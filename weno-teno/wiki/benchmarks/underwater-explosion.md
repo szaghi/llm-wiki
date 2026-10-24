@@ -5,7 +5,7 @@ description: "A gas bubble at a gigapascal and 1250 kg/m³, 0.24 m in diameter, 
 status: established
 aliases: [underwater explosion near a free surface, explosion bubble under a free surface, gas bubble explosion in water]
 tags: [benchmark, multiphase, interface-capturing, positivity]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Underwater explosion
@@ -168,7 +168,7 @@ converges from below (Fig. 16).
   a homogeneous mixture in pressure and temperature equilibrium. Their
   agreement with earlier computations is visual.
 - Huang et al. (2025b) assign the liquid constants to phase 1 but write
-  "the volume fraction of air $\alpha_1=10^{-8}$" in water, so the phase
+  "the volume fraction of air" in water for $\phi_1=10^{-8}$ (their $\alpha_1$), so the phase
   labels are inconsistent within their paragraph; their mixture
   equation of state, Eq. (10), and their phasic law, Eq. (5), differ in
   the sign and the $\gamma_k$ factor of the stiffening term *(compiler

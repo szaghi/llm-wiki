@@ -5,7 +5,7 @@ description: "Flux differencing replaces the DG volume term D f by symmetric two
 status: established
 aliases: [flux-differencing DG, split-form DG, split-form DGSEM, two-point flux volume integral, entropy-conservative DG volume term, LeFloch–Mercier–Rohde flux, Hadamard-product form]
 tags: [dg, finite-difference, entropy-stable, kinetic-energy-preserving, numerical-flux, software]
-timestamp: 2026-10-23T20:29:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Flux differencing and split-form DG
@@ -265,8 +265,8 @@ page-local $g_i=\tfrac12S_i[\![B_1]\!]$ is a half-jump correction at the
 end nodes, after Cheng & Shu's DG for Hamilton–Jacobi equations. The
 volume part of the non-conservative term is a plain nodal product. Unlike
 Rueda-Ramírez et al.'s, it uses no two-point average. The element uses
-$k_q+1$ Gauss–Lobatto nodes, $k_q\ge k$, for degree-$k$ polynomials
-($k_q=k+2$ in the tests).
+$N_q+1$ Gauss–Lobatto nodes, $N_q\ge N$, for polynomials of degree $N$
+(page-local $N_q$; the source's $k_q$ and $k$; $N_q=N+2$ in the tests).
 The difference matrix $D$ is then the Chen–Shu SBP operator built from
 the modal projection, not the collocation derivative
 ([summation-by-parts operator](/operators/summation-by-parts-operator.md)).
@@ -274,7 +274,7 @@ the modal projection, not the collocation derivative
 **Conservative MHD without the non-conservative term.**
 [Liu et al. (2025c)](/sources/liu-2025-c.md) (§3.1, Eq. (8), Thm. 1) use
 the same two-point volume term for the *conservative* ideal MHD system in
-2D, with $k+2$ Gauss–Lobatto nodes per direction. They prove that the
+2D, with $N+2$ Gauss–Lobatto nodes per direction. They prove that the
 terms of the modified Tadmor condition that carry the page-local
 Godunov–Powell potential $\phi_{\mathrm G}=\rho(v\cdot B)/p$ cancel when the
 nodal magnetic field is divergence-free at every node and its normal

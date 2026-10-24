@@ -5,7 +5,7 @@ description: "Entropy filtering applies, after every Runge–Kutta stage, an ele
 status: established
 aliases: [adaptive filtering, entropy-based adaptive filtering, positivity-preserving entropy filtering, constraint-driven modal filtering]
 tags: [dg, flux-reconstruction, limiting, positivity, entropy-stable, mhd]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Entropy filtering for DG and FR
@@ -434,8 +434,8 @@ tolerance on that problem.
   tolerance, not the margin of the 2023 paper.
 - **Printed slips (Trojak & Dzanic (2024), arXiv v1).** The discrete
   sensor (Eq. (34)) drops the absolute value of Eq. (27), so a negative
-  pressure jump would never trigger it, and sums over the solution nodes
-  where the interface nodes are meant. The "else" branch of Eq. (25) sets
+  pressure jump would never trigger it, and sums over the solution nodes,
+  whereas Eq. (27) integrates over the element boundary. The "else" branch of Eq. (25) sets
   the entropy constraint to $0$, while constraints are strict inequalities
   $>0$; the text makes clear the constraint is dropped. The helium–air mesh
   is described as "average edge lengths of $h/R=50$, 100, and 200", which
@@ -466,8 +466,8 @@ tolerance on that problem.
   $1+\tfrac{11}{6}\lambda\Delta t+\dots$, not first-order consistent, and the
   factors $\tfrac14$ and $\tfrac23$ on $\Delta t$ of the Shu–Osher form are
   missing (also in Alg. 4) *(compiler check, not in the sources)*. Alg. 4
-  updates $u^{n+1}$ from itself in its last stage, where the filtered
-  inviscid state is meant. Tables 1–4 print $L^2$ errors smaller than
+  updates $u^{n+1}$ from itself in its last stage, not from the filtered
+  inviscid state that the split of §4.1 adds the viscous increment to. Tables 1–4 print $L^2$ errors smaller than
   $L^1$ errors throughout, which the point-mean definitions of Eq. (28)
   exclude, since the root-mean-square of a set of numbers is not smaller
   than their mean absolute value *(compiler check, not in the sources)*.

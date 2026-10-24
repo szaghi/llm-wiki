@@ -5,7 +5,7 @@ description: "The normalised-variable diagram plots the normalised interface val
 status: established
 aliases: [NVD, normalized variable diagram, unified normalised-variable diagram, UND]
 tags: [reconstruction, finite-volume, limiting, weno, low-dissipation]
-timestamp: 2026-10-23T15:11:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Normalised-variable diagram
@@ -137,7 +137,7 @@ $\mu^{\mathrm P}_1$). The results generalize Propositions 3–5 above:
 
 On a uniform grid these reduce to UW2, CD2, P3, the point $(1/2,3/4)$ and Deng's Proposition 5
 (Remark 2.1). The non-uniform UND (Fig. 1(a)) keeps the elements listed above: accuracy point and
-P line, diffusion and anti-diffusion regions, an ENO region on $0\le\tilde u\le1$ bounded by
+P line, diffusion and anti-diffusion regions, a region on $0\le\tilde u\le1$ (which they call the ENO region, where Deng (2023) calls the same region CBC-TVD) bounded by
 first-order downwind ($\mathcal R=1$), first-order upwind ($\mathcal R=\tilde u$) and a line
 $\mathcal R=k\tilde u$ with "CFL $<1/k$" called a safe choice, and high-resolution regions
 outside $[0,1]$; no formula is printed for the latter. The ROUND operator drawn on it is on the
@@ -155,7 +155,7 @@ recomputed by Taylor expansion and agree; P errs on a cubic by $h_0h_+(h_-+h_0)u
   MinMod is always dissipative (Deng, §4.1). See
   [TVD](/definitions/total-variation-diminishing.md).
 - **NVD schemes.** CUBISTA and TOPUS do not fully retrieve P3 on $0<\tilde u<1$
-  and stay below the $k=2.5$ line; SMART is meant for implicit stepping; all
+  and stay below the $k=2.5$ line; SMART is designed for implicit stepping; all
   revert to UW1 outside $[0,1]$, which smears critical points (Deng, §4.2).
 - **WENO3.** WENO-JS3, WENO-Z3 and WENO-P3 are not normalisable; plotted under
   $\bar u_{i-1}=0$, $\bar u_{i+1}=1$ (a special case Deng calls "not a perfect

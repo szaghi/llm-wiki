@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Ducros shock sensor"
-description: "The Ducros sensor flags compressions by the share of dilatation in the velocity-gradient magnitude; the page gives the classical squared ratio, the modified compression-only form that switches hybrid central/TENO and central/WENO schemes, its use as a weight towards a first-order flux (a WENO-Z blend, an exponential Active Flux limiter), its regularization and thresholds, and its recorded failures and repairs."
+description: "The Ducros sensor flags compressions by the share of dilatation in the velocity-gradient magnitude; the page gives the classical squared ratio and the modified compression-only form, their use as switches of hybrid central/TENO and central/WENO schemes, as weights towards a first-order flux and as a factor of an adaptive Lax–Friedrichs coefficient, their regularization, thresholds, failures and repairs."
 status: established
 aliases: [Ducros sensor, modified Ducros sensor, improved Ducros sensor, Ducros dilatation–vorticity sensor, Ducros level, dilatation-to-vorticity ratio]
 tags: [central-scheme, teno, weno, finite-difference, turbulence]
-timestamp: 2026-10-23T19:53:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Ducros shock sensor
@@ -169,14 +169,14 @@ non-uniform meshes, they take $\Psi_{\mathrm D}$ with $\epsilon_{\mathrm D}=10^{
 it by a Jameson pressure sensor, written page-locally
 $\varphi_{\mathrm J,i}=\lvert\bar p_{i+1}-2\bar p_i+\bar p_{i-1}\rvert/\lvert\bar p_{i+1}+2\bar p_i+\bar p_{i-1}\rvert$.
 Face values are the maxima of the two adjacent cell values, and the blending factor
-(page-local)
+(page-local $\theta^{\mathrm s}$, the source's $\ell^{\mathrm s}$, renamed to keep the Lagrange basis $\ell_j$)
 
-$$\ell^{\mathrm s}_{i+1/2}=\exp\big(-\kappa_{\mathrm s}\,\varphi_{\mathrm J,i+1/2}\,\Psi_{\mathrm D,i+1/2}\big)\in(0,1]$$
+$$\theta^{\mathrm s}_{i+1/2}=\exp\big(-\kappa_{\mathrm s}\,\varphi_{\mathrm J,i+1/2}\,\Psi_{\mathrm D,i+1/2}\big)\in(0,1]$$
 
 scales the antidiffusive part of the already [convex-limited](/methods/convex-limiting.md)
-flux, $\hat f=\hat f^{\mathrm L}+\ell^{\mathrm s}\big(\hat f^{\mathrm{Lim}}-\hat f^{\mathrm L}\big)$, with
+flux, $\hat f=\hat f^{\mathrm L}+\theta^{\mathrm s}\big(\hat f^{\mathrm{Lim}}-\hat f^{\mathrm L}\big)$, with
 $\hat f^{\mathrm L}$ the first-order local Lax–Friedrichs flux (page-local). Since
-$\ell^{\mathrm s}\le1$ the flux moves further towards $\hat f^{\mathrm L}$, so bound preservation
+$\theta^{\mathrm s}\le1$ the flux moves further towards $\hat f^{\mathrm L}$, so bound preservation
 is kept. The strength $\kappa_{\mathrm s}$ (page-local) is problem dependent ($0.5$, $1$ or $10$ in the
 tests), and "its optimal choice needs further investigation"; the limiting strongly reduces the
 oscillations behind strong shocks in the forward-facing step, the double Mach reflection and a
@@ -187,6 +187,34 @@ $\max\big(-(\bar v_{i+1}-\bar v_{i-1})/(\lvert\bar v_{i+1}-\bar v_{i-1}\rvert+10
 a shock-capturing flux; it is a continuous weight towards first order, like McQuaid & Brehm's
 blend above, but multiplied by a pressure sensor.
 
+## Use as a factor of an adaptive Rusanov coefficient
+
+[Wang et al. (2023a)](/sources/wang-2023.md) (§3.2, Eq. (21)) multiply the classical squared
+ratio, with $\epsilon_{\mathrm D}=10^{-40}$ (footnote 2: to avoid zero denominators in IEEE
+double precision), by two Jameson-type normalized second differences, one of pressure and one
+of density, on primitive variables and with second-order central differences for the
+dilatation and the curl:
+
+$$\varphi_{\mathrm F,i}=\Phi_{\mathrm D,i}\,\varphi_{\mathrm J,i}[p]\,\varphi_{\mathrm J,i}[\rho],\qquad \varphi_{\mathrm J,i}[q]=\left\lvert\frac{q_{i+1}-2q_i+q_{i-1}}{q_{i+1}+2q_i+q_{i-1}}\right\rvert$$
+
+(page-local $\varphi_{\mathrm F}$; $\varphi_{\mathrm J}[q]$ is the Duan et al. pressure factor
+above, applied to $q=p$ and $q=\rho$). The sensor sets the modifier
+$\mathsf k_i=\max\big(\mathsf k_{\min},1-\exp(-\delta_{\mathrm F}\varphi_{\mathrm F,i})\big)$,
+$\mathsf k_{\min}=0.1$, $\delta_{\mathrm F}=10^5$ (page-local), of the LLF-M flux, a
+[Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md) whose coefficient
+$a_{i+1/2}$ is multiplied by $\max\{\mathsf k_i,\mathsf k_{i+1}\}$ inside fifth-order
+[alternative WENO](/methods/alternative-weno.md). The authors give the product as a repair of
+the stand-alone Ducros sensor's "indiscriminate activation" where dilatation and vorticity are
+both small, in irrotational flow outside boundary and mixing layers, the failure Sciacovelli et
+al. report below; they state that the sensor is $O(1)$ where the divergence is high and tends
+to zero in vortex-dominated regions, and call it "non-dimensional scale-invariant" (§3.2). On
+2D Riemann configuration 6 they plot the three factors separately: $\Phi_{\mathrm D}$ marks
+dilatation against vorticity, the two Jameson factors the high pressure and density gradients,
+and the product keeps the smooth shear vortices unflagged (§4.7, Fig. 17). In 1D, they note,
+the Ducros factor "measures only the velocity gradient" (§4.4). Unlike Duan et al.'s
+exponential limiter, the weight does not move the flux towards first order: it only scales the
+dissipation coefficient of a two-point flux between $0.1a_{i+1/2}$ and $a_{i+1/2}$.
+
 ## Failure modes and repairs
 
 - **Smooth irrotational flow.** Where both the dilatation and the vorticity are
@@ -194,7 +222,8 @@ blend above, but multiplied by a pressure sensor.
   to one. On an underexpanded jet it is near unity "even in smooth irrotational
   regions" (Sciacovelli et al. 2021, §3, §5.1, Fig. 8(a)).
 - **One space dimension.** In 1D the Ducros factor is inactive (Sciacovelli et
-  al. 2021, §4.3). *(Compiler check, not in the sources: with
+  al. 2021, §4.3); Wang et al. (2023a, §4.4) say it "measures only the velocity
+  gradient" there. *(Compiler check, not in the sources: with
   $\nabla\times v=0$, $\Phi_{\mathrm D}\to1$ wherever
   $(\nabla\cdot v)^2\gg\epsilon_{\mathrm D}$, so the factor does not separate a
   shock from a smooth compression.)*
@@ -281,3 +310,4 @@ derivatives-ratio detector beside it (see
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §3.1: TENO-type indicator claimed more universal than the Ducros sensor.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §3.4, Eq. (35): Jameson-type sensor, distinct from Ducros' (arXiv v4).
 - [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §4.1.3; App. C.1.3; Examples 5.9, D.5–D.7: modified Ducros sensor times a Jameson pressure sensor in an exponential limiting of bound-preserving Active Flux (arXiv v3).
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §3.2, Eq. (21), footnote 2; §4.4; §4.7, Fig. 17: classical ratio times pressure and density Jameson factors as the sensor of the LLF-M flux.

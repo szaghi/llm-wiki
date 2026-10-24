@@ -5,7 +5,7 @@ description: "One-dimensional Euler benchmark of a Mach 3 shock running into a s
 status: established
 aliases: [Shu–Osher problem, shock–density wave interaction, shock–entropy wave interaction, Titarev–Toro problem]
 tags: [benchmark, low-dissipation, weno, teno]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Shu–Osher shock–entropy-wave problem
@@ -16,7 +16,7 @@ entropy wave. Passing through the shock, the wave is compressed into a
 band of short, steep density oscillations, followed by weak shocklets.
 A dissipative scheme damps the short waves; an oscillatory one creates
 spurious waves near the shocklets. The problem is the most widely run
-one-dimensional resolution test in the bundle: fifty-seven sources run it
+one-dimensional resolution test in the bundle: sixty-seven sources run it
 or a variant (one of them a review reproducing earlier figures), in
 several placements of one set of data, plus a high-frequency variant attributed
 to Titarev & Toro, a Mach 10 variant, two-medium variants and a radial
@@ -41,11 +41,12 @@ ends at $t=1.8$.
 
 | Placement | Shock position | Perturbation | Final time | Sources |
 |---|---|---|---|---|
-| $[-5,5]$ | $x=-4$ | $1+0.2\sin(5x)$ | 1.8 | [Li et al. (2022b)](/sources/li-2022-b.md) §4.3.2; [Luo & Wu (2021)](/sources/luo-2021-b.md) §5.2.2; [Wang et al. (2023b)](/sources/wang-2023-b.md) Example 2; [Takagi et al. (2022)](/sources/takagi-2022.md) §4.4; [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.8 (domain not stated); [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.6; [Pazner (2021)](/sources/pazner-2021.md) §5.2.2; [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) §4.3, Eq. (42); [Wang et al. (2021)](/sources/wang-2021.md) Example 5.4a; [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.2.2; [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.2; [Hiejima (2022)](/sources/hiejima-2022.md) §3.3, Eq. (28); [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.3.2; [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.4; [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) §8.5; [Zhou et al. (2023)](/sources/zhou-2023.md) §5.2, Eq. (37); [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 8; [Wang et al. (2023c)](/sources/wang-2023-c.md) Example 4.3; [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) §8.2 (interface printed at $x=4$, see Qualifications); [Liu et al. (2023b)](/sources/liu-2023-b.md) §5.2 (strip $[-5,5]\times[-0.1,0.1]$ on triangles); [Jiang et al. (2024)](/sources/jiang-2024.md) §5.1.1 (Lagrangian particles); [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.5 (strip $[-5,5]\times[-0.166,0.166]$ on triangles); [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.5; [Naudet & Zahr (2024)](/sources/naudet-2024.md) §5.3.2 (to $T=2$, supersonic inlet at $x=-5$, solid wall at $x=5$); [Fan et al. (2025a)](/sources/fan-2025.md) Ex. 3.7 (outflow); [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.3, Eq. (4.5) (post-shock density printed $3.857148$, see Qualifications); [Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 6; [Danis et al. (2025)](/sources/danis-2025.md) §5.6 (3D tensor-train solver; data not printed, "Mach 3 shock/sinusoidal density" and the plotted $[-5,5]$, $T=1.8$) |
-| $[-5,15]$ | $x=-4$ | $1+0.2\sin(5x)$ | 5 | [Chu et al. (2025a)](/sources/chu-2025.md) Example 2 (free boundaries; arXiv v1) |
+| $[-5,5]$ | $x=-4$ | $1+0.2\sin(5x)$ | 1.8 | [Li et al. (2022b)](/sources/li-2022-b.md) §4.3.2; [Luo & Wu (2021)](/sources/luo-2021-b.md) §5.2.2; [Wang et al. (2023b)](/sources/wang-2023-b.md) Example 2; [Takagi et al. (2022)](/sources/takagi-2022.md) §4.4; [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.8 (domain not stated); [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.6; [Pazner (2021)](/sources/pazner-2021.md) §5.2.2; [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) §4.3, Eq. (42); [Wang et al. (2021)](/sources/wang-2021.md) Example 5.4a; [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.2.2; [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.2; [Hiejima (2022)](/sources/hiejima-2022.md) §3.3, Eq. (28); [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.3.2; [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.4; [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) §8.5; [Zhou et al. (2023)](/sources/zhou-2023.md) §5.2, Eq. (37); [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 8; [Wang et al. (2023c)](/sources/wang-2023-c.md) Example 4.3; [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) §8.2 (interface printed at $x=4$, see Qualifications); [Liu et al. (2023b)](/sources/liu-2023-b.md) §5.2 (strip $[-5,5]\times[-0.1,0.1]$ on triangles); [Jiang et al. (2024)](/sources/jiang-2024.md) §5.1.1 (Lagrangian particles); [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.5 (strip $[-5,5]\times[-0.166,0.166]$ on triangles); [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.5; [Naudet & Zahr (2024)](/sources/naudet-2024.md) §5.3.2 (to $T=2$, supersonic inlet at $x=-5$, solid wall at $x=5$); [Fan et al. (2025a)](/sources/fan-2025.md) Ex. 3.7 (outflow); [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.3, Eq. (4.5) (post-shock density printed $3.857148$, see Qualifications); [Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 6; [Danis et al. (2025)](/sources/danis-2025.md) §5.6 (3D tensor-train solver; data not printed, "Mach 3 shock/sinusoidal density" and the plotted $[-5,5]$, $T=1.8$); [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.10 (left state on $[-5,-4]$, post-shock pressure printed $10.33333$) |
+| $[-5,15]$ | $x=-4$ | $1+0.2\sin(5x)$ | 5 | [Chu et al. (2025a)](/sources/chu-2025.md) Example 2 (free boundaries; arXiv v1); [Wang et al. (2023a)](/sources/wang-2023.md) §4.4, Eq. (26) (left state in exact form $(27/7,\,4\sqrt{35}/9,\,31/3)$; called the "extended Mach 3 shock–density-wave interaction") |
 | $[-4.5,4.5]\times[0,1]$ | $x=-4$ | $1+0.2\sin(5x)$ | 1.8 | [Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.3 (strip on triangles, periodic in $y$) |
 | $[0,10]$ | $x=1$ | $1+0.2\sin(5(x-5))$ | 1.8 | [Fu (2021)](/sources/fu-2021.md) §5.4; [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.5; [Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.5 (two-dimensional strip on triangles); [Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.4, Eq. (41) (likewise); [Huang et al. (2025a)](/sources/huang-2025.md) §5.4, Eq. (46) (boundaries not stated); [Liang et al. (2025)](/sources/liang-2025.md) §4.3, Eq. (34) (strip $[0,10]\times[0,2]$ on triangles) |
 | $[0,10]$ | $x=1$ | $1+0.2\sin(5x)$ as printed | 1.8 | [Ye et al. (2022)](/sources/ye-2022.md) §4.4; [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.4, Eq. (33); [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.2; [Liang et al. (2022)](/sources/liang-2022.md) §4.4; [Qin et al. (2023)](/sources/qin-2023.md) §3.4.3; [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) §4.3; [Fan et al. (2025b)](/sources/fan-2025-b.md) Eq. (48) |
+| $[0,10]$ | $x=1$ | $1+0.2\sin(5x)$ as printed | 0.2 as printed | [Wang et al. (2026)](/sources/wang-2026.md) §6.3.3, Fig. 15 (left state $(3.857143,2.629369,10.333333)$ on $[0,1]$; the time is the figure caption's, see Qualifications) |
 | $[-5,5]$ | $x=-4$ | $1+0.2\sin(5(x-5))$ as printed | 1.8 | [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.11; [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.5 |
 | $[0,1]$ | $x=0.1$ | $1+0.2\sin(50x-25)$ | 0.18 | [Deng (2023)](/sources/deng-2023.md) App. A.6; [Huang et al. (2026)](/sources/huang-2026.md) §6.4 |
 | $[-1,1]$ | $x=-0.8$ | $1+0.2\sin(5\pi x)$ | 0.36; not stated | [Sousa & Scalo (2022)](/sources/sousa-2022.md) §5.1 ($\gamma$ not printed); [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.4, Eq. (9e) (amplitude 0.2, wavenumber $5\pi$, supersonic inflow at $x=-1$, non-reflecting outflow at $x=1$; arXiv v2) |
@@ -102,8 +103,8 @@ slip for $\sin(5x)$.
 | [Wang et al. (2021)](/sources/wang-2021.md) | 200, CFL 0.6 | WENO-JS5, 20,000 | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5) vs the original multi-resolution WENO5, [WENO-AO](/methods/weno-ao.md)(5,3) and WENO-JS5 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) | 400, 800, CFL 0.6 | — | [WENO3-NN](/methods/learned-weno-weights.md) vs WENO3-JS, WENO3-Z, WENO3-N, WENO5-JS, WENO5-Z |
 | [Hiejima (2022)](/sources/hiejima-2022.md) | 201, 401 ($\times21\times21$), RK4 at CFL 0.8 | WCNS-JS fifth order, 2000 | [WCNS](/methods/weighted-compact-nonlinear-scheme.md) with JS and TENO-type weights, interpolation orders 5–11 |
-| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) | $\mathbb P_4$, 100 elements | exact-Godunov solver, highly resolved | [artificial viscosity](/methods/artificial-viscosity.md) from the temporal residual, $c_\mu=5$ |
-| [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) | $\mathbb P_3$, 100 and 200 elements | exact-Godunov solver, highly resolved | flux reconstruction with [entropy filtering](/methods/entropy-filtering.md) |
+| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) | $\mathbb P^4$, 100 elements | exact-Godunov solver, highly resolved | [artificial viscosity](/methods/artificial-viscosity.md) from the temporal residual, tunable constant $c_\mu=5$ (page-local) |
+| [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) | $\mathbb P^3$, 100 and 200 elements | exact-Godunov solver, highly resolved | flux reconstruction with [entropy filtering](/methods/entropy-filtering.md) |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) | 200 elements; fixed-DOF series across degrees | — | nodal DG with ANN-predicted artificial viscosity |
 | [Sousa & Scalo (2022)](/sources/sousa-2022.md) | grid series, $\delta t=10^{-5}$ | same scheme (quasi-spectral viscosity), 4096 | [quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md) vs localized artificial diffusion |
 | [Hong, Ye & Ye (2022)](/sources/hong-2022.md) | 200, zero-gradient boundaries | WENO-JS, 2000 | TENO-M6 and TENO-M8 ([TENO](/methods/targeted-eno.md) with stencil extension) vs TENO6, TENO8, [WENO-CU6](/methods/weno-cu6.md), WENO-JS, WENO7, WENO9 |
@@ -139,13 +140,17 @@ slip for $\sin(5x)$.
 | [Chu et al. (2025a)](/sources/chu-2025.md) | $\Delta x=1/40$, SSP-RK3, CFL 0.4 | LDCU, $\Delta x=1/400$ | adaptive [low-dissipation central-upwind](/methods/low-dissipation-central-upwind-scheme.md) A-MM, A-WLR vs LDCU |
 | [Naudet & Zahr (2024)](/sources/naudet-2024.md) | five space-time slabs, 20 spatial elements, quadratic simplices, then refinement | second-order FV (superbee), over $5\times10^4$ cells, adaptive RK4 | space-time [implicit shock tracking](/methods/implicit-shock-tracking.md) (HOIST) |
 | [Maltsev et al. (2023)](/sources/maltsev-2023.md) | triangles, $h=0.070$, about 13,000 elements | 1D WENO5, 10,000 points | hybrid DG–FV(CWENOZ) of orders 3–5 with MOOD$^{\mathrm R}$ (limited and extended bounds) and the shock detector ($C_k=1.5$), vs pure FV |
+| [Wang et al. (2023a)](/sources/wang-2023.md) | 600, CFL 0.45, TVD-RK3 | AWENO with the LLF flux, 4000 | fifth-order [A-WENO](/methods/alternative-weno.md) with [affine-invariant](/methods/affine-invariant-weno.md) Z-type weights and the adaptive-diffusion LLF-M flux ([local Lax–Friedrichs](/methods/lax-friedrichs-flux.md) with a feature-sensor-reduced coefficient) vs the LLF flux |
+| [Cao et al. (2026)](/sources/cao-2026.md) | 400 cells, third order ($\mathbb P^2$), SSP-RK3, CFL 0.16 | LF scheme, 300,000 cells | [COS(DG)](/methods/cos-dg.md) with its local (Lax-criterion) variant vs TVB, moment, MP, MMP, WENO and simple-WENO DG limiters with the KXRCF indicator, OFDG and [OEDG](/methods/oedg.md) |
+| [Stone et al. (2026)](/sources/stone-2026.md) | 200 cells | WENO-Z with RK3, 2000 cells | primitive-variable PLM with RK2 vs [WENO-Z](/methods/weno-z.md) with RK3 in [AthenaK](/software/athenak.md); data not printed |
+| [Wang et al. (2026)](/sources/wang-2026.md) | base 128, two-level [AMR](/methods/adaptive-mesh-refinement.md), ratio 2 | uniform, 2048 | FD WENO-JS5 with Berger–Colella second-order transfers, AMR-HybridWENO and pure WENO interpolation between levels |
 
 ## Findings across sources
 
 **Short-wave resolution.** The sources read the amplitude of the
 post-shock short waves as the measure of dissipation, and each new
 scheme below improves on its baseline: TENO-AA over WENO-CU6 in amplitude and
-phase (Fu 2021, Fig. 4); WENO-ZN over WENO-JS and WENO-Z (Li et al.,
+phase (Fu 2021, Fig. 4); WENO-ZN over WENO-JS and WENO-Z (Li et al. (2022b),
 Fig. 5); WENO-Z+M better than WENO-Z+ at the discontinuity and better
 than WENO-IS-I and WENO-Z9 on the high-frequency waves (Luo & Wu, Fig.
 10); the adaptive-diffusion flux reducing dissipation behind the shock
@@ -240,6 +245,27 @@ slightly better than WCNS3-MR (§4.3.2, Fig. 12), and on 200 points takes
 of the $L^1$ error relative to the same finite-volume scheme on the same
 grid (§6.2, Fig. 8).
 
+**Post-processing, dissipation control and AMR transfers.**
+Cao et al. (2026) find third-order COS(DG) giving the sharpest
+non-oscillatory profile among the ten DG techniques compared (Ex. 6.10,
+Fig. 11). Their Table 3 times the oscillation control on this problem
+and on the [Woodward–Colella blast wave](/benchmarks/woodward-colella-blast-wave.md)
+at 400 cells (single core, Python): the OE step of OEDG takes 35.3–40.6 %
+of the total run time, the global COS step 15.6–18.8 % and the local
+COS step 6.3–10.4 %, COS being applied once per time step and OE at
+every Runge–Kutta stage. Wang et al. (2023a) map the dissipation
+coefficient in space and time: the LLF coefficient rises "to about
+$\alpha\ge4$ from $\alpha\approx1.4$" wherever the main shock has passed,
+while the LLF-M coefficient exceeds 4 only around the main shock and the
+shocklet train and is "about 0.5 or smaller" in the high-frequency
+smooth region, with better-resolved entropy waves than LLF (§4.4,
+Figs. 9–10). Wang et al. (2026) pass the problem through a two-level
+AMR hierarchy and find the AMR-HybridWENO and pure WENO inter-level
+interpolations less dissipative in the smooth region than the
+second-order Berger–Colella transfers (§6.3.3, Fig. 15). Stone et al.
+(2026) use it to verify AthenaK: on 200 cells WENO-Z with RK3 resolves
+the small scales better than PLM with RK2 (§3.1, Fig. 1).
+
 **Switching in hybrid DG–FV.** Maltsev et al. find that at third order
 the hybrid improves markedly on pure FV, while at higher order the pure
 FV scheme agrees better with the reference than the hybrid with
@@ -260,9 +286,9 @@ order rises and from WENO to TENO (App. A.2, Fig. 12).
 $x=5$ into two blocks with a 2:1 jump of spacing and pass the shock
 through the interface with their one-sided nonlinear closures: the
 transition is smooth at $t=1.0$ and $1.8$ against the single-domain
-reference (Fig. 9). With unscaled smoothness indicators ($\lambda=1$ in
-their notation) "the shock fails to cross the interface", as stated
-without a figure; their scaled indicators ($\lambda=2$) are used
+reference (Fig. 9). With unscaled smoothness indicators (Qin et al.'s scaling
+$\lambda_{\mathrm s}=1$) "the shock fails to cross the interface", as stated
+without a figure; their scaled indicators ($\lambda_{\mathrm s}=2$) are used
 throughout. The interface costs nothing measurable: 376.14 s on one zone
 against 375.44 s on two at 10000 points, serial on an AMD Ryzen7-5800H
 (Table 13).
@@ -303,7 +329,7 @@ order matching the ninth, and on 401 points the results are "very
 similar to the exact solution" (§3.3, Figs. 4–5).
 
 **Element methods and shock-capturing devices.** Dzanic, Trojak &
-Witherden find good agreement with the reference at $\mathbb P_4$ on
+Witherden find good agreement with the reference at $\mathbb P^4$ on
 100 elements; their residual-based indicator separates the shocks from
 the oscillatory density field, with a magnitude roughly proportional to
 the shock strength (§5.2.2, Fig. 5). Yu & Hesthaven report sharp,
@@ -312,7 +338,7 @@ accuracy decreases with the polynomial degree on coarse meshes, which
 they attribute to the network underestimating smoothness on coarse
 meshes, while the degrees nearly coincide on finer meshes (§5.3.2,
 Figs. 9–11), the opposite of Pazner's fixed-DOF trend with convex
-limiting. Dzanic & Witherden run $\mathbb P_3$ on 100 and 200 elements
+limiting. Dzanic & Witherden run $\mathbb P^3$ on 100 and 200 elements
 against the same kind of reference (§5.1.2). Sousa & Scalo find
 quasi-spectral viscosity and localized artificial diffusion recovering
 the trailing density oscillations alike, the former with a sharper
@@ -440,7 +466,7 @@ state above *(compiler check, not in the sources)*.
 "modified Shu–Osher" problem with a Mach 10 shock:
 $(\rho,v,p)=(3.857143,\ 9.76153,\ 116.5)$ for $x\le-4$ and
 $(1+0.2\sin5x,\,0,\,1)$ for $x>-4$ on $[-5,5]$, $\gamma=1.4$, $t=0.7$
-(shock at $x=4.27$), 170 elements of degree $P=3$,
+(shock at $x=4.27$), 170 elements of degree $N=3$,
 $\Delta t=9.9964\times10^{-5}$, reference DGSEM on 3000 elements. Their
 entropy-stable DGSEM with flux blending resolves the dip at $x=2.82$
 and the valley at $x=3.265$, which spectral-difference and filtered
@@ -569,11 +595,32 @@ printed density and pressure.
   dispersive than WCNS7M, and uses a shock-stable HLLC flux to avoid a
   carbuncle seen with the author's earlier scheme (Fig. 10; see
   [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)).
+- **Parametrized family for learning a flux.**
+  [Liu et al. (2026)](/sources/liu-2026.md) §5.1.3 (arXiv v1) train and
+  test a neural entropy-stable flux on a family built on the problem,
+  on $(-5,5)$ with Dirichlet boundaries and $\gamma=1.4$: $\rho=\rho_{\mathrm L}$
+  for $x\le x_0$, $1+0.2\sin(5x)$ for $x_0<x\le x_1$ and
+  $1+0.2\sin(5x)\,e^{-(x-x_1)^4}$ beyond, with $x_1=3.29867$ ($x_0$,
+  $x_1$ page-local), velocity
+  $v_{\mathrm L}$ behind the interface and zero ahead, and pressures
+  $p_{\mathrm L}$, $p_{\mathrm R}$ (Eq. (5.8)), the amplitude being
+  written as a parameter. Training samples draw every parameter within
+  $\pm10\,\%$ of the nominal values $\rho_{\mathrm L}=3.857135$,
+  $p=10.32333$ (printed without subscript), $v_{\mathrm L}=2.62936$,
+  amplitude $0.2$, $p_{\mathrm R}=1$, $x_0=-4$ (300 trajectories of
+  PyClaw data on 512 points, $\Delta t=0.002$); the test runs the nominal
+  values to $T=1.6$. A second family (Eq. (5.10)), with
+  $\rho_{\mathrm L}=3.857135$ and the amplitude, pressures, velocity and
+  interface position varied linearly in an index running over 101
+  cases, checks that the learned discrete entropy remainder stays
+  non-positive (Fig. 5.9). The prediction is comparable to the authors'
+  earlier flux network with a fixed central scheme, with added diffusion
+  at high noise (§5.2.3, Fig. 5.7).
 - [Ye et al. (2022)](/sources/ye-2022.md) §4.5, after an earlier
   study, add a long, small-amplitude shock–entropy-wave test: the Mach 3
   post-shock state on $0\le x<0.5$ and
-  $(\exp(-\varepsilon_{\mathrm s}\sin(k(x-19.5))),0,1)$ on $0.5\le x<20$ with
-  $\varepsilon_{\mathrm s}=0.01$, $k=-13$ (page-local symbols), $N=1500$,
+  $(\exp(-\varepsilon_{\mathrm a}\sin(k(x-19.5))),0,1)$ on $0.5\le x<20$ with
+  $\varepsilon_{\mathrm a}=0.01$, $k=-13$ (page-local symbols), $N=1500$,
   $t=5$, reference WENO-JS with $N=10000$. They find the weight
   exponent $q=2$ better than $q=6$ on it (Fig. 5).
 
@@ -626,6 +673,20 @@ printed density and pressure.
   one-dimensional cases (6 to 24, 8 to 32 elements), gives 80 *(compiler
   check, not in the sources)*.
 - Kolluru et al.'s figure caption calls it the "Osher–Shu problem".
+- Wang et al. (2026) give the final time as $t=0.2$ in the caption of
+  Fig. 15 on the $[0,10]$ placement, where the common runs end at
+  $t=1.8$; at the Rankine–Hugoniot shock speed of about $3.55$ the shock
+  moves about $0.7$ by $t=0.2$ and meets only part of the first
+  wavelength of the perturbation *(compiler check, not in the
+  sources)*. The paper itself does not allow the time to be checked.
+- Stone et al. (2026) print neither the data nor the domain, only 200
+  cells and a final time $t=0.047$.
+- Liu et al. (2026) print two nominal sets that disagree: $3.857135$,
+  $10.32333$, $2.62936$ for the training samples and $3.857135$,
+  $10.33333$, $2.629$ at index 0 of the entropy family; the common
+  density is $3.857143$.
+- Wang et al. (2023a) attribute the $[-5,15]$, $t=5$ version to
+  reference [3] of their list.
 - Hiejima runs the one-dimensional problem in a three-dimensional
   code on $N_x\times21\times21$ points and prints the post-shock pressure
   as $31/3$.
@@ -694,3 +755,8 @@ printed density and pressure.
 - [Fan et al. (2025b)](/sources/fan-2025-b.md) — §4.3.2, Eq. (48), Fig. 12, Table 5.
 - [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §6.2, Fig. 8.
 - [Chu et al. (2025c)](/sources/chu-2025-c.md) — Example 1, Fig. 3.1 (arXiv v1).
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §4.4, Eq. (26), Figs. 9–10.
+- [Cao et al. (2026)](/sources/cao-2026.md) — Ex. 6.10, Fig. 11, Table 3.
+- [Liu et al. (2026)](/sources/liu-2026.md) — §5.1.3, Eqs. (5.8), (5.10), §5.2.3, Figs. 5.7, 5.9 (arXiv v1).
+- [Stone et al. (2026)](/sources/stone-2026.md) — §3.1, Fig. 1.
+- [Wang et al. (2026)](/sources/wang-2026.md) — §6.3.3, Fig. 15.

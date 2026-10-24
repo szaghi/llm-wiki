@@ -5,7 +5,7 @@ description: "Subcell finite-volume limiting makes a nodal DGSEM robust by conve
 status: established
 aliases: [subcell limiting, subcell FV shock capturing, hybrid DG/FV blending, element-wise blending, subcell-wise blending, native LGL finite volumes, FV subcell switching]
 tags: [dg, limiting, finite-volume, positivity, entropy-stable]
-timestamp: 2026-10-23T20:40:00Z
+timestamp: 2026-10-24T06:02:00Z
 ---
 
 # Subcell finite-volume limiting for DG
@@ -92,8 +92,8 @@ Options for the scheme:
   or [HLLE, HLLEM](/methods/hll-riemann-solvers.md), which preserve positivity
   of $\rho$ and $p$; for MHD, an entropy-stable Rusanov flux whose
   dissipation acts on jumps of the entropy variables, which the
-  authors motivate by stating that plain Lax–Friedrichs dissipation on
-  $[\![u]\!]$ is not entropy stable for MHD (Rueda-Ramírez et al. 2021,
+  authors motivate by stating that "Lax–Friedrichs type" dissipation on
+  $[\![u]\!]$ with their Roe-type matrix is not entropy stable for MHD (Rueda-Ramírez et al. 2021,
   §3.3.1, Eqs. (52)–(60); compare the compiler check on the
   [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md) page).
 - Reconstruction: first order (piecewise constant), second-order minmod on
@@ -238,7 +238,7 @@ $\epsilon_K$).
 |---|---|---|
 | modified Sod tube (sonic rarefaction) | $N=3$, 50 and 100 elements, $t=0.2$ | DGSEM alone shows an entropy-violating jump at the rarefaction; ESDG and DGSEM with the cell-entropy limiter give a smooth rarefaction (Fig. 2) |
 | [KPP rotating wave](/benchmarks/kpp-rotating-wave.md) | $N=3$, $64^2$ and $128^2$ elements | DGSEM with Hennemann blending converges to a non-entropic solution, with the cell-entropy limiter to the entropic one (Fig. 3) |
-| [isentropic vortex](/benchmarks/isentropic-vortex.md) | $N=1$–4, $K=5$–80, no convex constraint | finest $L^2$ rates 1.84, 2.74 (printed), 4.28, 4.36; the local minimum entropy principle gives at most first order (0.86–0.95), its relaxed form at most second (1.21–1.52) (Tables 1–3) |
+| [isentropic vortex](/benchmarks/isentropic-vortex.md) | $N=1$–4, $2K_{\mathrm e}\times K_{\mathrm e}$ elements, $K_{\mathrm e}=5$–80 (page-local), no convex constraint | finest $L^2$ rates 1.84, 2.74 (printed), 4.28, 4.36; the local minimum entropy principle gives at most first order (0.86–0.95), its relaxed form at most second (1.21–1.52) (Tables 1–3) |
 | [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md) | $N=3$, $80^2$, $t=10$, relaxed positivity | robust; applied to ESDG instead of DGSEM the turbulent structures differ visibly (Figs. 4–5) |
 | [Mach 2000 jet](/benchmarks/high-mach-astrophysical-jet.md) | $N=3$, $150^2$, $t=10^{-3}$ | robust with TVD-like density bounds; with $\beta_{\mathrm e}=0.01$ and 0 carbuncles appear, also with the minimum entropy principle; the carbuncle effect, the authors write, "is not due only to a loss of entropy stability, but rather a lack of sufficient dissipation near shocks" (Figs. 6–7, A.8) |
 
@@ -307,7 +307,7 @@ for all but the KPP case, which uses Trixi.jl
 | Test | Setup | Finding |
 |---|---|---|
 | [KPP rotating wave](/benchmarks/kpp-rotating-wave.md) | $N=3$, $32^2$–$256^2$ elements, $t=1$, element-wise a priori, $\alpha_{\max}=0.5$ | standard DGSEM converges to a clean but **non-entropic** solution; entropy-stable split-form DGSEM converges to the entropy solution (Figs. 2–3) |
-| [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md) | $N=7$, $64^2$ elements, $t=10$, bounds $\rho\ge0.1\rho^{\mathrm{FV}}$, $p\ge0.1p^{\mathrm{FV}}$ | subcell-wise blending adds about $10^3$ times less low-order method ($\bar\alpha\approx10^{-9}$–$10^{-8}$ vs $10^{-6}$–$10^{-5}$, read from Fig. 4b) at a similar peak $\alpha\approx0.025$ |
+| [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md) | $N=7$, $64^2$ elements, $t=10$, bounds $\rho\ge0.1\rho^{\mathrm{FV}}$, $p\ge0.1p^{\mathrm{FV}}$ | subcell-wise blending needs about three orders of magnitude less low-order method ($\bar\alpha$) at a similar peak $\alpha$ (§5.2.1, Fig. 4) |
 | Mach 4 bow shock | $N=5$, curved third-order mesh, subcell IDP bounds (bar states + entropy), first-order Rusanov FV | bounds met to machine precision; shock sharp inside elements; $\bar\alpha=11.03\%$ (864 elements) and $9.50\%$ (1536) |
 | [Mach 2000 jet](/benchmarks/high-mach-astrophysical-jet.md) | $N=3$, $256^2$ elements, $\gamma=5/3$, $t=10^{-3}$ | robust with both blendings; resolution improves from FV-Rusanov to FV-HLLE to second-order FV-HLLE; subcell-wise sharper than element-wise |
 | [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) (GLM-MHD) | $N=3$, $256^2$ elements, $t=1$, subcell-wise TVD-like density bounds | second-order subcell FV limits less and develops more turbulent structure than first-order FV |

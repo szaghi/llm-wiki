@@ -5,7 +5,7 @@ description: "Linear advection of Jiang and Shu's four-wave profile, a smooth na
 status: established
 aliases: [Jiang–Shu multi-wave test, multi-wave advection, multiple-wave advection, composite wave, Shu linear advection test, Gaussian–square–triangle–ellipse test]
 tags: [benchmark, weno, teno, reconstruction, low-dissipation]
-timestamp: 2026-10-23T19:51:00Z
+timestamp: 2026-10-24T05:33:00Z
 ---
 
 # Jiang–Shu composite-wave advection
@@ -26,8 +26,9 @@ a visual test: none of the sources reports an error norm on it.
 
 With page-local $G(x,\beta_{\mathrm G},z)=e^{-\beta_{\mathrm G}(x-z)^2}$ and
 $F(x,\alpha_{\mathrm F},a)=\sqrt{\max\big(1-\alpha_{\mathrm F}^2(x-a)^2,0\big)}$,
-the form printed by [Li et al. (2022b)](/sources/li-2022-b.md) §4.2 and
-[Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 1 is
+the form printed by [Li et al. (2022b)](/sources/li-2022-b.md) §4.2,
+[Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 1 and
+[Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.5 is
 
 $$
 u_0(x)=\begin{cases}
@@ -56,6 +57,7 @@ $\lvert x-z\rvert=0.03$, and the ellipse has half-width $1/\alpha_{\mathrm F}=0.
 | [Wang & Don (2022)](/sources/wang-2022-b.md) §3.2.1 | $[-1,1)$, periodic | 200 | $t=2$ | TVD-RK3, CFL 0.45 | [affine-invariant WENO-Z](/methods/affine-invariant-weno.md) against scale-invariant WENO-Z, on scaled and translated data |
 | [Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 1 | $[-1,1]$, periodic | 400 | $t=2$ (1 period) | SSP-RK3, CFL 0.2 | bound-preserving [PAMPA](/methods/pampa-scheme.md), strict and relaxed bounds |
 | [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) §6, Eq. (56) | $[-1,1]$, periodic | 200 | $t=2000$ (1000 periods) | ADER, CFL 0.9 | [AENO-C](/methods/aeno-reconstruction.md) against WENO, orders 5–10 |
+| [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.5 | $[-1,1]$, periodic | 256 cells | $t=6$ (3 periods) | SSP-RK3 | global [COS(DG)](/methods/cos-dg.md), $\mathbb P^1$–$\mathbb P^3$ |
 
 Takagi et al. print the domain $[0,2]$ with the Jiang–Shu constants;
 Huang et al. (2023b) print the pieces explicitly as functions of $x-1$
@@ -121,6 +123,16 @@ for instance at order 6, which they attribute to the reconstruction
 keeping too much information from the centred stencil, call not
 spurious oscillations, and see decrease with resolution (§5.2, §9).
 
+**A post-processed DG.** Cao et al. (2026) run the profile with global
+COS(DG), which blends each cell polynomial with its cell average once
+per time step through a coefficient driven by the jumps to the two
+neighbours, at $\mathbb P^1$, $\mathbb P^2$ and $\mathbb P^3$: higher
+degrees give sharper resolution, and spurious oscillations are, in
+their words, fully suppressed (Fig. 5). The same paper advects two
+other piecewise-smooth profiles on 256 cells, one on $[-1,1]$ to $t=8$
+and one on $[0,1]$ to $t=1.1$, with the same verdict (Exs. 6.3–6.4,
+Figs. 3–4).
+
 **A static detection test.** [Liang & Fu (2026)](/sources/liang-2026.md)
 §3.3 use the profile without advecting it: shifted to $[0,2]$ as in
 Huang et al. (2023b) (Gaussian on $[0.2,0.4)$, square wave on
@@ -159,3 +171,4 @@ a block is refined below 0.3 and coarsened above 0.7.
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §4, Ex. 1, Tables 1–2, Fig. 1.
 - [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) — §5.2, §6, §9, Eq. (56), Fig. 11.
 - [Liang & Fu (2026)](/sources/liang-2026.md) — §3.3, Eqs. (27)–(28), Fig. 3.
+- [Cao et al. (2026)](/sources/cao-2026.md) — Exs. 6.3–6.5, Figs. 3–5.

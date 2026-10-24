@@ -5,7 +5,7 @@ description: "One-dimensional Euler Riemann problem with pressure ratio 10^9 and
 status: established
 aliases: [LeBlanc problem, Le Blanc shock tube, LeBlanc shock tube]
 tags: [benchmark, positivity, bound-preserving, low-dissipation]
-timestamp: 2026-10-23T20:39:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Leblanc shock tube
@@ -84,7 +84,7 @@ states, so this is the $\gamma=5/3$ version carried as two phases
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.5c | same | same | 6400 points | $10^{-4}$ |
 | [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) Example 5.4 | same, Navier–Stokes $\mathrm{Re}=1000$ | same | 3200 points | $10^{-3}$ as printed |
 | [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.7 | same | same | 6400 cells | $10^{-4}$ |
-| [Peyvan et al. (2023)](/sources/peyvan-2023.md) §4.1 | same, $\gamma=1.4$ | same | 1000 elements, $P=3$ (4000 solution points) | $10^{-4}$ |
+| [Peyvan et al. (2023)](/sources/peyvan-2023.md) §4.1 | same, $\gamma=1.4$ | same | 1000 elements, $N=3$ (their $P$; 4000 solution points) | $10^{-4}$ |
 | [Fan et al. (2025b)](/sources/fan-2025-b.md) §4.3.1, Eq. (47) | same, on $[-10,0)$ | same, on $[0,10]$ | 1000 points | $10^{-4}$ |
 
 Fan, Zhang & Qiu (2021) use inlet/outlet boundaries, Fan, Zhang & Qiu
@@ -172,7 +172,7 @@ entropy-conservative volume flux) against spectral-difference (SD) and
 with the adaptive [entropy filter](/methods/entropy-filtering.md):
 ES-DGSEM smears the contact more than FR and SD but has the smallest
 oscillations; SD has the largest oscillations and undershoots, which
-they attribute to its degree-$P+1$ flux polynomial (Fig. 1). They also
+they attribute to its degree-$(N+1)$ flux polynomial (Fig. 1). They also
 state that, "according to our experience", artificial viscosity cannot
 stabilize a high-order spectral method for shocks of high pressure
 ratio; no run is shown.
@@ -233,7 +233,7 @@ oscillatory" than WENO-JS5 on 200 cells (Fig. 34).
 **Discontinuity position at $x=8$.** The two Chamarthi papers use the
 problem to compare gradient-based reconstructions with other
 low-dissipation schemes. In Chamarthi (2023a) TENO5 oscillates in density
-with larger amplitude, which Chamarthi matches with Fig. 19 of Li, Fu & Adams,
+with larger amplitude, which Chamarthi (2023a) matches with Fig. 19 of Li, Fu & Adams,
 where an MP filter is applied to TENO8-A; MIG4
 ([gradient-based reconstruction](/methods/gradient-based-reconstruction.md)
 with an [MP limiter](/methods/monotonicity-preserving-limiter.md))

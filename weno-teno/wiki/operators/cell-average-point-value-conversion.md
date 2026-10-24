@@ -6,7 +6,7 @@ status: established
 symbol: "$\\mathsf C_{2p}$, $\\mathsf C_{2p}^{-1}$"
 aliases: [average-to-point transformation, AtoP, PtoA, point-value passage, Laplacian correction, deconvolution of cell averages, McCorquodale–Colella correction]
 tags: [finite-volume, mhd, reconstruction]
-timestamp: 2026-10-23T15:06:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Cell-average to point-value conversion
@@ -45,8 +45,8 @@ and likewise in 1-D and 2-D; the two sources agree.)*
 $$u_i=\tfrac{1067}{960}\bar u_i-\tfrac{29}{480}\bar u^{\Sigma1}+\tfrac3{640}\bar u^{\Sigma2}+O(\Delta x^6),\qquad
 \bar u_i=\tfrac{863}{960}u_i+\tfrac{77}{1440}u^{\Sigma1}-\tfrac{17}{5760}u^{\Sigma2}+O(\Delta x^6)$$
 (Eqs. (112), (117)), and on a face
-$$u=\tfrac{1771}{1440}\bar u-\tfrac{23}{360}\bar u^{\Sigma10}+\tfrac3{640}\bar u^{\Sigma20}+\tfrac1{576}\bar u^{\Sigma11}+O(h^6)$$
-($h=\Delta x+\Delta y$; Eq. (39)), up to tenth order in 1-D (Eqs. (111)–(120)), on faces (Eqs. (37)–(41),
+$$u=\tfrac{1771}{1440}\bar u-\tfrac{23}{360}\bar u^{\Sigma10}+\tfrac3{640}\bar u^{\Sigma20}+\tfrac1{576}\bar u^{\Sigma11}+O(\Delta_{xy}^6)$$
+($\Delta_{xy}=\Delta x+\Delta y$, page-local, the source's $h$; Eq. (39)), up to tenth order in 1-D (Eqs. (111)–(120)), on faces (Eqs. (37)–(41),
 (45)–(49)) and in cells (Eqs. (96)–(110)).
 
 **General construction** (App. A). The average of a monomial term is

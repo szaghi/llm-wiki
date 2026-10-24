@@ -165,7 +165,7 @@ a habilitation) print no venue or institution. No unparseable items.
 
 # Pages created or updated
 
-Chunk 8 (2026-10-23), cited further in chunks 9–10 (2026-10-23). This source is cited on:
+Chunk 8 (2026-10-23), cited further in chunks 9–11 (2026-10-23/24). This source is cited on:
 
 * [Bound preservation](/properties/bound-preservation.md)
 * [Carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)

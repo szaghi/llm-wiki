@@ -5,7 +5,7 @@ description: "Geometric quasilinearization rewrites every nonlinear constraint o
 status: established
 aliases: [GQL, geometric quasi-linearization, GQL representation]
 tags: [bound-preserving, positivity, mhd, relativistic]
-timestamp: 2026-10-23T19:51:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Geometric quasilinearization (GQL)
@@ -39,8 +39,8 @@ linear constraints alone ($G_L=\mathbb R^m$ if there are none).
 ## Representation theorems
 
 - **Constructive criterion** (Thm 3.2). If each $\varphi_i$ is affine in
-  $u$ and $\min_{\zeta_{i*}\in\Theta_i}\varphi_i(u;\zeta_{i*})=\lambda_i(u)\,g_i(u)$
-  with a scalar $\lambda_i(u)>0$ on $G_L$ (page-local), then $G_*=G$. The
+  $u$ and $\min_{\zeta_{i*}\in\Theta_i}\varphi_i(u;\zeta_{i*})=\mathsf l_i(u)\,g_i(u)$
+  with a scalar $\mathsf l_i(u)>0$ on $G_L$ (page-local), then $G_*=G$. The
   source states it follows immediately from the definition; no separate
   proof is printed.
 - **Necessity of convexity** (§3, Assumption 3.4). An intersection of
@@ -89,7 +89,7 @@ Wu & Shu derive (§4.2):
   Its physical reading is $\varphi=\tfrac12\rho(v-v_*)^2+\rho e$, the total
   energy seen from a frame moving at velocity $v_*$ (Rem. 4.6). Minimizing
   over $v_*$ (at $v_*=v$) returns $\rho e$, so the constructive criterion
-  holds with $\lambda=1$ *(compiler check, not in the sources: expand
+  holds with $\mathsf l=1$ *(compiler check, not in the sources: expand
   $E=\rho e+\tfrac12\rho v^2$)*. All three construction methods give this
   representation.
 - **Euler with Tadmor's minimum entropy principle** (Thm 4.7): two
@@ -109,8 +109,8 @@ Wu & Shu derive (§4.2):
   Cauchy–Schwarz the other. The model is on
   [relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md).
 - **Ten-moment Gaussian closure** (Thm 4.11): positive definiteness of the
-  pressure tensor becomes $z^\top(\mathcal E-m\otimes v_*+\tfrac12\rho\,v_*\otimes v_*)z>0$
-  for all $v_*\in\mathbb R^2$, $z\ne0$, with $\mathcal E$ the energy tensor
+  pressure tensor becomes $z^\top(\mathcal E_{\mathrm T}-m\otimes v_*+\tfrac12\rho\,v_*\otimes v_*)z>0$
+  for all $v_*\in\mathbb R^2$, $z\ne0$, with $\mathcal E_{\mathrm T}$ the energy tensor
   (page-local).
 - **Ideal MHD** (Thm 4.12): $\rho>0$ and
   $u\cdot n_*+\tfrac12\lvert B_*\rvert^2>0$ for all $v_*,B_*\in\mathbb R^3$,
@@ -256,7 +256,7 @@ $\pm f(u)\cdot n_*$ by a multiple of $u\cdot n_*$:
   without the source the proof needs globally coupled discrete
   divergence-free conditions (Thm 4.2). The authors call GQL "essential"
   here, because the locally divergence-free constraint couples the
-  interface states and prevents the usual splitting into formally 1D
+  interface states and prevents the splitting into formally 1D
   bound-preserving schemes (§4.4;
   [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md),
   [bound preservation](/properties/bound-preservation.md)). Their limiter

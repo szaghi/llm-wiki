@@ -5,7 +5,7 @@ description: "Komissarov & Phillips split the electromagnetic field of ideal rel
 status: established
 aliases: [splitting method for relativistic MHD, FFDE splitting, force-free degenerate electrodynamics splitting, split RMHD, background-field splitting]
 tags: [relativistic, mhd, finite-difference, bound-preserving]
-timestamp: 2026-10-23T15:06:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Force-free splitting for relativistic MHD
@@ -205,7 +205,7 @@ Monte-Carlo test found "not a single incident of convergence failure"
   and an ABC grid of ropes are compared with tearing theory and with
   particle-in-cell results ([tearing-mode instability](/benchmarks/tearing-mode-instability.md));
   the numerical resistivity that drives them is calibrated as
-  $\eta_{\mathrm{num}}\approx0.031\,L(\Delta x/\Delta t)(\Delta x/L)^3$, with $L$ the
+  $\eta_{\mathrm{num}}\approx0.031\,L_{\mathrm B}(\Delta x/\Delta t)(\Delta x/L_{\mathrm B})^3$, with page-local $L_{\mathrm B}$ the
   field length scale and a factor 2 smaller at 45° to the grid (§4.3, §5.2;
   [numerical dissipation](/definitions/numerical-dissipation.md)).
 

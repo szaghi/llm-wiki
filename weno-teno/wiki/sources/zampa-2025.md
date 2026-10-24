@@ -8,7 +8,7 @@ authors: [Zampa E., Dumbser M.]
 year: 2025
 venue: "J. Comput. Phys. 521:113551"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2025_Crossref_Journal_of_Computational_Physics_Zampa_An_asymptotic-preserving_and_exactly_mass-conservative_semi-.pdf"
-tags: [asymptotic-preserving, semi-implicit, low-mach, finite-element, mood, artificial-viscosity]
+tags: [asymptotic-preserving, semi-implicit, all-mach, finite-element, mood, artificial-viscosity]
 timestamp: 2026-10-23T19:58:00Z
 ---
 
@@ -153,7 +153,7 @@ unparseable.
 
 # Pages created or updated
 
-Chunk 10 (2026-10-23). This source is cited on:
+Chunk 10 (2026-10-23), cited further in chunk 11 (2026-10-24). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
 * [Asymptotic preservation](/properties/asymptotic-preservation.md)

@@ -5,7 +5,7 @@ description: "A reconstruction has the ENO property when, near a discontinuity, 
 status: established
 aliases: [ENO-property, essentially non-oscillatory property, ENO condition]
 tags: [reconstruction, weno, teno, limiting]
-timestamp: 2026-10-23T19:53:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # ENO property
@@ -33,7 +33,7 @@ the singularity, against Gibbs-type oscillations when the property is lost.
 - **WENO-ZN.** Li et al. (2022b, §3.3(2)) argue that $S_0$ and $S_{r-1}$ cover the global stencil
   without overlap, so any discontinuity falls in one of them; then the adaptive term of the weights is
   small and the ranking by $\beta_k$ takes over. This is a heuristic argument, not a theorem
-  ([WENO-ZN](/methods/weno-zn.md)). Li et al. leave WENO-Z$\eta$ and the WENO-Z of Don & Borges with
+  ([WENO-ZN](/methods/weno-zn.md)). Li et al. (2022b) leave WENO-Z$\eta$ and the WENO-Z of Don & Borges with
   $\epsilon=\Delta x^m$ out of their comparison because they "cannot keep the ENO property well".
 - **WENO-Z+.** Luo & Wu (2021, §2.3) recall that Acker et al. proved the ENO property of WENO-Z+ for
   an $O(1)$ coefficient of the extra term ([WENO-Z+](/methods/weno-z-plus.md)).

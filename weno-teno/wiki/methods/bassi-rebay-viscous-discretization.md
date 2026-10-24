@@ -5,7 +5,7 @@ description: "BR1 and BR2 discretize the viscous terms of DG and flux-reconstruc
 status: established
 aliases: [BR1, BR2, Bassi–Rebay scheme, first Bassi–Rebay scheme, second Bassi–Rebay scheme, lifting-operator viscous flux, projected entropy-stable BR1, projected entropy-stable BR2]
 tags: [dg, flux-reconstruction, entropy-stable, positivity]
-timestamp: 2026-10-23T15:13:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Bassi–Rebay viscous discretizations (BR1, BR2)
@@ -69,7 +69,8 @@ with $R=\sum_Fr_F$, and takes as interface viscous flux
 
 $$\hat f_v=\Big\{\!\!\Big\{f_v\big(w_h,\ \nabla_hw_h+C_{\mathrm{BR2}}\,r_F([\![w_h]\!])\big)\Big\}\!\!\Big\}\cdot n_F,$$
 
-with page-local penalty factor $C_{\mathrm{BR2}}$ (Alberti et al.,
+with page-local penalty factor $C_{\mathrm{BR2}}$ and test functions $\tau_h$, $\phi$ (not the
+global smoothness indicator) (Alberti et al.,
 Eqs. (12)–(14)). The penalty must exceed the number of faces of the
 element; Alberti et al. state the requirement both as "greater than the
 number of cell faces" and as $C_{\mathrm{BR2}}\ge\mathrm{card}(\mathcal F_K)+1$,
@@ -169,17 +170,17 @@ steps" (§4.6; [bound preservation](/properties/bound-preservation.md)).
 ## Qualifications
 
 - Alberti et al. print the BR2 bound (42) as
-  $-(1+\epsilon)\int\partial w^\top\mathsf K\,\partial w-\epsilon^{-1}\int R^\top\mathsf KR-C_{\mathrm{BR2}}\sum\int r_F^\top\mathsf Kr_F$
-  for all $\epsilon>0$. Bounding the cross term $-2\int\partial w^\top\mathsf
+  $-(1+\epsilon_{\mathrm Y})\int\partial w^\top\mathsf K\,\partial w-\epsilon_{\mathrm Y}^{-1}\int R^\top\mathsf KR-C_{\mathrm{BR2}}\sum\int r_F^\top\mathsf Kr_F$
+  for all $\epsilon_{\mathrm Y}>0$ (page-local Young parameter). Bounding the cross term $-2\int\partial w^\top\mathsf
   KR$ of Eq. (40) with their Lemma 1 gives instead
-  $-(1-\epsilon)\int\partial w^\top\mathsf K\,\partial w+\epsilon^{-1}\int
+  $-(1-\epsilon_{\mathrm Y})\int\partial w^\top\mathsf K\,\partial w+\epsilon_{\mathrm Y}^{-1}\int
   R^\top\mathsf KR-C_{\mathrm{BR2}}\sum\int r_F^\top\mathsf Kr_F$, which is
   negative only if the lifting term is controlled by the penalty term:
   elementwise $\int_KR^\top\mathsf KR\le\mathrm{card}(\mathcal
   F_K)\sum_{F\in\mathcal F_K}\int_Kr_F^\top\mathsf Kr_F$ for positive
   semi-definite $\mathsf K$, so the bound is nonpositive for
-  $C_{\mathrm{BR2}}\ge\mathrm{card}(\mathcal F_K)/\epsilon$ with
-  $\epsilon<1$; their remark that a larger penalty increases entropy
+  $C_{\mathrm{BR2}}\ge\mathrm{card}(\mathcal F_K)/\epsilon_{\mathrm Y}$ with
+  $\epsilon_{\mathrm Y}<1$; their remark that a larger penalty increases entropy
   stability agrees with this form *(compiler check, not in the sources)*.
 - Alberti et al.'s viscous Kelvin–Helmholtz runs report that smaller
   penalties than the theoretical bound work for BR2 in general, yet

@@ -5,7 +5,7 @@ description: "The DGSEM is nodal collocation DG on tensor-product Legendre–Gau
 status: established
 aliases: [LGL-DGSEM, DG spectral element method, nodal DGSEM, split-form DGSEM, collocation DG on Gauss–Lobatto nodes]
 tags: [dg, entropy-stable, kinetic-energy-preserving, limiting, software]
-timestamp: 2026-10-23T20:29:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Discontinuous Galerkin spectral element method (DGSEM)
@@ -136,17 +136,17 @@ split-form DGSEM (§2–3, after Bohm et al.):
 
 **Ideal MHD in conservative form with a globally divergence-free field.**
 [Liu et al. (2025c)](/sources/liu-2025-c.md) use the Chen–Shu nodal
-entropy-stable DG, a DGSEM-type collocation on $k+2$ Gauss–Lobatto nodes
-per direction. They apply it to the **conservative** ideal MHD system,
+entropy-stable DG, a DGSEM-type collocation on $N+1$ Gauss–Lobatto nodes
+per direction (cell degree $N$; the source writes $k=N-1$ for the face degree). They apply it to the **conservative** ideal MHD system,
 with no Powell or Godunov term. The volume flux is the
 Chandrashekar–Klingenberg entropy-conservative flux, and the surface flux
 is HLL with three-wave relaxation speeds (§3.1, Eq. (8), App. A). The
 scheme is entropy stable if the nodal field is divergence-free at every
 node and its normal component is continuous across faces (Def. 4,
 Thm. 1). To provide such a field, the normal components are evolved on
-the faces as degree-$k$ polynomials, by 1D DG forms of the induction
+the faces as degree-$(N-1)$ polynomials, by 1D DG forms of the induction
 equation with a 2D HLL vertex electric field, after Balsara et al. A new
-least-squares reconstruction then rebuilds the tensor-degree-$(k+1)$
+least-squares reconstruction then rebuilds the tensor-degree-$N$
 nodal field inside each cell. It minimizes the mass-matrix distance to
 the DG-evolved field under the nodal-divergence and trace constraints,
 solved by SVD row reduction and a KKT system (§3.2–3.3, Eqs. (15)–(25)).
@@ -155,15 +155,15 @@ This keeps the entropy but loses local energy conservation (Eq. (27),
 Remark 2; [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md),
 [constrained transport](/methods/constrained-transport.md)). An
 OEDG-inspired limiter scales all nodal values toward the cell mean by
-$\exp(-\sigma\Delta t)$. It scales the face moments beyond the average by
+$\exp(-\sigma\Delta t)$ (page-local rate $\sigma$). It scales the face moments beyond the average by
 the smaller factor of the two neighbours, so the cell-average constraint
 survives (§4.1, Eq. (26)). Time stepping is Ketcheson's ten-stage
 fourth-order SSP Runge–Kutta at CFL 0.45 (§4.2).
 
 On the smooth MHD vortex at $T=20$ the finest-mesh $L^2$ orders are about
-2.3–2.6 for $k=1$, 2.9–3.1 for $k=2$ and 4.0–4.5 for $k=3$ (Table 1). The
-cells have tensor degree $N=k+1$, so these orders are about one below the
-registry's design order $N+1=k+2$. They agree with the $(k+1)$th-order
+2.3–2.6 for $N=2$, 2.9–3.1 for $N=3$ and 4.0–4.5 for $N=4$ (Table 1; the
+source's $k=1,2,3$), so these orders are about one below the
+registry's design order $N+1$. They agree with the $N$th-order
 truncation error the authors cite from Chen & Shu (§3.1)
 *(compiler check, not in the sources)*. Without the entropy-stable
 treatment, both the standard and the divergence-free nodal DG break down
@@ -262,7 +262,8 @@ Rueda-Ramírez et al. (2022) gives the same expression *(compiler check, not
 in the sources)*. Reading the nodal values as subcell means of width
 $J\mathsf w_i$, the compatible low-order scheme is the subcell Rusanov
 scheme with fluxes $\hat f^{\mathrm{FV}}_{(i,j)}$, whose bar states
-$\bar u_{(i,j)}$ (page-local, Guermond–Popov form) are HLL intermediate
+$\breve u_{(i,j)}$ (page-local, Guermond–Popov form, as on
+[convex limiting](/methods/convex-limiting.md)) are HLL intermediate
 states, so the forward-Euler low-order update is invariant-domain
 preserving under $\Delta t\le J\mathsf w_i/(a_{(i,i-1)}+a_{(i,i+1)})$ (Eqs.
 (9)–(13); [convex limiting](/methods/convex-limiting.md)). Three
@@ -279,7 +280,7 @@ LGL-specific facts carry the method:
   (registry $\alpha$; the source's correction factor is $1-\alpha$) does not
   depend on $\alpha$ there (Remark 6).
 - **Symmetric ratio bar states.** The bar state of a ratio $\phi=(\rho\phi)/\rho$
-  reduces on LGL nodes to $(\overline{\rho\phi})_{(i,j)}/\bar\rho_{(i,j)}$, which
+  reduces on LGL nodes to $\breve{(\rho\phi)}_{(i,j)}/\breve\rho_{(i,j)}$, which
   the authors list as an advantage over Bernstein-basis DG (Eq. (25)).
 
 The anti-diffusive fluxes $\hat f^{\mathrm{DG}}-\hat f^{\mathrm{FV}}$ are then

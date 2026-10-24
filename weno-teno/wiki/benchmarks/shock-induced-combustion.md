@@ -5,7 +5,7 @@ description: "Reacting-flow cases: Lehr's blunt-body experiments with a measured
 status: established
 aliases: [shock-induced combustion, Lehr blunt-body experiment, blunt-body shock-induced combustion, cellular detonation, H2–O2–Ar detonation, reflected-shock detonation, Chapman–Jouguet detonation, ZND detonation, real-gas detonation]
 tags: [benchmark, reacting-flows, bound-preserving, immersed-boundary]
-timestamp: 2026-10-23T20:05:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Shock-induced combustion and detonation
@@ -49,7 +49,7 @@ UCSD couples a high- and a low-frequency mode. At Mach 5.04 they obtain
 1155 kHz against 1040 kHz, and refining the mesh destabilizes the run
 (the reaction front couples with the bow shock and a detonation forms),
 which they attribute to the missing physical viscosity and to errors of
-detailed chemistry (Fig. 21). Wang et al. measure the pressure
+detailed chemistry (Fig. 21). Wang et al. (2022a) measure the pressure
 oscillation and obtain 707.2 kHz with the baseline ghost-cell wall and
 714.8 kHz with their hybrid reconstruction, errors of 2.5 % and 1.4 %
 against 725 kHz; only the hybrid wall treatment reproduces the
@@ -210,7 +210,7 @@ incorrect cellular structures.
 
 - Peng et al.'s Lehr cases are run on the inviscid model; at Mach 5.04
   their run becomes unstable when the mesh is refined, so that case has
-  no converged frequency. Wang et al. run one mesh.
+  no converged frequency. Wang et al. (2022a) run one mesh.
 - The two blunt-body sources measure different signals (H$_2$O mass
   fraction at the stagnation point; pressure) at different flight
   conditions; their frequencies are not comparable with each other.

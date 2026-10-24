@@ -5,7 +5,7 @@ description: "A two-dimensional elliptic drop at rest relaxes under surface tens
 status: established
 aliases: [oscillating ellipsoidal drop, oscillating elliptic droplet, droplet oscillation test, Rayleigh drop oscillation]
 tags: [benchmark, multiphase, interface-capturing, surface-tension]
-timestamp: 2026-10-23T20:05:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Oscillating droplet
@@ -27,7 +27,7 @@ compressible scheme, separately from shocks and phase change.
 |---|---|---|---|---|---|
 | [Jiao et al. (2024)](/sources/jiao-2024.md) §4.4 | two ideal gases at $p_0=10^7$ Pa, 300 K (Table 4.6) | 117.647 and 4.444 | $(10^4x-7.9)^2/4^2+(10^4y-7.9)^2/3^2=1$ (semi-axes 0.4 and 0.3 mm), 80 N/m | $(1.58\times10^{-3})^2$ m$^2$, $158\times158$, non-reflective | Fyfe et al., $T=2\pi\sqrt{(\rho_1+\rho_2)(ab)^{3/2}/(48\sigma_{\mathrm{st}})}$ with $a=6\times10^{-4}$, $b=8\times10^{-4}$ m |
 | [Zhang et al. (2024a)](/sources/zhang-2024.md) §4.10 | water ellipse in air, nondimensional parameters of a cited work (water $p_\infty=6000$), uniform $p=1$ | ratio about 1000 | semi-axes 1.25 and 0.8, $\sigma_{\mathrm{st}}=1$ | $[0,4]^2$, extrapolation boundaries, to $t=120$ | Rayleigh, $T=2\pi\sqrt{(\rho_1+\rho_2)R_0^3/(6\sigma_{\mathrm{st}})}$, $R_0=\sqrt{a'b'}=1$; $T/2=40.56$ printed |
-| [Long et al. (2023)](/sources/long-2023.md) §4.3, Eq. (36) | water drop in vapour, $p=1.3\times10^5$ Pa, 380 K | 1073.55 and 0.74 | semi-axes 0.6 and 0.4 mm, 20 N/m | $5\times5$ mm, quarter computed, multiresolution $256^2$ effective | two-phase Rayleigh, $\omega^2=(o^3-o)\sigma_{\mathrm{st}}/((\rho_{\mathrm{liq}}+\rho_{\mathrm{vap}})R^3)$, mode $o=2$, $R=0.4899$ mm (Eq. (37)) |
+| [Long et al. (2023)](/sources/long-2023.md) §4.3, Eq. (36) | water drop in vapour, $p=1.3\times10^5$ Pa, 380 K | 1073.55 and 0.74 | semi-axes 0.6 and 0.4 mm, 20 N/m | $5\times5$ mm, quarter computed, multiresolution $256^2$ effective | two-phase Rayleigh, $\omega^2=(o^3-o)\sigma_{\mathrm{st}}/((\rho_{\mathrm{liq}}+\rho_{\mathrm{vap}})R^3)$, mode $o=2$, angular frequency $\omega$ (page-local), $R=0.4899$ mm (Eq. (37)) |
 
 The three reference formulas are the same; Zhang et al. (2024a) print
 Long et al.'s mode-2 form directly, and Jiao et al.'s agrees with it: with Jiao et al.'s full axes $a=2a'$, $b=2b'$ one has

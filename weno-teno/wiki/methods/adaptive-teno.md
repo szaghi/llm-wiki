@@ -5,7 +5,7 @@ description: "Adaptive TENO varies the TENO cut-off locally through a discontinu
 status: established
 aliases: [TENO-A, TENO-AA, TENO-E, TENO5-E, TENO6-E, TENO7-E, TENO5-A, TENO6-A, TENO8-AA, TENO10-AA, TENO-AZ, TENO-LAD, TENO6-SA, scale-adaptive TENO, adaptive dissipation TENO, adaptive cut-off TENO, TENO with adaptive accuracy order]
 tags: [teno, reconstruction, low-dissipation, turbulence, finite-difference]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Adaptive TENO (TENO-A, TENO-AA)
@@ -71,7 +71,7 @@ above and Fu (2021) $C_r=0.265$. No source states that the other's stencil or
 constant is wrong; the values are recorded as variants, possibly scheme-dependent
 (five-point against wider schemes), which none of the sources discusses. In a
 different use, the shock detector of hybrid schemes,
-[Li, Chen & Ren (2022)](/sources/li-2022.md) (§3.2, Eqs. (48)–(54)) recall
+[Li, Chen & Ren (2022a)](/sources/li-2022.md) (§3.2, Eqs. (48)–(54)) recall
 Ren's original as a two-point minimum
 $\sigma_{i+1/2}=\min(\sigma_i,\sigma_{i+1})$ with threshold $0.3$ and
 $\xi_{\mathrm A}=10^{-3}$, and run it with the four-point minimum "after Kim and
@@ -284,7 +284,7 @@ test functions its value at critical points of a sine differs from its value at
 other points of the same wavenumber, and in one case it is smaller at the
 discontinuity than at some critical points ([Huang et al. (2023)](/sources/huang-2023-b.md),
 §3.1, Fig. 2). The six-point scale sensors of Su et al. and Sun et al. and the six-point sensor of
-[Li, Chen & Ren (2022)](/sources/li-2022.md) cannot be applied directly to a five-point
+[Li, Chen & Ren (2022a)](/sources/li-2022.md) cannot be applied directly to a five-point
 stencil (Huang et al., §1, §3.1).
 
 **Five-point scale sensor** (Huang et al., §3.1, Eqs. (29)–(31); page-local
@@ -301,7 +301,7 @@ $$\vartheta_{\mathrm{ESW},i}=\sqrt{\frac{\lvert\mathsf D_3\rvert+\lvert\mathsf D
 \mathsf D_4&=f_{i-2}-4f_{i-1}+6f_i-4f_{i+1}+f_{i+2}.
 \end{aligned}$$
 
-For $f=A\sin(k_wx+\varphi_0)$ the ratios of exact derivatives give $\vartheta=k_w\Delta x$ at every
+For a sinusoid $f\propto\sin(k_wx+\varphi_0)$ the ratios of exact derivatives give $\vartheta=k_w\Delta x$ at every
 point, critical and inflection points included, and the sensor is large at
 discontinuities (Eqs. (24)–(28)). It is evaluated at $x_i$ rather than at
 $x_{i+1/2}$ as in the six-point version, which the authors call "almost
@@ -341,12 +341,12 @@ and TENO5 55.10 s (Table 3; hardware and step count not stated). The claim of
 **TENO-LAD** (Peng et al. 2021, as recalled by
 [Tang (2024)](/sources/tang-2024.md), §2, Eqs. (17)–(18)) adapts $C_T$
 through the shock sensor of Peng et al.'s adaptive WENO-Z. With
-page-local $\theta_{\mathrm L}$, $m_{\mathrm L}$ and $H$,
+page-local $\theta_{\mathrm L}$, $m_{\mathrm L}$, $H_{\mathrm L}$, $B_l$ and $B_u$,
 
 $$C_T=10^{-m_{\mathrm L}},\qquad m_{\mathrm L}=B_l+\big\lfloor\theta_{\mathrm L}(B_u-B_l)\big\rfloor,\qquad
-\theta_{\mathrm L}=\frac{1}{1+\max_k\big(\tfrac{\tau_5}{\beta_k+\epsilon}\big)/H},$$
+\theta_{\mathrm L}=\frac{1}{1+\max_k\big(\tfrac{\tau_5}{\beta_k+\epsilon}\big)/H_{\mathrm L}},$$
 
-$H=10$, $B_l=4$, $B_u=10$, so $C_T$ moves between $10^{-4}$ and $10^{-10}$
+$H_{\mathrm L}=10$, $B_l=4$, $B_u=10$, so $C_T$ moves between $10^{-4}$ and $10^{-10}$
 *(compiler check, not in the sources)*. Tang recalls that TENO-LAD was
 motivated by cases in which TENO-A's adaptive $C_T$ is "ineffective in
 the control of numerical oscillations", and that its authors report
@@ -501,7 +501,7 @@ holds (Remark 3.2).
 **Linear schemes.** The large-stencil schemes are spectrally optimized, with a
 dispersive part minimizing a weighted wavenumber-error integral and a
 dissipative part satisfying the Hu-type dispersion–dissipation condition
-$\zeta\approx O(10)$ (see [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)),
+$\zeta\approx O(10)$ (page-local $\zeta$, the dispersion-to-dissipation ratio; see [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)),
 with relaxed order: 4th order on the 6-point, 6th on the 8-point, 8th on the
 10-point stencil (Fu 2021, §4.1, Eqs. (25)–(27), coefficients printed to 16
 digits; smoothness indicators of the 6-, 8- and 10-point stencils as exact
@@ -545,8 +545,8 @@ $\xi=10^{-3}$", against the fixed $C_T=10^{-7}$ of their TENO5. No formula is
 printed. *(Compiler check, not in the sources: read as $b_1=10.5$ and
 $b_2=3.5$ in the cut-off $C_T=10^{-\lfloor b\rfloor}$ above, $b$ runs over
 $[7,10.5]$ and $C_T$ over $10^{-10},\dots,10^{-7}$, the printed range, and
-$\xi$ is then $\xi_{\mathrm A}$. The identification of the symbols is
-inferred, not stated.)* The constant $C_r=0.25$ is a third value next to Fu
+$\xi$ is then $\xi_{\mathrm A}$; the sources do not state this
+identification of the symbols.)* The constant $C_r=0.25$ is a third value next to Fu
 (2021)'s $0.265$ and Huang et al.'s $0.24$. De Vanna et al. (2023a, §3.1)
 credit the shock-sensor adaptation of $C_T$ to two later works (Hamzehloo et
 al.; Peng et al.) and only the parameters to Fu et al. (2018). In the
@@ -695,7 +695,7 @@ TENO5 ([TENO-THINC](/methods/teno-thinc.md)).
 - [Fu (2023)](/sources/fu-2023.md) — §3.1, Eq. (19); §4, Eqs. (31)–(33), Figs. 12–17; §5.4: TENO-A and its evidence.
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §3.1, Eqs. (18)–(31), Fig. 2; §3.2, Eqs. (32)–(35), Fig. 3; §4, Tables 2–3, Figs. 4–11: TENO5-A parameters and the scale-sensor variant (arXiv v1).
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — abstract, §1, §2.5: adaptive TENO of Fu et al. (2018) as the origin of hierarchical voting and optimized backgrounds.
-- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §1, §3.2, Eqs. (48)–(54): Ren's detector, two- and four-point minimum.
+- [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §1, §3.2, Eqs. (48)–(54): Ren's detector, two- and four-point minimum.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1: TENO-A recalled.
 - [Tang (2024)](/sources/tang-2024.md) — §§2–4, Eqs. (15)–(20), Tables 1–6, Figs. 1–17: TENO-A and TENO-LAD recalled, TENO-AZ and its evidence.
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §3.3.2, Eqs. (47)–(49): TENO-A cut-off in the TENO branch of TENO-S.

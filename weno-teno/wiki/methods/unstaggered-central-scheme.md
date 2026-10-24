@@ -5,7 +5,7 @@ description: "Unstaggered central schemes evolve a piecewise-linear solution on 
 status: established
 aliases: [UC scheme, unstaggered Nessyahu–Tadmor scheme, Jiang–Levy–Lin–Osher–Tadmor scheme, ghost staggered cells, Riemann-solver-free central scheme]
 tags: [central-scheme, finite-volume, well-balanced, mhd]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Unstaggered central schemes
@@ -83,7 +83,7 @@ accurate (third order)" of them.
   staggered constrained transport, and it is zero only in the steps where the
   correction is applied.
 - Printed slips in the version read: the second bracket of the corrector (Eq. (14))
-  prints one $D^y_+F$ where $D^y_+G$ is meant; the space–time box is printed
+  prints one $D^y_+F$ in place of the $D^y_+G$ that the $y$-flux $g$ requires; the space–time box is printed
   $[x_i,x_{i+1}]\times[y_i,y_{i+1}]$ for $[y_j,y_{j+1}]$.
 
 # Citations

@@ -5,7 +5,7 @@ description: "A TeCNO-type flux adds to an entropy-conservative flux a dissipati
 status: established
 aliases: [TeCNO, TVD-ES, sign property, entropy-stable reconstruction, ENO-based entropy-stable scheme, Fjordholm–Mishra–Tadmor scheme]
 tags: [entropy-stable, reconstruction, numerical-flux, weno, dg, relativistic]
-timestamp: 2026-10-23T20:29:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # TeCNO schemes — entropy-stable reconstruction with the sign property
@@ -21,7 +21,7 @@ reconstructed jump has the sign of the cell-value jump. This is the
 Fjordholm, Mishra & Tadmor (2012), as recalled by
 [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) (§4), by
 [Duan & Tang (2022)](/sources/duan-2022.md) (§1, §4) and by
-[Li, Duan & Tang (2022)](/sources/li-2022-c.md) (§3.4, after their ref. [19]).
+[Li, Duan & Tang (2022c)](/sources/li-2022-c.md) (§3.4, after their ref. [19]).
 As recalled by Duan & Tang, Bhoriya & Kumar extended TeCNO schemes to
 relativistic hydrodynamics with ENO-based dissipation, and their own
 earlier uniform-mesh scheme already combined fifth-order WENO with the
@@ -131,9 +131,9 @@ shock interfaces, hence too little dissipation and overshoots (§3.2,
 
 The sources differ in the dissipation matrix:
 
-| | Rueda-Ramírez et al. (2021) | Duan & Tang (2022) | Li, Duan & Tang (2022) | Bhoriya et al. (2023) |
+| | Rueda-Ramírez et al. (2021) | Duan & Tang (2022) | Li, Duan & Tang (2022c) | Bhoriya et al. (2023) |
 |---|---|---|---|---|
-| $\lvert\Lambda\rvert$ | eigenvalue matrix; in the tests every entry set to the largest advective eigenvalue (ES Rusanov) | a scalar times the identity: $\hat a=\max_l\lvert J\partial_t\xi_k+L_k\lambda_l\rvert$, page-local $L_k$ the length of the metric vector (Rusanov-type) | a scalar times the identity: the largest $\lvert\lambda_l\rvert$ along the computational direction, scaled by the metric terms and shifted by the mesh velocity (Rusanov-type) | a scalar times the identity: the largest $\lvert\lambda_l\rvert$ of the fluid block (Rusanov-type, Eq. (21)) |
+| $\lvert\Lambda\rvert$ | eigenvalue matrix; in the tests every entry set to the largest advective eigenvalue (ES Rusanov) | a scalar times the identity: $\hat a=\max_l\lvert J\partial_t\xi_k+\mathsf L_k\lambda_l\rvert$, page-local $\mathsf L_k$ the length of the metric vector (Rusanov-type) | a scalar times the identity: the largest $\lvert\lambda_l\rvert$ along the computational direction, scaled by the metric terms and shifted by the mesh velocity (Rusanov-type) | a scalar times the identity: the largest $\lvert\lambda_l\rvert$ of the fluid block (Rusanov-type, Eq. (21)) |
 | reconstruction | minmod, second order | WENO-JS, fifth order | multi-resolution WENO, fifth order | minmod, ENO-3, ENO-4 |
 | sign property | by construction | by the switch $\mathcal Y$ | by the switch $\mathcal Y$ | by construction (ENO) |
 | setting | LGL subcells of a DGSEM element, irregular grid | finite differences on a moving curvilinear mesh, relativistic HD and MHD | finite differences on a moving curvilinear mesh, stiffened gas | finite differences on a uniform Cartesian grid, two-fluid relativistic plasma with stiff sources |
@@ -151,7 +151,7 @@ In both finite-difference schemes of the sources the entropy-stable flux
 has the order of its reconstructed dissipation, one below that of the
 entropy-conservative part (Duan & Tang, §4; Li, Duan & Tang, Exs. 5.1, 5.5).
 
-- Li, Duan & Tang (2022) take the entropy-conservative combination of
+- Li, Duan & Tang (2022c) take the entropy-conservative combination of
   LeFloch, Mercier & Rohde of order $2n_{\mathrm o}$, as they recall it
   (Eq. (3.6); page-local $n_{\mathrm o}$ and coefficients $c_n$, the
   source's $w$ and $\mathsf c_{w,m}$, the notation of
@@ -175,7 +175,7 @@ entropy-conservative part (Duan & Tang, §4; Li, Duan & Tang, Exs. 5.1, 5.5).
 - Bhoriya et al. (2023) (§4.1.1–4.1.2, Remarks 4.1–4.2) use the second-order closed-form
   entropy-conservative flux or its fourth-order LeFloch–Mercier–Rohde combination
   ($c_1=\tfrac43$, $c_2=-\tfrac16$ above). Only even orders are available, so a scheme of odd
-  order $q$ takes the flux of order $q+1$: their third-order scheme is the fourth-order
+  order takes the flux of the next even order: their third-order scheme is the fourth-order
   entropy-conservative flux with ENO-3 dissipation, and the fourth-order one the same flux with
   ENO-4, so the entropy-stable flux has the order of its reconstruction, equal to or one below
   that of the conservative part *(compiler check, not in the sources)*. With SSP Runge–Kutta of matching order the observed orders on a
@@ -219,7 +219,7 @@ communication" (§4).
   Riemann problems, a relativistic-MHD blast, shock–cloud interactions in
   2D and 3D and a 3D shock–bubble without reported failure (Exs.
   6.2–6.10).
-- **Entropy on a moving mesh.** Li, Duan & Tang (2022) compare the
+- **Entropy on a moving mesh.** Li, Duan & Tang (2022c) compare the
   entropy-conservative and TeCNO versions on the 2D
   [isentropic vortex](/benchmarks/isentropic-vortex.md) ($N_x=160$). The
   first keeps the total entropy almost constant, and the second decays it
@@ -263,7 +263,7 @@ communication" (§4).
 ## Qualifications
 
 - Rueda-Ramírez et al. (2021) derive the production formula (75) from
-  the sign property. Li, Duan & Tang (2022) state the inequality and refer
+  the sign property. Li, Duan & Tang (2022c) state the inequality and refer
   to Duan & Tang for the proof (§3.4); Duan & Tang (2022) print it for
   the high-order moving-mesh finite-difference scheme (Thm. 4.1).
 - The sign switch $\mathcal Y$ removes dissipation from components that
@@ -290,7 +290,7 @@ communication" (§4).
 # Citations
 
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §4 Eqs. (72)–(81), §6.2 Fig. 6, §6.3–6.4 (arXiv v1).
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §3.1 Eq. (3.6), §3.4 Eqs. (3.21)–(3.22), Remark 3.2, App. A, Ex. 5.1, 5.4, 5.5 (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — §3.1 Eq. (3.6), §3.4 Eqs. (3.21)–(3.22), Remark 3.2, App. A, Ex. 5.1, 5.4, 5.5 (arXiv v1).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §1, §4 Eqs. (4.1)–(4.4), Thm. 4.1, Remark 4.1, §6 Exs. 6.1–6.10, Figs. 6.4, 6.14 (arXiv v1).
 - [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) — §4.1 (Eqs. (18)–(22), Thms. 4.2–4.3, Remarks 4.1–4.3), §4.2, §6 (Table 2, Figs. 1–2), App. B (arXiv v2).
 - [Charles & Ray (2025)](/sources/charles-2025.md) — §2 Eqs. (6)–(11), Lemma 1, §3.2, §5 Tables 3–4, Fig. 10, Remark 6 (arXiv v2).

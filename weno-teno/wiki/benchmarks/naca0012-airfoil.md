@@ -5,13 +5,13 @@ description: "Inviscid flow past the symmetric NACA 0012 airfoil, above all the 
 status: established
 aliases: [NACA0012, NACA 0012, transonic NACA 0012, NACA0012 airfoil]
 tags: [benchmark, weno, dg, finite-difference]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # NACA 0012 airfoil
 
 The NACA 0012 is a symmetric airfoil of 12% thickness. Its inviscid flow at a small angle of
-attack $\alpha$ is a steady test of shock-capturing schemes on body-fitted or
+attack $\alpha$ (page-local) is a steady test of shock-capturing schemes on body-fitted or
 unstructured grids. In the transonic case, free-stream Mach number $M_\infty=0.8$ at
 $\alpha\approx1.25^\circ$–$1.5^\circ$, a supersonic pocket on the upper surface ends in a
 strong normal shock, and a weaker shock stands on the lower surface. Schemes are compared by
@@ -26,7 +26,7 @@ steady state is reached by time marching to a residual drop or by an implicit st
 |---|---|---|---|---|
 | [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.10 | $M_\infty=0.8$, $\alpha=1.25^\circ$ | 9340 triangles, circumcircle diameters 0.0031–1.4188, domain $[-15,15]^2$ | finite-volume ALW-MR-WENO, orders 3–5, characteristic-wise, CFL 0.6 | pressure distributions (Fig. 3.19), 30 Mach contours 0.172–1.325 (Fig. 3.20) |
 | Lin & Zhu Case 3.11 (conditions "specified in" Zhu & Shu's steady-state work) | (1) $M_\infty=0.5$, $\alpha=1.25^\circ$; (2) $M_\infty=2.0$, $\alpha=1^\circ$; (3) $M_\infty=3.0$, $\alpha=5^\circ$ | as Case 3.10 | as above | pressure contours: 30 levels 0.88–1.16; 30 levels 0.76–5.35; 60 levels 0.76–11.35 (Figs. 3.21–3.26) |
-| [Nguyen et al. (2024)](/sources/nguyen-2024.md) §4.1 | $M_\infty=0.8$, $\alpha=1.5^\circ$ | slip wall on the airfoil, far field elsewhere; element count not stated | HDG, degree $k=4$, artificial viscosity, three optimal-transport adapted meshes | $C_p$ on the three meshes (Figs. 2–4) |
+| [Nguyen et al. (2024)](/sources/nguyen-2024.md) §4.1 | $M_\infty=0.8$, $\alpha=1.5^\circ$ | slip wall on the airfoil, far field elsewhere; element count not stated | HDG, degree $N=4$, artificial viscosity, three optimal-transport adapted meshes | $C_p$ on the three meshes (Figs. 2–4) |
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.5.4 | $M_\infty=0.8$, $\alpha=1.25^\circ$ | $240\times100$ nodes in three blocks, far field at 50 chords; interfaces at the upper-surface point nearest $x=0.1$, the lower-surface point nearest $x=-0.14$ and along $y=0$ | fifth-order WCNS-MR with shock-capturing block closures, run to a four-order residual drop | 30 pressure contours 0.37–1.05 (Fig. 16), $C_p$ (Fig. 17) |
 
 None of the three sources prints $\gamma$ for this case. Nguyen et al. take the case from

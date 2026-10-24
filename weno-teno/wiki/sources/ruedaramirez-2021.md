@@ -9,7 +9,7 @@ year: 2021
 venue: "J. Comput. Phys. 444:110580"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2021_Crossref_Journal_of_Computational_Physics_Rueda-Ramírez_An_entropy_stable_nodal_discontinuous_Galerkin_method_for_th.pdf"
 tags: [dg, limiting, entropy-stable, mhd, non-conservative-systems]
-timestamp: 2026-10-23T20:40:00Z
+timestamp: 2026-10-24T06:02:00Z
 ---
 
 # Summary
@@ -81,7 +81,7 @@ $\underline{\mathbf R}^T\mathbf v$ are $\tilde w=R^\top w$ (the TeCNO page's $\t
 3. The hybrid scheme blends only the advective and non-conservative terms, $J\mathsf w_j\,\dot u_j=(1-\alpha)F^{a,\mathrm{DG}}_j+\alpha F^{a,\mathrm{FV}}_j-F^{\nu,\mathrm{DG}}_j$, with element-local $\alpha$; keeping the diffusive terms pure DGSEM is justified because physical diffusion adds dissipation at the large gradients near shocks (§3, Eq. 28). **Stated** (modelling choice)
 4. Lemma 1: the native LGL finite-volume scheme (44) has the cell entropy balance $J\mathsf w_j\dot\eta_j=\hat F_{\eta,(j,j-1)}-\hat F_{\eta,(j,j+1)}+\tfrac12(r_{(j-1,j)}+r_{(j,j+1)})$, with numerical entropy flux (54) and interface entropy production (55) (§3.3.1, Eq. 56; proof App. B.1). **Proved**
 5. With the EC flux of Derigs et al. as finite-volume flux, the first-order scheme is semi-discretely entropy conservative "by construction and is virtually dissipation free" (§3.3.1). **Stated** (it follows from the generalized Tadmor condition (51))
-6. The paper states, after Derigs et al., that Lax–Friedrichs dissipation on the conservative jump (52) is not entropy stable for MHD (compare the compiler check on the [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md) page); writing $[\![u]\!]\approx\mathcal H[\![w]\!]$, $\mathcal H=\partial u/\partial w$, gives the ES flux (57) with production $r=-\tfrac12[\![w]\!]^\top D_w[\![w]\!]\le0$, where $D_w=R\lvert\Lambda\rvert\mathcal ZR^\top$ is symmetric positive definite by Barth's scaling $\mathcal H=R\mathcal ZR^\top$ (§3.3.1, Eqs. 52–60). **Derived**
+6. The paper states, after Derigs et al., that the Lax–Friedrichs-type dissipation on the conservative jump (52), which they use with the Roe-type matrix $\mathcal D=R\lvert\Lambda\rvert R^{-1}$ (53), is not entropy stable for MHD (compare the compiler check on the [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md) page); writing $[\![u]\!]\approx\mathcal H[\![w]\!]$, $\mathcal H=\partial u/\partial w$, gives the ES flux (57) with production $r=-\tfrac12[\![w]\!]^\top D_w[\![w]\!]\le0$, where $D_w=R\lvert\Lambda\rvert\mathcal ZR^\top$ is symmetric positive definite by Barth's scaling $\mathcal H=R\mathcal ZR^\top$ (§3.3.1, Eqs. 52–60). **Derived**
 7. Lemma 2: the split-form DGSEM has the element entropy balance $\sum_j\mathsf w_jJ\dot\eta_j=\hat F_{\eta,(0,L)}-\hat F_{\eta,(N,R)}+\tfrac12(r_{(L,0)}+r_{(N,R)})+\sum_{j,k}Q_{jk}r_{(j,k)}+r^\nu$, $r^\nu\le0$ (§3.3.2, Eq. 61; proof App. B.2). **Proved**
 8. An entropy-stable (dissipative) flux used as the DGSEM volume flux gives an "unpredictable" entropy balance, because $Q_{jk}$ has entries of both signs; entropy stability needs an EC volume flux and an ES surface flux (§3.3.2). **Derived**
 9. Lemma 3 (blending lemma): if two schemes have the form (63), identical element-boundary terms plus arbitrary interior terms, the blend (62) has the entropy balance $\dot\eta_{\partial K}+(1-\alpha)\dot\eta^{\mathrm{DG}}_K+\alpha\dot\eta^{\mathrm{FV}}_K$; it is EC if both parts are EC, for any element-wise $\alpha$, and ES if one part is ES and the other EC or ES (§3.3.3, Eqs. 62–69). **Proved**
@@ -167,7 +167,7 @@ duplicates.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunks 3–10 (2026-10-22/23). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–11 (2026-10-22/24). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
 * [Bassi–Rebay viscous discretizations (BR1, BR2)](/methods/bassi-rebay-viscous-discretization.md)

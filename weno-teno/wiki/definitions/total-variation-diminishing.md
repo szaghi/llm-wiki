@@ -5,13 +5,13 @@ description: "TVD reconstruction limits the interface value of a second-order sc
 status: established
 aliases: [TVD, TVD limiter, flux limiter, slope limiter, MUSCL limiter, minmod]
 tags: [limiting, reconstruction, finite-volume, central-scheme]
-timestamp: 2026-10-23T20:39:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Total variation diminishing (TVD) and slope limiters
 
 **Total variation diminishing** (TVD) schemes satisfy $TV(u^{n+1})\le TV(u^n)$.
-The chunk-1 sources use the property without restating it and impose it
+Most sources of the bundle use the property without restating it and impose it
 through Sweby's limiter region; the estimate and the incremental-form
 conditions behind that region are restated by
 [Puppo et al. (2023)](/sources/puppo-2023.md) (§2; next section).
@@ -139,7 +139,7 @@ on conservative or equilibrium variables, as Kurganov et al. (2023) do.
 curvilinear meshes, dividing the cell differences by physical centroid-to-face distances,
 $\delta_i=(\bar u_{i+1}-\bar u_i)/(L^-_{i+1}+L^+_i)$, with $L^+_i$ ($L^-_i$) the distance from the
 centroid of cell $i$ to its right (left) face (page-local). *(compiler check, not in the sources:
-the printed left-face value, with the MUSCL parameter $\omega=0$, is
+the printed left-face value, with the MUSCL parameter $\kappa_{\mathrm M}=0$ (the source's $\omega$), is
 $\bar u_i-\tfrac12\big(\delta_{i-1}L^-_i+\delta_iL^+_i\big)$, which for linear data
 $\delta_{i-1}=\delta_i=b$ gives $\bar u_i-\tfrac12b(L^-_i+L^+_i)$ instead of $\bar u_i-bL^-_i$; the
 reconstruction is exact for linear data only where $L^-_i=L^+_i$, whereas the Cartesian form,
@@ -332,12 +332,12 @@ bounds to global ones in cells flagged smooth by a modal indicator restores
   third-order impossibility is Deng's own (Remark 4.1).
 - Abgrall & Nassajian Mojarrad's §3.2.1 is printed with inconsistencies: the
   factor $\tfrac16$ appears twice in one line and is dropped in a later one, and the
-  second branch of the limiter reads "$r<-6+\theta$" where its margin parameter is meant,
-  with a gap left between the first and third branches. *(Compiler check, not in the
+  second branch of the limiter reads "$r<-6+\theta$", with the limiter's own symbol as its threshold,
+  and a gap is left between the first and third branches. *(Compiler check, not in the
   sources: the printed difference $\tfrac16(f_{i-2}-3f_i+2f_{i+1})$, labelled second minus
   first order, is the third- minus the first-order upwind difference of their §3.1; the
-  second- minus first-order one is $\tfrac12f_{i-2}-f_{i-1}+\tfrac12f_i$.)* The page states
-  the intended structure only.
+  second- minus first-order one is $\tfrac12f_{i-2}-f_{i-1}+\tfrac12f_i$.)* The page records
+  only the structure the printed branches share.
 - The TVD left boundary of slope 2 is Sweby's; Deng's reading of it as a free
   CFL-dependent slope $k$ is a reinterpretation, not Sweby's statement.
 

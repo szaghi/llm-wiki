@@ -5,7 +5,7 @@ description: "Hermite WENO (HWENO) builds WENO candidates from cell averages plu
 status: established
 aliases: [HWENO, Hermite WENO reconstruction, HWENO-R, HWENO-L, finite-difference HWENO, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, PCP HWENO, HWENO6-M5-I, HTENO, Hermite TENO, OE-HWENO, oscillation-eliminating HWENO, HWENO-U, HWENO-M, unified-stencil HWENO]
 tags: [weno, reconstruction, finite-volume, dg, compact-scheme]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Hermite WENO
@@ -90,12 +90,12 @@ for compressible Navier–Stokes (Euler at $\mathrm{Re}=\infty$):
 - **Flux.** A Lax–Friedrichs-type flux of the total (advective minus viscous) flux, whose coefficient
   must exceed $|v|+\frac1{2\rho^2e}\big(\sqrt{\rho^2q_h^2+2\rho^2e|\tau_v-p|^2}+\rho|q_h|\big)$ (page-local
   viscous stress $\tau_v$ and heat flux $q_h$), after Zhang 2017 (Eqs. (3.4)–(3.5)).
-- **Theorem 1 (1-D).** With degree-$k$ reconstruction, the forward-Euler cell average stays in
+- **Theorem 1 (1-D).** With reconstruction of degree $k$ (page-local), the forward-Euler cell average stays in
   $G=\{\rho>0,\ \rho e>0\}$ if the interface traces and the Gauss–Lobatto residual state
   $(\bar u_i-\hat{\mathsf w}u^+_{i-1/2}-\hat{\mathsf w}u^-_{i+1/2})/(1-2\hat{\mathsf w})$ lie in $G$,
-  under $\frac{\Delta t}{\Delta x}\max_i(\text{coefficient})\le\hat{\mathsf w}=\frac1{n_{\mathrm{GL}}(n_{\mathrm{GL}}-1)}$,
-  $n_{\mathrm{GL}}=\lceil(k+3)/2\rceil$ (Eqs. (3.11)–(3.12); page-local $\hat{\mathsf w}$, the end
-  Gauss–Lobatto weight, and $n_{\mathrm{GL}}$ the number of Gauss–Lobatto points, the source's $N$). Theorem 2 is the 2-D analogue (Eqs. (3.29)–(3.30)). Both are enforced by a density-then-
+  under $\frac{\Delta t}{\Delta x}\max_i(\text{coefficient})\le\hat{\mathsf w}=\frac1{N_{\mathrm{GL}}(N_{\mathrm{GL}}-1)}$,
+  $N_{\mathrm{GL}}=\lceil(k+3)/2\rceil$ (Eqs. (3.11)–(3.12); page-local $\hat{\mathsf w}$, the end
+  Gauss–Lobatto weight, and $N_{\mathrm{GL}}$ the number of Gauss–Lobatto points of registry §10, the source's $N$). Theorem 2 is the 2-D analogue (Eqs. (3.29)–(3.30)). Both are enforced by a density-then-
   internal-energy [scaling limiter](/methods/zhang-shu-scaling-limiter.md) on point values only
   ([bound preservation](/properties/bound-preservation.md)).
 - **Viscous derivatives.** App. A reconstructs $u_x$ with HWENO at the interfaces of flagged stencils
@@ -472,7 +472,7 @@ are given in the ingested sources.
   returns $x_{i+1/2}$, the printed one does not.)* Their printed indicator of the limiter's point-value
   quartic does not equal the Jiang–Shu integral of that quartic
   ([smoothness indicators](/definitions/smoothness-indicator.md)). "Arbitrary" positive linear weights
-  coexist with a recommended band $\gamma_0/\gamma_1\in[100,300]$, $d_0/d_1\in[10,30]$ (Example 3.4), and
+  coexist with a recommended band $d_0/d_1\in[100,300]$ for the flux reconstruction and $d_0/d_1\in[10,30]$ for the derivative limiter (the source's $\gamma_0/\gamma_1$ and $d_0/d_1$; Example 3.4), and
   "robust without positivity limiters" coexists with negative minimum pressures on coarse meshes of the
   near-vacuum vortex run without limiters (Table 3.3).
 - **Heuristic resolution argument.** Remark 1 of Li, Shu & Qiu (2022d) assumes the low-order indicators
@@ -529,7 +529,7 @@ are given in the ingested sources.
   printed with $\gamma$ and $\omega$ exchanged relative to the 1-D Eq. (2.13) and App. B.
 - Chen & Fu (2024, Eq. (3)) call the SD solution points "the Gauss points", but print
   $X_s=-\tfrac12\cos\big(\tfrac{2s-1}{2N}\pi\big)$ on $[-\tfrac12,\tfrac12]$, Chebyshev–Gauss points *(compiler
-  check: for $N=3$ these are $0,\pm\sqrt3/4$, against $0,\pm\sqrt{15}/10$ for Gauss–Legendre)*; the linear
+  check, not in the sources: for $N=3$ these are $0,\pm\sqrt3/4$, against $0,\pm\sqrt{15}/10$ for Gauss–Legendre)*; the linear
   weights depend on this choice.
 - Li et al. (2022b, Eq. (8)) — the WENO-ZN paper — call the rescaled Legendre basis used by Balsara et
   al. for smoothness indicators "Hermite polynomials"; that reconstruction is not Hermite WENO.

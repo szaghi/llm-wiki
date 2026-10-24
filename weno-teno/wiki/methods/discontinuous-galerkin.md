@@ -5,7 +5,7 @@ description: "The discontinuous Galerkin (DG) semi-discretization of a conservat
 status: established
 aliases: [DG, RKDG, central DG, CDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG, LDG, local discontinuous Galerkin, discontinuous spectral element method, DSEM]
 tags: [dg, numerical-flux, limiting, bound-preserving]
-timestamp: 2026-10-23T20:29:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Discontinuous Galerkin method
@@ -170,7 +170,7 @@ Two further formulations appear:
   state, make it bound-preserving in 1D and 2D and locally
   divergence-free in 2D (below, and
   [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
-- **Moment equations with reconstruction.** [Li, Shu & Qiu (2022)](/sources/li-2022-d.md)
+- **Moment equations with reconstruction.** [Li, Shu & Qiu (2022d)](/sources/li-2022-d.md)
   test the conservation law with $1$ and $(x-x_i)/\Delta x$ on each cell
   (§2.1, Eqs. (2.2)–(2.4)). These two functions span $\mathbb P^1(I_i)$, so
   the equations are the weak form of $\mathbb P^1$ DG *(compiler check, not
@@ -192,9 +192,9 @@ Further formulations and boundary treatments:
   Yu & Hesthaven use an LDG-type mixed form with centred viscous fluxes for
   their artificial-viscosity term (§2). Lin, Chan & Tomas (2023) use an
   LDG-type form in the entropy variables, $\Theta_d=\partial w/\partial x_d$ and
-  viscous flux $\sigma_d=\sum_{d'}K_{dd'}\Theta_{d'}$ with the symmetric
-  positive semi-definite blocks $K_{dd'}$ of the symmetrized viscous operator
-  and central interface averages (page-local $\Theta$, $\sigma$, $K$), so the
+  viscous flux $\sigma_d=\sum_{d'}\mathsf K_{dd'}\Theta_{d'}$ with the symmetric
+  positive semi-definite blocks $\mathsf K_{dd'}$ of the symmetrized viscous operator
+  and central interface averages (page-local $\Theta$, $\sigma$, $\mathsf K$, as on [Bassi–Rebay](/methods/bassi-rebay-viscous-discretization.md)), so the
   entropy-stable DG dissipates entropy also for Navier–Stokes, as recalled
   from Chan's earlier work (§4, Eq. (15), Thm. 4.1). PyFR uses BR1 or BR2 (Dzanic et al.,
   §4.2; Dzanic & Witherden, §4.2), and [Kou et al. (2022)](/sources/kou-2022.md)
@@ -354,7 +354,11 @@ formula. In 2D it reads
 $$\Delta t\Big(\frac{a^{(1)}}{\Delta x}+\frac{a^{(2)}}{\Delta y}\Big)\le\frac1{2N+1},$$
 
 with $a^{(d)}$ the maximum wave speed in direction $d$. Peng et al. (2024)
-run their OEDG tests at CFL $1/(2N+1)$ (§5). Peng et al.'s Prop. 4.6,
+run their OEDG tests at CFL $1/(2N+1)$ (§5). Cao et al. (2026) use
+$\Delta t=C_{\mathrm{cfl}}/\big(a^{(1)}/\Delta x+a^{(2)}/\Delta y\big)$ with
+$C_{\mathrm{cfl}}=0.3$, $0.16$, $0.1$ for $N=1,2,3$, below $1/(2N+1)$, with
+SSP-RK3 on discontinuous problems and an $(N+1)$-stage Runge–Kutta method of
+order $N+1$ on smooth ones (§6; page-local $C_{\mathrm{cfl}}$). Peng et al.'s Prop. 4.6,
 collected from the RKDG stability literature, states for $r_{\mathrm{RK}}$th-order
 $r_{\mathrm{RK}}$-stage Runge–Kutta on linear problems that the $L^2$ stability estimate
 $\|u_h^{n+1}\|^2\le(1+C_s\Delta t)\|u_h^n\|^2$ (their Assumption 4.5,
@@ -424,8 +428,8 @@ The hypotheses are an admissible solution at the decomposition nodes and
 HLL speeds that bound the Wu–Shu estimates (Eqs. (58)–(66);
 [geometric quasilinearization](/methods/geometric-quasilinearization.md)).
 The Zhang–Shu decomposition gives
-$\Delta t(a^{(1)}/\Delta x+a^{(2)}/\Delta y)\le1/(L(L-1))$ with
-$L=\lceil(N+3)/2\rceil$ Gauss–Lobatto points (Cor. 1), which is $\tfrac16$
+$\Delta t(a^{(1)}/\Delta x+a^{(2)}/\Delta y)\le1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$ with
+$N_{\mathrm{GL}}=\lceil(N+3)/2\rceil$ Gauss–Lobatto points (Cor. 1), which is $\tfrac16$
 for $N=2$ *(compiler check, not in the sources)*. The optimal
 Cui–Ding–Wu decomposition gives $1/(4+2\lvert\varkappa\rvert)$ for $N=2,3$,
 with the registry's anisotropy
@@ -553,8 +557,8 @@ interfaces.
   unstructured mixed-element meshes: at every Runge–Kutta stage the
   unlimited modal DG solution is checked a priori, by a KXRCF-like shock
   detector or by MOOD-type positivity and relaxed-maximum-principle
-  criteria, and in flagged cells the modes $1,\dots,K$ (all but the cell
-  average, $K+1$ the number of basis functions) are replaced by the
+  criteria, and in flagged cells the modes $1,\dots,K_{\mathrm b}$ (all but the cell
+  average, $K_{\mathrm b}+1$ the number of basis functions, page-local) are replaced by the
   coefficients of a CWENOZ least-squares reconstruction of the same order
   built from neighbouring averages in the same Taylor basis (§2.4, Eq.
   (33), §2.5; [CWENO](/methods/cweno.md)). Keeping mode 0 keeps
@@ -623,7 +627,7 @@ interfaces.
   as a modal filter. This preserves the cell average and the scale and
   evolution invariance. For linear advection it keeps the optimal
   fully-discrete $L^2$ estimate $O(\Delta x^{N+1}+\Delta t^{r_{\mathrm{RK}}})$ under
-  $N>d/2$, $r>d/2+1$, a stable underlying RKDG scheme and a lower bound on
+  $N>d/2$, $r_{\mathrm{RK}}>d/2+1$, a stable underlying RKDG scheme and a lower bound on
   the deviation of $u_h$ from its average (Thm 4.1). Dzanic & Witherden
   (2022) filter instead with an exponential modal filter whose strength is
   chosen per element, after each Runge–Kutta stage, as the smallest one
@@ -645,6 +649,19 @@ interfaces.
   explicit step followed by a closed-form implicit damping step in each
   Runge–Kutta stage, so the damping does not restrict the time step
   (§3.3, Eq. (3.21); [entropy stability](/properties/entropy-stability.md)).
+  [Cao et al. (2026)](/sources/cao-2026.md) damp once per time step
+  instead of once per stage: after the last Runge–Kutta stage the
+  polynomial of each cell becomes the convex combination
+  $(1-\theta^{\mathrm{OS}}_i)\bar u_i+\theta^{\mathrm{OS}}_iu_h$, with one
+  exponential factor $\theta^{\mathrm{OS}}_i$ for all non-mean modes,
+  built from entropy-induced distances between the cell's extrapolated
+  polynomial and its two neighbours (page-local; §2.1–2.3,
+  [COS(DG)](/methods/cos-dg.md)). Because the step only blends with the
+  cell average, it works unchanged for modal and nodal DG, conserves, does
+  not increase the $L^2$ norm or the cell integral of any convex entropy,
+  and perturbs an $(N+1)$th-order accurate solution by $O(\Delta x^{N+1})$
+  (Thms 2.2, 2.4, 4.1). It costs 15.6–18.8 % of the run time against
+  35.3–40.6 % for the OE step of OEDG on the same 1D problems (Table 3).
 - **Artificial viscosity.** Two sources give sensors for nodal DG: the
   time-reversibility defect of Dzanic et al. (2022), which gives a
   separate viscosity for every conserved variable, and the modal decay
@@ -653,7 +670,7 @@ interfaces.
   as an extra DG variable and evolved in time, with a compression source,
   a source from the growth rate of the Persson–Peraire modal sensor and a
   decay over $f_\tau h/((N+1)c)$ (page-local $f_\tau=0.5$); the applied viscosity is
-  $\alpha_{\mathrm v}c\,h/(N+1)$ with page-local $\alpha_{\mathrm v}\le1$ (§4.1,
+  $\alpha_{\mathrm{AV}}c\,h/(N+1)$ with page-local $\alpha_{\mathrm{AV}}\le1$ (as on the artificial-viscosity page) (§4.1,
   Eqs. (43)–(46)). See
   [artificial viscosity](/methods/artificial-viscosity.md) and
   [troubled-cell indicators](/definitions/troubled-cell-indicator.md).
@@ -676,7 +693,7 @@ instead makes the low-order method more diffusive as $N$ grows at fixed
 degrees of freedom, because each node couples to $O(N)$ others (§3.4,
 Fig. 1; [convex limiting](/methods/convex-limiting.md)).
 
-Li, Shu & Qiu (2022) flag troubled cells with a modified KXRCF indicator,
+Li, Shu & Qiu (2022d) flag troubled cells with a modified KXRCF indicator,
 an indicator from the RKDG literature, in which the power of $h$ in the
 denominator is $(l+1)/3$ with $l=5$ the reconstruction degree instead of
 the original $(N+1)/2$ (Eqs. (2.25), (2.32)–(2.34);
@@ -787,7 +804,7 @@ $N=1,2,3$ (§6.2, Table 10).
   & Li, Du, Shu & Zhong and Du & Yang write $k$; Abgrall et al., Cicchino
   et al. and the two Dzanic papers write $p$; Yu & Hesthaven write $P$;
   Huang & Zahr write $p$ and Kou et al. $P$; Liu & Wu (2025), Liu et al.
-  (2025b) and Huang et al. (2025a) write $k$; Liu et al. (2025c) write $k$
+  (2025b), Huang et al. (2025a) and Cao et al. (2026) write $k$; Liu et al. (2025c) write $k$
   for the degree of the face polynomials, with tensor degree $k+1$ in the
   cells; Zampa & Dumbser write $r$ for $\mathrm{RT}_r$ and
   discontinuous degree-$r$ spaces; Mossier et al. and Lin,
@@ -841,7 +858,7 @@ $N=1,2,3$ (§6.2, Table 10).
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.1, §5.
 - [Basile et al. (2022)](/sources/basile-2022.md) — §2.3 Eqs. (15)–(23) (author manuscript).
 - [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — §2, §3.1–3.3 Eqs. (2.4)–(3.15) (author manuscript).
-- [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §2.1 Eqs. (2.2)–(2.4), Eqs. (2.25), (2.32)–(2.34) (arXiv v1).
+- [Li, Shu & Qiu (2022d)](/sources/li-2022-d.md) — §2.1 Eqs. (2.2)–(2.4), Eqs. (2.25), (2.32)–(2.34) (arXiv v1).
 - [Pazner (2021)](/sources/pazner-2021.md) — §3, §3.4 Fig. 1, §4 (arXiv v1).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §2.1 Eqs. (6)–(9), §2.2 Eqs. (20)–(21), Ex. 2.3 (arXiv v4).
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1, Eqs. (3)–(6), §2.5.2–2.5.3 Eqs. (27)–(28), §2.6, Eq. (30), §3.1.4–3.1.5 Figs. 12–14.
@@ -855,6 +872,7 @@ $N=1,2,3$ (§6.2, Table 10).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §4, §7.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §3.1, §4 Eq. (15) Thm. 4.1, §5 Remarks 1–2, §6 Thm. 6.2, §7 Eq. (57), Tables 3–9, App. B.1 (arXiv v2).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.1 Eqs. (2)–(9), §2.3 Eq. (32), §2.4 Eq. (33), §2.5, §3.1–3.2, §3.6, §4, Table 1, App. B Tables B.3–B.4.
+- [Cao et al. (2026)](/sources/cao-2026.md) — §2.1–2.3, Thms 2.2, 2.4, 4.1; §6, Table 3.
 - [Cernetic et al. (2023)](/sources/cernetic-2023.md) — accepted manuscript (arXiv v2): §2.3–2.5 Eqs. (13)–(23), §3.1–3.2 Eqs. (29)–(36), §4.1 Eqs. (43)–(46) Figs. 3–4, §5.1 Fig. 5, §5.3 Figs. 7–8, §6.3 Fig. 14.
 - [Ciallella et al. (2024)](/sources/ciallella-2024.md) — arXiv v1: §3.2, §4 Fig. 1, §6.1 Tables 2, 4, §6.2 Table 10.
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — arXiv v1: §3.1–3.3 Eqs. (22)–(34), §4.1–4.4 Props. 1–5, Eq. (67).

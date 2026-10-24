@@ -5,7 +5,7 @@ description: "The Zhang–Shu limiter scales a high-order polynomial linearly to
 status: established
 aliases: [scaling limiter, bound-preserving limiter, positivity-preserving limiter, maximum-principle-satisfying limiter, BP limiter, simplified BP limiter, PP limiter]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Zhang–Shu scaling limiter
@@ -149,15 +149,15 @@ scaling acting on the result of the previous one, with the density first:
   depends on the mass fractions (Eq. (6.3)).
 - **Relativistic MHD, central DG** ([Ding & Wu (2024b)](/sources/ding-2024-b.md),
   §3.3, §4.5, Eqs. (33)–(36), Remarks 4–6, 8). Three successive scalings
-  into the shrunk set $\{D\ge\varepsilon_D,\ q\ge\varepsilon_q,\ \Phi_\varepsilon\ge0\}$,
-  with $q=E-\sqrt{D^2+\lvert m\rvert^2}$ and $\Phi$ the closed-form third
+  into the shrunk set $\{D\ge\varepsilon_D,\ g\ge\varepsilon_g,\ \Phi_\varepsilon\ge0\}$,
+  with $g=E-\sqrt{D^2+\lvert m\rvert^2}$ (the concave function of Chen & Wu above) and $\Phi$ the closed-form third
   constraint of the relativistic MHD admissible set, $\Phi_\varepsilon$ the
   same with $E-\varepsilon$ ($\varepsilon=10^{-13}\bar E$): the density with
   $\varepsilon_D=\min\{10^{-13},\bar D\}$; then $(D,m,E)$ toward the mean
-  with $\varepsilon_q=\min\{10^{-13},q(\bar u)\}$, $B$ left unscaled;
+  with $\varepsilon_g=\min\{10^{-13},g(\bar u)\}$, $B$ left unscaled;
   then the whole vector with the smallest, over the points, root in
-  $[0,1)$ of $\Phi_\varepsilon$ along the segment from the mean (Eq. (36); page-local $q$, $\Phi$,
-  $\varepsilon_D$, $\varepsilon_q$). The point set is the Gauss–Lobatto
+  $[0,1)$ of $\Phi_\varepsilon$ along the segment from the mean (Eq. (36); page-local $g$ (the source's $q$), $\Phi$,
+  $\varepsilon_D$, $\varepsilon_g$). The point set is the Gauss–Lobatto
   points of the decomposition **plus** the Gauss flux-quadrature points,
   because the flux needs primitive variables recovered from conserved
   ones, which fails for inadmissible states, a requirement the authors say
@@ -281,11 +281,11 @@ $P_i=\frac{\Delta t}{m_i}(r^{\mathrm L}_i-r^{\mathrm H}_i)$ and one $\mathsf l_K
 page-local), the largest $\mathsf l_K$ that keeps $\rho\ge\rho^{\min}_i$ and
 $\rho e\ge\rho e^{\min}_i$ at every node. They call it "Zhang–Shu type".
 The density bound is linear in $\mathsf l_K$; the internal-energy bound, multiplied
-by $\rho>0$, is the quadratic $a\mathsf l^2+b\mathsf l+c\ge0$ with
-$a=E^P\rho^P-\tfrac12\lvert(\rho v)^P\rvert^2$,
-$b=E^{\mathrm L}\rho^P+\rho^{\mathrm L}E^P-(\rho v)^{\mathrm L}\cdot(\rho v)^P-\rho^P\rho e^{\min}$,
-$c=E^{\mathrm L}\rho^{\mathrm L}-\tfrac12\lvert(\rho v)^{\mathrm L}\rvert^2-\rho^{\mathrm L}\rho e^{\min}$
-(superscripts $\mathrm L$ and $P$ for the components of $u^{\mathrm L}_i$ and $P_i$), and $\mathsf l^{\rho e}$ is its smallest non-negative root,
+by $\rho>0$, is the quadratic $c_2\mathsf l^2+c_1\mathsf l+c_0\ge0$ with
+$c_2=E^P\rho^P-\tfrac12\lvert(\rho v)^P\rvert^2$,
+$c_1=E^{\mathrm L}\rho^P+\rho^{\mathrm L}E^P-(\rho v)^{\mathrm L}\cdot(\rho v)^P-\rho^P\rho e^{\min}$,
+$c_0=E^{\mathrm L}\rho^{\mathrm L}-\tfrac12\lvert(\rho v)^{\mathrm L}\rvert^2-\rho^{\mathrm L}\rho e^{\min}$
+(superscripts $\mathrm L$ and $P$ for the components of $u^{\mathrm L}_i$ and $P_i$; page-local $c_0,c_1,c_2$), and $\mathsf l^{\rho e}$ is its smallest non-negative root,
 or 1 if none; $\mathsf l_K=\min(\mathsf l^\rho,\mathsf l^{\rho e})$ (Eqs. 39–42) *(compiler check,
 not in the sources: expanding $(\rho^{\mathrm L}+\mathsf l\rho^P)(E^{\mathrm L}+\mathsf lE^P)-\tfrac12\lvert(\rho v)^{\mathrm L}+\mathsf l(\rho v)^P\rvert^2-(\rho^{\mathrm L}+\mathsf l\rho^P)\rho e^{\min}$
 gives these coefficients)*. The bounds are relaxed to
@@ -304,9 +304,9 @@ the low-order solution, not the cell average
 Eqs. 31–35, arXiv v1) meet the same quadratic pressure constraint in
 monolithic convex limiting, one factor per subcell interface of an LGL
 element rather than per element, and do not solve for its root: since
-$\alpha^2\le\alpha$ on $[0,1]$ they replace $A\alpha^2+B\alpha\le Q$ by
-the linear sufficient condition $\big(\max\{0,A\}+|B|\big)\alpha\le Q$,
-which gives the factor in closed form (page-local $A$, $B$, $Q$; their
+$\alpha^2\le\alpha$ on $[0,1]$ they replace $c_2\alpha^2+c_1\alpha\le c_0$ by
+the linear sufficient condition $\big(\max\{0,c_2\}+|c_1|\big)\alpha\le c_0$,
+which gives the factor in closed form (page-local $c_0,c_1,c_2$, the source's $Q$, $B$, $A$; their
 $\alpha$ = 1 is the high-order flux; see
 [convex limiting](/methods/convex-limiting.md)).
 
@@ -316,9 +316,9 @@ of a generalized [Active Flux](/methods/active-flux.md) scheme the same way, tow
 a first-order target rather than a mean: a first-order Lax–Friedrichs update of each
 point value on a staggered stencil of neighbouring point values, admissible under the
 six-term time-step condition of their Lemma 4.2, is blended with the high-order
-forward-Euler value, $u^{\mathrm{Lim}}_\sigma=\theta_\sigma u^{\mathrm H}_\sigma+(1-\theta_\sigma)u^{\mathrm L}_\sigma$
-($\sigma$ a point-value location, page-local). For scalar laws
-$\theta_\sigma=\min\{1,(u^{\mathrm L}_\sigma-u_{\min})/(u^{\mathrm L}_\sigma-u^{\mathrm H}_\sigma),(u_{\max}-u^{\mathrm L}_\sigma)/(u^{\mathrm H}_\sigma-u^{\mathrm L}_\sigma)\}$
+forward-Euler value, $u^{\mathrm{Lim}}_{\mathsf s}=\theta_{\mathsf s}u^{\mathrm H}_{\mathsf s}+(1-\theta_{\mathsf s})u^{\mathrm L}_{\mathsf s}$
+($\mathsf s$ a point-value location, page-local). For scalar laws
+$\theta_{\mathsf s}=\min\{1,(u^{\mathrm L}_{\mathsf s}-u_{\min})/(u^{\mathrm L}_{\mathsf s}-u^{\mathrm H}_{\mathsf s}),(u_{\max}-u^{\mathrm L}_{\mathsf s})/(u^{\mathrm H}_{\mathsf s}-u^{\mathrm L}_{\mathsf s})\}$
 (Eq. (43)); for Euler the density first, then the pressure by the ratio
 $(p(u^{\mathrm L})-\varepsilon_p)/(p(u^{\mathrm L})-p(u^{\mathrm{Lim},*}))$, which by
 concavity of $p$ and Jensen's inequality needs no quadratic solve (Eq. (44)). The
@@ -439,6 +439,26 @@ within the nodal range of the cell and its two neighbours where the
 sensor fires *(compiler check, not in the sources)*; the authors use it
 for robustness at strong shocks ([WENO limiters for DG](/methods/weno-limiter-dg.md)).
 
+[Cao et al. (2026)](/sources/cao-2026.md) build a whole oscillation control on the
+same convex form, [COS(DG)](/methods/cos-dg.md): once per time step, after the
+last Runge–Kutta stage, every DG polynomial is scaled toward its cell average by
+an exponential factor driven by distances to the neighbouring polynomials, not
+by bounds (§2.1). They call the form "formally related" to the Zhang–Shu limiter
+"though the two distinct purposes", and state that DG with bound-preserving
+limiters alone "may reduce, but still exhibit, spurious oscillations", citing
+Qin, Shu & Yang on relativistic hydrodynamics (§1, Remark 2). Remark 2 recalls
+the scalar limiter with $\theta$ computed over $\lceil(N+3)/2\rceil$
+Gauss–Lobatto points and proposes, without using it, a combined bound-preserving
+and oscillation-suppressing limiter whose factor is the smaller of the COS factor
+and $\theta$. In their computations the positivity-preserving limiter is applied
+at the Runge–Kutta stages, where the COS step does not act, in every
+discontinuous Euler run (§6). Cao et al. prove that the COS step does not
+increase the cell integral of any convex entropy (Thm 2.4), by pointwise
+convexity and Jensen's inequality, an argument they liken to one for
+bound-preserving limiters; the proof uses only that the factor lies in $[0,1]$,
+so it covers the Zhang–Shu scaling as well *(compiler check, not in the
+sources)*.
+
 ## Finite-difference counterparts
 
 Finite-difference schemes have no cell polynomial to scale. The
@@ -544,3 +564,4 @@ in practice and is more convenient for FD schemes" (§1, Remark 2.3).
 - [Liu & Wu (2025)](/sources/liu-2025.md) — arXiv v2: §3.4, Eqs. (54)–(55); §3.5.
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — Remark 3.1; Ex. 10.
 - [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — arXiv v3: §4.2, Eqs. (39)–(44), Lemma 4.2, Remarks 4.3–4.4.
+- [Cao et al. (2026)](/sources/cao-2026.md) — §1; §2.1; Remark 2; Thm 2.4; §6.

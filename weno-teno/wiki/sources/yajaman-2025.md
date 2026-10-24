@@ -147,7 +147,7 @@ Master's thesis; ref. [3] (ENO III) is printed as the 1997 J. Comput. Phys. repr
 
 # Pages created or updated
 
-Chunk 9 (2026-10-23), cited further in chunk 10 (2026-10-23). This source is cited on:
+Chunk 9 (2026-10-23), cited further in chunks 10–11 (2026-10-23/24). This source is cited on:
 
 * [ADER schemes](/methods/ader-scheme.md)
 * [AENO and AENO-C reconstruction](/methods/aeno-reconstruction.md)

@@ -4,8 +4,8 @@ title: "RBF differential-quadrature finite volumes"
 description: "The implicit RBF differential-quadrature finite-volume method (IRBFDQ-FV) of Liu et al. evolves cell-centre point values with a cubic Taylor polynomial whose derivatives come from meshless multiquadric RBF quadrature, so a non-diagonal mass operator makes it implicit; it uses Roe or gas-kinetic fluxes and a PEEB scaling limiter on unstructured grids."
 status: established
 aliases: [IRBFDQ-FV, RBFDQ-FV, LRBFDQ, local RBF differential quadrature, RBF-based differential quadrature, PEEB limiter, point extrema-based extended bounds limiter]
-tags: [finite-volume, reconstruction, limiting, numerical-flux]
-timestamp: 2026-10-23T03:53:00Z
+tags: [finite-volume, reconstruction, limiting, numerical-flux, rbf]
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # RBF differential-quadrature finite volumes
@@ -26,7 +26,7 @@ cells. RBFs enter only this derivative step, not the candidates of a WENO scheme
 ## Local RBF differential quadrature
 
 At a reference point $X_i$ with $N$ supporting points $X_j$, a derivative is a weighted sum of point
-values (page-local symbols: $a^{(p)}_{ij}$ the quadrature weights, $\varphi_k$ the RBFs, $\mathsf G$
+values (page-local symbols: $N$ the number of supporting points, not a DG degree, $a^{(p)}_{ij}$ the quadrature weights, $\varphi_k$ the RBFs, $\mathsf G$
 the collocation matrix; Liu et al. 2023b, §2.1, Eqs. (1)–(4)):
 
 $$\frac{\partial^pf(X_i)}{\partial x^p}=\sum_{j=1}^Na^{(p)}_{ij}f(X_j),\qquad

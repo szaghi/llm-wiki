@@ -5,7 +5,7 @@ description: "Adaptive DG refines the mesh (h) or raises the polynomial degree (
 status: established
 aliases: [hp-adaptivity, h-adaptation, p-adaptation, p-refinement, metric-based mesh adaptation, a posteriori error estimation, SSED estimator, hp-shock capturing]
 tags: [dg, amr, entropy-stable, limiting, turbulence]
-timestamp: 2026-10-22T16:24:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # h- and hp-adaptation for DG
@@ -169,7 +169,7 @@ means of $J$ and $Ja^{(d)}$, the same operator applied to the DG metrics
 indicator is the Mavriplis modal decay rate, as recalled: the relative
 energy of the modes of order $m$ in reference direction $d$, summed over
 the other two directions and normalized by the total, is fitted to
-$a\,e^{-\varrho^{(d)}_Km}$ (page-local amplitude $a$), and the indicator is
+$C_{\mathrm M}\,e^{-\varrho^{(d)}_Km}$ (page-local amplitude $C_{\mathrm M}$), and the indicator is
 $\min_d\lvert\varrho^{(d)}_K\rvert$, evaluated on one scalar (density or
 pressure, per test). The fitting procedure, including which modes enter,
 is not specified. Four thresholds per degree, ordered
@@ -291,7 +291,7 @@ nearest-neighbour assignment (§4.4, Fig. 1).
 magnitude-dependent sizing, according to the authors (no figure). They
 choose instead the target $\mathsf E^*$ for which the predicted number of
 degrees of freedom grows by a fixed factor $\mathsf g$ (page-local),
-$\sum_KN_p(N^*_K)\,(h_K/h^*_K)^d=\mathsf g\cdot\mathrm{NDOF}_i$, solved by
+$\sum_KN_p(N^*_K)\,(h_K/h^*_K)^d=\mathsf g\cdot\mathrm{NDOF}_i$ (page-local $N_p(N)$ the number of modes of degree $N$, $\mathrm{NDOF}_i$ the current count), solved by
 bisection (Eqs. (47)–(49)). The default is $\mathsf g=1.5$.
 
 Boundary-layer prisms, and for the jet the tetrahedra inside the nozzle,
@@ -304,10 +304,10 @@ All tests are steady, subsonic and shock-free (§5–6).
 
 | test | setting | result |
 |---|---|---|
-| 2D NACA0012 | $M_\infty=0.5$, $\alpha=1°$, $Re=5000$ | four adaptation steps beat the finest uniform mesh in drag error for $N=1,2,3$; hp reaches it with the fewest degrees of freedom; final drag and lift errors about two orders below uniform refinement |
-| 3D sphere | $Re=200$ | $h$-adaptation at $N=1$ saves about a factor 10 in degrees of freedom; hp fastest in the first steps |
-| 3D delta wing | $M=0.3$, $\alpha=12.5°$, $Re=4000$ | hp fastest early, then coincides with $h$ at $N=2$; elements at the geometric singularity stay at $N=2$ until it is resolved |
-| PPRIME jet, RANS–SA | $M_j=0.9$, $Re_D\simeq10^6$ | hp results at 7–15 M degrees of freedom agree better with LES and experiment than a 48 M-element second-order structured finite-volume RANS |
+| 2D NACA0012 | $M_\infty=0.5$, angle of attack $1°$, $\mathrm{Re}=5000$ | four adaptation steps beat the finest uniform mesh in drag error for $N=1,2,3$; hp reaches it with the fewest degrees of freedom; final drag and lift errors about two orders below uniform refinement |
+| 3D sphere | $\mathrm{Re}=200$ | $h$-adaptation at $N=1$ saves about a factor 10 in degrees of freedom; hp fastest in the first steps |
+| 3D delta wing | $M=0.3$, angle of attack $12.5°$, $\mathrm{Re}=4000$ | hp fastest early, then coincides with $h$ at $N=2$; elements at the geometric singularity stay at $N=2$ until it is resolved |
+| PPRIME jet, RANS–SA | $M_j=0.9$, $\mathrm{Re}_D\simeq10^6$ | hp results at 7–15 M degrees of freedom agree better with LES and experiment than a 48 M-element second-order structured finite-volume RANS |
 
 The growth factor study on NACA0012 ($\mathsf g$ from 1.2 to 2) shows that
 all values converge, with smaller $\mathsf g$ needing fewer degrees of
@@ -341,11 +341,11 @@ solver on stiff problems (§5.2, §6.2); no failing alternative is shown.
   as printed it reproduces the end values only for $N_{\min}=0$
   *(compiler check, not in the sources)*. One bullet of §7.3 names
   $FV^N_{\mathrm{lower}}$ as the switch-back threshold where the other
-  bullet and Fig. 4 use $FV^N_{\mathrm{upper}}$, which is meant. How
+  bullet and Fig. 4 use $FV^N_{\mathrm{upper}}$. How
   $DG^N_{\mathrm{coarse}}$ is set is not stated.
 - Eq. (43) prints the new degree as $\max(N_K+1,N_{\max})$. The text and
-  Algorithm 2 increase the degree by one with the cap $N_{\max}$, which is
-  $\min$.
+  Algorithm 2 increase the degree by one with the cap $N_{\max}$, which
+  corresponds to $\min(N_K+1,N_{\max})$ *(compiler check, not in the sources)*.
 
 # Citations
 

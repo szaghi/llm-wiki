@@ -127,7 +127,7 @@ Appl. Mech. Eng. 382:113853) and [48] (Zheng et al. 2021, Appl. Math. Mech. 42:4
 
 # Pages created or updated
 
-Chunk 6 (2026-10-23), cited further in chunks 7–10 (2026-10-23). This source is cited on:
+Chunk 6 (2026-10-23), cited further in chunks 7–11 (2026-10-23/24). This source is cited on:
 
 * [Central WENO (CWENO)](/methods/cweno.md)
 * [Density-wave advection](/benchmarks/density-wave-advection.md)

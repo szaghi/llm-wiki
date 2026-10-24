@@ -5,7 +5,7 @@ description: "A planar shock hitting a circular or spherical region of different
 status: established
 aliases: [shock–bubble, shock-bubble interaction, shocked bubble, shock–helium bubble, shock–R22 bubble, Haas–Sturtevant experiment, shock-induced bubble collapse]
 tags: [benchmark, multiphase, interface-capturing, central-scheme, finite-volume]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Shock–bubble interaction
@@ -92,7 +92,7 @@ $\rho=0.138$ at rest with $p=1$ in air $(1,0,1)$, to $t=0.35$.
 [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.2.1 (arXiv v1)
 place the shock at $x\le0.2$ and the slab on $[0.4,0.6]$ in a strip
 $[0,1]\times[0,0.05]$ and carry a material marker $\chi$ (page-local),
-$5/(3\gamma)$ in the helium; their $\mathbb P_2$ ADER-DG scheme in
+$5/(3\gamma)$ in the helium; their $\mathbb P^2$ ADER-DG scheme in
 primitive variables on $h=1/270$ "perfectly agree[s]" with a reference
 Kapila-model solution on 20000 cells, while a conservative second-order
 finite-volume scheme produces spurious pressure oscillations at the
@@ -100,7 +100,7 @@ interfaces even on $h=1/2690$ (Fig. 7).
 [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.3, Table 3 (arXiv
 v1) place the shock at $x\le0.25$ and the slab on $(0.4,0.6]$
 (helium $\gamma=1.67$, $c_v=2.52$; air $1.4$, $0.72$); their
-conservative multi-species DG with entropy filtering ($\mathbb P_3$,
+conservative multi-species DG with entropy filtering ($\mathbb P^3$,
 $N=50$, 100, 200) is in "excellent agreement" at $N=200$ with a
 first-order Godunov reference on $5\cdot10^4$ elements, and the
 pressure-equilibrium oscillations of conservative schemes "were not
@@ -118,7 +118,7 @@ models:
 | [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) §5.1 | five-equation model, FV-WENO5 + HLLC ([MFC](/software/mfc.md)) | spherical bubble, axisymmetric; grid, CFL, $\gamma$ deferred to an earlier MFC paper | not printed |
 | [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) §4.6 | [five-equation model](/definitions/five-equation-model.md), unstructured CWENO5 + HLLC | $(\phi_1\rho_1,\phi_2\rho_2,v_1,v_2,p,\phi_1)$: pre-shock air $(0,1.204,0,0,101325,0)$, post-shock $(0,1.658,-114.49,0,159060,0)$, bubble $(0.158,0.061,0,0,101325,0.95)$, helium "contaminated by 28% air"; $\gamma=1.4$ (air), $1.66$ (helium); shock moving right to left | 2D mixed meshes $D_b/35$, $D_b/120$, $D_b/400$; 3D $D_b/50$; to $t=1000\,\mu$s |
 | [Renac (2021)](/sources/renac-2021.md) §7.3 | [multicomponent Euler](/definitions/multicomponent-euler-equations.md), entropy-stable [DGSEM](/methods/dgsem.md), $N=3$ | $[0,6.5]\times[0,0.89]$ (unit = bubble diameter), shock at $x=4.5$ moving left, bubble at $(3.5,0)$, symmetry boundaries top and bottom; helium $\gamma=1.648$, $C_v=6.89$; air $\gamma=1.4$, $C_v=1.7857$; regularized initial interface | 238,673 unstructured elements |
-| [Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.8, 5.10 | multicomponent Euler, entropy-stable FD on an [adaptive moving mesh](/methods/adaptive-moving-mesh.md) | $[0,445]\times[-44.5,44.5]$, bubble radius 25 at $(225,0)$, shock at $x=275$ moving left (speed $-415.16$); helium with 28 % air; air $(1.225,0,0,101325)$, post-shock $(1.6861,-113.5243,0,159060)$; $\gamma=1.4$, $1.647$ | 2D: $800\times160$ moving vs $2400\times480$ uniform; 3D: $400\times80\times80$ moving vs $800\times160\times160$ uniform |
+| [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) Ex. 5.8, 5.10 | multicomponent Euler, entropy-stable FD on an [adaptive moving mesh](/methods/adaptive-moving-mesh.md) | $[0,445]\times[-44.5,44.5]$, bubble radius 25 at $(225,0)$, shock at $x=275$ moving left (speed $-415.16$); helium with 28 % air; air $(1.225,0,0,101325)$, post-shock $(1.6861,-113.5243,0,159060)$; $\gamma=1.4$, $1.647$ | 2D: $800\times160$ moving vs $2400\times480$ uniform; 3D: $400\times80\times80$ moving vs $800\times160\times160$ uniform |
 | [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) Ex. 10 | sharp interface: level set, conservative A-WENO | non-dimensional; pre-shock air $(\rho,v_1,v_2,p)=(1,0,0,1)$, post-shock $(1.3764,0.394,0,1.5698)$ for $x<-1.2$, helium $\rho=0.138$, $\gamma=5/3$ inside the unit circle | $280\times240$ |
 | [Bai & Li (2022)](/sources/bai-2022.md) §3.4 | sharp interface: level set, ghost fluid and cut cells, DG of degree 2 with HLLC–HLL flux, adaptive quadtree | diameter 5 cm, upper half domain (symmetry); air $\rho=1.225$ kg/m³, $p=1.01325$ bar, $\gamma=1.4$; helium $\rho=0.2228$ kg/m³, $\gamma=1.648$ | background $720\times40$, two to four levels (AMR1–AMR4); to $983\,\mu$s |
 | [Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md) §5.2.5 | sharp interface: level set of Hu et al. in the finite-volume [JAX-Fluids](/software/jax-fluids.md); scheme settings not restated for this case | helium bubble of diameter 50 mm at the origin, shock 5 mm to its left, moving right; domain $[-90,266]\times[-44.5,44.5]$ mm; gas states not printed | not printed (arXiv v1) |
@@ -126,9 +126,9 @@ models:
 | [Zhou et al. (2023)](/sources/zhou-2023.md) §5.8 | two-species Euler with the double-flux method, six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) (WCNS-SA, WCNS-LD, ONL6) + HLLC | the same three states and geometry as Chamarthi, after Shankar et al.; zeroth-order extrapolation left and right, slip walls top and bottom, an artificial diffusion layer at the interface; CFL 0.5 | $\Delta x=D/150$ |
 | [Huang & Johnsen (2023)](/sources/huang-2023.md) §4.4 | [five-equation model](/definitions/five-equation-model.md) with a [phase-field](/methods/phase-field-method.md) term, MUSCL–minmod + HLLC | $(\rho_1,\rho_2,v_1,v_2,p,\phi_1)$, phase 1 helium: pre-shock air and bubble moving at $v_1=114.49$, $(0.166,1.204,114.49,0,101325,\phi_1)$ with $\phi_1=10^{-15}$ outside and $1-10^{-15}$ in the bubble; air at rest $(0.166,1.658,0,0,159060,10^{-15})$ for $x>30$ mm; $[-44.5,44.5]^2$ mm, bubble radius 25 mm; $\gamma=1.67$ (helium), $1.40$ (air); zero-gradient left and right, reflecting top and bottom; CFL 0.4 | upper half, $200\times100$; to $983\,\mu$s |
 | [Paula et al. (2023)](/sources/paula-2023.md) §7.6 | Baer–Nunziato model, [discrete equations method](/methods/discrete-equations-method.md) (RDEMIC) with time-averaged [THINC](/methods/thinc-reconstruction.md), WENO3, HLLC, multiresolution | half domain of height 44.5 mm and length 356 mm, shock at $x=40$ mm, bubble of diameter 50 mm at $x=90$ mm; post-shock air $(\rho,v_1,p)=(1.6573,114.5,159056)$, air $(1.2041,0,101325)$, helium $\rho=0.166$, $\gamma=5/3$ (Table 3); symmetry at axis and top, zero-gradient left and right | $8192\times1024$ effective, about 1150 cells per diameter |
-| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.2.2 | two-gas Euler with marker $\chi$, ADER-DG $\mathbb P_2$ in primitive variables with a posteriori subcell FV limiting, conservative MUSCL–Hancock in shock-triggered subcells; polygonal meshes | $(\rho,v_1,v_2,p,\chi)$: pre-shock air $(1,0,0,1/\gamma,1)$, post-shock $(1.3764,-0.3336,0,1.5698/\gamma,1)$, helium $(0.1819,0,0,1/\gamma,1.648/\gamma)$, $\gamma=1.4$; $[0,7D]\times[-0.89D,0.89D]$, shock at $x=4.5D$ moving left, bubble at $(3.5D,0)$, radius printed $r_b=0.05$ with $D=1$ m; walls top and bottom | $h=1/30$, $1/75$, $1/150$ (arXiv v1) |
+| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.2.2 | two-gas Euler with marker $\chi$, ADER-DG $\mathbb P^2$ in primitive variables with a posteriori subcell FV limiting, conservative MUSCL–Hancock in shock-triggered subcells; polygonal meshes | $(\rho,v_1,v_2,p,\chi)$: pre-shock air $(1,0,0,1/\gamma,1)$, post-shock $(1.3764,-0.3336,0,1.5698/\gamma,1)$, helium $(0.1819,0,0,1/\gamma,1.648/\gamma)$, $\gamma=1.4$; $[0,7D]\times[-0.89D,0.89D]$, shock at $x=4.5D$ moving left, bubble at $(3.5D,0)$, radius printed $r_b=0.05$ with $D=1$ m; walls top and bottom | $h=1/30$, $1/75$, $1/150$ (arXiv v1) |
 | [Jiao et al. (2024)](/sources/jiao-2024.md) §4.2, Table 4.3 | four-equation mass-fraction model, second-order compact FV, all-Mach flux, THINC on the gas mass fraction with EOS-consistent face density (THINC-TDU) | pre-shock air $(p,v_1,\rho)=(101325\ \mathrm{Pa},0,1.225\ \mathrm{kg/m^3})$, post-shock $(159059,\ 113.5\ \mathrm{m/s},\ 1.686)$, helium $(101325,0,0.169)$; air $\gamma=1.4$, helium $1.67$; $M=1.22$; walls top and bottom, zero gradient left and right | $14400\times1600$, cell $0.055625$ mm |
-| [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.4, Table 4 | conservative multi-species Euler, nodal DG $\mathbb P_3$ with positivity-preserving [entropy filtering](/methods/entropy-filtering.md) and a pressure-jump entropy switch ([PyFR](/software/pyfr.md)) | half of $[0,1]\times[-0.1,0.1]$ with symmetry; bubble radius $5/89$ at $(0.8,0)$, helium with 28 % air by mass; shock $M=1.22$ at $x=0.9$ moving left; air $(\rho,v_1,p)=(1,0,1)$, $\gamma=1.3986$; shocked air $(1.37636,-0.55957,1.5698)$; bubble $\rho=0.18187$, $\gamma=1.6467$ | unstructured triangles at three edge lengths (arXiv v1) |
+| [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.4, Table 4 | conservative multi-species Euler, nodal DG $\mathbb P^3$ with positivity-preserving [entropy filtering](/methods/entropy-filtering.md) and a pressure-jump entropy switch ([PyFR](/software/pyfr.md)) | half of $[0,1]\times[-0.1,0.1]$ with symmetry; bubble radius $5/89$ at $(0.8,0)$, helium with 28 % air by mass; shock $M=1.22$ at $x=0.9$ moving left; air $(\rho,v_1,p)=(1,0,1)$, $\gamma=1.3986$; shocked air $(1.37636,-0.55957,1.5698)$; bubble $\rho=0.18187$, $\gamma=1.6467$ | unstructured triangles at three edge lengths (arXiv v1) |
 | [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) §3.1 | multi-species Navier–Stokes in [OpenFOAM](/software/openfoam.md), kinetic-energy-preserving central flux plus Ducros-switched AUSM$^+$-up dissipation | helium circle $d=50$ mm in N$_2$ at $101325$ Pa, 273 K, shock moving right to left; shock Mach number not printed | three hexahedral grids, sizes not printed for this case |
 | [Chen & Fu (2024)](/sources/chen-2024.md) §9.8 | single-material Euler ($\gamma=1.4$ throughout), [spectral differences](/methods/spectral-difference-method.md) of third and fourth order with TENO-A and WENO limiters | $(\rho,v_1,v_2,p)$: $(1,0,0,1)$ outside, bubble $(0.1819,0,0,1)$ of radius 0.5 at $(3.5,0.89)$, post-shock $(1.3764,-0.3947,0,1.5698)$ for $x\ge4.5$; $[0,6.5]\times[0,1.78]$; inflow and outflow left and right, reflective top and bottom; $t=2.5$ | $1300\times356$ |
 | [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) Ex. 4.11 | Kapila [five-equation model](/definitions/five-equation-model.md), bound-preserving [OEDG](/methods/oedg.md) $\mathbb P^2$, $\mathbb P^3$, HLL, SSP-RK3, CFL $1/(2N+1)$ | $(\rho_1,\rho_2,v_1,v_2,p,\phi_1)$, phase 1 air ($\gamma_1=1.4$), phase 2 helium with 28 % air ($\gamma_2=1.648$): helium $(1.4,0.25463,0,0,10^5,10^{-6})$, pre-shock air $(1.4,0.25463,0,0,10^5,1-10^{-6})$, post-shock air $(1.92691,0.25463,-113.5,0,1.5698\times10^5,1-10^{-6})$; Mach 1.22 moving left; Haas–Sturtevant geometry in mm; walls top and bottom | $900\times267$; 32 to 983 µs after impact |
@@ -460,7 +460,7 @@ Fig. 20).
 **Four further codes against experiment or references.** Gaburro et
 al. find that a second-order conservative ENO finite-volume scheme on
 $h=1/750$ emits circular spurious pressure waves from the interface,
-while their quasi-conservative $\mathbb P_2$ scheme on $h=1/150$
+while their quasi-conservative $\mathbb P^2$ scheme on $h=1/150$
 "completely avoids any spurious oscillations"; since both use the same
 ENO reconstruction at limiter level, they ascribe the waves to the
 conservative fluxes at the material interface, "not related to
@@ -521,7 +521,7 @@ their consistent reconstruction or flux computation of mass and volume
 fraction creates mass spikes near the interface, up to $40\%$ in the second
 case (§5.1, Figs. 10–12).
 
-**Interface thickness at fixed grid.** Two chunk-5 sources run the same non-dimensional setup and
+**Interface thickness at fixed grid.** Two sources run the same non-dimensional setup and
 compare schemes on one grid. Chamarthi (2023a) (Ex. 4.16, Figs. 20–21) finds no noticeable spurious
 oscillations with the author's gradient-based schemes, and a material interface thinner with MIG4 than with
 MEG6 and TENO5. On $2600\times712$, more secondary instabilities appear at late times. Chamarthi (2023a) states that
@@ -624,7 +624,7 @@ qualitative claim with no reference comparison (Figs. 13–15).
   interfaces "even if run on a very fine mesh"; Trojak & Dzanic find the
   oscillations of their conservative DG "not visually noticeable" and
   expect them to reduce with resolution. The schemes differ (second-order
-  finite volumes against entropy-filtered $\mathbb P_3$ DG), so the
+  finite volumes against entropy-filtered $\mathbb P^3$ DG), so the
   statements are not recorded as a contradiction.
 - Duronio & Di Mascio's observed orders measure grid convergence of a
   solution with shocks and interfaces, not the design order of the
@@ -650,7 +650,7 @@ qualitative claim with no reference comparison (Figs. 13–15).
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §5.1, Fig. 1; §6.1 (arXiv v1).
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §4.4, Figs. 6–8; §4.6, Table 2, Figs. 15–18.
 - [Renac (2021)](/sources/renac-2021.md) — §7.3, Figs. 5–6; §7.5, Fig. 8 (arXiv v3).
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Ex. 5.8–5.11, Table 5.3 (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — Ex. 5.8–5.11, Table 5.3 (arXiv v1).
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §4, Ex. 10–11, Figs. 13–15.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2.5.3, Fig. 6; §3.1.3–3.1.4, Figs. 10–13; §3.4, Table 4, Figs. 20–30; §3.5, Figs. 31–33.
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §3.4, Table 3, Figs. 16–20.

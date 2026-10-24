@@ -5,7 +5,7 @@ description: "Steady inviscid Mach 1.4 flow through a channel of length 3 and he
 status: established
 aliases: [supersonic bump, supersonic channel bump, 4% bump, circular-arc bump channel]
 tags: [benchmark, finite-difference, dg, shock-tracking]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Supersonic flow over a circular-arc bump
@@ -34,6 +34,8 @@ x&=(1-s_2)R_{\mathrm b}\sin\theta+s_2\,(-0.5+s_1),\\
 y&=(1-s_2)\big(-b_{\mathrm b}+R_{\mathrm b}\cos\theta\big)+s_2,\qquad\theta=(2s_1-1)\Phi .
 \end{aligned}$$
 
+(with $\theta$ the page-local arc angle).
+
 The circle passes through the bump ends $(\pm a_{\mathrm b},0)$ and its top $(0,c_{\mathrm b})$
 because $R_{\mathrm b}=b_{\mathrm b}+c_{\mathrm b}$; with $a_{\mathrm b}=0.5$ and
 $c_{\mathrm b}=0.04$ these give $b_{\mathrm b}=3.105$, $R_{\mathrm b}=3.145$, and the map sends $s_2=0$ to the arc and
@@ -44,7 +46,7 @@ $s_2=1$ to the upper wall $y=1$ *(compiler check, not in the sources)*.
 | Source | Grid | Method | Run, output |
 |---|---|---|---|
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.5.3 | three blocks, interfaces at $x=\pm0.5$ (the bump ends), $160\times160$ points per block | fifth-order WCNS-MR finite differences with shock-capturing block closures | four-order residual drop; 30 pressure contours 0.458–1.478 (Fig. 13); $p$ along $y=0.4$ (Fig. 14) |
-| [Nguyen et al. (2024)](/sources/nguyen-2024.md) §3.5 | isoparametric elements of degree $k=4$, moved by optimal transport | HDG with artificial viscosity | illustration of the six steps of their adaptation algorithm (Fig. 1); no quantitative output |
+| [Nguyen et al. (2024)](/sources/nguyen-2024.md) §3.5 | isoparametric elements of degree $N=4$, moved by optimal transport | HDG with artificial viscosity | illustration of the six steps of their adaptation algorithm (Fig. 1); no quantitative output |
 
 Both sources state the same channel, bump and Mach number and cite earlier work for the
 case; neither prints $\gamma$ for it.

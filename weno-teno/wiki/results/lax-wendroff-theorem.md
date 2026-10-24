@@ -5,7 +5,7 @@ description: "The Lax–Wendroff theorem makes conservation in flux form, with c
 status: established
 aliases: [Lax–Wendroff convergence theorem, Lax–Wendroff consistency condition, conservation and convergence to weak solutions]
 tags: [finite-volume, finite-difference, dg]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Lax–Wendroff theorem
@@ -97,7 +97,7 @@ flux form. They show that the defect vanishes (§4.3):
   update, with $\mathsf d^n_i=O(h)$ under bounds on the first derivatives and on the face jumps
   that they call stronger than the TVB condition (Props. 2–3, App. A);
 - at faces between limited and unlimited cells of the a posteriori limiter when the two face
-  states differ by $O(h^{1+\beta})$, $\beta>0$, which justifies extending the troubled flag to
+  states differ by $O(h^{1+\beta_{\mathrm c}})$, $\beta_{\mathrm c}>0$ (page-local, the source's $\beta$), which justifies extending the troubled flag to
   neighbours instead of correcting the fluxes of unflagged cells (Prop. 4;
   [MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md));
 - across quasi-1D contacts with velocity and pressure constant up to terms $O(h^{1+\epsilon_{\mathrm c}})$, $\epsilon_{\mathrm c}>0$ (Eq. (63); page-local exponent), for one

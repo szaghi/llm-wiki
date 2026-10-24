@@ -5,7 +5,7 @@ description: "A gas or vapour bubble in high-pressure liquid next to a rigid wal
 status: established
 aliases: [cavitation bubble collapse near a wall, CBNW, near-wall bubble collapse, vapour bubble collapse near a wall, gas bubble collapse near a wall, Lauer bubble collapse]
 tags: [benchmark, multiphase, interface-capturing, cavitation]
-timestamp: 2026-10-23T19:51:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Bubble collapse near a wall
@@ -72,8 +72,8 @@ Lauer et al. to the thermal non-equilibrium assumption of the latter (§4.5).
 [Wilfong et al. (2026)](/sources/wilfong-2026.md) run two bubble-collapse cases in
 [MFC](/software/mfc.md) 5.0 that are not this benchmark, because no wall is present. A
 spatially homogeneous ("0D") collapse of monodisperse sub-grid air bubbles of equilibrium
-radius 5 mm at liquid-to-bubble pressure ratio $p_\infty/p_{\mathrm b}=1427$ (page-local
-symbols) tests time stepping, not interface capture: the unsplit scheme needs
+radius 5 mm at liquid-to-bubble pressure ratio $p_{\mathrm l}/p_{\mathrm b}=1427$ (page-local
+symbols, the paper's $p_\infty/p_{\mathrm b}$, not the stiffened-gas constant) tests time stepping, not interface capture: the unsplit scheme needs
 $\Delta t=0.008$ μs and fails at $0.8$ μs with a negative radius, while
 [Strang splitting](/methods/operator-splitting.md) with an adaptive embedded third-order
 Runge–Kutta sub-step runs at $0.8$ μs (§4.2.3, Fig. 13). A shock-driven collapse of a cloud of

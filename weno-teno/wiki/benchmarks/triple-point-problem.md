@@ -5,7 +5,7 @@ description: "Two-dimensional three-state Riemann problem on [0,7]×[0,3] in whi
 status: established
 aliases: [tri-point problem, triple point shock interaction, three-state Riemann problem]
 tags: [benchmark, low-dissipation, multiphase, teno]
-timestamp: 2026-10-23T15:02:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Triple-point problem
@@ -23,7 +23,7 @@ multicomponent discretization.
 
 ## Data
 
-| Region | [Liang et al. (2022)](/sources/liang-2022.md) §4.8: $(\rho,v_1,v_2,p)$ | [Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.7: component densities, $v$, $p$ |
+| Region | [Liang et al. (2022)](/sources/liang-2022.md) §4.8: $(\rho,v_1,v_2,p)$ | [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) Ex. 5.7: component densities, $v$, $p$ |
 |---|---|---|
 | $x<1$ | $(1,0,0,1)$ | component 1, density $1$, $p=1$ |
 | $x>1$, $y>1.5$ | $(0.125,0,0,0.1)$ | component 1, density $0.125$, $p=0.1$ |
@@ -71,7 +71,7 @@ unstructured dual-stencil-selection TENO4-D to TENO7-D against
 the two-material version after Galera et al., with the densities and
 pressures of the table, $\gamma=1.5$ in the left strip and the upper
 right and $1.4$ in the lower right, $c_v=1$ and $c_p=\gamma$ for both
-species, slip adiabatic walls on all sides, $\mathbb P_3$ DG on
+species, slip adiabatic walls on all sides, $\mathbb P^3$ DG on
 $2800\times1200$ uniform quadrilaterals, density at $t=1,\dots,6$.
 
 [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) Ex. 4.13 run the
@@ -169,7 +169,7 @@ proved bounds are not restrictive (Fig. 21; see
 # Citations
 
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4.8, Fig. 20.
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Ex. 5.7, Table 5.2 (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — Ex. 5.7, Table 5.2 (arXiv v1).
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.17, Eq. (84), Fig. 23 (arXiv v2).
 - [Paula, Adami & Adams (2023)](/sources/paula-2023.md) — §7.5, Figs. 17–18.
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.8, Figs. 18–20.

@@ -5,7 +5,7 @@ description: "Wang, Don, Kurganov and Liu tighten the one-sided speeds of the an
 status: established
 aliases: [adaptive diffusion CURH flux, CURH flux, central-upwind Rankine–Hugoniot flux, NEW A-WENO flux]
 tags: [central-scheme, numerical-flux, alternative-weno, low-dissipation]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-24T05:33:00Z
 ---
 
 # Adaptive-diffusion central-upwind Rankine–Hugoniot flux
@@ -34,7 +34,7 @@ $i-2,\dots,i+3$ (§2, Eqs. (2)–(4)):
 
 $$(f_{xx})_{i+1/2}=\frac{-5f_{i-2}+39f_{i-1}-34f_i-34f_{i+1}+39f_{i+2}-5f_{i+3}}{48\,\Delta x^2},\qquad (f_{xxxx})_{i+1/2}=\frac{f_{i-2}-3f_{i-1}+2f_i+2f_{i+1}-3f_{i+2}+f_{i+3}}{2\,\Delta x^4}.$$
 
-Wang et al. state that in finite differences a standard finite-volume flux is limited to
+Wang et al. (2023b) state that in finite differences a standard finite-volume flux is limited to
 second order, the high order coming from this Taylor correction (§1), and that A-WENO
 schemes had so far used the Rusanov flux or its lower-dissipation adaptive-diffusion central
 variant (§1).
@@ -85,6 +85,22 @@ an energy-component Rankine–Hugoniot speed clipped between $\min\lvert v^\pm\r
 $\max(\lvert v^\pm\rvert+c^\pm)$ (App. A,
 Eqs. (A1)–(A3)); see [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md).
 
+**A sensor-driven Rusanov analogue.** The same group's
+[Wang et al. (2023a)](/sources/wang-2023.md) keep the Rusanov form inside fifth-order A-WENO
+(with affine-invariant Z-weights, and citing Wang, Don, Garg & Kurganov for the fifth-order
+interpolation, §2) and reduce its coefficient instead by a feature sensor: the LLF-M flux uses
+$a^{\mathrm M}_{i+1/2}=a_{i+1/2}\max\{\mathsf k_i,\mathsf k_{i+1}\}$ with
+$\mathsf k_i=\max\big(\mathsf k_{\min},1-\exp(-\delta_{\mathrm F}\varphi_{\mathrm F,i})\big)$,
+$\mathsf k_{\min}=0.1$, $\delta_{\mathrm F}=10^5$, and $\varphi_{\mathrm F,i}$ a product of the
+[Ducros ratio](/definitions/ducros-shock-sensor.md) and normalized second differences of
+pressure and density (§3.2, Eqs. (18)–(21); page-local $a^{\mathrm M}$, $\mathsf k_i$,
+$\delta_{\mathrm F}$, $\varphi_{\mathrm F}$ as on the
+[Lax–Friedrichs page](/methods/lax-friedrichs-flux.md), which gives the details). Both routes bring the smooth-region
+coefficient down to the order of one tenth of an acoustic bound, the OLD flux by capping it at
+$0.1\max(\lvert v^\pm\rvert+c^\pm)$ (or less), LLF-M by flooring the factor at $\mathsf k_{\min}=0.1$; the detectors
+differ (relative jumps and Rankine–Hugoniot speeds here, a flow-feature sensor there), and
+Wang et al. (2023a) do not compare the two fluxes.
+
 ## Numerical evidence
 
 Euler, $\gamma=1.4$ (Examples 1–8) or $5/3$ (Example 9), SSP-RK3 at CFL 0.45, all
@@ -119,3 +135,4 @@ regularizations $10^{-10}$, $c_{\varsigma}=0.1$ (§4).
 
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — §1, §2 (Eqs. (2)–(4)), §3.1 (Eqs. (5)–(13)), §3.2 (Eqs. (14)–(18)), §4 (Exs. 1–9, Table 1), App. A.
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §1 (Rankine–Hugoniot speeds and dissipation switch as dissipation-reduction routes).
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §2 (A-WENO with the interpolation of Wang, Don, Garg & Kurganov), §3.2 (Eqs. (18)–(21), LLF-M flux).

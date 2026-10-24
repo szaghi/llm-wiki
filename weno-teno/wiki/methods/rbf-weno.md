@@ -4,8 +4,8 @@ title: "RBF-based WENO"
 description: "RBF-based WENO and TENO replace polynomial candidates by radial-basis-function interpolants: Jeong, Yang and Yoon's WENO-G fits the Gaussian shape parameter to reach sixth order on five points with RBF ideal weights; Liang and Fu's Gaussian-RBF TENO selects one target stencil by TENO flags, needs no linear weights and adapts the shape parameter to the local scale."
 status: established
 aliases: [RBF-WENO, WENO-G, Gaussian RBF WENO, radial basis function WENO, RBF-ENO, non-polynomial TENO, Gaussian RBF TENO]
-tags: [weno, teno, reconstruction, finite-difference]
-timestamp: 2026-10-23T11:06:00Z
+tags: [weno, teno, reconstruction, finite-difference, rbf]
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # RBF-based WENO
@@ -194,8 +194,8 @@ WENO5-Z.)*
   Jeong et al. point out (Remark 2.1; [scale invariance](/properties/scale-invariance.md)); Liang & Fu do not
   discuss it. They state that as $\Delta x\to0$ the scheme "will degenerate to the classical polynomial
   reconstruction" (§3.2).
-- Liang & Fu write the six flag patterns as products ("$\delta_1\delta_2=0$, $\delta_0=1$") that must mean
-  "$\delta_1=\delta_2=0$", and number the patterns ($\hat f^n$) and the fluxes of Eq. (25) ($R'_n$) in
+- Liang & Fu write the six flag patterns as products ("$\delta_1\delta_2=0$, $\delta_0=1$"), which
+  agree with the stencils of their Fig. 2 only when read as "$\delta_1=\delta_2=0$", and number the patterns ($\hat f^n$) and the fluxes of Eq. (25) ($R'_n$) in
   different orders for the two four-point stencils; the mapping is fixed only by the stencils of Fig. 2.
 - Eq. (27) gives $\lambda_{\mathrm s}^2<0$ whenever $f^{(5)}$ and $f^{(3)}$ have the same sign, which
   turns the Gaussian into a growing exponential of $x^2$; likewise the fitted exponent $\nu_k^2=f''/f+O(\Delta x)$ of the

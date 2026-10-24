@@ -5,7 +5,7 @@ description: "Two-dimensional Navier–Stokes shock tube of Daru and Tenaud in a
 status: established
 aliases: [Daru–Tenaud viscous shock tube, viscous shock-tube problem, shock–boundary-layer interaction in a shock tube]
 tags: [benchmark, low-dissipation, finite-difference, dg]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Viscous shock tube (Daru–Tenaud)
@@ -33,7 +33,7 @@ the tube is computed, with a symmetry condition on top.
 | $\gamma$, viscosity | $\gamma=7/5$, $\mu=1/1000$, $\mathrm{Re}=1000$ | $\mu=10^{-3},\,5\cdot10^{-4},\,2\cdot10^{-4},\,10^{-4}$ |
 | boundaries | walls, symmetry on top | no-slip adiabatic walls, slip adiabatic top |
 | final time | $t=1$ (also $t=0.5$ in Chamarthi 2023a) | $t=1$ |
-| discretization | $1280\times640$ points, conservative finite differences | $\mathbb P_4$ flux reconstruction, $800\times400$ elements |
+| discretization | $1280\times640$ points, conservative finite differences | $\mathbb P^4$ ($N=4$) flux reconstruction, $800\times400$ elements |
 | reference | grid-converged $4000\times2000$ solution of the cited study | Guermond et al., qualitative |
 
 **Reynolds number 200.** Three further sources run the same states on

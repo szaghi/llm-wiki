@@ -5,7 +5,7 @@ description: "Two-dimensional ideal-MHD test in which a weak cylindrical magneti
 status: established
 aliases: [field loop advection, advection of a magnetic field loop, current loop advection, Gardiner–Stone field loop]
 tags: [benchmark, mhd, relativistic, low-dissipation]
-timestamp: 2026-10-23T20:39:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Magnetic field-loop advection
@@ -129,7 +129,7 @@ $10^{-3}$ is also run (§4.5, Fig. 22).
 
 **Globally divergence-free entropy-stable DG.** Liu et al. (2025c) run
 the loop to $t=2$ on $240\times120$ cells, periodic, without any limiter,
-with their nodal DG on $\mathbb Q^3$ cells ($k=2$) for the conservative MHD
+with their nodal DG on $\mathbb Q^3$ cells ($N=3$; the paper's face degree $k=2$) for the conservative MHD
 system, whose face-evolved normal fields and least-squares interior
 reconstruction keep the nodal field divergence-free and normal-continuous
 (see [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)),

@@ -5,7 +5,7 @@ description: "WENO-AO nonlinearly hybridizes one large central high-order stenci
 status: established
 aliases: [WENO-AO, combination of ENO and WENO, adaptive-order WENO, WENO-AO-(5,3), WENO-AO-(7,3), WENO-AO-(9,3), WENOAO5]
 tags: [weno, cweno, reconstruction, finite-difference]
-timestamp: 2026-10-23T12:03:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # WENO-AO (adaptive-order WENO)
@@ -28,7 +28,7 @@ Wang et al. (2021).
 
 Balsara et al. (2024, App. D, Eqs. (D.1)–(D.2)) rewrite the AO(5,3) weights of the original paper. Let
 $\beta_{\mathrm H}$ be the indicator of the large stencil, $\beta_k$, $k=0,1,2$, those of the small
-ones, $d_{\mathrm H}$ and $d_k$ the linear weights (page-local subscript $\mathrm H$), and
+ones, $d_{\mathrm H}$ and $d_k$ the linear weights (page-local subscript $\mathrm H$; the global indicator $\tau$ below carries no point-count subscript), and
 
 $$\tau=\tfrac13\big(|\beta_{\mathrm H}-\beta_0|+|\beta_{\mathrm H}-\beta_1|+|\beta_{\mathrm H}-\beta_2|\big).$$
 
@@ -70,9 +70,9 @@ the sources: $2\times0.01125+0.1275+0.85=1$.)*
 Zhao, Ji, Shyy & Xu (2023, §3.4, Eqs. (28)–(30); arXiv v1 read) reconstruct with the same structure,
 which they call "a combination of ENO and WENO methodology", in compact gas-kinetic schemes that evolve
 cell averages and cell-averaged gradients ([gas-kinetic schemes](/methods/gas-kinetic-scheme.md)). With
-the large-stencil polynomial $P$ and $n$ small-stencil polynomials $q_k$ (page-local),
+the large-stencil polynomial $P$ and $n$ small-stencil polynomials $q_k$ and the reconstruction $p^{\mathrm{AO}}$ (page-local),
 
-$$R(x)=\sum_{k=1}^n\omega_kq_k(x)+\omega_0\Big(\frac{1+C}{C}P(x)-\sum_{k=1}^n\frac{C_k}{C}q_k(x)\Big),\qquad
+$$p^{\mathrm{AO}}(x)=\sum_{k=1}^n\omega_kq_k(x)+\omega_0\Big(\frac{1+C}{C}P(x)-\sum_{k=1}^n\frac{C_k}{C}q_k(x)\Big),\qquad
 d_0=\frac{C}{1+C},\quad d_k=\frac{C_k}{1+C},$$
 
 $\sum_kC_k=1$, with $C=5$ and $C_k=1/n$ (page-local constants), and WENO-Z weights

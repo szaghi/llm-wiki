@@ -4,8 +4,8 @@ title: "Flux vector splitting"
 description: "Flux vector splitting writes the flux as a sum of parts whose Jacobians have non-negative and non-positive eigenvalues, so each part is upwinded on its own; the page gives the Lax–Friedrichs, Steger–Warming and van Leer–Hänel splittings, their use in Active Flux and finite differences, and the advective–pressure splittings of all-Mach schemes."
 status: established
 aliases: [FVS, flux-vector splitting, Steger–Warming splitting, upwind flux splitting, van Leer splitting, van Leer–Hänel splitting, Toro–Vázquez splitting]
-tags: [numerical-flux, finite-difference, finite-volume, characteristic, bound-preserving]
-timestamp: 2026-10-23T20:39:00Z
+tags: [numerical-flux, flux-splitting, finite-difference, finite-volume, characteristic, bound-preserving]
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Flux vector splitting

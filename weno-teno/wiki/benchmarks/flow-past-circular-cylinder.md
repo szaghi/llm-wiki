@@ -5,7 +5,7 @@ description: "Cylinder flows in four regimes: supersonic and hypersonic inviscid
 status: established
 aliases: [cylinder flow, supersonic cylinder, bow shock over a cylinder, cylinder wake at Re 40, flow over a cylinder]
 tags: [benchmark, limiting, immersed-boundary, flux-reconstruction]
-timestamp: 2026-10-23T20:39:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Flow past a circular cylinder
@@ -33,7 +33,7 @@ Strouhal number.
 Ex. 4.6, after Jiang & Shu, map $(\xi,\eta)\in[0,1]^2$ to
 $x=-\big(R_x-(R_x-0.5)\xi\big)\cos\big(\theta(2\eta-1)\big)$,
 $y=\big(R_y-(R_y-0.5)\xi\big)\sin\big(\theta(2\eta-1)\big)$ with
-$R_x=3$, $R_y=6$, $\theta=\pi/2$; inflow $(\rho,v_1,v_2,p)=(1,\,3\sqrt{1.4},\,0,\,1)$,
+$R_x=3$, $R_y=6$, $\theta=\pi/2$ (page-local computational coordinates $\xi$, $\eta$ and angle $\theta$); inflow $(\rho,v_1,v_2,p)=(1,\,3\sqrt{1.4},\,0,\,1)$,
 inflow boundary at $\xi=0$, reflective wall at $\xi=1$, outflow at
 $\eta=0,1$. The wall $\xi=1$ is the half circle of radius 0.5, so $D=1$,
 and the inflow speed $3\sqrt{1.4}$ is Mach 3 for $\rho=p=1$, $\gamma=1.4$
@@ -292,7 +292,7 @@ thermochemistry library.
 
 | Source | Method | $M$ | Domain and grid | Measures |
 |---|---|---|---|---|
-| [Funada & Imamura (2023)](/sources/funada-2023.md) §3.3 | [flux reconstruction](/methods/flux-reconstruction.md) of order $k$ on hierarchical Cartesian grids with sharp-interface [immersed boundary](/methods/immersed-boundary-method.md) conditions (LO, HO-i/f, HO-i/c, HO-e), SLAU flux, implicit MFGS | 0.3 | $200\times200$ square, $D=1$; $\Delta x_{\min}=0.0977,0.0488,0.0244$; Riemann far field | $L_2$ entropy error, surface $C_p$, drag |
+| [Funada & Imamura (2023)](/sources/funada-2023.md) §3.3 | [flux reconstruction](/methods/flux-reconstruction.md) of order $N+1$ (their $k$) on hierarchical Cartesian grids with sharp-interface [immersed boundary](/methods/immersed-boundary-method.md) conditions (LO, HO-i/f, HO-i/c, HO-e), SLAU flux, implicit MFGS | 0.3 | $200\times200$ square, $D=1$; $\Delta x_{\min}=0.0977,0.0488,0.0244$; Riemann far field | $L_2$ entropy error, surface $C_p$, drag |
 | [Wei et al. (2023)](/sources/wei-2023.md) §7.2 | second-order cell-centred finite volume with weighted least-squares gradients and five boundary treatments, including their ghost-cell constraint (WLSQ-GCC); LU-SGS, CFL 20 | 0.38 | radius 0.5, far field at 20 radii, $160\times40$ quadrilateral O-grid, 3000 steps | Mach and entropy contours, $C_p$, windward–leeward pressure difference, cost |
 
 **Order of immersed walls.** Funada & Imamura's four constructions
@@ -301,8 +301,8 @@ $L_2$ entropy error plotted against $\sqrt{N_{\mathrm{DoF}}}$ the slopes are
 "much steeper" than the design order; the authors attribute this to the
 error concentrating near the wall on these hierarchical grids and
 re-plot against $1/\Delta x_{\min}$, on which HO-i/c (wall curvature
-imposed) and HO-e (tangential velocity extrapolated) are of order $k$
-and LO and HO-i/f are not (Figs. 17–19). At $k=3$, $\Delta x_{\min}=0.0244$
+imposed) and HO-e (tangential velocity extrapolated) are of order $N+1$
+and LO and HO-i/f are not (Figs. 17–19). At $N=2$ (their $k=3$), $\Delta x_{\min}=0.0244$
 the drag coefficients are $5.0\times10^{-2}$ (LO), $1.2\times10^{-2}$
 (HO-i/f), $9.1\times10^{-5}$ (HO-i/c) and $4.5\times10^{-4}$ (HO-e); the
 stagnation $C_p$ of HO-i/c and HO-e is closer to the theoretical 1.023,
@@ -336,16 +336,16 @@ ill-conditioning (§7.2). See
 
 Both sources run $\mathrm{Re}=40$ based on the diameter. Kou et al. place
 the cylinder in $[-30D,50D]\times[-30D,30D]$ with uniform elements in
-$[-D,D]^2$ of size $0.03D$ ($P=3$, 532,576 DOFs), $0.015D$ ($P=2$,
-915,525) and $0.01D$ ($P=2$, 1,476,000), penalization parameter equal to
+$[-D,D]^2$ of size $0.03D$ ($N=3$, their $P$; 532,576 DOFs), $0.015D$ ($N=2$,
+915,525) and $0.01D$ ($N=2$, 1,476,000), penalization parameter equal to
 the time step, no-slip adiabatic wall and characteristic far field. They
 compare with Dennis & Chang (2.35, 53.8°, 1.52), Fornberg (2.24, 55.6°,
 1.50) and Choi et al. (2.21, 53.6°, 1.49) as printed in their Table 1,
 and quote a literature range of 1.48 to 1.59 for the incompressible drag
 (App. D). Their pressure coefficient agrees with the body-fitted run,
 the wall vorticity less well, since only the surface velocity is
-penalized. Local $p$-refinement (P1 far field, P2 buffer, P3 within
-$0.25D$ of the wall) gives results very close to uniform P3 with 148,296
+penalized. Local $p$-refinement ($N=1$ far field, $N=2$ buffer, $N=3$ within
+$0.25D$ of the wall) gives results very close to uniform $N=3$ with 148,296
 DOFs, 0.278 of 532,576 (see [hp-adaptation](/methods/hp-adaptation.md)).
 See [immersed-boundary methods](/methods/immersed-boundary-method.md) and
 [flux reconstruction](/methods/flux-reconstruction.md).
@@ -374,7 +374,7 @@ $\mathrm{Re}=185$ is shown in Fig. 12. No table is printed.
 **Compressible wakes.** Kou et al. App. D run the compressible
 cylinder benchmark of Canuto & Taira at $M=0.1$ to $0.5$, $\mathrm{Re}=40$
 (steady, $h=0.015D$) and $\mathrm{Re}=100$ (unsteady, $h=0.02D$, wake
-refined), with $P=2$ in $[-20D,40D]\times[-20D,20D]$: mean drag, wake
+refined), with $N=2$ in $[-20D,40D]\times[-20D,20D]$: mean drag, wake
 geometry, maximal lift and Strouhal number agree with that reference and
 the trend with Mach number is captured (Fig. D.25).
 

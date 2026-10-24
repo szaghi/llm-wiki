@@ -5,7 +5,7 @@ description: "Constrained transport stores face averages of the normal magnetic 
 status: established
 aliases: [CT, staggered constrained transport, Evans–Hawley constrained transport, upwind constrained transport, UCT, UCT-GFORCE, Gardiner–Stone constrained transport, staggered mesh MHD, MPACT]
 tags: [mhd, finite-volume, relativistic, numerical-flux]
-timestamp: 2026-10-23T20:43:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Constrained transport for the induction equation
@@ -13,8 +13,8 @@ timestamp: 2026-10-23T20:43:00Z
 **Constrained transport** (CT) discretizes the induction equation
 $\partial_tB+\nabla\times\mathcal E=0$, with the electric field
 $\mathcal E=-v\times B$ of ideal MHD plus $\eta_{\mathrm m}\nabla\times B$
-in resistive MHD ($\mathcal E$ and the resistivity $\eta_{\mathrm m}$
-page-local; $\mathcal E$ is not the vortex strength of registry §10, and
+in resistive MHD ($\mathcal E$ and the resistivity $\eta_{\mathrm m}$ as in
+registry §10; $\mathcal E$ is not the vortex strength, and
 the electric field is written $\mathcal E$ as on the
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
 page), on a staggered layout: each component of $B$ is stored as an average
@@ -98,13 +98,13 @@ faces.
 
 **Multidimensional Lax–Friedrichs** (Teissier et al., §3.2.3, Eqs.
 (50)–(51), after Balsara). At the edge $(i-1/2,j-1/2,k)$,
-$$\bar{\mathcal E}_3=\tfrac14\big(\bar{\mathcal E}^{++}_3+\bar{\mathcal E}^{+-}_3+\bar{\mathcal E}^{-+}_3+\bar{\mathcal E}^{--}_3\big)+\tfrac{S}{2}\big(\hat B^{+}_2-\hat B^{-}_2\big)-\tfrac{S}{2}\big(\hat B^{+}_1-\hat B^{-}_1\big),$$
+$$\bar{\mathcal E}_3=\tfrac14\big(\bar{\mathcal E}^{++}_3+\bar{\mathcal E}^{+-}_3+\bar{\mathcal E}^{-+}_3+\bar{\mathcal E}^{--}_3\big)+\tfrac{a_{\mathrm e}}{2}\big(\hat B^{+}_2-\hat B^{-}_2\big)-\tfrac{a_{\mathrm e}}{2}\big(\hat B^{+}_1-\hat B^{-}_1\big),$$
 with the four corner states of the edge, the two edge-reconstructed values
 of each tangential face field, and
-$S=\max\big(a^{(1)}_{i-1/2,j,k},a^{(1)}_{i-1/2,j-1,k},a^{(2)}_{i,j-1/2,k},a^{(2)}_{i-1,j-1/2,k}\big)$
+$a_{\mathrm e}=\max\big(a^{(1)}_{i-1/2,j,k},a^{(1)}_{i-1/2,j-1,k},a^{(2)}_{i,j-1/2,k},a^{(2)}_{i-1,j-1/2,k}\big)$
 the largest of the four adjacent face speeds of the one-dimensional
 [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md), reused for
-efficiency (page-local $S$; the authors write that one should ideally take
+efficiency (page-local edge speed $a_{\mathrm e}$; the authors write that one should ideally take
 the maximum speed among the four reconstructed states). The corner fields are built in
 steps: point values of $-v\times B$ from the face point values, conversion
 to face averages, the resistive part added when $\eta_{\mathrm m}>0$, WENO
@@ -150,7 +150,7 @@ $$\mathcal E_3=\tfrac14\big(\mathcal E_3^{\mathrm N}+\mathcal E_3^{\mathrm S}+\m
 then turned into a line average by adding $\tfrac1{24}$ of the undivided
 second difference along the edge (Eq. (53)). *(Compiler check, not in the
 sources: this has the weights of Teissier et al.'s multidimensional
-Lax–Friedrichs average above with $S=1$, the light speed, which bounds the
+Lax–Friedrichs average above with $a_{\mathrm e}=1$, the light speed, which bounds the
 Maxwell wave speeds; the four averaged values are edge reconstructions of
 face values, not corner states.)* The reconstruction now starts from face values;
 their earlier second-order scheme started from cell centres with linear
@@ -184,8 +184,8 @@ $\big[(B_1)_{i+1,j}+(B_1)_{i+1,j+1}-(B_1)_{i,j}-(B_1)_{i,j+1}\big]/(2\Delta x)+\
 
 **Unstaggered vector-potential variant** (Dematté et al., §3.3.2, Eqs.
 (48)–(51), adapting Rossmanith's MPACT). Only the out-of-plane vector
-potential $A_3$ (page-local) is kept, at cell centres, advected by
-$\partial_tA_3+v_1\partial_xA_3+v_2\partial_yA_3=0$ with Rossmanith's
+potential $\mathcal A_3$ (registry §10, MHD) is kept, at cell centres, advected by
+$\partial_t\mathcal A_3+v_1\partial_x\mathcal A_3+v_2\partial_y\mathcal A_3=0$ with Rossmanith's
 limited upwind wave-propagation method, and $B_1$, $B_2$ are recomputed
 from it by central differences, so that the central (cell-centred)
 divergence vanishes (Eq. (50)); motivated by adaptive meshes and
@@ -281,12 +281,12 @@ divergence (§3.5, Eq. (55); initial fields likewise, Eqs. (76)–(77)).
   $\partial_tB_1=-\partial_y\mathcal E_3$ and
   $\partial_tB_2=+\partial_x\mathcal E_3$; Eq. (39) prints both signs
   reversed, which leaves the divergence preservation intact. Eqs. (49) and
-  (51) print $B_2=+(A_{3,i+1,j}-A_{3,i-1,j})/(2\Delta x)$; from
-  $B=\nabla\times(A_3e_3)$, $B_2=-\partial_xA_3$, and only with the minus sign
+  (51) print $B_2=+(\mathcal A_{3,i+1,j}-\mathcal A_{3,i-1,j})/(2\Delta x)$; from
+  $B=\nabla\times(\mathcal A_3e_3)$, $B_2=-\partial_x\mathcal A_3$, and only with the minus sign
   does the central divergence of Eq. (50) vanish identically (with the
-  printed sign it equals $2\,\delta_x\delta_yA_3/(4\Delta x\Delta y)$, $\delta$
+  printed sign it equals $2\,\delta_x\delta_y\mathcal A_3/(4\Delta x\Delta y)$, $\delta$
   central differences) *(compiler check, not in the sources)*. The text
-  also writes "$A=\nabla\times B$" for $B=\nabla\times A$.
+  also writes "$A=\nabla\times B$" for $B=\nabla\times\mathcal A$.
 - **Scope of the high-order evidence.** Teissier et al. treat only smooth
   subsonic flows and state that shocks need flattening, possibly with
   positivity preservation, which they do not implement (§1, §5); their
@@ -294,7 +294,7 @@ divergence (§3.5, Eq. (55); initial fields likewise, Eqs. (76)–(77)).
   loss) rests on the smooth vortex. Berta et al. reach their shock tests
   with an order-reduction fallback
   ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
-- **Speeds and ghost data.** Teissier et al.'s edge speed $S$ reuses the
+- **Speeds and ghost data.** Teissier et al.'s edge speed $a_{\mathrm e}$ reuses the
   one-dimensional face speeds instead of the maximum over the four edge
   states, a choice the authors state is made for efficiency (§3.2.3); their
   Lax–Friedrichs speed estimate is valid only for ideal MHD and is replaced

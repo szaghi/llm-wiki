@@ -5,7 +5,7 @@ description: "A WENO limiter replaces the DG polynomial of a troubled cell by a 
 status: established
 aliases: [simple WENO limiter, compact WENO limiter, improved simple WENO limiter, WENO limiter for RKDG, Qiu–Shu WENO limiter, HWENO limiter, TENO limiter for RKDG]
 tags: [dg, weno, teno, limiting, characteristic]
-timestamp: 2026-10-23T20:29:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # WENO limiters for discontinuous Galerkin
@@ -346,7 +346,7 @@ the second point stated without figure). Comparisons are visual.
 ## Evidence
 
 Du, Shu & Zhong test the 2D Euler equations ($\gamma=1.4$) with SSP-RK3,
-CFL 0.3 ($N=1$) and 0.18 ($N=2$, 3; $\Delta t\sim h^{4/3}$ in $N=3$ accuracy
+CFL 0.3 ($N=1$) and 0.18 ($N=2$, 3; $\Delta t\sim\Delta x^{4/3}$, $\Delta x$ the mesh size, in $N=3$ accuracy
 tests), the KXRCF indicator with threshold $C_k$ (page-local) tuned per
 test, and a positivity-preserving limiter for $N=2$ on point clouds (§4).
 The numerical flux is not stated. The claims are numerical; no theorem is
@@ -356,7 +356,7 @@ given.
   ($N=1$), 90.85% ($N=2$) and 81.73% ($N=3$) of cells are flagged on the
   coarsest mesh of a sine density wave, both limiters keep order $N+1$ and
   the error level of the unlimited DG; the improved one perturbs it less,
-  e.g. $N=1$, $h=2\pi/10$: $L^2$ error $2.46\times10^{-2}$ (improved),
+  e.g. $N=1$, mesh size $2\pi/10$: $L^2$ error $2.46\times10^{-2}$ (improved),
   $3.87\times10^{-2}$ (original), $5.63\times10^{-3}$ (unlimited) (Ex. 4.1,
   Tables 4.1–4.3). The same holds on the
   [isentropic vortex](/benchmarks/isentropic-vortex.md) (Ex. 4.2) and on
@@ -389,7 +389,6 @@ given.
   [Cui, Ding & Wu (2024)](/sources/cui-2024.md) the Qiu–Shu WENO limiter
   (Exs. 3–5): the WENO limiter controls oscillations, the scaling limiter
   bounds.
-- [Huang et al. (2025a)](/sources/huang-2025.md) — §1; §3.1 Eq. (11); §3.2–3.3 Eqs. (15)–(25); §4 Eqs. (26)–(36); §5 Tables 1–4, Figs. 1–8.
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) (§3.1.3, arXiv v1) apply
   the Hermite WENO limiter of Zhao and Qiu to the first moments of
   KXRCF-flagged cells of a finite-volume Hermite WENO scheme for
@@ -428,6 +427,18 @@ given.
 - Du, Shu & Zhong list the a posteriori subcell finite-volume limiters of
   Dumbser and coworkers as another class (§1;
   [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
+
+- [Cao et al. (2026)](/sources/cao-2026.md) group WENO and simple WENO
+  limiters with the TVB, moment and MP limiters that modify KXRCF-flagged
+  cells after every Runge–Kutta stage, and fault WENO and MP limiters for
+  their wide stencils, against which their [COS(DG)](/methods/cos-dg.md)
+  post-processing uses only the two face neighbours (§1, Property 2.1). In
+  their comparisons the Qiu–Shu WENO limiter and the simple WENO limiter of
+  Zhong & Shu, flagged by KXRCF, are among seven limiters whose results are
+  taken from Zhu, Cheng & Qiu's 2013 comparison; third-order COS(DG) gives
+  sharper non-oscillatory profiles on a strong single shock, the Lax,
+  Woodward–Colella and Shu–Osher problems and 2D Burgers (Figs. 1, 6, 8,
+  10, 11, 13). The comparison is visual.
 
 - **Compact stencils.** Chen & Fu contrast their face-neighbour stencil
   with the RKDG WENO and TENO limiters of Qiu & Shu and Huang & Fu, whose
@@ -530,3 +541,5 @@ given.
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — arXiv v1: §3.1.3 (Hermite WENO limiter on first moments).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.1–2.4, Eqs. (2)–(34); §3.1, Table 1; §3.5–3.8; §4; Appendix B, Tables B.3–B.4.
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §1; §2, Eq. (3); §5.1–5.7, Eqs. (21)–(69); §6–7, Eqs. (70)–(75), Algorithm 1, Figs. 2–3; §9, Table 1, Figs. 5–25; §10.
+- [Cao et al. (2026)](/sources/cao-2026.md) — §1; §2.1 (Property 2.1); §6, Figs. 1, 6, 8, 10, 11, 13.
+- [Huang et al. (2025a)](/sources/huang-2025.md) — §1; §3.1 Eq. (11); §3.2–3.3 Eqs. (15)–(25); §4 Eqs. (26)–(36); §5 Tables 1–4, Figs. 1–8.

@@ -5,7 +5,7 @@ description: "Ideal and relativistic MHD robustness test in which a strong plana
 status: established
 aliases: [shock–cloud interaction, cloud–shock interaction, Dai–Woodward shock–cloud problem, magnetized cloud–shock interaction]
 tags: [benchmark, mhd, relativistic, positivity]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # MHD shock–cloud interaction
@@ -75,7 +75,7 @@ this is the reading recorded under Qualifications.
 ## Runs and findings
 
 **Positivity-preserving entropy filtering in DG.** Dzanic & Witherden
-run nodal DG / flux reconstruction at $\mathbb P_2$ on $400^2$ elements
+run nodal DG / flux reconstruction at $\mathbb P^2$ on $400^2$ elements
 (with respect to $[0,1]^2$), $\Delta t=4\times10^{-6}$, with their
 [entropy filter](/methods/entropy-filtering.md): the strong
 discontinuities are resolved without observable spurious oscillations,

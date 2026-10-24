@@ -8,7 +8,7 @@ authors: [Allegrini P., Vignal M.H.]
 year: 2025
 venue: "SIAM J. Sci. Comput. 47:A268-A299"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2025_Crossref_SIAM_Journal_on_Scientific_Computing_Allegrini_Study_of_a_New_Low-Oscillating_Second-Order_All-Mach_Number.pdf"
-tags: [all-mach, asymptotic-preserving, imex, finite-volume, flux-splitting, low-mach]
+tags: [all-mach, asymptotic-preserving, imex, finite-volume, flux-splitting]
 timestamp: 2026-10-23T20:29:00Z
 ---
 
@@ -163,7 +163,7 @@ unclear volume. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 10 (2026-10-23). This source is cited on:
+Chunk 10 (2026-10-23), cited further in chunk 11 (2026-10-24). This source is cited on:
 
 * [Asymptotic preservation](/properties/asymptotic-preservation.md)
 * [Flux vector splitting](/methods/flux-vector-splitting.md)

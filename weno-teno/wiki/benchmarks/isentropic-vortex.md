@@ -5,7 +5,7 @@ description: "Smooth exact solution of the Euler equations, an isentropic vortex
 status: established
 aliases: [isentropic vortex advection, isentropic vortex evolution, vortex convection, steady isentropic vortex]
 tags: [benchmark, weno, dg, entropy-stable, finite-volume]
-timestamp: 2026-10-23T20:39:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Isentropic vortex
@@ -15,14 +15,14 @@ compressible Euler equations: a vortex with Gaussian-type velocity and
 temperature perturbations, at constant specific entropy $s$, superposed
 on a uniform stream $(v_1,v_2)=(1,1)$ on a periodic square. Since the
 exact solution is the initial data translated along the diagonal, the
-error after any number of periods is measurable; Wang et al. and
+error after any number of periods is measurable; Wang et al. (2023b) and
 Balsara et al. use it as their two-dimensional order-of-accuracy check
 for the Euler equations, and Ranocha et al. call it "a widely used
 benchmark problem" with an analytical solution. Without the stream the
 vortex is steady, and the error is the deviation from the initial data
 ([Bryngelson et al. (2021)](/sources/bryngelson-2021.md)); a rotated
 copy gives a three-dimensional test
-([Li, Duan & Tang (2022)](/sources/li-2022-c.md)), and Lorentz-boosted
+([Li, Duan & Tang (2022c)](/sources/li-2022-c.md)), and Lorentz-boosted
 versions give relativistic and relativistic-MHD tests
 ([Chen & Wu (2022)](/sources/chen-2022-b.md),
 [Duan & Tang (2022)](/sources/duan-2022.md)), and a magnetized
@@ -64,8 +64,8 @@ $\gamma=1.4$. The sources differ in normalization and strength:
 | [Wang et al. (2023b)](/sources/wang-2023-b.md) Example 3 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=T_0=1$ | $t=1$; $L^2$ error of $\rho$ on $\Delta x=1/2,\dots,1/64$ |
 | [Balsara et al. (2024)](/sources/balsara-2024.md) §VII.a | square periodic box; $[-10,10]^2$ and doubled time for orders 7 and 9 | not restated | not restated | design order, $64^2$ to $512^2$ |
 | [Ranocha et al. (2023)](/sources/ranocha-2023.md) §4.1 | $[-5,5]^d$, $d=2,3$, periodic | 20 | $\rho_0=1$, $p_0=10$, $v_0=(1,1,0)$ | timing only, 8 elements per direction |
-| [Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.1 | $[-10,10]^2$, centre $(-2,-2)$, periodic | 5 | $\rho_0=1$, temperature 1 with $c_v=1$, stream $(1,1)$ | $t=4$; $\ell^1$, $\ell^\infty$ errors of $\rho$, $N_x=40$ to $320$, moving mesh |
-| Li, Duan & Tang (2022) Ex. 5.5 | $[-10,10]^3$, 2D vortex rotated onto the domain diagonal | 5 | as Ex. 5.1 | $t=0.1$; $N_x=40$ to $320$ |
+| [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) Ex. 5.1 | $[-10,10]^2$, centre $(-2,-2)$, periodic | 5 | $\rho_0=1$, temperature 1 with $c_v=1$, stream $(1,1)$ | $t=4$; $\ell^1$, $\ell^\infty$ errors of $\rho$, $N_x=40$ to $320$, moving mesh |
+| Li, Duan & Tang (2022c) Ex. 5.5 | $[-10,10]^3$, 2D vortex rotated onto the domain diagonal | 5 | as Ex. 5.1 | $t=0.1$; $N_x=40$ to $320$ |
 | [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) §4.1 | $[-10,10]^2$ (enlarged from $[-5,5]^2$), periodic | amplitude not printed | $\rho_0=1$, $p_0=1/\gamma$, stream of Mach $\sqrt{2/\gamma}$ at $45°$ | one cycle; $100^2$ to $500^2$, CFL 0.6 down to 0.00625 |
 | [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) §5.4 | steady vortex, no stream; setup deferred to an earlier MFC paper | not printed | not printed | $\lVert\rho(1)-\rho(0)\rVert_\infty$, $1/N\in[10^{-3},10^{-1}]$ |
 | [Chen et al. (2022)](/sources/chen-2022.md) §6.3, Eq. (32) | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=2$; density error on triangles with boundary spacing $h=0.4$ to $0.05$ (1966 to 122,204 cells); HLLC, four-stage RK, $\Delta t=0.002$ |
@@ -99,15 +99,17 @@ $\gamma=1.4$. The sources differ in normalization and strength:
 | [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) §4, Fig. 12 | $[-5,5]^2$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=1$; relative $L^2$ density error of IMEX all-Mach finite volumes |
 | [Zampa & Dumbser (2025)](/sources/zampa-2025.md) §4.1 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | unit background, no stream | $t=1$, $C_{\mathrm{CFL}}=0.25$; $L^2$ errors on unstructured meshes $M_{40}$ to $M_{120}$, degrees 0–2 |
 | [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.2, Eq. (4.3) | $[0,1]^2$, centre $(0.5,0.5)$, periodic | $\epsilon_{\mathrm v}=0.3$, $r_{\mathrm c}=0.05$, $\alpha_{\mathrm v}=0.204$ (their form, page-local) | $\rho=p=1$, stream $(1,0)$ | $t=1$; third-order DG with ROUND subcells, $10^2$ to $50^2$ elements |
+| [Wang et al. (2023a)](/sources/wang-2023.md) §4.5, Eq. (27) | $[0,10]^2$, centre $(5,5)$ | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=1$; $L^1$ density errors, $10^2$ to $320^2$; A-WENO with LLF and LLF-M fluxes |
+| [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.2 | $[-5,15]^2$, periodic, diagonal propagation | as in the paper they cite, not restated | not restated | $t=0.01$; density errors, $\mathbb P^1$ $160^2$–$2560^2$, $\mathbb P^2$ $40^2$–$1280^2$, $\mathbb P^3$ $40^2$–$640^2$ |
 
-Wang et al. print $\rho=\big(1-\frac{25(\gamma-1)}{8\gamma\pi^2}e^{1-r^2}\big)^{1/(\gamma-1)}$,
+Wang et al. (2023b) print $\rho=\big(1-\frac{25(\gamma-1)}{8\gamma\pi^2}e^{1-r^2}\big)^{1/(\gamma-1)}$,
 which is the table's form with $\mathcal E=5$, $T_0=1$. Balsara et al.
 take the setup of Pao & Salas as described in Balsara & Shu, without
-restating its parameters. Wang et al. take theirs from three earlier
+restating its parameters. Wang et al. (2023b) take theirs from three earlier
 papers, Ranocha et al. cite Shu.
 
 The other normalizations reduce to the same vortex *(compiler check, not
-in the sources)*. Li et al. write $p=(\gamma-1)\rho T$ with $c_v=1$, so
+in the sources)*. Li, Duan & Tang write $p=(\gamma-1)\rho T$ with $c_v=1$, so
 their temperature perturbation $-\mathcal E^2e^{1-r^2}/(8\gamma\pi^2)$
 is the table's $T$-perturbation divided by $\gamma-1$; their velocity
 perturbation turns the other way, $\propto(\bar y,-\bar x)$.
@@ -117,7 +119,7 @@ $\rho=(1-\tfrac{\gamma-1}2\Omega^2)^{1/(\gamma-1)}$ and
 $p=\rho^\gamma/\gamma$; this is the table's form with
 $\mathcal E=2\pi A_\Omega e^{-1/2}$ and $T_0=1/\gamma$, i.e. unit background
 sound speed. Sciacovelli et al. enlarge the domain to $[-10,10]^2$ "to
-reduce artificial shear layers at boundaries", and Li et al.,
+reduce artificial shear layers at boundaries", and Li, Duan & Tang,
 Yu & Hesthaven, the two Dzanic papers and Balsara et al. (orders 7
 and 9) use the same box. Chen et al. (2022), Du et al. and Yu &
 Hesthaven print the table's form with $\mathcal E=5$ and unit
@@ -218,7 +220,7 @@ $\mathcal E=5$, unit background and no stream; they attribute it to
 Hu & Shu in the text and call it "Shu vortex" in their table captions.
 
 Two sources use other profiles. Dzanic, Trojak & Witherden and Dzanic &
-Witherden write the perturbation through
+Witherden (2022) write the perturbation through
 $\varphi_{\mathrm v}(r)=\exp\big((1-r^2)/(2R_{\mathrm v}^2)\big)$, velocity
 $(V_x,V_y)+\frac{S_{\mathrm v}}{2\pi R_{\mathrm v}}\varphi_{\mathrm v}\,(\bar y,-\bar x)$
 and pressure
@@ -311,7 +313,7 @@ $1-f$ at most $1.08\times10^{-4}$, i.e. negligible activity (Tables
 
 [Chen & Wu (2022)](/sources/chen-2022-b.md) Ex. 4.1 (arXiv v1) move a
 [relativistic](/definitions/relativistic-hydrodynamics.md) isentropic
-vortex along $(-1,-1)$ with speed $w=0.5\sqrt2$ on $[-5,5]^2$:
+vortex along $(-1,-1)$ with speed $0.5\sqrt2$ on $[-5,5]^2$:
 $\rho=(1-\alpha_{\mathrm r}e^{1-r^2})^{1/(\gamma-1)}$, $p=\rho^\gamma$,
 $\alpha_{\mathrm r}=\frac{(\gamma-1)/\gamma}{8\pi^2}\mathcal E^2$
 (page-local symbols for the source's vortex parameters), with
@@ -363,15 +365,15 @@ error for their TVD blend of the two AP schemes (Fig. 12); see
 
 **Compatible finite elements on unstructured meshes.** Zampa & Dumbser's
 semi-implicit, exactly mass-conservative H(div) finite-element scheme for
-weakly compressible flow reaches $L^2$ order $r+1$ ($r=0,1,2$ the
-polynomial degree, page-local) for $\rho_h$, $v_h$ and $p_h$, for example
-$L^2(\rho_h)=5.2539\times10^{-6}$ with order 3.20 at $r=2$ on $M_{120}$
+weakly compressible flow reaches $L^2$ order $N+1$ ($N=0,1,2$ the
+polynomial degree) for $\rho_h$, $v_h$ and $p_h$, for example
+$L^2(\rho_h)=5.2539\times10^{-6}$ with order 3.20 at $N=2$ on $M_{120}$
 (Tables 1–3). The scheme is first order in time and no time-convergence
 study is shown, so the spatial orders are seen at the fixed
 $C_{\mathrm{CFL}}=0.25$ of the test.
 
 **Fifth-order A-WENO with the time-step tied to the grid.** Wang et
-al. run their [A-WENO](/methods/alternative-weno.md) schemes with the
+al. (2023b) run their [A-WENO](/methods/alternative-weno.md) schemes with the
 adaptive-diffusion central-upwind flux (NEW) and the earlier central flux
 (OLD) with CFL number $\Delta x^{2/3}$. Then $\Delta t\propto\Delta x^{5/3}$
 and the third-order SSP-RK error scales like $\Delta x^5$, the spatial
@@ -393,6 +395,16 @@ $\log_2(2.42\times10^{-3}/2.22\times10^{-4})=3.45$ and
 $\log_2(2.22\times10^{-4}/2.12\times10^{-6})=6.71$ reproduces the
 printed orders *(compiler check, not in the sources)*, so the
 irregularity is in the printed errors, not in the rate computation.
+
+Wang et al. (2023a) run the same vortex with their fifth-order A-WENO
+(affine-invariant Z-type weights) and two fluxes: the LLF flux and
+LLF-M, whose dissipation coefficient a feature sensor reduces to as
+little as $0.1$ of the LLF value. LLF-M gives the smaller $L^1$ density
+error on every grid, at $320^2$ $3.28\times10^{-8}$ against
+$3.52\times10^{-7}$ for LLF; the printed LLF-M orders are 5.07, 5.62,
+5.51 and 5.25, above the formal order five, and the LLF orders end at
+4.77, while the text says both "achieve the optimal convergence order"
+(§4.5, Table 2).
 
 **Scale invariance costs accuracy on coarse grids.** Li, Li, Don & Wang
 compare their scale-invariant multi-resolution
@@ -447,9 +459,9 @@ $100^2$–$500^2$ only at CFL $1.25\times10^{-2}$ and
 $6.25\times10^{-3}$ (§4.1, Fig. 2). They explain the behaviour by the
 error balance: keeping the ratio of temporal to spatial error fixed
 needs $\Delta t\propto\Delta x^{9/3}=\Delta x^3$, whereas a constant CFL
-gives $\Delta t\propto\Delta x$ (Eq. 40). Wang et al.'s CFL
-$\Delta x^{2/3}$ and Li et al.'s
-$\Delta t=C_{\mathrm{CFL}}(\min\Delta\xi_k)^{5/3}$ (Li et al., §5) realize
+gives $\Delta t\propto\Delta x$ (Eq. 40). Wang et al. (2023b)'s CFL
+$\Delta x^{2/3}$ and Li, Duan & Tang's
+$\Delta t=C_{\mathrm{CFL}}(\min\Delta\xi_k)^{5/3}$ (their §5) realize
 the same balance for fifth order with a third-order integrator
 *(compiler check, not in the sources)*. See
 [SSP Runge–Kutta time stepping](/methods/ssp-runge-kutta.md).
@@ -562,7 +574,7 @@ residual-based viscosity gives $L^2$ density rates that "met or
 exceeded" the optimal order $N+1$: 3.30, 4.93, 5.53, 7.44, 7.79, 8.74 for
 $\mathbb P^2$–$\mathbb P^7$, with maximum viscosity components falling
 from $O(10^{-7})$ at $N_x=20$ to $O(10^{-9})$ at $N_x=40$ for $\mathbb P^7$
-(§5.2.3, Table 2). Dzanic & Witherden's
+(§5.2.3, Table 2). Dzanic & Witherden (2022)'s
 [entropy filter](/methods/entropy-filtering.md) gives rates
 generally between $N$ and $N+1$ (their "$p$ to $p+1$"), 2.59, 4.00, 4.27, 6.73, 6.10,
 8.13 (Table 5), and costs 1.1, 1.7 and 2.0 % more time-to-solution for
@@ -572,6 +584,16 @@ $N+1$ on some of these runs: Du et al.'s unlimited $\mathbb P^2$ DG has $L^2$
 orders 2.64–2.70 on triangles (Table 4.5) and $\mathbb P^1$ $L^\infty$ orders
 about 1.6 on point clouds (Table 4.11), and Yu & Hesthaven's inviscid
 $\mathbb P^2$ about 2.1–2.2 (Table 3); neither paper comments on it.
+
+Cao et al. (2026) check that their [COS(DG)](/methods/cos-dg.md)
+post-processing, applied once per time step with the frozen-Hessian
+entropy distance, keeps the DG order on the vortex: density rates rise
+from 1.84 to 2.00 for $\mathbb P^1$, lie about 2.8–2.95 for
+$\mathbb P^2$ ($L^1$ rate 2.89 at $1280^2$) and 3.98–4.01 for
+$\mathbb P^3$ (Ex. 6.2, Table 2); their accuracy theorem bounds the
+perturbation of one application by $O(h^{N+1})$ for $N\ge d/2$, $d$ the dimension (Thm.
+4.1). The $\mathbb P^2$ rates stay below three up to $1280^2$, while the
+text states the expected order $N+1$.
 
 **Long-time robustness of kinetic-energy-preserving splittings.** Edoh
 runs a sixth-order compact central scheme (CD06) on 60 points per
@@ -586,7 +608,7 @@ Kennedy–Gruber and $0.6261$ rotational form (§4.1, Figs. 1–2). See
 [split convective forms](/methods/split-convective-forms.md) and
 [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
 
-**Moving meshes and entropy.** Li et al. advect the vortex on an
+**Moving meshes and entropy.** Li, Duan & Tang advect the vortex on an
 [adaptive moving mesh](/methods/adaptive-moving-mesh.md) (monitor built
 from $\lvert\nabla\rho\rvert$ and $\lvert\Delta\rho\rvert$) with
 entropy-stable fluxes whose dissipation uses
@@ -610,7 +632,7 @@ Chamarthi (2023a) finds every scheme the author runs, the fourth-order
 MIG4 and TENO5 alike, only second order on the vortex, with nearly
 equal errors on $200^2$ ($4.10\times10^{-5}$ for all), although on
 linear advection MIG4 and MEG6 are fourth and TENO5 fifth order (Tables
-2–3). Chamarthi attributes this to reconstructing primitive variables and
+2–3). Chamarthi (2023a) attributes this to reconstructing primitive variables and
 evaluating the flux of the reconstructed states, after Zhang, Zhang &
 Shu, and states that other published schemes (BVD, P4T2, Fu's
 finite-volume TENO) share it without having computed their order.
@@ -620,7 +642,7 @@ limited state through a density-based detector; the seventh-order MEG7
 then reaches $L_2$ rates 5.25, 6.03, 6.59 (conservative variables) and
 5.13, 6.00, 6.68 (primitive) on $50^2$, $100^2$, $200^2$, against 4.71,
 6.35, 6.24 for the seventh-order mapped WCNS7M, with errors about
-$1.0\times10^{-8}$–$1.5\times10^{-8}$ on $200^2$ (Table 1). Chamarthi calls this
+$1.0\times10^{-8}$–$1.5\times10^{-8}$ on $200^2$ (Table 1). Chamarthi (2023b) calls this
 seventh-order accuracy; the observed rates stay below seven on these
 grids.
 
@@ -651,7 +673,7 @@ $t=16$ (§8.1.2, Fig. 8).
 **Order of a flux-reconstruction solver without walls.** Funada &
 Imamura use their weak vortex to show that their
 [flux reconstruction](/methods/flux-reconstruction.md) on hierarchical
-Cartesian grids reaches order $k$ for $k=2,3,4$ in the $L_\infty$
+Cartesian grids reaches its design order $N+1$ (their $k$) for $k=2,3,4$ in the $L_\infty$
 error of $v_2$ before they test immersed walls (§3.1, Fig. 10; see
 [flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)).
 
@@ -755,11 +777,11 @@ on $40^2$ elements (Table 3); see
 - Dao & Nazarov label the second error block of the $\mathbb P^2$ and
   $\mathbb P^3$ panels of Table 1 "$u$", where the caption and the
   $\mathbb P^1$ panel indicate $B$.
-- Wang et al. print "$r=(x-5)^2+(y-5)^2$" while the formulas use
+- Wang et al. (2023b) print "$r=(x-5)^2+(y-5)^2$" while the formulas use
   $e^{1-r^2}$; the formulas are consistent only with
   $r^2=(x-5)^2+(y-5)^2$, i.e. with $r$ the distance from the centre as
   Ranocha et al. define it.
-- The irregular rate sequence of Wang et al. (2.36–2.39 on the third
+- The irregular rate sequence of Wang et al. (2023b) (2.36–2.39 on the third
   refinement) is printed without comment.
 - Ranocha et al. report timings only; their strengthened vortex
   carries no accuracy result.
@@ -787,7 +809,7 @@ on $40^2$ elements (Table 3); see
   the printed minima *(compiler check, not in the sources)*; the strong
   case was therefore run with $\gamma=1.4$, as their Ex. 4.10 states for
   the same vortex.
-- Dzanic & Witherden print the density as $p^{1/\gamma}$ with $p$
+- Dzanic & Witherden (2022) print the density as $p^{1/\gamma}$ with $p$
   undefined; if $p$ is the printed pressure, the far-field density is
   $(1/(\gamma M^2))^{1/\gamma}\neq1$, and the isentropic density
   consistent with it would be $(\gamma M^2p)^{1/\gamma}$ *(compiler check,
@@ -846,7 +868,7 @@ on $40^2$ elements (Table 3); see
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4, Example 3, Table 1.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §VII.a, Table I.
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §4.1, Eq. (4.1); §7.2, Fig. 6 (arXiv v2).
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §5, Eq. (5.1), Ex. 5.1, Fig. 5.2; Ex. 5.5, Fig. 5.6 (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — §5, Eq. (5.1), Ex. 5.1, Fig. 5.2; Ex. 5.5, Fig. 5.6 (arXiv v1).
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — §4.1, Eqs. (37)–(40), Fig. 2 (arXiv v1).
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §4.1, Eqs. (29)–(30); §5.4, Fig. 5a (arXiv v1).
 - [Chen et al. (2022)](/sources/chen-2022.md) — §6.3, Eq. (32), Table 1.
@@ -884,3 +906,5 @@ on $40^2$ elements (Table 3); see
 - [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — Remark 2.1, Ex. 5.6, Fig. 9; Ex. D.1 (arXiv v3).
 - [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §4, Fig. 12 (HAL manuscript).
 - [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §3.1, §4.1, Tables 1–3 (arXiv v1).
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §4.5, Eq. (27), Table 2.
+- [Cao et al. (2026)](/sources/cao-2026.md) — Ex. 6.2, Table 2; Thm. 4.1.

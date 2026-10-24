@@ -19,7 +19,8 @@ exponent, $\tau$ the WENO-Z global indicator, $C_T$ and $\delta_k$ the TENO
 cut-off, $N$ the DG degree, $(\eta,F_\eta)$ the entropy pair), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–10 of 11 ingested (199 of 207 sources). Chunk 1, the reviews and the
+**Corpus:** all 11 chunks ingested (204 of 207 sources; feng-2026, li-2024 and wu-2023
+await a re-download, see `INGESTION-ISSUES.md`). Chunk 1, the reviews and the
 papers that fix the vocabulary: the TENO review of
 [Fu (2023)](/sources/fu-2023.md), the geometric quasilinearization of
 [Wu & Shu (2023)](/sources/wu-2023-b.md), the compact-stencil framework of
@@ -92,8 +93,10 @@ limiter for DG, sign-preserving WENO for TeCNO, the APEC pressure-equilibrium fl
 and divergence-free DG for MHD with the Godunov–Powell term, a new LDCU, arbitrary-order and
 flux-vector-split Active Flux with bound preservation and for Vlasov–Poisson, all-Mach and
 low-Mach finite elements, a positivity-preserving immersed-boundary TENO and the MFC 5.0 code.
-The remaining chunks follow the archive's order; the [Sources](/sources/index.md) index
-lists what is in.
+Chunk 11 (2023–2026 papers): the COS(DG) oscillation suppression, Wang, Don & Wang's AWENO
+with adaptive Lax–Friedrichs dissipation, learned entropy-stable fluxes, low-dissipation
+high-order AMR with WENO transfers, and the AthenaK code. The [Sources](/sources/index.md)
+index lists what is in; a whole-bundle deep lint closed the archive.
 
 ## Reading guide
 
@@ -169,7 +172,8 @@ yields the [ROUND schemes](/methods/round-scheme.md).
 [low-dissipation central-upwind schemes](/methods/low-dissipation-central-upwind-scheme.md) and the
 [adaptive-diffusion Rankine–Hugoniot flux](/methods/adaptive-diffusion-central-upwind-flux.md);
 [unstaggered central schemes](/methods/unstaggered-central-scheme.md);
-[MUSCL and MUSCL–Hancock schemes](/methods/muscl-hancock.md);
+[MUSCL and MUSCL–Hancock schemes](/methods/muscl-hancock.md) and the
+[piecewise parabolic method](/methods/piecewise-parabolic-method.md);
 [fluctuation-form finite-difference WENO](/methods/fluctuation-form-fd-weno.md)
 and [path-conservative schemes](/methods/path-conservative-scheme.md) for
 non-conservative systems, with
@@ -214,7 +218,8 @@ the codes [Trixi.jl](/software/trixi-jl.md), [FLUXO](/software/fluxo.md) and
 
 **6. Limiting and bounds.** [Troubled-cell and shock indicators](/definitions/troubled-cell-indicator.md)
 decide where to act; [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
-[convex limiting](/methods/convex-limiting.md), [OEDG](/methods/oedg.md),
+[convex limiting](/methods/convex-limiting.md), [OEDG](/methods/oedg.md) and
+[COS(DG)](/methods/cos-dg.md),
 [artificial viscosity](/methods/artificial-viscosity.md),
 [MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md) (with a subcell
 correction built on the [equivalence of DG and subcell finite volumes](/results/dg-subcell-finite-volume-equivalence.md)),
@@ -251,7 +256,7 @@ add the recovery of primitive variables; at high magnetization the
 [immersed-boundary and cut-cell methods](/methods/immersed-boundary-method.md);
 [block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md);
 the solvers [MFC](/software/mfc.md), [AMROC](/software/amroc.md),
-[UCNS3D](/software/ucns3d.md), [IDEFIX](/software/idefix.md), [PLUTO](/software/pluto.md),
+[UCNS3D](/software/ucns3d.md), [IDEFIX](/software/idefix.md), [PLUTO](/software/pluto.md), [AthenaK](/software/athenak.md),
 [ADAM](/software/adam.md), [URANOS](/software/uranos.md),
 [STREAmS](/software/streams.md), [JAX-Fluids](/software/jax-fluids.md),
 [TENET](/software/tenet.md), [ForestClaw](/software/forestclaw.md) and the [OpenFOAM-based solvers](/software/openfoam.md);

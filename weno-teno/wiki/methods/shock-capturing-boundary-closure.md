@@ -5,7 +5,7 @@ description: "Qin, Chen, Lin and Deng close a fifth-order staggered WCNS at bloc
 status: established
 aliases: [shock-capturing boundary closure, nonlinear boundary closure, conservative boundary closure, WCNS-MR boundary closure, conservative solution points, semi-uniform grid]
 tags: [finite-difference, compact-scheme, weno, reconstruction, limiting]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Shock-capturing boundary closure for multi-block finite differences
@@ -71,7 +71,7 @@ $u^-_{i+1/2}=\omega_1u^{(1)}+\omega_2u^{(2)}+\omega_3\big(\tfrac1{d_3}u^{(3)}-\s
 with $d=(1,10,100)/111$, $\alpha_m=d_m\big(1+\tau/(\beta_m+\epsilon)\big)$, $\epsilon=10^{-10}$ and
 $\tau=\big(\tfrac12(|\beta_3-\beta_2|+|\beta_3-\beta_1|)\big)^2$ (Eqs. (10)–(12)). The indicators are
 derivative sums at the solution point with a new **scaling parameter** $\lambda_{\mathrm s}>0$
-(page-local),
+(registry §10),
 
 $$\beta_2=\sum_{n=1}^2\big(\lambda_{\mathrm s}^{n-1}\Delta x^n\partial_x^nP_2(x_i)\big)^2,\qquad
 \beta_3=\sum_{n=1}^4\big(\lambda_{\mathrm s}^{n-1}\Delta x^n\partial_x^nP_3(x_i)\big)^2,\qquad
@@ -80,7 +80,7 @@ $$\beta_2=\sum_{n=1}^2\big(\lambda_{\mathrm s}^{n-1}\Delta x^n\partial_x^nP_2(x_
 with $P_m$ the interpolant on $T_m$ and $\delta_0$, $\delta_1$ the one-sided divided differences times
 $\Delta x$, which accommodate non-uniform points (Eqs. (13)–(22);
 [smoothness indicators](/definitions/smoothness-indicator.md)). $\lambda_{\mathrm s}=1$ is the unscaled form,
-"slightly" different from Zhang et al.'s; $\lambda_{\mathrm s}=2$ is adopted, which multiplies the squared
+"slightly" different from Zhang, Wang & Zhang's; $\lambda_{\mathrm s}=2$ is adopted, which multiplies the squared
 $n$th-derivative terms by $1,4,16,64$. The choice is empirical; no analysis is given.
 [Fan et al. (2025b)](/sources/fan-2025-b.md) (§2.2, Eqs. (13)–(15)) take this modified recipe for the
 interior of a third-order WCNS (WCNS3-MR), as the target of a learned weighting, with $\lambda_{\mathrm s}=1$ and

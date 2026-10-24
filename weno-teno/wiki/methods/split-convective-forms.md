@@ -5,7 +5,7 @@ description: "Split forms write the convective terms of mass and momentum as wei
 status: established
 aliases: [split forms, skew-symmetric form, Feiereisen splitting, Kennedy–Gruber splitting, KGP splitting, supraconservative discretization, dual-sided discretization, rotational form, Div-rot, Div-str, EMAC, Morinishi splitting, Rozema splitting, Ducros splitting, quadratic split, cubic split, quartic split, quintic split, Jameson–Pirozzoli form, KEEP scheme, energy-equation splitting]
 tags: [kinetic-energy-preserving, finite-difference, finite-volume, multiphase, turbulence, low-dissipation]
-timestamp: 2026-10-23T20:29:00Z
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Split convective forms
@@ -360,7 +360,7 @@ with $[\![\cdot]\!]$ here the flux difference divided by $\Delta x$ (Eqs.
 
 ## Energy-equation splittings
 
-With KEP mass and momentum, De Michele & Coppola compare fifteen
+With KEP mass and momentum, De Michele & Coppola (2023a) compare fifteen
 discretizations of the energy equation, written in total energy $\rho E$,
 internal energy $\rho e$, pressure, total enthalpy $\rho H$, sound speed
 $\rho c$ or entropy $\rho s$ (§4; page-local $\rho$-weighted variables). Their
@@ -481,8 +481,8 @@ shock–bubble interactions, a supercritical LOX/H$_2$ mixing layer with a
 Peng–Robinson equation of state and a gasoline injector, with qualitative
 or graphical agreement and three-grid observed orders 1.35–1.53 (§3,
 Table 1); no smooth accuracy or kinetic-energy test is run. The paper
-prints $H=(e+p)/\rho$ with $e$ the total energy per unit mass, where
-$H=e+p/\rho$ is meant by its own definitions (§2).
+prints $H=(e+p)/\rho$ with $e$ the total energy per unit mass, whereas
+its own definitions give $H=e+p/\rho$ (§2).
 
 ## Split forms in DG and flux reconstruction
 
@@ -506,7 +506,7 @@ Fig. 8; [entropy correction term](/methods/entropy-correction-term.md)).
 
 ## Dual-sided discretization
 
-A *dual-sided* scheme pairs a directionally biased operator with its
+A *dual-sided* scheme (Coppola & Veldman) pairs a directionally biased operator with its
 negative transpose in the dual slot. An example is
 $D^m=D^\rho=I-\mathcal T^{-1}$ (backward) with $D^v=D^0=-(I-\mathcal T^{-1})^\top$.
 It satisfies the duality relations and so conserves mass, momentum and
@@ -561,11 +561,11 @@ and [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
 - Jain & Moin print "QS and CS stands for cubic-split and quadratic-split
   forms, respectively" (§3.5); their own definitions and Eq. (62) make QS
   the quadratic and CS the cubic split.
-- In their §7.3 tests with the central split family, weights violating
+- In Coppola & Veldman's §7.3 tests with the central split family, weights violating
   Eq. (10) still conserve mass and momentum but lose kinetic energy at
   $O(10^{-3})$–$O(10^{-4})$. The variant $\mu_\rho=1$ ("$\delta=1$" in the
   source's letters) "turned out not always to be stable" (Fig. 2).
-- De Michele & Coppola (arXiv v1, §3.1) print "the cases $\xi=0$ and
+- De Michele & Coppola (2023a; arXiv v1, §3.1) print "the cases $\xi=0$ and
   $\xi=1$ give the classical Feiereisen form and the newly derived form",
   the reverse of their own Eqs. (15)–(16), §4.2.5 and Table 2, which give
   $\xi=1$ Feiereisen. Their conditions assume exact time integration and

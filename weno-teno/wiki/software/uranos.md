@@ -5,7 +5,7 @@ description: "URANOS is a BSD-licensed Fortran 90, OpenACC and MPI finite-differ
 status: established
 aliases: [Unsteady Robust All-around Navier-StOkes Solver, URANOS GPU]
 tags: [software, gpu, finite-difference, teno, turbulence, immersed-boundary]
-timestamp: 2026-10-22T19:46:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # URANOS
@@ -56,7 +56,7 @@ cut-off formula; the schemes are named and parametrized only.
 
 **Hybridization.** The shock-capturing schemes run either everywhere
 ("pure") or in a [hybrid](/methods/hybrid-weno.md) with the EP scheme:
-an a priori sensor $\Psi_{\mathrm D,i+1/2}$ ([Ducros sensor](/definitions/ducros-shock-sensor.md)) is evaluated at
+an a priori shock sensor (one of the three below) is evaluated at
 each interface, and where it exceeds a user threshold
 $\Psi^*$ the WENO/TENO flux is used in the
 flagged cell and in a band of 2, 3 or 4 neighbouring cells for orders 3,

@@ -5,7 +5,7 @@ description: "The non-conservative term proportional to div B that Godunov and P
 status: established
 aliases: [Powell source term, Godunov source term, eight-wave source, Godunov symmetrization source, symmetrizable MHD, Godunov–Powell modified system, upwind discrete Godunov–Powell source]
 tags: [mhd, entropy-stable, positivity, dg, finite-volume]
-timestamp: 2026-10-23T20:43:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Godunov–Powell source term
@@ -229,12 +229,12 @@ not tested).
 ## Qualifications
 
 - The upwind and central jump forms are not compared on the same scheme
-  in any source; Ding & Wu's "milder CFL" and Liu & Wu's "notably
+  in any source; Ding & Wu (2024a)'s "milder CFL" and Liu & Wu's "notably
   improved" CFL are each relative to Wu & Shu's earlier estimates.
 - Liu & Wu (2025) print the split as an "un-wind" discretization
   (§3.2, a typo for upwind) and refer at the end of Remark 3 to "our above
-  PP CFL condition (2)", where (2) is the divergence constraint; the
-  intended condition is that of Corollary 2.
+  PP CFL condition (2)", where (2) is the divergence constraint and the
+  CFL condition of the remark is that of Corollary 2.
 - Liu et al. (2021) evaluate only the jump term because the interior term
   is not zero in floating point; with it omitted, Wu & Shu's guarantee is
   not established for their code (see

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Block-structured adaptive mesh refinement"
-description: "Hierarchical h-refinement of Cartesian or mapped meshes in nested levels of patches or fixed-size blocks: Berger–Oliger/Colella patch refinement in AMROC, tree-based block refinement on GPUs, in PARAMESH and in ForestClaw, the refinement criteria, coarse–fine transfer including Active Flux point values and divergence-preserving prolongation, sub-cycling with and without time interpolation, and the measured savings and accuracy against uniform meshes."
+description: "Hierarchical h-refinement of Cartesian or mapped meshes in nested patches or fixed-size blocks (AMROC, PARAMESH, ForestClaw, ADAM, AthenaK, AMReX): refinement criteria, coarse–fine transfer from second-order to WENO, divergence-preserving and Active Flux transfers, refluxing and its conservation analysis, sub-cycling with and without time interpolation, and measured savings and accuracy against uniform meshes."
 status: established
 aliases: [AMR, SAMR, block-structured AMR, structured adaptive mesh refinement, patch-based AMR, tree-based AMR, quadtree AMR, octree AMR]
 tags: [amr, finite-volume, finite-difference, software, gpu, mhd]
-timestamp: 2026-10-23T20:43:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Block-structured adaptive mesh refinement
@@ -13,7 +13,9 @@ timestamp: 2026-10-23T20:43:00Z
 Block-structured adaptive mesh refinement covers the regions that need
 resolution with a hierarchy of finer and finer logically rectangular
 grids, each level refining the one below by an integer factor (2 in
-every source of the bundle), while the rest of the domain stays coarse.
+every computation of the bundle; [Wang et al. (2026)](/sources/wang-2026.md)
+also tabulate transfer coefficients for a factor of 4), while the rest of
+the domain stays coarse.
 The integrator works on each block as on a uniform grid; the adaptation
 supplies ghost data at coarse–fine boundaries, transfers data when the
 hierarchy changes, and keeps the coarse and fine fluxes consistent. It
@@ -75,6 +77,21 @@ on the CPU. In ADAM the GPU field array is transposed so that the block
 index is contiguous, for coalesced access, and is copied to the CPU only
 at input/output and AMR updates, refinement and coarsening themselves
 being done on the CPU (§2.2, Fig. 3).
+[Stone et al. (2026)](/sources/stone-2026.md) keep the design of Athena++
+in their Kokkos rewrite [AthenaK](/software/athenak.md): MeshBlocks in an
+octree (binary tree or quadtree in 1D and 2D) labelled by Z-ordering,
+communication between levels only at block boundaries, flux corrections at
+level boundaries for conservation, one time step for all levels, and
+task-list execution (§2). New are the **MeshBlockPacks**, which aggregate
+all MeshBlocks of a device so that one kernel launch covers them, an idea
+the authors credit to the Parthenon framework; the variables of a pack are
+$(N+1)$-dimensional device arrays whose extra index is the MeshBlock, the
+tree is built and refined on the host, and prolongation and restriction of
+all blocks are done at once in parallel kernels (§2). Load balancing
+assigns each MeshBlock a cost proportional to its cells and physics modules
+and redistributes blocks while keeping Z-ordering (§5.2). Wang et al.
+(2026) build their finite-difference AMR on AMReX, regridding every
+`regrid_int` steps (§6).
 
 **Unstructured simplices in space–time shock tracking.** Outside the
 block-structured family, [Naudet & Zahr (2024)](/sources/naudet-2024.md)
@@ -165,8 +182,8 @@ threshold, while the element count stays below a user limit (§4.5).
   $\chi_{\mathrm D}<\varepsilon_{\mathrm r}$, coarsened if all cells have
   $\chi_{\mathrm D}>\varepsilon_{\mathrm c}$, and left unchanged otherwise, with
   $\varepsilon_{\mathrm r}=0.3<\varepsilon_{\mathrm c}=0.7$ "based on preliminary
-  numerical experiments" (page-local thresholds). The band between the two
-  thresholds is meant to freeze the mesh once the flow is steady. The
+  numerical experiments" (page-local thresholds). The authors introduce the band between
+  the two thresholds so that the mesh freezes once the flow is steady. The
   authors call the criterion problem-independent because its range is
   fixed, block-local (unlike Harten-type prediction-error criteria, which
   need inter-level data and case-by-case thresholds) and cheap (Remarks
@@ -176,12 +193,22 @@ threshold, while the element count stays below a user limit (§4.5).
   and recomposition thresholds above also form such a band, stated there
   as a guard against flip-flop.
 
+- **Thresholds on a flow variable.** Stone et al. refine where the density
+  exceeds the background by a factor of 1.1 (2D MHD blast) or by half the
+  wave amplitude (AMR scaling test), and by pressure in the Komissarov
+  cylindrical explosions (§3.5, §5.1–5.2). Wang et al. refine where
+  $\rho>1.19$ in a dynamic-refinement convergence test, where the
+  dilatation falls below a user threshold (value not given) in decaying
+  isotropic turbulence, and on fixed thin sheets in their Euler–Burgers
+  test (§6.1–6.4). Their [troubled-cell indicator](/definitions/troubled-cell-indicator.md)
+  does not refine: it chooses the transfer operator (below).
+
 **When to remesh.** Matsushita & Aoki remesh when the interface has
 moved $2\Delta x_{\min}$, estimated from the acoustic time step
 (Eq. 42); Browne et al. every $n_{\mathrm R}=\Delta t_{x,b}/\Delta t$
 steps, with $\Delta t_{x,b}=\Delta x\,n_{x,b}/(u+c)$ the time the
 fastest wave needs to cross a block of $n_{x,b}$ cells (Eqs. 64–65).
-On their three-dimensional flat plate this meant 520
+On their three-dimensional flat plate this amounted to 520
 refinement steps in about 130,000 time steps (§5).
 
 **Remeshing that never stops.** Liang & Fu (2026) state that classical
@@ -250,6 +277,80 @@ page-local).
   The charge density, an unconstrained zone-averaged variable, is
   prolonged by finite-volume WENO at design orders 2–5 (Table 12).
 
+- **Flux correction with a positivity fallback.** In AthenaK the
+  first-order flux correction (FOFC), which recomputes all face fluxes of a
+  cell with piecewise-constant states and the local Lax–Friedrichs flux when
+  density or pressure would turn negative, must be applied before the flux
+  corrections at level boundaries (Stone et al. §3). Staggered
+  [constrained transport](/methods/constrained-transport.md) complicates the
+  ghost-zone and flux-conservation logic of AMR but is "critical for some
+  problems" (§3.2).
+
+**High-order transfer on a cell-centred finite-difference layout.**
+[Wang et al. (2026)](/sources/wang-2026.md) analyse coarse–fine transfer for
+fifth-order finite-difference [WENO-JS](/methods/weno-js-reconstruction.md)
+with characteristic Lax–Friedrichs splitting. Earlier high-order
+finite-difference AMR, as they recall it (Shen, Qiu & Christlieb; Sebastian
+& Shu for multidomains), is node-based: coarse and fine solution points
+coincide at the interface, transfers are point-wise interpolations, and
+there is no location at which coarse and fine fluxes can be reconciled
+(§1, §3.1). They place solution points at cell centres and flux points at
+faces, the staggered layout of [WCNS](/methods/weighted-compact-nonlinear-scheme.md)
+and spectral difference, equivalent to the node-based scheme on a uniform
+grid, so that patch boundaries are flux points and refluxing applies
+(§2.1, §3.1). Two closures follow:
+
+- **AMR-Berger&Colella** (second order, conservative): limited
+  piecewise-linear prolongation that keeps the coarse value and
+  volume-weighted restriction, with cell values read as cell averages; with
+  refluxing the composite totals change only through physical boundary
+  fluxes (App. B, Eq. (B.7)).
+- **AMR-WENO** (non-conservative): a fifth-order WENO interpolation for
+  prolongation, re-derived for cell-centred children of ratio 2 and 4. For
+  ratio 2 the child at $x_i-\Delta x_{\mathrm c}/4$ uses three 3-point
+  coarse candidates with linear weights $d_k=(15/64,\,21/32,\,7/64)$, the
+  other child following by reflection, and Jiang–Shu indicators integrated
+  over the coarse cell (Tables 1–2; page-local $\Delta x_{\mathrm c}$,
+  $\Delta x_{\mathrm f}$ the coarse and fine spacings). Restriction is a
+  central WENO interpolation on six fine points with four 3-point
+  candidates and $d_k=(1/32,\,15/32,\,15/32,\,1/32)$, optimally sixth
+  order, on the conserved variables without upwind bias; two fine ghost
+  cells complete the stencil near patch edges (§3.2.2, Table 3, App. A).
+  The authors state that it keeps at least third order near
+  discontinuities (App. A), without a demonstration.
+
+Their error analysis (Apps. C–D) states that non-conservative transfers
+change the composite mass by $O(\Delta x)$ at discontinuities and
+$O(\Delta x^p)$ in smooth regions, accumulating over restrictions, which
+refluxing cannot repair; the violated discrete
+[Rankine–Hugoniot](/definitions/rankine-hugoniot-condition.md) balance shifts
+the shock speed by $O(\Delta x)$, a drift visible for slowly moving shocks
+(App. C). Berger–Colella transfers degrade the local truncation error of
+fine points whose stencil crosses the interface to $O(\Delta x_\ell)$ and
+the global $L_1$ truncation error to $O(\Delta x^2)$ whatever the order $p$
+of the scheme (Eqs. (D.13), (D.21)); $p$th-order WENO prolongation loses at
+most one order locally and none globally, because the number of interface
+points is bounded, giving $\min(p,q)$ with a $q$th-order Runge–Kutta method
+(Eqs. (D.17), (D.25)–(D.26)).
+
+They describe three ways a discontinuity meets the hierarchy (§5.1): it
+stays on the finest level (errors confined to the coarse level); it crosses
+a coarse–fine interface (conservation errors, curable by flux correction
+in the cell-centred layout); or it is refined or coarsened abruptly, when
+the WENO restriction picks one-sided stencils, steepens the shock and
+corrupts the coarse values that are then advanced. Since, in their words,
+"no single interpolation scheme can simultaneously maintain high-order
+accuracy in smooth regions and guarantee conservation at discontinuities",
+**AMR-HybridWENO** uses WENO transfers in smooth regions and second-order
+linear interpolation in space and time, with slopes "constrained using a
+local Lax-Friedrichs limiter", in cells flagged by a Roe-averaged Lax-type
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md) with a
+mapped pressure curvature, plus flux correction (§5.2–5.3, Eqs. (44)–(50)).
+They also find WENO interpolation "significantly more robust than the
+Lagrange interpolation of comparable order" (§5.3); on double Mach
+reflection both pure WENO and Lagrange transfers fail at once with negative
+density (§6.4.2).
+
 **Multiresolution prediction.** In Liang & Fu (2026) coarsening averages
 the two children, $\bar u^l_i=\tfrac12(\bar u^{l+1}_{2i}+\bar u^{l+1}_{2i+1})$, and
 refinement predicts them from the parent and its neighbours,
@@ -304,7 +405,36 @@ intermediate-time fine fluxes are not balanced by coarse ones, and a
 constant field shows an error of $10^{-13}$ against about $10^{-16}$
 without sub-cycling (§4.3; [free-stream preservation](/properties/free-stream-preservation.md)).
 On smooth swirl data sub-cycling does not change the accuracy noticeably
-(Table 3). Paula et al. adapt the time step after every finest-level step
+(Table 3).
+
+**Sub-cycling with Runge–Kutta-consistent time interpolation.** Wang et
+al. (2026) (§3.3, Eqs. (8)–(9)) sub-cycle with SSP-RK3 and fill fine ghost
+cells by the time interpolant adapted from McCorquodale & Colella,
+$$u(t^n+\eta\Delta t_{\mathrm c})=u^n+k_1\eta+\big(-\tfrac56k_1+\tfrac16k_2+\tfrac23k_3\big)\eta^2+O(\Delta t_{\mathrm c}^3),$$
+with $k_1,k_2,k_3$ the stage increments ($\Delta t$ included) and
+$\eta\in[0,1]$ the time fraction (page-local), aligned with the stage times
+of the fine step so that ghost and interior values do not differ enough to
+trigger the WENO weights. At $\eta=1$ it returns
+$u^n+\tfrac16k_1+\tfrac16k_2+\tfrac23k_3$, the SSP-RK3 update *(compiler
+check, not in the sources)*. Refluxing is written for a generic $s$-stage
+Runge–Kutta method, the coarse cell next to the interface being corrected
+by $\sum_mb_m\,\delta\hat f\,\Delta t/\Delta x$, $\delta\hat f$ the coarse–fine
+flux difference of stage $m$ and $b_m$ the Runge–Kutta weights (§3.4, Eqs.
+(10)–(12); page-local). Stone et al. (2026) use one time step on all
+levels instead (§2); in their efficiency test the AMR run still takes a
+larger step than the uniform one, because the largest wave speeds lie on
+the coarse grid (§5.1).
+
+**Spectral analysis of the composite operator.** Wang et al. (§4) extend
+the Fourier analysis of the
+[approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
+to AMR by a Bloch-wave analysis of a periodic coarse–fine–coarse macro-cell
+with linear weights: the cell-centred closures disperse less than the
+node-based one for $\vartheta\in[1.5,2.5]$, AMR-WENO stays closest to the
+uniform fifth-order operator near the grid cutoff, all closures add
+dissipation from $\vartheta\approx2$ (Fig. 5), and the global spectra lie in
+the closed left half-plane, inside the SSP-RK3 stability region up to a
+fine-level CFL number of 1.43 (Eqs. (38)–(42), Fig. 6). Paula et al. adapt the time step after every finest-level step
 by local time stepping, which lets them use the CFL numbers of uniform
 grids (§2.2).
 
@@ -315,6 +445,7 @@ grids (§2.2).
 | Peng et al. §4.1, Table 3 | blunt-body combustion, Mach 4.18, to 0.2 ms | 308.6 against 240.0 CPU h at 7 µm (two levels), 1193.5 against 1286.7 at 3.5 µm (three), 5521.6 against 9590.6 at 1.75 µm (four), a factor 1.74 |
 | Browne et al. §5, Table 6 | hypersonic flat-plate wavepacket | about 55 million against 91.7 million points (linear), 66 million against 715 million (strongly nonlinear): 60 % and 9 % |
 | Zaghi et al. §3.2, Table 1 | 3D shock diffraction by a sphere, finest spacing 0.015625 | 350.3 million cells in 684,258 blocks; the authors' uniform-grid figure is "8 billions", a $1280^3$ grid has $2.1\times10^9$ *(compiler check, not in the sources)* |
+| Stone et al. §5.1, Fig. 20 | 2D MHD blast, one A100 GPU, pressure ratio 100 | uniform $4096^2$ at 181 Mzcps against AMR ($1024^2$ root, two levels) at 141 Mzcps, about 20 % overhead; the AMR run takes 18 % of the wall-clock time ("5.4× faster" in the caption), with essentially identical density |
 | Matsushita & Aoki §6.3 | liquid-jet breakup | 11 h on one GPU against an estimated 501,840 core-hours of an incompressible uniform-mesh reference, explicitly not a fair comparison |
 
 Peng et al. find that refinement pays off only at high resolution,
@@ -349,6 +480,37 @@ compression ratios of the finest-level leaf cells above 85–90%; uniform
 TENO5 takes 1.003–1.412 of the WENO5-Z time. No hardware is stated, and
 the ratios are of whole runs, which differ in mesh and reconstruction,
 the adaptive one with local time stepping ([steady shock problems](/benchmarks/steady-shock-problems.md)).
+
+Stone et al. (§5.2, Fig. 22) run AMR weak scaling on Frontier up to 4096
+GPU dies with a sound wave refined on its crests: super-linear scaling while
+the MeshBlock size grows, and nearly perfect scaling with fixed $32^3$
+MeshBlocks, with over 5 million MeshBlocks moved for load balancing at the
+largest size. They attribute the 20 % overhead partly to the small work per
+MeshBlock of a 2D mesh (§5.1).
+
+**Accuracy and robustness of high-order transfers.** Wang et al. (2026)
+measure on a two-level grid (ratio 2): $L_1$ density orders 4.35, 4.86,
+5.40 for a manufactured steady Navier–Stokes solution, and 4.65, 4.83,
+4.92 for smooth unsteady advection with dynamic refinement and
+$\Delta t=0.2\Delta x^2$ (Table 6;
+[manufactured solutions](/definitions/method-of-manufactured-solutions.md)).
+Without flux correction the conservation error of the smooth problem
+converges at fifth order (Table 7); with flux correction, they state
+without a table, the coarse–fine flux mismatch limits it to second order
+(§6.1). On slowly moving Mach 2 and Mach 3 shocks crossing seven
+coarse–fine interfaces, WENO transfers without flux correction distort at
+the first interface and with it oscillate and later fail, while
+HybridWENO keeps a sharp shock to $t=30$ (Mach 3, Fig. 12;
+[steady shock problems](/benchmarks/steady-shock-problems.md)). On the Sod
+and Lax tubes regridding every 5 or 10 steps makes AMR-WENO oscillate and
+overshoot the shock speed while HybridWENO matches the uniform reference;
+at `regrid_int` = 2 they coincide (Figs. 13–14). In decaying
+[compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md)
+at $M_{t,0}=1.0$ on a $64^3$ base with two levels, pure WENO transfers fail
+at $t\approx3.4\tau_{\mathrm e}$ while shocklet regions are coarsened, Berger–Colella
+transfers are the most dissipative, and HybridWENO survives with a
+dissipation that approaches that of WENO transfers (§6.4.3, Figs. 21–22;
+page-local $\tau_{\mathrm e}$ the eddy time).
 
 **Accuracy on refined grids.** Calhoun et al. measure third order of
 Active Flux on adaptive grids, in $L^1$ (Tables 1–4). Advecting a
@@ -390,13 +552,52 @@ as the coarser uniform one (Table 4).
   with static refinement only.
 - The bundle's sources use refinement with second-order finite volumes
   (Peng et al., Matsushita & Aoki), fifth-order finite differences
-  (Browne et al.), finite-difference WENO of unstated order (Zaghi et
-  al.; WENO3 in their appendix) and discontinuous Galerkin (Bai & Li);
-  none analyses the accuracy of the coarse–fine interface for its
-  high-order scheme. Zaghi et al. state only that level jumps "seem to
-  not pollute the solution" of a WENO3 vortex (Appendix). Calhoun et al.
+  (Browne et al., Wang et al. (2026)), finite-difference WENO of unstated
+  order (Zaghi et al.; WENO3 in their appendix), finite-volume PLM, PPM and
+  WENO-Z (Stone et al.) and discontinuous Galerkin (Bai & Li). Only Wang et
+  al. (2026) analyse the truncation and conservation errors of the
+  coarse–fine interface for a high-order scheme (Apps. C–D, a static
+  two-level 1D hierarchy). Zaghi et al. state only that level jumps "seem
+  to not pollute the solution" of a WENO3 vortex (Appendix). Calhoun et al.
   measure third-order convergence of Active Flux on refined grids, a
   measurement rather than an analysis of the interface error (§4).
+- **Wang et al. (2026) on earlier transfers.** They call the argument of
+  Shen, Qiu & Christlieb, that the conservation loss of node-based
+  transfers at shocks is hidden under the overlying fine grid, "overly
+  idealized", because it assumes discontinuities confined to the finest
+  level; at `regrid_int` = 2 they reproduce agreement with that work, and
+  at 5 and 10 they show failures (§1, §5.1, §6.3.1). They report, as a
+  summary of Sebastian & Shu, that Lagrange interpolation was found more
+  efficient and accurate enough at multidomain interfaces, while they find
+  WENO interpolation more robust in AMR with regridding (§1, §5.3). Neither
+  earlier work is a source of the bundle; the settings differ.
+- **Strict conservation and its scope (Wang et al. 2026).** The abstract
+  and §3.4 claim strict conservation at coarse–fine interfaces by flux
+  correction; Appendix B proves global conservation for the
+  Berger–Colella closure only, and Appendix C states that refluxing does
+  not restore it when the transfers are non-conservative, as the WENO ones
+  are. The second-order conservation error with flux correction (§6.1) is
+  stated without a table. The CFL bound 1.43 and the Bloch spectra concern
+  the linear-weight operator.
+- **Printed slips in Wang et al. (2026).** In Table 7 the density errors
+  $5.95\times10^{-4}$ and $2.13\times10^{-5}$ give the order
+  $\log_2(5.95\times10^{-4}/2.13\times10^{-5})=4.80$, while 5.02 is printed,
+  the density orders repeating those of the momentum column *(compiler
+  check, not in the sources)*. Appendix B prints the coarse update as
+  $U^{n+1}_{\ell-1,i}=U^n_{\ell-1,i}-\frac{\Delta t_{\ell-1}}{\Delta x_{\ell-1}}\big(F_{\ell-1,i+1/2}-F_{\ell-1,i-1/2}\big)+\mathcal R_{\ell-1,i}$
+  with $\mathcal R_{\ell-1,i}=\frac{\Delta t_{\ell-1}}{\Delta x_{\ell-1}}\big(\bar F_\ell-F_{\ell-1,i+1/2}\big)$
+  (Eqs. (B.3), (B.6); page-local $U$, $F$, $\bar F_\ell$ the time-averaged
+  fine flux, $\mathcal R$ the reflux term), for a coarse cell whose right
+  face $i+1/2$ is the interface; substituted, this gives
+  $-\frac{\Delta t}{\Delta x}\big(2F_{\ell-1,i+1/2}-\bar F_\ell-F_{\ell-1,i-1/2}\big)$
+  instead of replacing $F_{\ell-1,i+1/2}$ by $\bar F_\ell$, which needs
+  $\mathcal R_{\ell-1,i}=\frac{\Delta t_{\ell-1}}{\Delta x_{\ell-1}}\big(F_{\ell-1,i+1/2}-\bar F_\ell\big)$
+  *(compiler check, not in the sources)*. The caption of Fig. 6
+  nondimensionalizes the eigenvalues with $\Delta x_{\mathrm c}$, Eq. (38)
+  with $\Delta x_{\mathrm f}$.
+- **Stone et al.'s AMR claims** are measurements on one GPU and on
+  Frontier (Figs. 20, 22); the 20 % overhead and 5.4 × speed-up concern a
+  2D blast, which the authors expect to overstate the overhead.
 - Calhoun et al. call theirs "the first implementation of the Active
   Flux method on adaptively refined Cartesian grids" (Abstract). The
   stationarity-preserving acoustic evolution operator of Barsukow et al.
@@ -444,3 +645,5 @@ as the coarser uniform one (Table 4).
 - [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — arXiv v2: §1.1, §7.1 (argument against dyadic refinement).
 - [Liang & Fu (2026)](/sources/liang-2026.md) — §1; §3.1, Eqs. (8)–(10); §3.3, Eqs. (27)–(28), Remarks 1–3; §4.1–4.2, Eqs. (30)–(31); §5, Eq. (32), Figs. 9–10, 14–15; §5.8, Table 1.
 - [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §3, §3.3 (Eqs. (31)–(35), Remarks 9–10, Fig. 6); §4.5 (Eqs. (43)–(45)); §5.1.2 (Figs. 12–13); §5.3.2 (Figs. 19–21).
+- [Stone et al. (2026)](/sources/stone-2026.md) — §2; §3 (FOFC), §3.2, §3.5; §5.1, Fig. 20; §5.2, Fig. 22.
+- [Wang et al. (2026)](/sources/wang-2026.md) — §1; §2.1; §3.1–3.4, Eqs. (8)–(12), Tables 1–3; §4, Eqs. (38)–(42), Figs. 5–6; §5.1–5.3, Eqs. (44)–(50); §6.1–6.4, Tables 6–7, Figs. 12–14, 21–22; Apps. A–D.

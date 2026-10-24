@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark of Mach 3 flow in a wind tunnel wi
 status: established
 aliases: [forward-facing step, wind tunnel with a step, Mach 3 wind tunnel]
 tags: [benchmark, low-dissipation, weno]
-timestamp: 2026-10-23T20:39:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Mach 3 forward-facing step
@@ -18,7 +18,7 @@ sheet trails downstream. The expansion corner of the step is a
 singularity that strains robustness, and the vortex sheet is
 Kelvin–Helmholtz unstable, so the benchmark measures both whether a
 scheme survives and how much small-scale structure it resolves.
-Twenty-four sources of the bundle run it, seven of them on triangles (one of these
+Twenty-five sources of the bundle run it, seven of them on triangles (one of these
 in a relativistic version), one on polygons and one as a steady-state
 problem; those
 that name an origin attribute it to Woodward & Colella.
@@ -33,7 +33,7 @@ of that state is $c=\sqrt{1.4\cdot1/1.4}=1$, so the inflow velocity is
 $(v_1,v_2)=(3,0)$ *(compiler check, not in the sources)*.
 Walls are reflecting, the left boundary is inflow and the right one
 outflow. Balsara et al. treat the corner singularity "in the same manner
-as Woodward and Colella"; Li et al. do not mention a corner
+as Woodward and Colella"; Li et al. (2022b) do not mention a corner
 treatment. [Luo & Wu (2021)](/sources/luo-2021-b.md) §5.3.4 refer the
 setup to Woodward & Colella without reprinting it and run to $t=4$.
 [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.10 and
@@ -154,6 +154,7 @@ fix at the corner.
 | [de Romémont et al. (2026)](/sources/deromemont-2026.md) §6.3 | second-order MUSCL with [learned slopes](/methods/learned-weno-weights.md) (van Albada limiter kept), Rusanov flux, explicit Euler | $384\times128$, reference $768\times256$ | Courant 0.01 |
 | [Vilar & Abgrall (2024)](/sources/vilar-2024.md) §4.3.3 | $\mathbb P^5$ DG with a posteriori local subcell correction ([MOOD-type](/methods/mood-a-posteriori-limiting.md)), first-order FV fallback | 680 triangles, no refinement at the corner | — |
 | [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.6 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG $\mathbb P^2$, $\mathbb P^3$ in primitive variables, a posteriori subcell FV limiter with conservative correction in shock cells | polygons, $h=1/80$ | 0.5 after 10 steps at 0.1 |
+| [Wang et al. (2023a)](/sources/wang-2023.md) §4.8 | fifth-order characteristic-wise [A-WENO](/methods/alternative-weno.md) with affine-invariant Z-type weights, adaptive-diffusion LLF-M flux vs [LLF](/methods/lax-friedrichs-flux.md); TVD-RK3; Woodward–Colella corner treatment; $t=4$ | $900\times300$ | 0.45 |
 
 ## What the benchmark measures
 
@@ -207,6 +208,19 @@ overshoot and spurious oscillations at the corner that they attribute to
 "the double boundary condition at the corner" (Fig. 15); the case is not
 in their slip-wall training data.
 
+**Adaptive numerical diffusion in the two-point flux.** Wang et al.
+(2023a) run the step with the inflow $\rho=1.4$, $p=1$, $v=(3,0)$,
+reflecting walls, and the corner treated as in Woodward & Colella under
+the nearly-steady-flow assumption. Their LLF-M flux, whose coefficient
+a feature sensor (a Ducros dilatation–vorticity ratio times Jameson-type
+normalized second differences of pressure and density) lowers to as
+little as $0.1$ of the LLF value in smooth flow, resolves more
+vortices along the slip line from the triple point than the LLF flux,
+with the same dissipation at the shocks (§4.8, Figs. 18–19). The run
+takes 13,760 s against 12,670 s with LLF, a ratio of 1.09, the largest
+of their four two-dimensional tests (Table 3; Fortran 90, Intel
+i7-9700).
+
 **Shock stability of the Riemann solver.** Hu, Yuan & Zhao use the
 step as one of their tests of the
 [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md): HLLC and
@@ -248,7 +262,7 @@ hardware not stated (Table 4); the printed MUSCL-THINC-BVD components,
 17.9 % instead of the 11.1 % implied by the printed totals *(compiler
 check, not in the sources)*.
 
-**Vortex-sheet roll-up.** Li et al. find that all schemes capture the
+**Vortex-sheet roll-up.** Li et al. (2022b) find that all schemes capture the
 shocks and that WENO-ZN gives the clearest Kelvin–Helmholtz roll-up of
 the vortex sheet (§4.4.3, Fig. 9). Balsara et al. show "pronounced"
 vortex-sheet roll-up at seventh order on $1440\times480$ (Fig. 17).
@@ -303,7 +317,7 @@ troubled cells flagged by their modified KXRCF indicator are plotted
   them.
 - Yu & Hesthaven stop at $t=3$, the other non-relativistic unsteady
   runs that print a final time at $t=4$; Mossier et al. print none.
-- Li et al. write that the problem "is also originally from the paper
+- Li et al. (2022b) write that the problem "is also originally from the paper
   of [30]", with no preceding mention of that paper.
 - Tang's step interior and Gaburro et al.'s printed domain depart from
   the Woodward–Colella setup (see Setup).
@@ -334,3 +348,4 @@ troubled cells flagged by their modified KXRCF indicator are plotted
 - [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §4.1.3, Ex. 5.9 (arXiv v3).
 - [Huang et al. (2025b)](/sources/huang-2025-b.md) — §4.2.5, Table 4, Figs. 9–10.
 - [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §6.3, Fig. 15.
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §4.8, Figs. 18–19; §4.9, Table 3.

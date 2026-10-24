@@ -5,25 +5,27 @@ description: "WENO-ZN weights replace the WENO-Z global indicator by the square 
 status: established
 aliases: [WENO-ZN, WENO5-ZN, WENO7-ZN, WENO9-ZN]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # WENO-ZN schemes
 
 WENO-ZN is a modification of the [WENO-Z](/methods/weno-z.md) weights aimed at
 [accuracy at critical points](/properties/critical-point-accuracy.md). The fifth-order scheme is
-due to Shen, Zhang, Li & Peng (an arXiv preprint of 2020, as recalled by Li et al. 2022, §3.1); Li
-et al. (2022) generalize it to every odd order $2r-1$, $r\ge3$, and work out $r=4$ and $r=5$. With
+due to Shen, Zhang, Li & Peng (an arXiv preprint of 2020, as recalled by Li et al. 2022b, §3.1); Li
+et al. (2022b) generalize it to every odd order $2r-1$, $r\ge3$, and work out $r=4$ and $r=5$. With
 the linear weights $d_k$ and the Jiang–Shu [smoothness indicators](/definitions/smoothness-indicator.md)
 $\beta_k$ of [WENO-JS](/methods/weno-js-reconstruction.md),
 
-$$\alpha_k=d_k\Big[\Theta+\Big(\frac{\tau_{4r-4}}{\beta_k+\epsilon}\Big)^q\Big],\qquad
-\tau_{4r-4}=\big[\Delta^{2r-2}f_i\big]^2,\qquad
+$$\alpha_k=d_k\Big[\Theta+\Big(\frac{\tau^{\mathrm{ZN}}_{2r-1}}{\beta_k+\epsilon}\Big)^q\Big],\qquad
+\tau^{\mathrm{ZN}}_{2r-1}=\big[\Delta^{2r-2}f_i\big]^2,\qquad
 \Theta=C_\Theta\Big(\frac{\beta_0+\beta_{r-1}-|\beta_0-\beta_{r-1}|+\epsilon}{|\beta_0-\beta_{r-1}|+\epsilon}\Big)^2,$$
 
-(Li et al. 2022, Eqs. (27)–(29)), where $\Delta^{m}f_i$ (page-local) is the $m$th undivided
+(Li et al. 2022b, Eqs. (27)–(29)), where $\Delta^{m}f_i$ (page-local) is the $m$th undivided
 difference centred at $x_i$ over the global stencil $f_{i-r+1},\dots,f_{i+r-1}$, and $\Theta$ and
-$C_\Theta$ (page-local) are the paper's adaptive function $\theta$ and constant $C$. The
+$C_\Theta$ (page-local) are the paper's adaptive function $\theta$ and constant $C$. The global
+indicator $\tau^{\mathrm{ZN}}_{2r-1}$ (page-local) carries, as in the registry, the number of points of
+its stencil as subscript; the source writes it $\tau_{4r-4}$, after the power of $\Delta x$ it carries. The
 normalization is that of WENO-Z.
 
 ## The two ingredients
@@ -32,12 +34,12 @@ normalization is that of WENO-Z.
 uses the highest undivided difference the global stencil supports (Eqs. (30)–(32)):
 
 $$\begin{aligned}
-\tau_8&=(f_{i-2}-4f_{i-1}+6f_i-4f_{i+1}+f_{i+2})^2,\\
-\tau_{12}&=(f_{i-3}-6f_{i-2}+15f_{i-1}-20f_i+15f_{i+1}-6f_{i+2}+f_{i+3})^2,\\
-\tau_{16}&=(f_{i-4}-8f_{i-3}+28f_{i-2}-56f_{i-1}+70f_i-56f_{i+1}+28f_{i+2}-8f_{i+3}+f_{i+4})^2,
+\tau^{\mathrm{ZN}}_5&=(f_{i-2}-4f_{i-1}+6f_i-4f_{i+1}+f_{i+2})^2,\\
+\tau^{\mathrm{ZN}}_7&=(f_{i-3}-6f_{i-2}+15f_{i-1}-20f_i+15f_{i+1}-6f_{i+2}+f_{i+3})^2,\\
+\tau^{\mathrm{ZN}}_9&=(f_{i-4}-8f_{i-3}+28f_{i-2}-56f_{i-1}+70f_i-56f_{i+1}+28f_{i+2}-8f_{i+3}+f_{i+4})^2,
 \end{aligned}$$
 
-so that $\tau_{4r-4}=O(\Delta x^{4r-4})$ in smooth regions, against WENO-Z's $\tau_{2r-1}$
+so that $\tau^{\mathrm{ZN}}_{2r-1}=O(\Delta x^{4r-4})$ in smooth regions, against WENO-Z's $\tau_{2r-1}$
 ($\tau_7=O(\Delta x^6)$ by Li et al.'s Eq. (17)) and $O(\Delta x^{2r+2})$ for the optimal-order indicator of Fan's WENO-Z$\eta$
 (§3.3). The same squared undivided difference is the quantity $d_1$ of the OWENO scheme of Baeza et
 al. (Eq. (19), recalled in §2).
@@ -49,11 +51,11 @@ relative weights are governed by $(\tau/(\beta_k+\epsilon))^q$ and the ENO behav
 $\beta_k$ is recovered. $C_\Theta=10$ comes from the fifth-order paper (§3.1); Li et al. argue that
 it raises the contribution of less-smooth stencils "in a reasonable region" and improves
 high-frequency waves on coarse grids. On the test function of Eq. (33) (a jump at $x=0$), Fig. 1
-shows $\Theta\sim10^{10}$–$10^{15}$ in smooth parts and $\tau_{12}\sim\tau_7\gg\Theta$ at the jump.
+shows $\Theta\sim10^{10}$–$10^{15}$ in smooth parts and $\tau^{\mathrm{ZN}}_7\sim\tau_7\gg\Theta$ at the jump.
 
 ## Accuracy at critical points
 
-Li et al. (2022, §3.3, Table 5) count, from the ratio $\tau_{4r-4}/\beta_k$ alone, the order $n$ in
+Li et al. (2022b, §3.3, Table 5) count, from the ratio $\tau^{\mathrm{ZN}}_{2r-1}/\beta_k$ alone, the order $n$ in
 $\alpha_k=d_k+O(\Delta x^n)$ at an $m$th-order critical point (where $f'=\dots=f^{(m)}=0$):
 $n=q\,[(4r-4)-(2+2m)]$. For $r=3$: $n=4$ ($q=1$) or 8 ($q=2$) at the first order, 2 or 4 at the second
 and 0 at the third; for $r=4$ it is positive up to the fourth order, for $r=5$ up to the sixth. Hence the

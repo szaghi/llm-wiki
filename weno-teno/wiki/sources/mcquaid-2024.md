@@ -8,7 +8,7 @@ authors: [McQuaid J.A., Brehm C.]
 year: 2024
 venue: "Comput. Fluids 269:106121"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Computers_amp_Fluids_McQuaid_Heat_flux_predictions_for_hypersonic_flows_with_an_overset_n.pdf"
-tags: [hypersonic, weno-z, hybrid-scheme, ducros-sensor, amr, overset-grid]
+tags: [hypersonic, weno-z, hybrid-scheme, troubled-cell, amr, overset-grid]
 timestamp: 2026-10-23T11:06:00Z
 ---
 
@@ -135,7 +135,7 @@ printed duplicates were found.
 
 # Pages created or updated
 
-Chunk 7 (2026-10-23), cited further in chunks 8–10 (2026-10-23). This source is cited on:
+Chunk 7 (2026-10-23), cited further in chunks 8–11 (2026-10-23/24). This source is cited on:
 
 * [Ducros shock sensor](/definitions/ducros-shock-sensor.md)
 * [Flux vector splitting](/methods/flux-vector-splitting.md)

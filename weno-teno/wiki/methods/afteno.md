@@ -5,7 +5,7 @@ description: "AFTENO places a TENO interpolation of point values inside the alte
 status: established
 aliases: [AFTENO, AFTENO5, alternative formulation of targeted ENO, TENO in the AFWENO framework]
 tags: [teno, finite-difference, numerical-flux, reconstruction]
-timestamp: 2026-10-23T15:05:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # AFTENO — alternative-formulation TENO
@@ -20,10 +20,11 @@ reconstructed from split point fluxes; it is a two-point flux on interpolated
 states plus even-derivative corrections (the Shu–Osher alternative flux
 expansion),
 
-$$\hat f_{i+1/2}=h\big(u^-_{i+1/2},u^+_{i+1/2}\big)+\sum_{\ell\ge1}a_{2\ell}\,\Delta x^{2\ell}\Big(\frac{\partial^{2\ell}f}{\partial x^{2\ell}}\Big)_{i+1/2},$$
+$$\hat f_{i+1/2}=h\big(u^-_{i+1/2},u^+_{i+1/2}\big)+\sum_{\ell\ge1}b_{2\ell}\,\Delta x^{2\ell}\Big(\frac{\partial^{2\ell}f}{\partial x^{2\ell}}\Big)_{i+1/2},$$
 
-with $h$ any monotone flux (Lax–Friedrichs, Steger–Warming, HLL, HLLC, Roe)
-and $u^\pm_{i+1/2}$ interpolated point values (Ye et al., §3, Eqs. (11)–(13)).
+with $h$ any monotone flux (Lax–Friedrichs, Steger–Warming, HLL, HLLC, Roe),
+$u^\pm_{i+1/2}$ interpolated point values and $b_{2\ell}$ the correction coefficients
+(page-local, Ye et al.'s $a_{2\ell}$, as on the alternative-WENO page; §3, Eqs. (11)–(13)).
 AFTENO replaces the WENO interpolation of $u^\pm_{i+1/2}$ by a TENO
 interpolation. [Fu (2023)](/sources/fu-2023.md) (§3.10) lists it among the TENO
 variants as the route by which "arbitrary monotone fluxes (Riemann solvers) can be
@@ -58,8 +59,8 @@ used".
    differences of the physical point fluxes over the TENO global stencil, without
    characteristic projection or weighting, on the argument that their coefficients
    carry at least $\Delta x^2$ (§3.2). The coefficients are
-   $a_2=-\tfrac1{24}$, $a_4=\tfrac7{5760}$, $a_6=-\tfrac{31}{967680}$,
-   $a_8=\tfrac{127}{154828800}$, $a_{10}=-\tfrac{73}{3503554560}$
+   $b_2=-\tfrac1{24}$, $b_4=\tfrac7{5760}$, $b_6=-\tfrac{31}{967680}$,
+   $b_8=\tfrac{127}{154828800}$, $b_{10}=-\tfrac{73}{3503554560}$
    (Appendix, Eqs. (A.15)–(A.17)), with central difference coefficients up to
    order 10 in Tables 3–6. A purely central approximation "can be unstable in
    some problems"; the upwind, flux-split approximation of Liu (2017) fixes this
@@ -113,7 +114,8 @@ TENO to the interpolation-based flux plus derivative terms (§4.2).
   domain is printed $[0,1\pi]$ with periodic $\sin x$ data, whose periodic extension
   on $[0,\pi]$ has a kink in its derivative *(compiler check, not in the sources)*.
 - "AFWENO has odd order only" is a property of the Jiang–Shu–Zhang construction,
-  not of interpolation-based flux formulations in general.
+  not of interpolation-based flux formulations in general: AFTENO itself uses the
+  same flux expansion and has coefficients for even orders (Tables 1–2).
 
 # Citations
 

@@ -6,6 +6,123 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 11 — closing chunk: COS(DG), adaptive-dissipation AWENO, learned fluxes, high-order AMR, AthenaK; whole-bundle deep lint (2026-10-24)
+
+Sources (5): cao-2026, liu-2026, wang-2026, wang-2023, stone-2026. 204 of
+207 ingested, 224 concept pages plus the registry, 5567 bibliography
+entries. The archive is complete except for the three defective files below.
+
+### Decisions for the human
+
+1. **Archive defects still open (the bundle closes at 204/207):** the
+   archive has no new files since 2026-10-21. `feng-2026` (Phys. Fluids
+   38:011302) and `li-2024` (JCP 519:113375) have no PDF (their files hold
+   other papers: wang-2023, ingested here from the "Feng" file, and a copy
+   of liang-2022), and `wu-2023` (SINUM 61:250-285) holds only its
+   supplement. List: `~/papers/mosaic/weno-teno-redownload.csv`. Once the
+   PDFs are in the archive the three can be ingested as a small follow-up
+   unit (the deferred wu-2023 notes are in the chunk-7 scratch).
+2. **New open contradiction — is the Brio–Wu compound wave part of the
+   solution?** on [Brio–Wu shock tube](wiki/benchmarks/brio-wu-shock-tube.md):
+   Dematté et al. (2024, §4.1.1) call it "artificial"; Dao & Nazarov
+   (2022, §5.2) treat capturing it as the aim of the test. Promoted from a
+   qualification by the whole-bundle audit; chunk 8 had kept it as a
+   qualification because no source analyses admissibility. **Rule whether
+   it is a conflict of claims or of interpretation.** Seven contradictions
+   are now open.
+3. **Round-off and symmetry breaking (Rayleigh–Taylor, symmetry
+   preservation):** Fu (2021), Liang et al. and Huang et al. say low
+   dissipation unmasks round-off errors; Fleischmann et al., as recalled by
+   Fu (2023), find "no causality" between symmetry breaking and low
+   dissipation. Both pages keep it as a qualification (a recalled source is
+   not ingested); promote to a contradiction?
+4. **Bibliography rulings:** `peng-2024`/`peng-2024-b` and
+   `yan-2024`/`yan-2024-b` share a DOI (the `-b` entries are the in-press
+   forms, kept distinct under bundle law) — confirm or fold. The closing
+   sweeps found no further duplicates (below).
+5. **Tag map applied** (`ducros-sensor`→`troubled-cell`,
+   `high-mach`→`hypersonic`, `filtering`→`solution-filtering`,
+   `riemann-problem`→`riemann-solver`, `low-mach`→`all-mach`,
+   `efficiency`→`performance`); kept distinct on purpose:
+   `compact-stencil`/`compact-scheme` (different meanings) and
+   `positivity`/`bound-preserving` (a subset). Remaining overlaps the
+   auditors list (split-form/kinetic-energy-preserving,
+   multicomponent/multiphase, diffuse-interface/interface-capturing,
+   high-order/very-high-order) are left for your call.
+6. **Long pages (split candidates, nothing split):** sod-and-lax-shock-tubes
+   (9.6k words), double-mach-reflection (8.7k), isentropic-vortex (8.5k),
+   shu-osher-problem (8.2k), troubled-cell-indicator (~1,460 lines),
+   hll-riemann-solvers and lax-friedrichs-flux (~6.2k each, repeating the
+   bound-preservation material), numerical-dissipation.
+
+### Whole-bundle deep lint
+
+- Eight auditors re-read all 224 concept pages in full and the five new
+  Source pages; about 170 pages edited. Classes of fixes: registry notation
+  (DG degree $N$/$\mathbb P^N$ everywhere, registry symbols used with
+  other meanings renamed page-locally — $h$, $\tau$, $\lambda_{\mathrm s}$,
+  $\varepsilon_{\mathrm s}$, $\ell$, $\zeta$ —, WENO-ZN's
+  $\tau_{4r-4}$ renamed $\tau^{\mathrm{ZN}}_{2r-1}$ under the registry's
+  subscript rule); about 170 citation labels lettered or dated (Li, Duan &
+  Tang (2022c), Li, Shu & Qiu (2022d), Huang et al. (2026), Liang et al.
+  (2022) …); reader-side and process wording removed ("is meant", "usual",
+  "chunk N"); stale counts and pointers; three mojibake and line-break
+  repairs.
+- Corrections of substance: the PAMPA point-value update is not a convex
+  combination under the paper's first-order condition (it needs
+  $\Delta t/\Delta x\max a\le1/4$, Eq. (3.9)); Rueda-Ramírez et al.'s
+  non-entropy-stable dissipation is their Lax–Friedrichs-type flux with a
+  Roe-type matrix (Eqs. (52)–(53)), not the scalar case (four pages);
+  Bai & Li's HLLC/HLL switch aligned to the PDF; Cao et al. compare with
+  seven DG limiters plus OFDG and OEDG; a heading on the HLL page that took
+  a side on the open carbuncle entry neutralized; inferences about Chu et
+  al. (2025b)'s path replaced by what the paper states.
+- Contradictions: the six open entries were re-checked and stay open; one
+  new (above). Ji, Liang & Fu (2023, §2.2), who prefer HLL to HLLC against
+  the carbuncle with high-order TENO, are a possible further source on the
+  Fu/Ji side of the carbuncle entry (not added).
+
+### Identity and metadata
+
+- liu-2026 read from arXiv 2507.01795v1; wang-2023 read from the archive
+  file misnamed "2026 … Physics of Fluids Feng …" (page 1: Wang, Don & Wang,
+  Comput. Fluids 251:105743).
+- Labels: Wang et al. (2023a) = wang-2023 beside 2023b/c.
+- Merge: 5442 → 5567 (50 aliases, 9 verified silences, one printed
+  duplicate folded); `li-2022` printed in wang-2023 is the ingested
+  `li-2023` (J. Sci. Comput. 94:15); two wrong automatic merges overridden
+  (`porth-2017` against `ambroso-2007`, `toro-2009` against `toro-1997`).
+- **Closing sweeps over the whole record:** `--dupes` 9 groups, all
+  deliberate distinct forms (preprint, accepted, in press, reprint);
+  journal+volume+page collisions 7, all different journals; cross-year
+  near-identical titles 90, all distinct or cross-noted; one fold,
+  `yusof-1997` → `mohdyusof-1997`.
+
+### Printed slips (the Source pages list them in full)
+
+- cao-2026: every $C_k$ used is below the $1/e$ of Corollary 5.1; Ex. 6.8
+  scales the Lax states by $10^{\pm2}$, not "$10^{-4}$".
+- liu-2026: entropy stability claimed by Tadmor's theorem but not proved
+  (the averaged flux misses Tadmor's condition by $[\![u]\!]^3/12$ for
+  Burgers); SiLU printed as Sigmoid·ReLU (a kink at 0); TVD-RK2 as printed
+  is a half Euler step.
+- wang-2026: Table 7 order 5.02 printed, 4.80 from the errors; Eq. (B.6)
+  reflux sign; Fig. 6 against Eq. (38) scaling.
+- wang-2023: Configuration 6 columns permuted (values not restored);
+  "Euler equations (1)" for a scalar law.
+- stone-2026: Fig. 5 panels and Fig. 9 caption against the text; "4096³"
+  against 10,240³.
+
+### Candidates for later pages and registry
+
+- Locally divergence-free DG; Ryu–Jones MHD tubes; deepMTBVD; MR-WENO-SD;
+  conservative cut-cell sharp-interface methods.
+- Registry §10 extended (LLF-M symbols, COS(DG) symbols, $\sigma^{\mathrm{ES}}$,
+  $\mu_{\mathrm p}$, $\mathsf K_{dd'}$, $\breve u$, $c_\mu$, the mesh-size $h$
+  note). Still open: $\epsilon_\sigma$ (entropy tolerance vs TENO-A
+  regularization), a third $\zeta$ and $\varsigma$, the vector potential
+  $\mathsf A$ on older benchmark pages.
+
 ## Chunk 10 — converged ENO, learned and adaptive TENO/WCNS, Active Flux variants, entropy-stable MHD DG, low-Mach and multiphase codes (2026-10-23)
 
 Sources (20): allegrini-2025, barsukow-2026, charles-2025, chen-2026,

@@ -4,8 +4,8 @@ title: "Level-set and ghost-fluid interface methods"
 description: "Methods that locate a material interface or rigid wall by the zero contour of a signed-distance level set: transport, reinitialization, ghost-fluid methods and their loss of conservation, a conservative sharp-interface finite-difference scheme with cell merging, a DG cut-cell scheme with real–ghost mixing, a conservative cut-cell finite-volume method extended to liquid–vapour phase change, and level-set–phase-field coupling."
 status: established
 aliases: [level set, level-set function, ghost fluid method, GFM, original ghost fluid method, OGFM, sharp-interface method, conservative sharp-interface scheme, real–ghost mixing, DGCCGF]
-tags: [interface-capturing, multiphase, finite-difference, weno, dg, immersed-boundary]
-timestamp: 2026-10-23T03:53:00Z
+tags: [interface-capturing, level-set, multiphase, finite-difference, weno, dg, immersed-boundary]
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Level-set and ghost-fluid interface methods
@@ -63,7 +63,7 @@ Eq. 25, Fig. 6); corner values of $\Phi$ are obtained by trilinear
 interpolation (below), and the interface velocity is extended into the
 band like the ghost states.
 
-**Reinitialization.** Both sources restore the distance property by
+**Reinitialization.** The sources restore the distance property by
 solving to pseudo-steady state
 
 $$
@@ -341,14 +341,14 @@ cuts each crossed Cartesian cell $K$ by a straight line into $K_1$ and
 $K_2$, and each fluid is updated on its own part. To avoid both the
 small-cell time-step limit and the cell merging of their earlier DG
 cut-cell method (which could not follow topology changes), each fluid
-$\ell$ receives an intermediate polynomial on the whole cell,
+$k$ receives an intermediate polynomial on the whole cell,
 
 $$
-\int_Ku^\star_\ell\,\varphi\,dx=\int_{K_\ell}u_\ell\,\varphi\,dx+\int_{K\setminus K_\ell}u^{\mathrm g}_\ell\,\varphi\,dx\qquad\forall\varphi\in\mathbb P^N(K),
+\int_Ku^\star_k\,\varphi\,dx=\int_{K_k}u_k\,\varphi\,dx+\int_{K\setminus K_k}u^{\mathrm g}_k\,\varphi\,dx\qquad\forall\varphi\in\mathbb P^N(K),
 $$
 
-the $L^2$ projection of the real polynomial $u_\ell$ on its part and of
-the ghost polynomial $u^{\mathrm g}_\ell$ on the other (Eqs. 27–28;
+the $L^2$ projection of the real polynomial $u_k$ on its part and of
+the ghost polynomial $u^{\mathrm g}_k$ on the other (Eqs. 27–28;
 page-local symbols, $\varphi$ the test function). The ghost state of
 the cut part comes from the ghost-fluid method;
 its higher-order coefficients are assumed equal to those of the real
@@ -408,7 +408,7 @@ test the interface error converges at roughly second order (rates
 ## Level sets for rigid walls
 
 With a stationary level set, $\Phi(x,t)=\Phi(x)$, the same machinery
-describes a rigid body on a Cartesian grid. Wang et al. (2022) take the
+describes a rigid body on a Cartesian grid. Wang et al. (2022a) take the
 signed distance to the wall, positive in the fluid, and compute
 $n=\nabla\Phi/\lvert\nabla\Phi\rvert$ and the curvature
 $\nabla\cdot n$ by second-order central differences (§2.2,
@@ -422,7 +422,7 @@ which motivates their body-fitted mapped meshes.
 
 ## Qualifications
 
-- The two sources solve different problems. Zheng et al. solve the
+- Zheng et al. and Matsushita & Aoki solve different problems. Zheng et al. solve the
   compressible Euler equations with physical equations of state and a
   sharp interface; Matsushita & Aoki solve a weakly compressible,
   isothermal model of low-Mach gas–liquid flow, $\partial_tp=-\rho c_{\mathrm a}^2\nabla\cdot v$

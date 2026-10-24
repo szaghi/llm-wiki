@@ -5,7 +5,7 @@ description: "Viscous two-dimensional (and three-dimensional) benchmark after Ye
 status: established
 aliases: [shock/mixing-layer interaction, shock–shear layer interaction, Yee–Sandham–Djomehri mixing layer, viscous shock–mixing layer]
 tags: [benchmark, low-dissipation, turbulence, weno]
-timestamp: 2026-10-23T15:02:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Shock–mixing-layer interaction
@@ -24,7 +24,7 @@ fires on shocklets and stays silent on smooth acoustic waves.
 
 [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.3.4 and
 [Wang et al. (2021)](/sources/wang-2021.md) Ex. 5.10 print the same
-setup, attributed by Li et al. to Yee et al. (1999): domain
+setup, attributed by Li et al. (2022a) to Yee et al. (1999): domain
 $[0,200]\times[-20,20]$, Navier–Stokes with $\mathrm{Re}=500$,
 $\mathrm{Pr}=0.72$, $t=120$;
 
@@ -37,7 +37,7 @@ $\mathrm{Pr}=0.72$, $t=120$;
   $T_{\mathrm f}=\lambda_{\mathrm f}/u_c$, $\lambda_{\mathrm f}=30$, $u_c=2.68$
   (page-local forcing period, phases and wavelength);
 - inflow on the left, slip wall at the bottom, outflow on the right
-  (zero gradient in Li et al.).
+  (zero gradient in Li et al. (2022a)).
 
 [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.2 and
 [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.11 print the
@@ -71,7 +71,7 @@ $0.59998$, Tang's $0.3636$ gives $2.6797$ and $0.6005$: both agree with
 $u_c=2.68$ and $0.6$ to the printed digits, the former more closely
 *(compiler check, not in the sources)*.
 
-**Three-dimensional extension.** Wang et al. Ex. 5.12 extend the domain
+**Three-dimensional extension.** Wang et al. (2021) Ex. 5.12 extend the domain
 to $[0,200]\times[-20,20]^2$ with symmetric boundaries in $z$ and the
 forcing $v_2'=\sum_ka_k\cos\big(2\pi k(t/T_{\mathrm f}+z/L_z)+\varphi_k\big)e^{-y^2/b}$,
 $L_z=40$, on $600\times120\times120$ points to $t=120$.
@@ -102,7 +102,7 @@ upstream of the shock and smaller-scale compression waves (Fig. 5.15).
 | Tang (2024) | [TENO-AZ](/methods/adaptive-teno.md) vs TENO-Z, TENO-A, TENO-LAD; finite difference, global LF splitting, TVD-RK3 | $500\times100$; $1000\times200$ at CFL 0.3, 0.5, 0.8 | none |
 | Wang et al. (2021) | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5) against WENO-JS5, [WENO-AO](/methods/weno-ao.md)5, WENO-ZS5; sixth-order central viscous fluxes | $500\times100$ | seventh-order WENO-JS on $2000\times400$ |
 
-**Detector behaviour.** Li et al. use the case as the robustness test
+**Detector behaviour.** Li et al. (2022a) use the case as the robustness test
 of their [hybrid](/methods/hybrid-weno.md) detector: it flags the
 oblique shock and the vortex-induced shocklets and does not flag the
 acoustic waves (Fig. 26).
@@ -113,7 +113,7 @@ finds MIG4 giving the thinnest shear layer of MEG6, MIG4 and TENO5
 without oscillation and MEG7 resolves the shear-layer vortices better
 than WCNS7M (Fig. 14).
 
-**Resolution and cost.** Wang et al. compare the schemes on density
+**Resolution and cost.** Wang et al. (2021) compare the schemes on density
 contours and a cut at $y=0$ against the fine reference (Figs. 5.16–5.17);
 they rank WENO-AO5 below the multi-resolution schemes on this case. In
 their cost table New WENO5 takes 1.60 times the time of WENO-JS5 on this
@@ -137,14 +137,14 @@ i7-9700 (Table 6).
 
 ## Qualifications
 
-- No source gives an error norm; the comparisons are visual (Wang et al.
-  against a finer computation, Li et al. and the Chamarthi papers
+- No source gives an error norm; the comparisons are visual (Wang et al. (2021)
+  against a finer computation, Li et al. (2022a) and the Chamarthi papers
   without reference).
 - Chamarthi (2023a) prints $\mathrm{Re}=1000$ for a setup the other three
   sources, Chamarthi's companion paper included, run at $\mathrm{Re}=500$; the
   paper does not say whether the value is deliberate. Both are read as
   arXiv preprints.
-- The two runs differ by a factor of about 3 in grid spacing
+- Li et al. (2022a)'s and Wang et al. (2021)'s runs differ by a factor of about 3 in grid spacing
   ($1600\times320$ against $500\times100$) *(compiler check, not in the sources)* and in grid
   type (uniform against refined near the layer), so their figures
   cannot be compared directly.
@@ -157,7 +157,7 @@ i7-9700 (Table 6).
   $\tfrac12\big((T_F+Y_O)+(T_F-T_O)\tanh(\cdot)\big)$; by the pattern of
   their velocity and mass-fraction profiles the first term is
   $T_F+T_O$ *(compiler check, not in the sources)*.
-- Wang et al. call the 3D case an "extension of the previous Example
+- Wang et al. (2021) call the 3D case an "extension of the previous Example
   4.10"; the 2D case is their Example 5.10.
 
 # Citations

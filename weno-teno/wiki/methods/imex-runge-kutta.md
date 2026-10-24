@@ -5,7 +5,7 @@ description: "Implicit–explicit Runge–Kutta schemes pair an explicit tableau
 status: established
 aliases: [IMEX-RK, implicit-explicit Runge–Kutta, additive Runge–Kutta, ARK-IMEX, SI-IMEX, semi-implicit IMEX Runge–Kutta, partitioned IMEX Runge–Kutta, IMEX TVD Runge–Kutta]
 tags: [asymptotic-preserving, imex, semi-implicit, finite-difference, relativistic, mhd]
-timestamp: 2026-10-23T19:54:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # IMEX Runge–Kutta schemes
@@ -178,7 +178,7 @@ but does not analyse its order or stiff accuracy.
 
 **Resistive relativistic MHD** ([Mignone et al. (2024)](/sources/mignone-2024.md), §3.2,
 §3.4, App. A). The stiff term is the relaxation source $-\tilde{\mathcal E}/\eta_{\mathrm m}$ of Ampère's
-law ($\eta_{\mathrm m}$ the resistivity and $\tilde{\mathcal E}$ the rest-frame electric field, page-local);
+law ($\eta_{\mathrm m}$ the resistivity, registry §10, and $\tilde{\mathcal E}$ the rest-frame electric field, page-local);
 everything else, fluxes, constrained-transport update and the charge source, is explicit. In a
 fourth-order finite-volume scheme the authors split each stage in two (Eq. (24)): the explicit
 part acts on **cell averages**, the implicit part on **point values** at cell centres,

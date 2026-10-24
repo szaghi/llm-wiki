@@ -5,7 +5,7 @@ description: "The Jiang–Shu weighted ENO reconstruction: a convex combination 
 status: established
 aliases: [WENO-JS, WENO5-JS, classical WENO, Jiang–Shu WENO, WENO3-JS]
 tags: [weno, reconstruction, finite-difference, finite-volume]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # WENO-JS reconstruction
@@ -155,7 +155,7 @@ upwinding through a minmod-limited slope ratio ([hybrid schemes](/methods/hybrid
 
 - **Accuracy at critical points.** WENO-JS loses order where low derivatives vanish
   ([critical-point accuracy](/properties/critical-point-accuracy.md)). On $x^ke^x$ at $x=0$, Li et
-  al. (2022, Table 6) measure for WENO5-JS orders 3.04–3.15 at a first-order critical point, 2.00 at
+  al. (2022b, Table 6) measure for WENO5-JS orders 3.04–3.15 at a first-order critical point, 2.00 at
   a second-order one and 3.39–3.72 at a third-order one; WENO7-JS and WENO9-JS also lose several
   orders (Tables 7–8). Fu (2021), Fu (2023), Takagi et al. (2022), Balsara et al. (2024) and Luo &
   Wu (2021) all recall this defect as the motivation for [mapped WENO](/methods/mapped-weno.md) and

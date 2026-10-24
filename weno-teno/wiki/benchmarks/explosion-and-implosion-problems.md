@@ -5,7 +5,7 @@ description: "Multi-dimensional Euler tests with Sod-type circular, spherical an
 status: established
 aliases: [explosion problem, implosion problem, cylindrical explosion, spherical explosion, 2D explosion, Liska–Wendroff implosion]
 tags: [benchmark, low-dissipation, central-scheme, teno]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Two-dimensional explosion and implosion problems
@@ -36,23 +36,23 @@ of radius 0.4, and $(0.125,0,0,0.1)$ outside, computed in the first
 quadrant $[0,1.5]^2$ with solid walls at $x=0$ and $y=0$ and free
 boundaries at $x=1.5$ and $y=1.5$, $\Delta x=\Delta y=3/800$, $t=3.2$.
 
-Both papers compare a new scheme with its predecessor on the shape of
+Chertock et al. and Wang et al. (2023b) compare a new scheme with its predecessor on the shape of
 the contact: the [LCD central-upwind scheme](/methods/lcd-central-upwind-scheme.md)
 of Chertock et al. gives a "substantially curlier" contact and a
 slightly wider mixing layer than the original
 [central-upwind scheme](/methods/central-upwind-scheme.md), with the
 shock still stable (Fig. 5.6); the
 [adaptive diffusion central-upwind flux](/methods/adaptive-diffusion-central-upwind-flux.md)
-of Wang et al. in [A-WENO](/methods/alternative-weno.md) gives a "much
+of Wang et al. (2023b) in [A-WENO](/methods/alternative-weno.md) gives a "much
 curlier" contact than their earlier adaptive diffusion central flux
-(Fig. 6). Wang et al. state the reasoning behind the gauge: the contact
+(Fig. 6). Wang et al. (2023b) state the reasoning behind the gauge: the contact
 is physically unstable and "may be stabilized by the ND only", so less
 dissipation shows as more roll-up.
 
 Chu et al. (2025c) use the problem to compare their new
 [low-dissipation central-upwind scheme](/methods/low-dissipation-central-upwind-scheme.md)
 (NEW), whose subcell projection places the jump at
-$x_{j+1/2}+u^{\mathrm{int}}\Delta t$ ($u^{\mathrm{int}}$ the
+$x_{i+1/2}+v^{\mathrm{int}}\Delta t$ ($v^{\mathrm{int}}$ the
 page-local intermediate velocity) instead of at the interface, with the
 original LDCU scheme of Kurganov & Xin (OLD); both second order with the
 generalized minmod limiter (minmod parameter $\theta=1.3$, page-local), SSP-RK3, CFL 0.475. OLD
@@ -78,7 +78,7 @@ Wendroff.
 The ambient state is $(1,0,0,1)$ in all six. The two printed regions
 are the same diamond, since $\max(\lvert x+y\rvert,\lvert x-y\rvert)=\lvert x\rvert+\lvert y\rvert$,
 and Liang et al. (2022)'s $800\times800$ grid on a side of 0.6 has the spacing
-$3/4000$ of Wang et al. *(compiler check, not in the sources)*. A solution
+$3/4000$ of Wang et al. (2023b) *(compiler check, not in the sources)*. A solution
 of Liang et al. (2022)'s problem that keeps the symmetry of the data, even in
 $x$ and in $y$, is in the periodic box the same as the solution on the
 quadrant $[0,0.3]^2$ with solid walls on all four sides, because
@@ -86,7 +86,7 @@ evenness and period $0.6$ make $x=\pm0.3$ mirror lines as well as $x=0$
 *(compiler check, not in the sources)*. The three sources thus run one
 problem; Liang et al. (2022) stop at $t=0.8$, the others at $t=2.5$. Tang's
 full box with reflecting walls is, for a symmetric solution, the same
-problem again, on a grid of spacing $3/2000$, twice that of Wang et al.
+problem again, on a grid of spacing $3/2000$, twice that of Wang et al. (2023b)
 *(compiler check, not in the sources)*. Chu et al. (2025a) print
 the quadrant as $[0,0.5]^2$, with the same diamond and walls on all four
 sides; the walls at $x=0.5$ and $y=0.5$ then lie farther from the
@@ -94,7 +94,7 @@ diamond than the mirror lines $x,y=0.3$ of the other runs, so their
 problem is not the same after the waves reach the outer walls
 *(compiler check, not in the sources)*.
 
-What is measured differs. Chertock et al. and Wang et al. read the
+What is measured differs. Chertock et al. and Wang et al. (2023b) read the
 distance the jet travels along $y=x$ as a sign of low dissipation: the
 new schemes send it further. Chertock et al. add an efficiency
 statement: at equal CPU time the new scheme on $\Delta x=1/2000$ "still
@@ -109,7 +109,7 @@ their low-dissipation TENO scheme with a
 "rigorous flow symmetry", with a symmetry-preserving implementation
 technique taken from earlier work, since such schemes "may cause the
 so-called symmetry breaking issue … due to machine round-off errors"
-(Fig. 21). Tang reads the jet as Chertock et al. and Wang et al. do:
+(Fig. 21). Tang reads the jet as Chertock et al. and Wang et al. (2023b) do:
 the adaptive-cut-off TENO-AZ builds finer and longer diagonal jets,
 while the TENO-Z and TENO-LAD results "show a large amount of noise"
 (§4.4.3, Fig. 12; see [adaptive TENO](/methods/adaptive-teno.md)).
@@ -120,11 +120,11 @@ adds Menshov) also measure how far the jet goes. Their adaptive
 switch the reconstruction, in local characteristic variables, from the
 Minmod2 limiter to an overcompressive limiter in cells flagged as
 rough, either by a minmod-based detector (A-MM) or by a weak local
-residual above $C(\Delta x)^2$ (A-WLR, $C=5$ here; SSP-RK3, CFL 0.4). The
+residual above $C_{\mathrm W}(\Delta x)^2$ (A-WLR, $C_{\mathrm W}=5$ here; SSP-RK3, CFL 0.4). The
 jet goes much further with both adaptive schemes than with the
 Minmod2 scheme LDCU. A-MM "seems to contain even smaller amount of
 numerical diffusion" than A-WLR, which, the authors show, flags only
-cells along the shocks, and a smaller $C$ makes A-WLR sharp
+cells along the shocks, and a smaller $C_{\mathrm W}$ makes A-WLR sharp
 on coarse meshes but gives "severe instabilities" on $\Delta x=1/2000$
 (Figs. 4.7–4.8). Symmetry about $y=x$, lost to round-off in these
 low-dissipation schemes, is enforced by averaging mirrored cell values
@@ -266,7 +266,15 @@ two-fluid "cylindrical explosion" of
 [Chu et al. (2025b)](/sources/chu-2025-b.md) Ex. 5, a
 high-pressure gas bubble in water below a layer of air, is a
 gas–liquid problem and is recorded on
-[underwater explosion](/benchmarks/underwater-explosion.md).
+[underwater explosion](/benchmarks/underwater-explosion.md). The
+relativistic-MHD cylindrical explosions of Komissarov, which
+[Stone et al. (2026)](/sources/stone-2026.md) §3.5 run with a
+first-order flux fallback in their GPU AMR code (Fig. 10), are
+magnetized blasts and are recorded on
+[MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md); the same
+paper's supernova in a turbulent multiphase interstellar medium
+($2048^3$ cells, with heating and cooling, §3.1, Fig. 2) is an
+application run, not a test with a reference solution.
 
 ## Qualifications
 
@@ -277,18 +285,18 @@ gas–liquid problem and is recorded on
   and [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md)
   instabilities).
 - Each long-time comparison is against one predecessor only: Wang et
-  al. against their own earlier adaptive diffusion central flux,
+  al. (2023b) against their own earlier adaptive diffusion central flux,
   Chertock et al. against the original central-upwind scheme, Chu et
   al. (2025c) against the original LDCU scheme.
 - de Romémont et al.'s gain is a relative $L^1$ error reduction on one
   grid against a fine-grid run of the standard scheme, not an order or
   a convergence statement.
 - Liang et al. (2022)'s final time is given only in the caption of Fig. 21.
-- Chu et al. (2025a)'s adaptive schemes depend on the constant $C$
+- Chu et al. (2025a)'s adaptive schemes depend on the constant $C_{\mathrm W}$
   of the residual threshold, tuned per problem; the authors conclude
   that this hurts the robustness of A-WLR and that the minmod-based
   detector gives the robust adaption strategy (§5).
-- Ji et al. print "$\lVert r\rVert\le0.5$" without restating the centre
+- Ji, Liang & Fu (2022) print "$\lVert r\rVert\le0.5$" without restating the centre
   of the disc; the 3D domain is not printed. Ji, Liang & Fu (2023) print
   the disc as "a unit circle of radius $R=1$ centered at $[1,1]$" again.
 
@@ -310,3 +318,4 @@ gas–liquid problem and is recorded on
 - [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §3.2.2, §4.3, Figs. 3–4 (arXiv v1).
 - [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §6.3, Fig. 14.
 - [Liang et al. (2025)](/sources/liang-2025.md) — §4.7, Figs. 19–20.
+- [Stone et al. (2026)](/sources/stone-2026.md) — §3.1, §3.5, Figs. 2, 10 (cross-reference).

@@ -5,7 +5,7 @@ description: "Viscous flow in a square cavity driven by its sliding top wall, ru
 status: established
 aliases: [lid-driven cavity flow, driven cavity, MHD lid-driven cavity, accelerating-lid cavity]
 tags: [benchmark, mhd, asymptotic-preserving, finite-volume]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Lid-driven cavity
@@ -50,8 +50,8 @@ consistent with the authors' "$M\simeq2$" at $t=10$.
 
 **Gas-kinetic compact scheme.** Zhao et al. use the cavity at $\mathrm{Re}=1000$ to show the
 viscous accuracy of their compact [gas-kinetic scheme](/methods/gas-kinetic-scheme.md) on a
-coarse stretched triangular mesh in a nearly incompressible regime: the centreline $U$ and
-$V$ profiles are compared with "reference solutions" whose source is not named in the text
+coarse stretched triangular mesh in a nearly incompressible regime: the centreline $v_1$ and
+$v_2$ profiles (the paper's $U$, $V$) are compared with "reference solutions" whose source is not named in the text
 (§4.9, Figs. 15–16, arXiv v1).
 
 **Semi-implicit MHD at very low Mach number.** Dematté et al.'s

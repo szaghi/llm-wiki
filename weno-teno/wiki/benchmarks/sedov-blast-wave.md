@@ -5,7 +5,7 @@ description: "Point-explosion benchmark: the energy of one or a few cells drives
 status: established
 aliases: [Sedov problem, Sedov–Taylor blast wave, point explosion, Sedov blast]
 tags: [benchmark, positivity, bound-preserving, weno]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Sedov blast wave
@@ -60,7 +60,7 @@ $\gamma=1.4$, $p=(\gamma-1)E$ maps $4\times10^{-13}$ to $E=10^{-12}$ and
 $1.28\times10^6/\Delta x$ to $E=3.2\times10^6/\Delta x$, and
 $2.56\times10^8\times5\times10^{-3}=1.28\times10^6$, so all are the
 common data *(compiler check, not in the sources)*. Li et al. (2023a)
-call the pressure ratio $O(10^{21})$. Wang et al. attribute the setup to Zhang & Shu (2012). Li, Shu & Qiu
+call the pressure ratio $O(10^{21})$. Wang et al. (2021) attribute the setup to Zhang & Shu (2012). Li, Shu & Qiu
 print the deposited cell as "the centre cell" and plot density,
 velocity, pressure and the troubled cells (Fig. 3.6).
 
@@ -109,7 +109,7 @@ $p=0.0979264/(\Delta x\Delta y)$, which is $10^{-6}$ times Fu's corner
 pressure. Fu's run thus deposits $10^6$ times the energy and stops at
 $10^{-3}$ times the time. A cylindrical blast of energy $E_0$ per unit length (page-local; the
 corner run is a quarter of it) in gas of density $\rho$ has, by
-dimensional analysis, a radius $R\propto(E_0t^2/\rho)^{1/4}$, and
+dimensional analysis, a radius $R$ (page-local) $\propto(E_0t^2/\rho)^{1/4}$, and
 $E_0t^2$ is the same in both runs, so the shock reaches the same radius; velocities are $10^3$ times larger in
 Fu's run and its ambient pressure is relatively $10^6$ times smaller,
 both immaterial for a strong blast. Fu's printed factor $\times10^4$ is
@@ -179,7 +179,7 @@ each quadrant carries the corner problem *(compiler check, not in the
 sources)*. Their generalized Active Flux scheme with flux-vector-split
 point-value updates needs its bound-preserving limiting of both the cell
 averages and the point values to run; their shock-sensor flux limiting
-$\theta^{\mathrm s}=\exp(-\kappa_{\mathrm s}\varphi_{\mathrm J}\Psi_{\mathrm D})$, with the
+$\theta^{\mathrm s}=\exp(-\kappa_{\mathrm s}\varphi_{\mathrm J}\Psi_{\mathrm D})$ ($\theta^{\mathrm s}$ page-local), with the
 Jameson pressure sensor $\varphi_{\mathrm J}$ (page-local, the source's
 $\varphi_1$, as is the strength $\kappa_{\mathrm s}$) and the modified,
 compression-only [Ducros sensor](/definitions/ducros-shock-sensor.md)
@@ -195,7 +195,7 @@ $p=(\gamma-1)E_0/(\pi r_0^2)$, with $\rho=1$, $v=0$, ambient
 $p=10^{-5}$, $\gamma=1.4$, periodic boundaries, $T=1$. With $N=3$
 entropy-stable DG on $K_{1D}=100$ quadrilaterals and triangles, blended
 elementwise with a low-order positivity-preserving scheme under relaxed
-bounds (relaxation $\zeta_{\mathrm r}$, their $\zeta$), all three configurations ($\zeta_{\mathrm r}=0.1$ without and with
+bounds (relaxation $\zeta_{\mathrm r}$, page-local, their $\zeta$), all three configurations ($\zeta_{\mathrm r}=0.1$ without and with
 shock-capturing blending, $\zeta_{\mathrm r}=0.5$ without) remain robust; with
 $\zeta_{\mathrm r}=0.1$ alone spurious oscillations appear on both meshes, and
 shock capturing, or to some extent $\zeta_{\mathrm r}=0.5$, reduces them
@@ -248,15 +248,16 @@ a hybrid HLLC/HLL flux switched by the same function, is stable (Fig.
 40). Their [matrix stability analysis](/methods/matrix-stability-analysis.md)
 of a steady normal shock motivates the design, which degenerates to the
 zeroth-degree polynomial at shocks (see
-[steady shock problems](/benchmarks/steady-shock-problems.md)). The deposited
-energy is $4\,\Delta x^2p/(\gamma-1)=21.9$ with $\Delta x=0.0025$
-*(compiler check, not in the sources)*.
+[steady shock problems](/benchmarks/steady-shock-problems.md)). The energy
+deposited by Hu, Yuan & Zhao is $4\,\Delta x^2p/(\gamma-1)=21.9$ with
+$\Delta x=0.0025$, and three times that if all twelve cells of Ren et al.'s
+disc are pressurized *(compiler check, not in the sources)*.
 
 ## Three-dimensional version
 
 [Lesur et al. (2023)](/sources/lesur-2023.md) §4.1 (arXiv v1) validate
 the [IDEFIX](/software/idefix.md) code on a Sedov–Taylor blast with
-$\gamma=5/3$, $\rho=1$, ambient $P=10^{-2}$ and an energy 1 deposited as
+$\gamma=5/3$, $\rho=1$, ambient $p=10^{-2}$ and an energy 1 deposited as
 pressure in a sphere of radius $r_i$ (value not printed), $t=0.1$, HLL
 solver, linear reconstruction and RK2. They run it on a periodic
 Cartesian box of side 1 with $512^3$ cells and on a spherical grid
@@ -295,7 +296,7 @@ scaling limiter is triggered in 3.00 % of the cells in 1D and 1.09 % in
 2D, identically for the hybrid and non-hybrid positivity-preserving
 schemes (Table 4.2). Fu computes the corner blast, like all the author's
 extreme cases, with the positivity-preserving flux limiter and reports
-it stable (§5.7). Wang et al. use no
+it stable (§5.7). Wang et al. (2021) use no
 positivity limiter: the ratio of the linear weights "used in this
 paper" is "so large" that the scheme cannot run the extreme problems
 robustly, and they switch to the weights of the original
@@ -317,7 +318,7 @@ control numerical oscillations" (Ex. 3.5, Fig. 3.9). Li, Li, Don & Wang
 use their PP limiter on both schemes; MR-AWENO oscillates near the
 shocks at $x\approx\pm1.5$ and MR-AWENO-Si is sharper (§3.3, Fig. 6).
 Li, Chen & Ren's hybrid schemes need case-specific thresholds,
-$\psi_c=0.4$ for MDCD-HY and $0.8$ for MDAD-HY (against 0.5 on the
+$\psi_c=0.4$ (page-local threshold) for MDCD-HY and $0.8$ for MDAD-HY (against 0.5 on the
 blast waves), and TENO-HY (with its optimized TENO6) fails "even with
 $C_T=0.1$"; the shock front lies near $x=3.43$ (§4.2, Fig. 18); see
 [MDCD schemes](/methods/mdcd-scheme.md).
@@ -350,7 +351,7 @@ time-step policy halves
 $\Delta t$ and repeats the step whenever an intermediate state leaves
 the admissible set (Remark 4.2).
 
-**Resolution of the density peak.** Wang et al. find WENO-JS5 and both
+**Resolution of the density peak.** Wang et al. (2021) find WENO-JS5 and both
 multi-resolution schemes similar, and all worse than WENO-AO5 near the
 peak; they conjecture that near strong shocks of large pressure ratio
 their algorithm reduces quickly to first order (Fig. 5.9). Li, Shu &

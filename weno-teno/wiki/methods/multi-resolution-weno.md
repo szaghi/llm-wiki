@@ -4,8 +4,8 @@ title: "Multi-resolution WENO"
 description: "Multi-resolution WENO combines polynomials on nested central stencils, down to a one-point base, with any positive linear weights; the page records the Zhu–Shu hierarchy to ninth order, ghost candidates, the Wang et al. variant, scale-invariant MR-AWENO, WCNS, learned, shock-detector (MR-WENO-SD), hybrid, moving-mesh, Hermite, entropy-stable and steady-state uses."
 status: established
 aliases: [multi-resolution WENO, multiresolution WENO, MR-WENO, WENO-MR, WENOZS5, New WENO5, WENOMR, Zhu–Shu WENO, MRWENO, MR-AWENO, MR-AWENO-Si, WCNS-MR, MR-WCNS, hybrid MR-WCNS, GMR-WENO, ghost multi-resolution WENO, MMR-WENO, HMR-WENO, MR-WENO-SD, WCNS3-MR]
-tags: [weno, cweno, reconstruction, finite-difference]
-timestamp: 2026-10-23T20:37:00Z
+tags: [weno, cweno, reconstruction, finite-difference, multi-resolution]
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Multi-resolution WENO
@@ -85,7 +85,7 @@ In the original scheme (as recalled by Wang et al. 2021, Remark 2, Eqs. (3.23)�
 are computed on "equivalent polynomials"
 $$\tilde P_1=P_1,\qquad \tilde P_m=\frac1{d_{m,m}}P_m-\sum_{l=1}^{m-1}\frac{d_{l,m}}{d_{m,m}}\tilde P_l,\qquad \sum_{l=1}^md_{l,m}=1,$$
 (page-local level-wise weights $d_{l,m}$) that contain the linear weights, and $\beta_1$ is a weighted
-blend of the two one-sided squared differences. Wang et al. argue that these indicators "misjudge" the
+blend of the two one-sided squared differences. Wang et al. (2021) argue that these indicators "misjudge" the
 smoothness of $P_2$, $P_3$ for some weight choices, "resulting in only first-order accuracy for the
 smooth problems" (§3.1.1, p. 5), and show the original scheme (WENOZS5) missing fifth order with their
 third weight set and failing to converge on their 3-D viscous test (§5.1, Figs. 5.2–5.6). Their scheme
@@ -135,7 +135,7 @@ Qin, Chen, Lin & Deng (2023, §2.1–2.2) use the hierarchy as the interpolation
 [WCNS](/methods/weighted-compact-nonlinear-scheme.md) ("WCNS-MR", after Zhang, Wang & Zhang and Zhu & Shu). The
 three point-value candidates at $x_{i+1/2}$ are those of MR-AWENO above, the linear weights
 $(1,10,100)/111$, the global indicator that of Step 4 with $\epsilon=10^{-10}$, and the interface value the
-simplified combination of Wang et al. (2021), Step 5, which they call more efficient than Zhang et al.'s
+simplified combination of Wang et al. (2021), Step 5, which they call more efficient than Zhang, Wang & Zhang's
 (Eqs. (6)–(12)). Two changes are new:
 
 - **Scaled indicators.** $\beta_2$, $\beta_3$ are sums of squared derivatives of $P_2$, $P_3$ at the solution
@@ -194,7 +194,7 @@ node-to-midpoint interpolation of an explicit fifth-order
 - Jiang–Shu indicators for the quartic and the parabola, the latter
   $\tfrac{13}{12}(u_{i-1}-2u_i+u_{i+1})^2+\tfrac14(u_{i+1}-u_{i-1})^2$, and the parameter-free
   $\beta_1=\min\big((u_{i-1}-u_i)^2,(u_i-u_{i+1})^2\big)$ for the constant, which they set against the
-  parameter-dependent indicator of Zhang et al. ([smoothness indicators](/definitions/smoothness-indicator.md));
+  parameter-dependent indicator of Zhang, Wang & Zhang ([smoothness indicators](/definitions/smoothness-indicator.md));
 - the global indicator and weights of Step 4 above with $\epsilon=10^{-6}$, default linear weights
   $(1,10,100)/111$ from the smallest to the largest stencil.
 
@@ -204,7 +204,7 @@ interpolation is not scale-invariant.)*
 
 The paper claims that its scheme reaches fifth order with all three tested weight sets,
 $(1,10,100)/111$, $(\tfrac13,\tfrac13,\tfrac13)$ and $(100,10,1)/111$ in this page's order, while the
-MR-WCNS of Zhang et al. reaches it only with the first, because its pre-defined linear weights "have
+MR-WCNS of Zhang, Wang & Zhang reaches it only with the first, because its pre-defined linear weights "have
 a negative impact on the smoothness indicators" (Remark 2, Example 4.1). This is the WCNS counterpart
 of the claim of Wang et al. (2021) against the original scheme above, by an overlapping author group.
 With the default weights, all schemes are fifth order on 1-D and 2-D Euler and Navier–Stokes density
@@ -300,7 +300,7 @@ $P^{(k)}_1=\bar u_i+\sum_{r=1}^{k-1}A^{(k)}_rL_r$ (page-local $L_r$, $A^{(k)}_r$
 dropping the top Legendre modes, so there are $k$ candidates of every degree from $k-1$ down to 0, all with
 the cell average $\bar u_i$ (Remark 1); they "could not be constructed by directly utilizing the information
 defined on real spatial stencils" (§1). The fifth-order coefficients $A^{(5)}_r$ are those of $\mathsf b_r$ in the
-recipe of Wang et al. above. *(Compiler check, not in the sources: the two sets of printed coefficients agree
+recipe of Wang et al. (2021) above. *(Compiler check, not in the sources: the two sets of printed coefficients agree
 term by term.)* The candidates are combined in the CWENO form, with any positive linear weights (used:
 $10{:}5{:}1$, $100{:}25{:}10{:}5{:}1$, $1000{:}125{:}100{:}25{:}10{:}5{:}1$ from the top polynomial down),
 Jiang–Shu indicators written as sums of squares of Legendre coefficients, and
@@ -439,7 +439,7 @@ for RKDG methods of various orders" ([WENO limiters for DG](/methods/weno-limite
   the new scheme 1.9766 s (Wang et al. 2021, Table 5.1); in 3-D at $100^3$, 14526 s, 22054 s and
   15170 s for WENO-JS5, WENOZS5 and the new scheme (Table 5.5). Over the 2-D and 3-D shock tests the
   cost relative to WENO-JS5 is 1.09–1.60 for the new scheme, 1.40–1.83 for WENOZS5 and 1.29–1.80 for
-  WENO-AO(5,3) (Table 5.8). Wang et al. (§6) add that on unstructured meshes three sub-stencils
+  WENO-AO(5,3) (Table 5.8). Wang et al. (2021, §6) add that on unstructured meshes three sub-stencils
   suffice for orders above three, where classical unstructured WENO "needs more than nine
   sub-stencils" (stated, not shown).
 - **Resolution.** The multi-resolution schemes capture more roll-up than WENO-JS5 on the
@@ -450,7 +450,7 @@ for RKDG methods of various orders" ([WENO limiters for DG](/methods/weno-limite
   "performs best among the four considered WENO schemes" on the
   [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) (Wang et al. 2021, Examples 5.6–5.9,
   5.13). WENO-AO(5,3) is better near the Sedov peak and on the
-  [Shu–Osher problem](/benchmarks/shu-osher-problem.md) (Examples 5.4–5.5), where Wang et al.
+  [Shu–Osher problem](/benchmarks/shu-osher-problem.md) (Examples 5.4–5.5), where Wang et al. (2021)
   suggest that their algorithm "is rapidly reduced to the first order accuracy" at strong shocks.
   The approximate dispersion relation of the multi-resolution schemes is better than WENO-JS5 (§4,
   Fig. 4.1; [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)).
@@ -495,10 +495,10 @@ Subramanian (2023, §6.3) name the Zhu–Shu scheme as an efficient alternative 
 - Li, Duan & Tang (2022c, App. A) phrase the algorithm "for the given cell average values"; applied
   to finite-difference point values it rests on the reading that Wang et al. (2021, §3.1.1) state,
   point values interpreted, as in FD-WENO, as cell averages of the primitive function.
-- The claim against the original multi-resolution WENO is made by Wang et al. with Zhu, a co-author
+- The claim against the original multi-resolution WENO is made by Wang et al. (2021) with Zhu, a co-author
   of the original; Balsara et al.'s third-order fix is likewise made by a group including Shu.
   Neither is an independent test, and the original Zhu–Shu paper is not ingested.
-- *(Compiler check, not in the sources.)* Li et al.'s ratio (Eq. (41)),
+- *(Compiler check, not in the sources.)* Li et al.'s (2023a) ratio (Eq. (41)),
   $\alpha_k[\sigma f]/\alpha_k[f]=1+(\sigma^2-1)\frac{\tau}{\tau+\beta_k+\epsilon}\big(1+\frac{\epsilon}{\beta_k+\epsilon/\sigma^2}\big)$,
   is exact for $\beta_k$ quadratic and $\tau$ quartic in the data, and depends on $k$ even for $\epsilon=0$.
 - Li et al. (2023a, §5.2) call the polytropic accuracy result "super-convergence behavior like the spectral
@@ -507,7 +507,7 @@ Subramanian (2023, §6.3) name the Zhu–Shu scheme as an efficient alternative 
   the MR-AWENO-Si error is $3.09\times10^{-6}$ against $1.05\times10^{-7}$ for MR-AWENO (Table 2).
 - Balsara et al. (2024, Table III) contain an unexplained rate of 12.06 for ninth-order
   multi-resolution WENO.
-- Wang et al. (2023c) show the failure of Zhang et al.'s MR-WCNS with the two non-default weight sets
+- Wang et al. (2023c) show the failure of Zhang, Wang & Zhang's MR-WCNS with the two non-default weight sets
   only in CPU-versus-error figures (Figs. 4.1–4.4), with no tabulated errors; no bundle source states the
   contrary.
 - Wang et al. (2023c, Eq. (3.20)) print the explicit quartic indicator without the cross term

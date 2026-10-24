@@ -5,7 +5,7 @@ description: "MDCD schemes are six-point fourth-order finite-difference fluxes w
 status: established
 aliases: [MDCD, MDAD, MDAD-WENO, MDAD-HY, MDCD-HY, minimized dispersion and adaptive dissipation, Sun–Ren MDCD scheme, WCNS-SA, WCNS-opt, ADADF, ADADF-HY]
 tags: [finite-difference, low-dissipation, weno, turbulence]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Minimized-dispersion and controllable-dissipation (MDCD) schemes
@@ -142,7 +142,7 @@ Both parameters follow a re-optimized six-point [scale sensor](/definitions/scal
 to $\vartheta=2.08$. With them ADADF keeps a resolving efficiency of about 65.58 % at every $\nu$ tested,
 while the total dispersion errors of MDCD and MDAD grow with $\nu$ (§3.4, Fig. 11). The hybrid with
 WENO-CU6, ADADF-HY, is on [hybrid schemes](/methods/hybrid-weno.md). Its WENO-CU6 partner uses the
-MDAD-WENO linear weights below, $\alpha_k=d_k\big(100+\tau_6/(\beta_k+\epsilon)\big)$ with exponent 1 and
+MDAD-WENO linear weights above, $\alpha_k=d_k\big(100+\tau_6/(\beta_k+\epsilon)\big)$ with exponent 1 and
 $\epsilon=10^{-40}$ (Eq. (53)), where Li, Chen & Ren use $\big(20+\tau_6/(\beta_k+\epsilon)\big)^2$.
 
 **Results** (§4; figures only, no error norms, convergence orders or timings): on multi-wave advection
@@ -174,8 +174,8 @@ Zhou et al. frame the work explicitly on Sun et al.'s criterion and extend it in
   becoming independent of $\xi_{\mathrm Z}$ near $C=10^9$; relaying Sun et al., they state that for the nonlinear
   scheme dispersion "mainly relies on" the dispersion parameter, while in Table 2 the optimum still depends on
   $\xi_{\mathrm Z}$ for $C\le10^5$ (0.0675 for $\xi_{\mathrm Z}=0$ against 0.0539 for $\tfrac3{128}$ at $C=10$; 0.0394 against 0.0373 at $C=10^5$).
-- **Sensor-driven dissipation.** Like MDAD, the dissipation parameter follows a sensor, here Li et al.'s
-  second-derivative ratio, together with $C$ ([scale sensor](/definitions/scale-sensor.md)); unlike MDAD the
+- **Sensor-driven dissipation.** Like MDAD, the dissipation parameter follows a sensor, here the
+  second-derivative ratio of Li et al. (Zhou et al.'s ref. [42], not ingested), together with $C$ ([scale sensor](/definitions/scale-sensor.md)); unlike MDAD the
   maximum $\xi_{\mathrm Z}=0.028$, i.e. $c_{\mathrm{diss}}=0.0398$, exceeds the dissipation of the fifth-order upwind
   scheme ($\xi_{\mathrm Z}=\tfrac3{128}$) *(compiler check, not in the sources: $\tfrac{64}{45}\cdot0.028=0.0398$)*.
   The authors also argue that Hu et al.'s dispersion–dissipation condition, the criterion behind MDCD(0.012),

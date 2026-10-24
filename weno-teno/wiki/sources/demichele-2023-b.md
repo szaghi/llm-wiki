@@ -146,7 +146,7 @@ contribution (ECCOMAS 2022, Oslo) without pages. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 6 (2026-10-23), cited further in chunks 7–10 (2026-10-23). This source is cited on:
+Chunk 6 (2026-10-23), cited further in chunks 7–11 (2026-10-23/24). This source is cited on:
 
 * [Density-wave advection](/benchmarks/density-wave-advection.md)
 * [Entropy-conservative and kinetic-energy-preserving two-point fluxes](/methods/entropy-conservative-flux.md)

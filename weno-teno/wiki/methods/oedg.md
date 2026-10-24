@@ -5,7 +5,7 @@ description: "OEDG follows every Runge–Kutta stage of a DG scheme with an exac
 status: established
 aliases: [BP-OEDG, OEDG, LDF OEDG, ESOFDG, entropy-stable oscillation-free DG, oscillation-eliminating DG, OE procedure, OE step, OE-HWENO, oscillation-eliminating Hermite WENO]
 tags: [dg, limiting, low-dissipation, weno]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T06:02:00Z
 ---
 
 # Oscillation-eliminating discontinuous Galerkin (OEDG)
@@ -27,7 +27,7 @@ kind of damping is added to the semi-discrete ODE and makes it stiff.
 Let $\mathcal L$ denote the DG spatial operator of degree $N$ on cells $I_i$
 of width $\Delta x_i$, and let a Runge–Kutta method be written in Shu–Osher
 form. OEDG (Eqs. (2.3)–(2.4)) computes each stage $u_h^{n,\ell+1}$ from the
-damped previous stages exactly as standard RKDG would, then replaces it by
+damped previous stages exactly as unmodified RKDG would, then replaces it by
 $u_\sigma^{n,\ell+1}=\mathcal F_{\Delta t}\,u_h^{n,\ell+1}$, with
 $\mathcal F_{\Delta t}$ the OE operator (page-local symbols
 $u_\sigma$, $\mathcal F_{\Delta t}$). The step applies equally after each step
@@ -374,6 +374,37 @@ the rotor and the Balsara–Spicer blast run without a positivity limiter, the M
 contrast their jets, run with the positivity limiter alone, with Liu & Wu's, which needed
 three ingredients (Ex. 10).
 
+## The OE step and COS(DG)
+
+[Cao et al. (2026)](/sources/cao-2026.md), from the same group, recall the OE operator
+exactly in their Remark 3 and replace it by the [COS(DG)](/methods/cos-dg.md)
+post-processing, which scales all non-mean modes of a cell by one exponential factor
+$\exp(-a_i\Delta t\,\sigma^{\mathrm{OS}}_i/\Delta x_i)$ built from distances between the
+cell's extrapolated polynomial and its neighbours' (page-local, defined on that page). They
+read the OE step as a modal filter whose mode-$l$ exponent is the cumulative sum
+$\sum_{m\le l}\sigma^m_i$, and list five differences: mode-dependent against uniform damping,
+derivative jumps against derivative-free differences, every Runge–Kutta stage against once
+per time step, global against local scale invariance, and a modal formulation against one
+that also serves nodal DG (§1, Remark 3). Their statements about OEDG:
+
+- **Global scale invariance only.** Because the normaliser
+  $\lVert u_h-\mathrm{avg}(u_h)\rVert_{L^\infty(\Omega)}$ is one domain-wide range, OEDG "may
+  fail to fully suppress oscillations when small and large-scale jumps coexist" (§2.1,
+  Fig. 2); on a multi-scale Lax problem with two tubes of very different amplitude OEDG
+  shows undershoots in the small-scale part that COS(DG) suppresses (Ex. 6.8, Fig. 9).
+  Peng et al. themselves proposed a locally scale-invariant coefficient and left it unused
+  for want of a mesh-independent constant (Rem. 2.9; see Qualifications); COS(DG) uses a local
+  normaliser with one fixed constant per degree, chosen empirically (see its page).
+- **Entropy stability** is "not guaranteed for the OEDG method", whereas the COS step
+  provably does not increase any convex entropy in a cell (§1; Thm 2.4 of Cao et al.;
+  [entropy stability](/properties/entropy-stability.md)).
+- **Cost.** On the Woodward–Colella and Shu–Osher problems with 400 cells, single-core
+  Python, the OE step takes 35.3–40.6 % of the OEDG run time, against 15.6–18.8 % for the
+  COS step and 6.3–10.4 % for local COS (Table 3).
+- **OFDG**, the semi-discrete precursor, is recalled as stiff at strong discontinuities,
+  needing modified exponential Runge–Kutta methods, and as prone to smearing or persistent
+  oscillations when scales or wave speeds vary widely, the latter citing Peng et al. (§1).
+
 ## Qualifications
 
 - **No bound preservation in the original method.** Peng et al.'s OEDG is not claimed bound-preserving, and no
@@ -440,3 +471,4 @@ three ingredients (Ex. 10).
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §1; §2.2, Eqs. (2.17)–(2.22), Thms 2.3, 2.6, 2.13–2.14, Remark 2.4; §3, Eqs. (3.17)–(3.18), Thm 3.4, Remark 3.5; §4, Tables 2–3, 5–6, Fig. 4.
 - [Liu & Wu (2025)](/sources/liu-2025.md) — arXiv v2: §1; §2.2–2.4, Eqs. (5)–(35), Remarks 1–2; §3.2–3.5; §4.1–4.2, Tables 1–2.
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.1–3.3, Eqs. (3.11)–(3.21), Thm 3.2, Remarks 3.1–3.2; §4, Tables 1–2, Ex. 6, 8, 10.
+- [Cao et al. (2026)](/sources/cao-2026.md) — §1; §2.1, Fig. 2; Remark 3; Thm 2.4; Ex. 6.8, Fig. 9; Table 3.

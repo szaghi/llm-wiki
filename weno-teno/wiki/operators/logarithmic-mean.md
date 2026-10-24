@@ -6,7 +6,7 @@ status: established
 symbol: "$\\{\\!\\{a\\}\\!\\}_{\\log}$"
 aliases: [log mean, Ismail–Roe mean, inverse logarithmic mean]
 tags: [entropy-stable, numerical-flux, dg, kinetic-energy-preserving]
-timestamp: 2026-10-23T19:58:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Logarithmic mean
@@ -47,7 +47,7 @@ jump. The defining identity does exactly this,
 $$[\![\ln a]\!]=\frac{[\![a]\!]}{\{\!\{a\}\!\}_{\log}},$$
 
 next to the product rule $[\![ab]\!]=\{\!\{a\}\!\}[\![b]\!]+\{\!\{b\}\!\}[\![a]\!]$.
-[Li, Duan & Tang (2022)](/sources/li-2022-c.md) derive their
+[Li, Duan & Tang (2022c)](/sources/li-2022-c.md) derive their
 entropy-conservative stiffened-gas fluxes this way. They express the jumps
 of the entropy variables in the parameter vector $(\rho,v,1/T)$ with these
 two identities and solve the resulting linear system for the flux
@@ -61,7 +61,7 @@ properties are wanted (§3.1).
   pressure-equilibrium-preserving): mass flux $\{\!\{\rho\}\!\}_{\log}\{\!\{v\cdot n\}\!\}$,
   and the internal-energy term carries $1/\{\!\{\rho/p\}\!\}_{\log}$
   (Ranocha et al. (2023), Eq. (3.10)).
-- **Chandrashekar-type fluxes.** Li, Duan & Tang (2022) use
+- **Chandrashekar-type fluxes.** Li, Duan & Tang (2022c) use
   $\{\!\{\rho\}\!\}_{\log}$ and $\{\!\{1/T\}\!\}_{\log}$ for one stiffened gas, and the
   logarithmic means of both partial densities for two components (§3.3).
   For GLM-MHD, the Derigs et al. flux used by
@@ -89,7 +89,7 @@ properties are wanted (§3.1).
   mass component being $\{\!\{\rho\}\!\}_{\log}\{\!\{W\}\!\}$ with $W$ the Lorentz
   factor (§3.1); the entropy variables of relativistic flows contain
   $\ln(p\rho^{-\gamma})$ as in the classical case (§2).
-- **Interface states.** Li, Duan & Tang (2022) also average with
+- **Interface states.** Li, Duan & Tang (2022c) also average with
   logarithmic means when they evaluate the scaled eigenvectors at an
   interface, e.g. $\bar\rho=\{\!\{\rho\}\!\}_{\log}$ and
   $\bar T=1/\{\!\{1/T\}\!\}_{\log}$ (§3.4).
@@ -134,10 +134,10 @@ sits between these two families *(compiler check, not in the sources)*.
 The formula is a $0/0$ form as $a^-\to a^+$ and loses accuracy nearby.
 As recalled by Ranocha et al. (2023), §3.1, Algorithm 1 of Ismail & Roe
 sets $\xi_{\mathrm r}=a^-/a^+$, $f_{\mathrm r}=(\xi_{\mathrm r}-1)/(\xi_{\mathrm r}+1)$
-and $\varsigma=f_{\mathrm r}^2$ (all page-local), and returns
+and $s_{\mathrm r}=f_{\mathrm r}^2$ (all page-local), and returns
 $(a^-+a^+)/(2F)$ with
 
-$$F=\begin{cases}1+\varsigma/3+\varsigma^2/5+\varsigma^3/7,&\varsigma<10^{-4},\\ \dfrac{\ln\xi_{\mathrm r}}{2f_{\mathrm r}},&\text{otherwise},\end{cases}$$
+$$F=\begin{cases}1+s_{\mathrm r}/3+s_{\mathrm r}^2/5+s_{\mathrm r}^3/7,&s_{\mathrm r}<10^{-4},\\ \dfrac{\ln\xi_{\mathrm r}}{2f_{\mathrm r}},&\text{otherwise},\end{cases}$$
 
 the threshold being for 64-bit arithmetic. The series is that of
 $\ln\xi_{\mathrm r}=2\operatorname{artanh}f_{\mathrm r}$ *(compiler check, not in the
@@ -148,7 +148,7 @@ expansion exactly, $[\![\ln a]\!]=\frac{[\![a]\!]}{\{\!\{a\}\!\}}\sum_{n\ge0}\fr
 so $\{\!\{a\}\!\}_{\log}=\{\!\{a\}\!\}\big/\sum_{n\ge0}\mathsf j_a^{2n}/(2n+1)$
 (Eqs. (11)–(12)), recalling that Ismail & Roe used such an expansion to
 remove the singularity. Since $f_{\mathrm r}=-\mathsf j_a$, it is the series
-of Algorithm 1 with $\varsigma=\mathsf j_a^2$ *(compiler check, not in the
+of Algorithm 1 with $s_{\mathrm r}=\mathsf j_a^2$ *(compiler check, not in the
 sources)*. Instead of switching to it near $a^-=a^+$, they truncate it at a
 fixed order $N_{\mathrm T}$ (page-local) everywhere, which gives purely algebraic fluxes whose
 entropy error decreases as $N_{\mathrm T}$ grows; the zeroth-order truncation of
@@ -157,9 +157,9 @@ $\big(\{\!\{1/e\}\!\}_{\log}\big)^{-1}$ is the harmonic mean of $e$ (§4, Eq.
 They state that this is cheaper than the logarithmic mean and avoids the
 local treatment against division by zero, without timings (§1, §6).
 
-Ranocha et al.'s Algorithm 2 computes $\varsigma$ with one division,
-$\varsigma=\big(a^-(a^--2a^+)+(a^+)^2\big)/\big(a^-(a^-+2a^+)+(a^+)^2\big)$. It
-returns $(a^-+a^+)/\big(2+\varsigma(2/3+\varsigma(2/5+\varsigma\,2/7))\big)$
+Ranocha et al.'s Algorithm 2 computes $s_{\mathrm r}$ with one division,
+$s_{\mathrm r}=\big(a^-(a^--2a^+)+(a^+)^2\big)/\big(a^-(a^-+2a^+)+(a^+)^2\big)$. It
+returns $(a^-+a^+)/\big(2+s_{\mathrm r}(2/3+s_{\mathrm r}(2/5+s_{\mathrm r}\,2/7))\big)$
 below the threshold and $(a^+-a^-)/\ln(a^+/a^-)$ above it. Algorithm 3
 returns the *inverse* logarithmic mean $1/\{\!\{a\}\!\}_{\log}$ in the same way,
 which the Ranocha flux needs. A variant multiplies by a Taylor polynomial
@@ -192,7 +192,7 @@ speed-up of about 10 % to 75 % depending on the data (Ranocha et al.
 
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §3.1 Eq. (3.3), Algorithms 1–3, §3.2 Eqs. (3.10)–(3.11), §7.2 Fig. 6.
 - [Renac (2021)](/sources/renac-2021.md) — §3.1 Eq. (24), Remark 3.1, App. B (arXiv v3).
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §3.3 Eq. (3.15), §3.4 (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — §3.3 Eq. (3.15), §3.4 (arXiv v1).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — App. A Eqs. (102)–(103) (arXiv v1).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §2, §3.1 (arXiv v1).
 - [Edoh (2022)](/sources/edoh-2022.md) — §3.2, Table 3.

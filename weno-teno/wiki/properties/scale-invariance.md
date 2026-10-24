@@ -5,7 +5,7 @@ description: "A reconstruction or limiter is scale-invariant when it commutes wi
 status: established
 aliases: [scale-invariant, affine-invariant, Ai-property, Si-property, homogeneity of a reconstruction, normalisable scheme, homogeneity of the evolution operator]
 tags: [reconstruction, weno, limiting, dg]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T06:02:00Z
 ---
 
 # Scale and affine invariance
@@ -230,6 +230,30 @@ $u\mapsto\sigma u$ the MHD velocity and sound speed are unchanged but the Alfvé
 $\mu$ changes all speeds); with different scalings of the components, a change of units of one variable, the
 maximum over components need not be invariant either.)* See [OEDG](/methods/oedg.md).
 
+**Neighbour-normalized damping in COS(DG).** [Cao et al. (2026)](/sources/cao-2026.md)
+(§2.1, Eqs. (5)–(9), Properties 2.3 and 2.5), with Wu as corresponding author of both papers, make
+the normalization local to the three-cell stencil of a single scalar damping step. After the last
+Runge–Kutta stage, [COS(DG)](/methods/cos-dg.md) replaces the cell polynomial $u_h\vert_{I_i}$ by
+$(1-\theta^{\mathrm{OS}}_i)\bar u_i+\theta^{\mathrm{OS}}_iu_h\vert_{I_i}$ with
+$\theta^{\mathrm{OS}}_i=\exp(-a_i\Delta t\,\sigma^{\mathrm{OS}}_i/\Delta x_i)$. Here $a_i$ is the
+largest $\lvert f'\rvert$ over the three cell averages and $\Delta x_i$ the cell width. The indicator is
+$\sigma^{\mathrm{OS}}_i=\sigma^{\mathrm{OS},-}_i+\sigma^{\mathrm{OS},+}_i$, with
+$\sigma^{\mathrm{OS},\pm}_i=C_{\mathrm{OS}}\lVert u_{i\pm1}-u_i\rVert^2_{L^2(I_{i\pm1})}/\mathsf N^\pm_i$,
+$\mathsf N^\pm_i=\lVert u_{i\pm1}-\bar u_i\rVert^2_{L^2(I_{i\pm1})}$, and $u_i$ the polynomial of cell $i$
+extrapolated onto the neighbour (page-local $\theta^{\mathrm{OS}}_i$, $\sigma^{\mathrm{OS}}_i$,
+$\mathsf N^\pm_i$, $C_{\mathrm{OS}}$, as on the COS(DG) page). Numerator and denominator both scale by $\sigma^2$ under
+$u_h\mapsto\sigma u_h+\mu$ and are unchanged by $\mu$, so the indicator and the step are
+invariant: Property 2.3, called *local* scale invariance and stated as direct from the formula.
+Under the same name the authors class the OEDG damping (above) as only *globally* scale-invariant.
+Of two earlier jump-based indicators they recall, the unnormalized one (Eq. (10)) is not
+scale-invariant at all and the one normalized by a global range (Eq. (11)) is so only globally.
+The factor $a_i\Delta t/\Delta x_i$ gives evolution invariance in the OEDG sense, with the definition
+credited to OEDG (Property 2.5). The test is a multi-scale Lax problem on $[-15,15]$, 6000 cells,
+$t=1.4$, with the Lax states multiplied by $10^2$ on $[-15,0)$ and by $10^{-2}$ on $[0,15]$
+(velocities unscaled). There OEDG shows spurious undershoots in the small-scale region, and COS(DG)
+suppresses them, with $\mathbb P^1$ and $\mathbb P^2$ (Ex. 6.8, Figs. 2, 9;
+[Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md)).
+
 **Deliberately scale-variant features.** [Fan et al. (2025b)](/sources/fan-2025-b.md) (§3.1.1, Eqs. (24)–(26),
 Fig. 4) go the other way for a learned three-point weighting
 ([learned WENO weights](/methods/learned-weno-weights.md)). The normalized differences of WENO3-NN are kept, but on
@@ -291,6 +315,16 @@ problem scaled by 100 OF-HWENO "excessively smears" (Ex. 9, Fig. 3.8).
   unstructured scheme, uses squared pressure differences and squared gradients against a fixed
   $\epsilon=10^{-3}$, and so depends on the units of the data *(compiler check, not in the sources)*
   ([gradient reconstruction on unstructured meshes](/methods/unstructured-gradient-reconstruction.md)).
+- **COS(DG) and its switch.** Cao et al. (2026) set $\sigma^{\mathrm{OS},\pm}_i=0$ when $\mathsf N^\pm_i<\epsilon$,
+  $\epsilon=10^{-8}\max\{\lvert\bar u_i\rvert^2,1\}$, and $10^{-8}\max\{\eta_{\mathrm d}(\bar u_i),1\}$ with a convex
+  entropy $\eta_{\mathrm d}$ (page-local, as on the COS(DG) page) for systems (§2.1, §2.3). *(Compiler check, not in the sources: the threshold is
+  absolute for small data and does not transform with $u\mapsto\sigma u+\mu$, so Property 2.3 holds
+  exactly only where $\mathsf N^\pm_i$ and $\sigma^2\mathsf N^\pm_i$ lie on the same side of their
+  thresholds. This is the same kind of caveat as the descaler floors of Ai-WENO.)* They describe the
+  data of Ex. 6.8 as the Lax setup combined with "a scaled version (by $10^{-4}$)". *(Compiler check,
+  not in the sources: the printed states are the Lax states times $10^2$, $(44.5,0.698,352.8)$ and
+  $(50,0,57.1)$, and times $10^{-2}$, $(0.00445,0.698,0.03528)$ and $(0.005,0,0.00571)$, a ratio of
+  $10^4$ between the two halves.)*
 - The Ai-WENO theorems assume a zero floor in the descaler; the floors used in practice make
   invariance approximate for very small $|\sigma|$.
 
@@ -313,3 +347,4 @@ problem scaled by 100 OF-HWENO "excessively smears" (Ex. 9, Fig. 3.8).
 - [Fan & Wu (2024)](/sources/fan-2024.md) — §2.2.4–2.2.5, Defs. 1–3, Eqs. (2.30)–(2.33), Theorems 4–7; §2.3, Def. 4; Examples 3, 4, 9, Figs. 3.1, 3.2, 3.8 (arXiv v1).
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.2, Eq. (3.16), Theorem 3.2: locally normalized ESOFDG damping coefficient, invariance stated.
 - [Fan et al. (2025b)](/sources/fan-2025-b.md) — §3.1.1, Eqs. (24)–(26), Fig. 4; §3.2, Eq. (36): scale-variant input of a learned weighting.
+- [Cao et al. (2026)](/sources/cao-2026.md) — §2.1, Eqs. (5)–(11), Properties 2.3, 2.5; §2.3; Ex. 6.8, Figs. 2, 9: locally scale-invariant COS damping.

@@ -5,7 +5,7 @@ description: "Pressure-driven compressible flow between two isothermal no-slip w
 status: established
 aliases: [plane channel flow, turbulent plane channel, compressible channel flow, channel between immersed blocks]
 tags: [benchmark, turbulence, gpu, immersed-boundary]
-timestamp: 2026-10-22T19:46:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Turbulent channel flow
@@ -33,7 +33,7 @@ viscosities; page-local).
 | box | $2\pi h\times2h\times\pi h$ | $2\pi h\times2.6h\times\pi h$, of which two immersed blocks of $0.3h$, fluid height $2h$ |
 | walls | isothermal no-slip | isothermal no-slip immersed-boundary walls with the wall model |
 | wall-normal grid | error-function stretching (DNS, WRLES), uniform (WMLES) | uniform |
-| forcing | constant mass flow | $f_i=(0,f,0,0,fv_1)$ for constant mass flow |
+| forcing | constant mass flow | $f_i=(0,f,0,0,fv_1)$ for constant mass flow ($f$ the forcing, page-local) |
 | initial data | not printed | Henningson–Kim vortex pair on a Poiseuille profile |
 | convective scheme | the code's sixth-order energy-preserving central scheme | pure sixth-order energy-preserving central scheme |
 

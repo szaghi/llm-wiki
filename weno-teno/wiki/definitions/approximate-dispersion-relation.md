@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Approximate dispersion relation"
-description: "The modified-wavenumber characterization of a possibly nonlinear spatial scheme: its sign convention for dissipation, the Hu-type dispersion-to-dissipation ratio, its fully discrete Runge–Kutta form and its critique, optimization on the nonlinear ADR, and what the sources read off it for WENO, TENO, THINC, ROUND, MDCD, WCNS, gradient-based, hybrid and multi-resolution schemes and central schemes with artificial dissipation."
+description: "The modified-wavenumber characterization of a possibly nonlinear spatial scheme: its sign convention for dissipation, the Hu-type dispersion-to-dissipation ratio, its fully discrete Runge–Kutta form, its Bloch-wave extension to AMR grids, optimization on the nonlinear ADR and its critique, and what the sources read off it for WENO, TENO, THINC, ROUND, MDCD, WCNS, gradient-based, hybrid and central schemes."
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-10-23T19:54:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Approximate dispersion relation
@@ -46,11 +46,11 @@ anti-dissipated, when $\tilde\vartheta_i>0$.)* The same convention is used by
 = negative dissipation, "anti-diffusion") and by
 [Takagi et al. (2022)](/sources/takagi-2022.md) (§2.3, for THINC). All
 chunk-1 sources agree on this sign, none uses the opposite one, and
-[Li, Chen & Ren (2022)](/sources/li-2022.md) (§2.1, Eqs. (8)–(15)) use it too.
+[Li, Chen & Ren (2022a)](/sources/li-2022.md) (§2.1, Eqs. (8)–(15)) use it too.
 
 **A scheme with decoupled dispersion and dissipation.** The fourth-order
 six-point MDCD flux of Sun et al. (2011), as used by
-[Li, Chen & Ren (2022)](/sources/li-2022.md) (§2.1, Eqs. (6)–(15); see
+[Li, Chen & Ren (2022a)](/sources/li-2022.md) (§2.1, Eqs. (6)–(15); see
 [MDCD schemes](/methods/mdcd-scheme.md)), has two free parameters, page-local
 $c_{\mathrm{disp}}$ and $c_{\mathrm{diss}}$ as on the MDCD page (the source's
 $\gamma_{disp}$, $\gamma_{diss}$), and its modified wavenumber splits exactly:
@@ -232,7 +232,7 @@ sources: the three bandwidths come out as 1.1001, 1.5303 and 1.7264, the switchi
 1.0850 and 1.5158, and each scheme has $G_1=1$.)* The schemes become the band-wise linear
 backgrounds of TENO6-SA ([adaptive TENO](/methods/adaptive-teno.md)).
 
-**The ratio used pointwise.** [Li, Chen & Ren (2022)](/sources/li-2022.md) write the same
+**The ratio used pointwise.** [Li, Chen & Ren (2022a)](/sources/li-2022.md) write the same
 condition as $\zeta\sim1<10$ and use it twice. Imposing $\zeta(\pi)\le9$ at the
 wavenumber of largest dispersion error gives the fixed dissipation parameter
 $c_{\mathrm{diss}}=0.012$ (§2.1, Eqs. (16)–(17)). *(Compiler check, not in the
@@ -307,6 +307,63 @@ The local wavenumber comes from a re-optimized [scale sensor](/definitions/scale
 reliable to $\vartheta=2.08$ (§3.2). The resulting scheme, ADADF, is on
 [MDCD schemes](/methods/mdcd-scheme.md).
 
+## Bloch-wave analysis of composite AMR operators
+
+A refined patch breaks the translation invariance on which the single-mode ADR rests.
+[Wang et al. (2026)](/sources/wang-2026.md) (§§4.1–4.4) extend the analysis to a two-level
+[adaptive-mesh-refinement](/methods/adaptive-mesh-refinement.md) grid by Bloch (Floquet) theory,
+which they recall from solid-state physics and from earlier flux-reconstruction and finite-element
+analyses. Page-local symbols: $\theta_{\mathrm B}$ the Bloch phase, $\mathbb A_\ell$ and
+$\mathbb A(\theta_{\mathrm B})$ the coupling blocks and the Bloch operator, $L_{\mathrm M}$ the
+macro-cell length, $r_{\mathrm{ref}}$ the refinement ratio, $N_c$, $N_f$, $N_{\mathrm{DoF}}$
+the coarse cells, fine cells and unknowns of one macro-cell.
+
+- **Uniform baseline.** For $\frac{d}{dt}u_j=\sum_ma_mu_{j+m}$ the symbol is
+  $\lambda=\sum_ma_me^{\mathrm im\vartheta}$ (page-local, not an eigenvalue $\lambda_l$ of $A$), written $\lambda\Delta x=-\mathrm i\tilde\vartheta$
+  (Eqs. (14)–(17)). *(Compiler check, not in the sources: then
+  $\lambda\Delta x=\tilde\vartheta_i-\mathrm i\tilde\vartheta_r$, so a mode decays for
+  $\tilde\vartheta_i<0$. This is the registry's convention above, and the authors read
+  dissipation as more negative $\mathrm{Im}\,\tilde\vartheta$.)*
+- **Macro-cell.** A periodic coarse–fine–coarse cell holds uniform coarse cells of width
+  $\Delta x_c$, a block of fine cells $\Delta x_f=\Delta x_c/r_{\mathrm{ref}}$ and ghost cells. The
+  coarse operator reads restricted fine values on refined cells, and the fine operator reads
+  prolonged coarse values in its ghost cells (Eqs. (18)–(24)). Linearized about a smooth state, the
+  macro-cell evolves by $\frac{d}{dt}u^{(n)}=\sum_{\ell=-J}^J\mathbb A_\ell u^{(n+\ell)}$
+  (Eqs. (25)–(26)).
+- **Bloch eigenproblem.** The ansatz $u^{(n)}=\phi(\theta_{\mathrm B})e^{\mathrm i(n\theta_{\mathrm B}-\omega t)}$,
+  $\theta_{\mathrm B}=k_wL_{\mathrm M}\in[-\pi,\pi]$, gives
+  $\mathbb A(\theta_{\mathrm B})\phi=\lambda\phi$ with
+  $\mathbb A(\theta_{\mathrm B})=\sum_\ell\mathbb A_\ell e^{\mathrm i\ell\theta_{\mathrm B}}$
+  (Eqs. (27)–(29)).
+- **Unfolding and branch selection.** Each $\theta_{\mathrm B}$ yields $N_{\mathrm{DoF}}$
+  eigenvalues. They are unfolded to coarse-grid wavenumbers
+  $\vartheta=k_w\Delta x_c=(\theta_{\mathrm B}+2\pi m)/N_c$, $m=0,\dots,\lceil N_c/2\rceil-1$,
+  kept in $[0,\pi]$ (Eqs. (33)–(34)). The physical branch is the eigenvector with the largest
+  projection on the normalized plane wave $e^{\mathrm ik_wx}$ sampled at the unknowns' positions,
+  and $\lambda_{\mathrm{phys}}\Delta x_c=-\mathrm i\tilde\vartheta$. The other eigenpairs are
+  parasitic (aliasing) branches (Eqs. (35)–(37)).
+
+The analysed operator is fifth-order finite-difference WENO with **linear** weights, on
+$L_{\mathrm M}=1$, $r_{\mathrm{ref}}=2$, $N_f=8$, $N_c=40$, $\Delta x_c=1/40$, $N_{\mathrm{DoF}}=44$
+(§4.4.1). Three inter-level closures are compared (§4.3, Fig. 5): cell-centred Berger–Colella
+transfers, cell-centred WENO prolongation and restriction, and the node-based WENO prolongation of
+Shen, Qiu & Christlieb.
+
+- **Dispersion.** The cell-centred closures deviate less from the uniform operator than the
+  node-based one, most visibly for $\vartheta\in[1.5,2.5]$.
+- **Dissipation.** All closures match the uniform dissipation at low wavenumbers and are more
+  dissipative from $\vartheta\gtrsim2$. The authors interpret this as damping of
+  interface-generated parasitic modes. The WENO closure deviates least near the cut-off, and the
+  authors conclude that it is closest to the uniform fifth-order operator at high wavenumbers
+  ([numerical dissipation](/definitions/numerical-dissipation.md)).
+- **Linear stability.** The global eigenvalues of the semi-discrete cell-centred Berger–Colella and
+  WENO operators, $\tilde\lambda_j=\lambda_j\Delta x_f/a$, lie in the closed left half-plane for
+  $N_c=100$, $200$ and $1000$; the AMR closures enlarge the spectral footprint (Eq. (39), Fig. 6).
+  With one global step set by the fine-level CFL number $\nu=a\Delta t/\Delta x_f$, all of them lie
+  inside the stability region of SSP-RK3, $\lvert1+z+\tfrac12z^2+\tfrac16z^3\rvert\le1$,
+  $z=\nu\tilde\lambda$, at $\nu=1.43$, which the authors call "aligned with the uniform scheme"
+  (§4.4.2, Eqs. (40)–(42); [SSP Runge–Kutta](/methods/ssp-runge-kutta.md)).
+
 **Optimizing the nonlinear scheme, not its linear part.**
 [Zhou et al. (2023)](/sources/zhou-2023.md) (§§3–4) minimize the same kind of
 weighted dispersion error,
@@ -354,7 +411,7 @@ different roles of the same condition.)*
 
 **Two meanings of the name.** In the Fu papers "approximate dispersion relation"
 names the condition on $\zeta$; in Pirozzoli's usage, followed by Luo & Wu,
-Li et al. (2022b), Deng, Huang et al., Wang et al. (2021), Bezgin et al., Hiejima, Hong et al.,
+Li et al. (2022b), Deng, Huang et al. (2026), Wang et al. (2021), Bezgin et al., Hiejima, Hong et al.,
 Wan & Xia and Li, Chen & Ren, it names the numerically evaluated
 $\tilde\vartheta(\vartheta)$ of a nonlinear scheme. The two are compatible (the
 condition is imposed on the curve) but a page citing "the ADR" must say which
@@ -402,7 +459,7 @@ is meant.
   TENO-M has better dispersion than TENO of the same width. See
   [targeted ENO](/methods/targeted-eno.md).
 - **Hybrid schemes and their detectors.** The MDAD-HY hybrid of
-  [Li, Chen & Ren (2022)](/sources/li-2022.md) (§3.3, Figs. 11–12) recovers the MDAD dissipation and
+  [Li, Chen & Ren (2022a)](/sources/li-2022.md) (§3.3, Figs. 11–12) recovers the MDAD dissipation and
   the MDCD dispersion up to $\vartheta=2.06$, beyond which the WENO part activates; TENO-HY and
   MDCD-HY show irregular dissipation at low wavenumbers, which the authors trace to detector
   misjudgments, and WENO-Z is the most dissipative. The same sine-wave procedure grades the
@@ -465,7 +522,7 @@ is meant.
   the dissipation minimal and has **zero dissipation at the cut-off wavenumber**, which the
   authors call "counterintuitive to classical discretization-design principles" and read as
   under-resolved wave packets kept "without interacting with resolved scales", "akin to soliton
-  solutions". Huang et al. (above) find their ROUND schemes markedly less dissipative than
+  solutions". Huang et al. (2026) (above) find their ROUND schemes markedly less dissipative than
   WENO3-NN at high wavenumbers. See [learned WENO weights](/methods/learned-weno-weights.md).
 - **A learned five-point WENO and its hyperparameters.** [Nogueira et al. (2024)](/sources/nogueira-2024.md)
   (§3.3, Fig. 5) apply Pirozzoli's ADR to their WENO5-NN, whose weights a
@@ -550,7 +607,13 @@ is meant.
   gives $\sum_jj^2b_j=b_1+4b_2+9b_3$, the pattern their other printed coefficients follow
   *(compiler check, not in the sources)*. Their §3.2 states the order conditions as
   "$G_1=0$", while §3.1 and the printed schemes have $G_1=1$.
-- Zhang et al.'s observation that conclusions from monochromatic ADR "do not transfer
+- Wang et al. (2026) analyse the linear-weight operator only, so their Bloch curves and the
+  $\nu=1.43$ bound say nothing about the nonlinear weights or the hybrid switch used in their
+  shock tests. They normalize the eigenvalues by $\Delta x_f$ in Eq. (38) and by $\Delta x_c$ in
+  the caption of Fig. 6; the CFL number of Eq. (40) uses $\Delta x_f$. They write the unfolded
+  phase as $\theta_{\mathrm B}+2\pi m$ in Eq. (36) and divided by $N_c$ in Eq. (34), a notational
+  difference.
+- Zhang et al. (2024b)'s observation that conclusions from monochromatic ADR "do not transfer
   directly to nonlinear problems" (§6.1.3) rests on one cut-off study of the Titarev–Toro
   problem; see [adaptive TENO](/methods/adaptive-teno.md).
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) (§6) present "beating the
@@ -576,7 +639,7 @@ is meant.
 - [Nogueira et al. (2024)](/sources/nogueira-2024.md) — §3.3, Fig. 5: ADR of WENO5-NN for five hyperparameter pairs.
 - [Tang (2024)](/sources/tang-2024.md) — §3, Fig. 1: ADR of TENO-AZ against TENO-Z, TENO-A and TENO-LAD.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §2.2 (Eq. (5)), Appendix (Fig. A.1): WCNS-JS and WCNS-T spectra at orders 5–11.
-- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §2.1–2.3, Eqs. (6)–(38), Figs. 1–7; §3.2–3.4, Figs. 9, 11–12, Eqs. (62)–(69): MDCD symbol, pointwise dispersion–dissipation ratio, MDAD-HY and detector spectra.
+- [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §2.1–2.3, Eqs. (6)–(38), Figs. 1–7; §3.2–3.4, Figs. 9, 11–12, Eqs. (62)–(69): MDCD symbol, pointwise dispersion–dissipation ratio, MDAD-HY and detector spectra.
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §3.2, Fig. 3: spectra of the scale-sensor TENO5-A (arXiv v1).
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §4.3, Figs. 6–7: TENO-M spectra against $C_s$.
 - [Zhou et al. (2023)](/sources/zhou-2023.md) — §§3–4, Eqs. (19)–(28), Tables 1–2, Figs. 3–7: two-parameter WCNS symbol, ADR-based optimization, idealized dissipation, critique of the dispersion–dissipation condition.
@@ -585,4 +648,5 @@ is meant.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §3, Fig. 3.2: WENO-H, WENO-ZQ, MRWENO, WENO-JS spectra.
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §3, Eqs. (18)–(21), Table 1, Fig. 1; §5.2, Figs. 5–6; §6.1.3; App. A: order cost of decoupled optimization, piecewise spectrum optimization, cut-off against nonlinearity onset, resolved bandwidths, nonlinear spectral analysis.
 - [Liang & Fu (2024a)](/sources/liang-2024.md) — §3.2, Fig. 3: ADR of a Gaussian-RBF TENO.
+- [Wang et al. (2026)](/sources/wang-2026.md) — §§4.1–4.4, Eqs. (14)–(42), Figs. 4–6: Bloch-wave analysis of AMR closures, global spectra, SSP-RK3 CFL bound.
 - [Fan et al. (2025b)](/sources/fan-2025-b.md) — §4.2, Fig. 9: ADR of WCNS3-MR-NN against WCNS3-JS, WCNS3-MR and linear WCNS3.

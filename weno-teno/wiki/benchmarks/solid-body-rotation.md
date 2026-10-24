@@ -5,7 +5,7 @@ description: "LeVeque's two-dimensional linear-advection test in which a smooth 
 status: established
 aliases: [LeVeque solid body rotation, slotted cylinder test, hump–cone–slotted-cylinder rotation]
 tags: [benchmark, limiting, bound-preserving, dg]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Solid-body rotation
@@ -83,7 +83,7 @@ triangles) with the dual-stencil-selection TENO4-D to TENO7-D, again
 without error norms (Fig. 2).
 
 Maltsev et al. run hybrid DG–FV schemes of orders 3 to 5
-(DG($P_r$) whose troubled cells receive CWENOZ coefficients of the same
+(DG of degree $N$ whose troubled cells receive CWENOZ coefficients of the same
 order) in [UCNS3D](/software/ucns3d.md) on a hybrid
 quadrilateral–triangle mesh with 64 edges per side, CFL 0.5, with
 MOOD-type switches of strict ($10^{-3}$) or relaxed ($10^{-1}$)
@@ -159,7 +159,7 @@ rotate four profiles of the Jiang–Shu type on $[0,4]^2$ with
 $v=(0.5y-1,\ 1-0.5x)$: a cone $1-5r_1$ for $r_1\le0.2$, a square of
 height 1 on $\lvert x-2\rvert\le0.4$, $2.8\le y\le3.6$, a Gaussian
 composite and an elliptic composite (their $G$ and $F$ with
-$\delta=0.01$, $\alpha=5$), with $r_1=0.5\sqrt{(x-3.2)^2+(y-2)^2}$,
+$\delta=0.01$, $\alpha=5$, page-local), with $r_1=0.5\sqrt{(x-3.2)^2+(y-2)^2}$,
 $r_2=0.5\sqrt{(x-2)^2+(y-0.8)^2}$, $r_3=\sqrt{(x-0.8)^2+(y-2)^2}$
 (page-local), to $t=2$, "after one period", with a pure finite-volume
 scheme on $200\times200$ uniform cells or on non-uniform cells equal
@@ -260,19 +260,19 @@ solution *(compiler check, not in the sources)*.
 - Kuzmin & Vedral's Fig. 4(d) caption gives the $\mathbb Q^2$ WENO-stabilized
   error as $2.67\times10^{-1}$, ten times their $\mathbb Q^1$ and $\mathbb Q^4$
   values and above the LO error $1.10\times10^{-1}$ of a visibly more
-  diffused solution; it reads as a slip for $2.67\times10^{-2}$, and no
+  diffused solution; it reads as a slip for $2.67\times10^{-2}$ *(compiler
+  check, not in the sources)*, and no
   $\mathbb Q^2$ value is entered in the table.
 - None of the papers reports errors for the three bodies separately.
 - Deng, Jiang & Yan's field $v=(0.5y-1,\ 1-0.5x)$ rotates about $(2,2)$
   with angular speed $0.5$, a period of $4\pi\approx12.6$, not the
   printed $t=2$ "after one period"; and they print the Gaussian
-  parameter as $\beta=\log_2(36\delta^2)$, negative for $\delta=0.01$
+  parameter (page-local) as $\beta=\log_2(36\delta^2)$, negative for $\delta=0.01$
   ($-8.1$), which makes $\exp(-\beta r^2)$ grow away from its centre
   *(compiler check, not in the sources)*.
 - Kiechle, Chudzik & Helzel's initial circle, centred at $(1,1)$ with radius
   0.8, covers only the corner of the unit square near $(1,1)$ *(compiler
-  check, not in the sources)*; the text layer reads the radius as "0.82",
-  the printed form is $0.8^2$.
+  check, not in the sources)*.
 - Maltsev et al. run their other unit-scale scalar tests (square-wave
   advection) on a domain also printed as $[0,10]^2$.
 

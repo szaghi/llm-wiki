@@ -135,7 +135,7 @@ volume. No printed duplicates; no item is unparseable.
 
 # Pages created or updated
 
-Chunk 10 (2026-10-23). This source is cited on:
+Chunk 10 (2026-10-23), cited further in chunk 11 (2026-10-24). This source is cited on:
 
 * [Boundary variation diminishing (BVD)](/definitions/boundary-variation-diminishing.md)
 * [Density-wave advection](/benchmarks/density-wave-advection.md)

@@ -5,7 +5,7 @@ description: "Local characteristic decomposition projects stencil data onto the 
 status: established
 aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables, primitive-variable reconstruction]
 tags: [characteristic, reconstruction, weno, teno, central-scheme, multiphase]
-timestamp: 2026-10-23T19:52:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Characteristic decomposition
@@ -70,7 +70,8 @@ for the six-point interpolation of their [A-WENO](/methods/alternative-weno.md).
 of $u_i$ and $u_{i+1}$, not the Lax–Friedrichs split fluxes but the split auxiliary variables of
 their positivity-preserving Navier–Stokes splitting
 ([positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md));
-they print the factorization as $A=L\Lambda R$, where $A=R\Lambda L$ is meant.
+they print the factorization as $A=L\Lambda R$; with the right eigenvectors as the columns of
+$R$ and $L=R^{-1}$ it reads $A=R\Lambda L$ *(compiler check, not in the sources)*.
 
 ## Variants of the frozen state and of where the projection acts
 
@@ -101,8 +102,8 @@ they print the factorization as $A=L\Lambda R$, where $A=R\Lambda L$ is meant.
   quantities, and print closed forms.
   For the $\gamma$-based two-fluid system with stiffened gas the eigenvalues are $v-c$, $v$ (three
   times in 1D, four in 2D), $v+c$, with $c=\sqrt{\gamma(p+p_\infty)/\rho}$ from averaged $\gamma$,
-  $p$, $p_\infty$, $\rho$; for the thermal rotating shallow-water system they are $v\mp\sqrt{bh}$ and
-  $v$ (twice), $b$ the buoyancy and $h$ the depth (page-local). Unlike Chu et al. (2022) they
+  $p$, $p_\infty$, $\rho$; for the thermal rotating shallow-water system they are $v\mp\sqrt{\mathsf bh}$ and
+  $v$ (twice), $\mathsf b$ the buoyancy (registry §10) and $h$ the depth (page-local). Unlike Chu et al. (2022) they
   apply the projection only in the numerical flux, through the field-wise coefficients, and
   reconstruct conservative (or equilibrium) variables (Remark 2.2; see [LCD central-upwind scheme](/methods/lcd-central-upwind-scheme.md)).
 - **Arithmetic mean of conservative averages.** In the adaptive
@@ -141,7 +142,7 @@ they print the factorization as $A=L\Lambda R$, where $A=R\Lambda L$ is meant.
   Peng et al. that it changes scale invariance.
 - **Fewer projections in a DG limiter.** In the simple WENO limiter for DG on triangles,
   [Du, Shu & Zhong (2022)](/sources/du-2022.md) (§3.1, Eqs. (3.1)–(3.8)) use, for each edge
-  normal $\mathbf n_l$, the Jacobian $A_l=n_{l,x}\partial f/\partial u+n_{l,y}\partial g/\partial u$ at the
+  normal $n_l$, the Jacobian $A_l=n_{l,x}\partial f/\partial u+n_{l,y}\partial g/\partial u$ at the
   target-cell average, and project **two** polynomial vectors — the target cell's and the
   neighbour's across edge $l$, shifted to the target average — instead of all four as in the
   original limiter of Zhu, Zhong, Shu and Qiu; the directional results are averaged with weights
@@ -247,7 +248,7 @@ they print the factorization as $A=L\Lambda R$, where $A=R\Lambda L$ is meant.
   field its own central-upwind diffusion, the
   [LCD central-upwind scheme](/methods/lcd-central-upwind-scheme.md) (§3).
 - **Entropy-scaled eigenvectors in the dissipation.** In the entropy-stable
-  moving-mesh finite-difference scheme of [Li, Duan & Tang (2022)](/sources/li-2022-c.md)
+  moving-mesh finite-difference scheme of [Li, Duan & Tang (2022c)](/sources/li-2022-c.md)
   (§3.4, Eqs. (3.21)–(3.22)) the dissipation acts on jumps of the reconstructed
   scaled entropy variables, with right-eigenvector matrices scaled so that
   $\partial u/\partial w=RR^\top$ ($w$ the entropy variables). They print these
@@ -413,7 +414,8 @@ to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
   $B=\mathrm{diag}(0,0,0,0,v,v)$ of §5.1 has the wrong sign.)* The thermal shallow-water
   matrices of App. B invert and diagonalize exactly *(same check)*.
 - [Fu (2023)](/sources/fu-2023.md) calls the splitting with a global per-field maximum speed
-  "Rusanov"; most of the literature calls it global Lax–Friedrichs (naming convention, see
+  "Rusanov"; Li et al. (2022b) and Chen, Wu & Xiong (2023) above call it global Lax–Friedrichs
+  (naming convention, see
   [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)).
 
 # Citations
@@ -433,7 +435,7 @@ to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
 - [Wong et al. (2021)](/sources/wong-2021.md) — §4.2, App. A (arXiv v1).
 - [Zheng et al. (2021)](/sources/zheng-2021.md) — §1, §2.2, §3.1.3.
 - [Wang et al. (2021)](/sources/wang-2021.md) — §3.1, Remark 1.
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §3.4, Eqs. (3.21)–(3.22) (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — §3.4, Eqs. (3.21)–(3.22) (arXiv v1).
 - [Kanbar et al. (2022)](/sources/kanbar-2022.md) — §3, Eq. (8) (arXiv v1).
 - [Browne et al. (2022)](/sources/browne-2022.md) — §2.2.
 - [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §2, §4.

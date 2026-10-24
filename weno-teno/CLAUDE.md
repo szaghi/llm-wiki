@@ -53,8 +53,9 @@ here, in this bundle's notation.
   Three works are therefore missing or incomplete: Feng et al. 2026
   (Phys. Fluids 38:011302), Li et al. 2024 (JCP 519:113375) and Wu &
   Shu 2023 (SINUM 61:250-285). The list for the re-download is
-  `~/papers/mosaic/weno-teno-redownload.csv`. These sources and
-  `wang-2023` are ingested last (chunk 11).
+  `~/papers/mosaic/weno-teno-redownload.csv`. `wang-2023` was
+  ingested from the "Feng" file in chunk 11 (2026-10-24); the three
+  missing works are ingested once their PDFs are in the archive.
 - **Version rule:** the Source page records the version read (arXiv vN,
   HAL, SSRN, accepted manuscript, version of record); its metadata is the
   published identity from Crossref. Claims and equations are those of the
@@ -102,13 +103,20 @@ here, in this bundle's notation.
 
 ## Status
 
-**Chunk 10 staged 2026-10-23:** converged ENO, learned and adaptive
+**Chunk 11 staged 2026-10-24 (archive complete):** the last five
+sources, the whole-bundle deep lint and the closing bibliography sweeps;
+204 of 207 ingested (feng-2026, li-2024 and wu-2023 await a re-download),
+224 concept pages plus the registry, 5567 bibliography entries, seven
+contradictions open (the six of chunk 10 and whether the Brio–Wu compound
+wave is part of the solution). Next: ingest the three defective works once
+their PDFs are in the archive.
+
+**Chunk 10 committed 2026-10-23 (be807d5):** converged ENO, learned and adaptive
 TENO/WCNS, Active Flux variants, entropy-stable MHD DG, low-Mach and
 multiphase codes; 199 of 207 ingested, 221 concept pages plus the
 registry, 5442 bibliography entries, deep lint done, six contradictions
 open (the five of chunk 9 and whether HLL is carbuncle-free under
-high-order reconstruction). Next: chunk 11 (the remaining sources and the
-archive defects), with the whole-bundle deep lint and closing sweeps.
+high-order reconstruction).
 
 **Chunk 9 committed 2026-10-23 (e275831):** PAMPA, tensor-train and AENO
 reconstruction, entropy projection, central-upwind and relativistic MHD

@@ -5,7 +5,7 @@ description: "Coppola and Veldman prove that a banded periodic matrix has vanish
 status: established
 aliases: [global conservation implies local conservation, flux-form equivalence, finite-difference finite-volume equivalence, discrete main theorem of calculus]
 tags: [finite-difference, finite-volume, kinetic-energy-preserving, dg]
-timestamp: 2026-10-23T15:13:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Local conservation is equivalent to a flux form
@@ -198,6 +198,36 @@ converge at the truncation rate of the base scheme, hence to be small where wall
 small, as on adiabatic walls (§4.5.2, §5); the convergence of the conservation error is stated,
 not measured, and the evidence is two ghost-cell implementations.
 
+**Flux form across refinement levels.** On a block-structured
+[adaptive mesh](/methods/adaptive-mesh-refinement.md) a coarse–fine face
+carries a coarse flux and, with sub-cycling, several fine fluxes, and the
+composite scheme is conservative only if one flux is used per physical face.
+[Wang et al. (2026)](/sources/wang-2026.md) (§3.1, §3.4, App. B) make this
+explicit for finite differences: in a cell-centred layout, with solution
+points at cell centres and flux points at faces, patch boundaries are flux
+points, and refluxing replaces the coarse flux at the interface by the time
+average of the fine fluxes through it, $\bar F=\frac1{r_{\mathrm{ref}}}\sum_kF^{n+k+1/2}$ over
+the $r_{\mathrm{ref}}$ fine substeps (Eq. (B.5); page-local $\bar F$, $F$, $r_{\mathrm{ref}}$ the
+refinement ratio). Summing the coarse and fine updates then telescopes, and
+for a static two-level 1D hierarchy with second-order conservative
+(averaging and limited piecewise-linear) transfers the composite totals
+change only through the physical boundary fluxes (Eq. (B.7)). In a
+node-based layout coarse and fine solution points coincide at the
+interface and there is "no natural location" at which to reconcile the
+fluxes (§3.1). The flux form is necessary but not sufficient: transfers that
+do not preserve the coarse-cell integral, such as their WENO prolongation
+and restriction, change the composite mass by $O(\Delta x)$ at
+discontinuities and $O(\Delta x^{p_{\mathrm{FD}}})$ in smooth regions ($p_{\mathrm{FD}}$ the
+finite-difference order, page-local), independently of the
+time step and accumulating over restrictions, and refluxing alone cannot
+repair this (App. C, Eq. (C.3)); the violated discrete Rankine–Hugoniot
+balance perturbs the shock speed by $O(\Delta x)$, the drift they observe on
+slowly moving shocks (App. C;
+[Rankine–Hugoniot condition](/definitions/rankine-hugoniot-condition.md),
+[Lax–Wendroff theorem](/results/lax-wendroff-theorem.md)). The paper prints
+the reflux term with the opposite sign to the one that makes Eq. (B.3)
+use $\bar F$ at the interface; see the [adaptive-mesh page](/methods/adaptive-mesh-refinement.md).
+
 A conservative scheme need not be written in flux form to conserve mass: the
 semi-Lagrangian finite-volume update of [Zheng et al. (2022)](/sources/zheng-2022.md)
 integrates the reconstruction over the upstream cell, cut by the Eulerian mesh and
@@ -252,3 +282,4 @@ for periodic data (Prop. 3.1, Eq. (25)), observed at $O(10^{-13})$ (Figs. 13, 18
 - [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §6.2 Thm. 6.2, Eq. (53), Remark 6.1, §7.3 Tables 2–3.
 - [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — §2.1 Thm. 2.1 (HAL preprint v1).
 - [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §3, §3.2, §4.5.2 (Table 7), §5 (Fig. 18) (author preprint).
+- [Wang et al. (2026)](/sources/wang-2026.md) — §3.1, §3.4; App. B, Eqs. (B.1)–(B.7); App. C, Eq. (C.3).

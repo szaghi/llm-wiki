@@ -5,7 +5,7 @@ description: "Periodic two-dimensional ideal-MHD benchmark in which smooth vorti
 status: established
 aliases: [Orszag–Tang, Orszag–Tang MHD vortex, OT vortex]
 tags: [benchmark, mhd, dg, teno, limiting, relativistic]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Orszag–Tang vortex
@@ -107,7 +107,7 @@ not in the sources)*.
 
 **Relativistic single-fluid version.** [Ding & Wu (2024b)](/sources/ding-2024-b.md)
 Example 5.5 run relativistic MHD on periodic $[0,2\pi]^2$ with
-$\rho=1$, $v=A(-\sin y,\ \sin x,\ 0)$, $A=0.99/\sqrt2$, so the maximum
+$\rho=1$, $v=A_{\mathrm v}(-\sin y,\ \sin x,\ 0)$, $A_{\mathrm v}=0.99/\sqrt2$ (page-local), so the maximum
 Lorentz factor is about $7.09$, $B=(-\sin y,\ \sin2x,\ 0)$, $p=10$, and
 the equation of state $h=\tfrac{5p}{2\rho}+\sqrt{1+\tfrac94(p/\rho)^2}$
 they label TM, on $600^2$ cells, with $\log\rho$ and $W$ shown at $t=2.82$
@@ -175,10 +175,10 @@ constraint.
 | [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) §6.2 | entropy-stable DGSEM, $N=3$ and $7$, element-wise blending with first-order FV or the TVD-ES [subcell scheme](/methods/tecno-scheme.md), indicator on $p$; code [FLUXO](/software/fluxo.md) | $256^2$, $512^2$, $1024^2$ DOFs | GLM cleaning with Powell and GLM non-conservative terms |
 | [Liu et al. (2021)](/sources/liu-2021.md) §4.2 | finite-volume [WLS-ENO](/methods/wls-eno.md), locally divergence-free, second and third order, HLL flux, positivity-preserving framework | $200^2$ (both orders), $600^2$ (second order) | locally divergence-free reconstruction plus Godunov–Powell source term |
 | [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) §4.3 | one-step HLL [generalized Riemann problem](/methods/generalized-riemann-problem.md) finite volumes with the WLS-ENO reconstruction, compared with forward-Euler and SSP-RK2 HLL; Barth–Jespersen-type limiter on $\rho$, $p$; CFL 0.8, 100 cores | $200^2$ | locally divergence-free reconstruction plus Godunov–Powell source term |
-| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.3.2 | flux reconstruction, $\mathbb P_7$, vector-valued residual-based [artificial viscosity](/methods/artificial-viscosity.md), $c_\mu=3$ | $32^2$, $64^2$ elements | none stated |
-| [Dao & Nazarov (2022)](/sources/dao-2022.md) §§5.3–5.4 | continuous Galerkin $\mathbb P_1$, $\mathbb P_3$ with residual-based [artificial viscosity](/methods/artificial-viscosity.md), RK4, CFL 0.3 | $450\times450$ nodes (2D), $120^3$ nodes ($\mathbb P_3$, 3D) | projection cleaning; pseudo-time and hyperbolic (GLM) cleaning compared |
-| [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) Ex. 5.6 | semi-implicit IMEX fifth-order finite-difference WENO, all-Mach formulation at $\varepsilon=1$ | $192^2$ | constrained transport through $\mathsf A_3$ |
-| [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) §5.3 | nodal DG / flux reconstruction, $\mathbb P_3$, positivity-preserving [entropy filtering](/methods/entropy-filtering.md) | $64^2$, $128^2$, $256^2$ elements, $\Delta t=4,2,1\times10^{-4}$ | Powell source term |
+| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.3.2 | flux reconstruction, $\mathbb P^7$, vector-valued residual-based [artificial viscosity](/methods/artificial-viscosity.md), tunable constant $c_\mu=3$ (page-local) | $32^2$, $64^2$ elements | none stated |
+| [Dao & Nazarov (2022)](/sources/dao-2022.md) §§5.3–5.4 | continuous Galerkin $\mathbb P^1$, $\mathbb P^3$ with residual-based [artificial viscosity](/methods/artificial-viscosity.md), RK4, CFL 0.3 | $450\times450$ nodes (2D), $120^3$ nodes ($\mathbb P^3$, 3D) | projection cleaning; pseudo-time and hyperbolic (GLM) cleaning compared |
+| [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) Ex. 5.6 | semi-implicit IMEX fifth-order finite-difference WENO, all-Mach formulation at sonic Mach parameter $\varepsilon=1$ (page-local) | $192^2$ | constrained transport through $\mathsf A_3$ |
+| [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) §5.3 | nodal DG / flux reconstruction, $\mathbb P^3$, positivity-preserving [entropy filtering](/methods/entropy-filtering.md) | $64^2$, $128^2$, $256^2$ elements, $\Delta t=4,2,1\times10^{-4}$ | Powell source term |
 | [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) §6.2.1 | [entropy-stable](/properties/entropy-stability.md) finite differences, orders 3 and 4, IMEX | $200^2$ | hyperbolic (perfectly hyperbolic Maxwell) cleaning |
 | [Berta et al. (2024)](/sources/berta-2024.md) §5.6 | fourth-order finite volume, pointwise MP5 or WENO-Z (LINEAR second-order comparison), Roe or HLLD with UCT-HLLD (MHD), GFORCE with UCT-GFORCE (RMHD), SSPRK(5,4), CFL 0.5 | MHD $64^2$, $512^2$; RMHD $128^2$, $1024^2$ | upwind constrained transport |
 | [Dematté et al. (2024)](/sources/dematte-2024.md) §4.1.5, §4.5 | cell-centred [semi-implicit all-Mach](/methods/semi-implicit-all-mach-scheme.md) finite volume, explicit Rusanov advection with MUSCL–Hancock, implicit pressure sub-system by Picard iterations and GMRES, CFL 0.8 on the flow speed | $1000^2$ | unstaggered constrained transport from a vector potential |
@@ -247,13 +247,13 @@ $64^2$ elements and is over-diffused at small scales on $32^2$
 
 **Long times and divergence cleaning in continuous finite elements.**
 Dao & Nazarov capture all shocks "locally and accurately" with
-$\mathbb P_1$ and $\mathbb P_3$ to $t=1.0$ with unchanged parameters;
-printed ranges are $\rho_h\in[0.0814,\,0.495]$ ($\mathbb P_1$, $t=0.5$)
-and $[0.0377,\,0.419]$ ($\mathbb P_3$, $t=1.0$), the artificial
-viscosity below $4.2\times10^{-4}$, and $\mathbb P_3$ reproduces a
+$\mathbb P^1$ and $\mathbb P^3$ to $t=1.0$ with unchanged parameters;
+printed ranges are $\rho_h\in[0.0814,\,0.495]$ ($\mathbb P^1$, $t=0.5$)
+and $[0.0377,\,0.419]$ ($\mathbb P^3$, $t=1.0$), the artificial
+viscosity below $4.2\times10^{-4}$, and $\mathbb P^3$ reproduces a
 twisting central density upsurge seen with a third-order DG scheme
 (Figs. 3–4). Without cleaning, they state, the solution breaks near
-$t\approx0.7$ on a fine mesh. On a coarse $40\times40$ $\mathbb P_1$
+$t\approx0.7$ on a fine mesh. On a coarse $40\times40$ $\mathbb P^1$
 run, projection, pseudo-time stepping (10 pseudo-iterations) and
 hyperbolic cleaning all keep $\int\lvert\nabla\cdot B_h\rvert$ small,
 pseudo-time stepping being best and costliest (Fig. 5); up to $t=0.5$
@@ -366,7 +366,7 @@ adaptive TENO family carries over to MHD with constrained transport
   captions are taken here. Dao & Nazarov's Fig. 3(c) caption reads
   $t=0.5$ for a panel whose printed range and the text place at
   $t=1.0$.
-- Dao & Nazarov's cleaning ranking rests on one coarse $\mathbb P_1$ run
+- Dao & Nazarov's cleaning ranking rests on one coarse $\mathbb P^1$ run
   without timings; the break-up at $t\approx0.7$ is stated, not shown.
 - Dzanic et al. refer to the Orszag–Tang density contours as "Fig. 7",
   which is their explosion test; the contours are their Fig. 12.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Brio–Wu MHD shock tube"
-description: "One-dimensional ideal-MHD Riemann problem with a constant normal field and a reversing transverse field, whose solution holds a compound wave; validates MHD Riemann solvers (HLLD included), continuous finite elements, central and all-Mach schemes, filtered, oscillation-eliminating, entropy-stable and globally divergence-free DG, and, in a relativistic two-fluid variant, entropy-stable finite differences."
+description: "One-dimensional ideal-MHD Riemann problem with a constant normal field and a reversing transverse field, whose computed solutions hold a compound wave; validates MHD Riemann solvers (HLLD included), continuous finite elements, central and all-Mach schemes, filtered, oscillation-eliminating, entropy-stable and globally divergence-free DG, and, in a relativistic two-fluid variant, entropy-stable finite differences."
 status: established
 aliases: [Brio–Wu problem, Brio–Wu tube, MHD shock tube, Brio and Wu shock tube]
 tags: [benchmark, mhd, riemann-solver, central-scheme, relativistic]
-timestamp: 2026-10-23T20:39:00Z
+timestamp: 2026-10-24T06:02:00Z
 ---
 
 # Brio–Wu MHD shock tube
@@ -14,9 +14,10 @@ The Brio–Wu problem is the MHD analogue of the
 [Sod shock tube](/benchmarks/sod-and-lax-shock-tubes.md): two uniform
 states at rest, Sod's density and pressure jump, a constant normal
 magnetic field $B_1$ and a transverse field $B_2$ that reverses sign
-across the initial discontinuity. The reversal of $B_2$ produces, among
-the waves, a compound wave that a scheme must capture without spurious
-oscillation; the sources use it to validate MHD Riemann solvers
+across the initial discontinuity. In the computed solutions of the sources the reversal of
+$B_2$ produces, among the waves, a compound wave, which a scheme must
+resolve without spurious oscillation (whether it belongs to the exact
+solution is disputed, see Contradictions); the sources use it to validate MHD Riemann solvers
 and shock capturing for ideal MHD, and one runs a relativistic
 two-fluid version of it. Velocities are $v=(v_1,v_2,v_3)$
 and the field $B=(B_1,B_2,B_3)$ in the notation of the registry.
@@ -36,6 +37,7 @@ and the field $B=(B_1,B_2,B_3)$ in the notation of the registry.
 | [Liu et al. (2025b)](/sources/liu-2025-b.md) Ex. 2(a) | $(-1,1)$, jump at $x=0$ | $(1,0,0,0,0.75,1,0,1)$ | $(0.125,0,0,0,0.75,-1,0,0.1)$ | 2 | 0.2 |
 | [Liu et al. (2025c)](/sources/liu-2025-c.md) Ex. 5.2 | rotated by $\arctan(0.5)$, jump on $2x+y=1$ | $(1,0,0,0,0.5/\sqrt5,2.75/\sqrt5,0,1)$ | $(0.125,0,0,0,2.5/\sqrt5,-1.25/\sqrt5,0,0.1)$ | $5/3$ (stated once for the paper, §2) | $0.2/\sqrt5$ |
 | [Wilfong et al. (2026)](/sources/wilfong-2026.md) §4.1.9 | as Miyoshi & Kusano's Fig. 5, not reprinted | — | — | not printed | not printed |
+| [Stone et al. (2026)](/sources/stone-2026.md) §3.2 | 1D, 200 cells | not reprinted | — | not printed | not printed |
 
 Dao & Nazarov, Kanbar et al., Chen, Wu & Xiong, Dzanic & Witherden,
 Liu, Feng & Wang and Dematté et al. print the same states; their final times differ (0.2 on $[0,1]$ for Dao
@@ -150,9 +152,9 @@ diffusion) give (Figs. 1–2, Table 4):
   the same order, less entropy dissipated as the order rises;
 - in the stiff cases on 400 cells, profiles close to RMHD that stay
   stable without resolving the small-scale oscillations;
-- on 10 CPU cores at $r=10^5/\sqrt{4\pi}$ and 800 cells, 413.55 s
+- on 10 CPU cores at $r_{\mathrm i}=10^5/\sqrt{4\pi}$ and 800 cells, 413.55 s
   explicit against 12.11 s IMEX at order 2, 374.54 s against 47.00 s at
-  order 4; at $r=10^4/\sqrt{4\pi}$ and 800 cells IMEX is slower at orders
+  order 4; at $r_{\mathrm i}=10^4/\sqrt{4\pi}$ and 800 cells IMEX is slower at orders
   3 and 4 (22.14 s against 13.04 s, 44.90 s against 37.98 s), faster at
   order 2 (14.28 s against 17.90 s).
 
@@ -188,9 +190,9 @@ being Ryu–Jones problems (below). No error norm is given.
 
 **Entropy-stable oscillation-free DG.** Liu et al. (2025b) run their
 entropy-stable damped nodal [DG](/methods/discontinuous-galerkin.md)
-(ESOFDG: $k=2$, flux differencing with an entropy-conservative flux, a
+(ESOFDG: $N=2$, their $k$; flux differencing with an entropy-conservative flux, a
 Godunov–Powell non-conservative term, a damping term on the deviation
-from the cell mean, CFL $0.6/(2k+1)=0.12$) on 800 cells against a
+from the cell mean, CFL $0.6/(2N+1)=0.12$) on 800 cells against a
 5000-cell reference (Fig. 1) and describe the compound waves as
 captured. They add a high-pressure-ratio variant, Ex. 2(c): left
 $(1,0,0,0,0,1,0,1000)$, right $(0.125,0,0,0,0,-1,0,0.1)$ in the variables
@@ -215,6 +217,21 @@ first several steps" (Ex. 5.2).
 solver of Miyoshi & Kusano and WENO reconstruction on the tube and report
 agreement with Miyoshi & Kusano's Fig. 5 (§4.1.9, §4.2.5, Fig. 10a). The
 paper names no divergence-control method for its MHD module.
+
+**Primitive reconstruction in a GPU AMR code.** Stone et al. (2026) run
+the tube with [AthenaK](/software/athenak.md) on 200 cells, RK2 with PLM
+against RK3 with PPM under the original Colella–Woodward limiters
+(their figure legend), with a 2000-cell RK3–PPM reference. The two
+perform similarly, "since the solution mostly involves
+discontinuities", and small-amplitude ringing remains near the compound
+wave at $x=0$; citing the Athena++ paper, they state that reconstructing
+characteristic instead of primitive variables would reduce it
+significantly, an option not implemented in AthenaK, "largely because
+of the complexity of the implementation for general relativistic flows"
+(§3, §3.2, Fig. 3). This is the same remedy that Lesur et al. name for
+the velocity oscillation of IDEFIX above; see
+[characteristic decomposition](/methods/characteristic-decomposition.md)
+and [piecewise parabolic method](/methods/piecewise-parabolic-method.md).
 
 ## Related problems
 
@@ -265,22 +282,34 @@ $t'$: $\cos\alpha_{\mathrm r}\cos\gamma_{\mathrm r}=4/\sqrt{21}\approx0.873$,
 so the MHD run ends at $t\approx0.175$ *(compiler check, not in the
 sources)*.
 
+## Contradictions
+
+- **Is the compound wave part of the solution?**
+  [Dematté et al. (2024)](/sources/dematte-2024.md) §4.1.1 call the
+  compound wave in their RP1 density profile "artificial", "a common
+  feature of standard finite volume schemes for ideal MHD".
+  [Dao & Nazarov (2022)](/sources/dao-2022.md) §5.2 treat it as part of
+  the solution: the test examines whether a solver represents "the whole
+  compound structure accurately", and their $\mathbb P^3$ solution
+  "captures the compound structure more accurately" than $\mathbb P^1$
+  against the Athena reference (Fig. 2). Dzanic & Witherden (2023) and
+  Stone et al. (2026) name the compound wave without judging it. No
+  source of the bundle analyses its admissibility, so neither side is
+  settled here. *Open.*
+
 ## Qualifications
 
 - Bhoriya et al. state that $\Delta x=0.0025$ at 400 cells is slightly
   larger than the skin depth "in the entire domain"; with their own
   formula the right state has skin depth $4\times10^{-3}>\Delta x$
   *(compiler check, not in the sources)*.
-- Dematté et al. call the compound wave in their density profile
-  "artificial", "a common feature of standard finite volume schemes for
-  ideal MHD" (§4.1.1), while Dao & Nazarov and Dzanic & Witherden report
-  it as a wave their schemes capture (above); no source of the bundle
-  analyses the admissibility of the compound wave.
 - No source reports an error norm; all comparisons are visual, against
   a reference code (Athena, PLUTO), a fine-grid run, a lower-order
   run (Liu, Feng & Wang's forward-Euler reference) or the literature.
-- Liu & Wu (2025) is read in arXiv v2; Liu et al. (2025b, 2025c) and
-  Wilfong et al. are versions of record.
+- Liu & Wu (2025) is read in arXiv v2; Liu et al. (2025b, 2025c),
+  Wilfong et al. and Stone et al. (2026) are versions of record. Stone
+  et al. print neither the data nor $\gamma$ nor the final time of their
+  run.
 - All earlier sources except Liu, Feng & Wang and Dematté et al. (versions of record) are read in
   arXiv versions (v1; Dzanic & Witherden v2, Bhoriya et al. v2), not the
   versions of record. Kanbar et al. print no $\gamma$ for any test; Lesur et al. do
@@ -300,4 +329,5 @@ sources)*.
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — Ex. 2, Figs. 1–3.
 - [Liu et al. (2025c)](/sources/liu-2025-c.md) — §2, Ex. 5.2, Figs. 3–4.
 - [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §4.1.9, §4.2.5, Fig. 10a.
+- [Stone et al. (2026)](/sources/stone-2026.md) — §3, §3.2, Fig. 3.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §5.1, Eqs. (41)–(42), Figs. 2–3 (arXiv v4; a rotated non-Brio–Wu MHD tube).

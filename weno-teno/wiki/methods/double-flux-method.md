@@ -5,7 +5,7 @@ description: "The double-flux method removes the spurious pressure oscillations 
 status: established
 aliases: [double flux, double-flux algorithm, Abgrall–Karni double flux, quasi-conservative double-flux method]
 tags: [multiphase, finite-difference, numerical-flux, interface-capturing]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Double-flux method
@@ -57,7 +57,7 @@ also used on the Mach 1.22 [shock–bubble interaction](/benchmarks/shock-bubble
 ## Two families and the overspecification objection
 
 Fujiwara et al. (§1) place the method among the remedies for the
-oscillations, with page-local $\mathsf G=1/(\gamma-1)$:
+oscillations, with $\mathsf G=1/(\gamma-1)$ (registry §10):
 
 - **non-conservative schemes** solve the primitive-variable equations
   (Karni) or the transport equation of $\mathsf G$ instead of the

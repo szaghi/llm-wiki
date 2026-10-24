@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Rankine–Hugoniot jump condition"
-description: "The Rankine–Hugoniot condition ties the speed of a discontinuity to the jumps of state and flux across it; in this bundle it is the interface condition that a moving space–time DG method enforces to fit shocks and contacts, and, componentwise and regularized, the source of sharper one-sided speeds in central-upwind fluxes."
+description: "The Rankine–Hugoniot condition ties the speed of a discontinuity to the jumps of state and flux across it; in this bundle it is the interface condition of a moving space–time DG method, the source of sharper one-sided speeds in central-upwind fluxes, and the discrete balance that non-conservative AMR transfers violate, causing shock drift."
 status: established
 aliases: [Rankine–Hugoniot condition, jump condition, interface condition, interface conservation, discrete Rankine–Hugoniot speed]
 tags: [shock-tracking, riemann-solver, numerical-flux, central-scheme]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-24T05:33:00Z
 ---
 
 # Rankine–Hugoniot jump condition
@@ -129,6 +129,36 @@ overdetermined least-squares system
 ([Liu et al. (2023a)](/sources/liu-2023.md), §3.2.1, Eq. (64);
 [generalized Riemann problem](/methods/generalized-riemann-problem.md)).
 
+## The discrete jump balance at mesh-refinement interfaces
+
+The condition also explains why inter-level transfers of
+[adaptive mesh refinement](/methods/adaptive-mesh-refinement.md) must be conservative where a
+shock crosses or is regridded. [Wang et al. (2026)](/sources/wang-2026.md) (App. C,
+Eqs. (C.3), (C.5)) show for finite-difference WENO on a two-level hierarchy that a
+non-conservative restriction or prolongation changes the composite-grid total of a conserved
+quantity by a jump $\Delta M^n$ (page-local). It is $O(\Delta x)$ at a discontinuity and
+$O(\Delta x^p)$ in smooth regions ($p$ the interpolation order). It does not depend on the time
+step and accumulates under repeated restrictions, and refluxing alone cannot repair it. The
+transfer then violates the discrete Rankine–Hugoniot balance, which perturbs the effective
+shock speed by $O(\Delta x)$. A slowly moving shock drifts over long runs. With second-order
+conservative (Berger–Colella) transfers plus refluxing, by contrast, the composite total changes
+only through the physical boundary fluxes (App. B, Eq. (B.7);
+[local conservation](/results/local-conservation-flux-form.md)).
+
+Their tests are built from the jump condition itself: slowly moving Mach-2 and Mach-3 shocks of
+speed $s_{\mathrm d}=0.01$ crossing seven coarse–fine interfaces. The Mach-2 shock separates
+$(\rho,v,p)=(2.6667,-0.8774,4.5)$, left of $x=0.05$, from $(1.0,-2.3564,1.0)$, run to $t=90$.
+The Mach-3 shock separates $(3.86,-0.91,10.33)$, left of $x=0.37$, from $(1.0,-3.54,1.0)$, run
+to $t=30$ (§6.2). *(Compiler check, not in the sources: in the shock frame the pre-shock
+velocities are $-2.3664$ and $-3.55$, i.e. Mach $2.000$ and $3.000$ for $\gamma=1.4$. The
+normal-shock density and pressure ratios, $2.6667$ and $4.5$ at Mach 2, $3.857$ and $10.333$ at
+Mach 3, and the post-shock velocities, $-0.8774$ and $-0.910$, reproduce the printed states.)*
+On the Mach-3 shock, WENO interpolation without flux correction distorts the shock at the first
+interface. With flux correction it oscillates by $t=10$, and both variants fail later. The
+hybrid scheme, which switches to conservative linear interpolation at troubled cells, keeps a
+sharp shock to $t=30$ (Fig. 12). In the Sod and Lax tubes with infrequent regridding, pure WENO
+interpolation gives a non-physical shock-speed overshoot (§6.3, Figs. 13–14).
+
 ## Shock states in test problems
 
 Shocked initial data are built from the jump condition with zero speed or with the shock
@@ -153,7 +183,7 @@ of a Mach-1.3 shock.)*
   the sources: the printed (3.9) gives $x^{n+1}=x^n-a\Delta t$; a face with tangent
   $(\Delta x,\Delta t)$ has normal proportional to $(\Delta t,-\Delta x)$, which gives the
   conclusions with $+$.)*
-- In Wang et al.'s Eq. (9) the two branches are not mutually exclusive and the order of
+- In Wang et al.'s (2023b) Eq. (9) the two branches are not mutually exclusive and the order of
   evaluation is not stated; $[\![u]\!]$ and $[\![f]\!]$ are not defined in §3 and are read
   from App. A as interface jumps.
 
@@ -166,3 +196,4 @@ of a Mach-1.3 shock.)*
 - [Hu et al. (2022)](/sources/hu-2022.md) — §3.2, §5.3, §5.8, §5.10.
 - [Long et al. (2023)](/sources/long-2023.md) — §3.1 (Eqs. (9)–(12)), §3.2 (Eq. (14)).
 - [Liu et al. (2023a)](/sources/liu-2023.md) — §3.2.1 (Eq. (64)).
+- [Wang et al. (2026)](/sources/wang-2026.md) — §6.2, Figs. 11–12; §6.3, Figs. 13–14; App. B (Eq. (B.7)); App. C (Eqs. (C.3), (C.5)).

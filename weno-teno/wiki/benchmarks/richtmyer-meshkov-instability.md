@@ -5,7 +5,7 @@ description: "A planar shock crossing a sinusoidally perturbed interface: single
 status: established
 aliases: [RMI, Richtmyer–Meshkov, shock-accelerated interface, reshocked Richtmyer–Meshkov instability, single-mode Richtmyer–Meshkov instability]
 tags: [benchmark, multiphase, interface-capturing, dg]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Richtmyer–Meshkov instability
@@ -118,7 +118,7 @@ the sources)*. The test measures robustness, as the completion index
 (the fraction of the final time reached, averaged over the runs).
 
 **Viscous air–SF$_6$, two materials.** Chamarthi (2023a) Ex. 4.18 solves
-the five-equation model with viscosity $\mu=10^{-4}$ on
+the five-equation model with viscosity $\mu=10^{-4}$ (page-local) on
 $[0,16\lambda]\times[0,\lambda]$, $\lambda=1$, interface
 $x/\lambda=0.4-0.1\sin(2\pi(y/\lambda+0.25))$, states
 $(\rho,v_1,v_2,p,\gamma)$: pre-shock air $(1,1.24,0,1/1.4,1.4)$,

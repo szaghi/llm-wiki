@@ -5,7 +5,7 @@ description: "Strong-stability-preserving Runge–Kutta methods are convex combi
 status: established
 aliases: [SSP-RK, SSP-RK3, TVD Runge–Kutta, TVD-RK3, Shu–Osher Runge–Kutta, strong-stability-preserving time integration]
 tags: [bound-preserving, limiting, weno, dg]
-timestamp: 2026-10-23T20:39:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # SSP Runge–Kutta time stepping
@@ -44,13 +44,14 @@ with it:
 | [Balsara et al. (2024)](/sources/balsara-2024.md) | fluctuation-form FD-WENO | 0.3 (2D accuracy), 0.4 (2D problems), 0.8 (1D problems) |
 | [Wu & Shu (2023)](/sources/wu-2023-b.md) | BP locally divergence-free DG, MHD | 0.15 |
 | [Peng et al. (2024)](/sources/peng-2024.md) | OEDG, discontinuous tests | $1/(2N+1)$ |
+| [Cao et al. (2026)](/sources/cao-2026.md) | COS(DG), discontinuous tests | 0.3, 0.16, 0.1 for $N=1,2,3$; $\Delta t=\nu/(a^{(1)}/\Delta x+a^{(2)}/\Delta y)$ in 2D (§6) |
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) | moment-based multi-resolution HWENO | 0.6 (1D and 2D) |
 | [Wang et al. (2021)](/sources/wang-2021.md) | FD multi-resolution WENO | 0.6; 0.3 for the viscous shock tube |
 | [Wong et al. (2021)](/sources/wong-2021.md) | positivity-preserving WCNS, gas–liquid | 0.5 |
 | [Zheng et al. (2021)](/sources/zheng-2021.md) | conservative two-medium A-WENO | 0.5; $\Delta t=O(\Delta x^{5/3})$ in the accuracy tests |
 | [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) | ninth-order central scheme with adaptive dissipation | 0.5 (Taylor–Green), 0.02 (reacting shock tube) |
 | [Pazner (2021)](/sources/pazner-2021.md) | sparse IDP DG with subcell convex limiting | half the IDP bound $\min_im_i/(2\lvert\hat d_{ii}\rvert)$, printed with $\hat d_{ii}$ (§3.2, §5; see below) |
-| [Li, Duan & Tang (2022)](/sources/li-2022-c.md) | entropy-stable moving-mesh FD | 0.4 (2D), 0.3 (3D); $\Delta t=\nu(\min\Delta\xi)^{5/3}$ in the accuracy tests ($\Delta\xi$ the computational spacing) |
+| [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) | entropy-stable moving-mesh FD | 0.4 (2D), 0.3 (3D); $\Delta t=\nu(\min\Delta\xi)^{5/3}$ in the accuracy tests ($\Delta\xi$ the computational spacing) |
 | [Matsushita & Aoki (2021)](/sources/matsushita-2021.md) | weakly compressible two-phase solver | 0.4 on the acoustic speed, with viscous, surface-tension and phase-field limits (Eq. (38)) |
 | [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) | unstructured CWENO, multicomponent | 0.1 in the convergence test, others not printed |
 | [Fan et al. (2021)](/sources/fan-2021.md) | positivity-preserving FV hybrid HWENO, Navier–Stokes | $\Delta t=\min\{\Delta x/(12a),\ 0.001\,\mathrm{Re}\,\Delta x^2\}$, halved on failure (below) |
@@ -58,7 +59,7 @@ with it:
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) | FV learned three-point WENO (WENO3-NN) | 0.6; 0.05 in the $\sin^3$ convergence run |
 | [Chen & Wu (2022)](/sources/chen-2022-b.md) | physical-constraint-preserving FV WENO on triangles, relativistic | 0.5 (default) |
 | [Chu et al. (2022)](/sources/chu-2022.md) | fifth-order A-WENO path-conservative CU | 0.5; $\frac1{10}\Delta x^{2/3}$ in the accuracy test |
-| [Du, Shu & Zhong (2022)](/sources/du-2022.md) | RKDG with simple WENO limiter, triangles | 0.3 ($\mathbb P^1$), 0.18 ($\mathbb P^2$, $\mathbb P^3$); $\Delta t\sim h^{4/3}$ for $\mathbb P^3$ accuracy |
+| [Du, Shu & Zhong (2022)](/sources/du-2022.md) | RKDG with simple WENO limiter, triangles | 0.3 ($\mathbb P^1$), 0.18 ($\mathbb P^2$, $\mathbb P^3$); $\Delta t\sim\Delta x^{4/3}$ for $\mathbb P^3$ accuracy ($\Delta x$ the mesh size) |
 | [Duan & Tang (2022)](/sources/duan-2022.md) | entropy-stable moving-mesh FD, relativistic (M)HD | 0.4 (2D), 0.3 (3D); $\Delta t=\nu\Delta\xi^2$ (sixth-order EC) and $\nu\Delta\xi^{5/3}$ (fifth-order ES) in the accuracy tests |
 | [Nguyen et al. (2022)](/sources/nguyen-2022.md) | FV MUSCL, $N$-phase model, update of primitive variables | 0.5 (water–air), 0.9 (gas–gas) |
 | [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) | FR with entropy filtering after every stage | not stated |
@@ -116,7 +117,7 @@ scheme: the spectral radius of the amplification matrix exceeds one for every $\
 e.g. $1+3.158\times10^{-12}$ for forward Euler at $\Delta t/\Delta x=10^{-12}$ (Thm. 2.1, Eqs. (2.27)–(2.31)). Inspired by the
 Lax–Friedrichs scheme, they replace the first moment by its high-order HWENO modification
 $\hat u^{(1)}_i$, the first moment of the reconstructed polynomial (page-local), as the "old value"
-in every convex combination of the three stages, the cell average being advanced as usual
+in every convex combination of the three stages, the cell average being advanced by the unmodified stages
 (Eq. (2.13)):
 
 $$\begin{aligned}
@@ -159,7 +160,7 @@ finite-difference HWENO, as the authors cite (§2.1).
   forward Euler (Thms. 1–2) and state that they "still hold for (2.6) if the CFL is one
   third of (3.12) and (3.30)", (2.6) being SSP-RK3 in the Shu–Osher form; see
   Qualifications.
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) (Remark 3.1) quote free-stream
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) (Remark 3.1) quote free-stream
   preservation of the fully discrete moving-mesh scheme with SSP-RK3 as proved in the
   companion paper of Duan & Tang, not in the paper itself. For the high-order
   finite-difference case the proof is in [Duan & Tang (2022)](/sources/duan-2022.md)
@@ -195,9 +196,9 @@ finite-difference HWENO, as the authors cite (§2.1).
   varies between 3 and 9: keeping the ratio of the two errors fixed needs
   $\Delta t\propto\Delta x^{3}$, while a constant CFL gives $\Delta t\propto\Delta x$; ninth
   order appears over $100^2$–$500^2$ only for CFL $1.25\times10^{-2}$ and $6.25\times10^{-3}$.
-  [Zheng et al. (2021)](/sources/zheng-2021.md) and [Li, Duan & Tang (2022)](/sources/li-2022-c.md)
+  [Zheng et al. (2021)](/sources/zheng-2021.md) and [Li, Duan & Tang (2022c)](/sources/li-2022-c.md)
   take $\Delta t\propto\Delta x^{5/3}$ for fifth order; Zheng et al.'s accuracy budget at the
-  interface moreover needs $\Delta t=O(\Delta x^r)$ with $r\le2$, because a low-order
+  interface moreover needs $\Delta t=O(\Delta x^{r_t})$ with $r_t\le2$ (page-local $r_t$), because a low-order
   interface flux there is recovered by dividing by $\Delta t/\Delta x$ (Prop. 2.2, App. A).
   [Wang et al. (2021)](/sources/wang-2021.md) report fifth order at CFL 0.6 without a
   reduction.
@@ -237,19 +238,27 @@ finite-difference HWENO, as the authors cite (§2.1).
 - **A split stage with implicit damping.** [Liu et al. (2025b)](/sources/liu-2025-b.md) (§3.3,
   Eqs. (3.20)–(3.21)) write each forward-Euler stage of third-order TVD Runge–Kutta as an
   explicit DG step $\tilde u$ followed by the implicit damping
-  $u=\tilde u-c_{\mathrm s}\frac{2\tau}h\sigma(\tilde u)(u-\bar u)$ with the stage weights $c_{\mathrm s}=1,\tfrac14,\tfrac23$
-  (page-local $\sigma$, $\tau$ the time step, $h$ the element size), which is solved in closed form
+  $u=\tilde u-c_{\mathrm s}\frac{2\Delta t}{\Delta x}\sigma(\tilde u)(u-\bar u)$ with the stage weights $c_{\mathrm s}=1,\tfrac14,\tfrac23$
+  (page-local $\sigma$; $\Delta x$ the element size, the sources' $\tau$ and $h$), which is solved in closed form
   and keeps the cell mean ([operator splitting](/methods/operator-splitting.md)).
+- **Post-processing once per step.** [Cao et al. (2026)](/sources/cao-2026.md) (§2.1,
+  Eq. (26)) run the stages of SSP-RK3 on the unmodified DG operator and apply their
+  oscillation-suppressing convex blend with the cell average only to the final stage, as the
+  start of the next step ([COS(DG)](/methods/cos-dg.md)), whereas OEDG and most DG limiters act
+  after every stage. Since the blend is not applied at intermediate stages, the
+  positivity-preserving scaling limiter that their discontinuous Euler runs need is applied at the
+  stages separately (§6; [Zhang–Shu limiter](/methods/zhang-shu-scaling-limiter.md)). Smooth
+  tests use an $(N+1)$-stage Runge–Kutta method of order $N+1$ instead.
 - **Direction-dependent stability regions.** For their arbitrary-order 2D Active Flux on linear
   advection, [Barsukow et al. (2026)](/sources/barsukow-2026.md) (§4.2, Eqs. (40)–(46), Table 3,
   Figs. 7–8; arXiv v2) diagonalize the semi-discrete operator and apply the SSP-RK3 stability
-  polynomial $G(z)=1+z+\tfrac12z^2+\tfrac16z^3$ eigenvalue by eigenvalue. The maximal CFL number,
-  printed as $\lvert a\rvert\Delta t_{\max}/h$ for $a_x=a_y$ (Eq. (42)), is 0.27, 0.20,
+  polynomial $\mathcal G(z)=1+z+\tfrac12z^2+\tfrac16z^3$ (registry §10) eigenvalue by eigenvalue. The maximal CFL number,
+  defined as $\lvert a\rvert\Delta t_{\max}/\Delta x$ for equal velocity components (Eq. (42); $a$ the advection velocity), is 0.27, 0.20,
   0.17, 0.12 and 0.088 for orders 3 to 7. The stable region in the plane of the two directional CFL
   numbers is about a disc for orders 3 and 4 and about a square for order 5, so the stable step
   depends on the direction as well as the magnitude of the velocity; moments added at orders 6 and 7
-  round the corners again. Their convergence runs scale $\nu$ with $h^{(N-2)/3}$ so that
-  $\Delta t^3=O(h^{N+1})$ (§5.1).
+  round the corners again. Their convergence runs scale $\nu$ with $\Delta x^{(N-2)/3}$ so that
+  $\Delta t^3=O(\Delta x^{N+1})$ for order $N+1$ (§5.1).
 
 - **Five-stage fourth order, printed.** [Berta et al. (2024)](/sources/berta-2024.md) (§3.3,
   Eqs. (31)–(32)) advance their fourth-order finite-volume MHD scheme with eSSPRK(5,4), with
@@ -433,7 +442,7 @@ finite-difference HWENO, as the authors cite (§2.1).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §5 (Eq. (89)), §6.1 (Fig. 5) (arXiv v1).
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — §3, §4.1 (Eqs. (39)–(40), Fig. 2), §4.4, §5.2 (arXiv v1).
 - [Zheng et al. (2021)](/sources/zheng-2021.md) — §2.2.6 (Eq. (27)), Prop. 2.2, App. A, §4.
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Remark 3.1, §5 (Eq. (5.1)) (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — Remark 3.1, §5 (Eq. (5.1)) (arXiv v1).
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §2 (Eq. (2.28)), §3 (arXiv v1).
 - [Wang et al. (2021)](/sources/wang-2021.md) — §3.2 (Eq. (3.32)), §5.
 - [Liu et al. (2021)](/sources/liu-2021.md) — §3.3.
@@ -487,3 +496,4 @@ finite-difference HWENO, as the authors cite (§2.1).
 - [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §2.3 (Eqs. (14)–(15)), Remark 4.2, §5 (arXiv v3).
 - [Barsukow et al. (2026)](/sources/barsukow-2026.md) — §4.2 (Eqs. (40)–(46), Table 3, Figs. 7–8), §5.1 (arXiv v2).
 - [Chu et al. (2025c)](/sources/chu-2025-c.md) — §3 (arXiv v1).
+- [Cao et al. (2026)](/sources/cao-2026.md) — §2.1, Eq. (26); §6.

@@ -5,7 +5,7 @@ description: "Treatments of walls and interfaces off the mesh: ghost-cell immers
 status: established
 aliases: [immersed boundary method, IBM, ghost-cell method, GCM, ghost-cell immersed boundary, cut-cell method, CCM, embedded boundary, HBCGCM, BCGCM, volume penalization, Brinkman penalization, IDW-IP, image line, HO-e, discrete forcing, eikonal extrapolation]
 tags: [immersed-boundary, finite-volume, flux-reconstruction, interface-capturing, multiphase]
-timestamp: 2026-10-23T20:43:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Immersed-boundary and cut-cell methods
@@ -376,8 +376,8 @@ point (IP) at twice that distance into the fluid (Figs. 4–5).
 - **Ghost values** (Eqs. (38)–(40)). Primitive variables are reflected,
   $V_{\mathrm{GP}}=2V_{\mathrm{BI}}-V_{\mathrm{IP}}$ for Dirichlet and
   $V_{\mathrm{GP}}=V_{\mathrm{IP}}-\Delta l\,(\partial_nV)_{\mathrm{BI}}$ for Neumann
-  conditions, with $u_{\mathrm{GP}}=2u_{\mathrm{BI}}-u_{\mathrm{IP}}$ and
-  $T_{\mathrm{GP}}=T_{\mathrm{IP}}$ at adiabatic walls; the method is formally
+  conditions, with $v_{\mathrm{GP}}=2v_{\mathrm{BI}}-v_{\mathrm{IP}}$ (velocity; the source's $u$) and
+  $T_{\mathrm{GP}}=T_{\mathrm{IP}}$ (temperature, page-local) at adiabatic walls; the method is formally
   second order, and using the fifth-order scheme up to the wall "does not
   compromise the robustness" (§2.5).
 
@@ -611,8 +611,9 @@ Figs. 8–9).
   "concave" in the conservative variables and their Theorem 1 "convex"
   *(compiler check, not in the sources: the convexity of $G$ that Theorem 1
   draws from it holds for a concave pressure)*. They
-  print the momentum flux with the viscous stress $\sigma_{ij}$ where the
-  Kronecker delta is meant (Eq. (2)), and the indicator stencil as
+  print the momentum flux with the viscous stress $\sigma_{ij}$ multiplying the
+  pressure, where the pressure term needs the Kronecker delta $\delta_{ij}$
+  (Eq. (2)) *(compiler check, not in the sources)*, and the indicator stencil as
   $\min(\eta_{i-1},\eta_i,\eta_{i+2})$ without $\eta_{i+1}$ (Eq. (23)).
 - Chen & Chen's Table 3 orders recomputed from the printed errors are
   2.03, 2.82, 2.25 (printed 2.81), and oblique-shock theory with $\gamma=1.4$

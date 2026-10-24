@@ -5,7 +5,7 @@ description: "The magnetic field of MHD obeys div B = 0; discretizations enforce
 status: established
 aliases: [div B = 0, solenoidal constraint, discrete divergence-free condition, DDF, divergence cleaning, GLM-MHD, constrained transport, CTM, upwind constrained transport, UCT, locally divergence-free DG, locally divergence-free reconstruction, Powell source term, Godunov–Powell source term, projection cleaning, vector-potential formulation, divergence-preserving prolongation]
 tags: [mhd, bound-preserving, positivity, dg, finite-volume, relativistic]
-timestamp: 2026-10-23T20:43:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Divergence-free magnetic field
@@ -132,8 +132,8 @@ degree one in $w$ (page-local), so that
 $\Phi'(w)=\big(0,\ B/W^2+v(v\cdot B),\ v\cdot B,\ v\big)$ in the ordering
 $(D,m,E,B)$. Without it the thermodynamic entropy pair does not symmetrize
 the system for $B\not\equiv0$. On moving curvilinear meshes they discretize
-it by the same $2p$th-order linear combination of two-point fluxes as the
-entropy-conservative flux, with a two-point "source flux" built from the
+it by the same $2n_{\mathrm o}$th-order linear combination of two-point fluxes as the
+entropy-conservative flux (page-local $n_{\mathrm o}$, as on [TeCNO schemes](/methods/tecno-scheme.md)), with a two-point "source flux" built from the
 averaged metrics and the averaged $B_d$ (Eqs. (3.4), (3.9)), and add no
 dissipation to it; the entropy-conservation proof uses this compatibility
 (Thm 3.2; [entropy-conservative flux](/methods/entropy-conservative-flux.md),
@@ -259,7 +259,7 @@ across faces. Three ingredients enforce it:
    nodes, with $\mathsf a_1=\Delta x\,\nabla_h\cdot\hat B_{ij}/\big(2(1+(\Delta x/\Delta y)^2)\big)$,
    $\mathsf a_2=\Delta y\,\nabla_h\cdot\hat B_{ij}/\big(2(1+(\Delta y/\Delta x)^2)\big)$ and
    $\hat B$ the reconstructed values (page-local; the source's $A_1$, $A_2$, not the
-   vector potential $A$ below). At second order it equals
+   vector potential $\mathcal A$ below). At second order it equals
    a minimum-norm change of the slopes and is a symmetric idempotent matrix,
    hence the name (Props 2.3, 2.5); at any order it makes the condition hold
    exactly (Thm 2.6) and keeps order $k$ accuracy when the field is smooth and
@@ -414,7 +414,7 @@ and the rotor (Figs. 6, 9, 12).
 [Liu et al. (2021)](/sources/liu-2021.md) (§3.1–§3.3) carry the
 locally divergence-free idea from DG bases to finite-volume reconstruction.
 Their [WLS-ENO](/methods/wls-eno.md) polynomials $B^{\mathrm R}_1$,
-$B^{\mathrm R}_2$ of degree $k$ in each cell are constrained so that
+$B^{\mathrm R}_2$ of degree $n$ (page-local) in each cell are constrained so that
 $\partial_xB^{\mathrm R}_1+\partial_yB^{\mathrm R}_2\equiv0$ in the cell
 (Eqs. (15)–(16); $B^{\mathrm R}$ page-local):
 
@@ -438,7 +438,7 @@ HLL wave speeds, after Wu & Shu (2019, as recalled; Eqs. (3), (32)). The
 resulting discrete divergence splits into an interior term, the integral of
 $\nabla\cdot B^{\mathrm R}$ over the cell, which vanishes for a locally
 divergence-free reconstruction when the edge quadrature is exact
-($2N_g-1\ge k$, $N_g$ Gauss points per edge, Eq. (34)), and a term of
+($2N_g-1\ge n$, $N_g$ Gauss points per edge, Eq. (34)), and a term of
 normal-field jumps across the edges (Eqs. (33), (35)). The same reduction
 to normal-field jumps is what Wu & Shu's DG analysis uses (Eq. (6.19)).
 Because the interior term is not zero in floating point and "may lead to a
@@ -503,7 +503,7 @@ clearly nonzero without CTM and zero "up to machine precision" with it
 **Staggered constrained transport in IDEFIX.**
 [Lesur et al. (2023)](/sources/lesur-2023.md) (§2.4, Eqs. (6)–(8))
 evolve face-averaged $B$ by $\partial_tB=-\nabla\times\mathcal E$ with
-the electric field $\mathcal E$ (page-local) on cell edges, after Evans
+the electric field $\mathcal E$ (registry §10) on cell edges, after Evans
 and Hawley, so that the discrete Stokes theorem keeps the face-based
 divergence of each cell "in principle" at machine precision; the
 cell-centred $B$ in the conserved vector is reconstructed from the faces
@@ -517,10 +517,10 @@ accumulate over billions of steps: with second-order Runge–Kutta–Legendre
 super time-stepping for Ohmic and ambipolar diffusion the round-off
 divergence grows like $O(n)$ in the number of cycles, against
 $O(\sqrt n)$ with the explicit integrator (§2.8; stated from their
-tests). An optional vector-potential form, $\partial_tA=-\mathcal E$ with
-$A$ on edges and $B=\nabla\times A$, "mathematically equivalent to the
+tests). An optional vector-potential form, $\partial_t\mathcal A=-\mathcal E$ with
+$\mathcal A$ on edges and $B=\nabla\times \mathcal A$, "mathematically equivalent to the
 original CT algorithm", stops the accumulation at the cost of memory, an
-initial condition written for $A$, and possible overflow of $A$ under a
+initial condition written for $\mathcal A$, and possible overflow of $\mathcal A$ under a
 large-scale constant electric field (§2.4). On the
 [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)
 $\lvert\nabla\cdot B\rvert\ll10^{-12}$ in all runs (§4.2, Fig. 11). For
@@ -530,14 +530,14 @@ Hall-modified $\mathcal E^c$ "led to numerical instabilities" (§2.5).
 **Vector potential in a semi-implicit finite-difference WENO scheme.**
 [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) (§2.4, Eqs.
 (2.15)–(2.17), after Christlieb, Rossmanith & Tang) write
-$B=\nabla\times A$ with a page-local vector potential $A$ in the Weyl
-gauge, evolve $\partial_tA+(\nabla\times A)\times v=0$ in place of the
-induction equation, and recover $B$ from $A$ at every stage, so that the
-continuous $\nabla\cdot B$ vanishes identically. In 2D only $A_3$ is
+$B=\nabla\times \mathcal A$ with the vector potential $\mathcal A$ (registry §10) in the Weyl
+gauge, evolve $\partial_t\mathcal A+(\nabla\times \mathcal A)\times v=0$ in place of the
+induction equation, and recover $B$ from $\mathcal A$ at every stage, so that the
+continuous $\nabla\cdot B$ vanishes identically. In 2D only $\mathcal A_3$ is
 evolved, by the Hamilton–Jacobi equation
-$\partial_tA_3+v_1\partial_xA_3+v_2\partial_yA_3=0$, discretized by the
+$\partial_t\mathcal A_3+v_1\partial_x\mathcal A_3+v_2\partial_y\mathcal A_3=0$, discretized by the
 fifth-order WENO scheme for Hamilton–Jacobi equations of Jiang & Peng with
-a Lax–Friedrichs Hamiltonian, and $B_1=\partial_yA_3$, $B_2=-\partial_xA_3$
+a Lax–Friedrichs Hamiltonian, and $B_1=\partial_y\mathcal A_3$, $B_2=-\partial_x\mathcal A_3$
 are computed by fourth-order central differences (§3.3–3.4, Eq. (3.14)).
 The explicit part of their
 [semi-implicit all-Mach scheme](/methods/semi-implicit-all-mach-scheme.md)
@@ -755,7 +755,7 @@ ways:
   grid; the novelty claimed is relative to the collocated variant.)*
 - **Lagrange multiplier**: a pseudo-pressure in the induction equation,
   advanced exactly like the velocity–pressure pair (§3.3.2).
-- **Vector potential** $B=\nabla\times A$ ($A$ page-local, as above) in the Coulomb
+- **Vector potential** $B=\nabla\times \mathcal A$ ($\mathcal A$ as above) in the Coulomb
   gauge, enforced by an extra projection; with face-centred potential and
   edge-centred field the twelve terms of the discrete divergence "cancel
   each other in pairs" (Eqs. (25)–(27)).
@@ -800,10 +800,10 @@ one extra Poisson solve per step (§4).
   which discrete divergence they measure (§5.2).
 - Dzanic & Witherden (2023) do not quantify the divergence added by the
   nonlinear filter; "negligible" is stated (§3.2).
-- Berta et al. define the field-loop vector potential as $A_3=A_0(R-r)$
-  for $R_1<r\le R$ and zero "elsewhere" (Eq. 54), which makes $A_3$ jump
-  by $A_0(R-R_1)$ at $r=R_1$ and would put a singular azimuthal field
-  there; a constant $A_3=A_0(R-R_1)$ for $r\le R_1$ gives a field-free
+- Berta et al. define the field-loop vector potential as $\mathcal A_3=\mathcal A_0(R-r)$
+  for $R_1<r\le R$ and zero "elsewhere" (Eq. 54), which makes $\mathcal A_3$ jump
+  by $\mathcal A_0(R-R_1)$ at $r=R_1$ and would put a singular azimuthal field
+  there; a constant $\mathcal A_3=\mathcal A_0(R-R_1)$ for $r\le R_1$ gives a field-free
   core without the singular sheet *(compiler check, not in the sources)*.
 - Kanbar et al.'s CTM preserves the centred discrete divergence at the
   nodes, not a face-centred divergence *(compiler check, not in the

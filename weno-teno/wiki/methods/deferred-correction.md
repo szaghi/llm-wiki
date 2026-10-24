@@ -5,7 +5,7 @@ description: "Deferred correction reaches a high-order implicit collocation-type
 status: established
 aliases: [DeC, defect correction, deferred correction method, DeC(p,K), Abgrall's DeC]
 tags: [asymptotic-preserving, entropy-stable, finite-difference, limiting]
-timestamp: 2026-10-22T16:24:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Deferred correction (DeC) time integration
@@ -154,7 +154,7 @@ the corrected one runs to $t=0.25$; DeC(4,4) with cubic elements needs
   printed radius $\sqrt3$; the printed decimal "$\sqrt{2.2}\approx1.58$" is $1.483$.)* The
   values are therefore quoted as printed.
 - **Iteration count.** Both papers write the final state with the number of sub-nodes as
-  superscript where the iteration count is meant (Abgrall et al. (2022), p. 7: "$K$
+  superscript, although their iteration counts differ from it (Abgrall et al. (2022), p. 7: "$K$
   corrections $k=0,\dots,M$"; Abgrall & Nassajian Mojarrad (2024), §2.1, $\mathbf F^{(M)}$
   while Table 1 runs five or six iterations with two sub-steps).
 - The contraction estimate (Prop. 1) and the $\varepsilon$-uniform bounds it needs are shown

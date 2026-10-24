@@ -5,7 +5,7 @@ description: "Equilibrium wall-modelled LES solves thin-boundary-layer ODEs betw
 status: established
 aliases: [WMLES, wall-modeled LES, equilibrium wall-stress model, unified WR/WMLES, IBM+WMLES]
 tags: [turbulence, immersed-boundary, numerical-flux, low-dissipation, weno, teno]
-timestamp: 2026-10-22T19:46:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -51,11 +51,11 @@ $$\begin{aligned}
 \end{aligned}$$
 
 with turbulent Prandtl number $\mathrm{Pr}_t=0.9$ and the mixing-length
-eddy viscosity $\mu_t=\kappa_{\mathrm{vK}}\rho_{\mathrm{wm}}u_\tau yD$,
-$\rho_{\mathrm{wm}}=p_{\mathrm{LES}}/(RT_{\mathrm{wm}})$, van Driest damping
-$D=[1-\exp(-y^*/A^+)]^2$, $A^+=17$, and the semi-local wall distance
+eddy viscosity $\mu_t=\kappa_{\mathrm{vK}}\rho_{\mathrm{wm}}u_\tau y\,D_{\mathrm{vD}}$,
+$\rho_{\mathrm{wm}}=p_{\mathrm{LES}}/(R_{\mathrm g}T_{\mathrm{wm}})$, van Driest damping
+$D_{\mathrm{vD}}=[1-\exp(-y^*/A^+)]^2$, $A^+=17$, and the semi-local wall distance
 $y^*=y\sqrt{\rho_{\mathrm{wm}}\tau_{w,\mathrm{wm}}}/\mu_{\mathrm{wm}}$
-(page-local $R$ the gas constant). At $y=h_{\mathrm{wm}}$ the model is matched
+(page-local $R_{\mathrm g}$ the gas constant). At $y=h_{\mathrm{wm}}$ the model is matched
 to the LES: $U_{\mathrm{wm}}$ to the wall-parallel LES velocity,
 $T_{\mathrm{wm}}$ and the pressure to the LES values. The outputs are
 $\tau_{w,\mathrm{wm}}=(\mu\,dU_{\mathrm{wm}}/dy)_{y=0}$ and

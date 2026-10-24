@@ -5,7 +5,7 @@ description: "HLL, HLLE, HLLC, HLLEM/HLLI, HLLD and relaxation two-point fluxes 
 status: established
 aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, RHLLEM, HLLD, Harten–Lax–van Leer solver, relaxation Riemann solver, Suliciu relaxation solver, radiative HLL, Rad-HLL, shock-stable HLLC, HLLC-LM]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity, multiphase, entropy-stable]
-timestamp: 2026-10-23T20:44:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # HLL-family approximate Riemann solvers
@@ -152,27 +152,27 @@ The contact speed also advects the volume fraction upwind (Eqs. (40)–(43)).
 
 **Split form for two-medium DG** ([Bai & Li (2022)](/sources/bai-2022.md), §2.4,
 Eqs. (7)–(15)). The flux is split as $f=v\,u+\mathsf D$ with the pressure part
-$\mathsf D=p\,(0,1,0,v)^\top$ (page-local), and with $\beta_K=\rho_K(s_K-v_K)$, $K=L,R$
-(page-local; $L,R$ the sides $u^-,u^+$),
+$\mathsf D=p\,(0,1,0,v)^\top$ (page-local), and with $\beta^\pm=\rho^\pm(s^\pm-v^\pm)$
+(page-local; the source's $\beta_L$, $\beta_R$, its sides $L$, $R$ being $u^-$, $u^+$),
 
-$$s^*=\frac{\beta_Rv_R-\beta_Lv_L+p_L-p_R}{\beta_R-\beta_L},\qquad p^*=\frac{\beta_Rp_L-\beta_Lp_R-\beta_L\beta_R(v_L-v_R)}{\beta_R-\beta_L},$$
+$$s^*=\frac{\beta^+v^+-\beta^-v^-+p^--p^+}{\beta^+-\beta^-},\qquad p^*=\frac{\beta^+p^--\beta^-p^+-\beta^-\beta^+(v^--v^+)}{\beta^+-\beta^-},$$
 
-the star fluxes being $s^*u^*_K+\mathsf D^*$ with $\mathsf D^*=(0,p^*,0,p^*s^*)^\top$ and the
-Einfeldt speeds $s^-=\min(v_L-c_L,\hat v-\hat c)$, $s^+=\max(v_R+c_R,\hat v+\hat c)$ from Roe
+the star fluxes being $s^*u^{*,\pm}+\mathsf D^*$ with $\mathsf D^*=(0,p^*,0,p^*s^*)^\top$ and the
+Einfeldt speeds $s^-=\min(v^--c^-,\hat v-\hat c)$, $s^+=\max(v^++c^+,\hat v+\hat c)$ from Roe
 averages. *(compiler check, not in the sources: multiplying numerator and denominator by $-1$
 turns this $s^*$ into the Batten contact speed printed by Wong et al. above.)* The solver is
 blended with HLL by a shock sensor in an HLLC–HLL hybrid
 ([carbuncle](/definitions/carbuncle-phenomenon.md),
 [Rankine–Hugoniot condition](/definitions/rankine-hugoniot-condition.md)); the printed star
-density carries a slip, $\beta_L$ for both sides (Eq. (11)).
+density carries a slip, $\beta_L$ ($\beta^-$) for both sides (Eq. (11)).
 
 **$N$-phase pressure–temperature equilibrium model** ([Nguyen et al. (2022)](/sources/nguyen-2022.md),
 §2.3, Eqs. (20)–(25)). HLLC is "reconstructed" for one mass equation per phase plus mixture
 momentum and energy: every partial density $\phi_k\rho_k$ is carried across the outer waves by
-the same factor $(s_K-v_K)/(s_K-s^*)$ as the mixture density, with no special treatment of the
+the same factor $(s^\pm-v^\pm)/(s^\pm-s^*)$ as the mixture density, with no special treatment of the
 volume fractions; $s^*$ is again the Batten form and the speeds are the Davis–Einfeldt blend
-with Roe averages. The printed right speed $s^+=\max(v_R-c_R,\hat v+\hat c)$ uses $v_R-c_R$ where
-symmetry with $s^-$ requires $v_R+c_R$ (Eq. (23)). On 1D water–air interface advection HLLC keeps
+with Roe averages. The printed right speed $s^+=\max(v^+-c^+,\hat v+\hat c)$ uses $v^+-c^+$ where
+symmetry with $s^-$ requires $v^++c^+$ (Eq. (23)). On 1D water–air interface advection HLLC keeps
 the interface sharper than the Rusanov flux over Mach 0.001–1, within three to five cells
 depending on the limiter (§3.1, Figs. 3–4).
 
@@ -239,7 +239,7 @@ temporal metric. The interface metrics are those of the scheme's free-stream-pre
 interpolation. The authors state that HLLC is less dissipative than HLL and Rusanov (not
 tested in the paper).
 
-**Pressure-based speeds** ([Li, Shu & Qiu (2022)](/sources/li-2022-d.md), §2.1,
+**Pressure-based speeds** ([Li, Shu & Qiu (2022d)](/sources/li-2022-d.md), §2.1,
 Eqs. (2.5)–(2.7)), for the Euler equations: a primitive-variable estimate
 
 $$p^*=\tfrac12\big(p^-+p^++(v^--v^+)\{\!\{\rho\}\!\}\{\!\{c\}\!\}\big),\qquad s^*=\tfrac12\Big(v^-+v^++\frac{p^--p^+}{\{\!\{\rho\}\!\}\{\!\{c\}\!\}}\Big),$$
@@ -350,7 +350,7 @@ the electromagnetic stress and Poynting flux are then evaluated from the tilde s
 (Eq. (47)). The point flux is converted to a face average by
 $\big(1+(\Delta_2+\Delta_3)/24\big)$, with $\Delta_d$ the undivided three-point Laplacian along the face
 (Eq. (48); page-local; see [cell-average and point-value conversion](/operators/cell-average-point-value-conversion.md)).
-On their resistive rotor at $\eta_{\mathrm m}=10^{-1}$ ($\eta_{\mathrm m}$ the resistivity, page-local) spurious $m=4$ modes appear, an
+On their resistive rotor at $\eta_{\mathrm m}=10^{-1}$ ($\eta_{\mathrm m}$ the resistivity, registry §10) spurious $m=4$ modes appear, an
 artefact of the Cartesian mesh that they find "more evident" with MHLLC than with a more
 diffusive solver (§4.3).
 
@@ -424,10 +424,11 @@ it ignores the contact (§3.2.2, §4.1.9).
   $s^+=\max\{\lambda_4(u^-),\lambda_4(u^+),0\}$ keeps the cell averages of a third-order
   finite-volume WENO scheme for special relativistic hydrodynamics on triangles in the
   admissible set (positive density and pressure, subluminal velocity) under
-  $\Delta t\,\hat\sigma^{(j)}_K\lvert E^j_K\rvert/\lvert K\rvert\le\tfrac23\hat\omega_1$, with
-  $\hat\sigma$ the spectral radius of the normal Jacobian, $\lvert E^j_K\rvert$ the edge lengths,
-  $\lvert K\rvert$ the area and $\hat\omega_1=1/(L(L-1))$ the first Gauss–Lobatto weight,
-  $L=\lceil(N+3)/2\rceil$ for reconstruction degree $N$ (page-local). The proof works on the
+  $\Delta t\,\hat a\,\lvert e\rvert/\lvert K\rvert\le\tfrac23\mathsf w^{\mathrm{GL}}_0$ on every edge $e$ of every
+  triangle $K$, with $\hat a$ the spectral radius of the normal Jacobian on the edge, $\lvert e\rvert$ its
+  length, $\lvert K\rvert$ the area and $\mathsf w^{\mathrm{GL}}_0=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$ the first
+  Gauss–Lobatto weight, $N_{\mathrm{GL}}=\lceil(k+3)/2\rceil$ for reconstruction degree $k$ (page-local
+  $\hat a$, $e$, $k$, $\mathsf w^{\mathrm{GL}}_0$; the source's $\hat\sigma^{(j)}_K$, $E^j_K$, $\hat\omega_1$, $L$, $N$). The proof works on the
   [geometric-quasilinearization](/methods/geometric-quasilinearization.md) form of the admissible
   set, in which the constraints are linear in $u$ (Lemma 3.4). They also show
   $h^{\mathrm{HLL}}(\sigma u^-,\sigma u^+)=\sigma\,h^{\mathrm{HLL}}(u^-,u^+)$ for $\sigma>0$, since the
@@ -481,7 +482,8 @@ where any monotone two-point flux can be used, HLLC gives the best dissipation-r
 on the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) and beats Steger–Warming
 splitting in both alternative-formulation schemes (§4.9, Figs. 10–12).
 
-**HLL is not shock-stable at fifth order.** [Ren et al. (2025)](/sources/ren-2025.md) (§4.1,
+**HLL with fifth-order WENO-Z (Ren et al.; an open contradiction with Fu and Ji et al. above).**
+[Ren et al. (2025)](/sources/ren-2025.md) (§4.1,
 Figs. 9–19), with HLL on Davis speeds and HLLC on Einfeldt speeds, find by
 [matrix stability analysis](/methods/matrix-stability-analysis.md) that fifth-order
 finite-volume WENO-Z is unstable on a Mach-20 steady normal shock not only with HLLC and Roe but
@@ -548,10 +550,11 @@ Several sources pair or compare HLL-type solvers with other interface fluxes:
   [immersed-boundary](/methods/immersed-boundary-method.md) method of
   [Wang et al. (2022a)](/sources/wang-2022.md) (§2.1, Eqs. (9)–(11)), chosen "to avoid the
   correction of the Riemann solver for the immersed method":
-  $$p^*=\frac{C_Rp_L+C_Lp_R+C_LC_R(v_L-v_R)}{C_L+C_R},\qquad s^*=\frac{C_Lv_L+C_Rv_R+p_L-p_R}{C_L+C_R},\qquad C_K=\sqrt{\gamma p_K\rho_K},$$
-  with $\rho^*_K=\rho_K+(p^*-p_K)/c_K^2$; HLL is used for the reactive case (§3.6).
+  $$p^*=\frac{C^+p^-+C^-p^++C^-C^+(v^--v^+)}{C^-+C^+},\qquad s^*=\frac{C^-v^-+C^+v^++p^--p^+}{C^-+C^+},\qquad C^\pm=\sqrt{\gamma p^\pm\rho^\pm},$$
+  with $\rho^{*,\pm}=\rho^\pm+(p^*-p^\pm)/(c^\pm)^2$ (page-local $C^\pm$; the source's $C_L$, $C_R$); HLL is used
+  for the reactive case (§3.6).
   *(compiler check, not in the sources: these are Renac's relaxation $p^*$, $s^*$ above with the
-  Lagrangian sound speeds set to the acoustic impedances, $\mathsf a_K=C_K=\rho_Kc_K$.)*
+  Lagrangian sound speeds set to the acoustic impedances, $\mathsf a^\pm=C^\pm=\rho^\pm c^\pm$.)*
 - **van Leer flux-vector splitting** for every shocked case of the second-order unstructured
   finite-volume scheme of [Chen et al. (2022)](/sources/chen-2022.md), to exclude flux-induced
   shock instabilities, and HLLC, for its contact resolution, for the shock-free ones (§2).
@@ -635,7 +638,7 @@ the text's general statement that Cartesian fluxes are 5–20 % faster.
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §4.2, Table 2 (arXiv v2).
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — Eq. (5) (intermediate state).
 - [Wong et al. (2021)](/sources/wong-2021.md) — §3.2–3.3 (Eqs. (24)–(70), Lemma 1, Thm. 1) (arXiv v1).
-- [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §1, §2.1 (Eqs. (2.5)–(2.7)) (arXiv v1).
+- [Li, Shu & Qiu (2022d)](/sources/li-2022-d.md) — §1, §2.1 (Eqs. (2.5)–(2.7)) (arXiv v1).
 - [Renac (2021)](/sources/renac-2021.md) — §1.3, §4 (Eqs. (51)–(56), Lemma 4.1), §7, Apps. C–D (arXiv v3).
 - [Liu et al. (2021)](/sources/liu-2021.md) — §2 (Eqs. (3)–(4)).
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §2.2, §4.1 (arXiv v1).

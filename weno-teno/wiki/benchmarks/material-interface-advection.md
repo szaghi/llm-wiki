@@ -5,7 +5,7 @@ description: "Uniform-velocity, uniform-pressure advection of material interface
 status: established
 aliases: [interface advection, advection of a material interface, interface translation test, water disk advection, smooth interface advection]
 tags: [benchmark, multiphase, interface-capturing, finite-volume]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Material-interface advection tests
@@ -31,7 +31,7 @@ shape after one or more periods.
 three tests of the
 [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)
 with ideal gases, RK4, $\Delta t=10^{-4}$ (printed "CFL number of 0.05"),
-on 501 points per direction, $u_0=1$, $p_0=0.9$ (chosen "just for the
+on 501 points per direction, $v_1=1$, $p_0=0.9$ (chosen "just for the
 visibility of the figures"):
 
 - §4.1, 1D, periodic $[0,1]$: two species, $\gamma=(1.4,1.66)$, molar
@@ -44,9 +44,9 @@ visibility of the figures"):
 - §4.2, 2D, periodic $[0,1]^2$: three species, $\gamma=(1.4,1.66,1.29)$,
   molar masses $(28,4,44)$, circular tanh interfaces about $(0.5,0.5)$
   of radii $(0.3,0.3,0.2)$, amplitudes $(0.4,0.2,0.1)$, $k=15$,
-  $u_0=v_0=1$, to $t=5$, five passes;
+  $v_1=v_2=1$, to $t=5$, five passes;
 - §4.3, 2D: the two species of §4.1 with a tangential velocity jump
-  $v_0=w_v\tanh(k(r-r_c))$, $w_v=0.5$, to $t=5$.
+  $v_2=w_v\tanh(k(r-r_c))$, $w_v=0.5$ (page-local), to $t=5$.
 
 **The same interface with a real-fluid equation of state.**
 [Terashima, Ly & Ihme (2025)](/sources/terashima-2025.md) §3.1 rerun
@@ -57,13 +57,13 @@ the ideal gases by transcritical CH$_4$/N$_2$ with the Soave–Redlich–Kwong
 equation of state: on the periodic $[0,1]$ m, partial densities of the
 same tanh form with $\rho_{\mathrm{CH_4},\infty}=400$ and
 $\rho_{\mathrm{N_2},\infty}=100$ kg m$^{-3}$, $k=15$, $r_c=0.25$ m,
-$u_\infty=100$ m/s, $p_\infty=5$ MPa, which gives temperatures of
+$v_1=100$ m/s and pressure 5 MPa, which give temperatures of
 128.12 K and 190.18 K in the two pure states; 501 to 4001 points, over
 twenty flow-through times (§3.2.1). In 2D (§3.2.2) a circular blob of the
 same profile on the periodic $[0,1]^2$ m is advected diagonally at
-$u=v=100$ m/s on $501\times501$ points to $t=0.09$ s, nine flow-throughs,
-and §3.2.3 adds the tangential profile $v_0=v_\infty\tanh(k(x-x_c))$,
-$v_\infty=15$ m/s, of Fujiwara et al. on $2001\times2001$ points for
+$v_1=v_2=100$ m/s on $501\times501$ points to $t=0.09$ s, nine flow-throughs,
+and §3.2.3 adds the tangential profile $v_2=v_\infty\tanh(k(x-x_c))$,
+$v_\infty=15$ m/s (page-local), of Fujiwara et al. on $2001\times2001$ points for
 four flow-throughs, during which shear thins the interface.
 
 **Two-component convergence in the five-equation model.**
@@ -84,7 +84,7 @@ top-hat below it is a contact in one gas.
 
 **Gas–gas interfaces with sharp profiles, discrete-equations method.**
 [Paula, Adami & Adams (2023)](/sources/paula-2023.md) §7.1 advect, at
-$u=1$, $p=1$, ideal gases with interfaces defined by level-set
+$v_1=1$, $p=1$, ideal gases with interfaces defined by level-set
 functions: in 1D on periodic $[0,1]$ two phases
 $\rho_1=1$, $\gamma_1=1.2$ and $\rho_2=2$, $\gamma_2=1.4$, interfaces at
 0.25 and 0.75, 160 cells, $t=1$, CFL 0.5; in 2D on the periodic unit
@@ -94,7 +94,7 @@ $\rho_l=l$ (page-local phase index $l$), $80\times80$ cells, $t=2$ (two
 passes in $x$, one in $y$).
 
 **Smooth profiles with and without an interface.** Paula et al. §7.3
-advect, on the periodic unit interval with $u=p=1$, $\gamma=1.4$, CFL
+advect, on the periodic unit interval with $v=p=1$, $\gamma=1.4$, CFL
 0.05 and 128 to 2048 cells to $t=1$, a smooth volume-fraction bump
 $\phi_1=0.1+0.8e^{-200(x-0.5)^2}$ and a smooth density bump
 $1+5e^{-200(x-0.5)^2}$ in both phases, without and with an interface at
@@ -110,15 +110,15 @@ $t=T$ is the initial data.
 
 **Gas–liquid disk with a density ratio of about 1000.**
 [Huang & Johnsen (2023)](/sources/huang-2023.md) §4.3 advect a disk of
-radius 0.2 at the centre of the periodic $[-0.5,0.5]^2$ at $(u,v)=(1,1)$,
+radius 0.2 at the centre of the periodic $[-0.5,0.5]^2$ at $v=(1,1)$,
 at an angle of $45^\circ$ to the grid, for one period, $t=1$:
-$(\rho_1,\rho_2,u,v,p)=(1.204\times10^{-3},1,1,1,4.819\times10^{-5})$,
+$(\rho_1,\rho_2,v_1,v_2,p)=(1.204\times10^{-3},1,1,1,4.819\times10^{-5})$,
 air ($\gamma_1=1.4$) and water as a
 [stiffened gas](/definitions/stiffened-gas-equation-of-state.md)
 ($\gamma_2=6.12$, $p_{\infty,2}=3.43\times10^8$ Pa), $100\times100$
 cells, CFL 0.2, with their [phase-field](/methods/phase-field-method.md)
-regularization at interface-thickness parameter $\eta/\Delta x=1$ (their
-$\eta$, page-local).
+regularization at interface-thickness parameter $\eta_{\mathrm{pf}}/\Delta x=1$ (page-local; their
+$\eta$).
 
 **Water block and water droplet in air, five-equation model.**
 [Zhang et al. (2024a)](/sources/zhang-2024.md) §4.1 advect, at
@@ -136,7 +136,7 @@ interface cells.
 
 **A square column of heavy gas, four-equation model.**
 [Jiao et al. (2024)](/sources/jiao-2024.md) §4.1 advect a square column
-of one ideal gas in another at $u=5$ m/s and $p_0=10^7$ Pa, 300 K, on a
+of one ideal gas in another at $v=5$ m/s and $p_0=10^7$ Pa, 300 K, on a
 periodic 0.2 m domain with 100 cells, CFL 1.4, for four periods to
 $t=0.16$ s: component 1 with $\gamma=5$, $\rho=4.444$ kg m$^{-3}$,
 component 2 with $\gamma=1.6$, $\rho=117.647$ kg m$^{-3}$ (Table 4.1),
@@ -324,13 +324,13 @@ faces.
   $5.4\times10^{-15}$ *(compiler check, not in the sources)*; the paper
   does not discuss the difference.
 - Fujiwara et al.'s "CFL number of 0.05" matches the convective
-  number $u_0\Delta t/\Delta x=1\cdot10^{-4}/0.002$; with the sound
+  number $v_1\Delta t/\Delta x=1\cdot10^{-4}/0.002$; with the sound
   speed of species 2, $c=\sqrt{1.66\cdot0.9/0.2}\approx2.73$, the acoustic
-  number $(u_0+c)\Delta t/\Delta x$ is about 0.19 *(compiler check, not in the sources)*. Their
+  number $(v_1+c)\Delta t/\Delta x$ is about 0.19 *(compiler check, not in the sources)*. Their
   §4.3 prints a "periodic region $[0,1]$" for a 2D test and defines no
   $y_c$.
 - Huang & Johnsen describe a water disk in air with phase 1 the air,
-  but print $\alpha_1=1$ inside the disk and $0$ outside, i.e. a disk of
+  but print the volume fraction $\phi_1=1$ (their $\alpha_1$) inside the disk and $0$ outside, i.e. a disk of
   phase 1; one of the two is inverted. Their initial data are printed
   without units while the equation-of-state constants are in Pa; their
   temperature constants $C^T_1=701.27$ and $C^T_2=223.37$ J/(kg K) are

@@ -5,7 +5,7 @@ description: "Numerical dissipation is the part of a scheme's error that damps r
 status: established
 aliases: [numerical diffusion, numerical viscosity, anti-diffusion, negative dissipation, ND, high-order artificial dissipation, JST dissipation]
 tags: [low-dissipation, numerical-flux, reconstruction, central-scheme]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Numerical dissipation and anti-dissipation
@@ -45,7 +45,7 @@ jumps.
 - **Smaller speeds.** The [central-upwind flux](/methods/central-upwind-scheme.md)
   uses the one-sided speeds $a^\pm_{i+1/2}$; it "in general" carries more ND than
   upwind fluxes but needs no Riemann solver
-  ([Wang et al. (2023b)](/sources/wang-2023-b.md), §1). Wang et al. reduce ND by
+  ([Wang et al. (2023b)](/sources/wang-2023-b.md), §1). Wang et al. (2023b) reduce ND by
   tightening $a^\pm$ with regularized discrete Rankine–Hugoniot speeds, by
   replacing them in smooth regions (relative interface jump $\le\Delta x^2$) by
   symmetric speeds built from the fluid velocity and capped by $0.1$ of the
@@ -56,6 +56,19 @@ jumps.
   The CURH flux they start from already subtracts a minmod "anti-diffusion"
   correction $\delta U$ from the jump (§3, Eq. (5)): here "anti-diffusion" means a
   reduction of the diffusion term, not a negative one.
+- **A sensor-scaled Rusanov coefficient.** [Wang et al. (2023a)](/sources/wang-2023.md)
+  (§3.2, Eqs. (18)–(21)) keep the local Lax–Friedrichs form inside fifth-order
+  [A-WENO](/methods/alternative-weno.md) and multiply its coefficient by
+  $\max\{\mathsf k_i,\mathsf k_{i+1}\}$, $\mathsf k_i=\max\big(0.1,1-\exp(-10^5\varphi_{\mathrm F,i})\big)$
+  (page-local), with $\varphi_{\mathrm F}$ the product of the
+  [Ducros ratio](/definitions/ducros-shock-sensor.md) and normalized second differences of
+  pressure and density. The stated aim is a small coefficient in smooth regions and the full spectral-radius
+  bound near high gradients (§3.1). The floor 0.1 keeps a baseline dissipation where primitive
+  variables are constant or linear (Fig. 1). In smooth regions of the Sod and blast-wave
+  problems the coefficient falls to about one tenth of the LLF one (Figs. 6, 8). The 2D tests
+  show more slip-line and vortex roll-up at 5%–9% extra cost (§4, Table 3); see the
+  [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md) for the evidence and the missing
+  monotonicity statement.
 - **Field-wise speeds.** [Chertock et al. (2023)](/sources/chertock-2023.md)
   (§3, Eqs. (3.1)–(3.8)) rewrite the central-upwind flux as a central average plus
   a diffusion term $D_{i+1/2}$ and express $D$ through the
@@ -286,13 +299,31 @@ potentially lead to numerical instability"
 
 In the [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
 of a scheme, $\tilde\vartheta_i<0$ is dissipation and $\tilde\vartheta_i>0$
-anti-dissipation (the sign convention of Fu 2023, used by all chunk-1 sources
+anti-dissipation (the sign convention of Fu 2023, used by all the sources
 cited here). Measured this way:
 
 - THINC with $\beta_{\mathrm T}=1.6$ is anti-diffusive in some wavenumber
   ranges, like Superbee ([Takagi et al. (2022)](/sources/takagi-2022.md), §2.3);
 - WENO-Z+ with a large coefficient has a narrow band of negative dissipation
   near $\vartheta\approx1.18$ ([Luo & Wu (2021)](/sources/luo-2021-b.md), §3).
+
+**Dissipation added by mesh interfaces.** [Wang et al. (2026)](/sources/wang-2026.md) (§4.4.1,
+Fig. 5) extend the measure to a two-level AMR grid by a Bloch-wave analysis of the composite
+semi-discrete operator of fifth-order finite-difference WENO with linear weights
+([approximate dispersion relation](/definitions/approximate-dispersion-relation.md),
+[adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)). With $\vartheta=k_w\Delta x_c$
+on the coarse spacing, their convention $\lambda=-\mathrm i\tilde\vartheta$ makes
+$\tilde\vartheta_i<0$ dissipative, as above. All three inter-level closures (cell-centred
+Berger–Colella, cell-centred WENO prolongation and restriction, node-based WENO prolongation)
+match the uniform-grid dissipation at low wavenumbers. All show excess dissipation from
+$\vartheta\gtrsim2$, which the authors interpret as damping of interface-generated parasitic
+modes. The WENO closure deviates least near the grid cut-off. In nonlinear runs the ranking
+persists: on the [Shu–Osher problem](/benchmarks/shu-osher-problem.md) WENO-type transfers are less
+dissipative in smooth regions than second-order Berger–Colella transfers (§6.3.3, Fig. 15). In
+decaying [compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md) at
+$M_{t,0}=1.0$, Berger–Colella is the most dissipative, pure WENO interpolation the least (it fails
+at $t\approx3.4\tau$ during coarsening), and the hybrid WENO interpolation's dissipation approaches
+the WENO one (§6.4.3, Figs. 21–22).
 
 **Nonlinear dissipation of WENO weights.**
 [Luo & Wu (2021)](/sources/luo-2021-b.md) (§4) split the dissipation of a WENO
@@ -625,7 +656,7 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
   one sense and dissipative in another (Deng's symmetric limiters change sign
   with $\tilde u$).
 - Visual dissipation proxies (curlier contacts, more vortices) are what most of
-  the chunk-1 2D claims rest on; none of these sources quantifies them.
+  the 2D claims above rest on; none of these sources quantifies them.
 - Sciacovelli et al. state $k_\varepsilon=\mathsf a_0/\mathsf a_P$, but their explicit members
   print the factors $1$, $\tfrac15$, $\tfrac3{70}$, $\tfrac1{105}$, which are
   $\lvert\mathsf a_P/\mathsf a_0\rvert$; and the sign $-\tfrac{\mathsf a_P}{2}$ of their general
@@ -705,4 +736,6 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
 - [Huang et al. (2025b)](/sources/huang-2025-b.md) — §3.2, Eq. (18): boundary variation as the dissipation of the flux, kept by deepMTBVD.
 - [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §4.2.4, Fig. 14: Thornber and anti-dissipation pressure corrections of HLLC in MFC, Gresho vortex at low Mach number.
 - [Chen & Chen (2026)](/sources/chen-2026.md) — §2.3.2, §3.1, Fig. 8: adaptive TENO cut-off range as dissipation control, $10^{-1}$ at ghost-point stencils, positivity-limiter activations.
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §3.1–3.2, Eqs. (17)–(21), Fig. 1; §4.3, Figs. 6, 8; Table 3: sensor-scaled LLF coefficient.
+- [Wang et al. (2026)](/sources/wang-2026.md) — §4.4.1, Fig. 5; §6.3.3, Fig. 15; §6.4.3, Figs. 21–22: interface dissipation of AMR closures.
 - [Crin-Barat & Manea (2026)](/sources/crinbarat-2026.md) — §3.3–3.4, Propositions 3.4–3.5; §2.1, Theorem 2.1: skew-adjoint central difference (arXiv v2).

@@ -5,7 +5,7 @@ description: "Flux reconstruction corrects the discontinuous interpolated flux o
 status: established
 aliases: [FR, CPR, NSFR, nonlinearly stable flux reconstruction, correction procedure via reconstruction, ESFR, VCJH, Vincent–Castonguay–Jameson–Huynh schemes, energy-stable flux reconstruction, Huynh g2 lumped-Lobatto scheme]
 tags: [flux-reconstruction, dg, entropy-stable, software, immersed-boundary]
-timestamp: 2026-10-23T15:13:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Flux reconstruction and energy-stable FR
@@ -150,7 +150,7 @@ faces, on which the common and interaction fluxes are computed and
 projected back (§5.2; [h- and hp-adaptation](/methods/hp-adaptation.md)).
 Kou et al. add a volume-penalization source to this scheme to impose
 walls on Cartesian grids ([immersed-boundary methods](/methods/immersed-boundary-method.md)).
-In a 1D penalized advection–diffusion test the FR rate $O(h^{N+1})$ is
+In a 1D penalized advection–diffusion test the FR rate $O(h^{N+1})$ ($h$ the element size) is
 kept when the solid points are penalized towards the exact solution, but
 falls to about first order over the fluid domain when they are penalized
 towards the boundary value, while the rate away from the wall stays
@@ -244,13 +244,13 @@ overintegration.
 - energy stability in the $M+K_{\mathrm{FR}}$ norm for $\alpha_{\mathrm s}=2/3$, for
   which the volume terms cancel and only interface terms remain (Eq. (46)).
   The interface contribution is
-  $(u^+-u^-)^2\big(\tfrac1{12}(u^+-u^-)-\lambda_{\mathrm s}\big)$ for the flux
-  $\tfrac12\big(\tfrac12(u^-)^2+\tfrac12(u^+)^2\big)-\lambda_{\mathrm s}(u^+-u^-)$
-  (page-local dissipation coefficient $\lambda_{\mathrm s}=a/2$ in the registry's
+  $(u^+-u^-)^2\big(\tfrac1{12}(u^+-u^-)-\lambda_{\mathrm F}\big)$ for the flux
+  $\tfrac12\big(\tfrac12(u^-)^2+\tfrac12(u^+)^2\big)-\lambda_{\mathrm F}(u^+-u^-)$
+  (page-local dissipation coefficient $\lambda_{\mathrm F}=a/2$ in the registry's
   Lax–Friedrichs form), so stability requires
-  $\lambda_{\mathrm s}\ge\tfrac1{12}(u^+-u^-)$, with equality for the
+  $\lambda_{\mathrm F}\ge\tfrac1{12}(u^+-u^-)$, with equality for the
   energy-conservative flux; local Lax–Friedrichs,
-  $\lambda_{\mathrm s}=\tfrac12\max(\lvert u^-\rvert,\lvert u^+\rvert)$, satisfies it and is energy
+  $\lambda_{\mathrm F}=\tfrac12\max(\lvert u^-\rvert,\lvert u^+\rvert)$, satisfies it and is energy
   stable (Eqs. (47)–(50);
   [entropy-conservative two-point fluxes](/methods/entropy-conservative-flux.md),
   [entropy stability](/properties/entropy-stability.md)).

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Compressible isotropic turbulence"
-description: "Triply periodic turbulence box. In the decaying form a random solenoidal velocity field of prescribed spectrum and turbulent Mach number 0.07–0.6 decays, and the histories of kinetic energy, turbulent Mach number, density fluctuations, enstrophy and dilatation measure numerical dissipation on under-resolved turbulence with eddy shocklets; driven subsonic hydrodynamic and MHD variants compare inertial ranges across scheme orders."
+description: "Triply periodic turbulence box. Decaying runs (turbulent Mach number 0.07–1.0, uniform and AMR grids) measure numerical dissipation and robustness on under-resolved turbulence with eddy shocklets through kinetic-energy, Mach-number, density-fluctuation, enstrophy and dilatation histories; driven hydrodynamic and MHD variants compare inertial ranges across orders and demonstrate GPU-scale runs."
 status: established
 aliases: [decaying compressible isotropic turbulence, decaying isotropic turbulence, compressible homogeneous isotropic turbulence, compressible HIT, decaying HIT, forced compressible turbulence, driven subsonic turbulence]
 tags: [benchmark, turbulence, low-dissipation, teno]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-24T05:33:00Z
 ---
 
 # Compressible isotropic turbulence
@@ -35,6 +35,7 @@ turbulence*.
 | [Bezgin et al. (2023)](/sources/bezgin-2023.md) §5.1.4 | $E(k)=Ak^4\exp(-2k^2/k_0^2)$ (Eq. 34) | Spyropoulos & Blaisdell cases 1–3, $M_t=0.2,0.4,0.6$, $\mathrm{Re}_T=2742$ | DNS reference; HLLC on $128^3$; LES on $32^3$; $\tau=\lambda_f/u'\approx0.85$ |
 | [Bielawski et al. (2023)](/sources/bielawski-2023.md) App. A | $E(k)=\frac{16}{3}\sqrt{\frac2\pi}\,M_{t,0}^2c^2\,\frac{k^4}{k_0^5}\exp\!\big(-2(k/k_0)^2\big)$, $k_0=4$ (Eq. A.1) | A.1: $M_{t,0}=0.3$, $\mathrm{Re}_{\lambda,0}=30$; A.2: $M_{t,0}=0.6$, $\mathrm{Re}_{\lambda,0}=100$ | structured $64^3$ and skewed tetrahedral (32 edges per direction, maximum skewness 0.425); spectral data of Honein & Moin (A.1) and Johnsen et al. (A.2) |
 | [Jain & Moin (2022)](/sources/jain-2022.md) §4.2, §5 | Honein (2005) | inviscid two-phase, $M_{t,0}=0.07$, density ratio 10; droplet-laden, $\mathrm{Re}_\lambda\approx75$, $M_{t,0}=0.07$ | $32^3$ to $t/\tau=20$; $256^3$ in $[0,\pi/2]^3$ with 1000 droplets |
+| [Wang et al. (2026)](/sources/wang-2026.md) §6.4.3 | $E(k)\sim k^4\exp(-2(k/k_0)^2)$, $k_0=4$; $p_0=101325$ Pa, $T_0=300$ K, $\rho_0=1.1768$ kg m$^{-3}$, viscosity $\propto T^{3/4}$ | validation $M_{t,0}=0.6$, $\mathrm{Re}_{\lambda,0}=100$ to $t/\tau=4$; AMR runs $M_{t,0}=1.0$ | uniform $64^3$ against a $256^3$ run spectrally filtered to $64^3$ and Johnsen et al.; two-level AMR on a $64^3$ base |
 
 In Bezgin et al. $\lambda_f$ and $u'$ are the longitudinal Taylor scale
 and rms velocity of the cited setup. Jain & Moin's two-phase runs place a
@@ -82,6 +83,26 @@ droplet-laden case the droplets enhance the early kinetic-energy decay,
 more so with denser droplets, in qualitative agreement with Dodd &
 Ferrante's incompressible results (§5, Figs. 9–10).
 
+**High-order AMR at $M_{t,0}=1$.** Wang et al. (2026) first check
+their single-level fifth-order WENO-JS solver on the uniform $64^3$ grid
+at $M_{t,0}=0.6$: it agrees with the filtered $256^3$ reference and with
+Johnsen et al.'s results, slightly more dissipative in the dilatational
+kinetic energy (Fig. 19). They then run $M_{t,0}=1.0$ on a two-level
+[AMR](/methods/adaptive-mesh-refinement.md) grid refined where the
+dilatation falls below a user threshold whose value is not given, and
+compare three inter-level transfers. Pure fifth/sixth-order WENO
+interpolation gives the highest resolution but terminates at $t\approx3.4\tau$, during
+the coarsening of shocklet regions, when one-sided restriction stencils
+steepen the shocklets and corrupt the coarse values; second-order
+conservative Berger–Colella transfers are the most dissipative; and
+AMR-HybridWENO, which switches to the conservative linear transfer in
+cells flagged by a Roe-averaged Lax wave-speed criterion and a
+pressure-curvature sensor, runs through, its dissipation converging
+towards that of WENO interpolation (Figs. 21–22). The test is their
+evidence that non-conservative transfers break down when a
+discontinuity is refined or coarsened abruptly (their scenario III,
+§5.1).
+
 ## Forced subsonic turbulence
 
 [Teissier et al. (2024)](/sources/teissier-2024.md) (§4.3, arXiv v2)
@@ -124,9 +145,24 @@ flattening and positivity preservation (§1, §5). The same schemes'
 dissipation on a smooth vortex is recorded on
 [numerical dissipation](/definitions/numerical-dissipation.md).
 
+## Driven turbulence at GPU scale
+
+[Stone et al. (2026)](/sources/stone-2026.md) use driven turbulence to
+demonstrate the scale of [AthenaK](/software/athenak.md), without a
+reference or a scheme comparison: isothermal ideal-MHD turbulence on
+$10{,}240^3$ cells in $256^3$ MeshBlocks on 65,536 GPUs of Frontier,
+with [WENO-Z](/methods/weno-z.md), RK2 and HLLD, solenoidal real-space
+driving at the largest scales, sonic Mach number $0.5$, Alfvén Mach
+number 2 and $\delta B/\bar B\approx3$, over four eddy turnover times
+(§3.2, Fig. 4); two-fluid ion–neutral turbulence on $1200^3$ with
+PPM, IMEX3, ionization fraction 0.1 and drag coefficient $10^6$,
+reaching sonic Mach number about 10 and Alfvén Mach number about 1
+(§3.4, Fig. 8); and test particles in MHD turbulence on $1280^3$ (§4.2,
+Fig. 19). See [piecewise parabolic method](/methods/piecewise-parabolic-method.md).
+
 ## Qualifications
 
-- The four sources use different spectra, Mach and Reynolds numbers and
+- The decaying-turbulence sources use different spectra, Mach and Reynolds numbers and
   references, so their results are not comparable with each other; the
   Spyropoulos–Blaisdell and Johnsen et al. setups are taken from the
   cited works and not restated in full.
@@ -139,6 +175,15 @@ dissipation on a smooth vortex is recorded on
   scale and dissipation is a garbled entry (ref. [80]).
 - Jain & Moin's comparison with Dodd & Ferrante is qualitative; their
   runs are shock-free ($M_{t,0}=0.07$).
+- Wang et al. (2026) print the eddy-turnover time as
+  $\tau=k_0/u_{\mathrm{rms},0}$ and do not give the dilatation threshold
+  of their refinement criterion.
+- Stone et al. (2026) print the driving spectrum as "$1\le2\pi
+  k/L_{\mathrm{box}}\le3$, peaking at $2\pi k=2L_{\mathrm{box}}$", which
+  is dimensionally inconsistent if $k$ is a wavenumber *(compiler check,
+  not in the sources)*; and their §4.2 refers to "the $4096^3$
+  turbulence simulation described in Section 3.2 and Figure 4", which
+  describe a $10{,}240^3$ run.
 - Teissier et al.'s forced runs are not decaying turbulence and use a
   different box, $[0,1]^3$, and forcing; they are recorded here as the
   same flow class, not as a comparable data point. Their Fig. 12 caption
@@ -155,3 +200,5 @@ dissipation on a smooth vortex is recorded on
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §4.2, §5, Figs. 8–10.
 - [Fu (2023)](/sources/fu-2023.md) — §4.2 (TENO-A, as recorded on the adaptive-TENO page).
 - [Teissier et al. (2024)](/sources/teissier-2024.md) — §1, §3.5.4, §4.3, Eqs. (78)–(82), Figs. 12–15, §5 (arXiv v2).
+- [Wang et al. (2026)](/sources/wang-2026.md) — §5.1, §6.4.3, Figs. 19–22.
+- [Stone et al. (2026)](/sources/stone-2026.md) — §3.2, §3.4, §4.2, Figs. 4, 8, 19.

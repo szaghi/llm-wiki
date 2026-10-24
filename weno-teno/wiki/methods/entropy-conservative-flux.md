@@ -5,7 +5,7 @@ description: "Two-point fluxes satisfying Tadmor's jump condition conserve entro
 status: established
 aliases: [EC flux, entropy-conservative flux, entropy-dissipative flux, ED flux, Tadmor flux, KEP flux, KEEP flux, Ranocha flux, Shima flux, AEC flux, asymptotically entropy-conservative flux]
 tags: [entropy-stable, kinetic-energy-preserving, numerical-flux, dg]
-timestamp: 2026-10-23T20:40:00Z
+timestamp: 2026-10-24T06:02:00Z
 ---
 
 # Entropy-conservative and kinetic-energy-preserving two-point fluxes
@@ -357,7 +357,7 @@ h_E&=\sum_{i<n_c}\frac{C_{v,i}-C_{v,n_c}}{\{\!\{1/T\}\!\}_{\log}}h_{\rho Y_i}+\B
 ## Moving curvilinear meshes: stiffened gas and relativistic MHD
 
 [Duan & Tang (2022)](/sources/duan-2022.md) and
-[Li, Duan & Tang (2022)](/sources/li-2022-c.md) work in time-dependent
+[Li, Duan & Tang (2022c)](/sources/li-2022-c.md) work in time-dependent
 curvilinear coordinates ([adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
 The sufficient condition for an EC flux $\hat F_k$ in computational
 direction $k$ weights the jumps of the page-local entropy potential
@@ -549,8 +549,12 @@ is subtracted.
   page-local $\Lambda$ the eigenvalue matrix, with $\partial u/\partial w$ at
   a mean state and Barth's eigenvector scaling, so the production is a
   negative quadratic form in $[\![w]\!]$ (Eqs. (57)–(60)). They state,
-  after Derigs et al., that plain $\tfrac12a[\![u]\!]$ is not entropy stable
-  for MHD (Eq. (52)) *(compiler check, not in the sources: with scalar dissipation $a\ge0$ added to an entropy-conservative flux the production is $-\tfrac12a[\![w]\!]\cdot[\![u]\!]\le0$ for a convex entropy; see [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md))*.
+  after Derigs et al., that the "Lax–Friedrichs type" dissipation
+  $\tfrac12\mathcal D[\![u]\!]$ of their Eq. (52), used with the Roe-type
+  matrix $\mathcal D=R\lvert\Lambda\rvert R^{-1}$ (Eq. (53)), is not entropy
+  stable for MHD *(compiler check, not in the sources: for the scalar case
+  $\mathcal D=aI$, $a\ge0$, the production $-\tfrac12a[\![w]\!]\cdot[\![u]\!]$ is
+  non-positive for a convex entropy; see [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md))*.
 - **Roe-type scalar dissipation.** Renac (2021) uses the author's EC flux minus a
   scalar multiple of the largest wave speed times a matrix applied to
   $[\![w]\!]$, with no dissipation on the mass fractions (App. D, Eq. (D.1)),
@@ -594,13 +598,13 @@ order (Remark 3.3).
 **Burgers.** For $f=u^2/2$ and $\eta=u^2/2$,
 [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md)
 write the interface flux as
-$\tfrac12\big(\tfrac12(u^-)^2+\tfrac12(u^+)^2\big)-\lambda_{\mathrm s}(u^+-u^-)$
-with page-local dissipation coefficient $\lambda_{\mathrm s}$. With their
+$\tfrac12\big(\tfrac12(u^-)^2+\tfrac12(u^+)^2\big)-\lambda_{\mathrm F}(u^+-u^-)$
+with page-local dissipation coefficient $\lambda_{\mathrm F}$. With their
 split form at weight $2/3$, the interface energy contribution is
-$(u^+-u^-)^2\big(\tfrac1{12}(u^+-u^-)-\lambda_{\mathrm s}\big)$, so the
-scheme is energy stable for $\lambda_{\mathrm s}\ge\tfrac1{12}(u^+-u^-)$
+$(u^+-u^-)^2\big(\tfrac1{12}(u^+-u^-)-\lambda_{\mathrm F}\big)$, so the
+scheme is energy stable for $\lambda_{\mathrm F}\ge\tfrac1{12}(u^+-u^-)$
 and energy conservative at equality; local Lax–Friedrichs,
-$\lambda_{\mathrm s}=\tfrac12\max(\lvert u^-\rvert,\lvert u^+\rvert)$, satisfies the bound
+$\lambda_{\mathrm F}=\tfrac12\max(\lvert u^-\rvert,\lvert u^+\rvert)$, satisfies the bound
 (Eqs. (47)–(50)). The energy-conservative choice is
 $\big((u^-)^2+u^-u^++(u^+)^2\big)/6$, which equals Tadmor's
 $[\![u^3/6]\!]/[\![u]\!]$ *(compiler check, not in the sources)*.
@@ -683,7 +687,7 @@ Table 2).
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.1, §4, §5.1 Eqs. (39)–(40), §5.2, §5.3.
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §5.2 Observation 7, §5.4, Table 1.
 - [Renac (2021)](/sources/renac-2021.md) — §3.1 Eqs. (19)–(24), Lemma 3.1, Remarks 3.1–3.2, App. B Eq. (B.1), App. D Eq. (D.1) (arXiv v3).
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Prop. 3.1 Eq. (3.5), Eqs. (3.6)–(3.7), (3.11)–(3.20), §3.3.1–3.3.2 (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — Prop. 3.1 Eq. (3.5), Eqs. (3.6)–(3.7), (3.11)–(3.20), §3.3.1–3.3.2 (arXiv v1).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §3.3.1 Eqs. (51)–(60), App. A Eqs. (102)–(103) (arXiv v1).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §1, Remarks 2.5–2.7 Eqs. (27)–(29), Remark 3.3, §3.3 Eq. (40), §4.2.2, §5 Eq. (45), App. A.3 (arXiv v4).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §2 Eqs. (2.3)–(2.6), §3.1 Def. 3.1 Eqs. (3.1)–(3.3), Prop. 3.1, Thm. 3.2 Eqs. (3.20)–(3.21), §4 (arXiv v1).

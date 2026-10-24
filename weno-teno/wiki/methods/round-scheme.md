@@ -4,8 +4,8 @@ title: "ROUND schemes"
 description: "ROUND schemes are three-cell compact finite-volume reconstructions written directly as functions of the normalised cell average, hence scale-invariant, with dissipation, TVD and ENO behaviour placed by construction; the page gives the dissipative, low-dissipative, fine-tuned, learned-weight-inspired and non-uniform-grid forms, their DG-subcell use, cost, evidence and order caveat."
 status: established
 aliases: [ROUND, LD-ROUND, Reconstruction Operator on Unified Normalised-variable Diagram, low-dissipative ROUND]
-tags: [reconstruction, finite-volume, low-dissipation, limiting]
-timestamp: 2026-10-23T15:11:00Z
+tags: [reconstruction, finite-volume, low-dissipation, limiting, round-scheme]
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # ROUND schemes
@@ -98,7 +98,7 @@ $$\mathcal R=\begin{cases}
 \text{CD2},&\tilde u>1,
 \end{cases}$$
 
-*(compiler check of the breakpoints: UW2 on $[-0.6,0]$, the connector on
+*(compiler check, not in the sources: the breakpoints are UW2 on $[-0.6,0]$, the connector on
 $[-1.15,-0.6]$, CD2 below $-1.15$; $\tfrac52\tilde u$ on $(0,0.2]$, P3 on
 $[0.2,91/116]$, the near-1 line on $[91/116,1]$)*, with a larger central share for
 $\tilde u<0$ than WENO3-NN itself, "motivated by numerical experiments" not shown.

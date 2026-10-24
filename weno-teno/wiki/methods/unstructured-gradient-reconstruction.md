@@ -5,7 +5,7 @@ description: "Cell-centred finite volumes on unstructured meshes reconstruct a c
 status: established
 aliases: [constrained least-squares reconstruction, VWLSQ, VWLSQ-ITER, vertex-based weighted least squares, node-averaging Green–Gauss, NAGG, WLSQ, least-squares gradient, nonlinear weighting strategy, NW, WLSQ-GCC, ghost-cell constraint, WLSQ-EC, WLSQ-EA, WLSQ-WA, curvature-corrected symmetry technique, Gauss gradient, volume-normalized Taylor basis]
 tags: [finite-volume, reconstruction, limiting, weno]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Gradient reconstruction on unstructured meshes
@@ -24,7 +24,8 @@ viscous fluxes through face gradients. Chen et al. reconstruct primitive variabl
 for shock-free and van Leer flux-vector splitting for shocked problems, and LU-SGS (steady) or
 four-stage Runge–Kutta (unsteady) stepping (§2). "Order" on this page follows the paper: a gradient
 that is exact for linear data ("linearly exact") is first-order accurate, and the scheme is second
-order.
+order. On this page $h$ is a mesh size (page-local), never the two-point flux $h(u^-,u^+)$ of the
+registry.
 
 ## Families of gradient
 
@@ -214,17 +215,17 @@ finest pair ($h=1/80\to1/160$; Tables 1–4), the fourth-order one below its des
 Eqs. (2)–(17)) use the same least-squares construction in [UCNS3D](/software/ucns3d.md), but solve it
 in **physical space**, without the reference-space map of their earlier work, and in the cell-centred
 Taylor basis of their modal DG,
-$\phi_k=\big((x-x_c)/h\big)^{p_k}\big((y-y_c)/h\big)^{q_k}\big((z-z_c)/h\big)^{r_k}$ minus its cell mean
-(page-local exponents $p_k,q_k,r_k$), normalized by $h$, the square root of the target cell's volume.
+$\phi_k=\big((x-x_c)/h\big)^{\mathsf a_k}\big((y-y_c)/h\big)^{\mathsf b_k}\big((z-z_c)/h\big)^{\mathsf c_k}$ minus its cell mean
+(page-local exponents $\mathsf a_k,\mathsf b_k,\mathsf c_k$, the source's $p_k,q_k,r_k$), normalized by $h$, the square root of the target cell's volume.
 They state that without the normalization they "could not achieve higher than 4th" order on the meshes
 and tests they tried (no data shown). The stencils follow the same stencil-based compact algorithm with
-$M=2K$ neighbours, QR and a pre-stored pseudo-inverse. Because DG and finite volume share the basis, a
+twice as many neighbours as coefficients, QR and a pre-stored pseudo-inverse. Because DG and finite volume share the basis, a
 CWENOZ reconstruction can replace the higher DG modes of a troubled cell by copying coefficients, with
 the cell average kept ([CWENO](/methods/cweno.md), [WENO limiters for DG](/methods/weno-limiter-dg.md)).
-Their count of degrees of freedom, $K(r,d)=\tfrac1{d!}\prod_{l=1}^d(r+l)$ (Eq. (5)), is Ji et al.'s
-count below and includes the constant mode, although their expansion sums $k=0,\dots,K$; they say it
-"increases exponentially as the order is increased" *(compiler check, not in the sources: it is a
-polynomial of degree $d$ in $r$)*.
+Their count of degrees of freedom, $N_k=\tfrac1{n_d!}\prod_{l=1}^{n_d}(\mathsf r+l)$ (Eq. (5), the source's
+$K(r,d)$), is Ji et al.'s count below and includes the constant mode, although their expansion sums
+$k=0,\dots,N_k$; they say it "increases exponentially as the order is increased" *(compiler check, not in
+the sources: it is a polynomial of degree $n_d$ in $\mathsf r$)*.
 
 **Derivatives from point values: RBF differential quadrature.** Liu, Shu, Yang, Liu, Liu & Zhang
 (2023b) build a cubic Taylor polynomial per triangle or quadrilateral whose nine derivatives come from a

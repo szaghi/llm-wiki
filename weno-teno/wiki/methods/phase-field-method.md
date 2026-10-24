@@ -5,7 +5,7 @@ description: "A phase-field flux added to the volume-fraction equation of a diff
 status: established
 aliases: [phase-field method, Phase-Field mechanism, conservative Allen–Cahn, consistent and conservative phase-field method, reduction-consistent formulation, interface regularization]
 tags: [interface-capturing, multiphase, bound-preserving, finite-volume, positivity]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Conservative phase-field interface methods
@@ -20,7 +20,7 @@ the model: an extra flux in the volume-fraction equation, of
 diffusion–sharpening type, drives the volume fraction towards a profile
 of prescribed width, so that the interface stays a few cells thick for
 the whole run. Huang & Johnsen build it into a compressible
-diffuse-interface model for $N_\phi$ phases (page-local $N_\phi$, not a DG degree) and require that the added flux
+diffuse-interface model for $N_\phi$ phases ($N_\phi$ registry §10) and require that the added flux
 change neither the conservation of phase mass, momentum and energy nor
 the equilibrium of an isolated interface. Other bundle sources hold the
 interface sharp at the level of the reconstruction instead:
@@ -205,7 +205,7 @@ fraction by MUSCL (Definition 1 broken) creates mass spikes at the
 interface; updating the volume fraction by $\nabla\cdot J_1$ and the
 masses by $\tilde J_1$ (Definition 2 broken) creates mass spikes of up to
 40 % and a thickened mass interface, although conservation, boundedness
-and equilibrium hold and, the authors state, the volume fraction looks similar
+and equilibrium hold and, the authors state, the volume fraction is similar
 (Figs. 10–12). Initializing the volume fraction exactly at 0 and 1 gives
 negative round-off values after a few steps in the shock–bubble run,
 with or without phase field; $[10^{-15},1-10^{-15}]$ avoids it (§4.4).

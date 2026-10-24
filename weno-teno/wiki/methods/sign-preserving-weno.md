@@ -4,8 +4,8 @@ title: "Sign-preserving WENO"
 description: "Sign-preserving WENO reconstructions (SP-WENO, SP-WENOc, DSP-WENO) are third-order four-point WENO forms whose weight perturbations keep the sign property that TeCNO entropy-stable dissipation needs; the page gives the form, the sign constraint, the zero-jump problem at shocks, and the learned feasible-region variant."
 status: established
 aliases: [SP-WENO, SP-WENOc, DSP-WENO, deep sign-preserving WENO, sign-property WENO, Fjordholm–Ray WENO]
-tags: [weno, entropy-stable, reconstruction, finite-difference, machine-learning]
-timestamp: 2026-10-23T20:29:00Z
+tags: [weno, entropy-stable, reconstruction, finite-difference, machine-learning, sign-property]
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Sign-preserving WENO
@@ -21,7 +21,7 @@ limiter with it (§4), and [Bhoriya et al. (2023)](/sources/bhoriya-2023.md)
 use ENO for that reason (§4.1.2). Fifth-order WENO gets it only through
 the componentwise Biswas–Dubey switch of
 [Duan & Tang (2022)](/sources/duan-2022.md) (§4) and
-[Li, Duan & Tang (2022)](/sources/li-2022-c.md) (§3.4), which removes the
+[Li, Duan & Tang (2022c)](/sources/li-2022-c.md) (§3.4), which removes the
 dissipation where the test fails. Sign-preserving WENO builds the property into the weights instead.
 [Charles & Ray (2025)](/sources/charles-2025.md) recall SP-WENO (Fjordholm
 & Ray) and SP-WENOc (Ray), and propose DSP-WENO. All three are third-order
@@ -49,7 +49,7 @@ third-order interpolant *(compiler check, not in the sources)*. The
 weights are consistent, all in $[0,1]$, if and only if
 $-\tfrac38\le\mathsf c_1,\mathsf c_2\le\tfrac18$.
 
-Let page-local $r_i=\Delta z_{i+1/2}/\Delta z_{i-1/2}$ be the slope ratio.
+Let $r_i=\Delta z_{i+1/2}/\Delta z_{i-1/2}$ be the slope ratio (registry §4).
 The jump can then be rewritten (Eqs. (15)–(16)) as
 
 $$[\![z]\!]^{\mathrm{rec}}_{i+1/2}=\tfrac12\Big(\tilde\omega_0\,(1-r_{i+1})+\omega_1\,(1-1/r_i)\Big)\,\Delta z_{i+1/2}.$$
@@ -209,4 +209,4 @@ on the reconstructed jumps, with SSP-RK3
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §4 (minmod and the sign property).
 - [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) — §4.1.2 (ENO reconstruction with the sign property).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §4 (WENO with the sign switch).
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §3.4 (WENO with the sign switch).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — §3.4 (WENO with the sign switch).

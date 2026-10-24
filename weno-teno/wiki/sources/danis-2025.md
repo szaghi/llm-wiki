@@ -8,7 +8,7 @@ authors: [Danis M.E., Truong D., Boureima I., Korobkin O., Rasmussen K.Ø., Alex
 year: 2025
 venue: "J. Comput. Phys. 529:113891"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2025_Crossref_Journal_of_Computational_Physics_Danis_Tensor-train_WENO_scheme_for_compressible_flows.pdf"
-tags: [weno, finite-difference, efficiency, performance]
+tags: [weno, finite-difference, performance]
 timestamp: 2026-10-23T14:53:00Z
 ---
 
@@ -145,7 +145,7 @@ pages, and [32] (Shu 1998, pp. 325–432) no book title. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 9 (2026-10-23), cited further in chunk 10 (2026-10-23). This source is cited on:
+Chunk 9 (2026-10-23), cited further in chunks 10–11 (2026-10-23/24). This source is cited on:
 
 * [Burgers equation tests](/benchmarks/burgers-equation-tests.md)
 * [Double Mach reflection](/benchmarks/double-mach-reflection.md)

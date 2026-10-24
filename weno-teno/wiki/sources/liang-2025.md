@@ -8,7 +8,7 @@ authors: [Liang T., Shyy W., Fu L.]
 year: 2025
 venue: "J. Sci. Comput. 104:1"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2025_Crossref_Journal_of_Scientific_Computing_Liang_Efficient_Arbitrary-High-Order_TENO_Schemes_with_Local_Adapt.pdf"
-tags: [teno, unstructured-mesh, troubled-cell, hybrid-scheme, finite-volume, efficiency]
+tags: [teno, unstructured-mesh, troubled-cell, hybrid-scheme, finite-volume, performance]
 timestamp: 2026-10-23T19:54:00Z
 ---
 
@@ -153,7 +153,7 @@ matched by title. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 10 (2026-10-23). This source is cited on:
+Chunk 10 (2026-10-23), cited further in chunk 11 (2026-10-24). This source is cited on:
 
 * [Adaptive TENO (TENO-A, TENO-AA)](/methods/adaptive-teno.md)
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)

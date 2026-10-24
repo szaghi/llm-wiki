@@ -5,7 +5,7 @@ description: "The fully conservative Euler system for a mixture of several gases
 status: established
 aliases: [multi-component Euler equations, multispecies Euler equations, compressible multicomponent Euler system, HRM model (as named by Renac)]
 tags: [multiphase, entropy-stable, positivity, bound-preserving, dg, finite-difference]
-timestamp: 2026-10-23T20:43:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Multicomponent Euler equations
@@ -25,7 +25,7 @@ with mass fractions $Y_k$, $\sum_kY_k=1$, mixture density
 $\rho=\sum_k\rho Y_k$ and $E=\rho e+\tfrac12\rho\lvert v\rvert^2$.
 [Renac (2021)](/sources/renac-2021.md) §2 writes the unknowns as
 $(\rho Y_1,\dots,\rho Y_{n_{\mathrm c}-1},\rho,\rho v,E)$ (Eqs. 1–2);
-[Li, Duan & Tang (2022)](/sources/li-2022-c.md) §1 writes them with
+[Li, Duan & Tang (2022c)](/sources/li-2022-c.md) §1 writes them with
 the partial densities $\rho Y_k$ of all components (Eq. 1.1), as do
 [Nguyen et al. (2022)](/sources/nguyen-2022.md) §2.1 (with
 $\rho Y_k=\phi_k\rho_k$, Eqs. 2a–2e) and
@@ -132,7 +132,7 @@ take ideal-gas species with temperature-dependent heat capacities
 (CHEMKIN-II or NASA polynomials) and formation enthalpies,
 $p=\rho R_uT\sum_kY_k/W_k$ with $R_u$ the universal gas constant and
 $W_k$ the molar masses, and add finite-rate chemistry as a source
-$\dot\omega_k$ in the species equations (Peng et al. Eqs. 4–8; Du &
+$\Omega_k$ (the mass production rate of the registry) in the species equations (Peng et al. Eqs. 4–8; Du &
 Yang Eqs. 2.3–2.4; page-local symbols). Du & Yang solve the
 Navier–Stokes version, with mixture-averaged diffusion velocities
 corrected so that $\sum_kY_kV_k=0$, Wilke viscosity and Mathur
@@ -244,8 +244,8 @@ $P(u)=E-\sum_k\rho Y_kh_k(0)-\tfrac12\rho\lvert v\rvert^2$ (page-local,
 $h_k(0)$ the formation enthalpy at 0 K), so that $p\ge0$ iff $P\ge0$;
 $P$ is concave and $G$ convex (§4.1, Eq. 4.1). The upper bound
 $Y_k\le1$ is not in $G$: it follows from $\rho Y_k\ge0$ once
-$\sum_kY_k=1$ holds exactly, which the next section obtains from the
-scheme.
+$\sum_kY_k=1$ holds exactly, which the section on bound preservation
+below obtains from the scheme.
 
 ## Mixture entropy
 
@@ -407,13 +407,13 @@ the reacting Navier–Stokes system (see
   positivity-preserving DG for Navier–Stokes, the convective and viscous
   fluxes are treated as one flux with a
   [Lax–Friedrichs](/methods/lax-friedrichs-flux.md)-type penalty
-  $\beta$ large enough that $u\pm\beta^{-1}f\in G$ (Lemma 4.1, Eq. 3.5),
+  $\beta$ (page-local) large enough that $u\pm\beta^{-1}f\in G$ (Lemma 4.1, Eq. 3.5),
   now including the species diffusion velocities.
 - **Stiff chemistry.** A third-order conservative modified exponential
   Runge–Kutta method of the authors replaces
   [SSP Runge–Kutta](/methods/ssp-runge-kutta.md); each stage is a convex
   combination of a convective update, admissible under a CFL bound with
-  the Gauss–Lobatto weight $1/(L(L-1))$ (Theorem 4.1; see
+  the Gauss–Lobatto weight $1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$ (Theorem 4.1; see
   [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)),
   and a source update, admissible for a large enough damping
   coefficient (Theorems 4.2–4.3). A three-step
@@ -427,7 +427,7 @@ integrator converges at third order ($L^2$ error $1.84\times10^{-3}$ on
 returns NaN on the two coarsest meshes (Table 6.2); without the limiter
 the He/N$_2$ shock tube produces a negative mass fraction at
 $0.5085\,\mu$s and the code stops (Fig. 6.2). The run uses a time step
-$\Delta t=\min(a\Delta x/\beta^*,b\Delta x^2/\eta^*)$ with a simpler
+$\Delta t=\min(a\Delta x/\beta^*,b\Delta x^2/\eta^*)$ (page-local constants $a$, $b$ and bounds $\beta^*$, $\eta^*$, not the registry's wave speed and entropy) with a simpler
 speed $\beta^*$ than the proven bound and restarts a step with doubled
 damping and halved $\Delta t$ when a cell average leaves $G$ (§6,
 Eq. 6.1): admissibility in the runs rests on this restart, which
@@ -442,7 +442,7 @@ effective contact speed, and the error "can grow and become
 significant over a simulation" (§3, not demonstrated in the paper).
 They note that species are limited in mixing and burning regions as
 well as at shocks. Du & Yang's consistency condition $\hat f\cdot\mathsf v=0$
-(next section) is the property such a scheme loses.
+(above) is the property such a scheme loses.
 
 **Separated viscous flux and an entropy bound on the convective part.**
 Ching et al. (2025) extend their positivity-preserving and entropy-bounded
@@ -596,7 +596,7 @@ keeps velocity, pressure and temperature errors "on the order of
 $10^{-14}$", about three cells thick with superbee or the compressive
 overbee limiter on the volume fractions, also with initial temperature
 jumps of 100 and 500 K (§3.1, Figs. 1–5). Their reconstruction is MUSCL
-($\kappa=1/3$) on $(p,v,T,\phi_k)$ with Van Leer on the other variables
+($\kappa_{\mathrm M}=1/3$) on $(p,v,T,\phi_k)$ with Van Leer on the other variables
 and overbee on the volume fractions (Eqs. 26–28; see
 [TVD limiters](/definitions/total-variation-diminishing.md)), the flux
 Rusanov or an HLLC solver carrying the partial densities with the star
@@ -770,8 +770,8 @@ temperature approaches zero before 50 μs without the entropy limiter, and a
   and smaller unless $\mathsf v_k\mathsf b_k/C_{p,k}$ is the same for
   every phase, so the printed eigenvalues overestimate the wave speeds
   of the model they solve *(compiler check, not in the sources)*.
-- Du & Yang print the Wilke mixing rule with $X_i$ where $X_j$ is meant
-  inside the denominator sum (as printed the mole fractions cancel), and
+- Du & Yang print the Wilke mixing rule with $X_i$ inside the denominator sum, where
+  the summation index requires $X_j$ (as printed the mole fractions cancel), and
   the Arrhenius factor as $\exp\big(E_{a,r}/(R_uT)\big)$, where Peng et
   al. (Eq. 8) print $\exp\big(-E/(RT)\big)$; Du & Yang do not say
   whether their activation energies carry the sign. Peng et al. print the
@@ -797,7 +797,7 @@ temperature approaches zero before 50 μs without the entropy limiter, and a
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §2.1, Eqs. (8)–(18); §4, Props. 1–5, App. B; §5.2 (arXiv v1).
 - [Jiao et al. (2024)](/sources/jiao-2024.md) — §1.1, §1.3; §2.1–2.2, Eqs. (2–1)–(2–7); §3.3, Eq. (3–5); §4.1.
 - [Renac (2021)](/sources/renac-2021.md) — §1.2–1.3; §2, Eqs. (1)–(18); §3.1, Lemma 3.1, Eq. (24), Remarks 3.1–3.2; §4, Lemma 4.1, Eqs. (52)–(56); §5, Eqs. (62)–(64); §6, Theorem 6.1, Eq. (67); §7, Tables 1, 3, Fig. 4; Appendices A–D (arXiv v3).
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §1, Eqs. (1.1)–(1.2); §3.3–3.4, Eqs. (3.11)–(3.21); §5 (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — §1, Eqs. (1.1)–(1.2); §3.3–3.4, Eqs. (3.11)–(3.21); §5 (arXiv v1).
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §1; §2.1–2.3, Eqs. (2)–(31); §3, Figs. 1–5, Table 1; Appendix.
 - [Du & Yang (2022)](/sources/du-2022-b.md) — §2, Eqs. (2.1)–(2.8); §3, Thms. 3.1–3.2; §4, Lemma 4.1, Thms. 4.1–4.3; §5; §6, Eq. (6.1), Tables 6.1–6.3, Figs. 6.1–6.3.
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §2.1, Eqs. (1)–(8); §3.2–3.3, Figs. 6–8 (accepted manuscript).

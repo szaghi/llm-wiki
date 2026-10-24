@@ -5,7 +5,7 @@ description: "APEC is a fully conservative kinetic-energy-preserving central flu
 status: established
 aliases: [APEC, approximately pressure-equilibrium-preserving with conservation, PEqC, pressure equilibrium with quasi-conservation, FC-NPE]
 tags: [kinetic-energy-preserving, central-scheme, finite-difference, multiphase, numerical-flux]
-timestamp: 2026-10-23T19:58:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # APEC flux for approximate pressure equilibrium
@@ -51,7 +51,7 @@ evaluated at node $i$, the condition is asymmetric between the two
 interfaces of a cell. The authors argue that "no locally-defined
 half-point values satisfy Eq. (19) for all cells, and thereby no
 conservative schemes may be constructed" for a general equation of state
-(§2.5–2.6). The argument is not a proof. For the calorically perfect
+(§2.5–2.6). The paper gives no proof of it. For the calorically perfect
 mixture, Fujiwara et al. do construct exact local half-point values, and
 Terashima et al. acknowledge this (§1, §3.1).
 
@@ -155,7 +155,7 @@ advected periodically
   Fujiwara's exact scheme has a smaller error. All three schemes conserve
   total energy. The APEC residual converges at second order.
 - **Transcritical CH$_4$/N$_2$ with the cubic equation of state, 1D**
-  ($p_\infty=5$ MPa, $u_\infty=100$ m/s, 501 to 4001 points; §3.2.1, Figs.
+  (ambient pressure 5 MPa, velocity 100 m/s, 501 to 4001 points; §3.2.1, Figs.
   6–11). FC-NPE blows up after $t=0.09$ s. Refinement does not cure it:
   with 4001 points it blows up around $t=0.11$ s. APEC is stable over
   twenty flow-through times. PEqC keeps the pressure error at $10^{-8}$,

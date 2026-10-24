@@ -5,7 +5,7 @@ description: "A nonlinear reconstruction keeps its design order at a critical po
 status: established
 aliases: [critical-point accuracy, accuracy near critical points, Cp-property, order degeneracy at extrema]
 tags: [weno, reconstruction, finite-difference, critical-points]
-timestamp: 2026-10-23T20:07:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Accuracy at critical points
@@ -19,15 +19,15 @@ $(k-1)$th-order critical point (Li et al. 2022b, §4.1).
 ## Mechanism
 
 At an $m$th-order critical point the [smoothness indicators](/definitions/smoothness-indicator.md)
-lose their $O(\Delta x^2)$ leading term: for $r=4$ they become $\beta_k\sim A\Delta x^4$,
-$B\Delta x^6$, $C_k\Delta x^8$ at the first, second and third order (Li et al. 2022b, Table 4; page-local
-Taylor constants $A$, $B$, $C_k$). The
+lose their $O(\Delta x^2)$ leading term: for $r=4$ they become $\beta_k\sim\mathsf c_1\Delta x^4$,
+$\mathsf c_2\Delta x^6$, $\mathsf c_{3,k}\Delta x^8$ at the first, second and third order (Li et al. 2022b, Table 4; page-local
+Taylor constants $\mathsf c_1$, $\mathsf c_2$, $\mathsf c_{3,k}$, the source's $A$, $B$, $C_k$). The
 weight deviation $\omega_k-d_k$ is governed by ratios such as $\tau/\beta_k$, which lose the same
 number of orders. Li et al. (2022b, Eqs. (12)–(13)) recall the conditions for the $(2r-1)$th order of
 the finite-difference scheme: necessary and sufficient
-$\sum_kA_k(\omega^+_k-\omega^-_k)=O(\Delta x^r)$ together with $\omega^\pm_k-d_k=O(\Delta x^{r-1})$,
+$\sum_k\mathsf a_k(\omega^+_k-\omega^-_k)=O(\Delta x^r)$ together with $\omega^\pm_k-d_k=O(\Delta x^{r-1})$,
 sufficient $\omega^\pm_k-d_k=O(\Delta x^r)$, where $\pm$ marks the weights at $x_{i\pm1/2}$ (the
-coefficients $A_k$ are not defined in the paper).
+coefficients $\mathsf a_k$, page-local, the source's $A_k$, are not defined in the paper).
 
 ## Scheme by scheme
 
@@ -231,14 +231,14 @@ three-point version of the defect: weights built from ratios of the two-point in
 $(u_i-u_{i\pm1})^2$, which are the third-order Jiang–Shu ones, "do not differentiate between
 shocks and critical points", because a critical point midway between $x_i$ and $x_{i+1}$ makes
 one difference much smaller than the other, as a jump does. Their remedy floors both indicators,
-$\beta_\pm=(u_i-u_{i\pm1})^2+U^2(\Delta x/L)^2+\epsilon$ with $U=\max(\lvert u_{i-1}\rvert,\lvert u_i\rvert,\lvert u_{i+1}\rvert)$,
-$L=n_{\mathrm{sm}}\Delta x$, $5\lesssim n_{\mathrm{sm}}\lesssim10$ ($n_{\mathrm{sm}}=10$ and
+$\beta_\pm=(u_i-u_{i\pm1})^2+U^2(\Delta x/L_{\mathrm{sm}})^2+\epsilon$ with $U=\max(\lvert u_{i-1}\rvert,\lvert u_i\rvert,\lvert u_{i+1}\rvert)$,
+$L_{\mathrm{sm}}=n_{\mathrm{sm}}\Delta x$, $5\lesssim n_{\mathrm{sm}}\lesssim10$ ($n_{\mathrm{sm}}=10$ and
 $\epsilon=10^{-25}$ in the tests; page-local symbols), so that near a critical point, where the
-squared differences are of order $U^2(\Delta x/L)^4$ in their estimate, both indicators are dominated by the
+squared differences are of order $U^2(\Delta x/L_{\mathrm{sm}})^4$ in their estimate, both indicators are dominated by the
 floor and the TVD weights are close to $\tfrac12$, which the mapping sends to the linear weights
 ([mapped WENO](/methods/mapped-weno.md)); at strong shocks the floor is negligible. The argument
 is asymptotic, and no test isolates a critical point. *(Compiler check, not in the sources: since
-$L=n_{\mathrm{sm}}\Delta x$, the floor is the mesh-independent fraction $U^2/n_{\mathrm{sm}}^2$ of the
+$L_{\mathrm{sm}}=n_{\mathrm{sm}}\Delta x$, the floor is the mesh-independent fraction $U^2/n_{\mathrm{sm}}^2$ of the
 squared amplitude, so under refinement the differences of any smooth profile, $O(\Delta x^2)$ in
 square, fall below it everywhere and the interpolation tends to the linear one; a jump smaller than
 about $U/n_{\mathrm{sm}}$ is likewise treated as smooth.)*

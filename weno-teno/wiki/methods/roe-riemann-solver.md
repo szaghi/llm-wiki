@@ -5,7 +5,7 @@ description: "Roe's solver upwinds every characteristic field of a linearized fl
 status: established
 aliases: [Roe flux, Roe scheme, Roe solver, linearized Riemann solver, Roe–Harten flux]
 tags: [riemann-solver, numerical-flux, characteristic, finite-volume]
-timestamp: 2026-10-23T20:07:00Z
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Roe approximate Riemann solver
@@ -165,7 +165,9 @@ micro-jet that LWLS-WENO-Z gives (§5.2.3, Fig. 14).
 
 - **Carbuncle.** Fu (2023) (§3.6) states that HLLC and Roe "may induce carbuncle problem in
   proximity to strong shockwaves with low numerical dissipation", while HLL is free of it but
-  much more dissipative; Hu et al. (2022) list Roe with HLLC and HLLEM as shock-unstable (§1).
+  much more dissipative (whether HLL stays free of it under high-order reconstruction is an open
+  contradiction on the carbuncle page); Hu et al. (2022) list Roe with HLLC and HLLEM as
+  shock-unstable (§1).
   Hu et al.'s linear analysis is of HLLEM; the analysis of the Roe flux itself is Ren et al.'s
   (2025), below ([carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)).
 - Lesur et al.'s diffusivity ordering is a stated heuristic; their own linear-wave errors

@@ -5,7 +5,7 @@ description: "BVD is the selection principle that picks, cell by cell, the candi
 status: established
 aliases: [BVD, BVD principle, boundary variation diminishing algorithm]
 tags: [reconstruction, low-dissipation, interface-capturing, finite-volume, riemann-solver]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Boundary variation diminishing (BVD)
@@ -22,7 +22,7 @@ of the reconstructed values at the cell boundaries
 
 ## Why the interface jump
 
-The chunk-1 sources write the finite-volume flux in the unified form
+Fu (2023) and Huang et al. (2026) write the finite-volume flux in the unified form
 
 $$\hat f_{i+1/2}=\tfrac12\big(f(u^-_{i+1/2})+f(u^+_{i+1/2})\big)-\tfrac12\lvert\tilde a_{i+1/2}\rvert\big(u^+_{i+1/2}-u^-_{i+1/2}\big),$$
 
@@ -112,8 +112,6 @@ prediction, the **deepMTBVD** scheme (§3.3, Algorithm 2):
 
 ## Uses in the sources
 
-## Uses in the sources
-
 - **BVD with TENO.** BVD-TENO5-THINC, the BVD selection between TENO5 and THINC,
   performs better than BVD-WENOZ-THINC (as recalled by
   [Fu (2023)](/sources/fu-2023.md), §3.6); the floating-point treatment that
@@ -135,7 +133,7 @@ prediction, the **deepMTBVD** scheme (§3.3, Algorithm 2):
   an interface-wise selection over all four left/right pairs for one variable, not the
   cell-wise selection recalled above. Whether the central part uses these values is not
   stated. The resulting RHLLEM-LD solver resolves contacts and interfaces more sharply than the
-  solvers it is compared with (HLLE and HLLEM on the isolated contact) on an isolated
+  solvers it is compared with (HLLE and HLLEM) on an isolated
   contact, the blast wave, Titarev–Toro, Richtmyer–Meshkov and Kelvin–Helmholtz tests at
   second order (§5, Figs. 5.1–5.6), and the
   BVD step does not change the robustness of the solver at strong shocks: HLLEM with BVD

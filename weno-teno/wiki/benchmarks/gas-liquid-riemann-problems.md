@@ -5,7 +5,7 @@ description: "One-dimensional gas–liquid Riemann problems with exact or refere
 status: established
 aliases: [gas–water Riemann problem, gas–liquid shock tube, water–air shock tube, Cocchi gas–liquid Riemann problem, two-medium Riemann problems]
 tags: [benchmark, multiphase, interface-capturing, riemann-solver]
-timestamp: 2026-10-23T15:17:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Gas–liquid Riemann problems
@@ -24,7 +24,9 @@ gas-bubble-in-water [shock–bubble](/benchmarks/shock-bubble-interaction.md)
 problems.
 
 States are listed as $(\rho,v,p,\gamma,p_\infty)$ unless a row says
-otherwise; $\phi_k$ is the volume fraction of phase $k$ (page-local).
+otherwise, $p_\infty$ being the stiffened-gas constant $p_{\infty,k}$ of the
+state's material with the phase index dropped; $\phi_k$ is the volume
+fraction of phase $k$ (page-local).
 
 ## Problems in the sources
 
@@ -200,7 +202,7 @@ $\gamma=1.4$ and $1.63$, both at rest, on $[-5,5]$ m to $t=1.7817$ ms.
 Huang & Johnsen (2023) §4.1, Eq. (48), run an air–helium tube on $[0,2]$:
 air $(\rho,v,p)=(1,0,1)$, $\gamma=1.4$, for $x<1$ against helium
 $(0.125,0,0.1)$, $\gamma=1.6$, with 200 cells, CFL 0.4 and $t=0.4$.
-*(Compiler check, not in the sources: these are the states of Chamarthi's
+*(Compiler check, not in the sources: these are the states of Chamarthi (2023a)'s
 Abgrall–Karni tube below on a domain twice as long, run twice as long.)*
 [Chamarthi (2023a)](/sources/chamarthi-2023.md) runs two gas–gas problems on the
 [five-equation model](/definitions/five-equation-model.md), with states in
@@ -302,7 +304,7 @@ report "very good agreement" with the reference on their
 $10^9$ Pa problem (Fig. 10).
 
 **Gas–gas interfaces, diffuse and sharp.** On two gas–gas problems,
-Chamarthi finds no oscillations at the material interface. The author's
+Chamarthi (2023a) finds no oscillations at the material interface. The author's
 [gradient-based reconstruction](/methods/gradient-based-reconstruction.md)
 MIG4 gives the thinnest interface. The volume-fraction equation is written
 in the non-conservative form of Johnsen & Colonius, and its source term uses

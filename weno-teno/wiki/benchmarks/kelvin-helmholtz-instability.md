@@ -5,7 +5,7 @@ description: "Periodic shear-layer benchmark: Euler variants with sharp and smoo
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
 tags: [benchmark, low-dissipation, central-scheme, dg, positivity, finite-volume]
-timestamp: 2026-10-23T19:51:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Kelvin–Helmholtz instability
@@ -113,6 +113,22 @@ $\sigma=0.2$, $p_0=10$ (Mach about 0.25) and $\Delta\rho/\rho_0=0$
 and dye diffusivity $2u_{\mathrm f}/\mathrm{Re}=2\times10^{-5}$, and
 $\mathrm{Re}=10^6$ also run. The metrics are the dye entropy and the
 $L_2$ dye difference against the published DEDALUS spectral reference.
+
+[Stone et al. (2026)](/sources/stone-2026.md) §4.1 take the same
+Lecoanet et al. initial condition, printed as $P_0=10$, shear velocity
+1, "width of shear profile" $\sigma=0.2$ and $a=0.01$ (their symbols,
+page-local), on $[-0.5,0.5]\times[-1,1]$ with $512\times1024$ cells, the
+LLF solver, PLM and RK2, without stating a viscosity, to compare a
+passive contaminant advected by the fluid with $10^7$ Lagrangian Monte
+Carlo tracer particles in [AthenaK](/software/athenak.md) at $t=2$ and
+$3$ (Fig. 18). The tracers follow the mass flow and recover the
+statistics of the fluid more accurately but are more diffusive than the
+fluid evolution, an extra diffusivity that they call a consequence of
+the probabilistic update, an effective random walk, which more
+particles cannot reduce. Cernetic et al.'s $\sigma=0.2$ is the width of
+the Gaussian of the velocity perturbation and their $a=0.05$ the
+shear-layer thickness, so the two papers' labels of the same data
+differ.
 
 The three setups differ in density ratio (2, 2, and 4 for the tanh
 setup, where $\rho$ runs from $0.5$ to $2$ *(compiler check, not in the
@@ -224,7 +240,7 @@ and profile in $\phi_{\mathrm s}=(\lvert y\rvert-\tfrac12)/a_{\mathrm s}$,
 seeded by a perturbation of amplitude 0.1 with random phases localized
 by $e^{-\phi_{\mathrm s}^2a_{\mathrm s}^2/0.1^2}$, a magnetic field with
 poloidal and toroidal magnetization parameters $0.01$ and $1$, and
-resistivity $\eta=10^{-5}$, on $[-\tfrac12,\tfrac12]\times[-1,1]\times[-\tfrac12,\tfrac12]$
+resistivity $\eta_{\mathrm m}=10^{-5}$, on $[-\tfrac12,\tfrac12]\times[-1,1]\times[-\tfrac12,\tfrac12]$
 with $N_x\times2N_x\times N_x$ zones, $N_x=128,256$, to $t=30$, in [PLUTO](/software/pluto.md) with
 the MHLLC solver and SSP(4,3,3) IMEX stepping with a linear fallback at
 discontinuities.
@@ -255,7 +271,7 @@ against the earlier [central-upwind scheme](/methods/central-upwind-scheme.md). 
 [TENO](/methods/adaptive-teno.md) than with
 [WENO-CU6](/methods/weno-cu6.md) (Fig. 10). All three read
 "more structure" as "less [numerical dissipation](/definitions/numerical-dissipation.md)".
-Ji et al. read the sharp-layer case the same way on unstructured
+Ji, Liang & Fu (2022) read the sharp-layer case the same way on unstructured
 triangles: finite-volume TENO3 is much more dissipative than the
 higher-order [unstructured TENO](/methods/targeted-eno.md) schemes, and
 TENO5/6 resolve more than [CWENO](/methods/cweno.md)5/6 (Figs. 18–20);
@@ -301,7 +317,7 @@ It also qualifies the first finding: if the limit depends on the
 scheme, more small-scale structure on one grid is not by itself
 evidence of accuracy.
 
-**Positivity of high-order DG.** Rueda-Ramírez et al. report that both
+**Positivity of high-order DG.** Rueda-Ramírez et al. (2022) report that both
 standard and split-form [DGSEM](/methods/dgsem.md) ($N=7$, entropy- and
 kinetic-energy-preserving volume flux, Rusanov surface flux) need a
 positivity limiter on this case. With
@@ -344,7 +360,7 @@ inequality (subcell limiting factors from a linear program); the run is
 robust and resolves fine-scale features. Applying the same limiting to
 entropy-stable DG gives visibly different turbulent structures, from
 which they conclude that the choice of the high-order scheme matters
-(§4.3, Figs. 4–5); like Rueda-Ramírez et al., they do not say which is
+(§4.3, Figs. 4–5); like Rueda-Ramírez et al. (2022), they do not say which is
 closer to a converged solution.
 
 **Helicity of a semi-implicit MHD scheme.** Dematté et al. show their
@@ -385,9 +401,9 @@ fall by a factor 1.8 under refinement *(compiler check, not in the
 sources)*.
 
 **Entropy stability and the magnetic field.** Liu et al. (2025c) run
-their globally divergence-free entropy-stable nodal DG at $k=1,2,3$
-without any limiter; the total entropy does not increase and the
-divergence norm stays at machine level for $k=2$ (Figs. 7–9). Liu et
+their globally divergence-free entropy-stable nodal DG at $N=2,3,4$
+(their face degree $k=1,2,3$) without any limiter; the total entropy does not increase and the
+divergence norm stays at machine level for $N=3$ (Figs. 7–9). Liu et
 al. (2025b) describe "growth of the magnetic field … amplified by the
 vortical flow" with their entropy-stable oscillation-free DG and plot
 the magnetic pressure in $[1,21]$ (Fig. 8). With the printed initial
@@ -452,8 +468,8 @@ convergent flow, and the benchmark measures an error.
   (2025c) give no initial data for their MHD run.
 - Zampa & Dumbser and Allegrini & Vignal are read as arXiv v1 and the
   HAL manuscript.
-- Chertock et al. print the Cesàro average with upper index $n$ where
-  $m$ is meant, and refer to "the adaptive scheme" in the Ex. 8 text,
+- Chertock et al. print the Cesàro average with upper index $n$ in
+  place of the $m$ of their text, and refer to "the adaptive scheme" in the Ex. 8 text,
   a leftover: the paper has no adaptive scheme.
 - None of the sources reports an error measure for the compressible
   Euler or MHD variants; the only error measurements are for the
@@ -475,7 +491,7 @@ convergent flow, and the benchmark measures an error.
   and the viscous ones at 0.99.
 - Mignone et al. (2024) print the density of Eq. (68) with $\rho_h$ in
   both terms and give no density values, nor the $p$ and $\sigma$ that
-  enter their magnetic field (where $\sigma$ is also $1/\eta$); and their
+  enter their magnetic field (where $\sigma$ is also $1/\eta_{\mathrm m}$); and their
   text says that higher resolution or accuracy gives "a gradual
   reduction of the growth rate", while their fourth-order rates rise
   from about 2.17 to 2.31 with resolution.
@@ -489,7 +505,7 @@ convergent flow, and the benchmark measures an error.
   of [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.4 (see
   [two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md));
   and in the two-material tri-point problem of
-  [Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.7, resolved by
+  [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) Ex. 5.7, resolved by
   the moving-mesh scheme. These are not runs of the benchmark itself.
 - The roll-up of the slip line of the
   [double Mach reflection](/benchmarks/double-mach-reflection.md) is
@@ -519,7 +535,7 @@ convergent flow, and the benchmark measures an error.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §5.2.1, Figs. 4–6 (arXiv v2).
 - [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) — §4.3, Ex. 4.6, Eq. (62), Table 5, Figs. 15–18.
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §4.6, Figs. 16–18 (roll-up on a shocked bubble only).
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Ex. 5.7 (roll-up in the tri-point problem only; arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — Ex. 5.7 (roll-up in the tri-point problem only; arXiv v1).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §5.1.5, Fig. 5; §5.1.4 (slip-line roll-up only) (arXiv v3).
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.7, Figs. 18–20; §5.10, Table 7 (preprint).
 - [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §5.6, Eq. (5.8), Fig. 5.6.
@@ -541,3 +557,4 @@ convergent flow, and the benchmark measures an error.
 - [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §4, Fig. 16 (HAL manuscript).
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — Ex. 7, Fig. 8.
 - [Liu et al. (2025c)](/sources/liu-2025-c.md) — Ex. 5.4, Figs. 7–9.
+- [Stone et al. (2026)](/sources/stone-2026.md) — §4.1, Fig. 18.

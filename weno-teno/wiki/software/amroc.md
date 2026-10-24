@@ -5,7 +5,7 @@ description: "Deiterding's open-source C++ framework for block-structured adapti
 status: established
 aliases: [AMROC, Blockstructured Adaptive Mesh Refinement in object-oriented C++, AMROC-Clawpack]
 tags: [software, finite-volume, immersed-boundary]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # AMROC
@@ -25,7 +25,7 @@ include the framework's author.
 
 ## Numerics in the sources
 
-| | Peng et al. (2022) | Wang et al. (2022) |
+| | Peng et al. (2022) | Wang et al. (2022a) |
 |---|---|---|
 | Equations | reacting multispecies Euler, planar or axisymmetric, thermally perfect (CHEMKIN-II) | Euler, ideal gas; reacting H$_2$–air in one case |
 | Reconstruction | [MUSCL–Hancock](/methods/muscl-hancock.md) with minmod, mapped-mesh slopes | MUSCL–Hancock on primitive variables |

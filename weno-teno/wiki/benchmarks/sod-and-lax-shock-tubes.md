@@ -5,7 +5,7 @@ description: "The two most often run one-dimensional Euler Riemann problems with
 status: established
 aliases: [Sod problem, Sod shock tube, Lax problem, Lax shock tube, Riemann problem of Lax, Lax–Harden problem]
 tags: [benchmark, weno, teno, riemann-solver]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Sod and Lax shock tubes
@@ -36,11 +36,11 @@ the right half.
 | [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) §4.2, Eq. (41) | 200 points | 0.2 | on $[-0.5,0.5]$ (from Fig. 3), $\Delta t=5\times10^{-4}$; ninth-order central scheme with adaptive [artificial dissipation](/methods/artificial-viscosity.md) |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.2, Eq. (29) | 200 | 0.2 | finite-volume [WENO3-NN](/methods/learned-weno-weights.md), LLF, characteristic, TVD-RK3 at CFL 0.6 |
 | [Hiejima (2022)](/sources/hiejima-2022.md) §3.1, Eq. (26) | 101 points ($101\times21\times21$) | 0.2 | on $[-0.5,0.5]$; [WCNS](/methods/weighted-compact-nonlinear-scheme.md) of interpolation order 5–11, AUSMDV |
-| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.2.1 | $\mathbb P_3$ on 50 and $\mathbb P_9$ on 20 elements (200 DOFs); $N=20$–$160$ for $\mathbb P_2$–$\mathbb P_7$ | 0.2 | [artificial viscosity](/methods/artificial-viscosity.md) from the temporal residual, $c_\mu=5$ (arXiv v2) |
-| [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.1 | $\mathbb P_3$, $\mathbb P_5$ at about 200 DOFs; $N=40$–$640$ ($L^1$), $20$–$320$ ($L^2$), and $M=100$–$1600$ DOFs, $\mathbb P_2$–$\mathbb P_7$ | 0.2 | flux reconstruction with [entropy filtering](/methods/entropy-filtering.md) (arXiv v3) |
+| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.2.1 | $\mathbb P^3$ on 50 and $\mathbb P^9$ on 20 elements (200 DOFs); $N=20$–$160$ for $\mathbb P^2$–$\mathbb P^7$ | 0.2 | [artificial viscosity](/methods/artificial-viscosity.md) from the temporal residual, tunable constant $c_\mu=5$ (page-local) (arXiv v2) |
+| [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.1 | $\mathbb P^3$, $\mathbb P^5$ at about 200 DOFs; $N=40$–$640$ ($L^1$), $20$–$320$ ($L^2$), and $M=100$–$1600$ DOFs, $\mathbb P^2$–$\mathbb P^7$ | 0.2 | flux reconstruction with [entropy filtering](/methods/entropy-filtering.md) (arXiv v3) |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.3.1 | 100 elements | 0.2 | nodal DG with ANN-predicted artificial viscosity |
 | [Sousa & Scalo (2022)](/sources/sousa-2022.md) §5.1 | grid study (grids not printed in the text) | 0.2 | diaphragm at $x=0$; Dirichlet left, Neumann right; compact central scheme with [quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md) vs localized artificial diffusion; $\gamma$ not printed (arXiv v2) |
-| [Boscarino et al. (2022)](/sources/boscarino-2022.md) Ex. 5.2 | 50 | 0.2 | reflective boundaries; [semi-implicit all-Mach](/methods/semi-implicit-all-mach-scheme.md) WENO S2T2 and S4T3 at $\varepsilon=1$, CFL 0.25 (arXiv v2) |
+| [Boscarino et al. (2022)](/sources/boscarino-2022.md) Ex. 5.2 | 50 | 0.2 | reflective boundaries; [semi-implicit all-Mach](/methods/semi-implicit-all-mach-scheme.md) WENO S2T2 and S4T3 at Mach-scaling parameter $\varepsilon=1$ (page-local), CFL 0.25 (arXiv v2) |
 | [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.2 | 100 | 0.2 | on $[-0.5,0.5]$, zero-gradient boundaries; TENO-M6/M8 ([TENO](/methods/targeted-eno.md) with stencil extension); $\gamma$ not printed |
 | [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.3 | 100 | 0.2 | five-point TENO with a new [scale sensor](/definitions/scale-sensor.md) vs TENO5-A, TENO5, WENO5-Z (arXiv v1) |
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.2 | 100 | 0.2 | [TENO-THINC](/methods/teno-thinc.md)-family scheme |
@@ -48,7 +48,7 @@ the right half.
 | [Lesur et al. (2023)](/sources/lesur-2023.md) §4.1 | 500 | 0.2 | [IDEFIX](/software/idefix.md), Roe solver, linear reconstruction, RK2; left pressure printed $0.1$, see Qualifications (arXiv v1) |
 | [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) §8.4 | 10 elements, static $N=5$ or $p$-adaptive $N\in[2,5]$ | 0.2 | Dirichlet; Roe with entropy fix; [$p$-adaptive DG](/methods/hp-adaptation.md) with [FV subcells](/methods/subcell-finite-volume-limiting.md), $N_{\mathrm{FV}}=6$ or 11 |
 | [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.2 | 200 | 2 | mirrored, on $[-5,5]$: $(0.125,0,0.1)$ on $[-5,0)$, $(1,0,1)$ on $[0,5]$; scale-invariant multi-resolution [A-WENO](/methods/alternative-weno.md) |
-| [Huang & Zahr (2022)](/sources/huang-2022.md) §6.4.1 | 108 space–time triangles, 84 after element removal | 0.2 | [implicit shock tracking](/methods/implicit-shock-tracking.md) HOIST, $p=2$ (arXiv v2) |
+| [Huang & Zahr (2022)](/sources/huang-2022.md) §6.4.1 | 108 space–time triangles, 84 after element removal | 0.2 | [implicit shock tracking](/methods/implicit-shock-tracking.md) HOIST, degree $N=2$ (arXiv v2) |
 | [Bezgin et al. (2023)](/sources/bezgin-2023.md) §5.1.2, App. A | 100 | 0.2 | zero-gradient boundaries; [JAX-Fluids](/software/jax-fluids.md) with HLLC (primitive WENO5-JS) and Roe-type characteristic flux splitting (arXiv v1) |
 | [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.9 | 200 | 0.2 | [gradient-based](/methods/gradient-based-reconstruction.md) MEG6, MIG4 vs TENO5 (arXiv v2) |
 | [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.2 | 200 | 0.2 | MEG7 vs WCNS7M; exact Riemann reference (arXiv v1) |
@@ -60,7 +60,7 @@ the right half.
 | [Jiang et al. (2024)](/sources/jiang-2024.md) §4.2.1 | particle spacing $\Delta x_0=0.0025$ | 0.15 | on $[-0.5,0.5]$; Lagrangian weighted-least-squares particles with WENO-Z-type pair states vs the GSPH and WENO-SPH particle methods |
 | [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.4, Eq. (9c) | Chebyshev with a mapping, $N_x=615$ | not stated | on $[-1,1]$, reflecting walls; spectral relaxation; reference HyPar characteristic WENO5 on 8000 (arXiv v2) |
 | [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.4 | triangles, $201\times11$ vertices | 2 | strip $[-5,5]\times[-0.025,0.025]$, jump at $x=0$; ALW-MR-WENO-3/4/5 vs [MR-WENO](/methods/multi-resolution-weno.md); fourth entries printed $2.5$ and $0.25$, see Qualifications |
-| [Naudet & Zahr (2024)](/sources/naudet-2024.md) §5.3.1, Eq. (57) | six space-time slabs, 65 simplices ($q=1$, $p=2$) in the first | 1 | walls at $x=0$ and $1$; space-time [implicit shock tracking](/methods/implicit-shock-tracking.md); reference second-order FV (superbee) on over $10^5$ elements, adaptive RK4 |
+| [Naudet & Zahr (2024)](/sources/naudet-2024.md) §5.3.1, Eq. (57) | six space-time slabs, 65 simplices (geometry degree 1, solution degree $N=2$) in the first | 1 | walls at $x=0$ and $1$; space-time [implicit shock tracking](/methods/implicit-shock-tracking.md); reference second-order FV (superbee) on over $10^5$ elements, adaptive RK4 |
 | [Danis et al. (2025)](/sources/danis-2025.md) §5.5 | $N^3$ with $N=5\cdot2^n$, $n=1,\dots,7$ (to $640^3$), CFL 0.5 | 0.2 | on $[0,1]^3$, jump at $x=0.5$; [tensor-train](/methods/tensor-train-weno.md) FD WENO5-JS with global LF splitting (arXiv v1) |
 | [Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 5 | 200 cells | 0.16 | bound-preserving [PAMPA](/methods/pampa-scheme.md), SSP-RK3 at CFL 0.2 |
 | [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) §3.1, §3.4.1 | 200, 500 cells | 0.2 | linearized all-Mach IMEX finite volumes (L2 and L∞ AP, first order; [asymptotic preservation](/properties/asymptotic-preservation.md)) at $\varepsilon=1$, against their non-linear versions; exact reference (HAL manuscript) |
@@ -70,6 +70,8 @@ the right half.
 | [Liang et al. (2025)](/sources/liang-2025.md) §4.2, Eq. (33) | triangles, $h\approx1/60$ | 0.2 | unstructured TENO5-E–TENO7-E vs CWENO; exact reference |
 | [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Example 5.7 | quasi-2D, $[0,1]^2$ on $100\times2$ | 0.2 | generalized [Active Flux](/methods/active-flux.md), Jacobian splitting vs [flux vector splitting](/methods/flux-vector-splitting.md) of the point-value update (arXiv v3) |
 | [de Romémont et al. (2026)](/sources/deromemont-2026.md) §6.2 | 128 (coarse and learned) | 0.156 | MUSCL finite volumes with network-learned slopes vs finite-difference slopes; reference on 1024; data not printed |
+| [Wang et al. (2023a)](/sources/wang-2023.md) §4.3, Eq. (24) | 400 | 2 | mirrored, on $[-5,5]$: $(0.125,0,0.1)$ on $[-5,0)$, $(1,0,1)$ on $[0,5]$; fifth-order [A-WENO](/methods/alternative-weno.md) with affine-invariant Z-type weights, adaptive-diffusion LLF-M flux vs [LLF](/methods/lax-friedrichs-flux.md); cited to Hu & Shu |
+| [Wang et al. (2026)](/sources/wang-2026.md) §6.3.1 | two-level [AMR](/methods/adaptive-mesh-refinement.md), ratio 2, finest $\Delta x=1/256$ | 0.2 | diaphragm at $x=0.5$; FD WENO-JS5 with AMR-WENO or AMR-HybridWENO inter-level interpolation, regridding every 2 or 5 steps |
 
 Abgrall & Barsukow run Sod with three Active Flux variants: sixth order
 at CFL 0.25 (Fig. 19); a fifth-order point setup with a third-order
@@ -157,7 +159,7 @@ $[-\tfrac12,\tfrac12]$, and $[-5,5]$.
 | [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.2 | not printed | 200 | 0.14 | text prints "$t=01.4$", Fig. 3 caption $0.14$ |
 | [Zhou et al. (2023)](/sources/zhou-2023.md) §5.1, Eq. (36) | $[-0.5,0.5]$ | 100 | 0.14 | right pressure printed $0.5710$ |
 | [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 7 | $[-5,5]$ | 300 cells | 1.3 | WENO-JS lowest resolution, then WENO-Z; IMWENO-P as MWENO-P, marginally above WENO-P and WENO-NS (Fig. 6) |
-| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.3 | $[0,1]\times[0,0.1]$, polygons | $h=1/430$, $P_2$, $P_3$ | 0.14 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG in primitive variables; reference 1D residual distribution on 50,000 points (arXiv v1) |
+| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.3 | $[0,1]\times[0,0.1]$, polygons | $h=1/430$, $\mathbb P^2$, $\mathbb P^3$ | 0.14 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG in primitive variables; reference 1D residual distribution on 50,000 points (arXiv v1) |
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.4.2 | $[0,1]$, jump at $0.5$ | single domain; two blocks 160 on $[0,0.75]$, 40 on $(0.75,1]$ | 0.14; two blocks also 0.06 | |
 | [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.4, Eq. (9d) | $[-1,1]$, reflecting walls | Chebyshev, $N_x=615$ | first output 0.02 | printed in conserved variables $(0.445,0.311,8.928)$ and $(0.5,0,1.4275)$ |
 | [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.3 | $[-0.5,0.5]$ strip, width 0.05, periodic in $y$, $x$-boundary condition not specified | triangles, $201\times11$ vertices | 0.16 | ALW-MR-WENO vs MR-WENO |
@@ -168,6 +170,9 @@ $[-\tfrac12,\tfrac12]$, and $[-5,5]$.
 | [Huang et al. (2025b)](/sources/huang-2025-b.md) §4.2.2 | $[0,1]$ | 200 cells | 0.16 | THINC cells in the $x$–$t$ plane |
 | [Fan et al. (2025b)](/sources/fan-2025-b.md) Eq. (44) | $[0,1]$, jump at 0.5 | 400 | 0.15 | right pressure printed $0.5710$ |
 | [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.3, Eq. (4.7) | $[-5,5]$ | third order, 60 elements (180 DOFs) | 1.6 | DG/FV-[ROUND](/methods/round-scheme.md) on non-uniform subcells vs DG/FV with WENO5-JS on uniform subcells |
+| [Wang et al. (2023a)](/sources/wang-2023.md) §4.2 | not printed | 200 | 1.3 | LLF-M vs LLF fluxes in A-WENO; also data scaled by $10^{-7}$ |
+| [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.7 | $[-5,5]$, outflow | 200 cells | 1.3 | local [COS(DG)](/methods/cos-dg.md) vs seven DG limiters with the KXRCF indicator, OFDG and OEDG; Zhang–Shu positivity limiter |
+| [Wang et al. (2026)](/sources/wang-2026.md) §6.3.2 | not printed | two-level AMR | 0.1 | regridding every 10 steps; AMR-WENO vs AMR-HybridWENO |
 
 The $[-5,5]$ placement at $t=1.3$ corresponds to the $[0,1]$ placement
 at $t=0.13$ under the scaling $x\mapsto(x+5)/10$, $t\mapsto t/10$
@@ -195,7 +200,7 @@ with $N=3$ and $N=7$ largely indistinguishable (Fig. 7). Sciacovelli et
 al. attribute the smearing of their contact to the high-order
 dissipation alone, since their shock sensor switches the low-order
 term off at the contact, where the pressure is constant (§4.2, Fig. 3).
-On Lax, WENO-ZN reduces the dissipation near the shock (Li et al.,
+On Lax, WENO-ZN reduces the dissipation near the shock (Li et al. (2022b),
 Fig. 4); WENO-Z+M improves shock and contact markedly over WENO-Z and
 WENO-Z+, is less oscillatory than WENO-IS-I, while ninth-order WENO-Z9
 is less dissipative but more oscillatory (Luo & Wu, Fig. 12). Deng finds
@@ -254,9 +259,9 @@ a shock through a block interface at $x=0.75$, the spacing jumping
 from $0.75/160$ to $0.25/40$ (ratio $4:3$) *(compiler check, not in
 the sources)*: the shock locations agree with the exact solution at both
 times, the Lax shock sitting at the interface at $t=0.06$ (Figs. 7–8).
-On a single domain their scaled smoothness indicators ($\lambda=2$ in
-their notation) suppress the oscillations that the unscaled ones
-($\lambda=1$) produce on Lax, where WENO-JS and multi-resolution WENO
+On a single domain their scaled smoothness indicators (Qin et al.'s
+scaling $\lambda_{\mathrm s}=2$) suppress the oscillations that the unscaled ones
+($\lambda_{\mathrm s}=1$) produce on Lax, where WENO-JS and multi-resolution WENO
 are also less oscillatory than the unscaled WCNS; they attribute this
 to the wide explicit difference stencil of WCNS (Fig. 6). The interface
 coupling costs nothing measurable: at 10000 points 283.38 s (one zone)
@@ -286,7 +291,7 @@ Hiejima states without a figure (§3.2, Fig. 3).
 the density localized at the shock, with minimal dissipation at the
 rarefaction and the contact (§5.2.1, Fig. 4). The $L^1$ density error
 converges at first order, rates 0.92, 1.02, 0.87, 0.95, 0.99, 0.85 for
-$\mathbb P_2$–$\mathbb P_7$ on 20 to 160 elements, with a marginally lower error at higher order
+$\mathbb P^2$–$\mathbb P^7$ on 20 to 160 elements, with a marginally lower error at higher order
 for fixed DOFs (Table 1). Dzanic & Witherden's entropy filter gives the
 same first order, $L^1$ rates 0.91, 0.94, 0.93, 0.92, 0.87, 0.86 and
 $L^2$ rates 1.05, 0.98, 1.01, 1.01, 0.98, 1.03 against $N$ (Tables 1–2);
@@ -302,7 +307,7 @@ elements (§5.3.1, Figs. 7–8).
 quasi-spectral viscosity and localized artificial diffusion both
 converge under refinement on Sod, the former giving slightly sharper
 discontinuities on equal grids; localized artificial diffusion needs an
-explicit Padé filter ($\alpha=0.495$), the quasi-spectral viscosity does
+explicit Padé filter (page-local filter parameter $\alpha=0.495$), the quasi-spectral viscosity does
 not, although an optional filter ($\alpha=0.499$) attenuates residual
 high-wavenumber oscillations (§5.1, Fig. 4).
 
@@ -326,7 +331,7 @@ $-3.38,\ -4.54,\ -5.59$ on Lax (slopes 6.59 and 8.44), which they call
 exponential $p$-convergence (Table 1 and the second Table 1); no
 shock-capturing scheme is run for comparison. Huang & Zahr's HOIST
 method tracks the Sod waves on a space–time mesh of 108 triangles
-refined near the diaphragm ($p=2$, geometry $q=1$), removing 24
+refined near the diaphragm (solution degree $N=2$, geometry degree 1), removing 24
 elements; the features are tracked in order of strength, the shock by
 about iteration 27, the contact by 52, the rarefaction head by 66 and
 its tail by 106 (§6.4.1, Fig. 29). See
@@ -463,6 +468,45 @@ vertical-face ones and the cell averages when the flow is grid-aligned.
 All flux-vector-splitting variants agree with the exact solution once
 limiting is on (§3.2, Figs. 10–11).
 
+**Adaptive dissipation, oscillation suppression and AMR transfers.**
+Wang et al. (2023a)'s LLF-M flux, which multiplies the LLF coefficient
+by a feature-sensor factor between $0.1$ and $1$, gives a sharper Lax
+contact and a lower error in the smooth regions than LLF, and in the
+smooth density regions of the mirrored Sod tube its coefficient sits
+at about $0.1$ of the LLF one (§4.2–4.3, Figs. 2–3, 5–6). Cao et al.
+(2026) find third-order local COS(DG) giving the sharpest
+non-oscillatory Lax profile among the ten DG techniques compared
+(Ex. 6.7, Figs. 7–8). Wang et al. (2026) use the tubes to show what
+regridding does to non-conservative inter-level interpolation: with the
+patches rebuilt every 5 steps (Sod) or 10 steps (Lax), pure WENO
+interpolation oscillates and gives a non-physical overshoot of the
+shock speed, while AMR-HybridWENO, which falls back to conservative
+linear interpolation in troubled cells, agrees with the uniform-grid
+reference; with regridding every 2 steps the two coincide, which the
+authors call agreement with the earlier node-based results of Shen, Qiu
+& Christlieb (§6.3.1–6.3.2,
+Figs. 13–14; see [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)).
+
+**Scale invariance across scales.** Wang et al. (2023a) run the Lax
+data multiplied by $10^{-7}$: classical A-WENO with Z-type weights
+oscillates near the steep gradients, the affine-invariant version does
+not, and the same holds with the LLF flux, figure omitted (§4.2,
+Fig. 4). Cao et al. (2026) Ex. 6.8 build a multi-scale Lax problem on
+$[-15,15]$ with outflow boundaries: $(\rho,v,p)=(44.5,0.698,352.8)$ on
+$[-15,-10)$, $(50,0,57.1)$ on $[-10,0)$, $(0.00445,0.698,0.03528)$ on
+$[0,10)$ and $(0.005,0,0.00571)$ on $[10,15]$, 6000 cells, $t=1.4$,
+reference $\mathbb P^1$ COS(DG) on 160,000 cells. The printed states are
+the Lax states with density and pressure multiplied by $10^2$ on the
+left half and $10^{-2}$ on the right half, the velocity unchanged, so
+the tubes at $x=-10$ and $x=10$ are both Lax problems, $10^4$ apart in
+magnitude, and $x=0$ carries a third jump *(compiler check, not in the
+sources)*. OEDG, which is invariant under a global rescaling only,
+undershoots in the small-scale region at $\mathbb P^1$ and
+$\mathbb P^2$, whereas COS(DG), whose indicator is invariant under
+affine maps of the data on each three-cell stencil, does not (Fig. 9).
+This sharpens Peng, Sun & Wu's single-scale result above rather than
+contradicting it. See [scale invariance](/properties/scale-invariance.md).
+
 ## Relatives of the two tubes
 
 The Sod data recur, unchanged or nearly so, in models other than the
@@ -485,7 +529,7 @@ single-gas Euler equations.
   $Y_1$ the mass fraction of component 1, $\gamma_1=1.5$, $\gamma_2=1.3$,
   unit heat capacities, $t=0.2$, entropy-stable DGSEM with $N=3$ on 100
   cells; shocks and contacts are well captured (Figs. 3–4).
-- **Stiffened gas and three dimensions.** [Li, Duan & Tang (2022)](/sources/li-2022-c.md)
+- **Stiffened gas and three dimensions.** [Li, Duan & Tang (2022c)](/sources/li-2022-c.md)
   run a quasi-two-dimensional [stiffened-gas](/definitions/stiffened-gas-equation-of-state.md)
   tube, $(\rho,v_1,v_2,p)=(1,0,0,1)$ and $(0.75,0,0,0.05)$ with
   stiffening pressure 1 and $\gamma=3$, on $100\times5$ cells to
@@ -528,7 +572,7 @@ single-gas Euler equations.
   down to 0.25 mm, whose results on several meshes agree with two
   earlier computations (Fig. 6); and
   [Du & Yang (2022)](/sources/du-2022-b.md) Ex. 6.3 on a 10 cm domain
-  with bound-preserving LDG, $k=2$, 400 cells and a 5000-cell
+  with bound-preserving LDG of degree $N=2$, 400 cells and a 5000-cell
   reference, whose code blows up without the bound-preserving limiter
   (Fig. 6.3). Du & Yang also run a He/N$_2$ tube, $(T,v,p,Y_1,Y_2)=(300\
   \mathrm K,0,10\ \mathrm{atm},1,0)$ for $x\le0.4$ m and $(300\ \mathrm
@@ -596,7 +640,7 @@ single-gas Euler equations.
 - **Single planar shocks.** [Gaburro et al. (2024)](/sources/gaburro-2024.md)
   §5.1.2 run a right-moving shock of Mach 5, 10 or 20 into
   $(\rho,v,p)=(\gamma,0,1)$ on $[0,1.2]\times[0,0.1]$, the post-shock
-  state from the normal-shock relations, at $P_2$ and $P_3$ on polygons
+  state from the normal-shock relations, at $\mathbb P^2$ and $\mathbb P^3$ on polygons
   with $h=1/180$ to $t=0.04$: shock position and magnitude are "always
   perfectly captured", with start-up perturbations downstream that they
   attribute to the mismatch between one-dimensional Rankine–Hugoniot and
@@ -661,6 +705,15 @@ single-gas Euler equations.
   air–helium and water–air tubes with a sharp-interface DG method. They
   belong with the [gas–liquid Riemann problems](/benchmarks/gas-liquid-riemann-problems.md).
 
+- **Entropy test family for a learned flux.** [Liu et al. (2026)](/sources/liu-2026.md)
+  §5.1.3 (arXiv v1) check the discrete entropy remainder of a neural
+  entropy-stable flux on a Sod-type family on $(-5,5)$ with Dirichlet
+  boundaries: $\rho=3.5$ and $p=10-0.01k$ on the left, $\rho=0.12+0.01k$
+  and $p=1+0.01k$ on the right, $v=0$, the jump at
+  $x_0=-0.3+0.6\,(2k)/100$, for $k=0,\dots,100$ ($k$ page-local, their
+  index), Eq. (5.9); the remainder stays non-positive across the family
+  (Fig. 5.9). The jump positions range over $[-0.3,0.9]$ *(compiler
+  check, not in the sources)*.
 - **Real gas.** [Weng & Mével (2023)](/sources/weng-2023.md) §4.1
   validate their OpenFOAM real-gas solver on a Sod-type tube with
   driver-to-driven pressure ratio 20, equal temperatures, $\gamma=1.4$
@@ -699,7 +752,7 @@ single-gas Euler equations.
 - Mossier, Beck & Munz state Dirichlet boundaries; Boscarino et al.
   reflective ones; Hong, Ye & Ye zero-gradient ones.
 - Luo & Wu print the left Lax pressure as $0.3528$ (Eq. (16)), where
-  Fu (2021), Takagi et al., Li et al., Deng, Huang et al. (2026), Peng et
+  Fu (2021), Takagi et al., Li et al. (2022b), Deng, Huang et al. (2026), Peng et
   al., Li, Shu & Qiu, Fan, Zhang & Qiu, Fan et al. (2025a) and Sciacovelli et al. print $3.528$;
   the paper's text does not show which value was run.
 - Huang et al. (2026) give $t=0.15$ in the text and $t=0.16$ in the caption of
@@ -713,7 +766,7 @@ single-gas Euler equations.
   gives the opposite signs *(compiler check, not in the sources)*.
 - Wang & Don's figure of the unscaled tubes includes the Lax problem,
   although their §3.2.3 text list omits it.
-- Li et al. compute the Lax reference with fifth-order WENO-Z, the
+- Li et al. (2022b) compute the Lax reference with fifth-order WENO-Z, the
   other references of the paper with seventh order.
 - Fan, Zhang & Qiu print both Lax states on "$x\in[0,5)$" and "$x\in[0,5]$"
   (Eq. (4.1)); their figures show $[-5,5]$, so the left state belongs on
@@ -727,7 +780,7 @@ single-gas Euler equations.
   al. not for their tube, Sousa & Scalo not for Sod.
 - Dzanic & Witherden's $L^2$ errors are smaller than their $L^1$ errors
   throughout (e.g. $1.21\times10^{-3}$ against $6.87\times10^{-3}$ at
-  $M=100$, $\mathbb P_2$, Tables 3–4), while their printed definitions
+  $M=100$, $\mathbb P^2$, Tables 3–4), while their printed definitions
   (Eq. (28)), $\frac1M\sum\lvert e_i\rvert$ and
   $\sqrt{\frac1M\sum e_i^2}$ over the same points, satisfy
   $L^2\ge L^1$ by the power-mean inequality *(compiler check, not in the
@@ -748,6 +801,13 @@ single-gas Euler equations.
 - Danis et al. compute full-tensor reference timings only up to
   $160^3$ and extrapolate them to $320^3$ and $640^3$; their "1000 times"
   speedup rests on the extrapolation.
+- Cao et al. (2026) describe their multi-scale Lax data as the Lax
+  setup combined with "a scaled version (by $10^{-4}$)"; the printed
+  states are the Lax states scaled by $10^2$ and by $10^{-2}$, whose
+  ratio is $10^4$ *(compiler check, not in the sources)*.
+- Wang et al. (2023a) print no domain for the Lax tube and attribute the
+  Sod tube to Hu & Shu's paper on WENO schemes for triangular meshes;
+  Wang et al. (2026) print no domain for the Lax tube.
 - Du & Yang print the H$_2$/O$_2$/Ar diaphragm at $x=0.5$ cm of a 10 cm
   domain, Peng et al. at the middle of their 100 mm tube.
 
@@ -769,7 +829,7 @@ single-gas Euler equations.
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — Ex. 3.5, Fig. 3.3; comment p. 31 (arXiv v1).
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — Ex. 4.2, Eq. (4.1), Figs. 4.1–4.2, Table 4.2.
 - [Renac (2021)](/sources/renac-2021.md) — §7.2, RP1, Figs. 3–4 (arXiv v3).
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Ex. 5.2, Fig. 5.3; Ex. 5.6, Table 5.2 (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — Ex. 5.2, Fig. 5.3; Ex. 5.6, Table 5.2 (arXiv v1).
 - [Arun, Krishnan & Samantaray (2022)](/sources/arun-2022.md) — §5.1, Eq. (5.2), Figs. 1–2 (arXiv v1).
 - [Wong et al. (2021)](/sources/wong-2021.md) — §6.3, Table 6 (arXiv v1).
 - [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §4.2, Eqs. (29)–(30), Figs. 8–9; App. A.6, Table 4.
@@ -828,3 +888,7 @@ single-gas Euler equations.
 - [Liang et al. (2025)](/sources/liang-2025.md) — §4.2, Eq. (33), Fig. 4.
 - [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §3.2, Example 5.7, Figs. 10–11 (arXiv v3).
 - [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §6.2, Fig. 7, Table A.1.
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §4.2–4.3, Eq. (24), Figs. 2–6.
+- [Cao et al. (2026)](/sources/cao-2026.md) — Exs. 6.7–6.8, Figs. 7–9.
+- [Liu et al. (2026)](/sources/liu-2026.md) — §5.1.3, Eq. (5.9), Fig. 5.9 (arXiv v1).
+- [Wang et al. (2026)](/sources/wang-2026.md) — §6.3.1–6.3.2, Figs. 13–14.

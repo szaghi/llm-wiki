@@ -4,8 +4,8 @@ title: "Riemann solvers with phase change"
 description: "The liquid–vapour Riemann problem with phase change has four waves and jump conditions with latent heat and surface tension, closed by a mass-flux model; Long et al. approximate it by a four-wave HLL-type solver reduced to a scalar iteration on the mass flux from the states adjacent to the phase interface, the interfacial flux of a fully conservative cut-cell scheme."
 status: established
 aliases: [two-phase Riemann problem with phase change, four-wave HLL-type phase-change solver, phase-transition Riemann solver, Hertz–Knudsen closure, evaporation and condensation Riemann problem]
-tags: [riemann-solver, multiphase, interface-capturing, numerical-flux]
-timestamp: 2026-10-23T03:53:00Z
+tags: [riemann-solver, multiphase, interface-capturing, numerical-flux, phase-change]
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Riemann solvers with phase change
@@ -19,7 +19,8 @@ inviscid compressible flow. Below the liquid is on the left, the vapour on the r
 normal velocity, $\dot m$ the mass flux through the phase interface (positive for
 evaporation), $s_{\mathrm p}$ and $s_{\mathrm c}$ the speeds of the phase interface and of the
 contact, $Q_{\mathrm{lat}}$ the latent heat, $\sigma_{\mathrm{st}}$ the surface-tension
-coefficient and $\kappa_{\mathrm c}$ the curvature (all page-local; the source writes $j$,
+coefficient and $\kappa_{\mathrm c}$ the curvature ($\dot m$, $s_{\mathrm p}$, $\sigma_{\mathrm{st}}$,
+$\kappa_{\mathrm c}$ from registry §10, the others page-local; the source writes $j$,
 $S_p$, $S_c$, $\sigma$, $\kappa$).
 
 ## The Riemann problem with phase change

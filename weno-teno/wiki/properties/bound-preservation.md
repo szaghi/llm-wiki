@@ -5,7 +5,7 @@ description: "A scheme is bound-preserving when its discrete solution stays in t
 status: established
 aliases: [bound-preserving scheme, positivity preservation, invariant-region preservation, invariant-domain preservation, physical-constraint preservation, BP, PP, IDP, PCP]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Bound preservation
@@ -165,7 +165,7 @@ The property that results is called *weak* bound preservation in the
 literature these sources recall: the cell average is guaranteed in $G$
 when the point values are, and the limiter supplies the point values
 ([Wu & Shu (2023)](/sources/wu-2023-b.md), concepts recalled in §1 and
-§6.2). The BP CFL number of the standard Gauss–Lobatto decomposition is
+§6.2). The BP CFL number of the classic Gauss–Lobatto decomposition is
 $\mathsf w_0^{\mathrm{GL}}=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$ with $N_{\mathrm{GL}}=\lceil(N+3)/2\rceil$ in 1D
 and on Cartesian $\mathbb Q^N$ cells; Cui et al. prove it optimal there and,
 for $\mathbb P^N$ at zero anisotropy, improve it by a factor between 1.5
@@ -338,12 +338,12 @@ check, not in the sources: ratios of the tabulated weights)*.
   $\Delta t=\theta_\tau\tau_{\max}$, $\theta_\tau\in(0,1]$ (Thm 3.1;
   page-local $\tau_{\max}$, $\theta_\tau$). In 2D the locally
   divergence-free scheme for the symmetrizable form of the equations is BP
-  under $\tau_{\max}\big(\alpha_1/\Delta x+\alpha_2/\Delta y\big)\le\varpi/2$
+  under $\tau_{\max}\big(\alpha^{\mathrm B}_1/\Delta x+\alpha^{\mathrm B}_2/\Delta y\big)\le\varpi/2$
   for any feasible symmetric decomposition, applied to the four quarter
-  cells of the overlapping mesh, with $\alpha_\ell=\max\{1,\beta_\ell\}$
-  and $\beta_\ell$ the normal-field jumps across the interior lines divided
+  cells of the overlapping mesh, with $\alpha^{\mathrm B}_\ell=\max\{1,\beta^{\mathrm B}_\ell\}$
+  and $\beta^{\mathrm B}_\ell$ the normal-field jumps across the interior lines divided
   by $2\sqrt{\{\!\{\rho h\}\!\}}$ (Thm 4.1, Eqs. (62)–(63); page-local
-  $\alpha_\ell$, $\beta_\ell$, $h$ the specific enthalpy). The proof is by
+  $\alpha^{\mathrm B}_\ell$, $\beta^{\mathrm B}_\ell$, not the WENO weights and indicators, and $h$ the specific enthalpy). The proof is by
   [geometric quasilinearization](/methods/geometric-quasilinearization.md);
   the authors call GQL "essential" because the locally divergence-free
   constraint couples the interface states, so splitting the scheme into
@@ -576,7 +576,7 @@ the bounds.
   a non-negative density bound and a closed-form pressure fix as the last
   stage the scheme is positivity preserving (§2.2.3), under the bar-state
   condition $\Delta t\lesssim\min_im_i/(2\sum_da^{(d)}_i)$, more
-  restrictive than the usual low-order CFL condition (Eq. 44). The
+  restrictive than the low-order CFL condition (Eq. 44). The
   FCT/IDP alternative needs a positive fraction of the low-order density
   and pressure as bound, "as otherwise some nodes might get an invalid
   vacuum state" (§3.2; [convex limiting](/methods/convex-limiting.md)).
@@ -635,7 +635,7 @@ scaling limiter is the special case of a degenerate filter (§3.1).
 
 [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) extend the filter
 to ideal MHD with Powell's non-conservative source term, for which the
-standard argument no longer covers the element mean. They split each
+Zhang–Shu argument no longer covers the element mean. They split each
 forward-Euler step (and each SSP-RK3 stage, Eq. (34)): the conservative
 update $u^n+\Delta t\,\mathcal L_1(u^n)$ is filtered by a filter $H_e$
 that enforces positivity and the local entropy minimum, the explicit
@@ -768,7 +768,7 @@ as a heuristic. The details are on
 - **Proved and tested steps, central DG.** Ding & Wu (2024b) run all tests
   with $\Delta t=0.25\,\Delta x$ in 1D and $\Delta t=0.25/(1/\Delta x+1/\Delta y)$
   in 2D, and state that the theoretical bound is sufficient but not
-  necessary (§5); with $\varpi_\star=1/4$ and $\alpha_\ell=1$ (normal-field
+  necessary (§5); with $\varpi_\star=1/4$ and $\alpha^{\mathrm B}_\ell=1$ (normal-field
   jumps observed small, Remark 9) the proved 2D condition is
   $\tau_{\max}(1/\Delta x+1/\Delta y)\le1/8$, and since
   $\Delta t=\theta_\tau\tau_{\max}$ with $\theta_\tau\le1$ the runs have
@@ -933,6 +933,17 @@ as a heuristic. The details are on
   [OEDG](/methods/oedg.md)). Yan, Abgrall & Wu (2024) obtain a bound-preserving
   OEDG scheme by adding a scaling limiter after the OE step, which they prove
   keeps the interface equilibrium (Thms 2.13–2.14).
+- **Bounds without oscillation control, and the reverse.** [Cao et al. (2026)](/sources/cao-2026.md)
+  state that DG with bound-preserving limiters "may reduce, but still exhibit, spurious
+  oscillations", citing Qin, Shu & Yang, and that their own oscillation-suppressing
+  [COS(DG)](/methods/cos-dg.md) step does not enforce bounds (§1, Remark 2). Since COS acts
+  only once per time step, after the last Runge–Kutta stage, they apply the Zhang–Shu
+  positivity-preserving limiter at the stages in all discontinuous Euler runs, including the
+  Mach 80 and Mach 2000 jets with fourth-order COS(DG) (§6, Ex. 6.15). Remark 2 proposes, but
+  does not use, a single convex blend whose factor is the smaller of the COS factor and the
+  Zhang–Shu $\theta$. The Jensen form of their entropy-induced distance needs the extrapolated
+  neighbour polynomials to be admissible, which may require the positivity limiter before the
+  COS step; the frozen-Hessian form does not (§2.3).
 - **Accuracy of the limiter.** That the scaling limiter keeps high-order
   accuracy is cited, not shown, in Wu & Shu (2023) (App. B) and Fan et al.
   (2021) (Rems. 3.2, 3.4); Cui et al. (2024) show it numerically for
@@ -994,3 +1005,4 @@ as a heuristic. The details are on
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — Remark 3.1.
 - [Chen & Chen (2026)](/sources/chen-2026.md) — Abstract; §2.4–2.5, Eqs. (27)–(40).
 - [Barsukow et al. (2026)](/sources/barsukow-2026.md) — arXiv v2: §5–6.
+- [Cao et al. (2026)](/sources/cao-2026.md) — §1; Remark 2; §2.3; §6, Ex. 6.15.

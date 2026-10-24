@@ -5,7 +5,7 @@ description: "The cell-average decomposition writes a cell average as a positive
 status: established
 aliases: [cell average decomposition, CAD, OCAD, optimal CAD, quasi-optimal CAD, convex decomposition of the cell average]
 tags: [bound-preserving, positivity, dg, finite-volume]
-timestamp: 2026-10-23T19:51:00Z
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Optimal cell-average decomposition
@@ -165,8 +165,8 @@ relativistic jet (§8.3, §8.5).
 ## Optimal decompositions in later sources
 
 Three sources of the bundle use the optimal decomposition of Cui, Ding & Wu
-in new schemes; the first two print the closed forms of $\varpi_\star(\varkappa)$
-beyond $\mathbb P^{2,3}$.
+in new schemes; all three print a closed form of $\varpi_\star(\varkappa)$
+beyond $\mathbb P^{2,3}$ (Liu & Wu in a remark, Fan & Wu with a printed slip).
 
 - **Ideal MHD, locally divergence-free OEDG**
   ([Liu & Wu (2025)](/sources/liu-2025.md), arXiv v2, §3.3, Eqs. (50)–(52),

@@ -5,7 +5,7 @@ description: 'The Lax–Friedrichs two-point flux and the Lax–Friedrichs flux 
 status: established
 aliases: [Rusanov flux, local Lax–Friedrichs, LLF, global Lax–Friedrichs, GLF, Lax–Friedrichs flux splitting, Rusanov flux splitting]
 tags: [numerical-flux, finite-difference, bound-preserving, weno, teno]
-timestamp: 2026-10-23T20:39:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Lax–Friedrichs (Rusanov) flux and flux splitting
@@ -193,6 +193,71 @@ density and pressure throughout, including beyond the training horizon (Figs. 20
 one trained network on one problem; no generalization test to other flows is shown. See
 [learned WENO weights](/methods/learned-weno-weights.md).
 
+## A sensor-reduced coefficient: the LLF-M flux
+
+[Wang et al. (2023a)](/sources/wang-2023.md) keep the LLF form as the two-point flux of
+fifth-order characteristic-wise [alternative WENO](/methods/alternative-weno.md) with
+[affine-invariant](/methods/affine-invariant-weno.md) Z-weights. Its states $u^\pm_{i+1/2}$ are
+WENO-interpolated conservative variables and
+$a_{i+1/2}=\max\{\lvert v^+\rvert+c^+,\lvert v^-\rvert+c^-\}$ (§3.1, Eq. (17)). They regard
+the LLF flux as robust but more dissipative than other monotone fluxes, and those
+alternatives as "complex to implement and time-consuming to compute" (§1). No comparison with
+them is shown. Their modified flux, LLF-M, keeps the form and scales the coefficient
+(§3.2, Eqs. (18)–(21); page-local $a^{\mathrm M}$, $\mathsf k$, $\delta_{\mathrm F}$,
+$\varphi_{\mathrm F}$):
+
+$$h^{\mathrm{LF\text{-}M}}=\tfrac12\big(f(u^-)+f(u^+)\big)-\tfrac12a^{\mathrm M}_{i+1/2}\big(u^+-u^-\big),\qquad a^{\mathrm M}_{i+1/2}=a_{i+1/2}\max\{\mathsf k_i,\mathsf k_{i+1}\},$$
+
+$$\mathsf k_i=\max\big(\mathsf k_{\min},\,1-\exp(-\delta_{\mathrm F}\varphi_{\mathrm F,i})\big)\in[\mathsf k_{\min},1),\qquad \mathsf k_{\min}=0.1,\quad\delta_{\mathrm F}=10^5.$$
+
+The feature sensor $\varphi_{\mathrm F,i}$ is the classical
+[Ducros ratio](/definitions/ducros-shock-sensor.md) times normalized second differences of
+pressure and density. The Ducros page gives the formula. The design aim is
+the full coefficient near high gradients and a reduced one in smooth regions. The authors call
+$\delta_{\mathrm F}$ problem dependent: $10^5$ "works well" in extensive shock-tube testing,
+and its optimal choice is left to future work. The floor $\mathsf k_{\min}$ keeps a small
+baseline dissipation where one or more primitive variables are constant or linear (§3.2,
+Fig. 1). *(Compiler check, not in the sources: the floor is active for
+$\varphi_{\mathrm F}<\ln(10/9)/\delta_{\mathrm F}\approx1.05\times10^{-6}$, and
+$\mathsf k_i\ge0.99$ needs $\varphi_{\mathrm F}\ge\ln100/\delta_{\mathrm F}\approx4.6\times10^{-5}$.
+Since $\mathsf k_i<1$ for every finite sensor value, $a^{\mathrm M}_{i+1/2}<a_{i+1/2}$ at every
+interface. "The same" dissipation as LLF at shocks therefore holds only up to this
+exponentially small gap.)*
+
+Evidence, all numerical, with RK3-TVD at CFL $0.45$ (§4):
+
+- **Accuracy.** On density-perturbation advection both fluxes give the same printed orders
+  (5.30, 5.09, 5.02, 4.96), with $L^1(\rho)=6.18\times10^{-12}$ (LLF) and
+  $6.17\times10^{-12}$ (LLF-M) at $N=320$ (§4.1, Table 1;
+  [density-wave advection](/benchmarks/density-wave-advection.md)). On the
+  [isentropic vortex](/benchmarks/isentropic-vortex.md) LLF-M has the smaller error on every
+  grid: at $320\times320$, $L^1(\rho)=3.52\times10^{-7}$ (LLF, order 4.77) against
+  $3.28\times10^{-8}$ (LLF-M, order 5.25). The printed LLF-M orders 5.07, 5.62, 5.51 and 5.25
+  exceed five, while the text says both fluxes "achieve the optimal convergence order"
+  (§4.5, Table 2).
+- **Where the coefficient drops.** In the smooth density regions of the Sod and blast-wave
+  problems $a^{\mathrm M}\approx\mathsf k_{\min}a$ (§4.3, Figs. 6, 8). In the extended
+  [shock–density-wave interaction](/benchmarks/shu-osher-problem.md) the LLF coefficient rises
+  "to about $\alpha\ge4$ from $\alpha\approx1.4$" (the paper's $\alpha$ is this page's $a$)
+  wherever the main shock has passed. The LLF-M coefficient exceeds 4 only around the main
+  shock and the shocklet train, and is "$\approx0.5$ or smaller" in the high-frequency smooth
+  region (§4.4, Fig. 10).
+- **Small scales.** Sharper contacts in the Lax and Sod tubes. The slip lines and vortices
+  are better resolved in the [double Mach reflection](/benchmarks/double-mach-reflection.md),
+  two [2D Riemann configurations](/benchmarks/two-dimensional-riemann-problems.md) (3 and 6,
+  with changed interface lines and final times) and the
+  [forward-facing step](/benchmarks/forward-facing-step.md). Shock capturing is unchanged
+  (§§4.2–4.8, Figs. 2–19).
+- **Cost.** 5%–9% more CPU time: ratios 1.05 (DMR, $800\times200$), 1.07 and 1.05 (the two
+  Riemann configurations, $400^2$), 1.09 (FFS, $900\times300$). Fortran 90, Intel ifort `-O3`,
+  one Intel i7-9700 (§4.9, Table 3).
+
+The authors present the idea as transferable to finite-volume WENO and DG and to
+multi-material flows, all left to future work (§5). It is the Rusanov-form counterpart of the
+same group's
+[adaptive-diffusion central fluxes](/methods/adaptive-diffusion-central-upwind-flux.md), which
+reduce the speeds by jump detectors rather than by a flow-feature sensor.
+
 ## Bound preservation and invariant domains
 
 - **First-order BP.** [Wu & Shu (2023)](/sources/wu-2023-b.md) prove with
@@ -320,8 +385,8 @@ property, Lemma 6 of Zhang as used by Fan et al., is that $u\in G$ implies
 $u\pm F(u,\nabla u)/a^{\mathrm{NS}}\in G$ for any gradient, so the update can be written as a
 convex combination of admissible states under
 $\frac{\Delta t}{\Delta x}\max a^{\mathrm{NS}}\le\frac1{N_{\mathrm{GL}}(N_{\mathrm{GL}}-1)}$, the
-boundary weight of an $N_{\mathrm{GL}}$-point Gauss–Lobatto decomposition (page-local
-$N_{\mathrm{GL}}$; Thm. 1, Eqs. (3.11)–(3.13)). *(compiler check, not in the sources: for
+boundary weight of an $N_{\mathrm{GL}}$-point Gauss–Lobatto decomposition (registry
+§10; Thm. 1, Eqs. (3.11)–(3.13)). *(compiler check, not in the sources: for
 $\mathrm{Re}=\infty$, $q_{\mathrm h}=0$ and $\tau_{\mathrm v}=0$, the bound reduces to
 $\lvert v\rvert+\sqrt{(\gamma-1)p/(2\rho)}$, below $\lvert v\rvert+c$, so the LF speed $\lvert v\rvert+c$
 satisfies it.)* See
@@ -411,7 +476,7 @@ damping, halved step) whenever a cell average leaves $G$ (§6).
   flux as $\tfrac12\big(f(u^-)+f(u^+)\big)-\lambda_{\mathrm F}(u^+-u^-)$ (page-local
   $\lambda_{\mathrm F}=a/2$ in this page's form) and show that their nonlinearly stable split
   [flux-reconstruction](/methods/flux-reconstruction.md) scheme with split parameter
-  $\alpha=2/3$ (page-local split weight, not the DG–FV blending coefficient) has interface energy production
+  $\alpha_{\mathrm s}=2/3$ (page-local split weight, as on the flux-reconstruction page; not the DG–FV blending coefficient $\alpha$) has interface energy production
   $(u^+-u^-)^2\big(\tfrac1{12}(u^+-u^-)-\lambda_{\mathrm F}\big)$, hence is energy stable iff
   $\lambda_{\mathrm F}\ge\tfrac1{12}(u^+-u^-)$; equality is the energy-conserving flux, and LLF,
   $\lambda_{\mathrm F}=\tfrac12\max(\lvert u^-\rvert,\lvert u^+\rvert)$, satisfies it. With LF the
@@ -521,6 +586,14 @@ $a=\max(\lvert\lambda^-_{\max}\rvert,\lvert\lambda^+_{\max}\rvert)$ over the glo
   (Thm. 6.2).
 - [Fu (2023)](/sources/fu-2023.md) mis-cites the Rusanov and Roe references by one number in
   Algorithm 1 (a slip of the review, not a disagreement).
+- **A coefficient below the wave-speed bound.** The LLF-M coefficient of Wang et al. (2023a)
+  goes down to $0.1a_{i+1/2}$, below the local maximum wave speed. The bar-state and
+  invariant-domain arguments above all assume $a$ at least that speed. The paper makes no
+  monotonicity, entropy or positivity statement for LLF-M; robustness rests on its tests.
+  *(Compiler check, not in the sources: for a scalar law, $h^{\mathrm{LF}}$ is nondecreasing in
+  $u^-$ only if $f'(u^-)+a\ge0$ and nonincreasing in $u^+$ only if $f'(u^+)-a\le0$, so a
+  coefficient $0.1\max\lvert f'\rvert$ loses monotonicity wherever $f'(u^-)<-0.1\max\lvert f'\rvert$
+  or $f'(u^+)>0.1\max\lvert f'\rvert$.)*
 
 # Citations
 
@@ -582,3 +655,4 @@ $a=\max(\lvert\lambda^-_{\max}\rvert,\lvert\lambda^+_{\max}\rvert)$ over the glo
 - [Kiechle et al. (2025)](/sources/kiechle-2025.md) — §3.2 (Eqs. (12)–(24), Remarks 3.1–3.2, Fig. 5).
 - [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §3.2 (Eqs. (15f), (16), Remarks 5.1–5.2) (HAL author manuscript).
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.1 (Eq. (3.14)).
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §1, §3.1–3.2 (Eqs. (17)–(21), Fig. 1), §4.1–4.9 (Tables 1–3, Figs. 2–19), §5.

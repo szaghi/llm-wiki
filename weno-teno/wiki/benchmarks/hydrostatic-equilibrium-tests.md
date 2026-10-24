@@ -5,7 +5,7 @@ description: "Suite of Euler-with-gravity tests for well-balanced schemes: isoth
 status: established
 aliases: [hydrostatic steady state, isothermal equilibrium, polytropic equilibrium, Lane–Emden polytrope, Sod under gravity, stratified atmosphere]
 tags: [benchmark, well-balanced, asymptotic-preserving]
-timestamp: 2026-10-23T15:17:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Hydrostatic equilibrium tests under gravity
@@ -35,12 +35,12 @@ grow with $\phi$. The formulas below are as each source prints them.
 |---|---|---|
 | isothermal | $\rho_{\mathrm e}=e^{\phi}$, $\gamma=1$, $\phi=x,\ x^2/2,\ \sin2\pi x$ on $[0,1]$ | $\rho_{\mathrm e}=p_{\mathrm e}=e^{-\phi}$, $\phi=x$ on $[0,1]$; 2D $\rho_0=1.21$, $\phi=x+y$ |
 | isentropic / polytropic | $\rho_{\mathrm e}=\big(1+\tfrac{\gamma-1}{\gamma}\phi\big)^{1/(\gamma-1)}$, $\gamma=1.4$ | $\rho_{\mathrm e}=\big(1-\tfrac{\gamma-1}{\gamma}\phi\big)^{1/(\gamma-1)}$, $p_{\mathrm e}=\rho_{\mathrm e}^\gamma$; 1D $\phi=3.15x$ |
-| 2D polytrope | — | Lane–Emden, $\gamma=2$: $\rho_{\mathrm e}=\sin(\alpha r)/(\alpha r)$, $p_{\mathrm e}=\rho_{\mathrm e}^2$, $\phi=-2\rho_{\mathrm e}$, $\alpha=\sqrt{2\pi}$, $[-0.5,0.5]^2$ |
+| 2D polytrope | — | Lane–Emden, $\gamma=2$: $\rho_{\mathrm e}=\sin(\alpha_{\mathrm{LE}}r)/(\alpha_{\mathrm{LE}}r)$, $p_{\mathrm e}=\rho_{\mathrm e}^2$, $\phi=-2\rho_{\mathrm e}$, $\alpha_{\mathrm{LE}}=\sqrt{2\pi}$ (page-local; the source's $\alpha$), $[-0.5,0.5]^2$ |
 
 Every printed pair satisfies its source's balance: $p_{\mathrm e}'=\mp\rho_{\mathrm e}\phi'$
 for the exponential and polytropic states with $p_{\mathrm e}=\rho_{\mathrm e}$
 or $\rho_{\mathrm e}^\gamma$, and $\nabla p_{\mathrm e}=2\rho_{\mathrm e}\nabla\rho_{\mathrm e}=-\rho_{\mathrm e}\nabla\phi$
-for the Lane–Emden state, whatever $\alpha$ *(compiler check, not in the
+for the Lane–Emden state, whatever $\alpha_{\mathrm{LE}}$ *(compiler check, not in the
 sources)*.
 
 **Round-off or truncation.** The two sources measure different things.
@@ -67,7 +67,7 @@ for the Euler system with gravity and friction.
 
 [Kanbar et al. (2022)](/sources/kanbar-2022.md) §5.4–5.5 (arXiv v1) run
 the MHD counterpart, an isothermal stratified atmosphere
-$\rho=\rho_0e^{-y/H}$, $p=p_0e^{-y/H}$ at rest, with $p_0=1.13$, $g=2.74$,
+$\rho=\rho_0e^{-y/H}$, $p=p_0e^{-y/H}$ at rest, with $p_0=1.13$, gravitational acceleration $g=2.74$ (page-local),
 $H=p_0/(g\rho_0)=0.158$ (so $\rho_0\approx2.61$ *(compiler check, not in
 the sources)*), unmagnetized or with $B=(0,\mu_B,0)$ (page-local field
 strength), and show the unperturbed state kept to $t=1.8$ (Fig. 7).

@@ -5,7 +5,7 @@ description: "The Suresh–Huynh monotonicity-preserving limiter keeps a high-or
 status: established
 aliases: [MP limiter, MP5, MP3, MP reconstruction, Suresh–Huynh limiter, monotonicity-preserving scheme, monotonicity-preserving reconstruction, improved MP5 limiter, pointwise MP5]
 tags: [limiting, reconstruction, finite-difference, finite-volume, relativistic, mhd]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-24T05:42:00Z
 ---
 
 # Monotonicity-preserving (MP) limiter
@@ -119,6 +119,14 @@ Chandravamsi et al. (2023, App. E) give neither value.
   Robustness rests on an a priori order reduction that switches flagged cells to WENO3 or piecewise-linear
   reconstruction ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
 
+- **As a DG limiter.** [Cao et al. (2026)](/sources/cao-2026.md) list the Suresh–Huynh MP limiter and the
+  modified MP (MMP) limiter of Rider & Margolin among the limiters that overwrite troubled DG cells, and criticize
+  WENO and MP limiters for their wide stencils (§1, §2.1). In their comparisons both run with the KXRCF
+  [troubled-cell indicator](/definitions/troubled-cell-indicator.md), with results taken from Zhu, Cheng & Qiu's 2013
+  comparison of DG limiters; third-order [COS(DG)](/methods/cos-dg.md) gives sharper non-oscillatory profiles than
+  MP(K) and MMP(K) on a strong single shock, the Lax, Woodward–Colella and Shu–Osher problems (Figs. 1, 6, 8, 10,
+  11; [discontinuous Galerkin](/methods/discontinuous-galerkin.md)).
+
 ## Qualifications
 
 - López-Miralles et al. do not discuss why MP5 with a fourth-order Runge–Kutta method shows fifth-order
@@ -138,3 +146,4 @@ Chandravamsi et al. (2023, App. E) give neither value.
 - [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §5.1, Step 4; §8.3; App. E, Eqs. (E.1)–(E.4).
 - [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md) — §3.2; §4.1.1, Tables 1–4; §5.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §1; §3.1–3.2, Eq. (23); §5.1–5.4, §5.6, Tables 1–2, Figs. 6–7 (arXiv v4).
+- [Cao et al. (2026)](/sources/cao-2026.md) — §1; §2.1 (Property 2.1); §6, Figs. 1, 6, 8, 10, 11.

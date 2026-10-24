@@ -5,7 +5,7 @@ description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer b
 status: established
 aliases: [magnetic blast wave, MHD blast, Balsara–Spicer blast wave, MHD rotor, second rotor problem, weak magnetic blast, cylindrical explosion, resistive relativistic rotor]
 tags: [benchmark, mhd, positivity, entropy-stable]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # MHD blast wave and rotor
@@ -72,8 +72,8 @@ provably positivity-preserving entropy-stable DG scheme for ideal MHD
 Ex. 5.6 run the Balsara–Spicer blast (data not reprinted; plasma beta
 "about $2.51\times10^{-4}$") on $200^2$ cells to $T=0.01$, with $\gamma=5/3$
 stated for the whole paper and not restated per test. With their
-entropy-non-increasing scaling limiter, of strength $c_0$, on (their
-remark: $c_0\ge0.08$ "appears adequate", a smaller value may fail) and
+entropy-non-increasing scaling limiter, of strength $c_{0,\mathrm L}$ (page-local), on (their
+remark: $c_{0,\mathrm L}\ge0.08$ "appears adequate", a smaller value may fail) and
 no positivity limiter, the pressure stays non-negative, with a minimum
 of about $0.0952$ at the final time, and the conservation errors of
 mass, momentum and $B$ stay at round-off while the total energy is
@@ -128,11 +128,11 @@ $\gamma=5/3$, $\rho=1$, $v=0$, $B=(1000/\sqrt{4\pi},0)$, $p=10^4$ for
 $r\le0.1$ and $p=0.1$ otherwise, a pressure ratio of $10^5$; $t=0.001$.
 Their nodal DG with positivity-preserving
 [entropy filtering](/methods/entropy-filtering.md) runs at
-$\mathbb P_4$ on unstructured triangles of $h=1/200$ (about
-$1.2\times10^5$ elements, $\Delta t=2\times10^{-7}$) and $h=1/400$ (about
+$\mathbb P^4$ on unstructured triangles of size $1/200$ (about
+$1.2\times10^5$ elements, $\Delta t=2\times10^{-7}$) and $1/400$ (about
 $5\times10^5$, $\Delta t=10^{-7}$) with the HLL flux: the solution is
 well behaved, discontinuities are resolved across one or two solution
-nodes with thickness decreasing in proportion to $h$, and minor density
+nodes with thickness decreasing in proportion to the element size, and minor density
 oscillations (mesh imprinting) appear on the coarse mesh (Figs. 10–13).
 Without the positivity-preserving modifications the scheme "would
 diverge almost instantly", as stated; HLL was "much better behaved"
@@ -140,6 +140,18 @@ than HLLC here. They print the plasma beta as $2.5\times10^{-4}$; with
 $B_1=1000/\sqrt{4\pi}$ and $p=0.1$, $2p/\lvert B\rvert^2=2.51\times10^{-6}$,
 and $2.5\times10^{-4}$ is the value of the original data
 *(compiler check, not in the sources)*.
+
+**Uniform grid against AMR on one GPU.** [Stone et al. (2026)](/sources/stone-2026.md)
+§5.1 use a 2D MHD blast, a circular region with pressure 100 times
+the ambient value (field strength, $\gamma$ and radius not printed), to
+time the AMR of [AthenaK](/software/athenak.md) on one NVIDIA A100 to
+$t=0.4$: a uniform $4096^2$ grid of $64^2$ MeshBlocks runs at 181
+million cell updates per second, an AMR grid with a $1024^2$ root and
+two levels, refined where the density exceeds the background by a
+factor 1.1, at 141, an overhead of about 20 %; the density is identical,
+and the AMR run needs 18 % of the wall-clock time of the uniform one, a
+5.4-fold speed-up by their figure caption (Fig. 20; see
+[adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)).
 
 ### Three-dimensional blast
 
@@ -251,6 +263,26 @@ of the run time. Their error parameter, the relative field error times
 magnetization over $W^2$ estimated from $\nabla\cdot B$, is about 4 for
 the $B_0=1$ explosion and at most about 0.3 for $B_0=0.1$, where the
 standard mode succeeds (§5.6, Fig. 22).
+
+**Cylindrical explosion with a first-order flux fallback.** Stone et
+al. (2026) §3.5 run Komissarov's cylindrical explosions in
+[AthenaK](/software/athenak.md): $\rho=10^{-2}$, $p=1$ for $r\le1$,
+ambient $\rho=10^{-4}$, $p=3\times10^{-5}$, joined by an exponential ramp
+after Mösta et al., with $B_1=0.1$ and $B_1=1$, on an AMR grid refined
+on the pressure with $20\times20$ MeshBlocks (Fig. 10). They state that
+many finite-volume SRMHD codes need density or pressure floors, a
+modified background or artificial viscosity for these problems, and
+that AthenaK runs both robustly thanks to first-order flux correction:
+in each Runge–Kutta stage, the fluxes on all faces of any cell whose
+density or pressure would turn negative are recomputed with
+piecewise-constant states and the LLF flux, before the AMR flux
+correction (§3, after Lemaster & Stone); see
+[MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md).
+Komissarov & Phillips's unsplit mode, above, crashes at $B_0=1$ on a
+cylinder of radius $0.9$ with a tanh ramp; the two findings concern
+different codes and slightly different data, and neither paper runs the
+other's scheme. Stone et al.'s §3.5 also shows an SRMHD blast after
+Mignone et al., with AMR, WENO-Z and HLLE to $t=0.4$ (Fig. 9).
 
 **Resistive relativistic MHD.** [Mignone et al. (2024)](/sources/mignone-2024.md)
 §4.4 run a 3D blast after their earlier resistive paper, on $[-6,6]^3$
@@ -379,13 +411,13 @@ $r_0<r\le r_1$, $0$ beyond, $r_0=0.1$, $r_1=0.115$; $t=0.15$. The disk
 edge thus rotates at speed 2, against 1 in Liu et al.'s second rotor,
 and the plasma beta is $2p/|B|^2=8\pi/25\approx1.0$, against
 $16\pi/25\approx2.0$ there *(compiler check, not in the sources)*. Their residual-based
-[artificial viscosity](/methods/artificial-viscosity.md) ($c_\mu=2$)
-gives effectively non-oscillatory profiles at $\mathbb P_4$ on $128^2$
-and $\mathbb P_9$ on $64^2$ elements, with discontinuities resolved
+[artificial viscosity](/methods/artificial-viscosity.md) (tunable constant $c_\mu=2$, page-local)
+gives effectively non-oscillatory profiles at $\mathbb P^4$ on $128^2$
+and $\mathbb P^9$ on $64^2$ elements, with discontinuities resolved
 over 2–3 solution points and no visible deterioration at the higher
 order (Figs. 10–11). They print $r=\sqrt{x^2+y^2}$, while the velocity
 field is centred at $(0.5,0.5)$; consistent use requires $r$ to be the
-distance to $(0.5,0.5)$.
+distance to $(0.5,0.5)$ *(compiler check, not in the sources)*.
 
 [Dao & Nazarov (2022)](/sources/dao-2022.md) §5.5 (arXiv v1) print the
 same problem up to the taper velocity, citing Balsara & Spicer and calling it the "first rotor"
@@ -397,7 +429,7 @@ is not printed and no boundary conditions are stated; with $u_0=2$ the
 disk data are Dzanic et al.'s, while in the taper Dao & Nazarov's speed
 $\varphi u_0$ and Dzanic et al.'s $2\varphi r/r_0$ differ by the factor
 $r/r_0\le1.15$ *(compiler check, not in the sources)*. Their
-continuous-Galerkin $\mathbb P_3$ scheme with residual-based
+continuous-Galerkin $\mathbb P^3$ scheme with residual-based
 [artificial viscosity](/methods/artificial-viscosity.md) and projection
 divergence cleaning, on $300\times300$ nodes, runs without negative
 pressure, with printed ranges $\rho_h\in[0.727,\,8.42]$,
@@ -504,6 +536,10 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
   and $T=0.6$ in the Fig. 9 caption; the Balsara–Spicer runs of the other
   sources end at $0.01$. Liu et al. (2025c)'s cells carry $\mathbb Q^{k+1}$
   fields on $k+2$ Gauss–Lobatto points with their $k=2$ by default.
+- Stone et al. (2026) describe their Fig. 9 in the text as the
+  relativistic MHD blast wave of the Athena++ paper, while its caption
+  reads "Transverse component of the magnetic field in the SRMHD
+  shock-tube test"; text and caption disagree on what is shown.
 - The blast-wave comparison with earlier results is visual, against
   figures of other papers; so are the rotor runs of Dao & Nazarov and
   Lesur et al.
@@ -534,3 +570,4 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
 - [Liu & Wu (2025)](/sources/liu-2025.md) — §§4.2.3, 4.2.5, Figs. 9–11 (arXiv v2).
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — Exs. 6, 8, Remark 3.1, Figs. 7, 9.
 - [Liu et al. (2025c)](/sources/liu-2025-c.md) — Exs. 5.5–5.6, Figs. 10–14.
+- [Stone et al. (2026)](/sources/stone-2026.md) — §3, §3.5, §5.1, Figs. 9–10, 20.

@@ -5,7 +5,7 @@ description: "Prolongation of a face-collocated vector field with a divergence c
 status: established
 aliases: [divergence-free prolongation, divergence-preserving prolongation, constraint-preserving prolongation, WENO-ADP, WENO-ADPT, almost divergence-preserving WENO, divergence-preserving reconstruction, divergence-free reconstruction]
 tags: [mhd, weno, reconstruction, finite-volume]
-timestamp: 2026-10-22T16:24:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Divergence-preserving prolongation and reconstruction for AMR
@@ -142,8 +142,8 @@ sources; one printed symbol slip below)*.
 
 ## Verification
 
-On analytic fields (§8, Eqs. (53)–(54)), $D=\nabla\times A$ for a
-trigonometric vector potential (divergence-free) and a field with
+On analytic fields (§8, Eqs. (53)–(54)), $D=\nabla\times\mathcal A$ for a
+trigonometric vector potential $\mathcal A$ (registry §10, MHD) (divergence-free) and a field with
 $\rho_{\mathrm q}=\nabla\cdot D\neq0$ (divergence-preserving), coarse
 meshes $8^3$ to $128^3$ (ratio 2) or $6^3$ to $96^3$ (ratio 3), errors
 measured on the internal fine faces only:

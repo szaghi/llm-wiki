@@ -5,7 +5,7 @@ description: "A discretization on curvilinear or moving grids is free-stream pre
 status: established
 aliases: [freestream preservation, free-stream preserving, discrete metric identities, geometric conservation law, GCL, watertight subcell discretization, constant-state preservation]
 tags: [dg, finite-difference, limiting, entropy-stable, reconstruction]
-timestamp: 2026-10-23T15:13:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Free-stream preservation
@@ -203,7 +203,7 @@ once; it does not separate them.
 
 On a mesh that moves in time, a uniform state must also survive the mesh
 motion. [Duan & Tang (2022)](/sources/duan-2022.md) and
-[Li, Duan & Tang (2022)](/sources/li-2022-c.md) write the law in
+[Li, Duan & Tang (2022c)](/sources/li-2022-c.md) write the law in
 time-dependent curvilinear coordinates together with the volume
 conservation law (VCL), $\partial_\tau J+\sum_k\partial_{\xi_k}(J\partial_t\xi_k)=0$,
 and the surface conservation laws (SCLs),
@@ -365,7 +365,7 @@ the chain rule, $\xi_t=-(x_t\xi_x+y_t\xi_y+z_t\xi_z)$, and the
 geometric-conservation form $(1/J)_t=-\big[(\xi_t)_\xi+(\eta_t)_\eta+(\zeta_t)_\zeta\big]$,
 recomputed every step, the schemes are free-stream preserving on deforming
 grids (§4.2, Eqs. (11)–(14)). The last relation plays the role of the volume
-conservation law of the moving-mesh section below *(compiler check, not in
+conservation law of the moving-mesh section above *(compiler check, not in
 the sources)*.
 
 **Evidence** (§8; non-FP = non-conservative metrics with fourth-order
@@ -406,7 +406,7 @@ the source.
   low-order scheme (Props. 3–4), and Rueda-Ramírez et al. (2021) prove
   that the curvilinear entropy-balance residuals vanish under the metric
   identities and show free-stream preservation numerically. Li, Duan &
-  Tang (2022) cite the proof for moving meshes; Duan & Tang (2022) give it
+  Tang (2022c) cite the proof for moving meshes; Duan & Tang (2022) give it
   (Prop. 3.2), and Mossier et al. (2022) show it numerically for
   mixed-degree DG with finite-volume subcells, without a proof. Ramani &
   Shkoller (2023) argue it from linearity and test it on a moving mesh;
@@ -445,7 +445,7 @@ the source.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §1, §4.2, §5.
 - [Pazner (2021)](/sources/pazner-2021.md) — §2.4 Eq. (22) Prop. 3, §3.1 Eqs. (25)–(29) Props. 4–5, §3.3 (arXiv v1).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §6.1 Eqs. (91)–(94) Table 1, App. C Lemmas 4–5 Eqs. (145), (150) (arXiv v1).
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §2 Eq. (2.3), §3.2 Eqs. (3.9)–(3.10), Remark 3.1 (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — §2 Eq. (2.3), §3.2 Eqs. (3.9)–(3.10), Remark 3.1 (arXiv v1).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §4.1 Eqs. (19)–(21), §8.1 Eq. (39), Table 1.
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §2 Eq. (2.9), Remark 2.1, §3.3 Eqs. (3.5), (3.8), (3.15)–(3.18), Prop. 3.2, Thm. 3.2, Remark 4.1, App. A–B, Exs. 6.1, 6.7 (arXiv v1).
 - [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §1, §3, §4.2 Eqs. (10)–(14), §5.1, §7 Eqs. (36)–(44), §8.1–8.2 Table 2 Figs. 8–12, §9.4, App. D (arXiv v1).

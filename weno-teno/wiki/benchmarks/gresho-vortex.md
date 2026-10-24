@@ -5,7 +5,7 @@ description: "Two-dimensional vortex in exact equilibrium between a piecewise-li
 status: established
 aliases: [Gresho–Chan vortex, triangular vortex, low-Mach Gresho vortex]
 tags: [benchmark, low-dissipation, asymptotic-preserving, machine-learning]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Gresho vortex
@@ -167,8 +167,8 @@ energy is 0.9825 without and 0.92 with the minmod limiter on $40^2$
 **Low-Mach corrections of HLLC.** Wilfong et al. use the vortex to test
 two low-Mach corrections of the [HLLC](/methods/hll-riemann-solvers.md)
 solver in [MFC](/software/mfc.md) 5.0: Thornber et al.'s modification of
-the interface velocities by $z=\min\big(\max(\lvert v_{\mathrm L}\rvert/c_{\mathrm L},\lvert v_{\mathrm R}\rvert/c_{\mathrm R}),1\big)$
-(page-local), and Chen et al.'s anti-dissipation pressure correction,
+the interface velocities by $z=\min\big(\max(\lvert v^-\rvert/c^-,\lvert v^+\rvert/c^+),1\big)$
+(page-local; $v^\mp$, $c^\mp$ the left and right interface states, the paper's L and R), and Chen et al.'s anti-dissipation pressure correction,
 which adds $(z-1)$ times a pressure-difference term to the star-state
 fluxes. Standard HLLC loses accuracy as $M_{\mathrm r}$ falls, the
 low-Mach defect of Godunov-type solvers that they cite from Guillard &

@@ -8,7 +8,7 @@ authors: [Cicchino A., Nadarajah S.]
 year: 2025
 venue: "J. Comput. Phys. 521:113532"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2025_Crossref_Journal_of_Computational_Physics_Cicchino_Discretely_nonlinearly_stable_weight-adjusted_flux_reconstru.pdf"
-tags: [flux-reconstruction, dg, entropy-stable, kinetic-energy-preserving, efficiency]
+tags: [flux-reconstruction, dg, entropy-stable, kinetic-energy-preserving, performance]
 timestamp: 2026-10-23T14:51:00Z
 ---
 
@@ -156,7 +156,7 @@ own entry; [39] prints "complex geometrics" in its title. No item is unparseable
 
 # Pages created or updated
 
-Chunk 9 (2026-10-23), cited further in chunk 10 (2026-10-23). This source is cited on:
+Chunk 9 (2026-10-23), cited further in chunks 10–11 (2026-10-23/24). This source is cited on:
 
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [Entropy projection](/methods/entropy-projection.md)

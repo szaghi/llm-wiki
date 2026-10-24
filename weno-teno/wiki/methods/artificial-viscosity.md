@@ -5,7 +5,7 @@ description: "Artificial viscosity adds solution-dependent dissipation instead o
 status: established
 aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, local artificial diffusivity, LAD, residual-based viscosity, RV, residual viscosity, time-dependent artificial viscosity, viscosity switch]
 tags: [limiting, dg, low-dissipation, finite-difference, weno, machine-learning]
-timestamp: 2026-10-23T20:29:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Artificial viscosity and spectral viscosity
@@ -235,8 +235,8 @@ $\mathfrak a_K<\mathfrak a_0$ or $h<\tilde{\mathcal H}$, and
 $\mathcal H=\tilde{\mathcal H}=\max_e[\![u]\!]_e$, the largest jump across
 the element's edges, otherwise; $\mathfrak a_0=2$ by default and 2.5 on the
 forward step and the jet (page-local $\mathcal H$, $\tilde{\mathcal H}$,
-$\mathfrak a_0$). The jump-based scale is meant to tell spurious
-oscillations from physical fluctuations. The same viscosity acts on all
+$\mathfrak a_0$). The authors state that the jump-based scale "helps tell the
+difference between spurious oscillations and physical fluctuations". The same viscosity acts on all
 components, computed from the density for Euler, and is made continuous by
 averaging it at the nodes of a quadratic Lagrange basis (Remarks 1–2). The
 viscous term uses an LDG-type auxiliary gradient with central fluxes, and
@@ -435,11 +435,11 @@ applied to the velocity (with coefficient $b_v$) and to $E/\rho$ (with
 $b_E$) (Eq. 65; page-local $b$, $b_v$, $b_E$, $\mu_{\mathrm c}$). The
 C-functions are smooth in space and time because they solve
 reaction–diffusion equations forced by the solution,
-$\partial_tC_{\mathrm s}=\frac{S_{\mathrm c}}{\varepsilon_{\mathrm c}\lvert\Delta x\rvert}(\hat F-C_{\mathrm s})+\kappa_{\mathrm c}S_{\mathrm c}\lvert\Delta x\rvert\Delta C_{\mathrm s}$,
+$\partial_tC_{\mathrm s}=\frac{S_{\mathrm c}}{\varepsilon_{\mathrm c}\lvert\Delta x\rvert}(\hat F-C_{\mathrm s})+\mathsf d_{\mathrm c}S_{\mathrm c}\lvert\Delta x\rvert\Delta C_{\mathrm s}$,
 with $\hat F$ the normalized magnitude of the density gradient for the
 shock function and the rotated density gradient for the contact tangent
 (Eqs. 64–67; page-local $S_{\mathrm c}$, $\varepsilon_{\mathrm c}$,
-$\kappa_{\mathrm c}$, whose values are not printed). The coefficients
+$\mathsf d_{\mathrm c}$, whose values are not printed). The coefficients
 used are $b_v=0.35$, $b_E=2.5$, $\mu_{\mathrm c}=0$ for the Noh
 implosion on uniform grids and $b_v=0.1$, $b_E=0.7$ on the adaptive
 grid, and $\mu_{\mathrm c}=7.5\times10^{-4}$, $b_v=b_E=0$ for
@@ -569,8 +569,8 @@ multiplication per moment. The authors contrast it with limiting the
 moments, which keeps at most fifth order for sixth-order Hermite WENO, and
 with adding stiff damping terms to the moment equations, which needs
 problem-dependent parameters and exponential Runge–Kutta (§1); they prove
-that the step keeps order $k+1$ under $a\Delta t/\Delta x\le C_{\mathrm{cfl}}<1$
-(Thm 2) and that it commutes with $u\mapsto\lambda u+c$ (Thm 4;
+that the step keeps the design order (sixth, from a degree-5 Hermite reconstruction) under $a\Delta t/\Delta x\le C_{\mathrm{cfl}}<1$
+(Thm 2) and that it commutes with $u\mapsto\sigma u+\mu$ (Thm 4;
 [scale invariance](/properties/scale-invariance.md)). The approximate
 dispersion relation with and without the step is "nearly identical"
 (Fig. 2.1).

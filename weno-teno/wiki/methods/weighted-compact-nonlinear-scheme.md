@@ -5,7 +5,7 @@ description: "WCNS are finite-difference shock-capturing schemes in three steps 
 status: established
 aliases: [WCNS, WCNS3-MR-NN, WCNS3-MR, WCNS3-JS, WCNS-Z, WCNS-JS, TCNS, targeted compact nonlinear scheme, WCNS-T, HWCNS, WCNS-IS, PP-WCNS-IS, explicit WCNS, WCNS-SA, WCNS-opt, WCNS-LD, ONL6, WCNS-MR, WCNS7M, MND scheme, WCNS-EXP, hybrid MR-WCNS]
 tags: [compact-scheme, finite-difference, weno, teno, numerical-flux, multiphase]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Weighted compact nonlinear schemes (WCNS)
@@ -286,7 +286,7 @@ three steps are a node-to-midpoint interpolation of $u^-_{i+1/2}$ (the right sta
 flux, and the explicit fourth-order central difference of the interface fluxes,
 $$\partial_xf\big|_i\approx\frac1{24\Delta x}\big(\hat f_{i-3/2}-27\hat f_{i-1/2}+27\hat f_{i+1/2}-\hat f_{i+3/2}\big).$$
 *(Compiler check, not in the sources: this is the difference $\tilde h_{i+1/2}-\tilde h_{i-1/2}$ of the implied flux
-$\tilde h_{i+1/2}=\tfrac1{24}(-\hat f_{i-1/2}+26\hat f_{i+1/2}-\hat f_{i+3/2})$, the implied-flux form that Wong et al. print
+$\tilde h_{i+1/2}=\tfrac1{24}(-\hat f_{i-1/2}+26\hat f_{i+1/2}-\hat f_{i+3/2})$ (page-local), the implied-flux form that Wong et al. print
 for their HCS differencing above; it does not bear on the compact case of the Contradictions entry below.)* Two interpolations are
 compared: WCNS3-JS, the two two-point candidates $\tfrac12(3u_i-u_{i-1})$ and $\tfrac12(u_i+u_{i+1})$ with linear weights
 $(\tfrac14,\tfrac34)$ and Jiang–Shu weights, $\epsilon=10^{-6}$; and WCNS3-MR, the nested one- and three-point

@@ -5,7 +5,7 @@ description: "Semi-implicit all-Mach schemes split the Euler or MHD equations in
 status: established
 aliases: [all-Mach scheme, all-speed semi-implicit scheme, low-Mach semi-implicit scheme, SI-IMEX WENO, S4T3, all sonic Mach MHD scheme, AP WENO-CT, pressure-based semi-implicit MHD, flux-vector-splitting semi-implicit scheme]
 tags: [asymptotic-preserving, imex, semi-implicit, all-mach, finite-difference, weno, characteristic, low-dissipation, mhd]
-timestamp: 2026-10-23T20:39:00Z
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Semi-implicit all-Mach schemes
@@ -258,7 +258,7 @@ to one (§2.2): the momentum flux carries $(p/\varepsilon^2+\tfrac12\lvert B\rve
 and the energy is $E=\frac{p}{\gamma-1}+\frac{\varepsilon^2}2\big(\rho\lvert v\rvert^2+\lvert B\rvert^2\big)$.
 They combine it with constrained transport through a vector potential (Weyl gauge, after
 Christlieb, Rossmanith and Tang): the induction equation is replaced by
-$\partial_t\mathcal A+(\nabla\times\mathcal A)\times v=0$ for the page-local potential $\mathcal A$,
+$\partial_t\mathcal A+(\nabla\times\mathcal A)\times v=0$ for the potential $\mathcal A$ (registry §10),
 and $B=\nabla\times\mathcal A$, so $\nabla\cdot B=0$ holds identically (§2.4,
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
 
@@ -383,7 +383,7 @@ visco-resistive-dominated flows.
 
 ## Qualifications
 
-- **Two meanings of "all Mach".** Boscarino et al. prove asymptotic preservation and asymptotic
+- **Different meanings of "all Mach".** Boscarino et al. prove asymptotic preservation and asymptotic
   accuracy (formal, time-semi-discrete); Dematté et al. mean a velocity-based time step and
   flow-speed-scaled dissipation, give no asymptotic analysis, state that there is "no rigorous
   proof" of stability under the advective CFL condition (§2.1), and leave higher order in time
@@ -391,7 +391,7 @@ visco-resistive-dominated flows.
 - Dematté et al. print the explicit advective update (Eq. (21)) and the semi-discrete energy
   equation (Eq. (34)) with the sign of the flux divergence reversed, against their Eqs. (16),
   (26) and (35); the face-field updates of the staggered constrained transport (Eq. (39)) with
-  both signs reversed with respect to Faraday's law with their electric field $\mathcal E_z=v_2B_1-v_1B_2$ (page-local $\mathcal E$, as on [constrained transport](/methods/constrained-transport.md)); and the
+  both signs reversed with respect to Faraday's law with their electric field $\mathcal E_z=v_2B_1-v_1B_2$ ($\mathcal E$ registry §10, as on [constrained transport](/methods/constrained-transport.md)); and the
   vector-potential field (Eqs. (49), (51)) with $B_2=+\partial_x\mathcal A$ where $B=\nabla\times(\mathcal A\hat z)$
   gives $-\partial_x\mathcal A$, so that the printed field would not satisfy their own discrete divergence
   condition (50). *(compiler check, not in the sources: each of these follows from the paper's
@@ -405,12 +405,12 @@ visco-resistive-dominated flows.
   $\lVert B^n\rVert$ grows like $n$, so no induced norm has $\lVert B\rVert\le1$; it exists when the
   eigenvalues of modulus $r(B)$ are semisimple, which the paper does not check.)* The lemmas are
   therefore numerical evidence of stability over the plotted ranges, not complete proofs.
-- **Three meanings of "all Mach".** Zampa & Dumbser prove asymptotic preservation for constant
+- **Further meanings of "all Mach".** Zampa & Dumbser prove asymptotic preservation for constant
   density only and restrict their scheme to Mach numbers up to about one; Allegrini & Vignal
   run shocked problems at $\varepsilon_{\mathrm A}=1$ and prove consistency for well-prepared
   energy (linear scheme) or arbitrary data (semi-discrete Toro–Vázquez splitting).
 - Allegrini & Vignal's printed slips (HAL v1): the 2D explicit flux of Remark 4 has mass flux
-  $u$ where $\rho u$ is meant; Eqs. (15e), (19d)–(19e) carry stray tildes on $p^{n+1}$; the
+  $u$ in place of $\rho u$; Eqs. (15e), (19d)–(19e) carry stray tildes on $p^{n+1}$; the
   centred part of the MUSCL flux, Eq. (26), is divided by $2\Delta x$ against 2 in Eq. (15f);
   Eq. (28) calls the L∞ AP scheme "(13)", which is the L2 semi-discretization; and the time-step
   ratio of the L∞ AP scheme to the explicit one is said to exceed "the expected gain

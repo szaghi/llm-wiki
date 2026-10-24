@@ -5,7 +5,7 @@ description: "A troubled-cell (shock, discontinuity) indicator is a cheap local 
 status: established
 aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor, TVB minmod indicator, TENO-based troubled-cell indicator, Jameson sensor, derivatives-ratio detector, interface jump convergence sensor, minmod-based smoothness indicator, weak local residual, relaxed BVD indicator, discontinuity feedback factor, PAD, NAD]
 tags: [limiting, dg, teno, finite-difference, low-dissipation, machine-learning]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Troubled-cell and shock indicators
@@ -225,7 +225,7 @@ Fig. 4).
 
 **KXRCF indicator (finite volumes and DG).** The Krivodonova et al.
 indicator measures the jump of the cell polynomial across its inflow
-boundary. [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) (§2, Eqs.
+boundary. [Li, Shu & Qiu (2022d)](/sources/li-2022-d.md) (§2, Eqs.
 (2.25), (2.31)–(2.34)) flag cell $I_i$ as troubled if
 $$\aleph_i=\frac{\big\lvert\int_{\partial I_i^-}\big(u_i(x)-u_{n_i}(x)\big)\,ds\big\rvert}{h_i^{(\ell+1)/3}\,\lvert\partial I_i^-\rvert\,\lVert u_i\rVert_\infty}>1,$$
 with $\partial I_i^-$ the inflow part of the boundary, $u_{n_i}$ the
@@ -291,7 +291,7 @@ $C_\beta=1/4$ in 1D, 5 on rectangles (0.5 for the vortex accuracy test)
 and 1 on triangles. On smooth Burgers and vortex tests the errors equal
 the unlimited ones to the printed digits (Tables 1, 5). Against the TVD
 limiter the average fraction of troubled cells falls, e.g. for Sod with
-100 cells from 32.44–26.54 % to 6.95–1.72 % for $P^1$–$P^4$ (Tables 2–4),
+100 cells from 32.44–26.54 % to 6.95–1.72 % for $\mathbb P^1$–$\mathbb P^4$ (Tables 2–4),
 and slip lines and the flow under the Mach stem of the
 [double Mach reflection](/benchmarks/double-mach-reflection.md) are
 sharper (§4).
@@ -444,6 +444,56 @@ residuals sets the high-order part of a residual-based
 [artificial viscosity](/methods/artificial-viscosity.md); the indicator
 is not thresholded, and the viscosity is capped by a first-order one.
 
+**Lax-type wave-speed criteria (interfaces).** Two sources flag an
+interface as a potential shock when a characteristic speed decreases
+across it, the discrete form of Lax's entropy condition.
+
+- [Cao et al. (2026)](/sources/cao-2026.md) (§2.4, Eq. (23); DG) flag
+  $x_{i+1/2}$ when, for the smallest or the largest eigenvalue $\lambda_l$
+  of $A$ ($l=1$ or $m$) at the two cell averages,
+  $$\lambda_l(\bar u_i)-\lambda_l(\bar u_{i+1})>\delta_{\mathrm L}\big(\lvert\lambda_l(\bar u_i)\rvert+\lvert\lambda_l(\bar u_{i+1})\rvert\big),\qquad\delta_{\mathrm L}=0.05$$
+  (page-local $\delta_{\mathrm L}$), with the normal flux Jacobian in
+  multi-D. The criterion is inspired by a learned shock indicator of the
+  literature, costs $O(1)$ per interface, and with $\delta_{\mathrm L}=0.05$
+  "sufficed across all DG orders and Euler equations with various Mach
+  numbers"; it decides at which interfaces the damping of local
+  [COS(DG)](/methods/cos-dg.md) acts. The relative threshold makes the flag
+  unchanged when all wave speeds are multiplied by one positive constant
+  *(compiler check, not in the sources)*. Cao et al. also read the
+  dimensionless weight of their damping as "an intrinsic shock/discontinuity
+  sensor" (§5); the damping coefficients it is built from are stated to be $O(1)$ across
+  jumps, $O(\Delta x^{2N})$ in smooth regions and generically $O(\Delta x^{2N-2})$ near
+  smooth extrema, rates asserted rather than proved (§2.1, §5.1), and run their seven comparison limiters with the
+  KXRCF indicator above.
+- [Wang et al. (2026)](/sources/wang-2026.md) (§5.2, Eqs. (44)–(48);
+  finite-difference AMR) follow Ziegler et al. (as cited) and replace a
+  normalized-curvature criterion of earlier AMR work, which they find to
+  misidentify smooth compressions on coarse cells. With the left and right
+  states of a direction, the Roe averages
+  $v_*=\frac{\sqrt{\rho_{\mathrm L}}v_{\mathrm L}+\sqrt{\rho_{\mathrm R}}v_{\mathrm R}}{\sqrt{\rho_{\mathrm L}}+\sqrt{\rho_{\mathrm R}}}$,
+  $H_*$ likewise and $c_*=\sqrt{(\gamma-1)(H_*-\tfrac12v_*^2)}$, the
+  detector requires
+  $\lvert v_{\mathrm R}\pm c_{\mathrm R}\rvert<\lvert v_*\pm c_*\rvert<\lvert v_{\mathrm L}\pm c_{\mathrm L}\rvert$
+  together with a mapped pressure curvature
+  $$\Pi_i=\frac{2\mathsf S_i}{(1+\mathsf S_i)^2},\qquad \mathsf S_i=\frac{\lvert p_{i-1}-2p_i+p_{i+1}\rvert}{p_{i-1}+2p_i+p_{i+1}},\qquad \Pi_i>\Pi_{\mathrm{map}},$$
+  and the implementation flags a cell when the largest normalized Lax
+  residual, $\lvert(v_*\mp c_*)-(v_{\mathrm R}\mp c_{\mathrm R})\rvert/c_*$ or
+  $\lvert(v_{\mathrm L}\mp c_{\mathrm L})-(v_*\mp c_*)\rvert/c_*$, exceeds
+  $C_{\mathrm{Lax}}$ (page-local $v_*$, $H_*$, $c_*$, $\Pi_i$, $\mathsf S_i$,
+  $\Pi_{\mathrm{map}}$, $C_{\mathrm{Lax}}$; the source's $\theta_i$,
+  $\theta_{map}$, $\alpha_{\rm Liu}$). Defaults are $C_{\mathrm{Lax}}=0.1$,
+  $\Pi_{\mathrm{map}}=10^{-2}$; with the curvature sensor it filters out weak
+  compressions, which the high-order interpolation resolves. Flagged cells
+  switch the coarse–fine interpolation of their
+  [AMR scheme](/methods/adaptive-mesh-refinement.md) from WENO to a
+  conservative linear one. In a sensitivity study the errors are unchanged
+  over $C_{\mathrm{Lax}}\in\{0.05,0.1,0.2\}$ and
+  $\Pi_{\mathrm{map}}\in\{10^{-3},10^{-2},10^{-1}\}$: on the acoustic-wave
+  (Euler–Burgers) problem $L_1(\rho)=0.001590$ throughout while the largest
+  troubled fraction goes from 5.6338 % to 0 %, and on the Mach 3 moving
+  shock the shock-position error stays at 0.001791 while the fraction goes
+  from 6.25 % to 4.6875 % (Tables 4–5).
+
 ## Finite-difference indicators
 
 **Three-region WENO-Z-type detector.** [Wan & Xia (2022)](/sources/wan-2022.md)
@@ -522,9 +572,9 @@ averages, to push the
 already bound-preserving limited flux of their
 [Active Flux](/methods/active-flux.md) scheme further toward the
 first-order Lax–Friedrichs flux behind strong shocks:
-$$\Phi_{\mathrm J,i,j}=\frac{\lvert\bar p_{i+1,j}-2\bar p_{i,j}+\bar p_{i-1,j}\rvert}{\lvert\bar p_{i+1,j}+2\bar p_{i,j}+\bar p_{i-1,j}\rvert},\qquad
+$$\varphi_{\mathrm J,i,j}=\frac{\lvert\bar p_{i+1,j}-2\bar p_{i,j}+\bar p_{i-1,j}\rvert}{\lvert\bar p_{i+1,j}+2\bar p_{i,j}+\bar p_{i-1,j}\rvert},\qquad
 \Psi_{\mathrm D,i,j}=\max\Big\{\frac{-(\nabla\cdot v)_{i,j}}{\sqrt{(\nabla\cdot v)^2_{i,j}+\lvert\nabla\times v\rvert^2_{i,j}+10^{-40}}},\,0\Big\},$$
-$$\theta^{\mathrm s}_{i+1/2,j}=\exp\big(-\kappa_{\mathrm s}\,\Phi_{\mathrm J,i+1/2,j}\,\Psi_{\mathrm D,i+1/2,j}\big)\in(0,1],$$
+$$\theta^{\mathrm s}_{i+1/2,j}=\exp\big(-\kappa_{\mathrm s}\,\varphi_{\mathrm J,i+1/2,j}\,\Psi_{\mathrm D,i+1/2,j}\big)\in(0,1],$$
 with interface values the maximum over the two adjacent cells and the
 divergence and curl by central differences (page-local $\varphi_{\mathrm J}$,
 $\theta^{\mathrm s}$, $\kappa_{\mathrm s}$; the source's $\varphi_1$,
@@ -827,18 +877,18 @@ al. and a Joukowsky-type criterion) blend the HLLC and HLL star states at
 each face, $\hat u^*=f\,u^*_{\mathrm{HLLC}}+(1-f)\,u^{\mathrm{HLL}}$ (registry §10
 $u^{\mathrm{HLL}}$), with
 $$f_p=\begin{cases}1,&\lvert p^--p^+\rvert>\alpha_J\,\lvert v_n^--v_n^+\rvert\sqrt{\gamma\min\big(\rho^-(p^-+p_\infty),\ \rho^+(p^++p_\infty)\big)},\\0,&\text{otherwise},\end{cases}\qquad\alpha_J=0.3,$$
-$f=f_p$ when the normal Mach numbers on both sides are both above or both
-below one, $f=0$ otherwise ($f$, $f_p$, $\alpha_J$ page-local; $v_n^\pm$ the
+"when the indicator function is equal to 1", $f=f_p$ if the normal Mach numbers on both sides are both above or both
+below one and $f=0$ otherwise (Eq. (19)); $f$ where the indicator is 0 is not stated ($f$, $f_p$, $\alpha_J$ page-local; $v_n^\pm$ the
 face-normal velocities, $p_\infty$ the stiffened-gas constant of the fluid,
 registry §10 $p_{\infty,k}$). The criterion compares the pressure jump with
 the acoustic impedance times the velocity jump, "similar to the Joukowsky
 equation except for an parameter" (§2.4). The stated aim is to use HLL "to
 avoid the shock instability" near strong shocks
-([carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)). As printed,
-however, $f=1$ (pure HLLC) where the indicator fires and $f=0$ (pure HLL)
-elsewhere, the opposite of that aim *(compiler check, not in the sources:
-Eqs. (16), (18) and (19) read together)*; either $f=1-f_p$ is meant or the
-roles are inverted in print.
+([carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)). *(Compiler check, not in the sources:
+across a stationary shock aligned with the face the upstream normal Mach number exceeds 1 and the
+downstream one is below 1, so the "otherwise" branch gives $f=0$, pure HLL, as the stated aim requires;
+at a detected moving shock both Mach numbers can lie on one side of 1, and Eqs. (16), (18) and (19) as
+printed then give $f=f_p=1$, pure HLLC.)*
 
 **Flattener (antidiffusion control).**
 [Balsara et al. (2024)](/sources/balsara-2024.md) (§III, Eq. (3.8)) multiply
@@ -953,7 +1003,7 @@ the five-cell stencil and a monotonicity flag, outputs the probability
 that the cell holds a monotone discontinuity, and THINC is built only
 where it exceeds $0.45$. Its training labels are the BVD scheme's own
 choices on one-dimensional Euler Riemann problems, so the network is
-trained to reproduce where BVD picks THINC (\xc2\xa73.3.2); the method is
+trained to reproduce where BVD picks THINC (§3.3.2); the method is
 described on the BVD page.
 
 **Minmod-jump roughness indicator (limiter switching).** [Chu et al.
@@ -1282,11 +1332,11 @@ Several sources use an indicator without defining or analysing it:
   net jump would never trigger, and sums over the solution nodes $S$ where
   the jump exists only at interface nodes; Eq. (25) sets the inactive
   entropy constraint to zero although constraints are required to be
-  strictly positive (Eqs. 17, 21); the intent is clear from the text.
+  strictly positive (Eqs. 17, 21).
 - Berta et al. print $\delta^{(3)}=\tfrac12\big(\bar\Upsilon_{i+2}-2(\bar\Upsilon_{i+1}-2\bar\Upsilon_{i-1})-\bar\Upsilon_{i-2}\big)$
   (Eq. 37, with "$i+2\hat e_x$" for "$c+2\hat e_x$"), whose coefficients
   $(1,-2,0,4,-1)/2$ sum to 1 and are not antisymmetric, so it does not
-  vanish on constants; the antisymmetric third difference above is meant
+  vanish on constants; the page uses the antisymmetric third difference above
   *(compiler check, not in the sources)*.
 - Cernetic et al.'s Eq. (42) starts the numerator sum at the last index of
   the degree-$(N-1)$ set, which by their Eq. (41) belongs to the retained
@@ -1360,7 +1410,7 @@ Several sources use an indicator without defining or analysing it:
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — arXiv v2: §2.4, Eqs. (19)–(22).
 - [Pazner (2021)](/sources/pazner-2021.md) — arXiv v1: §4.4 (Eqs. (68)–(70), Figs. 5–6); §5.1 (Table 1).
 - [Basile et al. (2022)](/sources/basile-2022.md) — author manuscript: §4.2 (Eqs. (36)–(37)).
-- [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — arXiv v1: §2 (Eqs. (2.25), (2.31)–(2.34), Remarks 2–3); §3.
+- [Li, Shu & Qiu (2022d)](/sources/li-2022-d.md) — arXiv v1: §2 (Eqs. (2.25), (2.31)–(2.34), Remarks 2–3); §3.
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — arXiv v1: §3 (Eqs. (9)–(10)); §5; Rem. 6.
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §2.2.4 (indicator, Props. 2.1–2.3); Eqs. (6), (15)–(16); Appendix B; Table 3.
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — arXiv v1: §3 (Eq. (36)); §4.3–§4.4; §5.1 (Fig. 8).
@@ -1410,3 +1460,5 @@ Several sources use an indicator without defining or analysing it:
 - [Huang et al. (2025a)](/sources/huang-2025.md) — §1; §3.1, Eqs. (11)–(14); §3.3; §4.1, Eq. (26); §5.1, Tables 1, 3; §5.5, Fig. 6.
 - [Huang et al. (2025b)](/sources/huang-2025-b.md) — §3.3, Eqs. (28)–(32), Algorithm 2, Remark 2.
 - [Liang et al. (2025)](/sources/liang-2025.md) — §3.3.2, Eqs. (19)–(20); §3.3.3–3.3.4; §4.4, §4.8.
+- [Cao et al. (2026)](/sources/cao-2026.md) — §2.4, Eq. (23); §5.1; §6.
+- [Wang et al. (2026)](/sources/wang-2026.md) — §5.2, Eqs. (44)–(48); §5.3–5.4, Tables 4–5.

@@ -5,7 +5,7 @@ description: "A positivity-preserving flux limiter blends, interface by interfac
 status: established
 aliases: [PP flux limiter, Hu–Adams–Shu limiter, positivity-preserving limiter, positivity- and boundedness-preserving flux limiter, parametrized flux limiter]
 tags: [positivity, bound-preserving, limiting, finite-difference, numerical-flux]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Positivity-preserving flux limiter (Hu–Adams–Shu)
@@ -136,9 +136,9 @@ limiter out for their [adaptive TENO](/methods/adaptive-teno.md)
 finite-difference scheme with Lax–Friedrichs flux splitting and a sharp-interface
 [immersed boundary](/methods/immersed-boundary-method.md). Each stage of the
 five-stage third-order SSP Runge–Kutta method is written as a forward-Euler step
-with $\lambda_s=\Delta t\sum_k\beta_{sk}/\Delta x$ ($\beta_{sk}$ the Shu–Osher
-coefficients, page-local), and the step is split into two half-cell states,
-$$u^{s+1}_i=\tfrac12u^-_i+\tfrac12u^+_i,\qquad u^-_i=u^s_i+2\lambda_s\hat f_{i-1/2},\qquad u^+_i=u^s_i-2\lambda_s\hat f_{i+1/2}$$
+with $\lambda^{(s)}=\Delta t\sum_k\beta_{sk}/\Delta x$ ($\beta_{sk}$ the Shu–Osher
+coefficients of stage $s$, page-local), and the step is split into two half-cell states,
+$$u^{s+1}_i=\tfrac12u^-_i+\tfrac12u^+_i,\qquad u^-_i=u^s_i+2\lambda^{(s)}\hat f_{i-1/2},\qquad u^+_i=u^s_i-2\lambda^{(s)}\hat f_{i+1/2}$$
 (page-local $u^\pm_i$), the 1D form of Wong et al.'s split above. The low-order flux is
 the global [Lax–Friedrichs](/methods/lax-friedrichs-flux.md) flux with
 $a=\max(\lvert v\rvert+c)$, positivity preserving for CFL numbers below $\tfrac12$,
@@ -328,13 +328,13 @@ Hu–Adams–Shu limiter, without describing it:
   the sources)*.
 - **No guarantee is stated where the limiter is only used.** Fu (2021),
   Takagi et al. (2022), Wang & Don (2022), Liang et al. (2022) and Li et
-  al. (2023) print no limiter formulas, no
+  al. (2023a) print no limiter formulas, no
   low-order flux of the limiter and no statement of the CFL condition it
   needs; their positivity claims are therefore numerical.
-- **Printed slips in Fan et al.'s appendix.** The density box of Step II
+- **Printed slips in Fan et al.'s (2023) appendix.** The density box of Step II
   is printed $[0,\Lambda^\rho_L]\times[0,\Lambda^\rho_R]\times[0,\Lambda^\rho_L]\times[0,\Lambda^\rho_D]$,
-  while its vertices are built with the down and up bounds; the third and
-  fourth factors are meant to be the down and up bounds. Line 15 of
+  while its vertices are built with the down and up bounds, which the third and
+  fourth factors must therefore carry. Line 15 of
   Algorithm A.1 tests "$f(k)=1$" for the flag set on line 12. Their
   isentropic-vortex runs without the limiter report negative minimum
   pressures on coarse meshes (Table 3.3), so "robust without limiters"
@@ -349,7 +349,7 @@ Hu–Adams–Shu limiter, without describing it:
   concave otherwise (Lemma 1), and call the assumption mild for water–air
   pairs (§2).
 
-- **Zhang et al.'s sound-speed quantity.** The text limits
+- **Zhang et al.'s (2024a) sound-speed quantity.** The text limits
   "$\rho c^2=\frac{p+P_\infty}{\gamma-1}$" (their $P_\infty$ the mixture
   stiffened-gas constant, written $p_\infty$ below, page-local); with their
   frozen sound speed $c^2=\gamma(p+p_\infty)/\rho$ (Eq. (16)),

@@ -153,7 +153,7 @@ NIST-JANAF web tables.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-22), cited further in chunks 4–10 (2026-10-22/23). This source is cited on:
+Chunk 3 (2026-10-22), cited further in chunks 4–11 (2026-10-22/24). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
 * [Bound preservation](/properties/bound-preservation.md)

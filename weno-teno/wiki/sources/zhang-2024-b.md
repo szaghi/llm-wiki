@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 502:112793"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Zhang_A_finite_difference_scale-adaptive_TENO_scheme_for_turbulenc.pdf"
 tags: [teno, low-dissipation, spectral-analysis, finite-difference, turbulence]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Summary
@@ -67,7 +67,7 @@ $c^{\mathrm s}_1$ (page-local).
 8. The sensor of Li, Chen & Ren (Eq. 27) is phase independent but resolves only up to 1.454 at 1% error (efficiency 46.279%); the sensor of S. Li et al. (Eq. 30) reaches higher wavenumbers but oscillates with the phase because its two ratios differ (§4.1–4.2, Fig. 3). **Shown**
 9. For any sinusoid, $\sqrt{|\mathsf D_4|/|\mathsf D_2|}=\sqrt{|2(1-\cos\vartheta)|/|(1+2b^{\mathrm s}_1)\cos\vartheta-2b^{\mathrm s}_1|}$, independent of phase and amplitude; $b^{\mathrm s}_1=-5/12$ recovers the Li, Chen & Ren sensor (Eq. 31). **Derived**
 10. Requiring $\sqrt{|\mathsf D_3|/|\mathsf D_1|}=\sqrt{|\mathsf D_4|/|\mathsf D_2|}$ gives two constraints on the $\mathsf D_1$ coefficients, after which the sensor depends on $b^{\mathrm s}_1$ alone and $c^{\mathrm s}_1$ does not affect monochromatic waves (Eq. 32). **Derived**
-11. With $b^{\mathrm s}_1=-0.398$ ($c^{\mathrm s}_1=-5$, $\epsilon_{\mathrm s}=10^{-5}$, Eq. 33) the sensor resolves up to $\vartheta=2.137$ at 1% error, efficiency 68.012% (§4.2, Fig. 4). **Shown** *(compiler check: 2.1367 and 68.01% from Eq. 31; 1.4539 for $b^{\mathrm s}_1=-5/12$.)*
+11. With $b^{\mathrm s}_1=-0.398$ ($c^{\mathrm s}_1=-5$, $\varepsilon_{\mathrm s}=10^{-5}$, Eq. 33) the sensor resolves up to $\vartheta=2.137$ at 1% error, efficiency 68.012% (§4.2, Fig. 4). **Shown** *(compiler check: 2.1367 and 68.01% from Eq. 31; 1.4539 for $b^{\mathrm s}_1=-5/12$.)*
 12. $b^{\mathrm s}_1=-5/12$ makes the sensor curve tangent to $\vartheta_{\mathrm{ESW}}=\vartheta$ at the origin and keeps it below; smaller values stay below with larger error, larger values cross the reference at low wavenumber (§4.2). **Stated** *(compiler check: Eq. 31 expands as $\vartheta_{\mathrm{ESW}}=\vartheta\{1+\vartheta^2[(1+2b^{\mathrm s}_1)/4-1/24]+O(\vartheta^4)\}$, so the slope at the origin is 1 for every $b^{\mathrm s}_1$; $-5/12$ is the value that cancels the $\vartheta^3$ error term, and the stated behaviour on either side follows from its sign.)*
 13. The arccos sensor of Li & Ren (2023), exact for sinusoids on $[0,\pi]$, is capped at $\pi$ at discontinuities; the proposed sensor gives larger values there, which suits TENO better (§4.2, Eqs. 34–35). **Stated**
 14. TENO6-SA (Algorithm 1) uses four bands: $\vartheta_{\mathrm{ESW}}<1.085$ with $C_T=10^{-5}$ and $d_k=(9/20,3/10,1/20,1/5)$; $<1.516$ with $10^{-10}$ and $(21/50,9/50,2/25,8/25)$; $<1.726$ with $10^{-13}$, and $\ge1.726$ with $10^{-8}$, both with the least-squares weights $(5571/14000,321/3500,1429/14000,1429/3500)$, because the second-order flux is not a convex combination of the candidate fluxes (§5.1). **Stated** *(compiler check, not in the sources: with the TENO6 candidates ordered central, downwind, upwind, four-point, the first two weight sets reproduce the sixth- and fourth-order fluxes exactly; the third leaves residuals up to $8\times10^{-3}$ in the stencil coefficients.)*
@@ -115,7 +115,7 @@ $c^{\mathrm s}_1$ (page-local).
 | $\omega^r_k$, $w_k$, $\alpha^r_k$ | $\omega_k$, $\alpha_k$ | |
 | $IS^r_k$, $IS^4_3$, $IS^6_3$ | $\beta_k$, $\beta^{(4)}_3$, $\beta^{(6)}_3$ | superscript = stencil width |
 | $\tau_{2r-1}$, $\tau_6$, $\tau_K$ | $\tau_{2r-1}$, $\tau_6$ | subscript = points of the global stencil; agrees |
-| $\varepsilon$ | $\epsilon$; $\epsilon_{\mathrm s}$ in the sensor | **also the 1% tolerance and the acoustic amplitude** |
+| $\varepsilon$ | $\epsilon$; $\varepsilon_{\mathrm s}$ in the sensor | **also the 1% tolerance and the acoustic amplitude** |
 | $p$, $q$, $C$, $\gamma_k$, $\chi_k$, $\delta_k$, $C_T$ | $q$, $C$, $\gamma_k$, $\chi_k$, $\delta_k$, $C_T$ | WENO exponent $p$ is the registry $q$ |
 | $C_{max}$, $C_{min}$, $\theta$, $\xi$, $m$ (Eq. 12) | kept | EWENO-CU6 switch; **$\theta$ is the Zhang–Shu factor in the registry** |
 | $\alpha_1$, $\alpha_2$, $g(m)$, $m$, $\eta_i$, $C_r$, $\xi$, $\bar\beta$ (Eq. 17) | $b_1$, $b_2$, $\varphi(\mu_d)$, $\mu_d$, $\sigma_i$, $C_r$, $\xi_{\mathrm A}$, $b$ | TENO-A, as on [adaptive TENO](/methods/adaptive-teno.md) |
@@ -146,7 +146,7 @@ Ref. [37] prints the first author as "I. Wibisono Yanuar" and [62] the last two 
 
 # Pages created or updated
 
-Chunk 8 (2026-10-23), cited further in chunks 9–10 (2026-10-23). This source is cited on:
+Chunk 8 (2026-10-23), cited further in chunks 9–11 (2026-10-23/24). This source is cited on:
 
 * [Accuracy at critical points](/properties/critical-point-accuracy.md)
 * [Adaptive TENO (TENO-A, TENO-AA)](/methods/adaptive-teno.md)

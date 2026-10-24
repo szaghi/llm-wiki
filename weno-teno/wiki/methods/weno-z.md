@@ -5,7 +5,7 @@ description: "WENO-Z replaces the Jiang–Shu weights by α_k = d_k[1+(τ/(β_k+
 status: established
 aliases: [WENO-Z, WENO5-Z, WENO-Z3, WENO7-Z, WENO9-Z, WENO-Z5, WENO-Z7, Borges WENO]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-23T20:06:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # WENO-Z weights
@@ -148,7 +148,7 @@ $f\mapsto\sigma f$) and restore degree 0 by squaring the denominator and scaling
 with the data; on scaled Riemann problems the original weights oscillate and break the homogeneity of
 the solution, the new ones keep it to $10^{-12}$–$10^{-13}$ (Example 4.4).
 
-Of the last four rows, the MR-AWENO row has degree 2 like the first three; Li et al. (2023a, §2.3,
+Of the MR-AWENO, MR-AWENO-Si, WENO-G and WENO-H rows, the MR-AWENO row has degree 2 like the first three; Li et al. (2023a, §2.3,
 Theorem 3) prove that this operator is not scale-invariant and trace it to the different scalings of
 $\beta_k$, $\tau$ and $\epsilon$; MR-AWENO-Si and WENO-G are of degree 0,
 the former exactly once $\epsilon$ is scaled by $\mathsf m^2$ (Theorem 4) *(compiler check, not in the sources,
@@ -156,15 +156,15 @@ for WENO-G: $\nabla^4f$ and the $\beta_k^{1/2}$ are homogeneous of degree 1 in t
 degree 0 up to $\epsilon$)*. Wan & Xia's $C_R$ contains $\big(\sum|u_j|\big)^2\Delta x$, a deliberate amplitude
 dependence meant to make the weights more linear on fine grids (§3.1).
 
-*(Compiler check, not in the sources, for the five rows added with chunk 6.)* The MR-WCNS ratio has
+*(Compiler check, not in the sources, for the MR-WCNS, moving-quadrilateral, CWENOZ, IMWENO-P and compact gas-kinetic rows.)* The MR-WCNS ratio has
 degree 2 like the first row; it is the MR-AWENO weight, and Li et al.'s (2023a) Theorem 3 covers it. The
 moving-quadrilateral, IMWENO-P and compact gas-kinetic ratios have degree 0 up to $\epsilon$, though
-$\epsilon=10^{-3}$ in the first is large against small-amplitude data. The CWENOZ ratio has degree
-$2b-2=6$ for $b=4$, the strongest amplitude dependence in the table. IMWENO-P is invariant to data scaling
+$\epsilon=10^{-3}$ in the first is large against small-amplitude data. The CWENOZ ratio, with its mean difference raised to the power 4, has degree
+6, the strongest amplitude dependence in the table. IMWENO-P is invariant to data scaling
 up to $\epsilon$ but its indicators $\beta^{\mathrm{IMP}}_k$ carry the cell width as a factor, so its weights change with the unit
 of length; see [scale invariance](/properties/scale-invariance.md).
 
-*(Compiler check, not in the sources, for the WCNS3-MR row added with chunk 10.)* The squared difference of two
+*(Compiler check, not in the sources, for the WCNS3-MR row.)* The squared difference of two
 indicators over one indicator has degree 2 in the data, like the first row.
 
 ## Uses in the bundle

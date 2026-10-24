@@ -5,7 +5,7 @@ description: "A conservative finite-difference scheme evolves point values by di
 status: established
 aliases: [conservative FD scheme, Shu–Osher finite difference, FD-WENO, finite-difference flux reconstruction, flux-difference form]
 tags: [finite-difference, reconstruction, weno, teno]
-timestamp: 2026-10-23T15:16:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Conservative finite-difference scheme
@@ -34,7 +34,7 @@ $x_{i+1/2}$ from the $f_j$ yields a high-order $\hat f_{i+1/2}$ (Fu 2021, Eqs. (
 requires a [flux splitting](/methods/lax-friedrichs-flux.md) $f=f^++f^-$ with
 $\pm\partial f^\pm/\partial u\ge0$: $\hat f^+_{i+1/2}$ is reconstructed from a left-biased stencil,
 $\hat f^-_{i+1/2}$ by mirror symmetry, and $\hat f_{i+1/2}=\hat f^+_{i+1/2}+\hat f^-_{i+1/2}$ (Li et
-al. 2022, §2). For systems the reconstruction is applied to characteristic projections of the split
+al. 2022b, §2). For systems the reconstruction is applied to characteristic projections of the split
 fluxes ([characteristic decomposition](/methods/characteristic-decomposition.md)); Fu (2023,
 Algorithm 1) gives the full sequence with Roe-averaged eigenvectors and a Rusanov splitting that uses
 the maximum characteristic speed over the whole domain. Multi-dimensional schemes apply the 1-D
@@ -161,14 +161,14 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
 - **Central flux plus high-order dissipation.** Sciacovelli, Passiatore, Cinnella & Pascazio (2021,
   §3, Eqs. (20)–(35)), after Lerat & Corre, write the flux as a central part corrected by recursive
   truncation-error terms plus a dissipation of matching odd order: on $2(P+2)+1$ points,
-  $\hat f_{i+1/2}=\Big[\big(1-\sum_{p=0}^Pa_p\Delta^{2+2p}\big)\{\!\{f\}\!\}\Big]_{i+1/2}-\mathcal D_{i+1/2}$
-  with $a_0=\tfrac16$, $a_1=-\tfrac1{30}$, $a_2=\tfrac1{140}$, $a_3=-\tfrac1{630}$, where
+  $\hat f_{i+1/2}=\Big[\big(1-\sum_{p=0}^P\mathsf a_p\Delta^{2+2p}\big)\{\!\{f\}\!\}\Big]_{i+1/2}-\mathcal D_{i+1/2}$
+  with $\mathsf a_0=\tfrac16$, $\mathsf a_1=-\tfrac1{30}$, $\mathsf a_2=\tfrac1{140}$, $\mathsf a_3=-\tfrac1{630}$ (page-local $\mathsf a_p$, as on [numerical dissipation](/definitions/numerical-dissipation.md)), where
   $\Delta^m$ is the undivided difference of the registry, here centred at half points for even and
   odd $m$ alike, and $\{\!\{f\}\!\}_{i+1/2}=\tfrac12(f_i+f_{i+1})$. The central part is the
   $2(P+2)$-order central difference; the dissipation
-  $\mathcal D=(-1)^{P+1}\tfrac{|a_P|}{2}\rho(A)\,\Delta^{2P+3}u$ (page-local $\mathcal D$; magnitudes
+  $\mathcal D=(-1)^{P+1}\tfrac{|\mathsf a_P|}{2}a\,\Delta^{2P+3}u$ (page-local $\mathcal D$; magnitudes
   $\tfrac1{12},\tfrac1{60},\tfrac1{280},\tfrac1{1260}$ for orders 3, 5, 7, 9) uses the spectral radius
-  $\rho(A)$ instead of a Roe matrix, and is blended with a second-order term switched on by a shock
+  $a$ of $A$ (the source's $\rho(A)$) instead of a Roe matrix, and is blended with a second-order term switched on by a shock
   sensor ([artificial viscosity](/methods/artificial-viscosity.md)). The schemes are odd-order only,
   neither TVD nor monotonicity-preserving, and their dispersion error is exactly that of the central
   scheme (§3).
@@ -273,9 +273,9 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
   restores it with anti-diffusive terms ([stationary contact
   preservation](/properties/stationary-contact-preservation.md)).
 - Sciacovelli et al. (2021, Eqs. (23), (29)) print the dissipation of the general member as
-  $-\tfrac{a_P}{2}\rho(A)\Delta^{2P+3}u$ (their dissipation matrix taken as $\rho(A)$), which with the signed $a_P$ above has the opposite sign of
+  $-\tfrac{\mathsf a_P}{2}a\,\Delta^{2P+3}u$ (their dissipation matrix taken as the spectral radius $a$), which with the signed $\mathsf a_P$ above has the opposite sign of
   their explicit members (Eqs. (25)–(28)); the members, used here, are the dissipative ones
-  *(compiler check, not in the sources: the order-3 member adds $-\tfrac1{12}\rho(A)\Delta^4u/\Delta x$
+  *(compiler check, not in the sources: the order-3 member adds $-\tfrac1{12}a\,\Delta^4u/\Delta x$
   to $du_i/dt$, which damps every Fourier mode)*. The dissipated quantity of Eq. (23) carries a tilde that
   is never defined; the JST-blended form (Eq. (30)) acts on the conserved variables.
 - Wang et al. (2021, §3.1.2) state that their viscous discretization does not exceed the WENO

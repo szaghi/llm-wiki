@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Learned WENO weights"
-description: "Learned WENO weights replace the smoothness-indicator formula of a WENO-type scheme by a trained network that outputs the nonlinear weights; the page describes WENO3-NN, the five-point WENO5-NN, WCNS3-MR-NN, the constrained DSP-WENO, learned MUSCL slopes and scheme selection, the ROUND operators fitted to WENO3-NN, and a learned DG smoothness indicator."
+description: "Learned WENO weights replace the smoothness-indicator formula of a WENO-type scheme by a trained network that outputs the nonlinear weights; the page describes WENO3-NN, the five-point WENO5-NN, WCNS3-MR-NN, the constrained DSP-WENO, learned MUSCL slopes and scheme selection, a learned entropy-stable flux, the ROUND operators fitted to WENO3-NN, and a learned DG smoothness indicator."
 status: established
 aliases: [WENO3-NN, WENO3-NN1, WENO3-NN2, WENO5-NN, WCNS3-MR-NN, DSP-WENO, learned MUSCL slopes, learned discretization, neural-network WENO, data-driven WENO weights, machine-learned reconstruction, data-driven shock capturing]
 tags: [machine-learning, weno, reconstruction, finite-volume, finite-difference]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T06:02:00Z
 ---
 
 # Learned WENO weights
@@ -250,6 +250,74 @@ reconstructions (MUSCL or THINC) the boundary-variation-diminishing rule would s
 built per cell (deepMTBVD); the network chooses a scheme, not weights. It is described on
 [boundary variation diminishing](/definitions/boundary-variation-diminishing.md).
 
+## Learning the flux and an entropy (Liu et al. 2026)
+
+[Liu et al. (2026)](/sources/liu-2026.md) (arXiv v1) take the learning one level up: they learn
+an unknown conservation law, its numerical flux and a matching convex entropy from noisy
+solution trajectories (the "neural entropy-stable conservative flux form network", §3). Nothing
+here learns reconstruction weights. The interface states come from a fixed Kurganov–Tadmor
+reconstruction with the minmod-type limiter $\max(0,\min(r,(1+r)/2,1))$ (§2.2.3, Eq. (2.16);
+[central-upwind schemes](/methods/central-upwind-scheme.md)). *(Compiler check, not in the
+sources: $(1+r)/2$ lies between $r$ and $1$, so the limiter equals $\max(0,\min(r,1))$, the
+minmod limiter.)* Three networks enter (§3.1, §4.4):
+
+- a fully connected network $f_\mu$ for the physical flux (page-local; three hidden layers of
+  64 neurons);
+- an input-convex network $\eta_\theta$ for the entropy (page-local), convex by construction
+  (non-negative hidden-to-hidden weights obtained as exponentials, convex non-decreasing
+  activations, after Amos et al.). Its gradient $w_\theta=\eta_\theta'$ and Hessian
+  $\eta_\theta''$ come from automatic differentiation;
+- a network for the wave speed, mapped to
+  $a_w=\frac{\Delta x}{\Delta t}\big[1-\tanh\lvert\phi_w(f_\mu'(u))\rvert\big]\in(0,\Delta x/\Delta t]$
+  (page-local $a_w$, $\phi_w$).
+
+The flux follows Tadmor's entropy-stable form $f^{\mathrm{ec}}-\tfrac12D[\![w]\!]$ with
+Rusanov-type dissipation $D=a\,(\eta'')^{-1}$ in entropy variables (Eqs. (2.14), (3.1)–(3.2);
+the same structure as the ES Rusanov flux on the
+[Lax–Friedrichs page](/methods/lax-friedrichs-flux.md)). The entropy-conservative flux is
+replaced by the average of $f_\mu$ at the reconstructed states:
+
+$$h_{i+1/2}=\tfrac12\big(f_\mu(u^-_{i+1/2})+f_\mu(u^+_{i+1/2})\big)-\tfrac12\max\big(a_w(u^+_{i+1/2}),a_w(u^-_{i+1/2})\big)\,\eta_\theta''\big(\{\!\{u\}\!\}_{i+1/2}\big)^{-1}\big(\eta_\theta'(u^+_{i+1/2})-\eta_\theta'(u^-_{i+1/2})\big)$$
+
+(Eqs. (3.4)–(3.5); see Qualifications for the printed index). The Hessian is inverted by a
+Cholesky solve after adding $10\cdot0.3^{\mathrm{epoch}}$ times the identity (Eq. (3.6)), and time
+stepping is two-stage TVD Runge–Kutta, chosen for its GPU memory footprint (§3.2). Training
+minimizes a recurrent trajectory loss plus penalties that push $\eta_\theta''$ towards the identity
+and $\eta_\theta''f_\mu'$ towards symmetry. Symmetry is the Godlewski–Raviart condition under
+which a strictly convex $\eta$ is an entropy and the system is symmetrizable, hence hyperbolic
+(Thm 2.3; §4, Eqs. (4.5)–(4.7)).
+
+**What is proved and what is shown.** The authors state that the learned flux is entropy stable
+for the learned law with respect to the learned entropy, "thanks to the structural guarantees of
+convex input networks and Theorem 2.6" (§3.1). Theorem 2.6, Tadmor's, is recalled without proof
+and assumes an entropy-conservative $f^{\mathrm{ec}}$; the paper does not show that the averaged
+flux is one, and the symmetry is only penalized. *(Compiler check, not in the sources: for
+Burgers' flux $f=u^2/2$ with $\eta=u^2/2$, $w=u$ and $\psi=u^3/6$, the average
+$\{\!\{f\}\!\}$ gives $[\![w]\!]\{\!\{f\}\!\}-[\![\psi]\!]=[\![u]\!]^3/12\ne0$, so an arithmetic
+flux average does not satisfy Tadmor's condition in general.)* The evidence for entropy stability
+is numerical. A discrete entropy remainder, defined in Eq. (4.10), stays non-positive over each
+family of 101 out-of-distribution initial data, for Burgers at every noise level (Figs. 5.3, 5.6, 5.9, 5.11).
+No convergence or stability analysis and no timings are given (§6).
+
+**Results** (training data by PyClaw, additive Gaussian noise of relative level
+$\xi\in\{0,0.25,0.5,1\}$, §5):
+
+- On 1D [Burgers](/benchmarks/burgers-equation-tests.md) with training data only up to $t=0.1$,
+  before the shock forms, the model captures the shock formation at $t=1$ and predicts to $t=3$.
+  It keeps the shock structure for $\xi\le0.5$, against $\xi\le1.0$ for the authors' earlier
+  network with a fixed Kurganov–Tadmor scheme and a known entropy. They attribute the difference
+  to the entropy being learned (§5.2.1).
+- On the 1D [shallow-water equations](/definitions/shallow-water-equations.md) the shock
+  structure survives at $\xi=1$ and conservation holds to $O(10^{-5})$ (§5.2.2).
+- On 1D Euler, with Sod-type and Shu–Osher-type data, the accuracy is comparable to the earlier
+  network. High noise adds diffusion, because in the worst case the surrogate approaches a
+  Lax–Friedrichs flux with constant speed (§5.2.3).
+- On 2D Burgers, trained on five trajectories (GPU memory limit), the prediction is good at
+  $\xi=1$ but more diffusive than expected. The authors attribute it to the difficulty of
+  learning the maximum local wave speed (§5.2.4).
+
+None of the hyperparameters was fine-tuned (§4.4.3).
+
 ## Order, dissipation and cost
 
 **Order.** The ideal-weight loss is the point of the design. Earlier networks trained
@@ -429,6 +497,13 @@ not under adding a constant, unlike the WENO3-NN features.)*
   $0.35$ (CFL 0.44 to 0.77), i.e. a worse error than the baseline MUSCL scheme there. Their §5 writes the CFL number as
   $a\Delta x/\Delta t$, the inverse of their Eqs. (14)–(15). The entropy and total-variation terms are soft
   training penalties; no discrete entropy inequality is proved for the scheme.
+- Liu et al. (2026) print the second argument of the maximum in Eq. (3.5) as
+  $a_w(u^-_{j-1/2})$ while every other term uses the interface $j+\tfrac12$, as does their
+  Eq. (2.15). The page writes the symmetric form. Their Algorithm 3.1 prints the second TVD
+  Runge–Kutta stage as $z^l=\tfrac12z^{l-1}+\tfrac12z^{(1)}$, without the term
+  $\tfrac12\Delta t\,G(z^{(1)})$. *(Compiler check, not in the sources: as printed the step is
+  $z^{l-1}+\tfrac12\Delta t\,G(z^{l-1})$, a forward-Euler half step.)* The text calls the scheme
+  TVD-RK2 throughout (§3.2).
 - Huang et al. state that ROUND needs "only 5% of the cost of WENO3-NN"; their
   Table 2 gives $11/2139\approx0.5\%$ in FLOPs.
 - Yu & Hesthaven attribute a slight asymmetry of the viscosity on a Burgers test to the
@@ -448,3 +523,4 @@ not under adding a constant, unlike the WENO3-NN features.)*
 - [Charles & Ray (2025)](/sources/charles-2025.md) — §1; §4, Eqs. (24)–(31), Algorithm SM1; §5, Tables 2–4, Fig. 3; §6; Remark 5: DSP-WENO, constrained learned weights (arXiv v2).
 - [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §1; §3.1; §§4.1–4.6, Eqs. (12)–(25), Tables 1–2; §5, Fig. 4; §§6–9, Figs. 6–17; App. A, Table A.1: learned MUSCL slope coefficients.
 - [Huang et al. (2025b)](/sources/huang-2025-b.md) — §3.3: learned BVD selection (deepMTBVD).
+- [Liu et al. (2026)](/sources/liu-2026.md) — §2.1–2.2 (Thm 2.3, Thm 2.6, Eqs. (2.14)–(2.16)); §3.1–3.2 (Eqs. (3.1)–(3.6), Alg. 3.1); §4 (Eqs. (4.5)–(4.10)); §4.4; §5.2.1–5.2.4; §6: learned flux and entropy, NESCFN (arXiv v1).

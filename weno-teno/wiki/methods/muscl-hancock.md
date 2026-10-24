@@ -4,8 +4,8 @@ title: "MUSCL and MUSCL–Hancock schemes"
 description: "MUSCL reconstructs limited piecewise-linear states from cell averages, in a one-parameter κ family; MUSCL–Hancock adds a half-step predictor of the boundary values and one Riemann solve per interface, a second-order single-step scheme that the bundle's AMR, immersed-boundary and multiphase solvers use as their base discretization."
 status: established
 aliases: [MUSCL, MUSCL reconstruction, kappa scheme, κ-scheme, MUSCL–Hancock method, MHM, van Leer MUSCL]
-tags: [reconstruction, limiting, finite-volume, riemann-solver]
-timestamp: 2026-10-23T20:39:00Z
+tags: [reconstruction, limiting, finite-volume, riemann-solver, muscl]
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # MUSCL and MUSCL–Hancock schemes
@@ -66,7 +66,7 @@ $$h^{\mathrm{MHM}}_{i+1/2}=\begin{cases}a\big[\bar u_i+\tfrac12(1-\nu)\Delta_i\b
 with the Courant number $\nu$ (signed in the source). *(compiler check, not in the sources: for
 $a>0$ and the unlimited slope $\Delta_i=\bar u_{i+1}-\bar u_i$ this is the Lax–Wendroff flux, for
 $\Delta_i=\bar u_i-\bar u_{i-1}$ the Beam–Warming flux, so the limiter interpolates between
-second-order fluxes.)* Wang et al. do not state the slope or limiter. Peng et al. state that
+second-order fluxes.)* Wang et al. (2022a) do not state the slope or limiter. Peng et al. state that
 MUSCL–Hancock gives "a scheme which is second-order accurate in space and time" (§2.4), with
 the predictor not written out. Nguyen et al. do not use the Hancock step: they advance the
 primitive variables with three-stage [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) through the
@@ -158,7 +158,7 @@ shows proper second order convergence for all of the resolutions we have tested"
 - Gaburro et al. measure the order of the unlimited DG scheme only (their limiter never
   activates on the smooth vortex, §5.1.1), so their MUSCL–Hancock subcell scheme has no
   measured order.
-- Wang et al.'s Prandtl–Meyer tests give boundary-region $L_2$ entropy orders between 1.13 and 1.37
+- Wang et al.'s (2022a) Prandtl–Meyer tests give boundary-region $L_2$ entropy orders between 1.13 and 1.37
   (1.36, 1.37, 1.35, 1.33 at deflections 20°–50° with their hybrid ghost-cell method, 1.13–1.25
   with the other two ghost-cell variants, Table 1), the order of the coupled scheme near an immersed wall, which they compare with
   about 1.14 reported by Pember et al. (§3.3).
@@ -168,7 +168,7 @@ shows proper second order convergence for all of the resolutions we have tested"
 - Peng et al. state that the area-weighted restriction on mapped meshes is conservative but
   "may cause accuracy losses" when the areas of the refined cells do not sum to the coarse
   area (§2.5.2), a further limit on the second order of the composite scheme.
-- Wang et al.'s observed orders mix the interior scheme with the immersed-boundary
+- Wang et al.'s (2022a) observed orders mix the interior scheme with the immersed-boundary
   reconstruction, whose own local error they call second order on a Taylor argument; the
   tests do not separate the two.
 - Wakimura et al. (2024) (Eqs. (27)–(28)) print the face values

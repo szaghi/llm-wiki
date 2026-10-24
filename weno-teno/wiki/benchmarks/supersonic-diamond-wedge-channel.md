@@ -5,7 +5,7 @@ description: "Steady Mach 2 Euler flow through a channel containing a diamond-sh
 status: established
 aliases: [diamond wedge in a channel, Mach 2 diamond, diamond airfoil in a tunnel, supersonic diamond]
 tags: [benchmark, shock-tracking, dg]
-timestamp: 2026-10-22T16:24:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Supersonic flow in a diamond-wedge channel
@@ -27,8 +27,8 @@ in advance.
 
 | Source | Method | Mesh | Result |
 |---|---|---|---|
-| [Luo et al. (2021)](/sources/luo-2021.md) §IV (second "D.") | moving DG with interface conservation enforcement, MDG(P1), started from a DG(P0) solution | 500 elements, 284 points, 66 boundary faces | shock reflection, shock–shock interaction and the expansion fan "well resolved" (Fig. 27) |
-| [Huang & Zahr (2022)](/sources/huang-2022.md) §6.4.2 | high-order implicit shock tracking (HOIST), $p=q=2$, DistMesh initial mesh | 220 triangles, 201 after 19 element removals | all shocks and four generalized triple points tracked; the slip line from the trailing-edge triple point at $(3.16,0.26)$ not tracked on this coarse mesh (Fig. 30, Remark 23) |
+| [Luo et al. (2021)](/sources/luo-2021.md) §IV (second "D.") | moving DG with interface conservation enforcement, MDG($\mathbb P^1$), started from a DG($\mathbb P^0$) solution | 500 elements, 284 points, 66 boundary faces | shock reflection, shock–shock interaction and the expansion fan "well resolved" (Fig. 27) |
+| [Huang & Zahr (2022)](/sources/huang-2022.md) §6.4.2 | high-order implicit shock tracking (HOIST), solution and geometry degree 2, DistMesh initial mesh | 220 triangles, 201 after 19 element removals | all shocks and four generalized triple points tracked; the slip line from the trailing-edge triple point at $(3.16,0.26)$ not tracked on this coarse mesh (Fig. 30, Remark 23) |
 
 Both use the steady Euler equations with slip walls and supersonic
 inflow and outflow. Neither prints the channel or diamond dimensions in

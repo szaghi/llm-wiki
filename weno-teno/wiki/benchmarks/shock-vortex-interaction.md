@@ -5,7 +5,7 @@ description: "An isentropic vortex advected through a stationary Mach 1.1 shock 
 status: established
 aliases: [shock–vortex, vortex–shock interaction, shock/vortex interaction]
 tags: [benchmark, weno, dg, bound-preserving, multiphase]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Shock–vortex interaction
@@ -44,7 +44,7 @@ $$
 \delta s=0 .
 $$
 
-Li et al., Huang et al. and Zhang & Zhu write the velocity as
+Li et al. (2022b), Huang et al. (2026) and Zhang & Zhu write the velocity as
 $\mathcal E\,(r/r_c)\,e^{\mathcal A(1-r^2/r_c^2)}(\sin\theta,-\cos\theta)$
 with $\theta$ the polar angle about the centre, which is the same field,
 since $(r/r_c)\sin\theta=\bar y/r_c$ *(compiler check, not in the
@@ -96,7 +96,7 @@ sources)*.
   in the sources)*.
 - **Strong shock and strong vortex.** [Sousa & Scalo (2022)](/sources/sousa-2022.md)
   §5.2 (arXiv v2), after Ellzey et al., Rault et al. and Tonicello et
-  al., hold a shock at $x=L/2$ of $[0,2L]\times[0,L]$ against an inflow
+  al., hold a shock at $x=L/2$ of $[0,2L]\times[0,L]$ ($L$ page-local) against an inflow
   of speed $1.5$ times the upstream sound speed, and send through it a
   zero-circulation vortex centred at $(L/4,L/2)$ whose azimuthal speed
   grows linearly to $0.9$ times the inflow speed at $r=0.075L$ and
@@ -116,7 +116,7 @@ sources)*.
   $10^{-12}$ *(compiler check, not in the sources)*.
   [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) Example 5.8 (arXiv v1)
   run the same configuration, with the same printed post-shock state,
-  vortex speed $w=0.9$, $\gamma=1.4$ and strengths 5 (mild) and 10.0828
+  vortex speed $w=0.9$ (page-local), $\gamma=1.4$ and strengths 5 (mild) and 10.0828
   (demanding, minimum density $7.8337\times10^{-15}$ and pressure
   $1.7847\times10^{-20}$), on $800\times400$ cells with inflow on the
   right, outflow on the left and reflective top and bottom; the final
@@ -124,9 +124,9 @@ sources)*.
 
 ## Findings across sources
 
-**Resolution of the transmitted vortex.** Li et al. find WENO-ZN
+**Resolution of the transmitted vortex.** Li et al. (2022b) find WENO-ZN
 closest to the $2000\times1000$ reference in pressure along $y=0.5$
-(Fig. 8). Huang et al. find ROUND more accurate at the shock front than
+(Fig. 8). Huang et al. (2026) find ROUND more accurate at the shock front than
 WENO3-NN and WENO5-JS, and LD-ROUND most accurate near $x\approx0.55$,
 capturing the lowest pressure near $x\approx0.95$ (Fig. 15). Peng et
 al. use the test as a robustness check and report no nonphysical
@@ -233,15 +233,16 @@ a numerical result.
   about $1/100$, the measure that reproduces their $h$ for other meshes
   *(compiler check, not in the sources)*.
 - Cai, Qiu & Wu print the vortex region as "$x>6$" and the post-shock
-  region as "$x<6$" for a shock at $x=-6$; $x>-6$ and $x<-6$ are meant.
+  region as "$x<6$" for a shock at $x=-6$; $x>-6$ and $x<-6$ are meant
+  *(compiler check, not in the sources)*.
   They do not define their CFL number of 0.6, so whether the runs meet
   the time-step bound of their positivity theorem cannot be checked.
-- Huang et al. do not print the final time, so their pressure profiles
-  cannot be placed against those of Li et al. ($t=0.6$) and Peng et al.
+- Huang et al. (2026) do not print the final time, so their pressure profiles
+  cannot be placed against those of Li et al. (2022b) ($t=0.6$) and Peng et al.
   ($t=0.8$).
 - Balsara et al. write "by an intermediate time of $t=0.6$" in §IX.f
   where the run ends at $t=0.24$ and the figures are at $0.06$; $0.06$ is
-  meant.
+  meant *(compiler check, not in the sources)*.
 
 - Zhang & Zhu's Table 3.1 caption names Examples 3.5–3.9, but the table
   also has rows for this Example 3.10. They print the upstream state as

@@ -5,7 +5,7 @@ description: "A smoothness indicator β_k is a quadratic functional of the data 
 status: established
 aliases: [smoothness indicator, local smoothness indicator, LSI, IS_k, Jiang–Shu indicator, global smoothness indicator, oscillation indicator, reference smoothness indicator, symmetry-preserving indicators, L1-type indicators, IMWENO-P, WENO-NS]
 tags: [reconstruction, weno, teno, cweno]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Smoothness indicators
@@ -321,7 +321,7 @@ indicators is a discontinuity indicator, not a weight
 
 For $r=4$, Li et al. (2022b, Eq. (16)) give
 $\beta_k=f'^2\Delta x^2+\tfrac{13}{12}f''^2\Delta x^4+a_kf'f^{(4)}\Delta x^5+\dots$ with $k$-dependent
-$a_k$; Ye et al. (2022, Eqs. (25), (30)) give the fifth- and sixth-order expansions. The leading term
+$a_k$ (page-local); Ye et al. (2022, Eqs. (25), (30)) give the fifth- and sixth-order expansions. The leading term
 is common to all stencils, which is what allows global indicators $\tau$ built from differences of
 $\beta_k$ to be of higher order: $\tau_5=|\beta_0-\beta_2|=O(\Delta x^5)$ for
 [WENO-Z](/methods/weno-z.md), $\tau_6=\big|\beta_6-\tfrac16(\beta_0+\beta_2+4\beta_1)\big|=O(\Delta x^6)$
@@ -439,7 +439,7 @@ the Jiang–Shu form over the target cell (Eq. (56); [Hermite WENO](/methods/her
   ([Hermite WENO](/methods/hermite-weno.md)).
 - **Hermite data in finite volumes.** For the quartic of the moment-based HWENO-U, fitted to
   three cell averages and the first moments of the two neighbours, Fan et al. (2025a, §2.1,
-  Eqs. (2.8)–(2.9)) print, with $p_0=\sum_l\mathsf c_l\xi^l$, $\xi=(x-x_i)/\Delta x$ (page-local
+  Eqs. (2.8)–(2.9)) print, with $p_0=\sum_l\mathsf c_lX^l$, $X=(x-x_i)/\Delta x$ as in the Legendre form above (page-local
   coefficients),
   $\beta_0=(\mathsf c_1+\tfrac14\mathsf c_4)^2+\tfrac{13}3(\mathsf c_2+\tfrac{63}{130}\mathsf c_4)^2+\tfrac{781}{20}\mathsf c_3^2+\tfrac{1421461}{2275}\mathsf c_4^2$,
   and squared slopes for the two linear candidates. *(Compiler check, not in the sources: the
@@ -500,7 +500,7 @@ the data, or test stencils pairwise:
   \chi_{\mathrm d}=\min(\Delta\beta_{01},\Delta\beta_{02},\Delta\beta_{12}),\qquad\epsilon=10^{-8}$$
   (page-local $\Delta\beta_{kl}$ and detection variable $\chi_{\mathrm d}$, the source's $\chi$, not the registry's $\chi_k$):
   $\Delta\beta_{kl}\approx1$ when the two indicators agree and $\approx0$ when one stencil crosses a jump, the bound
-  following from $2b_kb_l\le b_k^2+b_l^2$. Squaring the indicators is meant to give "strong scale separation". On four
+  following from $2b_kb_l\le b_k^2+b_l^2$. The authors square the indicators to obtain "strong scale separation". On four
   static profiles with $400$ points, among them the Jiang–Shu composite profile, $\chi_{\mathrm d}$ falls at the
   discontinuities and non-smooth regions (Fig. 3); its use is on [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
 - **Compact gas-kinetic stencils.** In the WENO-AO-type reconstruction of compact gas-kinetic schemes,

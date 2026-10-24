@@ -5,7 +5,7 @@ description: "A scheme is entropy stable when its discrete total entropy obeys t
 status: established
 aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG, energy stability, semi-discrete entropy stability, fully discrete entropy stability]
 tags: [entropy-stable, dg, numerical-flux, bound-preserving, limiting]
-timestamp: 2026-10-23T20:40:00Z
+timestamp: 2026-10-24T06:02:00Z
 ---
 
 # Entropy stability
@@ -58,7 +58,7 @@ high-order finite-difference scheme built on it is entropy conservative
 (Thm. 3.2), and that the TeCNO-type scheme with a WENO dissipation and a
 sign switch satisfies the semi-discrete entropy inequality (Thm. 4.1;
 [adaptive moving mesh](/methods/adaptive-moving-mesh.md),
-[TeCNO schemes](/methods/tecno-scheme.md)). Li, Duan & Tang (2022) state
+[TeCNO schemes](/methods/tecno-scheme.md)). Li, Duan & Tang (2022c) state
 the same properties for the stiffened gas with reference to Duan & Tang
 (Prop. 3.1).
 
@@ -457,6 +457,20 @@ and [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md).
   quadrature-weighted cell entropy (Lemma 3, a Jensen argument). Their
   limiter takes $\theta=\exp(-\sigma\Delta t)$ with a jump-based $\sigma$
   (§4.1, Eq. (26)).
+- **Once-per-step convex blend.** [Cao et al. (2026)](/sources/cao-2026.md)
+  prove the same property for their [COS(DG)](/methods/cos-dg.md)
+  post-processing, $u_h\mapsto(1-\theta^{\mathrm{OS}}_i)\bar u_i+\theta^{\mathrm{OS}}_iu_h$
+  with one factor $\theta^{\mathrm{OS}}_i\in[0,1]$ per cell (page-local):
+  $\int_{I_i}\eta(u^{\mathrm{OS}}_h)\,dx\le\int_{I_i}\eta(u_h)\,dx$ for every
+  convex entropy $\eta$, not only the one that defines their indicator,
+  by pointwise convexity and Jensen's inequality on the mean (Thm 2.4).
+  An entropy-stable base DG scheme therefore stays entropy stable, while a
+  component-wise variant with a diagonal matrix of factors does not
+  guarantee it, which is why they build one scalar factor from an
+  entropy-induced distance between neighbouring polynomials (§2.3). They
+  state that entropy stability is not guaranteed for OEDG (§1). The
+  statement concerns the post-processing; the base scheme and time
+  stepper must supply the rest.
 - **Field reconstruction with energy correction.** After the
   divergence-free reconstruction of $B$, Liu et al. (2025c) correct the
   total energy node by node to keep the pressure, and hence the entropy,
@@ -468,13 +482,15 @@ and [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md).
 ## Dissipation operators
 
 In the sources an ES flux is an EC flux minus a dissipation. In Rueda-Ramírez
-et al. (2021), Li, Duan & Tang (2022) and Renac's Roe-type flux the
+et al. (2021), Li, Duan & Tang (2022c) and Renac's Roe-type flux the
 dissipation acts on the jump of the entropy variables, not of the
 conserved variables, which is what gives the production a provable sign.
 
-- **Lax–Friedrichs on $[\![u]\!]$.** Rueda-Ramírez et al. (2021), after
-  Derigs et al., state that $f^{\mathrm{ec}}-\tfrac12a[\![u]\!]$ is not
-  entropy stable for MHD (§3.3.1, Eq. (52)) *(compiler check, not in the sources: with scalar dissipation $a\ge0$ added to an entropy-conservative flux the production is $-\tfrac12a[\![w]\!]\cdot[\![u]\!]\le0$ for a convex entropy; see [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md))*.
+- **Lax–Friedrichs-type dissipation on $[\![u]\!]$.** Rueda-Ramírez et al. (2021), after
+  Derigs et al., state that the Roe-type dissipation $\tfrac12R\lvert\Lambda\rvert R^{-1}[\![u]\!]$
+  (page-local $\Lambda$), which they call Lax–Friedrichs type, added to an
+  entropy-conservative flux is not entropy stable for MHD (§3.3.1, Eq. (52))
+  *(compiler check, not in the sources: in the scalar case $R\lvert\Lambda\rvert R^{-1}=aI$, $a\ge0$, the production is $-\tfrac12a[\![w]\!]\cdot[\![u]\!]\le0$ for a convex entropy, so the statement can hold only for a non-scalar matrix; see [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md))*.
 - **Dissipation on $[\![w]\!]$.** Replacing $[\![u]\!]$ by
   $\frac{\partial u}{\partial w}[\![w]\!]$ at a mean state, with Barth's
   eigenvector scaling, gives the production
@@ -485,7 +501,7 @@ conserved variables, which is what gives the production a provable sign.
 - **Reconstructed jumps.** Applying the dissipation to reconstructed jumps
   raises its order and keeps the sign if the reconstruction has the sign
   property ([TeCNO schemes](/methods/tecno-scheme.md);
-  [Li, Duan & Tang (2022)](/sources/li-2022-c.md), Eq. (3.21)).
+  [Li, Duan & Tang (2022c)](/sources/li-2022-c.md), Eq. (3.21)).
 - **How much the reconstructed jump dissipates.**
   [Charles & Ray (2025)](/sources/charles-2025.md) show that the sign
   property is not enough. The third-order SP-WENO reconstruction keeps it,
@@ -495,6 +511,33 @@ conserved variables, which is what gives the production a provable sign.
   variant that keeps the jump away from zero removes most overshoots, at
   larger smooth errors (§3.2, §5.3; arXiv v2;
   [sign-preserving WENO](/methods/sign-preserving-weno.md)).
+- **A learned entropy and flux.** [Liu et al. (2026)](/sources/liu-2026.md)
+  (arXiv v1) learn an unknown conservation law together with an entropy
+  from trajectory data. They recall Tadmor's theorem that an EC flux minus
+  $\tfrac12D[\![w]\!]$, $D$ symmetric positive semidefinite, is entropy
+  stable (Thm 2.6), and specialize it to the Rusanov-type choice
+  $D=a_{i+1/2}\big(\eta''(u_{i+1/2})\big)^{-1}$, i.e.
+  $h=f^{\mathrm{ec}}-\tfrac12a_{i+1/2}(\eta'')^{-1}[\![\eta'(u)]\!]$, with
+  the scaled eigenvectors of Barth (Eqs. (3.1)–(3.2)); they note that this
+  flux is first order unless $w$ is reconstructed (§2.2.2). In the learned
+  flux (3.5) the entropy is an input-convex network $\eta_\theta$, the EC
+  flux is replaced by the arithmetic mean of a flux network $f_\mu$
+  at minmod-limited Kurganov–Tadmor interface states $u^\pm_{i+1/2}$, the
+  Hessian is taken at their mean, and $a_{i+1/2}$ by a learned speed
+  $a_w=\frac{\Delta x}{\Delta t}\big(1-\tanh\lvert\phi_w\rvert\big)\in(0,\Delta x/\Delta t]$
+  (page-local $\eta_\theta$, $f_\mu$, $a_w$,
+  $\phi_w$; §3.1). They state that the flux is entropy stable for
+  the learned law "thanks to the structural guarantees of convex input
+  networks and Theorem 2.6" (§3.1), without a proof; the theorem needs an
+  EC flux, and nothing in the training enforces Tadmor's condition on the
+  averaged flux. For Burgers with $\eta=u^2/2$ ($w=u$, $\psi=u^3/6$) the
+  arithmetic mean $\tfrac14\big((u^-)^2+(u^+)^2\big)$ gives
+  $[\![w]\!]h-[\![\psi]\!]=[\![u]\!]^3/12$, positive at an expansion jump,
+  so it is not EC; adding $-\tfrac12a_w[\![u]\!]$ gives the two-point
+  production $[\![u]\!]^2\big([\![u]\!]/12-a_w/2\big)$, non-positive when
+  $a_w\ge[\![u]\!]/6$, which holds for $a_w=\max(\lvert u^-\rvert,\lvert u^+\rvert)$
+  but not for an arbitrarily small learned speed *(compiler check, not in
+  the sources)*. The paper's evidence is numerical (below).
 - **Robustness of "EC plus dissipation".** Renac (2021) proves that a
   Roe-type flux, the author's EC flux minus a scalar dissipation on the entropy
   variables, is ES (App. D.1, Eq. (D.1)). Renac argues that such fluxes are
@@ -633,7 +676,7 @@ and the fully discrete error is a time-integration error.
   mesh, $N=4$ and $6$, SSP-RK(5,4). The EC entropy error converges to zero
   at fourth order in the CFL number, down to machine precision; the ES and
   TVD-ES schemes dissipate (§6.1, Fig. 5).
-- **Li, Duan & Tang (2022)**, finite differences on a moving mesh. The EC
+- **Li, Duan & Tang (2022c)**, finite differences on a moving mesh. The EC
   scheme keeps the total entropy almost constant on the isentropic
   vortex, and the ES scheme decays it monotonically, in 2D and 3D (Ex. 5.1,
   5.5, plotted curves only; [adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
@@ -654,6 +697,19 @@ and the fully discrete error is a time-integration error.
   varying the tolerance ([Peyvan et al. (2023)](/sources/peyvan-2023.md),
   §4.4, Fig. 4; [entropy-conservative fluxes](/methods/entropy-conservative-flux.md)).
 
+- **Liu et al. (2026)**, learned laws (arXiv v1). They define a discrete
+  entropy remainder
+  $\mathcal J(t_l)=\sum_j\Delta x\big[\eta_\theta(u_j(t_l))-\eta_\theta(u_j(t_0))-\sum_{s=1}^l\eta_\theta'(u_j(t_s))^\top f_\mu(u_j(t_s))\,\Delta t\big]$
+  and call the trained model a neural-entropy-stable operator when
+  $\mathcal J\le0$ (Eq. (4.10)). $\mathcal J$ stays non-positive over 101
+  out-of-distribution initial data for 1D Burgers, shallow water, Euler
+  (Sod- and Shu–Osher-type families) and 2D Burgers, at all noise levels
+  of the training data (Figs. 5.3, 5.6, 5.9, 5.11). The second term of
+  $\mathcal J$ is a cell sum of $w\cdot f$, not a difference of boundary
+  entropy fluxes, so $\mathcal J$ is the authors' diagnostic rather than
+  the discrete total-entropy balance *(compiler check, not in the
+  sources)*.
+
 Renac and Rueda-Ramírez et al. attribute the EC residual to the time
 integrator, and the observed orders 3 and 4 are the orders of their
 Runge–Kutta methods
@@ -673,7 +729,7 @@ non-oscillatory schemes:
   volume and LLF at surfaces, converges to the entropy solution. Shock
   capturing alone does not fix the entropy.
 - **[Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md)** (§7.4, Figs. 6–8;
-  $Q_p$ continuous elements, $N_h=129^2$ degrees of freedom). The lumped-mass Galerkin scheme
+  continuous $\mathbb Q^N$ elements, $N_h=129^2$ degrees of freedom). The lumped-mass Galerkin scheme
   oscillates and produces an entropy-violating shock. High-order
   stabilization alone reduces the oscillations but not the entropy defect.
   The low-order and WENO-blended schemes reproduce the spiral entropy
@@ -804,7 +860,7 @@ blend reduces the oscillations (§8.2–8.4).
     ($\eta=-\rho s/(\gamma-1)$ for Euler); they do not state the sign
     convention or the convexity explicitly.
   - The KPP tests use $\eta=\tfrac12u^2$.
-  - Renac (2021) and Li, Duan & Tang (2022) use the mixture entropy
+  - Renac (2021) and Li, Duan & Tang (2022c) use the mixture entropy
     $\eta=-\rho s$ with the specific entropy of the mixture, without the
     factor $1/(\gamma-1)$; Rueda-Ramírez et al. (2021) use
     $\eta=-\rho s/(\gamma-1)$ as in the registry. All three take $\eta$
@@ -877,7 +933,7 @@ blend reduces the oscillations (§8.2–8.4).
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — Eq. (2.3), Thms 4.7, 4.10.
 - [Renac (2021)](/sources/renac-2021.md) — §1.2, §3.1–3.2 Eqs. (19)–(23), §4.3–4.4 Eq. (52), §5.2 Eqs. (62)–(64), Theorem 6.1, Eq. (67), §7.2 Table 3, App. D (arXiv v3).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §1, §2 Eqs. (21), (38)–(39), §3.3 Eqs. (51)–(69), Lemmas 2–3, §6.1 Fig. 5, §6.3 (arXiv v1).
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Prop. 3.1 Eq. (3.5), Eq. (3.21), Ex. 5.1, 5.5 (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — Prop. 3.1 Eq. (3.5), Eq. (3.21), Ex. 5.1, 5.5 (arXiv v1).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §2 Eqs. (2.3), (2.10)–(2.11), Def. 3.1, Thm. 3.2, Thm. 4.1, Figs. 6.4, 6.14 (arXiv v1).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — Remark 2.2, Thms. 2.8, 3.1, Example 2.12, Remark 3.3, §4, §4.2.2, §6, App. A.2 Fig. 10 (arXiv v4).
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3 Eq. (23), §3.1.2 Eqs. (43)–(50), Tables 1–3 (arXiv v1).
@@ -902,3 +958,5 @@ blend reduces the oscillations (§8.2–8.4).
 - [Charles & Ray (2025)](/sources/charles-2025.md) — §3.2, §5.3 Figs. 6–10, Remark 5 (arXiv v2).
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — §2, §3.1 Thm. 3.1, §3.2 Thm. 3.2 Eqs. (3.15)–(3.18), Remarks 3.1–3.2, §3.3 Eq. (3.21), Exs. 5–10, Fig. 6.
 - [Liu et al. (2025c)](/sources/liu-2025-c.md) — §1, §3.1 Defs. 2–4 Thm. 1, App. B, §4.1 Lemma 3 Eq. (26), §4.2 Eq. (27) Remark 2, Ex. 5.6.
+- [Cao et al. (2026)](/sources/cao-2026.md) — §1; §2.3; Thm 2.4.
+- [Liu et al. (2026)](/sources/liu-2026.md) — arXiv v1: §2.2.2, Thm 2.6; §3.1, Eqs. (3.1)–(3.5); §4.3, Eq. (4.10); §5.2, Figs. 5.3, 5.6, 5.9, 5.11.

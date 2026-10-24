@@ -5,7 +5,7 @@ description: "Periodic vortex flow that transitions to turbulence: inviscid at l
 status: established
 aliases: [TGV, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, compressible Taylor–Green vortex]
 tags: [benchmark, turbulence, low-dissipation, teno, weno]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Taylor–Green vortex
@@ -37,7 +37,7 @@ on periodic $[0,2\pi]^3$. The background pressure $100$ makes the
 maximum Mach number about $0.08$ for $\gamma=5/3$
 ($c=\sqrt{\gamma p/\rho}\approx12.9$ with $\lvert v\rvert\le1$)
 *(compiler check, not in the sources)*, so the flow is nearly
-incompressible. Li et al. use $\gamma=5/3$ and grids $64^3$, $128^3$ up
+incompressible. Li et al. (2022b) use $\gamma=5/3$ and grids $64^3$, $128^3$ up
 to $t=6$; Takagi et al. do not print $\gamma$ and use $64^3$ to $t=10$.
 [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.4.1 print the same
 data (after Brachet et al. and Shu et al.) and run four linear schemes
@@ -47,7 +47,7 @@ MDAD fluxes) on $128^3$ to $t=10$, with local characteristic
 Lax–Friedrichs splitting, which they prefer to the global splitting as
 less dissipative here; diagnostics are the kinetic energy, the spectrum
 at $t=10$ and $Q=3$ iso-surfaces.
-Li et al. write the pressure as $100+([\cos(2z)+2][\cos(2x)+\cos(2y)]-2)/16$,
+Li et al. (2022b) write the pressure as $100+([\cos(2z)+2][\cos(2x)+\cos(2y)]-2)/16$,
 the same expression.
 [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.5 and
 [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) §3.2 print the same
@@ -180,8 +180,8 @@ and [Edoh (2022)](/sources/edoh-2022.md) §4.2, Eqs. (31)–(32), use Ye
 et al.'s field on $[-\pi L,\pi L]^3$ (Dzanic & Witherden with $L=1$,
 unit velocity amplitude and $p_0=1/(\gamma M^2)$, i.e. Sciacovelli et
 al.'s normalization). Dzanic & Witherden: $M=0.08$,
-$\mu=1/1600$, flux reconstruction $\mathbb P_3$ with $96^3$, $128^3$
-and $160^3$ DOFs and $\mathbb P_3$–$\mathbb P_5$ at about $120^3$ DOFs,
+$\mu=1/1600$, flux reconstruction $\mathbb P^3$ with $96^3$, $128^3$
+and $160^3$ DOFs and $\mathbb P^3$–$\mathbb P^5$ at about $120^3$ DOFs,
 against the DNS of van Rees et al.; diagnostics the kinetic-energy
 dissipation rate (smoothed by a moving average) and the enstrophy-based
 rate $\frac{2\mu}{V}\int\tfrac12\rho\lvert\omega\rvert^2$ ($\omega$ the
@@ -197,7 +197,7 @@ vorticity magnitude at $t\approx9t_c$.
 [Sousa & Scalo (2022)](/sources/sousa-2022.md) §§6.1, 7.1 (arXiv v2)
 print the same field on $[-\pi L,\pi L]^3$ with $\rho_0=1$,
 $p_0=1/\gamma$, $\mathrm{Re}=\rho_0V_0L/\mu_0=5000$ ($V_0$ the velocity
-amplitude), at turbulent Mach numbers $M_t=0.1$ and $1.2$: a DNS on
+amplitude, $\mu_0$ the viscosity, page-local), at turbulent Mach numbers $M_t=0.1$ and $1.2$: a DNS on
 $384^3$, a priori analysis with a sharp filter at $k_c=48$, and LES on
 $96^3$ (grid studies $72^3$–$144^3$ at $M_t=0.1$ and $96^3$–$384^3$ at
 $M_t=1.2$), with a sixth-order compact scheme; at $M_t=1.2$ shocklets
@@ -255,7 +255,7 @@ single-species vortex: case A one species; case B a smooth species
 fraction $\tfrac12+\tfrac1{16}(\cos x+1)(\cos y+1)(\cos z+1)$; case C
 a sharp one,
 $\tfrac12+\tfrac14\tanh(1000(x-\pi))\tanh(1000(y-\pi))\tanh(1000(z-\pi))$.
-$\mathbb P_3$ DG (flux reconstruction in [PyFR](/software/pyfr.md)) on
+$\mathbb P^3$ DG (flux reconstruction in [PyFR](/software/pyfr.md)) on
 $32^3$ and $40^3$ elements; the metric is the enstrophy-based
 dissipation rate, against a DNS of van Rees et al. obtained by private
 communication. They print the pressure factor as $\cos(2z+2)$; the
@@ -310,7 +310,7 @@ Zampa & Dumbser's runs the $L^\infty$ errors of $\nabla\cdot v_h$ and of
 $\rho_h-1$ fall as $M^2$ (order 2.00) from $M=1.20\times10^{-2}$ down to
 about $10^{-6}$, where round-off ($\sim10^{-13}$) lowers the
 divergence orders to 1.87 and 0.92 (Table 4); velocity and pressure
-converge at order $r+1$ for polynomial degrees $r=0,1,2$, e.g. at $r=2$
+converge at order $N+1$ for polynomial degrees $N=0,1,2$, e.g. at $N=2$
 on the finest mesh $L^2(v_h)=7.8322\times10^{-6}$ (order 3.00) and
 $L^2(p_h)=3.4815\times10^{-6}$ (order 2.86) (Tables 5–7); inviscid to
 $t=10$ the energy dissipation is "less than $\approx2\cdot10^{-6}$ per
@@ -366,7 +366,7 @@ minimal blending (§4.2.2, Figs. 5–8). See
 [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md).
 
 **Kinetic-energy loss ranks the schemes; WENO-JS loses most.** Li et
-al. find that WENO-JS dissipates the most kinetic energy of the WENO
+al. (2022b) find that WENO-JS dissipates the most kinetic energy of the WENO
 variants, that at $128^3$ it still dissipates more than the
 seventh-order linear upwind scheme at $64^3$, yet its enstrophy grows
 faster than that upwind run; [WENO-ZN](/methods/weno-zn.md) has the
@@ -597,7 +597,7 @@ cells (§9, Figs. 21–24).
 - Takagi et al. head §4.10 "incompressible" Taylor–Green vortex, but
   solve the compressible Euler equations with the background pressure
   $100$; the flow is low-Mach, not incompressible.
-- Li et al.'s Fig. 10 caption says the contours are "given by velocity
+- Li et al. (2022b)'s Fig. 10 caption says the contours are "given by velocity
   from 0 to 1", while the panels are labelled with vorticity-magnitude
   levels $\Omega=1.5$ and $3.0$.
 - Bryngelson et al. defer every parameter of their run to an earlier
@@ -631,7 +631,7 @@ cells (§9, Figs. 21–24).
   slip as in De Michele & Coppola (2023a).
 - Maltsev et al. state that the $128^3$ supersonic run uses "a
   fourth-order DG-FV scheme", while their Figs. 19–20 show
-  DG($P_4$)–FV(CWENOZ5), a fifth-order scheme, on $128^3$.
+  DG($\mathbb P^4$)–FV(CWENOZ5), a fifth-order scheme, on $128^3$.
 - Bezgin et al.'s text gives "around 25 μs per time step" for what their
   Table 3 shows as about $25\times10^{-9}$ s per cell and step, and lists
   four grids while the tables include $32^3$.
@@ -639,7 +639,7 @@ cells (§9, Figs. 21–24).
   Taylor-Green").
 - Li, Chen & Ren's §4.4.2 refers to "Fig. 3(b)" for the enstrophy
   history at matched error; Fig. 30(b) is meant (Fig. 3 is a linear
-  dissipation plot).
+  dissipation plot) *(compiler check, not in the sources)*.
 - Jain & Moin call the cubic- and quadratic-split forms "QS and CS ...
   cubic-split and quadratic-split forms, respectively" in §3.5, the
   reverse of their own definitions (QS is quadratic split), and write
@@ -664,7 +664,7 @@ cells (§9, Figs. 21–24).
   the other runs use $10^7$ and the stated $M^2$-sized errors require a
   large $p_0$ *(compiler check, not in the sources)*.
 - In the inviscid runs there is no converged reference: the sources
-  compare schemes with each other (Li et al. also with a linear upwind
+  compare schemes with each other (Li et al. (2022b) also with a linear upwind
   scheme), not with an exact energy history.
 
 # Citations

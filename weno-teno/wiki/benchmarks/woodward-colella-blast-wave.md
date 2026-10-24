@@ -5,7 +5,7 @@ description: "One-dimensional Euler problem of two strong blast waves between re
 status: established
 aliases: [interacting blast waves, two blast waves interaction, Woodward–Colella blast wave, blast wave problem]
 tags: [benchmark, weno, teno, low-dissipation, positivity]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Woodward–Colella interacting blast waves
@@ -17,7 +17,7 @@ and interact. By $t=0.038$ the density shows narrow peaks and contacts
 (Fu 2021 single out the peak near $x\approx0.78$). The pressure ratio
 $10^5$ makes the problem a robustness test, and the height and position
 of the density peaks and the sharpness of the contacts measure
-resolution against a fine-grid reference. Thirty-nine sources of the
+resolution against a fine-grid reference. Forty-one sources of the
 bundle run it, and three more run its left half as a single blast.
 
 ## Setup
@@ -27,7 +27,8 @@ et al. (2023b), Wang et al. (2023c), Zhao et al., Chertock et al., Deng, Huang e
 Wang et al. (2021), Bezgin et al., Fan et al. (2023), Hong, Ye & Ye, Hu,
 Yuan & Zhao, Huang, Liang & Fu, Li, Chen & Ren, Liang et al., Zhou et
 al., Kolluru et al., Lin & Zhu, Zhang & Zhu, Zuo & Zhu (2024b), Chu et al. (2025a), Deng, Jiang & Yan, Fan et al. (2025a), Duan, Barsukow &
-Klingenberg, Fan et al. (2025b) and Huang et al. (2025a) (Li et al. differ in one value and the two Chamarthi papers in the position of
+Klingenberg, Fan et al. (2025b), Huang et al. (2025a), Wang et al.
+(2023a) and Cao et al. (2026) (Li et al. (2022b) differ in one value and the two Chamarthi papers in the position of
 the right break, see Qualifications),
 in $(\rho,v,p)$ with $\gamma=1.4$:
 
@@ -55,14 +56,14 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.7 | 640 | LLF, 100,000 | [OEDG](/methods/oedg.md), with and without [characteristic decomposition](/methods/characteristic-decomposition.md) |
 | [Balsara et al. (2024)](/sources/balsara-2024.md) §VIII.d | 1000, on $[-0.5,0.5]$ | third order, 10,000 | HLL, CFL 0.8, orders 3, 5, 7 |
 | [Wang & Don (2022)](/sources/wang-2022-b.md) §3.2.2–3.2.3 | 800 (scaled variant) | Ai-WENO-Z, 3200 | [affine-invariant weights](/methods/affine-invariant-weno.md) |
-| [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.7 | 800 cells, CFL 0.6 | FD WENO5, 16,000 | moment-based [multi-resolution HWENO](/methods/hermite-weno.md), HLLC; boundary conditions not printed |
+| [Li, Shu & Qiu (2022d)](/sources/li-2022-d.md) Ex. 3.7 | 800 cells, CFL 0.6 | FD WENO5, 16,000 | moment-based [multi-resolution HWENO](/methods/hermite-weno.md), HLLC; boundary conditions not printed |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.4b | 400, CFL 0.6 | WENO-JS5, 20,000 | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5) vs original WENO5-MR, WENO-AO5, WENO-JS5 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.3, Eq. (32) | 400, 800; CFL 0.6 | — | [WENO3-NN](/methods/learned-weno-weights.md) vs WENO3-JS, WENO3-Z, WENO3-N, WENO5-JS, WENO5-Z; LLF, characteristic |
 | [Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.4 | not recorded | classical WENO, 2001 | finite-difference [Hermite WENO](/methods/hermite-weno.md) HWENO-R vs HWENO-L and WENO-ZQ; linear-weight study |
 | [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.3 | 400 | WENO-JS, 2000 | TENO-M6/M8 ([TENO](/methods/targeted-eno.md) with stencil extension) vs TENO6/8, [WENO-CU6](/methods/weno-cu6.md), WENO-JS, WENO7, WENO9 |
 | [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) §5.2, Eq. (5.2) | 500, CFL 0.9 | — | second-order MUSCL with [HLL-family](/methods/hll-riemann-solvers.md) solvers HLLE, HLLEM, RHLLEM-LD; boundaries not stated |
 | [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.4 | 400, CFL 0.35 | WENO5-JS, 2000 | Roe flux with entropy fix; five-point TENO with a new [scale sensor](/definitions/scale-sensor.md) vs [TENO5-A](/methods/adaptive-teno.md), TENO5, WENO5-Z |
-| [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.2 | 400, CFL 0.6 | WENO-Z, 2000 | MDAD-HY ([MDCD](/methods/mdcd-scheme.md)-type hybrid) with switch threshold $\psi_c=0.5$; TENO-HY with $C_T=10^{-5}$ |
+| [Li, Chen & Ren (2022a)](/sources/li-2022.md) §4.2 | 400, CFL 0.6 | WENO-Z, 2000 | MDAD-HY ([MDCD](/methods/mdcd-scheme.md)-type hybrid) with switch threshold $\psi_c=0.5$; TENO-HY with $C_T=10^{-5}$ |
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.3 | 400 | WENO5-JS, 2500 | Roe flux with entropy fix; [TENO-THINC](/methods/teno-thinc.md)-family scheme vs TENO5-THINC, TENO5 ($C_T=10^{-4}$), WENO5-Z |
 | [Zhou et al. (2023)](/sources/zhou-2023.md) §5.3, Eq. (38) | 400, CFL 0.4 | fifth-order WENO, 4000 | HLLC, TVD-RK3; six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS-SA vs WCNS-LD and ONL6 |
 | [Wang et al. (2023c)](/sources/wang-2023-c.md) Example 4.4 | 800, CFL 0.6 | WENO-JS, 20000 | hybrid multi-resolution [WCNS](/methods/weighted-compact-nonlinear-scheme.md) vs MR-WCNS and WENO-JS; boundary conditions not stated, intervals printed open |
@@ -70,7 +71,7 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 | [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.13, Eq. (80) | 600, CFL 0.2 | exact | right region printed from $x=0.8$, see Qualifications; [gradient-based](/methods/gradient-based-reconstruction.md) MIG4, MEG6 vs TENO5 (arXiv v2) |
 | [Tang (2024)](/sources/tang-2024.md) §4.3, Eq. (31) | 200, CFL 0.2 | WENO-JS, 4000 | global LF splitting; [TENO-AZ](/methods/adaptive-teno.md) vs TENO-Z, TENO-A, TENO-LAD; boundary conditions not stated |
 | [Cernetic et al. (2023)](/sources/cernetic-2023.md) §5.3 | 100 cells at degree 1, 3, 7; 400 cells at degree 1; $f_{\mathrm{CFL}}=0.3$ | same code, 10,000 cells | modal DG with an evolved [artificial-viscosity](/methods/artificial-viscosity.md) field, HLLC; middle pressure printed $0.1$, boundaries not stated (arXiv v2) |
-| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.5 | strip $[0,1]\times[0,0.1]$, polygons, $h=1/1080$, $P_2$, $P_3$ | 1D residual distribution, 50,000 points | quasi-conservative [ADER](/methods/ader-scheme.md)-DG in primitive variables with conservative subcell correction at shocks (arXiv v1) |
+| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.5 | strip $[0,1]\times[0,0.1]$, polygons, $h=1/1080$, $\mathbb P^2$, $\mathbb P^3$ | 1D residual distribution, 50,000 points | quasi-conservative [ADER](/methods/ader-scheme.md)-DG in primitive variables with conservative subcell correction at shocks (arXiv v1) |
 | [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.4, Eq. (9f) | $N_x=1599$, Chebyshev | CLAWPACK HLLE, 8000 cells | spectral relaxation with Fejér–Korovkin and de la Vallée-Poussin kernels ([artificial and spectral viscosity](/methods/artificial-viscosity.md)) (arXiv v2) |
 | [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.6 | triangles, 401 vertices along $[0,1]$, strip of width 0.025 | FD WENO5, 20000 | ALW-MR-WENO-3/4/5 vs [MR-WENO](/methods/multi-resolution-weno.md), characteristic-wise, CFL 0.6 |
 | [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.6 | 1200 points or cells | WENO-JS5, 2000 | GMR-WENO3/5/7 vs MR-WENO; boundary conditions and $\gamma$ not printed |
@@ -82,6 +83,8 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 | [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Example 5.3 | 800, CFL 0.4 (0.36 with van Leer splitting) | — | bound-preserving generalized [Active Flux](/methods/active-flux.md), Jacobian and [flux-vector-split](/methods/flux-vector-splitting.md) point-value updates (local Lax–Friedrichs, Steger–Warming, van Leer–Hänel), shock-sensor limiting $\kappa_{\mathrm s}=1$; also with a power-law reconstruction (Example D.3, CFL 0.1) (arXiv v3) |
 | [Huang et al. (2025a)](/sources/huang-2025.md) §5.3, Eq. (45) | 400, $\mathbb P^2$ RKDG, CFL 0.15 | WENO5-JS, 4000 | [TENO-THINC limiter](/methods/weno-limiter-dg.md) vs simple WENO limiter |
 | [Fan et al. (2025b)](/sources/fan-2025-b.md) Eq. (49) | 800; boundary conditions not stated | — | three-point WCNS3-MR-NN ([learned weights](/methods/learned-weno-weights.md)) vs WCNS3-JS, WCNS3-MR, WCNS5-JS |
+| [Wang et al. (2023a)](/sources/wang-2023.md) §4.3, Eq. (25) | 600, CFL 0.45 | AWENO with the LLF flux, 4000 | fifth-order [A-WENO](/methods/alternative-weno.md) with affine-invariant Z-type weights, adaptive-diffusion LLF-M flux vs [LLF](/methods/lax-friedrichs-flux.md) |
+| [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.9 | 400 cells, third order ($\mathbb P^2$), SSP-RK3 | LF scheme, 100,000 cells | global [COS(DG)](/methods/cos-dg.md) vs TVB ($M=100$), moment, MP, MMP, WENO and simple-WENO DG limiters with the KXRCF indicator, OFDG and [OEDG](/methods/oedg.md); Zhang–Shu positivity limiter |
 
 ## Findings across sources
 
@@ -90,7 +93,7 @@ peaks and contacts of its baseline. Fu (2021) gets a better density peak
 at $x\approx0.78$ than WENO-CU6, free of WENO-CU6's pressure oscillations
 and velocity overshoot near $x\approx0.86$ (Fig. 6). Takagi et al.
 resolve the contact "significantly better" than WENO5-Z and TENO5
-(Fig. 8). Li et al. find WENO-ZN less dissipative than WENO-JS and
+(Fig. 8). Li et al. (2022b) find WENO-ZN less dissipative than WENO-JS and
 WENO-Z (Fig. 6); Ye et al. find AFTENO closest to the reference in
 density and pressure (Fig. 6); Chertock et al. and Wang et al. (2023b) report
 "slightly" better resolution of the second density spike with their
@@ -209,8 +212,8 @@ discontinuities converge at first order and that high-order DG gives
 "no magic solution" for them (Figs. 7–8; see
 [discontinuous Galerkin](/methods/discontinuous-galerkin.md)). Gaburro
 et al. find all waves and shock positions correct against the
-residual-distribution reference and visual convergence from $P_2$ to
-$P_3$ (Fig. 4), with the conservative update confined to the
+residual-distribution reference and visual convergence from $\mathbb P^2$ to
+$\mathbb P^3$ (Fig. 4), with the conservative update confined to the
 shock-triggered subcells.
 
 **A Riemann-solver-free scheme at the contact.** Chu et al. (2025a)
@@ -247,6 +250,19 @@ resolves the density peak "much more effectively" and the shocks more
 sharply than the simple WENO limiter (Fig. 3). Fan et al. (2025b)'s
 three-point WCNS3-MR-NN clearly outperforms the other third-order
 schemes and nearly matches the five-point WCNS5-JS (§4.3.3, Fig. 13).
+
+**Oscillation control and adaptive dissipation (later sources).** Cao
+et al. (2026) find third-order COS(DG), a once-per-step convex blend of
+each DG polynomial with its cell average, giving the sharpest
+non-oscillatory profile among ten DG techniques, with the comparator
+limiters run through a published code and TVB at the tuned $M=100$
+(Figs. 1, 10, zoom on $[0.5,0.9]$). On this problem and on the
+[Shu–Osher problem](/benchmarks/shu-osher-problem.md) at 400 cells the
+OE step of OEDG takes 35.3–40.6 % of the run time, global COS
+15.6–18.8 % and local COS 6.3–10.4 % (Table 3). Wang et al. (2023a)
+find the LLF-M coefficient at about $0.1$ of the LLF coefficient in the
+smooth density regions between the blasts and equal to it at the
+shocks (§4.3, Figs. 7–8).
 
 ## Single blast
 
@@ -320,7 +336,7 @@ with specifications deferred to an earlier paper (Fig. 7).
   exact solution without saying for which data, so whether $0.8$ is a
   printed slip or the data run cannot be decided from them.
 
-- Li et al. print the middle pressure as $0.001$ (Eq. (41)) where Fu
+- Li et al. (2022b) print the middle pressure as $0.001$ (Eq. (41)) where Fu
   (2021), Takagi et al., Ye et al., Wang et al. (2023b), Chertock et
   al., Deng, Huang et al. (2026), Li, Shu & Qiu, Wang et al. (2021) and
   Bezgin et al. print $0.01$; whether this is a misprint or the value run cannot be decided
@@ -369,14 +385,14 @@ with specifications deferred to an earlier paper (Fig. 7).
 - [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) — §7.2, Eq. (69), Figs. 15–16.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §VIII.d, Fig. 10.
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.2.2–3.2.3, Figs. 6–7.
-- [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — Ex. 3.7, Fig. 3.5; comment p. 31 (arXiv v1).
+- [Li, Shu & Qiu (2022d)](/sources/li-2022-d.md) — Ex. 3.7, Fig. 3.5; comment p. 31 (arXiv v1).
 - [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.4b, Fig. 5.8.
 - [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §3.2; §4.3, Eq. (32), Fig. 11; App. A.4, Fig. 21.
 - [Fan et al. (2023)](/sources/fan-2023.md) — §3, Ex. 3.4, Table 3.4, Figs. 3.4–3.7.
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §5.3, Fig. 11.
 - [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §5.2, Eq. (5.2), Fig. 5.2.
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §4.4, Fig. 7 (arXiv v1).
-- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §4.2, Fig. 17.
+- [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §4.2, Fig. 17.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4.3, Fig. 9.
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.13, Eq. (80), Fig. 17 (arXiv v2).
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.4, Eq. (55), Fig. 6 (arXiv v1).
@@ -395,3 +411,5 @@ with specifications deferred to an earlier paper (Fig. 7).
 - [Huang et al. (2025a)](/sources/huang-2025.md) — §5.3, Eq. (45), Fig. 3.
 - [Fan et al. (2025b)](/sources/fan-2025-b.md) — §4.3.3, Eq. (49), Fig. 13.
 - [Huang et al. (2025b)](/sources/huang-2025-b.md) — §4.2.3, Table 6, Fig. 7.
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §4.3, Eq. (25), Figs. 7–8.
+- [Cao et al. (2026)](/sources/cao-2026.md) — Ex. 6.9, Figs. 1, 10, Table 3.

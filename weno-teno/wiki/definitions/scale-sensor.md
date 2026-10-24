@@ -5,7 +5,7 @@ description: "A scale sensor estimates the local reduced wavenumber of the data,
 status: established
 aliases: [scale sensor, effective scaled wavenumber, ESW, estimated scaled wavenumber, k_ESW, K_ESW, wavenumber sensor, second-derivative sensor, Li sensor, optimized scale sensor, phase-independent scale sensor, TENO6-SA sensor]
 tags: [low-dissipation, teno, finite-difference, limiting]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Scale sensors and the effective scaled wavenumber
@@ -38,12 +38,12 @@ $$\sqrt{\frac{|\mathsf D_3|}{|\mathsf D_1|}}=\sqrt{\frac{|\mathsf D_4|}{|\mathsf
 (Li, Chen & Ren 2022a, Eqs. (27)–(28); Huang, Liang & Fu 2023, Eqs. (24)–(28)). Each ratio alone is
 singular where $f'$ or $f''$ vanishes, so both sources combine them,
 
-$$\vartheta_{\mathrm{ESW}}=\sqrt{\frac{|\mathsf D_3|+|\mathsf D_4|}{|\mathsf D_1|+|\mathsf D_2|+\epsilon_{\mathrm s}}}$$
+$$\vartheta_{\mathrm{ESW}}=\sqrt{\frac{|\mathsf D_3|+|\mathsf D_4|}{|\mathsf D_1|+|\mathsf D_2|+\varepsilon_{\mathrm s}}}$$
 
-(page-local regularization $\epsilon_{\mathrm s}$; Li, Chen & Ren 2022a, Eq. (29); Huang, Liang &
+(page-local regularization $\varepsilon_{\mathrm s}$; Li, Chen & Ren 2022a, Eq. (29); Huang, Liang &
 Fu 2023, Eq. (29)). *(Compiler check, not in the sources: for the sinusoid the numerator is
 $\vartheta^2$ times the denominator, $\vartheta^3|A|(|\cos|+\vartheta|\sin|)$ against
-$\vartheta|A|(|\cos|+\vartheta|\sin|)$, so with $\epsilon_{\mathrm s}=0$ the combination is
+$\vartheta|A|(|\cos|+\vartheta|\sin|)$, so with $\varepsilon_{\mathrm s}=0$ the combination is
 exact at every phase, critical and inflection points included.)* At a discontinuity the higher
 differences dominate and the sensor is large: Li, Chen & Ren read a jump as "a high-frequency
 component" (§2.2, Fig. 5).
@@ -66,7 +66,7 @@ Adding $|\mathsf D_5|$ "cannot give the ideal result", because the fifth differe
 points and leaves nothing to optimize (Eq. (32)). The regularization depends on the stencil
 amplitude,
 
-$$\epsilon_{\mathrm s}=0.005\,e^{-500\max\left((f_{\max}-f_{\min})-0.001,\ 0\right)}$$
+$$\varepsilon_{\mathrm s}=0.005\,e^{-500\max\left((f_{\max}-f_{\min})-0.001,\ 0\right)}$$
 
 (Eq. (33); $f_{\max}$, $f_{\min}$ the non-dimensional stencil extremes): for
 $f_{\max}-f_{\min}\le0.001$ the sensor stays below 1 at all wavenumbers, above 0.01 it is practically
@@ -97,7 +97,7 @@ in the sources: $0.4106\pi=1.29$)*.
 - **Re-optimized stencils.** They parametrize $\mathsf D_1$ and $\mathsf D_3$ by their symmetric
   coefficients, keep consistency, and optimize the free ones for the largest $\vartheta$ within the
   0.6 % tolerance (Eq. (32)). The final sensor has the form of $\vartheta_{\mathrm{ESW}}$ with
-  $\epsilon_{\mathrm s}=10^{-8}$ and, on $f_{i-2},\dots,f_{i+3}$ (Eqs. (33)–(34)),
+  $\varepsilon_{\mathrm s}=10^{-8}$ and, on $f_{i-2},\dots,f_{i+3}$ (Eqs. (33)–(34)),
 
   | | $f_{i-2}$ | $f_{i-1}$ | $f_i$ | $f_{i+1}$ | $f_{i+2}$ | $f_{i+3}$ |
   |---|---|---|---|---|---|---|
@@ -130,7 +130,7 @@ $$\begin{aligned}
 \mathsf D_4&=f_{i-2}-4f_{i-1}+6f_i-4f_{i+1}+f_{i+2},
 \end{aligned}$$
 
-with $\epsilon_{\mathrm s}=10^{-12}$, results being "not sensitive" to it as long as it is small
+with $\varepsilon_{\mathrm s}=10^{-12}$, results being "not sensitive" to it as long as it is small
 (no sensitivity study shown). They assert that evaluating at $x_i$ or $x_{i+1/2}$ is "almost
 identical" (no test shown). On the same four kinds of test function the sensor tracks the local
 wavenumber at critical points and separates discontinuities, where Ren et al.'s discontinuity sensor
@@ -146,11 +146,11 @@ $\tanh\in[0,1)$, the exponent's argument lies in $(5,10]$, so $C_T\in\{10^{-10},
 Zhou, Ding, Huang & Luo (2023, §4.3, Eqs. (29)–(30)) adapt the dissipation of their WCNS with a sensor that they cite from Li et
 al. and that compares two second differences of different width,
 
-$$\theta^{\mathrm L}_i=\frac{|S_1-S_2|}{|S_1+S_2|+\epsilon},\qquad S_1=|u_{i+1}-2u_i+u_{i-1}|,\quad S_2=\tfrac14|u_{i+2}-2u_i+u_{i-2}|,\qquad \theta^{\mathrm L}_{i+1/2}=\max\big(\theta^{\mathrm L}_i,\theta^{\mathrm L}_{i+1}\big)$$
+$$\theta^{\mathrm L}_i=\frac{|\mathsf S_1-\mathsf S_2|}{|\mathsf S_1+\mathsf S_2|+\epsilon},\qquad \mathsf S_1=|u_{i+1}-2u_i+u_{i-1}|,\quad \mathsf S_2=\tfrac14|u_{i+2}-2u_i+u_{i-2}|,\qquad \theta^{\mathrm L}_{i+1/2}=\max\big(\theta^{\mathrm L}_i,\theta^{\mathrm L}_{i+1}\big)$$
 
-(page-local $\theta^{\mathrm L}$, $S_1$, $S_2$). It lies in $[0,1]$; the authors state that it rises monotonically
+(page-local $\theta^{\mathrm L}$, $\mathsf S_1$, $\mathsf S_2$, not candidate stencils). It lies in $[0,1]$; the authors state that it rises monotonically
 from 0 to 1 with wavenumber and is independent of phase for a single sinusoid. *(Compiler check, not in the
-sources: for $u=A\cos(k_wx+\phi_0)$ and $\epsilon=0$, $S_1=4\sin^2(\vartheta/2)|u_i|$ and $S_2=\sin^2\vartheta\,|u_i|$,
+sources: for $u=A\cos(k_wx+\phi_0)$ and $\epsilon=0$, $\mathsf S_1=4\sin^2(\vartheta/2)|u_i|$ and $\mathsf S_2=\sin^2\vartheta\,|u_i|$,
 so $\theta^{\mathrm L}_i=\sin^2(\vartheta/2)/\big(1+\cos^2(\vartheta/2)\big)$, monotone on $[0,\pi]$ and phase-independent
 wherever $u_i\ne0$; at a node with $u_i=0$ both differences vanish and $\theta^{\mathrm L}_i=0$, which the maximum
 over two nodes masks at the interface. The thresholds 0.5 and 0.71 used below correspond to
@@ -184,7 +184,7 @@ free coefficients $b_1$ of $\mathsf D_2$ on $f_i,f_{i+1}$ and $c_1$ of $\mathsf 
   $\mathsf D_1$ coefficients, $a_1=\tfrac1{10}(1+2c_1+10b_1c_1)$, $a_2=\tfrac1{20}(1-10b_1-3c_1-10b_1c_1)$
   (page-local $a_1,a_2$; Eq. (32)); the whole sensor then equals the closed form above and depends on $b_1$
   alone, $c_1$ being irrelevant for single waves.
-- **New sensor.** With $b_1=-0.398$, $c_1=-5$, $\epsilon_{\mathrm s}=10^{-5}$ (Eq. (33)):
+- **New sensor.** With $b_1=-0.398$, $c_1=-5$, $\varepsilon_{\mathrm s}=10^{-5}$ (Eq. (33)):
 
   | | $f_{i-2}$ | $f_{i-1}$ | $f_i$ | $f_{i+1}$ | $f_{i+2}$ | $f_{i+3}$ |
   |---|---|---|---|---|---|---|
@@ -219,7 +219,7 @@ stays below 1.085 in most of the domain and exceeds the top band at shocks and s
 ## A five-point sensor on spectral-difference traces (Chen & Fu 2024)
 
 Chen & Fu (2024, §5.6, Eqs. (66)–(69)) use the five-point differences of Huang, Liang & Fu with the
-amplitude-dependent $\epsilon_{\mathrm s}$ of Li, Chen & Ren as a **strong-shock detector** in a limiter for the nodal
+amplitude-dependent $\varepsilon_{\mathrm s}$ of Li, Chen & Ren as a **strong-shock detector** in a limiter for the nodal
 spectral difference method. At an interface the five inputs are cell-centre values, interface means of the two
 traces and a neighbour's trace, spaced $\Delta x/2$, and the cell value is $\vartheta_i=2\min(\vartheta_{i-1/2},\vartheta_{i+1/2})$;
 where $\vartheta_i>0.6$ the limited polynomial is compressed towards the cell average,
@@ -229,11 +229,27 @@ the polynomial's range inside the nodal range of the three cells *(compiler chec
 Here the sensor neither sets a dissipation parameter nor a cut-off but switches an extra limiting step
 ([Hermite WENO](/methods/hermite-weno.md), [troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
 
+## Not a scale sensor: Jameson-type normalized second differences
+
+The feature sensor of the LLF-M flux of [Wang et al. (2023a)](/sources/wang-2023.md) (§3.2,
+Eq. (21)) also uses second differences on three points, but normalizes them by the local level
+of the variable, not by another difference:
+$\varphi_{\mathrm J,i}[q]=\lvert(q_{i+1}-2q_i+q_{i-1})/(q_{i+1}+2q_i+q_{i-1})\rvert$ for $q=p$ and
+$q=\rho$ (page-local, as on the [Ducros sensor](/definitions/ducros-shock-sensor.md) page, where
+the full product with the Ducros ratio is given). The authors call the product "non-dimensional
+scale-invariant" and tune its use with a problem-dependent constant ([Lax–Friedrichs
+flux](/methods/lax-friedrichs-flux.md)). *(Compiler check, not in the sources: for
+$q=q_0+A\cos(k_wx+\phi_0)$, $\varphi_{\mathrm J,i}[q]=\sin^2(\vartheta/2)\,\lvert A\cos(k_wx_i+\phi_0)\rvert/\lvert q_0+\cos^2(\vartheta/2)A\cos(k_wx_i+\phi_0)\rvert$.
+It depends on the relative amplitude $A/q_0$ and on the phase, so it is not a wavenumber estimate.
+Zhou et al.'s $\theta^{\mathrm L}$ above normalizes by a second second difference instead, and
+amplitude and phase cancel. $\varphi_{\mathrm J}$ is invariant under $q\mapsto\sigma q$ but not
+under $q\mapsto q+\mu$, so "scale-invariant" holds for scalings only.)*
+
 ## How the sources relate
 
-The five-point sensor is the six-point one of Li, Chen & Ren, which Huang et al. cite (with Sun et al.
+The five-point sensor is the six-point one of Li, Chen & Ren, which Huang, Liang & Fu cite (with Sun et al.
 and Su et al.) as its origin, moved from the interface to the node and with plain instead of optimized
-differences and a constant instead of an amplitude-dependent $\epsilon_{\mathrm s}$. Both sources
+differences and a constant instead of an amplitude-dependent $\varepsilon_{\mathrm s}$. Both sources
 use it to modulate dissipation, not to switch schemes: the MDAD flux maps it to a dissipation
 parameter, TENO5-A to a cut-off. Li, Chen & Ren (2022a, §1) claim the sensor and the adaptive-dissipation
 strategy as first "according to our knowledge", while citing an earlier scale sensor of Li et al.
@@ -243,8 +259,8 @@ strategy as first "according to our knowledge", while citing an earlier scale se
 
 - On sampled data the finite differences have their own modified wavenumber, so the sensor is exact
   only in the limit of resolved sinusoids; Li, Chen & Ren document the underestimate above
-  $\vartheta=1.5$, Huang et al. do not analyse it.
-- Li, Chen & Ren (2022a, §2.2) write that $\epsilon_{\mathrm s}$ is below $5\times10^{-5}$ when
+  $\vartheta=1.5$, Huang, Liang & Fu do not analyse it.
+- Li, Chen & Ren (2022a, §2.2) write that $\varepsilon_{\mathrm s}$ is below $5\times10^{-5}$ when
   $f_{\max}-f_{\min}\ge0.01$. *(Compiler check, not in the sources: Eq. (33) gives
   $0.005e^{-4.5}=5.55\times10^{-5}$ at 0.01; the bound holds from about 0.0102.)*
 - Li et al. (2023b) reprint the sensor of Li, Chen & Ren (2022a) with two slips: the $f_{i-2}$
@@ -270,7 +286,7 @@ strategy as first "according to our knowledge", while citing an earlier scale se
 - Chen & Fu (2024, Eq. (67)) print only four of the five inputs of $\vartheta_{i-1/2}$, and use the exact solution's
   symbol for the cell value in it; the inputs of $\vartheta_{i+1/2}$ are complete.
 - Li, Chen & Ren drop the $1/p!$ of the Taylor term in $\mathsf D_p$ (Eq. (19)); the ratios that enter
-  the sensor are calibrated on that convention, which Huang et al. share.
+  the sensor are calibrated on that convention, which Huang, Liang & Fu share.
 
 # Citations
 
@@ -280,3 +296,4 @@ strategy as first "according to our knowledge", while citing an earlier scale se
 - [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §4.3, Eqs. (29)–(32), Table 3.
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §3.2; §4.1–4.2, Eqs. (22)–(35), Figs. 3–4; §5.1, Algorithm 1; §5.3, Table 2; §6.3.2, Fig. 22; Table 6.
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §5.6, Eqs. (66)–(69).
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §3.2, Eq. (21): Jameson-type normalized second differences in the LLF-M feature sensor.

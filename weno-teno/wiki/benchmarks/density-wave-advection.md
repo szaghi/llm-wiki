@@ -5,7 +5,7 @@ description: "Smooth density (entropy) wave carried at uniform velocity and pres
 status: established
 aliases: [density wave, entropy wave advection, sine density wave, advection of an entropy wave, density perturbation advection]
 tags: [benchmark, kinetic-energy-preserving, entropy-stable, low-dissipation, weno]
-timestamp: 2026-10-23T20:39:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Density-wave advection
@@ -34,7 +34,7 @@ property, and conserves entropy.
 | [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) §4.1 | $1+0.2\sin(\pi x)$ | 1, 1 | $[0,2]$, periodic | $h=1/10$–$1/80$, $\Delta t=0.5\Delta x^2$; final time not printed | eighth-order accuracy |
 | Zhao et al. §4.4 | $1+0.5\,e^{-\ln2\,x^2/b^2}$, $b=2$ and $1.5$ | 1, 1 | $[-800,1000]$, free-flow | $h=1$, $t=400$, CFL 0.4 and 0.8 | long-time propagation |
 | [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) §5 | $1+\exp(\sin(2\pi x/L))$, $L=1$ | 1, 1 | $[0,1]$, periodic | 61 points, RK4 at CFL 0.01, to $t=100$ | pressure equilibrium and entropy |
-| [Peyvan et al. (2023)](/sources/peyvan-2023.md) §4.4 | temperature $9000+200\sin(2\pi x)$ K, equilibrium five-species composition | 11450 m/s, 195256 Pa | $[0,1]$, periodic | 170 elements, $P=3$, $t=0.1$ | entropy conservation of two-point fluxes |
+| [Peyvan et al. (2023)](/sources/peyvan-2023.md) §4.4 | temperature $9000+200\sin(2\pi x)$ K, equilibrium five-species composition | 11450 m/s, 195256 Pa | $[0,1]$, periodic | 170 elements, $N=3$ (their $P$), $t=0.1$ | entropy conservation of two-point fluxes |
 | [Jiang et al. (2024)](/sources/jiang-2024.md) §4.1.1 | $1+0.2\sin(\pi x)$ | 1, 1 | $[0,2]$, periodic | $N_{\mathrm p}=100$, 200, 400 particles (page-local), fixed; $t=2$ | accuracy of a Lagrangian particle scheme |
 | Jiang et al. §4.1.2 | $1+0.2\sin(x+y)$ | $(1,1)$, 1 | $[0,2\pi]^2$, periodic | $51^2$, $101^2$, $201^2$ particles (and a non-uniform set); $t=1$ | 2D accuracy |
 | [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) §3.1 | $2+0.98\sin(2\pi(x+y))$ | $(0.1,0.2)$, 20 | $[-1,1]^2$ | $N_e=4$–$32$ elements per direction, $N=3,4$, CFL 0.9; final time not printed | accuracy under convex limiting with global and local bounds |
@@ -50,10 +50,13 @@ property, and conserves entropy.
 | [Fan et al. (2025b)](/sources/fan-2025-b.md) §4.1.2 | $2+0.01\sin(2\pi x)$ | 1, 1 | $[0,1]$ (periodic implied) | $N=20$–10240; $t=1$ | third order of a learned WCNS |
 | [Liu et al. (2025b)](/sources/liu-2025-b.md) Ex. 1 | ideal MHD, $1+0.2\sin x$ | $(1,0,0)$, 2, with $B=(0.5,1,1.5)$ | $(0,2\pi)$, periodic | $N=12$–384; $t=1.3$ | third order of entropy-stable damped DG |
 | [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.1 | two species, $\rho=e^{-500x^2}+4\epsilon_{\mathrm v}$, species fraction $\tfrac12(\sin(2\pi x)+1)$ | 1, $2\epsilon_{\mathrm v}$ | $[-0.5,0.5]\times[-0.05,0.05]$, periodic | $N_x=8$–512 elements, $\mathbb P^1$–$\mathbb P^5$; $t=1$ | accuracy and positivity near vacuum |
+| [Wang et al. (2023a)](/sources/wang-2023.md) §4.1 | $1+0.1\sin(\pi x)$ | 1, 1 | $[0,2]$ (periodicity not stated) | $N=20$–320, $\Delta t\le\Delta x^{5/3}$; $t=2$ | fifth order of A-WENO with LLF and LLF-M fluxes |
+| [Wang et al. (2026)](/sources/wang-2026.md) §6.1, Eq. (60) | $1+0.2\sin(2\pi x)$ | 1, 1 | $[0,1]$, two-level AMR refined where $\rho>1.19$ | $N=32$–256, $\delta t=0.2\Delta x^2$; $t=1$ | space–time order and conservation error of high-order AMR transfers |
+| [Stone et al. (2026)](/sources/stone-2026.md) §3.1 | exact linear entropy-wave eigenmode, amplitude not printed | not printed | 1D | one wave period, grid series | convergence of the reconstructions of [AthenaK](/software/athenak.md) |
 
 All with $\gamma=1.4$ (Lin & Zhu and Zhang & Zhu print no $\gamma$; Chudzik
 et al.'s background primes, page-local, are those of their linearized
-Euler system), except Wang et al.'s Navier–Stokes cases
+Euler system), except Wang et al. (2023c)'s Navier–Stokes cases
 ($\gamma=5/3$, $\mu=0.0005$, $\mathrm{Pr}=2/3$, $\mathrm{Re}=1000$, after
 earlier work), Liu et al. (2025b)'s MHD wave ($\gamma=5/3$) and Peyvan et al.'s reacting air (five species, with the
 reaction sources switched off). Zhao et al.'s Gaussian has half-width
@@ -62,7 +65,7 @@ check, not in the sources)*. De Michele & Coppola choose a
 non-sinusoidal profile because with a pure sine wave they observed a
 fortuitous global entropy conservation, from symmetry, despite the lack
 of local conservation. Peyvan et al.'s Table 1 prints constant $p$,
-$\rho=0.03805$ kg m$^{-3}$ and $u$, with the temperature and composition
+$\rho=0.03805$ kg m$^{-3}$ and velocity $v$, with the temperature and composition
 varying, so their wave is one of temperature and composition at
 printed constant density.
 
@@ -269,10 +272,10 @@ schemes, not the finite-volume scheme the network was trained for.
 
 **Third order of entropy-stable damped DG for MHD.** Liu et al. (2025b)'s
 entropy-stable oscillation-free nodal [DG](/methods/discontinuous-galerkin.md)
-($k=2$, CFL 0.12) converges at order 3.000 in all norms on the MHD wave,
+($N=2$, their $k$; CFL 0.12) converges at order 3.000 in all norms on the MHD wave,
 $L^1$ error $1.085\times10^{-4}$ at $N=12$ to $3.313\times10^{-9}$ at
 $N=384$ (Table 1): the authors conclude that the damping term does not
-degrade the accuracy, while their Theorem 3.2 proves only a $k$-th order
+degrade the accuracy, while their Theorem 3.2 proves only an $N$-th order
 truncation error.
 
 **Active Flux.** Chudzik et al.'s Cartesian
@@ -336,6 +339,35 @@ order 7), while the Cauchy–Kovalevskaya procedure takes 37%, 59.6%,
 authors conclude that generalized Riemann problem solvers without
 Cauchy–Kovalevskaya expansion are desirable at very high order (§8).
 
+**Adaptive dissipation, AMR transfers and a GPU code.**
+Wang et al. (2023a)'s fifth-order [A-WENO](/methods/alternative-weno.md)
+with affine-invariant Z-type weights gives the orders 5.30, 5.09, 5.02,
+4.96 with both the LLF flux and their sensor-reduced LLF-M flux, the
+$L^1$ density errors at $N=320$ being $6.18\times10^{-12}$ and
+$6.17\times10^{-12}$ (Table 1): the reduced coefficient leaves the error
+of this one-dimensional wave unchanged, unlike their
+[isentropic vortex](/benchmarks/isentropic-vortex.md), where it lowers
+it tenfold. Wang et al. (2026) advect the wave through a two-level
+[AMR](/methods/adaptive-mesh-refinement.md) hierarchy that follows the
+density crest, with fifth-order WENO prolongation, sixth-order central
+WENO restriction and an RK-consistent time interpolation of the ghost
+cells: the $L^1$ density errors $1.61\times10^{-4}$, $6.40\times10^{-6}$,
+$2.25\times10^{-7}$, $7.44\times10^{-9}$ give orders 4.65, 4.83, 4.92
+(Table 6(b)). Without flux correction the conservation error of the
+non-conservative transfers converges at fifth order, as the authors
+expect from the truncation error of the interpolation; with flux
+correction, they state without a table, the coarse–fine flux mismatch
+limits it to second order (Table 7, §6.1). Stone et al. (2026) find
+fourth-order $L_1$ convergence for PPM with the extremum-preserving
+limiters of McCorquodale et al. and for primitive-variable
+[WENO-Z](/methods/weno-z.md), both with RK3, until nonlinear effects or
+round-off dominate, and second order for PLM and for PPM with the
+original Colella–Woodward limiters, identical to the figure of the
+earlier Athena code for the same options (Fig. 1); see
+[piecewise parabolic method](/methods/piecewise-parabolic-method.md).
+Their entropy and sound waves are run together; the sound waves are on
+[linear acoustics tests](/benchmarks/linear-acoustics-tests.md).
+
 ## Qualifications
 
 - Yajaman et al.'s text announces "a sequence of five meshes" for the
@@ -390,6 +422,13 @@ Cauchy–Kovalevskaya expansion are desirable at very high order (§8).
   check, not in the sources)*; Wang et al. (2023c) measure them against
   an asymptotic convergence error, not against the initial data.
 
+- Wang et al. (2026) print the $\rho$ conservation-error orders 5.02,
+  5.40, 5.38 in Table 7, identical to the $\rho u$ column; the first
+  printed $\rho$ errors, $5.95\times10^{-4}$ and $2.13\times10^{-5}$, give
+  $\log_2(5.95\times10^{-4}/2.13\times10^{-5})=4.80$, while the other two
+  $\rho$ orders reproduce *(compiler check, not in the sources)*. Either
+  the first error or the first order is misprinted.
+
 # Citations
 
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — Examples 4.1–4.2, Remark 2, Tables 4.1–4.4, Figs. 4.1–4.4.
@@ -413,3 +452,6 @@ Cauchy–Kovalevskaya expansion are desirable at very high order (§8).
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — Ex. 1, Theorem 3.2, Table 1.
 - [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §4.1.7, Fig. 7.
 - [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) — §7.2, §8, Eq. (66), Tables 4–5, B.9–B.11, Fig. 13.
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §4.1, Table 1.
+- [Wang et al. (2026)](/sources/wang-2026.md) — §6.1, Eq. (60), Tables 6(b) and 7.
+- [Stone et al. (2026)](/sources/stone-2026.md) — §3.1, Fig. 1.

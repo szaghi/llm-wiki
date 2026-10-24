@@ -5,7 +5,7 @@ description: "Smooth exact travelling-wave solution of ideal and relativistic MH
 status: established
 aliases: [Alfvén wave test, circularly polarised Alfvén wave, rotated Alfvén wave, large-amplitude Alfvén wave]
 tags: [benchmark, mhd, relativistic]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Circularly polarized Alfvén wave
@@ -35,7 +35,7 @@ parameter $\varepsilon=1$. The time step
 $\Delta t=\nu\,\Delta x^{5/3}/\max(\lvert v_1\rvert+\hat c_f)$ ($\hat c_f$
 their capped fast speed, $\nu=0.25$) makes the error of their
 third-order time integrator of order $\Delta x^5$ *(compiler check, not in the sources)*. Ex. 5.4 rotates the same wave to the direction
-$(-\cos\theta,-\sin\theta)$, $\theta=\pi/4$, on
+$(-\cos\theta,-\sin\theta)$, $\theta=\pi/4$ (page-local propagation angle), on
 $[0,1/\cos\theta]\times[0,1/\sin\theta]$ with $\Delta t$ scaled by
 $\Delta x^{5/3}$ and $\Delta y^{5/3}$.
 
@@ -102,23 +102,23 @@ $B_3=\kappa_{\mathrm A}v_3$, with $\kappa_{\mathrm A}=\sqrt{1+\rho hW^2}$
 (page-local), so the wave moves at speed $1/\kappa_{\mathrm A}$ and
 $W\approx7.09$ *(compiler check, not in the sources)*; $t=1$, error of $v_2$. In 2D the same wave propagates at
 $45^\circ$ on the periodic $[0,\sqrt2]^2$ with phase
-$x\cos\alpha+y\sin\alpha$, $\alpha=\pi/4$, and constant field
-$(\cos\alpha,\sin\alpha)$ added to $\kappa_{\mathrm A}(v_1,v_2)$; $t=1$, error
+$x\cos\theta+y\sin\theta$, $\theta=\pi/4$, and constant field
+$(\cos\theta,\sin\theta)$ added to $\kappa_{\mathrm A}(v_1,v_2)$; $t=1$, error
 of $B_2$. They take the 1D setup from Wu & Tang and describe the 2D one
 as that of Wu & Shu with a lower pressure.
 
 **Relativistic, high magnetization, [Komissarov & Phillips (2024)](/sources/komissarov-2024.md).**
 §4.1 (arXiv v3). In its de Hoffmann–Teller frame the wave is stationary,
-with zero electric field and $v=\pm B/\sqrt{w+\lvert B\rvert^2}$, $w$
-the relativistic enthalpy density (page-local). The data are $p=\rho=1$,
+with zero electric field and $v=\pm B/\sqrt{w_{\mathrm h}+\lvert B\rvert^2}$, $w_{\mathrm h}$
+the relativistic enthalpy density. The data are $p=\rho=1$,
 $B=(0.3B_0,\ B_0\cos\phi_{\mathrm A},\ B_0\sin\phi_{\mathrm A})$ with
 $\phi_{\mathrm A}=\arcsin(0.3\sin k_wx)$ (page-local rotation angle), so
 the transverse field keeps the magnitude $B_0$ but does not rotate
 uniformly along $x$; the state is Lorentz-boosted to $v=0.5$, with
 wavelength 2 in the laboratory frame, and run over $t\in[0,2]$ with
 Courant number $0.4$ and $\gamma=4/3$. With $B_0=50$ the magnetization
-$\sigma_{\mathrm m}=\lvert B\rvert^2/w$ (page-local) is 545: $\lvert B\rvert^2=1.09B_0^2=2725$
-and $w=\rho+\tfrac{\gamma}{\gamma-1}p=5$ *(compiler check, not in the sources)*.
+$\sigma_{\mathrm m}=\lvert B\rvert^2/w_{\mathrm h}$ (page-local) is 545: $\lvert B\rvert^2=1.09B_0^2=2725$
+and $w_{\mathrm h}=\rho+\tfrac{\gamma}{\gamma-1}p=5$ *(compiler check, not in the sources)*.
 
 **Degenerate, standing, [Komissarov & Phillips (2024)](/sources/komissarov-2024.md).**
 §4.3: $v=0$, $p=\rho=1$, $B=B_0(0,\cos k_wx,\sin k_wx)$, $B_0=50$,
@@ -255,9 +255,9 @@ the plasma variables carry the largest errors, absolute errors of order
 one in $p=1$ at $N_x=20$ (§4.1, Fig. 2).
 
 **Numerical resistivity from the degenerate wave.** The standing field
-decays as $\exp(-\omega t)$, so its total magnetic energy decays
-exponentially at the rate $2\omega=2\eta_{\mathrm{num}}k_w^2$ (page-local
-$\omega$ and numerical resistivity $\eta_{\mathrm{num}}$), from which
+decays as $\exp(-\omega_\eta t)$, so its total magnetic energy decays
+exponentially at the rate $2\omega_\eta=2\eta_{\mathrm{num}}k_w^2$ (page-local
+decay rate $\omega_\eta$, not Berta et al.'s angular frequency, and numerical resistivity $\eta_{\mathrm{num}}$), from which
 Komissarov & Phillips measure $\eta_{\mathrm{num}}$. They
 model it by the ansatz
 $\eta_{\mathrm{num}}=A_\eta L(\Delta x/\Delta t)(\Delta x/L)^{r_\eta}$ (Eq. 91;
@@ -270,7 +270,7 @@ the resistive time, with $r_\eta=3$ for their third-order scheme
 
 | $N_x$ | 10 | 20 | 40 | 80 |
 |---|---|---|---|---|
-| $2\omega$ | 0.39 | 0.26e-1 | 0.30e-2 | 0.38e-3 |
+| $2\omega_\eta$ | 0.39 | 0.26e-1 | 0.30e-2 | 0.38e-3 |
 | $\eta_{\mathrm{num}}$ | 0.49e-2 | 0.33e-3 | 0.38e-4 | 0.48e-5 |
 | observed $r_\eta$ | – | 3.75 | 3.1 | 3 |
 | $A_\eta$ | 0.063 | 0.034 | 0.031 | 0.031 |
@@ -291,7 +291,7 @@ for their scheme (§4.3). See
 
 **Third order, not cleanly, of entropy-stable damped DG.** Liu et al.
 (2025b) run their entropy-stable oscillation-free nodal
-[DG](/methods/discontinuous-galerkin.md) ($k=2$, CFL $0.12$, TVD-RK3 with
+[DG](/methods/discontinuous-galerkin.md) ($N=2$, their $k$, CFL $0.12$, TVD-RK3 with
 the damping step split off and solved in closed form). The $L^1$ orders
 of the perpendicular field are 3.622, 5.065, 3.910, 3.086 and 2.897 from
 $16^2$ to $512^2$, with $L^1$ error $2.478\times10^{-8}$ on $512^2$; the

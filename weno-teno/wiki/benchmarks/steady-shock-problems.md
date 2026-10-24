@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Steady shock problems"
-description: "Steady Euler problems whose solution contains fixed shocks: a 1D stationary shock, oblique shocks, regular reflection, plate and shock-interaction flows run to a steady residual, and a perturbed planar normal shock whose growth rate tests multidimensional shock stability; they measure residual convergence to machine zero and carbuncle-type instability of high-order schemes."
+description: "Euler problems with fixed shocks (1D stationary shock, oblique shocks, regular reflection, plate and shock-interaction flows run to a steady residual, a perturbed planar normal shock testing multidimensional stability), with slowly moving and single strong shocks as relatives; they measure steady convergence, carbuncle-type instability and post-shock errors of high-order schemes."
 status: established
 aliases: [steady shock tests, stationary shock, steady normal shock, regular shock reflection, oblique shock reflection, steady-state convergence tests, planar steady normal shock]
 tags: [benchmark, teno, weno, riemann-solver, finite-volume, carbuncle]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Steady shock problems
@@ -137,6 +137,61 @@ see [multi-resolution WENO](/methods/multi-resolution-weno.md) and the
 [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md), where the analysis is set against
 earlier accounts of shock instability.
 
+## Moving single-shock relatives
+
+Two later sources run a single one-dimensional shock that moves, not
+a steady one; they test what a steady shock tests, the behaviour of the
+scheme in and behind a captured shock, under a strong pressure jump or
+across mesh interfaces.
+
+**Slowly moving shocks across AMR interfaces.**
+[Wang et al. (2026)](/sources/wang-2026.md) §6.2 run two shocks moving
+to the right at speed $0.01$ through a two-level
+[AMR](/methods/adaptive-mesh-refinement.md) grid on which thin refined
+sheets of width $1/10$ produce seven coarse–fine interfaces (base
+$N=64$, ratio 2), against a uniform $N=512$ reference, with the exact
+states imposed at the boundaries:
+
+| Case | Behind the shock $(\rho,v,p)$ | Ahead $(\rho,v,p)$ | Initial position | End |
+|---|---|---|---|---|
+| Mach 2 (Fig. 11) | $(2.6667,\,-0.8774,\,4.5)$ | $(1.0,\,-2.3564,\,1.0)$ | $x=0.05$ | $t=90$, shock at $x=0.95$ |
+| Mach 3 (Fig. 12, Table 5) | $(3.86,\,-0.91,\,10.33)$ | $(1.0,\,-3.54,\,1.0)$ | $x=0.37$ | $t=30$, shock at $x=0.67$ |
+
+In the frame of the shock both are steady normal shocks of Mach 2 and
+3 with $\gamma=1.4$, to the printed digits *(compiler check, not in the
+sources)*, so the problem is a steady shock seen from a moving frame,
+which forces the shock through every interface. On the Mach 3 case the
+pure WENO inter-level interpolation without flux correction distorts
+at the first interface, with flux correction it oscillates by $t=10$,
+and both fail later, while AMR-HybridWENO, which uses conservative
+linear interpolation in cells flagged by a Roe-averaged Lax wave-speed
+criterion and a pressure-curvature sensor, keeps a sharp shock to
+$t=30$ (Fig. 12). The shock-position error $0.001791$ and post-shock
+overshoot $0.001609$ do not change over the tested thresholds
+$\alpha_{\mathrm{Liu}}\in\{0.05,0.1,0.2\}$ and
+$\theta_{\mathrm{map}}\in\{10^{-3},10^{-2},10^{-1}\}$ (their symbols,
+page-local), the share of troubled cells falling from 6.25 % to
+4.6875 % (Table 5). The authors trace the failure to Appendix C of
+their paper: non-conservative transfers break the discrete
+[Rankine–Hugoniot](/definitions/rankine-hugoniot-condition.md) balance
+and perturb the shock speed by $\mathcal O(\Delta x)$, which accumulates
+into a drift for slowly moving shocks; see
+[local conservation](/results/local-conservation-flux-form.md).
+
+**A single strong shock.** [Cao et al. (2026)](/sources/cao-2026.md)
+Ex. 6.6, after a published comparison of DG limiters, put
+$(\rho,v,p)=(1,0,1)$ for $x\le0$ against
+$\big(\tfrac{1+6\eta_{\mathrm p}}{\eta_{\mathrm p}+6},\ \tfrac{1-\eta_{\mathrm p}}{\sqrt{1.2\eta_{\mathrm p}+0.2}},\ \eta_{\mathrm p}\big)$
+for $x>0$ on $[-50,50]$ with the pressure ratio $\eta_{\mathrm p}=10^5$
+($\eta_{\mathrm p}$ page-local, not the entropy), $\gamma=1.4$, 1000 cells, $t=0.1$, zoom on $[-37,-32]$.
+The right state is the Rankine–Hugoniot state behind a shock of
+pressure ratio $\eta_{\mathrm p}$ running to the left into gas at rest, with density
+ratio about 6 and shock speed about $346$, which puts the shock near
+$x=-34.6$ at $t=0.1$, inside the zoom *(compiler check, not in the
+sources)*. Third-order local [COS(DG)](/methods/cos-dg.md) gives the
+sharpest non-oscillatory profile among ten DG techniques, the TVB
+limiter being run with the tuned $M=20$ (Fig. 6).
+
 ## Findings across sources
 
 **Where the residual stalls.** In one dimension all the schemes of Wan & Xia and of Liang & Fu
@@ -191,6 +246,9 @@ agreement of Table 2 on one problem.
   [flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)), not on the steady
   convergence problems above.
 - Duan et al. are read as arXiv v3; Example D.5 and Fig. 24 are locators of that version.
+- Wang et al. (2026) write that the WENO run without flux correction distorts "as soon as the
+  shock passes through the first interface at approximately $x=4.7$" on the domain $[0,1]$; the
+  printed position cannot be on their grid *(compiler check, not in the sources)*.
 
 # Citations
 
@@ -198,3 +256,5 @@ agreement of Table 2 on one problem.
 - [Liang & Fu (2026)](/sources/liang-2026.md) — §1, §3.2.3, §3.3, §4.1, §§5.1–5.8, Eq. (34), Table 1, Figs. 5–26.
 - [Ren et al. (2025)](/sources/ren-2025.md) — §§3.2–3.4, §4, §5.2.2, §6, Eqs. (34)–(36), Tables 1–3, Figs. 8–13, 21–22, 35.
 - [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §4.1.3, Example D.5, Fig. 24 (arXiv v3).
+- [Wang et al. (2026)](/sources/wang-2026.md) — §6.2, Figs. 11–12, Table 5; Appendix C.
+- [Cao et al. (2026)](/sources/cao-2026.md) — Ex. 6.6, Fig. 6.

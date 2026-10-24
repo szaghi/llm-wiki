@@ -5,14 +5,14 @@ description: "The alternative formulation of finite-difference WENO evaluates a 
 status: established
 aliases: [A-WENO, AFWENO, alternative formulation of WENO, alternative flux formulation, Jiang–Shu–Zhang scheme]
 tags: [weno, finite-difference, numerical-flux, reconstruction, multiphase]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-24T05:33:00Z
 ---
 
 # Alternative WENO (A-WENO)
 
 The alternative formulation of finite-difference WENO (Jiang, Shu & Zhang 2013, built on the
-alternative flux expansion of Shu & Osher 1988, as recalled by Ye et al. 2022, §3.1, and Wang et al.
-2023, §2) keeps the [conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)
+alternative flux expansion of Shu & Osher 1988, as recalled by Ye et al. 2022, §3.1, Wang et al.
+2023b, §2, and Wang et al. 2023a, §2) keeps the [conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)
 on point values $u_i$ but constructs the flux differently. Instead of reconstructing split point
 fluxes, it **interpolates** left and right states $u^\mp_{i+1/2}$ at $x_{i+1/2}$ with WENO and writes
 
@@ -20,8 +20,10 @@ $$\hat f_{i+1/2}=h\big(u^-_{i+1/2},u^+_{i+1/2}\big)+\sum_{\ell=1}^{\lfloor(\math
 
 with $h$ a two-point numerical flux, $\mathcal K$ the target order and $b_{2\ell}$ the correction
 coefficients (page-local; Ye et al.'s $a_{2\ell}$) (Ye et al. 2022,
-Eqs. (12)–(13)). The two names in the bundle, "A-WENO" (Wang et al. 2023) and "AFWENO" (Ye et al.
-2022), denote this same scheme.
+Eqs. (12)–(13)). The two names in the bundle, "A-WENO" or "AWENO" (Wang et al. 2023a, 2023b) and "AFWENO" (Ye et
+al. 2022), denote this same scheme. Wang et al. (2023a, footnote 1) stress that the "A" means
+alternative, distinct from the "Ai" (affine-invariant) of
+[Ai-WENO](/methods/affine-invariant-weno.md).
 
 ## Correction coefficients
 
@@ -33,7 +35,7 @@ $$b_2=-\tfrac1{24},\quad b_4=\tfrac{7}{5760},\quad b_6=-\tfrac{31}{967680},\quad
 *(Compiler check, not in the sources: these are the Taylor coefficients of
 $\tfrac{z/2}{\sinh(z/2)}$, the inverse of the cell-averaging symbol, and were confirmed by series
 expansion.)* The fifth-order scheme keeps $b_2$ and $b_4$, with central differences of the point
-fluxes $f_j=f(u_j)$ on the six points $i-2,\dots,i+3$ (Wang et al. 2023, Eq. (4)):
+fluxes $f_j=f(u_j)$ on the six points $i-2,\dots,i+3$ (Wang et al. 2023b, Eq. (4); the same formulas in Wang et al. 2023a, Eqs. (3)–(4)):
 
 $$\begin{aligned}
 (\partial_x^2f)_{i+1/2}&\approx\frac{-5f_{i-2}+39f_{i-1}-34f_i-34f_{i+1}+39f_{i+2}-5f_{i+3}}{48\,\Delta x^2},\\
@@ -56,22 +58,42 @@ unstable in some problems"; an upwind (flux-split) approximation as in Liu (2017
 Because the leading term is an ordinary two-point flux on interpolated states, A-WENO can use any
 monotone flux or (approximate) Riemann solver. In a finite-difference context a standard
 finite-volume flux is limited to second order; the high order comes from the corrections (Wang et
-al. 2023, §1). The fluxes used in the bundle:
+al. 2023b, §1). Wang et al. (2023a, §2) give the reason for the freedom: the scheme interpolates
+conservative (or characteristic) variables, not fluxes, so an arbitrary monotone flux for scalar
+laws, or an approximate Riemann solver for systems, can be used. The fluxes used in the bundle:
 
 - global Lax–Friedrichs, Steger–Warming and HLLC (Ye et al. 2022, §4; HLLC outperforms Steger–Warming
   in the viscous [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), §4.9)
   ([Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md), [HLL-family solvers](/methods/hll-riemann-solvers.md));
 - Rusanov and the adaptive-diffusion central flux of earlier A-WENO papers, and the adaptive-diffusion
-  central-upwind Rankine–Hugoniot flux of Wang et al. (2023, §3), which lowers the numerical
+  central-upwind Rankine–Hugoniot flux of Wang et al. (2023b, §3), which lowers the numerical
   dissipation in smooth regions and near contacts
   ([adaptive-diffusion CURH flux](/methods/adaptive-diffusion-central-upwind-flux.md),
-  [central-upwind schemes](/methods/central-upwind-scheme.md)).
+  [central-upwind schemes](/methods/central-upwind-scheme.md));
+- local Lax–Friedrichs and its sensor-reduced variant LLF-M (Wang et al. 2023a, §3), whose
+  coefficient is scaled down to $0.1a_{i+1/2}$ where a Ducros–Jameson feature sensor sees smooth
+  flow ([Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md),
+  [Ducros sensor](/definitions/ducros-shock-sensor.md)). They state, without showing it, that the
+  same adaptive-diffusion conclusion holds for the seventh- and ninth-order A-WENO schemes they
+  cite (§2), and present the idea as transferable to finite-volume WENO and DG (§5).
 
 The interpolated variables can be conserved, primitive or characteristic (Ye et al. 2022, Abstract,
-§5). Wang et al. (2023, §2) use fifth-order [WENO-Z](/methods/weno-z.md) interpolation, applied
+§5). Wang et al. (2023b, §2) use fifth-order [WENO-Z](/methods/weno-z.md) interpolation, applied
 characteristic-wise with a local characteristic decomposition
 ([characteristic decomposition](/methods/characteristic-decomposition.md)), SSP-RK3 at CFL 0.45, and
-add source terms pointwise for balance laws (Remarks 1–2).
+add source terms pointwise for balance laws (Remarks 1–2). Wang et al. (2023a, §§2.1–2.2,
+Eqs. (5)–(16)) write the interpolation out: quadratic Lagrange interpolants on
+$S_k=\{x_{i+k-2},x_{i+k-1},x_{i+k}\}$, $k=0,1,2$, giving
+$u^{(0)}=\tfrac38u_{i-2}-\tfrac54u_{i-1}+\tfrac{15}8u_i$,
+$u^{(1)}=-\tfrac18u_{i-1}+\tfrac34u_i+\tfrac38u_{i+1}$,
+$u^{(2)}=\tfrac38u_i+\tfrac34u_{i+1}-\tfrac18u_{i+2}$ at $x_{i+1/2}$, linear weights
+$d=(\tfrac1{16},\tfrac58,\tfrac5{16})$ (interpolation weights, not the
+$(\tfrac1{10},\tfrac6{10},\tfrac3{10})$ of flux reconstruction), Jiang–Shu $\beta_k$,
+$\tau_5=\lvert\beta_0-\beta_2\rvert$, and the affine-invariant Z-weights with $q=2$,
+$\epsilon=10^{-12}$ ([affine-invariant WENO](/methods/affine-invariant-weno.md)). The fields
+are projected with Roe-averaged eigenvectors $L_{i+1/2}$, $R_{i+1/2}$ on $i-2,\dots,i+3$, and
+$u^+_{i+1/2}$ follows by mirror symmetry. Time stepping is the three-stage TVD Runge–Kutta at
+CFL 0.45 (Eq. (22)).
 
 ## Two-medium flows: interpolating primitive variables
 
@@ -170,7 +192,7 @@ scheme uses no Riemann solver and claims no stationary-contact preservation.
 
 ## Multi-resolution interpolation and gravity
 
-Li, Li, Don & Wang (2023) use the fifth-order formulation with a global Lax–Friedrichs flux on states
+[Li et al. (2023a)](/sources/li-2023.md) (Li, Li, Don & Wang) use the fifth-order formulation with a global Lax–Friedrichs flux on states
 interpolated by the multi-resolution A-WENO operator of Wang, Zhu, Yang & Zhao, made scale-invariant
 ([multi-resolution WENO](/methods/multi-resolution-weno.md)). Their corrections are the same:
 $b_2=-\tfrac1{24}$, $b_4=\tfrac7{5760}$ with the six-point second- and fourth-derivative formulas above
@@ -201,7 +223,7 @@ in double and quadruple precision (Tables 4–8).
   leading term of the alternative formulation without its corrections; the paper does not cite
   the alternative formulation. *(Compiler check, not in the sources: the plain difference of exact interface fluxes is
   $\partial_xf(x_i)+\tfrac{\Delta x^2}{24}\partial_x^3f(x_i)+O(\Delta x^4)$, so such a scheme is formally
-  second order for point values, consistent with Wang et al.'s statement above; Hiejima shows no
+  second order for point values, consistent with Wang et al.'s (2023b) statement above; Hiejima shows no
   convergence test.)*
 - Ye et al. (2022) replace the WENO interpolation by a TENO interpolation and obtain
   [AFTENO](/methods/afteno.md); they argue that AFWENO is odd-order only and loses every smooth
@@ -212,10 +234,17 @@ in double and quadruple precision (Tables 4–8).
 
 - On $u_t+u_x=0$, $u_0=\sin\pi x$, $t=2$, AFWENO5-LF has $L_1$ error $6.31\times10^{-11}$ at $N_x=640$
   (fifth order), against $7.94\times10^{-11}$ for FD WENO5-JS (Ye et al. 2022, Tables 7–8).
-- On the 2-D isentropic vortex Wang et al. (2023, Table 1) report $L^2$ density errors at $\Delta x=1/64$
+- On the 2-D isentropic vortex Wang et al. (2023b, Table 1) report $L^2$ density errors at $\Delta x=1/64$
   of $3.45\times10^{-9}$ (Rusanov-type adaptive central flux) and $3.62\times10^{-9}$ (CURH flux), with
   irregular observed rates (2.36–6.38) that trend to fifth order
   ([isentropic vortex](/benchmarks/isentropic-vortex.md)).
+- With affine-invariant Z-weights, Wang et al. (2023a) report the same printed orders for LLF and
+  LLF-M on density-perturbation advection (5.30, 5.09, 5.02, 4.96; $L^1(\rho)\approx6.2\times10^{-12}$
+  at $N=320$, Table 1). On the isentropic vortex at $320^2$ they report
+  $L^1(\rho)=3.52\times10^{-7}$ (LLF, order 4.77) and $3.28\times10^{-8}$ (LLF-M, order 5.25), with
+  LLF-M orders above five (Table 2). The sensor adds 5%–9% CPU time (Table 3). On the Lax problem
+  with data scaled by $10^{-7}$ the classical Z-weight A-WENO oscillates where the affine-invariant
+  one does not (§4.2, Fig. 4; [scale invariance](/properties/scale-invariance.md)).
 - Cost: on a 2-D Euler density wave, 500 steps, $160\times160$, AFWENO takes 176.86 s against 90.94 s
   for FD TENO5 (Ye et al. 2022, Table 13), i.e. about 1.9 times. Ye et al. (§4.2) attribute the
   extra cost of the interpolation-based family to the two-point flux and the derivative terms, and say
@@ -234,9 +263,13 @@ in double and quadruple precision (Tables 4–8).
   WENO scheme can only be used with flux-vector splitting methods ... when high-order of accuracy is
   desired", since a Riemann solver in an FD WENO scheme "degenerates to only second order", whereas
   a [WCNS](/methods/weighted-compact-nonlinear-scheme.md) keeps high order. Read as a statement about
-  flux-reconstruction FD-WENO it agrees with Wang et al. (2023, §1); it does not cover the alternative
+  flux-reconstruction FD-WENO it agrees with Wang et al. (2023b, §1); it does not cover the alternative
   formulation, which they do not cite and which Ye et al. (2022, HLLC) and Zheng, Shu & Qiu (2021,
   Lax–Friedrichs on WENO-interpolated states) run at fifth order.
+- Wang et al. (2023a) call their scheme, A-WENO with affine-invariant Z-weights ("Ai-AWENO-Z"),
+  simply "AWENO" after §2.1. They print the equation label (11) twice, on the interpolation sum and
+  on the eigenvector matrices (p. 3), and introduce the scalar law (1) as "the Euler equations (1)"
+  (§2).
 - Zheng, Shu & Qiu (2021, §1) state that finite-volume methods above second order cannot interpolate
   primitive variables, because only cell averages of conserved variables are available. Finite-volume
   schemes of the bundle above second order do reconstruct primitive or characteristic variables
@@ -265,4 +298,5 @@ in double and quadruple precision (Tables 4–8).
 - [Wong et al. (2021)](/sources/wong-2021.md) — §4.3.
 - [Chu, Kurganov & Na (2022)](/sources/chu-2022.md) — §1; §§2–5, Eqs. (2.1)–(5.2), Remark 4.1; §6, Remarks 6.1–6.3; §7, Table 7.1, Figs. 7.3, 7.10.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §2.2, Eq. (5).
-- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §1; §2.2, Eqs. (6)–(8), (26)–(35); §4, Eqs. (61)–(71), Theorem 5; App. A; §5, Tables 3–8.
+- [Li et al. (2023a)](/sources/li-2023.md) — §1; §2.2, Eqs. (6)–(8), (26)–(35); §4, Eqs. (61)–(71), Theorem 5; App. A; §5, Tables 3–8.
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §2, footnote 1, Eqs. (3)–(16), (22); §3; §4.1–4.2, §4.5, §4.9, Tables 1–3, Fig. 4; §5.

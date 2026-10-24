@@ -5,7 +5,7 @@ description: "Resistive or numerically resistive instability of a Harris-type cu
 status: established
 aliases: [tearing mode, tearing instability, ideal tearing mode, Harris current sheet, Harris sheet, plasmoid instability]
 tags: [benchmark, mhd, relativistic, low-dissipation]
-timestamp: 2026-10-23T15:21:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Tearing-mode instability
@@ -90,7 +90,7 @@ $\lvert B\rvert^2/w_{\mathrm h}=5\times10^4$ ($w_{\mathrm h}$ the relativistic e
 density, page-local); domain $(-1,1)^2$ with $400^2$ points, periodic
 in $x$, zero-gradient in $y$, $\gamma=4/3$. The perturbation is
 $B_2=\sum_{j=1}^{20}A_j\sin(\pi jx/L+2\pi r_j)$ with $A_j=10^{-5}B_0$
-and random phases $r_j$; a single-mode run uses
+and random phases $r_j$ ($A_j$, $r_j$ page-local); a single-mode run uses
 $B_2=10^{-4}\sin6\pi x$. No physical resistivity is present: the
 sheet tears through the numerical resistivity of their third-order
 finite-difference scheme with
@@ -127,7 +127,7 @@ one for the same rate.
 §5.4.1 measure $\omega_{\mathrm{TM}}\approx2.7$, $2.0$ and $1.7$ in
 successive unit time intervals and infer, from Furth's growth-rate
 relation, $320<S^*<480$; the corresponding fastest wavelength,
-$0.25<\lambda<0.36$, matches the observed $0.33$ (six plasmoids along
+$0.25<\lambda<0.36$ ($\lambda$ page-local), matches the observed $0.33$ (six plasmoids along
 the sheet). They model the numerical resistivity of their scheme as
 $\eta_{\mathrm{num}}=A_\eta L_B(\Delta x/\Delta t)(\Delta x/L_B)^3$, with
 $L_B$ the length scale of the field and $A_\eta\approx0.031$ calibrated

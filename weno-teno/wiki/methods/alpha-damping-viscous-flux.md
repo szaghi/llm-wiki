@@ -5,7 +5,7 @@ description: "The α-damping viscous flux computes the interface gradient as the
 status: established
 aliases: [alpha-damping scheme, α-damping interface gradient, α-EG, α-IG, gradient sharing, interface-gradient viscous flux]
 tags: [finite-difference, compact-scheme, low-dissipation, navier-stokes, gradient-based-reconstruction]
-timestamp: 2026-10-22T19:46:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # α-damping viscous flux discretization
@@ -44,7 +44,8 @@ $u^\mp_{i+1/2}$. The interface velocity in the stress work is $\tfrac12(v^{\math
 (Chamarthi (2023a), Eq. (26)), and in 1D the viscous flux is
 $\big(0,\,-\tau_{i+1/2},\,-\tau_{i+1/2}v_{i+1/2}+q_{i+1/2}\big)$ with
 $\tau_{i+1/2}=\tfrac43\mu_{i+1/2}(\partial_xv)_{i+1/2}$ and the heat flux from
-$(\partial_xT)_{i+1/2}$ (Eqs. (21)–(22)).
+$(\partial_xT)_{i+1/2}$ (Eqs. (21)–(22); page-local $\tau_{i+1/2}$ the viscous stress, not the
+global smoothness indicator, $q_{i+1/2}$ the heat flux and $\mu$ the dynamic viscosity).
 
 All three sources use $\beta_{\mathrm D}=0$. As recalled by Chamarthi (2023a) (§3.1),
 Nishikawa used second-order central cell gradients with $\alpha_{\mathrm D}=8/3$ and obtained
@@ -144,7 +145,8 @@ kinetic energy and enstrophy of a stationary $512^2$ run (§8.2.3).
 - **Printed slips.** Chamarthi (2023a) prints Eq. (28) as $\beta u'_{i-1}+u'_i+\beta u'_{i-1}$;
   the second term is $\beta u'_{i+1}$, as the symmetric scheme and its modified wavenumber
   (Eq. (33)) require. Chandravamsi et al. print the brackets of Eqs. (17)–(18) as sums
-  $(u_{i+1}+u_{i-1})$ where differences are meant, and leave the viscous time-step factor
+  $(u_{i+1}+u_{i-1})$, where the first-derivative schemes need the differences that
+  Chamarthi (2023a) prints, and leave the viscous time-step factor
   $\alpha$ of Eq. (B.3) undefined. Chamarthi (2023a) writes the heat flux with
   $\mu/(\mathrm{Re}\,\mathrm{Pr}\,M(\gamma-1))$ in Eq. (6) but without $\mathrm{Re}$ and $M$ in
   Eq. (22); the paper does not say which scaling the code uses.

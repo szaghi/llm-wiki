@@ -6,7 +6,7 @@ status: established
 symbol: "$Q+Q^\\top=B$"
 aliases: [SBP operator, SBP property, diagonal-norm SBP, generalized SBP, hybridized SBP operator, discrete integration by parts]
 tags: [dg, entropy-stable, kinetic-energy-preserving, finite-difference]
-timestamp: 2026-10-23T19:58:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Summation-by-parts operator
@@ -33,11 +33,12 @@ for each direction $d$, the ingredients are:
 - a restriction $\mathcal R$ from volume to boundary nodes (page-local
   symbol, since $R$ is the eigenvector matrix in this bundle);
 - a symmetric positive-definite boundary quadrature $B_\partial$;
-- the multiplication $N_d$ by the $d$th component of the outward unit normal.
+- the multiplication $\mathsf N_d$ by the $d$th component of the outward unit normal
+  (page-local, to keep $N$ for the degree).
 
 The pair is SBP when
 
-$$MD_d+D_d^\top M=\mathcal R^\top B_\partial N_d\,\mathcal R .$$
+$$MD_d+D_d^\top M=\mathcal R^\top B_\partial \mathsf N_d\,\mathcal R .$$
 
 The derivative matrix is *$N$th-order accurate* if it differentiates
 monomials of degree $\le N$ exactly, $D\,\boldsymbol\xi^k=k\,\boldsymbol\xi^{k-1}$ for
@@ -49,11 +50,11 @@ The following special cases appear in the sources:
   Legendre–Gauss–Lobatto nodes, with collocated LGL quadrature, are SBP with
   $M=\mathrm{diag}(\mathsf w_j)$, and the nodes include the boundary (Ranocha
   et al. (2023), Ex. 2.3). $\mathcal R$ then selects the boundary nodes, and
-  $\mathcal R^\top B_\partial N_d\mathcal R$ is diagonal. In 1D it is exactly
+  $\mathcal R^\top B_\partial \mathsf N_d\mathcal R$ is diagonal. In 1D it is exactly
   the matrix $B$ above. This is the [DGSEM](/methods/dgsem.md).
   [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md)
   write the same operator as $Q_{ij}=\mathsf w_i\ell_j'(\xi_i)$ with Lagrange
-  polynomials $\ell_j$ (page-local), and $B=\mathrm{diag}(-1,0,\dots,0,1)$
+  polynomials $\ell_j$ (registry §10), and $B=\mathrm{diag}(-1,0,\dots,0,1)$
   (Eq. (4)). [Pazner (2021)](/sources/pazner-2021.md) calls $Q$ the
   *weighted* differentiation matrix, on the reference interval $[0,1]$, and
   states its two defining sums as Prop. 1:
@@ -73,7 +74,7 @@ The following special cases appear in the sources:
   $\mathcal R$ is a dense interpolation (Ranocha et al. (2023), §6).
   Entropy-stable schemes on these nodes use the *hybridized* SBP operator
 
-  $$Q_{h,d}=\frac12\begin{bmatrix}MD_d-(MD_d)^\top & \mathcal R^\top B_\partial N_d\\ -B_\partial N_d\mathcal R & 0\end{bmatrix},$$
+  $$Q_{h,d}=\frac12\begin{bmatrix}MD_d-(MD_d)^\top & \mathcal R^\top B_\partial \mathsf N_d\\ -B_\partial \mathsf N_d\mathcal R & 0\end{bmatrix},$$
 
   which acts on volume and surface values together (Eq. (6.2)).
 - **Curvilinear SBP.** On a mapped element with Jacobian $J$ and
@@ -89,7 +90,7 @@ The following special cases appear in the sources:
   and a boundary operator $B$ with $\mathbf 1^\top B\mathbf x^k=x_R^k-x_L^k$;
   multi-dimensional operators are tensor products
   ([Edoh (2022)](/sources/edoh-2022.md), §2, Eqs. (1)–(2)). Because a
-  diagonal norm commutes with diagonal data matrices $A=\mathrm{diag}(\mathbf a)$,
+  diagonal norm commutes with diagonal data matrices $\mathrm{diag}(\mathbf a)$,
   the SBP property gives the integrated discrete product rule
   $$\mathbf 1^\top M\big(\mathrm{diag}(\mathbf a)D\mathbf b+\mathrm{diag}(\mathbf b)D\mathbf a\big)=\mathbf a^\top B\mathbf b=a_Rb_R-a_Lb_L,$$
   the identity behind every kinetic-energy proof of split forms (Eq. (2)). Edoh
@@ -97,7 +98,7 @@ The following special cases appear in the sources:
   [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) run a
   sixth-order SBP finite-difference scheme on the periodic 2D Taylor–Green
   vortex (App. A.3) and write nodal DG in the general element-wise form
-  above, $MD_j+D_j^\top M=\mathcal R^\top B_\partial N_j\mathcal R$ (§2.2,
+  above, $MD_j+D_j^\top M=\mathcal R^\top B_\partial \mathsf N_j\mathcal R$ (§2.2,
   Eq. (20)); they note that a single-block finite-difference or Fourier
   collocation scheme is a one-element DG scheme in this sense (Example 2.12).
 - **Stiffness operator with dense norms.**
@@ -197,9 +198,9 @@ The following special cases appear in the sources:
   [flux reconstruction](/methods/flux-reconstruction.md)).
 - **Over-integrated LGL nodes with a modal projection.**
   [Liu et al. (2025b)](/sources/liu-2025-b.md) (§3.1, Eqs. (3.4)–(3.8))
-  use, after Chen & Shu, $k_q+1\ge k+1$ LGL nodes for degree-$k$
-  polynomials, with $k_q=k+2$ in their tests. In page-local notation,
-  $\mathsf V$ is the $(k_q+1)\times(k+1)$ Legendre Vandermonde matrix at the
+  use, after Chen & Shu, $N_q+1\ge N+1$ LGL nodes for degree-$N$
+  polynomials, with $N_q=N+2$ in their tests (the source's $k_q$, $k$). In page-local notation,
+  $\mathsf V$ is the $(N_q+1)\times(N+1)$ Legendre Vandermonde matrix at the
   nodes, $\mathsf P=\hat M^{-1}\mathsf V^\top M$ the discrete $L^2$ projection
   with $\hat M=\mathsf V^\top M\mathsf V$, and $\hat D$ the modal
   differentiation matrix. The modal matrices satisfy
@@ -209,9 +210,9 @@ The following special cases appear in the sources:
   has $Q=MD$ with $Q+Q^\top=B$, $M=\mathrm{diag}(\mathsf w_j)$. Because the
   LGL nodes contain the endpoints, plain restriction serves as the
   extrapolation. [Liu et al. (2025c)](/sources/liu-2025-c.md) (§3.1,
-  Lemmas 1–2) use the collocated case, $k+2$ LGL nodes for tensor degree
-  $k+1$. They use the row sums $\sum_lD_{jl}=\sum_lQ_{jl}=0$ and the column
-  sums $\sum_lQ_{lj}=\tau_j$, the $j$th diagonal entry of $B$, in their
+  Lemmas 1–2) use the collocated case, $N+2$ LGL nodes for tensor degree
+  $N+1$. They use the row sums $\sum_lD_{jl}=\sum_lQ_{jl}=0$ and the column
+  sums $\sum_lQ_{lj}=B_{jj}$ (the source's $\tau_j$), in their
   entropy proof for conservative MHD.
 
 ## Consequences used by the sources
@@ -228,7 +229,7 @@ The following special cases appear in the sources:
    $\mathbf h$ carries the numerical fluxes at the boundary nodes. The
    equivalence is the SBP identity $MD=B-D^\top M$.
 3. **Skew-symmetric flux-differencing operator.** With
-   $\widetilde D_d=2D_d-M^{-1}\mathcal R^\top B_\partial N_d\mathcal R$, the SBP
+   $\widetilde D_d=2D_d-M^{-1}\mathcal R^\top B_\partial \mathsf N_d\mathcal R$, the SBP
    identity gives
 
    $$M\widetilde D_d=MD_d-D_d^\top M=-(M\widetilde D_d)^\top,$$

@@ -5,7 +5,7 @@ description: "The stiffened-gas law, an ideal gas shifted by a constant stiffeni
 status: established
 aliases: [stiffened gas EOS, stiffened equation of state, Tait EOS (as named by Zheng et al.), SG EOS]
 tags: [multiphase, interface-capturing, positivity, entropy-stable]
-timestamp: 2026-10-23T19:58:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Stiffened-gas equation of state
@@ -31,7 +31,7 @@ constant (below)
 [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) §2, Eq. 6;
 [Wong et al. (2021)](/sources/wong-2021.md) §2, Eq. 6;
 [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) §2;
-[Li, Duan & Tang (2022)](/sources/li-2022-c.md) §1, Eq. 1.2;
+[Li, Duan & Tang (2022c)](/sources/li-2022-c.md) §1, Eq. 1.2;
 [Bai & Li (2022)](/sources/bai-2022.md) §2, Eq. 2;
 [Nguyen et al. (2022)](/sources/nguyen-2022.md) §2.2, Eqs. 8–11;
 [Jain & Moin (2022)](/sources/jain-2022.md) §2, Eqs. 5–9;
@@ -118,11 +118,11 @@ $p+p_\infty>0$.
   infinite-rate chemical relaxation of their six-equation model
   ([five- and six-equation models](/definitions/five-equation-model.md)).
 - **Linear form.** Jain & Moin write each phase as
-  $p_k=\alpha_k\rho_ke_k+\beta_k$, with $\alpha_k=\gamma_k-1$ and
-  $\beta_k=-\gamma_kp_{\infty,k}$ for the stiffened gas (page-local
-  $\alpha_k$, $\beta_k$), so that the single-pressure mixture of the
+  $p_k=\mathsf a_k\rho_ke_k+\mathsf b_k$, with $\mathsf a_k=\gamma_k-1$ and
+  $\mathsf b_k=-\gamma_kp_{\infty,k}$ for the stiffened gas (page-local
+  $\mathsf a_k$, $\mathsf b_k$, the source's $\alpha_k$, $\beta_k$, renamed to keep the registry's weights and smoothness indicators), so that the single-pressure mixture of the
   [five-equation model](/definitions/five-equation-model.md) has
-  $p=\big(\rho e+\sum_k\phi_k\beta_k/\alpha_k\big)\big/\sum_k\phi_k/\alpha_k$
+  $p=\big(\rho e+\sum_k\phi_k\mathsf b_k/\mathsf a_k\big)\big/\sum_k\phi_k/\mathsf a_k$
   (Eq. 5), the same mixture rule as below. They give
   $c_k=\sqrt{\gamma_k(p+p_{\infty,k})/\rho_k}$,
   $h_k=\gamma_k(p+p_{\infty,k})/\big(\rho_k(\gamma_k-1)\big)$
@@ -131,7 +131,7 @@ $p+p_\infty>0$.
   (Eq. 65; page-local $C_{v,k}$, $s_{0,k}$), whose transport they use to
   measure the entropy production of interface regularization. Their
   proof that matching split forms keep interface equilibrium uses the
-  linear form, through $\rho_kh_k=(p-\beta_k)/\alpha_k+p$ (Appendix B,
+  linear form, through $\rho_kh_k=(p-\mathsf b_k)/\mathsf a_k+p$ (Appendix B,
   printed as "$h_l$"); they state, without showing it, that a more
   general cubic equation of state can be used.
 - **Coefficient form with an energy constant.** Huang & Johnsen, after
@@ -158,7 +158,7 @@ $p+p_\infty>0$.
 - **Energy form with an energy offset.** Huang et al. (2025b) write
   $p_k=(\gamma_k-1)\rho_k(e_k-e_{\infty,k})-\gamma_kp_{\infty,k}$ with an energy constant
   $e_{\infty,k}$ (page-local) and $c_k^2=\gamma_k(p_k+p_{\infty,k})/\rho_k$ (Eqs. 5–6; the
-  printed law has the mixture density $\rho$ where the phase density is meant, see
+  printed law has the mixture density $\rho$ where the phase law requires the phase density $\rho_k$, see
   Qualifications); MFC 5.0 states the inverse,
   $e_k=(p_k+\gamma_kp_{\infty,k})/((\gamma_k-1)\rho_k)$ (Wilfong et al. §2.2). Both are the
   law above.
@@ -243,8 +243,8 @@ $\rho e_\infty=\sum_k\phi_k\rho_ke_{\infty,k}$ (Eq. 9), and a mixture pressure
 implies (Qualifications); with their rule the mixture constant differs from
 Wong et al.'s by the factors $\gamma_k$ *(compiler check, not in the sources)*.
 Jain & Moin's Eq. (5) is the volume-fraction rule written with
-$\alpha_k,\beta_k$: with $\alpha_k=\gamma_k-1$ and
-$\beta_k=-\gamma_kp_{\infty,k}$ it reproduces $1/(\gamma-1)=\sum_k\phi_k/(\gamma_k-1)$
+$\mathsf a_k,\mathsf b_k$: with $\mathsf a_k=\gamma_k-1$ and
+$\mathsf b_k=-\gamma_kp_{\infty,k}$ it reproduces $1/(\gamma-1)=\sum_k\phi_k/(\gamma_k-1)$
 and $\gamma p_\infty/(\gamma-1)=\sum_k\phi_k\gamma_kp_{\infty,k}/(\gamma_k-1)$
 *(compiler check, not in the sources)*.
 
@@ -366,7 +366,7 @@ water density 1; §4.3, Eq. 50).
   makes a thermal-equilibrium mixture and a physical entropy available.
 - Wong et al.'s concavity result covers a stiffened phase paired with an
   ideal gas; it says nothing about the temperature-based multicomponent
-  closure of Li et al. (2022c)
+  closure of Li et al. (2022c).
 
 # Citations
 
@@ -374,7 +374,7 @@ water density 1; §4.3, Eq. 50).
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §2, Eqs. (6)–(11); §4.3–4.5.
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §3, Eqs. (6)–(9) (arXiv v1).
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §2; §4, Ex. 2, 5–7, 9, 11.
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §1, Eq. (1.2); §3.3–3.4, Eqs. (3.13)–(3.17); Ex. 5.2, 5.9 (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — §1, Eq. (1.2); §3.3–3.4, Eqs. (3.13)–(3.17); Ex. 5.2, 5.9 (arXiv v1).
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2, Eq. (2); §3.1–3.6, Table 3.
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §2.2, Eqs. (8)–(13); §3.1, Table 1; §3.3, Table 2.
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §2, Eqs. (5)–(9); §4–5; Eq. (65); Appendix B (arXiv v1).

@@ -5,7 +5,7 @@ description: "Single-velocity diffuse-interface models of compressible two-phase
 status: established
 aliases: [five-equation model, 5-equation model, Kapila model, Allaire–Clerc–Kokh model, six-equation model, 6-equation model, diffuse-interface model, quasi-conservative two-phase model]
 tags: [multiphase, interface-capturing, finite-volume, positivity, bound-preserving]
-timestamp: 2026-10-23T19:57:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Five- and six-equation diffuse-interface models
@@ -296,10 +296,10 @@ $E_k=\rho_ke_k+\tfrac12\rho_k\lvert v\rvert^2$ (page-local) in place of internal
 
 $$
 \begin{aligned}
-&\partial_t\phi_1+v\cdot\nabla\phi_1=\mathsf r_{\mathrm p}(p_1-p_2)+\frac{\mathcal Q}{\kappa_{\mathrm I}}+\frac{\dot m}{\rho_{\mathrm I}},\qquad
+&\partial_t\phi_1+v\cdot\nabla\phi_1=\mu_{\mathrm p}(p_1-p_2)+\frac{\mathcal Q}{\kappa_{\mathrm I}}+\frac{\dot m}{\rho_{\mathrm I}},\qquad
 \partial_t(\phi_k\rho_k)+\nabla\cdot(\phi_k\rho_kv)=\pm\dot m,\\
 &\partial_t(\rho v)+\nabla\cdot\big(\rho v\otimes v+(\phi_1p_1+\phi_2p_2)I\big)=0,\\
-&\partial_t(\phi_1E_1)+\nabla\cdot\big(\phi_1(E_1+p_1)v\big)+\Sigma=-\mathsf r_{\mathrm p}p_{\mathrm I}(p_1-p_2)+\mathcal Q+e_{\mathrm I}\dot m,
+&\partial_t(\phi_1E_1)+\nabla\cdot\big(\phi_1(E_1+p_1)v\big)+\Sigma=-\mu_{\mathrm p}p_{\mathrm I}(p_1-p_2)+\mathcal Q+e_{\mathrm I}\dot m,
 \end{aligned}
 $$
 
@@ -308,7 +308,7 @@ $\Sigma=-v\cdot\big(Y_2\nabla(\phi_1p_1)-Y_1\nabla(\phi_2p_2)\big)$, $\dot m$ ca
 $+$ sign in the phase-1 mass equation, the heat exchange is
 $\mathcal Q=\mathsf r_{\mathrm T}(T_2-T_1)$ and the mass transfer
 $\dot m=\mathsf r_{\mathrm g}(\mathsf g_2-\mathsf g_1)$ (page-local: relaxation rates
-$\mathsf r_{\mathrm p},\mathsf r_{\mathrm T},\mathsf r_{\mathrm g}$, phasic Gibbs energies
+$\mu_{\mathrm p}$, $\mathsf r_{\mathrm T}$, $\mathsf r_{\mathrm g}$, the pressure rate written as on the six-equation page; phasic Gibbs energies
 $\mathsf g_k$, interface pressure $p_{\mathrm I}$, density $\rho_{\mathrm I}$, energy
 $e_{\mathrm I}$, coefficient $\kappa_{\mathrm I}$; the last three need not be specified for
 infinite rates). They choose it because its frozen sound speed $c^2=\sum_kY_kc_k^2$ is
@@ -475,7 +475,7 @@ agree on the remedy, reconstruction of primitive variables:
   pressure errors are negligible and the interface free of oscillations (§4.1, Fig. 3).
   *(Compiler check, not in the sources: the proportional reconstruction keeps each cell's
   phasic densities constant at its face values, the property Huang & Johnsen's condition
-  below is meant to secure.)*
+  above requires.)*
 - Wakimura et al. (2024) reconstruct the quasi-primitive vector
   $(\phi_1,\phi_1\rho_1,\phi_2\rho_2,v,p)$ of the six-equation model, at second order only,
   because "a numerical scheme that has accuracy higher than third-order may introduce
@@ -589,7 +589,7 @@ ideal-gas phases, without the tolerance band of Wong et al.:
    $(\tfrac12v_*^2,\tfrac12v_*^2,-v_*,1,0)$ in the ordering
    $(\phi_1\rho_1,\phi_2\rho_2,\rho v,E,\phi_1)$), and flux inequalities for the
    HLL speeds (Lemma 2.11), the cell averages stay admissible under the
-   minimum of the volume-fraction condition and the usual condition
+   minimum of the volume-fraction condition and the condition
    $\Delta t\max(s^+-s^-)/\Delta x\le\varpi$, $\varpi$ the first Gauss–Lobatto weight
    (Eq. (2.37)).
 3. **Limiter.** A two-step [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)
@@ -715,7 +715,7 @@ fluid and ghost-fluid states in cut cells
   (Zhang et al. 2024a, Chamarthi 2023a, Wong et al. 2021, above).
 - Zhang et al. (2024a) print the deformation tensor as
   $\tfrac12\big(\nabla\cdot v+(\nabla\cdot v)^\top\big)$ (Eq. (8)), a scalar where the
-  velocity gradient is meant, and state that $\rho c^2=(p+p_\infty)/(\gamma-1)$ is limited,
+  symmetric part of the velocity gradient $\nabla v$ is required, and state that $\rho c^2=(p+p_\infty)/(\gamma-1)$ is limited,
   whereas their own Eq. (16) gives $\rho c^2=\gamma(p+p_\infty)$ *(compiler check, not in the
   sources: both are positive exactly when $p+p_\infty>0$, so the limiter acts the same)*.
 - Wakimura et al. (received 24 February 2024, online 7 June 2024) state that "to our
@@ -742,7 +742,7 @@ fluid and ghost-fluid states in cut cells
   the internal energy gives $-\sum_k\phi_k\gamma_kp_{\infty,k}/(\gamma_k-1)$; one of the two
   is misprinted, and the paper does not say which it implements *(compiler check,
   not in the sources)*. In the underwater explosion the text calls the volume
-  fraction of the absent phase in water "the volume fraction of air $\phi_1$" while
+  fraction $\phi_1$ (their $\alpha_1$) of the absent phase in water "the volume fraction of air" while
   giving phase 1 the liquid parameters (§4.3.1).
 - [Wilfong et al. (2026)](/sources/wilfong-2026.md) (§2.1.1, Eq. (5)) print Kapila's
   coefficient for MFC 5.0 with the sum $\rho_2c_2^2+\rho_1c_1^2$ in the numerator and the

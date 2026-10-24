@@ -5,7 +5,7 @@ description: "AENO averages, coefficient by coefficient, the Taylor coefficients
 status: established
 aliases: [AENO, average ENO, AENO-C, AENO-Centred, joining function, ADER-AENO, ADER-AENO-C]
 tags: [reconstruction, finite-volume, limiting, low-dissipation]
-timestamp: 2026-10-23T15:16:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # AENO and AENO-C reconstruction
@@ -188,7 +188,7 @@ in the conclusions (§§2, 9).
   efficiency loss on Euler "beyond the seventh-order", §8 "above the eighth-order".
 - **Printed slips.** §2.2 calls the full-stencil polynomial of WENO "of degree $2m+1$"; the
   $2m+1$ cells of the extended stencil determine degree $2m$, consistent with the spatial
-  accuracy $2m+1$ that §6 states. Eq. (42) prints the cell average as $\bar q_j$ and the upper
+  accuracy $2m+1$ that §6 states *(compiler check, not in the sources)*. Eq. (42) prints the cell average as $\bar q_j$ and the upper
   summation limit as $n$ for cell $i$ and degree $m$.
 - **Priority claim.** The authors state that this is, to their knowledge, the first study of
   the Euler equations with nonlinear ADER schemes of order 8 or higher (§9).

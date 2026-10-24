@@ -5,7 +5,7 @@ description: "Implicit shock tracking makes the mesh geometry an unknown and mov
 status: established
 aliases: [MDG-ICE, MDG+ICE, HOIST, space-time HOIST, slab-based HOIST, high-order implicit shock tracking, moving discontinuous Galerkin with interface condition enforcement, moving discontinuous Galerkin with interface conservation enforcement, implicit discontinuity tracking, shock fitting by optimization]
 tags: [shock-tracking, dg, numerical-flux]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Implicit shock tracking and moving DG (MDG-ICE)
@@ -259,16 +259,16 @@ of its maximum (Eqs. (43)–(45); see
 [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)); and
 regions of known upstream flow are removed and replaced by a shock
 boundary condition. Each slab is solved by the SQP method of Huang &
-Zahr from the DG($p=0$) solution on the reference mesh (Algorithm 1).
+Zahr from the DG ($N=0$) solution on the reference mesh (Algorithm 1).
 
 **Evidence** (§5; no convergence-order study, deferred to the
 single-slab work):
 
 | test | setup | result |
 |---|---|---|
-| [Burgers](/benchmarks/burgers-equation-tests.md), accelerating shock leaving the domain | 192 $P_2$ simplices, $S=1,2,4,8$ slabs | residuals converge faster and deeper as slabs are added (Fig. 9); shock boundary conditions remove over half of the elements (Fig. 11) |
+| [Burgers](/benchmarks/burgers-equation-tests.md), accelerating shock leaving the domain | 192 $\mathbb P^2$ simplices, $S=1,2,4,8$ slabs | residuals converge faster and deeper as slabs are added (Fig. 9); shock boundary conditions remove over half of the elements (Fig. 11) |
 | Burgers, shock formation and merger | 1 slab, 96 → 207 triangles after 8 refinement rounds | formation point resolved, agreement with a fine second-order FV run at $t=0.1$ |
-| 2D Burgers, curved shock | 3 slabs, 448 $P_2$ tetrahedra in slab 1 | curving shock tracked |
+| 2D Burgers, curved shock | 3 slabs, 448 $\mathbb P^2$ tetrahedra in slab 1 | curving shock tracked |
 | shallow-water [dam break](/benchmarks/dam-break-problem.md) with walls | 5 slabs, 32 triangles in slab 1 | shock and rarefaction tracked through the wall reflections |
 | [Sod tube](/benchmarks/sod-and-lax-shock-tubes.md) with walls to $t=1$ | 6 slabs, 65 simplices in slab 1 | all waves, a generalized triple point, shock–shock and shock–contact interactions tracked |
 | [Shu–Osher problem](/benchmarks/shu-osher-problem.md) to $T=2$ with a wall at $x=5$ | 5 slabs, refinement and shock boundary conditions | relative $L^2$ error $3.97\times10^{-4}$ against a second-order FV superbee reference |

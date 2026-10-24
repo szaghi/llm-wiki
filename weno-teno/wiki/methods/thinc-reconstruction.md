@@ -5,7 +5,7 @@ description: "THINC reconstructs a cell's data by a hyperbolic-tangent jump prof
 status: established
 aliases: [THINC, tangent of hyperbola for interface capturing, tanh reconstruction]
 tags: [interface-capturing, reconstruction, low-dissipation, finite-volume, finite-difference]
-timestamp: 2026-10-23T20:05:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # THINC reconstruction
@@ -87,15 +87,15 @@ is Takagi et al.'s $(\mathcal A+\mathcal T)/(1+\mathcal A\mathcal T)$ exactly.)*
 
 **Volume fractions with an oriented steepness.** [Zhang et al. (2024a)](/sources/zhang-2024.md)
 (§3.3, Eqs. (35)–(46)) reconstruct only the volume fraction $\phi_1$ (page-local) by THINC in
-interfacial cells, with profile $\tfrac12\big[1+\tanh\big(\beta_i(X+\mathsf c_i)\big)\big]$ on
+interfacial cells, with profile $\tfrac12\big[1+\tanh\big(\beta_{\mathrm T,i}(X+\mathsf c_i)\big)\big]$ on
 $X=(x-x_{i-1/2})/\Delta x\in[0,1]$, an oriented steepness
-$\beta_i=\beta_{\mathrm T}\lvert n_{1,i}\rvert+0.01$ ($n$ the interface normal) and the centre
+$\beta_{\mathrm T,i}=\beta_{\mathrm T}\lvert n_{1,i}\rvert+0.01$ ($n$ the interface normal) and the centre
 in closed form,
 
-$$\mathsf c_i=\frac1{2\beta_i}\ln\frac{e^{2\beta_i\bar\phi_{1,i}}-1}{e^{2\beta_i}-e^{2\beta_i\bar\phi_{1,i}}}$$
+$$\mathsf c_i=\frac1{2\beta_{\mathrm T,i}}\ln\frac{e^{2\beta_{\mathrm T,i}\bar\phi_{1,i}}-1}{e^{2\beta_{\mathrm T,i}}-e^{2\beta_{\mathrm T,i}\bar\phi_{1,i}}}$$
 
 (page-local $\mathsf c_i$; Eq. (38)). *(Compiler check, not in the sources: for
-$\beta_i=1.8$, $\bar\phi_{1,i}=0.3$ the profile with this centre averages to $0.3$ to
+$\beta_{\mathrm T,i}=1.8$, $\bar\phi_{1,i}=0.3$ the profile with this centre averages to $0.3$ to
 $10^{-10}$ by quadrature.)* The face values for increasing and decreasing $\phi_1$ collapse into
 one formula with the gradient sign (Eq. (43)). Because the mirror relation between them fails in
 floating point ($e^x\ne1/e^{-x}$ exactly), the implementation obtains the values for one sign by
@@ -117,7 +117,7 @@ THINC has the closed form
 $$\tilde u_{i+1/2}=\frac{\sinh\beta_{\mathrm T}+\cosh\beta_{\mathrm T}-e^{\beta_{\mathrm T}(1-2\tilde u_i)}}{2\sinh\beta_{\mathrm T}},\quad0<\tilde u_i<1,\qquad\tilde u_{i+1/2}=\tilde u_i\ \text{otherwise}$$
 
 ([Deng (2023)](/sources/deng-2023.md), Eq. (4.33)), so it is normalisable and
-scale-invariant. Deng reads the effect of $\beta_{\mathrm T}$ off the diagram
+scale-invariant. Deng discusses the effect of $\beta_{\mathrm T}$ on the diagram
 (§4.6, Fig. 8): $\beta_{\mathrm T}=1.0$ lies entirely below the third-order line
 (diffusive); $\beta_{\mathrm T}=1.3$ lies above it near $\tilde u=1/2$
 (anti-diffusive, "as the SuperBee TVD limiter"); $\beta_{\mathrm T}=1.1$ passes
@@ -303,7 +303,7 @@ does not cite THINC-type reconstructions.
 ## Qualifications
 
 - Fu (2023, Eq. (25)) and Takagi et al. (§2.3) print the conservation constraint
-  without the factor $1/\Delta x$ (or with the integral meant in the local
+  without the factor $1/\Delta x$ (or with the integral in the local
   coordinate), and the profile of Fu (2023) has unbalanced parentheses.
 - Paula et al.'s steepness $\beta_{\mathrm T}=3$ is far above the
   $1.1$–$1.6$ of the one-dimensional sources, and their fluxes are not

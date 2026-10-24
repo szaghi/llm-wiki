@@ -5,7 +5,7 @@ description: "Code verification by a chosen smooth solution whose source term is
 status: established
 aliases: [MMS, manufactured solution, manufactured solutions, order-of-accuracy verification]
 tags: [benchmark, finite-volume, finite-difference, dg, immersed-boundary]
-timestamp: 2026-10-23T14:56:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Method of manufactured solutions
@@ -153,7 +153,7 @@ treatment on a non-fitted geometry.
 Browne et al. evaluate the discrete right-hand side once, against
 "exact" derivatives that are themselves a sixth-order central difference
 of the exact fluxes (Eq. A.3). Chen et al. evaluate a gradient from
-exact cell values and solve no equation (§6.2). The four observed
+exact cell values and solve no equation (§6.2). The five measured
 orders therefore refer to an unsteady solution, a steady solution, a
 boundary closure, an operator and a reconstruction respectively *(compiler check, not in the sources)*.
 

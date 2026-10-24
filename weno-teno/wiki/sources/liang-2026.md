@@ -157,7 +157,7 @@ Refs. [2] and [48] are keyed by the surnames von Neumann and Asunción. Refs.
 
 # Pages created or updated
 
-Chunk 10 (2026-10-23). This source is cited on:
+Chunk 10 (2026-10-23), cited further in chunk 11 (2026-10-24). This source is cited on:
 
 * [Block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)
 * [Converged ENO (CENO)](/methods/converged-eno.md)

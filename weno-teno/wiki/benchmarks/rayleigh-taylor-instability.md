@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu sett
 status: established
 aliases: [RTI, Rayleigh–Taylor, single-mode Rayleigh–Taylor instability]
 tags: [benchmark, low-dissipation, teno, weno, central-scheme]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Rayleigh–Taylor instability
@@ -95,7 +95,7 @@ fourth equations).
 in the $\rho v_2$ equation, $\rho v_2$ in the energy equation), with
 gravity "acting in the positive direction of the y-axis".
 [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) Eq. (48) print the
-source $(0,0,\rho g,\rho v_2g)$ with $g=1$ on the right-hand side, the
+source $(0,0,\rho g,\rho v_2g)$ with $g=1$ (gravity magnitude, page-local) on the right-hand side, the
 same convention, and so do Huang et al. (2025a), Eq. (49), with the
 source $(0,0,\rho g,\rho v_2g)$, $g=1$. [Li, Chen & Ren (2022)](/sources/li-2022.md) mention
 "gravity source terms" without writing them, and
@@ -105,7 +105,7 @@ term. Jiang et al. write $g_y=1$ in the Lagrangian momentum equation
 $\mathrm dv/\mathrm dt=-\nabla p/\rho+g$, which balances $\partial_yp=2$ at
 $\rho=2$ only with $g$ along $+y$, the convention above *(compiler check,
 not in the sources)*. Ye et al. say "the direction of gravity is the
-same as the $y$ axis" without giving the sign of the source; Li et al.
+same as the $y$ axis" without giving the sign of the source; Li et al. (2022b)
 write that $\rho$ and $\rho v_2$ are added "to the flux" of the
 $y$-momentum and energy equations, without writing the term; Takagi et al., Fu (2021),
 [Huang et al. (2026)](/sources/huang-2026.md) and Bezgin et al. do not
@@ -164,7 +164,7 @@ width, as the common setup *(compiler check, not in the sources)*.
 **Small-scale structure.** Every comparison favours the new scheme by
 the richness of the roll-up on the spike flanks: TENO-THINC over
 WENO5-Z and TENO5 with both Rusanov and Roe fluxes (Takagi et al.,
-Figs. 14–17); WENO-ZN over WENO-JS and WENO-Z (Li et al., Fig. 7);
+Figs. 14–17); WENO-ZN over WENO-JS and WENO-Z (Li et al. (2022b), Fig. 7);
 AFTENO5 with HLLC richest among the TENO and AFWENO variants (Ye et
 al., Fig. 7); the new central-upwind fluxes over their predecessors,
 with earlier secondary mushrooms and a "jellyfish-like" structure at
@@ -241,7 +241,7 @@ state that their simplified flux, with no Riemann solver, misses
 roll-up that their interface tracking captures (§7.2.4), and claim that
 running the classical problem on coarse adaptive grids faster than on
 uniform ones is "the first of its kind" (footnote 3). The uniform runs
-use C-method viscosity $\mu=7.5\times10^{-4}$.
+use C-method viscosity $\mu=7.5\times10^{-4}$ (page-local).
 
 **Symmetry.** The data are symmetric about $x=1/8$ ($\cos 8\pi x$ is
 invariant under $x\mapsto\tfrac14-x$) *(compiler check, not in the
@@ -300,7 +300,7 @@ observation, not Fu (2021).
 
 [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) §5.6, Eqs.
 (47)–(52) (arXiv v2) scale the ideal-MHD setup of Stone & Gardiner to
-$[-L/2,L/2]^2\times[-L,L]$, $L=1$: light fluid $\rho=1$ for $z\le0$,
+$[-L/2,L/2]^2\times[-L,L]$, $L=1$ (domain length, page-local): light fluid $\rho=1$ for $z\le0$,
 heavy fluid $\rho=3$ above (Atwood number $1/2$), $\gamma=5/3$,
 hydrostatic pressure $p(z)=p_0-\rho gz$ with $p_0=10/\gamma$ and $g=1$,
 gravity as a source term added to the Powell term, uniform field
@@ -310,7 +310,7 @@ of random noise; periodic in $x$ and $y$, reflecting top and bottom.
 With the critical field $B_{\mathrm c}=\sqrt{(\rho_{\mathrm h}-\rho_{\mathrm l})gL}=\sqrt2$
 they run $B_0=0$, $0.1B_{\mathrm c}$ and $0.5B_{\mathrm c}$ ($A$,
 $B_{\mathrm c}$, $\rho_{\mathrm h}$, $\rho_{\mathrm l}$ page-local), at
-$\mathbb P_3$ on $64\times64\times128$ hexahedra, $\Delta t=2\times10^{-5}$,
+$\mathbb P^3$ on $64\times64\times128$ hexahedra, $\Delta t=2\times10^{-5}$,
 snapshots at $t=2,3,4,5$.
 
 With positivity-preserving [entropy filtering](/methods/entropy-filtering.md)
@@ -319,8 +319,8 @@ magnetized regimes; the field makes the mixing anisotropic and slows the
 growth (Figs. 14–16). The case is also their cost test: to $t=1$ at
 $B_0=0.1B_{\mathrm c}$ on 16 V100 GPUs, the new node-wise filter
 optimization takes 25.3 GPU hours against 61.4 with the earlier
-matrix–vector approach at $\mathbb P_3$ (a factor 2.43), and 39.8
-against 257 at $\mathbb P_4$ on $51\times51\times102$ elements (6.46),
+matrix–vector approach at $\mathbb P^3$ (a factor 2.43), and 39.8
+against 257 at $\mathbb P^4$ on $51\times51\times102$ elements (6.46),
 at about the same number of degrees of freedom (Fig. 17). The speedup
 factors are recomputed from the printed hours *(compiler check, not in
 the sources)*.
@@ -337,7 +337,7 @@ gravity sources $-\rho g$ and $-\rho gv_3$, $g=1$, and
 $p=p_0-\rho gz$, $p_0=6$; periodic in $x$ and $y$, slip adiabatic top and
 bottom; $c_v=3.11$, $c_p=5.19$ (species 0) and $c_v=0.72$, $c_p=1.007$
 (species 1), $\mathrm{Pr}=0.71$, viscosity $10^{-4}$, $5\times10^{-5}$
-and $10^{-5}$; $\mathbb P_3$ on $32\times32\times64$ hexahedra to $t=5$.
+and $10^{-5}$; $\mathbb P^3$ on $32\times32\times64$ hexahedra to $t=5$.
 Their positivity-preserving [entropy filter](/methods/entropy-filtering.md)
 with the pressure-jump entropy switch gives a volume-averaged kinetic
 energy whose peak rises as the viscosity falls on the same mesh, which
@@ -356,12 +356,12 @@ sources)*.
   roles of bottom and top exchanged, and the two do not fit each other:
   the printed initial data give $(\rho,p)=(1,1.5)$ at $y=0$ and $(2,3)$
   at $y=1$ *(compiler check, not in the sources)*; the common setup is
-  the one printed by Fu (2021), Takagi et al., Ye et al., Li et al.,
+  the one printed by Fu (2021), Takagi et al., Ye et al., Li et al. (2022b),
   Chertock et al. and Wang et al. (2023b). The gravity term is not given, so the run actually computed
   cannot be reconstructed from the paper.
 - Hong et al. print the domain as "$[0,0.25]\times[0,1][0,1]$", a
   duplicated interval.
-- Li et al. print the domain as "$[0,0.25]\times[0.1]$"; Eq. (45) and
+- Li et al. (2022b) print the domain as "$[0,0.25]\times[0.1]$"; Eq. (45) and
   the $120\times480$ grid fix it as $[0,0.25]\times[0,1]$. They also use
   $\alpha$ for the sound speed in the data.
 - Tang prints the grid as $256\times1024$ in the text but times the run

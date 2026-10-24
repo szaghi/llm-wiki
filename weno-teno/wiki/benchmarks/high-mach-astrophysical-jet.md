@@ -5,7 +5,7 @@ description: "Mach 80 and Mach 2000 gas jets injected into a light ambient mediu
 status: established
 aliases: [Mach 2000 jet, Mach 80 jet, astrophysical jet, high Mach number jet]
 tags: [benchmark, positivity, bound-preserving, relativistic, mhd]
-timestamp: 2026-10-23T20:39:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # High-Mach astrophysical jets
@@ -28,7 +28,7 @@ measure of resolution.
 Common data ($\gamma=5/3$), printed by [Fu (2021)](/sources/fu-2021.md)
 §5.7.3 and [Takagi et al. (2022)](/sources/takagi-2022.md) §4.9, both
 citing Zhang & Shu's positivity-preserving DG paper for it (their refs.
-[76] and [74]; Rueda-Ramírez et al. attribute the Mach 2000 jet to Ha et
+[76] and [74]; Rueda-Ramírez et al. (2022) attribute the Mach 2000 jet to Ha et
 al., Wang & Don take the setup from Gao et al.), in $(\rho,v_1,v_2,p)$:
 
 - **Mach 80:** domain $[0,2]\times[-0.5,0.5]$, ambient $(0.5,0,0,0.4127)$,
@@ -62,20 +62,21 @@ speed and 682.08 with respect to the ambient one.
 | [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Ex. 5.10 | generalized [Active Flux](/methods/active-flux.md) with flux-vector-split point values | both jets, $400\times200$, shock-sensor strength $\kappa_{\mathrm s}=1$ and $10$ (page-local) | Mach 80: $0.07$; Mach 2000: $0.001$ | convex limiting of cell averages and scaling of point values, with time-step halving |
 | [Fan et al. (2025b)](/sources/fan-2025-b.md) §4.4, Eqs. (56)–(57) | learned third-order [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS3-MR-NN vs WCNS3-JS, WCNS3-MR | Mach 80 only, $[-1,1]\times[-0.5,0.5]$, $800\times400$ | $0.07$ | none mentioned |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.4.6 | nodal DG on triangles, $\mathbb P^2$–$\mathbb P^4$, ANN-predicted [artificial viscosity](/methods/artificial-viscosity.md) (decay-rate threshold $\mathfrak a_0=2.5$, page-local; min-rule) | $h=1/320$, mesh symmetric about $y=0$ | $0.001$ | none; first layer of elements next to the inlet initialized with the jet state |
+| [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.15 | fourth-order ($\mathbb P^3$) global [COS(DG)](/methods/cos-dg.md), SSP-RK3 | Mach 80: upper half $[0,2]\times[0,0.5]$ with a reflective bottom, $400\times100$; Mach 2000: "the same mesh" | Mach 80: $0.07$; Mach 2000: $0.001$ (text) | [Zhang–Shu](/methods/zhang-shu-scaling-limiter.md) positivity-preserving limiter at the Runge–Kutta stages |
 
 Yu & Hesthaven print the Mach 2000 data and domain above but not
-$\gamma$. Liang et al. print both jets with the common data (Mach 80
+$\gamma$. Liang et al. (2022) print both jets with the common data (Mach 80
 with $(5,0,0,0.4127)$ on the rest of the left boundary) and no final
-times. Fan, Zhao, Xiong & Qiu, Fan et al. (2025a) and Li et al. print
+times. Fan, Zhao, Xiong & Qiu, Fan et al. (2025a) and Li et al. (2023a) print
 the Mach 2000 data above; Fan et al. (2025a) run it "without radiative
 cooling". Fan, Zhang & Qiu (2022) print the jet inflow as
 $(\rho,v_1,v_2,p)=(0.5,800,0,0.4127)$, the ambient density, not 5
 (checked on the PDF page); with that density the jet sound speed is
 $1.173$ and the jet Mach number $800/1.173=682$, the value
-Rueda-Ramírez et al. give with respect to the ambient sound speed
+Rueda-Ramírez et al. (2022) give with respect to the ambient sound speed
 *(compiler check, not in the sources)*. Fan, Zhang & Qiu still call it
 the Mach 2000 jet.
-Rueda-Ramírez et al. run the Mach 2000 jet on the square
+Rueda-Ramírez et al. (2022) run the Mach 2000 jet on the square
 $[-0.5,0.5]^2$ with inflow at $x=-0.5$, periodic top and bottom and
 characteristic inflow/outflow left and right, a different box from the
 $[0,1]\times[-0.25,0.25]$ of the other sources.
@@ -89,12 +90,12 @@ Fu (2023) presents the TENO10 jet as an example of near-vacuum robustness
 "with the PP limiter". Wang & Don state that their affine-invariant
 schemes are not positivity preserving in general and need a PP limiter
 on the Mach 2000 jet; at the final time it is active only around the jet
-front and the two inlet corners (§3.2.4, Fig. 8). Rueda-Ramírez et al.
+front and the two inlet corners (§3.2.4, Fig. 8). Rueda-Ramírez et al. (2022)
 make DGSEM robust by blending with a low-order finite-volume scheme up
 to invariant-domain-preserving bar-state bounds, element-wise or
 subcell-wise (Figs. 8–9).
 
-Liang et al. report all four of their schemes stable with the
+Liang et al. (2022) report all four of their schemes stable with the
 positivity-preserving flux limiter. Fan, Zhang & Qiu (2022) find that
 negative density and pressure never appear; their limiter acts on
 0.178 %, 0.230 % and 0.416 % of the cells per step for WENO-JS5, JS7 and
@@ -104,7 +105,7 @@ will simply blow up for this test", which is stated, not shown
 (Example 5.7, Fig. 5.6). Fan, Zhao, Xiong & Qiu need the limiter for
 HWENO-R and WENO-ZQ, although HWENO-R runs their one-dimensional
 extreme problems without it; it acts on 0.0146 % of the cells
-(Remark 3.2). Li et al. find that only the pressure part of the limiter
+(Remark 3.2). Li et al. (2023a) find that only the pressure part of the limiter
 is active, at the jet front, and the density stays positive (§3.6).
 
 **Time-step dependence of the limited scheme.** [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md)
@@ -133,7 +134,7 @@ the development of turbulence" (Fig. 9).
 
 **Entropy bounds, dissipation and carbuncles.** Lin & Chan run the
 Mach 2000 jet, attributed to Ha et al., on the square of Rueda-Ramírez
-et al., ambient $(0.5,0,0,0.4127)$ and inflow $(5,800,0,0.4127)$ through
+et al. (2022), ambient $(0.5,0,0,0.4127)$ and inflow $(5,800,0,0.4127)$ through
 $y\in[-0.05,0.05]$ at $x=-0.5$ (§4.4). With TVD-like density bounds,
 relaxed internal-energy positivity and the cell entropy inequality the
 run is robust (Fig. 6). In a shock-capturing variant that blends a
@@ -163,6 +164,21 @@ than WCNS3-JS and WCNS3-MR (Fig. 18); the jet Mach number of their
 printed state is $30/\sqrt{(5/3)(0.4127)/5}\approx80.9$, the value of
 the common data *(compiler check, not in the sources)*.
 
+**Oscillation suppression and positivity as separate steps.** Cao et
+al. (2026) run both jets, citing Zhang & Shu's positivity paper and Ha
+et al. for them, with fourth-order COS(DG), which damps the
+non-mean modes of each DG polynomial once per time step, together with
+the Zhang–Shu positivity-preserving limiter; since COS acts only after
+the last Runge–Kutta stage, the positivity limiter is applied at the
+stages separately, the combined bound-preserving and
+oscillation-suppressing coefficient of their Remark 2 being proposed but
+not used (Ex. 6.15, Figs. 17–18). They present the jets as tests of
+robustness at Mach numbers up to 2000, where negative pressure can
+occur, and find bow shocks and shear layers sharply resolved,
+consistent with the two cited works. Their Mach 80 run imposes outflow
+on the rest of the left boundary, where Takagi et al. impose
+$(5,0,0,0.4127)$.
+
 **An exception without a stated limiter.** Peng, Sun & Wu compute the
 Mach 2000 jet with OEDG on $320\times160$ to $t=0.001$ and report no
 nonphysical oscillations; the paper neither claims bound preservation
@@ -185,14 +201,14 @@ information carried by low-degree polynomials (§5.4.6, Figs. 24–25;
 §6). The run needs the tuned settings $\mathfrak a_0=2.5$ (default 2) and the min-rule
 and a start-up layer of jet-state elements.
 
-**Resolution.** Liang et al. claim richer small-scale structures for
+**Resolution.** Liang et al. (2022) claim richer small-scale structures for
 their scheme than for the three comparators on both jets (Figs. 24–25).
-Li et al. find MR-AWENO noisier than MR-AWENO-Si along the rear and
+Li et al. (2023a) find MR-AWENO noisier than MR-AWENO-Si along the rear and
 above the jet tail (Fig. 8). Takagi et al. rank TENO-THINC, then TENO5, then WENO5-Z
 by small-scale structure and claim TENO-THINC beats earlier WENO5-JS and
 DG results (Fig. 20). Fu (2021) claims "much richer small-scale
 structures" than fifth- and seventh-order WENO and a DG scheme (Figs.
-11–14). Rueda-Ramírez et al. find that the low-order partner matters:
+11–14). Rueda-Ramírez et al. (2022) find that the low-order partner matters:
 going from first-order FV with LLF, to first-order FV with HLLE, to
 second-order FV with HLLE sharpens shocks and develops finer scales,
 and subcell-wise blending beats element-wise blending. The second-order
@@ -345,7 +361,7 @@ closest to them (§5.2.3).
   Ex. 10 run the same two jets on the full domain with outgoing boundaries
   and $320\times480$ cells, to $t=0.002$ and $0.00015$, with their
   entropy-stable oscillation-free DG, the Zhang–Shu positivity limiter and
-  CFL $0.2/(2k+1)$, and contrast this with Liu & Wu: their scheme needs only
+  CFL $0.2/(2N+1)$ (their $k$ for the degree $N$), and contrast this with Liu & Wu: their scheme needs only
   the positivity limiter (Figs. 11–12). Both papers treat the
   Godunov–Powell term as part of the discretized system; Liu et al.
   (2025b) state that their scheme is non-conservative and not provably
@@ -385,9 +401,9 @@ closest to them (§5.2.3).
 
 ## Qualifications
 
-- Fu (2021), Takagi et al. and Liang et al. do not print the final
-  times of the jets; the sources that do (Rueda-Ramírez et al., Peng et
-  al., Fan et al. 2022, 2023 and 2025a, Li et al. 2023) use $t=10^{-3}$ for
+- Fu (2021), Takagi et al. and Liang et al. (2022) do not print the final
+  times of the jets; the sources that do (Rueda-Ramírez et al. 2022 and 2024, Peng et
+  al., Fan et al. 2022, 2023 and 2025a, Li et al. 2023a) use $t=10^{-3}$ for
   Mach 2000.
 - Fan, Zhang & Qiu (2022)'s printed jet density 0.5 makes their jet a
   Mach 682 jet as defined on this page; whether the printed value or
@@ -403,6 +419,9 @@ closest to them (§5.2.3).
   dependence of FCT/IDP limiting is this one test.
 - Resolution claims are visual comparisons, partly against figures
   from other papers.
+- Cao et al. (2026) state that the Mach 2000 jet "runs to $t=0.001$",
+  while the caption of their Fig. 18 shows $t=0.0005$, $0.001$ and
+  $0.0015$.
 - Liu et al. (2025b) label the colour range of their Fig. 11 "density
   logarithm $\rho\in[-1.58,1.12]$" without $\log_{10}$, which their Fig.
   12 prints. Liu & Wu (2025) are read as arXiv v2, Duan, Barsukow &
@@ -447,3 +466,4 @@ closest to them (§5.2.3).
 - [Fan et al. (2025b)](/sources/fan-2025-b.md) — §4.4, Eqs. (56)–(57), Fig. 18.
 - [Liu & Wu (2025)](/sources/liu-2025.md) — §4.2, MHD jets (arXiv v2).
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — Remarks 3.1–3.2, Ex. 10, Figs. 11–12.
+- [Cao et al. (2026)](/sources/cao-2026.md) — Remark 2, Ex. 6.15, Figs. 17–18.

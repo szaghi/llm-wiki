@@ -5,7 +5,7 @@ description: "Tensor-train WENO evolves the fields of a three-dimensional finite
 status: established
 aliases: [WENO-TT, TT-WENO, tensor-train WENO scheme, LF-cross, WENO-cross, TT-SSPRK3]
 tags: [weno, finite-difference, reconstruction, software]
-timestamp: 2026-10-23T15:11:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Tensor-train WENO
@@ -81,9 +81,9 @@ use the triangle inequality with the assumption $\|u_{\mathrm{TT}}-u_{\mathrm{FT
 which gives $\varepsilon_{\mathrm{TT}}\le C\Delta x^{7/2}/\|u_{\mathrm{TT}}\|_F$, and set (§4.6,
 Eqs. (32)–(35))
 
-$$\varepsilon_{\mathrm{TT}}=\varepsilon_{\mathrm{cross}}=\frac{C_\varepsilon V^{1/2}\Delta x^{7/2}}{\max_q\|q\|_F},$$
+$$\varepsilon_{\mathrm{TT}}=\varepsilon_{\mathrm{cross}}=\frac{C_\varepsilon V^{1/2}\Delta x^{7/2}}{\max_c\|u_c\|_F},$$
 
-with $V$ the domain volume, the maximum over the five conserved variables, and a
+with $V$ the domain volume, the maximum over the five conserved variables $u_c$ (page-local index $c$), and a
 problem-dependent constant $C_\varepsilon$ (page-local): 500 for linear advection, 10 for
 Burgers and the manufactured solution, $2/\sqrt V$ for the isentropic vortex. The assumption
 that the accumulated TT–FT difference is bounded by one rounding estimate is not proved.

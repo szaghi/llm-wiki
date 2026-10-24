@@ -4,8 +4,8 @@ title: "Conservative semi-Lagrangian finite-volume WENO"
 description: "A semi-Lagrangian finite-volume scheme updates each cell average as the integral of the old solution over its upstream cell; Zheng et al. reach fourth order in 2-D without dimensional splitting by cubic-curved upstream cells, a WENO-ZQ polynomial reconstruction and Green's-theorem clipping, with mass conservation, positivity and large CFL numbers."
 status: established
 aliases: [semi-Lagrangian finite volume, SL FV WENO, non-splitting semi-Lagrangian WENO, conservative semi-Lagrangian scheme, SLWENO]
-tags: [finite-volume, weno, cweno, positivity, reconstruction]
-timestamp: 2026-10-22T04:49:00Z
+tags: [finite-volume, weno, cweno, positivity, reconstruction, semi-lagrangian]
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Conservative semi-Lagrangian finite-volume WENO
@@ -43,7 +43,8 @@ Zheng et al. (2022) realize the identity to fourth order in 2-D without dimensio
   reconstruction of the overlapped cell (Eqs. (17)–(21)). Three-point Gauss–Legendre quadrature per
   segment is exact on inner segments and "of sixth-order accuracy" on the cubic ones (§2.3.2).
   Intersections come from roots of cubics; for near-tangencies and endpoints near a mesh line the
-  authors "do not state a standard way to treat them" (App. B.1).
+  authors acknowledge these floating-point cases and "do not state a standard way to treat them"
+  (App. B.1).
 - **Positivity.** A [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md) on each
   reconstruction, with the cell minimum found exactly by solving $\nabla\tilde u=0$, two quadratics,
   i.e. intersecting conics (Eqs. (22)–(24)). Remark 2.1: unlike the quadrature-point minima of Zhang &
@@ -96,8 +97,8 @@ scheme (§4, Tables 1–5):
 
 ## Qualifications
 
-- **Global order.** *(Compiler check, not in the sources:)* a one-step error $O(h^4)$ with
-  $\Delta t\sim h$, summed over $O(h^{-1})$ steps, bounds the global error by $O(h^3)$ only; the
+- **Global order.** *(Compiler check, not in the sources: a one-step error $O(h^4)$ with
+  $\Delta t\sim h$, summed over $O(h^{-1})$ steps, bounds the global error by $O(h^3)$ only.)* The
   paper claims fourth order without discussing this, so global fourth order rests on the tables, not
   on Prop. 3.6.
 - **Stability by sampling.** Prop. 3.9 is a numerical check of a von Neumann condition for the linear

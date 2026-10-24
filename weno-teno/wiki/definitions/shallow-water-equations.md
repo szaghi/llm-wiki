@@ -5,7 +5,7 @@ description: "The one- and two-layer, one- and two-dimensional shallow-water (Sa
 status: established
 aliases: [Saint-Venant equations, SWE, shallow water equations, two-layer shallow-water equations, lake at rest, moving-water equilibrium]
 tags: [well-balanced, finite-volume, central-scheme, benchmark, shallow-water]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Shallow-water equations
@@ -137,6 +137,22 @@ not eigenvalues (Kurganov et al., §6; Chu et al., §2).
   (page-local width $\beta_{\mathrm h}$, value not printed) on periodic $[-5,5]$, which steepens into a
   shock at $t\simeq3$, and a dam break with $h_{\mathrm l}>h_{\mathrm r}$ (values and $g$ not printed),
   both on 2665 points with spectral relaxation against a CLAWPACK reference.
+- **Liu et al. (2026)** (arXiv v1; §5.1.2, Eqs. (5.4)–(5.6); §5.2.2) use the 1D system without
+  topography as a target for learning an unknown conservation law from data. Training
+  trajectories are perturbed [dam breaks](/benchmarks/dam-break-problem.md) on $(-5,5)$ with
+  Dirichlet boundaries: $h_{\mathrm l}=3.5$, $h_{\mathrm r}=1.0$, both at rest, interface at
+  $x=0$, perturbed by uniform random amounts up to $0.2$ in the depths and $0.1$ in the
+  velocities and the interface position. They are 300 trajectories of 20 steps with
+  $\Delta t=0.005$ on 512 cells, computed by PyClaw with the HLLE solver ($g$ not printed). The
+  test case ($h_{\mathrm l}=3.5691196$, $h_{\mathrm r}=1.178673$, small nonzero velocities, $T=1.5$)
+  is predicted by a learned entropy-stable flux that keeps the shock structure even at the
+  largest noise level ($\xi=1$, page-local: the relative level of the Gaussian noise added to the training data). The authors attribute this to discontinuities already present
+  in the training data. Conservation holds "up to O($10^{-5}$)", and a discrete entropy
+  remainder stays non-positive over 101 out-of-distribution dam breaks
+  ($h=6.0-0.01\kappa_{\mathrm e}$ left of $x=0.01\kappa_{\mathrm e}$, $0.1+0.01\kappa_{\mathrm e}$ right,
+  $\kappa_{\mathrm e}=0,\dots,100$ page-local) (Figs. 5.4–5.6). Their entropy is learned, not the
+  energy entropy above; the method is on
+  [learned WENO weights](/methods/learned-weno-weights.md).
 
 ## Qualifications
 
@@ -157,3 +173,4 @@ not eigenvalues (Kurganov et al., §6; Chu et al., §2).
 - [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — §2 (Eqs. (2)–(6)), §2.1, §5.1–5.8 (HAL preprint).
 - [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §5.2 (Eqs. (52)–(54)), App. A.
 - [Kolluru et al. (2024)](/sources/kolluru-2024.md) — §3.3 (Eqs. (8a)–(8c), Figs. 12–13) (arXiv v2).
+- [Liu et al. (2026)](/sources/liu-2026.md) — §5.1.2 (Eqs. (5.4)–(5.6)), §5.2.2 (Figs. 5.4–5.6) (arXiv v1).

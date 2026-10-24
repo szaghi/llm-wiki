@@ -138,8 +138,9 @@ were found.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-22), cited further in chunks 5–10 (2026-10-22/23). This source is cited on:
+Chunk 4 (2026-10-22), cited further in chunks 5–11 (2026-10-22/24). This source is cited on:
 
+* [AthenaK](/software/athenak.md)
 * [Block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)
 * [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md)
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)
@@ -153,6 +154,7 @@ Chunk 4 (2026-10-22), cited further in chunks 5–10 (2026-10-22/23). This sourc
 * [MUSCL and MUSCL–Hancock schemes](/methods/muscl-hancock.md)
 * [Numerical dissipation and anti-dissipation](/definitions/numerical-dissipation.md)
 * [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)
+* [Piecewise parabolic method (PPM)](/methods/piecewise-parabolic-method.md)
 * [PLUTO](/software/pluto.md)
 * [Roe approximate Riemann solver](/methods/roe-riemann-solver.md)
 * [Sedov blast wave](/benchmarks/sedov-blast-wave.md)

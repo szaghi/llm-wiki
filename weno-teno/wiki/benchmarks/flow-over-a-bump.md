@@ -5,7 +5,7 @@ description: "One-dimensional shallow-water tests over an isolated bottom bump: 
 status: established
 aliases: [flow over a bump, lake at rest, perturbed lake at rest, LeVeque perturbation test, transcritical flow over a bump, subcritical flow over a bump, supercritical flow over a bump, Houghton–Kasahara bump, SWASHES bump]
 tags: [benchmark, well-balanced, finite-volume, central-scheme, shallow-water]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Shallow-water flow over a bump and lake at rest
@@ -35,7 +35,7 @@ well-balanced scheme with a standard one of the same order.
 | Goudon & Minjeaud §3.2 | $-1+0.25\big(1+\cos(10\pi(x-0.5))\big)$ on $1.4<x<1.6$, else $-1$ | $[0,2]$ | LeVeque's perturbed lake at rest: $+0.001$ on $1.1<x<1.2$; $g=9.8$ | $\Delta x=10^{-2}$, reference $4\times10^{-4}$ |
 | Goudon & Minjeaud §3.3 | $\tfrac1{10}(1-x^2/16)$, crest $0.1$ | not printed | Houghton–Kasahara: $h_0=0.2$, Froude number $F_0\in\{0.2,0.3,0.7,1.9\}$, $g=9.8$ | $\Delta x=0.05$–$0.2$; $T=30$–$2000$ |
 | Goudon & Minjeaud §3.3.4 | $-1+0.3\exp(-(x-5)^2)$; and $0.2-0.05(x-10)^2$ on $8<x<12$ | $[0,10]$; $[0,25]$ | Castro et al. Test 1 ($q=2$, $h+b+v^2/(2g)=2$, $t=100$); Test 2 transcritical, $q(0,t)=0.18$, $h(25,t)=0.33$, $t=200$ | $\Delta x=0.125$ |
-| [Kurganov et al. (2023)](/sources/kurganov-2023.md) §7.2 Ex. 7 | two-layer, $b=0.2$ on $[8,12]$, else 0 | $[0,20]$ | from rest $h_1=8$, $h_2=4$; inflow $q_1=119$, $q_2=60$; $g=1$, $r=0.98$ | $N_x=100$, $500$; $t=100$ |
+| [Kurganov et al. (2023)](/sources/kurganov-2023.md) §7.2 Ex. 7 | two-layer, $b=0.2$ on $[8,12]$, else 0 | $[0,20]$ | from rest $h_1=8$, $h_2=4$; inflow $q_1=119$, $q_2=60$; $g=1$, density ratio $r=0.98$ (page-local) | $N_x=100$, $500$; $t=100$ |
 
 Goudon & Minjeaud solve the barotropic Euler equations with a potential source, of which
 shallow water is the case $\gamma=2$; their tests use the pressure $g h^\gamma/\gamma$ with
@@ -113,8 +113,8 @@ scheme, whose fluxes come from a nodal solver, with $g=9.81$, CFL 0.5
   first-order multi-point, the second-order and the two-point schemes
   keep it "up to a machine error of order $10^{-15}$" (Fig. 5). The
   multi-point scheme needs no modification for this, because of the
-  geometric identity $\sum_p\sum_fl_{pcf}\mathbf n_{pcf}=0$ over the
-  subfaces of a cell (their Eq. (48); $l$ and $\mathbf n$ subface lengths
+  geometric identity $\sum_p\sum_fl_{pcf}n_{pcf}=0$ over the
+  subfaces of a cell (their Eq. (48); $l$ and $n$ subface lengths
   and normals); the second-order extension needs an extra in-cell term
   (Eq. (60)) (§4.5–4.6).
 - **Perturbation** (§5.2.1): $10^{-3}$ added to $h$ on

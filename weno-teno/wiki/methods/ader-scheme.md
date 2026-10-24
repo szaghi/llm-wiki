@@ -5,7 +5,7 @@ description: "ADER schemes advance a DG or finite-volume solution in one step: a
 status: established
 aliases: [ADER, ADER-DG, ADER-FV, ADER predictor–corrector, local space–time predictor, one-step ADER]
 tags: [dg, finite-volume, limiting, immersed-boundary, multiphase]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # ADER schemes
@@ -18,7 +18,7 @@ a weak sense using only the element's own data at $t^n$. A **corrector** then
 updates the solution with the DG (or finite-volume) residual
 integrated over the time step, by quadrature in time on the predictor.
 Neighbouring elements meet only in the corrector, through numerical fluxes
-evaluated on the predictor traces. The two bundle sources run ADER-DG of
+evaluated on the predictor traces. The two ADER-DG sources of the bundle run it at
 degree $N=1$–$3$ on unstructured triangles and polygons, after Dumbser and
 co-workers ([Ciallella et al. (2024)](/sources/ciallella-2024.md), §3.3;
 [Gaburro et al. (2024)](/sources/gaburro-2024.md), §3.1–3.3; both arXiv v1).
@@ -38,7 +38,7 @@ scale of $K$; $(x_{b},y_{b})$ its barycentre.
 
 ## Predictor
 
-**Basis.** Both sources use rescaled Taylor monomials about the barycentre,
+**Basis.** Both ADER-DG sources use rescaled Taylor monomials about the barycentre,
 with time scaled by the same length (Ciallella et al., Eq. (12); Gaburro et
 al., Eqs. (23)–(25)):
 
@@ -91,7 +91,7 @@ predictor, as the authors state (§1).
 
 ## Time step
 
-Both sources bound the step by a $1/(2N+1)$ factor:
+Both ADER-DG sources bound the step by a $1/(2N+1)$ factor:
 
 - Ciallella et al.: $\Delta t<\nu\,h_{\min}/\big((2N+1)\,a\big)$ with $\nu<1/d$
   for DG on unstructured meshes (Eq. (14), Remark 1, citing the literature);
@@ -183,7 +183,7 @@ linear ADER to order 16 that they cite.
 ## Uses of the space–time predictor
 
 The predictor is a space–time polynomial available before any flux is
-computed, and the sources use it in three ways.
+computed, and three sources use it in three ways.
 
 - **One boundary reconstruction per step.** Ciallella et al. impose
   boundary conditions on a curved true boundary by a constrained

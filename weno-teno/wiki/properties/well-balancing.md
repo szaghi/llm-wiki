@@ -5,7 +5,7 @@ description: "A scheme for a balance law is well-balanced if it preserves a stea
 status: established
 aliases: [well-balanced scheme, C-property, lake-at-rest property, exact preservation of still water, hydrostatic reconstruction, subtraction technique, perturbation well-balancing, fully well-balanced scheme, moving-equilibria preservation, stationarity preservation]
 tags: [well-balanced, weno, finite-difference, finite-volume, central-scheme, asymptotic-preserving]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Well-balancing
@@ -150,9 +150,9 @@ well-balanced schemes on it, with different discrete notions of the preserved st
   not preserved, and the authors add that "to the best of our knowledge, no existing numerical
   method is capable of exactly preserving general 2-D steady states, even the smooth ones". On
   the Ripa (thermal shallow-water) system a discontinuous constant-pressure equilibrium,
-  $(h,v,b)=(2,0,1)$ for $y<0$ and $(1,0,4)$ otherwise ($h$ the depth, $b$ the buoyancy,
-  page-local), is preserved by PCCU and LCD-PCCU with zero errors in $h$ and $b$ (§5.2.1,
-  Ex. 6) *(compiler check, not in the sources: $\tfrac12bh^2=2$ on both sides)*.
+  $(h,v,\mathsf b)=(2,0,1)$ for $y<0$ and $(1,0,4)$ otherwise ($h$ the depth, $\mathsf b$ the buoyancy,
+  registry §10), is preserved by PCCU and LCD-PCCU with zero errors in $h$ and $\mathsf b$ (§5.2.1,
+  Ex. 6) *(compiler check, not in the sources: $\tfrac12\mathsf bh^2=2$ on both sides)*.
 
 Ciallella et al. do not compare with still-water well-balanced WENO schemes, citing earlier
 work that such methods "do not provide better performances on moving-water equilibria" (§5).

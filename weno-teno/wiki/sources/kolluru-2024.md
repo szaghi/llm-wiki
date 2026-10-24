@@ -8,7 +8,7 @@ authors: [Kolluru S.S.V., Besse N., Pandit R.]
 year: 2024
 venue: "J. Comput. Phys. 519:113446"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Kolluru_Novel_spectral_methods_for_shock_capturing_and_the_removal_o.pdf"
-tags: [shock-capturing, artificial-viscosity, filtering, shallow-water, benchmark]
+tags: [shock-capturing, artificial-viscosity, solution-filtering, shallow-water, benchmark]
 timestamp: 2026-10-23T11:06:00Z
 ---
 
@@ -151,7 +151,7 @@ order. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 8 (2026-10-23), cited further in chunks 9–10 (2026-10-23). This source is cited on:
+Chunk 8 (2026-10-23), cited further in chunks 9–11 (2026-10-23/24). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
 * [Burgers equation tests](/benchmarks/burgers-equation-tests.md)

@@ -5,7 +5,7 @@ description: "The special relativistic (magneto)hydrodynamics equations in lab-f
 status: established
 aliases: [RHD, RMHD, relativistic hydrodynamics, relativistic MHD, special relativistic hydrodynamics, special relativistic magnetohydrodynamics, physical-constraint-preserving, PCP, two-fluid relativistic plasma, relativistic radiation MHD, Rad-RMHD, M1 closure]
 tags: [relativistic, mhd, bound-preserving, positivity, entropy-stable]
-timestamp: 2026-10-23T15:19:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Special relativistic hydrodynamics and MHD
@@ -237,8 +237,8 @@ $s^+=\max\{\lambda_4(u^-),\lambda_4(u^+),0\}$ satisfies GQL-type bounds
 finite-volume WENO scheme on triangles is PCP under
 $\Delta t\,\hat a_K^{(j)}\lvert e_K^j\rvert/\lvert K\rvert\le\frac23\mathsf w^{\mathrm{GL}}_0$
 (Thm 3.1, Eq. (57); $e_K^j$ the edges of triangle $K$, $\hat a_K^{(j)}$ the
-spectral radius on edge $e_K^j$, page-local; $\mathsf w^{\mathrm{GL}}_0=1/(L(L-1))$
-the first Gauss–Lobatto weight, $L=\lceil(N+3)/2\rceil$, $1/6$ for their
+spectral radius on edge $e_K^j$, page-local; $\mathsf w^{\mathrm{GL}}_0=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$
+the first Gauss–Lobatto weight, $N_{\mathrm{GL}}=\lceil(N+3)/2\rceil$, $1/6$ for their
 quadratic reconstruction); see [HLL solvers](/methods/hll-riemann-solvers.md) and the
 [cell-average decomposition](/methods/optimal-cell-average-decomposition.md)
 on triangles.
@@ -516,7 +516,7 @@ all in [PLUTO](/software/pluto.md).
   $\gamma=4/3$ it is $5\times10^4$, the value they print for the same data in §5.4
   *(compiler check, not in the sources)*. They use "rounding error" for
   truncation error throughout.
-- Ding & Wu's statements that the ideal EOS is a poor approximation and that the conservative
+- Ding & Wu (2024b)'s statements that the ideal EOS is a poor approximation and that the conservative
   RMHD system may be ill-posed without $\nabla\cdot B=0$ are cited, not shown; Duan & Tang and
   Berta et al. on this page use the ideal EOS.
 

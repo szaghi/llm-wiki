@@ -4,8 +4,8 @@ title: "MOOD a posteriori limiting"
 description: "MOOD-type limiting computes a candidate high-order update, checks it for admissibility (positivity, NaN, maximum principle), and recomputes only flagged cells with a robust low-order scheme; the page records a kinetic scheme, deferred correction, a posteriori subcell limiters of ADER-DG and unstructured DG, artificial-viscosity recomputation, PAD and NAD used a priori, and the a priori contrast."
 status: established
 aliases: [MOOD, multi-dimensional optimal order detection, a posteriori limiting, a posteriori stabilization, a posteriori subcell limiting, APLSC, a posteriori local subcell correction]
-tags: [limiting, positivity, bound-preserving, finite-difference, dg]
-timestamp: 2026-10-23T20:29:00Z
+tags: [limiting, positivity, bound-preserving, finite-difference, dg, mood]
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # MOOD a posteriori limiting
@@ -17,9 +17,10 @@ candidate update $\tilde u^{n+1}$ with the unlimited high-order scheme,
 tests the candidate cell by cell against admissibility criteria, and
 recomputes the update only in the cells that fail, with a lower-order
 scheme that is robust there; the high-order result is kept everywhere
-else. Two sources of this bundle that apply it use only physical
-admissibility (positivity of density and pressure, finite values) as
-criterion, and fall back directly to first order; a third uses the
+else. One source of this bundle uses only physical admissibility
+(positivity of density and pressure, finite values) as criterion and
+falls back directly to first order, and a second does not describe its
+criteria or fallback; a third uses the
 classical MOOD criteria, physical and numerical admissibility, but before
 the step rather than after it; and the ADER-DG sources recompute flagged
 cells on a subcell grid with a second-order finite-volume scheme, after
@@ -340,10 +341,9 @@ and call their own switching, decided by a modal-decay indicator before
 the step and after each Runge–Kutta stage, "a priori" (§1, §4.3, §7.2;
 [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
 [troubled-cell indicator](/definitions/troubled-cell-indicator.md)). In
-the a priori route the indicator decides; in MOOD the candidate solution
-itself does, so no smoothness threshold has to be tuned for the
-admissibility part, at the cost of computing every step twice in the
-flagged cells *(compiler check, not in the sources)*.
+the a priori route the indicator decides before the step; in MOOD, as
+described above, the candidate solution is tested after it and the
+flagged cells are computed twice.
 
 [Berta et al. (2024)](/sources/berta-2024.md) (§3.4, arXiv v4) call the
 order reduction of their fourth-order finite-volume MHD scheme a

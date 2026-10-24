@@ -160,7 +160,7 @@ volume, and [74] no venue. [8] and [20] are book chapters. No item is unparseabl
 
 # Pages created or updated
 
-Chunk 7 (2026-10-23), cited further in chunks 8–10 (2026-10-23). This source is cited on:
+Chunk 7 (2026-10-23), cited further in chunks 8–11 (2026-10-23/24). This source is cited on:
 
 * [ADER schemes](/methods/ader-scheme.md)
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)

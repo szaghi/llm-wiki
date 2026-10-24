@@ -5,7 +5,7 @@ description: "An r-adaptive scheme moves a fixed number of grid points, by varia
 status: established
 aliases: [moving mesh method, r-adaptivity, adaptive moving mesh, mesh redistribution, MM-WENOMR, MM-O5, MM-O6, smooth adaptive meshing, SAM, SAM-ALE, optimal-transport mesh adaptation, Monge–Ampère mesh adaptation]
 tags: [finite-difference, entropy-stable, multiphase, relativistic, weno, moving-mesh]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Adaptive moving mesh finite differences
@@ -26,7 +26,7 @@ entropy-stable version of the scheme:
   in 2D and 3D, extending their own second-order entropy-stable
   moving-mesh schemes to arbitrary even order for the entropy-conservative
   flux (§1);
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md), who carry the same
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md), who carry the same
   construction to single- and two-component Euler equations with a
   stiffened-gas law (§1;
   [stiffened-gas equation of state](/definitions/stiffened-gas-equation-of-state.md),
@@ -497,7 +497,7 @@ time step on a moving mesh.
   their Table 6.2 give $11397/125209=9.10$ % *(compiler check, not in the
   sources)*. Their other printed percentages agree with their tables.
 - Duan & Tang's mesh-motion limiter (§5) mixes $(x_1)$ and $(x_k)$ in one
-  formula; $(x_k)$ is evidently meant in both places.
+  formula; the consistent reading has $(x_k)$ in both places.
 - Ramani & Shkoller's Table 3 prints SAM-over-MK speed-up factors 47, 131,
   160, 174, 190 for $16^2$ to $256^2$; the printed times give 37.5, 107,
   148, 171 and 206 *(compiler check, not in the sources)*. One of the two
@@ -531,7 +531,7 @@ time step on a moving mesh.
 # Citations
 
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §1, §2 Eqs. (2.4)–(2.11), §3.1 Def. 3.1 Eqs. (3.1)–(3.3), Prop. 3.1 Eqs. (3.6)–(3.12), §3.3 Eqs. (3.15)–(3.18), Prop. 3.2, Thm. 3.2, §4 Thm. 4.1, §5 Eqs. (5.1)–(5.3), Remark 5.1, §6 Eqs. (6.1)–(6.3), Exs. 6.1–6.10, Tables 6.1–6.2 (arXiv v1).
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §1, §2 Eqs. (2.1)–(2.3), §3 Eqs. (3.1)–(3.12), Prop. 3.1, Remark 3.1, §3.4 Eq. (3.21), Remark 3.2, §4 Eqs. (4.1)–(4.2), Remark 4.1, §5 Eq. (5.1), Ex. 5.1–5.11, Tables 5.1–5.3 (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — §1, §2 Eqs. (2.1)–(2.3), §3 Eqs. (3.1)–(3.12), Prop. 3.1, Remark 3.1, §3.4 Eq. (3.21), Remark 3.2, §4 Eqs. (4.1)–(4.2), Remark 4.1, §5 Eq. (5.1), Ex. 5.1–5.11, Tables 5.1–5.3 (arXiv v1).
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — ref. [9] (moving-mesh work cited); block-structured h-refinement used.
 - [Bai & Li (2022)](/sources/bai-2022.md) — quadtree AMR of the DG solver.
 - [Huang & Zahr (2022)](/sources/huang-2022.md) — §1, §2.1 (arXiv v2).

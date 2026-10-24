@@ -5,7 +5,7 @@ description: "Four-quadrant Riemann problems of the two-dimensional Euler equati
 status: established
 aliases: [2D Riemann problem, four-quadrant Riemann problem, Lax–Liu configuration 3, Lax–Liu configuration 12, Lax–Liu configuration 7]
 tags: [benchmark, low-dissipation, weno, teno, central-scheme]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Two-dimensional Riemann problems
@@ -51,7 +51,7 @@ The sources use three placements and several final times:
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.8.1 | $[0,1]^2$, $(0.5,0.5)$ | $1024\times1024$ | 0.3 | [TENO-THINC](/methods/teno-thinc.md) |
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.15 (their "second Riemann problem") | $[0,1]^2$, $(0.5,0.5)$, outflow | $320\times320$ | 0.35 | [OEDG](/methods/oedg.md), third order, data scaled by $\lambda\in\{1,100\}$ |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.6 ("four shocks") | $[0,1]^2$, $(0.8,0.8)$ | $400\times400$, CFL 0.6 | 0.8 | [multi-resolution WENO](/methods/multi-resolution-weno.md) vs WENO-JS5, WENO-AO5 |
-| [Boscarino et al. (2022)](/sources/boscarino-2022.md) Ex. 5.4(a) ("modified" configuration 3) | $[-1,1]^2$, $(0.8,0.8)$ | $400\times400$, CFL 0.25 | 0.8 | [semi-implicit all-Mach](/methods/semi-implicit-all-mach-scheme.md) WENO S4T3 at $\varepsilon=1$, reconstruction approaches A1–A3, S2T2 |
+| [Boscarino et al. (2022)](/sources/boscarino-2022.md) Ex. 5.4(a) ("modified" configuration 3) | $[-1,1]^2$, $(0.8,0.8)$ | $400\times400$, CFL 0.25 | 0.8 | [semi-implicit all-Mach](/methods/semi-implicit-all-mach-scheme.md) WENO S4T3 at Mach-scaling parameter $\varepsilon=1$ (page-local), reconstruction approaches A1–A3, S2T2 |
 | [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.7 ("four-shock configuration") | $[0,1]^2$, $(0.5,0.5)$ | $512\times512$, van Leer flux | 0.3 | TENO-M6/M8 ([TENO](/methods/targeted-eno.md) with stencil extension) vs TENO, WENO; timing |
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.6 | $[0,1]^2$, split not recorded | $512^2$, $1024^2$ | 0.3 | [TENO-THINC](/methods/teno-thinc.md)-family scheme vs TENO5-THINC, TENO5, WENO5-Z |
 | [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.7 | $[0,1]^2$, $(0.8,0.8)$, non-reflective | $400\times400$, CFL 0.2 | 0.8 | [gradient-based](/methods/gradient-based-reconstruction.md) MIG4, MIG4-base, MEG6 vs TENO5, primitive variables (arXiv v2) |
@@ -66,12 +66,25 @@ The sources use three placements and several final times:
 | [Fan et al. (2025b)](/sources/fan-2025-b.md) Eq. (52) | $[0,1]^2$ (implied), $(0.8,0.8)$ | $800\times800$ | 0.8 | three-point WCNS3-MR-NN ([learned weights](/methods/learned-weno-weights.md)) vs WCNS3-JS, WCNS3-MR, WCNS5-JS |
 | [de Romémont et al. (2026)](/sources/deromemont-2026.md) §6.3, case 1 | $(0,1)^2$, split not printed | $512^2$, reference $2048^2$ | not printed | MUSCL finite volumes with network-learned slopes vs finite-difference slopes |
 | [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.4, Eq. (4.8), case 1 | $[-0.5,0.5]^2$, $(0.3,0.3)$, non-reflecting | $200\times200$ elements of fourth-order DG ($800\times800$ DOFs) | 0.8 | DG with non-uniform [ROUND](/methods/round-scheme.md) subcell limiting |
+| [Wang et al. (2023a)](/sources/wang-2023.md) §4.7, Configuration 3 | $[0,1]^2$, $(0.8,0.8)$ | $400\times400$, CFL 0.45 | 0.8 | fifth-order [A-WENO](/methods/alternative-weno.md) with affine-invariant Z-type weights, adaptive-diffusion LLF-M flux vs [LLF](/methods/lax-friedrichs-flux.md); split and time chosen, as stated, "to allow a longer time simulation" |
+| [Wang et al. (2026)](/sources/wang-2026.md) §6.4.1 | $[0,1]^2$, $(0.8,0.8)$ | three-level [AMR](/methods/adaptive-mesh-refinement.md), ratio 2 per level, base $448\times448$ | 0.8 | FD WENO-JS5 with AMR-HybridWENO inter-level transfers only |
 
 The two Chamarthi papers print the states as fractions,
 $(33/62,\,4/\sqrt{11},\,0,\,0.3)$, $(77/558,\,4/\sqrt{11},\,4/\sqrt{11},\,9/310)$;
 $33/62=0.53226$, $4/\sqrt{11}=1.20605$, $77/558=0.13799$ and
 $9/310=0.029032$ round to the decimals of the table *(compiler check,
 not in the sources)*.
+
+[Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.13 run four
+problems of Lax & Liu's family on $[0,1]^2$ with outflow boundaries,
+$400\times400$ cells, $\mathbb P^1$–$\mathbb P^3$ global
+[COS(DG)](/methods/cos-dg.md), their Table 4 listing the states for
+regions $\Omega_1$–$\Omega_4$ without locating the regions in the text.
+Read counter-clockwise from the upper right, their Problem 1 ($t=0.23$)
+is Boscarino et al.'s configuration-5 four-contact set, Problem 2
+($t=0.3$) configuration 7, Problem 3 ($t=0.25$) configuration 12 and
+Problem 4 ($t=0.2$) configuration 16, value for value *(compiler check,
+not in the sources)*; they are listed under those headings below.
 
 Chu et al. (2025a) use Chertock et al.'s placement and grid, $1000^2$
 cells, and Deng, Jiang & Yan's placement is the $[0,1]^2$ one with split
@@ -105,7 +118,8 @@ The data are symmetric under $x\leftrightarrow y$, $v_1\leftrightarrow v_2$
 Kurganov & Tadmor, print the same four states on $[0,1]^2$ split at
 $(0.5,0.5)$, $t=0.25$, on $1000^2$ and $1500^2$ cells with their
 $\mathbb P^2$ RKDG and TENO-THINC limiter, 28 contours from 0.4 to 0.9
-(Fig. 7); boundary conditions are not stated.
+(Fig. 7); boundary conditions are not stated. Cao et al. (2026)'s
+Problem 2 has the same four states and runs to $t=0.3$.
 
 ## Configurations 8 and 16
 
@@ -119,6 +133,9 @@ triangles with $h\approx1/550$:
 | $x<0$, $y>0$ | $(1,\ -0.6259,\ 0.1,\ 1)$ | $(1.0222,\ -0.6179,\ 0.1,\ 1)$ |
 | $x<0$, $y<0$ | $(0.8,\ 0.1,\ 0.1,\ 1)$ | $(0.8,\ 0.1,\ 0.1,\ 1)$ |
 | $x>0$, $y<0$ | $(1,\ 0.1,\ -0.6259,\ 1)$ | $(1,\ 0.1,\ 0.8276,\ 1)$ |
+
+Cao et al. (2026)'s Problem 4 has the configuration-16 states, on
+$[0,1]^2$ to $t=0.2$.
 
 Configuration 8 is symmetric under $x\leftrightarrow y$,
 $v_1\leftrightarrow v_2$; configuration 16 is not *(compiler check, not
@@ -172,7 +189,7 @@ and lower-right quadrants; $\rho=17/32$, $v=0$, $p=2/5$ on
 $(\tfrac12,1)^2$ ($3/\sqrt{17}=0.72761$, $17/32=0.53125$)
 *(compiler check, not in the sources)*. Pazner makes the problem periodic on $[0,2]^2$ by reflection about
 $(1,1)$ and runs it to $t=0.25$.
-[Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.3, their "2D
+[Li, Duan & Tang (2022c)](/sources/li-2022-c.md) Ex. 5.3, their "2D
 Riemann problem I", print the decimal states of the table above,
 citing Brio, Zakharian & Webb (2001), and run to $t=0.25$.
 [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.4.1, citing Kurganov &
@@ -206,11 +223,12 @@ $(0.5313,0,0,0.4)$ for $x>0,y>0$, $(0.8,0,0,1)$ for $x<0,y\le0$,
 $(1,0,0.726,1)$ for $x>0,y<0$, on $[-0.5,0.5]^2$ with transmissive
 boundaries, $400\times400$, $T=0.25$, local Mach number up to 1.14,
 with their second-order linearized all-Mach IMEX schemes at
-$\varepsilon=1$.
+$\varepsilon=1$. Cao et al. (2026)'s Problem 3 has the decimal states of
+the table above, to $t=0.25$.
 
 ## Four-contact configurations
 
-[Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.4, their "2D
+[Li, Duan & Tang (2022c)](/sources/li-2022-c.md) Ex. 5.4, their "2D
 Riemann problem II", citing Lax & Liu without a configuration number:
 
 | Quadrant | State |
@@ -232,6 +250,18 @@ $300^2$ and $400^2$ elements: Li, Duan & Tang's problem shifted by $-0.5$
 [de Romémont et al. (2026)](/sources/deromemont-2026.md) §6.3, case 3,
 print these same four states, quadrant by quadrant, as Lax–Liu
 configuration 6, on $(0,1)^2$ with $512^2$ cells.
+
+[Wang et al. (2023a)](/sources/wang-2023.md) §4.7 also call their
+second problem Configuration 6, on $[0,1]^2$ split at $(0.5,0.5)$,
+$400\times400$, $t=1$, and print under the heading $(\rho,u,v,P)$ the
+rows $(1.0,1.0,0.750,-0.50)$, $(1.0,2.0,0.750,0.50)$,
+$(1.0,1.0,-0.750,0.50)$, $(1.0,3.0,-0.750,-0.50)$ for the upper-right,
+upper-left, lower-left and lower-right quadrants. Read under the printed
+heading, two quadrants have a negative pressure and all four the same
+density; read with the first column as the pressure and the next three
+as $(\rho,v_1,v_2)$, the rows are Li, Duan & Tang's four states above
+*(compiler check, not in the sources)*. The paper does not say which
+data were run.
 
 [Boscarino et al. (2022)](/sources/boscarino-2022.md) Ex. 5.4(b), citing
 Lax & Liu's configuration 5, print on $[-1,1]^2$ with the split at
@@ -400,6 +430,25 @@ MWENO-P resolve it, WENO-NS "very slightly", and WENO-JS, WENO-Z and
 WENO-P do not (Figs. 16–19). See
 [smoothness indicator](/definitions/smoothness-indicator.md).
 
+**Adaptive dissipation and post-processing.** Wang et al.
+(2023a) find their LLF-M flux, whose coefficient a feature sensor
+reduces to $0.1$ of the LLF value in smooth flow, resolving the triple
+point, the slip plane and the instability of the jet neck on
+configuration 3, and the shear vortices of their configuration 6, better
+than the LLF flux, with the same dissipation at the shocks (§4.7,
+Figs. 13–16). On configuration 6 they plot the three factors of the
+sensor separately: the [Ducros](/definitions/ducros-shock-sensor.md)
+factor detects dilatation against vorticity, the pressure and density
+factors the steep gradients, and their product keeps the smooth
+vortices from being flagged (Fig. 17). The flux costs 1386 s against
+1487 s (ratio 1.07) on configuration 3 and 1246 s against 1306 s (1.05)
+on configuration 6 (Table 3; Fortran 90, Intel i7-9700). Cao et al.
+(2026) find COS(DG) capturing the features of their four problems
+without obvious spurious oscillations, with sharper resolution at higher
+degree (Ex. 6.13, Fig. 14). Wang et al. (2026) show configuration 3 on
+their three-level AMR grid with AMR-HybridWENO only, as a demonstration
+without a comparison (§6.4.1, Fig. 16).
+
 **Adaptive TENO on the Tang configuration.** Tang finds that the
 TENO-AZ generates more refined Kelvin–Helmholtz microstructures than
 TENO-Z, TENO-A and TENO-LAD (§4.4.2, Fig. 11;
@@ -562,7 +611,8 @@ entropy-stable DG with oscillation-eliminating damping gives results
   ($t=0.3$ to $1$), so the jet is at different stages of development in
   different papers; only the runs with split $(0.8,0.8)$ on $[0,1]^2$
   and $t=0.8$ (Deng, Huang et al. (2026), Wang et al. 2023b, Wang et al. 2021,
-  the two Chamarthi papers, Zhou et al., Zhong et al., Zuo & Zhu 2024a) are directly comparable.
+  the two Chamarthi papers, Zhou et al., Zhong et al., Zuo & Zhu 2024a,
+  Wang et al. 2023a, Wang et al. 2026) are directly comparable.
 - Li, Duan & Tang's Ex. 5.4 says its monitor function and linear
   weights are those of Ex. 5.2, which states no linear weights; the
   non-default weights $(0.95,0.045,0.005)$ are set in Ex. 5.3.
@@ -573,7 +623,11 @@ entropy-stable DG with oscillation-eliminating damping gives results
   $(0.8,0,0,1)$ and break the tiling that their other states and the
   configuration-12 data of Takagi et al. and Pazner define, so the
   printed range is inconsistent with the tiling, which needs
-  $0.5<x<1.5$.
+  $0.5<x<1.5$ *(compiler check, not in the sources)*.
+- Wang et al. (2023a) state that they changed the interface lines and
+  final times of their two configurations from the classical ones; their
+  configuration 3 nevertheless uses the split $(0.8,0.8)$ and $t=0.8$ of
+  the comparable group above.
 - Evidence is visual throughout.
 
 # Citations
@@ -590,7 +644,7 @@ entropy-stable DG with oscillation-eliminating damping gives results
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §X.b, Table XIV.
 - [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.6, Fig. 5.12.
 - [Pazner (2021)](/sources/pazner-2021.md) — §5.5–5.6, Figs. 11–12 (arXiv v1).
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Ex. 5.3–5.4, Table 5.1 (arXiv v1).
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — Ex. 5.3–5.4, Table 5.1 (arXiv v1).
 - [Kanbar, Touma & Klingenberg (2022)](/sources/kanbar-2022.md) — §5.2, Figs. 4–5 (arXiv v1).
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §5.4.1, Eq. (5.7), Fig. 12.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — Exs. 4.6–4.7, Figs. 10–11 (arXiv v1).
@@ -618,3 +672,6 @@ entropy-stable DG with oscillation-eliminating damping gives results
 - [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §4.6, Fig. 15 (HAL manuscript).
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — Ex. 4, Table 3, Fig. 4.
 - [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §6.3, Figs. 9–13.
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §4.7, Figs. 13–17; §4.9, Table 3.
+- [Cao et al. (2026)](/sources/cao-2026.md) — Ex. 6.13, Table 4, Fig. 14.
+- [Wang et al. (2026)](/sources/wang-2026.md) — §6.4.1, Fig. 16.

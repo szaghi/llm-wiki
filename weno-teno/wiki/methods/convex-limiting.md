@@ -5,7 +5,7 @@ description: "Convex limiting blends a high-order update with a bound-preserving
 status: established
 aliases: [flux-corrected transport, FCT, algebraic flux correction, AFC, invariant-domain-preserving limiting, IDP limiting, a posteriori blending, Zalesak limiter, sparse IDP DG, subcell convex limiting, monolithic convex limiting, MCL, residual blending]
 tags: [limiting, bound-preserving, positivity, dg, entropy-stable]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Convex limiting and invariant-domain-preserving schemes
@@ -137,14 +137,15 @@ Three kinds are used (Pazner, §4.1.1, §4.3; Rueda-Ramírez et al. 2022,
    Pazner Eq. (66), Rueda-Ramírez et al. Eq. (47)) and add a local minimum
    principle on a specific entropy, enforced by convex limiting with a
    Newton-type line search. Pazner bounds
-   $s=\ln\big(e^{1/(\gamma-1)}\rho^{-1}\big)$ from below by its minimum over
+   $s_{\mathrm P}=\ln\big(e^{1/(\gamma-1)}\rho^{-1}\big)$ (page-local; the registry's $s$ times
+   $1/(\gamma-1)$ up to an additive constant) from below by its minimum over
    the neighbouring states at $t^n$, not over bar states (Eq. (67)), in the
-   convex invariant set $\{\rho>0,\ e>0,\ s\ge r\}$ (Eq. (65)); the
+   convex invariant set $\{\rho>0,\ e>0,\ s_{\mathrm P}\ge s_{\min}\}$ (Eq. (65)); the
    entropy bound also keeps the internal energy positive. Rueda-Ramírez et
    al. bound the modified specific entropy $e\rho^{1-\gamma}$ (Eq. (48)),
    which they prefer to $\ln(p\rho^{-\gamma})$ as cheaper and better suited
    to Newton's method; the two are monotone functions of each other,
-   $s=\frac{1}{\gamma-1}\ln(e\rho^{1-\gamma})$, so the bounded sets coincide
+   $s_{\mathrm P}=\frac{1}{\gamma-1}\ln(e\rho^{1-\gamma})$, so the bounded sets coincide
    *(compiler check, not in the sources)*. Bar states preserve every convex
    invariant of the system, and together these bounds guarantee positivity
    of density and pressure and a discrete entropy inequality (as recalled
@@ -347,7 +348,7 @@ relaxation.
 FCT/IDP, require
 $\Delta t\lesssim\min_i m_i/\big(2\sum_da^{(d)}_i\big)$ ($m_i$ the
 diagonal mass entry, $a^{(d)}_i$ the largest wave speed at node $i$ in
-direction $d$; page-local), more restrictive than the usual low-order
+direction $d$; page-local), more restrictive than the low-order
 condition $\Delta t\lesssim\min_i\min_d\Delta x^{(d)}_i/a^{(d)}_i$,
 "especially for multiple space dimensions". To the authors' knowledge
 the only way to circumvent it while keeping the bounds is FCT/IDP without
@@ -456,7 +457,7 @@ separately by a [Zhang–Shu-type](/methods/zhang-shu-scaling-limiter.md) blend 
 first-order point update, and on a 2D advection test the bounds hold only with both
 limiters (Example 5.4, Table 1). And the time-step condition is evaluated at $t^n$ only;
 when a later Runge–Kutta stage violates it the implementation halves $\Delta t$ and
-restarts the step (Remark 4.2). A further factor $\theta^{\mathrm s}\in(0,1]$ from a
+restarts the step (Remark 4.2). A further factor $\theta^{\mathrm s}\in(0,1]$ (page-local) from a
 shock sensor scales the limited antidiffusive flux once more, which keeps the bounds
 ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
 

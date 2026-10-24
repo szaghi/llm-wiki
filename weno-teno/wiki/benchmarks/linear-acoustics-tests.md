@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Linear acoustics tests"
-description: "Smooth and stationary solutions of the two-dimensional linear acoustic equations, a periodic standing sine wave, a non-irrotational wave, a high-frequency radial pulse and a stationary vortex, used to verify the order, the adaptive-mesh behaviour and the stationarity preservation of Active Flux methods."
+description: "Smooth and stationary solutions of the two-dimensional linear acoustic equations (standing sine wave, non-irrotational wave, high-frequency radial pulse, stationary vortex) verifying order, adaptive-mesh behaviour and stationarity preservation of Active Flux methods, with small-amplitude sound and MHD eigenmode convergence tests of nonlinear solvers as relatives."
 status: established
 aliases: [acoustics sine wave, Lukáčová acoustics test, acoustic convergence test, linear acoustics sine wave, stationary acoustic vortex]
 tags: [benchmark, active-flux, finite-volume, well-balanced]
-timestamp: 2026-10-23T20:37:00Z
+timestamp: 2026-10-24T05:33:00Z
 ---
 
 # Linear acoustics tests
@@ -126,6 +126,33 @@ observation without a figure. As recalled by both papers, Barsukow showed that t
 Active Flux method with the exact operator adds no dissipation to discrete representations of
 all stationary states.
 
+## Linear-wave eigenmodes of the nonlinear equations
+
+A relative of these tests runs the full Euler or ideal-MHD equations
+with a small-amplitude exact eigenmode on a uniform state, one wave
+period, and measures the $L_1$ error against the initial data under
+refinement. [Stone et al. (2026)](/sources/stone-2026.md) §§3.1–3.2
+verify the reconstructions of [AthenaK](/software/athenak.md) this way,
+in one dimension and always on primitive variables (amplitudes and
+background states not printed):
+
+- *Hydrodynamics* (sound and entropy waves): fourth order for RK3 with
+  PPM under the extremum-preserving limiters of McCorquodale et al.
+  ("PPMX") and for RK3 with [WENO-Z](/methods/weno-z.md), until
+  nonlinear effects or round-off dominate; second order for RK2 with
+  PLM and for RK3 with PPM under the original Colella–Woodward limiters
+  ("PPM4"); the same as the corresponding figure of the earlier Athena
+  code (Fig. 1).
+- *Ideal MHD* (fast, slow and Alfvén waves): fourth order for RK3 with
+  PPMX or WENO-Z on the slow and Alfvén waves, while the fast wave
+  converges only at second order "even in one dimension", a result they
+  report as reproducing the Athena++ paper without giving a cause;
+  second order for PPM4 and PLM on all waves (Fig. 3).
+
+The entropy wave is also recorded on
+[density-wave advection](/benchmarks/density-wave-advection.md), PPM on
+[piecewise parabolic method](/methods/piecewise-parabolic-method.md).
+
 ## Qualifications
 
 - All the convergence data are third order; the arbitrary-order comparison of Barsukow et al.
@@ -147,3 +174,4 @@ all stationary states.
 - [Barsukow et al. (2026)](/sources/barsukow-2026.md) — §4, §5.2, Eq. (42), Table 3, Figs. 12–13 (arXiv v2).
 - [Chudzik, Helzel & Lukáčová-Medvid'ová (2024)](/sources/chudzik-2024.md) — §2.1, Ex. 5.1–5.2, Tables 3–5, Figs. 8–10.
 - [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §4.2, Figs. 1–2 (arXiv v1; nonlinear relative).
+- [Stone et al. (2026)](/sources/stone-2026.md) — §§3.1–3.2, Figs. 1 and 3 (eigenmode relatives).

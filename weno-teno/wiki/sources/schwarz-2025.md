@@ -141,7 +141,7 @@ by key. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 9 (2026-10-23), cited further in chunk 10 (2026-10-23). This source is cited on:
+Chunk 9 (2026-10-23), cited further in chunks 10–11 (2026-10-23/24). This source is cited on:
 
 * [Bassi–Rebay viscous discretizations (BR1, BR2)](/methods/bassi-rebay-viscous-discretization.md)
 * [Discontinuous Galerkin spectral element method (DGSEM)](/methods/dgsem.md)

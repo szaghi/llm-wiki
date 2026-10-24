@@ -5,7 +5,7 @@ description: "Symmetry preservation has four meanings in the sources: the mirror
 status: established
 aliases: [mirror symmetry preservation, symmetry breaking, symmetry-preserving discretization, skew-symmetry]
 tags: [low-dissipation, teno, weno, kinetic-energy-preserving]
-timestamp: 2026-10-23T15:06:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Symmetry preservation
@@ -50,7 +50,7 @@ WENO5-JS keeps it, and TENO5 breaks it on a coarse grid where WENO5-JS keeps it.
   (§5.5.2) attributes the asymmetry to machine round-off that low dissipation no
   longer hides, and cites Fleischmann et al. for a cure by careful floating-point
   implementation.
-  Huang et al. (2023, §4.7) give the same explanation for their TENO runs,
+  Huang, Liang & Fu (2023, §4.7) give the same explanation for their TENO runs,
   citing two earlier works, and [Liang et al. (2022)](/sources/liang-2022.md) (§4) state
   that their scheme, TENO-THINC and TENO5, all very low-dissipation, "may cause the
   so-called symmetry breaking issue ... due to machine round-off errors".

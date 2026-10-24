@@ -5,7 +5,7 @@ description: "TENO builds a K-point reconstruction from candidate stencils of in
 status: established
 aliases: [TENO, targeted essentially non-oscillatory scheme, TENO5, TENO6, TENO7, TENO8]
 tags: [teno, reconstruction, finite-difference, low-dissipation, turbulence]
-timestamp: 2026-10-23T20:04:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Targeted ENO (TENO)
@@ -456,7 +456,7 @@ Recorded here because they have no page of their own:
 - **TENO-E on unstructured meshes** ([Liang et al. (2025)](/sources/liang-2025.md), §3.3,
   Eqs. (21)–(28)): the two-level unstructured selection of Ji, Liang & Fu above with
   $\gamma_k=1/(\beta_k+\epsilon)^6$, $\epsilon=10^{-12}$, one cut-off for both levels and equal
-  weights $1/K$ on the surviving third-order directional stencils, at fifth to seventh order on
+  weights $1/n_s$ ($n_s$ the number of directional stencils, the source's $K$) on the surviving third-order directional stencils, at fifth to seventh order on
   triangles, tetrahedra and hexahedra; it is applied only in cells flagged by a jump-variance
   indicator, the linear large-stencil reconstruction acting elsewhere on the conserved variables,
   and its cut-off follows the same indicator ([hybrid schemes](/methods/hybrid-weno.md),
@@ -531,7 +531,7 @@ Two further schemes take only the cut-off or the stencils:
 
 ## TENO5 as a reference scheme in other groups' studies
 
-Two chunk-5 groups run TENO5 as a comparison scheme. Neither prints its
+Two groups run TENO5 as a comparison scheme. Neither prints its
 parameters beyond $C_T$, and they report opposite tendencies.
 
 **Wall-modelled LES with a central baseline.**
@@ -696,7 +696,7 @@ the sources, and not a resolution: if every ratio tends to zero, then
 $\gamma_k\to C^q$ for every $k$, $\chi_k\to1/(K-2)$, and all flags are 1 on fine
 enough grids as long as $C_T<1/(K-2)$, which supports the weaker condition for
 the sharp cut-off away from critical points where $\beta_k$ vanishes; Ye et
-al.'s rate is the one that smooth WENO-Z-type weights need.)* The chunk-4
+al.'s rate is the one that smooth WENO-Z-type weights need.)* Hong et al.'s
 evidence does not decide it: TENO8 with the sixth-order $\tau_8$ reaches order 6
 on Gaussian-pulse advection ([Hong et al. (2022)](/sources/hong-2022.md), §5.1),
 but its background scheme is itself only sixth order, so the test cannot

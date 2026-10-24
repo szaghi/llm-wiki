@@ -5,7 +5,7 @@ description: "PAMPA (Point-Average-Moment PolynomiAl-interpreted) is an Active-F
 status: established
 aliases: [Point-Average-Moment PolynomiAl-interpreted scheme, BP PAMPA, bound-preserving PAMPA]
 tags: [finite-volume, bound-preserving, positivity, limiting, active-flux]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # PAMPA scheme
@@ -116,9 +116,11 @@ once, with a minus sign, so a one-sided bound would suffice; the authors take th
 two-sided minimum on purpose, against a wrong estimate of the upwind direction that
 can flip the sign of $\Delta\Phi$, "especially in the transonic case" (§3.2). The
 convex-combination condition of the point update,
-$2\frac{\Delta t}{\Delta x}(a^{\mathrm L}_{i+1/2}+a^{\mathrm R}_{i+1/2})\le1$, follows from
-the first-order condition $\frac{\Delta t}{\Delta x}\max a^{\mathrm{L,R}}\le\tfrac12$
-of §2 *(compiler check, not in the sources)*.
+$2\frac{\Delta t}{\Delta x}(a^{\mathrm L}_{i+1/2}+a^{\mathrm R}_{i+1/2})\le1$, is not stated
+with Prop. 3.2 and does not follow from the first-order condition
+$\frac{\Delta t}{\Delta x}\max a^{\mathrm{L,R}}\le\tfrac12$ of §2, which lets the left-hand
+side reach 2; it holds under $\frac{\Delta t}{\Delta x}\max a^{\mathrm{L,R}}\le\tfrac14$
+*(compiler check, not in the sources)*. The tests run at CFL 0.2 (§4).
 
 **Local maximum principle and smooth extrema** (§3.3). For the averages the
 coefficients can instead enforce local bounds
@@ -227,8 +229,9 @@ All tests use SSP-RK3 at CFL 0.2 (§4).
   intermediate state be admissible; a larger coefficient could still keep the full
   update admissible *(compiler check, not in the sources)*.
 - Propositions 3.1 and 3.2 do not restate the time-step conditions they need; the
-  condition for the averages is given before (3.5), the one for the point values
-  only in §2.
+  condition for the averages is given before (3.5); for the point values only the
+  first-order condition of §2 is printed, which does not make (3.9) a convex
+  combination (see above).
 - The coefficients with $u_{\min}=0$ for the density allow equality,
   $\rho^*\pm\mathsf e\Delta\hat f^\rho/a\ge0$, while §3.4 states strict constraints;
   no margin $\epsilon$ is mentioned.

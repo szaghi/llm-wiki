@@ -5,7 +5,7 @@ description: "Wang & Don's Ai-WENO weights multiply the sensitivity parameter ε
 status: established
 aliases: [Ai-WENO, Ai-WENO-Z, Ai-WENO-D, Ai-WENO-JS, affine-invariant WENO operator]
 tags: [weno, reconstruction, well-balanced, finite-difference]
-timestamp: 2026-10-22T16:24:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Affine-invariant WENO weights
@@ -75,7 +75,7 @@ flops", citing CPU timings of Don et al. 2022 (Remark 3).
   to the linear fifth-order scheme: Si-WENO-Z then shows Gibbs oscillations in linear advection of
   a multi-wave profile ($N_x=200$, $t=2$), while Ai-WENO-Z is non-oscillatory with point-wise errors
   identical for $\mu=0$ and $\mu=1$ (§3.2.1, Figs. 4–5). In a two-blast-wave problem with background
-  pressure $p_\infty=\mu=1$ and $\sigma=10^{-7}$, Cl-WENO-Z oscillates at strong and weak shocks,
+  pressure $\mu=1$ and $\sigma=10^{-7}$, Cl-WENO-Z oscillates at strong and weak shocks,
   Si-WENO-Z reduces but does not remove the oscillations, Ai-WENO-Z is essentially non-oscillatory
   (Fig. 6). Wang & Don conclude that the [ENO property](/definitions/eno-property.md) of a
   non-affine-invariant WENO scheme can fail when $|\sigma|\ll|\mu|$.
@@ -105,7 +105,7 @@ flops", citing CPU timings of Don et al. 2022 (Remark 3).
 
 ## Reuse of the descaler
 
-Li, Li, Don & Wang (2023, §2.3, Eqs. (43)–(44)) carry the Si descaler over to the
+[Li et al. (2023a)](/sources/li-2023.md) (Li, Li, Don & Wang; §2.3, Eqs. (43)–(44)) carry the Si descaler over to the
 [multi-resolution A-WENO](/methods/multi-resolution-weno.md) interpolation: with Z-type weights on
 nested central stencils, $\alpha_k=d_k\big(1+\tau^*/(\beta_k+\epsilon\,\mathsf m^2)\big)$ and
 $\mathsf m=\tfrac15\sum_{j=i-2}^{i+2}|f_j|+\mathsf m_0$, $\mathsf m_0=10^{-100}$, $\epsilon=10^{-6}$, citing
@@ -116,6 +116,27 @@ affine-invariant, since $\mathsf m$ changes under $f\mapsto f+\mu$)*; it serves 
 well-balanced scheme, where the characteristic variables at equilibrium are multiples of the
 equilibrium pressure, a pure scaling ([scale invariance](/properties/scale-invariance.md),
 [well-balancing](/properties/well-balancing.md)).
+
+## Ai-weights in alternative WENO with an adaptive flux
+
+[Wang et al. (2023a)](/sources/wang-2023.md) (§2.1, Eqs. (7)–(8)), with Don as co-author, use the
+Z-type Ai-weights for the fifth-order point-value **interpolation** of
+[alternative WENO](/methods/alternative-weno.md):
+$\alpha_k=d_k\big(1+(\tau_5/(\beta_k+\epsilon\,\mathsf m^2))^q\big)$ with
+$d=(\tfrac1{16},\tfrac58,\tfrac5{16})$, $\mathsf m=\mathsf m_0+\tfrac15\sum_{x_j\in S^5}\lvert u_j-\langle u\rangle\rvert$
+on the five-point global stencil, $\epsilon=10^{-12}$, $q=2$, $\mathsf m_0=10^{-40}$ (to avoid
+$0/0$ for constant data). This is the case $\Phi=1$, $q_{\mathrm o}=1$ above, and $\mathsf m=1$
+recovers the classical A-WENO-Z. They call the scheme "Ai-AWENO-Z", then simply "AWENO". They
+recall from Wang & Don that the descaler lets $\epsilon$ be set independently of the scaling and
+translation of the data, and that Ai-WENO keeps the ENO property for small scaling with nonzero
+translation where WENO-JS and WENO-Z do not (§1, §2.1). Their own test is a pure scaling: the Lax
+shock tube with all conserved variables multiplied by $10^{-7}$ ($\sigma=10^{-7}$, $\mu=0$). The
+classical Z-weight scheme then shows "obvious numerical oscillation" near the high gradients,
+while the Ai scheme captures the shocks without oscillation, with both the sensor-reduced LLF-M
+flux and plain LLF (the LLF figure is omitted) (§4.2, Fig. 4;
+[Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md)). The paper's subject is the two-point
+flux ([Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)); the Ai-weights are the
+interpolation it is built on.
 
 ## Qualifications
 
@@ -135,4 +156,5 @@ equilibrium pressure, a pure scaling ([scale invariance](/properties/scale-invar
 # Citations
 
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §1, Defs. 1–4; §2, Eqs. (4)–(18), Theorem 1, Remarks 1–3; §3, Eqs. (19)–(30), Figs. 1–10; App. A, Theorem 2.
-- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §1; §2.3, Eqs. (42)–(45), Theorem 4; §4.2, Theorem 5.
+- [Li et al. (2023a)](/sources/li-2023.md) — §1; §2.3, Eqs. (42)–(45), Theorem 4; §4.2, Theorem 5.
+- [Wang et al. (2023a)](/sources/wang-2023.md) — §1; §2.1, Eqs. (7)–(8); §4.2, Fig. 4.

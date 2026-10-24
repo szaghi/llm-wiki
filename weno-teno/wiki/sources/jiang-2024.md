@@ -147,7 +147,7 @@ Printed oddities are kept as printed ("K.Y.Lam Lam" [13], "compact unwind scheme
 
 # Pages created or updated
 
-Chunk 7 (2026-10-23), cited further in chunks 8–10 (2026-10-23). This source is cited on:
+Chunk 7 (2026-10-23), cited further in chunks 8–11 (2026-10-23/24). This source is cited on:
 
 * [Bubble collapse near a wall](/benchmarks/bubble-collapse-near-wall.md)
 * [Density-wave advection](/benchmarks/density-wave-advection.md)

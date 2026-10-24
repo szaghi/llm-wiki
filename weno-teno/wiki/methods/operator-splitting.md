@@ -5,7 +5,7 @@ description: "Operator splitting advances the transport part of a balance law wi
 status: established
 aliases: [Strang splitting, fractional-step method, convection–chemistry splitting, constant-volume reactor step, relaxation splitting, infinite-rate relaxation]
 tags: [finite-volume, software, gpu, reacting-flows, stiff-source, well-balanced, multiphase]
-timestamp: 2026-10-23T20:39:00Z
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Operator splitting for stiff source terms
@@ -25,7 +25,7 @@ implicit inside the stages of one scheme.
 In both sources the source step solves, per cell $i$, the species and energy equations at
 constant volume and density. [Bielawski et al. (2023)](/sources/bielawski-2023.md) (§5,
 Eqs. (11)–(12)) write $\mathrm d(\rho Y_k)_i/\mathrm dt=(\Omega_k)_i$ for the partial
-densities (page-local mass production rates $\Omega_k$ of species $k$; $Y_k$ the mass
+densities (mass production rates $\Omega_k$ of species $k$, registry §10; $Y_k$ the mass
 fractions, registry §10) together with a temperature equation, which in practice is
 replaced by a Newton–Raphson solve at constant internal energy; the species equation is
 integrated with an explicit adaptive-step scheme batched over cells. The splitting is
@@ -75,14 +75,15 @@ serves the Redlich–Kwong and Noble–Abel real-gas laws without modification (
   $-\nabla\cdot f$.
 - **An implicit damping step inside each Runge–Kutta stage.** In the entropy-stable
   oscillation-free DG scheme for MHD of [Liu et al. (2025b)](/sources/liu-2025-b.md) (§3.3,
-  Eqs. (3.20)–(3.21)) the stiff term is the damping $\frac2h\sigma(u_h)(u_h-\bar u_h)$ (page-local
-  coefficient $\sigma$ and element size $h$). Treated explicitly within third-order TVD Runge–Kutta
+  Eqs. (3.20)–(3.21)) the stiff term is the damping $\frac2{\Delta x}\sigma^{\mathrm{ES}}(u_h)(u_h-\bar u_h)$
+  (page-local coefficient $\sigma^{\mathrm{ES}}$, defined on the OEDG page; the source's $\sigma$, with
+  element size $h$). Treated explicitly within third-order TVD Runge–Kutta
   it "may lead to restricted CFL conditions", so every forward-Euler stage is split into the
   explicit DG step $\tilde u$ and an implicit damping step solved in closed form,
-  $u=\frac1{1+\alpha_\sigma}\tilde u+\frac{\alpha_\sigma}{1+\alpha_\sigma}\bar{\tilde u}$ with
-  $\alpha_\sigma=\frac{2\Delta t}h\sigma(\tilde u)$ (page-local $\alpha_\sigma$; the paper's time step $\tau$), which keeps the cell
+  $u=\frac1{1+\mathsf d}\tilde u+\frac{\mathsf d}{1+\mathsf d}\bar{\tilde u}$ with
+  $\mathsf d=\frac{2\Delta t}{\Delta x}\sigma^{\mathrm{ES}}(\tilde u)$ (page-local $\mathsf d$, the source's $\alpha$; the paper's time step $\tau$), which keeps the cell
   mean and needs no iteration. The splitting is at most first order, but does not degrade the
-  accuracy because $\sigma$ is of high order in smooth regions, the proof for linear scalar laws
+  accuracy because $\sigma^{\mathrm{ES}}$ is of high order in smooth regions, the proof for linear scalar laws
   being referred to the [OEDG](/methods/oedg.md) paper; the CFL gain is not quantified.
 
 ## Two-phase relaxation: algebraic source steps
@@ -210,7 +211,7 @@ Neither source isolates the splitting error.
   that the units require; they replace that equation by a Newton solve in practice, so the
   method is unaffected *(compiler check, not in the sources: the constant-volume energy
   balance gives $\mathrm dT/\mathrm dt=-\big(\rho\sum_kY_kc_{v,k}\big)^{-1}\sum_k(\epsilon_k/W_k)\Omega_k$,
-  with page-local molar internal energies $\epsilon_k$ and molecular weights $W_k$)*.
+  with the molar internal energies $\epsilon_k$ and molar masses $W_k$ of registry §10)*.
 - Weng & Mével cite Eq. (20) where the forward-difference rate is Eq. (14) (§4.3).
 
 # Citations

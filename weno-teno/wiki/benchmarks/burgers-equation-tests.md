@@ -5,7 +5,7 @@ description: "The inviscid Burgers equation as test bed: 1D to 3D sine data for 
 status: established
 aliases: [Burgers equation, inviscid Burgers test, Burgers sine wave, two-dimensional Burgers Riemann problem]
 tags: [benchmark, weno, cweno, dg]
-timestamp: 2026-10-23T19:51:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Burgers equation tests
@@ -44,6 +44,8 @@ that reduce exactly to Burgers.
 | [Danis et al. (2025)](/sources/danis-2025.md) §5.2 | $u_0=0.5+0.5\sin(2\pi(x+y+z))$, 3D flux $(u^2/2,u^2/2,u^2/2)$ | $[0,1]^3$, periodic | $1/(12\pi)$, up to $320^3$, $\Delta t=h^{5/3}$ | — |
 | [Vilar & Abgrall (2024)](/sources/vilar-2024.md) §3.4, §4.2.1 | $u_0=\sin(2\pi(x+y))$, 2D flux $(u^2/2,u^2/2)$ | $[0,1]^2$, periodic, triangles | — | $0.5$, $\mathbb P^5$ on 576 and $\mathbb P^3$ on 242 triangles |
 | [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Ex. 5.5 | $u_0=0.5+\sin(2\pi(x+y))$, 2D flux $(u^2/2,u^2/2)$ | $[0,1]^2$, periodic | — | $0.3$, $100\times100$, generalized Active Flux with LLF flux vector splitting |
+| [Cao et al. (2026)](/sources/cao-2026.md) Ex. 6.1, Ex. 6.12 | $u_0=\sin x+0.5$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | $[0,2\pi]$; $[-2,2]^2$, periodic | $0.6$; $\mathbb P^1$ 1280–10240, $\mathbb P^2$ 320–2560, $\mathbb P^3$ 160–1280 cells | 2D: $1.5/\pi$, $160\times80$, third order, cut along the diagonal cells |
+| [Liu et al. (2026)](/sources/liu-2026.md) §5.1.1, §5.1.4 | $u_0=A\sin x+B$ (training family); 2D $u_0=A\sin(2\pi x+x_0)\cos(2\pi y+y_0)+B$ ($A$, $B$, $x_0$, $y_0$ page-local, random) | $[0,2\pi]$; $[0,1]^2$, periodic | training data on $[0,0.1]$ (1D) | test to $T=3$ (1D), $T=1.6$ (2D) |
 
 For $u_0=0.5+\sin(\pi x)$, $t_{\mathrm b}=1/\pi$ (stated by Zhong et
 al.); along the diagonal the
@@ -73,7 +75,11 @@ the shock times after breaking. Likewise $t_{\mathrm b}=1/\pi$ for
 Cicchino et al., $1/(2\pi)\approx0.16$ for Dzanic et al., $2/\pi\approx0.64$
 for Sousa & Scalo and for Qin et al. (who print $t=2/\pi$ themselves), and, with Yu & Hesthaven's flux $u^2$ (characteristic
 speed $2u$), $1/(4\pi)\approx0.08$ *(compiler check, not in the
-sources)*: all four run past breaking.
+sources)*: all five run past breaking. For Cao et al.'s
+$u_0=\sin x+0.5$, $t_{\mathrm b}=1$, so $t=0.6$ is an accuracy time,
+and their 2D data are Li, Shu & Qiu's on a shifted square, with
+$t_{\mathrm b}=1/\pi$ along the diagonal *(compiler check, not in the
+sources)*.
 
 **Orders.** Li, Shu & Qiu's sixth-order moment-based
 [multi-resolution HWENO](/methods/hermite-weno.md), with the first
@@ -167,8 +173,8 @@ and one-sided nonlinear [boundary closures](/methods/shock-capturing-boundary-cl
 used at the ends of a periodic domain, with global Lax–Friedrichs
 splitting. At $t=0.3$ the $L_2$ order is 5.16 and the $L_\infty$ order
 4.97 at 640 points; their scaled smoothness indicators (scaling
-parameter $\lambda=2$, page-local)
-give larger errors than $\lambda=1$ on coarse grids ($L_2$
+parameter $\lambda_{\mathrm s}=2$, the shared page-local symbol of Qin et al.'s scaling)
+give larger errors than $\lambda_{\mathrm s}=1$ on coarse grids ($L_2$
 $6.92\times10^{-5}$ against $4.37\times10^{-5}$ at 40 points) and the
 same from 160 points (Table 11). After breaking, the shock reaches $x=0$
 at $t=4$ and crosses the periodic boundary between $t=7.9$ and $8.1$
@@ -257,6 +263,36 @@ $(0.97,0.98)$ is stable, with $L^1$ orders about 0.99 at $t=0.07$ and
 method worse for IC0 and better for IC1, from which the authors
 conclude that the growth of aliasing errors depends on the initial data
 (§3.2, Fig. 10).
+
+**Oscillation-suppressing DG.** Cao et al. (2026) reach the optimal
+order $N+1$ with $\mathbb P^N$ [COS(DG)](/methods/cos-dg.md) on the 1D
+sine, e.g. $L^1$ error $1.37\times10^{-11}$ at rate 3.96 for
+$\mathbb P^3$ on 1280 cells (Table 1), the post-processing being applied
+once per time step and shown to perturb an $(N+1)$-th order DG solution
+by $O(h^{N+1})$ (their Thm. 2.1). On the shocked 2D data with third
+order on $160\times80$ cells, after the comparison of DG limiters whose
+codes they reuse, COS(DG) gives the sharpest non-oscillatory profile
+along the diagonal, the other limiters being more dissipative near the
+shocks or overshooting (Ex. 6.12, Fig. 13).
+
+**Learning a flux from Burgers data.** Liu et al. (2026) (arXiv v1)
+train a neural entropy-stable flux, together with a learned convex
+entropy, on PyClaw trajectories of the 1D sine family with
+$A\sim U[0.75,1.25]$ and $B\sim U[-0.25,0.25]$ (200 trajectories, 512 points, $\Delta t=0.005$, 20
+steps), so the training window $[0,0.1]$ ends before any shock forms.
+On the test datum $A=1.05609$, $B=0.1997$ the learned model
+forms the shock at about $t=1$ and predicts to $T=3$; with noise of
+relative level $\xi$ ($\xi$ page-local) added to the data, the shock
+structure survives for $\xi\le0.5$, against $\xi\le1$ for the authors'
+earlier flux network inside a fixed Kurganov–Tadmor scheme, which they
+attribute to learning the entropy (§5.2.1, Fig. 5.1); a discrete
+entropy remainder stays non-positive over 101 further initial data
+(Fig. 5.3). The test datum breaks at $t_{\mathrm b}=1/A\approx0.95$
+*(compiler check, not in the sources)*. On the 2D family (5
+trajectories of $100\times100$ points, $\Delta t=0.001$, test to
+$T=1.6$) the prediction stays accurate at $\xi=1$, with more numerical
+diffusion than expected, which they attribute to the difficulty of
+learning the maximum local wave speed (§5.2.4, Figs. 5.10–5.11).
 
 **Active Flux on adaptive grids.** Calhoun, Chudzik & Helzel run the
 two-dimensional sine data with their Cartesian
@@ -543,6 +579,31 @@ use this to obtain exact smooth Euler solutions:
 The breaking time of $1+0.2\sin x$ is $1/0.2=5$ *(compiler check, not
 in the sources)*, matching Zheng et al.'s statement.
 
+[Wang et al. (2026)](/sources/wang-2026.md) §6.2 use the general-$\gamma$
+version of the construction, a simple wave: on periodic $[0,1]$,
+$\gamma=1.4$, $v=\tfrac2{\gamma+1}V(x)$ with
+$V(x)=\sin(2\pi x)/(2\pi t_{\mathrm s})$,
+$\rho=\rho_\infty\big[1+\tfrac{\gamma-1}2\tfrac{v}{c_\infty}\big]^{2/(\gamma-1)}$,
+$p=p_\infty\big[1+\tfrac{\gamma-1}2\tfrac{v}{c_\infty}\big]^{2\gamma/(\gamma-1)}$,
+$\rho_\infty=0.1$, $p_\infty=1$, $c_\infty=\sqrt{\gamma p_\infty/\rho_\infty}$,
+shock formation at $t_{\mathrm s}=1$ ($t_{\mathrm s}$, $V$ and the
+far-field sound speed $c_\infty$, their $a_\infty$, page-local), run to $4t_{\mathrm s}$; they call it the
+"acoustic wave problem" (isentropic Euler–Burgers coupling). With
+$c=c_\infty+\tfrac{\gamma-1}2v$ the invariant $v-2c/(\gamma-1)$ is
+constant and $v+c=c_\infty+V$ is transported at its own speed, so it
+obeys Burgers' equation and breaks at $t_{\mathrm s}$ *(compiler check,
+not in the sources)*. On a two-level AMR grid (base $N=64$, ratio 2,
+seven coarse–fine interfaces, reference uniform $N=512$) the periodic
+shock crosses the interfaces repeatedly: WENO and hybrid WENO inter-level
+interpolation keep the shock in the right place when flux correction
+is applied, while WENO interpolation without flux correction shows
+significant artifacts (Fig. 10; see
+[adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)). On
+the same problem their $L_1(\rho)=0.001590$ and
+$L_\infty(\rho)=0.003035$ do not change over the tested thresholds of
+their troubled-cell indicator, the maximum share of troubled cells
+going from 5.6338 % to 0 % (Table 4).
+
 ## Qualifications
 
 - Li, Shu & Qiu caption the Burgers figures "density" and call the
@@ -632,3 +693,6 @@ in the sources)*, matching Zheng et al.'s statement.
 - [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) — §7.1, Eqs. (57)–(60), Table 3, Fig. 12.
 - [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §2.1, Ex. 5.1, 5.5, Figs. 3, 8 (arXiv v3).
 - [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §6, §6.1, App. B, Figs. 5–6.
+- [Cao et al. (2026)](/sources/cao-2026.md) — Ex. 6.1, Table 1; Ex. 6.12, Fig. 13; Thm. 2.1.
+- [Liu et al. (2026)](/sources/liu-2026.md) — §5.1.1, §5.1.4, §5.2.1, §5.2.4, Figs. 5.1–5.3, 5.10–5.11 (arXiv v1).
+- [Wang et al. (2026)](/sources/wang-2026.md) — §6.2, Fig. 10, Table 4.

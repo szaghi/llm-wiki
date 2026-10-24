@@ -5,7 +5,7 @@ description: "The single-velocity pressure-disequilibrium model of compressible 
 status: established
 aliases: [6-equation model, six-equation model, pressure-disequilibrium model, Saurel–Petitpas–Berry model, Pelanti–Shyue model, pressure-relaxation model]
 tags: [multiphase, interface-capturing, finite-volume]
-timestamp: 2026-10-23T20:43:00Z
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # Six-equation two-phase model
@@ -115,9 +115,9 @@ a fractional step after the hyperbolic update
 ## Surface tension
 
 MFC 5.0 adds two-material surface tension to the six-equation model after
-Schmidmayer et al. (Wilfong et al., §4.1.8): an advected colour function $c$
-(page-local), $\partial_tc+v\cdot\nabla c=0$, defines the capillary stress
-$-\sigma_{\mathrm{st}}\big(\lVert\nabla c\rVert I-\nabla c\otimes\nabla c/\lVert\nabla c\rVert\big)$
+Schmidmayer et al. (Wilfong et al., §4.1.8): an advected colour function $\mathsf c$
+(page-local, not the sound speed $c$), $\partial_t\mathsf c+v\cdot\nabla\mathsf c=0$, defines the capillary stress
+$-\sigma_{\mathrm{st}}\big(\lVert\nabla\mathsf c\rVert I-\nabla\mathsf c\otimes\nabla\mathsf c/\lVert\nabla\mathsf c\rVert\big)$
 ($\sigma_{\mathrm{st}}$ registry §10), which enters momentum and the total energy
 with a capillary energy. The authors state that the model is conservative
 except for the pressure-relaxation terms and obeys the second law, and resolve

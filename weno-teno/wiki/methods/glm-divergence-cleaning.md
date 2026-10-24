@@ -4,8 +4,8 @@ title: "GLM divergence cleaning"
 description: "Generalized-Lagrange-multiplier cleaning adds a scalar field coupled to the magnetic-field divergence, so that divergence errors propagate away at a finite speed and are damped instead of accumulating; the page gives the augmented system, the cleaning speeds and damping rates the sources choose, its conservative and non-conservative forms, and its comparison with constrained transport and projection."
 status: established
 aliases: [GLM, GLM-MHD, generalized Lagrange multiplier, hyperbolic divergence cleaning, Dedner cleaning, Munz cleaning, perfectly hyperbolic Maxwell equations, mixed hyperbolic–parabolic cleaning]
-tags: [mhd, relativistic, dg, finite-difference]
-timestamp: 2026-10-23T15:06:00Z
+tags: [mhd, relativistic, dg, finite-difference, divergence-free]
+timestamp: 2026-10-24T05:59:00Z
 ---
 
 # GLM divergence cleaning

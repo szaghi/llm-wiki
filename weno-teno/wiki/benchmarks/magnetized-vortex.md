@@ -5,7 +5,7 @@ description: "Smooth exact equilibrium vortices of ideal and relativistic MHD, i
 status: established
 aliases: [MHD vortex, magnetized vortex, iso-density vortex, iso-enthalpy vortex, near-vacuum magnetized vortex, Balsara vortex]
 tags: [benchmark, mhd, relativistic, positivity]
-timestamp: 2026-10-23T20:30:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Magnetized (MHD) vortex
@@ -35,33 +35,33 @@ al. §5.2, Eqs. (44)–(45): on $[-5,5]^2$, periodic, $\rho=1$,
 
 $$
 \begin{aligned}
-v&=v_0+(-y,\,x)\,k\,e^{q(1-R^2)},\qquad
-B=(-y,\,x)\,\mu\,e^{q(1-R^2)}+B_3\,e_z,\\
-p+\frac{B_3^2}{2}&=1+\frac{1}{4q}\Big[\mu^2(1-2qR^2)-fk^2\Big]e^{2q(1-R^2)},
+v&=v_0+(-y,\,x)\,k_{\mathrm v}\,e^{q_{\mathrm v}(1-R^2)},\qquad
+B=(-y,\,x)\,\mu\,e^{q_{\mathrm v}(1-R^2)}+B_3\,e_z,\\
+p+\frac{B_3^2}{2}&=1+\frac{1}{4q_{\mathrm v}}\Big[\mu^2(1-2q_{\mathrm v}R^2)-fk_{\mathrm v}^2\Big]e^{2q_{\mathrm v}(1-R^2)},
 \end{aligned}
 $$
 
-with $R=\sqrt{x^2+y^2}$, $k=\mu=1/(2\pi)$ (printed "$1/2\pi$"), $q=1$,
+with $R=\sqrt{x^2+y^2}$, $k_{\mathrm v}=\mu=1/(2\pi)$ (printed "$1/2\pi$"), $q_{\mathrm v}=1$,
 $f=\rho=1$, the right-hand side split equally into thermal and
 magnetic parts ($p$ and $B_3^2/2$ each half of it), $v_0=(1,1)$, one
-period $t=10$; error $\varepsilon_1(B_1)$ in $L^1$ ($k$, $\mu$, $q$, $f$,
-$v_0$ page-local). Differentiating the printed pressure reproduces the
+period $t=10$; error $\varepsilon_1(B_1)$ in $L^1$ ($k_{\mathrm v}$, $\mu$, $q_{\mathrm v}$, $f$,
+$v_0$ page-local; the sources' $k$, $q$). Differentiating the printed pressure reproduces the
 balance above term by term, so the data are an exact equilibrium
 *(compiler check, not in the sources)*.
 
 **Dumbser et al.'s vortex, unshifted ([Dematté et al. 2024](/sources/dematte-2024.md)).**
 Dematté et al. §4.1.2 take "the same" setup as Dumbser et al. (2019) on the
 periodic box $[0,10]^2$, $\rho=1$, with the profiles of Berta et al.
-at $q=\tfrac12$, centred at $(5,5)$ and without mean flow:
-$v=k\,e^{\frac12(1-R^2)}(5-y,\,x-5)$, $B=\mu\,e^{\frac12(1-R^2)}(5-y,\,x-5)$,
-$k=\mu=1/(2\pi)$ (their $\varepsilon/(2\pi)$ with $\varepsilon=1$); the
+at $q_{\mathrm v}=\tfrac12$, centred at $(5,5)$ and without mean flow:
+$v=k_{\mathrm v}\,e^{\frac12(1-R^2)}(5-y,\,x-5)$, $B=\mu\,e^{\frac12(1-R^2)}(5-y,\,x-5)$,
+$k_{\mathrm v}=\mu=1/(2\pi)$ (their $\varepsilon/(2\pi)$ with $\varepsilon=1$); the
 exact solution is the initial state. In these symbols the pressure is
-printed as $p=1+\tfrac12\mu^2(1-R^2)e^{(1-R^2)}-\tfrac12\tilde k^2e^{\frac12(1-R^2)}$,
-with a symbol $\tilde k$ (their $\tilde\varepsilon/(2\pi)$) that is not
-defined. *(Compiler check, not in the sources.)* With $k=\mu$ and $\rho=1$
+printed as $p=1+\tfrac12\mu^2(1-R^2)e^{(1-R^2)}-\tfrac12\tilde k_{\mathrm v}^2e^{\frac12(1-R^2)}$,
+with a symbol $\tilde k_{\mathrm v}$ (their $\tilde\varepsilon/(2\pi)$) that is not
+defined. *(Compiler check, not in the sources.)* With $k_{\mathrm v}=\mu$ and $\rho=1$
 the velocity equals the field, so the state is stationary iff
 $p+\tfrac12\lvert B\rvert^2$ is constant; this holds when the last term is
-$-\tfrac12k^2e^{(1-R^2)}$ and fails with the printed exponent
+$-\tfrac12k_{\mathrm v}^2e^{(1-R^2)}$ and fails with the printed exponent
 $e^{\frac12(1-R^2)}$; the magnetic term is correct as printed. The run
 ends at $t=1$ with a fixed $\Delta t=0.01$, error in $L_2$ against the
 initial state (Eq. (65)). In §4.1.3 the same vortex, centred at the
@@ -72,25 +72,24 @@ preservation of a steady state over long times.
 **Three-dimensional vortex at low Mach number ([Teissier et al. 2024](/sources/teissier-2024.md)).**
 Teissier et al. §4.1, Eq. (66) (arXiv v2) use the Balsara profiles in a
 triply periodic $[-5,5]^3$, with the Gaussian of the full 3D radius
-$r=\sqrt{x^2+y^2+z^2}$: $\rho=1$, $v=(1,1,2)+(-y,x,0)\,k\,e^{q(1-r^2)}$,
-$B=(-y,x,0)\,\mu\,e^{q(1-r^2)}$,
-$p=p_0+\frac1{4q}\big[\mu^2\big(1-2q(r^2-z^2)\big)-k^2\rho\big]e^{2q(1-r^2)}$,
-with $k=\mu=1/(2\pi)$, $q=1.75$ and $p_0=360$, chosen higher than in the
+$r=\sqrt{x^2+y^2+z^2}$: $\rho=1$, $v=(1,1,2)+(-y,x,0)\,k_{\mathrm v}\,e^{q_{\mathrm v}(1-r^2)}$,
+$B=(-y,x,0)\,\mu\,e^{q_{\mathrm v}(1-r^2)}$,
+$p=p_0+\frac1{4q_{\mathrm v}}\big[\mu^2\big(1-2q_{\mathrm v}(r^2-z^2)\big)-k_{\mathrm v}^2\rho\big]e^{2q_{\mathrm v}(1-r^2)}$,
+with $k_{\mathrm v}=\mu=1/(2\pi)$, $q_{\mathrm v}=1.75$ and $p_0=360$, chosen higher than in the
 earlier versions so that the advection speed is about a tenth of the
 sound speed; $\gamma$ is not stated. One period ends at $t=10$, and the
 error $\delta_2$ is the root mean square over all cells of the
 differences of all eight conserved variables against $t=0$ (Eq. (67)).
 They also record the fraction $E_{\mathrm{loss}}$ of the fluctuating
 kinetic plus magnetic energy lost in one period (Eq. (69)). *Compiler
-check, not in the sources:* with $k=\mu$ and $\rho=1$,
+check, not in the sources:* with $k_{\mathrm v}=\mu$ and $\rho=1$,
 $p+\tfrac12\lvert B\rvert^2=p_0$ everywhere, so the 3D data are an
 exact equilibrium despite the $z$-dependence of the Gaussian.
 
 **Iso-enthalpy relativistic vortex (new in Berta et al.).** The same
-profiles with $f=w=5$, the constant enthalpy density $\rho h$
-(page-local), $B_3=0$, zero radial electric field, a static vortex
-($v_0=0$), $\gamma=5/3$ and $\rho=w-5p/2$ from the equation of state,
-which stays positive for this choice of $w$; run to $t=10$
+profiles with $f=w_{\mathrm h}=5$, the constant relativistic enthalpy density $w_{\mathrm h}=\rho h$, $B_3=0$, zero radial electric field, a static vortex
+($v_0=0$), $\gamma=5/3$ and $\rho=w_{\mathrm h}-5p/2$ from the equation of state,
+which stays positive for this choice of $w_{\mathrm h}$; run to $t=10$
 (see [relativistic hydrodynamics and MHD](/definitions/relativistic-hydrodynamics.md)).
 
 **Near-vacuum vortex (Christlieb et al., as cited).**
@@ -122,7 +121,7 @@ sources)*.
 **Stationary charged vortex of resistive relativistic MHD.**
 [Mignone et al. (2024)](/sources/mignone-2024.md) §4.2, Eq. (60): an
 exact equilibrium of resistive relativistic MHD that does not depend on
-the resistivity $\eta$, with radial electric field
+the resistivity $\eta_{\mathrm m}$, with radial electric field
 $\mathcal E_r=\frac{q_0}2\frac{r}{r^2+1}$ (page-local $\mathcal E$, the
 electric field of the registry's MHD row; no vortex strength $\mathcal E$
 on this page), axial field
@@ -213,8 +212,8 @@ the LLF dissipation at low Mach number, proportional to the fast speed
 times the interface jump; raising the order shrinks the jump and acts as
 an alternative to low-Mach Riemann-solver fixes (§4.1; see
 [numerical dissipation](/definitions/numerical-dissipation.md)). The
-WENO weights use the exponent $1$ (not the vortex parameter $q$) and
-$\epsilon=10^{-12}$, because the "typical choice" of exponent $2$ with $\epsilon=10^{-6}$ "leads to a worse convergence for schemes
+WENO weights use the exponent $q=1$ (not the vortex parameter $q_{\mathrm v}$) and
+$\epsilon=10^{-12}$, because the "typical choice" $q=2$ with $\epsilon=10^{-6}$ "leads to a worse convergence for schemes
 of order strictly greater than 4" (§4.1, no table). With the cost per
 step relative to S2 (Table 3), the authors argue that S6 at $96^3$
 matches the energy loss of S4 at $192^3$ at a fraction of the cost, "a
@@ -251,7 +250,7 @@ Mignone et al. (2024)'s fourth-order finite-volume scheme, run in
 error "by two orders of magnitude" against the second-order scheme of
 their Paper I; the
 SSP(4,3,3) and ARK4 integrators "yield nearly identical results", but
-ARK4 becomes unstable for $\eta\lesssim10^{-4}$. The pressure converges
+ARK4 becomes unstable for $\eta_{\mathrm m}\lesssim10^{-4}$. The pressure converges
 at fourth order with both integrators, against second order for Paper I
 (§4.2, Fig. 3).
 
@@ -283,12 +282,12 @@ and [entropy stability](/properties/entropy-stability.md).
   paper does not comment on the rates above four.
 - As printed, Berta et al.'s relativistic balance, Eq. (46), carries a
   factor $W$ (the Lorentz factor) in the centrifugal term, while the
-  solution they give, Eqs. (44)–(45) with constant $f=w$, balances the
+  solution they give, Eqs. (44)–(45) with constant $f=w_{\mathrm h}$, balances the
   same term without it; at the largest vortex speed of these data,
   $v_\phi\approx0.186$ at $R=1/\sqrt2$, $W\approx1.018$, so the two
   differ by up to about 2 % of that term *(compiler check, not in the
-  sources)*. The paper does not resolve which of the two equations is
-  meant.
+  sources)*. The paper does not say which of the two equations is
+  correct.
 - Dematté et al.'s Table 2 orders are spatial, with $\Delta t$ fixed
   (§4.1.2).
 - Teissier et al. are read as arXiv:2306.09856v2, titled "High-order
@@ -299,8 +298,8 @@ and [entropy stability](/properties/entropy-stability.md).
   $0.05\sqrt2$), and their error is measured against the translated
   exact solution.
 - Mignone et al. (2024) give the ARK4 stability threshold as
-  $\eta\lesssim10^{-4}$ here, report its failure at $\eta=10^{-6}$ on
-  their rotor and call SSP more robust for $\eta\lesssim10^{-5}$ in their
+  $\eta_{\mathrm m}\lesssim10^{-4}$ here, report its failure at $\eta_{\mathrm m}=10^{-6}$ on
+  their rotor and call SSP more robust for $\eta_{\mathrm m}\lesssim10^{-5}$ in their
   summary. Their Fig. 3 caption gives the charge cuts at $t=3$ and
   "pressure" maps where the panels read $t=2$ and $\rho$.
 - Berta et al. are read as the arXiv v4 preprint, Dzanic & Witherden

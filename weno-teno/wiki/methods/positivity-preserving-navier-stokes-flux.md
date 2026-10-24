@@ -5,24 +5,23 @@ description: "Zhang's Lax–Friedrichs-type Navier–Stokes flux, with a coeffic
 status: established
 aliases: [positivity-preserving viscous flux, positivity-preserving Navier–Stokes flux, Zhang's positivity-preserving flux, positivity-preserving convection–diffusion flux splitting, total-flux Lax–Friedrichs flux, separated viscous Lax–Friedrichs flux, gradient limiting]
 tags: [positivity, bound-preserving, numerical-flux, finite-difference, finite-volume, dg]
-timestamp: 2026-10-23T15:20:00Z
+timestamp: 2026-10-24T05:57:00Z
 ---
 
 # Positivity-preserving numerical fluxes for Navier–Stokes
 
 For the Euler equations, positivity of density and pressure is
 obtained by writing a high-order update as a convex combination of
-first-order updates that are positive by themselves. The compressible
-Navier–Stokes equations have no standard first-order
-positivity-preserving scheme for the diffusion operator, which
-[Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) call "the key
-difficulty" (§1.1). The remedy that four sources of the bundle use, due
+first-order updates that are positive by themselves. For the compressible
+Navier–Stokes equations, [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md)
+state that the diffusion operator has no such first-order
+positivity-preserving scheme, "the key difficulty" (§1.1). The remedy that four sources of the bundle use, due
 to X. Zhang (2017) as they recall it, treats the **total** flux
 $F(u,\nabla u)=f(u)-f^\nu(u,\nabla u)$, advective minus diffusive, as a
 single convective flux and applies a
 [Lax–Friedrichs](/methods/lax-friedrichs-flux.md)-type flux to it with a
-dissipation coefficient $a^{\mathrm{NS}}$ (page-local, as on the
-Lax–Friedrichs page; the sources write $\beta$) that accounts for the
+dissipation coefficient $a^{\mathrm{NS}}$ (registry §10; the sources
+write $\beta$) that accounts for the
 viscous stress and the heat flux. The admissible set is
 $G=\{\rho>0,\ \rho e>0\}$ with $\rho e=E-\tfrac12\rho\lvert v\rvert^2$,
 convex because $\rho e$ is concave in $u$ for $\rho>0$
@@ -32,9 +31,9 @@ same kind of flux to the **viscous** flux alone and keeps a separate
 inviscid flux (section below).
 
 Page-local symbols: $\tau_{\mathrm v}$ and $q_{\mathrm h}$ the viscous
-stress and heat flux (their normal components in multi-D), $N_{\mathrm{GL}}$ the
-number of Gauss–Lobatto points of a cell-average decomposition and
-$\varpi=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$ its end weight on the unit interval (registry §8).
+stress and heat flux (their normal components in multi-D). From the registry:
+$N_{\mathrm{GL}}$ the number of Gauss–Lobatto points of a cell-average decomposition (§10) and
+$\varpi=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$ its end weight on the unit interval (§8).
 
 ## The flux and the key lemma
 
@@ -140,7 +139,7 @@ advective flux keeps global Lax–Friedrichs splitting and the diffusive
 flux gets its own splitting with flipped signs,
 $\tfrac12\big(u\mp f^\nu/a^\nu\big)$, "for the correct upwinding bias",
 with $a^\nu$ the bound above without $\lvert v\rvert$ and without $p$
-(page-local), under
+(registry §10), under
 $\frac{\Delta t}{\Delta x}\max a^\nu\le\frac1{4N_{\mathrm{GL}}(N_{\mathrm{GL}}-1)}$; results of the
 two variants show "no significant difference", and only the first is
 shown (§5).
@@ -214,7 +213,7 @@ multicomponent, chemically reacting Navier–Stokes equations with thermally
 perfect gases, in a primal DG scheme whose conserved species variables are
 molar concentrations $\mathsf C_k$ (page-local; partial density $W_k\mathsf C_k$). Unlike
 Zhang and Du & Yang, they penalize only the viscous flux, with
-$\delta^\nu=\tfrac{a^\nu}2(u^+-u^-)$ ($\delta^\nu$, $a^\nu$ page-local; the source
+$\delta^\nu=\tfrac{a^\nu}2(u^+-u^-)$ ($\delta^\nu$ page-local, $a^\nu$ registry §10; the source
 writes $\beta$), and keep an invariant-region-preserving inviscid flux, HLLC in
 practice, which they find more accurate than Lax–Friedrichs (§1, §4.1, Remark 5;
 [HLL-family solvers](/methods/hll-riemann-solvers.md)). Separating the two is what
@@ -366,7 +365,7 @@ the detonation approaches zero before 50 μs (Fig. 5.12).
   the monocomponent limit, so that case is unaffected *(compiler check, not in the
   sources)*. Their Appendix B prints the quadratic of Lemma 14 with the sign of its
   linear term opposite to what the expansion and the printed root need, and with
-  $e$ where $e^*$ is meant.
+  $e$ in place of the $e^*$ of Lemma 1.
 - **Which viscous flux is better.** Ching et al.'s evidence is mixed: the
   Lax–Friedrichs-type flux gives the smaller overshoot in 1D, BR2 the smaller
   oscillations in 2D (§5.3–5.4); the authors choose BR2 from the 2D runs.

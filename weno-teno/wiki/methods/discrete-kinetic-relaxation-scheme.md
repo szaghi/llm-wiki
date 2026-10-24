@@ -5,7 +5,7 @@ description: "A discrete kinetic (Jin–Xin, BGK-type) scheme replaces a system 
 status: established
 aliases: [discrete BGK scheme, kinetic scheme, Jin–Xin relaxation scheme, discrete kinetic approximation, four-wave model]
 tags: [asymptotic-preserving, finite-difference, limiting]
-timestamp: 2026-10-22T16:24:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Discrete kinetic relaxation schemes
@@ -74,7 +74,7 @@ DeC iteration (§2.3, Prop. 1).
 **Asymptotic preservation** (Prop. 2). With $u^{\varepsilon,(\ell)}=\mathbb P\mathsf f^{(\ell)}$, the
 update gives $\mathsf f^{(\ell+1)}=\mathbb M(u^{\varepsilon,(\ell+1)})+O(\varepsilon)$, and by the
 consistency relations the conserved update is a DeC discretization of the limit conservation
-law itself, up to $O(\varepsilon)$; AP is meant in Jin's sense, stability and accuracy uniform
+law itself, up to $O(\varepsilon)$; the paper uses AP in Jin's sense, stability and accuracy uniform
 in $\varepsilon$ (§1, §2.2; [asymptotic preservation](/properties/asymptotic-preservation.md)).
 The AP property is shown only as this formal consistency: the tests do not report $\varepsilon$.
 
@@ -125,7 +125,7 @@ All 2D, CFL 1 unless stated (§5):
   ([deferred correction](/methods/deferred-correction.md), Table 1); the paper states both that
   the schemes "are always stable for CFL $=1+\delta$" with the BGK source (§4) and that the
   source is not included in the analysis and observed limits are more severe (Remark 1).
-- CFL here is measured with the kinetic speeds: $\mu=a\Delta t/\Delta x$ with $a$ an entry of
+- CFL here is measured with the kinetic speeds: $\nu=a\Delta t/\Delta x$ with $a$ an entry of
   $\Lambda^{(1)}$ (§4), not with the physical wave speeds.
 - The isentropic-vortex data print $v_2=\frac{\sqrt2}2+\dots$ while the free stream and the
   vortex centre use $\frac{\sqrt3}2$ (§5.2.1); the radial Sod problem uses periodic boundaries.

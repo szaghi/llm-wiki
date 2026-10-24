@@ -5,7 +5,7 @@ description: "Shock-diffraction benchmarks: the 2D Mach 5.09 corner problem, its
 status: established
 aliases: [shock diffraction problem, shock diffraction at a corner, shock diffraction around a backward-facing step, Mach 5.09 shock diffraction, Mach 10 shock reflection and diffraction]
 tags: [benchmark, positivity, bound-preserving, dg, relativistic, gpu]
-timestamp: 2026-10-23T20:05:00Z
+timestamp: 2026-10-24T05:58:00Z
 ---
 
 # Shock diffraction
@@ -20,8 +20,8 @@ test: a scheme must keep density and pressure positive in the
 expansion and stay free of oscillations at the strong shock, and the
 contours of density and pressure at $t=2.3$ are compared visually.
 Five sources of the bundle run it, four in the Euler form (one on a
-rescaled geometry) and one in a relativistic form; two more run a
-Mach 10 variant in which the double-Mach-reflection shock meets a
+rescaled geometry) and one in a relativistic form; two, one of them
+already counted, run a Mach 10 variant in which the double-Mach-reflection shock meets a
 backward step, one runs the three-dimensional diffraction of a
 strong shock by a sphere, five the diffraction of a weak shock by a
 triangular wedge (Schardin's problem), and one its three-dimensional
@@ -132,7 +132,7 @@ not stated in the text), with the compressible Navier–Stokes equations
 for air: pre-shock $(\rho,p)=(1.4,1)$ at rest, post-shock
 $\rho=5.1432014$, $p=9.0454500$, $v=(2.0451168,0,0)$, imposed as
 supersonic inflow on the left, extrapolation elsewhere; fluid
-properties $c_p=1005.2$, $c_v=718.0$, $\mu=0.0013485123$ (Fig. 4b); the
+properties $c_p=1005.2$, $c_v=718.0$, viscosity $\mu=0.0013485123$ (page-local) (Fig. 4b); the
 initial shock position is not stated; measurements at $t=5$,
 figures at $t=4$ and $6$; refinement on the modulus of the density
 gradient, between levels 3 and 8. The text states a shock Mach number
@@ -148,15 +148,15 @@ Mach 2.81.
 [Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.5 compute a
 triangular wedge hit by a normal shock of Mach 1.34 moving left to
 right, in a domain of the dimensions of Schardin's experiment, with the
-Euler equations, $\gamma=1.4$, $R=287$ J/(kg K): pre-shock $p=101325$
+Euler equations, $\gamma=1.4$, gas constant $R=287$ J/(kg K) (page-local): pre-shock $p=101325$
 Pa, $T=288.15$ K, at rest; post-shock $p=195557.25$ Pa, $T=350.5$ K,
 $v_1=168.62$ m/s (their Table 2). Walls of wedge, top and bottom are
 reflective, left and right boundaries non-reflecting; about 340,000
 mixed quadrilaterals and triangles with edge size $h=0.01$ mm near the
 wedge; SSP-RK3 at CFL 0.3; the run starts when the shock meets the
 wedge and stops at $t=200$ ms as printed. They compare a pure
-finite-volume CWENOZ5 scheme with their hybrid DG($P_3$)–FV(CWENOZ4)
-and DG($P_4$)–FV(CWENOZ5) schemes in [UCNS3D](/software/ucns3d.md), with
+finite-volume CWENOZ5 scheme with their hybrid DG($\mathbb P^3$)–FV(CWENOZ4)
+and DG($\mathbb P^4$)–FV(CWENOZ5) schemes in [UCNS3D](/software/ucns3d.md), with
 a relaxed MOOD-type [troubled-cell](/definitions/troubled-cell-indicator.md)
 switch.
 
@@ -217,9 +217,9 @@ check, not in the sources)*. The paper prints no $\gamma$.
 
 | Source | Scheme | Mesh | Notes |
 |---|---|---|---|
-| [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.7 | positivity-preserving hybrid [HWENO](/methods/hermite-weno.md), finite volume, cubic reconstruction, SSP-RK3; Euler and Navier–Stokes ($\mathrm{Re}=1000$, $\mathrm{Pr}=0.72$) | $\Delta x=\Delta y=1/32$ | time step with $a=1/12$, $b=0.001$ as in their whole paper |
-| [Du, Shu & Zhong (2022)](/sources/du-2022.md) Ex. 4.4 | RKDG $P^1$, $P^2$ with the improved vs the original [simple WENO limiter](/methods/weno-limiter-dg.md), KXRCF threshold $C_k=0.01$, SSP-RK3 | triangles, $h=1/16$ | CFL 0.3 ($P^1$), 0.18 ($P^2$) |
-| [Du, Shu & Zhong (2022)](/sources/du-2022.md) Ex. 4.10 | as above, DG on polygonal cells from random point clouds | 219,200 ($P^1$) and 493,200 ($P^2$) points | positivity-preserving limiter for $P^2$; 20 density contours 0.066227–7.1 |
+| [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.7 | positivity-preserving hybrid [HWENO](/methods/hermite-weno.md), finite volume, cubic reconstruction, SSP-RK3; Euler and Navier–Stokes ($\mathrm{Re}=1000$, $\mathrm{Pr}=0.72$) | $\Delta x=\Delta y=1/32$ | time step with page-local constants $a=1/12$, $b=0.001$ as in their whole paper |
+| [Du, Shu & Zhong (2022)](/sources/du-2022.md) Ex. 4.4 | RKDG $\mathbb P^1$, $\mathbb P^2$ with the improved vs the original [simple WENO limiter](/methods/weno-limiter-dg.md), KXRCF threshold $C_k=0.01$, SSP-RK3 | triangles, $h=1/16$ | CFL 0.3 ($\mathbb P^1$), 0.18 ($\mathbb P^2$) |
+| [Du, Shu & Zhong (2022)](/sources/du-2022.md) Ex. 4.10 | as above, DG on polygonal cells from random point clouds | 219,200 ($\mathbb P^1$) and 493,200 ($\mathbb P^2$) points | positivity-preserving limiter for $\mathbb P^2$; 20 density contours 0.066227–7.1 |
 | [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) Example 5.6 | finite-difference WENO-JS5, JS7, ZQ5 with the [positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md); Euler and $\mathrm{Re}=1000$ | $\Delta x=\Delta y=1/64$ | $T=2.3$ |
 | [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) §5.12 | second-order MUSCL, TVD RK2; HLLC, HLLEM and the shock-stable RHLLEM-LD | $400\times400$ on the rescaled corner | CFL 0.5, $t=0.15$ |
 | [Zaghi et al. (2023)](/sources/zaghi-2023.md) §3 | conservative finite differences with WENO reconstruction, Rusanov flux-vector splitting, SSP-RK3, [immersed boundary](/methods/immersed-boundary-method.md) by pseudo-time normal extrapolation, block-octree [AMR](/methods/adaptive-mesh-refinement.md) in [ADAM](/software/adam.md) on V100 GPUs | 3.6 M cells (strong scaling) to 350.3 M cells (684,258 blocks) | WENO order not stated for this case; 3D Navier–Stokes |
@@ -235,7 +235,7 @@ cells, identically for the hybrid and non-hybrid schemes and for both
 Reynolds numbers, and they state that the earlier hybrid HWENO of Zhao,
 Chen & Qiu blows up on this problem from loss of positivity, without a
 figure (§1, §4, Fig. 4.7, Table 4.2). Du et al. switch on a
-positivity-preserving limiter for their $P^2$ runs on point clouds; on
+positivity-preserving limiter for their $\mathbb P^2$ runs on point clouds; on
 triangles no positivity limiter is mentioned. See
 [bound preservation](/properties/bound-preservation.md) and the
 [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md).
@@ -255,8 +255,8 @@ does not; see [HLL-family solvers](/methods/hll-riemann-solvers.md).
 **Limiters and troubled cells.** On triangles Du et al.'s improved
 limiter, which combines only two polynomials per edge direction, gives
 results "almost identical" to the original limiter; it saves 6.6 %
-($P^1$) and 11.73 % ($P^2$) of the CPU time although it flags more
-cells at $P^2$ (12.63 % against 9.48 %; Figs. 4.6–4.7, Table 4.8). On
+($\mathbb P^1$) and 11.73 % ($\mathbb P^2$) of the CPU time although it flags more
+cells at $\mathbb P^2$ (12.63 % against 9.48 %; Figs. 4.6–4.7, Table 4.8). On
 point clouds both limiters give the same quality, more oscillatory than
 on triangles, with savings of 9.90 % and 40.91 % (Fig. 4.16,
 Table 4.18). Fan, Zhang & Qiu's (2021) hybrid scheme applies its
@@ -297,7 +297,7 @@ Chang that they cite (Fig. 13); both hybrid variants resolve more
 structures and acoustic waves from the shock–vortexlet interactions
 than pure FV-CWENOZ5 (Fig. 14), the Mach number along the wedge
 symmetry line agrees among the three schemes, and fewer than 0.4 %
-($P_3$) and 0.2 % ($P_4$) of the cells are troubled throughout (Fig. 15).
+($\mathbb P^3$) and 0.2 % ($\mathbb P^4$) of the cells are troubled throughout (Fig. 15).
 
 Lin & Zhu find that ALW-MR-WENO and MR-WENO "can provide good
 resolution" with similar results on the wedge (Case 3.7, Figs.

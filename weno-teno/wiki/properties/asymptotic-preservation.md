@@ -5,7 +5,7 @@ description: "A scheme for a singularly perturbed problem is asymptotic preservi
 status: established
 aliases: [AP, AP scheme, asymptotic-preserving scheme, unified asymptotic preserving scheme, asymptotic accuracy, AA]
 tags: [asymptotic-preserving, well-balanced, finite-volume, mhd]
-timestamp: 2026-10-23T20:43:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # Asymptotic preservation
@@ -285,9 +285,9 @@ needs a limit problem. [Du & Yang (2022)](/sources/du-2022-b.md) treat stiff fin
 chemistry in multicomponent reacting Navier–Stokes with a third-order conservative modified
 exponential Runge–Kutta (CMERK) method of their own earlier work: an artificial linear damping
 $\mu u$ (page-local rate $\mu$) is added to and subtracted from the source, the stages carry
-exponential factors $e^{\beta_{10}\mu\Delta t}$, $e^{\mathsf A\mu\Delta t}$ (page-local
+exponential factors $e^{\beta_{10}\mu\Delta t}$, $e^{\mathsf c_{\mathrm E}\mu\Delta t}$ (page-local
 Shu–Osher-form coefficients $\alpha_{jl}$, $\beta_{jl}$ and their combination
-$\mathsf A=\beta_{20}+\alpha_{21}\beta_{10}+\beta_{21}$, Eq. (3.7); not the weights $\alpha_k$ or
+$\mathsf c_{\mathrm E}=\beta_{20}+\alpha_{21}\beta_{10}+\beta_{21}$, Eq. (3.7); not the weights $\alpha_k$ or
 the indicators $\beta_k$), and each stage of the cell-average update is a convex combination of a
 convective forward-Euler state and a source state $\bar s/\mu+\bar u$ (§3.2, Eqs. (3.6)–(3.10);
 §4.2, Eqs. (4.3)–(4.6)). Bound preservation then holds under a convective CFL condition with
@@ -328,7 +328,7 @@ integrated with an [IMEX](/methods/imex-runge-kutta.md) extension of third-order
 - The AP property is shown by limit arguments on the scheme's formulas and by figures; the
   $\varepsilon$-independent stability is asserted with reference to earlier work, not
   proved or measured.
-- Across the four nonlinear cases the evidence is of the same kind: formal limits of the
+- For four of the nonlinear cases the evidence is of the same kind: formal limits of the
   time-semi-discrete or fully discrete formulas (Arun et al., Thm. 3.2 and 4.3; Boscarino et
   al., Thm. 4.1 and Prop. 4.4; Chen, Wu & Xiong, Thms. 4.1–4.2; Abgrall & Nassajian Mojarrad,
   Prop. 2), with tests at one or a few fixed values of the small parameter; none measures
@@ -346,9 +346,10 @@ integrated with an [IMEX](/methods/imex-runge-kutta.md) extension of third-order
   non-positive *(compiler check, not in the sources)*.
 - Allegrini & Vignal's stability lemmas (5–7) are linear, 1D and completed numerically,
   with a maximal root modulus of 1; their closing step asserts a matrix norm with
-  $\lVert B\rVert\le r(B)$, the spectral radius. That holds only under extra conditions
-  (e.g. the eigenvalues of modulus $r(B)$ semisimple): for $B=\begin{pmatrix}1&1\\0&1\end{pmatrix}$,
-  $r(B)=1$ but $\lVert B^n\rVert$ grows like $n$, so no norm gives $\lVert B\rVert\le1$
+  $\lVert\mathcal G\rVert\le r(\mathcal G)$ for the amplification matrix $\mathcal G$ (registry §10; the source's $B$),
+  $r$ the spectral radius. That holds only under extra conditions
+  (e.g. the eigenvalues of modulus $r(\mathcal G)$ semisimple): for $\mathcal G=\begin{pmatrix}1&1\\0&1\end{pmatrix}$,
+  $r(\mathcal G)=1$ but $\lVert\mathcal G^n\rVert$ grows like $n$, so no norm gives $\lVert\mathcal G\rVert\le1$
   *(compiler check, not in the sources)*. The printed argument therefore completes the
   lemmas only if the eigenvalues of modulus one are semisimple, which the paper does not
   examine. Their second-order scheme uses ARS(2,2,2), the kind of tableau
@@ -359,9 +360,9 @@ integrated with an [IMEX](/methods/imex-runge-kutta.md) extension of third-order
   $+\Delta t\int_{\partial T}m_h\cdot n$, whereas the density update they state,
   $\rho_h^{n+1}=\rho_h^n-\Delta t\,\nabla\cdot m_h^{n+1}$, gives a minus sign by the divergence
   theorem *(compiler check, not in the sources)*.
-- The time step still carries a parabolic $\Delta x^2$ restriction for $\beta_{\mathrm{ms}}=1$;
+- Arun et al.'s time step still carries a parabolic $\Delta x^2$ restriction for $\beta_{\mathrm{ms}}=1$;
   "uniform in $\varepsilon$" does not mean hyperbolic-CFL.
-- The printed fully discrete scheme (Eqs. (4.17)–(4.18)) omits a factor $\Delta t$ on the
+- Arun et al.'s printed fully discrete scheme (Eqs. (4.17)–(4.18)) omits a factor $\Delta t$ on the
   right-hand-side terms and some powers of $\varepsilon$ found in the semi-discrete
   scheme (3.3)–(3.4); the limits (4.29)–(4.30) are unaffected *(compiler check, not in the
   sources: by eliminating the implicit momentum from (3.1)–(3.2))*.

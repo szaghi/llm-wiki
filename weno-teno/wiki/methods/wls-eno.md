@@ -5,7 +5,7 @@ description: "WLS-ENO is a single-stencil finite-volume reconstruction: a weight
 status: established
 aliases: [WLS-ENO, weighted least-squares ENO, conservative WLS-ENO, locally divergence-free WLS-ENO, LDF WLS-ENO]
 tags: [reconstruction, finite-volume, mhd, positivity, riemann-solver]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-24T06:00:00Z
 ---
 
 # WLS-ENO reconstruction
@@ -34,12 +34,12 @@ mesh quality" (§1; not shown in this paper).
 Following Ollivier-Gooch, Liu et al. (2021, §3.1–3.2, Eqs. (9)–(12), (21)–(23)) write the polynomial in
 a zero-mean basis, so that its cell average is $\bar u_i$ exactly:
 
-$$u^{\mathrm R}_i=\bar u_i+\sum_{q=1}^n\sum_{p_1+p_2=q}\frac{1}{p_1!\,p_2!}\,
-\frac{\partial^qu}{\partial x^{p_1}\partial y^{p_2}}\Big|_i\Big((x-x_i)^{p_1}(y-y_i)^{p_2}-\overline{x^{p_1}y^{p_2}}_i\Big),$$
+$$u^{\mathrm R}_i=\bar u_i+\sum_{m=1}^n\sum_{p_1+p_2=m}\frac{1}{p_1!\,p_2!}\,
+\frac{\partial^mu}{\partial x^{p_1}\partial y^{p_2}}\Big|_i\Big((x-x_i)^{p_1}(y-y_i)^{p_2}-\overline{x^{p_1}y^{p_2}}_i\Big),$$
 
 with $\overline{x^{p_1}y^{p_2}}_i$ the moments of $I_i$ about its centroid (page-local exponents
-$p_1,p_2$). Each neighbour gives one equation
-$\bar u_j-\bar u_i\approx\sum\frac1{p_1!p_2!}\partial^qu|_i\big(\widehat{x^{p_1}y^{p_2}}_{ij}-\overline{x^{p_1}y^{p_2}}_i\big)$,
+$p_1,p_2$ and order $m$). Each neighbour gives one equation
+$\bar u_j-\bar u_i\approx\sum\frac1{p_1!p_2!}\partial^mu|_i\big(\widehat{x^{p_1}y^{p_2}}_{ij}-\overline{x^{p_1}y^{p_2}}_i\big)$,
 with $\widehat{x^{p_1}y^{p_2}}_{ij}$ the moments of $I_j$ about the centroid of $I_i$ (shift formula
 Eq. (23)); the weighted system for the $\tfrac{(n+1)(n+2)}2-1$ derivative coefficients is solved in
 least squares, with the weights $W_j$ above and no central-cell row. For $n=2$ the truncation error is
