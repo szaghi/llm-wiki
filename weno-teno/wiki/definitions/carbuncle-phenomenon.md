@@ -5,7 +5,7 @@ description: "The carbuncle is a numerical instability that low-dissipation Riem
 status: established
 aliases: [carbuncle problem, carbuncle instability, shock instability of low-dissipation Riemann solvers, odd-even decoupling, shock instability, carbuncle-like instability]
 tags: [riemann-solver, numerical-flux, carbuncle, benchmark]
-timestamp: 2026-10-23T20:43:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # Carbuncle phenomenon
@@ -279,7 +279,7 @@ elements, $T=0.001$) with subcell-limited DGSEM in which a linear program choose
 blending factors so that a semi-discrete cell entropy inequality holds
 ([subcell limiting](/methods/subcell-finite-volume-limiting.md)). A shock-capturing variant
 tightens the entropy bound by a fraction $\beta_{\mathrm e}\epsilon_K$ of the
-low-order entropy dissipation (page-local: $\beta_{\mathrm e}\in[0,1]$ user-chosen,
+low-order entropy dissipation (registry §10: $\beta_{\mathrm e}\in[0,1]$ user-chosen,
 $\epsilon_K$ the elementwise modal smoothness factor; Eq. (49)). With
 $\beta_{\mathrm e}=1.0,0.1,0.01,0$ finer features appear as $\beta_{\mathrm e}$ decreases, but
 carbuncles appear at $\beta_{\mathrm e}=0.01$ and $0$, and also with a local minimum entropy

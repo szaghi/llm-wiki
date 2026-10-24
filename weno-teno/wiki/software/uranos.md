@@ -5,7 +5,7 @@ description: "URANOS is a BSD-licensed Fortran 90, OpenACC and MPI finite-differ
 status: established
 aliases: [Unsteady Robust All-around Navier-StOkes Solver, URANOS GPU]
 tags: [software, gpu, finite-difference, teno, turbulence, immersed-boundary]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # URANOS
@@ -63,7 +63,7 @@ flagged cell and in a band of 2, 3 or 4 neighbouring cells for orders 3,
 5 and 7; the EP scheme is used elsewhere (De Vanna et al. 2023b §3.2,
 Eqs. 8–10). Three sensors are offered:
 
-- the maximum over the three directions of the undivided density
+- the maximum over the three directions of the divided density
   gradient $\lvert(\rho_{j+1}-\rho_j)/(x_{j+1}-x_j)\rvert$ (Eq. 8);
 - the corresponding density jump $\lvert\rho_{j+1}-\rho_j\rvert$
   (Eq. 9), which "generally reduces the WENO/TENO intervention";

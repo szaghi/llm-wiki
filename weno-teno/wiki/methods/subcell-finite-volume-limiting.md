@@ -5,7 +5,7 @@ description: "Subcell finite-volume limiting makes a nodal DGSEM robust by conve
 status: established
 aliases: [subcell limiting, subcell FV shock capturing, hybrid DG/FV blending, element-wise blending, subcell-wise blending, native LGL finite volumes, FV subcell switching]
 tags: [dg, limiting, finite-volume, positivity, entropy-stable]
-timestamp: 2026-10-24T06:02:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # Subcell finite-volume limiting for DG
@@ -228,8 +228,8 @@ shock-capturing variant tightens the bound by the factor $1-\beta_{\mathrm e}\ep
 with $\epsilon_K\in[0,1]$ the modal smoothness factor of Pazner's
 [indicator](/definitions/troubled-cell-indicator.md) and a user parameter
 $\beta_{\mathrm e}\in[0,1]$, which blends in that fraction of the
-low-order entropy dissipation (Eqs. (49)–(51); page-local $\beta_{\mathrm e}$,
-$\epsilon_K$).
+low-order entropy dissipation (Eqs. (49)–(51); $\beta_{\mathrm e}$,
+$\epsilon_K$ registry §10).
 
 **Evidence** (§4; Euler, SSPRK(3,3), Davis wave speeds;
 [DGSEM](/methods/dgsem.md)):

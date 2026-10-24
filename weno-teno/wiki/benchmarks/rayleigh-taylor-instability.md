@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu sett
 status: established
 aliases: [RTI, Rayleigh–Taylor, single-mode Rayleigh–Taylor instability]
 tags: [benchmark, low-dissipation, teno, weno, central-scheme]
-timestamp: 2026-10-24T05:58:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # Rayleigh–Taylor instability
@@ -254,8 +254,8 @@ report different outcomes for low-dissipation schemes:
   low-dissipation schemes and Fleischmann et al. as a cure by careful
   floating-point implementation (§5.5.2, Fig. 9).
 - Fu (2023) reports the observation that TENO5 breaks the symmetry on
-  a coarse grid where WENO5-JS keeps it, and sides with Fleischmann et
-  al.: symmetry breaking is caused by floating-point inconsistencies
+  a coarse grid where WENO5-JS keeps it, and reports the finding of Fleischmann et
+  al. that symmetry breaking is caused by floating-point inconsistencies
   that grow exponentially, not by low dissipation, and with a
   consistent implementation TENO5 keeps symmetry to machine precision
   (§3.8).

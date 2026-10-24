@@ -5,7 +5,7 @@ description: "MOOD-type limiting computes a candidate high-order update, checks 
 status: established
 aliases: [MOOD, multi-dimensional optimal order detection, a posteriori limiting, a posteriori stabilization, a posteriori subcell limiting, APLSC, a posteriori local subcell correction]
 tags: [limiting, positivity, bound-preserving, finite-difference, dg, mood]
-timestamp: 2026-10-24T05:57:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # MOOD a posteriori limiting
@@ -19,8 +19,8 @@ recomputes the update only in the cells that fail, with a lower-order
 scheme that is robust there; the high-order result is kept everywhere
 else. One source of this bundle uses only physical admissibility
 (positivity of density and pressure, finite values) as criterion and
-falls back directly to first order, and a second does not describe its
-criteria or fallback; a third uses the
+falls back directly to first order, and a second states only that MOOD
+ensures positivity, without its detection or fallback; a third uses the
 classical MOOD criteria, physical and numerical admissibility, but before
 the step rather than after it; and the ADER-DG sources recompute flagged
 cells on a subcell grid with a second-order finite-volume scheme, after
@@ -80,8 +80,9 @@ CPU cost of the recomputation.
 deferred-correction residual-distribution scheme, DeC(4,4) with cubic
 Bernstein elements, on the radial Sod problem with
 [entropy correction terms](/methods/entropy-correction-term.md); with it
-the computation works (§4.1, Fig. 5). The paper does not describe the
-detection criteria or the fallback scheme.
+the computation works (§4.2.1, Fig. 5). The paper states only that MOOD
+ensures positivity of density and pressure at all degrees of freedom; it
+describes neither the detection procedure nor the fallback scheme.
 
 ## A posteriori subcell finite-volume limiting of ADER-DG
 
@@ -392,7 +393,7 @@ an a priori switch in the sense of this page
 # Citations
 
 - [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §2.1, Eqs. (15)–(16); §3.2.1–3.2.2; §5.2.2–5.2.3, Figs. 8–10.
-- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — arXiv v4: §4.1, Fig. 5.
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — arXiv v4: §4.2.1, Fig. 5.
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — arXiv v1: §3.4, Eqs. (35)–(41); §4.3.1, Prop. 4; §4.4, Eqs. (65)–(67); §5, Figs. 2–3, 8–9.
 - [Ciallella et al. (2024)](/sources/ciallella-2024.md) — arXiv v1: §3.4, Remark 1, Eq. (14); §5.3.2; §6.3, Fig. 9.
 - [Berta et al. (2024)](/sources/berta-2024.md) — arXiv v4: §3.4 (a priori "fallback").

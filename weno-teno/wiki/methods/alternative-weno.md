@@ -5,7 +5,7 @@ description: "The alternative formulation of finite-difference WENO evaluates a 
 status: established
 aliases: [A-WENO, AFWENO, alternative formulation of WENO, alternative flux formulation, Jiang–Shu–Zhang scheme]
 tags: [weno, finite-difference, numerical-flux, reconstruction, multiphase]
-timestamp: 2026-10-24T05:33:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # Alternative WENO (A-WENO)
@@ -203,7 +203,7 @@ FD-WENO needs a smooth flux splitting, lower dissipation and dispersion errors, 
 preservation on curvilinear meshes (§1; stated, citing earlier work).
 
 For the Euler equations with gravity the structure of the flux is what makes the scheme
-[well-balanced](/properties/well-balancing.md) (§4.1, Theorem 5): the Lax–Friedrichs dissipation acts on
+[well-balanced](/properties/well-balancing.md) (§4.2, Theorem 5): the Lax–Friedrichs dissipation acts on
 the interpolated deviation $\delta u=u-u_{\mathrm e}$ from the hydrostatic state, the momentum source is
 rewritten as $(\rho/\rho_{\mathrm e})\partial_xp_{\mathrm e}$ (page-local $\rho_{\mathrm e}$, $p_{\mathrm e}$ the
 equilibrium density and pressure) and discretized by the same
@@ -298,5 +298,5 @@ in double and quadruple precision (Tables 4–8).
 - [Wong et al. (2021)](/sources/wong-2021.md) — §4.3.
 - [Chu, Kurganov & Na (2022)](/sources/chu-2022.md) — §1; §§2–5, Eqs. (2.1)–(5.2), Remark 4.1; §6, Remarks 6.1–6.3; §7, Table 7.1, Figs. 7.3, 7.10.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §2.2, Eq. (5).
-- [Li et al. (2023a)](/sources/li-2023.md) — §1; §2.2, Eqs. (6)–(8), (26)–(35); §4, Eqs. (61)–(71), Theorem 5; App. A; §5, Tables 3–8.
+- [Li et al. (2023a)](/sources/li-2023.md) — §1; §2–2.2, Eqs. (6)–(8), (26)–(35); §4, Eqs. (61)–(71), Theorem 5; App. A; §5, Tables 3–8.
 - [Wang et al. (2023a)](/sources/wang-2023.md) — §2, footnote 1, Eqs. (3)–(16), (22); §3; §4.1–4.2, §4.5, §4.9, Tables 1–3, Fig. 4; §5.

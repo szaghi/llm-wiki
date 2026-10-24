@@ -5,7 +5,7 @@ description: "The discontinuous Galerkin (DG) semi-discretization of a conservat
 status: established
 aliases: [DG, RKDG, central DG, CDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG, LDG, local discontinuous Galerkin, discontinuous spectral element method, DSEM]
 tags: [dg, numerical-flux, limiting, bound-preserving]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # Discontinuous Galerkin method
@@ -882,7 +882,7 @@ $N=1,2,3$ (§6.2, Table 10).
 - [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §3.2 Eqs. (24)–(25), (36), §4, §7.3–7.4.
 - [Liu & Wu (2025)](/sources/liu-2025.md) — arXiv v2: §2.4 Eqs. (14)–(35), Remarks 1–2; §3.2 Eqs. (45)–(49); §3.3–3.6 Eqs. (50)–(72), Thm. 1, Cors. 1–2, Remark 3; §4 Tables 1–2, §4.2.4, §4.2.6.
 - [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.2 Eqs. (3.15)–(3.16), §3.3 Eq. (3.21).
-- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §3.1 (degree convention).
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §3.1–3.2 (degree convention).
 - [Huang et al. (2025a)](/sources/huang-2025.md) — §2, §3, §4.
 - [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — arXiv v1: §3.2.2–3.2.3 Eqs. (7)–(10), §3.3.
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §2.1 Eqs. (2.8), (2.10), Remarks 2.1–2.2, Lemma 2.5, Thms. 2.6–2.7, 2.12; §3 Thms. 3.6, 3.10; §4 Tables 2–3, Figs. 9, 21.

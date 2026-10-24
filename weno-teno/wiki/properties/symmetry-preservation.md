@@ -5,7 +5,7 @@ description: "Symmetry preservation has four meanings in the sources: the mirror
 status: established
 aliases: [mirror symmetry preservation, symmetry breaking, symmetry-preserving discretization, skew-symmetry]
 tags: [low-dissipation, teno, weno, kinetic-energy-preserving]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # Symmetry preservation
@@ -66,7 +66,7 @@ WENO5-JS keeps it, and TENO5 breaks it on a coarse grid where WENO5-JS keeps it.
   floating-point inconsistencies of the implementation (for example a
   directional dependence), which grow exponentially,
   keeps the TENO5 solution symmetric to machine precision; the same was done for
-  BVD schemes (as recalled by Fu 2023, §3.8). The review sides with this view.
+  BVD schemes (as recalled by Fu 2023, §3.8). The review reports this finding ("Fleischmann et al. demonstrate") after opening the section with the observation that less dissipative schemes tend to break symmetry.
 - *The mesh itself*: on unstructured meshes the discrete problem is not
   symmetric in the first place. [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md)
   (§4.6, Figs. 16–17) report that their fifth-order unstructured

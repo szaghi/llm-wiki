@@ -5,7 +5,7 @@ description: "A troubled-cell (shock, discontinuity) indicator is a cheap local 
 status: established
 aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor, TVB minmod indicator, TENO-based troubled-cell indicator, Jameson sensor, derivatives-ratio detector, interface jump convergence sensor, minmod-based smoothness indicator, weak local residual, relaxed BVD indicator, discontinuity feedback factor, PAD, NAD]
 tags: [limiting, dg, teno, finite-difference, low-dissipation, machine-learning]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # Troubled-cell and shock indicators
@@ -86,12 +86,12 @@ from $[0,0.95]$ (§4.4, Fig. 6;
 with $\mathbb S_0=\log_{10}N^{-4}$, $\Delta_{\mathbb S}=1$, computed from the two
 highest modal energies of the element in an orthonormal Legendre basis
 (the form of the modal-energy indicator above), to blend a fraction
-$\beta_{\mathrm e}\varepsilon_K$ of low-order entropy dissipation into their
+$\beta_{\mathrm e}\epsilon_K$ of low-order entropy dissipation into their
 entropy-constrained subcell limiter
 ([subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md));
 for the KPP problem they also cap the subcell weights by Hennemann et al.'s
 logistic blending, with the sharpness $\ln\big((1-10^{-4})/10^{-4}\big)$ and
-threshold $\mathbb T(N)$ above (Eqs. 58–59; page-local $\beta_{\mathrm e}$).
+threshold $\mathbb T(N)$ above (Eqs. 58–59; $\beta_{\mathrm e}$, $\epsilon_K$ registry §10).
 
 **Rate of the Persson–Peraire sensor as a viscosity source.**
 [Cernetic et al. (2023)](/sources/cernetic-2023.md) (§4.1, Eqs. 41–45,
@@ -463,8 +463,8 @@ across it, the discrete form of Lax's entropy condition.
   dimensionless weight of their damping as "an intrinsic shock/discontinuity
   sensor" (§5); the damping coefficients it is built from are stated to be $O(1)$ across
   jumps, $O(\Delta x^{2N})$ in smooth regions and generically $O(\Delta x^{2N-2})$ near
-  smooth extrema, rates asserted rather than proved (§2.1, §5.1), and run their seven comparison limiters with the
-  KXRCF indicator above.
+  smooth extrema, rates stated as following from §4 but not proved there (§2.1, §5.1); the results of their seven
+  comparison limiters with the KXRCF indicator above are taken from Zhu, Cheng & Qiu (2013) (their ref. [13]).
 - [Wang et al. (2026)](/sources/wang-2026.md) (§5.2, Eqs. (44)–(48);
   finite-difference AMR) follow Ziegler et al. (as cited) and replace a
   normalized-curvature criterion of earlier AMR work, which they find to

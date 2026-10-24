@@ -5,7 +5,7 @@ description: "Mach 80 and Mach 2000 gas jets injected into a light ambient mediu
 status: established
 aliases: [Mach 2000 jet, Mach 80 jet, astrophysical jet, high Mach number jet]
 tags: [benchmark, positivity, bound-preserving, relativistic, mhd]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # High-Mach astrophysical jets
@@ -140,7 +140,7 @@ relaxed internal-energy positivity and the cell entropy inequality the
 run is robust (Fig. 6). In a shock-capturing variant that blends a
 fraction $\beta_{\mathrm e}\epsilon_K$ of the low-order entropy dissipation into the
 entropy bound ($\epsilon_K$ a modal smoothness factor, $\beta_{\mathrm e}\in[0,1]$
-user-chosen; both page-local here), finer features appear as $\beta_{\mathrm e}$
+user-chosen; both registry §10), finer features appear as $\beta_{\mathrm e}$
 decreases through $1$, $0.1$, $0.01$, $0$, but carbuncles appear at
 $\beta_{\mathrm e}=0.01$ and $0$, and also with the local minimum entropy principle
 in place of the cell entropy inequality (Fig. 7, Fig. A.8c). The authors

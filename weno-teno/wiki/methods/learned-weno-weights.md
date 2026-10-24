@@ -5,7 +5,7 @@ description: "Learned WENO weights replace the smoothness-indicator formula of a
 status: established
 aliases: [WENO3-NN, WENO3-NN1, WENO3-NN2, WENO5-NN, WCNS3-MR-NN, DSP-WENO, learned MUSCL slopes, learned discretization, neural-network WENO, data-driven WENO weights, machine-learned reconstruction, data-driven shock capturing]
 tags: [machine-learning, weno, reconstruction, finite-volume, finite-difference]
-timestamp: 2026-10-24T06:02:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # Learned WENO weights
@@ -296,7 +296,8 @@ Burgers' flux $f=u^2/2$ with $\eta=u^2/2$, $w=u$ and $\psi=u^3/6$, the average
 $\{\!\{f\}\!\}$ gives $[\![w]\!]\{\!\{f\}\!\}-[\![\psi]\!]=[\![u]\!]^3/12\ne0$, so an arithmetic
 flux average does not satisfy Tadmor's condition in general.)* The evidence for entropy stability
 is numerical. A discrete entropy remainder, defined in Eq. (4.10), stays non-positive over each
-family of 101 out-of-distribution initial data, for Burgers at every noise level (Figs. 5.3, 5.6, 5.9, 5.11).
+family of 101 test initial data, which include out-of-distribution ones, at every noise level
+$\xi\in\{0,0.25,0.5,1\}$ (§5, Figs. 5.3, 5.6, 5.9, 5.11).
 No convergence or stability analysis and no timings are given (§6).
 
 **Results** (training data by PyClaw, additive Gaussian noise of relative level

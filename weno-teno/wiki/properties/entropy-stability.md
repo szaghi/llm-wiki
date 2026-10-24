@@ -5,7 +5,7 @@ description: "A scheme is entropy stable when its discrete total entropy obeys t
 status: established
 aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG, energy stability, semi-discrete entropy stability, fully discrete entropy stability]
 tags: [entropy-stable, dg, numerical-flux, bound-preserving, limiting]
-timestamp: 2026-10-24T06:02:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # Entropy stability
@@ -387,7 +387,7 @@ sort-based Algorithm 2 costs $O(m\log m)$, $m=N(N+1)$ (§3.2, §3.4). A
 shock-capturing variant multiplies the admissible entropy budget by
 $(1-\beta_{\mathrm e}\epsilon_K)$, $\epsilon_K\in[0,1]$ a modal smoothness factor after
 Hennemann et al. and Pazner, $\beta_{\mathrm e}\in[0,1]$ user-chosen (Eq. (49), LP
-(51); page-local $\beta_{\mathrm e}$, $\epsilon_K$). The authors state that the
+(51); $\beta_{\mathrm e}$, $\epsilon_K$ registry §10). The authors state that the
 SSP Runge–Kutta step and its CFL condition are needed only for
 positivity; the entropy inequality is semi-discrete (footnote 7).
 

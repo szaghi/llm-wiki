@@ -5,7 +5,7 @@ description: "A TeCNO-type flux adds to an entropy-conservative flux a dissipati
 status: established
 aliases: [TeCNO, TVD-ES, sign property, entropy-stable reconstruction, ENO-based entropy-stable scheme, Fjordholm–Mishra–Tadmor scheme]
 tags: [entropy-stable, reconstruction, numerical-flux, weno, dg, relativistic]
-timestamp: 2026-10-24T06:00:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # TeCNO schemes — entropy-stable reconstruction with the sign property
@@ -21,7 +21,7 @@ reconstructed jump has the sign of the cell-value jump. This is the
 Fjordholm, Mishra & Tadmor (2012), as recalled by
 [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) (§4), by
 [Duan & Tang (2022)](/sources/duan-2022.md) (§1, §4) and by
-[Li, Duan & Tang (2022c)](/sources/li-2022-c.md) (§3.4, after their ref. [19]).
+[Li, Duan & Tang (2022c)](/sources/li-2022-c.md) (§1, their ref. [19]; §3.4).
 As recalled by Duan & Tang, Bhoriya & Kumar extended TeCNO schemes to
 relativistic hydrodynamics with ENO-based dissipation, and their own
 earlier uniform-mesh scheme already combined fifth-order WENO with the

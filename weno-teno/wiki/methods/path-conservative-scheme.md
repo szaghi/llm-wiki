@@ -5,7 +5,7 @@ description: 'Path-conservative schemes discretize a non-conservative product $\
 status: established
 aliases: [path-conservative method, PCCU scheme, path-conservative central-upwind scheme, A-WENO PCCU scheme, Dal Maso–LeFloch–Murat path]
 tags: [numerical-flux, central-scheme, riemann-solver, finite-volume, finite-difference, well-balanced, path-conservative]
-timestamp: 2026-10-24T05:59:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # Path-conservative schemes
@@ -248,7 +248,7 @@ solution in plots only (§3.2.2, §4.3). The scheme is part of a
 | stationary contacts | not claimed | discontinuous steady states preserved (Theorem 4.1) | preserved with HLLI anti-diffusion |
 | lake at rest | via equilibrium variables, asserted | special case of constant $\mathsf E$ *(compiler check, not in the sources: $q_1=q_2=0$ and constant layer energies give $h_1$, $h_2+b$ constant)* | passed "without any special modifications" |
 
-Chu et al. (2025b) state that they keep the flux-globalized well-balanced PCCU scheme of Kurganov et al. and change only its diffusion (§3–§4); they do not test two-layer shallow water. The three schemes of the table all use the two-layer shallow-water equations as a test system. For lake-at-rest
+Chu et al. (2025b) present their schemes as enhancing the flux-globalized well-balanced PCCU schemes of Kurganov et al. (§1), with the global fluxes computed as in Cao, Kurganov, Liu & Xin (§3); for the two-fluid system they drop the equilibrium variables and reconstruct $u$ (Remark 5.1). They do not test two-layer shallow water. The three schemes of the table all use the two-layer shallow-water equations as a test system. For lake-at-rest
 preservation see [well-balancing](/properties/well-balancing.md); for exact stationary jumps
 see [stationary contact preservation](/properties/stationary-contact-preservation.md).
 
@@ -256,7 +256,7 @@ see [stationary contact preservation](/properties/stationary-contact-preservatio
 
 - None of the sources of this page on non-conservative systems discusses the dependence of the
   computed weak solution on the choice of path; Chu et al. (2022) and Balsara et al. fix the straight
-  line in $u$, Kurganov et al. the straight line in $\mathsf E$, chosen for well-balancing (the scheme Chu et al. (2025b) keep). Only
+  line in $u$, Kurganov et al. the straight line in $\mathsf E$, chosen for well-balancing. Chu et al. (2025b) state no path: for the thermal rotating shallow-water system they take the equilibrium variables, global fluxes and path-conservative technique of Cao, Kurganov & Liu (Remark 5.4). Only
   Gaburro et al. (2024), for a conservation law in primitive variables, recall the inconsistency
   of the segment path with the jump conditions, and they avoid it by conservative updates at
   shocks rather than by another path.

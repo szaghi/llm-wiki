@@ -5,7 +5,7 @@ description: "WENO-CU6 (Hu et al.) is a sixth-order central-upwind WENO that add
 status: established
 aliases: [WENO-CU6, sixth-order central-upwind WENO, WENO-CU6-M1, EWENO-CU6, EWENO-CU]
 tags: [weno, reconstruction, low-dissipation, finite-difference, turbulence]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-24T06:38:53Z
 ---
 
 # WENO-CU6
@@ -43,7 +43,7 @@ $\{x_{i-2},\dots,x_{i+3}\}$, symmetric about $x_{i+1/2}$.
   WENO-CU6 linear weights or exponent. Li, Chen & Ren (2022a, §3.1, Eqs. (42)–(45)) evaluate the weights of their MDAD-WENO
   "by the same method as the WENO-CU6 scheme", with
   $\alpha_k=d_k\big(20+\tau_6/(\beta_k+\epsilon)\big)^2$, $\epsilon=10^{-40}$, the downwind three-point indicator
-  replaced by $\beta_6$ "following WENO-CU6", and their own dissipation-dependent linear weights
+  replaced by $\beta_6$ ("we adopt the approach of the WENO-CU6 scheme", §3.1), and their own dissipation-dependent linear weights
   ([MDCD schemes](/methods/mdcd-scheme.md)); they print $C=20$ and $q=2$ but do not say whether $q=2$ is the
   original WENO-CU6 exponent.
   Li, Sun, Zha, Zhu, Ding & Xia (2023b, Eq. (53)) write WENO-CU6 as $\alpha_k=d_k\big(C+\tau_6/(\beta_k+\epsilon)\big)$,
