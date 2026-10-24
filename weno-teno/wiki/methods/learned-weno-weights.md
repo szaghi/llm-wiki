@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Learned WENO weights"
-description: "Learned WENO weights replace the smoothness-indicator formula of a WENO scheme by a trained neural network that outputs the nonlinear weights; this page describes WENO3-NN and the five-point WENO5-NN of Nogueira et al. (architecture, ENO layers, ideal-weight loss, training, order, dissipation, cost), the ROUND operators fitted to WENO3-NN, and a learned DG smoothness indicator."
+description: "Learned WENO weights replace the smoothness-indicator formula of a WENO-type scheme by a trained network that outputs the nonlinear weights; the page describes WENO3-NN, the five-point WENO5-NN, WCNS3-MR-NN, the constrained DSP-WENO, learned MUSCL slopes and scheme selection, the ROUND operators fitted to WENO3-NN, and a learned DG smoothness indicator."
 status: established
-aliases: [WENO3-NN, WENO3-NN1, WENO3-NN2, WENO5-NN, neural-network WENO, data-driven WENO weights, machine-learned reconstruction, data-driven shock capturing]
+aliases: [WENO3-NN, WENO3-NN1, WENO3-NN2, WENO5-NN, WCNS3-MR-NN, DSP-WENO, learned MUSCL slopes, learned discretization, neural-network WENO, data-driven WENO weights, machine-learned reconstruction, data-driven shock capturing]
 tags: [machine-learning, weno, reconstruction, finite-volume, finite-difference]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T20:37:00Z
 ---
 
 # Learned WENO weights
@@ -144,6 +144,111 @@ points), the [Shu–Osher problem](/benchmarks/shu-osher-problem.md) (200 points
 and the [Mach 3 step](/benchmarks/forward-facing-step.md) (§4.2–4.4, figure comparisons). The cost is "several
 times" that of WENO5-JS, unmeasured; the authors present the network as a tool for discovering analytical weight
 functions rather than as a production scheme (§3.1, §5).
+
+## WCNS3-MR-NN (Fan et al. 2025b)
+
+[Fan et al. (2025b)](/sources/fan-2025-b.md) attribute the accuracy loss of earlier learned schemes
+(Stevens & Colonius' network, WENO3-NN, the WENO5-NN of Nogueira et al. and a data-driven WCNS3) to the
+requirement that the network predict, for *every* lower-order candidate, weights close to the linear
+ones; at fine scales small deviations then contaminate the accuracy (§1). They move the problem into the
+third-order [weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md) with the
+multi-resolution weighting of Zhu & Shu in the modified form of Qin et al.
+([multi-resolution WENO](/methods/multi-resolution-weno.md)), on point values of a staggered
+finite-difference grid:
+
+- **A target at one corner.** With nested candidates, the one-point value $u^{(1)}=u_i$ and the
+  three-point value $u^{(2)}=-\tfrac18u_{i-1}+\tfrac34u_i+\tfrac38u_{i+1}$, the multi-resolution combination
+  of the hierarchical polynomials is rewritten as a combination $\omega_1u^{(1)}+\omega_2u^{(2)}$ of the
+  candidates themselves (the "MR-q" form, Eqs. (19)–(20)), whose optimal weights are $(0,1)$. Third order
+  then holds iff $\omega_1=O(\Delta x^2)$ and $\omega_2=O(1)$ (Eqs. (29)–(30)). With a softmax output
+  $\omega_1=(1+e^{\delta_{\mathrm{sm}}})^{-1}$ ($\delta_{\mathrm{sm}}$ the logit difference, page-local), a
+  tolerance $\lvert\omega_1-d_1\rvert\le\epsilon_{\mathrm a}$ is an interval of width $O(\epsilon_{\mathrm a})$
+  around $\ln3$ for the Jiang–Shu target $d_1=\tfrac14$ and around $\ln10$ for the original
+  multi-resolution form ($d_1=\tfrac1{11}$), but the half-line $\delta_{\mathrm{sm}}\ge\ln(1/\epsilon_{\mathrm a}-1)$ for the
+  MR-q target $d_1=0$; e.g. $\delta_{\mathrm{sm}}\ge13.82$ for $\epsilon_{\mathrm a}=10^{-6}$ (App. A, Eqs. (A.4)–(A.6),
+  Table A.6). *(Compiler check, not in the sources: for $\epsilon_{\mathrm a}=10^{-2}$ the Jiang–Shu interval is
+  $[\ln(1/0.26-1),\ln(1/0.24-1)]=[\ln3-0.0527,\ln3+0.0541]$ and the MR-q bound $\ln99=4.595$, as tabulated.)*
+  Only the MR-q form keeps optimal $L^\infty$ accuracy in their advection test (Fig. A.19).
+- **Features.** The four normalized differences of WENO3-NN (Delta layer) plus a **scale-variant**
+  feature $\log_{10}\Delta_{\max}$, $\Delta_{\max}$ the largest one-sided difference, because on three points
+  a smooth extremum and a jump give essentially the same normalized data, while $\Delta_{\max}$ shrinks
+  under refinement only at the extremum (§3.1.1, Eqs. (24)–(26), Fig. 4;
+  [scale invariance](/properties/scale-invariance.md)).
+- **Network and safety layer.** Three hidden layers of 16 swish nodes with layer normalization and a
+  softmax output (a single layer of 8 nodes gives similar results, Remark 4); at inference a hard cut-off
+  at $C_T=2\times10^{-4}$, taken from WENO3-NN, with renormalization (§3.1.2–3.1.3, Eqs. (27)–(31)).
+- **Loss and training.** An $L^1$ distance to low-dissipation multi-resolution weights (base $30$,
+  amplifying parameter $1$) plus $1.2$ times a scale-weighted $L^1$ distance to high-dissipation ones
+  (base $10$, amplifying parameter $50$), switched off at large $\Delta_{\max}$ by the factor
+  $1-\tanh(2\Delta_{\max})$, plus an $L^2$ weight penalty $10^{-5}$ (§3.1.4, Eqs. (32)–(35)). Six function
+  families, 4000 samples each, rescaled by $10^a/\Delta_{\max}$ with $a\sim\mathcal U(-4,4)$; Adam, learning rate
+  $10^{-4}$, batches of 500, 100 epochs (§3.2, Table 1, Eq. (36)).
+
+**Results** (characteristic-wise interpolation, Roe flux, SSP-RK3 at CFL 0.5; §4). On linear advection of
+$10^{-3}\sin(2\pi x)$ the order is 3.00 from $N=80$ to $5120$ in all three norms ($L^1$ error
+$8.28\times10^{-6}$ at $N=20$, $6.29\times10^{-14}$ at $N=10240$, Table 3), and on the 1D Euler density wave
+third order to $N=10240$ (Table 4; [density-wave advection](/benchmarks/density-wave-advection.md)). Two
+re-implementations inside the same WCNS with the WENO3-NN network, with Jiang–Shu weighting (WCNS3-NN1) and
+with multi-resolution weighting (WCNS3-NN2), reach about second order in $L^1$, $L^2$ and first order in
+$L^\infty$ (Figs. 6–7). On Lax, Sod, Woodward–Colella and 2D Riemann configurations 3 and 5 the resolution
+is comparable to the fifth-order WCNS5-JS in several cases, better than WCNS3-JS and WCNS3-MR throughout
+(§§4.3–4.4), and its approximate dispersion relation shows lower dissipation than both
+([approximate dispersion relation](/definitions/approximate-dispersion-relation.md)). Wall-clock times
+are close to those of WCNS3-MR, e.g. $2800.06$ against $2808.29$ s on Riemann configuration 5 at
+$400\times400$ (Table 5, Intel i5-13600KF CPU with an RTX 4070 Ti GPU; where the network runs is not
+stated).
+
+## DSP-WENO: learned weights inside a feasible region (Charles & Ray 2025)
+
+[Charles & Ray (2025)](/sources/charles-2025.md) (§4, arXiv v2) learn the two weight perturbations of the
+third-order sign-preserving WENO used in entropy-stable [TeCNO](/methods/tecno-scheme.md) fluxes, but impose the
+constraints **strongly** ([sign-preserving WENO](/methods/sign-preserving-weno.md)). For each four-point
+stencil a hand-derived vertex algorithm builds the convex polygon of perturbations that satisfy
+consistency, the sign property and third-order accuracy (at most five vertices, six cases of the jump
+ratios); a small network (three hidden layers of 5 ReLU neurons, softmax output, 120 parameters) outputs
+five convex weights, and the perturbation is their combination of the vertices, so every output satisfies
+the constraints by construction (§4.1, Eqs. (24)–(30), Algorithm SM1). The inputs are the two jump ratios
+(through $\tanh$) and three scaled absolute jumps. Training uses interface values of synthetic smooth and
+piecewise-linear functions only (100 000 samples, $\Delta x=1/40,1/100,1/200$; §4.2–4.3), and one network
+serves advection, Burgers and 1D/2D Euler (§6). The authors prefer this to a weak, penalty-type imposition,
+which "cannot guarantee" the sign property and hence entropy stability (§6).
+
+**Results.** Third-order convergence on smooth advection and the isentropic vortex, where ENO3 loses order;
+larger errors than the unconstrained sign-preserving schemes on smooth data, being more dissipative; far
+smaller overshoots than those schemes at shocks (Burgers, Sod-type, Shu–Osher, Lax, 2D Riemann,
+Kelvin–Helmholtz); reconstruction about five times as costly as SP-WENO, 95% of it in the vertex search (§5,
+Tables 2–4, Fig. 3). The scheme is not positivity preserving (Remark 5). Details and the comparison with
+ENO and SP-WENO are on [sign-preserving WENO](/methods/sign-preserving-weno.md).
+
+## Learned MUSCL slopes (de Romémont et al. 2026)
+
+[de Romémont et al. (2026)](/sources/deromemont-2026.md) learn not weights but stencil coefficients. A
+convolutional network applied to the min–max-normalized primitive variables outputs, for every cell,
+variable and direction, three coefficients with zero sum (imposed by a final linear layer) that define a
+learned slope $\sum_{j=-1}^1\mathsf a_ju_{i+j}/\Delta x$ (page-local $\mathsf a_j$); the slope replaces the
+finite-difference slope of a second-order MUSCL finite-volume scheme whose van Albada limiter is kept, now
+applied to the ratio of learned slopes, with the Rusanov flux and explicit Euler steps (§3.1, §4.1–4.2,
+Eqs. (12)–(17)). Training is supervised against fine solutions sub-sampled by a factor 2, with $L^1$ and
+$L^2$ losses plus soft penalties on a discrete entropy inequality, on total-variation increase and on the
+$L^1$ norm of the network parameters, their coefficients tuned by Bayesian optimization (§4.4, Eqs.
+(18)–(25), Table 2). Because the limited scheme is stable by itself, they train on single steps, without the
+unrolled multi-step accumulation of earlier learned discretizations (§1, §4.4). Boundary conditions enter
+through padding matched to the boundary type, the learned contribution being zeroed at slip walls, and a
+slip-wall model is obtained by fine-tuning a periodic one (§4.3, §4.6). A linearized von Neumann analysis
+with frozen coefficients gives less dissipation and dispersion than the centred slope (§5, Fig. 4).
+
+**Results.** $L^1$ error reductions against the same scheme on the same coarse grid of 49.2% (Sod,
+128 cells), 46% (Shu–Osher), 22%, 39%, 48% and 28% (four 2D Riemann problems at $512^2$), 6% (2D explosion)
+and 19% (forward-facing step) (§6); no gain on a smooth advected sine, where the baseline scheme is
+"slightly better" and both are second order (§7, Fig. 16); comparable time-to-error on one V100 GPU (§8,
+Fig. 17).
+
+## Learned scheme selection
+
+[Huang et al. (2025b)](/sources/huang-2025-b.md) train a network to predict which of two candidate
+reconstructions (MUSCL or THINC) the boundary-variation-diminishing rule would select, so that only one is
+built per cell (deepMTBVD); the network chooses a scheme, not weights. It is described on
+[boundary variation diminishing](/definitions/boundary-variation-diminishing.md).
 
 ## Order, dissipation and cost
 
@@ -295,6 +400,35 @@ not under adding a constant, unlike the WENO3-NN features.)*
   from the surviving weights too, so $(0.4,0.6)$ becomes $(0.39996,0.60004)$ instead
   of staying unchanged; the difference is negligible but the forms are not
   equivalent.)*
+- **Fan et al. (2025b) and WENO3-NN.** The second-order behaviour of WCNS3-NN1 and WCNS3-NN2 concerns
+  WCNS re-implementations of the WENO3-NN network on point values, not the finite-volume WENO3-NN of Bezgin et
+  al., whose own tests are recorded above; the two results are not about the same scheme and are not recorded
+  as a contradiction. Fan et al.'s general statement that WENO3-NN-type networks lose accuracy under refinement
+  (§1) is shown only for these re-implementations.
+- Fan et al. (2025b) state that Remark 3's weights are convex, $\omega_k\ge0$. *(Compiler check, not in the
+  sources: the MR-q weights of the multi-resolution scheme used as training targets are
+  $\omega_1=\omega^{\mathrm p}_1-\omega^{\mathrm p}_2d^{\mathrm{MR}}_1/d^{\mathrm{MR}}_2$, which is negative for example for
+  $\omega^{\mathrm p}=(0.05,0.95)$ and $d^{\mathrm{MR}}=(\tfrac1{11},\tfrac{10}{11})$, below the range of a softmax.)* The paper
+  does not discuss it. Its Table 1 lists $\tan(kx)$, $k\in\mathcal U(5,30)$, on $[-1,1]$ among the smooth
+  training functions where the text says tanh, the family of the WENO3-NN training set above *(compiler check,
+  not in the sources: $\tan(kx)$ has poles in $[-1,1]$ for $k\ge5$, since $\pi/(2k)\le0.32$)*; the text speaks of
+  polynomials "up to degree three" where the table has degrees $0$ to $2$; and App. A writes the MR-q target as
+  "$d_1=\gamma_1=0$" although the multi-resolution linear weight $\tfrac1{11}$ is not zero.
+- Charles & Ray (2025, §5.2.1) write that the errors of DSP-WENO "are about an order of magnitude larger than
+  those of SP-WENO and SP-WENOc" on smooth advection. Their Table 3 gives, at $N=1000$, $5.02\times10^{-8}$
+  against $4.22\times10^{-8}$ (SP-WENO) on Test 1 and $1.66\times10^{-6}$ against $8.94\times10^{-7}$ on Test 2,
+  factors of about 1.2 and 1.9; factors of about seven appear in their reconstruction-only Table 2
+  ($1.22\times10^{-6}$ against $1.68\times10^{-7}$ at $N=1280$), where §5.1 makes the same statement, and on the
+  isentropic vortex of Table 4 ($2.73\times10^{-4}$ against $3.57\times10^{-5}$ at $N=400$)
+  *(compiler check, not in the sources)*.
+- de Romémont et al. (2026) summarize their gains as "20–50%" (abstract, §1, §9), while their 2D explosion
+  and forward-facing-step gains are 6% and 19% (§6.3). They state that the learned scheme "is not constrained
+  by the temporal resolution of the training data, allowing users to freely select time steps"; their only
+  time-step study (Sod, App. A, Table A.1, explicit Euler) gives gains of 49.1% at $\Delta t/\Delta x=0.01$
+  (CFL 0.022), 33.8% at $0.1$, 16.3% at $0.15$ and $-20.8\%$, $-42.9\%$, $-56.8\%$, $-34.8\%$ at $0.2$ to
+  $0.35$ (CFL 0.44 to 0.77), i.e. a worse error than the baseline MUSCL scheme there. Their §5 writes the CFL number as
+  $a\Delta x/\Delta t$, the inverse of their Eqs. (14)–(15). The entropy and total-variation terms are soft
+  training penalties; no discrete entropy inequality is proved for the scheme.
 - Huang et al. state that ROUND needs "only 5% of the cost of WENO3-NN"; their
   Table 2 gives $11/2139\approx0.5\%$ in FLOPs.
 - Yu & Hesthaven attribute a slight asymmetry of the viscosity on a Burgers test to the
@@ -310,3 +444,7 @@ not under adding a constant, unlike the WENO3-NN features.)*
 - [Fu (2023)](/sources/fu-2023.md) — §3.10: WENO3-NN among TENO-related schemes.
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — Abstract; §3, Eq. (3.4); §4.1–4.2, Eqs. (4.1)–(4.9), Table 1, Fig. 4; §5, Tables 2–3; §5.2; §5.4.6.
 - [Nogueira et al. (2024)](/sources/nogueira-2024.md) — Abstract; §1; §2, Eqs. (5)–(10); §3.1–3.3, Eqs. (11)–(17), Tables 1–2, Figs. 2, 5; §3.4, Fig. 6; §4, Table 3, Figs. 8–22; §5.
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §1; §2.2; §3, Eqs. (19)–(36), Remarks 3–4, Table 1, Figs. 3–5; §4, Tables 3–5, Figs. 6–18; App. A, Eqs. (A.1)–(A.6), Table A.6, Fig. A.19: WCNS3-MR-NN.
+- [Charles & Ray (2025)](/sources/charles-2025.md) — §1; §4, Eqs. (24)–(31), Algorithm SM1; §5, Tables 2–4, Fig. 3; §6; Remark 5: DSP-WENO, constrained learned weights (arXiv v2).
+- [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §1; §3.1; §§4.1–4.6, Eqs. (12)–(25), Tables 1–2; §5, Fig. 4; §§6–9, Figs. 6–17; App. A, Table A.1: learned MUSCL slope coefficients.
+- [Huang et al. (2025b)](/sources/huang-2025-b.md) — §3.3: learned BVD selection (deepMTBVD).

@@ -5,7 +5,7 @@ description: "Two-point fluxes satisfying Tadmor's jump condition conserve entro
 status: established
 aliases: [EC flux, entropy-conservative flux, entropy-dissipative flux, ED flux, Tadmor flux, KEP flux, KEEP flux, Ranocha flux, Shima flux, AEC flux, asymptotically entropy-conservative flux]
 tags: [entropy-stable, kinetic-energy-preserving, numerical-flux, dg]
-timestamp: 2026-10-23T14:57:00Z
+timestamp: 2026-10-23T20:40:00Z
 ---
 
 # Entropy-conservative and kinetic-energy-preserving two-point fluxes
@@ -483,6 +483,62 @@ the Powell and GLM terms (Eq. (51);
 [entropy stability](/properties/entropy-stability.md),
 [flux differencing](/methods/flux-differencing.md)).
 
+## Ideal MHD with the Godunov–Powell term
+
+The conservative ideal MHD system is not symmetrizable. Adding the
+[Godunov–Powell term](/definitions/godunov-powell-source-term.md)
+$(\nabla\cdot B)\,(0,B,v,v\cdot B)^\top$ to the left-hand side makes it
+symmetrizable by the entropy variables of $\eta=-\rho s/(\gamma-1)$.
+[Liu et al. (2025b)](/sources/liu-2025-b.md) (§2, Eqs. (2.7)–(2.9)) and
+[Liu et al. (2025c)](/sources/liu-2025-c.md) (§2, Eq. (7)) recall this
+after Godunov. With $w=\eta'(u)$ the term is $\phi_{\mathrm G}'(w)$ for the
+degree-one homogeneous function
+
+$$\phi_{\mathrm G}=\frac{\rho}{p}\,(v\cdot B),\qquad w=\Big(\frac{\gamma-s}{\gamma-1}-\frac{\rho\lvert v\rvert^2}{2p},\ \frac\rho pv,\ \frac\rho pB,\ -\frac\rho p\Big)$$
+
+(page-local $\phi_{\mathrm G}$, the sources' $\phi$ with $\beta=\rho/(2p)$;
+components in Liu et al. (2025b)'s order $(\rho,\rho v,B,E)$). The
+entropy-conservation condition gains a term in the jump of
+$\phi_{\mathrm G}$. Liu et al. (2025b) write it (Def. 3.1, Eq. (3.12)) as
+
+$$[\![w]\!]\cdot f^{\mathrm{ec}}+[\![\phi_{\mathrm G}]\!]\,\{\!\{B_1\}\!\}=[\![\psi^{(1)}_{\mathrm G}]\!],\qquad \psi^{(1)}_{\mathrm G}=\rho v_1+\frac{\rho}{2p}v_1\lvert B\rvert^2,$$
+
+with page-local $\psi^{(1)}_{\mathrm G}=w\cdot f^{(1)}+\phi_{\mathrm G}B_1-F_\eta^{(1)}$.
+Entropy stability is the same expression with $\le$ (Def. 3.2). Liu et
+al. (2025c) print (Def. 2, Eq. (9); with $\le$ for entropy stability,
+Eq. (10))
+
+$$[\![w]\!]\cdot f^{\mathrm{ec}}=[\![\psi^{(1)}]\!]-[\![\phi_{\mathrm G}]\!]\,\{\!\{B_1\}\!\},\qquad \psi^{(1)}=w\cdot f^{(1)}-F_\eta^{(1)},$$
+
+with the registry's potential $\psi$, which has no $\phi_{\mathrm G}B_1$ term
+(§2). The two papers define the potential differently: Liu et al.
+(2025b)'s $\psi^{(1)}_{\mathrm G}$ includes $\phi_{\mathrm G}B_1$. Both use the
+Chandrashekar–Klingenberg flux and write it out in full. Its mass flux is
+$\{\!\{\rho\}\!\}_{\log}\{\!\{v_1\}\!\}$, and its energy flux carries
+$1/\{\!\{\rho/(2p)\}\!\}_{\log}$. The momentum and induction components are
+products of arithmetic means, the induction ones weighted by $\rho/(2p)$
+(Liu et al. (2025b), §3.1; Liu et al. (2025c), App. A.1).
+
+The surface fluxes differ:
+
+- **Entropy-variable Lax–Friedrichs.** Liu et al. (2025b) take
+  $f^{\mathrm{ec}}-\tfrac12a\,\mathcal H[\![w]\!]$. Here $\mathcal H$ is the
+  discrete entropy Jacobian of Derigs et al. (page-local), with
+  $[\![u]\!]=\mathcal H[\![w]\!]$, so the flux reduces to Lax–Friedrichs.
+  They recommend the local $a=\max(\lvert\lambda^-_{\max}\rvert,\lvert\lambda^+_{\max}\rvert)$
+  (Eq. (3.14); [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)).
+- **HLL.** Liu et al. (2025c) use HLL with the three-wave relaxation
+  speed estimates of Bouchut, Klingenberg & Waagan. They state, citing
+  the literature, that HLL and Lax–Friedrichs are entropy stable when the
+  speed estimates bound the true ones (App. A.2;
+  [HLL-type solvers](/methods/hll-riemann-solvers.md)).
+
+Liu et al. (2025c) avoid the non-conservative term in the scheme. They
+discretize the conservative form and show that the $\phi_{\mathrm G}$ terms
+cancel exactly when the nodal field is globally divergence-free
+([entropy stability](/properties/entropy-stability.md),
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+
 ## From EC to entropy-stable fluxes
 
 An EC flux becomes entropy stable when a dissipation with a provable sign
@@ -492,9 +548,9 @@ is subtracted.
   write $h=f^{\mathrm{ec}}-\tfrac12R\lvert\Lambda\rvert R^{-1}\frac{\partial u}{\partial w}[\![w]\!]$,
   page-local $\Lambda$ the eigenvalue matrix, with $\partial u/\partial w$ at
   a mean state and Barth's eigenvector scaling, so the production is a
-  negative quadratic form in $[\![w]\!]$ (Eqs. (57)–(60)). Plain
-  $\tfrac12a[\![u]\!]$ is not entropy stable for MHD, as they recall from
-  Derigs et al. (Eq. (52)).
+  negative quadratic form in $[\![w]\!]$ (Eqs. (57)–(60)). They state,
+  after Derigs et al., that plain $\tfrac12a[\![u]\!]$ is not entropy stable
+  for MHD (Eq. (52)) *(compiler check, not in the sources: with scalar dissipation $a\ge0$ added to an entropy-conservative flux the production is $-\tfrac12a[\![w]\!]\cdot[\![u]\!]\le0$ for a convex entropy; see [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md))*.
 - **Roe-type scalar dissipation.** Renac (2021) uses the author's EC flux minus a
   scalar multiple of the largest wave speed times a matrix applied to
   $[\![w]\!]$, with no dissipation on the mass fractions (App. D, Eq. (D.1)),
@@ -505,6 +561,14 @@ is subtracted.
   ([TeCNO schemes](/methods/tecno-scheme.md)). Duan & Tang (2022) use a
   scalar maximal wave speed (including the mesh velocity) times the scaled
   eigenvector matrix, not a Roe-type $R\lvert\Lambda\rvert R^{-1}$ (§4).
+- **Dissipation on reconstructed jumps, third-order WENO.**
+  [Charles & Ray (2025)](/sources/charles-2025.md) use the fourth-order
+  LeFloch–Mercier–Rohde combination of Tadmor-type fluxes. For
+  advection the base flux is the arithmetic mean, for Burgers
+  $(u_i^2+u_iu_{i+1}+u_{i+1}^2)/6$, and for Euler Chandrashekar's
+  kinetic-energy-preserving EC flux. They add Roe-type dissipation on
+  jumps reconstructed with [sign-preserving WENO](/methods/sign-preserving-weno.md)
+  (§2, Eqs. (5)–(11), (33)–(34); arXiv v2).
 - **Correction instead of flux design.** Abgrall et al. (2022) avoid the
   construction of an EC flux altogether: an element-wise
   [entropy correction term](/methods/entropy-correction-term.md) makes any
@@ -630,4 +694,7 @@ Table 2).
 - [De Michele & Coppola (2023a)](/sources/demichele-2023.md) — §1, §4.2.5 (arXiv v1).
 - [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — §1–§6, Eqs. (1)–(15), Figs. 1–2 (arXiv v2).
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §1, §3 Eqs. (60)–(91), §4.4 Fig. 4 (arXiv v1).
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — §2 Eqs. (2.7)–(2.9), §3.1 Defs. 3.1–3.2 Eqs. (3.12)–(3.14).
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §2 Eq. (7), §3.1 Defs. 2–3 Eqs. (9)–(10), Thm. 1, App. A.1–A.2.
+- [Charles & Ray (2025)](/sources/charles-2025.md) — §2 Eqs. (5)–(11), §5 Eqs. (33)–(34) (arXiv v2).
 - [Alberti et al. (2025)](/sources/alberti-2025.md) — §2.1.1 Eqs. (19), (25)–(26), §3.1.1 Figs. 1–2.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Immersed-boundary and cut-cell methods"
-description: "Treatments of walls and interfaces off the mesh: ghost-cell immersed boundaries and the bilinearly complete reconstruction, cut cells and the small-cell problem, volume penalization with flux reconstruction, image lines, ghost points with a wall model, signed-distance extrapolation on adaptive meshes, cut against ghost cells at cold walls, and true-boundary reconstruction for embedded DG."
+description: "Treatments of walls and interfaces off the mesh: ghost-cell immersed boundaries and the bilinearly complete reconstruction, positivity-preserving convex interpolation with adaptive TENO, cut cells and the small-cell problem, volume penalization with flux reconstruction, image lines, ghost points with a wall model, signed-distance extrapolation on adaptive meshes, cut against ghost cells at cold walls, and true-boundary reconstruction for embedded DG."
 status: established
 aliases: [immersed boundary method, IBM, ghost-cell method, GCM, ghost-cell immersed boundary, cut-cell method, CCM, embedded boundary, HBCGCM, BCGCM, volume penalization, Brinkman penalization, IDW-IP, image line, HO-e, discrete forcing, eikonal extrapolation]
 tags: [immersed-boundary, finite-volume, flux-reconstruction, interface-capturing, multiphase]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T20:43:00Z
 ---
 
 # Immersed-boundary and cut-cell methods
@@ -339,6 +339,89 @@ shock by a sphere on up to 350 million cells and 256 GPUs
 ([shock diffraction](/benchmarks/shock-diffraction.md)); the immersed
 boundary is not assessed separately from the AMR (§3).
 
+## Positivity-preserving ghost cells with adaptive TENO
+
+[Chen & Chen (2026)](/sources/chen-2026.md) (§2.3–2.5) put a ghost-cell
+sharp-interface method into a fifth-order finite-difference
+[TENO](/methods/targeted-eno.md) solver on uniform Cartesian grids, with
+Lax–Friedrichs-split characteristic fluxes, the cut-off $C_T$ chosen
+locally by the [adaptive TENO](/methods/adaptive-teno.md) strategy of Fu,
+Hu & Adams, the [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)
+of Hu, Adams & Shu at every stage of a five-stage third-order
+[SSP Runge–Kutta](/methods/ssp-runge-kutta.md) method, and viscous fluxes
+by fifth-order central differences. Grid nodes are fluid or ghost points;
+each ghost point has a body-intercept point (BI) on the wall and an image
+point (IP) at twice that distance into the fluid (Figs. 4–5).
+
+- **A priori limiting at the wall** (§2.3.2, Fig. 3). Every interface flux
+  whose stencil contains a ghost point uses $C_T=10^{-1}$, "the largest
+  value", to add dissipation near the body; elsewhere $C_T=10^{-\lfloor\beta_{\mathrm a}\rfloor}$
+  with $\beta_{\mathrm a}=\alpha_{\mathrm a,1}-\alpha_{\mathrm a,2}\big(1-g\big)$ ranges over
+  $[10^{-9},10^{-1}]$ for $\alpha_{\mathrm a,1}=9$, $\alpha_{\mathrm a,2}=8$ (Eq. (26);
+  page-local $\beta_{\mathrm a}$, $\alpha_{\mathrm a,1}$, $\alpha_{\mathrm a,2}$, $g$ the mapped
+  Ren et al. indicator).
+- **Convex interpolation** (§2.5). At a BI, and at an IP whose four
+  bounding nodes are all fluid points, bilinear interpolation of the
+  conservative variables is written as two successive linear
+  interpolations, $Q_{I_1}=\omega_xQ_{N_1}+(1-\omega_x)Q_{N_2}$,
+  $Q_{I_2}=\omega_xQ_{N_4}+(1-\omega_x)Q_{N_3}$, $Q_P=\omega_yQ_{I_1}+(1-\omega_y)Q_{I_2}$
+  (page-local weights $\omega_x,\omega_y\in[0,1]$, not WENO weights), a convex
+  combination of admissible states, hence admissible because $G$ is convex
+  (their Theorem 1, cited, not proved). When a bounding node is a ghost
+  point it is replaced by its BI and the four-coefficient bilinear fit
+  $c_1xy+c_2x+c_3y+c_4$ through the BI and three grid nodes is used (Eqs.
+  (35)–(36)), which is not guaranteed positive; if it gives $\rho\le0$ or
+  $p\le0$, it is blended with the grid-only value by a weight found by
+  bisection (Eq. (37)), "rarely activated" (not quantified).
+- **Ghost values** (Eqs. (38)–(40)). Primitive variables are reflected,
+  $V_{\mathrm{GP}}=2V_{\mathrm{BI}}-V_{\mathrm{IP}}$ for Dirichlet and
+  $V_{\mathrm{GP}}=V_{\mathrm{IP}}-\Delta l\,(\partial_nV)_{\mathrm{BI}}$ for Neumann
+  conditions, with $u_{\mathrm{GP}}=2u_{\mathrm{BI}}-u_{\mathrm{IP}}$ and
+  $T_{\mathrm{GP}}=T_{\mathrm{IP}}$ at adiabatic walls; the method is formally
+  second order, and using the fifth-order scheme up to the wall "does not
+  compromise the robustness" (§2.5).
+
+**Evidence** (§3). The $L_2$ error of the wall-normal velocity on a Mach 3
+inviscid cylinder falls from $7.60\times10^{-2}$ to $5.54\times10^{-4}$
+between $800\times400$ and $6400\times3200$, orders 2.03, 2.81, 2.25, "the
+expected second-order accuracy" (Table 3). With $C_T\in[10^{-9},10^{-1}]$ the
+positivity limiter is rarely needed on that cylinder; with smaller cut-offs
+(the range $[10^{-15},10^{-5}]$, or a fixed $10^{-14}$, plus $10^{-1}$ at the
+wall) its activations spread to the shock front and into the wake (Fig. 8,
+maps only). Shock angles on 15° wedges at Mach 2, 4 and 6 are within
+0.3° of oblique-shock theory, and 34.80° against 34.58° on a 20° wedge at
+Mach 3.5 (Table 4), and on viscous cylinders at
+$\mathrm{Re}=2\times10^5$ the separation angle, shock stand-off and
+recirculation length are 115°, 0.950 and 1.20 at Mach 1.7 against Turner
+et al.'s 113°, 1.030 and 1.17, and 120°, 0.240 and 1.76 at Mach 5 against
+118°, 0.245 and 1.75 (Table 5;
+[flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md),
+[shock diffraction](/benchmarks/shock-diffraction.md) for Schardin's
+problem). No timings and no CFL number are printed.
+
+## A vector level set with inverse-distance image interpolation in MFC
+
+[Wilfong et al. (2026)](/sources/wilfong-2026.md) (§4.1.1–4.1.2,
+Algorithms 1–3) add a ghost-cell method after Tseng & Ferziger to
+[MFC](/software/mfc.md) 5.0. The geometry is a **vector** level set
+$\varphi_{\mathrm v}(x)$, the vector from a cell to the closest boundary point
+(page-local; not a scalar signed distance), analytic for simple shapes or
+obtained by ray tracing from STL/OBJ surface meshes. Ghost points are the
+solid cells within three cells of the fluid; the image point is
+$x_{\mathrm{ip}}=x_{\mathrm{gp}}+2\varphi_{\mathrm v}(x_{\mathrm{gp}})$; its value is an
+inverse-distance-squared average of the four surrounding cells, with zero
+weight for non-fluid cells, normalized to sum one. Ghost values are
+$v_{\mathrm{gp}}=0$ for no-slip, $v_{\mathrm{gp}}=v_{\mathrm{ip}}-(n\cdot v_{\mathrm{ip}})n$
+for slip, and $q_{\mathrm{gp}}=q_{\mathrm{ip}}$ (Neumann) for pressure, densities and
+volume fractions. *(Compiler check, not in the sources: the inverse-distance
+weights are non-negative and sum to one, so the image value is a convex
+combination of fluid states, as in Chen & Chen's grid-only case above.)*
+The authors call the cost negligible against the flow solve and validate
+the implementation on Mach 2 helium flow over a sphere at
+$\mathrm{Re}=6.5\times10^5$, showing the steady density with the analytic and
+with the STL level set (Fig. 2, fields only); no order of accuracy is
+reported.
+
 ## Ghost cells against cut cells at cold and reacting walls
 
 [Başkaya et al. (2024)](/sources/baskaya-2024.md) compare wall treatments
@@ -518,6 +601,25 @@ Figs. 8–9).
   no-slip wall in another; the two coincide only where the vortex
   velocity vanishes at the wall.
 
+- Chen & Chen (2026) state in the abstract that their interpolation
+  "ensures density and pressure remain positive at every grid point for
+  all time". The convexity argument is printed for the interpolated BI and
+  IP values; the ghost values come from the reflection
+  $2V_{\mathrm{BI}}-V_{\mathrm{IP}}$, which is not a convex combination, the rules
+  for ghost density and pressure are not printed, the IP fallback is a
+  bisection, and no test prints a CFL number. The abstract calls pressure
+  "concave" in the conservative variables and their Theorem 1 "convex"
+  *(compiler check, not in the sources: the convexity of $G$ that Theorem 1
+  draws from it holds for a concave pressure)*. They
+  print the momentum flux with the viscous stress $\sigma_{ij}$ where the
+  Kronecker delta is meant (Eq. (2)), and the indicator stencil as
+  $\min(\eta_{i-1},\eta_i,\eta_{i+2})$ without $\eta_{i+1}$ (Eq. (23)).
+- Chen & Chen's Table 3 orders recomputed from the printed errors are
+  2.03, 2.82, 2.25 (printed 2.81), and oblique-shock theory with $\gamma=1.4$
+  gives 45.34°, 27.06° and 22.67° for the 15° wedge, as printed, but 34.60°
+  for the 20° wedge at Mach 3.5, against the printed theoretical 34.58°
+  *(compiler check, not in the sources)*.
+
 # Citations
 
 - [Wang et al. (2022a)](/sources/wang-2022.md) — §1; §2.1–2.3, Eqs. (16)–(38), Figs. 1–2; §3.1–3.7, Tables 1–2, Figs. 3–20.
@@ -529,4 +631,6 @@ Figs. 8–9).
 - [De Vanna et al. (2023c)](/sources/devanna-2023-c.md) — §2.3 Eqs. (9), (15)–(18), §3.5 Eqs. (21)–(25), §4.
 - [Zaghi et al. (2023)](/sources/zaghi-2023.md) — §3, §3.1.1 Eq. (10).
 - [Başkaya et al. (2024)](/sources/baskaya-2024.md) — author preprint: §3, §3.2, §4 Table 1, §4.5 Table 7 Figs. 7–11, §4.6, §5 Fig. 18.
+- [Chen & Chen (2026)](/sources/chen-2026.md) — Abstract; §2.2–2.5, Eqs. (2), (14)–(40), Theorem 1, Figs. 3–5; §3.1–3.4, Tables 3–6, Figs. 6–21.
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §4.1.1–4.1.2, Algorithms 1–3, Fig. 2.
 - [Ciallella et al. (2024)](/sources/ciallella-2024.md) — arXiv v1: §1, §4 Eqs. (15)–(21), §5 Eqs. (22)–(36), Remarks 3–5, §6 Tables 2, 4, 5, 7, 9, 10, Figs. 8–9, §7.

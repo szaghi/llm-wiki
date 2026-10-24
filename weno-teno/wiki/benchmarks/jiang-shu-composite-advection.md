@@ -5,7 +5,7 @@ description: "Linear advection of Jiang and Shu's four-wave profile, a smooth na
 status: established
 aliases: [Jiang–Shu multi-wave test, multi-wave advection, multiple-wave advection, composite wave, Shu linear advection test, Gaussian–square–triangle–ellipse test]
 tags: [benchmark, weno, teno, reconstruction, low-dissipation]
-timestamp: 2026-10-23T15:17:00Z
+timestamp: 2026-10-23T19:51:00Z
 ---
 
 # Jiang–Shu composite-wave advection
@@ -121,9 +121,24 @@ for instance at order 6, which they attribute to the reconstruction
 keeping too much information from the centred stencil, call not
 spurious oscillations, and see decrease with resolution (§5.2, §9).
 
+**A static detection test.** [Liang & Fu (2026)](/sources/liang-2026.md)
+§3.3 use the profile without advecting it: shifted to $[0,2]$ as in
+Huang et al. (2023b) (Gaussian on $[0.2,0.4)$, square wave on
+$[0.6,0.8]$, triangle $1-\lvert10(x-1.1)\rvert$ on $[1.0,1.2]$, half
+ellipse on $[1.4,1.6)$, same constants), sampled on $N=400$ points, it is
+the fourth of four static functions on which they show that their
+discontinuity-detecting variable, the minimum over the three stencil
+pairs of a normalized agreement between the TENO smoothness indicators
+$\beta_k$, taking values in $(0,1]$, flags the jumps and the non-smooth
+regions (Fig. 3). The variable drives the mesh adaptation of their
+finite-volume [converged ENO](/methods/converged-eno.md) scheme with
+multiresolution [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md):
+a block is refined below 0.3 and coarsened above 0.7.
+
 ## Qualifications
 
-- All findings are visual comparisons of plotted profiles; no source
+- All findings are visual comparisons of plotted profiles (Liang & Fu's
+  use is a static plot of the detector); no source
   reports an error norm, a convergence rate or a measure of
   dissipation on this test, and the grids, times and stepping differ
   between sources, so results are not comparable across papers.
@@ -143,3 +158,4 @@ spurious oscillations, and see decrease with resolution (§5.2, §9).
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.2.1, Figs. 4–5.
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §4, Ex. 1, Tables 1–2, Fig. 1.
 - [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) — §5.2, §6, §9, Eq. (56), Fig. 11.
+- [Liang & Fu (2026)](/sources/liang-2026.md) — §3.3, Eqs. (27)–(28), Fig. 3.

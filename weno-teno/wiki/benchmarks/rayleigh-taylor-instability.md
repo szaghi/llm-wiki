@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu sett
 status: established
 aliases: [RTI, Rayleigh–Taylor, single-mode Rayleigh–Taylor instability]
 tags: [benchmark, low-dissipation, teno, weno, central-scheme]
-timestamp: 2026-10-23T15:02:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Rayleigh–Taylor instability
@@ -19,14 +19,14 @@ spike whose flanks are Kelvin–Helmholtz unstable. The test serves two
 purposes: the amount of secondary roll-up is a visual gauge of
 [numerical dissipation](/definitions/numerical-dissipation.md), and the
 exact left–right mirror symmetry of the data probes
-[symmetry preservation](/properties/symmetry-preservation.md). Twenty-four
+[symmetry preservation](/properties/symmetry-preservation.md). Twenty-five
 sources of the bundle discuss it (one of them only in a
 three-dimensional magnetized variant, one only in a three-dimensional
 two-species viscous variant, one only in a diffuse-interface variant,
 one in a spanwise-periodic three-dimensional extension, and one with
 Lagrangian particles); Fu (2021), Takagi et al., Ye et al.,
-Huang et al. (2026), Huang, Liang & Fu (2023) and Li, Chen & Ren (2022)
-cite Xu & Shu for it, Li et al. (2022b, WENO-ZN) and Chu et al. (2025a)
+Huang et al. (2026), Huang et al. (2025a), Huang, Liang & Fu (2023) and
+Li, Chen & Ren (2022) cite Xu & Shu for it, Li et al. (2022b, WENO-ZN) and Chu et al. (2025a)
 cite Shi, Zhang & Shu, Li et al. (2022b) also Young et al.
 
 ## Setup
@@ -47,7 +47,8 @@ The common data, printed by [Fu (2021)](/sources/fu-2021.md) §5.5.2,
 [Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.13 and
 [Zhou et al. (2023)](/sources/zhou-2023.md) §5.7, Eq. (42),
 [Tang (2024)](/sources/tang-2024.md) §4.4.5, Eq. (37),
-[Chu et al. (2025a)](/sources/chu-2025.md) Example 6 (arXiv v1) and, for a
+[Chu et al. (2025a)](/sources/chu-2025.md) Example 6 (arXiv v1),
+[Huang et al. (2025a)](/sources/huang-2025.md) §5.7, Eqs. (49)–(50) and, for a
 particle method, [Jiang et al. (2024)](/sources/jiang-2024.md) §5.2.1, with
 $c=\sqrt{\gamma p/\rho}$:
 
@@ -95,7 +96,8 @@ in the $\rho v_2$ equation, $\rho v_2$ in the energy equation), with
 gravity "acting in the positive direction of the y-axis".
 [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) Eq. (48) print the
 source $(0,0,\rho g,\rho v_2g)$ with $g=1$ on the right-hand side, the
-same convention. [Li, Chen & Ren (2022)](/sources/li-2022.md) mention
+same convention, and so do Huang et al. (2025a), Eq. (49), with the
+source $(0,0,\rho g,\rho v_2g)$, $g=1$. [Li, Chen & Ren (2022)](/sources/li-2022.md) mention
 "gravity source terms" without writing them, and
 [Liang et al. (2022)](/sources/liang-2022.md) and Tang, whose governing
 Eq. (32) is the homogeneous Euler system, do not write the gravity
@@ -153,6 +155,7 @@ width, as the common setup *(compiler check, not in the sources)*.
 | [Tang (2024)](/sources/tang-2024.md) §4.4.5 | [TENO-AZ](/methods/adaptive-teno.md) vs TENO-Z, TENO-A, TENO-LAD; global LF splitting, TVD-RK3 at CFL 0.5 | $256\times1024$ (timing on $240\times960$) | 1.95; 14 contours 0.9–2.2 |
 | [Jiang et al. (2024)](/sources/jiang-2024.md) §5.2.1 | Lagrangian weighted-least-squares particles with Roe-type pair states (LWLS-RR) or [WENO-Z](/methods/weno-z.md)-type reconstruction (LWLS-WENO-Z), vs RR-SPH and WENO-SPH; GPU | particle spacing $\Delta x_0=0.002$, $0.001$, $0.0005$ | 2.05 |
 | [Chu et al. (2025a)](/sources/chu-2025.md) Example 6 | second-order adaptive [low-dissipation central-upwind](/methods/low-dissipation-central-upwind-scheme.md) A-MM and A-WLR (overcompressive limiter in flagged cells) vs LDCU with Minmod2; SSP-RK3, CFL 0.4 | $\Delta x=\Delta y=1/1024$ | 1.95, 2.95 |
+| [Huang et al. (2025a)](/sources/huang-2025.md) §5.7 | $\mathbb P^2$ RKDG with the [TENO-THINC limiter](/methods/weno-limiter-dg.md) vs the Zhong–Shu simple WENO limiter, both in cells flagged by a TENO indicator; LLF, SSP-RK3, CFL 0.15 | $150\times600$, $300\times1200$ | 1.95; 43 contours 0.9–2.2 |
 | [Danis et al. (2025)](/sources/danis-2025.md) §5.8 | [tensor-train](/methods/tensor-train-weno.md) component-wise finite-difference WENO5-JS, global LF splitting, TT-SSPRK3 | $60\times240\times60$, $120\times480\times120$ | 1.95; 15 contours 0.952269–2.14589 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.7 | [WENO3-NN](/methods/learned-weno-weights.md) vs WENO3-JS, WENO3-Z, WENO5-JS; LLF, characteristic | $128\times512$, $256\times1024$ | 1.95; 20 contours 0.85–2.25 |
 
@@ -222,6 +225,10 @@ results in the literature they cite (Fig. 12); the solution's
 tensor-train ranks grow, and they name the single global truncation
 tolerance as a limitation for such localized features (§5.8).
 
+Huang et al. (2025a) find "significantly richer small-scale structures"
+with their TENO-THINC limiter for DG than with the simple WENO limiter on
+both grids (Fig. 8).
+
 **Cost of resolution on adaptive meshes.** Ramani & Shkoller compare
 their SAM-ALE run on $64\times128$ (target mesh concentrated at the
 tracked interface, depth parameter $\delta=0.97$ of their target, page-local, with a large zoom-in homotopy at
@@ -274,6 +281,10 @@ report different outcomes for low-dissipation schemes:
   cell (with the sign of $\rho v_1$ reversed), following Wang et al.
   (2020), because round-off breaks it in their low-dissipation schemes
   (Remark 4.2).
+- Huang et al. (2025a) observe that their TENO-THINC DG limiter breaks
+  the symmetry, attributing it to round-off disturbances that the low
+  dissipation does not suppress and citing Wakimura, Takagi & Xiao and
+  Fleischmann, Adami & Adams for it (§5.7).
 - Hong et al. raise the weight regularization to $\epsilon=10^{-4}$ on
   this case "to alleviate" round-off symmetry breaking, following
   Fu et al. (§5.5).
@@ -338,7 +349,7 @@ sources)*.
 
 ## Qualifications
 
-- Huang et al. (Eq. (6.10) and the text after it) print the heavy gas
+- Huang et al. (2026) (Eq. (6.10) and the text after it) print the heavy gas
   ($\rho=2$, $p=2y+1$) for $y\ge0.5$ and the light gas ($p=y+1.5$)
   below, and the fixed states $(1,0,0,2.5)$ at the bottom and
   $(2,0,0,1)$ at the top. Each of the two is the common setup with the
@@ -388,3 +399,4 @@ sources)*.
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.2.1, Eqs. (38)–(40), Figs. 12–13 (arXiv v1).
 - [Chu et al. (2025a)](/sources/chu-2025.md) — §4.2, Example 6, Remark 4.2, Figs. 4.9–4.10 (arXiv v1).
 - [Danis et al. (2025)](/sources/danis-2025.md) — §5.8, Eq. (42), Fig. 12 (arXiv v1).
+- [Huang et al. (2025a)](/sources/huang-2025.md) — §5.7, Eqs. (49)–(50), Fig. 8.

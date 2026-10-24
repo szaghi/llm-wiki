@@ -5,7 +5,7 @@ description: "Roe's solver upwinds every characteristic field of a linearized fl
 status: established
 aliases: [Roe flux, Roe scheme, Roe solver, linearized Riemann solver, Roe–Harten flux]
 tags: [riemann-solver, numerical-flux, characteristic, finite-volume]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:07:00Z
 ---
 
 # Roe approximate Riemann solver
@@ -89,7 +89,27 @@ The fix itself is not written out in any of these sources.
 | [Fu (2021)](/sources/fu-2021.md), [Takagi et al. (2022)](/sources/takagi-2022.md) | FD TENO, TENO-THINC | Rayleigh–Taylor with Rusanov and Roe fluxes ([Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md)) |
 | [Basile et al. (2022)](/sources/basile-2022.md) | modal DG (CODA) | convective flux with Harten-type fix |
 | [Berta et al. (2024)](/sources/berta-2024.md) | fourth-order FV, MHD and relativistic MHD (PLUTO) | one of six solvers on pointwise-reconstructed face states; Orszag–Tang runs with Roe or HLLD and UCT-HLLD electric fields (§3.3, §5.6) |
+| [Ren et al. (2025)](/sources/ren-2025.md) | FV WENO-Z, 2D Euler, shock-instability analysis | smoothed Roe flux in the matrix stability analysis; unstable at first to fifth order on a strong normal shock |
 | [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) | FV Hermite WENO, relativistic hydrodynamics | no Roe flux (global Lax–Friedrichs); the eigenvectors of the Eulderink–Mellema Roe matrix, rescaled, for the characteristic reconstruction (§3.1.3, Remark 3.3) |
+
+## Shock instability at first to fifth order
+
+[Ren et al. (2025)](/sources/ren-2025.md) (§3–§4) use the Roe flux as the main test case of their
+[matrix stability analysis](/methods/matrix-stability-analysis.md) of finite-volume schemes on a
+Mach-20 steady normal shock with one intermediate cell ($11\times11$ cells, intermediate-state
+position $\varepsilon_{\mathrm s}\in[0,1]$, page-local as on the carbuncle page). To make the flux
+differentiable at the mean state they smooth the absolute Roe-averaged eigenvalues
+$\hat v_1-\hat c,\hat v_1,\hat v_1,\hat v_1+\hat c$ by $\lvert\lambda\rvert\to(\lambda^2+\delta_0^2)/(2\delta_0)$ for
+$\lvert\lambda\rvert<\delta_0=10^{-4}$, after Shen, Yan and Yuan, and state that Roe is differentiable when
+the shock does not sit exactly between two cells (§3.3, Eqs. (32)–(33)). When the 1D Roe solution is
+itself unstable, the mean flow uses Xie et al.'s mass-flux consistency fix across the shock
+(Eq. (37)). Findings (§4.1.1, Table 2, Figs. 9–13): with fifth-order WENO-Z the Roe scheme is stable
+only for $\varepsilon_{\mathrm s}=0.8$ and $0.9$; at $\varepsilon_{\mathrm s}=0.1$ its largest growth rate
+lies between the first-order and the second-order (MUSCL, van Albada) rates, and the run collapses
+at $t=47.8$, at $t=42.2$ with two-point Gauss face integration, whose growth rate is lower. The
+predicted growth rate matches the measured one within 0.59% with the smoothing and 21.88% without
+it (Table 1). Fifth-order Roe on the transverse faces with first-order van Leer splitting on the
+normal faces is unstable, and so is the reverse (§4.2).
 
 ## Space-time form
 
@@ -146,12 +166,12 @@ micro-jet that LWLS-WENO-Z gives (§5.2.3, Fig. 14).
 - **Carbuncle.** Fu (2023) (§3.6) states that HLLC and Roe "may induce carbuncle problem in
   proximity to strong shockwaves with low numerical dissipation", while HLL is free of it but
   much more dissipative; Hu et al. (2022) list Roe with HLLC and HLLEM as shock-unstable (§1).
-  None of the sources analyses Roe's instability itself; Hu et al.'s linear analysis is of
-  HLLEM ([carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)).
+  Hu et al.'s linear analysis is of HLLEM; the analysis of the Roe flux itself is Ren et al.'s
+  (2025), below ([carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)).
 - Lesur et al.'s diffusivity ordering is a stated heuristic; their own linear-wave errors
   differ only by small factors (Fig. 7).
-- Hong et al. print the 1981 Roe reference with a DOI of 1997 form (ref. [24]); the reference
-  is not relied on here.
+- Hong et al. (ref. [24]) and Ren et al. (2025) (ref. [72]) print the 1981 Roe reference with a
+  DOI of 1997 form; the reference is not relied on here.
 
 # Citations
 
@@ -173,3 +193,4 @@ micro-jet that LWLS-WENO-Z gives (§5.2.3, Fig. 14).
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1.3, Remark 3.3 (arXiv v1).
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §4.4.
 - [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §2.1–2.2 (Eqs. (2)–(17), Remarks 2–5), §5, App. A.
+- [Ren et al. (2025)](/sources/ren-2025.md) — §3.2–3.3 (Eqs. (32)–(33), (37), Table 1), §4.1.1 (Table 2, Figs. 9–13), §4.2, ref. [72].

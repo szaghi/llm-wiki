@@ -141,8 +141,9 @@ authors as printed. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 6 (2026-10-23), cited further in chunks 7–9 (2026-10-23). This source is cited on:
+Chunk 6 (2026-10-23), cited further in chunks 7–10 (2026-10-23). This source is cited on:
 
+* [APEC flux for approximate pressure equilibrium](/methods/apec-scheme.md)
 * [Double-flux method](/methods/double-flux-method.md)
 * [Material-interface advection tests](/benchmarks/material-interface-advection.md)
 * [Multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)

@@ -5,7 +5,7 @@ description: "Smooth exact travelling-wave solution of ideal and relativistic MH
 status: established
 aliases: [Alfvén wave test, circularly polarised Alfvén wave, rotated Alfvén wave, large-amplitude Alfvén wave]
 tags: [benchmark, mhd, relativistic]
-timestamp: 2026-10-23T15:17:00Z
+timestamp: 2026-10-23T20:37:00Z
 ---
 
 # Circularly polarized Alfvén wave
@@ -49,6 +49,19 @@ $p=0.1$, $\gamma=5/3$, Alfvén speed 1, $t=2$, CFL 0.2, meshes $16^2$ to
 $256^2$. The reference is "the exact solution at $t=2$, which is the
 initial value", and the error is that of the reconstructed polynomial
 (their Eq. (84)).
+
+**Non-relativistic, rotated, [Liu et al. (2025b)](/sources/liu-2025-b.md).**
+Ex. 3, after Tóth, on the periodic $(0,1/\cos\alpha_{\mathrm r})\times(0,1/\sin\alpha_{\mathrm r})$
+with the propagation angle $\alpha_{\mathrm r}$ (page-local) not given
+numerically: with $x_\parallel=x\cos\alpha_{\mathrm r}+y\sin\alpha_{\mathrm r}$,
+$\rho=1$, $p=0.1$, $\gamma=5/3$, parallel field $1$, perpendicular
+velocity and field both $0.1\sin(2\pi x_\parallel)$, $v_3=B_3=0.1\cos(2\pi x_\parallel)$,
+period 1, run to $t=5$ on $16^2$ to $512^2$, errors of the perpendicular
+field. These are Liu, Feng & Wang's data above, with their angle
+$\theta=\pi/4$ replaced by the unstated $\alpha_{\mathrm r}$.
+
+**Non-relativistic, [Wilfong et al. (2026)](/sources/wilfong-2026.md).**
+§4.1.9 run "a smooth Alfvén wave" after Tóth without reprinting the data.
 
 **Non-relativistic and relativistic, 2D and 3D, [Berta et al. (2024)](/sources/berta-2024.md).**
 §5.3, Eqs. (47)–(49), after Mignone (MHD) and Del Zanna (RMHD) as they
@@ -276,6 +289,22 @@ Rembiasz et al., who, the authors note, reported a negative resistivity
 for their scheme (§4.3). See
 [numerical dissipation](/definitions/numerical-dissipation.md).
 
+**Third order, not cleanly, of entropy-stable damped DG.** Liu et al.
+(2025b) run their entropy-stable oscillation-free nodal
+[DG](/methods/discontinuous-galerkin.md) ($k=2$, CFL $0.12$, TVD-RK3 with
+the damping step split off and solved in closed form). The $L^1$ orders
+of the perpendicular field are 3.622, 5.065, 3.910, 3.086 and 2.897 from
+$16^2$ to $512^2$, with $L^1$ error $2.478\times10^{-8}$ on $512^2$; the
+last $L^2$ and $L^\infty$ orders are 2.854 and 2.917 (Table 2). The
+authors call this "the optimal order of error accuracy". On their smooth
+density wave the same scheme gives orders 3.000
+([density wave advection](/benchmarks/density-wave-advection.md)).
+
+**Orders of WENO3 and WENO5 in a GPU code.** Wilfong et al. report that
+the finite-volume WENO3 and WENO5 schemes of [MFC](/software/mfc.md) 5.0
+with the HLLD solver converge on their Alfvén wave "at the expected rate"
+(Fig. 11); no table is printed.
+
 **Other sources.** [Liu et al. (2021)](/sources/liu-2021.md) use a
 smooth Alfvén wave as the order test of their
 [WLS-ENO](/methods/wls-eno.md) MHD scheme (orders about 2 and 3).
@@ -316,9 +345,16 @@ smooth Alfvén wave as the order test of their
   is the per-axis reading; their text also calls the per-axis values
   "exactly the same", while Tables 3 and 5 print 0.49e-2/0.063 and
   0.50e-2/0.064 at $N_x=10$.
+- Liu et al. (2025b)'s orders are not monotone and their finest pair
+  falls below the design order three in all three norms (Table 2), while
+  the text claims optimal order; the orders follow from the printed errors
+  to rounding (2.897, 2.853, 2.917) *(compiler check, not in the
+  sources)*. Their angle $\alpha_{\mathrm r}$ is not printed, so the
+  domain size of the run cannot be reconstructed.
 - Chen, Wu & Xiong and López-Miralles et al. are read as arXiv v1
   preprints, Berta et al. as arXiv v4, Komissarov & Phillips as arXiv
-  v3; Liu, Feng & Wang and Ding & Wu (2024b) as versions of record.
+  v3; Liu, Feng & Wang, Ding & Wu (2024b), Liu et al. (2025b) and Wilfong
+  et al. as versions of record.
 
 # Citations
 
@@ -328,4 +364,6 @@ smooth Alfvén wave as the order test of their
 - [Liu et al. (2021)](/sources/liu-2021.md) — §4.1, Table 1.
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §4.2, Table 1.
 - [Ding & Wu (2024b)](/sources/ding-2024-b.md) — §5, Example 5.1, Eq. (88), Tables 1–2.
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — Ex. 3, Table 2.
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §4.1.9, Fig. 11.
 - [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — §3.3, §4.1, §4.3, §5.2, Eqs. (91), (98), Tables 1, 3, 5, Figs. 2, 6 (arXiv v3).

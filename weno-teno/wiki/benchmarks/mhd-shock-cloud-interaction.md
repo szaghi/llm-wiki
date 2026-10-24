@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "MHD shock–cloud interaction"
-description: "Ideal and relativistic MHD robustness test in which a strong planar fast shock with a rotational discontinuity overruns a dense cloud ten to thirty times the ambient density, in two and three dimensions; used for positivity-preserving DG, order-reduced fourth-order finite volumes, entropy-stable moving meshes and bound-preserving central DG."
+description: "Ideal and relativistic MHD robustness test in which a strong planar fast shock with a rotational discontinuity overruns a dense cloud five to thirty times the ambient density, in two and three dimensions; used for positivity-preserving and entropy-stable DG, order-reduced fourth-order finite volumes, entropy-stable moving meshes and bound-preserving central DG."
 status: established
 aliases: [shock–cloud interaction, cloud–shock interaction, Dai–Woodward shock–cloud problem, magnetized cloud–shock interaction]
 tags: [benchmark, mhd, relativistic, positivity]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # MHD shock–cloud interaction
@@ -36,6 +36,17 @@ States are $(\rho,v_1,v_2,v_3,B_1,B_2,B_3,p)$ in units without $4\pi$.
 |---|---|---|---|---|---|
 | [Berta et al. (2024)](/sources/berta-2024.md) §5.8, Eq. (56) | unit cube; inflow at $x=0$, zero gradient elsewhere; jump at $x=0.6$ | $(3.86859,0,0,0,0,2.1826182,-2.1826182,167.345)$ | $(1,-11.2536,0,0,0,0.56418958,0.56418958,1)$ | sphere $\rho=10$, radius 0.15, centre $(0.8,0.5,0.5)$, in equilibrium with the ambient | 5/3, 0.06 |
 | [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) §5.4, Eqs. (44)–(45) | $[0,1]\times[-0.5,1.5]$ (instead of $[0,1]^2$), periodic top and bottom, left Neumann, right Dirichlet; jump at $x=0.6$ | $(3.86859,0,0,0,2.1826182,-2.1826182,1,167.345)$ | $(1,-11.2536,0,0,0,0.56418958,0.56418958,1)$ | disc radius 0.15, centre $(0.8,0.5)$, state $(10,0,0,0,2.1826182,-2.1826182,1,167.345)$ | 5/3, 0.06 |
+| [Liu & Wu (2025)](/sources/liu-2025.md) §4.2.4 (arXiv v2), printed in the order $(\rho,v,p,B)$ | $[0,1]^2$; supersonic inflow on the right, outflow elsewhere; jump at $x=0.6$ | $(3.86859,0,0,0,0,2.1826182,-2.1826182,167.345)$ | $(1,-11.2536,0,0,0,0.56418958,0.56418958,1)$ | disc $\rho=10$, radius 0.15, centre $(0.8,0.5)$ | 5/3, 0.06 |
+| [Liu et al. (2025b)](/sources/liu-2025-b.md) Ex. 9 | $(0,2)\times(0,1)$, outgoing boundaries; shocked state on $0\le x_1\le1.2$ | $(3.88968,0,0,-0.05234,1,0,3.9353,14.2641)$ | $(1,-3.3156,0,0,1,0,1,0.04)$ | disc of radius 0.18 about $(1.4,0.5)$, $(5,-3.3156,0,0,1,0,1,0.04)$ | 5/3, 0.6 |
+
+Liu & Wu's states, reordered into the table's convention, are Berta et
+al.'s 2D states. Liu et al. (2025b) run a different variant, with a
+normal field $B_1=1$ continuous across the shock and a cloud five times
+the ambient density whose other variables are those of the pre-shock
+state, $v_1=-3.3156$ included. Liu et al. (2025c) Ex. 5.7 take the
+cloud–shock problem of Rossmanith in the setup of Christlieb, Rossmanith
+& Tang, as they cite it, without reprinting the data, to $T=0.06$ on
+$600^2$ cells.
 
 Dzanic & Witherden extend the domain so that the top and bottom
 boundaries lie outside the domain of influence over the run, and solve
@@ -76,6 +87,25 @@ on the same mesh the filter is "roughly equally performative" in
 resolving discontinuities and "marginally better" on the small-scale
 features on the trailing side of the cloud (Fig. 9). Without the
 positivity-preserving filter the scheme diverged with negative pressure.
+
+**Oscillation-eliminating DG with Godunov–Powell source.** Liu & Wu
+(2025)'s $\mathbb P^2$ locally divergence-free, positivity-preserving
+[OEDG](/methods/oedg.md) runs on $400^2$ cells at CFL 0.12 with the HLL
+flux. Their ablation makes the test a diagnostic of each component:
+without the oscillation-eliminating step the run fails, and without either
+the upwind discretization of the
+[Godunov–Powell source](/definitions/godunov-powell-source-term.md) in
+the cell-average equation or the positivity-preserving limiter the cell
+averages acquire negative pressure (§4.2.4; the outcome is stated, the
+failures are not shown in a figure).
+
+**Entropy-stable DG.** Liu et al. (2025b)'s entropy-stable nodal DG with
+an oscillation-eliminating damping term ($\mathbb P^2$, CFL 0.12) runs
+their variant on $512\times256$ cells to $T=0.6$ (Fig. 10). Liu et al.
+(2025c)'s globally divergence-free entropy-stable nodal DG, with its
+entropy-non-increasing scaling limiter and no positivity limiter,
+resolves the cloud without negative pressure on $600^2$ cells,
+"matching" the results of the earlier papers they cite (Fig. 15).
 
 **Order reduction in fourth-order finite volumes.** Berta et al. run
 both setups on $256^3$ zones with their fourth-order constrained-transport
@@ -140,6 +170,7 @@ relative local error of zero (Fig. 7c); see
 - All comparisons are visual (contours, schlieren images, a figure of
   another paper); no source reports an error norm or a conservation
   measure for this test.
+- Liu & Wu (2025) are read as arXiv v2.
 - Berta et al. are read as arXiv v4, Dzanic & Witherden as arXiv v2,
   Duan & Tang as arXiv v1, Ding & Wu (2024b) as the version of record.
 
@@ -149,3 +180,6 @@ relative local error of zero (Fig. 7c); see
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.4, Eqs. (44)–(45), Figs. 7–9 (arXiv v2).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — Exs. 6.6, 6.10, Tables 6.1–6.2, Figs. 6.10–6.12, 6.18–6.20 (arXiv v1).
 - [Ding & Wu (2024b)](/sources/ding-2024-b.md) — Example 5.7, Figs. 7c, 9.
+- [Liu & Wu (2025)](/sources/liu-2025.md) — §4.2.4 (arXiv v2).
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — Ex. 9, Fig. 10.
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — Ex. 5.7, Fig. 15.

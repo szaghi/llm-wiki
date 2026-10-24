@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Kelvin–Helmholtz instability"
-description: "Periodic shear-layer benchmark: Euler variants with sharp and smoothed layers serve as a visual dissipation gauge, a robustness test for high-order and entropy-corrected DG and a probe of non-convergence; low-Mach and MHD variants check all-Mach schemes; relativistic MHD runs measure growth rates; Vlasov and viscous variants serve as convergence tests."
+description: "Periodic shear-layer benchmark: Euler variants with sharp and smoothed layers serve as a visual dissipation gauge, a robustness test for high-order and entropy-corrected DG and a probe of non-convergence; low-Mach and MHD variants check all-Mach schemes and entropy-stable MHD DG; relativistic MHD runs measure growth rates; Vlasov and viscous variants serve as convergence tests."
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
 tags: [benchmark, low-dissipation, central-scheme, dg, positivity, finite-volume]
-timestamp: 2026-10-23T15:17:00Z
+timestamp: 2026-10-23T19:51:00Z
 ---
 
 # Kelvin–Helmholtz instability
@@ -148,6 +148,44 @@ $[-9/32,-7/32]$, $\eta=\tfrac12(1-\sin(16\pi(y-1/4)))$ on $[7/32,9/32]$
 and $0$ otherwise (page-local $\eta$); periodic for the conserved
 variables, first-order extrapolation for $\mathsf A_3$. They print the velocity
 as $1-2\eta(x)$ while $\eta$ is defined as a function of $y$.
+
+**Low-Mach variant with a density contrast, and low-Mach double shear
+layers.** [Zampa & Dumbser (2025)](/sources/zampa-2025.md) §4.4 (arXiv
+v1) run, on the periodic $[-1,1]^2$ with a $120\times120$ unstructured
+triangular mesh and polynomials of degree 1,
+$\rho=1-\tfrac14\tanh\big(25(\lvert y\rvert-\tfrac12)\big)$,
+$p=10^4/\gamma$, $v_1=-\tfrac12\tanh\big(25(\lvert y\rvert-\tfrac12)\big)$,
+$v_2=\tfrac1{100}\sin(2\pi x)\cos(2\pi y)$, density shown at $t=2$, 3,
+4, 5 (Fig. 5). With $\rho\approx1$ the sound speed is about 100, so the
+shear speed $\tfrac12$ is a Mach number of about $5\times10^{-3}$
+*(compiler check, not in the sources)*; the authors state that the
+non-constant density puts the test outside their asymptotic-preserving
+theory. Their §4.6 runs the double shear layer of Bell, Colella & Glaz on
+the same box mapped to $\hat x=(x+1)/2$, $\hat y=(y+1)/2$:
+$\rho=1$, $p=10^4/\gamma$, $v_1=\tanh(30(\hat y-0.25))$ for
+$\hat y\le0.5$ and $\tanh(30(0.75-\hat y))$ above, $v_2=0.05\sin(2\pi\hat x)$,
+viscosity $\mu=2\times10^{-4}$, 120 elements per side, $\Delta t=10^{-4}$,
+vorticity at $t=0.8$, 1.6, 2.4, 3.6 (Fig. 7).
+[Allegrini & Vignal (2025)](/sources/allegrini-2025.md) §4 (HAL
+manuscript) run the same layer inviscid on the periodic $[0,1]^2$,
+$\rho=p=1$, $v_1=\tanh(30(y-0.25))$ for $y<0.5$ and $\tanh(30(0.75-y))$
+otherwise, $v_2=0.05\sin(2\pi x)$, to $t=1.2$ on $128^2$, with their
+rescaling parameter $\varepsilon$ (the squared Mach-number scale,
+$M^2=\varepsilon/\gamma$, page-local) decreased to $10^{-6}$ (Fig. 16).
+
+**Ideal-MHD shear layers.** [Liu et al. (2025b)](/sources/liu-2025-b.md)
+Ex. 7, after Yee & Sjögreen, run $(0,1)\times(-1,1)$, periodic, $\gamma=1.4$:
+$\rho=1$, $v_1=5\big(\tanh(20(y+0.5))-\tanh(20(y-0.5))-1\big)$,
+$v_2=0.25\sin(2\pi x)\big(e^{-100(y+0.5)^2}-e^{-100(y-0.5)^2}\big)$,
+$v_3=0$, $p=50$, printed $B=(0,0,0)$, to $t=0.5$ on $256\times512$ (Fig.
+8). [Liu et al. (2025c)](/sources/liu-2025-c.md) Ex. 5.4 take the MHD
+setup of Mignone, Tzeferacos & Bodo, which they do not reprint, with
+reflective walls (implied by their statement on entropy for reflective
+walls), on $256\times512$ to $t=5$, 12 and 20, and plot the ratio of the
+poloidal field $\sqrt{B_1^2+B_2^2}$ to the toroidal field $B_3$ and the
+normalized poloidal magnetic energy; the linear growth lasts to $t\approx5$
+and tearing-mode reconnection sets in from $t\approx8$ (see
+[tearing-mode instability](/benchmarks/tearing-mode-instability.md)).
 
 **Visco-resistive MHD variant.** [Dematté et al. (2024)](/sources/dematte-2024.md)
 §4.3.2 run a magnetized shear layer on $[0,2]\times[-1,1]$, $1024^2$
@@ -336,6 +374,28 @@ numerical check of the asymptotic-preserving property of their MHD
 scheme (Fig. 5.7); the vorticity is computed with fourth-order central
 differences.
 
+**Low-Mach shear layers of compatible finite elements and IMEX finite
+volumes.** Zampa & Dumbser compare their low-Mach Kelvin–Helmholtz and
+double-shear-layer results with the literature only qualitatively
+(Figs. 5, 7). Allegrini & Vignal measure the density error against 1 at
+$\varepsilon=10^{-3}$: $9.18\times10^{-3}$ on $128^2$ and
+$5.13\times10^{-3}$ on $256^2$, which they describe as "of order
+$\varepsilon$"; the printed errors are 5 to 9 times $\varepsilon$ and
+fall by a factor 1.8 under refinement *(compiler check, not in the
+sources)*.
+
+**Entropy stability and the magnetic field.** Liu et al. (2025c) run
+their globally divergence-free entropy-stable nodal DG at $k=1,2,3$
+without any limiter; the total entropy does not increase and the
+divergence norm stays at machine level for $k=2$ (Figs. 7–9). Liu et
+al. (2025b) describe "growth of the magnetic field … amplified by the
+vortical flow" with their entropy-stable oscillation-free DG and plot
+the magnetic pressure in $[1,21]$ (Fig. 8). With the printed initial
+field $B=0$ the ideal induction equation $\partial_tB=\nabla\times(v\times B)$
+keeps $B\equiv0$, so the printed data cannot produce that figure and
+the initial field as printed is incomplete *(compiler check, not in the
+sources)*.
+
 **Entropy correction and BR2 projection in modal DG.** Alberti et al.
 (2025) use the inviscid case to compare their entropy-projection DG
 (STD) with five discrete entropy-balance (DEEB) corrections: every DEEB
@@ -387,6 +447,11 @@ convergent flow, and the benchmark measures an error.
 
 ## Qualifications
 
+- Liu et al. (2025b)'s Ex. 7 is not reproducible from the paper: the
+  initial magnetic field is printed as zero (see above). Liu et al.
+  (2025c) give no initial data for their MHD run.
+- Zampa & Dumbser and Allegrini & Vignal are read as arXiv v1 and the
+  HAL manuscript.
 - Chertock et al. print the Cesàro average with upper index $n$ where
   $m$ is meant, and refer to "the adaptive scheme" in the Ex. 8 text,
   a leftover: the paper has no adaptive scheme.
@@ -472,3 +537,7 @@ convergent flow, and the benchmark measures an error.
 - [Mignone et al. (2024)](/sources/mignone-2024.md) — §4.6, Eqs. (68)–(70), Figs. 7–8.
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Ex. 4.11 (roll-up on a shocked bubble only).
 - [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.4 (roll-up in a Riemann problem only).
+- [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §4.4, §4.6, Figs. 5, 7 (arXiv v1).
+- [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §4, Fig. 16 (HAL manuscript).
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — Ex. 7, Fig. 8.
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — Ex. 5.4, Figs. 7–9.

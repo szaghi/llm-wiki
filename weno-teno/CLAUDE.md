@@ -102,13 +102,20 @@ here, in this bundle's notation.
 
 ## Status
 
-**Chunk 9 staged 2026-10-23:** PAMPA, tensor-train and AENO
+**Chunk 10 staged 2026-10-23:** converged ENO, learned and adaptive
+TENO/WCNS, Active Flux variants, entropy-stable MHD DG, low-Mach and
+multiphase codes; 199 of 207 ingested, 221 concept pages plus the
+registry, 5442 bibliography entries, deep lint done, six contradictions
+open (the five of chunk 9 and whether HLL is carbuncle-free under
+high-order reconstruction). Next: chunk 11 (the remaining sources and the
+archive defects), with the whole-bundle deep lint and closing sweeps.
+
+**Chunk 9 committed 2026-10-23 (e275831):** PAMPA, tensor-train and AENO
 reconstruction, entropy projection, central-upwind and relativistic MHD
 schemes; 179 of 207 ingested, 212 concept pages plus the registry, 5027
 bibliography entries, deep lint done, five contradictions open (TENO
 $\tau_K$; conservation of WCNS; entropy-filter tolerance; cost of WENO-Z
 against mapped WENO; order of TENO at a second-order critical point).
-Next: chunk 10.
 
 **Chunk 8 committed 2026-10-23 (22017c3):** multi-resolution WENO, TENO and THINC
 variants, DG limiters, MHD and shallow-water schemes; 159 of 207

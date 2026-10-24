@@ -157,10 +157,11 @@ no unparseable items.
 
 # Pages created or updated
 
-Chunk 8 (2026-10-23), cited further in chunk 9 (2026-10-23). This source is cited on:
+Chunk 8 (2026-10-23), cited further in chunks 9–10 (2026-10-23). This source is cited on:
 
 * [Active Flux](/methods/active-flux.md)
 * [Density-wave advection](/benchmarks/density-wave-advection.md)
 * [ForestClaw](/software/forestclaw.md)
 * [Gresho vortex](/benchmarks/gresho-vortex.md)
+* [Linear acoustics tests](/benchmarks/linear-acoustics-tests.md)
 * [Two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md)

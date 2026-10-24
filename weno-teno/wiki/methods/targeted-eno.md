@@ -5,7 +5,7 @@ description: "TENO builds a K-point reconstruction from candidate stencils of in
 status: established
 aliases: [TENO, targeted essentially non-oscillatory scheme, TENO5, TENO6, TENO7, TENO8]
 tags: [teno, reconstruction, finite-difference, low-dissipation, turbulence]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:04:00Z
 ---
 
 # Targeted ENO (TENO)
@@ -154,6 +154,10 @@ Values used:
 | $10^{-5}$, $10^{-10}$, $10^{-13}$, $10^{-8}$ | the four wavenumber bands of TENO6-SA ([adaptive TENO](/methods/adaptive-teno.md)) | Zhang et al. (2024b), §5.1 |
 | $10^{-5}$; $10^{-4}$ | TENO5 default; Woodward–Colella blast wave with Roe flux, "for a stable result" | [Liang & Fu (2024a)](/sources/liang-2024.md), §2.4, §4.3 |
 | $10^{-5}$ (1D), $5\times10^{-4}$ (2D) | TENO-based troubled-cell indicator for spectral differences | [Chen & Fu (2024)](/sources/chen-2024.md), §4.2 |
+| $10^{-4}$; $10^{-5}$ | TENO troubled-cell indicator; TENO step of the TENO-THINC limiter for RKDG | [Huang et al. (2025a)](/sources/huang-2025.md), §3.1, §3.2.1 |
+| $10^{-10}$–$10^{-6}$, adaptive | TENO-E on unstructured meshes, from a jump-variance indicator | [Liang et al. (2025)](/sources/liang-2025.md), §3.3.4 ([adaptive TENO](/methods/adaptive-teno.md)) |
+| $10^{-9}$–$10^{-1}$, adaptive; $10^{-1}$ | TENO5-A cut-off; every stencil containing an immersed-boundary ghost point | [Chen & Chen (2026)](/sources/chen-2026.md), §2.3.2 |
+| $10^{-1}$; $10^{-10}$ or $10^{-8}$ | converged ENO: stencil discarded at the previous step; kept, large or small stencil | [Liang & Fu (2026)](/sources/liang-2026.md), §3.2.3 ([converged ENO](/methods/converged-eno.md)) |
 
 **Where TENO turns nonlinear.** Zhang et al. (2024b, §3.2, Table 1) measure "through
 numerical experiments" in the
@@ -211,7 +215,14 @@ An adaptive, locally varying $C_T$ is the subject of
   discontinuities ([Fu (2021)](/sources/fu-2021.md), §3.4; Fu 2023, §4.1).
 - **Steady states.** Residuals of WENO stall at truncation-error level because of
   slight post-shock oscillations, and TENO behaves the same way, "an open problem"
-  (Fu 2023, §4.2).
+  (Fu 2023, §4.2). [Liang & Fu (2026)](/sources/liang-2026.md) measure it for
+  finite-volume TENO5 with HLLC and the mid-point rule on uniform meshes: the residual
+  reaches near machine zero on a 1D stationary shock but stalls on 2D steady shock
+  problems, "around $O(1)$" on a heterolateral and "around $10^{-1}$" on an ipsilateral
+  shock interaction, with post-shock oscillations (§§5.1–5.6). They attribute the stall,
+  after their finite-difference paper, to the variation in time of the stencil choice at
+  fixed interfaces, and their [converged ENO](/methods/converged-eno.md) scheme makes the
+  cut-off depend on the previous step; their parameters for TENO5 are not printed.
 - **Cost.** TENO6-A costs 17% more than WENO5-JS on GPU and 47% more on CPU
   (Fu 2023, §5.4); TENO5 costs 810 ms against 696 ms for WENO5-Z per step on a
   $512\times128$ double Mach reflection (Takagi et al., Table 3), but 55.10 s
@@ -428,6 +439,37 @@ Recorded here because they have no page of their own:
   [troubled-cell indicators](/definitions/troubled-cell-indicator.md)). A very small
   $\epsilon$ such as $10^{-12}$ is "not good" because high-wavenumber noise of very low
   amplitude would then be flagged (§4.2).
+- **TENO5 with hierarchical target schemes in an immersed-boundary solver**
+  ([Chen & Chen (2026)](/sources/chen-2026.md), §2.3.1, Eqs. (14)–(22), Table 2, after Fu,
+  Hu & Adams 2017). On the TENO5 stencils, numbered here from the most upwind
+  ($S_0=\{i-2,i-1,i\}$, $S_1=\{i-1,i,i+1\}$, $S_2=\{i,i+1,i+2\}$, the registry's order),
+  each flag pattern selects a predefined target: all smooth, the fifth-order upwind
+  combination $(\tfrac1{10},\tfrac6{10},\tfrac3{10})$; $(1,1,0)$, $\tfrac14\hat f^{(0)}+\tfrac34\hat f^{(1)}$;
+  $(0,1,1)$, $\tfrac12\hat f^{(1)}+\tfrac12\hat f^{(2)}$; a single survivor, its own flux. A
+  wider stencil judged smooth forces its sub-stencils to be considered smooth. *(Compiler
+  check, not in the sources: the two four-point targets are the fourth-order
+  reconstructions $\tfrac1{12}(f_{i-2}-5f_{i-1}+13f_i+3f_{i+1})$ and
+  $\tfrac1{12}(-f_{i-1}+7f_i+7f_{i+1}-f_{i+2})$, so a dropped outer stencil costs one order, unlike
+  the renormalized weights discussed under Properties.)* The cut-off is adaptive, and stencils
+  touching ghost points of the [immersed boundary](/methods/immersed-boundary-method.md) take
+  $C_T=10^{-1}$ ([adaptive TENO](/methods/adaptive-teno.md)).
+- **TENO-E on unstructured meshes** ([Liang et al. (2025)](/sources/liang-2025.md), §3.3,
+  Eqs. (21)–(28)): the two-level unstructured selection of Ji, Liang & Fu above with
+  $\gamma_k=1/(\beta_k+\epsilon)^6$, $\epsilon=10^{-12}$, one cut-off for both levels and equal
+  weights $1/K$ on the surviving third-order directional stencils, at fifth to seventh order on
+  triangles, tetrahedra and hexahedra; it is applied only in cells flagged by a jump-variance
+  indicator, the linear large-stencil reconstruction acting elsewhere on the conserved variables,
+  and its cut-off follows the same indicator ([hybrid schemes](/methods/hybrid-weno.md),
+  [adaptive TENO](/methods/adaptive-teno.md)). Final $L_\infty$ orders on an entropy wave on
+  triangles are 4.95, 5.81 and 6.99, and the cost is 0.52–0.88 of CWENO5 (Tables 1–2).
+- **Converged ENO** ([Liang & Fu (2026)](/sources/liang-2026.md)): a finite-volume TENO-type
+  selection whose stencil-wise cut-off depends on the previous step's flags, with a noise filter
+  and a choice between the five-point linear value and a two-stencil third-order combination, for
+  steady states; see [converged ENO](/methods/converged-eno.md).
+- **An equal-weight TENO polynomial in a DG limiter** ([Huang et al. (2025a)](/sources/huang-2025.md),
+  §3.2.1, Eqs. (15)–(19)): the TENO cut-off ($q=6$, $\epsilon=10^{-10}$, $C_T=10^{-5}$) on the DG
+  polynomials of the cell and its two neighbours, the survivors averaged with equal weights and no
+  linear weights; it is one candidate of the [TENO-THINC](/methods/teno-thinc.md) limiter.
 - **Very high order and adaptive order**: TENO8-AA, TENO10-AA and TENO-A, see
   [adaptive TENO](/methods/adaptive-teno.md); **TENO-THINC** and its improved
   detector and interpolation-like jump flux of [Liang et al. (2022)](/sources/liang-2022.md), see
@@ -616,6 +658,16 @@ primitive variables and applies an HLLC flux (arXiv v2). Chamarthi reports:
 - Liang & Fu (2024b) claim the TENO-S indicator needs no case-by-case
   tuning, yet its $\epsilon$ differs between 1D ($10^{-4}$) and multi-D
   ($10^{-2}$).
+- Chen & Chen (2026, Eq. (19)) print the TENO5 measure as $\gamma_k=1/(\beta_k+\epsilon)^q$,
+  $\epsilon=10^{-40}$, "inspired by" Fu & Tang, without the $C+\tau_K/(\cdot)$ form of step 2 that this
+  page records for the TENO5 of Fu et al. they cite; whether the printed form is the one run is not
+  stated.
+- The explanations of stalled steady residuals differ: Fu (2023, §4.2) speaks of slight post-shock
+  oscillations, Liang & Fu (2026, §1, §3.2.3) of the variation of the reconstruction formula at fixed
+  interfaces, which they contrast with the post-shock-oscillation account of Zhang & Shu. The two are
+  not recorded as a contradiction: Liang & Fu describe the formula variation as an effect of
+  shock-induced instability, so the accounts can describe one mechanism, and neither source tests
+  them against each other.
 
 ## Contradictions
 
@@ -695,3 +747,7 @@ at the critical point.
 - [Liang & Fu (2024a)](/sources/liang-2024.md) — §2, Eqs. (7)–(15); §3.1–3.3; §4, Table 1: TENO5 recipe, target-stencil selection without linear weights, $C_T$ for the blast wave, cost.
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §4.2, Eqs. (15)–(20); §§5.4–5.7: TENO troubled-cell indicator and TENO weighting for spectral-difference limiters.
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §3.3, App. C; §4.8, Fig. 16(b): incremental-stencil WENO5IS with the TENO reference indicator; limiter frequency of WENO-JS5, TENO5 and WENO5IS.
+- [Chen & Chen (2026)](/sources/chen-2026.md) — §2.3.1–2.3.2, Eqs. (14)–(26), Table 2, Fig. 3: TENO5 targets, adaptive cut-off, ghost-point rule.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §3.3, Eqs. (21)–(28); §4, Tables 1–4: TENO-E on unstructured meshes.
+- [Liang & Fu (2026)](/sources/liang-2026.md) — §1; §3.2, Eqs. (17)–(26); §5: converged ENO, steady-state stall of FV TENO5.
+- [Huang et al. (2025a)](/sources/huang-2025.md) — §3.1–3.2.1, Eqs. (11)–(19): TENO indicator and equal-weight TENO polynomial in a DG limiter.

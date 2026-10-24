@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Magnetic field-loop advection"
-description: "Two-dimensional ideal-MHD test in which a weak cylindrical magnetic loop, defined by a vector potential, is advected diagonally across a periodic box; with the magnetic field nearly passive, the loop shape and magnetic-energy decay measure the dissipation of constrained-transport schemes, here at fourth order and at low Mach number."
+description: "Two-dimensional ideal-MHD test in which a weak cylindrical magnetic loop, defined by a vector potential, is advected diagonally across a periodic box; with the magnetic field nearly passive, the loop shape and magnetic-energy decay measure the dissipation of constrained-transport schemes, here at fourth order, at low Mach number and in globally divergence-free entropy-stable DG."
 status: established
 aliases: [field loop advection, advection of a magnetic field loop, current loop advection, Gardiner–Stone field loop]
 tags: [benchmark, mhd, relativistic, low-dissipation]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # Magnetic field-loop advection
@@ -26,7 +26,9 @@ after Gardiner & Stone and Mignone as they cite them;
 [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) Ex. 5.8, which call
 it a test of "capturing a tangential discontinuity for a
 multidimensional flow"; [Dematté et al. (2024)](/sources/dematte-2024.md)
-§4.2.1, who run the low-Mach variant of Dumbser et al.).
+§4.2.1, who run the low-Mach variant of Dumbser et al.;
+[Liu et al. (2025c)](/sources/liu-2025-c.md) Ex. 5.3, after Gardiner &
+Stone with the setup of Li, Xu & Yakovlev, which they do not reprint).
 
 ## Setup as printed
 
@@ -125,6 +127,18 @@ ten on the Orszag–Tang and Kelvin–Helmholtz tests, which the authors
 attribute to the low Mach number; a loop with amplitude $1$ in place of
 $10^{-3}$ is also run (§4.5, Fig. 22).
 
+**Globally divergence-free entropy-stable DG.** Liu et al. (2025c) run
+the loop to $t=2$ on $240\times120$ cells, periodic, without any limiter,
+with their nodal DG on $\mathbb Q^3$ cells ($k=2$) for the conservative MHD
+system, whose face-evolved normal fields and least-squares interior
+reconstruction keep the nodal field divergence-free and normal-continuous
+(see [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)),
+against the earlier entropy-stable nodal DG of Liu, Shu & Zhang for the
+Godunov-symmetrized system (ES), with ten-stage SSP-RK4 at CFL 0.45. The
+new scheme captures the loop better than ES in 40 contours of
+$\sqrt{B_1^2+B_2^2}$ (Fig. 5); its total entropy does not increase and
+its divergence norm stays near machine precision over the run (Fig. 6).
+
 ## Qualifications
 
 - As printed, Berta et al.'s Eq. (54) sets $\mathsf A_3=0$ also for
@@ -144,6 +158,9 @@ $10^{-3}$ is also run (§4.5, Fig. 22).
 - Chen, Wu & Xiong do not state which wave speed sets the explicit
   ERKC time step at $\varepsilon<1$, nor the hardware or the linear
   solver behind Table 5.5.
+- Liu et al. (2025c) state $\gamma=5/3$ once for the paper (§2) and do
+  not reprint the loop data, so their run cannot be placed in the table
+  above; its grid has the $2:1$ aspect of the other three.
 - Berta et al. are read as the arXiv v4 preprint, Chen, Wu & Xiong as
   arXiv v1, Dematté et al. as the version of record.
 
@@ -152,3 +169,4 @@ $10^{-3}$ is also run (§4.5, Fig. 22).
 - [Berta et al. (2024)](/sources/berta-2024.md) — §5.4, Eqs. (53)–(54), Figs. 6–7 (arXiv v4).
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — Ex. 5.8, Fig. 5.6, Table 5.5 (arXiv v1).
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §4, §4.2.1, Eq. (66), Fig. 11; §4.5, Fig. 22.
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §2, Ex. 5.3, Figs. 5–6.

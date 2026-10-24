@@ -5,7 +5,7 @@ description: "Constrained transport stores face averages of the normal magnetic 
 status: established
 aliases: [CT, staggered constrained transport, Evans–Hawley constrained transport, upwind constrained transport, UCT, UCT-GFORCE, Gardiner–Stone constrained transport, staggered mesh MHD, MPACT]
 tags: [mhd, finite-volume, relativistic, numerical-flux]
-timestamp: 2026-10-23T15:19:00Z
+timestamp: 2026-10-23T20:43:00Z
 ---
 
 # Constrained transport for the induction equation
@@ -191,6 +191,42 @@ from it by central differences, so that the central (cell-centred)
 divergence vanishes (Eq. (50)); motivated by adaptive meshes and
 multi-material coupling, which a dual representation complicates.
 
+## Face polynomials in discontinuous Galerkin
+
+[Liu et al. (2025c)](/sources/liu-2025-c.md) (§3.2, Eqs. (15)–(21), after
+Balsara, Kumar and Chandrashekar and Chandrashekar and Kumar, as recalled)
+carry the staggered idea to nodal DG on Cartesian meshes. The normal
+components are stored on faces as univariate polynomials of degree $N-1$,
+$b_1(y)$ on $x$-faces and $b_2(x)$ on $y$-faces (page-local; one degree
+below the cell space $\mathbb Q^N$; the source's face degree $k$ is
+$N-1$), and evolved by 1D DG weak forms of the 2D induction equation
+$\partial_tB_1+\partial_y\mathcal E_3=0$, $\partial_tB_2-\partial_x\mathcal E_3=0$,
+$\mathcal E_3=v_2B_1-v_1B_2$: for every test function $\varphi_{\mathrm t}\in\mathbb P^{N-1}$
+(page-local) on the face $x_{i+1/2}$,
+$$\int\partial_tb_1\,\varphi_{\mathrm t}\,dy=\int\hat{\mathcal E}_3\,\partial_y\varphi_{\mathrm t}\,dy-\tilde{\mathcal E}_{3,i+1/2,j+1/2}\,\varphi_{\mathrm t}(y^-_{j+1/2})+\tilde{\mathcal E}_{3,i+1/2,j-1/2}\,\varphi_{\mathrm t}(y^+_{j-1/2}),$$
+and the analogue with opposite signs for $b_2$ (Eqs. (16)–(17)). Inside a
+face $\hat{\mathcal E}_3$ is the induction component of the 1D face flux;
+at the vertices $\tilde{\mathcal E}_3$ is a single-valued electric field
+from a 2D HLL Riemann solver on the four surrounding states. With
+$\varphi_{\mathrm t}=1$ the face averages $\bar b$ change only by vertex
+values that each enter two faces of a cell with opposite signs *(compiler
+check, not in the sources)*, and the cell-average constraint
+$\Delta y(\bar b_{1,i+1/2}-\bar b_{1,i-1/2})+\Delta x(\bar b_{2,j+1/2}-\bar b_{2,j-1/2})=0$
+holds for all time if it holds initially (Eq. (21), stated after Balsara et
+al.). The interior nodal field is rebuilt from the face polynomials by a
+constrained least-squares reconstruction that makes it divergence-free at
+every node and continuous in its normal component (§3.3), and the
+total energy is corrected to keep the pressure; the reconstruction, its
+existence count and its use for entropy stability are on
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
+Their limiter scales the face moments of degree $\ge1$ by the smaller of the
+two adjacent cell factors and leaves the face averages, and with them the
+constraint, unchanged (§4.1). The authors state that the earlier
+divergence-free DG reconstructions of Li, Xu and Yakovlev and of Fu, Li and
+Xu "fail in designing a limiter for the magnetic field at interfaces since
+the limiter will destroy the theorem", while Balsara et al.'s, which
+contain the constraint explicitly, do not (§1).
+
 ## Order and accuracy
 
 CT itself is exact in the divergence at any order; the order is set by the
@@ -213,7 +249,14 @@ waves (Table 2), with the [field-loop advection](/benchmarks/field-loop-advectio
 smeared less at fourth than at second order (§5.4). Dematté et al. measure
 second order in space on a smooth MHD vortex at fixed $\Delta t$ (Table 2),
 and $\lVert\nabla\cdot B\rVert_{L^2}$ near machine precision with both
-variants through the MHD rotor (§4.1.4, Fig. 8).
+variants through the MHD rotor (§4.1.4, Fig. 8). Liu et al. (2025c)
+measure $L^2$ orders on the smooth MHD vortex at $t=20$ ($N_x=32$–$256$,
+10-stage fourth-order SSP-RK, CFL 0.45) of 2.29–2.57 for $N=2$,
+2.91–3.09 for $N=3$ and 4.00–4.47 for $N=4$ on the finest pair (the
+source's $k=1,2,3$), about $N$, which the text calls the designed accuracy
+(Table 1, [magnetized vortex](/benchmarks/magnetized-vortex.md)); this is
+one order below the $N+1$ of the cell space $\mathbb Q^N$, in line with the
+truncation error of order $N$ they state (§3.1).
 
 **Divergence-free forcing.** For driven turbulence Teissier et al. make the
 electromotive forcing a staggered face average in Fourier space, multiplying
@@ -272,6 +315,10 @@ divergence (§3.5, Eq. (55); initial fields likewise, Eqs. (76)–(77)).
   write that "the mathematical problem supposed to be solved ... is actually
   not posed". They cite, without testing, that GLM gives accuracy similar to
   CT in ideal MHD.
+- **Energy conservation in DG constrained transport.** Liu et al.
+  (2025c) give up local conservation of total energy by the nodal energy
+  correction that follows the reconstruction; the per-cell error is the
+  quadrature of the change of $\tfrac12\lvert B\rvert^2$ (Remark 2).
 - Other constrained-transport variants of the bundle (Touma's unstaggered
   CTM in a central scheme, the IDEFIX GPU code, vector potentials in
   finite-difference WENO, divergence-preserving prolongation on adaptive
@@ -286,3 +333,4 @@ divergence (§3.5, Eq. (55); initial fields likewise, Eqs. (76)–(77)).
 - [Mignone et al. (2024)](/sources/mignone-2024.md) — §1; §3.1, Eqs. (15)–(20); §3.6–3.8, Eqs. (43), (49)–(56), Fig. 1, footnote 1; §3.10.
 - [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — arXiv v3: §1, §3.
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §3.3.1, Eqs. (39)–(47); §3.3.2, Eqs. (48)–(51); §3.4, Eq. (61); §4.1.2, Table 2; §4.1.4, Fig. 8.
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §1; §3.1; §3.2, Eqs. (15)–(21); §3.3; §4.1, Eq. (27), Remark 2; §5.1, Table 1.

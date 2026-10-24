@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Flow past a circular cylinder"
-description: "Cylinder flows in four regimes: supersonic and hypersonic inviscid flow with a detached bow shock (steady shock capturing, limiters, immersed walls); hypersonic viscous flow over isothermal or catalytic walls in perfect or reacting gas, including a type IV shock–shock interaction (wall heat flux); subsonic inviscid flow testing wall treatments; viscous flow at Re 40 and 100."
+description: "Cylinder flows in four regimes: supersonic and hypersonic inviscid flow with a detached bow shock (steady capturing, shock stability, limiters, immersed walls); supersonic and hypersonic viscous flow (wall heat flux, stand-off, wake, a type IV shock–shock interaction); subsonic inviscid flow testing wall treatments; low-Reynolds viscous flow with steady wake or vortex shedding."
 status: established
 aliases: [cylinder flow, supersonic cylinder, bow shock over a cylinder, cylinder wake at Re 40, flow over a cylinder]
 tags: [benchmark, limiting, immersed-boundary, flux-reconstruction]
-timestamp: 2026-10-23T15:17:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # Flow past a circular cylinder
@@ -101,6 +101,44 @@ amplitude and width, the pressure and Mach profiles along $y=0$ converge
 (the second and third adaptive meshes being close), and the final mesh
 shows no oscillation or overshoot (Figs. 9–12). No error norm is given.
 
+**Mach 20: stability of fifth-order capturing.** [Ren et al.
+(2025)](/sources/ren-2025.md) §4.1.2, §4.2 and §5.2.3 run inviscid flow at
+$M_0=20$ ($\rho=1.4$, $p=1$) over a cylinder on $240\times40$ cells
+(circumferential × radial), CFL 0.5 for the residual histories, as the
+blunt-body check of their matrix stability analysis of fifth-order
+finite volumes (see [matrix stability analysis](/methods/matrix-stability-analysis.md)
+and [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)). With
+fifth-order WENO the HLL, van Leer, HLLC-ADC, SLAU and HLLC-EC fluxes
+and two hybrids of Roe and van Leer fluxes are all unstable, although
+HLL and van Leer are, in the paper's words, generally believed to
+capture strong shocks stably at first and second order (Figs. 15, 19,
+26); WENO with HLLC is severely unstable. Their
+MR-WENO-SD, whose weights a pressure-jump shock detector sets and which
+drops to the cell average in the shock structure, with HLLC switched to
+HLL at shocks, is stable, and its residual converges further than that
+of plain multi-resolution WENO (Figs. 33–34, 36–37).
+
+**Mach 3 with a sharp-interface immersed boundary.** [Chen & Chen
+(2026)](/sources/chen-2026.md) §3.1 run the Mach 3 setup of Guermond et
+al.: $[0,4]\times[0,2]$, a cylinder of $D=0.5$ at $(0.6,1)$, initial
+$(\rho,v_1,v_2,p)=(1.4,3,0,1)$, inlet left, outlet right, slip top and
+bottom, adiabatic slip cylinder, with their finite-difference TENO with
+adaptive cut-off $C_T\in[10^{-9},10^{-1}]$, a positivity-preserving
+flux limiter and a ghost-point [immersed boundary](/methods/immersed-boundary-method.md).
+The $L_2$ error of the wall-normal velocity, whose exact value is zero,
+is $7.60\times10^{-2}$, $1.86\times10^{-2}$, $2.64\times10^{-3}$ and
+$5.54\times10^{-4}$ on $800\times400$ to $6400\times3200$, orders 2.03,
+2.81, 2.25, which they call "the expected second-order accuracy" (Table
+3); the final time is not stated. On $700\times350$ cells (245,000
+points, close to Guermond et al.'s 252,820) the flow shows the same two
+triple points and a more clearly visible Kelvin–Helmholtz roll-up of the
+two contact lines, which they attribute to the low dissipation of
+adaptive TENO (Fig. 6); maps of $-\log C_T$ and of the cells where the
+positivity limiter acts are shown for three $C_T$ ranges (Figs. 7–8).
+A Mach 2 run with three cylinders of radius 0.1 at $(0.6,1.0)$,
+$(1.0,1.4)$ and $(1.0,0.6)$ in the same domain stays stable to $t=20$
+(Fig. 9; inflow state and grid not printed).
+
 **Shallow-water analogue.** [Del Grosso et al. (2024)](/sources/delgrosso-2024.md)
 §5.8 (HAL preprint) run the supercritical shallow-water flow past a
 cylinder of radius 0.5 m sitting on a bottom bump, with inflow depth 1
@@ -149,6 +187,39 @@ at the wall and at the shock; the pressure coefficient barely changes
 between the meshes, but the wall heat-transfer coefficient is lower on
 the initial mesh, and on the adapted mesh it "agrees very well" with the
 LAURA results of Gnoffo & White (Figs. 17–22).
+
+**Fifth-order heat flux at Mach 8.1.** Ren et al. (2025) §5.2.6 run a
+cylinder of diameter 40 mm at $M_0=8.1$, $T_\infty=63.73$ K,
+$\mathrm{Re}=6.5\times10^6$ per metre, isothermal no-slip wall at 300
+K, on $160\times120$ cells with first-cell height $5.0\times10^{-5}$ m.
+WENO with HLLC is unstable and gives an unphysical wall heat flux; MUSCL
+with HLLC/HLL is stable but its heat flux is unsatisfactory on this
+grid; MR-WENO-SD with HLLC/HLL gives a normalized stagnation heat flux of
+2.44 against 2.46 from the Fay–Riddell correlation, 0.81 % (Figs.
+41–42).
+
+**Supersonic wake at $\mathrm{Re}=200{,}000$ with an immersed
+cylinder.** Chen & Chen (2026) §3.4 run the setup of Mao et al. at
+$\mathrm{Re}_\infty=200{,}000$ and $M_\infty=1.7$, $3.0$, $5.0$
+($\mathrm{Kn}\approx3.7\times10^{-5}$), adiabatic no-slip wall, on
+$[-2D,22D]\times[-3D,3D]$ with $2000\times500$ points, and at Mach 1.7
+on $[-4.5D,16D]\times[-5.5D,5.5D]$ with $2000\times1200$ as Turner et
+al. do. Against Turner et al. they find (Table 5):
+
+| $M_\infty$ | separation angle | stand-off $\Delta x_s/D$ | recirculation length $l_r/D$ |
+|---|---|---|---|
+| 1.7 | 115° (Turner et al. 113°) | 0.950 (1.030) | 1.20 (1.17) |
+| 5.0 | 120° (118°) | 0.240 (0.245) | 1.76 (1.75) |
+
+At Mach 3 the stand-off is 0.33 against 0.34 from the correlation
+$\Delta x_s/D=\lambda_1\exp(\lambda_2/M^2)$, $\lambda_1=0.2$,
+$\lambda_2=4.7$ (page-local constants, Eq. (43)), and 0.37 from Mao et
+al. (Table 6); the local bow-shock angle is compared with oblique-shock
+theory and the wall $C_p$ and mean wake profiles at
+$x/D=0.55$–$2.5$ with Mao et al., Turner et al. and an experiment
+(Figs. 18–21). The correlation gives
+$0.2\,e^{4.7/9}=0.337$ at Mach 3 *(compiler check, not in the
+sources)*.
 
 **Type IV shock–shock interaction.** [Deng, Jiang & Yan (2025)](/sources/deng-2025.md)
 §4.7 send an oblique shock onto the bow shock of a cylinder of
@@ -287,6 +358,19 @@ dissipation. They compare with a wake length of 2.13 and a drag of 1.48,
 both labelled "Experiment" in Table 3, and call 1.588 "close to the
 experimental result".
 
+**Vortex shedding at low Mach number.** [Zampa & Dumbser
+(2025)](/sources/zampa-2025.md) §4.9 (arXiv v1) run viscous flow round a
+cylinder of radius 0.5 centred at $(10,10)$ in the rectangle from
+$(0,0)$ to $(50,20)$ with their semi-implicit compatible finite-element
+scheme for weakly compressible flow, on 9168 elements with curved
+$\mathbb P^3$ boundaries: inflow $v=(1,0)$ on the left, $p=0$ on the other sides
+of the rectangle, no-slip cylinder, $\mathrm{Re}=1/\mu$. The Strouhal
+number, from the shedding frequency at $(15,10)$, agrees over a range of
+Reynolds numbers with Tavelli & Dumbser, with Williamson & Brown and with
+the universal Strouhal curve, with fewer elements than the earlier
+computations they cite (Fig. 11); vorticity at $t=100$ for
+$\mathrm{Re}=185$ is shown in Fig. 12. No table is printed.
+
 **Compressible wakes.** Kou et al. App. D run the compressible
 cylinder benchmark of Canuto & Taira at $M=0.1$ to $0.5$, $\mathrm{Re}=40$
 (steady, $h=0.015D$) and $\mathrm{Re}=100$ (unsteady, $h=0.02D$, wake
@@ -308,9 +392,19 @@ the trend with Mach number is captured (Fig. D.25).
 - In Chen et al.'s Table 3 the variants with and without nonlinear
   weighting give identical wake lengths and drag, so the viscous test
   does not exercise the nonlinear weights.
-- The supersonic runs are evaluated by residual histories and contour
-  plots; no source compares the shock stand-off distance with a
-  reference value.
+- The inviscid supersonic runs are evaluated by residual histories and
+  contour plots, apart from Chen & Chen's wall-normal velocity error; the
+  only stand-off comparisons with reference values are Chen & Chen's
+  viscous ones (Tables 5–6).
+- Chen & Chen's Table 3 orders are not monotone (2.03, 2.81, 2.25); the
+  printed 2.81 is the truncation of the 2.817 that the printed errors
+  give *(compiler check, not in the sources)*. Their abstract states that
+  density and pressure stay positive "at every grid point for all time",
+  while the ghost-point values come from a linear extrapolation and no
+  CFL number is printed for any test.
+- Ren et al. do not print $\gamma$; their inviscid and viscous runs use
+  different grids and Mach numbers, and the viscous comparison is a
+  single stagnation value.
 - The two subsonic inviscid sources use different error measures
   (entropy error and drag against the exact zero, contour symmetry) and
   Mach numbers (0.3, 0.38). The theoretical stagnation $C_p$ values of
@@ -346,3 +440,6 @@ the trend with Mach number is captured (Fig. D.25).
 - [Nguyen et al. (2024)](/sources/nguyen-2024.md) — §2.2, §3, §4.3, §4.5, Figs. 9–12, 17–22 (arXiv v1).
 - [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — §5.8, Fig. 17 (HAL preprint).
 - [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.7, Figs. 20–23.
+- [Ren et al. (2025)](/sources/ren-2025.md) — §4.1.2, §4.2, §5.2.3, §5.2.6, Figs. 15, 33–37, 41–42.
+- [Chen & Chen (2026)](/sources/chen-2026.md) — Abstract, §3.1, §3.4, Eq. (43), Tables 3, 5–6, Figs. 6–9, 18–21.
+- [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §4.9, Figs. 11–12 (arXiv v1).

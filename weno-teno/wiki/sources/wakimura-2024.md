@@ -155,7 +155,7 @@ same DOI). Same-author same-year works take suffixes in printed order (Deng 2018
 
 # Pages created or updated
 
-Chunk 8 (2026-10-23), cited further in chunk 9 (2026-10-23). This source is cited on:
+Chunk 8 (2026-10-23), cited further in chunks 9–10 (2026-10-23). This source is cited on:
 
 * [Boundary variation diminishing (BVD)](/definitions/boundary-variation-diminishing.md)
 * [Double rarefaction (123) problem](/benchmarks/double-rarefaction-problem.md)
@@ -166,6 +166,7 @@ Chunk 8 (2026-10-23), cited further in chunk 9 (2026-10-23). This source is cite
 * [Numerical dissipation and anti-dissipation](/definitions/numerical-dissipation.md)
 * [Operator splitting for stiff source terms](/methods/operator-splitting.md)
 * [Richtmyer–Meshkov instability](/benchmarks/richtmyer-meshkov-instability.md)
+* [Six-equation two-phase model](/definitions/six-equation-model.md)
 * [Stiffened-gas equation of state](/definitions/stiffened-gas-equation-of-state.md)
 * [Symmetry preservation](/properties/symmetry-preservation.md)
 * [THINC reconstruction](/methods/thinc-reconstruction.md)

@@ -5,7 +5,7 @@ description: "One-dimensional Euler problem of two strong blast waves between re
 status: established
 aliases: [interacting blast waves, two blast waves interaction, Woodward–Colella blast wave, blast wave problem]
 tags: [benchmark, weno, teno, low-dissipation, positivity]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Woodward–Colella interacting blast waves
@@ -17,16 +17,17 @@ and interact. By $t=0.038$ the density shows narrow peaks and contacts
 (Fu 2021 single out the peak near $x\approx0.78$). The pressure ratio
 $10^5$ makes the problem a robustness test, and the height and position
 of the density peaks and the sharpness of the contacts measure
-resolution against a fine-grid reference. Thirty-six sources of the
-bundle run it, and two more run its left half as a single blast.
+resolution against a fine-grid reference. Thirty-nine sources of the
+bundle run it, and three more run its left half as a single blast.
 
 ## Setup
 
 The common data, printed by Fu (2021), Takagi et al., Ye et al., Wang
-et al. (2023b), Wang et al. (2023c), Zhao et al., Chertock et al., Deng, Huang et al., Li, Shu & Qiu,
-Wang et al. (2021), Bezgin et al., Fan et al., Hong, Ye & Ye, Hu,
+et al. (2023b), Wang et al. (2023c), Zhao et al., Chertock et al., Deng, Huang et al. (2026), Li, Shu & Qiu,
+Wang et al. (2021), Bezgin et al., Fan et al. (2023), Hong, Ye & Ye, Hu,
 Yuan & Zhao, Huang, Liang & Fu, Li, Chen & Ren, Liang et al., Zhou et
-al., Kolluru et al., Lin & Zhu, Zhang & Zhu, Zuo & Zhu (2024b), Chu et al. (2025a), Deng, Jiang & Yan and Fan et al. (2025) (Li et al. differ in one value and the two Chamarthi papers in the position of
+al., Kolluru et al., Lin & Zhu, Zhang & Zhu, Zuo & Zhu (2024b), Chu et al. (2025a), Deng, Jiang & Yan, Fan et al. (2025a), Duan, Barsukow &
+Klingenberg, Fan et al. (2025b) and Huang et al. (2025a) (Li et al. differ in one value and the two Chamarthi papers in the position of
 the right break, see Qualifications),
 in $(\rho,v,p)$ with $\gamma=1.4$:
 
@@ -77,7 +78,10 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 | [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.4, Eq. (55) | 600, CFL 0.2 | exact | right region printed from $x=0.8$; MEG7 (conservative and primitive) vs seventh-order mapped WCNS7M (arXiv v1) |
 | [Chu et al. (2025a)](/sources/chu-2025.md) Example 3 | $\Delta x=1/400$, SSP-RK3, CFL 0.4 | LDCU, $\Delta x=1/4000$ | adaptive [low-dissipation central-upwind](/methods/low-dissipation-central-upwind-scheme.md) A-MM, A-WLR (indicator constant 0.1) vs LDCU (arXiv v1) |
 | [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.3, Eq. (4.4) | third-order DG, 130 elements (390 DOFs) | high-order FV, 2000 cells | DG with non-uniform [ROUND](/methods/round-scheme.md) subcell limiting |
-| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.6 | not stated in the text, CFL 0.6 | classical WENO, 2001 | moment-based finite-volume [HWENO-U](/methods/hermite-weno.md) vs HWENO-M, WENO-ZQ |
+| [Fan et al. (2025a)](/sources/fan-2025.md) Ex. 3.6 | not stated in the text, CFL 0.6 | classical WENO, 2001 | moment-based finite-volume [HWENO-U](/methods/hermite-weno.md) vs HWENO-M, WENO-ZQ |
+| [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Example 5.3 | 800, CFL 0.4 (0.36 with van Leer splitting) | — | bound-preserving generalized [Active Flux](/methods/active-flux.md), Jacobian and [flux-vector-split](/methods/flux-vector-splitting.md) point-value updates (local Lax–Friedrichs, Steger–Warming, van Leer–Hänel), shock-sensor limiting $\kappa_{\mathrm s}=1$; also with a power-law reconstruction (Example D.3, CFL 0.1) (arXiv v3) |
+| [Huang et al. (2025a)](/sources/huang-2025.md) §5.3, Eq. (45) | 400, $\mathbb P^2$ RKDG, CFL 0.15 | WENO5-JS, 4000 | [TENO-THINC limiter](/methods/weno-limiter-dg.md) vs simple WENO limiter |
+| [Fan et al. (2025b)](/sources/fan-2025-b.md) Eq. (49) | 800; boundary conditions not stated | — | three-point WCNS3-MR-NN ([learned weights](/methods/learned-weno-weights.md)) vs WCNS3-JS, WCNS3-MR, WCNS5-JS |
 
 ## Findings across sources
 
@@ -106,7 +110,7 @@ slightly better than WENO9 (§5.3, Fig. 11); Huang, Liang & Fu find
 TENO5-A and their scale-sensor scheme better than WENO5-Z and TENO5 at
 the $0.78$ peak (§4.4, Fig. 7); Liang et al. capture the shocks as
 sharply as WENO5-Z and TENO5 and resolve the peak "slightly better"
-(§4.3, Fig. 9). Fan et al. find HWENO-R and HWENO-L better than WENO-ZQ
+(§4.3, Fig. 9). Fan et al. (2023) find HWENO-R and HWENO-L better than WENO-ZQ
 and HWENO-R slightly better than HWENO-L (Ex. 3.4, Fig. 3.4). With only
 a second-order MUSCL reconstruction, Hu, Yuan & Zhao find their
 RHLLEM-LD Riemann solver giving "obviously higher resolution for all
@@ -179,7 +183,7 @@ their hybrid's switch threshold per problem ($\psi_c=0.5$ here,
 against 0.4 and 0.8 on the [Sedov problem](/benchmarks/sedov-blast-wave.md);
 §4.2). See [TENO](/methods/targeted-eno.md).
 
-**Linear weights.** Fan et al. use the problem to study the linear
+**Linear weights.** Fan et al. (2023) use the problem to study the linear
 weights of HWENO-R, which they state may be arbitrary positive numbers
 summing to one: nine flux sets G1–G9 and nine derivative-limiter sets
 D1–D9 (Table 3.4) show that the resolution depends strongly on them,
@@ -217,7 +221,7 @@ is, to their knowledge, "the first Riemann-problem solver-free scheme"
 to resolve that contact sharply (Fig. 4.4). Deng, Jiang & Yan find their third-order DG/FV-ROUND on 390
 DOFs competitive with a ninth-order DG with first-order subcell
 correction of Vilar on 540 DOFs, as published, and slightly better at
-the contact at $x=0.6$ (Fig. 9). Fan et al. (2025) find HWENO-U better
+the contact at $x=0.6$ (Fig. 9). Fan et al. (2025a) find HWENO-U better
 resolved than HWENO-M and WENO-ZQ (Fig. 10), at a total CPU time between
 the two (Table 7).
 
@@ -232,6 +236,17 @@ costs: 5274.56 s for ALW-MR-WENO-5 against 8343.94 s for MR-WENO-5
 (ratio 0.63; Lin & Zhu, Table 3.1, hardware not stated), and 1.3388,
 2.9974 and 7.9915 s for HMR-WENO against 3.7314, 6.6907 and 10.310 s for
 MR-WENO at orders 5, 7, 9 (Zuo & Zhu 2024b, Table 3.1, a laptop).
+
+**Bound preservation, limiters and learned weights.** Duan et al.'s
+Active Flux variants all blow up without bound-preserving limiting
+(Example 5.3); the power-law reconstruction of an earlier work they cite reduces
+oscillations less than their shock-sensor limiting and drops the CFL
+number to 0.1, and they "do not recommend" it for the generalized method
+(Example D.3, Fig. 20). Huang et al. (2025a)'s TENO-THINC DG limiter
+resolves the density peak "much more effectively" and the shocks more
+sharply than the simple WENO limiter (Fig. 3). Fan et al. (2025b)'s
+three-point WCNS3-MR-NN clearly outperforms the other third-order
+schemes and nearly matches the five-point WCNS5-JS (§4.3.3, Fig. 13).
 
 ## Single blast
 
@@ -259,6 +274,15 @@ $0.01$ (Fig. 16). They run the half problem because the full two-blast
 problem gives negative pressures with their high-order schemes,
 AENO-C included, around $t\approx0.028$, when the shocks collide, as
 stated (§7.2); see [ADER](/methods/ader-scheme.md).
+
+[Huang et al. (2025b)](/sources/huang-2025-b.md) §4.2.3 run the same
+left half on $[0,1]$, $(1,0,1000)$ for $x<0.5$ and $(1,0,0.01)$ beyond,
+on 100 cells to $t=0.012$, calling it the "strong Lax" problem and "half
+of the blast wave" of Woodward–Colella; their network-selected
+MUSCL/THINC reconstruction is sharper than MUSCL and less dissipative
+than MUSCL-THINC-BVD at the strong contact (Fig. 7). The data also
+appear exactly in their training set (Table 6), so the run is not an
+out-of-sample test *(compiler check, not in the sources)*; see [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md).
 
 ## Two-dimensional strip on triangles
 
@@ -298,7 +322,7 @@ with specifications deferred to an earlier paper (Fig. 7).
 
 - Li et al. print the middle pressure as $0.001$ (Eq. (41)) where Fu
   (2021), Takagi et al., Ye et al., Wang et al. (2023b), Chertock et
-  al., Deng, Huang et al., Li, Shu & Qiu, Wang et al. (2021) and
+  al., Deng, Huang et al. (2026), Li, Shu & Qiu, Wang et al. (2021) and
   Bezgin et al. print $0.01$; whether this is a misprint or the value run cannot be decided
   from the paper.
 - Cernetic et al. print the middle pressure as $0.1$, ten times the
@@ -341,7 +365,7 @@ with specifications deferred to an earlier paper (Fig. 7).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — Ex. 5.7, Fig. 4 (arXiv v1).
 - [Chu et al. (2025a)](/sources/chu-2025.md) — §4.1, Example 3, Fig. 4.4 (arXiv v1).
 - [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.3, Eq. (4.4), Fig. 9.
-- [Fan et al. (2025)](/sources/fan-2025.md) — Ex. 3.6, Fig. 10, Table 7.
+- [Fan et al. (2025a)](/sources/fan-2025.md) — Ex. 3.6, Fig. 10, Table 7.
 - [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) — §7.2, Eq. (69), Figs. 15–16.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §VIII.d, Fig. 10.
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.2.2–3.2.3, Figs. 6–7.
@@ -367,3 +391,7 @@ with specifications deferred to an earlier paper (Fig. 7).
 - [Lin & Zhu (2024)](/sources/lin-2024-b.md) — Case 3.6, Fig. 3.7, Table 3.1.
 - [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — Ex. 3.6, Figs. 3.11–3.12.
 - [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — Ex. 3.4, Figs. 3.4–3.5, Table 3.1.
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — Examples 5.3, D.3, Fig. 20 (arXiv v3).
+- [Huang et al. (2025a)](/sources/huang-2025.md) — §5.3, Eq. (45), Fig. 3.
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §4.3.3, Eq. (49), Fig. 13.
+- [Huang et al. (2025b)](/sources/huang-2025-b.md) — §4.2.3, Table 6, Fig. 7.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "WENO limiters for discontinuous Galerkin"
-description: "A WENO limiter replaces the DG polynomial of a troubled cell by a nonlinear, cell-average-preserving combination of polynomials from the cell and its neighbours; the page gives the compact simple WENO limiter, a direction-wise characteristic variant, Maltsev et al.'s same-order CWENOZ replacement on mixed meshes, Huang and Fu's TENO-weighted compact limiter, and critiques."
+description: "A WENO limiter replaces the DG polynomial of a troubled cell by a nonlinear, cell-average-preserving combination of polynomials from the cell and its neighbours; the page gives the simple WENO limiter, a direction-wise variant, a same-order CWENOZ replacement on mixed meshes, a TENO-weighted compact limiter, a TENO-THINC limiter with a compact BVD switch, and critiques."
 status: established
 aliases: [simple WENO limiter, compact WENO limiter, improved simple WENO limiter, WENO limiter for RKDG, Qiu–Shu WENO limiter, HWENO limiter, TENO limiter for RKDG]
 tags: [dg, weno, teno, limiting, characteristic]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:29:00Z
 ---
 
 # WENO limiters for discontinuous Galerkin
@@ -207,6 +207,75 @@ structure than the compact WENO limiter of Zhu, Qiu and Zhu (2020) driven
 by the same indicator. The comparison is visual; no error norm or
 spectral measure is given for the discontinuous tests.
 
+## TENO-THINC limiter with a compact BVD switch
+
+[Huang et al. (2025a)](/sources/huang-2025.md) replace, in third-order
+modal RKDG ($N=2$, the scaled Legendre basis above), the Hermite-type
+candidates by two simpler candidate polynomials. A compact
+[boundary-variation-diminishing](/definitions/boundary-variation-diminishing.md)
+rule chooses between them (§3.2–3.3). The limiter acts only in cells
+flagged by the TENO indicator of Huang & Fu (2024), with $\epsilon=10^{-3}$,
+$q=6$, $C_T=10^{-4}$ (§3.1).
+
+- **TENO candidate** (Eqs. (15)–(19)). The smoothness indicators
+  $\beta_l$ of the three DG polynomials $p_{i-1},p_i,p_{i+1}$ give
+  $\gamma_l=1/(\beta_l+\epsilon_1)^6$, normalized and cut off at
+  $C_T=10^{-5}$, with $\epsilon_1=10^{-10}$. If all three survive, $p_i$ is
+  kept. Otherwise $p^{\mathrm{TENO}}_i=\sum_l\delta_lp_l/\sum_m\delta_m$:
+  surviving stencils get equal weights, with no linear weights. The
+  authors say $\epsilon_1$ "also acts as a cutoff of the smoothness
+  measurements", after Castro et al.
+- **THINC candidate** (Eqs. (20)–(21)). Interface values come from the
+  three cell averages by the THINC formula
+  $\hat u_{i+1/2}=f_{\mathrm m}+f_{\mathrm j}\frac{\mathcal A+\mathcal T}{1+\mathcal A\mathcal T}$,
+  with page-local $f_{\mathrm m}=\tfrac12(\bar u_{i+1}+\bar u_{i-1})$ and
+  $f_{\mathrm j}=\tfrac12(\bar u_{i+1}-\bar u_{i-1})$ (the source's
+  $\bar u_\pm$), $\mathcal T=\tanh(\beta_{\mathrm T}/2)$,
+  $\mathcal A=\frac{\operatorname{sgn}(\varsigma)}{\mathcal T}\frac{e^{\lvert\varsigma\rvert\beta_{\mathrm T}}-1}{e^{\lvert\varsigma\rvert\beta_{\mathrm T}}+1}$
+  and $\varsigma=(\bar u_i-f_{\mathrm m})/f_{\mathrm j}$ (the source's
+  $\alpha$), steepness $\beta_{\mathrm T}=1.6$, as on
+  [THINC reconstruction](/methods/thinc-reconstruction.md). The value falls back to $\bar u_i$ when
+  $(\bar u_{i-1}-\bar u_i)(\bar u_i-\bar u_{i+1})<10^{-15}$. The THINC
+  polynomial is the unique quadratic with the cell integral of $p_i$ and
+  these two interface values
+  ([THINC reconstruction](/methods/thinc-reconstruction.md)).
+- **Compact BVD** (Eqs. (22)–(24)). For each candidate, the total
+  boundary variation is the sum of its jumps against the *unlimited*
+  traces $p_{i\pm1}(x_{i\pm1/2})$ of the neighbours. THINC is chosen when
+  $\mathrm{TBV}^{\mathrm{TENO}}-\mathrm{TBV}^{\mathrm{THINC}}>\max\big(10^{-10},10^{-3}(\mathrm{TBV}^{\mathrm{TENO}}+\mathrm{TBV}^{\mathrm{THINC}})\big)$.
+  Because the neighbours' unlimited traces are used, the limiter stays on
+  the three-cell stencil. The authors set this against Jiang et al.'s
+  BVD, which "requires the reconstructed values of neighboring cells"
+  (§1, §3.2.3).
+- **Systems and 2D** (§3.3, §4.2). Indicator and limiter act on local
+  characteristic variables, and the limiter is skipped when every
+  component is smooth. In 2D the weights computed on the traces at
+  $y=y_j$ rebuild only the $x$-only modes, and those at $x=x_i$ the
+  $y$-only modes. The mixed mode is always the average of the $x$- and
+  $y$-TENO combinations and never uses THINC, "to enhance robustness"
+  (Eqs. (27)–(36)). The THINC weights in 2D solve a $3\times3$ system and
+  are not constrained to be non-negative.
+
+**Evidence** (§5; Euler, SSP-RK3, CFL 0.15, local Lax–Friedrichs flux;
+the comparison is the Zhong–Shu simple WENO limiter driven by the same
+indicator).
+
+- **Smooth flows.** On the 1D and 2D density waves no cell is flagged, so
+  the errors equal the unlimited ones (Tables 1, 3). They also equal them
+  with the limiter forced on in every cell, because the BVD rule picks
+  TENO and TENO keeps $p_i$ (Table 2).
+- **Cost.** On Lax's problem the run takes 172.08 s against 163.07 s
+  with the WENO limiter (Table 4). The hardware is not stated.
+- **Flagged fraction.** On the $1200\times300$ double Mach reflection,
+  34681 cells (9.63 %) are flagged, and THINC is selected in 6476 of them
+  (1.8 % of the domain) (§5.5, Fig. 6).
+- **Shocked flows.** On Sod, Lax, the blast waves, Shu–Osher, the double
+  Mach reflection, 2D Riemann configuration 7 and Rayleigh–Taylor, the
+  authors report sharper discontinuities and more small-scale structure
+  than with the WENO limiter. On Shu–Osher the gain is "not as obvious".
+  On Rayleigh–Taylor the symmetry breaks under round-off, which they
+  attribute to the low dissipation (§5.4, §5.7). The evidence is visual.
+
 ## Nodal Hermite TENO limiter for spectral difference
 
 [Chen & Fu (2024)](/sources/chen-2024.md) (§5–§7, Algorithm 1) build a
@@ -320,6 +389,7 @@ given.
   [Cui, Ding & Wu (2024)](/sources/cui-2024.md) the Qiu–Shu WENO limiter
   (Exs. 3–5): the WENO limiter controls oscillations, the scaling limiter
   bounds.
+- [Huang et al. (2025a)](/sources/huang-2025.md) — §1; §3.1 Eq. (11); §3.2–3.3 Eqs. (15)–(25); §4 Eqs. (26)–(36); §5 Tables 1–4, Figs. 1–8.
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) (§3.1.3, arXiv v1) apply
   the Hermite WENO limiter of Zhao and Qiu to the first moments of
   KXRCF-flagged cells of a finite-volume Hermite WENO scheme for
@@ -404,6 +474,21 @@ given.
   not in the sources)*. Eq. (56) enforces exactness for basis functions
   $v_6,\dots,v_9$ that the paper never defines, so the 2D weights cannot
   be re-derived from the text.
+- **Huang et al. (2025a) against Huang & Fu (2024).** The 2025 paper
+  states that it reuses the TENO indicator of Huang & Fu (2024)
+  unchanged (§3.1). Yet its Eq. (11) integrates the indicators of all
+  three polynomials over the central cell $I_i$, while Huang & Fu (2024)
+  integrate each polynomial over its own cell (their Eqs. (32)–(35)). For
+  quadratics the first-derivative term differs between the two domains,
+  so the two printed indicators are not the same *(compiler check, not in
+  the sources)*. Which one the 2025 code uses is not stated. The 1D TENO
+  candidate of Eq. (19) combines the full neighbour polynomials. Its
+  integral over $I_i$ equals that of $p_i$ only if the neighbours'
+  extrapolated averages equal $\bar u_i$, so the printed 1D formula is not
+  conservative unless a mean shift is understood *(compiler check, not in
+  the sources)*. The 2D Eqs. (27)–(29) recombine only the non-constant
+  modes and keep the average. Neither the 2025 limiter nor the 2024 one
+  is compared with the other.
 - Huang & Fu weight the 2D indicators by powers of the cell area,
   $|I_{ij}|^{2k-1}$, where the 1D ones use $\Delta x^{2l-1}$ (Eqs. 41,
   59), and do not say whether the limiter acts on conserved or

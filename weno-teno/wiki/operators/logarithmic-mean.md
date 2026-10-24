@@ -6,7 +6,7 @@ status: established
 symbol: "$\\{\\!\\{a\\}\\!\\}_{\\log}$"
 aliases: [log mean, Ismail–Roe mean, inverse logarithmic mean]
 tags: [entropy-stable, numerical-flux, dg, kinetic-energy-preserving]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T19:58:00Z
 ---
 
 # Logarithmic mean
@@ -67,6 +67,14 @@ properties are wanted (§3.1).
   For GLM-MHD, the Derigs et al. flux used by
   [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) carries the
   logarithmic means of $\rho$ and of $\rho/(2p)$ (App. A, Eqs. (102)–(103)).
+  The Chandrashekar–Klingenberg flux for ideal MHD with the Godunov–Powell
+  term, written out by [Liu et al. (2025b)](/sources/liu-2025-b.md) (§3.1)
+  and [Liu et al. (2025c)](/sources/liu-2025-c.md) (App. A.1), uses the
+  same two. The mass flux is $\{\!\{\rho\}\!\}_{\log}\{\!\{v_1\}\!\}$, and the
+  energy flux carries $1/\big((\gamma-1)\{\!\{\rho/(2p)\}\!\}_{\log}\big)$. All
+  other averages are arithmetic. [Charles & Ray (2025)](/sources/charles-2025.md)
+  use Chandrashekar's Euler flux, with the same two logarithmic means
+  (§5, Eq. (34); arXiv v2).
 - **Multicomponent Euler.** Renac's flux needs three logarithmic means, of
   the density of the last component, of the mixture density and of
   $1/T$, whatever the number $n_c$ (page-local) of components. The
@@ -190,3 +198,6 @@ speed-up of about 10 % to 75 % depending on the data (Ranocha et al.
 - [Edoh (2022)](/sources/edoh-2022.md) — §3.2, Table 3.
 - [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — §1, §3 Eqs. (5)–(8), §4 Eqs. (11)–(13), §6 (arXiv v2).
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §3 Eqs. (76)–(87) (arXiv v1).
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.1.
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — App. A.1.
+- [Charles & Ray (2025)](/sources/charles-2025.md) — §5 Eq. (34) (arXiv v2).

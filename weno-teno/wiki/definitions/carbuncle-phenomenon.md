@@ -1,19 +1,22 @@
 ---
 type: Definition
 title: "Carbuncle phenomenon"
-description: "The carbuncle is a numerical instability that low-dissipation approximate Riemann solvers such as HLLC, HLLEM and Roe develop near strong shocks, in gas dynamics and in shallow water; a linear analysis traces it in HLLEM to undamped transverse perturbations, and the sources avoid it by HLL, flux-vector splitting, nodal multidimensional fluxes, extra shock dissipation or shock fitting."
+description: "The carbuncle is a numerical instability that low-dissipation Riemann solvers such as HLLC, HLLEM and Roe develop near strong shocks; linear analyses trace it to undamped transverse perturbations and, at fifth order, to the reconstruction inside the numerical shock structure, which destabilizes even HLL; the remedies are HLL, flux splitting, multidimensional fluxes, extra dissipation or shock fitting."
 status: established
 aliases: [carbuncle problem, carbuncle instability, shock instability of low-dissipation Riemann solvers, odd-even decoupling, shock instability, carbuncle-like instability]
 tags: [riemann-solver, numerical-flux, carbuncle, benchmark]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:43:00Z
 ---
 
 # Carbuncle phenomenon
 
 The **carbuncle phenomenon** is the numerical instability that some approximate Riemann
 solvers develop in the vicinity of strong shock waves. Most sources of this bundle identify
-it by the solvers that exhibit it and by the remedy; one, [Hu et al. (2022)](/sources/hu-2022.md),
-analyses its mechanism (next section).
+it by the solvers that exhibit it and by the remedy; two analyse its mechanism by a
+[matrix stability analysis](/methods/matrix-stability-analysis.md):
+[Hu et al. (2022)](/sources/hu-2022.md) for a first-order flux (next section) and
+[Ren et al. (2025)](/sources/ren-2025.md) for fifth-order finite-volume WENO, where the
+reconstruction itself becomes a cause (section *High order*).
 [Fu (2023)](/sources/fu-2023.md) (§3.6) states that "the HLLC and Roe solvers may induce
 carbuncle problem in proximity to strong shockwaves with low numerical dissipation whereas
 the HLL solver is free from carbuncle problem but featuring substantially larger
@@ -64,6 +67,84 @@ to the shock ("streamwise"), $y$ along it ("transverse").
 
 The two analyses differ in mean state (uniform vs shocked), perturbation (saw-tooth vs
 random) and locality, and Hu et al. require a shock-stable scheme to pass both (§3.3).
+
+## High order: the reconstruction inside the shock structure
+
+Ren et al. (2025) (§3–§4) extend the matrix stability analysis of Dumbser, Moschetta and
+Gressier from first-order fluxes to fifth-order finite-volume
+[WENO-Z](/methods/weno-z.md) reconstruction on uniform Cartesian grids. With the nonlinear
+weights frozen, the perturbation of cell $(i,j)$ couples to 13 cells (a cross of half-width 3)
+with mid-point flux integration and to 45 cells with two Gauss points per face; the scheme is
+stable iff $\max\mathrm{Re}\,\lambda(\mathbf S)\le0$ for the stability matrix $\mathbf S$ of
+$\frac{d}{dt}\delta u=\mathbf S\,\delta u$ (page-local $\mathbf S$; Eqs. (24)–(31), App. C).
+The mean flow is a planar steady normal shock with one intermediate state on the Hugoniot
+curve, its position $\varepsilon_{\mathrm s}\in[0,1]$ (page-local; the source's $\varepsilon$,
+$\varepsilon_{\mathrm s}\to1$ close to the downstream state), at upstream Mach number 20 on
+$11\times11$ cells (§3.2; [steady shock problems](/benchmarks/steady-shock-problems.md)).
+Their findings (§4):
+
+- **Low-dissipation solvers.** With Roe and HLLC the fifth-order scheme is unstable; its
+  largest growth rate lies between the first-order and the second-order (MUSCL, van Albada)
+  rates, but in the nonlinear stage the Roe run collapses at $t=47.8$, and with Gauss
+  integration, at a lower growth rate, already at $t=42.2$ (Figs. 9–13). The authors
+  attribute the slower growth to the "smearing" of perturbations by the stencil combination
+  and the instability itself to wider stencils that carry perturbations into undisturbed
+  cells, the "more decisive" factor (§4.1.1, §4.1.3).
+- **Dissipative and shock-stable solvers fail too.** HLL and van Leer
+  [flux-vector splitting](/methods/flux-vector-splitting.md), "generally believed" to capture
+  strong shocks stably at first and second order, have eigenvalues with positive real part
+  at fifth order, and the inviscid Mach-20
+  [cylinder](/benchmarks/flow-past-circular-cylinder.md) ($240\times40$) is unstable; so are
+  HLLC-ADC, hybrid SLAU and HLLC-EC, which are shock-stable at low order (§4.1.2,
+  Figs. 11–19). The authors present this against the "previous understanding" that HLL and
+  van Leer are stable, in line with Rodionov (as recalled).
+- **The cause is the reconstruction.** Inside the numerical shock structure every
+  three-point substencil contains the discontinuity, so all nonlinear weights stay nonzero,
+  e.g. $\omega=(0.21135,0.62458,0.16407)$ for the density at the face next to the
+  intermediate cell with HLL (Table 3), and WENO loses the
+  [ENO property](/definitions/eno-property.md) there. Even the single smoothest quadratic (the
+  ENO choice) is unstable; a constant (first-order) reconstruction on the faces near the
+  shock is stable (Figs. 21–22). Their conclusion: high-order schemes "should degenerate to
+  employing zeroth-degree polynomials to reconstruct variables near shocks" (§4.1.3).
+- **A multidimensional coupled problem.** Fifth-order Roe on transverse faces with
+  first-order van Leer on normal faces, and the reverse, are both unstable (Eq. (40),
+  Figs. 24–26): stability needs dissipation for the shear and contact waves on transverse
+  faces and shock dissipation on normal faces (§4.2). Ren et al. state that earlier studies,
+  of thin shocks, found Roe and HLLC sensitive mainly to the transverse fluxes, and that their
+  own low-order study had already found the coupled problem; §4.2 finds it again at fifth
+  order. Hu et al.'s transverse-flux diagnosis above concerns a first-order flux.
+- **Where it starts.** The most unstable eigenvector has a saw-tooth distribution at the
+  intermediate cell, and in time the perturbation appears there and convects downstream while
+  upstream it stays zero (Figs. 27–28), against analyses that place the source upstream of a
+  thin shock (§4.3, as recalled).
+- **Characteristic variables help but do not cure.** Reconstruction in local
+  [characteristic variables](/methods/characteristic-decomposition.md) lowers the largest real
+  part at every Mach number tested, without making it negative (§4.4, Figs. 29–30).
+
+The analysis was validated against the measured growth of $\lVert v_2\rVert_\infty$ on the
+same shock: with the smoothing $\lvert\lambda\rvert\to(\lambda^2+\delta_0^2)/(2\delta_0)$ for
+$\lvert\lambda\rvert<\delta_0=10^{-4}$ the predicted rate 2.19187 is within 0.59% of the
+measured 2.17904 at $\varepsilon_{\mathrm s}=0$, against 21.88% without it (Table 1); and
+mid-point and Gauss integration give the same verdicts for Roe (stable only at
+$\varepsilon_{\mathrm s}=0.8,0.9$) and HLL (stable only at $0.6,0.7$) (Table 2). Details of the
+method are on [matrix stability analysis](/methods/matrix-stability-analysis.md).
+
+**Their remedy** (§5). MR-WENO-SD replaces the smoothness-based weights of Zhu–Shu
+[multi-resolution WENO](/methods/multi-resolution-weno.md) (constant, quadratic and quartic
+on nested central stencils) by weights set from a shock detector
+$f_{i+1/2}=\big(1-e^{-\max(M_i,M_{i+1})\lvert p_i-p_{i+1}\rvert/(p_i+p_{i+1})}\big)^4$
+(page-local $f$; Eqs. (47)–(49)): a shock on the adjacent faces selects the constant, one
+two faces away the quadratic, otherwise the quartic. In the shock structure the weight of the
+constant is $0.99999999$ (Table 6), whereas plain MR-WENO with linear weights $10^m$ puts
+$0.55311$ on the quartic and shows a "subtle" anomaly (Table 4). It is paired with an HLLC/HLL
+blend $(1-\kappa_{\mathrm s})h^{\mathrm{HLLC}}+\kappa_{\mathrm s}h^{\mathrm{HLL}}$, $\kappa_{\mathrm s}$
+the maximum of $f$ over the face and its four transverse neighbours (page-local; Eqs.
+(50)–(51)). The pair has all eigenvalues in the left half-plane on a $50\times25$ normal
+shock and is stable on the Mach-20 cylinder, the
+[double Mach reflection](/benchmarks/double-mach-reflection.md) (where WENO with HLLC kinks the
+Mach stem) and the [Sedov blast wave](/benchmarks/sedov-blast-wave.md) at $960^2$ (where WENO
+with HLLC shows grid-aligned instabilities); on a viscous Mach-8.1 cylinder its stagnation
+heat flux, 2.44, is 0.81% from the Fay–Riddell value 2.46 (§5.2, Figs. 35–42).
 
 ## Remedies used in the sources
 
@@ -116,6 +197,9 @@ random) and locality, and Hu et al. require a shock-stable scheme to pass both (
   "no carbuncle" in their third-order finite-volume WENO run of an axisymmetric relativistic
   jet with the HLL flux on triangles, relativistic Mach number about 41.95
   ([high-Mach jets](/benchmarks/high-mach-astrophysical-jet.md)).
+- **Constant reconstruction and HLL at detected shocks.** Ren et al. (2025) combine both:
+  the MR-WENO-SD weights fall back to the cell average at a detected shock and the flux
+  blends toward HLL there (section above).
 - **Fitting the shock instead of capturing it.** In the moving discontinuous
   Galerkin method MDG+ICE of [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md)
   the bow shock is a mesh face located by the weakly enforced interface
@@ -237,6 +321,16 @@ paper does not call the kinked stem a carbuncle.
 
 ## Qualifications
 
+- Ren et al. (2025) analyse a scheme with frozen nonlinear weights and mid-point flux
+  integration, which their own citation makes second order for nonlinear smooth flows; the
+  transfer to Gauss integration rests on the agreement of Table 2 on one problem. Their §4.4
+  states that §§4.1–4.3 reconstruct primitive variables, whereas §§2.2 and 3.1 present the
+  reconstruction and the analysis in conservative variables. Their fifth-order accuracy test
+  of MR-WENO-SD has constant pressure, so the detector vanishes and the scheme reduces to the
+  linear quartic there *(compiler check, not in the sources)*. They attribute the two-Gauss-point
+  procedure to "Titarev and Toro [58]", where [58] is Coralic & Colonius and Titarev & Toro
+  is [94].
+
 - Hu et al.'s analyses are linear and of the first-order HLLEM flux; that the undamped
   transverse density and shear perturbations cause the instability is their inference,
   supported by the matrix analysis and the hybrid experiments. They cite earlier work for the
@@ -259,6 +353,22 @@ paper does not call the kinked stem a carbuncle.
   $[-\delta,\delta]$)*, and give the canal inflow of the
   odd-even test as $u_{\mathrm{in}}=13.283$ in m²/s, the unit of a discharge.
 
+## Contradictions
+
+- **Is HLL carbuncle-free under high-order reconstruction?** *Open.*
+  [Fu (2023)](/sources/fu-2023.md) (§3.6) states that "the HLL solver is free from carbuncle
+  problem", in the context of finite-volume TENO with an HLL flux at non-smooth stencils, and
+  [Ji et al. (2022)](/sources/ji-2022.md) (§5) that HLL is "free from Carbuncle problem";
+  neither tests it. [Ren et al. (2025)](/sources/ren-2025.md) (§4.1.2, Figs. 11–15) find
+  fifth-order finite-volume WENO-Z with HLL unstable in the matrix analysis of a Mach-20 normal
+  shock and on the Mach-20 blunt body (the classical carbuncle test, §3.2), unstable also when
+  only the smoothest quadratic (the ENO choice) is used on the faces near the shock (Fig. 21),
+  and stable only when the reconstruction there is first order (Fig. 22). Fu and Ji et al.
+  state the property of the HLL solver without restriction to low order, and both use it with
+  high-order finite-volume TENO; Ren et al. test WENO-Z and the ENO choice, not TENO. What
+  would decide it for TENO: the matrix analysis, or Ren et al.'s normal-shock and blunt-body
+  runs, for TENO with HLL at the shock.
+
 # Citations
 
 - [Hu et al. (2022)](/sources/hu-2022.md) — §1, §3.1 (Eqs. (3.1)–(3.12)), §3.2 (Eqs. (3.13)–(3.18), Figs. 3.1–3.4), §3.3, §4.1 (Eqs. (4.1)–(4.6), Fig. 4.2), §5.7–5.12 (Figs. 5.7–5.13).
@@ -272,3 +382,4 @@ paper does not call the kinked stem a carbuncle.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — Ex. 4.12 (Fig. 18) (arXiv v1).
 - [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — §1, §3.3–3.6 (Eqs. (29)–(34)), §4.1–4.6 (Eqs. (33), (47)), §5.3, §5.6–5.8 (Figs. 14–17), §6 (HAL preprint).
 - [Lin & Chan (2024)](/sources/lin-2024.md) — §3.3 (Eq. (49)), §4.4 (Figs. 6–7, A.8).
+- [Ren et al. (2025)](/sources/ren-2025.md) — §1; §2.3; §3.1–3.4 (Eqs. (24)–(38), Tables 1–2); §4.1–4.4 (Eq. (40), Tables 3, Figs. 9–30); §5.1–5.2 (Eqs. (41)–(51), Tables 4–7, Figs. 31–42); App. C.

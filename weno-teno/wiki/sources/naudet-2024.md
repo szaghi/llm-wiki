@@ -170,7 +170,7 @@ preprints. Ref. [1] prints an article number without volume, and ref. [7] prints
 
 # Pages created or updated
 
-Chunk 8 (2026-10-23), cited further in chunk 9 (2026-10-23). This source is cited on:
+Chunk 8 (2026-10-23), cited further in chunks 9–10 (2026-10-23). This source is cited on:
 
 * [Block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)
 * [Burgers equation tests](/benchmarks/burgers-equation-tests.md)

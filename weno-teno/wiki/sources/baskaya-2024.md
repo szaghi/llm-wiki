@@ -124,9 +124,10 @@ same-group works distinct from this source. No printed duplicates were found.
 
 # Pages created or updated
 
-Chunk 7 (2026-10-23), cited further in chunks 8–9 (2026-10-23). This source is cited on:
+Chunk 7 (2026-10-23), cited further in chunks 8–10 (2026-10-23). This source is cited on:
 
 * [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
+* [Flux vector splitting](/methods/flux-vector-splitting.md)
 * [Immersed-boundary and cut-cell methods](/methods/immersed-boundary-method.md)
 * [Local conservation is equivalent to a flux form](/results/local-conservation-flux-form.md)
 * [MUSCL and MUSCL–Hancock schemes](/methods/muscl-hancock.md)

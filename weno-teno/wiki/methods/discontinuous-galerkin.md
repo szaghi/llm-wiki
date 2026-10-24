@@ -5,7 +5,7 @@ description: "The discontinuous Galerkin (DG) semi-discretization of a conservat
 status: established
 aliases: [DG, RKDG, central DG, CDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG, LDG, local discontinuous Galerkin, discontinuous spectral element method, DSEM]
 tags: [dg, numerical-flux, limiting, bound-preserving]
-timestamp: 2026-10-23T15:13:00Z
+timestamp: 2026-10-23T20:29:00Z
 ---
 
 # Discontinuous Galerkin method
@@ -407,6 +407,36 @@ parameters (all three page-local). Their tests use the third-order case
 $N=2$. See
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 
+[Liu & Wu (2025)](/sources/liu-2025.md) (§3; arXiv v2) take the same
+route for ideal MHD with an [OEDG](/methods/oedg.md) scheme on Cartesian
+meshes. The magnetic field lies in the locally divergence-free space of
+Li & Shu. The [Godunov–Powell term](/definitions/godunov-powell-source-term.md)
+is added **only to the cell-average equations**, since weak positivity
+involves only the averages. The higher moments evolve with the plain
+OEDG scheme (§3.2). For a locally divergence-free field the cell-average
+source comes only from the normal-field jumps at the interfaces. Each jump
+is split between the two neighbours with the HLL weights
+$-s^-/(s^+-s^-)$ and $s^+/(s^+-s^-)$, which the authors call an "upwind"
+discretization (Eqs. (45)–(49)). With the geometric-quasilinearization
+form of the admissible set and new two-state HLL inequalities, their
+Thm. 1 proves admissible cell averages under an explicit CFL condition.
+The hypotheses are an admissible solution at the decomposition nodes and
+HLL speeds that bound the Wu–Shu estimates (Eqs. (58)–(66);
+[geometric quasilinearization](/methods/geometric-quasilinearization.md)).
+The Zhang–Shu decomposition gives
+$\Delta t(a^{(1)}/\Delta x+a^{(2)}/\Delta y)\le1/(L(L-1))$ with
+$L=\lceil(N+3)/2\rceil$ Gauss–Lobatto points (Cor. 1), which is $\tfrac16$
+for $N=2$ *(compiler check, not in the sources)*. The optimal
+Cui–Ding–Wu decomposition gives $1/(4+2\lvert\varkappa\rvert)$ for $N=2,3$,
+with the registry's anisotropy
+$\varkappa=(a^{(1)}\Delta y-a^{(2)}\Delta x)/(a^{(1)}\Delta y+a^{(2)}\Delta x)$
+(Cor. 2, Remark 3;
+[optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)).
+On the shock–cloud interaction, switching off the damping step makes the
+run fail, and removing the source term or the positivity limiter gives
+negative cell-average pressure (§4.2.4). On the Mach 800 and 10000 jets,
+disabling any of the three makes "the code immediately fail" (§4.2.6).
+
 Yan, Abgrall & Wu (2024) carry it to the Kapila model: if $\phi_1\in[0,1]$
 and the state lies in the admissible set at the Gauss and Gauss–Lobatto
 points of every cell, the forward-Euler cell average stays admissible under
@@ -559,6 +589,11 @@ interfaces.
   equal those of the unlimited scheme, e.g. $L^1$ errors $3.53\times10^{-7}$ to
   $6.94\times10^{-10}$ at $N_x=100$ to 800 and rates 2.99–3.00 in 1D (Table 1),
   2.98–2.99 in 2D (Table 3).
+  [Huang et al. (2025a)](/sources/huang-2025.md) keep that indicator and
+  replace the limiter by a choice between an equal-weight TENO
+  combination of the three DG polynomials and a THINC polynomial. The
+  choice is made by a compact BVD rule on unlimited neighbour traces
+  ([WENO limiters for DG](/methods/weno-limiter-dg.md)).
 - **Blending with a low-order scheme.** The nodal DG update is convexly
   blended with a compatible subcell finite-volume update, element by element
   or interface by interface, with a priori or a posteriori blending
@@ -594,6 +629,22 @@ interfaces.
   chosen per element, after each Runge–Kutta stage, as the smallest one
   that makes the nodal values positive and satisfy a local minimum entropy
   bound ([entropy filtering](/methods/entropy-filtering.md)).
+  Liu & Wu (2025) apply the OEDG step to ideal MHD in two forms (§2.4).
+  For the non-magnetic variables the damping is **componentwise**, one
+  coefficient per component through a Hadamard product. For the in-plane
+  field it is **locally divergence-free**: one coefficient per edge, the
+  larger of those of $B_1$ and $B_2$, multiplies whole divergence-free basis
+  vectors, so the damped field stays divergence-free in each cell
+  (Eqs. (16)–(35), Remark 2). [Liu et al. (2025b)](/sources/liu-2025-b.md)
+  keep the damping in the semi-discrete system instead, as an
+  entropy-stable oscillation-free DG for MHD. The term is
+  $-\sigma(u_h)(u_h-\bar u_h)$, with one scalar $\sigma$ per element built
+  from the interface jumps of the solution and its first derivative.
+  These are scaled by the local largest characteristic speed and divided
+  by the squared local oscillation (Eq. (3.16)). It is integrated by an
+  explicit step followed by a closed-form implicit damping step in each
+  Runge–Kutta stage, so the damping does not restrict the time step
+  (§3.3, Eq. (3.21); [entropy stability](/properties/entropy-stability.md)).
 - **Artificial viscosity.** Two sources give sensors for nodal DG: the
   time-reversibility defect of Dzanic et al. (2022), which gives a
   separate viscosity for every conserved variable, and the modal decay
@@ -640,6 +691,16 @@ this as an alternative to WENO limiters for DG (§1, Remark 2;
 Their claim that the hybrid is "easier to analyze than DG-WENO schemes" is
 stated, not demonstrated (§8).
 
+- **A posteriori viscosity in a compatible finite element scheme.**
+  [Zampa & Dumbser (2025)](/sources/zampa-2025.md) (§3.2–3.3; arXiv v1)
+  use DG only for the explicit convective parts of a semi-implicit scheme
+  for weakly compressible flow. The momentum is in a Raviart–Thomas space
+  and is convected by DG with a split flux plus Rusanov dissipation
+  ([split convective forms](/methods/split-convective-forms.md)). The
+  entropy is transported by a path-conservative DG scheme
+  ([path-conservative schemes](/methods/path-conservative-scheme.md)).
+  Troubled elements get an a posteriori artificial viscosity
+  ([MOOD](/methods/mood-a-posteriori-limiting.md)).
 - **Sharp material interfaces.** Bai & Li (2022) keep the two fluids
   separate across a level-set interface. Ghost-fluid states and cut-cell
   mixing replace any smearing of the interface (see the cut-cell item
@@ -725,7 +786,11 @@ $N=1,2,3$ (§6.2, Table 10).
   write $p$, Wu & Shu write $K$, and Rueda-Ramírez et al. write $N$; Bai
   & Li, Du, Shu & Zhong and Du & Yang write $k$; Abgrall et al., Cicchino
   et al. and the two Dzanic papers write $p$; Yu & Hesthaven write $P$;
-  Huang & Zahr write $p$ and Kou et al. $P$; Mossier et al. and Lin,
+  Huang & Zahr write $p$ and Kou et al. $P$; Liu & Wu (2025), Liu et al.
+  (2025b) and Huang et al. (2025a) write $k$; Liu et al. (2025c) write $k$
+  for the degree of the face polynomials, with tensor degree $k+1$ in the
+  cells; Zampa & Dumbser write $r$ for $\mathrm{RT}_r$ and
+  discontinuous degree-$r$ spaces; Mossier et al. and Lin,
   Chan & Tomas write $N$; Maltsev et al. write $r$; Ciallella et al. write
   $M$ and Gaburro et al. $N$; Huang & Fu write $k$; Cernetic et al. define
   the degree $n$ and the order $p=n+1$ but label most figures, Table 1 and
@@ -753,6 +818,13 @@ $N=1,2,3$ (§6.2, Table 10).
   degrees of freedom $K$, but for $N=1$, $d=2$ it gives 3, the number of
   basis functions $K+1$ of their Eq. (2) *(compiler check, not in the
   sources)*.
+- Liu & Wu (2025) read the $L^1$ orders 2.92, 4.24, 4.61, 3.55, 3.19 of
+  their 2D sine wave (Table 2) as "consistently" third order. Only the
+  finest pair is near 3. They print the 1D mesh column of Table 1 as
+  "100 × 100" to "3200 × 3200" for a 1D problem. The printed orders
+  match halving $\Delta x$ from 100 to 3200 cells, e.g.
+  $\log_2(7.3204\times10^{-6}/8.0642\times10^{-7})=3.18$ *(compiler check,
+  not in the sources)*.
 - Luo et al.'s claim that the central flux suffices rests on the converged
   interface condition. It does not carry over to DG on a fixed mesh, where
   the sources above use upwind-type numerical fluxes.
@@ -790,4 +862,9 @@ $N=1,2,3$ (§6.2, Table 10).
 - [Alberti et al. (2025)](/sources/alberti-2025.md) — §2 Eqs. (7), (11)–(15), §3.1.2.
 - [Ching et al. (2025)](/sources/ching-2025.md) — §3 Eq. (3.2), §4.2–4.4 Eqs. (4.12), (4.17), (4.33), Thms. 6, 8, §4.7 Remark 11.
 - [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §3.2 Eqs. (24)–(25), (36), §4, §7.3–7.4.
+- [Liu & Wu (2025)](/sources/liu-2025.md) — arXiv v2: §2.4 Eqs. (14)–(35), Remarks 1–2; §3.2 Eqs. (45)–(49); §3.3–3.6 Eqs. (50)–(72), Thm. 1, Cors. 1–2, Remark 3; §4 Tables 1–2, §4.2.4, §4.2.6.
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.2 Eqs. (3.15)–(3.16), §3.3 Eq. (3.21).
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §3.1 (degree convention).
+- [Huang et al. (2025a)](/sources/huang-2025.md) — §2, §3, §4.
+- [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — arXiv v1: §3.2.2–3.2.3 Eqs. (7)–(10), §3.3.
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §2.1 Eqs. (2.8), (2.10), Remarks 2.1–2.2, Lemma 2.5, Thms. 2.6–2.7, 2.12; §3 Thms. 3.6, 3.10; §4 Tables 2–3, Figs. 9, 21.

@@ -156,7 +156,7 @@ found apart from the repeated in-text citation "[70, 71, 15, 15]".
 
 # Pages created or updated
 
-Chunk 7 (2026-10-23), cited further in chunks 8–9 (2026-10-23). This source is cited on:
+Chunk 7 (2026-10-23), cited further in chunks 8–10 (2026-10-23). This source is cited on:
 
 * [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md)
 * [Cell-average to point-value conversion](/operators/cell-average-point-value-conversion.md)

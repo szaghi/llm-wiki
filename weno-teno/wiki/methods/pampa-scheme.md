@@ -5,7 +5,7 @@ description: "PAMPA (Point-Average-Moment PolynomiAl-interpreted) is an Active-F
 status: established
 aliases: [Point-Average-Moment PolynomiAl-interpreted scheme, BP PAMPA, bound-preserving PAMPA]
 tags: [finite-volume, bound-preserving, positivity, limiting, active-flux]
-timestamp: 2026-10-23T15:08:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # PAMPA scheme
@@ -191,8 +191,35 @@ All tests use SSP-RK3 at CFL 0.2 (§4).
   [double rarefaction](/benchmarks/double-rarefaction-problem.md) and
   [Sedov](/benchmarks/sedov-blast-wave.md) run without failures (Ex. 4–9). The Jacobian
   splitting of PAMPA for Euler "may lead to non-physical solutions", as observed by
-  Duan, Barsukow & Klingenberg and others, and the authors state that their blending
+  [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) and others, and the authors state that their blending
   "cures completely this problem" (§2).
+
+## Relation to other Active Flux variants
+
+- **The flux limiter in a fully discrete Active Flux.**
+  [Kiechle, Chudzik & Helzel (2025)](/sources/kiechle-2025.md) (Remark 3.2, Fig. 5)
+  write the averages' coefficient of Abgrall et al., from its preprint, as the flux
+  blend $\mathsf e\,\hat f^{\mathrm{AF}}+(1-\mathsf e)\hat f^{\mathrm{LO}}$ with
+  $\mathsf e_{i+1/2}=\min\big(1,\frac{a_{i+1/2}}{\lvert\hat f^{\mathrm{AF}}_{i+1/2}-\hat f^{\mathrm{LO}}_{i+1/2}\rvert}\min(u_{\max}-u^*_{i+1/2},\,u^*_{i+1/2}-u_{\min})\big)$,
+  the form of Proposition 3.1 above, and run it in the 2D fully discrete
+  [Active Flux](/methods/active-flux.md) method with Simpson space–time fluxes on a
+  deformation-flow advection test. It keeps both bounds, but it also needs admissible
+  point values, which they obtain by replacing out-of-range values with values traced
+  back on a piecewise-constant reconstruction; a global speed $a$ in place of the local
+  $a_{i+1/2}$ gave more accurate results there. They call it "related but not
+  equivalent" to their own positivity limiter, which enforces only the lower bound and
+  needs no admissible point values
+  ([positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)).
+- **Generalized Active Flux.** [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md)
+  limit the averages of the semi-discrete Active Flux with the same Lax–Friedrichs bar
+  states and the point values by a Zhang–Shu-type blend instead of per-residual
+  coefficients ([convex limiting](/methods/convex-limiting.md)).
+  [Barsukow et al. (2026)](/sources/barsukow-2026.md) (§1) count Abgrall's combination of
+  residual distribution and Active Flux among the papers that introduced the
+  semi-discrete, "generalized" Active Flux, and extend that family to arbitrary order on
+  2D Cartesian grids with point values and cell moments, for smooth problems; they also
+  mention a third- and fourth-order semi-discrete Active Flux on triangles by Abgrall,
+  Lin & Liu.
 
 ## Qualifications
 
@@ -228,3 +255,6 @@ All tests use SSP-RK3 at CFL 0.2 (§4).
 # Citations
 
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §1; §2, Eqs. (2.1)–(2.9); §3.1–3.4, Eqs. (3.1)–(3.19), Props. 3.1–3.2, Algorithm 1; Appendix A; §4, Ex. 1–9, Tables 1–3, Remark 4.1, Figs. 1–10.
+- [Kiechle, Chudzik & Helzel (2025)](/sources/kiechle-2025.md) — §3.2, Remark 3.2, Fig. 5.
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — arXiv v3: §4.1–4.2.
+- [Barsukow et al. (2026)](/sources/barsukow-2026.md) — arXiv v2: §1.

@@ -5,7 +5,7 @@ description: "A nonlinear reconstruction keeps its design order at a critical po
 status: established
 aliases: [critical-point accuracy, accuracy near critical points, Cp-property, order degeneracy at extrema]
 tags: [weno, reconstruction, finite-difference, critical-points]
-timestamp: 2026-10-23T15:11:00Z
+timestamp: 2026-10-23T20:07:00Z
 ---
 
 # Accuracy at critical points
@@ -207,6 +207,23 @@ $\omega_0$, they find that WENO3-JS and WENO3-Z "degenerate at the saddle point"
 "distinguish[es]" it, as does WENO-F3+ (§3.5, Fig. 4); the order is not improved by it
 ([learned WENO weights](/methods/learned-weno-weights.md)).
 
+**Third order kept at smooth extrema by a learned weighting.** [Fan et al. (2025b)](/sources/fan-2025-b.md)
+(§3.1.1, §4.1, Figs. 4, 6–8) make the three-point case the design target of their learned
+[WCNS3-MR-NN](/methods/learned-weno-weights.md), a point-value staggered
+[WCNS](/methods/weighted-compact-nonlinear-scheme.md). On three points a smooth extremum and a jump give
+essentially the same normalized data, so features invariant under scaling cannot separate them; the largest
+one-sided difference, however, shrinks under refinement at an extremum and stays constant at a jump, and they add
+its logarithm as a scale-variant input ([scale invariance](/properties/scale-invariance.md)). In the
+multi-resolution form, where the optimal weights are $(0,1)$, third order needs only that the weight of the
+one-point candidate be $O(\Delta x^2)$ (Eqs. (29)–(30)). On linear advection of $10^{-3}\sin(2\pi x)$, whose
+extrema are first-order critical points, the scheme converges at order 3.00 in $L^1$, $L^2$ and $L^\infty$ from
+$N=80$ to $5120$ (Table 3), and to $N=10240$ on the Euler density wave (Table 4); two WCNS re-implementations of the
+WENO3-NN network reach about second order in $L^1$, $L^2$ and first order in $L^\infty$ (Figs. 6–7). Plots of the
+weights on profiles with an extremum and a jump (functions not given) show WCNS3-MR-NN closest to $\omega_2=1$ at the
+extremum on a coarse grid ($N=20$) and separating extrema from discontinuities on a fine one ($N=500$) as WCNS3-MR
+does, while the multi-resolution re-implementation of the WENO3-NN network still drops to first order at extrema
+(§4.1.3, Fig. 8). Higher-order critical points are not tested.
+
 ## Third-order interpolation with a floored indicator
 
 [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) (App. A1; arXiv v3) state the
@@ -285,6 +302,10 @@ resolution).
   scales as $\sigma^2$ under $f\mapsto\sigma f$ (page-local $\sigma$); wherever $\tau_{\mathrm{AZ}}<10^{-5}$ the cut-off
   decisions therefore depend on the amplitude and units of the data
   ([scale invariance](/properties/scale-invariance.md)). The paper does not discuss scaling.
+- The third order of Fan et al. (2025b) on smooth advection and the low orders of Huang et al. (2026, Table 3) on
+  $\sin(\pi x)$ concern different three-point schemes (a point-value WCNS with a multi-resolution weighting against
+  finite-volume WENO3-NN and ROUND); the two results are not recorded as a contradiction. Fan et al.'s WCNS
+  re-implementations of the WENO3-NN network are not the finite-volume WENO3-NN of Bezgin et al. either.
 - Nogueira et al. (2024, §3.4) write that WENO5-NN "also alleviates" the critical-point order loss of WENO5-JS;
   the evidence is a plot of the weights on $\sin^3(\pi x)$ at $\Delta x=0.01$, without a convergence test.
 - *(Compiler check, not in the sources.)* Lemma 2 gives sharper bounds than Proposition 1 states:
@@ -328,3 +349,4 @@ resolution).
 - [Nogueira et al. (2024)](/sources/nogueira-2024.md) — §3.4, Fig. 6.
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §5.4, Eq. (38), Table 3.
 - [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — App. A1–A2, Eqs. (A3)–(A23); §4.1, Table 1 (arXiv v3).
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §3, Eqs. (26), (29)–(30), Fig. 4; §4.1, Tables 3–4, Figs. 6–8: third order at smooth extrema with a scale-variant learned weighting.

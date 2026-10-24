@@ -5,7 +5,7 @@ description: "The stiffened-gas law, an ideal gas shifted by a constant stiffeni
 status: established
 aliases: [stiffened gas EOS, stiffened equation of state, Tait EOS (as named by Zheng et al.), SG EOS]
 tags: [multiphase, interface-capturing, positivity, entropy-stable]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T19:58:00Z
 ---
 
 # Stiffened-gas equation of state
@@ -40,7 +40,9 @@ constant (below)
 [Paula et al. (2023)](/sources/paula-2023.md) §2.1, Eq. 3;
 [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) Appendix B;
 [Wakimura et al. (2024)](/sources/wakimura-2024.md) §2.2, Eq. 4;
-[Zhang et al. (2024a)](/sources/zhang-2024.md) §2.2, Eqs. 9–10).
+[Zhang et al. (2024a)](/sources/zhang-2024.md) §2.2, Eqs. 9–10;
+[Huang et al. (2025b)](/sources/huang-2025-b.md) §2, Eqs. 5–6;
+[Wilfong et al. (2026)](/sources/wilfong-2026.md) §2.2, after Menikoff & Plohr).
 Because only $p+p_\infty$ enters the sound speed, the pressure itself
 may be negative: [Wong et al. (2021)](/sources/wong-2021.md) §6.4 start
 a Sedov test in water at $p=-3\times10^7$ Pa, an admissible state since
@@ -153,6 +155,13 @@ $p+p_\infty>0$.
   $e=\frac{p+\gamma p_\infty}{(\gamma-1)\rho}+e_{0}$ and
   $T=\frac{p+p_\infty}{C_v(\gamma-1)\rho}$ for liquid water and its vapour
   (Eq. 3).
+- **Energy form with an energy offset.** Huang et al. (2025b) write
+  $p_k=(\gamma_k-1)\rho_k(e_k-e_{\infty,k})-\gamma_kp_{\infty,k}$ with an energy constant
+  $e_{\infty,k}$ (page-local) and $c_k^2=\gamma_k(p_k+p_{\infty,k})/\rho_k$ (Eqs. 5–6; the
+  printed law has the mixture density $\rho$ where the phase density is meant, see
+  Qualifications); MFC 5.0 states the inverse,
+  $e_k=(p_k+\gamma_kp_{\infty,k})/((\gamma_k-1)\rho_k)$ (Wilfong et al. §2.2). Both are the
+  law above.
 - **Parameters for liquids.** Bryngelson et al. state that the liquid
   constants are fitted to shock-Hugoniot data (§3).
 
@@ -227,6 +236,12 @@ molar masses for both $\mathsf G=1/(\gamma-1)$ and
 $\mathsf A=\gamma p_\infty/(\gamma-1)$ (Appendix B, Eqs. B.1–B.2;
 page-local symbols, see
 [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)).
+Huang et al. (2025b) print a different rule for the stiffening pressure,
+$p_\infty/(\gamma-1)=\sum_k\phi_kp_{\infty,k}/(\gamma_k-1)$, together with
+$\rho e_\infty=\sum_k\phi_k\rho_ke_{\infty,k}$ (Eq. 9), and a mixture pressure
+(Eq. 10) whose $p_\infty$ term has the opposite sign of the one their phase law
+implies (Qualifications); with their rule the mixture constant differs from
+Wong et al.'s by the factors $\gamma_k$ *(compiler check, not in the sources)*.
 Jain & Moin's Eq. (5) is the volume-fraction rule written with
 $\alpha_k,\beta_k$: with $\alpha_k=\gamma_k-1$ and
 $\beta_k=-\gamma_kp_{\infty,k}$ it reproduces $1/(\gamma-1)=\sum_k\phi_k/(\gamma_k-1)$
@@ -300,6 +315,7 @@ sound speed $c^2=\gamma(p+p_\infty)/\rho$ (§3.3–3.4).
 | Zhang et al. (2024a) Table 1, water (dimensional tests, §§4.1–4.8) | 4.4 | $6.0\times10^8$ Pa | SI |
 | Zhang et al. (2024a) §4.12, water in droplet collision | 5.0 | $10^8$ Pa | SI |
 | Zhang et al. (2024a) §§4.9–4.11, water in capillary tests | — | 6000 | non-dimensional ($\gamma$ as Table 1) |
+| Huang et al. (2025b) §4.3.1, underwater explosion (water) | 4.4 | $6\times10^8$ Pa | SI; air $\gamma=1.4$, $p_\infty=0$ |
 | Jain & Moin §4, Taylor–Green and isotropic-turbulence tests | 1.4 | 0 | non-dimensional; in §5 the $p_{\infty,k}$ are chosen to equalize the turbulent Mach number, values not printed |
 
 The fits differ from test to test within one source (Tsoutsanis et al.
@@ -335,6 +351,12 @@ water density 1; §4.3, Eq. 50).
   $\sqrt{4.4(10^5+6\times10^8)/1000}=1624.9$ and $\sqrt{1.4\cdot10^5}=374.2$ *(compiler
   check, not in the sources)*.
 
+- Huang et al. (2025b) print the phase law with the mixture density, $(\gamma_k-1)\rho(e_k-e_{\infty,k})$
+  (Eq. 5), and their mixture pressure (Eq. 10) as
+  $p=\big(\rho e-\sum_k\phi_k\rho_ke_{\infty,k}+\sum_k\phi_kp_{\infty,k}/(\gamma_k-1)\big)\big/\sum_k\phi_k/(\gamma_k-1)$;
+  inverting Eq. 5 with $\rho_k$ gives $-\sum_k\phi_k\gamma_kp_{\infty,k}/(\gamma_k-1)$ in that
+  numerator. One of the two equations is misprinted, and the paper does not say which
+  it implements *(compiler check, not in the sources)*.
 - The name is not uniform: Zheng et al. call the stiffened-gas energy
   relation the "Tait EOS"; the other sources call it stiffened gas, and
   Nguyen et al. use "Tait" for the barotropic law of the section above.
@@ -361,4 +383,6 @@ water density 1; §4.3, Eq. 50).
 - [Paula et al. (2023)](/sources/paula-2023.md) — §2.1, Eq. (3); §7.4.1–7.4.3 (parameter values).
 - [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) — Appendix B, Eqs. (B.1)–(B.2) (mass-fraction mixture rule).
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §2.2, Eqs. (4)–(8), (12)–(13), Tables 1–2; §4.4: caloric form, saturation curve, water and dodecane constants.
+- [Huang et al. (2025b)](/sources/huang-2025-b.md) — §2, Eqs. (5)–(10); §4.3.1.
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §2.2.
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §2.2–2.3, Eqs. (9)–(16), Table 1, Fig. 1; §§4.9–4.12: parameter values and sound speeds.

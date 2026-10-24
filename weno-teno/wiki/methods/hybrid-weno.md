@@ -3,9 +3,9 @@ type: Method
 title: "Hybrid central-WENO schemes"
 description: "Hybrid schemes use a cheap linear (central, energy-preserving or optimal upwind) reconstruction where a sensor declares the stencil smooth and a nonlinear WENO or TENO reconstruction elsewhere, or switch between flux and state reconstruction; they cut dissipation and cost, restore order or add robustness by a first-order fallback, but hinge on the sensor and its threshold."
 status: established
-aliases: [hybrid WENO, TENO-S, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS, MMR-WENO, HMR-WENO, modified MR-WENO, WENO5IS-THINC]
+aliases: [hybrid WENO, TENO-S, TENO-E, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS, MMR-WENO, HMR-WENO, modified MR-WENO, WENO5IS-THINC]
 tags: [weno, teno, reconstruction, low-dissipation, turbulence, limiting]
-timestamp: 2026-10-23T15:11:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Hybrid central-WENO schemes
@@ -89,6 +89,39 @@ earlier hybrids: Pirozzoli's compact–WENO hybrid "inevitably generates slight 
 reads only low-order information, hybrid performance "strongly depends on the discontinuity indicator, which is mostly
 problem-sensitive", and compact schemes cost more than central ones of the same order. They leave positivity preservation
 for extreme configurations to future work (§5).
+
+## A jump-variance hybrid on unstructured meshes: TENO-E
+
+[Liang et al. (2025)](/sources/liang-2025.md) (§3.3) build fifth- to seventh-order finite-volume
+schemes on triangles, tetrahedra and hexahedra (TENO5-E, TENO6-E, TENO7-E, in
+[UCNS3D](/software/ucns3d.md)) as a hybrid of a linear and a TENO reconstruction:
+
+- **Sensor** (§3.3.2, Eqs. (19)–(20)). For the target cell $i$ the relative density jumps
+  $\mathsf r_{i,k}=\lvert\bar\rho_k-\bar\rho_i\rvert/\bar\rho_i$ to the $N_{\mathrm n}$ neighbours $k$ of its large
+  central stencil are formed, and the cell is troubled when their population variance
+  $\mathsf v_i=\frac1{N_{\mathrm n}}\sum_k\big(\mathsf r_{i,k}-\overline{\mathsf r}_i\big)^2$ reaches $C_{\mathrm v}=10^{-3}$
+  (page-local symbols, as on the Source page; $\overline{\mathsf r}_i$ the mean jump). Outliers in the sequence of
+  jumps, from a discontinuity or a high-wavenumber fluctuation, raise the variance. Only density is
+  checked, in physical space, with one threshold for all orders and tests, "sufficient" by
+  "extensive numerical experiments" ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
+- **Branches** (§3.3.3, Eq. (21)). In untroubled cells the linear least-squares reconstruction of the
+  large stencil acts on the **conserved** variables, with neither weights nor
+  [characteristic decomposition](/methods/characteristic-decomposition.md); in troubled cells a TENO
+  reconstruction in characteristic variables keeps the large stencil if it passes the cut-off and
+  otherwise averages the surviving third-order directional stencils with equal weights
+  ([targeted ENO](/methods/targeted-eno.md)). The cut-off itself is adapted to the variance, from $10^{-10}$
+  to $10^{-6}$ ([adaptive TENO](/methods/adaptive-teno.md)).
+- **Exact linear recovery.** The authors contrast TENO-E, which recovers the background linear scheme
+  exactly in smooth regions, with the unstructured CWENO they compare it with, which recovers it only
+  asymptotically and adds dissipation where its nonlinear adaptation is activated in smooth regions
+  (§3.2, §3.3.5).
+- **Cost** (§4, Tables 2–4). Against CWENO5 on 2D Riemann configuration 8, total time 0.52, 0.64 and 0.88
+  and reconstruction time 0.43, 0.55 and 0.80 for TENO5/6/7-E (CWENO6 1.16 and 1.19, CWENO7 1.42 and
+  1.46); on Schardin's shock–wedge problem with about 1.6 million triangles 0.56, 0.67 and 0.79; on the
+  inviscid Taylor–Green vortex TENO6-E needs 35.2% ($64^3$) and 27.0% ($128^3$) of CWENO6's reconstruction
+  time (§4.9). The overhead of the sensor, which needs extra communication across processor
+  boundaries, is said to be outweighed by the skipped decompositions (§3.3.5); no parallel timing is
+  shown and the hardware is "the same workstation".
 
 ## A dissipation-adaptive hybrid: MDAD-HY
 
@@ -451,6 +484,10 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
   the hurricane problem, without proof. Their Table 2
   ($L_2$, $20\to40$) prints order 4.87 and Table 4 ($L_\infty$, $20\to40$) 4.92. *(Compiler check, not in
   the sources: the printed errors give 4.97 and 5.56.)*
+- *(Compiler check, not in the sources: Liang et al. (2025) check density alone, so a discontinuity
+  without a density jump, such as a shear layer at constant density, would not switch the TENO-E
+  sensor; the indicator divides by the target-cell density and is undefined for vanishing density.)*
+  The paper discusses neither point.
 - The factor-four speed-up of the hybrid TENO is quoted from earlier work in a review; neither the
   hardware nor the share of flagged points is given in the review.
 
@@ -481,3 +518,4 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 - [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — §1; §2.2, Eqs. (2.15)–(2.19), Algorithm 1, Remarks 1–3; §3, Tables 3.1–3.4.
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §3.3, Eqs. (46)–(49), Algorithm 1.
 - [Zhang et al. (2024d)](/sources/zhang-2024-d.md) — §1; §2.3; §3.2–3.3, Eqs. (40)–(43), Remark 1, Algorithm 1; §4, Tables 1–7, Figs. 3–14; §5 (arXiv v1).
+- [Liang et al. (2025)](/sources/liang-2025.md) — §3.2; §3.3.2–3.3.5, Eqs. (19)–(28); §4, Tables 2–4, §§4.7, 4.9: TENO-E linear/TENO hybrid with a jump-variance sensor on unstructured meshes, cost against CWENO.

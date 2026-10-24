@@ -5,7 +5,7 @@ description: "Implicit–explicit Runge–Kutta schemes pair an explicit tableau
 status: established
 aliases: [IMEX-RK, implicit-explicit Runge–Kutta, additive Runge–Kutta, ARK-IMEX, SI-IMEX, semi-implicit IMEX Runge–Kutta, partitioned IMEX Runge–Kutta, IMEX TVD Runge–Kutta]
 tags: [asymptotic-preserving, imex, semi-implicit, finite-difference, relativistic, mhd]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T19:54:00Z
 ---
 
 # IMEX Runge–Kutta schemes
@@ -221,6 +221,38 @@ transport, with the third-order stiffly accurate scheme of Boscarino et al. (202
 Huang, Xing and Xiong (tableau not reprinted); stiff accuracy is the hypothesis of their
 asymptotic-accuracy theorem (Thm. 4.2; [semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)).
 
+## ARS(2,2,2) in flux form for a linearized all-Mach scheme
+
+[Allegrini & Vignal (2025)](/sources/allegrini-2025.md) (§4.1, Eqs. (24)–(25); HAL author
+manuscript) take the second-order ARS(2,2,2) scheme, "shown in [37] to be the better choice for
+second-order discretizations", for the full Euler equations split additively into an explicit
+flux $f_{\mathrm e}$ (mass, convective momentum and kinetic-energy flux) and an implicit flux
+$f_{\mathrm i}$ (pressure and enthalpy flux) of the Toro–Vázquez type (page-local symbols; see
+[flux vector splitting](/methods/flux-vector-splitting.md)). With $\gamma_{\mathrm D}=1-1/\sqrt2$
+(their $\beta$) the stage and the update read
+
+$$\begin{aligned}
+\frac{u^{*}-u^n}{\Delta t}&+\gamma_{\mathrm D}\nabla\cdot f_{\mathrm e}(u^n)+\gamma_{\mathrm D}\nabla\cdot f_{\mathrm i}(u^{*})=0,\\
+\frac{u^{n+1}-u^n}{\Delta t}&+\nabla\cdot f(u^{*})+(1-\gamma_{\mathrm D})\nabla\cdot\big(f_{\mathrm e}(u^{*})-f_{\mathrm e}(u^n)\big)+\gamma_{\mathrm D}\nabla\cdot\big(f_{\mathrm i}(u^{n+1})-f_{\mathrm i}(u^{*})\big)=0,
+\end{aligned}$$
+
+with $f=f_{\mathrm e}+f_{\mathrm i}$, so the explicit weights on $u^n$ and $u^*$ are $\gamma_{\mathrm D}-1$ and
+$2-\gamma_{\mathrm D}$ and the implicit ones on $u^*$ and $u^{n+1}$ are $1-\gamma_{\mathrm D}$ and
+$\gamma_{\mathrm D}$. *(compiler check, not in the sources: these are the ARS(2,2,2) tableaux, whose
+explicit entry $\delta=1-1/(2\gamma_{\mathrm D})=-1/\sqrt2$ equals $\gamma_{\mathrm D}-1$; the scheme is of
+type ARS in the classification above, with a trivial first implicit stage.)* After the same
+reformulation and linearization as their first-order scheme, each of the two implicit stages
+is one linear elliptic pressure equation; the first is the first-order scheme with
+$\Delta t\to\gamma_{\mathrm D}\Delta t$. Lemma 8 proves (in sketch) asymptotic consistency for
+well-prepared initial energy.
+
+Two observations frame the choice (§4, §4.3). Citing Gottlieb, Shu and Tadmor, implicit
+Runge–Kutta methods of order above one cannot be SSP without a time-step restriction, and,
+citing their ref. [19], neither can IMEX schemes; second order in time with first-order space
+oscillates more as the Mach number decreases (low-Mach shock tube, Fig. 11). The authors therefore
+blend the first- and second-order updates convexly into a first-order TVD scheme
+([total variation diminishing](/definitions/total-variation-diminishing.md)).
+
 ## IMEX schemes in the sources
 
 | Source | Scheme | Stiff term | Order |
@@ -232,6 +264,7 @@ asymptotic-accuracy theorem (Thm. 4.2; [semi-implicit all-Mach schemes](/methods
 | [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) | Pareschi–Russo L-stable ARK2; Kennedy–Carpenter ARK3, ARK4 | Lorentz-force and resistive sources of two-fluid relativistic plasma | 2, 3, 4 |
 | [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) | IMEX extension of Shu–Osher SSP-RK3 | radiation four-force (absorption, scattering) | not analysed |
 | [Mignone et al. (2024)](/sources/mignone-2024.md) | SSP3(4,3,3) of Pareschi & Russo; ARK4(3)7L[2]SA1 of Kennedy & Carpenter | resistive relaxation of the electric field in relativistic MHD | 3, 4 (fourth order observed in space and time with ARK4) |
+| [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) | first-order IMEX Euler; ARS(2,2,2), $\gamma_{\mathrm D}=1-1/\sqrt2$, in flux form | pressure gradient $\nabla p/\varepsilon_{\mathrm A}$ and enthalpy flux of full Euler, $M^2=\varepsilon_{\mathrm A}/\gamma$ (page-local $\varepsilon_{\mathrm A}$) | 1, 2 |
 
 ## Qualifications
 
@@ -260,6 +293,11 @@ asymptotic-accuracy theorem (Thm. 4.2; [semi-implicit all-Mach schemes](/methods
   implicit row. *(compiler check, not in the sources: with the printed $\mathsf c=(0,\ 1767732205903/2027836641118,\ \tfrac35,\ 1)$,
   the printed $\mathsf b$ gives $\sum_l\mathsf b_l=1$ and $\sum_l\mathsf b_l\mathsf c_l=\tfrac12$ but
   $\sum_l\mathsf b_l\mathsf c_l^2=0.345754\ne\tfrac13$, while $\tilde{\mathsf b}$ gives $\tfrac13$.)*
+- **Type A or ARS.** Boscarino et al. (2022) call type A "critical" for their low-Mach analysis
+  because an ARS scheme has no pressure equation in its first stage; Allegrini & Vignal (2025)
+  use ARS(2,2,2) and prove asymptotic consistency of their second-order scheme only for
+  well-prepared initial energy (Lemma 8). The two claims concern different schemes and data
+  and are not incompatible; no source compares the two types on the same scheme.
 - The explicit tableau of Eq. (3.30) carries a meaningless $0$ in the $\tilde{\mathsf c}$ column
   of its $\tilde{\mathsf b}$ row, and the order symbol $p$ of the label clashes with pressure; both
   are typographical.
@@ -274,3 +312,4 @@ asymptotic-accuracy theorem (Thm. 4.2; [semi-implicit all-Mach schemes](/methods
 - [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) — §3.1 (Eqs. (18)–(22)), §3.3 (Eqs. (39)–(43)) (arXiv v1).
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — §3.2 (Eqs. (3.7)–(3.10)), Thm. 4.2, Tables 5.2, 5.4 (arXiv v1).
 - [Mignone et al. (2024)](/sources/mignone-2024.md) — §1, §3.2 (Eqs. (21)–(24)), §3.4 (Eqs. (30)–(40)), §4.1–§4.3, §5, App. A (Eqs. (A1)–(A6)).
+- [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §4, §4.1 (Eqs. (24)–(25), Lemma 8), §4.3 (Eq. (28), Fig. 11) (HAL author manuscript).

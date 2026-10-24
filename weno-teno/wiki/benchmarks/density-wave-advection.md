@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Density-wave advection"
-description: "Smooth density (entropy) wave carried at uniform velocity and pressure, the exact Euler solution being pure translation; used as a 1D and 2D order-of-accuracy test of Euler and Navier–Stokes schemes, as a long-time dissipation test, and as a probe of pressure-equilibrium and entropy conservation of kinetic-energy-preserving fluxes."
+description: "Smooth density (entropy) wave carried at uniform velocity and pressure, the exact Euler solution being pure translation; used as a 1D and 2D order-of-accuracy test of Euler, Navier–Stokes and ideal-MHD schemes, as a long-time dissipation test, and as a probe of pressure-equilibrium and entropy conservation of kinetic-energy-preserving fluxes."
 status: established
 aliases: [density wave, entropy wave advection, sine density wave, advection of an entropy wave, density perturbation advection]
 tags: [benchmark, kinetic-energy-preserving, entropy-stable, low-dissipation, weno]
-timestamp: 2026-10-23T15:17:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # Density-wave advection
@@ -42,15 +42,20 @@ property, and conserves entropy.
 | [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.3–3.4 | $1+0.2\sin x$; 2D $1+0.2\sin(x+y)$ | 1; $(1,1)$, 1 | $[0,2\pi]$; $[0,2\pi]^2$, periodic | 40–140 points or cells; $40^2$–$140^2$; $t=2$ | accuracy, finite differences and finite volumes |
 | [Zuo & Zhu (2024a)](/sources/zuo-2024.md) Ex. 3.1–3.3; [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) Ex. 3.1–3.3 | $1+0.2\sin x$; $1+0.2\sin(x+y)$; $1+0.2\sin(x+y+z)$ | 1; $(1,1)$; $(0.3,0.3,0.4)$; $p_0=1$ | $[0,2\pi]^d$, periodic | $N_x=100,110,\dots,150$; $10^2$–$60^2$; $10^3$–$60^3$; $t=2$ | orders 5, 7, 9 of hybrid multi-resolution WENO |
 | [Chudzik et al. (2024)](/sources/chudzik-2024.md) Ex. 6.2, 7.1 | $\tfrac52\exp\!\big(-40((x+0.31)^2+(y+0.31)^2)\big)+\tfrac1{10}$ | Ex. 6.2: perturbation $v=(1,1)$, $p=1$ on background $\rho'=c'=1$, $v'=(0.5,0.5)$ to $t=4$ or $(1,1)$ to $t=2$; Ex. 7.1: two velocity cases | $[-1,1]^2$, periodic | $32^2$–$256^2$, CFL 0.275 | third-order Active Flux, linearized and nonlinear Euler |
-| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.2, 3.4 | $1+0.2\sin(\pi x)$; 2D $1+0.2\sin(\pi(x+y))$ | 1; $(1,1)$, 1 | $[0,2]$; $[0,4]^2$, periodic | $t=2$ (Tables 3, 6) | fifth-order accuracy and cost of Hermite WENO, CFL 0.6 |
+| [Fan et al. (2025a)](/sources/fan-2025.md) Ex. 3.2, 3.4 | $1+0.2\sin(\pi x)$; 2D $1+0.2\sin(\pi(x+y))$ | 1; $(1,1)$, 1 | $[0,2]$; $[0,4]^2$, periodic | $t=2$ (Tables 3, 6) | fifth-order accuracy and cost of Hermite WENO, CFL 0.6 |
 | [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) Eq. (66) | $2+\sin^4(\pi x)$ | 1, 1 | $[-1,1]$, periodic | 16–128 cells, CFL 0.9; $t=2$ (one period); efficiency runs to $t=10$, profiling on 200 cells to $t=5$ | orders 2–10 of ADER finite volumes |
+| [Huang et al. (2025a)](/sources/huang-2025.md) §5.1.1–5.1.2 | $1+0.2\sin(\pi x)$; 2D $1+0.2\sin(\pi(x+y))$ | $0.7$; $(0.7,0.3)$, 1 | $[0,2]$; $[0,2]^2$, periodic | $N=100$–800, $t=1$; $20^2$–$160^2$, $t=2$ | troubled-cell indicator inactive, $\mathbb P^2$ RKDG, CFL 0.15 |
+| [Liang et al. (2025)](/sources/liang-2025.md) §4.1, Eq. (32) | $1+0.5\sin^2(\pi x)$ | $(1,0)$, 1 | $[0,2]^2$, periodic in $x$ ($y$ boundaries not printed), uniform triangles | $h=2/13$ to $1/80$ (374 to 58330 elements); $t=2$ | orders 5–7 of unstructured TENO |
+| [Ren et al. (2025)](/sources/ren-2025.md) §5.2.1 | $1+0.2\sin(\pi x)$ | 1, 1 | not printed | $n=10$–320; final time not printed; TVD-RK3 with $O(\Delta t^3)<O(\Delta x^5)$ | fifth order of a shock-detector MR-WENO |
+| [Fan et al. (2025b)](/sources/fan-2025-b.md) §4.1.2 | $2+0.01\sin(2\pi x)$ | 1, 1 | $[0,1]$ (periodic implied) | $N=20$–10240; $t=1$ | third order of a learned WCNS |
+| [Liu et al. (2025b)](/sources/liu-2025-b.md) Ex. 1 | ideal MHD, $1+0.2\sin x$ | $(1,0,0)$, 2, with $B=(0.5,1,1.5)$ | $(0,2\pi)$, periodic | $N=12$–384; $t=1.3$ | third order of entropy-stable damped DG |
 | [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.1 | two species, $\rho=e^{-500x^2}+4\epsilon_{\mathrm v}$, species fraction $\tfrac12(\sin(2\pi x)+1)$ | 1, $2\epsilon_{\mathrm v}$ | $[-0.5,0.5]\times[-0.05,0.05]$, periodic | $N_x=8$–512 elements, $\mathbb P^1$–$\mathbb P^5$; $t=1$ | accuracy and positivity near vacuum |
 
 All with $\gamma=1.4$ (Lin & Zhu and Zhang & Zhu print no $\gamma$; Chudzik
 et al.'s background primes, page-local, are those of their linearized
 Euler system), except Wang et al.'s Navier–Stokes cases
 ($\gamma=5/3$, $\mu=0.0005$, $\mathrm{Pr}=2/3$, $\mathrm{Re}=1000$, after
-earlier work) and Peyvan et al.'s reacting air (five species, with the
+earlier work), Liu et al. (2025b)'s MHD wave ($\gamma=5/3$) and Peyvan et al.'s reacting air (five species, with the
 reaction sources switched off). Zhao et al.'s Gaussian has half-width
 $b$ at half height: $e^{-\ln2\,x^2/b^2}=\tfrac12$ at $x=b$ *(compiler
 check, not in the sources)*. De Michele & Coppola choose a
@@ -70,6 +75,17 @@ near-vacuum test: $\epsilon_{\mathrm v}=10^{-12}$ (page-local; their
 $\epsilon$), each species density has minimum $2\times10^{-12}$, and the
 two species have $c_p=1.4$, $c_v=1$ and $c_p=4.21$, $c_v=2.52$; the
 Gaussian of width parameter 500 is the density, the sine the composition.
+
+In ideal MHD a uniform field leaves the density wave an exact solution
+when $v$, $p$ and $B$ are uniform: the Lorentz force and the induction
+term vanish *(compiler check, not in the sources)*. Liu et al. (2025b)'s
+field $(0.5,1,1.5)$ is therefore only carried along. [Wilfong et al.
+(2026)](/sources/wilfong-2026.md) run a multispecies variant, the
+advection of a two-species calorically perfect mixture initialized with
+sinusoidal density and temperature and uniform mass fractions, errors
+taken against a reference solution, as the order check of their
+chemistry module (§4.1.7, Fig. 7; velocity, pressure and amplitudes not
+printed).
 
 ## Findings across sources
 
@@ -105,7 +121,7 @@ $5.6985\times10^{-4}$ to $1.5194\times10^{-10}$ (orders 6.13, 7.00,
 **Long-time propagation at large CFL.** On the Gaussian wave to
 $t=400$, Zhao et al. run the nonlinear and the linear eighth-order
 compact scheme at CFL 0.4 and 0.8 and compare with a sixth-order
-DG-$P^5$ result of the literature at $h=6$ and CFL $1/30$, which solved
+DG-$\mathbb P^5$ result of the literature at $h=6$ and CFL $1/30$, which solved
 the linear advection equation without background flow; they state that
 their scheme "works very well even for the linear wave propagation"
 (Fig. 7).
@@ -192,6 +208,73 @@ number the time error $O(\Delta t^3)$ would dominate the seventh- and
 ninth-order spatial errors as the grid is refined *(compiler check, not
 in the sources)*.
 
+**Indicator inactivity and third order of a DG limiter.** Huang et al.
+(2025a) use the wave to show that the TENO
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md) of
+Huang & Fu (2024) flags no cell, so their
+[TENO-THINC](/methods/teno-thinc.md) limiter for $\mathbb P^2$ RKDG leaves
+the scheme untouched: errors with their limiter, with the simple WENO
+limiter driven by the same indicator and without any limiter are
+identical, $L^1$ $3.53\times10^{-7}$ ($N=100$) to $6.94\times10^{-10}$
+($N=800$), orders 2.99, 3.00, 3.00 (Table 1), and the 2D errors fall from
+$1.22\times10^{-4}$ on $20^2$ to $2.46\times10^{-7}$ on $160^2$, orders
+2.98, 2.98, 2.99 (Table 3). With the TENO-THINC limiter switched on in
+every cell the errors are again the unlimited ones (Table 2), because the
+boundary-variation rule detects no discontinuity and the TENO step leaves
+the polynomial unchanged when all three candidate stencils are smooth
+(§5.1.1). Their 1D and 2D errors and orders are those that
+[Huang & Fu (2024)](/sources/huang-2024.md) print in their Tables 1 and 3
+for the same indicator *(compiler check, not in the sources)*.
+
+**Orders 5, 6 and 7 of TENO on triangles.** Liang et al. (2025)'s
+finite-volume [TENO](/methods/targeted-eno.md) schemes with local
+adaptive dissipation (TENO5-E, TENO6-E, TENO7-E) reach their design
+orders on the entropy wave (Table 1, $L^\infty$ errors):
+
+| $h$ | 2/13 | 1/10 | 1/20 | 1/40 | 1/80 |
+|---|---|---|---|---|---|
+| TENO5-E | 3.35e-2 | 4.35e-3 (4.74) | 1.44e-4 (4.91) | 4.57e-6 (4.98) | 1.48e-7 (4.95) |
+| TENO6-E | 8.92e-3 | 4.98e-4 (6.70) | 5.82e-6 (6.42) | 1.26e-7 (5.53) | 2.25e-9 (5.81) |
+| TENO7-E | 1.83e-2 | 6.31e-4 (7.82) | 5.14e-6 (6.94) | 4.07e-8 (6.98) | 3.20e-10 (6.99) |
+
+The $L^2$ orders at the finest pair are 4.92, 6.02 and 6.85; TENO6-E
+falls below six at one refinement in $L^\infty$ (5.53). The printed
+orders follow from the printed errors and $h$ to within 0.01
+*(compiler check, not in the sources)*.
+
+**Fifth order of a shock-detector MR-WENO.** Ren et al. (2025)'s
+fifth-order finite-volume MR-WENO-SD, whose weights are set by a
+pressure-jump shock detector instead of smoothness indicators (see
+[multi-resolution WENO](/methods/multi-resolution-weno.md)), gives $L_1$
+orders 4.9055–5.0290, $L_\infty$ orders 4.8084–4.9973 and $L_2$ orders
+5.4265–5.5007 from $n=10$ to 320 (Table 7); the printed $L_2$ errors lie
+below the $L_1$ errors (at $n=10$, $4.2921\times10^{-4}$ against
+$1.1983\times10^{-3}$), and the paper does not define its norms. Their
+detector, Eq. (47), is a function of $\lvert p_{i,j}-p_{i+1,j}\rvert$
+and vanishes identically for the uniform pressure of this test, so the
+weights never see a shock and the run checks the reconstruction selected
+in smooth flow, not the nonlinear switching *(compiler check, not in
+the sources)*.
+
+**Third order of a learned WCNS.** Fan et al. (2025b)'s WCNS3-MR-NN, a
+third-order [WCNS](/methods/weighted-compact-nonlinear-scheme.md) whose
+weights a neural network sets from multi-resolution data (see
+[learned WENO weights](/methods/learned-weno-weights.md)), stays third
+order up to $N=10240$ ($L^1$ $3.94\times10^{-12}$ at $N=10240$), with
+$L^\infty$ orders 2.72 and 3.51 at the two coarsest refinements (Table 4,
+Fig. 7). Their two WCNS re-implementations of an earlier network,
+WCNS3-NN1 and WCNS3-NN2, reach only about second order in $L^1$ and $L^2$
+and first order in $L^\infty$ (Fig. 7); these are point-value WCNS
+schemes, not the finite-volume scheme the network was trained for.
+
+**Third order of entropy-stable damped DG for MHD.** Liu et al. (2025b)'s
+entropy-stable oscillation-free nodal [DG](/methods/discontinuous-galerkin.md)
+($k=2$, CFL 0.12) converges at order 3.000 in all norms on the MHD wave,
+$L^1$ error $1.085\times10^{-4}$ at $N=12$ to $3.313\times10^{-9}$ at
+$N=384$ (Table 1): the authors conclude that the damping term does not
+degrade the accuracy, while their Theorem 3.2 proves only a $k$-th order
+truncation error.
+
 **Active Flux.** Chudzik et al.'s Cartesian
 [Active Flux](/methods/active-flux.md) method, with point values evolved
 by the bicharacteristic EG2 operator, converges at third order on the
@@ -225,7 +308,7 @@ that the scheme keeps its high-order accuracy with the entropy
 constraints active. See [entropy filtering](/methods/entropy-filtering.md)
 and [bound preservation](/properties/bound-preservation.md).
 
-**Hermite WENO with unified stencils.** Fan et al. (2025) find fifth
+**Hermite WENO with unified stencils.** Fan et al. (2025a) find fifth
 order for their moment-based [Hermite WENO](/methods/hermite-weno.md)
 HWENO-U, for HWENO-M and for WENO-ZQ in 1D and 2D (Tables 3, 6). Against
 WENO-ZQ, HWENO-U costs 1.711 times the CPU time for an $L^1$ error
@@ -258,7 +341,7 @@ Cauchy–Kovalevskaya expansion are desirable at very high order (§8).
 - Yajaman et al.'s text announces "a sequence of five meshes" for the
   density wave, while their Table 4 prints four (16–128 cells), as its
   caption says.
-- Fan et al. (2025) print HWENO-M's CPU time at $120^2$ in Table 6 as
+- Fan et al. (2025a) print HWENO-M's CPU time at $120^2$ in Table 6 as
   1.30E+03 s, below its $80^2$ time (2.29E+03 s) and an order of
   magnitude off the times of the two other schemes at $120^2$
   (1.43E+04 s, 8.83E+03 s); the paper gives no other value to settle
@@ -321,5 +404,12 @@ Cauchy–Kovalevskaya expansion are desirable at very high order (§8).
 - [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — §3, Ex. 3.1–3.3, Tables 3.2–3.4.
 - [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — §3, Ex. 3.1–3.3, Tables 3.2–3.4.
 - [Chudzik et al. (2024)](/sources/chudzik-2024.md) — §6, Ex. 6.2, Ex. 7.1, Tables 6 and 8.
-- [Fan et al. (2025)](/sources/fan-2025.md) — §3.1, Ex. 3.2 and 3.4, Tables 3 and 6.
+- [Fan et al. (2025a)](/sources/fan-2025.md) — §3.1, Ex. 3.2 and 3.4, Tables 3 and 6.
+- [Huang & Fu (2024)](/sources/huang-2024.md) — §6.1.1, Table 1 (for comparison).
+- [Huang et al. (2025a)](/sources/huang-2025.md) — §5.1.1–5.1.2, Eqs. (38)–(42), Tables 1–3.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §4.1, Eq. (32), Table 1.
+- [Ren et al. (2025)](/sources/ren-2025.md) — §5.1.1, §5.2.1, Eq. (47), Table 7.
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §4.1.2, Table 4, Fig. 7.
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — Ex. 1, Theorem 3.2, Table 1.
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §4.1.7, Fig. 7.
 - [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) — §7.2, §8, Eq. (66), Tables 4–5, B.9–B.11, Fig. 13.

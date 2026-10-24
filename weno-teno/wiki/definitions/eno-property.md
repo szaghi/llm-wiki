@@ -5,7 +5,7 @@ description: "A reconstruction has the ENO property when, near a discontinuity, 
 status: established
 aliases: [ENO-property, essentially non-oscillatory property, ENO condition]
 tags: [reconstruction, weno, teno, limiting]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T19:53:00Z
 ---
 
 # ENO property
@@ -50,6 +50,13 @@ the singularity, against Gibbs-type oscillations when the property is lost.
   measure is at least $1/K>C_T=10^{-6}$, so at least one stencil always survives.)* Ji, Liang & Fu (2023, §3.2.2, Eqs. (29)–(36)) keep the two steps and use
   different cut-offs, $C_T=10^{-7}$ among all candidates and $10^{-5}$ among the small stencils, so that the second step
   "ensures the preservation of ENO property" with stronger nonlinear adaptation at discontinuities.
+  Liang, Shyy & Fu's unstructured TENO-E keeps the same two-level structure, with one cut-off for both
+  levels and equal weights $1/K$ among the surviving third-order directional stencils
+  ([Liang et al. (2025)](/sources/liang-2025.md), §3.3.3, Eqs. (22)–(27)). In the finite-volume
+  [converged ENO](/methods/converged-eno.md) scheme of [Liang & Fu (2026)](/sources/liang-2026.md)
+  (§3.2.4, Eqs. (25)–(26)) the five-point stencil is used alone if it survives; otherwise the two
+  two-point stencils are combined with renormalized linear weights, and a dropped two-point stencil
+  is suppressed "such that the ENO property is achieved".
 - **Blending with a linear reconstruction.** In the steady-state hybrid WENO-H of Wan & Xia (2022,
   §3.1), the non-smooth-region reconstruction is a blend of a CWENO-type nonlinear and a linear
   polynomial whose weights bound the blended smoothness indicator by twice an amplification factor
@@ -96,6 +103,20 @@ with $\sigma=10^{-7}$ it does not, and only the relative $\epsilon$ restores the
 ENO-property of the solution cannot be satisfied by using the new $\tau^*$ alone"
 ([multi-resolution WENO](/methods/multi-resolution-weno.md)).
 
+**Inside a captured shock.** The property presupposes that some candidate stencil is free of the
+discontinuity. [Ren et al. (2025)](/sources/ren-2025.md) (§4.1.3, Table 3, Fig. 20) point out that inside the
+numerical structure of a captured shock, whose intermediate cells carry states between the pre- and
+post-shock values, every three-point substencil of fifth-order WENO contains the jump, so all weights
+stay $O(1)$: for a left state next to a planar Mach 20 normal shock reconstructed with the HLL flux,
+the finite-volume [WENO-Z](/methods/weno-z.md) weights are $(\omega_0,\omega_1,\omega_2)=(0.21135,0.62458,0.16407)$,
+and the authors say the reconstruction loses the ENO property there. They also find, by
+[matrix stability analysis](/methods/matrix-stability-analysis.md), that reconstructing these faces
+with the single smoothest quadratic (the ENO choice) is still unstable, whereas a constant
+(first-order) reconstruction on the faces next to the shock restores stability (§4.1.3, Figs. 21–22); they conclude
+that high-order schemes should degenerate to zeroth-degree polynomials near shocks, and build MR-WENO-SD
+on it ([multi-resolution WENO](/methods/multi-resolution-weno.md),
+[carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)).
+
 A learned weight function can lose the property in a second way, by construction rather than by
 scaling: Bezgin et al. (2022, §3.2, App. A.4, Fig. 21) report that without the ENO layer WENO3-NN
 reconstructs negative densities or pressures in the interacting blast waves.
@@ -128,3 +149,6 @@ to deliver them.
 - [Li, Li, Don & Wang (2023a)](/sources/li-2023.md) — §2.5, Fig. 4.
 - [Nogueira et al. (2024)](/sources/nogueira-2024.md) — §3.1, Eqs. (12)–(15).
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §3.2.2, Eqs. (29)–(36).
+- [Ren et al. (2025)](/sources/ren-2025.md) — §4.1.3, Table 3: all WENO-Z weights $O(1)$ inside the numerical shock structure; ENO choice still unstable.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §3.3.3, Eqs. (22)–(27): two-level unstructured TENO-E selection.
+- [Liang & Fu (2026)](/sources/liang-2026.md) — §3.2.4, Eqs. (25)–(26): prioritized CENO reconstruction.

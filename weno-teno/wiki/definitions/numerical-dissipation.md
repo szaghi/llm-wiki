@@ -5,7 +5,7 @@ description: "Numerical dissipation is the part of a scheme's error that damps r
 status: established
 aliases: [numerical diffusion, numerical viscosity, anti-diffusion, negative dissipation, ND, high-order artificial dissipation, JST dissipation]
 tags: [low-dissipation, numerical-flux, reconstruction, central-scheme]
-timestamp: 2026-10-23T15:11:00Z
+timestamp: 2026-10-23T20:37:00Z
 ---
 
 # Numerical dissipation and anti-dissipation
@@ -38,6 +38,10 @@ jumps.
   motivate their two-phase BVD scheme by the limiter dissipation of MUSCL, which smears
   discontinuities; to their knowledge, vapour–liquid interfaces created dynamically by
   phase change "have never been captured" because of it.
+  [Huang et al. (2025b)](/sources/huang-2025-b.md) (§3.2, Eq. (18)) give the same rationale
+  for MUSCL-THINC-BVD, calling $\lvert u^+-u^-\rvert$ the "boundary variation" whose
+  minimization reduces the dissipation of the flux, and keep it while replacing the selection by
+  a network prediction ([BVD](/definitions/boundary-variation-diminishing.md)).
 - **Smaller speeds.** The [central-upwind flux](/methods/central-upwind-scheme.md)
   uses the one-sided speeds $a^\pm_{i+1/2}$; it "in general" carries more ND than
   upwind fluxes but needs no Riemann solver
@@ -171,6 +175,19 @@ jumps.
   converges only at second order but keeps an energy loss close to the full scheme's,
   which they take as a hint that its errors are dispersive rather than dissipative.
   See [magnetized vortex](/benchmarks/magnetized-vortex.md).
+- **Low Mach number by a solver correction.** [Wilfong et al. (2026)](/sources/wilfong-2026.md)
+  (§4.2.4, Fig. 14) implement in [MFC](/software/mfc.md) two corrections of the HLLC flux,
+  after Guillard & Viozat's account of the low-Mach accuracy loss. Let $v^\pm$ and $c^\pm$
+  denote the normal velocities and sound speeds of the two interface states and
+  $\mathsf z=\min\big(\max(\lvert v^-\rvert/c^-,\lvert v^+\rvert/c^+),1\big)$ a local Mach
+  number (page-local). The Thornber et al. correction replaces the two velocities by
+  $\tfrac12(v^-+v^+)+\tfrac{\mathsf z}2(v^--v^+)$ and $\tfrac12(v^-+v^+)+\tfrac{\mathsf z}2(v^+-v^-)$ in the signal speeds and fluxes, i.e. it scales
+  the velocity jump by $\mathsf z$; the anti-dissipation pressure correction of Chen et al. adds
+  $(\mathsf z-1)$ times a pressure-dissipation term built from the HLL speeds to the momentum and
+  energy fluxes of the two star states. On the [Gresho vortex](/benchmarks/gresho-vortex.md) at
+  reference Mach numbers $10^{-1}$ to $10^{-4}$ ($t/t_r=1$) the uncorrected HLLC loses accuracy,
+  and both corrections preserve it "to visual accuracy for all tested Mach numbers"
+  ([HLL-family solvers](/methods/hll-riemann-solvers.md)).
 - **Galerkin as a central scheme.** The plain continuous-Galerkin discretization "is equivalent
   to central differencing" and oscillates at shocks; [Dao & Nazarov (2022)](/sources/dao-2022.md)
   (§4, §4.2–4.3, Eq. (4.10)) add a residual-based viscosity, the minimum of a first-order
@@ -382,6 +399,18 @@ of the local resolution.
   measure; the nonlinear scheme has better dispersion and dissipation than TENO5 and
   WENO5-Z in the ADR and keeps total kinetic energy better on Kelvin–Helmholtz, where
   WENO5-Z is the most dissipative (§4.7, Figs. 3, 12(b)).
+- **A widened cut-off range, overridden at immersed boundaries.** [Chen & Chen (2026)](/sources/chen-2026.md)
+  (§2.3.2, §3.1, Fig. 8) treat the TENO cut-off $C_T$ as the dissipation control of a
+  fifth-order finite-difference TENO with an [immersed boundary](/methods/immersed-boundary-method.md).
+  Away from the body $C_T$ follows the nonlinear adaptation of Fu, Hu & Adams with parameters
+  that give the range $[10^{-9},10^{-1}]$ ([adaptive TENO](/methods/adaptive-teno.md)); every
+  interface whose stencil contains a ghost point takes the largest value $10^{-1}$, "to enhance
+  dissipation near the immersed boundary". On a Mach 3 cylinder the
+  [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md) is then
+  rarely activated; with $C_T\in[10^{-15},10^{-5}]$ (still $10^{-1}$ at the wall) its
+  activations increase near the shock front, and with $C_T$ fixed at $10^{-14}$ they spread into
+  the wake. The authors read this as resolution of high-wavenumber fluctuations bought with
+  stability (Fig. 8, maps only, no counts).
 - **Dissipation at a jump.** [Liang et al. (2022)](/sources/liang-2022.md) (§1, §3.2, Fig. 6)
   attribute residual dissipation of THINC at discontinuities to its cell-average constraint and
   replace it by point interpolation with two steepness levels in cells a TENO-flag detector marks
@@ -673,4 +702,7 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
 - [Chu et al. (2025a)](/sources/chu-2025.md) — §2.1–2.2, Eq. (2.6); §4, Examples 1–6, Figs. 4.1–4.10: SBM limiter classes and adaptive overcompression (arXiv v1).
 - [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §2.2, Proposition 3, Eq. (2.22); §2.4: diffusion sign on non-uniform grids.
 - [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — §4.3, Eqs. (87)–(95), Table 3, Fig. 6; §5.2, Eq. (98), Table 5; §6: numerical-resistivity ansatz and anisotropy (arXiv v3).
+- [Huang et al. (2025b)](/sources/huang-2025-b.md) — §3.2, Eq. (18): boundary variation as the dissipation of the flux, kept by deepMTBVD.
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §4.2.4, Fig. 14: Thornber and anti-dissipation pressure corrections of HLLC in MFC, Gresho vortex at low Mach number.
+- [Chen & Chen (2026)](/sources/chen-2026.md) — §2.3.2, §3.1, Fig. 8: adaptive TENO cut-off range as dissipation control, $10^{-1}$ at ghost-point stencils, positivity-limiter activations.
 - [Crin-Barat & Manea (2026)](/sources/crinbarat-2026.md) — §3.3–3.4, Propositions 3.4–3.5; §2.1, Theorem 2.1: skew-adjoint central difference (arXiv v2).

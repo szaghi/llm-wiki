@@ -5,7 +5,7 @@ description: "Convex limiting blends a high-order update with a bound-preserving
 status: established
 aliases: [flux-corrected transport, FCT, algebraic flux correction, AFC, invariant-domain-preserving limiting, IDP limiting, a posteriori blending, Zalesak limiter, sparse IDP DG, subcell convex limiting, monolithic convex limiting, MCL, residual blending]
 tags: [limiting, bound-preserving, positivity, dg, entropy-stable]
-timestamp: 2026-10-23T15:08:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Convex limiting and invariant-domain-preserving schemes
@@ -423,6 +423,43 @@ coefficient is again a closed-form ratio, minimized over the auxiliary velocity 
 an eigenvalue formula (§3.4, Appendix A), instead of the Newton-type line searches
 used for nonlinear bounds above.
 
+**Active Flux averages.** [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md)
+(arXiv v3, §4.1) limit the averages of the generalized
+[Active Flux](/methods/active-flux.md) method, whose high-order flux is Simpson's rule
+over the interface point values, in the same bar-state form. The low-order scheme is
+first-order local Lax–Friedrichs on the averages, with $a_{i+1/2}$ the larger spectral
+radius of the two adjacent averages, rewritten as a convex combination of $\bar u_i$ and
+the bar states $\breve u_{i\pm1/2}$ under
+$\Delta t\le\tfrac12\min\{\Delta x/(a^{(1)}_{i-1/2}+a^{(1)}_{i+1/2}),\ \Delta y/(a^{(2)}_{j-1/2}+a^{(2)}_{j+1/2})\}$
+(Lemma 4.1, Eq. (30); bar-state admissibility for scalar laws and Euler in Lemmas
+B.1–B.2). The limited states are $\breve u_{i\pm1/2}\mp\mathsf e_{i\pm1/2}\Delta\hat f_{i\pm1/2}/a_{i\pm1/2}$,
+$\mathsf e\in[0,1]$ the weight of the antidiffusive flux (page-local as above; the
+source's $\theta$), and Proposition 4.1 makes the limited forward-Euler update bound
+preserving, then SSP-RK3 by convexity (§4.1). The coefficients are those of the
+monolithic limiter above:
+
+- **Scalar laws** (§4.1.1, Eq. (34)): the same closed-form bounding fluxes
+  $a\min\{\breve u-u^{\min}_i,\ u^{\max}_{i+1}-\breve u\}$ and
+  $a\max\{u^{\min}_{i+1}-\breve u,\ \breve u-u^{\max}_i\}$, with global bounds over all
+  averages and point values or local bounds over the cell, its bar states and its
+  neighbours' averages.
+- **Euler** (§4.1.2, Eqs. (35)–(37)): density first, by the same min/max rule against a
+  floor $\min\{10^{-13},\dots\}$; then pressure, whose constraint at the limited bar
+  states is quadratic in $\mathsf e$, replaced, after Kuzmin as the authors state, by the
+  linear sufficient condition from $\mathsf e^2\le\mathsf e$, which gives
+  $\mathsf e=\min\{1,C/(\max\{0,A\}+\lvert B\rvert)\}$ ($A$, $B$, $C$ the coefficients of
+  the quadratic, page-local).
+
+Two points are specific to Active Flux. Limiting the averages is not enough, because the
+point values are degrees of freedom too: they are limited
+separately by a [Zhang–Shu-type](/methods/zhang-shu-scaling-limiter.md) blend with a
+first-order point update, and on a 2D advection test the bounds hold only with both
+limiters (Example 5.4, Table 1). And the time-step condition is evaluated at $t^n$ only;
+when a later Runge–Kutta stage violates it the implementation halves $\Delta t$ and
+restarts the step (Remark 4.2). A further factor $\theta^{\mathrm s}\in(0,1]$ from a
+shock sensor scales the limited antidiffusive flux once more, which keeps the bounds
+([troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
+
 ## A nonlinear relative: constraint-driven modal filtering
 
 [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) (§3.1, Remark
@@ -586,3 +623,4 @@ nodes (Pazner, §3.1).
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §1; §3.2, Eqs. (9)–(11); §5, Eqs. (16)–(24), Lemma 5.1, Theorem 5.2; §6.1–6.2, Eqs. (37)–(45), Theorems 6.1–6.2; Table 1, Fig. 3; App. B, Eqs. (70)–(81); footnotes 3–4.
 - [Lin & Chan (2024)](/sources/lin-2024.md) — §3.1–3.2, Eqs. (25), (46), Thms 3.1–3.3; §4.3–4.4, Eqs. (62)–(68).
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §3.1–3.4, Eqs. (3.1)–(3.18), Props. 3.1–3.2; Appendix A; §4, Tables 1–2.
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — arXiv v3: §4.1, Eqs. (27)–(38), Lemma 4.1, Prop. 4.1, Remarks 4.1–4.2; App. B, Lemmas B.1–B.2; Example 5.4, Table 1.

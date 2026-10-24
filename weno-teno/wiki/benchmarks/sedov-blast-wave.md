@@ -5,7 +5,7 @@ description: "Point-explosion benchmark: the energy of one or a few cells drives
 status: established
 aliases: [Sedov problem, Sedov–Taylor blast wave, point explosion, Sedov blast]
 tags: [benchmark, positivity, bound-preserving, weno]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Sedov blast wave
@@ -44,7 +44,12 @@ holds $E=3.2\times10^8$, $3.2\times10^{20}$ times the ambient value
 | [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.3 | 800 ($\Delta x=5\times10^{-3}$) | — | MR-AWENO-Si and MR-AWENO with a [PP flux limiter](/methods/positivity-preserving-flux-limiter.md) |
 | [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.2 | 800 | — | hybrid MDCD-HY and MDAD-HY, TENO-HY |
 | [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.7 | 400 points or cells | — | ghost multi-resolution GMR-WENO3/5/7 vs [MR-WENO](/methods/multi-resolution-weno.md), finite differences and finite volumes |
-| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.9 | 800 | exact solution | moment-based finite-volume [HWENO-U](/methods/hermite-weno.md) with unified stencils vs HWENO-M, WENO-ZQ; Zhang–Shu-type positivity limiter; outflow boundaries |
+| [Fan et al. (2025a)](/sources/fan-2025.md) Ex. 3.9 | 800 | exact solution | moment-based finite-volume [HWENO-U](/methods/hermite-weno.md) with unified stencils vs HWENO-M, WENO-ZQ; Zhang–Shu-type positivity limiter; outflow boundaries |
+| [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Example D.4 | 801 ($\Delta x=4/N$) | — | bound-preserving generalized [Active Flux](/methods/active-flux.md) with local Lax–Friedrichs [flux vector splitting](/methods/flux-vector-splitting.md) of the point-value update, CFL 0.4 |
+
+Duan et al. (arXiv v3) put the energy $3.2\times10^6/\Delta x$ both in the
+centre cell average and in its two interface point values, the extra
+degrees of freedom of Active Flux.
 
 Li, Li, Don & Wang and Li, Chen & Ren print the same blast in
 $(\rho,v,p)$: pressure $4\times10^{-13}$, and $2.56\times10^8$ in the
@@ -129,7 +134,7 @@ Three further corner runs use the same data on $320\times320$ cells
 Example 5.5, at $\mathrm{Re}=1000$ and $\mathrm{Re}=\infty$, 20 density
 contours from 0.1 to 5 (Fig. 5.4),
 [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.10, Euler,
-without positivity limiter, and [Fan et al. (2025)](/sources/fan-2025.md)
+without positivity limiter, and [Fan et al. (2025a)](/sources/fan-2025.md)
 Ex. 3.12, with positivity limiters, which they state are required.
 
 **Two-phase corner run.** [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md)
@@ -163,6 +168,24 @@ They state that "any scheme lacking positivity-preserving property or
 a rigorous stabilization technique would fail".
 
 ## Centred two-dimensional version
+
+**Whole-domain counterpart of the corner blast.** [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md)
+Example 5.8 (arXiv v3) run the corner data mirrored about both axes: on
+$[-1.1,1.1]^2$ with outflow boundaries, $\rho=1$, $v=0$, $E=10^{-12}$,
+and $E=0.979264/(\Delta x\Delta y)$ in the centre cell average and its
+face point values, to $T=1$ on $101^2$ and $201^2$ cells. The deposit is
+four times the corner value $0.244816$, $4\times0.244816=0.979264$, so
+each quadrant carries the corner problem *(compiler check, not in the
+sources)*. Their generalized Active Flux scheme with flux-vector-split
+point-value updates needs its bound-preserving limiting of both the cell
+averages and the point values to run; their shock-sensor flux limiting
+$\theta^{\mathrm s}=\exp(-\kappa_{\mathrm s}\varphi_{\mathrm J}\Psi_{\mathrm D})$, with the
+Jameson pressure sensor $\varphi_{\mathrm J}$ (page-local, the source's
+$\varphi_1$, as is the strength $\kappa_{\mathrm s}$) and the modified,
+compression-only [Ducros sensor](/definitions/ducros-shock-sensor.md)
+$\Psi_{\mathrm D}$ (the source's $\varphi_2$), is used at
+$\kappa_{\mathrm s}=0.5$. They state that bound preservation is
+necessary for this test.
 
 **Smoothed deposit for positivity-limited DG.**
 [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) §8.3 (arXiv v2) put
@@ -209,7 +232,23 @@ of the [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md):
 where the cylindrical shock is aligned with the grid lines, HLLC and
 HLLEM, "especially the latter", produce shock instabilities, while
 their shock-stable HLLEM variant RHLLEM-LD does not (§5.9); see
-[HLL-family solvers](/methods/hll-riemann-solvers.md). The deposited
+[HLL-family solvers](/methods/hll-riemann-solvers.md).
+
+[Ren et al. (2025)](/sources/ren-2025.md) §5.2.5 use the same deposit on
+a domain of the same size and the same $960\times960$ grid: $(\rho,v_1,v_2,p)=(1,0,0,3.5\times10^5)$
+for $r<0.005$ and $(1,0,0,10^{-10})$ elsewhere, $[-1.2,1.2]^2$ with reflecting walls; the final time is not printed.
+With cells of side $2.4/960=0.0025$ and the origin at a cell corner,
+twelve cell centres lie in the disc $r<0.005$, against the four
+pressurized cells of Hu, Yuan & Zhao; the paper does not say how the disc
+is sampled *(compiler check, not in the sources)*. With fifth-order finite-volume
+WENO and the HLLC flux the cylindrical shock develops grid-aligned
+instabilities; their MR-WENO-SD, a multi-resolution WENO whose weights
+come from a pressure-jump and Mach-number shock-detection function, with
+a hybrid HLLC/HLL flux switched by the same function, is stable (Fig.
+40). Their [matrix stability analysis](/methods/matrix-stability-analysis.md)
+of a steady normal shock motivates the design, which degenerates to the
+zeroth-degree polynomial at shocks (see
+[steady shock problems](/benchmarks/steady-shock-problems.md)). The deposited
 energy is $4\,\Delta x^2p/(\gamma-1)=21.9$ with $\Delta x=0.0025$
 *(compiler check, not in the sources)*.
 
@@ -295,7 +334,7 @@ spurious oscillations at the strong shock and that its distribution
 captures the symmetric structure of the blast (§5.4.3, Figs. 16–17);
 the paper names no positivity safeguard for this run.
 
-Fan et al. (2025) need the positivity limiter for HWENO-U and HWENO-M
+Fan et al. (2025a) need the positivity limiter for HWENO-U and HWENO-M
 on both Sedov problems; in 2D, HWENO-M and WENO-ZQ with the original
 WENO-ZQ-type weights still oscillate with the limiter, while HWENO-U
 and HWENO-M with their scale-invariant weights, which normalize
@@ -303,6 +342,13 @@ $\tau$, $\beta_k$ and $\epsilon$ by a local mean of $\lvert\bar u\rvert$,
 do not (Ex. 3.12, Fig. 17; see
 [scale invariance](/properties/scale-invariance.md)). Their CPU times
 for the shock tests fall between those of WENO-ZQ and HWENO-M (Table 7).
+
+Duan et al. state that bound preservation is necessary for their 2D
+Sedov run, which otherwise fails on negative pressure (Example 5.8), and
+adopt the bound-preserving limiting for the 1D run (Example D.4); their
+time-step policy halves
+$\Delta t$ and repeats the step whenever an intermediate state leaves
+the admissible set (Remark 4.2).
 
 **Resolution of the density peak.** Wang et al. find WENO-JS5 and both
 multi-resolution schemes similar, and all worse than WENO-AO5 near the
@@ -334,7 +380,7 @@ stated (Table 4.2).
   the reading *(compiler check, not in the sources)*.
 - Vilar & Abgrall's background total energy $10^{-14}/0.4=2.5\times10^{-14}$
   is consistent with $\gamma=1.4$ *(compiler check, not in the sources)*.
-- Among the 1D sources only Fan, Zhao, Xiong & Qiu, Fan et al. (2025),
+- Among the 1D sources only Fan, Zhao, Xiong & Qiu, Fan et al. (2025a),
   Abgrall et al. (2026) (§4.2) and Li, Li, Don & Wang print $\gamma=1.4$
   for the problem; Fan, Zhang & Qiu (2021) use
   $\gamma=1.4$ throughout their paper, the others print none.
@@ -359,5 +405,7 @@ stated (Table 4.2).
 - [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — Ex. 3.7, Figs. 3.13–3.14, Table 3.1.
 - [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — §4.3.2, Figs. 38–40 (HAL preprint).
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Ex. 4.8, Thms 3.6, 3.10, Fig. 10.
-- [Fan et al. (2025)](/sources/fan-2025.md) — Exs. 3.9, 3.12, Figs. 13, 17, Table 7.
+- [Fan et al. (2025a)](/sources/fan-2025.md) — Exs. 3.9, 3.12, Figs. 13, 17, Table 7.
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §4.2, Ex. 9, Fig. 10.
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §4.1.3, Remark 4.2, Examples 5.8, D.4 (arXiv v3).
+- [Ren et al. (2025)](/sources/ren-2025.md) — §5.2.5, Fig. 40.

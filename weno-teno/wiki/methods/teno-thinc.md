@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "TENO-THINC"
-description: "TENO-THINC is a finite-difference hybrid that uses TENO5 everywhere and replaces its interface flux by a tanh jump flux in cells that a parameter-free detector, built only from the binary TENO stencil flags, marks as discontinuous; the page gives the original detector and THINC switch, Liang et al.'s improved detector and two-steepness flux, the evidence and the cost."
+description: "TENO-THINC uses TENO5 everywhere and replaces its interface flux by a tanh jump flux in cells that a parameter-free detector, built from the binary TENO stencil flags, marks as discontinuous; the page gives the original detector, Liang et al.'s improved detector and two-steepness flux, a TENO-THINC limiter for DG, the evidence and the cost."
 status: established
-aliases: [TENO5-THINC, hybrid TENO-THINC scheme]
+aliases: [TENO5-THINC, hybrid TENO-THINC scheme, TENO-THINC limiter, TENO-THINC RKDG limiter]
 tags: [teno, interface-capturing, low-dissipation, finite-difference, reconstruction]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:37:00Z
 ---
 
 # TENO-THINC
@@ -45,7 +45,7 @@ $1$ ($i>5$), TENO5 gives
 table, rule and cell flag, Eqs. (16)–(18)), so the jump cell has $\delta_{1,i}=\delta_{2,i}=1$ while $\delta_{1,i-1}=0$ and
 $\delta_{2,i+1}=0$. *(Compiler check, not in the sources: at $i=5$ the outer
 stencils give $\beta_1=\beta_2=5/6$, so $\tau_5=0$, $\gamma_k=1$, $\chi_k=1/3$ and
-all flags are 1: the cell containing the jump looks smooth to TENO5.)*
+all flags are 1: TENO5 classifies the cell containing the jump as smooth.)*
 
 **Cell flag** (Eq. (19), page-local $\zeta_i$):
 
@@ -167,6 +167,53 @@ the stencil selection, so the detector again adds no parameter. Their evidence
 better-resolved Lax rarefaction, better double-Mach slip lines than WENO5-Z, TENO5 and TENO6) is for the combined scheme, so
 the contribution of the jump flux is not separated (§4, Figs. 4–16).
 
+## A TENO-THINC limiter for discontinuous Galerkin (Huang et al. 2025a)
+
+[Huang et al. (2025a)](/sources/huang-2025.md) carry the pairing of a TENO and a THINC candidate into a
+limiter for third-order ($\mathbb P^2$, scaled Legendre modal basis) Runge–Kutta
+[discontinuous Galerkin](/methods/discontinuous-galerkin.md) methods on uniform 1D and Cartesian 2D meshes.
+The selection between the two candidates is not a TENO-flag pattern but a compact
+[BVD](/definitions/boundary-variation-diminishing.md) rule. Let $p_i$ denote the DG polynomial of $I_i$
+(page-local).
+
+- **Troubled cells** (§3.1, Eqs. (11)–(14)). The TENO indicator of Huang & Fu (2024) is reused: three
+  Jiang–Shu-type measures of $p_{i-1},p_i,p_{i+1}$, $\gamma_k=1/(\beta_k+10^{-3})^6$, normalized, and the cell
+  troubled when its own share falls below $C_T=10^{-4}$, one parameter set for every test
+  ([troubled-cell indicators](/definitions/troubled-cell-indicator.md),
+  [smoothness indicators](/definitions/smoothness-indicator.md)). For systems the indicator runs on each
+  characteristic variable and the limiter is skipped only if all are smooth (§3.3).
+- **TENO candidate** (§3.2.1, Eqs. (15)–(19)). The same measures with $\epsilon=10^{-10}$ and $C_T=10^{-5}$ flag
+  the three polynomials; if all survive $p_i$ is kept, otherwise
+  $p^{\mathrm{TENO}}_i=\sum_l\omega_lp_l$ with equal weights $\omega_l=\delta_l/\sum_m\delta_m$ over the survivors,
+  $l\in\{i-1,i,i+1\}$: no linear weights ([targeted ENO](/methods/targeted-eno.md)).
+- **THINC candidate** (§3.2.2, Eqs. (20)–(21)). The THINC face values computed from the three cell averages with
+  $\beta_{\mathrm T}=1.6$ ([THINC](/methods/thinc-reconstruction.md)), first order where
+  $(\bar u_{i-1}-\bar u_i)(\bar u_i-\bar u_{i+1})<10^{-15}$, define $p^{\mathrm{THINC}}_i\in\mathbb P^2$ as the unique
+  quadratic with the cell integral of $p_i$ and these two face values.
+- **Selection** (§3.2.3, Eqs. (22)–(24)): the candidate with the smaller total boundary variation against the
+  *unlimited* neighbour traces, THINC only above a relative threshold, so the limiter uses only the three-cell
+  stencil.
+- **Two dimensions** (§4.2, Eqs. (26)–(36)). Direction by direction: the 1D TENO and THINC steps run on the trace
+  polynomials along $y=y_j$ (resp. $x=x_i$) and rebuild only the $x$-only (resp. $y$-only) modal coefficients,
+  the THINC weights being obtained by solving for the three coefficients that reproduce the THINC quadratic
+  from the three trace polynomials; the mixed coefficient is always the mean of the $x$- and $y$-TENO
+  combinations, never THINC, "to enhance robustness". The authors propose this as a general way of extending 1D
+  limiters to 2D, against Hermite WENO limiters that "are not consistent" between 1D and 2D (§1, §4).
+
+*Evidence* (§5; local Lax–Friedrichs flux, SSP-RK3, CFL 0.15; comparison with the simple WENO limiter of Zhong
+& Shu driven by the same indicator). On smooth 1D and 2D density waves the indicator flags no cell and the errors
+equal those of the unlimited scheme, $L^1$ orders 2.99–3.00 in 1D and 2.98–2.99 in 2D (Tables 1, 3); even with
+the limiter forced on in every cell the 1D errors are unchanged, because the BVD rule detects no jump and the TENO
+step leaves $p_i$ when all three polynomials survive (Table 2). On Sod, Lax, Woodward–Colella, Shu–Osher,
+double Mach reflection, 2D Riemann configuration 7 and Rayleigh–Taylor the results are sharper and show more
+small-scale structure than with the WENO limiter (visual comparison); on Shu–Osher the gain is "not as obvious as
+in other cases", as for the finite-difference TENO-THINC. On the $1200\times300$ double Mach reflection 9.63% of the
+cells are troubled and THINC is selected in 1.8% of the domain (Fig. 6). On Lax's problem the run takes 172.08 s
+against 163.07 s with the WENO limiter (Table 4, hardware not stated), about 5.5% more *(compiler check, not in
+the sources)*. The Rayleigh–Taylor solution loses its symmetry, which the authors attribute to round-off growing
+under low dissipation (§5.7; [symmetry preservation](/properties/symmetry-preservation.md)). The limiter is also
+recorded on [WENO limiters for DG](/methods/weno-limiter-dg.md).
+
 ## A finite-volume multiphase analogue
 
 [Zhang et al. (2024a)](/sources/zhang-2024.md) (§1, §3.3) cite TENO-THINC and its
@@ -249,6 +296,16 @@ more expensive than TENO5.
   state-of-the-art reference" rest on visual comparison of contours.
 - Liang et al. do not state how the detector, designed for $\partial f/\partial u>0$
   and its mirror, is applied per characteristic field.
+- Huang et al. (2025a, Eq. (19)) print the 1D TENO candidate as a combination of the full neighbour
+  polynomials, cell averages included, while in 2D (Eqs. (27)–(29)) only the non-constant modes are recombined
+  and the mean is kept. *(Compiler check, not in the sources: as printed in 1D, the cell average of
+  $p^{\mathrm{TENO}}_i$ over $I_i$ is $\sum_l\omega_l\frac1{\Delta x}\int_{I_i}p_l\,dx$, which differs from $\bar u_i$ when a
+  neighbour weight is nonzero, so the 1D formula is conservative only with an unstated shift of the neighbour
+  polynomials to the target mean.)* The paper does not discuss it. Its indicator integral (Eq. (11)) is printed
+  over the target cell for all three polynomials, whereas Huang & Fu (2024) integrate each over its own cell; see
+  [smoothness indicators](/definitions/smoothness-indicator.md).
+- The 2D THINC weights of Huang et al. (2025a, Eq. (31)) are not constrained to be non-negative or to sum to one,
+  and the troubled-cell flags are set direction by direction (§4.1).
 
 # Citations
 
@@ -257,3 +314,4 @@ more expensive than TENO5.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §§1–5, Eqs. (16)–(33), Tables 1–4, Figs. 2–25: improved detector, interpolation-like two-steepness flux, evidence.
 - [Liang & Fu (2024a)](/sources/liang-2024.md) — §3.3, Eqs. (33)–(36); §4: detector and two-steepness flux reused in a Gaussian-RBF TENO.
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §1, §3.3, Eq. (46): volume-fraction switch of a finite-volume WENO–THINC multiphase hybrid.
+- [Huang et al. (2025a)](/sources/huang-2025.md) — §1; §§3.1–3.3, Eqs. (11)–(25); §4, Eqs. (26)–(36); §5, Tables 1–4, Figs. 1–8: TENO-THINC limiter for RKDG with a compact BVD selection.

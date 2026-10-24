@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock diffraction"
-description: "Shock-diffraction benchmarks: the 2D Mach 5.09 corner problem, its relativistic counterpart and a Mach 10 step variant, testing positivity-preserving and limited schemes in the near-vacuum expansion behind the corner; the 3D diffraction of a strong shock by a sphere, an adaptive-mesh GPU scaling test; and Schardin's weak shock over a wedge, checking hybrid DG–FV switching against experiment."
+description: "Shock-diffraction benchmarks: the 2D Mach 5.09 corner problem, its relativistic counterpart and a Mach 10 step variant, testing positivity preservation in the near-vacuum expansion behind the corner; 3D diffraction by a sphere, an adaptive-mesh GPU scaling test; and Schardin's weak shock over a wedge, and a cone in 3D, checking hybrid schemes and immersed boundaries."
 status: established
 aliases: [shock diffraction problem, shock diffraction at a corner, shock diffraction around a backward-facing step, Mach 5.09 shock diffraction, Mach 10 shock reflection and diffraction]
 tags: [benchmark, positivity, bound-preserving, dg, relativistic, gpu]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:05:00Z
 ---
 
 # Shock diffraction
@@ -23,8 +23,9 @@ Five sources of the bundle run it, four in the Euler form (one on a
 rescaled geometry) and one in a relativistic form; two more run a
 Mach 10 variant in which the double-Mach-reflection shock meets a
 backward step, one runs the three-dimensional diffraction of a
-strong shock by a sphere, and three the diffraction of a weak shock by a
-triangular wedge (Schardin's problem).
+strong shock by a sphere, five the diffraction of a weak shock by a
+triangular wedge (Schardin's problem), and one its three-dimensional
+counterpart on a cone.
 
 ## Setup
 
@@ -172,6 +173,31 @@ post-shock state is the Rankine–Hugoniot state of a Mach 1.3 shock
 into it to the printed digits ($\rho=2.12197$, $p=1.805$,
 $v_1=0.44231$) *(compiler check, not in the sources)*.
 
+[Liang et al. (2025)](/sources/liang-2025.md) §4.6, Eq. (38) and
+[Chen & Chen (2026)](/sources/chen-2026.md) §3.2, the latter after Liang &
+Fu as they cite it, run the same post-shock state with the shock at the
+wedge tip: $(\rho,v_1,v_2,p)=(2.122,0.442,0,1.805)$ for $x<0$ and
+$(1.4,0,0,1)$ for $x\ge0$, on $[-5,13]\times[-5,5]$ with the wedge tip at
+the origin, Euler (slip) walls top and bottom, inflow and outflow left and
+right, schlieren $e^{-10\lvert\nabla\rho\rvert/\max\lvert\nabla\rho\rvert}$.
+Liang et al. (2025) run TENO5-E to TENO7-E and CWENO5 to CWENO7 in
+[UCNS3D](/software/ucns3d.md) on a multi-resolution triangular mesh of
+about 1,627,638 elements ($h\approx0.004$ in the wake region, 0.015 and
+0.06 farther out) at CFL 0.6 to $t=4.0$ (Figs. 17–18, Table 4). Chen &
+Chen compute the wedge as a sharp-interface
+[immersed boundary](/methods/immersed-boundary-method.md) (adiabatic
+slip) on a uniform Cartesian $6000\times3000$ grid ($h\approx0.003$), with
+their positivity-preserving finite-difference
+[adaptive TENO](/methods/adaptive-teno.md), against WENO-Z with the
+same immersed boundary, outputs at $t=3.09$ and $4.26$ (Figs. 10–13).
+
+**A cone in three dimensions.** Liang et al. (2025) §4.8 run the 3D
+counterpart: the post-shock state of Eq. (38), a right-moving Mach 1.3
+shock at the tip of a half cone of length 2 and foot radius 1 (tip at the
+origin) inside a half cylinder of radius 4.5, $x\in[-3,8]$, solid walls on
+the cone and the cylinder mantle, 2,495,825 tetrahedra, CFL 0.6, TENO6-E
+only, troubled cells shown at $t=1.0$ and $4.0$ (Figs. 21–23).
+
 [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.7 run Schardin's
 problem on triangles with their finite-volume ALW-MR-WENO of orders 3
 to 5 and the MR-WENO of the same group: domain $[0,3]\times[0,1.5]$, a
@@ -285,7 +311,31 @@ plotted as $e^{-\lvert\nabla\rho\rvert}$ with a normalised gradient, and
 all orders with similar shock patterns and counter-rotating vortices at
 $t=4.0$, without visible oscillations (§4.7, Figs. 16–17).
 
+Chen & Chen find both WENO-Z and their adaptive TENO, each with the
+immersed boundary, in agreement with the Chang & Chang experiment at
+$t=3.09$ and $4.26$, the adaptive TENO "exhibit[ing] lower numerical
+dissipation in resolving the fine structures" (§3.2, Figs. 11–13); its
+cut-off $C_T$ adapts in $[10^{-9},10^{-1}]$ ([TENO](/methods/targeted-eno.md)).
+Liang et al. (2025)'s TENO-E captures more tip vortices than CWENO of the
+same order, and costs less: with CWENO5 as 1.00, total times of 0.56,
+0.67 and 0.79 for TENO5-E, TENO6-E and TENO7-E against 1.12 and 1.33 for
+CWENO6 and CWENO7, reconstruction times of 0.48, 0.59, 0.72 against 1.14
+and 1.38 (Table 4); TENO-E runs the linear reconstruction, without
+characteristic decomposition, in cells that a density-jump variance
+indicator does not flag ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
+On the cone "very few elements are misidentified" by that indicator
+outside the shock and the torus vortex (Figs. 22–23).
+
 ## Qualifications
+
+- Liang et al. (2025)'s bracketed time ratios are truncated, not
+  rounded, to two decimals (e.g. $51096.02/89682.30=0.5697$, printed
+  0.56) *(compiler check, not in the sources)*; their timings come from
+  one unspecified workstation.
+- The Mach 1.3 post-shock state of Liang et al. (2025) and Chen & Chen
+  is Ji, Liang & Fu's; the three differ in the initial shock position
+  (at the tip against $x=-1$), the domain and the wedge size, which
+  Liang et al. (2025) and Chen & Chen give only in figures.
 
 - Evidence is visual throughout; no source reports a reference
   solution or an error norm. Maltsev et al. compare with experimental
@@ -322,3 +372,5 @@ $t=4.0$, without visible oscillations (§4.7, Figs. 16–17).
 - [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §3, Case 3.7, Figs. 3.8–3.10, Table 3.1.
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §3.5, Table 2, Figs. 12–15.
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.7, Eq. (44), Figs. 16–17.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §§4.6, 4.8, Eq. (38), Table 4, Figs. 17–18, 21–23.
+- [Chen & Chen (2026)](/sources/chen-2026.md) — §2.3.2, §3.2, Figs. 10–13.

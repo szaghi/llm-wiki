@@ -136,7 +136,7 @@ is unparseable.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-22), cited further in chunks 6–9 (2026-10-23). This source is cited on:
+Chunk 5 (2026-10-22), cited further in chunks 6–10 (2026-10-23). This source is cited on:
 
 * [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
 * [Flux reconstruction and energy-stable FR](/methods/flux-reconstruction.md)

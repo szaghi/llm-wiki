@@ -5,7 +5,7 @@ description: "Smooth exact equilibrium vortices of ideal and relativistic MHD, i
 status: established
 aliases: [MHD vortex, magnetized vortex, iso-density vortex, iso-enthalpy vortex, near-vacuum magnetized vortex, Balsara vortex]
 tags: [benchmark, mhd, relativistic, positivity]
-timestamp: 2026-10-23T15:19:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Magnetized (MHD) vortex
@@ -135,6 +135,12 @@ cuts on $256^2$. The charge is the divergence of the electric field:
 $\frac1r\frac{d}{dr}(r\mathcal E_r)=q_0/(r^2+1)^2$ *(compiler check,
 not in the sources)*.
 
+**Balsara's vortex in a long run ([Liu et al. 2025c](/sources/liu-2025-c.md)).**
+Liu et al. (2025c) Ex. 5.1 take Shu's hydrodynamic vortex extended to MHD
+by Balsara, in the setup of Li & Shu, as they cite it, without reprinting
+the data; $\gamma=5/3$, $N_x=N_y=32,64,128,256$, run to $T=20$, where the
+exact solution is the initial state, $L^2$ errors.
+
 The same page records two further magnetized vortices: the Wu–Shu-type
 vortex of [Dao & Nazarov (2022)](/sources/dao-2022.md) and the
 relativistic-MHD vortex of [Duan & Tang (2022)](/sources/duan-2022.md),
@@ -249,6 +255,26 @@ ARK4 becomes unstable for $\eta\lesssim10^{-4}$. The pressure converges
 at fourth order with both integrators, against second order for Paper I
 (§4.2, Fig. 3).
 
+**Globally divergence-free entropy-stable nodal DG.** Liu et al.
+(2025c)'s nodal DG on $k+2$ Gauss–Lobatto points, whose cells carry
+$\mathbb Q^{k+1}$ fields and whose faces carry degree-$k$ normal fields
+(their $k$; registry $N=k+1$), with a least-squares reconstruction of a
+nodally divergence-free $B$, reaches on the finest pair the $L^2$ orders
+2.48 ($\rho$), 2.29 ($\rho v_1$), 2.57 ($B_1$), 2.35 (total energy) for
+$k=1$; 3.09, 3.03, 2.91, 3.05 for $k=2$; and 4.47, 4.21, 4.00, 4.33 for
+$k=3$ (Table 1, no limiter, SSP-RK of ten stages and fourth order, CFL
+0.45). The authors read this as the "designed accuracy"; it matches the
+$(k+1)$-th-order truncation error they state for $k+2$ Gauss–Lobatto
+points (§3.1), one order below the registry's design order $N+1=k+2$ for
+DG of degree $N=k+1$. On $64^2$ and $128^2$ with $k=2$, both their scheme and the
+entropy-stable nodal DG of Liu, Shu & Zhang (2018), as they cite it,
+leave a total-energy conservation error "at the same level" (the
+reconstruction step corrects the energy to keep the pressure), while
+only the divergence-free variant keeps the conservation error of $B$ at
+machine accuracy (Fig. 2). See
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
+and [entropy stability](/properties/entropy-stability.md).
+
 ## Qualifications
 
 - Berta et al.'s observed orders exceed four on every grid pair except
@@ -291,3 +317,4 @@ at fourth order with both integrators, against second order for Paper I
 - [Duan & Tang (2022)](/sources/duan-2022.md) — Exs. 6.1, 6.7 (arXiv v1).
 - [Ding & Wu (2024a)](/sources/ding-2024.md) — Ex. 4.1, Table 4.1 (arXiv v1).
 - [Mignone et al. (2024)](/sources/mignone-2024.md) — §4.2, Eq. (60), Fig. 3.
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §3.1, Ex. 5.1, Table 1, Fig. 2.

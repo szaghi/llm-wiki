@@ -189,11 +189,12 @@ No printed duplicates and no unparseable items.
 
 # Pages created or updated
 
-Chunk 8 (2026-10-23), cited further in chunk 9 (2026-10-23). This source is cited on:
+Chunk 8 (2026-10-23), cited further in chunks 9–10 (2026-10-23). This source is cited on:
 
 * [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md)
 * [Constrained transport for the induction equation](/methods/constrained-transport.md)
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
+* [Flux vector splitting](/methods/flux-vector-splitting.md)
 * [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Lid-driven cavity](/benchmarks/lid-driven-cavity.md)

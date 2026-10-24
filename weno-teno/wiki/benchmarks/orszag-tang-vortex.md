@@ -5,7 +5,7 @@ description: "Periodic two-dimensional ideal-MHD benchmark in which smooth vorti
 status: established
 aliases: [Orszag–Tang, Orszag–Tang MHD vortex, OT vortex]
 tags: [benchmark, mhd, dg, teno, limiting, relativistic]
-timestamp: 2026-10-23T15:02:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Orszag–Tang vortex
@@ -63,6 +63,9 @@ $2\pi$-periodic data again, $(\rho,v,B,p)=(\gamma^2,\ -\sin y,\ \sin x,\ 0,\
 -\sin y,\ \sin2x,\ 0,\ \gamma)$ with $\gamma=5/3$, on $200^2$ cells,
 with density at $t=2$ and $4$ and the history of the discrete
 divergence to $t=4$.
+[Liu & Wu (2025)](/sources/liu-2025.md) §4.2.2 (arXiv v2) print the
+$2\pi$-periodic data once more, $\gamma=5/3$, $400^2$ cells, snapshots at
+$t=3$ and $4$ and cuts at $y=0.625\pi$, $t=3$, on $200^2$ and $400^2$.
 
 The two are one problem up to a rescaling *(compiler check, not in the
 sources)*. Multiplying $\rho$, $p$ and $|B|^2$ of the unit-square data
@@ -71,7 +74,7 @@ one, and leaves every wave speed unchanged, since ideal MHD is
 invariant under a common scaling of $\rho$, $p$ and $|B|^2$ at fixed
 velocity; both states have unit sound speed,
 $\gamma p/\rho=1$. Stretching $x$ by $2\pi$ at unchanged velocity
-stretches $t$ by $2\pi$, so Liu et al.'s $t=3$ corresponds to
+stretches $t$ by $2\pi$, so Liu et al. (2021)'s $t=3$ corresponds to
 $t=3/(2\pi)\approx0.477$ in the unit square, close to the $t=0.5$
 snapshots and pressure slices of Rueda-Ramírez et al. (2021); both
 unit-square papers run to $t=1$. The printed sign of $B_2$ differs
@@ -81,8 +84,11 @@ unit-square papers run to $t=1$. The printed sign of $B_2$ differs
 [Lesur et al. (2023)](/sources/lesur-2023.md) §4.2 (arXiv v1) print the
 unit-square data with $\gamma=5/3$ (Dao & Nazarov) and the same
 $\rho$, $p$, $v$, but with $B=\frac{1}{\sqrt{4\pi}}\big(-\sin(2\pi y),\
-+\sin(4\pi x)\big)$: the sign of $B_2$ of Liu et al., not that of
-Rueda-Ramírez et al. Lesur et al. stop at $t=0.5$; Dao & Nazarov run
++\sin(4\pi x)\big)$: the sign of $B_2$ of Liu et al. (2021), not that of
+Rueda-Ramírez et al. [Liu et al. (2025b)](/sources/liu-2025-b.md) Ex. 5 print the same
+sign, $\rho=25/(36\pi)$, $p=5/(12\pi)$, $\gamma=5/3$, periodic $(0,1)^2$,
+to $T=0.5$ on $128^2$ and $256^2$ cells.
+Lesur et al. stop at $t=0.5$; Dao & Nazarov run
 to $t=0.5$ and on to $t=1.0$, noting that results beyond $t=0.5$ have
 "rarely been reported" and that up to $t=0.5$ the problem is easy for
 shock-capturing schemes. They state that $t=3.14$ in Tóth's
@@ -94,7 +100,7 @@ the sources)*.
 on the unit square $[0,1]^2$ they print the $2\pi$-periodic amplitudes,
 $\rho=\gamma^2$, $p=\gamma$, $v=(-\sin2\pi y,\ \sin2\pi x,\ 0)$,
 $B=(-\sin2\pi y,\ \sin4\pi x,\ 0)$, $\gamma=5/3$, and output at
-$t=0.5/2\pi$, $2/2\pi$, $3/2\pi$ and $5/2\pi$, i.e. Liu et al.'s times
+$t=0.5/2\pi$, $2/2\pi$, $3/2\pi$ and $5/2\pi$, i.e. Liu et al. (2021)'s times
 under the $2\pi$ time scaling. In the rescaling above this is the
 $2\pi$-periodic problem shrunk to the unit square *(compiler check,
 not in the sources)*.
@@ -178,6 +184,8 @@ constraint.
 | [Dematté et al. (2024)](/sources/dematte-2024.md) §4.1.5, §4.5 | cell-centred [semi-implicit all-Mach](/methods/semi-implicit-all-mach-scheme.md) finite volume, explicit Rusanov advection with MUSCL–Hancock, implicit pressure sub-system by Picard iterations and GMRES, CFL 0.8 on the flow speed | $1000^2$ | unstaggered constrained transport from a vector potential |
 | [Ding & Wu (2024a)](/sources/ding-2024.md) Ex. 4.2 | fifth-order finite-volume WENO-Z with characteristic decomposition at four Gauss–Lobatto points per edge, Lax–Friedrichs flux, SSP-RK3, CFL 0.3, positivity-preserving scaling limiter on the point values | $200^2$ | discretely divergence-free projection of the interface values plus an interface-jump Godunov–Powell source |
 | [Ding & Wu (2024b)](/sources/ding-2024-b.md) Ex. 5.5 | $\mathbb P^2$ bound-preserving, locally divergence-free central DG for relativistic MHD, SSP-RK3, CFL 0.25, locally divergence-free WENO limiter in troubled cells | $600^2$ | locally divergence-free spaces plus a symmetrization source on the jumps of the normal field |
+| [Liu & Wu (2025)](/sources/liu-2025.md) §4.2.2 | $\mathbb P^2$ locally divergence-free, positivity-preserving [OEDG](/methods/oedg.md), HLL flux, SSP-RK3, CFL 0.12 | $200^2$, $400^2$ | locally divergence-free DG spaces, oscillation-eliminating step that keeps them, upwind [Godunov–Powell source](/definitions/godunov-powell-source-term.md) in the cell-average equation |
+| [Liu et al. (2025b)](/sources/liu-2025-b.md) Ex. 5 | $\mathbb P^2$ entropy-stable nodal DG with a damping term of [OEDG](/methods/oedg.md) type, Chandrashekar–Klingenberg volume flux, TVD-RK3 with the damping split off, CFL 0.12 | $128^2$, $256^2$ | Godunov–Powell (symmetrizing) source; not divergence-free |
 | [Lesur et al. (2023)](/sources/lesur-2023.md) §4.2, §5 | second-order Godunov finite volume of [IDEFIX](/software/idefix.md), primitive reconstruction (linear, LimO3, PPM), HLLD or Roe, RK2/RK3 | $128^2$, reference $1024^2$ (as captioned) | constrained transport |
 
 ## Findings
@@ -210,7 +218,7 @@ mathematical entropy stays constant while the solution is smooth and
 decreases once shocks form (Fig. 11); see
 [entropy stability](/properties/entropy-stability.md).
 
-**Divergence and energy without a limiter.** Liu et al. use no limiter
+**Divergence and energy without a limiter.** Liu et al. (2021) use no limiter
 besides the positivity-preserving one: their locally divergence-free
 WLS-ENO captures the shocks sharply (density profiles along
 $y=0.625\pi$, shocks near $x=0.5$, $1.6$, $4.4$), keeps the divergence
@@ -265,6 +273,17 @@ node, 25.0 on a dual Intel Cascade Lake node, 484 on four V100 GPUs and
 (they print 19.3 for $484/25.0=19.36$ *(compiler check, not in the
 sources)*), with weak-scaling efficiency above 80 % on V100 and AMD
 Rome and above 95 % on MI250X (Table 4, Fig. 18).
+
+**Positivity without a failure time.** Liu & Wu's cuts at
+$y=0.625\pi$ place shocks near $x=0.4$, $0.5$, $1.6$ and $4.4$, and the
+run produces no negative pressure at any time; they set this against
+Jiang & Wu's report of negative pressure at $t\approx3.9$, as Liu, Feng
+& Wang did, again with a different scheme (§4.2.2).
+
+**Entropy of the fully discrete scheme.** Liu et al. (2025b) find the
+discrete total entropy non-increasing in time (Fig. 6), although only
+the semi-discrete scheme is proved entropy stable; see
+[entropy stability](/properties/entropy-stability.md).
 
 **Positivity filtering in DG.** Dzanic & Witherden find minor density
 oscillations on the coarse meshes that vanish with refinement,
@@ -338,7 +357,7 @@ adaptive TENO family carries over to MHD with constrained transport
 
 ## Qualifications
 
-- All fifteen sources compare contour plots or slices; none reports an
+- All seventeen sources compare contour plots or slices; none reports an
   error norm (Berta et al.'s normalized pressure maximum is a scalar
   proxy, not an error). Rueda-Ramírez et al. (2021) compare with another code,
   Dzanic et al. with another paper's slice.
@@ -359,7 +378,7 @@ adaptive TENO family carries over to MHD with constrained transport
   brackets the uniform density $\gamma^2=25/9\approx2.78$ of the
   $2\pi$-periodic one, which points to that normalization *(compiler
   check, not in the sources)*.
-- Liu et al. cite "Orszag-Tang (1979)" without a reference-list entry.
+- Liu et al. (2021) cite "Orszag-Tang (1979)" without a reference-list entry.
 
 # Citations
 
@@ -378,3 +397,5 @@ adaptive TENO family carries over to MHD with constrained transport
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §4.1.5, §4.5, Figs. 9, 21–22.
 - [Ding & Wu (2024a)](/sources/ding-2024.md) — Ex. 4.2, Figs. 4.1, 4.2a (arXiv v1).
 - [Ding & Wu (2024b)](/sources/ding-2024-b.md) — Example 5.5, Figs. 6–7.
+- [Liu & Wu (2025)](/sources/liu-2025.md) — §4.2.2 (arXiv v2).
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — Ex. 5, Fig. 6.

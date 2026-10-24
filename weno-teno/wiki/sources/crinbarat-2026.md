@@ -152,7 +152,7 @@ unparseable.
 
 # Pages created or updated
 
-Chunk 9 (2026-10-23). This source is cited on:
+Chunk 9 (2026-10-23), cited further in chunk 10 (2026-10-23). This source is cited on:
 
 * [Asymptotic preservation](/properties/asymptotic-preservation.md)
 * [Numerical dissipation and anti-dissipation](/definitions/numerical-dissipation.md)

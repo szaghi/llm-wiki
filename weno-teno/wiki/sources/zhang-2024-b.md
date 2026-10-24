@@ -146,7 +146,7 @@ Ref. [37] prints the first author as "I. Wibisono Yanuar" and [62] the last two 
 
 # Pages created or updated
 
-Chunk 8 (2026-10-23), cited further in chunk 9 (2026-10-23). This source is cited on:
+Chunk 8 (2026-10-23), cited further in chunks 9–10 (2026-10-23). This source is cited on:
 
 * [Accuracy at critical points](/properties/critical-point-accuracy.md)
 * [Adaptive TENO (TENO-A, TENO-AA)](/methods/adaptive-teno.md)

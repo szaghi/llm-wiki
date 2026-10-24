@@ -5,7 +5,7 @@ description: "Qin, Chen, Lin and Deng close a fifth-order staggered WCNS at bloc
 status: established
 aliases: [shock-capturing boundary closure, nonlinear boundary closure, conservative boundary closure, WCNS-MR boundary closure, conservative solution points, semi-uniform grid]
 tags: [finite-difference, compact-scheme, weno, reconstruction, limiting]
-timestamp: 2026-10-22T19:46:00Z
+timestamp: 2026-10-23T20:37:00Z
 ---
 
 # Shock-capturing boundary closure for multi-block finite differences
@@ -82,6 +82,12 @@ $\Delta x$, which accommodate non-uniform points (Eqs. (13)–(22);
 [smoothness indicators](/definitions/smoothness-indicator.md)). $\lambda_{\mathrm s}=1$ is the unscaled form,
 "slightly" different from Zhang et al.'s; $\lambda_{\mathrm s}=2$ is adopted, which multiplies the squared
 $n$th-derivative terms by $1,4,16,64$. The choice is empirical; no analysis is given.
+[Fan et al. (2025b)](/sources/fan-2025-b.md) (§2.2, Eqs. (13)–(15)) take this modified recipe for the
+interior of a third-order WCNS (WCNS3-MR), as the target of a learned weighting, with $\lambda_{\mathrm s}=1$ and
+$\lambda_{\mathrm s}=50$ for a low- and a high-dissipation reference; they print the derivatives without the
+factor $\Delta x^n$ that Qin et al. print, and use no boundary closure (periodic and far-field tests;
+[learned WENO weights](/methods/learned-weno-weights.md),
+[multi-resolution WENO](/methods/multi-resolution-weno.md)).
 
 ## The closures
 
@@ -131,6 +137,19 @@ SSP-RK3 at CFL 0.4 with stage boundary data after Tan & Shu (Eqs. (23)–(24);
 - **Cost.** Two zones against one at $N=10^4$: Lax 284.55 s against 283.38 s, Sod 191.42 s against
   189.09 s, Shu–Osher 375.44 s against 376.14 s (serial, AMD Ryzen7-5800H; Table 13).
 
+## Boundary oscillations without a closure: a contrast
+
+The boundary problem also appears in schemes with compact stencils and no closure at all.
+[Chu et al. (2025c)](/sources/chu-2025-c.md) (Abstract, §1; arXiv v1) state that the second-order
+[low-dissipation central-upwind schemes](/methods/low-dissipation-central-upwind-scheme.md) of Kurganov & Xin
+sometimes produce more oscillatory results than the central-upwind schemes they modify, "especially near the
+computational domain boundaries". In their shock–entropy test, run with free boundary conditions by copying the
+first and last cells into ghost cells, the original scheme is "very inaccurate near the left boundary" at
+$\Delta x=1/80$, $t=5$, while their new scheme, which places the subcell jump of the projection step at the
+position reached by the contact instead of at the cell interface, is accurate throughout (Example 1, Fig. 3.1).
+The remedy is a change of the interior flux, not of the boundary treatment, and the paper does not analyse why
+the oscillation concentrates at the boundary.
+
 ## Qualifications
 
 - No stability analysis of the nonlinear closures is given, in contrast with SBP-SAT time stability;
@@ -145,7 +164,16 @@ SSP-RK3 at CFL 0.4 with stage boundary data after Tan & Shu (Eqs. (23)–(24);
 - Table 10 prints identical errors for $\lambda_{\mathrm s}=1$ and 2 in every entry, while Tables 11–12 differ
   on coarse grids.
 - The method is shown at fifth order only; the authors state that it applies to other orders (§4).
+- Chu et al. (2025c) describe the data of their Example 1, $(\rho,v,p)=(1.51695,0.523346,1.805)$ ahead of
+  $(1+0.1\sin20x,0,1)$, as "a forward-facing shock wave of Mach number 1.1". *(Compiler check, not in the sources:
+  with $\gamma=1.4$ the pressure ratio 1.805 into $(\rho,p)=(1,1)$ gives the shock Mach number
+  $\sqrt{(2.4\cdot1.805+0.4)/2.8}=1.300$, and the Rankine–Hugoniot density and velocity at $M=1.3$ are
+  $1.515695$ and $0.52335$; the printed velocity and pressure are those of a Mach 1.3 shock, and the printed density
+  1.51695 differs from 1.515695 by a dropped digit.)* [Chu et al. (2025a)](/sources/chu-2025.md) print the same data
+  and the same "Mach number 1.1".
 
 # Citations
 
 - [Qin, Chen, Lin & Deng (2023)](/sources/qin-2023.md) — §1; §2, Eqs. (1)–(5), Table 1; §2.1, Eqs. (6)–(22), Tables 2–5, Fig. 1; §2.2, Tables 6–9, Fig. 2; Eqs. (23)–(24); §3, Tables 10–13, Figs. 3–17; §4.
+- [Chu et al. (2025c)](/sources/chu-2025-c.md) — Abstract; §1; §3, Example 1, Fig. 3.1: boundary oscillations of low-dissipation central-upwind schemes removed by a new projection step (arXiv v1).
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §2.2, Eqs. (13)–(15): Qin et al.'s indicators in a third-order WCNS.

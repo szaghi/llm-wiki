@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Oscillation-eliminating discontinuous Galerkin (OEDG)"
-description: "OEDG follows every Runge–Kutta stage of a DG scheme with an exactly solved damping step that multiplies each modal coefficient by a solution-dependent exponential factor, scale-, evolution- and linearity-invariant and conserving cell averages; Fan and Wu carry it to Hermite WENO, Yan, Abgrall and Wu to a bound-preserving five-equation two-phase scheme."
+description: "OEDG follows every Runge–Kutta stage of a DG scheme with an exactly solved damping step that multiplies each modal coefficient by a solution-dependent exponential factor, scale- and evolution-invariant and conserving cell averages; the page covers OE-HWENO, bound-preserving two-phase OEDG, locally divergence-free OEDG for MHD and the entropy-stable oscillation-free DG relative."
 status: established
-aliases: [BP-OEDG, OEDG, oscillation-eliminating DG, OE procedure, OE step, OE-HWENO, oscillation-eliminating Hermite WENO]
+aliases: [BP-OEDG, OEDG, LDF OEDG, ESOFDG, entropy-stable oscillation-free DG, oscillation-eliminating DG, OE procedure, OE step, OE-HWENO, oscillation-eliminating Hermite WENO]
 tags: [dg, limiting, low-dissipation, weno]
-timestamp: 2026-10-23T15:08:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Oscillation-eliminating discontinuous Galerkin (OEDG)
@@ -291,6 +291,89 @@ sound speed of 1, run with $\mathbb P^2$ and $\mathbb P^3$; the authors state th
 double rarefaction and the jet can stop on negative density or pressure without the
 limiter (no figure).
 
+## Locally divergence-free OEDG for ideal MHD
+
+[Liu & Wu (2025)](/sources/liu-2025.md) (arXiv v2) carry OEDG to the 2D ideal MHD
+equations on Cartesian meshes with two structure-preserving properties: a
+[locally divergence-free](/properties/divergence-free-magnetic-field.md) magnetic field
+and provable positivity of the cell averages. The variables are split into
+$(\rho,\rho v,B_3,E)$, discretized in a $\mathbb P^N$ modal Legendre space, and
+$(B_1,B_2)$, discretized in the Li–Shu space of vector polynomials of degree $N$ with zero
+divergence in each cell, of dimension $(N+1)(N+4)/2$ (§2.2). After every SSP-RK3 stage
+the OE step of Peng et al. is applied in a form that differs from the system version
+above in how coefficients are pooled (§2.4):
+
+- **Component-wise step** for the six non-magnetic variables (Eqs. (16)–(25)): each
+  component has its own damping coefficients, applied by a Hadamard product, instead of
+  the common maximum over the components of Peng et al. (Eq. (2.17)) and Yan et al.
+- **Locally divergence-free step** for $(B_1,B_2)$ (Eqs. (27)–(35)): one coefficient per
+  edge, the maximum over $B_1$ and $B_2$, scales whole basis vectors of the
+  divergence-free space, so the damped field stays divergence free in each cell
+  (Remark 2); the two constant basis vectors are untouched.
+
+The rate is $\delta^m_{ij}=a^{(1)}_{ij}\big(\sigma^m_{i+1/2,j}+\sigma^m_{i-1/2,j}\big)/\Delta x+a^{(2)}_{ij}\big(\sigma^m_{i,j+1/2}+\sigma^m_{i,j-1/2}\big)/\Delta y$,
+with $a^{(d)}_{ij}$ the spectral radius at the cell average and, on an $x$-edge,
+$$\sigma^m_{i+1/2,j}=\frac{(2m+1)\Delta x^m}{2(2N-1)\,m!}\sum_{\lvert\boldsymbol\alpha\rvert=m}\frac{\frac1{\Delta y}\int_{y_{j-1/2}}^{y_{j+1/2}}\big\lvert[\![\partial^{\boldsymbol\alpha}u_h]\!]_{i+1/2}\big\rvert\,dy}{\lVert u_h-\mathrm{avg}(u_h)\rVert_{L^\infty(\Omega)}}$$
+(Eqs. (17)–(19); $\boldsymbol\alpha$ a multi-index and $\partial^{\boldsymbol\alpha}$ the
+derivative weighted by the multinomial coefficient $\lvert\boldsymbol\alpha\rvert!/(\alpha_1!\alpha_2!)$,
+page-local). For data that vary in $x$ only this is Peng et al.'s 1D coefficient, the
+factor $\tfrac12$ moved from the normaliser into the edge term *(compiler check, not in
+the sources)*; Peng et al.'s 2D form uses face-averaged jumps by the trapezoidal rule and
+the distances $h_{e,K}$. The authors state that the step keeps conservation,
+compactness, the optimal order and, "as with the OE technique" of Peng et al., scale and
+evolution invariance (Remarks 1–2).
+
+Positivity comes from the cell-average equation, not from the OE step: the
+[Godunov–Powell source](/definitions/godunov-powell-source-term.md) is added there only,
+split upwind between the two cells of each interface, the flux is a positivity-preserving
+HLL flux, and a [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md) at the
+nodes of the [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)
+after each OE step supplies the hypotheses of the
+[geometric-quasilinearization](/methods/geometric-quasilinearization.md) proof (Thm 1,
+§3). With $N=2$ and CFL $0.12$ the 1D sine wave converges at $L^1$ orders
+$3.18\to3.01$ (Table 1), and the 2D sine wave at $2.92$, $4.24$, $4.61$, $3.55$, $3.19$
+(Table 2), which the authors read as third order. Disabling the OE step makes the MHD
+shock–cloud run fail, and removing the source or the limiter gives negative cell-average
+pressure; on the Mach 800 and Mach 10000 magnetized jets disabling any of the three makes
+"the code immediately fail" (§4.2.4, §4.2.6).
+
+## Entropy-stable oscillation-free DG for ideal MHD (ESOFDG)
+
+[Liu et al. (2025b)](/sources/liu-2025-b.md) extend their entropy-stable
+oscillation-free DG, the OFDG line that OEDG modifies, to ideal MHD on nodal
+Legendre–Gauss–Lobatto DG with [flux differencing](/methods/flux-differencing.md), the
+Chandrashekar–Klingenberg [entropy-conservative flux](/methods/entropy-conservative-flux.md)
+and the Godunov–Powell source (§3.1). The damping stays in the semi-discrete equation,
+as in OFDG, as a term $-\sigma^{\mathrm{ES}}_i\big(u_h-\bar u_i\big)$ that acts on the
+deviation from the cell mean, all non-mean modes alike, with one scalar coefficient per
+cell for all eight components (Eqs. (3.15)–(3.16)):
+$$\sigma^{\mathrm{ES}}_i=\frac{a_i}{\mathcal M_i^2}\max_{1\le c\le8}\sum_{\ell=0}^{1}\tfrac12\Delta x^{2\ell}\Big([\![\partial_x^\ell u^{(c)}_h]\!]^2_{i-1/2}+[\![\partial_x^\ell u^{(c)}_h]\!]^2_{i+1/2}\Big),\qquad
+\mathcal M_i=\max_c\big\lVert u^{(c)}_h-\overline{u^{(c)}_h}\big\rVert_{L^\infty(I_{i-1}\cup I_i\cup I_{i+1})},$$
+zero if $\mathcal M_i\le10^{-12}$ (page-local $\sigma^{\mathrm{ES}}_i$, $\mathcal M_i$; $a_i$
+the largest characteristic speed in the cell). Against the OEDG coefficient above it
+uses only the jumps of the value and of the first derivative, independently of $N$,
+squared jumps over a squared local range in place of absolute jumps over the global
+range, and no $(2m+1)/((2N-1)m!)$ factors. The authors present the local wave speed, the
+absence of characteristic decomposition, evolution invariance and, through
+$\mathcal M_i$, affine invariance as taken from OEDG; the invariances are asserted, not
+proved (§3.2). Each forward-Euler stage of TVD-RK3 is split into the explicit DG step and
+an implicit damping step solved in closed form, $u_h\leftarrow\frac1{1+\mathsf d_i}u_h+\frac{\mathsf d_i}{1+\mathsf d_i}\bar u_i$
+with $\mathsf d_i=2\Delta t\,\sigma^{\mathrm{ES}}_i/\Delta x$ times the stage weight
+(page-local $\mathsf d_i$, Eq. (3.21)), a rational rather than exponential factor, which
+keeps the CFL number of the undamped scheme; the splitting is at most first order, which
+they argue does not pollute accuracy because the coefficient vanishes on smooth solutions,
+citing the OEDG proof for linear scalar laws (§3.3). **Theorem 3.2** proves the damped
+semi-discrete scheme entropy stable, since the damping term is entropy dissipative by
+convexity of $\eta$ and orthogonality of the cell-mean projection, and its local
+truncation error $O(\Delta x^N)$ ([entropy stability](/properties/entropy-stability.md)).
+The scheme is non-conservative because of the Godunov–Powell term and not provably
+positivity preserving (Remarks 3.1–3.2). With $N=2$, $N+3$ Gauss–Lobatto points (more than
+collocation needs) and CFL $0.6/(2N+1)$, the density wave converges at order $3.000$ (Table 1);
+the rotor and the Balsara–Spicer blast run without a positivity limiter, the Mach 800 and
+10000 jets need the Zhang–Shu limiter and CFL $0.2/(2N+1)$ (Ex. 6, 8, 10). The authors
+contrast their jets, run with the positivity limiter alone, with Liu & Wu's, which needed
+three ingredients (Ex. 10).
+
 ## Qualifications
 
 - **No bound preservation in the original method.** Peng et al.'s OEDG is not claimed bound-preserving, and no
@@ -299,6 +382,27 @@ limiter (no figure).
   positivity-preserving flux limiter on the Mach 2000 jet
   ([bound preservation](/properties/bound-preservation.md)). Yan et al. (2024)
   obtain bound preservation by adding a scaling limiter, not from the OE step (above).
+  Liu & Wu (2025) likewise obtain positivity from the cell-average update, the
+  Godunov–Powell source and a scaling limiter (above).
+- **Pooling across components.** Peng et al. and Yan et al. damp all components of a
+  system with one coefficient, the maximum over the components, which Yan et al.'s
+  linearity invariance needs; Liu & Wu (2025) damp the non-magnetic components with
+  their own coefficients and pool only $B_1$, $B_2$. Their paper states scale and
+  evolution invariance but not linearity invariance. Component-wise factors still keep
+  an identity in which one component is an affine function of another, such as
+  $\rho v=v_0\rho$ at uniform velocity, because each coefficient is affine invariant, but
+  not a general identity $\Lambda u_h\equiv c$ that couples several components, for which
+  Yan et al.'s proof needs a common factor *(compiler check, not in the sources)*. The
+  two are design variants; no source compares them on the same problem.
+- **Orders read as "third".** Liu & Wu's 2D sine-wave orders $4.24$, $4.61$, $3.55$
+  (Table 2) and Liu et al. (2025b)'s circularly polarized Alfvén-wave orders
+  $3.622$, $5.065$, $3.910$, $3.086$, $2.897$ in $L^1$ (Table 2) are called third order
+  and "the optimal order" by the authors; the finest pairs are $3.19$ and $2.897$, the
+  latter below $N+1=3$. Theorem 3.2 of Liu et al. (2025b) proves only truncation error
+  $O(\Delta x^N)$.
+- Liu et al. (2025b) state the entropy-stable flux condition (Eq. (3.13)) for the
+  entropy-conservative flux instead of the interface flux, for which it is trivially
+  satisfied; their proof of Theorem 3.2 uses the condition for the interface flux.
 - **Global coupling.** The normaliser $\lVert u_h-\mathrm{avg}(u_h)\rVert_{L^\infty(\Omega)}$
   makes the damping strength depend on the global range of the solution.
   A locally scale-invariant variant (Eq. (2.14)) is proposed but not used,
@@ -334,3 +438,5 @@ limiter (no figure).
 - [Ding & Wu (2024b)](/sources/ding-2024-b.md) — Cor. 4.2 (form of the optimal weight).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — arXiv v1: §1 (Eqs. (1.2)–(1.4)); §2 (Eqs. (2.3)–(2.17); Rems. 2.1–2.12; Thms 2.6, 2.7, 2.10); §3 (Eqs. (3.8)–(3.12), Rem. 3.1); §4 (Thm 4.1, Assumption 4.5, Lemmas 4.10, 4.14, Rem. 4.4); §5 (Ex. 5.1–5.18, Tables 1–6, Figs. 1–14).
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §1; §2.2, Eqs. (2.17)–(2.22), Thms 2.3, 2.6, 2.13–2.14, Remark 2.4; §3, Eqs. (3.17)–(3.18), Thm 3.4, Remark 3.5; §4, Tables 2–3, 5–6, Fig. 4.
+- [Liu & Wu (2025)](/sources/liu-2025.md) — arXiv v2: §1; §2.2–2.4, Eqs. (5)–(35), Remarks 1–2; §3.2–3.5; §4.1–4.2, Tables 1–2.
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.1–3.3, Eqs. (3.11)–(3.21), Thm 3.2, Remarks 3.1–3.2; §4, Tables 1–2, Ex. 6, 8, 10.

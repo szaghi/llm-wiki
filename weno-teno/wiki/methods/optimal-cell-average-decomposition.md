@@ -5,7 +5,7 @@ description: "The cell-average decomposition writes a cell average as a positive
 status: established
 aliases: [cell average decomposition, CAD, OCAD, optimal CAD, quasi-optimal CAD, convex decomposition of the cell average]
 tags: [bound-preserving, positivity, dg, finite-volume]
-timestamp: 2026-10-23T15:08:00Z
+timestamp: 2026-10-23T19:51:00Z
 ---
 
 # Optimal cell-average decomposition
@@ -164,9 +164,33 @@ relativistic jet (§8.3, §8.5).
 
 ## Optimal decompositions in later sources
 
-Two sources of the bundle use the optimal decomposition of Cui, Ding & Wu
-in new schemes and print the closed forms of $\varpi_\star(\varkappa)$
+Three sources of the bundle use the optimal decomposition of Cui, Ding & Wu
+in new schemes; the first two print the closed forms of $\varpi_\star(\varkappa)$
 beyond $\mathbb P^{2,3}$.
+
+- **Ideal MHD, locally divergence-free OEDG**
+  ([Liu & Wu (2025)](/sources/liu-2025.md), arXiv v2, §3.3, Eqs. (50)–(52),
+  Cors. 1–2, Remark 3). They write the general feasible decomposition on a
+  rectangle with $Q$-point Gauss nodes on the edges and free internal nodes, and
+  prove the cell averages of their scheme admissible under a CFL condition set by
+  its edge weights (Thm 1;
+  [geometric quasilinearization](/methods/geometric-quasilinearization.md)). With
+  the classic decomposition this gives
+  $\Delta t\big(a^{(1)}/\Delta x+a^{(2)}/\Delta y\big)\le1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$,
+  $N_{\mathrm{GL}}=\lceil(N+3)/2\rceil$ (Cor. 1); with the optimal $\mathbb P^{2,3}$
+  decomposition, whose edge weights are $\tfrac12\varpi(1\pm\varkappa)$ and whose
+  two internal nodes sit at $(x_i,\,y_j\pm\frac{\Delta y}{2\sqrt3}\sqrt{1-\phi_2/\phi_*})$
+  if $\phi_1\ge\phi_2$ and at $(x_i\pm\frac{\Delta x}{2\sqrt3}\sqrt{1-\phi_1/\phi_*},\,y_j)$
+  otherwise ($\phi_1=a^{(1)}/\Delta x$, $\phi_2=a^{(2)}/\Delta y$,
+  $\phi_*=\max\{\phi_1,\phi_2\}$, page-local), it gives
+  $\Delta t\le\Delta x\Delta y/\max\{6a^{(1)}\Delta y+2a^{(2)}\Delta x,\ 6a^{(2)}\Delta x+2a^{(1)}\Delta y\}$
+  (Cor. 2), which is $\Delta t\big(a^{(1)}/\Delta x+a^{(2)}/\Delta y\big)\le1/(4+2\lvert\varkappa\rvert)$,
+  the Thm 5.13 weight above with $c_0=1$, against $\tfrac16$ for the classic one at
+  $N=2$ *(compiler check, not in the sources)*. Here $a^{(d)}$ are wave speeds
+  enlarged by normal-field-jump terms of the HLL estimates. Remark 3 recalls the
+  $N=4,5$ formula below. The optimal decomposition, with fewer nodes, is the one
+  used in their computations (§3.5); their tests run at CFL $0.12$, a value the text
+  does not relate to Cor. 2.
 
 - **Relativistic MHD, central DG on overlapping meshes**
   ([Ding & Wu (2024b)](/sources/ding-2024-b.md), §4.3, §4.6, Eqs.
@@ -384,3 +408,4 @@ change.
 - [Ding & Wu (2024b)](/sources/ding-2024-b.md) — §4.3 (Eqs. (53)–(60), Fig. 2); §4.6 (Cors. 4.1–4.2, Eqs. (54)–(56), (76)–(77), Fig. 1, Remark 9).
 - [Fan & Wu (2024)](/sources/fan-2024.md) — arXiv v1: §2.4, Eqs. (2.52)–(2.57), Thm 11, Remark 5.
 - [Ching et al. (2025)](/sources/ching-2025.md) — §4.2.2, Eqs. (4.17)–(4.23); §4.4, Eqs. (4.27)–(4.39), Thms 6, 8.
+- [Liu & Wu (2025)](/sources/liu-2025.md) — arXiv v2: §3.3, Eqs. (50)–(52); §3.5; §3.6, Thm 1, Cors. 1–2, Remark 3.

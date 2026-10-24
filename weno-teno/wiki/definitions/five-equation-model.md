@@ -5,7 +5,7 @@ description: "Single-velocity diffuse-interface models of compressible two-phase
 status: established
 aliases: [five-equation model, 5-equation model, Kapila model, Allaire–Clerc–Kokh model, six-equation model, 6-equation model, diffuse-interface model, quasi-conservative two-phase model]
 tags: [multiphase, interface-capturing, finite-volume, positivity, bound-preserving]
-timestamp: 2026-10-23T15:06:00Z
+timestamp: 2026-10-23T19:57:00Z
 ---
 
 # Five- and six-equation diffuse-interface models
@@ -175,6 +175,26 @@ the five-equation transport model", citing an earlier paper for its being
 "not compatible with the assumption that the material derivatives of the
 phase entropies are zero" (§1).
 
+**Allaire form with a learned reconstruction selector.**
+[Huang et al. (2025b)](/sources/huang-2025-b.md) (§2, Eqs. (4)–(11)) solve the
+Allaire form, written with the source $\phi_1\nabla\cdot v$ on the right of
+the conservative-looking equation $\partial_t\phi_1+\nabla\cdot(\phi_1v)=\phi_1\nabla\cdot v$,
+with stiffened-gas phases and the mixture rules
+$$\frac1{\gamma-1}=\sum_k\frac{\phi_k}{\gamma_k-1},\qquad \frac{p_\infty}{\gamma-1}=\sum_k\frac{\phi_kp_{\infty,k}}{\gamma_k-1}$$
+(Eq. (9), with an energy offset $e_{\infty,k}$ per phase, page-local), and
+quote Wood's sound speed (Eq. (11)). Their finite-volume scheme is HLLC in
+wave-propagation form with SSP-RK2 and dimensional splitting, and a
+neural network that predicts, per cell, the
+[BVD](/definitions/boundary-variation-diminishing.md) choice between MUSCL
+and [THINC](/methods/thinc-reconstruction.md), trained on 1D Euler Riemann
+problems only and applied unchanged to the five-equation model because of
+the min–max normalization of its inputs (Remark 1). They run an underwater
+explosion ($600\times600$, liquid $\gamma=4.4$, $p_\infty=6\times10^8$ Pa) and a
+Mach-1.22 shock–R22 cylinder (400 cells per diameter), with $10^{-8}$ for the
+absent phase (§4.3;
+[underwater explosion](/benchmarks/underwater-explosion.md),
+[shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)).
+
 ## Conservative diffuse-interface regularization and phase entropy
 
 Jain & Moin (2022) add to the Kapila model the interface-regularization
@@ -250,7 +270,10 @@ section).
 
 ## The six-equation model
 
-Bryngelson et al. §3.2 describe the pressure-disequilibrium model of
+The model has its own page,
+[six-equation two-phase model](/definitions/six-equation-model.md), which
+collects the sources below with MFC 5.0's phase change and surface tension;
+this section keeps the account of each source. Bryngelson et al. §3.2 describe the pressure-disequilibrium model of
 Saurel, Petitpas & Berry, which MFC also implements: the total-energy
 equation is replaced by two phasic internal-energy equations, each phase
 keeps its pressure $p_k$, and a relaxation source drives $p_1-p_2$ to
@@ -711,6 +734,22 @@ fluid and ghost-fluid states in cut cells
   squares is below $\tfrac12$, so the step holds.)* Their admissibility
   results cover ideal-gas phases only, unlike the stiffened-gas setting of
   Wong et al.
+- Huang et al. (2025b) print Wood's formula as
+  $\rho c^2=\phi_1/(\rho_1c_1^2)+\phi_2/(\rho_2c_2^2)$ (Eq. (11)), whose right side has
+  the dimension of an inverse pressure; the left side should be $1/(\rho c^2)$, as in
+  Bryngelson et al. above. Their mixture pressure (Eq. (10)) carries
+  $+\sum_k\phi_kp_{\infty,k}/(\gamma_k-1)$, whereas solving their phasic law (Eq. (5)) for
+  the internal energy gives $-\sum_k\phi_k\gamma_kp_{\infty,k}/(\gamma_k-1)$; one of the two
+  is misprinted, and the paper does not say which it implements *(compiler check,
+  not in the sources)*. In the underwater explosion the text calls the volume
+  fraction of the absent phase in water "the volume fraction of air $\phi_1$" while
+  giving phase 1 the liquid parameters (§4.3.1).
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) (§2.1.1, Eq. (5)) print Kapila's
+  coefficient for MFC 5.0 with the sum $\rho_2c_2^2+\rho_1c_1^2$ in the numerator and the
+  same $K$ in the equation of every $\phi_k$; with $\phi_1+\phi_2=1$ the two
+  volume-fraction equations then give $2K\nabla\cdot v=0$, so the coefficient must
+  change sign between the phases, and Bryngelson et al. above print the difference
+  $\rho_2c_2^2-\rho_1c_1^2$ *(compiler check, not in the sources)*.
 - Huang & Johnsen's scheme is at best second order (MUSCL with minmod,
   midpoint face fluxes, CFL $\le0.5$; §3.4), and their argument that
   Allaire's coefficient is inconsistent concerns the incompressible
@@ -730,4 +769,6 @@ fluid and ghost-fluid states in cut cells
 - [Paula et al. (2023)](/sources/paula-2023.md) — §2.1, Eqs. (1)–(5); §7.4.1 (parent model only).
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §1; §2, Eqs. (1)–(16); §3, Eq. (45); Appendices B–E: mixture-energy-consistent six-equation model with heat and mass transfer, infinite-rate relaxation in closed form.
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §1, Eqs. (1.1)–(1.4); §2.1, Eqs. (2.1)–(2.16), Remarks 2.1–2.2; §2.2, Lemma 2.5, Thms 2.3, 2.6; §2.3, Thms 2.7, 2.12–2.14, Lemmas 2.10–2.11, Eqs. (2.29)–(2.40); §3, Eqs. (3.1)–(3.35), Remarks 3.1, 3.2, 3.5; §4, Exs. 4.1–4.2, Tables 2–3, 5–6, Figs. 4, 9, 21; App. A: Kapila model with uniformly high-order bound-preserving OEDG.
+- [Huang et al. (2025b)](/sources/huang-2025-b.md) — §2, Eqs. (4)–(11); §3.3, Remark 1; §4.3.1–4.3.2.
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §2.1.1, Eq. (5).
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §2, Eqs. (1)–(18), Fig. 1; §3.1, Eqs. (21)–(26); §3.3, Eqs. (45)–(48), Algorithm 1; §4.1, §4.8; App. B: five-equation model with viscosity and surface tension, sound-speed choice, HLLC-consistent source terms, THINC on mass variables, interpolation limiter.

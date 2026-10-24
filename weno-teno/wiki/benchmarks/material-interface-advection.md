@@ -5,7 +5,7 @@ description: "Uniform-velocity, uniform-pressure advection of material interface
 status: established
 aliases: [interface advection, advection of a material interface, interface translation test, water disk advection, smooth interface advection]
 tags: [benchmark, multiphase, interface-capturing, finite-volume]
-timestamp: 2026-10-23T15:17:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Material-interface advection tests
@@ -47,6 +47,40 @@ visibility of the figures"):
   $u_0=v_0=1$, to $t=5$, five passes;
 - §4.3, 2D: the two species of §4.1 with a tangential velocity jump
   $v_0=w_v\tanh(k(r-r_c))$, $w_v=0.5$, to $t=5$.
+
+**The same interface with a real-fluid equation of state.**
+[Terashima, Ly & Ihme (2025)](/sources/terashima-2025.md) §3.1 rerun
+Fujiwara et al.'s 1D two-species test (same data, 501 points, third-order
+TVD Runge–Kutta, CFL 0.6) to $t=8$, eight flow-throughs, with histories to
+$t=20$ and a convergence study from 251 points at $t=20$. §3.2 replaces
+the ideal gases by transcritical CH$_4$/N$_2$ with the Soave–Redlich–Kwong
+equation of state: on the periodic $[0,1]$ m, partial densities of the
+same tanh form with $\rho_{\mathrm{CH_4},\infty}=400$ and
+$\rho_{\mathrm{N_2},\infty}=100$ kg m$^{-3}$, $k=15$, $r_c=0.25$ m,
+$u_\infty=100$ m/s, $p_\infty=5$ MPa, which gives temperatures of
+128.12 K and 190.18 K in the two pure states; 501 to 4001 points, over
+twenty flow-through times (§3.2.1). In 2D (§3.2.2) a circular blob of the
+same profile on the periodic $[0,1]^2$ m is advected diagonally at
+$u=v=100$ m/s on $501\times501$ points to $t=0.09$ s, nine flow-throughs,
+and §3.2.3 adds the tangential profile $v_0=v_\infty\tanh(k(x-x_c))$,
+$v_\infty=15$ m/s, of Fujiwara et al. on $2001\times2001$ points for
+four flow-throughs, during which shear thins the interface.
+
+**Two-component convergence in the five-equation model.**
+[Wilfong et al. (2026)](/sources/wilfong-2026.md) §3.5 advect, on the
+periodic $[0,1]$ at uniform pressure and velocity 1, the profiles printed
+"$\phi_k=\phi_k\rho_k=0.5+(-1)^k\sin(2\pi x)$", for five periods with
+reconstructions of order 1, 3 and 5 and the HLL and HLLC solvers, on
+$N_x=2^5$ to $2^{10}$ cells; the error is a root mean square
+(the `examples/1D_convergence` case of [MFC](/software/mfc.md)).
+
+**A density ratio of $10^5$ in one gas, all-Mach IMEX.**
+[Allegrini & Vignal (2025)](/sources/allegrini-2025.md) (HAL
+manuscript) advect on $[0,1]$ the contact $(\rho,v,p)=(1000,1,10^5)$ for
+$x<0.25$ and $(0.01,1,10^5)$ otherwise to $t=0.5$, on 200 and 2000
+cells, with $\gamma=1.4$; the local Mach number ranges from
+$2\times10^{-4}$ to $9\times10^{-2}$ (Fig. 7). Like Cernetic et al.'s
+top-hat below it is a contact in one gas.
 
 **Gas–gas interfaces with sharp profiles, discrete-equations method.**
 [Paula, Adami & Adams (2023)](/sources/paula-2023.md) §7.1 advect, at
@@ -201,6 +235,39 @@ overspecified alternatives they argue against.
 Jiao et al. likewise find pressure and velocity at their initial
 values after four periods with every reconstruction (Fig. 4.3).
 
+**Approximate equilibrium for any equation of state.** Terashima et
+al.'s [APEC scheme](/methods/apec-scheme.md) satisfies the discrete
+equilibrium condition only to second order, but on every test the
+fully conservative split form with arithmetic means (FC-NPE) diverges
+and APEC does not. On the ideal-gas interface FC-NPE's pressure-equilibrium error
+grows from $t\approx4$ and the run blows up after $t=9$, while APEC's
+stays at $10^{-5}$–$10^{-4}$, larger than that of Fujiwara et al.'s
+exact scheme; all three conserve total energy (Figs. 1–2). With the
+Soave–Redlich–Kwong gas, where Fujiwara et al.'s fluxes do not apply,
+FC-NPE blows up after $t=0.09$ s (at $t\approx0.11$ s with 4001
+points: refinement does not cure it), APEC runs through twenty
+flow-throughs with a maximum equilibrium error about a quarter of
+FC-NPE's at $t=0$, and the quasi-conservative variant PEqC keeps the
+error at $10^{-8}$ while its energy error grows (Figs. 6–8, 11). In 2D,
+FC-NPE reaches about 10 % error in pressure and 5 % in velocity before
+blowing up near $t=0.1$ s, against about 0.02 % and 0.01 % for APEC
+(Fig. 12); in the shear case FC-NPE fails before $t=0.044$ s, and APEC
+eventually becomes unstable too as the interface thins, which the
+authors attribute to under-resolved species density and temperature,
+not to equilibrium errors (§3.2.3). The equilibrium residual of APEC
+converges at second order (Figs. 5, 10).
+
+**Contacts at all Mach numbers.** On Allegrini & Vignal's contact the
+velocity and pressure of their linearized IMEX schemes stay constant
+"up to an error of $10^{-5}$", the variant with implicit upwinding
+being more diffusive on density (Fig. 7); the splitting they use is
+proved to keep constant contacts (Lemmas 1, 4; see
+[stationary contact preservation](/properties/stationary-contact-preservation.md)
+and [asymptotic preservation](/properties/asymptotic-preservation.md)).
+
+**Order of the reconstruction.** Wilfong et al.'s solver converges at
+the design orders 1, 3 and 5 with both HLL and HLLC (Fig. 1).
+
 **Interface thickness and shape.** Huang & Johnsen find that, without
 the phase-field term, the disk becomes diamond-like from mesh
 anisotropy; with it, the interface holds 4–5 cells and the circular
@@ -280,6 +347,14 @@ faces.
 - Cernetic et al. say in §5.4 that 10 cells are used for the multi-degree
   comparison at $t=1$, while the Fig. 9 caption gives 64 cells for it
   and 10 cells for the degree-9 run at $t=0.01$.
+- Wilfong et al.'s printed initial condition sets the volume fraction
+  equal to the partial density, $\phi_k=\phi_k\rho_k$, i.e. $\rho_k=1$
+  wherever $\phi_k\neq0$; the plot label of their error is
+  $\lVert\epsilon\rVert_2$. Terashima et al. note that the pressure
+  error of Fujiwara et al.'s scheme they computed "is slightly
+  different from the original result" (Fig. 2 caption), and print the
+  energy error with a leading sum over time, $\sum_t$, for a quantity
+  plotted against time.
 - Fujiwara et al. restrict their scheme to smooth interfaces without
   shocks and to non-dissipative central fluxes; whether equilibrium
   survives added shock-capturing dissipation is left open.
@@ -294,3 +369,6 @@ faces.
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §3.3, §4, §4.1, Table 1, Table 2, Figs. 3–4.
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Lemma 2.5, Thms 2.3, 2.6, 2.13–2.14, Remark 3.5, Ex. 4.2, Figs. 3–4.
 - [Ching et al. (2025)](/sources/ching-2025.md) — §5.1, Eq. (5.1), Fig. 5.1.
+- [Terashima, Ly & Ihme (2025)](/sources/terashima-2025.md) — §3.1–3.2.3, Eqs. (62), (65)–(67), Figs. 1–2, 5–8, 10–12, 14.
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §3.5, Fig. 1.
+- [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — Lemmas 1, 4, Fig. 7 (HAL manuscript).

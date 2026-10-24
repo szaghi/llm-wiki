@@ -5,7 +5,7 @@ description: "A scheme for a singularly perturbed problem is asymptotic preservi
 status: established
 aliases: [AP, AP scheme, asymptotic-preserving scheme, unified asymptotic preserving scheme, asymptotic accuracy, AA]
 tags: [asymptotic-preserving, well-balanced, finite-volume, mhd]
-timestamp: 2026-10-23T15:06:00Z
+timestamp: 2026-10-23T20:43:00Z
 ---
 
 # Asymptotic preservation
@@ -119,6 +119,67 @@ it is about 4 at $\varepsilon=1$ and 5 at $\varepsilon=10^{-6}$ (Table 5.2, Fig.
 [Gresho vortex](/benchmarks/gresho-vortex.md) at $\varepsilon=10^{-1},10^{-2},10^{-6}$ shape and
 kinetic energy are kept over two periods with a time step independent of the acoustic speed
 (Ex. 5.5).
+
+**Which flux splitting is AP.** [Allegrini & Vignal (2025)](/sources/allegrini-2025.md)
+(HAL author manuscript) scale full Euler so that the pressure gradient carries
+$1/\varepsilon$ and $M^2=\varepsilon/\gamma$; the formal limit is incompressible Euler with
+constant thermodynamic pressure for any initial data (§1, Eqs. (1)–(3)). Asymptotic
+stability requires the term $\gamma p\,\nabla\cdot v/(\gamma-1)$ of the internal-energy
+equation, i.e. the enthalpy flux, to be implicit, since otherwise the pressure-wave operator
+forces $\Delta t=O(\sqrt\varepsilon\,\Delta x)$ (§2.1). For a first-order IMEX step
+$\frac{u^{n+1}-u^n}{\Delta t}+\nabla\cdot f_{\mathrm e}(u^n)+\nabla\cdot f_{\mathrm i}(u^{n+1})=0$
+(page-local $f_{\mathrm e}$, $f_{\mathrm i}$) they ask for three properties: real eigenvalues
+of both Jacobians, the explicit ones bounded in $\varepsilon$; asymptotic consistency; and
+preservation of constant contacts. The
+[Toro–Vázquez-Cendón splitting](/methods/flux-vector-splitting.md),
+$f_{\mathrm e}=(\rho v,\ \rho v\otimes v,\ \kappa_\varepsilon v)$, $f_{\mathrm i}=(0,\ pI/\varepsilon,\ \tfrac{\gamma p}{\gamma-1}v)$
+with $\kappa_\varepsilon=\varepsilon\rho\lvert v\rvert^2/2$ the scaled kinetic energy
+(page-local), has all three, consistency for non-well-prepared data by citation of
+Boscheri et al. (Lemma 1); putting a fraction $\beta_{\mathrm h}\in[0,1)$ of the enthalpy flux in
+the explicit part gives $\nabla\cdot v^{n+1}=\frac{\beta_{\mathrm h}}{\beta_{\mathrm h}-1}\nabla\cdot v^n$
+in the limit, so only the fully implicit enthalpy flux is consistent (Remark 2.2;
+page-local $\beta_{\mathrm h}$). The splitting of Cordier, Degond & Kumbaro is multi-step and
+consistent only up to $O(\Delta t)$, as Boscarino et al. also state, the non-conservative
+splitting of Dimarco, Loubère & Vignal likewise (Lemma 2), and a Lagrange-projection-type
+splitting is consistent iff the initial velocity is well prepared (Lemma 3).
+
+Their scheme linearizes Boscheri et al.'s reformulated semi-discretization: the enthalpy and
+kinetic energy in the elliptic pressure equation are taken from the explicitly convected
+state, so density, pressure, momentum and energy follow in sequence from one linear elliptic
+solve, without Picard iteration (§3.1, Eq. (13)). The price is consistency only for
+well-prepared initial energy, $E(x,0)=E^0+\varepsilon\bar E(x)$ (Lemma 4); the variant that
+restores it for general data is rejected because "oscillations appear in some test-cases"
+(Remark 3.2). With a Rusanov explicit flux ("L2 AP") a linearized 1D Fourier analysis gives
+stability under $\gamma\lvert v\rvert\Delta t=\Delta x$; adding implicit upwinding scaled by
+$\lvert v\rvert/2+\sqrt{v^2/4+c^2/\varepsilon}$ ("L∞ AP") relaxes it to $\lvert v\rvert\Delta t=\Delta x$
+but makes the consistency hold only up to $O(\Delta t)$ (Lemmas 5–6, Remark 5.2), the
+Fourier analysis being completed numerically over $\sqrt\varepsilon\,v/c\in(0,25)$ and
+$\gamma\in[1,10]$ or $[1,5]$. Second order uses the ARS(2,2,2)
+[IMEX Runge–Kutta](/methods/imex-runge-kutta.md) scheme with MUSCL–minmod on the explicit
+flux only, consistent for well-prepared energy (Lemma 8); since second-order IMEX schemes
+cannot be SSP, a convex blend $\theta=\beta_{\mathrm{ARS}}/(1-\beta_{\mathrm{ARS}})$, $\beta_{\mathrm{ARS}}=1-1/\sqrt2$ the ARS(2,2,2) coefficient, of the first- and
+second-order updates gives a first-order but less diffusive TVD scheme (§4.3; page-local
+$\theta$, not the Zhang–Shu factor, and $\beta_{\mathrm{ARS}}$). On the [Gresho vortex](/benchmarks/gresho-vortex.md)
+($80^2$, $M=10^{-1}$ to $10^{-3}$) the second-order scheme keeps the Mach-number field
+independent of the reference Mach number, and on a double shear layer at $\varepsilon=10^{-3}$
+and $10^{-6}$ ($128^2$) it matches the incompressible solution, with density errors
+$9.18\times10^{-3}$ ($128^2$) and $5.13\times10^{-3}$ ($256^2$) at $\varepsilon=10^{-3}$,
+which they call "of order $\varepsilon$" (§4.5, §4.7).
+
+**Exact mass conservation in compatible finite elements.** [Zampa & Dumbser (2025)](/sources/zampa-2025.md)
+(arXiv v1) treat weakly compressible isentropic flow in density–momentum–entropy form
+with momentum in a Raviart–Thomas space and density and pressure discontinuous of the same
+degree, so that the implicit density update equals the divergence of the discrete
+momentum and mass is conserved cell by cell (Thm 3.1). Momentum and entropy convection are
+explicit, pressure and density implicit through a Newton iteration on the equation of
+state, so the CFL condition depends on the flow speed only (§3.1). **AP statement** (Thm
+3.2): for constant density and $1/c^2=0$ the Newton iteration converges in one step to a
+new H(div) vorticity–velocity–pressure scheme for incompressible Navier–Stokes. On a
+low-Mach Taylor–Green vortex the $L^\infty$ norms of $\nabla\cdot v_h$ and of $\rho_h-1$ fall as
+$M^2$ (order 2.00) down to about $M\approx10^{-6}$, where round-off ($\sim10^{-13}$) takes
+over (Table 4). The entropy equation is non-conservative, and the authors restrict the
+method to Mach numbers from zero to about one, not expecting correct strong shocks
+(§3.2.2); its finite-element setting is peripheral to the bundle.
 
 ## The low sonic-Mach limit of ideal MHD
 
@@ -283,6 +344,21 @@ integrated with an [IMEX](/methods/imex-runge-kutta.md) extension of third-order
   Prop. 3.4 proof bounds the exponential of the $A$ part alone, while $A$ and $\mathsf B$ need
   not commute; the result follows from an energy estimate since $-\mathsf B$ is
   non-positive *(compiler check, not in the sources)*.
+- Allegrini & Vignal's stability lemmas (5–7) are linear, 1D and completed numerically,
+  with a maximal root modulus of 1; their closing step asserts a matrix norm with
+  $\lVert B\rVert\le r(B)$, the spectral radius. That holds only under extra conditions
+  (e.g. the eigenvalues of modulus $r(B)$ semisimple): for $B=\begin{pmatrix}1&1\\0&1\end{pmatrix}$,
+  $r(B)=1$ but $\lVert B^n\rVert$ grows like $n$, so no norm gives $\lVert B\rVert\le1$
+  *(compiler check, not in the sources)*. The printed argument therefore completes the
+  lemmas only if the eigenvalues of modulus one are semisimple, which the paper does not
+  examine. Their second-order scheme uses ARS(2,2,2), the kind of tableau
+  Boscarino et al. exclude from asymptotic **accuracy** (above); Allegrini & Vignal prove
+  asymptotic **consistency** only (Lemma 8), so the two statements do not conflict.
+- Zampa & Dumbser's AP theorem covers constant density only; their low-Mach
+  Kelvin–Helmholtz test is outside it (§4). Their Thm 3.1 prints the cell mass balance with
+  $+\Delta t\int_{\partial T}m_h\cdot n$, whereas the density update they state,
+  $\rho_h^{n+1}=\rho_h^n-\Delta t\,\nabla\cdot m_h^{n+1}$, gives a minus sign by the divergence
+  theorem *(compiler check, not in the sources)*.
 - The time step still carries a parabolic $\Delta x^2$ restriction for $\beta_{\mathrm{ms}}=1$;
   "uniform in $\varepsilon$" does not mean hyperbolic-CFL.
 - The printed fully discrete scheme (Eqs. (4.17)–(4.18)) omits a factor $\Delta t$ on the
@@ -300,3 +376,6 @@ integrated with an [IMEX](/methods/imex-runge-kutta.md) extension of third-order
 - [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) — §3.1–3.3, §4.1.4, §5 (arXiv v1).
 - [Crin-Barat & Manea (2026)](/sources/crinbarat-2026.md) — arXiv v2: §1.1–1.3; §2.1–2.2 (Thms 2.1, 2.3, 2.6, Cor. 2.7); §3.2–3.5 (Props 3.4, 3.5, 3.8); §4; §7 (Figs. 3, 5, 6); §8 (Eq. (8.4)).
 - [Mignone et al. (2024)](/sources/mignone-2024.md) — §3.2–3.4; §4.2–4.3; §5.
+- [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — HAL v1: §1, Eqs. (1)–(4); §2.1–2.2, Eqs. (6)–(11), Lemmas 1–3, Remarks 2.1–2.2; §3.1–3.3, Eqs. (13)–(23), Lemmas 4–7, Remarks 3.2, 5.1–5.2; §4.1–4.3, Eqs. (24)–(28), Lemma 8; §4.5, §4.7, Figs. 13–16.
+- [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — arXiv v1: §1; §2.2; §3.1; §3.2.2; Thms 3.1–3.2; §4.4; §4.5, Table 4.
+

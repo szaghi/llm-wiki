@@ -5,7 +5,7 @@ description: "WENO-Z replaces the Jiang–Shu weights by α_k = d_k[1+(τ/(β_k+
 status: established
 aliases: [WENO-Z, WENO5-Z, WENO-Z3, WENO7-Z, WENO9-Z, WENO-Z5, WENO-Z7, Borges WENO]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:06:00Z
 ---
 
 # WENO-Z weights
@@ -125,6 +125,7 @@ each time with a global indicator built against the largest candidate:
 | third-order two-level WENO on moving quadrilaterals | $\lvert\beta_2-\beta_1\rvert$ | $(\tau/(\beta_l+\epsilon))^2$, $\epsilon=10^{-3}$ | Gu, Li, Cheng & Shu 2023, §2.4, after Castro, Costa & Don |
 | unstructured CWENOZ ([CWENO](/methods/cweno.md)) | $\big(\tfrac1{s_t-1}\sum_{s\ge1}\lvert\beta_s-\beta_0\rvert\big)^4$ | $\tau/(\epsilon+\beta_s)$, $\epsilon=10^{-14}$ | Maltsev et al. 2023, Eqs. (22)–(23) |
 | IMWENO-P ([smoothness indicators](/definitions/smoothness-indicator.md)) | squared undivided fourth difference $\tau^{\mathrm{IMP}}$ | $(\tau^{\mathrm{IMP}}/(\beta^{\mathrm{IMP}}_k+\epsilon))^q$, $q=1$, $\epsilon=10^{-40}$ | Zhong et al. 2023, Eqs. (23)–(26) |
+| third-order WCNS3-MR ([multi-resolution WENO](/methods/multi-resolution-weno.md)), stencils of 1 and 3 points | $\tau_{\mathrm{MR}}=\lvert\beta_2-\beta_1\rvert^2$ | $\tau_{\mathrm{MR}}/(\beta_m+\epsilon)$, $\epsilon=10^{-10}$ | Fan et al. 2025b, Eqs. (16)–(17), after Qin et al. |
 | compact gas-kinetic reconstruction ([WENO-AO](/methods/weno-ao.md)) | $\lvert3(\beta_1-\beta_2)+(\beta_3-\beta_2)\rvert$ (1-D), $\tfrac13\sum\lvert2\beta_0-\beta_k-\beta_l\rvert$ (triangles) | $(\tau/(\beta_k+\epsilon))^2$, $\epsilon=10^{-5}$ | Zhao, Ji, Shyy & Xu 2023, Eqs. (29), (31)–(32) |
 
 All the $\tau$ in the table are page-local and none is the registry's $\tau_5$. The same construction,
@@ -162,6 +163,9 @@ $\epsilon=10^{-3}$ in the first is large against small-amplitude data. The CWENO
 $2b-2=6$ for $b=4$, the strongest amplitude dependence in the table. IMWENO-P is invariant to data scaling
 up to $\epsilon$ but its indicators $\beta^{\mathrm{IMP}}_k$ carry the cell width as a factor, so its weights change with the unit
 of length; see [scale invariance](/properties/scale-invariance.md).
+
+*(Compiler check, not in the sources, for the WCNS3-MR row added with chunk 10.)* The squared difference of two
+indicators over one indicator has degree 2 in the data, like the first row.
 
 ## Uses in the bundle
 
@@ -211,6 +215,24 @@ Mach reflection; Jeong et al. (2022, Table 1) measure the same $L^\infty$ error 
 advection at $N_x=640$ ($1.96\times10^{-8}$). Liang et al. (2022, §2.2) note that WENO-Z "typically" uses $q=1$ and $C=1$ in the template
 above.
 
+**At strong shocks and steady states.** [Ren et al. (2025)](/sources/ren-2025.md) (§2.2, Eqs. (6)–(13)) take
+finite-volume WENO-Z with exponent 1, $\epsilon=10^{-15}$, $d=(\tfrac1{10},\tfrac6{10},\tfrac3{10})$ and one weight per
+conserved variable as the fifth-order reconstruction of their
+[matrix stability analysis](/methods/matrix-stability-analysis.md) of the
+[carbuncle](/definitions/carbuncle-phenomenon.md). On a planar Mach 20 normal shock the scheme is unstable with the
+Roe, HLLC, HLL and van Leer fluxes and with three fluxes that are shock-stable at first and second order (HLLC-ADC,
+hybrid SLAU, HLLC-EC), and blunt-body runs at Mach 20 confirm it (§4.1); mid-point and two-point Gauss face
+integration give the same verdicts (Table 2), and characteristic-wise reconstruction lowers the largest growth rate
+without removing the instability (§4.4, Figs. 29–30). Inside the numerical shock structure the weights stay $O(1)$,
+$(0.21135,0.62458,0.16407)$ at the face next to the shock with HLL (Table 3; [ENO property](/definitions/eno-property.md)).
+As a steady-state comparator, finite-volume WENO5-Z with HLLC and the mid-point rule reaches near machine zero only
+on a 1D stationary shock; on 2D steady shock problems its residual stalls ("around $O(1)$" on a heterolateral shock
+interaction) with post-shock oscillations, against the [converged ENO](/methods/converged-eno.md) scheme of
+[Liang & Fu (2026)](/sources/liang-2026.md) (§§5.1–5.6), whose user CPU time is 0.16–0.53 of WENO5-Z's at the finest
+effective resolution (Table 1). Chen & Chen (2026, §3.2) use WENO-Z with an immersed boundary as the comparator of
+their adaptive TENO on Schardin's problem, where it agrees with the experiment but resolves fewer fine structures
+([adaptive TENO](/methods/adaptive-teno.md)).
+
 **In LES of wall turbulence and in GPU codes.** De Vanna et al. (2023a) compare WENO-Z3, Z5 and Z7 with
 TENO5, TENO-A5 and a sixth-order energy-preserving central scheme in wall-resolved and wall-modelled LES of
 supersonic boundary layers ([supersonic turbulent boundary layer](/benchmarks/supersonic-turbulent-boundary-layer.md),
@@ -245,6 +267,9 @@ gradients, and costs about as much as MIG4 on viscous cases (§9.1, Tables 5–7
   linear weights; see [WENO-JS](/methods/weno-js-reconstruction.md). Jiang et al. (2024, Eq. (14)) label all three
   indicators alike and repeat the point $i+1$ in the last term of the third, where the first term of the same indicator
   and the candidate of Eq. (13) use $i+2$, i.e. the stencil $\{i,i+1,i+2\}$.
+- Ren et al. (2025) present the reconstruction and the analysis in conserved variables (§2.2, §3.1) but state in
+  §4.4 that §§4.1–4.3 reconstruct primitive variables; which variables the main results use is not settled by the
+  paper.
 - **Naming.** WENO-ZQ (Zhu & Qiu) shares the Z-type weight form but is a different reconstruction,
   of CWENO type (Zheng, Cai, Qiu & Qiu 2022, §2.2); it is not the WENO-Z of Borges et al.
 
@@ -302,3 +327,7 @@ WENO-M in one code, on one problem and hardware.
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §3.2, Eqs. (12)–(15); §4.1, Tables 1–2.
 - [McQuaid & Brehm (2024)](/sources/mcquaid-2024.md) — §3.8, Eq. (20).
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.3, Eq. (9); §5.2–5.5, Tables 2–4, Fig. 5; §6.4.
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §2.2, Eqs. (16)–(17): Z-type weights of WCNS3-MR.
+- [Ren et al. (2025)](/sources/ren-2025.md) — §2.2, Eqs. (6)–(13); §4.1–4.4, Tables 2–3: finite-volume WENO-Z in the matrix stability analysis of strong shocks.
+- [Liang & Fu (2026)](/sources/liang-2026.md) — §5, Figs. 5–26, Table 1: FV WENO5-Z as steady-state comparator.
+- [Chen & Chen (2026)](/sources/chen-2026.md) — §3.2, Figs. 11–13: WENO-Z with an immersed boundary as comparator.

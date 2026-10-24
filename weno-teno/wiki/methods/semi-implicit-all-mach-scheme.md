@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Semi-implicit all-Mach schemes"
-description: "Semi-implicit all-Mach schemes split the Euler or MHD equations into explicitly treated material waves and implicitly treated acoustic (and, in one MHD scheme, magnetic) waves, so the time step follows the flow speed; the implicit part is one linear pressure equation per stage or a nested Picard iteration, with asymptotic preservation proved for one family."
+description: "Semi-implicit all-Mach schemes split the Euler or MHD equations into explicitly treated material waves and implicitly treated acoustic (and, in one MHD scheme, magnetic) waves, so the time step follows the flow speed; the page compares splittings by hyperbolicity, asymptotic consistency and contact preservation, and implicit parts solved by one linear pressure equation or Picard iteration."
 status: established
 aliases: [all-Mach scheme, all-speed semi-implicit scheme, low-Mach semi-implicit scheme, SI-IMEX WENO, S4T3, all sonic Mach MHD scheme, AP WENO-CT, pressure-based semi-implicit MHD, flux-vector-splitting semi-implicit scheme]
 tags: [asymptotic-preserving, imex, semi-implicit, all-mach, finite-difference, weno, characteristic, low-dissipation, mhd]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # Semi-implicit all-Mach schemes
@@ -153,6 +153,103 @@ All tests with $\gamma=1.4$ (§5):
   $\varepsilon=10^{-6}$: the $L^\infty$ divergence error grows in time and jumps when fine
   structures are no longer resolved (Ex. 5.6, Fig. 5.7).
 
+## Linear IMEX finite volumes: what a splitting must satisfy
+
+[Allegrini & Vignal (2025)](/sources/allegrini-2025.md) (HAL author manuscript) build a
+first- and second-order IMEX finite-volume scheme for the full Euler equations in a different
+scaling: the pressure gradient carries $1/\varepsilon_{\mathrm A}$ and
+$E=\frac{p}{\gamma-1}+\frac{\varepsilon_{\mathrm A}}2\rho\lvert v\rvert^2$, with
+$M^2=\varepsilon_{\mathrm A}/\gamma$ (page-local $\varepsilon_{\mathrm A}$, so
+$\varepsilon_{\mathrm A}=\gamma\varepsilon^2$ in the notation above) and the unscaled
+$c^2=\gamma p/\rho$, the physical sound speed being $c/\sqrt{\varepsilon_{\mathrm A}}$ (§1, Eq. (1)).
+They name three properties a splitting $f=f_{\mathrm e}+f_{\mathrm i}$ (page-local, explicit and
+implicit parts) should have (§2): (i) real eigenvalues of both Jacobians, those of the explicit
+one bounded in $\varepsilon_{\mathrm A}$; (ii) asymptotic consistency; (iii) preservation of
+constant contact discontinuities ([stationary contact preservation](/properties/stationary-contact-preservation.md)).
+The energy equation must carry the enthalpy flux implicitly, or the pressure-wave operator
+forces $\Delta t=O(\sqrt{\varepsilon_{\mathrm A}}\,\Delta x)$ (§2.1). They compare (Lemmas 1–3):
+
+- the **Toro–Vázquez splitting** ([flux vector splitting](/methods/flux-vector-splitting.md)),
+  $f_{\mathrm e}=(\rho v,\ \rho v\otimes v,\ \kappa_{\mathrm A}v)$,
+  $f_{\mathrm i}=(0,\ p\,\mathbb I/\varepsilon_{\mathrm A},\ h_{\mathrm v}v)$ with the rescaled
+  kinetic energy $\kappa_{\mathrm A}=\varepsilon_{\mathrm A}\rho\lvert v\rvert^2/2$ and the enthalpy per
+  unit volume $h_{\mathrm v}=\gamma p/(\gamma-1)$ (page-local), satisfies all three, with explicit
+  eigenvalues $0,v,v$ and implicit ones $0$, $v/2\pm\sqrt{v^2/4+c^2/\varepsilon_{\mathrm A}}$ in 1D, and
+  is consistent for non-well-prepared data (Lemma 1, (ii) by citation of Boscheri et al.); moving a
+  fraction $\beta_{\mathrm A}\in[0,1)$ (page-local) of $h_{\mathrm v}v$ to the explicit part gives
+  $\nabla\cdot v^{n+1}=\frac{\beta_{\mathrm A}}{\beta_{\mathrm A}-1}\nabla\cdot v^n$ in the limit, so
+  $\beta_{\mathrm A}=0$ is "the only choice" consistent for non-well-prepared data (Remark 2.2);
+- the **Cordier–Degond–Kumbaro** splitting is multi-step through $p^n$, so (i) is meaningless and
+  (ii)–(iii) hold up to $O(\Delta t)$ (§2.2), in agreement with Boscarino et al.'s finding above
+  that $\rho^n$ in the energy flux leaves an $O(\Delta t)$ divergence;
+- the non-conservative splitting of Dimarco, Loubère and Vignal satisfies (i) but is consistent
+  only up to $O(\Delta t)$ and does not preserve contacts; its one-step conservative variant has
+  complex explicit eigenvalues for $\gamma<3$ (Lemma 2);
+- a **Lagrange-projection-type** splitting, $f_{\mathrm e}=(\rho v,\rho v\otimes v,Ev)$,
+  $f_{\mathrm i}=(0,p\,\mathbb I/\varepsilon_{\mathrm A},pv)$, separates transport from pressure waves
+  and satisfies (i) and (iii), and (ii) iff the initial velocity is well prepared (Lemma 3).
+
+**Linearization without Picard iteration** (§3.1, Eq. (13)). Boscheri et al.'s reformulated
+semi-discretization is non-linear in the enthalpy and needs a Picard iteration; Allegrini &
+Vignal evaluate the enthalpy and the kinetic energy of the elliptic pressure equation on the
+explicitly convected state $u^{n+1,\mathrm{ex}}$, so that $\rho^{n+1}$, $p^{n+1}$, $\rho v^{n+1}$ and
+$E^{n+1}$ follow in sequence from one linear elliptic solve on a three-point stencil. The energy
+must be updated from the energy equation, not from the equation of state, or the Sod
+intermediate states are wrong (Fig. 1). The price (Lemma 4) is consistency only for
+well-prepared initial **energy**, $E(x,0)=E^0+\varepsilon_{\mathrm A}\bar E(x)$; putting
+$h^{n+1,\mathrm{ex}}$ in the energy update would restore consistency for arbitrary data but is
+rejected as less diffusive and oscillatory in some tests (Remark 3.2).
+
+**Fluxes and stability** (§3.2–3.4). The explicit part takes a [Rusanov flux](/methods/lax-friedrichs-flux.md)
+with coefficient $\tfrac12\max(\lvert v_i\rvert,\lvert v_{i+1}\rvert)$, the implicit part centred
+fluxes ("L2 AP" scheme); the "L∞ AP" scheme adds a second implicit solve, an upwinding of the
+whole state with coefficient $\tfrac12\max\lvert\lambda_{\mathrm i}\rvert$,
+$\lvert\lambda_{\mathrm i}\rvert=\lvert v\rvert/2+\sqrt{v^2/4+c^2/\varepsilon_{\mathrm A}}$, which degrades
+consistency to $O(\Delta t)$ (Remark 5.2). A 1D linearized Fourier analysis, finished by
+plotting root moduli over $M_\varepsilon\in(0,25]$ and $\gamma\in[1,10]$ or $[1,5]$, gives $L^2$
+stability under $\gamma\lvert v\rvert\Delta t=\Delta x$ (L2 AP) and $\lvert v\rvert\Delta t=\Delta x$
+(L∞ AP and the non-linear L2 AP variant) (Lemmas 5–7). The time step is thus set by the
+flow speed alone. Second order uses [ARS(2,2,2)](/methods/imex-runge-kutta.md) with
+minmod MUSCL on the explicit flux only, and a convex blend with the first-order scheme gives a
+first-order TVD variant ([total variation diminishing](/definitions/total-variation-diminishing.md)).
+
+**Evidence** (§3.4, §4). On Sod and Lax (200 and 500 cells) the linear schemes match the
+non-linear ones up to extra smearing at the Lax contact that vanishes on refinement; a contact
+with a density ratio of $10^5$ keeps velocity and pressure constant "up to an error of
+$10^{-5}$"; on interacting Riemann problems at $\varepsilon_{\mathrm A}=1,10^{-1},10^{-2}$ all
+first-order AP schemes oscillate on coarse meshes unless the CFL number is reduced, the L2
+versions more, so the L∞ scheme is kept as the first-order one; on the
+[Gresho vortex](/benchmarks/gresho-vortex.md) ($M_p=10^{-1}$ to $10^{-3}$, $80^2$) the second-order
+scheme keeps a Mach-independent local Mach field without pressure oscillations, its
+kinetic-energy loss coming "mostly" from the limiter (0.9825 unlimited against 0.92 with minmod
+on $40^2$); a double shear layer at $\varepsilon_{\mathrm A}$ down to $10^{-6}$ matches the
+incompressible solution.
+
+## A weakly compressible finite-element relative
+
+[Zampa & Dumbser (2025)](/sources/zampa-2025.md) (§3.1, Eqs. (4)–(6); arXiv v1) apply the same
+explicit-convection, implicit-pressure split to weakly compressible **isentropic** flow with
+compatible finite elements (momentum in Raviart–Thomas, density and pressure discontinuous),
+with Newton iterations on the equation of state and a non-conservative entropy equation; the
+time step $\Delta t=C_{\mathrm{CFL}}h/((2r+1)\max(\lVert v\rVert_\infty,1))$ ($r$ the polynomial
+degree, $C_{\mathrm{CFL}}=0.25$) does not contain the sound speed (§4). Theorem 3.2 proves that
+with constant density and $1/c^2=0$ the Newton iteration converges in one step to an H(div)
+incompressible Navier–Stokes scheme ([asymptotic preservation](/properties/asymptotic-preservation.md)).
+The scheme is first order in time, IMEX Runge–Kutta being named as the route to higher order,
+and the authors restrict it to Mach numbers from zero to about one because the entropy
+equation replaces the energy equation (§3.2.2, §5).
+
+## Explicit low-Mach flux corrections, for contrast
+
+Allegrini & Vignal (§1) recall that explicit schemes, besides $\Delta t=O(\sqrt{\varepsilon_{\mathrm A}})$,
+are not asymptotically consistent without flux corrections. [MFC](/software/mfc.md) 5.0
+([Wilfong et al. (2026)](/sources/wilfong-2026.md), §4.2.4, Fig. 14) keeps an explicit solver and
+implements two such corrections of HLLC, the Thornber et al. velocity reconstruction and the
+anti-dissipation pressure correction of Chen et al.; on the Gresho vortex at reference Mach
+numbers $10^{-1}$ to $10^{-4}$ standard HLLC loses accuracy, both corrections preserve the flow "to
+visual accuracy" ([HLL-family solvers](/methods/hll-riemann-solvers.md)). The time step remains
+acoustic.
+
 ## Extension to ideal MHD
 
 [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) carry the scheme over to the ideal MHD
@@ -299,6 +396,26 @@ visco-resistive-dominated flows.
   gives $-\partial_x\mathcal A$, so that the printed field would not satisfy their own discrete divergence
   condition (50). *(compiler check, not in the sources: each of these follows from the paper's
   own definitions; divergence preservation (40) holds for either sign of (39).)*
+- **Stability lemmas finished numerically.** Allegrini & Vignal's Lemmas 5–7 reduce the
+  amplification factor to a quadratic whose roots are plotted over the parameter ranges, the
+  maximum modulus being 1; the closing step invokes a matrix norm with
+  $\lVert B\rVert\le r(B)$ for the amplification matrix $B$ and its spectral radius $r(B)$
+  (page-local). *(compiler check, not in the sources: such a norm does not exist for every
+  matrix: for the Jordan block $B=\begin{pmatrix}1&1\\0&1\end{pmatrix}$, $r(B)=1$ while
+  $\lVert B^n\rVert$ grows like $n$, so no induced norm has $\lVert B\rVert\le1$; it exists when the
+  eigenvalues of modulus $r(B)$ are semisimple, which the paper does not check.)* The lemmas are
+  therefore numerical evidence of stability over the plotted ranges, not complete proofs.
+- **Three meanings of "all Mach".** Zampa & Dumbser prove asymptotic preservation for constant
+  density only and restrict their scheme to Mach numbers up to about one; Allegrini & Vignal
+  run shocked problems at $\varepsilon_{\mathrm A}=1$ and prove consistency for well-prepared
+  energy (linear scheme) or arbitrary data (semi-discrete Toro–Vázquez splitting).
+- Allegrini & Vignal's printed slips (HAL v1): the 2D explicit flux of Remark 4 has mass flux
+  $u$ where $\rho u$ is meant; Eqs. (15e), (19d)–(19e) carry stray tildes on $p^{n+1}$; the
+  centred part of the MUSCL flux, Eq. (26), is divided by $2\Delta x$ against 2 in Eq. (15f);
+  Eq. (28) calls the L∞ AP scheme "(13)", which is the L2 semi-discretization; and the time-step
+  ratio of the L∞ AP scheme to the explicit one is said to exceed "the expected gain
+  $\sqrt\varepsilon$", although $\sqrt\varepsilon<1$ for the tested $\varepsilon<1$, so a ratio
+  above it need not be a gain.
 - The scheme is not uniformly accurate in $\varepsilon$: asymptotic accuracy covers only
   $\varepsilon\to0$, and order is lost at intermediate Mach numbers (Table 5.2, Fig. 5.3),
   which the paper observes without explanation.
@@ -326,3 +443,6 @@ visco-resistive-dominated flows.
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — §2.2–2.4, §3.1–3.4 (Eqs. (3.1)–(3.18)), §4, §5 (Tables 5.1–5.5) (arXiv v1).
 - [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §§1–2 (Eqs. (2.1)–(2.9)), §3.1 (Eqs. (3.10)–(3.19), Remark 3.1), §3.2 (Eqs. (3.25)–(3.40), Remark 3.2), §3.3 (Eq. (3.32)), §4 (Thm. 4.1, Remark 4.2, Def. 4.3, Prop. 4.4), §5 (Tables 5.1–5.2, Figs. 5.1–5.7) (arXiv v2).
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §1, §2.1 (Eqs. (14)–(19)), §3.1 (Eqs. (21)–(24)), §3.2 (Eqs. (25)–(38), Fig. 1), §3.3 (Eqs. (39)–(51)), §3.4, §4 (Tables 1–2, Figs. 2–22).
+- [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §1 (Eqs. (1)–(5)), §2 (Eqs. (6)–(12), Lemmas 1–3, Remarks 2.1–2.2), §3 (Eqs. (13)–(23), Lemmas 4–7, Remarks 3.1–5.2), §3.4, §4 (Eqs. (24)–(28), Lemma 8, Figs. 1–16) (HAL author manuscript).
+- [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §3.1 (Eqs. (4)–(6)), §3.2.2, Thm. 3.2, §4, §5 (arXiv v1).
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §4.2.4, Fig. 14: explicit low-Mach HLLC corrections in MFC 5.0.

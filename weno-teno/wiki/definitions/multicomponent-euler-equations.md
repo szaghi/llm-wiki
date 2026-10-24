@@ -5,7 +5,7 @@ description: "The fully conservative Euler system for a mixture of several gases
 status: established
 aliases: [multi-component Euler equations, multispecies Euler equations, compressible multicomponent Euler system, HRM model (as named by Renac)]
 tags: [multiphase, entropy-stable, positivity, bound-preserving, dg, finite-difference]
-timestamp: 2026-10-23T15:06:00Z
+timestamp: 2026-10-23T20:43:00Z
 ---
 
 # Multicomponent Euler equations
@@ -191,6 +191,21 @@ below saturation, the gases are ideal at fixed reference temperatures,
 and the vapour volume fraction follows from the density (Eqs.
 (2–3)–(2–7)); stiffened-gas and Peng–Robinson closures with an energy
 equation are given in appendices.
+
+**A cubic real-fluid law.** [Terashima, Ly & Ihme (2025)](/sources/terashima-2025.md)
+(§2.9, Eqs. (41)–(52), after Soave) close the system for transcritical
+methane–nitrogen mixtures with the Soave–Redlich–Kwong equation of state,
+$p=\rho R_uT/(\bar W-\mathsf b\rho)-\rho^2\mathsf a(T)/\big(\bar W(\bar W+\mathsf b\rho)\big)$, with
+$R_u$ the universal gas constant, $\bar W$ the mixture molar mass (registry
+§10), and $\mathsf a=\sum_k\sum_lX_kX_l\sqrt{\mathsf a_k\mathsf a_l\mathsf s_k\mathsf s_l}$, $\mathsf b=\sum_kX_k\mathsf b_k$
+mole-fraction mixing rules over the critical-point constants
+$\mathsf a_k=0.42748R_u^2T_{c,k}^2/p_{c,k}$, $\mathsf b_k=0.08664R_uT_{c,k}/p_{c,k}$ and the
+acentric-factor correction $\mathsf s_k(T)$ (page-local $R_u$, $X_k$ the mole
+fraction, $\mathsf a$, $\mathsf b$, $\mathsf s_k$, $T_{c,k}$, $p_{c,k}$; the source's $a\alpha$, $b$,
+$\alpha_i$); thermally perfect parts follow Chemkin II.
+With such a law spurious interface pressure oscillations appear even in a
+single-species flow, e.g. cryogenic into warm nitrogen at supercritical
+pressure (§1).
 
 **A two-material marker form.** [Gaburro et al. (2024)](/sources/gaburro-2024.md)
 (§2.1, Eqs. (8)–(18); arXiv v1) write two-gas Euler with one advected
@@ -538,6 +553,43 @@ Shocks and sharp interfaces are outside the scope: the authors offer the
 scheme as a non-dissipative baseline to which numerical diffusion must
 still be added (§1, §6).
 
+**Approximate pressure equilibrium for any equation of state.**
+Terashima, Ly & Ihme (2025) extend the analysis to an arbitrary law
+$p=p(\rho Y_k,\rho v,E)$. For initially uniform $p$ and $v$ the discrete
+condition on a central half-point flux form reduces to the interface values
+of $\rho e$ and $\rho Y_k$ alone,
+$$\rho e\big|_{i+1/2}-\rho e\big|_{i-1/2}=\sum_k\varepsilon^{\mathrm e}_{k,i}\big(\rho Y_k\big|_{i+1/2}-\rho Y_k\big|_{i-1/2}\big),\qquad
+\varepsilon^{\mathrm e}_k=\Big(\frac{\partial\rho e}{\partial\rho Y_k}\Big)_{p,\rho Y_{l\ne k}}$$
+(§2.5, Eq. (19); page-local $\varepsilon^{\mathrm e}_k$, the source's $\epsilon_i$),
+which they identify with Fujiwara et al.'s compatibility condition. Because
+$\varepsilon^{\mathrm e}_k$ is evaluated at the node $i$, the condition is
+asymmetric, and they state that no locally defined interface values satisfy
+it in all cells for a general law (§2.5–2.6; argued, not proved). Splitting
+it into two half-cell relations and eliminating between neighbours gives,
+with arithmetic means of $\rho Y_k$,
+$$\rho e\big|_{i+1/2}=\tfrac12(\rho e_i+\rho e_{i+1})-\sum_k\tfrac12\big(\varepsilon^{\mathrm e}_{k,i+1}-\varepsilon^{\mathrm e}_{k,i}\big)\,\tfrac12\big(\rho Y_{k,i+1}-\rho Y_{k,i}\big)$$
+(Eq. (25)), the internal-energy value of the fully conservative
+[APEC scheme](/methods/apec-scheme.md), whose pressure-equilibrium residual is
+second order with smaller constants than the plain arithmetic mean (Eqs.
+(32)–(33)). For any law
+$\varepsilon^{\mathrm e}_k=-\rho C_v(\partial p/\partial\rho Y_k)_T/(\partial p/\partial T)+(\partial\rho e/\partial\rho Y_k)_T$
+(Eq. (48), App. B; $C_v$ the mixture specific heat at constant volume,
+page-local), evaluated in closed form for the cubic law above (Eqs.
+(49)–(52)); for calorically perfect gases it is Eq. (59). The quasi-conservative
+variant PEqC replaces the internal-energy flux divergence in the energy
+equation by $\sum_k\varepsilon^{\mathrm e}_k\partial_x(\rho Y_kv)$, which keeps pressure
+equilibrium exactly but loses energy conservation (§2.11, Eq. (54)). On
+advected methane–nitrogen interfaces the fully conservative scheme with
+arithmetic means blows up (1D after $t=0.09$ s, and with 4001 points around $t=0.11$ s; 2D at
+about $t=0.1$ s), while APEC stays stable with pressure errors of about
+0.02% in 2D and conserves energy; PEqC keeps the pressure error near
+$10^{-8}$ with a growing energy error (§3.2, Figs. 6–12;
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md),
+[material-interface advection](/benchmarks/material-interface-advection.md)).
+Fujiwara et al.'s exact ideal-gas interface values do not follow from
+Eq. (25); substituting their $\rho Y_k$ values into the general half-cell form
+returns their arithmetic $\rho e$ value (§3.1).
+
 Nguyen et al. report the opposite outcome for a moving interface: a
 water–air interface advected at 150 m/s at uniform $p$, $v$ and $T$
 keeps velocity, pressure and temperature errors "on the order of
@@ -752,5 +804,6 @@ temperature approaches zero before 50 μs without the entropy limiter, and a
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1–2 (sharp-interface contrast only).
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §2, Eqs. (1)–(7), Alg. 2; §3; §5, Eqs. (11)–(12); §6 (accepted manuscript).
 - [Zhou et al. (2023)](/sources/zhou-2023.md) — §2, Eqs. (1)–(2); §4.3, Eq. (33); §5.4, Figs. 13–14; §5.8.
+- [Terashima, Ly & Ihme (2025)](/sources/terashima-2025.md) — §1; §2.1–2.11, Eqs. (1)–(59); §3.1–3.2, Figs. 1–14; App. B.
 - [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) — §1; §2.1–2.3, Eqs. (1)–(16); §3, Eqs. (17)–(49), Table 1; §4, Figs. 2–8; §5, Eqs. (55)–(59); Appendices A–B.
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §1; §2.1–2.3, Eqs. (1)–(55); §3, Eqs. (60)–(91); §4.3–4.5, Figs. 3–7 (arXiv v1).

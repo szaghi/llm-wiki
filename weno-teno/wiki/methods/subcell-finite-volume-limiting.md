@@ -5,7 +5,7 @@ description: "Subcell finite-volume limiting makes a nodal DGSEM robust by conve
 status: established
 aliases: [subcell limiting, subcell FV shock capturing, hybrid DG/FV blending, element-wise blending, subcell-wise blending, native LGL finite volumes, FV subcell switching]
 tags: [dg, limiting, finite-volume, positivity, entropy-stable]
-timestamp: 2026-10-23T15:13:00Z
+timestamp: 2026-10-23T20:40:00Z
 ---
 
 # Subcell finite-volume limiting for DG
@@ -91,9 +91,11 @@ Options for the scheme:
 - Riemann solver: Rusanov / local [Lax–Friedrichs](/methods/lax-friedrichs-flux.md),
   or [HLLE, HLLEM](/methods/hll-riemann-solvers.md), which preserve positivity
   of $\rho$ and $p$; for MHD, an entropy-stable Rusanov flux whose
-  dissipation acts on jumps of the entropy variables, since plain
-  Lax–Friedrichs dissipation on $[\![u]\!]$ is not entropy stable for MHD
-  (Rueda-Ramírez et al. 2021, §3.3.1, Eqs. (52)–(60)).
+  dissipation acts on jumps of the entropy variables, which the
+  authors motivate by stating that plain Lax–Friedrichs dissipation on
+  $[\![u]\!]$ is not entropy stable for MHD (Rueda-Ramírez et al. 2021,
+  §3.3.1, Eqs. (52)–(60); compare the compiler check on the
+  [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md) page).
 - Reconstruction: first order (piecewise constant), second-order minmod on
   primitive variables (keeps positivity; slopes in reference space; falls
   back to first order in the element-boundary subcells, where the

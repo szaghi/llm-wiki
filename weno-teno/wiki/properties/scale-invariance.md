@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Scale and affine invariance"
-description: "A reconstruction or limiter is scale-invariant when it commutes with multiplication of the data by a constant, and affine-invariant when it also commutes with adding a constant; classical WENO weights have neither property because ε is absolute, and the sources reach it by normalised variables, relative ε, or globally normalised damping."
+description: "A reconstruction or limiter is scale-invariant when it commutes with multiplication of the data by a constant, and affine-invariant when it also commutes with adding a constant; classical WENO weights have neither property because ε is absolute, and the sources reach it by normalised variables, relative ε, or normalised damping, or give it up on purpose."
 status: established
 aliases: [scale-invariant, affine-invariant, Ai-property, Si-property, homogeneity of a reconstruction, normalisable scheme, homogeneity of the evolution operator]
 tags: [reconstruction, weno, limiting, dg]
-timestamp: 2026-10-23T15:11:00Z
+timestamp: 2026-10-23T20:37:00Z
 ---
 
 # Scale and affine invariance
@@ -156,7 +156,7 @@ $(cr,l/c)$ with $c=\sqrt{|l|/|r|}$, which the authors find necessary to avoid os
 Riemann problem (Remark 3.3, Example 5.7); it is a fix of the arbitrary eigenvector scaling that Peng et al. identify below
 as a threat to invariance ([characteristic decomposition](/methods/characteristic-decomposition.md)).
 
-**Normalizing indicator, global indicator and $\epsilon$ together.** Fan, Qiu & Zhao (2025,
+**Normalizing indicator, global indicator and $\epsilon$ together.** Fan et al. (2025a,
 §2.1, Eqs. (2.10)–(2.11), Remark 2.1; §2.2, Eq. (2.22)) take the step for the WENO-ZQ-type weights
 of their moment-based [Hermite WENO](/methods/hermite-weno.md), HWENO-U:
 
@@ -212,6 +212,33 @@ Ex. 5.6, 5.8). A locally normalized coefficient (Eq. (2.14)) is proposed, but no
 constant for it has been found (Remark 2.9). Peng et al. also note that a characteristic
 decomposition can destroy invariance, because eigenvectors are defined up to an arbitrary scaling
 (Remark 2.12, Ex. 5.7; [characteristic decomposition](/methods/characteristic-decomposition.md)).
+
+**Locally normalized damping in entropy-stable DG.** [Liu et al. (2025b)](/sources/liu-2025-b.md) (§3.2,
+Eq. (3.16)) build the damping coefficient of their entropy-stable essentially oscillation-free DG scheme for ideal
+MHD, after the OEDG idea, as (page-local $\sigma_{\mathrm d}$, not the scaling $\sigma$ of this page; $\mathcal M_j$, $\Omega_j$)
+$$\sigma_{\mathrm d}=\frac{a_j}{\mathcal M_j^2}\max_{1\le s\le8}\sum_{\ell=0}^1\tfrac12\Delta x^{2\ell}\Big([\![\partial_x^\ell u_{h,s}]\!]^2_{j-1/2}+[\![\partial_x^\ell u_{h,s}]\!]^2_{j+1/2}\Big)\quad(\mathcal M_j>10^{-12}),\qquad
+\mathcal M_j=\max_s\big\lVert u_{h,s}-\overline{u_{h,s}}^{\,\Omega_j}\big\rVert_{L^\infty(\Omega_j)},$$
+with $a_j$ the largest characteristic speed in $I_j$, $\Omega_j=I_{j-1}\cup I_j\cup I_{j+1}$, $s$ the eight components,
+and $\sigma_{\mathrm d}=0$ otherwise. The normalization is *local*, over three cells, where Peng, Sun & Wu use the global
+range and found no mesh-independent constant for their locally normalized variant (above). The authors state that the
+coefficient is affine-invariant, because of the denominator $\mathcal M_j^2$, evolution-invariant and free of
+characteristic decomposition; they prove neither invariance (the theorem of the paper concerns entropy stability and
+truncation order). *(Compiler check, not in the sources: under $u_h\mapsto\sigma u_h+\mu$ applied to every component
+with one $\sigma$, the squared jumps and $\mathcal M_j^2$ both scale by $\sigma^2$ and are unchanged by $\mu$, so
+the factor multiplying $a_j$ is invariant; $a_j$ itself is computed from the state and is in general not (under
+$u\mapsto\sigma u$ the MHD velocity and sound speed are unchanged but the Alfvén speed scales by $\sigma^{1/2}$, and a shift
+$\mu$ changes all speeds); with different scalings of the components, a change of units of one variable, the
+maximum over components need not be invariant either.)* See [OEDG](/methods/oedg.md).
+
+**Deliberately scale-variant features.** [Fan et al. (2025b)](/sources/fan-2025-b.md) (§3.1.1, Eqs. (24)–(26),
+Fig. 4) go the other way for a learned three-point weighting
+([learned WENO weights](/methods/learned-weno-weights.md)). The normalized differences of WENO3-NN are kept, but on
+three points they cannot tell a smooth extremum from a jump, so the logarithm of the largest one-sided difference is
+added as a scale-variant input: it decreases under refinement at an extremum and stays constant at a jump. The
+training data are rescaled to magnitudes $10^a$, $a\sim\mathcal U(-4,4)$, of that difference (Eq. (36)). *(Compiler
+check, not in the sources: under $u\mapsto\sigma u$ this input shifts by $\log_{10}\lvert\sigma\rvert$, so the weights
+depend on the amplitude and on the unit of the data, a dependence the paper accepts to recover third order at smooth
+extrema; [critical-point accuracy](/properties/critical-point-accuracy.md).)*
 
 **A dimensionless transformation of the stencil data.** Fan & Wu (2024, §2.2.4, Definitions 2–3,
 Theorem 5) make a nonlinear reconstruction invariant from outside instead of changing its weights, the
@@ -282,5 +309,7 @@ problem scaled by 100 OF-HWENO "excessively smears" (Ex. 9, Fig. 3.8).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.2.2, Eqs. (22)–(23).
 - [Li, Li, Don & Wang (2023a)](/sources/li-2023.md) — §1, Def. 1; §2.3–2.5, Eqs. (36)–(46), Theorems 1–4, Figs. 1, 3–4; §4.2, Theorem 5.
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1.2–3.1.3, Eq. (3.8), Remarks 3.2–3.3; Example 5.7 (arXiv v1).
-- [Fan, Qiu & Zhao (2025)](/sources/fan-2025.md) — §2.1–2.2, Eqs. (2.10)–(2.11), (2.22), Remarks 2.1, 2.4; Examples 3.5, 3.10, 3.12.
+- [Fan et al. (2025a)](/sources/fan-2025.md) — §2.1–2.2, Eqs. (2.10)–(2.11), (2.22), Remarks 2.1, 2.4; Examples 3.5, 3.10, 3.12.
 - [Fan & Wu (2024)](/sources/fan-2024.md) — §2.2.4–2.2.5, Defs. 1–3, Eqs. (2.30)–(2.33), Theorems 4–7; §2.3, Def. 4; Examples 3, 4, 9, Figs. 3.1, 3.2, 3.8 (arXiv v1).
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.2, Eq. (3.16), Theorem 3.2: locally normalized ESOFDG damping coefficient, invariance stated.
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §3.1.1, Eqs. (24)–(26), Fig. 4; §3.2, Eq. (36): scale-variant input of a learned weighting.

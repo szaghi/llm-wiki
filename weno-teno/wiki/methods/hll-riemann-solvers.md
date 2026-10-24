@@ -5,7 +5,7 @@ description: "HLL, HLLE, HLLC, HLLEM/HLLI, HLLD and relaxation two-point fluxes 
 status: established
 aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, RHLLEM, HLLD, Harten–Lax–van Leer solver, relaxation Riemann solver, Suliciu relaxation solver, radiative HLL, Rad-HLL, shock-stable HLLC, HLLC-LM]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity, multiphase, entropy-stable]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T20:44:00Z
 ---
 
 # HLL-family approximate Riemann solvers
@@ -14,7 +14,8 @@ The HLL solver approximates the Riemann fan at $x_{i+1/2}$ by two waves of speed
 $s^-\le s^+$ enclosing a single constant state. The bundle's sources use it, and its
 relatives HLLE, HLLC and HLLEM/HLLI, as the two-point flux $h(u^-,u^+)$ of finite-volume and
 DG schemes, as the building block of [fluctuation-form FD-WENO](/methods/fluctuation-form-fd-weno.md),
-and as the carbuncle-free fallback near strong shocks.
+and as a fallback near strong shocks that several sources call carbuncle-free (but see the
+[carbuncle contradiction](/definitions/carbuncle-phenomenon.md) for fifth-order reconstruction).
 
 ## The single-state HLL solver
 
@@ -220,6 +221,12 @@ shown. The interface states come from BVD-selected MUSCL or
 [THINC](/methods/thinc-reconstruction.md) reconstructions of quasi-primitive variables
 ([boundary variation diminishing](/definitions/boundary-variation-diminishing.md)), and the
 relaxation terms are applied afterwards by [operator splitting](/methods/operator-splitting.md).
+The same wave-propagation form with HLLC carries the learned BVD selection of
+[Huang et al. (2025b)](/sources/huang-2025-b.md) (§2.1, Eqs. (13)–(15)) for the Euler equations and
+the Allaire five-equation model: fluctuations $\sum_l(s^l)^\pm\mathcal W^l$ at the interfaces
+plus the total fluctuation of the Riemann problem between the two reconstructed states of each
+cell, with HLLC waves in all tests, SSP-RK2 stepping and dimensional splitting in 2D
+([boundary variation diminishing](/definitions/boundary-variation-diminishing.md)).
 
 **Moving curvilinear meshes** ([Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md),
 §5.1.1, Eqs. (26)–(28)). In contravariant form the speeds are
@@ -293,6 +300,19 @@ maximum wave speed, which HLL, Roe and Rusanov need, are not known for this
 multicomponent model (§1.3). See [entropy stability](/properties/entropy-stability.md)
 and [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md).
 
+**Relaxation speed estimates for an entropy-stable MHD flux.** In the globally divergence-free
+entropy-stable nodal DG scheme of [Liu et al. (2025c)](/sources/liu-2025-c.md) (App. A.2, App. B)
+the interface flux is HLL with the three-wave relaxation speeds of Bouchut, Klingenberg and Waagan,
+$s^-=\min\{v_1^--C^-,0\}$, $s^+=\max\{v_1^++C^+,0\}$, where $C^\pm$ (page-local) is a fast-speed-like
+quantity plus $\tfrac{\gamma+1}2$ times the positive parts of the velocity and pressure jumps scaled
+by the fast speeds. HLL and Lax–Friedrichs are entropy stable when $s^\mp$ bound the true outer
+speeds, which the authors cite rather than prove (App. A.2). At reflective walls the HLL flux
+with $s^+=-s^-$ reduces to Lax–Friedrichs, and they prove that the wall then produces entropy
+$-4\beta_{\mathrm{CK}}\rho v_1^2s^+\le0$, with $\beta_{\mathrm{CK}}$ the inverse-temperature variable (proportional to $\rho/p$) of
+the entropy variables (page-local) (App. B). A 2D HLL solver at cell vertices supplies the
+single-valued electric field of the face update of the normal field
+([constrained transport](/methods/constrained-transport.md)).
+
 ## Radiative HLL and relativistic MHD
 
 In relativistic radiation MHD with the M1 closure, [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md)
@@ -334,6 +354,24 @@ On their resistive rotor at $\eta_{\mathrm m}=10^{-1}$ ($\eta_{\mathrm m}$ the r
 artefact of the Cartesian mesh that they find "more evident" with MHLLC than with a more
 diffusive solver (§4.3).
 
+## HLLD for ideal MHD
+
+As printed for [MFC](/software/mfc.md) 5.0 by [Wilfong et al. (2026)](/sources/wilfong-2026.md)
+(§4.2.5, after Miyoshi and Kusano), HLLD resolves five of the seven MHD waves with four
+intermediate states separated by $s^{*-}$, $s^{\mathrm M}$, $s^{*+}$ (page-local), the normal velocity
+$s^{\mathrm M}$ and the total pressure $p_{\mathrm T}=p+\tfrac12\lvert B\rvert^2$ (page-local) being
+constant across the fan:
+
+$$s^-=\min(v_1^--c_{\mathrm f}^-,\,v_1^+-c_{\mathrm f}^+),\quad s^+=\max(v_1^-+c_{\mathrm f}^-,\,v_1^++c_{\mathrm f}^+),\quad
+s^{\mathrm M}=\frac{(s^+-v_1^+)\rho^+v_1^+-(s^--v_1^-)\rho^-v_1^--p_{\mathrm T}^++p_{\mathrm T}^-}{(s^+-v_1^+)\rho^+-(s^--v_1^-)\rho^-},$$
+
+with $c_{\mathrm f}$ the fast magnetosonic speed (page-local), $\rho^{*\pm}=\rho^\pm(s^\pm-v_1^\pm)/(s^\pm-s^{\mathrm M})$ and
+$s^{*\pm}=s^{\mathrm M}\pm\lvert B_1\rvert/\sqrt{\rho^{*\pm}}$; the other star states are referred to
+Miyoshi and Kusano. MFC matches their Brio–Wu result
+([Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md)); its default fluxes for the
+diffuse-interface models remain HLL and HLLC, HLL being described as more dissipative because
+it ignores the contact (§3.2.2, §4.1.9).
+
 ## Positivity and the bound-preserving CFL
 
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) (§2.1, Eqs. (2.3)–(2.8); §3) use the HLL
@@ -352,6 +390,23 @@ diffusive solver (§4.3).
   first Gauss–Lobatto weight and $\max(s^+-s^-)$ (Thms. 2.7, 2.12, Eq. (2.37); flux inequalities
   Lemma 2.11 with $\min\{v-c,0\}$ and $\max\{v+c,0\}$). See
   [bound preservation](/properties/bound-preservation.md).
+- [Liu & Wu (2025)](/sources/liu-2025.md) (§3.1–3.2, Eqs. (38)–(49), Thm. 1; arXiv v2) use the
+  same construction for ideal MHD in a locally divergence-free [OEDG](/methods/oedg.md) scheme.
+  The HLL flux in single-formula form, with $s^-=\min\{s_{\mathrm l},0\}$, $s^+=\max\{s_{\mathrm r},0\}$, takes
+  the wave-speed bounds of Wu and Shu, as recalled: $s_{\mathrm l}$ is the minimum of a
+  positivity bound $\alpha_{\mathrm l}(u^-,u^+)$ and of the slowest eigenvalue at $u^-$, the Roe state and $u^+$,
+  where, with page-local symbols,
+  $$\alpha_{\mathrm l}(u,\tilde u)=\min\Big\{v_1,\frac{\sqrt\rho\,v_1+\sqrt{\tilde\rho}\,\tilde v_1}{\sqrt\rho+\sqrt{\tilde\rho}}\Big\}-\mathscr C(u)-\frac{\lvert B-\tilde B\rvert}{\sqrt\rho+\sqrt{\tilde\rho}},\qquad
+  \mathscr C=\frac1{\sqrt2}\Big[\mathscr C_s^2+\frac{\lvert B\rvert^2}\rho+\sqrt{\Big(\mathscr C_s^2+\frac{\lvert B\rvert^2}\rho\Big)^2-4\frac{\mathscr C_s^2B_1^2}\rho}\Big]^{1/2},\quad \mathscr C_s=\sqrt{\frac{(\gamma-1)p}{2\rho}},$$
+  and $s_{\mathrm r}$ the mirror maximum (Eqs. (39)–(43)). The same speeds split the jump of the normal
+  field in the [Godunov–Powell source](/definitions/godunov-powell-source-term.md) between the two
+  cells, with weights $-s^-/(s^+-s^-)$ to the left cell and $s^+/(s^+-s^-)$ to the right, so that the
+  whole jump goes to one cell when all waves move one way (Eqs. (45)–(49), Fig. 2); this is the
+  weighting Yan et al. use for the velocity jump above. With two-state HLL inequalities obtained by
+  specializing Wu and Shu's theorems to Cartesian cells (Lemmas 3–4), Theorem 1 proves positive
+  density and internal energy of the cell averages under an explicit CFL condition, which the
+  authors call a notably improved estimate over the general-mesh one (Remark 3). See
+  [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 - [Wong et al. (2021)](/sources/wong-2021.md) (§3.3, Eqs. (46)–(70)) prove that the
   first-order HLLC scheme above keeps partial densities non-negative, the volume
   fraction in $[0,1]$ and $\rho e-\bar p_\infty>0$ (page-local mixture stiffening
@@ -425,6 +480,38 @@ in the presence of strong shock waves" (§6.7). In the
 where any monotone two-point flux can be used, HLLC gives the best dissipation-rate results
 on the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) and beats Steger–Warming
 splitting in both alternative-formulation schemes (§4.9, Figs. 10–12).
+
+**HLL is not shock-stable at fifth order.** [Ren et al. (2025)](/sources/ren-2025.md) (§4.1,
+Figs. 9–19), with HLL on Davis speeds and HLLC on Einfeldt speeds, find by
+[matrix stability analysis](/methods/matrix-stability-analysis.md) that fifth-order
+finite-volume WENO-Z is unstable on a Mach-20 steady normal shock not only with HLLC and Roe but
+also with HLL, van Leer splitting and the shock-stable HLLC-ADC, hybrid SLAU and HLLC-EC fluxes,
+all stable at first and second order; the cause they identify is the reconstruction inside the
+numerical shock structure, not the flux alone ([carbuncle](/definitions/carbuncle-phenomenon.md)).
+Their cure pairs a detector-weighted multi-resolution reconstruction with the blend
+$h=(1-\kappa_{\mathrm h})h^{\mathrm{HLLC}}+\kappa_{\mathrm h}h^{\mathrm{HLL}}$, where $\kappa_{\mathrm h}$
+(page-local) is the maximum, over the face and the four transverse faces of the two cells, of the
+shock detector
+$$f_{\mathrm{SD},i+1/2}=\Big(1-\exp\Big(-\max(M_i,M_{i+1})\frac{\lvert p_i-p_{i+1}\rvert}{p_i+p_{i+1}}\Big)\Big)^4$$
+(page-local; Eqs. (47), (50)–(51)); this scheme is stable on the normal shock, the Mach-20
+cylinder, the double Mach reflection and the Sedov blast wave (§5.2;
+[multi-resolution WENO](/methods/multi-resolution-weno.md)).
+
+**Low-Mach corrections of HLLC.** Standard HLLC loses accuracy at low Mach number, as recalled
+after Guillard and Viozat; MFC 5.0 implements two corrections ([Wilfong et al. (2026)](/sources/wilfong-2026.md),
+§4.2.4). Thornber et al.'s reconstruction replaces the face velocities by
+$v_1^{\pm*}=\tfrac12(v_1^-+v_1^+)\pm\tfrac z2(v_1^+-v_1^-)$ in the signal speeds and fluxes, and
+Chen et al.'s anti-dissipation pressure correction adds $(z-1)p_{\mathrm d}\,n$ to the momentum and
+$(z-1)p_{\mathrm d}s^*$ to the energy of the star fluxes, with
+
+$$z=\min\Big(\max\Big(\frac{\lvert v_1^-\rvert}{c^-},\frac{\lvert v_1^+\rvert}{c^+}\Big),1\Big),\qquad
+p_{\mathrm d}=\frac{\rho^-\rho^+(s^--v_1^-)(s^+-v_1^+)(v_1^+-v_1^-)}{\rho^+(s^+-v_1^+)-\rho^-(s^--v_1^-)}$$
+
+(page-local $z$, $p_{\mathrm d}$, normal $n$). On the [Gresho vortex](/benchmarks/gresho-vortex.md)
+at reference Mach numbers $10^{-1}$ to $10^{-4}$ standard HLLC loses accuracy and both corrected
+fluxes keep it "to visual accuracy for all tested Mach numbers" (Fig. 14). See
+[semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md) for the implicit
+alternative.
 
 **Dissipation on compressible turbulence.** In the GPU port of an unstructured OpenFOAM
 finite-volume solver, [Bielawski et al. (2023)](/sources/bielawski-2023.md) (App. A) compare a
@@ -581,3 +668,8 @@ the text's general statement that Cartesian fluxes are 5–20 % faster.
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §3.3 (Eqs. (37)–(44)), App. A (Eqs. (A.3)–(A.5)).
 - [Mignone et al. (2024)](/sources/mignone-2024.md) — §3.6 (Eqs. (43)–(48)), §4.3: MHLLC for resistive relativistic MHD.
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §2.1 (Eqs. (2.3)–(2.8)), Lemma 2.11, Thms. 2.7 and 2.12, §3: HLL speeds for a bound-preserving five-equation OEDG scheme.
+- [Liu & Wu (2025)](/sources/liu-2025.md) — §2.3, §3.1–3.2 (Eqs. (38)–(49)), §3.6 (Lemmas 3–4, Thm. 1, Remark 3): positivity-preserving HLL for ideal MHD and the HLL-weighted Godunov–Powell source (arXiv v2).
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — App. A.2, App. B, §3 (Eqs. (16)–(17)): HLL with relaxation speeds, wall entropy production, vertex HLL electric field.
+- [Ren et al. (2025)](/sources/ren-2025.md) — §4.1 (Figs. 9–19), §5.1.2 (Eqs. (47), (50)–(51)), §5.2: fifth-order shock instability of HLL-type fluxes, HLLC/HLL hybrid.
+- [Huang et al. (2025b)](/sources/huang-2025-b.md) — §2.1 (Eqs. (13)–(17)): HLLC in wave-propagation form.
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §3.2.2, §4.1.9, §4.2.4 (Fig. 14), §4.2.5: HLL, HLLC, low-Mach HLLC corrections and HLLD in MFC 5.0.

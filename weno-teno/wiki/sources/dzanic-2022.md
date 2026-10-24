@@ -136,7 +136,7 @@ page range "107–107"; [1] keeps Hopf's printed equation in the title. No print
 
 # Pages created or updated
 
-Chunk 3 (2026-10-22), cited further in chunks 4–9 (2026-10-22/23). This source is cited on:
+Chunk 3 (2026-10-22), cited further in chunks 4–10 (2026-10-22/23). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
 * [Bassi–Rebay viscous discretizations (BR1, BR2)](/methods/bassi-rebay-viscous-discretization.md)
@@ -145,6 +145,7 @@ Chunk 3 (2026-10-22), cited further in chunks 4–9 (2026-10-22/23). This source
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
 * [Entropy stability](/properties/entropy-stability.md)
 * [Flux reconstruction and energy-stable FR](/methods/flux-reconstruction.md)
+* [Godunov–Powell source term](/definitions/godunov-powell-source-term.md)
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
 * [KPP rotating wave](/benchmarks/kpp-rotating-wave.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)

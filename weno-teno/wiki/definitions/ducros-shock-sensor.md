@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Ducros shock sensor"
-description: "The Ducros sensor flags compressions by the share of dilatation in the velocity-gradient magnitude; the page gives the classical squared ratio, the modified compression-only form that switches hybrid central/TENO and central/WENO schemes, its use as a weight blending WENO-Z with a first-order flux, its regularization and thresholds, and its recorded failures and repairs."
+description: "The Ducros sensor flags compressions by the share of dilatation in the velocity-gradient magnitude; the page gives the classical squared ratio, the modified compression-only form that switches hybrid central/TENO and central/WENO schemes, its use as a weight towards a first-order flux (a WENO-Z blend, an exponential Active Flux limiter), its regularization and thresholds, and its recorded failures and repairs."
 status: established
 aliases: [Ducros sensor, modified Ducros sensor, improved Ducros sensor, Ducros dilatation–vorticity sensor, Ducros level, dilatation-to-vorticity ratio]
 tags: [central-scheme, teno, weno, finite-difference, turbulence]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T19:53:00Z
 ---
 
 # Ducros shock sensor
@@ -159,6 +159,34 @@ somewhat low peak temperature (AS-202 capsule) to the first-order
 reduction (§4.1, §4.3). They describe the sensor as detecting shocks
 "with a minimal increase in computational overhead".
 
+## Use as a factor of an exponential flux limiter
+
+[Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) (§4.1.3, arXiv v3) use the
+modified, compression-only form as one factor of a shock-sensor limiting of the
+bound-preserving [Active Flux](/methods/active-flux.md) method. With cell values recovered
+from the cell averages and central differences for the dilatation and the vorticity on
+non-uniform meshes, they take $\Psi_{\mathrm D}$ with $\epsilon_{\mathrm D}=10^{-40}$ and multiply
+it by a Jameson pressure sensor, written page-locally
+$\varphi_{\mathrm J,i}=\lvert\bar p_{i+1}-2\bar p_i+\bar p_{i-1}\rvert/\lvert\bar p_{i+1}+2\bar p_i+\bar p_{i-1}\rvert$.
+Face values are the maxima of the two adjacent cell values, and the blending factor
+(page-local)
+
+$$\ell^{\mathrm s}_{i+1/2}=\exp\big(-\kappa_{\mathrm s}\,\varphi_{\mathrm J,i+1/2}\,\Psi_{\mathrm D,i+1/2}\big)\in(0,1]$$
+
+scales the antidiffusive part of the already [convex-limited](/methods/convex-limiting.md)
+flux, $\hat f=\hat f^{\mathrm L}+\ell^{\mathrm s}\big(\hat f^{\mathrm{Lim}}-\hat f^{\mathrm L}\big)$, with
+$\hat f^{\mathrm L}$ the first-order local Lax–Friedrichs flux (page-local). Since
+$\ell^{\mathrm s}\le1$ the flux moves further towards $\hat f^{\mathrm L}$, so bound preservation
+is kept. The strength $\kappa_{\mathrm s}$ (page-local) is problem dependent ($0.5$, $1$ or $10$ in the
+tests), and "its optimal choice needs further investigation"; the limiting strongly reduces the
+oscillations behind strong shocks in the forward-facing step, the double Mach reflection and a
+2D Riemann problem, and accelerates the steady residual convergence of an oblique shock
+reflection (§4.1.3; Examples 5.9, D.5–D.7). In 1D the factor becomes the 0/1 switch
+$\max\big(-(\bar v_{i+1}-\bar v_{i-1})/(\lvert\bar v_{i+1}-\bar v_{i-1}\rvert+10^{-40}),0\big)$
+(App. C.1.3). Unlike the hybrid switches above, the sensor does not choose between a central and
+a shock-capturing flux; it is a continuous weight towards first order, like McQuaid & Brehm's
+blend above, but multiplied by a pressure sensor.
+
 ## Failure modes and repairs
 
 - **Smooth irrotational flow.** Where both the dilatation and the vorticity are
@@ -221,6 +249,9 @@ derivatives-ratio detector beside it (see
 
 ## Qualifications
 
+- Duan et al. print the Jameson sensor and the face blending only for $x$-faces, the
+  $y$-direction counterparts being implied ("explanations will be given for the
+  $x$-direction", §4.1.3).
 - McQuaid & Brehm print neither the Ducros formula nor a threshold, so
   their blend cannot be compared quantitatively with the hybrid
   switches above; it is a continuous weight, not a binary switch.
@@ -249,3 +280,4 @@ derivatives-ratio detector beside it (see
 - [McQuaid & Brehm (2024)](/sources/mcquaid-2024.md) — §3.8, Eq. (20); §4.1, Fig. 14; §4.3: Ducros-weighted blend of WENO-Z with a first-order flux, heating artefacts on non-aligned grids.
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §3.1: TENO-type indicator claimed more universal than the Ducros sensor.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §3.4, Eq. (35): Jameson-type sensor, distinct from Ducros' (arXiv v4).
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §4.1.3; App. C.1.3; Examples 5.9, D.5–D.7: modified Ducros sensor times a Jameson pressure sensor in an exponential limiting of bound-preserving Active Flux (arXiv v3).

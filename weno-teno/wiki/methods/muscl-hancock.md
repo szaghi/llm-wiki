@@ -5,7 +5,7 @@ description: "MUSCL reconstructs limited piecewise-linear states from cell avera
 status: established
 aliases: [MUSCL, MUSCL reconstruction, kappa scheme, κ-scheme, MUSCL–Hancock method, MHM, van Leer MUSCL]
 tags: [reconstruction, limiting, finite-volume, riemann-solver]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # MUSCL and MUSCL–Hancock schemes
@@ -113,6 +113,9 @@ to stay second order (see [well-balancing](/properties/well-balancing.md)).
 | [Başkaya et al. (2024)](/sources/baskaya-2024.md) | US3D (body-fitted) and CHESS (ghost-cell IB), reacting hypersonic flow | modified Steger–Warming; Steger–Warming flux-vector splitting | second-order MUSCL as the reference and the ghost-cell discretizations of an immersed-boundary assessment ([immersed boundaries](/methods/immersed-boundary-method.md)) |
 | [Wakimura et al. (2024)](/sources/wakimura-2024.md) | six-equation two-phase model with infinite-rate relaxation, wave-propagation form, SSP-RK3 | HLLC fluctuations | method-of-lines MUSCL with the van Leer limiter (no Hancock step) as one candidate of a BVD selection against THINC, on quasi-primitive variables ([boundary variation diminishing](/definitions/boundary-variation-diminishing.md)) |
 | [Dematté et al. (2024)](/sources/dematte-2024.md) | cell-centred semi-implicit all-Mach FV, ideal and visco-resistive MHD | Rusanov on the advective sub-system | second-order TVD MUSCL–Hancock with the van Leer limiter for the explicit advective terms, after Dumbser et al. ([semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)) |
+| [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) | linear IMEX all-Mach FV, full Euler, ARS(2,2,2) in time | Rusanov on the explicit Toro–Vázquez sub-flux; centred implicit fluxes | MUSCL with minmod slopes on the explicit flux only, none on the implicit pressure terms (no Hancock step); the kinetic-energy loss on the Gresho vortex comes "mostly" from the limiter (§4.2, §4.5; [semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)) |
+| [Ren et al. (2025)](/sources/ren-2025.md) | Cartesian FV, 2D Euler, shock-instability analysis | Roe, HLLC, HLL, van Leer splitting; HLLC/HLL hybrid | MUSCL with the van Albada limiter as the second-order baseline of the [matrix stability analysis](/methods/matrix-stability-analysis.md) and of the viscous Mach-8.1 cylinder, where MUSCL + HLLC/HLL is stable but its stagnation heat flux "unsatisfactory" on the grid used (§4.1.1, §5.2.6) |
+| [de Romémont et al. (2026)](/sources/deromemont-2026.md) | 1D and 2D scalar laws and Euler, explicit Euler stepping at fixed $\Delta t/\Delta x$ | Rusanov | MUSCL in primitive variables with the van Albada limiter, whose slopes are replaced by convolutional-network stencil coefficients; the limiter ratio is taken between learned slopes (§3.1, §4.1–4.2; [learned WENO weights](/methods/learned-weno-weights.md)) |
 
 Chemistry enters Peng et al.'s scheme by second-order Strang splitting with a semi-implicit
 fourth-order generalized Runge–Kutta integrator, GRK4A (§2.1); see
@@ -143,6 +146,15 @@ shows proper second order convergence for all of the resolutions we have tested"
   1.854, 1.966, 1.992, 1.998 from $16^2$ to $512^2$ cells, error $3.647\times10^{-5}$ on $512^2$;
   the paper calls this "second order of accuracy in space" and leaves higher order in time to
   future IMEX Runge–Kutta work (§4.1.2).
+- de Romémont et al. (2026) (§7, Fig. 16) run 2D periodic Euler at $\Delta t/\Delta x=0.03$: on an advected
+  density sine wave the standard and the learned MUSCL scheme are "identical", second order is
+  "approximately retrieved" and the standard scheme is "slightly better"; on randomized Riemann
+  data the learned scheme has the lower error. Their von Neumann analysis of linear advection
+  with the limiter set to 1 and the learned coefficients frozen gives the amplification factor
+  $1-\nu(1-e^{-\mathrm i\vartheta})\big(1+\tfrac12(\bar\alpha_{-1}(e^{-\mathrm i\vartheta}-1)+\bar\alpha_1(e^{\mathrm i\vartheta}-1))\big)$
+  (page-local frozen coefficients $\bar\alpha_{\pm1}$; §5), compared with the centred slope
+  $(-\tfrac12,0,\tfrac12)$ in their Fig. 4; the authors say it confirms a reduction of the
+  dispersion and dissipation errors (§9), and the frozen values are not printed.
 - Gaburro et al. measure the order of the unlimited DG scheme only (their limiter never
   activates on the smooth vortex, §5.1.1), so their MUSCL–Hancock subcell scheme has no
   measured order.
@@ -181,3 +193,6 @@ shows proper second order convergence for all of the resolutions we have tested"
 - [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §3.1–3.2 (author preprint).
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §3.2.2 (Eqs. (27)–(28)), §3.2.4, §3.3.
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §3.1, §4.1.2 (Table 2).
+- [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §4.2 (Eqs. (26)–(27)), §4.5 (HAL author manuscript).
+- [Ren et al. (2025)](/sources/ren-2025.md) — §4.1.1, §5.2.6.
+- [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §3.1 (Eqs. (12)–(15)), §4.1–4.2 (Eqs. (16)–(17)), §5, §7 (Fig. 16).

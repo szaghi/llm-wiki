@@ -5,7 +5,7 @@ description: "Local characteristic decomposition projects stencil data onto the 
 status: established
 aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables, primitive-variable reconstruction]
 tags: [characteristic, reconstruction, weno, teno, central-scheme, multiphase]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T19:52:00Z
 ---
 
 # Characteristic decomposition
@@ -183,6 +183,18 @@ they print the factorization as $A=L\Lambda R$, where $A=R\Lambda L$ is meant.
   reconstruction (§2.3). They report that more than 90 % of the cells of the double Mach
   reflection take the split-form branch (§4.6; no count shown), and replace Rusanov by Roe
   splitting with entropy fix "to obtain a stable result" on the interacting blast waves (§4.4).
+  The unstructured finite-volume TENO-E schemes of [Liang et al. (2025)](/sources/liang-2025.md)
+  (§3.3.3, Eq. (21)) apply the same switch per cell on triangles, tetrahedra and hexahedra: a
+  troubled-cell indicator built on the variance of the relative density jumps to the neighbours
+  of the central stencil, evaluated in physical space, selects either the linear least-squares
+  reconstruction of the large stencil applied to the conserved variables, with no projection and
+  no weights, or TENO in characteristic variables. The authors state that this avoids the
+  characteristic decomposition and the weight computation in smooth regions and that the
+  saving outweighs the extra communication the indicator needs across processor boundaries
+  (§3.3.5; no parallel timing shown). Against CWENO of the same order they report about 30–56 %
+  lower total and 40–73 % lower reconstruction wall time, a saving of the whole hybrid scheme
+  that is not split into its parts (§4; see [troubled-cell indicators](/definitions/troubled-cell-indicator.md)
+  and [adaptive TENO](/methods/adaptive-teno.md)).
 - **Eigenvectors of another system.** In the semi-implicit all-Mach scheme of
   [Boscarino et al. (2022)](/sources/boscarino-2022.md) (§3.3.1) only the explicit
   (material-wave) flux is reconstructed characteristic-wise, with the local eigenvectors of the
@@ -334,6 +346,14 @@ slight oscillations of the primitive-variable HLLC setup on the Sod and Lax tube
 reconstruction in physical space (§3.3, §5.1.2, Figs. 9–10); no characteristic-space run of the
 same Godunov setup is shown.
 
+**Not a cure for shock instability.** [Ren et al. (2025)](/sources/ren-2025.md) (§4.4,
+App. B, Figs. 29–30) repeat their [matrix stability analysis](/methods/matrix-stability-analysis.md)
+of fifth-order finite-volume WENO-Z on a steady normal shock with the reconstruction done in
+characteristic variables $L u$, $L$ the left-eigenvector matrix at the face. At every Mach
+number tested the largest real part of the eigenvalues of the stability matrix is lower than
+with primitive-variable reconstruction but stays positive: the projection mitigates the
+[carbuncle](/definitions/carbuncle-phenomenon.md)-type instability without removing it.
+
 **The field speeds matter beyond oscillations.** For steady Euler problems
 [Wan & Xia (2022)](/sources/wan-2022.md) (Ex. 4.4, Figs. 4.4–4.6) find that on the shock
 reflection ($120\times30$) only their WENO-H residue falls to about $10^{-12}$ with the global speed
@@ -444,3 +464,5 @@ to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §6 (Eqs. (70)–(72)), §7 (Algorithm 1, Eq. (73)), Eq. (51).
 - [Chu et al. (2025a)](/sources/chu-2025.md) — §1, §2.1 (Eqs. (2.4)–(2.5)), App. A (arXiv v1).
 - [Chu et al. (2025b)](/sources/chu-2025-b.md) — Remark 2.2, §3–§4, §5.1 (Eq. (5.2)), Apps. A–B.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §3.3.3 (Eq. (21)), §3.3.5, §4: characteristic projection only in troubled cells on unstructured meshes.
+- [Ren et al. (2025)](/sources/ren-2025.md) — §4.4, App. B (Eq. (B.3)), Figs. 29–30: characteristic reconstruction lowers but does not remove the fifth-order shock instability.

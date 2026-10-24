@@ -5,7 +5,7 @@ description: 'The Lax–Friedrichs two-point flux and the Lax–Friedrichs flux 
 status: established
 aliases: [Rusanov flux, local Lax–Friedrichs, LLF, global Lax–Friedrichs, GLF, Lax–Friedrichs flux splitting, Rusanov flux splitting]
 tags: [numerical-flux, finite-difference, bound-preserving, weno, teno]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # Lax–Friedrichs (Rusanov) flux and flux splitting
@@ -276,6 +276,30 @@ one trained network on one problem; no generalization test to other flows is sho
   divergence-free condition. See
   [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md) and
   [bound preservation](/properties/bound-preservation.md).
+- **Active Flux averages and point values.** [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md)
+  (§4, Lemmas 4.1–4.2, App. B; arXiv v3) take first-order LLF as the low-order scheme of the
+  [convex limiting](/methods/convex-limiting.md) of Active Flux cell averages, with
+  $a_{i+1/2,j}=\max\{\varrho(\bar u_{i,j}),\varrho(\bar u_{i+1,j})\}$ ($\varrho$ the spectral radius of the
+  directional Jacobian, page-local). The update is written through the bar states
+  $\tilde u_{i+1/2}=\tfrac12(\bar u_i+\bar u_{i+1})-\frac1{2a_{i+1/2}}\big(f(\bar u_{i+1})-f(\bar u_i)\big)$, which lie
+  in $G$ whenever $a_{i+1/2}$ is not below the spectral radius at both states, for scalar laws and
+  for Euler (Lemmas B.1–B.2), and the 2D scheme is a convex combination under
+  $\Delta t\le\tfrac12\min\{\Delta x_i/(a_{i-1/2,j}+a_{i+1/2,j}),\ \Delta y_j/(a_{i,j-1/2}+a_{i,j+1/2})\}$ (Eq. (30)). A
+  second LLF scheme on staggered stencils of point values bounds the point-value update (Lemma 4.2);
+  on uniform meshes $\Delta t\le\tfrac14\min\{\Delta x/\lVert\varrho_1\rVert_\infty,\Delta y/\lVert\varrho_2\rVert_\infty\}$
+  satisfies both conditions (Remark 4.5), and $\Delta t\le\Delta x/(2\lVert\varrho\rVert_\infty)$ in 1D
+  (Remark C.1). The same flux, between the interior state and its mirror image, replaces the
+  boundary flux at reflective walls (§3.3). This LLF coefficient differs from the five-state one of
+  their LLF flux vector splitting ([flux vector splitting](/methods/flux-vector-splitting.md)).
+- **A global-speed flux limiter for Active Flux.** [Kiechle et al. (2025)](/sources/kiechle-2025.md)
+  (§3.2, Eqs. (12)–(24), Remark 3.2) blend each Active Flux interface flux with a first-order
+  **global** LF flux, $\gamma F^{\mathrm{AF}}+(1-\gamma)F^{\mathrm{LF}}$ (page-local $\gamma\in[0,1]$, $F$),
+  with $a_x=\max_i\lvert f'(\bar u_{i,j})\rvert$; the first-order LF scheme is positivity preserving under
+  CFL $\le\tfrac12$, but the four one-sided split states of their convex splitting of the 2D update
+  are non-negative only under CFL $\le\tfrac14$ with equal weights $\tfrac12$, which is the condition
+  of guaranteed positivity. In a comparison with the PAMPA flux limiter of Abgrall et al., a
+  global speed gave more accurate results than the local one of that limiter on their test (Fig. 5;
+  [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)).
 - **Positivity by an external limiter.** [Fu (2021)](/sources/fu-2021.md) (§5.7) runs the
   extreme cases (double rarefaction, Le Blanc, Sedov, Mach 80 and Mach 2000 jets) with LLF
   plus the positivity-preserving flux limiter of Hu, Adams & Shu; the TENO reconstruction
@@ -414,6 +438,15 @@ damping, halved step) whenever a cell average leaves $G$ (§6).
   are $0$ and $v_1$, with $a_{i+1/2}=\max(\lvert v_1^-\rvert,\lvert v_1^+\rvert)$; the acoustic and magnetic
   waves are treated implicitly, so neither the dissipation nor the time step contains the sound,
   Alfvén or fast speeds ([semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)).
+  [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) (§3.2, Eqs. (15f), (16); HAL author
+  manuscript) do the same for full Euler with the Toro–Vázquez splitting: the explicit Rusanov
+  coefficient is $\tfrac12\max(\lvert v_i\rvert,\lvert v_{i+1}\rvert)$, "half of the maximum explicit
+  eigenvalues", and an optional implicit Rusanov-type upwinding with coefficient
+  $\tfrac12\max\lvert\lambda_{\mathrm i}\rvert$, the largest implicit eigenvalue
+  $\lvert v\rvert/2+\sqrt{v^2/4+c^2/\varepsilon_{\mathrm A}}$ (page-local; $M^2=\varepsilon_{\mathrm A}/\gamma$),
+  acts on the whole state, density included, or contact results are not consistent (Remark 5.1).
+  That upwinding reduces the oscillations of the centred implicit fluxes but degrades asymptotic
+  consistency to $O(\Delta t)$ (Remark 5.2).
 - **Downwinding by sign flip.** [Dzanic et al. (2022)](/sources/dzanic-2022.md) (§2, §4.2) obtain
   the downwind-biased divergence of their time-reversibility shock indicator by negating the
   dissipative term of the Rusanov flux (Davis wave speeds) used in the forward step; the defect
@@ -425,10 +458,12 @@ damping, halved step) whenever a cell average leaves $G$ (§6).
 
 ## Entropy stability: dissipation on entropy-variable jumps
 
-Plain LF dissipation on the conservative jump, $\tfrac a2[\![u]\!]$, added to an
-entropy-conservative flux is not entropy stable for MHD
-([Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md), §3.3.1, citing Derigs et al.
-2017). Their "ES Rusanov" flux replaces $[\![u]\!]$ by $\frac{\partial u}{\partial w}[\![w]\!]$
+[Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) (§3.3.1, Eqs. (52)–(53), citing
+Derigs et al. 2017) write "Lax-Friedrichs type dissipation" on the conservative jump,
+$\tfrac12\mathcal D[\![u]\!]$, with a Roe-type matrix $\mathcal D=R\lvert\Lambda\rvert R^{-1}$ (page-local),
+LF and Rusanov being the case where every entry of $\lvert\Lambda\rvert$ is the largest eigenvalue,
+and state that this dissipation added to an entropy-conservative flux is not entropy stable for
+MHD. Their "ES Rusanov" flux replaces $[\![u]\!]$ by $\frac{\partial u}{\partial w}[\![w]\!]$
 written with Barth's eigenvector scaling,
 
 $$h=f^{\mathrm{ec}}(u^-,u^+)-\tfrac12R\,\lvert\Lambda\rvert\,\mathcal Z\,R^\top[\![w]\!],$$
@@ -441,7 +476,12 @@ their default wherever dissipation is needed (§6). [Bhoriya et al. (2023)](/sou
 (§4.1.2, Eq. (21), App. B) use the same Rusanov-type magnitude, the largest eigenvalue
 modulus times the identity, with Barth-scaled eigenvectors in their entropy-stable flux for
 two-fluid relativistic plasma, and call it "similar to the Roe diffusion operator"
-([TeCNO schemes](/methods/tecno-scheme.md)). See
+([TeCNO schemes](/methods/tecno-scheme.md)). In the entropy-stable oscillation-free DG scheme
+for MHD of [Liu et al. (2025b)](/sources/liu-2025-b.md) (§3.1, Eq. (3.14)) the interface flux is
+$h=f^{\mathrm{ec}}-\tfrac12a\,\mathcal H[\![w]\!]$, with $\mathcal H$ the discrete entropy Jacobian of
+Derigs et al. such that $[\![u]\!]=\mathcal H[\![w]\!]$ (page-local $\mathcal H$), which the authors say
+reduces to the Lax–Friedrichs flux; they recommend the local speed
+$a=\max(\lvert\lambda^-_{\max}\rvert,\lvert\lambda^+_{\max}\rvert)$ over the global one. See
 [entropy-conservative fluxes](/methods/entropy-conservative-flux.md) and
 [entropy stability](/properties/entropy-stability.md).
 
@@ -461,6 +501,21 @@ two-fluid relativistic plasma, and call it "similar to the Roe diffusion operato
   Eq. (18) and without the square in the condition (20) that motivates it, and $u_2$ in place of
   $n_2$ in the second component of $n\cdot\tau_{\mathrm v}$ (Eq. (18)).
 
+- **Plain LF dissipation and entropy stability for MHD.** Rueda-Ramírez et al. (2021) state,
+  citing Derigs et al., that the Roe-type dissipation $\tfrac12\mathcal D[\![u]\!]$,
+  $\mathcal D=R\lvert\Lambda\rvert R^{-1}$, of their Eq. (52) added to an entropy-conservative flux is not
+  entropy stable for MHD; Liu et al. (2025b) present their entropy-stable dissipation
+  $\tfrac12a\mathcal H[\![w]\!]$, with $[\![u]\!]=\mathcal H[\![w]\!]$, as reducing to the LF flux. Neither source
+  proves its statement on the page read. *(compiler check, not in the sources: for the scalar
+  case $\mathcal D=aI$, $a\ge0$, the dissipation changes the interface entropy production (55) of
+  Rueda-Ramírez et al., written with their generalized Tadmor condition (51) for GLM-MHD with
+  non-conservative terms, only by $-\tfrac12a[\![w]\!]\cdot[\![u]\!]$, because the non-conservative terms
+  do not involve the dissipation; this is $\le0$ for any $a\ge0$ when $\eta$ is convex on the
+  segment between $u^-$ and $u^+$, since $w=\eta'(u)$ is then monotone. The statement of
+  non-entropy-stability can therefore apply to a general Roe-type matrix, for which
+  $[\![w]\!]\cdot R\lvert\Lambda\rvert R^{-1}[\![u]\!]$ has no sign in general, but not to the scalar LF case, which
+  is consistent with Liu et al. (2025b).)* Not recorded as a contradiction: the first statement
+  is recalled from a non-ingested source.
 - Wu & Shu's LF statements are proved for the first-order scheme; the high-order FV/DG MHD
   result uses Gauss-quadrature LF fluxes with a viscosity bound and its proof is "omitted"
   (Thm. 6.2).
@@ -523,3 +578,7 @@ two-fluid relativistic plasma, and call it "similar to the Roe diffusion operato
 - [Lin & Chan (2024)](/sources/lin-2024.md) — §2.3 (Eqs. (13)–(17), footnotes 2, 8), §3.1 (Eq. (22), Theorem 3.1), §4 (Eq. (54)).
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §3.1 (Eqs. (22)–(23)).
 - [Ding & Wu (2024a)](/sources/ding-2024.md) — §2.1 (Eqs. (6)–(16), Thm. 2.1), §3.2 (arXiv v1).
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §3.3, §4.1–4.2 (Eqs. (27)–(30), Lemmas 4.1–4.2, Remark 4.5), App. B (Lemmas B.1–B.2), Remark C.1 (arXiv v3).
+- [Kiechle et al. (2025)](/sources/kiechle-2025.md) — §3.2 (Eqs. (12)–(24), Remarks 3.1–3.2, Fig. 5).
+- [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §3.2 (Eqs. (15f), (16), Remarks 5.1–5.2) (HAL author manuscript).
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.1 (Eq. (3.14)).

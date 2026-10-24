@@ -5,7 +5,7 @@ description: "Strong-stability-preserving Runge–Kutta methods are convex combi
 status: established
 aliases: [SSP-RK, SSP-RK3, TVD Runge–Kutta, TVD-RK3, Shu–Osher Runge–Kutta, strong-stability-preserving time integration]
 tags: [bound-preserving, limiting, weno, dg]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # SSP Runge–Kutta time stepping
@@ -79,7 +79,14 @@ with it:
 | [Chu et al. (2025a)](/sources/chu-2025.md) | adaptive low-dissipation central-upwind FV | 0.4 (§4) |
 | [Chu et al. (2025b)](/sources/chu-2025-b.md) | LCD path-conservative central-upwind FV | 0.45 (§5) |
 | [Ding & Wu (2024a)](/sources/ding-2024.md) | divergence-free positivity-preserving FV WENO, MHD | 0.3; positivity proved for forward Euler and lifted to SSP-RK3 by convexity (Remark 2.2) |
-| [Fan et al. (2025)](/sources/fan-2025.md) | moment-based FV Hermite WENO with unified stencils (HWENO-U) | 0.6, with a modified scheme whose linear bound is about 0.824 (below) |
+| [Fan et al. (2025a)](/sources/fan-2025.md) | moment-based FV Hermite WENO with unified stencils (HWENO-U) | 0.6, with a modified scheme whose linear bound is about 0.824 (below) |
+| [Huang et al. (2025b)](/sources/huang-2025-b.md) | wave-propagation FV with learned BVD selection, HLLC | SSP-RK2 for the tests (0.4 on Sod); SSP-RK3 at 0.1 to generate the training data (§2.1, §3.3.2, §4.2.1) |
+| [Liu & Wu (2025)](/sources/liu-2025.md) | locally divergence-free OEDG, ideal MHD, $N=2$ | 0.12; positivity proved for forward Euler and carried to SSP-RK3 by convexity (§3.2, §3.6, §4) |
+| [Liu et al. (2025b)](/sources/liu-2025-b.md) | entropy-stable oscillation-free nodal DG, ideal MHD, $N=2$ | $0.6/(2N+1)=0.12$, each stage split into an explicit step and a closed-form implicit damping step (below) |
+| [Liu et al. (2025c)](/sources/liu-2025-c.md) | globally divergence-free entropy-stable nodal DG, ideal MHD | 0.45 with Ketcheson's ten-stage fourth-order SSP-RK, $\Delta t=\nu/(a^{(1)}/\Delta x+a^{(2)}/\Delta y)$ (below) |
+| [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) | bound-preserving generalized Active Flux | $\Delta t=\nu/\max_i(\varrho(\bar u_i)/\Delta x_i)$ with $\varrho$ the spectral radius (page-local), $\nu$ 0.1 to 0.4 by splitting and test; step halved and restarted when a stage fails the bound-preserving conditions (Eq. (15), Remark 4.2) |
+| [Barsukow et al. (2026)](/sources/barsukow-2026.md) | arbitrary-order 2D Active Flux, linear advection | maximal 0.27, 0.20, 0.17, 0.12, 0.088 for orders 3–7 (Table 3; below) |
+| [Chu et al. (2025c)](/sources/chu-2025-c.md) | new low-dissipation central-upwind FV | 0.475 (§3) |
 
 [Fu (2023)](/sources/fu-2023.md), [Cui et al. (2024)](/sources/cui-2024.md) (Exs. 2–5) and
 the variants A and C of [Active Flux](/methods/active-flux.md)
@@ -99,7 +106,7 @@ conservative flux difference from $u^n$; this is what lets their cell merging an
 redistribution near a material interface stay conservative. *(compiler check, not in the
 sources: expanding the Shu–Osher form above gives exactly these two lines.)*
 
-**Modified stages for moment-based Hermite WENO.** [Fan et al. (2025)](/sources/fan-2025.md)
+**Modified stages for moment-based Hermite WENO.** [Fan et al. (2025a)](/sources/fan-2025.md)
 (§2.1, Eq. (2.13); §2.3, Thms. 2.1–2.2) evolve the cell average $\bar u_i$ and the first moment
 $\bar u^{(1)}_i$ (registry §10) by the $\mathbb P^1$ DG weak form, but reconstruct on cell $i$ from
 $\{\bar u_{i-1},\bar u_i,\bar u_{i+1},\bar u^{(1)}_{i-1},\bar u^{(1)}_{i+1}\}$, without the central
@@ -219,6 +226,30 @@ finite-difference HWENO, as the authors cite (§2.1).
   with empirical factors $\beta^a,\beta^\nu$ (page-local) and CFL $=$ CFL$_\nu=0.5$.
 
 ## Other SSP methods and refinement rules
+
+- **Ten-stage fourth order.** [Liu et al. (2025c)](/sources/liu-2025-c.md) (§4.2, §5)
+  advance their globally divergence-free entropy-stable DG scheme for MHD with Ketcheson's
+  ten-stage fourth-order SSP Runge–Kutta method, applying the forward-Euler template of DG step,
+  face update of the normal field, limiter and least-squares reconstruction of the field with an
+  energy correction at every stage (tableau not reprinted). Entropy stability is semi-discrete per
+  cell; the full method with reconstruction, limiter and time stepping is not proved fully
+  discrete entropy stable.
+- **A split stage with implicit damping.** [Liu et al. (2025b)](/sources/liu-2025-b.md) (§3.3,
+  Eqs. (3.20)–(3.21)) write each forward-Euler stage of third-order TVD Runge–Kutta as an
+  explicit DG step $\tilde u$ followed by the implicit damping
+  $u=\tilde u-c_{\mathrm s}\frac{2\tau}h\sigma(\tilde u)(u-\bar u)$ with the stage weights $c_{\mathrm s}=1,\tfrac14,\tfrac23$
+  (page-local $\sigma$, $\tau$ the time step, $h$ the element size), which is solved in closed form
+  and keeps the cell mean ([operator splitting](/methods/operator-splitting.md)).
+- **Direction-dependent stability regions.** For their arbitrary-order 2D Active Flux on linear
+  advection, [Barsukow et al. (2026)](/sources/barsukow-2026.md) (§4.2, Eqs. (40)–(46), Table 3,
+  Figs. 7–8; arXiv v2) diagonalize the semi-discrete operator and apply the SSP-RK3 stability
+  polynomial $G(z)=1+z+\tfrac12z^2+\tfrac16z^3$ eigenvalue by eigenvalue. The maximal CFL number,
+  printed as $\lvert a\rvert\Delta t_{\max}/h$ for $a_x=a_y$ (Eq. (42)), is 0.27, 0.20,
+  0.17, 0.12 and 0.088 for orders 3 to 7. The stable region in the plane of the two directional CFL
+  numbers is about a disc for orders 3 and 4 and about a square for order 5, so the stable step
+  depends on the direction as well as the magnitude of the velocity; moments added at orders 6 and 7
+  round the corners again. Their convergence runs scale $\nu$ with $h^{(N-2)/3}$ so that
+  $\Delta t^3=O(h^{N+1})$ (§5.1).
 
 - **Five-stage fourth order, printed.** [Berta et al. (2024)](/sources/berta-2024.md) (§3.3,
   Eqs. (31)–(32)) advance their fourth-order finite-volume MHD scheme with eSSPRK(5,4), with
@@ -445,7 +476,14 @@ finite-difference HWENO, as the authors cite (§2.1).
 - [Yu, Liu & Feng (2023)](/sources/yu-2023.md) — §5 (arXiv v1).
 - [Lin & Chan (2024)](/sources/lin-2024.md) — Eq. (52), footnote 7.
 - [Teissier et al. (2024)](/sources/teissier-2024.md) — §3.6 (Eqs. (60)–(65), Table 1), §4.1 (Tables 2–3) (arXiv v2).
-- [Fan et al. (2025)](/sources/fan-2025.md) — §2.1 (Eq. (2.13)), §2.3 (Thms. 2.1–2.2, Eqs. (2.25)–(2.33)), §3.
+- [Fan et al. (2025a)](/sources/fan-2025.md) — §2.1 (Eq. (2.13)), §2.3 (Thms. 2.1–2.2, Eqs. (2.25)–(2.33)), §3.
 - [Chu et al. (2025a)](/sources/chu-2025.md) — §4 (arXiv v1).
 - [Chu et al. (2025b)](/sources/chu-2025-b.md) — §5.
 - [Ding & Wu (2024a)](/sources/ding-2024.md) — Remark 2.2, §4 (arXiv v1).
+- [Huang et al. (2025b)](/sources/huang-2025-b.md) — §2.1 (Eqs. (16)–(17)), §3.3.2, §4.2.1.
+- [Liu & Wu (2025)](/sources/liu-2025.md) — §2.3, §3.2, §3.6, §4 (arXiv v2).
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.3 (Eqs. (3.20)–(3.21)), §4.
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §4.2 (fully discrete algorithm), §5 (time step).
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §2.3 (Eqs. (14)–(15)), Remark 4.2, §5 (arXiv v3).
+- [Barsukow et al. (2026)](/sources/barsukow-2026.md) — §4.2 (Eqs. (40)–(46), Table 3, Figs. 7–8), §5.1 (arXiv v2).
+- [Chu et al. (2025c)](/sources/chu-2025-c.md) — §3 (arXiv v1).

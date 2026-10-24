@@ -230,8 +230,12 @@ uses the same letter.
 | $\psi^{\mathrm{SBM}}$, $\beta$, $\tau_{\mathrm S}$ | SBM slope limiter of Chu et al. and its two parameters | total variation diminishing, low-dissipation central-upwind schemes, numerical dissipation |
 | $\mathcal W_{i+1/2}$, $C_{\mathrm W}$, $\alpha_{\mathrm W}$ | weak local residual of Chu et al. (2025a), its constant and contact exponent | low-dissipation central-upwind schemes, troubled-cell indicators |
 | $Q_{\mathrm h}$, $V_f$ | hybridized SBP operator and face interpolation matrix | summation-by-parts operators, flux differencing |
-| $\tau_{\mathrm{ZQ}}$ | global indicator of the scale-invariant Zhu–Qiu weights (Fan et al. 2025) | scale invariance |
+| $\tau_{\mathrm{ZQ}}$ | global indicator of the scale-invariant Zhu–Qiu weights (Fan et al. 2025a) | scale invariance |
 | $\mathsf b$ | buoyancy of thermal rotating shallow water | dam-break problems, hydrostatic equilibrium tests |
+| $\phi_{\mathrm G}$ | Godunov potential of the MHD Powell term in the modified Tadmor condition | Godunov–Powell source term, entropy-conservative fluxes, flux differencing |
+| $\kappa_{\mathrm s}$, $\varphi_{\mathrm J}$ | strength and Jameson pressure factor of Duan et al.'s shock sensor $\exp(-\kappa_{\mathrm s}\varphi_{\mathrm J}\Psi_{\mathrm D})$; other pages (asymptotic preservation, pressure equilibrium, carbuncle) use $\kappa_{\mathrm s}$ for unrelated page-local quantities and never with this sensor | troubled-cell indicators, Ducros shock sensor, double Mach reflection, forward-facing step, Leblanc tube, Sedov, 2D Riemann problems, high-Mach jets, Woodward–Colella, steady shock problems |
+| $\varepsilon_{\mathrm s}$ (shock position) | Ren et al.'s sub-cell position of a steady shock in matrix stability analyses; no page uses it together with the scale-sensor regularization $\varepsilon_{\mathrm s}$ | carbuncle phenomenon, matrix stability analysis, steady shock problems |
+| $s_{\max}$ | maximum signal speed of a Rusanov-type dissipation (Zampa & Dumbser and others); split convective forms use the same letter for Zampa & Dumbser's dissipation speed | MOOD, artificial viscosity, path-conservative schemes, split convective forms |
 | $\lambda_{\mathrm s}$ (RBF) | shape parameter of a Gaussian or multiquadric RBF reconstruction, adaptive in Liang & Fu (2024a) as $\lambda_{\mathrm s}=\lambda_0+\lambda_\Delta(1-\varphi(\mu_d))$; no page uses it together with Qin et al.'s scaling $\lambda_{\mathrm s}$ | RBF-WENO, adaptive TENO |
 | $\beta_{\mathrm e}$, $\epsilon_K$ | Lin & Chan's user-defined blending fraction $\beta_{\mathrm e}\in[0,1]$ and elementwise modal smoothness factor $\epsilon_K\in[0,1]$, which relax the cell entropy bound by $1-\beta_{\mathrm e}\epsilon_K$ in the shock-capturing variant of entropy-bounded subcell limiting | subcell limiting, troubled-cell indicators, entropy stability, carbuncle phenomenon, high-Mach jets |
 | $n_{\mathrm g}$, $g$ | degree of the nodal-density interpolant of Zuo & Zhu's troubled-cell tests (the sources' $2r$) and the interpolant | troubled-cell indicators, hybrid WENO |
@@ -242,6 +246,6 @@ $\mathcal T$, $\mathcal C$, $\zeta$ and $\mu$ carry two family meanings
 (THINC/shift, non-conservative/convective matrix, Z+/characteristic
 variables, Z+M coefficient/affine translation); no page uses both families. $\mathcal G$ is likewise the global part of the flux on flux-globalization pages and the Runge–Kutta amplification factor on spectral pages, and $\mathsf G$ is $1/(\gamma-1)$ on multicomponent pages but Ramani & Shkoller's target map on the moving-mesh pages; no page uses both meanings. The
 gravitational potential is written $\phi$ without subscript on well-balancing pages; the
-volume fraction always carries its phase index, $\phi_k$. The MUSCL parameter is written $\kappa_{\mathrm M}$ and the minmod
+volume fraction always carries its phase index, $\phi_k$. $B$ is also the boundary matrix of $Q+Q^\top=B$ on the SBP pages (summation-by-parts operators, flux differencing); flux differencing uses it in both senses, the magnetic field only inside MHD formulas such as $\phi_{\mathrm G}$. The MUSCL parameter is written $\kappa_{\mathrm M}$ and the minmod
 parameter is declared page-local wherever used, to keep $\kappa$ (kinetic energy) and $\theta$
 (Zhang–Shu factor) free.

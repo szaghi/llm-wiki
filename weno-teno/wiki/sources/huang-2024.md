@@ -132,8 +132,9 @@ incomplete as printed (see Printed slips). No item is unparseable.
 
 # Pages created or updated
 
-Chunk 7 (2026-10-23), cited further in chunks 8–9 (2026-10-23). This source is cited on:
+Chunk 7 (2026-10-23), cited further in chunks 8–10 (2026-10-23). This source is cited on:
 
+* [Density-wave advection](/benchmarks/density-wave-advection.md)
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [Smoothness indicators](/definitions/smoothness-indicator.md)
 * [Targeted ENO (TENO)](/methods/targeted-eno.md)

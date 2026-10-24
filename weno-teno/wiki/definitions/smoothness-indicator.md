@@ -5,7 +5,7 @@ description: "A smoothness indicator β_k is a quadratic functional of the data 
 status: established
 aliases: [smoothness indicator, local smoothness indicator, LSI, IS_k, Jiang–Shu indicator, global smoothness indicator, oscillation indicator, reference smoothness indicator, symmetry-preserving indicators, L1-type indicators, IMWENO-P, WENO-NS]
 tags: [reconstruction, weno, teno, cweno]
-timestamp: 2026-10-23T15:11:00Z
+timestamp: 2026-10-23T20:37:00Z
 ---
 
 # Smoothness indicators
@@ -174,6 +174,23 @@ $\tfrac1{5040}$ (diagonal coefficients 6908, 104963, 231153, 104963, 6908), and 
 $\tau_K=\big|\beta_{3,5}-\tfrac16(\beta_{1,3}+\beta_{2,3}+4\beta_{0,3})\big|=O(\Delta x^6)$ with $K=5$, after Fu et al.: the
 TENO full-stencil form of [targeted ENO](/methods/targeted-eno.md), not the registry's WENO-Z $\tau_5=|\beta_0-\beta_2|$.
 
+**Finite-volume five-point indicator with two-point candidates.** For the finite-volume
+[converged ENO](/methods/converged-eno.md) scheme, Liang & Fu (2026, §3.2.2, Eqs. (18)–(19)) print the Jiang–Shu
+indicator of the quartic on $\bar u_{i-2},\dots,\bar u_{i+2}$ (their $\beta_0$, the large stencil) as
+$$\begin{aligned}\beta_0={}&\tfrac1{15600}(11\bar u_{i+2}-174\bar u_{i+1}+326\bar u_i-174\bar u_{i-1}+11\bar u_{i-2})^2+\tfrac{781}{2880}(\bar u_{i+2}-2\bar u_{i+1}+2\bar u_{i-1}-\bar u_{i-2})^2\\&+\tfrac{1421461}{1310400}(\bar u_{i+2}-4\bar u_{i+1}+6\bar u_i-4\bar u_{i-1}+\bar u_{i-2})^2+\tfrac1{144}(\bar u_{i+2}-8\bar u_{i+1}+8\bar u_{i-1}-\bar u_{i-2})^2,\end{aligned}$$
+the form [Ren et al. (2025)](/sources/ren-2025.md) (§5.1.1, Eq. (45)) print for the quartic of their multi-resolution WENO, with squared
+differences $(\bar u_{i-1}-\bar u_i)^2$ and $(\bar u_i-\bar u_{i+1})^2$ for the two two-point stencils, and the global indicator
+$\tau_{\mathrm C}=\lvert2\beta_0-(\beta_1+\beta_2)\rvert$ (page-local; their stencil numbering, $0$ the large stencil). Their Taylor expansions
+(Eqs. (22)–(23)) give $\beta_0=u'^2\Delta x^2+\tfrac{13}{12}u''^2\Delta x^4+O(\Delta x^6)$,
+$\beta_{1,2}=u'^2\Delta x^2\mp u'u''\Delta x^3+(\tfrac14u''^2+\tfrac13u'u''')\Delta x^4+O(\Delta x^5)$ and
+$\tau_{\mathrm C}=\big\lvert(\tfrac23u'u'''-\tfrac53u''^2)\Delta x^4+O(\Delta x^6)\big\rvert$, so that $\tau_{\mathrm C}$ cancels the common
+$u'^2\Delta x^2$ and has more contrast between smooth and non-smooth data than the $\beta_k$, whose leading term depends
+on $u'$ alone; they use $\tau_{\mathrm C}$ in their noise filter for that reason. *(Compiler check, not in the sources: the printed
+$\beta_k$ expansions are those of point values $u(x_j)$ in place of the cell averages; with cell averages the
+$\Delta x^4$ coefficients become $\tfrac{13}{12}u''^2+\tfrac1{12}u'u'''$ for $\beta_0$ and
+$\tfrac14u''^2+\tfrac5{12}u'u'''$ for $\beta_{1,2}$. The $\Delta x^4$ term of $\tau_{\mathrm C}$ is the same in both settings,
+so the argument for $\tau_{\mathrm C}$ is unaffected; its $\Delta x^6$ term differs.)*
+
 ## $L^1$-type and symmetric indicators (the WENO-NS line)
 
 **As network inputs.** Nogueira et al. (2024, §3.1, Eqs. (12)–(14)) feed their learned WENO5 weights with the
@@ -250,6 +267,14 @@ from one point need another base indicator:
 - Wang, Zhu, Wang & Zhao (2023c, Eq. (3.22)) take the same minimum of squared differences for the
   constant of their multi-resolution WCNS interpolation, and call it simpler and parameter-free
   compared with the indicator of the earlier MR-WCNS;
+- Fan et al. (2025b, §2.2, Eqs. (13)–(15)) take the same minimum for the one-point stencil of the third-order
+  multi-resolution WCNS (WCNS3-MR) in the modified form of Qin et al., and for the three-point stencil
+  $\beta=\sum_{n=1}^2\big(\lambda_{\mathrm s}^{n-1}\partial_x^nP(x_i)\big)^2$ with the amplifying parameter $\lambda_{\mathrm s}\ge1$ of
+  Qin et al. below ($\lambda_{\mathrm s}=1$ and $50$ in the two training targets of their network); their global indicator is
+  the square $\lvert\beta_2-\beta_1\rvert^2$ of the difference, not the difference
+  ([learned WENO weights](/methods/learned-weno-weights.md)). Fan et al. print the derivatives without the factor
+  $\Delta x^n$ that Qin, Chen, Lin & Deng (2023, Eqs. (13)–(20)) print, so that, unless the derivatives are meant in
+  index space, their $\beta_2$ and their undivided $\beta_1$ scale differently with $\Delta x$ *(compiler check, not in the sources)*;
 - in two dimensions, on the $3\times3$ block of a moving-mesh remap, Gu, Li, Cheng & Shu (2023, §2.4)
   take the minimum of the four sums of two adjacent squared face-neighbour differences, after Zhu & Shu,
   because $\beta=0$ on the constant "does lead to more smearing" at strong shocks
@@ -394,6 +419,14 @@ the Jiang–Shu form over the target cell (Eq. (56); [Hermite WENO](/methods/her
   different powers of length, whereas the $|I|^{|\alpha|-1}$ scaling of Li, Shu & Qiu and Chen & Wu above makes every term
   scale like the squared data; the absolute $10^{-3}$ in the troubled-cell measure also makes it depend on the amplitude of
   the data.)*
+- **The same DG indicator printed twice.** Huang et al. (2025a, §3.1, Eq. (11)) state that they reuse the indicator of
+  Huang & Fu (2024) unchanged, but print the integral of the three polynomials $p_{i-1},p_i,p_{i+1}$ over the target
+  cell $I_i$ for all three, whereas Huang & Fu (2024, Eq. (32)) integrate each polynomial over its own cell. *(Compiler
+  check, not in the sources: for a quadratic the second-derivative term is the same on either cell, but the
+  first-derivative term of a neighbour polynomial differs, so the two prints define different indicators.)* Which one is
+  implemented neither paper settles. Huang et al. (2025a, §3.2.1) use the same form again, with $\epsilon=10^{-10}$
+  instead of $10^{-3}$, inside their [TENO-THINC](/methods/teno-thinc.md) limiter, the smaller value "also" acting "as a
+  cutoff of the smoothness measurements".
 - **Derivative reconstruction.** When the reconstructed quantity is a derivative, Fan, Zhang & Qiu
   (2021, App. A, Eqs. (A.1), (A.3)) sum only derivative orders 2 and 3 of the Hermite candidates, i.e.
   the variation of the candidate's derivative.
@@ -405,7 +438,7 @@ the Jiang–Shu form over the target cell (Eq. (56); [Hermite WENO](/methods/her
   $\tfrac1{3900}$, $\tfrac{1421461}{36400}$, and squared differences for the two linear candidates
   ([Hermite WENO](/methods/hermite-weno.md)).
 - **Hermite data in finite volumes.** For the quartic of the moment-based HWENO-U, fitted to
-  three cell averages and the first moments of the two neighbours, Fan, Qiu & Zhao (2025, §2.1,
+  three cell averages and the first moments of the two neighbours, Fan et al. (2025a, §2.1,
   Eqs. (2.8)–(2.9)) print, with $p_0=\sum_l\mathsf c_l\xi^l$, $\xi=(x-x_i)/\Delta x$ (page-local
   coefficients),
   $\beta_0=(\mathsf c_1+\tfrac14\mathsf c_4)^2+\tfrac{13}3(\mathsf c_2+\tfrac{63}{130}\mathsf c_4)^2+\tfrac{781}{20}\mathsf c_3^2+\tfrac{1421461}{2275}\mathsf c_4^2$,
@@ -461,6 +494,15 @@ the data, or test stencils pairwise:
   $(1,-3,2)$, $(-1,1)$, $(1,-2,1)$ and $(1,-4,6,-4,1)$ return
   ([RBF-based WENO](/methods/rbf-weno.md)).
 
+- **Pairwise agreement of squared indicators.** Liang & Fu (2026, §3.3, Eqs. (27)–(28)) detect discontinuities for
+  mesh adaptation from the indicators already computed by the reconstruction. With $b_k=\beta_k^2$ (page-local),
+  $$\Delta\beta_{kl}=\frac{2b_kb_l+\epsilon}{b_k^2+b_l^2+\epsilon}\in(0,1],\qquad
+  \chi_{\mathrm d}=\min(\Delta\beta_{01},\Delta\beta_{02},\Delta\beta_{12}),\qquad\epsilon=10^{-8}$$
+  (page-local $\Delta\beta_{kl}$ and detection variable $\chi_{\mathrm d}$, the source's $\chi$, not the registry's $\chi_k$):
+  $\Delta\beta_{kl}\approx1$ when the two indicators agree and $\approx0$ when one stencil crosses a jump, the bound
+  following from $2b_kb_l\le b_k^2+b_l^2$. Squaring the indicators is meant to give "strong scale separation". On four
+  static profiles with $400$ points, among them the Jiang–Shu composite profile, $\chi_{\mathrm d}$ falls at the
+  discontinuities and non-smooth regions (Fig. 3); its use is on [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
 - **Compact gas-kinetic stencils.** In the WENO-AO-type reconstruction of compact gas-kinetic schemes,
   Zhao, Ji, Shyy & Xu (2023, §3.4, Eqs. (31)–(32)) form the WENO-Z reference value from the sub-stencil
   indicators, $|3(\beta_1-\beta_2)+(\beta_3-\beta_2)|$ for their eighth-order 1-D stencils and
@@ -468,6 +510,13 @@ the data, or test stencils pairwise:
   of the large stencil by the maximum of the small ones to save cost ([WENO-AO](/methods/weno-ao.md)).
   The minimum and maximum indicators of the cells on each side of a face are reused to limit the
   third- and fourth-order time-derivative terms of their two-stage time stepping (Eq. (27)).
+
+- **TENO measures without a global indicator.** Several sources print the TENO measure as
+  $\gamma_k=(\beta_k+\epsilon)^{-q}$, $q=6$, without the constant $C$ and the global indicator of the registry form:
+  Chen & Chen (2026, §2.3.1, Eq. (19), $\epsilon=10^{-40}$) for the five-point finite-difference TENO5 they take from
+  Fu, Hu & Adams; Liang et al. (2025, §3.3.3, Eq. (22), $\epsilon=10^{-12}$) on unstructured meshes, as Ji, Liang & Fu above;
+  Huang et al. (2025a, Eqs. (12), (15)) on DG polynomials ([targeted ENO](/methods/targeted-eno.md)). Liang & Fu (2026,
+  Eq. (17)) keep the form $(1+\tau_{\mathrm C}/(\beta_k+\epsilon))^6$ with the $\tau_{\mathrm C}$ above.
 
 ## Indicators of blended reconstructions
 
@@ -487,6 +536,21 @@ Several sources use "smoothness indicator" for quantities of a different kind:
   coefficients, $n\ge1$, a smoothness indicator (page-local symbols); $\varrho_K>1$ means smooth and selects
   $p$-enrichment, otherwise $h$-refinement. It grows with smoothness, the opposite sense of $\beta_k$,
   and is computable only for degree $\ge2$ ([h- and hp-adaptation](/methods/hp-adaptation.md)).
+- **First-order measures for detection.** Two TENO sources prefer low-order measures to the high-order indicators for
+  telling discontinuities from fluctuations. Chen & Chen (2026, §2.3.2, Eqs. (23)–(25)) drive the TENO cut-off by the
+  discontinuity indicator of Ren et al.,
+  $\mathfrak r_i=\big(\lvert2\Delta f_{i+1/2}\Delta f_{i-1/2}\rvert+\epsilon_{\mathrm r}\big)/\big((\Delta f_{i+1/2})^2+(\Delta f_{i-1/2})^2+\epsilon_{\mathrm r}\big)$,
+  $\Delta f_{i+1/2}=f_{i+1}-f_i$, $\epsilon_{\mathrm r}=\tfrac{0.9C_{\mathrm r}}{1-0.9C_{\mathrm r}}\,10^{-6}$, $C_{\mathrm r}=0.24$ (page-local
+  $\mathfrak r_i$, $\epsilon_{\mathrm r}$, $C_{\mathrm r}$; the $\sigma_i$, $\epsilon_\sigma$, $C_r$ of [adaptive TENO](/methods/adaptive-teno.md), renamed here
+  because this page uses $\sigma$ for a scaling), a "low-order undivided difference" that they argue detects
+  discontinuities better than high-order undivided differences ([adaptive TENO](/methods/adaptive-teno.md)). Liang et al.
+  (2025, §1, §3.3.4) call the high-order undivided differences of WENO/TENO indicators "over-sensitive" to both
+  high-wavenumber fluctuations and discontinuities, citing Ren et al. for first-order measures being "more sensitive to
+  discontinuities than to high-wavenumber fluctuations", and build their unstructured troubled-cell indicator from the
+  variance of relative first-order cell-average jumps ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
+  Both keep the high-order $\beta_k$ inside the TENO weights. *(Compiler check, not in the sources: $\mathfrak r_i$ has the
+  structure of Liang & Fu (2026)'s $\Delta\beta_{kl}$ above, applied to two one-sided differences instead of two squared
+  indicators.)*
 - Matsushita & Aoki (2021, §3.1, Eq. (27)) call the slope ratio of a minmod-limited blend of third-order
   WENO with first-order upwinding a "smoothness indicator"; it is the TVD ratio $r_i$ of the registry
   ([TVD limiters](/definitions/total-variation-diminishing.md),
@@ -622,5 +686,11 @@ Several sources use "smoothness indicator" for quantities of a different kind:
 - [Zhao et al. (2023)](/sources/zhao-2023.md) — §3.3, Eq. (27); §3.4, Eqs. (28)–(32).
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.4–2.5, Eqs. (11), (16); §5.1, Eq. (36).
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §4.2, Eqs. (15)–(20); §5.4.1, Eq. (56).
-- [Fan, Qiu & Zhao (2025)](/sources/fan-2025.md) — §2.1, Eqs. (2.8)–(2.11); §2.2, Eqs. (2.19)–(2.22).
+- [Fan et al. (2025a)](/sources/fan-2025.md) — §2.1, Eqs. (2.8)–(2.11); §2.2, Eqs. (2.19)–(2.22).
 - [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — App. A, Eqs. (A3)–(A10) (arXiv v3).
+- [Liang & Fu (2026)](/sources/liang-2026.md) — §3.2.2, Eqs. (17)–(19); §3.2.3, Eqs. (22)–(23); §3.3, Eqs. (27)–(28), Fig. 3: five-point FV indicator, $\tau_{\mathrm C}=\lvert2\beta_0-(\beta_1+\beta_2)\rvert$ and its expansion, pairwise detection variable.
+- [Ren et al. (2025)](/sources/ren-2025.md) — §5.1.1, Eq. (45): quartic indicator of multi-resolution WENO.
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §2.2, Eqs. (13)–(17): WCNS3-MR indicators with amplifying parameter.
+- [Huang et al. (2025a)](/sources/huang-2025.md) — §3.1, Eqs. (11)–(14); §3.2.1, Eqs. (15)–(17): DG-polynomial indicator over the target cell.
+- [Chen & Chen (2026)](/sources/chen-2026.md) — §2.3.1, Eqs. (19)–(20); §2.3.2, Eqs. (23)–(25): TENO measure without $\tau$, Ren et al.'s first-order indicator.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §1, §3.3.3–3.3.4, Eq. (22): over-sensitivity of high-order differences, unstructured TENO measure.

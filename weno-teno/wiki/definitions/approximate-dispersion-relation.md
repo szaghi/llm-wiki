@@ -5,7 +5,7 @@ description: "The modified-wavenumber characterization of a possibly nonlinear s
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T19:54:00Z
 ---
 
 # Approximate dispersion relation
@@ -510,6 +510,13 @@ is meant.
   error the derivative corrections of [A-WENO](/methods/alternative-weno.md) remove, and it is
   consistent with curves that do not separate with the interpolation order. The paper offers
   no convergence test that would decide between the two readings.)*
+- **A learned third-order WCNS.** [Fan et al. (2025b)](/sources/fan-2025-b.md) (§4.2, Fig. 9)
+  apply Pirozzoli's procedure to their WCNS3-MR-NN, a third-order
+  [weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md) whose
+  multi-resolution weights a network predicts ([learned WENO weights](/methods/learned-weno-weights.md)),
+  against WCNS3-JS, WCNS3-MR and the linear third-order WCNS: WCNS3-MR-NN has the better
+  dispersion over a wide wavenumber range and the lower dissipation of the nonlinear schemes.
+  The comparison is given by the curves only; no cut-off wavenumbers or values are printed.
 
 ## Qualifications
 
@@ -578,3 +585,4 @@ is meant.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §3, Fig. 3.2: WENO-H, WENO-ZQ, MRWENO, WENO-JS spectra.
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §3, Eqs. (18)–(21), Table 1, Fig. 1; §5.2, Figs. 5–6; §6.1.3; App. A: order cost of decoupled optimization, piecewise spectrum optimization, cut-off against nonlinearity onset, resolved bandwidths, nonlinear spectral analysis.
 - [Liang & Fu (2024a)](/sources/liang-2024.md) — §3.2, Fig. 3: ADR of a Gaussian-RBF TENO.
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §4.2, Fig. 9: ADR of WCNS3-MR-NN against WCNS3-JS, WCNS3-MR and linear WCNS3.

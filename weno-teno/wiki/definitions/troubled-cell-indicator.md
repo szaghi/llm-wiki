@@ -5,7 +5,7 @@ description: "A troubled-cell (shock, discontinuity) indicator is a cheap local 
 status: established
 aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor, TVB minmod indicator, TENO-based troubled-cell indicator, Jameson sensor, derivatives-ratio detector, interface jump convergence sensor, minmod-based smoothness indicator, weak local residual, relaxed BVD indicator, discontinuity feedback factor, PAD, NAD]
 tags: [limiting, dg, teno, finite-difference, low-dissipation, machine-learning]
-timestamp: 2026-10-23T15:08:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Troubled-cell and shock indicators
@@ -514,6 +514,33 @@ improves the entropy waves of the
 spurious activations of the pressure sensor (§4.3); on a reacting 9000 K
 shock tube it had to be switched off for robustness (§4.4).
 
+**Jameson–Ducros product (flux blending in Active Flux).**
+[Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) (arXiv v3,
+§4.1.3) use the Jameson pressure factor above times a compression-only,
+non-squared Ducros factor (not the squared Ducros ratio above), both on cell
+averages, to push the
+already bound-preserving limited flux of their
+[Active Flux](/methods/active-flux.md) scheme further toward the
+first-order Lax–Friedrichs flux behind strong shocks:
+$$\Phi_{\mathrm J,i,j}=\frac{\lvert\bar p_{i+1,j}-2\bar p_{i,j}+\bar p_{i-1,j}\rvert}{\lvert\bar p_{i+1,j}+2\bar p_{i,j}+\bar p_{i-1,j}\rvert},\qquad
+\Psi_{\mathrm D,i,j}=\max\Big\{\frac{-(\nabla\cdot v)_{i,j}}{\sqrt{(\nabla\cdot v)^2_{i,j}+\lvert\nabla\times v\rvert^2_{i,j}+10^{-40}}},\,0\Big\},$$
+$$\theta^{\mathrm s}_{i+1/2,j}=\exp\big(-\kappa_{\mathrm s}\,\Phi_{\mathrm J,i+1/2,j}\,\Psi_{\mathrm D,i+1/2,j}\big)\in(0,1],$$
+with interface values the maximum over the two adjacent cells and the
+divergence and curl by central differences (page-local $\varphi_{\mathrm J}$,
+$\theta^{\mathrm s}$, $\kappa_{\mathrm s}$; the source's $\varphi_1$,
+$\varphi_2$, $\theta^s$, $\kappa$; $\Psi_{\mathrm D}$ is the registry's
+compression-only, non-squared [Ducros sensor](/definitions/ducros-shock-sensor.md)).
+The final flux is $\hat f^{\mathrm L}+\theta^{\mathrm s}(\hat f^{\mathrm{Lim}}-\hat f^{\mathrm L})$;
+since $\theta^{\mathrm s}\le1$ it only moves the flux further toward the
+admissible low-order one, so bound preservation is kept (§4.1.3). In 1D
+the Ducros factor reduces to a 0/1 compression switch (App. C.1.3). The
+strength $\kappa_{\mathrm s}$ is problem-dependent (0.5, 1 or 10 in the
+tests) and "its optimal choice needs further investigation"; the product
+reduces oscillations behind strong shocks on the forward-facing step,
+the double Mach reflection and a 2D Riemann problem (Examples 5.9, D.6,
+D.7) and speeds up steady-state residual convergence on an oblique shock
+reflection (Example D.5).
+
 **Order-reduction detectors (fourth-order finite volumes).**
 [Berta et al. (2024)](/sources/berta-2024.md) (§3.4, Eqs. 33–37, arXiv v4)
 switch their fourth-order MHD scheme to a lower-order "fallback" in
@@ -751,6 +778,22 @@ from them.
   KXRCF flags "over 50 percent of cells" at both resolutions (§6.4, §6.6).
   It drives their TENO-weighted limiter
   ([WENO limiters for DG](/methods/weno-limiter-dg.md)).
+  [Huang et al. (2025a)](/sources/huang-2025.md) (§3.1, Eqs. (11)–(14);
+  §4.1, Eq. (26)) reuse the indicator "in [Huang & Fu 2024]" with the same
+  constants ($\epsilon=10^{-3}$, $q=6$, $C_T=10^{-4}$, fixed for all their
+  tests) to drive their TENO-THINC limiter for $\mathbb P^2$ RKDG
+  ([WENO limiters for DG](/methods/weno-limiter-dg.md),
+  [TENO-THINC](/methods/teno-thinc.md)). For systems it is evaluated on
+  each local characteristic variable, and the cell is left unlimited only
+  if every component is smooth (§3.3). In 2D the indicator runs on the
+  traces $u_h(x,y_j)$ along $x$ and $u_h(x_i,y)$ along $y$, and a flag
+  along one direction activates the limiter along that direction only
+  (§4.1), where Huang & Fu (2024) limit a cell flagged in either direction.
+  On the 1D and 2D [density waves](/benchmarks/density-wave-advection.md)
+  it flags no cell (errors identical with and without limiter, Tables 1,
+  3); on the $1200\times300$
+  [double Mach reflection](/benchmarks/double-mach-reflection.md) it flags
+  34681 cells, 9.63 % of the domain (§5.5, Fig. 6).
 
 - *Direction-wise indicator for spectral difference* ([Chen & Fu (2024)](/sources/chen-2024.md),
   §4.2, Eqs. (15)–(20)). For the nodal
@@ -868,6 +911,50 @@ fifth-order rates where the non-hybrid scheme's rates oscillate
 free of problem-dependent parameters (Abstracts).
 
 ## Finite-volume and subcell indicators
+
+**Variance of relative jumps (unstructured finite volumes).**
+[Liang et al. (2025)](/sources/liang-2025.md) (§3.3.2, Eqs. (19)–(20))
+flag the cells of their unstructured TENO-E schemes with the dispersion of
+the relative cell-average jumps of density between the target cell and
+the $N_{\mathrm e}$ neighbours of its large central-biased stencil,
+$$\mathsf r_{i,k}=\frac{\lvert\bar\rho_{i,k}-\bar\rho_i\rvert}{\bar\rho_i},\qquad
+\mathcal V_i=\frac1{N_{\mathrm e}}\sum_{k=1}^{N_{\mathrm e}}\Big(\mathsf r_{i,k}-\frac1{N_{\mathrm e}}\sum_{l=1}^{N_{\mathrm e}}\mathsf r_{i,l}\Big)^2,$$
+and the cell is troubled iff $\mathcal V_i\ge C_{\mathcal V}=10^{-3}$
+(page-local $\mathsf r_{i,k}$, $\mathcal V_i$, $C_{\mathcal V}$,
+$N_{\mathrm e}$; the source's $\gamma_{i,k}$, $\sigma_i$, $\mathcal C$).
+Outliers in the jump sequence, from discontinuities or high-wavenumber
+fluctuations, raise the variance, and the square weights large deviations
+more. The indicator reads density only, in physical space, with one
+threshold for fifth to seventh order and all tests, which the authors
+contrast with KXRCF (a case-dependent scaling parameter) and the Fu–Shu
+indicator (a threshold that depends on the polynomial degree). Where it is
+off, the linear large-stencil reconstruction acts on the conserved
+variables without characteristic decomposition or weights; where it is
+on, TENO in characteristic variables takes over
+([hybrid schemes](/methods/hybrid-weno.md)), and $\mathcal V_i$ also sets
+the local cut-off $C_T$, printed as ranging over $[10^{-10},10^{-6}]$
+([adaptive TENO](/methods/adaptive-teno.md)). The rationale, cited to Ren
+et al., is that first-order jumps separate fluctuations from
+discontinuities better than the high-order undivided differences inside
+the TENO smoothness measures (§3.3.4), the argument of Fu's
+undivided-difference sensor above. On the double Mach reflection they
+judge their flagged-cell maps "even better than" those of TVB, KXRCF,
+Harten and Fu–Shu indicators in earlier papers, by comparison with
+published figures (§4.4), and on the 3D shock–cone interaction "very few
+elements are misidentified" (§4.8). Since the jumps are divided by the
+target-cell density, $\mathcal V_i$ is unchanged under a rescaling of the
+density *(compiler check, not in the sources)*.
+
+**Learned BVD selector.** [Huang et al. (2025b)](/sources/huang-2025-b.md)
+(§3.3, Algorithm 2) replace the a posteriori MUSCL/THINC choice of a
+[BVD](/definitions/boundary-variation-diminishing.md) scheme by an a
+priori one: a small network, fed with the min–max normalized averages of
+the five-cell stencil and a monotonicity flag, outputs the probability
+that the cell holds a monotone discontinuity, and THINC is built only
+where it exceeds $0.45$. Its training labels are the BVD scheme's own
+choices on one-dimensional Euler Riemann problems, so the network is
+trained to reproduce where BVD picks THINC (\xc2\xa73.3.2); the method is
+described on the BVD page.
 
 **Minmod-jump roughness indicator (limiter switching).** [Chu et al.
 (2025a)](/sources/chu-2025.md) (arXiv v1, §2.2.1, §3.2.1) modify the shock
@@ -1062,8 +1149,12 @@ Several sources use an indicator without defining or analysing it:
   Trojak & Dzanic call their sensor parameter-free while fixing the
   threshold 1 and the exponent $N+1$; Liang & Fu (2024b) say no
   case-by-case tuning is needed while setting $\epsilon$ differently in
-  1D and in multi-D. In all three, "parameter-free" means fixed across
-  the authors' tests.
+  1D and in multi-D. Huang et al. (2025a) repeat Huang & Fu's argument
+  against TVB and KXRCF without running either (Abstract, §1), and Liang
+  et al. (2025) state that their density threshold $10^{-3}$, found
+  "sufficient" by "extensive numerical experiments", needs no
+  case-sensitive tuning (§3.3.2). In all five, "parameter-free" means
+  fixed across the authors' tests.
 - **Thresholds that remain.** Zuo & Zhu (2024a) test the bounds against
   the margin $\pm\Delta x$, a length compared with a quantity of the size
   of the density differences, so the test changes under a rescaling of
@@ -1244,6 +1335,18 @@ Several sources use an indicator without defining or analysing it:
   outer cases rise from 0 to 1 and jumps at both ends;
   $\tfrac12+\tfrac12\sin(\cdot)$ would join them continuously *(compiler
   check, not in the sources)*.
+- **Integration domain of the compact DG indicator.** Huang & Fu (2024)
+  print $\beta_n$ integrated over each polynomial's own cell $I_n$ (Eq.
+  32), while Huang et al. (2025a), who state that they reuse that
+  indicator unchanged, print all three integrals over the target cell
+  $I_i$, the neighbour polynomials extrapolated into it (Eq. (11)). The two
+  give different $\beta_{i\pm1}$ for the same data; neither paper says
+  which form the code uses, so the printed difference is recorded here
+  rather than resolved.
+- Liang et al.'s indicator reads density only, so a discontinuity in
+  pressure or velocity without a density jump, such as a constant-density
+  shear layer, is not flagged *(compiler check, not in the sources)*; the
+  paper does not discuss such cases.
 - Chen & Fu's TENO indicator and their KXRCF comparison are qualitative
   (flagged-cell plots); the parameters differ from Huang & Fu's for RKDG,
   a per-method choice.
@@ -1303,3 +1406,7 @@ Several sources use an indicator without defining or analysing it:
 - [Deng et al. (2025)](/sources/deng-2025.md) — §3.3, Eqs. (3.7)–(3.9), Remark 3.1; §4.2, Tables 1–2.
 - [Zhang et al. (2024d)](/sources/zhang-2024-d.md) — arXiv v1: §3.2–3.3, Eqs. (40)–(43), Remark 1, Algorithm 1; §4.3, Tables 5–6.
 - [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — HAL preprint: §3.2, Eqs. (3.3)–(3.6), Remarks 5–6; §4.1.1, Table 1, Figs. 19–21; §4.3, Eqs. (4.3), (4.6).
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — arXiv v3: §4.1.3; App. C.1.3; Examples 5.9, D.5–D.7.
+- [Huang et al. (2025a)](/sources/huang-2025.md) — §1; §3.1, Eqs. (11)–(14); §3.3; §4.1, Eq. (26); §5.1, Tables 1, 3; §5.5, Fig. 6.
+- [Huang et al. (2025b)](/sources/huang-2025-b.md) — §3.3, Eqs. (28)–(32), Algorithm 2, Remark 2.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §3.3.2, Eqs. (19)–(20); §3.3.3–3.3.4; §4.4, §4.8.

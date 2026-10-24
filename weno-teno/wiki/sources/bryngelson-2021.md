@@ -137,7 +137,7 @@ review (2019)", [36] arXiv preprint. No DOIs are printed.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunks 3–9 (2026-10-22/23). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–10 (2026-10-22/23). This source is cited on:
 
 * [Bound preservation](/properties/bound-preservation.md)
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)
@@ -152,6 +152,7 @@ Chunk 2 (2026-10-22), cited further in chunks 3–9 (2026-10-22/23). This source
 * [Positivity-preserving flux limiter (Hu–Adams–Shu)](/methods/positivity-preserving-flux-limiter.md)
 * [Shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)
 * [Shock–water-column interaction](/benchmarks/shock-water-column.md)
+* [Six-equation two-phase model](/definitions/six-equation-model.md)
 * [SSP Runge–Kutta time stepping](/methods/ssp-runge-kutta.md)
 * [Stiffened-gas equation of state](/definitions/stiffened-gas-equation-of-state.md)
 * [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)

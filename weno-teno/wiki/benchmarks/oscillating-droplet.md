@@ -5,7 +5,7 @@ description: "A two-dimensional elliptic drop at rest relaxes under surface tens
 status: established
 aliases: [oscillating ellipsoidal drop, oscillating elliptic droplet, droplet oscillation test, Rayleigh drop oscillation]
 tags: [benchmark, multiphase, interface-capturing, surface-tension]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:05:00Z
 ---
 
 # Oscillating droplet
@@ -81,6 +81,20 @@ parasitic currents at Laplace number $10^{11}$ give capillary numbers
 $10^{-6}$–$10^{-7}$, comparable for the three schemes and decreasing with
 resolution (§4.11, Fig. 20).
 
+[Wilfong et al. (2026)](/sources/wilfong-2026.md) §4.1.8 run the same
+static test with the surface-tension model of their
+[six-equation model](/definitions/six-equation-model.md) in
+[MFC](/software/mfc.md): a water column in air of nondimensional radius
+$R^*=1$ and surface-tension coefficient $\sigma^*_{\mathrm{st}}=7.2\times10^{-4}$
+on $128\times128$ cells, the capillary stress
+$-\sigma_{\mathrm{st}}\big(\lVert\nabla\mathsf c\rVert I-\nabla\mathsf c\otimes\nabla\mathsf c/\lVert\nabla\mathsf c\rVert\big)$
+of an advected colour function $\mathsf c$ (page-local) entering momentum and
+total energy. The pressure jump settles at $\sigma_{\mathrm{st}}/R_0$, which
+they call resolved "exactly", and the relative change of the pressure
+between steps, $\max\lvert p^{n}-p^{n-1}\rvert/p^n$, falls to about
+$10^{-9}$ by $t^*\approx40$ (Fig. 9). They state that the model is
+conservative except for the pressure-relaxation terms.
+
 ## Qualifications
 
 - Jiao et al. call the ellipse "drop" in the section title and "bubble" in Fig. 4.11 and in the
@@ -103,3 +117,4 @@ resolution (§4.11, Fig. 20).
 - [Jiao et al. (2024)](/sources/jiao-2024.md) — §3.5, §4.4, Eqs. (4–2)–(4–4), Table 4.6, Figs. 4.11–4.12.
 - [Long et al. (2023)](/sources/long-2023.md) — §4.3, Eqs. (36)–(37), Fig. 13.
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §4.9–4.11, Table 10–11, Figs. 17–20.
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §4.1.8, Fig. 9.

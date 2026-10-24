@@ -5,7 +5,7 @@ description: "The magnetic field of MHD obeys div B = 0; discretizations enforce
 status: established
 aliases: [div B = 0, solenoidal constraint, discrete divergence-free condition, DDF, divergence cleaning, GLM-MHD, constrained transport, CTM, upwind constrained transport, UCT, locally divergence-free DG, locally divergence-free reconstruction, Powell source term, Godunov–Powell source term, projection cleaning, vector-potential formulation, divergence-preserving prolongation]
 tags: [mhd, bound-preserving, positivity, dg, finite-volume, relativistic]
-timestamp: 2026-10-23T15:06:00Z
+timestamp: 2026-10-23T20:43:00Z
 ---
 
 # Divergence-free magnetic field
@@ -53,14 +53,27 @@ separately to the two parts of a force-free splitting of relativistic MHD
 ([Komissarov & Phillips (2024)](/sources/komissarov-2024.md)); and an
 incompressible Boussinesq MHD code keeps the constraint by exact projection
 or a vector potential on a staggered grid
-([Bader & Zhu (2025)](/sources/bader-2025.md)). The construction of
+([Bader & Zhu (2025)](/sources/bader-2025.md)). Three DG schemes of 2025
+complete the picture: locally divergence-free oscillation-eliminating DG
+with an upwind Powell-type source and provable positivity
+([Liu & Wu (2025)](/sources/liu-2025.md)), an entropy-stable
+oscillation-free DG for the symmetrizable system with no divergence
+constraint on the field ([Liu et al. (2025b)](/sources/liu-2025-b.md)), and a globally
+divergence-free entropy-stable nodal DG for the conservative system that
+needs no source ([Liu et al. (2025c)](/sources/liu-2025-c.md)). The source
+term itself, its entropy structure and its discretizations are collected on
+[Godunov–Powell source term](/definitions/godunov-powell-source-term.md).
+The construction of
 staggered schemes is collected on
 [constrained transport](/methods/constrained-transport.md) and GLM cleaning
 on [GLM divergence cleaning](/methods/glm-divergence-cleaning.md).
 
 ## The Powell source term
 
-Three sources add to the conservative MHD system the non-conservative
+The term is defined, with its entropy variables, the modified Tadmor
+condition and a table of its discretizations, on
+[Godunov–Powell source term](/definitions/godunov-powell-source-term.md);
+this section keeps the uses that bear on the divergence. Three sources add to the conservative MHD system the non-conservative
 Godunov–Powell term, proportional to the divergence,
 $$\partial_tu+\nabla\cdot f(u)+(\nabla\cdot B)\,S_B(u)=0,\qquad S_B=(0,\ B,\ v,\ v\cdot B)^\top$$
 for the ordering $u=(\rho,\rho v,B,E)$ ($S_B$ page-local): Wu & Shu as the
@@ -279,6 +292,122 @@ quickly without it; the fifth-order WENO-Z scheme without projection and
 limiter breaks down at $t=3.11$ on Orszag–Tang, and the blast and jet fail
 without the limiter (§4, Figs. 4.1–4.6). Fifth order is shown on a smooth
 low-pressure vortex (Table 4.1).
+
+**Locally divergence-free OEDG with an upwind source.**
+[Liu & Wu (2025)](/sources/liu-2025.md) (arXiv v2 read) carry the same
+mechanism to the oscillation-eliminating DG method of
+[OEDG](/methods/oedg.md) for 2D ideal MHD. They split the unknowns into
+$(\rho,\rho v,B_3,E)$, in a standard modal $\mathbb P^N$ space, and
+$(B_1,B_2)$, in the locally divergence-free space of Li and Shu, vector
+polynomials of degree $N$ with zero divergence in each cell, of dimension
+$(N+1)(N+4)/2$, with an explicit orthogonal basis beginning $(0,1)$,
+$(1,0)$, $(0,\xi)$, $(\eta,0)$, $(\Delta x\,\xi,-\Delta y\,\eta)$ in local
+coordinates $\xi,\eta\in[-1,1]$ (page-local) (§2.2, Eqs. (5)–(6)). Two
+properties keep the field in that space:
+
+1. **Divergence-preserving damping** (§2.4.2, Eqs. (27)–(35), Remark 2).
+   The oscillation-eliminating step damps the modal coefficients of
+   $(B_1,B_2)$ with one coefficient per edge, the maximum over the two
+   components, so that each basis vector of the divergence-free space is
+   only multiplied by a scalar and the damped field stays in it; the
+   constant modes are untouched. The other six components are damped
+   component by component.
+2. **Divergence-preserving limiter** (§3.4, Eqs. (54)–(55)). The
+   [Zhang–Shu scaling](/methods/zhang-shu-scaling-limiter.md) toward the
+   cell average is a scalar scaling and keeps the space.
+
+With the field locally divergence-free, the cell-interior divergence of the
+Powell term vanishes and only the normal-field jumps at the interfaces
+remain; these are split between the two neighbouring cells with weights
+given by the HLL wave speeds and added to the cell-average equations only
+(§3.2, Eqs. (45)–(49);
+[Godunov–Powell source term](/definitions/godunov-powell-source-term.md)).
+Theorem 1 then proves that the cell averages stay admissible under an
+explicit CFL condition: in the proof the divergence terms of the flux sum
+to $-\Delta t\,(v_*\cdot B_*)$ times the quadrature divergence of the
+limited field, which equals the cell integral of $\nabla\cdot B$ and is zero
+(§3.6). The authors recall that positivity of the cell averages of the
+conservative system is tied to globally coupled discrete divergence-free
+conditions that a local limiter cannot satisfy (§3, after Wu and after Wu &
+Shu, as recalled). On the rotor ($200^2$, $400^2$) they see no distortion of
+the central Mach number, which they take as effective divergence control,
+and no overshoots in the $B$ slices where the third-order finite-volume
+scheme of Liu et al. (2021) has them (§4.2.3); on the shock–cloud
+interaction disabling the oscillation-eliminating step makes the run fail
+(§4.2.4); the divergence itself is not plotted.
+
+**Entropy-stable DG without divergence control.**
+[Liu et al. (2025b)](/sources/liu-2025-b.md) (§2–§3) discretize the
+symmetrizable system with a nodal entropy-stable DG scheme on
+Gauss–Lobatto points and an oscillation-damping term; the field is neither
+locally nor globally divergence-free, and the Powell term is kept in nodal
+form. They state, after Wu, that positivity of ideal MHD is linked to a
+discrete divergence-free condition, so that a provably
+positivity-preserving entropy-stable DG scheme "remains an open
+challenge", and use the Zhang–Shu limiter heuristically (Remark 3.1). On
+the rotor the standard DG method introduces a "distortion" of the central
+Mach number (after Li and Shu, as recalled); their scheme does not, which
+they attribute to entropy stability (Ex. 6).
+
+## Globally divergence-free entropy-stable DG
+
+[Liu et al. (2025c)](/sources/liu-2025-c.md) build an arbitrarily
+high-order nodal DG method on Cartesian meshes for the **conservative**
+ideal MHD system that is both globally divergence-free and entropy stable,
+so that no Powell term is needed. The cell scheme is a nodal
+[flux-differencing](/methods/flux-differencing.md) DG on $N+1$
+Gauss–Lobatto points per direction with the Chandrashekar–Klingenberg
+entropy-conservative volume flux and an HLL interface flux with
+Bouchut–Klingenberg–Waagan wave speeds (§3.1, Eq. (8)). Their $k$ is the
+degree of the face polynomials and the cell space is $\mathbb Q^{k+1}$, so
+the registry's $N=k+1$; the page writes $N$ throughout.
+
+**Nodal globally divergence-free field** (Def. 4). The nodal field is
+globally divergence-free if its collocated derivative vanishes at every
+node, $\sum_l\big(\tfrac2{\Delta x}D_{i_1l}B_{1,lj_1}+\tfrac2{\Delta y}D_{j_1l}B_{2,i_1l}\big)=0$
+(Eq. (11), node indices $i_1,j_1$ page-local), and its normal component is
+continuous across faces (Eq. (12)). **Theorem 1**: under these two
+conditions, with periodic, compactly supported or reflective boundaries,
+the conservative scheme is entropy conservative in each element and entropy
+stable on the domain; in the proof the face terms of the
+Godunov potential cancel by normal continuity and the volume terms by the
+nodal divergence (App. B). Without the condition the conservative scheme
+"cannot achieve the entropy stability" (§3.1).
+
+**Supplying the field** (§3.2–§3.3). After Balsara, Kumar and
+Chandrashekar, the normal components are evolved on faces as polynomials
+of degree $N-1$ by 1D DG forms of the induction equation with a single-valued
+2D HLL vertex electric field ([constrained transport](/methods/constrained-transport.md));
+the interior nodal field is then rebuilt from the face data by a new
+**least-squares reconstruction**: minimize the mass-weighted distance to
+the DG-evolved field subject to the nodal divergence and the trace
+conditions, reduced to full row rank by an SVD and solved through a KKT
+system (Eqs. (22)–(25)). A counting argument gives $2(N+1)^2$ unknowns
+against $4N+(N+1)^2-2$ independent conditions, so a (non-unique)
+reconstruction exists for every $N$; face polynomials of degree $N$ could
+over-determine it, which is why degree $N-1$ is used (§3.3). The
+cell-average constraint
+$\Delta y(\bar b_{1,i+1/2}-\bar b_{1,i-1/2})+\Delta x(\bar b_{2,j+1/2}-\bar b_{2,j-1/2})=0$
+on the face averages $\bar b$ (page-local) is preserved by the face update
+if it holds initially (Eq. (21)). Because the reconstruction changes $B$,
+the total energy is corrected at each node,
+$E\leftarrow E+\tfrac12\big(\lvert B^{\mathrm{new}}\rvert^2-\lvert B^{\mathrm{old}}\rvert^2\big)$,
+which keeps pressure and hence entropy unchanged and gives up local
+conservation of total energy (Eq. (27), Remark 2). A limiter that scales
+the face moments of degree $\ge1$ by the smaller of the two adjacent cell
+factors keeps the face averages and thus the constraint (§4.1).
+
+**Evidence** (§5). Magnetic conservation errors stay at machine accuracy
+with the globally divergence-free scheme and not with their earlier
+entropy-stable nodal DG for the symmetrized system; both lose total
+energy "at the same level" on a smooth vortex (Fig. 2). On the rotated
+Brio–Wu tube both the standard and the globally divergence-free DG without
+the entropy-stable treatment "break down in the first several steps", and
+without limiter the earlier scheme is unstable where the parallel field
+should stay constant (Figs. 3–4). The divergence norm, which adds the
+integrated normal-field jumps to the integrated cell divergence, stays near
+machine error on field-loop advection, the MHD Kelvin–Helmholtz instability
+and the rotor (Figs. 6, 9, 12).
 
 ## Locally divergence-free reconstruction (finite volumes)
 
@@ -699,6 +828,24 @@ one extra Poisson solve per step (§4).
   the Lagrange-multiplier variant loses accuracy like a hydrodynamic
   pressure is stated, not shown (their convergence study gives identical
   errors in $B$ for both projection variants, §5.1, Fig. 6).
+- Liu & Wu (2025) prove positivity for the cell averages only, on
+  Cartesian meshes, for forward Euler extended to SSP-RK3 by convexity
+  (§3.2, §3.6); their tests run at CFL 0.12, a number the text does not
+  relate to Corollary 2.
+- Liu et al. (2025c) prove entropy stability of the semi-discrete cell
+  scheme; they state that the reconstruction breaks Theorem 1 and that the
+  pressure-preserving energy correction restores the entropy property
+  (Remarks 1–2), but no theorem covers the full step with reconstruction,
+  energy correction, limiter and SSP-RK4, and the energy correction gives
+  up local energy conservation, whose error is the change of magnetic
+  energy in the reconstruction (Remark 2). Their count of independent
+  conditions does not match the matrix sizes of App. C: the printed KKT
+  sizes $35$, $60$, $91$ for $N=2,3,4$, with $2(N+1)^2$ unknowns, imply
+  constraint ranks $17$, $28$, $41$, two more than
+  $4N+(N+1)^2-2=15,26,39$, and the printed $N=1$ reduction has rank 8,
+  not 6; the rank of the constraint matrix of Eq. (22), computed
+  numerically, is 8, 17, 28, 41, and the existence conclusion (unknowns
+  $\ge$ rank) holds either way *(compiler check, not in the sources)*.
 - Dematté et al.'s printed signs of the staggered update (Eq. (39)) and
   of $B_2$ from the potential (Eqs. (49), (51)) are reversed; see
   [constrained transport](/methods/constrained-transport.md).
@@ -727,3 +874,6 @@ one extra Poisson solve per step (§4).
 - [Bader & Zhu (2025)](/sources/bader-2025.md) — §3.3, Eqs. (12)–(27); §4; §5.1, Figs. 6–7.
 - [Teissier et al. (2024)](/sources/teissier-2024.md) — arXiv v2: §2.3, Eq. (17); §3.1.1; §3.2.3; §3.5, Eq. (55); §4.2.
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §3.3, Eqs. (39)–(51); §4.1.4, Fig. 8; §4.3.2, Fig. 16.
+- [Liu & Wu (2025)](/sources/liu-2025.md) — arXiv v2: §1; §2.2, Eqs. (5)–(6); §2.4.2, Eqs. (27)–(35), Remark 2; §3, §3.2, Eqs. (45)–(49); §3.4, Eqs. (54)–(55); §3.6, Theorem 1; §4.2.3–4.2.4.
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — §2, Eq. (2.7); Remarks 3.1–3.2; Ex. 6.
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §1; §3.1, Def. 4, Eqs. (8), (11)–(12), Thm 1; §3.2–3.3, Eqs. (21)–(25); §4.1, Eq. (27), Remark 2; §5, Figs. 2–4, 6, 9, 12; App. B, App. C.

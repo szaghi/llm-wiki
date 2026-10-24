@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Solid-body rotation"
-description: "LeVeque's two-dimensional linear-advection test in which a smooth hump, a cone and a slotted cylinder rotate rigidly for one revolution; the exact solution is the initial data, so L1 errors and the solution range measure dissipation and bound violations of limited high-order schemes and troubled-cell switches; smooth rotations test order on adaptive grids."
+description: "LeVeque's two-dimensional linear-advection test in which a smooth hump, a cone and a slotted cylinder rotate rigidly for one revolution; the exact solution is the initial data, so L1 errors and the solution range measure dissipation and bound violations of limited high-order schemes; smooth rotations test order on adaptive grids, and LeVeque's swirling deformation tests positivity limiting."
 status: established
 aliases: [LeVeque solid body rotation, slotted cylinder test, hump–cone–slotted-cylinder rotation]
 tags: [benchmark, limiting, bound-preserving, dg]
-timestamp: 2026-10-23T15:02:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Solid-body rotation
@@ -222,6 +222,36 @@ its $x$-fluxes depend only on $y$ and its $y$-fluxes only on $x$
 Their text speaks of the error "after a half rotation", the Table 2
 caption of $t=2$, a full rotation of the period-2 flow.
 
+## Swirling deformation (LeVeque)
+
+[Kiechle, Chudzik & Helzel (2025)](/sources/kiechle-2025.md) §3.1.1 take
+LeVeque's deformation test, as they cite it, as a check of
+positivity limiting for the colour equation $\partial_tu+v\cdot\nabla u=0$
+with the divergence-free field
+$v=\big(\sin^2(\pi x)\sin(2\pi y),\ -\sin^2(\pi y)\sin(2\pi x)\big)$,
+time-independent as printed, on $[0,1]^2$, with $u_0=1$ inside the circle
+$(x-1)^2+(y-1)^2<0.8^2$ and $0$ outside, on $100^2$ and $200^2$ cells,
+snapshots at $t=0,1,2.5$ and slices along $x=0.5$ at $t=2.5$ (Figs. 1–5);
+the CFL number is not stated. Their two-dimensional
+[Active Flux](/methods/active-flux.md) scheme, whose cell averages are
+updated by Simpson's rule in space and time over point values on cell
+corners and edge midpoints, shows "quite mild" oscillations unlimited.
+Their own earlier bound-preserving reconstruction reduces them but is not
+exactly bound preserving, because Simpson's rule is not exact for
+piecewise quadratics (Fig. 3). The new limiter blends the Active Flux
+fluxes with first-order Lax–Friedrichs fluxes to keep the cell averages
+non-negative (lower bound only), with positivity guaranteed for CFL
+$\le1/4$, against the CFL limit $1/2$ of Lax–Friedrichs; the
+[PAMPA](/methods/pampa-scheme.md) flux limiter of Abgrall et al., which
+enforces both bounds, is related but "not equivalent", and on this test
+a global Lax–Friedrichs speed gave more accurate results than the local
+one (Remark 3.2, Fig. 5). See
+[positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)
+and [bound preservation](/properties/bound-preservation.md). With a
+time-independent field the profile is not returned to its initial shape,
+so the test compares limiters against each other, not against an exact
+solution *(compiler check, not in the sources)*.
+
 ## Qualifications
 
 - Kuzmin & Vedral write "the exact solution of the linear advection
@@ -239,6 +269,10 @@ caption of $t=2$, a full rotation of the period-2 flow.
   parameter as $\beta=\log_2(36\delta^2)$, negative for $\delta=0.01$
   ($-8.1$), which makes $\exp(-\beta r^2)$ grow away from its centre
   *(compiler check, not in the sources)*.
+- Kiechle, Chudzik & Helzel's initial circle, centred at $(1,1)$ with radius
+  0.8, covers only the corner of the unit square near $(1,1)$ *(compiler
+  check, not in the sources)*; the text layer reads the radius as "0.82",
+  the printed form is $0.8^2$.
 - Maltsev et al. run their other unit-scale scalar tests (square-wave
   advection) on a domain also printed as $[0,10]^2$.
 
@@ -253,3 +287,4 @@ caption of $t=2$, a full rotation of the period-2 flow.
 - [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — §4.2, Eqs. (16)–(21), Remark 4.1, Table 2, Fig. 8 (arXiv v2).
 - [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — §4.1, §4.1.2, Figs. 19–26 (HAL preprint).
 - [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.1, Eqs. (4.1)–(4.2), Figs. 3–8.
+- [Kiechle, Chudzik & Helzel (2025)](/sources/kiechle-2025.md) — §3.1–3.2, Remark 3.2, Figs. 1–5.

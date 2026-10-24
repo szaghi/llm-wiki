@@ -141,7 +141,7 @@ kept as printed. No printed duplicates were found.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-22), cited further in chunks 6–9 (2026-10-23). This source is cited on:
+Chunk 5 (2026-10-22), cited further in chunks 6–10 (2026-10-23). This source is cited on:
 
 * [Entropy stability](/properties/entropy-stability.md)
 * [Entropy-conservative and kinetic-energy-preserving two-point fluxes](/methods/entropy-conservative-flux.md)

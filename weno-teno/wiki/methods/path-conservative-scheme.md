@@ -5,7 +5,7 @@ description: 'Path-conservative schemes discretize a non-conservative product $\
 status: established
 aliases: [path-conservative method, PCCU scheme, path-conservative central-upwind scheme, A-WENO PCCU scheme, Dal Maso–LeFloch–Murat path]
 tags: [numerical-flux, central-scheme, riemann-solver, finite-volume, finite-difference, well-balanced]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # Path-conservative schemes
@@ -213,6 +213,29 @@ everywhere the circular Sod explosion has a wrong shock speed, with the correcti
 (§4.4, §5.1.4, Fig. 3). They list the extension to systems with genuinely non-conservative
 terms, "where the conservative correction is not obvious", as open (§6).
 
+## A non-conservative entropy equation in DG
+
+[Zampa & Dumbser (2025)](/sources/zampa-2025.md) (§3.2.2; arXiv v1) replace the energy equation
+of weakly compressible isentropic flow by the non-conservative transport
+$\partial_t\mathsf S+v\cdot\nabla\mathsf S=0$ of an entropy variable $\mathsf S$ (page-local) and
+discretize it with a path-conservative DG scheme in the framework of Dal Maso, LeFloch and Murat
+and of Parés, as they cite them. With $\mathsf Q=(\rho,\rho v)$ and the segment path
+$\Psi(\mathsf s)=(1-\mathsf s)\mathsf Q^++\mathsf s\,\mathsf Q^-$ between the two traces (page-local), a
+"Roe-type" normal velocity follows from a generalized Rankine–Hugoniot condition,
+
+$$\widehat{v\cdot n}=\int_0^1 v\big(\Psi(\mathsf s)\big)\cdot n\,d\mathsf s,$$
+
+approximated by the midpoint rule, which "suffices to preserve the accuracy and correctness of
+the scheme" (Eqs. (7)–(8); stated, not shown separately). The facet term of the weak form is
+$\tfrac{\Delta t}2\big\langle(\widehat{v\cdot n}-s_{\max})[\![\mathsf S_h]\!],r_h\big\rangle$ with the
+Rusanov-type speed $s_{\max}=\max\big(2\lvert v^+\cdot n\rvert,2\lvert v^-\cdot n\rvert\big)$ and test
+functions $r_h$ (page-local), and an implicit diffusion step makes the system matrix symmetric
+positive definite. The authors restrict the scheme to Mach numbers up to about one because,
+citing Hou and LeFloch, non-conservative schemes converge to wrong solutions at strong shocks;
+their circular explosion has a pressure ratio of 10 and is compared with a radial reference
+solution in plots only (§3.2.2, §4.3). The scheme is part of a
+[semi-implicit](/methods/semi-implicit-all-mach-scheme.md) compatible-finite-element method.
+
 ## Comparison of the two routes
 
 | | PCCU / A-WENO PCCU (Chu et al. 2022) | well-balanced PCCU (Kurganov et al. 2023) | fluctuation-form FD-WENO (Balsara et al. 2024) |
@@ -237,6 +260,10 @@ see [stationary contact preservation](/properties/stationary-contact-preservatio
   Gaburro et al. (2024), for a conservation law in primitive variables, recall the inconsistency
   of the segment path with the jump conditions, and they avoid it by conservative updates at
   shocks rather than by another path.
+- Zampa & Dumbser print the generalized Rankine–Hugoniot condition (Eq. (7)) with
+  $\partial\Psi/\partial\mathsf s$ under the integral although the path lives in $\mathsf Q=(\rho,\rho v)$ and the
+  jump on the left is that of $\mathsf S$; the midpoint formula (Eq. (8)) is what the scheme uses. They
+  do not discuss the dependence on the path either.
 - The well-balancing of the A-WENO PCCU scheme for the two-layer lake at rest is asserted
   ("capable of exactly preserving"), with no proof and no round-off table; the evidence is the
   small-perturbation test (Chu et al., §6.1, Ex. 2).
@@ -257,3 +284,4 @@ see [stationary contact preservation](/properties/stationary-contact-preservatio
 - [Ciallella et al. (2023)](/sources/ciallella-2023.md) — §3.3 (Eq. (38)) (author manuscript).
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §1, §2 (Eqs. (4)–(5)), §3.3–3.4 (Eqs. (32)–(39)), §4.4, §5.1.4, §5.2, §6 (arXiv v1).
 - [Chu et al. (2025b)](/sources/chu-2025-b.md) — §1, §3–§4, §5.1 (Eqs. (5.1)–(5.2), Remarks 5.1–5.2, Tables 5.1–5.2, Exs. 1–5), §5.2.
+- [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §3.2.2 (Eqs. (7)–(8)), §4.3 (arXiv v1).

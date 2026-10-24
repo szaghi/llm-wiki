@@ -5,7 +5,7 @@ description: "Viscous flow in a square cavity driven by its sliding top wall, ru
 status: established
 aliases: [lid-driven cavity flow, driven cavity, MHD lid-driven cavity, accelerating-lid cavity]
 tags: [benchmark, mhd, asymptotic-preserving, finite-volume]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:37:00Z
 ---
 
 # Lid-driven cavity
@@ -27,6 +27,7 @@ $v_{\mathrm{lid}}$ is the lid velocity and $\mu$ the dynamic viscosity (page-loc
 |---|---|---|---|
 | [Zhao et al. (2023)](/sources/zhao-2023.md) §4.9 | hydrodynamic, steady | unit square; lid $U_0=1$, $T_0=1$, $M=0.15$, $\mathrm{Re}=1000$; isothermal no-slip walls | $33\times33\times2$ triangles, stretching 1.2, minimum $h\approx0.0052$ |
 | [Dematté et al. (2024)](/sources/dematte-2024.md) §4.3.3 | visco-resistive MHD, steady | $[-0.5,0.5]^2$; $\rho=1$, $v=0$, $p=10^5$; lid $v_{\mathrm{lid}}=\tanh\big(\hat\beta(0.5-x)\big)+\tanh\big(\hat\beta(0.5+x)\big)-1$, $\hat\beta=40$; $B_0=(B_{x,0},0,0)$, $B_{x,0}=0.5$ and $1.0$ | $512^2$, CFL 0.4 on the velocity, steady by $t=20$ |
+| [Zampa & Dumbser (2025)](/sources/zampa-2025.md) §4.7 | hydrodynamic, low Mach, after Ghia, Ghia & Shin | $[-0.5,0.5]^2$; $v=(1,0)$ on $y=0.5$, $v=0$ on the other walls; $\mu=0.01$ and $0.001$; density and pressure not printed | 40 elements per side; to $t=10$ ($\mu=0.01$) and to a steady state ($\mu=0.001$) |
 | Dematté et al. §4.4 (new) | visco-resistive MHD, unsteady all-Mach | $[-0.5,0.5]^2$; $\rho=2$, $v=0$, $p=10$; $B=(0,0,0.1/\sqrt{4\pi})$ for $r\le0.1$, $0$ outside; lid $v_{\mathrm{lid}}=4A(x_{\mathrm{norm}}-x_{\mathrm{norm}}^2)$, $A=u_{\max}e^{-(t-t_{\mathrm{peak}})^2/(2s_t^2)}$, $u_{\max}=6$, $t_{\mathrm{peak}}=10$, $s_t^2=5$; $\mu=0.02$, thermal conductivity $1.0$ | $512^2$, no-slip walls, MUSCL–Hancock; snapshots $t=3.2$, $7.2$, $10$, $20$ |
 
 In Dematté et al.'s accelerating-lid case $r$ is the distance from the cavity centre,
@@ -70,6 +71,17 @@ lid speed rises as a Gaussian pulse, so that the flow passes from very low Mach 
 ($t=20$), with a magnetized disc at the centre. There is no reference solution; the authors
 judge the results "satisfactory based on physical intuition" (§4.4, Figs. 19–20).
 
+**Compatible finite elements at low Mach number.** Zampa & Dumbser run
+the cavity with their semi-implicit, exactly mass-conservative
+compatible finite-element scheme for weakly compressible flow
+([asymptotic preservation](/properties/asymptotic-preservation.md)),
+whose incompressible limit is an H(div) vorticity–velocity–pressure
+scheme, on 40 elements per side. For the profiles $v_1(0,y)$ and
+$v_2(x,0)$ they report "an excellent agreement" with Ghia et al. at
+$\mu=0.01$ and "good agreement" at $\mu=0.001$ (§4.7, Figs. 8–9). With unit density, lid speed and box
+side these viscosities are $\mathrm{Re}=100$ and $1000$ *(compiler
+check, not in the sources; the density is not printed)*.
+
 **Hydrodynamic cavity at higher Reynolds number.** [Bezgin et al. (2023)](/sources/bezgin-2023.md)
 run the cavity at $\mathrm{Re}=5000$ on $500^2$ cells with the HLLC flux in
 [JAX-Fluids](/software/jax-fluids.md); the centreline velocities agree with those of Ghia et
@@ -83,10 +95,13 @@ al. (§5.1.3, Fig. 11).
   defines it as the thermal conductivity; the table above follows §3.4.
 - Zhao et al.'s lid-driven cavity is in the arXiv v1 read; the published version may differ.
 - None of the sources gives an error norm: the comparisons are of profiles (Zhao et al.,
-  Dematté et al. §4.3.3) or qualitative (§4.4).
+  Dematté et al. §4.3.3, Zampa & Dumbser, Bezgin et al.) or qualitative (Dematté et al. §4.4).
+- Zampa & Dumbser print neither the Mach number nor the background pressure of their cavity;
+  they are read as arXiv v1.
 
 # Citations
 
 - [Zhao et al. (2023)](/sources/zhao-2023.md) — §4.9, Figs. 15–16 (arXiv v1).
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §3.4, §4 (defaults), §4.3.3, §4.4, Figs. 17–20.
 - [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §5.1.3, Fig. 11.
+- [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §4.7, Figs. 8–9 (arXiv v1).

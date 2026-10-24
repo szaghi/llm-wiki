@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Stationary contact preservation"
-description: "A scheme preserves stationary contacts when an isolated discontinuity of a linearly degenerate field with zero speed stays exactly on the mesh; Balsara et al. obtain it in FD-WENO through HLLI anti-diffusion, Renac in multicomponent DGSEM through contact-resolving fluxes, Lax–Friedrichs-type FD-WENO and central-upwind schemes lack it, and for moving interfaces the weaker interface equilibrium condition applies."
+description: "A scheme preserves stationary contacts when an isolated zero-speed discontinuity of a linearly degenerate field stays exactly on the mesh; HLLI anti-diffusion and contact-resolving DGSEM fluxes give it, Lax–Friedrichs-type FD-WENO and central-upwind schemes lack it, and for moving contacts, also under IMEX splittings, the sources require that velocity and pressure stay constant."
 status: established
 aliases: [exact capture of stationary contact discontinuities, preservation of stationary linearly degenerate discontinuities, stationary discontinuity preservation]
 tags: [riemann-solver, finite-difference, well-balanced, multiphase, dg]
-timestamp: 2026-10-22T19:46:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # Stationary contact preservation
@@ -47,7 +47,12 @@ works they cite also stress ([well-balancing](/properties/well-balancing.md)).
   $(1,-19.59745,0.01)$ otherwise on $[-1,1]$, $t=0.03$, $\Delta x=1/100$ (Ex. 3). Both the
   original and the [LCD central-upwind scheme](/methods/lcd-central-upwind-scheme.md) are
   non-oscillatory and the LCD scheme resolves the contact better, but neither is claimed to
-  keep it exact. *(compiler check, not in the sources: for a constant-coefficient linear
+  keep it exact. [Chu et al. (2025c)](/sources/chu-2025-c.md) (§3, Ex. 2; arXiv v1) run the same
+  states on $[0,1]$ to $t=0.012$ with $\Delta x=1/200$ and $1/8000$: the original
+  [low-dissipation central-upwind scheme](/methods/low-dissipation-central-upwind-scheme.md) has
+  small oscillations "whose magnitude does not decay when the mesh is refined", while their new
+  variant, whose subcell jump moves with the contact, is non-oscillatory with the same shock and
+  contact resolution; exactness is not claimed either. *(compiler check, not in the sources: for a constant-coefficient linear
   system the LCD scheme is exactly upwind (Lemma 3.1), and the upwind flux carries no
   contribution of a field with zero eigenvalue, so a stationary jump of that field stays
   fixed in the linear case.)*
@@ -107,6 +112,21 @@ entropy production instead: small positive relative changes of the two phase ent
 plotted on axes scaled by $10^{-7}$ and $10^{-8}$, for interface widths off the equilibrium one
 (App. A, Fig. 12).
 
+**Contact preservation as a requirement on IMEX splittings.** [Allegrini & Vignal (2025)](/sources/allegrini-2025.md)
+(§2, Lemmas 1–4; HAL author manuscript) list "preservation of constant contact discontinuities"
+among the three properties an explicit–implicit flux splitting for all-Mach Euler should have:
+for data with constant velocity and pressure and an arbitrary density, the scheme must keep
+velocity and pressure constant while the density is transported, a moving contact in the sense
+of the interface equilibrium condition. They prove it for the Toro–Vázquez splitting, where
+constant $v$, $p$ give $\rho^{n+1}=\rho^n-\Delta t\,v\cdot\nabla\rho^n$ and a momentum update consistent
+with $v^{n+1}=v$, $p^{n+1}=p$ (Lemma 1), for a Lagrange-projection-type splitting (Lemma 3) and
+for their linearized scheme (Lemma 4), and show that the non-conservative splitting of Dimarco,
+Loubère and Vignal violates it (Lemma 2); the implicit upwinding of their L∞ variant must act on
+the density as well, or the contact results are not consistent (Remark 5.1). On a contact with
+$(\rho,v,p)=(1000,1,10^5)$ against $(0.01,1,10^5)$, 200 and 2000 cells, $t=0.5$, velocity and pressure
+stay constant "up to an error of $10^{-5}$" (§3.4.1, Fig. 7;
+[semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)).
+
 Sharpness of a moving contact is a matter of the flux's dissipation on the contact field.
 [Hu et al. (2022)](/sources/hu-2022.md) (§5.1, Eq. (5.1), Fig. 5.1) advect an isolated contact,
 $(\rho,v,p)=(1.4,0.1,1)$ to $(1,0.1,1)$, over 100 cells at CFL 0.9 to $t=2$: their RHLLEM-LD, which keeps the HLLEM
@@ -140,6 +160,14 @@ significant improvement" over both (§5.4; [HLL-family solvers](/methods/hll-rie
   recovers $u$ in some way the paper does not describe. The result therefore does not clearly
   test the statement, recalled by Renac, that discretely conservative schemes oscillate at
   moving material interfaces; see [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md).)*
+- **Not stationarity preservation.** Barsukow et al. (2026) (§1) recall, citing earlier Active
+  Flux work, that classical and semi-discrete third-order Active Flux share "stationarity
+  preservation" for linear acoustics; that property concerns the discrete steady states of
+  multi-dimensional acoustics, not isolated contacts, and is discussed on
+  [Active Flux](/methods/active-flux.md).
+- Allegrini & Vignal's $10^{-5}$ is not identified as relative or absolute, and the run is at a
+  local Mach number between $2\times10^{-4}$ and $9\times10^{-2}$; the lemmas, by contrast, state exact
+  preservation for the semi-discrete and fully discrete schemes.
 - In the Baer–Nunziato Riemann problems 1–6 the anti-diffusion is switched off for lack of a
   good flattener (§VIII.b), so the property is not used there.
 - The anti-diffusion needs the eigenvectors of the linearly degenerate fields only; for
@@ -154,3 +182,6 @@ significant improvement" over both (§5.4; [HLL-family solvers](/methods/hll-rie
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §2.1 (Eqs. (2), (7)), §2.3 (Eqs. (26)–(30)), §3.1 (Fig. 1).
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §3.3 (Lemma 3.1), §4.1 (Figs. 4–5), Apps. A–B.
 - [Hu et al. (2022)](/sources/hu-2022.md) — §5.1 (Eq. (5.1), Fig. 5.1), §5.4.
+- [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §2 (Lemmas 1–3), §3.1 (Lemma 4), Remark 5.1, §3.4.1 (Fig. 7) (HAL author manuscript).
+- [Chu et al. (2025c)](/sources/chu-2025-c.md) — §3, Ex. 2 (Fig. 3.2) (arXiv v1).
+- [Barsukow et al. (2026)](/sources/barsukow-2026.md) — §1 (arXiv v2).

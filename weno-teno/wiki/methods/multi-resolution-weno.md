@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Multi-resolution WENO"
-description: "Multi-resolution WENO combines polynomials on nested central stencils, down to a one-point base, with any positive linear weights; the page records the Zhu–Shu hierarchy to ninth order, ghost candidates projected from one stencil, the Wang et al. variant, scale-invariant MR-AWENO, WCNS, hybrid, moving-mesh, Hermite, entropy-stable and steady-state uses."
+description: "Multi-resolution WENO combines polynomials on nested central stencils, down to a one-point base, with any positive linear weights; the page records the Zhu–Shu hierarchy to ninth order, ghost candidates, the Wang et al. variant, scale-invariant MR-AWENO, WCNS, learned, shock-detector (MR-WENO-SD), hybrid, moving-mesh, Hermite, entropy-stable and steady-state uses."
 status: established
-aliases: [multi-resolution WENO, multiresolution WENO, MR-WENO, WENO-MR, WENOZS5, New WENO5, WENOMR, Zhu–Shu WENO, MRWENO, MR-AWENO, MR-AWENO-Si, WCNS-MR, MR-WCNS, hybrid MR-WCNS, GMR-WENO, ghost multi-resolution WENO, MMR-WENO, HMR-WENO]
+aliases: [multi-resolution WENO, multiresolution WENO, MR-WENO, WENO-MR, WENOZS5, New WENO5, WENOMR, Zhu–Shu WENO, MRWENO, MR-AWENO, MR-AWENO-Si, WCNS-MR, MR-WCNS, hybrid MR-WCNS, GMR-WENO, ghost multi-resolution WENO, MMR-WENO, HMR-WENO, MR-WENO-SD, WCNS3-MR]
 tags: [weno, cweno, reconstruction, finite-difference]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:37:00Z
 ---
 
 # Multi-resolution WENO
@@ -157,6 +157,29 @@ oscillatory than characteristic-wise WENO-JS and Zhu & Shu's WENO-MR with the si
 et al. (2021), which the authors attribute to the wide difference stencil of WCNS; $\lambda_{\mathrm s}=2$
 removes the oscillations (§3.4.2, Fig. 6).
 
+## Third-order WCNS hierarchy (WCNS3-MR) and a learned weight
+
+[Fan et al. (2025b)](/sources/fan-2025-b.md) (§2.2, Eqs. (10)–(18)) write the third-order member of the
+WCNS hierarchy in the modified form of Qin et al. above, on point values of a staggered grid: $T_1=\{x_i\}$
+with $P_1=u_i$ and $T_2=\{x_{i-1},x_i,x_{i+1}\}$ with
+$P_2(x_{i+1/2})=-\tfrac18u_{i-1}+\tfrac34u_i+\tfrac38u_{i+1}$; linear weights $d_m=b_{\mathrm{MR}}^{m-1}/\sum_lb_{\mathrm{MR}}^{l-1}$
+with a base $b_{\mathrm{MR}}>0$ (page-local), $10$ by default, i.e. $(\tfrac1{11},\tfrac{10}{11})$; $\beta_1$ the
+minimum of the two squared one-sided differences and $\beta_2$ Qin et al.'s derivative sum with the
+amplifying parameter $\lambda_{\mathrm s}\ge1$; the squared global indicator $\tau_{\mathrm{MR}}=\lvert\beta_2-\beta_1\rvert^2$
+(page-local) in Z-type weights with exponent 1 and $\epsilon=10^{-10}$; and the interface value of Step 5.
+They record two trade-offs (Remarks 1–2): a larger base gives higher resolution but poorer shock
+capturing, a smaller one suppresses oscillations at a cost in resolution, and no single base suits the
+whole domain; a larger $\lambda_{\mathrm s}$ improves shock capturing "without sacrificing the design accuracy", a
+statement they attribute to Qin et al. and do not test.
+
+Their contribution is to rewrite the two-level combination as a combination of the candidates
+themselves, $\omega_1P_1+\omega_2P_2$ with
+$\omega_1=\omega^{\mathrm p}_1-\omega^{\mathrm p}_2d_1/d_2$, $\omega_2=\omega^{\mathrm p}_2/d_2$ (Eqs. (19)–(20); $\omega^{\mathrm p}_m$ the
+weights of the hierarchical form, page-local), whose optimal weights are $(0,1)$: third order then needs
+only $\omega_1=O(\Delta x^2)$, a target that a network with softmax output can meet as a half-line
+condition. The network that predicts these weights (WCNS3-MR-NN) and its accuracy to $N=10240$ are on
+[learned WENO weights](/methods/learned-weno-weights.md).
+
 ## Simplified multi-resolution WCNS interpolation (Wang et al. 2023c)
 
 Wang, Zhu, Wang & Zhao (2023c, §3, Steps 2.1–2.5, Eqs. (3.10)–(3.24)) transpose the hierarchy to the
@@ -306,6 +329,47 @@ real substencils, so the new element is the projected candidates.)*
 the triangular Zhu–Shu hierarchy and adapt the two linear weights cell by cell; the scheme is recorded on the
 [CWENO](/methods/cweno.md) page. Fan & Wu (2024) use a nested quintic–cubic–linear Hermite hierarchy with
 arbitrary linear weights in their OE-HWENO ([Hermite WENO](/methods/hermite-weno.md)).
+
+## Weights from a shock detector: MR-WENO-SD (Ren et al. 2025)
+
+[Ren et al. (2025)](/sources/ren-2025.md) (§5.1.1, Eqs. (41)–(49)) use the fifth-order finite-volume
+hierarchy (degrees 0, 2, 4 on $T_1$, $T_2$, $T_3$, after Zhu & Shu, Cui & Zhu and Wang et al. 2021) with
+the indicators of Step 3, $\beta_1=\min\big((\bar u_i-\bar u_{i-1})^2,(\bar u_i-\bar u_{i+1})^2\big)$, the global
+indicator of Step 4 and Z-type weights, and write the result as weights $\omega^{\mathrm P}_m$ (page-local) on
+the three polynomials themselves. Their [matrix stability analysis](/methods/matrix-stability-analysis.md)
+of the [carbuncle](/definitions/carbuncle-phenomenon.md) on a planar Mach 20 normal shock examines these
+weights inside the numerical shock structure, where every candidate but the constant contains the jump:
+
+- with the level-wise weights $10^m$ the polynomial weights at the face next to the shock are
+  $(0.21940,0.22749,0.55311)$ (constant, quadratic, quartic), and the steady shock shows a "subtle"
+  non-carbuncle anomaly (Table 4, Fig. 32a);
+- with equal level-wise weights they become $(0.85337,0.08849,0.05815)$ and the normal shock is stable,
+  but the residual of the blunt-body problem does not reach machine zero (Table 5, Figs. 32b, 33–34).
+
+The authors recall from the multi-resolution literature that the linear weights of the hierarchy are not unique and that
+larger weights on the higher-degree polynomials sharpen shocks (§5.1.1); in their Table 5 it is the choice that gives the
+constant the largest weight at the shock that is stable. **MR-WENO-SD** sets the polynomial weights directly from a pressure-jump shock
+detector of the faces, page-local
+$$f_{\mathrm{SD},i+1/2}=\Big(1-\exp\Big(-\max(M_i,M_{i+1})\,\frac{\lvert p_i-p_{i+1}\rvert}{p_i+p_{i+1}}\Big)\Big)^4,$$
+the exponent 4 "to ensure spatial accuracy": with $\bar w_0$ the maximum of $f_{\mathrm{SD}}$ over the four transverse
+faces of the two cells, $\bar w_1=\max(f_{\mathrm{SD},i-1/2},f_{\mathrm{SD},i+1/2})$ and $\bar w_2=\max(f_{\mathrm{SD},i-3/2},f_{\mathrm{SD},i+3/2})$
+(page-local),
+$$\omega^{\mathrm P}_1=\max(\bar w_0,\bar w_1),\qquad\omega^{\mathrm P}_2=\big(1-\omega^{\mathrm P}_1\big)\bar w_2,\qquad\omega^{\mathrm P}_3=\big(1-\omega^{\mathrm P}_1\big)(1-\bar w_2),$$
+so that a shock on the adjacent faces (or on the transverse faces) selects the constant, a shock two faces
+away the quadratic, and otherwise the quartic; the weights sum to one by construction (Eqs. (47)–(49)).
+No smoothness indicator enters. At the same face as above the weights are
+$(0.99999999,\,1.98\times10^{-14},\,1.27\times10^{-8})$ (Table 6). The scheme is paired with an HLLC/HLL
+flux blended by the same detector ([HLL-family solvers](/methods/hll-riemann-solvers.md)), and is also used
+for the in-cell Gauss-point values of the two-point face quadrature (§5.2.3).
+
+*Evidence* (§5.2). Fifth order on a 1D density wave, $L_1$ orders 4.9055–5.0290 and $L_\infty$ orders
+4.8084–4.9973 for 10 to 320 cells (Table 7); all eigenvalues of the analysed $50\times25$ normal shock in the
+left half-plane (Fig. 35); stable runs where WENO with HLLC is unstable on the inviscid Mach 20 cylinder
+(Figs. 36–37), the double Mach reflection, the Sedov blast at $960\times960$ (Fig. 40) and a viscous Mach 8.1
+cylinder, whose stagnation heat flux is within 0.81% of the Fay–Riddell value (Figs. 41–42). *(Compiler
+check, not in the sources: the accuracy test has $p\equiv1$, so $f_{\mathrm{SD}}\equiv0$ and the reconstruction there
+is the linear quartic; the fifth order of Table 7 does not exercise the detector-based weighting, whose effect
+on smooth flows with pressure variation is not tested.)*
 
 ## Hermite and moment-based hierarchy
 
@@ -481,3 +545,5 @@ Subramanian (2023, §6.3) name the Zhu–Shu scheme as an efficient alternative 
 - [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — Abstract; §1; §2.1–2.2, Eqs. (2.4)–(2.36), Remark 1; §3, Tables 3.1–3.9, Examples 3.1–3.10; §4.
 - [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §1; §2.
 - [Fan & Wu (2024)](/sources/fan-2024.md) — §2.2.1, App. A (arXiv v1).
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §2.2, Eqs. (10)–(18), Remarks 1–2; §3, Eqs. (19)–(21): third-order WCNS3-MR and its candidate-weight form.
+- [Ren et al. (2025)](/sources/ren-2025.md) — §5.1.1, Eqs. (41)–(49), Tables 4–6, Figs. 32–34; §5.2, Table 7, Figs. 35–42: weights inside the numerical shock structure, MR-WENO-SD.

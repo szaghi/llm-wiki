@@ -5,7 +5,7 @@ description: "A scheme is bound-preserving when its discrete solution stays in t
 status: established
 aliases: [bound-preserving scheme, positivity preservation, invariant-region preservation, invariant-domain preservation, physical-constraint preservation, BP, PP, IDP, PCP]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T15:08:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Bound preservation
@@ -33,13 +33,21 @@ set stays there. Pazner presents IDP as a generalization of the discrete
 maximum principle that implies bound preservation, positivity preservation
 and the absence of oscillations of the low-order scheme (§1, §2).
 
+**Several kinds of degree of freedom.** For [Active Flux](/methods/active-flux.md),
+whose unknowns are cell averages and interface point values,
+[Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) (arXiv v3, Def. 4.1)
+call a method BP if averages **and** point values that start in $G$ stay in $G$;
+in practice with floors $\rho\ge\varepsilon_\rho$, $p\ge\varepsilon_p$. Both kinds
+must be limited: on a 2D advection test the bounds $[0,1]$ hold only when the
+averages and the point values are limited (Example 5.4, Table 1).
+
 ## Admissible sets used by the sources
 
 | System | $G$ | Source |
 |---|---|---|
 | scalar law | $[U_{\min},U_{\max}]$ (global maximum principle); any interval is an invariant set | Cui et al. (2024), §1; Pazner (2021), Def. 1 |
-| linear transport, Vlasov–Poisson | $u\ge0$ | Zheng et al. (2022), Prop. 3.2 |
-| Euler / Navier–Stokes | $\{\rho>0,\ \rho e>0\}$; $\rho e$ is concave in $u$ for $\rho>0$ | Wu & Shu (2023), Eq. (2.2); Cui et al. (2024), Rem. 8.1; Fan et al. (2021), Eqs. (3.7), (3.25); Lin et al. (2023), Eq. (3); Gu et al. (2023), §2.6.1; Abgrall et al. (2026), Eq. (1.2) |
+| linear transport, Vlasov–Poisson | $u\ge0$ | Zheng et al. (2022), Prop. 3.2; Kiechle et al. (2025), §3.2 (lower bound only) |
+| Euler / Navier–Stokes | $\{\rho>0,\ \rho e>0\}$; $\rho e$ is concave in $u$ for $\rho>0$ | Wu & Shu (2023), Eq. (2.2); Cui et al. (2024), Rem. 8.1; Fan et al. (2021), Eqs. (3.7), (3.25); Lin et al. (2023), Eq. (3); Gu et al. (2023), §2.6.1; Abgrall et al. (2026), Eq. (1.2); Duan et al. (2025), Eq. (26), for averages and point values; Chen & Chen (2026), Eq. (33) |
 | Euler with a minimum principle on the specific entropy | $\{\rho>0,\ \rho e>0,\ s\ge s_{\min}\}$, i.e. $p\rho^{-\gamma}\ge\exp(s_{\min})$; Pazner writes the specific entropy as $\ln(e^{1/(\gamma-1)}\rho^{-1})$ | Wu & Shu (2023), Eq. (2.3), Thm 4.7; Pazner (2021), Eq. (65) |
 | Euler with a local minimum of $\rho s$ at the solution nodes | $\{\rho\ge\rho_{\min},\ p\ge p_{\min},\ \rho s\ge(\rho s)^K_{\min}\}$, floors $10^{-8}$, bound over the element and its face neighbours | Dzanic & Witherden (2022), §3.2, §4.1 |
 | multicomponent Euler (mixture of $n_c$ ideal gases) | $\{0\le Y_k\le1,\ \rho>0,\ e>0\}$ ($Y_k$ mass fractions) | Renac (2021), Eq. (9) |
@@ -54,7 +62,7 @@ and the absence of oscillations of the low-order scheme (§1, §2).
 | special relativistic hydrodynamics | $\{D>0,\ E-\sqrt{D^2+\lvert m\rvert^2}>0\}=\{\rho>0,\ p>0,\ \lvert v\rvert<1\}$ ($D=\rho W$ the relativistic mass density, $m$ the momentum, $E$ the relativistic energy) | Wu & Shu (2023), Thm 4.9; Chen & Wu (2022), Lemmas 2.1–2.2; Cui et al. (2024), Ex. 4–5; Cai et al. (2024), Eqs. (1.5)–(1.6) |
 | special relativistic MHD, general equation of state satisfying a Taub-type inequality and causality | $\{D>0,\ p>0,\ \lvert v\rvert<1\}$, convex; GQL form linear in $u$ | Ding & Wu (2024b), Eq. (8), Lemmas 2.1–2.2 |
 | ten-moment Gaussian closure | positive-definite pressure tensor | Wu & Shu (2023), Thm 4.11 |
-| ideal MHD | $\{\rho>0,\ E-\tfrac12\rho\lvert v\rvert^2-\tfrac12\lvert B\rvert^2>0\}$ | Wu & Shu (2023), Thm 4.12; Liu et al. (2021), §3.3.4; Ding & Wu (2024a), Eq. (4) |
+| ideal MHD | $\{\rho>0,\ E-\tfrac12\rho\lvert v\rvert^2-\tfrac12\lvert B\rvert^2>0\}$ | Wu & Shu (2023), Thm 4.12; Liu et al. (2021), §3.3.4; Ding & Wu (2024a), Eq. (4); Liu & Wu (2025), Eq. (36) |
 | ideal MHD with a local minimum of $p\rho^{-\gamma}$ at the solution nodes | $\{\rho>\epsilon_{\mathrm f},\ p>\epsilon_{\mathrm f},\ p\rho^{-\gamma}>(p\rho^{-\gamma})^K_{\min}+\epsilon_{\mathrm f}\}$, tolerance $\epsilon_{\mathrm f}=10^{-8}$ (page-local), bound over the element and its face neighbours from the previous stage | Dzanic & Witherden (2023), Eqs. (21)–(22), §4 |
 | multicomponent MHD | $0\le Y_k\le1$, $\rho>0$, $p>0$ | Wu & Shu (2023), Eq. (6.4) |
 
@@ -78,6 +86,10 @@ Sources: [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md),
 [Ding & Wu (2024a)](/sources/ding-2024.md),
 [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md),
 [Ching et al. (2025)](/sources/ching-2025.md),
+[Kiechle et al. (2025)](/sources/kiechle-2025.md),
+[Duan et al. (2025)](/sources/duan-2025.md),
+[Liu & Wu (2025)](/sources/liu-2025.md),
+[Chen & Chen (2026)](/sources/chen-2026.md),
 [Abgrall et al. (2026)](/sources/abgrall-2026.md). The multicomponent and
 two-phase models are on the
 [multicomponent Euler](/definitions/multicomponent-euler-equations.md) and
@@ -480,6 +492,31 @@ the bounds.
   GQL form with an eigenvalue formula (§3.4, Appendix A). Strict global bounds
   lower the linear-advection rates to about $1.8$–$2.6$; relaxed ones restore
   $3.00$ (Tables 1–2).
+- **Averages and point values of generalized Active Flux.**
+  [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) (arXiv v3, §4)
+  limit the averages by [convex limiting](/methods/convex-limiting.md) against a
+  first-order local Lax–Friedrichs scheme, and the point values by a
+  [Zhang–Shu-type](/methods/zhang-shu-scaling-limiter.md) blend with a first-order
+  Lax–Friedrichs point update on a staggered stencil; the cell-centre value, not a
+  convex combination of the unknowns, is scaled toward the average. Proposition 4.2
+  (2D) and Theorem C.1 (1D) prove, with SSP-RK3, the maximum principle for scalar
+  laws and positive density and pressure for Euler under explicit time-step
+  conditions, which on uniform meshes reduce to
+  $\Delta t\le\tfrac14\min\{\Delta x/\lVert a^{(1)}\rVert_\infty,\Delta y/\lVert a^{(2)}\rVert_\infty\}$
+  in 2D and $\Delta t\le\Delta x/(2\lVert a\rVert_\infty)$ in 1D (Remarks 4.5, C.1).
+  The LeBlanc tube, the blast waves and the Sedov problem fail on negative density or
+  pressure without the limiting (Examples 5.2–5.3, 5.8); the Mach 80 and 2000 jets are
+  run with it (Example 5.10).
+- **Lower-bound flux limiting of fully discrete Active Flux.**
+  [Kiechle, Chudzik & Helzel (2025)](/sources/kiechle-2025.md) (§3.2) blend each
+  Simpson flux of the fully discrete Cartesian Active Flux with a global
+  Lax–Friedrichs flux, with coefficients from a four-way convex split of the update,
+  and guarantee nonnegative averages for CFL numbers up to $\tfrac14$; only the lower
+  bound is enforced ([positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)).
+  Their earlier discontinuous bound-preserving reconstruction is not exactly bound
+  preserving, because Simpson's rule is not exact for piecewise quadratic functions
+  (§3.1.1). On Vlasov–Poisson the limited scheme conserves the $L^1$ norm to machine
+  precision, being conservative and positive (§4.4).
 - **Elementwise blending with a low-order DG scheme.**
   [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) blend, with one
   parameter $\mathsf l_K$ per element $K$ ($1$ = high order, so $\alpha=1-\mathsf l_K$), an entropy-stable nodal DG update with a
@@ -525,7 +562,13 @@ the bounds.
   needs it only on the Mach 2000 jet (0.0146 % of cells limited) and a
   Mach 10 reflection–diffraction problem (0.0012 %) (Ex. 3.5–3.12,
   Remark 3.2); the limiter is sufficient only, and its accuracy rests on
-  numerical verification.
+  numerical verification. [Chen & Chen (2026)](/sources/chen-2026.md) write out the
+  Hu–Adams–Shu density-then-pressure form and apply it at every stage of a
+  five-stage SSP Runge–Kutta method in an adaptive-TENO scheme with an immersed
+  boundary; the bilinear interpolation at body intercepts is two successive convex
+  combinations of grid states and keeps positivity, a general bilinear fit is blended
+  by bisection with it where it fails (§2.4–2.5;
+  [immersed boundary method](/methods/immersed-boundary-method.md)).
 - **Semi-discrete limiting of bar states.**
   [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) (§2.2,
   arXiv v1) limit the subcell antidiffusive fluxes of an LGL-DGSEM before
@@ -679,10 +722,39 @@ authors state that each of the three ingredients, projection, scaling limiter an
 source, is essential (§2.1); without the projection and the limiter their
 fifth-order WENO code fails on the Orszag–Tang vortex at $t=3.11$, and without the
 limiter on the blast and the jet (Ex. 4.2, 4.4–4.5).
-The details are on
+[Liu & Wu (2025)](/sources/liu-2025.md) (arXiv v2, §3, Thm 1) give the DG
+counterpart on Cartesian meshes: with the magnetic field in a locally divergence-free
+DG space, the [Godunov–Powell source](/definitions/godunov-powell-source-term.md)
+discretized in the cell-average equation only, split upwind between the two cells of
+each interface, and a positivity-preserving HLL flux, the cell averages of their
+[OEDG](/methods/oedg.md) scheme stay admissible under an explicit CFL condition,
+given admissible values at the nodes of a cell-average decomposition, which a scaling
+limiter enforces ([optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)).
+Disabling the oscillation-eliminating step, the limiter or the source makes the
+Mach 800 and 10000 magnetized jets fail (§4.2.6). [Liu et al. (2025b)](/sources/liu-2025-b.md)
+(Remark 3.1) state the gap for their entropy-stable DG, which is not globally
+divergence-free: provable positivity for an entropy-stable DG scheme "remains an
+open challenge", and the scaling limiter with time-step reduction is used on the jets
+as a heuristic. The details are on
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 
 ## Qualifications
+
+- **Stage conditions checked once.** Duan et al.'s theorem assumes the time-step
+  condition at every Runge–Kutta stage, while the coefficients are evaluated at
+  $t^n$; their implementation halves $\Delta t$ and restarts when a stage violates it
+  (Remark 4.2). Kiechle et al.'s guarantee needs CFL $\le\tfrac14$, half the
+  Lax–Friedrichs limit, and their unlimited runs go up to $0.75$ (§3.2, §4.4.2).
+- **Positivity "for all time" with unprinted ingredients.** Chen & Chen's abstract
+  states that density and pressure "remain positive at every grid point for all
+  time"; the paper prints no CFL number, recalls the convexity argument as a theorem
+  without proof, stating there that pressure is "convex" in the conservative variables
+  where the abstract says "concave" (§2.4), and gives the ghost values by a mirror
+  extrapolation, not a convex combination, without the rules for ghost density and
+  pressure (Eqs. (38)–(40)).
+- **Smooth problems only.** Barsukow et al.'s arbitrary-order 2D Active Flux is not
+  limited; bound preservation is left to future work, with Duan et al.'s limiting
+  named for third order ([Barsukow et al. (2026)](/sources/barsukow-2026.md), §5–6).
 
 - **Proved step bound against the tested CFL number.** Cai, Qiu & Wu
   prove PCP for $\Delta t\le\Delta x/(12a)$ (Thms 3.1, 4.1) and run all
@@ -916,3 +988,9 @@ The details are on
 - [Ching et al. (2025)](/sources/ching-2025.md) — §1; §4, Eqs. (4.1)–(4.3), Lemma 1, Thms 6, 8; §4.7.
 - [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — HAL preprint: §3, Remark 8; §4.3.2.
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — Eq. (1.2); §3, Props. 3.1–3.2, Eq. (3.18); §3.4, Appendix A; Tables 1–2.
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — arXiv v3: §4, Def. 4.1, Eqs. (25)–(26), Props. 4.1–4.2, Thm C.1, Remarks 4.2, 4.5, C.1; Examples 5.2–5.4, 5.8, 5.10, Table 1.
+- [Kiechle, Chudzik & Helzel (2025)](/sources/kiechle-2025.md) — §3.1.1; §3.2; §4.4, §4.4.2.
+- [Liu & Wu (2025)](/sources/liu-2025.md) — arXiv v2: §3, Eq. (36), Thm 1; §4.2.6.
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — Remark 3.1.
+- [Chen & Chen (2026)](/sources/chen-2026.md) — Abstract; §2.4–2.5, Eqs. (27)–(40).
+- [Barsukow et al. (2026)](/sources/barsukow-2026.md) — arXiv v2: §5–6.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Active Flux"
-description: "Active Flux evolves cell averages conservatively with fluxes from point values shared at cell interfaces, giving a globally continuous reconstruction without Riemann solvers; Abgrall and Barsukow extend it to arbitrary order in 1D, Calhoun et al. run the third-order Cartesian version on adaptively refined grids, and Chudzik et al. evolve the point values of 2D systems with bicharacteristic operators."
+description: "Active Flux evolves cell averages conservatively with fluxes from point values shared at cell interfaces, giving a globally continuous reconstruction without Riemann solvers; the page covers arbitrary order in 1D and on 2D Cartesian grids, flux-vector-split point updates, bound-preserving limiting, adaptive refinement and bicharacteristic operators for systems."
 status: established
 aliases: [AF, active point value method, high-order Active Flux, Cartesian Active Flux, AF with evolution-Galerkin operators, PAMPA]
 tags: [finite-volume, reconstruction, characteristic, limiting]
-timestamp: 2026-10-23T15:08:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Active Flux
@@ -127,6 +127,82 @@ reconstruction can self-steepen into a shock within one step (§2.3, Eqs. (32)�
 fix chooses among several characteristic foot points the one of largest speed modulus;
 variants A and C use a switch (Eq. (53)) that degrades accuracy at sonic points (§3.3).
 
+## Generalized Active Flux with flux vector splitting
+
+[Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) (arXiv v3) work with the
+"generalized" (method-of-lines) AF of Abgrall and Barsukow: the averages follow the
+semi-discrete balance above, the point values a finite-difference-like update, both
+advanced with [SSP-RK3](/methods/ssp-runge-kutta.md). Their thesis is that, against the
+earlier view that any stable consistent point-value formula will do, nonlinear problems
+impose further conditions (§2). The update they criticise is the **Jacobian splitting**
+$\frac{d}{dt}u_{i+1/2}=-\big[A^+(u_{i+1/2})D^+_{i+1/2}+A^-(u_{i+1/2})D^-_{i+1/2}\big]$,
+$A^\pm=R\Lambda^\pm L$, with the upwind derivatives of the cell parabolas (Eqs. (6)–(8))
+$$D^+_{i+1/2}=\frac{2u_{i-1/2}-6\bar u_i+4u_{i+1/2}}{\Delta x},\qquad
+D^-_{i+1/2}=\frac{-4u_{i+1/2}+6\bar u_{i+1}-2u_{i+3/2}}{\Delta x}$$
+(page-local $D^\pm$). It has two defects (§2.1, §3.2):
+
+- **Stagnation.** For Burgers' equation with $u_{i-1/2}=2$, $u_{i+1/2}=-1$ at the initial
+  discontinuity both upwind derivatives vanish, the point values freeze and $\bar u_i$
+  grows linearly in time, a spike (Example 5.1). This is the transonic failure recalled
+  above from Abgrall & Barsukow (2023), on the same data; [bound-preserving
+  limiting](/properties/bound-preservation.md) of the average alone does not remove it.
+- **Mesh alignment.** In 2D, on a grid-aligned quasi-one-dimensional Sod problem
+  ($100\times2$ cells), the corner and horizontal-edge values decouple from the
+  vertical-edge values and the averages, and the density deviates strongly between contact
+  and shock (Example 5.7, Figs. 10–11); the authors call the reason "complicated".
+
+The cure is a [flux vector splitting](/methods/flux-vector-splitting.md) of the
+point-value update (§2.2, Eqs. (9)–(11)): with $f=f^++f^-$, the eigenvalues of
+$\partial f^+/\partial u$ non-negative and those of $\partial f^-/\partial u$
+non-positive, $f^\pm$ is evaluated at the two interfaces and at the cell centre, where the
+parabola gives $u_i=(-u_{i-1/2}+6\bar u_i-u_{i+1/2})/4$, and the parabola through these
+three values is differentiated at the interface,
+$$\frac{d}{dt}u_{i+1/2}=-\frac{f^+_{i-1/2}-4f^+_i+3f^+_{i+1/2}}{\Delta x}-\frac{-3f^-_{i+1/2}+4f^-_{i+1}-f^-_{i+3/2}}{\Delta x},$$
+two third-order differences; the continuous reconstruction is kept. Three splittings are
+used: local [Lax–Friedrichs](/methods/lax-friedrichs-flux.md), with $a_{i+1/2}$ the
+largest spectral radius over $u_{i-1/2},u_i,u_{i+1/2},u_{i+1},u_{i+3/2}$ (Eq. (12));
+the upwind splitting $f^\pm=\tfrac12(f\pm\lvert A\rvert u)$, which for the Euler equations
+is Steger–Warming and for linear systems reduces exactly to the Jacobian splitting, so
+there the two methods coincide (§2.2.2); and van Leer–Hänel (§2.2.3). In 2D the corner
+values take the splitting in both directions and the edge values the splitting in the
+normal direction and a central difference along the edge (Eqs. (22)–(23)); the averages
+use Simpson's rule along each edge (Eq. (20)). On smooth Euler tests the Jacobian,
+Lax–Friedrichs and van Leer–Hänel variants reach third order, Steger–Warming about second
+(near-vacuum vortex, Example 5.6; 1D accuracy test, Example D.1), which the authors
+relate to the non-differentiability of its split fluxes (Remark 2.1). Maximal CFL
+numbers, found experimentally, depend on the splitting, e.g. about $0.47$ (Jacobian),
+$0.43$ (Lax–Friedrichs), $0.32$ (Steger–Warming), $0.18$ (van Leer–Hänel) on the 1D
+accuracy test (Example D.1), and are "not related to the BP property" (Remark 5.1). The
+authors judge Lax–Friedrichs splitting the best in CFL number and non-oscillatory
+behaviour for strong discontinuities (Remark 2.2, Conclusion), and do not recommend the
+power-law reconstruction for generalized AF, which oscillates more than their limiting and
+drops the CFL number to $0.1$ (Example D.3).
+
+**Bound preservation.** Duan et al. call an AF method bound preserving if averages *and*
+point values starting in $G$ stay in $G$ (Def. 4.1). The averages are limited by
+[convex limiting](/methods/convex-limiting.md) against a first-order local
+Lax–Friedrichs flux, the point values by a
+[Zhang–Shu-type](/methods/zhang-shu-scaling-limiter.md) blend with a first-order
+Lax–Friedrichs point update on a staggered stencil, and the non-convex cell-centre value
+$u_i$ is scaled toward $\bar u_i$ at each stage (Remarks 4.3–4.4). Limiting the averages
+alone is not enough: on a 2D advection test $[0,1]$ is kept only with both limiters active
+(Example 5.4, Table 1). Proposition 4.2 (2D) and Theorem C.1 (1D) give the maximum
+principle for scalar laws and positive density and pressure for the Euler equations under
+the time-step conditions of the first-order average and point-value schemes, which on
+uniform meshes hold for
+$\Delta t\le\frac14\min\{\Delta x/\lVert a^{(1)}\rVert_\infty,\Delta y/\lVert a^{(2)}\rVert_\infty\}$ in
+2D and $\Delta t\le\Delta x/(2\lVert a\rVert_\infty)$ in 1D (Remarks 4.5,
+C.1; $a^{(d)}$ the spectral radius in direction $d$); details on
+[bound preservation](/properties/bound-preservation.md). A Jameson–Ducros product sensor
+pushes the flux further toward the first-order one behind strong shocks
+([troubled-cell indicators](/definitions/troubled-cell-indicator.md)). With these
+ingredients the scheme runs the LeBlanc tube, the Woodward–Colella blast waves and the
+Sedov problem, which fail without limiting (Examples 5.2, 5.3, 5.8), and Mach 80 and
+2000 jets (Example 5.10), and on the forward-facing step at the same mesh resolves the Kelvin–Helmholtz
+roll-ups better than $\mathbb P^2$ RKDG with the TVB limiter, with fewer degrees of
+freedom (Example 5.9); on the double Mach reflection the roll-ups are comparable, with
+"4 versus 6" degrees of freedom per cell (Example D.7).
+
 ## Two-dimensional Cartesian Active Flux
 
 [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) recall the fully discrete
@@ -171,7 +247,7 @@ recalled by Abgrall & Barsukow ($\nu=1$ for the original scheme, $0.77$ for the 
 RK version) belong to different schemes (two-dimensional fully discrete against
 one-dimensional); they are not competing values for one method. The same holds for the limits
 $0.279$ (EG2) and $0.154$ (EG4) of Chudzik et al. below, which belong to other point-value
-operators.
+operators, and for the semi-discrete orders 3–7 of Barsukow et al. below.
 
 Calhoun et al. also recall Barsukow's result that the Cartesian AF for acoustics with the exact
 evolution operator is stationarity preserving: it adds no dissipation to discrete
@@ -185,6 +261,52 @@ integrates over a disc of radius $ct$ and needs no differentiation across interf
 They write the stability condition of the exact operators as
 $\max(c\Delta t/\Delta x,c\Delta t/\Delta y)\le\tfrac12$, which their earlier work showed is
 sufficient for linear stability (§2.1, Fig. 3).
+
+## Arbitrary order on Cartesian grids
+
+[Barsukow, Chandrashekar, Klingenberg & Lechner (2026)](/sources/barsukow-2026.md)
+(arXiv v2) build a semi-discrete generalized AF of arbitrary order $N+1$ ($N$ the degree of
+the reconstruction) on 2D Cartesian grids, as a hybrid finite element–finite volume
+method in the sense of variant (C) above (§3, Def. 1). The degrees of freedom of a cell
+are point values at its four nodes and at $N-1$ points on each edge, shared with the
+neighbours, so that the reconstruction is a unique degree-$N$ polynomial on each edge and
+globally $C^0$, plus moments $\frac{(k+1)2^k(l+1)2^l}{\Delta x\Delta y}\int_{I_{ij}}\hat x^k\hat y^lu\,dx$
+of the cell ($\hat x$, $\hat y$ the reference coordinates in $[-\tfrac12,\tfrac12]$,
+page-local), the average always among them (Eqs. (7)–(12)). Two reconstruction spaces are
+used (§3.3):
+
+- tensor-like $\mathbb Q^N$, with $(N-1)^2$ moments, which reduces to the biquadratic
+  third-order Cartesian AF above for $N=2$;
+- a minimal space, the serendipity space $\mathbb P^N\oplus\mathrm{span}\{\hat x^N\hat y,\hat x\hat y^N\}$
+  for $N\ge4$ (with $\hat x^2\hat y^2$ added for $N=2,3$), with the moments against
+  $\mathbb P^{N-4}$; its dimension is $8+1$, $12+1$, $17$, $23$, $30$ for orders $3$–$7$
+  (Table 2). Unisolvence was checked with Mathematica up to order 7, while $\mathbb P^N$
+  alone is not unisolvent (checked for $N=5,6$; §3.3.2).
+
+Point values are updated by the Jacobian splitting with one-sided derivatives of the
+upwind cell's reconstruction (tangential derivatives on edges are continuous and not
+upwinded), moments by the weak form with Gauss or Gauss–Lobatto quadrature on the
+reconstruction (Eqs. (30)–(36), Def. 2). **The edge points must be Gauss–Legendre points.**
+A numerical eigenvalue analysis of the semi-discrete operator for linear advection
+(orders 3–7, periodic $3^2$, $5^2$, $10^2$ grids, angles in $[0,\pi/2]$ in steps
+$\pi/64$) finds non-positive real parts, with semisimple eigenvalues on the imaginary
+axis up to tolerances $5\times10^{-13}$–$5\times10^{-12}$, only for Gauss edge points;
+uniform and Gauss–Lobatto points give eigenvalues with positive real part at orders 4–7
+(§4.1). This parallels Abgrall & Barsukow's 1D finding that interior points must move
+toward the interfaces (variant B above). With SSP-RK3 the maximal CFL numbers of the
+minimal method, defined at equal velocity components $a_x=a_y$ (Eq. (42)), are $0.27$,
+$0.20$, $0.17$, $0.12$, $0.088$ for orders 3–7 (Table 3); the stable region in the plane
+of the directional CFL numbers $(a_x\Delta t/\Delta x,\,a_y\Delta t/\Delta y)$ is close to a disc at orders 3–4 and close to a square at order 5
+(Eqs. (43)–(46), Fig. 8). The tensor-like method has smaller but less
+direction-dependent limits (Fig. 9). On a Gaussian advected diagonally, with the CFL
+number reduced so that the time error does not dominate, the final $L^1$ orders of the
+averages are $2.98$, $4.02$, $4.98$, $6.01$, $7.00$ (Table 4); a linear-acoustics sine wave
+([linear acoustics tests](/benchmarks/linear-acoustics-tests.md)) and a Mach $0.1$
+[Gresho vortex](/benchmarks/gresho-vortex.md) are compared qualitatively (§5.2–5.3). Only
+smooth problems are run; limiting is left to future work, with Duan et al. above named
+for third order (§5, §6). The authors recall that the multiple Runge–Kutta stages widen
+the effective stencil of generalized AF, which Roe linked to a reduced maximal CFL
+number, against the one-stage classical AF (§1).
 
 ## Bicharacteristic evolution operators for systems
 
@@ -339,6 +461,23 @@ not balanced by coarse fluxes: constant data on levels 3–4 have error $10^{-13
 subcycling against about $10^{-16}$ without (§4.3). See
 [free-stream preservation](/properties/free-stream-preservation.md).
 
+## Positivity-preserving flux limiting of the fully discrete method
+
+[Kiechle, Chudzik & Helzel (2025)](/sources/kiechle-2025.md) use the fully discrete
+Cartesian AF above (Simpson fluxes in space and time, point values by backward
+characteristic tracing with classical RK4) for variable-coefficient advection in
+divergence-free velocity fields, a guiding-centre model and the 1+1-dimensional
+Vlasov–Poisson system (§2–4). The earlier bound-preserving reconstruction of Chudzik,
+Helzel & Kerkmann (2021), discontinuous across interfaces, reduces the oscillations of the unlimited scheme but is
+not exactly bound preserving, because Simpson's rule is not exact for piecewise quadratic
+functions (§3.1.1). Their limiter instead blends each interface flux with a global
+Lax–Friedrichs flux, the coefficient chosen from a four-way convex split of the 2D update;
+nonnegative averages are guaranteed for CFL numbers up to $\tfrac14$
+([positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)).
+On the Vlasov–Poisson two-stream instability the limited and unlimited schemes both
+converge with order $2.97$ (Table 1). Kiechle et al. compare it with the PAMPA flux limiter
+below, which preserves both bounds (Remark 3.2).
+
 ## PAMPA: bound preservation by blending
 
 [Abgrall et al. (2026)](/sources/abgrall-2026.md) work with the
@@ -355,8 +494,9 @@ mixes the point value and the adjacent average. Both updates are then convex
 combinations of bar-state-type intermediate states, and closed-form coefficients
 make the scheme bound preserving for scalar laws and positivity preserving for
 the Euler equations (Props. 3.1–3.2, §3.4). They state that their scheme does not
-show the transonic difficulties met by Duan, Barsukow & Klingenberg's generalized
-Active Flux, which needed careful flux vector splitting, and that it
+show the transonic difficulties met by
+[Duan, Barsukow & Klingenberg's](/sources/duan-2025.md) generalized
+Active Flux, which needed careful flux vector splitting (section above), and that it
 needs no explicit reconstruction inside the cell (§1, Ex. 2, Conclusions). The
 Burgers self-steepening shock of the transonic discussion above is their
 Example 2 ([Burgers tests](/benchmarks/burgers-equation-tests.md)).
@@ -364,7 +504,29 @@ Example 2 ([Burgers tests](/benchmarks/burgers-equation-tests.md)).
 ## Qualifications
 
 - Abgrall & Barsukow's arbitrary-order variants are one-dimensional; multi-dimensional
-  extensions are deferred (§1, §7). The Cartesian AMR method of Calhoun et al. is third order.
+  extensions are deferred (§1, §7). Barsukow et al. (2026) supply the 2D Cartesian
+  extension for smooth problems only, with stability shown by numerical spectra on small
+  periodic grids up to order 7 and unisolvence checked by computer algebra up to order 7,
+  without a proof for general $N$ (§4.1, §3.3.2). The Cartesian AMR method of Calhoun et
+  al. is third order.
+- The link of AF to van Leer's 1977 paper "Towards the ultimate conservative difference
+  scheme. IV" is stated with different strength: Kiechle et al. call AF "in its simplest
+  form for one-dimensional linear advection" "equivalent with van Leer's scheme V"
+  presented there (§1), Barsukow et al. say AF was "inspired by van Leer's scheme V" (§1),
+  and Duan et al. that it "was inspired by" that paper, without naming a scheme
+  (Introduction). All three cite the same paper; no source disputes another.
+- Duan et al.'s bound-preservation theorem assumes the time-step condition at every
+  Runge–Kutta stage, while the limiter is evaluated at $t^n$; their implementation halves
+  $\Delta t$ and restarts the step when a stage violates it (Remark 4.2). Their van
+  Leer–Hänel splitting is printed in a single form, with no case distinction in the Mach
+  number, and the paper does not discuss $\lvert M\rvert\ge1$; for $M>1$ the printed mass
+  component of $f^-$, $-\tfrac14\rho c(M-1)^2$, is nonzero, so the printed form alone does
+  not give $f^-=0$ in supersonic flow *(compiler check, not in the sources)*.
+- Barsukow et al. print the exact acoustics solution with $v=\tfrac1c\sin(2\pi ct)(\cos2\pi x,\cos2\pi y)$
+  for $p=\tfrac1c\cos(2\pi ct)(\sin2\pi x+\sin2\pi y)$, which does not satisfy
+  $\partial_tp+c\nabla\cdot v=0$ (their system, with $\partial_tv+c\nabla p=0$); a minus sign
+  on $v$, or on $p$ as Calhoun et al. (2023) print it (Eq. (31)), is needed *(compiler
+  check, not in the sources)*. The comparison at $t=5$, where $v=0$, is unaffected (§5.2).
 - Calhoun et al.'s Table 4 (acoustics, arXiv v2) prints observed orders for the AMR rows that
   do not follow from its own errors: $\log_2(1.64\times10^{-4}/2.06\times10^{-5})=2.99$ for $p$
   and $\log_2(3.33\times10^{-5}/3.87\times10^{-6})=3.11$ for $v$, against the printed $3.1045$ and
@@ -402,4 +564,7 @@ Example 2 ([Burgers tests](/benchmarks/burgers-equation-tests.md)).
 - [Abgrall & Barsukow (2023)](/sources/abgrall-2023.md) — §§1–7, Defs. 2.1, 2.2, 4.1, 5.1, Thms. 2.1, 2.2, 4.1, 4.2, Eqs. (11), (23)–(24), (37), (43), (47)–(49), (53), (100)–(115), Tables 1–2, Figs. 16–28 (author preprint).
 - [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — §§1–4, Eqs. (1)–(15), (25)–(28), Remark 4.1, Thm. 4.2, Cor. 4.3, Tables 1–4, Figs. 3–6, 12, 16 (arXiv v2).
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §1; §2, Eqs. (2.6)–(2.9); §3, Props. 3.1–3.2; §3.4; Ex. 2.
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — arXiv v3: §§2–4, Eqs. (6)–(12), (20)–(24), Def. 4.1, Prop. 4.2, Thm. C.1, Remarks 2.1–2.2, 4.2–4.5, 5.1, C.1; Examples 5.1–5.10, D.1, D.3, D.7; Table 1.
+- [Barsukow et al. (2026)](/sources/barsukow-2026.md) — arXiv v2: §1; §3, Eqs. (7)–(36), Defs. 1–2, Table 2; §4.1–4.2, Eqs. (42)–(46), Table 3, Figs. 8–9; §5, Table 4; §6.
+- [Kiechle, Chudzik & Helzel (2025)](/sources/kiechle-2025.md) — §1; §2, Eqs. (2)–(6); §3.1.1; §3.2, Remark 3.2; §4.4.1, Table 1.
 - [Chudzik, Helzel & Lukáčová-Medvid'ová (2024)](/sources/chudzik-2024.md) — §§1–7, Eqs. (1), (4), (6), (7), (10)–(14), (17)–(20), (28), (31)–(33), (38), Thms. 3.1, 4.1, Remarks 4.2, 6.1, Algorithm 1, Tables 1–9, Examples 5.1–5.2, 6.2–6.3, 7.1–7.4, Appendix A.

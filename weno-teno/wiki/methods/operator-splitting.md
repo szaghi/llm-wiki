@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Operator splitting for stiff source terms"
-description: "Operator splitting advances the transport part of a balance law with an explicit shock-capturing step and the source separately; for stiff chemistry the source step is a constant-volume reactor per cell, for two-phase flow with phase change a sequence of algebraic infinite-rate relaxations, while for a singular Dirac-delta source splitting is never well-balanced."
+description: "Operator splitting advances the transport part of a balance law with an explicit shock-capturing step and a stiff term separately: chemistry as a constant-volume reactor per cell, two-phase relaxation as algebraic infinite-rate projections, bubble sources by Strang splitting, DG damping as a closed-form implicit stage; for a Dirac-delta source splitting is never well-balanced."
 status: established
 aliases: [Strang splitting, fractional-step method, convection–chemistry splitting, constant-volume reactor step, relaxation splitting, infinite-rate relaxation]
 tags: [finite-volume, software, gpu, reacting-flows, stiff-source, well-balanced, multiphase]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # Operator splitting for stiff source terms
@@ -59,6 +59,31 @@ serves the Redlich–Kwong and Noble–Abel real-gas laws without modification (
   then the update of the primitive variables from the conserved ones, then, for reactive
   runs, the chemistry correction. The paper does not state whether the sequence is
   symmetrized, nor its order.
+- **Strang splitting with an adaptive embedded Runge–Kutta pair.** In [MFC](/software/mfc.md) 5.0
+  ([Wilfong et al. (2026)](/sources/wilfong-2026.md), §4.2.3) the stiff sub-grid bubble source is
+  advanced for $\Delta t/2$, the transport for $\Delta t$, and the source again for $\Delta t/2$. The
+  source sub-steps use the three-stage third-order TVD Runge–Kutta stages $k_1,k_2,k_3$ (page-local)
+  with the embedded second-order solution
+  $\hat u^{n+1}=u^n+\tfrac h8(3k_1+3k_2+2k_3)$ against $u^{n+1}=u^n+\tfrac h6(k_1+k_2+4k_3)$, so that the
+  error estimate is $-\tfrac5{24}h(k_1+k_2-2k_3)$ for the sub-step $h$ (page-local). *(compiler check, not
+  in the sources: $\tfrac16-\tfrac38=-\tfrac5{24}$ and $\tfrac46-\tfrac28=\tfrac5{12}$, consistent with the
+  printed estimate.)* On a homogeneous bubble collapse with $p_\infty/p_{\mathrm b}=1427$ (page-local
+  pressure ratio) the split solver runs at $\Delta t=0.8$ µs, where the unsplit scheme fails with a
+  negative bubble radius and needs $\Delta t=0.008$ µs (Fig. 13). The paper calls the split solver
+  second-order accurate in time (§7) without a temporal convergence test, and prints the governing
+  equation as $\partial_tu=\nabla\cdot f(u)+s(u)$ while the transport sub-step carries
+  $-\nabla\cdot f$.
+- **An implicit damping step inside each Runge–Kutta stage.** In the entropy-stable
+  oscillation-free DG scheme for MHD of [Liu et al. (2025b)](/sources/liu-2025-b.md) (§3.3,
+  Eqs. (3.20)–(3.21)) the stiff term is the damping $\frac2h\sigma(u_h)(u_h-\bar u_h)$ (page-local
+  coefficient $\sigma$ and element size $h$). Treated explicitly within third-order TVD Runge–Kutta
+  it "may lead to restricted CFL conditions", so every forward-Euler stage is split into the
+  explicit DG step $\tilde u$ and an implicit damping step solved in closed form,
+  $u=\frac1{1+\alpha_\sigma}\tilde u+\frac{\alpha_\sigma}{1+\alpha_\sigma}\bar{\tilde u}$ with
+  $\alpha_\sigma=\frac{2\Delta t}h\sigma(\tilde u)$ (page-local $\alpha_\sigma$; the paper's time step $\tau$), which keeps the cell
+  mean and needs no iteration. The splitting is at most first order, but does not degrade the
+  accuracy because $\sigma$ is of high order in smooth regions, the proof for linear scalar laws
+  being referred to the [OEDG](/methods/oedg.md) paper; the CFL gain is not quantified.
 
 ## Two-phase relaxation: algebraic source steps
 
@@ -79,7 +104,10 @@ $$u^{n+1}=\mathcal R_{\mathrm p}\mathcal H^{(\Delta t)}u^n,\quad
 \mathcal R_{\mathrm{pTg}}\mathcal R_{\mathrm{pT}}\mathcal R_{\mathrm p}\mathcal H^{(\Delta t)}u^n;$$
 
 only the last two reach Gibbs equilibrium, i.e. model phase change. Mechanical relaxation comes
-first, on the assumption that it is the fastest process.
+first, on the assumption that it is the fastest process. MFC 5.0 adds the same infinite-rate
+pT and pTg relaxations for $N$ fluids as a fractional step, solved by Newton's method
+([Wilfong et al. (2026)](/sources/wilfong-2026.md), §4.1.3;
+[six-equation model](/definitions/six-equation-model.md)).
 
 - **Pressure equilibrium** (App. B): at constant $\phi_k\rho_k$, $\rho v$ and total energy, with
   interface pressure equal to the relaxed pressure $p^*$, the stiffened-gas law gives a quadratic
@@ -173,8 +201,10 @@ Neither source isolates the splitting error.
 ## Qualifications
 
 - No source measures the order of the split scheme or compares it with an unsplit
-  (IMEX) integration, for stiff chemistry or, in Wakimura et al., for relaxation. The one comparison with an unsplit scheme, Yu et al.'s,
-  concerns a singular source and a stationary equilibrium, not a stiff one.
+  (IMEX) integration, for stiff chemistry or, in Wakimura et al., for relaxation. The
+  comparisons with an unsplit scheme are Yu et al.'s, which concerns a singular source and a
+  stationary equilibrium, and Wilfong et al.'s, which compares admissible time steps on one
+  bubble collapse, not accuracy.
 - Bielawski et al. print the reactor temperature equation (Eq. (12)) with
   $\sum_kY_k/c_{v,k}$ in place of $1/(\rho\sum_kY_kc_{v,k})$ and without the factor $1/\rho$
   that the units require; they replace that equation by a Newton solve in practice, so the
@@ -190,3 +220,5 @@ Neither source isolates the splitting error.
 - [Yu, Liu & Feng (2023)](/sources/yu-2023.md) — §1, §2.1, §3.1 (Eqs. (3.5)–(3.9), Thm. 3.1), §5 (Test 1, Fig. 2) (arXiv v1).
 - [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §3.2 (author preprint).
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §2.4 (Eqs. (9)–(11)), §3 (Eqs. (17)–(20), (45)), §4.1, §4.4, Apps. B–E.
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §4.1.3, §4.2.3 (Fig. 13), §7: Strang splitting with an embedded Runge–Kutta pair and infinite-rate relaxation in MFC 5.0.
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.3 (Eqs. (3.20)–(3.21)): stage-wise implicit damping step.

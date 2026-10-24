@@ -5,7 +5,7 @@ description: "The Zhang–Shu limiter scales a high-order polynomial linearly to
 status: established
 aliases: [scaling limiter, bound-preserving limiter, positivity-preserving limiter, maximum-principle-satisfying limiter, BP limiter, simplified BP limiter, PP limiter]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T14:55:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Zhang–Shu scaling limiter
@@ -227,6 +227,23 @@ scaling acting on the result of the previous one, with the density first:
   identities $\Lambda u\equiv c$ (Thm 2.13, proof omitted), which is how it keeps
   uniform velocity and pressure at a material interface (Thm 2.14;
   [OEDG](/methods/oedg.md)).
+- **Ideal MHD with a locally divergence-free field** ([Liu & Wu (2025)](/sources/liu-2025.md),
+  §3.4, Eqs. (54)–(55), arXiv v2). After each OE step of their
+  [OEDG](/methods/oedg.md) scheme, at the nodes of the optimal cell-average
+  decomposition: first the density, $\theta_1=\min\{1,(\bar\rho-\varepsilon_1)/(\bar\rho-\min\rho)\}$,
+  then the whole state with the same form for the internal energy
+  $E-\tfrac12(\lvert\rho v\rvert^2/\rho+\lvert B\rvert^2)$, floors
+  $\min\{10^{-13},\cdot\}$ of the cell-average values. A scalar scaling of the
+  magnetic field toward its constant mean keeps it in the locally divergence-free
+  space, which the authors note, as Ding & Wu (2024a) do for their discrete
+  divergence; the limiter supplies the node hypotheses of their positivity theorem
+  ([optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)).
+- **Entropy-stable DG for ideal MHD, heuristic use** ([Liu et al. (2025b)](/sources/liu-2025-b.md),
+  Remark 3.1, Ex. 10). Their entropy-stable oscillation-free DG is not provably
+  positivity preserving, because positivity for ideal MHD is tied to a discrete
+  divergence-free condition their scheme does not satisfy; they apply the scaling
+  limiter with an adaptive reduction of the time step only on the Mach 800 and
+  Mach 10000 jets, at CFL $0.2/(2N+1)$, as a workaround.
 
 **Iterated halving for the pressure.** In the GPU discontinuous Galerkin
 code [TENET](/software/tenet.md), [Cernetic et al. (2023)](/sources/cernetic-2023.md)
@@ -292,6 +309,24 @@ the linear sufficient condition $\big(\max\{0,A\}+|B|\big)\alpha\le Q$,
 which gives the factor in closed form (page-local $A$, $B$, $Q$; their
 $\alpha$ = 1 is the high-order flux; see
 [convex limiting](/methods/convex-limiting.md)).
+
+**Point values of Active Flux.** [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md)
+(arXiv v3, §4.2, Eqs. (39)–(44), Remarks 4.3–4.4) limit the interface point values
+of a generalized [Active Flux](/methods/active-flux.md) scheme the same way, toward
+a first-order target rather than a mean: a first-order Lax–Friedrichs update of each
+point value on a staggered stencil of neighbouring point values, admissible under the
+six-term time-step condition of their Lemma 4.2, is blended with the high-order
+forward-Euler value, $u^{\mathrm{Lim}}_\sigma=\theta_\sigma u^{\mathrm H}_\sigma+(1-\theta_\sigma)u^{\mathrm L}_\sigma$
+($\sigma$ a point-value location, page-local). For scalar laws
+$\theta_\sigma=\min\{1,(u^{\mathrm L}_\sigma-u_{\min})/(u^{\mathrm L}_\sigma-u^{\mathrm H}_\sigma),(u_{\max}-u^{\mathrm L}_\sigma)/(u^{\mathrm H}_\sigma-u^{\mathrm L}_\sigma)\}$
+(Eq. (43)); for Euler the density first, then the pressure by the ratio
+$(p(u^{\mathrm L})-\varepsilon_p)/(p(u^{\mathrm L})-p(u^{\mathrm{Lim},*}))$, which by
+concavity of $p$ and Jensen's inequality needs no quadratic solve (Eq. (44)). The
+cell-centre value $(-u_{i-1/2}+6\bar u_i-u_{i+1/2})/4$, not a convex combination,
+is in addition scaled toward $\bar u_i$ at each stage for Euler (Remarks 4.3–4.4).
+The blend acts on point values, not on a polynomial interpolating them, so it is not
+the operation whose incompatibility with prescribed interface values is recalled under
+Qualifications *(compiler check, not in the sources)*.
 
 ## Point sets and the simplified limiter
 
@@ -451,7 +486,9 @@ in practice and is more convenient for FD schemes" (§1, Remark 2.3).
   scaling limiter cannot be used in [Active Flux](/methods/active-flux.md),
   whose reconstruction must interpolate given interface point values; they
   use power-law limiters that keep continuity instead (discussion after
-  Thm 2.2).
+  Thm 2.2). Duan et al. (2025) blend the point values with a low-order point
+  update instead of scaling a polynomial (above), so the two statements concern
+  different operations *(compiler check, not in the sources)*.
 - **Missing caps in two printings.** The arXiv v1 of Wu & Shu (2023) prints
   the density factor of App. B as $(\bar\rho-\varepsilon_1)/(\bar\rho-\min\rho)$
   without $\min\{1,\cdot\}$ (and the mass-fraction factor without a cap),
@@ -504,3 +541,6 @@ in practice and is more convenient for FD schemes" (§1, Remark 2.3).
 - [Ching et al. (2025)](/sources/ching-2025.md) — §4.3 (limiting procedure); Remark 9.
 - [Ding & Wu (2024a)](/sources/ding-2024.md) — arXiv v1: §2.4, Eqs. (37)–(39), Thm 2.9; §3 intro; §4, Table 4.1, Ex. 4.4–4.5.
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Eqs. (2.39)–(2.40), (3.33)–(3.35); Thms 2.13–2.14.
+- [Liu & Wu (2025)](/sources/liu-2025.md) — arXiv v2: §3.4, Eqs. (54)–(55); §3.5.
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — Remark 3.1; Ex. 10.
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — arXiv v3: §4.2, Eqs. (39)–(44), Lemma 4.2, Remarks 4.3–4.4.

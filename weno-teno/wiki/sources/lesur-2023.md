@@ -138,7 +138,7 @@ were found.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-22), cited further in chunks 5–9 (2026-10-22/23). This source is cited on:
+Chunk 4 (2026-10-22), cited further in chunks 5–10 (2026-10-22/23). This source is cited on:
 
 * [Block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)
 * [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md)

@@ -5,7 +5,7 @@ description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer b
 status: established
 aliases: [magnetic blast wave, MHD blast, Balsara–Spicer blast wave, MHD rotor, second rotor problem, weak magnetic blast, cylindrical explosion, resistive relativistic rotor]
 tags: [benchmark, mhd, positivity, entropy-stable]
-timestamp: 2026-10-23T15:21:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # MHD blast wave and rotor
@@ -39,7 +39,7 @@ pressure, produces no negative pressure, and its density is
 "significantly smoother" than earlier published results (Fig. 13).
 
 **Discretely divergence-free positivity preservation.** [Ding & Wu (2024a)](/sources/ding-2024.md)
-Ex. 4.4 (arXiv v1) run the Balsara–Spicer data as Liu et al. ($\gamma=1.4$,
+Ex. 4.4 (arXiv v1) run the Balsara–Spicer data as Liu et al. (2021) ($\gamma=1.4$,
 $[-0.5,0.5]^2$, $B_1=100/\sqrt{4\pi}$, $p=10^3$ for $r\le0.1$ and $0.1$
 otherwise) on $200^2$ cells; the final time is not stated in the text.
 Their second-order (van Albada) and fifth-order (finite-volume WENO-Z)
@@ -53,6 +53,35 @@ limiter and their interface-jump discretization of the Godunov–Powell
 source together; see
 [bound preservation](/properties/bound-preservation.md) and
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
+
+**Entropy-stable DG without a limiter.** [Liu et al. (2025b)](/sources/liu-2025-b.md)
+Ex. 8 run the Balsara–Spicer data ($\rho=1$, $v=0$,
+$B=(100/\sqrt{4\pi},0,0)$, $p=1000$ for $r\le0.1$ and $0.1$ otherwise,
+$\gamma=1.4$, outgoing boundaries, $[-0.5,0.5]^2$) on $256^2$ cells. Their
+$\mathbb P^2$ entropy-stable nodal DG with an oscillation-eliminating
+damping term ([OEDG](/methods/oedg.md)-type, split from the TVD-RK3 stage
+and solved in closed form), the Chandrashekar–Klingenberg
+entropy-conservative volume flux and a Godunov–Powell source, at CFL
+$0.6/(2N+1)=0.12$, captures the blast "without resorting to artificial
+nonlinear limiters", with density and pressure positive near the shock
+front (Fig. 9). Positivity is observed, not proved: the authors call a
+provably positivity-preserving entropy-stable DG scheme for ideal MHD
+"an open challenge" (Remark 3.1).
+
+**Globally divergence-free entropy-stable nodal DG.** [Liu et al. (2025c)](/sources/liu-2025-c.md)
+Ex. 5.6 run the Balsara–Spicer blast (data not reprinted; plasma beta
+"about $2.51\times10^{-4}$") on $200^2$ cells to $T=0.01$, with $\gamma=5/3$
+stated for the whole paper and not restated per test. With their
+entropy-non-increasing scaling limiter, of strength $c_0$, on (their
+remark: $c_0\ge0.08$ "appears adequate", a smaller value may fail) and
+no positivity limiter, the pressure stays non-negative, with a minimum
+of about $0.0952$ at the final time, and the conservation errors of
+mass, momentum and $B$ stay at round-off while the total energy is
+not conserved by design, because the energy is corrected after the
+reconstruction of $B$ to keep the pressure (Figs. 13–14). Against the
+results of an earlier globally divergence-free DG of Fu et al., as they
+cite it, they note that their pressure stays non-negative "even without
+a positivity limiter".
 
 **One-step HLL-GRP.** [Liu, Feng & Wang (2023a)](/sources/liu-2023.md)
 §4.4 run the same data (same domain, outgoing boundaries, $\gamma=1.4$,
@@ -71,7 +100,7 @@ beta is lowest (Figs. 8–11).
 §4.1.6 run the Balsara–Spicer data ($\rho=1$, $v=0$,
 $B=(100/\sqrt{4\pi},0,0)$, $p=1000$ for $r\le0.1$ and $0.1$ otherwise) on
 $[-0.5,0.5]^2$ with $1000^2$ cells to $t=0.01$, with their default
-$\gamma=5/3$ (§4) instead of the $1.4$ of Liu et al., as a strong-shock
+$\gamma=5/3$ (§4) instead of the $1.4$ of Liu et al. (2021), as a strong-shock
 check of their cell-centred
 [semi-implicit all-Mach scheme](/methods/semi-implicit-all-mach-scheme.md)
 with MUSCL–Hancock advective reconstruction and staggered
@@ -126,6 +155,15 @@ the results agree with the cited CESE runs (Figs. 16–20). In this
 blast $2p/\lvert B\rvert^2=0.2$ in the ambient medium
 *(compiler check, not in the sources)*, three orders of magnitude above
 the Balsara–Spicer value.
+
+[Liu & Wu (2025)](/sources/liu-2025.md) §4.2.5 (arXiv v2) run a 2D slice
+of this weakly magnetized blast: $\rho=1$, $v=0$,
+$B=(1/\sqrt2,1/\sqrt2,0)$, $p=10$ within $0.1$ of $(1.5,0)$ and $p=0.1$
+outside, on $[1,2]\times[-0.5,0.5]$ with Dirichlet boundaries,
+$\gamma=5/3$, $400^2$ cells, $t=0.2$; the ambient $\beta_{\mathrm p}$ is
+again $0.2$ *(compiler check, not in the sources)*. Their $\mathbb P^2$
+positivity-preserving, locally divergence-free OEDG keeps the symmetry
+without oscillations.
 
 [Berta et al. (2024)](/sources/berta-2024.md) §5.7, Table 3 (arXiv v4)
 run three 3D blasts on $192^3$ zones in a cube of side $L$ centred at
@@ -290,6 +328,21 @@ overshoots of the third-order scheme in $B_1$ and $B_2$ slices
 against the second-order $600^2$ one as showing "the superiority of
 higher-order methods".
 
+Liu & Wu (2025) §4.2.3 run the second rotor with the same data
+($\gamma=5/3$, $B=(2.5/\sqrt{4\pi},0,0)$, $p=0.5$, disk speed 1 at
+$r_0=0.1$, taper to $r_1=0.115$), again with periodic boundaries as
+printed, to $t=0.295$ on $200^2$ and $400^2$ cells. Their locally
+divergence-free, positivity-preserving OEDG shows no distortion of the
+central Mach number, which they take as effective divergence control, and
+no overshoots in the $B_1$ slices at $y=0.05,0.95$ or the $B_2$ slices at
+$x=0.38,0.62$, where they locate the overshoots of Liu et al. (2021)'s
+third-order finite-volume scheme (Figs. 9–11). Liu et al. (2025c) Ex.
+5.5 run the rotor in Tóth's setup to $T=0.295$ (data not reprinted) with
+their scaling limiter on; the central Mach number shows no
+divergence-induced distortion on several meshes, and on $400^2$ the
+scheme conserves momentum and $B$, dissipates entropy and keeps the
+divergence at round-off (Figs. 10–12).
+
 Ding & Wu (2024a) Ex. 4.3 run the second rotor with the same
 $\gamma=5/3$, $B=(2.5/\sqrt{4\pi},0,0)$, $p=0.5$ and disk speed 1 at
 $r=0.1$, taper to $r=0.115$, on $[0,1]^2$ with outflow boundaries
@@ -307,7 +360,7 @@ kinematics (disk of density 10 rotating with $v=(5-10y,\ 10x-5)$, edge speed
 $1$ at $r=0.1$, Tóth's taper $(23-200r)/3$ up to $r=0.115$) but $p=1$,
 $B=(2.5/\sqrt{4\pi},0,0)$ and their default $\gamma=5/3$, on $[0,1]^2$ with
 $800^2$ cells to $t=0.25$; the plasma beta is $8\pi/6.25\approx4.0$
-*(compiler check, not in the sources)*, twice that of Liu et al.'s second
+*(compiler check, not in the sources)*, twice that of Liu et al. (2021)'s second
 rotor. Both of their constrained-transport variants, staggered
 (Gardiner–Stone adapted) and unstaggered (vector potential), agree with
 published results and keep the $L_2$ norm of the divergence at machine
@@ -352,6 +405,16 @@ $p_h\in[0.0386,\,1.93]$, Mach number up to 4.82 and magnetic pressure
 $\tfrac12\lvert B_h\rvert^2\in[0.0551,\,2.30]$, and captures circular
 Mach contours (Fig. 7). The method has no positivity guarantee; they
 leave invariant-domain preservation out of scope.
+
+Liu et al. (2025b) Ex. 6 run the first rotor in the form they attribute
+to Balsara & Spicer, modified as Tóth: $\rho=10$ and
+$v=\tfrac{u_0}{r_0}(-(y-0.5),\ x-0.5)$ for $r<r_0$, the taper
+$\rho=1+9\varphi$ to $r_1$, ambient $\rho=1$, $v=0$; $B=(5/\sqrt{4\pi},0,0)$,
+$p=1$, $u_0=2$, $r_0=0.1$, $r_1=0.115$, $\gamma=1.4$, on $[0,1]^2$ with
+periodic boundaries, to $T=0.15$; the disk data are Dzanic et al.'s.
+Their entropy-stable OEDG-type nodal DG shows no distortion of the
+central Mach number, which they attribute to entropy stability, and keeps
+density and pressure positive without a positivity limiter (Fig. 7).
 
 ### Relativistic rotor
 
@@ -437,6 +500,10 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
   unstable for resistivity $\lesssim10^{-4}$ (charged vortex, §4.2),
   failure at $10^{-6}$ (rotor, §4.3) and SSP3(4,3,3) "more robust" for
   $\lesssim10^{-5}$ (§5).
+- Liu et al. (2025b) give the blast's final time as $T=0.01$ in the text
+  and $T=0.6$ in the Fig. 9 caption; the Balsara–Spicer runs of the other
+  sources end at $0.01$. Liu et al. (2025c)'s cells carry $\mathbb Q^{k+1}$
+  fields on $k+2$ Gauss–Lobatto points with their $k=2$ by default.
 - The blast-wave comparison with earlier results is visual, against
   figures of other papers; so are the rotor runs of Dao & Nazarov and
   Lesur et al.
@@ -464,3 +531,6 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
 - [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — §5.3, §5.6, Eq. (99), Figs. 14–15, 22 (arXiv v3).
 - [Mignone et al. (2024)](/sources/mignone-2024.md) — §§4.3–4.4, §5, Figs. 4–5.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §5.7, Eq. (55), Table 3, Figs. 11–13 (arXiv v4).
+- [Liu & Wu (2025)](/sources/liu-2025.md) — §§4.2.3, 4.2.5, Figs. 9–11 (arXiv v2).
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — Exs. 6, 8, Remark 3.1, Figs. 7, 9.
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — Exs. 5.5–5.6, Figs. 10–14.

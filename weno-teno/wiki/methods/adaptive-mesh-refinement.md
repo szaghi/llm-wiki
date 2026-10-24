@@ -5,7 +5,7 @@ description: "Hierarchical h-refinement of Cartesian or mapped meshes in nested 
 status: established
 aliases: [AMR, SAMR, block-structured AMR, structured adaptive mesh refinement, patch-based AMR, tree-based AMR, quadtree AMR, octree AMR]
 tags: [amr, finite-volume, finite-difference, software, gpu, mhd]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:43:00Z
 ---
 
 # Block-structured adaptive mesh refinement
@@ -57,6 +57,13 @@ in ALPACA, whose block-based multiresolution adapts the mesh by Harten's
 wavelet analysis of the cell averages and keeps shocks and interfaces on
 the finest level; their "effective resolution" is that finest level
 (§2.2).
+[Liang & Fu (2026)](/sources/liang-2026.md) (§3.1) use the same kind of
+cell-average multiresolution (after Harten, Bihari & Harten, as recalled)
+on the pyramid data structure of Han, Hu & Adams: blocks of 4 cells in 1D
+and $4\times4$ in 2D are the unit of adaptation, flagged empty or occupied,
+with ghost memory permanently allocated, and only leaf blocks are
+advanced, by a [converged ENO](/methods/converged-eno.md) finite-volume
+scheme with local time stepping aimed at steady states.
 [Zaghi et al. (2023)](/sources/zaghi-2023.md) build the same kind of
 octree in [ADAM](/software/adam.md): identical blocks of $8^3$ to $32^3$
 cells with 26 ghost regions each, 2:1 balance, the tree stored in a hash
@@ -147,6 +154,28 @@ threshold, while the element count stays below a user limit (§4.5).
   $L^2$ error of $3.97\times10^{-4}$ against a refined finite-volume
   reference (§5.3.2, Figs. 19–21).
 
+- **Smoothness-indicator agreement with a buffer band.** Liang & Fu (2026)
+  (§3.3, Eqs. (27)–(28)) flag cells by the agreement of the three
+  smoothness indicators $\beta_0,\beta_1,\beta_2$ the reconstruction has
+  already computed (one five-point, two two-point stencils):
+  $$\chi_{\mathrm D}=\min_{k<l}\frac{2\beta_k^2\beta_l^2+\epsilon}{\beta_k^4+\beta_l^4+\epsilon}\in(0,1],\qquad\epsilon=10^{-8}$$
+  (page-local $\chi_{\mathrm D}$, the source's $\chi$, not the TENO $\chi_k$),
+  close to 1 where the indicators agree and small at discontinuities, in
+  characteristic variables. A block is refined if any cell has
+  $\chi_{\mathrm D}<\varepsilon_{\mathrm r}$, coarsened if all cells have
+  $\chi_{\mathrm D}>\varepsilon_{\mathrm c}$, and left unchanged otherwise, with
+  $\varepsilon_{\mathrm r}=0.3<\varepsilon_{\mathrm c}=0.7$ "based on preliminary
+  numerical experiments" (page-local thresholds). The band between the two
+  thresholds is meant to freeze the mesh once the flow is steady. The
+  authors call the criterion problem-independent because its range is
+  fixed, block-local (unlike Harten-type prediction-error criteria, which
+  need inter-level data and case-by-case thresholds) and cheap (Remarks
+  1–3), and judge hybrid-scheme shock detectors unsuitable for steady
+  adaptation (§3.3). Over five threshold pairs the solutions are "not very
+  sensitive" to them (§5.2–5.3, Figs. 9–10, 14–15). Zaghi et al.'s split
+  and recomposition thresholds above also form such a band, stated there
+  as a guard against flip-flop.
+
 **When to remesh.** Matsushita & Aoki remesh when the interface has
 moved $2\Delta x_{\min}$, estimated from the acoustic time step
 (Eq. 42); Browne et al. every $n_{\mathrm R}=\Delta t_{x,b}/\Delta t$
@@ -154,6 +183,17 @@ steps, with $\Delta t_{x,b}=\Delta x\,n_{x,b}/(u+c)$ the time the
 fastest wave needs to cross a block of $n_{x,b}$ cells (Eqs. 64–65).
 On their three-dimensional flat plate this meant 520
 refinement steps in about 130,000 time steps (§5).
+
+**Remeshing that never stops.** Liang & Fu (2026) state that classical
+adaptation keeps refining and coarsening at a steady state because of its
+sensitivity, which changes the reconstruction formula from step to step
+and keeps the residual from reaching machine zero (§1, §3.3); their buffer
+band is the remedy. Because the leaf set changes in time, they measure the
+residual on a fixed virtual root level, obtained by recursively averaging
+the leaf data up to it,
+$\mathrm{Res}=\frac1{4N_{\mathrm{root}}}\sum_i\big(\lvert R^\rho_i\rvert+\lvert R^{\rho v_1}_i\rvert+\lvert R^{\rho v_2}_i\rvert+\lvert R^E_i\rvert\big)$
+with $R_i=(u^{n+1}_i-u^n_i)/\Delta t$ per conserved variable (§4.2, Eq. (31);
+page-local).
 
 ## Coarse–fine transfer
 
@@ -209,6 +249,16 @@ refinement steps in about 130,000 time steps (§5).
   ([divergence-preserving prolongation](/methods/divergence-preserving-prolongation.md)).
   The charge density, an unconstrained zone-averaged variable, is
   prolonged by finite-volume WENO at design orders 2–5 (Table 12).
+
+**Multiresolution prediction.** In Liang & Fu (2026) coarsening averages
+the two children, $\bar u^l_i=\tfrac12(\bar u^{l+1}_{2i}+\bar u^{l+1}_{2i+1})$, and
+refinement predicts them from the parent and its neighbours,
+$\hat u^{l+1}_{2i,\,2i+1}=\bar u^l_i\pm\sum_{m=1}^2\mathsf c_m(\bar u^l_{i+m}-\bar u^l_{i-m})$
+with $\mathsf c_1=-22/128$, $\mathsf c_2=3/128$, fifth order and conservative
+between levels (Eqs. (8)–(10); page-local $\mathsf c_m$, the source's
+$\gamma_k$). *(Compiler check, not in the sources: for $u=x$ the
+prediction returns the exact child averages $x_i\mp\Delta x/4$ of the
+parent spacing $\Delta x$.)*
 
 ## Time sub-cycling and edge-field defect correction
 
@@ -289,6 +339,17 @@ Figs. 5, 7). Browne et al. compare finite-difference adaptive points with a DNS 
 is Fourier-spectral in the spanwise direction, a caveat they state
 (§5).
 
+Liang & Fu (2026) (§5.8, Table 1) compare user CPU time on steady Euler
+problems against uniform finite-volume WENO5-Z at the finest resolution:
+their adaptive scheme takes 0.408 of it on a 1D stationary shock
+($N=512$), 0.277 on an oblique shock ($1024\times512$), 0.252 on a regular
+shock reflection ($2048\times512$), 0.163 on supersonic flow past a plate,
+0.528 and 0.425 on two shock interactions ($1024\times512$), with
+compression ratios of the finest-level leaf cells above 85–90%; uniform
+TENO5 takes 1.003–1.412 of the WENO5-Z time. No hardware is stated, and
+the ratios are of whole runs, which differ in mesh and reconstruction,
+the adaptive one with local time stepping ([steady shock problems](/benchmarks/steady-shock-problems.md)).
+
 **Accuracy on refined grids.** Calhoun et al. measure third order of
 Active Flux on adaptive grids, in $L^1$ (Tables 1–4). Advecting a
 smoothed disc, refinement that follows the solution (levels 3–6) matches
@@ -354,6 +415,11 @@ as the coarser uniform one (Table 4).
   points is cut into three tetrahedra, e.g. $\{1,2,3,4\}$, $\{2,3,4,5\}$,
   $\{3,4,5,6\}$ for bottom vertices 1–3 and top vertices 4–6 *(compiler
   check, not in the sources)*.
+- Liang & Fu (2026) do not state which time step enters the root-level
+  residual under local time stepping (§4.2), and their multi-dimensional
+  scheme uses the mid-point flux rule, second order overall (§4.1); the
+  residual levels of their uniform-mesh comparators concern their own
+  finite-volume implementations with HLLC.
 - [Ramani & Shkoller (2023)](/sources/ramani-2023.md) argue for
   r-adaptation instead: the dyadic refinement of AMR produces spurious
   reflection, refraction and scattering of waves at refinement jumps,
@@ -376,4 +442,5 @@ as the coarser uniform one (Table 4).
 - [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — arXiv v2: §3.1–3.2, Figs. 3–6; §4.1–4.6, Corollary 4.3, Tables 1–4; Conclusions.
 - [Paula, Adami & Adams (2023)](/sources/paula-2023.md) — §2.2 (ALPACA multiresolution and local time stepping).
 - [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — arXiv v2: §1.1, §7.1 (argument against dyadic refinement).
+- [Liang & Fu (2026)](/sources/liang-2026.md) — §1; §3.1, Eqs. (8)–(10); §3.3, Eqs. (27)–(28), Remarks 1–3; §4.1–4.2, Eqs. (30)–(31); §5, Eq. (32), Figs. 9–10, 14–15; §5.8, Table 1.
 - [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §3, §3.3 (Eqs. (31)–(35), Remarks 9–10, Fig. 6); §4.5 (Eqs. (43)–(45)); §5.1.2 (Figs. 12–13); §5.3.2 (Figs. 19–21).

@@ -5,7 +5,7 @@ description: "A gas bubble at a gigapascal and 1250 kg/m³, 0.24 m in diameter, 
 status: established
 aliases: [underwater explosion near a free surface, explosion bubble under a free surface, gas bubble explosion in water]
 tags: [benchmark, multiphase, interface-capturing, positivity]
-timestamp: 2026-10-23T15:02:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Underwater explosion
@@ -20,7 +20,7 @@ et al. (§3.3). The test combines three material regions (explosion
 gas, water as a [stiffened gas](/definitions/stiffened-gas-equation-of-state.md),
 air), density ratios of about 1000 and pressure ratios of about $10^4$,
 and the sources present it as a test of robustness at such ratios and
-of interface sharpness. The three sources run the same
+of interface sharpness. The four sources run the same
 geometry: a bubble of diameter $0.24$ m centred $0.3$ m below the free
 surface, with the bubble at $\rho=1250$ kg/m³ and $p=1$ GPa ($10^9$ Pa)
 and ambient air and water at atmospheric pressure.
@@ -53,6 +53,23 @@ phase's stiffened-gas law. Initial spacing $0.01$ m with two static
 refinement levels ($1/4$ of it in the bubble, $1/2$ on
 $0.12<\sqrt{x^2+(y+0.3)^2}<1.1$), about $2.2\times10^5$ particles.
 
+[Huang et al. (2025b)](/sources/huang-2025-b.md) §4.3.1 run the geometry
+in a five-equation model on $[-2,2]\times[-1.5,2.5]$ m with the free
+surface at $y=0$ and the bubble of diameter $0.24$ m centred at
+$(0,-0.3)$ m: bubble gas at $10^9$ Pa and $1250$ kg/m³, water at
+$1000$ and air at $1$ kg/m³ at atmospheric pressure, liquid
+$(\gamma_1,p_{\infty,1})=(4.4,6\times10^8\ \mathrm{Pa})$, gas
+$(\gamma_2,p_{\infty,2})=(1.4,0)$, volume fraction $10^{-8}$ for the
+absent phase; transparent left, right and top boundaries and a
+reflective bottom; $600\times600$ cells; schlieren at $0.95$, $1.26$,
+$1.58$ and $1.90$ ms, volume fraction from $0.2$ to $1.9$ ms, density
+along $x=0$ at $0.2$ ms (Figs. 11–14). Their scheme is a finite-volume
+wave-propagation method with HLLC and dimensional splitting whose
+interface cells use MUSCL or [THINC](/methods/thinc-reconstruction.md)
+as chosen by a small neural network trained on the
+[BVD](/definitions/boundary-variation-diminishing.md) selections of
+MUSCL-THINC-BVD (deepMTBVD).
+
 ## Findings
 
 **Interface sharpness and limiters.** Nguyen et al. compare limiters on
@@ -65,6 +82,13 @@ computation on $1200\times1200$ cells, with a sharper liquid film at
 about 1.9 ms, which they attribute to their sharp-interface treatment;
 their density profile along $x=2$ m at 0.2 ms agrees with two other
 computations except at the bubble centre (Figs. 34–36).
+
+**Network-selected THINC.** Huang et al. (2025b) find that MUSCL smears
+the water–air interface, while MUSCL-THINC-BVD and their deepMTBVD keep
+it sharp and resolve the water bridge above the bubble; their density
+along $x=0$ agrees with Shukla's and Hu et al.'s computations, as they
+cite them, on a coarser grid ($h=1/150$ m) than Shukla's (§4.3.1, Figs.
+12–14).
 
 **A particle method against grid-based results.** Jiang et al. find
 density and pressure along $x=0$ in agreement with the grid-based results
@@ -81,7 +105,7 @@ temperature for all phases (Fig. 14). They do not print the heat
 capacities, so the value cannot be checked from the paper. Bai & Li do
 not print heat capacities for this case either.
 
-**Robustness.** The two grid-based papers present the run as evidence
+**Robustness.** The grid-based papers present the run as evidence
 that the scheme handles high density and pressure ratios with strong
 shocks; Jiang et al. present it, with the cavitation bubble near a wall,
 as a flow with strong shocks and large volume changes. None reports a
@@ -143,6 +167,13 @@ converges from below (Fig. 16).
   model, with an interface repulsive force): a sharp interface with one equation of state per fluid against
   a homogeneous mixture in pressure and temperature equilibrium. Their
   agreement with earlier computations is visual.
+- Huang et al. (2025b) assign the liquid constants to phase 1 but write
+  "the volume fraction of air $\alpha_1=10^{-8}$" in water, so the phase
+  labels are inconsistent within their paragraph; their mixture
+  equation of state, Eq. (10), and their phasic law, Eq. (5), differ in
+  the sign and the $\gamma_k$ factor of the stiffening term *(compiler
+  check, not in the sources)*, and the paper does not say which it
+  implements.
 - Bai & Li state that the physical parameters are those of their
   bubble-collapse case (§3.5), which prints only $\gamma$ and
   $p_\infty$; the heat capacities that their temperature form of the
@@ -164,3 +195,4 @@ converges from below (Fig. 16).
 - [Paula et al. (2023)](/sources/paula-2023.md) — §7.4.3, Fig. 16: spherically symmetric explosion bubble.
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §5.2.2, Figs. 11–12; §§3.1–3.3, §4.1: Lagrangian WLS particle method with WENO-Z-type reconstruction.
 - [Chu et al. (2025b)](/sources/chu-2025-b.md) — §5.1, Example 5, Figs. 5.6–5.7: non-dimensional explosion above a wall, LCD path-conservative central-upwind scheme.
+- [Huang et al. (2025b)](/sources/huang-2025-b.md) — §4.3.1, Eqs. (5), (10), Figs. 11–14: deepMTBVD in a five-equation model.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Two-dimensional Riemann problems"
-description: "Four-quadrant Riemann problems of the two-dimensional Euler equations in the Lax–Liu classification, chiefly configurations 3 and 12, with configurations 7 and 13 and two four-contact configurations; used as visual tests of resolution, of the jet's sideband and neck instabilities and of slip-line instability, of scale invariance and of moving-mesh efficiency, with relativistic, MHD, multispecies and Burgers relatives."
+description: "Four-quadrant Riemann problems of the two-dimensional Euler equations in the Lax–Liu classification, chiefly configurations 3 and 12, with configurations 4, 5, 6, 7, 8, 13 and 16; visual tests of resolution, of the jet's instabilities and of slip lines, of scale invariance, moving meshes and learned schemes, with relativistic, MHD, multispecies and Burgers relatives."
 status: established
 aliases: [2D Riemann problem, four-quadrant Riemann problem, Lax–Liu configuration 3, Lax–Liu configuration 12, Lax–Liu configuration 7]
 tags: [benchmark, low-dissipation, weno, teno, central-scheme]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Two-dimensional Riemann problems
@@ -13,14 +13,16 @@ timestamp: 2026-10-23T15:15:00Z
 A two-dimensional Riemann problem divides the square into four
 quadrants, each with a constant state; the sources that number the
 configurations follow Lax & Liu (cited by Takagi et al., Luo & Wu,
-Deng, Huang et al. and Zhong et al.; Wang et al. (2023b) and Chertock et al. take
+Deng, Huang et al. (2026) and Zhong et al.; Wang et al. (2023b) and Chertock et al. take
 configuration 3, and Fu 2023 configuration 12, from Kurganov & Tadmor;
-Boscarino et al., Hong, Ye & Ye and Liang et al. cite Lax & Liu or
-Schulz-Rinne et al.). Four kinds are used in the bundle:
+Boscarino et al., Hong, Ye & Ye and Liang et al. (2022) cite Lax & Liu or
+Schulz-Rinne et al.; Huang et al. (2025a) and Liang et al. (2025) take
+configurations 7, 8 and 16 from Kurganov & Tadmor). The bundle uses
 **configuration 3**, in which a jet forms along the diagonal whose
 sideband and neck instabilities serve as a resolution gauge,
-**configuration 12**, **configuration 7**, **configuration 13**, and configurations of four
-contacts that roll up into a spiral. The data of the first two are symmetric under the
+**configuration 12**, **configurations 4, 7, 8, 13 and 16**, and configurations of four
+contacts that roll up into a spiral (configurations 5 and 6 in the
+numbering of two sources). The data of the first two are symmetric under the
 exchange $x\leftrightarrow y$, $v_1\leftrightarrow v_2$ (see the tables
 below) *(compiler check, not in the sources)*, so they also test
 [symmetry preservation](/properties/symmetry-preservation.md).
@@ -59,6 +61,10 @@ The sources use three placements and several final times:
 | [Zuo & Zhu (2024a)](/sources/zuo-2024.md) Ex. 3.5 | $[0,1]^2$, $(0.8,0.8)$, boundary conditions not stated | $400\times400$, CFL 0.6 | 0.8 | [hybrid](/methods/hybrid-weno.md) MMR-WENO5/7/9 vs [MR-WENO](/methods/multi-resolution-weno.md) |
 | [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) App. A.3 | box $L_0\times L_0$, quadrants split at $x=y=0$, extrapolation | $1600\times1600$ | $t/t_0=0.3$ | [WENO-Z](/methods/weno-z.md)5, WENO-Z7, TENO5, [TENO-A5](/methods/adaptive-teno.md) in [URANOS](/software/uranos.md) |
 | [Chu et al. (2025a)](/sources/chu-2025.md) Example 4 | $[0,1.2]^2$, $(1,1)$, free boundaries | $\Delta x=\Delta y=3/2500$, SSP-RK3, CFL 0.4 | 1 | adaptive [low-dissipation central-upwind](/methods/low-dissipation-central-upwind-scheme.md) A-MM, A-WLR vs LDCU (arXiv v1) |
+| [Chu et al. (2025c)](/sources/chu-2025-c.md) Example 3 | $[0,1.2]^2$, $(1,1)$, free boundaries | $\Delta x=\Delta y=0.001$, SSP-RK3, CFL 0.475 | 1 | new vs original [low-dissipation central-upwind](/methods/low-dissipation-central-upwind-scheme.md) scheme (arXiv v1) |
+| [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Example D.6 | $[0,1]^2$, $(0.8,0.8)$ | $200^2$, $400^2$ | 0.8 | bound-preserving generalized [Active Flux](/methods/active-flux.md) with shock-sensor flux limiting, $\kappa_{\mathrm s}=0$ and $0.5$ (arXiv v3) |
+| [Fan et al. (2025b)](/sources/fan-2025-b.md) Eq. (52) | $[0,1]^2$ (implied), $(0.8,0.8)$ | $800\times800$ | 0.8 | three-point WCNS3-MR-NN ([learned weights](/methods/learned-weno-weights.md)) vs WCNS3-JS, WCNS3-MR, WCNS5-JS |
+| [de Romémont et al. (2026)](/sources/deromemont-2026.md) §6.3, case 1 | $(0,1)^2$, split not printed | $512^2$, reference $2048^2$ | not printed | MUSCL finite volumes with network-learned slopes vs finite-difference slopes |
 | [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.4, Eq. (4.8), case 1 | $[-0.5,0.5]^2$, $(0.3,0.3)$, non-reflecting | $200\times200$ elements of fourth-order DG ($800\times800$ DOFs) | 0.8 | DG with non-uniform [ROUND](/methods/round-scheme.md) subcell limiting |
 
 The two Chamarthi papers print the states as fractions,
@@ -72,7 +78,7 @@ cells, and Deng, Jiang & Yan's placement is the $[0,1]^2$ one with split
 $(0.8,0.8)$ shifted by $-0.5$ *(compiler check, not in the sources)*.
 
 Contours: Deng 40 from 0.14 to 1.7, Deng, Jiang & Yan 31 from 0.2 to 1.7, Luo & Wu 40 from 0.14 to 1.7,
-Huang et al. 43 from 0.135 to 1.75, Wang et al. (2023b) 35 from 0.1 to 1.8.
+Huang et al. (2026) 43 from 0.135 to 1.75, Wang et al. (2023b) 35 from 0.1 to 1.8.
 Boscarino et al.'s placement puts the split at $(0.8,0.8)$ of
 $[-1,1]^2$, so the low-pressure quadrant covers $[-1,0.8]^2$ and the
 high-pressure one only $[0.8,1]^2$ *(compiler check, not in the
@@ -95,6 +101,38 @@ run configuration 7 on $1024^2$ to $t=0.25$:
 
 The data are symmetric under $x\leftrightarrow y$, $v_1\leftrightarrow v_2$
 *(compiler check, not in the sources)*.
+[Huang et al. (2025a)](/sources/huang-2025.md) §5.6, Eq. (48), after
+Kurganov & Tadmor, print the same four states on $[0,1]^2$ split at
+$(0.5,0.5)$, $t=0.25$, on $1000^2$ and $1500^2$ cells with their
+$\mathbb P^2$ RKDG and TENO-THINC limiter, 28 contours from 0.4 to 0.9
+(Fig. 7); boundary conditions are not stated.
+
+## Configurations 8 and 16
+
+[Liang et al. (2025)](/sources/liang-2025.md) §4.5, Eqs. (36)–(37), after
+Kurganov & Tadmor, run on $[-0.5,0.5]^2$ split at the origin, on
+triangles with $h\approx1/550$:
+
+| Quadrant | Configuration 8, $t=0.25$ | Configuration 16, $t=0.2$ |
+|---|---|---|
+| $x>0$, $y>0$ | $(0.5197,\ 0.1,\ 0.1,\ 0.4)$ | $(0.5313,\ 0.1,\ 0.1,\ 0.4)$ |
+| $x<0$, $y>0$ | $(1,\ -0.6259,\ 0.1,\ 1)$ | $(1.0222,\ -0.6179,\ 0.1,\ 1)$ |
+| $x<0$, $y<0$ | $(0.8,\ 0.1,\ 0.1,\ 1)$ | $(0.8,\ 0.1,\ 0.1,\ 1)$ |
+| $x>0$, $y<0$ | $(1,\ 0.1,\ -0.6259,\ 1)$ | $(1,\ 0.1,\ 0.8276,\ 1)$ |
+
+Configuration 8 is symmetric under $x\leftrightarrow y$,
+$v_1\leftrightarrow v_2$; configuration 16 is not *(compiler check, not
+in the sources)*.
+
+## Configuration 4
+
+[de Romémont et al. (2026)](/sources/deromemont-2026.md) §6.3, case 2,
+call it Lax–Liu configuration 4: $(1.1,0,0,1.1)$ upper right,
+$(0.5065,0.8939,0,0.35)$ upper left, $(1.1,0.8939,0.8939,1.1)$ lower
+left, $(0.5065,0,0.8939,0.35)$ lower right, on $(0,1)^2$ with $512^2$
+cells against $2048^2$; final time not printed. The data are symmetric
+under $x\leftrightarrow y$, $v_1\leftrightarrow v_2$ *(compiler check,
+not in the sources)*.
 
 ## Configuration 13
 
@@ -159,6 +197,16 @@ $(0.5,0.5)$ of $[0,1]^2$, two forward-moving shocks and two stationary
 contacts, and run them on $128^2$ and $512^2$ with their third-order
 [Active Flux](/methods/active-flux.md) method without any limiter; the
 output time is not given in the text (Fig. 24).
+De Romémont et al. (2026) §6.3, case 4, print the same states as Lax–Liu
+configuration 12 on $(0,1)^2$, $512^2$ against $2048^2$, final time not
+printed. [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) §4.6
+(HAL manuscript), after Schulz-Rinne et al., print the configuration
+with $0.726$ for $0.7276$: $(1,0.726,0,1)$ for $x<0,y>0$,
+$(0.5313,0,0,0.4)$ for $x>0,y>0$, $(0.8,0,0,1)$ for $x<0,y\le0$,
+$(1,0,0.726,1)$ for $x>0,y<0$, on $[-0.5,0.5]^2$ with transmissive
+boundaries, $400\times400$, $T=0.25$, local Mach number up to 1.14,
+with their second-order linearized all-Mach IMEX schemes at
+$\varepsilon=1$.
 
 ## Four-contact configurations
 
@@ -181,6 +229,10 @@ $[-0.5,0.5]^2$ with the split at the origin, $t=0.3$, fourth-order DG on
 $300^2$ and $400^2$ elements: Li, Duan & Tang's problem shifted by $-0.5$
 *(compiler check, not in the sources)*.
 
+[de Romémont et al. (2026)](/sources/deromemont-2026.md) §6.3, case 3,
+print these same four states, quadrant by quadrant, as Lax–Liu
+configuration 6, on $(0,1)^2$ with $512^2$ cells.
+
 [Boscarino et al. (2022)](/sources/boscarino-2022.md) Ex. 5.4(b), citing
 Lax & Liu's configuration 5, print on $[-1,1]^2$ with the split at
 $(0.5,0.5)$, $400\times400$, $t=0.23$:
@@ -197,9 +249,14 @@ The normal velocity is continuous across both splits in either set, so
 both are four-contact problems, but the tangential jumps across the
 horizontal split change sign, so the two are different configurations,
 not one problem in two placements *(compiler check, not in the
-sources)*. Li, Duan & Tang give no configuration number; which of the
-two is Lax & Liu's configuration 5 cannot be decided from the bundle's
-sources.
+sources)*. Li, Duan & Tang give no configuration number; de Romémont
+et al. (2026) call their set configuration 6, and Boscarino et al. call
+the negated set configuration 5, so the two labels agree with each other
+*(compiler check, not in the sources)*; neither source
+prints Lax & Liu's table, which would decide the numbering.
+[Fan et al. (2025b)](/sources/fan-2025-b.md) Eq. (53) print Boscarino et
+al.'s configuration-5 states quadrant by quadrant, split at $(0.5,0.5)$,
+$t=0.3$, $800\times800$ (Fig. 15).
 
 [Tang (2024)](/sources/tang-2024.md) §4.4.2, Eq. (34) prints on $[0,1]^2$,
 split at $(0.5,0.5)$, zero-order extrapolation boundaries, $512\times512$,
@@ -233,10 +290,10 @@ configurations, with shocks sharp and stable and symmetry preserved
 (Figs. 18–19). Luo & Wu find WENO-Z+ about equal to WENO-Z, and
 WENO-Z+M better resolved and more symmetric than WENO-IS-I and WENO-Z9
 (Fig. 14). Deng resolves the main structures "with less grid number"
-than WENO-JS5 on $600\times600$ (Figs. 24, 35); Huang et al. compare
+than WENO-JS5 on $600\times600$ (Figs. 24, 35); Huang et al. (2026) compare
 ROUND and LD-ROUND with WENO3-NN and WENO5-JS on the same grid.
 
-Liang et al. find their scheme resolving more instability and vortical
+Liang et al. (2022) find their scheme resolving more instability and vortical
 structure than WENO5-Z, TENO5 and TENO5-THINC on configurations 3 and
 7 (§4.6, Figs. 16–18). Hong, Ye & Ye find TENO-M slightly better than
 TENO on the small structures along the slip lines, both much better
@@ -349,6 +406,51 @@ TENO-Z, TENO-A and TENO-LAD (§4.4.2, Fig. 11;
 see [adaptive TENO](/methods/adaptive-teno.md)), at 0.98–1.01 of
 TENO-Z's time per step on $400\times400$ (Table 6).
 
+**Corrections of a central-upwind scheme.** Chu et al. (2025c) find
+their new low-dissipation central-upwind scheme, which moves the
+sub-cell jump of the projection with the intermediate velocity,
+"substantially" less oscillatory than the original one on configuration
+3, with comparable or slightly better resolution (Fig. 3.3).
+
+**Bound preservation and shock-sensor limiting in Active Flux.** Duan et
+al.'s generalized Active Flux crashes on configuration 3 without
+bound-preserving limiting; their shock-sensor limiting with
+$\kappa_{\mathrm s}=0.5$ strongly reduces the spurious oscillations behind
+the shocks, $\kappa_{\mathrm s}$ being problem-dependent (Example D.6, §4.1.3);
+$\theta^{\mathrm s}=\exp(-\kappa_{\mathrm s}\varphi_{\mathrm J}\Psi_{\mathrm D})$
+blends the limited flux toward Lax–Friedrichs, with $\varphi_{\mathrm J}$
+the Jameson pressure sensor (page-local, the source's $\varphi_1$, as is
+$\kappa_{\mathrm s}$) and $\Psi_{\mathrm D}$ the modified, compression-only
+[Ducros sensor](/definitions/ducros-shock-sensor.md) (the source's
+$\varphi_2$).
+
+**Learned reconstructions.** Fan et al. (2025b)'s three-point WCNS3-MR-NN
+resolves configurations 3 and 5 better than WCNS3-JS and WCNS3-MR and
+comparably to the five-point WCNS5-JS (§4.4, Figs. 14–15); on
+configuration 5 at $400^2$ it takes 2800.06 s against 2808.29 s for
+WCNS3-MR (Table 5). De Romémont et al. (2026) report $L^1$ error
+reductions against the same MUSCL scheme on the same grid of 22 %
+(configuration 3, with residual artefacts and a lost symmetry between the
+two plumes), 39 % (configuration 4), 48 % (configuration 6, with
+"notably high" symmetry preservation) and 28 % (configuration 12)
+(Figs. 10–13).
+
+**Limiters, indicators and unstructured TENO.** Huang et al. (2025a)'s
+TENO-THINC limiter for DG gives richer vortical structures than the
+simple WENO limiter on configuration 7 (Fig. 7). Liang et al. (2025)'s
+TENO-E schemes cost less than CWENO of the same order on triangles: with
+CWENO5 as 1.00, total times of 0.52, 0.64 and 0.88 for TENO5-E, TENO6-E,
+TENO7-E on configuration 8 against 1.16 and 1.42 for CWENO6 and CWENO7
+(Table 2), and 0.57, 0.68, 0.86 against 1.25 and 1.52 on configuration
+16 (Table 3) (Figs. 13–16); the printed ratios are truncated to two
+decimals *(compiler check, not in the sources)*.
+
+**Steady contacts at all Mach numbers.** On their configuration-12 data
+Allegrini & Vignal's two second-order schemes keep the contacts steady;
+the variant without implicit upwinding has a much sharper interface but
+spurious oscillations, which the implicit upwinding reduces (§4.6, Fig.
+15).
+
 ## Other systems
 
 The same four-quadrant construction appears for other equations:
@@ -437,7 +539,20 @@ discrete divergence of $B$ stays at the $10^{-14}$ level, without it it
 reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 
+**MHD.** [Liu et al. (2025b)](/sources/liu-2025-b.md) Ex. 4 run the
+four-quadrant ideal-MHD problem of Yee & Sjögreen, as they cite it, on
+$(-1,1)^2$ with extrapolation boundaries, $\gamma=5/3$, $T=0.2$, on
+$128^2$ and $256^2$ cells, with the quadrant states printed in conserved
+variables (their Table 3; e.g. quadrant III $\rho=1$,
+$\rho v=(1.75,-1,0)$, $B=(0.5642,0.5078,0.2539)$, $E=6$); their
+entropy-stable DG with oscillation-eliminating damping gives results
+"comparable" to Yee & Sjögreen's (Fig. 4).
+
 ## Qualifications
+
+- De Romémont et al. (2026) print neither final times nor $\gamma$ for
+  their four configurations, and number the quadrants 1 (upper right)
+  to 4 (lower right) counter-clockwise.
 
 - Boscarino et al. print an unmatched parenthesis in the
   configuration-3 data, "(0.5323, 1.206, 0, 0.3))" (Eq. (5.6)).
@@ -446,7 +561,7 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 - The configuration-3 runs differ in split, domain and final time
   ($t=0.3$ to $1$), so the jet is at different stages of development in
   different papers; only the runs with split $(0.8,0.8)$ on $[0,1]^2$
-  and $t=0.8$ (Deng, Huang et al., Wang et al. 2023b, Wang et al. 2021,
+  and $t=0.8$ (Deng, Huang et al. (2026), Wang et al. 2023b, Wang et al. 2021,
   the two Chamarthi papers, Zhou et al., Zhong et al., Zuo & Zhu 2024a) are directly comparable.
 - Li, Duan & Tang's Ex. 5.4 says its monitor function and linear
   weights are those of Ex. 5.2, which states no linear weights; the
@@ -495,3 +610,11 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 - [Chudzik et al. (2024)](/sources/chudzik-2024.md) — §7, Ex. 7.4, Fig. 24.
 - [Chu et al. (2025a)](/sources/chu-2025.md) — §4.2, Example 4, Figs. 4.5–4.6 (arXiv v1).
 - [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.4, Eqs. (4.8)–(4.9), Figs. 14–15.
+- [Chu et al. (2025c)](/sources/chu-2025-c.md) — Example 3, Fig. 3.3 (arXiv v1).
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §4.1.3, Example D.6 (arXiv v3).
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §4.4, Eqs. (52)–(53), Figs. 14–15, Table 5.
+- [Huang et al. (2025a)](/sources/huang-2025.md) — §5.6, Eq. (48), Fig. 7.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §4.5, Eqs. (36)–(37), Tables 2–3, Figs. 13–16.
+- [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §4.6, Fig. 15 (HAL manuscript).
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — Ex. 4, Table 3, Fig. 4.
+- [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §6.3, Figs. 9–13.

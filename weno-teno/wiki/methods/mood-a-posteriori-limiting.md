@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "MOOD a posteriori limiting"
-description: "MOOD-type limiting computes a candidate high-order update, checks it for admissibility (positivity, NaN, maximum principle), and recomputes only flagged cells with a robust low-order scheme; the page records a kinetic scheme, deferred correction, a posteriori subcell limiters of ADER-DG and unstructured DG (local subcell flux correction), PAD and NAD used a priori, and the a priori contrast."
+description: "MOOD-type limiting computes a candidate high-order update, checks it for admissibility (positivity, NaN, maximum principle), and recomputes only flagged cells with a robust low-order scheme; the page records a kinetic scheme, deferred correction, a posteriori subcell limiters of ADER-DG and unstructured DG, artificial-viscosity recomputation, PAD and NAD used a priori, and the a priori contrast."
 status: established
 aliases: [MOOD, multi-dimensional optimal order detection, a posteriori limiting, a posteriori stabilization, a posteriori subcell limiting, APLSC, a posteriori local subcell correction]
 tags: [limiting, positivity, bound-preserving, finite-difference, dg]
-timestamp: 2026-10-23T15:13:00Z
+timestamp: 2026-10-23T20:29:00Z
 ---
 
 # MOOD a posteriori limiting
@@ -247,6 +247,39 @@ correction active, uniform subdivisions resolve better than non-uniform
 ones, which the authors attribute to the numerical detector's dependence on
 the subcell aspect ratio (§4.1.1, Figs. 19–21).
 
+## Recomputation with artificial viscosity (compatible finite elements)
+
+[Zampa & Dumbser (2025)](/sources/zampa-2025.md) (§3.3–3.4; arXiv v1)
+keep the three MOOD steps but recompute flagged cells with the same
+scheme plus a cellwise
+[artificial viscosity](/methods/artificial-viscosity.md), instead of a
+lower-order scheme. Their scheme is a semi-implicit DG/compatible finite
+element method for weakly compressible isentropic flow
+([asymptotic preservation](/properties/asymptotic-preservation.md)).
+
+1. **Candidate.** Compute the candidate update with zero numerical
+   viscosity.
+2. **Detection.** Flag element $T$ when the candidate value $W$ (density
+   or entropy) leaves a relaxed discrete maximum principle over the
+   Voronoi neighbourhood $\mathcal N(T)$ of $T$ (page-local):
+   $$\min_{\mathcal N(T)}W-\delta_T\le W(x)\le\max_{\mathcal N(T)}W+\delta_T,\qquad \delta_T=\max\Big(10^{-4},\ 10^{-3}\big(\max_{\mathcal N(T)}W-\min_{\mathcal N(T)}W\big)\Big).$$
+   The criterion follows Tavelli & Dumbser (Eqs. (21)–(22)).
+3. **Recomputation.** Set the viscosity to $\tfrac12h\,s_{\max}$ on
+   flagged elements, with page-local $h$ the mesh size and $s_{\max}$ an
+   estimate of the maximum wave speed. Use a small floor value elsewhere
+   (Eq. (23)), and recompute the step.
+
+The entropy transport is computed, checked and recomputed first. The
+coupled momentum–pressure–density step follows, checked on the density
+(Algorithm, §3.4). The viscosity enters through the interior-penalty,
+div–div and curl–curl terms of a regularized system, so the
+recomputation needs no subcell grid or second scheme. On a circular
+explosion ($120\times120$, degree 2) the viscosity is active only near
+the discontinuities, and the authors report no spurious oscillations
+(§4.3, Figs. 3–4). They call the method "one of the first works that uses
+a posteriori limiting in the context of compatible finite element
+exterior calculus" (§1).
+
 ## PAD and NAD criteria used a priori
 
 [Maltsev et al. (2023)](/sources/maltsev-2023.md) (§2.5, Eqs. 36–37,
@@ -344,6 +377,13 @@ an a priori switch in the sense of this page
   Lax–Wendroff proposition as $\sup\lVert\Delta^n_i\rVert=O(1)$ and define
   $O(1)$ in the text as "a quantity vanishing when $h\to0$", i.e. $o(1)$
   (Eqs. 47, 51).
+- Zampa & Dumbser's Eq. (21) prints the time level $t^n$ on both the
+  tested value and the neighbourhood bounds, and Eq. (23) says "if (22) is
+  violated", where (22) defines $\delta_T$ and (21) is the criterion
+  (arXiv v1). Their scheme carries the entropy by a non-conservative
+  transport equation, and they do not expect shocks to be computed correctly
+  at large shock Mach numbers (§3.2.2). Their explosion test has a
+  pressure ratio of 10 (§4.3).
 - Maltsev et al. attribute the two NAD relaxations to different
   references in §2.5 and in Appendix C. Their observed orders with an
   active indicator, up to 6.89 at $N=4$, are an artefact of the troubled
@@ -358,4 +398,5 @@ an a priori switch in the sense of this page
 - [Berta et al. (2024)](/sources/berta-2024.md) — arXiv v4: §3.4 (a priori "fallback").
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1; §4.3; §7.2 (a priori contrast).
 - [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — HAL preprint v1: §1; §3.1–3.4, Eqs. (3.3)–(3.7), Remarks 6–8, Figs. 4–9; §4.1–4.3, Table 1, Figs. 12, 19–22, 33, 38–39, 41.
+- [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — arXiv v1: §1; §3.2.2; §3.3 Eqs. (21)–(23); §3.4; §4.3, Figs. 3–4.
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §1; §2.4, Eq. (34); §2.5, Eqs. (36)–(37); §3.1–3.4, Table 1, Figs. 4, 6–11; Appendices A–C.

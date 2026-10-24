@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Weighted compact nonlinear schemes (WCNS)"
-description: "WCNS are finite-difference shock-capturing schemes in three steps — nonlinear node-to-interface interpolation, an interface flux, and high-order interface-to-node differencing; the page records explicit, TENO-weighted, spectrally optimized adaptive-dissipation, exponential-weight, multi-resolution, hybrid and mapped members, and an open disagreement on conservation."
+description: "WCNS are finite-difference shock-capturing schemes in three steps — nonlinear node-to-interface interpolation, an interface flux, and high-order interface-to-node differencing; the page records explicit, TENO-weighted, spectrally optimized adaptive-dissipation, exponential-weight, multi-resolution, learned, hybrid and mapped members, and an open disagreement on conservation."
 status: established
-aliases: [WCNS, WCNS-Z, WCNS-JS, TCNS, targeted compact nonlinear scheme, WCNS-T, HWCNS, WCNS-IS, PP-WCNS-IS, explicit WCNS, WCNS-SA, WCNS-opt, WCNS-LD, ONL6, WCNS-MR, WCNS7M, MND scheme, WCNS-EXP, hybrid MR-WCNS]
+aliases: [WCNS, WCNS3-MR-NN, WCNS3-MR, WCNS3-JS, WCNS-Z, WCNS-JS, TCNS, targeted compact nonlinear scheme, WCNS-T, HWCNS, WCNS-IS, PP-WCNS-IS, explicit WCNS, WCNS-SA, WCNS-opt, WCNS-LD, ONL6, WCNS-MR, WCNS7M, MND scheme, WCNS-EXP, hybrid MR-WCNS]
 tags: [compact-scheme, finite-difference, weno, teno, numerical-flux, multiphase]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T20:37:00Z
 ---
 
 # Weighted compact nonlinear schemes (WCNS)
@@ -278,6 +278,29 @@ stencil ([hybrid schemes](/methods/hybrid-weno.md)). The scheme costs 0.81–1.0
 node-to-midpoint interpolation "dominates" the resolution of WCNS (§1, §3), the view also stated by
 Zhou et al. above.
 
+## Third-order staggered WCNS with learned multi-resolution weights (WCNS3-MR-NN)
+
+[Fan et al. (2025b)](/sources/fan-2025-b.md) (§2, Eqs. (2)–(18)) work with the third-order member on a staggered
+grid, flux points $x_{i+1/2}$ at the cell faces and solution points at the centres, point values as unknowns. The
+three steps are a node-to-midpoint interpolation of $u^-_{i+1/2}$ (the right state by flipping the stencil), the Roe
+flux, and the explicit fourth-order central difference of the interface fluxes,
+$$\partial_xf\big|_i\approx\frac1{24\Delta x}\big(\hat f_{i-3/2}-27\hat f_{i-1/2}+27\hat f_{i+1/2}-\hat f_{i+3/2}\big).$$
+*(Compiler check, not in the sources: this is the difference $\tilde h_{i+1/2}-\tilde h_{i-1/2}$ of the implied flux
+$\tilde h_{i+1/2}=\tfrac1{24}(-\hat f_{i-1/2}+26\hat f_{i+1/2}-\hat f_{i+3/2})$, the implied-flux form that Wong et al. print
+for their HCS differencing above; it does not bear on the compact case of the Contradictions entry below.)* Two interpolations are
+compared: WCNS3-JS, the two two-point candidates $\tfrac12(3u_i-u_{i-1})$ and $\tfrac12(u_i+u_{i+1})$ with linear weights
+$(\tfrac14,\tfrac34)$ and Jiang–Shu weights, $\epsilon=10^{-6}$; and WCNS3-MR, the nested one- and three-point
+candidates of [multi-resolution WENO](/methods/multi-resolution-weno.md), whose linear interpolant is
+$-\tfrac18u_{i-1}+\tfrac34u_i+\tfrac38u_{i+1}$. Their contribution, WCNS3-MR-NN, keeps the multi-resolution candidates and
+lets a network predict the weights, written on the candidates themselves so that the optimal weights are $(0,1)$
+([learned WENO weights](/methods/learned-weno-weights.md)). With characteristic-wise interpolation and SSP-RK3 at
+CFL 0.5 it is third order to $N=10240$ on linear advection and on the Euler density wave (Tables 3–4), has lower
+dissipation and better dispersion than WCNS3-JS and WCNS3-MR in the
+[approximate dispersion relation](/definitions/approximate-dispersion-relation.md) (Fig. 9), resolves the
+Woodward–Colella blast waves nearly like the fifth-order WCNS5-JS and better than both third-order schemes, and
+costs about as much as WCNS3-MR (Table 5). The authors state that the method extends to higher orders and to WENO
+(§2, §5), which is not shown.
+
 ## Members recalled in the sources
 
 - **WCNS-JS and WCNS-Z**: interpolation weighted with Jiang–Shu or WENO-Z weights; WCNS-Z beats
@@ -310,7 +333,9 @@ Zhou et al. above.
   weights give the seven-point interpolant $\tfrac1{1024}(-5,42,-175,700,525,-70,7)$ once the third
   candidate is corrected as in the Qualifications.)*
 - **Learned variants**: WCNS3-NN and WCNS3-MR-NN, to which Huang et al. (2026, §7) claim their
-  diagram-fitting method applies ([learned WENO weights](/methods/learned-weno-weights.md)).
+  diagram-fitting method applies ([learned WENO weights](/methods/learned-weno-weights.md)); WCNS3-MR-NN is the
+  scheme of Fan et al. (2025b) above, and Fan et al. run two WCNS re-implementations of the WENO3-NN network
+  (WCNS3-NN1 with Jiang–Shu, WCNS3-NN2 with multi-resolution weighting) as comparators.
 - **Earlier multiphase use**: Wong & Lele applied WCNS to the five-equation model for mixtures of ideal
   gases only (as recalled by Wong et al. 2021, §1).
 
@@ -369,6 +394,9 @@ Zhou et al. above.
   exponent 6), nor the variable fed to the sensor; they reuse $r$ for the stencil half-width and the
   parameter of Hu et al.'s condition. Optimizing $\eta_{\mathrm Z}\ne\tfrac3{128}$ makes the interpolation
   fourth order; the scheme is a six-point, not a sixth-order, WCNS.
+- Fan et al. (2025b) call $E=\rho v^2/2+p/(\gamma-1)$ the total energy "per unit mass" (§4.1.2, §4.4), the energy per
+  unit volume of the registry; the text of §4.4.3 compares "WCNS3-NN and WCNS3-MR", a scheme name not defined in
+  their Table 2.
 - Hiejima (2022) prints "$c^{(k)}_{2,i+54}$" for $c^{(k)}_{2,i+5}$ in a header of Table 5, and the
   index ranges of Eqs. (11)–(12) and (24) hold only for the widest substencils or for $K=7$. In the
   double Mach reflection the text calls the at-rest state $(1.4,0,0,0,1)$ "post-shock" and imposes it
@@ -415,3 +443,4 @@ et al. for periodic grids only.)*
 - [Chen & Deng (2023)](/sources/chen-2023.md) — §1; §2, Eqs. (1)–(16); §4, Table 1: staggered WCNS-EXP.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §1; §3, Eqs. (3.2)–(3.24); §5, Table 5.1: hybrid MR-WCNS.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §1; §2.2, Eq. (5); §§2.3–2.6, Eqs. (6)–(25), Tables 1–6, Fig. 1; §3, Figs. 2–9; §4; App., Fig. A.1: WCNS-T and WCNS-JS at orders 5–11.
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §2, Eqs. (2)–(18); §3; §4, Tables 2–5, Figs. 6–18: staggered third-order WCNS3-JS, WCNS3-MR and the learned WCNS3-MR-NN.

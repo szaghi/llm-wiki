@@ -144,7 +144,7 @@ No printed duplicates.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-22), cited further in chunks 6–9 (2026-10-23). This source is cited on:
+Chunk 5 (2026-10-22), cited further in chunks 6–10 (2026-10-23). This source is cited on:
 
 * [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md)
 * [Entropy stability](/properties/entropy-stability.md)
@@ -154,5 +154,6 @@ Chunk 5 (2026-10-22), cited further in chunks 6–9 (2026-10-23). This source is
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md)
 * [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)
+* [Sign-preserving WENO](/methods/sign-preserving-weno.md)
 * [Special relativistic hydrodynamics and MHD](/definitions/relativistic-hydrodynamics.md)
 * [TeCNO schemes — entropy-stable reconstruction with the sign property](/methods/tecno-scheme.md)

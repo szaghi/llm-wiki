@@ -5,7 +5,7 @@ description: "Smooth exact solution of the Euler equations, an isentropic vortex
 status: established
 aliases: [isentropic vortex advection, isentropic vortex evolution, vortex convection, steady isentropic vortex]
 tags: [benchmark, weno, dg, entropy-stable, finite-volume]
-timestamp: 2026-10-23T15:17:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # Isentropic vortex
@@ -95,6 +95,9 @@ $\gamma=1.4$. The sources differ in normalization and strength:
 | [Edoh (2022)](/sources/edoh-2022.md) §4.1, Eqs. (27)–(28) | periodic, dimensional | 4 (dimensionless factor of $\sqrt{R_{\mathrm g}T_\infty}$), Gaussian exponent factor $\phi_{\mathrm v}=1$ | $\rho_\infty=1$ kg m$^{-3}$, $\rho v_{1,\infty}=200$ kg m$^{-2}$s$^{-1}$, $\rho e_{o,\infty}=305714.3$ | 100 vortex widths; 60 points per direction; density error, kinetic energy, entropy |
 | [Alberti et al. (2025)](/sources/alberti-2025.md) §3.1.1, Eq. (52) | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=T_0=1$, stream $(\sqrt\gamma,\sqrt\gamma)$, Mach $\sqrt2$ | one period $t=10/\sqrt\gamma$; $25^2$, $50^2$, $100^2$ elements, modal DG degree $N=3,4$ |
 | [Danis et al. (2025)](/sources/danis-2025.md) §5.3 | $[0,10]^3$, centre $(5,5)$ in the $x$–$y$ plane, exact time-dependent boundary values | as in the paper they cite, not restated | not restated | $T=1$, $\Delta t=\tfrac12h^{5/3}$; $20^3$ to $320^3$; tensor-train ranks and cost |
+| [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Ex. 5.6 | $[-5,5]^2$, centre at the origin, periodic | 10.0828 | unit background, stream $(1,1)$ | $T=1$, CFL 0.2; $\ell^1$ orders of the generalized Active Flux with bound-preserving limiting |
+| [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) §4, Fig. 12 | $[-5,5]^2$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=1$; relative $L^2$ density error of IMEX all-Mach finite volumes |
+| [Zampa & Dumbser (2025)](/sources/zampa-2025.md) §4.1 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | unit background, no stream | $t=1$, $C_{\mathrm{CFL}}=0.25$; $L^2$ errors on unstructured meshes $M_{40}$ to $M_{120}$, degrees 0–2 |
 | [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.2, Eq. (4.3) | $[0,1]^2$, centre $(0.5,0.5)$, periodic | $\epsilon_{\mathrm v}=0.3$, $r_{\mathrm c}=0.05$, $\alpha_{\mathrm v}=0.204$ (their form, page-local) | $\rho=p=1$, stream $(1,0)$ | $t=1$; third-order DG with ROUND subcells, $10^2$ to $50^2$ elements |
 
 Wang et al. print $\rho=\big(1-\frac{25(\gamma-1)}{8\gamma\pi^2}e^{1-r^2}\big)^{1/(\gamma-1)}$,
@@ -199,7 +202,20 @@ $1-\frac{(\gamma-1)\mathcal E^2}{8\gamma\pi^2}e=2.28\times10^{-6}$,
 the density $7.83\times10^{-15}$ and the pressure $1.78\times10^{-20}$
 *(compiler check, not in the sources)*: Fan et al. (2023) print the minima
 $7.8\times10^{-15}$ and $1.7\times10^{-20}$, the same strength as Chen &
-Wu's relativistic case below.
+Wu's relativistic case below. Duan, Barsukow & Klingenberg write the
+same vortex through $k_0=\frac{\mathcal E}{2\pi}e^{(1-r^2)/2}$ and
+$T=1-\frac{\gamma-1}{2\gamma}k_0^2$, the table's temperature, with the
+velocity perturbation $k_0(\bar y,-\bar x)$ turning the other way, and
+print the minima $7.83\times10^{-15}$ and $1.78\times10^{-20}$
+*(compiler check, not in the sources, for the identity of the forms)*.
+
+Allegrini & Vignal write the table's form through $\delta T$ with
+$\mathcal E=5$ and zero entropy perturbation, after Hu & Shu. Zampa &
+Dumbser write the steady vortex as $\rho=(1+\delta T)^{1/(\gamma-1)}$,
+$p=(1+\delta T)^{\gamma/(\gamma-1)}$, $\delta T=-(\gamma-1)\frac{25}{8\gamma\pi^2}e^{1-r^2}$,
+$v=\frac5{2\pi}e^{(1-r^2)/2}(5-y,\ x-5)$: the table's form with
+$\mathcal E=5$, unit background and no stream; they attribute it to
+Hu & Shu in the text and call it "Shu vortex" in their table captions.
 
 Two sources use other profiles. Dzanic, Trojak & Witherden and Dzanic &
 Witherden write the perturbation through
@@ -325,6 +341,34 @@ finest grid: WENO-AO-3 2.59 ($512^2$), AO-(5,3) 4.97, AO-(7,3) 6.93
 ($1.01355\times10^{-10}$ at $384^2$); multi-resolution WENO 2.74, 4.68,
 6.93, 8.78 (Table I). The domain and the final time are doubled for
 orders 7 and 9.
+
+**Third order of Active Flux at near vacuum.** Duan, Barsukow &
+Klingenberg run the near-vacuum vortex with their generalized
+[Active Flux](/methods/active-flux.md) method and its bound-preserving
+limiting active. With the point values updated by Jacobian splitting or
+by the local Lax–Friedrichs or van Leer–Hänel
+[flux vector splittings](/methods/flux-vector-splitting.md) the scheme
+reaches third order in $\ell^1$; with the Steger–Warming splitting the
+order drops to about 2 (Ex. 5.6, Fig. 9), which they relate to the
+non-differentiability of the Steger–Warming mass flux, citing earlier
+work (Remark 2.1). Their one-dimensional smooth Euler test shows the
+same drop (Ex. D.1).
+
+**IMEX all-Mach schemes in the compressible regime.** Allegrini & Vignal
+obtain the expected orders for their first- and second-order "L2 AP"
+IMEX finite volumes (the latter without the minmod limiter) and for the
+explicit first- and second-order schemes, and first order with lower
+error for their TVD blend of the two AP schemes (Fig. 12); see
+[semi-implicit all-Mach scheme](/methods/semi-implicit-all-mach-scheme.md).
+
+**Compatible finite elements on unstructured meshes.** Zampa & Dumbser's
+semi-implicit, exactly mass-conservative H(div) finite-element scheme for
+weakly compressible flow reaches $L^2$ order $r+1$ ($r=0,1,2$ the
+polynomial degree, page-local) for $\rho_h$, $v_h$ and $p_h$, for example
+$L^2(\rho_h)=5.2539\times10^{-6}$ with order 3.20 at $r=2$ on $M_{120}$
+(Tables 1–3). The scheme is first order in time and no time-convergence
+study is shown, so the spatial orders are seen at the fixed
+$C_{\mathrm{CFL}}=0.25$ of the test.
 
 **Fifth-order A-WENO with the time-step tied to the grid.** Wang et
 al. run their [A-WENO](/methods/alternative-weno.md) schemes with the
@@ -512,7 +556,7 @@ error magnitude of the unlimited DG, the improved one saving between
 up to 57.82 % on point clouds (Tables 4.14–4.16). Yu & Hesthaven's
 ANN-predicted [artificial viscosity](/methods/artificial-viscosity.md)
 fires only on the coarsest grid ($N_g=40$), giving inflated apparent
-orders on the first refinement ($P^4$: 10.2 in $L^2$), and is identical
+orders on the first refinement ($\mathbb P^4$: 10.2 in $L^2$), and is identical
 to the inviscid DG afterwards (Table 3). Dzanic, Trojak & Witherden's
 residual-based viscosity gives $L^2$ density rates that "met or
 exceeded" the optimal order $N+1$: 3.30, 4.93, 5.53, 7.44, 7.79, 8.74 for
@@ -524,10 +568,10 @@ generally between $N$ and $N+1$ (their "$p$ to $p+1$"), 2.59, 4.00, 4.27, 6.73, 
 8.13 (Table 5), and costs 1.1, 1.7 and 2.0 % more time-to-solution for
 5, 10 and 20 bisection iterations ($N_x=40$, $\mathbb P^3$, V100, five
 flow-throughs; §5.1.3). The unlimited schemes themselves fall below
-$N+1$ on some of these runs: Du et al.'s unlimited $P^2$ DG has $L^2$
-orders 2.64–2.70 on triangles (Table 4.5) and $P^1$ $L^\infty$ orders
+$N+1$ on some of these runs: Du et al.'s unlimited $\mathbb P^2$ DG has $L^2$
+orders 2.64–2.70 on triangles (Table 4.5) and $\mathbb P^1$ $L^\infty$ orders
 about 1.6 on point clouds (Table 4.11), and Yu & Hesthaven's inviscid
-$P^2$ about 2.1–2.2 (Table 3); neither paper comments on it.
+$\mathbb P^2$ about 2.1–2.2 (Table 3); neither paper comments on it.
 
 **Long-time robustness of kinetic-energy-preserving splittings.** Edoh
 runs a sixth-order compact central scheme (CD06) on 60 points per
@@ -837,3 +881,6 @@ on $40^2$ elements (Table 3); see
 - [Alberti et al. (2025)](/sources/alberti-2025.md) — §3.1.1, Eq. (52), Figs. 1–3.
 - [Danis et al. (2025)](/sources/danis-2025.md) — §4.6, §5.3, Table 3, Figs. 4–5 (arXiv v1).
 - [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.2, Eq. (4.3), Tables 1–3.
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — Remark 2.1, Ex. 5.6, Fig. 9; Ex. D.1 (arXiv v3).
+- [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §4, Fig. 12 (HAL manuscript).
+- [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §3.1, §4.1, Tables 1–3 (arXiv v1).

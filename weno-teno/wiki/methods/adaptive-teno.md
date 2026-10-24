@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Adaptive TENO (TENO-A, TENO-AA)"
-description: "Adaptive TENO varies the TENO cut-off locally through a discontinuity measure, a wavenumber scale sensor or a global smoothness factor (TENO-A, TENO-LAD, TENO-AZ), relays band-wise linear schemes and cut-offs (TENO6-SA) and, in TENO-AA, tests nested symmetric large stencils largest-first so that the accuracy order drops recursively near discontinuities; this page gives the formulas, parameters, orders and evidence of these variants."
+description: "Adaptive TENO varies the TENO cut-off locally through a discontinuity measure, a wavenumber scale sensor, a global smoothness factor or a jump-variance indicator (TENO-A, TENO-LAD, TENO-AZ, TENO-E), relays band-wise linear schemes and cut-offs (TENO6-SA) and, in TENO-AA, tests nested large stencils largest-first; the page gives formulas, parameters, orders and evidence."
 status: established
-aliases: [TENO-A, TENO-AA, TENO5-A, TENO6-A, TENO8-AA, TENO10-AA, TENO-AZ, TENO-LAD, TENO6-SA, scale-adaptive TENO, adaptive dissipation TENO, adaptive cut-off TENO, TENO with adaptive accuracy order]
+aliases: [TENO-A, TENO-AA, TENO-E, TENO5-E, TENO6-E, TENO7-E, TENO5-A, TENO6-A, TENO8-AA, TENO10-AA, TENO-AZ, TENO-LAD, TENO6-SA, scale-adaptive TENO, adaptive dissipation TENO, adaptive cut-off TENO, TENO with adaptive accuracy order]
 tags: [teno, reconstruction, low-dissipation, turbulence, finite-difference]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:37:00Z
 ---
 
 # Adaptive TENO (TENO-A, TENO-AA)
@@ -234,7 +234,7 @@ six-point WENO-CU6 indicator (Eq. (36)). *(Compiler check, not in the sources: t
 first two rows of weights reproduce the sixth- and fourth-order fluxes exactly from
 the TENO6 candidate fluxes, and the third is the least-squares fit under
 $\sum_kd_k=1$; it reproduces the second-order flux only approximately.)* The
-cut-offs are read off Table 1, which maps $C_T$ to the wavenumber at which their
+cut-offs are taken from Table 1, which maps $C_T$ to the wavenumber at which their
 TENO turns nonlinear in the ADR ($10^{-4}\to1.058$, $10^{-5}\to1.146$, …,
 $10^{-10}\to1.549$, $10^{-13}\to1.794$; see
 [targeted ENO](/methods/targeted-eno.md)): each band's $C_T$ makes the scheme
@@ -246,7 +246,7 @@ the wavenumber, the reverse of TENO-A and of the scale-sensor TENO5-A below, whi
 raise $C_T$ at high wavenumbers. Zhang et al. reconcile the two: TENO-A keeps one
 linear scheme, while TENO6-SA relays to schemes of better dispersion, which need
 less nonlinear dissipation; above $1.726$ the cut-off is raised again (§5.1). Their
-Titarev–Toro study supports the usual direction within one band: lowering $C_T$ of
+Titarev–Toro study supports the TENO-A direction within one band: lowering $C_T$ of
 the low-wavenumber band from $10^{-3}$ to $10^{-10}$ sharpens the waves but creates
 pseudo-oscillations from $10^{-7}$ on, so "conclusions from monochromatic ADR do not
 transfer directly to nonlinear problems" (§6.1.3, Fig. 13).
@@ -411,6 +411,66 @@ characteristic-wise is not stated):
   four cases; in 2D it is faster, in line with the saving Peng et al.
   report.
 
+## TENO-A at immersed boundaries and on unstructured meshes
+
+**A widened range and a geometric override.** [Chen & Chen (2026)](/sources/chen-2026.md)
+(§2.3.2, Eqs. (23)–(26), Fig. 3) use the five-point finite-difference TENO5 of Fu, Hu & Adams
+(2017) with the TENO-A cut-off of Fu, Hu & Adams (2018), in a solver with a ghost-cell
+[immersed boundary method](/methods/immersed-boundary-method.md). They print the measure with
+$\xi_{\mathrm A}=10^{-3}$ and $C_r=0.24$, the mapping $\varphi$ above and $b_1=9$, $b_2=8$, so that
+$C_T=10^{-\lfloor b\rfloor}$ ranges over $[10^{-9},10^{-1}]$, "notably broader" than the range
+$10^{-10}$ to $10^{-5}$ they attribute to Fu et al. (that of the TENO5-A parameters $b_1=10$,
+$b_2=5$ above). In smooth regions $\mu_d=0$, $\varphi=1$ and $C_T=10^{-9}$; at a discontinuity
+$\mu_d\to1$ and $C_T=10^{-1}$ *(compiler check, not in the sources: from the printed formulas)*.
+On top of this, every interface whose TENO stencil contains at least one ghost point uses
+$C_T=10^{-1}$, "the largest value", motivated by the steep gradients and the loss of positivity
+in the low-pressure, low-density regions behind bluff bodies; the other interfaces use the
+adaptive value. With Hu, Adams & Shu's
+[positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md) at every
+stage of a five-stage SSP Runge–Kutta method, the limiter is rarely activated on a Mach 3
+cylinder with this range, more often near the shock front with $C_T\in[10^{-15},10^{-5}]$, and in the
+wake with a fixed $10^{-14}$ (both with $10^{-1}$ kept at the wall), §3.1, Fig. 8; the
+parameters giving the middle range are not printed. Against WENO-Z with the same immersed
+boundary, on Schardin's problem, the adaptive TENO "exhibits lower numerical dissipation in
+resolving the fine structures" (§3.2, Figs. 11–13; visual comparison). They call the adaptive scheme
+free of "an extrinsic shock sensor"; near the wall the ghost-point rule, a geometric switch,
+overrides the adaptation.
+
+**TENO-E: a cut-off from the variance of cell-average jumps.** [Liang et al. (2025)](/sources/liang-2025.md)
+(§3.3, Eqs. (19)–(28)) carry the adaptive cut-off to finite-volume TENO on unstructured
+triangular, tetrahedral and hexahedral meshes (TENO5-E, TENO6-E, TENO7-E, in
+[UCNS3D](/software/ucns3d.md)). Their sensor is not Ren's measure but a new
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md): for the target cell, the
+relative jumps $\lvert\bar\rho_k-\bar\rho_i\rvert/\bar\rho_i$ of the density averages to the $N_{\mathrm e}$
+neighbours of its large central stencil are formed, and their population variance
+$\mathsf v_i$ (page-local) is compared with $10^{-3}$. Where $\mathsf v_i<10^{-3}$ the linear large-stencil
+least-squares reconstruction acts on the conserved variables directly, without characteristic
+decomposition or weights ([hybrid schemes](/methods/hybrid-weno.md)); elsewhere TENO runs in
+characteristic variables with the cut-off (page-local $m_i$, $g_{\mathrm c}$, $\mathsf e_i$, as on the Source page)
+$$m_i=\frac{\min(\mathsf v_{\mathrm U},\mathsf v_i)-\mathsf v_{\mathrm L}}{\mathsf v_{\mathrm U}-\mathsf v_{\mathrm L}},\qquad
+g_{\mathrm c}=(1-m_i)^2(1+2m_i),\qquad
+\mathsf e_i=10-4\big(1-g_{\mathrm c}\big),\qquad C_{T,i}=10^{-\lfloor \mathsf e_i\rfloor},$$
+with $\mathsf v_{\mathrm L}=10^{-3}$ and $\mathsf v_{\mathrm U}=10^{-2}$, so that $C_T\to10^{-6}$ at strong
+discontinuities ($\mathsf v_i\ge\mathsf v_{\mathrm U}$) and $10^{-10}$ for weak high-wavenumber fluctuations. The
+kernel is the cubic $(1-m)^2(1+2m)$, not the quartic $\varphi$ of TENO-A, and the structure of the
+exponent is that of $b$ in TENO-A, with $m_i$ in the role of $\mu_d$ ($m_i=0$ is the weakest flagged
+case, $m_i=1$ a strong discontinuity); the paper does not say where the kernel comes from. The rationale, citing Ren et al., is that first-order jumps separate
+fluctuations from discontinuities better than the high-order undivided differences of the TENO
+indicators (§1, §3.3.4). *(Compiler check, not in the sources: TENO runs only where
+$\mathsf v_i\ge10^{-3}=\mathsf v_{\mathrm L}$, so $m_i\in[0,1]$ and $\mathsf e_i\in[6,10]$; with the floor,
+$C_T$ takes the values $10^{-10},\dots,10^{-6}$, and $10^{-10}$ only at $\mathsf v_i=\mathsf v_{\mathrm L}$ exactly,
+since any larger variance gives $\mathsf e_i<10$.)* All parameters are fixed across orders and tests. The TENO step itself
+is on [targeted ENO](/methods/targeted-eno.md).
+
+*Evidence* (HLL flux, SSP-RK3, CFL 0.4 or 0.6; comparator CWENO5/6/7 of the same orders in UCNS3D):
+design order on a periodic entropy wave on triangles, final $L_\infty$ orders 4.95, 5.81 and 6.99
+(Table 1); sharper resolution on Shu–Osher, double Mach reflection, 2D Riemann configurations 8 and 16,
+Schardin's shock–wedge problem, an implosion inside multiple circles, a 3D shock–cone interaction and
+the inviscid Taylor–Green vortex; on the double Mach reflection $C_T\approx10^{-6}$ near strong shocks and
+smaller values in density fluctuations (Fig. 8). Total-time ratios to CWENO5 on Riemann configuration 8
+are 0.52, 0.64 and 0.88 for TENO5/6/7-E (CWENO6 1.16, CWENO7 1.42; Table 2), and TENO6-E takes 44.2%
+of CWENO6's time on the implosion (§4.7); the hardware is "the same workstation".
+
 ## Adaptive accuracy order (TENO-AA)
 
 **Stencils** ([Fu (2021)](/sources/fu-2021.md), §3.1, Fig. 1(b)): the three
@@ -569,7 +629,14 @@ TENO5 ([TENO-THINC](/methods/teno-thinc.md)).
   $0.265$ (Fu 2021), $0.24$ (Huang et al. 2023; Tang 2024), $0.25$ (De
   Vanna et al. 2023a, 2023b, both attributing the value to Fu et al.
   2018), $0.23$ (Liang & Fu 2024b, citing Fu et al. 2018) and $0.17$
-  (Zhang et al. 2024b, for TENO6-A). No source discusses the difference.
+  (Zhang et al. 2024b, for TENO6-A); Chen & Chen (2026) use $0.24$. No source discusses the difference.
+- Chen & Chen (2026, Eq. (23)) print the minimum of the measure as $\min(\sigma_{i-1},\sigma_i,\sigma_{i+2})$,
+  without $\sigma_{i+1}$, where Huang et al. (2023) and Tang (2024) print the three-point minimum
+  $\min(\sigma_{i-1},\sigma_i,\sigma_{i+1})$ and the Fu papers the four-point one; the gap is not discussed.
+- The positivity statement of Chen & Chen (2026) concerns the limiter and the immersed-boundary
+  interpolation, not the cut-off; their abstract's guarantee "at every grid point for all time" is
+  discussed on [immersed boundary methods](/methods/immersed-boundary-method.md). The paper prints no CFL
+  number for any test.
   Chen & Fu's $0.5$ and $0.6$ belong to a measure raised to the power
   $p_\sigma$ and taken at one cell, so they are not comparable values.
 - Zhang et al. (2024b, §5.3) state that the scale sensor adds "an approximate
@@ -639,3 +706,5 @@ TENO5 ([TENO-THINC](/methods/teno-thinc.md)).
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §§5.4–5.7, Eqs. (57)–(65); §9, Table 1, Fig. 13: TENO-A cut-off and order fallback in a compact limiter for spectral differences.
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.5, Eq. (17); §3.2; §5, Algorithm 1, Eq. (36), Tables 1–4, 6, Figs. 5–6; §6.1.3, §6.3.3, §6.4: TENO6-A parameters, TENO6-SA and its evidence.
 - [Liang & Fu (2024a)](/sources/liang-2024.md) — §3.1; §3.2, Eqs. (30)–(32): TENO-A mapping on the RBF shape parameter.
+- [Chen & Chen (2026)](/sources/chen-2026.md) — §2.3.1–2.3.2, Eqs. (14)–(26), Fig. 3; §3.1, Fig. 8; §3.2, Figs. 11–13: TENO5-A cut-off in $[10^{-9},10^{-1}]$, $C_T=10^{-1}$ on ghost-point stencils, limiter activations.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §1; §3.3.2–3.3.5, Eqs. (19)–(28); §4, Tables 1–4, Figs. 7–20: TENO-E adaptive cut-off from the variance of cell-average jumps, unstructured evidence and cost.

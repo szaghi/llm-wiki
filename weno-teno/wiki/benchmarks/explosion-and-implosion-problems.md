@@ -5,7 +5,7 @@ description: "Multi-dimensional Euler tests with Sod-type circular, spherical an
 status: established
 aliases: [explosion problem, implosion problem, cylindrical explosion, spherical explosion, 2D explosion, Liska–Wendroff implosion]
 tags: [benchmark, low-dissipation, central-scheme, teno]
-timestamp: 2026-10-23T15:17:00Z
+timestamp: 2026-10-23T20:37:00Z
 ---
 
 # Two-dimensional explosion and implosion problems
@@ -28,8 +28,9 @@ states $\gamma=1.4$ for all its Euler tests (§2.1).
 
 ## Long-time cylindrical explosion
 
-[Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 6 (arXiv v2) and
-[Wang et al. (2023b)](/sources/wang-2023-b.md) Ex. 6 print the same data:
+[Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 6 (arXiv v2),
+[Wang et al. (2023b)](/sources/wang-2023-b.md) Ex. 6 and
+[Chu et al. (2025c)](/sources/chu-2025-c.md) Ex. 4 (arXiv v1) print the same data:
 $(\rho,v_1,v_2,p)=(1,0,0,1)$ for $x^2+y^2<0.16$, i.e. inside the circle
 of radius 0.4, and $(0.125,0,0,0.1)$ outside, computed in the first
 quadrant $[0,1.5]^2$ with solid walls at $x=0$ and $y=0$ and free
@@ -48,6 +49,18 @@ curlier" contact than their earlier adaptive diffusion central flux
 is physically unstable and "may be stabilized by the ND only", so less
 dissipation shows as more roll-up.
 
+Chu et al. (2025c) use the problem to compare their new
+[low-dissipation central-upwind scheme](/methods/low-dissipation-central-upwind-scheme.md)
+(NEW), whose subcell projection places the jump at
+$x_{j+1/2}+u^{\mathrm{int}}\Delta t$ ($u^{\mathrm{int}}$ the
+page-local intermediate velocity) instead of at the interface, with the
+original LDCU scheme of Kurganov & Xin (OLD); both second order with the
+generalized minmod limiter (minmod parameter $\theta=1.3$, page-local), SSP-RK3, CFL 0.475. OLD
+oscillates along the free boundaries $x=1.5$ and $y=1.5$, NEW much less,
+while OLD "achieves a slightly better resolution" of the contact here
+(Fig. 3.4). The gauge does not favour the new scheme on this test, in
+contrast with the two comparisons above.
+
 ## Implosion
 
 The diamond-shaped implosion is attributed by the sources to Liska &
@@ -60,17 +73,18 @@ Wendroff.
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.9 | $(0.125,0,0,0.14)$ for $\lvert x+y\rvert<0.15$ and $\lvert x-y\rvert<0.15$ | "periodic box" $[-0.3,0.3]^2$ | $800\times800$ | 0.8 |
 | [Tang (2024)](/sources/tang-2024.md) §4.4.3, Eq. (35) | $(0.125,0,0,0.14)$ for $\lvert x\rvert+\lvert y\rvert<0.15$ | $[-0.3,0.3]^2$, reflecting | $400\times400$ | 2.5 |
 | [Chu et al. (2025a)](/sources/chu-2025.md) Ex. 5 | $(0.125,0,0,0.14)$ for $\lvert x\rvert+\lvert y\rvert<0.15$ | $[0,0.5]^2$ as printed, solid walls on all four sides | $\Delta x=1/2000$ | 2.5 |
+| [Chu et al. (2025c)](/sources/chu-2025-c.md) Ex. 5 | $(0.125,0,0,0.14)$ for $\lvert x\rvert+\lvert y\rvert<0.15$ | $[0,0.3]^2$, solid walls | $\Delta x=1/2000$ | 2.5 |
 
-The ambient state is $(1,0,0,1)$ in all five. The two printed regions
+The ambient state is $(1,0,0,1)$ in all six. The two printed regions
 are the same diamond, since $\max(\lvert x+y\rvert,\lvert x-y\rvert)=\lvert x\rvert+\lvert y\rvert$,
-and Liang et al.'s $800\times800$ grid on a side of 0.6 has the spacing
+and Liang et al. (2022)'s $800\times800$ grid on a side of 0.6 has the spacing
 $3/4000$ of Wang et al. *(compiler check, not in the sources)*. A solution
-of Liang et al.'s problem that keeps the symmetry of the data, even in
+of Liang et al. (2022)'s problem that keeps the symmetry of the data, even in
 $x$ and in $y$, is in the periodic box the same as the solution on the
 quadrant $[0,0.3]^2$ with solid walls on all four sides, because
 evenness and period $0.6$ make $x=\pm0.3$ mirror lines as well as $x=0$
 *(compiler check, not in the sources)*. The three sources thus run one
-problem; Liang et al. stop at $t=0.8$, the others at $t=2.5$. Tang's
+problem; Liang et al. (2022) stop at $t=0.8$, the others at $t=2.5$. Tang's
 full box with reflecting walls is, for a symmetric solution, the same
 problem again, on a grid of spacing $3/2000$, twice that of Wang et al.
 *(compiler check, not in the sources)*. Chu et al. (2025a) print
@@ -88,7 +102,7 @@ achieves a much higher resolution" than the old one on $1/2500$, and the
 old one needs $3/10000$ to look "similar"; no timings or hardware are
 given. Equal CPU time on these two grids means the new scheme costs about
 $(2500/2000)^3\approx1.95$ times as much per cell and step, counting the
-time-step reduction *(compiler check, not in the sources)*. Liang et al.
+time-step reduction *(compiler check, not in the sources)*. Liang et al. (2022)
 use the problem for [symmetry preservation](/properties/symmetry-preservation.md):
 their low-dissipation TENO scheme with a
 [THINC](/methods/thinc-reconstruction.md)-type jump reconstruction keeps
@@ -115,6 +129,12 @@ on coarse meshes but gives "severe instabilities" on $\Delta x=1/2000$
 (Figs. 4.7–4.8). Symmetry about $y=x$, lost to round-off in these
 low-dissipation schemes, is enforced by averaging mirrored cell values
 after each time step (Remark 4.1).
+
+Chu et al. (2025c) run Chertock et al.'s problem on Chertock et al.'s
+finest grid for the new scheme and find NEW slightly less oscillatory,
+with a jet that propagates further, "slightly higher resolution" than
+OLD (Fig. 3.5). Both of their 2D tests are attributed to Liska &
+Wendroff.
 
 **A training variant.** [Bezgin et al. (2023)](/sources/bezgin-2023.md)
 (§7.4, Eq. 49, arXiv v1) use a corner implosion on $[0,1]^2$ as the
@@ -201,6 +221,44 @@ states $(\rho,v,p)=(1,0,1)$ for $r\le0.5$ and $(0.125,0,0.1)$ outside:
   the small gain of the hp variant by almost 8 % of the elements being
   finite-volume limited.
 
+**Circular explosion with a posteriori viscosity, low-Mach scheme.**
+[Zampa & Dumbser (2025)](/sources/zampa-2025.md) §4.3 (arXiv v1) run the
+circular Sod data, $(\rho,p)=(1,1)$ for $r\le0.5$ and $(0.125,0.1)$
+outside, at rest, on the periodic $[-1,1]^2$ with 120×120 elements to
+$t=0.25$, against a radial reference. Their semi-implicit compatible
+finite-element scheme for weakly compressible flow, of degree 2, adds an
+artificial viscosity only in cells that fail a relaxed discrete maximum
+principle, after which the step is recomputed; the viscosity is active
+only near the discontinuities and no spurious oscillations appear
+(Figs. 3–4). The scheme evolves a non-conservative entropy equation, and
+the authors do not expect it to compute shocks correctly at large shock
+Mach numbers (§3.2.2); agreement with the reference is shown by plots.
+
+**Learned slopes on a circular explosion.** [de Romémont et al.
+(2026)](/sources/deromemont-2026.md) §6.3 take the circle of radius 0.2
+centred at $(0.5,0.5)$ in $[0,1]^2$ with the same Sod states, citing
+Toro's book in the text and Liska & Wendroff in the caption of Fig. 14.
+Their second-order MUSCL finite volumes with
+[learned slopes](/methods/learned-weno-weights.md) on $256^2$ reduce the
+relative $L^1$ error of the same scheme with standard slopes on the same
+grid, against a $1024^2$ reference, by 6 %, the smallest gain of their
+tests and outside the "20–50%" of their abstract; the final time is not
+printed.
+
+**Explosion among obstacles on triangles.** [Liang et al.
+(2025)](/sources/liang-2025.md) §4.7 call "implosion inside multiple
+circles" a unit disc with eight circular solid holes around a central
+disc, $(\rho,v_1,v_2,p)=(1,0,0,1)$ in the central disc and
+$(0.125,0,0,0.14)$ elsewhere (values given only in the labels of Fig.
+19), reflective boundaries, 911,276 triangles ($h\approx1/400$),
+snapshots at $t=0.15$, $0.25$, $0.75$, $1.0$; no source of the setup is
+printed. The high state sits in the central disc, so in this page's
+terms the data are an explosion that then reflects off the obstacles and
+the outer wall *(compiler check, not in the sources)*. Their
+unstructured TENO6-E resolves richer interfacial instabilities than
+CWENO6 at 20583.60 s against 46562.19 s, "about 44.2%" of the CWENO6
+cost (Fig. 20; hardware not stated).
+
 A two-dimensional radial Sod problem and a three-dimensional spherical
 one on an adaptive moving mesh are recorded on
 [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md). The
@@ -220,8 +278,12 @@ gas–liquid problem and is recorded on
   instabilities).
 - Each long-time comparison is against one predecessor only: Wang et
   al. against their own earlier adaptive diffusion central flux,
-  Chertock et al. against the original central-upwind scheme.
-- Liang et al.'s final time is given only in the caption of Fig. 21.
+  Chertock et al. against the original central-upwind scheme, Chu et
+  al. (2025c) against the original LDCU scheme.
+- de Romémont et al.'s gain is a relative $L^1$ error reduction on one
+  grid against a fine-grid run of the standard scheme, not an order or
+  a convergence statement.
+- Liang et al. (2022)'s final time is given only in the caption of Fig. 21.
 - Chu et al. (2025a)'s adaptive schemes depend on the constant $C$
   of the residual threshold, tuned per problem; the authors conclude
   that this hurts the robustness of A-WLR and that the minmod-based
@@ -244,3 +306,7 @@ gas–liquid problem and is recorded on
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §4.2.2, Fig. 5.
 - [Chu et al. (2025a)](/sources/chu-2025.md) — §2.2, §4.2, Example 5, Remark 4.1, Figs. 4.7–4.8 (arXiv v1).
 - [Chu et al. (2025b)](/sources/chu-2025-b.md) — Example 5 (cross-reference).
+- [Chu et al. (2025c)](/sources/chu-2025-c.md) — §3, Examples 4–5, Figs. 3.4–3.5 (arXiv v1).
+- [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §3.2.2, §4.3, Figs. 3–4 (arXiv v1).
+- [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §6.3, Fig. 14.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §4.7, Figs. 19–20.

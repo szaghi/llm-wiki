@@ -5,7 +5,7 @@ description: "A planar shock hitting a circular or spherical region of different
 status: established
 aliases: [shock–bubble, shock-bubble interaction, shocked bubble, shock–helium bubble, shock–R22 bubble, Haas–Sturtevant experiment, shock-induced bubble collapse]
 tags: [benchmark, multiphase, interface-capturing, central-scheme, finite-volume]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Shock–bubble interaction
@@ -209,6 +209,23 @@ values belong to R22 ($1.249$) and air ($1.4$) as in Bai & Li and Paula
 et al. Chu et al. (2025b) Example 4 run R22 on their helium setup, with
 bubble $(3.1538,0,0,1;1.249,0)$ at $t=3$.
 
+[Huang et al. (2025b)](/sources/huang-2025-b.md) §4.3.2 run the R22
+case in a five-equation model, with phase 1 R22 ($\gamma_1=1.249$) and
+phase 2 air ($\gamma_2=1.4$): in $(\rho_1,\rho_2,v_1,v_2,p,\phi_1)$, the
+bubble $(3.869,1.225,0,0,1.01325\times10^5,1-10^{-8})$ of radius 25 mm
+about $(225,44.5)$ mm, pre-shock air the same with $\phi_1=10^{-8}$, and
+post-shock air $(3.869,1.686,-113.5,0,1.59\times10^5,10^{-8})$ behind a
+leftward Mach 1.22 shock at $x=275$ mm; $\Delta x=\Delta y=1/8$ mm, 400
+cells per diameter, reflective top and bottom, schlieren of
+$\log(1+\lvert\nabla\rho\rvert)$ (Figs. 15–18). Their deepMTBVD, which
+replaces the [BVD](/definitions/boundary-variation-diminishing.md) selection
+between MUSCL and [THINC](/methods/thinc-reconstruction.md) by a small
+neural-network classifier, is comparable to MUSCL-THINC-BVD and sharper
+than MUSCL; it classifies fewer cells as THINC than the BVD rule but
+gives very similar results (§4.3.2). The states are Yan, Abgrall & Wu's
+with the R22 density $3.869$ for $3.863$ and the volume-fraction floor
+$10^{-8}$ for $10^{-6}$.
+
 **Three-phase bubble.** Paula et al. §7.6.3–7.6.4 put a helium core of
 diameter 30 mm inside an R22 shell of diameter 50 mm, in 2D and in 3D on a
 quarter domain of $3072\times384\times384$ cells (431 and 259 cells per
@@ -242,6 +259,15 @@ $C_v=0.523$; 74,504 unstructured elements, $t$ up to $13.6\,\mu$s. The
 results "compare well" with three earlier computations, and the case is
 offered as evidence of robustness on unstructured meshes (Fig. 8).
 
+**Three-dimensional air–helium at 640 cells per diameter.**
+[Wilfong et al. (2026)](/sources/wilfong-2026.md) §5.2 run a shock on a
+helium bubble in air in 3D with [MFC](/software/mfc.md) on
+$[0,20D]\times[-5D,5D]^2$ with $3200\times1600\times1600$ cells (more than
+$8\times10^9$), 640 cells per diameter, to $t^*=tU/D=5.0$, in 16 h on 144
+H200 GPUs (Fig. 20); the shock Mach number is not printed. The run is a
+capability demonstration: the authors state that validation rests on
+earlier work (§5.5).
+
 **A strong shock on a light bubble across block interfaces.**
 [Qin et al. (2023)](/sources/qin-2023.md) (§3.5.2, Eq. (41), Fig. 11) run a rightward strong shock with $(\rho,v_1,v_2,p)=(3.81,2.85,0,10)$ in $[-0.1,0]\times[-0.5,0.5]$. It
 hits a light bubble $(0.1,0,0,1)$ of radius $0.2$ centred at $(0.3,0)$ in a gas $(1,0,0,1)$. The
@@ -252,6 +278,12 @@ and $320\times200$ points, with interfaces at $y=0$ and $x=0.8$. The test exerci
 multi-resolution WCNS. Contacts and small scales are "well resolved" at $t=0.2$ and $0.4$ across the
 interfaces. The contours are not completely symmetric, because the grid spacing differs between
 blocks.
+[Fan et al. (2025b)](/sources/fan-2025-b.md) Eq. (54), after Čada &
+Torrilhon, run the same data on a single $680\times400$ grid to $t=0.4$
+(Fig. 16): their three-point WCNS3-MR-NN, whose nonlinear weights come
+from a network trained to reproduce the weights of a multi-resolution
+WCNS ([learned WENO weights](/methods/learned-weno-weights.md)), resolves
+the bubble better than WCNS3-JS and WCNS3-MR (§4.4).
 
 ## Gas bubbles in liquids and stiffened gases
 
@@ -323,6 +355,12 @@ being refracted by it.
   partial density $0.05$ as a symbol and subtract it from the main one);
   stiffened gas $\gamma_1=3$, $p_{\infty,1}=100$, bubble gas
   $\gamma_2=1.4$; $t=0.8$ (2D), $0.64$ (3D).
+
+- **A cloud of 75 bubbles.** Wilfong et al. (2026) §5.1 collapse 75
+  randomly placed 3 mm air bubbles in water with a shock, on
+  $[-9D,9D]\times[0,10D]^2$, $2000\times1000\times1000$ cells (about
+  $2\times10^9$) stretched to 100 points per diameter, in about 30 min on
+  1024 MI250X GCDs (Fig. 19), also as a demonstration.
 
 [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) §6.1 show a
 related illustration rather than a benchmark: a 40 MPa shock collapsing
@@ -553,6 +591,11 @@ qualitative claim with no reference comparison (Figs. 13–15).
   shock speeds $3.86$ and $3.68$, and with the printed $\rho$ and $p$ a single shock would carry
   $v_1\approx2.58$, with $\gamma=1.4$, the value the paper fixes for its Euler tests in §3.4)*.
   The paper does not comment on the inflow state.
+- Huang et al. (2025b) print inflow on the left and outflow on the right
+  for a leftward shock whose post-shock state ($v_1=-113.5$ m/s) lies on
+  the right, and call it "Example 6" in the Fig. 15 caption. Fan et al.
+  (2025b) take Qin et al.'s inflow state unchanged, so the remark on it
+  above applies to their run too *(compiler check, not in the sources)*.
 - Trojak & Dzanic's Table 4 prints the shocked-air velocity as
   $-0.55957$; a Mach 1.22 shock into their quiescent air gives
   $\lvert v_1\rvert=0.3948$ ($\gamma=1.3986$) or $0.3947$ ($\gamma=1.4$),
@@ -622,3 +665,6 @@ qualitative claim with no reference comparison (Figs. 13–15).
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §4.8, Table 9, Figs. 14–16: Mach 10 air-bubble collapse in water, mass conservation, limiter frequency.
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Exs. 4.11–4.12, Figs. 14–18.
 - [Chu et al. (2025b)](/sources/chu-2025-b.md) — §5.1, Examples 1–4, Remark 5.2, Tables 5.1–5.2, Figs. 5.4–5.5.
+- [Huang et al. (2025b)](/sources/huang-2025-b.md) — §4.3.2, Figs. 15–18.
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §4.4, Eq. (54), Fig. 16.
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §§5.1–5.2, 5.5, Figs. 19–20.

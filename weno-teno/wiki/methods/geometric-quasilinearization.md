@@ -5,7 +5,7 @@ description: "Geometric quasilinearization rewrites every nonlinear constraint o
 status: established
 aliases: [GQL, geometric quasi-linearization, GQL representation]
 tags: [bound-preserving, positivity, mhd, relativistic]
-timestamp: 2026-10-23T14:51:00Z
+timestamp: 2026-10-23T19:51:00Z
 ---
 
 # Geometric quasilinearization (GQL)
@@ -204,6 +204,33 @@ $\pm f(u)\cdot n_*$ by a multiple of $u\cdot n_*$:
   and, they state, invalidates the classical convex-decomposition argument of
   Zhang & Shu (§3); see
   [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
+- **Ideal MHD, locally divergence-free OEDG with HLL fluxes.**
+  [Liu & Wu (2025)](/sources/liu-2025.md) (arXiv v2, §3.6, Lemmas 1–4,
+  Thm 1) carry the same argument to the cell averages of a 2D
+  [OEDG](/methods/oedg.md) scheme whose magnetic field lies in a locally
+  divergence-free DG space. Lemma 1 is the Thm 4.12 representation; Lemma 2
+  recalls $S(u)\cdot n_*=(v-v_*)\cdot(B-B_*)-v_*\cdot B_*$ and
+  $\lvert\sqrt\rho\,(v-v_*)\cdot(B-B_*)\rvert<u\cdot n_*+\tfrac12\lvert B_*\rvert^2$,
+  hence the source bound above for any real multiplier. Two new lemmas
+  specialize Wu & Shu's general-mesh estimates to rectangles: a two-state
+  inequality for an HLL-type combination of two admissible states, whose
+  GQL form is bounded below by $-v_*\cdot B_*$ times the jump of the normal
+  field over the sum of the two speeds (Lemma 3), and the admissibility of
+  the HLL intermediate state with the analogous jump term (Lemma 4, Eq.
+  (65)). The [Godunov–Powell source](/definitions/godunov-powell-source-term.md)
+  is added to the cell-average equation only, with the normal-field jump
+  of each interface split between the two cells in the ratio of the HLL
+  wave speeds (§3.2, Eqs. (45)–(49)). In the proof the $v_*\cdot B_*$ terms
+  of the flux part sum to $-\Delta t\,(v_*\cdot B_*)$ times the
+  Gauss-quadrature divergence of the cell, which vanishes because the field
+  is divergence free in the cell, and the interface jump terms cancel
+  against the split source terms (§3.6). Theorem 1 then keeps the averages
+  admissible under the CFL condition (66), given admissible values at the
+  nodes of a cell-average decomposition
+  ([optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)).
+  The authors state that the two lemmas "simplify and improve" Wu & Shu's
+  estimates when reduced to Cartesian meshes, giving a "notably improved"
+  CFL condition (§1, Remark 3).
 - **Kapila model with HLL fluxes on DG.** Yan et al. (2024) (Lemma 2.11, 2D
   Lemma 3.9) show $f(u)\cdot n>\sigma^-\,u\cdot n$ and $-f(u)\cdot n>-\sigma^+\,u\cdot n$
   for $n=n_1,n_2,n_*$ with $\sigma^-=\min\{v-c,0\}$, $\sigma^+=\max\{v+c,0\}$
@@ -276,7 +303,11 @@ quasilinearization (§3.7, Fig. 4); see
   $(v-v_*)\cdot(B-B_*)\le\rho^{-1/2}\varphi$, while the printed bound fails
   for $\rho<1$ when $\lvert B-B_*\rvert=\rho^{1/2}\lvert v-v_*\rvert$ and
   $\rho e$ is small *(compiler check, not in the sources: Cauchy–Schwarz and
-  AM–GM)*. Whether the version of record corrects it is not known.
+  AM–GM)*. Whether the version of record corrects it is not known. Liu & Wu
+  (2025, Lemma 2) print the bound with the exponent $-1/2$,
+  $\lvert\sqrt\rho\,(v-v_*)\cdot(B-B_*)\rvert<u\cdot n_*+\tfrac12\lvert B_*\rvert^2$,
+  and so do Ding & Wu (2024a, Lemma 3.4) through the factor
+  $\lvert\xi\rvert/\sqrt\rho$ above.
 
 - Chen & Wu (2022, arXiv v1) print "$-U^\pm\cdot\xi_*>0$" in the proof of
   Lemma 3.7, where their own Lemma 3.4 and the proof of Lemma 3.6 give
@@ -298,3 +329,4 @@ quasilinearization (§3.7, Fig. 4); see
 - [Ding & Wu (2024a)](/sources/ding-2024.md) — arXiv v1: §2.1 (Thm 2.1); §3.1 (Lemmas 3.1–3.4); §3.2 (proof of Thm 2.1).
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Lemmas 2.10–2.11, 3.8–3.9; Thms 2.12, 3.10; App. A.
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §1; §3.4, Eq. (3.19); Appendix A.
+- [Liu & Wu (2025)](/sources/liu-2025.md) — arXiv v2: §1; §3.2, Eqs. (45)–(49); §3.6, Lemmas 1–4, Thm 1, Eqs. (58)–(72); Remark 3.

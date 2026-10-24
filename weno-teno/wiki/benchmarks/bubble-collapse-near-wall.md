@@ -5,7 +5,7 @@ description: "A gas or vapour bubble in high-pressure liquid next to a rigid wal
 status: established
 aliases: [cavitation bubble collapse near a wall, CBNW, near-wall bubble collapse, vapour bubble collapse near a wall, gas bubble collapse near a wall, Lauer bubble collapse]
 tags: [benchmark, multiphase, interface-capturing, cavitation]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T19:51:00Z
 ---
 
 # Bubble collapse near a wall
@@ -67,6 +67,20 @@ conserved through interfacial fluxes of a phase-change Riemann solver
 [level-set method](/methods/level-set-method.md)); they attribute their differences from
 Lauer et al. to the thermal non-equilibrium assumption of the latter (§4.5).
 
+## Related tests without a wall
+
+[Wilfong et al. (2026)](/sources/wilfong-2026.md) run two bubble-collapse cases in
+[MFC](/software/mfc.md) 5.0 that are not this benchmark, because no wall is present. A
+spatially homogeneous ("0D") collapse of monodisperse sub-grid air bubbles of equilibrium
+radius 5 mm at liquid-to-bubble pressure ratio $p_\infty/p_{\mathrm b}=1427$ (page-local
+symbols) tests time stepping, not interface capture: the unsplit scheme needs
+$\Delta t=0.008$ μs and fails at $0.8$ μs with a negative radius, while
+[Strang splitting](/methods/operator-splitting.md) with an adaptive embedded third-order
+Runge–Kutta sub-step runs at $0.8$ μs (§4.2.3, Fig. 13). A shock-driven collapse of a cloud of
+75 resolved 3 mm air bubbles in water on about $2\times10^9$ points is a capability
+demonstration, without comparison data (§5.1, Fig. 19; the authors state in §5.5 that
+validation rests on earlier work).
+
 ## Qualifications
 
 - The three setups differ in the bubble content (non-condensable gas, vapour without and with
@@ -83,3 +97,4 @@ Lauer et al. to the thermal non-equilibrium assumption of the latter (§4.5).
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §3.3.1, §5.2.3, Figs. 13–19.
 - [Jiao et al. (2024)](/sources/jiao-2024.md) — §4.9, §5, Figs. 4.20–4.23.
 - [Long et al. (2023)](/sources/long-2023.md) — §4.5, Eq. (41).
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §4.2.3, §5.1, §5.5, Figs. 13, 19 (free-field collapses, for contrast).

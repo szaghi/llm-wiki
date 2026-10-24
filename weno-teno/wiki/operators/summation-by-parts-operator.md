@@ -6,7 +6,7 @@ status: established
 symbol: "$Q+Q^\\top=B$"
 aliases: [SBP operator, SBP property, diagonal-norm SBP, generalized SBP, hybridized SBP operator, discrete integration by parts]
 tags: [dg, entropy-stable, kinetic-energy-preserving, finite-difference]
-timestamp: 2026-10-23T15:13:00Z
+timestamp: 2026-10-23T19:58:00Z
 ---
 
 # Summation-by-parts operator
@@ -195,6 +195,24 @@ The following special cases appear in the sources:
   terms in their free-stream proof and gives local conservation through
   skew-symmetry (Thms. 6.1–6.2;
   [flux reconstruction](/methods/flux-reconstruction.md)).
+- **Over-integrated LGL nodes with a modal projection.**
+  [Liu et al. (2025b)](/sources/liu-2025-b.md) (§3.1, Eqs. (3.4)–(3.8))
+  use, after Chen & Shu, $k_q+1\ge k+1$ LGL nodes for degree-$k$
+  polynomials, with $k_q=k+2$ in their tests. In page-local notation,
+  $\mathsf V$ is the $(k_q+1)\times(k+1)$ Legendre Vandermonde matrix at the
+  nodes, $\mathsf P=\hat M^{-1}\mathsf V^\top M$ the discrete $L^2$ projection
+  with $\hat M=\mathsf V^\top M\mathsf V$, and $\hat D$ the modal
+  differentiation matrix. The modal matrices satisfy
+  $\hat M\hat D+\hat D^\top\hat M=\mathsf V^\top B\mathsf V$, and the nodal
+  difference matrix
+  $$D=\tfrac12M^{-1}(I+\mathsf V\mathsf P)^\top B(I-\mathsf V\mathsf P)+\mathsf V\hat D\mathsf P$$
+  has $Q=MD$ with $Q+Q^\top=B$, $M=\mathrm{diag}(\mathsf w_j)$. Because the
+  LGL nodes contain the endpoints, plain restriction serves as the
+  extrapolation. [Liu et al. (2025c)](/sources/liu-2025-c.md) (§3.1,
+  Lemmas 1–2) use the collocated case, $k+2$ LGL nodes for tensor degree
+  $k+1$. They use the row sums $\sum_lD_{jl}=\sum_lQ_{jl}=0$ and the column
+  sums $\sum_lQ_{lj}=\tau_j$, the $j$th diagonal entry of $B$, in their
+  entropy proof for conservative MHD.
 
 ## Consequences used by the sources
 
@@ -302,3 +320,5 @@ route to non-periodic boundaries, which they do not treat.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §3.1 Eq. (5), §3.2 Eqs. (7)–(11), §5 Table 1a Fig. 3, §8, App. A (arXiv v2).
 - [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §3.1, §3.3–3.4 Eqs. (20)–(25) (arXiv v1).
 - [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §2 Eq. (22), §3.3 Eqs. (38)–(39), §6 Thms. 6.1–6.2.
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.1 Eqs. (3.4)–(3.8).
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §3.1 Lemmas 1–2, App. B.

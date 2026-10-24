@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Brio–Wu MHD shock tube"
-description: "One-dimensional ideal-MHD Riemann problem with a constant normal field and a reversing transverse field, whose solution contains a compound wave; used to validate MHD Riemann solvers, continuous finite elements, unstaggered central schemes, positivity-filtered DG, all-Mach IMEX WENO, a one-step HLL-GRP finite-volume scheme, a semi-implicit all-Mach finite-volume scheme, and, in a relativistic two-fluid variant, entropy-stable finite differences."
+description: "One-dimensional ideal-MHD Riemann problem with a constant normal field and a reversing transverse field, whose solution holds a compound wave; validates MHD Riemann solvers (HLLD included), continuous finite elements, central and all-Mach schemes, filtered, oscillation-eliminating, entropy-stable and globally divergence-free DG, and, in a relativistic two-fluid variant, entropy-stable finite differences."
 status: established
 aliases: [Brio–Wu problem, Brio–Wu tube, MHD shock tube, Brio and Wu shock tube]
 tags: [benchmark, mhd, riemann-solver, central-scheme, relativistic]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # Brio–Wu MHD shock tube
@@ -32,6 +32,10 @@ and the field $B=(B_1,B_2,B_3)$ in the notation of the registry.
 | [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) §5.2 | $[0,1]$, jump at $x=0.5$ | $(\rho,v_1,v_2,B_1,B_2,p)=(1,0,0,0.75,1,1)$ | $(0.125,0,0,0.75,-1,0.1)$ | 2 | 0.1 |
 | [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) §4.1 | $(-1,1)$, jump at $x=0$ | $(\rho,v_1,v_2,v_3,B_1,B_2,B_3,p)=(1,0,0,0,0.75,1,0,1)$ | $(0.125,0,0,0,0.75,-1,0,0.1)$ | 2 | 0.1 |
 | [Dematté et al. (2024)](/sources/dematte-2024.md) §4.1.1, Table 1 (RP1) | $[0,1]$, jump at $x=0.5$ | $(\rho,v_1,v_2,v_3,B_1,B_2,B_3,p)=(1,0,0,0,0.75,1,0,1)$ | $(0.125,0,0,0,0.75,-1,0,0.1)$ | 5/3 (default of §4) | 0.1 |
+| [Liu & Wu (2025)](/sources/liu-2025.md) §4.1 | not printed (plotted on $[-0.4,0.4]$), jump at $x=0$ | $(\rho,v_1,v_2,v_3,B_1,B_2,B_3,p)=(1,0,0,0,0.75,1,0,1)$ | $(0.125,0,0,0,0.75,-1,0,0.1)$ | 2 | 0.1 |
+| [Liu et al. (2025b)](/sources/liu-2025-b.md) Ex. 2(a) | $(-1,1)$, jump at $x=0$ | $(1,0,0,0,0.75,1,0,1)$ | $(0.125,0,0,0,0.75,-1,0,0.1)$ | 2 | 0.2 |
+| [Liu et al. (2025c)](/sources/liu-2025-c.md) Ex. 5.2 | rotated by $\arctan(0.5)$, jump on $2x+y=1$ | $(1,0,0,0,0.5/\sqrt5,2.75/\sqrt5,0,1)$ | $(0.125,0,0,0,2.5/\sqrt5,-1.25/\sqrt5,0,0.1)$ | $5/3$ (stated once for the paper, §2) | $0.2/\sqrt5$ |
+| [Wilfong et al. (2026)](/sources/wilfong-2026.md) §4.1.9 | as Miyoshi & Kusano's Fig. 5, not reprinted | — | — | not printed | not printed |
 
 Dao & Nazarov, Kanbar et al., Chen, Wu & Xiong, Dzanic & Witherden,
 Liu, Feng & Wang and Dematté et al. print the same states; their final times differ (0.2 on $[0,1]$ for Dao
@@ -52,15 +56,30 @@ $2p/\lvert B\rvert^2$ of the printed states is $1.28$ on the left and
 $0.128$ on the right *(compiler check, not in the sources)*. Kanbar et
 al. describe the solution as having "seven discontinuities".
 
+Liu & Wu and Liu et al. (2025b) print the same states with the jump at
+$x=0$, to $t=0.1$ and $t=0.2$ respectively (the latter on the domain
+$(-1,1)$, like Liu, Feng & Wang). Liu et al. (2025c) run the tube rotated
+by $\alpha_{\mathrm r}=\arctan(0.5)$ on $[0,1]$ times a strip two cells
+high, with Dirichlet ends and shifted-periodic top and bottom after Tóth,
+$512\times2$ cells, to $t=0.1\cos\alpha_{\mathrm r}=0.2/\sqrt5$
+($\alpha_{\mathrm r}$ page-local, as for Berta et al. below); the
+second interval of their printed domain, "$[(2/N_x)\cot\alpha]$",
+lacks its lower end. Projected on the shock normal and tangent, their
+fields are $B_\parallel=(2B_1+B_2)/\sqrt5=0.75$ on both sides and
+$B_\perp=(-B_1+2B_2)/\sqrt5=1$ and $-1$, so the data are Brio–Wu's
+*(compiler check, not in the sources)*, but run at the paper's global
+$\gamma=5/3$, which the test does not restate. Wilfong et al. do not
+reprint the data and show density only.
+
 ## Runs in the sources
 
 **Continuous finite elements with residual viscosity.** Dao & Nazarov run
-their explicit continuous Galerkin $\mathbb P_1$ and $\mathbb P_3$
+their explicit continuous Galerkin $\mathbb P^1$ and $\mathbb P^3$
 discretization with residual-based
 [artificial viscosity](/methods/artificial-viscosity.md) at 600 and 1200
 degrees of freedom against an Athena reference on 10000 points (Fig. 2,
 density with zooms). The compound wave is captured, and at equal degrees
-of freedom $\mathbb P_3$ is sharper than $\mathbb P_1$. Boundary
+of freedom $\mathbb P^3$ is sharper than $\mathbb P^1$. Boundary
 conditions are not stated.
 
 **Unstaggered central scheme on a 2D grid.** Kanbar et al. run the tube
@@ -85,9 +104,9 @@ ascribe to the reconstruction of primitive variables without
 [characteristic decomposition](/methods/characteristic-decomposition.md).
 
 **Positivity-preserving entropy filtering in DG.** Dzanic & Witherden run
-nodal DG/flux reconstruction ($\mathbb P_3$, 200 and 400 elements,
+nodal DG/flux reconstruction ($\mathbb P^3$, 200 and 400 elements,
 $\Delta t=2\cdot10^{-4}$ and $10^{-4}$) with their MHD
-[entropy filter](/methods/entropy-filtering.md), against a $\mathbb P_0$
+[entropy filter](/methods/entropy-filtering.md), against a $\mathbb P^0$
 reference on $5\cdot10^4$ elements (Fig. 2). Rarefactions and shocks are
 resolved within an element without noticeable oscillations; minor
 density oscillations remain between the compound wave and the contact,
@@ -161,6 +180,42 @@ left state of Berta et al.'s rotated tube below
 ($2/\sqrt{4\pi}=0.564190$, $3.6/\sqrt{4\pi}=1.015541$); the right states
 differ *(compiler check, not in the sources)*.
 
+**Oscillation-eliminating DG with a divergence-free field.** Liu & Wu
+run their locally divergence-free, positivity-preserving
+[OEDG](/methods/oedg.md) scheme ($\mathbb P^2$, SSP-RK3, HLL flux, CFL
+0.12) on 800 cells (Fig. 5) as the third of three 1D tubes, the other two
+being Ryu–Jones problems (below). No error norm is given.
+
+**Entropy-stable oscillation-free DG.** Liu et al. (2025b) run their
+entropy-stable damped nodal [DG](/methods/discontinuous-galerkin.md)
+(ESOFDG: $k=2$, flux differencing with an entropy-conservative flux, a
+Godunov–Powell non-conservative term, a damping term on the deviation
+from the cell mean, CFL $0.6/(2k+1)=0.12$) on 800 cells against a
+5000-cell reference (Fig. 1) and describe the compound waves as
+captured. They add a high-pressure-ratio variant, Ex. 2(c): left
+$(1,0,0,0,0,1,0,1000)$, right $(0.125,0,0,0,0,-1,0,0.1)$ in the variables
+of the table, $B_1=0$, $\gamma=2$, $(-1,1)$, $t=0.012$, 800 cells (Fig. 3).
+
+**Globally divergence-free entropy-stable DG.** Liu et al. (2025c) use
+the rotated tube to test their nodal DG on the conservative MHD system,
+with face-evolved normal fields and a least-squares reconstruction of the
+interior field ($\mathbb Q^3$ cells, ten-stage SSP-RK4, CFL 0.45), against a 1D
+third-order DG reference with a TVB limiter on 10,000 cells. Without
+limiter (Fig. 3) their scheme gives "a more stable result" than the
+entropy-stable DG of Liu, Shu & Zhang, which is not divergence-free and
+is unstable in $0.45<x<0.62$, an instability that "may be caused by the
+non-constancy of $B_\parallel$"; with their exponential scaling limiter
+(Fig. 4) it gives "a more compatible simulation, especially for
+$B_\parallel$". Without an entropy-stable treatment both the standard
+nodal DG and the globally divergence-free nodal DG "break down in the
+first several steps" (Ex. 5.2).
+
+**HLLD in a GPU code.** Wilfong et al. validate the ideal-MHD module of
+[MFC](/software/mfc.md) 5.0 with the [HLLD](/methods/hll-riemann-solvers.md)
+solver of Miyoshi & Kusano and WENO reconstruction on the tube and report
+agreement with Miyoshi & Kusano's Fig. 5 (§4.1.9, §4.2.5, Fig. 10a). The
+paper names no divergence-control method for its MHD module.
+
 ## Related problems
 
 The same sources follow the tube with two-dimensional MHD tests: the
@@ -170,9 +225,20 @@ Dematté et al., Bhoriya et al. in its relativistic form), the [rotor](/benchmar
 Nazarov, Lesur et al., Liu, Feng & Wang, Dematté et al.), the [MHD blast wave](/benchmarks/mhd-blast-wave.md)
 (Chen, Wu & Xiong, Dzanic & Witherden, Liu, Feng & Wang, Dematté et al., Bhoriya et al.), the
 [circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md)
-(Liu, Feng & Wang) and a four-state
+(Liu, Feng & Wang; Liu et al. 2025b; Wilfong et al.) and a four-state
 MHD Riemann problem (Kanbar et al., recorded on
 [two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md)).
+
+**Ryu–Jones tubes.** Liu & Wu run two Ryu–Jones problems at $\gamma=5/3$
+beside Brio–Wu: one with the left and right states of Berta et al.'s
+rotated tube below, unrotated (the same printed eight-component states
+*(compiler check, not in the sources)*), jump at $x=0.5$, $t=0.2$, 800 cells against 4000 (Fig. 3), and one with
+left $(1,0,0,0,0.7,0,0,1)$, right $(0.3,0,0,1,0.7,1,0,0.2)$, $t=0.16$
+(Fig. 4), whose solution holds a hydrodynamic rarefaction, a switch-on
+slow shock, a contact, a slow shock, a rotational discontinuity and a fast
+rarefaction. Liu et al. (2025b) run the second one on $(-1,1)$ to
+$t=0.32$ with 800 cells (Ex. 2(b), Fig. 2). Liu & Wu also run an MHD
+variant of the [Leblanc tube](/benchmarks/leblanc-shock-tube.md).
 
 **A different MHD shock tube, rotated in 3D.** [Berta et al. (2024)](/sources/berta-2024.md)
 §5.1, Eqs. (41)–(42) (arXiv v4) run another one-dimensional MHD
@@ -213,7 +279,9 @@ sources)*.
 - No source reports an error norm; all comparisons are visual, against
   a reference code (Athena, PLUTO), a fine-grid run, a lower-order
   run (Liu, Feng & Wang's forward-Euler reference) or the literature.
-- All sources except Liu, Feng & Wang and Dematté et al. (versions of record) are read in
+- Liu & Wu (2025) is read in arXiv v2; Liu et al. (2025b, 2025c) and
+  Wilfong et al. are versions of record.
+- All earlier sources except Liu, Feng & Wang and Dematté et al. (versions of record) are read in
   arXiv versions (v1; Dzanic & Witherden v2, Bhoriya et al. v2), not the
   versions of record. Kanbar et al. print no $\gamma$ for any test; Lesur et al. do
   not reprint the data.
@@ -228,4 +296,8 @@ sources)*.
 - [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §6.1.2, Figs. 1–2, Table 4 (arXiv v2).
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §4.1, Fig. 3.
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §4, §4.1.1, Table 1, Figs. 2–3.
+- [Liu & Wu (2025)](/sources/liu-2025.md) — §4.1, Figs. 3–5 (arXiv v2).
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — Ex. 2, Figs. 1–3.
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §2, Ex. 5.2, Figs. 3–4.
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §4.1.9, §4.2.5, Fig. 10a.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §5.1, Eqs. (41)–(42), Figs. 2–3 (arXiv v4; a rotated non-Brio–Wu MHD tube).

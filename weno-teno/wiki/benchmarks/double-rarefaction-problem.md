@@ -5,7 +5,7 @@ description: "One-dimensional Euler Riemann problem of two gases receding from e
 status: established
 aliases: [123 problem, receding flow, double rarefaction, double rarefaction with vacuum, water cavitation tube, two-phase expansion tube]
 tags: [benchmark, positivity, bound-preserving, riemann-solver]
-timestamp: 2026-10-23T15:03:00Z
+timestamp: 2026-10-23T19:51:00Z
 ---
 
 # Double rarefaction (123) problem
@@ -43,7 +43,9 @@ right of the centre.
 | [Tang (2024)](/sources/tang-2024.md) §4.3, Eq. (30) | $(1,\mp2,0.4)$, split at $x=0$ | $[-5,5]$ | 200 cells, reference WENO-JS on 4000 | 1.0 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.2, Eq. (31) | $(1,\mp2,0.4)$ | $[0,1]$ (stated for their Sod tube) | 200 cells | 0.15 |
 | [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 10, "low density and low internal energy" | $(1,\mp2,0.4)$, transmissive | $[0,1]$ | 300 cells; 30 cells | 0.15; 0.0295 |
-| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.8 | $(7,\mp1,0.2)$, outflow | $(-1,1)$ | 400 cells | 0.6 |
+| [Fan et al. (2025a)](/sources/fan-2025.md) Ex. 3.8 | $(7,\mp1,0.2)$, outflow | $(-1,1)$ | 400 cells | 0.6 |
+| [Fan et al. (2025b)](/sources/fan-2025-b.md) §4.3.1, Eq. (46), "123 problem" | $(1,\mp2,0.4)$, split at $x=0$ | $[-5,5]$ | 400 points | 1 |
+| [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Ex. D.2 | $(7,\mp1,0.2)$ | $[0,1]$ | 400 cells, CFL 0.4 (0.1 for the van Leer–Hänel splitting) | 0.3 |
 | [Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 8, "1-2-3" | $(1,\mp2,0.4)$, $\gamma=5/3$ | $[0,1]$ | 400 cells, SSP-RK3, CFL 0.2 | 0.15 |
 | [Fu (2021)](/sources/fu-2021.md) §5.7.1, Eq. (42) | $(1,\mp2,0.1)$, split at $x=0.5$; $\gamma$ not printed | $[0,1]$ | 400 points, exact reference | 0.1 |
 
@@ -120,7 +122,7 @@ without the positivity flux and limiter all three WENO schemes blow up
 on this test, without showing the failed runs (§5). Fan, Zhao, Xiong &
 Qiu instead run their finite-difference HWENO with restricted
 derivatives (HWENO-R) and WENO-ZQ on the same data **without**
-positivity limiters, and both complete (Ex. 3.6). Fan et al. (2025) do
+positivity limiters, and both complete (Ex. 3.6). Fan et al. (2025a) do
 the same with their moment-based HWENO with unified stencils (HWENO-U),
 HWENO-M and WENO-ZQ: all three run without positivity limiters
 (Fig. 12), while their 1D Sedov problem needs them.
@@ -134,7 +136,23 @@ of the admissible set; the solution is non-oscillatory, with a
 near-vacuum centre (Fig. 9). They state that their bound-preserving
 technique cures the non-physical solutions that the Jacobian splitting
 of the point-value update can give for the Euler equations, observed
-by Duan, Barsukow & Klingenberg and by others (§2).
+by [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) and by others (§2).
+
+Duan, Barsukow & Klingenberg run the critical vacuum-point data with
+their generalized [Active Flux](/methods/active-flux.md) method, whose
+point values are updated by Jacobian splitting or by one of three
+[flux vector splittings](/methods/flux-vector-splitting.md) (local
+Lax–Friedrichs, Steger–Warming, van Leer–Hänel): every variant fails
+without their bound-preserving limiting, convex limiting of the cell
+averages plus a scaling limiter of the point values, and runs with it
+(Ex. D.2, arXiv v3).
+
+**Learned weights at strong rarefactions.** Fan et al. (2025b) run the
+no-vacuum 123 data with their learned third-order
+[WCNS](/methods/weighted-compact-nonlinear-scheme.md) (WCNS3-MR-NN),
+WCNS3-JS and WCNS3-MR, and present the completed run, with the Leblanc
+tube, as the evidence of robustness at strong rarefactions (§4.3.1,
+Fig. 11); no positivity limiter is mentioned for these runs.
 
 **Two-phase bound preservation.** Yan, Abgrall & Wu's bound-preserving
 [OEDG](/methods/oedg.md) scheme keeps density and internal energy
@@ -281,6 +299,8 @@ condition is shown (§4.1).
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.3, Ex. 10, Figs. 9–12.
 - [Tang (2024)](/sources/tang-2024.md) — §4.3, Eq. (30), Fig. 8, Table 5.
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §3.2.3–3.2.4, §4.1, Eq. (46), Table 1, Figs. 1–2.
-- [Fan et al. (2025)](/sources/fan-2025.md) — Ex. 3.8, Fig. 12.
+- [Fan et al. (2025a)](/sources/fan-2025.md) — Ex. 3.8, Fig. 12.
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §2, §3.4, §4.2, Ex. 8, Fig. 9.
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Ex. 4.3, Fig. 5.
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §4, Ex. D.2 (arXiv v3).
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §4.3.1, Eq. (46), Fig. 11.

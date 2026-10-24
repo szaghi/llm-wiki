@@ -19,7 +19,7 @@ exponent, $\tau$ the WENO-Z global indicator, $C_T$ and $\delta_k$ the TENO
 cut-off, $N$ the DG degree, $(\eta,F_\eta)$ the entropy pair), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–9 of 11 ingested (179 of 207 sources). Chunk 1, the reviews and the
+**Corpus:** chunks 1–10 of 11 ingested (199 of 207 sources). Chunk 1, the reviews and the
 papers that fix the vocabulary: the TENO review of
 [Fu (2023)](/sources/fu-2023.md), the geometric quasilinearization of
 [Wu & Shu (2023)](/sources/wu-2023-b.md), the compact-stencil framework of
@@ -85,7 +85,14 @@ DG as subcell finite volumes with a posteriori correction, positivity and entrop
 reacting Navier–Stokes, OEDG for the five-equation model, divergence-free positivity-preserving
 finite volumes for MHD, force-free splitting and resistive relativistic MHD, the ROUND scheme on
 non-uniform grids, STREAmS-2.1, an incompressible MHD dynamo code and hypocoercive
-relaxation analysis. The remaining chunks follow the archive's order; the [Sources](/sources/index.md) index
+relaxation analysis. Chunk 10 (2025–2026 papers): converged ENO for steady
+states, TENO with an adaptive cut-off and a variance indicator, learned WCNS weights and learned
+MUSCL slopes, deepMTBVD, MR-WENO with spectral analysis against the carbuncle, a TENO-THINC
+limiter for DG, sign-preserving WENO for TeCNO, the APEC pressure-equilibrium flux, entropy-stable
+and divergence-free DG for MHD with the Godunov–Powell term, a new LDCU, arbitrary-order and
+flux-vector-split Active Flux with bound preservation and for Vlasov–Poisson, all-Mach and
+low-Mach finite elements, a positivity-preserving immersed-boundary TENO and the MFC 5.0 code.
+The remaining chunks follow the archive's order; the [Sources](/sources/index.md) index
 lists what is in.
 
 ## Reading guide
@@ -110,7 +117,8 @@ weight families follow: [WENO-Z](/methods/weno-z.md),
 [hybrid central-WENO schemes](/methods/hybrid-weno.md) and
 [learned WENO weights](/methods/learned-weno-weights.md), with
 [RBF-based WENO](/methods/rbf-weno.md), [AENO reconstruction](/methods/aeno-reconstruction.md),
-[tensor-train WENO](/methods/tensor-train-weno.md) and the
+[tensor-train WENO](/methods/tensor-train-weno.md), [converged ENO](/methods/converged-eno.md),
+[sign-preserving WENO](/methods/sign-preserving-weno.md) and the
 [MDCD schemes](/methods/mdcd-scheme.md) driven by
 [scale sensors](/definitions/scale-sensor.md). The
 [semi-Lagrangian finite-volume WENO](/methods/semi-lagrangian-finite-volume.md)
@@ -152,7 +160,9 @@ yields the [ROUND schemes](/methods/round-scheme.md).
 [Riemann solvers with phase change](/methods/phase-change-riemann-solver.md), the
 [α-damping viscous flux](/methods/alpha-damping-viscous-flux.md), the
 [Rankine–Hugoniot condition](/definitions/rankine-hugoniot-condition.md) and the
-[carbuncle phenomenon](/definitions/carbuncle-phenomenon.md);
+[carbuncle phenomenon](/definitions/carbuncle-phenomenon.md), probed by
+[matrix stability analysis](/methods/matrix-stability-analysis.md);
+[flux vector splitting](/methods/flux-vector-splitting.md);
 [characteristic decomposition](/methods/characteristic-decomposition.md);
 [central-upwind schemes](/methods/central-upwind-scheme.md), their
 [LCD variant](/methods/lcd-central-upwind-scheme.md), the
@@ -192,7 +202,8 @@ and [flux reconstruction](/methods/flux-reconstruction.md) with its code
 posteriori; on the
 finite-difference side, [split convective forms](/methods/split-convective-forms.md)
 give [kinetic energy preservation](/properties/kinetic-energy-preservation.md)
-and [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md),
+and [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)
+(with the [APEC flux](/methods/apec-scheme.md)),
 and [local conservation is equivalent to a flux form](/results/local-conservation-flux-form.md).
 [Free-stream preservation](/properties/free-stream-preservation.md) on curved
 meshes; [adaptive moving meshes](/methods/adaptive-moving-mesh.md),
@@ -218,7 +229,8 @@ or the [positivity-preserving flux limiter](/methods/positivity-preserving-flux-
 and, for viscous flows, the
 [positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md),
 whose time-step bound the [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)
-sharpens; MHD adds the [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md),
+sharpens; MHD adds the [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
+and the [Godunov–Powell source term](/definitions/godunov-powell-source-term.md),
 kept exactly by [constrained transport](/methods/constrained-transport.md) or damped by
 [GLM divergence cleaning](/methods/glm-divergence-cleaning.md)
 (on AMR hierarchies, [divergence-preserving prolongation](/methods/divergence-preserving-prolongation.md)),
@@ -227,7 +239,8 @@ add the recovery of primitive variables; at high magnetization the
 [force-free splitting](/methods/force-free-splitting-rmhd.md) separates the field from the plasma.
 
 **7. Multiphase and multicomponent flows.** The
-[five- and six-equation models](/definitions/five-equation-model.md), the
+[five-equation](/definitions/five-equation-model.md) and
+[six-equation models](/definitions/six-equation-model.md), the
 [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md) and the
 [stiffened-gas equation of state](/definitions/stiffened-gas-equation-of-state.md);
 [level-set and ghost-fluid methods](/methods/level-set-method.md),
@@ -271,6 +284,7 @@ the [Shu–Osher problem](/benchmarks/shu-osher-problem.md), the
 Smooth: [density-wave advection](/benchmarks/density-wave-advection.md),
 [material-interface advection](/benchmarks/material-interface-advection.md), the [isentropic vortex](/benchmarks/isentropic-vortex.md), the
 [Gresho vortex](/benchmarks/gresho-vortex.md), the
+[linear acoustics tests](/benchmarks/linear-acoustics-tests.md), the
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), the
 [hydrostatic equilibrium tests](/benchmarks/hydrostatic-equilibrium-tests.md) and
 [flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md), the
@@ -280,6 +294,7 @@ Smooth: [density-wave advection](/benchmarks/density-wave-advection.md),
 shocks: [two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md),
 [double Mach reflection](/benchmarks/double-mach-reflection.md), the
 [forward-facing step](/benchmarks/forward-facing-step.md),
+[steady shock problems](/benchmarks/steady-shock-problems.md),
 [shock diffraction](/benchmarks/shock-diffraction.md),
 [explosion and implosion problems](/benchmarks/explosion-and-implosion-problems.md), the
 [triple-point problem](/benchmarks/triple-point-problem.md),

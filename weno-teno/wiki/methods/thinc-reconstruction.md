@@ -5,7 +5,7 @@ description: "THINC reconstructs a cell's data by a hyperbolic-tangent jump prof
 status: established
 aliases: [THINC, tangent of hyperbola for interface capturing, tanh reconstruction]
 tags: [interface-capturing, reconstruction, low-dissipation, finite-volume, finite-difference]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:05:00Z
 ---
 
 # THINC reconstruction
@@ -53,6 +53,14 @@ Takagi et al. state that this $\mathrm{sgn}/\lvert\cdot\rvert$ form differs from
 the one of Deng, Shimizu and Xiao (2019), a difference they relate to symmetry
 breaking from floating-point errors (see
 [symmetry preservation](/properties/symmetry-preservation.md)).
+
+**As a DG polynomial.** [Huang et al. (2025a)](/sources/huang-2025.md) (§3.2.2, Eqs. (20)–(21)) print the
+same closed form for cell averages, $\hat u_{i+1/2}=u_{\mathrm m}+u_{\mathrm j}(\mathcal A+\mathcal T)/(1+\mathcal A\mathcal T)$ with
+$u_{\mathrm m}$, $u_{\mathrm j}$, $\varsigma$ formed from $\bar u_{i-1},\bar u_i,\bar u_{i+1}$ and $\beta_{\mathrm T}=1.6$ (following
+Takagi et al.), the left face by "the symmetric formula" (not printed), and the first-order value $\bar u_i$ where
+$(\bar u_{i-1}-\bar u_i)(\bar u_i-\bar u_{i+1})<10^{-15}$. In a troubled cell of a $\mathbb P^2$ discontinuous Galerkin
+method the two face values and the cell integral of the DG polynomial fix a unique quadratic, which is conservative
+by construction and serves as the THINC candidate of a limiter ([TENO-THINC](/methods/teno-thinc.md)).
 
 ## Symmetric finite-volume closed form
 
@@ -259,6 +267,15 @@ with and without the interface (§7.3, Fig. 12).
   rule over the four left/right combinations; the THINC formula and steepness are not
   given (see [BVD](/definitions/boundary-variation-diminishing.md),
   [HLL-family solvers](/methods/hll-riemann-solvers.md)).
+- **TENO or THINC in a DG limiter.** [Huang et al. (2025a)](/sources/huang-2025.md) (§3.2) choose in each
+  troubled DG cell between an equal-weight TENO polynomial and the THINC quadratic above by a compact BVD rule
+  against the unlimited neighbour traces; see [TENO-THINC](/methods/teno-thinc.md) and
+  [BVD](/definitions/boundary-variation-diminishing.md).
+- **A learned choice between MUSCL and THINC.** [Huang et al. (2025b)](/sources/huang-2025-b.md) (§3.2, Eqs.
+  (21)–(23)) print the finite-volume THINC of MUSCL-THINC-BVD with $\beta_{\mathrm T}=1.6$ (values from 1.6 to 2.2
+  giving "good or acceptable results", as they recall) and the directional steepness $\beta_{\mathrm T}\lvert n_x\rvert$
+  in 2D, and let a network predict where the BVD rule would select it, so that only one reconstruction is built per
+  cell ([BVD](/definitions/boundary-variation-diminishing.md)).
 - **Anti-dissipative design**: the behaviour of THINC above the third-order line
   is the precedent Huang et al. cite for the controlled anti-dissipation of
   LD-ROUND ([Huang et al. (2026)](/sources/huang-2026.md), §4.2; see
@@ -308,3 +325,5 @@ does not cite THINC-type reconstructions.
 - [Huang & Johnsen (2023)](/sources/huang-2023.md) — §1, §4: phase-field alternative to sharpening reconstructions (contrast only).
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §3.2.3–3.2.4, Eqs. (29)–(36); §§4.2, 4.4; Appendix A: symmetric closed form, steepness regimes, BVD hybrids in two-phase flow.
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §3.3, Eqs. (35)–(49), Algorithm 1; §4.1, §4.5, §4.7, §4.9–4.10, Table 11: volume-fraction THINC with closed-form centre, mirror flipping, steepness against surface tension, WENO5IS-THINC.
+- [Huang et al. (2025a)](/sources/huang-2025.md) — §3.2.2, Eqs. (20)–(21); §3.2.3: THINC face values from cell averages turned into a DG quadratic, TENO-or-THINC selection.
+- [Huang et al. (2025b)](/sources/huang-2025-b.md) — §3.2, Eqs. (21)–(26): finite-volume THINC in MUSCL-THINC-BVD, learned selection.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "TeCNO schemes — entropy-stable reconstruction with the sign property"
-description: "A TeCNO-type flux adds to an entropy-conservative flux a dissipation acting on jumps of reconstructed scaled entropy variables; it is entropy stable whenever the reconstruction has the sign property, which minmod and ENO have by construction and WENO reconstructions get from a componentwise sign switch."
+description: "A TeCNO-type flux adds to an entropy-conservative flux a dissipation acting on jumps of reconstructed scaled entropy variables; it is entropy stable whenever the reconstruction has the sign property, which minmod and ENO have by construction and WENO reconstructions get from a componentwise sign switch or from constrained weights."
 status: established
 aliases: [TeCNO, TVD-ES, sign property, entropy-stable reconstruction, ENO-based entropy-stable scheme, Fjordholm–Mishra–Tadmor scheme]
 tags: [entropy-stable, reconstruction, numerical-flux, weno, dg, relativistic]
-timestamp: 2026-10-22T19:46:00Z
+timestamp: 2026-10-23T20:29:00Z
 ---
 
 # TeCNO schemes — entropy-stable reconstruction with the sign property
@@ -109,6 +109,25 @@ $\hat a$ (page-local) the scalar dissipation speed (Eqs. (4.2)–(4.4)). The
 dissipation vanishes for a constant state, so the scheme keeps the free
 streams of its entropy-conservative part (Remark 4.1;
 [free-stream preservation](/properties/free-stream-preservation.md)).
+
+**Third-order WENO with the property built in.**
+[Charles & Ray (2025)](/sources/charles-2025.md) use four-point
+third-order WENO reconstructions whose weights are constrained to have
+the sign property, so no switch is needed. These are SP-WENO
+(Fjordholm & Ray), SP-WENOc (Ray) and their learned DSP-WENO, detailed on
+[sign-preserving WENO](/methods/sign-preserving-weno.md) (§3–4; arXiv v2).
+Their scheme "TeCNO4" is the fourth-order LeFloch–Mercier–Rohde
+entropy-conservative flux ($c_1=\tfrac43$, $c_2=-\tfrac16$, see High
+order) plus $-\tfrac12R\lvert\Lambda\rvert[\![\tilde w]\!]^{\mathrm{rec}}$. Here
+$R$ is the right-eigenvector matrix of the flux Jacobian, for which no
+scaling is stated, the scaled variables are $R^\top_{i+1/2}w$, and
+$\lvert\Lambda\rvert=\mathrm{diag}(\lvert\lambda_l\rvert)$ is Roe-type (Eqs.
+(6)–(11)). They also run a Rusanov-type $\lvert\Lambda\rvert=(\lvert v\rvert+c)I$.
+They state the entropy condition as Lemma 1, after Fjordholm, Mishra &
+Tadmor. Their central claim is that the *size* of the reconstructed jump
+governs the dissipation. SP-WENO gives a zero or near-zero jump at most
+shock interfaces, hence too little dissipation and overshoots (§3.2,
+§5.3).
 
 The sources differ in the dissipation matrix:
 
@@ -223,6 +242,18 @@ communication" (§4).
   stable, which the authors credit to "the built in entropy stability" (Fig. 2). The 2D
   relativistic Orszag–Tang, blast and reconnection runs are stable at 200×200 and 512×256
   (§6.2).
+- **Third-order WENO and ENO dissipation, Cartesian finite differences.**
+  Charles & Ray (2025) report that with TeCNO4, ENO3 loses order on
+  $\sin^4x$ advection ($L^1$ rate 1.32 at $N=1000$), which they attribute
+  to the linear instability of ENO. On the 2D isentropic vortex ENO3
+  reaches about 2.2, while the sign-preserving WENO variants keep third
+  order (Tables 3–4). On a Burgers Riemann problem every reconstruction
+  oscillates, minmod included. The authors call this "a fundamental
+  problem with high-order TeCNO schemes" (Remark 6). On 2D Riemann
+  configuration 3 a carbuncle-like artefact appears with SP-WENO and
+  DSP-WENO under Roe-type dissipation, and Rusanov-type dissipation
+  weakens it. Entropy stability does not prevent it (§5.3, Fig. 10;
+  [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)).
 - **TVD-ES against first-order subcells.** On Orszag–Tang, TVD-ES has
   higher resolution and fewer artefacts than first-order finite volumes.
   On the GEM reconnection challenge and the Io–plasma-torus problem the
@@ -262,3 +293,4 @@ communication" (§4).
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §3.1 Eq. (3.6), §3.4 Eqs. (3.21)–(3.22), Remark 3.2, App. A, Ex. 5.1, 5.4, 5.5 (arXiv v1).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §1, §4 Eqs. (4.1)–(4.4), Thm. 4.1, Remark 4.1, §6 Exs. 6.1–6.10, Figs. 6.4, 6.14 (arXiv v1).
 - [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) — §4.1 (Eqs. (18)–(22), Thms. 4.2–4.3, Remarks 4.1–4.3), §4.2, §6 (Table 2, Figs. 1–2), App. B (arXiv v2).
+- [Charles & Ray (2025)](/sources/charles-2025.md) — §2 Eqs. (6)–(11), Lemma 1, §3.2, §5 Tables 3–4, Fig. 10, Remark 6 (arXiv v2).

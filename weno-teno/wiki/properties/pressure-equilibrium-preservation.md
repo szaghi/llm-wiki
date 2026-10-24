@@ -5,7 +5,7 @@ description: "A discretization is pressure-equilibrium preserving when initial d
 status: established
 aliases: [PEP, pressure equilibrium preserving, KEEP-PE, interface equilibrium, preservation of constant velocity and pressure, compatibility condition, FC/PE scheme]
 tags: [kinetic-energy-preserving, finite-difference, central-scheme, multiphase, turbulence]
-timestamp: 2026-10-23T14:56:00Z
+timestamp: 2026-10-23T19:58:00Z
 ---
 
 # Pressure-equilibrium preservation
@@ -246,6 +246,33 @@ and round-off disturbances make it diverge (§5, Eqs. (55)–(59);
   extension (arithmetic mean of the extra energy term) is derived but not
   tested (App. B).
 
+**Multi-species and real fluids, approximately.**
+[Terashima, Ly & Ihme (2025)](/sources/terashima-2025.md) write the same
+condition on half-point values for an arbitrary equation of state, under
+uniform $p_0$, $v_0$ (§2.5, Eq. (19)). They note that the Jacobians
+$(\partial\rho e/\partial\rho Y_k)_{p,\rho Y_{j\ne k}}$ are evaluated at the
+node, so the condition is asymmetric between the two interfaces of a cell.
+They argue that "no locally-defined half-point values satisfy Eq. (19)
+for all cells, and thereby no conservative schemes may be constructed" for
+a general equation of state (§2.6). With real-fluid equations of state
+the spurious oscillations appear even in a single species, for example
+cryogenic N$_2$ injected into warm N$_2$ at supercritical pressure (§1).
+
+Their [APEC flux](/methods/apec-scheme.md) solves a sufficient pair of
+half-cell relations for the internal-energy half-point value. It keeps
+the arithmetic mean for the partial densities and stays fully
+conservative, but meets the condition only to second order. The leading
+residual has coefficients $\tfrac1{12}$, $-\tfrac1{12}$, against $\tfrac13$,
+$\tfrac16$ for the plain split form (Eqs. (32)–(33)). On transcritical
+CH$_4$/N$_2$ interfaces with the Soave–Redlich–Kwong equation of state,
+the plain split form blows up and APEC does not. A quasi-conservative
+variant, PEqC, holds equilibrium to $10^{-8}$ but loses energy
+conservation (§3.2). For the calorically perfect mixture, Fujiwara et
+al.'s scheme is exact and APEC is not: APEC's pressure error is larger
+there (§3.1). Terashima et al. describe Fujiwara et al. as "the first one
+in which the full conservation and pressure equilibrium properties are
+both preserved", for the calorically perfect gas only (§1).
+
 The Jain & Moin scheme above solves a diffuse-interface model with a
 volume-fraction equation, so it is not a scheme of the
 $(\rho Y_k,\rho v,E)$ kind to which Fujiwara et al.'s "first" claim
@@ -409,6 +436,14 @@ and [multicomponent Euler equations](/definitions/multicomponent-euler-equations
   is: a conservative shock-capturing scheme built on the compatibility
   condition and run on a sharp moving interface would decide whether they
   conflict.
+- Terashima et al.'s statement that no fully conservative scheme with
+  locally defined half-point values can satisfy the discrete condition is
+  argued from the asymmetry of their Eq. (19), not proved. They restrict
+  it to general equations of state, since Fujiwara et al.'s FC/PE (S) is
+  exact for calorically perfect mixtures. A fully conservative two-point
+  flux that is exact for a real-fluid equation of state would refute it.
+  Their tests, like Fujiwara et al.'s, are smooth interfaces without
+  numerical dissipation (§3, §4).
 - Gaburro et al.'s Prop. 1 writes the vanishing defect as "$O(1)$", which
   the text defines as "a quantity vanishing when $h\to0$", i.e. $o(1)$ (§4.1).
   Their App. B prints the constant of case 3 as
@@ -442,3 +477,4 @@ and [multicomponent Euler equations](/definitions/multicomponent-euler-equations
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — arXiv v1: §1, §5.1.3 Fig. 5.
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §2.2 Lemma 2.5, Thms 2.3, 2.6; §2.4 Thms 2.13–2.14; §3 Thm 3.4, Remark 3.5; §4 Ex. 4.2 Fig. 4.
 - [Ching et al. (2025)](/sources/ching-2025.md) — §3 Eqs. (3.7)–(3.9); §4.2.3; §4.4.4, Lemma 14.
+- [Terashima, Ly & Ihme (2025)](/sources/terashima-2025.md) — §1, §2.5–2.7 Eqs. (19)–(33), §2.11, §3.1–3.2.

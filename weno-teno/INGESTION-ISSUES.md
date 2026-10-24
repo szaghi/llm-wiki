@@ -6,6 +6,119 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 10 — converged ENO, learned and adaptive TENO/WCNS, Active Flux variants, entropy-stable MHD DG, low-Mach and multiphase codes (2026-10-23)
+
+Sources (20): allegrini-2025, barsukow-2026, charles-2025, chen-2026,
+chu-2025-c, deromemont-2026, duan-2025, fan-2025-b, huang-2025,
+huang-2025-b, kiechle-2025, liang-2025, liang-2026, liu-2025, liu-2025-b,
+liu-2025-c, ren-2025, terashima-2025, wilfong-2026, zampa-2025. 199 of 207
+ingested, 221 concept pages plus the registry, 5442 bibliography entries.
+
+### Decisions for the human
+
+1. **New open contradiction — is HLL carbuncle-free under high-order
+   reconstruction?** on the [carbuncle phenomenon](wiki/definitions/carbuncle-phenomenon.md):
+   Fu (2023, §3.6) and Ji et al. (2022, §5) state that HLL is
+   carbuncle-free, with no restriction to low order, and use it with
+   high-order TENO; Ren et al. (2025, §4.1.2) find fifth-order WENO-Z with
+   HLL unstable on the same blunt-body test, even with the single ENO
+   quadratic (Fig. 21). Checked in the PDFs; *Open*. Ren et al. do not test
+   TENO.
+2. **Bibliography rulings to confirm:**
+   - wilfong-2026's reference list prints wrong DOIs (and for three of them
+     the wrong venue or title) for `giles-1990`, `tam-1996`, `jaensch-2016`
+     and `lodato-2008`; the Crossref values were adopted and the printed
+     forms kept in notes. The rest of that list may be unreliable too.
+   - Existing keys renamed to their real issue year on Crossref:
+     `kochkov-2023` → `kochkov-2021`, `zhuang-2023` → `zhuang-2021`,
+     `beck-2023` → `beck-2019` (no page cites them).
+   - `godlewski-2013` and `godlewski-2014` are probably the same reprint
+     listing; kept apart by chunk precedent (fold both into
+     `godlewski-1996`?).
+3. **Labels re-lettered:** the existing `fan-2025` is now Fan et al.
+   (2025a) beside the new (2025b); also Huang et al. 2025a/b, Liu & Wu
+   (2025) with Liu et al. 2025b/c, Chu et al. 2025c.
+4. **Bundle fit (no D17 copy made):** zampa-2025 (H(div) finite elements for
+   low Mach), the Vlasov–Poisson part of kiechle-2025 and the HPC part of
+   wilfong-2026 (MFC 5.0) are peripheral and cited only where they bear on a
+   page's concept.
+5. **Still open:** the archive re-download (Feng 2026, Li 2024, Wu 2023) and
+   chunk 11 (the 8 remaining sources: `cao-2026`, `liu-2026`, `wang-2026`,
+   `wang-2023`, `stone-2026`, `feng-2026`, `li-2024` and the deferred
+   `wu-2023`; `feng-2026`, `li-2024` and `wu-2023` await the re-download); the six open contradictions; the label convention; book
+   printings; the whole-bundle deep lint and closing bibliography sweeps due
+   with chunk 11.
+
+### Identity and metadata
+
+- Versions read that are not the version of record: arXiv preprints
+  chu-2025-c (2405.07620v1), zampa-2025 (2407.10163v1), duan-2025
+  (2411.00065v3, archived under a SIAM file name), charles-2025
+  (2403.14848v2), barsukow-2026 (2502.05101v2), liu-2025 (2404.16794v2);
+  HAL author manuscript allegrini-2025 (hal-04874138v1).
+- Merge: 5027 → 5442 entries (264 aliases, 34 verified silences, 10 printed
+  duplicates folded plus `kinga-2015` → `kingma-2015`, `FLAGS: 0`); many
+  cited works keyed under planned slugs of different works re-keyed by
+  venue/vol/page; preprints of ingested sources kept distinct
+  (`abgrall-2022-d`, `abgrall-2023-e`/`-g`, `abgrall-2024-c`, `ding-2024-c`);
+  Crossref fixes (DOIs of `zeifang-2021`, `xiong-2014`; venues of
+  `andrianov-2004`, `schardin-1957`; years of `xu-2001-b`, `barsukow-2024`).
+- Audit corrections of substance: the Active Flux/van Leer qualification
+  (Duan et al. write "inspired by [43]", van Leer IV; Barsukow et al.
+  "inspired by scheme V"; Kiechle et al. "equivalent with scheme V" — the
+  same paper, no conflict); the Lax–Friedrichs entropy compiler check
+  narrowed and the "plain Lax–Friedrichs is not entropy stable for MHD"
+  statement attributed on four pages; Liu et al. (2025b) and (2025c) state
+  the MHD Tadmor condition with potentials that differ by $\phi_{\mathrm G}B_1$
+  (both as printed); a lost `## Qualifications` heading on PAMPA restored;
+  chen-2026 dropped from the diamond-wedge page (single triangular wedges).
+
+### Printed slips (the Source pages list them in full)
+
+- chu-2025-c: Ex. 1 "Mach 1.1" is a Mach 1.3 state (as in chu-2025).
+- huang-2025-b: Table 3 and Table 4 totals; savings 59.0/46.0/39.2 %
+  against "up to 40%"; MUSCL boundary signs, Eqs. (10), (11), (28), (35).
+- huang-2025: Eq. (11) integrates over the target cell, while Huang & Fu
+  (2024) Eq. (32) integrates each polynomial over its own cell, although the
+  paper says it reuses that indicator unchanged; 1D Eq. (19) not
+  conservative as printed.
+- liu-2025-c: App. C differentiation matrix sign, condition count two below
+  the matrix ranks, Schur complement. liu-2025-b: Ex. 7 starts from $B=0$.
+- wilfong-2026: 158³ ≈ 3.9 M not 8 M; Eq. 5 single positive Kapila
+  coefficient (Bryngelson et al. print a difference); six-equation
+  relaxation signs reversed.
+- charles-2025: entropy-variable sign; "an order of magnitude" against
+  Table 3. chen-2026: "convex" for concave; 34.58° against 34.60°.
+- barsukow-2026: acoustics exact-solution sign, Gresho velocity, Fig. 5
+  weights. calhoun-2023 (chunk 6): Table 4 orders do not follow from its
+  errors (new check).
+- kiechle-2025: Eqs. (37), (44). liang-2025: Eqs. (10)–(11), $C_T$ floor.
+  liang-2026: Eq. (22) point-value expansions (argument holds). zampa-2025:
+  Eqs. (9), (13), Table 4. deromemont-2026: CFL definition inverted,
+  "20–50%" against its own 6 % and 19 % and negative gains. fan-2025-b:
+  tan/tanh, a rewritten weight negative against Remark 3. allegrini-2025:
+  Lax left velocity 1.698 against 0.698 elsewhere; Lemmas 5–7 completed
+  numerically (Jordan-block counterexample to the closing step). ren-2025:
+  Table 7 $L_2$ below $L_1$.
+
+### Candidates for later pages
+
+- Locally divergence-free DG (liu-2021, ding-2024-b, liu-2025, liu-2025-c);
+  Ryu–Jones MHD shock tubes (three sources, inline on Brio–Wu); deepMTBVD;
+  MR-WENO-SD; a low-Mach HLLC correction (Thornber, Chen et al., MFC);
+  WCNS3-MR-NN is described on four pages (one main account would do).
+- Registry: §10 now lists $\phi_{\mathrm G}$, Duan et al.'s $\kappa_{\mathrm s}$
+  and $\varphi_{\mathrm J}$, Ren et al.'s shock position $\varepsilon_{\mathrm s}$,
+  $s_{\max}$ and the SBP boundary matrix $B$. Still to settle: the
+  pressure-relaxation rate ($\mu_{\mathrm p}$ on six-equation and operator
+  splitting, $r_{\mathrm p}$ on five-equation), $\ell^{\mathrm s}$ on the Ducros
+  page against the Lagrange basis $\ell_j$.
+- Tag near-synonyms for a whole-bundle pass: dg/discontinuous-galerkin,
+  entropy-stable/entropy-stability, ducros-sensor/shock-sensor/troubled-cell,
+  compact-scheme/compact-stencil, positivity/bound-preserving,
+  high-mach/hypersonic, low-mach/all-mach, filtering/solution-filtering/
+  entropy-filtering, tvd/slope-limiter/limiting.
+
 ## Chunk 9 — PAMPA, tensor-train and AENO reconstruction, entropy projection, central-upwind and relativistic MHD schemes (2026-10-23)
 
 Sources (20): abgrall-2026, alberti-2025, bader-2025, chu-2025,

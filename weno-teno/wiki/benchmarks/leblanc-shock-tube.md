@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Leblanc shock tube"
-description: "One-dimensional Euler Riemann problem with pressure ratio 10^9 and density ratio 10^3 or 2×10^3, printed in two inequivalent versions under one name, plus a rescaled copy, gamma = 1.4 variants and a two-phase copy of the first; a near-vacuum robustness test for positivity limiters, DG blending, bound-preserving schemes and ALE remapping."
+description: "One-dimensional Euler Riemann problem with pressure ratio 10^9 and density ratio 10^3 or 2×10^3, printed in two inequivalent versions under one name, with rescaled copies, gamma = 1.4 variants, a two-phase copy and an MHD variant; a near-vacuum robustness test for positivity limiters, DG blending, bound-preserving schemes and ALE remapping."
 status: established
 aliases: [LeBlanc problem, Le Blanc shock tube, LeBlanc shock tube]
 tags: [benchmark, positivity, bound-preserving, low-dissipation]
-timestamp: 2026-10-23T15:17:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # Leblanc shock tube
@@ -85,6 +85,7 @@ states, so this is the $\gamma=5/3$ version carried as two phases
 | [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) Example 5.4 | same, Navier–Stokes $\mathrm{Re}=1000$ | same | 3200 points | $10^{-3}$ as printed |
 | [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.7 | same | same | 6400 cells | $10^{-4}$ |
 | [Peyvan et al. (2023)](/sources/peyvan-2023.md) §4.1 | same, $\gamma=1.4$ | same | 1000 elements, $P=3$ (4000 solution points) | $10^{-4}$ |
+| [Fan et al. (2025b)](/sources/fan-2025-b.md) §4.3.1, Eq. (47) | same, on $[-10,0)$ | same, on $[0,10]$ | 1000 points | $10^{-4}$ |
 
 Fan, Zhang & Qiu (2021) use inlet/outlet boundaries, Fan, Zhang & Qiu
 (2022) inflow/outflow and Fan, Zhao, Xiong & Qiu outflow ones. The
@@ -96,7 +97,25 @@ al. describe the density and pressure ratios as $O(10^3)$ and
 $O(10^9)$.
 
 Peyvan et al. use a fixed $\Delta t=2.0893\times10^{-8}$ and cite the
-problem as the "Leblanc Sod problem".
+problem as the "Leblanc Sod problem". Fan et al. (2025b) attribute their
+run to Zhang & Shu (2012).
+
+**Rescaled copy on $[0,1]$.** [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md)
+Ex. 5.2 (arXiv v3) print $(\rho,v,p)=(2,0,10^9)$ for $x<0.5$ and
+$(10^{-3},0,1)$ otherwise on $[0,1]$, $\gamma=1.4$, to $T=5\times10^{-6}$,
+on 6000 cells. Dividing $x$ and $t$ by 20 maps $[-10,10]$, $x=0$,
+$t=10^{-4}$ onto $[-\tfrac12,\tfrac12]$, $x=0$, $t=5\times10^{-6}$, so this
+is the $[-10,10]$ version shifted by $\tfrac12$ *(compiler check, not in
+the sources)*.
+
+**MHD variant.** [Liu & Wu (2025)](/sources/liu-2025.md) §4.1 (arXiv v2)
+run an ideal-MHD Leblanc problem that they take from Wu & Shu:
+$(\rho,v,p,B)=(2,0,10^9,(0,5000,5000))$ for $x<0$ and
+$(0.001,0,1,(0,5000,5000))$ for $x>0$ on $[-10,10]$, $\gamma=1.4$, to
+$t=3\times10^{-5}$, on 2000 cells against 10000; the uniform transverse
+field of magnitude $5000\sqrt2$ makes the right plasma beta
+$2p/\lvert B\rvert^2=2/(5\times10^7)=4\times10^{-8}$, the value they
+print *(compiler check, not in the sources, for the arithmetic)*.
 
 ## Findings across sources
 
@@ -181,6 +200,32 @@ Wu's bound-preserving [OEDG](/methods/oedg.md) scheme resolves the
 two-phase copy better than its variant with the averaged
 (second-order) discretization of the non-conservative source (Fig. 7).
 
+**Bound-preserving Active Flux.** Duan, Barsukow & Klingenberg run the
+rescaled tube with their generalized [Active Flux](/methods/active-flux.md)
+method, whose point values are updated by Jacobian splitting or by the
+local Lax–Friedrichs, Steger–Warming or van Leer–Hänel
+[flux vector splittings](/methods/flux-vector-splitting.md). Without
+their bound-preserving limiting, convex limiting of the cell averages
+and scaling of the point values, the run stops on a negative density or
+pressure; with it, and with shock-sensor limiting (strength $\kappa_{\mathrm s}=10$, page-local), it runs
+at CFL 0.4 for the Jacobian, Lax–Friedrichs and Steger–Warming variants
+and at 0.1 for van Leer–Hänel (Fig. 4).
+
+**Learned weights.** Fan et al. (2025b) run the $[-10,10]$ tube with
+their learned third-order [WCNS](/methods/weighted-compact-nonlinear-scheme.md)
+WCNS3-MR-NN and present the completed run, with the 123 problem, as
+evidence of robustness at strong rarefactions (Fig. 11); no positivity
+limiter is mentioned for it.
+
+**Positivity of OEDG for MHD.** Liu & Wu's locally divergence-free,
+positivity-preserving [OEDG](/methods/oedg.md) scheme ($\mathbb P^2$,
+HLL, CFL 0.12) keeps the density and pressure positive on the MHD
+variant and resolves $\log\rho$ and the magnetic pressure against the
+10000-cell reference; the positivity rests on their Theorem 1 with a
+Zhang–Shu scaling limiter and the discrete
+[Godunov–Powell source term](/definitions/godunov-powell-source-term.md)
+added to the cell-average equations.
+
 **Low dissipation.** Deng finds low-dissipation
 [ROUND](/methods/round-scheme.md) "much less dissipative and less
 oscillatory" than WENO-JS5 on 200 cells (Fig. 34).
@@ -208,7 +253,9 @@ almost no cells are troubled (Table 4.2).
 ## Qualifications
 
 - The two versions share a name and the pressure ratio only; results
-  on one say nothing directly about the other.
+  on one say nothing directly about the other. Duan, Barsukow &
+  Klingenberg's $[0,1]$ tube belongs to the second version, Liu & Wu's
+  MHD problem is a magnetized relative of it.
 - The two versions and the relatives (Lin, Chan & Tomas's rescaled
   copy, the $\gamma=1.4$ variants of Gu et al. and Abgrall et al.)
   give four sets of wave positions; the rescaled copy and Yan et al.'s
@@ -256,3 +303,6 @@ almost no cells are troubled (Table 4.2).
 - [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md) — §3.5.4, Fig. 19.
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §4.2, Ex. 7, Figs. 7–8.
 - [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Ex. 4.5, Fig. 7.
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §5, Ex. 5.2, Fig. 4 (arXiv v3).
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §4.3.1, Eq. (47), Fig. 11.
+- [Liu & Wu (2025)](/sources/liu-2025.md) — §3, Theorem 1; §4.1, MHD Leblanc problem (arXiv v2).

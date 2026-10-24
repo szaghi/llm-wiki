@@ -5,7 +5,7 @@ description: "Hermite WENO (HWENO) builds WENO candidates from cell averages plu
 status: established
 aliases: [HWENO, Hermite WENO reconstruction, HWENO-R, HWENO-L, finite-difference HWENO, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, PCP HWENO, HWENO6-M5-I, HTENO, Hermite TENO, OE-HWENO, oscillation-eliminating HWENO, HWENO-U, HWENO-M, unified-stencil HWENO]
 tags: [weno, reconstruction, finite-volume, dg, compact-scheme]
-timestamp: 2026-10-23T15:11:00Z
+timestamp: 2026-10-23T20:37:00Z
 ---
 
 # Hermite WENO
@@ -241,7 +241,7 @@ shows "obvious" non-physical oscillations (Ex. 7–12). No timings are reported.
 
 ## Unified stencils without the central moment (HWENO-U)
 
-Fan, Qiu & Zhao (2025) build a fifth-order moment-based HWENO in which **one** nonlinear
+Fan et al. (2025a; Fan, Qiu & Zhao) build a fifth-order moment-based HWENO in which **one** nonlinear
 procedure gives both the point values and the high-order modification of the first moment,
 whereas the HWENO-M of Zhao & Qiu needs two sequential procedures on different stencils (§1,
 Remark 2.3, Fig. 1); the moment equations are those of the moment-based HWENO above.
@@ -368,7 +368,7 @@ parametrized flux limiter of Xiong, Qiu & Xu, active in 0.0146 % and 0.0012 % of
 on Burgers, 1-D Euler and a near-vacuum isentropic vortex (Tables 3.1–3.3), more accurate than WENO-ZQ
 at equal CPU time (CPU ratios 1.2–1.8, error ratios about 1/5), slightly cheaper than HWENO-L, and on
 the [Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md) at $120\times480$ comparable
-to WENO-ZQ at $240\times960$ (Example 3.13). Fan et al. (§1) count three points for fifth-order HWENO
+to WENO-ZQ at $240\times960$ (Example 3.13). Fan et al. (2023, §1) count three points for fifth-order HWENO
 against five for WENO.
 
 ## HWENO candidates on a finite element mesh
@@ -508,7 +508,7 @@ are given in the ingested sources.
   others; Li, Shu & Qiu report sixth order (5.96–6.49) for HWENO6-M5-I, whose modification acts only in flagged
   cells, and fifth order only when every cell is modified (Tables 3.1–3.4). The two statements are
   compatible: the first concerns the modification when it is active, the second smooth tests where it is not.
-- **HWENO-U slips** (Fan, Qiu & Zhao 2025). The interface value printed as $u^-_{i+1/2}$ after
+- **HWENO-U slips** (Fan et al. 2025a). The interface value printed as $u^-_{i+1/2}$ after
   Eq. (2.25) is $\tfrac{269}{456}\bar u_{i-1}+\tfrac7{12}\bar u_i-\tfrac{79}{456}\bar u_{i+1}+\tfrac{177}{76}\bar u^{(1)}_{i-1}+\tfrac{63}{76}\bar u^{(1)}_{i+1}$,
   which is $p_0(x_{i-1/2})$; the stability matrices that follow are consistent with the correct
   value above *(compiler check, not in the sources)*. The first square of $\beta_0$ in Eq. (2.9) carries
@@ -551,4 +551,4 @@ are given in the ingested sources.
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1, Eqs. (3.2)–(3.8), Remarks 3.2–3.4; Lemma 3.2, Theorem 3.1; §4, Theorem 4.1, Apps. A–B; §5, Examples 5.2–5.9, Tables 4–5 (arXiv v1).
 - [Fan & Wu (2024)](/sources/fan-2024.md) — §1; §2.1–2.4, Eqs. (2.2)–(2.57), Theorems 1–11, Remarks 1–5; §3, Tables 3.1–3.2, Examples 1–12; App. A–C (arXiv v1).
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §1; §2, Eq. (3); §5, Eqs. (36)–(69); §6–§7, Eqs. (70)–(75); §9.1, Table 1.
-- [Fan, Qiu & Zhao (2025)](/sources/fan-2025.md) — §1; §2.1–2.3, Eqs. (2.2)–(2.33), Theorems 2.1–2.2, Remarks 2.1–2.5; §3, Tables 1–7, Examples 3.1–3.13; §4; App. A.
+- [Fan et al. (2025a)](/sources/fan-2025.md) — §1; §2.1–2.3, Eqs. (2.2)–(2.33), Theorems 2.1–2.2, Remarks 2.1–2.5; §3, Tables 1–7, Examples 3.1–3.13; §4; App. A.

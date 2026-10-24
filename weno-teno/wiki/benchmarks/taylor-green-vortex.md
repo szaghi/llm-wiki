@@ -5,7 +5,7 @@ description: "Periodic vortex flow that transitions to turbulence: inviscid at l
 status: established
 aliases: [TGV, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, compressible Taylor–Green vortex]
 tags: [benchmark, turbulence, low-dissipation, teno, weno]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Taylor–Green vortex
@@ -104,6 +104,13 @@ $t=14$, on Cartesian and on non-symmetrically warped curvilinear grids
 (warping amplitude $1/5$), with $4^3$ elements of degree $N=4$ and 5
 for the conservation tests and $4^3$ and $8^3$ elements of degree
 $N=3$ to 5 for timing, RK4 at an adaptive CFL 0.1, in the PHiLiP code.
+[Liang et al. (2025)](/sources/liang-2025.md) §4.9, Eq. (39) print the
+same data as Li et al. (2022b) and run them on hexahedral $64^3$ and $128^3$
+meshes in [UCNS3D](/software/ucns3d.md), CFL 0.6, with TENO6-E against
+CWENO6: $Q$-criterion iso-surfaces (levels 1, 3, 6, 10) at $t=4,8,10$,
+the kinetic-energy history (the figures reach $t=10$; no end time is
+stated) and $x$-direction kinetic-energy spectra at $t=8$ and $10$ on
+$64^3$.
 
 **Inviscid, supersonic.** Maltsev et al. §3.7 run the inviscid form
 of Lusher & Sandham's supersonic vortex: same domain and velocity,
@@ -207,6 +214,20 @@ difference scheme on $100^2$ nodes with $\Delta t=\Delta x/8$. It is a
 long-time robustness test of the semi-discrete entropy and
 kinetic-energy budgets, not a turbulence test.
 
+**Two-dimensional, low Mach number, toward the incompressible limit.**
+[Zampa & Dumbser (2025)](/sources/zampa-2025.md) §4.5 (arXiv v1) use the
+planar field with $\rho=1$, $v=(\sin x\cos y,\ -\cos x\sin y)$ and
+$p=p_0+\frac14(\cos2x+\cos2y)$ on periodic $[0,2\pi]^2$ to test their
+semi-implicit compatible-finite-element scheme for weakly compressible
+flow: as an [asymptotic-preservation](/properties/asymptotic-preservation.md)
+test at $t=0.2$ on $50\times50$ with $p_0$ from $5\cdot10^3$ to
+$5\cdot10^{12}$ (Table 4), as a convergence test at $t=0.5$ with
+$p_0=10^7$ on unstructured meshes of 40 to 120 elements per side (Tables
+5–7), and inviscid to $t=10$ on $40\times40$ as a conservation test
+(Fig. 6). Raising $p_0$ lowers the Mach number, so the series moves the
+same flow toward the incompressible limit *(compiler check, not in the
+sources)*.
+
 **Two-phase, inviscid.** [Jain & Moin (2022)](/sources/jain-2022.md)
 §4.1 (arXiv v1) put a slab of width $2L$ of fluid 1 across the middle
 of the periodic box $[0,2\pi]^3$, with volume fraction
@@ -249,6 +270,14 @@ deferred to an earlier MFC paper (Reynolds number, Mach number and grid
 are not printed), and compare the kinetic-energy dissipation rate over
 $t\in[0,10]$ with Brachet et al.'s spectral solution.
 
+**Demonstration at $1600^3$.** [Wilfong et al. (2026)](/sources/wilfong-2026.md)
+§5.3 run the viscous vortex at $\mathrm{Re}=1600$ and Mach 0.1, with the
+initial condition of Hillewaert as they cite it, $L=2\pi$, on $1600^3$
+cells (about $4\times10^9$) with [MFC](/software/mfc.md), snapshots at
+$t/t_c=4,12,20$, $t_c=L/(c_0\mathrm{Ma})$, in 28 h on 144 H200 GPUs
+(Fig. 21); they present it as a capability demonstration, with
+validation resting on earlier work (§5.5).
+
 **Performance case.** [Bezgin et al. (2023)](/sources/bezgin-2023.md)
 §6 (arXiv v1) time a TGV at Mach 0.1 on $32^3$ to $384^3$ cells in
 [JAX-Fluids](/software/jax-fluids.md), and
@@ -264,6 +293,31 @@ TGV dissipation rate on $64^3$ against DNS on $256^3$ (TENO8-A against
 the ALDM and dynamic Smagorinsky models, Fig. 14).
 
 ## Findings across sources
+
+**Hybrid linear/TENO reconstruction on unstructured meshes.** Liang et
+al. (2025) find that TENO6-E preserves the kinetic energy better than
+CWENO6 and gives a more energetic spectrum (Figs. 24–27), at a
+reconstruction time of 11966.31 s against 33930.79 s on $64^3$ and
+153987.56 s against 570238.01 s on $128^3$, which they call about 35.2 %
+and 27.0 % of CWENO6's: TENO-E runs its linear reconstruction, without
+characteristic decomposition or weights, wherever its density-jump
+indicator is quiet.
+The ratios are $0.3527$ and $0.2700$ *(compiler check, not in the
+sources)*.
+
+**Low-Mach consistency of a compatible finite-element scheme.** In
+Zampa & Dumbser's runs the $L^\infty$ errors of $\nabla\cdot v_h$ and of
+$\rho_h-1$ fall as $M^2$ (order 2.00) from $M=1.20\times10^{-2}$ down to
+about $10^{-6}$, where round-off ($\sim10^{-13}$) lowers the
+divergence orders to 1.87 and 0.92 (Table 4); velocity and pressure
+converge at order $r+1$ for polynomial degrees $r=0,1,2$, e.g. at $r=2$
+on the finest mesh $L^2(v_h)=7.8322\times10^{-6}$ (order 3.00) and
+$L^2(p_h)=3.4815\times10^{-6}$ (order 2.86) (Tables 5–7); inviscid to
+$t=10$ the energy dissipation is "less than $\approx2\cdot10^{-6}$ per
+time unit" and the momentum and incompressibility errors are of the
+order of $M^2$ (Fig. 6). Their scheme carries a non-conservative entropy
+equation, so the test probes the incompressible limit, not shock
+capturing.
 
 **Species fields add dissipation.** In Trojak & Dzanic's
 multi-species runs with a positivity-preserving
@@ -602,6 +656,13 @@ cells (§9, Figs. 21–24).
   divergence-free ($\partial_xv_1+\partial_yv_2=u_0\cos x\cos z(\cos y+\sin y)/L$),
   and the $\sin(y/L)$ of every other source is meant *(compiler check,
   not in the sources)*.
+- Zampa & Dumbser's Table 4 lists $p_0=5\cdot10^9$ twice; the stated
+  sequence and the Mach column ($3.78\times10^{-5}$, then
+  $1.20\times10^{-5}$) place $5\cdot10^8$ in the first of the two rows,
+  and the column headed "O($p_h$)" reports the order of
+  $L^\infty(\rho_h)$. Their conservation run prints "$p_0=1e-7$", where
+  the other runs use $10^7$ and the stated $M^2$-sized errors require a
+  large $p_0$ *(compiler check, not in the sources)*.
 - In the inviscid runs there is no converged reference: the sources
   compare schemes with each other (Li et al. also with a linear upwind
   scheme), not with an exact energy history.
@@ -633,3 +694,6 @@ cells (§9, Figs. 21–24).
 - [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — Ex. 3.7, Eq. (3.5), Figs. 3.11–3.12, Table 3.1.
 - [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §7.3–7.4, Eq. (64), Thm 6.4, Tables 2–4, Figs. 3–6.
 - [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §3.5, §4.2, Eqs. (28)–(31), Figs. 2–8 (arXiv v1).
+- [Liang et al. (2025)](/sources/liang-2025.md) — §4.9, Eq. (39), Figs. 24–27.
+- [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §4.5, Tables 4–7, Fig. 6 (arXiv v1).
+- [Wilfong et al. (2026)](/sources/wilfong-2026.md) — §5.3, §5.5, Fig. 21.

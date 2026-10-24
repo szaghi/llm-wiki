@@ -5,7 +5,7 @@ description: "The two most often run one-dimensional Euler Riemann problems with
 status: established
 aliases: [Sod problem, Sod shock tube, Lax problem, Lax shock tube, Riemann problem of Lax, Lax–Harden problem]
 tags: [benchmark, weno, teno, riemann-solver]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T20:30:00Z
 ---
 
 # Sod and Lax shock tubes
@@ -63,6 +63,13 @@ the right half.
 | [Naudet & Zahr (2024)](/sources/naudet-2024.md) §5.3.1, Eq. (57) | six space-time slabs, 65 simplices ($q=1$, $p=2$) in the first | 1 | walls at $x=0$ and $1$; space-time [implicit shock tracking](/methods/implicit-shock-tracking.md); reference second-order FV (superbee) on over $10^5$ elements, adaptive RK4 |
 | [Danis et al. (2025)](/sources/danis-2025.md) §5.5 | $N^3$ with $N=5\cdot2^n$, $n=1,\dots,7$ (to $640^3$), CFL 0.5 | 0.2 | on $[0,1]^3$, jump at $x=0.5$; [tensor-train](/methods/tensor-train-weno.md) FD WENO5-JS with global LF splitting (arXiv v1) |
 | [Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 5 | 200 cells | 0.16 | bound-preserving [PAMPA](/methods/pampa-scheme.md), SSP-RK3 at CFL 0.2 |
+| [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) §3.1, §3.4.1 | 200, 500 cells | 0.2 | linearized all-Mach IMEX finite volumes (L2 and L∞ AP, first order; [asymptotic preservation](/properties/asymptotic-preservation.md)) at $\varepsilon=1$, against their non-linear versions; exact reference (HAL manuscript) |
+| [Huang et al. (2025a)](/sources/huang-2025.md) §5.2, Eq. (43) | 100 | 0.2 | $\mathbb P^2$ RKDG with the [TENO-THINC limiter](/methods/weno-limiter-dg.md) vs the simple WENO limiter; exact reference |
+| [Huang et al. (2025b)](/sources/huang-2025-b.md) §4.2.1 | 200 cells | 0.25 | HLLC, CFL 0.4; deepMTBVD (network-selected MUSCL or [THINC](/methods/thinc-reconstruction.md)) vs MUSCL-THINC-[BVD](/definitions/boundary-variation-diminishing.md) and MUSCL |
+| [Fan et al. (2025b)](/sources/fan-2025-b.md) Eq. (45) | 400 | 0.2 | three-point WCNS3-MR-NN ([learned weights](/methods/learned-weno-weights.md)) vs WCNS3-JS, WCNS3-MR, WCNS5-JS |
+| [Liang et al. (2025)](/sources/liang-2025.md) §4.2, Eq. (33) | triangles, $h\approx1/60$ | 0.2 | unstructured TENO5-E–TENO7-E vs CWENO; exact reference |
+| [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Example 5.7 | quasi-2D, $[0,1]^2$ on $100\times2$ | 0.2 | generalized [Active Flux](/methods/active-flux.md), Jacobian splitting vs [flux vector splitting](/methods/flux-vector-splitting.md) of the point-value update (arXiv v3) |
+| [de Romémont et al. (2026)](/sources/deromemont-2026.md) §6.2 | 128 (coarse and learned) | 0.156 | MUSCL finite volumes with network-learned slopes vs finite-difference slopes; reference on 1024; data not printed |
 
 Abgrall & Barsukow run Sod with three Active Flux variants: sixth order
 at CFL 0.25 (Fig. 19); a fifth-order point setup with a third-order
@@ -155,7 +162,11 @@ $[-\tfrac12,\tfrac12]$, and $[-5,5]$.
 | [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.4, Eq. (9d) | $[-1,1]$, reflecting walls | Chebyshev, $N_x=615$ | first output 0.02 | printed in conserved variables $(0.445,0.311,8.928)$ and $(0.5,0,1.4275)$ |
 | [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.3 | $[-0.5,0.5]$ strip, width 0.05, periodic in $y$, $x$-boundary condition not specified | triangles, $201\times11$ vertices | 0.16 | ALW-MR-WENO vs MR-WENO |
 | [Zuo & Zhu (2024a)](/sources/zuo-2024.md) Ex. 3.4 | $[-0.5,0.5]$ | 200 | 0.16 | [hybrid](/methods/hybrid-weno.md) MMR-WENO5/7/9 vs MR-WENO and the SHUS-WENO indicator; troubled-cell maps |
-| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.5 | $[-0.5,0.5]$, outflow | not stated in the text | 0.16 | [HWENO-U](/methods/hermite-weno.md) vs HWENO-M, WENO-ZQ; also data scaled to $(\zeta\rho,v,\zeta p)$, $\zeta\in\{10^{-7},1,10^7\}$ (page-local) |
+| [Fan et al. (2025a)](/sources/fan-2025.md) Ex. 3.5 | $[-0.5,0.5]$, outflow | not stated in the text | 0.16 | [HWENO-U](/methods/hermite-weno.md) vs HWENO-M, WENO-ZQ; also data scaled to $(\zeta\rho,v,\zeta p)$, $\zeta\in\{10^{-7},1,10^7\}$ (page-local) |
+| [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) §3.4.1 | $[0,1]$ | 200, 500 cells | 0.14 | left velocity printed $1.698$; local Mach number up to 1.2 |
+| [Huang et al. (2025a)](/sources/huang-2025.md) §5.2, Eq. (44) | $[0,1]$ | 100 | 0.14 | troubled and THINC cells shown; timings |
+| [Huang et al. (2025b)](/sources/huang-2025-b.md) §4.2.2 | $[0,1]$ | 200 cells | 0.16 | THINC cells in the $x$–$t$ plane |
+| [Fan et al. (2025b)](/sources/fan-2025-b.md) Eq. (44) | $[0,1]$, jump at 0.5 | 400 | 0.15 | right pressure printed $0.5710$ |
 | [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.3, Eq. (4.7) | $[-5,5]$ | third order, 60 elements (180 DOFs) | 1.6 | DG/FV-[ROUND](/methods/round-scheme.md) on non-uniform subcells vs DG/FV with WENO5-JS on uniform subcells |
 
 The $[-5,5]$ placement at $t=1.3$ corresponds to the $[0,1]$ placement
@@ -209,7 +220,7 @@ TENO variants agree in kind. Hong, Ye & Ye find every scheme stable on
 both tubes, with a slight oscillation of WENO-CU6 near the contact;
 TENO-M6 matches TENO6 and resolves the contact and the expansion better
 than WENO-JS, and TENO-M8 the discontinuities better than WENO9 (§5.2,
-Figs. 9–10). Liang et al. report sharper shocks and contacts and a more
+Figs. 9–10). Liang et al. (2022) report sharper shocks and contacts and a more
 accurate rarefaction than their baselines (§4.2, Figs. 7–8). Huang,
 Liang & Fu find all four of their schemes free of oscillations
 (§4.3, Fig. 6). On a Cartesian strip with conservative-variable
@@ -366,7 +377,7 @@ positivity limiter, so they attribute the stability on this problem to
 the first-moment limiter; a small velocity dent is a numerical artifact
 also seen in an earlier finite-volume WENO (Fig. 4.2, Table 4.2).
 
-Fan et al. (2025) find that WENO-ZQ, whose nonlinear weights are not
+Fan et al. (2025a) find that WENO-ZQ, whose nonlinear weights are not
 scale-invariant, over- and undershoots on the unscaled Lax tube, and
 that with the scaled data the original weights give oscillations at
 $\zeta=10^{-7}$ and extra dissipation at $\zeta=10^7$, while their weights,
@@ -403,11 +414,68 @@ Deng recalls, from an earlier study, that
 WENO-Z with $\epsilon=10^{-12}$ and WENO-JS with $\epsilon=10^{-6}$
 oscillate on Sod scaled by $\lambda=10^{-7}$ (§1). See [scale invariance](/properties/scale-invariance.md).
 
+**Learned and selected reconstructions.** Fan et al. (2025b) find their
+three-point WCNS3-MR-NN comparable in resolution to the five-point
+WCNS5-JS on both tubes, with sharper discontinuities and no overshoot
+against WCNS3-MR (§4.3.1, Fig. 10), at the cost of WCNS3-MR (1.16
+against 1.15 s on Sod, $N=400$; Table 5). Huang et al. (2025b)'s
+deepMTBVD resolves Sod as MUSCL-THINC-BVD does; on Lax both resolve
+contact and shock better than MUSCL, deepMTBVD with weaker oscillations
+between shock and contact than MUSCL-THINC-BVD and THINC cells that
+nearly coincide with those of the BVD rule (Figs. 5–6). Its time saving
+on the 1D tests grows with the grid: at $N=10^4$ the totals are 32.67,
+45.01, 34.51 s against 40.04, 55.30, 45.36 s for MUSCL-THINC-BVD, with
+reconstruction times of 9.11, 13.41, 8.93 s against 37.04, 51.20, 42.17
+s and selection times raised from 2.99–4.10 to 23.56–31.60 s by the
+network; at $N=10^5$ they are 2566.02,
+3926.57, 3635.13 s against 6265.50, 7268.35, 5975.97 s (Tables 1–2).
+The test cases overlap their training data: their Table 6 contains the
+Lax data and, with $v=0$, the strong Lax data below *(compiler check,
+not in the sources)*. De Romémont et al.'s
+learned slopes reduce the $L^1$ error on Sod by 49.2 % relative to the
+same finite-volume scheme on the same grid at $\mathrm{Co}=\Delta t/\Delta x=0.01$
+(page-local; their CFL number $\mathrm{Co}\,a$ is then 0.022). In their
+Table A.1 the gain falls to 33.8 % at $\mathrm{Co}=0.1$ (CFL 0.22) and
+turns negative, $-20.8$ % at $\mathrm{Co}=0.2$ and $-56.8$ % at $0.3$
+(Fig. 7, Table A.1); the paper states that time steps can be chosen
+freely at inference (§1, §6, §9).
+
+**Limiters and indicators.** Huang et al. (2025a)'s TENO-THINC limiter
+for DG is oscillation-free and less dissipative than the simple WENO
+limiter on both tubes, the BVD rule picking THINC at the genuine
+discontinuities (Figs. 1–2); on Lax it costs 172.08 s against 163.07 s,
+hardware not stated (Table 4). Liang et al. (2025)'s TENO-E schemes are
+monotone at shock and contact on triangles (Fig. 4).
+
+**All-Mach IMEX at $\varepsilon=1$.** Allegrini & Vignal first show on
+Sod that updating the total energy from the equation of state instead of
+the energy equation gives inconsistent intermediate states (Fig. 1).
+Their linearized schemes then match their non-linear ones on both tubes,
+are more diffusive at the Lax contact, a difference that vanishes on
+refinement from 200 to 500 cells, and the L2 variant has a small density
+overshoot at the Sod contact that also vanishes (Figs. 3–6).
+
+**Mesh alignment in Active Flux.** On Duan et al.'s quasi-2D Sod tube
+the Jacobian-splitting point-value update of the generalized Active Flux
+method gives large density deviations between contact and shock: the
+corner and horizontal-face degrees of freedom decouple from the
+vertical-face ones and the cell averages when the flow is grid-aligned.
+All flux-vector-splitting variants agree with the exact solution once
+limiting is on (§3.2, Figs. 10–11).
+
 ## Relatives of the two tubes
 
 The Sod data recur, unchanged or nearly so, in models other than the
 single-gas Euler equations.
 
+- **Strong Lax tube.** Huang et al. (2025b) §4.2.3 run the left half of
+  the [Woodward–Colella blast wave](/benchmarks/woodward-colella-blast-wave.md),
+  $(\rho,v,p)=(1,0,1000)$ for $x<0.5$ and $(1,0,0.01)$ otherwise on
+  $[0,1]$, 100 cells, $t=0.012$: deepMTBVD is sharper than MUSCL and
+  less dissipative than MUSCL-THINC-BVD at the strong contact (Fig. 7);
+  it also serves their study of the threshold $\kappa_{\mathrm{ref}}$ of
+  the network output (page-local), from 0.1 to 0.9, $0.45$ being used
+  throughout (Appendix E).
 - **Gas mixtures.** Sciacovelli et al. run both tubes for a single
   species and for an N$_2$ (79 %)–O$_2$ (21 %) mixture and find the two
   solutions superposed (§4.2, Fig. 3). [Renac (2021)](/sources/renac-2021.md)
@@ -631,16 +699,23 @@ single-gas Euler equations.
 - Mossier, Beck & Munz state Dirichlet boundaries; Boscarino et al.
   reflective ones; Hong, Ye & Ye zero-gradient ones.
 - Luo & Wu print the left Lax pressure as $0.3528$ (Eq. (16)), where
-  Fu (2021), Takagi et al., Li et al., Deng, Huang et al., Peng et
-  al., Li, Shu & Qiu, Fan et al. and Sciacovelli et al. print $3.528$;
+  Fu (2021), Takagi et al., Li et al., Deng, Huang et al. (2026), Peng et
+  al., Li, Shu & Qiu, Fan, Zhang & Qiu, Fan et al. (2025a) and Sciacovelli et al. print $3.528$;
   the paper's text does not show which value was run.
-- Huang et al. give $t=0.15$ in the text and $t=0.16$ in the caption of
+- Huang et al. (2026) give $t=0.15$ in the text and $t=0.16$ in the caption of
   Fig. 8.
+- Allegrini & Vignal print the left Lax velocity as $1.698$; the other
+  sources of the table that print the Lax data give $0.698$, and the
+  paper does not show which was run. De Romémont et al. print the same caption time $T=0.156$ for
+  Sod and for Shu–Osher, and no initial data. Huang et al. (2025b) print
+  the two MUSCL face values after their Eq. (20) with both signs of the
+  slope term reversed; evaluating their own linear profile at the faces
+  gives the opposite signs *(compiler check, not in the sources)*.
 - Wang & Don's figure of the unscaled tubes includes the Lax problem,
   although their §3.2.3 text list omits it.
 - Li et al. compute the Lax reference with fifth-order WENO-Z, the
   other references of the paper with seventh order.
-- Fan et al. print both Lax states on "$x\in[0,5)$" and "$x\in[0,5]$"
+- Fan, Zhang & Qiu print both Lax states on "$x\in[0,5)$" and "$x\in[0,5]$"
   (Eq. (4.1)); their figures show $[-5,5]$, so the left state belongs on
   $[-5,0)$. Their text gives CPU savings of the hybrid scheme of 77.68 %
   and 75.08 % "as shown in Table 4.2", whose entries are 71.20 %
@@ -743,6 +818,13 @@ single-gas Euler equations.
 - [Ching et al. (2025)](/sources/ching-2025.md) — §5.3, Eq. (5.4), Figs. 5.5–5.6.
 - [Danis et al. (2025)](/sources/danis-2025.md) — §5.5, Fig. 9 (arXiv v1).
 - [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.3, Eq. (4.7), Fig. 13.
-- [Fan et al. (2025)](/sources/fan-2025.md) — Ex. 3.5, Figs. 8–9.
+- [Fan et al. (2025a)](/sources/fan-2025.md) — Ex. 3.5, Figs. 8–9.
 - [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) — §7.2, Eq. (68), Fig. 14.
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — Ex. 5, Fig. 5.
+- [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §3.1, §3.4.1, Figs. 1, 3–6 (HAL manuscript).
+- [Huang et al. (2025a)](/sources/huang-2025.md) — §5.2, Eqs. (43)–(44), Figs. 1–2, Table 4.
+- [Huang et al. (2025b)](/sources/huang-2025-b.md) — §4.2.1–4.2.3, Tables 1–2, 6, Figs. 5–7, Appendix E.
+- [Fan et al. (2025b)](/sources/fan-2025-b.md) — §4.3.1, Eqs. (44)–(45), Fig. 10, Table 5.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §4.2, Eq. (33), Fig. 4.
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §3.2, Example 5.7, Figs. 10–11 (arXiv v3).
+- [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §6.2, Fig. 7, Table A.1.

@@ -5,7 +5,7 @@ description: "A scheme is entropy stable when its discrete total entropy obeys t
 status: established
 aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG, energy stability, semi-discrete entropy stability, fully discrete entropy stability]
 tags: [entropy-stable, dg, numerical-flux, bound-preserving, limiting]
-timestamp: 2026-10-23T15:13:00Z
+timestamp: 2026-10-23T20:40:00Z
 ---
 
 # Entropy stability
@@ -85,6 +85,37 @@ third and fourth order dissipate less entropy than second (§6.1.2, Fig. 1).
 The authors recall that entropy solutions of multi-dimensional systems can
 be non-unique and still call entropy stability "one of the few nonlinear
 stability estimates" (§1).
+
+**Ideal MHD: symmetrized or conservative form.** The conservative ideal
+MHD system is not symmetrizable. With the
+[Godunov–Powell term](/definitions/godunov-powell-source-term.md) added
+it is, and Tadmor's condition gains a term in the jump of the
+Godunov–Powell potential
+([entropy-conservative fluxes](/methods/entropy-conservative-flux.md)).
+[Liu et al. (2025b)](/sources/liu-2025-b.md) discretize this modified
+system with nodal DG on LGL points. They prove semi-discrete entropy
+stability for an entropy-conservative volume flux and an entropy-stable
+surface flux (Thm. 3.1, proof cited to Liu, Shu & Zhang). The scheme is
+not conservative because of the source term, and the authors state that
+a DG method that is at once conservative, globally divergence-free,
+entropy stable and positivity preserving "remains open" (Remark 3.2).
+
+[Liu et al. (2025c)](/sources/liu-2025-c.md) take the conservative system
+instead. They state that schemes for the modified system "are inherently
+nonconservative", which "can lead to numerical instability and
+nonphysical features" (§1). Their Thm. 1 assumes a nodal field that is
+divergence-free at every Gauss–Lobatto node and normal-continuous across
+faces. The source-term contributions then cancel, so the conservative
+flux-differencing scheme is entropy conservative within each element and
+entropy stable globally, for periodic, compactly supported or reflective
+boundaries (§3.1, App. B). At a reflective wall the HLL flux reduces to
+Lax–Friedrichs, and the wall production is $-2\rho^2v_1^2s^+/p\le0$, with
+$s^+=-s^-$ the HLL speed (their $-4\beta\rho u_x^2S$, $\beta=\rho/(2p)$).
+Without the divergence-free field the conservative scheme "cannot achieve
+the entropy stability" (§3.1). Liu et al. (2025c) compare the two routes
+through Liu, Shu & Zhang's 2018 scheme for the modified system, the base
+of Liu et al. (2025b), not through Liu et al. (2025b) itself (§5)
+([divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
 
 **Semi-discrete and fully discrete.** All the conditions above are
 semi-discrete. [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md)
@@ -405,6 +436,35 @@ the scheme (Remark 2); the second-order extension is stated, not proved,
 to keep the property (§4.6). See [well-balancing](/properties/well-balancing.md)
 and [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md).
 
+**Damping, scaling and reconstruction steps.**
+
+- **Mean-preserving damping term.** Liu et al. (2025b) (Thm. 3.2) add
+  $-\sigma(u_h)\,(u_h-\bar u_h)$ to the nodal DG scheme, with $\sigma\ge0$
+  a scalar per element (page-local; the source's Eq. (3.16), see
+  [OEDG](/methods/oedg.md)). By orthogonality of the cell-mean projection
+  its entropy contribution is
+  $-\sigma\sum_i\mathsf w_i\big(\eta'(u_i)-\eta'(\bar u)\big)\cdot(u_i-\bar u)\le0$.
+  This holds by the monotonicity of $\eta'$ for convex $\eta$, so the
+  damped scheme stays semi-discretely entropy stable. In time each SSP
+  stage is split into an explicit step and an implicit damping step with
+  the closed form $u\mapsto\bar u+(u-\bar u)/(1+\alpha_\sigma)$, with
+  page-local $\alpha_\sigma=2\Delta t\,\sigma/\Delta x$ (§3.3, Eq. (3.21)).
+  The fully discrete entropy is not proved non-increasing. It does not
+  increase on the Orszag–Tang vortex (Fig. 6).
+- **Common-factor scaling toward the mean.** Liu et al. (2025c) recall
+  from Chen & Shu that $u_j\mapsto\bar u+\theta(u_j-\bar u)$ with one
+  $\theta\in[0,1]$ for all nodes and components does not increase the
+  quadrature-weighted cell entropy (Lemma 3, a Jensen argument). Their
+  limiter takes $\theta=\exp(-\sigma\Delta t)$ with a jump-based $\sigma$
+  (§4.1, Eq. (26)).
+- **Field reconstruction with energy correction.** After the
+  divergence-free reconstruction of $B$, Liu et al. (2025c) correct the
+  total energy node by node to keep the pressure, and hence the entropy,
+  unchanged (Eq. (27), Remark 2). Local total-energy conservation is lost
+  by the change in magnetic energy. The authors call this high-order
+  small if the reconstruction is accurate. Without the correction there
+  is no guarantee that the total entropy does not increase.
+
 ## Dissipation operators
 
 In the sources an ES flux is an EC flux minus a dissipation. In Rueda-Ramírez
@@ -412,9 +472,9 @@ et al. (2021), Li, Duan & Tang (2022) and Renac's Roe-type flux the
 dissipation acts on the jump of the entropy variables, not of the
 conserved variables, which is what gives the production a provable sign.
 
-- **Lax–Friedrichs on $[\![u]\!]$.** As recalled by Rueda-Ramírez et al.
-  (2021) after Derigs et al., $f^{\mathrm{ec}}-\tfrac12a[\![u]\!]$ is not
-  entropy stable for MHD (§3.3.1, Eq. (52)).
+- **Lax–Friedrichs on $[\![u]\!]$.** Rueda-Ramírez et al. (2021), after
+  Derigs et al., state that $f^{\mathrm{ec}}-\tfrac12a[\![u]\!]$ is not
+  entropy stable for MHD (§3.3.1, Eq. (52)) *(compiler check, not in the sources: with scalar dissipation $a\ge0$ added to an entropy-conservative flux the production is $-\tfrac12a[\![w]\!]\cdot[\![u]\!]\le0$ for a convex entropy; see [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md))*.
 - **Dissipation on $[\![w]\!]$.** Replacing $[\![u]\!]$ by
   $\frac{\partial u}{\partial w}[\![w]\!]$ at a mean state, with Barth's
   eigenvector scaling, gives the production
@@ -426,6 +486,15 @@ conserved variables, which is what gives the production a provable sign.
   raises its order and keeps the sign if the reconstruction has the sign
   property ([TeCNO schemes](/methods/tecno-scheme.md);
   [Li, Duan & Tang (2022)](/sources/li-2022-c.md), Eq. (3.21)).
+- **How much the reconstructed jump dissipates.**
+  [Charles & Ray (2025)](/sources/charles-2025.md) show that the sign
+  property is not enough. The third-order SP-WENO reconstruction keeps it,
+  but its reconstructed jump is zero or nearly zero at most shock
+  interfaces. The entropy-stable scheme then adds almost no dissipation
+  and overshoots on Sod-type, Shu–Osher and Lax problems. A learned
+  variant that keeps the jump away from zero removes most overshoots, at
+  larger smooth errors (§3.2, §5.3; arXiv v2;
+  [sign-preserving WENO](/methods/sign-preserving-weno.md)).
 - **Robustness of "EC plus dissipation".** Renac (2021) proves that a
   Roe-type flux, the author's EC flux minus a scalar dissipation on the entropy
   variables, is ES (App. D.1, Eq. (D.1)). Renac argues that such fluxes are
@@ -480,6 +549,16 @@ limiter restores the nodal values (Theorem 6.1, Eq. (67);
 (2022) find the same in their Taylor–Green tests: corrected schemes that
 conserve entropy blow up once nodal density or pressure turns negative,
 after which the entropy variables cannot even be formed (§4.2.2, §6).
+Liu et al. (2025b) assume positive density and pressure. They state that
+a provably positivity-preserving entropy-stable DG scheme for ideal MHD
+"remains an open challenge", since positivity is tied to a discrete
+divergence-free condition. They add the Zhang–Shu limiter only for the
+Mach 800 and Mach 10000 jets, and observe positivity without it on the
+blast and rotor (Remark 3.1, Exs. 6, 8, 10). Liu et al. (2025c) run the
+MHD blast, plasma beta about $2.51\times10^{-4}$, without a positivity
+limiter, and the minimum pressure at the final time is about 0.0952
+(Ex. 5.6). Charles & Ray (2025) state that their scheme is not
+positivity preserving, since no constraint enforces it (Remark 5).
 Lin, Chan & Tomas (2023) state the same premise for entropy-stable DG of
 Euler and Navier–Stokes: the semi-discrete entropy inequality holds only
 while density and internal energy stay positive, and nothing in the
@@ -532,6 +611,12 @@ equilibrium (hyperbolic-tangent) interface profile; regularization is
 irreversible, and its entropy production in a stationary slab test is
 small and positive, of order $10^{-7}$ relative (§2.2, Eqs. (19)–(21),
 App. A).
+
+**Entropy stability and the carbuncle.** On 2D Riemann configuration 3,
+Charles & Ray (2025) find a carbuncle-like protrusion with two
+entropy-stable TeCNO schemes under Roe-type dissipation. A Rusanov-type
+dissipation weakens it, so entropy stability does not preclude it (§5.3,
+Fig. 10; [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)).
 
 ## Discrete entropy tests
 
@@ -814,3 +899,6 @@ blend reduces the oscillations (§8.2–8.4).
 - [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §2.2 Eq. (4), §3.3–3.4, §4 (arXiv v1).
 - [Alberti et al. (2025)](/sources/alberti-2025.md) — §2 Eq. (16), §2.1.1 Eqs. (20)–(25), §2.1.2 Eqs. (40)–(47), §3.2.2.
 - [Ching et al. (2025)](/sources/ching-2025.md) — §1, §4 Eqs. (4.1), (4.12), (4.20), (4.38), §4.3, §5.3 Figs. 5.5–5.6, §5.4 Fig. 5.12.
+- [Charles & Ray (2025)](/sources/charles-2025.md) — §3.2, §5.3 Figs. 6–10, Remark 5 (arXiv v2).
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — §2, §3.1 Thm. 3.1, §3.2 Thm. 3.2 Eqs. (3.15)–(3.18), Remarks 3.1–3.2, §3.3 Eq. (3.21), Exs. 5–10, Fig. 6.
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §1, §3.1 Defs. 2–4 Thm. 1, App. B, §4.1 Lemma 3 Eq. (26), §4.2 Eq. (27) Remark 2, Ex. 5.6.

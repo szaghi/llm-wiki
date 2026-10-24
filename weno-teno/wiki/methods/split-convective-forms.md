@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Split convective forms"
-description: "Split forms write the convective terms of mass and momentum as weighted mixtures of divergence and advective forms; the page gives the Coppola–Veldman family and conditions, Edoh's rotational forms, De Michele and Coppola's flux form and energy splittings, the Burgers split of DG and FR, an optimized eight-point cubic split in a TENO hybrid, and the face and two-point fluxes."
+description: "Split forms write the convective terms of mass and momentum as weighted mixtures of divergence and advective forms; the page gives the Coppola–Veldman family and conditions, Edoh's rotational forms, De Michele and Coppola's flux form and energy splittings, the Burgers split of DG and FR, an optimized eight-point cubic split in a TENO hybrid, and face and two-point fluxes."
 status: established
 aliases: [split forms, skew-symmetric form, Feiereisen splitting, Kennedy–Gruber splitting, KGP splitting, supraconservative discretization, dual-sided discretization, rotational form, Div-rot, Div-str, EMAC, Morinishi splitting, Rozema splitting, Ducros splitting, quadratic split, cubic split, quartic split, quintic split, Jameson–Pirozzoli form, KEEP scheme, energy-equation splitting]
 tags: [kinetic-energy-preserving, finite-difference, finite-volume, multiphase, turbulence, low-dissipation]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T20:29:00Z
 ---
 
 # Split convective forms
@@ -197,6 +197,38 @@ to $t=6$ and runs to $t=20$ (§4–5, Figs. 3–5;
 This is a case where the split form, not the divergence form, is what
 keeps a second-order central scheme stable. As with Jain & Moin, the
 internal-energy flux is a quadratic split of $p\mathsf G$ times $\overline v$.
+
+[Terashima, Ly & Ihme (2025)](/sources/terashima-2025.md) use the same
+KEP face fluxes with arithmetic means throughout:
+$\overline{\rho Y_k}\,\overline v$, $\overline\rho\,\overline v\,\overline v$,
+$\overline p$, $\overline\rho\,\tfrac12v_iv_{i+1}\,\overline v$ and
+$\tfrac12(p_{i+1}v_i+p_iv_{i+1})$ (Eqs. (35)–(39)). They change only the
+internal-energy flux, for any equation of state
+([APEC flux](/methods/apec-scheme.md)). With the plain mean
+$\overline{\rho e}\,\overline v$ (their FC-NPE) the pressure-equilibrium
+error of the split form diverges on smooth transcritical interfaces at
+every resolution tried (501 to 4001 points), and the run blows up. With APEC's
+corrected half-point value it stays stable and conserves total energy
+(§3.2). The two schemes share every flux except the internal-energy
+one (§3.1).
+
+## Split convective flux in a DG momentum update (Zampa & Dumbser)
+
+[Zampa & Dumbser (2025)](/sources/zampa-2025.md) discretize the
+convective momentum flux of a semi-implicit compatible-finite-element
+scheme by DG with what they call a "Ducros-type numerical flux with a
+dissipative term" (§3.2.3, Eq. (10); arXiv v1):
+$\hat F\,n=(m\cdot n)\{\!\{m/\rho\}\!\}+\tfrac12s_{\max}[\![m]\!]$. Here
+$m=\rho v$, and page-local $s_{\max}$ is a dissipation speed (in their
+entropy transport step, twice the largest normal velocity of the two
+states, §3.2.2). The normal mass flux $m\cdot n$ is single-valued
+because the momentum lies in an $H(\mathrm{div})$-conforming
+Raviart–Thomas space. So the face flux is the mass flux times the mean
+velocity, the $\hat C\,\overline v$ structure of the KEP fluxes above,
+plus a Rusanov-type dissipation. The authors state that the
+dissipative flux with their first-order time stepping is not energy
+conserving, with "remarkably small" energy dissipation (§3.5, §4.5). This
+is not the [Ducros shock sensor](/definitions/ducros-shock-sensor.md).
 
 ## Rotational-form splittings (Edoh)
 
@@ -555,3 +587,5 @@ and [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
 - [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) — §3.1 Eq. (17), §3.4 Table 1, §4, §5 Eqs. (55)–(59).
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §2.3 Eqs. (21)–(30), §3.2 Eq. (35) Algorithm 1, §3.3.1 Eqs. (36)–(46), §4.5–4.8 Tables 6–11.
 - [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) — §2 Eqs. (1)–(8), §3 Table 1.
+- [Terashima, Ly & Ihme (2025)](/sources/terashima-2025.md) — §2.8 Eqs. (35)–(40), §3.1–3.2.
+- [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — §3.2.3 Eqs. (9)–(10), §3.5, §4.5 (arXiv v1).

@@ -137,7 +137,7 @@ printed duplicates.
 
 # Pages created or updated
 
-Chunk 8 (2026-10-23), cited further in chunk 9 (2026-10-23). This source is cited on:
+Chunk 8 (2026-10-23), cited further in chunks 9–10 (2026-10-23). This source is cited on:
 
 * [Boundary variation diminishing (BVD)](/definitions/boundary-variation-diminishing.md)
 * [Five- and six-equation diffuse-interface models](/definitions/five-equation-model.md)

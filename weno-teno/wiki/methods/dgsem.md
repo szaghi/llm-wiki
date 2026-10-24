@@ -5,7 +5,7 @@ description: "The DGSEM is nodal collocation DG on tensor-product Legendre–Gau
 status: established
 aliases: [LGL-DGSEM, DG spectral element method, nodal DGSEM, split-form DGSEM, collocation DG on Gauss–Lobatto nodes]
 tags: [dg, entropy-stable, kinetic-energy-preserving, limiting, software]
-timestamp: 2026-10-23T15:13:00Z
+timestamp: 2026-10-23T20:29:00Z
 ---
 
 # Discontinuous Galerkin spectral element method (DGSEM)
@@ -133,6 +133,49 @@ split-form DGSEM (§2–3, after Bohm et al.):
   $\Delta t$ the minimum of an advective bound $\propto\Delta x/(2N+1)$ and a
   diffusive one $\propto\Delta x^2/(2N+1)^2$, with empirical factors and CFL
   numbers 0.5 (Eq. (89)).
+
+**Ideal MHD in conservative form with a globally divergence-free field.**
+[Liu et al. (2025c)](/sources/liu-2025-c.md) use the Chen–Shu nodal
+entropy-stable DG, a DGSEM-type collocation on $k+2$ Gauss–Lobatto nodes
+per direction. They apply it to the **conservative** ideal MHD system,
+with no Powell or Godunov term. The volume flux is the
+Chandrashekar–Klingenberg entropy-conservative flux, and the surface flux
+is HLL with three-wave relaxation speeds (§3.1, Eq. (8), App. A). The
+scheme is entropy stable if the nodal field is divergence-free at every
+node and its normal component is continuous across faces (Def. 4,
+Thm. 1). To provide such a field, the normal components are evolved on
+the faces as degree-$k$ polynomials, by 1D DG forms of the induction
+equation with a 2D HLL vertex electric field, after Balsara et al. A new
+least-squares reconstruction then rebuilds the tensor-degree-$(k+1)$
+nodal field inside each cell. It minimizes the mass-matrix distance to
+the DG-evolved field under the nodal-divergence and trace constraints,
+solved by SVD row reduction and a KKT system (§3.2–3.3, Eqs. (15)–(25)).
+The total energy is then corrected node by node to keep the pressure.
+This keeps the entropy but loses local energy conservation (Eq. (27),
+Remark 2; [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md),
+[constrained transport](/methods/constrained-transport.md)). An
+OEDG-inspired limiter scales all nodal values toward the cell mean by
+$\exp(-\sigma\Delta t)$. It scales the face moments beyond the average by
+the smaller factor of the two neighbours, so the cell-average constraint
+survives (§4.1, Eq. (26)). Time stepping is Ketcheson's ten-stage
+fourth-order SSP Runge–Kutta at CFL 0.45 (§4.2).
+
+On the smooth MHD vortex at $T=20$ the finest-mesh $L^2$ orders are about
+2.3–2.6 for $k=1$, 2.9–3.1 for $k=2$ and 4.0–4.5 for $k=3$ (Table 1). The
+cells have tensor degree $N=k+1$, so these orders are about one below the
+registry's design order $N+1=k+2$. They agree with the $(k+1)$th-order
+truncation error the authors cite from Chen & Shu (§3.1)
+*(compiler check, not in the sources)*. Without the entropy-stable
+treatment, both the standard and the divergence-free nodal DG break down
+within a few steps on the rotated Brio–Wu tube. Without any limiter the
+new scheme runs the field loop and, in the authors' words, captures its
+features better than the earlier entropy-stable nodal DG of Liu, Shu &
+Zhang. It also runs the MHD
+Kelvin–Helmholtz problem, on which that scheme blows up without a
+limiter. The authors read Table 1 as maintaining "the designed
+accuracy".
+On the blast the pressure stays positive with no positivity limiter
+(minimum about 0.0952) (Exs. 5.1–5.6).
 
 ## Positivity of the cell averages
 
@@ -507,5 +550,6 @@ al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1, §3 Eqs. (5)–(18), §4 Eqs. (19)–(30) Fig. 2, §7.2, §8.2 Table 2, §9.
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §1, §2.3 Eqs. (42)–(59), §4.1–4.3 Figs. 1–3, §5 (arXiv v1).
 - [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §1, §3.1–3.5 Eqs. (15)–(25), §4.1–4.4 Table 1, Figs. 1–12, §5 (arXiv v1).
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §3.1–3.3 Eqs. (8)–(25), Defs. 2–4, Thm. 1; §4.1–4.2 Eqs. (26)–(27), Remark 2; §5 Table 1, Exs. 5.1–5.6; App. A.
 - [Lin & Chan (2024)](/sources/lin-2024.md) — §2.1–2.3 Eqs. (5)–(18), §3, §4.1–4.3 Figs. 2–5.
 - [Rueda-Ramírez, Bolm, Kuzmin & Gassner (2024)](/sources/ruedaramirez-2024.md) — §1, §2.1 Eqs. (3)–(8), Remarks 1–3, §2.2 Eqs. (9)–(25), Remarks 5–6, §3 Tables 1–5, Figs. 1–8 (arXiv v1).

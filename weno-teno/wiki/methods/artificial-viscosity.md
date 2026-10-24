@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Artificial viscosity and spectral viscosity"
-description: "Artificial viscosity adds solution-dependent dissipation instead of overwriting the solution; the page covers the high-order Jameson–Schmidt–Turkel blend, graph viscosity, Laplacian DG viscosities driven by a time-reversibility defect, a learned modal decay or a time-evolved SPH-type switch, residual-based finite-element viscosity, spectral and quasi-spectral eddy viscosities, C-function viscosity on moving meshes, and modal damping read as dissipation."
+description: "Artificial viscosity adds solution-dependent dissipation instead of overwriting the solution; the page covers the high-order Jameson–Schmidt–Turkel blend, graph viscosity, Laplacian DG viscosities driven by a time-reversibility defect, a learned modal decay or a time-evolved SPH-type switch, residual-based finite-element viscosity, spectral and quasi-spectral eddy viscosities, C-function viscosity on moving meshes, a posteriori cellwise viscosity, and modal damping read as dissipation."
 status: established
 aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, local artificial diffusivity, LAD, residual-based viscosity, RV, residual viscosity, time-dependent artificial viscosity, viscosity switch]
 tags: [limiting, dg, low-dissipation, finite-difference, weno, machine-learning]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T20:29:00Z
 ---
 
 # Artificial viscosity and spectral viscosity
@@ -449,6 +449,29 @@ the alignment of the moving mesh with the shock (§7.1.3;
 [Noh implosion](/benchmarks/noh-implosion-problem.md),
 [adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
 
+## A posteriori cellwise viscosity (compatible finite elements)
+
+[Zampa & Dumbser (2025)](/sources/zampa-2025.md) (§2.1, §3.3; arXiv v1)
+regularize the density, momentum and entropy equations of weakly
+compressible isentropic flow with page-local viscosities
+$\epsilon_\rho,\epsilon_m,\epsilon_S$. The density and entropy get a
+Laplacian $\nabla\cdot(\epsilon\nabla\cdot)$, discretized by symmetric
+interior penalty. The momentum gets a grad–div plus curl–curl operator,
+$-\nabla(\epsilon_m\nabla\cdot m)+\nabla\times(\epsilon_m\nabla\times m)$, which
+fits the $H(\mathrm{div})$ momentum space (Eq. (2)). The authors note that
+for constant viscosities this coincides with the monolithic
+regularization of Guermond & Popov and differs in general. Neither has
+physical meaning (Remark 2.1).
+
+The viscosity is set a posteriori. It is $\tfrac12h\,s_{\max}$ in elements
+whose candidate solution violates a relaxed discrete maximum principle,
+and a small floor value elsewhere (Eq. (23)). The step is then
+recomputed, as in [MOOD](/methods/mood-a-posteriori-limiting.md). The
+viscous terms are treated implicitly in the semi-implicit step, which the
+authors say "avoids a quadratic CFL restriction of the time step size"
+(§3.1, §3.5). On a circular explosion the
+viscosity stays localized at the discontinuities (§4.3, Figs. 3–4).
+
 ## Spectral and quasi-spectral eddy viscosities
 
 [Sousa & Scalo (2022)](/sources/sousa-2022.md) recall Tadmor's spectral
@@ -767,4 +790,5 @@ that the flux and limiter "do not induce excessive numerical viscosity"
 - [Cernetic et al. (2023)](/sources/cernetic-2023.md) — accepted manuscript: §1; §2.3; §3.1–3.2, Eqs. (24)–(36); §4.1, Eqs. (41)–(46), Figs. 3–4; §5.1–5.4, Figs. 5–10; §6.3, Fig. 14.
 - [Nguyen et al. (2024)](/sources/nguyen-2024.md) — arXiv v1: §1; §2.2–2.5, Eqs. (5)–(17); §4.3–4.5; §5.
 - [Kolluru, Besse & Pandit (2024)](/sources/kolluru-2024.md) — arXiv v2: §1; §2.2–2.3, Eqs. (3)–(4); §3.1–3.4, Tables 1–2, Figs. 4, 7, 16–17; §4; App. A.3.
+- [Zampa & Dumbser (2025)](/sources/zampa-2025.md) — arXiv v1: §2.1 Eq. (2), Remark 2.1; §3.1; §3.3 Eqs. (21)–(23); §4.3, Figs. 3–4.
 - [Fan & Wu (2024)](/sources/fan-2024.md) — arXiv v1: §1; §2.2.2, Eqs. (2.14)–(2.17), Thms 1–2, Remarks 2–3; §2.2.4, Thm 4; §2.2.6, Fig. 2.1.

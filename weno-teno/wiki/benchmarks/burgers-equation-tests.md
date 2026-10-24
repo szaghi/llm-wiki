@@ -5,7 +5,7 @@ description: "The inviscid Burgers equation as test bed: 1D to 3D sine data for 
 status: established
 aliases: [Burgers equation, inviscid Burgers test, Burgers sine wave, two-dimensional Burgers Riemann problem]
 tags: [benchmark, weno, cweno, dg]
-timestamp: 2026-10-23T15:17:00Z
+timestamp: 2026-10-23T19:51:00Z
 ---
 
 # Burgers equation tests
@@ -40,14 +40,15 @@ that reduce exactly to Burgers.
 | [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.1–3.2 | IC0 $u_0=\sin(2\pi x)$; IC1 $u_0=\sin(2\pi x-\pi/2)$ | $[0,1]$, periodic | $0.07$, $N_x=39$–$7995$ | $0.2$, $2.0$ (IC0), $0.17$ (IC1); Fourier, RK4 |
 | [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.1 | $u_0=0.5+\sin(\pi(x+y)/2)$ | $[-2,2]^2$, periodic, triangles | $0.5/\pi$, 58–14848 cells | — |
 | [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.1–3.2 | $u_0=0.5+\sin(\pi x)$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | $[0,2]$; $[0,4]^2$, periodic | $0.5/\pi$, 100–200 points or cells; $100^2$–$200^2$ | — |
-| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.1, 3.3 | $u_0=0.5+\sin(\pi x)$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | $(0,2)$; $(0,4)^2$, periodic | $0.5/\pi$, 40–240 cells; $40^2$–$240^2$ | — |
+| [Fan et al. (2025a)](/sources/fan-2025.md) Ex. 3.1, 3.3 | $u_0=0.5+\sin(\pi x)$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | $(0,2)$; $(0,4)^2$, periodic | $0.5/\pi$, 40–240 cells; $40^2$–$240^2$ | — |
 | [Danis et al. (2025)](/sources/danis-2025.md) §5.2 | $u_0=0.5+0.5\sin(2\pi(x+y+z))$, 3D flux $(u^2/2,u^2/2,u^2/2)$ | $[0,1]^3$, periodic | $1/(12\pi)$, up to $320^3$, $\Delta t=h^{5/3}$ | — |
 | [Vilar & Abgrall (2024)](/sources/vilar-2024.md) §3.4, §4.2.1 | $u_0=\sin(2\pi(x+y))$, 2D flux $(u^2/2,u^2/2)$ | $[0,1]^2$, periodic, triangles | — | $0.5$, $\mathbb P^5$ on 576 and $\mathbb P^3$ on 242 triangles |
+| [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Ex. 5.5 | $u_0=0.5+\sin(2\pi(x+y))$, 2D flux $(u^2/2,u^2/2)$ | $[0,1]^2$, periodic | — | $0.3$, $100\times100$, generalized Active Flux with LLF flux vector splitting |
 
 For $u_0=0.5+\sin(\pi x)$, $t_{\mathrm b}=1/\pi$ (stated by Zhong et
 al.); along the diagonal the
 two-dimensional data have the same breaking time (the data of Li, Shu
-& Qiu, also run by Fan et al. (2023) and Fan et al. (2025), by Zhang &
+& Qiu, also run by Fan et al. (2023) and Fan et al. (2025a), by Zhang &
 Zhu and, on $[-2,2]^2$, by Lin & Zhu); Danis et al. call their final
 time "well before the breaking time": along $\xi=x+y+z$ their equation
 is $\partial_tu+3u\,\partial_\xi u=0$ with $\max\lvert\partial_\xi u_0\rvert=\pi$,
@@ -56,6 +57,9 @@ Vilar & Abgrall's data, $\partial_tu+2u\,\partial_\xi u=0$ along
 $\xi=x+y$ gives $t_{\mathrm b}=1/(4\pi)\approx0.08$, and the two shocks form
 on the lines $x+y=0.5$ and $x+y=1.5$ where $u_0$ decreases through zero,
 the stationary shocks the authors state *(compiler check, not in the
+sources)*; Duan, Barsukow & Klingenberg's data have the same slope
+$2\pi$ along $\xi=x+y$, so $t_{\mathrm b}=1/(4\pi)\approx0.08$ and their
+$t=0.3$ is a shock-capturing time *(compiler check, not in the
 sources)*; for $u_0=\sin(2\pi x)$, Kolluru et al. state
 $t_{\mathrm b}=1/(2\pi)\simeq0.159$, the shock forming at $x=0.5$; for Calhoun et al.'s two-dimensional
 data, whose characteristics carry the Jacobian
@@ -124,7 +128,7 @@ $\Delta t\sim(\Delta x)^{\nu/3}$ for a scheme of order $\nu$ to keep the
 third-order Runge–Kutta error below the spatial one, and GMR-WENO
 reaches a given error in less CPU time (Figs. 3.1–3.4).
 
-**Hermite WENO with unified stencils.** Fan et al. (2025) run the same
+**Hermite WENO with unified stencils.** Fan et al. (2025a) run the same
 sine data with their fifth-order moment-based
 [Hermite WENO](/methods/hermite-weno.md) HWENO-U, which obtains the
 point values and the high-order modification of the first moment from
@@ -413,12 +417,42 @@ with their bound-preserving [PAMPA scheme](/methods/pampa-scheme.md)
 $[-1.003,2.003]$. Without the bound-preserving blending the point values
 develop a spike; with either set of bounds there is none (Fig. 2). The
 results are "obtained without sonic point transition that is described
-in" Duan, Barsukow & Klingenberg's generalized Active Flux, which needs
+in" Duan, Barsukow & Klingenberg's generalized Active Flux (below), which needs
 flux vector splitting at sonic points, and the authors state that their
 scheme does not exhibit the transonic issues of that work (§1). The jump
 at $x=-0.2$ from $-1$ to $2$ opens a transonic rarefaction through the
 sonic value $u=0$, and the jump at $x=0.2$ from $2$ to $-1$ is a shock of
 speed $\tfrac12(2-1)=\tfrac12$ *(compiler check, not in the sources)*.
+
+[Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) Ex. 5.1
+(arXiv v3) run the same data to the same time on the same 200 cells, at
+CFL 0.2, as the test that exposes the stagnation of the point-value
+update of the generalized [Active Flux](/methods/active-flux.md) method
+when it uses Jacobian splitting: at the jump from $2$ to $-1$ the two
+upwind derivatives vanish, both point values stay frozen and the cell
+average grows linearly in time, a spike (§2.1, Fig. 3). Updating the
+point values by [flux vector splitting](/methods/flux-vector-splitting.md)
+(local Lax–Friedrichs or upwind splitting) takes information from the
+neighbours and removes the spike; their bound-preserving limiting alone,
+added to the Jacobian splitting, does not (Fig. 3). Abgrall et al.'s
+PAMPA result above is the same experiment run with a different scheme.
+On the two-dimensional sine data of the table their limiters are active
+only near the shocks (Ex. 5.5, Fig. 8).
+
+[de Romémont et al. (2026)](/sources/deromemont-2026.md) §6.1 take the
+composite data of Ray & Hesthaven on $[0,1]$: $u_0=1.5$ on
+$3/8\le x\le3.5/8$ and on $4/8<x\le4.5/8$, $0.5$ on $3.5/8<x<4/8$, $1$ on
+$4.5/8<x\le5/8$, and $\tfrac12\sin(8\pi x)$ elsewhere, to $t=0.39$. Their
+second-order MUSCL finite-volume scheme with
+[learned slopes](/methods/learned-weno-weights.md) (a convolutional
+network predicts three-point slope coefficients inside the van Albada
+limiter; Rusanov flux, explicit Euler, Courant number $0.01$) on 256
+cells has smaller and narrower error spikes at the discontinuities than
+the same scheme with standard slopes on the same grid, against a
+1024-cell reference (Figs. 5–6); unlike their Euler tests, no error gain
+is printed for this case. The test is not in their training set, which
+holds randomized sine waves partly multiplied by a rectangle function
+(App. B).
 
 **Slow shock across a block interface.** [Qin et al.](/sources/qin-2023.md)
 §3.2 start from $u_0=1.02$ for $x<0.1$ and $u_0=-1$ otherwise, a shock
@@ -557,7 +591,7 @@ in the sources)*, matching Zheng et al.'s statement.
   read as the centred difference $q_{i,j+1}-q_{i,j-1}$ is the
   non-trivial one; both are printed without absolute values. They are
   read in the arXiv v2 preprint.
-- Fan et al. (2025) print HWENO-M's $L^\infty$ errors and orders at
+- Fan et al. (2025a) print HWENO-M's $L^\infty$ errors and orders at
   $160^2$, $200^2$ and $240^2$ in Table 4 identical to HWENO-U's
   ($7.18\times10^{-8}$, $2.38\times10^{-8}$, $9.52\times10^{-9}$), while
   the $L^1$ errors of the two schemes differ; the paper does not say
@@ -591,8 +625,10 @@ in the sources)*, matching Zheng et al.'s statement.
 - [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §3, Case 3.1, Table 3.2.
 - [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §5.1.1–5.1.3, Eqs. (46)–(51), Figs. 9–14.
 - [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — §3, Ex. 3.1–3.2, Table 3.2, Figs. 3.1–3.4.
-- [Fan et al. (2025)](/sources/fan-2025.md) — §3.1, Ex. 3.1 and 3.3, Tables 1–2, 4–5.
+- [Fan et al. (2025a)](/sources/fan-2025.md) — §3.1, Ex. 3.1 and 3.3, Tables 1–2, 4–5.
 - [Danis et al. (2025)](/sources/danis-2025.md) — §5.2, Table 2 (arXiv v1).
 - [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — §3.4, §4.2.1, Figs. 5–9, 28–32 (HAL preprint).
 - [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §1, §4, Ex. 2, Fig. 2.
 - [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) — §7.1, Eqs. (57)–(60), Table 3, Fig. 12.
+- [Duan, Barsukow & Klingenberg (2025)](/sources/duan-2025.md) — §2.1, Ex. 5.1, 5.5, Figs. 3, 8 (arXiv v3).
+- [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §6, §6.1, App. B, Figs. 5–6.

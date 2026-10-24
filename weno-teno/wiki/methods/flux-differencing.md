@@ -5,7 +5,7 @@ description: "Flux differencing replaces the DG volume term D f by symmetric two
 status: established
 aliases: [flux-differencing DG, split-form DG, split-form DGSEM, two-point flux volume integral, entropy-conservative DG volume term, LeFloch–Mercier–Rohde flux, Hadamard-product form]
 tags: [dg, finite-difference, entropy-stable, kinetic-energy-preserving, numerical-flux, software]
-timestamp: 2026-10-23T14:54:00Z
+timestamp: 2026-10-23T20:29:00Z
 ---
 
 # Flux differencing and split-form DG
@@ -250,6 +250,38 @@ conservative in the generalized Tadmor sense
 meshes the non-conservative terms carry averaged metric terms as well
 (App. C.1, Eqs. (133)–(139)).
 
+**Godunov–Powell MHD on LGL nodes.**
+[Liu et al. (2025b)](/sources/liu-2025-b.md) (§3.1, Eqs. (3.9)–(3.11))
+use the nodal entropy-stable DG of Liu, Shu & Zhang for 1D ideal MHD with
+the [Godunov–Powell term](/definitions/godunov-powell-source-term.md).
+In page-local notation, $S_i$ is the Godunov–Powell vector
+$(0,B,v,v\cdot B)^\top$ at node $i$, the element has width $\Delta x$, and
+$\tau_i$ are the diagonal entries of $B$. The nodal balance is
+
+$$\frac{\Delta x}{2}\frac{d}{dt}u_i+2\sum_lD_{il}f^{\mathrm{ec}}(u_i,u_l)+S_i\sum_lD_{il}(B_1)_l=\frac{\tau_i}{\mathsf w_i}\big(f(u_i)-h_i\big)+\frac{\tau_i}{\mathsf w_i}g_i .$$
+
+Here $h_i$ is the surface flux at the two end nodes and zero inside, and
+page-local $g_i=\tfrac12S_i[\![B_1]\!]$ is a half-jump correction at the
+end nodes, after Cheng & Shu's DG for Hamilton–Jacobi equations. The
+volume part of the non-conservative term is a plain nodal product. Unlike
+Rueda-Ramírez et al.'s, it uses no two-point average. The element uses
+$k_q+1$ Gauss–Lobatto nodes, $k_q\ge k$, for degree-$k$ polynomials
+($k_q=k+2$ in the tests).
+The difference matrix $D$ is then the Chen–Shu SBP operator built from
+the modal projection, not the collocation derivative
+([summation-by-parts operator](/operators/summation-by-parts-operator.md)).
+
+**Conservative MHD without the non-conservative term.**
+[Liu et al. (2025c)](/sources/liu-2025-c.md) (§3.1, Eq. (8), Thm. 1) use
+the same two-point volume term for the *conservative* ideal MHD system in
+2D, with $k+2$ Gauss–Lobatto nodes per direction. They prove that the
+terms of the modified Tadmor condition that carry the page-local
+Godunov–Powell potential $\phi_{\mathrm G}=\rho(v\cdot B)/p$ cancel when the
+nodal magnetic field is divergence-free at every node and its normal
+component is continuous across faces. The scheme is then entropy
+conservative in each element and entropy stable globally
+([entropy stability](/properties/entropy-stability.md)).
+
 ## Efficient evaluation
 
 Ranocha et al. (2023) collect the implementation identities and measure
@@ -404,4 +436,6 @@ than conservative DG (§7.4, Table 4;
 - [Rueda-Ramírez, Bolm, Kuzmin & Gassner (2024)](/sources/ruedaramirez-2024.md) — §2.1 Eqs. (5)–(8), Remarks 1–3 (arXiv v1).
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §2.3 Eqs. (27)–(28), §3.3.1 Eqs. (40)–(42).
 - [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §3.3–3.4 Eqs. (20)–(25), §4.2.1, §4.4 (arXiv v1).
+- [Liu et al. (2025b)](/sources/liu-2025-b.md) — §3.1 Eqs. (3.2)–(3.11), Thm. 3.1.
+- [Liu et al. (2025c)](/sources/liu-2025-c.md) — §3.1 Eq. (8), Defs. 2–4, Thm. 1, App. B.
 - [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §3.3 Eqs. (37)–(41), §5, §7.4 Table 4.

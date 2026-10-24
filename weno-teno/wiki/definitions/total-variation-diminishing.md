@@ -5,7 +5,7 @@ description: "TVD reconstruction limits the interface value of a second-order sc
 status: established
 aliases: [TVD, TVD limiter, flux limiter, slope limiter, MUSCL limiter, minmod]
 tags: [limiting, reconstruction, finite-volume, central-scheme]
-timestamp: 2026-10-23T15:15:00Z
+timestamp: 2026-10-23T20:39:00Z
 ---
 
 # Total variation diminishing (TVD) and slope limiters
@@ -66,7 +66,7 @@ whose nonlinear weights it computes from a first-order predictor (§2–§3).
 | MinMod | $\max[0,\min(1,r)]$ | Deng, Eq. (4.10) |
 | SuperBee | $\max[0,\min(2r,1),\min(2,r)]$ | Deng, Eq. (4.11) |
 | van Leer | $(r+\lvert r\rvert)/(1+\lvert r\rvert)$ | Deng, Eq. (4.12) |
-| van Albada | $(r^2+r)/(r^2+1)$ | Deng, Eq. (4.13) |
+| van Albada | $(r^2+r)/(r^2+1)$ | Deng, Eq. (4.13); de Romémont et al. (2026), §3.1 |
 | OSPRE | $1.5(r^2+r)/(r^2+r+1)$ | Deng, Eq. (4.14) |
 | Deng's shape-preserving limiter | $(2r+4r^2)/(1+2r+3r^2)$ for $r\ge0$, $0$ otherwise | Deng, Eq. (6.2) |
 | SuperBee, parametrized | $\max[0,\min(\beta r,1),\min(r,\beta)]$, $\beta=2$ | Nguyen et al., Eq. (28b) |
@@ -287,6 +287,31 @@ cells flagged rough and Minmod2 elsewhere, in characteristic variables
   keep $M$ for the Mach number) in place of fifth-order WENO; it is
   between the WENO scheme and the oscillatory variants on 2D Riemann problems, with poorer
   resolution (Ex. 5.4).
+- **A TVD blend of IMEX schemes.** [Allegrini & Vignal (2025)](/sources/allegrini-2025.md)
+  recall that implicit Runge–Kutta methods of order above one cannot be SSP without a time-step
+  restriction (Gottlieb, Shu and Tadmor, as they cite it) and that the same holds for IMEX
+  schemes (their ref. [19]); on their low-Mach shock tube, second order in time with first-order
+  space oscillates more as the Mach number decreases (§4, §4.3, Fig. 11). They therefore take the
+  convex combination
+  $u^{n+1}=(1-\theta_{\mathrm{TVD}})u^{n+1,\mathrm{O1}}+\theta_{\mathrm{TVD}}u^{n+1,\mathrm{O2}}$ of the
+  first-order (implicitly upwinded) and second-order updates, with page-local
+  $\theta_{\mathrm{TVD}}=\gamma_{\mathrm D}/(1-\gamma_{\mathrm D})$, $\gamma_{\mathrm D}=1-1/\sqrt2$ the
+  ARS(2,2,2) parameter, a blending weight "proved in [19] to be the largest possible value to
+  ensure the TVD property in the case of an advection equation" (§4.3, Eq. (28)). The "TVD-AP"
+  scheme is asymptotically consistent as a convex combination and first order, with a lower error
+  than the first-order schemes on the isentropic vortex (Fig. 12). *(compiler check, not in the
+  sources: $\theta_{\mathrm{TVD}}=\sqrt2-1\approx0.414$.)* See
+  [semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md) and
+  [IMEX Runge–Kutta](/methods/imex-runge-kutta.md).
+- **A limiter around learned slopes.** In the learned MUSCL scheme of
+  [de Romémont et al. (2026)](/sources/deromemont-2026.md) a convolutional network supplies the
+  three slope coefficients of each cell, and the van Albada limiter of the table is kept, its ratio
+  taken between the learned slopes of cells $i-1$ and $i$ (§4.1–4.2, Eq. (17)); van Albada is chosen
+  because it is smooth and differentiable, unlike minmod, which suits training through the
+  solver (§3.1). The growth of the discrete total variation over one step enters the training
+  loss only as a soft penalty, $\max\big(0,TV(u^{n+1})-TV(u^n)\big)$ (Eqs. (23)–(24)); the authors
+  note that a TV bound does not hold in general in several space dimensions or for systems
+  (§4.4). See [learned WENO weights](/methods/learned-weno-weights.md).
 
 ## The first-order barrier at extrema
 
@@ -336,3 +361,5 @@ bounds to global ones in cells flagged smooth by a modal indicator restores
 - [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §3.3, Ex. 5.4: TVB reconstruction in S2T2 (arXiv v2).
 - [Chu et al. (2025a)](/sources/chu-2025.md) — §2.1.1–§2.2, Eq. (2.6): SBM limiter, dissipative/compressive/overcompressive settings, Minmod2 (arXiv v1).
 - [Chu et al. (2025b)](/sources/chu-2025-b.md) — §2, Eqs. (2.5)–(2.6): generalized minmod with factor 1.3.
+- [Allegrini & Vignal (2025)](/sources/allegrini-2025.md) — §4, §4.3, Eq. (28), Figs. 11–12: TVD convex blend of first- and second-order IMEX schemes (HAL author manuscript).
+- [de Romémont et al. (2026)](/sources/deromemont-2026.md) — §3.1, §4.1–4.4, Eqs. (13), (17), (23)–(24): van Albada on learned slopes, TV-increase training penalty.
