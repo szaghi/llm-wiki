@@ -1,0 +1,34 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "Turbulence modelling and scale-resolving simulation"
+summary = "Turbulence modelling and simulation, 2017–2026: RANS closures (Spalart–Allmaras, k-ω SST, Reynolds-stress models) and laminar–turbulent transition models, large-eddy simulation (subgrid-scale models, explicit and implicit LES, filtering), wall models, hybrid RANS/LES (DES, PANS), data-driven and machine-learned closures (field inversion, symbolic regression, neural-network and reinforcement-learning models), high-order discretizations for scale-resolving simulation (DG, flux reconstruction, spectral elements, gas-kinetic schemes, kinetic-energy-preserving schemes), DNS of compressible and hypersonic boundary layers, immersed boundaries and mesh adaptation, turbulent combustion, and MHD, astrophysical and plasma turbulence."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/turbulence_modelling"
+keywords = [
+  "turbulence modelling",
+  "RANS",
+  "Spalart-Allmaras",
+  "k-omega SST",
+  "Reynolds stress model",
+  "transition model",
+  "large-eddy simulation",
+  "subgrid-scale model",
+  "implicit LES",
+  "wall model",
+  "WMLES",
+  "hybrid RANS/LES",
+  "detached-eddy simulation",
+  "PANS",
+  "data-driven turbulence modelling",
+  "machine-learning closure",
+  "reinforcement learning",
+  "field inversion",
+  "DNS",
+  "hypersonic boundary layer",
+  "Taylor-Green vortex",
+  "turbulent combustion",
+  "MHD turbulence",
+  "turbulent dynamo",
+  "FLEXI",
+  "NekRS",
+]

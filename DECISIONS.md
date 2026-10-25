@@ -590,3 +590,41 @@ their discretization content and listed in the issues file as candidates
 for a D17 copy into another bundle; no copy is made without the human's
 decision. Chunk 1 holds the reviews and the papers that fix the vocabulary,
 so the registry and the reading guide are built from them.
+
+## D30 — Turbulence-modelling bundle (2026-10-25)
+
+**Decision (user):** a new bundle `turbulence-modelling` for the modelling
+and simulation of turbulent flows, compiled from the user's
+turbulence-modelling bibliography, `~/papers/mosaic/turbulence_modelling`,
+in chunks of 20 (D26), each staged for the human's review and commit
+before the next starts, with a per-chunk digest in
+`turbulence-modelling/INGESTION-ISSUES.md`.
+
+**A growing archive.** The human is still adding papers. The founding plan
+covers the 131 PDFs present on 2026-10-25 (7 chunks); files added later
+are ingested in further chunks, found by the derived worklist
+(`tools/worklist.sh turbulence-modelling`), so no list of pending files is
+stored.
+
+**The archive's composition, recorded because it shapes the bundle:** the
+page-1 and checksum check found 131 distinct works, no byte copies and no
+misfiled papers; none of them is a Source page of another bundle. More
+than half of the files are preprints or accepted manuscripts (arXiv, HAL,
+Research Square, institutional repositories); twelve of them have a
+preprint-server DOI in their metadata, and their published identity was
+found on Crossref and checked against page 1. Source pages record the
+version read (as in D29).
+
+**How the scope is kept:** the archive mixes turbulence modelling proper
+(RANS and transition closures, LES and SGS models, wall models, hybrid
+RANS/LES, data-driven closures) with high-order discretizations for
+scale-resolving simulation, DNS, turbulent combustion, and MHD,
+astrophysical and plasma turbulence. All are ingested in full: the
+user's bibliography defines the domain. Papers whose main subject lives
+in another bundle (DG and FR numerics in `weno-teno`, plasma turbulence in
+`fusion-mhd-simulation`, astrophysical codes in
+`astrophysical-simulation-codes`) are listed in the issues file as D17
+candidates; no copy is made without the human's decision, and the bundle
+never links to another bundle (D12). Chunk 1 holds the reviews and the
+papers that fix the vocabulary, so the registry and the reading guide are
+built from them.

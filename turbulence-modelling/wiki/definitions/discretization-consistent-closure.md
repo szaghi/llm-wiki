@@ -1,0 +1,190 @@
+---
+type: Definition
+title: "Discretization-consistent closure"
+description: "An LES closure built for the discrete equations actually solved, so it accounts for the commutation error and the discretization-induced subgrid term as well as the physical subfilter stress; obtained by in-the-loop optimization or by training on discretize-first data."
+status: established
+aliases: [filter-consistent closure, discretize-first closure, model-data consistency, computational subgrid stress]
+tags: [les, sgs-model, implicit-les, data-driven, numerical-dissipation]
+timestamp: 2026-10-25T13:44:00Z
+---
+
+# Discretization-consistent closure
+
+In an LES whose filter is induced by the grid and the discrete operator, the
+equation actually solved is not the continuous filtered Navier–Stokes
+equation. Its exact closure term is therefore not the subgrid stress
+$\tau_{ij}$ alone. It also contains a commutation error and a term produced
+by the discretization itself. A **discretization-consistent closure** is a
+model designed, trained or optimized for that discrete equation, so it
+accounts for all three terms (Beck & Kurz 2023, §I).
+
+The sources reach it by two routes. Beck & Kurz (2023) optimize the closure
+in the loop with the actual LES operator, by
+[reinforcement learning](/methods/reinforcement-learning-closure.md).
+Agdestein & Sanderse (2025) discretize first and filter next: training data
+then satisfy the coarse discrete equations exactly (see
+[divergence-consistent LES](/methods/divergence-consistent-les.md)).
+
+## Decomposition of the closure term (Beck & Kurz 2023, §I)
+
+Beck & Kurz work with a 1D model problem. Let $\bar u$ be the filtered
+solution of the inviscid Burgers equation under a filter of width $\Delta$,
+and let $\delta/\delta x$ denote the discrete derivative of the LES scheme
+(page-local). Then (Eqs. 2–5)
+
+$$\frac{\partial\bar u}{\partial t}+\frac12\frac{\delta(\bar u\,\bar u)}{\delta x}=C_1+C_2+C_3,$$
+
+where:
+
+- $C_1=\tfrac12\big(\partial_x\overline{u^2}-\overline{\partial_xu^2}\big)$
+  is the **commutation error** between filter and derivative. It is
+  non-zero when $\Delta$ varies in space or is anisotropic, and appears
+  already for linear advection.
+- $C_2=\tfrac12\big(\partial_x(\bar u\bar u)-\partial_x\overline{u^2}\big)$
+  is the classical subfilter term, $-\tfrac12\partial_x(\overline{uu}-\bar u\bar u)$,
+  the 1D analogue of the subgrid-stress divergence.
+- $C_3=\tfrac12\big(\delta_x(\bar u\bar u)-\partial_x(\bar u\bar u)\big)$
+  is the **discretization-induced term**. Following Geurts & van der Bos,
+  it can be written as the derivative of a "computational subgrid stress"
+  under a numerically induced filter $\mathcal F_h$ (page-local symbol;
+  Beck & Kurz write it as a hat, which this bundle reserves for the test
+  filter), assuming $\delta_xf=\partial_x\mathcal F_h(f)$ (Eq. 5).
+
+Beck & Kurz state three properties of $C_3$ (the first two citing Geurts &
+van der Bos, the third citing their refs. [11, 17]):
+
+1. For consistent schemes on smooth, band-limited fields, it vanishes with
+   the design order as $h\to0$, but not for grid-filtered turbulence.
+2. For $\Delta\approx h$, the setting of implicitly filtered LES, the
+   computational subgrid stresses "can be considerably larger" than $C_2$.
+3. Modern high-order schemes are nonlinear in under-resolved settings
+   (upwinding, non-oscillatory reconstruction, limiters). $C_3$ then
+   depends on the current solution and cannot be determined a priori.
+
+They conclude that "the closure model has to be optimized in conjunction
+with the LES operator", and that a segregated optimization on
+independently generated data "is not constructive". A note in their
+reference list extends the argument to finite volumes: the cell average
+(box filter) is exact, but the reconstruction of its integrand is a
+nonlinear approximation, so $C_3$ appears there too.
+
+## The discrete commutator error (Agdestein & Sanderse 2025, §3.2)
+
+Agdestein & Sanderse make the same decomposition exact at the discrete
+level. They define the DNS as a discrete system, apply a discrete
+coarse-graining filter to it, and write the filtered DNS as the coarse LES
+operator plus a remainder. That remainder, their **discrete commutator
+error**, "lumps" the subfilter closure term together with the coarse-grid
+discretization error (Eqs. 11–12). It is the exact target for a closure
+used with that coarse operator. Training data generated this way are
+consistent with the discrete LES by construction: the authors call this
+model–data consistency (§1, Fig. 1).
+
+Two consequences follow:
+
+- **Discretization error in the closure target.** Under-resolved central
+  differences produce grainy oscillations in the coarse right-hand side.
+  These oscillations appear in the commutator error, and the closure must
+  predict them. Filter-first LES would instead have to remove them by
+  other means, such as explicit filtering (§5.1.2, Fig. 8).
+- **Size of the term.** At $32^2$ and $128^3$ coarse points with face
+  averaging, more than half of the filtered right-hand side is commutator
+  error (fractions 0.56 and 0.51), although 92% and 91% of the kinetic
+  energy is resolved. At $256^2$ the commutator error is still 7.7% of the
+  right-hand side, with all of the energy resolved (§5.1.3, Table 2).
+
+Their analysis of the 2D Taylor–Green vortex (App. F) separates the
+continuous and discrete commutators. Under a top-hat filter, the continuous
+convective commutator is $-\tfrac{\Delta^4}{480}\sin 2x+O(\Delta^6)$
+(Eq. F.12). The discrete one has the same $\sin 2x$ dependence but a
+different coefficient, which depends on the DNS spacing (Eqs. F.29–F.30).
+A model fitted to one is therefore inconsistent with the other.
+
+## Closures built this way
+
+- **Element-local Smagorinsky coefficients in DG.** Beck & Kurz (2023, §V)
+  optimize the coefficients by RL in a
+  [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) LES
+  of forced isotropic turbulence. The quadratic intra-element coefficient
+  learns a centre-peaked eddy viscosity that vanishes at the faces. The
+  authors read it as accounting for $C_3$ as well as $C_2$, i.e. as
+  compensating DG dissipation that acts through the face fluxes (Fig. 11).
+  They flag this reading as needing investigation.
+- **DG/finite-volume blending as an implicit model.** Beck & Kurz (2023,
+  §V C) also control the blending factor $\alpha$ of the hybrid
+  DG/finite-volume subcell scheme by RL. It is a closure made of
+  discretization alone.
+- **CNN closures on a staggered grid.** Agdestein & Sanderse (2025, §4.4.2)
+  train a CNN on the discrete commutator error. The authors read its small
+  stencils as learned finite-difference operators.
+
+## Relation to implicit LES and numerical dissipation
+
+Sources on [implicit LES](/definitions/implicit-les.md) make a related
+observation: the numerical scheme and the explicit model act together and
+cannot be designed independently.
+
+- **The interaction can defeat explicit models.** Flad & Gassner (2017,
+  §1, §4) find that adding Smagorinsky models on top of a dissipative,
+  de-aliased DG scheme gives no significant improvement "independent of
+  the SGS model constants used". With a
+  [kinetic-energy-preserving](/properties/kinetic-energy-preservation.md)
+  split-form baseline, which adds no artificial kinetic-energy
+  dissipation, stability and model dissipation are strictly separated, and on
+  it a Smagorinsky model with $C_s=0.12$ beats implicit LES at $48^3$
+  degrees of freedom.
+- **The numerics can swamp the model.** Vicente Cruz & Lamballais (2023,
+  §6.3) show that a Smagorinsky LES with filter width equal to the cell
+  size is dominated by differentiation errors at $C_s=0.1$. It converges
+  numerically only when the filter width is five cells (equivalently
+  $C_s=0.5$ on the cell size). Their conclusion (§8) reverses the
+  justification of implicit LES as an ersatz of explicit modelling:
+  explicit SGS models "should be seen as an ersatz of regularization".
+- **The terminology spans both views.** Duraisamy (2021, §VII) notes that
+  in LES, especially without explicit filtering, disambiguating numerical
+  from modelling errors is hard, and possibly unresolved even with explicit
+  filtering. Model-consistent training absorbs numerical error into the
+  closure, "at least as far as reconstructing the training data is
+  concerned".
+
+See [numerical dissipation](/properties/numerical-dissipation.md) for
+where element methods dissipate, and
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+for why closures validated only on the continuous equations fail in the
+solver.
+
+## Qualifications
+
+- **Two routes, two scopes.** Beck & Kurz (2023) argue that the closure
+  must be optimized in the loop because $C_3$ of a nonlinear scheme
+  depends on the running solution. Agdestein & Sanderse (2025, §5.2) train
+  a CNN a priori on the discrete commutator error and find it stable and
+  accurate, with a posteriori training adding little. Their coarse
+  operator has none of the solution-adaptive mechanisms Beck & Kurz name
+  (upwinding, non-oscillatory reconstruction, limiters): second-order
+  central differences on a staggered grid, with an explicit Runge–Kutta
+  method. Neither source tests the other's setting: the a priori route is
+  shown only for such a non-adaptive scheme, and the in-the-loop route
+  only for DG with upwind interface fluxes and for DG/finite-volume
+  blending.
+- **Consistency binds the closure to its discretization.** A
+  discretization-consistent closure is tied to one scheme, polynomial
+  degree and grid. Beck & Kurz (2023, §VI) present their models as a way
+  of developing discretization-specific closures, not as ready-to-use
+  ones. Agdestein & Sanderse (2025, §6) state that their filter's
+  properties hold only for the second-order staggered divergence, with
+  uniform weights and filter width equal to the coarse spacing.
+- **Definitions of "implicit LES" differ.** Agdestein & Sanderse (2025,
+  §1) call any LES that keeps the DNS equations in their original form and
+  adds a closure, whether or not the filter is known, "implicit LES".
+  Beck & Kurz (2023) and Vicente Cruz & Lamballais (2023) reserve the term
+  for LES in which the discretization supplies the closure. See
+  [implicit LES](/definitions/implicit-les.md).
+
+# Citations
+
+- [Beck & Kurz (2023)](/sources/beck-2023.md) — §I, Eqs. 1–5 (commutation error, computational subgrid stress, the case for in-the-loop optimization); §V B–C, Fig. 11; §VI.
+- [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md) — §1, Fig. 1 (model–data consistency); §3.2, Eqs. 11–12; §4.4.2; §5.1.2–§5.1.3, Fig. 8, Table 2; §5.2; §6; App. F.
+- [Flad & Gassner (2017)](/sources/flad-2017.md) — §1, Fig. 3 (explicit models on top of dissipative DG), §4, Fig. 7 (dissipation-free baseline).
+- [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §6.3 (numerical convergence of Smagorinsky LES), §8 (physical/numerical duality).
+- [Duraisamy (2021)](/sources/duraisamy-2021.md) — §VII (numerical against modelling error in LES).

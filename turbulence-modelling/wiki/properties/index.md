@@ -1,0 +1,8 @@
+# Properties
+
+Constraints and invariants a method can hold.
+
+* [Critical balance and the anisotropic MHD cascade](/properties/critical-balance.md) — Critical balance equates the linear Alfvén time and the nonlinear time at every scale of strong MHD turbulence; it fixes the parallel spectrum k_par^-2, the anisotropy l_par ~ lambda^(2/3) of Goldreich–Sridhar, the weak-to-strong transition scale, and frames imbalance and residual energy.
+* [Dynamic alignment and intermittency in MHD turbulence](/properties/dynamic-alignment.md) — Dynamic alignment is the scale-dependent alignment of Elsasser increments that weakens the MHD nonlinearity and gives a k_perp^-3/2 spectrum; Schekochihin (2022) recasts it, to respect the RMHD rescaling symmetry, as an intermittency effect with sin(theta) ~ (lambda/lambda_CB)^(1/4).
+* [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md) — A discretization is kinetic-energy preserving when its convective terms neither create nor destroy discrete kinetic energy; this page gives the split-form and two-point-flux constructions, and shows why a dissipation-free baseline is robust but thermalizes without a subgrid model.
+* [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md) — Numerical dissipation is the kinetic-energy loss a discretization adds by itself; the sources show where in wavenumber and in the element it acts, that it competes with or replaces the subgrid model, and that both too much and too little of it degrade LES.
