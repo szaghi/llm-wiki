@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-25T19:45:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -63,6 +63,8 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Goc et al. (2021)](/sources/goc-2021.md), §2.1 | compressible DSM (Germano et al. 1991; Moin et al. 1991), for the in-tunnel aircraft cases | not printed |
 | [Griffin et al. (2023)](/sources/griffin-2023.md), §4 | dynamic compressible model accounting only for variable properties (Moin et al. 1991) | not printed |
 | [Beck & Kurz (2023)](/sources/beck-2023.md), §V | DSM after Moin et al. (1991) in DG (FLEXI) | not printed |
+| [Abe (2021)](/sources/abe-2021.md), §II A, Eq. (5) | DSM (Germano et al. 1991; Lilly 1992), $\nu_t=C\Delta^2\lvert\bar S\rvert$ with $C\Delta^2$ computed as one product | not printed |
+| [Prakash et al. (2022)](/sources/prakash-2022.md), §III | DSM and dynamic mixed model in the stabilized finite-element code PHASTA | $\hat\Delta/\Delta=\sqrt3$, filters of Tejada-Martínez & Jansen; homogeneous directions |
 | [Fowler et al. (2022)](/sources/fowler-2022.md), §5; [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md), App. B | Lagrangian scale-dependent dynamic model (Bou-Zeid et al. 2005) in LESGO | averaging along fluid-particle paths (Meneveau, Lund & Cabot 1996, as recalled by Fowler et al.) |
 
 Fowler et al. (2022, §4.2) borrow the Lagrangian averaging of the dynamic
@@ -72,6 +74,22 @@ find that replacing the anisotropic minimum-dissipation model by the
 Lagrangian scale-dependent dynamic model changes the channel WMLES mean
 velocity at $Re_\tau=5200$ very little, for the equilibrium and for the
 learned wall models alike.
+
+## Independence of the filter-width definition
+
+Because the procedure returns the product $(C_s\Delta)^2$, the definition of
+$\Delta$ drops out once $\hat\Delta/\Delta$ is fixed. [Abe (2021)](/sources/abe-2021.md)
+(§II A) states that the DSM therefore "does not depend explicitly on the
+filter-width definition", and in an a priori test on high-aspect-ratio
+cells in the free shear layer behind a backward-facing step it returns
+"generally reasonable" eddy viscosities with some overestimation
+downstream, where the static Smagorinsky model with the cube-root width is
+strongly suppressed (§IV C, Fig. 9b). [Prakash et al. (2022)](/sources/prakash-2022.md)
+(§III) use the same property for their dynamic mixed model, computing
+$(C_G\Delta)^2$ directly because "the optimal definition of $\Delta$ for
+anisotropic grids is not yet known" ($C_G$ the mixed-model coefficient, page-local). See
+[large-eddy simulation](/definitions/large-eddy-simulation.md) for the
+filter-width question.
 
 ## Behaviour reported
 
@@ -103,6 +121,17 @@ learned wall models alike.
   $\varepsilon_u\approx0.08\,\Delta/\delta$ and observe a non-monotonic
   convergence around $\Delta/\delta\approx0.03$–$0.05$ (see
   [wall-modelled LES](/methods/wall-modelled-les.md)).
+- **Finite-element LES** (Prakash et al. 2022, §III.B, Table 4, Figs. 4–10).
+  In forced isotropic turbulence at $\nu=10^{-12}$, DSM has no energy
+  pile-up and follows the $k^{-5/3}$ slope but over-predicts energy at
+  intermediate wavenumbers; in the Taylor–Green vortex at $Re=1600$ it
+  under-predicts the resolved dissipation and the high-wavenumber energy;
+  in channel flow at $Re_\tau=590$ it under-predicts $C_f$ (0.0047 and
+  0.0049 on the coarse and medium meshes against 0.0058 from DNS). The
+  dynamic mixed model with the [gradient model](/methods/gradient-model.md)
+  is the most accurate model of the paper in the channel ($C_f=0.0053$,
+  0.0055) but decays too fast and under-predicts the resolved dissipation in
+  the Taylor–Green vortex, significantly even on $128^3$.
 - **Smooth-body separation.** On the Gaussian bump, DSM and Vreman show
   non-monotonic grid convergence of $C_f$ (separation on the coarse grid,
   lost on the medium one, back on the fine one), whereas the tensor-coefficient
@@ -117,6 +146,21 @@ learned wall models alike.
   destabilizes the computation; clipping or homogeneous averaging restores
   $\nu_t>0$ everywhere ([Vela-Martín 2022](/sources/velamartin-2022.md),
   §2.2, recalling Germano et al. 1991 and Meneveau & Katz 2000).
+
+## Dynamic wall models (inline)
+
+[Bae & Koumoutsakos (2022)](/sources/bae-2022.md) (Introduction, p. 2)
+recall dynamic (slip) wall models, the first author's earlier work, which
+are free of a priori coefficients and follow from consistency between the
+filtered velocity at the wall and a differential filter kernel. They state
+that these models are robust to Reynolds number and grid but sensitive to
+the numerical method and SGS model, which they attribute to near-wall
+numerical errors, and that they have been used only in structured
+incompressible solvers. This motivates their
+[reinforcement-learning wall model](/methods/machine-learning-wall-model.md),
+whose states they argue "do not depend heavily on numerics or SGS models,
+unlike filtered velocities or eddy viscosity values required in the dynamic
+model" (p. 10).
 
 ## Extension to a coefficient tensor
 
@@ -153,3 +197,6 @@ squares from a 6×4 system; see the
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §4.
 - [Vela-Martín (2022)](/sources/velamartin-2022.md) — §2.2.
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §4.1; §6.3.
+- [Abe (2021)](/sources/abe-2021.md) — §II A, Eq. (5); §IV C, Fig. 9(b).
+- [Prakash et al. (2022)](/sources/prakash-2022.md) — §II; §III; §III.B, Table 4, Figs. 4–10.
+- [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Introduction, p. 2; p. 10.

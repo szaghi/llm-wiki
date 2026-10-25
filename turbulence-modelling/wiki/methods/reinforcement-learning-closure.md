@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Reinforcement-learning turbulence closures"
-description: "Closure parameters chosen online by a policy trained with reinforcement learning, with the running LES as the environment and a reward computed from solver statistics; element-local SGS coefficients and DG/FV blending in DG-LES, and a multi-agent wall-stress model in WMLES."
+description: "Closure parameters chosen online by a policy trained with reinforcement learning, with the running LES as the environment and a reward computed from solver statistics; element-local SGS coefficients and DG/FV blending in DG-LES, and multi-agent wall-stress models in WMLES with their training, tests and disputed extrapolation."
 status: established
-aliases: [RL closure, reinforcement-learning SGS model, multi-agent reinforcement learning wall model, MARL wall model, RL-Const, RL-Quad, RL-Blend]
+aliases: [RL closure, reinforcement-learning SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM]
 tags: [reinforcement-learning, sgs-model, data-driven, implicit-les, wall-model]
-timestamp: 2026-10-25T13:43:00Z
+timestamp: 2026-10-25T19:46:00Z
 ---
 
 # Reinforcement-learning turbulence closures
@@ -28,8 +28,10 @@ places it in the class that Duraisamy (2021, §IV.B) calls
 [model-consistent training](/methods/model-consistent-training.md), as a
 gradient-free, adjoint-free member; that review names RL only as a
 flow-control application (§I) and does not discuss RL closures. Beck &
-Kurz (2023) use it for SGS models in discontinuous Galerkin LES. Vadrot et
-al. (2023b) assess a published RL wall model.
+Kurz (2023) use it for SGS models in discontinuous Galerkin LES.
+[Bae & Koumoutsakos (2022)](/sources/bae-2022.md) use it, with many
+cooperating agents, for wall-stress models in wall-modelled LES, and
+Vadrot et al. (2023b) assess one of those wall models in another code.
 
 ## SGS closures for DG-LES (Beck & Kurz 2023)
 
@@ -123,12 +125,125 @@ $N=3$, 5 and 8, initialized from filtered DNS.
   Cartesian-trained RL-Quad, without retraining, performs comparably to
   the dynamic model. RL-Const loses energy at wavenumbers 2–6.
 
+## Multi-agent RL wall models (Bae & Koumoutsakos 2022)
+
+Bae & Koumoutsakos (2022) call their framework scientific multi-agent
+reinforcement learning (SciMARL). The version read is the Research Square
+preprint v1 (22 June 2021); locators below refer to it. Page-local
+notation: $\tau_{w,\mathrm m}$ is the modelled, instantaneous, local wall
+stress and $u_{\tau,\mathrm m}=\sqrt{\tau_{w,\mathrm m}/\rho}$ the modelled
+friction velocity (subscript $\mathrm m$ as in the registry: from the
+model's own solution); $y^+_{\mathrm m}$, $u^+_{\mathrm m}$ are inner units
+built on $\nu$ and $u_{\tau,\mathrm m}$ (the paper's superscript $*$, which
+here is not the semi-local scaling); $\tau_w$ without subscript is the
+true mean wall stress.
+
+**Agents and action (pp. 3–4, Methods pp. 12–13).** Agents sit on the
+channel walls every four grid cells in $x$ and $z$; each observes local
+states at the matching height $h_{\mathrm{wm}}$ and acts at every time
+step of the WMLES by $\tau_{w,\mathrm m}(t_{n+1})=a_n\,\tau_{w,\mathrm m}(t_n)$
+with $a_n\in[0.9,1.1]$, which "does not require the model to produce the
+exact wall-shear stress". All agents share and update one policy. The
+states are scaled with $u_{\tau,\mathrm m}$, so no prior knowledge of the
+true $u_\tau$ is needed (Eq. 2).
+
+**Two models.**
+
+- *Velocity-based wall model (VWM):* states $u^+_{\mathrm m}$,
+  $\partial u^+_{\mathrm m}/\partial y^+_{\mathrm m}$ and
+  $y^+_{\mathrm m}$ at $h_{\mathrm{wm}}$.
+- *Log-law-based wall model (LLWM):* states the local log-law slope and
+  intercept, $1/\kappa_{\mathrm m}=y^+_{\mathrm m}\,\partial u^+_{\mathrm m}/\partial y^+_{\mathrm m}$
+  and $B_{\mathrm m}=u^+_{\mathrm m}-\kappa_{\mathrm m}^{-1}\ln y^+_{\mathrm m}$
+  at $h_{\mathrm{wm}}$ (Methods p. 13; Vadrot et al. write
+  $1/\kappa_{\mathrm{wm}}$, $B_{\mathrm{wm}}$). These states do not contain
+  $y^+_{\mathrm m}$ explicitly, which the authors offer as the reason the
+  LLWM extends beyond the trained heights. Evaluating the slope at one of
+  the two finite-difference points instead of their midpoint changes the
+  wall stress by about 5% (Methods p. 14).
+
+The state–action maps conditioned on positive reward show that both
+models learn to raise or lower the wall stress according to whether the
+local state lies above or below the
+[law of the wall](/definitions/law-of-the-wall.md) with $\kappa=0.41$,
+$B=5.2$, without being given those constants (Fig. 2).
+
+**Reward (Eq. 9).** Described as "proportional to the improvement in the
+prediction" of $\tau_{w,\mathrm m}$ relative to the true mean $\tau_w$,
+plus a bonus of one when the relative error is below 1% (see
+Qualifications for the printed sign).
+
+**Algorithm (Methods pp. 11–13).** V-RACER, an off-policy actor-critic
+method for continuous actions, with Retrace value estimates and
+Remember-and-Forget Experience Replay (ReF-ER), in the smarties library.
+Gaussian policy from a network of two hidden layers of 128 units (softsign,
+skip connections) initialized near $\mathcal N(1,10^{-4})$; discount factor
+0.995; batch 512; replay memory $10^6$; Adam with learning rate $10^{-5}$;
+trust-region bound 1.5 and target far-policy fraction 0.05; $10^7$
+policy-gradient steps per training run.
+
+**Training (Methods p. 12).** WMLES of
+[channel flow](/benchmarks/turbulent-channel-flow.md) at $Re_\tau\approx2000$,
+4200 or 8000 (sampled per episode), $\Delta_{x,y,z}\simeq0.05\delta$,
+$h_{\mathrm{wm}}$ drawn at random in $[0.075\delta,0.15\delta]$ at each step,
+episodes of $2\delta/u_\tau$. Each episode starts from "a previously
+obtained WMLES flow field" plus white noise of standard deviation
+$0.5u_\tau$, with the initial wall stress off by up to $\pm20\%$. The
+trained range is quoted as $150<h^+_{\mathrm{wm}}<1200$ (p. 6). The solver is
+a staggered second-order finite-difference code with the anisotropic
+minimum-dissipation SGS model; the wall stress enters through a wall eddy
+viscosity $\nu_t\vert_w=\tau_{w,\mathrm m}/(\rho\,\partial_y u\vert_w)-\nu$
+(Eq. 10), which the authors state is better against
+[log-layer mismatch](/definitions/log-layer-mismatch.md) than a Neumann
+condition.
+
+**Tests (pp. 6–8, Table 1, Figs. 3–7).** Channel flow from $Re_\tau=5200$
+to $10^6$ at $\Delta_{x,z}=0.05\delta$, runs of $300\delta/u_\tau$:
+
+| $Re_\tau$ | $\Delta_y/\delta$ | $h^+_{\mathrm{wm}}$ |
+|---|---|---|
+| 5200 | 0.05 | 520 |
+| $10^4$ | 0.05 | 1000 |
+| $2\times10^4$ | 0.05, 0.025 | 2000, 1000 |
+| $5\times10^4$ | 0.05, 0.01 | 5000, 1000 |
+| $10^5$ | 0.05 | $10^4$ |
+| $10^6$ | 0.05 | $10^5$ |
+
+Every row has $h_{\mathrm{wm}}=2\Delta_y$ *(compiler check, not in the
+sources)*.
+
+- The VWM works only while $h^+_{\mathrm{wm}}$ lies in the trained range;
+  refining the wall-normal grid to bring it back "significantly"
+  reduces the error.
+- The LLWM's error "in the friction velocity is less than 5%" and its
+  mean profiles align with the log law "regardless of the value of"
+  $h^+_{\mathrm{wm}}$; the authors call this comparable to the
+  [equilibrium wall model](/methods/equilibrium-wall-model.md), whose
+  channel results are not plotted.
+- Without retraining, the LLWM predicts the skin friction of a
+  zero-pressure-gradient
+  [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md) for
+  $Re_\theta=1000$ to 7000 comparably to the empirical correlation of
+  Schlichting & Kestin (Fig. 5).
+- The LLWM wall stress correlates with the off-wall velocity at
+  $h_{\mathrm{wm}}=0.1\delta$ at about 0.3, the DNS value the authors
+  recall, whereas the equilibrium model's correlation is perfect (Figs.
+  6–7). The authors read this as the policy replicating "the natural
+  mechanisms of wall-shear stress control" (pp. 10–11).
+
+**Cost.** Training the LLWM at $Re_\tau=4200$ costs $O(10^3)$ CPU-hours and
+under 1 GB, against $O(10^7)$ CPU-hours and over 100 TB for DNS data for
+supervised learning (p. 8). The authors propose adding a state dimension
+to cover roughness, stratification or compressibility, not tested (pp.
+10–11).
+
 ## RL wall model in WMLES (as assessed by Vadrot et al. 2023b)
 
 Vadrot et al. (2023b, §II B 4) implement in [LESGO](/software/lesgo.md)
 the log-law variant of the multi-agent RL wall model of Bae &
 Koumoutsakos (2022), and compare it with an
-[equilibrium wall model](/methods/equilibrium-wall-model.md).
+[equilibrium wall model](/methods/equilibrium-wall-model.md). They cite
+the published version; this bundle reads the preprint.
 
 **Model.** Agents sit in a wall-parallel plane at the matching height.
 Each agent multiplies its local wall stress at every action instant:
@@ -141,8 +256,11 @@ $B_{\mathrm{wm}}$ (page-local names, mirroring $\kappa$ and $B$).
 
 **Training.** As recalled there, the model was trained in WMLES at
 $Re_\tau=2000$, 4200 and 8000, from fields generated with the equilibrium
-model and without high-fidelity data, at about $10^7$ gradient steps
-(§IV D). The reward is not stated in this paper.
+model ("EWM-generated flow fields", §II B 4) and without high-fidelity
+data, at about $10^7$ gradient steps (§IV D). The reward is not stated in this paper. The preprint of Bae &
+Koumoutsakos (2022, Methods p. 12) says only that episodes start from "a
+previously obtained WMLES flow field" plus noise; it does not name the
+wall model that produced that field.
 
 **Findings in half-channel flow from $Re_\tau=180$ to $10^{10}$ (§III,
 §IV C, Table III).**
@@ -150,9 +268,10 @@ model and without high-fidelity data, at about $10^7$ gradient steps
 - **Log-layer mismatch.** The model gives the log law with a
   [log-layer mismatch](/definitions/log-layer-mismatch.md) of $+2.2$ inner
   units at $Re_\tau=180$, $+1.0$ to $+2.0$ from $10^3$ to $10^5$, and
-  $-0.9$ to $-3.2$ from $10^6$ to $10^{10}$. It is best near
-  $Re_\tau=10^5$, where the inner-scaled matching height is close to
-  training conditions.
+  $-0.9$ to $-3.2$ from $10^6$ to $10^{10}$. The authors attribute "the
+  good performance at $Re_\tau=10^5$ and $10^6$" to $h^+_{\mathrm{wm}}$
+  being near the training values, and the mismatches at lower and higher
+  $Re_\tau$ to its distance from them (§III A).
 - **Source of the mismatch.** The authors trace it to a mismatch between
   two lines in the state plane: the neutral line, on which the LES velocity
   equals the log law, moves with $Re_\tau$ and with the grid; the line
@@ -188,15 +307,53 @@ for the supervised models compared in the same study.
   [implicit LES](/definitions/implicit-les.md)).
 - **Generalization.** Beck & Kurz (2023, §VI) leave generalizability,
   interpretability and uncertainty as open challenges, and propose
-  transfer learning and meta-RL to cut training cost. Vadrot et al. (2023b,
-  §III A) obtain results "slightly different" from the original RL
-  wall-model paper, "mainly because of the difference in the grid
-  resolution". They set the log-layer mismatch they find away from the
-  training conditions against the original authors' claim of
-  "extrapolation to unseen Reynolds numbers" (§III A).
+  transfer learning and meta-RL to cut training cost.
+- **Reynolds-number extrapolation of the log-law RL wall model.** Bae &
+  Koumoutsakos (2022, preprint p. 6, Figs. 3–4), training at
+  $Re_\tau=2000$–8000, report for the LLWM a friction-velocity error
+  "less than 5%" and mean profiles "well-aligned with the log law
+  regardless of the value of" $h^+_{\mathrm{wm}}$, in channel flow from
+  $Re_\tau=5200$ to $10^6$ in their finite-difference solver
+  ($\Delta_{x,z}=0.05\delta$, Table 1). Vadrot et al. (2023b), who name
+  the original authors' claim of "extrapolation to unseen Reynolds
+  numbers" as one they assess (§I), find in LESGO a log-layer mismatch of
+  $+1.0$ to $+2.0$ inner units from $Re_\tau=10^3$ to $10^5$ and $-0.9$ to
+  $-3.2$ from $10^6$ to $10^{10}$ (Table III), and call their results
+  "slightly different" from the original ones, "mainly because of the
+  difference in the grid resolution" (§III A). The two use different
+  solvers, SGS models, grids and error measures, and Vadrot et al. cite
+  the published version while this bundle reads the preprint. The
+  normative entry on this disagreement is on
+  [machine-learning wall models](/methods/machine-learning-wall-model.md).
+- **Reward sign in Bae & Koumoutsakos (2022, Eq. 9).** The preprint prints
+  $$r_n=\frac{\lvert\tau_w-\tau_{w,\mathrm m}(t_n)\rvert-\lvert\tau_w-\tau_{w,\mathrm m}(t_{n-1})\rvert}{\tau_w}+\mathbb 1\!\left(\frac{\lvert\tau_w-\tau_{w,\mathrm m}(t_n)\rvert}{\tau_w}<0.01\right),$$
+  whose first term is positive when the error grows from $t_{n-1}$ to
+  $t_n$, while the text twice calls the reward proportional to the
+  improvement *(compiler check, not in the sources)*. The same preprint's
+  ReF-ER weight update (Eq. 8) prints, in its second branch,
+  $\beta\leftarrow\beta+(1-\eta)\beta$, i.e. nearly doubling a weight that
+  Eq. 7 uses with its complement $1-\beta$ (here $\beta$ is the ReF-ER
+  weight and $\eta$ a learning rate, page-local) *(compiler check, not in
+  the sources)*.
+- **Which VWM cases fail.** Bae & Koumoutsakos (2022, p. 6) name only
+  $Re_\tau=2\times10^4$ and $5\times10^4$ at $\Delta_y=0.05\delta$ as
+  failing because $h^+_{\mathrm{wm}}$ leaves the trained range; by their
+  Table 1 the $Re_\tau=10^5$ and $10^6$ cases are also outside it, and the
+  Fig. 4 caption omits "the two largest Reynolds number cases for VWM"
+  because their profiles fall outside the plot.
+- **Error metric.** The text (p. 6) quotes the LLWM error in the friction
+  velocity; the Fig. 3 caption calls the plotted quantity the error in the
+  time-averaged wall stress. Since $\tau_w\propto u_\tau^2$ the two differ by
+  about a factor two for small errors *(compiler check, not in the
+  sources)*.
+- **Robustness to numerics.** Bae & Koumoutsakos (2022, pp. 3, 10) claim
+  robustness to the discretization because numerical errors enter
+  training; the preprint uses one solver and one SGS model (see
+  [model-consistent training](/methods/model-consistent-training.md)).
 
 # Citations
 
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §I (motivation), §II B (MDP, PPO), §III B–C, Eqs. 11–17, Table I, §IV A–B, Eq. 18, §V A–C, Figs. 7–14, App. A, §VI.
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §II B 4, Eqs. 7–8; §III A–B, Figs. 8–10; §IV C, Eqs. 10–14, Table III; §IV D.
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §IV.B (model-consistent training as the class to which in-the-loop optimization belongs).
+- [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Research Square preprint v1: pp. 3–8, Eqs. 1–3, 9–10, Table 1, Figs. 2–7; Discussion pp. 10–11; Methods pp. 11–14, Eqs. 4–8.

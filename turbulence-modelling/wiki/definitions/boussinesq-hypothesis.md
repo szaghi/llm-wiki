@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les]
-timestamp: 2026-10-25T13:45:00Z
+timestamp: 2026-10-25T19:45:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -56,6 +56,33 @@ and treatments of the trace; translated to the registry they agree.
   Sanderse (2025) write the closure directly as the force
   $\nabla\cdot(2\nu_t\bar S)$ added to the filtered momentum equation
   ([Agdestein & Sanderse (2025)](/sources/agdestein-2025.md), §4.4.1, Eq. 26).
+- **RANS, compressible, as a viscosity substitution.** Alauzet et al. (2022)
+  write the RANS equations as the laminar ones with $\mu\to\mu+\mu_t$ and the
+  conductivity $\lambda\to\lambda+\lambda_t$, $Pr_t=\mu_tc_p/\lambda_t=0.9$, so the
+  total stress is $(\mu+\mu_t)\big(\partial_ju_i+\partial_iu_j-\tfrac23\partial_ku_k\delta_{ij}\big)$;
+  the isotropic part $\tfrac23\rho k\delta_{ij}$ is absent, as it must be for
+  the Spalart–Allmaras closure they use
+  ([Alauzet et al. (2022)](/sources/alauzet-2022.md), §2.1, Eq. 1).
+- **Variable-density PANS.** Pereira et al. (2021) close the unresolved stress
+  of their [PANS](/methods/partially-averaged-navier-stokes.md) BHR model as
+  $2\nu_u\{S_{ij}\}-\tfrac23k_u\delta_{ij}$, with $\{\cdot\}$ their
+  density-weighted resolved field and $\nu_u$ the unresolved eddy viscosity:
+  the registry form with the opposite sign, i.e. in the
+  $-\langle u_i'u_j'\rangle$ convention. The eddy viscosity is built from
+  the unresolved energy and a transported length scale rather than from $k$
+  and $\varepsilon$ or $\omega$
+  ([Pereira et al. (2021)](/sources/pereira-2021.md), §III, Eqs. 5–6).
+- **LES viscosity in an artificial-viscosity flux.** Mateo-Gabín et al. (2022)
+  add a Smagorinsky viscosity to the molecular one ("Boussinesq's
+  approximation", §2) and carry it as the viscosity of an artificial
+  Navier–Stokes flux; its dissipation in kinetic-energy entropy variables is
+  non-negative by construction (§2.2.1, Eq. 25), which in registry notation is
+  $2\mu_aS^d_{ij}S^d_{ij}\ge0$ with $\mu_a$ the added viscosity *(compiler
+  check, not in the sources: the printed $\mu_a\big(2\lvert\mathsf S\rvert^2-\tfrac23(\partial_ku_k)^2\big)$
+  equals this when the source's $\lvert\mathsf S\rvert^2$ is read as
+  $S_{ij}S_{ij}$, which the paper does not define)*
+  ([Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md), §2, §2.2.1, §6.1;
+  see [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)).
 
 ### A traceless Reynolds stress
 
@@ -68,6 +95,18 @@ $\propto\nu_t\lvert S^d\rvert\delta_{ij}$ that "acts similarly" to the
 missing $\tfrac23k\delta_{ij}$ ([Li & Liu (2022)](/sources/li-2022.md), §2.3,
 Eqs. 26–27; §4.2, Eqs. 35, 38; details on the
 [Spalart–Allmaras page](/methods/spalart-allmaras-model.md)).
+
+### Normal stresses reconstructed from the hypothesis
+
+A Boussinesq model fixes all six stress components from $k$, $\nu_t$ and
+the mean strain, so its normal stresses are $\tfrac23k-2\nu_t\langle S_{\alpha\alpha}\rangle$
+(no sum). François et al. (2022) reconstruct RMS velocities in this way from
+$k$-$\omega$ SST and Smith $k$-$l$ RANS of a turbofan fan stage and compare
+them with hot-wire data between fan and vanes: the RANS RMS profiles show
+"larger discrepancies" than zonal detached-eddy simulation and the wrong
+profile shape in the tip-gap region, and the RANS wakes are narrower
+([François et al. (2022)](/sources/francois-2022.md), §5.3–5.4, Figs. 13, 15;
+the relation itself is not printed).
 
 ## Where it sits among the modelling assumptions
 
@@ -180,3 +219,7 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §III.A Eq. 4, §IV.A.
 - [Haering et al. (2022)](/sources/haering-2022.md) — §II B, §III Eqs. 3–8, §III B Eqs. 12–24.
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §2.1, Eq. 7.
+- [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §2.1, Eq. 1.
+- [Pereira et al. (2021)](/sources/pereira-2021.md) — §III, Eqs. 5–6.
+- [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §2, §2.2.1 Eq. 25, §6.1.
+- [François et al. (2022)](/sources/francois-2022.md) — §5.3–5.4, Figs. 13, 15.

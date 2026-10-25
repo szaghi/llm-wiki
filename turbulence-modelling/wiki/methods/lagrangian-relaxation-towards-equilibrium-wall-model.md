@@ -5,7 +5,7 @@ description: "A wall-stress model that transports the friction-velocity vector a
 status: established
 aliases: [LaRTE, LaRTE wall model, relaxation-towards-equilibrium wall model, quasi-equilibrium wall model]
 tags: [wall-model, wmles, boundary-layer]
-timestamp: 2026-10-25T13:33:00Z
+timestamp: 2026-10-25T16:24:00Z
 ---
 
 # Lagrangian relaxation towards equilibrium (LaRTE) wall model
@@ -181,6 +181,17 @@ interpolation stands in for the neglected horizontal diffusion (§4.2).
   work; in the same code they list the integral, slip and
   POD-inspired wall models (§II.A). LaRTE is the relaxation-based member of the
   family surveyed on the [wall-modelled LES](/methods/wall-modelled-les.md) page.
+- [Gillyns et al. (2022)](/sources/gillyns-2022.md) (§3) cite Fowler et al.
+  (2022), with Yang et al. (2017), for the benefit of time-averaging the
+  wall-model input, and adopt the simplest version of the idea: an
+  exponential moving average of the sampled LES velocity with a fixed time
+  constant of $0.0025\,\delta/u_\tau$, ahead of an algebraic
+  [equilibrium wall model](/methods/equilibrium-wall-model.md). Their time
+  constant is tuned, not derived; LaRTE's $T_s$ follows from the momentum
+  balance of the layer below $h_{\mathrm{wm}}$ and is $T_su_\tau/\delta\approx0.45$
+  at $Re_\tau=1000$ in Fowler et al.'s channel, about 180 times longer
+  *(compiler check, not in the sources)*. The two filters serve different
+  purposes: Gillyns et al. need theirs to keep the model from diverging (§5).
 
 ## Qualifications
 
@@ -195,9 +206,10 @@ interpolation stands in for the neglected horizontal diffusion (§4.2).
   Eq. (2.1); §2.3 gives $h^+_{\mathrm{wm}}\approx34$ and Table 1 gives 33 for
   $Re_\tau=1000$.
 - The sources of this bundle offer no second test of LaRTE; its evidence is
-  that of its authors.
+  that of its authors. Gillyns et al. (2022) cite it but do not implement it.
 
 # Citations
 
 - [Fowler et al. (2022)](/sources/fowler-2022.md) — §2, Eqs. (2.1)–(2.21); §3, Eqs. (3.1)–(3.7); §4, Eqs. (4.1)–(4.15); §5, Figs. 2–16; Apps. A–E.
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §II.A.
+- [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §3, Eq. (4); §5.

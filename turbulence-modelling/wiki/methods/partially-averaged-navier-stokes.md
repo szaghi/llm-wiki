@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Partially-averaged Navier–Stokes"
-description: "Girimaji's bridging hybrid model that solves RANS-form transport equations for the unresolved fractions f_k and f_ω of the kinetic energy and specific dissipation; its SST form, its use with high-order flux reconstruction, the shift of the optimal f_k with discretization order, and the criticism of feeding RANS equations fluctuating inputs."
+description: "Girimaji's bridging hybrid model that solves RANS-form transport equations for the unresolved fractions of kinetic energy and dissipation; its SST form on high-order flux reconstruction, its variable-density BHR form for Rayleigh–Taylor mixing, the choice of resolution parameters, and the criticism of feeding RANS equations fluctuating inputs."
 status: established
-aliases: [PANS, partially averaged Navier-Stokes, PANS k-ω SST, bridging model]
+aliases: [PANS, partially averaged Navier-Stokes, PANS k-ω SST, bridging model, PANS BHR-LEVM, variable-density PANS, BHR model]
 tags: [pans, hybrid-rans-les, flux-reconstruction, numerical-dissipation, separated-flow]
-timestamp: 2026-10-25T13:40:00Z
+timestamp: 2026-10-25T19:45:00Z
 ---
 
 # Partially-averaged Navier–Stokes
@@ -121,6 +121,101 @@ implicit LES, makes PANS less sensitive to $f_k$, and does so "without a
 significant increase in computational effort" (§4); no timings are given.
 They attribute the gains to lower [numerical dissipation](/properties/numerical-dissipation.md).
 
+## Variable-density PANS with the BHR closure
+
+Pereira et al. (2021) apply PANS to variable-density, buoyancy-driven
+turbulence, closing it with a scale-aware form of the
+Besnard–Harlow–Rauenzahn (BHR) linear eddy-viscosity model derived in a
+companion paper by the same authors
+([Pereira et al. (2021)](/sources/pereira-2021.md), §III, Eqs. 5–21). In
+registry notation the overbar is the PANS resolved field and the tilde its
+density-weighted (Favre-filtered) counterpart (the source writes
+$\langle\cdot\rangle$ and $\{\cdot\}$). Page-local symbols: $\ell_u$ the
+unresolved dissipation length scale (source $S_u$), $a_i$ the unresolved
+velocity mass-flux vector $\overline{\rho'u_i'}/\bar\rho$ and $b$ the
+density–specific-volume correlation $-\overline{\rho'(1/\rho)'}$ (both
+unresolved parts), $f_a$, $f_b$ their unresolved-to-total ratios.
+
+**Closure.** The unresolved stress is Boussinesq, in registry sign
+$\tfrac23k_u\delta_{ij}-2\nu_t\tilde S_{ij}$, with
+$\nu_t=c_\mu\ell_u\sqrt{k_u}$ (Eqs. 5–6; the source prints the opposite sign,
+see the [Boussinesq page](/definitions/boussinesq-hypothesis.md)). Six
+transport equations are solved, for $k_u$, $\ell_u$, the three components of
+$a_i$ and $b$ (Eqs. 7–10). The $k_u$-equation reads
+
+$$\partial_t(\bar\rho k_u)+\partial_j(\bar\rho k_u\tilde u_j)=P_b+P_s-\bar\rho\varepsilon_u+\partial_j\Big(\frac{\bar\rho\nu_t}{\sigma_k}\frac{f_\varepsilon}{f_k^2}\partial_jk_u\Big),$$
+
+with shear production $P_s$ and buoyancy production
+$P_b=a_j\,\partial_j\bar p$ (Eqs. 17–18); the $\ell_u$-equation has the
+same diffusion factor $f_\varepsilon/f_k^2$, and the $a_i$- and $b$-equations
+carry the ratios $f_a$, $f_b$ in their sources. No coefficient value is
+printed; they are deferred to the companion paper.
+
+*Compiler check, not in the sources:* with $f_\omega=f_\varepsilon/f_k$, the
+diffusion multiplier $f_\omega/f_k$ of the SST form of Dzanic et al. above
+equals $f_\varepsilon/f_k^2$, so the two closures scale the turbulent
+diffusion of the unresolved quantities identically.
+
+**Resolution parameters.** Besides $f_k$ and $f_\varepsilon$, the closure has
+$f_a$ and $f_b$; the length-scale ratio follows as
+$f_\ell=f_k^{3/2}/f_\varepsilon$ (page-local; Eq. 21), and the unresolved
+eddy viscosity relative to the RANS one is $f_k^2$ when $f_\varepsilon=1$
+(Eq. 24). The authors note that $k_u$ and $\varepsilon_u$ are turbulent while
+$a_i$ and $b$ can also carry coherent, non-turbulent content. Three
+strategies are compared (§III):
+
+- **S1:** prescribe $f_k$, set $f_\varepsilon=f_a=f_b=1$;
+- **S2:** prescribe $f_k$, set $f_a=\sqrt{f_k}$, $f_\varepsilon=f_b=1$, assuming
+  that density fluctuations come mostly from the coherent field;
+- **S3:** $f_\varepsilon=1$, $f_a\approx f_k/2$, $f_b=f_k$, from a priori
+  filtering of DNS of homogeneous variable-density turbulence at Atwood
+  number 0.75. From a priori filtering of forced isotropic-turbulence DNS,
+  $f_\varepsilon=1$ is "adequate for practical computations, i.e.,
+  $f_k\ge0.20$" (Fig. 4a, from the companion paper).
+
+**Rayleigh–Taylor results.** In the finite-volume code xRAGE (HLLC,
+parabolic reconstruction, low-Mach correction, Heun time stepping) on a
+$256^2\times768$ grid, at Atwood number 0.5 and Reynolds number up to about
+500, with $f_k=0$ (no closure) as the reference (§II, §IV;
+[Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md)):
+
+| $f_k$ | 0.25 | 0.35 | 0.50 |
+|---|---|---|---|
+| $\alpha_b$, S1 | 0.016 | 0.012 | 0.027 |
+| $\alpha_b$, S2 | 0.024 | 0.015 | 0.016 |
+| $\alpha_b$, S3 | 0.018 | 0.012 | 0.013 |
+
+against 0.043 for RANS ($f_k=1$) and 0.025 for the reference, which matches
+the DNS of Livescu et al. (Table II, where these two values are printed once; $\alpha_b$ the growth-rate coefficient of the mixing layer). RANS
+overpredicts mixing, gives linear mixture-fraction profiles and a molecular
+mixing parameter tending to one, and disturbs even the laminar linear
+regime. S2 gives the smallest errors: at $f_k=0.25$ it reproduces the
+reference, and it needs only $f_k\le0.35$; S1 improves as $f_k$ decreases,
+with larger errors and late-time ($t>20$) discrepancies that the authors
+attribute to $f_a=1$. S3 does not converge as
+$f_k$ decreases, shows an overshoot of $b$ at $t=2.5$ and robustness
+problems, which the authors attribute to its fully-developed-turbulence
+assumption being violated at early times; they suggest dynamic strategies
+for $f_a$, $f_b$ (§IV.2, §IV.3.2, §V). The minimum resolution is set by the
+need to resolve the bubbles and spikes that trigger turbulence: for
+$f_k\le0.35$ the coherent structures at $t=2.5$ are indistinguishable from
+the reference, while larger $f_k$ dissipates them (§IV.3.4, Fig. 16).
+
+**Effective viscosity.** The authors define an effective viscosity
+$\nu+\nu_t+\nu_n$, with $\nu_n$ the (unquantified) numerical viscosity, and
+the effective Reynolds number built on it (Eqs. 22–23). Excluding $\nu_n$,
+the peak planar-averaged ratio to $\nu$ at $t=25$ is 20 737 for RANS, 1376
+(S1) and 408 (S2) at $f_k=0.25$, while S3 makes it grow after $t\approx3$ for
+$f_k<0.5$ (§IV.3.1, Fig. 11). The effective ratio $\nu_t/\nu_t^{\mathrm{RANS}}$
+does not follow the prescribed $f_k^2$, which the authors attribute to the
+transient flow's sensitivity to accumulated modelling errors (Fig. 13). See
+[numerical dissipation](/properties/numerical-dissipation.md).
+
+S3 is the strategy whose parameters come from a priori filtering of DNS of
+a different, fully developed flow; inside the solver, on the transitional
+flow, it is the one that fails (see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+
 ## Criticism: RANS equations with fluctuating inputs
 
 Haering et al. (2022) class PANS, with DES and PITM, among the single-model
@@ -151,7 +246,33 @@ second-order numerics among the successful hybrid results on that case
   matches the LES of Parnaudeau et al. and $f_k=0.3$ the new DNS, so the
   "optimal" $f_k$ depends on which reference is preferred.
 
+- The reference of Pereira et al. is the same code at $f_k=0$ with no
+  closure and no artificial viscosity, which the authors call a
+  "high-fidelity simulation resolving all flow scales" while noting that the
+  initial perturbations are not fully resolved on the $256^2\times768$ grid
+  (molecular mixing parameter 0.26 at $t=0$; §IV.2).
+- Pereira et al. print the shear production as $-\bar\rho\,\tau^{\mathrm{src}}_{ij}\partial_j\tilde u_i$
+  with their stress $\tau^{\mathrm{src}}_{ij}=2\nu_t\tilde S_{ij}-\tfrac23k_u\delta_{ij}$
+  (Eqs. 5, 17; $\tau^{\mathrm{src}}$ page-local); with that sign the
+  eddy-viscosity part of the production is negative, so either the stress or
+  the production carries a sign slip, and the registry form
+  $-\bar\rho\big(\tfrac23k_u\delta_{ij}-2\nu_t\tilde S_{ij}\big)\partial_j\tilde u_i$
+  is the positive one *(compiler check, not in the sources)*.
+- The same paper defines $\alpha_b=\dot h^2/(4ghAt)$ as the growth rate of
+  the mixing-layer *half-width* (App. A, Eq. A9), with $h$ the full 5%–95%
+  height and $At$ the Atwood number; for $h=\alpha\,At\,g\,t^2$ the formula
+  returns $\alpha$, the coefficient of the full height *(compiler check, not
+  in the sources)*. The convention matters when comparing with other
+  $\alpha_b$ values.
+- Pereira et al. state that accuracy improves "monotonically" as $f_k$
+  decreases with S1, judged on the height $h(t)$ (Fig. 8a); the S1 values of
+  $\alpha_b$ in Table II (0.027, 0.012, 0.016 at $f_k=0.50$, 0.35, 0.25) are
+  not monotonic in their distance from 0.025. They also give the maximum
+  CFL number as 0.5 for all runs (§II) while saying S3 needed a CFL "not
+  exceeding 0.5" (§IV.2).
+
 # Citations
 
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §1, §2.1 Eqs. 1–17, §2.2–2.3 Eqs. 18–24, §3 Eq. 26, §3.1 Figs. 3–6, §3.2 Figs. 8–13, §4.
 - [Haering et al. (2022)](/sources/haering-2022.md) — §I, §II D, §V B.
+- [Pereira et al. (2021)](/sources/pereira-2021.md) — §II, §III Eqs. 5–21 Fig. 4, §IV.1–IV.3 Eqs. 22–25 Table II Figs. 8–16, §V, App. A Eq. A9.

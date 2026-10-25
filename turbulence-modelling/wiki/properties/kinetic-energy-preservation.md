@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Kinetic-energy preservation and split forms"
-description: "A discretization is kinetic-energy preserving when its convective terms neither create nor destroy discrete kinetic energy; this page gives the split-form and two-point-flux constructions, and shows why a dissipation-free baseline is robust but thermalizes without a subgrid model."
+description: "A discretization is kinetic-energy preserving when its convective terms neither create nor destroy discrete kinetic energy; this page gives the split-form and two-point-flux constructions, kinetic energy as an entropy with entropy-stable added dissipation, and why a dissipation-free baseline is robust but thermalizes without a subgrid model."
 status: established
-aliases: [KEP, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing]
+aliases: [KEP, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-25T19:47:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -71,6 +71,54 @@ form that conserves linear and angular momentum and kinetic energy discretely,
 with no upwinding. Krais et al. (2021, §7.2) use the entropy-conserving
 Chandrashekar flux in the DG cells of their shock-capturing scheme.
 
+**Energy-preserving finite differences with shock capturing.** The GPU code
+STREAmS used by [Cogo et al. (2022)](/sources/cogo-2022.md), §2, for DNS of
+supersonic and hypersonic boundary layers applies "consolidated, high-order,
+energy-preserving schemes" to the convective terms in shock-free regions,
+"free of numerical dissipation", and a WENO scheme only where the Ducros
+sensor flags shocks; its viscous terms are written in a locally conservative
+form "expanded to Laplacian for ensuring finite molecular dissipation at all
+resolved wavelengths". For an adiabatic Mach 2.5 boundary layer
+[Huang et al. (2022)](/sources/huang-2022.md), §2.2, replace their
+limiter-optimized seventh-order WENO by the eighth-order split convective
+finite-difference scheme of Pirozzoli (2011), which "runs about twice as fast
+as the conventional WENO method" and was shown robust up to edge Mach 4; the
+paper does not discuss its energy-preservation properties.
+
+## Kinetic energy as an entropy
+
+[Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md), §2, treat kinetic
+energy and thermodynamic entropy in one framework. For a convex entropy
+$\mathcal E(Q)$ (page-local; $Q$ the conservative variables) the entropy
+variables are $W=\partial\mathcal E/\partial Q$; dissipative fluxes written as
+$\mathcal B\nabla W$ with $\mathcal B$ symmetric positive semi-definite
+dissipate $\mathcal E$ at the rate $(\nabla W)^{\mathsf T}\mathcal B\nabla W\ge0$
+(Eqs. 19–22). Kinetic energy $\rho|\boldsymbol u|^2/2$ has
+$W=(-|\boldsymbol u|^2/2,u,v,w,0)^{\mathsf T}$ (Eq. 23), the
+thermodynamic entropy $-\rho s/(\gamma-1)$ with $s=\ln p-\gamma\ln\rho$ has
+the entropy variables printed in Eq. 24. Kinetic energy is **not a strict
+entropy**: its balance contains the pressure work
+$\int_\Omega\boldsymbol u\cdot\nabla p\,d\Omega$, which cannot be bounded
+(Eqs. 33–35), so kinetic-energy "stability" is weaker than entropy stability.
+This is the continuous counterpart of the observation of Flad & Gassner
+(2017) below that kinetic-energy preservation leaves density and pressure
+uncontrolled. For an artificial viscosity $\mu_a$ added to the Navier–Stokes
+viscous flux, the kinetic-energy dissipation is
+$\mu_a\big(2S_{ij}S_{ij}-\tfrac23(\nabla\cdot\boldsymbol u)^2\big)\ge0$ (Eq. 25),
+which is $2\mu_aS^d_{ij}S^d_{ij}$ *(compiler check, not in the sources)*.
+
+On the LGL DGSEM, with the Pirozzoli flux (kinetic energy) or the
+Chandrashekar flux (thermodynamic entropy), BR1 viscous terms and a modally
+filtered artificial viscosity, they prove the semi-discrete scheme entropy
+stable, or kinetic-energy stable up to the pressure work (§5.1, Eq. 118; the
+construction is on the [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)
+page). They describe kinetic-energy-preserving schemes as robust and cheaper
+for subsonic flow and thermodynamic-entropy schemes as preferred for
+supersonic flow (§5.1), and state that entropy-conserving split forms are
+not by themselves stable at shocks, because entropy stability rests on
+positive density, which oscillations near shocks can violate; shock
+capturing must add density regularization (§1).
+
 ## Consequences in under-resolved turbulence
 
 **Robustness without dissipation.** The dissipation-free split-form DGSEM
@@ -95,7 +143,14 @@ thermalizes over more than 80% of the wavenumbers at the coarsest mesh and
 "dramatically" over-estimates the total dissipation during breakdown, "a
 subdissipative operator leads eventually to an overdissipative behaviour". Both
 sources therefore add dissipation to the KEP baseline, an explicit model or a
-scale-selective numerical one.
+scale-selective numerical one. Mateo-Gabín et al. (2022, §6.1, Fig. 4) do the
+same for the inviscid Taylor–Green vortex ($8^3$ elements, $N=8$, Pirozzoli
+split form, low-dissipation Roe flux): a Smagorinsky viscosity ($C_s=0.2$)
+applied unfiltered is excessively dissipative, while the same viscosity
+filtered towards the high modes with a
+[spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
+kernel avoids high-wavenumber pile-up and gives a spectrum close to
+$k^{-5/3}$.
 
 **Separating stability from modelling.** Flad & Gassner (2017, §1, §4) argue
 that adding an explicit model to standard DG [implicit LES](/definitions/implicit-les.md)
@@ -149,3 +204,6 @@ polynomial de-aliasing in their in-house code, without timings.
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §III A (split form and L2Roe in FLEXI).
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §4 (charLES scheme, artificial bulk viscosity).
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §IV (charLES, low-dissipation finite volume).
+- [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §1; §2.1–2.3, Eqs. (19)–(35) (entropy variables, kinetic energy as an entropy, pressure work); §3 (Pirozzoli and Chandrashekar fluxes); §5.1, Eq. (118); §6.1, Fig. 4.
+- [Cogo et al. (2022)](/sources/cogo-2022.md) — §2 (STREAmS: energy-preserving schemes, WENO with Ducros sensor, Laplacian viscous terms).
+- [Huang et al. (2022)](/sources/huang-2022.md) — §2.2 (eighth-order split convective finite differences).

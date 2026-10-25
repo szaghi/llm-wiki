@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Smagorinsky model"
-description: "The Smagorinsky model closes the deviatoric subgrid stress with an eddy viscosity (C_s Δ)²|S̄|; the sources report its constants, filter-width definitions in element methods, its interaction with numerical error, and its a priori and a posteriori behaviour."
+description: "The Smagorinsky model closes the deviatoric subgrid stress with an eddy viscosity (C_s Δ)²|S̄|; the sources report its constants, filter-width definitions in element methods and on high-aspect-ratio cells, its interaction with numerical error, and its a priori and a posteriori behaviour."
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-25T19:45:00Z
 ---
 
 # Smagorinsky model
@@ -46,13 +46,17 @@ are variants of the same eddy-viscosity idea.
 | 0.17 | small–small VMS variant on DG ILES | Flad & Gassner (2017), Fig. 3 |
 | 0.000–0.144 | fitted per grid, filter and formulation on 2D forced turbulence by grid search on the a posteriori error | Agdestein & Sanderse (2025), App. B.5, Table B.5 |
 | 0.17 | "the common choice", 3D forced turbulence | Agdestein & Sanderse (2025), App. G.2 |
+| 0.1 | with van Driest damping $A^+=25$, called "generally used constants"; a priori test on a backward-facing-step shear layer | [Abe (2021)](/sources/abe-2021.md), §II A, Eqs. (3)–(4) |
+| 0.2 | viscosity amplitude of an SVV-filtered LES in DG ($N=8$) | [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md), §6.1, Eq. (125) |
 
 Lilly's value is consistent with the recalled formula: $\pi^{-1}(2.1)^{-3/4}\approx0.18$
 *(compiler check, not in the sources)*. The fitted 2D coefficients of
 Agdestein & Sanderse decrease with resolution and reach 0.000 for the
 divergence-inconsistent formulation at $\bar n=256$, which the authors
 explain by the Smagorinsky term not being divergence-free; they are
-error-optimal fits, not model constants.
+error-optimal fits, not model constants. [Prakash et al. (2022)](/sources/prakash-2022.md)
+(§II), citing earlier work, state that the optimal $C_s$ is flow dependent,
+which motivates the dynamic procedure; they use no fixed value.
 
 ## Filter width in element methods
 
@@ -65,7 +69,35 @@ keep $\Delta$ as a parameter independent of the mesh; their cell-based
 variant $\nu_t=(C_s\Delta x)^2\lvert\bar S\rvert$ (Eq. 47) shows that
 $C_s$ and $\Delta/\Delta x$ are not separately identifiable: running
 $\Delta x=\Delta/5$ with $C_s=0.1$ is the same model as $\Delta=\Delta x$
-with $C_s=0.5$.
+with $C_s=0.5$. [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md)
+(§6.1, Eq. 125) define $\Delta^3=\mathrm{Vol}/(N+1)^3$ for DG elements, the
+cube of the Beck & Kurz width.
+
+## Filter width on high-aspect-ratio cells
+
+[Abe (2021)](/sources/abe-2021.md) tests the model a priori in the free
+shear layer behind a [backward-facing step](/benchmarks/backward-facing-step.md),
+on a coarse grid with $\Delta x=\Delta z=0.1H$ and wall-normal spacing down
+to $10^{-3}H$ ($\Delta x/\Delta y\sim100$ in the shear layer), against a
+fine LES filtered to that grid. With the cube root
+$\Delta=(\Delta x\Delta y\Delta z)^{1/3}$ (also the definition of Prakash
+et al. 2022, §II, after Deardorff), the Smagorinsky viscosity is "much
+smaller than the reference data", "clearly suppressed by the extremely
+narrow grid width in the y-direction" (§IV C, Fig. 9a). With
+$\Delta=\max(\Delta x,\Delta y,\Delta z)$ (the author's mSM) it has "a
+reasonable distribution even in the shear layer" (§IV D, Fig. 10). The
+author concludes that "the effect of a grid width in one direction much
+smaller than in other directions must be excluded in determining the filter
+width" (§V). The [dynamic procedure](/methods/dynamic-procedure.md), which
+computes $(C_s\Delta)^2$ as one product, does not depend explicitly on the
+definition of $\Delta$ (§II A). The same suppression appears in the
+algebraic subgrid energy obtained by equating the Smagorinsky viscosity to
+a one-equation viscosity $C_{\mathrm{sgs}}f_{\mathrm{sgs}}\sqrt{k_{\mathrm{sgs}}}\Delta$
+(§IV E, Eqs. 18–20): $k_{\mathrm{sgs}}=0.04\,(f_S^4/f_{\mathrm{sgs}}^2)\,\Delta^2\lvert\bar S\rvert^2$
+in the registry's $\lvert\bar S\rvert$, the paper's $0.08\,(f_S^4/f_{\mathrm{sgs}}^2)\Delta^2\bar S_{ij}\bar S_{ij}$
+with $C_s=0.1$, $C_{\mathrm{sgs}}=0.05$; the registry form is
+*(compiler check, not in the sources)*. See [large-eddy simulation](/definitions/large-eddy-simulation.md)
+for the filter-width question across the sources.
 
 ## Interaction with numerical error
 
@@ -112,7 +144,12 @@ pressure–dilatation oscillates unless a low-dissipation Roe flux is added
   is recalled as the classical fix (Agrawal et al. 2022, §II.A) and is used
   with Smagorinsky in the pipe LES of Vicente Cruz & Lamballais (2023,
   §7.3), where the SGS viscosity reaches about $3\nu$ instantaneously and
-  $0.3\nu$ on average near the wall. The damping form is not printed.
+  $0.3\nu$ on average near the wall; the damping form is not printed there.
+[Abe (2021)](/sources/abe-2021.md) (§II A, Eq. 4) prints it:
+$\nu_t=(C_sf_S\Delta)^2\lvert\bar S\rvert$ with
+$f_S=1-\exp(-y^+/A^+)$, $A^+=25$; in §IV E (Eq. 20) the author switches to
+$f_S=\sqrt{1-\exp[-(y^+/A^+)^3]}$, "considering the correct near-wall
+limiting behavior".
 - **Small–small VMS.** The strain is computed from high-pass filtered
   (polynomial-projection) gradients (Flad & Gassner 2017, App. B,
   Eq. B.1).
@@ -129,6 +166,18 @@ pressure–dilatation oscillates unless a low-dissipation Roe flux is added
 - **Mixed explicit–implicit.** Smagorinsky added to implicit SVV
   (Vicente Cruz & Lamballais 2023, §6.5); see
   [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md).
+- **SVV-filtered Smagorinsky in DG.** [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md)
+  (§6.1) use the Smagorinsky viscosity ($C_s=0.2$) as the amplitude of an
+  artificial viscous flux that a modal spectral-vanishing-viscosity filter
+  with kernel $(i/N)^{P}$ weights, in an entropy-stable form. On the
+  inviscid [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+  ($8^3$ elements, $N=8$, kinetic-energy-preserving split form with a
+  low-dissipation Roe flux), the unfiltered model ($P=0$) is excessively
+  dissipative, and $P\approx0.1$ gives a spectrum close to $k^{-5/3}$ at
+  $t=20$ (Fig. 4); see [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md).
+- **Mixed with a structural model.** A Smagorinsky term stabilizes the
+  [gradient model](/methods/gradient-model.md); optimal clipping derives a
+  pointwise coefficient for it (Prakash et al. 2022, §II).
 
 ## A priori and a posteriori behaviour
 
@@ -158,6 +207,12 @@ Fig. 9). Smagorinsky is among the SGS models available in FLEXI ([Krais et al. 2
 and LESGO ([Vadrot et al. 2023b](/sources/vadrot-2023-b.md), §II A), and is
 the base of the dynamic model used in the wall-modelled LES of
 [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) (§II.B).
+Prakash et al. (2022, §II), citing a priori studies, state that the
+alignment of $\tau^d_{ij}$ with $\bar S_{ij}$ assumed by the model does not
+hold and that eddy-viscosity models correlate poorly with the exact stress.
+The finest DG reference LES of the PPRIME jet listed by [Basile et al. (2023)](/sources/basile-2023.md)
+(Table 1, Lorteau et al.) uses Smagorinsky at $N=3$ with 78 million
+degrees of freedom.
 
 ## Qualifications
 
@@ -166,6 +221,20 @@ the base of the dynamic model used in the wall-modelled LES of
   $C_S\Delta^2\lvert S\rvert$, with "$C_S=0.13^2$" in App. C (i.e.
   $C_s=0.13$ in the registry form). They do not state whether $\lvert S\rvert$ carries the
   factor 2.
+
+- Abe (2021) labels two damping functions with the same symbol $f_S$
+  (Eq. 4 and Eq. 20) and says so in §IV E; the a priori test of §IV C cites
+  Eq. (4).
+- Prakash et al. (2022) do not define $\lvert\bar S\rvert$, and
+  Mateo-Gabín et al. (2022) do not define the $\lvert\mathsf S\rvert$ of
+  their Eq. (125). The same symbol appears in their Eq. (25), whose
+  dissipation $\mu_a\big(2\lvert\mathsf S\rvert^2-\tfrac23(\nabla\cdot\boldsymbol u)^2\big)$
+  equals the Navier–Stokes value only if
+  $\lvert\mathsf S\rvert^2=S_{ij}S_{ij}$; if Eq. (125) uses it in the same
+  sense, their $C_S=0.2$ corresponds to the registry's
+  $C_s=0.2\cdot2^{-1/4}\approx0.17$ *(compiler check, not in the sources)*.
+  Mateo-Gabín et al. write the viscosity $\mu_a=C_S^2\Delta^2\lvert\mathsf S\rvert$
+  without a density factor, immaterial for their test with $\rho\approx1$.
 
 # Citations
 
@@ -180,3 +249,7 @@ the base of the dynamic model used in the wall-modelled LES of
 - [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) — §II.B.
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §II A (LESGO SGS models).
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §IV.A.
+- [Abe (2021)](/sources/abe-2021.md) — §II A, Eqs. (3)–(4); §IV C–E, Eqs. (18)–(20), Figs. 9–10, 12; §V.
+- [Prakash et al. (2022)](/sources/prakash-2022.md) — §II, Eq. (3).
+- [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §6.1, Eq. (125), Fig. 4.
+- [Basile et al. (2023)](/sources/basile-2023.md) — Table 1.

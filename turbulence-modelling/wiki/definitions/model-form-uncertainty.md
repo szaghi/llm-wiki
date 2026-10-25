@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Model-form uncertainty in turbulence closures"
-description: "The epistemic uncertainty that comes from the structure of a turbulence closure rather than from its inputs or coefficients; the four layers of RANS assumptions, physics-based bounds by Reynolds-stress eigenspace perturbation and random matrices, Bayesian calibration and discrepancy fields, and the limits of identifiability."
+description: "The epistemic uncertainty that comes from the structure of a turbulence closure rather than from its inputs or coefficients; the four layers of RANS assumptions, physics-based bounds by eigenspace perturbation and random matrices, Bayesian calibration and discrepancy fields, non-unique inversions and physics-based priors, and the limits of identifiability."
 status: established
 aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation]
 tags: [uncertainty-quantification, rans, data-driven, field-inversion]
-timestamp: 2026-10-25T13:51:00Z
+timestamp: 2026-10-25T19:45:00Z
 ---
 
 # Model-form uncertainty in turbulence closures
@@ -138,6 +138,53 @@ geometry is the step to learned closures (§5.2;
 [tensor-basis neural network](/methods/tensor-basis-neural-network.md),
 [model-consistent training](/methods/model-consistent-training.md)).
 
+## Non-unique inversions and physics-based priors
+
+Yan et al. (2022) infer a spatial multiplier $\beta(\boldsymbol x)$ of the
+Spalart–Allmaras production (the registry's field-inversion $\beta$) from
+scarce data, assuming Gaussian, pointwise-independent prior and noise with
+prior mean one, so that the MAP estimate minimizes
+
+$$\mathcal L=\sum_i\frac{\big(d_i-o_i(\boldsymbol\beta)\big)^2}{\sigma_{\mathrm{obs}}^2}+\sum_j\frac{(\beta_j-1)^2}{\sigma_\beta^2},$$
+
+with $o_i$ the model output at observation $i$ and $\sigma_{\mathrm{obs}}$,
+$\sigma_\beta$ observation and prior standard deviations (page-local)
+([Yan et al. (2022)](/sources/yan-2022.md), §2.1, Eq. 6). This is twice the
+MAP objective of Duraisamy et al. above with diagonal covariances
+$Q_d=\sigma_{\mathrm{obs}}^2I$, $Q_\theta=\sigma_\beta^2I$ and prior mean one
+*(compiler check, not in the sources)*. Their findings bear on the
+identifiability question below:
+
+- **Many corrections fit the same data.** On the S809 airfoil, inversions on
+  the lift alone with uniform and non-uniform prior widths give different
+  $\beta$ fields that both reduce the error sufficiently (§3.1.1, Figs. 4–5);
+  on the parametrized periodic hills an unregularized inversion yields an
+  irregular field with no general tendency, which "might be not physical"
+  (§3.2.1, Fig. 18).
+- **Priors from physical mechanism.** Restricting the correction to a box
+  around the separating shear layer, or a uniform regularization weight,
+  still fits the data, and both give similar fields that lower the
+  production at the start of the shear layer and raise it downstream; the
+  authors read the agreement of the uniform-prior case as evidence that the
+  inversion "captures" the model-form uncertainty in the critical region
+  with little human intervention (§3.2.1, Table 2, Fig. 14).
+- **Where the error sits.** The corrected regions coincide with those where
+  turbulence is far from equilibrium: models are calibrated in equilibrium
+  shear flow, where production exceeds dissipation by a factor of about 1.4
+  to 1.8, while in separating shear layers production can be much larger
+  (§1). The regions agree with the nonequilibrium switch of the authors'
+  earlier $k$-$\overline{v^2}$-$\omega$ model and with Rumsey's separation fix
+  of SST (§3.2.1, Figs. 11, 18).
+- **More data, more credible inversions.** On an iced airfoil, inverting on
+  lift and drag together gives a better pressure plateau, which was not
+  observed, than inverting on lift alone (§3.3.1, Fig. 28). Yan et al. also
+  recall Rumsey's finding that enhanced mixing in separated shear layers
+  helps the periodic hill but worsens backward-facing-step flows, as an
+  example of ad hoc corrections that do not generalize (§1).
+
+See [field inversion and machine learning](/methods/field-inversion-machine-learning.md)
+and the [SA page](/methods/spalart-allmaras-model.md) for the learned model.
+
 ## Identifiability and data–model consistency
 
 Duraisamy (2021) shows a channel-flow inference of an anisotropy perturbation
@@ -177,8 +224,13 @@ however, not been achieved" and calls for community benchmarks (§VII).
 - Duraisamy et al. (2019) credit "the scenario averaging (Edeling et al.
   2014b)", whereas their reference list gives the scenario-averaging paper
   the label 2014a.
+- Yan et al. call $\sigma_{\mathrm{obs}}$ and $\sigma_\beta$ "variances" while
+  they enter squared in the denominators, as standard deviations (Eqs. 6,
+  14–15); their periodic-hill objective writes the weight as $\lambda_i$ under
+  a sum over $j$ (Eq. 17).
 
 # Citations
 
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §2 Eqs. 1–6, boxes pp. 3, 5, 7, §3 Eqs. 7–9, §4.1 Eq. 10 Figs. 1–2, §4.2, §5.1–5.2, §5.4, §6 Eq. 13.
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §I, §II Eq. 2, §III.A, §IV.A, §VII Fig. 4.
+- [Yan et al. (2022)](/sources/yan-2022.md) — §1, §2.1 Eqs. 6, 14–17, §3.1.1 Figs. 4–5, §3.2.1 Table 2 Figs. 11, 14, 18, §3.3.1 Fig. 28.

@@ -1,0 +1,119 @@
+---
+type: Benchmark
+title: "Rayleigh–Taylor mixing"
+description: "Buoyancy-driven mixing of a heavy fluid placed above a light one: a transient flow that passes from linear laminar growth through bubbles, spikes and Kelvin–Helmholtz transition to turbulent mixing, here at Atwood number 0.5 as a test that RANS fails and partially-averaged Navier–Stokes recovers at a fraction of the resolution."
+status: established
+aliases: [Rayleigh-Taylor instability, RT mixing layer, Rayleigh–Taylor flow, variable-density mixing layer]
+tags: [benchmark, pans, hybrid-rans-les, rans]
+timestamp: 2026-10-25T19:38:00Z
+---
+
+# Rayleigh–Taylor mixing
+
+A heavy fluid of density $\rho_h$ rests above a light fluid of density
+$\rho_l$ under gravity $g$, and the perturbed interface is unstable: the
+misalignment of the density gradient and the pressure gradient generates
+vorticity, light fluid rises in bubbles and heavy fluid falls in spikes, and
+Kelvin–Helmholtz instability on their flanks triggers turbulence. The
+density contrast is measured by the Atwood number
+$At=(\rho_h-\rho_l)/(\rho_h+\rho_l)$. A mixing layer of height $h$ grows,
+late in time as $h\propto At\,g\,t^2$. The flow is transient and passes
+through laminar, transitional and turbulent stages, and turbulent kinetic
+energy is produced both by shear and by buoyancy, which one-point RANS
+closures are not designed to represent. In this bundle it tests how much of
+the spectrum a bridging model must resolve.
+
+## Set-up in the source
+
+[Pereira et al. (2021)](/sources/pereira-2021.md), §II, App. A, Table I:
+
+- prism of square section $L=2\pi$ cm and height $3L$; periodic lateral
+  boundaries, reflective top and bottom;
+- $At=0.5$, viscosities 0.002 and 0.006 g/(cm s) (light, heavy), $\gamma=1.4$,
+  Schmidt and Prandtl numbers 1, $g=-980$ cm/s$^2$, Mach number below 0.1;
+  the Reynolds number $\dot hh/\nu$ reaches about 500;
+- initial interface perturbation: a band of modes $30\le\sqrt{n^2+m^2}\le34$
+  with random phases and standard deviation up to $0.04L$, containing the
+  most unstable linear mode, of wavelength $h_o=2\pi/32$ (Eq. 2);
+- compressible multi-material finite-volume code xRAGE (HLLC Riemann
+  solver, parabolic reconstruction, low-Mach correction, Heun time
+  stepping, maximum CFL 0.5), $256^2\times768$ cells; time in units of
+  $\sqrt{h_o/(g\,At)}$, run to $t=25$;
+- diagnostics: $h$ between the 5% and 95% levels of the mixture fraction,
+  a growth coefficient $\alpha_b=\dot h^2/(4g\,h\,At)$ averaged over the
+  last ten time units, the molecular-mixing parameter $\theta_m$ (page-local;
+  0 unmixed, 1 fully mixed), and resolved spectra at the centre plane.
+
+The reference is the same code with no closure ($f_k=0$), not an external
+DNS; its growth coefficient $\alpha_b\approx0.025$ matches the DNS of
+Livescu et al. that the authors cite (§IV.2). A grid study at $f_k=0$ with
+$64^2\times192$ to $512^2\times1536$ cells shows the $256^2\times768$ and
+$512^2\times1536$ results nearly identical, while the coarsest grid misses
+the shape of $h(t)$ (App. B, Fig. 18).
+
+## Regimes
+
+The flow is linear and laminar until $t\approx2.5$, then nonlinear: mushroom
+bubbles and spikes form, fine-scale turbulence is visible from $t\ge5$, and
+the layer grows quadratically late in time (§IV.1). Shear and buoyancy
+contribute similarly to the production at first (§IV.3.3).
+
+## What the case tests
+
+**Failure of RANS in a transitional flow.** With the variable-density
+[partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
+closure (a scale-aware form of the Besnard–Harlow–Rauenzahn linear
+eddy-viscosity model) run as RANS ($f_k=1$), the mixing is over-predicted:
+$\alpha_b=0.043$ against 0.025, linear mixture-fraction profiles, $\theta_m$
+near 0.95 before $t=5$ and tending to one, against 0.8 at $t\approx25$ in
+the reference; the maximum ratio of effective to molecular viscosity is
+20,737 at $t=25$ (§IV.2–IV.3.1, Table II, Figs. 8–11). The closure already
+alters the laminar linear stage, where the turbulent stress should vanish,
+and puts the peaks of the turbulent mass flux and of the density–specific-volume
+correlation on the heavy side, against the DNS literature (§IV.2, §IV.3.2).
+
+**Convergence of a bridging model with resolution.** Lowering $f_k$, the
+ratio of unresolved to total kinetic energy, moves the solution toward the
+reference. Of three ways of setting the other resolution ratios, setting the
+mass-flux ratio to $\sqrt{f_k}$ (strategy S2) is best: at $f_k=0.25$ it
+gives $\alpha_b=0.024$ and an effective-viscosity ratio of 408, and S2 needs
+$f_k\le0.35$ to reproduce the reference. The strategy derived from a priori
+filtering of fully developed variable-density turbulence (S3) does not
+converge as $f_k$ decreases and produces a nonphysical overshoot at
+$t=2.5$, which the authors attribute to assuming developed turbulence in a
+transitional flow (§IV.2, §IV.3.2, Table II). Coherent structures at
+$t=2.5$ are indistinguishable from the reference for $f_k\le0.35$ and are
+dissipated above it; the resolution needed is set by the bubbles and spikes
+that trigger turbulence (§IV.3.4, Fig. 16). See
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md) and
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
+
+**Spread in the literature.** The authors' survey (§I, Fig. 1) finds
+experimental growth coefficients significantly larger than simulated ones,
+small variability among DNS and a broad range among
+[implicit LES](/definitions/implicit-les.md) runs, attributed beyond initial
+conditions to inviscid or one- and two-dimensional modelling assumptions.
+
+## Qualifications
+
+- Only one ingested source runs the case; the page records its set-up and
+  findings, not a cross-source consensus.
+- [Pereira et al. (2021)](/sources/pereira-2021.md) (read in arXiv v2) call
+  $\alpha_b$ the growth rate of the mixing-layer half-width (and, in §I,
+  "of the lower interface") while computing it from the full height $h$:
+  for $h=\alpha At\,g\,t^2$, $\dot h^2/(4ghAt)=\alpha$, the coefficient of
+  the full height *(compiler check, not in the sources)*.
+- They set the maximum CFL number to 0.5 for all runs in §II, yet report
+  that strategy S3 at $f_k<0.5$ required "a CFL number not exceeding 0.5"
+  (§IV.2), and use 0.8 on the finest grid of App. B.
+- The text calls the accuracy of strategy S1 monotonic in $f_k$ (on $h(t)$,
+  Fig. 8a), while the S1 growth coefficients of Table II (0.027, 0.012,
+  0.016 at $f_k=0.50$, 0.35, 0.25, reference 0.025) are not monotonic in
+  error.
+- The reference run is under-resolved at the initial interface
+  ($\theta_m\approx0.26$ at $t=0$, §IV.2), although the authors call it a
+  simulation resolving all flow scales.
+
+# Citations
+
+- [Pereira et al. (2021)](/sources/pereira-2021.md) — §I, Fig. 1; §II, Eqs. (1)–(3), Table I; §III; §IV.1–IV.3, Table II, Figs. 8–17; App. A–B, Fig. 18.

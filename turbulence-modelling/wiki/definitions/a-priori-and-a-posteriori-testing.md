@@ -5,7 +5,7 @@ description: "A priori testing evaluates or trains a closure on filtered or aver
 status: established
 aliases: [a priori test, a posteriori test, offline and online evaluation, a-priori training, a-posteriori training]
 tags: [data-driven, sgs-model, machine-learning, les, rans]
-timestamp: 2026-10-25T13:40:00Z
+timestamp: 2026-10-25T16:05:00Z
 ---
 
 # A priori and a posteriori testing
@@ -27,8 +27,17 @@ the pair reports cases in which the two verdicts disagree.
 
 The definition above is shared by Agrawal et al. (2022), Vela-Martín
 (2022), Vicente Cruz & Lamballais (2023), Vadrot et al. (2023b), Griffin et
-al. (2023) and Domingo & Vervisch (2023). The words carry three further
-meanings that must be kept apart:
+al. (2023) and Domingo & Vervisch (2023). [Bae & Koumoutsakos (2022)](/sources/bae-2022.md)
+(preprint, p. 3) state it in the same terms: a priori testing measures how
+well a supervised model predicts target values of a reference database
+(typically DNS), and a posteriori testing integrates the equations in time
+with the trained closure and compares the statistics with reference data.
+[Prakash et al. (2022)](/sources/prakash-2022.md), [Abe (2021)](/sources/abe-2021.md)
+and [Pereira et al. (2021)](/sources/pereira-2021.md) ("a priori
+exercises" on filtered DNS) use the same pair. [Yan et al. (2022)](/sources/yan-2022.md)
+call the out-of-solver evaluation of their network "offline prediction"
+and its use embedded in the RANS solver the online test. The words carry
+four further meanings that must be kept apart:
 
 - **Training rather than testing.** Duraisamy (2021, §IV) and Agdestein &
   Sanderse (2025, §4.3) speak of *a priori training* (the loss compares the
@@ -43,6 +52,14 @@ meanings that must be kept apart:
   "a posteriori corrections" for corrections applied to an existing RANS
   model; the review does not use the pair for testing, though its argument
   on training and prediction environments (§5.4, §6) is the same one.
+- **Error estimation in numerical analysis.** In
+  [mesh adaptation](/methods/mesh-adaptation.md) the pair names the kind of
+  discretization-error estimate, not a closure test.
+  [Alauzet et al. (2022)](/sources/alauzet-2022.md) (§6.2) drive adaptation
+  with an "a priori" goal-oriented estimate (an adjoint-weighted bound on
+  interpolation errors); [Basile et al. (2023)](/sources/basile-2023.md)
+  (§3.1) with an "a posteriori error estimator" computed from the
+  solution's modal content and inter-element jumps.
 
 For wall models, a priori means that the matching data at $h_{\mathrm{wm}}$
 are taken from DNS and the model is run offline; a posteriori means the
@@ -59,6 +76,23 @@ model is coupled to the WMLES (Griffin et al. 2023, §§3–4; Vadrot et al.
   DNS uses a discretely commutative filter with three vanishing moments of
   width three grid spacings (channel at $Re_\tau=395$ and 2000); widths of
   two to four spacings change the trends little ("not shown").
+- **Correlation and energy-flux error.** Prakash et al. (2022, §III.A,
+  Eq. 19) pair a mean correlation coefficient (C.C.) between model and
+  exact SGS stress components with a relative error of the mean SGS energy
+  flux $\Pi$ (R.E.F.), on box-filtered DNS of forced isotropic turbulence
+  at $Re_\lambda=418$ with isotropic filters ($\Delta\approx6.5\eta$ to
+  $68\eta$) and anisotropic "book" and "pencil" filters with aspect ratios
+  up to about 19.5 (Figs. 1–3). The two numbers separate structural
+  accuracy (C.C.) from dissipation (R.E.F.).
+- **Equivalent eddy viscosity.** Abe (2021, §IV C, Eq. 17) projects each
+  stress, exact or modelled, onto the resolved strain,
+  $\nu_{\mathrm{eq}}=-\tau^d_{ij}\bar S_{ij}/(2\bar S_{kl}\bar S_{kl})$
+  (page-local name), so that an eddy-viscosity model with this
+  $\nu_{\mathrm{eq}}$ reproduces the local energy transfer of the stress,
+  forward and backward. With the registry definitions,
+  $\nu_{\mathrm{eq}}=\Pi/\lvert\bar S\rvert^2$ in incompressible flow
+  *(compiler check, not in the sources)*. The metric compares dissipation,
+  not stress components.
 - **Spectral eddy viscosity.** Vicente Cruz & Lamballais (2023, §2.2,
   Eq. 23) estimate Kraichnan's spectral eddy viscosity $\nu_t(k\mid k_c)$ a
   priori from filtered DNS of the
@@ -99,6 +133,36 @@ model is coupled to the WMLES (Griffin et al. 2023, §§3–4; Vadrot et al.
 - Agdestein & Sanderse (2025, §5.2.2) find that an a priori-trained CNN
   closure is unstable in the divergence-inconsistent LES formulation and
   worse than no closure at all resolutions except $\bar n=32$.
+- Abe (2021, §IV C, §V) finds that the Bardina-type and modified-Leonard
+  [scale-similarity models](/methods/scale-similarity-model.md) agree well
+  with the reference $\nu_{\mathrm{eq}}$ in the shear layer behind a
+  [backward-facing step](/benchmarks/backward-facing-step.md), and states
+  that a pure scale-similarity model nevertheless "often causes numerical
+  instability" a posteriori; as recalled there from the author's earlier
+  work, the similarity estimate of $k_{\mathrm{sgs}}$ did not always work a
+  posteriori on coarse grids.
+- Pereira et al. (2021, §III, §IV.2) set the
+  [PANS](/methods/partially-averaged-navier-stokes.md) resolution
+  parameters of their strategy S3 ($f_\varepsilon=1$, mass-flux ratio
+  about $f_k/2$, density-correlation ratio $f_k$) from a priori filtering
+  of DNS of homogeneous variable-density turbulence at Atwood number 0.75.
+  A posteriori, in the transitional
+  [Rayleigh–Taylor mixing layer](/benchmarks/rayleigh-taylor-mixing.md), S3
+  does not converge toward the reference as $f_k$ is reduced and produces
+  a nonphysical overshoot of the unresolved density–specific-volume
+  correlation at $t=2.5$, while the simpler S1 and S2, which use no a
+  priori information, converge. The authors attribute the failure to the
+  fully-developed-turbulence assumption behind the a priori data, which the
+  early, laminar and transitional stages violate.
+- Yan et al. (2022, §3.1.2, Table 1) train twelve networks (four sizes,
+  three epoch counts) to reproduce a field-inversion correction of the
+  [Spalart–Allmaras model](/methods/spalart-allmaras-model.md) on the S809
+  airfoil. Lower training and validation loss does not give lower a
+  posteriori error: the embedded model's lift error at $8^\circ$ ranges
+  from $-2.0\%$ to $15.1\%$ with no monotone relation to the root-mean-square
+  error of the correction field. They call this "a kind of overfitting"
+  and choose the network by its a posteriori lift error (see
+  [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
 
 **A priori success is not necessary.** Duraisamy (2021, §IV.A) states
 that successful a priori evaluation is "neither a necessary (e.g.
@@ -122,6 +186,42 @@ with its a priori estimate: it is of the same order at low $k$ but
 underestimated, weakly $k$-dependent, and vanishes near $k_c$ where the a
 priori one rises. The drop scales on $k_c$, not on the filter wavenumber,
 which they read as a signature of numerical error.
+
+**Equal a priori dissipation, different a posteriori results.** Prakash et
+al. (2022) compare two ways of removing the local backscatter of Clark's
+[gradient model](/methods/gradient-model.md): standard clipping (set the
+model stress to zero where $\tau_{ij}\bar S_{ij}>0$) and their optimal
+clipping (the nearest backscatter-free tensor). A priori the two have
+identical SGS dissipation, while optimal clipping keeps the correlation
+coefficient of the unclipped model and standard clipping lowers it (§III.A,
+Figs. 1–3). Where the structural model backscatters, both give
+$\Pi=0$ pointwise, so the identity of the a priori dissipation is exact
+*(compiler check, not in the sources)*. A posteriori, in forced isotropic
+turbulence and the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+at $Re=1600$, the two are close; in wall-resolved
+[channel flow](/benchmarks/turbulent-channel-flow.md) at $Re_\tau=590$
+optimal clipping gives $C_f=0.0051$ and $0.0053$ on the coarse and medium
+meshes against $0.0047$ and $0.0050$ for standard clipping and $0.0058$ in
+DNS (§III.B.3, Table 4), with better mean velocity and Reynolds shear
+stress. The authors "hypothesize" that structural accuracy, not
+dissipation, explains the gain in the anisotropic wall-bounded flow (§IV),
+following the argument they recall from Baggett et al. that HIT needs only
+the right dissipation (§I–II). This is the converse of Vela-Martín's
+reading above: for Prakash et al. a priori stress correlation is
+predictive where dissipation is held equal.
+
+**Cases where the verdicts agree.** Abe (2021) tests the filter width of
+eddy-viscosity models on cells of aspect ratio up to about 100 in the free
+shear layer behind a backward-facing step. A priori the
+[Smagorinsky model](/methods/smagorinsky-model.md) with
+$\Delta=(\Delta x\Delta y\Delta z)^{1/3}$ gives a $\nu_{\mathrm{eq}}$ "much
+smaller than the reference data" in the shear layer, while the same model
+with $\Delta=\max(\Delta x,\Delta y,\Delta z)$ is reasonable; the author's
+own mixed model behaves the other way round when the widths are swapped
+(§IV C–D, Figs. 9–10). A posteriori, the mixed model with the cube-root
+width lengthens the reattachment length from $7.19H$ to $7.43H$ (experiment
+$6.51H$) and suppresses the SGS values in the shear layer as the a priori
+test predicted (§IV D, Tables II–III, Fig. 11).
 
 ## Mechanisms named by the sources
 
@@ -147,6 +247,13 @@ which they read as a signature of numerical error.
    Domingo & Vervisch (2023, §1) state that a priori tests on frozen DNS
    inputs "cannot always allow for reaching definitive conclusions",
    because they miss error accumulation and error compensation in time.
+   Bae & Koumoutsakos (2022, preprint p. 3) state the same argument for
+   wall models: supervised closures trained on single-step targets are not
+   trained to compensate systematic DNS–LES discrepancies or compounding
+   errors, and, since "wall models are more sensitive than SGS models"
+   (recalled from their ref. 22), compounding errors are expected to hurt
+   more in wall-modelled LES. They recall a posteriori studies that exposed
+   ill-conditioning of data-driven SGS models.
 3. **Balance between model terms.** Exact inputs do not repair a model
    whose other terms were tuned to its own variables. As recalled by
    Duraisamy (2021, §IV.A), using exact DNS or LES $k$ and $\varepsilon$ in
@@ -165,6 +272,19 @@ which they read as a signature of numerical error.
    Agdestein & Sanderse (2025, App. F) compute the continuous and the
    discrete convective commutator errors of the 2D Taylor–Green vortex:
    they have the same spatial form but different coefficients.
+5. **Inputs outside the training distribution during convergence.** In a
+   steady RANS solver the embedded model is evaluated on every iterate, not
+   only on the converged field it was trained on. Yan et al. (2022, §3.1.2)
+   attribute the mismatch between regression loss and a posteriori error
+   to this: a low loss guarantees the correct correction only on the
+   converged field, while during the non-converged iterations the network
+   sees inputs unlike its training data.
+6. **Flow-regime mismatch of the reference data.** A priori data drawn from
+   one regime can fail in another. Pereira et al. (2021, §IV.3.2) trace the
+   a posteriori failure of their S3 strategy to resolution parameters
+   taken from fully developed homogeneous turbulence and applied to a flow
+   that is laminar and then transitional at early times; they suggest
+   dynamic, stage-dependent parameters (§V).
 
 ## Testbeds that allow both tests
 
@@ -188,6 +308,25 @@ for [machine-learning wall models](/methods/machine-learning-wall-model.md),
 and add a priori law-of-the-wall tests to locate where each model fails
 (§IV B).
 
+**Reference data that are not DNS.** Abe (2021, §IV B, Fig. 5) takes the a
+priori reference from a fine wall-resolved LES of the backward-facing step
+($\Delta x^+=\Delta z^+=7.25$), top-hat filtered in $x$ and $z$ to the
+coarse grid ($\Delta x^+=29$), on 20 snapshots. The fine LES's subgrid
+share of the turbulent energy and shear stress is very small, so it "can
+be approximately regarded as DNS data"; filtering also in $y$ changes the
+SGS values little (App. C). Pereira et al. (2021, §II, App. B) take as
+reference the same code run without closure ($f_k=0$) on the same grid,
+whose initial interface perturbations are not fully resolved (§IV.2).
+
+**Discretization-aware a priori data.** As recalled by Basile et al.
+(2023, §3.2, §4.2.3), Chapelier and co-workers set an under-resolution
+threshold of a DG smoothness indicator a priori from DNS of the
+Taylor–Green vortex at $Re=5000$, finding values close to the $-5/3$
+inertial slope, and Beck et al. projected filtered DNS onto a DG grid a
+priori, obtaining fields that are discontinuous at element interfaces; see
+[mesh adaptation](/methods/mesh-adaptation.md) and
+[discretization-consistent closure](/definitions/discretization-consistent-closure.md).
+
 ## Qualifications
 
 - The pair describes where a test is done, not the quality of the reference.
@@ -206,6 +345,20 @@ and add a priori law-of-the-wall tests to locate where each model fails
   training improves it only slightly. Agreement between the two tests
   depends on how closely the a priori data match the discrete equations
   the model will be used in.
+- Prakash et al. (2022, Eq. 19) define C.C. as a double sum
+  $\sum_i\sum_j$ of per-component correlation coefficients and state that a
+  perfect model has C.C. $=1$; as printed, a perfect model would give 9,
+  so an averaging factor is missing, as the text's "mean correlation
+  coefficient" implies *(compiler check, not in the sources)*.
+- The structural-accuracy explanation of Prakash et al. (2022) and the
+  gauge argument of Vela-Martín (2022) answer different questions: the
+  first holds dissipation fixed and varies correlation, the second shows
+  that correlation with one gauge of $\tau_{ij}$ is not a unique measure.
+  Neither paper tests the other's claim; no contradiction is recorded.
+- In Abe's (2021) test the a priori metric is $\nu_{\mathrm{eq}}$, a
+  dissipation measure; the author notes that good $\nu_{\mathrm{eq}}$
+  agreement of the similarity models does not imply their a posteriori
+  stability (§V).
 
 # Citations
 
@@ -219,3 +372,10 @@ and add a priori law-of-the-wall tests to locate where each model fails
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §I (literature), §III A, Eq. 9; §IV B, Fig. 12; §V.
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §3 (a priori, 48 DNS cases), §4 (a posteriori WMLES).
 - [Domingo & Vervisch (2023)](/sources/domingo-2023.md) — §1 (limits of a priori tests), §3.1, Figs. 6 and 9.
+- [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — preprint v1, p. 3 (definitions, single-step targets, compounding errors).
+- [Prakash et al. (2022)](/sources/prakash-2022.md) — arXiv v2, §I–II, §III.A, Eq. 19, Figs. 1–3; §III.B.3, Table 4; §IV.
+- [Abe (2021)](/sources/abe-2021.md) — §IV B–D, Eq. 17, Figs. 5, 9–11, Tables II–III; §V; App. C.
+- [Pereira et al. (2021)](/sources/pereira-2021.md) — arXiv v2, §II, §III (strategies S1–S3), §IV.2, §IV.3.2, §V, App. B.
+- [Yan et al. (2022)](/sources/yan-2022.md) — accepted manuscript, §3.1.2, Table 1; §3.2.2 (offline and online prediction).
+- [Basile et al. (2023)](/sources/basile-2023.md) — HAL accepted manuscript, §3.1 (a posteriori error estimator), §3.2, §4.2.3 (a priori DG studies recalled).
+- [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §6.2 (a priori goal-oriented error estimate).

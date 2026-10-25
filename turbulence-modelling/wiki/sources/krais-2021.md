@@ -141,7 +141,7 @@ prints its DOI as a URL. No printed duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
 
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)

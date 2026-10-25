@@ -5,7 +5,7 @@ description: "How the number of grid points and time steps of DNS, wall-resolved
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-25T13:44:00Z
+timestamp: 2026-10-25T19:43:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -37,6 +37,12 @@ Reynolds number, $\tilde t$ the run length in flow-through times. The
 sources agree that the grid of WMLES grows linearly with Reynolds number and
 that of WRLES almost quadratically, so that wall modelling is "a necessity for
 flows at practically relevant Reynolds numbers" (Vadrot et al. 2023b, §I).
+[Bae & Koumoutsakos (2022)](/sources/bae-2022.md) (Introduction) and
+[Gillyns et al. (2022)](/sources/gillyns-2022.md) (§1) quote the grid count
+as $Re^{13/7}$ for WRLES and $Re$ for WMLES ("at most" $O(Re)$ for Bae &
+Koumoutsakos; Gillyns et al. cite Choi & Moin 2012 and Yang & Griffin 2021),
+without stating the Reynolds number used; $13/7\approx1.857$ agrees with the
+1.86 of the table *(compiler check, not in the sources)*.
 Their exponents for the total WMLES cost differ, because they rest on different time-step assumptions (see Qualifications).
 
 ## DNS
@@ -114,6 +120,45 @@ about ten.
   [periodic hill](/benchmarks/periodic-hill.md) on 0.2–0.9 M cells, 14–62
   times fewer than the 13 M-cell wall-resolved LES reference (§V.B).
 
+- **Wall-modelled grids in wall units and per $\delta$.** Gillyns et al.
+  (2022, §6–9) run spectral-element WMLES of channel flow at $Re_\tau=1000$
+  with $22\times16$ elements of degree 7 on $2\pi\delta\times\pi\delta$
+  (average node spacings $0.040\delta$ and $0.028\delta$, i.e. 24.5 and 35.7
+  nodes per $\delta$), chosen by refining until element-interface spikes are
+  small and found similar to the guidelines of Larsson et al.; in wall units
+  this is about $\Delta x^+\approx41$, $\Delta z^+\approx28$ *(compiler check,
+  not in the sources)*. Five wall-normal elements per half-height (35 nodes)
+  are acceptable and four "not sufficiently resolved" (§8), though §9 calls
+  the four-element mesh "a fair compromise"; at $Re_\tau=5200$ ten elements per
+  half-height with the same in-plane count keep mean-velocity errors below
+  1 %. Bae & Koumoutsakos (2022, Methods) use $\Delta x=\Delta z=0.05\delta$ (20 points
+  per $\delta$) and $\Delta y=0.01$–$0.05\delta$ in channel flow up to $Re_\tau=10^6$, and for the boundary
+  layer at $Re_\theta=6500$ $\Delta x^+=128$, $\Delta z^+=105$, uniform
+  $\Delta y^+=64$, about ten wall-normal points per $\delta$ at the inlet.
+  [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) (§3) use
+  $\Delta x\approx0.08\delta_0$, $\Delta z=0.05\delta_0$ and four cells below
+  $h_{\mathrm{wm}}=0.1\delta_0$ for a Mach 3 shock/boundary-layer interaction,
+  about 20 M cells for a span of $5\delta_0$ and 200 M for $50\delta_0$.
+- **Wall-resolved LES at coarse resolution.** [Prakash et al. (2022)](/sources/prakash-2022.md)
+  (§III.B.3, Table 3) run channel flow at $Re_\tau=590$ on meshes with
+  $\Delta x^+=78$ and 58, $\Delta z^+=39$ and 29, first off-wall
+  $\Delta y^+=1$, and find their optimally clipped gradient model and the
+  dynamic mixed model close to DNS on the medium mesh. They argue, after
+  Baggett et al. as recalled, that in anisotropic wall-bounded flows at
+  moderate resolution an accurate SGS stress, not only an accurate
+  dissipation, is needed for accurate statistics, and hypothesize that
+  structurally accurate models therefore lower mesh requirements (§I–II).
+- **Hybrid RANS/LES on adapted meshes.** [Mozaffari et al. (2022)](/sources/mozaffari-2022.md)
+  stress that every change of cell size in space or time perturbs hybrid
+  RANS/LES turbulence: across a fine-to-coarse interface "the loss of
+  resolved turbulence is never equal to the gain in modeled turbulence"
+  (§1, Fig. 1, from a thesis they cite). Their average-based adaptive
+  refinement (see [mesh adaptation](/methods/mesh-adaptation.md)) predicts
+  the reattachment length of a backward-facing step at $Re_H=28\,000$ within
+  5.1 % on 2.5 M cells and 3.6 % on 9.9 M cells, against 9.6 % for a 9.3 M
+  cell hand-designed mesh (Table 2; the text of §4.1 gives 9.2 M), and recommends a minimum cell size of a
+  quarter of the Taylor microscale for vortex cores (§5.1, §6).
+
 ## Measured costs
 
 Goc et al. (2021, §4, Tables 1–2) report, for 30 flow passes of the JAXA model
@@ -125,6 +170,16 @@ same as a steady RANS run of the workshop (about $60\times10^3$); the fine grid
 (about $360\times10^3$) six times the RANS cost. Lozano-Durán et al. (2022, §V.A) report 13–398 thousand
 core-hours for 6–174 M cells on the Juncture Flow. Uniform refinement by two
 halves the explicit time step (Goc et al. 2021, §4).
+
+For hybrid RANS/LES of a ship hull at 10° drift (DDES-SST), Mozaffari et al.
+(2022, §5.1) report about 160 000 CPU-hours on a 154 M cell adapted mesh
+against about 250 000 on a 163 M cell hand-designed mesh, and for steady RANS
+about 16 000 (47 M cells) against 30 000 (163 M); the runs used different
+processor counts and the hand-designed DDES included extra analysis steps, so
+"the adaptation probably saves some time, but not a lot". Training the
+reinforcement-learning wall model of Bae & Koumoutsakos (2022, p. 8) costs
+$O(10^3)$ CPU-hours, against an estimated $O(10^7)$ for the DNS data a
+supervised model would need at $Re_\tau=4200$.
 
 ## Qualifications
 
@@ -184,3 +239,8 @@ halves the explicit time step (Goc et al. 2021, §4).
 - [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) — §III.B, Eqs. (5)–(7), Fig. 6; §V.A–V.E; App. A, Eqs. (13)–(14).
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §VIII.B.
 - [Haering et al. (2022)](/sources/haering-2022.md) — §V.A.1; §V.B.
+- [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Introduction; p. 8; Methods.
+- [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §1; §6–9, Tables 1–3.
+- [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §3.
+- [Prakash et al. (2022)](/sources/prakash-2022.md) — §I–II; §III.B.3, Table 3.
+- [Mozaffari et al. (2022)](/sources/mozaffari-2022.md) — §1, Fig. 1; §4, Table 2; §5.1; §6.

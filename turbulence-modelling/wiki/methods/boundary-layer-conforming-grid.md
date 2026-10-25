@@ -5,7 +5,7 @@ description: "Grids whose local isotropic cell size follows the local boundary-l
 status: established
 aliases: [BL-conforming grid, boundary-layer-conforming mesh, delta-conforming grid]
 tags: [wmles, mesh-adaptation, boundary-layer, wall-model]
-timestamp: 2026-10-25T13:44:00Z
+timestamp: 2026-10-25T16:35:00Z
 ---
 
 # Boundary-layer-conforming grids for wall-modelled LES
@@ -133,6 +133,26 @@ scheme used. This sufficed for $C_{L,\max}$ within five lift counts; the
 coarsest grid under-predicts the outboard slat and main-element suction,
 which they link to under-resolved leading-edge acceleration (§3.2, Fig. 9).
 
+## Contrast: automatic anisotropic adaptation
+
+A different route to resolving boundary layers without designing the mesh by
+hand is metric-based [mesh adaptation](/methods/mesh-adaptation.md).
+[Alauzet et al. (2022)](/sources/alauzet-2022.md) adapt purely tetrahedral,
+anisotropic meshes for steady RANS (Spalart–Allmaras) of turbomachinery and
+argue that prismatic or hexahedral boundary-layer meshes are "not absolutely
+necessary" (§1, §9). On NASA Rotor 37 their feature-based adaptation (an
+$L^4$ interpolation-error estimate of the Mach number) yields a first-cell
+$y^+=1$ ahead of the shock and $y^+\approx2$ in the separated layer behind it,
+the same on the coarsest (0.36 M vertices) and finest (2.8 M vertices)
+adapted meshes, so the adaptation converges in the boundary layer without
+over-refining (§8.2.5, Fig. 40); the mean anisotropic quotient of their 10 M
+vertex mesh, about $10^4$, stands for "almost four order of magnitudes" fewer
+elements than an isotropic adapted mesh (§8.2.6, Table 3). The comparison
+concerns wall-resolved RANS, where the mesh follows the viscous sublayer; the
+BL-conforming grid of Lozano-Durán et al. is isotropic and sized by $\delta$
+for WMLES. No source of this bundle applies either approach to the other's
+problem.
+
 ## Qualifications
 
 - The method has one source of evidence, on one geometry and one Reynolds
@@ -151,3 +171,4 @@ which they link to under-resolved leading-edge acceleration (§3.2, Fig. 9).
 
 - [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) — §III.A, Eqs. (2)–(4), Figs. 3–5; §III.B, Eqs. (5)–(7), Fig. 6; §V.A–V.E, Figs. 16–21; App. A, Eqs. (13)–(14).
 - [Goc et al. (2021)](/sources/goc-2021.md) — §2.2; §3, Fig. 9; §4.
+- [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §1; §8.2.5–8.2.6, Fig. 40, Table 3; §9.

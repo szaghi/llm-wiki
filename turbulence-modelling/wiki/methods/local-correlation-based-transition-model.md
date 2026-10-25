@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Local-correlation-based transition models"
-description: "RANS laminar–turbulent transition models that evaluate an empirical onset correlation with local variables and switch on the turbulence model through an intermittency; the γ-Reθ, one-equation γ and algebraic γ-alg-SST members, the hysteresis of transition location and its harmonic-averaging remedy, and mesh requirements."
+description: "RANS laminar–turbulent transition models that evaluate an empirical onset correlation with local variables and switch on the turbulence model through an intermittency; the γ-Reθ model, its calibrations and separation-induced correction, the one-equation γ and algebraic γ-alg-SST members, hysteresis, very-low-Reynolds airfoils and mesh requirements."
 status: established
-aliases: [LCTM, local correlation-based transition modelling, γ-Reθ model, gamma-Re-theta, γ-SST, one-equation γ model, γ-alg-SST, algebraic LCTM model, algebraic intermittency model]
+aliases: [LCTM, γ-Reθ-SST, separation-induced transition correction, Suluksna–Juntasaro calibration, Langtry–Menter calibration, local correlation-based transition modelling, γ-Reθ model, gamma-Re-theta, γ-SST, one-equation γ model, γ-alg-SST, algebraic LCTM model, algebraic intermittency model]
 tags: [rans, transition, eddy-viscosity, boundary-layer, separated-flow]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-25T19:45:00Z
 ---
 
 # Local-correlation-based transition models
@@ -115,6 +115,132 @@ They also show that the tripping indicator $k/(\lvert S\rvert\nu)$ of Juntasaro
 et al. is, with $\omega\sim\lvert S\rvert$, proportional to $Re_V\,Tu_l^2$, so that
 model reads as an LCTM with $Re_{\theta c}\sim Tu_l^{-2}$ (Eqs. 23–24).
 
+## The $\gamma$-$Re_\theta$ model and its separation-induced correction
+
+Carreño Ruiz & D'Ambrosio (2022) print the two-equation $\gamma$-$Re_\theta$
+model coupled to [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) as
+implemented in STAR-CCM+ 14.06 (Menter et al. 2006; Langtry 2006; Langtry &
+Menter 2009, as recalled), and test it on airfoils at very low Reynolds
+number ([Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md),
+§2, Eqs. 1–20). Page-local symbols: $\mathcal R_{\theta t}$ the transported
+onset Reynolds number (the source writes it with an overbar, which the
+registry reserves for the LES filter), $Re_{\theta t}$ its correlation value,
+$\gamma_{\mathrm{eff}}$, $\gamma_{\mathrm{sep}}$, $s_1$, $R_T$, $\lambda_\theta$
+and the functions $F$ as named in the source; $Re_V$ is the vorticity
+Reynolds number of the previous section, which the source does not define
+by formula.
+
+**Transport equations** (Eqs. 7–11):
+
+$$\begin{aligned}
+\rho\frac{D\gamma}{Dt}&=\nabla\cdot\Big[\Big(\mu+\frac{\mu_t}{\sigma_\gamma}\Big)\nabla\gamma\Big]+F_{\mathrm{length}}c_{a1}\rho\lvert S\rvert\big[\gamma F_{\mathrm{onset}}\big]^{1/2}(1-c_{e1}\gamma)-c_{a2}\rho\lvert\Omega\rvert\gamma F_{\mathrm{turb}}(c_{e2}\gamma-1),\\
+\rho\frac{D\mathcal R_{\theta t}}{Dt}&=\nabla\cdot\big[\sigma_{\theta t}(\mu+\mu_t)\nabla\mathcal R_{\theta t}\big]+c_{\theta t}\frac{\rho}{t}\big(Re_{\theta t}-\mathcal R_{\theta t}\big)(1-F_{\theta t}),
+\end{aligned}$$
+
+with $F_{\mathrm{onset}}$ triggering production, $F_{\mathrm{turb}}$ preventing
+relaminarization, $t$ a time scale and $F_{\theta t}$ a blending function that
+switches the $\mathcal R_{\theta t}$ source off inside the boundary layer, so
+that the free-stream correlation value diffuses into it. The model is
+therefore "semi-local": a free-stream edge must be defined. The source prints $S$
+and $W$ in the production and destruction of $\gamma$ without defining
+them; the page writes them as the strain-rate and vorticity magnitudes
+$\lvert S\rvert$, $\lvert\Omega\rvert$, an identification the source does not
+state *(compiler check, not in the sources)*. The
+constants $c_{a1},c_{a2},c_{e1},c_{e2},c_{\theta t},\sigma_\gamma,\sigma_{\theta t}$
+are those of Menter et al. (2006), not printed. The effective intermittency
+$\gamma_{\mathrm{eff}}=\max(\gamma,\gamma_{\mathrm{sep}})$ scales both production
+and destruction of $k$ (see the SST page), unlike the production-only
+coupling of γ-alg-SST above.
+
+**Onset correlation** (both calibrations, Eqs. 18–20), with $Tu$ in percent
+and Thwaites' parameter $\lambda_\theta=(\theta^2/\nu)\,dU/ds$, $\theta$
+estimated locally from $Re_{\theta t}$ so that the correlation is solved
+iteratively:
+
+$$Re_{\theta t}=\begin{cases}\big(1173-589.428\,Tu+0.2196\,Tu^{-2}\big)F(\lambda_\theta),&Tu<1.3,\\331.5\,(Tu-0.5658)^{-0.671}F(\lambda_\theta),&Tu>1.3,\end{cases}$$
+
+$$F(\lambda_\theta)=\begin{cases}1-\big(-12.986\lambda_\theta-123.66\lambda_\theta^2-405.689\lambda_\theta^3\big)e^{-(Tu/1.5)^{1.5}},&\lambda_\theta<0,\\1+0.275\big(1-e^{-35\lambda_\theta}\big)e^{-Tu/0.5},&\lambda_\theta>0.\end{cases}$$
+
+**Two calibrations** of the critical Reynolds number $Re_{\theta c}$ and the
+transition length $F_{\mathrm{length}}$ (§2.1, Eqs. 12–17):
+
+- *Suluksna–Juntasaro* (the STAR-CCM+ default, no pressure-gradient
+  correction, $F(\lambda_\theta)=1$):
+  $Re_{\theta c}=\min(\mathcal R_{\theta t},\,0.615\mathcal R_{\theta t}+61.5)$,
+  $F_{\mathrm{length}}=\min\big(300,\,e^{7.168-0.01173\mathcal R_{\theta t}}+0.5\big)$;
+- *Langtry–Menter (2009)*: piecewise polynomials in $\mathcal R_{\theta t}$
+  (coefficients not printed), with
+  $F_{\mathrm{length}}$ blended towards 40 near the wall by
+  $F_{\mathrm{sublayer}}=\exp\big[-\big(\omega d^2/(200\nu)\big)^2\big]$.
+
+**Separation-induced transition.** Langtry (2006) found reattachment
+predicted downstream of experiment at low $Tu$, attributed to too little
+production of $k$ in the separated shear layer; the correction lets the
+intermittency exceed one (§2). Two forms are in use (Eqs. 5–6):
+
+$$\gamma_{\mathrm{sep}}=\min\Big(s_1\max\Big[0,\frac{Re_V}{a\,Re_{\theta c}}-1\Big]e^{-(R_T/b)^4},\;c\Big)F_{\theta t},$$
+
+with $(a,b,c)=(3.235,20,2)$ in the *updated* form (STAR-CCM+ since 2021.2)
+and $(2.193,15,5)$ in the *older* one (up to 2021.1); $s_1=2$ by default and
+$R_T$ the viscosity ratio of the damping (not defined in the source). The
+threshold 3.235 is the ratio $Re_V/Re_{\theta c}$ at shape factor 3.5, taken
+as separation, and 2.193 the maximum of $Re_V/Re_{\theta c}$ in a Blasius
+profile. Like the bubble term of γ-alg-SST, the correction works by an
+intermittency above one: with the older form $\gamma_{\mathrm{eff}}$ exceeds 3
+in separated regions (§3.5, Fig. 7).
+
+## Very-low-Reynolds airfoils and laminar separation bubbles
+
+Carreño Ruiz & D'Ambrosio (2022) run 2D compressible RANS and URANS
+(Roe flux, second order, polyhedral mesh with a prism layer at $y^+<1$ and
+gradient-based adaptive refinement, $Tu=0.03\%$, $\mu_t/\mu=1$) on the SD7003,
+Ishii and Eppler 387 airfoils at $Re=2.3\times10^4$–$2\times10^5$, where
+transition is induced by laminar separation bubbles. They take the
+transition location as the point where the skin friction starts to drop
+(§3.5). On SD7003 at $Re=60{,}000$, $\alpha=4^\circ$, against the implicit LES
+of Galbraith & Visbal (Tables 5, 8, 10):
+
+| Setting | $x_{\mathrm{sep}}/c$ | $x_{\mathrm{tr}}/c$ | $x_{\mathrm{re}}/c$ | $C_L$ | $C_D$ |
+|---|---|---|---|---|---|
+| Langtry–Menter, older $\gamma_{\mathrm{sep}}$ | 0.202 | 0.518 | 0.660 | 0.600 | 0.0221 |
+| Langtry–Menter, updated $\gamma_{\mathrm{sep}}$ | 0.185 | 0.535 | 0.769 | 0.603 | 0.0259 |
+| Suluksna–Juntasaro, $s_1=2$ | 0.184 | 0.530 | 0.743 | 0.600 | 0.0257 |
+| Suluksna–Juntasaro, $s_1=6$ | 0.202 | 0.536 | 0.680 | 0.593 | 0.0228 |
+| Langtry–Menter with $F(\lambda_\theta)=1$ | 0.184 | 0.544 | 0.767 | 0.597 | 0.0264 |
+| LES (Galbraith & Visbal) | 0.23 | 0.55 | 0.65 | 0.59 | 0.021 |
+
+The authors conclude (§3.5, §4, §7):
+
+- the Langtry–Menter calibration performs "significantly better" than the
+  default one at $s_1=2$; at $\alpha=8^\circ$ the default does not reattach;
+- the older correction beats the updated one: lowering the cap from 5 to 2
+  reduces the production of $k$ and "considerably delays reattachment" —
+  the opposite of the direction of the developers' update;
+- with $F(\lambda_\theta)=1$ the Langtry–Menter correlation behaves like the
+  default calibration, and the default with $s_1=6$ reproduces its forces
+  while placing transition closer to the LES; the pressure-gradient
+  correction and the separation correction "play a similar role", the former
+  possibly double-counting pressure-gradient effects (after Malan et al.);
+- no single $s_1$ fits all incidences (a low value is needed at $6^\circ$, a
+  high one at $11^\circ$); they propose a second parameter in
+  $\gamma_{\mathrm{sep}}$ to control bubble position and length separately;
+- the model gives too little skin friction after reattachment (leading to
+  early stall) and too early transition at $6^\circ$–$8^\circ$; at
+  $Re=30{,}000$, $\alpha=8^\circ$ neither calibration reattaches while the LES
+  reattaches at $x/c=0.53$ (Table 7); accuracy improves with Reynolds number,
+  with "excellent" agreement with experiment at $Re=2\times10^5$ (§6.1);
+- unsteady RANS is needed at low incidence, where trailing-edge vortex
+  shedding raises the mean lift by 22.8% (SD7003, $Re=23{,}000$,
+  $\alpha=2^\circ$; §5, Table 11), and near bubble bursting;
+- on the more cambered Eppler 387 at $Re=60{,}000$ the 2D results agree with
+  2D Navier–Stokes but not with 3D data, which the authors attribute to
+  three-dimensional flow (§6.3).
+
+They also recommend not exceeding $Tu=0.1\%$ and not using $Tu$ as a tuning
+parameter (§3.4). Menter et al. (2022) report a related tendency of the
+transport model γ-SST to overpredict bubble size at low Reynolds number on
+Eppler 387 (see Validation); the two papers test different models.
+
 ## Hysteresis of the transition location
 
 Menter et al. (2022) call *hysteresis* the dependence of the converged
@@ -186,7 +312,23 @@ larger than $\delta$; wall-function meshes are unsuitable (§4, Figs. 26–28).
   above $y^+_{\max}=6$.
 - The hysteresis of the Kubacki and Sandhu–Ghosh models is stated, not
   shown in this paper.
+- Carreño Ruiz & D'Ambrosio attribute the two $\gamma_{\mathrm{sep}}$ forms
+  inconsistently: §2 places the 3.235 form in Menter et al. (2006) and the
+  2.193 form in a first version by Langtry et al. (2006), while §3.5 says the
+  2.193 form was introduced by Menter et al. (2004) and updated by Langtry &
+  Menter (2009). The page names the forms by their STAR-CCM+ versions only.
+- The same paper says $\gamma_{\mathrm{eff}}$ "well above 3" makes production
+  "over 300% larger" than in natural or bypass transition; since production
+  scales with $\gamma_{\mathrm{eff}}$, 300% larger needs $\gamma_{\mathrm{eff}}>4$
+  *(compiler check, not in the sources)*. Its grid study (Table 3, medium
+  grid: 0.181, 0.741, 0.6020, 0.02585) is close to the Suluksna–Juntasaro
+  row of Table 5 (0.184, 0.743, 0.600, 0.0257) and differs from the
+  Langtry–Menter one (0.202, 0.660, 0.600, 0.0221); the calibration used for the
+  grid study is not stated. The text refers to the $\mathcal R_{\theta t}$
+  transport equation as Eq. 11, which is its production term (the equation
+  is Eq. 10).
 
 # Citations
 
 - [Menter et al. (2022)](/sources/menter-2022.md) — §1, §2 Eqs. 1–24 and Table 1, §2.3 Figs. 2–3, §3 Figs. 1, 4–24, §4 Figs. 25–28, §5.
+- [Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md) — §1, §2 Eqs. 1–20, §3.4 Table 4, §3.5 Tables 5–9 Fig. 7, §4 Table 10 Fig. 8, §5 Table 11, §6.1–6.3, §7.

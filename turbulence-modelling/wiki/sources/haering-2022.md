@@ -142,7 +142,7 @@ is unparseable.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
 
 - [Periodic hill](/benchmarks/periodic-hill.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
@@ -152,6 +152,7 @@ Chunk 1 (2026-10-25). This source is cited on:
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Log-layer mismatch](/definitions/log-layer-mismatch.md)
 - [Active model split hybrid RANS/LES](/methods/active-model-split.md)
+- [Detached-eddy simulation and its delayed and zonal forms](/methods/detached-eddy-simulation.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)

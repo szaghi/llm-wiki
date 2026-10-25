@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Direct numerical simulation"
-description: "DNS solves the Navier–Stokes equations with no turbulence model and a grid fine enough for the dissipative range; this page gives its resolution criteria and cost scalings, the weaker quasi-DNS and DNS-embedded-in-LES variants, and its role as reference data for closure development."
+description: "DNS solves the Navier–Stokes equations with no turbulence model and a grid fine enough for the dissipative range; this page gives its resolution criteria and cost scalings, the discretizations used for it, the set-up of spatially developing compressible boundary layers, weaker variants, and its role as reference data for closure development."
 status: established
 aliases: [DNS, quasi-DNS, flame-resolved DNS, under-resolved DNS, DNS embedded in LES, downsized DNS]
-tags: [dns, les, combustion, boundary-layer, compressible]
-timestamp: 2026-10-25T13:42:00Z
+tags: [dns, les, combustion, boundary-layer, compressible, hypersonic]
+timestamp: 2026-10-25T19:47:00Z
 ---
 
 # Direct numerical simulation
@@ -47,6 +47,22 @@ together, and at fixed $Da$ raising $Ka$ by a factor $a$ requires raising $Re_T$
 by $a^2$. Cost also grows with the number of transported species, and faster
 than linearly because of stiffness.
 
+**Other criteria in use.** Cogo et al. (2022, §2) require the effective
+spacing $(\Delta x\,\Delta y\,\Delta z)^{1/3}$ to stay below $4\eta$
+everywhere in their boundary layers. Cao et al. (2022, §3.4) adopt
+$k_{\max}\eta_0\ge2.71$ (with $k_{\max}$ the largest resolved wavenumber and
+$\eta_0$ the initial Kolmogorov length) and a time step
+$\Delta t/\tau_{\mathrm{to}}\le5.58\times10^{-3}$ of the initial large-eddy
+turnover time, taken from their earlier study, for decaying compressible
+isotropic turbulence. Seta & Federrath (2022, §2.4) run a shock-capturing
+finite-volume MHD code (FLASH, HLL3R solver) at $512^3$ with explicit
+viscosity and resistivity, $Re=Rm=2000$, and argue that because the
+numerical Reynolds number of the scheme is approximately
+$2n_g^{4/3}\approx8000$ for $n_g=512$ points per direction (as recalled from
+McKee et al. 2020), the explicit diffusion "is always significantly higher
+and at larger scales than the numerical diffusion"; their runs are DNS in
+this sense (see [small-scale dynamo](/results/small-scale-dynamo.md)).
+
 **Measured resolutions in the sources.**
 
 | Flow | Resolution | Source |
@@ -59,10 +75,65 @@ than linearly because of stiffness.
 | Supersonic turbulent boundary layer, $M=2.67$, $Re_\theta$ up to 3878 | 1.458 billion DOF per variable (a cited work, shown as a picture) | Krais et al. (2021), §2.2.2 |
 | Bunsen jet flame, DNS box | $h=50$ µm $\approx\eta$, 28.58 M nodes | Domingo & Vervisch (2023), §3.1 |
 | Bluff-body premixed burner (flame-resolved) | 1.6 billion cells, $h=100$ µm $\approx2\eta$ | Domingo & Vervisch (2023), §3.2 |
+| [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), $Re=1600$, $M=0.1$, [gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md) | $128^3$ to $1024^3$ cells; large peak-dissipation discrepancy on $128^3$ and $256^3$, agreement with the reference on refinement; $1024^3$ costs 747,062 core hours | Cao et al. (2022), §3.1–3.2 |
+| [Channel](/benchmarks/turbulent-channel-flow.md), $Re_\tau=180$, $M=0.1$, gas-kinetic scheme | $128^3$: $\Delta x^+=8.83$, $\Delta z^+=4.42$, $\Delta y^+$ 0.21–5.83 | Cao et al. (2022), §3.3 |
+| Decaying compressible isotropic turbulence, $Re_\lambda=72$, $M_t$ 0.8–1.6 | $512^3$, grid spacing $0.819\eta_0$, $k_{\max}\eta_0=3.613$ | Cao et al. (2022), §3.4 |
+| ZPG boundary layers, $M_e=2$ and 5.86, $T_w/T_r=0.76$, $Re_\tau$ up to about 2000 | up to $16384\times832\times2048$ points; $\Delta x^+\le7.9$, $\Delta z^+\le4.8$, $\Delta y^+$ from $\le0.7$ to $\le6.5$ | Cogo et al. (2022), §2, Table 1 |
+| ZPG boundary layers, $M_e=2.5$, 4.9, 10.9, $Re_\tau$ up to 1244 | three boxes up to $6300\times690\times600$ points ($x$, wall-normal, spanwise); Mach 10.9: $\Delta x^+=7.1$, $\Delta z^+=6.6$, $\Delta y^+$ 0.43–4.2 | Huang et al. (2022), §2.3, Table 2 |
+| Two-phase MHD turbulence (small-scale dynamo), $Re=Rm=2000$ | $512^3$, finite volume | Seta & Federrath (2022), §2.4 |
 
 From their pipe DNS, Vicente Cruz & Lamballais (2023, §7.1) suggest that the
 recommendation of about one wall unit for the first wall-normal spacing
 "may be somewhat over-demanding".
+
+## Discretizations for DNS
+
+Domingo & Vervisch (2023, §1) list DNS codes of sixth to tenth order, spectral
+elements, and fourth- or second-order codes (below). Cao et al. (2022, §1)
+state that DNS "is reported rarely within the finite volume framework due to
+its over-dissipative nature", and that spectral, pseudo-spectral and
+lattice-Boltzmann methods, established for incompressible turbulence, "fail
+to capture shocklets and suffer from numerical instability" in compressible
+flow with shocks, while compact and hybrid compact–WENO finite differences
+have a limiting turbulent Mach number. Their
+[high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md),
+a finite-volume method, reaches $M_t=1.6$ and costs about 1.4 times a
+dispersion-relation-preserving finite-difference code on the Taylor–Green
+vortex (1.2 after correcting for processor speed; §3.2). For compressible
+boundary layers the sources combine a non-dissipative central scheme with
+local shock capturing: STREAmS, run on GPUs in CUDA Fortran, uses
+energy-preserving schemes in shock-free regions and WENO where the Ducros
+sensor detects shocks (Cogo et al. 2022, §2); Huang et al. (2022, §2.2) use a
+limiter-optimized seventh-order WENO scheme, or an eighth-order split
+convective scheme for their adiabatic Mach 2.5 case, with fourth-order
+central viscous fluxes and third-order Runge–Kutta (see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+
+## Spatially developing boundary layers
+
+DNS of spatially developing [boundary layers](/benchmarks/turbulent-boundary-layer.md)
+needs a turbulent inflow and a domain long enough for it to be forgotten.
+Both compressible studies use a recycling–rescaling inflow (recycling plane
+at $80\delta_{\mathrm{in}}$ in Cogo et al. 2022, §2; at $52.7\delta_i$ in
+Huang et al. 2022, §2.3, with $\delta_{\mathrm{in}}$, $\delta_i$ the inflow
+thickness). Huang et al. (2022, §3.1, Table 3) measure the **induction
+length**, the distance from the inflow to where the von Kármán integral
+relation $C_f=2\,\mathrm d\theta/\mathrm dx$ first holds to 5%: it grows with
+Mach number from $20\delta_i$ at Mach 2.5 to $80\delta_i$ at Mach 14, lies
+between one and three eddy-turnover lengths $U_e\delta_i/u_{\tau,i}$, and is
+$15$–$20\delta_i$ longer with a digital-filter inflow than with
+recycling–rescaling; outer-layer differences between the two inflows persist
+much farther downstream than near-wall ones. To reach $Re_\tau\approx1200$
+over more than $300\delta_i$ they split the domain into three overlapping
+boxes, each fed by inflow planes saved from the one upstream (§2.3, Fig. 1).
+Their checks: spanwise refinement from $\Delta z^+=6.6$ to 5.0 changes wall
+heat flux, mean velocity and Reynolds stresses by about 1%, and the
+Mach 10.9 wall shear stress and heat flux agree with Baldwin–Lomax RANS
+within 1.9% and 1.7% (App. A). These DNS are the data against which
+[Morkovin's hypothesis](/definitions/morkovin-hypothesis.md), the
+[attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md) and the
+[compressible velocity transformations](/definitions/compressible-velocity-transformation.md)
+are tested.
 
 ## Weaker forms and hybrids
 
@@ -78,7 +149,14 @@ recommendation of about one wall unit for the first wall-normal spacing
   use "implicit LES (ILES) or under-resolved DNS (URDNS)" as synonyms and use it
   as the baseline of their [PANS](/methods/partially-averaged-navier-stokes.md)
   study, where high-order URDNS of the periodic hill shows oscillations in the
-  second moments that they attribute to aliasing (§3.1).
+  second moments that they attribute to aliasing (§3.1). In PANS the limit
+  $f_k=0$ is DNS; Pereira et al. (2021, §IV.2) use their $f_k=0$ run of
+  [Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md) on a
+  $256^2\times768$ finite-volume grid as "a high-fidelity simulation
+  resolving all flow scales", while noting that its molecular-mixing
+  parameter is about 0.26 at $t=0$ instead of zero because the initial
+  perturbations are not fully resolved; its mixing-layer growth rate
+  ($\alpha_b\approx0.025$) matches the DNS of Livescu et al. (as recalled).
 - **DNS embedded in LES.** Domingo & Vervisch (2023, §3.1) refine a
   well-resolved LES of a laboratory burner to DNS resolution over a streamwise
   window, with the same low-dissipation discretization in both zones, so that
@@ -113,6 +191,23 @@ inviscid solution, about 15%, and note that wall-modelled LES may not converge
 to DNS until the grid reaches the wall-resolved regime, because of the errors
 internal to the wall model.
 
+Chunk-2 sources use published DNS as the reference for model calibration and
+validation: the channel DNS of Lee & Moser at $Re_\tau=1000$ and 5200 for
+wall-modelled LES (Gillyns et al. 2022, §5–§9), the SD7003 airfoil DNS of
+Carton de Wiart & Hillewaert at $Re=60{,}000$, $\alpha=4^\circ$
+(separation at $x/c=0.209$, reattachment at 0.654, $C_L=0.602$,
+$C_D=0.0196$) and two- and three-dimensional simulations of the Eppler 387
+airfoil by Sahin et al. for a [transition model](/methods/local-correlation-based-transition-model.md)
+(Carreño Ruiz & D'Ambrosio 2022, §3.5, Table 5; §6.3, Fig. 19; their 2D results agree with the 2D
+simulations but not with the 3D data), and the adverse-pressure-gradient
+boundary-layer DNS of Coleman et al. (2018), $Re_\tau$ up to 880, for an
+[adverse-pressure-gradient wall law](/definitions/adverse-pressure-gradient-wall-law.md)
+(Knopp 2022, §7.3). Gillyns et al. (2022, §2, §6, §8) observe in
+spectral-element wall-modelled LES that the spikes of the velocity
+fluctuations at element boundaries (a Gibbs phenomenon of the $C^0$
+discretization) vanish as the mesh approaches DNS resolution, and use them
+as a reference-free indicator of under-resolution.
+
 Domingo & Vervisch (2023, §1) list DNS codes and orders: SENGA, DINO, S3D,
 FK³, KARFS and HOLOMAC of sixth to tenth order; Nek5000 with spectral elements;
 NGA, PsiPhi, AVBP and OpenFOAM of fourth or second order. They estimate the
@@ -135,6 +230,15 @@ layers (§7).
   $12\times18\times18$ mm box at 50 µm, which a uniform count puts at about 31
   million; the paper does not say how nodes are counted *(compiler check,
   not in the sources)*.
+- Cao et al. (2022, §3.4) print the resolved wavenumber as
+  $\kappa_{max}=\sqrt2\kappa_0N/3$, here $k_{\max}=\sqrt2\,k_0N_x/3$ with
+  the spectrum peak $k_0=8$ and $N_x$ cells per direction; their tabulated
+  $k_{\max}\eta_0=3.613$ is reproduced by $\sqrt2N_x/3$ with $N_x=512$, not
+  with the factor $k_0$ *(compiler check, not in the sources)*. The version read is the arXiv v1 preprint.
+- Seta & Federrath (2022) justify their model-free runs by the ratio of
+  explicit to numerical diffusion, and Pereira et al. (2021) their reference
+  run by a grid study (App. B); neither states its grid spacing in Kolmogorov
+  lengths, so the criteria above cannot be checked for them.
 
 # Citations
 
@@ -146,3 +250,11 @@ layers (§7).
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §IV A (DNS of forced isotropic turbulence).
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — §1 (pseudo-spectral reference DNS).
 - [Krais et al. (2021)](/sources/krais-2021.md) — §2.2.2 (supersonic boundary-layer DNS).
+- [Cao et al. (2022)](/sources/cao-2022.md) — §1 (finite-volume DNS, competing methods); §3.1–3.4, Tables 3, 5, 8 (gas-kinetic DNS, resolution criterion, cost).
+- [Cogo et al. (2022)](/sources/cogo-2022.md) — §2, Table 1 (STREAmS, recycling–rescaling, resolution, $4\eta$ criterion).
+- [Huang et al. (2022)](/sources/huang-2022.md) — §2.2–2.3, Table 2 (scheme, multi-box set-up); §3.1, Table 3 (induction length); App. A (grid check, validation).
+- [Seta & Federrath (2022)](/sources/seta-2022.md) — §2.4 (explicit against numerical diffusion).
+- [Pereira et al. (2021)](/sources/pereira-2021.md) — §IV.2 ($f_k=0$ reference run); App. B.
+- [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §2, §5–§9 (Lee & Moser DNS as reference; Gibbs spikes).
+- [Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md) — §3.5, Table 5 (SD7003 DNS reference); §6.3, Fig. 19 (Eppler 387).
+- [Knopp (2022)](/sources/knopp-2022.md) — §7.3 (Coleman et al. DNS as validation).

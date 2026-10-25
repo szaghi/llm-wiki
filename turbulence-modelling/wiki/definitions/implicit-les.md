@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-25T19:45:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -33,7 +33,20 @@ can carry.
    SGS model". [Flad & Gassner (2017)](/sources/flad-2017.md) (§1, §3.1)
    describe the standard DG practice: no model, polynomial de-aliasing for
    stability, and the interface Riemann solver as the only source of
-   subgrid dissipation.
+   subgrid dissipation. [Prakash et al. (2022)](/sources/prakash-2022.md)
+   (§III.B) call their no-model runs, in which only the SUPG/PSPG/grad-div
+   stabilization of a finite-element scheme acts, an "implicit SGS model".
+   In the [PANS](/methods/partially-averaged-navier-stokes.md) study of
+   [Pereira et al. (2021)](/sources/pereira-2021.md) (§II, §IV) the
+   $f_k=0$ run has no closure and the finite-volume code no artificial
+   viscosity; the authors use it as their reference solution, "resolving
+   all flow scales", while noting that the initial interface perturbations
+   are not fully resolved on that grid. Astrophysical MHD runs use
+   the same no-model setting: [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md)
+   (§2) set the physical resistivity to zero in their RAMSES runs, so that
+   "all diffusive effects in our simulations are of numerical nature" (the
+   paper does not use the term implicit LES), and [Liu et al. (2022)](/sources/liu-2022.md)
+   (§1) let dissipation be "provided by local truncation errors".
 2. **Designed numerical regularization.** The numerical dissipation is
    built to act as a model. Vicente Cruz & Lamballais (2023, §5.1) use the
    [implicit spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
@@ -47,7 +60,10 @@ can carry.
    (App. C) use an upwinding weight driven by a subgrid cell Reynolds
    number (iSGET) as the energy-transfer part of a hybrid model; MILES is
    recalled as the origin of the idea by Vicente Cruz & Lamballais (2023,
-   §1) and Beck & Kurz (2023, §III C).
+   §1) and Beck & Kurz (2023, §III C). [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md)
+   (§1) describe implicit LES as benefiting "from the scheme's numerical
+   dissipation", against explicit LES which models the small scales; their
+   own SVV-filtered Smagorinsky viscosity sits between the two.
 3. **Implicitly filtered LES.** The filter is the one induced by grid and
    discrete operator, whatever closure is added. Beck & Kurz (2023, §I)
    use the term in this sense: the filter width and shape are
@@ -103,6 +119,28 @@ interpretation they flag as needing further work).
   +9.6% for Smagorinsky with van Driest damping and +15.3% for no model
   (§7.2–7.4); the authors call this an "augmented wall-resolving" property.
 
+- **High-order gas-kinetic scheme, Taylor–Green vortex.** [Cao et al. (2022)](/sources/cao-2022.md)
+  (§3.1, Figs. 2–5) run the Taylor–Green vortex at $Re=1600$, $M_0=0.1$
+  with a fifth-order WENO gas-kinetic scheme on $128^3$ to $1024^3$ cells,
+  and estimate the numerical dissipation as the kinetic-energy decay rate
+  minus the resolved solenoidal, bulk and pressure–dilatation dissipation.
+  The numerical part decreases with refinement and is significant on the
+  coarse grids. The authors state that because the decay rate "is well
+  predicted at all grid levels", "the filtering due to the coarse mesh
+  correctly mimics the physical dissipation from the unresolved scale
+  dynamics", which "validates the usage of high-order numerical methods for
+  the implicit large-eddy simulations"; the same section reports "a large
+  discrepancy" in the peak dissipation rate on $128^3$ and $256^3$, and
+  kinetic energy matching the reference on all grids except $128^3$. See
+  [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md).
+- **Jet reference.** Among the reference simulations of the PPRIME round
+  jet, the finest hp-adapted hybrid RANS/LES of [Basile et al. (2023)](/sources/basile-2023.md)
+  (§4.2.3, Fig. 9, Table 1) agrees on the centreline with the RANS-profile
+  plus ILES of Shur et al. (23 million cells, high-order finite volume);
+  both overestimate the potential-core length, and Basile et al. list ILES,
+  with the missing nozzle–jet feedback loop, among the candidate causes
+  given by Shur et al., without settling between them.
+
 ## Evidence: when it fails
 
 - **Applicability plateau.** At $48^3$ degrees of freedom ($6^3$ elements,
@@ -147,6 +185,30 @@ interpretation they flag as needing further work).
   [PANS](/methods/partially-averaged-navier-stokes.md) eddy viscosity is
   added (Dzanic et al. 2022, §3.1, Fig. 5); the paper reports no
   de-aliased run.
+- **Coarse grids with high-aspect-ratio cells.** On the coarse grid of a
+  [backward-facing step](/benchmarks/backward-facing-step.md) (10 nodes per
+  step height, $\Delta x/\Delta y\sim100$ in the shear layer), a no-model run
+  of [Abe (2021)](/sources/abe-2021.md) (App. B, Table IV, Fig. 14) gives a
+  reattachment length (page-local $x_R$) $x_R/H=7.60$ (+16.7% against the experimental 6.51),
+  against 7.19 with the author's stabilized mixed model; on the fine and
+  medium grids the explicit-model LES gives 6.54 and 6.67 (Table II). Citing
+  the author's earlier work, Abe states that "as the grid resolution
+  becomes coarser, the performance of the ILES suddenly decreases", so a
+  high-quality SGS model is preferable on coarse grids, and that ILES "does
+  not always account for the detailed dynamics of small-scale turbulent
+  structures" (§I).
+- **Stabilized finite elements at infinite Reynolds number.** In forced
+  isotropic turbulence with $\nu=10^{-12}$ on $32^3$–$128^3$ trilinear
+  elements, the no-model run shows a large energy pile-up at the highest
+  resolved wavenumbers, as does the unclipped gradient model (Prakash et
+  al. 2022, §III.B.1, Fig. 4). The authors state, from numerical experiments
+  not shown, that the numerical dissipation of the stabilization is
+  "significantly smaller" than the SGS dissipation of every explicit model.
+- **Rayleigh–Taylor mixing.** Pereira et al. (2021, §I, Fig. 1) survey
+  growth rates of [Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md):
+  DNS values vary little, ILES values span a broad range, which they
+  attribute, beyond initial conditions, to modelling assumptions such as an
+  inviscid fluid or one- and two-dimensional flow.
 - **Wall-modelled resolution.** Implicit SVV alone underestimates $u_\tau$
   by more than 12% at $Re_\tau=2000$ with $\Delta x^+=18$ (Vicente Cruz &
   Lamballais 2023, §7.4), so it "cannot be used alone in the context of
@@ -165,6 +227,25 @@ cylinder at $Re_D=3900$ (at $x/D=7$) much more for PANS than for URDNS
 (§3.2, Figs. 11–13). The authors attribute the difference to the lower
 numerical dissipation of the high-order scheme, which lets resolved small
 scales respond to the model.
+
+## Numerical dissipation as an effective Reynolds number
+
+When the numerics are the only dissipation, the grid fixes an effective
+Reynolds number. Liu et al. (2022, §1) recall that a turbulent dynamo needs a
+dissipation scale at least about 30 times smaller than the injection scale
+(critical Reynolds number about 30–60), and with truncation-error
+dissipation turn this into a resolution of at least 30 pc for a 1 kpc thick
+disc and about 3 pc for a 100 pc disc; they replace the unresolved dynamo by
+a [subgrid model](/methods/subgrid-turbulent-dynamo-model.md).
+Martin-Alvarez et al. (2022, §1, §3.2) argue that multi-level adaptive
+refinement introduces one numerical viscous and resistive scale per level,
+and compare dynamo growth rates with reference scalings drawn against the
+finest cell size (Fig. 7), the numerical viscosity being assumed
+proportional to the cell size; see
+[numerical dissipation](/properties/numerical-dissipation.md) and
+[small-scale dynamo](/results/small-scale-dynamo.md). Pereira et al. (2021,
+§IV.3.1, Eqs. 22–23) define an effective viscosity $\nu+\nu_t+\nu_n$ with
+$\nu_n$ the numerical viscosity, which they do not compute.
 
 ## Qualifications
 
@@ -186,6 +267,16 @@ scales respond to the model.
   numerical dissipation is "extremely detrimental" for coarse LES (Mittal &
   Moin 1997, as recalled): the opposite design choice to usage 2.
 
+- Abe (2021) and Cao et al. (2022) reach opposite verdicts on implicit LES
+  from different settings: a second-order finite-volume code on a coarse,
+  strongly anisotropic grid in a separated shear layer, with a local
+  measure (reattachment length), against a fifth-order gas-kinetic scheme
+  on uniform grids of $128^3$ and finer in the Taylor–Green vortex, with a
+  global measure (kinetic-energy decay rate). Neither tests the other's
+  configuration, so the two are not recorded as a contradiction. Cao et
+  al.'s verdict also sits beside their own report of a large peak-dissipation
+  discrepancy on the two coarsest grids.
+
 # Citations
 
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — §1, Figs. 1–3; §3, Fig. 4; §3.1; §4.
@@ -198,3 +289,11 @@ scales respond to the model.
 - [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) — App. B.
 - [Goc et al. (2021)](/sources/goc-2021.md) — §2.3 (low-dissipation numerics as a requirement of coarse LES).
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §VII.C, Fig. 6.
+- [Abe (2021)](/sources/abe-2021.md) — §I; App. B, Tables II, IV, Fig. 14.
+- [Prakash et al. (2022)](/sources/prakash-2022.md) — §III.B, §III.B.1, Fig. 4.
+- [Cao et al. (2022)](/sources/cao-2022.md) — §3.1, Figs. 2–5.
+- [Basile et al. (2023)](/sources/basile-2023.md) — §4.2.3, Fig. 9, Table 1.
+- [Pereira et al. (2021)](/sources/pereira-2021.md) — §I, Fig. 1; §II; §IV; §IV.3.1, Eqs. (22)–(23).
+- [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §1.
+- [Liu et al. (2022)](/sources/liu-2022.md) — §1.
+- [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md) — §1; §2; §3.2.

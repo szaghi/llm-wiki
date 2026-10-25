@@ -5,7 +5,7 @@ description: "Training a learned closure with the solver in the loop, so the los
 status: established
 aliases: [a posteriori training, a-posteriori training, solver-in-the-loop training, integrated inference and learning, embedded learning, differentiable-physics training]
 tags: [data-driven, machine-learning, neural-network, sgs-model, rans, les]
-timestamp: 2026-10-25T13:43:00Z
+timestamp: 2026-10-25T19:46:00Z
 ---
 
 # Model-consistent (a posteriori) training of learned closures
@@ -44,6 +44,14 @@ come from the model environment, but the regression step is still separate
 from the solver. Duraisamy (2021) says it "promotes" consistency, and
 regression errors reintroduce some inconsistency. See
 [field inversion and machine learning](/methods/field-inversion-machine-learning.md).
+[Yan et al. (2022)](/sources/yan-2022.md) show the effect on the S809
+airfoil: across twelve network settings the regression loss and the a
+posteriori lift error of the embedded Spalart–Allmaras correction are not
+monotonically related (lift error from $-2.0\%$ to $15.1\%$ at $8^\circ$),
+which they attribute to inputs the network meets only during the solver's
+non-converged iterations (§3.1.2, Table 1). They keep two-step training and
+select the network by its a posteriori error: model consistency enters at
+model selection, not in the loss.
 
 **Integrated (tightly coupled) inference and learning.** The learned map
 sits inside the solver constraint, and one optimization over
@@ -76,7 +84,16 @@ parameters as a Markov decision process. The LES with its actual
 discretization is the environment, and the reward is computed from the LES
 energy spectrum, so no gradient of the solver is needed. Vadrot et al.
 (2023b, §II B 4) describe a wall model trained the same way in WMLES
-without high-fidelity data (Bae & Koumoutsakos 2022). See
+without high-fidelity data. Its authors, [Bae & Koumoutsakos (2022)](/sources/bae-2022.md)
+(preprint, pp. 3, 8, 10), give the consistency argument for wall models:
+the agents are the computational elements, their actions compensate both
+the closure and the solver's numerical errors, and the resulting models
+are "robust with respect to the numerical discretizations, as these
+errors are taken into consideration in the training process". The reward
+uses only the true mean wall stress, so the training needs no DNS field,
+and the states (velocity, its wall-normal gradient, wall distance) "do not
+depend heavily on numerics or SGS models", unlike the filtered velocities
+of a dynamic wall model. See
 [reinforcement-learning closures](/methods/reinforcement-learning-closure.md).
 
 ## Evidence
@@ -119,6 +136,7 @@ without high-fidelity data (Bae & Koumoutsakos 2022). See
 | Agdestein & Sanderse (2025, §5.2.7) | DNS and filtering of all data | $1.5739\times10^4$ s |
 | Beck & Kurz (2023, §IV B) | 2000 iterations of 16 parallel episodes | at most 0.8 CPU-hours per LES; 8 or 16 cores per LES |
 | Vadrot et al. (2023b, §IV D) | RL wall model of Bae & Koumoutsakos | about $10^7$ gradient steps (recalled) |
+| Bae & Koumoutsakos (2022, preprint pp. 8, 12–13) | multi-agent RL in WMLES, $10^7$ policy-gradient steps | $O(10^3)$ CPU-hours and under 1 GB at $Re_\tau=4200$, against $O(10^7)$ CPU-hours and over 100 TB to generate DNS data for supervised training (no hardware given) |
 
 Duraisamy (2021, §IV.B) names the obstacles to adjoint-based integrated
 training. Adjoints are intrusive. In LES the chaotic dynamics can make
@@ -136,6 +154,18 @@ the convergence of these training methods and the choice of loss function
   their trained models as a way of developing discretization-specific
   closures, not as ready-to-use ones. Agdestein & Sanderse (2025, §5.2.7)
   keep one parameter set per grid, filter and formulation.
+- **Robustness to the discretization is claimed, not tested.** Bae &
+  Koumoutsakos (2022) train and test their wall models with one solver
+  (staggered second-order finite differences) and one SGS model
+  (anisotropic minimum dissipation); the robustness to numerics they
+  claim (pp. 3, 10) is an argument from the training setup. Beck & Kurz
+  (2023, §VI), who also train in the loop, present their SGS closures as
+  discretization-specific rather than transferable.
+- **"No reference data" is relative.** The reward of Bae & Koumoutsakos
+  (2022, Eq. 9) contains the true mean wall stress at each training
+  $Re_\tau$ (2000, 4200, 8000); the preprint does not say where those
+  values come from. In-solver training removes the need for full DNS
+  fields, not for reference statistics.
 - **Extrapolation.** Vadrot et al. (2023b, §III A, §IV C, Table III) test
   the RL wall model, trained at $Re_\tau=2000$, 4200 and 8000, from
   $Re_\tau=180$ to $10^{10}$. They find a log-layer mismatch of $+1.5$ to
@@ -143,6 +173,11 @@ the convergence of these training methods and the choice of loss function
   $10^5$, and $-2.2$ to $-3.2$ for $Re_\tau\ge10^7$, i.e. errors both near
   and far beyond the training range (see
   [machine-learning wall models](/methods/machine-learning-wall-model.md)).
+  Bae & Koumoutsakos (2022, preprint p. 6, Figs. 3–4) report for their own
+  log-law model a friction-velocity error below 5% from $Re_\tau=5200$ to
+  $10^6$. The two assessments differ in solver, grid and error measure;
+  the normative entry on this disagreement is on
+  [machine-learning wall models](/methods/machine-learning-wall-model.md).
 - **Identifiability.** Duraisamy (2021, §VII, Fig. 4) shows an anisotropy
   perturbation inferred from mean-velocity data in channel flow that
   reproduces the mean velocity and shear stress but not the anisotropy, and
@@ -163,3 +198,5 @@ the convergence of these training methods and the choice of loss function
 - [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md) — §2.4, §4.3, Eq. 25 (trajectory loss, unrolling), §5.2.2–§5.2.7, Figs. 11–12, Table 3; §6; App. B.5, Table B.5.
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §I, §IV B (RL in the loop, training cost), §V, §VI.
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §II B 4, §III A, §IV C, Table III, §IV D.
+- [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Research Square preprint v1, pp. 3, 6, 8, 10 (consistency argument, cost, states), Eq. 9 (reward), Methods pp. 12–13 (training).
+- [Yan et al. (2022)](/sources/yan-2022.md) — accepted manuscript, §3.1.2, Table 1 (regression loss against a posteriori error; selection by a posteriori error).

@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-25T13:44:00Z
+timestamp: 2026-10-25T19:43:00Z
 ---
 
 # Equilibrium wall model
@@ -23,8 +23,11 @@ every wall-modelled source of this bundle:
 [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md),
 [Agrawal et al. (2022)](/sources/agrawal-2022.md),
 [Fowler et al. (2022)](/sources/fowler-2022.md),
-[Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) and
-[Griffin et al. (2023)](/sources/griffin-2023.md). It is the boundary
+[Vadrot et al. (2023b)](/sources/vadrot-2023-b.md),
+[Griffin et al. (2023)](/sources/griffin-2023.md),
+[Gillyns et al. (2022)](/sources/gillyns-2022.md) and
+[Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md); it is the comparison
+baseline of the learned models of [Bae & Koumoutsakos (2022)](/sources/bae-2022.md). It is the boundary
 condition that defines [wall-modelled LES](/methods/wall-modelled-les.md).
 
 ## Assumptions
@@ -65,6 +68,12 @@ with $Pr_t=0.9$, an ideal gas, a viscosity law and constant pressure across the
 inner layer; the boundary conditions are the wall temperature and the matching
 temperature (Griffin et al. 2023, Eq. 1.3, after Larsson et al. 2016 as they
 recall it). Two coupled nonlinear boundary-value problems must then be iterated.
+Hoy & Bermejo-Moreno (2022, §3) use the compressible equilibrium model of
+Kawai & Larsson (2012), with a mixing-length eddy viscosity, solved on a
+separate one-dimensional grid from the wall to $h_{\mathrm{wm}}$, with the
+instantaneous LES velocity, pressure and temperature at $h_{\mathrm{wm}}$ as
+top condition and an adiabatic no-slip wall; equations and constants are not
+printed.
 
 ## Algebraic forms
 
@@ -82,6 +91,17 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
   from $C^1$ continuity; walls adiabatic. Agrawal et al. (2022, §VIII) use an
   algebraic $C^1$-continuous profile in its compressible formulation in the same
   code ([CharLES](/software/charles.md)).
+- **Reichardt profile** (Gillyns et al. 2022, §3–4, Eqs. 3, 5): the
+  streamwise LES velocity at the top node of the first spectral element is
+  inserted in Reichardt's composite law (see
+  [law of the wall](/definitions/law-of-the-wall.md); $\kappa=0.38$,
+  $B=4.1$), and the root $u_\tau$ is found by an iterative method from two
+  initial guesses (algorithm not named): seven iterations on average to
+  machine precision, 0.4 % of the cost of a time step, so that the look-up
+  tables of earlier implementations are judged unnecessary (hardware not
+  given). Sampling inside the wall-adjacent element keeps the model
+  element-local and avoids inter-process communication; smooth walls, no
+  pressure-gradient term.
 - **Fitted equilibrium solution with pressure gradient** (Meneveau 2020, as
   used by Fowler et al. 2022, Eqs. 2.19–2.20, Algorithm 1): a fit returns
   $\langle u_\tau\rangle h_{\mathrm{wm}}/\nu$ from
@@ -103,6 +123,21 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | Vadrot et al. (2023b, §II.B.1) | LESGO | first point, $\Delta y/2$ | sharp filter of twice the grid spacing |
 | Griffin et al. (2023, §4) | CharLES | $0.3\delta$ (12 points per half-height) | none stated |
 | Goc et al. (2021, §2.2) | CharLES, Alya | not quantified (deferred to Lehmkuhl et al. 2018) | — |
+| Gillyns et al. (2022, §3, §5, §7) | Nek5000, spectral elements of degree 7 | top node of the first element, $y/\delta=0.063$–0.15 ($y^+=63$–153) at $Re_\tau=1000$; $y^+=260$, 520 at $Re_\tau=5200$ | exponential moving average in time, $\bar U_n=\bar U_{n-1}+\alpha_e(U_n-\bar U_{n-1})$, $\alpha_e=\Delta t/(C_t+\Delta t)$, $C_t=0.0025\,\delta/u_\tau$ (about five time steps) |
+| Hoy & Bermejo-Moreno (2022, §3) | unstructured finite volume | $0.1\delta_0$, four uniform cells below | none stated |
+| Bae & Koumoutsakos (2022, Methods) | staggered finite differences | $0.1\delta$ in the correlation analysis (Figs. 6–7) | formulation not printed ("RANS-based", coefficients "tuned for this particular case") |
+
+Gillyns et al. (2022, §5) find that without the moving average ($C_t=0$) the
+model diverges, "most likely due to the Gibbs phenomenon at the element
+boundary", that $C_t=0.0025\,\delta/u_\tau$ gives the same statistics as
+$C_t=2\,\delta/u_\tau$ with a much shorter settling time, and that the same
+value is near optimal at $Re_\tau=5200$; spanwise element-wise averaging gave
+no gain (page-local symbols $\bar U_n$, $\alpha_e$, $C_t$). "The law of the
+wall is quite robust to the input quantity, yet it still requires a minimal
+time averaging". The matching height barely matters while it stays below
+$0.15\delta$: errors grow slightly from the lowest to the highest first
+element, so a first element ending near $y^+\simeq150$ "is not necessarily
+the best choice" (§7, Table 1).
 
 The choice is tied to [log-layer mismatch](/definitions/log-layer-mismatch.md):
 matching away from the wall or filtering the input are the recalled remedies,
@@ -134,6 +169,15 @@ Goc et al. (2021, §2.2) recall the complementary bound of Bose & Park (2018):
 the equilibrium-model wall-stress error is bounded by the resolution of the
 matching location relative to the displacement or momentum thickness, even with
 pressure gradients, because the outer LES resolves the non-equilibrium effects.
+
+## Wall-stress fluctuations
+
+Bae & Koumoutsakos (2022, p. 8, Figs. 6–7) point out that in a deterministic
+wall model such as the equilibrium model the modelled wall stress is
+perfectly correlated with the LES velocity at the sampling location, whereas
+DNS gives a correlation of about 0.3, as they recall; their log-law-based
+reinforcement-learning model reproduces about 0.3 at $h_{\mathrm{wm}}=0.1\delta$
+(see [machine-learning wall models](/methods/machine-learning-wall-model.md)).
 
 ## Cost
 
@@ -168,6 +212,22 @@ model.
   the mean-velocity error reaches about 15 % in the wing–body juncture and
   about 100 % in the separated trailing-edge corner (Lozano-Durán et al. 2022,
   §V.B), which the authors partly attribute to internal (log-law) errors.
+- **Shock-induced separation.** Hoy & Bermejo-Moreno (2022) apply the model
+  to a Mach 3 impinging shock/boundary-layer interaction with a separation
+  length of 8–13 $\delta_0$, resting its validity in such non-equilibrium
+  separated flows on earlier work (Bermejo-Moreno et al. 2014, as recalled,
+  §1).
+- **Adverse pressure gradient.** The log law that the algebraic forms invert
+  ends below $0.11\delta$ once the inner-scaled pressure gradient exceeds
+  0.005 and the Rotta–Clauser parameter 4.5, and below $0.08\delta$ beyond
+  0.015 and 12 ([Knopp 2022](/sources/knopp-2022.md), §5.2); see the
+  [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md).
+  Knopp's paper targets RANS wall functions, not WMLES. By the second bound
+  a matching height of $0.1\delta$ lies above the log layer; by Knopp's
+  Eq. (35) it does so once the inner-scaled pressure gradient exceeds about
+  0.057 at $Re_\tau=1000$ and 0.0057 at $Re_\tau=2500$ *(compiler check, not in
+  the sources)*. Gillyns et al. (2022, §1) expect
+  their algebraic model to fail once Coles' wake reaches the matching point.
 - **Equilibrium as a limit.** Fowler et al. (2022, §2.2) derive the classical
   model as the limit $T_s\to0$ of their relaxation equation (page-local $T_s$,
   the relaxation time of the fluid layer below $h_{\mathrm{wm}}$); applying the
@@ -190,6 +250,10 @@ profile lies above the DNS).
   scaling in §4, while the same section attributes it to Choi & Moin (2012);
   their reference list gives the 1994 work as "Effects of the computational
   time step on numerical solutions of turbulent flow".
+- [Basile et al. (2023)](/sources/basile-2023.md) (§4.2.3) recall that the
+  LES of the PPRIME jet by Brès et al. uses an equilibrium wall model inside
+  the nozzle, which allows elements much larger than $y^+=1$, and note that
+  dof comparisons with such a computation are not like-for-like.
 - [Krais et al. (2021)](/sources/krais-2021.md) (§2.2.3, §7.3) list a wall-stress
   model after Larsson et al. and Kawai & Larsson in [FLEXI](/software/flexi.md)
   and use it with the Vreman SGS model in a zonal LES of an open cavity at
@@ -205,3 +269,8 @@ profile lies above the DNS).
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §II.B.1, Eqs. (1)–(2), Table II; §III.A; §IV.D.
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §1, Eqs. (1.1)–(1.3); §3–4, Figs. 5, 10, 13.
 - [Krais et al. (2021)](/sources/krais-2021.md) — §2.2.3; §7.3.
+- [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §1; §3–5, Eqs. (3)–(5); §7, Table 1.
+- [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §1; §3; §4.3.
+- [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — p. 8, Figs. 6–7; Methods.
+- [Knopp (2022)](/sources/knopp-2022.md) — §5.2.
+- [Basile et al. (2023)](/sources/basile-2023.md) — §4.2.3.

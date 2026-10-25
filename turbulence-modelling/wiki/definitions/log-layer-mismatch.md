@@ -5,7 +5,7 @@ description: "The shift, in wall units, between the mean velocity of a wall-mode
 status: established
 aliases: [LLM, log-layer shift, super-buffer layer error]
 tags: [wmles, wall-model, hybrid-rans-les, boundary-layer]
-timestamp: 2026-10-25T13:44:00Z
+timestamp: 2026-10-25T19:43:00Z
 ---
 
 # Log-layer mismatch
@@ -72,6 +72,9 @@ under-resolved first cells of the LES, not to the log law itself.
 | Filter the wall-model input in space (the "2Δ spatial filter" of Bou-Zeid et al. 2005) or in time and/or wall-parallel space (Yang, Park & Moin 2017) | recalled by Fowler et al. (2022, §1), who apply a "2Δ spatial filter, like that used in Bou-Zeid et al. (2005)" to $U_{\mathrm{LES}}$ (§5.1; their $\Delta$ is the matching height, the first grid point at half the wall-normal spacing); Vadrot et al. (2023b, §II.B.1, Table II) filter the input of their equilibrium model with a sharp filter of twice the grid spacing |
 | Random forcing near the wall | recalled by Vadrot et al. (2023b, §I) |
 | Stochastic forcing at the RANS/LES interface (Piomelli et al.) | recalled by Haering et al. (2022, §II): removes LLM but is problem-dependent; the SAS-F forcing of Menter et al. still showed LLM in channel flow |
+| Several cells below the matching height: $h_{\mathrm{wm}}=0.1\delta_0$ with four uniform cells below it ($\Delta y=0.25h_{\mathrm{wm}}$), "to reduce numerical errors from the LES transferred to the wall model (Kawai & Larsson, 2012) and avoid the log-layer mismatch" | [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) (§3), Mach 3 shock/boundary-layer interaction |
+| Impose the wall stress through a wall eddy viscosity, $\nu_t\rvert_w=\tau^{\mathrm m}_w/\big(\rho\,(\partial u/\partial y)_w\big)-\nu$ with no slip kept ("viscosity augmentation"), instead of a Neumann condition | [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) (Methods, Eq. 10), stated, citing earlier work, to be "better at resolving the so-called log-layer mismatch"; $\tau^{\mathrm m}_w$ the modelled wall stress (page-local) |
+| Short exponential moving average of the wall-model input in time | [Gillyns et al. (2022)](/sources/gillyns-2022.md) (§3, §5, Eq. 4), who recall Yang et al. (2017) and Fowler et al. (2022) for time filtering; without it ($C_t=0$) their wall model diverged, which they attribute "most likely" to Gibbs oscillations at the element boundary, not to the mismatch |
 | Active forcing of resolved fluctuations at the rate the modelled stress is reduced | [active model split](/methods/active-model-split.md): Haering et al. (2022, §V.A.1) report no LLM in channel flow at $Re_\tau\approx5200$ on four grids with $\Delta x^+\approx700$–$1550$ |
 
 ## First-point matching without mismatch
@@ -87,6 +90,16 @@ discretization: second-point matching for staggered finite-difference meshes,
 first-point matching for these Voronoi grids. None of them tests both on the
 same grid.
 
+A third discretization gives a similar result.
+[Gillyns et al. (2022)](/sources/gillyns-2022.md) (§3, §7, Table 1) sample the
+LES velocity at the top node of the first spectral element (polynomial degree
+7, $y^+=63$–153 at $Re_\tau=1000$; 260 and 520 at $Re_\tau=5200$), i.e. at the
+first element interface. They report mean-velocity errors (normalized RMS,
+excluding the first nodes) of 0.52–1.09 % and a mean velocity close to DNS
+"down to $y^+\simeq10$" inside the under-resolved first element, which they
+attribute to the spectral element method. They do not discuss log-layer
+mismatch by name.
+
 ## In learned wall models
 
 Learned wall models can create a mismatch of their own. Vadrot et al. (2023b,
@@ -100,6 +113,17 @@ and lowering actions stays about the same. When the neutral line lies above
 that boundary the mismatch is positive, and when it lies below, negative.
 The precision of the "raise" action correlates with the sign and size of the
 mismatch; accuracy (about 0.50 at all $Re_\tau$) and recall do not (Table III).
+
+For the reinforcement-learning model BK22 the two sources report under
+different conditions: Vadrot et al. (2023b) find a mismatch in LESGO with
+$h_{\mathrm{wm}}=dz$, while [Bae & Koumoutsakos (2022)](/sources/bae-2022.md)
+report mean profiles aligned with the log law from $Re_\tau=5200$ to $10^6$
+in their own solver with $h_{\mathrm{wm}}=2\Delta y$, a matching height several
+times larger in wall units at each common $Re_\tau$ *(compiler check, not in
+the sources)*; Vadrot et al. attribute
+the difference mainly to grid resolution. The comparison is a qualification
+on the [machine-learning wall models](/methods/machine-learning-wall-model.md)
+page, not a contradiction.
 
 ## Qualifications
 
@@ -121,3 +145,6 @@ mismatch; accuracy (about 0.50 at all $Re_\tau$) and recall do not (Table III).
 - [Fowler et al. (2022)](/sources/fowler-2022.md) — §1; §5.1.
 - [Haering et al. (2022)](/sources/haering-2022.md) — §II.A; §II (SAS-F, Piomelli et al.); §V.A.1, Figs. 2–3.
 - [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) — §II.B.
+- [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §3.
+- [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Methods, Eq. (10); Figs. 3–4.
+- [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §3, Eq. (4); §5; §7, Table 1.

@@ -5,7 +5,7 @@ description: "LES that resolves the outer-layer eddies and replaces the near-wal
 status: established
 aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-25T13:44:00Z
+timestamp: 2026-10-25T19:43:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -25,6 +25,15 @@ In the classification of Larsson et al. (2016), recalled by
 where the LES extends to the wall, are distinct from
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md), where a RANS region covers
 the inner layer. This page covers the wall-stress kind.
+[Bae & Koumoutsakos (2022)](/sources/bae-2022.md) (Introduction) draw the same
+line between hybrid LES/RANS and "wall-flux" modelling, and subdivide the
+latter into models based on the law of the wall, on the full unsteady
+three-dimensional RANS equations, and on wall-normal diffusion only (ODEs),
+plus the coefficient-free dynamic slip model. The modelled region is the inner
+layer up to about 10 % of $\delta$ ([Hoy & Bermejo-Moreno 2022](/sources/hoy-2022.md),
+§1, as recalled) or $y/\delta\lesssim0.15$ ([Gillyns et al. 2022](/sources/gillyns-2022.md),
+§1), the outer region being driven by the pressure gradient and by the stress
+propagated from the wall.
 
 ## Wall models
 
@@ -34,6 +43,13 @@ the inner layer. This page covers the wall-stress kind.
 | LaRTE | transport equation for the friction-velocity vector, relaxing towards equilibrium with the inertia of the layer below $h_{\mathrm{wm}}$; optional laminar Stokes-layer stress | [LaRTE wall model](/methods/lagrangian-relaxation-towards-equilibrium-wall-model.md) |
 | Inverse velocity transformation | incompressible ODE mapped to compressible profiles plus an algebraic temperature–velocity relation | [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md) |
 | Learned (supervised or reinforcement learning) | network maps LES state to $\tau_w$ or to its update | [machine-learning wall models](/methods/machine-learning-wall-model.md) |
+
+**How the stress reaches the LES.** Gillyns et al. (2022, §2) prescribe
+$\tau_w$ as a stress boundary condition (Nek5000's `sh` condition), which
+requires the stress formulation of the momentum equations. Bae & Koumoutsakos (2022, Methods, Eq. 10) keep
+no slip and impose the stress through a wall eddy viscosity chosen so that the
+resolved wall gradient gives the modelled stress, a choice they call better
+against [log-layer mismatch](/definitions/log-layer-mismatch.md).
 
 Fowler et al. (2022, §1) and [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md)
 (§I, §II.A) also recall zonal two-layer models on a separate RANS mesh (whose
@@ -160,6 +176,20 @@ same under-resolved first cells.
   conclude it "cannot be used alone in the context of WMLES"
   ([Vicente Cruz & Lamballais 2023](/sources/vicentecruz-2023.md), §7.4).
 
+- **Discretization dependence of the guidelines.** Gillyns et al. (2022, §1)
+  state that WMLES guidelines derived for finite differences (Larsson et al.)
+  or discontinuous Galerkin (Frère et al.) "cannot be used as such" in a
+  spectral element code, because "the modelled region is highly sensitive to
+  the discretization method". In their continuous spectral-element LES
+  (polynomial degree 7, approximate-deconvolution SGS model) the velocity is
+  continuous across elements but its gradient is not, which produces
+  Gibbs-like spikes in the fluctuation statistics at element interfaces on
+  coarse meshes; they use the spikes as a reference-free mesh-quality
+  indicator and name them the main drawback of the approach (§2, §8). Their
+  mean velocity stays within 1.1 % (normalized RMS) of DNS even inside the
+  under-resolved first element, which they attribute, without a same-mesh
+  comparison, to the spectral element method (§7, §10).
+
 Low numerical dissipation is a precondition: Goc et al. (2021, §2.3) call
 [numerical dissipation](/properties/numerical-dissipation.md) "extremely
 detrimental" for coarse LES and use kinetic-energy- and entropy-preserving
@@ -188,6 +218,30 @@ schemes ([kinetic-energy preservation](/properties/kinetic-energy-preservation.m
   pressure gradient at $Re_{\tau0}=1000$.
 - **Compressible channels** (Griffin et al. 2023, §4): $M_b=0.7$–$4$,
   $Re_\tau=320$–$1800$, 12 points per half-height.
+- **Spectral-element channel** (Gillyns et al. 2022, §5–9): algebraic
+  equilibrium model in Nek5000 against the DNS of Lee & Moser at
+  $Re_\tau=1000$ and 5200; mean-velocity errors below 1 % and fluctuation
+  errors up to about 9 % (normalized RMS), with five wall-normal elements per
+  half-height judged acceptable and four "not sufficiently resolved" at
+  $Re_\tau=1000$ (§8), the same four-element mesh being called "a fair
+  compromise between accuracy and computational cost" in §9.
+- **Shock/boundary-layer interaction over a flexible panel** (Hoy &
+  Bermejo-Moreno 2022): Mach 3 impinging shock, unit Reynolds number
+  $49.4\times10^6$ m$^{-1}$, $\delta_0=4$ mm, coupled to a finite-element
+  structural solver; finite-volume WMLES with the
+  [Vreman model](/methods/vreman-model.md), the Kawai–Larsson equilibrium
+  model at $h_{\mathrm{wm}}=0.1\delta_0$, a hybrid ENO/central scheme and
+  digital-filter inflow, on about 20 M (spanwise-periodic, $5\delta_0$) and
+  200 M (full span, $50\delta_0$) cells. WMLES is what makes the experimental
+  Reynolds number, span and duration affordable (§1, §3). Panel flexibility
+  moves separation about $3\delta_0$ upstream and lengthens the separation by
+  about 60 % ($L_{sep}/\delta_0\approx7.8\to12.6$; §4.3). The authors rest the
+  validity of the equilibrium model in this strongly separated flow on earlier
+  work (Bermejo-Moreno et al. 2014, as recalled), not on a test here.
+- **Learned wall models** (Bae & Koumoutsakos 2022): channel flow from
+  $Re_\tau=5200$ to $10^6$ at $\Delta x=\Delta z=0.05\delta$, and a zero-pressure-gradient
+  flat-plate boundary layer at $Re_\theta=1000$–7000; see
+  [machine-learning wall models](/methods/machine-learning-wall-model.md).
 
 ## Qualifications
 
@@ -196,6 +250,14 @@ schemes ([kinetic-energy preservation](/properties/kinetic-energy-preservation.m
   spacings of at most 8 %, 2 % and 5 % of $\delta$; both exceed the 0.9 M cells
   of their fine [active model split](/methods/active-model-split.md) grid. The
   estimate is theirs; no WMLES of the hill is run.
+- **WMLES against zonal DES for turbomachinery.** [François et al. (2022)](/sources/francois-2022.md)
+  (§4.1) choose [zonal detached-eddy simulation](/methods/detached-eddy-simulation.md)
+  for a fan–outlet-guide-vane stage, keeping RANS in the boundary layers
+  ($\Delta y^+\le1$ at the wall, 380 M cells), and state that the 0.5 mm
+  free-shear cell size needed for the fan wakes "would require a larger
+  number of cells in the whole mesh with a WMLES approach". The claim is not
+  backed by a cost comparison in the source; they recall WMLES of fan stages
+  by others.
 - Locators of Lozano-Durán et al. (2022) refer to the arXiv v1 preprint read, not the AIAA Journal version.
 
 # Citations
@@ -209,3 +271,7 @@ schemes ([kinetic-energy preservation](/properties/kinetic-energy-preservation.m
 - [Haering et al. (2022)](/sources/haering-2022.md) — §II; §V.B.
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §7.4, Fig. 28.
 - [Krais et al. (2021)](/sources/krais-2021.md) — §7.3, Fig. 27.
+- [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Introduction; Methods, Eq. (10); Figs. 3–5.
+- [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §1–2; §5–10, Tables 1–3.
+- [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §1; §3; §4.3.
+- [François et al. (2022)](/sources/francois-2022.md) — §1; §4.1.

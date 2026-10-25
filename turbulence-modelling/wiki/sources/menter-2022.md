@@ -126,7 +126,7 @@ volume or pages; none is unparseable and no printed duplicate was found.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
 
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)

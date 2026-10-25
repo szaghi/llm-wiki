@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Vreman model"
-description: "Vreman's static eddy-viscosity model builds the subgrid viscosity from an invariant of the resolved velocity-gradient tensor so that it vanishes in many laminar flows; the sources give its form and report its use in aircraft LES, burner LES and cavity noise, and its failure to separate on the Gaussian bump."
+description: "Vreman's static eddy-viscosity model builds the subgrid viscosity from an invariant of the resolved velocity-gradient tensor so that it vanishes in many laminar flows; the sources give its form and report its use in aircraft, burner, cavity-noise, jet and shock-interaction LES, and its failure to separate on the Gaussian bump."
 status: established
 aliases: [Vreman eddy-viscosity model, Vreman (2004) model, static-coefficient Vreman model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-25T19:44:00Z
 ---
 
 # Vreman model
@@ -68,6 +68,23 @@ vanish at walls without damping.
   agreeing with Iyer & Malik, who are recalled to find no separation with
   Vreman up to 450 million control volumes.
 
+- **Shock/boundary-layer interaction over a flexible panel.**
+  [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) (§3) use the Vreman
+  model in a compressible finite-volume wall-modelled LES on unstructured
+  hexahedra in arbitrary Lagrangian–Eulerian form, with the Kawai–Larsson
+  equilibrium wall model, hybrid ENO/central second-order numerics and a
+  digital-filter inflow, coupled to a finite-element panel solver for a
+  Mach 3 oblique-shock interaction ($Re_\infty=49.4\times10^6$ m$^{-1}$,
+  $\delta_0=4$ mm, about 20 million cells spanwise-periodic). No formula or
+  constant of the model is printed. See [wall-modelled LES](/methods/wall-modelled-les.md).
+- **Jet reference LES.** Among the reference simulations of the PPRIME
+  $M_j=0.9$ round jet listed by [Basile et al. (2023)](/sources/basile-2023.md)
+  (Table 1), the LES of Brès et al. uses the Vreman model with a
+  second-order finite-volume scheme on 16 and 69 million cells, with
+  turbulent injection in the nozzle; Basile et al. note that dof
+  comparisons with it are not like-for-like, because it uses a wall model
+  and turbulent injection (§4.2.3).
+
 ## Fluctuating viscosity and the mean stress
 
 [Haering et al. (2022)](/sources/haering-2022.md) (§V D) list Vreman with
@@ -83,3 +100,5 @@ computed and subtracted from the mean-stress model.
 - [Domingo & Vervisch (2023)](/sources/domingo-2023.md) — §3.1.
 - [Krais et al. (2021)](/sources/krais-2021.md) — §2.2.3; §7.3, Fig. 27.
 - [Haering et al. (2022)](/sources/haering-2022.md) — §V D.
+- [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §3.
+- [Basile et al. (2023)](/sources/basile-2023.md) — §4.2.3, Table 1.

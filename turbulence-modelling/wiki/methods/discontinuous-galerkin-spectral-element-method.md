@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Discontinuous Galerkin spectral element method"
-description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra with Legendre–Gauss or Gauss–Lobatto nodes; this page states its weak and strong forms, the SBP property, its cost per degree of freedom and how its interface dissipation shapes LES on it."
+description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra with Legendre–Gauss or Gauss–Lobatto nodes; this page states its weak and strong forms, the SBP property, modal filtering and filtered artificial viscosity, its cost per degree of freedom, how interface dissipation shapes LES on it, and modal hp-adaptive relatives."
 status: established
 aliases: [DGSEM, nodal discontinuous Galerkin, collocation DG, DG spectral element method]
-tags: [dg, numerical-dissipation, kinetic-energy-preserving, les, dns]
-timestamp: 2026-10-25T13:42:00Z
+tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns]
+timestamp: 2026-10-25T19:47:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -20,8 +20,10 @@ interface flux $f^*$ (an approximate Riemann solver), and viscous terms
 through a lifting procedure. It is the discretization of the
 [FLEXI](/software/flexi.md) framework derived in full by
 [Krais et al. (2021)](/sources/krais-2021.md), the baseline of the
-kinetic-energy-preserving LES of [Flad & Gassner (2017)](/sources/flad-2017.md)
-and of the learned closures of [Beck & Kurz (2023)](/sources/beck-2023.md).
+kinetic-energy-preserving LES of [Flad & Gassner (2017)](/sources/flad-2017.md),
+of the learned closures of [Beck & Kurz (2023)](/sources/beck-2023.md) and
+of the entropy-stable spectral vanishing viscosity of
+[Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md).
 
 ## Approximation on curvilinear hexahedra
 
@@ -36,7 +38,8 @@ and the differentiation matrix is $D_{ij}=\ell_j'(\xi_i)$ (Krais et al. 2021,
 contravariant metric terms $\mathcal J\boldsymbol a^i$; Krais et al. (2021,
 Eq. 4) compute them in the **curl form**, which satisfies the discrete metric
 identities, the condition they state (citing Kopriva) for free-stream
-preservation on curved meshes.
+preservation on curved meshes; Mateo-Gabín et al. (2022, §3) use the same
+conservative Kopriva form for the same reason.
 
 Because the nodes are collocated with Gauss-type quadrature, the mass matrix is
 diagonal, $M=\mathrm{diag}(w_0,\dots,w_N)$ in one direction. For LG nodes the
@@ -63,11 +66,15 @@ Gassner).
 On LGL nodes the strong-form DGSEM has the **summation-by-parts (SBP)**
 property
 $$(MD)+(MD)^{\mathsf T}=B,\qquad B=\mathrm{diag}(-1,0,\dots,0,1)$$
-(Flad & Gassner 2017, Eq. 9). It is the property that lets the volume term be
-rewritten with a symmetric two-point flux $f^{\#}$, the split-form DG
-described on [kinetic-energy preservation](/properties/kinetic-energy-preservation.md);
+(Flad & Gassner 2017, Eq. 9; Mateo-Gabín et al. 2022, Eq. 47, write it with
+the mass matrix $P$ and $Q=PD$, $Q+Q^{\mathsf T}=B$). It is the property that
+lets the volume term be rewritten with a symmetric two-point flux $f^{\#}$,
+the split-form DG described on [kinetic-energy preservation](/properties/kinetic-energy-preservation.md);
 both Flad & Gassner (2017, §2.1) and Krais et al. (2021, §3.3) call the LGL
-variant essential for it.
+variant essential for it. Mateo-Gabín et al. (2022, §3, Eq. 51) use the
+three-dimensional form with the Pirozzoli flux (kinetic-energy preserving)
+or the Chandrashekar flux (entropy conserving), and gradients of the entropy
+variables as the lifted unknowns.
 
 ## Viscous terms
 
@@ -81,6 +88,11 @@ controlled by a constant $\eta_{BR}\ge1$; Flad & Gassner (2017, §2.1, App. E)
 use $\eta_{BR}=2$ as one of their small-scale damping strategies and
 $\eta_{BR}=1$ in the interior with $\eta_{BR}=40$ at the walls of their channel,
 where weakly imposed wall conditions otherwise give too-large wall velocities.
+Mateo-Gabín et al. (2022, §3, Eq. 57; §5.1, Eq. 115) treat physical and
+artificial viscous fluxes alike with BR1 and show that the interior-face
+contributions of both then vanish from the discrete entropy balance; with
+their wall treatment (Eqs. 58–61) the adiabatic-wall contributions vanish
+too.
 
 ## Non-linear stability: de-aliasing or split form
 
@@ -98,6 +110,75 @@ produces aliasing. Two remedies appear in the sources:
   de-aliasing into the volume term. Flad & Gassner (2017, §6.1) state that it
   costs at least three times less than polynomial de-aliasing in their
   in-house code (no timing given).
+
+## Modal filtering and filtered artificial viscosity
+
+**Nodal–modal transforms.** On LGL nodes the nodal values $Q_i$ of a degree-$N$
+polynomial and its Legendre coefficients $Q^{(m)}_j$ are related by a
+forward matrix $\mathcal V^{-1}$ and a backward (Vandermonde) matrix
+$\mathcal V$ that are exact inverses, and the collocated quadrature satisfies
+a **discrete Parseval identity**
+$$\sum_{i=0}^{N}w_iU_iV_i=\sum_{j=0}^{N}\|\mathcal P_j\|_N^2\,U^{(m)}_jV^{(m)}_j,$$
+with $\mathcal P_j$ the Legendre polynomials and $\|\cdot\|_N$ the discrete
+norm, exact except for $j=N$, which needs only to be positive
+(Mateo-Gabín et al. 2022, §4.1, Properties 1–3, Eqs. 72–78; page-local
+$\mathcal V$, $\mathcal P_j$, $Q^{(m)}_j$). A modal filter with
+coefficients $\varphi_j$ (page-local) is the nodal matrix
+$\mathcal H=\mathcal V\,\mathrm{diag}(\varphi_j)\,\mathcal V^{-1}$ (Eq. 81),
+and Parseval gives their Theorem 1,
+$$\sum_iw_iQ_i(\mathcal HQ)_i=\sum_j\|\mathcal P_j\|_N^2\,\varphi_j\,(Q^{(m)}_j)^2\ge0\quad\text{for }\varphi_j\ge0,$$
+extended to tensor-product hexahedra in Theorem 2 and Property 4 (§4.2). A
+tensor-product kernel $\varphi_{ijk}=\varphi_i\varphi_j\varphi_k$ is applied
+as three one-dimensional products, which the authors count as $3(N+1)$
+operations against $(N+1)^3$ for a general kernel (Eqs. 95–96).
+
+**Filtered artificial viscosity.** Mateo-Gabín et al. (2022, §5) add an
+artificial dissipative flux written as a symmetric positive semi-definite
+matrix times the gradient $G$ of the entropy variables, and filter it so that
+its dissipation stays non-negative by placing the filter between the two
+halves of a symmetric factorization. For a scalar coefficient times a
+constant matrix, $\mathcal B_a=\mu_a\mathcal C$,
+$$F_a^{\mathcal H}=\sqrt{\mu_a/\mathcal J}\;\mathcal C\;\mathcal H\big(\sqrt{\mathcal J\mu_a}\,G\big),$$
+and for a general matrix factored as $\mathcal B_a=\mathcal R^{\mathsf T}\mathcal D\mathcal R$
+(Cholesky, $\mathcal D$ diagonal and non-negative) the filter acts on
+$\sqrt{\mathcal J\mathcal D}\,\mathcal R\,G$ (Eqs. 101–102; page-local
+$\mathcal C$, $\mathcal R$, $\mathcal D$, $G$). The filtered flux replaces the
+artificial flux in volume and surface terms; with BR1 the volume dissipation
+is non-negative by Property 4, the interface and adiabatic-wall terms vanish,
+and the semi-discrete scheme is **entropy stable** for the thermodynamic
+entropy, or kinetic-energy stable up to the pressure work (Eqs. 109–118; see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+With a high-pass kernel this is a
+[spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md) of
+the explicit modal-filter kind, which the authors present as an entropy-stable
+modification of the Smagorinsky–SVV of Manzanero et al. (2020).
+
+**Where the filter acts.** A von Neumann analysis of linear
+advection–diffusion with $N=7$, upwind interface flux, BR1 and the kernel
+$\varphi_j=(j/N)^{P_{\mathrm{SVV}}}$ (after Moura et al.; $P_{\mathrm{SVV}}$
+page-local) shows that the exponent acts mainly at low wavenumbers, where
+the SVV supplies almost all the dissipation, whereas at other wavenumbers
+the added viscosity is smaller than the dissipation of the Riemann solver
+(Mateo-Gabín et al. 2022, §5.2, Figs. 2–3). $P_{\mathrm{SVV}}=0$ recovers the
+unfiltered viscous operator.
+
+**Shock capturing by artificial viscosity.** Entropy-conserving split forms
+alone are not robust at shocks, because entropy stability presupposes
+positive density, which oscillations near shocks can violate (Mateo-Gabín et
+al. 2022, §1). Their remedy adds the Guermond–Popov regularization flux
+(density diffusion carried consistently into momentum and energy, plus a
+viscosity), written in entropy variables with a non-negative Cholesky
+diagonal whenever $\rho,p\ge0$ (§2.2.3, App. D), SVV-filtered and switched by
+an element-wise density-gradient sensor. On the Chandrashekar split form
+with matrix-dissipation Roe interface flux it reproduces the Shu–Osher
+problem with 50 to 100 elements at $N=5$ and $N=8$, and captures the main
+shock of a Mach 3 forward-facing step within one element on an unstructured
+mesh of 3653 quadrilaterals at $N=7$ (§6.2–6.3, Figs. 5–7). They contrast it
+with order-lowering approaches such as the
+[subcell finite-volume](/methods/subcell-finite-volume-shock-capturing.md)
+schemes. The choice of $P_{\mathrm{SVV}}$ has no systematic rule: $O(1)$
+suits supersonic flow, about $10^{-2}$ turbulent flow, and the admissible
+range is found by trial and error (App. A, Fig. 8).
 
 ## Cost per degree of freedom
 
@@ -146,11 +227,31 @@ an explicit Smagorinsky model ($C_s=0.12$) succeeds at $48^3$ (§4). Beck & Kurz
 freedom per direction that the no-model LES is the best of their reference
 closures for $N=3$ and degrades as $N$ grows to 5 and 8.
 
+**SVV-filtered explicit model.** Mateo-Gabín et al. (2022, §6.1, Fig. 4) run
+the inviscid [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) on
+$8^3$ elements at $N=8$ with the Pirozzoli split form and a low-dissipation
+Roe flux, taking the artificial viscosity from a
+[Smagorinsky model](/methods/smagorinsky-model.md) with $C_s=0.2$ (the
+magnitude of the strain rate is not defined further) and filtering it with
+the high-pass SVV kernel above. Unfiltered ($P_{\mathrm{SVV}}=0$) the model
+is excessively dissipative; $P_{\mathrm{SVV}}\approx0.1$ gives a spectrum
+close to $k^{-5/3}$ over most resolved wavenumbers at $t=20$ and leaves the
+highest modes almost unchanged, the SVV acting on low-to-medium
+wavenumbers. Their reference for the dissipation rate is the viscous
+$Re=1600$ computation of van Rees et al. on $768^3$ points, while their own
+test is inviscid; during the first five time units the scheme dissipates
+less than the reference, then reaches a comparable level (Fig. 4a).
+
 **Filter width.** A DG element of volume $V_e$ carries $N+1$ nodes per
 direction; Beck & Kurz (2023, Eq. 11) set $\Delta=V_e^{1/3}/(N+1)$ and stress
 that the choice is not unique (nodes are not equidistant, elements may be
-skewed). Flad & Gassner (2017, App. A) print the filter width as the cell
-volume divided by $(N+1)^3$ (see Qualifications).
+skewed). Mateo-Gabín et al. (2022, Eq. 125) print the same width as
+$\Delta^3=V_e/(N+1)^3$, and Basile et al. (2023, §2.2) use
+$\Delta=|K|^{1/3}/(N+1)$ as the subgrid length of their DG
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) on
+tetrahedra, with $|K|$ the element volume, instead of the largest cell
+dimension of classical DES. Flad & Gassner (2017, App. A) print the filter
+width as the cell volume divided by $(N+1)^3$ (see Qualifications).
 
 **Resolution per wavelength.** Flad & Gassner (2017, §1, §3) estimate the
 resolved wavenumber with 3 points per wavelength (optimistic) and state the
@@ -171,6 +272,33 @@ sides and $L^2$ projection of their fluxes back to the large side. The flux
 reconstruction scheme used with [PANS](/methods/partially-averaged-navier-stokes.md)
 by Dzanic et al. (2022) is described there as a generalization of nodal DG.
 
+**Modal DG on simplices and hp-adaptation.** Basile et al. (2023, §2.1) use
+the modal DG solver CODA (Airbus, ONERA, DLR) on hybrid prism/tetrahedron
+meshes: a hierarchical basis orthonormalized by modified Gram–Schmidt in each
+element (so the mass matrix is diagonal and the degree-$N$ basis contains the
+degree-$(N-1)$ one), a Roe flux with a Harten-type entropy fix, BR1 viscous
+terms, Gauss–Legendre quadrature on hexahedra and Witherden–Vincent rules on
+simplices, and a three-stage explicit Runge–Kutta scheme. It is not a DGSEM
+(no collocation, no tensor product), but the hierarchical basis gives the
+modal content per degree directly, which drives their
+[hp-adaptation](/methods/mesh-adaptation.md) for hybrid RANS/LES of a
+Mach 0.9 jet: an error estimator summing the energy of the highest modal
+level and the inter-element momentum jumps, and a smoothness indicator
+$\sigma$ fitted to the decay of modal energy with degree,
+$E^{(q)}\simeq Cq^{-\sigma}$, with elements p-enriched when $\sigma>5/3$
+(the inertial-range slope) and h-refined otherwise (§3.1–3.2, Eqs. 8–12;
+page-local $E^{(q)}$, $q$, $\sigma$). They argue that a DG discretization
+has two cut-off wavenumbers, that of the mesh and that of the full
+discretization, between which the element spectrum lies (§3.2); that pure
+p-adaptation on fixed meshes needs very high degrees, which complicates load
+balancing, raises the cost per degree of freedom and risks instabilities
+from aliasing or too little numerical dissipation (§1); and, citing earlier
+Taylor–Green tests, that high-order DG resolves turbulence better
+than low order at equal degrees of freedom (§4.2.1). Their coarse meshes
+show spurious peaks of the r.m.s. velocity on the jet axis, which they
+attribute to the inter-element discontinuities of DG on coarse elements and
+to poor sampling, and which decrease with adaptation (§4.2.3, Fig. 10).
+
 ## Qualifications
 
 - **Weak-form differentiation matrix.** Krais et al. (2021, Eq. 31) print
@@ -182,7 +310,21 @@ by Dzanic et al. (2022) is described there as a generalization of nodal DG.
   cell volume divided be $(N+1)^3$", which is a volume, not a length; the cube
   root of that ratio, which coincides with Beck & Kurz's (2023)
   $V_e^{1/3}/(N+1)$, is the dimensionally consistent reading *(compiler check,
-  not in the sources)*.
+  not in the sources)*. Mateo-Gabín et al. (2022, Eq. 125) print exactly this
+  reading, $\Delta^3=V_e/(N+1)^3$.
+- Mateo-Gabín et al. (2022) print the Smagorinsky viscosity as
+  $\mu_a=C_s^2\Delta^2|S|$ with no density factor (Eq. 125); they print the switching rule of the
+  forward-facing step with the one-dimensional sensor $s_1$ although they
+  define the two-dimensional sensor $s_2$ for it (§6.3); and they call the
+  first five non-dimensional time units of the Taylor–Green vortex "the first
+  five seconds" (§6.1). The version read is the arXiv v3 preprint.
+- Basile et al. (2023, Eq. 18) print the degree update of p-enriched
+  elements as $\max(N_K+1,N_{\max})$; with their marking condition
+  $N_K+1\le N_{\max}$ (Eqs. 15–16) this always returns $N_{\max}$ and
+  leaves the argument $N_K+1$ without effect, whereas
+  $\min(N_K+1,N_{\max})$ would raise the degree by one step
+  *(compiler check, not in the sources)*. The version read is the HAL
+  author manuscript.
 - The 40% applicability plateau is inferred by Flad & Gassner (2017) from two
   resolutions of one test case at $N=7$; the authors present it as a
   finding, not a bound.
@@ -195,3 +337,5 @@ by Dzanic et al. (2022) is described there as a generalization of nodal DG.
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — §1 (DG implicit LES, applicability plateau); §2.1, Eqs. (4)–(12) (LGL DGSEM, SBP, de-aliasing, split form); §3.1, §4, §6.1; App. A, App. E (BR2 at walls).
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §III A, Eqs. (7)–(8) (DGSEM in FLEXI); Eq. (11) (filter width); §IV A (resolution limit); §V A–B (no-model LES against $N$, face-localized dissipation).
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §2.2 (flux reconstruction as a generalization of nodal DG).
+- [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §1; §2.2–2.3 (entropy-stable artificial fluxes, Guermond–Popov); §3, Eqs. (39)–(61) (LGL DGSEM, SBP, split form, BR1, walls); §4, Eqs. (72)–(100) (modal filtering, Parseval, Theorems 1–2); §5, Eqs. (101)–(122) (filtered artificial viscosity, entropy stability, von Neumann analysis); §6, Eqs. (123)–(128), Figs. 4–7 (TGV, Shu–Osher, forward-facing step); App. A.
+- [Basile et al. (2023)](/sources/basile-2023.md) — §1; §2.1–2.2 (modal DG in CODA, DG length scale); §3.1–3.2, Eqs. (8)–(12) (error and smoothness indicators); §4.2.1, §4.2.3 (degree-of-freedom distribution, interface peaks).

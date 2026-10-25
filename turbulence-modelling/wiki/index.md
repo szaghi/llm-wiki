@@ -20,8 +20,8 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunk 1 of 7 ingested (20 of the 131 sources present on
-2026-10-25; the archive is still growing). Chunk 1 holds the reviews and the
+**Corpus:** chunks 1–2 of 7 ingested (40 of the 132 sources planned; the
+archive is still growing). Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
 [Duraisamy (2021)](/sources/duraisamy-2021.md), the MHD turbulence review of
@@ -46,6 +46,15 @@ discretization- and divergence-consistent learned closures
 ([Beck & Kurz 2023](/sources/beck-2023.md),
 [Agdestein & Sanderse 2025](/sources/agdestein-2025.md)) and
 Spalart–Allmaras corrections ([Li & Liu 2022](/sources/li-2022.md)).
+Chunk 2 (2021–2023 papers): SGS models on anisotropic grids and the
+clipping of structural models, PANS for Rayleigh–Taylor mixing, adaptive
+and adjoint-based mesh adaptation, hybrid RANS/LES and zonal DES of jets
+and turbomachinery, transition at low Reynolds number, wall models in
+Nek5000 and adverse pressure gradient, data-driven SA corrections,
+high-order gas-kinetic schemes, entropy-stable SVV for DG, DNS of
+supersonic and hypersonic boundary layers, reinforcement-learning wall
+models, and turbulent dynamos in galaxy and interstellar-medium
+simulations.
 
 ## Reading guide
 
@@ -70,6 +79,7 @@ Spalart–Allmaras corrections ([Li & Liu 2022](/sources/li-2022.md)).
 [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md),
 [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md);
 [energy backscatter](/definitions/energy-backscatter.md);
+[gradient model and clipping](/methods/gradient-model.md);
 [implicit LES](/definitions/implicit-les.md) and
 [numerical dissipation](/properties/numerical-dissipation.md).
 
@@ -81,13 +91,15 @@ Spalart–Allmaras corrections ([Li & Liu 2022](/sources/li-2022.md)).
 [compressible velocity transformations](/definitions/compressible-velocity-transformation.md) and the
 [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md),
 [machine-learning wall models](/methods/machine-learning-wall-model.md);
+[wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md),
 [log-layer mismatch](/definitions/log-layer-mismatch.md),
 [boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md).
 
 **5. Hybrid RANS/LES.**
 [Hybrid RANS/LES](/definitions/hybrid-rans-les.md) →
 [partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md),
-[active model split](/methods/active-model-split.md).
+[active model split](/methods/active-model-split.md),
+[detached-eddy simulation](/methods/detached-eddy-simulation.md).
 
 **6. Data-driven closures.**
 [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md) →
@@ -96,14 +108,19 @@ Spalart–Allmaras corrections ([Li & Liu 2022](/sources/li-2022.md)).
 [model-consistent training](/methods/model-consistent-training.md),
 [reinforcement-learning closures](/methods/reinforcement-learning-closure.md);
 [discretization-consistent closure](/definitions/discretization-consistent-closure.md),
-[divergence-consistent LES](/methods/divergence-consistent-les.md).
+[divergence-consistent LES](/methods/divergence-consistent-les.md);
+[mesh adaptation](/methods/mesh-adaptation.md).
 
 **7. Discretizations and codes for scale-resolving simulation.**
 [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md),
 [kinetic-energy preservation](/properties/kinetic-energy-preservation.md),
-[subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md);
+[subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md),
+[high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md);
 codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
-[LESGO](/software/lesgo.md).
+[LESGO](/software/lesgo.md), [elsA](/software/elsa.md),
+[RAMSES](/software/ramses.md). Compressible wall turbulence:
+[Morkovin's hypothesis and Reynolds analogies](/definitions/morkovin-hypothesis.md),
+[attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md).
 
 **8. Benchmarks.**
 [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md),
@@ -111,7 +128,10 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md),
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md),
 [JAXA Standard Model](/benchmarks/jaxa-standard-model.md),
-[NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md).
+[NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md),
+[turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md),
+[backward-facing step](/benchmarks/backward-facing-step.md),
+[Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md).
 
 **9. MHD turbulence.**
 [Reduced MHD and Elsasser variables](/definitions/reduced-mhd.md) →
@@ -119,7 +139,8 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [dynamic alignment](/properties/dynamic-alignment.md) →
 [tearing-mediated turbulence](/results/tearing-mediated-mhd-turbulence.md);
 [decaying MHD turbulence](/results/decaying-mhd-turbulence.md),
-[small-scale dynamo](/results/small-scale-dynamo.md).
+[small-scale dynamo](/results/small-scale-dynamo.md),
+[subgrid turbulent dynamo model](/methods/subgrid-turbulent-dynamo-model.md).
 
 ## Catalog
 

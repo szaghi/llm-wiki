@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Hybrid RANS/LES"
-description: "Scale-resolving approaches that model all turbulence with RANS in some regions or limits and resolve part of it as in LES elsewhere; the distinction from wall-modelled LES, the three operating modes and unified against interfaced transitions, and the deficiencies the sources identify, modelled-stress depletion first."
+description: "Scale-resolving approaches that model all turbulence with RANS in some regions or limits and resolve part of it as in LES elsewhere; the distinction from wall-modelled LES, the operating modes and unified against interfaced transitions, the deficiencies the sources identify (modelled-stress depletion, grid measures, grid changes), and applications."
 status: established
 aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-25T13:47:00Z
+timestamp: 2026-10-25T19:45:00Z
 ---
 
 # Hybrid RANS/LES
@@ -53,6 +53,27 @@ High-Lift Prediction Workshop delayed detached-eddy simulation was among the
 few unsteady techniques submitted next to the dominant steady RANS
 ([Goc et al. (2021)](/sources/goc-2021.md), §1).
 
+Bae & Koumoutsakos (2022) draw the line differently: they list hybrid
+LES/RANS, with RANS near the wall, LES outside and the interface set
+implicitly by the change of model, as one of two families of wall-modelled
+LES, the other being wall-flux models that replace the no-slip condition by
+a modelled wall stress ([Bae & Koumoutsakos (2022)](/sources/bae-2022.md),
+p. 2).
+
+Where the whole boundary layer stays in RANS, the grid need only resolve
+the free shear regions. François et al. (2022) use this argument for a
+zonal detached-eddy simulation of a turbofan fan stage at a Reynolds number
+of about one million, whose cost they call "much less dependent on the
+Reynolds number" than that of wall-resolved or wall-modelled LES (§1); they
+assert, without a cost comparison, that their 0.5 mm free-shear cells would
+need more cells with wall-modelled LES ([François et al. (2022)](/sources/francois-2022.md),
+§4.1). Hoy & Bermejo-Moreno (2022) recall, for shock/boundary-layer
+interaction, that RANS cannot predict strong separation and its
+low-frequency dynamics while DNS and wall-resolved LES are too expensive
+for the long integration times needed, and that the experiment they compute
+had been simulated with a dynamic hybrid RANS/LES by Zope et al.
+([Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md), §1).
+
 ## How hybrids operate
 
 Haering et al. (2022, §I) sort HRL methods into three modes:
@@ -61,8 +82,8 @@ Haering et al. (2022, §I) sort HRL methods into three modes:
    fluctuations can develop (e.g. the flow-simulation methodology);
 2. carry distinct RANS and LES models and blend their modelled stresses;
 3. carry a single model that switches internally between RANS-like and
-   LES-like operation, as detached-eddy simulation (DES), "the most
-   ubiquitous HRL approach", does.
+   LES-like operation, as [detached-eddy simulation](/methods/detached-eddy-simulation.md)
+   (DES), "the most ubiquitous HRL approach", does.
 
 The switch between modes is either *unified*, responding to local model or
 flow parameters and a grid measure, or *interfaced*, prescribed ab initio.
@@ -78,6 +99,23 @@ $f_k$ of the kinetic energy, moves the same transport equations between RANS
 ($f_k=1$) and DNS. The [active model split](/methods/active-model-split.md)
 method of Haering et al. is a two-model method with no blending function at
 all.
+
+Abe's anisotropy-resolving hybrid (HLR) is a two-model blend of the second
+kind: a one-equation nonlinear eddy-viscosity RANS model and the stabilized
+mixed subgrid model are combined as
+$\phi=(1-f_{hb})\phi_{\mathrm{RANS}}+f_{hb}\phi_{\mathrm{LES}}$, with
+$f_{hb}=1-\exp\{-(C_{hb}l_{KL}/\Delta)^3\}$ and $l_{KL}$ a RANS length built from
+$k^{3/2}/\varepsilon$ with near-wall damping (page-local symbols), so that
+$f_{hb}\to1$, pure LES, as the grid is refined; on the backward-facing-step
+grids of Abe (2021) it runs essentially as LES
+([Abe (2021)](/sources/abe-2021.md), §III, App. A, Eqs. A1–A4; see
+[scale-similarity and mixed models](/methods/scale-similarity-model.md)).
+In Haering et al.'s terms, zonal DES is interfaced where the user prescribes
+the zones (modes 1 and 3, as Basile et al. recall) and unified where a
+shielding function detects them (mode 2) *(compiler check, not in the
+sources)*; Basile et al. (2023) force RANS inside a jet nozzle
+and François et al. (2022) in the core flow of a fan stage
+([Basile et al. (2023)](/sources/basile-2023.md), §2.2).
 
 ### Mean-and-fluctuation splitting
 
@@ -127,6 +165,13 @@ formulations.
    overestimates the resolution; cell-diagonal measures are preferable, and
    resolution indicators should account for the anisotropy of both the grid
    and the resolved turbulence (§II C).
+   Abe (2021) supplies LES evidence for the first half: on a shear layer
+   resolved by cells with $\Delta x/\Delta y\sim100$, subgrid models using the
+   cube root are "clearly suppressed" and lengthen the separation bubble,
+   while $\max(\Delta x,\Delta y,\Delta z)$ gives reasonable eddy viscosities
+   (§IV C–D, Figs. 9–11). In detached-eddy simulation the grid length differs
+   by variant (see the table on the DES page); Basile et al. (2023) divide
+   the cube root by $N+1$ on a high-order DG discretization (§2.2).
 4. **RANS transport equations fed with fluctuating quantities.** Nonlinear
    sources calibrated on mean quantities, such as the $\varepsilon$
    destruction $C_{\varepsilon2}\varepsilon^2/k$, acquire spurious correlations
@@ -138,12 +183,44 @@ formulations.
    and its symptoms are masked by numerical dissipation, coefficient tuning
    or averaging (§II D, Eqs. 1–2).
 
+**Grid changes perturb the turbulence.** Because the grid sets the split
+between modelled and resolved turbulence, Mozaffari et al. (2022) show
+with a DES of decaying turbulence crossing a fine-to-coarse interface that
+the drop of resolved energy is never compensated by the slower decay of
+modelled energy, so "a single change in mesh size causes a lasting
+perturbation of the turbulence"; from "a mesh designer's perspective" they
+conclude that mesh-size changes should be avoided, and adapt meshes on
+time-averaged criteria so that the mesh converges to a static one
+([Mozaffari et al. (2022)](/sources/mozaffari-2022.md), §1, Fig. 1, §3; see
+[mesh adaptation](/methods/mesh-adaptation.md)).
+
 Dzanic et al. (2022) stress the numerical side: the excessive dissipation of
 low-order schemes harms the modelled physics of hybrid simulations more than
 RANS, and they find that raising the order of a flux-reconstruction
 discretization at fixed degrees of freedom benefits PANS proportionally more
 than [implicit LES](/definitions/implicit-les.md) (§1, §4; see
 [numerical dissipation](/properties/numerical-dissipation.md)).
+
+## Evidence from applications
+
+- **Transitional Rayleigh–Taylor mixing.** With variable-density PANS
+  (BHR closure), RANS ($f_k=1$) overpredicts mixing, with a growth rate
+  $\alpha_b=0.043$ against 0.025 of the unmodelled reference, and even
+  disturbs the laminar linear regime; with $f_k\le0.35$ and a suitable choice
+  of the other resolution parameters PANS reproduces the reference
+  ($\alpha_b=0.024$ at $f_k=0.25$); the minimum resolution is set by the need
+  to resolve the bubbles and spikes that trigger turbulence ([Pereira et al. (2021)](/sources/pereira-2021.md),
+  §IV.2, Table II, §V; see [PANS](/methods/partially-averaged-navier-stokes.md)
+  and [Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md)).
+- **Turbomachinery and jets.** Zonal DES of a fan stage matches hot-wire
+  mean and RMS profiles where RANS fails in the tip gap (François et al.
+  2022, §5.3–5.4); zonal DES on $hp$-adaptive DG reproduces a subsonic jet
+  with fewer degrees of freedom than finite-volume references (Basile et al.
+  2023, §4.2.3). Details on the
+  [DES page](/methods/detached-eddy-simulation.md).
+- **Separated and vortical flows.** IDDES of a backward-facing step and
+  DDES-SST of a ship hull and a delta wing on adapted meshes (Mozaffari et
+  al. 2022, §4–§5).
 
 ## Qualifications
 
@@ -160,3 +237,10 @@ than [implicit LES](/definitions/implicit-les.md) (§1, §4; see
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §1, §4.
 - [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) — §I.
 - [Goc et al. (2021)](/sources/goc-2021.md) — §1.
+- [Abe (2021)](/sources/abe-2021.md) — §III, App. A Eqs. A1–A4, §IV C–D Figs. 9–11.
+- [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — p. 2.
+- [Basile et al. (2023)](/sources/basile-2023.md) — §2.2, §4.2.3.
+- [François et al. (2022)](/sources/francois-2022.md) — §1, §4.1, §5.3–5.4.
+- [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §1.
+- [Mozaffari et al. (2022)](/sources/mozaffari-2022.md) — §1 Fig. 1, §3, §4–§5.
+- [Pereira et al. (2021)](/sources/pereira-2021.md) — §IV.2 Table II, §V.

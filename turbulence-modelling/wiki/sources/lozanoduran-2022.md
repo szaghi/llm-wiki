@@ -151,7 +151,7 @@ title; [33] prints its issue as "No. 1970".
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
 
 - [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)

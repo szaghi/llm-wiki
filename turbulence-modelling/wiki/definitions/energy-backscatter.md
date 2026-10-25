@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Energy backscatter and the subgrid energy flux"
-description: "Energy backscatter is a negative local subgrid energy flux, energy moving from subgrid to resolved scales; the sources define the flux, show that its local sign depends on the gauge of the subgrid stress and on the filter, and disagree in emphasis on whether models must reproduce it."
+description: "Energy backscatter is a negative local subgrid energy flux, energy moving from subgrid to resolved scales; the sources define the flux, show that its local sign depends on the gauge of the subgrid stress and on the filter, and disagree in emphasis on whether models must reproduce it or remove it for stability."
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-25T19:45:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -93,11 +93,52 @@ $\int(-2\nu_t\bar S_{ij}-\tau_{ij})^2\,dV$ pointwise gives
 
 $$\nu_t^{\mathrm{opt}}=-\frac{\tau_{ij}\bar S_{ij}}{2\bar S_{ij}\bar S_{ij}}=\frac{\Pi}{\lvert\bar S\rvert^2},\qquad \nu_t^{\mathrm{opt}}\lvert\bar S\rvert^2=\Pi$$
 
-*(translation: compiler check, not in the sources)*. It is gauge-dependent:
+*(compiler check, not in the sources)*. It is gauge-dependent:
 negative over a large fraction of the domain for the filtered-DNS stress,
 positive almost everywhere for the optimized one. In this sense a purely
 dissipative "perfect" eddy-viscosity model exists for the flux. The author
 cautions that it may be hard to express in resolved quantities.
+
+The same projection is used as an a priori diagnostic by [Abe (2021)](/sources/abe-2021.md)
+(§IV C, Eq. 17): the "equivalent SGS eddy viscosity"
+$-\tau^d_{ij}\bar S_{ij}/(2\bar S_{kl}\bar S_{kl})$ of a reference or model
+stress, which the author notes reproduces exactly its resolved/subgrid
+energy transfer, forward and backward. It equals $\nu_t^{\mathrm{opt}}$
+above, since $\bar S_{ii}=0$ *(compiler check, not in the sources)*. Abe
+compares it between filtered fine-LES data and five models in a free shear
+layer (see [Smagorinsky model](/methods/smagorinsky-model.md) and
+[scale-similarity models](/methods/scale-similarity-model.md)).
+
+## Model backscatter and stability
+
+[Prakash et al. (2022)](/sources/prakash-2022.md) (§II, Eqs. 4–8) treat
+backscatter of a *model* stress $\tau^{\mathrm M}_{ij}$ (page-local) as a
+stability risk. With periodic or homogeneous boundaries and no forcing the
+resolved energy decays if and only if
+$\int_\Omega\tau_{ij}\bar S_{ij}\,d\Omega\le\int_\Omega2\nu\bar S_{ij}\bar S_{ij}\,d\Omega$,
+so excessive model backscatter can make it grow. They enforce the
+sufficient pointwise condition of no model backscatter,
+$\Pi^{\mathrm M}=-\tau^{\mathrm M}_{ij}\bar S_{ij}\ge0$, and say it is
+sufficient, not necessary. Two procedures do so for structural models such
+as the [gradient model](/methods/gradient-model.md): standard clipping,
+which zeroes the model stress where $\Pi^{\mathrm M}<0$ (attributed to Liu,
+Meneveau & Katz), and their optimal clipping, which subtracts from the
+stress its projection on $\bar S_{ij}$ there, i.e. adds the eddy viscosity
+$\max(-\Pi^{\mathrm M},0)/\lvert\bar S\rvert^2$. Both set the local model
+flux to zero where the base model backscatters. A priori on box-filtered
+isotropic turbulence at $Re_\lambda=418$, anisotropic (book- and
+pencil-type) filters lower the mean model dissipation, which the authors
+partly attribute to more model backscatter (§III.A.2, Figs. 2–3).
+
+Prakash et al. and Vela-Martín (2022) both arrive at models without local
+backscatter, from different premises: stability of the resolved energy for
+Prakash et al., the gauge freedom of the stress and the statistics of the
+flux for Vela-Martín. The clipping constraint is imposed on one
+representative of the model stress; by the gauge argument above, adding
+to it a symmetric divergence-free tensor $T_{ij}$ (page-local) leaves the
+resolved dynamics unchanged but shifts the local flux by
+$-T_{ij}\bar S_{ij}$, which is not zero in general, so the constraint is
+not gauge-invariant *(compiler check, not in the sources)*.
 
 ## Interpretation and scope
 
@@ -158,3 +199,5 @@ Other sources treat backscatter as a physical effect to be represented:
 - [Li & Liu (2022)](/sources/li-2022.md) — §2.3, Eqs. (19)–(22); §3.2.
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §III.A; §VII.D.
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §2.2, Eqs. (16)–(22).
+- [Prakash et al. (2022)](/sources/prakash-2022.md) — §II, Eqs. (4)–(15); §III.A.2, Figs. 2–3.
+- [Abe (2021)](/sources/abe-2021.md) — §IV C, Eq. (17).

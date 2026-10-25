@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "k-ω SST model"
-description: "Menter's two-equation shear-stress-transport eddy-viscosity model, blending a k-ω inner formulation with an outer one through F1 and limiting the eddy viscosity through F2; its equations and constants as printed in the sources, its transition and PANS forms, and its unsuitability where k must be the true kinetic energy."
+description: "Menter's two-equation shear-stress-transport eddy-viscosity model, blending a k-ω inner formulation with an outer one through F1 and limiting the eddy viscosity through F2; its equations and constants, its transition, PANS and DES forms and modifications, and evidence on airfoils, fan stages, vortex flows and its transported k."
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-25T13:40:00Z
+timestamp: 2026-10-25T19:45:00Z
 ---
 
 # k-ω SST model
@@ -87,6 +87,50 @@ generalized $k$-$\omega$ model whose free coefficients users can change
 The intermittency multiplies only the production $P_k$ of the $k$-equation,
 not its destruction.
 
+### The $\gamma$-$Re_\theta$ coupling and free-stream sustaining terms
+
+In the $\gamma$-$Re_\theta$ model as implemented in STAR-CCM+ the coupling
+is different: Carreño Ruiz & D'Ambrosio (2022) print the $k$-equation as
+
+$$\rho\frac{Dk}{Dt}=\nabla\cdot\big[(\mu+\sigma_k\mu_t)\nabla k\big]+\gamma_{\mathrm{eff}}P_k-\min\big[\max(\gamma_{\mathrm{eff}},0.1),1\big]D_k,\qquad D_k=\rho\beta^*f_{\beta^*}(\omega k-\omega_0k_0),$$
+
+so the effective intermittency $\gamma_{\mathrm{eff}}$ (page-local; see the
+[transition-model page](/methods/local-correlation-based-transition-model.md))
+also scales the destruction, between 0.1 and 1. $P_k$ collects shear,
+nonlinear and buoyancy production, $f_{\beta^*}$ is a free-shear modification
+factor, and $\omega_0$, $k_0$ are ambient values of the sustaining terms of
+Spalart & Rumsey (2007), which keep the free-stream turbulence from decaying
+between inlet and body ([Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md),
+§2, Eqs. 1–3, §3.4). This is the "earlier" kind of coupling that Menter et
+al. (2022) contrast with their production-only form. With the sustaining
+terms active, the inlet ratio $\mu_t/\mu$ has an "almost negligible" effect
+once it is large enough to avoid a dormant turbulence model; Carreño Ruiz &
+D'Ambrosio use $\mu_t/\mu=1$, higher than the values Rumsey & Spalart (2009)
+recommend for SST, arguing that those were meant for SST without a
+transition model. At $Tu=0.43\%$ with $\mu_t/\mu=0.001$ or 0.01 the solution
+is an inconsistent laminar one with negative lift (§3.4, Table 4).
+
+### Separation, pressure-gradient and hybrid modifications
+
+- **Separation fix.** Yan et al. (2022) recall Rumsey's fix of SST, a
+  multiplier $F_{sf}$ that increases the $\omega$ destruction in separating
+  shear layers where production greatly exceeds dissipation (formula not
+  printed), and Rumsey's finding that enhanced mixing there improves the
+  periodic hill but worsens backward-facing-step flows; their own field
+  inversion of the SA model localizes its corrections in the same region
+  ([Yan et al. (2022)](/sources/yan-2022.md), §1, §3.2, Fig. 11; see the
+  [SA page](/methods/spalart-allmaras-model.md)).
+- **Adverse pressure gradient.** Knopp (2022) describes, in words only, a
+  preliminary augmentation term in the $\omega$-equation of
+  "$k$-$\omega$ type" models (Knopp 2016) that reproduces a half-power law
+  above the log law, activated by a blending function built from Knopp's
+  correlations in $y^+$, $Re_\tau$ and the pressure-gradient parameter
+  ([Knopp (2022)](/sources/knopp-2022.md), §1; see
+  [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)).
+- **Hybrid forms.** SST is the base of the DDES ("DDES-SST") and IDDES
+  models of the ISIS-CFD solver ([Mozaffari et al. (2022)](/sources/mozaffari-2022.md),
+  §2; see [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+
 ## What the transported $k$ represents
 
 Haering et al. (2022) exclude SST as the base model of their
@@ -113,6 +157,34 @@ operational role and need not match their DNS counterparts
   airfoils and a turbine cascade with accuracy similar to the transport
   transition models; see the
   [transition-model page](/methods/local-correlation-based-transition-model.md).
+- **Very-low-Reynolds airfoils.** Coupled to $\gamma$-$Re_\theta$, SST
+  reproduces the two-dimensional transition of airfoils at
+  $Re=2\times10^4$–$2\times10^5$ "with an accuracy that increases with the
+  Reynolds number", but gives too little skin friction after reattachment,
+  which can lead to early stall (Carreño Ruiz & D'Ambrosio 2022, §3.5, §7;
+  details on the transition-model page).
+- **Fan stage.** François et al. (2022) compare SST and Smith $k$-$l$ RANS
+  (5 million cells, one rotor and one stator channel) with zonal DES and
+  hot-wire data behind a turbofan fan: tangential and radial mean velocities
+  are close to the DES, the axial velocity is off by $+6$–$7\%$ (attributed
+  to an over-estimated tip-gap flow area), the wakes are narrower, and in
+  the tip gap RANS over-estimates the main dip and peak by a factor of two
+  and gives the wrong shape of the RMS profiles, reconstructed through the
+  [Boussinesq](/definitions/boussinesq-hypothesis.md) relation
+  ([François et al. (2022)](/sources/francois-2022.md), §5.3–5.4, Figs. 12–15).
+- **Delta wing.** On a hybrid delta wing at $\alpha=24^\circ$,
+  $Re=2.17\times10^6$, SST on a 60-million-cell adapted mesh (steady
+  solution, instantaneous refinement criterion) predicts forces and the
+  experimental vortex features well, as does DDES-SST (which over-predicts
+  the core velocity peaks and the kinetic energy of the first vortex),
+  while the SSG/LRR-$\omega$ Reynolds-stress model gives an unsteady, smeared vortex with too much
+  kinetic energy (Mozaffari et al. 2022, §5.2, Figs. 26–27).
+- **Hypersonic heat flux.** Huang et al. (2022) recall that SA and SST predict
+  hypersonic zero-pressure-gradient heat flux less accurately than algebraic
+  models with compressibility corrections (Rumsey 2010; Gnoffo et al. 2013)
+  ([Huang et al. (2022)](/sources/huang-2022.md), §1).
+- Alauzet et al. (2022) name a comparison of SA and SST on mesh-converged
+  adapted meshes as future work ([Alauzet et al. (2022)](/sources/alauzet-2022.md), §9).
 - **PANS.** Dzanic et al. (2022) use SST as the PANS closure on the
   [periodic hill](/benchmarks/periodic-hill.md) and the circular cylinder at
   $Re_D=3900$, with high-order flux reconstruction.
@@ -136,6 +208,21 @@ version read (arXiv v1):
   corrected RANS destruction $\beta\omega^2$ are both given under
   Equations.
 
+- Mozaffari et al. (2022) call RANS predictions of unsteady flow at high
+  incidence incorrect, "since according to the RANS velocity decomposition,
+  with the right Reynolds stresses, the mean flow should be steady" (§5.2).
+  Carreño Ruiz & D'Ambrosio (2022) need unsteady RANS at low incidence, where
+  the boundary layer stays laminar and trailing-edge vortex shedding raises
+  the mean lift by 22.8% (SD7003, $Re=23{,}000$, $\alpha=2^\circ$; §5,
+  Table 11). The two statements concern different regimes (turbulent vortex
+  flow, laminar periodic shedding) and are not incompatible.
+- Carreño Ruiz & D'Ambrosio print the turbulent viscosity ratio as
+  $k/(\omega\mu)$ (Eq. 24), which is not dimensionless; $\rho k/(\omega\mu)$
+  is *(compiler check, not in the sources)*. Their Eq. 1 prints the
+  diffusion term with an unbalanced parenthesis,
+  $\nabla\cdot[(\mu+\sigma_k\mu_t)\nabla k)]$; the form above drops the stray
+  ")".
+
 # Citations
 
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §2.1 Eqs. 10–17, §3 Eq. 26, App. A.
@@ -143,3 +230,10 @@ version read (arXiv v1):
 - [Haering et al. (2022)](/sources/haering-2022.md) — §IV B.
 - [Goc et al. (2021)](/sources/goc-2021.md) — §1, Fig. 1.
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §IV.A.
+- [Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md) — §2 Eqs. 1–3, 24, §3.4 Table 4, §3.5, §5 Table 11, §7.
+- [François et al. (2022)](/sources/francois-2022.md) — §5.3–5.4, Figs. 12–15.
+- [Mozaffari et al. (2022)](/sources/mozaffari-2022.md) — §2, §5.2, Figs. 26–27.
+- [Yan et al. (2022)](/sources/yan-2022.md) — §1, §3.2, Fig. 11.
+- [Knopp (2022)](/sources/knopp-2022.md) — §1.
+- [Huang et al. (2022)](/sources/huang-2022.md) — §1.
+- [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §9.

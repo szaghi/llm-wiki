@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Spalart–Allmaras model and its corrections"
-description: "The one-equation eddy-viscosity RANS model transporting the working variable ν̃, with its negative-ν̃, rotation–curvature, Kato–Launder, strain-based, helicity and quadratic-constitutive-relation variants, and the evidence on corner separation, high-lift and field-inversion corrections."
+description: "The one-equation eddy-viscosity RANS model transporting the working variable ν̃: its equations and constants, the negative, rotation–curvature, helicity and quadratic-constitutive-relation variants, field-inversion corrections of its production, its role as host of detached-eddy simulation, and evidence from compressors, rotors, airfoils and high-lift flows."
 status: established
-aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
+aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-25T13:44:00Z
+timestamp: 2026-10-25T19:37:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -46,6 +46,55 @@ $f_{v2}$ are not printed. $f_{t2}=c_{t3}\exp(-c_{t4}\chi^2)$ makes $\tilde\nu=0$
 stable laminar solution so that transition happens at a prescribed trip; the
 trip term $f_{t1}$ is mentioned but not used. Away from the buffer layer and
 the viscous sublayer $\mu_t$ and $\tilde\nu$ are linearly proportional (§3.2).
+
+### Constants and printed forms in other sources
+
+Alauzet et al. (2022) print the same equation with the trip term
+$f_{t1}(\Delta\boldsymbol u)^2$, which they set to zero, and the constants
+$\sigma=2/3$, $c_{b1}=0.1355$, $c_{b2}=0.622$, $\kappa=0.41$, $c_{w2}=0.3$,
+$c_{w3}=2$, $c_{v1}=7.1$, with $f_{v2}=1-\chi/(1+\chi f_{v1})$ and
+$S_{\mathrm{SA}}$ built on the vorticity magnitude $\lvert\nabla\times\boldsymbol u\rvert$,
+which is the registry's $\lvert\Omega\rvert$
+([Alauzet et al. (2022)](/sources/alauzet-2022.md), §2.3, Eqs. 8–9). They
+drop $f_{t2}$ as well (SA-noft2), following the argument that it is
+unnecessary without the trip, and note that the model "is not a
+conservative model", pointing to Catris & Aupoix for a conservative form.
+They print $c_{w1}=c_{b1}/\kappa+(1+c_{b2})/\sigma$; see Qualifications.
+
+Basile et al. (2023) recall the near-wall design of the functions: $f_{v1}$
+and $f_{v2}$ make $\tilde\nu=\kappa u_\tau y$ hold in the viscous, buffer and
+log layers and $S_{\mathrm{SA}}=u_\tau/(\kappa d)$ in the log layer, and $f_w$
+lowers $\nu_t$ in the outer layer ([Basile et al. (2023)](/sources/basile-2023.md),
+§2.2). In the log layer, where $f_w=1$ and the molecular viscosity is
+negligible, the equation of Li & Liu and Alauzet et al. then balances
+$c_{b1}u_\tau^2+\sigma^{-1}(1+c_{b2})\kappa^2u_\tau^2=c_{w1}\kappa^2u_\tau^2$, i.e.
+$c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma\approx3.24$ with Alauzet et al.'s
+constants *(compiler check, not in the sources)*.
+
+Yan et al. (2022) print a different baseline (§2.1, Eqs. 2–4): the
+production uses
+$(1-f_{t2})\lvert S\rvert+\tfrac{\tilde\nu}{\kappa^2d^2}\big[(1-f_{t2})f_{v2}+f_{t2}\big]$,
+with $\lvert S\rvert$ the norm of the **mean strain-rate** tensor (norm not
+specified), and $r$ uses $\hat S=\max\big(\lvert S\rvert+\tilde\nu f_{v2}/(\kappa^2d^2),0\big)$
+(page-local $\hat S$, not a test filter). They print $\sigma=2/3$ and
+$\kappa=0.41$ and no other constant.
+
+**Negative SA.** Basile et al. (2023) use the negative-$\tilde\nu$ model with
+$\mu_t=\rho\tilde\nu f_{v1}$ for $\tilde\nu\ge0$ and $\mu_t=0$ for $\tilde\nu<0$
+(§2.2, Eq. 5), the same treatment of the mean-flow equations that Li & Liu
+record for SA-neg (below).
+
+### Discretization in an unstructured solver
+
+Alauzet et al. (2022, §4.1–4.2) give a vertex-centred mixed finite-volume /
+finite-element discretization of SA-noft2: the convection of $\rho\tilde\nu$
+takes the upwind value of $\tilde\nu$ times the HLLC mass flux, which they
+state is proven to preserve the maximum principle for $\tilde\nu$ (Eq. 16);
+the diffusion is P1 Galerkin; the SA system is solved after the mean flow
+as a separate linear system (loose coupling), differentiated with respect
+to $\tilde\nu$ with $\rho$ frozen. The turbulence equation is left out of
+their adjoint and goal-oriented error estimate (Remarks 5.1, 6.1; see
+[mesh adaptation](/methods/mesh-adaptation.md)).
 
 ## Variants
 
@@ -134,6 +183,52 @@ The QCR2000 correction adds no trace, since $O$ is antisymmetric and $R$
 symmetric *(compiler check, not in the sources: the added trace is
 $-2C_{cr1}O_{ik}R_{ik}=0$)*, so SA-QCR2000 is traceless like SA; the QCR2013
 isotropic term partly supplies the missing $\tfrac23k\delta_{ij}$ (§4.2).
+Alauzet et al. (2022) write the SA-noft2-QCR2000 stress as
+$\mu\tau+\mu_t(\tau-\tau_{\mathrm{QCR}})$, with $\tau$ twice the deviatoric
+strain and $\tau_{\mathrm{QCR}}$ "given in" Spalart (2000), not reproduced
+(§2.3, Eq. 10).
+
+### Field-inversion correction of the production
+
+Yan et al. (2022) multiply the SA production by a spatial field
+$\beta(\boldsymbol x)$, $c_{b1}S_{\mathrm{SA}}\tilde\nu\to\beta\,c_{b1}S_{\mathrm{SA}}\tilde\nu$
+($\beta=1$ recovers SA), infer $\beta$ by Bayesian
+[field inversion](/methods/field-inversion-machine-learning.md) from scarce
+data (lift only, or lift and drag, or mean-velocity profiles) and learn it
+with a neural network embedded in the solver ([Yan et al. (2022)](/sources/yan-2022.md),
+§2.1, Eq. 5, §2.3). On three separated flows:
+
+- **GLC305 airfoil with horn ice 944**, $M=0.12$, $Re=3.5\times10^6$:
+  baseline SA gives $C_L=0.393$ and $0.495$ against the measured 0.489 and
+  0.669 at $4^\circ$ and $6^\circ$; at $6^\circ$ its separation bubble covers
+  the whole airfoil, the inverted one about half the chord (§3.3.1, Table 3,
+  Fig. 25). The learned model cuts the $C_L$ error to $-7.0\%$ and
+  $-5.5\%$ (Table 4) and generalizes over $0^\circ$–$7^\circ$ in the linear
+  range, less well beyond $6^\circ$ (Fig. 33).
+- **S809 airfoil near stall**, $M=0.10$, $Re=2\times10^6$: inversion on $C_L$
+  alone suppresses the production mainly in the strong adverse-pressure-gradient
+  region near the boundary layer, enlarges the separation and improves the
+  unobserved $C_p$ (§3.1.1, Figs. 6–7).
+- **Parametrized periodic hills** at $Re_b=5600$ (the Xiao et al. family,
+  not the configuration of the [periodic-hill](/benchmarks/periodic-hill.md)
+  page's main case): see the field-inversion page.
+
+In all cases the regularized correction both lowers the production at the
+start of the separating shear layer and raises it downstream, in the region
+where production greatly exceeds dissipation (§3.2.1, §3.3.1). This
+continues the curved-channel field inversion recalled by Duraisamy et al.
+(2019) below.
+
+### SA as the host of detached-eddy simulation
+
+SA is the RANS closure of the zonal
+[detached-eddy simulations](/methods/detached-eddy-simulation.md) of François
+et al. (2022) and Basile et al. (2023). In DES zones the wall distance of the
+destruction term is capped by a grid length; in the zonal form of Basile et
+al. the near-wall functions take their far-wall values, $f_{v1}=1$,
+$f_{v2}=0$, $f_w=1$, in LES mode (§2.2, Eqs. 6–7), and the shielding function
+of François et al.'s mode 2 is computed from $\tilde\nu$ rather than from
+$\nu_t$ ([François et al. (2022)](/sources/francois-2022.md), §3.1).
 
 ## Evidence
 
@@ -169,6 +264,24 @@ million points, $y^+\approx0.8$), against experiment only:
   adiabatic efficiency, the helicity correction lowering it by about 0.5%
   (§5, Figs. 17–19).
 
+### Mesh-converged RANS of a transonic rotor
+
+Alauzet et al. (2022) run SA-noft2-QCR2000 on NASA Rotor 37 (36 blades,
+17 188.7 rpm, cold blade geometry, 23 operating points) on anisotropically
+adapted tetrahedral meshes up to about 11 million vertices, after mesh
+convergence of mass flow, total-pressure and total-temperature ratios to
+1%, and compare with structured [elsA](/software/elsa.md) RANS with standard
+SA on 3–32 million cells (§8.2). With discretization error removed, the
+total-pressure and total-temperature characteristics lie above the
+experimental data, "not in accordance with the literature", which generally
+lies below; the efficiency is "a lot higher" than literature and elsA
+results, below experiment at high mass flow and matching it near stall. The
+authors attribute the first to the cold geometry and the second to the
+under-resolution of non-adapted meshes, without testing either (§8.2.4,
+Table 2). Transition is not modelled, because LES shows transition almost
+at the leading edge (§8.2). They propose comparing SA and SST on such
+meshes as future work (§9).
+
 ### Aircraft and other uses
 
 - In the AIAA Third High-Lift Prediction Workshop most of the 79 submitted
@@ -191,6 +304,13 @@ million points, $y^+\approx0.8$), against experiment only:
   Cakmakcioglu et al. built on SA at constant free-stream turbulence are
   listed by Menter et al. (2022, §1); see
   [local-correlation-based transition models](/methods/local-correlation-based-transition-model.md).
+- Huang et al. (2022) recall that standard one- and two-equation models
+  (SA, SST), built on subsonic adiabatic data, predict the heat flux of
+  hypersonic zero-pressure-gradient boundary layers less accurately than
+  algebraic models with compressibility corrections (Rumsey 2010; Gnoffo et
+  al. 2013), and find their cold-wall Mach 11 DNS within 1.9% ($\tau_w$) and
+  1.7% (wall heat flux) of a Baldwin–Lomax RANS
+  ([Huang et al. (2022)](/sources/huang-2022.md), §1, App. A.2).
 
 ## Qualifications
 
@@ -206,6 +326,21 @@ million points, $y^+\approx0.8$), against experiment only:
   $\mu_t$ unchanged *(compiler check, not in the sources)*.
 - Li & Liu call $h$ a "helicity density", while their Eq. 20 defines a
   normalized, dimensionless relative helicity.
+- Alauzet et al. (2022) print $c_{w1}=c_{b1}/\kappa+(1+c_{b2})/\sigma$ (§2.3),
+  while their own equation, with Basile et al.'s log-layer solution, requires
+  $c_{b1}/\kappa^2$ (Constants above, compiler check). Their source vector
+  (Eq. 13) prints the destruction $c_{w1}f_w\rho(\tilde\nu/d)^2$ with a plus
+  sign, against the minus sign of their Eq. 9; and they label the
+  conservative diffusion term "dissipation" and the $c_{b2}$ term "diffusion".
+- Yan et al. (2022) print the destruction as $c_{w1}f_w[\tilde\nu/d]$, without
+  the square; by their own Eq. 2 the destruction must have the dimensions of
+  the production $c_{b1}S_{\mathrm{SA}}\tilde\nu$, which $(\tilde\nu/d)^2$ has
+  *(compiler check, not in the sources)*.
+- Yan et al.'s baseline production is built on the mean strain-rate norm,
+  which in Li & Liu's taxonomy is the SA-S variant that Li & Liu say is "not
+  mentioned in the existing references". Yan et al. call it the SA model and
+  give no reason for the strain; whether this is a notational choice cannot
+  be settled from the paper.
 
 # Citations
 
@@ -215,3 +350,8 @@ million points, $y^+\approx0.8$), against experiment only:
 - [Haering et al. (2022)](/sources/haering-2022.md) — §I.
 - [Krais et al. (2021)](/sources/krais-2021.md) — §2.2.3.
 - [Menter et al. (2022)](/sources/menter-2022.md) — §1.
+- [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §2.1, §2.3 Eqs. 8–10, 13, §4.1–4.2 Eq. 16, Remarks 5.1, 6.1, §8.2, §8.2.4 Table 2, §9.
+- [Yan et al. (2022)](/sources/yan-2022.md) — §2.1 Eqs. 2–5, §2.3, §3.1.1 Figs. 6–7, §3.2.1, §3.3 Tables 3–4, Figs. 25, 33.
+- [Basile et al. (2023)](/sources/basile-2023.md) — §2.2, Eqs. 5–7.
+- [François et al. (2022)](/sources/francois-2022.md) — §3.1, §3.5.
+- [Huang et al. (2022)](/sources/huang-2022.md) — §1, App. A.2.

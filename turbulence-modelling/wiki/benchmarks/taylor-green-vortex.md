@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "The triply periodic vortex flow started from a single-mode analytic field that transitions to turbulence and decays, used at Re 40,000 against a 5400³ DNS to separate explicit Smagorinsky and implicit LES errors, and in its 2D analytic form to compare continuous and discrete commutator errors."
+description: "The triply periodic vortex flow started from a single-mode analytic field that transitions to turbulence and decays: at Re 40,000 against a 5400³ DNS to separate Smagorinsky and implicit LES errors, at Re 1600 to measure numerical dissipation and test subgrid models, inviscid to tune spectral vanishing viscosity, and in 2D to compare commutator errors."
 status: established
-aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex]
-tags: [benchmark, les, implicit-les, sgs-model, dns]
-timestamp: 2026-10-25T13:45:00Z
+aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex]
+tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation]
+timestamp: 2026-10-25T19:46:00Z
 ---
 
 # Taylor–Green vortex
@@ -80,6 +80,92 @@ used. Details of these results live on the model pages linked above and on
 [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md) and
 [numerical dissipation](/properties/numerical-dissipation.md).
 
+## Three-dimensional TGV at $Re=1600$ and inviscid
+
+**Set-up.** Three sources use the same initial velocity as above,
+$u=\sin x\cos y\cos z$, $v=-\cos x\sin y\cos z$, $w=0$ on $[0,2\pi]^3$
+(scaled by a length $L=1$ and velocity $V_0=1$), with $Re=V_0L/\nu=1600$ or
+no viscosity. The compressible solvers add the pressure field
+$p=p_0+\tfrac{1}{16}\rho_0V_0^2(\cos2x+\cos2y)(\cos2z+2)$ at low Mach number:
+[Cao et al. (2022)](/sources/cao-2022.md), §3.1, at Mach 0.1 with
+$\gamma=1.4$, $Pr=0.71$, $0\le t\le20$; [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md),
+§6.1, Eq. (124), with $p_0=100$ and no viscosity (their Eq. 124 prints the
+pressure product expanded; the two forms agree *(compiler check, not in the
+sources)*). [Prakash et al. (2022)](/sources/prakash-2022.md),
+§III.B.2, solve the incompressible equations and analyse only the transition
+to the fully turbulent state.
+
+| Source | Solver | Resolution | Reference |
+|---|---|---|---|
+| [Cao et al. (2022)](/sources/cao-2022.md) | finite-volume [high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md), no model | $128^3$, $256^3$, $512^3$, $1024^3$ cells | 13-point dispersion-relation-preserving finite differences at $512^3$ (DeBonis) |
+| [Prakash et al. (2022)](/sources/prakash-2022.md) | stabilized trilinear finite elements, explicit SGS models | $64^3$, $128^3$ elements | DNS and filtered DNS of Shoraka; spectra of Brachet et al. |
+| [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) | DGSEM, $N=8$, kinetic-energy-preserving split form, low-dissipation Roe flux, SVV-filtered Smagorinsky viscosity | $8^3$ elements ($72^3$ nodes, *compiler check, not in the sources*) | viscous $Re=1600$ result of van Rees et al. at $768^3$ |
+
+**Numerical dissipation of a no-model DNS scheme.**
+[Cao et al. (2022)](/sources/cao-2022.md), §3.1, Figs. 2–5, measure the
+kinetic-energy decay rate $-dK/dt$ against the dissipation computed from the
+resolved field, split into the deviatoric-strain, bulk-viscosity and
+pressure–dilatation parts; the remainder is their numerical dissipation. The
+kinetic energy agrees with the reference except on $128^3$; the peak
+dissipation differs markedly on $128^3$ and $256^3$ and agrees with
+refinement. The bulk and pressure–dilatation parts are negligible at Mach
+0.1, and the numerical dissipation decreases with refinement. The authors
+read the agreement of $-dK/dt$ as evidence that the coarse-mesh numerical
+dissipation "correctly mimics" the unresolved dissipation and so supports
+[implicit LES](/definitions/implicit-les.md) with high-order methods (see
+[numerical dissipation](/properties/numerical-dissipation.md)). Their run
+costs (Table 3) grow from 213 core hours at $128^3$ to 747,062 at $1024^3$,
+about 1.4 times the core hours of the finite-difference reference at equal
+grids, 1.2 after correcting for processor speed (§3.2); the comparison is
+across machines and time steps. They call the $1024^3$ run "the finest
+resolution" for the problem (§3.1).
+
+**Explicit subgrid models during transition.**
+[Prakash et al. (2022)](/sources/prakash-2022.md), §III.B.2, Figs. 5–7:
+every model matches the filtered-DNS resolved kinetic energy on $128^3$, and
+every model except the dynamic mixed model on $64^3$, which decays too fast.
+In resolved dissipation, dynamic Smagorinsky under-predicts, the dynamic
+mixed model under-predicts more (significantly even on $128^3$), the
+unclipped [gradient model](/methods/gradient-model.md) over-predicts
+(especially on $64^3$), and the gradient model with standard or optimal
+clipping is the most accurate. At $t=9$ dynamic Smagorinsky and the dynamic
+mixed model under-predict the high-wavenumber energy; the gradient-model
+variants are closest to filtered DNS, optimal clipping slightly better than
+standard clipping on $64^3$. The authors conclude that clipping may be more
+accurate than the dynamic mixed model in laminar–turbulent transition
+(§IV).
+
+**Inviscid TGV and the shape of a spectral vanishing viscosity.**
+[Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md), §6.1, Fig. 4, add
+a [Smagorinsky](/methods/smagorinsky-model.md) viscosity ($C_s=0.2$, filter
+width the cube root of the element volume over $(N+1)^3$) filtered modally
+by the kernel $(i/N)^{P}$ of an entropy-stable
+[spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
+with $P$ the page-local kernel exponent. This is an explicit modal SVV
+acting on an added viscous flux, a different construction from the
+implicit SVV of Vicente Cruz & Lamballais above. Unfiltered ($P=0$) the model is
+excessively dissipative; $P\approx0.1$ is best, with a spectrum close to
+$k^{-5/3}$ over most resolved wavenumbers at $t=20$. The filtered viscosity
+acts mainly at low and medium wavenumbers and prevents high-wavenumber
+pile-up. For the first five time units the scheme dissipates less than the
+viscous reference, then reaches a comparable level. Two sources thus agree
+that a plain Smagorinsky viscosity over-dissipates the TGV (this source and
+[Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) above),
+and [Prakash et al. (2022)](/sources/prakash-2022.md) find the converse
+failure, a pile-up at the cutoff, for a model with too little dissipation,
+the unclipped gradient model, in forced
+[homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md).
+
+**Recalled uses.** As recalled by [Basile et al. (2023)](/sources/basile-2023.md),
+§3.2 and §4.2.1, Chapelier et al. fixed a modal-decay smoothness threshold
+close to the $-5/3$ slope a priori from TGV DNS at $Re=5000$, and the
+authors' earlier TGV tests showed high-order DG more accurate than low
+order at equal degrees of freedom. As recalled by
+[Pereira et al. (2021)](/sources/pereira-2021.md), the companion study of
+[partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
+on the transitional TGV found that the coherent structures driving
+transition must be resolved, which fixes the minimum physical resolution.
+
 ## Two-dimensional analytic TGV as a commutator test
 
 [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md), App. F, use the
@@ -101,7 +187,37 @@ The 3D initial condition of Vicente Cruz & Lamballais and the 2D solution of
 Agdestein & Sanderse differ by an overall sign of the velocity *(compiler check, not in the
 sources)*.
 
+## Qualifications
+
+- The sources measure two kinds of dissipation: the decay rate $-dK/dt$ of
+  the volume-averaged kinetic energy, which includes model and numerical
+  dissipation ([Cao et al. (2022)](/sources/cao-2022.md);
+  [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md); the
+  dissipation-rate curves of [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md)),
+  and the viscous dissipation of the resolved field computed from its
+  gradients or enstrophy ([Cao et al. (2022)](/sources/cao-2022.md);
+  [Prakash et al. (2022)](/sources/prakash-2022.md), Eq. 27). Only the
+  first includes what a model or a scheme removes, so the two are not
+  interchangeable when comparing runs.
+- [Cao et al. (2022)](/sources/cao-2022.md), §3.1, state both that the peak
+  of $-dK/dt$ shows "a large discrepancy" on $128^3$ and $256^3$ and that it
+  is "well predicted at all grid levels"; their implicit-LES conclusion
+  rests on the second statement. Read in the arXiv v1 preprint.
+- [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) compare an
+  inviscid run with a viscous $Re=1600$ reference, so the dissipation
+  agreement is qualitative; they print the time as "seconds" and the
+  Smagorinsky viscosity (Eq. 125) without a density factor, although it is
+  used as a dynamic viscosity. Read in arXiv v3.
+- [Prakash et al. (2022)](/sources/prakash-2022.md) run no no-model case
+  on the TGV and stop the analysis at the end of transition, so their
+  ranking does not cover the decay phase.
+
 # Citations
 
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §3; §5.3; §6.1–6.5, Eqs. (43)–(46), Figs. 4–22.
 - [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md) — App. F, Eqs. (F.1), (F.5), (F.9), (F.12), (F.29)–(F.30).
+- [Cao et al. (2022)](/sources/cao-2022.md) — §3.1–3.2, Tables 1–4, Figs. 2–6.
+- [Prakash et al. (2022)](/sources/prakash-2022.md) — §III.B.2, Eqs. (25)–(27), Figs. 5–7; §IV.
+- [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §6.1, Eqs. (123)–(125), Fig. 4.
+- [Basile et al. (2023)](/sources/basile-2023.md) — §3.2, §4.2.1 (recalled TGV studies).
+- [Pereira et al. (2021)](/sources/pereira-2021.md) — §IV.3.4 (recalled companion TGV study).

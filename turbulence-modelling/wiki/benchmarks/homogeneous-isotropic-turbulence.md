@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Homogeneous isotropic turbulence (decaying and forced)"
-description: "Turbulence in a triply periodic box, decaying from a prescribed spectrum or sustained by forcing, used as a priori database and a posteriori test of subgrid-scale closures: here Re_λ from 70 to 324, LES of 24³ to 144³ degrees of freedom against filtered DNS spectra."
+description: "Turbulence in a triply periodic box, decaying from a prescribed spectrum or sustained by forcing, used as a priori database and a posteriori test of subgrid-scale closures, as a DNS test up to supersonic turbulent Mach numbers, and as driven MHD turbulence for dynamo studies: here Re_λ from 70 to 418, LES of 24³ to 144³ degrees of freedom."
 status: established
-aliases: [HIT, DHIT, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence]
-tags: [benchmark, les, sgs-model, data-driven, dns]
-timestamp: 2026-10-25T13:45:00Z
+aliases: [HIT, DHIT, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation]
+tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
+timestamp: 2026-10-25T19:46:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -35,6 +35,9 @@ notation registry.)
 | [Beck & Kurz (2023)](/sources/beck-2023.md), §IV A | forced | about 180 | DG $N=7$, $64^3$ elements, 512 points per direction, run to $t=10$ (about 14 large-eddy turnovers) | DG, 24 or 36 DOF per direction, $N=3,5,8$ | Rogallo initialization, linear forcing applied at the nodes |
 | [Vela-Martín (2022)](/sources/velamartin-2022.md), §5.1, Table 1 | forced | 140, 240, 324 | $256^3$, $512^3$, $1024^3$, with $k_{\max}\eta=1.5,1.5,2.0$; 290 independent fields | a priori only: filter scales $\ell/L$ from 0.65 to 0.08 | linear forcing |
 | [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md), §5, App. G.2 | forced (3D) | not stated ($Re=2000$) | $1024^3$, single precision | $32^3$, $64^3$ | random field with spectrum peaked at wavenumber 20; Kolmogorov force $\sin(8\pi x_2)$ on $[0,1]^3$ |
+| [Prakash et al. (2022)](/sources/prakash-2022.md), §III.A, §III.B.1 | forced | 418 (a priori); effectively infinite in the LES ($\nu=10^{-12}$) | Johns Hopkins forced isotropic database (a priori); $k^{-5/3}$ spectrum with Kolmogorov constant 1.6 (a posteriori) | a priori box filters $\Delta\approx6.5\eta$ to $68\eta$, anisotropic up to $15\eta\times292\eta\times292\eta$; LES on $32^3$, $64^3$, $128^3$ trilinear finite elements | spectral forcing of the modes $\lvert k_i\rvert<3$ at injected power 62.843 |
+| [Cao et al. (2022)](/sources/cao-2022.md), §3.4, Table 8 | decaying, compressible | 72 (initial) | none: the DNS is offered as reference data | DNS only, $512^3$ cells, $k_{\max}\eta_0=3.61$ | spectrum $E(k)\propto k^4\exp(-2k^2/k_0^2)$, $k_0=8$; turbulent Mach number $M_t=0.8$, 1.0, 1.2, 1.6 |
+| [Seta & Federrath (2022)](/sources/seta-2022.md), §2 | forced, MHD, two-phase (heating and cooling) | not given; $Re=Rm=2000$ at the driving scale | none | DNS only, $512^3$, 200 pc box | solenoidal or compressive driving at $1\le kL/2\pi\le3$ to $u_{\mathrm{rms}}\approx10$ km/s; seed field $10^{-10}$ G |
 
 The beck-2023 DNS used 16,384 cores of the HAWK system for almost two hours
 (about 30,000 CPU hours). [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md)
@@ -88,7 +91,74 @@ DG scheme at $48^3$ DOF, which stays stable (§3, Fig. 4); and, on the
 [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) for
 truncated Euler and no-model runs (§6.2). This is the statement of the
 benchmark that a stable, energy-conserving scheme must be supplemented by
-dissipation, explicit or numerical.
+dissipation, explicit or numerical. [Prakash et al. (2022)](/sources/prakash-2022.md),
+§III.B.1, Fig. 4, find the same failure in forced HIT at effectively
+infinite Reynolds number with a stabilized finite-element solver: the
+no-model run (stabilization only) and the unclipped
+[gradient model](/methods/gradient-model.md), whose a priori dissipation is
+too low, both pile up energy at the highest resolved wavenumbers. Dynamic
+Smagorinsky has no pile-up and follows the $k^{-5/3}$ slope but over-predicts
+intermediate wavenumbers, as does the dynamic mixed model; the gradient model
+with standard or optimal clipping of its backscatter gives the best spectra,
+optimal clipping a slightly longer inertial range. The authors state, without
+showing it, that the dissipation of the stabilization is much smaller than
+the SGS dissipation of every explicit model.
+
+**A priori structure of structural models.**
+[Prakash et al. (2022)](/sources/prakash-2022.md), §III.A, Figs. 1–3, box-filter
+the Johns Hopkins forced database at $Re_\lambda=418$ to test the gradient
+model. Unclipped, it is highly correlated with the exact SGS stress at all
+filter widths but under-predicts the mean SGS dissipation. Standard clipping
+(zeroing the stress where it backscatters) restores dissipation and lowers the
+correlation, more under anisotropic book- and pencil-type filters; optimal
+clipping (the nearest stress without local backscatter) keeps the unclipped
+correlation and gives the same mean dissipation as standard clipping. See
+[energy backscatter](/definitions/energy-backscatter.md) and
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
+
+**Compressible decaying turbulence as a DNS test.**
+[Cao et al. (2022)](/sources/cao-2022.md), §3.4, run decaying compressible
+isotropic turbulence with their
+[high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md)
+at initial $Re_\lambda=72$ and turbulent Mach number $M_t=0.8$ to 1.6
+(defined with $\sqrt3\,u_{\mathrm{rms}}$ over the sound speed), $512^3$
+cells, viscosity $\propto T^{0.76}$, up to five large-eddy turnover times.
+WENO-Z reconstruction in characteristic variables and a collision time
+enlarged at pressure jumps keep the runs stable "without extra special
+treatment", and the time histories of density rms, kinetic energy, velocity
+derivative skewness and flatness, and of the dissipation are offered as
+benchmark data. With rising $M_t$ the normalized density rms
+$\rho_{\mathrm{rms}}/M_t^2$ decreases, the peak total dissipation grows, its
+solenoidal part $\varepsilon_s=\langle\mu\,\omega_i\omega_i\rangle$ decreases
+and its dilatational part $\varepsilon_d=\tfrac43\langle\mu(\nabla\cdot\boldsymbol u)^2\rangle$
+increases; the pressure–dilatation correlation changes sign and stays small
+and positive later, as in the subsonic results of Sarkar et al. that the
+authors cite (Figs. 13–14; $\varepsilon_s$, $\varepsilon_d$ page-local).
+Shocklets, regions where the dilatation is below $-3$ times its rms, appear as
+long narrow ribbons beside block-like expansion regions (Fig. 15). The
+resolution criterion $k_{\max}\eta_0\ge2.71$ is taken from the authors'
+earlier work. The authors state that compact finite differences are limited
+to $M_t\le0.8$ and that spectral and lattice Boltzmann methods fail to capture
+shocklets (§1, §3.4).
+
+**Driven MHD turbulence and the small-scale dynamo.**
+[Seta & Federrath (2022)](/sources/seta-2022.md) drive turbulence in a
+triply periodic box with heating and cooling, so that the gas splits into a
+cold supersonic phase (3–4% of the volume by their text, rms Mach number about 5) and a
+warm transsonic phase, and follow the growth of a weak seed field. Explicit
+viscosity and resistivity at $Re=Rm=2000$ are chosen to exceed the numerical
+diffusion, whose effective Reynolds number they estimate at about $2N_x^{4/3}\approx8000$
+for $N_x=512$ (§2.4, from McKee et al.). The kinematic growth rate of the
+magnetic-to-kinetic energy ratio is the same in both phases, $0.37$ and
+$0.18$ per driving time for solenoidal and compressive driving, and both
+growth rate and saturation level are lower than the isothermal empirical
+model of Federrath et al. at matching Mach numbers (§4.1, Table 1); they
+explain the equal growth rates through a vorticity budget (§4.2). As
+recalled by [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md),
+turbulent-box simulations of this kind (Balsara et al.; Federrath;
+Schekochihin et al.) are the reference for the growth rates and the
+resolution scaling expected of the dynamo in galaxy simulations. See
+[small-scale dynamo](/results/small-scale-dynamo.md).
 
 **A priori structure of the subgrid flux.**
 [Vela-Martín (2022)](/sources/velamartin-2022.md) uses the forced database
@@ -128,6 +198,14 @@ spectral reference used with HIT in both
 [Flad & Gassner (2017)](/sources/flad-2017.md), App. C, and
 [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md), Eq. (55)
 (see [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md)).
+As recalled by [Basile et al. (2023)](/sources/basile-2023.md), §2.2, the
+DES constant $C_{DES}=0.65$ is calibrated on decaying homogeneous turbulence
+(see [detached-eddy simulation](/methods/detached-eddy-simulation.md)). As
+recalled by [Pereira et al. (2021)](/sources/pereira-2021.md), §III, Fig. 4,
+from the authors' companion paper, explicit filtering of forced HIT DNS of
+Silva et al. at $Re_\lambda=140$ and 300 supports setting the dissipation
+ratio of [partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
+to $f_\varepsilon=1$ for $f_k\ge0.20$.
 
 ## Qualifications
 
@@ -145,6 +223,27 @@ spectral reference used with HIT in both
   case of App. G.2 both "forced" (title) and "decaying" (first sentence)
   while applying a body force, and print its amplitude as 5 while Eq. (31)
   of the 2D case has amplitude 1 and App. G.2 calls it "the same body force".
+- [Cao et al. (2022)](/sources/cao-2022.md) were read in the arXiv v1
+  preprint. Their Eq. (11) prints the energy balance as
+  $d\langle K\rangle/dt=\varepsilon+\langle p\,\nabla\cdot\boldsymbol u\rangle$
+  with $\varepsilon=\varepsilon_s+\varepsilon_d$, a sum of non-negative
+  terms, while the text describes a decay; a decay needs $-\varepsilon$
+  *(compiler check, not in the sources)*. They print the maximum resolved
+  wavenumber as $\sqrt2k_0N_x/3$ with $k_0=8$. With $N_x=512$,
+  $\Delta=2\pi/512$ and their $\Delta/\eta_0=0.819$, $\sqrt2N_x/3$ gives
+  $k_{\max}\eta_0=3.617$, close to their Table 8 value 3.613, while the
+  printed factor $k_0=8$ would give 28.9 *(compiler check, not in the
+  sources)*. Their Mach number of the
+  supersonic runs is the turbulent one; §1 calls the range "hypersonic",
+  the abstract and §3.4 "supersonic".
+- [Seta & Federrath (2022)](/sources/seta-2022.md) are a non-isothermal,
+  magnetized, driven box: the isotropy of the large-scale forcing is the
+  only sense in which the case is "isotropic". Read in arXiv v2.
+- The set-ups differ in what is forced: velocity modes below a wavenumber
+  at fixed power ([Prakash et al. (2022)](/sources/prakash-2022.md),
+  Eqs. 21–23), solenoidal or compressive acceleration fields
+  ([Seta & Federrath (2022)](/sources/seta-2022.md)), or nothing (the
+  decaying runs).
 
 # Citations
 
@@ -156,3 +255,9 @@ spectral reference used with HIT in both
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §IV.B, Fig. 2 (recalled result).
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — test-problem list (recalled grid-turbulence calibration).
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §6.2, §6.4–6.5, Eq. (55).
+- [Prakash et al. (2022)](/sources/prakash-2022.md) — §III.A, Tables 1–2, Figs. 1–3; §III.B.1, Eqs. (21)–(24), Fig. 4.
+- [Cao et al. (2022)](/sources/cao-2022.md) — §1; §3.4, Eqs. (9)–(11), Table 8, Figs. 13–15.
+- [Seta & Federrath (2022)](/sources/seta-2022.md) — §2, §2.4, §4.1–4.2, Table 1, Figs. 7–10.
+- [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md) — recalled turbulent-box references.
+- [Basile et al. (2023)](/sources/basile-2023.md) — §2.2 (recalled calibration of $C_{DES}$).
+- [Pereira et al. (2021)](/sources/pereira-2021.md) — §III, Fig. 4 (recalled a priori filtering).

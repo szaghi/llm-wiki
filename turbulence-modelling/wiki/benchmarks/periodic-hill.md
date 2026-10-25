@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Periodic hill"
-description: "The streamwise-periodic channel with a hill constriction at hill-height Reynolds number about 10,600, a smooth-wall separation and reattachment test for hybrid RANS/LES, implicit LES and learned RANS corrections, here run on grids 14 to 60 times smaller than wall-resolved LES."
+description: "The streamwise-periodic channel with a hill constriction, a smooth-wall separation and reattachment test: at hill-height Reynolds number about 10,600 for hybrid RANS/LES and implicit LES on grids 14 to 60 times smaller than wall-resolved LES, and as the parametrized hill family at 5600 for field-inversion RANS corrections."
 status: established
-aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow]
-tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven]
-timestamp: 2026-10-25T13:45:00Z
+aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow, parametrized periodic hills]
+tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion]
+timestamp: 2026-10-25T19:46:00Z
 ---
 
 # Periodic hill
@@ -110,6 +110,37 @@ Reynolds number for these cases. See
 [field inversion and machine learning](/methods/field-inversion-machine-learning.md)
 and [model-form uncertainty](/definitions/model-form-uncertainty.md).
 
+**Field inversion on the parametrized hill family.** A different
+configuration from the one of the table above:
+[Yan et al. (2022)](/sources/yan-2022.md), §3.2, use the DNS database of
+Xiao et al. for periodic hills of parametrized geometry, in which the hill
+width is scaled by a factor (written $\alpha_h$ here, page-local; the
+source writes $\alpha$, which it also uses for the angle of attack) at fixed
+hill height, at a Reynolds number of 5600 built on the crest height and the
+bulk velocity at the crest. The cases are 2D steady RANS with the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md) on an
+$81\times77$-point grid (shown for $\alpha_h=0.8$), with no-slip top and
+bottom walls, periodic inflow and outflow, and a volume force adjusted to
+hold the bulk velocity. [Field inversion](/methods/field-inversion-machine-learning.md)
+multiplies the SA production by a field $\beta(\boldsymbol x)$ and fits DNS
+mean-velocity profiles at stations (Eq. 17), with three regularizations
+(Table 2): none, which gives an irregular correction field with no general
+tendency; a weight $8\times10^{-6}$ with corrections confined to a box over
+the separating shear layer; and the same weight everywhere. The two
+regularized inversions give similar fields: production decreased at the
+start of the separating shear layer and increased downstream, in the region
+where the authors' earlier nonequilibrium modifier and Rumsey's separation
+fix act (Figs. 11, 18). The inversion on velocity alone also improves the
+lower-wall skin friction, which was not in the objective, and the separation at the
+hill top and the reattachment (Figs. 16–17). A network with hidden layers
+(32, 16, 8), trained on two geometries, reproduces the inversions and,
+embedded in the solver, brings velocity profiles closer to DNS than baseline
+SA at an interpolated width ($\alpha_h=1.0$) and at two extrapolated widths
+(0.5, 1.5) "in most regions" (§3.2.2, Figs. 19–22). Yan et al. also recall
+Rumsey's finding that enhanced mixing in the separated shear layer improves
+the periodic hill but worsens backward-facing-step flows (§1; see
+[backward-facing step](/benchmarks/backward-facing-step.md)).
+
 **Machine-learning wall models.**
 [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md), §I and §IV B, recall
 that the wall model of Zhou et al. was trained on channel and periodic-hill
@@ -155,6 +186,16 @@ oscillatory stresses in high-order no-model runs). See also
   The entry was recorded as an open contradiction at drafting and moved
   here at the chunk-1 deep lint, because neither paper makes a claim about
   the other's domain.
+- The parametrized hills of [Yan et al. (2022)](/sources/yan-2022.md)
+  ($Re=5600$ on crest height and crest bulk velocity, variable hill width)
+  are a family distinct from the $Re_h\approx10{,}600$ configuration of
+  Haering et al. and Dzanic et al.; results are not comparable across the
+  two. Yan et al. were read in an accepted manuscript, which names the
+  training geometries $\alpha_h=0.5$ and 0.8 in the text (§3.2.2) while
+  Figs. 19–21 show 0.8 and 1.2 as the training cases and call 0.5 an
+  extrapolation; only training at 0.8 and 1.2 is consistent with the
+  interpolation and extrapolation labels *(compiler check, not in the
+  sources)*.
 
 # Citations
 
@@ -162,3 +203,4 @@ oscillatory stresses in high-order no-model runs). See also
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §3.1, Table 1, Figs. 2–6.
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3, Figs. 6–7 (recalled results).
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §I, §IV B (recalled training data and results).
+- [Yan et al. (2022)](/sources/yan-2022.md) — §1; §3.2, Eq. (17), Table 2, Figs. 11–22.

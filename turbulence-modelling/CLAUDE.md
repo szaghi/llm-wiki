@@ -42,11 +42,11 @@ bundle's notation.
 ## Corpus
 
 - Primary archive: `~/papers/mosaic/turbulence_modelling/*.pdf`
-  (read-only; Layer 1), 131 PDFs on 2026-10-25, named
+  (read-only; Layer 1), 131 PDFs at founding (2026-10-25), named
   `year_Crossref_Journal_Surname_Title-prefix.pdf`. **The archive is still
   growing** (the human is adding papers): the founding plan covers the 131
-  files present on 2026-10-25; files added later are ingested in further
-  chunks after them, found with `tools/worklist.sh turbulence-modelling`.
+  files present on 2026-10-25; files added later are appended to the plan
+  (ghidoni-2026, chunk 7) or ingested in further chunks after them, found with `tools/worklist.sh turbulence-modelling`.
 - The page-1 and checksum check of 2026-10-25 found 131 distinct works and
   no byte copies. The year in the filename is the online year (the slug
   uses the year of the published issue), and more than half of the files
@@ -105,6 +105,11 @@ bundle's notation.
 
 ## Status
 
-**Chunk 1 staged 2026-10-25:** scaffold (D30) and the 20 reviews and
-vocabulary papers; 20 of 131 ingested, 55 concept pages plus the registry,
-1815 bibliography entries, deep lint done, no contradiction open.
+**Chunk 2 staged 2026-10-25:** 20 papers of 2021–2023; 40 of 132
+ingested, 68 concept pages plus the registry, 2768 bibliography entries,
+deep lint done, no contradiction open. One paper added to the archive
+after founding (ghidoni-2026) is planned for chunk 7.
+
+**Chunk 1 committed 2026-10-25 (6271a4e):** scaffold (D30) and the 20
+reviews and vocabulary papers; 55 concept pages plus the registry, 1815
+bibliography entries, deep lint done, no contradiction open.

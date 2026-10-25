@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-25T13:47:00Z
+timestamp: 2026-10-25T19:48:00Z
 ---
 
 # Notation registry
@@ -196,3 +196,6 @@ that uses one still says what it means.
 | $\lambda_D$ | disruption scale of the aligned MHD cascade | MHD pages |
 | $\varpi^\pm=\nabla_\perp^2\zeta^\pm$ | Elsasser vorticities, $\zeta^\pm$ the Elsasser potentials | MHD pages |
 | $\sigma_c$, $\sigma_r$ | normalized cross-helicity, normalized residual energy | MHD pages |
+| $\Gamma_E$, $h_{\min}$ | dynamo growth rate of the magnetic energy; finest cell size of an adaptive grid | small-scale dynamo, numerical dissipation, mesh adaptation, RAMSES |
+| $x_R$ | reattachment length of a separated flow | backward-facing step, LES pages |
+| $\Delta p_s^+$ | streamwise pressure gradient in inner units | wall law in adverse pressure gradient, turbulent boundary layers |

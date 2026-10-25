@@ -6,6 +6,107 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 2 — 2021–2023 papers: SGS clipping, PANS, mesh adaptation, DES, transition, wall laws, gas-kinetic DNS, RL wall models, dynamos (2026-10-25)
+
+Sources (20): abe-2021, pereira-2021, prakash-2022, mozaffari-2022,
+hoy-2022, basile-2023, carrenoruiz-2022, gillyns-2022, knopp-2022,
+yan-2022, alauzet-2022, cao-2022, mateogabin-2022, cogo-2022, huang-2022,
+francois-2022, liu-2022, martinalvarez-2022, seta-2022, bae-2022. 40 of 132
+ingested, 68 concept pages plus the registry, 2768 bibliography entries.
+Deep lint A1–A7 over the chunk-2 content done.
+
+### Decisions for the human
+
+1. **New archive file.** Ghidoni et al. (2026), J. Comput. Phys.
+   550:114637 (explicit wall function for high-order DG RANS), appeared in
+   the archive after founding; identity checked on Crossref and page 1,
+   planned as `ghidoni-2026` in chunk 7 (now 12 sources).
+2. **Bibliography calls left by the resolver:** the chunk-1 key
+   `langtry-2004` holds Langtry et al. Part II, J. Turbomach. 128:423, whose
+   print issue is 2006 (the year-of-issue rule would make it
+   `langtry-2006`); `duan-2011-b` (Part 3, JFM 672) precedes `duan-2011`
+   (Part 4, 684), so the suffixes are not in publication order; Reed & Hill,
+   printed "1977, p. 23" with no venue by mateogabin-2022, was folded into
+   `reed-1973` on authors and title alone. Rename or split on your word.
+3. **Version read of bae-2022** is the Research Square preprint v1 (June
+   2021); the Nature Communications version may differ in numbers and
+   wording, and the pages cite the preprint.
+
+### Contradictions
+
+None open. One opened at drafting and reclassified: **log-layer mismatch
+of the Bae & Koumoutsakos RL wall model** — Bae & Koumoutsakos (2022,
+preprint) report a friction-velocity error below 5% from $Re_\tau=5200$
+to $10^6$; Vadrot et al. (2023b, Table III) measure log-layer mismatches of
+$+1$ to $+2$ and $-0.9$ to $-3.2$ in their re-implementation. Different
+quantities, solvers and matching heights ($h^+_{\mathrm{wm}}$ about 4.7
+times lower in Vadrot et al., compiler check), and Vadrot et al. attribute
+the difference to grid resolution: now a qualification on
+[machine-learning wall models](wiki/methods/machine-learning-wall-model.md),
+cross-referenced from the RL-closure, log-layer-mismatch and benchmark
+pages. Near-conflicts kept as attributed qualifications: Yan et al.'s
+strain-based baseline SA against Li & Liu; two printed forms of the DDES
+shielding function (François et al., Yan et al.); unsteady RANS judged
+incorrect (Mozaffari et al.) and needed (Carreño Ruiz & D'Ambrosio) in
+different regimes; Abe (2021) and Cao et al. (2022) on implicit LES in
+different settings.
+
+### Printed slips (recorded on the Source pages)
+
+- alauzet-2022: $c_{w1}$ printed with $c_{b1}/\kappa$ (the log-layer
+  balance gives $c_{b1}/\kappa^2$, 3.24 against 2.76, compiler check);
+  destruction-term sign in Eq. 13; inverted anisotropic-ratio formula;
+  Table 2 mass-flow ratios of the elsA rows.
+- pereira-2021: production-sign slip between Eqs. 5 and 17; the "half-width"
+  growth rate of Eq. A9 is that of the full height.
+- yan-2022: SA destruction term without the square; training hill shapes
+  (text 0.5/0.8, captions 0.8/1.2); Table 4 against Table 3.
+- cao-2022: Eq. 11 sign; $k_{\max}$ formula against Table 8.
+- cogo-2022: Table 2 shape factor of case M6L (10.9 printed, 13.4 from the
+  row); Eqs. 5.9–5.10 exponent. huang-2022: Table 3 ratios; $H_{12}$
+  against the Hopkins correlation.
+- basile-2023: `max` in Eq. 18 against the marking rules.
+- bae-2022: reward sign (Eq. 9) and $\beta$ update (Eq. 8).
+- seta-2022: compression-term sign reading; Table 3 parts against the
+  Table 2 total; Lorentz force labelled "dyne".
+- martinalvarez-2022: §3.2 exponent pairing; liu-2022: $q=10^3$ caption,
+  Eq. 13 primes, units of $E_{\mathrm{mag}}$.
+- knopp-2022: constant 1.78 kept in §7.4 after the revision to 1.68;
+  prakash-2022: correlation-coefficient normalization (Eq. 19);
+  mateogabin-2022, mozaffari-2022, francois-2022, carrenoruiz-2022,
+  gillyns-2022, hoy-2022, abe-2021: minor slips.
+
+### Bibliography
+
+2768 entries (+953 from 1248 printed references); 105 aliases, 38 verified
+silences, 3 printed duplicates folded (liu-2022 Kretschmer 2019/2020 and
+Schmidt 2011a/b; martinalvarez-2022 Attia 2021), `FLAGS: 0`. Keys corrected
+from Crossref: `pudritz-1989` (printed 2002), `vazza-2018`,
+`steinwandel-2020`, `kretschmer-2020`, `beck-2016-b`; cao-2022's
+`jeffrey-2014` aliased to `slotnick-2014`, carrenoruiz-2022's
+`menter-1994` to `menter-1994-b`.
+
+### Bundle fit (D17 candidates, no copy made)
+
+- liu-2022, martinalvarez-2022, seta-2022 (dynamos in galaxy and
+  interstellar-medium simulations): `astrophysical-simulation-codes`.
+- mateogabin-2022 (entropy-stable SVV and shock capturing for DG) and
+  cao-2022 (gas-kinetic schemes): `weno-teno`.
+- alauzet-2022 (adjoint-based anisotropic mesh adaptation for steady RANS)
+  and hoy-2022 (fluid–structure interaction under shock/boundary-layer
+  interaction): peripheral to closure modelling.
+
+### Candidate pages (kept inline until a second source)
+
+Stabilized mixed model; approximate deconvolution; anisotropic
+minimum-dissipation model; laminar separation bubble; SD7003 airfoil;
+nonequilibrium turbulence; discrete adjoint (Yan, Alauzet); strong
+Reynolds analogy; uniform momentum zones; inflow turbulence generation
+(Bae, Cogo, Huang); shock/boundary-layer interaction; dilatational
+dissipation; wall-model input filtering; spectral elements and Nek5000;
+quasi-Eulerian refinement; mean-field dynamo; solenoidal and compressive
+forcing.
+
 ## Chunk 1 — reviews and vocabulary papers (2026-10-25)
 
 Sources (20): duraisamy-2019, duraisamy-2021, schekochihin-2022,

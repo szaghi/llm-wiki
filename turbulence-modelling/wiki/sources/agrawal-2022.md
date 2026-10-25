@@ -8,7 +8,7 @@ authors: [Agrawal R., Whitmore M.P., Griffin K.P., Bose S.T., Moin P.]
 year: 2022
 venue: "Phys. Rev. Fluids 7:074602"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physical_Review_Fluids_Agrawal_Non-Boussinesq_subgrid-scale_model_with_dynamic_tensorial_co.pdf"
-tags: [sgs-model, non-boussinesq, dynamic-procedure, wmles, separated-flow]
+tags: [sgs-model, non-boussinesq, wmles, separated-flow]
 timestamp: 2026-10-25T13:45:00Z
 ---
 
@@ -140,7 +140,7 @@ research model, is a distinct work.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
@@ -154,6 +154,7 @@ Chunk 1 (2026-10-25). This source is cited on:
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Dynamic tensor-coefficient Smagorinsky model](/methods/dynamic-tensor-coefficient-smagorinsky-model.md)
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
+- [Gradient (Clark) model and the clipping of structural SGS models](/methods/gradient-model.md)
 - [Scale-similarity and mixed subgrid-scale models](/methods/scale-similarity-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Vreman model](/methods/vreman-model.md)
