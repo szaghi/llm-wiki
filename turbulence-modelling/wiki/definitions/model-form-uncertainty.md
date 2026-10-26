@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Model-form uncertainty in turbulence closures"
-description: "The epistemic uncertainty that comes from the structure of a turbulence closure rather than from its inputs or coefficients; the four layers of RANS assumptions, physics-based bounds by eigenspace perturbation and random matrices, Bayesian calibration and discrepancy fields, non-unique inversions and physics-based priors, and the limits of identifiability."
+description: "The epistemic uncertainty that comes from the structure of a turbulence closure rather than from its inputs or coefficients; the four layers of RANS assumptions, physics-based bounds by eigenspace perturbation and random matrices, Bayesian calibration and discrepancy fields, where to place the correction, non-unique inversions and physics-based priors, and the limits of identifiability."
 status: established
 aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation]
 tags: [uncertainty-quantification, rans, data-driven, field-inversion]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-25T20:38:00Z
 ---
 
 # Model-form uncertainty in turbulence closures
@@ -185,6 +185,78 @@ identifiability question below:
 See [field inversion and machine learning](/methods/field-inversion-machine-learning.md)
 and the [SA page](/methods/spalart-allmaras-model.md) for the learned model.
 
+## Where to put the correction
+
+Cato et al. (2023) compare six space-dependent corrections of the
+negative Spalart–Allmaras model, each optimized alone by adjoint-based
+variational data assimilation against dense DNS mean velocity, with the
+cost $\tfrac12\int\lVert\boldsymbol u_{\mathrm m}-\langle\boldsymbol u\rangle\rVert^2$
+and no regularization ([Cato et al. (2023)](/sources/cato-2023.md), §II B–D,
+Eqs. 5–6). Page-local names, as on the
+[field-inversion page](/methods/field-inversion-machine-learning.md): a
+momentum forcing $\boldsymbol f_u$; the divergence of a traceless symmetric
+tensor $\boldsymbol\Psi$ (a conservative forcing; the source's
+$\mathbf R_{\gamma\delta}$); the production multiplier, written in registry
+form as $\beta P$ with $\beta-1$ the source's control (the source writes
+$(1+\beta)P$ with prior zero); an additive source $f_{\tilde\nu}$ and a
+proportional source $g_{\tilde\nu}\tilde\nu$ in the $\tilde\nu$-equation;
+and a multiplier $1+\varphi$ of $\nu_t$ in the momentum equation (the
+source's $\xi$). The four scalar
+corrections keep the solution within the
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md): "only the
+length-scale of the turbulence is corrected, not the structure of the
+Reynolds-stresses" (§II B).
+
+Relative velocity errors $E_u$ after assimilation (Tables I–II):
+
+| Correction | channel ($Re=12\,600$) | periodic hill ($Re_b=2800$) |
+|---|---|---|
+| baseline SA | $4.9\times10^{-2}$ | $7.1\times10^{-2}$ |
+| $\boldsymbol f_u$ | $3.1\times10^{-3}$ | $3.8\times10^{-3}$ |
+| $\boldsymbol\Psi$ | $2.9\times10^{-3}$ | $3.7\times10^{-3}$ |
+| $\beta$ | $8.4\times10^{-3}$ | $3.2\times10^{-2}$ |
+| $f_{\tilde\nu}$ | $8.1\times10^{-3}$ | $7.8\times10^{-3}$ |
+| $g_{\tilde\nu}$ | $4.6\times10^{-3}$ | $7.5\times10^{-3}$ |
+| $\varphi$ | $1.2\times10^{-2}$ | $4.3\times10^{-2}$ |
+
+The channel is a converging–diverging channel. On a square cylinder at
+$Re=22\,000$ the momentum corrections and $g_{\tilde\nu}$ reproduce the DNS, $\beta$
+and $f_{\tilde\nu}$ improve it partially, and $\varphi$ "was not able to correct
+the field" (§V B, Table III). The $\varphi$ problem can be
+ill-conditioned, in agreement with Dow & Wang as the authors recall: its
+gradient stays on a plateau while the others fall by three to four orders
+of magnitude (§III B; App. B, Fig. 21).
+
+**Non-uniqueness.** Three forms appear in the same paper:
+
+- $\boldsymbol\Psi$ is defined only up to the gradient of a harmonic
+  potential, which leaves the force unchanged (§II B);
+- matching the mean velocity does not fix the Reynolds stresses: no
+  correction reproduces the DNS stresses around the square cylinder, even
+  the tensor one, so "the mean-flow prediction can be accurate even though
+  the Reynolds stresses are wrong" (§V C, Figs. 16–17);
+- in the channel, $\beta$, $f_{\tilde\nu}$ and $g_{\tilde\nu}$ recover the velocity "at the
+  expense of large eddy-viscosity corrections, which very strongly
+  overshoot the reference values", which the authors call "a classical
+  over-learning situation" (§III B, Fig. 6).
+
+They propose, without testing them, penalties on the control or on the
+distance of $\nu_t$ from a RANS prior (§III B, Eqs. 19–20). Their summary
+table ranks $g_{\tilde\nu}$ with the momentum corrections in all three
+flows, while noting that $f_{\tilde\nu}$ and $g_{\tilde\nu}$ are "not naturally
+dimensionless" and that vector and tensor corrections pose rotational
+invariance problems (§VI, Table III).
+
+**The Boussinesq (L2) choice on one flow.** McConkey et al. (2022) do not
+frame their work as uncertainty quantification, but they measure the error
+left by the best-fit Boussinesq closure: on a parametrized periodic hill,
+even the eddy viscosity fitted to DNS stresses leaves anisotropy errors "on
+the order of 100%", and injected into RANS it still gives significant
+velocity errors at separation and reattachment, the "upper limit" of a
+linear closure based on it
+([McConkey et al. (2022)](/sources/mcconkey-2022.md), §II B, Figs. 1–4;
+details on the [Boussinesq page](/definitions/boussinesq-hypothesis.md)).
+
 ## Identifiability and data–model consistency
 
 Duraisamy (2021) shows a channel-flow inference of an anisotropy perturbation
@@ -228,9 +300,20 @@ however, not been achieved" and calls for community benchmarks (§VII).
   they enter squared in the denominators, as standard deviations (Eqs. 6,
   14–15); their periodic-hill objective writes the weight as $\lambda_i$ under
   a sum over $j$ (Eq. 17).
+- Cato et al. (2023) rank $\beta$ below $f_{\tilde\nu}$ for the converging–diverging
+  channel in their summary (Table III) although their Table I gives the two
+  nearly equal errors ($E_u$ $8.4\times10^{-3}$ against $8.1\times10^{-3}$,
+  skin-friction error 0.18 against 0.19).
+- Cato et al. rate the production multiplier $\beta$ in their middle class
+  in all three flows (Table III), while Yan et al. use it as their only
+  correction (above). The settings differ as the sources state them: Cato
+  et al. invert dense velocity data with no regularization (§II B, Eq. 6),
+  Yan et al. scarce data with a Gaussian prior (§2.1, Eq. 6).
 
 # Citations
 
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §2 Eqs. 1–6, boxes pp. 3, 5, 7, §3 Eqs. 7–9, §4.1 Eq. 10 Figs. 1–2, §4.2, §5.1–5.2, §5.4, §6 Eq. 13.
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §I, §II Eq. 2, §III.A, §IV.A, §VII Fig. 4.
 - [Yan et al. (2022)](/sources/yan-2022.md) — §1, §2.1 Eqs. 6, 14–17, §3.1.1 Figs. 4–5, §3.2.1 Table 2 Figs. 11, 14, 18, §3.3.1 Fig. 28.
+- [Cato et al. (2023)](/sources/cato-2023.md) — §II B–D Eqs. 5–6, §III B Table I Eqs. 19–20 Fig. 6, §IV B Table II, §V B–C Figs. 16–17, §VI Table III, App. B Fig. 21 (HAL v2).
+- [McConkey et al. (2022)](/sources/mcconkey-2022.md) — §II B, Figs. 1–4 (arXiv v1).

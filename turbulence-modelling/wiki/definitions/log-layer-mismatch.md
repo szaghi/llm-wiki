@@ -5,7 +5,7 @@ description: "The shift, in wall units, between the mean velocity of a wall-mode
 status: established
 aliases: [LLM, log-layer shift, super-buffer layer error]
 tags: [wmles, wall-model, hybrid-rans-les, boundary-layer]
-timestamp: 2026-10-25T19:43:00Z
+timestamp: 2026-10-25T20:36:00Z
 ---
 
 # Log-layer mismatch
@@ -58,11 +58,52 @@ under-resolved first cells of the LES, not to the log law itself.
   (§1) recall the argument of Bou-Zeid et al. (2005): by the Schwarz
   inequality, applying the law of the wall locally and instantaneously
   over-predicts the mean wall stress.
+- **Numerical dissipation of the scheme in the LES region.**
+  [Carlsson et al. (2023)](/sources/carlsson-2023.md) (§4.3, Fig. 4, Table 2)
+  run SST-IDDES of channel flow at $M_b=0.15$ and $Re_\tau=395$, 2400 and
+  18 000 on grids built to WMLES practice (first node at $y^+\approx0.5$,
+  stretching 1.14, $64\times64$ points in the wall-parallel plane, so
+  $\Delta x^+\approx40$–1800). With a second-order central scheme carrying
+  the fourth-difference artificial dissipation of RANS practice
+  ($\kappa^{(4)}=1/128$ in their notation) the mismatch is "significant" at
+  all Reynolds numbers: the profile is right in the viscous sublayer, buffer
+  layer and the part of the log layer where IDDES runs in RANS mode, "but fails
+  as soon as the model switches to LES due to adding to[o] much numerical
+  dissipation". Their low-dissipation low-dispersion schemes (fourth-difference
+  coefficient 1/1024 or 1/512 plus gradient-extrapolated face values) leave
+  only a small mismatch at the RANS–LES interface, near $y^+\approx200$ at
+  $Re_\tau=2400$ and $y^+\approx2000$ at $Re_\tau=18\,000$; the same holds for
+  the transformed profiles of isothermal-wall channels at $M_b=1.5$ (Fig. 5).
+  Each case is run on one grid (Table 2) with the same SST-IDDES, and only
+  the convective scheme changes (Table 1: the reference scheme differs from
+  the low-dissipation ones in its fourth-difference coefficient and in the
+  face extrapolation); the authors attribute the mismatch of the reference
+  scheme to its [numerical dissipation](/properties/numerical-dissipation.md)
+  (§4.3). Details on
+  the [low-dissipation low-dispersion scheme](/methods/low-dissipation-low-dispersion-scheme.md)
+  page.
+- **Spurious correlation between resolved and modelled quantities.**
+  [Kim et al. (2022)](/sources/kim-2022.md) (§III E) mention in passing,
+  citing Yang, Park & Moin (2017), that in LES wall modelling "artificial
+  correlation between the resolved and modeled variables could cause LOW
+  mismatch" (LOW: law of the wall); the remark accompanies their correlation
+  analysis of SGS models (Table IV), and they run no wall-modelled LES.
+  [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) report the corresponding
+  measurement for a wall model: the modelled wall stress of the equilibrium
+  model is perfectly correlated with the LES velocity at the sampling
+  location, against about 0.3 in DNS (see
+  [equilibrium wall model](/methods/equilibrium-wall-model.md)).
 - **Modelled-stress depletion in hybrid methods.** [Haering et al. (2022)](/sources/haering-2022.md)
   (§II.A) argue that a hybrid RANS/LES method which reduces the modelled
   stress and waits for resolved turbulence to grow passively must have regions
   where the total stress is depleted, and list LLM among the consequences
   (with reduced body forces, premature separation, delayed reattachment).
+  [Cai et al. (2022)](/sources/cai-2022.md) (§I, §II.C.1) describe a related
+  depletion at an immersed boundary: the boundary treatment is not
+  conservative, so the total (modelled plus resolved) Reynolds stress is not
+  maintained near the wall, the skin friction deviates and, in LES, turbulence
+  development is "strongly delayed"; they do not use the term log-layer
+  mismatch.
 
 ## Remedies used or recalled
 
@@ -75,6 +116,9 @@ under-resolved first cells of the LES, not to the log law itself.
 | Several cells below the matching height: $h_{\mathrm{wm}}=0.1\delta_0$ with four uniform cells below it ($\Delta y=0.25h_{\mathrm{wm}}$), "to reduce numerical errors from the LES transferred to the wall model (Kawai & Larsson, 2012) and avoid the log-layer mismatch" | [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) (§3), Mach 3 shock/boundary-layer interaction |
 | Impose the wall stress through a wall eddy viscosity, $\nu_t\rvert_w=\tau^{\mathrm m}_w/\big(\rho\,(\partial u/\partial y)_w\big)-\nu$ with no slip kept ("viscosity augmentation"), instead of a Neumann condition | [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) (Methods, Eq. 10), stated, citing earlier work, to be "better at resolving the so-called log-layer mismatch"; $\tau^{\mathrm m}_w$ the modelled wall stress (page-local) |
 | Short exponential moving average of the wall-model input in time | [Gillyns et al. (2022)](/sources/gillyns-2022.md) (§3, §5, Eq. 4), who recall Yang et al. (2017) and Fowler et al. (2022) for time filtering; without it ($C_t=0$) their wall model diverged, which they attribute "most likely" to Gibbs oscillations at the element boundary, not to the mismatch |
+| Elevating function $f_e$ of IDDES, which raises the RANS length scale near the RANS–LES interface, and the wall-distance-based subgrid length of IDDES, meant to "give a correct log-layer behavior in WMLES without the need to alter the value of the modeling constant" | recalled from Shur et al. (2008) by Carlsson et al. (2023, §2, Eqs. 18–19), who use IDDES; a small mismatch remains at the interface with their low-dissipation schemes (§4.3) |
+| Low-dissipation convective scheme in the LES region | Carlsson et al. (2023, §4.3, Figs. 4–5): reduces a significant mismatch to a small one at the RANS–LES interface (above) |
+| Near-wall eddy viscosity that enforces the total (modelled plus resolved) stress of a mixing-length RANS model, "several grid points from wall" (constrained LES) | Cai et al. (2022, §II.C.1, Eq. 27) at an immersed boundary; the mean velocity in the log layer is not shown, so its effect on mismatch is not reported (see [wall-modelled LES](/methods/wall-modelled-les.md)) |
 | Active forcing of resolved fluctuations at the rate the modelled stress is reduced | [active model split](/methods/active-model-split.md): Haering et al. (2022, §V.A.1) report no LLM in channel flow at $Re_\tau\approx5200$ on four grids with $\Delta x^+\approx700$–$1550$ |
 
 ## First-point matching without mismatch
@@ -136,6 +180,9 @@ page, not a contradiction.
   number increases" — holds for the magnitude of the printed slope, which is
   negative and tends to zero as $Re_\tau$ grows *(compiler check, not in the
   sources)*.
+- Carlsson et al. (2023, §4.3) cite "Fig. 4(b)" for both the $Re_\tau=2400$
+  and the $Re_\tau=18\,000$ interface mismatch; the $Re_\tau=18\,000$ case is
+  their Fig. 4(c).
 
 # Citations
 
@@ -148,3 +195,6 @@ page, not a contradiction.
 - [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §3.
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Methods, Eq. (10); Figs. 3–4.
 - [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §3, Eq. (4); §5; §7, Table 1.
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §2, Eqs. (18)–(19); Table 1; §4.3, Table 2, Figs. 4–5.
+- [Kim et al. (2022)](/sources/kim-2022.md) — §III E, Table IV.
+- [Cai et al. (2022)](/sources/cai-2022.md) — §I; §II.C.1, Eq. (27).

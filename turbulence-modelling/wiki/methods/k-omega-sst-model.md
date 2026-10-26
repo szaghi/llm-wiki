@@ -3,9 +3,9 @@ type: Method
 title: "k-ω SST model"
 description: "Menter's two-equation shear-stress-transport eddy-viscosity model, blending a k-ω inner formulation with an outer one through F1 and limiting the eddy viscosity through F2; its equations and constants, its transition, PANS and DES forms and modifications, and evidence on airfoils, fan stages, vortex flows and its transported k."
 status: established
-aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω]
+aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-25T20:27:00Z
 ---
 
 # k-ω SST model
@@ -130,6 +130,15 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
 - **Hybrid forms.** SST is the base of the DDES ("DDES-SST") and IDDES
   models of the ISIS-CFD solver ([Mozaffari et al. (2022)](/sources/mozaffari-2022.md),
   §2; see [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+  Carlsson et al. (2023) use SST-DDES and SST-IDDES (after Gritskevich et
+  al.), in which the low-Reynolds-number correction of the LES length is
+  not needed ($\Psi=1$); in LES mode on decaying isotropic turbulence the
+  constant of the $k$-$\varepsilon$ branch, $C_{\mathrm{DES}}=0.61$, reproduces
+  the measured spectra with a low-dissipation scheme, and the
+  $k$-$\omega$-branch value 0.78 gives "nearly identical results" (not shown)
+  ([Carlsson et al. (2023)](/sources/carlsson-2023.md), §3, §4.2). SST-IDDES
+  of channel flow at $M_b=0.15$ and 1.5 then follows DNS and the log law
+  except for a small log-layer mismatch at the interface (§4.3).
 
 ## What the transported $k$ represents
 
@@ -185,6 +194,14 @@ operational role and need not match their DNS counterparts
   ([Huang et al. (2022)](/sources/huang-2022.md), §1).
 - Alauzet et al. (2022) name a comparison of SA and SST on mesh-converged
   adapted meshes as future work ([Alauzet et al. (2022)](/sources/alauzet-2022.md), §9).
+- **Ahmed body.** As recalled by Cai et al. (2022), Menter & Kuntz ran
+  $k$-$\varepsilon$ and SST with wall models and obtained fully separated
+  flow on the 35° slant but a 25° case "much more sensitive to the
+  numerical schemes and the turbulence models", improved with DES; in
+  Guilmineau et al.'s body-fitted comparison at 35° and $Re_H=7.68\times10^5$
+  SST gives a drag coefficient of 0.2999 and EARSM 0.2603 against 0.279
+  measured by Meile et al. ([Cai et al. (2022)](/sources/cai-2022.md), §I,
+  Table III).
 - **PANS.** Dzanic et al. (2022) use SST as the PANS closure on the
   [periodic hill](/benchmarks/periodic-hill.md) and the circular cylinder at
   $Re_D=3900$, with high-order flux reconstruction.
@@ -237,3 +254,5 @@ version read (arXiv v1):
 - [Knopp (2022)](/sources/knopp-2022.md) — §1.
 - [Huang et al. (2022)](/sources/huang-2022.md) — §1.
 - [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §9.
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §3, §4.2, §4.3.
+- [Cai et al. (2022)](/sources/cai-2022.md) — §I, Table III (HAL v1).

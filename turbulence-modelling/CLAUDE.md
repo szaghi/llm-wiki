@@ -46,7 +46,8 @@ bundle's notation.
   `year_Crossref_Journal_Surname_Title-prefix.pdf`. **The archive is still
   growing** (the human is adding papers): the founding plan covers the 131
   files present on 2026-10-25; files added later are appended to the plan
-  (ghidoni-2026, chunk 7) or ingested in further chunks after them, found with `tools/worklist.sh turbulence-modelling`.
+  (ghidoni-2026, wang-2023, elzaabalawy-2023, chunk 7; 134 files on
+  2026-10-25) or ingested in further chunks after them, found with `tools/worklist.sh turbulence-modelling`.
 - The page-1 and checksum check of 2026-10-25 found 131 distinct works and
   no byte copies. The year in the filename is the online year (the slug
   uses the year of the published issue), and more than half of the files
@@ -105,10 +106,15 @@ bundle's notation.
 
 ## Status
 
-**Chunk 2 staged 2026-10-25:** 20 papers of 2021–2023; 40 of 132
-ingested, 68 concept pages plus the registry, 2768 bibliography entries,
-deep lint done, no contradiction open. One paper added to the archive
-after founding (ghidoni-2026) is planned for chunk 7.
+**Chunk 3 staged 2026-10-26:** 20 papers of 2022–2023; 60 of 134
+ingested, 84 concept pages plus the registry, 3573 bibliography entries,
+deep lint done, no contradiction open. Three papers added to the archive
+after founding (ghidoni-2026, wang-2023, elzaabalawy-2023) are planned for
+chunk 7.
+
+**Chunk 2 committed 2026-10-25 (eeda52f):** 20 papers of 2021–2023; 68
+concept pages, 2768 bibliography entries, deep lint done, no contradiction
+open.
 
 **Chunk 1 committed 2026-10-25 (6271a4e):** scaffold (D30) and the 20
 reviews and vocabulary papers; 55 concept pages plus the registry, 1815

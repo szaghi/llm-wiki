@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Detached-eddy simulation and its delayed and zonal forms"
-description: "The single-model hybrid RANS/LES in which a RANS model's length scale is capped by a grid length so that the model acts as a subgrid model away from walls; the DES switch and its failure on ambiguous grids, the DDES shielding function, ZDES modes and their grid lengths, and applications."
+description: "The single-model hybrid RANS/LES in which a RANS model's length scale is capped by a grid length so that the model acts as a subgrid model away from walls; the DES switch and its failure on ambiguous grids, the DDES shielding function, IDDES, ZDES modes, grid lengths and the shear-layer-adapted length, calibration with the numerical scheme, and applications."
 status: established
-aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, ZDES mode 2, ZDES mode 0+1]
+aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-25T20:38:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -28,7 +28,7 @@ Haering et al. (2022) call DES "the most ubiquitous HRL approach" and class
 it with the single-model hybrids that switch internally between RANS-like
 and LES-like operation
 ([Haering et al. (2022)](/sources/haering-2022.md), §I). Page-local
-symbols: $d_{\mathrm{DES}}$ the hybrid length, $\Delta_{\max}=\max(\Delta x,\Delta y,\Delta z)$
+symbols: $d_{\mathrm{DES}}$ the hybrid length, $l_{\mathrm{RANS}}$ and $l_{\mathrm{LES}}$ the RANS and LES length scales, $\Delta_{\max}=\max(\Delta x,\Delta y,\Delta z)$
 and $\Delta_{\mathrm{vol}}=(\Delta x\Delta y\Delta z)^{1/3}$ (the cube root of
 the cell volume), $r_d$ and $f_d$ the DDES shielding parameter and function.
 
@@ -70,6 +70,20 @@ feature of their learned SA correction, without defining $r_d$
 ([Yan et al. (2022)](/sources/yan-2022.md), §2.3; see
 [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
 
+Carlsson et al. (2023) write DDES for any host model through its length
+scale,
+
+$$l_{\mathrm{DDES}}=l_{\mathrm{RANS}}-f_d\max\big(0,\,l_{\mathrm{RANS}}-l_{\mathrm{LES}}\big),\qquad l_{\mathrm{LES}}=C_{\mathrm{DES}}\Psi\Delta,$$
+
+with $\Psi$ a low-Reynolds-number correction that avoids an unphysical
+damping in LES regions (page-local; $\Psi=1$ for SST) and $C_{\mathrm{DES}}$ "code
+dependent"; the RANS model becomes hybrid by replacing $l_{\mathrm{RANS}}$
+with $l_{\mathrm{DDES}}$. They use the SA and SST hosts, with $\Delta=\Delta_{\max}$
+taken in their edge-based solver as the longest edge of the dual control
+volume ([Carlsson et al. (2023)](/sources/carlsson-2023.md), §3, Eqs. 16–17).
+For SA, $l_{\mathrm{RANS}}=d$ and with $f_d=1$ the form reduces to the
+$d_{\mathrm{DES}}$ above *(compiler check, not in the sources)*.
+
 Haering et al. (2022) count the delaying function of DDES among the ad hoc
 unified switches "tuned per flow", which make such methods possibly not
 predictive in general (§I). In the AIAA Third High-Lift Prediction Workshop
@@ -81,6 +95,27 @@ models of the ISIS-CFD solver used by Mozaffari et al. (2022), built on the
 [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md); the paper prints no
 equation of either ([Mozaffari et al. (2022)](/sources/mozaffari-2022.md),
 §2, §4.1, §5).
+
+Carlsson et al. (2023, §3, Eqs. 18–19) print the IDDES blending of Shur et
+al.,
+
+$$l_{\mathrm{IDDES}}=\hat f_d(1+f_e)\,l_{\mathrm{RANS}}+(1-\hat f_d)\,l_{\mathrm{LES}},\qquad
+\Delta_{dw}=\min\big(\max[C_{dw}d,\;C_{dw}\Delta_{\max},\;\Delta_{wn}],\;\Delta\big),$$
+
+with $\hat f_d$ (page-local; the source's $\tilde f_d$) blending a DDES
+branch, meant for inflow without turbulent content, and a wall-modelled-LES
+branch, meant for turbulent inflow on grids fine enough to resolve the
+boundary-layer eddies; $f_e$ raises the RANS length near the interface to
+reduce [log-layer mismatch](/definitions/log-layer-mismatch.md); $\Delta_{dw}$
+replaces $\Delta$ in $l_{\mathrm{LES}}$ to give the right log-layer behaviour
+"without the need to alter the value of the modeling constant"; $\Delta_{wn}$ is
+the wall-normal cell size, $C_{dw}=0.15$ (page-local names). With this
+IDDES on SST, channel flow at $M_b=0.15$ ($Re_\tau=395$ to 18 000) and
+$M_b=1.5$ ($Re_\tau=500$ to 5000) on wall-modelled-LES grids
+($\Delta x^+$ up to about 1800 at $Re_\tau=18\,000$) agrees with DNS and
+Reichardt's law once the scheme's dissipation is low enough (§4.3, Table 2,
+Figs. 4–6; see [hybrid RANS/LES](/definitions/hybrid-rans-les.md) and
+[turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
 
 ## Zonal DES
 
@@ -121,6 +156,10 @@ The variants differ in the length $\Delta$ that caps the RANS length:
 | DES, DDES | $\Delta_{\max}$ | as recalled by François et al. (2022, §3.1) and Basile et al. (2023, §2.2) |
 | ZDES mode 2 | $\Delta_{\max}$ where $f_d<0.8$, $\Delta_{\mathrm{vol}}$ where $f_d>0.8$ | François et al. (2022), §3.1 |
 | ZDES mode 0+1 on high-order DG | $\Delta_{\mathrm{vol}}/(N+1)$, $\Delta_{\mathrm{vol}}$ the cube root of the element volume, $N$ the local polynomial degree; $C_{\mathrm{DES}}=0.65$ | Basile et al. (2023), §2.2 |
+| DDES in an edge-based finite-volume code | $\Delta_{\max}$ = longest edge of the dual control volume | Carlsson et al. (2023), §3 |
+| IDDES | $\Delta_{dw}$ (Eq. 19 above) | Carlsson et al. (2023), §3 |
+| SA-DDES with grey-area mitigation | $\Delta_{\mathrm{SLA}}$ (below), $C_{\mathrm{DES}}=0.65$ | Carlsson et al. (2023), §3.1, §4.4 |
+| ZDES of the supersonic base flow (Simon et al.) | $\Delta_{\mathrm{vol}}$, $C_{\mathrm{DES}}=0.55$ | as recalled by Carlsson et al. (2023), §4.4 |
 
 Basile et al. divide by $N+1$, the number of one-dimensional degrees of
 freedom, following Lorteau et al., and take $C_{\mathrm{DES}}=0.65$ ("usually
@@ -138,6 +177,42 @@ cell size as the aspect ratio grows (§II C). Neither source tests a DES
 model. Basile et al. remesh isotropically outside a frozen prism layer,
 justified by the isotropy of the inertial-range scales in free shear flows
 (§3.4).
+
+### The shear-layer-adapted length
+
+$\Delta_{\max}$ "often gives an excess SGS viscosity" in free shear layers in
+LES mode, delaying resolved turbulence after the RANS–LES switch (the grey
+area). Carlsson et al. (2023, §3.1, Eqs. 20–21) recall the remedy of Shur et
+al. (2015): a vorticity-oriented length and a Kelvin–Helmholtz reduction,
+
+$$\Delta_\omega=\frac1{\sqrt3}\max_{n,m}\lVert\boldsymbol l_n-\boldsymbol l_m\rVert,\quad
+\boldsymbol l_n=\boldsymbol n_\omega\times(\boldsymbol r_n-\boldsymbol r),\quad
+\boldsymbol n_\omega=\frac{\boldsymbol\omega}{\lVert\boldsymbol\omega\rVert},\qquad
+\Delta_{\mathrm{SLA}}=\Delta_\omega\,F_{KH}(\langle VTM\rangle),$$
+
+with $\boldsymbol r_n$ the cell vertices, $F_{KH}\in[0,1]$ equal to one in
+developed turbulence and reduced where the vortex-tilting measure
+$\langle VTM\rangle$ (averaged over neighbouring cells, near zero in
+quasi-two-dimensional regions) detects Kelvin–Helmholtz structures
+(page-local symbols; the source writes $\tilde\Delta_\omega$). The factor
+$1/\sqrt3$ recovers $\Delta_{\max}$ for cubic cells. Replacing $\Delta_{\max}$
+by $\Delta_\omega$ alone "is not enough to fully unlock the Kelvin–Helmholtz
+instability". The authors state that $\Delta_{\mathrm{SLA}}$ gives the same
+decaying-turbulence spectra as $\Delta_{\max}$ with the same constant
+(§4.4).
+
+### Calibration of $C_{\mathrm{DES}}$ and the numerical scheme
+
+In LES mode on Comte-Bellot–Corrsin decaying turbulence ($32^3$ to $128^3$),
+Carlsson et al. (2023, §4.2, Fig. 3) find that the "standard values" of the constant,
+$C_{\mathrm{DES}}=0.65$ for SA and $0.61$ for the $k$-$\varepsilon$ branch of
+SST ($0.78$ for the $k$-$\omega$ branch giving "nearly identical results", not
+shown), predict the measured spectra without recalibration once the
+fourth-difference dissipation coefficient of the scheme is lowered to
+1/512 or 1/1024, while the RANS-practice value 1/128 is far too
+dissipative on all grids; the constant is thus calibrated together with
+the scheme (see [numerical dissipation](/properties/numerical-dissipation.md)
+and [low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md)).
 
 ## Grid dependence and mesh adaptation
 
@@ -190,6 +265,43 @@ RANS-adapted mesh (§3.3).
   finest box, and keeps the experimental trends downstream (160 000 against
   about 250 000 CPU hours)
   and a delta wing at $\alpha=24^\circ$ (§5).
+- **Supersonic axisymmetric base flow** (Carlsson et al. 2023, §4.4).
+  Herrin–Dutton experiment, $M_\infty=2.46$, $Re_R=1.632\times10^6$ on the base
+  radius $R$. As the authors recall, DESider SA-DES with $\Delta_{\max}$ and
+  $C_{\mathrm{DES}}=0.65$ (0.9–3.6 million cells) gave a good flat base
+  pressure but an over-long recirculation and low early shear stresses,
+  attributed to excess $\mu_t$ from $\Delta_{\max}$; ZDES of Simon et al. (13.5
+  and 20.7 million cells) matched recirculation length and shear stress but
+  over-predicted backflow and gave a wavy, too low base pressure; SA-DDES
+  with $\Delta_{\mathrm{SLA}}$ of Guseva et al. (2 million cells) accelerated the
+  instability without a flat base pressure. Their own SA-DDES with
+  $\Delta_{\mathrm{SLA}}$ on 1.82, 2.06 and 8.51 million cells shows that the
+  low-dissipation scheme unlocks the Kelvin–Helmholtz instability, its
+  coarse grid matching the reference scheme's fine grid in small-scale
+  content; reattachment at $x/R\approx2.7$ (G2, G3) against 2.67 measured,
+  against about 4.0 (G1) and 3.0 (G2, G3) with the reference scheme; better
+  shear stress at $x/R=1.57$; but a wavy, under-predicted base pressure
+  (experiment flat near $C_p=-0.102$): "improved numerics in the initial
+  shear layer does not produce a better prediction of the base pressure
+  profile" (Figs. 9–10).
+- **Ahmed body**, as recalled by Cai et al. (2022, §I). Menter & Kuntz
+  obtained the partial reattachment of the 25° slant with DES where RANS
+  gave fully attached or fully separated flow; Guilmineau et al.'s DES and
+  IDDES on body-fitted grids predicted the massive 35° separation with a
+  small separation near the slant end, and at 25° only IDDES gave the
+  partial reattachment; their 35° drag coefficients are 0.3156 (DES) and
+  0.3452 (IDDES) against 0.279 measured by Meile et al. (Table III). Cai et
+  al. state that their immersed-boundary wall-modelled LES (0.2347) is
+  closer to experiment than that IDDES; their Table III also lists RANS,
+  EARSM and DES values closer to 0.279 than 0.2347 *(compiler check, not
+  in the sources)*
+  ([Cai et al. (2022)](/sources/cai-2022.md), §I, §IV, Table III; see
+  [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+- **Capsule wakes**, as recalled by Placco et al. (2023, §1). DES of
+  planetary-entry capsule wakes was restricted to the near-body wake and
+  disagreed with experiment in the backshell area, which the cited work
+  attributed to the model's prediction of transition after shoulder
+  separation ([Placco et al. (2023)](/sources/placco-2023.md), §1).
 
 ## Qualifications
 
@@ -204,8 +316,20 @@ RANS-adapted mesh (§3.3).
   Neither source discusses the form further. At $r_d=1$ both readings give
   $f_d\approx0$ ($\tanh8\approx1$), so François et al.'s description does
   not decide between them *(compiler check, not in the sources)*.
-- None of the three applications prints the DES equations in full;
-  Mozaffari et al. print none.
+- None of the three applications of chunks 1–2 prints the DES equations in
+  full; Mozaffari et al. print none. Carlsson et al. (2023) print the DDES
+  and IDDES length scales but not $f_d$, $\hat f_d$ or $f_e$.
+- Carlsson et al. print $C_{dw}$ in their Eq. 19 and "$C_w=0.15$" below it.
+  They credit their conclusion on grey-area mitigation partly to the
+  vorticity-weighted shock sensor, but the base-flow comparison changes the
+  sensor, the dissipation coefficient and the face extrapolation at once
+  (§4.4, §5, Table 1), so the sensor's share is not isolated *(compiler
+  check, not in the sources)*.
+- $C_{\mathrm{DES}}=0.65$ goes with $\Delta_{\mathrm{vol}}/(N+1)$ in Basile et al.
+  and with $\Delta_{\max}$ or $\Delta_{\mathrm{SLA}}$ in Carlsson et al.; the ZDES
+  base-flow studies recalled by Carlsson et al. use 0.55 with
+  $\Delta_{\mathrm{vol}}$. Carlsson et al. call the constant code dependent, so
+  these are different calibrations, not a disagreement.
 
 # Citations
 
@@ -216,3 +340,6 @@ RANS-adapted mesh (§3.3).
 - [Abe (2021)](/sources/abe-2021.md) — §IV C–D, Figs. 9–11.
 - [Yan et al. (2022)](/sources/yan-2022.md) — §2.3.
 - [Goc et al. (2021)](/sources/goc-2021.md) — §1.
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §1, §3 Eqs. 16–19, §3.1 Eqs. 20–21, §4.2 Fig. 3, §4.3 Table 2 Figs. 4–6, §4.4 Figs. 9–10, §5.
+- [Cai et al. (2022)](/sources/cai-2022.md) — §I, §IV, Table III (HAL v1).
+- [Placco et al. (2023)](/sources/placco-2023.md) — §1.

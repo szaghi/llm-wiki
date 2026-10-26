@@ -20,7 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–2 of 7 ingested (40 of the 132 sources planned; the
+**Corpus:** chunks 1–3 of 7 ingested (60 of the 134 sources planned; the
 archive is still growing). Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
@@ -54,7 +54,15 @@ Nek5000 and adverse pressure gradient, data-driven SA corrections,
 high-order gas-kinetic schemes, entropy-stable SVV for DG, DNS of
 supersonic and hypersonic boundary layers, reinforcement-learning wall
 models, and turbulent dynamos in galaxy and interstellar-medium
-simulations.
+simulations. Chunk 3 (2022–2023 papers): a fractional SGS model, learned
+SGS models trained by reinforcement learning, the optimal eddy viscosity
+and the conditioning of data-driven RANS, physics-informed networks,
+variational data assimilation, residual-based grid adaptation for
+wall-modelled LES, immersed boundaries with lattice Boltzmann and
+constrained LES, low-dissipation and WENO-based schemes and the GPU codes
+STREAmS, OpenCFD-SCU, NekRS and HORSES3D, shock–boundary-layer
+interaction at hypersonic speeds, shock-generated turbulence, and plasma,
+Hall-MHD and wave turbulence.
 
 ## Reading guide
 
@@ -77,7 +85,8 @@ simulations.
 [Vreman model](/methods/vreman-model.md),
 [scale-similarity and mixed models](/methods/scale-similarity-model.md),
 [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md),
-[spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md);
+[spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
+[fractional SGS model](/methods/fractional-sgs-model.md);
 [energy backscatter](/definitions/energy-backscatter.md);
 [gradient model and clipping](/methods/gradient-model.md);
 [implicit LES](/definitions/implicit-les.md) and
@@ -106,7 +115,8 @@ simulations.
 [field inversion and machine learning](/methods/field-inversion-machine-learning.md),
 [tensor-basis neural network](/methods/tensor-basis-neural-network.md),
 [model-consistent training](/methods/model-consistent-training.md),
-[reinforcement-learning closures](/methods/reinforcement-learning-closure.md);
+[reinforcement-learning closures](/methods/reinforcement-learning-closure.md),
+[physics-informed neural networks](/methods/physics-informed-neural-network.md);
 [discretization-consistent closure](/definitions/discretization-consistent-closure.md),
 [divergence-consistent LES](/methods/divergence-consistent-les.md);
 [mesh adaptation](/methods/mesh-adaptation.md).
@@ -115,10 +125,15 @@ simulations.
 [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md),
 [kinetic-energy preservation](/properties/kinetic-energy-preservation.md),
 [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md),
-[high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md);
+[high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md),
+[WENO and hybrid shock-capturing schemes](/methods/weno-scheme.md),
+[low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md),
+[immersed boundary methods](/methods/immersed-boundary-method.md);
 codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [LESGO](/software/lesgo.md), [elsA](/software/elsa.md),
-[RAMSES](/software/ramses.md). Compressible wall turbulence:
+[RAMSES](/software/ramses.md), [STREAmS](/software/streams.md),
+[OpenCFD-SCU](/software/opencfd-scu.md), [Nek5000 and NekRS](/software/nek5000.md),
+[HORSES3D](/software/horses3d.md). Compressible wall turbulence:
 [Morkovin's hypothesis and Reynolds analogies](/definitions/morkovin-hypothesis.md),
 [attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md).
 
@@ -131,16 +146,23 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md),
 [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md),
 [backward-facing step](/benchmarks/backward-facing-step.md),
-[Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md).
+[Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md),
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md),
+[shock-generated turbulence](/results/shock-generated-turbulence.md).
 
-**9. MHD turbulence.**
+**9. MHD, plasma and wave turbulence.**
 [Reduced MHD and Elsasser variables](/definitions/reduced-mhd.md) →
 [critical balance](/properties/critical-balance.md) →
 [dynamic alignment](/properties/dynamic-alignment.md) →
 [tearing-mediated turbulence](/results/tearing-mediated-mhd-turbulence.md);
 [decaying MHD turbulence](/results/decaying-mhd-turbulence.md),
 [small-scale dynamo](/results/small-scale-dynamo.md),
-[subgrid turbulent dynamo model](/methods/subgrid-turbulent-dynamo-model.md).
+[subgrid turbulent dynamo model](/methods/subgrid-turbulent-dynamo-model.md);
+[compressible MHD turbulence](/results/compressible-mhd-turbulence.md),
+[exact laws of (Hall-)MHD turbulence](/results/turbulence-exact-laws.md),
+[weak wave turbulence](/results/weak-wave-turbulence.md),
+[cross-scale interaction in plasma turbulence](/results/cross-scale-interaction.md),
+[STITCH helicity-condensation model](/methods/stitch-helicity-condensation-model.md).
 
 ## Catalog
 

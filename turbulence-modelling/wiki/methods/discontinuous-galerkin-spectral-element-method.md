@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Discontinuous Galerkin spectral element method"
-description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra with Legendre–Gauss or Gauss–Lobatto nodes; this page states its weak and strong forms, the SBP property, modal filtering and filtered artificial viscosity, its cost per degree of freedom, how interface dissipation shapes LES on it, and modal hp-adaptive relatives."
+description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra with Legendre–Gauss or Gauss–Lobatto nodes; this page states its weak and strong forms, the SBP property, modal filtering and filtered artificial viscosity, its cost per degree of freedom, how interface dissipation shapes LES on it, element-local filters and mortars, and modal and continuous relatives."
 status: established
 aliases: [DGSEM, nodal discontinuous Galerkin, collocation DG, DG spectral element method]
 tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns]
-timestamp: 2026-10-25T19:47:00Z
+timestamp: 2026-10-26T05:06:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -299,8 +299,75 @@ show spurious peaks of the r.m.s. velocity on the jet axis, which they
 attribute to the inter-element discontinuities of DG on coarse elements and
 to poor sampling, and which decrease with adaptation (§4.2.3, Fig. 10).
 
+## Implementation choices in HORSES3D
+
+[Ferrer et al. (2023)](/sources/ferrer-2023.md) describe a second DGSEM
+framework, [HORSES3D](/software/horses3d.md), with the same weak form on
+curvilinear hexahedra (§3.3, Eqs. 4–8) and these options: Gauss nodes,
+"more accurate", or Gauss–Lobatto nodes, which allow split forms; convective
+interface fluxes from central and Lax–Friedrichs to Roe, low-dissipation
+Roe and matrix dissipation; viscous fluxes by BR1, BR2 or symmetric interior
+penalty. For [implicit LES](/definitions/implicit-les.md) they list three
+sources of dissipation: dissipative Riemann solvers, an interior-penalty
+parameter raised above the minimum required for coercivity, and split forms
+combined with spectral vanishing viscosity (§4.1). They call DG "very
+suitable for ILES" because its dissipation and dispersion errors sit at high
+wavenumbers, so that numerical dissipation acts mainly on under-resolved
+scales. Flad & Gassner (2017) report the $48^3$ failure of DG implicit LES
+described above; Ferrer et al. list both implicit and explicit options
+without adjudicating between them. HORSES3D also adapts the polynomial
+degree anisotropically, one degree per element and direction, from a
+$\tau$-estimate of the truncation error (§3.6; see
+[mesh adaptation](/methods/mesh-adaptation.md)).
+
+## Element-local filters, mortars and grid adaptation
+
+**Modal test filter.** A cut-off of the modal coefficients is an
+element-local low-pass filter. [Blind et al. (2023)](/sources/blind-2023.md),
+§2.3, use it as the test filter of an LES modelling-residual estimator in
+[FLEXI](/software/flexi.md): with $N=5$ they zero the coefficients of
+degrees 4 and 5 in one direction only (a uni-directional modal cut-off,
+equally applicable on unstructured hexahedra), evaluate the residual at the
+imagined coarser resolution by changing only the subgrid length scale,
+square it exactly by projecting to degree $2N$, and average it over each
+element, because without averaging the estimator flags element boundaries
+as high-error regions, an artefact of the discontinuous solution. They state
+that the method transfers to any DG-type scheme "as long as an element-local
+filter operation can be specified" (§2.1). The adaptation it drives is on
+[mesh adaptation](/methods/mesh-adaptation.md).
+
+**Filter width under the test filter.** With $\Delta=V_e^{1/3}/(N+1)$ as
+above and a test filter keeping modes up to degree $N_f=3$ (page-local), Blind
+et al. take the test-level length
+$\hat\Delta=\big[(N+1)/(N_f+1)\big]^{1/3}\Delta$ for the isotropic Vreman
+length scale (§2.3).
+
+**Non-conforming mortars.** FLEXI's mortars are limited to 2-to-1
+interfaces, a halving of the element size across a face (Blind et al. 2023,
+§3.2), which covers the 2:1 and 4:1 face types of Krais et al. (2021, §3.2)
+above, both cut at the middle of the big face; Blind et al. keep the smallest required spacing
+from the wall until the optimal spacing has at least doubled, then insert a
+2-to-1 interface, which saves up to about half of the elements of a
+structured mesh with the same near-wall spacing in a channel at
+$Re_\tau=2000$; the time step is unchanged, set by the smallest element, so
+the saving is in processors. Ferrer et al. (2023, §3.6) couple faces of
+different polynomial degree by mortars, at the price of entropy stability.
+
+**Continuous spectral elements.** The continuous Galerkin spectral element
+method of [Nek5000 and NekRS](/software/nek5000.md) uses the same GLL
+tensor-product bases but enforces $C^0$ continuity by a gather–scatter
+operation, so the velocity is continuous across faces and its gradient is
+not (Fischer et al. 2022, §2.3; Gillyns et al. 2022, §2). Gillyns et al.
+(2022, §2, §6) observe Gibbs spikes of the fluctuation statistics at element
+faces on coarse meshes, which vanish near DNS resolution.
+
 ## Qualifications
 
+- **Test-level eddy viscosity.** Blind et al. (2023, §2.3) state that the
+  test-level eddy viscosity is "a factor of $[(P+1)/(N_f+1)]^{2/3}\approx1.59$
+  larger" ($P$ their degree); with $N=5$ and $N_f=3$ the expression is
+  $1.5^{2/3}\approx1.31$ *(compiler check, not in the sources)*. The version
+  read is the arXiv v1 preprint, retitled at publication.
 - **Weak-form differentiation matrix.** Krais et al. (2021, Eq. 31) print
   $\hat D_{ij}=-\frac{w_i}{w_j}D_{ji}$. Dividing the weak-form volume term
   $\sum_m w_m D_{mi}\mathcal F_m$ by the mass $w_i$ gives
@@ -339,3 +406,7 @@ to poor sampling, and which decrease with adaptation (§4.2.3, Fig. 10).
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §2.2 (flux reconstruction as a generalization of nodal DG).
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §1; §2.2–2.3 (entropy-stable artificial fluxes, Guermond–Popov); §3, Eqs. (39)–(61) (LGL DGSEM, SBP, split form, BR1, walls); §4, Eqs. (72)–(100) (modal filtering, Parseval, Theorems 1–2); §5, Eqs. (101)–(122) (filtered artificial viscosity, entropy stability, von Neumann analysis); §6, Eqs. (123)–(128), Figs. 4–7 (TGV, Shu–Osher, forward-facing step); App. A.
 - [Basile et al. (2023)](/sources/basile-2023.md) — §1; §2.1–2.2 (modal DG in CODA, DG length scale); §3.1–3.2, Eqs. (8)–(12) (error and smoothness indicators); §4.2.1, §4.2.3 (degree-of-freedom distribution, interface peaks).
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §3.3, Eqs. (4)–(8) (HORSES3D weak form, nodes, fluxes); §3.6 (anisotropic $p$-adaptation, mortars); §4.1 (implicit-LES options).
+- [Blind et al. (2023)](/sources/blind-2023.md) — §2.1 (transfer to DG); §2.3 (modal test filter, length scales, element averaging); §3.2, Tables 2–3 (2-to-1 mortars, savings).
+- [Fischer et al. (2022)](/sources/fischer-2022.md) — §2.3 (continuous spectral elements, gather–scatter).
+- [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §2, §6 ($C^0$ continuity, Gibbs spikes).

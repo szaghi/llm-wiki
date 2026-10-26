@@ -5,7 +5,7 @@ description: "Scale-resolving approaches that model all turbulence with RANS in 
 status: established
 aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-25T20:38:00Z
 ---
 
 # Hybrid RANS/LES
@@ -23,6 +23,19 @@ relaxes the resolution requirements of LES while resolving the dominant
 flow physics, with the intent "to resolve only the coherent flow structures
 while modeling the stochastic portion of the flow"
 ([Dzanic et al. (2022)](/sources/dzanic-2022.md), §1).
+Carlsson et al. (2023) describe hybrid RANS-LES modelling as "more accurate
+than RANS and computationally more affordable than LES for the aeronautical
+industry", its key feature being RANS-type behaviour near solid walls and
+LES far from them; the common methods stem from DES, of which delayed DES
+is "considered to be the most mature for industrial use", next to IDDES,
+HYB0, PANS and zonal DES
+([Carlsson et al. (2023)](/sources/carlsson-2023.md), §1). Cai et al. (2022)
+group hybrid RANS-LES with wall-modelled LES as the routes that relax the
+near-wall grid requirement of LES around ground vehicles
+([Cai et al. (2022)](/sources/cai-2022.md), §I), and Placco et al. (2023)
+call DES "a hybrid solution of Navier-Stokes equations using both
+turbulence modelling and filtering"
+([Placco et al. (2023)](/sources/placco-2023.md), §1).
 
 ## Hybrid RANS/LES and wall-modelled LES
 
@@ -137,6 +150,37 @@ models act on the mean and on the fluctuating strain; the authors say it
 - **dual-mesh HRL**: separate RANS and LES simulations on two grids coupled
   by forcing terms that enforce consistency in expectation.
 
+**Constrained LES near an immersed boundary.** Cai et al. (2022) use a
+Reynolds-stress-constrained ("constrained LES", CLES) eddy viscosity near
+the wall, after Chen et al. (2012) and Verma et al. (2013) and the authors'
+own submitted work; the Chen et al. paper is the same Reynolds-stress-constrained
+LES work that Haering et al. cite for RSC-SGS: both reference lists resolve
+to one bibliography entry *(compiler check, not in the sources)*. In registry notation, with
+$\langle\cdot\rangle$ a time average, $\tilde u_i$ the Favre-filtered velocity
+and the page-local resolved Reynolds stress
+$R^{\mathrm{res}}_{ij}=\langle\tilde u_i\tilde u_j\rangle-\langle\tilde u_i\rangle\langle\tilde u_j\rangle$,
+
+$$\nu_t^{\mathrm{hyb}}=\frac{2\nu_t^{\mathrm{RANS}}\langle\tilde S_{ij}\rangle\langle\tilde S_{ij}\rangle+R^{\mathrm{res}}_{ij}\langle\tilde S_{ij}\rangle}{2\langle\tilde S_{ij}\rangle\langle\tilde S_{ij}\rangle},\qquad
+\frac{\nu_t^{\mathrm{RANS}}}{\nu}=\kappa y^+\big(1-e^{-y^+/19}\big)^2,$$
+
+([Cai et al. (2022)](/sources/cai-2022.md), §II C 1, Eq. 27; $\nu_t^{\mathrm{hyb}}$,
+$\nu_t^{\mathrm{RANS}}$ page-local, the latter a mixing-length viscosity, $\kappa$
+not given a value). Contracting the condition
+$-2\nu_t^{\mathrm{hyb}}\langle\tilde S_{ij}\rangle+R^{\mathrm{res}}_{ij}=-2\nu_t^{\mathrm{RANS}}\langle\tilde S_{ij}\rangle$
+with $\langle\tilde S_{ij}\rangle$ gives the formula: modelled plus resolved
+stress, projected on the mean strain, equals the RANS stress *(compiler
+check, not in the sources)*. The modelled stress is enforced up to "several
+grid points from wall", because the non-conservative
+[immersed boundary](/methods/immersed-boundary-method.md) otherwise loses
+near-wall Reynolds stress and delays turbulence development. The authors
+state that $\nu_t^{\mathrm{hyb}}$ "approaches the RANS eddy viscosity for
+attached boundary layers and reduces to the LES viscosity for separated
+boundary layers automatically"; the printed formula contains no subgrid
+viscosity, and how the return to the Vreman subgrid viscosity is enforced is
+not printed (§II C 1). They also state that "without this enhancement, the
+flow stays attached even by refining the grid", with no run without it in
+the paper (§IV; see [wall-modelled LES](/methods/wall-modelled-les.md)).
+
 ## Deficiencies identified by the sources
 
 Haering et al. (2022, §II) name four deficiencies common to most HRL
@@ -201,6 +245,27 @@ discretization at fixed degrees of freedom benefits PANS proportionally more
 than [implicit LES](/definitions/implicit-les.md) (§1, §4; see
 [numerical dissipation](/properties/numerical-dissipation.md)).
 
+**The grey area.** Carlsson et al. (2023) name the "grey-area" problem, the
+delayed development of resolved turbulence in the initial LES region next
+to a RANS–LES interface in free shear layers, which "may significantly
+degrade" the scale-resolving result; grey-area-mitigation methods modify
+the LES length scale (§1; the shear-layer-adapted length is on the
+[DES page](/methods/detached-eddy-simulation.md)). With that length scale,
+they find the onset of resolved turbulence in a separated shear layer
+"mainly governed by the amount of numerical dissipation introduced by the
+numerical scheme and the resolution of the grid" (§4.4).
+
+**Numerical dissipation as a source of log-layer mismatch.** In SST-IDDES
+of channel flow at $M_b=0.15$, the same model with a second-order central
+scheme carrying RANS-level fourth-difference dissipation shows a
+significant [log-layer mismatch](/definitions/log-layer-mismatch.md) at
+$Re_\tau=395$, 2400 and 18 000: correct where IDDES runs in RANS mode,
+failing "as soon as the model switches to LES due to adding to much
+numerical dissipation"; the low-dissipation low-dispersion schemes leave
+only a small mismatch at the interface ($y^+\approx200$ at $Re_\tau=2400$,
+$\approx2000$ at $18\,000$) (Carlsson et al. 2023, §4.3, Fig. 4; see
+[low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md)).
+
 ## Evidence from applications
 
 - **Transitional Rayleigh–Taylor mixing.** With variable-density PANS
@@ -221,6 +286,30 @@ than [implicit LES](/definitions/implicit-les.md) (§1, §4; see
 - **Separated and vortical flows.** IDDES of a backward-facing step and
   DDES-SST of a ship hull and a delta wing on adapted meshes (Mozaffari et
   al. 2022, §4–§5).
+- **Ahmed body.** Cai et al. (2022) recall body-fitted RANS and hybrid
+  results for the 35° and 25° slants (DES, IDDES, PANS, embedded LES,
+  scale-adaptive and stress-blended eddy simulation; §I) and run a
+  lattice-Boltzmann wall-modelled LES with the CLES viscosity above at
+  $Re_H=7.68\times10^5$ ($H$ the body height): on the fine grid ($4.03\times10^7$
+  cells) the wall-law case separates massively on the slant, on the coarse
+  one ($1.36\times10^7$) it stays attached. Drag coefficients (near-field):
+  wall law 0.2347 (fine) and 0.2742 (coarse), no-slip on slant and base
+  0.2553 and 0.2548, against 0.279 measured by Meile et al. at the same
+  $Re_H$ and the body-fitted results of Guilmineau et al. recalled in their
+  Table III (SST 0.2999, EARSM 0.2603, DES 0.3156, IDDES 0.3452) (§IV,
+  Table III; DES details on the
+  [DES page](/methods/detached-eddy-simulation.md)).
+- **Supersonic base flow and channel flow.** SA-DDES of the Herrin–Dutton
+  base flow ($M_\infty=2.46$) and SST-IDDES of channels at $M_b=0.15$ and 1.5
+  with low-dissipation schemes (Carlsson et al. 2023, §4.3–§4.4; on the
+  DES page).
+- **Planetary-entry capsule wakes.** Placco et al. (2023) recall that DES
+  studies of capsule wakes showed the importance of the turbulence model and
+  the limits of RANS in separated flow, but were "restricted to the
+  near-body region of the wake due to some shortcomings of the hybrid
+  solution approach", with disagreements in the backshell area attributed to
+  the model's prediction of transition after shoulder separation; they use
+  [implicit LES](/definitions/implicit-les.md) instead (§1, §2).
 
 ## Qualifications
 
@@ -244,3 +333,6 @@ than [implicit LES](/definitions/implicit-les.md) (§1, §4; see
 - [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §1.
 - [Mozaffari et al. (2022)](/sources/mozaffari-2022.md) — §1 Fig. 1, §3, §4–§5.
 - [Pereira et al. (2021)](/sources/pereira-2021.md) — §IV.2 Table II, §V.
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §1, §4.3 Fig. 4, §4.4.
+- [Cai et al. (2022)](/sources/cai-2022.md) — §I, §II C 1 Eq. 27, §IV Table III (HAL v1).
+- [Placco et al. (2023)](/sources/placco-2023.md) — §1, §2.

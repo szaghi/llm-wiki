@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Spalart–Allmaras model and its corrections"
-description: "The one-equation eddy-viscosity RANS model transporting the working variable ν̃: its equations and constants, the negative, rotation–curvature, helicity and quadratic-constitutive-relation variants, field-inversion corrections of its production, its role as host of detached-eddy simulation, and evidence from compressors, rotors, airfoils and high-lift flows."
+description: "The one-equation eddy-viscosity RANS model transporting the working variable ν̃: its equations and constants, the negative, rotation–curvature, helicity and quadratic-constitutive-relation variants, field-inversion and data-assimilation corrections, its role as host of detached-eddy simulation, and evidence from compressors, rotors, airfoils and high-lift flows."
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-25T19:37:00Z
+timestamp: 2026-10-25T20:38:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -79,10 +79,29 @@ specified), and $r$ uses $\hat S=\max\big(\lvert S\rvert+\tilde\nu f_{v2}/(\kapp
 (page-local $\hat S$, not a test filter). They print $\sigma=2/3$ and
 $\kappa=0.41$ and no other constant.
 
+Cato et al. (2023) print the same constants as Alauzet et al.
+($c_{v1}=7.1$, $c_{b1}=0.1355$, $c_{b2}=0.622$, $\sigma=2/3$, $\kappa=0.41$,
+$c_{w2}=0.3$, $c_{w3}=2$, the same $f_{v2}$) and give
+$c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma$, the form required by the log-layer
+balance above; they write the von Kármán constant as $k$, the letter of the
+turbulent kinetic energy. They regularize the vorticity magnitude as
+$\sqrt{\lvert\Omega\rvert^2+M^2}-M$ with $M=10^{-5}$ (page-local $M$, not a
+Mach number) to keep the model
+differentiable for adjoint computations, and have no trip term
+([Cato et al. (2023)](/sources/cato-2023.md), §II A, Eqs. 2–4).
+
 **Negative SA.** Basile et al. (2023) use the negative-$\tilde\nu$ model with
 $\mu_t=\rho\tilde\nu f_{v1}$ for $\tilde\nu\ge0$ and $\mu_t=0$ for $\tilde\nu<0$
 (§2.2, Eq. 5), the same treatment of the mean-flow equations that Li & Liu
-record for SA-neg (below).
+record for SA-neg (below). Cato et al. (2023) print the full negative
+branch of the variant of Crivellini et al.: for $\chi<0$ the production is
+$c_{b1}\tilde\nu\lvert\Omega\rvert g_n$ with $g_n=1-1000\chi^2/(1+\chi^2)$, the
+destruction becomes $-c_{w1}(\tilde\nu/d)^2$ (a source), and the diffusion
+coefficient $\sigma^{-1}\nu(1+\chi)$ becomes $\sigma^{-1}\nu(1+\chi+\tfrac12\chi^2)$,
+with $\nu_t=0$ in the momentum equation (§II A, Eqs. 3–4; $g_n$ page-local).
+Ferrer et al. (2023) use a negative SA model in the RANS solver of
+[HORSES3D](/software/horses3d.md), citing Oliver's thesis and Joshi et al.,
+without printing it ([Ferrer et al. (2023)](/sources/ferrer-2023.md), §4.1).
 
 ### Discretization in an unstructured solver
 
@@ -95,6 +114,18 @@ as a separate linear system (loose coupling), differentiated with respect
 to $\tilde\nu$ with $\rho$ frozen. The turbulence equation is left out of
 their adjoint and goal-oriented error estimate (Remarks 5.1, 6.1; see
 [mesh adaptation](/methods/mesh-adaptation.md)).
+
+Two other discretizations appear in the sources. Cato et al. (2023, §II E)
+solve the steady incompressible RANS–SA system with continuous finite
+elements in FreeFEM++ (P1-bubble velocity, P1 pressure and $\tilde\nu$, "a
+first-order accurate scheme"), SUPG stabilization of the advection terms
+only, Newton iterations and the MUMPS direct solver; the adjoint operator
+is the transpose of the discrete Jacobian. Ferrer et al. (2023) report that
+the group extended entropy-stable discontinuous Galerkin schemes to the SA
+equations, implemented in HORSES3D, where the implicit solvers use an
+analytic Jacobian for the Navier–Stokes part and a numerical Jacobian with
+colouring once SA is included (§3.5, §3.7; see
+[discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)).
 
 ## Variants
 
@@ -219,6 +250,25 @@ where production greatly exceeds dissipation (§3.2.1, §3.3.1). This
 continues the curved-channel field inversion recalled by Duraisamy et al.
 (2019) below.
 
+**Comparison of correction sites.** Cato et al. (2023) compare the
+production multiplier with five other space-dependent corrections of the
+negative SA model, optimized by adjoint-based data assimilation against
+dense DNS mean velocity: a momentum forcing, a conservative traceless
+tensor forcing, an additive source and a source proportional to $\tilde\nu$
+in the $\tilde\nu$-equation, and a multiplier of $\nu_t$ in the momentum
+equation. They write the production correction as $(1+\beta)P$, with prior
+zero, where Yan et al. and Singh & Duraisamy write $\beta P$ with prior one.
+On a converging–diverging channel, the periodic hill at $Re_b=2800$ and a
+square cylinder at $Re=22\,000$, the proportional source "performed almost
+as well as the source terms in the momentum equations", the production
+multiplier and the additive source are intermediate, and the
+eddy-viscosity multiplier is poorest and fails on the square cylinder;
+corrections placed in the SA equation improve "numerical robustness
+regardless of the test case" compared with the eddy-viscosity multiplier
+(§II B, Tables I–III, §VII). Error tables, non-uniqueness and over-fitting
+of $\nu_t$ are on the
+[model-form uncertainty page](/definitions/model-form-uncertainty.md).
+
 ### SA as the host of detached-eddy simulation
 
 SA is the RANS closure of the zonal
@@ -229,6 +279,12 @@ al. the near-wall functions take their far-wall values, $f_{v1}=1$,
 $f_{v2}=0$, $f_w=1$, in LES mode (§2.2, Eqs. 6–7), and the shielding function
 of François et al.'s mode 2 is computed from $\tilde\nu$ rather than from
 $\nu_t$ ([François et al. (2022)](/sources/francois-2022.md), §3.1).
+Carlsson et al. (2023) use SA in DDES with $C_{\mathrm{DES}}=0.65$, which
+reproduces the spectra of decaying isotropic turbulence in LES mode with a
+low-dissipation scheme, and in SA-DDES of a supersonic base flow with the
+shear-layer-adapted length; in channel flow SA-IDDES gives results "very
+similar" to SST-IDDES (not shown)
+([Carlsson et al. (2023)](/sources/carlsson-2023.md), §3, §4.2–4.4).
 
 ## Evidence
 
@@ -291,6 +347,11 @@ meshes as future work (§9).
   medium-grid wall-modelled LES of Goc et al.
   ([Goc et al. (2021)](/sources/goc-2021.md), §1, Fig. 1, §4; see
   [JAXA Standard Model](/benchmarks/jaxa-standard-model.md)).
+- HORSES3D runs negative-SA RANS of the NASA Common Research Model at
+  $M=0.85$, $Re=5\times10^6$, $2.3^\circ$ incidence on a third-order ($N=2$)
+  hexahedral mesh with split-form inviscid fluxes; only surface pressure
+  contours are shown ([Ferrer et al. (2023)](/sources/ferrer-2023.md), §4.1,
+  Fig. 6).
 - FLEXI initialises scale-resolving runs with an SA RANS solution obtained
   by pseudo-time stepping ([Krais et al. (2021)](/sources/krais-2021.md),
   §2.2.3; see [FLEXI](/software/flexi.md)).
@@ -328,7 +389,9 @@ meshes as future work (§9).
   normalized, dimensionless relative helicity.
 - Alauzet et al. (2022) print $c_{w1}=c_{b1}/\kappa+(1+c_{b2})/\sigma$ (§2.3),
   while their own equation, with Basile et al.'s log-layer solution, requires
-  $c_{b1}/\kappa^2$ (Constants above, compiler check). Their source vector
+  $c_{b1}/\kappa^2$ (Constants above, compiler check); Cato et al. (2023)
+  print $c_{b1}/\kappa^2$ with the same constants (§II A), so Alauzet et al.'s
+  form is a printed slip, not a variant. Their source vector
   (Eq. 13) prints the destruction $c_{w1}f_w\rho(\tilde\nu/d)^2$ with a plus
   sign, against the minus sign of their Eq. 9; and they label the
   conservative diffusion term "dissipation" and the $c_{b2}$ term "diffusion".
@@ -355,3 +418,6 @@ meshes as future work (§9).
 - [Basile et al. (2023)](/sources/basile-2023.md) — §2.2, Eqs. 5–7.
 - [François et al. (2022)](/sources/francois-2022.md) — §3.1, §3.5.
 - [Huang et al. (2022)](/sources/huang-2022.md) — §1, App. A.2.
+- [Cato et al. (2023)](/sources/cato-2023.md) — §II A Eqs. 2–4, §II B Eq. 5, §II E, Tables I–III, §VII (HAL v2).
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §3.5, §3.7, §4.1 Fig. 6 (arXiv v1).
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §3, §4.2–4.4.

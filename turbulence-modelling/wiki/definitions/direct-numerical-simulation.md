@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Direct numerical simulation"
-description: "DNS solves the Navier–Stokes equations with no turbulence model and a grid fine enough for the dissipative range; this page gives its resolution criteria and cost scalings, the discretizations used for it, the set-up of spatially developing compressible boundary layers, weaker variants, and its role as reference data for closure development."
+description: "DNS solves the Navier–Stokes equations with no turbulence model and a grid fine enough for the dissipative range; this page gives its resolution criteria, measured resolutions and cost, the discretizations and GPU codes used for it, spatially developing compressible boundary layers, weaker variants, looser uses of the term, and its role as reference data."
 status: established
 aliases: [DNS, quasi-DNS, flame-resolved DNS, under-resolved DNS, DNS embedded in LES, downsized DNS]
-tags: [dns, les, combustion, boundary-layer, compressible, hypersonic]
-timestamp: 2026-10-25T19:47:00Z
+tags: [dns, les, combustion, boundary-layer, compressible, gpu]
+timestamp: 2026-10-26T05:06:00Z
 ---
 
 # Direct numerical simulation
@@ -81,6 +81,10 @@ this sense (see [small-scale dynamo](/results/small-scale-dynamo.md)).
 | ZPG boundary layers, $M_e=2$ and 5.86, $T_w/T_r=0.76$, $Re_\tau$ up to about 2000 | up to $16384\times832\times2048$ points; $\Delta x^+\le7.9$, $\Delta z^+\le4.8$, $\Delta y^+$ from $\le0.7$ to $\le6.5$ | Cogo et al. (2022), §2, Table 1 |
 | ZPG boundary layers, $M_e=2.5$, 4.9, 10.9, $Re_\tau$ up to 1244 | three boxes up to $6300\times690\times600$ points ($x$, wall-normal, spanwise); Mach 10.9: $\Delta x^+=7.1$, $\Delta z^+=6.6$, $\Delta y^+$ 0.43–4.2 | Huang et al. (2022), §2.3, Table 2 |
 | Two-phase MHD turbulence (small-scale dynamo), $Re=Rm=2000$ | $512^3$, finite volume | Seta & Federrath (2022), §2.4 |
+| Mach 2.9, 24° compression ramp, wide span (over 29 boundary-layer thicknesses) | $16250\times240\times8000$ points (31.2 billion; streamwise, wall-normal, spanwise); $\Delta x^+=1.2$, $\Delta y^+=0.41$, $\Delta z^+=1.2$ at the reference station | Dang et al. (2022), §6.1 |
+| Boundary layers at Mach 2.9, 7.2 and 9.0 (nitrogen), $Re_\tau$ 202–495, cold walls at Mach 7 and 9 | 7.3 to 361.3 million points; $\Delta x^+$ 6.8–7.8, $\Delta z^+$ 2.9–4.3, first wall-normal point at $y^+$ 0.21–0.31 (the source writes $y$ spanwise and $z$ wall-normal) | Helm & Martín (2022), Tables I–II (the Mach 9 case is a new DNS, the others earlier ones) |
+| 5×5 rod bundle, $Re_D=19{,}000$, spectral elements $N=7$ | 8.4 million elements, 2.87 billion points (resolution in wall units not given) | Fischer et al. (2022), §4.1 |
+| Forced isotropic turbulence, $Re_\lambda=170$, 240, 355 | pseudo-spectral, $320^3$, $520^3$, $1024^3$ | Seyedi & Zayernouri (2022), §III |
 
 From their pipe DNS, Vicente Cruz & Lamballais (2023, §7.1) suggest that the
 recommendation of about one wall unit for the first wall-normal spacing
@@ -108,6 +112,36 @@ limiter-optimized seventh-order WENO scheme, or an eighth-order split
 convective scheme for their adiabatic Mach 2.5 case, with fourth-order
 central viscous fluxes and third-order Runge–Kutta (see
 [kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+[OpenCFD-SCU](/software/opencfd-scu.md) applies Steger–Warming flux splitting
+and a hybrid of a linear seventh-order upwind scheme with seventh- and
+fifth-order WENO switched by a pressure sensor, with sixth- or eighth-order
+central viscous terms (Dang et al. 2022, §2); see
+[WENO and hybrid schemes](/methods/weno-scheme.md). Dang et al. (§1) name
+the two difficulties of compressible DNS: robustness against low
+dissipation at shocks (for Mach numbers "generally exceeding 6" a
+dissipative scheme is usually introduced) and cost, from the long domains
+needed for developed boundary layers, small time steps, and long times for
+low-frequency shock motion. For incompressible flows the sources use Fourier
+pseudo-spectral methods, in all directions for isotropic turbulence
+(Seyedi & Zayernouri 2022, §III) or in the homogeneous directions of a
+channel with second-order finite differences across it and
+Adams–Bashforth/Crank–Nicolson time stepping (the channel solver of Kim et
+al. 2022, §II A), and
+the continuous spectral elements of [Nek5000 and NekRS](/software/nek5000.md)
+(Fischer et al. 2022, §2).
+
+**GPU codes and cost.** Several sources of this bundle describe GPU codes for
+DNS. [STREAmS](/software/streams.md) runs the boundary-layer DNS of Cogo et
+al. (2022) in CUDA Fortran. OpenCFD-SCU, in CUDA-C translated to HIP, runs
+weak-scaling tests at $280^3$ points per GPU on up to 24,576 GPUs (more than
+500 billion points, 98.7% efficiency as printed), and 512 GPUs outrun its
+CPU predecessor on 131,712 cores (Dang et al. 2022, §5.2–5.3). NekRS scales
+to all 27,648 V100 GPUs of Summit with up to 60 billion points, with 80%
+parallel efficiency at about 2.5 million points per GPU (Fischer et al. 2022,
+§4.2). Maeyama et al. (2022, Methods) report 3.1 PFLOPS on 12,288 nodes of
+Fugaku for the gyrokinetic code GKV. The printed efficiencies of OpenCFD-SCU
+are not all reproduced by its own timings (see its page) *(compiler check,
+not in the sources)*.
 
 ## Spatially developing boundary layers
 
@@ -129,7 +163,16 @@ boxes, each fed by inflow planes saved from the one upstream (§2.3, Fig. 1).
 Their checks: spanwise refinement from $\Delta z^+=6.6$ to 5.0 changes wall
 heat flux, mean velocity and Reynolds stresses by about 1%, and the
 Mach 10.9 wall shear stress and heat flux agree with Baldwin–Lomax RANS
-within 1.9% and 1.7% (App. A). These DNS are the data against which
+within 1.9% and 1.7% (App. A). Helm & Martín (2022, §II) feed their
+compression-ramp simulations from an auxiliary boundary layer with
+recycling–rescaling over a long box, the solution at its rescaling plane
+being interpolated onto the ramp inflow; the long rescaling length
+decorrelates the recycled eddies and keeps the boundary-layer state fixed
+over the long times needed for low-frequency shock motion. Their Mach 9 DNS
+was initialized from a RANS mean profile with incompressible DNS
+fluctuations scaled by the mean density, after Morkovin's hypothesis.
+Dang et al. (2022, §5.1, §6.1) instead trip the boundary layer by wall
+blowing and suction upstream of the region of interest. These DNS are the data against which
 [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md), the
 [attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md) and the
 [compressible velocity transformations](/definitions/compressible-velocity-transformation.md)
@@ -176,6 +219,33 @@ are tested.
   injection change that raised the DeNOx efficiency by 7%, reported also in the
   plant.
 
+## Looser uses of the term
+
+Ferrer et al. (2023, §4.1) give the definition: DNS "solves the
+Navier-Stokes equations without additional modelling" and is therefore
+restricted to moderate Reynolds numbers. Sources at the edge of the bundle
+use or avoid the word in other senses:
+
+- **Model-free but inviscid.** Davidovits et al. (2022, §II A) simulate
+  shock-generated turbulence with artificial viscosity and no physical
+  viscosity or conduction, and state that the runs "should not be regarded as
+  direct numerical simulation (DNS), but are rather in the spirit of implicit
+  large eddy simulations"; doubling the resolution changes their averaged
+  quantities by 0.6–2.9% (see [shock-generated turbulence](/results/shock-generated-turbulence.md)).
+- **Model equations with imposed damping.** Kochurin et al. (2022) call
+  "direct numerical simulation" a pseudo-spectral integration ($1024^2$
+  harmonics) of quadratically truncated Hamiltonian equations for
+  magneto-capillary surface waves, with an imposed damping
+  $-\nu_d(k-k_d)^2$ of the Fourier amplitudes above a wavenumber $k_d=150$
+  (page-local $\nu_d$, the source's $\nu$, and $k_d$, $k_a$) and a spectral cut-off at $k_a=212$ that
+  the authors interpret as "superviscosity" (p. 2) (see [weak wave turbulence](/results/weak-wave-turbulence.md)).
+- **Closure-free plasma simulations.** Maeyama et al. (2022) run
+  gyrokinetic simulations that resolve both the electron and the ion
+  gyroradius scales without a transport closure, and Coelho et al. (2022)
+  global two-fluid simulations of stellarator edge turbulence with small
+  numerical diffusion terms added for stability (p. 4); neither paper calls its
+  runs DNS (see [cross-scale interaction](/results/cross-scale-interaction.md)).
+
 ## DNS as reference and test bed
 
 DNS supplies the filtered or averaged fields of
@@ -207,6 +277,25 @@ spectral-element wall-modelled LES that the spikes of the velocity
 fluctuations at element boundaries (a Gibbs phenomenon of the $C^0$
 discretization) vanish as the mesh approaches DNS resolution, and use them
 as a reference-free indicator of under-resolution.
+
+**Filtered DNS as the LES reference.** Several sources compare LES not with
+DNS but with DNS filtered like the LES. Helm & Martín (2022, §III B) apply a
+top-hat filter in space, and in time through Taylor's hypothesis, and find
+the spectra essentially unaffected for $f\delta/U_e\lesssim0.4$; against it
+their LES of Mach 3 to 10 boundary layers, on grids with 32 times fewer
+points and a time step 2.8 times larger, reproduces the mean profiles within
+3% (5% at Mach 10) and the peak turbulent kinetic energy within 2%, with an
+unresolved share of the kinetic energy, estimated from filtered against
+unfiltered DNS, of 14–25% at Mach 7 and 10–15% at Mach 3 and 10, with
+near-wall minima of 5–7%; they
+call the LES cost "equivalent to 3% of the DNS" (§V). The same code runs as a
+DNS with the subgrid terms switched off. Filtered isotropic-turbulence DNS
+supplies the a priori stresses of Seyedi & Zayernouri (2022, §III), and
+time-averaged profiles of filtered channel DNS are the only training targets
+of the reinforcement-learning subgrid model of Kim et al. (2022, §II–§III);
+see [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md),
+[fractional SGS model](/methods/fractional-sgs-model.md) and
+[reinforcement-learning closures](/methods/reinforcement-learning-closure.md).
 
 Domingo & Vervisch (2023, §1) list DNS codes and orders: SENGA, DINO, S3D,
 FK³, KARFS and HOLOMAC of sixth to tenth order; Nek5000 with spectral elements;
@@ -258,3 +347,13 @@ layers (§7).
 - [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §2, §5–§9 (Lee & Moser DNS as reference; Gibbs spikes).
 - [Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md) — §3.5, Table 5 (SD7003 DNS reference); §6.3, Fig. 19 (Eppler 387).
 - [Knopp (2022)](/sources/knopp-2022.md) — §7.3 (Coleman et al. DNS as validation).
+- [Dang et al. (2022)](/sources/dang-2022.md) — §1 (difficulties of compressible DNS); §2 (OpenCFD-SCU numerics); §5.1–5.3 (blowing/suction inflow, GPU performance); §6.1 (31.2-billion-point ramp DNS).
+- [Helm & Martín (2022)](/sources/helm-2022.md) — §II (recycling–rescaling auxiliary box, Morkovin-scaled initialization); Tables I–II (boundary-layer DNS resolutions); §III B (filtered DNS as LES reference, unresolved energy); §V (cost ratio).
+- [Fischer et al. (2022)](/sources/fischer-2022.md) — §2 (spectral elements); §4.1–4.2 (rod-bundle DNS, scaling on Summit).
+- [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) — §III (pseudo-spectral isotropic DNS, filtered-DNS a priori data).
+- [Kim et al. (2022)](/sources/kim-2022.md) — §II A (channel DNS numerics); §II–§III (filtered-DNS statistics as training targets).
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1 (definition of DNS).
+- [Davidovits et al. (2022)](/sources/davidovits-2022.md) — §II A (artificial-viscosity runs "not DNS", resolution check).
+- [Kochurin et al. (2022)](/sources/kochurin-2022.md) — p. 2 (pseudo-spectral "DNS" with hyperviscosity and spectral cut-off).
+- [Maeyama et al. (2022)](/sources/maeyama-2022.md) — Methods (closure-free gyrokinetic simulations, GKV performance).
+- [Coelho et al. (2022)](/sources/coelho-2022.md) — p. 4–5 (global fluid simulation with numerical diffusion).

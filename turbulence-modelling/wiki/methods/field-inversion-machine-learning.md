@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Field inversion and machine learning"
-description: "Field inversion infers a spatial correction field of a RANS model from data by solving a PDE-constrained inverse problem; FIML then learns that field as a function of local flow features and embeds the learned map in the solver, so the training targets come from the model's own environment."
+description: "Field inversion infers a spatial correction field of a RANS model from data by solving a PDE-constrained inverse problem; FIML then learns that field from local flow features and embeds the learned map in the solver. The sources compare which model term to correct and show non-unique, over-fitted inversions."
 status: established
-aliases: [FIML, field inversion, field-inversion and machine-learning, inference before learning]
+aliases: [FIML, field inversion, field-inversion and machine-learning, inference before learning, variational data assimilation, non-parametric correction, Reynolds-force vector]
 tags: [field-inversion, data-driven, machine-learning, rans, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-25T19:46:00Z
+timestamp: 2026-10-25T20:39:00Z
 ---
 
 # Field inversion and machine learning
@@ -236,6 +236,191 @@ fixed height, $Re_b=5600$ on crest height and bulk velocity at the crest),
 not the configuration of the [periodic hill](/benchmarks/periodic-hill.md)
 benchmark at $Re_h=10{,}595$ (§3.2). All evidence is 2D steady RANS.
 
+## Which term to correct (Cato et al. 2023)
+
+[Cato et al. (2023)](/sources/cato-2023.md) study the inversion step alone.
+They ask which of six space-dependent correction fields gives the best
+fit, and which would be easiest to learn afterwards. The authors call them
+"non-parametric" corrections. All six are compared with the same meshes,
+numerics and cost, each optimized alone (§II B).
+
+**Setting.**
+
+- *Model.* Steady 2D incompressible RANS with the negative
+  [Spalart–Allmaras model](/methods/spalart-allmaras-model.md) of
+  Crivellini et al., without the trip term; the vorticity magnitude is
+  regularized with a constant $10^{-5}$ (§II A, Eqs. 2–4).
+- *Discretization.* Continuous finite elements in FreeFEM++: bubble-enriched
+  P1 for velocity, P1 for pressure and $\tilde\nu$, which "results in a
+  first-order accurate scheme". Advection is stabilized by a simplified
+  SUPG, and the steady equations are solved by Newton's method with the
+  MUMPS direct solver. First cells lie below $y^+=1$ (§II E).
+- *Data and cost.* Dense mean velocity from averaged DNS over the whole
+  domain. The cost is
+  $\mathcal L=\tfrac12\int_\Omega\lVert\langle\boldsymbol u\rangle_{\mathrm m}-\langle\boldsymbol u\rangle\rVert^2\,\mathrm d\Omega$,
+  with no regularization (Eq. 6).
+- *Gradients.* Adjoint equations are derived in continuous form (App. A).
+  In practice the adjoint operator is the transpose of the discrete Newton
+  Jacobian, combined with the continuous gradient expressions (Eq. 12). A
+  finite-difference gradient test checks them (App. B).
+- *Optimizer.* L-BFGS (SciPy), with a change of variables because the
+  gradients are defined in the $L^2$ inner product (§II D).
+
+**The six corrections (Eq. 5).** In registry notation, with subscript
+$\mathrm m$ for the model's solution and $\mathcal P$, $\mathcal D$,
+$\mathcal C$ (page-local) the Spalart–Allmaras production, destruction and
+cross-diffusion terms, the augmented equations are
+
+$$\begin{aligned}
+\langle\boldsymbol u\rangle_{\mathrm m}\cdot\nabla\langle\boldsymbol u\rangle_{\mathrm m}+\nabla\langle p\rangle_{\mathrm m}-\nabla\cdot\big(2\nu\langle\boldsymbol S\rangle_{\mathrm m}\big)&=\nabla\cdot\big[2(1+\varphi)\nu_t\langle\boldsymbol S\rangle_{\mathrm m}+\boldsymbol\Psi\big]+\boldsymbol f_u,\\
+\langle\boldsymbol u\rangle_{\mathrm m}\cdot\nabla\tilde\nu-\nabla\cdot\big(\nu_{\tilde\nu}\nabla\tilde\nu\big)&=\beta\,\mathcal P-\mathcal D+\mathcal C+f_{\tilde\nu}+g_{\tilde\nu}\,\tilde\nu,
+\end{aligned}$$
+
+plus continuity. Here $\nu_{\tilde\nu}$ is the model's diffusion
+coefficient, and every correction is a function of $\boldsymbol x$
+(page-local symbols):
+
+| Correction | Where it acts | Keeps the Boussinesq form |
+|---|---|---|
+| $\boldsymbol f_u$ | momentum forcing vector, "not conservative in general" | no |
+| $\boldsymbol\Psi=\begin{pmatrix}\psi_1&\psi_2\\\psi_2&-\psi_1\end{pmatrix}$ | trace-free symmetric tensor whose divergence forces momentum (conservative) | no |
+| $\beta$ | multiplier of the model's production, after Singh & Duraisamy | yes |
+| $f_{\tilde\nu}$ | additive source in the $\tilde\nu$ equation | yes |
+| $g_{\tilde\nu}$ | source proportional to $\tilde\nu$; acts only where $\tilde\nu\neq0$ | yes |
+| $\varphi$ | multiplier $(1+\varphi)$ of $\nu_t$ in the momentum equation | yes |
+
+The four model-side corrections correct "only the length-scale of the
+turbulence ... not the structure of the Reynolds-stresses" (§II B). The
+authors state that $\boldsymbol\Psi$ is defined only up to
+$(\psi_1+\partial_x\Phi,\ \psi_2+\partial_y\Phi)$ with
+$\partial_{xx}\Phi+\partial_{yy}\Phi=0$ ($\Phi$ page-local), which gives
+the same force. This freedom could be used to impose realizability (§II B).
+The adjoint gradients show where each correction can act. The gradient for
+$g_{\tilde\nu}$ (and for $\beta$) lives where $\tilde\nu$ (respectively
+the production) overlaps the adjoint $\tilde\nu$. The gradient for
+$f_{\tilde\nu}$ lies "more upstream", where the adjoint is largest, so
+this correction can act in a "non-physical upstream region, where
+Reynolds stresses are weak" (§II C).
+
+**Test cases.**
+
+- a converging–diverging channel at $Re=12{,}600$ on the inlet reference
+  velocity (DNS of Marquillie et al.), with a thin adverse-pressure-gradient
+  separation that baseline SA places too far downstream (§III);
+- the [periodic hill](/benchmarks/periodic-hill.md) at bulk $Re=2800$
+  (§IV);
+- a square cylinder at $Re=22{,}000$ (DNS of Trias et al. 2015), with
+  separation fixed at the corners and no error table (§V).
+
+**Fit quality (Tables I–III).** The errors are global relative $L^2$ errors
+of the velocity, $E_u$, and of the wall skin friction, $E_{C_f}$
+(page-local names).
+
+| Correction | channel $E_{C_f}$ | channel $E_u$ | hill $E_{C_f}$ | hill $E_u$ | square cylinder (Table III) |
+|---|---|---|---|---|---|
+| none (baseline SA) | 0.39 | $4.9\times10^{-2}$ | 0.38 | $7.1\times10^{-2}$ | — |
+| $\boldsymbol f_u$ | 0.059 | $3.1\times10^{-3}$ | 0.17 | $3.8\times10^{-3}$ | best |
+| $\boldsymbol\Psi$ | 0.057 | $2.9\times10^{-3}$ | 0.26 | $3.7\times10^{-3}$ | best |
+| $\beta$ | 0.18 | $8.4\times10^{-3}$ | 0.27 | $3.2\times10^{-2}$ | partial |
+| $f_{\tilde\nu}$ | 0.19 | $8.1\times10^{-3}$ | 0.23 | $7.8\times10^{-3}$ | partial |
+| $g_{\tilde\nu}$ | 0.12 | $4.6\times10^{-3}$ | 0.20 | $7.5\times10^{-3}$ | best |
+| $\varphi$ | 0.23 | $1.2\times10^{-2}$ | 0.30 | $4.3\times10^{-2}$ | failure |
+
+- *Momentum corrections.* $\boldsymbol f_u$ and $\boldsymbol\Psi$ fit best
+  everywhere. In the channel the cost falls by "almost three orders of
+  magnitude" (§III B, Fig. 3).
+- *Best model-side correction.* $g_{\tilde\nu}$ comes close to the momentum
+  corrections in all three cases. On the square cylinder it "performed
+  almost as well as the source terms in the momentum equations" (§V B). It
+  also lowers the cost faster than $f_{\tilde\nu}$ in the channel and on
+  the hill (§IV B).
+- *Eddy-viscosity multiplier.* $\varphi$ is the poorest and fails on the
+  square cylinder. Its gradient stays on a "high plateau" while the other
+  gradients fall by three to four orders of magnitude (App. B, Fig. 21). In
+  the channel it "rapidly interrupts the L-BFGS iterations". The authors
+  call the problem ill-conditioned, in agreement with Dow & Wang (§III B).
+- *Robustness.* Corrections placed on the transport model "improve[s]
+  numerical robustness regardless of the test case" compared with $\varphi$
+  (§VII).
+- *Skin friction.* The $L^2$ velocity cost favours the bulk over thin
+  near-wall regions, so profiles of $u^+$ scaled with each fit's own
+  $u_\tau$ show differences that the DNS scaling hides (§III B, Fig. 4).
+
+**Over-learning.** In the channel, $g_{\tilde\nu}$, $f_{\tilde\nu}$ and
+$\beta$ recover the mean velocity "very accurately", but "at the expense of
+large eddy-viscosity corrections, which very strongly overshoot the
+reference values"; the authors call this "a classical over-learning
+situation" (§III B, Fig. 6). The reference is a DNS estimate of the eddy
+viscosity (Eq. 18, recalled from Volpiani et al. 2022), which the authors
+call an approximation that is good for attached flows. Translated to the
+registry it reads
+$\nu_t=-(R_{ij}-\tfrac23k\delta_{ij})S_{ij}/(2S_{kl}S_{kl})$, the
+least-squares fit of the Boussinesq form, and it coincides with the optimal
+eddy viscosity of Wu et al. used by
+[McConkey et al. (2022)](/sources/mcconkey-2022.md) (§II A, Eq. 6)
+*(compiler check, not in the sources)*. In the same channel, the $\varphi$
+fit gives a $(1+\varphi)\nu_t$ "pretty much in agreement" with that
+estimate, noisy only where the flow separates (Fig. 6f). The authors
+propose two untested regularizations: a penalty on the squared correction,
+or on the distance of $\nu_t$ from the baseline RANS value (Eqs. 19–20).
+
+**Stress alignment does not decide the mean flow.** The authors measure the
+alignment of Reynolds stress and mean strain with Schmitt's indicator
+(Eq. 21), masked to $k>0.1k_{\max}$, with a plotted threshold of 0.8.
+
+- *Channel.* The indicator falls below 0.8 near the wall behind the bump
+  in reverse flow, yet the $g_{\tilde\nu}$ fit reconstructs that region well
+  (§III C, Fig. 7).
+- *Hill.* It is below 0.8 "in much of the domain below" the hill crest
+  height, yet $f_{\tilde\nu}$ and $g_{\tilde\nu}$ recover the DNS velocity
+  and skin friction. The authors conclude that "missing the proper stress
+  alignment does not play a large role for predicting the mean flow" (§IV,
+  Figs. 8–10).
+- *Square cylinder.* It exceeds 0.8 only in "a few areas" (§V A, Fig. 12).
+
+See [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md).
+
+**The Reynolds-force vector.** The mean flow depends on the Reynolds
+stresses only through the force they exert. In registry notation it is
+$f^R_i=-\partial_jR_{ij}+\tfrac23\partial_ik$ (page-local name and symbol;
+Eqs. 7–8, the gradient part being absorbed in the pressure).
+
+- *Stresses not identified.* With only mean velocity in the cost there is
+  "no a-priori reason" for the inferred stresses to match the DNS (§II B).
+- *Square cylinder.* Baseline SA stresses are "very weak compared to the
+  DNS". Assimilation raises them, but no correction matches the DNS
+  stresses, not even $\boldsymbol\Psi$ with its large drop of the cost, and
+  near the corners the $\boldsymbol\Psi$ and $g_{\tilde\nu}$ stresses are
+  wrong. Hence "the mean-flow prediction can be accurate even though the
+  Reynolds stresses are wrong" (§V C, Figs. 16–17).
+- *Force against stress.* $\boldsymbol\Psi$ captures the streamwise force
+  component reasonably well despite wrong stresses: "even with the wrong
+  stresses, it is possible to have accurate mean fields, as long as the
+  Reynolds force vector is correctly represented". $\boldsymbol f_u$
+  captures the streamwise component but not the cross-stream one (Figs.
+  18–19).
+- *Realistic stresses from $g_{\tilde\nu}$.* $g_{\tilde\nu}$ "manages to
+  capture a realistic stress tensor especially in the wake region", and its
+  force field approximates the DNS better in the recirculation (Figs.
+  17–19).
+- *As a learning target.* As recalled there (§I), Cruz et al. and Berrone &
+  Oberto proposed the Reynolds-force vector as the target of machine
+  learning, to avoid the ill-conditioning of injecting learned stresses.
+
+**What to learn next (§VI, Table III).**
+
+- $\boldsymbol f_u$ and $\boldsymbol\Psi$ are dimensional vectors and
+  tensors. They need more resources, and rotational invariance is "non
+  trivial (especially in 3D)".
+- $\beta$ and $\varphi$ are dimensionless scalars.
+- $f_{\tilde\nu}$ and $g_{\tilde\nu}$ are scalars but "not naturally
+  dimensionless".
+
+The summary table ranks $\boldsymbol f_u$, $\boldsymbol\Psi$ and
+$g_{\tilde\nu}$ best in all three cases. For skin friction the conclusions
+name the same three (§VII). Only dense velocity data were treated; sparse
+data are left to future work.
+
 ## Consistency claims
 
 Both reviews argue that FIML is preferable to learning directly from DNS,
@@ -260,6 +445,20 @@ is used:
   keeps the two-step form and moves the model selection, not the training,
   into the solver (see
   [model-consistent training](/methods/model-consistent-training.md)).
+- Cato et al. (2023, §I) give the same reason for the two steps: features
+  computed from DNS can make the learned field "inconsistent with the RANS
+  model structure", and correcting the Reynolds stresses directly can be
+  ill-conditioned. Their results add a caveat for the first step: the
+  inferred field is consistent with the model, but not unique, and it can be
+  over-fitted.
+- Two sources of this chunk take other routes to data in RANS. McConkey et
+  al. (2022) train on labels computed from DNS and inject the prediction
+  once into a converged RANS solution, the open-loop alternative described
+  on [model-consistent training](/methods/model-consistent-training.md).
+  [Eivazi et al. (2022)](/sources/eivazi-2022.md) solve the RANS equations
+  with a [physics-informed neural network](/methods/physics-informed-neural-network.md)
+  closed by boundary data instead of a turbulence model. Neither paper
+  compares itself with field inversion.
 
 ## Qualifications
 
@@ -272,7 +471,11 @@ is used:
   meet the same problem as the non-uniqueness of $\beta$ when the data
   are a single integral quantity, and answer it with priors rather than
   with more data, except on the iced airfoil, where adding drag to lift
-  improves the unobserved pressure (§3.3.1).
+  improves the unobserved pressure (§3.3.1). Cato et al. (2023) show the
+  same limit with dense data. Mean velocity over the whole domain fixes
+  neither the Reynolds stresses (square cylinder, §V C) nor the eddy
+  viscosity (channel, §III B, Fig. 6). The tensor correction
+  $\boldsymbol\Psi$ is non-unique by construction (§II B).
 - **Generalization.** Duraisamy (2021, §VII) states that "the goal of more
   generalizable models has, however, not been achieved". Machine-learning
   regressions are interpolative in feature space (§V), and a model with
@@ -309,9 +512,38 @@ is used:
   $Y_{\mathrm m,i}(\beta)$ and $\boldsymbol\zeta$. The paper's $\alpha$ is
   both the angle of attack and the hill-width factor; the page uses words
   for both.
+- **Convention of the production multiplier.** Cato et al. (2023, Eq. 5)
+  write it as $(1+\beta)$ with baseline $\beta=0$. Duraisamy et al. (2019)
+  and Yan et al. (2022) write $\beta$ with baseline $\beta=1$. This page
+  writes $\beta$ throughout, so Cato et al.'s field is $\beta-1$ here. The
+  paper's tilde marks the model's solution (here subscript $\mathrm m$), its
+  overbar the DNS mean (here $\langle\cdot\rangle$). Its
+  $\nabla_s=\nabla+\nabla^T$ is twice the strain-rate operator. Its letters
+  $\xi$, $\gamma$, $\delta$, $\boldsymbol R_{\gamma\delta}$ and
+  $\tilde{\boldsymbol f}_u$ are translated to $\varphi$, $\psi_1$,
+  $\psi_2$, $\boldsymbol\Psi$ and $\boldsymbol f_u$, because the registry
+  gives the originals other meanings. Its $k$ is both the turbulent kinetic
+  energy and the von Kármán constant.
+- **Printed slips in Cato et al. (2023).** Eq. 9 prints the DNS stress as
+  $-\nabla\cdot(\overline{\boldsymbol u'\otimes\boldsymbol u'})+\tfrac23k\boldsymbol I$,
+  a vector added to a tensor. The text calls it "the traceless Reynolds
+  stress tensor" (§V C), which fits the form without the divergence.
+  Eq. 2b prints the DNS mean $\overline{\boldsymbol u}$ in the viscous term
+  of the model equation, where Eq. 5 has the model's velocity. The 0.86
+  threshold is attributed to Schmitt, but the figures and text use 0.8
+  (§III C, §V A).
+- **Ranking in Cato et al. (2023).** Table III rates $f_{\tilde\nu}$ in the
+  top class and $\beta$ in the middle class for the channel, while Table I
+  gives the two nearly equal errors there ($E_u$ $8.1\times10^{-3}$ against
+  $8.4\times10^{-3}$; $E_{C_f}$ 0.19 against 0.18). On the hill the ranking
+  follows Table II. All three cases are 2D steady RANS with dense velocity
+  data.
 
 # Citations
 
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §2 (layers L1–L4), §3.2 and box p. 7 (MAP), §4.1, §5.1 (field inversion, Figs. 4–5), §5.2 (feature space), §5.4 and §6 (FIML, Fig. 8; inference before learning).
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §I, §IV.B, Eqs. 7–9 (FI, FIML, integrated training), §V (features), §VII (identifiability, Fig. 4; generalization).
+- [Cato et al. (2023)](/sources/cato-2023.md) — HAL author manuscript: §I (FIML rationale, Reynolds-force targets), §II A–E, Eqs. 2–12 (model, six corrections, cost, adjoint, optimizer, discretization), §III B–C, Figs. 3–7, Table I, Eqs. 18–21 (channel, over-learning, alignment), §IV, Figs. 8–10, Table II (hill), §V, Figs. 11–19 (square cylinder, stresses, Reynolds force), §VI–VII, Table III; App. B, Figs. 20–21.
+- [McConkey et al. (2022)](/sources/mcconkey-2022.md) — arXiv v1: §II A, Eq. 6 (optimal eddy viscosity, compared with Cato et al.'s Eq. 18), §II D (open-loop injection).
+- [Eivazi et al. (2022)](/sources/eivazi-2022.md) — arXiv v1: §1–2 (RANS closed by boundary data, no turbulence model).
 - [Yan et al. (2022)](/sources/yan-2022.md) — accepted manuscript, §1, §2.1–2.3, Eqs. 5–11, 14–17; §3.1 (S809, Figs. 4–7, 10, Table 1); §3.2 (parametrized hills, Figs. 11, 13–22, Table 2); §3.3 (GLC305/944, Figs. 25–33, Tables 3–4).

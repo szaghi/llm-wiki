@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-25T19:43:00Z
+timestamp: 2026-10-25T20:23:00Z
 ---
 
 # Equilibrium wall model
@@ -26,7 +26,9 @@ every wall-modelled source of this bundle:
 [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md),
 [Griffin et al. (2023)](/sources/griffin-2023.md),
 [Gillyns et al. (2022)](/sources/gillyns-2022.md) and
-[Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md); it is the comparison
+[Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md),
+[Cai et al. (2022)](/sources/cai-2022.md) and
+[Blind et al. (2023)](/sources/blind-2023.md); it is the comparison
 baseline of the learned models of [Bae & Koumoutsakos (2022)](/sources/bae-2022.md). It is the boundary
 condition that defines [wall-modelled LES](/methods/wall-modelled-les.md).
 
@@ -102,6 +104,22 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
   given). Sampling inside the wall-adjacent element keeps the model
   element-local and avoids inter-process communication; smooth walls, no
   pressure-gradient term.
+- **Spalding's law** (Blind et al. 2023, §3.3): an algebraic wall model in
+  the DG spectral element code [FLEXI](/software/flexi.md), solved by
+  Newton's method in every Runge–Kutta stage; formula and constants not
+  printed.
+- **Explicit inversion** (Cai et al. 2022, §II.C.1, Eqs. 24–26, from the
+  authors' earlier work as they cite it): a fitted closed-form inverse
+  $y^+(Re_y)$ of a tanh-blended viscous/log profile, with the Lambert $W$
+  function for the log branch, gives $u_\tau=y^+\nu/y$ from the wall-tangential
+  velocity at distance $y$ without iteration (formulas on the
+  [law of the wall](/definitions/law-of-the-wall.md) page). The authors
+  contrast it with the Newton iteration of the "traditional logarithmic wall
+  model" and credit it with eliminating unnecessary iterations and enhancing
+  stability; because it is cheap, it can be inverted at all fluid points
+  next to an immersed boundary (no cost figures). Only the equilibrium model
+  is used because a proper implementation of non-equilibrium terms is "still
+  arguable" (as they cite it).
 - **Fitted equilibrium solution with pressure gradient** (Meneveau 2020, as
   used by Fowler et al. 2022, Eqs. 2.19–2.20, Algorithm 1): a fit returns
   $\langle u_\tau\rangle h_{\mathrm{wm}}/\nu$ from
@@ -125,6 +143,8 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | Goc et al. (2021, §2.2) | CharLES, Alya | not quantified (deferred to Lehmkuhl et al. 2018) | — |
 | Gillyns et al. (2022, §3, §5, §7) | Nek5000, spectral elements of degree 7 | top node of the first element, $y/\delta=0.063$–0.15 ($y^+=63$–153) at $Re_\tau=1000$; $y^+=260$, 520 at $Re_\tau=5200$ | exponential moving average in time, $\bar U_n=\bar U_{n-1}+\alpha_e(U_n-\bar U_{n-1})$, $\alpha_e=\Delta t/(C_t+\Delta t)$, $C_t=0.0025\,\delta/u_\tau$ (about five time steps) |
 | Hoy & Bermejo-Moreno (2022, §3) | unstructured finite volume | $0.1\delta_0$, four uniform cells below | none stated |
+| Blind et al. (2023, §3.3, §4) | FLEXI, DG spectral elements of degree 5, residual-adapted grids | channel: $0.1h$ ($h^+_{\mathrm{wm}}=200$ at $Re_\tau=2000$), in the first or, on the finest adapted grid, the second cell; airfoil: $0.0134c$, about 10 % of the mean $\delta_{99}$, chosen by the exchange-location algorithm of Kahraman & Larsson on wall-resolved reference data | none stated |
+| Cai et al. (2022, §II.C.1) | ProLB lattice Boltzmann, octree Cartesian grid, [immersed boundary](/methods/immersed-boundary-method.md) | first fluid points next to the boundary; $u_\tau$ (not the velocity) interpolated to the boundary points, e.g. by inverse distance weighting | none stated |
 | Bae & Koumoutsakos (2022, Methods) | staggered finite differences | $0.1\delta$ in the correlation analysis (Figs. 6–7) | formulation not printed ("RANS-based", coefficients "tuned for this particular case") |
 
 Gillyns et al. (2022, §5) find that without the moving average ($C_t=0$) the
@@ -217,6 +237,23 @@ model.
   length of 8–13 $\delta_0$, resting its validity in such non-equilibrium
   separated flows on earlier work (Bermejo-Moreno et al. 2014, as recalled,
   §1).
+- **Massive separation on a bluff body.** Cai et al. (2022, §II.C.2, §IV)
+  apply the explicit equilibrium model on the whole Ahmed body (a generic car
+  body) with a 35° slant ($Re_H=7.68\times10^5$, $H$ the body height), including
+  the front where they acknowledge pressure-gradient effects, arguing that
+  the wall stress in the recirculation is small, that the model then acts in
+  the linear range and that the flow is insensitive to it there (as recalled).
+  On their coarse grid this "wall-law" case does not separate on the slant,
+  which they attribute to the assumed alignment of wall stress and tangential
+  velocity at the boundary points and to too little near-wall turbulent
+  stress; on the fine grid it separates massively and, by their velocity
+  profiles, "outperforms" a case with no-slip imposed in advance on slant and
+  base. With the wall stress applied through an
+  [immersed boundary](/methods/immersed-boundary-method.md), they state that
+  flow separation required enhancing the near-wall Reynolds stress (the
+  constrained-LES viscosity on the [wall-modelled LES](/methods/wall-modelled-les.md)
+  page): "Without this enhancement, the flow stays attached even by refining
+  the grid" (no run without it is shown in the paper).
 - **Adverse pressure gradient.** The log law that the algebraic forms invert
   ends below $0.11\delta$ once the inner-scaled pressure gradient exceeds
   0.005 and the Rotta–Clauser parameter 4.5, and below $0.08\delta$ beyond
@@ -259,6 +296,9 @@ profile lies above the DNS).
   and use it with the Vreman SGS model in a zonal LES of an open cavity at
   $N=7$ with a wall-adjacent spacing of $y^+=15$; no equations or matching
   height are printed.
+- Cai et al. (2022) never print the value of $\kappa$ used in their
+  explicit model; the blend constants (180.8 and 0.789 for the inverse,
+  10.71 and 1.526 for the forward profile) and $E=11.27$ are printed.
 
 # Citations
 
@@ -274,3 +314,5 @@ profile lies above the DNS).
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — p. 8, Figs. 6–7; Methods.
 - [Knopp (2022)](/sources/knopp-2022.md) — §5.2.
 - [Basile et al. (2023)](/sources/basile-2023.md) — §4.2.3.
+- [Cai et al. (2022)](/sources/cai-2022.md) — §II.C.1, Eqs. (24)–(26), Fig. 1(b); §II.C.2; §IV, Table III.
+- [Blind et al. (2023)](/sources/blind-2023.md) — §3.3; §4.

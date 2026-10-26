@@ -5,7 +5,7 @@ description: "FLEXI is an open-source high-order DGSEM framework for compressibl
 status: established
 aliases: [FLEXI framework, HOPR, POSTI]
 tags: [software, dg, les, kinetic-energy-preserving, reinforcement-learning]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-26T05:06:00Z
 ---
 
 # FLEXI
@@ -130,6 +130,29 @@ and super-samples high-order data to linear output (Krais et al. 2021, §2.3,
   degrees of freedom per direction and $N=3,5,8$ run the RL agent through the
   **Relexi** framework, which couples FLEXI to the agent on HPC systems (§IV B).
 
+- **Grid adaptation for wall-resolved and wall-modelled LES**
+  ([Blind et al. 2023](/sources/blind-2023.md)): FLEXI with LGL nodes, Roe
+  interface flux, BR1 lifting, low-storage Runge–Kutta, the Pirozzoli
+  split form and the [Vreman model](/methods/vreman-model.md) (constant
+  0.03 wall-resolved, raised to 0.11 for wall-modelled runs "from previous
+  experience") with the isotropic length $V_e^{1/3}/(N+1)$, $N=5$ (§2.1,
+  §2.3, §3.3). The Toosi–Larsson modelling-residual estimator, transferred to
+  the DGSEM through an element-local modal test filter, drives
+  [mesh adaptation](/methods/mesh-adaptation.md) of channels at
+  $Re_\tau=550$ and 2000 (wall-resolved, against Lee & Moser DNS) and
+  $Re_\tau=2000$ (Spalding-law wall model at $h_{\mathrm{wm}}=0.1\delta$), and
+  of a transonic NACA 64A-110 at $M=0.72$, $Re_c=930{,}000$ from a
+  6-element-per-chord start; FLEXI's mortars, limited to 2-to-1 interfaces,
+  save up to about half of the elements (§3–§4; see
+  [wall-modelled LES](/methods/wall-modelled-les.md)).
+
+Ferrer et al. (2023, §2, Table 1), comparing high-order codes, tick for
+Flexi/Fluxo a Fortran DG code for compressible flow with energy- or
+entropy-stable formulations, $p$-adaptation, LES and shock capturing, and no
+RANS, multiphase, particle, aeroacoustics or immersed-boundary capability,
+as judged by the HORSES3D authors in June 2022 (see
+[HORSES3D](/software/horses3d.md)).
+
 Flad & Gassner (2017) ran their study of kinetic-energy-preserving DG LES in an
 "in-house DG simulation framework" that the paper does not name; Krais et al.
 (2021, §2.2.3, §7.1) cite it as the basis of FLEXI's implicit-LES approach.
@@ -145,9 +168,22 @@ Flad & Gassner (2017) ran their study of kinetic-energy-preserving DG LES in an
 - Krais et al. (2021, Eq. 46) swap the superscripts of the two mortar
   interpolation matrices relative to their own Eqs. (43) and (45).
 - The validation of the airfoil LES is against XFoil only.
+- Krais et al. (2021, §3.2) call their mortar types 2:1 and 4:1 by the
+  number of small faces per big face, the big face being halved in one or in
+  both reference directions, "always cut at the middle"; Blind et al. (2023,
+  §3.2) call FLEXI's mortars "2-to-1" by the element-size ratio. Both
+  describe a halving of the element size across a mortar face; the labels
+  count different things.
+- Blind et al. (2023, §2.3) state that $N=5$ is used "throughout this work",
+  but their airfoil table gives 512 degrees of freedom per element, i.e.
+  $N=7$, against 216 ($N=5$) in the channel tables *(compiler check, not in
+  the sources)*. The version read is the arXiv v1 preprint, retitled at
+  publication.
 
 # Citations
 
 - [Krais et al. (2021)](/sources/krais-2021.md) — §1–§2 (framework, HOPR, POSTI, features); §3–§4 (numerics); §5.6–5.8, Eq. (68), Tables 3–4, Fig. 20 (cost and scaling); §6 (reproducibility); §7.1–7.3 (applications).
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §III A (scheme); §IV A–B (DNS cost, Relexi); §V (reference closures).
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — §2.1, §6.1 (the in-house DG framework and the split-form LES strategy FLEXI cites).
+- [Blind et al. (2023)](/sources/blind-2023.md) — §2.1, §2.3 (FLEXI set-up, Vreman length scale, modal test filter); §3.1–3.3, Tables 1–4 (channels, mortars); §4, Tables 5–6 (NACA 64A-110).
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §2, Table 1 (Flexi/Fluxo capabilities as judged by the HORSES3D authors).

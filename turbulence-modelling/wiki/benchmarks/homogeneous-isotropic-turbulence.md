@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Homogeneous isotropic turbulence (decaying and forced)"
-description: "Turbulence in a triply periodic box, decaying from a prescribed spectrum or sustained by forcing, used as a priori database and a posteriori test of subgrid-scale closures, as a DNS test up to supersonic turbulent Mach numbers, and as driven MHD turbulence for dynamo studies: here Re_λ from 70 to 418, LES of 24³ to 144³ degrees of freedom."
+description: "Turbulence in a triply periodic box, decaying from a prescribed spectrum or sustained by forcing: a priori database and a posteriori test of subgrid closures (Re_λ 70 to 418, LES of 24³ to 144³ degrees of freedom), a dissipation test of schemes for hybrid RANS/LES, a DNS test up to supersonic turbulent Mach numbers, and driven MHD turbulence."
 status: established
 aliases: [HIT, DHIT, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-25T19:46:00Z
+timestamp: 2026-10-25T20:27:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -38,6 +38,9 @@ notation registry.)
 | [Prakash et al. (2022)](/sources/prakash-2022.md), §III.A, §III.B.1 | forced | 418 (a priori); effectively infinite in the LES ($\nu=10^{-12}$) | Johns Hopkins forced isotropic database (a priori); $k^{-5/3}$ spectrum with Kolmogorov constant 1.6 (a posteriori) | a priori box filters $\Delta\approx6.5\eta$ to $68\eta$, anisotropic up to $15\eta\times292\eta\times292\eta$; LES on $32^3$, $64^3$, $128^3$ trilinear finite elements | spectral forcing of the modes $\lvert k_i\rvert<3$ at injected power 62.843 |
 | [Cao et al. (2022)](/sources/cao-2022.md), §3.4, Table 8 | decaying, compressible | 72 (initial) | none: the DNS is offered as reference data | DNS only, $512^3$ cells, $k_{\max}\eta_0=3.61$ | spectrum $E(k)\propto k^4\exp(-2k^2/k_0^2)$, $k_0=8$; turbulent Mach number $M_t=0.8$, 1.0, 1.2, 1.6 |
 | [Seta & Federrath (2022)](/sources/seta-2022.md), §2 | forced, MHD, two-phase (heating and cooling) | not given; $Re=Rm=2000$ at the driving scale | none | DNS only, $512^3$, 200 pc box | solenoidal or compressive driving at $1\le kL/2\pi\le3$ to $u_{\mathrm{rms}}\approx10$ km/s; seed field $10^{-10}$ G |
+| [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md), §III, §IV | forced (a priori); decaying (a posteriori) | 170, 240, 355 (a priori); 240 (a posteriori) | pseudo-spectral, $320^3$, $520^3$, $1024^3$; ten snapshots per $Re_\lambda$ | a priori box filters of dimensionless size 2 to 32; LES at sizes 4 and 20 from the $520^3$ DNS | decaying runs started from the filtered statistically stationary field; large-eddy turnover time about 2.7 |
+| [Carlsson et al. (2023)](/sources/carlsson-2023.md), §4.2 | decaying (grid turbulence of Comte-Bellot & Corrsin) | not given; $U_0M_g/\nu=34{,}000$ on the grid mesh size $M_g$ | experiment, spectra at $tU_0/M_g=42$, 98, 171 | $32^3$, $64^3$, $128^3$ nodes, second-order finite volumes, SA- and SST-based LES | field built from the measured spectrum; turbulent Mach number 0.1 |
+| [Gan et al. (2022)](/sources/gan-2022.md), §2 | forced, compressible isothermal MHD with a strong guide field | not given | none | ideal MHD, $512^3$ ($8\pi\times2\pi\times2\pi$ in one run), ATHENA++ | Ornstein–Uhlenbeck forcing at $0<\lvert\boldsymbol k\rvert\le2$, incompressible or compressible velocity driving; $v_A=8$, $\beta_p=0.4$, turbulent Mach number 0.12–0.18 |
 
 The beck-2023 DNS used 16,384 cores of the HAWK system for almost two hours
 (about 30,000 CPU hours). [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md)
@@ -103,6 +106,12 @@ with standard or optimal clipping of its backscatter gives the best spectra,
 optimal clipping a slightly longer inertial range. The authors state, without
 showing it, that the dissipation of the stabilization is much smaller than
 the SGS dissipation of every explicit model.
+[Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md), §IV, Fig. 8, find the
+same pile-up in decaying HIT with a pseudo-spectral solver: the no-model run
+on the LES grid accumulates energy at high wavenumbers, the Smagorinsky
+model over-dissipates, and their dynamic
+[fractional SGS model](/methods/fractional-sgs-model.md) lies between the two,
+closest to the filtered DNS.
 
 **A priori structure of structural models.**
 [Prakash et al. (2022)](/sources/prakash-2022.md), §III.A, Figs. 1–3, box-filter
@@ -183,6 +192,52 @@ dissipative at high wavenumbers. See
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 and [model-consistent training](/methods/model-consistent-training.md).
 
+**A nonlocal closure, a priori and a posteriori.**
+[Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) use forced HIT at
+$Re_\lambda=170$, 240 and 355 to fix the order of their dynamic
+[fractional SGS model](/methods/fractional-sgs-model.md) a priori: the order
+that maximizes the stress correlation with box-filtered DNS falls with the
+filter size and rises with $Re_\lambda$, fitted by a power law of the
+filter size (§III.1, Table I). At $Re_\lambda=240$ and dimensionless filter
+sizes 4 and 8 the dynamic fractional model correlates better with the exact
+SGS stress than static and dynamic Smagorinsky and the static fractional
+model in all six components, and predicts a backscatter volume fraction
+$v^-$ of 24% and 25% against 26% and 30% in the filtered DNS and 20% and 18%
+for dynamic Smagorinsky (§III.2, Figs. 4–5; see
+[energy backscatter](/definitions/energy-backscatter.md)). A posteriori in
+decaying HIT at $Re_\lambda=240$, its resolved-energy decay is closer to the
+filtered DNS than that of dynamic Smagorinsky at filter size 4 and, more
+markedly, at the very-large-eddy filter size 20, where dynamic Smagorinsky
+decays too fast (§IV, Fig. 9).
+
+**Numerical dissipation of hybrid RANS/LES schemes.**
+[Carlsson et al. (2023)](/sources/carlsson-2023.md), §4.2, Fig. 3, run the
+decaying grid turbulence of Comte-Bellot & Corrsin with the LES branch of
+Spalart–Allmaras- and SST-based
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) in an
+unstructured second-order finite-volume code. With the fourth-difference
+artificial-dissipation coefficient of RANS practice ($1/128$) the spectra
+decay too steeply at high wavenumbers on all three grids; the
+[low-dissipation low-dispersion scheme](/methods/low-dissipation-low-dispersion-scheme.md)
+with $1/512$ or $1/1024$ matches the measured spectra, $1/512$ being only
+slightly more dissipative. With it the standard constants $C_{DES}=0.65$
+(Spalart–Allmaras) and 0.61 (the $k$-$\varepsilon$ branch of SST) need no
+recalibration; 0.78 for the $k$-$\omega$ branch gives nearly identical
+results (not shown). The authors conclude that in this case the numerical
+dissipation of the convection scheme dominates the decay of turbulent
+kinetic energy (§5). See [numerical dissipation](/properties/numerical-dissipation.md).
+
+**Driven compressible MHD turbulence with a guide field.**
+[Gan et al. (2022)](/sources/gan-2022.md) drive isothermal compressible MHD
+in a periodic box threaded by a strong uniform field and decompose the
+fluctuations into Alfvén, fast and slow modes. A spatial projection onto the
+linear eigenvectors assigns 0.137 of the power outside the injection range
+to fast modes under compressible driving; a space–time Fourier analysis that
+counts only power within ±10% of each mode's linear frequency assigns 0.024
+to fast modes and 0.73 to 0.79 to fluctuations on no linear branch
+(§3, Fig. 2). The guide field makes the box anisotropic; see
+[compressible MHD turbulence](/results/compressible-mhd-turbulence.md).
+
 **Closure constants.** As recalled by
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md), decay rates of grid
 turbulence (Comte-Bellot & Corrsin 1966) constrain the coefficients of RANS
@@ -200,7 +255,10 @@ spectral reference used with HIT in both
 (see [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md)).
 As recalled by [Basile et al. (2023)](/sources/basile-2023.md), §2.2, the
 DES constant $C_{DES}=0.65$ is calibrated on decaying homogeneous turbulence
-(see [detached-eddy simulation](/methods/detached-eddy-simulation.md)). As
+(see [detached-eddy simulation](/methods/detached-eddy-simulation.md)), the
+value with which [Carlsson et al. (2023)](/sources/carlsson-2023.md)
+reproduce the Comte-Bellot–Corrsin decay once the scheme's dissipation is
+low enough. As
 recalled by [Pereira et al. (2021)](/sources/pereira-2021.md), §III, Fig. 4,
 from the authors' companion paper, explicit filtering of forced HIT DNS of
 Silva et al. at $Re_\lambda=140$ and 300 supports setting the dissipation
@@ -239,6 +297,22 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Seta & Federrath (2022)](/sources/seta-2022.md) are a non-isothermal,
   magnetized, driven box: the isotropy of the large-scale forcing is the
   only sense in which the case is "isotropic". Read in arXiv v2.
+- [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) (read in arXiv
+  v3) multiply the squared filter width directly by their Smagorinsky
+  coefficient, so that it corresponds to the registry's $C_s^2$, and print neither its value nor
+  the constant of the static fractional model. Their filter size is the
+  filter width over twice the DNS grid spacing, as printed. They label the
+  subfilter energy $\tfrac12(\overline{u_iu_i}-\bar u_i\bar u_i)$ "resolved" and
+  $\tfrac12\bar u_i\bar u_i$ "filtered" (Eq. 24); the labels are swapped
+  relative to the formulas.
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) give the resolution as
+  $N^3$ nodes ($N_x^3$ here) and measure time from the first experimental
+  station; their tests are hybrid RANS/LES in LES mode, not wall-resolved
+  closure tests.
+- [Gan et al. (2022)](/sources/gan-2022.md) (read in arXiv v1) are
+  periodic-box turbulence but anisotropic by construction (guide field
+  $v_A=8$); their fractions exclude the injection range $\lvert\boldsymbol k\rvert\le2$
+  and the $(k_\parallel=0,\omega=0)$ component.
 - The set-ups differ in what is forced: velocity modes below a wavenumber
   at fixed power ([Prakash et al. (2022)](/sources/prakash-2022.md),
   Eqs. 21–23), solenoidal or compressive acceleration fields
@@ -261,3 +335,6 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md) — recalled turbulent-box references.
 - [Basile et al. (2023)](/sources/basile-2023.md) — §2.2 (recalled calibration of $C_{DES}$).
 - [Pereira et al. (2021)](/sources/pereira-2021.md) — §III, Fig. 4 (recalled a priori filtering).
+- [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) — §III.1–III.2, Eq. (23), Table I, Figs. 3–7; §IV, Figs. 8–10.
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §4.2, Fig. 3; §5.
+- [Gan et al. (2022)](/sources/gan-2022.md) — §2; §3, Figs. 1–3.

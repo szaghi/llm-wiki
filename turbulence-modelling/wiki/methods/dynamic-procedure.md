@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-26T05:09:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -66,6 +66,9 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Abe (2021)](/sources/abe-2021.md), §II A, Eq. (5) | DSM (Germano et al. 1991; Lilly 1992), $\nu_t=C\Delta^2\lvert\bar S\rvert$ with $C\Delta^2$ computed as one product | not printed |
 | [Prakash et al. (2022)](/sources/prakash-2022.md), §III | DSM and dynamic mixed model in the stabilized finite-element code PHASTA | $\hat\Delta/\Delta=\sqrt3$, filters of Tejada-Martínez & Jansen; homogeneous directions |
 | [Fowler et al. (2022)](/sources/fowler-2022.md), §5; [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md), App. B | Lagrangian scale-dependent dynamic model (Bou-Zeid et al. 2005) in LESGO | averaging along fluid-particle paths (Meneveau, Lund & Cabot 1996, as recalled by Fowler et al.) |
+| [Kim et al. (2022)](/sources/kim-2022.md), §II | DSM (Germano et al. 1991; Lilly 1992), baseline of a learned channel model; the coefficient written $C^2$ absorbs $\Delta^2$, i.e. $C^2=(C_s\Delta)^2$ in the form above | $\hat\Delta=2\Delta$; horizontal (wall-parallel) average |
+| [Helm & Martín (2022)](/sources/helm-2022.md), §II, Eqs. (9)–(10) | compressible one-coefficient dynamic mixed model of Martín, Piomelli & Candler (2000): dynamic eddy-viscosity, eddy-diffusivity coefficients and subgrid turbulent Prandtl number | top-hat test filter in computational space; local ensemble average in the spanwise direction; coefficients transformed to curvilinear coordinates after Armenio et al. |
+| [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md), §II.2 | DSM as baseline, and the identity on forces for the [fractional SGS model](/methods/fractional-sgs-model.md) | $\hat\Delta=2\Delta$, box filter; average over homogeneous directions |
 
 Fowler et al. (2022, §4.2) borrow the Lagrangian averaging of the dynamic
 model for the time integration of their wall model (semi-Lagrangian upstream
@@ -74,6 +77,29 @@ find that replacing the anisotropic minimum-dissipation model by the
 Lagrangian scale-dependent dynamic model changes the channel WMLES mean
 velocity at $Re_\tau=5200$ very little, for the equilibrium and for the
 learned wall models alike.
+
+## The identity on forces
+
+A model posed on the subgrid force $\partial_j\tau_{ij}$ rather than on
+the stress needs the identity in divergence form,
+$\partial_jL_{ij}=\partial_j\mathcal T_{ij}-\partial_j\hat\tau_{ij}$.
+[Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) (§II.2,
+Eqs. 16–22) use it for the [fractional SGS model](/methods/fractional-sgs-model.md):
+with the same coefficient at both levels the identity becomes
+$\partial_jL_{ij}=C_{\mathrm{fr}}Q_i$, a vector equation for one unknown, and Lilly's
+least squares gives $C_{\mathrm{fr}}=\langle Q_i\partial_jL_{ij}\rangle/\langle Q_iQ_i\rangle$
+($C_{\mathrm{fr}}$, $Q_i$ page-local, defined there). The model operator does not
+commute with the test filter, so $Q_i$ contains both the operator applied
+to the test-filtered velocity and the test-filtered operator; for the
+fractional Laplacian the two differ, shown with PDFs at fractional order
+0.6 (Fig. 1). The coefficient is averaged over homogeneous directions to
+avoid long-lived negative values (p. 10).
+
+The same paper compares the effect of the procedure on a local and on a
+nonlocal model. A priori, in isotropic turbulence at $Re_\lambda=240$, it
+raises the stress correlation of the fractional model markedly but barely
+that of the Smagorinsky model: "dynamic local models do not necessarily
+increase the correlation coefficient remarkably" (§III.2, Fig. 4).
 
 ## Independence of the filter-width definition
 
@@ -141,6 +167,36 @@ filter-width question.
   than the true filtered stress" in channel flow, in support of their
   statement that a simple eddy viscosity cannot represent both the mean
   subgrid stress and the subgrid energy transfer.
+- **Wall-resolved channel, coarse grids** ([Kim et al. 2022](/sources/kim-2022.md),
+  §III C–E, Figs. 7, 10, 12–13, Table IV). In channel LES at
+  $(\Delta x^+,\Delta z^+)=(70.7,35.3)$, DSM over-predicts the mean
+  velocity in the buffer and log layers and, at $Re_\tau=180$, 360 and
+  720, the Reynolds shear stress; the authors call its dissipation
+  insufficient. On the coarser grid $(94.2,47.1)$ the peak mean subgrid
+  shear stress of the filtered DNS is about three times that of DSM. Applied
+  to the same resolved field, DSM correlates almost perfectly with the
+  strain: the correlation of $\bar S_{xy}$ with $-\tau_{xy}$ is 0.95 and
+  0.94 at $y^+\approx15$ and 50, against $-0.20$ and 0.19 in the filtered
+  DNS, and that of $\lvert\bar S\rvert^3$ with the local subgrid
+  dissipation 0.92 and 0.88 against 0.01 and 0.28. Learned
+  [reinforcement-learning](/methods/reinforcement-learning-closure.md)
+  models trained on mean statistics do better on the means.
+- **Compressible mixed model** ([Helm & Martín 2022](/sources/helm-2022.md),
+  §III–IV F). With the dynamic coefficients above, the mixed model
+  reproduces DNS of Mach 3, 7 and 10 boundary layers and two
+  compression-ramp interactions; dropping its scale-similar part leaves
+  the dynamic eddy viscosity alone and lengthens the Mach 7 separation by
+  30% (see [scale-similarity models](/methods/scale-similarity-model.md)).
+- **A priori backscatter.** The DSM gives backscatter at 20% and 18% of
+  the points at two filter widths in
+  box-filtered isotropic turbulence, against 26% and 30% in the filtered
+  DNS, and over-predicts the tails of the PDF of the subgrid dissipation,
+  which the authors link to the need for averaging a posteriori (Seyedi &
+  Zayernouri 2022, §III.2, Fig. 5). A posteriori, in decaying isotropic
+  turbulence, the resolved-energy decay of the fractional model agrees
+  better with the filtered DNS than that of DSM, and the difference is
+  "more remarkable" at the wider filter the authors class as
+  very-large-eddy simulation than at the LES one (§IV, Fig. 9).
 - **Negative viscosity.** The local coefficient can become negative (local
   [backscatter](/definitions/energy-backscatter.md)), which generally
   destabilizes the computation; clipping or homogeneous averaging restores
@@ -200,3 +256,6 @@ squares from a 6×4 system; see the
 - [Abe (2021)](/sources/abe-2021.md) — §II A, Eq. (5); §IV C, Fig. 9(b).
 - [Prakash et al. (2022)](/sources/prakash-2022.md) — §II; §III; §III.B, Table 4, Figs. 4–10.
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Introduction, p. 2; p. 10.
+- [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) — §II.2, Eqs. (16)–(22), Fig. 1; §III.2, Figs. 4–5; §IV, Fig. 9.
+- [Kim et al. (2022)](/sources/kim-2022.md) — §II (DSM baseline); §III C–E, Figs. 7, 10, 12–13, Table IV.
+- [Helm & Martín (2022)](/sources/helm-2022.md) — §II, Eqs. (9)–(10); §III; §IV F.

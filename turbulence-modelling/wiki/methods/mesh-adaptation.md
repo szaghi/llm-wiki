@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Mesh adaptation for turbulent-flow simulation"
-description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an error estimate or refinement criterion during a turbulent-flow computation: Hessian and metric criteria for RANS, time-averaged criteria for hybrid RANS/LES, hp-adaptive DG with turbulence-based indicators, and refinement strategy as a control of numerical dissipation."
+description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an error estimate or refinement criterion in a turbulent-flow computation: Hessian and metric criteria for RANS, time-averaged criteria for hybrid RANS/LES, LES modelling-residual and truncation-error estimators for high-order DG, and refinement strategy as a dissipation control."
 status: established
-aliases: [adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation]
-tags: [mesh-adaptation, hybrid-rans-les, rans, dg, numerical-dissipation]
-timestamp: 2026-10-25T19:46:00Z
+aliases: [adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation]
+tags: [mesh-adaptation, hybrid-rans-les, rans, dg, numerical-dissipation, wmles]
+timestamp: 2026-10-25T20:30:00Z
 ---
 
 # Mesh adaptation for turbulent-flow simulation
@@ -30,12 +30,12 @@ from an estimate of $\delta$, not adapted from the solution.
 
 Every adaptive procedure in the sources has the same four parts.
 
-| Part | Mozaffari et al. (2022) | Alauzet et al. (2022) | Basile et al. (2023) | Martin-Alvarez et al. (2022) |
-|---|---|---|---|---|
-| Flow and model | incompressible hybrid RANS/LES (IDDES, DDES-SST) and RANS, ISIS-CFD | steady compressible RANS, Spalart–Allmaras without $f_{t2}$, Wolf | compressible ZDES on the negative Spalart–Allmaras model, modal DG (CODA) | ideal MHD, cosmological galaxy formation, RAMSES |
-| Criterion | Hessians of $p$ and $u_i$, time-averaged | $L^4$ Mach-number interpolation error or adjoint-weighted goal-oriented estimate | modal small-scale energy plus inter-element jumps; modal-decay smoothness | mass per cell (quasi-Lagrangian) or a density threshold (quasi-Eulerian) |
-| Operation | anisotropic h-refinement and derefinement of hexahedra by cell division | anisotropic remeshing of tetrahedra to a metric (Feflo.a) | isotropic remeshing (MMG) plus p-enrichment, $N\in\{1,2,3\}$; prism layer frozen | octree refinement, at most one level jump |
-| Driver | refinement every 25 steps (backward-facing step) | mesh-convergence loop at doubled complexity | static steps, dof count doubled per step | every step, on the running flow |
+| Part | Mozaffari et al. (2022) | Alauzet et al. (2022) | Basile et al. (2023) | Blind et al. (2023) | Ferrer et al. (2023) | Martin-Alvarez et al. (2022) |
+|---|---|---|---|---|---|---|
+| Flow and model | incompressible hybrid RANS/LES (IDDES, DDES-SST) and RANS, ISIS-CFD | steady compressible RANS, Spalart–Allmaras without $f_{t2}$, Wolf | compressible ZDES on the negative Spalart–Allmaras model, modal DG (CODA) | wall-resolved and wall-modelled LES with the Vreman model, DGSEM ([FLEXI](/software/flexi.md)) | compressible and multiphase flows, DGSEM ([HORSES3D](/software/horses3d.md)) | ideal MHD, cosmological galaxy formation, RAMSES |
+| Criterion | Hessians of $p$ and $u_i$, time-averaged | $L^4$ Mach-number interpolation error or adjoint-weighted goal-oriented estimate | modal small-scale energy plus inter-element jumps; modal-decay smoothness | directional LES modelling residual from a modal test filter, time- and element-averaged | truncation error ($\tau$-estimation); interface tracking for multiphase | mass per cell (quasi-Lagrangian) or a density threshold (quasi-Eulerian) |
+| Operation | anisotropic h-refinement and derefinement of hexahedra by cell division | anisotropic remeshing of tetrahedra to a metric (Feflo.a) | isotropic remeshing (MMG) plus p-enrichment, $N\in\{1,2,3\}$; prism layer frozen | anisotropic hexahedral grids built by hand to the target spacing, 2-to-1 mortars | anisotropic p-adaptation, a degree per element and direction, mortar faces | octree refinement, at most one level jump |
+| Driver | refinement every 25 steps (backward-facing step) | mesh-convergence loop at doubled complexity | static steps, dof count doubled per step | post-processing between full LES runs, about four times the elements per step | one step on a converged moderate-degree solution (steady) or at fixed intervals (unsteady) | every step, on the running flow |
 
 The models and codes have their own pages:
 [detached-eddy simulation](/methods/detached-eddy-simulation.md) (the
@@ -44,7 +44,13 @@ DDES, IDDES and ZDES of Mozaffari et al. and Basile et al.), the
 al., Basile et al.), [RAMSES](/software/ramses.md) and the
 [small-scale dynamo](/results/small-scale-dynamo.md) (Martin-Alvarez et
 al.); Mozaffari et al.'s calibration case is the
-[backward-facing step](/benchmarks/backward-facing-step.md).
+[backward-facing step](/benchmarks/backward-facing-step.md); Blind et al.
+adapt for [wall-modelled LES](/methods/wall-modelled-les.md) of
+[channel flow](/benchmarks/turbulent-channel-flow.md) and a transonic
+airfoil. [Dahlin et al. (2022)](/sources/dahlin-2022.md) (§3) run their
+solar coronal MHD simulations in the adaptive-mesh code ARMS, with the
+maximally refined grid covering the separatrix dome and a volume above it;
+they state no refinement criterion.
 
 ## Hessian and metric criteria
 
@@ -118,9 +124,170 @@ with two time-averaged indicators computed on momentum.
 This replaces the decay-rate formulation of Mavriplis used in the authors'
 earlier RANS hp-adaptation; the authors justify it by the two cutoffs of
 DG (mesh and full discretization), between which the element's modal
-spectrum lies, likely in the inertial range (§3.2). Pure p-adaptation on a
+spectrum lies, and take the threshold $5/3$ from the inertial-range slope (§3.2). Pure p-adaptation on a
 fixed mesh would need very high degrees, with load-balancing problems,
 higher cost per degree of freedom and aliasing instabilities (§1).
+
+## LES modelling residual (Blind et al. 2023)
+
+[Blind et al. (2023)](/sources/blind-2023.md) transfer the grid-adaptation
+method of Toosi and Larsson (as recalled there, §1–2) from finite-difference
+and finite-volume codes to the
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md). The
+version read is the arXiv v1, whose title differs from the published one.
+Page-local notation:
+
+- $\boldsymbol w_\Delta$ is the discrete solution and
+  $\partial_t\boldsymbol w_\Delta=\mathcal R_\Delta(\boldsymbol w_\Delta)$
+  the discrete equations;
+- the hat is a test filter, as in the registry;
+- $h_i$ is the element spacing in direction $i$.
+
+**Why a modelling residual.** Classical residual estimates (leading
+Taylor-series terms, or interpolating the solution onto a finer mesh) do
+not work for LES. The finer-mesh solution would contain smaller scales,
+and LES is far from the asymptotic range, so many Taylor terms are large
+(§2.2). The estimator instead evaluates the residual at an imagined
+coarser resolution $\hat\Delta$, assuming that the test filter commutes
+with the time derivative (Eq. 2):
+
+$$\mathcal E_{\hat\Delta}=\mathcal R_{\hat\Delta}(\hat{\boldsymbol w}_\Delta)-\widehat{\mathcal R_\Delta(\boldsymbol w_\Delta)},$$
+
+where $\mathcal E$ (page-local) is the modelling residual. It is the part
+of the error source due to under-resolved small-scale turbulence;
+numerical error is excluded. It is evaluated at $\hat\Delta$ rather than
+$\Delta$ so as not to double-count scales the SGS model already
+represents. In $\mathcal R_{\hat\Delta}$ the SGS model uses the
+test-level length scale. For implicit LES without an explicit model, the
+SGS terms vanish in the estimate (§2.2).
+
+**DG realization (contribution, §2.3).**
+
+- *Test filter.* An element-local, uni-directional modal cutoff. With
+  polynomial degree $N=5$, the modes of degree 4 and 5 are zeroed in one
+  direction only. Filtering each direction in turn gives three residual
+  fields per hexahedral element, which allows anisotropic adaptation. It
+  works equally on unstructured grids. The authors state that the method
+  transfers to "any DG or related scheme ... as long as an element-local
+  filter operation can be specified" (§2.1).
+- *Change at the test level.* Only the SGS length scale changes. The
+  Vreman length scale $\Delta=V_e^{1/3}/(N+1)$, with $V_e$ the element
+  volume, becomes $\hat\Delta=[(N+1)/(N_f+1)]^{1/3}\Delta$, where
+  $N_f=3$ (page-local) is the highest retained mode.
+- *Exact square.* The residual is mapped to degree $2N$ before squaring, so
+  $\mathcal E_i\mathcal E_i$ is represented exactly.
+- *Element averaging.* The squared residual is averaged over each element
+  before the time and homogeneous averaging. Without this, the estimator
+  flags element boundaries, an artefact of the discontinuous solution and
+  of overshooting gradients in under-resolved regions. The averaging makes
+  the target spacing piecewise constant per element. The authors find the
+  estimator "most efficient when applied elementwise and not per
+  collocation point" (§5).
+
+**Optimal spacing (§2.4, Eqs. 4–6).** The directional indicator is
+$\mathcal G(\boldsymbol x,\boldsymbol n)=\sqrt{\langle\mathcal E_i\mathcal E_i\rangle}$,
+with $\boldsymbol n$ the filter direction and $\langle\cdot\rangle$ the
+time, homogeneous-direction and element average. It is modelled as
+$\mathcal G=\varrho_r\,h^{a}$, with $\varrho_r$ a residual density and
+$a=2$ (page-local). The authors call $a=2$ "almost certainly larger than
+the 'correct' value in most flow scenarios"; a large exponent damps the
+variation of the optimal spacing. Minimizing the residual in all
+directions at a fixed number of elements gives
+
+$$\varrho_{r,i}\,h_{i,\mathrm{opt}}^{a}\,V_{\mathrm{opt}}=\Lambda,\qquad i=1,2,3,\qquad V_{\mathrm{opt}}=\prod_m h_{m,\mathrm{opt}}:$$
+
+the element-integrated residual is equidistributed in space and direction,
+independently of the norm used to combine directions. $\Lambda$ follows by
+root-finding from the target element count.
+
+**Workflow (§2.5, §3).**
+
+- *Between runs.* Adaptation is a post-processing step between full LES
+  runs, and the grids are built by hand to mimic the target spacing;
+  automation is future work. In the channel, each new grid has about four
+  times the elements of the previous one.
+- *Mortars.* FLEXI's 2-to-1 mortar interfaces let the wall-parallel spacing
+  coarsen away from the wall. The smallest required spacing is kept until
+  the optimal spacing has at least doubled, and then an interface is
+  inserted (§3.2).
+- *Convergence.* The residual says nothing about whether a grid is
+  converged; that must be judged on quantities of interest (§2.5).
+- *Wall-modelled LES.* The estimator sees the strongest under-resolution
+  next to the wall, but below $h_{\mathrm{wm}}$ under-resolution is a
+  choice. The target spacing of the cells between the wall and
+  $h_{\mathrm{wm}}$ is therefore reset to its value at $h_{\mathrm{wm}}$, in
+  all directions, a rule credited to Toosi (personal communication). The
+  exchange location may then lie in the second cell (§3.3).
+
+**Results.**
+
+| Case | Start | Final iteration | Outcome |
+|---|---|---|---|
+| Wall-resolved channel, $Re_\tau=550$ (§3.1, Table 1) | $10\times2\times3$ elements | $l=4$: $50\times9\times36=16{,}200$ elements, 3,499,200 DOF; wall spacing per DOF $(\Delta x^+,\Delta y^+,\Delta z^+)=(18.33,1.28,7.64)$ | mean velocity converged to DNS at $l=4$, Reynolds stresses at $l=3$; spacing sequence "similar" to Toosi–Larsson's finite-difference one; spacing "acceptable (albeit a bit fine)" |
+| Wall-resolved channel, $Re_\tau=2000$, mortars (§3.2, Tables 2–3) | 60 elements | $l=5$: 142,662 elements, 30,814,992 DOF, 128,154 elements saved | mortars save "up to approx. 50%" of the elements of a structured mesh of the same spacing; the time step is unchanged, so the saving is in processor count |
+| Wall-modelled channel, $Re_\tau=2000$, Vreman constant 0.11, Spalding wall law, $h_{\mathrm{wm}}=0.1\delta$ ($h^+_{\mathrm{wm}}=200$) (§3.3, Table 4) | 60 elements | $l=4$: 31,217 elements | mean velocity agrees with DNS above $h_{\mathrm{wm}}$ at $l=3$; stresses acceptable at $l=4$, the streamwise one not exactly converged, which the authors attribute to WMLES, not to adaptation |
+| Transonic NACA 64A-110, $M=0.72$, $Re_c=930{,}000$, zero incidence, wall-modelled (§4, Tables 5–6) | 6 elements per chord, maximum $y^+\approx1100$ | $l=3$: 222,426 elements, 214,902 saved by spanwise mortar zones | $C_p$, $\tau_w$ and $\delta_{99}$ converge to an in-house wall-resolved LES within four meshes; $C_p$ fastest, $\delta_{99}$ slowest |
+
+- *Wall-parallel spacing.* In the wall-resolved channel the suggested $x$
+  and $z$ spacings are larger in the viscous sublayer than in the buffer
+  layer. The authors call this the correct behaviour, because wall-parallel
+  length scales grow in the viscous sublayer (§3.1, Fig. 1). The
+  converged grids also bear on the
+  [grid-point requirements of LES](/results/les-grid-point-requirements.md).
+- *Airfoil.* The indicator refines most in the wall-normal direction, then
+  spanwise, then wall-tangential. It suggests a very coarse spanwise
+  spacing at the laminar leading edge and refines the turbulent wake (§4,
+  Fig. 12).
+
+**Place among the criteria.** Blind et al. (2023, §1) reject three earlier
+measures of LES resolution:
+
+- the ratio of subgrid to viscous dissipation, meaningful only in the
+  buffer layer;
+- the ratio of modelled to resolved kinetic energy, which correlates poorly
+  with known length scales of wall-bounded flows;
+- local spectra, valid for isotropic flows only.
+
+They call the Toosi–Larsson residual "the most well-grounded approach to
+date". Mozaffari et al. (2022, §3.3) recall the same authors' criterion as
+"almost identical" to their own Hessian criterion. The two approaches
+differ in flow, discretization and in whether adaptation runs during the
+computation. The modelling residual is also a different object
+from the a posteriori error estimator of Basile et al., which measures the
+modal energy at the discretization cutoff and inter-element jumps.
+
+## Truncation-error p-adaptation (Ferrer et al. 2023)
+
+[Ferrer et al. (2023)](/sources/ferrer-2023.md) (§3.6) describe the
+adaptation of [HORSES3D](/software/horses3d.md), a DGSEM code; the version
+read is arXiv v1.
+
+- *Operation.* Anisotropic p-adaptation: each element carries its own
+  degree in each direction. Faces with different degrees on the two sides
+  are coupled by mortars, "which does not retain entropy stability" (§3.6).
+- *Criterion.* The truncation error, estimated by $\tau$-estimation, is the
+  preferred sensor. It "targets the source of the discretisation error", is
+  cheap compared with adjoint techniques, and comes as a by-product of a
+  multigrid cycle. As recalled from the group's earlier work, the
+  truncation error controls all functional errors (§3.6.1–3.6.2).
+- *Steady procedure.* Converge at a moderate degree until the residual is
+  below the truncation-error threshold. Then estimate the truncation error
+  for all lower degrees and choose, in one step, the lowest degree per
+  element and direction that meets the threshold, extrapolating if none of
+  the degrees up to the current one does (§3.6.2).
+- *Unsteady procedure.* Re-estimate and adapt at prescribed intervals
+  (§3.6.2).
+- *Threshold.* It "does not have any direct physical or engineering
+  meaning", a past drawback that the group now bypasses by linking it to a
+  flow functional (§3.6.2).
+- *Feature-based variant.* For multiphase flow, elements containing the
+  Cahn–Hilliard interface (phase field between 0.1 and 0.9) are refined
+  (§3.6.2, Fig. 2).
+
+The illustrations are a sphere at $Re=200$ (Fig. 1) and multiphase flows;
+a wind-turbine immersed-boundary case uses degree 3 near the rotor and
+wake and 2 elsewhere (§4.7, Fig. 14). The paper shows no adapted turbulent
+case.
 
 ## Adaptation in scale-resolving simulation
 
@@ -310,6 +477,29 @@ smoother meshes.
   their goal-oriented bound an a priori estimate and Basile et al. their
   indicators an a posteriori estimator; neither use is the closure test of
   [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
+- **Claims and slips in Blind et al. (2023).**
+  - *Test-level eddy viscosity.* §2.3 states that it is "a factor of
+    $[(P+1)/(M+1)]^{2/3}\approx1.59$ larger" (the paper's $P$, $M$ are $N$,
+    $N_f$ here). With $N=5$ and $N_f=3$, $1.5^{2/3}\approx1.31$ *(compiler
+    check, not in the sources)*.
+  - *Table 4 caption.* It names the wall-modelled "$Re_\tau=550$" channel,
+    while §3.3 and the table's spacings are for $Re_\tau=2000$. The
+    $Re_\tau$ computed on the last WMLES mesh is printed as 1555.60, which
+    the text does not discuss.
+  - *Polynomial degree of the airfoil.* Table 6 gives 512 DOF per element
+    for the airfoil, i.e. $(N+1)^3$ with $N=7$, while §2.3 states $N=5$
+    "throughout this work" *(compiler check, not in the sources)*.
+  - *Savings.* The "up to 50%" savings of the abstract are measured against
+    structured meshes with the same finest spacing, not against independent
+    hand-made grids. For the channel the authors place the saving in
+    processor count, because the time step is unchanged (§3.2). For the
+    airfoil they say it translates "directly" into compute time (§4).
+  - *Heuristic settings.* The Vreman constant 0.11 for WMLES rests on
+    "previous experience" (§3.3).
+- **Scale-resolving use of $\tau$-estimation.** Ferrer et al. (2023)
+  describe truncation-error p-adaptation as a code capability and
+  illustrate it on laminar and multiphase cases; its behaviour in
+  turbulent flow is not shown there.
 - Mozaffari et al. (2022, §3.3) state that, to their knowledge, no
   refinement criterion had been evaluated for hybrid RANS/LES; Basile et
   al. (2023) is later and uses a different (DG-specific) criterion.
@@ -320,3 +510,6 @@ smoother meshes.
 - [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §3 (Algorithms 1–2), §4.3, §5, §6 (Eqs. 30–38), §7 (Table 1), §8.1.3, §8.2.4–8.2.6 (Figs. 32, 40, Table 3), §9.
 - [Basile et al. (2023)](/sources/basile-2023.md) — HAL accepted manuscript, §1, §3.1–3.4 (Eqs. 8–19), §4.1, §4.2.1–4.2.3 (Table 1), §4.4.
 - [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md) — §1, §2.1–2.2 (Fig. 2), §3.2 (Figs. 6–7).
+- [Blind et al. (2023)](/sources/blind-2023.md) — arXiv v1: §1 (earlier resolution measures), §2.1–2.5, Eqs. 1–7 (modelling residual, DG test filter, optimal spacing, workflow), §3.1–3.3, Tables 1–4, Figs. 1–11 (channels), §4, Tables 5–6, Figs. 12–14 (airfoil), §5.
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — arXiv v1: §3.6–3.6.2, Figs. 1–2 (anisotropic p-adaptation, $\tau$-estimation, interface tracking), §4.7, Fig. 14.
+- [Dahlin et al. (2022)](/sources/dahlin-2022.md) — arXiv v1: §3 (ARMS adaptive mesh, refined region; no criterion stated).

@@ -5,7 +5,7 @@ description: "A subgrid closure of the induction equation for cosmological MHD: 
 status: established
 aliases: [subgrid dynamo, subgrid turbulent mean-field dynamo, alpha-effect subgrid dynamo, quenched alpha subgrid model]
 tags: [sgs-model, dynamo, mhd, astrophysics, les]
-timestamp: 2026-10-25T19:44:00Z
+timestamp: 2026-10-26T05:06:00Z
 ---
 
 # Subgrid turbulent dynamo model
@@ -165,6 +165,21 @@ rather than adding a transport equation of its own.
   Pakmor et al. (2020), "possibly a consequence of our less turbulent halo
   gas".
 
+## A related induction-equation source term
+
+Another "subgrid-scale model" acting through the induction equation, the [STITCH helicity-condensation
+model](/methods/stitch-helicity-condensation-model.md) of [Dahlin et al.
+(2022)](/sources/dahlin-2022.md), differs in kind. It is not a closure of a
+filtered electromotive force in the volume: it injects, through the bottom
+layer of cells of a coronal MHD simulation, the large-scale shear that
+unresolved photospheric vortical cells would produce through reconnection
+and an inverse helicity cascade, with one parameter set by the size and
+rotation rate of those cells (§2, Eqs. 1–2). The authors read it as a
+modification of Ohm's law at the base of the atmosphere (§7). Both models
+have a single free parameter ($q$ here, the injection amplitude there).
+Liu et al. calibrate $q$ on one halo (§4.2); Dahlin et al. compare STITCH
+with one simulation that resolves the cells (§4).
+
 ## Qualifications
 
 - **Tuned, resolution-dependent parameter.** The authors state that $q$ is
@@ -200,3 +215,4 @@ rather than adding a transport equation of its own.
 
 - [Liu et al. (2022)](/sources/liu-2022.md) — §1; §2.2, Eqs. (7)–(14); §2.3; §4.2, Fig. 1; §5.1.1–§5.1.3; §5.2; §6; §7.
 - [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md) — §4 (subgrid modelling as the alternative to resolved amplification).
+- [Dahlin et al. (2022)](/sources/dahlin-2022.md) — §2, Eqs. (1)–(2); §4; §7 (contrast: boundary helicity-injection source term).

@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-26T05:09:00Z
 ---
 
 # Smagorinsky model
@@ -57,6 +57,12 @@ explain by the Smagorinsky term not being divergence-free; they are
 error-optimal fits, not model constants. [Prakash et al. (2022)](/sources/prakash-2022.md)
 (§II), citing earlier work, state that the optimal $C_s$ is flow dependent,
 which motivates the dynamic procedure; they use no fixed value.
+[Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) (§II, Eqs. 3–4)
+write $\nu_t=C_s\mathcal L^2\lvert\bar S\rvert$ with $\mathcal L$ the
+effective grid scale, so their $C_s$ is the square of the registry's; they
+call its flow dependence its main drawback (no single universal constant
+across flows, §II) and Smagorinsky "one of the most dissipative models"
+(§IV), and do not print the value used.
 
 ## Filter width in element methods
 
@@ -177,7 +183,21 @@ limiting behavior".
   $t=20$ (Fig. 4); see [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md).
 - **Mixed with a structural model.** A Smagorinsky term stabilizes the
   [gradient model](/methods/gradient-model.md); optimal clipping derives a
-  pointwise coefficient for it (Prakash et al. 2022, §II).
+  pointwise coefficient for it (Prakash et al. 2022, §II). In the
+  compressible dynamic mixed model of [Helm & Martín (2022)](/sources/helm-2022.md)
+  (§II, Eq. 9) the eddy-viscosity part is a dynamic Smagorinsky term
+  $-2C_1\Delta^2\bar\rho\lvert\tilde S\rvert\tilde S^d_{ij}$ ($C_1$
+  page-local, Favre filter as tilde) with
+  $\Delta=(\Delta_\xi\Delta_\eta\Delta_\zeta)^{1/3}$ over the computational
+  directions; used alone it lengthens a hypersonic separation by 30% (see
+  [scale-similarity models](/methods/scale-similarity-model.md)).
+- **SVV-Smagorinsky in HORSES3D.** [Ferrer et al. (2023)](/sources/ferrer-2023.md)
+  (§4.1) list Smagorinsky, WALE (Nicoud & Ducros, as cited) and Vreman as
+  the explicit LES models of the [HORSES3D](/software/horses3d.md) DG code,
+  with the group's SVV-Smagorinsky combination, said to keep dissipation low
+  in laminar flow while "providing the correct dissipation for all
+  wave–number ranges in turbulent regimes" (citing Manzanero et al.). The
+  paper prints no model equation, constant or filter width.
 
 ## A priori and a posteriori behaviour
 
@@ -213,6 +233,33 @@ hold and that eddy-viscosity models correlate poorly with the exact stress.
 The finest DG reference LES of the PPRIME jet listed by [Basile et al. (2023)](/sources/basile-2023.md)
 (Table 1, Lorteau et al.) uses Smagorinsky at $N=3$ with 78 million
 degrees of freedom.
+
+**Alignment.** [Kim et al. (2022)](/sources/kim-2022.md) (§III E,
+Eq. 27, Figs. 15–20, Table IV) quantify the alignment assumption in
+channel flow at $Re_\tau=180$, applying all models to the same resolved
+field. The angle between $-\tau^d_{ij}$ and $\bar S_{ij}$ is zero by
+construction for a linear eddy-viscosity model, whereas in filtered DNS
+its mean is near $\pi/2$ at all heights. The correlation of $\bar S_{xy}$
+with $-\tau_{xy}$ is $-0.20$ and 0.19 at $y^+\approx15$ and 50 in
+filtered DNS, against 0.95 and 0.94 for the dynamic Smagorinsky model. The
+eddy viscosity obtained from the eigenvalue ratio of $-\tau^d_{ij}$ and
+$\bar S_{ij}$ is "one order of magnitude larger" in filtered DNS than in
+every model. An eddy-viscosity form of their learned model over-predicts
+the mean velocity like the dynamic model, while the tensor form does not;
+the authors conclude that "the eddy-viscosity assumption could seriously
+limit the performance" and that the non-alignment, "rather than the level
+of eddy viscosity", matters more (§III C, §IV). The conclusion rests on
+these correlations, angle PDFs and eigenvalue ratios; see
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md).
+
+**Isotropic turbulence a posteriori.** In decaying isotropic turbulence at
+$Re_\lambda=240$, the authors call Smagorinsky "one of the most dissipative
+models", evident in the spectra, and the Smagorinsky-based models deviate
+more than the fractional model from filtered DNS in the third-order
+structure function (Seyedi & Zayernouri
+2022, §IV, Figs. 8, 10); a priori its stress correlation is below that of
+the [fractional SGS model](/methods/fractional-sgs-model.md) (§III.2,
+Fig. 4).
 
 ## Qualifications
 
@@ -253,3 +300,7 @@ degrees of freedom.
 - [Prakash et al. (2022)](/sources/prakash-2022.md) — §II, Eq. (3).
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §6.1, Eq. (125), Fig. 4.
 - [Basile et al. (2023)](/sources/basile-2023.md) — Table 1.
+- [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) — §II, Eqs. (3)–(4); §III.2, Fig. 4; §IV, Figs. 8, 10.
+- [Kim et al. (2022)](/sources/kim-2022.md) — §III C; §III E, Eq. (27), Figs. 15–20, Table IV; §IV.
+- [Helm & Martín (2022)](/sources/helm-2022.md) — §II, Eq. (9).
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1.

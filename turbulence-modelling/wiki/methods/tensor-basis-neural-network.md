@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Tensor-basis neural network and the integrity basis"
-description: "A neural network that predicts the scalar coefficients of Pope's ten-tensor integrity basis from invariants of the mean strain and rotation, so the learned Reynolds-stress anisotropy is objective by construction; random forests, gene-expression programming and sparse regression learn the same expansion."
+description: "A neural network that predicts the scalar coefficients of Pope's ten-tensor integrity basis from invariants of the mean strain and rotation, so the learned Reynolds-stress anisotropy is objective by construction; random forests, gene-expression programming and sparse regression learn the same expansion, and larger integrity bases supply invariant input features."
 status: established
-aliases: [TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis]
+aliases: [TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features]
 tags: [neural-network, machine-learning, rans, data-driven, symbolic-regression]
-timestamp: 2026-10-25T13:43:00Z
+timestamp: 2026-10-25T20:23:00Z
 ---
 
 # Tensor-basis neural network and the integrity basis
@@ -75,6 +75,74 @@ regularizer eliminates model terms and so simplifies the model form
 multiphase RANS (drag production, drag exchange, pressure strain, viscous
 dissipation).
 
+## Integrity bases as sources of invariant features
+
+An integrity basis can also serve the input side of a learned closure. Its
+invariants are rotationally invariant scalars that a network can take as
+features, whatever it outputs.
+[McConkey et al. (2022)](/sources/mcconkey-2022.md) follow the procedure of
+Wu et al. (as recalled there, §III C) and build the Spencer–Rivlin minimal
+integrity basis of four tensors:
+
+- the mean strain-rate tensor $S_{ij}$ and rotation-rate tensor
+  $\Omega_{ij}$;
+- an antisymmetric tensor built from $\nabla k$;
+- an antisymmetric tensor built from the gradient of the wall-normal stress
+  variable of their $v^2$-$f$-type base model.
+
+The last one replaces the pressure-gradient tensor of Wu et al., whose terms
+were "numerically unstable in our experience" (§III C). The result is 47
+basis tensors (page-local $\mathcal B_1,\dots,\mathcal B_{47}$, a different
+object from Pope's $T^{(n)}$). Their first and second invariants,
+$I_1(\mathcal B)=\mathrm{tr}\,\mathcal B$ and
+$I_2(\mathcal B)=\tfrac12[(\mathrm{tr}\,\mathcal B)^2-\mathrm{tr}(\mathcal B^2)]$
+(page-local), are the candidate features.
+
+**Two-dimensional reduction.** In 2D incompressible flow many of these
+invariants vanish identically, directly or through continuity, and all
+third invariants vanish because each of the four base tensors has zero
+determinant. A symbolic evaluation (Maple) leaves 29 non-zero first and
+second invariants, which the authors call "an outcome not previously
+discussed in detail" (§III C, App. A, Table II). With three heuristic
+scalars and the base model's normalized wall-normal stress, the network
+receives 33 Galilean-invariant features, "one of the richest feature sets
+used in a data-driven turbulence closure model" (§III C, Table I). In a
+three-dimensional flow, adding the second invariants doubles the count from
+47 to 94 (§III C, §V).
+
+**Outputs without a tensor basis.** The outputs of McConkey et al. are not
+basis coefficients. One network predicts a non-negative optimal eddy
+viscosity, the other the three independent components of the remaining
+non-linear part of the anisotropy (§III B; see
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)). Because
+those components are predicted directly, the authors state that this part
+"is not invariant under coordinate transformations", and propose a
+tensor-basis neural network for it as future work (§V).
+
+**Feature importance.** By a SHAP analysis of the eddy-viscosity network,
+the base model's normalized wall-normal stress is the most important
+feature. Among the invariants, the first invariants of
+$\mathcal B_9=\mathcal A^2S$ and $\mathcal B_7=\Omega^2S^2$ rank second and
+third, where $\mathcal A$ (page-local) is the antisymmetric tensor of the
+wall-normal-stress gradient. For $\mathcal B_7$ the second invariant ranks
+only twenty-fifth, while for $\mathcal B_5$ (the square of the
+antisymmetric tensor of $\nabla k$) the second invariant ranks much higher
+than the first (§IV C, Fig. 22). The paper's Table II defines the basis
+tensors.
+
+**Dataset and training.** The training data are the authors' curated
+dataset (McConkey et al. 2021, as recalled in §III D). Its periodic-hill
+part pairs RANS fields of the base model with DNS of Xiao et al. for five
+hill-steepness factors 0.5, 0.8, 1.0, 1.2 and 1.5 of the parametrized
+[periodic hill](/benchmarks/periodic-hill.md) family at $Re_h=5600$, with
+14,751 points per case. The factor 1.2 is held out for testing, an
+interpolation within the family, and the other four are used with 4-fold
+cross-validation by geometry (§III D–E). Both networks have 14 hidden
+layers of 30 SELU neurons; the eddy-viscosity network ends in an
+exponential activation that makes its output non-negative (§III B). The
+a priori and a posteriori results are on
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
+
 ## Assessment in the sources
 
 - **Interpretability.** Duraisamy et al. (2019, §5.3) note that the TBNN
@@ -93,6 +161,14 @@ dissipation).
   the RANS or LES environment" (see
   [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
   and [model-consistent training](/methods/model-consistent-training.md)).
+- **Tensor basis in an LES closure.** [Kim et al. (2022)](/sources/kim-2022.md)
+  (§II E) tried a tensor-basis neural network for rotational invariance in
+  their [reinforcement-learning SGS model](/methods/reinforcement-learning-closure.md)
+  of channel flow. It "did not conclusively help improve DRL performance,
+  presumably due to strong anisotropy of the near-wall turbulence". No
+  results are shown. Their actor instead outputs the six SGS stress
+  components directly and imposes only reflectional equivariance and a zero
+  wall value.
 - **Locality.** Existing feature sets use only local quantities.
   Non-local, non-equilibrium features, such as streamline integration
   (Hamlington & Dahm), could extend predictive capability (Duraisamy et al.
@@ -125,8 +201,21 @@ eigen-decomposition, or the integrity basis itself. See
   paragraph credits a random-forest variant to Kaandorp & Dwight, but the
   reference it gives ([32]) is a duplicate of another entry and not their
   work. The attribution here follows the text.
+- McConkey et al. (2022, Table II) print the same expression for different
+  basis tensors that are marked differently (zero and non-zero invariants):
+  $\mathcal B_{15}$ and $\mathcal B_{16}$, $\mathcal B_{18}$ and
+  $\mathcal B_{26}$, $\mathcal B_{19}$ and $\mathcal B_{27}$. Table II marks
+  21 tensors with a non-zero first invariant, while Table I and the text use
+  20 first invariants (the first invariant of $\mathcal B_{44}$ is absent)
+  and 29 invariants in all. The paper does not explain the difference.
+- McConkey et al. (2022) write the rotation-rate tensor as $R$ and the
+  integrity-basis tensors as $B_n$; this page uses $\Omega_{ij}$ and
+  $\mathcal B_n$, because $R_{ij}$ is the Reynolds stress and $B$ the
+  log-law intercept in the registry. The version read is arXiv v1.
 
 # Citations
 
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §2 (L2, Cayley–Hamilton), §5.2–§5.3, Eqs. 11–12 (tensor-basis expansion, TBNN, gene-expression programming, features).
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §III.A, Eq. 4 (TBNN), random forests, symbolic and sparse regression, §IV.A (a priori training, sparse loss), §V (features), §VII (interpretability).
+- [McConkey et al. (2022)](/sources/mcconkey-2022.md) — arXiv v1: §III B (outputs), §III C, Table I (33 features), App. A, Table II (47-tensor basis, vanishing invariants in 2D), §IV C, Fig. 22 (SHAP), §V (TBNN for the non-linear part, 3D count).
+- [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: §II E (tensor-basis network tried in DRL, no conclusive gain).

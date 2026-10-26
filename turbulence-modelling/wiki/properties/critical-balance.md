@@ -5,7 +5,7 @@ description: "Critical balance equates the linear Alfvén time and the nonlinear
 status: established
 aliases: [CB, Goldreich–Sridhar theory, GS95, strong MHD turbulence, weak MHD turbulence, imbalanced MHD turbulence, residual energy]
 tags: [mhd, astrophysics, plasma, anisotropy, energy-cascade]
-timestamp: 2026-10-25T13:29:00Z
+timestamp: 2026-10-26T05:06:00Z
 ---
 
 # Critical balance and the anisotropic MHD cascade
@@ -75,11 +75,30 @@ Two justifications are given (§4–§5, recalled from Boldyrev 2005 and Nazaren
   $\lambda_{CB}$, and the transition was first captured numerically by
   Meyrand et al. (2016), as recalled (Fig. 3).
 
+**Prefactor and an analogue.** [Kochurin et al.
+(2022)](/sources/kochurin-2022.md) (Eq. 3) quote the kinetic-equation result
+for anisotropic shear-Alfvén wave turbulence with its constant,
+$C_m=1.467$ (from Galtier 2021, with "a $\sqrt{2\pi}$ factor" missing in
+Galtier et al. 2000, as recalled), written for an elevation-like spectrum $\mathcal S^m\propto k_\perp^{-3}$
+($\mathcal S^m$ page-local) with the energy relation
+$E^m=v_A^2k\,\mathcal S^m$ *(compiler check, not in the sources: this gives
+$E^m\propto k_\perp^{-2}$, the exponent above)*. They
+reproduce that law, prefactor scaling included, in simulations of
+magneto-capillary waves on a ferrofluid surface, a liquid without free
+charge or current (p. 2) whose magnetic surface waves are dispersionless
+along the field; the authors stress that in a plasma no wave propagates
+across the field and magnetic energy reaches that direction only by
+shearing, whereas there capillary waves propagate across it (p. 4); see [weak wave
+turbulence](/results/weak-wave-turbulence.md). They list "the critical
+balance separating weak turbulence from strong turbulence" (citing Meyrand
+et al.) among the open questions the analogy could explore (Conclusion,
+p. 5).
+
 ### Weak turbulence: the $k_\parallel=0$ condensate
 
 Because every WT interaction scatters a wave off a zero-frequency
 $k_\parallel=0$ mode, Schekochihin (2022, §4.4, App. A) argues that the
-standard WT kinetic equation (Galtier et al. 2000, derived in App. A.2 under
+WT kinetic equation of Galtier et al. (2000) (derived in App. A.2 under
 the random-phase approximation) is "at best incomplete and at worst wrong":
 the $k_\parallel=0$ "2D condensate" is forced by pairs of counter-propagating
 waves, builds up even when unforced, and is itself strongly turbulent and
@@ -92,7 +111,7 @@ Eqs. A25–A30, new there and with the conjecture that the condensate is
 unaligned) a condensate spectrum
 $E_{0,2D}\sim(\varepsilon L_\parallel v_A)^{1/2}k_\perp^{-2}$, which recovers
 the $k_\perp^{-2}$ WT exponent ("spectral continuity"). Imbalanced WT is
-harder still: the standard closure cannot accommodate
+harder still: that kinetic equation cannot accommodate
 $\varepsilon^+\gg\varepsilon^-$, and its power-law solutions only satisfy
 $\mu^++\mu^-_0=-4$ for the exponents of waves and condensate (Eqs. 4.9,
 A23), with non-universal prefactors.
@@ -130,6 +149,29 @@ extended to the three directions $l_\parallel$, $\xi$, $\lambda$ of
 [dynamic alignment](/properties/dynamic-alignment.md). The review quotes a
 second-order exponent of 1 along the local field and between $2/3$ and $1/2$
 across it in the solar wind, closer to $1/2$ in simulations (§5.3).
+
+### Anisotropy of separated wave modes
+
+[Gan et al. (2022)](/sources/gan-2022.md) (§3, Figs. 4–5) fit
+$l_\parallel\propto\lambda^{m_a}$ ($m_a$ page-local) to contours of
+second-order velocity structure functions of driven compressible MHD with a
+strong guide field, in the plane of the parallel and perpendicular
+separations (the source's $L_\parallel$, $L_\perp$). In run B
+(incompressible velocity and magnetic driving), a spatial projection on
+linear eigenmodes gives $m_a=2/3$ for the total, Alfvén and slow
+components, which the authors call consistent with Goldreich & Sridhar
+(1995) and Cho & Lazarian (2002, 2003), and $m_a=1$ for fast modes; with
+highly compressible driving (run C) the total gives 5/6. When modes are
+instead selected by their frequency (spatio-temporal Fourier analysis), the
+Alfvén component of run B gives $m_a=1$. The authors say only that these
+slopes, "showing slight variations under different conditions", call for
+"additional theoretical and numerical studies" (§3, p. 6; details on
+[compressible MHD turbulence](/results/compressible-mhd-turbulence.md)).
+They define $k_\parallel\simeq k_x$ along $\boldsymbol B_0$ for their
+spectra (§3, p. 3) and do not say whether the structure-function
+separations are taken along $\boldsymbol B_0$ or along a local field;
+Schekochihin (2022, §5.3, Eq. 5.8) states that scale-dependent anisotropy
+is visible only when increments are taken along the local field.
 
 ### Two-dimensional spectrum
 
@@ -248,3 +290,5 @@ debated" (§8.2).
 # Citations
 
 - [Schekochihin (2022)](/sources/schekochihin-2022.md) — §2 (Eqs. 2.1–2.11); §4 (Eqs. 4.2–4.13), §4.4; §5 (Eqs. 5.1–5.12), §5.2, §5.3; §8.2; §9 (Eqs. 9.1–9.28), §9.2, §9.6; §10 (Eqs. 10.1–10.4), §10.4; §11 (Eqs. 11.1–11.17); §14; App. A.2–A.5 (Eqs. A15, A23, A25–A41); App. C (Eqs. C3–C29).
+- [Gan et al. (2022)](/sources/gan-2022.md) — §3, p. 3; §3, Figs. 4–5, p. 6 (anisotropy exponents of mode components).
+- [Kochurin et al. (2022)](/sources/kochurin-2022.md) — Eq. (3); pp. 2, 4–5; Conclusion (weak shear-Alfvén spectrum constant; magneto-capillary analogue; critical balance as an open question).

@@ -6,6 +6,147 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 3 — 2022–2023 papers: learned SGS and RANS closures, immersed boundaries, GPU codes, shock–boundary-layer interaction, plasma and wave turbulence (2026-10-26)
+
+Sources (20): maeyama-2022, coelho-2022, fischer-2022, davidovits-2022,
+kochurin-2022, helm-2022, cai-2022, dang-2022, eivazi-2022, kim-2022,
+mcconkey-2022, seyedi-2022, dahlin-2022, ferrand-2022, gan-2022,
+placco-2023, ferrer-2023, blind-2023, carlsson-2023, cato-2023. 60 of 134
+ingested, 84 concept pages plus the registry, 3573 bibliography entries.
+Deep lint A1–A7 over the chunk-3 content done.
+
+### Decisions for the human
+
+1. **Two new archive files.** Wang & Roy (2023), J. Comput. Phys.
+   474:111760 (error transport for DG), and Elzaabalawy et al. (2023),
+   J. Comput. Phys. 483:112059, appeared after founding; both are planned
+   in chunk 7 (now 14 sources) as `wang-2023` and `elzaabalawy-2023`. To keep
+   suffixes in publication order, the planned GPU gas-kinetic paper
+   (J. Comput. Phys. 476:111899, chunk 4) becomes `wang-2023-b` and the
+   EnKF SGS paper (Phys. Fluids 35:085107, chunk 5) `wang-2023-c`.
+2. **Bibliography calls left by the resolver:** ferrer-2023's Reed & Hill
+   Los Alamos report was folded into `reed-1973` (the conference entry), as
+   in chunk 2; `pope-2006` (a reprint printed by helm-2022) was folded into
+   `pope-2000`, while `pope-2010` and `karniadakis-2005`/`karniadakis-2013`
+   remain separate entries; ferrand-2022's Kolmogorov (1941) citation
+   (Russian edition, page 16 against 19) was folded into
+   `kolmogorov-1941` without a Crossref check. Split or keep on your word.
+3. **carlsson-2023 ref. [28]** prints the title and authors of its ref.
+   [35] with a different DOI; the DOI resolves to Probst, Löwe, Reuß, Knopp
+   & Kessler, AIAA J. 54:2972, which matches the text's "Löwe [28]". The
+   entry (`probst-2016`) now follows the DOI's record.
+4. **Versions read.** Sixteen of the 20 files are preprints or author
+   manuscripts (13 arXiv, 2 HAL, 1 author manuscript); the Source pages say which
+   and cite their locators. blind-2023's arXiv title ("Grid-adaptation for
+   wall-modeled large eddy simulation using unstructured high-order
+   methods") differs from the published one; ferrer-2023's arXiv version
+   prints 13 authors where Crossref lists 14 (Marbona H. added).
+5. **Optimal eddy viscosity page?** McConkey et al. (Eqs. 6–7), Cato et
+   al. (Eq. 18), Abe (2021) and Vela-Martín (2022) use the same projection
+   of a reference stress on the strain rate (compiler check). It is now
+   inline on the Boussinesq page; a page of its own qualifies.
+
+### Contradictions
+
+None open. Considered and kept as attributed qualifications:
+**modelled-energy threshold of LES** — Haering et al. recall the 10% of
+Jiménez & Moser but run well past it; Seyedi & Zayernouri use 10% as the
+line between LES and very-large-eddy simulation; Helm & Martín say 25–30%
+"may be possible"; Blind et al. cite Toosi & Larsson's finding that the
+ratio correlates poorly with length scales; the four define the fraction
+differently ([large-eddy simulation](wiki/definitions/large-eddy-simulation.md)).
+Also: Kim et al. (eddy-viscosity form limiting for a learned SGS model)
+against Cato et al. (stress misalignment immaterial to the reconstructed
+mean flow); best-fit eddy viscosity of the stress (McConkey) against that
+of the mean velocity (Cato); Gan et al.'s Alfvén anisotropy exponent
+against Schekochihin's local-field argument; Kochurin et al.'s weak
+turbulence of a non-conducting ferrofluid against Schekochihin's critique
+of weak MHD turbulence; Seyedi & Zayernouri against Kim et al. on
+backscatter; Ferrer et al. against Flad & Gassner on DG for implicit LES;
+Cogo et al. against Placco et al. on the schemes of STREAmS; the Trettel–
+Larsson transformation printed with the square root over the whole
+integrand (Carlsson et al., Eq. 26) and without it (Cogo et al., Huang et
+al.). The FLEXI mortar types of Krais et al. (2:1, 4:1) and Blind et al.
+(2-to-1) were found to describe the same halving.
+
+One chunk-2 error corrected: the channel page called the PANS fraction
+$\beta_k$ "resolved"; it is the unresolved fraction. Cato et al. print
+$c_{w1}=c_{b1}/\kappa^2+\dots$ with Alauzet et al.'s constants, which
+confirms the chunk-2 compiler check on Alauzet et al.'s $c_{b1}/\kappa$.
+
+### Printed slips (recorded on the Source pages)
+
+- helm-2022: separation-length increase 32% (abstract) against 30%
+  (§§IV F, V); 25% and 18% for the same wall value; 12% (§V) against 14%
+  (§III B); Table III wide-domain row duplicates the narrow one; rescaling
+  lengths 29δ/7δ attached to the wrong simulation types; index slips.
+- dang-2022: 24 567 against 24 576 GPUs; Table 6 total ($10^{12}$ against
+  the rows' $10^{11}$, compiler check); weak- and strong-scaling
+  efficiencies against the printed times; WENO-SYMBO operation count 216
+  against 262; Eqs. 12, 13, 15–16, 19, 27, 38; companion Part 2 cited but
+  not listed.
+- blind-2023: test-level factor 1.59 (1.31 from the printed degrees,
+  compiler check); Table 4 captioned $Re_\tau=550$; 512 DOF per element
+  against degree 5; Table 2 row $l=2$.
+- fischer-2022: Table 1 header $n$, Table 2 38-node time, $E=6840$ against
+  6480, 248× against 234×, operation count of §2.3.
+- seyedi-2022: order "$2\alpha\in(1,2]$" against $\alpha\in(0,1]$;
+  swapped labels in Eq. 24; inconsistent symbols in Eqs. 7, 10, 19, 21.
+- placco-2023: $C_P$ without the square on the Mach number; "order of
+  magnitude" reduction against Table 3 (factor 2.2–4.6, compiler check).
+- cato-2023: Eqs. 2b, 9, A16; ref. [9] cited as "Duraisamy et al." (first
+  author Singh); threshold 0.86 against 0.8.
+- carlsson-2023: LD2 credited to "Löwe et al. [28]"; $C_{dw}$/$C_w$; figure
+  and equation cross-references.
+- maeyama-2022: $\Omega_i$ for $\Omega_e$; phase velocities 42.7, 45.1
+  against 47.3, 42.6 from the printed values (compiler check).
+- ferrand-2022: $d_i=0.05/L_0$; missing $\sqrt{\mu_0}$ in Eqs. 17, 23
+  (compiler check); $F_{F21}$ for $F_{A18}$.
+- dahlin-2022: "just over 15×" against 18 (compiler check); kochurin-2022:
+  $\omega\sim k^{-3/2}$ for $k^{+3/2}$ (Fig. 4); gan-2022: run C wave
+  fraction 0.271 against "less than ∼25%", run A fast fraction; davidovits-
+  2022: Fig. 6 Mach numbers against Table I; cai-2022: Eqs. 16, 18
+  consistent only for $\Delta=1$; kim-2022: run length; mcconkey-2022:
+  Table II duplicates, invariant count; ferrer-2023: Eq. 2, Fortran
+  2003/2008, scaling "up to 1000 processors"; eivazi-2022, coelho-2022:
+  minor.
+
+### Bibliography
+
+3573 entries (+805); 87 aliases, about 55 verified silences, 2 printed
+duplicates folded (ferrer-2023 refs [16]/[40]; gan-2022 Meyrand 2016),
+`FLAGS: 0`, `--dupes` clean. Printed keys equal to a Source slug for a
+different work re-keyed: `li-2022-c` (Li, Chen & Ren, JCP 448, cited by
+dang-2022), `li-2022-d` (Li, He & Liu, PoF 34, cato-2023), `li-2022-e`
+(Tianwen-1, Astrodynamics, placco-2023), `cai-2022-c`, `kim-2022-b`;
+self-citations kept as `@misc` entries `maeyama-2022-b` (code and data)
+and `kochurin-2022-b` (supplemental material). Preprints kept distinct:
+`mateogabin-2021`, `duraisamy-2020`. Corrected from Crossref:
+`ohyabu-1994` (printed 1984), `paruta-2018` (volume 25), `priest-1996`
+(Phil. Trans. A), `lumley-1978` (pages 123–176), `probst-2016`.
+
+### Bundle fit (D17 candidates, no copy made)
+
+- maeyama-2022 (gyrokinetic cross-scale turbulence) and coelho-2022
+  (stellarator edge turbulence with GBS): `fusion-mhd-simulation`.
+- dahlin-2022 (coronal helicity condensation; its "subgrid-scale model" is
+  a parametrized source term, not an LES closure), ferrand-2022 and gan-2022
+  (space-plasma and compressible MHD turbulence): `astrophysical-simulation-codes`.
+- kochurin-2022 (magneto-capillary wave turbulence), davidovits-2022
+  (laboratory shock-generated turbulence), placco-2023 (planetary entry),
+  fischer-2022 and ferrer-2023 (software papers): peripheral to closure
+  modelling.
+
+### Candidate pages (kept inline until a second source)
+
+Optimal eddy viscosity (qualifies, see decision 5); constrained LES;
+lattice Boltzmann method and ProLB; Ahmed body; continuous spectral
+element method; Ducros and Jameson shock sensors; Reynolds-stress
+anisotropy invariants; Reynolds-force vector; Richtmyer–Meshkov
+instability; very-large-eddy simulation; v2-f model; WALE model;
+gyrokinetics and GKV; drift-reduced Braginskii model and GBS; MHD
+wave-mode decomposition; proper orthogonal decomposition.
+
 ## Chunk 2 — 2021–2023 papers: SGS clipping, PANS, mesh adaptation, DES, transition, wall laws, gas-kinetic DNS, RL wall models, dynamos (2026-10-25)
 
 Sources (20): abe-2021, pereira-2021, prakash-2022, mozaffari-2022,

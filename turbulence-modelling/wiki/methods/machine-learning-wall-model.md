@@ -5,7 +5,7 @@ description: "Wall-stress models for wall-modelled LES learned by supervised reg
 status: established
 aliases: [MLWM, ML wall model, neural-network wall model, data-driven wall model, reinforcement-learning wall model, RLWM, SciMARL wall model]
 tags: [wall-model, wmles, machine-learning, neural-network, reinforcement-learning]
-timestamp: 2026-10-25T19:43:00Z
+timestamp: 2026-10-25T20:36:00Z
 ---
 
 # Machine-learning wall models
@@ -149,6 +149,21 @@ Bae and colleagues among the first applications of RL to closure modelling.
   (Figs. 6–7); the authors read this as the policy replicating "the natural
   mechanisms of wall-shear stress control".
 
+## The neighbouring case: in-solver learning of the SGS model
+
+[Kim et al. (2022)](/sources/kim-2022.md) train by deep reinforcement
+learning not a wall model but the SGS stress of a wall-resolved channel LES
+(first point below $y^+=0.8$, $\Delta x^+=70.7$, $\Delta z^+=35.3$ at
+$Re_\tau=180$), with the SGS stress forced to zero at the wall; details on
+[reinforcement-learning closures](/methods/reinforcement-learning-closure.md).
+The source is cited here only as a contrast. As for BK22, the policy is
+trained inside the LES against mean statistics only (here the mean viscous
+stress and resolved Reynolds shear stress of filtered DNS), so no
+instantaneous high-fidelity fields are needed (Abstract; §II A, §II C). The
+authors name LES wall modelling as a future application of the framework,
+citing the network wall model of Yang et al. (2019) (§IV); they train or
+test no wall model.
+
 ## A priori against a posteriori
 
 The ZHY21 history is an instance of the gap described on the
@@ -285,3 +300,4 @@ Koumoutsakos, cited by Vadrot et al., was not read.
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §IV.A; §V; §VII.
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §II.A.
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Introduction; Results, Eq. (2), Figs. 1–7, Table 1; Discussion; Methods, Eqs. (3), (9), (10) (Research Square preprint v1).
+- [Kim et al. (2022)](/sources/kim-2022.md) — Abstract; §II A, §II C; §IV (arXiv v2).

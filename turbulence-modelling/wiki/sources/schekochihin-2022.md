@@ -281,11 +281,14 @@ printed.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2–3 (2026-10-25). This source is cited on:
 
 - [Reduced MHD and Elsasser variables](/definitions/reduced-mhd.md)
 - [Critical balance and the anisotropic MHD cascade](/properties/critical-balance.md)
 - [Dynamic alignment and intermittency in MHD turbulence](/properties/dynamic-alignment.md)
+- [Compressible MHD turbulence](/results/compressible-mhd-turbulence.md)
 - [Decaying MHD turbulence and its invariants](/results/decaying-mhd-turbulence.md)
 - [Small-scale turbulent dynamo](/results/small-scale-dynamo.md)
 - [Tearing-mediated MHD turbulence](/results/tearing-mediated-mhd-turbulence.md)
+- [Exact laws of (Hall-)MHD turbulence](/results/turbulence-exact-laws.md)
+- [Weak wave turbulence (magneto-capillary waves)](/results/weak-wave-turbulence.md)

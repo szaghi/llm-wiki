@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Reinforcement-learning turbulence closures"
-description: "Closure parameters chosen online by a policy trained with reinforcement learning, with the running LES as the environment and a reward computed from solver statistics; element-local SGS coefficients and DG/FV blending in DG-LES, and multi-agent wall-stress models in WMLES with their training, tests and disputed extrapolation."
+description: "Closures set or learned online by a policy trained with reinforcement learning, the running LES being the environment and the reward a solver statistic: element-local SGS coefficients in DG-LES, pointwise SGS stress tensors for channel LES trained on mean profiles, and multi-agent wall-stress models with disputed extrapolation."
 status: established
-aliases: [RL closure, reinforcement-learning SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM]
-tags: [reinforcement-learning, sgs-model, data-driven, implicit-les, wall-model]
-timestamp: 2026-10-25T19:46:00Z
+aliases: [RL closure, reinforcement-learning SGS model, deep reinforcement learning SGS model, DRL SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM, DRL180]
+tags: [reinforcement-learning, sgs-model, data-driven, implicit-les, wall-model, neural-network]
+timestamp: 2026-10-25T20:39:00Z
 ---
 
 # Reinforcement-learning turbulence closures
@@ -29,6 +29,8 @@ places it in the class that Duraisamy (2021, §IV.B) calls
 gradient-free, adjoint-free member; that review names RL only as a
 flow-control application (§I) and does not discuss RL closures. Beck &
 Kurz (2023) use it for SGS models in discontinuous Galerkin LES.
+[Kim et al. (2022)](/sources/kim-2022.md) use it to learn a pointwise SGS
+stress tensor for wall-resolved LES of channel flow from two mean profiles.
 [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) use it, with many
 cooperating agents, for wall-stress models in wall-modelled LES, and
 Vadrot et al. (2023b) assess one of those wall models in another code.
@@ -124,6 +126,223 @@ $N=3$, 5 and 8, initialized from filtered DNS.
 - **Deformed mesh.** On a sinusoidally deformed mesh (App. A), the
   Cartesian-trained RL-Quad, without retraining, performs comparably to
   the dynamic model. RL-Const loses energy at wavenumbers 2–6.
+
+## Pointwise SGS stress models for channel LES (Kim et al. 2022)
+
+Kim et al. (2022) train a neural-network SGS model for wall-resolved LES
+of incompressible [channel flow](/benchmarks/turbulent-channel-flow.md)
+with deep reinforcement learning (DRL). No filtered-DNS (fDNS) fields are
+used. The only targets are two time-averaged fDNS profiles (Abstract, §II
+B). The version read is arXiv v2. Page-local notation, in the paper's units
+of the half-height $\delta$ and $u_\tau$:
+
+- $\mathcal S_1(y)=Re_\tau^{-1}\,\mathrm d\langle\bar u\rangle/\mathrm dy$ is
+  the mean viscous stress and $\mathcal S_2(y)=\langle\bar u'\bar v'\rangle$
+  the mean resolved Reynolds shear stress, where $\langle\cdot\rangle$
+  averages over the homogeneous directions and time and the prime is the
+  fluctuation of the filtered velocity;
+- $\gamma_{\mathrm{RL}}$ is the discount factor (not the ratio of specific
+  heats);
+- $\Delta t_{\mathrm{RL}}$ is the interval between actions, 30 LES steps,
+  which the paper equates to 5.4 wall time units.
+
+**Why two profiles suffice.** The mean total shear stress satisfies
+$\mathcal S_1-\mathcal S_2-\langle\tau_{xy}\rangle=1-y$ (Eq. 11), so
+matching two of the three terms fixes the third. Rewarding the viscous
+stress and $\langle\tau_{xy}\rangle$ trained slightly more stably, but was
+dropped because $\tau_{xy}$ is not available in practice (§II B).
+
+**Actor and critic (§II B–C, §II F).** The algorithm starts from DDPG and
+TD3 (actor–critic, with clipped double Q-learning, delayed policy updates
+and target smoothing).
+
+- *Actor.* A pointwise fully connected network of six hidden layers of 128
+  units, chosen pointwise so as to be mesh-agnostic. It maps the local
+  resolved velocity gradient $\partial_i\bar u_j$ and the local grid size
+  $(\Delta x^+\Delta y^+\Delta z^+)^{1/3}$, both in wall units, to the six
+  components of $\tau_{ij}$. A variant outputs a scalar $\nu_t$ in
+  $\tau^d_{ij}=-2\nu_t\bar S_{ij}$. The output is multiplied by the
+  square of the filter width $\Delta$. The authors state that this improves
+  generalization across grids; without it the network can produce strong
+  SGS stress even on DNS-resolution grids (§II C).
+- *Critic.* A 2D convolutional network on an $8\times1\times8$ patch of
+  local states, plus plane-averaged global states (mean velocities and their
+  wall-normal gradients, rms velocities, $\mathcal S_2$, $y^+$).
+- *Optimization.* Adam with learning rates $10^{-4}$ (critic) and
+  $2\times10^{-6}$ (actor), mini-batch 64, replay buffer 64,000. Eight
+  parallel LES with different exploration noise run at once, in one long
+  episode restarted on divergence, from a no-model initial field.
+
+**Reward (Eqs. 12–17).** The reward is localized in $y$:
+
+$$r_t(y)=-\sum_{i=1}^{2}c_i\left\lvert\mathcal S_i^{\mathrm{fDNS}}(y)-\mathcal S_i^{\mathrm{LES}}(y)\right\rvert^{1/2},\qquad c_1=1,\ c_2=0.5.$$
+
+With $c_1=c_2=1$ the mean velocity fluctuated and learning was unstable.
+The square root, which evens out the reward scale across $y$, trained
+better than the absolute value. In the form used, the LES statistic is a
+discount-weighted time average over the next $N_s$ (page-local) action
+intervals.
+
+**Four modifications of DDPG/TD3 (contribution, §II B–D, Algorithm 1).**
+
+1. *Localized reward.* The reward is a function of $y$, as above.
+2. *Truncated return.* The discount-weighted time-averaged reward replaces
+   the Bellman bootstrap: the critic regresses this reward directly. This
+   gives the simplified algorithm.
+3. *Exploration noise.* Noise is added in parameter space and correlated in
+   space and time by an Ornstein–Uhlenbeck process. Its amplitude adapts to
+   keep a target policy distance $d$ (page-local, one minus the mean
+   correlation between perturbed and unperturbed actions).
+4. *Pretraining.* The actor is first fitted by least squares to a
+   conventional model, mostly the static
+   [Vreman model](/methods/vreman-model.md), for 50,000 iterations ("only a
+   few minutes").
+
+**Built-in constraints (§II E, Eq. 22).**
+
+- *Reflectional equivariance in $y$ and $z$.* It is imposed by averaging
+  the actor over mirror images of its input; the same is done for the
+  critic.
+- *Zero SGS stress at the wall.* The actor output is multiplied by the
+  2-norm of the seven velocity-gradient components that vanish at a
+  no-slip wall. The authors stress that no van Driest damping is used.
+- *Not imposed.* Rotational and Galilean invariance. A
+  [tensor-basis neural network](/methods/tensor-basis-neural-network.md)
+  was tried for rotational invariance without conclusive gain.
+
+**Hyperparameter findings (§III A–B).**
+
+- *Return.* One-step temporal-difference learning and the instantaneous
+  reward ($N_s=1$) both fail to raise the accuracy. Accumulation helps from
+  $N_s=20$ and saturates for $N_s\ge50$; $\gamma_{\mathrm{RL}}=0.99$ is best
+  for $N_s=200$ (Fig. 4).
+- *Return time scale.* $-\Delta t_{\mathrm{RL}}/\ln\gamma_{\mathrm{RL}}\approx100\,\Delta t_{\mathrm{RL}}$,
+  "approximately 500 wall time units". The authors relate this to a
+  wall-shear-stress structure lifetime of about 60 wall units, recalled from
+  Quadrio & Luchini, and argue for accumulating returns over about ten
+  lifetimes.
+- *Noise.* The correlated parameter-space noise gives a "critical
+  improvement" over no noise and over uncorrelated Gaussian action noise of
+  20% of the local rms action. Distance $d=0.05$ is fastest and most
+  stable; $0.02$ is slow, and $0.1$ oscillates because LES runs diverge
+  (Fig. 5).
+- *Actor depth.* Three hidden layers fail in a coarse LES; six and nine
+  succeed, and six is chosen for cost.
+- *Constraints.* The wall constraint makes learning faster and more stable.
+  Without it, exploration produces "nonphysically strong SGS mean shear
+  stress near the wall". Without reflectional equivariance, a spanwise mean
+  velocity appears, because spanwise statistics are not in the reward (Fig.
+  6).
+- *Pretraining target.* Pretraining on Vreman or on the dynamic
+  Smagorinsky model both work, Vreman converging slightly faster.
+  Pretraining on the [scale-similarity model](/methods/scale-similarity-model.md)
+  makes the DRL unstable because that LES is numerically unstable (§II D,
+  no results shown).
+
+**Environments (Tables I–III).** The DNS of the targets have
+$(\Delta x^+,\Delta z^+)=(17.7,8.84)$ at $Re_\tau=180$, 360 and 720.
+
+| Model | Training $Re_\tau$ | LES grid | $(\Delta x^+,\Delta z^+)$ | DRL iterations |
+|---|---|---|---|---|
+| DRL180, DRL180(clip), DRL180($\nu_t$) | 180 | $32\times49\times32$ | (70.7, 35.3) | 10,000 |
+| DRL180c, DRL180c(clip) | 180 | $24\times49\times24$ | (94.2, 47.1) | 15,000 |
+| DRL360 | 360 | $32\times65\times32$ | (70.7, 35.3) | 15,000 |
+
+"(clip)" sets negative SGS dissipation to zero; "($\nu_t$)" is the
+eddy-viscosity variant. Testing adds $Re_\tau=720$ on $32\times97\times32$
+at (70.7, 35.3). The baselines are the static Vreman model with constant
+0.08, the [dynamic Smagorinsky model](/methods/dynamic-procedure.md) and
+no-model LES. Training takes 2–4 days on one NVIDIA Titan Xp GPU (§II F).
+
+**Results in the training environment (§III C, Figs. 7–11).**
+
+- *Targets.* DRL180 and DRL180(clip) reproduce the fDNS mean velocity and
+  Reynolds shear stress almost exactly.
+- *Other statistics.* They also predict the rms velocity, the mean SGS
+  shear stress and the mean SGS transport better than the Vreman, dynamic
+  and no-model LES.
+- *Eddy-viscosity form.* DRL180($\nu_t$) overpredicts
+  $\langle\bar u\rangle$ in the buffer and log layers, as the dynamic model
+  does. The authors conclude that "the eddy-viscosity assumption could
+  seriously limit the performance".
+- *SGS dissipation.* The two targets do not fix the mean SGS dissipation:
+  models trained with the same settings give different values. An accurate
+  mean SGS transport "appears to be a necessary condition" for accurate
+  targets.
+- *Backscatter.* Clipping it changes almost nothing (see
+  [energy backscatter](/definitions/energy-backscatter.md)).
+- *Coarser grid and higher $Re_\tau$.* Training also succeeds on the
+  coarser grid, where the fDNS peak of the mean SGS shear stress is about
+  twice that of the finer grid and three times that of the dynamic model.
+  It succeeds at $Re_\tau=360$ with the same hyperparameters.
+
+**Generalization (§III D, Figs. 12–13).**
+
+- *Untrained $Re_\tau$ at fixed wall-unit resolution.* DRL180 underestimates
+  the buffer-layer slope of $\langle\bar u\rangle$ at $Re_\tau=360$. DRL360
+  overestimates $\langle\bar u\rangle$ at 180, and both underestimate the
+  slope at 720. Their Reynolds shear stress stays "quite precise", while the
+  dynamic and no-model LES overpredict it at every $Re_\tau$.
+- *Untrained coarser grid.* DRL180 overpredicts the Reynolds shear stress
+  and underpredicts the SGS shear stress (not plotted). The authors
+  conclude that "a model trained in a single environment might not perform
+  well in a different environment".
+
+**Stress–strain alignment (§III E, Eqs. 27–28, Table IV, Figs. 15–20).**
+All models are evaluated on the same resolved field (the LES with DRL180)
+and compared with fDNS. The tensor angle between $-\tau^d_{ij}$ and
+$\bar S_{ij}$ is zero by construction for a linear eddy-viscosity model.
+
+| Quantity | $y^+$ | fDNS | dynamic Smagorinsky | DRL180 |
+|---|---|---|---|---|
+| correlation of $\bar S_{xy}$ and $-\tau_{xy}$ | 15 | $-0.20$ | 0.95 | 0.34 |
+|  | 50 | 0.19 | 0.94 | 0.58 |
+| correlation of $\lvert\bar S\rvert^3$ and the SGS dissipation | 15 | 0.01 | 0.92 | 0.56 |
+|  | 50 | 0.28 | 0.88 | 0.73 |
+
+- *Tensor angle.* In fDNS its mean is near $\pi/2$ at every height. Its PDF
+  is compared with the $\sin^3$ PDF of the angle between two random
+  trace-free symmetric tensors (a five-dimensional space). For DRL180 the
+  peak moves from about 0.3 rad near the wall toward $\pi/2$ with distance;
+  for DRL180(clip) the mean is about 0.9 rad at all heights.
+- *Eigenvectors.* In fDNS the most-stretching eigenvectors of the two
+  tensors are at about $\pi/4$ near the wall, the most-compressing ones
+  almost random, and both tend to random away from the wall. DRL180 aligns
+  both, imperfectly, at $y^+\approx15$.
+- *Eddy-viscosity level.* The eigenvalue ratio of $-\tau^d_{ij}$ to
+  $\bar S_{ij}$ (twice a plane-averaged eddy viscosity) is "one order of
+  magnitude larger" in fDNS than in every model. The models are close to
+  one another, DRL being about twice the dynamic and Vreman models for
+  $y^+\le15$ (Fig. 20).
+- *Authors' conclusion.* "The non-alignment nature between" $-\tau^d_{ij}$
+  and $\bar S_{ij}$, "rather than the level of eddy viscosity, plays a more
+  important role". The evidence offered is the correlations, angle PDFs and
+  eigenvalue ratios above; no model with the fDNS alignment but a
+  different eddy-viscosity level is run (§III E).
+
+**Comparison with supervised learning (§III C, §III E).** As recalled by
+Kim et al., supervised network SGS models fed with local velocity
+gradients (Park & Choi 2021) reach a correlation of only about 0.5 with
+the fDNS stress. The supervised model of that study with the same inputs
+as here "did not predict" the two target profiles well and "highly
+overpredicted" $\lvert\tau_{xy}\rvert$. The authors conclude that "DRL using
+only statistical data for training can be superior to the standard
+supervised learning using expensive filtered DNS data" (see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+
+## Comparison of the RL closures
+
+| | Beck & Kurz (2023) | Kim et al. (2022) | Bae & Koumoutsakos (2022) |
+|---|---|---|---|
+| Closure | element-local Smagorinsky coefficient or DG/FV blending | full SGS stress tensor (or $\nu_t$) at every grid point | multiplicative update of the local wall stress |
+| Flow | forced isotropic turbulence, DG-LES | wall-resolved channel LES, $Re_\tau=180$, 360 | wall-modelled channel LES |
+| Reward | LES energy spectrum against DNS | mean viscous and resolved Reynolds shear stress profiles against fDNS | true mean wall stress |
+| Algorithm | PPO | DDPG/TD3 with truncated return | V-RACER |
+
+As recalled by Kim et al. (2022, §I), Novati et al. (2021) found learning
+with fully dispersed agents at all grid points unsuccessful in isotropic
+turbulence and restricted the actions to Smagorinsky-type eddy
+viscosities. Kim et al. use pointwise tensor actions at every grid point.
 
 ## Multi-agent RL wall models (Bae & Koumoutsakos 2022)
 
@@ -346,6 +565,35 @@ for the supervised models compared in the same study.
   time-averaged wall stress. Since $\tau_w\propto u_\tau^2$ the two differ by
   about a factor two for small errors *(compiler check, not in the
   sources)*.
+- **What the channel DRL model guarantees.** Kim et al. (2022) state that
+  training in the LES "guarantees the accuracy of the LES statistics used as
+  the training target" (§III C). Their own §III D shows this holds in the training
+  environment only: the same model fails on an untrained coarser grid. The
+  backscatter conclusion likewise concerns only the two target statistics.
+  The authors also assume that SGS inputs in wall units are universal,
+  "although it is not proven that subgrid-scale turbulence is universal in
+  general" (§II F).
+- **Run length in Kim et al. (2022, §II F).** The episode length is printed
+  as "approximately $1.1\times10^5$ $(=\Delta t^{DRL}\times N^{DRL})$ in wall
+  time units". With $\Delta t_{\mathrm{RL}}\approx5.4$ wall units and
+  10,000–15,000 iterations, the product is $5.4\times10^4$ to
+  $8.1\times10^4$ *(compiler check, not in the sources)*. The paper does
+  not restate the $N_s$ used for the production runs; $N_s=200$ with
+  $\gamma_{\mathrm{RL}}=0.99$ is the optimum of its §III A.
+- **Printed slips in Kim et al. (2022).** Eq. 22 opens a parenthesis after
+  the wall-constraint factor that it never closes before the division by
+  four; the inline form for the reflection-averaged actor is balanced. The
+  captions of Figs. 15–16 name the correlation of $\bar S_{xy}$ with
+  $\tau_{xy}$, while the text and Table IV use $-\tau_{xy}$. The activation
+  is printed as a "rectified linear unit with a slope of 2", not explained.
+  The abstract writes "reflectional invariance" for what the body calls
+  equivariance.
+- **Notation of Kim et al. (2022).** The paper writes the actor weights as
+  $\omega$, the critic weights as $\theta$, the discount factor as
+  $\gamma$, the target statistics as $S_i$ and the velocity gradient as
+  $\bar\alpha_{ij}=\partial\bar u_j/\partial x_i$; its tilde is the test
+  filter. This page uses $\pi_{\boldsymbol\theta}$ for the policy,
+  $\gamma_{\mathrm{RL}}$, $\mathcal S_i$, $\partial_i\bar u_j$ and the hat.
 - **Robustness to numerics.** Bae & Koumoutsakos (2022, pp. 3, 10) claim
   robustness to the discretization because numerical errors enter
   training; the preprint uses one solver and one SGS model (see
@@ -356,4 +604,5 @@ for the supervised models compared in the same study.
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §I (motivation), §II B (MDP, PPO), §III B–C, Eqs. 11–17, Table I, §IV A–B, Eq. 18, §V A–C, Figs. 7–14, App. A, §VI.
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §II B 4, Eqs. 7–8; §III A–B, Figs. 8–10; §IV C, Eqs. 10–14, Table III; §IV D.
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §IV.B (model-consistent training as the class to which in-the-loop optimization belongs).
+- [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: Abstract; §I (Novati et al. recalled); §II B–F, Eqs. 11–25, Algorithm 1 (state, action, reward, truncated return, noise, pretraining, constraints, architecture, cost); §III A–B, Figs. 4–6; §III C, Figs. 7–11; §III D, Figs. 12–13; §III E, Eqs. 27–28, Table IV, Figs. 15–20; §IV; Tables I–III.
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Research Square preprint v1: pp. 3–8, Eqs. 1–3, 9–10, Table 1, Figs. 2–7; Discussion pp. 10–11; Methods pp. 11–14, Eqs. 4–8.

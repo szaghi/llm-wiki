@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Periodic hill"
-description: "The streamwise-periodic channel with a hill constriction, a smooth-wall separation and reattachment test: at hill-height Reynolds number about 10,600 for hybrid RANS/LES and implicit LES on grids 14 to 60 times smaller than wall-resolved LES, and as the parametrized hill family at 5600 for field-inversion RANS corrections."
+description: "The streamwise-periodic channel with a hill constriction, a smooth-wall separation and reattachment test: at hill-height Reynolds number about 10,600 for hybrid RANS/LES and implicit LES on coarse grids, as the parametrized hill family at 5600 for learned RANS corrections, and at 2800 for data assimilation and physics-informed networks."
 status: established
 aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow, parametrized periodic hills]
 tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion]
-timestamp: 2026-10-25T19:46:00Z
+timestamp: 2026-10-26T05:07:00Z
 ---
 
 # Periodic hill
@@ -20,6 +20,10 @@ without the ambiguity of an inflow condition. The Reynolds number $Re_h$ is
 built on the bulk velocity and $h$. In this bundle it serves three purposes:
 a coarse-grid test of hybrid RANS/LES and of high-order implicit LES, and a
 training and testing case for data-driven RANS corrections and wall models.
+The sources use three Reynolds numbers, each with its own reference data:
+$Re_h\approx10{,}600$ (the configuration of Fröhlich et al. and ERCOFTAC),
+5600 (the parametrized family of Xiao et al.), and 2800; the ingested sources
+do not relate the three.
 
 ## Configuration
 
@@ -150,6 +154,69 @@ law-of-the-wall tests the same network over-predicts the wall stress,
 increasingly with $Re_\tau$ (§IV B, Fig. 12; see
 [machine-learning wall models](/methods/machine-learning-wall-model.md)).
 
+**Learned eddy viscosity and anisotropy on the parametrized family.**
+[McConkey et al. (2022)](/sources/mcconkey-2022.md) use the same DNS family
+of Xiao et al. at $Re_h=5600$, with the steepness factor $\alpha_h=0.5$,
+0.8, 1.0, 1.2, 1.5 (which in their description varies both the hill slope and
+the domain length; 14,751 points per case), as base RANS runs with an
+elliptic-relaxation model of the $v^2$-$f$ family (the $k$-$\varepsilon$-$\phi$-$f$ form) in OpenFOAM on wall-resolved
+meshes (§II E–F, §III D). Even the eddy viscosity fitted to the DNS
+anisotropy by least squares leaves errors of order 100% in every component of
+the anisotropy at $\alpha_h=1.2$; the linear approximation fails for all
+components during separation and for the wall-normal component also during
+reattachment (§II B, Figs. 1–3). Injecting DNS-derived closure terms into the RANS equations
+("conditioning" test), the fully explicit Reynolds-stress anisotropy gives a
+streamwise-velocity RMSE of $2.613\times10^{-3}$ m/s, while the non-negative
+fitted eddy viscosity treated implicitly plus the remaining anisotropy
+treated explicitly gives $2.265\times10^{-4}$ m/s; the authors note that the
+explicit run needed first-order schemes for stability (§II C, Figs. 5–6; see
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)). Two neural
+networks trained on the other four geometries and injected once into the
+converged base solution move the reattachment point from $x_R/h=5.42$ (base
+model) to 4.10, against 4.50 in the DNS, errors of 20% and 8.9% (§IV B,
+Fig. 21). The test geometry is an interpolation within the family.
+
+**Data assimilation at $Re=2800$.** [Cato et al. (2023)](/sources/cato-2023.md),
+§IV, assimilate a dense DNS mean-velocity field (they cite the DNS of
+Gloerfelt & Cinnella and of Xiao et al. without saying which they use)
+into steady 2D RANS with the negative Spalart–Allmaras variant, at a bulk
+Reynolds number of 2800, by adjoint-based optimization of one
+space-dependent corrector at a time (see
+[field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
+Relative errors in skin friction and mean velocity (Table II):
+
+| Corrector | $E_{C_f}$ | $E_u$ |
+|---|---|---|
+| baseline RANS | 0.38 | $7.1\times10^{-2}$ |
+| momentum forcing vector | 0.17 | $3.8\times10^{-3}$ |
+| divergence of a trace-free symmetric tensor | 0.26 | $3.7\times10^{-3}$ |
+| multiplier $\beta$ of SA production (prior 1; printed $1+\beta$ with prior 0) | 0.27 | $3.2\times10^{-2}$ |
+| additive source in the SA equation | 0.23 | $7.8\times10^{-3}$ |
+| source proportional to $\tilde\nu$ | 0.20 | $7.5\times10^{-3}$ |
+| multiplier of $\nu_t$ in the momentum equation | 0.30 | $4.3\times10^{-2}$ |
+
+The Boussinesq alignment indicator they use is below 0.8 in much of the
+domain below one hill height, yet the two source-type correctors of the SA
+equation recover the DNS velocity and skin friction; the authors conclude
+that "missing the proper stress alignment does not play a large role for
+predicting the mean flow" (§IV A–B, Figs. 8–10).
+
+**Physics-informed networks at $Re=2800$.**
+[Eivazi et al. (2022)](/sources/eivazi-2022.md), §3, Fig. 6, Table 1, solve
+the 2D RANS equations with a
+[physics-informed neural network](/methods/physics-informed-neural-network.md)
+that outputs the mean velocity, pressure and the three Reynolds-stress
+components, with no turbulence model: the loss combines the RANS residuals
+with data on the boundaries only (velocity and Reynolds stresses at the inlet
+and outlet of the subdomain $1<x/h<5$, pressure on all boundaries), taken from
+a spectral-element DNS at a Reynolds number of 2800 on the crest height and
+the bulk velocity at the crest. Relative $\ell_2$ errors are 2.77% for the
+streamwise velocity, 19.70% for the wall-normal velocity, 8.61% for the
+pressure, and 28.18%, 16.70% and 20.24% for $\langle u'u'\rangle$,
+$\langle u'v'\rangle$ and $\langle v'v'\rangle$. The authors call the
+separated region and the reattachment point "accurately predicted", judged
+from figures; no reattachment length is printed.
+
 ## What the case shows
 
 Two sources agree that the case discriminates between models chiefly
@@ -162,6 +229,18 @@ smaller than wall-resolved LES, while second-order statistics remain the
 sensitive quantity (excess stresses in the bubble on the finest hybrid grid;
 oscillatory stresses in high-order no-model runs). See also
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md).
+
+Two of the data-driven RANS studies state a related point: on the hill, a
+good mean velocity does not require a correct Reynolds-stress tensor.
+[Cato et al. (2023)](/sources/cato-2023.md) recover velocity and skin
+friction with eddy-viscosity-type correctors where the stresses are poorly
+aligned with the strain; [McConkey et al. (2022)](/sources/mcconkey-2022.md)
+find the velocity errors after injection smaller than the errors of the
+injected closure term and conclude that "the RANS equations can suppress
+rather than amplify errors in the closure prediction" (§IV B, Fig. 20).
+[Eivazi et al. (2022)](/sources/eivazi-2022.md), Table 1, make no such
+statement; their streamwise-velocity error is 2.77% against Reynolds-stress
+errors of 16.7% to 28.2%.
 
 ## Qualifications
 
@@ -197,6 +276,17 @@ oscillatory stresses in high-order no-model runs). See also
   interpolation and extrapolation labels *(compiler check, not in the
   sources)*.
 
+- [McConkey et al. (2022)](/sources/mcconkey-2022.md) (read in arXiv v1)
+  print absolute RMSE values of the fitted anisotropy components in the
+  Fig. 1 legend; they are not used here, only the errors "on the order of
+  100%" stated in the text (§II B).
+- [Cato et al. (2023)](/sources/cato-2023.md) (read in a HAL author
+  manuscript) attribute an alignment threshold of 0.86 to Schmitt but use 0.8
+  in their figures and text.
+- [Eivazi et al. (2022)](/sources/eivazi-2022.md) were read in arXiv v1, a
+  6-page preprint that prints no network sizes beyond the architecture, no
+  collocation counts and no citation for the hill DNS.
+
 # Citations
 
 - [Haering et al. (2022)](/sources/haering-2022.md) — §V B, Table II, Figs. 9–12; §V C, Figs. 14–15.
@@ -204,3 +294,6 @@ oscillatory stresses in high-order no-model runs). See also
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3, Figs. 6–7 (recalled results).
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §I, §IV B (recalled training data and results).
 - [Yan et al. (2022)](/sources/yan-2022.md) — §1; §3.2, Eq. (17), Table 2, Figs. 11–22.
+- [McConkey et al. (2022)](/sources/mcconkey-2022.md) — §II A–F, Figs. 1–6; §III D; §IV B, Figs. 15–21.
+- [Cato et al. (2023)](/sources/cato-2023.md) — §IV A–B, Table II, Figs. 8–10.
+- [Eivazi et al. (2022)](/sources/eivazi-2022.md) — §3, Table 1, Fig. 6; §4.

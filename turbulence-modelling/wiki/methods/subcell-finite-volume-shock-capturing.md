@@ -5,7 +5,7 @@ description: "Troubled DG elements are recomputed as (N+1)^3 finite-volume subce
 status: established
 aliases: [hybrid DG/FV, DG/FV subcell scheme, finite-volume subcell limiting, DG/FV blending, RL-Blend]
 tags: [dg, numerical-dissipation, implicit-les, reinforcement-learning, compressible]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-26T05:06:00Z
 ---
 
 # Subcell finite-volume shock capturing for DG
@@ -92,6 +92,23 @@ dissipation distribution is not measured. The agent lowers $\alpha$ for $N=3$ an
 (Figs. 13–14). See [discretization-consistent closure](/definitions/discretization-consistent-closure.md)
 and [numerical dissipation](/properties/numerical-dissipation.md).
 
+## Alternatives that keep the polynomial
+
+Not every DG code uses subcells. [HORSES3D](/software/horses3d.md) captures
+shocks with an entropy-stable artificial viscosity filtered by a spectral
+vanishing viscosity kernel and switched by an element-wise density-gradient
+sensor $\int_{\mathrm{el}}\mathcal J|\nabla_\xi\rho|^2$ (page-local
+$\mathcal J$ the Jacobian of the element map, $\nabla_\xi$ the
+reference-space gradient), which adds
+unfiltered dissipation in troubled elements; a Mach 3 forward-facing step on
+3653 elements with $N=7$ is shown ([Ferrer et al. 2023](/sources/ferrer-2023.md),
+§4.4, Eqs. 15–19, Fig. 9, from the work of
+[Mateo-Gabín et al. 2022](/sources/mateogabin-2022.md), who contrast it
+with order-lowering subcell approaches; see the
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) page).
+In the authors' comparison table of high-order codes (Ferrer et al. 2023,
+§2, Table 1), shock capturing is ticked for both HORSES3D and Flexi/Fluxo.
+
 ## Convention difference
 
 The two variants place the subcells differently: equispaced subcells of width
@@ -114,3 +131,5 @@ schemes, not a disagreement.
 
 - [Krais et al. (2021)](/sources/krais-2021.md) — §2.2.3; §4.1–4.4, Eqs. (56)–(67), Figs. 14–16; §5.7–5.8, Figs. 19–20; §7.2, Fig. 25.
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §III C, Eqs. (16)–(17), Figs. 4–5; §V C, Figs. 8, 12–14; Table I.
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §2, Table 1; §4.4, Eqs. (15)–(19), Fig. 9 (SVV-filtered artificial viscosity instead of subcells).
+- [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §1, §6.3 (filtered artificial viscosity against order-lowering approaches).

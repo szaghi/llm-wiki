@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Numerical dissipation in scale-resolving simulation"
-description: "Numerical dissipation is the kinetic-energy loss a discretization adds by itself; the sources show where in wavenumber and in the element it acts, how it is measured, that it competes with or replaces the subgrid model, that grid-size changes alter it, and that both too much and too little of it degrade LES."
+description: "Numerical dissipation is the kinetic-energy loss a discretization adds by itself; the sources show where in wavenumber and in the element it acts, how it is measured, that it competes with or replaces the subgrid model, that RANS-level artificial dissipation spoils hybrid RANS/LES, and that both too much and too little of it degrade LES."
 status: established
 aliases: [artificial dissipation, scheme dissipation, upwind dissipation, Riemann-solver dissipation, numerical viscosity]
 tags: [numerical-dissipation, implicit-les, les, dg, kinetic-energy-preserving]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-26T05:09:00Z
 ---
 
 # Numerical dissipation in scale-resolving simulation
@@ -61,6 +61,69 @@ model ([kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
   almost all the dissipation; at the other wavenumbers it is smaller than
   the Riemann-solver dissipation.
 
+- **DG as an ILES discretization.** [Ferrer et al. (2023)](/sources/ferrer-2023.md)
+  (§3.3, §4.1) state, citing earlier studies, that DG dissipation and
+  dispersion errors are confined to high wavenumbers, so that numerical
+  dissipation acts "primarily on under-resolved scales". In their
+  [HORSES3D](/software/horses3d.md) code the Riemann solver is the
+  standard source (central, Lax–Friedrichs, Rusanov, Roe, low-dissipation
+  Roe, Roe–Pike and matrix-dissipation fluxes are offered), and an
+  interior-penalty parameter raised above its coercivity minimum is an
+  alternative one; "for large enough Reynolds numbers" a turbulence model
+  is added "for additional dissipation". The same concentration is what
+  Flad & Gassner (above) blame for the failure of coarse DG ILES; see
+  [implicit LES](/definitions/implicit-les.md).
+
+## Dissipation of RANS-type schemes in hybrid RANS/LES
+
+[Carlsson et al. (2023)](/sources/carlsson-2023.md) quantify the
+artificial dissipation of a second-order node-based finite-volume scheme
+(Kok's energy-preserving central flux plus Jameson–Schmidt–Turkel matrix
+dissipation) in hybrid RANS/LES. The fourth-difference coefficient
+$\kappa^{(4)}$ (page-local, the global scaling of the background
+dissipation) controls it (§2.2.1, §2.3, Fig. 1).
+
+- **Values.** Typical RANS values $\kappa^{(4)}=1/128$–$1/64$ "will
+  severely dissipate resolved turbulence"; earlier LES of decaying grid
+  turbulence and channel flow indicate $1/512$ to $1/1024$ for
+  scale-resolving simulation (§2.2.1). The conclusion gives "1/512 or
+  smaller" (§5).
+- **Decaying isotropic turbulence.** Against the Comte-Bellot–Corrsin
+  experiment on $32^3$, $64^3$ and $128^3$ grids, the reference scheme
+  ($\kappa^{(4)}=1/128$, no gradient extrapolation) decays the spectrum too
+  steeply at high wavenumbers on all three grids, whereas the
+  [low-dissipation low-dispersion scheme](/methods/low-dissipation-low-dispersion-scheme.md)
+  with $\kappa^{(4)}=1/512$ or $1/1024$ matches it with the standard
+  DES constants, 1/512 being slightly more dissipative (§4.2, Fig. 3). In
+  this flow "numerical dissipation of the convection term dominates" the
+  decay (§5).
+- **Log-layer mismatch.** In IDDES of channel flow at $Re_\tau=395$, 2400
+  and 18 000 the reference scheme gives a significant
+  [log-layer mismatch](/definitions/log-layer-mismatch.md) at all
+  Reynolds numbers, correct in the RANS region and failing "as soon as the
+  model switches to LES due to adding to much numerical dissipation"; the
+  low-dissipation schemes leave only a small mismatch at the RANS–LES
+  interface (§4.3, Fig. 4).
+- **Shear-layer onset.** In delayed DES of a supersonic base flow with the
+  shear-layer-adapted length scale, the formation of resolved structures in
+  the initial shear layer is governed mainly by the numerical dissipation
+  and the grid. The reference scheme strongly delays them; the
+  low-dissipation scheme on the coarsest grid (1.82 million cells) has
+  small-scale content comparable to the reference scheme on the finest
+  (8.51 million). On the two finer grids it moves reattachment from
+  $x/R\approx3.0$ (reference scheme) to about 2.7, against the experimental
+  2.67 ($R$ the base radius), but does not improve the base pressure
+  (§4.4, Figs. 9–10). See
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md).
+
+The authors add that "some amount of numerical dissipation is often
+needed" for convergence (§2.3). In their conclusion they credit a
+vorticity-weighted (Ducros-type) shock sensor with better shear stress and
+grey-area mitigation than the Jameson pressure sensor (§5); in the
+base-flow discussion they attribute the faster transition of the separated
+shear layer jointly to "the reduction in numerical dissipation from the
+shock capturing sensor" and "the reduced overall dissipation" (§4.4).
+
 ## Where it acts in the element
 
 [Beck & Kurz (2023)](/sources/beck-2023.md) (§V A–C) contrast two DG-based
@@ -104,6 +167,13 @@ dissipation (Fig. 11).
   8000 at $n_g=512$), and choose explicit $Re=Rm=2000$ so that "the
   explicit diffusion is always significantly higher and at larger scales
   than the numerical diffusion".
+- **Resolution doubling.** [Davidovits et al. (2022)](/sources/davidovits-2022.md)
+  (§II A) restrict their analysis of shock-generated turbulence, computed
+  with artificial viscosity and no physical viscosity, to large-scale
+  averages "least influenced" by numerical dissipation (citing Kitsionas et
+  al.), and rerun a subset of 2D cases at double resolution: the scalings
+  of the averages do not change, and in one example case the averages
+  change by 0.6% to 2.9%.
 - **Effective viscosity.** [Pereira et al. (2021)](/sources/pereira-2021.md)
   (§IV.3.1, Eqs. 22–23) include a numerical viscosity $\nu_n$ in the
   effective viscosity $\nu+\nu_t+\nu_n$ that sets an effective Reynolds
@@ -142,6 +212,39 @@ measuring it:
   p-adaptation of DG needs very high polynomial degrees, which can cause
   instabilities from aliasing "or too little numerical dissipation"; their
   DG uses a Roe flux with a Harten-type entropy fix (§2.1).
+- [Helm & Martín (2022)](/sources/helm-2022.md) (§II) use a fourth-order
+  bandwidth-optimized WENO scheme with absolute and relative limiters "to
+  reduce WENO dissipation" and filtering of the candidate-stencil weights
+  near the wall. They recall that Wu & Martín "demonstrated that excess numerical
+  dissipation can prevent" the wall-pressure plateau of a separated
+  shock/boundary-layer interaction, and take the agreement of their Mach 3
+  ramp pressure with the reference as "assurance" that their LES does not
+  suffer from it (§III C, Fig. 8); see [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+- [Dang et al. (2022)](/sources/dang-2022.md) (§1, §2.2.3) write the DNS code
+  [OpenCFD-SCU](/software/opencfd-scu.md) with a three-way hybrid scheme
+  switched by a modified Jameson pressure sensor: seventh-order upwind
+  where the sensor is below a first threshold (usually 0.02),
+  seventh-order WENO up to a second (usually 0.1), fifth-order WENO
+  above. "More than 90%" of the points use the low-dissipation upwind
+  scheme. They state that seventh-order WENO alone is still too
+  dissipative for good DNS data, and that flows above Mach 6 usually need
+  a dissipative scheme for robustness at strong shocks. See
+  [WENO schemes](/methods/weno-scheme.md).
+- [Placco et al. (2023)](/sources/placco-2023.md) (§2) rely on the
+  dissipation of fifth-order WENO as the only small-scale dissipation of
+  their capsule-wake simulation ([implicit LES](/definitions/implicit-les.md)),
+  and recall that low-dissipation schemes represent the recirculation of
+  capsule wakes better in earlier DES studies (§1).
+- [Cai et al. (2022)](/sources/cai-2022.md) (§II.A, Eqs. 7, 9) use a
+  hybrid recursive regularized lattice Boltzmann collision, because plain
+  BGK is unstable at high Reynolds number; it adds a hyper-viscous term
+  depending on the fourth derivative of the velocity and on a parameter
+  "chosen as close to unity as possible" (no value printed). See
+  [immersed boundary methods](/methods/immersed-boundary-method.md).
+- In a plasma-turbulence fluid code, [Coelho et al. (2022)](/sources/coelho-2022.md)
+  (p. 4) add explicit perpendicular and parallel diffusion terms "to improve
+  the numerical stability", and state, without showing it, that they give
+  "significantly lower perpendicular transport than turbulence".
 - In the stabilized finite-element LES of [Prakash et al. (2022)](/sources/prakash-2022.md)
   (§III.B.1), the authors state from experiments not shown that the
   SUPG/PSPG/grad-div stabilization dissipates "significantly" less than any
@@ -274,6 +377,15 @@ two-point flux, with entropy-dissipative surface terms added.
   disambiguating numerical from modelling errors in LES is hard, especially
   without explicit filtering, and recalls from Lund that even explicit
   filtering may not fully address it.
+- Dang et al. (2022, §2.2.3) write that "the higher the values of
+  $\theta_1$ and $\theta_2$, the higher is the dissipation of the hybrid
+  scheme" ($\theta_1$, $\theta_2$ the two sensor thresholds, page-local).
+  By their own switching rule, raising the thresholds sends more points to
+  the low-dissipation upwind scheme, which lowers the dissipation
+  *(compiler check, not in the sources)*; the rule also assigns the value
+  $\theta=\theta_2$ to both WENO branches.
+- Carlsson et al. (2023) give the scale-resolving range of $\kappa^{(4)}$
+  as 1/512 to 1/1024 in §2.2.1 and as "1/512 or smaller" in §5.
 
 # Citations
 
@@ -300,3 +412,11 @@ two-point flux, with entropy-dissipative surface terms added.
 - [Prakash et al. (2022)](/sources/prakash-2022.md) — §III.B.1, Fig. 4.
 - [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md) — §1; §2.1; §3.2, Fig. 7.
 - [Liu et al. (2022)](/sources/liu-2022.md) — §1.
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §2.2.1; §2.3, Fig. 1; §4.2, Fig. 3; §4.3, Fig. 4; §4.4, Figs. 9–10; §5.
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §3.3; §4.1.
+- [Helm & Martín (2022)](/sources/helm-2022.md) — §II; §III C, Fig. 8.
+- [Dang et al. (2022)](/sources/dang-2022.md) — §1; §2.2.3.
+- [Placco et al. (2023)](/sources/placco-2023.md) — §1; §2.
+- [Cai et al. (2022)](/sources/cai-2022.md) — §II.A, Eqs. (7), (9).
+- [Coelho et al. (2022)](/sources/coelho-2022.md) — p. 4.
+- [Davidovits et al. (2022)](/sources/davidovits-2022.md) — §II A.

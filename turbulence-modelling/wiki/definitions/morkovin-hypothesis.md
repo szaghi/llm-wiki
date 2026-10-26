@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Morkovin's hypothesis and Reynolds analogies"
-description: "Morkovin's hypothesis holds that, while density fluctuations stay small against the mean, compressible wall turbulence behaves like incompressible turbulence once mean property variations are scaled out; this page gives Morkovin scaling, the strong Reynolds analogy and its extensions, and how DNS up to Mach 11 confirm or break them."
+description: "Morkovin's hypothesis holds that, while density fluctuations stay small against the mean, compressible wall turbulence behaves like incompressible turbulence once mean property variations are scaled out; this page gives Morkovin scaling, the strong Reynolds analogy and its extensions, and how DNS up to Mach 11 and LES of separated hypersonic interactions confirm or break them."
 status: established
 aliases: [Morkovin hypothesis, Morkovin scaling, Morkovin's scaling, strong Reynolds analogy, SRA, HSRA, Reynolds analogy factor]
 tags: [compressible, boundary-layer, dns, hypersonic, rans]
-timestamp: 2026-10-25T19:47:00Z
+timestamp: 2026-10-26T05:06:00Z
 ---
 
 # Morkovin's hypothesis and Reynolds analogies
@@ -175,10 +175,67 @@ Huang et al. (2022, §4.3.2, Figs. 17–18) find:
   so that $T''_{\mathrm{rms}}$ can be estimated from $u''_{\mathrm{rms}}$
   with $Pr_t\approx1$.
 
+## Across separated hypersonic interactions
+
+[Helm & Martín (2022)](/sources/helm-2022.md), §IV E, test the same
+relations in wall-resolved LES of two separated compression-ramp
+[shock/boundary-layer interactions](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+over cold walls: Mach 7.2 on a 33° ramp ($T_w/T_r=0.52$) and Mach 9.1 in
+nitrogen on a 34° ramp ($T_w/T_r=0.33$; the source's "Mach 10" case, written
+Mach 9 here), upstream of the interaction and in
+the recovering boundary layer downstream. Their wall-normal coordinate $z'$
+(distance from the local wall, over the local thickness $\delta_x$) is
+written $y$ here.
+
+- **Turbulent Prandtl number.** Upstream, $Pr_t$ is within 13% of one for
+  $0.05<y/\delta_x<0.75$, about 0.75 at the edge, and fails below 0.05;
+  downstream it is about 1.0 for $y/\delta_x>0.1$ at Mach 7 and about 1.4 at
+  $y/\delta_x=0.3$–0.5 at Mach 9 (Fig. 29a). The outer fit
+  $Pr_t=1-\tfrac14(y/\delta)$ recalled by Huang et al. (2022) gives 0.75 at
+  the edge, the value Helm & Martín find there *(compiler check, not in the
+  sources)*.
+- **SRA phase relation.** $-R_{u''T''}$ falls upstream from 0.85 at
+  $y/\delta_x=0.05$ to 0.6 at the edge and changes sign at the cold wall; it
+  is about 0.5 in the Mach 9 downstream layer (Fig. 29b). Helm & Martín
+  recall about 0.6 through most of adiabatic layers up to edge Mach 12 (Duan
+  et al.), only slightly reduced by wall cooling; Huang et al. (2022) find
+  about 0.55 for $y/\delta\gtrsim0.2$ (above).
+- **SRA magnitude relation.** About 0.65 upstream and 0.4 downstream at
+  Mach 7, 0.6 and 0.35 at Mach 9, with a minimum near 0.3 close to the wall:
+  the original relation fails over cold walls. The HSRA of Huang, Coleman &
+  Bradshaw takes about 1.2 upstream for $y/\delta_x=0.1$–1.0 in both flows,
+  about 1.2 downstream only for 0.2–0.5 at Mach 7, and fails in the Mach 9
+  recovering layer (Fig. 29c–d). Huang et al. (2022) find the HSRA close to
+  one in the outer layer of their zero-pressure-gradient layers; the two
+  levels belong to different flows and are not compared by either source.
+- **Reynolds analogy factor.** With the Stanton number defined on $T_w-T_r$
+  (the opposite sign of the convention above), Helm & Martín plot
+  $C_f/2C_h$: 0.85 upstream and about 0.7 downstream; the analogy with a
+  factor near one fails in the separated region (Fig. 28a). The upstream
+  value corresponds to $2C_h/C_f\approx1.18$, inside the range 1.1–1.2 that
+  Huang et al. (2022) find for hypersonic cold-wall layers *(compiler check,
+  not in the sources)*. The pressure–heat-transfer law
+  $q(x)/q_u=(p(x)/p_u)^{0.85}$ of Back & Cuffel (subscript $u$ the
+  undisturbed upstream layer), "shown by Priebe and Martín to be reasonably
+  accurate for the attached Mach 7 interaction", over-predicts heat transfer
+  at separation and in the recovering layer and misses the steep rise past
+  the corner; it was derived for attached interactions (§IV E, §V, Fig. 28b).
+
+Morkovin's hypothesis also serves as a construction tool: the Mach 9 DNS of
+Helm & Martín (2022, §II) was initialized with incompressible DNS
+fluctuations scaled by the mean density (see
+[direct numerical simulation](/definitions/direct-numerical-simulation.md)).
+
 ## Qualifications
 
-- Both sources test the hypothesis on zero-pressure-gradient flat-plate
-  boundary layers only; Huang et al. (2022) contrast them with isothermal
+- Helm & Martín (2022) print the friction velocity with the edge density,
+  $u_\tau=(\tau_w/\rho_e)^{1/2}$, and the recovery temperature without the
+  factor $T_e$; the relations above do not depend on these choices. Their
+  §IV E attributes the failure of the SRA magnitude relation to "Eq. (18)",
+  the phase relation, where the magnitude relation, their Eq. (19), is
+  meant.
+- Cogo et al. (2022) and Huang et al. (2022) test the hypothesis on
+  zero-pressure-gradient flat-plate boundary layers only; Huang et al. (2022) contrast them with isothermal
   cold-wall channels, where the Trettel–Larsson transformation collapses
   the data that it does not collapse in their boundary layers (§4.1).
 - Printed inconsistencies of the two papers that do not bear on these
@@ -189,3 +246,4 @@ Huang et al. (2022, §4.3.2, Figs. 17–18) find:
 
 - [Cogo et al. (2022)](/sources/cogo-2022.md) — §1 (Morkovin's hypothesis, Reynolds analogies, SRA); §2, Table 1 (Eckert number); §3.1; §4, Eqs. (4.3)–(4.4), Fig. 9 (temperature–velocity relations); §5.1, Eq. (5.1), Fig. 10 (Morkovin scaling); §5.2, Figs. 11–12 (TKE budget); §5.3 (pressure fluctuations).
 - [Huang et al. (2022)](/sources/huang-2022.md) — §3.2, Figs. 4, 6, 8 (Reynolds analogy factor, peak stresses, wall pressure); §4.2, Figs. 13–14 (Morkovin and semi-local scaling); §4.3, Eqs. (4.9)–(4.13), Table 5, Figs. 15–18 (temperature relations, SRA, HSRA, $Pr_t$); §4.4, Fig. 19; §5, Figs. 20–21; §6.
+- [Helm & Martín (2022)](/sources/helm-2022.md) — §II (Morkovin-scaled DNS initialization); §IV E, Figs. 28–29 (Reynolds analogy factor, QP85 law, $Pr_t$, SRA and modified SRA in separated hypersonic interactions); §V.

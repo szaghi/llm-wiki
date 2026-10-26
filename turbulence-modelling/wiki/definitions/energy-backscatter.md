@@ -5,7 +5,7 @@ description: "Energy backscatter is a negative local subgrid energy flux, energy
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-26T05:09:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -54,6 +54,25 @@ page-local:
 Backscatter is therefore not a property of the flow alone: its amount
 depends on the filter kernel. Literature values recalled in §2.1 are about
 40% of the domain for sharp filters and 15% for Gaussian filters.
+
+With a three-dimensional box filter at grid and test level,
+[Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) (§III.2, p. 15,
+Fig. 5) find backscatter at 26% of the points of filtered DNS of forced
+isotropic turbulence at $Re_\lambda=240$ for the smaller of their two
+filters (filter size $\ell_\Delta=4$, with $\ell_\Delta$ the filter width
+over twice the DNS grid spacing, page-local as on the
+[fractional SGS model](/methods/fractional-sgs-model.md) page), and 30%
+for a filter twice as wide ($\ell_\Delta=8$). They recall that the
+fraction depends on the filter type (Piomelli et al. 1991, as recalled).
+The box-filter fractions lie between the Gaussian and sharp-filter values
+above, from a different flow and filter scales *(compiler check, not in
+the sources)*.
+
+In channel flow, [Kim et al. (2022)](/sources/kim-2022.md) (§III E,
+Fig. 14a) filter DNS with a cut-off filter in the homogeneous directions
+and describe the backscatter of the filtered DNS as "a non-negligible
+quantity" with "considerably large negative dissipation" in the PDF of
+the subgrid dissipation at $y^+\approx15$ and 50 (§III C).
 
 ## Gauge dependence
 
@@ -140,6 +159,56 @@ resolved dynamics unchanged but shifts the local flux by
 $-T_{ij}\bar S_{ij}$, which is not zero in general, so the constraint is
 not gauge-invariant *(compiler check, not in the sources)*.
 
+## Backscatter of nonlocal and learned models
+
+Two sources reach opposite design choices from different questions.
+
+- **Backscatter as a design goal.** [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md)
+  (§I) list the absence of backscatter among the defects of earlier
+  nonlocal models and design the dynamic
+  [fractional SGS model](/methods/fractional-sgs-model.md) to produce it.
+  A priori, only that model and
+  the dynamic Smagorinsky model, of the four tested, give $\Pi<0$: 24% and
+  20% of the points at the smaller filter, 25% and 18% at the larger,
+  against 26% and 30% in filtered DNS. The dynamic Smagorinsky model
+  over-predicts the tails of the PDF of $\Pi$, which the authors link to
+  its need for averaging a posteriori (§III.2, Fig. 5). The dynamic
+  coefficient is assumed spatially uniform and averaged over homogeneous
+  directions against instability from "negative eddy-viscosity in
+  prolonged periods of time" (§II.2); the a posteriori tests (spectra,
+  energy decay, structure functions) do not measure backscatter (§IV).
+- **Backscatter not needed.** In the reinforcement-learning SGS model of
+  [Kim et al. (2022)](/sources/kim-2022.md) (§III C, §III E, Fig. 14) for
+  channel flow at $Re_\tau=180$, a variant with negative dissipation
+  clipped to zero (DRL180(clip)) predicts the mean velocity and the mean
+  Reynolds shear stress almost as well as the unclipped model, and no
+  model, learned or conventional, reproduces the large negative tail of
+  the filtered DNS. The authors conclude that backscatter "is not a
+  necessary condition" for at least those two statistics, the only
+  training targets, and recall that the dynamic Smagorinsky model
+  eliminates it by homogeneous averaging because inaccurate backscatter
+  can make LES diverge. The unclipped model shows weak backscatter at
+  $y^+\approx50$ without instability, so backscatter "does not necessarily
+  cause numerical instability" (Fig. 14b). They add that backscatter is
+  correlated with strong Reynolds shear stress in near-wall events
+  (Piomelli et al., as recalled) and that training on more statistics
+  (skewness, temporal correlation) might be needed to produce it. See
+  [reinforcement-learning closures](/methods/reinforcement-learning-closure.md).
+
+The two claims concern different flows (isotropic turbulence against a
+channel) and different measures (a priori stress correlation and a
+posteriori decay against two trained mean statistics), so they are not
+recorded as a contradiction. Kim et al. also find that the mean subgrid
+dissipation $\langle\Pi\rangle$ is not determined by the two target
+statistics: equally trained models give different values (§III C).
+
+[Helm & Martín (2022)](/sources/helm-2022.md) (§IV F, §V) describe the
+scale-similar part of their dynamic mixed model as a "conservative energy
+exchange" between the smallest resolved scales and the subgrid scales,
+beside the "dissipative drain" of the eddy viscosity (see
+[scale-similarity models](/methods/scale-similarity-model.md)); the paper
+does not use the word backscatter.
+
 ## Interpretation and scope
 
 Vela-Martín (2022, §7.2, §8) concludes that, in isotropic turbulence away
@@ -201,3 +270,6 @@ Other sources treat backscatter as a physical effect to be represented:
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §2.2, Eqs. (16)–(22).
 - [Prakash et al. (2022)](/sources/prakash-2022.md) — §II, Eqs. (4)–(15); §III.A.2, Figs. 2–3.
 - [Abe (2021)](/sources/abe-2021.md) — §IV C, Eq. (17).
+- [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) — §I; §II.2; §III.2, p. 15, Fig. 5.
+- [Kim et al. (2022)](/sources/kim-2022.md) — §III C; §III E, Fig. 14.
+- [Helm & Martín (2022)](/sources/helm-2022.md) — §IV F; §V.

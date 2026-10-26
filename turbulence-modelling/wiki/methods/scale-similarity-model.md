@@ -5,7 +5,7 @@ description: "Scale-similarity and deconvolution models build the subgrid stress
 status: established
 aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model]
 tags: [les, sgs-model, filtering, combustion]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-26T05:09:00Z
 ---
 
 # Scale-similarity and mixed subgrid-scale models
@@ -151,6 +151,65 @@ wavenumbers in forced isotropic turbulence (§III.B). Their **optimal
 clipping** derives a mixed model with a pointwise eddy viscosity and no
 coefficient; it is on the [gradient-model](/methods/gradient-model.md) page.
 
+**Compressible dynamic mixed model.** [Helm & Martín (2022)](/sources/helm-2022.md)
+(§II, Eqs. 9–10) run LES of hypersonic compression-ramp interactions with
+the one-coefficient dynamic mixed model of Martín, Piomelli & Candler
+(2000, as recalled), for the Favre-filtered subgrid stress
+$\tau_{ij}=\bar\rho(\widetilde{u_iu_j}-\tilde u_i\tilde u_j)$ and the
+subgrid heat flux. In registry notation (Favre filter written with the
+tilde; the paper writes it with a hat and the test filter with a second
+hat), the stress model is
+
+$$\tau_{ij}=-2C_1\Delta^2\bar\rho\lvert\tilde S\rvert\tilde S^d_{ij}+\bar\rho\big(\widehat{\tilde u_i\tilde u_j}-\hat{\tilde u}_i\hat{\tilde u}_j\big),$$
+
+with a dynamic coefficient $C_1$ (page-local) on the eddy-viscosity part
+only and unit coefficient on the scale-similar part, which is the
+registry's resolved stress $L_{ij}$ built from the Favre-filtered
+velocity; the heat-flux model has the same structure with a dynamic
+coefficient and a dynamic subgrid turbulent Prandtl number.
+$\Delta=(\Delta_\xi\Delta_\eta\Delta_\zeta)^{1/3}$ over the computational
+directions, the test filter is a top-hat in computational space, and the
+coefficients are averaged in the spanwise direction (see
+[dynamic procedure](/methods/dynamic-procedure.md)). The paper prints
+these equations in curvilinear coordinates, with the strain of the
+transformed velocity and with the density of the scale-similar stress
+term written $\rho$ where the heat-flux model has $\bar\rho$. The authors' rationale (§IV F) matches the agreed
+properties above: eddy-viscosity models give only a "dissipative drain",
+scale-similar models a local exchange between the smallest resolved and
+the subgrid scales but too little subgrid dissipation (citing the a
+priori study of Martín et al., in which the mixed model improves the
+correlation and rms amplitude of the stress and heat flux in compressible
+isotropic turbulence).
+
+Their ablation (§IV F, Figs. 30–33) is a posteriori. With the scale-similar
+terms switched off (dynamic eddy viscosity only):
+
+- the Mach 3, 24° ramp changes its separation length by less than 5%, and
+  the attached Mach 7, 8° ramp its peak corner reverse-flow probability
+  from 31% to 35%;
+- the separated Mach 7.2, 33° ramp lengthens its separation by 30% (§IV F
+  and §V; "as much as a 32%" in the abstract);
+- the incoming boundary layers are identical, and the difference sits in
+  the separation shear layer, whose spreading rate falls from 0.194 to
+  0.173, "nearly a 10% decrease"; lower spreading means lower entrainment
+  and a larger bubble.
+
+The authors relate the effect to the convective Mach number of about 2 of
+that shear layer (about 1 in the Mach 3 case, taken from their earlier
+work) and conclude that the conservative exchange of the scale-similar
+term is "necessary for the simulation of this condition" (§V). The
+effect is shown for one separated case, computed by LES only (the paper's
+DNS cover the boundary layers, the Mach 3 ramp and the attached Mach 7
+ramp); see [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+
+**Similarity model as a pretraining target.** [Kim et al. (2022)](/sources/kim-2022.md)
+(§II D) report that pretraining their reinforcement-learning SGS model on
+the scale-similarity model made the training unstable because the LES
+itself was numerically unstable, which suggests that clipping is needed,
+in line with the instability noted above; they do not use it as a
+baseline "because the DSM usually outperforms it" (§II, §I). No results
+are shown for either statement.
+
 ## Velocity-gradient (nonlinear) form
 
 Agrawal et al. (2022, App. C, Eq. C3) show that their
@@ -226,3 +285,5 @@ not improve.
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §III.B.
 - [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §2.
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §6.5, Figs. 20–22.
+- [Helm & Martín (2022)](/sources/helm-2022.md) — §II, Eqs. (9)–(10); §IV F, Figs. 30–33; §V.
+- [Kim et al. (2022)](/sources/kim-2022.md) — §I; §II; §II D.

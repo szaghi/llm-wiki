@@ -5,7 +5,7 @@ description: "Girimaji's bridging hybrid model that solves RANS-form transport e
 status: established
 aliases: [PANS, partially averaged Navier-Stokes, PANS k-ω SST, bridging model, PANS BHR-LEVM, variable-density PANS, BHR model]
 tags: [pans, hybrid-rans-les, flux-reconstruction, numerical-dissipation, separated-flow]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-25T20:27:00Z
 ---
 
 # Partially-averaged Navier–Stokes
@@ -216,6 +216,16 @@ a different, fully developed flow; inside the solver, on the transitional
 flow, it is the one that fails (see
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
 
+## Other uses recalled
+
+Cai et al. (2022) list PANS (Rao et al.) among the "advanced turbulence
+models" assessed on the Ahmed body, next to DES, IDDES, embedded LES,
+scale-adaptive and stress-blended eddy simulation, without giving its
+results ([Cai et al. (2022)](/sources/cai-2022.md), §I). Carlsson et al.
+(2023) name PANS among the hybrid RANS-LES methods besides DES and its
+delayed, improved and zonal forms
+([Carlsson et al. (2023)](/sources/carlsson-2023.md), §1).
+
 ## Criticism: RANS equations with fluctuating inputs
 
 Haering et al. (2022) class PANS, with DES and PITM, among the single-model
@@ -276,3 +286,5 @@ second-order numerics among the successful hybrid results on that case
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §1, §2.1 Eqs. 1–17, §2.2–2.3 Eqs. 18–24, §3 Eq. 26, §3.1 Figs. 3–6, §3.2 Figs. 8–13, §4.
 - [Haering et al. (2022)](/sources/haering-2022.md) — §I, §II D, §V B.
 - [Pereira et al. (2021)](/sources/pereira-2021.md) — §II, §III Eqs. 5–21 Fig. 4, §IV.1–IV.3 Eqs. 22–25 Table II Figs. 8–16, §V, App. A Eq. A9.
+- [Cai et al. (2022)](/sources/cai-2022.md) — §I (HAL v1).
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §1.

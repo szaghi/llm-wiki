@@ -140,7 +140,7 @@ unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25). This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunk 3 (2026-10-25). This source is cited on:
 
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
@@ -149,5 +149,7 @@ Chunk 2 (2026-10-25). This source is cited on:
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
+- [Subcell finite-volume shock capturing for DG](/methods/subcell-finite-volume-shock-capturing.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
+- [HORSES3D](/software/horses3d.md)

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Model-consistent (a posteriori) training of learned closures"
-description: "Training a learned closure with the solver in the loop, so the loss is evaluated on the model's own solution: field inversion, FIML, adjoint-based integrated training, differentiable-solver unrolling and reinforcement learning, with their consistency arguments, costs and limits."
+description: "Training a learned closure with the solver in the loop, so the loss is evaluated on the model's own solution: field inversion, FIML, adjoint-based integrated training, differentiable-solver unrolling and reinforcement learning, contrasted with open-loop injection of a priori-trained corrections, with consistency arguments, costs and limits."
 status: established
-aliases: [a posteriori training, a-posteriori training, solver-in-the-loop training, integrated inference and learning, embedded learning, differentiable-physics training]
+aliases: [a posteriori training, a-posteriori training, solver-in-the-loop training, integrated inference and learning, embedded learning, differentiable-physics training, online learning]
 tags: [data-driven, machine-learning, neural-network, sgs-model, rans, les]
-timestamp: 2026-10-25T19:46:00Z
+timestamp: 2026-10-25T20:39:00Z
 ---
 
 # Model-consistent (a posteriori) training of learned closures
@@ -37,6 +37,25 @@ $\min_{\boldsymbol\theta}\mathcal L[\boldsymbol\delta,f(\boldsymbol\zeta;\boldsy
 It is non-intrusive and admits direct physical constraints. Its drawbacks
 are that it requires full-field DNS and loses consistency with the solver.
 
+**Open-loop injection of a priori-trained corrections.**
+[McConkey et al. (2022)](/sources/mcconkey-2022.md) (§II D, Fig. 7) train
+two networks on labels computed from DNS, a non-negative optimal eddy
+viscosity and the remaining non-linear part of the anisotropy (see
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)). Their
+inputs are features of a converged base RANS solution. The predictions are
+then injected once and held fixed while the mean-flow equations are
+iterated to convergence around them, with no turbulence transport
+equation solved after injection: a "one-time correction" in the term
+recalled from Ho & West. The eddy viscosity enters implicitly, as an added
+viscosity, and the divergence of the non-linear part explicitly, as a
+source. Training is a priori; only the evaluation happens in the solver. As
+recalled there, open-loop frameworks are limited to steady flows, while
+iterative frameworks that call the network at every iteration (Liu et al.)
+can converge to solutions that depend on the initial field (§II D). The
+authors bound what such a framework can reach by a conditioning test that
+injects the exact DNS labels (§II C; see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+
 **Field inversion, then learning (FIML).** Field inversion is run for each
 dataset, and the inferred fields are then regressed onto
 $\boldsymbol\zeta_{\mathrm m}$ (Duraisamy 2021, Eqs. 7–8). The targets now
@@ -52,6 +71,18 @@ which they attribute to inputs the network meets only during the solver's
 non-converged iterations (§3.1.2, Table 1). They keep two-step training and
 select the network by its a posteriori error: model consistency enters at
 model selection, not in the loss.
+[Cato et al. (2023)](/sources/cato-2023.md) (§I) give the same rationale
+for the two-step procedure: the inversion keeps the learned correction
+consistent with the model structure, whereas learning Reynolds stresses
+directly from DNS is called potentially "ill-conditioned" (recalled). Their
+study of the inversion step shows that this consistency does not fix the
+inferred field. Several of their six correction fields fit the same mean
+velocity closely (Tables I–II). Some fits do so with eddy viscosities that "very
+strongly overshoot" a DNS-based estimate, which the authors call "a
+classical over-learning situation" (§III B, Fig. 6). The field that a
+later regression would learn therefore depends on which correction is
+inverted (see
+[field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
 
 **Integrated (tightly coupled) inference and learning.** The learned map
 sits inside the solver constraint, and one optimization over
@@ -93,7 +124,19 @@ errors are taken into consideration in the training process". The reward
 uses only the true mean wall stress, so the training needs no DNS field,
 and the states (velocity, its wall-normal gradient, wall distance) "do not
 depend heavily on numerics or SGS models", unlike the filtered velocities
-of a dynamic wall model. See
+of a dynamic wall model.
+[Kim et al. (2022)](/sources/kim-2022.md) train a pointwise SGS stress
+network for channel LES in the same way. The reward compares two mean
+profiles of the running LES (mean viscous stress and resolved Reynolds
+shear stress) with filtered DNS, so no filtered-DNS fields are stored.
+Because training and testing happen in the same LES, the authors argue
+that the a priori/a posteriori gap of supervised SGS learning is removed
+by construction (Abstract, §I, §III C). They contrast the approach with
+differentiable-PDE training (Sirignano et al., MacArt et al., among
+others). That route needs a differentiable solver and the storage of "all
+three-dimensional flow data", but they credit it with guaranteeing
+"robust performance, being superior to a standard supervised learning",
+and they call for a quantitative comparison of the two (§IV). See
 [reinforcement-learning closures](/methods/reinforcement-learning-closure.md).
 
 ## Evidence
@@ -126,6 +169,22 @@ of a dynamic wall model. See
   turbulence (no-model LES stays best at $N=3$), and read this as support
   for considering closure and discretization jointly
   (see [discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
+- **Wall-resolved channel LES from mean profiles.** Kim et al. (2022, §III
+  C) train at $Re_\tau=180$ on $(\Delta x^+,\Delta z^+)=(70.7,35.3)$. The
+  trained tensor models reproduce the filtered-DNS mean velocity and
+  Reynolds shear stress almost exactly. They also improve unrewarded
+  statistics (rms velocities, mean SGS shear stress and transport, spectra)
+  over the static Vreman, dynamic Smagorinsky and no-model LES. As recalled
+  there, a supervised network with the same local inputs (Park & Choi 2021)
+  "did not predict" the two target profiles well a posteriori (§III C).
+- **Open-loop RANS correction trained a priori.** McConkey et al. (2022,
+  §IV B, Fig. 21) inject the predictions of their DNS-trained networks into
+  a $v^2$-$f$-type RANS on a held-out periodic hill. The reattachment-point
+  error falls from 20% (base model) to 8.9%. The velocity error is smaller
+  than the error of the injected closure term (Fig. 20), so "under certain
+  conditions, the RANS equations can suppress rather than amplify errors in
+  the closure prediction" (§IV B, §V). This is an a posteriori improvement
+  from a priori training, shown for one geometry family in interpolation.
 
 ## Costs
 
@@ -137,6 +196,7 @@ of a dynamic wall model. See
 | Beck & Kurz (2023, §IV B) | 2000 iterations of 16 parallel episodes | at most 0.8 CPU-hours per LES; 8 or 16 cores per LES |
 | Vadrot et al. (2023b, §IV D) | RL wall model of Bae & Koumoutsakos | about $10^7$ gradient steps (recalled) |
 | Bae & Koumoutsakos (2022, preprint pp. 8, 12–13) | multi-agent RL in WMLES, $10^7$ policy-gradient steps | $O(10^3)$ CPU-hours and under 1 GB at $Re_\tau=4200$, against $O(10^7)$ CPU-hours and over 100 TB to generate DNS data for supervised training (no hardware given) |
+| Kim et al. (2022, §II F) | DRL of a pointwise SGS network in channel LES, 10,000–15,000 iterations, eight parallel LES; supervised pretraining of 50,000 iterations | about 2–4 days on one NVIDIA Titan Xp GPU; pretraining "only a few minutes" |
 
 Duraisamy (2021, §IV.B) names the obstacles to adjoint-based integrated
 training. Adjoints are intrusive. In LES the chaotic dynamics can make
@@ -153,7 +213,18 @@ the convergence of these training methods and the choice of loss function
   ties the closure to that environment. Beck & Kurz (2023, §VI) present
   their trained models as a way of developing discretization-specific
   closures, not as ready-to-use ones. Agdestein & Sanderse (2025, §5.2.7)
-  keep one parameter set per grid, filter and formulation.
+  keep one parameter set per grid, filter and formulation. Kim et al.
+  (2022, §III D) show the same limit for an RL-trained SGS model: trained
+  at $Re_\tau=180$, it gives reasonable Reynolds shear stress at untrained
+  $Re_\tau$ but fails on an untrained coarser grid, and the authors
+  conclude that "a model trained in a single environment might not perform
+  well in a different environment".
+- **Statistics as targets leave the closure under-determined.** Kim et al.
+  (2022, §III C) find that models trained to the same two mean profiles
+  give different mean SGS dissipation. Cato et al. (2023, §III B, §V C)
+  find, for inversions on mean velocity, that an accurate mean flow can
+  come with wrong Reynolds stresses or overshooting eddy viscosity. In both
+  cases the solver-in-the-loop loss constrains only what it measures.
 - **Robustness to the discretization is claimed, not tested.** Bae &
   Koumoutsakos (2022) train and test their wall models with one solver
   (staggered second-order finite differences) and one SGS model
@@ -200,3 +271,6 @@ the convergence of these training methods and the choice of loss function
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §II B 4, §III A, §IV C, Table III, §IV D.
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Research Square preprint v1, pp. 3, 6, 8, 10 (consistency argument, cost, states), Eq. 9 (reward), Methods pp. 12–13 (training).
 - [Yan et al. (2022)](/sources/yan-2022.md) — accepted manuscript, §3.1.2, Table 1 (regression loss against a posteriori error; selection by a posteriori error).
+- [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: Abstract, §I, §II F (cost), §III C–E (results, comparison with supervised learning, non-unique SGS dissipation, generalization), §IV (differentiable-PDE training).
+- [Cato et al. (2023)](/sources/cato-2023.md) — HAL author manuscript: §I (two-step FIML rationale), §III B, Fig. 6 (over-learning), §V C (mean flow without the right stresses).
+- [McConkey et al. (2022)](/sources/mcconkey-2022.md) — arXiv v1: §II C–D, Fig. 7 (conditioning, open-loop injection), §IV B, Figs. 20–21, §V.

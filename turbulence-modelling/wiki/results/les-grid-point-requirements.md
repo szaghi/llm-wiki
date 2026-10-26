@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Grid-point requirements of LES and DNS"
-description: "How the number of grid points and time steps of DNS, wall-resolved LES and wall-modelled LES scales with Reynolds number, the explicit WMLES cost model with boundary-layer and leading-edge resolution parameters, the practical sizing rules the sources use, and why their WMLES cost exponents differ."
+description: "How the number of grid points and time steps of DNS, wall-resolved LES and wall-modelled LES scales with Reynolds number, the explicit WMLES cost model with boundary-layer and leading-edge resolution parameters, the practical sizing rules the sources use, the resolutions solution-adaptive grids converge to, and why their WMLES cost exponents differ."
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-25T19:43:00Z
+timestamp: 2026-10-25T20:27:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -66,6 +66,21 @@ immersed boundary), and suggest the recommended one-wall-unit wall-normal spacin
 "may be somewhat over-demanding"; a factor 3 coarser in each direction
 ($\Delta x^+\approx9$, a cost reduction of $3^4=81$) still gives $u_\tau$
 within 1.8 % with implicit LES (§7.2–7.4).
+
+For a bluff body [Cai et al. (2022)](/sources/cai-2022.md) (§III, Tables
+I–II) estimate the scales of the Ahmed body flow at $Re_H=7.68\times10^5$
+($H$ the body height, $L$ its length) from correlations they cite:
+$\lambda_H/H\approx5.5Re_H^{-1/2}=6.3\times10^{-3}$ (called the Taylor scale),
+$\eta_H/H\approx1.2Re_H^{-3/4}=4.6\times10^{-5}$, boundary-layer thickness at
+the rear $\delta/L\approx0.37Re_L^{-1/5}$ ($\delta/H=6.9\times10^{-2}$) and
+viscous length $\delta_\nu/L\approx5.9Re_L^{-0.9}$ ($\delta_\nu/H=3.4\times10^{-5}$);
+"resolving down to the Kolmogorov scale or even the viscous sublayer is not
+feasible" on their octree grids, whose finest cells are
+$\Delta x_{\min}/H=9.0\times10^{-3}$ (13.6 M cells) and $4.5\times10^{-3}$
+(40.3 M cells), 1.4 and 0.7 times $\lambda_H$. The finest cell is thus about
+265 and 132 viscous lengths, and about 8 and 15 cells span the rear boundary
+layer *(compiler check, not in the sources)*; the authors do not report the
+near-wall resolution in wall units.
 
 ## Explicit WMLES cost model
 
@@ -159,6 +174,34 @@ about ten.
   cell hand-designed mesh (Table 2; the text of §4.1 gives 9.2 M), and recommends a minimum cell size of a
   quarter of the Taylor microscale for vortex cores (§5.1, §6).
 
+## Resolution found by solution-adaptive grids
+
+Instead of prescribing spacings, [Blind et al. (2023)](/sources/blind-2023.md)
+let a residual-based estimator choose them (see
+[mesh adaptation](/methods/mesh-adaptation.md)) in DG spectral element LES
+of degree 5, and report what the converged grids look like (spacings per
+degree of freedom, i.e. element size over 6):
+
+| Case | Converged grid | Wall spacing $(\Delta x^+,\Delta y^+,\Delta z^+)$ per DOF | DOF |
+|---|---|---|---|
+| Wall-resolved channel, $Re_\tau=550$ (§3.1, Table 1) | $l=4$, 16 200 elements | $(18.3,1.3,7.6)$ | 3.5 M |
+| Wall-resolved channel, $Re_\tau=2000$, 2-to-1 mortars (§3.2, Table 3) | $l=5$, 142 662 elements | $(26.9,2.0,9.6)$ | 30.8 M |
+| Wall-modelled channel, $Re_\tau=2000$, $h_{\mathrm{wm}}=0.1h$ (§3.3, Table 4) | $l=3$ (mean velocity), $l=4$ (stresses) | $(104.2,34.7,43.5)$ at $l=3$; $(53.8,10.0,26.3)$ at $l=4$ | 0.95 M; 6.7 M |
+
+The $Re_\tau=550$ grid, about $(18,1,8)$, is "viewed as an acceptable
+(albeit a bit fine) grid by the LES community", and the sequence of spacings
+resembles the finite-difference results of Toosi & Larsson. The estimator
+asks for larger wall-parallel spacings in the viscous sublayer than in the
+buffer layer, which the authors call correct because wall-parallel length
+scales grow there (citing Jiménez). Mortar interfaces that coarsen the
+wall-parallel spacing away from the wall save "up to approx. 50 %" of the
+elements against a structured mesh with the same, mortar-free, spacing
+(128 154 elements saved against 142 662 used at $l=5$); the time step is set by the smallest cell and
+does not change, so the saving is in processor count (§3.2), while for the
+airfoil the authors equate it with compute time (§4). The estimator says
+nothing about whether a grid is converged: convergence must be judged on the
+quantities of interest (§2.5).
+
 ## Measured costs
 
 Goc et al. (2021, §4, Tables 1–2) report, for 30 flow passes of the JAXA model
@@ -228,6 +271,17 @@ supervised model would need at $Re_\tau=4200$.
   sentence of §4 and Choi & Moin (2012) in another; their reference list
   gives the 1994 work as "Effects of the computational time step on numerical
   solutions of turbulent flow".
+- **Savings against what.** The abstract of Blind et al. (2023) claims
+  solutions "at up to 50% lower cost at comparable accuracy compared to when
+  using human-generated grids"; the 50 % measured in §3.2 and §4 is counted
+  against a structured mesh of the same spacing without mortars, not against
+  an independently designed grid. Their airfoil DOF counts are 512 per
+  element (Table 6), i.e. $8^3$, polynomial degree 7, whereas §2.3 states
+  degree 5 "throughout this work" and the channel tables give $6^3=216$
+  *(compiler check, not in the sources)*. Locators refer to the arXiv v1
+  preprint read.
+- Cai et al. (2022, §III) call $\lambda_H$ "the Taylor scale describing the
+  integral motions in the wake"; the estimate is printed as such.
 
 # Citations
 
@@ -244,3 +298,5 @@ supervised model would need at $Re_\tau=4200$.
 - [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §3.
 - [Prakash et al. (2022)](/sources/prakash-2022.md) — §I–II; §III.B.3, Table 3.
 - [Mozaffari et al. (2022)](/sources/mozaffari-2022.md) — §1, Fig. 1; §4, Table 2; §5.1; §6.
+- [Cai et al. (2022)](/sources/cai-2022.md) — §I; §III, Tables I–II.
+- [Blind et al. (2023)](/sources/blind-2023.md) — Abstract; §2.3; §2.5; §3.1–3.3, Tables 1, 3, 4; §4, Table 6.

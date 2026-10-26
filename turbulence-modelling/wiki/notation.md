@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-25T19:48:00Z
+timestamp: 2026-10-26T05:11:00Z
 ---
 
 # Notation registry
@@ -199,3 +199,14 @@ that uses one still says what it means.
 | $\Gamma_E$, $h_{\min}$ | dynamo growth rate of the magnetic energy; finest cell size of an adaptive grid | small-scale dynamo, numerical dissipation, mesh adaptation, RAMSES |
 | $x_R$ | reattachment length of a separated flow | backward-facing step, LES pages |
 | $\Delta p_s^+$ | streamwise pressure gradient in inner units | wall law in adverse pressure gradient, turbulent boundary layers |
+| $\nu_t^*$, $\nu_t^\dagger$, $a^\perp_{ij}$ | best-fit (optimal) eddy viscosity of a reference stress, unconstrained and non-negative; the non-linear remainder of the anisotropy | Boussinesq hypothesis; McConkey et al. (2022) |
+| $c_{RS}$ | stress–strain alignment indicator | Boussinesq hypothesis; Cato et al. (2023) |
+| $Re_y$ | local Reynolds number $Uy/\nu$ of an explicit wall law | law of the wall, equilibrium wall model |
+| $\nu_t^{\mathrm{hyb}}$, $\nu_t^{\mathrm{RANS}}$, $R^{\mathrm{res}}_{ij}$ | hybrid eddy viscosity of constrained LES, its RANS part, the resolved stress | wall-modelled LES, hybrid RANS/LES, immersed boundary methods |
+| $\gamma_{\mathrm{RL}}$, $\Delta t_{\mathrm{RL}}$, $N_s$ | discount factor, action interval and episode length of a reinforcement-learning closure | reinforcement-learning closures |
+| $\kappa^{(2)}$, $\kappa^{(4)}$, $\Psi_i$, $\Phi_i$ | second- and fourth-difference dissipation coefficients of JST-type artificial dissipation; Jameson pressure sensor, Ducros vorticity factor | numerical dissipation, low-dissipation low-dispersion scheme, log-layer mismatch |
+| $N_f$ | highest modal degree kept by a modal test filter | LES, Vreman model, mesh adaptation, DGSEM |
+| $\ell_\Delta$ | filter width in grid units | fractional SGS model, energy backscatter |
+| $\alpha_k$, $\beta_k$ | resolved and unresolved fractions of the turbulent kinetic energy | active model split, turbulent channel flow |
+| $m_a$ | anisotropy exponent, $l_\parallel\propto\lambda^{m_a}$ | critical balance, compressible MHD turbulence |
+| $A_\sigma$ | pre-shock average Atwood number | shock-generated turbulence, Rayleigh–Taylor mixing |

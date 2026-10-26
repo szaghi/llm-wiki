@@ -127,7 +127,7 @@ under Printed slips; none is unparseable and no printed duplicate was found.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2–3 (2026-10-25). This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
@@ -139,6 +139,7 @@ Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cite
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
+- [Immersed boundary methods](/methods/immersed-boundary-method.md)
 - [Scale-similarity and mixed subgrid-scale models](/methods/scale-similarity-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Spectral eddy viscosity](/methods/spectral-eddy-viscosity.md)

@@ -5,7 +5,7 @@ description: "Reduced MHD is the strong-guide-field, anisotropic limit of MHD wr
 status: established
 aliases: [RMHD, reduced magnetohydrodynamics, Strauss equations, Elsasser fields, Elsasser variables]
 tags: [mhd, plasma, astrophysics, dns]
-timestamp: 2026-10-25T13:29:00Z
+timestamp: 2026-10-26T05:06:00Z
 ---
 
 # Reduced MHD and Elsasser variables
@@ -142,6 +142,39 @@ aligned; the review prefers the Elsasser angle $\theta$ over $\theta_{ub}$
 because it is the one that reduces the nonlinearity under imbalance (App. B,
 Eq. B10). The scale-dependent version is $\theta_\lambda$ of the registry.
 
+## Outside the reduced limit
+
+Three sources work with systems that RMHD does not describe.
+
+- **Compressive modes in full MHD.** [Gan et al.
+  (2022)](/sources/gan-2022.md) drive isothermal compressible MHD with a
+  strong guide field ($v_A=8$, plasma beta $\beta_p=0.4$, turbulent Mach
+  number 0.12–0.18) and separate the fluctuation power into Alfvén, slow and
+  fast modes. Even there most of the power at finite frequency lies on none
+  of the linear dispersion branches; among the wave-like part the Alfvén
+  mode dominates, with fast modes negligible under incompressible driving
+  and about 2% under compressible driving (§3); details on [compressible MHD
+  turbulence](/results/compressible-mhd-turbulence.md). They solve the
+  full compressible equations, so the decoupling of property 1 above is not
+  assumed there.
+- **A different reduced plasma model.** [Coelho et al.
+  (2022)](/sources/coelho-2022.md) simulate stellarator edge turbulence with
+  the drift-reduced Braginskii two-fluid equations (electrostatic, with
+  density, electron and ion temperatures, parallel velocities, vorticity and
+  potential), not with RMHD; they apply what they call the Boussinesq
+  approximation (p. 3, Eqs. 1–7, not defined further), a plasma-fluid
+  approximation unrelated to the eddy-viscosity hypothesis.
+- **An Alfvén-like analogue.** On a ferrofluid surface in a horizontal field
+  the magnetic surface wave is dispersionless along the field with an
+  "Alfvén-like" speed, and its weak turbulence reproduces the spectrum of
+  anisotropic shear-Alfvén wave turbulence without any Elsasser formalism
+  ([Kochurin et al. 2022](/sources/kochurin-2022.md), Eqs. 1, 3, 6; see
+  [weak wave turbulence](/results/weak-wave-turbulence.md)).
+
+The exact third-order law of property 5 has compressible and Hall-MHD
+counterparts, tested on DNS by [Ferrand et al.
+(2022)](/sources/ferrand-2022.md); see [exact laws](/results/turbulence-exact-laws.md).
+
 ## Qualifications
 
 - RMHD is incompressible in the perpendicular plane and assumes
@@ -155,3 +188,7 @@ Eq. B10). The scale-dependent version is $\theta_\lambda$ of the registry.
 # Citations
 
 - [Schekochihin (2022)](/sources/schekochihin-2022.md) — §3, Eqs. (3.1)–(3.7); App. A.1, Eqs. (A1)–(A5); App. B, Eqs. (B1)–(B10); App. D, Eqs. (D1)–(D3); §10.4, Eq. (10.4); §13.3.3.
+- [Gan et al. (2022)](/sources/gan-2022.md) — §2.1; §3 (mode fractions with a strong guide field).
+- [Coelho et al. (2022)](/sources/coelho-2022.md) — p. 3, Eqs. (1)–(7) (drift-reduced Braginskii model, plasma Boussinesq approximation).
+- [Kochurin et al. (2022)](/sources/kochurin-2022.md) — Eqs. (1), (3), (6).
+- [Ferrand et al. (2022)](/sources/ferrand-2022.md) — §2 (compressible Hall-MHD exact laws).

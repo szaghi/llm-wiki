@@ -132,11 +132,13 @@ Nek5000, OpenFOAM, Green Algorithms) carry the printed "(2021)". Odd author stri
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2–3 (2026-10-25). This source is cited on:
 
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
+- [Physics-informed neural networks for RANS](/methods/physics-informed-neural-network.md)
 - [Scale-similarity and mixed subgrid-scale models](/methods/scale-similarity-model.md)
 - [Vreman model](/methods/vreman-model.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)
+- [Nek5000 and NekRS](/software/nek5000.md)

@@ -5,7 +5,7 @@ description: "Large-eddy simulation resolves the filtered velocity and models th
 status: established
 aliases: [LES, filtered Navier–Stokes equations, subgrid-scale stress, SGS stress, subfilter stress, coarse-grained equations]
 tags: [les, filtering, sgs-model, compressible]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-26T05:09:00Z
 ---
 
 # Large-eddy simulation: filtering and the subgrid-scale stress
@@ -61,6 +61,20 @@ use them as LES filters. [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md)
 cell-centred finite-volume method in arbitrary Lagrangian–Eulerian form, to
 follow a deforming panel.
 
+[Helm & Martín (2022)](/sources/helm-2022.md) (§II, Eqs. 1–8) write the
+Favre-filtered equations in generalized curvilinear coordinates for LES of
+hypersonic compression ramps, with four unclosed terms: the subgrid stress
+$\tau_{ij}=\bar\rho(\widetilde{u_iu_j}-\tilde u_i\tilde u_j)$, the subgrid
+heat flux $\bar\rho(\widetilde{u_jT}-\tilde u_j\tilde T)$, the subgrid
+turbulent diffusion $\bar\rho(\widetilde{u_ju_ku_k}-\tilde u_j\widetilde{u_ku_k})$
+and the subgrid viscous diffusion $\overline{\sigma_{ij}u_i}-\tilde\sigma_{ij}\tilde u_i$
+(registry notation; the paper writes the Favre filter with a hat). The
+first two are closed by a [dynamic mixed model](/methods/scale-similarity-model.md),
+the turbulent diffusion by $\tilde u_k\tau_{jk}$ (Knight et al., as
+recalled), and the viscous diffusion is neglected because it is "typically
+an order of magnitude smaller than the SGS heat flux". The filtered total
+energy carries $\tfrac12\tau_{kk}$.
+
 [Duraisamy (2021)](/sources/duraisamy-2021.md) (§II, Eq. 2) frames LES and
 RANS together: coarse-graining a high-fidelity system $\mathcal R(q)=0$ by
 low-pass filtering (LES) or ensemble averaging (RANS) gives an equation for
@@ -79,7 +93,11 @@ entering with $+\partial_j$; [Haering et al. (2022)](/sources/haering-2022.md)
 Duraisamy (2021, §III.B) writes the SGS stress with the reversed sign while
 the RANS stress of the same paper (Table I) is positive. Agrawal et al. (2022), Goc et al.
 (2021), Vicente Cruz & Lamballais (2023), Abe (2021) and Prakash et al.
-(2022) use the positive convention.
+(2022) use the positive convention, as do
+[Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) (§II, Eqs. 1–2),
+[Kim et al. (2022)](/sources/kim-2022.md) (§II A, Eqs. 3–4),
+Helm & Martín (2022, Eq. 5) and [Cai et al. (2022)](/sources/cai-2022.md)
+(§II.A, Eqs. 9, 11), the last two in density-weighted form.
 
 ## Filters and filter widths
 
@@ -109,6 +127,17 @@ and checks with a three-point trapezoidal filter
 $\bar\phi_i=\tfrac14(\phi_{i+1}+2\phi_i+\phi_{i-1})$ that filtering also in
 the wall-normal direction changes the subgrid values little.
 
+[Kim et al. (2022)](/sources/kim-2022.md) (§III E) filter channel DNS
+with a cut-off filter in the two homogeneous directions only.
+[Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) (§III) use a
+three-dimensional box filter for both grid and test level on isotropic
+turbulence. [Helm & Martín (2022)](/sources/helm-2022.md) (§III B, Eq. 12,
+Fig. 6) validate their LES against DNS filtered with the top-hat test filter
+of their model, in space and, through Taylor's hypothesis, in time, with
+widths matching the LES-to-DNS grid ratio; the filter truncates the
+spectrum like the LES, and spectra are essentially unaffected for
+$f\delta/U_e\lesssim0.4$ ($f$ the frequency, $U_e$ the edge velocity).
+
 The amount of [backscatter](/definitions/energy-backscatter.md) measured
 a priori depends strongly on the kernel: the local flux is negative in about
 half of the domain with the sharp filter and in less than one-fifth with the
@@ -136,6 +165,10 @@ LES is approximated by the super-Gaussian above.
 | [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md), §6.1, Eq. (125) | $\Delta^3=\mathrm{Vol}/(N+1)^3$ for a DG element of degree $N$ |
 | [Basile et al. (2023)](/sources/basile-2023.md), §2.2 | DES length scale $\sqrt[3]{\mathrm{Vol}}/(N+1)$ on DG elements: the cube root instead of the maximum spacing of classical DES, divided by $N+1$ following Lorteau et al. |
 | [François et al. (2022)](/sources/francois-2022.md), §3.1 | DES length scale switching from $\max(\Delta x,\Delta y,\Delta z)$ to $(\Delta x\Delta y\Delta z)^{1/3}$ where the DDES shielding function exceeds 0.8 (ZDES mode 2, after Deck) |
+| [Helm & Martín (2022)](/sources/helm-2022.md), §II | $(\Delta_\xi\Delta_\eta\Delta_\zeta)^{1/3}$, the LES grid spacings in the computational (curvilinear) directions |
+| [Kim et al. (2022)](/sources/kim-2022.md), §II C | $(\Delta x\Delta y\Delta z)^{1/3}$ in wall units as an input of a learned model, whose output is multiplied by $\Delta^2$ to generalize across grids |
+| [Blind et al. (2023)](/sources/blind-2023.md), §2.3 | $\mathrm{Vol}^{1/3}/(N+1)$ in DG (Vreman length scale), and $[(N+1)/(N_f+1)]^{1/3}$ times it for a modal test filter keeping degrees up to $N_f$ (page-local, as on the mesh-adaptation page) |
+| [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md), §II–III | "the effective grid scale"; filter sizes are quoted as multiples of twice the DNS grid spacing |
 
 In implicitly filtered LES the filter width and the grid spacing $h$
 coincide approximately, $h\approx\Delta$, whereas in explicitly filtered LES
@@ -241,8 +274,43 @@ fluctuation) with a filter that leaves the mean unchanged,
 $\bar u_i=\langle u_i\rangle+u_i^>$, and write $\tau_{ij}$ as cross and
 subgrid–subgrid products of $u^>$ and $u^<$. Their computable measure of
 resolution is the unresolved fraction $1-k_{\mathrm{res}}/k_{\mathrm{tot}}$;
-citing Jiménez & Moser, they recall that typical LES requires this fraction
-to be below about 0.1 (§V A 1). The grid counts needed for wall-resolved and
+citing Jiménez & Moser, they recall that "for typical LES" this fraction is
+expected to stay below about 0.1 over the entire domain "for the model to
+perform well", and report that their hybrid model keeps a correct mean in
+channel flow "well past this threshold", with the fraction as low as 0.4
+at the channel centre on their finest grid (§V A 1).
+[Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md)
+(§III.1, p. 13) use the same figure descriptively to separate LES from
+very-large-eddy simulation (VLES): "almost all of the LES studies are
+designed to model about less than ten percent of the total kinetic energy",
+and they mark the larger filter sizes of their a priori study as the VLES
+region; a posteriori they test a filter five times wider than their LES one
+there (§IV), and report that their model gives "promising results in the
+VLES region as well as the LES region" (abstract). They do not print the
+formula of the modelled-energy percentage.
+[Helm & Martín (2022)](/sources/helm-2022.md) (§III B, Fig. 5; §V) run
+compressible boundary layers with more modelled energy. Estimated from
+filtered against unfiltered DNS as a fraction of the local DNS value, the
+unresolved share of the turbulent kinetic energy at Mach 7 is "14% to 25%,
+namely, 25% at the wall and in $z/\delta>0.7$, otherwise it is about 14%"
+(§III B, which in the next sentence gives a maximum of 18% at the wall;
+§V: about 25% at the wall and 12% over most of the layer), and between 10%
+and 15% at Mach 3 and 10. As a direction for further savings, the authors
+state that the a priori study of Martín et al. indicates that "maintaining
+25%–30% TKE in the SGS throughout the boundary layer may be possible" for
+their LES method (§V).
+[Blind et al. (2023)](/sources/blind-2023.md) (§1) review measures of how
+well an LES is resolved: the ratio of subgrid to viscous dissipation is
+meaningful only in the buffer layer; the ratio of modelled to resolved or
+total energy, proposed by Jiménez & Moser and by Pope (as cited), "has been
+found to correlate poorly to the known behavior of length scales in
+wall-bounded flows" (citing Toosi & Larsson); local-spectrum estimates fail
+beyond isotropic flows. They call the LES modelling-residual estimate of
+Toosi & Larsson "the most well-grounded approach to date" and use it for
+[mesh adaptation](/methods/mesh-adaptation.md); they add that the residual
+cannot be estimated by Taylor expansion or by interpolation on a finer
+grid, because an LES is far from the asymptotic range and a finer grid
+carries smaller scales (§2.2). The grid counts needed for wall-resolved and
 wall-modelled LES are on [LES grid-point requirements](/results/les-grid-point-requirements.md),
 and the near-wall alternative on [wall-modelled LES](/methods/wall-modelled-les.md).
 
@@ -259,6 +327,23 @@ and the near-wall alternative on [wall-modelled LES](/methods/wall-modelled-les.
   the unresolved induction with a
   [subgrid turbulent dynamo model](/methods/subgrid-turbulent-dynamo-model.md);
   see [implicit LES](/definitions/implicit-les.md).
+
+## Explicit models offered by codes
+
+The software paper of the [HORSES3D](/software/horses3d.md) DG code
+([Ferrer et al. 2023](/sources/ferrer-2023.md), §4.1) describes explicit
+LES as resolving the large eddies and modelling the small ones, and lists
+the [Smagorinsky](/methods/smagorinsky-model.md),
+WALE (Nicoud & Ducros, as cited) and [Vreman](/methods/vreman-model.md)
+models with the group's SVV-Smagorinsky combination (see
+[spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md));
+no formula is printed, and WALE appears only in this list. The GPU
+spectral-element code NekRS (see [Nek5000 and NekRS](/software/nek5000.md))
+is benchmarked by [Fischer et al. (2022)](/sources/fischer-2022.md)
+(§4.1, Table 2) on a spacer-grid LES at $Re_D=14\,000$ with 3.2 million
+elements and $N=7$, without stating the subgrid model. The capsule-wake
+LES of [Placco et al. (2023)](/sources/placco-2023.md) has no explicit
+model (see [implicit LES](/definitions/implicit-les.md)).
 
 ## Testing a closure
 
@@ -301,6 +386,27 @@ than the LES one; see
 
 - Abe (2021) gives the coarse-grid case two labels, BSC and, in §III and the
   Fig. 8 caption, "BFC".
+- **Modelled-energy fraction: different statements, not a conflict.**
+  Haering et al. (2022, §V A 1) recall, citing Jiménez & Moser, that typical
+  LES is expected to model below about 10% of the energy, and report their
+  own hybrid model performing well past it; Seyedi & Zayernouri (2022,
+  §III.1) use the 10% figure as a description of common LES practice to
+  delimit LES from VLES, and test their model in both; Helm & Martín (2022,
+  §V) state, from the a priori study of Martín et al., that 25–30% "may be
+  possible" for their LES method in compressible boundary layers; Blind et
+  al. (2023, §1) report, citing Toosi & Larsson, that the energy ratio
+  correlates poorly with the length scales of wall-bounded flows and so is
+  a weak grid criterion. No source states that LES fails above 10%, and the
+  fractions are defined differently (domain-wide $1-k_{\mathrm{res}}/k_{\mathrm{tot}}$
+  in Haering et al., a local fraction of the DNS energy in Helm & Martín,
+  an unprinted percentage in Seyedi & Zayernouri); the statements are
+  therefore recorded as qualifications, not as a contradiction.
+- Helm & Martín (2022, §III B) give the Mach 7 unresolved share at the wall
+  both as 25% and, a sentence later, as a maximum of 18%.
+- Seyedi & Zayernouri (2022, Eq. 24) call $\tfrac12(\overline{u_iu_i}-\bar u_i\bar u_i)$
+  the "resolved" and $\tfrac12\bar u_i\bar u_i$ the "filtered" kinetic
+  energy; the first is the subfilter energy and the second the resolved
+  one.
 
 # Citations
 
@@ -325,3 +431,11 @@ than the LES one; see
 - [Liu et al. (2022)](/sources/liu-2022.md) — §1.
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Introduction, p. 3; Methods, p. 13.
 - [Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md) — §3–4, Tables 5–7; §3.5, Figs. 4–5.
+- [Helm & Martín (2022)](/sources/helm-2022.md) — §II, Eqs. (1)–(12); §III B, Figs. 5–6; §V.
+- [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) — §II, Eqs. (1)–(4); §III; §III.1, Eq. (24); §IV.
+- [Kim et al. (2022)](/sources/kim-2022.md) — §II A, Eqs. (3)–(4); §II C; §III E.
+- [Blind et al. (2023)](/sources/blind-2023.md) — §1; §2.2–2.3.
+- [Cai et al. (2022)](/sources/cai-2022.md) — §II.A, Eqs. (8)–(11).
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1.
+- [Fischer et al. (2022)](/sources/fischer-2022.md) — §4.1, Table 2.
+- [Placco et al. (2023)](/sources/placco-2023.md) — §1–2.

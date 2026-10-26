@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity profile of wall-bounded turbulence �
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-25T19:43:00Z
+timestamp: 2026-10-25T20:36:00Z
 ---
 
 # Law of the wall
@@ -43,6 +43,15 @@ and the choice is part of the model.
 | [Cao et al. (2022)](/sources/cao-2022.md), Eq. (8) | 0.40 | 5.5 | "for the low Reynolds number turbulent channel flow" | estimate of $u_\tau$ for a channel DNS at $Re_\tau=180$ |
 | [Knopp (2022)](/sources/knopp-2022.md), §4, Eq. (26) | 0.41 | 5.0 | with Coles' wake, after Coles & Hirst | fit of boundary-layer thickness in adverse pressure gradient |
 | [Cogo et al. (2022)](/sources/cogo-2022.md), Fig. 8 | 0.41 | 5.2 | | reference for transformed compressible profiles |
+| [Kim et al. (2022)](/sources/kim-2022.md), Fig. 12 | 0.41 | 5.2 | | reference line for the mean velocity of LES with learned SGS models at $Re_\tau=180$–720 |
+| [Dang et al. (2022)](/sources/dang-2022.md), Fig. 17 legend | $1/2.44$ | 5.1 | | reference for van Driest-transformed DNS profiles upstream of a Mach 2.9 ramp |
+| [Cai et al. (2022)](/sources/cai-2022.md), Eq. (26) | not printed | $\kappa^{-1}\ln E$, $E=11.27$ | blend constants 10.71 and 1.526 | log law written $u^+=\kappa^{-1}\ln(Ey^+)$; explicit equilibrium wall model in a lattice Boltzmann solver |
+| [Blind et al. (2023)](/sources/blind-2023.md), §3.3 | not printed | not printed | Spalding's law | algebraic wall model in [FLEXI](/software/flexi.md) |
+| [Carlsson et al. (2023)](/sources/carlsson-2023.md), Figs. 4–5 | not printed | not printed | Reichardt's law | reference profile for IDDES of channel flow |
+
+Dang et al.'s slope $1/2.44$ is $\kappa\approx0.410$, and Cai et al.'s $E=11.27$
+corresponds to $B=\kappa^{-1}\ln E\approx2.42/\kappa$, about 5.9 for
+$\kappa=0.41$ *(compiler check, not in the sources)*.
 
 Griffin et al. (2023, §3) test Reynolds-number-dependent constants fitted to
 the incompressible channel DNS of Lee & Moser (as recalled by them): at
@@ -89,8 +98,33 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   wall model (the source writes $C$ for $B$). Fowler et al. (2022) reject this
   profile for its error near $y^+\sim10$ (above); Gillyns et al. sample it at
   $y^+\ge63$, where the choice is not tested against an alternative.
+- **Blended profile with an explicit inverse** (Cai et al. 2022, §II.C.1,
+  Eqs. 24–26, after the authors' earlier work as they cite it). The forward
+  profile blends the two asymptotes with hyperbolic tangents,
+
+  $$u^+=\left[1-\tanh\frac{y^+}{10.71}\right]^{1.526}y^++\left[\tanh\frac{y^+}{10.71}\right]^{1.526}\frac1\kappa\ln(Ey^+),\qquad E=11.27,$$
+
+  and a separately fitted inverse gives $y^+$ directly from the local Reynolds
+  number $Re_y=U y/\nu$ ($U$ the wall-tangential velocity at distance $y$;
+  page-local),
+
+  $$y^+=\left[1-\tanh\frac{Re_y}{180.8}\right]^{0.789}Re_y^{1/2}+\left[\tanh\frac{Re_y}{180.8}\right]^{0.789}\frac{e^{W(\kappa ERe_y)}}{E},$$
+
+  with $W$ the Lambert function, $W(x)=\ln\big(x/W(x)\big)$, "expanded
+  explicitly into series" (series not printed), so that
+  $u_\tau=y^+\nu/y$ needs no Newton iteration. Each branch of the inverse is
+  the exact inverse of the matching branch of the forward profile — the
+  viscous branch from $Re_y=(y^+)^2$, the log branch from
+  $\kappa ERe_y=Ey^+\ln(Ey^+)$, i.e. $\ln(Ey^+)=W(\kappa ERe_y)$ — while the
+  two blending functions differ, so the pair is consistent only
+  asymptotically; its buffer-layer accuracy is not shown in the source
+  *(compiler check, not in the sources)*. See the
+  [equilibrium wall model](/methods/equilibrium-wall-model.md).
+- **Spalding's law** is the algebraic wall model of Blind et al. (2023,
+  §3.3), solved by Newton's method in every Runge–Kutta stage; the formula
+  and its constants are not printed.
 - **Mixing length with van Driest damping**, the differential form behind
-  both fits: the eddy viscosity is $\nu_t=\kappa y\,u_\tau(1-e^{-y^+/A^+})^2$,
+  the fit of Fowler et al.: the eddy viscosity is $\nu_t=\kappa y\,u_\tau(1-e^{-y^+/A^+})^2$,
   and integrating the constant-stress equation gives $f$ (Griffin et al.
   2023, Eq. 1.2, in its incompressible form; see Qualifications for the
   printed form).
@@ -139,6 +173,22 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   velocity over $0.2\lesssim y/\delta\lesssim0.9$ with $n_{pl}=5$ (Eqs.
   4.6–4.7; page-local $n_{pl}$, $\delta_\infty$ the height where the mean
   velocity first reaches $U_\infty$).
+- **Low Reynolds number.** [Kim et al. (2022)](/sources/kim-2022.md) (§III D,
+  Fig. 12) recall, citing the channel DNS of Moser, Kim & Mansour, that the
+  DNS mean velocity at $Re_\tau=180$ deviates slightly from the log law in the
+  logarithmic region, and use this non-universality to explain why an SGS
+  model trained by reinforcement learning at $Re_\tau=180$ under-estimates the
+  buffer-layer slope at $Re_\tau=360$, while one trained at 360 over-estimates
+  the mean velocity at 180 (see
+  [reinforcement-learning closures](/methods/reinforcement-learning-closure.md)):
+  "the non-universal characteristic of $Re_\tau=180$ affects the
+  generalization performance of the DRL model".
+- **Separated regions.** Cai et al. (2022, §II.C.2) state that equilibrium
+  and non-equilibrium wall models assume quasi-parallel near-wall flow and
+  that their use under separation is "physically not appropriate", but that
+  the small wall stress there keeps the model in the low-$y^+$ range "where
+  linear profile applies", and recall three studies finding the flow not very
+  sensitive to the wall model in the recirculation zone.
 - **Universality claimed for learned models.** Bae & Koumoutsakos (2022,
   Discussion) state, citing the literature, that all flows with inner–outer
   scale separation exhibit a log law, and take this as the reason a state
@@ -194,3 +244,8 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 - [Huang et al. (2022)](/sources/huang-2022.md) — §4.1, Eqs. (4.5)–(4.7), Figs. 11–12.
 - [Cao et al. (2022)](/sources/cao-2022.md) — §3.3, Eq. (8).
 - [Cogo et al. (2022)](/sources/cogo-2022.md) — §4, Fig. 8.
+- [Kim et al. (2022)](/sources/kim-2022.md) — §III D, Fig. 12.
+- [Cai et al. (2022)](/sources/cai-2022.md) — §II.C.1, Eqs. (24)–(26); §II.C.2.
+- [Blind et al. (2023)](/sources/blind-2023.md) — §3.3.
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §4.3, Figs. 4–5.
+- [Dang et al. (2022)](/sources/dang-2022.md) — §5.1, Fig. 17.

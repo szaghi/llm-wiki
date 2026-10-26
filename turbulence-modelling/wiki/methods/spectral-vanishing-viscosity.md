@@ -5,7 +5,7 @@ description: "Spectral vanishing viscosity concentrates an added viscosity on th
 status: established
 aliases: [SVV, implicit SVV, ISVV, implicit spectral vanishing viscosity, spectral viscosity, SVV-LES, entropy-stable SVV, modal SVV filter]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg, entropy-stable]
-timestamp: 2026-10-25T19:46:00Z
+timestamp: 2026-10-25T20:23:00Z
 ---
 
 # Spectral vanishing viscosity
@@ -235,6 +235,31 @@ $P_{\mathrm{SVV}}$ exists: the admissible range is found by trial and error
 [subcell finite-volume](/methods/subcell-finite-volume-shock-capturing.md)
 approach in the paper's introduction.
 
+## SVV in the HORSES3D code
+
+[Ferrer et al. (2023)](/sources/ferrer-2023.md), the software paper of
+the [HORSES3D](/software/horses3d.md) DG code from the same group as
+Mateo-Gabín et al., list both uses (§4.1, §4.4):
+
+- **LES.** The SVV-Smagorinsky model (Manzanero et al., as cited) is
+  offered with Smagorinsky, WALE and Vreman, with the stated property of
+  keeping dissipation low in laminar flow while "providing the correct
+  dissipation for all wave–number ranges in turbulent regimes"; among the
+  [implicit-LES](/definitions/implicit-les.md) options, energy-stable split
+  forms are combined with SVV. No equation or parameter is printed.
+- **Shock capturing.** The artificial flux (Navier–Stokes or
+  Guermond–Popov) is filtered by an SVV kernel in Legendre modal space,
+  with the factorization $\mathcal B=\mathcal L^T\Lambda\mathcal L$ and
+  the filter applied to "only one half" of the factorized flux (Eq. 18),
+  the second formula above. A density-gradient sensor, the element integral
+  of $J\lvert\nabla_\xi\rho\rvert^2$ (Eq. 19), adds unfiltered dissipation
+  in troubled elements. The Mach 3 forward-facing step with 3653 elements
+  and $N=7$ is shown (Fig. 9), adapted from the preprint of Mateo-Gabín et
+  al., the same case as their §6.3.
+
+The paper states that the approach "has proven to be useful for the
+simulation of turbulent and supersonic flows", citing the group's work.
+
 ## Related constructions
 
 - [Flad & Gassner (2017)](/sources/flad-2017.md) (App. C) build a modal
@@ -274,3 +299,4 @@ approach in the paper's introduction.
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §1; §2, Eqs. (8)–(30); §4, Eqs. (65)–(100); §5, Eqs. (101)–(122), Figs. 2–3; §6.1, Eqs. (123)–(125), Fig. 4; §6.2–6.3, Eqs. (126)–(128), Figs. 5–7; §7; App. A, Fig. 8; App. D.
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — App. C.
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §III B.
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1; §4.4, Eqs. (15)–(19), Fig. 9.

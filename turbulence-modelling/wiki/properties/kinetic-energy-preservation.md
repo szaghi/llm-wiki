@@ -5,7 +5,7 @@ description: "A discretization is kinetic-energy preserving when its convective 
 status: established
 aliases: [KEP, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-25T19:47:00Z
+timestamp: 2026-10-26T05:06:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -84,6 +84,38 @@ limiter-optimized seventh-order WENO by the eighth-order split convective
 finite-difference scheme of Pirozzoli (2011), which "runs about twice as fast
 as the conventional WENO method" and was shown robust up to edge Mach 4; the
 paper does not discuss its energy-preservation properties.
+
+**Catalogue of split forms in a DG code.** [HORSES3D](/software/horses3d.md)
+offers the Morinishi, Ducros, Kennedy–Gruber, Pirozzoli, entropy-conserving
+and Chandrashekar split forms on Gauss–Lobatto nodes, where the
+summation-by-parts property recovers discrete energy or entropy conservation
+and improves robustness "especially in the presence of high numerical
+aliasing (e.g., under-resolved turbulence)"; the group has extended entropy
+stability to the Spalart–Allmaras equations and to a Navier–Stokes/Cahn–Hilliard
+model ([Ferrer et al. 2023](/sources/ferrer-2023.md), §3.3, §3.5). Two limits
+are stated: the split forms need the Gauss–Lobatto nodes, whereas the
+authors call the Gauss–Legendre nodes "more accurate" (§3.3), and the mortar
+coupling of faces between elements of different polynomial degree "does not
+retain entropy stability" (§3.6).
+[Blind et al. (2023)](/sources/blind-2023.md), §2.1, run
+[FLEXI](/software/flexi.md) with the skew-symmetric split form and Pirozzoli's
+fluxes "to obtain a dissipation-free and kinetic-energy preserving
+semi-discrete system", a Roe interface flux and a Vreman subgrid model, for
+wall-resolved and wall-modelled LES on adapted grids.
+
+**Energy-preserving central flux in an unstructured finite-volume code.**
+In the node-based solver M-Edge the convective face flux is Kok's
+skew-symmetric energy-preserving central flux, which "provides no numerical
+dissipation", so a Jameson–Schmidt–Turkel matrix dissipation must be added
+for stability on hybrid grids ([Carlsson et al. 2023](/sources/carlsson-2023.md),
+§2, Eqs. 2–3). The [low-dissipation low-dispersion scheme](/methods/low-dissipation-low-dispersion-scheme.md)
+keeps that flux, extrapolates its face values to cut dispersion and lowers
+the fourth-difference dissipation coefficient from the RANS value $1/128$
+to $1/512$–$1/1024$, which in their decaying-turbulence and channel tests
+removes the excess dissipation of the RANS-level setting (§4.2–4.3). The
+authors argue that the dissipation should ideally come only
+from the subgrid model (§2.3), the premise of a dissipation-free baseline
+discussed below.
 
 ## Kinetic energy as an entropy
 
@@ -207,3 +239,6 @@ polynomial de-aliasing in their in-house code, without timings.
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §1; §2.1–2.3, Eqs. (19)–(35) (entropy variables, kinetic energy as an entropy, pressure work); §3 (Pirozzoli and Chandrashekar fluxes); §5.1, Eq. (118); §6.1, Fig. 4.
 - [Cogo et al. (2022)](/sources/cogo-2022.md) — §2 (STREAmS: energy-preserving schemes, WENO with Ducros sensor, Laplacian viscous terms).
 - [Huang et al. (2022)](/sources/huang-2022.md) — §2.2 (eighth-order split convective finite differences).
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §3.3, §3.5 (split forms in HORSES3D, Gauss–Lobatto requirement, entropy-stable extensions); §3.6 (mortars not entropy stable).
+- [Blind et al. (2023)](/sources/blind-2023.md) — §2.1 (Pirozzoli split form in FLEXI for wall-resolved and wall-modelled LES).
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §2, Eqs. (2)–(3) (Kok's energy-preserving flux, JST dissipation); §2.3 (dissipation only from the subgrid model).

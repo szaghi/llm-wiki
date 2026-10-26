@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Compressible velocity transformations"
-description: "Maps that turn the mean velocity of a variable-property compressible wall layer into the incompressible law of the wall — van Driest, Trettel–Larsson, data-driven and total-stress-based — with semi-local scaling, temperature–velocity relations, and their assessment on DNS of channels and supersonic to hypersonic boundary layers."
+description: "Maps that turn the mean velocity of a variable-property compressible wall layer into the incompressible law of the wall — van Driest, Trettel–Larsson, data-driven and total-stress-based — with semi-local scaling, temperature–velocity relations, their assessment on DNS of channels and supersonic to hypersonic boundary layers, and their use as validation yardsticks."
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-25T16:48:00Z
+timestamp: 2026-10-25T20:36:00Z
 ---
 
 # Compressible velocity transformations
@@ -186,6 +186,45 @@ Iyer & Malik (2019) found the classical (van Driest-consistent) scaling more
 accurate for adiabatic walls, while Yang & Lv (2018) and Fu, Bose & Moin (2022)
 found semi-local damping better for cold walls.
 
+## Transformations as a validation yardstick
+
+Three further sources use a transformation not to rank transformations but to
+judge a simulation.
+
+- **Hybrid RANS/LES of supersonic channels.** [Carlsson et al. (2023)](/sources/carlsson-2023.md)
+  (§4.3, Eqs. 24–26) state, citing three earlier studies, that the van Driest
+  transformation, $u^+_{\mathrm{vD}}=\int_0^{u^+}\sqrt{\langle\rho\rangle/\rho_w}\,du^+$
+  with Reynolds stresses scaled by $\langle\rho\rangle/\rho_w$ (Eq. 25), "is
+  inaccurate for non-adiabatic walls", and adopt the Trettel–Larsson
+  transformation, whose wall distance $y_T^+=\langle\rho\rangle(\tau_w/\langle\rho\rangle)^{1/2}y/\langle\mu\rangle$
+  is the semi-local $y^*$ above. In SST-IDDES of isothermal-wall channels at
+  $M_b=1.5$, $Re_\tau=500$, 1015 and 5000, the transformed profiles of their
+  low-dissipation schemes agree with the DNS of Modesti & Pirozzoli (as they
+  cite it) at the two lower Reynolds numbers and collapse onto Reichardt's
+  incompressible law; at $Re_\tau=5000$, where no DNS exists, agreement with
+  that law is taken as the accuracy criterion. The more dissipative reference
+  scheme over-predicts the transformed velocity in the LES region (Fig. 5;
+  see [log-layer mismatch](/definitions/log-layer-mismatch.md) and the
+  [low-dissipation low-dispersion scheme](/methods/low-dissipation-low-dispersion-scheme.md)).
+  Carlsson et al. do not compare the two transformations on their own data;
+  the choice rests on the studies they cite.
+- **LES against DNS of hypersonic boundary layers.** [Helm & Martín (2022)](/sources/helm-2022.md)
+  (Sec. III B, Fig. 3, Tables I–II) compare van Driest-transformed profiles
+  of their LES with DNS at $M_e=2.9$ ($T_w/T_r=1.1$), 7.2 (0.52) and 9.0
+  (0.33): all three agree within 3 %. The Mach 3 LES shows a slightly lower
+  log-law intercept than the DNS, which they attribute to a mild forcing of
+  the DNS mean flow by its rescaling length, judging the LES "the more
+  accurate solution"; the Mach 10 LES overshoots the logarithmic layer of the
+  DNS because it under-predicts the skin friction, by less than 5 %. In the
+  upstream boundary layer of their Mach 7.2, 33° ramp the van Driest profiles
+  with and without the scale-similar part of the SGS model are identical
+  (Sec. IV F, Fig. 31).
+- **DNS code validation.** [Dang et al. (2022)](/sources/dang-2022.md) (§5.1,
+  Fig. 17) validate the GPU code [OpenCFD-SCU](/software/opencfd-scu.md) on
+  the Mach 2.9, 24° compression ramp with van Driest-transformed mean
+  profiles against the DNS of Martín and co-workers, reporting "good
+  agreement".
+
 ## Assessments of the temperature–velocity relation
 
 Cogo et al. (2022, §4, Fig. 9) compare Walz's relation with the generalized
@@ -219,9 +258,21 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
   Griffin et al. cite, for channels, pipes and boundary layers with and without
   heat transfer; Griffin et al. (§5) state that complex flows (for example
   blunt-body boundary layers behind curved shocks) remain untested.
+- **Printed form of Trettel–Larsson.** Carlsson et al. (2023) print Eq. (26)
+  as $u_T^+=\int_0^{u^+}\sqrt{(\langle\mu\rangle/\mu_w)\,dy_T^+/dy^+}\,du^+$,
+  with the square root over the whole product, whereas Cogo et al. (2022) and
+  Huang et al. (2022) write the velocity stretching of the same
+  transformation without a square root, $g_I=\mu^+dy^*/dy^+$ (table above).
+  Both printed forms are recorded here without deciding between them.
+- Helm & Martín (2022, Sec. III B) write "The much shorter rescaling length
+  of the DNS (29δ compared to 7δ for the LES)": as printed, the length called
+  shorter is the larger number.
 
 # Citations
 
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §1; §2.1, Eqs. (2.1)–(2.2); §2.2, Eqs. (2.3)–(2.5); §3, Figs. 1–7; §5.
 - [Cogo et al. (2022)](/sources/cogo-2022.md) — §4, Eqs. (4.1)–(4.4), Table 3, Figs. 8–9.
 - [Huang et al. (2022)](/sources/huang-2022.md) — §4.1, Eqs. (4.1)–(4.5), Figs. 10–11; §4.3.1, Table 5, Fig. 15.
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §4.3, Eqs. (24)–(26), Table 2, Fig. 5.
+- [Helm & Martín (2022)](/sources/helm-2022.md) — Sec. III B, Tables I–II, Fig. 3; Sec. IV F, Fig. 31.
+- [Dang et al. (2022)](/sources/dang-2022.md) — §5.1, Fig. 17.

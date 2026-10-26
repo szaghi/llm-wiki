@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "The triply periodic vortex flow started from a single-mode analytic field that transitions to turbulence and decays: at Re 40,000 against a 5400³ DNS to separate Smagorinsky and implicit LES errors, at Re 1600 to measure numerical dissipation and test subgrid models, inviscid to tune spectral vanishing viscosity, and in 2D to compare commutator errors."
+description: "The triply periodic vortex flow started from a single-mode analytic field that transitions to turbulence and decays: at Re 40,000 against a 5400³ DNS to separate Smagorinsky and implicit LES errors, at Re 1600 to measure numerical dissipation and test subgrid models, inviscid to tune spectral vanishing viscosity, in 2D for commutator errors, and as a parallel-scaling test."
 status: established
 aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex]
 tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation]
-timestamp: 2026-10-25T19:46:00Z
+timestamp: 2026-10-25T20:28:00Z
 ---
 
 # Taylor–Green vortex
@@ -166,6 +166,18 @@ order at equal degrees of freedom. As recalled by
 on the transitional TGV found that the coherent structures driving
 transition must be resolved, which fixes the minimum physical resolution.
 
+## TGV as a parallel-performance test
+
+[Ferrer et al. (2023)](/sources/ferrer-2023.md), §3.8, Fig. 5, use the TGV
+on a $64^3$ mesh as the strong-scaling test of the DG spectral-element code
+[HORSES3D](/software/horses3d.md) at polynomial degrees $N=3$ to 6: hybrid
+MPI+OpenMP parallelization reaches "86% of the ideal performance for 600
+cores" at $N=6$, and pure MPI scales worse. The abstract states "good
+scalability for up to 1000 processors". The paper states neither the
+Reynolds number nor whether $64^3$ counts elements or degrees of freedom,
+and reports no flow statistics for this run; it cites the TGV as a case
+widely used to report subgrid and implicit-LES capabilities.
+
 ## Two-dimensional analytic TGV as a commutator test
 
 [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md), App. F, use the
@@ -208,6 +220,8 @@ sources)*.
   agreement is qualitative; they print the time as "seconds" and the
   Smagorinsky viscosity (Eq. 125) without a density factor, although it is
   used as a dynamic viscosity. Read in arXiv v3.
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) were read in arXiv v1;
+  their scaling figure is not read here, only the stated values.
 - [Prakash et al. (2022)](/sources/prakash-2022.md) run no no-model case
   on the TGV and stop the analysis at the end of transition, so their
   ranking does not cover the decay phase.
@@ -221,3 +235,4 @@ sources)*.
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §6.1, Eqs. (123)–(125), Fig. 4.
 - [Basile et al. (2023)](/sources/basile-2023.md) — §3.2, §4.2.1 (recalled TGV studies).
 - [Pereira et al. (2021)](/sources/pereira-2021.md) — §IV.3.4 (recalled companion TGV study).
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — Abstract; §3.8, Fig. 5.

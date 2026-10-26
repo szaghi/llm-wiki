@@ -5,7 +5,7 @@ description: "Buoyancy-driven mixing of a heavy fluid placed above a light one: 
 status: established
 aliases: [Rayleigh-Taylor instability, RT mixing layer, Rayleigh–Taylor flow, variable-density mixing layer]
 tags: [benchmark, pans, hybrid-rans-les, rans]
-timestamp: 2026-10-25T19:38:00Z
+timestamp: 2026-10-26T05:07:00Z
 ---
 
 # Rayleigh–Taylor mixing
@@ -94,6 +94,18 @@ small variability among DNS and a broad range among
 [implicit LES](/definitions/implicit-les.md) runs, attributed beyond initial
 conditions to inviscid or one- and two-dimensional modelling assumptions.
 
+## Shock-driven counterpart
+
+[Davidovits et al. (2022)](/sources/davidovits-2022.md), §III, adapt the linear
+analysis of the Richtmyer–Meshkov instability to scale the turbulence a
+strong shock generates in a medium with order-one density fluctuations
+($\sigma_v\propto A_\sigma U_s$, page-local symbols defined there). For a
+continuous density field they use a pre-shock average Atwood number built
+from the normalized density standard deviation, which is not the two-fluid
+$At$ of this page; the scaling and the turbulent jump relations are on
+[shock-generated turbulence](/results/shock-generated-turbulence.md). No
+ingested source compares the two configurations.
+
 ## Qualifications
 
 - Only one ingested source runs the case; the page records its set-up and
@@ -117,3 +129,4 @@ conditions to inviscid or one- and two-dimensional modelling assumptions.
 # Citations
 
 - [Pereira et al. (2021)](/sources/pereira-2021.md) — §I, Fig. 1; §II, Eqs. (1)–(3), Table I; §III; §IV.1–IV.3, Table II, Figs. 8–17; App. A–B, Fig. 18.
+- [Davidovits et al. (2022)](/sources/davidovits-2022.md) — §III, §IV (Richtmyer–Meshkov scaling with a pre-shock Atwood number).

@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-26T05:09:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -47,6 +47,21 @@ can carry.
    "all diffusive effects in our simulations are of numerical nature" (the
    paper does not use the term implicit LES), and [Liu et al. (2022)](/sources/liu-2022.md)
    (§1) let dissipation be "provided by local truncation errors".
+   [Placco et al. (2023)](/sources/placco-2023.md) (§2) simulate the
+   supersonic wake of a Mars entry capsule with no explicit SGS model,
+   "using instead the numerical dissipation given by the numerical
+   discretisation as artificial viscosity acting at small scales": the
+   fifth-order WENO convective scheme of the GPU code
+   [STREAmS](/software/streams.md) (see [WENO schemes](/methods/weno-scheme.md)).
+   [Davidovits et al. (2022)](/sources/davidovits-2022.md) (§II A) run
+   shock-generated turbulence in an arbitrary Lagrangian–Eulerian
+   radiation-hydrodynamics code with artificial viscosity for shocks and
+   no physical viscosity or SGS model; they say the runs "should not be
+   regarded as direct numerical simulation" but are "in the spirit of
+   implicit large eddy simulations" (citing Sagaut), and analyse only
+   large-scale averages, "expected to be least influenced by the
+   (numerical) dissipation details\"
+   (see [shock-generated turbulence](/results/shock-generated-turbulence.md)).
 2. **Designed numerical regularization.** The numerical dissipation is
    built to act as a model. Vicente Cruz & Lamballais (2023, §5.1) use the
    [implicit spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
@@ -64,6 +79,16 @@ can carry.
    (§1) describe implicit LES as benefiting "from the scheme's numerical
    dissipation", against explicit LES which models the small scales; their
    own SVV-filtered Smagorinsky viscosity sits between the two.
+   [Ferrer et al. (2023)](/sources/ferrer-2023.md) (§4.1) list three
+   implicit-LES options of the [HORSES3D](/software/horses3d.md) DG code:
+   dissipative Riemann solvers, an interior-penalty parameter raised above
+   its coercivity minimum in the viscous discretization, and energy-stable
+   split forms combined with
+   [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md).
+   They state that DG dissipation and dispersion errors are confined to
+   high wavenumbers, so that the numerical dissipation acts "primarily on
+   under-resolved scales", making DG "very suitable for ILES" (citing
+   earlier studies).
 3. **Implicitly filtered LES.** The filter is the one induced by grid and
    discrete operator, whatever closure is added. Beck & Kurz (2023, §I)
    use the term in this sense: the filter width and shape are
@@ -133,6 +158,25 @@ interpretation they flag as needing further work).
   discrepancy" in the peak dissipation rate on $128^3$ and $256^3$, and
   kinetic energy matching the reference on all grids except $128^3$. See
   [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md).
+- **DG airfoil polars.** In HORSES3D, ILES of the NACA 0012 at
+  $Re_c=10^6$ on 18 000 hexahedra with $N=4$ (2.2 million degrees of
+  freedom) gives lift against angle of attack and a drag polar in "very
+  good agreement with the experimental data" (Ferrer et al. 2023, §4.1,
+  Fig. 7, adapted from the group's earlier paper); the experiment is not
+  named in this paper.
+- **Supersonic capsule wake.** Placco et al. (2023, §2–5) justify their
+  WENO-based ILES by turbulent-boundary-layer studies that found it
+  comparable to coarse DNS (Poggie et al.; Ritos et al., as recalled). They
+  run a $2048\times672\times672$ grid with an
+  [immersed boundary](/methods/immersed-boundary-method.md) at
+  $M_\infty=2$, $Re=10^6$ based on the capsule diameter, and report wake
+  topology, drag, lift and Strouhal numbers, with no comparison with
+  reference data, no grid-convergence study and no wall-unit resolution.
+- **Resolution check, shock-driven turbulence.** Davidovits et al. (2022,
+  §II A) rerun a subset of their 2D cases at double resolution in each
+  direction and state that the scalings of the averaged quantities do not
+  change; for one example case the analysis-region averages change by
+  0.6% to 2.9%, depending on the quantity.
 - **Jet reference.** Among the reference simulations of the PPRIME round
   jet, the finest hp-adapted hybrid RANS/LES of [Basile et al. (2023)](/sources/basile-2023.md)
   (§4.2.3, Fig. 9, Table 1) agrees on the centreline with the RANS-profile
@@ -267,6 +311,25 @@ $\nu_n$ the numerical viscosity, which they do not compute.
   numerical dissipation is "extremely detrimental" for coarse LES (Mittal &
   Moin 1997, as recalled): the opposite design choice to usage 2.
 
+- Ferrer et al. (2023, §4.1) call DG "very suitable for ILES" because its
+  numerical dissipation is confined to high wavenumbers, and give no
+  resolution condition; Flad & Gassner (2017), whom they cite, find that
+  the same high-wavenumber concentration makes de-aliased DG ILES fail
+  when the cutoff lies in the inertial range (above). Ferrer et al.
+  state no resolution condition and the paper reports no coarse-resolution
+  test, so the two statements are not recorded as a contradiction.
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) (§2.3) take the
+  position opposite to usage 2 for their hybrid RANS/LES: "if one assumes
+  that the added dissipation to the simulation should be only due to the
+  SGS scales", the scheme's fourth-order artificial dissipation should be
+  as low as possible, although "some amount of numerical dissipation is
+  often needed" for convergence (see
+  [numerical dissipation](/properties/numerical-dissipation.md)).
+- In the LES modelling-residual estimator that drives the
+  [mesh adaptation](/methods/mesh-adaptation.md) of
+  [Blind et al. (2023)](/sources/blind-2023.md) (§2.2), the subgrid terms
+  are zero for implicit LES, so the estimate contains only the resolved
+  terms.
 - Abe (2021) and Cao et al. (2022) reach opposite verdicts on implicit LES
   from different settings: a second-order finite-volume code on a coarse,
   strongly anisotropic grid in a separated shear layer, with a local
@@ -297,3 +360,8 @@ $\nu_n$ the numerical viscosity, which they do not compute.
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §1.
 - [Liu et al. (2022)](/sources/liu-2022.md) — §1.
 - [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md) — §1; §2; §3.2.
+- [Placco et al. (2023)](/sources/placco-2023.md) — §2; §3; §4–5.
+- [Davidovits et al. (2022)](/sources/davidovits-2022.md) — §II A.
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1, Fig. 7.
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §2.3.
+- [Blind et al. (2023)](/sources/blind-2023.md) — §2.2.

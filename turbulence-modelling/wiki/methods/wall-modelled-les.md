@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Wall-modelled large-eddy simulation"
-description: "LES that resolves the outer-layer eddies and replaces the near-wall viscous region by a wall-stress model: its definition and cost advantage, the grid-dependent error scaling of mean quantities, the interaction with SGS models, non-monotonic grid convergence, and its demonstrations on aircraft and separated flows."
+description: "LES that resolves the outer-layer eddies and replaces the near-wall viscous region by a wall-stress model: its definition and cost advantage, the grid-dependent error scaling of mean quantities, the interaction with SGS models, non-monotonic grid convergence, grid adaptation, immersed-boundary coupling, and its demonstrations on aircraft and separated flows."
 status: established
 aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-25T19:43:00Z
+timestamp: 2026-10-25T20:36:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -44,12 +44,53 @@ propagated from the wall.
 | Inverse velocity transformation | incompressible ODE mapped to compressible profiles plus an algebraic temperature–velocity relation | [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md) |
 | Learned (supervised or reinforcement learning) | network maps LES state to $\tau_w$ or to its update | [machine-learning wall models](/methods/machine-learning-wall-model.md) |
 
+[Cai et al. (2022)](/sources/cai-2022.md) (§I, §II.C.1) put the motivation
+in the same terms: without a wall model the no-slip condition requires grids
+refined "to the limit of DNS" in both wall-parallel and wall-normal
+directions near the wall.
+
 **How the stress reaches the LES.** Gillyns et al. (2022, §2) prescribe
 $\tau_w$ as a stress boundary condition (Nek5000's `sh` condition), which
 requires the stress formulation of the momentum equations. Bae & Koumoutsakos (2022, Methods, Eq. 10) keep
 no slip and impose the stress through a wall eddy viscosity chosen so that the
 resolved wall gradient gives the modelled stress, a choice they call better
 against [log-layer mismatch](/definitions/log-layer-mismatch.md).
+On non-body-fitted Cartesian grids the stress reaches the LES through an
+[immersed boundary](/methods/immersed-boundary-method.md): Cai et al. (2022,
+§II.C.1, Fig. 1b) invert the wall model at the fluid points next to the
+boundary, interpolate the friction velocity (not the velocity) to the
+boundary points, set the tangential velocity there from $u_\tau u^+(y^+)$,
+compute gradients by weighted least squares and correct the wall-normal
+gradient of the tangential velocity, which is "highly underestimated
+regardless of the accuracy of the gradient schemes", by a discrete wall-law
+gradient. They recall that immersed boundaries coupled to wall models give
+spurious oscillations of wall pressure and skin friction and over-estimate
+the mean skin friction, because the wall distance of near-wall nodes varies
+along a steep, under-resolved profile.
+
+**Near-wall stress constraint (constrained LES).** Because the immersed
+boundary is not conservative, the total near-wall Reynolds stress is not
+maintained and turbulence development is delayed; Cai et al. (2022,
+§II.C.1, Eq. 27, from the authors' earlier work and the constrained LES of
+Chen et al. and Verma et al., as they cite them) therefore augment the eddy
+viscosity "several grid points from wall" with the resolved stress:
+
+$$\nu_t^{\mathrm{hyb}}=\frac{2\nu_t^{\mathrm{RANS}}\langle\tilde S_{ij}\rangle\langle\tilde S_{ij}\rangle+R^{\mathrm{res}}_{ij}\langle\tilde S_{ij}\rangle}{2\langle\tilde S_{ij}\rangle\langle\tilde S_{ij}\rangle},\qquad \frac{\nu_t^{\mathrm{RANS}}}{\nu}=\kappa y^+\left(1-e^{-y^+/19}\right)^2,$$
+
+with $R^{\mathrm{res}}_{ij}=\langle\tilde u_i\tilde u_j\rangle-\langle\tilde u_i\rangle\langle\tilde u_j\rangle$
+the resolved Reynolds stress, $\langle\cdot\rangle$ a time average and $\tilde{\ }$
+the Favre filter of their weakly compressible lattice Boltzmann formulation
+(page-local $\nu_t^{\mathrm{hyb}}$, $\nu_t^{\mathrm{RANS}}$, $R^{\mathrm{res}}_{ij}$).
+Contracting the condition $R^{\mathrm{res}}_{ij}-2\nu_t^{\mathrm{hyb}}\langle\tilde S_{ij}\rangle=-2\nu_t^{\mathrm{RANS}}\langle\tilde S_{ij}\rangle$
+with $\langle\tilde S_{ij}\rangle$ gives exactly this formula: the total
+(resolved plus modelled) stress, projected on the mean strain, equals the
+mixing-length RANS stress *(compiler check, not in the sources)*. The authors
+state that $\nu_t^{\mathrm{hyb}}$ tends to the RANS viscosity in attached and
+to the SGS viscosity in separated boundary layers, which makes the method a
+form of [hybrid RANS/LES](/definitions/hybrid-rans-les.md) near the wall;
+how the return to the SGS viscosity is enforced is not printed. The SGS model
+is the [Vreman model](/methods/vreman-model.md) with $C_s\approx0.1$ in
+$\nu_t=2.5C_s^2\Delta^2\sqrt{B_\beta/A_\beta}$ (§II.A).
 
 Fowler et al. (2022, §1) and [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md)
 (§I, §II.A) also recall zonal two-layer models on a separate RANS mesh (whose
@@ -118,7 +159,15 @@ flap separation bubble collapses on the finest in-tunnel grid (§3.3).
 [Agrawal et al. (2022)](/sources/agrawal-2022.md) (§VIII.B) note that the
 suction peak of the Gaussian bump is primarily inviscid and is predicted by a
 free-slip run, whereas separation needs the finest grid (first cell at
-$y^+\sim30$ upstream).
+$y^+\sim30$ upstream). On a transonic airfoil [Blind et al. (2023)](/sources/blind-2023.md)
+(§4, Fig. 13) find the same order on a sequence of adapted grids: $c_p$
+converges fastest, the skin friction after the second adaptation and the
+boundary-layer thickness $\delta_{99}$, the most sensitive quantity, only on
+the fourth grid. On the Ahmed body Cai et al. (2022, §IV) find that the
+wall-modelled flow separates on the slant only on the finer of two grids
+($\Delta x_{\min}/H=4.5\times10^{-3}$ against $9.0\times10^{-3}$), and that
+grid resolution affects drag more with the wall model than with no-slip
+imposed on the slant, because the flow topology changes between the grids.
 
 ## Grid convergence can be non-monotonic
 
@@ -194,6 +243,34 @@ Low numerical dissipation is a precondition: Goc et al. (2021, §2.3) call
 [numerical dissipation](/properties/numerical-dissipation.md) "extremely
 detrimental" for coarse LES and use kinetic-energy- and entropy-preserving
 schemes ([kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+[Carlsson et al. (2023)](/sources/carlsson-2023.md) (§4.3, Fig. 4) show the
+consequence in the WMLES branch of IDDES: on channel grids built to WMLES
+practice up to $Re_\tau=18\,000$, a central scheme with the artificial
+dissipation of RANS practice produces a significant
+[log-layer mismatch](/definitions/log-layer-mismatch.md), which their
+[low-dissipation low-dispersion scheme](/methods/low-dissipation-low-dispersion-scheme.md)
+reduces to a small one at the RANS–LES interface.
+
+## Grid adaptation for WMLES
+
+[Blind et al. (2023)](/sources/blind-2023.md) adapt the residual-based grid
+adaptation of Toosi & Larsson to the DG spectral element code
+[FLEXI](/software/flexi.md) (details on [mesh adaptation](/methods/mesh-adaptation.md))
+and apply it to WMLES. Left alone, the residual estimator sees the strongest
+under-resolution next to the wall and refines there; but "severe
+underresolution in that region is a choice and not an error", so the target
+spacing of every cell between the wall and $h_{\mathrm{wm}}$ is reset, in all
+three directions, to its value at $h_{\mathrm{wm}}$ (a rule credited to Toosi,
+personal communication; §3.3). With the Vreman constant raised to 0.11
+("previous experience" in the code), Spalding's law and $h_{\mathrm{wm}}=0.1h$
+in channel flow at $Re_\tau=2000$, the mean velocity agrees with DNS above
+$h_{\mathrm{wm}}$ on the fourth grid ($l=3$) and the Reynolds stresses on the
+fifth, $\langle u'u'\rangle$ not exactly, which they attribute to WMLES rather
+than to the adaptation (Figs. 10–11). On the adapted grids the matching point
+can sit in the second off-wall cell. The WMLES of a transonic NACA 64A-110
+airfoil ($M=0.72$, $Re_c=9.3\times10^5$, $h_{\mathrm{wm}}=0.0134c$) starts from
+six elements per chord and reaches the wall-resolved reference in $c_p$,
+$\tau_w$ and $\delta_{99}$ within four grids (§4).
 
 ## Demonstrations
 
@@ -238,6 +315,26 @@ schemes ([kinetic-energy preservation](/properties/kinetic-energy-preservation.m
   about 60 % ($L_{sep}/\delta_0\approx7.8\to12.6$; §4.3). The authors rest the
   validity of the equilibrium model in this strongly separated flow on earlier
   work (Bermejo-Moreno et al. 2014, as recalled), not on a test here.
+- **Bluff body with massive separation on an immersed boundary** (Cai et al.
+  2022, §III–IV): Ahmed body with 35° slant, $Re_H=7.68\times10^5$, lattice
+  Boltzmann solver ProLB with the Vreman model, explicit equilibrium wall
+  model and the constrained-LES near-wall viscosity, octree grids of 13.6 M
+  and 40.3 M cells, Mach number raised from 0.12 to 0.24 to enlarge the time
+  step. Wall model everywhere ("wall-law") is compared with no-slip imposed
+  in advance on slant and base. Drag coefficients (near-field/far-field,
+  Table III): wall-law fine 0.2347/0.2380, coarse 0.2742/0.2912; no-slip
+  fine 0.2553/0.2588, coarse 0.2548/0.2486; against experiments of 0.279
+  (Meile et al., same $Re_H$) and 0.26 (Ahmed et al., $Re_H=1.2\times10^6$),
+  and body-fitted computations of Guilmineau et al. of 0.2999 ($k$-$\omega$
+  SST), 0.2603 (EARSM), 0.3156 (DES) and 0.3452 (IDDES), as they list them.
+  The authors judge the fine wall-law case better overall by its velocity
+  profiles and closer to Meile et al. than the body-fitted IDDES.
+- **Transonic airfoil on adapted DG grids** (Blind et al. 2023, §4): see
+  the section above; 222 426 elements on the last grid, about half of what a mesh
+  of the same spacings without spanwise mortar zones would need.
+- **IDDES channel flow** (Carlsson et al. 2023, §4.3, Table 2): SST-IDDES at
+  $M_b=0.15$ ($Re_\tau=395$, 2400, 18 000) and $M_b=1.5$ (500, 1015, 5000),
+  $64\times64$ points in the wall-parallel plane, first node at $y^+\approx0.5$.
 - **Learned wall models** (Bae & Koumoutsakos 2022): channel flow from
   $Re_\tau=5200$ to $10^6$ at $\Delta x=\Delta z=0.05\delta$, and a zero-pressure-gradient
   flat-plate boundary layer at $Re_\theta=1000$–7000; see
@@ -259,6 +356,22 @@ schemes ([kinetic-energy preservation](/properties/kinetic-energy-preservation.m
   backed by a cost comparison in the source; they recall WMLES of fan stages
   by others.
 - Locators of Lozano-Durán et al. (2022) refer to the arXiv v1 preprint read, not the AIAA Journal version.
+- **Drag of the Ahmed body.** Against Meile et al.'s 0.279, the fine-grid
+  wall-law drag of Cai et al. (2022, Table III) is closer than the
+  body-fitted IDDES (0.3452) but farther than their fine no-slip case
+  (0.2553) and their coarse wall-law case (0.2742), which does not separate
+  on the slant, so drag alone does not rank the cases in the authors' order
+  *(compiler check, not in the sources)*. The authors' judgement rests on the
+  velocity profiles (§IV, Figs. 8–9).
+- Blind et al. (2023, Table 4) list the friction Reynolds number computed in
+  the wall-modelled $Re_\tau=2000$ channel as 627.91, 872.29, 1241.07,
+  1220.01 and 1555.60 on the five grids, without comment; they judge
+  convergence on the profiles. The table is captioned "wall-modeled
+  $Re_\tau=550$ channel", while its spacings (333.33 $=2000/6$ at $l=0$)
+  belong to $Re_\tau=2000$ *(compiler check, not in the sources)*.
+- Locators of Blind et al. (2023) refer to the arXiv v1 preprint read
+  (titled "Grid-Adaptation for Wall-Modeled Large Eddy Simulation Using
+  Unstructured High-Order Methods"), not the Computers & Fluids version.
 
 # Citations
 
@@ -275,3 +388,6 @@ schemes ([kinetic-energy preservation](/properties/kinetic-energy-preservation.m
 - [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §1–2; §5–10, Tables 1–3.
 - [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §1; §3; §4.3.
 - [François et al. (2022)](/sources/francois-2022.md) — §1; §4.1.
+- [Cai et al. (2022)](/sources/cai-2022.md) — §I; §II.A; §II.C.1, Eq. (27), Fig. 1(b); §II.C.2; §III, Table II; §IV, Figs. 8–9, Table III.
+- [Blind et al. (2023)](/sources/blind-2023.md) — §3.3, Table 4, Figs. 9–11; §4, Table 6, Fig. 13.
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §4.3, Table 2, Fig. 4.

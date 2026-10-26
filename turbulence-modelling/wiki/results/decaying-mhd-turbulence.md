@@ -5,7 +5,7 @@ description: "Decaying MHD turbulence is a selective decay whose power laws foll
 status: established
 aliases: [selective decay, Saffman invariant, Hosking invariant, Saffman helicity invariant, Loitsyansky invariant, reconnection-controlled decay, inverse transfer]
 tags: [mhd, astrophysics, plasma, decaying-turbulence, reconnection]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-26T05:06:00Z
 ---
 
 # Decaying MHD turbulence and its invariants
@@ -137,6 +137,16 @@ coefficient of the magnetic spectrum grows, $J_B\sim b^2L^5$, which is the
 review's account of **inverse transfer** without helicity (§12.5,
 Eq. 12.33).
 
+In a driven setting, [Dahlin et al. (2022)](/sources/dahlin-2022.md) (§1–§2)
+recall helicity condensation (Antiochos 2013, building on the inverse
+cascade of magnetic helicity of Berger & Field 1984, Berger 1984, Finn &
+Antonsen 1985 and Biskamp 1993, as recalled): reconnection between the fields twisted by
+neighbouring photospheric cells of the same rotation sense removes the twist
+between them and moves twist flux to ever larger scales, until it accumulates at the boundary of the flux
+system. Their [STITCH model](/methods/stitch-helicity-condensation-model.md)
+parametrizes the outcome of that inverse transfer as a boundary source term
+in driven runs; the paper states no decay law.
+
 ## Decaying RMHD and imbalanced decay
 
 With a strong mean field (§12.6), Zhou et al. (2020), as recalled, find
@@ -153,6 +163,32 @@ $d(Z^\pm)^2/dt\sim-Z^\mp(Z^\pm)^2/L$, conserves $Z^+-Z^-$ and drives the
 system towards Elsasser states (§12.7, Eqs. 12.49–12.50; Dobrowolny et al. 1980,
 Maron & Goldreich 2001, as recalled), where $Z^\pm$ are the rms Elsasser
 amplitudes of [reduced MHD](/definitions/reduced-mhd.md).
+
+## Decay as a diagnostic problem
+
+Decay also matters where it is not the object of study. [Ferrand et al.
+(2022)](/sources/ferrand-2022.md) evaluate [exact
+laws](/results/turbulence-exact-laws.md) of compressible Hall MHD on
+$1024^3$ DNS of free decay (no forcing, initial random-phase modes at
+$1\le k\le3$, $Re=Rm\simeq3\times10^3$), where the stationarity behind the
+inertial-range law fails (§3, §5):
+
+- The energy decay rates from linear fits over the analysis windows are
+  $\approx0.047$ with a mean field $B_0=2$ and $\approx0.087$ without, in
+  code units, and the inertial-range cascade rate roughly matches them (§3.1,
+  §4).
+- With $B_0=2$, kinetic plus magnetic energy oscillates in step with the
+  internal energy, an exchange the authors attribute to waves (§3.1, Fig. 1;
+  see [compressible MHD turbulence](/results/compressible-mhd-turbulence.md)).
+- In the general (non-stationary) form of the laws, the time derivative of
+  the two-point energy correlator acts as a scale-dependent energy
+  reservoir that replaces large-scale forcing and is shared between cascade
+  and dissipation; the authors conclude that the stationary inertial-range
+  law still holds in decaying turbulence (§5–§6).
+
+These runs analyse one window near the peak of dissipation each (§3.1,
+§3.3) and report no decay exponents to compare with the selective-decay
+laws above.
 
 ## Qualifications
 
@@ -177,3 +213,5 @@ amplitudes of [reduced MHD](/definitions/reduced-mhd.md).
 # Citations
 
 - [Schekochihin (2022)](/sources/schekochihin-2022.md) — §12 (Eqs. 12.1–12.50): §12.1.1–§12.1.2, §12.2.1–§12.2.3, §12.3, §12.4.1–§12.4.3, §12.5, §12.5.2, §12.6, §12.6.2, §12.7; Figs. 25–29 cited only as locations of the evidence the text describes.
+- [Ferrand et al. (2022)](/sources/ferrand-2022.md) — §3.1, Figs. 1–2; §4; §5–§6 (decay in compressible Hall-MHD DNS, non-stationary exact laws).
+- [Dahlin et al. (2022)](/sources/dahlin-2022.md) — §1–§2 (helicity condensation as inverse helicity transfer, recalled).

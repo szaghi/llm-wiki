@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Turbulent channel flow"
-description: "Pressure-driven flow between two parallel walls, periodic in the wall-parallel directions, the canonical wall-bounded test: here DNS at Re_τ 180, wall-resolved LES at 590, a priori data at 395 to 2000, wall-modelled LES at Re_τ 1000 to 10¹⁰, hybrid RANS/LES at 5200 and 20,000, and compressible channels to bulk Mach 4."
+description: "Pressure-driven flow between two parallel walls, periodic in the wall-parallel directions, the canonical wall-bounded test: here DNS at Re_τ 180, wall-resolved LES at 180 to 2000 (learned subgrid models, grid adaptation), a priori data at 395 to 2000, wall-modelled LES at Re_τ 1000 to 10¹⁰, hybrid RANS/LES to 20,000, and compressible channels to bulk Mach 4."
 status: established
 aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow]
 tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns]
-timestamp: 2026-10-25T19:46:00Z
+timestamp: 2026-10-26T05:08:00Z
 ---
 
 # Turbulent channel flow
@@ -40,6 +40,9 @@ closures.
 | [Prakash et al. (2022)](/sources/prakash-2022.md), §III.B.3, Tables 3–4 | wall-resolved LES of structural SGS models | 590 | $2\pi\delta\times2\delta\times\pi\delta$ | trilinear finite elements, $48\times111\times48$ ($\Delta x^+=78$, $\Delta z^+=39$) and $64\times133\times64$ ($\Delta x^+=58$, $\Delta z^+=29$), first point at $\Delta y^+=1$ |
 | [Gillyns et al. (2022)](/sources/gillyns-2022.md), §§5–9 | spectral-element WMLES | 1000, 5200 | $2\pi\delta\times2\delta\times\pi\delta$ | $N=7$; $22\times16$ elements in $x$, $z$ ($0.286\delta$, $0.196\delta$ per element) with 4 to 6 elements per half-height at 1000; 20 and 10 elements per half-height at 5200 |
 | [Bae & Koumoutsakos (2022)](/sources/bae-2022.md), Methods, Table 1 | in-solver training and testing of RL wall models | 2000, 4200, 8000 (training); 5200 to $10^6$ (testing) | $2\pi\delta\times2\delta\times\pi\delta$ | $\Delta x=\Delta z=0.05\delta$; $\Delta y=0.05\delta$, refined to $0.025\delta$ and $0.01\delta$ in two test cases |
+| [Kim et al. (2022)](/sources/kim-2022.md), Tables I–III | in-solver training of a reinforcement-learning SGS model | 180, 360 (training); 720 (testing) | $4\pi\times2\times2\pi$, $2\pi\times2\times\pi$, $\pi\times2\times0.5\pi$ (units $\delta$) | LES $32\times49\times32$ ($\Delta x^+=70.7$, $\Delta z^+=35.3$) and $24\times49\times24$ (94.2, 47.1) at 180; $32\times65\times32$ at 360; $32\times97\times32$ at 720 |
+| [Blind et al. (2023)](/sources/blind-2023.md), §3, Tables 1–4 | residual-based grid adaptation of DG LES | 550, 2000 (wall-resolved); 2000 (wall-modelled) | $10\delta\times2\delta\times3\delta$ | DGSEM $N=5$, from $10\times2\times3$ elements to 16,200 elements ($3.5\times10^6$ DOF) at 550 and 142,662 elements ($3.1\times10^7$ DOF) with 2-to-1 mortars at 2000 |
+| [Carlsson et al. (2023)](/sources/carlsson-2023.md), §4.3, Table 2 | SST-IDDES with low-dissipation schemes | 395, 2400, 18,000 (bulk Mach 0.15); 500, 1015, 5000 (bulk Mach 1.5) | $2\pi\delta\times2\delta\times\pi\delta$ | $64\times N_y\times64$ with $N_y$ from 75 to 132, first point at $y^+\approx0.5$, stretching 1.14; $\Delta x^+$ from 40 to 1795; one $128\times118\times128$ grid at 1015 |
 
 Reference DNS named by the sources: Kim, Moin & Moser at $Re_\tau=180$
 (Cao et al.); Moser, Kim & Mansour at $Re_\tau=590$ (Flad & Gassner;
@@ -49,8 +52,13 @@ et al.; Vadrot et al.; Gillyns et al.); the Johns Hopkins database at 1000
 (Fowler et al.; Vadrot et al.); Trettel & Larsson for the compressible
 channels (Griffin et al.). The flow is driven at constant mass flow
 (Cao et al.; Prakash et al., at bulk Reynolds number
-$Re_b=\langle u\rangle_b\delta/\nu=10{,}975$; Gillyns et al.) or at
-constant pressure gradient (Bae & Koumoutsakos), said per source.
+$Re_b=\langle u\rangle_b\delta/\nu=10{,}975$; Gillyns et al.; Carlsson et al.)
+or at constant pressure gradient (Bae & Koumoutsakos), said per source.
+Further references: Lee & Moser for the grid-adaptation runs (Blind et al.);
+Moser, Kim & Mansour at 395 and Modesti & Pirozzoli for the supersonic
+channels at 500 and 1015 (Carlsson et al.); the authors' own DNS at 180, 360
+and 720, filtered in the homogeneous directions with a cut-off filter
+(Kim et al.).
 
 ## What the case tests
 
@@ -143,6 +151,48 @@ one (see [scale-similarity and mixed models](/methods/scale-similarity-model.md)
 [energy backscatter](/definitions/energy-backscatter.md)). The TKE peak of
 the unclipped gradient model is significantly overpredicted on both meshes.
 
+**Subgrid models trained on mean statistics.**
+[Kim et al. (2022)](/sources/kim-2022.md) train a pointwise neural-network
+SGS model by [reinforcement learning](/methods/reinforcement-learning-closure.md)
+inside channel LES, rewarding only agreement with the filtered-DNS profiles
+of the mean viscous stress and the mean resolved Reynolds shear stress. At
+$Re_\tau=180$ on the $\Delta x^+=70.7$, $\Delta z^+=35.3$ grid the
+tensor-output models reproduce the filtered-DNS mean velocity and Reynolds
+shear stress almost exactly and improve the rms velocities, the mean SGS
+shear stress and the spectra over the static [Vreman model](/methods/vreman-model.md)
+($C_s=0.08$ in their notation), dynamic Smagorinsky and no-model LES; an
+eddy-viscosity-output variant over-predicts the mean velocity in the buffer
+and log layers, like dynamic Smagorinsky (§III C, Fig. 7). Training also
+succeeds on the coarser grid and at $Re_\tau=360$. At untrained Reynolds
+numbers (360 and 720 for the model trained at 180) the Reynolds shear stress
+stays close to the filtered DNS while the buffer-layer slope of the mean
+velocity is under-estimated; on an untrained coarser grid the model fails
+(§III D, Figs. 12–13). A variant with backscatter clipped performs almost
+the same (see [energy backscatter](/definitions/energy-backscatter.md)).
+
+**Grid adaptation for DG LES.** [Blind et al. (2023)](/sources/blind-2023.md),
+§3, use the channel to transfer a residual-based
+[mesh-adaptation](/methods/mesh-adaptation.md) method to the DG
+spectral-element code [FLEXI](/software/flexi.md) with the Vreman model. At
+$Re_\tau=550$ (wall-resolved) the sequence of grids resembles the
+finite-difference results of Toosi & Larsson and converges after four
+iterations to a spacing of about $\Delta x^+\approx18$, $\Delta y^+\approx1$,
+$\Delta z^+\approx8$ per degree of freedom at the wall, where the computed
+$Re_\tau$ is 556.57; the mean velocity matches the Lee & Moser DNS on the
+last grid and the Reynolds stresses one grid earlier (Table 1, Figs. 1–3).
+The suggested wall-parallel spacings are larger in the viscous sublayer than
+in the buffer layer, which the authors call correct. At $Re_\tau=2000$ with
+2-to-1 mortar interfaces the procedure converges after five iterations
+($Re_\tau=1967.37$), and the mortars save about 50% of the elements against a
+structured mesh of the same near-wall spacing; the time step is unchanged,
+so the saving is in processors (§3.2, Tables 2–3). In wall-modelled LES at
+$Re_\tau=2000$ (Spalding's law, matching at $0.1\delta$, $h_{\mathrm{wm}}^+=200$,
+Vreman constant raised to 0.11) the target spacing below
+$h_{\mathrm{wm}}$ is clamped to its value at $h_{\mathrm{wm}}$; the mean
+velocity agrees with DNS above $h_{\mathrm{wm}}$ after three iterations and
+the stresses after four, with $\langle u'u'\rangle$ not exactly converged,
+which the authors attribute to WMLES (§3.3, Figs. 10–11).
+
 **Element-based LES.** [Flad & Gassner (2017)](/sources/flad-2017.md),
 §6.2, Fig. 11, compare split-form DG LES with the dynamic Smagorinsky model
 against no-model, de-aliased DG at $Re_\tau=590$; the split-form LES gives
@@ -184,13 +234,33 @@ hypersonic boundary layers: the channel does not exhaust the test of a
 compressible transformation (see
 [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)).
 
+**Numerical dissipation in hybrid RANS/LES.**
+[Carlsson et al. (2023)](/sources/carlsson-2023.md), §4.3, Figs. 4–6, run
+SST-based improved delayed DES on wall-modelled-LES grids in an unstructured
+second-order finite-volume code. With the artificial dissipation of RANS
+practice, the mean velocity is correct in the RANS region but shows a
+significant [log-layer mismatch](/definitions/log-layer-mismatch.md) at all
+Reynolds numbers as soon as the model switches to LES; with the
+[low-dissipation low-dispersion scheme](/methods/low-dissipation-low-dispersion-scheme.md)
+the mean velocity and total stresses agree with DNS at $Re_\tau=395$ and
+only a small mismatch remains at the RANS–LES interface ($y^+\approx200$ at
+2400, $\approx2000$ at 18,000). In the supersonic channels (bulk Mach 1.5,
+isothermal walls) the Trettel–Larsson-transformed profiles agree with DNS
+at 500 and 1015 and with Reichardt's law, the dissipative reference scheme
+over-estimates the velocity in the LES region, and the streamwise
+normal-stress peak is under-predicted, improved on the grid refined in $x$
+and $z$ (see [compressible velocity transformations](/definitions/compressible-velocity-transformation.md)).
+The shock-capturing term of the scheme switches off by itself in the
+low-speed channel.
+
 **Hybrid RANS/LES and transition from RANS.**
 [Haering et al. (2022)](/sources/haering-2022.md), §V A, run the
 [active model split](/methods/active-model-split.md) method at
 $Re_\tau\approx5200$ on four grids from $\Delta x^+\approx701$ to 1552
 (84K to 408K times fewer cells than the DNS). The mean is nearly
-grid-independent with no log-layer mismatch, and the resolved fraction
-reaches $\beta\approx0.4$ at the centreline on the fine grid. Started from
+grid-independent with no log-layer mismatch, and the computable unresolved fraction
+$\beta_k=1-k_{\mathrm{res}}/k_{\mathrm{tot}}$ (page-local) falls to 0.4 at
+the centreline on the fine grid. Started from
 RANS, the hybrid state develops in time with a transient overshoot that heals
 by eight flow-throughs, and in space (a $16\pi$-long channel with a RANS
 inlet) without overshoot but slowly. At $Re_\tau=20{,}000$ the mean
@@ -203,8 +273,8 @@ three grid spacings) and find higher stress-tensor correlations for their
 tensor-coefficient model than for dynamic Smagorinsky, mostly near the wall,
 and identical dissipation correlations. [Haering et al. (2022)](/sources/haering-2022.md),
 §III B, Fig. 1, box-filter DNS at $Re_\tau=1000$ (excluding $y^+<300$) to
-fit $\alpha=\beta^{1.7}$ between the modelled-energy fraction and the
-computable unresolved fraction. [Fowler et al. (2022)](/sources/fowler-2022.md),
+fit $\alpha_k=\beta_k^{1.7}$ between the modelled-energy fraction
+$\alpha_k=k_{\mathrm{sgs}}/k_{\mathrm{tot}}$ (page-local) and $\beta_k$. [Fowler et al. (2022)](/sources/fowler-2022.md),
 §2.3, Fig. 2, time-filter Johns Hopkins DNS at $Re_\tau=1000$ to show that
 filtering at their relaxation time collapses near-wall profiles onto the law
 of the wall.
@@ -283,6 +353,19 @@ Reynolds number given). See
 - [Cao et al. (2022)](/sources/cao-2022.md) were read in the arXiv v1
   preprint; they print the wall shear stress as $\partial U/\partial y$ at
   the wall, without the viscosity.
+- [Kim et al. (2022)](/sources/kim-2022.md) (read in arXiv v2) write the
+  Vreman constant in a form with $2.5C_s^2$; the value 0.08 is theirs. The
+  averaging time of their statistics is not quantified.
+- [Blind et al. (2023)](/sources/blind-2023.md) were read in arXiv v1, under
+  a title that differs from the published one. Their Table 4, captioned as
+  the $Re_\tau=550$ wall-modelled channel, holds the $Re_\tau=2000$ case,
+  whose computed $Re_\tau$ on the last grid is 1555.60, not discussed in the
+  text. Their element counts, $N_y$ and $\Delta_y$ columns are not mutually
+  consistent (two elements over the half-height or the full height).
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) show Reynolds stresses
+  only at $Re_\tau=395$ and in the supersonic cases, although their
+  conclusion calls the resolved stresses excellent at all three subsonic
+  Reynolds numbers; the $Re_\tau=5000$ supersonic case has no DNS.
 
 # Citations
 
@@ -301,3 +384,6 @@ Reynolds number given). See
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Results pp. 4–8, Table 1, Figs. 2–7; Methods pp. 12–14 (preprint v1).
 - [Huang et al. (2022)](/sources/huang-2022.md) — §4.1 (recalled channel results).
 - [Cogo et al. (2022)](/sources/cogo-2022.md) — §4 (recalled channel results).
+- [Kim et al. (2022)](/sources/kim-2022.md) — §II A–F, Tables I–III; §III C–D, Figs. 7–13.
+- [Blind et al. (2023)](/sources/blind-2023.md) — §3.1–3.3, Tables 1–4, Figs. 1–11 (arXiv v1).
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §4.3, Table 2, Figs. 4–6; §5.
