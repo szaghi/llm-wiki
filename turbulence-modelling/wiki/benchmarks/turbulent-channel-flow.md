@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Turbulent channel flow"
-description: "Pressure-driven flow between two parallel walls, periodic in the wall-parallel directions, the canonical wall-bounded test: here DNS at Re_τ 180, wall-resolved LES at 180 to 2000 (learned subgrid models, grid adaptation), a priori data at 395 to 2000, wall-modelled LES at Re_τ 1000 to 10¹⁰, hybrid RANS/LES to 20,000, and compressible channels to bulk Mach 4."
+description: "Pressure-driven flow between two parallel walls, periodic in the wall-parallel directions: here DNS at Re_τ 100 to 395 (gas-kinetic, GPU, real-gas), wall-resolved and implicit LES at 180 to 2000 (learned subgrid models, grid adaptation), a priori data at 395 to 2000, wall-modelled LES at Re_τ 1000 to 10¹⁰, hybrid RANS/LES to 20,000, and compressible channels to bulk Mach 4."
 status: established
 aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow]
 tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns]
-timestamp: 2026-10-26T05:08:00Z
+timestamp: 2026-10-26T07:40:00Z
 ---
 
 # Turbulent channel flow
@@ -43,6 +43,12 @@ closures.
 | [Kim et al. (2022)](/sources/kim-2022.md), Tables I–III | in-solver training of a reinforcement-learning SGS model | 180, 360 (training); 720 (testing) | $4\pi\times2\times2\pi$, $2\pi\times2\times\pi$, $\pi\times2\times0.5\pi$ (units $\delta$) | LES $32\times49\times32$ ($\Delta x^+=70.7$, $\Delta z^+=35.3$) and $24\times49\times24$ (94.2, 47.1) at 180; $32\times65\times32$ at 360; $32\times97\times32$ at 720 |
 | [Blind et al. (2023)](/sources/blind-2023.md), §3, Tables 1–4 | residual-based grid adaptation of DG LES | 550, 2000 (wall-resolved); 2000 (wall-modelled) | $10\delta\times2\delta\times3\delta$ | DGSEM $N=5$, from $10\times2\times3$ elements to 16,200 elements ($3.5\times10^6$ DOF) at 550 and 142,662 elements ($3.1\times10^7$ DOF) with 2-to-1 mortars at 2000 |
 | [Carlsson et al. (2023)](/sources/carlsson-2023.md), §4.3, Table 2 | SST-IDDES with low-dissipation schemes | 395, 2400, 18,000 (bulk Mach 0.15); 500, 1015, 5000 (bulk Mach 1.5) | $2\pi\delta\times2\delta\times\pi\delta$ | $64\times N_y\times64$ with $N_y$ from 75 to 132, first point at $y^+\approx0.5$, stretching 1.14; $\Delta x^+$ from 40 to 1795; one $128\times118\times128$ grid at 1015 |
+| [Zhao et al. (2023a)](/sources/zhao-2023.md), §5.2, Tables 6–9 | implicit LES with a gas-kinetic scheme | 180, 395 (Mach 0.1) | $2\pi\times2\times\pi$ (units $\delta$) | $64\times96\times64$ ($\Delta x^+=17.66$, $\Delta y^+_{\min}=0.29$); $96^3$ ($\Delta x^+=25.84$, $\Delta z^+=12.92$, $\Delta y^+_{\min}=0.58$) |
+| [Wang et al. (2023b)](/sources/wang-2023-b.md), §4.2, Tables 6–7 | GPU DNS, single against double precision | 395 (Mach 0.1); bulk $Re=3000$ at bulk Mach 0.8, isothermal walls | $2\pi\times2\times\pi$ (units $\delta$) | $256\times128\times128$ and $256\times256\times128$ ($\Delta x^+=\Delta z^+=9.69$); $128^3$ and $128\times256\times128$ ($\Delta x^+=8.76$, $\Delta z^+=4.38$) |
+| [Lederer et al. (2023)](/sources/lederer-2023.md), §4, Table 1 | under-resolved LES with a divergence-free mixed finite-element method | 392.24 | $2\pi\times2\times\pi$ | $6^3$, $12^3$, $16^3$ hexahedra at $N=3$ and $4^3$, $6^3$, $8^3$ at $N=6$ (43.2 to 775.7 thousand DOF); first-element height per point $\Delta y^+=3.0$ to 13.6 |
+| [Kang et al. (2023)](/sources/kang-2023.md), §3.5, Tables 8, 10 | a priori and a posteriori test of a neural-network SGS model | 180 (training), 395 (testing) | $4\pi\delta\times2\delta\times\tfrac43\pi\delta$ at 180; $2\pi\delta\times2\delta\times\pi\delta$ at 395 | DNS $192^3$; LES $48^3$ ($\Delta x^+=47.2$, $\Delta z^+=15.7$ at 180), $32\times48\times32$, $64^3$ |
+| [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md), §III A, App. B–C | a priori budget of the anisotropic SGS stress | 400 | $2\pi h\times2h\times\pi h$ | DNS $256\times192\times256$; filters and LES at $(\Delta x^+,\Delta z^+)=(26.2,13.1)$, $(52.4,26.2)$, $(105,52.4)$ |
+| [Bernades et al. (2023)](/sources/bernades-2023.md), §4.3 | DNS of a transcritical (real-gas) channel | 100 at the cold wall | $4\pi\delta\times2\delta\times\tfrac43\pi\delta$ | $128^3$; $\Delta x^+=9.8$, $\Delta z^+=3.3$, first point $y^+=0.1$ |
 
 Reference DNS named by the sources: Kim, Moin & Moser at $Re_\tau=180$
 (Cao et al.); Moser, Kim & Mansour at $Re_\tau=590$ (Flad & Gassner;
@@ -215,6 +221,124 @@ judge their scheme better overall, and note it uses a coarser, stretched
 grid where the lattice Boltzmann run needs $\Delta x^+\approx0.3$ everywhere
 (§3.3). See [direct numerical simulation](/definitions/direct-numerical-simulation.md).
 
+**Reconstruction order of an implicit-LES scheme.**
+[Zhao et al. (2023a)](/sources/zhao-2023.md) (read in arXiv v1), §5.2,
+run the channel with their
+[high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md)
+as [implicit LES](/definitions/implicit-les.md), at constant mass flux
+from a perturbed Poiseuille profile (transition about $400\,\delta/U_c$,
+averaging $200\,\delta/U_c$). The realized $Re_\tau$ measures the scheme's
+dissipation (Tables 8–9):
+
+| Reconstruction | $Re_\tau$ at nominal 180 | $Re_\tau$ at nominal 395 |
+|---|---|---|
+| DNS (Moser et al.) | 178.12 | 392.24 |
+| 5th order, non-compact | 171.33 | 360.35 |
+| 7th order normal, 5th tangential | 177.04 | 378.97 |
+| 7th order in all directions | 178.44 | 380.45 |
+| 5th order, compact | 176.27 | 377.05 |
+
+The higher-order and compact reconstructions also bring the mean velocity,
+rms profiles and Reynolds stress closer to DNS and keep more energy at high
+wavenumbers in the spectra at $y^+=30$ and 180, all runs showing a
+levelling-off near the cutoff that the authors attribute to the mesh
+(§5.2.1–5.2.3, Figs. 8–15). The compact fifth-order scheme nearly matches
+the seventh-order one at the cost of the fifth-order non-compact one (0.618
+against 0.595 and 0.961 s per step, Table 7).
+
+**Single against double precision on GPUs.**
+[Wang et al. (2023b)](/sources/wang-2023-b.md) (read in arXiv v1), §4.2,
+run the same family of gas-kinetic schemes on GPUs as DNS of the channel at
+$Re_\tau=395$, Mach 0.1, against Moser, Kim & Mansour, and of a compressible
+channel at bulk Reynolds number 3000 and bulk Mach 0.8 against the DNS of Fu
+et al. Single precision halves the memory and runs 2.7 times faster on a
+TITAN RTX and 1.7 times on a V100 (Table 8). Statistics averaged over
+$200\,\delta/U_c$ agree between precisions, with a visible deviation of
+the streamwise rms, while instantaneous rms profiles at $t=20$ and $200\,\delta/U_c$ after a common restart differ;
+the authors attribute the difference to round-off of the same order as the
+discretization error and conclude that single precision "may not be safe"
+for DNS of time-evolving turbulence but may serve LES and RANS (Figs.
+10–14).
+
+**Exactly divergence-free high-order LES.**
+[Lederer et al. (2023)](/sources/lederer-2023.md) (read in arXiv v1), §4,
+compare no-model LES with upwind jump dissipation, a variational-multiscale
+[WALE](/methods/wale-model.md) model and their adaptive
+[high-order projection-based upwinding](/methods/high-order-projection-based-upwind-method.md)
+at $Re_\tau=392.24$. The mixed method transmits the wall stress exactly, so
+a constant body force drives the flow without a controller (§4). All
+methods converge to DNS under refinement; the WALE model is close to no
+model on the finer meshes and slightly worse on the coarsest ones. Relative
+errors of the bulk Reynolds number at $N=3$ on $6^3$, $12^3$, $16^3$
+elements are 13.4%, 3.1%, 1.1% without model, 16.3%, 4.7%, 2.7% with WALE
+and 0.7%, 1.0%, 0.6% with the adaptive upwinding, which resolves the buffer
+layer on the coarsest mesh; at $N=6$ the upwinding changes little (Table
+2, Figs. 1, 4–6). The authors interpret the adaptive upwinding as "a wall
+model approach for standard DG ILES" (§6).
+
+**A neural-network mixed model in the channel.**
+[Kang et al. (2023)](/sources/kang-2023.md), §3.5–3.7, train their
+[neural-network SGS model](/methods/neural-network-sgs-model.md) on filtered
+DNS of the channel at $Re_\tau=180$, normalizing the output by the
+volume-averaged norm of the resolved stress $L_{ij}$, because the gradient
+model used for isotropic turbulence has the wrong near-wall scaling. On the
+trained $48^3$ grid the skin friction is 0.0092 against 0.0085 for the
+filtered DNS, 0.0072 for dynamic Smagorinsky and 0.0103 without model
+(Table 11); the mean velocity, rms fluctuations and Reynolds shear stress
+improve over dynamic Smagorinsky, which over-predicts the mean velocity, and
+the model stays better on untrained grids ($32\times48\times32$, $64^3$) and
+at $Re_\tau=395$ (Figs. 25–27). A model trained only on isotropic
+turbulence runs stably but under-predicts the mean velocity, which the
+authors attribute to the vanishing mean off-diagonal SGS stress of the
+isotropic training data; plane-wise normalization partly fixes it (§3.5–3.6).
+They name the resolved-stress input as the main factor of generalization to
+the channel (§3.7).
+
+**The anisotropic part of the subgrid stress on coarse grids.**
+[Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) (read in arXiv v3)
+filter their DNS at $Re_\tau=400$ with a sharp cut-off in $x$ and $z$ only
+and split the exact SGS stress into an eddy-viscosity part that carries the
+whole local energy transfer and an anisotropic remainder that carries none.
+At the medium resolution $(\Delta x^+,\Delta z^+)=(52.4,26.2)$ the remainder
+is negligible in the resolved energy budget; at the coarse resolution
+$(105,52.4)$ its mean shear stress is comparable to the eddy-viscosity part,
+it redistributes energy productively into the spanwise resolved stress near
+the wall, comparably to the pressure–strain term below $y^+=100$, with a
+spectral peak at $\lambda_z^+\approx130$ that the authors relate to the
+streak spacing $\lambda_z^+\sim100$ (§III–IV). An a posteriori dynamic
+Smagorinsky LES at the same resolutions predicts the DNS mean velocity on the
+fine and medium grids and over-predicts it on the coarse one (App. C,
+Table I). See [scale-similarity models](/methods/scale-similarity-model.md),
+[gradient model](/methods/gradient-model.md) and
+[energy backscatter](/definitions/energy-backscatter.md).
+
+**A real-gas channel as a scheme test.**
+[Bernades et al. (2023)](/sources/bernades-2023.md), §4.3, Figs. 8–10, run a
+DNS of nitrogen at twice the critical pressure between isothermal walls at
+$0.75$ and $1.5$ times the critical temperature ($Re_\tau=100$ at the cold
+wall) with their pressure-equilibrium-preserving split scheme and with the
+kinetic-energy-preserving scheme that conserves total energy: the two agree
+to plotting accuracy in first- and second-order statistics, and the authors
+state that in the channel physical viscosity mitigates the pressure
+oscillations. See [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)
+and [kinetic-energy preservation](/properties/kinetic-energy-preservation.md).
+
+**Wall models beyond the canonical channel.**
+[Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) build their
+[building-block-flow wall model](/methods/building-block-flow-wall-model.md)
+on channel-type flows: laminar and turbulent channels, Poiseuille–Couette
+flows under favourable and adverse pressure gradient up to separation, and
+a channel at $Re_\tau=700$ to which a sudden spanwise pressure gradient 80
+times the streamwise one is applied (§2.3). In the latter the learned model
+keeps its own wall-stress error below 1% and predicts the drop of the
+streamwise wall stress and the rotation of the wall stress, which the
+equilibrium model misses by construction; in the adverse-gradient
+Poiseuille–Couette flows the equilibrium model has the smaller total error
+"for the wrong reasons", by error cancellation (§4.5–4.6, Figs. 11–13). A
+pipe at $Re_\tau\approx40{,}000$, beyond the training range, gives total
+errors of 4–12% for both models with non-monotonic grid convergence (§4.4,
+Fig. 10).
+
 **Grid convergence of the classical compressible wall model.**
 [Griffin et al. (2023)](/sources/griffin-2023.md), §4, run nine compressible
 channels at bulk Mach 0.7 to 4 and dimensionless wall heat flux $-B_q$ from
@@ -362,6 +486,34 @@ Reynolds number given). See
   whose computed $Re_\tau$ on the last grid is 1555.60, not discussed in the
   text. Their element counts, $N_y$ and $\Delta_y$ columns are not mutually
   consistent (two elements over the half-height or the full height).
+- [Zhao et al. (2023a)](/sources/zhao-2023.md) print the viscosity of the
+  $Re_\tau=180$ case as $2.83\times10^{-4}$, while their own log-law
+  procedure (Eqs. 25–26, $\kappa=0.40$, $B=5.5$, $U_c=1$) gives
+  $U_\tau=1/(2.5\ln180+5.5)=0.0541$ and $\mu=U_\tau/180=3.0\times10^{-4}$,
+  as do the realized values of Table 8 (e.g. $0.0515/171.33$), and the same
+  procedure reproduces the printed $1.24\times10^{-4}$ at $Re_\tau=395$; and $\Delta z^+=8.33$ where $\pi\cdot180/64=8.84$
+  *(compiler check, not in the sources)*. Their seventh-order runs use 4
+  Gauss points per face, with which their accuracy test gives about fourth
+  order (§4).
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) say that two of their
+  channel cases ran on one GPU and two on two GPUs, while Table 8 states two
+  GPUs for all. They draw the "may not be safe" conclusion from the
+  instantaneous rms profiles (Fig. 14), while the statistics averaged over
+  $200\,\delta/U_c$ agree between precisions (Figs. 10–13).
+- [Lederer et al. (2023)](/sources/lederer-2023.md) print the friction
+  Reynolds number with the half-height and call their bulk-Reynolds-number
+  error "only a rough error estimate"; their averaging time is not printed.
+- [Kang et al. (2023)](/sources/kang-2023.md) give the $Re_\tau=395$ LES
+  spacings ($\Delta x^+=52.0$ on $48^3$) slightly above $2\pi\cdot395/48=51.7$
+  *(compiler check, not in the sources)*.
+- [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) filter only in the
+  wall-parallel directions; their "medium" and "coarse" resolutions are those
+  of the filters, matched to the LES grids of App. C.
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md), §3.1, §3.3, run a
+  channel of finite length with parallel end walls and synthetic inflow
+  (83,790 elements, $N=5$) as a precursor that calibrates the inflow of a
+  turbine cascade; it is a developing flow, not the periodic channel of this
+  page (see [inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) show Reynolds stresses
   only at $Re_\tau=395$ and in the supersonic cases, although their
   conclusion calls the resolved stresses excellent at all three subsonic
@@ -387,3 +539,11 @@ Reynolds number given). See
 - [Kim et al. (2022)](/sources/kim-2022.md) — §II A–F, Tables I–III; §III C–D, Figs. 7–13.
 - [Blind et al. (2023)](/sources/blind-2023.md) — §3.1–3.3, Tables 1–4, Figs. 1–11 (arXiv v1).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §4.3, Table 2, Figs. 4–6; §5.
+- [Zhao et al. (2023a)](/sources/zhao-2023.md) — §5.2, Tables 6–9, Figs. 8–17.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4.2, Tables 6–8, Figs. 9–14.
+- [Lederer et al. (2023)](/sources/lederer-2023.md) — §4, §4.1, Tables 1–2, Figs. 1–6.
+- [Kang et al. (2023)](/sources/kang-2023.md) — §3.5–3.7, Tables 8–13, Figs. 25–33.
+- [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §III–IV; App. B–C, Table I, Figs. 16–17.
+- [Bernades et al. (2023)](/sources/bernades-2023.md) — §4.3, Figs. 8–10; §5.
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.3; §4.4–4.6, Figs. 10–13.
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §3.1, §3.3, Table 2.

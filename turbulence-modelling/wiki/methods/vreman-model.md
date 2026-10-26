@@ -5,7 +5,7 @@ description: "Vreman's static eddy-viscosity model builds the subgrid viscosity 
 status: established
 aliases: [Vreman eddy-viscosity model, Vreman (2004) model, static-coefficient Vreman model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-26T05:09:00Z
+timestamp: 2026-10-26T07:19:00Z
 ---
 
 # Vreman model
@@ -149,6 +149,25 @@ $N$ (the paper's $P$), with $N=5$.
   [HORSES3D](/software/horses3d.md) DG code, with Smagorinsky and WALE
   ([Ferrer et al. 2023](/sources/ferrer-2023.md), §4.1; no formula printed).
 
+- **Building-block-flow wall model.** [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md)
+  (§3.2, §4.2–4.5) run their machine-learned
+  [building-block-flow wall model](/methods/building-block-flow-wall-model.md)
+  and the [equilibrium wall model](/methods/equilibrium-wall-model.md)
+  with the Vreman and the dynamic Smagorinsky models in charLES (no
+  equations printed). In the laminar Blasius boundary layer all four
+  combinations give the mean velocity within 5%, the equilibrium model
+  benefiting from cancellation between its own and the SGS-model errors;
+  across the cases, the SGS-model errors at the matching location limit
+  the accuracy of the learned wall model (§4.2, §6). See
+  [wall-modelled LES](/methods/wall-modelled-les.md).
+- **DG Taylor–Green vortex.** [Kou et al. (2023)](/sources/kou-2023.md)
+  (§4.2, Fig. 12) adapt the Vreman and Smagorinsky models to the DG code
+  [HORSES3D](/software/horses3d.md) and find both inferior to
+  [jump-penalty stabilization](/methods/jump-penalty-stabilization.md) at
+  $Re=1600$ ($32^3$ elements, $N=3$): lower peak dissipation rate, higher
+  dissipation before the peak and significant dissipation at mid
+  wavenumbers. No constant or filter width is printed.
+
 ## Fluctuating viscosity and the mean stress
 
 [Haering et al. (2022)](/sources/haering-2022.md) (§V D) list Vreman with
@@ -181,3 +200,5 @@ computed and subtracted from the mean-stress model.
 - [Cai et al. (2022)](/sources/cai-2022.md) — §II.A, Eqs. (11)–(15); §II.C.1.
 - [Blind et al. (2023)](/sources/blind-2023.md) — §2.2–2.3; §3; §3.3.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1.
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §3.2; §4.2–4.5; §6.
+- [Kou et al. (2023)](/sources/kou-2023.md) — §4.2, Fig. 12.

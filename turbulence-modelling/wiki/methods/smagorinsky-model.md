@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-26T05:09:00Z
+timestamp: 2026-10-26T07:41:00Z
 ---
 
 # Smagorinsky model
@@ -48,6 +48,8 @@ are variants of the same eddy-viscosity idea.
 | 0.17 | "the common choice", 3D forced turbulence | Agdestein & Sanderse (2025), App. G.2 |
 | 0.1 | with van Driest damping $A^+=25$, called "generally used constants"; a priori test on a backward-facing-step shear layer | [Abe (2021)](/sources/abe-2021.md), §II A, Eqs. (3)–(4) |
 | 0.2 | viscosity amplitude of an SVV-filtered LES in DG ($N=8$) | [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md), §6.1, Eq. (125) |
+| 0.17 | static baseline in DG LES of forced HIT, "theoretical $C_s=0.17$ suggested" in the literature (no citation) | [Kurz et al. (2023)](/sources/kurz-2023.md), §3.5 |
+| 0–0.5 | element-wise range of a reinforcement-learned coefficient | Kurz et al. (2023), §3.4 |
 
 Lilly's value is consistent with the recalled formula: $\pi^{-1}(2.1)^{-3/4}\approx0.18$
 *(compiler check, not in the sources)*. The fitted 2D coefficients of
@@ -169,6 +171,33 @@ limiting behavior".
   (RL-Quad), clipped at zero. The trained distributions are strongly skewed
   towards small $C_s$, and RL-Quad places its maximum at the element centre
   (§V B); see [reinforcement-learning closures](/methods/reinforcement-learning-closure.md).
+- **Element-wise coefficient, element-local policy.** In a related paper
+  of the same group, [Kurz et al. (2023)](/sources/kurz-2023.md) (§3.4, §4.2–4.4,
+  Figs. 6, 8) learn one $C_s\in[0,0.5]$ per DG element from the momentum
+  field inside the element only, with the form $\mu_t=\bar\rho(C_s\Delta)^2\lvert\bar S\rvert$
+  (Eq. 19). Most predicted values are close to zero with a decaying tail;
+  at 24 degrees of freedom per direction the policy uses almost the whole
+  range up to 0.5, at 48 its largest value does not exceed 0.3. A policy
+  trained at 36 degrees of freedom predicts up to 0.4 and one trained at 48
+  up to 0.3 on either resolution, from which the authors conclude that the
+  coefficient distribution is a property of the discretization the policy
+  was trained on ("discretization-adapted" models; see
+  [discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
+- **Shear-improved Smagorinsky in lattice Boltzmann.** [Cheylan et al. (2023)](/sources/cheylan-2023.md)
+  (§2.7, Eqs. 37–38), following Lévêque et al. (as recalled), subtract from
+  $\lvert\bar S\rvert$ the norm of a low-pass time-filtered strain rate,
+  so that the viscosity responds only to the fluctuating shear, with the
+  local lattice spacing as filter width. The eddy viscosity enters the
+  [lattice Boltzmann](/methods/lattice-boltzmann-method.md) relaxation time
+  as $(\nu+\nu_t)/c_s^2+\tfrac12\Delta t$ ($c_s$ the lattice sound speed,
+  $\Delta t$ the time step, page-local). It is used for a turbulent
+  fluid–structure benchmark at $Re=10\,000$; the constant and the
+  normalization of the strain norm are not printed.
+- **Smagorinsky limit of DDES.** [Delassaux et al. (2023)](/sources/delassaux-2023.md)
+  (§4.1.3) state that under local equilibrium (production equal to
+  dissipation) the subgrid model of SST-based delayed
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md)
+  reduces to the Smagorinsky–Lilly model; the derivation is not given.
 - **Mixed explicit–implicit.** Smagorinsky added to implicit SVV
   (Vicente Cruz & Lamballais 2023, §6.5); see
   [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md).
@@ -252,6 +281,14 @@ of eddy viscosity", matters more (§III C, §IV). The conclusion rests on
 these correlations, angle PDFs and eigenvalue ratios; see
 [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md).
 
+A learned stress shows the same alignment when it is given only the strain:
+the neural-network SGS model of [Kang et al. (2023)](/sources/kang-2023.md)
+(§3.1, Table 3, Figs. 4–6) with $\bar S_{ij}$ as its only input returns a
+stress with correlation $-0.82$ between $\bar S_{12}$ and $\tau_{12}$,
+against $-0.28$ in filtered DNS of forced isotropic turbulence; it "only
+rescales the given input", predicts no backscatter, and performs a
+posteriori almost identically to the dynamic Smagorinsky model.
+
 **Isotropic turbulence a posteriori.** In decaying isotropic turbulence at
 $Re_\lambda=240$, the authors call Smagorinsky "one of the most dissipative
 models", evident in the spectra, and the Smagorinsky-based models deviate
@@ -261,7 +298,35 @@ structure function (Seyedi & Zayernouri
 the [fractional SGS model](/methods/fractional-sgs-model.md) (§III.2,
 Fig. 4).
 
+**Smagorinsky against learned and implicit closures.** In DG LES of
+forced isotropic turbulence at $Re_\lambda\approx180$ with $N=5$ and 7,
+static Smagorinsky ($C_s=0.17$) is over-dissipative near the resolution
+limit, no-model LES piles energy up, and the learned element-wise
+coefficient matches the DNS spectrum (Kurz et al. 2023, §4.2, Fig. 6);
+this repeats the over-damping that Beck & Kurz (2023) report at $N=5$.
+On the Taylor–Green vortex at $Re=1600$ ($32^3$ elements, $N=3$),
+Smagorinsky and [Vreman](/methods/vreman-model.md) models adapted to DG
+give a lower peak of the dissipation rate, a higher dissipation rate before
+$t/t_c=8$ ($t_c$ the convective time) and significant dissipation at mid
+wavenumbers, and are "clearly" inferior to
+[jump-penalty stabilization](/methods/jump-penalty-stabilization.md)
+([Kou et al. 2023](/sources/kou-2023.md), §4.2, Fig. 12); the constants and
+filter width are not printed. The dynamic form is the baseline of the
+learned closures of Kang et al. (2023), [Sirignano & MacArt (2023)](/sources/sirignano-2023.md)
+(§3.2, Eq. 3.4) and of the WMLES of [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md),
+and of the a priori analysis of [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md)
+(§IV B); results are on the [dynamic procedure](/methods/dynamic-procedure.md)
+page.
+
 ## Qualifications
+
+- Cheylan et al. (2023, Eq. 37) print the viscosity as
+  $\nu_t=(C_S^2\Delta x)^2(\lvert S\rvert-\mathcal S)$, with $C_S$ called "the
+  Smagorinsky constant" and $\mathcal S$ the time-filtered strain norm;
+  with the registry form $(C_s\Delta)^2\lvert\bar S\rvert$ the constant
+  would appear squared once, not twice *(compiler check, not in the
+  sources)*. No value is printed, so the convention cannot be checked
+  against a number.
 
 - Flad & Gassner (2017) use two conventions for the coefficient: App. A and
   App. B print $\nu_t=C_S^2\Delta^2\lvert S\rvert$, App. C and App. D print
@@ -304,3 +369,11 @@ Fig. 4).
 - [Kim et al. (2022)](/sources/kim-2022.md) — §III C; §III E, Eq. (27), Figs. 15–20, Table IV; §IV.
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §II, Eq. (9).
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1.
+- [Kurz et al. (2023)](/sources/kurz-2023.md) — §3.3, Eq. (19); §3.4–3.5; §4.2–4.4, Figs. 6, 8.
+- [Cheylan et al. (2023)](/sources/cheylan-2023.md) — §2.7, Eqs. (37)–(38).
+- [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §4.1.3.
+- [Kang et al. (2023)](/sources/kang-2023.md) — §3.1, Table 3, Figs. 4–6.
+- [Kou et al. (2023)](/sources/kou-2023.md) — §4.2, Fig. 12.
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §3.2, Eq. (3.4).
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §3.2.
+- [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §IV B, Eq. (22).

@@ -137,13 +137,14 @@ No DOIs are printed; no duplicate or unparseable item.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Energy backscatter and the subgrid energy flux](/definitions/energy-backscatter.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
+- [Anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Scale-similarity and mixed subgrid-scale models](/methods/scale-similarity-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)

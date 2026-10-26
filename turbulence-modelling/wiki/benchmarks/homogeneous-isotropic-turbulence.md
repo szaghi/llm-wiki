@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Homogeneous isotropic turbulence (decaying and forced)"
-description: "Turbulence in a triply periodic box, decaying from a prescribed spectrum or sustained by forcing: a priori database and a posteriori test of subgrid closures (Re_λ 70 to 418, LES of 24³ to 144³ degrees of freedom), a dissipation test of schemes for hybrid RANS/LES, a DNS test up to supersonic turbulent Mach numbers, and driven MHD turbulence."
+description: "Turbulence in a triply periodic box, decaying from a prescribed spectrum or sustained by forcing: a priori database and a posteriori test of subgrid closures, learned ones included (Re_λ 70 to 418, LES of 24³ to 144³ degrees of freedom), a dissipation test of schemes for hybrid RANS/LES, DNS up to supersonic turbulent Mach numbers, and driven MHD turbulence."
 status: established
 aliases: [HIT, DHIT, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-25T20:27:00Z
+timestamp: 2026-10-26T07:40:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -41,6 +41,8 @@ notation registry.)
 | [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md), §III, §IV | forced (a priori); decaying (a posteriori) | 170, 240, 355 (a priori); 240 (a posteriori) | pseudo-spectral, $320^3$, $520^3$, $1024^3$; ten snapshots per $Re_\lambda$ | a priori box filters of dimensionless size 2 to 32; LES at sizes 4 and 20 from the $520^3$ DNS | decaying runs started from the filtered statistically stationary field; large-eddy turnover time about 2.7 |
 | [Carlsson et al. (2023)](/sources/carlsson-2023.md), §4.2 | decaying (grid turbulence of Comte-Bellot & Corrsin) | not given; $U_0M_g/\nu=34{,}000$ on the grid mesh size $M_g$ | experiment, spectra at $tU_0/M_g=42$, 98, 171 | $32^3$, $64^3$, $128^3$ nodes, second-order finite volumes, SA- and SST-based LES | field built from the measured spectrum; turbulent Mach number 0.1 |
 | [Gan et al. (2022)](/sources/gan-2022.md), §2 | forced, compressible isothermal MHD with a strong guide field | not given | none | ideal MHD, $512^3$ ($8\pi\times2\pi\times2\pi$ in one run), ATHENA++ | Ornstein–Uhlenbeck forcing at $0<\lvert\boldsymbol k\rvert\le2$, incompressible or compressible velocity driving; $v_A=8$, $\beta_p=0.4$, turbulent Mach number 0.12–0.18 |
+| [Kurz et al. (2023)](/sources/kurz-2023.md), §3–4, Table 2 | forced | about 180 (training and tests); about 240 (generalization) | DNS spectrum and velocity PDF, resolution not stated | DG: $N=5$ on $4^3$, $6^3$, $8^3$ elements and $N=7$ on $4^3$ (24, 36, 48 and 32 DOF per direction) | Rogallo initialization, linear (Lundgren) forcing; Mach 0.1; large-eddy turnover time about 0.7 |
+| [Kang et al. (2023)](/sources/kang-2023.md), §2, §3, App. A | forced (training, a posteriori); decaying (a posteriori) | 106 and 286 (training), 164 (validation) | pseudo-spectral, $192^3$, $512^3$ ($256^3$ at 164); 37 to 50 snapshots | pseudo-spectral LES, $24^3$, $48^3$, $96^3$ at 106; $128^3$ at 286 | set-ups of Mohan et al. (106) and Chumakov (286), forcing wavenumbers 2 and 1.5; decaying runs started from the converged filtered field |
 
 The beck-2023 DNS used 16,384 cores of the HAWK system for almost two hours
 (about 30,000 CPU hours). [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md)
@@ -72,6 +74,50 @@ but deviates at 24 DOF; their
 [reinforcement-learning closures](/methods/reinforcement-learning-closure.md)
 reach or exceed the best baseline in all cases except no-model LES at $N=3$
 (§V, Figs. 8–14).
+
+**A reinforcement-learned Smagorinsky coefficient for implicitly filtered DG LES.**
+[Kurz et al. (2023)](/sources/kurz-2023.md) (read in arXiv v2), from the
+same group and on the same forced case at $Re_\lambda\approx180$ as
+[Beck & Kurz (2023)](/sources/beck-2023.md), train with
+[Relexi](/software/relexi.md) and [FLEXI](/software/flexi.md) a policy that
+sets an element-wise Smagorinsky coefficient $C_s\in[0,0.5]$ from
+element-local momentum alone, rewarded by the error of the instantaneous
+spectrum against the time-averaged DNS spectrum up to a cutoff of 2.6 to 3
+points per wavelength (§3.4–3.5, Table 2). A posteriori, from an unseen
+initial state and over four times the training horizon, the policies are
+stable; no-model LES piles up energy at high wavenumbers, static
+Smagorinsky with $C_s=0.17$ over-dissipates near the resolution limit, the
+dynamic Smagorinsky model matches the RL model except at 24 DOF, where the
+RL model is "significantly better" and the authors suspect the test filter
+lies outside the scale-similar range (§4.2, Fig. 6). The predicted $C_s$
+shrinks with resolution (up to 0.5 at 24 DOF, at most 0.3 at 48 DOF); the
+36- and 48-DOF policies transfer to each other's resolution and to
+$Re_\lambda\approx240$ (§4.4–4.5, Figs. 8–9). Policies fed with the five
+velocity-gradient invariants train slower and end worse (§4.3, Fig. 7). See
+[reinforcement-learning closures](/methods/reinforcement-learning-closure.md)
+and [discretization-consistent closure](/definitions/discretization-consistent-closure.md).
+
+**A neural-network mixed model, a priori and a posteriori.**
+[Kang et al. (2023)](/sources/kang-2023.md) train a two-layer, 12-neuron
+[neural-network SGS model](/methods/neural-network-sgs-model.md) on
+filtered DNS of forced HIT at $Re_\lambda=106$ and 286 (§2, Table 1). With
+the resolved strain alone as input, the network predicts a stress almost
+aligned with the strain (correlation of its $\tau_{12}$ with $\bar S_{12}$
+of $-0.82$, against $-0.28$ for the filtered-DNS stress), no backscatter, and LES almost identical to
+the dynamic Smagorinsky model (§3.1, Table 3, Figs. 4–6). Adding the
+resolved stress $L_{ij}$ as input doubles the a priori stress correlation
+(0.70–0.72 against 0.35–0.37), reproduces the PDF of the SGS dissipation
+including backscatter, and runs stably with no averaging or clipping (§3.1,
+Table 4, Fig. 8). Trained at one Reynolds number and resolution, with inputs
+and output normalized by volume-averaged norms, it predicts decaying HIT at
+$24^3$ to $128^3$ and $Re_\lambda=106$ and 286 better than dynamic
+Smagorinsky (§3.2, Table 5, Figs. 13–17), and beats the algebraic dynamic
+mixed models a posteriori although they correlate as well or better a priori
+(§3.3, Table 6, Figs. 19–22), at 0.71 of the cost of the dynamic
+Smagorinsky stress evaluation (§3.4). The algebraic dynamic models diverge
+within tens of steps without averaging and clipping (Fig. 20). See
+[energy backscatter](/definitions/energy-backscatter.md) and
+[scale-similarity models](/methods/scale-similarity-model.md).
 
 **Dissipation of a non-Boussinesq model.**
 [Agrawal et al. (2022)](/sources/agrawal-2022.md) use decaying HIT to show
@@ -238,6 +284,13 @@ to fast modes and 0.73 to 0.79 to fluctuations on no linear branch
 (§3, Fig. 2). The guide field makes the box anisotropic; see
 [compressible MHD turbulence](/results/compressible-mhd-turbulence.md).
 
+**Not this case: decaying MHD from the Orszag–Tang vortex.**
+[Foldes et al. (2023)](/sources/foldes-2023.md) test a
+[lattice Boltzmann](/methods/lattice-boltzmann-method.md) MHD code on a
+triply periodic box too, but their initial field is the deterministic 3D
+Orszag–Tang vortex, not isotropic turbulence (§4.4, §5); that test is
+recorded on [decaying MHD turbulence](/results/decaying-mhd-turbulence.md).
+
 **Closure constants.** As recalled by
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md), decay rates of grid
 turbulence (Comte-Bellot & Corrsin 1966) constrain the coefficients of RANS
@@ -313,6 +366,25 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
   periodic-box turbulence but anisotropic by construction (guide field
   $v_A=8$); their fractions exclude the injection range $\lvert\boldsymbol k\rvert\le2$
   and the $(k_\parallel=0,\omega=0)$ component.
+- [Kurz et al. (2023)](/sources/kurz-2023.md) and
+  [Beck & Kurz (2023)](/sources/beck-2023.md) both compare reinforcement-learned
+  closures with the dynamic Smagorinsky model on forced HIT at
+  $Re_\lambda\approx180$ but in different configurations (polynomial degrees,
+  DOF, action noise). Kurz et al. find the RL model equal to the dynamic
+  model except at 24 DOF, where it is "significantly better" (§4.2); Beck &
+  Kurz find the RL models better than the dynamic model for $N=5$ and $N=8$,
+  with the dynamic model close at 36 DOF and off at 24 DOF (§V A–B). Both
+  report the dynamic model's weakness at 24 DOF and relate it to the test
+  filter leaving the scale-similar range, so they agree where their
+  configurations overlap.
+- [Kang et al. (2023)](/sources/kang-2023.md), App. A, Table 14, obtain
+  $Re_\lambda=122.9$, not 164, when reproducing the forced DNS of Langford &
+  Moser with the negative-viscosity forcing that paper describes, and 164.7
+  with the deterministic forcing of Machiels. They print the Leaky-ReLU
+  activation as $\max[-0.02x,x]$ (§2.4): for $x<0$ this returns
+  $-0.02x>0$, a non-monotone function, whereas $\max[0.02x,x]$ has slope
+  0.02 for negative arguments *(compiler check, not in the sources)*; the
+  paper does not say which form the code uses.
 - The set-ups differ in what is forced: velocity modes below a wavenumber
   at fixed power ([Prakash et al. (2022)](/sources/prakash-2022.md),
   Eqs. 21–23), solenoidal or compressive acceleration fields
@@ -338,3 +410,6 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) — §III.1–III.2, Eq. (23), Table I, Figs. 3–7; §IV, Figs. 8–10.
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §4.2, Fig. 3; §5.
 - [Gan et al. (2022)](/sources/gan-2022.md) — §2; §3, Figs. 1–3.
+- [Kurz et al. (2023)](/sources/kurz-2023.md) — §1, §3.4–3.5, Table 2; §4.1–4.5, Figs. 5–9.
+- [Kang et al. (2023)](/sources/kang-2023.md) — §2, Table 1; §3.1–3.4, Tables 3–6, Figs. 4–24; App. A, Table 14.
+- [Foldes et al. (2023)](/sources/foldes-2023.md) — §4.4, §5 (contrast only: Orszag–Tang initial field).

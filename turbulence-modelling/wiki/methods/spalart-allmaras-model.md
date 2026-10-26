@@ -5,7 +5,7 @@ description: "The one-equation eddy-viscosity RANS model transporting the workin
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-25T20:38:00Z
+timestamp: 2026-10-26T07:20:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -126,6 +126,19 @@ equations, implemented in HORSES3D, where the implicit solvers use an
 analytic Jacobian for the Navier–Stokes part and a numerical Jacobian with
 colouring once SA is included (§3.5, §3.7; see
 [discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)).
+
+For discontinuous Galerkin RANS, Zhao et al. (2023b) recall two ways of
+keeping the SA variable admissible: Crivellini et al. modify the source and
+diffusion terms only where the working variable or the closure functions
+become negative (the variant whose negative branch Cato et al. print
+above), and Moro et al. use an always-positive auxiliary variable
+([Zhao et al. (2023b)](/sources/zhao-2023-b.md), §1). Zhao et al. themselves
+avoid the issue for the [SST model](/methods/k-omega-sst-model.md) by
+solving the turbulence equations with a first-order finite-volume scheme.
+On NACA 0012 at $10^\circ$ their SST pressure coefficient differs from the SA
+results of Anderson et al. (SUPG finite elements) near the upper-surface
+leading edge, a difference they say "might be interpreted by the
+turbulence model" without testing it (§5.2).
 
 ## Variants
 
@@ -421,3 +434,4 @@ meshes as future work (§9).
 - [Cato et al. (2023)](/sources/cato-2023.md) — §II A Eqs. 2–4, §II B Eq. 5, §II E, Tables I–III, §VII (HAL v2).
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §3.5, §3.7, §4.1 Fig. 6 (arXiv v1).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §3, §4.2–4.4.
+- [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §1, §5.2.

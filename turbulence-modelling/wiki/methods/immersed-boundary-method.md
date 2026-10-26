@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Immersed boundary methods"
-description: "Immersed boundary methods impose solid walls on grids that do not conform to them, by reconstructing values at boundary or ghost points or by a penalization source; this page covers the variants used for DNS and LES, their coupling with wall models in a lattice Boltzmann solver, and the loss of near-wall stress they cause."
+description: "Immersed boundary methods impose solid walls on grids that do not conform to them, by reconstruction at boundary or ghost points, a penalization source or direct forcing spread from Lagrangian markers; this page covers the variants used for DNS and LES, the Lagrangian weight, wall models in a lattice Boltzmann solver and the near-wall errors they cause."
 status: established
-aliases: [IBM, immersed boundary, ghost-point forcing, volume penalization, IB wall model]
+aliases: [IBM, immersed boundary, ghost-point forcing, volume penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight]
 tags: [immersed-boundary, wall-model, lattice-boltzmann, les, dns]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-26T07:42:00Z
 ---
 
 # Immersed boundary methods
@@ -16,19 +16,23 @@ high-order mesh that ignores the body), and imposes the wall condition
 either by **reconstructing** the flow variables at grid points near or inside
 the body from the wall value and the surrounding fluid, or by a
 **penalization source term** that drives the velocity towards the body
-velocity inside a mask. In the sources it carries DNS of pipe flow on a
+velocity inside a mask, or by **direct forcing** computed on Lagrangian
+surface markers and spread to the grid. In the sources it carries DNS of pipe flow on a
 Cartesian mesh, implicit LES of a capsule wake, wall-modelled LES of a car
-body in a lattice Boltzmann code, and rotating blades in a DG code. Two
+body in a lattice Boltzmann code, rotating blades in a DG code, and an
+elastic beam in turbulent cross-flow in a lattice Boltzmann code. Three
 sources report a less accurate near-wall field: the wall distance of the
 near-wall nodes varies along the surface and the method does not conserve
-fluxes across the immersed surface (Cai et al. 2022), and a softly imposed
+fluxes across the immersed surface (Cai et al. 2022), a softly imposed
 no-slip condition can leave a residual wall velocity (Vicente Cruz &
-Lamballais 2023).
+Lamballais 2023), and with direct forcing the interpolation and spreading
+operators are not reciprocal, which leaves a boundary slip error
+([Cheylan et al. 2023](/sources/cheylan-2023.md)).
 
 ## Variants
 
-**Reconstruction at boundary points (lattice Boltzmann).** In the ProLB
-solver used by [Cai et al. (2022)](/sources/cai-2022.md), §II.B.1, the
+**Reconstruction at boundary points (lattice Boltzmann).** In the
+[ProLB](/software/prolb.md) solver used by [Cai et al. (2022)](/sources/cai-2022.md), §II.B.1, the
 boundary points are grid points just off the surface; along the wall normal
 through each, fictitious reference points are placed at distances $h$ and
 $2h$ ($h$ the local grid size; page-local $q_b$, $q_s$, $q_1$, $q_2$ the
@@ -72,6 +76,48 @@ by inverse-distance weighting of the nearest degrees of freedom. The
 demonstration is a horizontal-axis wind turbine with rotating blades
 ($N=3$ near the rotor and wake, $N=2$ elsewhere), shown qualitatively.
 
+**Direct forcing with Lagrangian markers (lattice Boltzmann).** In the
+[ProLB](/software/prolb.md) set-up of Cheylan et al. (2023, §2.2, Eqs. 5–10)
+the body surface carries Lagrangian markers $\boldsymbol X_k$, distinct from
+the Eulerian lattice nodes $\boldsymbol x_j$. Each step (1) moves the
+markers with the body, (2) advances the [lattice Boltzmann](/methods/lattice-boltzmann-method.md)
+step without the body, giving a predicted velocity $\boldsymbol u^*$, (3)
+interpolates $\rho$ and $\rho\boldsymbol u^*$ to the markers with a
+regularized discrete delta kernel $\delta_h$ (page-local), (4) computes the
+marker force $\boldsymbol F_k=\frac{2}{\Delta t}\big(I[\rho]\boldsymbol U^d-I[\rho\boldsymbol u^*]\big)$
+that drives the interpolated velocity to the body velocity $\boldsymbol U^d$
+(page-local $I[\cdot]$ the interpolation, Eq. 9), (5) spreads it back to the
+nodes,
+$$\boldsymbol f(\boldsymbol x_j)=\sum_k\boldsymbol F_k\,\delta_h(\boldsymbol x_j-\boldsymbol X_k)\,W_k\qquad(\text{Eq. 10, }W_k=\Delta S_k),$$
+and (6) corrects the velocity and the populations with that body force
+(Guo forcing, Eqs. 3–4). Three kernels are tested: a cosine kernel of
+half-width 1.5, a four-point kernel and the three-point kernel of Roma et
+al. (Eqs. 13–15). The authors state that the prediction step, which solves
+the fluid without the solid first, regularizes the intermediate field and
+reduces grid locking, so the kernel need not be chosen to suppress it
+(§2.3).
+
+**The Lagrangian weight.** $W_k$ is the volume of influence of a marker, which
+"cannot be computed directly" because the marker set is a surface; setting
+it to the cell volume has no justification (Cheylan et al. 2023, §2.4,
+Eqs. 16–17). Requiring that spreading and then interpolating a constant
+returns it (reciprocity) gives, in units of the cell volume, the linear
+system
+$$\sum_lA_{kl}W_l=1,\qquad A_{kl}=\sum_j\delta_h(\boldsymbol x_j-\boldsymbol X_k)\,\delta_h(\boldsymbol x_j-\boldsymbol X_l)$$
+(Eqs. 18–21, after Pinelli et al. and Favier et al.; page-local $A_{kl}$),
+solved by direct inversion or BiCGSTAB. Gsell et al.'s analytical
+correction, as recalled, neglects curvature and keeps only the marker
+itself, $W_k=1/\sum_j\delta_h(\boldsymbol x_j-\boldsymbol X_k)^2$ (Eq. 23).
+Cheylan et al. propose a third form from a Taylor expansion of the
+reciprocity condition about neighbouring markers, assuming a fine marker
+spacing and a smooth field (no wall discontinuity):
+$$W_l=\frac{1}{\sum_k\sum_j\delta_h(\boldsymbol x_j-\boldsymbol X_k)\,\delta_h(\boldsymbol x_j-\boldsymbol X_l)}\qquad(\text{Eq. 28}),$$
+which needs no linear solve and, they state, accounts for curvature and is
+usable whatever the solid/fluid size ratio and kernel (§2.4.2). It is the
+reciprocal of the row sum of $A_{kl}$, i.e. exact for the linear system
+when $W$ is uniform *(compiler check, not in the sources)*. On uniform grids
+a single mean weight is used for all markers (§3.1.4, §3.2).
+
 ## Resolution near an immersed wall
 
 - **Wall-resolved DNS.** Vicente Cruz & Lamballais (2023, §7.1) compute pipe
@@ -90,6 +136,21 @@ demonstration is a horizontal-axis wind turbine with rotating blades
   $4.5\times10^{-3}H$ on their fine grid ($H$ the body height), and state
   that resolving the viscous sublayer or the Kolmogorov scale is not
   feasible on their hierarchical grid, hence the wall model.
+
+- **Direct-forcing guidelines** (Cheylan et al. 2023, §3.1–3.2, Tables
+  2–11; laminar cylinder at $Re=100$ and Poiseuille channel): the three
+  weights give velocity profiles within 1% of each other, with boundary slip
+  errors $10^{-4}$ (Eq. 28), $5\times10^{-5}$ (BiCGSTAB) and $10^{-5}$
+  (inversion) at relative costs 1, 1.6 and 2.25; the slip error scales with
+  the Courant number $U_0\Delta t/h$; narrower kernels are better ("a
+  flatter function gives a bigger error"); a marker spacing between 0.8 and
+  1.2 grid spacings is recommended, too many markers making the weighted
+  run crash below about 0.785 grid spacings (two near-identical rows of
+  $A_{kl}$), too few letting fluid leak; applying the weight lowers the
+  cylinder drag error from 0.066 to 0.037 and the channel mass-flow error by
+  about three times. The weight corrects the slip but not the wall velocity
+  gradient, which the regularized kernels diffuse, so the near-wall solution
+  is first order in grid size while the far field is insensitive (§3.2).
 
 ## Wall models on immersed boundaries
 
@@ -133,7 +194,7 @@ layers and to the LES viscosity in separated ones; see
 
 ## The lattice Boltzmann host solver
 
-ProLB, as summarized by Cai et al. (2022, §II.A): D3Q19 lattice, a
+ProLB (see also [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md)), as summarized by Cai et al. (2022, §II.A): D3Q19 lattice, a
 BGK-type equation whose relaxation time $\tau_r$ (page-local) sets the total
 viscosity $\nu+\nu_t=c_s^2(\tau_r-\Delta t/2)$ with lattice sound speed
 $c_s=1/\sqrt3$, the weakly compressible Navier–Stokes equations recovered
@@ -147,6 +208,26 @@ $\Delta t=(c_s/c_0)\Delta x_{\min}$ with $c_0$ the physical sound speed, so the
 Mach number is raised from 0.12 to 0.24 to double the time step, on the
 argument that it barely affects nearly incompressible results (§III, citing
 Fares).
+
+## Turbulent fluid–structure interaction
+
+Cheylan et al. (2023, §2.5–2.7, §3.3–3.4) couple the direct-forcing IBM in
+ProLB with the finite-element structural solver Calculix through an
+explicit staggered scheme: each step the fluid sends marker forces and the
+structure returns marker displacements, with a second-order
+Hilber–Hughes–Taylor predictor–corrector for the structure. On a
+three-dimensional flapping flag ($Re=200$, mass ratio 1) the force
+histories agree better with the literature with the weight than without
+(stated as a 20% error reduction in the abstract and 20–30% in the
+conclusions; no number in §3.3 backs it). On an elastic beam behind a fixed
+cylinder at $Re=10^4$ with solid-to-fluid density ratio 1, an LES with the
+shear-improved [Smagorinsky](/methods/smagorinsky-model.md) model of
+Lévêque et al., coupled to the lattice Boltzmann relaxation time, gives
+Strouhal numbers 0.185 and 0.101 against 0.175 and 0.103 of Breuer et al.;
+the second-order structural prediction gives a less noisy lift spectrum
+than a first-order one (Table 13, Fig. 19). The authors state that LES is
+"not well established in the FSI context" and that the IBM avoids the
+grid-motion equation of an arbitrary Lagrangian–Eulerian method (§1).
 
 ## Application: Ahmed body with a 35° slant
 
@@ -188,10 +269,24 @@ $Re_H$) and 0.26 (Ahmed et al.).
   profiles.
 - Cai et al. (2022) do not print how $\nu_t^{\mathrm{hyb}}$ returns to the
   subgrid viscosity away from the wall, nor the value of $\kappa$.
-- Vicente Cruz & Lamballais (2023) and Cai et al. (2022) both report that the
-  immersed treatment degrades the near-wall solution (residual wall velocity;
-  lost Reynolds stress); the two concern different methods and are not
-  compared.
+- Vicente Cruz & Lamballais (2023), Cai et al. (2022) and Cheylan et al.
+  (2023) all report that the immersed treatment degrades the near-wall
+  solution (residual wall velocity; lost Reynolds stress; slip error and a
+  diffused wall gradient, first order near the wall); the three concern
+  different methods and are not compared.
+- Cheylan et al. (2023) contradict, by their own account, the conclusion
+  of Zhou & Balachandar that the weight has little effect on the Eulerian
+  force (§3.1.4–3.1.5); the earlier work is not ingested here.
+- **Recommended marker spacing.** Cheylan et al. recommend 0.8 to 1.2 grid
+  spacings (§3.1.5), while their best cylinder cases (15 and 20, Table 9)
+  use $0.00628/0.005=0.01256/0.01=1.256$ *(compiler check, not in the
+  sources)*; Table 8 shows a crash at 0.785 itself, the text a limit
+  "below 0.785".
+- **Printed slips (Cheylan et al.).** Eq. (12) raises the kernel to the
+  power $k$ in the moment condition; the beam case prints a solid density
+  of $10^4$ kg/m³ with a fluid density of $10^3$ kg/m³ and a density ratio
+  of 1, and a time step of $1.15\times10^4$ s (Table 12); Eq. (40) calls a
+  profile linear in $r$ parabolic.
 
 # Citations
 
@@ -199,3 +294,4 @@ $Re_H$) and 0.26 (Ahmed et al.).
 - [Placco et al. (2023)](/sources/placco-2023.md) — §2 (ghost-point-forcing IBM in STREAmS); §3 (grid).
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.7, Eqs. (27)–(29), Fig. 14 (volume penalization, ray tracing, wind turbine).
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §2.1; §3, footnote 6 (reconstruction inside the solid, soft no-slip); §7.1, Fig. 24 (pipe DNS and LES).
+- [Cheylan et al. (2023)](/sources/cheylan-2023.md) — §1; §2.1–2.4, Eqs. (1)–(28) (lattice Boltzmann host, direct forcing, kernels, Lagrangian weight); §2.5–2.7, Eqs. (29)–(38) (structural scheme, coupling, LES); §3.1–3.2, Tables 2–11 (cylinder, Poiseuille); §3.3–3.4, Tables 12–13, Figs. 12–19 (flag, beam); §4.

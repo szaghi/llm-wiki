@@ -156,7 +156,7 @@ as printed. No printed duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25), cited further in chunk 3 (2026-10-25). This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunks 3–4. This source is cited on:
 
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
@@ -165,6 +165,7 @@ Chunk 2 (2026-10-25), cited further in chunk 3 (2026-10-25). This source is cite
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)
 - [Morkovin's hypothesis and Reynolds analogies](/definitions/morkovin-hypothesis.md)
+- [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)
 - [WENO and hybrid shock-capturing schemes in scale-resolving simulation](/methods/weno-scheme.md)

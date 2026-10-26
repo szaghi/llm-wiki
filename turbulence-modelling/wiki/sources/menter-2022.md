@@ -126,8 +126,9 @@ volume or pages; none is unparseable and no printed duplicate was found.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
 
+- [Laminar separation bubble](/definitions/laminar-separation-bubble.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)

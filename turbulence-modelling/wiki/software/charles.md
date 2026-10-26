@@ -1,22 +1,25 @@
 ---
 type: Software
 title: "CharLES"
-description: "CharLES is Cascade Technologies' compressible, low-dissipation, second-order finite-volume LES code on Voronoi grids; this page records its scheme, meshing, GPU cost and the wall-modelled LES of aircraft, juncture flows, bumps and compressible channels run with it."
+description: "CharLES is Cascade Technologies' compressible, low-dissipation, second-order finite-volume LES code on Voronoi grids; this page records its scheme, meshing, GPU cost and the wall-modelled LES of aircraft, juncture flows, bumps and compressible channels run with it, including machine-learning wall models trained in it."
 status: established
 aliases: [charLES, Cascade charLES]
 tags: [software, les, wmles, kinetic-energy-preserving, gpu]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-26T07:42:00Z
 ---
 
 # CharLES
 
-**CharLES** (printed "charLES" in all four sources) is a massively parallel,
+**CharLES** (printed "charLES" in all five sources) is a massively parallel,
 compressible, unstructured finite-volume LES code of Cascade Technologies. It is
 the solver of the aircraft [wall-modelled LES](/methods/wall-modelled-les.md) of
 [Goc et al. (2021)](/sources/goc-2021.md), of the boundary-layer-conforming
 study of [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md), of the
 Gaussian-bump runs of [Agrawal et al. (2022)](/sources/agrawal-2022.md) and of
-the compressible-channel runs of [Griffin et al. (2023)](/sources/griffin-2023.md).
+the compressible-channel runs of [Griffin et al. (2023)](/sources/griffin-2023.md),
+and the solver in which [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md)
+train and test their
+[building-block-flow wall model](/methods/building-block-flow-wall-model.md).
 
 ## Discretization
 
@@ -25,17 +28,20 @@ the compressible-channel runs of [Griffin et al. (2023)](/sources/griffin-2023.m
   in inviscid low-Mach flow (Goc et al. 2021, §2.3, citing Tadmor, Honein &
   Moin, Chandrashekar); "kinetic-energy-conserving … approximately entropy
   preserving in the inviscid limit, thereby limiting the amount of numerical
-  dissipation" (Lozano-Durán et al. 2022, §II.B). Griffin et al. (2023, §4) add
+  dissipation" (Lozano-Durán et al. 2022, §II.B; the same wording in
+  Lozano-Durán & Bae 2023, §3.1). Griffin et al. (2023, §4) add
   an artificial bulk viscosity for discontinuities. See
   [kinetic-energy preservation](/properties/kinetic-energy-preservation.md).
 - **Accuracy.** Formally second order in space; explicit third-order
   Runge–Kutta in time (Gottlieb–Shu–Tadmor) (Goc et al. 2021, §2.3;
-  Lozano-Durán et al. 2022, §II.B; Agrawal et al. 2022, §IV).
+  Lozano-Durán et al. 2022, §II.B; Agrawal et al. 2022, §IV; Lozano-Durán &
+  Bae 2023, §3.1).
 - **Meshes.** Arbitrary polyhedra; in practice Voronoi diagrams of points
   seeded in hexagonally close-packed arrangements, so that the vector joining
   two adjacent sites is parallel to their shared face normal (Goc et al. 2021,
-  §2.3). Lozano-Durán et al. (2022, §III.A) apply ten iterations of Lloyd's
-  algorithm; Agrawal et al. (2022, §IV) build centroidal Voronoi diagrams with
+  §2.3). Lozano-Durán et al. (2022, §III.A) and Lozano-Durán & Bae (2023,
+  §3.1) apply ten iterations of Lloyd's algorithm to smooth the transitions
+  between refinement levels; Agrawal et al. (2022, §IV) build centroidal Voronoi diagrams with
   homothetic refinement by a factor 2 in near-wall layers ten cells thick.
 - **Closures used.** Static-coefficient [Vreman](/methods/vreman-model.md) model
   (free-air aircraft runs) and the compressible
@@ -50,12 +56,28 @@ the compressible-channel runs of [Griffin et al. (2023)](/sources/griffin-2023.m
   $B=5.2$, $C^1$ matching), with the wall stress returned as a Neumann
   condition; Griffin et al. (2023) use their
   [inverse-velocity-transformation model](/methods/inverse-velocity-transformation-wall-model.md).
+  Lozano-Durán & Bae (2023, §3.2) run the dynamic Smagorinsky model (with
+  Lilly's modification) or the Vreman model with either the algebraic
+  equilibrium model (Eq. 3.1, same constants, the velocity taken at the
+  second off-wall grid point) or their neural-network wall model, which
+  reads a two-point wall-normal stencil (§2.4).
 - **Matching location.** Lozano-Durán et al. (2022, §II.B) match at the first
   off-wall cell centre with no temporal filtering; Agrawal et al. (2022, §VIII)
   also match at the first point on Voronoi grids and report no
   [log-layer mismatch](/definitions/log-layer-mismatch.md) in their earlier
   tests; Griffin et al. (2023, §4) match at $0.3\delta$ with 12 points per
   channel half-height.
+
+**Solver-consistent training data.** Because the subgrid stress of an
+implicitly filtered LES is not the stress obtained by filtering the
+Navier–Stokes equations, Lozano-Durán & Bae (2023, §2.5–2.6) generate the
+training data of their wall model in charLES itself: wall-modelled LES on
+isotropic Voronoi grids $\Delta=\delta/n$, $n=5$ to 380 ($\delta$ the channel
+half-height, page-local $n$), driven
+by an "exact-for-the-mean" subgrid correction that forces the mean profile
+onto DNS and a wall condition that samples the DNS wall-stress p.d.f. They
+state that the model "must be re-trained for each flow solver" (§5; see
+[discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
 
 ## Voronoi mesh generation
 
@@ -78,6 +100,7 @@ their study.
 | [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md) (Lozano-Durán et al. 2022, §V.A) | 6–174 M | Xeon E5-2670, Pleiades | 13k–398k core-h |
 | Gaussian bump, spanwise periodic, fine (Agrawal et al. 2022, Table IV) | 52 M | 10 nodes of 6 V100 | 13 (DSM) vs 15 (tensor model) node-h per flow-through |
 | Gaussian bump, 3D, fine (Agrawal et al. 2022, Table V) | 452 M | 80 nodes of 6 V100 | 100 vs 112 node-h per flow-through |
+| NASA CRM-HL, 7° and 19° (Lozano-Durán & Bae 2023, §4.7) | 30 M | not stated | wall model 1.1–1.3 times the algebraic one (§2.6) |
 
 Goc et al. (2021, §4) state strong scaling with parallel efficiency above 80%
 down to about 2,000 cells per CPU core or about $10^6$ cells per GPU; the
@@ -105,6 +128,15 @@ code (implementation not optimized, no hardware stated).
   §IV.B, App. B).
 - Compressible isothermal channels at bulk Mach 0.7–4 and $Re_\tau$ 320–1800
   (Griffin et al. 2023, §4).
+- Building-block-flow wall model (Lozano-Durán & Bae 2023, §4): internal
+  wall-model errors much below those of the equilibrium model in laminar,
+  zero-pressure-gradient, pressure-gradient and three-dimensional unsteady
+  channel and boundary-layer cases, but total errors dominated by the
+  subgrid model; moderate improvements of lift, drag and pitching moment on
+  the NASA High-Lift Common Research Model ($Re=5.49\times10^6$,
+  $M_\infty=0.20$), and better juncture predictions on the
+  [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md) with a
+  boundary-layer-conforming grid of 5 points per boundary-layer thickness.
 
 ## Qualifications
 
@@ -113,9 +145,14 @@ code (implementation not optimized, no hardware stated).
   their own Table 1 gives about 4.7 h (CPU) and 4.3 h (GPU), and their Table 1
   values give 7.7 days rather than the printed 7.5 for the CPU run *(compiler
   check, not in the sources)*.
-- All four sources include Moin among the authors, three of them Bose
-  (Cascade Technologies, the code's developer); no chunk-1 source outside this
-  author group uses the code.
+- The four earlier sources (Goc et al. 2021, Lozano-Durán et al. 2022,
+  Agrawal et al. 2022, Griffin et al. 2023) include Moin among the authors,
+  three of them Bose (Cascade Technologies, the code's developer); Lozano-Durán & Bae
+  (2023) do not, but Lozano-Durán co-authored Lozano-Durán et al. (2022). No
+  source outside this author group uses the code so far.
+- The equilibrium model of Lozano-Durán et al. (2022) reads the first
+  off-wall cell centre; the one of Lozano-Durán & Bae (2023, Eq. 3.1) the
+  second off-wall point.
 
 # Citations
 
@@ -123,3 +160,4 @@ code (implementation not optimized, no hardware stated).
 - [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) — §II.B, Eq. (1); §III.A (Voronoi grids); §IV.B; §V.A (cost); App. B.
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §IV (solvers and meshes); §VIII (wall model); §IX, Tables IV–V (GPU cost).
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §4 (WMLES set-up, artificial bulk viscosity, cost).
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.4–2.6 (stencil, solver-consistent training, cost); §3.1–3.2, Eq. (3.1) (scheme, Voronoi grids, closures); §4 (results); §5.

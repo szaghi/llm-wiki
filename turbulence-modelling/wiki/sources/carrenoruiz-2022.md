@@ -152,9 +152,10 @@ unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25). This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunk 4. This source is cited on:
 
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
+- [Laminar separation bubble](/definitions/laminar-separation-bubble.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)

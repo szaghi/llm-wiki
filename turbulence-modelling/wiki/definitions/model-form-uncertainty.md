@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Model-form uncertainty in turbulence closures"
-description: "The epistemic uncertainty that comes from the structure of a turbulence closure rather than from its inputs or coefficients; the four layers of RANS assumptions, physics-based bounds by eigenspace perturbation and random matrices, Bayesian calibration and discrepancy fields, where to place the correction, non-unique inversions and physics-based priors, and the limits of identifiability."
+description: "The epistemic uncertainty that comes from the structure of a turbulence closure rather than from its inputs or coefficients; the four layers of RANS assumptions, physics-based bounds by eigenspace perturbation and random matrices, Bayesian calibration and discrepancy fields, where to place the correction, non-unique inversions, physics-based priors, identifiability limits, confidence scores of learned closures, and compensating errors."
 status: established
 aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation]
 tags: [uncertainty-quantification, rans, data-driven, field-inversion]
-timestamp: 2026-10-25T20:38:00Z
+timestamp: 2026-10-26T07:38:00Z
 ---
 
 # Model-form uncertainty in turbulence closures
@@ -271,6 +271,57 @@ fields, partly because the RANS equations can be ill-conditioned
 (Duraisamy et al. 2019, §5.4, §6; Duraisamy 2021, §IV.A; see
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
 
+## Confidence of a learned closure and the location of its error
+
+Lozano-Durán & Bae (2023) attach to each prediction of their
+[building-block-flow wall model](/methods/building-block-flow-wall-model.md)
+a confidence score in $[0,1]$ built from the distance of the input to its
+nearest neighbour in the training set, "based on the ratio $d_s/d_i$
+(clipped to be less than 1)", with $d_i$ that distance and $d_s$ the mean
+distance of that training sample to its ten nearest training samples
+(page-local symbols; [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md),
+§2.6). The score measures similarity to the training data, not an error
+bound: low confidence may still come with an accurate prediction and high
+confidence with an inaccurate one; the authors point to uncertainty
+quantification frameworks as the way to an error estimate (§5(2)). In use it
+flags the inputs farthest from the training flows: below 20% at the
+leading edges of nacelle, slats and flaps of a high-lift aircraft, where
+the grid has no point inside the boundary layer, and in the separated
+regions near wing tip and root; 22% in the trailing-edge corner separation
+of the [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md), where the
+prediction is "far from satisfactory"; 0% for random inputs (§4.7–4.8,
+Table 1, Figs. 16, 18).
+
+The same paper separates where the error of a wall-modelled LES comes
+from. Training and testing the model inside an LES whose subgrid model is
+corrected to be "exact for the mean" isolates the *internal* error of the
+wall model from the *external* error that the subgrid model makes at the
+matching point; the learned model reduces the internal error well below
+that of the equilibrium wall model, yet the total error is dominated by
+the external one, so the authors conclude that further gains need better
+subgrid models (§4.1, §4.7, §5(4), §6; see
+[wall-modelled LES](/methods/wall-modelled-les.md) and
+[machine-learning wall models](/methods/machine-learning-wall-model.md)).
+This is the LES counterpart of the RANS question above of which model
+layer carries the discrepancy.
+
+**Agreement through compensating errors.** Three sources show quantities
+right for the wrong reason. Lozano-Durán & Bae (2023) find the total error
+of the equilibrium wall model smaller than that of their learned model in
+the laminar boundary layer and in adverse-pressure-gradient
+Poiseuille–Couette flows, through cancellation of its internal and
+external errors (§4.2, §4.5, Figs. 8, 11). Delassaux et al.
+(2023) find RANS drag within 0.002 of the measurement on a full-scale car
+and attribute it to error cancellation, locating with a cumulative drag
+along the body where RANS and DDES differ (front fairings and rear), while
+the RANS wake topology is wrong ([Delassaux et al. (2023)](/sources/delassaux-2023.md), §6, Fig. 13;
+HAL author manuscript). Morsbach et al. (2024) show that reducing the RANS
+inflow length scale brings the turbine wake loss within 2.7% of the LES
+while leaving an open separation that the LES does not have, "a lucky
+cancellation of errors" ([Morsbach et al. (2024)](/sources/morsbach-2024.md),
+§4.1, Figs. 8–9). Agreement in an integrated quantity does not, therefore,
+validate the model form.
+
 Both reviews conclude that predictions should carry explicit uncertainty
 estimates, and Duraisamy et al. (2019) recommend that inference precede
 learning, that information content and closure assumptions be assessed, and
@@ -317,3 +368,6 @@ however, not been achieved" and calls for community benchmarks (§VII).
 - [Yan et al. (2022)](/sources/yan-2022.md) — §1, §2.1 Eqs. 6, 14–17, §3.1.1 Figs. 4–5, §3.2.1 Table 2 Figs. 11, 14, 18, §3.3.1 Fig. 28.
 - [Cato et al. (2023)](/sources/cato-2023.md) — §II B–D Eqs. 5–6, §III B Table I Eqs. 19–20 Fig. 6, §IV B Table II, §V B–C Figs. 16–17, §VI Table III, App. B Fig. 21 (HAL v2).
 - [McConkey et al. (2022)](/sources/mcconkey-2022.md) — §II B, Figs. 1–4 (arXiv v1).
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.6, §4.1, §4.2, §4.5, §4.7–4.8 Table 1 Figs. 8, 11, 16, 18, §5, §6.
+- [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §6, Fig. 13 (HAL author manuscript).
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §4.1, Figs. 8–9.

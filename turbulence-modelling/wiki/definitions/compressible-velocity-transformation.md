@@ -5,7 +5,7 @@ description: "Maps that turn the mean velocity of a variable-property compressib
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-25T20:36:00Z
+timestamp: 2026-10-26T07:39:00Z
 ---
 
 # Compressible velocity transformations
@@ -188,7 +188,7 @@ found semi-local damping better for cold walls.
 
 ## Transformations as a validation yardstick
 
-Three further sources use a transformation not to rank transformations but to
+Four further sources use a transformation not to rank transformations but to
 judge a simulation.
 
 - **Hybrid RANS/LES of supersonic channels.** [Carlsson et al. (2023)](/sources/carlsson-2023.md)
@@ -224,6 +224,18 @@ judge a simulation.
   the Mach 2.9, 24° compression ramp with van Driest-transformed mean
   profiles against the DNS of Martín and co-workers, reporting "good
   agreement".
+- **GPU DNS and floating-point precision.** [Wang et al. (2023b)](/sources/wang-2023-b.md)
+  (§4.2, Eqs. 10–11, Fig. 11) apply the van Driest transformation,
+  $u^+_{\mathrm{vD}}=\int_0^{u^+}\sqrt{\langle\rho\rangle/\rho_w}\,du^+$ (the source writes $\langle U\rangle^+_{VD}$ and $\langle\rho_w\rangle$),
+  to their multi-GPU gas-kinetic DNS of a channel at bulk Mach number 0.8 and
+  bulk Reynolds number 3000 with isothermal walls ($\mu\propto T^{0.7}$,
+  $Pr=0.7$), and compare it with the incompressible log law with
+  $\kappa=0.40$, $B=5.5$, stating that the transformed velocity is expected to
+  satisfy it; single- and double-precision runs are plotted together, and the
+  fine-grid results "agree well" with the compressible channel DNS of Fu et al.
+  as they cite it (Fig. 13). The paper does not discuss the choice of the van
+  Driest transformation over the alternatives above; see
+  [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md).
 
 ## Assessments of the temperature–velocity relation
 
@@ -276,3 +288,4 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §4.3, Eqs. (24)–(26), Table 2, Fig. 5.
 - [Helm & Martín (2022)](/sources/helm-2022.md) — Sec. III B, Tables I–II, Fig. 3; Sec. IV F, Fig. 31.
 - [Dang et al. (2022)](/sources/dang-2022.md) — §5.1, Fig. 17.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4.2, Eqs. (10)–(11), Figs. 11, 13 (arXiv v1).

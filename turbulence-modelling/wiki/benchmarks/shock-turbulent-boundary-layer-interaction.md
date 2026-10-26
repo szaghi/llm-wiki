@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock–turbulent boundary layer interaction"
-description: "A supersonic or hypersonic turbulent boundary layer meeting a shock from a compression ramp or an impinging oblique shock: separation length, low-frequency unsteadiness and wall heating test the subgrid model, the span of the domain and the DNS cost, here from Mach 2.9 to 9.1 by LES, DNS and wall-modelled LES."
+description: "A supersonic or hypersonic turbulent boundary layer meeting a shock from a compression ramp or an impinging oblique shock: separation length, low-frequency unsteadiness and wall heating test the subgrid model, the span of the domain and the DNS cost, here from Mach 2.9 to 9.1 by LES, DNS and wall-modelled LES, with a RANS compressibility-correction test at Mach 2.92."
 status: established
 aliases: [STBLI, SWBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction]
 tags: [benchmark, compressible, hypersonic, boundary-layer, separated-flow, les]
-timestamp: 2026-10-26T05:07:00Z
+timestamp: 2026-10-26T07:19:00Z
 ---
 
 # Shock–turbulent boundary layer interaction
@@ -38,6 +38,7 @@ expensive because the low-frequency cycle needs long records.
 | [Helm & Martín (2022)](/sources/helm-2022.md), Table IV | R34-M10-L | 9.1 ("Mach 10") | ramp 34° (separated) | $Re_\theta\approx8000$, $T_w/T_r=0.33$, nitrogen | LES only | 51.8M |
 | [Dang et al. (2022)](/sources/dang-2022.md), §5.1, §6.1, Table 8 | Mach 2.9 ramp | 2.9 | ramp 24° | unit Reynolds number 5581.4 per mm, $T_\infty=108.1$ K, $T_w=307$ K | DNS, no model | $16100\times240\times200$; wide span $16250\times240\times8000$ ($3.12\times10^{10}$ points) |
 | [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md), §2–3 | impinging shock over a rigid and a flexible panel | 3 | wedge rotating to 17.5° | $\delta_0=4$ mm, unit Reynolds number $49.4\times10^6$ m$^{-1}$ | wall-modelled LES | $2\times10^7$ (periodic $5\delta_0$ span) to $2\times10^8$ cells (full span) |
+| [Zhao et al. (2023b)](/sources/zhao-2023-b.md), §5.4 | Settles cavity–ramp | 2.92 | backward-facing step and cavity (depth 2.54 cm) closed by a 20° ramp, on which the cavity shear layer reattaches | not printed | steady RANS, $k$-$\omega$ SST with and without a compressibility correction, interior-penalty DG | 64.2 thousand cells |
 
 Both sources run a Mach 2.9, 24° ramp: Dang et al. validate against the DNS
 of Martín et al. and the experiment of Bookey et al. (§5.1), and Helm &
@@ -86,6 +87,14 @@ use the [Vreman model](/methods/vreman-model.md), the
 Larsson matched at $0.1\delta_0$ with four cells below it, and digital-filter
 inflow; the run details are on
 [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md).
+
+**RANS with a compressibility correction.**
+[Zhao et al. (2023b)](/sources/zhao-2023-b.md) discretize the mean-flow
+equations with interior-penalty
+[discontinuous Galerkin](/methods/discontinuous-galerkin-spectral-element-method.md)
+and the two [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) equations with
+first-order finite volumes, and capture shocks with an artificial viscosity
+driven by the residual of the flux divergence (§3.1–3.2).
 
 ## What the case tests
 
@@ -189,6 +198,19 @@ DNS of such flows as the conflict between robustness at shocks and low
 dissipation, and the cost of long domains, small time steps and the long
 records of low-frequency shock motion.
 
+On the Settles cavity–ramp at Mach 2.92,
+[Zhao et al. (2023b)](/sources/zhao-2023-b.md), §5.4, Figs. 5-14–5-15, find
+that the uncorrected SST model "produces excessive turbulent viscosity" in
+the compressible shear layer, which widens the shear layer and the shock and
+expansion regions, while the model with the compressibility correction of
+Suzen & Hoffmann reproduces the measured velocity profiles at three
+shear-layer stations; the comparison is of profiles only, with no
+separation length or wall heat transfer, the quantities on which Helm &
+Martín judge RANS unreliable. On the transonic NACA 0012 at Mach 0.804 the
+same solver places the shock near $x/c\approx0.47$ in agreement with the
+ONERA data but ends it slightly downstream, which the authors attribute to
+an over-estimated shock–boundary-layer interaction (§5.3, Figs. 5-9–5-11).
+
 **Fluid–structure coupling.** In the impinging-shock case of
 [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md), §4.3, panel flexibility
 moves separation about $3\delta_0$ upstream and lengthens it from
@@ -225,9 +247,14 @@ dominant frequencies down.
   profile against the DNS of Martín et al. and the experiment of Bookey et
   al.) is on the $16100\times240\times200$ grid; the wide-span run has no
   quantitative comparison, and its averaging time is not stated.
+- The cavity–ramp of [Zhao et al. (2023b)](/sources/zhao-2023-b.md) is a
+  reattaching cavity shear layer, not the boundary layer meeting a ramp or
+  an impinging shock of the other configurations; its incoming Reynolds
+  number and grid resolution are not printed.
 
 # Citations
 
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §I; §II, Eqs. (1)–(12), Fig. 1; §III B–D, Tables I–III, Figs. 2–14; §IV A–F, Table IV, Figs. 15–33; §V.
 - [Dang et al. (2022)](/sources/dang-2022.md) — §1; §5.1, Figs. 16–18; §6.1, Table 8, Figs. 22–25; §7.
 - [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §1–3; §4.3.
+- [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §3.1–3.2, Eq. (3-10); §5.3, Figs. 5-9–5-12; §5.4, Figs. 5-13–5-15.

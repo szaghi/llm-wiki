@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-26T05:09:00Z
+timestamp: 2026-10-26T07:19:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -69,6 +69,11 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Kim et al. (2022)](/sources/kim-2022.md), §II | DSM (Germano et al. 1991; Lilly 1992), baseline of a learned channel model; the coefficient written $C^2$ absorbs $\Delta^2$, i.e. $C^2=(C_s\Delta)^2$ in the form above | $\hat\Delta=2\Delta$; horizontal (wall-parallel) average |
 | [Helm & Martín (2022)](/sources/helm-2022.md), §II, Eqs. (9)–(10) | compressible one-coefficient dynamic mixed model of Martín, Piomelli & Candler (2000): dynamic eddy-viscosity, eddy-diffusivity coefficients and subgrid turbulent Prandtl number | top-hat test filter in computational space; local ensemble average in the spanwise direction; coefficients transformed to curvilinear coordinates after Armenio et al. |
 | [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md), §II.2 | DSM as baseline, and the identity on forces for the [fractional SGS model](/methods/fractional-sgs-model.md) | $\hat\Delta=2\Delta$, box filter; average over homogeneous directions |
+| [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md), §IV B, Eq. (22); App. C | DSM, a posteriori in channel flow and as the eddy viscosity of an a priori diagnostic | test filter by first-order Taylor expansion in all three directions, $\hat\Delta/\Delta=2$; wall-parallel plane average; negative coefficient clipped to zero |
+| [Kang et al. (2023)](/sources/kang-2023.md), §3.2–3.3, Eqs. (3.2)–(3.8) | DSM, one-parameter dynamic mixed model, two two-parameter mixed models (below) | Gaussian, $\hat\Delta/\Delta=\sqrt5$ (isotropic turbulence); volume or wall-parallel averages; negative coefficients clipped |
+| [Kurz et al. (2023)](/sources/kurz-2023.md), App. A, Eqs. (A.1)–(A.3) | DSM element by element in DG (FLEXI), baseline of a learned closure | modal cut-off to degree 2 ($N=5$) or 3 ($N=7$); numerator and denominator averaged over the element; $\mu_t$ clipped to $[-100\mu,1000\mu]$ |
+| [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md), §3.2; §2.5 | DSM with Lilly's modification in charLES; also the baseline stress of a mean-matching corrected SGS model used to generate wall-model training data | not printed |
+| [Sirignano & MacArt (2023)](/sources/sirignano-2023.md), §3.2 | DSM, "the standard approach", baseline of learned closures | test filter, least squares, average over homogeneous directions |
 
 Fowler et al. (2022, §4.2) borrow the Lagrangian averaging of the dynamic
 model for the time integration of their wall model (semi-Lagrangian upstream
@@ -77,6 +82,30 @@ find that replacing the anisotropic minimum-dissipation model by the
 Lagrangian scale-dependent dynamic model changes the channel WMLES mean
 velocity at $Re_\tau=5200$ very little, for the equilibrium and for the
 learned wall models alike.
+
+## Two-parameter mixed models
+
+[Kang et al. (2023)](/sources/kang-2023.md) (§3.3, Eqs. 3.5–3.8; after
+Anderson & Meneveau, as recalled) apply the identity to a model with two
+coefficients, $\tau_{ij}=-2C_1\Delta^2\lvert\bar S\rvert\bar S_{ij}+C_2B_{ij}$,
+with $B_{ij}$ (page-local) a structural term: the resolved stress $L_{ij}$
+(their DTM$_{\mathrm{sim}}$) or the Clark [gradient](/methods/gradient-model.md)
+term $\Delta^2\partial_k\bar u_i\partial_k\bar u_j$ (DTM$_{\mathrm{nl}}$).
+With $M'_{ij}=2\Delta^2M_{ij}$ and $N_{ij}$ (both page-local) the
+Smagorinsky and structural terms of the identity, least squares gives
+
+$$C_1=\frac{\langle L_{ij}M'_{ij}\rangle\langle N_{kl}N_{kl}\rangle-\langle L_{ij}N_{ij}\rangle\langle M'_{kl}N_{kl}\rangle}{\langle M'_{ij}M'_{ij}\rangle\langle N_{kl}N_{kl}\rangle-\langle M'_{ij}N_{ij}\rangle^2},\qquad
+C_2=\frac{\langle L_{ij}N_{ij}\rangle\langle M'_{kl}M'_{kl}\rangle-\langle L_{ij}M'_{ij}\rangle\langle M'_{kl}N_{kl}\rangle}{\langle M'_{ij}M'_{ij}\rangle\langle N_{kl}N_{kl}\rangle-\langle M'_{ij}N_{ij}\rangle^2}.$$
+
+For DTM$_{\mathrm{sim}}$ the structural term at the test level needs a third
+filter of width $5\Delta$. Their $M_{ij}$ is printed as
+$-2\hat\Delta^2\lvert\hat{\bar S}\rvert\hat{\bar S}_{ij}+2\Delta^2\widehat{\lvert\bar S\rvert\bar S_{ij}}$,
+which is $M'_{ij}$ here, so their one-parameter coefficient
+$\langle L_{ij}M'_{ij}\rangle/\langle M'_{ij}M'_{ij}\rangle$ is $C_s^2$
+*(compiler check, not in the sources)*. The one-parameter dynamic mixed
+model (after Zang, Street & Koseff, modified by Vreman et al., as recalled)
+subtracts the similarity part from $L_{ij}$ before the least squares (see
+[scale-similarity models](/methods/scale-similarity-model.md)).
 
 ## The identity on forces
 
@@ -197,6 +226,62 @@ filter-width question.
   better with the filtered DNS than that of DSM, and the difference is
   "more remarkable" at the wider filter the authors class as
   very-large-eddy simulation than at the LES one (§IV, Fig. 9).
+- **Averaging and clipping are needed; a learned mixed model does without**
+  ([Kang et al. 2023](/sources/kang-2023.md), §3.1–3.5, Tables 4, 6, 9,
+  11, Figs. 5–6, 20, 24–25). All four algebraic dynamic models are stable
+  only with averaging over homogeneous directions and clipping of negative
+  coefficients; without them they "significantly overestimate both
+  backscatter and forward scatter" and diverge "within tens of time
+  steps". In decaying isotropic turbulence the DTM$_{\mathrm{sim}}$ similarity
+  coefficient $C_2$ turns negative and is clipped to zero after
+  $t/T_{e,0}\ge1.62$ ($T_{e,0}$ the initial eddy-turnover time), so the
+  model then behaves like DSM, consistent with Anderson & Meneveau (as
+  recalled), for whom this happens when the test filter exceeds the
+  integral scale. A priori the DSM stress correlates worst with the
+  filtered-DNS stress (0.27–0.30 in isotropic turbulence, 0.19 for the
+  shear stress in channel flow), DTM$_{\mathrm{nl}}$ best (0.91). In channel
+  flow at $Re_\tau=180$ on $48^3$, DSM over-predicts the mean velocity and
+  $\bar u_{\mathrm{rms}}$, under-predicts the other two r.m.s. components and
+  gives $C_f=0.0072$ against 0.0085 from filtered DNS. Evaluating the SGS
+  stress costs, relative to DSM, 2.24 (one-parameter mixed), 2.05
+  (DTM$_{\mathrm{sim}}$), 1.68 (DTM$_{\mathrm{nl}}$) and 0.71 for their
+  [neural-network mixed model](/methods/neural-network-sgs-model.md), which
+  needs no averaging or clipping.
+- **Coarse wall-resolved channel** ([Inagaki & Kobayashi 2023](/sources/inagaki-2023.md),
+  App. C, Table I, Figs. 16–17). DSM LES at $Re_\tau=400$ predicts the DNS
+  mean velocity at $(\Delta x^+,\Delta z^+)=(26.2,13.1)$ and $(52.4,26.2)$
+  and overestimates it at $(105,52.4)$; at the medium resolution it
+  over-predicts the streamwise and shear resolved Reynolds stresses and
+  under-predicts the other two. A priori, the DSM eddy viscosity is less
+  dissipative than the energy-matching one: at $y^+\approx40$ the total
+  subgrid dissipation of the streamwise resolved Reynolds stress is twice
+  the DSM estimate (§IV B). See [energy backscatter](/definitions/energy-backscatter.md)
+  for the energy-matching eddy viscosity.
+- **DG, element-wise** ([Kurz et al. 2023](/sources/kurz-2023.md), §4.2,
+  §4.5, App. A, Figs. 6, 9). In forced isotropic turbulence at
+  $Re_\lambda\approx180$ the element-wise DSM reproduces the DNS spectrum
+  about as well as a reinforcement-learned element-wise Smagorinsky
+  coefficient at 32, 36 and 48 degrees of freedom per direction, and
+  significantly worse at 24, where the authors' "likely explanation" is
+  that the test filter is not in the scale-similar range, the same
+  explanation as Beck & Kurz (2023) above. At $Re_\lambda\approx240$ both
+  show some energy build-up near the cutoff. Unclipped, the element-wise
+  DSM "occasionally produced huge" coefficients that deteriorated the
+  solution "quite drastically"; with the clipping above, the range had very
+  limited influence. The learned policy costs about 10% more than the
+  dynamic procedure on one CPU core.
+- **Wall-modelled LES of complex flows** ([Lozano-Durán & Bae 2023](/sources/lozanoduran-2023.md),
+  §4.2–4.8). With DSM and Vreman models at the matching location, the
+  wall-stress error is dominated by "external" SGS errors once the wall
+  model is accurate; in pipe flow at $Re_\tau\approx40\,000$ on the coarsest
+  grid ($R/\Delta\approx5$, $R$ the pipe radius) the authors attribute a low
+  near-wall shear and a low wall-model confidence to poor DSM performance.
+- **Bluff bodies** ([Sirignano & MacArt 2023](/sources/sirignano-2023.md),
+  §4.1–4.3, Table 2, Figs. 8–10). DSM under-predicts the drag of
+  rectangular prisms (e.g. 2.15 against 2.45 from filtered DNS) and gives
+  "incorrectly large" resolved Reynolds stresses in the boundary layers;
+  the [AMD model](/methods/anisotropic-minimum-dissipation-model.md) and
+  the learned closures do better.
 - **Negative viscosity.** The local coefficient can become negative (local
   [backscatter](/definitions/energy-backscatter.md)), which generally
   destabilizes the computation; clipping or homogeneous averaging restores
@@ -240,6 +325,13 @@ squares from a 6×4 system; see the
   Gassner also call the definition of $L_{ij}$ (Eq. D.3) "the Germano
   identity".
 
+- Kurz et al. (2023, §4.2) find the DSM about as accurate as the learned
+  model at 32–48 degrees of freedom, while Beck & Kurz (2023, §V A) report
+  it beaten by their learned models at $N=5$ and 8; the policies, inputs
+  and resolutions differ between the two papers of the same group, and
+  both find the DSM weakest at 24 degrees of freedom, so the statements are
+  not recorded as a contradiction.
+
 # Citations
 
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §II.B, Eqs. (6)–(8); §III; §VII.A–D, Figs. 3–10; §VIII.
@@ -259,3 +351,8 @@ squares from a 6×4 system; see the
 - [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) — §II.2, Eqs. (16)–(22), Fig. 1; §III.2, Figs. 4–5; §IV, Fig. 9.
 - [Kim et al. (2022)](/sources/kim-2022.md) — §II (DSM baseline); §III C–E, Figs. 7, 10, 12–13, Table IV.
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §II, Eqs. (9)–(10); §III; §IV F.
+- [Kang et al. (2023)](/sources/kang-2023.md) — §3.1–3.5, Eqs. (3.2)–(3.8), Tables 4, 6, 9, 11, Figs. 5–6, 20, 24–25.
+- [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §IV B, Eq. (22); App. C, Table I, Figs. 16–17.
+- [Kurz et al. (2023)](/sources/kurz-2023.md) — §4.2; §4.5, Figs. 6, 9; App. A, Eqs. (A.1)–(A.3).
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.5; §3.2; §4.2–4.8.
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §3.2; §4.1–4.3, Table 2, Figs. 8–10.

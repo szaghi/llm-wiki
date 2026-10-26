@@ -5,7 +5,7 @@ description: "Energy backscatter is a negative local subgrid energy flux, energy
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-26T05:09:00Z
+timestamp: 2026-10-26T07:41:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -128,6 +128,57 @@ compares it between filtered fine-LES data and five models in a free shear
 layer (see [Smagorinsky model](/methods/smagorinsky-model.md) and
 [scale-similarity models](/methods/scale-similarity-model.md)).
 
+## Energy-transfer-free remainder and anisotropic redistribution
+
+[Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) (§II A, Eqs. 3–5;
+following Abe 2019 and Inagaki & Kobayashi 2020, as cited there) use the same
+optimal eddy viscosity to split the deviatoric subgrid stress of filtered
+DNS into a part that carries the whole local energy transfer and a
+remainder that carries none:
+
+$$\tau^d_{ij}=-2\nu_t^{\mathrm{opt}}\bar S_{ij}+\tau^{\mathrm{ani}}_{ij},\qquad \tau^{\mathrm{ani}}_{ij}\bar S_{ij}=0,$$
+
+with $\tau^{\mathrm{ani}}_{ij}$ (page-local) the "extra anisotropic" stress.
+The authors' "ideal" eddy viscosity $-\tau_{ij}\bar S_{ij}/(2\bar S_{kl}\bar S_{kl})$
+is $\nu_t^{\mathrm{opt}}$ above; they note that it is negative where the
+flow backscatters and call the decomposition "arbitrary" (§II A).
+Inserting it in the budget of the resolved Reynolds stress
+$R^{\mathrm{res}}_{ij}=\langle\bar u_i'\bar u_j'\rangle$ (fluctuations about
+the Reynolds average of the filtered field) splits the subgrid
+dissipation tensor into an eddy-viscosity dissipation and an **anisotropic
+redistribution** $\xi^{\mathrm{AR}}_{ij}=\langle\tau^{\mathrm{ani}}_{i\ell}\partial_\ell\bar u_j'+\tau^{\mathrm{ani}}_{j\ell}\partial_\ell\bar u_i'\rangle$
+(page-local; positive = productive) (§II C, Eqs. 8–9). Unlike the
+pressure redistribution it is not traceless; from
+$\langle\tau^{\mathrm{ani}}_{ij}\bar S_{ij}\rangle=0$ its trace is the
+exchange of the anisotropic stress with the mean strain,
+$\xi^{\mathrm{AR}}_{ii}=-\langle\tau^{\mathrm{ani}}_{ij}\rangle\langle\bar S_{ij}\rangle$
+(Eq. 10).
+
+In channel flow at $Re_\tau=400$, filtered with a sharp cut-off in $x$ and
+$z$ at a medium filter ($\Delta x^+,\Delta z^+=52.4,26.2$) and a coarse one
+($105,52.4$) (§III, Figs. 3–8):
+
+- for the medium filter $\tau^{\mathrm{ani}}_{ij}$ is negligible in the mean
+  shear stress and $\xi^{\mathrm{AR}}$ negligible in the resolved kinetic
+  energy budget; for the coarse filter the mean anisotropic shear stress is
+  comparable to the eddy-viscosity part and $\xi^{\mathrm{AR}}$ is
+  productive near the wall;
+- for the coarse filter the total subgrid dissipation of the resolved energy
+  is productive, an averaged backscatter, at $y^+\approx12$;
+- the spanwise component $\xi^{\mathrm{AR}}_{33}$ is productive at all
+  heights for both filters and, for the coarse filter, comparable to the
+  pressure redistribution for $y^+<100$; its spectrum peaks at
+  $\lambda_z^+\approx130$, the streak spacing, from which the authors infer
+  a role of the anisotropic stress in generating streamwise vortices
+  (§IV A 2, Fig. 12).
+
+They argue that a stochastic backscatter forcing $a_i$ (Leith; Langford &
+Moser, as cited there) cannot reproduce this productive term, because
+$\langle\bar u_i'a_j\rangle=0$; a deterministic anisotropic stress is needed
+(§IV B). Which a priori models reproduce $\xi^{\mathrm{AR}}$ is on the
+[scale-similarity](/methods/scale-similarity-model.md) and
+[gradient-model](/methods/gradient-model.md) pages.
+
 ## Model backscatter and stability
 
 [Prakash et al. (2022)](/sources/prakash-2022.md) (§II, Eqs. 4–8) treat
@@ -161,7 +212,7 @@ not gauge-invariant *(compiler check, not in the sources)*.
 
 ## Backscatter of nonlocal and learned models
 
-Two sources reach opposite design choices from different questions.
+The sources reach different design choices from different questions.
 
 - **Backscatter as a design goal.** [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md)
   (§I) list the absence of backscatter among the defects of earlier
@@ -195,8 +246,31 @@ Two sources reach opposite design choices from different questions.
   (skewness, temporal correlation) might be needed to produce it. See
   [reinforcement-learning closures](/methods/reinforcement-learning-closure.md).
 
-The two claims concern different flows (isotropic turbulence against a
-channel) and different measures (a priori stress correlation and a
+- **Backscatter predicted and stable.** The neural-network mixed SGS model
+  of [Kang et al. (2023)](/sources/kang-2023.md) (§3.1, §3.3, Figs. 4, 6,
+  8, 20) predicts all six stress components from $\bar S_{ij}$ and the
+  resolved stress $L_{ij}$. With $\bar S_{ij}$ alone the network returns a
+  stress aligned with $\bar S_{ij}$ and, like eddy-viscosity models, no
+  backscatter. With $L_{ij}$ added it reproduces the PDF of $\Pi$ of
+  filtered DNS, backscatter included, a posteriori in forced isotropic
+  turbulence, and "LES becomes stable without any ad hoc procedures". The
+  algebraic dynamic models (dynamic Smagorinsky and dynamic mixed) without
+  averaging and clipping "significantly overestimate both backscatter and
+  forward scatter", and "the excessive backscatter causes LES to diverge
+  within tens of time steps" (§3.3, Fig. 20a). For the mixed network the
+  authors write that it "predicts backscatter accurately" and that
+  "consequently" the LES is stable (§3.1). See
+  [neural-network SGS models](/methods/neural-network-sgs-model.md).
+- **Backscatter bounded by design.** In the reinforcement-learning closure
+  of [Kurz et al. (2023)](/sources/kurz-2023.md) (§3.4) the learned
+  Smagorinsky coefficient is restricted to $C_s\in[0,0.5]$ (negative values
+  excluded, §3.4), so its eddy viscosity is non-negative and it cannot
+  backscatter *(compiler check, not in the sources)*; their dynamic-Smagorinsky baseline in a DG code is
+  clipped to $-100\mu\le\mu_t\le1000\mu$, which admits bounded backscatter
+  (App. A).
+
+The two claims of Seyedi & Zayernouri and Kim et al. concern different
+flows (isotropic turbulence against a channel) and different measures (a priori stress correlation and a
 posteriori decay against two trained mean statistics), so they are not
 recorded as a contradiction. Kim et al. also find that the mean subgrid
 dissipation $\langle\Pi\rangle$ is not determined by the two target
@@ -258,6 +332,13 @@ Other sources treat backscatter as a physical effect to be represented:
   $\rho(T^S_s,T^O_g)$ for the correlation of the two standard fluxes. The
   Fig. 6 and Fig. 7 captions and §6.4 give $Re_\lambda=320$ where Table 1
   gives 324. The PGD algorithm is called "PSD" once (§6.1).
+- Inagaki & Kobayashi (2023, §II C) print the channel-flow form of
+  $\langle\tau^{\mathrm{ani}}_{ij}\rangle\langle\bar S_{ij}\rangle$ as
+  "$\langle\tau^{\rm ani}_{xy}\rangle\partial U_x/\partial y/2$"; with
+  $\langle\bar S_{xy}\rangle=\langle\bar S_{yx}\rangle=\tfrac12\partial_y\langle\bar u\rangle$
+  the contraction is $\langle\tau^{\mathrm{ani}}_{xy}\rangle\partial_y\langle\bar u\rangle$,
+  without the factor $\tfrac12$ *(compiler check, not in the sources)*. The
+  sign conclusions they draw from it are unaffected.
 - At $\Delta=0.33L$, $Re_\lambda=240$ the sharp-filter starting values are
   given as $f^-\approx0.6$, $v^-\approx0.4$ (§6.1), against the general
   "$v^-\approx0.5$" and $f^-$ "close to unity" of §5.3.
@@ -273,3 +354,6 @@ Other sources treat backscatter as a physical effect to be represented:
 - [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) — §I; §II.2; §III.2, p. 15, Fig. 5.
 - [Kim et al. (2022)](/sources/kim-2022.md) — §III C; §III E, Fig. 14.
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §IV F; §V.
+- [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §II A, Eqs. (3)–(5); §II C, Eqs. (8)–(10); §III, Figs. 3–8; §IV A 2, Fig. 12; §IV B.
+- [Kang et al. (2023)](/sources/kang-2023.md) — §3.1, Figs. 4, 6, 8; §3.3, Fig. 20a.
+- [Kurz et al. (2023)](/sources/kurz-2023.md) — §3.4; App. A.

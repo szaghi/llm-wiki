@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-25T20:23:00Z
+timestamp: 2026-10-26T07:39:00Z
 ---
 
 # Equilibrium wall model
@@ -28,8 +28,11 @@ every wall-modelled source of this bundle:
 [Gillyns et al. (2022)](/sources/gillyns-2022.md) and
 [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md),
 [Cai et al. (2022)](/sources/cai-2022.md) and
-[Blind et al. (2023)](/sources/blind-2023.md); it is the comparison
-baseline of the learned models of [Bae & Koumoutsakos (2022)](/sources/bae-2022.md). It is the boundary
+[Blind et al. (2023)](/sources/blind-2023.md), and the wall law of the
+fan-stage WMLES of [Lewis et al. (2023)](/sources/lewis-2023.md); it is the comparison
+baseline of the learned models of [Bae & Koumoutsakos (2022)](/sources/bae-2022.md)
+and of the [building-block-flow wall model](/methods/building-block-flow-wall-model.md)
+of [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md). It is the boundary
 condition that defines [wall-modelled LES](/methods/wall-modelled-les.md).
 
 ## Assumptions
@@ -92,7 +95,15 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
   for $y^+<23$, $\kappa^{-1}\ln y^++B$ otherwise, $\kappa=0.41$, $B=5.2$, $a_1$
   from $C^1$ continuity; walls adiabatic. Agrawal et al. (2022, §VIII) use an
   algebraic $C^1$-continuous profile in its compressible formulation in the same
-  code ([CharLES](/software/charles.md)).
+  code ([CharLES](/software/charles.md)). Lozano-Durán & Bae (2023, §3.2,
+  Eq. 3.1) print the same profile and constants, attributed to Deardorff
+  (1970) and Piomelli et al. (1989) as they cite them, with adiabatic walls
+  and the LES velocity taken at the second grid point off the wall.
+- **Linear/log switch** (Lewis et al. 2023, §3.2.2): in the compressible
+  solver AVBP, a wall law "inducing a no-slip condition at the walls" (after
+  Nicoud et al., as cited) that is linear for $y^+<11$ and logarithmic
+  otherwise (after Schmitt et al., as cited); constants and matching location
+  are not printed.
 - **Reichardt profile** (Gillyns et al. 2022, §3–4, Eqs. 3, 5): the
   streamwise LES velocity at the top node of the first spectral element is
   inserted in Reichardt's composite law (see
@@ -136,6 +147,8 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | Source | Code / grid | $h_{\mathrm{wm}}$ | Input treatment |
 |---|---|---|---|
 | Lozano-Durán et al. (2022, §II.B) | CharLES, isotropic Voronoi | first off-wall cell centre | none |
+| Lozano-Durán & Bae (2023, §3.2) | CharLES, isotropic Voronoi | second grid point off the wall | none stated |
+| Lewis et al. (2023, §3.2.2, §3.3) | AVBP, prisms at walls, tetrahedra elsewhere | not stated; mean wall-normal first-cell size $\Delta y^+=25$ and 17, maxima 66 and 64, on two meshes (Table 6) | none stated |
 | Agrawal et al. (2022, §VII.D, §VIII) | staggered finite differences (channel); CharLES (bump) | second off-wall point, first point at $y^+\sim100$ (channel); first point (bump) | dynamic coefficients averaged; SGS-stress wall condition $d\tau_{ij}/dy=0$ |
 | Fowler et al. (2022, §5.1) | [LESGO](/software/lesgo.md) | first grid point, $h_{\mathrm{wm}}=\Delta y/2=\delta/30$ | the "2Δ spatial filter" of Bou-Zeid et al. (2005) on $U_{\mathrm{LES}}$ (Fowler's $\Delta$ is $h_{\mathrm{wm}}$) |
 | Vadrot et al. (2023b, §II.B.1) | LESGO | first point, $\Delta y/2$ | sharp filter of twice the grid spacing |
@@ -185,6 +198,23 @@ $\phi$ (page-local symbols). Two error classes follow:
   mean WMLES may not converge to DNS until the grid reaches wall resolution.
   Errors of the two kinds can also cancel and give a fortuitously good $u_\tau$.
 
+Lozano-Durán & Bae (2023, §4) measure both classes a posteriori by
+replacing the SGS model with an "exact-for-the-mean" correction that removes
+the external error (see the [building-block-flow wall model](/methods/building-block-flow-wall-model.md)).
+The internal error of the equilibrium model is above 20 % in a laminar
+Blasius boundary layer, about 2 % in a zero-pressure-gradient turbulent
+boundary layer at $Re_\theta=800$–2000, below 5 % in pipe flow at
+$Re_\tau\approx40\,000$ even on the coarsest grid (§4.2–4.4); on the
+upstream fuselage of the [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md)
+both it and the learned model stay below 2 % error (§4.8, Table 1). The two classes cancel in practice: with dynamic
+Smagorinsky or Vreman the laminar mean velocity stays within 5 % despite the
+internal error, and in adverse pressure gradient and separation the
+equilibrium model has the smaller total error "for the wrong reasons", under-predicting
+$\tau_w$ while the near-wall mean velocity is over-predicted (§4.2, §4.5,
+Fig. 11). The authors also attribute its better lift at low incidence on the NASA
+CRM-HL to such cancellation ("it has been reported", with no citation,
+§4.7).
+
 Goc et al. (2021, §2.2) recall the complementary bound of Bose & Park (2018):
 the equilibrium-model wall-stress error is bounded by the resolution of the
 matching location relative to the displacement or momentum thickness, even with
@@ -209,7 +239,9 @@ reinforcement-learning wall model BK22 (one cluster, no hardware detail).
 Griffin et al. (2023, §4) report that their one-ODE
 [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md)
 costs between 7 % less and 32 % more than the classical two-ODE compressible
-model.
+model. Lozano-Durán & Bae (2023, §2.6) report that their learned
+building-block-flow model makes a CharLES WMLES 1.1–1.3 times as expensive as
+the algebraic equilibrium model.
 
 ## Limits shown by the sources
 
@@ -227,7 +259,16 @@ model.
   Fig. 12); the [LaRTE model](/methods/lagrangian-relaxation-towards-equilibrium-wall-model.md)
   recovers it. Fowler et al. note that their EQWM is closer to the DNS than
   that of Lozano-Durán et al. (2020), attributing the difference to a smaller
-  matching height.
+  matching height. In a channel at $Re_\tau=700$ with a sudden spanwise
+  pressure gradient 80 times the streamwise one, Lozano-Durán & Bae (2023,
+  §4.6, Fig. 13) find that the algebraic model misses the mild drop of the
+  streamwise wall stress and, by construction, the angle between the
+  wall stress and the velocity at the first off-wall point, which their
+  learned model predicts.
+- **Laminar regions.** Inverted in a laminar Blasius boundary layer, the
+  log-law model has an internal error above 20 % (Lozano-Durán & Bae 2023,
+  §4.2, Fig. 8); the learned model of the same authors has no
+  transition mechanism either (§5(1)).
 - **Separation and corners.** In the [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md)
   the mean-velocity error reaches about 15 % in the wing–body juncture and
   about 100 % in the separated trailing-edge corner (Lozano-Durán et al. 2022,
@@ -316,3 +357,5 @@ profile lies above the DNS).
 - [Basile et al. (2023)](/sources/basile-2023.md) — §4.2.3.
 - [Cai et al. (2022)](/sources/cai-2022.md) — §II.C.1, Eqs. (24)–(26), Fig. 1(b); §II.C.2; §IV, Table III.
 - [Blind et al. (2023)](/sources/blind-2023.md) — §3.3; §4.
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.6; §3.2, Eq. (3.1); §4.2–4.8, Figs. 8–13.
+- [Lewis et al. (2023)](/sources/lewis-2023.md) — §3.2.2; §3.3, Table 6.

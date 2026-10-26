@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Local-correlation-based transition models"
-description: "RANS laminar–turbulent transition models that evaluate an empirical onset correlation with local variables and switch on the turbulence model through an intermittency; the γ-Reθ model, its calibrations and separation-induced correction, the one-equation γ and algebraic γ-alg-SST members, hysteresis, very-low-Reynolds airfoils and mesh requirements."
+description: "RANS laminar–turbulent transition models that evaluate an empirical onset correlation with local variables and switch on the turbulence model through an intermittency; the γ-Reθ model, its calibrations and separation-induced correction, the one-equation γ and algebraic γ-alg-SST members, hysteresis, very-low-Reynolds airfoils, a turbine cascade and mesh requirements."
 status: established
 aliases: [LCTM, γ-Reθ-SST, separation-induced transition correction, Suluksna–Juntasaro calibration, Langtry–Menter calibration, local correlation-based transition modelling, γ-Reθ model, gamma-Re-theta, γ-SST, one-equation γ model, γ-alg-SST, algebraic LCTM model, algebraic intermittency model]
 tags: [rans, transition, eddy-viscosity, boundary-layer, separated-flow]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-26T07:38:00Z
 ---
 
 # Local-correlation-based transition models
@@ -241,6 +241,47 @@ parameter (§3.4). Menter et al. (2022) report a related tendency of the
 transport model γ-SST to overpredict bubble size at low Reynolds number on
 Eppler 387 (see Validation); the two papers test different models.
 
+## Separation-induced transition in a turbine cascade
+
+Morsbach et al. (2024) couple $\gamma$-$Re_\theta$ (Langtry & Menter 2009,
+called "state-of-the-art" and "topology-independent") to the 2003 SST model
+and to the SSG/LRR-$\omega$ differential Reynolds-stress model; in the
+latter the intermittency modifies the production, the dissipation and the
+pressure–strain term, after Nie et al.
+([Morsbach et al. (2024)](/sources/morsbach-2024.md), §2). On the T161
+low-pressure-turbine cascade (exit Reynolds number $9\times10^4$, Mach 0.6),
+with the inflow turbulence of both RANS tuned to reproduce the free-stream
+decay of a wall-resolved implicit LES, neither model reproduces the midspan
+[laminar separation bubble](/definitions/laminar-separation-bubble.md):
+separation is slightly delayed, reattachment premature and the bubble very
+thin, and the mixed-out wake loss is 35% (SST) and 29% (Reynolds-stress
+model) too low (§4.1, Figs. 7–9). The "common practice" of reducing the
+inflow length scale (here to $1/16.7$) keeps a larger laminar portion
+through $\gamma\ll1$ but separates early without reattachment; its loss is
+within 2.7% only by error cancellation (§4.1, Figs. 4, 7–9). The authors
+conclude that separation-induced transition is not predicted and that
+tuned versions of the transition model or laminar-kinetic-energy models
+may be needed (§5).
+
+Carreño Ruiz & D'Ambrosio, on very-low-Reynolds airfoils, tune the
+separation correction and still report too little skin friction after
+reattachment and no reattachment at $Re=30{,}000$, $\alpha=8^\circ$ (above);
+Morsbach et al. report no re-tuned separation correction.
+The cases differ in Reynolds number, free-stream turbulence and geometry,
+so the two results do not test the same configuration.
+
+## Benchmarks proposed for calibration
+
+Slaughter et al. (2023) offer an implicit LES of the
+[Imperial Front Wing](/benchmarks/imperial-front-wing.md), with laminar
+separation bubbles on the suction sides of the mainplane and first flap,
+on the floor and on the second flap's pressure side, and a wake-induced
+bypass ("wake transition") on the second flap's suction side, as the first step of an open,
+hierarchical dataset for calibrating lower-fidelity models, transition
+models among them; the data were announced, not released, in the version
+read ([Slaughter et al. (2023)](/sources/slaughter-2023.md), §4.1, §5;
+Research Square preprint v1).
+
 ## Hysteresis of the transition location
 
 Menter et al. (2022) call *hysteresis* the dependence of the converged
@@ -332,3 +373,5 @@ larger than $\delta$; wall-function meshes are unsuitable (§4, Figs. 26–28).
 
 - [Menter et al. (2022)](/sources/menter-2022.md) — §1, §2 Eqs. 1–24 and Table 1, §2.3 Figs. 2–3, §3 Figs. 1, 4–24, §4 Figs. 25–28, §5.
 - [Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md) — §1, §2 Eqs. 1–20, §3.4 Table 4, §3.5 Tables 5–9 Fig. 7, §4 Table 10 Fig. 8, §5 Table 11, §6.1–6.3, §7.
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §2, §4.1 Figs. 4, 7–9, §5.
+- [Slaughter et al. (2023)](/sources/slaughter-2023.md) — §4.1, §5 (Research Square preprint v1).

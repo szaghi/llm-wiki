@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Direct numerical simulation"
-description: "DNS solves the Navier–Stokes equations with no turbulence model and a grid fine enough for the dissipative range; this page gives its resolution criteria, measured resolutions and cost, the discretizations and GPU codes used for it, spatially developing compressible boundary layers, weaker variants, looser uses of the term, and its role as reference data."
+description: "DNS solves the Navier–Stokes equations with no turbulence model and a grid fine enough for the dissipative range; this page gives its resolution criteria, measured resolutions and cost, the discretizations, GPU codes and floating-point precision used for it, spatially developing boundary layers, weaker variants, looser uses of the term, and its role as reference data."
 status: established
 aliases: [DNS, quasi-DNS, flame-resolved DNS, under-resolved DNS, DNS embedded in LES, downsized DNS]
 tags: [dns, les, combustion, boundary-layer, compressible, gpu]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-26T07:42:00Z
 ---
 
 # Direct numerical simulation
@@ -62,6 +62,18 @@ $2n_g^{4/3}\approx8000$ for $n_g=512$ points per direction (as recalled from
 McKee et al. 2020), the explicit diffusion "is always significantly higher
 and at larger scales than the numerical diffusion"; their runs are DNS in
 this sense (see [small-scale dynamo](/results/small-scale-dynamo.md)).
+For a transcritical channel, [Bernades et al. (2023)](/sources/bernades-2023.md),
+§4.3, argue their $128^3$ grid finer than the Lee & Moser DNS and twice as
+fine per direction as an earlier transcritical study, and note that the
+density-gradient length there is about ten Kolmogorov lengths.
+
+**Cost scaling and forecasts.** As recalled by
+[Morsbach et al. (2024)](/sources/morsbach-2024.md), §1, from Choi & Moin,
+the cost of DNS grows roughly as $Re^{3.5}$ and that of wall-resolved LES as
+$Re^{2.5}$ (see [grid-point requirements](/results/les-grid-point-requirements.md));
+[Delassaux et al. (2023)](/sources/delassaux-2023.md), §4.1, recall
+Spalart's forecast that wall-resolved LES and DNS of a full-scale
+high-Reynolds-number geometry would become available around 2050 and 2080.
 
 **Measured resolutions in the sources.**
 
@@ -85,6 +97,12 @@ this sense (see [small-scale dynamo](/results/small-scale-dynamo.md)).
 | Boundary layers at Mach 2.9, 7.2 and 9.0 (nitrogen), $Re_\tau$ 202–495, cold walls at Mach 7 and 9 | 7.3 to 361.3 million points; $\Delta x^+$ 6.8–7.8, $\Delta z^+$ 2.9–4.3, first wall-normal point at $y^+$ 0.21–0.31 (the source writes $y$ spanwise and $z$ wall-normal) | Helm & Martín (2022), Tables I–II (the Mach 9 case is a new DNS, the others earlier ones) |
 | 5×5 rod bundle, $Re_D=19{,}000$, spectral elements $N=7$ | 8.4 million elements, 2.87 billion points (resolution in wall units not given) | Fischer et al. (2022), §4.1 |
 | Forced isotropic turbulence, $Re_\lambda=170$, 240, 355 | pseudo-spectral, $320^3$, $520^3$, $1024^3$ | Seyedi & Zayernouri (2022), §III |
+| Transcritical nitrogen channel, $Re_\tau=100$ (bottom-wall values), walls at 0.75 and 1.5 times the critical temperature | $128^3$, $\Delta x^+=9.8$, $\Delta z^+=3.3$, $0.4\lesssim\Delta y^+\lesssim2.3$, first point $y^+=0.1$; kinetic-energy- and pressure-equilibrium-preserving finite differences | Bernades et al. (2023), §4.3 |
+| Incompressible channel, $Re_\tau=400$ | $256\times192\times256$, $\Delta x^+=9.8$, $\Delta y^+$ 0.34–10, $\Delta z^+=4.9$; staggered finite differences, fourth order in $x$, $z$ | [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md), §III A, App. B |
+| Channel, $Re_\tau=395$, $M=0.1$, gas-kinetic scheme on GPUs | $256\times256\times128$: $\Delta x^+=\Delta z^+=9.69$, $\Delta y^+$ 0.45–6.40; against the spectral DNS of Moser, Kim & Mansour | [Wang et al. (2023b)](/sources/wang-2023-b.md), §4.2, Table 6 |
+| Compressible channel, bulk $Re=3000$, bulk $M=0.8$, isothermal walls | $128\times256\times128$: $\Delta x^+=8.76$, $\Delta z^+=4.38$, $\Delta y^+$ 0.22–2.90; against Fu et al. | Wang et al. (2023b), §4.2, Table 7 |
+| Rectangular prisms in confined cross-flow, aspect ratio 1–4, $Re_0=1000$ and 2000 | $512\times256\times64$ to $1024\times512\times128$; minimum $y^+$ 1.71–2.18; averaged over 77 to 427 time units | [Sirignano & MacArt (2023)](/sources/sirignano-2023.md), §3, Table 1 |
+| Decaying Orszag–Tang MHD, $Re\simeq1600$ at peak dissipation | lattice Boltzmann $512^3$ and $768^3$ against pseudo-spectral $512^3$ ([GHOST](/software/ghost.md)) | [Foldes et al. (2023)](/sources/foldes-2023.md), §4.4 |
 
 From their pipe DNS, Vicente Cruz & Lamballais (2023, §7.1) suggest that the
 recommendation of about one wall unit for the first wall-normal spacing
@@ -130,6 +148,30 @@ al. 2022, §II A), and
 the continuous spectral elements of [Nek5000 and NekRS](/software/nek5000.md)
 (Fischer et al. 2022, §2).
 
+**Thermodynamic consistency.** For real-gas (transcritical) turbulence,
+Bernades et al. (2023) show that a kinetic-energy-preserving split form with
+a total-energy equation produces spurious pressure oscillations at density
+interfaces and diverges in an inviscid mixing layer, and propose a split
+form with a pressure equation that is exactly
+[pressure-equilibrium preserving](/properties/pressure-equilibrium-preservation.md),
+at the price of an $O(h^2)$ total-energy error. In their channel DNS (run with
+the C++ code RHEA) both schemes agree to plotting accuracy, "pressure
+oscillations are mitigated by physical viscosity", and the lack of
+total-energy conservation causes no deviation (§4.3, §5).
+
+**Lattice Boltzmann against pseudo-spectral.** Foldes et al. (2023, §4.4)
+find their [lattice Boltzmann](/methods/lattice-boltzmann-method.md) MHD
+code over-damps the kinetic spectrum at high wavenumbers at the resolution
+of a pseudo-spectral reference, the two coming close when the lattice code
+has 1.5 times the points per direction, which they call "qualitatively
+consistent" with the statement of Shen et al. that the lattice Boltzmann
+method needs about twice the resolution; the lattice code resolves up to
+the Nyquist wavenumber $N_x/2$, the de-aliased spectral code up to $N_x/3$
+($N_x$ points per direction). For
+Hall-MHD, whose whistler waves force $\Delta t\propto\Delta x^2$ on both
+methods, they state that the GPU lattice code gives "significantly smaller"
+turnaround times (§5; no side-by-side timing).
+
 **GPU codes and cost.** Several sources of this bundle describe GPU codes for
 DNS. [STREAmS](/software/streams.md) runs the boundary-layer DNS of Cogo et
 al. (2022) in CUDA Fortran. OpenCFD-SCU, in CUDA-C translated to HIP, runs
@@ -141,7 +183,25 @@ parallel efficiency at about 2.5 million points per GPU (Fischer et al. 2022,
 §4.2). Maeyama et al. (2022, Methods) report 3.1 PFLOPS on 12,288 nodes of
 Fugaku for the gyrokinetic code GKV. The printed efficiencies of OpenCFD-SCU
 are not all reproduced by its own timings (see its page) *(compiler check,
-not in the sources)*.
+not in the sources)*. Wang et al. (2023b, §4.1) port the
+[gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md) to GPUs:
+one Tesla V100 runs the $256^3$ Taylor–Green vortex about 16 times faster
+than an 8-core desktop and about as fast as some 300 cores of TianHe-II,
+and eight V100s run $512^3$ about three times faster than 1024 TianHe-II
+cores. The FLAME lattice Boltzmann code reaches 2.7 billion lattice updates
+per second at $512^3$ on three A100 GPUs (Foldes et al. 2023, §5).
+
+**Floating-point precision.** Wang et al. (2023b, §4.2, Table 8) compare
+single and double precision for channel DNS: single precision halves memory
+and runs 1.7 to 2.7 times faster; statistics averaged over 200
+$\delta/U_c$ agree, but instantaneous r.m.s. profiles at $t=20$ and
+$200\,\delta/U_c$ after a common restart differ visibly, which the authors
+attribute to round-off "approximately equals to or larger than the errors
+of numerical scheme". They conclude that single precision "may not be safe
+for DNS in turbulence especially for time-evolutionary turbulent flows" and
+"may be used" for LES and RANS (§5). The deviation is shown in
+instantaneous r.m.s. profiles (Fig. 14); the profiles averaged over 200
+$\delta/U_c$ show "negligible" differences between precisions (Figs. 10–13).
 
 ## Spatially developing boundary layers
 
@@ -189,7 +249,9 @@ are tested.
   at about $2\eta$ is of this kind.
 - **Under-resolved DNS.** A model-free simulation on a grid too coarse for DNS
   is [implicit LES](/definitions/implicit-les.md); Dzanic et al. (2022, §1)
-  use "implicit LES (ILES) or under-resolved DNS (URDNS)" as synonyms and use it
+  use "implicit LES (ILES) or under-resolved DNS (URDNS)" as synonyms, and
+  [Kou et al. (2023)](/sources/kou-2023.md), §1, use the two terms
+  interchangeably. Dzanic et al. use URDNS
   as the baseline of their [PANS](/methods/partially-averaged-navier-stokes.md)
   study, where high-order URDNS of the periodic hill shows oscillations in the
   second moments that they attribute to aliasing (§3.1). In PANS the limit
@@ -259,7 +321,14 @@ call DNS the right test bed for new numerics, since no subgrid model interferes
 wall-modelled LES in canonical flows by the difference between DNS and an
 inviscid solution, about 15%, and note that wall-modelled LES may not converge
 to DNS until the grid reaches the wall-resolved regime, because of the errors
-internal to the wall model.
+internal to the wall model. [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md),
+§2.3, build their [building-block-flow wall model](/methods/building-block-flow-wall-model.md)
+on a database of about 500 DNS of channel, Poiseuille–Couette and
+three-dimensional channel flows, but train it not on filtered DNS: because
+the subgrid stress of an implicitly filtered LES differs from the stress of
+the filtered Navier–Stokes equations, they run wall-modelled LES in the
+target solver with a mean-flow correction that forces the DNS mean profile
+(§2.5; see [discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
 
 Chunk-2 sources use published DNS as the reference for model calibration and
 validation: the channel DNS of Lee & Moser at $Re_\tau=1000$ and 5200 for
@@ -297,6 +366,37 @@ see [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-t
 [fractional SGS model](/methods/fractional-sgs-model.md) and
 [reinforcement-learning closures](/methods/reinforcement-learning-closure.md).
 
+Further sources use DNS in the same three roles:
+
+- **A priori database.** Inagaki & Kobayashi (2023, §III A) filter their
+  $Re_\tau=400$ channel DNS with a sharp spectral cut-off in the two
+  homogeneous directions, at a "medium" and a "coarse" width chosen from
+  a posteriori dynamic-Smagorinsky LES, to study the energy-transfer-free
+  part of the subgrid stress (see
+  [scale-similarity models](/methods/scale-similarity-model.md)).
+- **Training target.** Sirignano & MacArt (2023, §3.1) box-filter their
+  prism DNS with a coarsening ratio of 4 or 8 kept constant on the
+  non-uniform mesh and downsample it as an implicitly filtered LES field; it
+  is the target of their adjoint-trained
+  [neural-network closure](/methods/neural-network-sgs-model.md) and the
+  reference of its tests; they observed no significant difference between
+  drag coefficients from DNS and from filtered DNS (§4.1). Kurz et al. (2023,
+  §3.5) reward their [reinforcement-learning closure](/methods/reinforcement-learning-closure.md)
+  by the error against a time-averaged DNS energy spectrum of forced
+  isotropic turbulence, whose resolution they do not state.
+- **Reference statistics.** The channel DNS of Moser, Kim & Mansour is the
+  reference of the gas-kinetic implicit LES of
+  [Zhao et al. (2023a)](/sources/zhao-2023.md), §5.2, and of the
+  mixed finite-element implicit LES of [Lederer et al. (2023)](/sources/lederer-2023.md),
+  §4, which uses the periodic-hill DNS of Balakumar & Ilhwan as well (§5);
+  [Saini et al. (2023)](/sources/saini-2023.md), §3.1, take a $512^3$
+  spectral DNS of the Taylor–Green vortex as reference and use the equality
+  of the measured decay rate and the enstrophy-based viscous dissipation as
+  the mark of a DNS. Morsbach et al. (2024, §3.3) build the turbulent
+  end-wall inflow of a turbine-cascade LES by scaling the $Re_\theta=670$
+  boundary-layer DNS of Schlatter & Örlü to the operating point (see
+  [inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
+
 Domingo & Vervisch (2023, §1) list DNS codes and orders: SENGA, DINO, S3D,
 FK³, KARFS and HOLOMAC of sixth to tenth order; Nek5000 with spectral elements;
 NGA, PsiPhi, AVBP and OpenFOAM of fourth or second order. They estimate the
@@ -324,6 +424,14 @@ layers (§7).
   the spectrum peak $k_0=8$ and $N_x$ cells per direction; their tabulated
   $k_{\max}\eta_0=3.613$ is reproduced by $\sqrt2N_x/3$ with $N_x=512$, not
   with the factor $k_0$ *(compiler check, not in the sources)*. The version read is the arXiv v1 preprint.
+- Bernades et al. (2023) and Inagaki & Kobayashi (2023) compare their
+  channel DNS with published DNS (the latter with Moser et al. and Abe et
+  al. at $Re_\tau=395$); Bernades et al. compare their two schemes with each
+  other only, against no external data.
+- The single-precision conclusion of Wang et al. (2023b) rests on the
+  arXiv v1 preprint, which also mislabels the memory ratio (double over
+  single printed as single over double) and the number of GPUs of the coarse
+  channel runs.
 - Seta & Federrath (2022) justify their model-free runs by the ratio of
   explicit to numerical diffusion, and Pereira et al. (2021) their reference
   run by a grid study (App. B); neither states its grid spacing in Kolmogorov
@@ -357,3 +465,16 @@ layers (§7).
 - [Kochurin et al. (2022)](/sources/kochurin-2022.md) — p. 2 (pseudo-spectral "DNS" with hyperviscosity and spectral cut-off).
 - [Maeyama et al. (2022)](/sources/maeyama-2022.md) — Methods (closure-free gyrokinetic simulations, GKV performance).
 - [Coelho et al. (2022)](/sources/coelho-2022.md) — p. 4–5 (global fluid simulation with numerical diffusion).
+- [Bernades et al. (2023)](/sources/bernades-2023.md) — §4.3, Figs. 8–10 (transcritical channel DNS, resolution argument); §5.
+- [Delassaux et al. (2023)](/sources/delassaux-2023.md) — HAL author manuscript: §4.1 (Spalart's forecast).
+- [Foldes et al. (2023)](/sources/foldes-2023.md) — arXiv v2: §4.4, Figs. 10–12 (lattice Boltzmann against pseudo-spectral); §5 (GPU performance, Hall-MHD turnaround).
+- [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — arXiv v3: §III A, App. B (channel DNS, filtering).
+- [Kou et al. (2023)](/sources/kou-2023.md) — §1 (implicit LES and under-resolved DNS used interchangeably).
+- [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §3.5 (DNS spectrum as reward target).
+- [Lederer et al. (2023)](/sources/lederer-2023.md) — arXiv v1: §4–5 (channel and periodic-hill DNS references).
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.3 (DNS database); §2.5 (training in the solver instead of filtered DNS).
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §1 (cost scaling); §3.3 (DNS boundary layer as inflow template).
+- [Saini et al. (2023)](/sources/saini-2023.md) — §3.1 (spectral DNS reference); Eqs. (16)–(19) (decay rate and viscous dissipation).
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §3, Table 1 (prism DNS); §3.1, Eq. (3.2) (filtered DNS); §4.1.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — arXiv v1: §4.1, Tables 3–5 (GPU cost); §4.2, Tables 6–8, Figs. 10–14 (channel DNS, single against double precision); §5.
+- [Zhao et al. (2023a)](/sources/zhao-2023.md) — arXiv v1: §5.2 (channel DNS reference).

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "NASA Juncture Flow"
-description: "The NASA Juncture Flow wing–fuselage model, with smooth-body corner separation at the wing-root trailing edge at crank-chord Reynolds number 2.4 million, Mach 0.189 and 5° incidence, on which wall-modelled LES predicts wall pressure within 5% but mean velocity only within 3–8% on the fuselage and about 100% in the separated corner."
+description: "The NASA Juncture Flow wing–fuselage model, with smooth-body corner separation at the wing-root trailing edge (crank-chord Reynolds number 2.4 million, Mach 0.189, 5°): wall-modelled LES predicts wall pressure within 5% but mean velocity only within 3–8% on the fuselage and about 100% in the corner, which a learned wall model does not fix."
 status: established
 aliases: [Juncture Flow experiment, NASA JF, wing-body juncture flow]
-tags: [benchmark, wmles, separated-flow, boundary-layer]
-timestamp: 2026-10-25T13:30:00Z
+tags: [benchmark, wmles, separated-flow, boundary-layer, machine-learning]
+timestamp: 2026-10-26T07:41:00Z
 ---
 
 # NASA Juncture Flow
@@ -96,6 +96,32 @@ From [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md), §V:
   but are under-predicted at the juncture and trailing edge, as expected
   when the subgrid contribution is not added (§V.B).
 
+**A machine-learning wall model on the same case.**
+[Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md), §4.8, Table 1,
+Fig. 18, run the [building-block-flow wall model](/methods/building-block-flow-wall-model.md)
+(a classifier of seven canonical flow types plus one network per type,
+trained on wall-modelled LES of those flows) against the algebraic
+equilibrium wall model, both with the dynamic Smagorinsky model in
+CharLES, on a boundary-layer-conforming grid with 5 points per $\delta$, at
+$Re=2.4\times10^6$ on the Yehudi-break chord and $5^\circ$, against the
+experiment of Kegerise et al. Per station:
+
+| Station | Classification by the model | Confidence | Outcome |
+|---|---|---|---|
+| upstream fuselage ($x=1168.4$ mm) | 88% zero pressure gradient, 12% favourable | 98% | errors below 2% for both wall models |
+| wing–body juncture ($x=2747.6$ mm) | 52% adverse pressure gradient, 41% zero, 7% separation | 82% | the learned model better, through a larger wall stress that decelerates the flow |
+| trailing-edge corner separation ($x=2922.6$ mm) | 56% separation | 22% | the learned model better but "far from satisfactory" |
+
+The separation bubble at the trailing edge is about $0.3\delta$ thick on a
+grid with $\Delta\approx0.2\delta$, one point across the bubble, and the
+authors attribute the remaining error there to the SGS model rather than
+the wall model (§4.8). They state, without side-by-side numbers, that this
+version is more accurate on the case than their preliminary version of
+2020 trained on filtered DNS. Vadrot et al. (2023b) recall a result on this case below; the work
+they cite (their ref. [85]) is the 2020 arXiv preprint of the preliminary
+version (Lozano-Durán & Bae 2020). The model was never trained on wing or aircraft flows
+(§2.3).
+
 Cost and error models built on this case are on
 [grid-point requirements](/results/les-grid-point-requirements.md) and
 [boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md).
@@ -116,8 +142,14 @@ was tested on this case and performed poorly in the separation zones (see
   and the case names; and it announces "six" constant-size cases in §V.A
   while listing five.
 - Averaging times are not printed.
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) state the
+  reference length as the chord at the Yehudi break, the same crank chord
+  as Lozano-Durán et al. (2022), and use the same aircraft frame for their
+  station coordinates; their runs are a single grid, not a convergence
+  study.
 
 # Citations
 
 - [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) — §I, §II.A–B, §III.A, §V.A–F, Figs. 3–22.
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §I (recalled result).
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.3; §4.8, Table 1, Fig. 18.

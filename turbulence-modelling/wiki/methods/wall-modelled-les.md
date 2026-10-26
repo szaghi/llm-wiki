@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Wall-modelled large-eddy simulation"
-description: "LES that resolves the outer-layer eddies and replaces the near-wall viscous region by a wall-stress model: its definition and cost advantage, the grid-dependent error scaling of mean quantities, the interaction with SGS models, non-monotonic grid convergence, grid adaptation, immersed-boundary coupling, and its demonstrations on aircraft and separated flows."
+description: "LES that resolves the outer-layer eddies and replaces the near-wall viscous region by a wall-stress model: its definition and cost advantage, the grid-dependent error scaling of mean quantities, the dominance of SGS-model errors, non-monotonic grid convergence, the insufficiency of wall-mesh criteria, grid adaptation, immersed-boundary coupling, and demonstrations on aircraft, fan stages and separated flows."
 status: established
 aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-25T20:36:00Z
+timestamp: 2026-10-26T07:39:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -25,6 +25,12 @@ In the classification of Larsson et al. (2016), recalled by
 where the LES extends to the wall, are distinct from
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md), where a RANS region covers
 the inner layer. This page covers the wall-stress kind.
+The vocabulary is not uniform across the sources: [Delassaux et al. (2023)](/sources/delassaux-2023.md)
+(§4.1) describe WMLES as using "a RANS model only in the innermost part of the
+wall boundary layer and then switch to a LES model", i.e. the hybrid kind in
+the classification above, and name separately "wall-function LES" (WFLES),
+which resolves the boundary layer with a number of cells independent of the
+Reynolds number and puts the first node at $y^+>30$, as they cite it.
 [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) (Introduction) draw the same
 line between hybrid LES/RANS and "wall-flux" modelling, and subdivide the
 latter into models based on the law of the wall, on the full unsteady
@@ -43,6 +49,7 @@ propagated from the wall.
 | LaRTE | transport equation for the friction-velocity vector, relaxing towards equilibrium with the inertia of the layer below $h_{\mathrm{wm}}$; optional laminar Stokes-layer stress | [LaRTE wall model](/methods/lagrangian-relaxation-towards-equilibrium-wall-model.md) |
 | Inverse velocity transformation | incompressible ODE mapped to compressible profiles plus an algebraic temperature–velocity relation | [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md) |
 | Learned (supervised or reinforcement learning) | network maps LES state to $\tau_w$ or to its update | [machine-learning wall models](/methods/machine-learning-wall-model.md) |
+| Building-block flow | classifier over seven canonical flows blends per-flow learned predictions of $\tau_w$, with a confidence score | [building-block-flow wall model](/methods/building-block-flow-wall-model.md) |
 
 [Cai et al. (2022)](/sources/cai-2022.md) (§I, §II.C.1) put the motivation
 in the same terms: without a wall model the no-slip condition requires grids
@@ -145,6 +152,18 @@ lowers $b_u$ but not $a_u$ (§V.C).
 The error of the wall model itself splits into external (LES velocity at the
 matching point) and internal (model constants) parts, analysed on the
 [equilibrium wall model](/methods/equilibrium-wall-model.md) page.
+[Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) separate the two a
+posteriori, by replacing the SGS model with an "exact-for-the-mean"
+correction that forces the mean LES profile onto DNS (§2.5, §4.1). Across
+laminar and turbulent boundary layers, pipe and Poiseuille–Couette flows, a
+three-dimensional channel, the NASA CRM-HL and the
+[NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md), their learned
+[building-block-flow wall model](/methods/building-block-flow-wall-model.md)
+reduces the internal error markedly, but the total error is set by the
+external error of the SGS model at the matching location; they conclude that
+further WMLES gains require better SGS models, not only better wall models
+(§4.7, §5(4), §6). Internal errors, they add, can keep WMLES from converging
+to DNS until the grid is DNS-like (§4.1).
 
 ## Agreement on what converges first
 
@@ -190,6 +209,38 @@ imposed on the slant, because the flow topology changes between the grids.
   in-tunnel grids is suppressed on the finest one, recall a similar collapse
   under refinement by Iyer & Malik (2021) for a Gaussian bump, and leave cause
   and remedy open.
+- **Pipe flow.** Lozano-Durán & Bae (2023, §4.4, Fig. 10) observe
+  non-monotonic grid convergence in pipe flow at $Re_\tau\approx40\,000$ on
+  grids $\Delta/R=1/5$ to $1/40$ ($R$ the radius), with both the equilibrium
+  and the building-block-flow wall model and dynamic Smagorinsky; total
+  errors are 4–12 %.
+
+## Wall-mesh criteria are necessary, not sufficient
+
+[Lewis et al. (2023)](/sources/lewis-2023.md) (§3.3, Table 5) recall, from
+Piomelli (2014) and Wagner et al. (2007) as they cite them, wall-mesh
+requirements in wall units (streamwise, spanwise and wall-normal cell
+sizes $\Delta x^+$, $\Delta z^+$, $\Delta y^+$; the source's $s^+$, $r^+$, $n^+$):
+$\Delta x^+=50$–150, $\Delta z^+=10$–40, $\Delta y^+=1$ with 3–5 points below
+$y^+=10$ for wall-resolved LES, and $\Delta x^+=100$–600, $\Delta z^+=100$–300,
+$\Delta y^+=30$–150 for WMLES. Two WMLES of the ACAT1 fan–outlet-guide-vane
+stage at approach in AVBP (Lax–Wendroff scheme,
+[WALE](/methods/wale-model.md) SGS model, linear/log wall law; LES1 with 95 M
+cells and 8 prism layers, LES2 with 210 M cells, 14 prism layers and about
+1.5 times finer blade and vane surface meshes) are both stated to meet them
+(§3.3). Yet LES1 shows a large separation at about 65 % of the stator chord
+over almost the whole vane span, with a radial vortex at 60 % chord, which
+disappears in LES2 through the wall-mesh refinement; the authors conclude
+that "wall laws should be used with caution since wall-mesh requirements for
+WMLES are actually quite broad", that two compliant WMLES "may exhibit
+significant discrepancies", and that even WMLES able to predict large
+detachments "might fail to accurately predict the exact detachment and
+reattachment points" (§4.2.1–4.2.2, Figs. 13, 17). LES2 also improves the
+interstage wake profiles and spectra (§4.3). See the
+[ACAT1 fan stage](/benchmarks/acat1-fan-stage.md). These criteria are
+stated in wall units; the
+[boundary-layer-conforming grid](/methods/boundary-layer-conforming-grid.md)
+sizes cells by the boundary-layer thickness instead.
 
 ## Interaction with the SGS model
 
@@ -224,6 +275,21 @@ same under-resolved first cells.
   $\Delta x^+=9$ but under-predicts it by more than 12 % at $\Delta x^+=18$, and the authors
   conclude it "cannot be used alone in the context of WMLES"
   ([Vicente Cruz & Lamballais 2023](/sources/vicentecruz-2023.md), §7.4).
+- **"Wall model" for DG implicit LES.** [Lederer et al. (2023)](/sources/lederer-2023.md)
+  (§6) write that their adaptive
+  [high-order projection-based upwind method](/methods/high-order-projection-based-upwind-method.md),
+  which lowers the excessive near-wall upwind dissipation of under-resolved DG
+  implicit LES, "can be interpreted as a wall model approach for standard DG
+  ILES". The method models no wall stress and uses no matching height; their
+  channel runs at $Re_\tau=392.24$ tabulate near-wall resolutions of 3.00 to
+  13.64 wall units (§4, Table 1). The term is used
+  here in a sense different from the wall-stress models of this page.
+- **A learned closure in place of a wall model.** [Sirignano & MacArt (2023)](/sources/sirignano-2023.md)
+  (§4.3) run LES of bluff bodies at $Re_0=1000$–2000 whose mesh does not
+  resolve within $y^+=10$, with no wall model, and find that an
+  adjoint-trained neural-network closure of all unclosed terms gives better
+  near-wall mean profiles than the AMD, dynamic Smagorinsky and no-model LES;
+  see [machine-learning wall models](/methods/machine-learning-wall-model.md).
 
 - **Discretization dependence of the guidelines.** Gillyns et al. (2022, §1)
   state that WMLES guidelines derived for finite differences (Larsson et al.)
@@ -335,6 +401,23 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
 - **IDDES channel flow** (Carlsson et al. 2023, §4.3, Table 2): SST-IDDES at
   $M_b=0.15$ ($Re_\tau=395$, 2400, 18 000) and $M_b=1.5$ (500, 1015, 5000),
   $64\times64$ points in the wall-parallel plane, first node at $y^+\approx0.5$.
+- **High-lift aircraft and juncture with a learned wall model**
+  (Lozano-Durán & Bae 2023, §4.7–4.8): NASA CRM-HL at
+  $Re=5.49\times10^6$ (mean aerodynamic chord), $M_\infty=0.20$, 30 M
+  points with 0–20 points per boundary-layer thickness, at 7° and 19°, and the
+  Juncture Flow on a boundary-layer-conforming grid with 5 points per
+  $\delta$; the building-block-flow model gives moderate gains over the
+  equilibrium model, especially near stall and most clearly in pitching
+  moment.
+- **Fan stage** (Lewis et al. 2023): see the section on wall-mesh criteria;
+  the WMLES wall-pressure fluctuations feed Ffowcs Williams–Hawkings and
+  Goldstein acoustic analogies for broadband noise (§5).
+- **Automotive, as recalled.** Delassaux et al. (2023, §1) recall a GPU
+  wall-function LES of the notchback DrivAer car by Menter et al. on 250 M
+  and 500 M cells, with drag errors of 24 counts (SBES), 10 counts (250 M LES)
+  and 2 counts (500 M LES, 1 %), and the GPU cost figures of Goc et al.
+  (2021); their own full-scale car study uses
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md).
 - **Learned wall models** (Bae & Koumoutsakos 2022): channel flow from
   $Re_\tau=5200$ to $10^6$ at $\Delta x=\Delta z=0.05\delta$, and a zero-pressure-gradient
   flat-plate boundary layer at $Re_\theta=1000$–7000; see
@@ -369,6 +452,14 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
   convergence on the profiles. The table is captioned "wall-modeled
   $Re_\tau=550$ channel", while its spacings (333.33 $=2000/6$ at $l=0$)
   belong to $Re_\tau=2000$ *(compiler check, not in the sources)*.
+- **Lewis et al.'s compliance.** Lewis et al. (2023, §3.3) state that both
+  fan-stage meshes are "consistent with the wall requirements for
+  wall-modelled LES", but their Table 6 gives mean first-cell sizes
+  $\Delta y^+=25$ (LES1) and 17 (LES2), and mean wall-parallel sizes
+  $\Delta x^+,\Delta z^+=80$ and 64, below the lower bounds of the WMLES ranges
+  of their Table 5 ($\Delta y^+=30$–150, $\Delta x^+=100$–600,
+  $\Delta z^+=100$–300); the maxima (66, 64; 300, 195) lie inside. The paper does not
+  say whether the ranges are meant as upper limits only.
 - Locators of Blind et al. (2023) refer to the arXiv v1 preprint read
   (titled "Grid-Adaptation for Wall-Modeled Large Eddy Simulation Using
   Unstructured High-Order Methods"), not the Computers & Fluids version.
@@ -391,3 +482,8 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
 - [Cai et al. (2022)](/sources/cai-2022.md) — §I; §II.A; §II.C.1, Eq. (27), Fig. 1(b); §II.C.2; §III, Table II; §IV, Figs. 8–9, Table III.
 - [Blind et al. (2023)](/sources/blind-2023.md) — §3.3, Table 4, Figs. 9–11; §4, Table 6, Fig. 13.
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §4.3, Table 2, Fig. 4.
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.5; §4.1–4.8, Figs. 10, 15, 18, Table 1; §5(4); §6.
+- [Lewis et al. (2023)](/sources/lewis-2023.md) — §3.2–3.3, Tables 5–6; §4.2–4.3, Figs. 13, 17; §5.
+- [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §1; §4.1 (HAL author manuscript).
+- [Lederer et al. (2023)](/sources/lederer-2023.md) — §4, Table 1; §6 (arXiv v1).
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §4.3, Fig. 10; §7.

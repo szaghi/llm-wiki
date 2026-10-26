@@ -5,7 +5,7 @@ description: "FLEXI is an open-source high-order DGSEM framework for compressibl
 status: established
 aliases: [FLEXI framework, HOPR, POSTI]
 tags: [software, dg, les, kinetic-energy-preserving, reinforcement-learning]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-26T07:30:00Z
 ---
 
 # FLEXI
@@ -19,8 +19,10 @@ procedural Fortran" with MPI and HDF5 I/O, and comprises three parts: the mesh
 preprocessor **HOPR**, the [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)
 solver FLEXI, and the post-processing suite **POSTI**
 ([Krais et al. 2021](/sources/krais-2021.md), §1–§2, Fig. 1).
-[Beck & Kurz (2023)](/sources/beck-2023.md) use it as the LES solver of their
-reinforcement-learning closures.
+[Beck & Kurz (2023)](/sources/beck-2023.md) and
+[Kurz et al. (2023)](/sources/kurz-2023.md) use it as the LES solver of their
+reinforcement-learning closures, coupled to the agent by
+[Relexi](/software/relexi.md).
 
 ## Numerics
 
@@ -128,7 +130,23 @@ and super-samples high-order data to linear output (Krais et al. 2021, §2.3,
   of Beck & Kurz (2023, §IV A) used $N=7$ and $64^3$ elements ($512^3$ points),
   about 30,000 CPU-hours on 16,384 cores of HAWK; their LES at 24 and 36
   degrees of freedom per direction and $N=3,5,8$ run the RL agent through the
-  **Relexi** framework, which couples FLEXI to the agent on HPC systems (§IV B).
+  [Relexi](/software/relexi.md) framework, which couples FLEXI to the agent
+  on HPC systems (§IV B). The earlier study of
+  [Kurz et al. (2023)](/sources/kurz-2023.md) uses the same set-up at
+  $Re_\lambda\approx180$, $M=0.1$, with Lundgren's linear isotropic forcing
+  applied nodally and the KEP split form on LGL nodes (§3.2, §3.5): LES at
+  24, 32, 36 and 48 degrees of freedom per direction ($N=5$ or 7, $4^3$ to
+  $8^3$ elements; Table 2) learn an element-wise Smagorinsky coefficient in
+  $[0,0.5]$; Relexi (TensorFlow, TF-Agents and SmartSim) launches several
+  FLEXI runs per training iteration, and training took one to five days on
+  HAWK with up to 1024 CPU cores for the simulations and one GPU node for
+  the network (§4.1). Their element-wise
+  [dynamic Smagorinsky](/methods/dynamic-procedure.md) baseline uses a modal
+  cut-off test filter to degree 2 ($N=5$) or 3 ($N=7$), element averages of
+  the Lilly numerator and denominator and an eddy viscosity clipped to
+  $[-100\mu,1000\mu]$, since unclipped values "deteriorated the solution
+  quite drastically" (App. A); evaluating the learned policy cost about 10%
+  more than this dynamic procedure on one CPU core (§4.2).
 
 - **Grid adaptation for wall-resolved and wall-modelled LES**
   ([Blind et al. 2023](/sources/blind-2023.md)): FLEXI with LGL nodes, Roe
@@ -187,3 +205,4 @@ Flad & Gassner (2017) ran their study of kinetic-energy-preserving DG LES in an
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — §2.1, §6.1 (the in-house DG framework and the split-form LES strategy FLEXI cites).
 - [Blind et al. (2023)](/sources/blind-2023.md) — §2.1, §2.3 (FLEXI set-up, Vreman length scale, modal test filter); §3.1–3.3, Tables 1–4 (channels, mortars); §4, Tables 5–6 (NACA 64A-110).
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §2, Table 1 (Flexi/Fluxo capabilities as judged by the HORSES3D authors).
+- [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §3.2 (linear forcing); §3.5, Table 2 (FLEXI set-up, Relexi); §4.1–4.2 (training cost, policy cost); App. A (element-wise dynamic Smagorinsky in FLEXI).

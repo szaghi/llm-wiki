@@ -5,7 +5,7 @@ description: "Training a learned closure with the solver in the loop, so the los
 status: established
 aliases: [a posteriori training, a-posteriori training, solver-in-the-loop training, integrated inference and learning, embedded learning, differentiable-physics training, online learning]
 tags: [data-driven, machine-learning, neural-network, sgs-model, rans, les]
-timestamp: 2026-10-25T20:39:00Z
+timestamp: 2026-10-26T07:37:00Z
 ---
 
 # Model-consistent (a posteriori) training of learned closures
@@ -55,6 +55,17 @@ can converge to solutions that depend on the initial field (§II D). The
 authors bound what such a framework can reach by a conditioning test that
 injects the exact DNS labels (§II C; see
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+[Tang et al. (2023)](/sources/tang-2023.md) (§II D–E) follow the same
+pattern with a [symbolic-regression closure](/methods/symbolic-regression-closure.md)
+of $k$-$\varepsilon$: the non-linear part of the anisotropy, learned
+offline from DNS, is evaluated once on the converged baseline solution
+and frozen ("loose coupling"), while the linear eddy-viscosity part is
+updated implicitly until the residuals reconverge. They distinguish
+"tight coupling", in which the learned term takes part in the RANS
+iterations, and do not use it. As recalled there (§I), the CFD-driven
+gene-expression programming of Zhao et al. evaluates candidate models in
+the solver during training; Tang et al. propose coupling their RL-driven
+search with RANS as future work (§IV).
 
 **Field inversion, then learning (FIML).** Field inversion is run for each
 dataset, and the inferred fields are then regressed onto
@@ -95,6 +106,49 @@ networks in RANS (Holland et al.) and the DPM closure for LES (Sirignano,
 MacArt & Freund). Its drawback is that features must be fixed before
 inference.
 
+**Adjoint-based training of an LES closure (Sirignano & MacArt 2023).**
+[Sirignano & MacArt (2023)](/sources/sirignano-2023.md) follow this route
+for incompressible LES of bluff-body wakes. A single network
+$h_{ij}(\nabla\bar u;\boldsymbol\theta)$ (page-local), fed with the
+filtered velocity-gradient tensor, replaces every unclosed term of the
+filtered equations (Eq. 2.3):
+
+$$\frac{\partial\bar u_i}{\partial t}=-\frac{\partial\bar p}{\partial x_i}-\frac{\partial\bar u_i\bar u_j}{\partial x_j}+\frac1{Re}\frac{\partial^2\bar u_i}{\partial x_j\partial x_j}-\frac{\partial h_{ij}}{\partial x_j}(\nabla\bar u;\boldsymbol\theta),\qquad\frac{\partial\bar u_k}{\partial x_k}=0,$$
+
+with $Re$ based on the prism height and free-stream velocity. The
+network is described on
+[neural-network SGS models](/methods/neural-network-sgs-model.md). The
+training loop (§2.2) is:
+
+1. choose $N$ windows $[t_n,t_n+\tau_{\mathrm{tr}}]$ with
+   $\tau_{\mathrm{tr}}=0.1$ time units (page-local symbol; "only a fraction
+   of the mean-flow time scale");
+2. start each window from filtered DNS and solve the LES in parallel;
+3. evaluate the end-of-window mismatch (Eq. 2.8)
+   $$\mathcal L(\boldsymbol\theta)=\sum_{n=1}^{N}\int_\Omega\big\|\bar u^{\boldsymbol\theta}(t_n+\tau_{\mathrm{tr}},\boldsymbol x)-\bar u^{\mathrm{DNS}}(t_n+\tau_{\mathrm{tr}},\boldsymbol x)\big\|\,d\boldsymbol x,$$
+   where $\bar u^{\boldsymbol\theta}$ is the LES solution and
+   $\bar u^{\mathrm{DNS}}$ the filtered, downsampled DNS;
+4. solve $N$ continuous adjoint problems backward over the windows (Eq.
+   2.9) and assemble $\nabla_{\boldsymbol\theta}\mathcal L$ as the
+   space–time integral of the adjoint velocity times the
+   $\boldsymbol\theta$-derivative of the divergence of $h_{ij}$ (Eq. 2.10);
+5. update $\boldsymbol\theta$ with RMSprop.
+
+The adjoint system has as many equations as the Navier–Stokes system
+(three momentum, one continuity) whatever the size of $\boldsymbol\theta$,
+which the authors give as the source of efficiency (§2.2). The adjoint
+velocity is the sensitivity of the loss to the solution at each point, so
+the optimization "naturally focuses" on the regions that most reduce the
+loss. The problem is "highly non-convex". Training is synchronized
+distributed RMSprop over "tens to hundreds of GPUs" with MPI; each GPU
+holds $M$ forward and adjoint solutions as one tensor (§2.3). As
+recalled there (§2.2, from Sirignano, MacArt & Spiliopoulos 2023), global
+convergence of adjoint-trained network–PDE models is proven, as hidden
+units and training time tend to infinity, only for linear PDE operators.
+The authors contrast adjoints with RL: adjoints "utilize the PDEs directly
+during gradient calculations", whereas RL depends on the fidelity of the
+"agent" to the flow dynamics (§1; see Qualifications).
+
 **Weakly coupled variants.** Embedded learning, iterative machine
 learning, CFD-driven machine learning and closed-loop training move toward
 model consistency without adjoints, though some still need full-field DNS
@@ -113,7 +167,12 @@ of 30–60 (List et al., 2D incompressible flow), 32 (Kochkov et al.), and 30
 **Reinforcement learning.** Beck & Kurz (2023) pose the choice of closure
 parameters as a Markov decision process. The LES with its actual
 discretization is the environment, and the reward is computed from the LES
-energy spectrum, so no gradient of the solver is needed. Vadrot et al.
+energy spectrum, so no gradient of the solver is needed.
+[Kurz et al. (2023)](/sources/kurz-2023.md), the precursor of that
+work, make the point explicit: the sample estimate of the policy gradient
+(their Eq. 8) contains no term of the environment dynamics, so the
+solver is never differentiated, and the implicit filter of the DG-LES is
+"incorporated" into training by design (§2, §1). Vadrot et al.
 (2023b, §II B 4) describe a wall model trained the same way in WMLES
 without high-fidelity data. Its authors, [Bae & Koumoutsakos (2022)](/sources/bae-2022.md)
 (preprint, pp. 3, 8, 10), give the consistency argument for wall models:
@@ -145,6 +204,44 @@ and they call for a quantitative comparison of the two (§IV). See
   §IV.B, Fig. 2, from Sirignano et al.), an a priori-trained SGS closure
   overpredicts the resolved kinetic energy over the plotted interval. The
   model-consistent DPM closure follows the filtered DNS.
+- **Bluff-body wakes, same network trained both ways.** Sirignano & MacArt
+  (2023, §5, Figs. 11–12) train their network a priori on the filtered-DNS
+  subgrid stress and by adjoints, for a square prism at $Re=1000$. The a
+  priori fit is "almost perfect"; in the LES the adjoint-trained network
+  "substantially outperforms" it for all flow statistics, on the training
+  case itself.
+- **Short windows, long-time statistics.** The adjoint-trained models see
+  only windows of 0.1 time units, with no guarantee of stability as
+  $t\to\infty$, yet run stably for "several thousand time units" on grids
+  with 1/64 or 1/512 of the DNS points (Sirignano & MacArt 2023, §2.2,
+  §3.2). Their drag coefficients on four rectangular prisms (aspect ratios
+  1, 2, 4; $Re=1000$ or 2000) are, against filtered DNS (Table 2):
+
+  | Case | filtered DNS | no model | dynamic Smagorinsky | AMD | DL-AR1 | DL-AR2 |
+  |---|---|---|---|---|---|---|
+  | AR1, $Re=1000$ | 2.45 | 1.88 | 2.15 | 2.53 | 2.43 | 2.51 |
+  | AR2, $Re=1000$ | 1.94 | 1.61 | 1.65 | 1.96 | 1.90 | 1.95 |
+  | AR2, $Re=2000$ | 2.09 | 1.62 | 1.68 | 1.89 | 1.84 | 1.96 |
+  | AR4, $Re=1000$ | 1.61 | 1.53 | 1.54 | 1.67 | 1.54 | 1.61 |
+
+  DL-AR1 is trained on the first case, DL-AR2 on the third; AMD is the
+  [anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md).
+  The authors summarize that the learned models "consistently perform as
+  well or better" than dynamic Smagorinsky and AMD, AMD being outperformed
+  "by the in-sample or nearest DL model" (§4.1). By the table, DL-AR1 is
+  less accurate than AMD on the AR2, $Re=2000$ and AR4 cases, where the
+  other learned model is the more accurate one *(compiler check, not in
+  the sources)*. Both learned models also run in a second solver on an
+  equilateral triangular prism and a circular cylinder never seen in
+  training; for the cylinder they "suppress all artificial primary
+  recirculation", as DNS does, while no-model LES and AMD predict two
+  recirculation regions (§6, Figs. 13–14).
+- **Isotropic turbulence with RL in DG.** Kurz et al. (2023, §4.2, Fig. 6)
+  train on episodes of 5 time units and test from an unseen state to
+  $t=20$: the RL models stay stable over four times the training horizon,
+  beat no-model LES and static Smagorinsky ($C_s=0.17$), match the dynamic
+  model and beat it at the coarsest resolution (24 DOF per direction). See
+  [reinforcement-learning closures](/methods/reinforcement-learning-closure.md).
 - **2D Kolmogorov-forced turbulence.** Agdestein & Sanderse (2025,
   §5.2.2–5.2.3, Figs. 11–12) run DNS on $4096^2$ points at $Re=6000$ and
   LES on $\bar n\in\{32,\dots,256\}$ points per direction.
@@ -197,6 +294,9 @@ and they call for a quantitative comparison of the two (§IV). See
 | Vadrot et al. (2023b, §IV D) | RL wall model of Bae & Koumoutsakos | about $10^7$ gradient steps (recalled) |
 | Bae & Koumoutsakos (2022, preprint pp. 8, 12–13) | multi-agent RL in WMLES, $10^7$ policy-gradient steps | $O(10^3)$ CPU-hours and under 1 GB at $Re_\tau=4200$, against $O(10^7)$ CPU-hours and over 100 TB to generate DNS data for supervised training (no hardware given) |
 | Kim et al. (2022, §II F) | DRL of a pointwise SGS network in channel LES, 10,000–15,000 iterations, eight parallel LES; supervised pretraining of 50,000 iterations | about 2–4 days on one NVIDIA Titan Xp GPU; pretraining "only a few minutes" |
+| Kurz et al. (2023, §4.1) | PPO of an element-local Smagorinsky coefficient in DG-LES, 16 or 32 episodes per update | 1 day (smallest) to 5 days (largest case) on HAWK, up to 1024 CPU cores for the LES plus one GPU node for the policy |
+| Sirignano & MacArt (2023, §2.3) | adjoint-based training, distributed RMSprop | "tens to hundreds of GPUs"; no timing given |
+| Tang et al. (2023, §III B) | a priori symbolic regression with an RL-trained expression generator (for contrast) | about 100 h on 20 cores (Intel Xeon E5-2650) |
 
 Duraisamy (2021, §IV.B) names the obstacles to adjoint-based integrated
 training. Adjoints are intrusive. In LES the chaotic dynamics can make
@@ -218,7 +318,12 @@ the convergence of these training methods and the choice of loss function
   at $Re_\tau=180$, it gives reasonable Reynolds shear stress at untrained
   $Re_\tau$ but fails on an untrained coarser grid, and the authors
   conclude that "a model trained in a single environment might not perform
-  well in a different environment".
+  well in a different environment". Sirignano & MacArt (2023, §4, §6)
+  report the other side for adjoint training: models trained on one prism
+  and one Reynolds number stay stable, and are often the most accurate, on
+  other aspect ratios, the other Reynolds number, two unseen geometries and
+  a second solver, all at $Re\le2000$; a test at $Re=12\,000$ is
+  mentioned as "stable and, in some cases, accurate" but not shown (§7).
 - **Statistics as targets leave the closure under-determined.** Kim et al.
   (2022, §III C) find that models trained to the same two mean profiles
   give different mean SGS dissipation. Cato et al. (2023, §III B, §V C)
@@ -258,6 +363,22 @@ the convergence of these training methods and the choice of loss function
   for numerical errors "at least as far as reconstructing the training
   data is concerned". Disambiguating numerical from modelling error
   remains hard without explicit filtering, and possibly even with it.
+- **Adjoints against RL, as characterized.** Sirignano & MacArt (2023, §1)
+  write that RL "typically approximates the flow dynamics using a DNN
+  model", so its consistency depends on the fidelity of the agent, and add
+  that "model-free reinforcement learning can also be used" (recalled
+  from Pino et al. 2023). In the RL closures of this bundle the
+  environment is the running LES or WMLES itself, not a network model of
+  the flow (Beck & Kurz 2023, §II B; Kurz et al. 2023, §2, Eq. 8; Kim et
+  al. 2022, §II; Bae & Koumoutsakos 2022, pp. 3–4). No source compares the
+  two routes on one case; Kim et al. (2022, §IV) call for such a
+  comparison.
+- **Cost of adjoint training is not reported.** Sirignano & MacArt (2023)
+  give hardware ("tens to hundreds of GPUs") but no training time, and
+  their training needs filtered DNS fields at the start and end of every
+  window. The rewards of the RL closures use only statistics (Kurz et al.
+  2023, §3.5; Kim et al. 2022), although Kurz et al. start their training
+  episodes from DNS fields projected onto the LES grid (§3.5).
 - **Noise.** Agdestein & Sanderse (2025, §6) report that adding noise to
   the training data, a common stabilizer, can destroy the divergence-free
   property. Validation errors were better without noise; no data are
@@ -274,3 +395,6 @@ the convergence of these training methods and the choice of loss function
 - [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: Abstract, §I, §II F (cost), §III C–E (results, comparison with supervised learning, non-unique SGS dissipation, generalization), §IV (differentiable-PDE training).
 - [Cato et al. (2023)](/sources/cato-2023.md) — HAL author manuscript: §I (two-step FIML rationale), §III B, Fig. 6 (over-learning), §V C (mean flow without the right stresses).
 - [McConkey et al. (2022)](/sources/mcconkey-2022.md) — arXiv v1: §II C–D, Fig. 7 (conditioning, open-loop injection), §IV B, Figs. 20–21, §V.
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1 (adjoints against RL), §2, Eqs. 2.3, 2.8–2.10 (adjoint training), §2.2–§2.3 (algorithm, GPUs, convergence result recalled), §3.2, §4.1, Table 2, §5, Figs. 11–12, §6, Figs. 13–15, §7.
+- [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §1, §2, Eq. 8 (no solver gradient), §3.5, §4.1 (cost), §4.2, Fig. 6.
+- [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I (CFD-driven GEP recalled), §II D–E (loose and tight coupling), §III B (cost), §IV.

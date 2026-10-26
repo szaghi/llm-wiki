@@ -249,7 +249,7 @@ ref. [78] ends its author list with "et al.".
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
 
 - [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md)
 - [Periodic hill](/benchmarks/periodic-hill.md)
@@ -257,6 +257,8 @@ Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cite
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)
 - [Log-layer mismatch](/definitions/log-layer-mismatch.md)
+- [Anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md)
+- [Building-block-flow wall model](/methods/building-block-flow-wall-model.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
 - [Lagrangian relaxation towards equilibrium (LaRTE) wall model](/methods/lagrangian-relaxation-towards-equilibrium-wall-model.md)

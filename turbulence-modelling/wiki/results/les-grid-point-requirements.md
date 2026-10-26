@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Grid-point requirements of LES and DNS"
-description: "How the number of grid points and time steps of DNS, wall-resolved LES and wall-modelled LES scales with Reynolds number, the explicit WMLES cost model with boundary-layer and leading-edge resolution parameters, the practical sizing rules the sources use, the resolutions solution-adaptive grids converge to, and why their WMLES cost exponents differ."
+description: "How the grid-point and time-step counts of DNS, wall-resolved and wall-modelled LES scale with Reynolds number, the explicit WMLES cost model, wall-unit and per-thickness resolution criteria and evidence that meeting them is not sufficient, the resolutions used in practice and found by adaptive grids, measured costs, and why WMLES cost exponents differ."
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-25T20:27:00Z
+timestamp: 2026-10-26T07:39:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -44,6 +44,12 @@ Koumoutsakos; Gillyns et al. cite Choi & Moin 2012 and Yang & Griffin 2021),
 without stating the Reynolds number used; $13/7\approx1.857$ agrees with the
 1.86 of the table *(compiler check, not in the sources)*.
 Their exponents for the total WMLES cost differ, because they rest on different time-step assumptions (see Qualifications).
+[Morsbach et al. (2024)](/sources/morsbach-2024.md) (§1) quote, after Choi &
+Moin (2012), a cost of roughly $Re^{3.5}$ for DNS and $Re^{2.5}$ for
+wall-resolved LES. [Delassaux et al. (2023)](/sources/delassaux-2023.md)
+(§4.1) recall Spalart's forecast that wall-resolved LES and DNS of a
+full-scale high-Reynolds-number geometry would become available in 2050 and
+2080 respectively.
 
 ## DNS
 
@@ -107,6 +113,49 @@ cores), whereas $n_\delta\approx20$ with $Re_\Delta^{\min}\approx10^3$ needs
 $O(1000)$ million, "which renders WMLES unfeasible as a routine tool in
 industry"; flight Reynolds numbers ($\approx5\times10^7$) multiply the count by
 about ten.
+
+## Wall-unit criteria and their limits
+
+[Lewis et al. (2023)](/sources/lewis-2023.md) (§3.3, Table 5) collect, from
+Piomelli (2014) and Wagner et al. (2007) as they cite them, cell sizes in wall
+units ($\Delta x^+$ streamwise, $\Delta z^+$ spanwise, $\Delta y^+$ wall-normal; the source's $s^+$, $r^+$, $n^+$):
+
+| | $\Delta x^+$ | $\Delta z^+$ | $\Delta y^+$ | points below $y^+=10$ |
+|---|---|---|---|---|
+| Wall-resolved LES | 50–150 | 10–40 | 1 | 3–5 |
+| Wall-modelled LES | 100–600 | 100–300 | 30–150 | — |
+
+Two WMLES of a fan stage that the authors judge compliant with these ranges
+differ qualitatively — a large stator separation on the 95 M-cell mesh
+vanishes on the 210 M-cell mesh — so they call the requirements "quite
+broad" (§4.2.2; see [wall-modelled LES](/methods/wall-modelled-les.md) and the
+qualification there on their mean values). For wall-resolved LES,
+[Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) (§II D) recall typical
+eddy-viscosity resolutions $\Delta x^+<130$, $\Delta z^+<30$ and the stricter
+$\Delta x^+<100$, $\Delta z^+<20$ that Cimarelli & De Angelis require for an
+eddy-viscosity model to resolve the interscale transfer including the spanwise
+inverse cascade. Their own a posteriori dynamic-Smagorinsky LES of channel
+flow at $Re_\tau=400$ predicts the DNS mean velocity on grids of
+$(\Delta x^+,\Delta z^+)=(26.2,13.1)$ and $(52.4,26.2)$ but over-estimates it
+on $(105,52.4)$, with $\Delta y^+=0.7$–20 in all three (App. C, Table I);
+a priori, with a sharp filter in $x$ and $z$ matching the medium grid, the
+filtered wall-normal fluctuation is below 80 % of the unfiltered one for
+$y^+<50$, from which they suggest $\Delta z^+<20$ may be
+needed for the near-wall anisotropy (§III B, Fig. 2). With the filter of the coarse grid
+the part of the SGS stress that transfers no energy carries a mean shear
+stress comparable to the eddy-viscosity part (§III C, Fig. 3); see
+[energy backscatter](/definitions/energy-backscatter.md).
+
+For high-order elements the "first cell" is ambiguous:
+[Slaughter et al. (2023)](/sources/slaughter-2023.md) (§3.6, Fig. 4) measure
+the wall-normal resolution by the position of the first quadrature point
+inside the wall element, and the spanwise resolution of their Fourier
+direction by the decay of the modal energy rather than by $\Delta z^+$; their
+in-plane spacings lie below the limits of Georgiadis et al. (2010) (values
+not printed) except two small regions where $y^+$ is "slightly above one".
+Morsbach et al. (2024, §3.1, Fig. 2) normalize the element size by the
+polynomial degree $N$ and keep the ratio of mean solution-point spacing to the
+estimated Kolmogorov length below 6 in the free stream.
 
 ## What resolution sufficed in practice
 
@@ -174,6 +223,37 @@ about ten.
   cell hand-designed mesh (Table 2; the text of §4.1 gives 9.2 M), and recommends a minimum cell size of a
   quarter of the Taylor microscale for vortex cores (§5.1, §6).
 
+- **Implicit LES with high-order elements.** Morsbach et al. (2024, §3.1,
+  Table 2) run a wall-resolved implicit DG LES of the MTU T161 low-pressure
+  turbine cascade (exit $Re=90\,000$, $M=0.6$) at $N=5$: 876 960 elements,
+  $189.4\times10^6$ degrees of freedom, mean spacings per solution point
+  $(23.1,0.742,15.0)$ in wall units at blade midspan and $(23.2,0.809,18.8)$ on
+  the end walls (maxima $(65.2,1.71,60.3)$); a coarser mesh of 312 424
+  elements, mainly coarser spanwise, gives the same blade loading but a
+  subtly different skin friction downstream of the transition peak,
+  "indicating that the resolution on the coarse mesh is not entirely
+  sufficient" (§4.1, Fig. 7). [Zhao et al. (2023a)](/sources/zhao-2023.md)
+  (§5.2, Table 6) run implicit LES of channel flow with high-order
+  gas-kinetic schemes on $64\times96\times64$ cells at $Re_\tau=180$
+  ($\Delta x^+=17.66$, $\Delta z^+=8.33$ as printed, $\Delta y^+=0.29$–7.76)
+  and $96^3$ at $Re_\tau=395$ ($25.84$, $12.92$, $0.58$–20.83); all schemes
+  show "an unnatural leveling-off of the energy spectrum near the cutoff
+  wavenumber", attributed to the mesh resolution (§5.2.3).
+- **Hybrid RANS/LES of a full-scale car.** Delassaux et al. (2023, §4.4,
+  §5) size a DDES grid of 115 M cells with wall-resolved prism layers
+  ($y^+\approx1$, 20 layers) and wall-parallel spacings kept coarse on
+  purpose against the boundary-layer thickness ($\Delta x^+\approx600$ on the
+  roof) to avoid grid-induced separation; from their Ahmed-body calibration
+  they recall that $y^+<1$ and "at least 15 or 20 prism layers" are needed.
+  The constraint is the reverse of WMLES sizing (see
+  [boundary-layer-conforming grid](/methods/boundary-layer-conforming-grid.md)).
+- **Training grids of a learned wall model.** [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md)
+  (§2.6) train their wall model on WMLES with isotropic grids $\Delta=\delta/n$,
+  $n=5$ to 380 ($\delta$ the channel half-height, $n$ page-local), and below
+  $\delta/380$ on DNS data so that the model converges to no slip; their NASA
+  CRM-HL WMLES uses 30 M points with 0–20 points per boundary-layer
+  thickness (§4.7).
+
 ## Resolution found by solution-adaptive grids
 
 Instead of prescribing spacings, [Blind et al. (2023)](/sources/blind-2023.md)
@@ -223,6 +303,16 @@ processor counts and the hand-designed DDES included extra analysis steps, so
 reinforcement-learning wall model of Bae & Koumoutsakos (2022, p. 8) costs
 $O(10^3)$ CPU-hours, against an estimated $O(10^7)$ for the DNS data a
 supervised model would need at $Re_\tau=4200$.
+
+Delassaux et al. (2023, §7.6) run steady RANS of a full-scale car on 384
+cores in about 2 h and DDES on 1152 cores in about one and a half days, and
+call the hybrid simulation "18 times more expensive"; 18 is the wall-clock
+ratio, and in core-hours the ratio is $1152\times36/(384\times2)=54$
+*(compiler check, not in the sources)*. Morsbach et al. (2024, Table 2)
+report 25 852 CPU-hours per convective time unit for their fine turbine LES
+(5120 MPI ranks) and 5861 for the coarse one (hardware not stated).
+Lozano-Durán & Bae (2023, §2.6) report that their learned wall model makes
+WMLES 1.1–1.3 times as expensive as the algebraic equilibrium model.
 
 ## Qualifications
 
@@ -280,6 +370,16 @@ supervised model would need at $Re_\tau=4200$.
   degree 5 "throughout this work" and the channel tables give $6^3=216$
   *(compiler check, not in the sources)*. Locators refer to the arXiv v1
   preprint read.
+- **Recalled exponents.** The WRLES cost exponents in this page are
+  recalled, not derived, by the sources: $Re^{2.7}$ by Griffin et al. (2023)
+  after Yang & Griffin (2021), $Re^{2.5}$ by Morsbach et al. (2024) after Choi
+  & Moin (2012). The two rest on different underlying works whose
+  assumptions the citing sources do not state; no source of this bundle
+  derives either.
+- Zhao et al. (2023a, Table 6) print $\Delta z^+=8.33$ at $Re_\tau=180$ with
+  $L_z=\pi$ and 64 cells, where $\pi\cdot180/64\approx8.84$; their printed
+  $\Delta x^+=17.66$ and the $Re_\tau=395$ values are reproduced by the same
+  arithmetic *(compiler check, not in the sources)*.
 - Cai et al. (2022, §III) call $\lambda_H$ "the Taylor scale describing the
   integral motions in the wake"; the estimate is printed as such.
 
@@ -300,3 +400,10 @@ supervised model would need at $Re_\tau=4200$.
 - [Mozaffari et al. (2022)](/sources/mozaffari-2022.md) — §1, Fig. 1; §4, Table 2; §5.1; §6.
 - [Cai et al. (2022)](/sources/cai-2022.md) — §I; §III, Tables I–II.
 - [Blind et al. (2023)](/sources/blind-2023.md) — Abstract; §2.3; §2.5; §3.1–3.3, Tables 1, 3, 4; §4, Table 6.
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §1; §3.1, Table 2, Fig. 2; §4.1, Fig. 7.
+- [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §4.1; §4.4; §5; §7.6 (HAL author manuscript).
+- [Lewis et al. (2023)](/sources/lewis-2023.md) — §3.3, Table 5; §4.2.2 (HAL accepted manuscript).
+- [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §II D; §III B–C, Figs. 2–3; App. C, Table I (arXiv v3).
+- [Slaughter et al. (2023)](/sources/slaughter-2023.md) — §3.6, Figs. 4–5 (Research Square preprint v1).
+- [Zhao et al. (2023a)](/sources/zhao-2023.md) — §5.2, Table 6; §5.2.3 (arXiv v1).
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.6; §4.7.

@@ -5,7 +5,7 @@ description: "Clark's gradient model approximates the subgrid stress by a trunca
 status: established
 aliases: [Clark model, gradient model, nonlinear gradient model, tensor-diffusivity model, optimal clipping, standard clipping, GM-OC, GM-SC]
 tags: [les, sgs-model, filtering, eddy-viscosity]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-26T07:41:00Z
 ---
 
 # Gradient (Clark) model and the clipping of structural SGS models
@@ -246,6 +246,66 @@ transfer between the GS and SGS components" and that a pure similarity
 model "often causes numerical instability" (§II C, §V). The two sources do
 not cite each other.
 
+## Gradient term as an energy-transfer-free anisotropic stress
+
+[Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) (§IV B, Eq. 20)
+use the gradient term, with directional widths $\Delta_\alpha$ (page-local),
+$\tau^{\mathrm a}_{ij}=\sum_\alpha\Delta_\alpha^2\partial_\alpha\bar u_i\partial_\alpha\bar u_j$
+(page-local), as the shape of the anisotropic remainder of the subgrid
+stress, the part that carries no energy transfer (see
+[energy backscatter](/definitions/energy-backscatter.md)). Following Abe's
+strategy (as recalled), they remove its eddy-viscosity projection with
+$\nu^{\mathrm a}=-\tau^{\mathrm a}_{ij}\bar S_{ij}/(2\bar S_{kl}\bar S_{kl})$
+(page-local) and scale it by the exact subgrid energy:
+
+$$\tau^{\mathrm{ani}}_{ij}=\tau_{\ell\ell}\,\frac{\tau^{\mathrm a\,d}_{ij}+2\nu^{\mathrm a}\bar S_{ij}}{\tau^{\mathrm a}_{mm}},$$
+
+the construction of the stabilized mixed model above with the gradient
+term in place of the similarity stress. The text recalls the Taylor
+relation with the factor $\tfrac1{12}$; Eq. (20) omits it, which the
+normalization by $\tau^{\mathrm a}_{mm}$ makes immaterial *(compiler
+check, not in the sources)*. A priori, on
+channel DNS at $Re_\tau=400$ filtered at $(\Delta x^+,\Delta z^+)=(105,52.4)$
+(§IV B, Fig. 13), the gradient version gives a streamwise anisotropic
+redistribution whose profile differs from the filtered DNS, and the right
+(productive) sign of the spanwise component, though with small intensity;
+the similarity version is closer to the filtered DNS overall (see
+[scale-similarity models](/methods/scale-similarity-model.md)).
+
+## Gradient term in learned and two-parameter models
+
+[Kang et al. (2023)](/sources/kang-2023.md) use the gradient term
+$\tau^{\mathrm G}_{ij}=\tfrac1{12}\Delta^2\partial_k\bar u_i\partial_k\bar u_j$
+(page-local), with one isotropic $\Delta$, in
+three roles (§3.2–3.3, App. C, Figs. 10, 19, 21):
+
+- **Normalization of a learned stress.** Among the volume-averaged norms of
+  the gradient term, of the modified Leonard term and of the resolved
+  stress $L_{ij}$, the gradient term keeps the most constant ratio to the
+  norm of the filtered-DNS stress over $Re_\lambda$ and over filter widths
+  half and twice the training one; it scales the output of their
+  [neural-network SGS model](/methods/neural-network-sgs-model.md) in
+  isotropic turbulence. In channel flow they use $L_{ij}$ instead, because
+  the gradient term "is known to have an incorrect near-wall scaling" (Liu
+  et al., as recalled).
+- **Learned-model input.** Added to $\bar S_{ij}$ as an input, it predicts
+  the decay of the kinetic energy best, but gives the largest spectral
+  errors at the lowest wavenumbers on $48^3$ and $24^3$ grids, which the
+  authors attribute to the Taylor-series truncation error growing on
+  coarse grids.
+- **Dynamic two-parameter mixed model** (DTM$_{\mathrm{nl}}$, Smagorinsky
+  plus Clark term, coefficients from the
+  [dynamic procedure](/methods/dynamic-procedure.md)): the best a priori
+  stress correlation of the paper (0.91 in isotropic turbulence), stable
+  only with averaging and clipping, 1.68 times the DSM cost of evaluating
+  the stress; a posteriori in forced isotropic turbulence its energy
+  spectrum is nearly identical to that of the learned mixed model.
+
+The eddy viscosity of the
+[anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md)
+is proportional to the positive part of the gradient-model flux with
+directional widths (*compiler check, not in the sources*; see that page).
+
 ## Qualifications
 
 - Prakash et al. (2022) define C.C. (Eq. 19) as a plain double sum of
@@ -276,3 +336,5 @@ not cite each other.
 - [Prakash et al. (2022)](/sources/prakash-2022.md) — §I–II, Eqs. (1)–(15); §III, Eqs. (16)–(20); §III.A, Tables 1–2, Figs. 1–3; §III.B.1–3, Tables 3–4, Figs. 4–10; §IV.
 - [Abe (2021)](/sources/abe-2021.md) — §II C, Eqs. (12)–(16); §V.
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §I; §VII.A.
+- [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §IV B, Eqs. (19)–(20), Fig. 13.
+- [Kang et al. (2023)](/sources/kang-2023.md) — §3.2, Fig. 10; §3.3, Eq. (3.8), Table 6, Figs. 19, 21, 24; §3.5; App. C.

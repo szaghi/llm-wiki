@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Boussinesq eddy-viscosity hypothesis"
-description: "The linear closure that aligns the deviatoric Reynolds or subgrid stress with the strain rate through a scalar eddy viscosity; its RANS and LES forms and sign conventions, measured misalignment, the best-fit (optimal) eddy viscosity and its conditioning, and why one scalar viscosity cannot carry both mean stress and energy transfer."
+description: "The linear closure that aligns the deviatoric Reynolds or subgrid stress with the strain rate through a scalar eddy viscosity; its RANS and LES forms and sign conventions, measured misalignment, anisotropy slaved to the strain, the best-fit eddy viscosity, explicit non-linear extensions and their conditioning, and why one scalar viscosity cannot carry both mean stress and energy transfer."
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-25T20:38:00Z
+timestamp: 2026-10-26T07:38:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -98,6 +98,34 @@ and treatments of the trace; translated to the registry they agree.
 - **LES, wall-bounded.** Kim et al. (2022) close the deviatoric subgrid stress
   of their comparison models as $\tau^d_{ij}=-2\nu_t\bar S_{ij}$, the registry
   form ([Kim et al. (2022)](/sources/kim-2022.md), §II, comparison models).
+  Sirignano & MacArt (2023) write the same deviatoric form for their
+  dynamic Smagorinsky and anisotropic-minimum-dissipation baselines, the
+  isotropic part absorbed into the pressure projection, while their learned
+  closure returns a full $3\times3$ stress from the filtered velocity
+  gradient and is not of eddy-viscosity form
+  ([Sirignano & MacArt (2023)](/sources/sirignano-2023.md), §2.1, §3.2,
+  Eq. 3.3; see [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+- **RANS, incompressible, with a non-linear remainder.** Tang et al. (2023)
+  use the registry convention, $R_{ij}=\tfrac23k\delta_{ij}-2\nu_t\langle S_{ij}\rangle$
+  with $\nu_t=C_\mu k^2/\varepsilon$, and add a learned non-linear term
+  (below) ([Tang et al. (2023)](/sources/tang-2023.md), §II A–C, Eqs. 3, 9;
+  arXiv v1).
+- **RANS, compressible, as a viscosity sum.** Zhao et al. (2023b) write the
+  total viscosity as $\mu=\mu_L+\mu_T$, with $\mu_L$ from Sutherland's law
+  and $\mu_T$ from the [SST model](/methods/k-omega-sst-model.md), in the
+  viscous flux of a discontinuous Galerkin RANS solver
+  ([Zhao et al. (2023b)](/sources/zhao-2023-b.md), §2, Eq. 2-1).
+- **LES, acting on the small scales only.** In the projection-based
+  variational multiscale form tested by Lederer et al. (2023), the eddy
+  viscosity of the [WALE model](/methods/wale-model.md) acts only on the
+  small resolved scales: the stress is $2\big((\nu+\nu_t)\bar S_{ij}-\nu_tg_{ij}\big)$
+  with $g_{ij}$ (page-local) the $L^2$ projection of the strain onto
+  element-wise symmetric polynomials of degree $m$; a zero projection space
+  recovers classical LES and a large enough $m$ removes the model
+  ([Lederer et al. (2023)](/sources/lederer-2023.md), §3.1, Eqs. 10–14;
+  arXiv v1; the source writes $\epsilon(u)$ for the strain). The sign is
+  that of a stress added to the viscous one, opposite to the registry's
+  $\tau_{ij}$.
 
 ### A traceless Reynolds stress
 
@@ -263,6 +291,101 @@ nonlocal closures such as the
 [fractional subgrid-scale model](/methods/fractional-sgs-model.md)
 ([Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md), §I, pp. 2–3).
 
+**Anisotropy slaved to the strain.** Morsbach et al. (2024) state that,
+through the linear Boussinesq approximation, the turbulence anisotropy of a
+linear eddy-viscosity model equals the strain-rate anisotropy, so that such
+a model cannot reproduce free-stream anisotropy (§4.2). They show the consequence in a low-pressure-turbine cascade: the
+SSG/LRR-$\omega$ Reynolds-stress model reproduces the measured free-stream
+anisotropy and the turbulence intensity along the passage, which SST
+underestimates shortly behind the leading edge, and follows the LES towards
+the two-component limit where the accelerating flow stretches the
+vortices; yet it underpredicts $k$ in the passage vortex and overpredicts
+the peak secondary loss more than SST (48% against 34%)
+([Morsbach et al. (2024)](/sources/morsbach-2024.md), §3.3, §4.2, Figs. 4,
+10, 14–15; see the [SST page](/methods/k-omega-sst-model.md)). Tang et al.
+(2023) find the same restriction in a standard $k$-$\varepsilon$ model, whose
+anisotropy on the periodic hill lies close to the plane-strain line of the
+barycentric map at all stations, with the normal components far from DNS
+(§III C, Figs. 7–8; see [k-ε models](/methods/k-epsilon-model.md)).
+
+**What the energy-matching viscosity leaves out.** Inagaki & Kobayashi
+(2023) split the deviatoric subgrid stress of filtered channel DNS
+($Re_\tau=400$) into the part carried by the flux-matching eddy viscosity
+and a remainder (page-local $\tau^{\mathrm{ani}}_{ij}$), following Abe:
+
+$$\tau^d_{ij}=-2\nu_t^{\mathrm{opt}}\bar S_{ij}+\tau^{\mathrm{ani}}_{ij},\qquad \nu_t^{\mathrm{opt}}=\frac{\Pi}{\lvert\bar S\rvert^2},\qquad \tau^{\mathrm{ani}}_{ij}\bar S_{ij}=0,$$
+
+in registry notation (the source's $\nu^{\rm sgs}=-\tau_{ij}\bar s_{ij}/(2\bar s_{ij}\bar s_{ij})$,
+the same flux-matching viscosity as Vela-Martín's below *(compiler check,
+not in the sources)*), so that $\tau^{\mathrm{ani}}_{ij}$ transfers no energy locally
+([Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md), §II A, Eqs. 3–5;
+arXiv v3). With a spectral cut-off in $x$ and $z$ only:
+
+- for the "medium" filter (LES spacings $\Delta x^+=52.4$, $\Delta z^+=26.2$)
+  the remainder is negligible in the mean shear stress, so eddy-viscosity
+  models can predict both the energy transfer and the mean subgrid shear
+  stress there (§III C, Fig. 3);
+- for the "coarse" filter ($105$, $52.4$) $-\langle\tau^{\mathrm{ani}}_{xy}\rangle$ is
+  comparable to the eddy-viscosity part (Fig. 3), and its contribution to
+  the budget of the resolved Reynolds stress $R^{\mathrm{res}}_{ij}$
+  (page-local, registry §11), the "anisotropic redistribution" (page-local
+  $\xi^{\mathrm{AR}}_{ij}$, not the reference coordinate $\xi$), is comparable to the pressure redistribution in the spanwise
+  component below $y^+=100$ (§III D–E, Figs. 5, 8); its spanwise component
+  is positive (productive) everywhere for both filters;
+- the trace of the redistribution is not zero but
+  $\xi^{\mathrm{AR}}_{ii}=-\langle\tau^{\mathrm{ani}}_{ij}\rangle\langle\bar S_{ij}\rangle$, the mean–subgrid
+  exchange through the remainder (§II C, Eq. 10).
+
+A pure eddy-viscosity model removes this mechanism; the authors infer from
+two-dimensional spectra that it participates in generating streamwise
+vortices at the streak spacing (§IV A 2, Fig. 12). Details on
+[energy backscatter](/definitions/energy-backscatter.md) and the
+[scale-similarity model](/methods/scale-similarity-model.md), whose
+streamwise redistribution comes closest to the filtered DNS among the three
+remainder models tested a priori (§IV B, Fig. 13).
+
+## Explicit non-linear extension
+
+Tang et al. (2023) keep the Boussinesq term and add a learned non-linear
+remainder of the anisotropy on Pope's two-dimensional integrity basis. In
+registry notation, with the page-local normalized tensors
+$\mathsf S_{ij}=(k/\varepsilon)\langle S_{ij}\rangle$ and
+$\mathsf W_{ij}=(k/\varepsilon)\langle\Omega_{ij}\rangle$,
+
+$$b_{ij}=\underbrace{-C_\mu\mathsf S_{ij}}_{\text{Boussinesq}}+b^\perp_{ij},\qquad
+b^\perp_{ij}=0.35\sum_{m=1}^{3}G^{m}(I_1,I_2)\,T^{(m)}_{ij},$$
+
+$$T^{(1)}=\mathsf S,\quad T^{(2)}=\mathsf S\mathsf W-\mathsf W\mathsf S,\quad T^{(3)}=\mathsf S^2-\tfrac13\operatorname{tr}(\mathsf S^2)\,\mathsf I,\qquad I_1=\operatorname{tr}(\mathsf S^2),\quad I_2=\operatorname{tr}(\mathsf W^2),$$
+
+with $G^m$ and $b^\perp_{ij}$ page-local
+(§II C 2, Eqs. 9–16, 19). The source normalizes the anisotropy as
+$\boldsymbol\tau/k-\tfrac23\mathbf I$, twice the registry's $b_{ij}$, so its
+linear part reads $-2C_\mu\mathsf S$ and its prefactor $\beta/10=0.7$
+($\beta=7$, "following the suggestion by Shih", for realizability); the
+factors $-C_\mu$ and 0.35 above are that convention halved *(compiler check,
+not in the sources)*. The sign of $T^{(2)}$ depends on the orientation of
+the rotation tensor, which the source defines through
+$\tfrac12(\nabla\boldsymbol u-\nabla\boldsymbol u^{\top})$ without fixing the index
+convention of $\nabla\boldsymbol u$. The three scalars $G^m$ are found by
+[symbolic regression](/methods/symbolic-regression-closure.md) as
+polynomials in the invariants, after the invariants are mapped to $[-1,1]$
+by $(1-e^{-I})/(1+e^{-I})$, which equals $\tanh(I/2)$ *(compiler check, not
+in the sources)* (Eq. 18).
+
+The split serves conditioning. The linear part is solved implicitly with
+the baseline model's eddy viscosity and only $b^\perp$ is injected,
+frozen after one evaluation ("loose coupling"); the authors call the
+decomposition "necessary", since injecting the full learned stress
+explicitly magnifies small errors during the RANS iterations (§II C 2,
+§II D), the same conclusion McConkey et al. reach for their
+non-negative split below. Trained on one periodic hill, the model improves
+the anisotropy on two other hills and the velocity profiles on a
+backward-facing step, but not visibly in the recirculation region of the
+steepest hill (§III D, Figs. 12–16); its term contributions
+show that the linear part and $T^{(1)}$ dominate the shear component, while
+$T^{(2)}$ contributes most to the streamwise and $T^{(3)}$ to the spanwise
+normal component (§III C, Fig. 11).
+
 ## The best-fit eddy viscosity
 
 If a reference stress is known, the scalar $\nu_t$ that brings the
@@ -280,7 +403,11 @@ sources)*, and call it "a good approximation for attached flows" whose
 injection into RANS "does not guarantee a perfect mean field". The LES
 counterpart is the flux-matching $\nu_t^{\mathrm{opt}}=\Pi/\lvert\bar S\rvert^2$
 of Vela-Martín above, the same projection applied to the deviatoric subgrid
-stress *(compiler check, not in the sources)*.
+stress *(compiler check, not in the sources)*; Inagaki & Kobayashi's
+remainder $\tau^{\mathrm{ani}}_{ij}$ above is the part of the subgrid stress orthogonal
+to the strain under that projection, the LES analogue of the remainder
+$a^\perp_{ij}$ below where its non-negativity constraint is inactive
+*(compiler check, not in the sources)*.
 
 **Non-negative optimum.** $\nu_t^*$ is negative where $b_{ij}$ and
 $\langle S_{ij}\rangle$ are poorly aligned, which destabilizes an implicit
@@ -396,3 +523,9 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [Cato et al. (2023)](/sources/cato-2023.md) — §II A, §III B Eq. 18 Fig. 6, §III C Eq. 21 Fig. 7, §IV B Fig. 8, §V A–C Figs. 12, 16–19 (HAL v2).
 - [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) — §I, pp. 2–3 (arXiv v3).
 - [Eivazi et al. (2022)](/sources/eivazi-2022.md) — §1–§2 (arXiv v1).
+- [Tang et al. (2023)](/sources/tang-2023.md) — §II A–D Eqs. 3, 9–19, §III C–D Figs. 7–8, 11–16 (arXiv v1).
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §3.3, §4.2 Figs. 4, 10, 14–15.
+- [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §II A Eqs. 3–5, §II C Eq. 10, §III C–E Figs. 3, 5, 8, §IV A 2 Fig. 12, §IV B Fig. 13 (arXiv v3).
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §2.1, §3.2 Eq. 3.3.
+- [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §2, Eq. 2-1.
+- [Lederer et al. (2023)](/sources/lederer-2023.md) — §3.1, Eqs. 10–14 (arXiv v1).

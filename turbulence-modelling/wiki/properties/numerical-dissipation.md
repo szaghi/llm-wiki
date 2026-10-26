@@ -5,7 +5,7 @@ description: "Numerical dissipation is the kinetic-energy loss a discretization 
 status: established
 aliases: [artificial dissipation, scheme dissipation, upwind dissipation, Riemann-solver dissipation, numerical viscosity]
 tags: [numerical-dissipation, implicit-les, les, dg, kinetic-energy-preserving]
-timestamp: 2026-10-26T05:09:00Z
+timestamp: 2026-10-26T07:41:00Z
 ---
 
 # Numerical dissipation in scale-resolving simulation
@@ -73,6 +73,40 @@ model ([kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
   is added "for additional dissipation". The same concentration is what
   Flad & Gassner (above) blame for the failure of coarse DG ILES; see
   [implicit LES](/definitions/implicit-les.md).
+
+- **Interface jump penalties in DG.** [Kou et al. (2023)](/sources/kou-2023.md)
+  (§2.1, §3, App. A, Figs. 1–4, Table 1) add to a modal DG scheme a
+  penalty on the solution jump or on the gradient jump across element faces
+  ([jump-penalty stabilization](/methods/jump-penalty-stabilization.md))
+  and study it by temporal eigensolution analysis of linear advection. With
+  an upwind flux at $N=3$, a positive solution penalty lowers the
+  dissipation at medium wavenumbers and raises it at high ones, without
+  instability for any positive value; a slightly negative gradient
+  penalty gives less dissipation at medium wavenumbers, and below about
+  $-10^{-3}$ it makes the scheme unstable. Their stated preference is a
+  scheme "with less dissipation at low to medium wavenumbers, and with more
+  dissipation at high wavenumbers" (§3). The solution penalty
+  drives DG towards continuous Galerkin as it grows, and with a central
+  flux a solution penalty of 0.5 reproduces the upwind scheme (both
+  recovered from earlier work). Both penalties are symmetric positive
+  semi-definite face terms (§2.2), "completely decoupled from the time
+  discretization" (§1, citing Moura et al.).
+- **Upwind jump term near walls.** In an exactly divergence-free hybrid
+  mixed finite-element method used as implicit LES, [Lederer et al. (2023)](/sources/lederer-2023.md)
+  (§3.2–3.3, Figs. 2–3, 10) identify the upwind term on the tangential
+  velocity jump as "the main source of stability" in under-resolved flow,
+  and show with a jump indicator that the jumps, hence the dissipation, are
+  largest near walls and, on the periodic hill, near the separation point:
+  more near-wall dissipation than stability needs. Their
+  [HOPU method](/methods/high-order-projection-based-upwind-method.md)
+  applies the upwind penalty only to the part of the jump orthogonal to
+  facet polynomials of degree $l$, treating the low-order jump with a
+  central flux; all upwinding vanishes as $h\to0$. In channel flow at
+  $Re_\tau=392.24$ this improves the $N=3$ mean velocity and the spectrum
+  at $y^+=5$ (§4.1, Figs. 4, 6, Table 2).
+- **Order, recalled for DG.** [Zhao et al. (2023b)](/sources/zhao-2023-b.md)
+  (§1) recall that raising the DG order increases the dissipation at the
+  largest wavenumbers while narrowing the range where it acts.
 
 ## Dissipation of RANS-type schemes in hybrid RANS/LES
 
@@ -160,6 +194,45 @@ dissipation (Fig. 11).
   grids, where $\varepsilon_1+\varepsilon_2+\varepsilon_3$ is well below the
   decay rate. The authors read the agreement of the decay rate with the
   reference as support for [implicit LES](/definitions/implicit-les.md).
+- **Subdomain energy budget with the model terms.** [Saini et al. (2023)](/sources/saini-2023.md)
+  (§2.2–2.3, Eqs. 2–12) extend the budget-residual method of Schranner et
+  al. (as recalled) to LES with an explicit model. The resolved-energy
+  budget is integrated over an arbitrary subdomain, with the rate of
+  change, viscous, subgrid (or SVV) dissipation and the surface fluxes,
+  and the residual of its discrete form is minus the numerical dissipation
+  rate. Equivalent viscosities follow as $\nu$ times the ratio of each
+  dissipation to the viscous one (Eq. 11). Rules: budget terms computed at
+  least at the solver's order; subdomains large enough for the residual to
+  be dissipative (of the size of the main geometric features) and away
+  from laminar regions; time derivative by central differences over the
+  solver time step. Validated on the Taylor–Green vortex at $Re=3000$
+  against Castiglioni & Domaradzki (as recalled) (§4, Figs. 5–6), it is
+  then applied to a second-order finite-volume code with
+  [WALE](/methods/wale-model.md) and a fifth-order continuous-Galerkin
+  code with [SVV](/methods/spectral-vanishing-viscosity.md) (results under
+  "Interaction with the subgrid model"). The residual also contains
+  dispersive errors; it is slightly negative in the laminar phase of the
+  vortex for the high-order runs and judged unreliable in a jet-stream
+  subdomain (standard error about 20%) (§5.1–5.2).
+- **The same budget for gas-kinetic ILES.** [Zhao et al. (2023a)](/sources/zhao-2023.md)
+  (§5.1, Eqs. 22–23, Fig. 7) apply the budget of Cao et al. above to the
+  Taylor–Green vortex at $Re=1600$ on $256^3$ cells with fifth- and
+  seventh-order, non-compact and compact
+  [gas-kinetic](/methods/high-order-gas-kinetic-scheme.md) reconstructions:
+  higher order and the compact stencil reduce the numerical dissipation,
+  and "the 5th-order scheme for ILES is still over-dissipative".
+- **Decay of an exact solution.** For the lattice Boltzmann Hall-MHD
+  scheme of [Foldes et al. (2023)](/sources/foldes-2023.md) (§4.3,
+  Eqs. 4.7–4.9, Figs. 6–9), the damping of an exact circularly polarized
+  wave gives an effective viscosity $\nu+\nu_{\mathrm{num}}$
+  ($\nu_{\mathrm{num}}$ page-local); the ratio $\nu_{\mathrm{num}}/\nu$ is
+  "only a small percentage", decreases as $N_x^{-2}$ with the grid points
+  per direction, and does not depend on $\nu$ or the Mach number. On the
+  3D Orszag–Tang problem at $512^3$ the moment-based collision operator
+  over-damps the kinetic-energy spectrum at high wavenumbers against a
+  pseudo-spectral code, recovered at $768^3$, while the BGK magnetic
+  scheme matches it (§4.4, Fig. 11). See
+  [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md).
 - **Numerical Reynolds number.** [Seta & Federrath (2022)](/sources/seta-2022.md)
   (§2.4) take from earlier work (McKee et al. 2020, App. C) that the
   numerical Reynolds numbers of their finite-volume MHD code are
@@ -235,6 +308,42 @@ measuring it:
   their capsule-wake simulation ([implicit LES](/definitions/implicit-les.md)),
   and recall that low-dissipation schemes represent the recirculation of
   capsule wakes better in earlier DES studies (§1).
+- [Delassaux et al. (2023)](/sources/delassaux-2023.md) (§4.2) choose for
+  hybrid RANS/LES of a car in a commercial finite-volume code the bounded
+  central-differencing scheme, a blend of central, second-order and
+  first-order upwind: second-order upwind "would annihilate the turbulent
+  structures" and pure central differencing "can be unstable or produce
+  nonphysical wiggles", so the bounded scheme, "slightly more dissipative"
+  than central, is "the optimal choice". They advise a CFL number of at
+  most 5 in the LES region, and recall from their Ahmed-body study that
+  above 10 the slant separation is missed or massively overpredicted (§5).
+- [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md) (§2.1,
+  §4.3–4.4, Eq. 6, Figs. 12–13, 18) use a second-order Roe-type flux whose
+  upwind term is scaled by a smoothing parameter between 0.3 and 1, lowered
+  in the jet's source region and raised near the boundaries to absorb
+  outgoing waves. The LES dissipates high-frequency acoustic waves within a
+  few jet diameters, which they relate to the 22 points per wavelength a
+  second-order scheme needs against 5 for their fifth-order DG acoustic
+  solver (values recalled from earlier work); hence the separate high-order
+  acoustic step.
+- [Bernades et al. (2023)](/sources/bernades-2023.md) (§1, footnote 1;
+  §4.1, Fig. 1) distinguish numerical dissipation, an undesired behaviour
+  of the method, from artificial dissipation, added deliberately, and
+  require both to be absent from schemes for transcritical turbulence; in
+  their density-wave tests the upwind and hybrid schemes dissipate the
+  wave, while their [kinetic-energy- and pressure-equilibrium-preserving](/properties/pressure-equilibrium-preservation.md)
+  scheme adds none (its total-energy error is dissipative at
+  $O(h^2)$, §4.2).
+- [Slaughter et al. (2023)](/sources/slaughter-2023.md) (§3–3.1) take all
+  the small-scale dissipation of their spectral/hp implicit LES from
+  gradient-jump penalisation and spanwise SVV, "a pure characteristic of
+  the numerical scheme", and relay that SVV at lower polynomial order can
+  be overly diffusive.
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) (§2) let the Roe
+  interface flux of a kinetic-energy-preserving split-form DGSEM ($N=5$)
+  carry the subgrid dissipation of their turbine-cascade implicit LES,
+  citing the dispersion and dissipation analyses of DG (Gassner & Kopriva;
+  Moura et al., as recalled).
 - [Cai et al. (2022)](/sources/cai-2022.md) (§II.A, Eqs. 7, 9) use a
   hybrid recursive regularized lattice Boltzmann collision, because plain
   BGK is unstable at high Reynolds number; it adds a hyper-viscous term
@@ -287,6 +396,45 @@ measuring it:
   $C_s$ from 0.18 to 0 shifts the dominant dissipation to the SVV term, which
   compensates the missing explicit dissipation; Vicente Cruz & Lamballais
   (2023, §6.5) relate this to the "convenient conspiracy" of Oran & Boris.
+- **Numerics dominate even beside an explicit model.** With the subdomain
+  budget above, [Saini et al. (2023)](/sources/saini-2023.md) (§5, Figs.
+  7–16; Abstract) find numerical dissipation 60–90% of the non-viscous
+  (model plus numerical) dissipation in both a second-order finite-volume
+  LES with WALE and a fifth-order continuous-Galerkin LES with SVV:
+  - Taylor–Green vortex at $Re=1600$: 65–75% for the second-order runs
+    and 85–95% for the high-order ones; the second-order $64^3$ run reaches
+    a non-viscous to viscous dissipation ratio near 4, a much lower
+    effective Reynolds number, against at most 1.2 for $16^3$ elements of
+    degree 4;
+  - combustor port flow ($Re=2.25\times10^4$): numerical dissipation is
+    4–12 times the WALE dissipation and 1.3–6 times the SVV dissipation in
+    the turbulent subdomains; between 16 and 48 million points, 85% of the
+    change of the normalized non-viscous dissipation comes from the
+    numerics; this ratio is 10–23 (16 million points, second order), 8–15
+    (48 million) and 2.5–7 (8.4 million, high order);
+  - the numerical dissipation follows the instantaneous flow more than the
+    model dissipation does.
+  They conclude that the accuracy-per-cost gain of the high-order solver
+  comes mainly from its lower numerical dissipation, and that the result
+  "challenges the usual assumption in LES practice that all or most of the
+  required subgrid dissipation is imparted by the SGS model", in line with
+  Ghosal (as recalled). Goc et al. (above) call numerical dissipation
+  "extremely detrimental" for coarse LES.
+- **Explicit model on top of an implicit one.** Lederer et al. (2023, §4.1,
+  §6) find that a WALE-based variational multiscale model added to DG-type
+  implicit LES does not help and, on the coarsest grids, slightly harms;
+  [Kou et al. (2023)](/sources/kou-2023.md) (§4.2, Fig. 12) find interface
+  penalties "clearly superior" to Smagorinsky and Vreman models adapted to
+  DG on the Taylor–Green vortex. Flad & Gassner (above) likewise report
+  that Smagorinsky added to de-aliased DG with Roe fluxes does not improve
+  coarse decaying isotropic turbulence.
+- **Learning around the numerics.** [Kurz et al. (2023)](/sources/kurz-2023.md)
+  (§1, §4.2) note that implicit modelling interprets numerical dissipation
+  as a turbulence model, and train a Smagorinsky coefficient inside the DG
+  solver so that the closure adapts to the discretization's own
+  dissipation; their no-model DG LES piles energy up at high wavenumbers
+  in forced isotropic turbulence ($N=5$, 7). See
+  [discretization-consistent closure](/definitions/discretization-consistent-closure.md).
 - **Uncounted dissipation.** The upwinding-based energy-transfer model iSGET
   of [Haering et al. (2022)](/sources/haering-2022.md) (App. C, §V D)
   works in their hybrid model, but its numerical dissipation is not counted
@@ -363,6 +511,13 @@ two-point flux, with entropy-dissipative surface terms added.
   of the [hybrid model](/definitions/hybrid-rans-les.md), which they call an
   "artificial dissipation term".
 
+- **Mesh interfaces in turbomachinery LES.** In a wall-modelled LES of a
+  fan stage, [Lewis et al. (2023)](/sources/lewis-2023.md) (§4.4.1,
+  Fig. 26) see the rotor wake grow abruptly at the rotor/stator domain
+  interface, where the coarser downstream mesh "enhances diffusion"; the
+  jump disappears on the refined mesh except at 25% span, outside the
+  interstage refinement block.
+
 ## Qualifications
 
 - The quantitative statements above come from canonical periodic flows
@@ -384,6 +539,15 @@ two-point flux, with entropy-dissipative surface terms added.
   the low-dissipation upwind scheme, which lowers the dissipation
   *(compiler check, not in the sources)*; the rule also assigns the value
   $\theta=\theta_2$ to both WENO branches.
+- Saini et al. (2023) print ranges that do not all agree: the abstract
+  gives numerics 60–90% of the total, §5.2 gives 56–86% for the high-order
+  runs (44% SVV share downstream); for the Taylor–Green vortex the summary
+  gives 85–95% numerics for the high-order runs while §5.1 gives an SVV
+  share of 10–20% for $8^3$ elements.
+- Kou et al. (2023, §5) conclude that "both penalty terms enhance
+  dissipation at high wavenumbers", while §3 describes the dissipation of
+  the representative negative gradient penalty at high wavenumbers as
+  "similar (or lower)" than standard upwind.
 - Carlsson et al. (2023) give the scale-resolving range of $\kappa^{(4)}$
   as 1/512 to 1/1024 in §2.2.1 and as "1/512 or smaller" in §5.
 
@@ -420,3 +584,16 @@ two-point flux, with entropy-dissipative surface terms added.
 - [Cai et al. (2022)](/sources/cai-2022.md) — §II.A, Eqs. (7), (9).
 - [Coelho et al. (2022)](/sources/coelho-2022.md) — p. 4.
 - [Davidovits et al. (2022)](/sources/davidovits-2022.md) — §II A.
+- [Kou et al. (2023)](/sources/kou-2023.md) — §1; §2.1–2.2; §3, Figs. 1–4, Table 1; §4.2, Fig. 12; §5; App. A.
+- [Lederer et al. (2023)](/sources/lederer-2023.md) — §3.2–3.3, Figs. 2–3, 10; §4.1, Figs. 4, 6, Table 2; §6.
+- [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §1.
+- [Saini et al. (2023)](/sources/saini-2023.md) — Abstract; §2.2–2.3, Eqs. (2)–(12); §4, Figs. 5–6; §5.1–5.2, Figs. 7–16; §6.
+- [Zhao et al. (2023a)](/sources/zhao-2023.md) — §5.1, Eqs. (22)–(23), Fig. 7.
+- [Foldes et al. (2023)](/sources/foldes-2023.md) — §4.3, Eqs. (4.7)–(4.9), Figs. 6–9; §4.4, Fig. 11.
+- [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §4.2; §5.
+- [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md) — §2.1, Eq. (6); §4.3–4.4, Figs. 12–13, 18.
+- [Bernades et al. (2023)](/sources/bernades-2023.md) — §1, footnote 1; §4.1, Fig. 1; §4.2.
+- [Slaughter et al. (2023)](/sources/slaughter-2023.md) — §3; §3.1.
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §2.
+- [Kurz et al. (2023)](/sources/kurz-2023.md) — §1; §4.2.
+- [Lewis et al. (2023)](/sources/lewis-2023.md) — §4.4.1, Fig. 26.

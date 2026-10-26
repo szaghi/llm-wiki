@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Tensor-basis neural network and the integrity basis"
-description: "A neural network that predicts the scalar coefficients of Pope's ten-tensor integrity basis from invariants of the mean strain and rotation, so the learned Reynolds-stress anisotropy is objective by construction; random forests, gene-expression programming and sparse regression learn the same expansion, and larger integrity bases supply invariant input features."
+description: "A neural network that predicts the scalar coefficients of Pope's ten-tensor integrity basis from invariants of the mean strain and rotation, so the learned Reynolds-stress anisotropy is objective by construction; random forests, gene-expression programming, sparse and deep symbolic regression learn the same expansion, and larger integrity bases supply invariant input features."
 status: established
 aliases: [TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features]
 tags: [neural-network, machine-learning, rans, data-driven, symbolic-regression]
-timestamp: 2026-10-25T20:23:00Z
+timestamp: 2026-10-26T07:37:00Z
 ---
 
 # Tensor-basis neural network and the integrity basis
@@ -67,6 +67,7 @@ are represented.
 | random forests (Kaandorp & Dwight) | tree ensemble on the same basis | Duraisamy (2021, §III.A) |
 | gene-expression programming (Weatheritt & Sandberg 2016, 2017) | explicit algebraic expressions in the invariants | Duraisamy et al. (2019, §5.3); Duraisamy (2021, §III.A) |
 | sparse regression, SpaRTA (Schmelzer et al.) | sparse linear combination of tensor-polynomial candidate functions of the invariants | Duraisamy (2021, §III.A, §IV.A) |
+| deep symbolic regression (an LSTM expression generator trained by a risk-seeking policy gradient) | explicit polynomial-type expressions in two normalized invariants, on the 2D three-tensor basis | read directly: Tang et al. (2023) |
 
 For sparse regression, Duraisamy (2021, §IV.A) prints the loss as a squared
 error plus an $\ell_1$ penalty on the weights. The sparsity-enforcing
@@ -74,6 +75,53 @@ regularizer eliminates model terms and so simplifies the model form
 (§III.A). As recalled there, Beetham et al. extend the approach to
 multiphase RANS (drag production, drag exchange, pressure strain, viscous
 dissipation).
+
+## The two-dimensional basis and the linear/non-linear split (Tang et al. 2023)
+
+[Tang et al. (2023)](/sources/tang-2023.md) (arXiv v1, §II C 2) print
+the reduced basis that Pope (1975) gives for statistically
+two-dimensional flow, as recalled there: the coefficients depend on at
+most two invariants and three tensors suffice. With the mean strain and
+rotation made dimensionless by $k/\varepsilon$,
+$\mathsf S_{ij}=\tfrac{k}{\varepsilon}\langle S_{ij}\rangle$ and
+$\mathsf W_{ij}=\tfrac{k}{\varepsilon}\langle\Omega_{ij}\rangle$
+(page-local, as on [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md);
+the paper's $\boldsymbol S$, $\boldsymbol R$, Eq. 11, whose sign
+convention for $\nabla\boldsymbol u$ is not stated),
+
+$$T^{(1)}_{ij}=\mathsf S_{ij},\qquad T^{(2)}_{ij}=\mathsf S_{ik}\mathsf W_{kj}-\mathsf W_{ik}\mathsf S_{kj},\qquad T^{(3)}_{ij}=\mathsf S_{ik}\mathsf S_{kj}-\tfrac13\delta_{ij}\mathsf S_{kl}\mathsf S_{lk},$$
+
+with invariants $I_1=\mathsf S_{ij}\mathsf S_{ji}$ and
+$I_2=\mathsf W_{ij}\mathsf W_{ji}$ (page-local; Eqs. 13–14).
+
+**Convention.** The paper's anisotropy is $R_{ij}/k-\tfrac23\delta_{ij}$
+(Eq. 10), twice the registry $b_{ij}$. In registry form its split (Eqs.
+15–16, 19) reads
+
+$$b_{ij}=-C_\mu\mathsf S_{ij}+b^\perp_{ij},\qquad b^\perp_{ij}=0.35\sum_{m=1}^{3}G^m(I_1,I_2)\,T^{(m)}_{ij},$$
+
+with $b^\perp_{ij}$ the non-linear part (page-local) and $G^m$ the
+paper's coefficients. The paper prints the linear part as
+$-2C_\mu\boldsymbol S$ and the prefactor of the sum as $\beta/10=0.7$
+(Eq. 19; Eq. 16 omits it); $-C_\mu$ and 0.35 are those factors halved with
+the anisotropy *(compiler check, not in the sources)*. The linear part is
+the $k$-$\varepsilon$ eddy viscosity with
+$C_\mu=0.09$, solved implicitly; only $b^\perp_{ij}$ is learned (§II C 2).
+The authors call this split "necessary": injecting the whole learned
+Reynolds stress explicitly is ill-conditioned and magnifies small errors
+in the RANS iterations (as recalled from their refs. 19, 46, 47; see
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)).
+
+**Regressor.** The coefficients $G^m$ are found by deep symbolic
+regression as explicit expressions, so Galilean and rotational invariance
+hold by construction and the model runs in a RANS code "without the need
+to deploy a deep learning environment" (§I, §IV). The learned expressions,
+the realizability factor and the results are on
+[symbolic-regression closures](/methods/symbolic-regression-closure.md).
+A contribution analysis on the training hill finds the linear part and
+$T^{(1)}$ dominating the shear component of the anisotropy, $T^{(2)}$ the
+largest contributor to the streamwise normal component and $T^{(3)}$ to
+the spanwise one (§III C, Fig. 11).
 
 ## Integrity bases as sources of invariant features
 
@@ -169,6 +217,13 @@ a priori and a posteriori results are on
   results are shown. Their actor instead outputs the six SGS stress
   components directly and imposes only reflectional equivariance and a zero
   wall value.
+- **Invariance of an LES network without a basis.**
+  [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) (§2.1) feed
+  their LES closure the full filtered velocity-gradient tensor and output
+  the stress components directly; the model is Galilean invariant but not
+  rotationally invariant. They name tensor-basis networks and rotationally
+  invariant inputs as future work (§7; see
+  [neural-network SGS models](/methods/neural-network-sgs-model.md)).
 - **Locality.** Existing feature sets use only local quantities.
   Non-local, non-equilibrium features, such as streamline integration
   (Hamlington & Dahm), could extend predictive capability (Duraisamy et al.
@@ -212,6 +267,26 @@ eigen-decomposition, or the integrity basis itself. See
   integrity-basis tensors as $B_n$; this page uses $\Omega_{ij}$ and
   $\mathcal B_n$, because $R_{ij}$ is the Reynolds stress and $B$ the
   log-law intercept in the registry. The version read is arXiv v1.
+- Tang et al. (2023) write the coefficients $G^m$ and the basis
+  $\boldsymbol T^m$ (labelled $\lambda_i$, $T^i$ in their Fig. 11); this page
+  writes $G^m$, $T^{(m)}$. Their $\boldsymbol R$ is the normalized rotation
+  tensor, written $\mathsf W_{ij}$ here.
+
+## Contradictions
+
+- **Do sparse-regression closures have invariant-dependent coefficients?**
+  Tang et al. (2023, §III B) state that the closures "discovered by some
+  other approaches, such as sparse regression and fast function
+  extraction, only contain constant coefficients that keep unchanged for
+  the whole computational domain", whereas the coefficients of their
+  deep-symbolic-regression closure "vary with the invariants at different
+  grid points"; they claim "a degree of superiority" from this, with no
+  comparison run. Duraisamy (2021, §III.A) describes the sparse regression
+  of Schmelzer et al. as acting "on a library of candidate functions which
+  are written as tensor polynomials of the aforementioned invariants".
+  Both sources recall Schmelzer et al. (2020), which is not ingested (Tang
+  et al. also Beetham & Capecelatro); neither prints a sparse-regression
+  model. *Open.*
 
 # Citations
 
@@ -219,3 +294,5 @@ eigen-decomposition, or the integrity basis itself. See
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §III.A, Eq. 4 (TBNN), random forests, symbolic and sparse regression, §IV.A (a priori training, sparse loss), §V (features), §VII (interpretability).
 - [McConkey et al. (2022)](/sources/mcconkey-2022.md) — arXiv v1: §III B (outputs), §III C, Table I (33 features), App. A, Table II (47-tensor basis, vanishing invariants in 2D), §IV C, Fig. 22 (SHAP), §V (TBNN for the non-linear part, 3D count).
 - [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: §II E (tensor-basis network tried in DRL, no conclusive gain).
+- [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I, §II C 2, Eqs. 10–16 (2D basis, convention, linear/non-linear split, conditioning), §III B (claim on constant coefficients), §III C, Fig. 11 (contributions), §IV.
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §2.1 (Galilean but not rotational invariance), §7 (tensor-basis networks as future work).

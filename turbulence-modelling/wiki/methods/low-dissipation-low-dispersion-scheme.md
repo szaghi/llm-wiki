@@ -5,7 +5,7 @@ description: "The LD2 scheme pairs a skew-symmetric energy-preserving central fl
 status: established
 aliases: [LD2, LD2C, LD2-Compressible, low-dissipation low-dispersion scheme, Kok flux with JST dissipation]
 tags: [numerical-dissipation, hybrid-rans-les, des, compressible, kinetic-energy-preserving]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-26T07:42:00Z
 ---
 
 # Low-dissipation low-dispersion schemes with shock sensor
@@ -170,6 +170,32 @@ the numerical dissipation of the convective scheme (§4.3). The shear-layer-adap
 length scale used in the base flow is described on
 [detached-eddy simulation](/methods/detached-eddy-simulation.md).
 
+## Related low-dissipation strategies
+
+The LD2/LD2C design (a non-dissipative central flux plus a sensor-switched,
+much-reduced artificial dissipation) is one answer to the stabilization of
+central schemes; [Bernades et al. (2023)](/sources/bernades-2023.md) compare
+others for real-gas (transcritical) flow, on second-order centred
+differences (§3.2, Table 2; §4):
+
+- **Implicit compact filtering** of the divergence form, the fourth-order
+  filter of Lele and of Visbal & Gaitonde with $\alpha_f=0.495$ (page-local
+  filter parameter) applied to every conservative variable at every
+  Runge–Kutta stage (Eq. 29): it "does not suppress" the spurious pressure
+  oscillations at a real-gas density interface (§4.1.2), and filtering is
+  cited as able to amplify them through thermodynamic non-linearities (§1);
+- a **Ducros-sensor hybrid** of a kinetic-energy-preserving split form and
+  an HLLC upwind flux, whose sensor is "mostly activated by the
+  oscillations" in an ideal-gas density wave (§4.1.1);
+- a non-dissipative scheme that removes the cause instead, by
+  [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md),
+  which keeps the runs stable with no artificial dissipation (§4.2).
+
+Bernades et al. distinguish *numerical* dissipation (an undesired property
+of the method) from *artificial* dissipation (deliberately added) (§1,
+footnote 1); in these terms the JST matrix dissipation of LD2 and LD2C is
+artificial dissipation *(compiler check, not in the sources)*.
+
 ## Qualifications
 
 - The conclusion (§5) credits the Ducros-weighted sensor with better resolved
@@ -190,4 +216,5 @@ length scale used in the base flow is described on
 
 # Citations
 
+- [Bernades et al. (2023)](/sources/bernades-2023.md) — §1, footnote 1 (numerical against artificial dissipation; filtering); §3.2, Eq. (29), Table 2 (compact filter, hybrid); §4.1–4.2.
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §2, Eqs. (1)–(8) (M-Edge discretization, Kok flux, extrapolation, JST dissipation); §2.2.2, Eqs. (9)–(11) (preconditioning); §2.2.3, Eqs. (12)–(15) (Jameson and Ducros sensors); §2.3, Fig. 1 (dispersion/dissipation analysis, choice of $a$); Table 1; §4.1, Eq. (22), Fig. 2 (Sod); §4.2, Fig. 3 (decaying isotropic turbulence); §4.3, Table 2, Figs. 4–6 (channel); §4.4, Figs. 7–10 (base flow); §5.

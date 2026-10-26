@@ -264,7 +264,7 @@ has no volume or pages.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
@@ -277,8 +277,10 @@ Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cite
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Machine-learning wall models](/methods/machine-learning-wall-model.md)
 - [Model-consistent (a posteriori) training of learned closures](/methods/model-consistent-training.md)
+- [Neural-network subgrid-scale models](/methods/neural-network-sgs-model.md)
 - [Reinforcement-learning turbulence closures](/methods/reinforcement-learning-closure.md)
 - [Scale-similarity and mixed subgrid-scale models](/methods/scale-similarity-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
+- [Symbolic-regression turbulence closures](/methods/symbolic-regression-closure.md)
 - [Tensor-basis neural network and the integrity basis](/methods/tensor-basis-neural-network.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)

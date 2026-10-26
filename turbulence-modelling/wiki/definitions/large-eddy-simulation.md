@@ -5,7 +5,7 @@ description: "Large-eddy simulation resolves the filtered velocity and models th
 status: established
 aliases: [LES, filtered Navier–Stokes equations, subgrid-scale stress, SGS stress, subfilter stress, coarse-grained equations]
 tags: [les, filtering, sgs-model, compressible]
-timestamp: 2026-10-26T05:09:00Z
+timestamp: 2026-10-26T07:19:00Z
 ---
 
 # Large-eddy simulation: filtering and the subgrid-scale stress
@@ -82,6 +82,32 @@ the coarse-grained state plus the divergence of an unclosed term, and this
 coarse-grained equation "is *not* an approximation"; the approximation enters
 only with the closure.
 
+[Sirignano & MacArt (2023)](/sources/sirignano-2023.md) (§2, Eq. 2.2) add
+to the incompressible filtered equations a term $\Gamma_i$ (page-local)
+that collects the unclosed boundary terms produced by filtering at an
+immersed bluff body and the commutation error of a non-uniform filter on a
+non-uniform mesh (Ghosal, as recalled); their learned closure replaces
+$-\partial_j\tau_{ij}+\Gamma_i$ as a whole (see
+[neural-network SGS models](/methods/neural-network-sgs-model.md)).
+[Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) (§II, Eqs. 1–2;
+§III A) assume commutation and filter channel DNS only in the homogeneous
+directions, so that the filter leaves the Reynolds average unchanged and the
+kinetic energy splits exactly into mean, resolved and subgrid parts; a
+wall-normal filter would be inhomogeneous and add commutation terms, a
+limitation they leave open. [Lederer et al. (2023)](/sources/lederer-2023.md)
+(§3.1) list the commutation error, dissipation in laminar regions and a
+model acting on all resolved scales as drawbacks of classical explicit LES
+that motivate a variational multiscale formulation.
+
+[Saini et al. (2023)](/sources/saini-2023.md) (§2.2, Eqs. 2–5) write the
+budget of the resolved kinetic energy $\tfrac12\bar u_i\bar u_i$ in
+incompressible LES, integrated over a subdomain: the subgrid term splits
+into a subgrid dissipation $-\int\tau_{ij}\partial_j\bar u_i\,dV$ (the
+volume integral of $\Pi$ when the stress enters the momentum equation as
+$-\partial_j\tau_{ij}$, as in their Eq. 1 *(compiler check, not in the
+sources)*) and a subgrid flux through the subdomain surface. The residual
+of its discrete form measures the [numerical dissipation](/properties/numerical-dissipation.md).
+
 ### Sign conventions in the sources
 
 The registry uses the positive-trace convention above. Three sources print
@@ -91,13 +117,22 @@ explicitly by the author) defines the stress as $\bar u_i\bar u_j-\overline{u_iu
 entering with $+\partial_j$; [Haering et al. (2022)](/sources/haering-2022.md)
 (§III, Eq. 3) define $\tau^{sgs}_{ij}=-(\overline{u_iu_j}-\bar u_i\bar u_j)$;
 Duraisamy (2021, §III.B) writes the SGS stress with the reversed sign while
-the RANS stress of the same paper (Table I) is positive. Agrawal et al. (2022), Goc et al.
+the RANS stress of the same paper (Table I) is positive.
+[Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md) (§2.1,
+Eqs. 1–3) define the compressible subgrid stress as
+$\bar\rho\tilde u_i\tilde u_j-\overline{\rho u_iu_j}$, minus the registry's,
+entering the momentum flux with a minus sign; their energy equation carries
+a subgrid energy flux that the paper does not define further. Agrawal et al. (2022), Goc et al.
 (2021), Vicente Cruz & Lamballais (2023), Abe (2021) and Prakash et al.
 (2022) use the positive convention, as do
 [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) (§II, Eqs. 1–2),
 [Kim et al. (2022)](/sources/kim-2022.md) (§II A, Eqs. 3–4),
 Helm & Martín (2022, Eq. 5) and [Cai et al. (2022)](/sources/cai-2022.md)
-(§II.A, Eqs. 9, 11), the last two in density-weighted form.
+(§II.A, Eqs. 9, 11), the last two in density-weighted form, and
+Inagaki & Kobayashi (2023, Eq. 2), [Kang et al. (2023)](/sources/kang-2023.md)
+(Eqs. 2.5–2.6) and Sirignano & MacArt (2023, Eq. 2.2), all three with the
+full tensor, trace included. [Saini et al. (2023)](/sources/saini-2023.md)
+(Eq. 1) do not print the sign or trace convention of their stress.
 
 ## Filters and filter widths
 
@@ -143,6 +178,20 @@ a priori depends strongly on the kernel: the local flux is negative in about
 half of the domain with the sharp filter and in less than one-fifth with the
 Gaussian filter (Vela-Martín 2022, §5.3).
 
+For learned subgrid models, Kang et al. (2023, §2.2–2.3, §3.5) use a
+Gaussian grid and test filter with $\hat\Delta/\Delta=\sqrt5$ on isotropic
+turbulence (a top-hat gave "no considerable differences"), with the grid
+filter width set to twice the spacing of the pseudospectral LES because its
+implicit filter is a Fourier cutoff; on channel flow they use the
+fourth-order commutative discrete filters of Vasilyev, Lund & Moin (as
+recalled) with $\Delta$ and $\hat\Delta$ equal to 4 and 8 DNS spacings.
+Sirignano & MacArt (2023, §3.1, Eq. 3.2) apply a box filter of local width
+equal to 4 or 8 DNS spacings on a non-uniform mesh, with one-sided kernels
+near walls, and downsample the result. Inagaki & Kobayashi (2023, §III A)
+use a sharp cut-off in $x$ and $z$, with cut-off wavelength $2\Delta$
+($\Delta x^+,\Delta z^+=52.4,26.2$ and $105,52.4$ in channel flow at
+$Re_\tau=400$).
+
 **Effective filter of an LES.** Vicente Cruz & Lamballais (2023, §6.3,
 Eq. 48) measure the filter an LES actually applies through the transfer
 function $T_f(k,t)=\sqrt{E_{\mathrm{LES}}(k,t)/E_{\mathrm{DNS}}(k,t)}$
@@ -169,6 +218,11 @@ LES is approximated by the super-Gaussian above.
 | [Kim et al. (2022)](/sources/kim-2022.md), §II C | $(\Delta x\Delta y\Delta z)^{1/3}$ in wall units as an input of a learned model, whose output is multiplied by $\Delta^2$ to generalize across grids |
 | [Blind et al. (2023)](/sources/blind-2023.md), §2.3 | $\mathrm{Vol}^{1/3}/(N+1)$ in DG (Vreman length scale), and $[(N+1)/(N_f+1)]^{1/3}$ times it for a modal test filter keeping degrees up to $N_f$ (page-local, as on the mesh-adaptation page) |
 | [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md), §II–III | "the effective grid scale"; filter sizes are quoted as multiples of twice the DNS grid spacing |
+| [Lederer et al. (2023)](/sources/lederer-2023.md), §3.1 | $\sqrt[3]{\Delta x\Delta y\Delta z}/(N+1)$ for elements of degree $N$ (the paper's $k$), in the WALE eddy viscosity |
+| [Kang et al. (2023)](/sources/kang-2023.md), Eq. (2.8) | $\sqrt[3]{\Delta_1\Delta_2\Delta_3}$ (after Deardorff) |
+| [Kurz et al. (2023)](/sources/kurz-2023.md), §3.3 | "filter width of the LES filter" in a DG Smagorinsky model, not defined further |
+| [Sirignano & MacArt (2023)](/sources/sirignano-2023.md), §3.1–3.2 | the local LES mesh spacing; directional spacings $\Delta_k$ in the [AMD model](/methods/anisotropic-minimum-dissipation-model.md) |
+| [Cheylan et al. (2023)](/sources/cheylan-2023.md), §2.7, Eq. (37) | the local lattice spacing of a lattice Boltzmann solver |
 
 In implicitly filtered LES the filter width and the grid spacing $h$
 coincide approximately, $h\approx\Delta$, whereas in explicitly filtered LES
@@ -337,13 +391,40 @@ the [Smagorinsky](/methods/smagorinsky-model.md),
 WALE (Nicoud & Ducros, as cited) and [Vreman](/methods/vreman-model.md)
 models with the group's SVV-Smagorinsky combination (see
 [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md));
-no formula is printed, and WALE appears only in this list. The GPU
+no formula is printed (the [WALE page](/methods/wale-model.md) has the
+formula from other sources). The GPU
 spectral-element code NekRS (see [Nek5000 and NekRS](/software/nek5000.md))
 is benchmarked by [Fischer et al. (2022)](/sources/fischer-2022.md)
 (§4.1, Table 2) on a spacer-grid LES at $Re_D=14\,000$ with 3.2 million
 elements and $N=7$, without stating the subgrid model. The capsule-wake
 LES of [Placco et al. (2023)](/sources/placco-2023.md) has no explicit
 model (see [implicit LES](/definitions/implicit-les.md)).
+
+Further explicit closures in this bundle's applications:
+
+- [WALE](/methods/wale-model.md) in the second-order finite-volume LES of
+  Saini et al. (2023, Table 1) and in the AVBP LES of a fan stage by
+  [Lewis et al. (2023)](/sources/lewis-2023.md) (§3.2.1);
+- the $\sigma$ model of Nicoud et al. (as recalled by Moratilla-Vega et al.
+  2024, §2.1, Eqs. 4–5) for jet-noise LES: an eddy viscosity
+  $\mu_t=\bar\rho(C_m\Delta)^2\,\sigma_3(\sigma_1-\sigma_2)(\sigma_2-\sigma_3)/\sigma_1^2$
+  with $\sigma_1\ge\sigma_2\ge\sigma_3\ge0$ the singular values of the
+  resolved velocity-gradient tensor and $C_m$ the model constant
+  (page-local symbols; the constant and $\Delta$ are not printed). The
+  paper prints the viscosity as $\mu_{SGS}=(C_m\Delta)^2\mathcal D_m$; the
+  density factor is added here to make it a dynamic viscosity *(compiler
+  check, not in the sources)*;
+- the shear-improved [Smagorinsky](/methods/smagorinsky-model.md) model in
+  the lattice Boltzmann LES of fluid–structure interaction of Cheylan et
+  al. (2023, §2.7), who state that LES is "not well established in the FSI
+  context" (§1);
+- dynamic Smagorinsky and [Vreman](/methods/vreman-model.md) in the
+  wall-modelled LES of [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md)
+  (§3.2), and Smagorinsky and Vreman adapted to DG as comparators of
+  [Kou et al. (2023)](/sources/kou-2023.md) (§4.2);
+- the anisotropic stress models, eddy-viscosity plus energy-transfer-free
+  remainder, analysed by Inagaki & Kobayashi (2023): see
+  [energy backscatter](/definitions/energy-backscatter.md).
 
 ## Testing a closure
 
@@ -368,6 +449,21 @@ SD7003 airfoil at $Re_c=6\times10^4$ with the implicit LES of Galbraith &
 Visbal and finds the RANS post-reattachment skin friction much smaller
 than the LES one; see
 [local-correlation-based transition models](/methods/local-correlation-based-transition-model.md).
+The wall-resolved DG implicit LES of the T161 turbine cascade by
+[Morsbach et al. (2024)](/sources/morsbach-2024.md) plays the same role for
+SST and Reynolds-stress closures with a transition model.
+
+Learned closures sharpen the a priori question. An a priori-trained
+network of Sirignano & MacArt (2023, §5, Figs. 11–12) fits the subgrid
+stress of filtered DNS "almost perfectly" and is substantially worse a
+posteriori than the same network trained through the solver; Kang et al.
+(2023, §3.3) find that a higher a priori correlation does not guarantee a
+better LES; [Kurz et al. (2023)](/sources/kurz-2023.md) (§1) argue that
+for implicitly filtered LES the a priori targets do not exist. In
+wall-modelled LES, Lozano-Durán & Bae (2023, §4.7, §6) find that the
+errors of the SGS model at the matching location ("external" errors)
+dominate the wall-stress error once the wall model is good, so better
+wall models need better SGS models.
 
 ## Qualifications
 
@@ -403,6 +499,10 @@ than the LES one; see
   therefore recorded as qualifications, not as a contradiction.
 - Helm & Martín (2022, §III B) give the Mach 7 unresolved share at the wall
   both as 25% and, a sentence later, as a maximum of 18%.
+- Sirignano & MacArt (2023, Eq. 3.4) and Saini et al. (2023) do not state
+  whether their $\lvert\bar S\rvert$ carries the factor two; Kang et al.
+  (2023) and Kurz et al. (2023, Eq. 19) write $\sqrt{2\bar S_{ij}\bar S_{ij}}$,
+  the registry convention.
 - Seyedi & Zayernouri (2022, Eq. 24) call $\tfrac12(\overline{u_iu_i}-\bar u_i\bar u_i)$
   the "resolved" and $\tfrac12\bar u_i\bar u_i$ the "filtered" kinetic
   energy; the first is the subfilter energy and the second the resolved
@@ -439,3 +539,15 @@ than the LES one; see
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1.
 - [Fischer et al. (2022)](/sources/fischer-2022.md) — §4.1, Table 2.
 - [Placco et al. (2023)](/sources/placco-2023.md) — §1–2.
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §2, Eq. (2.2); §3.1, Eq. (3.2); §3.2, Eqs. (3.3)–(3.5); §5, Figs. 11–12.
+- [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §II, Eqs. (1)–(5); §III A.
+- [Kang et al. (2023)](/sources/kang-2023.md) — Eqs. (2.5)–(2.8); §2.2–2.3; §3.3; §3.5.
+- [Kurz et al. (2023)](/sources/kurz-2023.md) — §1; §3.3, Eq. (19).
+- [Lederer et al. (2023)](/sources/lederer-2023.md) — §3.1.
+- [Saini et al. (2023)](/sources/saini-2023.md) — §2.1, Table 1; §2.2, Eqs. (1)–(5).
+- [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md) — §2.1, Eqs. (1)–(5).
+- [Lewis et al. (2023)](/sources/lewis-2023.md) — §3.2.1.
+- [Cheylan et al. (2023)](/sources/cheylan-2023.md) — §1; §2.7, Eqs. (37)–(38).
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §3.2; §4.7; §6.
+- [Kou et al. (2023)](/sources/kou-2023.md) — §4.2.
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §2.

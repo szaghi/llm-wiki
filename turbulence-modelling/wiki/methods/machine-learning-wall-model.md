@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Machine-learning wall models"
-description: "Wall-stress models for wall-modelled LES learned by supervised regression or multi-agent reinforcement learning: the published models, the SciMARL formulation of its authors, a posteriori behaviour in channel flow up to Re_tau = 10^10 and in a flat-plate boundary layer, the extrapolation argument, log-law preservation as the acceptance test, and cost."
+description: "Wall-stress models for wall-modelled LES learned by supervised regression, classification over building-block flows or multi-agent reinforcement learning: the published models, a posteriori behaviour from channel flow up to Re_tau = 10^10 to aircraft configurations, solver-consistent training data, the extrapolation argument, log-law preservation as the acceptance test, and cost."
 status: established
-aliases: [MLWM, ML wall model, neural-network wall model, data-driven wall model, reinforcement-learning wall model, RLWM, SciMARL wall model]
+aliases: [MLWM, ML wall model, neural-network wall model, data-driven wall model, reinforcement-learning wall model, RLWM, SciMARL wall model, BFWM]
 tags: [wall-model, wmles, machine-learning, neural-network, reinforcement-learning]
-timestamp: 2026-10-25T20:36:00Z
+timestamp: 2026-10-26T07:39:00Z
 ---
 
 # Machine-learning wall models
@@ -13,9 +13,13 @@ timestamp: 2026-10-25T20:36:00Z
 A machine-learning wall model (MLWM) is a wall-stress boundary condition for
 [wall-modelled LES](/methods/wall-modelled-les.md) whose map from the LES state
 near the wall to $\tau_w$ is learned rather than derived from the
-[law of the wall](/definitions/law-of-the-wall.md). Two families exist in the
-sources: supervised networks trained on high-fidelity data, and
-reinforcement-learning (RL) agents trained inside the WMLES itself. The main
+[law of the wall](/definitions/law-of-the-wall.md). Three families exist in the
+sources: supervised networks trained on high-fidelity data;
+reinforcement-learning (RL) agents trained inside the WMLES itself; and the
+[building-block-flow wall model](/methods/building-block-flow-wall-model.md)
+of [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md), a supervised
+classifier-plus-predictors model trained on WMLES data generated in the
+deployment solver. The main channel-flow
 evidence is the comparative a posteriori study of [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md),
 which implements three published models in [LESGO](/software/lesgo.md), uses
 them as trained by their authors (no re-training), and compares them with the
@@ -91,9 +95,37 @@ training free of DNS data, although the reward needs the true mean wall stress
 at each training $Re_\tau$ (Methods; the source does not say where it comes
 from).
 
+## Classification over building-block flows
+
+Lozano-Durán & Bae (2023) replace a single regression by a classification:
+a network assigns to each wall point the probabilities of seven canonical
+"building-block" flows (free stream, laminar channel, zero-pressure-gradient
+channel, favourable and adverse pressure gradient and separation in
+Poiseuille–Couette flow, channel with a sudden spanwise pressure gradient),
+one network per turbulent block predicts the wall-stress magnitude and
+direction, and the output is the probability-weighted sum, with a
+nearest-neighbour confidence score (§2; full description on the
+[building-block-flow wall model](/methods/building-block-flow-wall-model.md)
+page). The six inputs are local and non-dimensionalized with $\nu$ and the
+wall distance only, from the first two off-wall control volumes (Eq. 2.3);
+the authors criticize most earlier learned wall models — Yang et al. (2019),
+Huang et al. (2019), Zhou et al. (2021, 2022), Zangeneh (2021), Bhaskaran et
+al. (2021) and Bae & Koumoutsakos (2022), as they list them — for relying "on
+information about the flow that is typically inaccessible in real-world
+applications, such as the boundary layer thickness" and for being limited to
+simple configurations (§1). The ZHY21 and ZYZY22 inputs of the table above are
+scaled with $\delta$ (Vadrot et al. 2023b, §II.B). Among the models on this
+page, only the BFWM is tested a posteriori in three-dimensional and separated flows: the NASA CRM-HL near
+stall and the [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md), where
+it beats the equilibrium model in the wing–body juncture and in the
+trailing-edge corner separation, there "far from satisfactory" (§4.7–4.8,
+Table 1).
+
 Vadrot et al. (2023b, §I) also recall earlier models they do not test: the
 first network wall model of Yang et al. (2019), trained at $Re_\tau=1000$;
-the classifier-plus-predictor of Lozano-Durán & Bae, poor in separation zones
+the classifier-plus-predictor of Lozano-Durán & Bae (their ref. [85], the
+2020 arXiv preprint of the preliminary version of the building-block-flow
+model above), poor in separation zones
 of the [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md); gradient-boosted
 trees of Radhakrishnan et al., whose a posteriori results match their own
 equilibrium model including its log-layer mismatch; and a CNN of Moriya et al.,
@@ -186,6 +218,37 @@ RL training inside the WMLES, as in BK22, is one way to obtain it. Duraisamy
 non-local features that have proved important, and records that the goal of
 generalizable learned models "has, however, not been achieved" (§VII).
 
+Lozano-Durán & Bae (2023, §2.5) reach consistency by a third route, neither
+a priori nor in-solver training: they generate the supervised training data
+by running WMLES in the deployment solver with an SGS correction that forces
+the mean profile onto DNS and a wall stress sampled from the DNS distribution,
+arguing that in a grid-filtered LES the subgrid tensor does not coincide with
+the stress of filtered DNS (see
+[discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
+The price is a model that must be retrained for each flow solver (§5(3)).
+
+**A closure without a wall model.** [Sirignano & MacArt (2023)](/sources/sirignano-2023.md)
+take the opposite design to a discrete wall model: one neural network, trained
+in situ with adjoint equations, closes all unclosed terms of the LES of flows
+around bluff bodies — the SGS stress divergence and the boundary and
+commutation terms of filtering at the immersed body — at near-wall and
+far-field points alike (§2, §2.1). For most cases and stations their LES mesh
+does not resolve within $y^+=10$ and no wall model is used, yet the learned
+model "generally slightly outperform[s] the AMD model and dramatically
+outperform[s] the dynamic Smagorinsky model and implicitly modelled LES" in
+near-wall mean profiles (§4.3, Fig. 10); the Reynolds numbers are
+$Re_0=1000$ and 2000 on the blockage height; preliminary tests of these
+models on a wake flow at $Re_0=12\,000$ are reported "stable and, in some
+cases, accurate" but not shown (§7). They contrast adjoint training with RL wall modelling (Bae &
+Koumoutsakos 2022), which they say depends on the fidelity of the "agent" to
+the physical dynamics, an "inconsistency challenge" adjoint methods avoid
+(§1); they also write that RL "typically approximates the flow dynamics using
+a DNN model", while adding that model-free RL "can also be used". The BK22
+agents above act in the LES solver itself (Vadrot et al. 2023b, §II.B;
+Bae & Koumoutsakos 2022, Methods). Details are on
+[neural-network SGS models](/methods/neural-network-sgs-model.md) and
+[model-consistent training](/methods/model-consistent-training.md).
+
 ## Extrapolation and the activation function
 
 Vadrot et al. (2023b, §IV) explain the high-$Re$ behaviour with the
@@ -228,7 +291,10 @@ outputs, skip connections not counted) give exactly 17 412 *(compiler check,
 not in the sources)*. Bae & Koumoutsakos (2022, p. 8) put the training cost of
 the LLWM at $O(10^3)$ CPU-hours and under 1 GB of storage, against $O(10^7)$
 CPU-hours and over 100 TB to generate DNS data for supervised learning at
-$Re_\tau=4200$ (no hardware given).
+$Re_\tau=4200$ (no hardware given). Lozano-Durán & Bae (2023, §2.6) report
+about 12 h of training per network on four A100 GPUs and a WMLES cost of
+1.1–1.3 times that with the algebraic equilibrium model, without optimizing
+the implementation.
 
 ## BK22 in two solvers: log-layer mismatch
 
@@ -266,9 +332,12 @@ Koumoutsakos, cited by Vadrot et al., was not read.
 
 ## Qualifications
 
-- All evidence is channel flow, plus the original authors' training cases;
-  no learned wall model is tested here in a separated or three-dimensional
-  flow.
+- The evidence for the regression and RL models is channel flow, plus the
+  original authors' training cases; only the building-block-flow model of
+  Lozano-Durán & Bae (2023) is tested in separated and three-dimensional
+  flows, by its own authors and in one solver. Its authors find the total
+  error dominated by the SGS-model error at the matching point, not by the
+  wall model (§4.7, §6).
 - Vadrot et al. print $l^+_\Omega=u_\tau/(2\Omega_{\mathrm{rot}})$ and
   $l_\Omega=u_\tau/(2\Omega_{\mathrm{rot}})$ for the inner-scaled and the
   dimensional rotation length (§II.B.2, l. 139, 143); the expression has units
@@ -301,3 +370,5 @@ Koumoutsakos, cited by Vadrot et al., was not read.
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §II.A.
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Introduction; Results, Eq. (2), Figs. 1–7, Table 1; Discussion; Methods, Eqs. (3), (9), (10) (Research Square preprint v1).
 - [Kim et al. (2022)](/sources/kim-2022.md) — Abstract; §II A, §II C; §IV (arXiv v2).
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §1; §2, Eq. (2.3); §2.5–2.6; §4.7–4.8, Table 1; §5(3); §6.
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1; §2, §2.1; §4.3, Fig. 10; §7.

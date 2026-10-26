@@ -140,7 +140,7 @@ unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25), cited further in chunk 3 (2026-10-25). This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunk 3. This source is cited on:
 
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)

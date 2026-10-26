@@ -137,7 +137,7 @@ no unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25), cited further in chunk 3 (2026-10-25). This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunk 3. This source is cited on:
 
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [Wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)

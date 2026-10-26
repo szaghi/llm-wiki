@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Kinetic-energy preservation and split forms"
-description: "A discretization is kinetic-energy preserving when its convective terms neither create nor destroy discrete kinetic energy; this page gives the split-form and two-point-flux constructions, kinetic energy as an entropy with entropy-stable added dissipation, and why a dissipation-free baseline is robust but thermalizes without a subgrid model."
+description: "A discretization is kinetic-energy preserving when its convective terms neither create nor destroy discrete kinetic energy; this page gives the split-form families and two-point fluxes, kinetic energy as an entropy, why a dissipation-free baseline is robust but thermalizes without a subgrid model, and why it does not control pressure."
 status: established
 aliases: [KEP, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-26T07:42:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -117,6 +117,40 @@ authors argue that the dissipation should ideally come only
 from the subgrid model (§2.3), the premise of a dissipation-free baseline
 discussed below.
 
+**The one-parameter family of locally conservative split forms.** As
+recalled by [Bernades et al. (2023)](/sources/bernades-2023.md), §3.1.1,
+Eqs. (9)–(11), from Coppola et al., the semi-discrete convective term
+$C_{\rho\phi}$ of a quantity $\rho\phi$ ($\phi=1$ for mass, $u$ for
+momentum; page-local symbols, $D_x$ a centred difference matrix with
+summation by parts) can be written in five forms: divergence
+$C^D=D_x(\rho u\phi)$, $C^\phi=\phi D_x(\rho u)+\rho uD_x\phi$,
+$C^u=uD_x(\rho\phi)+\rho\phi D_xu$, $C^\rho=\rho D_x(u\phi)+\phi uD_x\rho$,
+and the fully split $C^L$. The KEP forms that remain locally conservative
+are the family
+$$C^{\mathrm{KEP}}_{\rho\phi}=a_{\mathrm K}\,\frac{C^D_{\rho\phi}+C^\phi_{\rho\phi}}{2}+(1-a_{\mathrm K})\,\frac{C^u_{\rho\phi}+C^\rho_{\rho\phi}}{2},$$
+with $a_{\mathrm K}=0$ the Feiereisen form, $a_{\mathrm K}=1$ the "C" form
+and $a_{\mathrm K}=\tfrac12$ the **Kennedy–Gruber–Pirozzoli (KGP)** form
+(page-local $a_{\mathrm K}$, the source's $\xi$); $C^L$ is excluded because it
+cannot be written as a difference of fluxes. The KGP form has the
+second-order flux
+$F_{i+1/2}=\tfrac18(\rho_i+\rho_{i+1})(u_i+u_{i+1})(\phi_i+\phi_{i+1})$, i.e.
+$\{\!\{\rho\}\!\}\{\!\{u\}\!\}\{\!\{\phi\}\!\}$ (footnote 3), and "proved to
+be particularly robust". With $\phi=1$ and $\phi=u$ it preserves mass,
+momentum and kinetic energy by convection, globally and locally. Bernades et
+al. state that the KEP property "depends only" on the discretization of the
+continuity and momentum equations (§3.1.2); the energy discretization decides
+instead [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md).
+
+**Kennedy–Gruber volume flux in a DG turbomachinery code.** The DGSEM of
+DLR's TRACE solver used by [Morsbach et al. (2024)](/sources/morsbach-2024.md),
+§2, for implicit LES of a low-pressure-turbine cascade stabilizes the
+collocated Legendre–Gauss–Lobatto scheme ($N=5$) with the split formulation
+and the kinetic-energy-preserving two-point volume flux of Kennedy and
+Gruber, a Roe interface flux and BR1 viscous terms with a central flux and no
+penalty, which the authors state is stable "in combination with a stable
+advective discretisation" (citing Gassner et al.); no explicit subgrid model
+is used.
+
 ## Kinetic energy as an entropy
 
 [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md), §2, treat kinetic
@@ -163,7 +197,13 @@ DG scheme. Krais et al. (2021, §7) call KEP split DG a stable scheme for
 implicitly modelled LES, and use it for a wall-resolved LES of a NACA 64418
 airfoil at $Re_c=10^6$, $M=0.2$ ($N=7$, about 117 million degrees of freedom).
 Beck & Kurz (2023, §III A) use the split form in [FLEXI](/software/flexi.md)
-for non-linear stability, with an L2Roe interface flux.
+for non-linear stability, with an L2Roe interface flux, and
+[Kurz et al. (2023)](/sources/kurz-2023.md), §3.5, use the same KEP split
+form on LGL nodes ($N=5$ and 7) as the implicitly filtered baseline on which a
+[reinforcement-learning closure](/methods/reinforcement-learning-closure.md)
+learns the Smagorinsky coefficient; without a model that baseline "exhibits
+a buildup of energy in the upper wavenumbers due to lacking dissipation" in
+forced isotropic turbulence (§4.2).
 
 **Thermalization.** Without dissipation, energy reaching the cut-off has nowhere
 to go. Flad & Gassner (2017, §3) observe an approximate $E(k)\propto k^2$
@@ -195,7 +235,17 @@ Reynolds stresses than DG implicit LES in [channel flow](/benchmarks/turbulent-c
 at $Re_\tau=590$ (§6.2). Goc et al. (2021, §2.3) state, recalling Mittal &
 Moin, that numerical dissipation is "extremely detrimental" for coarse LES,
 which motivates low-dissipation (entropy- and KEP) schemes for
-[wall-modelled LES](/methods/wall-modelled-les.md) of aircraft.
+[wall-modelled LES](/methods/wall-modelled-les.md) of aircraft; the same
+charLES scheme, "kinetic-energy-conserving" and approximately entropy
+preserving in the inviscid limit, carries the machine-learning wall model of
+[Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md), §3.1. The
+opposite case is a scheme that is not dissipation free:
+[Saini et al. (2023)](/sources/saini-2023.md), §2.1, needed a 60%–40% blend
+of second-order central and upwind convection for stability in their
+second-order finite-volume combustor LES, and measured that numerical
+dissipation supplies 80–90% of the non-viscous dissipation of those runs
+in the turbulent subdomains, the explicit WALE model the rest (§5.2; see
+[numerical dissipation](/properties/numerical-dissipation.md)).
 
 **What KEP does not control.** Kinetic-energy preservation constrains momentum,
 not density and pressure. Flad & Gassner (2017, §5.1, Fig. 10) find that
@@ -204,7 +254,16 @@ fluctuations, so the pressure–dilatation work oscillates strongly; only an
 interface flux whose dissipation acts on density and pressure (the low-Mach
 L2Roe solver, which scales the velocity jump by the local Mach number) removes
 the oscillations, and the authors rank "split form + L2Roe + Smagorinsky" best
-overall (§5.1, §6.1). Vicente Cruz & Lamballais (2023, footnote 6) note that
+overall (§5.1, §6.1). Bernades et al. (2023, §4.2) reach a related conclusion
+for real-gas (transcritical) flow: with a Peng–Robinson equation of state the
+KGP scheme with total energy (KGP-Et) is not pressure-equilibrium
+preserving, produces noisy pressure that contaminates the velocity and
+diverges in an inviscid mixing layer on $64\times32$ points, so "the KEP
+property alone is not sufficient to tackle transcritical flows"; adding
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)
+(their KGP-Pt) keeps the run smooth and stable. In a transcritical channel
+DNS at $Re_\tau=100$ the two schemes agree, physical viscosity mitigating the
+oscillations (§4.3). Vicente Cruz & Lamballais (2023, footnote 6) note that
 their immersed-boundary treatment is not kinetic-energy conserving.
 
 ## Cost
@@ -242,3 +301,8 @@ polynomial de-aliasing in their in-house code, without timings.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §3.3, §3.5 (split forms in HORSES3D, Gauss–Lobatto requirement, entropy-stable extensions); §3.6 (mortars not entropy stable).
 - [Blind et al. (2023)](/sources/blind-2023.md) — §2.1 (Pirozzoli split form in FLEXI for wall-resolved and wall-modelled LES).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §2, Eqs. (2)–(3) (Kok's energy-preserving flux, JST dissipation); §2.3 (dissipation only from the subgrid model).
+- [Bernades et al. (2023)](/sources/bernades-2023.md) — §3.1.1, Eqs. (9)–(11), footnote 3 (split forms, locally conservative KEP family, KGP flux); §3.1.2 (KEP depends on continuity and momentum only); §4.2–4.3 (KEP not sufficient in transcritical flow; channel DNS).
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §2 (TRACE DGSEM with Kennedy–Gruber two-point volume flux, Roe, BR1 without penalty).
+- [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §3.5 (KEP split-form FLEXI baseline); §4.2 (pile-up without a model).
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §3.1 (charLES: kinetic-energy-conserving, approximately entropy-preserving finite volumes).
+- [Saini et al. (2023)](/sources/saini-2023.md) — §2.1 (central/upwind blend for stability); §5.2 (numerical share of the non-viscous dissipation).

@@ -139,7 +139,7 @@ b; Sundstrom 2018a, b, c). No printed duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunk 2. This source is cited on:
 
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)

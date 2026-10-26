@@ -143,12 +143,14 @@ items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25). This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunk 4. This source is cited on:
 
+- [ACAT1 fan stage](/benchmarks/acat1-fan-stage.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Hybrid RANS/LES](/definitions/hybrid-rans-les.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Detached-eddy simulation and its delayed and zonal forms](/methods/detached-eddy-simulation.md)
+- [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)

@@ -5,7 +5,7 @@ description: "Spatially developing turbulent boundary layers on flat walls: zero
 status: established
 aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
 tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles]
-timestamp: 2026-10-26T05:08:00Z
+timestamp: 2026-10-26T07:40:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -41,6 +41,38 @@ is $\Delta x^+=128$, $\Delta z^+=105$, $\Delta y^+=64$, with about 10 points
 per $\delta$ at the inlet and the matching height at the third point. The
 predicted skin friction $C_f(Re_\theta)$ is comparable to the empirical
 correlation of Schlichting & Kestin.
+
+[Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md), §4.2–4.3,
+Figs. 8–9, test their
+[building-block-flow wall model](/methods/building-block-flow-wall-model.md)
+against the algebraic [equilibrium wall model](/methods/equilibrium-wall-model.md)
+on two flat-plate layers in CharLES, with the dynamic Smagorinsky or the
+Vreman SGS model. The ZPG layer spans $Re_\theta=800$–2000 in a box of
+$1060\times18\times35$ average momentum thicknesses, with Lund–Wu–Squires
+recycling at $890\theta_i$ (the recycling distance of Bae & Koumoutsakos above), a top
+condition from the displacement-thickness growth, a uniform grid from
+$\Delta\approx\delta/5$ at the inlet to $\delta/20$ at the outlet, and the
+DNS of Towne et al. on the same set-up as reference. Mean profiles deviate
+about 10–30% from DNS; the averaged wall-stress error of the wall model
+alone (its "internal" error, isolated by forcing the LES mean to the DNS) is
+below 0.5% for the learned model and about 2% for the equilibrium model,
+while the total error is 5–15% for both, dominated by the SGS model at the
+matching point. The model classifies the flow as ZPG with almost 100%
+confidence except near the inlet. A laminar Blasius layer
+($Re_x=10^4$–$10^6$) is also run: all combinations give the mean velocity
+within 5%, the learned model's internal error falls below 1% against more
+than 20% for the equilibrium model, and the equilibrium runs benefit from
+cancellation of internal and external errors.
+
+## Turbulent flat plate in RANS
+
+[Zhao et al. (2023b)](/sources/zhao-2023-b.md), §5.1, Fig. 5-2, run a ZPG
+flat plate at Mach 0.2 and $Re_L=1.12\times10^7$ on the plate length,
+first cell at $y^+=1$, with the [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md)
+discretized by first-order finite volumes under an interior-penalty DG mean
+flow. The velocity profile agrees with the reference of Georgiadis et al.
+in the log layer and the turbulent kinetic energy with that of Yoder &
+Georgiadis; grid size and polynomial degree are not printed.
 
 ## Mean-flow reconstruction with physics-informed networks
 
@@ -223,6 +255,22 @@ the cold walls of Mach 6–8 and 11–14, and the wall shear-stress rms reaches
 0.45–0.5 of its mean on cold walls (§3.2, Figs. 8–9). The two statements
 concern different cooling levels.
 
+## End-wall boundary layers built from a DNS template
+
+[Morsbach et al. (2024)](/sources/morsbach-2024.md), §3.3, Eqs. (5)–(11),
+Fig. 3, feed the turbulent end-wall boundary layers of a turbine-cascade LES
+by scaling the $Re_\theta=670$ ZPG DNS of Schlatter & Örlü to the operating
+point: the DNS velocity, Reynolds stresses and a length scale $k^{3/2}/\varepsilon$
+in wall units are mapped to total pressure, Reynolds stress and length-scale
+profiles that drive a synthetic turbulence generator (see
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md)). A
+precursor LES of a finite-length channel with parallel end walls fixes the
+inlet distance at which the layer meets the measured momentum-thickness
+growth (a fit $\propto x^{4/5}$). At $x/C_{ax}=-0.99$ upstream of the blades
+the shape factor $\delta^*/\theta$ is 1.447 in the cascade LES, 1.405 in the
+precursor, 1.440 with SST and 1.396 with the SSG/LRR-$\omega$
+Reynolds-stress model fed with the same profile.
+
 ## Shock/boundary-layer interaction
 
 The interaction has its own page,
@@ -288,6 +336,13 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) compare their skin
   friction with an empirical correlation, although the Reynolds-number range
   was chosen to match the DNS of Sillero et al.
+- The wall-model errors of [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md)
+  split into an internal part (the wall model given the exact mean input)
+  and an external part (SGS error at the matching point); their equilibrium
+  model takes its input at the second off-wall grid point (Eq. 3.1).
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) write $z$ for the
+  wall-normal coordinate of the end-wall layer; their momentum-thickness
+  data are given only as a fit, the absolute values being confidential.
 - [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) place the reference
   station at $x=210$ mm in §2 and at $x=200$ mm in the Table 1 caption and
   later in §2. Their structural-damping coefficient is fitted to the measured
@@ -303,3 +358,6 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 - [Eivazi et al. (2022)](/sources/eivazi-2022.md) — §3, Table 1, Figs. 3–5.
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §II, Fig. 1; §III B, Tables I–II, Figs. 2–6.
 - [Dang et al. (2022)](/sources/dang-2022.md) — §5.1, Fig. 17; §6.1.
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §4.1–4.3, Figs. 8–9.
+- [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §5.1, Fig. 5-2.
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §3.1, §3.3, Eqs. (5)–(12), Fig. 3.

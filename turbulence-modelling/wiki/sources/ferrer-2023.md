@@ -151,7 +151,7 @@ undated software.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-25). This source is cited on:
+Chunk 3 (2026-10-26), cited further in chunk 4. This source is cited on:
 
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
@@ -159,13 +159,16 @@ Chunk 3 (2026-10-25). This source is cited on:
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Immersed boundary methods](/methods/immersed-boundary-method.md)
+- [Jump-penalty stabilization of high-order methods](/methods/jump-penalty-stabilization.md)
 - [Mesh adaptation for turbulent-flow simulation](/methods/mesh-adaptation.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)
 - [Spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
 - [Subcell finite-volume shock capturing for DG](/methods/subcell-finite-volume-shock-capturing.md)
 - [Vreman model](/methods/vreman-model.md)
+- [WALE model](/methods/wale-model.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [FLEXI](/software/flexi.md)
 - [HORSES3D](/software/horses3d.md)
+- [Nektar++](/software/nektar-plus-plus.md)

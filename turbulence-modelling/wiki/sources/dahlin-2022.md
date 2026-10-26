@@ -132,7 +132,7 @@ DOI. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-25). This source is cited on:
+Chunk 3 (2026-10-26). This source is cited on:
 
 - [Mesh adaptation for turbulent-flow simulation](/methods/mesh-adaptation.md)
 - [STITCH helicity-condensation model](/methods/stitch-helicity-condensation-model.md)

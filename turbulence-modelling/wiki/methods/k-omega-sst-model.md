@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "k-ω SST model"
-description: "Menter's two-equation shear-stress-transport eddy-viscosity model, blending a k-ω inner formulation with an outer one through F1 and limiting the eddy viscosity through F2; its equations and constants, its transition, PANS and DES forms and modifications, and evidence on airfoils, fan stages, vortex flows and its transported k."
+description: "Menter's two-equation shear-stress-transport eddy-viscosity model, blending a k-ω inner formulation with an outer one through F1 and limiting the eddy viscosity through F2; its equations, constants and printed variants, its transition, PANS, DES and compressibility-corrected forms, high-order discretization, and evidence on airfoils, fan stages, turbine cascades, cars, vortex flows and its transported k."
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-25T20:27:00Z
+timestamp: 2026-10-26T07:38:00Z
 ---
 
 # k-ω SST model
@@ -65,6 +65,67 @@ $\phi=F_1\phi_1+(1-F_1)\phi_2$ (Dzanic et al., App. A):
 Dzanic et al. set the wall value of $\omega$ to $60\nu/(\beta_1\Delta d_1^2)$, with
 the first-point distance $\Delta d_1$ taken as the element height divided by
 $N+1$ so that wall values agree between polynomial degrees (§3, Eq. 26).
+
+**A second printed form.** Zhao et al. (2023b) print the compressible model
+with the same $F_1$, $F_2$ and cross-diffusion, with $0.09$ in place of
+$\beta^*$ inside $F_1$ and $F_2$, a floor of $10^{-20}$ on $CD_{k\omega}$, and
+the limiter $\mu_t=\min\big[\rho k/\omega,\ \rho a_1k/(\Omega F_2)\big]$ with
+$a_1=0.31$ and $\Omega=\lvert S_{ij}\rvert$, a strain magnitude whose
+normalization is not printed; they print no other coefficient
+([Zhao et al. (2023b)](/sources/zhao-2023-b.md), §2, Eqs. 2-2–2-4). The two
+sources thus differ in the limiter's argument (rotation magnitude in
+Dzanic et al., strain magnitude in Zhao et al.) and in the floor of
+$CD_{k\omega}$ ($10^{-10}$ against $10^{-20}$); neither discusses the choice.
+Zhao et al. impose $\omega_w=10\cdot6\nu/(\beta y^2)$ at the wall "according
+to" Bassi et al., which is Dzanic et al.'s $60\nu/(\beta_1\Delta d_1^2)$
+*(compiler check, not in the sources)*, and add that the wall constant
+$C_w$ must be adjusted to the discretization: 2.5 in Hellsten's work, 0.3
+in Bassi et al.'s, and 0.01 in theirs (§3.2).
+
+**Wall treatment in a finite-volume code.** Delassaux et al. (2023) use
+Fluent's $y^+$-insensitive wall treatment, which blends the viscous-sublayer
+and log-layer values of $\omega$ in wall units,
+$6/(C_{\omega2}y^{+2})$ and $1/(\sqrt{C_\mu}\,y^+)$ ($C_{\omega2}$ and $C_\mu$
+the $k$-$\omega$ constants, values not printed), and state that SST
+"requires the first node of the mesh to be in the viscous sublayer as
+$y^+\simeq1$" ([Delassaux et al. (2023)](/sources/delassaux-2023.md),
+§4.1.2; HAL author manuscript). Morsbach et al. (2024) use the 2003 version
+of Menter et al. with the Kato–Launder production, without printing
+constants ([Morsbach et al. (2024)](/sources/morsbach-2024.md), §2).
+
+### Compressibility correction
+
+Zhao et al. (2023b) add the dilatational-dissipation and
+pressure-dilatation correction of Suzen & Hoffmann, active only through the
+factor $(1-F_1)$, i.e. in the outer branch. In their nondimensional form
+the $k$-destruction becomes $\big[1+\alpha_1M_t^2(1-F_1)\big]\beta^*\rho k\omega$
+plus a pressure-dilatation source $(1-F_1)\,p''d''$ (page-local, the source's
+$\overline{p''d''}$; the double primes are not Favre fluctuations), with
+
+$$p''d''=-\alpha_2\,\tau_{ij}\partial_ju_iM_t^2+\alpha_3\rho\beta^*k\omega M_t^2,\qquad \alpha_1=1.0,\ \alpha_2=0.4,\ \alpha_3=0.2,$$
+
+with $\tau_{ij}$ their (unspecified-sign) stress of the production term, $M_t$ the turbulent Mach number, which is
+not defined in the paper, and the $\omega$-equation receiving the matching
+terms (§2, Eq. 2-5; the $\alpha_i$ page-local, not the SST $\alpha$). On the
+Settles supersonic cavity–ramp at $M=2.92$ the uncorrected model "produces
+excessive turbulent viscosity" and a too dissipative, too wide shear layer,
+while the corrected one reproduces the measured shear-layer velocity
+profiles (§5.4, Figs. 5-14, 5-15). The authors write that DG RANS has
+"rarely" included such a correction (§2).
+
+### Discretization in a high-order solver
+
+Zhao et al. (2023b) solve the mean flow with a high-order interior-penalty
+discontinuous Galerkin method and the two SST equations with a first-order
+cell-centred finite-volume scheme on the same mesh, with piecewise-constant
+turbulence variables and the DG velocity gradients $L^2$-projected onto the
+finite-volume space, "to pursue numerical stability and positivity" after
+Burgess & Mavriplis (§1, §3.2; see
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)). The
+high-order accuracy therefore applies to the mean-flow variables only
+*(compiler check, not in the sources)*. They
+recall the opposite choice of Bassi et al., who solve for $\log\omega$ at high
+order to enhance stability (§1).
 
 ### Implementation variants
 
@@ -139,6 +200,10 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
   ([Carlsson et al. (2023)](/sources/carlsson-2023.md), §3, §4.2). SST-IDDES
   of channel flow at $M_b=0.15$ and 1.5 then follows DNS and the log law
   except for a small log-layer mismatch at the interface (§4.3).
+  Delassaux et al. (2023) blend the two constants through $F_1$,
+  $C_{\mathrm{DES}}=0.78F_1+0.61(1-F_1)$, and use $C_{d1}=20$, $C_{d2}=3$ in the
+  DDES shielding function, raising $C_{d1}$ to 30 for more shielding
+  (§4.1.3, Eqs. 6–11, §4.4).
 
 ## What the transported $k$ represents
 
@@ -181,6 +246,51 @@ operational role and need not match their DNS counterparts
   and gives the wrong shape of the RMS profiles, reconstructed through the
   [Boussinesq](/definitions/boussinesq-hypothesis.md) relation
   ([François et al. (2022)](/sources/francois-2022.md), §5.3–5.4, Figs. 12–15).
+  On the same [ACAT1 stage](/benchmarks/acat1-fan-stage.md) Lewis et al.
+  (2023) find that a wall-resolved SST RANS reproduces the measured mass
+  flow and fan pressure ratios as closely as their coarser wall-modelled
+  LES, but misses the radial secondary flows predicted by both LES and gives
+  worse RMS wake shapes; its rotor leading-edge separation extends from 25%
+  of the span to the tip ([Lewis et al. (2023)](/sources/lewis-2023.md),
+  §4.1, §4.2.2, §4.3.1, Tables 9–10; HAL accepted manuscript).
+- **Low-pressure turbine cascade.** Morsbach et al. (2024) compare SST
+  (with $\gamma$-$Re_\theta$) and the SSG/LRR-$\omega$ differential
+  Reynolds-stress model with a wall-resolved high-order implicit LES of the
+  T161 cascade at an exit Reynolds number of $9\times10^4$ and Mach 0.6, with
+  inflow turbulence tuned so that the RANS free-stream decay matches the LES
+  (§3.3). Both RANS miss the midspan
+  [laminar separation bubble](/definitions/laminar-separation-bubble.md) and
+  underestimate the mixed-out wake loss by 35% (SST) and 29% (SSG/LRR-$\omega$);
+  SST with the inflow length scale reduced to $1/16.7$ gets within 2.7% by
+  "a lucky cancellation of errors" while leaving an open separation (§4.1,
+  Figs. 7–9). In the end-wall region both overpredict the peak loss, by 34%
+  (SST) and 48% (SSG/LRR-$\omega$), with passage and trailing shed vortices
+  too strong and too far from the wall. SST qualitatively reproduces the
+  elevated $k$ in the passage-vortex core, while the Reynolds-stress model
+  produces too little $k$ there and too compact, persistent vortices,
+  "contrary" to the reputation of such models as less diffusive for
+  vortices; it does reproduce the free-stream anisotropy that SST, through
+  the Boussinesq relation, cannot (§4.2, Figs. 10–15). The authors question
+  its high-Reynolds formulation, with the LRR pressure–strain near walls and
+  no explicit near-wall terms (§4.2).
+- **Full-scale car.** On a simplified estate car at $Re_L=1.3\times10^7$
+  Delassaux et al. (2023) find SST drag 0.242 against 0.244 measured (0.241
+  with 30 prism layers, 0.249 on a refined wake grid), but two massive
+  separation bubbles in the wake where the experiment has one, massive
+  separation behind the rear fairing, and the best pressure coefficient of
+  all models on rounded separation lines (§6–§7, Table 3, Figs. 17–23); on
+  the 25° Ahmed body SST separates massively on the slant (§5). See
+  [k-ε models](/methods/k-epsilon-model.md) and
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md).
+- **Airfoils with a DG discretization.** With the hybrid DG/finite-volume
+  scheme above, Zhao et al. (2023b) obtain on NACA 0012 ($M=0.15$,
+  $Re_c\approx6\times10^6$) $C_L=0.00$, $C_D=0.0084$ at $0^\circ$ and $C_L=0.93$,
+  $C_D=0.011$ at $10^\circ$, against McCroskey's 0.00, 0.0083, 1.05 and 0.012,
+  attributing the $10^\circ$ lift deficit to "the RANS assumption"; at
+  $M=0.804$ the shock end lags slightly behind the ONERA data (§5.2–5.3,
+  Table 5-1). The zero-pressure-gradient flat plate at $M=0.2$,
+  $Re_L=1.12\times10^7$ agrees with the reference log-layer velocity and
+  $k$ profiles (§5.1, Fig. 5-2).
 - **Delta wing.** On a hybrid delta wing at $\alpha=24^\circ$,
   $Re=2.17\times10^6$, SST on a 60-million-cell adapted mesh (steady
   solution, instantaneous refinement criterion) predicts forces and the
@@ -233,6 +343,13 @@ version read (arXiv v1):
   the mean lift by 22.8% (SD7003, $Re=23{,}000$, $\alpha=2^\circ$; §5,
   Table 11). The two statements concern different regimes (turbulent vortex
   flow, laminar periodic shedding) and are not incompatible.
+- Zhao et al. (2023b) print the diffusion coefficient of Eq. 2-2 as
+  $\mu_L+\sigma_k\mu_T$ and that of the compressibility-corrected Eq. 2-5 as
+  $\mu+\sigma_k\mu_t$, while §2 defines $\mu=\mu_L+\mu_T$; read literally, Eq.
+  2-5 counts the eddy viscosity twice. Eq. 2-5 also contains an undefined
+  $\upsilon_t$. Their wall condition $\omega_w=10\cdot6\nu/(\beta y^2)$ does not
+  contain the constant $C_w=\sqrt{(50^2/10)(\beta/6)}$ that the text says is
+  "reset to 0.01", so how $C_w$ enters is not printed (§3.2).
 - Carreño Ruiz & D'Ambrosio print the turbulent viscosity ratio as
   $k/(\omega\mu)$ (Eq. 24), which is not dimensionless; $\rho k/(\omega\mu)$
   is *(compiler check, not in the sources)*. Their Eq. 1 prints the
@@ -256,3 +373,7 @@ version read (arXiv v1):
 - [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §9.
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §3, §4.2, §4.3.
 - [Cai et al. (2022)](/sources/cai-2022.md) — §I, Table III (HAL v1).
+- [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §1, §2 Eqs. 2-2–2-5, §3.2, §5.1–5.4 Table 5-1 Figs. 5-2, 5-14, 5-15.
+- [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §4.1.2–4.1.3 Eqs. 6–11, §4.4, §5, §6–§7 Table 3 Figs. 17–23 (HAL author manuscript).
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §2, §3.3, §4.1 Figs. 7–9, §4.2 Figs. 10–15.
+- [Lewis et al. (2023)](/sources/lewis-2023.md) — §4.1, §4.2.2, §4.3.1, Tables 9–10 (HAL accepted manuscript).

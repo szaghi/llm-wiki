@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Discontinuous Galerkin spectral element method"
-description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra with Legendre–Gauss or Gauss–Lobatto nodes; this page states its weak and strong forms, the SBP property, modal filtering and filtered artificial viscosity, its cost per degree of freedom, how interface dissipation shapes LES on it, element-local filters and mortars, and modal and continuous relatives."
+description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra; this page states its weak and strong forms, SBP property, modal filtering and filtered artificial viscosity, cost, how interface dissipation and penalties shape LES on it, its implicit filter, element-local filters and mortars, and modal, interior-penalty and continuous relatives."
 status: established
 aliases: [DGSEM, nodal discontinuous Galerkin, collocation DG, DG spectral element method]
 tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-26T07:42:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -226,6 +226,37 @@ an explicit Smagorinsky model ($C_s=0.12$) succeeds at $48^3$ (§4). Beck & Kurz
 (2023, §V A) find in forced isotropic turbulence at 24 and 36 degrees of
 freedom per direction that the no-model LES is the best of their reference
 closures for $N=3$ and degrades as $N$ grows to 5 and 8.
+[Kurz et al. (2023)](/sources/kurz-2023.md), §4.2, see the same no-model
+LES of forced isotropic turbulence on the KEP split-form DGSEM ($N=5$ and
+7, 24 to 48 degrees of freedom per direction) pile up energy at high
+wavenumbers, a static Smagorinsky model ($C_s=0.17$) over-dissipate near
+the resolution limit, and an element-wise
+[reinforcement-learning](/methods/reinforcement-learning-closure.md)
+Smagorinsky coefficient match the DNS spectrum.
+
+**The implicit filter of the DGSEM.** Kurz et al. (2023, §1, §3.3) describe
+the filter that an under-resolved DG discretization imposes as an
+element-local $L_2$ projection onto the polynomial basis, coupled across
+elements by the numerical fluxes, so that the whole operator is "a complex
+filter with typically non-linear kernel" whose form is unknown; exact
+closure terms for such an implicitly filtered LES cannot be computed even
+from DNS (see [discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
+They find that policies trained at 36 and 48 degrees of freedom per
+direction predict different coefficient distributions on either grid and
+read this as different discretizations inducing different implicit filters
+(§4.4).
+
+**Interface penalties.** Beyond the Riemann-solver dissipation, the
+penalty terms on face jumps act as subgrid dissipation.
+[Kou et al. (2023)](/sources/kou-2023.md) penalize the solution jump (the
+symmetric-interior-penalty viscous flux with an enlarged parameter) or the
+gradient jump in HORSES3D with a Roe flux and no over-integration; on the
+Taylor–Green vortex at $32^3$ elements and $N=3$ the unpenalized scheme
+diverges and both penalties beat Smagorinsky and Vreman models adapted to
+DG (§4.2). The method, its eigenanalysis and its parameters are on
+[jump-penalty stabilization](/methods/jump-penalty-stabilization.md). Kou et
+al.'s one-dimensional analysis is for modal Legendre DG with Gauss–Legendre
+quadrature, not the collocated DGSEM (§2.1, App. A).
 
 **SVV-filtered explicit model.** Mateo-Gabín et al. (2022, §6.1, Fig. 4) run
 the inviscid [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) on
@@ -250,7 +281,9 @@ $\Delta^3=V_e/(N+1)^3$, and Basile et al. (2023, §2.2) use
 $\Delta=|K|^{1/3}/(N+1)$ as the subgrid length of their DG
 [detached-eddy simulation](/methods/detached-eddy-simulation.md) on
 tetrahedra, with $|K|$ the element volume, instead of the largest cell
-dimension of classical DES. Flad & Gassner (2017, App. A) print the filter
+dimension of classical DES. [Lederer et al. (2023)](/sources/lederer-2023.md),
+§3.1, use $\Delta=(\Delta x\Delta y\Delta z)^{1/3}/(N+1)$ for the WALE
+viscosity of their hybrid mixed method. Flad & Gassner (2017, App. A) print the filter
 width as the cell volume divided by $(N+1)^3$ (see Qualifications).
 
 **Resolution per wavelength.** Flad & Gassner (2017, §1, §3) estimate the
@@ -259,7 +292,17 @@ polynomial resolution limit as $\pi$ points per wavelength ($k=15.28$ for $48$
 degrees of freedom per direction); Beck & Kurz (2023, §IV A) take 4 points per
 wavelength as the resolution limit of the schemes, citing earlier analysis.
 The two numbers belong to different criteria and neither source defines a
-common error tolerance.
+common error tolerance. Kurz et al. (2023, §3.5) also take about 4 points
+per wavelength as the resolution capability of the DGSEM at $N=5$ and 7,
+and fit their reward up to $2.6$–$3$ points per wavelength. For linear
+acoustic propagation with a DG spectral/hp method at $N=5$,
+[Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md), §3, §4.4,
+use the 1% dispersion–diffusion rule of Moura et al. ($|kh|_{1\%}=8.071$,
+$h$ the element size) for the highest reliable frequency and quote 5 points
+per wavelength for that scheme against 22 for second-order methods; their
+second-order finite-volume LES damps high-frequency waves within a few jet
+diameters, which the DG acoustic solver then propagates (§4.3–4.4). The
+time step follows $\mathrm{CFL}=1/(2N+1)$ (Eq. 12, after Bauer et al.).
 
 ## Variants and relatives
 
@@ -298,6 +341,57 @@ than low order at equal degrees of freedom (§4.2.1). Their coarse meshes
 show spurious peaks of the r.m.s. velocity on the jet axis, which they
 attribute to the inter-element discontinuities of DG on coarse elements and
 to poor sampling, and which decrease with adaptation (§4.2.3, Fig. 10).
+
+**Interior-penalty DG for RANS.** [Zhao et al. (2023b)](/sources/zhao-2023-b.md)
+discretize the compressible RANS mean-flow equations with an interior
+penalty DG (IPDG) whose viscous penalty uses a jump-based lifting quantity,
+the viscous flux evaluated with the interface jump in place of the gradient,
+$L=-F^v(U,[U])$, so that the fourth-order tensor $g$ (page-local), the
+Jacobian of the viscous flux with respect to the gradient, never has to be
+formed (§3.1, Eqs. 3-1–3-7); the
+interface fluxes are local Lax–Friedrichs and the average viscous flux plus
+a penalty $C_{\mathrm{IP}}N^2/h_f$ times $L$ (Eq. 3-9; page-local constant
+and face scale). The two [$k$-$\omega$ SST](/methods/k-omega-sst-model.md)
+equations are solved instead by a first-order cell-centred finite-volume
+scheme on the same mesh, piecewise constant per element, "to pursue
+numerical stability and positivity", with the DG velocity gradients
+$L^2$-projected onto that space (§3.2). Time stepping is implicit BDF2 with
+Newton–GMRES, shocks are handled by a flux-divergence artificial viscosity.
+Order tests on an isentropic vortex and Couette flow reach roughly the
+design order on fine meshes (Tables 4-1, 4-2); the turbulence equations are
+first-order accurate by construction. The scheme is not stated to be
+collocated or nodal.
+
+**Hybrid mixed methods.** The mass-conserving mixed-stress method of
+Lederer et al. (2023, §2.2) is a DG relative for incompressible flow, with
+an exactly divergence-free $H(\mathrm{div})$ velocity, hybrid facet
+unknowns and a DG upwind convective form; its upwind penalty is the object of
+the [high-order projection-based upwind method](/methods/high-order-projection-based-upwind-method.md).
+
+## DGSEM in a turbomachinery code
+
+[Morsbach et al. (2024)](/sources/morsbach-2024.md), §2, run implicit LES of
+a low-pressure-turbine cascade with the DGSEM of DLR's TRACE solver:
+sixth order ($N=5$) on collocated LGL nodes, curved elements of geometry
+degree 4, free-stream preservation by the mapping of Kopriva and Gassner,
+the Kennedy–Gruber split form for stability (see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)),
+a Roe interface flux, BR1 with a central flux and no penalty, third-order
+SSP Runge–Kutta, and no explicit subgrid model; the unresolved scales are
+left to the scheme's dispersion and dissipation. Inflow turbulence comes
+from a Fourier-mode synthetic generator weakly imposed through a central
+flux on inflow faces (see
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
+Cost (Table 2): $189.4\times10^6$ degrees of freedom ($876\,960$ elements)
+on 5120 MPI ranks at 25 852 CPU hours per convective time, time step
+$13.65\times10^{-6}$ convective times, 100 convective times averaged; the
+coarse mesh ($312\,424$ elements) costs 5861 CPU hours per convective time.
+Blade resolution averages $(\Delta x^+,\Delta y^+,\Delta z^+)=(23.1,0.742,15.0)$
+in wall units divided by $N$ (§3.1). The fine LES agrees with experiment in
+midspan loading, the pressure plateau of the
+[laminar separation bubble](/definitions/laminar-separation-bubble.md) and
+the secondary-flow loss cores; the coarse mesh is "not entirely
+sufficient" downstream of the transition peak (§4.1).
 
 ## Implementation choices in HORSES3D
 
@@ -360,6 +454,15 @@ operation, so the velocity is continuous across faces and its gradient is
 not (Fischer et al. 2022, §2.3; Gillyns et al. 2022, §2). Gillyns et al.
 (2022, §2, §6) observe Gibbs spikes of the fluctuation statistics at element
 faces on coarse meshes, which vanish near DNS resolution.
+[Nektar++](/software/nektar-plus-plus.md) offers the continuous form too:
+[Saini et al. (2023)](/sources/saini-2023.md), §2.1, run its incompressible
+continuous-Galerkin spectral/hp solver at order 4 (velocity) and 3
+(pressure) with spectral vanishing viscosity and find its numerical plus
+model dissipation about a quarter of that of a second-order finite-volume
+LES at similar cost ("around 1/4th", §6; see [numerical dissipation](/properties/numerical-dissipation.md));
+[Slaughter et al. (2023)](/sources/slaughter-2023.md), §3.1, combine
+spectral/hp elements in the plane with Fourier modes in the span,
+stabilized by gradient-jump penalisation and SVV.
 
 ## Qualifications
 
@@ -410,3 +513,11 @@ faces on coarse meshes, which vanish near DNS resolution.
 - [Blind et al. (2023)](/sources/blind-2023.md) — §2.1 (transfer to DG); §2.3 (modal test filter, length scales, element averaging); §3.2, Tables 2–3 (2-to-1 mortars, savings).
 - [Fischer et al. (2022)](/sources/fischer-2022.md) — §2.3 (continuous spectral elements, gather–scatter).
 - [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §2, §6 ($C^0$ continuity, Gibbs spikes).
+- [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §1, §3.3 (implicit DG filter); §3.5 (resolution capability); §4.2, §4.4 (no-model pile-up, resolution-dependent policies).
+- [Kou et al. (2023)](/sources/kou-2023.md) — §2.1–2.2, App. A (modal DG, HORSES3D with Roe and SIP, no over-integration); §4.2 (Taylor–Green vortex).
+- [Lederer et al. (2023)](/sources/lederer-2023.md) — arXiv v1: §2.2 (mixed-stress DG relative); §3.1 (filter width).
+- [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md) — §2.2, Eqs. (11)–(13) (DG acoustic solver, CFL, 1% rule); §3; §4.3–4.4 (points per wavelength, dissipation of the LES).
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §2 (TRACE DGSEM); §3.1, Table 2 (resolution, cost); §4.1.
+- [Saini et al. (2023)](/sources/saini-2023.md) — §2.1, Table 1 (Nektar++ continuous Galerkin); §5–6.
+- [Slaughter et al. (2023)](/sources/slaughter-2023.md) — Research Square preprint v1: §3.1 (Fourier spectral/hp, GJP, SVV).
+- [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §3.1, Eqs. (3-1)–(3-10) (improved IPDG, fluxes, artificial viscosity); §3.2 (finite-volume SST equations, BDF2); §4, Tables 4-1–4-2.

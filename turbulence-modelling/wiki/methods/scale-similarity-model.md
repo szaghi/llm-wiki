@@ -5,7 +5,7 @@ description: "Scale-similarity and deconvolution models build the subgrid stress
 status: established
 aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model]
 tags: [les, sgs-model, filtering, combustion]
-timestamp: 2026-10-26T05:09:00Z
+timestamp: 2026-10-26T07:41:00Z
 ---
 
 # Scale-similarity and mixed subgrid-scale models
@@ -20,7 +20,7 @@ builds the stress from products of the resolved velocity re-filtered at a
 second level. Deconvolution models recover an approximation of the
 unfiltered field from $\bar u$ and filter its products. The
 [gradient (Clark) model](/methods/gradient-model.md) is the Taylor-series
-member of the class. **Mixed models** add an eddy-viscosity term, usually
+member of the class. **Mixed models** add an eddy-viscosity term, such as
 [Smagorinsky](/methods/smagorinsky-model.md), to supply the dissipation that
 the structural part lacks.
 
@@ -202,6 +202,65 @@ effect is shown for one separated case, computed by LES only (the paper's
 DNS cover the boundary layers, the Mach 3 ramp and the attached Mach 7
 ramp); see [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
+**Dynamic mixed models with one and two parameters.** [Kang et al. (2023)](/sources/kang-2023.md)
+(§3.3, Eqs. 3.4–3.8) compare three algebraic dynamic mixed models with a
+learned one in isotropic turbulence and channel flow:
+
+- the one-parameter dynamic mixed model (DMM; Zang, Street & Koseff,
+  modified by Vreman, Geurts & Kuerten, as recalled),
+  $\tau^d_{ij}=-2C\Delta^2\lvert\bar S\rvert\bar S_{ij}+\big[\overline{\bar u_i\bar u_j}-\bar{\bar u}_i\bar{\bar u}_j\big]^d$,
+  whose similarity part is the modified Leonard term (Bardina et al.;
+  Germano, as recalled) and whose coefficient comes from the
+  [dynamic procedure](/methods/dynamic-procedure.md) applied to $L_{ij}$
+  minus the test-level difference of the similarity term. The second term
+  of that difference, Eq. (3.4), is illegible in the version of record
+  (colliding accents); it is not reconstructed here;
+- two two-parameter models after Anderson & Meneveau (as recalled), with
+  dynamic coefficients on both the Smagorinsky term and the structural term,
+  the resolved stress $L_{ij}$ (DTM$_{\mathrm{sim}}$) or the Clark
+  [gradient](/methods/gradient-model.md) term (DTM$_{\mathrm{nl}}$); the
+  formulas are on the [dynamic procedure](/methods/dynamic-procedure.md)
+  page.
+
+Results (Tables 4, 6, 9, Figs. 19–22, 24): a priori correlations of the
+traceless stress with filtered DNS in isotropic turbulence are 0.71–0.72
+(DMM), 0.52–0.54 (DTM$_{\mathrm{sim}}$) and 0.91 (DTM$_{\mathrm{nl}}$),
+against 0.27–0.30 for dynamic Smagorinsky; in channel flow at
+$Re_\tau=180$ DMM has the best shear-stress correlation, 0.88. All three
+need averaging and clipping to stay stable; in decaying isotropic
+turbulence the similarity coefficient of DTM$_{\mathrm{sim}}$ turns
+negative and is clipped, so the model degenerates to dynamic Smagorinsky.
+They cost 1.6–2.2 times dynamic Smagorinsky per stress evaluation. A
+[neural-network mixed model](/methods/neural-network-sgs-model.md) that
+takes $\bar S_{ij}$ and $L_{ij}$ as inputs, with an a priori correlation
+comparable to that of DMM (0.70–0.72), gives the most accurate spectra and energy decay of
+all models in decaying isotropic turbulence, needs no averaging or
+clipping, and costs 0.71 times dynamic Smagorinsky: "higher correlation
+coefficients of the SGS stress in an a priori test do not guarantee more
+accurate LES results" (§3.3). Among the similarity inputs
+tested (modified Leonard term, $L_{ij}$, gradient term), $L_{ij}$ works
+best; the authors call it "the most important factor for generalization to
+an untrained turbulent channel flow" (§3.7, App. C).
+
+**Similarity stress as an energy-transfer-free anisotropic term.**
+[Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) (§IV B, Eq. 19,
+Fig. 13) test the similarity part of the stabilized mixed model (the
+"SGS-Reynolds" term $(\bar u_i-\hat{\bar u}_i)(\bar u_j-\hat{\bar u}_j)$,
+$\hat\Delta/\Delta=2$), with its eddy-viscosity projection removed and
+scaled by the exact subgrid energy, as a model of the anisotropic remainder
+of the subgrid stress (see [energy backscatter](/definitions/energy-backscatter.md)).
+A priori on channel DNS at $Re_\tau=400$ with a coarse filter
+($\Delta x^+,\Delta z^+=105,52.4$) it is the closest of three models to
+the filtered-DNS anisotropic redistribution; it gives the right
+(productive) sign of the spanwise component even without the projection
+removed, but with small intensity. The gradient version is farther from
+filtered DNS, and a quadratic strain–rotation model gives the wrong sign of
+the spanwise component. Variants that keep the energy transfer of the
+structural term give strongly negative streamwise redistribution, far from
+filtered DNS. Their earlier study (Inagaki & Kobayashi 2020, as recalled)
+found the similarity version better than the gradient version a
+posteriori, because it amplifies small-scale fluctuations near the cutoff.
+
 **Similarity model as a pretraining target.** [Kim et al. (2022)](/sources/kim-2022.md)
 (§II D) report that pretraining their reinforcement-learning SGS model on
 the scale-similarity model made the training unstable because the LES
@@ -287,3 +346,5 @@ not improve.
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §6.5, Figs. 20–22.
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §II, Eqs. (9)–(10); §IV F, Figs. 30–33; §V.
 - [Kim et al. (2022)](/sources/kim-2022.md) — §I; §II; §II D.
+- [Kang et al. (2023)](/sources/kang-2023.md) — §3.3, Eqs. (3.4)–(3.8), Tables 4, 6, 9, Figs. 19–22, 24; §3.7; App. C.
+- [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §I; §IV B, Eqs. (19)–(21), Fig. 13.

@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity profile of wall-bounded turbulence �
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-25T20:36:00Z
+timestamp: 2026-10-26T07:39:00Z
 ---
 
 # Law of the wall
@@ -48,8 +48,20 @@ and the choice is part of the model.
 | [Cai et al. (2022)](/sources/cai-2022.md), Eq. (26) | not printed | $\kappa^{-1}\ln E$, $E=11.27$ | blend constants 10.71 and 1.526 | log law written $u^+=\kappa^{-1}\ln(Ey^+)$; explicit equilibrium wall model in a lattice Boltzmann solver |
 | [Blind et al. (2023)](/sources/blind-2023.md), §3.3 | not printed | not printed | Spalding's law | algebraic wall model in [FLEXI](/software/flexi.md) |
 | [Carlsson et al. (2023)](/sources/carlsson-2023.md), Figs. 4–5 | not printed | not printed | Reichardt's law | reference profile for IDDES of channel flow |
+| [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md), §3.2, Eq. (3.1) | 0.41 | 5.2 | quadratic branch below $y^+=23$ | equilibrium baseline of the [building-block-flow wall model](/methods/building-block-flow-wall-model.md), sampled at the second grid point |
+| [Lewis et al. (2023)](/sources/lewis-2023.md), §3.2.2 | not printed | not printed | linear for $y^+<11$, logarithmic above | wall law of fan-stage WMLES in AVBP |
+| [Kang et al. (2023)](/sources/kang-2023.md), figures | 0.41 | 5.2 | | reference line for LES of channel flow at $Re_\tau=180$ and 395 with learned SGS models |
+| [Wang et al. (2023b)](/sources/wang-2023-b.md), Eq. (10) | 0.40 | 5.5 | "for the low Reynolds number turbulent channel flow" | reference for van Driest-transformed compressible channel DNS |
+| [Zhao et al. (2023a)](/sources/zhao-2023.md), Eqs. (25)–(26) | 0.40 | 5.5 | "selected for the low-Reynolds-number turbulent channel flow" | sets the viscosity of a channel at a target $Re_\tau$ |
 
-Dang et al.'s slope $1/2.44$ is $\kappa\approx0.410$, and Cai et al.'s $E=11.27$
+Zhao et al. (2023a) attribute $\kappa=0.40$, $B=5.5$ to the channel DNS of
+Kim et al. (1987), as they cite it; Wang et al. (2023b) give the same values
+with the same wording. Zhao et al. (2023a, §5.2, Eqs. 25–26) use the law in the reverse
+direction: with the centreline velocity $U_c=1$ and the target centreline
+value $y_c^+=Re_\tau=180$, they set $U_c^+=2.5\ln y_c^++5.5$,
+$u_\tau=U_c/U_c^+$ and the viscosity $\mu=\rho u_\tau\delta/Re_\tau$ ($\delta$ the
+channel half-height, the source's $H$; $U_c$, $U_c^+$, $y_c^+$ page-local); the realized $Re_\tau$ then follows
+from the simulation. Dang et al.'s slope $1/2.44$ is $\kappa\approx0.410$, and Cai et al.'s $E=11.27$
 corresponds to $B=\kappa^{-1}\ln E\approx2.42/\kappa$, about 5.9 for
 $\kappa=0.41$ *(compiler check, not in the sources)*.
 
@@ -120,6 +132,9 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   asymptotically; its buffer-layer accuracy is not shown in the source
   *(compiler check, not in the sources)*. See the
   [equilibrium wall model](/methods/equilibrium-wall-model.md).
+- **Linear/log switch** (Lewis et al. 2023, §3.2.2, after Schmitt et
+  al. as cited): a linear law $u^+=y^+$ for $y^+<11$ and a logarithmic law
+  otherwise; the constants are not printed.
 - **Spalding's law** is the algebraic wall model of Blind et al. (2023,
   §3.3), solved by Newton's method in every Runge–Kutta stage; the formula
   and its constants are not printed.
@@ -195,6 +210,17 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   space built on the local log-law slope and intercept can extend to
   roughness, stratification and compressibility (not shown).
 
+- **RANS on DG grids.** [Zhao et al. (2023b)](/sources/zhao-2023-b.md)
+  (§5.1, Fig. 5-2) report that the velocity profile of their interior-penalty
+  DG solver with the [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md)
+  on a turbulent flat plate ($M=0.2$, $Re_L=1.12\times10^7$, first-cell
+  $y^+=1$) agrees with a reference profile they cite in the log layer.
+- **Compressible channel.** Wang et al. (2023b, §4.2, Eqs. 10–11, Fig. 11)
+  compare the van Driest-transformed mean velocity of their gas-kinetic DNS of
+  a channel at bulk $M_b=0.8$ and bulk Reynolds number 3000 (isothermal walls)
+  with the incompressible log law; see the
+  [compressible velocity transformation](/definitions/compressible-velocity-transformation.md).
+
 ## The law of the wall as a constraint
 
 Vadrot et al. (2023b, §V) make preservation of the law of the wall the minimum
@@ -223,6 +249,11 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 
 - The constants are source choices, not measurements of this bundle; the
   table records them and no value is preferred here.
+- **Printed viscosity of Zhao et al. (2023a).** For $Re_\tau=180$ they print
+  $\mu=2.83\times10^{-4}$ (§5.2). With their Eqs. (25)–(26), $\rho=1$, $\delta=1$
+  and $U_c=1$: $U_c^+=2.5\ln180+5.5\approx18.48$, $u_\tau\approx0.0541$ and
+  $\mu\approx3.01\times10^{-4}$ *(compiler check, not in the sources)*; the
+  printed value is not reproduced.
 - Griffin et al. (2023) print Eq. (1.2) as
   $\mu_t=\kappa y\langle\rho\rangle\sqrt{\tau_w/\langle\rho\rangle}\,(1-\exp(y^+/A^+))^2$,
   without the minus sign in the exponent; their own text describes a damping
@@ -249,3 +280,9 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 - [Blind et al. (2023)](/sources/blind-2023.md) — §3.3.
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §4.3, Figs. 4–5.
 - [Dang et al. (2022)](/sources/dang-2022.md) — §5.1, Fig. 17.
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §3.2, Eq. (3.1).
+- [Lewis et al. (2023)](/sources/lewis-2023.md) — §3.2.2 (HAL accepted manuscript).
+- [Kang et al. (2023)](/sources/kang-2023.md) — channel-flow mean-velocity figures (§3).
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4.2, Eqs. (10)–(11), Fig. 11 (arXiv v1).
+- [Zhao et al. (2023a)](/sources/zhao-2023.md) — §5.2, Eqs. (25)–(26) (arXiv v1).
+- [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §5.1, Fig. 5-2.

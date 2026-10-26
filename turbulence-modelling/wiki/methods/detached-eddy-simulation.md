@@ -5,7 +5,7 @@ description: "The single-model hybrid RANS/LES in which a RANS model's length sc
 status: established
 aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-25T20:38:00Z
+timestamp: 2026-10-26T07:38:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -48,6 +48,22 @@ resolved turbulence passively (§II A; see
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md) and
 [log-layer mismatch](/definitions/log-layer-mismatch.md)).
 
+Delassaux et al. (2023) recall the same chain with its names: grid-induced
+separation (GIS, Menter & Kuntz) was renamed modelled-stress depletion (MSD)
+by Spalart et al., because the LES mode entering the upper boundary layer
+lowers the eddy viscosity and transfers modelled stress to a resolved
+stress the grid cannot sustain; "In reality, GIS is a consequence of MSD".
+The *grey area* is the RANS-to-LES transition region with an initial lack
+of resolved turbulence ([Delassaux et al. (2023)](/sources/delassaux-2023.md),
+§4.1.3; HAL author manuscript). As a grid rule they keep the wall-parallel
+spacing $\Delta_{\max}$ above the boundary-layer thickness $\delta$ ("Menter's
+criterion"); with Menter's ratio $r=\Delta_{\max}/\delta$, they report, the
+grid-refinement impact is delayed to $r<0.2$ in DDES against $r<1$ in DES
+(§4.1.3, §4.4). On a full-scale car they deliberately coarsen the flat-area
+surface mesh to 10 mm ($\Delta x^+\approx600$ on the roof) for this reason,
+and show GIS on a rounded separation line: a 3 mm surface mesh there is
+"too fine and leads to GIS", and 6 mm is advised (§4.4, §7.3, Figs. 8, 21).
+
 ## Delayed DES: the shielding function
 
 Delayed DES (DDES) detects the boundary layer with a sensor built from the
@@ -83,6 +99,25 @@ taken in their edge-based solver as the longest edge of the dual control
 volume ([Carlsson et al. (2023)](/sources/carlsson-2023.md), §3, Eqs. 16–17).
 For SA, $l_{\mathrm{RANS}}=d$ and with $f_d=1$ the form reduces to the
 $d_{\mathrm{DES}}$ above *(compiler check, not in the sources)*.
+
+Delassaux et al. (2023, §4.1.3, Eqs. 6–11) print the SST host in ANSYS
+Fluent. The destruction of the $k$-equation becomes
+
+$$\rho\beta^*k\omega\;\to\;\rho\beta^*\frac{k^{3/2}}{l_{\mathrm{DES}}},\qquad l_{\mathrm{DES}}=\min(l_{\mathrm{RANS}},l_{\mathrm{LES}}),\quad l_{\mathrm{RANS}}=\frac{\sqrt k}{\beta^*\omega},\quad l_{\mathrm{LES}}=C_{\mathrm{DES}}\Delta_{\max},$$
+
+with $C_{\mathrm{DES}}=0.78F_1+0.61(1-F_1)$, the inner and outer constants
+that Carlsson et al. also quote. The delayed form uses the same
+$l_{\mathrm{DDES}}$ as Carlsson et al. and
+
+$$f_d=1-\tanh\big[(C_{d1}r_d)^{C_{d2}}\big],\qquad C_{d1}=20,\quad C_{d2}=3,$$
+
+the SST values of Gritskevich et al. "to ensure a fair protection of
+boundary layer"; $r_d$, "the ratio of a model length scale to the wall
+distance", is not printed. Raising $C_{d1}$ to 30 increases the shielding,
+as their Ahmed-body tests showed, and is "advised for this case" (§4.4).
+They state, without derivation, that under local equilibrium the DDES
+subgrid model reduces to the Smagorinsky–Lilly model (§4.1.3; see
+[Smagorinsky model](/methods/smagorinsky-model.md)).
 
 Haering et al. (2022) count the delaying function of DDES among the ad hoc
 unified switches "tuned per flow", which make such methods possibly not
@@ -157,6 +192,7 @@ The variants differ in the length $\Delta$ that caps the RANS length:
 | ZDES mode 2 | $\Delta_{\max}$ where $f_d<0.8$, $\Delta_{\mathrm{vol}}$ where $f_d>0.8$ | François et al. (2022), §3.1 |
 | ZDES mode 0+1 on high-order DG | $\Delta_{\mathrm{vol}}/(N+1)$, $\Delta_{\mathrm{vol}}$ the cube root of the element volume, $N$ the local polynomial degree; $C_{\mathrm{DES}}=0.65$ | Basile et al. (2023), §2.2 |
 | DDES in an edge-based finite-volume code | $\Delta_{\max}$ = longest edge of the dual control volume | Carlsson et al. (2023), §3 |
+| SST-DES and SST-DDES in a cell-centred finite-volume code | $\Delta_{\max}$, $C_{\mathrm{DES}}=0.78F_1+0.61(1-F_1)$ | Delassaux et al. (2023), §4.1.3, Eq. 9 |
 | IDDES | $\Delta_{dw}$ (Eq. 19 above) | Carlsson et al. (2023), §3 |
 | SA-DDES with grey-area mitigation | $\Delta_{\mathrm{SLA}}$ (below), $C_{\mathrm{DES}}=0.65$ | Carlsson et al. (2023), §3.1, §4.4 |
 | ZDES of the supersonic base flow (Simon et al.) | $\Delta_{\mathrm{vol}}$, $C_{\mathrm{DES}}=0.55$ | as recalled by Carlsson et al. (2023), §4.4 |
@@ -248,7 +284,32 @@ RANS-adapted mesh (§3.3).
   and Smith $k$-$l$) fails in the tip gap (§5.3–5.4, Figs. 12–15). The URANS
   border must be placed so that all streamlines passing near the fan and
   entering the bypass are in mode 2; otherwise part of the wakes stays
-  "RANS-like" (§3.2.1).
+  "RANS-like" (§3.2.1). Lewis et al. (2023) compare two wall-modelled LES
+  of the same [ACAT1 stage](/benchmarks/acat1-fan-stage.md) with this ZDES
+  and its acoustic follow-up by Polacsek et al.: the trends of the
+  simulations agree, the ZDES recovers the measured RMS levels better but
+  shows a secondary peak of the axial RMS velocity absent in the
+  experiment, and the ZDES gives an aft-to-front difference of the vane
+  noise sources of about 5 dB (vane split at 50% chord) against about
+  10 dB in their LES (split at 40% of the maximum axial chord)
+  ([Lewis et al. (2023)](/sources/lewis-2023.md), §4.3, §5.3.1; HAL accepted
+  manuscript; see [wall-modelled LES](/methods/wall-modelled-les.md)).
+- **Full-scale car** (Delassaux et al. 2023). SST-DDES of a simplified
+  Peugeot 308 SW estate car at $Re_L=1.3\times10^7$ in ANSYS Fluent
+  (bounded central differencing, $\Delta t=5\times10^{-5}$ s, 115 million
+  cells with 20 prism layers at $y^+\approx1$): drag 0.255 against 0.244
+  measured and 0.242 for SST and realizable $k$-$\varepsilon$ RANS, but the
+  wake topology, the base pressure, the underbody flow and the cross-plane
+  velocities agree with the wind-tunnel data where RANS fails; on rounded
+  separation lines DDES under-predicts the pressure coefficient (GIS
+  above), on the sharp rear lump it is the most accurate (§6–§7, Table 3,
+  Figs. 15–28). A RANS run takes about 2 hours on 384 cores, a DDES about
+  1.5 days on 1152 cores (§7.6). They advise a maximum CFL number of 5 in
+  the LES region (structures vanish above it) and use a time step giving
+  "a CFL number below 2 around the car" (§4.2), and a prism-layer growth
+  ratio below 1.25 for hybrid methods after Spalart & Streett (§4.4). See
+  [hybrid RANS/LES](/definitions/hybrid-rans-les.md) and
+  [k-ε models](/methods/k-epsilon-model.md).
 - **Subsonic jet** (Basile et al. 2023). ZDES mode 0+1 on the negative SA
   model, RANS forced inside the nozzle, on the isothermal PPRIME jet at
   $M_j=0.9$, $Re_D\simeq10^6$; with 31.7 million degrees of freedom the
@@ -284,6 +345,16 @@ RANS-adapted mesh (§3.3).
   (experiment flat near $C_p=-0.102$): "improved numerics in the initial
   shear layer does not produce a better prediction of the base pressure
   profile" (Figs. 9–10).
+- **Ahmed body**, as recalled by Delassaux et al. (2023, §5, Table 2) from
+  their own calibration on four 25° bodies (sharp and rounded edges): RANS
+  gives no separation (realizable $k$-$\varepsilon$) or massive separation
+  (SST) on the slant; scale-adaptive simulation overestimates and
+  stress-blended eddy simulation underestimates the recirculation length;
+  SST-DDES is closest, with maximum errors of 3.3% in drag and 7.1% in lift
+  on a 20-prism-layer grid. Time steps of $1.5\times10^{-5}$ and
+  $5\times10^{-5}$ s give globally the same results, while a CFL number
+  above 10 gives no or massive separation on the slant (see
+  [Ahmed body](/benchmarks/ahmed-body.md)).
 - **Ahmed body**, as recalled by Cai et al. (2022, §I). Menter & Kuntz
   obtained the partial reattachment of the 25° slant with DES where RANS
   gave fully attached or fully separated flow; Guilmineau et al.'s DES and
@@ -325,6 +396,20 @@ RANS-adapted mesh (§3.3).
   sensor, the dissipation coefficient and the face extrapolation at once
   (§4.4, §5, Table 1), so the sensor's share is not isolated *(compiler
   check, not in the sources)*.
+- Delassaux et al. print $f_d=1-\tanh[(C_{d1}r_d)^{C_{d2}}]$ with the power
+  inside the hyperbolic tangent; with $C_{d1}=8$, $C_{d2}=3$ this is Yan et
+  al.'s reading of the SA form above *(compiler check, not in the sources)*.
+  Delassaux et al. attribute $C_{d1}=20$ to the SST host (Gritskevich et
+  al.); François et al.'s 8 goes with the Spalart–Allmaras host.
+- Delassaux et al. state the RANS-to-LES switch as occurring "when
+  $\Delta_{\max}<\delta$" (§4.1.3), while their Eq. 7 switches where
+  $C_{\mathrm{DES}}\Delta_{\max}<l_{\mathrm{RANS}}$; they use the
+  $\Delta_{\max}$–$\delta$ comparison to design their surface meshes
+  ("Menter's criterion", §4.4). They
+  give $C_{d1}=20$ in §4.1.3 and call 30 "advised for this case" in §4.4,
+  without stating which value the reported car results use. The cost ratio
+  "18 times more expensive" (§7.6) is the wall-clock ratio; in core-hours
+  the printed figures give 54 *(compiler check, not in the sources)*.
 - $C_{\mathrm{DES}}=0.65$ goes with $\Delta_{\mathrm{vol}}/(N+1)$ in Basile et al.
   and with $\Delta_{\max}$ or $\Delta_{\mathrm{SLA}}$ in Carlsson et al.; the ZDES
   base-flow studies recalled by Carlsson et al. use 0.55 with
@@ -343,3 +428,5 @@ RANS-adapted mesh (§3.3).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §1, §3 Eqs. 16–19, §3.1 Eqs. 20–21, §4.2 Fig. 3, §4.3 Table 2 Figs. 4–6, §4.4 Figs. 9–10, §5.
 - [Cai et al. (2022)](/sources/cai-2022.md) — §I, §IV, Table III (HAL v1).
 - [Placco et al. (2023)](/sources/placco-2023.md) — §1.
+- [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §4.1.3 Eqs. 6–11, §4.2, §4.4 Fig. 8, §5 Table 2, §6–§7 Table 3 Figs. 15–28, §7.3 Fig. 21, §7.6 (HAL author manuscript).
+- [Lewis et al. (2023)](/sources/lewis-2023.md) — §4.3, §5.3.1 (HAL accepted manuscript).

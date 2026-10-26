@@ -132,7 +132,7 @@ duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-25). This source is cited on:
+Chunk 3 (2026-10-26). This source is cited on:
 
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Reduced MHD and Elsasser variables](/definitions/reduced-mhd.md)

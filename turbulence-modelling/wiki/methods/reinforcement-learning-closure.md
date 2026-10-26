@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Reinforcement-learning turbulence closures"
-description: "Closures set or learned online by a policy trained with reinforcement learning, the running LES being the environment and the reward a solver statistic: element-local SGS coefficients in DG-LES, pointwise SGS stress tensors for channel LES trained on mean profiles, and multi-agent wall-stress models with disputed extrapolation."
+description: "Closures set or learned online by a policy trained with reinforcement learning, the running LES being the environment and the reward a solver statistic: element-local SGS coefficients in DG-LES, pointwise SGS stress tensors for channel LES trained on mean profiles, multi-agent wall-stress models with disputed extrapolation; RL also drives offline symbolic-expression search."
 status: established
-aliases: [RL closure, reinforcement-learning SGS model, deep reinforcement learning SGS model, DRL SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM, DRL180]
+aliases: [RL closure, PPO closure, reinforcement-learning SGS model, deep reinforcement learning SGS model, DRL SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM, DRL180]
 tags: [reinforcement-learning, sgs-model, data-driven, implicit-les, wall-model, neural-network]
-timestamp: 2026-10-25T20:39:00Z
+timestamp: 2026-10-26T07:37:00Z
 ---
 
 # Reinforcement-learning turbulence closures
@@ -47,7 +47,7 @@ RL is their instrument for optimizing in the loop.
 **Baseline scheme.** The
 [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) of
 [FLEXI](/software/flexi.md) on LGL nodes, in split form, with an L2-Roe
-flux and BR1 lifting (§III A). The Relexi framework couples FLEXI to the
+flux and BR1 lifting (§III A). The [Relexi](/software/relexi.md) framework couples FLEXI to the
 agent on HPC. Each DG element receives its own action.
 
 **Three closures (§III B–C, Eqs. 12–17).**
@@ -126,6 +126,104 @@ $N=3$, 5 and 8, initialized from filtered DNS.
 - **Deformed mesh.** On a sinusoidally deformed mesh (App. A), the
   Cartesian-trained RL-Quad, without retraining, performs comparably to
   the dynamic model. RL-Const loses energy at wavenumbers 2–6.
+
+## The precursor: element-wise Smagorinsky coefficient (Kurz et al. 2023)
+
+[Kurz et al. (2023)](/sources/kurz-2023.md) (arXiv v2) is an earlier
+paper of the same group. Beck & Kurz (2023) extend its setting and agent:
+beta-distributed instead of Gaussian actions, more polynomial degrees,
+and quadratic and blending actions besides the constant coefficient. Its setting is
+implicitly filtered [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)
+LES in [FLEXI](/software/flexi.md) (kinetic-energy-preserving split form
+on LGL nodes) of forced
+[homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)
+at $Re_\lambda\approx180$ and $M=0.1$, with Lundgren's linear forcing
+applied at the nodes (§3.1–3.2). The agent runs in the
+[Relexi](/software/relexi.md) framework.
+
+**MDP (§3.4, Table 1).**
+
+- *State.* The conserved-variable field of the LES.
+- *Action.* One Smagorinsky coefficient per element, $C_s\in[0,0.5]$,
+  updated every $\Delta t_{\mathrm{RL}}=0.1$; the eddy viscosity is
+  $\mu_t=\rho(C_s\Delta)^2\lvert\bar S\rvert$ (Eq. 19; the paper does not
+  define $\Delta$ for DG). Negative values are excluded to keep a
+  monotone map from action to eddy viscosity; removing both limits gave
+  similar accuracy for selected cases but needed many more iterations
+  (footnote 3).
+- *Policy.* A 3D CNN on one element's $(N+1)^3$ nodal values: four
+  convolution layers (8, 8, 4 and 1 filters) with ReLU, then a sigmoid
+  scaled to $[0,0.5]$ (Fig. 4). Every element is an agent and all share
+  the weights. The value network adds two dense layers (16 and 1 neurons)
+  that combine the element outputs.
+- *Inputs compared.* The momentum field of the element, or the five
+  invariants of the velocity-gradient tensor (Pope) used by Novati et al.
+  for Galilean invariance. The momentum input is purely element-local; the
+  authors present this as an improvement on Novati et al., who also fed
+  the global dissipation rate and energy spectrum (§1, §3.4).
+- *Exploration.* Actions are drawn from a normal distribution about the
+  network output with fixed standard deviation 0.02.
+- *Reward (Eq. 21).*
+  $$r=2\exp\!\left(-\frac{1}{\alpha_r k_{\max}}\sum_{k=1}^{k_{\max}}\left(\frac{\langle E_{\mathrm{DNS}}\rangle(k)-E_{\mathrm{LES}}(k)}{\langle E_{\mathrm{DNS}}\rangle(k)}\right)^2\right)-1,$$
+  stated to lie in $[-1,1]$, with $\langle E_{\mathrm{DNS}}\rangle$ the time-averaged DNS spectrum,
+  $E_{\mathrm{LES}}$ the instantaneous LES spectrum and $\alpha_r=0.4$
+  (page-local; the paper's $\alpha$). $k_{\max}$ is chosen so that 2.6 to 3
+  points per wavelength remain at the cutoff, against a resolution
+  capability of about 4 for these schemes, so that all represented
+  wavenumbers are optimized (§3.5).
+- *Training (§3.5).* PPO with clip 0.2, discount $\gamma_{\mathrm{RL}}=0.995$,
+  Adam at $10^{-4}$, entropy coefficient 0, 5 epochs per iteration (1 at 48
+  DOF), episodes of 5 time units (about 7 large-eddy turnovers) from
+  filtered DNS at four instants; 16 or 32 episodes per update, and 32
+  "consistently" sped up training (§4.1).
+
+**Configurations (Table 2).** 24 DOF ($N=5$, $4^3$ elements, $k_{\max}=9$),
+32 DOF ($N=7$, $4^3$, 12), 36 DOF ($N=5$, $6^3$, 13), 48 DOF ($N=5$,
+$8^3$, 16).
+
+**Results (§4).**
+
+- *Training.* The return rises from negative values to a plateau just
+  below the maximum of 50 (Fig. 5). The 48-DOF case needed fewer
+  iterations than the 24-DOF case; the authors offer two reasons and note
+  the speed-up could be stochastic.
+- *Accuracy.* Tested from an unseen state to $t=20$ (four times the
+  training horizon), the models are stable. No-model LES piles energy up
+  at high wavenumbers; static Smagorinsky ($C_s=0.17$) is over-dissipative
+  near the resolution limit. The RL model "clearly outperforms both" and
+  matches the DNS spectrum "almost perfectly up to and even beyond" the
+  resolution limit (Fig. 6). The dynamic model is as accurate, except at
+  24 DOF, where the RL model is significantly better; the authors' "likely
+  explanation" is a test filter outside the scale-similar range (§4.2).
+- *Coefficient distribution.* Most predicted $C_s$ are near zero with a
+  decaying tail; at 24 DOF the agent uses almost the whole range up to
+  0.5, at 48 DOF it stays below 0.3 (Fig. 6).
+- *Velocity PDFs.* Closer to DNS than the no-model and static models, but
+  at 36 DOF the RL model gives an asymmetric fluctuation distribution whose
+  origin is "still subject of on-going investigations".
+- *Inputs.* Invariant inputs train slower and less stably and end worse,
+  "quite substantial[ly]" at 36 DOF even with doubled training; the
+  authors attribute this to their spread over orders of magnitude, the
+  discontinuity of DG gradients at faces, and large gradients in the
+  projected initial states (§4.3, Fig. 7).
+- *Generalization.* The 36- and 48-DOF policies swapped between the two
+  grids stay stable and accurate (§4.4, Fig. 8); policies trained at
+  $Re_\lambda\approx180$ stay stable at $Re_\lambda\approx240$, still beat
+  no-model LES and static Smagorinsky, match the dynamic model, and beat
+  it at 24 DOF (§4.5, Fig. 9). See
+  [discretization-consistent closure](/definitions/discretization-consistent-closure.md)
+  for the authors' reading of the resolution dependence.
+- *Cost.* On one CPU core at 48 DOF, the unoptimized policy took about
+  10% more time than the dynamic procedure (§4.2). Training took one to
+  five days (§4.1).
+
+The authors "do not propose to use any of the models prescribed here in
+practice" (§5). The dynamic baseline is element-wise in DG: modal cutoff
+test filter to degree 2 ($N=5$) or 3 ($N=7$), element-averaged Germano–Lilly
+coefficient, eddy viscosity clipped to $[-100\mu,1000\mu]$; unclipped, it
+occasionally produced huge coefficients that "deteriorated the solution
+quite drastically" (App. A; see
+[dynamic procedure](/methods/dynamic-procedure.md)).
 
 ## Pointwise SGS stress models for channel LES (Kim et al. 2022)
 
@@ -332,12 +430,35 @@ supervised learning using expensive filtered DNS data" (see
 
 ## Comparison of the RL closures
 
-| | Beck & Kurz (2023) | Kim et al. (2022) | Bae & Koumoutsakos (2022) |
-|---|---|---|---|
-| Closure | element-local Smagorinsky coefficient or DG/FV blending | full SGS stress tensor (or $\nu_t$) at every grid point | multiplicative update of the local wall stress |
-| Flow | forced isotropic turbulence, DG-LES | wall-resolved channel LES, $Re_\tau=180$, 360 | wall-modelled channel LES |
-| Reward | LES energy spectrum against DNS | mean viscous and resolved Reynolds shear stress profiles against fDNS | true mean wall stress |
-| Algorithm | PPO | DDPG/TD3 with truncated return | V-RACER |
+| | Kurz et al. (2023) | Beck & Kurz (2023) | Kim et al. (2022) | Bae & Koumoutsakos (2022) |
+|---|---|---|---|---|
+| Closure | element-local Smagorinsky coefficient | element-local Smagorinsky coefficient (constant or quadratic) or DG/FV blending | full SGS stress tensor (or $\nu_t$) at every grid point | multiplicative update of the local wall stress |
+| Flow | forced isotropic turbulence, DG-LES, $N=5,7$ | forced isotropic turbulence, DG-LES, $N=3,5,8$ | wall-resolved channel LES, $Re_\tau=180$, 360 | wall-modelled channel LES |
+| Reward | LES energy spectrum against DNS | LES energy spectrum against DNS | mean viscous and resolved Reynolds shear stress profiles against fDNS | true mean wall stress |
+| Algorithm | PPO, Gaussian actions | PPO, beta-distributed actions | DDPG/TD3 with truncated return | V-RACER |
+
+The two DG studies overlap at 24 and 36 DOF with $N=5$ and agree there:
+Kurz et al. (2023, §4.2) find the dynamic model as accurate as RL at 36
+DOF and worse at 24 DOF, as Beck & Kurz (2023, §V B) do.
+
+## RL as an optimizer of model expressions (Tang et al. 2023)
+
+[Tang et al. (2023)](/sources/tang-2023.md) use RL in another role: the
+policy is a recurrent network that writes algebraic expressions token by
+token, and it is trained offline with a risk-seeking policy gradient to
+maximize the fit of the expressions to DNS anisotropy data. The learned
+object is an explicit RANS closure, and no solver runs during training
+(§II C). The authors recall the RL closures of Novati et al., Kim et al.,
+Bae & Koumoutsakos and Kurz et al. as precedents (§I). See
+[symbolic-regression closures](/methods/symbolic-regression-closure.md).
+The training loss compares the expressions with DNS data outside the
+solver (§II E); Tang et al. name coupling the search with RANS as future
+work (§IV).
+
+Sirignano & MacArt (2023, §1) set RL against adjoint training on
+consistency grounds; see
+[model-consistent training](/methods/model-consistent-training.md) for the
+characterization and its scope.
 
 As recalled by Kim et al. (2022, §I), Novati et al. (2021) found learning
 with fully dispersed agents at all grid points unsuccessful in isotropic
@@ -519,7 +640,19 @@ for the supervised models compared in the same study.
   non-negative sum and a positive exponent, the printed form gives
   $r\ge1$; a negative exponent gives $r\in(-1,1]$ with $r=1$ at zero
   error, which matches the stated range *(compiler check, not in the
-  sources)*.
+  sources)*. The precursor paper of the same group, Kurz et al. (2023,
+  Eq. 21), prints the same reward with the negative exponent,
+  $-1/(\alpha_rk_{\max})$, and the range $[-1,1]$, with the same scaling
+  value 0.4.
+- **Printed slips in Kurz et al. (2023).** The reward is written
+  $\mathcal R(s_t,s_{t+1})$ in Table 1 and §2 and $\mathcal R(s)$ in Eq. 21;
+  the episode length is $\Delta t_{\mathrm{end}}$ in §3.5 and $t_{\mathrm{end}}$
+  in the Fig. 5 caption. The sigmoid output layer gives the open interval
+  $(0,0.5)$, while $C_s\in[0,0.5]$ is printed *(compiler check, not in the
+  sources)*. In §4.4 the coefficient distributions are said not to
+  change with resolution, and the next sentences give different maxima
+  for the two policies (0.4 and 0.3); the two are consistent only if the
+  first statement means each policy across the two grids.
 - **No-model LES is not "implicit LES" there.** Beck & Kurz (2023, §V)
   label the baseline-scheme-only LES "no-model LES", to separate it from
   implicit modelling proper such as RL-Blend (see
@@ -606,3 +739,6 @@ for the supervised models compared in the same study.
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §IV.B (model-consistent training as the class to which in-the-loop optimization belongs).
 - [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: Abstract; §I (Novati et al. recalled); §II B–F, Eqs. 11–25, Algorithm 1 (state, action, reward, truncated return, noise, pretraining, constraints, architecture, cost); §III A–B, Figs. 4–6; §III C, Figs. 7–11; §III D, Figs. 12–13; §III E, Eqs. 27–28, Table IV, Figs. 15–20; §IV; Tables I–III.
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Research Square preprint v1: pp. 3–8, Eqs. 1–3, 9–10, Table 1, Figs. 2–7; Discussion pp. 10–11; Methods pp. 11–14, Eqs. 4–8.
+- [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §1, §2, Eqs. 8–11 (policy gradient, PPO), §3.1–3.5, Table 1–2, Fig. 4, Eqs. 19, 21 (MDP, policy, reward, training), §4.1–4.5, Figs. 5–9 (results, inputs, generalization, cost), §5, App. A (dynamic baseline in DG), footnote 3.
+- [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I (RL closures recalled), §II C (RL-trained expression generator), §IV.
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1 (RL against adjoint training).

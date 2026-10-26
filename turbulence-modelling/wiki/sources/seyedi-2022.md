@@ -151,7 +151,7 @@ are disambiguated in printed order. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-25). This source is cited on:
+Chunk 3 (2026-10-26). This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)

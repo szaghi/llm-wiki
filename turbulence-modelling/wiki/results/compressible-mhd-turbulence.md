@@ -3,9 +3,9 @@ type: Result
 title: "Compressible MHD turbulence"
 description: "In compressible MHD turbulence fluctuations can be Alfvénic, slow or fast magnetosonic, or none of these; a spatio-temporal decomposition finds most power off the linear dispersion branches and few fast modes, and subsonic compressible Hall-MHD runs show little Mach-number dependence of the cascade."
 status: established
-aliases: [compressible MHD turbulence, MHD wave-mode decomposition, fast modes, slow modes, non-wave fluctuations, compressible Hall MHD turbulence]
+aliases: [compressible MHD turbulence, MHD wave-mode decomposition, fast modes, slow modes, non-wave fluctuations, compressible Hall MHD turbulence, weakly compressible MHD]
 tags: [mhd, compressible, plasma, astrophysics, dns]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-26T07:35:00Z
 ---
 
 # Compressible MHD turbulence
@@ -149,12 +149,46 @@ compressibility:
   scale-independent", "still
   have a significant impact on the energy balance" (§2.1, §5.2).
 
+## Weak compressibility as a numerical route
+
+Compressibility can also be a property of the solver rather than of the
+physics. [Foldes et al. (2023)](/sources/foldes-2023.md) target
+incompressible Hall MHD but solve the **weakly compressible** equations with
+a [lattice Boltzmann](/methods/lattice-boltzmann-method.md) scheme: mass and
+momentum conservation with the Maxwell stress
+$\tfrac12|\boldsymbol B|^2\delta_{ij}-B_iB_j$ in the momentum flux, the
+isothermal closure $p=\rho c_s^2$ ($c_s$ the lattice sound speed,
+page-local), which they call consistent with density fluctuations of order
+$M^2$, and the Hall induction equation in conservative form (§2.2,
+Eqs. 2.10–2.14). Points that bear on compressibility:
+
+- **Measured density fluctuations.** On an exact incompressible Hall-MHD
+  solution, relative density fluctuations are "typically of order
+  $10^{-7}$–$10^{-6}$" and decrease with the Mach number, for
+  $M=0.003$–$0.01$ (§4.2, Fig. 5).
+- **Acoustic time step.** Because the scheme resolves sound waves, its time
+  step in plain MHD is smaller than that of an incompressible pseudo-spectral
+  solver by roughly the Mach number (Horstmann et al. 2022, as recalled), so
+  the weakly compressible route pays off only in Hall MHD, where whistler
+  waves limit both (§5; see [GHOST](/software/ghost.md)).
+- **Extension.** An incompressible or weakly compressible formulation is
+  "usually justified" for space plasmas (Andrés et al. 2022, Brodiano et
+  al. 2023, as recalled); accounting for compressibility explicitly would
+  need an additional equation of state and a coupled lattice scheme for
+  temperature or density (§7; cf. §2.2).
+
+Ferrand et al. (2022) run compressible Hall MHD at initial sonic Mach
+numbers 0.25–0.5 and measure its cascade; Foldes et al. run at Mach
+numbers of $6\times10^{-5}$–$2.5\times10^{-2}$ (Tables 1–2, §4.4) to approximate
+incompressible dynamics.
+
 ## Qualifications
 
 - **Different regimes.** Gan et al. drive at $M_t\le0.18$ with a strong
   guide field and analyse a statistically steady state; Ferrand et al.
   analyse decay at initial Mach numbers 0.25–0.5 with and without a mean
-  field. Neither reaches supersonic turbulence.
+  field. Neither reaches supersonic turbulence. Foldes et al. run at
+  $M\le0.025$ only to approximate incompressible dynamics.
 - **Reference frame.** Gan et al. define $k_\parallel\simeq k_x$ along
   the guide field $\boldsymbol B_0$ (§3, p. 3) and do not state whether the
   structure-function separations are taken along $\boldsymbol B_0$ or along
@@ -183,3 +217,4 @@ compressibility:
 - [Gan et al. (2022)](/sources/gan-2022.md) — §1; §2.1–§2.2; §3, Figs. 1–5; §4.
 - [Ferrand et al. (2022)](/sources/ferrand-2022.md) — §2.1, Eq. (9); §3.1, Fig. 1; §4, Fig. 4; §5.2.
 - [Schekochihin (2022)](/sources/schekochihin-2022.md) — §5.3, Eq. (5.8) (local-field measurement of anisotropy).
+- [Foldes et al. (2023)](/sources/foldes-2023.md) — §2.2, Eqs. (2.10)–(2.14); §4.2, Fig. 5; §5; §7 (weakly compressible lattice Boltzmann formulation of Hall MHD, density fluctuations, acoustic time step, compressible extension).

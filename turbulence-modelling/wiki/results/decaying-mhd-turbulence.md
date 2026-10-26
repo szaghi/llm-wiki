@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Decaying MHD turbulence and its invariants"
-description: "Decaying MHD turbulence is a selective decay whose power laws follow from the conserved quantity that constrains it (anastrophy, magnetic helicity, Saffman-type invariants such as the Hosking invariant) and from a reconnection-controlled decay time, as reviewed and extended by Schekochihin (2022, §12)."
+description: "Decaying MHD turbulence is a selective decay whose power laws follow from the conserved quantity that constrains it and from a reconnection-controlled decay time (Schekochihin 2022, §12); decaying runs also serve as code tests and as probes of the Hall effect, as in the Orszag–Tang decay with and without the Hall term."
 status: established
-aliases: [selective decay, Saffman invariant, Hosking invariant, Saffman helicity invariant, Loitsyansky invariant, reconnection-controlled decay, inverse transfer]
+aliases: [selective decay, Orszag–Tang vortex, Orszag-Tang decay, decaying Hall MHD, Saffman invariant, Hosking invariant, Saffman helicity invariant, Loitsyansky invariant, reconnection-controlled decay, inverse transfer]
 tags: [mhd, astrophysics, plasma, decaying-turbulence, reconnection]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-26T07:35:00Z
 ---
 
 # Decaying MHD turbulence and its invariants
@@ -190,6 +190,88 @@ These runs analyse one window near the peak of dissipation each (§3.1,
 §3.3) and report no decay exponents to compare with the selective-decay
 laws above.
 
+## Orszag–Tang decay, with and without the Hall term
+
+[Foldes et al. (2023)](/sources/foldes-2023.md) use freely decaying
+turbulence started from the three-dimensional **Orszag–Tang** vortex
+(Orszag & Tang 1979, as recalled), "often considered as a prototypical flow
+to study freely evolving MHD turbulence", first to validate a [lattice
+Boltzmann](/methods/lattice-boltzmann-method.md) MHD code against the
+pseudo-spectral code [GHOST](/software/ghost.md), then to study decaying
+Hall MHD (§4.4, §5). The field is in Alfvén units ($\mu_0^{1/2}$ absorbed
+into $\boldsymbol B$, so the Lorentz force is $\boldsymbol J\times\boldsymbol B$
+with $\boldsymbol J=\nabla\times\boldsymbol B$), and the initial condition in
+a periodic box of side $2\pi$ is
+
+$$\boldsymbol u(\boldsymbol x,0)=U_0\,[-2\sin y,\;2\sin x,\;0],\qquad \boldsymbol B(\boldsymbol x,0)=B_{\mathrm{OT}}\,[-2\sin2y+\sin z,\;2\sin x+\sin z,\;\sin x+\sin y],$$
+
+with amplitudes $U_0=1$ and $B_{\mathrm{OT}}=0.8$ (§4.4; page-local, the paper's $B_0$; $U_0$ is also the reference velocity and $L_0$ the reference length). There is no mean field; the authors note that
+the configuration is isotropic and does not contain the anisotropy a
+background field would impose (§7). The runs are model-free
+[DNS](/definitions/direct-numerical-simulation.md) with $Pm=1$.
+
+**Energy budget.** The diagnostic is the shell-cumulative balance
+$\partial_t\sum_{|k'|<k}E(k')=-S(k)-D(k)$, where $S(k)$ is the nonlinear
+transfer through the wavenumber $k$ (advection, Lorentz force and induction
+terms) and $D(k)=\sum_{|k'|<k}\bigl(\nu k'^2|\boldsymbol u_{\boldsymbol k'}|^2+\eta_mk'^2|\boldsymbol B_{\boldsymbol k'}|^2\bigr)$
+the cumulative dissipation (Eqs. 4.10–4.12; $S$ and $D$ page-local,
+$\boldsymbol u_{\boldsymbol k'}$, $\boldsymbol B_{\boldsymbol k'}$ the Fourier coefficients); the pressure contribution is
+neglected as negligible (§4.4, Fig. 12).
+
+**MHD decay ($N_x=512$ points per direction).** At $M=0.025$ the Reynolds number based on the rms
+velocity and the integral scale reaches $Re\simeq1600$ at the peak of
+dissipation. The mean magnetic dissipation, proportional to
+$\langle|\boldsymbol J|^2\rangle$, and the kinetic and magnetic energies are
+followed to $t\approx12$; the code comparison is summarized on
+[GHOST](/software/ghost.md) (Figs. 10–12).
+
+**Hall-MHD decay.** The Hall term enters the induction equation as
+$\partial_t\boldsymbol B=\nabla\times[(\boldsymbol u-\alpha_H\boldsymbol J)\times\boldsymbol B]+\eta_m\nabla^2\boldsymbol B$
+(Eq. 2.9), derived from a two-fluid model with isothermal, massless electrons; $\alpha_H=1/(en)$ is the Hall parameter and its
+dimensionless form $\epsilon_H=L_H/L_0$ the ratio of the Hall length to the
+reference length, equal to the ion inertial length $d_i$ over $L_0$ when
+$U_0$ equals the Alfvén speed (Eqs. 3.32, 3.37–3.38; $\alpha_H$, $\epsilon_H$,
+$L_H$, $d_i$ page-local). The runs (Table 2; $Pm=1$, box $2\pi$; $Re$ at the
+peak of magnetic dissipation, times in units of $L_0/U_0$):
+
+| Run | $N_x$ | $M$ (initial) | $Re$ | $\epsilon_H$ | $t_{\mathrm{tot}}$ | $t_{\mathrm{peak}}$ |
+|---|---|---|---|---|---|---|
+| I | 512 | $7.0\times10^{-4}$ | 4400 | 0.0025 | 48.2 | 31.8 |
+| II | 512 | $1.0\times10^{-4}$ | 5240 | 0.01 | 35.8 | 33.6 |
+| III | 512 | $0.625\times10^{-4}$ | 7150 | 0.025 | 29.6 | 26.5 |
+| IV | 768 | $0.6\times10^{-4}$ | 6000 | 0.015 | 36.6 | 32.0 |
+
+The Mach numbers are set by the whistler time-step bound of the explicit
+scheme (Table 2 caption, §3.4; see [GHOST](/software/ghost.md)).
+Findings (§5):
+
+- **Faster onset.** "Increasing the intensity of the Hall effect produces a
+  faster development of turbulence", attributed to whistler and Hall-drift
+  waves that propagate faster than Alfvén waves (Huba 2003, as recalled),
+  and said to be consistent with the magnetic-dissipation histories of
+  Fig. 13.
+- **Spectral break.** Increasing $\epsilon_H$ moves the Hall scale to larger
+  scales and shortens the $k^{-5/3}$ range of both the kinetic and the
+  magnetic spectrum (Fig. 16). Beyond the Hall wavenumber the magnetic
+  spectrum develops, as $\epsilon_H$ grows, a power law that the authors
+  call "in perfect agreement" with the $k^{-2.73}$ sub-ion slope of
+  solar-wind spectra (Kiyani et al. 2015, as recalled; Figs. 14, 16).
+- **Small-scale structure.** In run IV the current density and the
+  vorticity show current sheets, Kelvin–Helmholtz instabilities and
+  vortices, which the authors call the disordered structures characteristic
+  of the Hall effect (Miura & Araki 2014, as recalled; Fig. 15).
+
+Ferrand et al. (2022, §4) measure a different quantity in compressible
+Hall-MHD decay: the Hall part of the cascade rate of the [exact
+laws](/results/turbulence-exact-laws.md) never dominates the MHD part below
+the ion scale in their runs, which they attribute to a Hall effect too weak,
+dissipation stopping the cascade first, and they recommend hyperviscosity.
+Foldes et al. report the slope of magnetic spectra (Figs. 14, 16), Ferrand
+et al. the Hall and MHD components of the cascade rate (§4, Figs. 3, 7), in
+different set-ups (Orszag–Tang decay without mean field against random-phase
+initial modes at initial sonic Mach numbers 0.25–0.5); the two statements
+concern different quantities and are not in conflict as printed.
+
 ## Qualifications
 
 - **Printed inconsistency, §12.5.2, p. 96 of arXiv v3.** The text states that
@@ -205,6 +287,17 @@ laws above.
   dynamics "in § 12.4 was flawed"; the $U\sim b$ assumption is made in
   §12.1.1 (Eq. 12.4), and §12.4 is the Saffman-invariant section — an
   evident mix-up of the section with the equation number.
+- **Hall-MHD Orszag–Tang runs (Foldes et al. 2023, arXiv v2).** The
+  $k^{-2.73}$ agreement is shown by overlaying a reference slope on the
+  spectra (Figs. 14, 16); no fitted exponent or fit range is reported, the
+  Reynolds numbers are 4400–7150, and the same paper states (§6) that
+  observed solar-wind sub-ion slopes range from about $-4$ to $-2$. The §5
+  text and the Fig. 13 caption speak of "three" runs while Table 2 lists
+  four; the wall-clock times 10, 55 and 69 h are given for "the three runs".
+  The printed peak times of the three $512^3$ runs (Table 2), 31.8, 33.6
+  and 26.5 for $\epsilon_H=0.0025$, 0.01 and 0.025, are not monotone in
+  $\epsilon_H$, and the runs also differ in $M$ and $Re$; the paper supports
+  the "faster development" statement with Fig. 13 (§5).
 - Disagreements recalled by the review and not resolved by it: Brandenburg et
   al. (2019) and Banerjee & Jedamzik (2004) prefer the ideal helical law
   (12.7) (§12.2.1); Christensson et al. (2005) argue for $L\propto t^{1/2}$ along
@@ -213,5 +306,6 @@ laws above.
 # Citations
 
 - [Schekochihin (2022)](/sources/schekochihin-2022.md) — §12 (Eqs. 12.1–12.50): §12.1.1–§12.1.2, §12.2.1–§12.2.3, §12.3, §12.4.1–§12.4.3, §12.5, §12.5.2, §12.6, §12.6.2, §12.7; Figs. 25–29 cited only as locations of the evidence the text describes.
-- [Ferrand et al. (2022)](/sources/ferrand-2022.md) — §3.1, Figs. 1–2; §4; §5–§6 (decay in compressible Hall-MHD DNS, non-stationary exact laws).
+- [Ferrand et al. (2022)](/sources/ferrand-2022.md) — §3.1, Figs. 1–2; §4; §5–§6 (decay in compressible Hall-MHD DNS, non-stationary exact laws; Hall cascade component below the ion scale).
 - [Dahlin et al. (2022)](/sources/dahlin-2022.md) — §1–§2 (helicity condensation as inverse helicity transfer, recalled).
+- [Foldes et al. (2023)](/sources/foldes-2023.md) — §2.1, Eq. (2.9); §3.3, Eqs. (3.32), (3.37)–(3.38); §4.4, Eqs. (4.10)–(4.12), Figs. 10–12; §5, Table 2, Figs. 13–16; §6; §7 (Orszag–Tang decay in MHD and Hall MHD).

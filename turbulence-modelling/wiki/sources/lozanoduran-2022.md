@@ -151,7 +151,7 @@ title; [33] prints its issue as "No. 1970".
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
 
 - [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
@@ -161,6 +161,7 @@ Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cite
 - [Law of the wall](/definitions/law-of-the-wall.md)
 - [Log-layer mismatch](/definitions/log-layer-mismatch.md)
 - [Boundary-layer-conforming grids for wall-modelled LES](/methods/boundary-layer-conforming-grid.md)
+- [Building-block-flow wall model](/methods/building-block-flow-wall-model.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)

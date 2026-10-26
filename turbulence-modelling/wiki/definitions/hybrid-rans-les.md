@@ -5,7 +5,7 @@ description: "Scale-resolving approaches that model all turbulence with RANS in 
 status: established
 aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-25T20:38:00Z
+timestamp: 2026-10-26T07:20:00Z
 ---
 
 # Hybrid RANS/LES
@@ -65,6 +65,18 @@ Flow so far used RANS or hybrid RANS solvers
 High-Lift Prediction Workshop delayed detached-eddy simulation was among the
 few unsteady techniques submitted next to the dominant steady RANS
 ([Goc et al. (2021)](/sources/goc-2021.md), §1).
+
+Delassaux et al. (2023) give a finer automotive taxonomy: wall-resolved
+LES; wall-modelled LES, which "uses a RANS model only in the innermost part
+of the wall boundary layer and then switch[es] to a LES model";
+wall-function LES, which resolves the boundary layer with a number of cells
+independent of the Reynolds number and a first node at $y^+>30$; zonal and
+embedded LES with RANS and LES regions fixed a priori; and hybrid RANS/LES
+proper ([Delassaux et al. (2023)](/sources/delassaux-2023.md), §4.1; HAL
+author manuscript). They report, as recalled, a GPU wall-function LES of the
+notchback DrivAer car whose drag error falls from 24 counts with
+stress-blended eddy simulation to 10 and 2 counts with LES on 250 and 500
+million cells (Menter et al., cited; §1).
 
 Bae & Koumoutsakos (2022) draw the line differently: they list hybrid
 LES/RANS, with RANS near the wall, LES outside and the interface set
@@ -286,6 +298,22 @@ $\approx2000$ at $18\,000$) (Carlsson et al. 2023, §4.3, Fig. 4; see
 - **Separated and vortical flows.** IDDES of a backward-facing step and
   DDES-SST of a ship hull and a delta wing on adapted meshes (Mozaffari et
   al. 2022, §4–§5).
+- **Full-scale car.** Delassaux et al. (2023) compare the realizable
+  [$k$-$\varepsilon$](/methods/k-epsilon-model.md) and
+  [SST](/methods/k-omega-sst-model.md) RANS models with SST-based delayed
+  DES on a simplified estate car (Peugeot 308 SW, $Re_L=1.3\times10^7$,
+  115 million cells, wind-tunnel data). The hybrid model reproduces the
+  measured wake topology, a single recirculation bubble fed by the rising
+  underbody flow and capped by the roof shear layer, the base pressure and
+  the underbody exit flow, which both RANS models miss; its drag (0.255) is
+  further from the measurement (0.244) than RANS (0.242), and the authors
+  show with a cumulative drag along the car that the RANS agreement comes
+  from compensating errors (§6–§7, Table 3, Fig. 13). They call it "well
+  known" that hybrid RANS/LES does not improve integrated loads over RANS on
+  cars, citing DDES, LES and [PANS](/methods/partially-averaged-navier-stokes.md)
+  studies (§6). The hybrid run costs 18 times the wall-clock time of RANS
+  on three times as many cores (§7.6). Details on the
+  [DES page](/methods/detached-eddy-simulation.md).
 - **Ahmed body.** Cai et al. (2022) recall body-fitted RANS and hybrid
   results for the 35° and 25° slants (DES, IDDES, PANS, embedded LES,
   scale-adaptive and stress-blended eddy simulation; §I) and run a
@@ -316,6 +344,14 @@ $\approx2000$ at $18\,000$) (Carlsson et al. 2023, §4.3, Fig. 4; see
 - Haering et al.'s statement that explicit forcing is the only remedy for
   MSD is hedged in the source ("It appears that …", §II A) and rests on the
   cited forcing studies; no proof is given.
+- Delassaux et al. recall from the DrivAer estate study of Ashton et al.
+  that hybrid RANS/LES predicted drag and lift better than RANS, and state
+  that hybrid RANS/LES is required for the estate wake and loads (§1); their
+  own drag is better with RANS, which they attribute to error cancellation
+  (§6), without discussing the difference from that study. The
+  cost ratio of 18 is a wall-clock ratio: in core-hours (384 cores for
+  2 hours against 1152 cores for 36 hours) it is 54 *(compiler check, not
+  in the sources)*.
 - The periodic hill has been simulated successfully at about one million
   cells with second-order delayed DES, PANS and PITM, as recalled by Haering
   et al. (2022, §V B); see [periodic hill](/benchmarks/periodic-hill.md).
@@ -336,3 +372,4 @@ $\approx2000$ at $18\,000$) (Carlsson et al. 2023, §4.3, Fig. 4; see
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §1, §4.3 Fig. 4, §4.4.
 - [Cai et al. (2022)](/sources/cai-2022.md) — §I, §II C 1 Eq. 27, §IV Table III (HAL v1).
 - [Placco et al. (2023)](/sources/placco-2023.md) — §1, §2.
+- [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §1, §4.1, §6 Table 3 Fig. 13, §7, §7.6 (HAL author manuscript).

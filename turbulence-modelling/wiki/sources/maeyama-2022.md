@@ -138,7 +138,7 @@ items.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-25). This source is cited on:
+Chunk 3 (2026-10-26). This source is cited on:
 
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Cross-scale interaction in plasma turbulence](/results/cross-scale-interaction.md)

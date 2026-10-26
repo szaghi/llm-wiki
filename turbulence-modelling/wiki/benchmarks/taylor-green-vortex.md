@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "The triply periodic vortex flow started from a single-mode analytic field that transitions to turbulence and decays: at Re 40,000 against a 5400³ DNS to separate Smagorinsky and implicit LES errors, at Re 1600 to measure numerical dissipation and test subgrid models, inviscid to tune spectral vanishing viscosity, in 2D for commutator errors, and as a parallel-scaling test."
+description: "The triply periodic vortex flow that transitions from a single-mode analytic field to decaying turbulence: at Re 40,000 against a 5400³ DNS to separate Smagorinsky and implicit LES errors, at Re 1600 to split numerical dissipation and test subgrid models and stabilizations, inviscid to tune spectral vanishing viscosity, in 2D for commutator errors, and for GPU timing and parallel scaling."
 status: established
 aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex]
 tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation]
-timestamp: 2026-10-25T20:28:00Z
+timestamp: 2026-10-26T07:40:00Z
 ---
 
 # Taylor–Green vortex
@@ -82,7 +82,7 @@ used. Details of these results live on the model pages linked above and on
 
 ## Three-dimensional TGV at $Re=1600$ and inviscid
 
-**Set-up.** Three sources use the same initial velocity as above,
+**Set-up.** The sources at this Reynolds number use the same initial velocity as above,
 $u=\sin x\cos y\cos z$, $v=-\cos x\sin y\cos z$, $w=0$ on $[0,2\pi]^3$
 (scaled by a length $L=1$ and velocity $V_0=1$), with $Re=V_0L/\nu=1600$ or
 no viscosity. The compressible solvers add the pressure field
@@ -100,6 +100,10 @@ to the fully turbulent state.
 | [Cao et al. (2022)](/sources/cao-2022.md) | finite-volume [high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md), no model | $128^3$, $256^3$, $512^3$, $1024^3$ cells | 13-point dispersion-relation-preserving finite differences at $512^3$ (DeBonis) |
 | [Prakash et al. (2022)](/sources/prakash-2022.md) | stabilized trilinear finite elements, explicit SGS models | $64^3$, $128^3$ elements | DNS and filtered DNS of Shoraka; spectra of Brachet et al. |
 | [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) | DGSEM, $N=8$, kinetic-energy-preserving split form, low-dissipation Roe flux, SVV-filtered Smagorinsky viscosity | $8^3$ elements ($72^3$ nodes, *compiler check, not in the sources*) | viscous $Re=1600$ result of van Rees et al. at $768^3$ |
+| [Kou et al. (2023)](/sources/kou-2023.md) | DG ([HORSES3D](/software/horses3d.md)), $N=3$, Roe and symmetric interior penalty, solution or gradient [jump penalty](/methods/jump-penalty-stabilization.md); Smagorinsky and Vreman for comparison | $32^3$ elements | DNS dissipation rate (cited to a review) |
+| [Saini et al. (2023)](/sources/saini-2023.md) | second-order finite volume (OpenFOAM) with [WALE](/methods/wale-model.md); $N=4$ continuous Galerkin ([Nektar++](/software/nektar-plus-plus.md)) with spectral vanishing viscosity | $64^3$, $128^3$ cells; $8^3$, $16^3$ elements | $512^3$ spectral DNS of van Rees et al. |
+| [Zhao et al. (2023a)](/sources/zhao-2023.md) | [high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md), 5th- and 7th-order non-compact and 5th-order compact reconstruction, no model | $256^3$ cells | DNS (source of the curve not stated) |
+| [Wang et al. (2023b)](/sources/wang-2023-b.md) | the same gas-kinetic scheme with 5th-order WENO, on GPUs; also Mach 0.25 to 1.0 | $64^3$ to $512^3$ cells | the authors' earlier CPU runs |
 
 **Numerical dissipation of a no-model DNS scheme.**
 [Cao et al. (2022)](/sources/cao-2022.md), §3.1, Figs. 2–5, measure the
@@ -134,6 +138,75 @@ variants are closest to filtered DNS, optimal clipping slightly better than
 standard clipping on $64^3$. The authors conclude that clipping may be more
 accurate than the dynamic mixed model in laminar–turbulent transition
 (§IV).
+
+**Interface jump penalties as the implicit model.**
+[Kou et al. (2023)](/sources/kou-2023.md), §4.2, Figs. 10–12, run the
+compressible TGV at $Re=1600$ and Mach 0.1 with $N=3$ DG on $32^3$
+elements, penalizing the momentum equations only. The unpenalized scheme
+diverges, which the authors relate to aliasing. With a solution-jump
+penalty the dissipation rate shows a spurious second peak at $t\approx11$
+besides the reference peak at $t\approx9$ until the penalty exceeds 1.9, after
+which the first peak is too high; with a gradient-jump penalty the second
+peak disappears above $6.3\times10^{-4}$, and the largest value tested
+recovers the peak magnitude but oscillates later. At $t=8$ the solution
+penalty hardly changes the spectrum, while large gradient penalties make
+the energy decay faster. Both penalties are called "clearly superior" to
+the Smagorinsky and Vreman models adapted to DG, which give a lower
+dissipation peak, more dissipation before $t=8$ and significant dissipation
+at mid wavenumbers; the model constants are not printed. See
+[jump-penalty stabilization](/methods/jump-penalty-stabilization.md).
+
+**Splitting the dissipation into viscous, model and numerical parts.**
+[Saini et al. (2023)](/sources/saini-2023.md) integrate the resolved
+kinetic-energy budget over the box (and subdomains) and take its residual as
+the numerical dissipation rate, adding the SGS terms of WALE and the terms of
+spectral vanishing viscosity, including one from the spatial variation of
+its amplitude (§2.2, Eq. 8). They validate the procedure on the TGV at
+$Re=3000$ with 64 solution points per direction: the fluxes vanish over the
+whole box, the decay rate and viscous dissipation match their direct
+evaluation, and an interior box agrees with the no-model results of
+Castiglioni & Domaradzki for $t<3$ (§4, Figs. 5–6). At $Re=1600$ the
+numerical part dominates what is removed beyond molecular viscosity: on the
+$64^3$ finite-volume grid a peak of model-plus-numerical dissipation near
+$t=5$ is about 75% numerical and moves the dissipation peak earlier, and its
+ratio to the viscous dissipation approaches 4; on $16^3$ elements at $N=4$
+that ratio is at most 1.2 and the peak about a quarter of the $64^3$
+finite-volume one, 90–95% numerical (§5.1, Figs. 7–8). As recalled from
+the authors' earlier paper, the $16^3$, $N=4$ run costs 1.3 times the
+$64^3$ finite-volume run and is about ten times more accurate in the $L_2$
+sense (§3.1, Fig. 1). The authors conclude that the gain of the high-order
+solver comes mainly from lower
+[numerical dissipation](/properties/numerical-dissipation.md), not from the
+model.
+
+**Reconstruction order of a gas-kinetic scheme.**
+[Zhao et al. (2023a)](/sources/zhao-2023.md) (read in arXiv v1), §5.1, Figs.
+3–7, run the TGV at $Re=1600$, Mach 0.1, $Pr=1$ on $256^3$ cells as
+[implicit LES](/definitions/implicit-les.md) with their
+[high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md).
+Seventh-order reconstruction (in the face-normal direction, or also
+tangentially) and fifth-order compact reconstruction improve the kinetic
+energy, dissipation-rate and enstrophy histories over the fifth-order
+non-compact scheme, the fully seventh-order variant being best late in the
+decay, and lower the numerical dissipation computed, as in Cao et al.
+above, as the residual of the compressible dissipation budget; the authors
+conclude that the fifth-order non-compact scheme "is still
+over-dissipative". The seventh-order runs use 4 Gauss points per face,
+with which their own accuracy test drops to about fourth order under
+refinement (16 points restore seventh order at about twice the cost, §4,
+Tables 3–4).
+
+**GPU timing and compressibility.** [Wang et al. (2023b)](/sources/wang-2023-b.md)
+(read in arXiv v1), §4.1, use the TGV at $Re=1600$, Mach 0.1, $Pr=1$ over
+20 time units to time the gas-kinetic scheme on GPUs (Table 3): against an
+8-core desktop CPU the speedup is about 7 on one TITAN RTX and 16 on one
+Tesla V100 at $64^3$ to $256^3$; one V100 takes 11.7 h at $256^3$, and 8
+V100s take 22.3 h at $512^3$ against 66 h on 1024 CPU cores of TianHe-II
+(Tables 4–5, CPU data from Cao et al. above). At $256^3$ and Mach 0.25,
+0.5, 0.75 and 1.0 the dissipation peak is delayed and flattened as the Mach
+number grows, the kinetic energy is non-monotone for Mach 0.75 and 1.0 (as
+the authors say Peng & Yang report), and the late dissipation ($t\ge11$)
+is markedly higher than at low Mach number (Fig. 8).
 
 **Inviscid TGV and the shape of a spectral vanishing viscosity.**
 [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md), §6.1, Fig. 4, add
@@ -222,6 +295,25 @@ sources)*.
   used as a dynamic viscosity. Read in arXiv v3.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) were read in arXiv v1;
   their scaling figure is not read here, only the stated values.
+- [Kou et al. (2023)](/sources/kou-2023.md) recommend, from their
+  one-dimensional eigensolution analysis with upwind flux, a negative
+  gradient penalty ($-1\times10^{-3}$ at $N=3$, Table 1), but remove the
+  spurious TGV peak with positive values above $6.3\times10^{-4}$; the paper
+  does not comment on the change of sign. Their scaling of the penalty with
+  $Re$ cancels in the face integral as printed (§2.2, Eq. 23) *(compiler
+  check, not in the sources)*, although §4.2 explains the larger TGV
+  values by that scaling.
+- [Saini et al. (2023)](/sources/saini-2023.md) give the share of the
+  numerical part of the TGV as 85–95% for the high-order runs in their
+  summary and 80–90% (SVV share 10–20%) for the $8^3$ run in the same
+  section (§5.1).
+- [Zhao et al. (2023a)](/sources/zhao-2023.md) print the internal degrees
+  of freedom as $N=(5-3\gamma)(\gamma-1)$ (§2), which gives 0.32 at
+  $\gamma=1.4$, while §5.1 uses $N=2$, the value of $(5-3\gamma)/(\gamma-1)$
+  *(compiler check, not in the sources)*.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) print the $256^3$ speedups
+  as 7.4 and 15.4, while their printed times give 7.5 and 15.6 *(compiler
+  check, not in the sources)*.
 - [Prakash et al. (2022)](/sources/prakash-2022.md) run no no-model case
   on the TGV and stop the analysis at the end of transition, so their
   ranking does not cover the decay phase.
@@ -236,3 +328,7 @@ sources)*.
 - [Basile et al. (2023)](/sources/basile-2023.md) — §3.2, §4.2.1 (recalled TGV studies).
 - [Pereira et al. (2021)](/sources/pereira-2021.md) — §IV.3.4 (recalled companion TGV study).
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — Abstract; §3.8, Fig. 5.
+- [Kou et al. (2023)](/sources/kou-2023.md) — §3, Table 1; §4.2, Eq. (28), Figs. 10–12.
+- [Saini et al. (2023)](/sources/saini-2023.md) — §2.2, Eqs. (6)–(11); §3.1, Fig. 1; §4, Figs. 5–6; §5.1, Figs. 7–8.
+- [Zhao et al. (2023a)](/sources/zhao-2023.md) — §4, Tables 3–4; §5.1, Eqs. (18)–(23), Figs. 3–7.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4.1, Tables 3–5, Figs. 5–8.

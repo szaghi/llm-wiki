@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Spectral vanishing viscosity"
-description: "Spectral vanishing viscosity concentrates an added viscosity on the highest resolved scales. The sources use two forms: an implicit one that boosts the modified wavenumber of the viscous scheme near the cutoff, and an explicit modal filter on a DG artificial-viscosity flux made entropy stable; both serve as LES models, the second also for shock capturing."
+description: "Spectral vanishing viscosity concentrates an added viscosity on the highest resolved scales. The sources use an implicit finite-difference form, an explicit modal filter on a DG artificial flux made entropy stable, and a modal SVV in continuous spectral/hp elements; all serve as LES closures, and one source measures how little of the dissipation the SVV term itself supplies."
 status: established
 aliases: [SVV, implicit SVV, ISVV, implicit spectral vanishing viscosity, spectral viscosity, SVV-LES, entropy-stable SVV, modal SVV filter]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg, entropy-stable]
-timestamp: 2026-10-25T20:23:00Z
+timestamp: 2026-10-26T07:41:00Z
 ---
 
 # Spectral vanishing viscosity
@@ -24,9 +24,14 @@ use it in two different constructions:
   weighted, mode by mode in the Legendre basis of each element, by a filter
   kernel that grows with the mode index.
 
-Both act as an [implicit](/definitions/implicit-les.md) or mixed LES
-closure; the explicit form is also used for shock capturing. The kernel,
-the parameters and the evidence differ, so the two are kept apart below.
+A third construction, a modal SVV term in continuous spectral/hp
+element codes (Karamanos & Karniadakis, as recalled), is used by
+[Saini et al. (2023)](/sources/saini-2023.md) and
+[Slaughter et al. (2023)](/sources/slaughter-2023.md) in
+[Nektar++](/software/nektar-plus-plus.md) (section below).
+All act as an [implicit](/definitions/implicit-les.md) or mixed LES
+closure; the explicit DG form is also used for shock capturing. The kernel,
+the parameters and the evidence differ, so the three are kept apart below.
 
 ## Classical form
 
@@ -235,6 +240,69 @@ $P_{\mathrm{SVV}}$ exists: the admissible range is found by trial and error
 [subcell finite-volume](/methods/subcell-finite-volume-shock-capturing.md)
 approach in the paper's introduction.
 
+## Modal SVV in continuous spectral/hp elements
+
+**Form.** [Saini et al. (2023)](/sources/saini-2023.md) (§2.2, §2.3,
+Eqs. 6–8, 13–15) write the SVV term of Nektar++'s incompressible solver,
+after Karamanos & Karniadakis (as recalled), as
+$\epsilon_{\mathrm{svv}}\partial_j\big(Q\star\partial_j\bar u_i\big)$, with
+$Q\star$ a modal convolution and the amplitude and kernel of Moura et al.
+(as recalled),
+
+$$\epsilon_{\mathrm{svv}}=\epsilon_0\,U_l\,h/N,\qquad \hat Q(m)=(m/N)^{P_{\mathrm{SVV}}},\quad 0\le m\le N,$$
+
+with $U_l$ a local advection speed, $h$ the element size (cube root of the
+element volume), $N$ the polynomial degree, $m$ the mode index and
+$\epsilon_0$, $P_{\mathrm{SVV}}$ parameters (page-local symbols; the
+values are not printed, being referred to the authors' earlier paper). The
+kernel has the same printed form, also after Moura et al., as the 1D
+kernel of Mateo-Gabín et al. in DG above.
+
+**Energy budget.** Multiplying by $\bar u_i$ splits the term into an SVV
+dissipation $\int\epsilon_{\mathrm{svv}}(Q\star\partial_j\bar u_i)\,\partial_j\bar u_i\,dV$,
+a surface flux and a term $\int\bar u_i(Q\star\partial_j\bar u_i)\,\partial_j\epsilon_{\mathrm{svv}}\,dV$
+from the spatial variation of the amplitude, which they find below 5% of
+the SVV dissipation (about 10% in one subdomain) and drop. They evaluate
+the convolution by FFT on a three-times finer uniform grid with a Tukey
+window and call this part of the procedure "less general and non-exact".
+
+**How much the SVV term dissipates.** Measured against the residual of the
+discrete resolved-energy budget (see [numerical dissipation](/properties/numerical-dissipation.md);
+§5, Figs. 7–15), with polynomial degree 4 (nominally fifth order):
+
+- Taylor–Green vortex at $Re=1600$, $8^3$ elements: the SVV term supplies
+  10–20% of the non-viscous dissipation, the numerics the rest; its
+  absolute dissipation is below the WALE dissipation of the $64^3$
+  second-order finite-volume run;
+- combustor port flow at $Re=2.25\times10^4$ (8.4 million points): the SVV
+  share is about 20% (impingement region), 15% (recirculation zone) and
+  44% (downstream), against about 10%, 8% and 20% for the
+  [WALE](/methods/wale-model.md) share in the equal-cost second-order run;
+  the total non-viscous dissipation of the high-order run is 40% and 25%
+  lower in the first two regions, and its value normalized by the viscous
+  dissipation is one-fifth in the third (§5.2).
+
+The authors conclude that the accuracy-per-cost advantage of the high-order
+solver comes mainly from its lower numerical dissipation, with the closure
+(SVV or WALE) secondary (§6).
+
+**SVV in one direction, gradient-jump penalty in the others.**
+Slaughter et al. (2023) (§3.1, §3.6, Fig. 5) run a Fourier spectral/hp
+implicit LES of a multi-element wing with polynomial degree 6, using SVV
+with an exponential kernel (after Karniadakis & Sherwin, as recalled) only
+in the Fourier direction, active on modes above the product of a cut-off
+ratio and the polynomial order (ratio not printed), and the gradient-jump
+penalty of Moura et al. in the plane. Relaying Moura et al., they state
+that SVV at lower polynomial orders "can be overly diffusive, resulting in
+a significant loss in resolution", and that the gradient-jump penalty "has
+out-performed the SVV approach on canonical cases" (see
+[jump-penalty stabilization](/methods/jump-penalty-stabilization.md)). The
+spanwise modal energy falls to $10^{-7}$ before the SVV filter width,
+which they read as evidence that further spanwise modes are not needed.
+[Kou et al. (2023)](/sources/kou-2023.md) (§1) also recall SVV as an
+alternative stabilization to interface penalties, complementary to the
+Riemann-solver dissipation.
+
 ## SVV in the HORSES3D code
 
 [Ferrer et al. (2023)](/sources/ferrer-2023.md), the software paper of
@@ -282,6 +350,10 @@ simulation of turbulent and supersonic flows", citing the group's work.
   $4\pi k^2$ in the numerator and Eq. (39) without the factor $\nu$ of
   Eq. (37) *(compiler check, not in the sources)*. Their Fig. 16 legend
   cites Eq. (40) where the caption and text cite Eq. (42).
+- Saini et al. (2023, §2.2) call $\epsilon_{\mathrm{svv}}$ "the maximum value
+  of the artificial viscosity" while Eq. (14) makes it a local quantity
+  proportional to $U_lh/N$, and write it $\epsilon_{\mathrm{svv}}$ and
+  $\epsilon_{\mathrm{SVV}}$ for the same quantity.
 - The SVV values for the two Taylor–Green resolutions are given in §5.3 and
   not restated in §6.
 - Mateo-Gabín et al. (2022) print the parameter of Tadmor's step kernel as
@@ -300,3 +372,6 @@ simulation of turbulent and supersonic flows", citing the group's work.
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — App. C.
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §III B.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1; §4.4, Eqs. (15)–(19), Fig. 9.
+- [Saini et al. (2023)](/sources/saini-2023.md) — §2.2, Eqs. (6)–(8), (10); §2.3, Eqs. (13)–(15); §5.1–5.2, Figs. 7–15; §6.
+- [Slaughter et al. (2023)](/sources/slaughter-2023.md) — §3.1; §3.6, Fig. 5.
+- [Kou et al. (2023)](/sources/kou-2023.md) — §1.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Boundary-layer-conforming grids for wall-modelled LES"
-description: "Grids whose local isotropic cell size follows the local boundary-layer thickness, floored by a minimum grid Reynolds number at leading edges and capped by surface curvature; the boundary-layer-thickness estimate they need, their cost, and the evidence that they reduce WMLES error at fewer points than constant-size grids."
+description: "Grids whose local isotropic cell size follows the local boundary-layer thickness, floored by a minimum grid Reynolds number at leading edges and capped by surface curvature; the boundary-layer-thickness estimate they need, their cost, the evidence that they reduce WMLES error at fewer points than constant-size grids, and the opposite thickness-relative constraint of detached-eddy grids."
 status: established
 aliases: [BL-conforming grid, boundary-layer-conforming mesh, delta-conforming grid]
 tags: [wmles, mesh-adaptation, boundary-layer, wall-model]
-timestamp: 2026-10-25T16:35:00Z
+timestamp: 2026-10-26T07:19:00Z
 ---
 
 # Boundary-layer-conforming grids for wall-modelled LES
@@ -117,6 +117,37 @@ On the Juncture Flow at $Re=2.4\times10^6$ (crank chord), Lozano-Durán et al.
   $Re_\Delta^{\min}<10^4$ covers less than 10 % of the chord (§III.B, Fig. 6b).
 - The wall pressure is insensitive to all of this (errors below 5 % on every
   grid); the advantage concerns the velocity field.
+- **Reuse with a learned wall model.** [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md)
+  (§3.1, §4.8) run their Juncture Flow WMLES on the BL-conforming grid of
+  Lozano-Durán et al. (2022) with 5 points per $\delta$, testing the
+  [building-block-flow wall model](/methods/building-block-flow-wall-model.md)
+  against the equilibrium model. The trailing-edge corner separation bubble
+  is $0.3\delta$ thick on a grid of $\Delta\approx0.2\delta$, so it is spanned
+  by about one grid point and external (SGS-model) errors dominate there; the
+  learned model is better but "far from satisfactory" (Table 1).
+
+## Contrast: grids for detached-eddy simulation
+
+Grid design relative to $\delta$ has the opposite sign in
+[detached-eddy simulation](/methods/detached-eddy-simulation.md), where the
+boundary layer must stay in RANS mode. [Delassaux et al. (2023)](/sources/delassaux-2023.md)
+(§4.1.3, §4.4) state the criterion as keeping the largest wall-parallel
+spacing $\Delta_{\max}$ above $\delta$, and recall that Menter, with
+$r=\Delta_{\max}/\delta$ (page-local), finds the effect of refinement delayed
+to $r<0.2$ in DDES against $r<1$ in DES; violating it lets LES enter a
+boundary layer it cannot resolve and produces grid-induced separation
+(modelled-stress depletion). Their full-scale car grid is therefore
+deliberately coarse on flat areas — 10 mm surface triangles, about
+$\Delta x^+\approx600$ on the roof, against about 300 on the roof of their
+Ahmed-body calibration with 4 mm — and wall-resolved in the normal direction:
+20 prism layers with first height 0.020 mm and growth ratio 1.4 ($y^+\approx1$)
+enclosing the boundary layer, or 30 layers with ratio 1.23, below the 1.25
+advised by Spalart & Streett as they cite it; going from 20 to 30 layers
+leaves the drag unchanged (§6, Table 3). Along a rounded separation line a
+3 mm surface mesh is "too fine and leads to GIS", and 6 mm is advised (§7.3,
+Fig. 21). The WMLES grid of this page refines towards $\delta/n_\delta$ to
+resolve the outer eddies; the DES grid keeps the wall-parallel spacing large
+against $\delta$ to protect the RANS layer.
 
 ## Constant-size practice for comparison
 
@@ -155,8 +186,10 @@ problem.
 
 ## Qualifications
 
-- The method has one source of evidence, on one geometry and one Reynolds
-  number; its rule depends on a preliminary WMLES and inviscid solution.
+- The method's evidence comes from one group, on one geometry and one
+  Reynolds number (Lozano-Durán et al. 2022; reused by Lozano-Durán & Bae
+  2023 without a constant-size comparison); its rule depends on a preliminary
+  WMLES and inviscid solution.
 - Lozano-Durán et al. contrast their low leading-edge sensitivity at small
   angle of attack with NACA 0012 cases in which the whole-chord solution
   depended strongly on leading-edge grid details (Goc, personal communication,
@@ -172,3 +205,5 @@ problem.
 - [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) — §III.A, Eqs. (2)–(4), Figs. 3–5; §III.B, Eqs. (5)–(7), Fig. 6; §V.A–V.E, Figs. 16–21; App. A, Eqs. (13)–(14).
 - [Goc et al. (2021)](/sources/goc-2021.md) — §2.2; §3, Fig. 9; §4.
 - [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §1; §8.2.5–8.2.6, Fig. 40, Table 3; §9.
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §3.1; §4.8, Table 1, Fig. 18.
+- [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §4.1.3; §4.4, Table 1, Fig. 8; §6, Table 3; §7.3, Fig. 21 (HAL author manuscript).

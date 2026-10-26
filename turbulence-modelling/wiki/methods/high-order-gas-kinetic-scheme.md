@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "High-order gas-kinetic schemes for turbulence simulation"
-description: "A high-order gas-kinetic scheme is a finite-volume Navier–Stokes solver whose interface flux comes from the time-dependent solution of the BGK kinetic equation; this page gives its flux, collision time, reconstruction and two-stage fourth-order time stepping, and its use and cost as a DNS tool from low-Mach to supersonic turbulence."
+description: "A high-order gas-kinetic scheme is a finite-volume Navier–Stokes solver whose interface flux comes from the time-dependent BGK solution; this page gives its flux, collision time, non-compact and compact reconstructions and two-stage fourth-order time stepping, its use as DNS and implicit LES, and its multi-GPU cost and precision."
 status: established
 aliases: [HGKS, high-order GKS, gas-kinetic scheme, GKS, BGK finite-volume scheme]
-tags: [gas-kinetic, dns, compressible, numerical-dissipation]
-timestamp: 2026-10-25T19:47:00Z
+tags: [gas-kinetic, dns, implicit-les, compressible, numerical-dissipation, gpu]
+timestamp: 2026-10-26T07:42:00Z
 ---
 
 # High-order gas-kinetic schemes for turbulence simulation
@@ -27,6 +27,11 @@ up to turbulent Mach number $M_t=1.6$. Cao et al. (2022, §1) motivate it by
 the observation that DNS "is reported rarely within the finite volume framework
 due to its over-dissipative nature" (citing the CFD Vision 2030 study), while
 finite volumes have good conservation and shock-capturing properties.
+[Zhao et al. (2023a)](/sources/zhao-2023.md) raise the reconstruction to
+seventh order (non-compact) and add a fifth-order compact reconstruction, and
+use the scheme as [implicit LES](/definitions/implicit-les.md);
+[Wang et al. (2023b)](/sources/wang-2023-b.md) port it to single and
+multiple GPUs and test single against double precision.
 
 Page-local symbols: $f$ the gas distribution function, $g$ the local
 Maxwellian, $\boldsymbol c=(c_1,c_2,c_3)$ the particle (microscopic)
@@ -34,7 +39,10 @@ velocity, $\vartheta$ the internal variables with $K_{\mathrm{int}}$ internal
 degrees of freedom, $\tau_{\mathrm{col}}$ the collision time, $Q$ the vector of
 conservative variables, $\Omega_{ijk}$ a cell and $|\Omega_{ijk}|$ its volume ($\Omega$ and $|\Omega|$ the whole domain). They replace Cao et al.'s $\boldsymbol u$ (particle
 velocity), $\xi$, $N$ and $\tau$, which collide with the registry's velocity,
-reference coordinate, polynomial degree and subgrid stress.
+reference coordinate, polynomial degree and subgrid stress. Zhao et al.
+(2023a) and Wang et al. (2023b) print the same symbols as Cao et al. and are
+translated the same way; their macroscopic velocity $\boldsymbol U$ is the
+registry's $\boldsymbol u$.
 
 ## Kinetic model and interface flux
 
@@ -44,7 +52,9 @@ with the compatibility condition $\int(g-f)\psi\,d\Xi=0$ for the collision
 invariants $\psi=(1,c_1,c_2,c_3,\tfrac12(|\boldsymbol c|^2+|\vartheta|^2))^{\mathsf T}$,
 which makes mass, momentum and energy the conserved moments. The number of
 internal degrees of freedom is $K_{\mathrm{int}}=(5-3\gamma)/(\gamma-1)$, i.e.
-$K_{\mathrm{int}}=2$ for $\gamma=1.4$.
+$K_{\mathrm{int}}=2$ for $\gamma=1.4$; Wang et al. (2023b, §2, Eqs. 1–2) and
+Zhao et al. (2023a, §2, Eq. 1) restate the same model (for Zhao et al.'s
+printed form see the Qualifications).
 
 The cell-averaged update is the finite-volume form
 $\mathrm dQ_{ijk}/\mathrm dt=\mathcal L(Q_{ijk})=-|\Omega_{ijk}|^{-1}\sum_{p=1}^{6}\mathbb F_p(t)$
@@ -65,7 +75,10 @@ from kinetic scale to hydrodynamic scale": near a shock the kinetic particle
 transport builds a "crisp and stable" transition, and in resolved smooth flow
 it recovers the Navier–Stokes solution.
 
-**Collision time.** In smooth flow $\tau_{\mathrm{col}}=\mu/p$. Where the
+**Collision time.** In smooth flow $\tau_{\mathrm{col}}=\mu/p$ (also
+Wang et al. 2023b, §2, who print only this smooth-flow form because their
+tests have no discontinuities; Zhao et al. 2023a do not state the collision
+time of their turbulence runs). Where the
 reconstruction is discontinuous, an artificial term enlarges it (§3),
 $$\tau_{\mathrm{col}}=\frac{\mu}{p}+C\,\Big|\frac{p_l-p_r}{p_l+p_r}\Big|\,\Delta t,\qquad C=1,$$
 with $p_l$, $p_r$ the pressures on the two sides of the face, to "enlarge the
@@ -103,6 +116,69 @@ the flux over $\Delta t$ and $\Delta t/2$ (Eq. 7).
 **Parallelization.** The domain of $N_x\times N_y\times N_z$ cells is split in
 the $y$ and $z$ directions only ($x$ not split); each sub-domain exchanges
 ghost data with its eight neighbours through MPI (§2.2).
+
+## Higher-order and compact reconstruction
+
+Zhao et al. (2023a, §3) keep the second-order gas-kinetic flux, Gauss-point
+quadrature on the faces and S2O4 time stepping, and change only the
+reconstruction (linear weights throughout, since the flows are smooth). The
+variants are labelled by the normal and tangential orders:
+
+- **N5T5**, the fifth-order non-compact baseline (WENO-Z-type stencil of
+  five cell averages, $I_{i-2},\dots,I_{i+2}$);
+- **N7T5** and **N7T7**, a **seventh-order non-compact** reconstruction in the
+  face-normal direction (seventh-order WENO with linear weights on seven cell
+  averages, then a sixth-degree polynomial constrained by six cell averages
+  for the equilibrium state and its normal derivative, Eqs. 11–14), with
+  fifth- or seventh-order tangential reconstruction done direction by
+  direction (face averages to line averages to Gauss-point values);
+- **C5T5**, a **fifth-order compact** reconstruction following the compact
+  GKS of Ji et al. (as recalled by Zhao et al. 2023a, §3.2): each cell
+  carries its average and a cell-averaged derivative, the latter obtained
+  from time-evolved interface values by the Newton–Leibniz formula
+  $(Q_x)_i=(Q_{i+1/2}-Q_{i-1/2})/h$ (Eq. 15), and a fifth-order Hermite WENO
+  (HWENO) reconstruction uses cell averages of $I_{i-1},I_i,I_{i+1}$ and
+  derivatives of $I_{i-1},I_{i+1}$ only (§3.3, Fig. 2). The interface values
+  are advanced in time inside the two S2O4 stages from the gas-kinetic
+  distribution.
+
+The authors argue that the compact stencil "has the consistent physical and
+numerical domains of dependence" (abstract, §1, §6); this is a design
+argument, not a test in the paper.
+
+**Gauss points decide the order.** As recalled by Zhao et al. (2023a, §4)
+from Ji's thesis, "to achieve a 2Mth- or (2M-1)th-order spatial accuracy, at
+least M×M Gaussian points are required for the cell interface", and the
+leading error is $O(h_n^{r_n}+h_t^{r_t}+\Delta t^4)$ for normal and
+tangential orders $r_n$, $r_t$ (page-local $h_n$, $h_t$ the normal and
+tangential cell sizes). Their three-dimensional density-wave advection test
+(Tables 2–5, $\Delta t=0.3h^{r/4}$ to keep the spatial order visible) gives:
+N5T5 with $2\times2$ points, L1 orders 5.13, 5.19, 5.06; C5T5 with $2\times2$
+points, 4.91, 5.12, 5.02; the seventh-order scheme with $2\times2$ points
+6.29, 4.63, 4.07, falling to about four; with $4\times4$ points 7.35, 7.46,
+6.91. Sixteen points cost 1.964 against 0.961 s per step (§4); the
+turbulence runs therefore use $2\times2$ points, so the seventh-order labels
+of those runs refer to the reconstruction, whose asymptotic order with four
+Gauss points the same test shows to be about four. [Wang et al. (2023b)](/sources/wang-2023-b.md)
+and Cao et al. (2022) use the fifth-order scheme with $2\times2$ points.
+
+## GPU implementation
+
+Wang et al. (2023b, §3) port the fifth-order WENO HGKS to Nvidia GPUs:
+
+- **single GPU**: one thread per cell, kernels for the time step, WENO
+  reconstruction, interface flux and update in each direction, each followed
+  by a device synchronization (Alg. 1, Fig. 2); the code is built with the
+  Nvidia CUDA and HPC SDK compilers;
+- **multiple GPUs**: MPI with CUDA-aware MPI passing device data directly, a
+  one-dimensional (slab) decomposition in $x$ chosen because it "reduces the
+  frequency of GPU-GPU communications and improves performances" (pencil
+  decomposition is kept for the CPU code with thousands of cores), halo
+  exchange by an even/odd ordering of blocking sends and receives, and an
+  all-reduce for the global time step (§3.2, Alg. 2, Figs. 3–4).
+
+The GPU results of the nearly incompressible Taylor–Green vortex are stated
+to be "identical" to those of the CPU code (§4.1, not plotted).
 
 ## Use as a DNS tool
 
@@ -162,6 +238,43 @@ $0.819\eta_0$ and 1.275 to 2.551 mean free paths), which they offer as
 "intuitive evidence" that the smallest eddies remain within the continuum
 assumption.
 
+## Use as implicit LES
+
+Zhao et al. (2023a, §5) run the scheme with molecular viscosity only and no
+subgrid model, as [implicit LES](/definitions/implicit-les.md) in which the
+numerical dissipation of the reconstruction and flux replaces the subgrid
+dissipation (§1, citing Boris et al. 1992 as origin and MILES).
+
+- **Taylor–Green vortex**, $Re=1600$, $M=0.1$, $Pr=1$, $256^3$ (§5.1):
+  kinetic-energy histories are "basically consistent with DNS" except at
+  late times, where N7T7 is best, so "the high-order reconstruction in the
+  tangential direction is also important"; higher order and compactness both
+  improve the enstrophy-based dissipation. With the same budget
+  $\varepsilon_{\mathrm{num}}$ as above (Eqs. 22–23, physical terms by
+  sixth-order central differences, $\mu_b$ with $K_{\mathrm{int}}=2$), the
+  numerical dissipation falls with higher-order or compact reconstruction,
+  and the authors conclude that "the 5th-order scheme for ILES is still
+  over-dissipative, and reducing the numerical dissipation can improve the
+  results" (Fig. 7).
+- **Channel flow**, $M=0.1$, isothermal walls, constant flux, against the
+  DNS of Moser et al. (§5.2). At nominal $Re_\tau=180$ on
+  $64\times96\times64$ cells ($\Delta x^+=17.66$, $\Delta y^+$ from 0.29
+  to 7.76, Table 6) the realized $Re_\tau$ is 171.33 (N5T5), 177.04 (N7T5),
+  178.44 (N7T7) and 176.27 (C5T5) against 178.12 for DNS (Table 8); at
+  nominal $Re_\tau=395$ on $96^3$ it is 360.35, 378.97, 380.45 and 377.05
+  against 392.24 (Table 9). Mean velocity, r.m.s. profiles and Reynolds
+  shear stress improve with order and with compactness; "the 5th-order
+  compact scheme can almost achieve the accuracy of the 7th-order
+  non-compact scheme" (Figs. 8–13). Spectra at $y^+=30$ and 180 match DNS at
+  low wavenumbers and keep more energy at high wavenumbers with the
+  higher-order schemes, but all runs show "an unnatural leveling-off of the
+  energy spectrum near the cutoff wavenumber", which the authors attribute to
+  the mesh resolution (Figs. 14–15).
+
+The viscosity of these runs is set from the target $Re_\tau$ through a log
+law with $\kappa=0.40$, $B=5.5$ (Eqs. 24–26); each case uses one grid, with
+no convergence study of the statistics.
+
 ## Cost
 
 Cao et al. (2022, §3.2) note that the finite-volume scheme "is considered
@@ -176,6 +289,43 @@ BB13 finite-difference code at $256^3$ and $512^3$ on a 2.6 GHz machine
 after correcting for processor speed, which the authors call "comparable and
 affordable" given its robustness. The comparison uses different machines and
 time steps.
+
+**Reconstruction cost** (Zhao et al. 2023a, Table 7; $64\times96\times64$
+cells, 16 CPU cores, $2\times2$ Gauss points): 0.595 (N5T5), 0.649 (N7T5),
+0.961 (N7T7) and 0.618 (C5T5) s per step. The authors note that higher
+order raises the cost and the compact reconstruction raises it only slightly
+(§5.2); the tangential seventh order costs about half again
+($0.961/0.649=1.48$, *compiler check, not in the sources*).
+
+**GPU speedups** (Wang et al. 2023b, §4.1, Tables 2–5; Taylor–Green vortex,
+double precision, 20 convective times): against an 8-core desktop OpenMP
+code, one TITAN RTX is about 7 times and one Tesla V100 about 16 times
+faster on $64^3$ to $256^3$. The V100 has about 15 times the double-precision
+peak of the TITAN RTX but runs only about 2 times faster, which the authors
+attribute to memory bandwidth ("the bottleneck for current memory-intensive
+simulations"; not profiled). The $256^3$ run takes 11.697 h on one V100 and
+1.987 h on eight; $512^3$ takes 22.252, 19.055 and 13.466 h on 8, 12 and 16
+V100s, with the communication share rising and scaling degrading beyond 8
+GPUs, where inter-node traffic leaves NVLink for RoCE (Table 5, Figs. 5–6).
+Eight V100s run the $512^3$ case about 3 times faster than 1024 cores of
+TianHe-II (66 h, the CPU data of Cao et al. 2022), from which the authors
+infer an equivalence to about 3000 CPU cores, in agreement with the FluTAS
+code they cite; no run on 3000 cores is reported (§4.1, Tables 4–5).
+
+**Single against double precision** (Wang et al. 2023b, §4.2, Table 8;
+channel at $Re_\tau=395$, $M=0.1$, and at bulk $Re=3000$, bulk $M=0.8$):
+single precision halves memory (ratios 1.928 to 1.968) and runs 2.7 times
+(TITAN RTX) or 1.7 times (V100) faster. Mean and r.m.s. profiles averaged over
+200 $\delta/U_c$ agree between precisions, and the fine grids agree with the
+reference DNS (Moser, Kim & Mansour; Fu et al.), but instantaneous r.m.s.
+profiles at $t=20$ and $200\,\delta/U_c$ after a common restart differ
+visibly; the authors attribute this to single-precision round-off "approximately
+equals to or larger than the errors of numerical scheme" and conclude that
+single precision "may not be safe for DNS in turbulence especially for
+time-evolutionary turbulent flows", while it "may be used" for LES and RANS
+(§4.2, §5). The deviation is shown in instantaneous r.m.s. profiles
+(Fig. 14); the profiles averaged over 200 $\delta/U_c$ show "negligible"
+differences between precisions (Figs. 10–13).
 
 ## Qualifications
 
@@ -205,7 +355,46 @@ time steps.
   §3.4 and the conclusions say supersonic ($M_t\le1.6$).
 - The priority claims ("first successful DNS application of HGKS",
   "finest resolution" of the Taylor–Green vortex) are the authors'.
+- **Versions read.** Zhao et al. (2023a): arXiv 2208.07713v1; Wang et al.
+  (2023b): arXiv 2207.01173v1. Locators are those of the preprints.
+- **Printed slips (Zhao et al. 2023a).** §2 prints the internal degrees of
+  freedom as the product $N=(5-3\gamma)(\gamma-1)$, which gives 0.32 for
+  $\gamma=1.4$, while §5.1 uses $N=2$, the value of the quotient
+  $(5-3\gamma)/(\gamma-1)$ printed by Wang et al. (2023b) *(compiler check,
+  not in the sources)*. §5.2 prints $\mu=2.83\times10^{-4}$ for
+  $Re_\tau=180$; the paper's own Eqs. (25)–(26) with $U_c=1$ give
+  $3.01\times10^{-4}$, and the same procedure reproduces the printed
+  $1.24\times10^{-4}$ at $Re_\tau=395$ *(compiler check, not in the
+  sources)*. Table 6 prints $\Delta z^+=8.33$ for $\pi\cdot180/64=8.84$
+  *(compiler check, not in the sources)*.
+- **Printed slips (Wang et al. 2023b).** The scalability is defined as
+  $S_n=T_n/T_1$ with the ideal value stated as $n$, which holds for the
+  inverse ratio; the single/double-precision memory ratio is defined as
+  single over double while the printed values are double over single
+  (e.g. $5.355/2.761=1.94$, *compiler check, not in the sources*); the text
+  says the coarse channel grids ran on one GPU while Table 8 states two.
+
+## Contradictions
+
+- **Is the numerical dissipation of the fifth-order scheme right for
+  implicit LES?** *Open.* [Cao et al. (2022)](/sources/cao-2022.md) (§3.1)
+  state that, because the kinetic-energy decay rate of the Taylor–Green
+  vortex at $Re=1600$ is "well predicted at all grid levels" ($128^3$ to
+  $1024^3$), "the filtering due to the coarse mesh correctly mimics the
+  physical dissipation from the unresolved scale dynamics".
+  [Zhao et al. (2023a)](/sources/zhao-2023.md) (§5.1, Fig. 7) run the same
+  fifth-order scheme (N5T5) on the same flow at $256^3$, find that
+  higher-order or compact reconstruction lowers the measured
+  $\varepsilon_{\mathrm{num}}$ and improves the energy, dissipation and
+  enstrophy histories, and conclude that "the 5th-order scheme for ILES is
+  still over-dissipative"; their channel results (§5.2, Tables 8–9) point the
+  same way. Zhao et al. (§1) cite the authors' earlier fifth-order implicit
+  LES as showing that high-order GKS "can provide appropriate numerical
+  dissipation" and present their result as an improvement on it; they cite Cao et al. only
+  for the dissipation decomposition (§5.1).
 
 # Citations
 
 - [Cao et al. (2022)](/sources/cao-2022.md) — §1 (motivation, finite-volume DNS, competing methods); §2.1, Eqs. (1)–(7) (BGK model, gas-kinetic flux, WENO, S2O4), Remark 1; §2.2 (MPI decomposition); §3 (collision time); §3.1 (Taylor–Green vortex, bulk viscosity, numerical-dissipation decomposition); §3.2, Tables 1–4 (scaling, cost); §3.3, Tables 5–7, Figs. 10–12 (channel); §3.4, Table 8, Figs. 13–15 (compressible isotropic turbulence).
+- [Zhao et al. (2023a)](/sources/zhao-2023.md) — arXiv v1: §1 (implicit LES, compact stencils); §2, Eqs. (1)–(10) (BGK flux, Gauss quadrature); §3.1–3.3, Eqs. (11)–(15), Figs. 1–2 (seventh-order non-compact and fifth-order compact reconstruction); §4, Tables 2–5 (accuracy, Gauss-point rule, cost of 16 points); §5.1, Eqs. (19)–(23), Figs. 3–7 (Taylor–Green vortex, numerical dissipation); §5.2, Eqs. (24)–(28), Tables 6–9, Figs. 8–17 (channel flow); Table 7 (cost).
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — arXiv v1: §2, Eqs. (1)–(8) (BGK flux, S2O4); §3.1–3.2, Algs. 1–2, Figs. 2–4 (single- and multi-GPU implementation); §4.1, Tables 2–5, Figs. 5–8 (speedups, scaling, compressible Taylor–Green vortex); §4.2, Tables 6–8, Figs. 10–14 (channel flow, single against double precision); §5.

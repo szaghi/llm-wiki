@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Periodic hill"
-description: "The streamwise-periodic channel with a hill constriction, a smooth-wall separation and reattachment test: at hill-height Reynolds number about 10,600 for hybrid RANS/LES and implicit LES on coarse grids, as the parametrized hill family at 5600 for learned RANS corrections, and at 2800 for data assimilation and physics-informed networks."
+description: "The streamwise-periodic channel with a hill constriction, a smooth-wall separation and reattachment test: at hill-height Reynolds number about 10,600 for hybrid RANS/LES and implicit LES on coarse grids, as the parametrized hill family at 5600 for learned RANS corrections, and at 2800 for data assimilation, physics-informed networks and high-order DG implicit LES."
 status: established
 aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow, parametrized periodic hills]
-tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion]
-timestamp: 2026-10-26T05:07:00Z
+tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion, implicit-les]
+timestamp: 2026-10-26T07:40:00Z
 ---
 
 # Periodic hill
@@ -217,6 +217,53 @@ $\langle u'v'\rangle$ and $\langle v'v'\rangle$. The authors call the
 separated region and the reattachment point "accurately predicted", judged
 from figures; no reattachment length is printed.
 
+**Symbolic-regression closure on the parametrized family.**
+[Tang et al. (2023)](/sources/tang-2023.md) (read in arXiv v1) train a
+[symbolic-regression closure](/methods/symbolic-regression-closure.md) for
+the non-linear part of the Reynolds-stress anisotropy on the single hill
+$\alpha_h=0.8$ of the Xiao et al. DNS family at $Re=5600$ (hill height),
+and test it on $\alpha_h=0.5$ and 1.0 (§III A, D). The base model is the
+[$k$-$\varepsilon$ model](/methods/k-epsilon-model.md) in OpenFOAM
+(SIMPLE, about 9600 cells, cyclic inlet and outlet, 20,000 iterations to a
+residual of about $10^{-10}$, Table I); the learned term is computed once
+from the converged baseline, frozen and injected, and the linear part is
+re-converged (loose coupling, §II D). A priori on the training hill the
+baseline gets the shear component of the anisotropy roughly right but the
+diagonal components "far removed" from DNS near the bottom wall, while the
+learned model "captures the correct sign" of all components, with the
+largest gains for the streamwise and wall-normal normal components in the
+separated region (§III C, Fig. 7). A posteriori the baseline
+under-predicts the separation bubble and the learned model enlarges it
+toward DNS (Fig. 9). On the test hills the anisotropy is "markedly
+improved", the mean velocity improves on $\alpha_h=1.0$, but the
+improvement in the recirculation region is "not distinguishable" on the
+steeper $\alpha_h=0.5$, which the authors ascribe to its more severe
+separation (§III D, Figs. 12–15). A second reward function yields a much
+longer expression whose velocity field is "strikingly close" to that of the
+first (§III E, Fig. 19).
+
+**High-order DG implicit LES at $Re=2800$.**
+[Lederer et al. (2023)](/sources/lederer-2023.md) (read in arXiv v1), §5,
+run the geometry of Mellen, Fröhlich & Rodi with crest-to-crest length
+$9h$, height $3.0335h$ and span $4.5h$, at $Re=2800$ on the bulk velocity
+and $h$, with a dynamically controlled forcing, against the DNS of
+Balakumar & Ilhwan. The discretization is the exactly divergence-free
+hybridized mixed finite-element (MCS) method at $N=3$ on two curved meshes,
+$12\times8\times6$ and $24\times16\times12$ elements (Table 3). Three
+treatments are compared: [implicit LES](/definitions/implicit-les.md)
+with upwind jump dissipation only, a projection-based variational
+multiscale model with the [WALE](/methods/wale-model.md) eddy viscosity,
+and the authors' adaptive
+[high-order projection-based upwinding](/methods/high-order-projection-based-upwind-method.md),
+which removes upwind dissipation from the low-order part of the velocity
+jump. All three reproduce the mean streamwise velocity reasonably; on the
+coarse mesh the adaptive upwinding improves the wall-normal velocity near
+reattachment ($x=3h$, $5h$, $8h$) and markedly improves $\langle
+v'v'\rangle$ and $\langle u'v'\rangle$, which the no-model run mostly
+over-predicts, while the WALE model brings little or no improvement (§5.1,
+Figs. 8–9). The jump indicator of the no-model run peaks near the
+separation point and along the lower wall (Fig. 10).
+
 ## What the case shows
 
 Two sources agree that the case discriminates between models chiefly
@@ -240,7 +287,24 @@ injected closure term and conclude that "the RANS equations can suppress
 rather than amplify errors in the closure prediction" (§IV B, Fig. 20).
 [Eivazi et al. (2022)](/sources/eivazi-2022.md), Table 1, make no such
 statement; their streamwise-velocity error is 2.77% against Reynolds-stress
-errors of 16.7% to 28.2%.
+errors of 16.7% to 28.2%. [Tang et al. (2023)](/sources/tang-2023.md),
+§III E, report the same insensitivity between two learned closures of very
+different form, and explain it by the mean velocity being a first-order
+statistic and the Reynolds stress a "less converged" second-order one.
+
+On the scale-resolving side, two sources report no-model high-order runs
+whose Reynolds stresses miss the reference while the mean velocity is
+reasonable: [Lederer et al. (2023)](/sources/lederer-2023.md), §5.1, find
+the Reynolds stresses of their coarse runs mostly over-estimated and
+reduce the error with adaptive high-order projection-based upwinding, which
+their jump indicator places near the separation point and the lower wall,
+while the WALE model gives slight to no improvement; at $Re_hpprox10{,}600$
+the $N=3$ no-model run of [Dzanic et al. (2022)](/sources/dzanic-2022.md)
+over-predicts $\langle u'u'
+angle$ and oscillates in $\langle v'v'
+angle$
+and $\langle u'v'
+angle$, which PANS removes.
 
 ## Qualifications
 
@@ -286,6 +350,20 @@ errors of 16.7% to 28.2%.
 - [Eivazi et al. (2022)](/sources/eivazi-2022.md) were read in arXiv v1, a
   6-page preprint that prints no network sizes beyond the architecture, no
   collocation counts and no citation for the hill DNS.
+- [Lederer et al. (2023)](/sources/lederer-2023.md), §5, print the height
+  as $3.0335h$, against $3.035h$ in Dzanic et al. and Haering et al., and
+  their crest-to-crest length $9h$ agrees with Dzanic et al. The global
+  degrees of freedom of their two hill meshes (Table 3, 43.2 and 331.0
+  thousand) are exactly those of their $6^3$- and $12^3$-element channel meshes
+  (Table 1) although the element counts differ (576 and 4608 elements
+  against 216 and 1728) at the same $N=3$ *(compiler check, not in the
+  sources)*; the paper does not comment on it.
+- [Tang et al. (2023)](/sources/tang-2023.md) (arXiv v1) list the
+  barycentric stations of the training hill as starting at $x/h=1.5$ in the
+  text and at $0.5$ in the Fig. 8 caption and panels (§III C), and swap the
+  equation numbers of their two models in the captions of Figs. 17–18. Their
+  anisotropy is $R_{ij}/k-\tfrac23\delta_{ij}=2b_{ij}$ in this bundle's
+  notation (Eq. 10).
 
 # Citations
 
@@ -297,3 +375,5 @@ errors of 16.7% to 28.2%.
 - [McConkey et al. (2022)](/sources/mcconkey-2022.md) — §II A–F, Figs. 1–6; §III D; §IV B, Figs. 15–21.
 - [Cato et al. (2023)](/sources/cato-2023.md) — §IV A–B, Table II, Figs. 8–10.
 - [Eivazi et al. (2022)](/sources/eivazi-2022.md) — §3, Table 1, Fig. 6; §4.
+- [Tang et al. (2023)](/sources/tang-2023.md) — §II D; §III A–E, Table I, Figs. 7–19.
+- [Lederer et al. (2023)](/sources/lederer-2023.md) — §5, §5.1, Table 3, Figs. 7–10.

@@ -5,7 +5,7 @@ description: "The dynamic tensor-coefficient Smagorinsky model (DTCSM) replaces 
 status: established
 aliases: [DTCSM, tensor-coefficient Smagorinsky model, non-Boussinesq dynamic SGS model]
 tags: [les, sgs-model, eddy-viscosity, wmles, separated-flow]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-26T07:41:00Z
 ---
 
 # Dynamic tensor-coefficient Smagorinsky model
@@ -130,6 +130,20 @@ wall-modelled LES in [charLES](/software/charles.md) on Voronoi grids
 
 Each of the two geometries is run on three grid levels.
 
+## Place among anisotropic SGS models
+
+[Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) (§I) cite the
+model (their ref. [9]) among the non-eddy-viscosity or anisotropic SGS
+models that "improve the prediction of the statistics of turbulent flows"
+(refs. [4–11]) and among the anisotropic models that "prohibit backward
+scatter" (refs. [4–9]), from which they conclude that "additional stress,
+apart from energy transfer, can improve the performance of LES". This
+matches the structure above: the coefficient
+tensor dissipates through its Smagorinsky-type part, and the antisymmetric
+part changes the stress without exchanging energy. Their own analysis of
+such energy-transfer-free stresses in coarse channel LES is on
+[energy backscatter](/definitions/energy-backscatter.md).
+
 ## Qualifications
 
 - Agrawal et al. call the constraints of Eq. (12) "realizability
@@ -147,3 +161,4 @@ Each of the two geometries is run on three grid levels.
 # Citations
 
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §III.A, Eqs. (11)–(13); §V, Figs. 1–2; §VI; §VII.A–D, Figs. 3–10; §VIII, Eq. (16), Figs. 13–19; §IX, Tables IV–V; Apps. A–C, Eqs. (B2)–(B4), (C3).
+- [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §I; §II A.

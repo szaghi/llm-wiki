@@ -269,7 +269,7 @@ al. 2017, Weatheritt & Sandberg 2017).
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
 
 - [Backward-facing step](/benchmarks/backward-facing-step.md)
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
@@ -280,4 +280,5 @@ Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cite
 - [Model-form uncertainty in turbulence closures](/definitions/model-form-uncertainty.md)
 - [Field inversion and machine learning](/methods/field-inversion-machine-learning.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)
+- [Symbolic-regression turbulence closures](/methods/symbolic-regression-closure.md)
 - [Tensor-basis neural network and the integrity basis](/methods/tensor-basis-neural-network.md)

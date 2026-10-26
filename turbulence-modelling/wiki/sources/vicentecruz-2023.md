@@ -127,7 +127,7 @@ under Printed slips; none is unparseable and no printed duplicate was found.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2–3 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2–3. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)

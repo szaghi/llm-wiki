@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Backward-facing step"
-description: "Turbulent flow over a sudden expansion of a channel, with fixed separation at the step edge, a free shear layer and reattachment downstream; here the reattachment length as a measure of filter-width choices in wall-resolved LES at Re_H about 5700 and of adaptive meshing for IDDES at Re_H 28,000."
+description: "Turbulent flow over a sudden expansion of a channel, with fixed separation at the step edge, a free shear layer and reattachment downstream; here the reattachment length as a measure of filter-width choices in wall-resolved LES at Re_H about 5700 and of adaptive meshing for IDDES at Re_H 28,000, and an out-of-geometry test of a learned RANS closure at 5000."
 status: established
 aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step]
-tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation]
-timestamp: 2026-10-25T19:38:00Z
+tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven]
+timestamp: 2026-10-26T07:40:00Z
 ---
 
 # Backward-facing step
@@ -21,7 +21,8 @@ Reynolds number $Re_H$ is built on $H$ and a reference velocity of the
 incoming flow. Because separation is fixed, the case isolates what a model
 or a grid does to the free shear layer: its growth rate sets $x_R$. In this
 bundle it tests the definition of the LES filter width on cells of high
-aspect ratio and mesh adaptation for hybrid RANS/LES.
+aspect ratio, mesh adaptation for hybrid RANS/LES, and the transfer of a
+learned RANS closure to a geometry it was not trained on.
 
 ## Configurations in the sources
 
@@ -88,6 +89,21 @@ modelled shear layers: the coarse grids and the cube-root filter width in
 [Abe (2021)](/sources/abe-2021.md), the instantaneous or coarse adapted
 meshes in [Mozaffari et al. (2022)](/sources/mozaffari-2022.md).
 
+**Out-of-geometry test of a learned RANS closure.**
+[Tang et al. (2023)](/sources/tang-2023.md) (read in arXiv v1), §III A
+and D, use a step at $Re_H=5000$ on the step height, with the geometry and
+reference data of the Jovic & Driver experiment and the DNS of Le, Moin &
+Kim: about 46,000 cells, a fixed inlet velocity profile, a zero-gradient
+outlet and no-slip walls, 20,000 iterations of steady RANS (Table I). Their
+[symbolic-regression closure](/methods/symbolic-regression-closure.md) for
+the non-linear anisotropy, trained on a single
+[periodic hill](/benchmarks/periodic-hill.md) and injected in frozen form
+on top of the [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md), gives
+velocity profiles "much closer" to DNS and experiment than the baseline in
+the near-step region shown (Fig. 16). The comparison is restricted to that
+region because full-field reference data were not available to the authors,
+and no reattachment length is printed.
+
 **RANS corrections.** As recalled by
 [Yan et al. (2022)](/sources/yan-2022.md), §1, Rumsey found that enhancing
 the mixing in the separated shear layer of the $k$-$\omega$ SST model
@@ -111,6 +127,19 @@ step showed a high level of uncertainty when applied to the periodic hill.
   §4.1 and $9.3\times10^6$ in Table 2, and print the skin-friction
   coefficient as $\tau_w/(\tfrac12\rho U_\infty)$, without squaring the
   velocity.
+- The step of [Tang et al. (2023)](/sources/tang-2023.md) ($Re_H=5000$,
+  Jovic & Driver) is a third configuration; its comparison is qualitative
+  (profiles), so it adds no reattachment-length datum. In §III D the
+  authors attribute the DNS to Jovic & Driver and the experiment to Le, Moin
+  & Kim, the reverse of their own §III A and of the printed reference
+  titles.
+- Two sources now report how learned or corrected RANS models trained on
+  one separated geometry carry over to the other: the gene-expression
+  models trained on the step showed "a high level of uncertainty" on the
+  hill (as recalled by Duraisamy et al.), while the closure of Tang et al.,
+  trained on the hill, improved the step profiles. The two concern different
+  model families and opposite directions of transfer, so they do not
+  contradict each other.
 
 # Citations
 
@@ -118,3 +147,4 @@ step showed a high level of uncertainty when applied to the periodic hill.
 - [Mozaffari et al. (2022)](/sources/mozaffari-2022.md) — §4.1–4.5, Tables 1–2, Figs. 6–15; §6.
 - [Yan et al. (2022)](/sources/yan-2022.md) — §1 (recalled result of Rumsey).
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3 (recalled result).
+- [Tang et al. (2023)](/sources/tang-2023.md) — §III A, §III D, Table I, Fig. 16.

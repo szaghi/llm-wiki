@@ -137,7 +137,7 @@ items.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-25). This source is cited on:
+Chunk 3 (2026-10-26). This source is cited on:
 
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)

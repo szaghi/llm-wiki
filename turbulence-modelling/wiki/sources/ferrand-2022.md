@@ -150,9 +150,10 @@ Simon & Sahraoui (2021) is a preprint entry. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-25). This source is cited on:
+Chunk 3 (2026-10-26), cited further in chunk 4. This source is cited on:
 
 - [Reduced MHD and Elsasser variables](/definitions/reduced-mhd.md)
 - [Compressible MHD turbulence](/results/compressible-mhd-turbulence.md)
 - [Decaying MHD turbulence and its invariants](/results/decaying-mhd-turbulence.md)
 - [Exact laws of (Hall-)MHD turbulence](/results/turbulence-exact-laws.md)
+- [GHOST](/software/ghost.md)

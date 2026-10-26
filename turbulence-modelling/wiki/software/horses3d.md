@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "HORSES3D"
-description: "HORSES3D is an open-source Fortran DGSEM framework for compressible and incompressible flow with RANS, explicit and implicit LES, shock capturing, multiphase, particles, aeroacoustics and immersed boundaries; this page records its numerics, turbulence options, adaptation, solvers and parallel performance as its developers describe them."
+description: "HORSES3D is an open-source Fortran DGSEM framework for compressible and incompressible flow with RANS, explicit and implicit LES, shock capturing, multiphase, particles, aeroacoustics and immersed boundaries; this page records its numerics, turbulence options including jump-penalty implicit LES, adaptation, solvers and parallel performance."
 status: established
 aliases: [HORSES3D, High-Order Spectral Element Solver 3D, horses2plt]
 tags: [software, dg, les, implicit-les, entropy-stable, mesh-adaptation]
-timestamp: 2026-10-25T20:42:00Z
+timestamp: 2026-10-26T07:30:00Z
 ---
 
 # HORSES3D
@@ -104,6 +104,20 @@ numbers, and list the closures available:
 The program summary and §1 mention wall models, but none is described in the
 text.
 
+**Jump penalties as implicit LES.** [Kou et al. (2023)](/sources/kou-2023.md)
+implement two face penalties in HORSES3D, on the solution jump (the
+symmetric-interior-penalty viscous flux with an enlarged parameter, the
+second implicit-LES route above) and on the gradient jump, with a Roe flux,
+SIP viscous flux, no over-integration and the penalties scaled by $1/Re$ and
+applied to a selected subset of the equations (momentum only at low Mach
+number, all equations for compressible cases) (§2.2). On the Taylor–Green
+vortex at $Re=1600$, $M=0.1$, $32^3$ elements, $N=3$, the unpenalized code
+diverges and both penalties remove a spurious second peak of the
+dissipation rate and beat the Smagorinsky and Vreman models adapted to DG;
+on a Kelvin–Helmholtz instability only the solution penalty completes the
+run (§4.2–4.3). Details are on
+[jump-penalty stabilization](/methods/jump-penalty-stabilization.md).
+
 ## Other physics
 
 Artificial-compressibility incompressible solver with dual time stepping;
@@ -144,3 +158,4 @@ parallel (§5.1–5.2).
 
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — Program summary; §1 (degree-of-freedom estimate); §2, Table 1; §3.1–3.8, Figs. 1–5 (numerics, split forms, adaptation, solvers, scaling); §4.1, Figs. 6–7 (turbulence closures); §4.2–4.7, Figs. 8–14 (other physics); §5.
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §5–§6 (the SVV-filtered artificial viscosity used for shock capturing).
+- [Kou et al. (2023)](/sources/kou-2023.md) — §2.2, Eqs. (15)–(25) (jump penalties in HORSES3D); §4.2–4.3 (Taylor–Green vortex, Kelvin–Helmholtz instability).

@@ -142,7 +142,7 @@ is unparseable.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
 
 - [Periodic hill](/benchmarks/periodic-hill.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
@@ -154,11 +154,13 @@ Chunk 1 (2026-10-25), cited further in chunk 2 (2026-10-25). This source is cite
 - [Active model split hybrid RANS/LES](/methods/active-model-split.md)
 - [Detached-eddy simulation and its delayed and zonal forms](/methods/detached-eddy-simulation.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
+- [k-ε models](/methods/k-epsilon-model.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)
 - [Vreman model](/methods/vreman-model.md)
+- [WALE model](/methods/wale-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)

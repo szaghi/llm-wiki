@@ -20,7 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–3 of 7 ingested (60 of the 134 sources planned; the
+**Corpus:** chunks 1–4 of 7 ingested (80 of the 134 sources planned; the
 archive is still growing). Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
@@ -62,7 +62,14 @@ wall-modelled LES, immersed boundaries with lattice Boltzmann and
 constrained LES, low-dissipation and WENO-based schemes and the GPU codes
 STREAmS, OpenCFD-SCU, NekRS and HORSES3D, shock–boundary-layer
 interaction at hypersonic speeds, shock-generated turbulence, and plasma,
-Hall-MHD and wave turbulence.
+Hall-MHD and wave turbulence. Chunk 4 (2023–2024 papers): learned SGS
+models (supervised, adjoint-trained, reinforcement learning), symbolic
+regression for RANS, the anisotropic part of the SGS stress, the WALE,
+σ and anisotropic minimum-dissipation models, the building-block-flow wall
+model, hybrid RANS/LES of cars and turbomachinery, separation-bubble
+transition, kinetic-energy- and pressure-equilibrium-preserving schemes,
+jump-penalty and upwind stabilization of high-order methods, gas-kinetic
+schemes on GPUs, lattice Boltzmann methods, and Hall-MHD turbulence.
 
 ## Reading guide
 
@@ -75,7 +82,9 @@ Hall-MHD and wave turbulence.
 **2. RANS and transition.**
 [Spalart–Allmaras model](/methods/spalart-allmaras-model.md),
 [k-ω SST model](/methods/k-omega-sst-model.md),
+[k-ε models](/methods/k-epsilon-model.md),
 [local-correlation-based transition models](/methods/local-correlation-based-transition-model.md),
+[laminar separation bubble](/definitions/laminar-separation-bubble.md),
 [model-form uncertainty](/definitions/model-form-uncertainty.md).
 
 **3. Subgrid-scale models and implicit LES.**
@@ -86,7 +95,9 @@ Hall-MHD and wave turbulence.
 [scale-similarity and mixed models](/methods/scale-similarity-model.md),
 [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md),
 [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
-[fractional SGS model](/methods/fractional-sgs-model.md);
+[fractional SGS model](/methods/fractional-sgs-model.md),
+[WALE model](/methods/wale-model.md),
+[anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md);
 [energy backscatter](/definitions/energy-backscatter.md);
 [gradient model and clipping](/methods/gradient-model.md);
 [implicit LES](/definitions/implicit-les.md) and
@@ -99,7 +110,8 @@ Hall-MHD and wave turbulence.
 [LaRTE wall model](/methods/lagrangian-relaxation-towards-equilibrium-wall-model.md),
 [compressible velocity transformations](/definitions/compressible-velocity-transformation.md) and the
 [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md),
-[machine-learning wall models](/methods/machine-learning-wall-model.md);
+[machine-learning wall models](/methods/machine-learning-wall-model.md),
+[building-block-flow wall model](/methods/building-block-flow-wall-model.md);
 [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md),
 [log-layer mismatch](/definitions/log-layer-mismatch.md),
 [boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md).
@@ -116,7 +128,10 @@ Hall-MHD and wave turbulence.
 [tensor-basis neural network](/methods/tensor-basis-neural-network.md),
 [model-consistent training](/methods/model-consistent-training.md),
 [reinforcement-learning closures](/methods/reinforcement-learning-closure.md),
-[physics-informed neural networks](/methods/physics-informed-neural-network.md);
+[physics-informed neural networks](/methods/physics-informed-neural-network.md),
+[neural-network SGS models](/methods/neural-network-sgs-model.md),
+[symbolic-regression closures](/methods/symbolic-regression-closure.md),
+[Relexi](/software/relexi.md);
 [discretization-consistent closure](/definitions/discretization-consistent-closure.md),
 [divergence-consistent LES](/methods/divergence-consistent-les.md);
 [mesh adaptation](/methods/mesh-adaptation.md).
@@ -128,12 +143,17 @@ Hall-MHD and wave turbulence.
 [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md),
 [WENO and hybrid shock-capturing schemes](/methods/weno-scheme.md),
 [low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md),
-[immersed boundary methods](/methods/immersed-boundary-method.md);
+[immersed boundary methods](/methods/immersed-boundary-method.md),
+[lattice Boltzmann methods](/methods/lattice-boltzmann-method.md),
+[jump-penalty stabilization](/methods/jump-penalty-stabilization.md),
+[high-order projection-based upwind method](/methods/high-order-projection-based-upwind-method.md),
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md);
 codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [LESGO](/software/lesgo.md), [elsA](/software/elsa.md),
 [RAMSES](/software/ramses.md), [STREAmS](/software/streams.md),
 [OpenCFD-SCU](/software/opencfd-scu.md), [Nek5000 and NekRS](/software/nek5000.md),
-[HORSES3D](/software/horses3d.md). Compressible wall turbulence:
+[HORSES3D](/software/horses3d.md), [Nektar++](/software/nektar-plus-plus.md),
+[ProLB](/software/prolb.md). Compressible wall turbulence:
 [Morkovin's hypothesis and Reynolds analogies](/definitions/morkovin-hypothesis.md),
 [attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md).
 
@@ -148,7 +168,11 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [backward-facing step](/benchmarks/backward-facing-step.md),
 [Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md),
 [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md),
-[shock-generated turbulence](/results/shock-generated-turbulence.md).
+[shock-generated turbulence](/results/shock-generated-turbulence.md),
+[Ahmed body](/benchmarks/ahmed-body.md),
+[ACAT1 fan stage](/benchmarks/acat1-fan-stage.md),
+[Imperial front wing](/benchmarks/imperial-front-wing.md);
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md).
 
 **9. MHD, plasma and wave turbulence.**
 [Reduced MHD and Elsasser variables](/definitions/reduced-mhd.md) →
@@ -162,7 +186,8 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [exact laws of (Hall-)MHD turbulence](/results/turbulence-exact-laws.md),
 [weak wave turbulence](/results/weak-wave-turbulence.md),
 [cross-scale interaction in plasma turbulence](/results/cross-scale-interaction.md),
-[STITCH helicity-condensation model](/methods/stitch-helicity-condensation-model.md).
+[STITCH helicity-condensation model](/methods/stitch-helicity-condensation-model.md),
+[GHOST](/software/ghost.md).
 
 ## Catalog
 

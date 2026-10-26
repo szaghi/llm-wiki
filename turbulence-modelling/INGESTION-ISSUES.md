@@ -6,6 +6,127 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 4 — 2023–2024 papers: learned SGS models, symbolic regression, anisotropic SGS stress, hybrid RANS/LES of cars and turbomachinery, stabilized high-order methods, lattice Boltzmann, Hall MHD (2026-10-26)
+
+Sources (20): delassaux-2023, zhao-2023, zhao-2023-b, moratillavega-2024,
+morsbach-2024, saini-2023, slaughter-2023, kurz-2023, bernades-2023,
+cheylan-2023, kou-2023, lederer-2023, wang-2023-b, kang-2023,
+lozanoduran-2023, sirignano-2023, foldes-2023, lewis-2023, inagaki-2023,
+tang-2023. 80 of 134 ingested, 103 concept pages plus the registry, 4241
+bibliography entries. Deep lint A1–A7 over the chunk-4 content done.
+
+### Decisions for the human
+
+1. **Two contradictions opened** (see below): both rest partly on works
+   outside the archive or on judgements of adequacy; close by fiat, or keep
+   them open until a source settles them.
+2. **Bibliography calls left by the resolver:** `bardina-1983` merges a
+   PhD thesis (kang-2023) and a Stanford report (inagaki-2023) printed with
+   the same title, authors and year; `lewis-2021` (online-first form) now
+   also holds the 2022 AIAA J. 60 issue printed by lewis-2023; `yuan-2020`
+   and `yuan-2020-b` stay separate (arXiv paper and Phys. Fluids
+   32:115106, relation not confirmed). Split or keep on your word.
+3. **Versions read.** Ten of the 20 files are preprints or manuscripts
+   (seven arXiv, one Research Square, two HAL); delassaux-2023's HAL title
+   ("Computational analysis …") differs from the published one ("Numerical
+   analysis …").
+4. **Candidate pages that now qualify** (two or more sources): Hall MHD
+   (Ferrand et al. 2022, Foldes et al. 2023); interior-penalty DG (Kou et
+   al., Zhao et al. 2023b, Ferrer et al.); a differential Reynolds-stress
+   model (Morsbach et al., Mozaffari et al.); linear forcing of isotropic
+   turbulence (Kurz et al., Kang et al.); the anisotropy-invariant map
+   (Tang et al., Kang et al., Morsbach et al., Helm & Martín); the optimal
+   eddy viscosity (chunk 3). Inline for now; say which you want as pages.
+
+### Contradictions
+
+- **Sparse-regression closures: constant or invariant-dependent
+  coefficients?** Tang et al. (2023, §III B) say such closures "only contain
+  constant coefficients that keep unchanged for the whole computational
+  domain"; Duraisamy (2021, §III.A) describes the sparse regression of
+  Schmelzer et al. as acting on "candidate functions which are written as
+  tensor polynomials of the aforementioned invariants". Both recall
+  Schmelzer et al. (2020), not ingested. *Open* on
+  [tensor-basis neural network](wiki/methods/tensor-basis-neural-network.md).
+- **Is the fifth-order gas-kinetic scheme's dissipation right for implicit
+  LES?** Cao et al. (2022, §3.1): on the Taylor–Green vortex the coarse-mesh
+  filtering "correctly mimics" the unresolved dissipation from $128^3$ up;
+  Zhao et al. (2023a, §5.1): the same scheme at $256^3$ "is still
+  over-dissipative". *Open* on
+  [high-order gas-kinetic schemes](wiki/methods/high-order-gas-kinetic-scheme.md).
+
+Kept as attributed qualifications: Kurz et al. against Beck & Kurz on the
+dynamic model (they agree where their cases overlap); Lederer et al.
+against Abe on explicit models in implicit LES; wall-resolved LES cost
+exponents $Re^{2.7}$ and $Re^{2.5}$ (recalled from different works); SST
+limiter with rotation (Dzanic et al.) or strain (Zhao et al. 2023b);
+Carreño Ruiz & D'Ambrosio against Morsbach et al. on separation bubbles;
+Ferrand et al. against Foldes et al. below the ion scale (different
+quantities); ACAT1 data of François et al. against Lewis et al.; Ahmed
+body width 0.389 m against 380 mm.
+
+### Printed slips (recorded on the Source pages)
+
+- delassaux-2023: 185M against 180M cells; Table 3 sign of ΔCd; 8 against
+  9 refinement boxes; core-hour ratio (compiler check).
+- zhao-2023: $N=(5-3\gamma)(\gamma-1)$; viscosity and $\Delta z^+$ against
+  their own formulas (compiler check). zhao-2023-b: Eqs. 2-2/2-5, the
+  $\omega$ wall condition against $C_w$, ref. [30] title.
+- moratillavega-2024: CFL bound, $St_{\max}$, element counts (compiler
+  checks); probe distance 20 against 15. morsbach-2024: coarse-mesh DOF;
+  Afshar et al. (2022) cited but not listed.
+- saini-2023: percentage ranges across sections; ε for two quantities.
+  slaughter-2023: $C_p$ printed as the dynamic pressure; unsquared TKE;
+  $St=30$ against 10–20.
+- kurz-2023: reward form of Table 1 against Eq. 21. bernades-2023: Eq. 33
+  velocity difference, $N_f$ of the F4 filter, $G^E$ factor.
+- cheylan-2023: Eqs. 12, 37, 40; Table 7 Strouhal error (compiler check).
+  kou-2023: Eq. 27, 4096 against 4095 DOF, two against three test cases.
+  lederer-2023: Eq. 9 upwind term without the absolute value; Table 3
+  gDOF equal to Table 1's; quadrature order (compiler check).
+- wang-2023-b: Table 3 speed-ups, Table 8 ratio definition, G1 GPU count.
+  kang-2023: Leaky ReLU printed as $\max[-0.02x,x]$; Eq. (3.4) partly
+  illegible (gap recorded). lozanoduran-2023: duplicated "2019a" labels,
+  $\Pi$ wording, training ranges against validation cases.
+- sirignano-2023: §4.2 "all statistics" against §7. foldes-2023: D3Q27
+  edge weight 8/27 against 1/54; Eqs. 3.27 and B1 (compiler checks).
+  lewis-2023: Table 9 total, Table 10 error, mesh averages against the
+  quoted WMLES ranges. inagaki-2023: Eqs. 7, 12, 14, factor ½ after Eq. 10.
+  tang-2023: barycentric station 1.5 against 0.5; figure captions swapped;
+  Eqs. 16 and 19.
+
+### Bibliography
+
+4241 entries (+668 from 1113 printed references); 132 aliases, 29
+verified silences, 2 printed duplicates folded (lewis-2023: Ffowcs
+Williams & Hawkings 1969; Meyer et al. 2019), `FLAGS: 0`. Printed keys
+equal to a Source slug for a different work re-keyed: `sirignano-2023-c`,
+`bernades-2023-b`, `menter-2022-b`, `huang-2022-b`, `li-2022-f`,
+`wang-2023-d`, `yan-2022-b`, `lozanoduran-2022-b` (Lozano-Durán & Arranz);
+`kurz-2022-c` (ETNA, distinct from its preprint `kurz-2020`);
+`polacsek-2022-b` (published form of the submitted `polacsek-2022`).
+Wrong earlier merges split: the BR1 paper to `gassner-2018`,
+`balakumar-2015`. `ducros-1999` volume 152 (printed 1252) confirmed on
+Crossref.
+
+### Bundle fit (D17 candidates, no copy made)
+
+- moratillavega-2024, lewis-2023 (aeroacoustics), cheylan-2023
+  (fluid–structure interaction), wang-2023-b (GPU and floating-point
+  precision): peripheral to closure modelling.
+- foldes-2023 (Hall-MHD lattice Boltzmann): `astrophysical-simulation-codes`.
+- bernades-2023, kou-2023, lederer-2023, zhao-2023 (numerics):
+  `weno-teno` and `high-order-capturing-schemes` share their subjects.
+
+### Candidate pages (kept inline until a second source)
+
+NASA CRM-HL; turbulent Poiseuille–Couette flow; MTU T161 cascade; DrivAer
+car; Settles cavity–ramp; NACA 0012; σ model; variational multiscale
+method; reduced-precision simulation; Orszag–Tang vortex; Burgers
+turbulence; RHEA, TRACE, AVBP, NGSolve; explicit algebraic Reynolds-stress
+model; grid-induced separation; subdomain energy-budget dissipation
+analysis.
+
 ## Chunk 3 — 2022–2023 papers: learned SGS and RANS closures, immersed boundaries, GPU codes, shock–boundary-layer interaction, plasma and wave turbulence (2026-10-26)
 
 Sources (20): maeyama-2022, coelho-2022, fischer-2022, davidovits-2022,

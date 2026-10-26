@@ -5,7 +5,7 @@ description: "Field inversion infers a spatial correction field of a RANS model 
 status: established
 aliases: [FIML, field inversion, field-inversion and machine-learning, inference before learning, variational data assimilation, non-parametric correction, Reynolds-force vector]
 tags: [field-inversion, data-driven, machine-learning, rans, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-25T20:39:00Z
+timestamp: 2026-10-26T07:37:00Z
 ---
 
 # Field inversion and machine learning
@@ -451,7 +451,7 @@ is used:
   ill-conditioned. Their results add a caveat for the first step: the
   inferred field is consistent with the model, but not unique, and it can be
   over-fitted.
-- Two sources of this chunk take other routes to data in RANS. McConkey et
+- Two further sources take other routes to data in RANS. McConkey et
   al. (2022) train on labels computed from DNS and inject the prediction
   once into a converged RANS solution, the open-loop alternative described
   on [model-consistent training](/methods/model-consistent-training.md).
@@ -459,6 +459,17 @@ is used:
   with a [physics-informed neural network](/methods/physics-informed-neural-network.md)
   closed by boundary data instead of a turbulence model. Neither paper
   compares itself with field inversion.
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) take the
+  integrated route for LES, with no inferred field in between: the
+  network parameters $\boldsymbol\theta$ are optimized directly through the
+  continuous adjoint of the LES equations (§2.2, Eqs. 2.9–2.10; see
+  [model-consistent training](/methods/model-consistent-training.md)). As
+  recalled there (§1), adjoint-based model-consistent RANS closures go
+  back to Parish & Duraisamy (2016), with further work by He, Liu & Gan
+  (2018) and an adjoint eddy-viscosity correction by Brenner et al. (2022).
+  The authors state that "traditional one- or two-equation closures", or
+  any multiparametric closure, could replace the network in the same
+  adjoint framework (§2, §7).
 
 ## Qualifications
 
@@ -546,4 +557,5 @@ is used:
 - [Cato et al. (2023)](/sources/cato-2023.md) — HAL author manuscript: §I (FIML rationale, Reynolds-force targets), §II A–E, Eqs. 2–12 (model, six corrections, cost, adjoint, optimizer, discretization), §III B–C, Figs. 3–7, Table I, Eqs. 18–21 (channel, over-learning, alignment), §IV, Figs. 8–10, Table II (hill), §V, Figs. 11–19 (square cylinder, stresses, Reynolds force), §VI–VII, Table III; App. B, Figs. 20–21.
 - [McConkey et al. (2022)](/sources/mcconkey-2022.md) — arXiv v1: §II A, Eq. 6 (optimal eddy viscosity, compared with Cato et al.'s Eq. 18), §II D (open-loop injection).
 - [Eivazi et al. (2022)](/sources/eivazi-2022.md) — arXiv v1: §1–2 (RANS closed by boundary data, no turbulence model).
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1 (adjoint-based RANS closures recalled), §2, §2.2, Eqs. 2.9–2.10, §7 (integrated adjoint training of an LES closure).
 - [Yan et al. (2022)](/sources/yan-2022.md) — accepted manuscript, §1, §2.1–2.3, Eqs. 5–11, 14–17; §3.1 (S809, Figs. 4–7, 10, Table 1); §3.2 (parametrized hills, Figs. 11, 13–22, Table 2); §3.3 (GLC305/944, Figs. 25–33, Tables 3–4).

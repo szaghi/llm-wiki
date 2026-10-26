@@ -3,9 +3,9 @@ type: Method
 title: "WENO and hybrid shock-capturing schemes in scale-resolving simulation"
 description: "WENO schemes capture shocks by nonlinear weighting of candidate stencils; in DNS and LES of compressible turbulence their dissipation is reduced by optimized weights and limiters, by linear weights in smooth flow, or by hybrids that apply WENO only where a shock sensor fires, and in implicit LES it serves as the subgrid dissipation."
 status: established
-aliases: [WENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-SYMBO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme]
+aliases: [WENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-SYMBO, HWENO, Hermite WENO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme]
 tags: [numerical-dissipation, dns, compressible, implicit-les, gpu]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-26T07:42:00Z
 ---
 
 # WENO and hybrid shock-capturing schemes in scale-resolving simulation
@@ -35,6 +35,9 @@ in turbulence (see [numerical dissipation](/properties/numerical-dissipation.md)
 | Fifth-order WENO with linear weights; WENO-Z with characteristic-variable reconstruction | reconstruction of the [gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md): linear weights for the Taylor–Green vortex and channel, WENO-Z for supersonic isotropic turbulence | Cao et al. (2022), Remark 1, §3.4 |
 | WENO switched on by the Ducros sensor over energy-preserving central schemes | [STREAmS](/software/streams.md) DNS of supersonic and hypersonic boundary layers | Cogo et al. (2022), §2 |
 | Fifth-order WENO for the convective terms | STREAmS implicit LES of a Mars entry capsule wake | Placco et al. (2023), §2 |
+| Seventh-order WENO with linear weights (normal direction); fifth-order WENO-Z-type baseline; fifth-order Hermite WENO (HWENO) on a three-cell stencil of cell averages and cell-averaged derivatives | reconstructions of the gas-kinetic scheme used as implicit LES of the Taylor–Green vortex and channel flow | [Zhao et al. (2023a)](/sources/zhao-2023.md), §3 |
+| Fifth-order WENO (Jiang–Shu and WENO-Z cited), dimension by dimension | reconstruction kernel of the single- and multi-GPU gas-kinetic DNS code | [Wang et al. (2023b)](/sources/wang-2023-b.md), §2, §3.1 |
+| Ducros-sensor hybrid of the KGP split form and an HLLC upwind flux (WENO hybridization cited in §1 as a stabilization of divergence-form schemes) | comparison scheme for density-wave advection in real-gas flow | [Bernades et al. (2023)](/sources/bernades-2023.md), §1, §4.1.1 |
 
 The upwind schemes act on split fluxes or on characteristic variables.
 [OpenCFD-SCU](/software/opencfd-scu.md) splits the flux with Steger–Warming
@@ -75,7 +78,16 @@ each Gauss point for their supersonic cases.
   sixth-order central differences, and no switching to a central convective
   scheme is mentioned. Cao et al. (2022, §3.1) read
   the grid-independent agreement of their kinetic-energy dissipation as
-  support for implicit LES with the gas-kinetic scheme.
+  support for implicit LES with the gas-kinetic scheme. Zhao et al. (2023a,
+  §5.1) find the fifth-order (linear-weight) reconstruction of that scheme
+  "still over-dissipative" as implicit LES and reduce the measured numerical
+  dissipation by raising the order to seven or by the compact HWENO
+  reconstruction, which also brings the realized $Re_\tau$ of channel flow
+  closer to DNS; with $2\times2$ Gauss points per face, however, their
+  seventh-order reconstruction converges at only about fourth order in a
+  smooth advection test (§4, Table 3). The two verdicts on the fifth-order
+  scheme are recorded as an open contradiction on
+  [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md).
 
 ## Hybrid schemes
 
@@ -111,6 +123,16 @@ extrapolation change too (Table 1).
 Dang et al. (2022, §1) add that for Mach numbers "generally exceeding 6" a
 dissipative scheme is usually introduced for robustness at strong shocks.
 
+**Upwind hybrids at density interfaces.** Bernades et al. (2023, §1) list
+HLLC and WENO hybridization, with filtering, as the stabilization of the
+divergence-form schemes used for transcritical (real-gas) flows, and note
+that it adds dissipation. In their ideal-gas density-wave test (§4.1.1,
+Fig. 1) a hybrid that switches between the KGP split form and HLLC by the
+Ducros sensor dissipates the density wave at a slightly lower rate than pure
+HLLC, the sensor being "mostly activated by the oscillations" of the
+non-pressure-equilibrium-preserving central scheme (see
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)).
+
 ## Cost on GPUs
 
 On the AMD MI60 GPU the inviscid upwind difference takes 70% of the
@@ -123,6 +145,13 @@ hoisting divisions out of the seventh-order WENO kernel (10%) (Dang et al.
 2022, §4.3, Figs. 10, 14). The operation count of the WENO-SYMBO kernel is
 estimated by hand, a lower bound because library functions take several
 operations (§5.4).
+
+Wang et al. (2023b, §3.1, §4.1) run the fifth-order WENO reconstruction of
+the gas-kinetic scheme as one kernel per direction, one thread per cell, on
+Nvidia GPUs; they attribute the fact that a Tesla V100 with about 15 times the
+double-precision peak of a TITAN RTX runs only about twice as fast to memory
+bandwidth, "the bottleneck for current memory-intensive simulations" (not
+profiled; Tables 2–3).
 
 ## Qualifications
 
@@ -147,3 +176,6 @@ operations (§5.4).
 - [Cogo et al. (2022)](/sources/cogo-2022.md) — §2 (energy-preserving schemes with WENO switched by the Ducros sensor).
 - [Huang et al. (2022)](/sources/huang-2022.md) — §2.2 (limiter-optimized seventh-order WENO; split-convective alternative).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §2.2.3, Eqs. (14)–(15) (Ducros-weighted sensor); Table 1; §5.
+- [Zhao et al. (2023a)](/sources/zhao-2023.md) — arXiv v1: §3.1–3.3, Fig. 2 (seventh-order WENO, WENO-Z baseline, HWENO); §4, Table 3 (order with four Gauss points); §5.1 (over-dissipation of the fifth-order scheme).
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — arXiv v1: §2 (fifth-order WENO in the gas-kinetic scheme); §3.1 (GPU kernels); §4.1, Tables 2–3 (memory-bandwidth-bound speedup).
+- [Bernades et al. (2023)](/sources/bernades-2023.md) — §1 (upwind and WENO hybridization of divergence-form schemes); §3.2, §4.1.1, Fig. 1 (Ducros-sensor hybrid of KGP and HLLC).

@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-26T05:11:00Z
+timestamp: 2026-10-26T07:43:00Z
 ---
 
 # Notation registry
@@ -210,3 +210,14 @@ that uses one still says what it means.
 | $\alpha_k$, $\beta_k$ | resolved and unresolved fractions of the turbulent kinetic energy | active model split, turbulent channel flow |
 | $m_a$ | anisotropy exponent, $l_\parallel\propto\lambda^{m_a}$ | critical balance, compressible MHD turbulence |
 | $A_\sigma$ | pre-shock average Atwood number | shock-generated turbulence, Rayleigh–Taylor mixing |
+| $R_y=d\sqrt k/\nu$ | wall-distance Reynolds number of low-Reynolds-number RANS damping | $k$-$\varepsilon$ models, $k$-$\omega$ SST |
+| $\tau^{\mathrm{ani}}_{ij}$, $\xi^{\mathrm{AR}}_{ij}$, $\tau^{\mathrm a}_{ij}$, $\nu^{\mathrm a}$ | anisotropic (non-eddy-viscosity) part of the SGS stress, its anisotropic redistribution, the anisotropic model stress and its coefficient | Boussinesq hypothesis, energy backscatter, gradient model |
+| $\mathsf S_{ij}$, $\mathsf W_{ij}$, $b^\perp_{ij}$, $G^m$ | mean strain and rotation scaled by $k/\varepsilon$; non-linear part of the anisotropy; coefficient of the $m$-th basis tensor | Boussinesq hypothesis, tensor-basis neural network, symbolic-regression closures |
+| $\tau_{\mathrm{tr}}$, $h_{ij}$ | training window of an adjoint-trained closure; the network's stress output | model-consistent training, neural-network SGS models |
+| $\Delta_k$ | grid spacing in direction $k$ | anisotropic minimum-dissipation model, LES |
+| $\tau_s$, $\tau_g$, $\sigma_{\mathrm{IP}}$ | solution- and gradient-jump penalty parameters; interior-penalty coefficient | jump-penalty stabilization, implicit LES |
+| $f_q$, $\boldsymbol c_q$, $w_q$, $\tau_{\mathrm{LB}}$ | lattice distribution functions, discrete velocities, lattice weights, relaxation time | lattice Boltzmann methods, ProLB, immersed boundary methods |
+| $a_{\mathrm K}$, $D_x$ | split-form weights; discrete derivative operator | pressure-equilibrium preservation, kinetic-energy preservation |
+| $N_x$ | number of grid points per direction (not the polynomial degree $N$) | GHOST, lattice Boltzmann methods, MHD pages, DNS |
+| $B_{\mathrm{OT}}$ | field amplitude of the Orszag–Tang vortex (no mean field) | decaying MHD turbulence, GHOST |
+| $d_i$, $\alpha_H$, $\epsilon_H$ | ion inertial length; Hall coefficient and its normalized strength | exact laws, decaying MHD turbulence, GHOST, lattice Boltzmann methods |

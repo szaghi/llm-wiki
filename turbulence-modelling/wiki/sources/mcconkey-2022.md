@@ -167,12 +167,13 @@ disambiguated in printed order. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-25). This source is cited on:
+Chunk 3 (2026-10-26), cited further in chunk 4. This source is cited on:
 
 - [Periodic hill](/benchmarks/periodic-hill.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Model-form uncertainty in turbulence closures](/definitions/model-form-uncertainty.md)
 - [Field inversion and machine learning](/methods/field-inversion-machine-learning.md)
+- [k-ε models](/methods/k-epsilon-model.md)
 - [Model-consistent (a posteriori) training of learned closures](/methods/model-consistent-training.md)
 - [Tensor-basis neural network and the integrity basis](/methods/tensor-basis-neural-network.md)

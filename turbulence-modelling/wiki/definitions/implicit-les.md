@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-26T05:09:00Z
+timestamp: 2026-10-26T07:43:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -62,6 +62,21 @@ can carry.
    large-scale averages, "expected to be least influenced by the
    (numerical) dissipation details\"
    (see [shock-generated turbulence](/results/shock-generated-turbulence.md)).
+   [Delassaux et al. (2023)](/sources/delassaux-2023.md) (§4.1) define
+   implicit LES in this sense, as "use of the truncation error of high order
+   numerical scheme to mimic a sub-grid model". [Zhao et al. (2023a)](/sources/zhao-2023.md)
+   (§1) date the idea to Boris et al. (1992, as recalled), and recall MILES
+   and residual-based variational multiscale modelling as relatives; their
+   high-order [gas-kinetic](/methods/high-order-gas-kinetic-scheme.md) ILES
+   has molecular viscosity only, and they state that numerical dissipation
+   "can overcome the problem of over-dissipation that arises in explicit LES
+   models". [Morsbach et al. (2024)](/sources/morsbach-2024.md) (§2) run a
+   wall-resolved ILES of the T161 low-pressure-turbine cascade with the
+   sixth-order DGSEM of TRACE ($N=5$, Roe interface flux, Kennedy–Gruber
+   kinetic-energy-preserving split form, BR1 viscous flux without penalty)
+   and use it as the reference for RANS closures. [Sirignano & MacArt (2023)](/sources/sirignano-2023.md)
+   (§3.2) and [Kurz et al. (2023)](/sources/kurz-2023.md) (§3.3, "iLES")
+   use no-model LES as a baseline for learned closures.
 2. **Designed numerical regularization.** The numerical dissipation is
    built to act as a model. Vicente Cruz & Lamballais (2023, §5.1) use the
    [implicit spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
@@ -88,7 +103,27 @@ can carry.
    They state that DG dissipation and dispersion errors are confined to
    high wavenumbers, so that the numerical dissipation acts "primarily on
    under-resolved scales", making DG "very suitable for ILES" (citing
-   earlier studies).
+   earlier studies). [Zhao et al. (2023b)](/sources/zhao-2023-b.md) (§1),
+   in a RANS paper, recall the same literature: raising the DG order
+   increases the dissipation at the largest wavenumbers while narrowing the
+   range where it acts, and the choice of Riemann solver strongly
+   influences DG ILES.
+   [Kou et al. (2023)](/sources/kou-2023.md) (Abstract, §1, §2.2) study two
+   of these face penalties in HORSES3D, on the solution jump (an increased
+   interior-penalty parameter) and on the gradient jump, and state that
+   [jump-penalty stabilization](/methods/jump-penalty-stabilization.md)
+   "acts as an implicit subgrid model". [Slaughter et al. (2023)](/sources/slaughter-2023.md)
+   (§3, §3.1) stabilize a Fourier spectral/hp element ILES in
+   [Nektar++](/software/nektar-plus-plus.md) with gradient-jump penalisation
+   in the plane and spectral vanishing viscosity in the span. They call the
+   stabilisations "somewhat analogous to a sub-grid scale model" whose
+   dissipation is "a pure characteristic of the numerical scheme", and state
+   the ILES assumption as "the SGS stresses are of the order of magnitude as
+   the truncation error of the discretisation". [Lederer et al. (2023)](/sources/lederer-2023.md)
+   (§3.2–3.3) take the upwind jump term of an exactly divergence-free hybrid
+   mixed finite-element method as the only dissipation, and then restrict
+   it to the high-order part of the jump: the
+   [HOPU method](/methods/high-order-projection-based-upwind-method.md).
 3. **Implicitly filtered LES.** The filter is the one induced by grid and
    discrete operator, whatever closure is added. Beck & Kurz (2023, §I)
    use the term in this sense: the filter width and shape are
@@ -102,6 +137,19 @@ can carry.
    FLEXI uses implicitly filtered equations, with the implicit closure
    through the numerical flux recommended for well-resolved LES and
    explicit eddy-viscosity models available.
+   Kurz et al. (2023, §1, §3.3) state the consequence for learning: in DG
+   the induced filter is an element-local $L^2$ projection coupled through
+   the numerical fluxes, a filter with "typically non-linear kernel", so
+   the exact closure terms cannot be computed even from DNS and supervised
+   learning of closures for implicitly filtered LES is "from our
+   perspective, ill-posed"; reinforcement learning puts the filter in the
+   training loop. [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md)
+   (§2.5) generate wall-model training data in the target solver for the
+   same reason: in implicitly filtered LES the subgrid tensor does not
+   coincide with the stress obtained by filtering Navier–Stokes. Sirignano &
+   MacArt (2023, §3.1) box-filter and downsample DNS, with the filter width
+   equal to the local LES spacing, and treat the result as an implicitly
+   filtered LES solution.
 
 Usages 1 and 2 concern the closure (none, or numerical); usage 3 concerns
 the filter. A page or claim about "ILES" should say which.
@@ -185,6 +233,35 @@ interpretation they flag as needing further work).
   with the missing nozzle–jet feedback loop, among the candidate causes
   given by Shur et al., without settling between them.
 
+- **Gas-kinetic ILES of channel flow.** Zhao et al. (2023a, §5, Tables
+  8–9, Figs. 3–15) run the Taylor–Green vortex at $Re=1600$ on $256^3$ and
+  channel flow at nominal $Re_\tau=180$ ($64\times96\times64$) and 395
+  ($96^3$) with fifth- and seventh-order, non-compact and compact
+  reconstructions. Higher order or the compact stencil brings the realized
+  $Re_\tau$ closer to DNS (at 395: 360.35 for fifth order non-compact,
+  377.05–380.45 for the others, against 392.24) and improves mean velocity,
+  r.m.s. fluctuations and spectra; the fifth-order compact scheme "can
+  almost achieve the accuracy of the 7th-order non-compact scheme".
+- **Jump penalties against explicit models.** On the Taylor–Green vortex
+  at $Re=1600$, $M=0.1$ ($32^3$ elements, $N=3$), unpenalized DG diverges;
+  solution and gradient jump penalties above $\tau_s>1.9$ and
+  $\tau_g>6.3\times10^{-4}$ (page-local penalty parameters, defined on the
+  [jump-penalty](/methods/jump-penalty-stabilization.md) page) remove a
+  spurious second peak of the dissipation rate, and both are "clearly
+  superior" to [Smagorinsky](/methods/smagorinsky-model.md) and
+  [Vreman](/methods/vreman-model.md) models adapted to DG (Kou et al. 2023,
+  §4.2, Figs. 10–12). The paper gives no constants or filter width for the
+  explicit models.
+- **Explicit model on top of DG ILES.** In channel flow at
+  $Re_\tau=392.24$, a projection-based variational multiscale model with
+  the [WALE](/methods/wale-model.md) eddy viscosity gives about the same
+  statistics as ILES at the finer resolutions and slightly worse ones at
+  the coarsest (Lederer et al. 2023, §4.1, Fig. 1). The authors conclude
+  that the explicit model "can harm the implicit dissipation mechanism"
+  (§6). HOPU lowers the bulk-Reynolds-number error of the $N=3$ runs to
+  0.6–1.0%, against 1.1–13.4% for ILES and 2.7–16.3% for the VMS model
+  (Table 2), an error measure the authors call rough.
+
 ## Evidence: when it fails
 
 - **Applicability plateau.** At $48^3$ degrees of freedom ($6^3$ elements,
@@ -253,6 +330,39 @@ interpretation they flag as needing further work).
   DNS values vary little, ILES values span a broad range, which they
   attribute, beyond initial conditions, to modelling assumptions such as an
   inviscid fluid or one- and two-dimensional flow.
+- **Pile-up in DG at moderate order.** In forced HIT at
+  $Re_\lambda\approx180$ with $N=5$ and 7 (24 to 48 degrees of freedom per
+  direction), no-model DG LES "exhibits a buildup of energy in the
+  upper wavenumbers due to lacking dissipation"; static Smagorinsky ($C_s=0.17$) is over-dissipative, a
+  learned element-wise Smagorinsky coefficient matches the DNS spectrum
+  "almost perfectly", and the dynamic model does about as well except at
+  24 degrees of freedom (Kurz et al. 2023, §4.2, Fig. 6). This agrees with the
+  reward of no-model LES falling from $N=3$ to $N=5$ and 8 in Beck & Kurz
+  (2023) above.
+- **Unpenalized DG.** Kou et al. (2023) see standard DG diverge in the
+  Taylor–Green vortex ($32^3$ elements, $N=3$), which they relate to
+  aliasing following Gassner et al. (as recalled), and in a 2D compressible
+  Kelvin–Helmholtz instability ($Re=10^4$, $M=0.5$, $64^2$ elements, $N=3$)
+  at $t/t_c\simeq4$; only the solution penalty completes the
+  Kelvin–Helmholtz run (§4.2–4.3).
+- **Separated bluff-body flow.** For rectangular prisms in confined
+  cross-flow ($Re_0=1000$–2000, LES on $1/64$ or $1/512$ of the DNS points),
+  no-model LES underperforms the learned closures in all cases; it
+  underpredicts the drag coefficient (e.g. 1.88 against 2.45 for filtered
+  DNS at aspect ratio 1) and gives "incorrectly large" resolved Reynolds
+  stresses in the boundary layers (Sirignano & MacArt 2023, §4.1–4.2,
+  Table 2, Figs. 8–9).
+- **Excess near-wall upwind dissipation.** In highly under-resolved DG
+  ILES the velocity jumps, and so the upwind dissipation, are larger near
+  the wall than in the outer flow, more than stability needs (Lederer et
+  al. 2023, §3.3, Figs. 2–3, 10); HOPU targets this.
+- **Still over-dissipative at fifth order.** Measured by the residual of
+  the kinetic-energy budget, the numerical dissipation of the fifth-order
+  gas-kinetic ILES of the Taylor–Green vortex falls with order and with the
+  compact stencil; "the 5th-order scheme for ILES is still over-dissipative"
+  (Zhao et al. 2023a, §5.1, Fig. 7). All their channel spectra show "an
+  unnatural leveling-off of the energy spectrum near the cutoff
+  wavenumber", attributed to the resolution (§5.2.3).
 - **Wall-modelled resolution.** Implicit SVV alone underestimates $u_\tau$
   by more than 12% at $Re_\tau=2000$ with $\Delta x^+=18$ (Vicente Cruz &
   Lamballais 2023, §7.4), so it "cannot be used alone in the context of
@@ -291,6 +401,19 @@ proportional to the cell size; see
 §IV.3.1, Eqs. 22–23) define an effective viscosity $\nu+\nu_t+\nu_n$ with
 $\nu_n$ the numerical viscosity, which they do not compute.
 
+## Explicit models that act like implicit ones
+
+[Saini et al. (2023)](/sources/saini-2023.md) (Abstract, §5–6) measure, as
+the residual of the discrete resolved-energy budget, how much dissipation
+the numerics add beside an explicit closure: the [WALE](/methods/wale-model.md)
+model in a second-order finite-volume code and
+[spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md) in
+a fifth-order continuous-Galerkin code. Numerical dissipation is 60–90% of
+the total numerical-plus-model dissipation (Abstract); the authors say this "challenges the usual
+assumption in LES practice that all or most of the required subgrid
+dissipation is imparted by the SGS model". Details on
+[numerical dissipation](/properties/numerical-dissipation.md).
+
 ## Qualifications
 
 - The plateau threshold of Flad & Gassner (2017) and the plateau-dissipation
@@ -325,6 +448,21 @@ $\nu_n$ the numerical viscosity, which they do not compute.
   as low as possible, although "some amount of numerical dissipation is
   often needed" for convergence (see
   [numerical dissipation](/properties/numerical-dissipation.md)).
+- Lederer et al. (2023, §4.1, §5.1, §6) and Abe (2021, §I, App. B) reach
+  opposite recommendations about explicit models on coarse grids. In DG
+  ILES of channel flow and the periodic hill, a WALE-based VMS model gives
+  about the same statistics as no model, slightly worse ones on the
+  coarsest channel grids, and "can harm the implicit dissipation
+  mechanism"; Abe, on the coarse high-aspect-ratio grid of a
+  backward-facing step (above), finds that "the performance of the ILES
+  suddenly decreases" and favours a high-quality SGS model on coarse
+  grids. The schemes, models and flows differ, so the two are not
+  recorded as a contradiction.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) (§4.2, §5), after
+  comparing single and double precision in DNS of channel flow with a
+  GPU gas-kinetic code, state that single precision "may not be safe" for
+  DNS of time-evolving turbulence but "may be used" for LES and RANS; the
+  paper runs no LES or RANS case.
 - In the LES modelling-residual estimator that drives the
   [mesh adaptation](/methods/mesh-adaptation.md) of
   [Blind et al. (2023)](/sources/blind-2023.md) (§2.2), the subgrid terms
@@ -365,3 +503,15 @@ $\nu_n$ the numerical viscosity, which they do not compute.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1, Fig. 7.
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §2.3.
 - [Blind et al. (2023)](/sources/blind-2023.md) — §2.2.
+- [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §4.1.
+- [Zhao et al. (2023a)](/sources/zhao-2023.md) — §1; §5.1, Figs. 3–7; §5.2, Tables 8–9, Figs. 8–15.
+- [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §2.
+- [Kou et al. (2023)](/sources/kou-2023.md) — Abstract; §1; §2.2; §4.2, Figs. 10–12; §4.3.
+- [Slaughter et al. (2023)](/sources/slaughter-2023.md) — §3; §3.1.
+- [Lederer et al. (2023)](/sources/lederer-2023.md) — §3.2–3.3, Figs. 2–3, 10; §4.1, Fig. 1, Table 2; §6.
+- [Kurz et al. (2023)](/sources/kurz-2023.md) — §1; §3.3; §4.2, Fig. 6.
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.5.
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §3.1–3.2; §4.1–4.2, Table 2, Figs. 8–9.
+- [Saini et al. (2023)](/sources/saini-2023.md) — Abstract; §5; §6.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4.2; §5.
+- [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §1.
