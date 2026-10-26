@@ -152,7 +152,7 @@ in the text, is not in the list. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26), cited further in chunk 5. This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunks 5–6. This source is cited on:
 
 - [Turbine cascades (T106, T161, VKI LS89)](/benchmarks/turbine-cascade.md)
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
@@ -169,6 +169,8 @@ Chunk 4 (2026-10-26), cited further in chunk 5. This source is cited on:
 - [Laminar kinetic energy transition models](/methods/laminar-kinetic-energy-transition-model.md)
 - [Local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)
 - [Differential Reynolds-stress models](/methods/reynolds-stress-model.md)
+- [Geometric conservation law and free-stream preservation](/properties/geometric-conservation-law.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)
+- [TRACE](/software/trace.md)

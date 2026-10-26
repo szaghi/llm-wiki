@@ -5,7 +5,7 @@ description: "A priori testing evaluates or trains a closure on filtered or aver
 status: established
 aliases: [a priori test, a posteriori test, offline and online evaluation, a-priori training, a-posteriori training]
 tags: [data-driven, sgs-model, machine-learning, les, rans]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:54:00Z
 ---
 
 # A priori and a posteriori testing
@@ -68,7 +68,27 @@ their RANS transition model in the solver "a posteriori".
 [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) do not use the
 words for their own experiments, which are all run in the coarse solver,
 but recall a priori and a posteriori results of other closures (§1).
-The words carry six further meanings that must be kept apart:
+Six further sources use the pair in the same sense.
+[Maejima & Kawai (2025)](/sources/maejima-2025.md) (§5–6) test their
+[super-resolution SGS model](/methods/super-resolution-sgs-model.md) a
+priori on precomputed coarse-LES snapshots, the input the model meets in
+use, rather than on filtered DNS, and then run it in the LES.
+[Oulghelou et al. (2025)](/sources/oulghelou-2025.md) train their RANS
+experts on frozen-RANS targets extracted from high-fidelity data and
+evaluate the blended model in the solver (§2–4; see
+[model aggregation](/methods/turbulence-model-aggregation.md)).
+[Wu et al. (2025)](/sources/wu-2025.md) check the symbolic correction
+against the inverted field without CFD iterations (Fig. 14) and run every
+other test with the model coupled to the solver (§3.3, §4).
+[Li et al. (2024)](/sources/li-2024.md) and
+[Zhao et al. (2025)](/sources/zhao-2025.md) test their
+[neural-operator surrogates](/methods/neural-operator-les-surrogate.md)
+only a posteriori, by autoregressive rollouts from initial fields absent
+from training (Li et al. §V: 10 fields; Zhao et al. §3: 5 fields).
+[Mukha et al. (2025)](/sources/mukha-2025.md) (§III.B.3) compute an "a
+priori" wall stress by feeding the wall model with velocity recorded in
+the running WMLES, then compare with a posteriori runs.
+The words carry seven further meanings that must be kept apart:
 
 - **Training rather than testing.** Duraisamy (2021, §IV) and Agdestein &
   Sanderse (2025, §4.3) speak of *a priori training* (the loss compares the
@@ -91,6 +111,15 @@ The words carry six further meanings that must be kept apart:
   "a posteriori corrections" for corrections applied to an existing RANS
   model; the review does not use the pair for testing, though its argument
   on training and prediction environments (§5.4, §6) is the same one.
+  Zhao et al. (2025, §4.1) call the training-stage behaviour of their
+  coefficient loss an "a priori test", although no model is evaluated on
+  frozen reference inputs there.
+- **Metrics inside or outside the cost function.**
+  [Fanizza et al. (2025)](/sources/fanizza-2025.md) (§3.5) call
+  "iterative" the terms of the field-inversion cost and "a posteriori" the
+  errors of quantities that do not enter it (velocity, wall pressure, skin
+  friction, distance of the eddy viscosity from the baseline); both are
+  computed on the converged data-assimilated RANS solution.
 - **Error estimation in numerical analysis.** In
   [mesh adaptation](/methods/mesh-adaptation.md) the pair names the kind of
   discretization-error estimate, not a closure test.
@@ -333,6 +362,40 @@ model is coupled to the WMLES (Griffin et al. 2023, §§3–4; Vadrot et al.
   "especially in the KdV case", while their energy-conserving closure
   was already reasonable (§4.2; see
   [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+- Zhao et al. (2025, §3.1, Table 2, Figs. 6–7) find the lowest test loss
+  in decaying isotropic turbulence for the data-driven Fourier neural
+  operator (0.029 against 0.058–0.059 for the physics-informed LESnets),
+  yet in rollout it deviates in rms velocity and vorticity by $t\approx2T_E$
+  and fails on the kinetic energy at $t\approx T_E$ ($T_E$ the large-eddy
+  turnover time, page-local), while LESnets stay close to filtered DNS over
+  about $5T_E$. With 2000 training fields the
+  test loss is already about 0.059, but the a posteriori rms velocity and
+  spectra are too high until 3000 fields are used (§5.3, Fig. 25). See
+  [neural-operator surrogates](/methods/neural-operator-les-surrogate.md).
+- Mukha et al. (2025, §III.B.3, Table III, Figs. 4–5) find a priori that
+  time-averaging the input of an algebraic wall model reduces the
+  wall-stress error, most of the gain being reached at an averaging time
+  of $0.01\,\delta/u_\tau$; with the mean velocity as input the error
+  drops to 0.06%, 0.2% and $-1.07$% on three meshes. A posteriori, WMLES
+  with averaging times of 5 to 500 time steps show "no systematic accuracy
+  gain", because the velocity at the sampling point itself changes with
+  the averaging, "violating" the a priori assumption. The authors
+  conclude that for algebraic models the matching height matters more
+  than the averaging, "at odds with" Yang et al. as they cite them (see
+  [wall-modelled LES](/methods/wall-modelled-les.md)).
+
+**A priori failure on the deployment input predicts a posteriori
+failure.** Maejima & Kawai (2025) test a supervised super-resolution
+network, trained on (filtered DNS, DNS) pairs, on its deployment input,
+very coarse LES fields that differ from filtered DNS ("fDNS $\neq$ vLES").
+A priori it keeps the coarse-LES mean velocity and over-predicts the
+streamwise and shear Reynolds and SGS stresses (§5.3, Figs. 18–21); a
+posteriori it is only slightly better than the conventional model and
+still over-predicts the velocity (§6.1, Fig. 22). Their pipeline, which
+first maps the coarse-LES field to filtered-DNS quality without paired
+data, passes both tests (§5.3, §6.1). The a priori test here is run on
+solver output (precomputed coarse-LES fields), not on filtered DNS; see
+[super-resolution SGS models](/methods/super-resolution-sgs-model.md).
 
 **A priori success is not necessary.** Duraisamy (2021, §IV.A) states
 that successful a priori evaluation is "neither a necessary (e.g.
@@ -523,7 +586,14 @@ interpolation in the steepness factor.
    $\boldsymbol\zeta_{\mathrm m}$, not only between target and prediction.
    Sirignano & MacArt (2023, §1, §5) state the LES version: an a priori
    network "is trained on DNS inputs but receives LES or RANS inputs
-   during prediction".
+   during prediction". Maejima & Kawai (2025, §1, §3.1) state the extreme
+   case: on very coarse grids the resolved LES field is itself
+   non-physical, so filtered DNS is the wrong training input, and paired
+   (LES, DNS) data cannot exist because the two are separate simulations;
+   their remedy is an unsupervised map from LES to filtered-DNS fields.
+   Oulghelou et al. (2025, §3), following Cherroud et al. as they cite
+   them, evaluate the features of their weight regressor on the baseline RANS
+   solution, the same input the model receives in prediction.
 2. **Error accumulation.** In the solver the model sees inputs that carry
    its own past errors. Duraisamy (2021, §IV.A, Fig. 1) illustrates this
    with a neural super-resolution map: it reconstructs fine scales well
@@ -618,6 +688,12 @@ interpolation in the steepness factor.
    literature). Their remedy is to normalize inputs and outputs so that the
    normalized distributions do not change with $Re$ and resolution (see
    [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+8. **The solver changes the input the a priori test froze.** Mukha et al.
+   (2025, §III.B.3) find that time-averaging the wall-model input, which
+   helps a priori on recorded velocity, alters the velocity at the
+   sampling point once the model is coupled, so the a priori gain does
+   not carry over. Model and input are coupled through the solution,
+   which an a priori test with fixed inputs does not represent.
 
 ## Testbeds that allow both tests
 
@@ -791,3 +867,10 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 - [Pacciani et al. (2025)](/sources/pacciani-2025.md) — validation called "a posteriori".
 - [Steinhausen et al. (2023)](/sources/steinhausen-2023.md) — arXiv v1: §5, Fig. 7 (a priori manifold test, tabulation error isolated), §6.
 - [Böttler et al. (2023)](/sources/bottler-2023.md) — arXiv v1: §1, §3.1, Fig. 3 (a priori deviations), §3.2–3.3 (a posteriori).
+- [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1, §3.1 (fDNS against coarse LES, unpaired data); §5.3, Figs. 18–21 (a priori on coarse-LES input); §6.1, Fig. 22 (a posteriori).
+- [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §3, §3.1, Table 2, Figs. 6–7 (test loss against rollout); §4.1 ("a priori test" of training behaviour); §5.3, Fig. 25.
+- [Li et al. (2024)](/sources/li-2024.md) — arXiv v2: §V (a posteriori rollouts from 10 unseen initial fields).
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §III.B.3, Table III, Figs. 4–5 (a priori wall stress, time averaging, a posteriori without gain).
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §2–3 (frozen-RANS targets, features from the baseline solution), §4–5 (a posteriori).
+- [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: Fig. 14 (a priori check of the correction), §3.3, §4 (a posteriori).
+- [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §3.5 (iterative and a posteriori metrics of data assimilation).

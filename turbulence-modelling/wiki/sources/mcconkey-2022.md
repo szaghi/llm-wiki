@@ -167,7 +167,7 @@ disambiguated in printed order. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-26), cited further in chunk 4. This source is cited on:
+Chunk 3 (2026-10-26), cited further in chunks 4, 6. This source is cited on:
 
 - [Periodic hill](/benchmarks/periodic-hill.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
@@ -177,3 +177,4 @@ Chunk 3 (2026-10-26), cited further in chunk 4. This source is cited on:
 - [k-ε models](/methods/k-epsilon-model.md)
 - [Model-consistent (a posteriori) training of learned closures](/methods/model-consistent-training.md)
 - [Tensor-basis neural network and the integrity basis](/methods/tensor-basis-neural-network.md)
+- [OpenFOAM](/software/openfoam.md)

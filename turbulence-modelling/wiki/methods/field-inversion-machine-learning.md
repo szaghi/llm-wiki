@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Field inversion and machine learning"
-description: "Field inversion infers a spatial correction field of a RANS model from data by solving a PDE-constrained inverse problem; FIML then learns that field from local flow features and embeds the learned map in the solver. The sources compare which model term to correct and show non-unique, over-fitted inversions."
+description: "Field inversion infers a spatial correction field of a RANS model from data by solving a PDE-constrained inverse problem; FIML learns that field from local flow features and embeds it in the solver. Sources compare which term to correct, show non-unique and over-fitted inversions, gate corrections out of attached layers, and invert on high-order DG."
 status: established
 aliases: [FIML, field inversion, field-inversion and machine-learning, inference before learning, variational data assimilation, non-parametric correction, Reynolds-force vector]
 tags: [field-inversion, data-driven, machine-learning, rans, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:56:00Z
 ---
 
 # Field inversion and machine learning
@@ -467,6 +467,204 @@ authors read as non-uniqueness of the inverse problem, "also reported by
 other works" (§3.4). One run of their solver costs 1.3 baseline RANS runs; the LES cost
 7679 (Table 4).
 
+## Conditioned field inversion (Wu et al. 2025)
+
+[Wu et al. (2025)](/sources/wu-2025.md) (author manuscript) correct the
+destruction term of the $\omega$ equation of the
+[$k$-$\omega$ SST model](/methods/k-omega-sst-model.md) and ask whether
+the correction spoils the baseline where the baseline was right.
+Page-local: $\beta_\omega$ is the $\omega$-destruction coefficient of SST
+(the blended $\beta_1$, $\beta_2$; the paper's $\theta$), $\gamma_\omega$
+its $\omega$-production coefficient, $\sigma_\omega$ its $\omega$-diffusion
+coefficient.
+
+**Why classic inversion breaks attached flow (§2.1, Eqs. 3–4).** Citing
+Wilcox, the authors state that the log layer of $k$-$\omega$ models requires
+$\beta_\omega-\beta^*\gamma_\omega=\kappa^2\sqrt{\beta^*}\,\sigma_\omega$
+with $\kappa=0.41$. With the classic correction
+$-\beta(\boldsymbol x)\beta_\omega\rho\omega^2$ the constraint becomes
+$\beta\beta_\omega-\beta^*\gamma_\omega=\kappa^2\sqrt{\beta^*}\sigma_\omega$,
+so any $\beta\ne1$ in the log layer breaks the calibration; the authors add
+that wake-law calibrations under pressure gradient are affected too.
+
+**Conditioned inversion (Eqs. 5–6).** The destruction term becomes
+
+$$-\big[(\beta(\boldsymbol x)-1)f_d+1\big]\beta_\omega\rho\omega^2,\qquad f_d=1-\tanh\big[(8r_d)^3\big],\quad r_d=\frac{\mu+\mu_t}{\rho\kappa^2d^2\sqrt{\partial_ju_i\,\partial_ju_i}},$$
+
+with $f_d$ the DDES shielding function of Spalart et al. (2006) as printed
+(see [detached-eddy simulation](/methods/detached-eddy-simulation.md)):
+$f_d=0$ inside the attached boundary layer, where the model is exactly
+SST, and 1 outside, where the correction acts. The same gate is used in
+inversion and in prediction. The assumption, stated by the authors, is
+that the baseline computes the attached boundary layer accurately and
+needs no change there (§1); the justification is that separation errors
+arise mainly in the separated shear layer, outside the shielded region
+(§2.1, citing earlier studies). The authors state that no earlier work applied such a
+filter in the inversion stage; filters had been used for zonal models,
+adverse-pressure-gradient detection and cost reduction (§1).
+
+**Inversion set-up (Eqs. 7–15, 18).** Cost
+$\lambda_{\mathrm{QoI}}\sum_i(Y_i-Y_{\mathrm m,i})^2+\lambda_{L2}\sum_j(\beta_j-1)^2$
+on LES streamwise velocity at 30 random points in the separation region
+(curved backward-facing step) or 40 (wall-mounted hump), with
+$\lambda_{\mathrm{QoI}}$ set so that the cost is about 1 at $\beta\equiv1$
+and $\lambda_{L2}=10^{-5}$ to $10^{-4}$ chosen as large as still gives a
+"decent drop" in error (rule of thumb: penalty 10–20% of the final data
+error). SLSQP with discrete-adjoint gradients from DAFoam on
+[OpenFOAM](/software/openfoam.md), Jacobians by automatic differentiation.
+
+| Training case | Cost reduction, classic | Cost reduction, conditioned | Where $\beta$ departs from 1 |
+|---|---|---|---|
+| curved [backward-facing step](/benchmarks/backward-facing-step.md), $Re_h=13\,700$ | 88.3% | 74.7% | classic: shear layer and the attached layer upstream of the step; conditioned: shear layer only |
+| [NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md), $Re_c=0.936\times10^6$ | 61.7% | 66.7% | classic: about 2 near the shear layer and inside the attached layer on the hump top; conditioned: 4–5 around the shear layer only |
+
+(§3.1, Figs. 4–12; about 140 SLSQP iterations on the hump.) The
+inverted fields are then fitted by symbolic regression to closed forms
+(see [symbolic-regression closures](/methods/symbolic-regression-closure.md)),
+SR-CLS from the classic and SR-CND from the conditioned data, inserted
+into the corresponding equations and called at every iteration; they add
+about 15% and 10% to the runtime, against about 30 times for a random
+forest called every iteration, as reported by Yin et al., whom they cite (§3.2).
+
+**Generalizability levels (§1, Table 1).** The authors grade field
+inversion and machine learning by four levels: **L1**, geometries similar
+to the training ones; **L2**, no degradation of the baseline in simple
+attached flows; **L3**, the same separation mechanism in other geometries
+and Reynolds numbers; **L4**, different separation mechanisms. Most
+earlier studies, they state, test only L1; they cite Spalart for making
+L2 a hard constraint. As they cite, an inversion-trained model built
+on an adverse-pressure-gradient plate failed on the zero-pressure-gradient
+plate (Rumsey et al.), and Gaussian-process deactivation of corrections
+gained L2 at the cost of L1 and L3 (Pepper, Ho et al.).
+
+**Results (§3.3, §4, Tables 5–7).**
+
+| Test | Level | SST | SR-CLS | SR-CND |
+|---|---|---|---|---|
+| hump, $C_f$ error in the separation zone (vs experiment) | training | 100% | about 6.7% of SST | about 6.7% of SST |
+| hump top, $C_f$ error | training | 100% | 160% of SST | about equal to SST |
+| [periodic hills](/benchmarks/periodic-hill.md), slope factor 0.8, $Re=5600$: reattachment (DNS $x\approx5.2$) | L1/L3 | no reattachment before the next hill | about 6.0 | about 6.0 |
+| NLR-7301 two-element airfoil, $C_{L,\max}$ (exp. 3.03), stall angle (exp. $14.1^\circ$) | L3 | 2.84, $11.1^\circ$ | 2.94, $13.1^\circ$ | 3.00, $13.1^\circ$ |
+| SAE notchback, $C_D$ (exp. 0.207) | L3 | 0.181 | 0.209 | 0.211 |
+| 25° [Ahmed body](/benchmarks/ahmed-body.md), velocity-profile error | L3 | 0.677 | 0.069 | 0.072 |
+| zero-pressure-gradient [flat plate](/benchmarks/turbulent-boundary-layer.md), $Re_L=10^7$ | L2 | matches data | over-predicts $C_f$, wrong log layer, $\beta\approx1.06$ in the layer | matches SST, $\beta=1$ |
+| [NACA 0012](/benchmarks/naca-0012-airfoil.md) at $0^\circ$, $Re_c=6\times10^6$ | L2 | reference | over-predicts $C_f$ | about SST |
+
+On the notchback, SR-CLS raises $\beta$ near the wall and distorts the
+upper-surface $C_p$; SR-CND keeps $\beta=1$ there and has smaller $C_p$
+errors (§4.3). The NLR-7301 runs use a compressible code (CFL3D) other
+than the training code, stably (§4.2). The authors conclude that the
+conditioned version has L3 generalizability similar to the classic one
+while keeping L2 (§5). All evidence is numerical, with grid checks on
+three meshes for the test cases.
+
+## Field inversion on a high-order DG discretization (Fanizza et al. 2025)
+
+[Fanizza et al. (2025)](/sources/fanizza-2025.md) study the inversion step
+alone for compressible steady RANS with the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
+(Spalart–Garbaruk $c_{w2}$ correction, negative-SA limiting), discretized
+by a high-order modal discontinuous Galerkin method (orthonormal
+total-degree basis, BR2 viscous fluxes, Roe or local Lax–Friedrichs
+convective fluxes) in ONERA's Aghora code (§2). The motivation (§1):
+corrections inferred on diffusive second-order finite-volume
+discretizations carry discretization error and may not extrapolate to
+other meshes or codes (see
+[discretization-consistent closure](/definitions/discretization-consistent-closure.md));
+the authors state that earlier field inversion used low-order discretizations
+except Ferrero et al. (DG, subsonic).
+
+**Optimization (§3, Eqs. 16–41).** The correction is sought in the DG
+polynomial space, one set of modal coefficients per element; the cost is
+an $L^2$ data misfit, optionally plus an $L^2$ penalty on the correction.
+The gradient is a discrete adjoint consistent with the discretization,
+with residual derivatives from Tapenade automatic differentiation, checked
+against finite differences (App. A). The optimizer is L-BFGS; because it
+uses Euclidean inner products, the gradient is rescaled by the Cholesky
+factor of the (diagonal) mass matrix so that it mimics the continuous
+$L^2$ gradient and is mesh-independent (Eqs. 37–41). The stiff adjoint
+systems need a flexible inner–outer GMRES: on the square cylinder,
+GMRES(180) with block ILU(0) does not converge, flexible GMRES converges in
+12 000 matrix–vector products and its deflated-restart variant in 8000;
+the inner solve runs in single precision, halving matrix storage (§3.4.1,
+Fig. 2).
+
+**Four corrections (§3.3).** In the convention of this page (production
+multiplier with baseline 1):
+
+| Paper's name | Correction | Corresponds to Cato et al.'s |
+|---|---|---|
+| DA-$\boldsymbol f$ | source $\rho\boldsymbol f$ in momentum, with its power $\boldsymbol u\cdot\boldsymbol f$ plus a heat-flux correction in energy | $\boldsymbol f_u$ |
+| DA-$\chi$ | multiplier $(1+\chi)$ of $\mu_t$ in the Reynolds stress, kept positive by a smooth limiter | $\varphi$ |
+| DA-$f_{\tilde\nu}$ | source $\rho\tilde\nu f_{\tilde\nu}$ in the SA equation | $g_{\tilde\nu}$ |
+| DA-$\beta$ | multiplier $\beta$ of the SA production (the paper's $1+\beta$) | $\beta$ |
+
+(Correspondence by the printed forms; the paper attributes its third term
+to Cato et al. as a source term in the SA equation.)
+
+**Results (§4).**
+
+- *Laminar cylinder, $Re=80$, $M=0.15$ (§4.1, Figs. 4–6).* With dense
+  time-averaged DNS velocity, the momentum source fits the mean flow at
+  polynomial degrees 1, 2 and 3; the cost falls by more than three orders
+  of magnitude at degree 1 and more than four at 2 and 3, lowest at degree
+  2, the lowest at which the baseline is free of grid dependence. The
+  authors recommend running data assimilation "at the lowest degree $p$
+  for which the baseline model exhibits no grid-dependency errors".
+- *[Square cylinder](/benchmarks/square-cylinder-flow.md), $Re=22\,000$,
+  $M=0.1$ (§4.2, Figs. 7–8).* Ranking: momentum source best (cost down by
+  more than two orders), then $f_{\tilde\nu}$ (more than one) and $\beta$
+  (at least one); the eddy-viscosity multiplier stalls on a plateau "from
+  the very first iterations". The authors state agreement with Cato et al.
+  (2023), whose incompressible ranking is the same (section above).
+- *[Shock–boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md),
+  $M_\infty=2.28$, $9.5^\circ$ deflection, DNS reference (§4.3).*
+  Normalized errors (1 = baseline):
+
+  | Data | Correction | velocity | $C_p$ | $C_f$ |
+  |---|---|---|---|---|
+  | dense velocity, wall-weighted | momentum source | 0.049 | 0.1825 | 0.0998 |
+  | | $\chi$ | 0.250 | 0.5788 | 0.5689 |
+  | | $f_{\tilde\nu}$ | 0.257 | 0.2076 | 0.8920 |
+  | | $\beta$ | 0.339 | 0.2829 | 1.1450 |
+  | wall $C_p$ only | momentum source | 0.488 | 0.00106 | 0.8540 |
+  | | $\chi$ | 0.458 | 0.17357 | 1.657 |
+  | | $f_{\tilde\nu}$ | 0.542 | 0.04961 | 1.700 |
+  | | $\beta$ | 0.427 | 0.05982 | 1.559 |
+
+  (Tables 1–2.) With dense data only the momentum source lowers the cost
+  by one to two orders of magnitude and corrects quantities absent from the
+  cost; the authors add that the three other corrections "are still
+  constrained by the Boussinesq assumption", whereas the source corrects
+  the Reynolds-stress divergence directly, which matters where the stress
+  is not aligned with the strain (§4.3.1; see
+  [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)). With wall
+  pressure only, the source cuts the $C_p$ error by three orders of
+  magnitude, all four reduce the velocity error similarly, and the three
+  Boussinesq-type corrections make $C_f$ worse than the baseline over the
+  whole wall (§4.3.3). An $L^2$ penalty on the correction reduces its norm
+  but does not significantly improve the near-wall velocity and $C_f$; the
+  authors conclude that sparse data need regularization built on physical
+  prior knowledge (§4.3.4, §5, Tables 3–4).
+
+The paper also proposes the inferred fields as detectors of RANS-model
+failure (§5). Discrete adjoints give more accurate gradients than
+continuous ones, the authors state, at higher cost in large 3-D problems
+(§1).
+
+## Generalization across flow classes
+
+[Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (§1) state that
+corrections trained on narrow flow classes "do not generalize to radically
+different flows, and often deteriorate the representation of canonical
+flows", while training on many flows at once "may lead to a soft
+compromise solution". Their answer is to keep several class experts and
+blend them with learned weights (see
+[model aggregation](/methods/turbulence-model-aggregation.md)); the answer
+of Wu et al. (2025) is to switch the correction off where the baseline is
+trusted. Both protect attached flow: the blend reproduces SST in a channel
+at $Re_\tau=1000$, the conditioned model reproduces it on the flat plate.
+
 ## Consistency claims
 
 Both reviews argue that FIML is preferable to learning directly from DNS,
@@ -597,6 +795,35 @@ is used:
   of the model equation, where Eq. 5 has the model's velocity. The 0.86
   threshold is attributed to Schmitt, but the figures and text use 0.8
   (§III C, §V A).
+- **Scope of the conditioned inversion.** Wu et al. (2025) train on two
+  separations from curved surfaces (curved step, hump) and test mostly
+  separation from edges or shear layers; their Table 1 example of L3 for
+  smooth-surface separation is not tested on its own. The method assumes
+  that no correction is needed inside attached boundary layers (§1); where
+  $f_d=0$ the model is exactly SST (Eq. 5), so it cannot change a
+  separation onset decided inside the shielded layer *(compiler check, not
+  in the sources)*.
+- **Printed slips in Wu et al. (2025).** §3.2 refers to the features of
+  "Table 3" (they are in Table 2); the Fig. 44 caption writes "SST-CLS" for
+  SR-CLS; Table 7 is captioned as mean square errors while its row is
+  labelled RMSE; §4.5 refers to Figure 45 for the airfoil grid (it is Fig.
+  49); the integrated friction coefficient of Eq. 21 divides the already
+  dimensionless $C_f$ by a dynamic pressure. The paper writes the eddy
+  viscosity as $\mu_t$, $\mu_T$ and $\nu_t$ interchangeably and uses
+  $\gamma$ also for a sample ratio.
+- **Fanizza et al. (2025): text against tables.** §4.3.1 says the three
+  other corrections reduce "the three errors" by less than an order of
+  magnitude, but Table 1 gives the production multiplier a $C_f$ error of
+  1.1450, above the baseline. §4.3.4 says the penalty degrades the
+  velocity and wall-pressure errors; against Table 2, Table 3 shows the
+  velocity error improving for the $\chi$, $f_{\tilde\nu}$ and (at one
+  weight) $\beta$ corrections *(compiler check, not in the sources)*. Tables
+  3 and 4 print different penalty weights for the $f_{\tilde\nu}$ and
+  $\beta$ runs. The correction space is written $(\mathcal V_h^p)^{d+2}$
+  while the printed source vector has $d+1$ free components, and the
+  polynomial space is described as tensor-product although its dimension
+  $(p+d)!/(p!d!)$ is that of total-degree polynomials. The
+  Reynolds-number of the shock interaction is not printed.
 - **Ranking in Cato et al. (2023).** Table III rates $f_{\tilde\nu}$ in the
   top class and $\beta$ in the middle class for the channel, while Table I
   gives the two nearly equal errors there ($E_u$ $8.1\times10^{-3}$ against
@@ -615,3 +842,6 @@ is used:
 - [Yan et al. (2022)](/sources/yan-2022.md) — accepted manuscript, §1, §2.1–2.3, Eqs. 5–11, 14–17; §3.1 (S809, Figs. 4–7, 10, Table 1); §3.2 (parametrized hills, Figs. 11, 13–22, Table 2); §3.3 (GLC305/944, Figs. 25–33, Tables 3–4).
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — arXiv v2: §1 (earlier adjoint inversions), §2.2.2–2.2.5, Eqs. 13, 19–21, 32, App. B (stochastic discrepancy, adjoint, variational inference); §3.1–3.4, Fig. 7, Tables 2–5 (backward-facing step).
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — arXiv v3: §II.B (ensemble Kalman calibration), §V (data-assimilation alternatives).
+- [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §1, Table 1 (L1–L4, earlier work); §2.1, Eqs. 1–6 (log-layer constraint, conditioned inversion); Eqs. 7–15, 18 (cost, adjoint); §3.1, Figs. 4–12; §3.2 (cost of the learned models); §3.3, §4, Tables 5–7, Figs. 15–50; §5.
+- [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §1 (discretization error, adjoints, earlier DG work); §2–3, Eqs. 1–41, Fig. 2 (DG RANS, corrections, discrete adjoint, gradient scaling, flexible GMRES); §4.1–4.3, Figs. 4–15, Tables 1–4; §5; App. A.
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §1 (class-specific corrections, multi-flow training).

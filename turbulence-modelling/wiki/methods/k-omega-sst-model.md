@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "k-ω SST model"
-description: "Menter's two-equation shear-stress-transport eddy-viscosity model, blending a k-ω inner formulation with an outer one through F1 and limiting the eddy viscosity through F2; its equations, constants and printed variants, its transition, PANS, DES and compressibility-corrected forms, high-order discretization, and evidence on airfoils, fan stages, turbine cascades, cars, vortex flows and its transported k."
+description: "Menter's two-equation shear-stress-transport eddy-viscosity model, blending a k-ω inner formulation with an outer one through F1 and limiting the eddy viscosity through F2; its equations, constants and printed variants, its transition, PANS, DES and compressibility-corrected forms, high-order discretization, data-driven corrections, and evidence on airfoils, cascades, cars, separated flows and its transported k."
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-26T10:25:00Z
+timestamp: 2026-10-26T15:50:00Z
 ---
 
 # k-ω SST model
@@ -92,6 +92,41 @@ $y^+\simeq1$" ([Delassaux et al. (2023)](/sources/delassaux-2023.md),
 §4.1.2; HAL author manuscript). Morsbach et al. (2024) use the 2003 version
 of Menter et al. with the Kato–Launder production, without printing
 constants ([Morsbach et al. (2024)](/sources/morsbach-2024.md), §2).
+
+**A third printed form, with constants.** Oulghelou et al. (2025) print
+the incompressible model of their modified OpenFOAM with the same $F_1$,
+$F_2$ and cross-diffusion and the constants $\sigma_k=(0.85,1)$,
+$\sigma_\omega=(0.5,0.856)$, $\alpha=(5/9,0.44)$, $\beta=(0.075,0.0828)$,
+$\beta^*=0.09$, $a_1=0.31$, the source's names being $\alpha_k$, $\alpha_\omega$
+and $\gamma$ for the registry's $\sigma_k$, $\sigma_\omega$ and $\alpha$
+([Oulghelou et al. (2025)](/sources/oulghelou-2025.md), §2 Eqs. 3–6, App. B;
+arXiv v2). The production is limited, $P_k\le c_1\beta^*k\omega$ with
+$c_1=10$, and the eddy viscosity is
+$\nu_t=a_1k/\max\big(a_1\omega,\,b_1\lvert S\rvert F_{23}\big)$ with $b_1=1$, a
+strain magnitude, and $F_{23}=F_2F_3$ when the optional
+$F_3=1-\tanh\big[\big(\min(150\nu/(\omega d^2),10)\big)^4\big]$ is enabled.
+The production coefficients follow from the log-layer condition
+$\alpha=\beta/\beta^*-\sigma_\omega\kappa^2/\sqrt{\beta^*}$: with $\kappa=0.41$
+this gives 0.5532 and 0.4403, the values Dzanic et al. tabulate; Oulghelou
+et al.'s 0.44 is the rounding of 0.4403, while their $5/9\approx0.5556$
+differs from 0.5532 in the third digit, so it is not a rounding of the
+log-layer value *(compiler check, not in the sources)*. The same condition,
+written as $\beta_\omega-\beta^*\gamma_\omega=\kappa^2\sqrt{\beta^*}\sigma_\omega$
+with page-local $\beta_\omega$, $\gamma_\omega$ for the $\beta$ and $\alpha$ of
+the equations above (Wu et al.'s $\theta$ and $\gamma$), is the one Wu et al.
+(2025) use to argue that a field-inversion multiplier of the destruction
+must equal one in the log layer (below). Oulghelou et al. call SST itself
+a heuristic blend of $k$-$\varepsilon$ and $k$-$\omega$ (§1).
+
+Möller et al. (2024) print the compressible model in Favre-averaged form
+with the rotation-magnitude limiter of Dzanic et al., $a_1=0.31$ and
+$\beta^*=0.09$, without the other constants
+([Möller et al. (2024)](/sources/moller-2024.md), §II.B.1, Eqs. 14–16;
+accepted manuscript). Klose et al. (2025) use, like Morsbach et al., the
+Kato–Launder production with the $\gamma$-$Re_\theta$ model in the
+finite-volume part of [TRACE](/software/trace.md)
+([Klose et al. (2025)](/sources/klose-2025.md), §2; ASME accepted
+manuscript).
 
 ### Compressibility correction
 
@@ -204,6 +239,32 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
   $C_{\mathrm{DES}}=0.78F_1+0.61(1-F_1)$, and use $C_{d1}=20$, $C_{d2}=3$ in the
   DDES shielding function, raising $C_{d1}$ to 30 for more shielding
   (§4.1.3, Eqs. 6–11, §4.4).
+
+- **Transitional DDES.** Möller et al. (2024) couple SST-DDES to the
+  one-equation $\gamma$ model by multiplying the production of $k$ by
+  $\gamma$ and the DDES destruction by $\max(0.1,\gamma)$
+  (§II.B.3; see [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+
+### Data-driven corrections of SST
+
+- **Conditioned field inversion.** Wu et al. (2025) multiply the
+  $\omega$-destruction $\beta_\omega\omega^2$ by a spatial field
+  $\beta(\boldsymbol x)$, which classic field inversion lets act everywhere
+  and which, by the log-layer condition above, spoils the calibration
+  wherever it differs from one; they gate it as
+  $\big[(\beta(\boldsymbol x)-1)f_d+1\big]\beta_\omega\omega^2$, with $f_d$ the DDES
+  shielding function, so that the model is SST inside attached boundary
+  layers ([Wu et al. (2025)](/sources/wu-2025.md), §2.1, Eqs. 2–6;
+  authors' manuscript; $\beta_\omega$ is the SST coefficient $\beta$ of the
+  equations above, which the source calls $\theta$). Symbolic fits of the inverted fields add about 10–15% to the
+  run time (§3.2). Details on the
+  [field-inversion page](/methods/field-inversion-machine-learning.md) and
+  [model-form uncertainty](/definitions/model-form-uncertainty.md).
+- **Tensor-basis corrections and their blending.** Oulghelou et al. (2025)
+  add a symbolic extra-anisotropy and a $k$-equation production correction
+  to SST and blend several such experts in space (§2–§3; see the
+  [Boussinesq page](/definitions/boussinesq-hypothesis.md) and
+  [turbulence-model aggregation](/methods/turbulence-model-aggregation.md)).
 
 ### Implementation in a lattice Boltzmann solver
 
@@ -417,6 +478,51 @@ operational role and need not match their DNS counterparts
   gives the same onset on T3A as SST but a quicker transition and a
   different turbulent $C_f$, so the constants "should be retouched" per
   host model (§5.1.1, Fig. 5).
+- **Separated flows as baseline of data-driven corrections.** Wu et al.
+  (2025) find SST overpredicting separation in every separated case they
+  test: it reattaches too late on the curved backward-facing step, does not
+  reattach before the next hill on the parametrized periodic hill
+  ($Re=5600$, slope parameter 0.8; DNS reattachment near $x=5.2$),
+  stalls early on the NLR-7301 two-element airfoil ($C_{L,\max}=2.84$ at
+  $11.1^\circ$ against 3.03 at $14.1^\circ$ measured; $Re=2.51\times10^6$),
+  underpredicts the drag of the SAE notchback (0.181 against 0.207) and
+  separates from the start of the slant of the $25^\circ$
+  [Ahmed body](/benchmarks/ahmed-body.md), where they state that the
+  experiment stays attached (velocity-profile error 0.677; the slant
+  topology is disputed between sources, see that page's Contradictions); their conditioned symbolic
+  correction gives 3.00 at $13.1^\circ$, 0.211 and 0.072 (§4.1–4.4, Tables
+  5–7). On the zero-pressure-gradient flat plate and the NACA 0012 at
+  $0^\circ$, SST is the reference the corrections must reproduce (§4.5).
+  Oulghelou et al. (2025) report SST separation lengths, in units of the
+  case length, of 7.42 on the [periodic hill](/benchmarks/periodic-hill.md)
+  ($Re=10\,595$; LES 4.49), 3.41 on a converging–diverging channel (DNS
+  0.85) and 3.59 on the curved step (LES 3.55); on the
+  [NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md) at
+  $Re=9.36\times10^5$ its bubble extends from $x/c=0.62$ to 1.24 against
+  1.15 measured (Tables 6, 11). On the
+  [zero-pressure-gradient boundary layer](/benchmarks/turbulent-boundary-layer.md)
+  SST beats all their corrected models (mean absolute $C_f$ error
+  $8.4\times10^{-5}$; Table 9).
+- **Transonic compressor buffet.** On the TCTA transonic cascade (inlet
+  $M=1.21$, $Re=1.35\times10^6$), URANS with SST, Kato–Launder production and
+  $\gamma$-$Re_\theta$ captures the shock-buffet Strouhal number of the
+  implicit LES ($ft_c=0.161$ against 0.163–0.165; experiment about 0.14) but
+  places the mean shock upstream ($x_s/c=0.504$ against 0.528–0.537),
+  with less than half the oscillation amplitude of the LES (0.072 against
+  0.158–0.278), a mainly laminar suction side and wrong surface
+  distributions; it needed $\Delta t/t_c=2.8\times10^{-5}$ ($t_c$ the convective
+  time, page-local), "because the shock oscillation magnitude and frequency
+  are otherwise not correctly predicted", and cost 74.6 core-hours per
+  convective time against 15 583 to 152 850 for the LES (Klose et al. 2025,
+  §6, Tables 1–2, Fig. 7; see
+  [compressor cascades](/benchmarks/compressor-cascade.md) and
+  [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+- **Dynamic stall.** SST with an intermittency transport equation, as
+  two-dimensional URANS and as the RANS part of a stress-blended eddy
+  simulation, agrees with a wall-resolved LES of a pitching NACA 0012
+  within 0.1 in $C_L$ in attached flow and gives the same $22^\circ$ peak-lift
+  angle ([Baldan & Guardone (2025)](/sources/baldan-2025.md), §2.2,
+  Fig. 9; arXiv v2; see [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
 - **Aircraft wake precursor.** Bouhafid et al. (2024) use an SST RANS on an
   adapted mesh as the precursor of a temporal LES of a NACA 0012 wing with a
   jet ([Bouhafid et al. (2024)](/sources/bouhafid-2024.md), §2.2, §3; see
@@ -498,3 +604,8 @@ version read (arXiv v1):
 - [Liu et al. (2024)](/sources/liu-2024.md) — Eq. 9, Figs. 6, 8–13, Conclusions.
 - [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §4.2 Eqs. 15–18, §5.1.1 Fig. 5, §6.1, App. A Eq. A14.
 - [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) — §2.2, §3.
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — §1, §2 Eqs. 3–6, App. B, Tables 6, 9, 11 (arXiv v2).
+- [Möller et al. (2024)](/sources/moller-2024.md) — §II.B.1 Eqs. 14–16, §II.B.3 (accepted manuscript).
+- [Klose et al. (2025)](/sources/klose-2025.md) — §2, §6, Tables 1–2, Fig. 7 (ASME accepted manuscript).
+- [Wu et al. (2025)](/sources/wu-2025.md) — §2.1 Eqs. 2–6, §3.2, §4.1–4.5, Tables 5–7 (authors' manuscript).
+- [Baldan & Guardone (2025)](/sources/baldan-2025.md) — §2.2, Fig. 9 (arXiv v2).

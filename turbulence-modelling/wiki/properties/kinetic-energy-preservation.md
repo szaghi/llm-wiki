@@ -3,9 +3,9 @@ type: Property
 title: "Kinetic-energy preservation and split forms"
 description: "A discretization is kinetic-energy preserving when its convective terms neither create nor destroy discrete kinetic energy; this page gives the split-form families and two-point fluxes, kinetic energy as an entropy, why a dissipation-free baseline is robust but thermalizes or disperses without help, and what it does not control."
 status: established
-aliases: [KEP, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
+aliases: [KEP, KEEP, kinetic-energy and entropy preserving scheme, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T11:35:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -160,6 +160,48 @@ Gruber, a Roe interface flux and BR1 viscous terms with a central flux and no
 penalty, which the authors state is stable "in combination with a stable
 advective discretisation" (citing Gassner et al.); no explicit subgrid model
 is used.
+
+**Entropy-conserving split form in a transonic DG implicit LES.** In the
+same TRACE DGSEM, [Klose et al. (2025)](/sources/klose-2025.md), §2, use
+the entropy-conserving split form of Chandrashekar "together with the
+corresponding Riemann solver", BR1 viscous fluxes with a central flux and
+$N=3$, for an implicit LES of a transonic
+[compressor cascade](/benchmarks/compressor-cascade.md); they state that
+kinetic-energy or entropy-conserving split forms "cancel numerical errors
+and stabilize the high-order scheme", and add
+[subcell finite-volume blending](/methods/subcell-finite-volume-shock-capturing.md)
+at the shocks.
+
+**Pirozzoli split flux on GPUs.** The GPU DGSEM code
+[GALÆXI](/software/galaexi.md) keeps FLEXI's split-flux formulation of
+Gassner et al. with Pirozzoli's kinetic-energy-preserving two-point flux, on
+LGL nodes, as its remedy for aliasing in under-resolved runs, the
+alternatives named being over-integration and filtering
+([Kurz et al. 2025](/sources/kurz-2025.md), §2.2). The shared-memory volume
+integral keeps the structure of the standard one (App. A); the two-point
+evaluation "increases the computational cost considerably" (§2.2), and the
+volume integral, of $O(N^4)$ operations per element against $O(N^3)$ or
+less for the other routines, takes 39% of the run time of a split-form
+case at $N=7$ (Table 1, Fig. 5).
+
+**Kinetic-energy- and entropy-preserving central finite differences
+(KEEP).** [Maejima & Kawai (2025)](/sources/maejima-2025.md), §2, run DNS
+and LES of compressible channel flow at $Re_\tau\approx1000$, $M_b\approx0.1$,
+with the second-order kinetic-energy- and entropy-preserving split-form
+central scheme of Kuya, Totani & Kawai, non-dissipative, chosen so that the
+subgrid dissipation of the [super-resolution SGS model](/methods/super-resolution-sgs-model.md)
+they train is not contaminated by numerical dissipation. In the code
+comparison of [Chapelier et al. (2024)](/sources/chapelier-2024.md),
+§III.B.b–c, the SPADE solver uses the same family (Kuya et al., Totani et
+al.; orders 2 to 8, order 8 in the runs) blended with a third-order upwind
+flux by the Ducros sensor (see [WENO and hybrid schemes](/methods/weno-scheme.md)),
+and OpenSBLI offers central differences of arbitrary order in quadratic and
+cubic split forms (Coppola et al., as recalled). On the supersonic
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $64^3$ the two
+dissipation-free central codes, SPADE and NS3D, predict the kinetic energy
+very accurately up to $t\approx12$ and slightly too high afterwards, which
+the authors explain by a small-scale pile-up near the cut-off without
+subgrid closure (§IV.A, Fig. 5), the thermalization discussed below.
 
 ## Kinetic energy as an entropy
 
@@ -333,6 +375,16 @@ DNS at $Re_\tau=100$ the two schemes agree, physical viscosity mitigating the
 oscillations (§4.3). Vicente Cruz & Lamballais (2023, footnote 6) note that
 their immersed-boundary treatment is not kinetic-energy conserving.
 
+**A continuous energy bound is not a discrete property.**
+[Llorente (2024)](/sources/llorente-2024.md), Theorem 1 (pp. 8–9), proves for
+the Reynolds-averaged equations of a volume-penalized
+[immersed boundary](/methods/immersed-boundary-method.md) that the $L^2$
+norm of the mean velocity at a time $T$ is bounded by that of the body
+velocity provided the total viscosity $\nu+\nu_t$ stays non-negative. It is
+an energy estimate of the continuous system, conditional on exact
+penalization inside the body, and says nothing about the kinetic-energy
+behaviour of a discretization.
+
 ## Cost
 
 Krais et al. (2021, §7.1) report 1.35 µs per degree of freedom, stage and core
@@ -387,3 +439,8 @@ polynomial de-aliasing in their in-house code, without timings.
 - [Wang et al. (2024)](/sources/wang-2024.md) — §2.3, Eqs. (5)–(11) (five convective forms, KGP2); §2.5, Table 1 (dispersion and dissipation); §3.1, Fig. 2 (inviscid Taylor–Green time reversal); §3.2–3.3, §5 (TKE budgets, recommendation).
 - [Kim et al. (2024)](/sources/kim-2024.md) — §2.1 (energy-conserving second-order central scheme, no-model stability); §4.2.1, Table 3 (no-model LES, QUICK near the front); App. C (divergence on the coarsest grids).
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv 2301.13770v5: §2.2, Eqs. (8)–(14) (skew-symmetric Burgers and KdV discretizations); §3.1, Eq. (37) (stability conditional on an energy-conserving coarse operator); §4.5, §4.8, §6.
+- [Klose et al. (2025)](/sources/klose-2025.md) — ASME accepted manuscript: §2 (Chandrashekar entropy-conserving split form with matching Riemann solver in TRACE).
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv 2404.12703v2: §2.2, Table 1, Fig. 5 (Pirozzoli split flux in GALÆXI, cost of the two-point volume integral); App. A.
+- [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §2 (second-order KEEP central scheme for DNS and LES).
+- [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL hal-04582857v1: §III.B.b–c (KEEP-based SPADE, split forms in OpenSBLI); §IV.A, Fig. 5 (late-time pile-up of the central codes).
+- [Llorente (2024)](/sources/llorente-2024.md) — author accepted manuscript: Theorem 1, Eqs. (13)–(14) (continuous energy bound of penalized URANS).

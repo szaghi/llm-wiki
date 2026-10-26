@@ -127,11 +127,12 @@ under Printed slips; none is unparseable and no printed duplicate was found.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2–3. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 3, 6. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+- [Bottleneck effect in the energy spectrum](/definitions/bottleneck-effect.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Discretization-consistent closure](/definitions/discretization-consistent-closure.md)
 - [Energy backscatter and the subgrid energy flux](/definitions/energy-backscatter.md)

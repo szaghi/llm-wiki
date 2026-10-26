@@ -151,14 +151,16 @@ undated software.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-26), cited further in chunks 4–5. This source is cited on:
+Chunk 3 (2026-10-26), cited further in chunks 4–6. This source is cited on:
 
 - [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
+- [Artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
+- [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)
 - [Immersed boundary methods](/methods/immersed-boundary-method.md)
 - [Jump-penalty stabilization of high-order methods](/methods/jump-penalty-stabilization.md)
 - [Mesh adaptation for turbulent-flow simulation](/methods/mesh-adaptation.md)
@@ -171,5 +173,6 @@ Chunk 3 (2026-10-26), cited further in chunks 4–5. This source is cited on:
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [FLEXI](/software/flexi.md)
+- [GALÆXI](/software/galaexi.md)
 - [HORSES3D](/software/horses3d.md)
 - [Nektar++](/software/nektar-plus-plus.md)

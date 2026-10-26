@@ -5,7 +5,7 @@ description: "Maps that turn the mean velocity of a variable-property compressib
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:52:00Z
 ---
 
 # Compressible velocity transformations
@@ -247,7 +247,7 @@ thickness as a possible reason for its success (§3.2).
 
 ## Transformations as a validation yardstick
 
-Four further sources use a transformation not to rank transformations but to
+Five further sources use a transformation not to rank transformations but to
 judge a simulation.
 
 - **Hybrid RANS/LES of supersonic channels.** [Carlsson et al. (2023)](/sources/carlsson-2023.md)
@@ -295,6 +295,26 @@ judge a simulation.
   as they cite it (Fig. 13). The paper does not discuss the choice of the van
   Driest transformation over the alternatives above; see
   [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md).
+- **Implicit LES of a supersonic channel.** [Cao et al. (2024)](/sources/cao-2024.md)
+  (§3.3, Fig. 8) apply the same van Driest transformation, which they
+  state is "expected to satisfy the incompressible log law", to implicit LES
+  with the curvilinear high-order gas-kinetic scheme of an isothermal-wall
+  channel at bulk $M_b=1.5$ and bulk Reynolds number 3000 ($\mu\propto T^{0.7}$,
+  $Pr=0.70$). On $128^3$ cells (first point at $\Delta y^+=0.50$,
+  $\Delta x^+=21.18$, $\Delta z^+=7.06$) the transformed mean velocity is "in
+  reasonable agreement" with the DNS of Coleman et al. and of Morinishi et
+  al. (as they cite them), and a constrained LES on a coarser grid, as
+  they list it, "also performs very well" (Fig. 8; Table 4). Their wall
+  statistics, $Re_\tau=211$ against 222 and 218 in the two DNS and
+  $B_q=-0.047$ against $-0.049$ and $-0.048$ (Table 5; $B_q$ the heat-flux
+  parameter), are close; with the native BGK value $Pr=1$ the mean density
+  and temperature profiles change "greatly" and $Re_\tau$ rises to 221, and
+  the authors conclude that the Prandtl number must be corrected to the
+  target value (§3.3, Table 5, Fig. 7). As in Wang et al. (2023b), the
+  choice of the van Driest transformation is not discussed, although the
+  wall is isothermal with a non-zero heat flux ($B_q=-0.047$); Carlsson et al. (above) call it
+  inaccurate for non-adiabatic walls on the strength of the studies they
+  cite. See [implicit LES](/definitions/implicit-les.md).
 
 ## Assessments of the temperature–velocity relation
 
@@ -335,6 +355,13 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
   Huang et al. (2022) write the velocity stretching of the same
   transformation without a square root, $g_I=\mu^+dy^*/dy^+$ (table above).
   Both printed forms are recorded here without deciding between them.
+- Cao et al. (2024) print the bulk velocity and density as integrals over
+  $[-\delta,\delta]$ without the factor $1/(2\delta)$ (§3.3), and their
+  printed wall-unit spacings imply $Re_\tau\approx216$ where Table 5 gives
+  211 ($\Delta x^+=4\pi Re_\tau/128=21.18$ with the $4\pi\delta$ box and 128
+  cells gives $Re_\tau=215.7$, and $\Delta z^+=7.06$ gives 215.8) *(compiler
+  check, not in the sources)*. Locators refer to the arXiv v1 preprint read (2021, five authors;
+  the Journal of Scientific Computing version lists four).
 - Helm & Martín (2022, Sec. III B) write "The much shorter rescaling length
   of the DNS (29δ compared to 7δ for the LES)": as printed, the length called
   shorter is the larger number.
@@ -348,4 +375,5 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 - [Helm & Martín (2022)](/sources/helm-2022.md) — Sec. III B, Tables I–II, Fig. 3; Sec. IV F, Fig. 31.
 - [Dang et al. (2022)](/sources/dang-2022.md) — §5.1, Fig. 17.
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4.2, Eqs. (10)–(11), Figs. 11, 13 (arXiv v1).
+- [Cao et al. (2024)](/sources/cao-2024.md) — §3.3, Tables 4–5, Figs. 7–8 (arXiv v1).
 - [Chen et al. (2024)](/sources/chen-2024.md) — §1; §3.1, Eqs. (3.1)–(3.7), Fig. 3; §3.2, Eqs. (3.11)–(3.14), Figs. 4–5; §3.3, Eqs. (3.15)–(3.17), Fig. 6; App. B, Eq. (B1), Fig. 16.

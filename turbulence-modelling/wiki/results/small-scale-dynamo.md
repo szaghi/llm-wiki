@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Small-scale turbulent dynamo"
-description: "The small-scale (fluctuation) dynamo amplifies magnetic fields by turbulent stretching without a mean field; the page gathers its kinematic and saturated stages, Schekochihin's (2022) tearing-limited saturation theory, and simulation evidence on growth rates, saturation levels, resolution and multiphase gas."
+description: "The small-scale (fluctuation) dynamo amplifies magnetic fields by turbulent stretching without a mean field; the page gathers its kinematic and saturated stages, Schekochihin's (2022) tearing-limited saturation theory, and simulation evidence on growth rates, saturation levels, resolution, multiphase gas, and the stretching, winding and compression split of the growth rate under explicit bulk viscosity."
 status: hypothesis
 aliases: [fluctuation dynamo, turbulent dynamo, saturated dynamo, tearing-limited dynamo, reconnection-limited dynamo]
 tags: [dynamo, mhd, astrophysics, reconnection, dns, compressible]
-timestamp: 2026-10-25T19:44:00Z
+timestamp: 2026-10-26T15:53:00Z
 ---
 
 # Small-scale turbulent dynamo
@@ -25,15 +25,18 @@ strong-mean-field case. The page carries `status: hypothesis`: the author
 presents the theory as new, supported by "tentative evidence", and leaves
 open the central question of the saturated state (§13.3.4).
 
-Three simulation studies of astrophysical gas add measured growth rates and
+Four simulation studies of astrophysical gas add measured growth rates and
 saturation levels: [Seta & Federrath (2022)](/sources/seta-2022.md) run the
 dynamo in a driven, thermally bistable two-phase medium with explicit
 viscosity and resistivity; [Martin-Alvarez et al.
 (2022)](/sources/martinalvarez-2022.md) measure how the resolved dynamo in a
 cosmological galaxy simulation depends on resolution and refinement
 strategy; [Liu et al. (2022)](/sources/liu-2022.md) model the part of the
-dynamo the grid cannot resolve. None of them tests the tearing-limited
-theory (see Qualifications).
+dynamo the grid cannot resolve; [Beattie et al. (2025)](/sources/beattie-2025.md)
+control the dissipation of the compressive velocity modes with an explicit
+[bulk viscosity](/definitions/bulk-viscosity.md) and split the growth rate
+into stretching, winding and compression. None of them tests the
+tearing-limited theory (see Qualifications).
 
 Page-local notation: $\ell$ is the scale of the stretching motions, $L$ the
 outer scale, $\delta u_\ell$ the velocity increment at $\ell$,
@@ -47,7 +50,15 @@ rate of magnetic energy (the quantity it refers to is stated per source),
 $R_{\mathrm{sat}}=E_{\mathrm{mag}}/E_{\mathrm{kin}}$ in the saturated state,
 $E_B(k)$ the magnetic energy spectrum, $h_{\min}$ the finest cell size,
 $c_s$ the sound speed and $t_0$ the eddy-turnover time at the driving scale;
-the turbulent Mach number is $M_t=u_{\mathrm{rms}}/c_s$.
+the turbulent Mach number is $M_t=u_{\mathrm{rms}}/c_s$. In the
+bulk-viscosity section, $\nu_b$, $Re_{\mathrm{bulk}}$, $P_\nu=\nu/\nu_b$,
+$\boldsymbol u_{\mathrm c}$, $\boldsymbol u_{\mathrm s}$, $E_{\mathrm c}$,
+$E_{\mathrm s}$ are the bulk viscosity, bulk Reynolds number, viscous Prandtl
+number and the compressive and solenoidal velocity parts and their kinetic
+energies, as defined on [bulk viscosity](/definitions/bulk-viscosity.md),
+$\ell_0$ the driving scale, and $\gamma_B$ (page-local) the instantaneous
+growth rate of $\langle\boldsymbol B^2\rangle$ divided by two, so that
+$\Gamma_E=2\gamma_B$ in the kinematic stage.
 
 ## Kinematic stage and the onset of tearing
 
@@ -187,6 +198,12 @@ different quantities; their rates are not directly comparable.
 - **Liu et al. (2022, §5.1.1)** give the e-folding time of their subgrid
   amplification, $h/\sigma_{\mathrm{sgs}}$ (see [subgrid turbulent dynamo
   model](/methods/subgrid-turbulent-dynamo-model.md)).
+- **Beattie et al. (2025, §1, §4.5)**: kinematic, nonlinear and saturated
+  stages are exponential, linear and zero growth of the volume-averaged
+  magnetic energy; $\Gamma_E$ is fitted by log-linear regression over
+  $10\le t/t_0\le30$ in units of $t_0^{-1}$, with $t_0=\ell_0/u_{\mathrm{rms}}$
+  and $\ell_0$ half the box, and the saturated ratio $R_{\mathrm{sat}}$ is
+  averaged over $t/t_0\ge75$.
 
 ## Reynolds number, resolution and numerical dissipation
 
@@ -298,9 +315,11 @@ between Kolmogorov and Burgers ($k^{-2}$) for the weak-feedback run
 
 ## Stretching against compression
 
-All three sources separate amplification by field-line stretching from the
-frozen-in compression scaling $|\boldsymbol B|\propto\rho^{2/3}$ (magnetic
-energy density $\propto\rho^{4/3}$):
+The three galaxy and multiphase sources separate amplification by field-line
+stretching from the frozen-in compression scaling
+$|\boldsymbol B|\propto\rho^{2/3}$ (magnetic energy density
+$\propto\rho^{4/3}$); Beattie et al. (2025) split the growth rate itself
+(next section):
 
 - Martin-Alvarez et al. (2022, §3.3.1, Eq. 5, Fig. 8) build an
   adiabatic-compression estimate of the magnetic energy from the density
@@ -317,6 +336,101 @@ energy density $\propto\rho^{4/3}$):
   ($|\boldsymbol B|\propto\rho^0,\rho^{1/2},\rho^{2/3},\rho$), with fitted
   slopes between $\rho^{0.22}$ and $\rho^{0.71}$ and a large spread: "the
   magnetic field strength is not only controlled by the density".
+
+## Growth-rate decomposition and bulk viscosity in a trans-sonic dynamo
+
+[Beattie et al. (2025)](/sources/beattie-2025.md) (read in arXiv v4) run
+the dynamo in forced, isothermal, visco-resistive MHD at $M_t\approx0.90$–$0.96$
+(kinematic stage) with a modified FLASH finite-volume code, $Re=Rm=1000$,
+$Pm=1$, Ornstein–Uhlenbeck forcing at $\ell_0=L/2$ with a 2:1
+solenoidal-to-compressive energy ratio, a seed magnetic energy of
+$10^{-10}\rho_0c_s^2$ ($\rho_0$ the mean density), grids $128^3$–$1024^3$, and an explicit
+[bulk viscosity](/definitions/bulk-viscosity.md) with
+$P_\nu=\nu/\nu_b\in\{\infty,1,0.1,0.01,0.001\}$ (§4, Table 1). Their
+Reynolds numbers are real-space, $u_{\mathrm{rms}}\ell_0/\nu$ (footnote 3).
+
+**Decomposition of the growth rate** (§3.2, Eqs. 33–40, App. C). From the
+induction equation with uniform resistivity in a periodic box,
+$d\langle B^2\rangle/dt=2\gamma_B\langle B^2\rangle-2\eta_m\langle\partial_jB_i\partial_jB_i\rangle$,
+with
+
+$$\gamma_B=\underbrace{\frac{\langle B_iB_jS^d_{ij}\rangle}{\langle B^2\rangle}}_{\text{stretching}}+\underbrace{\frac{\langle B_iB_j\Omega_{ij}\rangle}{\langle B^2\rangle}}_{\text{winding}}-\underbrace{\frac{\langle B^2\,\nabla\cdot\boldsymbol u\rangle}{6\langle B^2\rangle}}_{\text{compression}},$$
+
+the velocity-gradient tensor being split orthogonally into expansion
+$\tfrac13(\nabla\cdot\boldsymbol u)\delta_{ij}$, deviatoric strain $S^d_{ij}$
+and rotation $\Omega_{ij}$. The winding term vanishes identically because
+$B_iB_j$ is symmetric and $\Omega_{ij}$ antisymmetric (Eq. 39), and the
+simulations confirm it. The factor $\tfrac16$ comes from the
+$-\tfrac12B^2\nabla\cdot\boldsymbol u$ of the induction equation and the
+$+\tfrac13B^2\nabla\cdot\boldsymbol u$ of the expansion part; the identity
+$B_i\,[\nabla\times(\boldsymbol u\times\boldsymbol B)]_i=B_iB_j\partial_ju_i-\tfrac12B^2\nabla\cdot\boldsymbol u-\tfrac12\nabla\cdot(\boldsymbol uB^2)$
+(their Eqs. C7–C8, with $\nabla\cdot\boldsymbol B=0$) reproduces it *(compiler
+check, not in the sources)*. Compressions ($\nabla\cdot\boldsymbol u<0$) raise
+the local growth rate by $\tfrac16|\nabla\cdot\boldsymbol u|$, rarefactions
+lower it by as much; for compression along the field the compression term
+cancels the stretching contribution (§3.2, footnote 6). The saturation
+balance of stretching plus compression against Ohmic dissipation (Eq. 42)
+is, the authors state, the one Yousef et al. (2007) derived for
+incompressible turbulence.
+
+**Results** (§5–§8, Table 1, Figs. 5–13):
+
+| $P_\nu$ | grid | $\Gamma_E$ [$t_0^{-1}$] | $R_{\mathrm{sat}}$ |
+|---|---|---|---|
+| $\infty$ | $512^3$ | $1.48\pm0.03$ | $0.17\pm0.03$ |
+| 1 | $1024^3$ | $1.42\pm0.01$ | $0.15\pm0.04$ |
+| 1 | $512^3$ | $1.42\pm0.02$ | $0.14\pm0.03$ |
+| 0.1 | $512^3$ | $1.47\pm0.05$ | $0.20\pm0.03$ |
+| 0.01 | $256^3$ | $1.46\pm0.03$ | $0.19\pm0.07$ |
+| 0.001 | $256^3$ | $1.28\pm0.02$ | not run to saturation |
+
+- **Integral quantities barely depend on $\nu_b$.** The saturated ratio
+  $\approx0.15$ (Alfvén Mach number $\approx2.5$) is consistent within
+  $1\sigma$ with the Stokes-hypothesis results of Federrath et al. (2011),
+  which the authors cite; the growth rate drops only when the bulk-viscous decay time
+  reaches $t_0$ (§5.1–5.2). The solenoidal modes saturate at
+  $\langle E_{\mathrm{mag}}\rangle/\langle E_{\mathrm s}\rangle\approx0.1$ for
+  every $P_\nu$, the compressive ones at ratios between 1 and 10 (Fig. 6).
+- **Stretching dominates**, in the kinematic and the saturated stage, even in
+  this compressible dynamo; it grows the field "for all quantiles above the
+  16th percentile", and its median moves towards zero by a factor of about
+  two at saturation, as, according to the authors, Sur & Subramanian
+  (2023) found at Mach 3 (§5.2, Figs. 7–8).
+- **Compression plays a "dual role"**: its term is nearly symmetric about
+  zero, growing and decaying the field in about equal amounts at
+  $M_t\approx1$; lowering $P_\nu$ narrows its fluctuations while keeping its
+  mean near zero, which the authors call "a key result" (§5.2).
+- **A larger-scale field.** Low $P_\nu$ suppresses high-wavenumber modes and
+  makes the field larger-scale in both stages; the saturated correlation
+  wavenumber settles at $k_{\mathrm{cor}}\ell_0\approx2.5$ ($k_{\mathrm{cor}}$
+  page-local). The mechanism offered, that the bulk dissipation wavenumber
+  "drags" the shear one, and with it the resistive one through
+  $\ell_\nu/\ell_\eta\sim Pm^{1/2}$, is a hypothesis (§7, Eq. 58,
+  Figs. 10–12).
+- **Spectral ratios.** In the kinematic stage
+  $E_B(k)\sim k^2E_{\mathrm s}(k)$ up to the ratio peak, flattening to
+  about $kE_{\mathrm s}(k)$ at saturation, with the equipartition wavenumber
+  moving from about 100 to about 10 at $P_\nu=\infty$ (§8, Fig. 13).
+- **Resolution.** Growth rates and integral statistics converge by $256^3$
+  (App. D). The compressive-mode spectra and the claim that dynamo
+  simulations without bulk viscosity are implicit LES for those modes are on
+  [bulk viscosity](/definitions/bulk-viscosity.md) and
+  [compressible MHD turbulence](/results/compressible-mhd-turbulence.md).
+
+The authors read the dominance of stretching as the reason why
+$\ell_\nu/\ell_\eta\sim Pm^{1/2}$ also holds in compressible flow, citing
+Kriel et al. (2025) (§9.2). They state (footnote 4) that the growth-rate
+decompositions of Seta & Federrath (2021) and Sur & Subramanian (2023)
+neglected the expansion part of the velocity gradient and overestimated the
+effect of compression by factors of 3 and 6; those works are not ingested,
+and the vorticity-budget analysis of the ingested
+[Seta & Federrath (2022)](/sources/seta-2022.md) above is a different
+decomposition.
+
+Seta & Federrath (2022) and Beattie et al. (2025) both give $\Gamma_E$ in
+units of a driving-scale time, but with different time units, Reynolds-number
+definitions, driving and thermodynamics; their rates are not compared by
+either source.
 
 ## Spectral signatures
 
@@ -361,13 +475,24 @@ large-scale shape and can mask the peak migration (App. B).
   review, not a bundle contradiction.
 - The theory revises the author's earlier result (Schekochihin et al. 2002,
   2004) that the reversal scale is resistive, $L\,Rm^{-1/2}$.
-- **Regime of the simulations.** The three simulation sources run
+- **Regime of the simulations.** The four simulation sources run
   compressible MHD at $Re=Rm=2000$, $Pm=1$ (Seta & Federrath 2022), or
   ideal MHD with numerical dissipation and an estimated numerical $Pm\sim2$
   (Martin-Alvarez et al. 2022); the galaxy runs stay kinematic or saturate
-  through a tuned subgrid model (Liu et al. 2022). None addresses fold
+  through a tuned subgrid model (Liu et al. 2022); Beattie et al. (2025) run
+  isothermal MHD at $Re=Rm=1000$, $Pm=1$, $M_t\approx1$. None addresses fold
   tearing or the $Rm$ scaling of the saturated reversal scale, so they
   neither support nor contradict the tearing-limited theory above.
+- **Printed slips, Beattie et al. (2025).** §5.2 reads a growth rate
+  $\Gamma_E t_0\approx1.4$ as an e-folding "every $1.4t_0$"; the magnetic
+  energy then e-folds every $t_0/1.4\approx0.71t_0$ *(compiler check, not in
+  the sources)*. §5.2 also says the growth rate is "significantly affected"
+  for $P_\nu\le0.01$, while Table 1 gives $1.46\pm0.03$ at $P_\nu=0.01$,
+  within the range of the larger $P_\nu$; only $P_\nu=0.001$ is clearly
+  lower. §4.2 gives a 2:1 solenoidal-to-compressive forcing energy, §5.1
+  "the same amount of energy". §7 writes the kinematic-stage field as
+  small-scale with $k_{\mathrm{cor}}\ell_0<1$, the Fig. 11 caption with
+  $k_{\mathrm{cor}}\ell_0>1$.
 - **Printed exponents, Martin-Alvarez et al. (2022, §3.2, pp. 3334–3335).** The
   text pairs $Re\propto\Delta x_{\max}^{-4/3}$ (ideal Kolmogorov, Kritsuk et
   al. 2011) and $Re\propto\Delta x_{\max}^{-1/3}$ (linear scaling of the
@@ -405,3 +530,4 @@ large-scale shape and can mask the peak migration (App. B).
 - [Seta & Federrath (2022)](/sources/seta-2022.md) — §2.3–§2.5; §3.1, Figs. 5–6; §3.2; §4.1, Table 1; §4.2, Eqs. (9)–(10), Figs. 9–12, Tables 2–3; §5; App. C.
 - [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md) — §1; §2; §3.1–§3.2, Figs. 6–7; §3.3.1, Eq. (5), Fig. 8; §3.3.4; §3.3.5, Figs. 12–14; §4; App. B.
 - [Liu et al. (2022)](/sources/liu-2022.md) — §1; §5.1.1; (subgrid model: §2.2, Eq. 14).
+- [Beattie et al. (2025)](/sources/beattie-2025.md) — §1, Eqs. (1)–(3), footnotes 3–4, 6; §3.2, Eqs. (33)–(42); §4, Table 1; §5.1–5.2, Figs. 5–8; §7, Eq. (58), Figs. 10–12; §8, Fig. 13; §9.2; App. C, Eqs. (C1)–(C16); App. D.

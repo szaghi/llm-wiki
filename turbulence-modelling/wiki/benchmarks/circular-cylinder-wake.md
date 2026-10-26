@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Circular-cylinder wake"
-description: "Flow past a circular cylinder, chiefly at Re_D=3900 in the shear-layer transition regime, with separation, shear-layer roll-up and a turbulent wake: the test of neural-network SGS models across grids and Reynolds numbers, of high-order PANS against unmodelled under-resolved simulation, and of immersed-boundary lattice Boltzmann numerics."
+description: "Flow past a circular cylinder, chiefly at Re_D=3900 in the shear-layer transition regime, with separation, shear-layer roll-up and a turbulent wake: the test of neural-network SGS models across grids and Reynolds numbers, of high-order PANS against unmodelled under-resolved simulation, and of immersed-boundary lattice Boltzmann numerics; at Re_D=80 the laminar validation of mean-flow data assimilation on a discontinuous Galerkin discretization."
 status: established
 aliases: [cylinder wake, flow over a circular cylinder, flow past a circular cylinder, cylinder at Re_D=3900]
-tags: [benchmark, separated-flow, les, neural-network, pans, immersed-boundary]
-timestamp: 2026-10-26T10:26:00Z
+tags: [benchmark, separated-flow, les, neural-network, pans, immersed-boundary, field-inversion]
+timestamp: 2026-10-26T15:57:00Z
 ---
 
 # Circular-cylinder wake
@@ -167,6 +167,29 @@ primary recirculation", as the DNS does, while no-model LES and the
 [anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md)
 predict two recirculation regions (Figs. 13–14).
 
+**Laminar mean-flow assimilation on a high-order discretization.**
+[Fanizza et al. (2025)](/sources/fanizza-2025.md), §4.1, validate adjoint
+data assimilation of a steady RANS-type system on a modal
+[discontinuous Galerkin](/methods/discontinuous-galerkin-spectral-element-method.md)
+discretization (ONERA's Aghora code) on the laminar cylinder at $Re_D=80$
+and $M=0.15$. The flow sheds vortices; the target is the time-averaged DNS
+on the same mesh, which a steady computation does not reproduce: the
+baseline steady solution over-estimates the wake size. Grid: 4386 cubic
+quadrangles extending to 30$D$, no-slip adiabatic wall, non-reflecting far
+field. A momentum and energy source $\rho\boldsymbol f_{\mathrm{DA}}$ (the
+correction compared on the
+[field inversion](/methods/field-inversion-machine-learning.md) page) is
+inferred from dense velocity data with no penalty at polynomial degrees
+$N=1$, 2, 3; the corrected axial momentum is "in good agreement with DNS"
+at all three degrees (Figs. 4–5). The cost falls by more than three orders
+of magnitude at $N=1$ and more than four at $N=2$ and 3, with the lowest
+minimum at $N=2$, the lowest degree at which the baseline is free of
+mesh-dependency errors (Fig. 6); the authors recommend running the
+assimilation at that degree, since higher $N$ adds degrees of freedom the
+mean flow does not need. The turbulent bluff-body test of the same paper
+is the
+[square cylinder](/benchmarks/square-cylinder-flow.md).
+
 **What the sources share.** In both scale-resolving studies at
 $Re_D=3900$ the recirculation length is the measure most sensitive to the
 model and the resolution: the SGS model and grid in
@@ -198,6 +221,11 @@ both lean on Parnaudeau et al. for reference data.
   whose standard deviation equals that of the training data (§4.1).
 - The grids of $Re_D=5000$ and 10,000 are marginal for second-order
   statistics by the authors' own grid study (App. C).
+- The cylinder of [Fanizza et al. (2025)](/sources/fanizza-2025.md) at
+  $Re_D=80$ is laminar and unsteady; it validates the assimilation method,
+  not a turbulence model. Their DG space is the total-degree modal space
+  ($(N+1)(N+2)/2$ modes per element in 2D), although §2.3 calls it a
+  tensor-product space.
 - The cylinder of [Cheylan et al. (2023)](/sources/cheylan-2023.md) at
   $Re_D=100$ is laminar; it tests immersed-boundary numerics, not a
   turbulence model.
@@ -208,3 +236,4 @@ both lean on Parnaudeau et al. for reference data.
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §3.2, Table 2, Figs. 7–13; §4.
 - [Cheylan et al. (2023)](/sources/cheylan-2023.md) — §3.1, Tables 2–3; §3.4, Table 13.
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §6, Figs. 13–14.
+- [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §2.3; §4.1, Figs. 4–6.

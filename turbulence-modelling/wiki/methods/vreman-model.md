@@ -5,7 +5,7 @@ description: "Vreman's static eddy-viscosity model builds the subgrid viscosity 
 status: established
 aliases: [Vreman eddy-viscosity model, Vreman (2004) model, static-coefficient Vreman model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T15:49:00Z
 ---
 
 # Vreman model
@@ -71,7 +71,7 @@ not print the value of $C_v$ used in their runs.
 
 [Blind et al. (2023)](/sources/blind-2023.md) (§2.3, §3, §3.3) use "the
 Vreman model constant" 0.03 for wall-resolved channels, the value of
-Toosi & Larsson (as recalled), and 0.11 for the wall-modelled channel,
+Toosi & Larsson (cited), and 0.11 for the wall-modelled channel,
 "from previous experience". The paper does not print the model formula,
 so it cannot be decided whether these values are $C_s$ or the prefactor
 $2.5C_s^2$ of the table. Their length scale is the DG one,
@@ -178,6 +178,63 @@ $N$ (the paper's $P$), with $N=5$.
   dissipation before the peak and significant dissipation at mid
   wavenumbers. No constant or filter width is printed.
 
+## Spectral-element LES
+
+Two sources use the model in continuous-Galerkin
+[spectral-element](/methods/spectral-element-method.md) codes.
+
+- **Form and constant in NUMA.**
+  [Reddy et al. (2026)](/sources/reddy-2026.md) (§3.2, Eqs. 9a–b) print
+  the model in the index order of Kim et al.:
+  $\beta_{ij}=\Delta_k^2\,\partial_k\bar u_i\,\partial_k\bar u_j$ (summed
+  over $k$), with a direction-dependent effective resolution $\Delta_k$,
+  equal in all directions in their runs. The prefactor is
+  $c\approx2.5C_s^2$, with the Smagorinsky value $C_s=0.14$, raised to 0.21
+  for a Burgers test. The prefactor is therefore about 0.049
+  *(compiler check, not in the sources)*. To the authors' knowledge the
+  model "has not been previously studied within the spectral element
+  framework or in the context of atmospheric flows" (§3.2).
+- **Results in NUMA ($N=4$, filter width $\min(h_x,h_y,h_z)/(N+1)$).**
+  Reddy et al. compare Vreman with Smagorinsky and the
+  [residual-based dynamic model](/methods/residual-based-dynamic-sgs-model.md):
+  - In passive-tracer transport, the errors in the extrema are about
+    0.05 kg/kg, against 0.12–0.15 kg/kg for Smagorinsky (§5.2).
+  - In a two-dimensional inviscid Burgers system with discontinuities,
+    Vreman oscillates and diverges at $t=0.7$ s, while the residual-based
+    model, with one coefficient per equation, stays stable. The authors
+    attribute the divergence to the single coefficient shared by both
+    equations (§6.2).
+  - In the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+    ($32^3$ elements), Vreman conserves more kinetic energy than
+    Smagorinsky (§7.2).
+  - In the Straka density current, Vreman and Smagorinsky resolve
+    Kelvin–Helmholtz rotors already at 50 m spacing, with similar enstrophy
+    and the largest tracer overshoots (§8.2).
+- **Wall-modelled LES in Nek5000.**
+  [Mukha et al. (2025)](/sources/mukha-2025.md) (§II.D, §III) use Vreman in
+  [Nek5000](/software/nek5000.md) ($N=7$) for
+  [wall-modelled LES](/methods/wall-modelled-les.md) of channel flow at
+  $Re_\tau\approx8000$ and of a flat-plate boundary layer.
+  - The constant is $2.5C_s^2$ with $C_s=0.16$, which the authors call
+    "slightly below the theoretical value for homogeneous isotropic
+    turbulence".
+  - The length scale is the maximum GLL spacing in the element, assigned to
+    the whole element.
+  - $\nu_t$ is not forced to zero at the wall. Its asymptote is linear in
+    $y$, but no decrease toward the wall is discernible, whereas the Sigma
+    model, with a cubic asymptote, visibly reduces $\nu_t$. The authors
+    conclude that "not only the asymptotic behavior … but also how fast the
+    model transitions towards the asymptote" matters (§III.C).
+  - Of the closures tested on the finest channel mesh (Vreman, Sigma and a
+    high-pass relaxation filter), Vreman stabilizes best and gives the
+    smoothest derivatives.
+  - The wall stress computed from the mean wall gradient deviates from the
+    modelled one by 8.07% with Vreman, against −25.72% with Sigma and
+    −84.85% with the filter.
+  - With Vreman, the mean velocity is within 1% of DNS for $y>0.1\delta$ on
+    all three meshes, and the boundary-layer skin friction is within 2% of
+    wall-resolved LES on the finest mesh (§III.B, §IV.B).
+
 ## Filter width for high-order wall-modelled LES
 
 Duan & Wang (2024) keep the model coefficients and recalibrate the filter
@@ -256,3 +313,5 @@ computed and subtracted from the mean-stress model.
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §3.2; §4.2–4.5; §6.
 - [Kou et al. (2023)](/sources/kou-2023.md) — §4.2, Fig. 12.
 - [Duan & Wang (2024)](/sources/duan-2024.md) — §2.4, Eq. (15); §3, Eqs. (26)–(30); §5.1–5.4, Figs. 5–15; §6.
+- [Reddy et al. (2026)](/sources/reddy-2026.md) — preprint of 4 March 2021: §3.2, Eqs. (9a)–(9b); §5.2; §6.2; §7.2; §8.2.
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §II.D; §III.B–III.C, Figs. 1–8, Table II; §IV.B.

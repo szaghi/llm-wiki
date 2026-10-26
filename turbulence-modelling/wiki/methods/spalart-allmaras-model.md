@@ -5,7 +5,7 @@ description: "The one-equation eddy-viscosity RANS model transporting the workin
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-26T10:25:00Z
+timestamp: 2026-10-26T15:44:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -89,6 +89,26 @@ $\sqrt{\lvert\Omega\rvert^2+M^2}-M$ with $M=10^{-5}$ (page-local $M$, not a
 Mach number) to keep the model
 differentiable for adjoint computations, and have no trip term
 ([Cato et al. (2023)](/sources/cato-2023.md), §II A, Eqs. 2–4).
+
+Fanizza et al. (2025) print the compressible conservative form, with
+$\rho\tilde\nu$ as the transported variable, diffusion coefficient
+$(\mu+\rho\tilde\nu)/\sigma$, $\chi=\rho\tilde\nu/\mu$, $S_{\mathrm{SA}}$ built on the
+vorticity magnitude, no $f_{t2}$ and no trip, and the constants $\sigma=2/3$,
+$c_{b1}=0.1355$, $c_{b2}=0.622$, $\kappa=0.41$, $c_{w3}=2$, $c_{v1}=7.1$ and
+$c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma$, Cato et al.'s form
+([Fanizza et al. (2025)](/sources/fanizza-2025.md), §2.2, Eqs. 1–5). In place
+of the constant $c_{w2}=0.3$ they use the Spalart–Garbaruk correction "for
+shear flows at low Reynolds numbers",
+$$c_{w2}=c_{w4}+\frac{c_{w5}}{(\chi/40+1)^2},\qquad c_{w4}=0.21,\quad c_{w5}=1.5,$$
+which falls from 1.71 at $\chi=0$ to 0.21 at large $\chi$ and equals 0.3 at
+$\chi\approx123$ *(compiler check, not in the sources)*; negative values of
+$\tilde\nu$ are handled by the negative SA model of Allmaras et al. (§2.2).
+They discretize it with a high-order modal discontinuous Galerkin method
+(BR2 viscous fluxes, Roe or local Lax–Friedrichs convective flux,
+adjoint-consistent wall conditions and source terms) in ONERA's Aghora
+solver (§2.3; see
+[discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
+for the nodal relative).
 
 **Negative SA.** Basile et al. (2023) use the negative-$\tilde\nu$ model with
 $\mu_t=\rho\tilde\nu f_{v1}$ for $\tilde\nu\ge0$ and $\mu_t=0$ for $\tilde\nu<0$
@@ -281,6 +301,28 @@ regardless of the test case" compared with the eddy-viscosity multiplier
 (§II B, Tables I–III, §VII). Error tables, non-uniqueness and over-fitting
 of $\nu_t$ are on the
 [model-form uncertainty page](/definitions/model-form-uncertainty.md).
+
+**Compressible, high-order data assimilation.** Fanizza et al. (2025)
+repeat four of these corrections for the compressible model on the modal
+DG discretization above: a momentum and energy source, a multiplier
+$(1+\chi_h)$ of $\mu_t$ (page-local $\chi_h$, kept positive by a smooth
+limiter), a source $\rho\tilde\nu f_{\tilde\nu}$ in the $\tilde\nu$-equation
+(page-local $f_{\tilde\nu}$, Cato et al.'s proportional source) and a
+production multiplier $(1+\beta)$ with prior zero, inferred by L-BFGS with
+discrete-adjoint gradients computed by flexible inner–outer GMRES and
+algorithmic differentiation (§3.3–3.4). On the square cylinder at
+$Re=22\,000$ the ranking is that of Cato et al., the eddy-viscosity
+multiplier stalling from the first iterations (§4.2, Figs. 7–8). On a
+supersonic shock/boundary-layer interaction ($M_\infty=2.28$, $9.5^\circ$
+deflection) with the Spalart–Garbaruk model, only the momentum source
+corrects the near-wall flow, $C_f$ and wall pressure with dense velocity
+data, and with wall-pressure data alone the three corrections of the SA
+equation and of $\mu_t$ make $C_f$ worse than the baseline (§4.3, Tables
+1–2; numbers on the [Boussinesq page](/definitions/boussinesq-hypothesis.md);
+see [field inversion](/methods/field-inversion-machine-learning.md) and
+[square-cylinder flow](/benchmarks/square-cylinder-flow.md)). The adjoint
+gradient of the eddy-viscosity multiplier is checked against finite
+differences (App. A).
 
 ### SA as the host of detached-eddy simulation
 
@@ -501,3 +543,4 @@ meshes as future work (§9).
 - [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — App. A, Table A.4.
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §3.1, Table 1, Figs. 4–8 (HAL accepted manuscript).
 - [Wang et al. (2024)](/sources/wang-2024.md) — §4.
+- [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §2.2 Eqs. 1–5, §2.3, §3.3–3.4, §4.2 Figs. 7–8, §4.3 Tables 1–2, App. A.

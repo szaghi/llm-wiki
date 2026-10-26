@@ -20,7 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–5 of 7 ingested (100 of the 134 sources planned; the
+**Corpus:** chunks 1–6 of 7 ingested (120 of the 134 sources planned; the
 archive is still growing). Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
@@ -78,7 +78,15 @@ laminar-kinetic-energy transition models, the compressible Baldwin–Lomax
 model, immersed-boundary and lattice-Boltzmann wall treatments, flux
 reconstruction and modal filtering, stabilized finite elements as implicit
 LES, tabulated chemistry for flame–wall interaction, and turbulence in a
-solar flare.
+solar flare. Chunk 6 (2024–2026 papers): transitional DDES of a compressor
+cascade and shock buffet in a transonic cascade, conditioned field
+inversion, adjoint data assimilation and blending of data-driven RANS
+models, neural-operator and super-resolution LES, a residual-based dynamic
+SGS model, artificial viscosity and shock-capturing comparisons for the
+supersonic Taylor–Green vortex, the GPU code GALÆXI, wall-modelled LES with
+spectral elements, LES of dynamic stall, canopy flow and wind-turbine noise,
+exascale DNS of isotropic turbulence, and bulk viscosity in compressible
+MHD turbulence.
 
 ## Reading guide
 
@@ -109,9 +117,11 @@ solar flare.
 [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
 [fractional SGS model](/methods/fractional-sgs-model.md),
 [WALE model](/methods/wale-model.md),
+[residual-based dynamic SGS model](/methods/residual-based-dynamic-sgs-model.md),
 [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md),
 [anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md);
-[energy backscatter](/definitions/energy-backscatter.md);
+[energy backscatter](/definitions/energy-backscatter.md),
+[bottleneck effect](/definitions/bottleneck-effect.md);
 [gradient model and clipping](/methods/gradient-model.md);
 [implicit LES](/definitions/implicit-les.md) and
 [numerical dissipation](/properties/numerical-dissipation.md).
@@ -145,7 +155,10 @@ solar flare.
 [neural-network SGS models](/methods/neural-network-sgs-model.md),
 [symbolic-regression closures](/methods/symbolic-regression-closure.md),
 [Relexi](/software/relexi.md),
-[ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md);
+[ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md),
+[blending of data-driven models](/methods/turbulence-model-aggregation.md),
+[super-resolution SGS models](/methods/super-resolution-sgs-model.md),
+[neural-operator LES surrogates](/methods/neural-operator-les-surrogate.md);
 [discretization-consistent closure](/definitions/discretization-consistent-closure.md),
 [divergence-consistent LES](/methods/divergence-consistent-les.md);
 [mesh adaptation](/methods/mesh-adaptation.md).
@@ -154,6 +167,10 @@ solar flare.
 [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md),
 [kinetic-energy preservation](/properties/kinetic-energy-preservation.md),
 [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md),
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md),
+[continuous-Galerkin spectral elements](/methods/spectral-element-method.md),
+[geometric conservation law](/properties/geometric-conservation-law.md),
+[multi-resolution independent simulations](/methods/multi-resolution-independent-simulations.md),
 [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md),
 [WENO and hybrid shock-capturing schemes](/methods/weno-scheme.md),
 [low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md),
@@ -169,7 +186,9 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [RAMSES](/software/ramses.md), [STREAmS](/software/streams.md),
 [OpenCFD-SCU](/software/opencfd-scu.md), [Nek5000 and NekRS](/software/nek5000.md),
 [HORSES3D](/software/horses3d.md), [Nektar++](/software/nektar-plus-plus.md),
-[ProLB](/software/prolb.md). Compressible wall turbulence:
+[ProLB](/software/prolb.md), [GALÆXI](/software/galaexi.md),
+[TRACE](/software/trace.md), [OpenFOAM](/software/openfoam.md);
+[Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md). Compressible wall turbulence:
 [Morkovin's hypothesis and Reynolds analogies](/definitions/morkovin-hypothesis.md),
 [attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md).
 
@@ -192,7 +211,12 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md),
 [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md),
 [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md),
-[turbine cascades](/benchmarks/turbine-cascade.md);
+[turbine cascades](/benchmarks/turbine-cascade.md),
+[compressor cascades](/benchmarks/compressor-cascade.md),
+[NASA Rotor 37](/benchmarks/nasa-rotor-37.md),
+[NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md),
+[square cylinder](/benchmarks/square-cylinder-flow.md),
+[temporal mixing layer](/benchmarks/temporal-mixing-layer.md);
 [inflow turbulence generation](/methods/inflow-turbulence-generation.md).
 
 **9. MHD, plasma and wave turbulence.**
@@ -204,6 +228,7 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [small-scale dynamo](/results/small-scale-dynamo.md),
 [subgrid turbulent dynamo model](/methods/subgrid-turbulent-dynamo-model.md);
 [compressible MHD turbulence](/results/compressible-mhd-turbulence.md),
+[bulk viscosity](/definitions/bulk-viscosity.md),
 [exact laws of (Hall-)MHD turbulence](/results/turbulence-exact-laws.md),
 [weak wave turbulence](/results/weak-wave-turbulence.md),
 [cross-scale interaction in plasma turbulence](/results/cross-scale-interaction.md),

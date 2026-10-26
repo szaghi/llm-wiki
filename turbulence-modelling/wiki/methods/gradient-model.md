@@ -5,7 +5,7 @@ description: "Clark's gradient model approximates the subgrid stress by a trunca
 status: established
 aliases: [Clark model, gradient model, nonlinear gradient model, tensor-diffusivity model, optimal clipping, standard clipping, GM-OC, GM-SC]
 tags: [les, sgs-model, filtering, eddy-viscosity]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T15:49:00Z
 ---
 
 # Gradient (Clark) model and the clipping of structural SGS models
@@ -99,7 +99,7 @@ model stress to zero wherever it backscatters:
 $$\tau^{\mathrm{SC}}_{ij}=\begin{cases}0,&\Pi^{\mathrm M}<0,\\ \tau^{\mathrm M}_{ij},&\Pi^{\mathrm M}\ge0.\end{cases}$$
 
 It raises the model dissipation at the cost of the correlation with the
-exact stress. Dynamic regularization (Vollant et al., as recalled), which
+exact stress. Dynamic regularization (Vollant et al., cited), which
 removes the backscattering terms of a decomposition of the gradient model,
 is said to share this drawback (§I).
 
@@ -294,7 +294,7 @@ chaotic.
 
 [Kim et al. (2024)](/sources/kim-2024.md) (App. C) apply standard
 clipping, setting the subgrid stress to zero wherever backscatter occurs
-(after Zhou et al. and Park & Choi, as recalled), to their pointwise
+(after Zhou et al. and Park & Choi, cited), to their pointwise
 [neural-network SGS model](/methods/neural-network-sgs-model.md) of the
 [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md): on two
 very coarse grids on which the unclipped network, the dynamic Smagorinsky
@@ -302,6 +302,54 @@ model and the no-model LES all diverge, the clipped network runs; on the
 first of these grids the result resembles that of the next finer grid, on
 the coarsest it is "not good". Clipping is used only to stabilize these
 two grids.
+
+## Clipping with a backscatter floor
+
+[Maejima & Kawai (2025)](/sources/maejima-2025.md) (§3.2, Eq. 3.2;
+App. C, Fig. 37) clip a structural stress that is not a gradient model.
+Their stress comes from a
+[super-resolution SGS model](/methods/super-resolution-sgs-model.md): a
+neural network reconstructs sub-cell velocities, and the stress is the
+top-hat-filtered product of the reconstructed fluctuations. They do not
+remove backscatter. They bound it from below. Their construction is
+translated here into the registry's positive-trace convention
+*(compiler check, not in the sources)*: the source writes the
+negative stress and a strain without the factor $\tfrac12$. With the
+effective viscosity of the model stress projected on the strain,
+
+$$\nu_{\mathrm{eff}}=-\frac{\tau_{ij}\bar S_{ij}}{2\bar S^d_{ij}\bar S^d_{ij}}=\frac{\Pi}{2\bar S^d_{ij}\bar S^d_{ij}},$$
+
+the clipped stress is
+
+$$\tau^{\mathrm{clip}}_{ij}=\begin{cases}\tau_{ij}, & \nu_{\mathrm{eff}}>\nu_{\mathrm{clip}},\\ \tau_{ij}+2(\nu_{\mathrm{eff}}-\nu_{\mathrm{clip}})\bar S^d_{ij}, & \text{otherwise},\end{cases}$$
+
+where $\nu_{\mathrm{eff}}$ and the floor $\nu_{\mathrm{clip}}\le0$ are
+page-local. In the clipped branch the effective viscosity is exactly
+$\nu_{\mathrm{clip}}$: the source states this intent, and the identity
+follows from the two formulas *(compiler check, not in the sources)*.
+
+Only extreme local backscatter is weakened, to a moderate level. The
+production runs use $\nu_{\mathrm{clip}}/\bar\nu_w\approx-2$, with
+$\bar\nu_w$ the mean wall viscosity (the source writes dynamic
+viscosities).
+
+In the sensitivity study (App. C) the authors ran very-coarse-grid LES of
+[channel flow](/benchmarks/turbulent-channel-flow.md) at
+$Re_\tau\approx1000$, with grid spacings $(\Delta x^+,\Delta z^+)\approx(72,36)$:
+
+- lowering the floor through 0, about −1 and about −2 times $\bar\nu_w$
+  moves the mean velocity closer to DNS;
+- about −3 is unstable;
+- even $\nu_{\mathrm{clip}}=0$, which admits no projected backscatter, does
+  better than the conventional selective mixed-scale model.
+
+They justify clipping at all with the stability criterion of Matsumoto,
+Inubushi & Goto (2024, cited): learned models cannot run stably for $k_{\max}\eta<0.2$,
+and their grid has $k_{z,\max}\eta\approx0.13$ (App. C). This is the
+opposite choice to the clipping procedures above, which remove backscatter
+pointwise. The backscatter it keeps is what the authors credit for the
+correct near-wall shear stress; see
+[energy backscatter](/definitions/energy-backscatter.md).
 
 ## Related construction: the stabilized mixed model
 
@@ -335,7 +383,7 @@ $\tau^{\mathrm a}_{ij}=\sum_\alpha\Delta_\alpha^2\partial_\alpha\bar u_i\partial
 (page-local), as the shape of the anisotropic remainder of the subgrid
 stress, the part that carries no energy transfer (see
 [energy backscatter](/definitions/energy-backscatter.md)). Following Abe's
-strategy (as recalled), they remove its eddy-viscosity projection with
+strategy (cited), they remove its eddy-viscosity projection with
 $\nu^{\mathrm a}=-\tau^{\mathrm a}_{ij}\bar S_{ij}/(2\bar S_{kl}\bar S_{kl})$
 (page-local) and scale it by the exact subgrid energy:
 
@@ -368,7 +416,7 @@ three roles (§3.2–3.3, App. C, Figs. 10, 19, 21):
   [neural-network SGS model](/methods/neural-network-sgs-model.md) in
   isotropic turbulence. In channel flow they use $L_{ij}$ instead, because
   the gradient term "is known to have an incorrect near-wall scaling" (Liu
-  et al., as recalled).
+  et al., cited).
 - **Learned-model input.** Added to $\bar S_{ij}$ as an input, it predicts
   the decay of the kinetic energy best, but gives the largest spectral
   errors at the lowest wavenumbers on $48^3$ and $24^3$ grids, which the
@@ -421,3 +469,4 @@ directional widths (*compiler check, not in the sources*; see that page).
 - [Kang et al. (2023)](/sources/kang-2023.md) — §3.2, Fig. 10; §3.3, Eq. (3.8), Table 6, Figs. 19, 21, 24; §3.5; App. C.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §II.A, Eqs. (13)–(14); §II.B; §III, Figs. 3–9, Table II; §IV, Eq. (25), Figs. 11–17, Table IV; Apps. A–C, Figs. 18–24.
 - [Kim et al. (2024)](/sources/kim-2024.md) — App. C.
+- [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §3.2, Eq. (3.2); §4.1, Table 1; App. C, Fig. 37.

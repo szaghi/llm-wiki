@@ -5,7 +5,7 @@ description: "Derivative-free calibration of closure parameters from data with a
 status: established
 aliases: [EnKF, ensemble Kalman filter, ensemble Kalman inversion, ensemble data assimilation, EnKF-MM, EnKF mixed model, EnKF-FM]
 tags: [data-driven, field-inversion, sgs-model, les, uncertainty-quantification]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:55:00Z
 ---
 
 # Ensemble Kalman filter calibration of turbulence closures
@@ -41,6 +41,31 @@ posteriori calibration of an LES subgrid model inside the running LES (see
   would also do for a one-parameter problem, and expect the ensemble
   method to pay off in high-dimensional optimization (§V). No cost
   comparison is given.
+- [Fanizza et al. (2025)](/sources/fanizza-2025.md) (§1) name ensemble
+  Kalman methods as an alternative to variational data assimilation for
+  steady RANS problems and use the variational route themselves: a
+  discrete adjoint of a high-order DG Spalart–Allmaras solver with L-BFGS,
+  for correction fields with one set of polynomial coefficients per element
+  (see [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
+- [Zhao et al. (2025)](/sources/zhao-2025.md) (§4) cite the ensemble
+  data assimilation of Wang et al. (2023c) as the motivation for learning
+  the Smagorinsky coefficient of their
+  [physics-informed neural-operator surrogate](/methods/neural-operator-les-surrogate.md),
+  but calibrate it by gradient descent on the residual of the filtered
+  equations evaluated on one trajectory, not by an ensemble.
+
+**A gradient-based counterpart.** The two LES calibrations differ in
+target and filter, so their values are not comparable. Wang et al. (2023c)
+match the filtered-DNS energy spectrum in forced isotropic turbulence at
+$Re_\lambda\approx160$ (Gaussian filter, ratio 2) and obtain
+$C_{\mathrm f}\approx0.00738$ for the dissipative part of a mixed model,
+or 0.01 for a pure Smagorinsky-type model (App. C). Zhao et al. (2025,
+Table 4) minimize the residual of the Smagorinsky-closed equations on
+sharp-spectral-filtered DNS of decaying isotropic turbulence at
+$Re_\lambda\approx60$ ($k_c=10$) and obtain $C_s\approx0.19$, and
+$C_s\approx0.1$ when the data are Smagorinsky LES run with $C_s=0.1$, the
+coefficient that generated them. With $C_{\mathrm f}=2C_s^2$, Wang et al.'s pure-model value
+corresponds to $C_s\approx0.07$ *(compiler check, not in the sources)*.
 
 ## The mixed SGS model calibrated (Wang et al. 2023c)
 
@@ -179,3 +204,5 @@ pure gradient model, all compared with filtered DNS:
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — arXiv v3: §I; §II.A, Eqs. 11–14 (mixed model); §II.B, Eqs. 15–20, Fig. 1 (EnKF loop); §III, Tables I–II, Figs. 2–9 (isotropic turbulence); §IV, Eqs. 23–27, Tables III–IV, Figs. 11–17 (mixing layer, shifting, inflation); §V–VI; Apps. A–C, Figs. 18–24.
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.1 (ensemble Kalman methods as field-inversion solvers).
 - [Yan et al. (2022)](/sources/yan-2022.md) — accepted manuscript, §1 (MCMC and EnKF for the full posterior; MAP as field inversion).
+- [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §1 (ensemble Kalman methods named as alternative to variational assimilation).
+- [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §4, Eqs. 25–26, Table 4 (gradient-based learning of the Smagorinsky coefficient, ensemble assimilation cited as motivation).

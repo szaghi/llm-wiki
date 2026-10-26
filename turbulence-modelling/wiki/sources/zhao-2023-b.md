@@ -131,7 +131,7 @@ refs. [41], [47], [49], [50] are reports. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26), cited further in chunk 5. This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunks 5–6. This source is cited on:
 
 - [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)
 - [Shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
@@ -139,6 +139,7 @@ Chunk 4 (2026-10-26), cited further in chunk 5. This source is cited on:
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)
+- [Artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Jump-penalty stabilization of high-order methods](/methods/jump-penalty-stabilization.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)

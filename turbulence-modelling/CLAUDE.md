@@ -106,11 +106,16 @@ bundle's notation.
 
 ## Status
 
-**Chunk 5 staged 2026-10-26:** 20 papers of 2023–2025; 100 of 134
+**Chunk 6 staged 2026-10-26:** 20 papers of 2024–2026; 120 of 134
+ingested, 134 concept pages plus the registry, 5882 bibliography entries,
+deep lint done, four contradictions open (sparse-regression coefficients;
+gas-kinetic dissipation; constants of the Cai & Sagaut inverse wall law;
+Ahmed-body slant topology). Chunk 7 (14 papers) completes the founding
+plan, with the whole-bundle deep lint and the closing bibliography sweeps.
+
+**Chunk 5 committed 2026-10-26 (fdc020d):** 20 papers of 2023–2025; 100 of 134
 ingested, 115 concept pages plus the registry, 4987 bibliography entries,
-deep lint done, three contradictions open (sparse-regression coefficients;
-gas-kinetic dissipation; constants of the Cai & Sagaut inverse wall law).
-Three papers added after founding are planned for chunk 7.
+deep lint done, three contradictions open.
 
 **Chunk 4 committed 2026-10-26 (cc8d2c6):** 20 papers of 2023–2024; 103
 concept pages, 4241 bibliography entries, deep lint done, two

@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Model-form uncertainty in turbulence closures"
-description: "The uncertainty that comes from the structure of a turbulence closure rather than from its inputs or coefficients; the four layers of RANS assumptions, physics-based bounds, Bayesian calibration and discrepancy fields, stochastic discrepancies trained on indirect data, where to place the correction, non-unique inversions, identifiability, confidence scores and compensating errors."
+description: "The uncertainty that comes from the structure of a turbulence closure rather than from its inputs or coefficients; the four layers of RANS assumptions, physics-based bounds, Bayesian calibration and discrepancy fields, where to place the correction, sparse data, generalizability levels, blended experts, stochastic discrepancies, identifiability and compensating errors."
 status: established
 aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, aleatoric model uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation, stochastic discrepancy closure]
 tags: [uncertainty-quantification, rans, data-driven, field-inversion]
-timestamp: 2026-10-26T10:25:00Z
+timestamp: 2026-10-26T15:50:00Z
 ---
 
 # Model-form uncertainty in turbulence closures
@@ -257,6 +257,104 @@ linear closure based on it
 ([McConkey et al. (2022)](/sources/mcconkey-2022.md), §II B, Figs. 1–4;
 details on the [Boussinesq page](/definitions/boussinesq-hypothesis.md)).
 
+**Corrections in a compressible, high-order setting.** Fanizza et al.
+(2025) repeat the comparison of correction sites for the compressible SA
+model on a high-order modal discontinuous Galerkin discretization, with a
+momentum and energy source, an eddy-viscosity multiplier, a source
+proportional to $\tilde\nu$ and a production multiplier written as
+$(1+\beta)$ like Cato et al.'s ([Fanizza et al. (2025)](/sources/fanizza-2025.md),
+§3.3). On the square cylinder at $Re=22\,000$ the source corrects the
+velocity best, followed by the $\tilde\nu$-source and the production
+multiplier, and the eddy-viscosity multiplier stalls on a plateau "from the
+very first iterations", in agreement with Cato et al. (§4.2, Figs. 7–8). On
+a supersonic shock/boundary-layer interaction only the source improves
+velocity, $C_p$ and $C_f$ together (§4.3.1, Table 1; numbers on the
+[Boussinesq page](/definitions/boussinesq-hypothesis.md)). Two of their
+findings bear on the data side of the problem:
+
+- **Sparse data.** With wall pressure as the only data, the source lowers
+  the $C_p$ error by three orders of magnitude, but $C_f$ stays wrong
+  (normalized error 0.854), and the three corrections acting through the
+  eddy viscosity make $C_f$ worse than the baseline over the whole wall
+  (1.56–1.70; §4.3.3, Table 2). An $L^2$ penalty on the correction
+  improves the skin-friction error, "particularly when the penalty is
+  sufficiently strong to outweigh the objective function", but the
+  near-wall velocity and $C_f$ "did not significantly improve"; the authors
+  conclude that sparse data need "advanced regularization" built on prior
+  knowledge of flow physics or turbulence modelling (§4.3.4, Tables 3–4,
+  §5).
+- **Discretization error in the inferred correction.** They argue, without
+  an FV–DG comparison, that corrections inferred on diffusive second-order
+  finite-volume discretizations contain a strong discretization component
+  and may not extrapolate to other meshes or codes, so that high-order
+  discretizations will be "mandatory" if corrections are to compensate
+  modelling errors only (§1). On a laminar cylinder at $Re=80$ the lowest
+  cost minimum is reached at $N=2$, the lowest polynomial degree at which
+  the baseline shows no grid dependence, and they recommend that degree for
+  data assimilation (§4.1, Fig. 6; the source writes the degree $p$). See
+  [discretization-consistent closures](/definitions/discretization-consistent-closure.md).
+
+They propose the inferred correction fields as detectors of where a RANS
+model fails (§5).
+
+## Generalizability and the attached boundary layer
+
+Wu et al. (2025) grade the generalizability of field-inversion corrections
+on four levels (Table 1): **L1**, good performance on geometries similar to
+the training ones; **L2**, no degradation of the baseline in simple attached
+flows such as the zero-pressure-gradient flat plate; **L3**, good
+performance on flows with similar separation features but different
+geometry and Reynolds number; **L4**, good performance across different
+separation features ([Wu et al. (2025)](/sources/wu-2025.md), §1, Table 1;
+authors' manuscript). Most published inversions, they state, test L1
+only. They cite Spalart for the proposal that L2 be a hard constraint on
+data-driven models, and Rumsey et al. for a model trained on an
+adverse-pressure-gradient plate that fails on the zero-pressure-gradient
+one (§1).
+
+The L2 failure has an algebraic cause in the
+[$k$-$\omega$ SST model](/methods/k-omega-sst-model.md): its log-layer
+solution requires $\beta_\omega-\beta^*\gamma_\omega=\kappa^2\sqrt{\beta^*}\sigma_\omega$
+(page-local $\beta_\omega$, $\gamma_\omega$: the SST $\omega$-destruction and
+$\omega$-production coefficients, $\beta$ and $\alpha$ on the SST page), and a
+multiplier $\beta(\boldsymbol x)$ of the $\omega$-destruction turns the left
+side into $\beta(\boldsymbol x)\beta_\omega-\beta^*\gamma_\omega$, so the calibration holds
+only where $\beta(\boldsymbol x)=1$ (§2.1, Eqs. 3–4; the source writes the SST
+destruction coefficient $\theta$ and the production coefficient $\gamma$).
+Their remedy, *conditioned* field inversion, gates the multiplier with the
+DDES shielding function $f_d$ during both inversion and prediction, so that
+the correction vanishes in the attached boundary layer (details on the
+[field-inversion page](/methods/field-inversion-machine-learning.md)). The
+two learned models differ exactly there: on the zero-pressure-gradient
+plate the classically trained one has $\beta(\boldsymbol x)\approx1.06$ in
+the boundary layer, overpredicts $C_f$ and distorts the log layer, while
+the conditioned one keeps $\beta(\boldsymbol x)=1$ and reproduces SST and the
+Wieghardt–Tillmann data; on the NACA 0012 at $0^\circ$ the conditioned model
+matches SST and the classic one overpredicts $C_f$ (§4.5, Figs. 47–50). On
+the separated test flows the two reach comparable L3 accuracy (§4.1–4.4).
+The construction rests on an assumption the authors state: "the baseline
+model accurately calculates the attached boundary layer and requires no
+modification in this region" (§1).
+
+## Blending specialized corrections
+
+Corrections trained on one flow class "do not generalize to radically
+different flows, and often deteriorate the representation of canonical
+flows" (Oulghelou et al. 2025, §1). Their two symbolic SST corrections show
+it on a channel at $Re_\tau=1000$: the mean absolute error of $u^+$ is 0.44
+for SST, 2.41 for the separated-flow correction and 8.97 for the jet
+correction ([Oulghelou et al. (2025)](/sources/oulghelou-2025.md), §4.2.1,
+Table 3; arXiv v2). The authors' earlier external aggregation mixes the
+*solutions* of several such models with space-dependent weights read as
+local model probabilities, after Bayesian model averaging, and uses the
+spread between the component solutions as an estimate of model-form
+uncertainty; it costs one simulation per model and the mixed field is "in
+general not a solution of the governing equations" (§1, Fig. 1). Blending
+the corrections *inside* one RANS solve fixes both but "does not deliver
+estimates of the predictive uncertainty as naturally", so it is "no
+longer an uncertainty quantification method" (§1, §3). See
+[turbulence-model aggregation](/methods/turbulence-model-aggregation.md).
+
 ## A stochastic discrepancy inside the closure, trained on indirect data
 
 Agrawal & Koutsourelakis (2024) build the discrepancy into a learned
@@ -391,6 +489,21 @@ cancellation of errors" ([Morsbach et al. (2024)](/sources/morsbach-2024.md),
 §4.1, Figs. 8–9). Agreement in an integrated quantity does not, therefore,
 validate the model form.
 
+**Agreement between models as an argument against model-form error.**
+Baldan & Guardone (2025) argue the converse case: a wall-resolved LES,
+a two-dimensional URANS and a stress-blended eddy simulation of a NACA 0012
+in deep dynamic stall agree with one another (within 0.1 in $C_L$ in
+attached flow, peak lift at $22^\circ$ in all three) but share an offset
+of 0.2 in $C_L$ and a $2^\circ$ shift of peak lift from the experiment, so
+the authors attribute the discrepancy to wind-tunnel effects or surface
+roughness rather than to the turbulence model, against the many URANS and
+hybrid studies they cite that blame the model
+([Baldan & Guardone (2025)](/sources/baldan-2025.md), Introduction, §2.2,
+Fig. 9, §3; arXiv v2). The paper does not test this attribution: one
+pitching cycle is computed, without phase averaging or cycle-to-cycle
+variation (§2.2). See
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md).
+
 Both reviews conclude that predictions should carry explicit uncertainty
 estimates, and Duraisamy et al. (2019) recommend that inference precede
 learning, that information content and closure assumptions be assessed, and
@@ -450,6 +563,29 @@ however, not been achieved" and calls for community benchmarks (§VII).
   correction (above). The settings differ as the sources state them: Cato
   et al. invert dense velocity data with no regularization (§II B, Eq. 6),
   Yan et al. scarce data with a Gaussian prior (§2.1, Eq. 6).
+- Wu et al. (2025) build their conditioned inversion on the assumption that
+  the attached boundary layer needs no correction (§1) and attribute
+  separation errors mainly to the separated shear layer, citing earlier
+  work (§2.1). Yan et al.'s inversion on the lift of the S809 airfoil near
+  stall acts "mainly in the strong adverse-pressure-gradient region near
+  the boundary layer" ([Yan et al. (2022)](/sources/yan-2022.md), §3.1.1,
+  Fig. 6). The two statements concern different flows (smooth-surface
+  separation onset on an airfoil against the curved step and hump on which
+  Wu et al. train), and Yan et al. show that their inversions are not unique
+  (above), so they are not incompatible; Wu et al. list smooth-surface
+  separation among their L3 examples (Table 1) but train on the hump and the
+  curved step only.
+- Fanizza et al. (2025) print slips around their regularization study:
+  §4.3.4 says the penalty degrades the velocity and wall-pressure errors,
+  while their Table 3 against Table 2 shows the velocity error improving
+  for three of the four corrections (e.g. 0.458 to 0.406 and 0.433 for the
+  eddy-viscosity multiplier) and the pressure error improving for that
+  multiplier at the smaller penalty (0.17357 to 0.1576); Tables 3 and 4
+  print different penalty weights for the $\tilde\nu$-source and the
+  production multiplier; and §4.3.1 says the errors of the three
+  Boussinesq-type corrections are "reduced by less than one order of
+  magnitude", while Table 1 gives the production multiplier a $C_f$ error
+  of 1.145, above the baseline.
 
 # Citations
 
@@ -462,3 +598,7 @@ however, not been achieved" and calls for community benchmarks (§VII).
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §6, Fig. 13 (HAL author manuscript).
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §4.1, Figs. 8–9.
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — §1, §2.2–2.2.5 Eqs. 9–21, 32, §3.1–3.4 Figs. 7–12 Tables 3–5, App. B (arXiv v2).
+- [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §1, §3.3, §4.1 Fig. 6, §4.2 Figs. 7–8, §4.3.1 Table 1, §4.3.3–4.3.4 Tables 2–4, §5.
+- [Wu et al. (2025)](/sources/wu-2025.md) — §1 Table 1, §2.1 Eqs. 3–4, §4.1–4.5 Figs. 47–50 (authors' manuscript).
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — §1 Fig. 1, §3, §4.2.1 Table 3 (arXiv v2).
+- [Baldan & Guardone (2025)](/sources/baldan-2025.md) — Introduction, §2.2 Fig. 9, §3 (arXiv v2).

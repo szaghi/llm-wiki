@@ -145,9 +145,10 @@ unparseable items.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-26). This source is cited on:
+Chunk 5 (2026-10-26), cited further in chunk 6. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
+- [Temporally developing mixing layer](/benchmarks/temporal-mixing-layer.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Energy backscatter and the subgrid energy flux](/definitions/energy-backscatter.md)

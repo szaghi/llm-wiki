@@ -137,7 +137,7 @@ no volume or pages. There are no printed duplicates and no unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25). This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunk 6. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
@@ -148,6 +148,7 @@ Chunk 2 (2026-10-25). This source is cited on:
 - [Detached-eddy simulation and its delayed and zonal forms](/methods/detached-eddy-simulation.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
+- [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)
 - [Mesh adaptation for turbulent-flow simulation](/methods/mesh-adaptation.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)

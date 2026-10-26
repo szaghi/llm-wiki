@@ -141,12 +141,13 @@ prefix, recorded once. No printed duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25), cited further in chunk 4. This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunks 4, 6. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+- [Bottleneck effect in the energy spectrum](/definitions/bottleneck-effect.md)
 - [Energy backscatter and the subgrid energy flux](/definitions/energy-backscatter.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)

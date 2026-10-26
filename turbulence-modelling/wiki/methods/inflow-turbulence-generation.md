@@ -5,7 +5,7 @@ description: "How a scale-resolving simulation is fed with turbulence at its inf
 status: established
 aliases: [turbulent inflow generation, synthetic inflow turbulence, synthetic turbulence generator, STG, recycling–rescaling inflow, recycling inflow, digital filter inflow, precursor inflow, MDSRFG, random flow generation]
 tags: [les, dns, boundary-layer, wmles, compressible]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:53:00Z
 ---
 
 # Inflow turbulence generation
@@ -62,6 +62,18 @@ the target thickness at the inlet and fed back.
   half-widths, 60 million cells, wall spacing at $y^+=0.24$) and write
   inflow planes every 3 µs for a reacting simulation of flame–wall
   interaction in the same channel; no recovery length is reported.
+- **Stored precursor planes reused cyclically**:
+  [Mukha et al. (2025)](/sources/mukha-2025.md) (read in arXiv v1), §IV.A,
+  feed wall-modelled LES of a zero-pressure-gradient boundary layer in
+  [Nek5000](/software/nek5000.md) with inflow planes from a SIMSON DNS at
+  $Re_\theta=790$, interpolated onto the coarser meshes in space and cubically
+  in time; the stored record spans about $450\,\delta_{99}/U_0$ ($U_0$ the
+  free-stream velocity, page-local) and is reused cyclically. The shape
+  factor agrees with the references "after inflow adaptation"; four
+  elements per inlet $\delta_{99}$ in the spanwise direction are already
+  wall-resolved resolution (about $10\delta_\nu$), so the wall-modelled
+  meshes must be coarsened downstream (§IV.A–B, Figs. 12–13; see
+  [wall-modelled LES](/methods/wall-modelled-les.md)).
 
 ## Synthetic turbulence
 
@@ -87,7 +99,16 @@ superimposed on the mean inflow.
   with the measured free-stream anisotropy and the stress tensor rotated from
   streamline-aligned to Cartesian axes. [Carlsson et al. (2023)](/sources/carlsson-2023.md)
   use the same generator only to seed fluctuations in a channel for one
-  convective time.
+  convective time. [Möller et al. (2024)](/sources/moller-2024.md) (read in
+  the accepted manuscript), §II.E, §III.A, use it in the TRACE
+  implementation they attribute to Morsbach & Franke, for detached-eddy
+  simulation of a compressor cascade: a bulk state (velocity, density, static
+  pressure) extracted from a RANS precursor feeds the generator, the inflow
+  turbulence intensity is 3.25%, and the inlet specific dissipation rate
+  is set as $\omega=\sqrt k/(\beta^*l_t)$ (Eq. 28; $l_t$
+  page-local inlet length scale), with $l_t=0.055$ axial chords against
+  $0.003$ in the runs without the generator, chosen to give "a comparable
+  inlet turbulent dissipation rate".
 - **Fourier modes from a RANS solution, as an initial field.**
   [Bouhafid et al. (2024)](/sources/bouhafid-2024.md), §2.1, initialize a
   temporal LES of an aircraft wake (a periodic box built by extruding a
@@ -122,6 +143,36 @@ show an $f^{-5/3}$ range. Matching the measured decay of free-stream
 turbulence would need a length scale of the order of the cascade pitch, so
 they reduce it and rescale the stresses to match the turbulence intensity at
 the blade leading edge, accepting a steeper decay.
+
+**Synthetic inflow in a hybrid RANS/LES.** [Möller et al. (2024)](/sources/moller-2024.md)
+show that in [detached-eddy simulation](/methods/detached-eddy-simulation.md)
+of the transitional V103 [compressor cascade](/benchmarks/compressor-cascade.md)
+the inflow decides which mode carries the free-stream turbulence (§III.B,
+Figs. 11–22):
+
+- **Without the generator**, the modelled free-stream turbulence intensity
+  drops unphysically ahead of the leading edge, unlike DNS, LES and RANS:
+  the shielding function is 1 in the free stream and, with a small subgrid
+  length scale, "spuriously" switches on LES-mode destruction there
+  (§III.B.1, Figs. 11–12). Pressure-side bypass transition is then carried
+  by modelled turbulence and follows RANS with a transition model.
+- **With the generator**, the total free-stream intensity agrees with DNS
+  (slight over-prediction of modelled plus resolved energy), the
+  suction-side separation bubble closes slightly earlier, closer to DNS, and
+  bypass transition is carried by resolved scales, slightly delayed against
+  LES; the skin friction on the pressure side barely changes, because the
+  shielding function enforces RANS mode near the wall (§III.B.2,
+  Figs. 13–18).
+- **Numerical dissipation interacts.** The dynamic central/upwind flux
+  blending of Travin et al. damps the injected scales; a constant upwind
+  fraction of 25% still damps them and over-predicts the bubble, 0%
+  oscillates and suppresses it, 5% agrees best with DNS (§III.B.3,
+  Fig. 19). Varying the blending without the generator changes little,
+  which the authors take as evidence of "the interdependence between
+  resolved inflow scales and numerical dissipation" (p. 25). They also
+  question whether shielding is needed at all once resolved inflow
+  turbulence is supplied (§III.B.2). The transitional DDES itself is on
+  [local-correlation-based transition models](/methods/local-correlation-based-transition-model.md).
 
 [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) show what the
 synthetic field is for, on two wake cases. On a NACA 0012 wing with an
@@ -170,47 +221,16 @@ inflow by total pressure, as is turbomachinery practice, which makes the
 near-wall velocity a result of the simulated static pressure and requires a
 chosen centre-line Mach number (0.362) that may need iteration.
 
-## Triggering transition instead
-
-[Dang et al. (2022)](/sources/dang-2022.md), §5.1, generate the Mach 2.9
-boundary layer upstream of a compression ramp by blowing and suction on the
-wall between 350 and 200 mm upstream of the corner, instead of the
-recycling of the reference DNS of Martín et al., and validate the van
-Driest-transformed mean velocity against it.
-
-## Choosing no inflow turbulence
-
-Three turbomachinery and jet sources inject no inflow turbulence, two of
-them with a stated reason.
-[François et al. (2022)](/sources/francois-2022.md), §3.2.1, compute the
-region upstream of the [ACAT1 fan](/benchmarks/acat1-fan-stage.md) in URANS
-because the measured inflow turbulence is about 0.3% and fan noise from it
-is negligible against rotor–stator interaction noise; the
-[ACAT1](/benchmarks/acat1-fan-stage.md) LES of
-[Lewis et al. (2023)](/sources/lewis-2023.md), §3.2.2, likewise injects no
-turbulence at the inlet. [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md),
-§3, run a subsonic round-jet LES with laminar inflow and no wall model,
-expecting the nozzle contraction to relaminarize the boundary layer and
-stating that synthetic inflow turbulence without experimental
-characterization "can generate spurious noise"; they then attribute a 3–4 dB
-over-prediction of the far-field spectrum at $0.7<St<1.4$ "possibly" to the
-laminar inlet (§4.3).
-
-The opposite case: [Morsbach et al. (2024)](/sources/morsbach-2024.md), §1,
-recall that earlier simulations of the same turbine cascade with laminar
-end-wall boundary layers and no free-stream turbulence (Rasquin et al.;
-Iyer et al.) reached "no satisfactory agreement" with the experiment, and
-attribute their own agreement to the turbulent inflow. They also show that
-the RANS practice of shrinking the inflow length scale to fix a laminar
-separation bubble gives the right loss for the wrong reason (§4.1, see
-[local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)).
-
 ## Qualifications
 
 - The sources measure recovery differently (momentum-integral balance in
   Huang et al.; match of a measured momentum-thickness growth and of the
-  free-stream decay in Morsbach et al.), so their recovery lengths are not
-  comparable.
+  free-stream decay in Morsbach et al.), so their recovery lengths are not comparable;
+  Mukha et al. give no length for their "inflow adaptation".
+- [Möller et al. (2024)](/sources/moller-2024.md) find the 5% upwind
+  fraction best but call it a tunable parameter likely to depend on case and
+  mesh; their inflow length scales with and without the generator differ
+  because the two inlet conditions define $\omega$ differently (§III.A).
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) write $z$ for the
   end-wall normal and keep the momentum-thickness data confidential (fit
   only).
@@ -243,3 +263,5 @@ separation bubble gives the right loss for the wrong reason (§4.1, see
 - [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md) — §3; §4.3.
 - [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) — §2.1, Eqs. (2.1)–(2.4), Figs. 1–2; §3.2, Figs. 4–6; §4.1.1; §4.3.1; §4.3.3, Figs. 18, 21–23.
 - [Steinhausen et al. (2023)](/sources/steinhausen-2023.md) — §2.1.
+- [Möller et al. (2024)](/sources/moller-2024.md) — §II.E; §III.A, Eq. (28); §III.B.1–III.B.3, Figs. 11–22 (Shur et al. generator fed from a RANS precursor in DDES of a compressor cascade).
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — §IV.A–B, Figs. 12–13 (stored DNS inflow planes reused cyclically).

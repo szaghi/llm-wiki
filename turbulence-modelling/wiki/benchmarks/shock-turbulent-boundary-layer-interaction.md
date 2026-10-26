@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock–turbulent boundary layer interaction"
-description: "A turbulent boundary layer meeting a shock from a compression ramp, an impinging oblique shock or a transonic airfoil: separation length, low-frequency unsteadiness and wall heating test subgrid models, domain span and DNS cost from Mach 2.9 to 9.1, with RANS tests at Mach 2.92 and the transonic buffet of the OAT15A airfoil for PANS."
+description: "A turbulent boundary layer meeting a shock from a compression ramp, an impinging oblique shock, a transonic airfoil or a compressor blade: separation length, unsteadiness and wall heating test subgrid models, span and DNS cost from Mach 2.3 to 9.1, RANS data assimilation at Mach 2.28, and transonic buffet of an airfoil and a compressor cascade."
 status: established
-aliases: [STBLI, SWBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet]
-tags: [benchmark, compressible, hypersonic, boundary-layer, separated-flow, les, pans]
-timestamp: 2026-10-26T10:12:00Z
+aliases: [STBLI, SWBLI, SBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet]
+tags: [benchmark, compressible, hypersonic, boundary-layer, separated-flow, les, pans, field-inversion, turbomachinery]
+timestamp: 2026-10-26T15:57:00Z
 ---
 
 # Shock–turbulent boundary layer interaction
@@ -38,6 +38,8 @@ expensive because the low-frequency cycle needs long records.
 | [Helm & Martín (2022)](/sources/helm-2022.md), Table IV | R34-M10-L | 9.1 ("Mach 10") | ramp 34° (separated) | $Re_\theta\approx8000$, $T_w/T_r=0.33$, nitrogen | LES only | 51.8M |
 | [Dang et al. (2022)](/sources/dang-2022.md), §5.1, §6.1, Table 8 | Mach 2.9 ramp | 2.9 | ramp 24° | unit Reynolds number 5581.4 per mm, $T_\infty=108.1$ K, $T_w=307$ K | DNS, no model | $16100\times240\times200$; wide span $16250\times240\times8000$ ($3.12\times10^{10}$ points) |
 | [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md), §2–3 | impinging shock over a rigid and a flexible panel | 3 | wedge rotating to 17.5° | $\delta_0=4$ mm, unit Reynolds number $49.4\times10^6$ m$^{-1}$ | wall-modelled LES | $2\times10^7$ (periodic $5\delta_0$ span) to $2\times10^8$ cells (full span) |
+| [Fanizza et al. (2025)](/sources/fanizza-2025.md), §4.3 | impinging oblique shock, adiabatic walls | 2.28 | flow deflection 9.5° | inlet thickness $\delta_0$; Reynolds number not printed (DNS of Volpiani et al.) | steady RANS (Spalart–Allmaras) with adjoint data assimilation, modal DG | $350\times250$ and $175\times125$ elements, $\Delta y^+<1$, $N=1$–3 |
+| [Klose et al. (2025)](/sources/klose-2025.md), §3, Table 1 | transonic compressor cascade TCTA at its design point, suction-side bow shock oscillating at mid-chord | inlet 1.21 | the blade passage | laminar or transitional layer; $Re=1.35\times10^6$ on chord | implicit LES with DGSEM ($N=3$) and subcell finite-volume shock capturing; URANS for comparison | 47,319 or 108,564 elements per plane; 54.6 M to 375.2 M degrees of freedom |
 | [Zhao et al. (2023b)](/sources/zhao-2023-b.md), §5.4 | Settles cavity–ramp | 2.92 | backward-facing step and cavity (depth 2.54 cm) closed by a 20° ramp, on which the cavity shear layer reattaches | not printed | steady RANS, $k$-$\omega$ SST with and without a compressibility correction, interior-penalty DG | 64.2 thousand cells |
 
 Both sources run a Mach 2.9, 24° ramp: Dang et al. validate against the DNS
@@ -248,6 +250,109 @@ predictions on this case across models and solvers. This is a transonic,
 two-dimensional-airfoil interaction in a confined tunnel, not the
 supersonic flat-wall configurations above.
 
+**Data assimilation into RANS of an impinging shock.**
+[Fanizza et al. (2025)](/sources/fanizza-2025.md), §4.3, assimilate their
+own DNS of an oblique shock impinging on a turbulent boundary layer
+($M_\infty=2.28$, deflection 9.5°, adiabatic wall, domain
+$(7,55)\delta_0\times(0,15)\delta_0$) into steady compressible RANS with the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md) and the
+Spalart–Garbaruk low-Reynolds correction, discretized with modal
+[discontinuous Galerkin](/methods/discontinuous-galerkin-spectral-element-method.md)
+methods. Baseline SA mispredicts the bubble size. Four correction fields are
+inferred by adjoint optimization (see
+[field inversion](/methods/field-inversion-machine-learning.md)): a
+momentum and energy source $\rho\boldsymbol f_{\mathrm{DA}}$, a multiplier
+of the eddy viscosity, a source $\rho\tilde\nu g_{\tilde\nu}$ ($g_{\tilde\nu}$ page-local; the source's $f_{\tilde\nu}$) and a
+production multiplier in the SA equation. Normalized errors after
+assimilation (velocity / $C_p$ / $C_f$; values above 1 are worse than the
+baseline):
+
+| Correction | dense velocity data, wall-weighted (Table 1) | sparse wall $C_p$ data (Table 2) |
+|---|---|---|
+| momentum and energy source | 0.049 / 0.1825 / 0.0998 | 0.488 / 0.00106 / 0.8540 |
+| eddy-viscosity multiplier | 0.250 / 0.5788 / 0.5689 | 0.458 / 0.17357 / 1.657 |
+| SA source | 0.257 / 0.2076 / 0.8920 | 0.542 / 0.04961 / 1.700 |
+| SA production multiplier | 0.339 / 0.2829 / 1.1450 | 0.427 / 0.05982 / 1.559 |
+
+- With dense data only the momentum source reduces the cost by one to two
+  orders of magnitude, the others stalling on a plateau (Fig. 9); it alone
+  improves quantities absent from the cost (§4.3.1), and its corrected
+  profiles match the DNS in the incoming layer, at separation, at the shock
+  reflection and downstream, with $C_f$ still wrong in the first part of
+  the bubble (Figs. 11–12). The authors give as a second reason that the
+  three other corrections "are still constrained by the Boussinesq
+  assumption", while the source corrects the divergence of the Reynolds
+  stress directly, in an interaction where the Reynolds stress is not
+  aligned with the viscous stress (§4.3.1; see
+  [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)).
+- With wall-pressure data only, the momentum source cuts the $C_p$ error by
+  three orders of magnitude but leaves $C_f$ wrong, and the three
+  Boussinesq-type corrections make $C_f$ worse than the baseline over the
+  whole wall (§4.3.3, Figs. 14–15). An $L^2$ penalty on the correction does
+  not cure it; the authors call for regularization with physical prior
+  knowledge (§4.3.4, §5).
+- The lowest cost minimum on each grid is reached at the lowest
+  polynomial degree that is grid-converged for the baseline ($N=1$ on the
+  fine grid, $N=2$ on the coarse one); converged steady solutions are needed
+  at every optimizer iteration, and wall quantities need reference data on
+  grids refined near the wall (§4.3.2, Fig. 13).
+
+**Buffet in a transonic compressor cascade.**
+[Klose et al. (2025)](/sources/klose-2025.md) (read in the ASME accepted
+manuscript) simulate the transonic cascade TCTA of DLR at its design point
+(inlet Mach number 1.21, $Re=1.35\times10^6$ on the chord, inlet angle
+145.7°), where a normal bow shock stands at mid-chord on the suction side
+and oscillates at low frequency over a laminar or transitional boundary
+layer with shock-induced separation. The LES is an
+[implicit LES](/definitions/implicit-les.md) with the DG solver of
+[TRACE](/software/trace.md): nodal DGSEM at $N=3$, an entropy-conserving
+split form, and the
+[subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)
+of Hennemann et al. The comparison is a second-order finite-volume URANS
+with [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) and the
+$\gamma$-$Re_\theta$ transition model. Shock position $x_s$ along the chord
+(Table 2):
+
+| Run | span | shock frequency $f c/U_{\mathrm{in}}$ | mean $x_s/c$ | max. amplitude of $x_s/c$ |
+|---|---|---|---|---|
+| LES5 (coarse) | 5% $c$ | 0.165 | 0.537 | 0.278 |
+| LES10 (coarse) | 10% $c$ | 0.164 | 0.531 | 0.172 |
+| LES20 (coarse) | 20% $c$ | 0.163 | 0.528 | 0.158 |
+| LES10-HR (fine) | 10% $c$ | 0.163 | 0.535 | 0.231 |
+| URANS | — | 0.161 | 0.504 | 0.072 |
+| experiment | 1.68$c$ (tunnel) | about 0.14 | — | 0.13 |
+
+- *Span.* The shock frequency and mean position are almost insensitive to
+  the span, while the amplitude and the separation bubble shrink as the
+  span grows. The authors read this as partial agreement with Touber &
+  Sandham (bubble size sensitive to span), but with a frequency "less
+  dependent on the bubble size" (§5); a Strouhal number of 0.03 on the
+  separation length, which Klose et al. take from Touber & Sandham, gives
+  $L_{\mathrm{sep}}/c\approx0.18$, inside the observed 0.12–0.22.
+- *Resolution.* Refining at 10% span changes little upstream of the shock
+  but raises the amplitude from 0.172 to 0.231; the authors assume that
+  numerical dissipation of the coarse LES and, more, of the URANS damps the
+  structures that drive the larger oscillation, and call the coarse runs
+  under-resolved (§6).
+- *URANS.* It needs $\Delta t=2.8\times10^{-5}c/U_{\mathrm{in}}$ to get the
+  shock motion; it captures the frequency but puts the shock upstream,
+  gives less than half the LES20 amplitude and a mostly laminar suction
+  side with wrong surface distributions (§6, Fig. 7).
+- *Mechanism.* SPOD shows a dominant mode at $fc/U_{\mathrm{in}}=0.16$ and
+  harmonics at 0.32, 0.48 and 0.64; as the shock moves downstream the bubble
+  grows, perturbations travel upstream through the subsonic part of the
+  boundary layer and produce intermittent oblique compression waves, driven
+  by shocklets running upstream from the pressure side (§7). All runs give
+  $St\approx0.16$ against about 0.14 measured. The cascade itself is on the
+  [compressor cascade](/benchmarks/compressor-cascade.md) page.
+
+**Shocks in decaying turbulence without a wall.** The supersonic
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $M_0=1.25$
+of [Chapelier et al. (2024)](/sources/chapelier-2024.md) tests the same
+shock-capturing families (artificial diffusivity, subcell finite volumes,
+TENO, hybrid central/WENO) on shock–turbulence interaction without a
+boundary layer.
+
 **Fluid–structure coupling.** In the impinging-shock case of
 [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md), §4.3, panel flexibility
 moves separation about $3\delta_0$ upstream and lengthens it from
@@ -297,6 +402,25 @@ dominant frequencies down.
   own SST URANS gives no buffet at $3.5^\circ$, while other SST URANS
   results in their Table A.4 do; the scatter is recorded by the authors.
 
+- [Fanizza et al. (2025)](/sources/fanizza-2025.md) do not print the
+  Reynolds number of their interaction. Their §4.3.1 says the three
+  non-source corrections reduce all errors "by less than one order of
+  magnitude", while Table 1 gives the production multiplier a $C_f$ error
+  of 1.1450, above the baseline. Their Tables 3 and 4 print different
+  penalty weights for two of the corrections, and their §4.3.4 says the
+  penalty degrades velocity and wall-pressure errors although Table 3
+  against Table 2 shows the velocity error improving for the eddy-viscosity
+  multiplier and the SA source at both penalty weights and for the
+  production multiplier at one of them.
+- In [Klose et al. (2025)](/sources/klose-2025.md) the amplitude is not
+  grid-converged (0.172 to 0.231 under refinement at fixed span), so the
+  "very good" agreement of the experimental 0.13 with the coarse LES20
+  (0.158) is not a converged comparison, as the authors concede for a
+  refined LES20. Their resolution is "deemed sufficient for LES" with
+  maxima of $\Delta x^+=65$, $\Delta y^+=2.5$, $\Delta z^+=40$ per
+  polynomial degree on the coarse grid, which §6 calls under-resolved. No
+  inflow turbulence is prescribed (measured level below 1%).
+
 # Citations
 
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §I; §II, Eqs. (1)–(12), Fig. 1; §III B–D, Tables I–III, Figs. 2–14; §IV A–F, Table IV, Figs. 15–33; §V.
@@ -304,3 +428,6 @@ dominant frequencies down.
 - [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §1–3; §4.3.
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §3.1–3.2, Eq. (3-10); §5.3, Figs. 5-9–5-12; §5.4, Figs. 5-13–5-15.
 - [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — §1; §2.1; §4.1–4.6, Tables 1–3, Figs. 4–17; App. A, Table A.4; App. C.
+- [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §1; §4.3.1–4.3.4, Eqs. 42–44, Tables 1–4, Figs. 9–15; §5.
+- [Klose et al. (2025)](/sources/klose-2025.md) — accepted manuscript: §1–3, Table 1, Fig. 2; §5–7, Table 2, Figs. 5–14; §8.
+- [Chapelier et al. (2024)](/sources/chapelier-2024.md) — §I (supersonic Taylor–Green vortex as shock–turbulence interaction).

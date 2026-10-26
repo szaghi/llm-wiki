@@ -5,7 +5,7 @@ description: "How the grid-point and time-step counts of DNS, wall-resolved and 
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:52:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -27,13 +27,13 @@ WMLES cost model, and report what resolution sufficed in practice.
 | WRLES, flat plate | $Re_{L_x}^{1.86}$ | $Re^{2.7}$ | points: [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md), §I; cost: [Griffin et al. (2023)](/sources/griffin-2023.md), §1 — both after Yang & Griffin (2021) |
 | WMLES, flat plate | $Re_{L_x}^{1.0}$ | $Re^{1.1}$ | same |
 | WMLES | $\propto Re_c$ | $\propto Re_c^{4/3}$, "which accounts for the reduction in time step" | [Goc et al. (2021)](/sources/goc-2021.md), §2.2, §4, after Choi & Moin (2012) |
-| WMLES on a [BL-conforming grid](/methods/boundary-layer-conforming-grid.md) | $n_\delta^{13/6}\,Re\,(Re_\Delta^{\min})^{-5/6}$ | steps $\sim\tilde t\,Re\,(Re_\Delta^{\min})^{-1}$ | [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md), §III.B, Eqs. (5)–(7) |
+| WMLES on a [BL-conforming grid](/methods/boundary-layer-conforming-grid.md) | $n_\delta^{13/6}\,Re\,(Re_\Delta^{\min})^{-5/6}$ | steps $\simt_{\mathrm{run}}\,Re\,(Re_\Delta^{\min})^{-1}$ | [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md), §III.B, Eqs. (5)–(7) |
 
 Page-local symbols: $L_d$ the domain size, $L$ the integral length,
 $Re_T=k^{1/2}L/\nu$ the turbulent Reynolds number, $Re_{L_x}=L_xU_\infty/\nu$ the
 plate-length Reynolds number, $n_\delta$ the points per boundary-layer
 thickness, $Re_\Delta^{\min}=\Delta_{\min}U_\infty/\nu$ the minimum grid
-Reynolds number, $\tilde t$ the run length in flow-through times. The
+Reynolds number, $t_{\mathrm{run}}$ the run length in flow-through times. The
 sources agree that the grid of WMLES grows linearly with Reynolds number and
 that of WRLES almost quadratically, so that wall modelling is "a necessity for
 flows at practically relevant Reynolds numbers" (Vadrot et al. 2023b, §I).
@@ -72,6 +72,26 @@ immersed boundary), and suggest the recommended one-wall-unit wall-normal spacin
 "may be somewhat over-demanding"; a factor 3 coarser in each direction
 ($\Delta x^+\approx9$, a cost reduction of $3^4=81$) still gives $u_\tau$
 within 1.8 % with implicit LES (§7.2–7.4).
+
+For isotropic turbulence the record is set by
+[Yeung et al. (2025)](/sources/yeung-2025.md): forced homogeneous isotropic
+turbulence at $Re_\lambda\approx2500$ on $32\,768^3$ points with a GPU
+Fourier pseudo-spectral code on the Frontier exascale machine, in single
+precision (§1–2, Table 1). The largest pseudo-spectral grid that fits in
+Frontier's memory is $40\,960^3$ (§1). Their resolution parameter is
+$k_{\max}\eta=(\sqrt2N_x/3)\eta$: 1.4 suffices for scales larger than $\eta$,
+and the statistics reported use 2.8, reached only for a few Kolmogorov
+times by the [multi-resolution independent simulations](/methods/multi-resolution-independent-simulations.md)
+protocol (§2.2). At fixed forcing and fixed $k_{\max}\eta$,
+$\nu\propto N_x^{-4/3}$ and $Re_\lambda\propto N_x^{2/3}$, a 58 % increase for
+each doubling of $N_x$ (§2.2), so going from $Re_\lambda=1000$ to 2500 needs
+four times the points per direction, at least 64 times the wall time per
+step and 256 times for a given physical time, on a machine with at least 64
+times the memory (§5). The $N_x^3\propto Re_\lambda^{9/2}$ that follows is the
+$Re_T^{9/4}$ of the table with $Re_\lambda\propto Re_T^{1/2}$ *(compiler check,
+not in the sources)*. They add, after Yakhot & Sreenivasan as cited, that
+scales finer than $\eta$ become more frequent as the Reynolds number grows,
+so better small-scale resolution than often practised is needed (§1).
 
 For a bluff body [Cai et al. (2022)](/sources/cai-2022.md) (§III, Tables
 I–II) estimate the scales of the Ahmed body flow at $Re_H=7.68\times10^5$
@@ -145,6 +165,23 @@ needed for the near-wall anisotropy (§III B, Fig. 2). With the filter of the co
 the part of the SGS stress that transfers no energy carries a mean shear
 stress comparable to the eddy-viscosity part (§III C, Fig. 3); see
 [energy backscatter](/definitions/energy-backscatter.md).
+
+Other sources recall stricter wall-resolved targets:
+[Baldan & Guardone (2025)](/sources/baldan-2025.md) (§1.1, §2.1, Fig. 7),
+after Piomelli & Balaras (2002) and Georgiadis et al. (2010) as they cite
+them, require $\Delta x^+<40$, $\Delta y^+<5$, $\Delta z^+<20$ (the source's
+$\xi^+$, $\eta^+$, $z^+$), a streamwise bound below the 50–150 range above,
+and check them span-averaged at the most demanding instant of a pitching
+airfoil, where the near-wall velocity exceeds twice the free stream; the
+first-cell $\Delta y^+$ is close to 1. [Maejima & Kawai (2025)](/sources/maejima-2025.md)
+(§4.1, App. B) state the requirement through the near-wall streaks of
+spanwise wavelength $\lambda_z^+\approx100$ (page-local, after Smith &
+Metzler as cited): their channel LES at $(\Delta x^+,\Delta z^+)\approx(36,18)$
+puts five to six points per wavelength, "close to" the requirements of
+Kawai & Fujii (2008) as cited, and reproduces the DNS mean velocity and
+Reynolds stresses with the selective mixed-scale model, while at
+$(72,36)$, two to three points per wavelength, the mean velocity is
+over-predicted and the stresses deviate (Fig. 5).
 
 For high-order elements the "first cell" is ambiguous:
 [Slaughter et al. (2023)](/sources/slaughter-2023.md) (§3.6, Fig. 4) measure
@@ -330,6 +367,51 @@ $Q_1$ against high order *(compiler check, not in the sources)*.
   (45.8 M nodes, finest cell 1.3 mm): the $35^\circ$ wake is reproduced but
   at $25^\circ$ separation is late with no reattachment, which they
   attribute to this resolution ([Mozaffari et al. 2024](/sources/mozaffari-2024.md)).
+- **Very coarse wall-resolved LES rescued by a learned SGS model.**
+  Maejima & Kawai (2025, §4.1, §6.1, §7, Tables 1–2) take the
+  $(\Delta x^+,\Delta z^+)\approx(72,36)$ channel grid at $Re_\tau\approx1000$
+  ($\Delta y^+=0.8$–16, $270\times180\times285$ points, eight times coarser
+  than their DNS in $x$ and $z$) as "very coarse-grid LES", where even the
+  energetic near-wall eddies are under-resolved and the resolved field
+  differs from filtered DNS. With the selective mixed-scale model the mass
+  flow rate is over-predicted by 23 %; their
+  [super-resolution SGS model](/methods/super-resolution-sgs-model.md) lowers
+  this to 10 % and gives mean velocity and total shear stress in good
+  agreement with DNS, also at the untrained $Re_\tau\approx2000$ on the same
+  wall-unit grid. They motivate coarse grids by the cost of resolved LES,
+  recalling an airfoil LES at $Re_c=10^7$ on Fugaku that needed about
+  $38\times10^9$ points (Tamaki & Kawai 2023, as cited; §1).
+- **Spectral-element WMLES: elements per thickness.** Mukha et al. (2025,
+  §III.A–III.B, §IV.A, Tables I, V, Fig. 12) run channel flow at
+  $Re_\tau\approx8000$ at $N=7$ on $16\times4\times12$, $32\times8\times24$ and
+  $64\times16\times48$ elements over $8\delta\times2\delta\times6\delta$ (2, 4
+  and 8 elements per $\delta$; $0.39$, $3.14$ and $25.17$ million nodes): the
+  mean velocity is within 1 % above $0.1\delta$ on all three, while
+  second-order statistics need "at least 4 elements across the boundary
+  layer in all three spatial directions". For a developing flat-plate
+  boundary layer, whose $\delta_{99}$ grows about eight times over their
+  domain, a structured mesh cannot keep the spanwise size proportional to
+  $\delta_{99}$, and four elements per inlet $\delta_{99}$ are already about
+  $10\delta_\nu$, "essentially WRLES" in inner units, so WMLES must coarsen
+  with $x$ and $y$; their meshes of $519\times15\times28$, 56 and 112
+  elements (1, 2 and 4 spanwise elements per inlet $\delta_{99}$; 75, 149 and
+  299 million nodes) give $C_f$ within 2 % of wall-resolved LES on the
+  finest. See [wall-modelled LES](/methods/wall-modelled-les.md).
+- **Span of a nominally two-dimensional geometry.** Baldan & Guardone (2025,
+  §1.1, §2.1, Tables 1–2, Figs. 3–6) run wall-resolved LES of a NACA 0012
+  in deep dynamic stall ($Re_c=1.35\times10^5$, pitching about
+  $10^\circ\pm15^\circ$) on spans of $0.2c$, $0.4c$, $0.8c$ and $1.2c$ with the
+  same spanwise spacing $10^{-3}c$, from 62.7 M to 374.7 M nodes, the number
+  of points "respecting the LES requirements" of Choi & Moin (2012) as they
+  cite it. The upstroke with attached flow is insensitive to the span
+  (lift within 0.05 up to about $22^\circ$), but after the dynamic-stall
+  vortex forms the two short spans force a quasi-two-dimensional vortex and
+  spurious lift peaks; they conclude that a span of at least one chord is
+  required for the downstroke, against the 5–20 % of chord common in the
+  literature; the $1.2c$ grid has six times the nodes of the $0.2c$ one
+  (Table 2). At $10^\circ$ in the downstroke the $1.2c$ span is completely
+  stalled while the $0.8c$ span still shows oscillatory wake patterns
+  (§2.1, Fig. 4); no span beyond $1.2c$ is run. See [NACA 0012](/benchmarks/naca-0012-airfoil.md).
 - **Training grids of a learned wall model.** [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md)
   (§2.6) train their wall model on WMLES with isotropic grids $\Delta=\delta/n$,
   $n=5$ to 380 ($\delta$ the channel half-height, $n$ page-local), and below
@@ -387,6 +469,13 @@ reinforcement-learning wall model of Bae & Koumoutsakos (2022, p. 8) costs
 $O(10^3)$ CPU-hours, against an estimated $O(10^7)$ for the DNS data a
 supervised model would need at $Re_\tau=4200$.
 
+Yeung et al. (2025, §1) report 13 s per time step for the $32\,768^3$ DNS
+on 44 % of Frontier at best, about 1000 steps per Kolmogorov time and about
+300 Kolmogorov times per large-eddy time at $Re_\lambda\approx2500$, so a run
+of ten large-eddy times "would require two years or more of virtually
+non-stop computing"; this is why the record grid is run only for a few
+Kolmogorov times (see Qualifications).
+
 Delassaux et al. (2023, §7.6) run steady RANS of a full-scale car on 384
 cores in about 2 h and DDES on 1152 cores in about one and a half days, and
 call the hybrid simulation "18 times more expensive"; 18 is the wall-clock
@@ -440,7 +529,7 @@ it, without breakdown).
   solvers deploying explicit time-marching schemes that are limited by the
   acoustic CFL condition". Lozano-Durán et al. (2022, Eq. 7) show that the
   step count depends on the grid strategy: under a convective limit on the
-  smallest cell it is $\tilde t\,Re\,(Re_\Delta^{\min})^{-1}$, set by how the
+  smallest cell it is $t_{\mathrm{run}}\,Re\,(Re_\Delta^{\min})^{-1}$, set by how the
   leading-edge resolution is scaled with Reynolds number. The exponents also
   refer to different configurations (a high-lift aircraft at chord Reynolds
   number; a flat-plate boundary layer at plate-length Reynolds number).
@@ -483,6 +572,25 @@ it, without breakdown).
   $L_z=\pi$ and 64 cells, where $\pi\cdot180/64\approx8.84$; their printed
   $\Delta x^+=17.66$ and the $Re_\tau=395$ values are reproduced by the same
   arithmetic *(compiler check, not in the sources)*.
+- **Node counts of Mukha et al. (2025).** Both node tables are captioned
+  "total number of nodes", but the channel values equal $(N+1)^3=512$ nodes
+  per element times the element count ($16\cdot4\cdot12\cdot512=393\,216$),
+  i.e. element-local nodes with duplicates, while the boundary-layer values
+  equal $N^3=343$ per element ($519\cdot15\cdot28\cdot343\approx74.8\times10^6$),
+  about the unique nodes *(compiler check, not in the sources)*; the two
+  tables are not on the same count. Locators refer to the arXiv v1 read.
+- **Cost of Yeung et al. (2025).** Their printed figures, 3000 Kolmogorov
+  times of 1000 steps at 13 s, give about $3.9\times10^7$ s, 1.2 years,
+  against the "two years or more" printed; the 13 s is a best timing on part
+  of the machine, and overheads are not stated *(compiler check, not in the
+  sources)*.
+- **Grid of Baldan & Guardone (2025).** Their Table 1 lists 311 622
+  quadrilaterals in the two-dimensional grid of $934\times334$ nodes, whereas
+  $933\times333=310\,689$ cells reproduce the hexahedron counts of their
+  Table 2 (62.1 M for 200 layers) *(compiler check, not in the sources)*.
+  They quote the spans of the literature as 5–20 % of chord in the
+  introduction and as 0.1–0.2 in the conclusions. Locators refer to the
+  arXiv v2 preprint read.
 - Cai et al. (2022, §III) call $\lambda_H$ "the Taylor scale describing the
   integral motions in the wake"; the estimate is printed as such.
 
@@ -517,3 +625,7 @@ it, without breakdown).
 - [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — §4.5.3, Table 1, Fig. 8; §4.6, Table 3.
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §3.3 (HAL accepted manuscript).
 - [Constant et al. (2024)](/sources/constant-2024.md) — §6.3, Tables 8–9 (HAL author manuscript).
+- [Yeung et al. (2025)](/sources/yeung-2025.md) — §1; §2.2, Table 1; §5.
+- [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1; §4.1, Tables 1–2, Fig. 5; §6.1; §7; App. B.
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — §III.A–III.B, Table I; §IV.A–IV.B, Table V, Fig. 12 (arXiv v1).
+- [Baldan & Guardone (2025)](/sources/baldan-2025.md) — §1.1, Tables 1–2; §2.1, Figs. 3–7; §3 (arXiv v2).

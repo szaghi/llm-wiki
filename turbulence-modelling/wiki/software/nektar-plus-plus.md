@@ -5,7 +5,7 @@ description: "Nektar++ is an open-source spectral/hp element framework with cont
 status: established
 aliases: [Nektar, NektarPlusPlus, IncNavierStokesSolver, AcousticSolver, NekMesh, FieldConvert]
 tags: [software, spectral-element, les, implicit-les, aeroacoustics]
-timestamp: 2026-10-26T10:03:00Z
+timestamp: 2026-10-26T11:08:00Z
 ---
 
 # Nektar++
@@ -132,6 +132,11 @@ case is shown.
 
 - Ferrer et al. (2023, §2, Table 1) list Nektar++ among the high-order codes
   they compare with HORSES3D (see [HORSES3D](/software/horses3d.md)).
+- [Kurz et al. (2025)](/sources/kurz-2025.md), §1, list Nektar++ with
+  HORSES3D as spectral element codes that "can solve both the compressible
+  and incompressible" Navier–Stokes equations. No study in the bundle runs
+  its compressible solver; the solvers recorded here are the incompressible
+  and the acoustic one.
 - The version of Slaughter et al. read is the Research Square preprint
   (v1); its reference to
   the Nektar++ paper prints a Mendeley Data DOI prefix.
@@ -145,3 +150,4 @@ case is shown.
 - [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md) — §2.2, Eqs. (11)–(12) (AcousticSolver); §2.3 (CWIPI coupling); §3, Table 1; §4.4.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §2, Table 1.
 - [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §1, §2.4, Table 2 (Nektar++ implicit LES of the periodic hill by Wang et al., as recalled).
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §1 (Nektar++ among high-order solvers).

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Turbulent boundary layers: zero and adverse pressure gradient, compressible"
-description: "Spatially developing turbulent boundary layers on flat walls: zero- and adverse-pressure-gradient layers as wall-model, log-law and physics-informed-network tests, supersonic and hypersonic layers on cooled walls as DNS databases for compressibility transformations, LES validation and the calibration of algebraic RANS, and the incoming layer of shock interactions."
+description: "Spatially developing turbulent boundary layers on flat walls: zero- and adverse-pressure-gradient layers as wall-model, log-law and physics-informed-network tests and as the non-regression test of data-driven RANS corrections, supersonic and hypersonic layers on cooled walls as DNS databases for compressibility transformations, LES validation and the calibration of algebraic RANS, and the incoming layer of shock interactions."
 status: established
 aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
-tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles]
-timestamp: 2026-10-26T10:26:00Z
+tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven]
+timestamp: 2026-10-26T15:57:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -64,6 +64,45 @@ within 5%, the learned model's internal error falls below 1% against more
 than 20% for the equilibrium model, and the equilibrium runs benefit from
 cancellation of internal and external errors.
 
+[Mukha et al. (2025)](/sources/mukha-2025.md) (read in arXiv v1), §IV,
+run wall-modelled LES of a ZPG layer in the
+[continuous-Galerkin spectral-element](/methods/spectral-element-method.md)
+code [Nek5000](/software/nek5000.md) ($N=7$), with the
+[Vreman model](/methods/vreman-model.md) and the
+[equilibrium wall model](/methods/equilibrium-wall-model.md) in the form of
+Spalding's law imposed as a weak Neumann condition on the wall-parallel
+velocity, matching height $h_{\mathrm{wm}}=0.2\delta_{99}(x)$ and a time
+average of the input over 10 time steps. The domain is
+$450\times20\times27.395$ inlet thicknesses $\delta_{99}$, with SIMSON
+inflow at $Re_\theta=790$; $\delta_{99}$ grows about eightfold and results
+reach $Re_\theta\approx6000$. Three meshes of $519\times15$ elements in $x$
+and $y$ and 28, 56, 112 spanwise (1, 2, 4 elements per inlet $\delta_{99}$;
+75, 149, 299 million nodes) cover the layer with about 4 elements in $x$
+and $y$, since a structured mesh cannot follow the growth in $z$ (Table V,
+Fig. 12):
+
+- the shape factor agrees with the references after the inflow adapts, with
+  no clear gain from refinement (Fig. 13);
+- the outer-scaled mean velocity is slightly over-predicted and improves
+  with spanwise refinement, the finest mesh being "virtually
+  indistinguishable" from the references at $Re_\theta=4000$ (Fig. 14);
+  the authors note that a dependence on $\Delta z^+$ "would violate" the
+  premise that WMLES is independent of inner-scale resolution;
+- Reynolds stresses are more accurate than in their channel runs (Fig. 15),
+  and $C_f$ from the modelled wall stress is within 2% of the wall-resolved
+  LES of Eitel-Amor et al. on the finest mesh (Fig. 16).
+
+They place the results "on par with the state of the art, possibly
+outperforming it" for $\langle u'u'\rangle$, recalling the 10–30% velocity
+and 5–15% wall-stress deviations of Lozano-Durán & Bae (above) on coarser
+meshes and an OpenFOAM WMLES with about 2 cells per $\delta_{99}$ (§IV.B).
+A priori, Spalding's law with $\kappa=0.41$ and the classical intercept
+gives a wall-stress error of about ±1% with reference input, an order of
+magnitude more than with the constants tuned for their channel; it reaches
+its logarithmic limit near $y^+=150$, close to the wake at low Reynolds
+number (App. A, Figs. 20–21). The channel runs are on
+[turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
+
 ## Turbulent flat plate in RANS
 
 [Zhao et al. (2023b)](/sources/zhao-2023-b.md), §5.1, Fig. 5-2, run a ZPG
@@ -73,6 +112,46 @@ discretized by first-order finite volumes under an interior-penalty DG mean
 flow. The velocity profile agrees with the reference of Georgiadis et al.
 in the log layer and the turbulent kinetic energy with that of Yoder &
 Georgiadis; grid size and polynomial degree are not printed.
+
+**Non-regression of data-driven corrections.** Two sources use the
+incompressible ZPG plate to check that a RANS correction trained on
+separated flows does not spoil an attached layer, the "L2" level of the
+generalizability scale of [Wu et al. (2025)](/sources/wu-2025.md), Table 1.
+
+- [Wu et al. (2025)](/sources/wu-2025.md), §4.5, run the plate at
+  $Re_L=10^7$ on about $2\times10^5$ cells with $\Delta y^+\le0.05$
+  (OpenFOAM simpleFoam) against the data of Wieghardt & Tillmann. SST and
+  SR-CND, a [symbolic-regression](/methods/symbolic-regression-closure.md)
+  correction of the SST $\omega$ destruction trained on
+  [field inversion](/methods/field-inversion-machine-learning.md) gated by
+  the DDES shielding function, both match the measured $C_f$ and the
+  viscous and log layers; SR-CLS, trained by ungated inversion, gives a
+  multiplier $\beta\approx1.06$ inside the layer, overestimates $C_f$ and
+  gives a wrong log layer and a thicker layer (Figs. 47–48). The authors
+  derive the cause: the log-layer calibration of the $\omega$ equation,
+  written, citing Wilcox, as $\beta_\omega-\beta^*\gamma_\omega=\kappa^2\sqrt{\beta^*}\sigma_\omega$
+  (page-local names $\beta_\omega$, $\gamma_\omega$ for the destruction and
+  production coefficients of the $\omega$ equation), holds only if the
+  multiplier equals 1 in the log layer (§2.1, Eqs. 3–4); see
+  [law of the wall](/definitions/law-of-the-wall.md).
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md), §5.1.1, run the
+  plate at $Re=5\times10^6$ per unit length on a $545\times385$ grid against
+  Wieghardt's data and the Coles profile, with three expert models (SST, a
+  separated-flow correction, a jet correction) and a learned
+  [blend](/methods/turbulence-model-aggregation.md) of them (Table 9):
+
+| Model | mean abs. error of $C_f$ | mean abs. error of $u^+$ |
+|---|---|---|
+| SST | $8.4\times10^{-5}$ | 0.42 |
+| separated-flow expert | $3.7\times10^{-4}$ | 1.45 |
+| jet expert | $1.1\times10^{-3}$ | 6.27 |
+| blend | $1.7\times10^{-4}$ | 0.7 |
+
+  The blend beats the two corrected experts but not SST. "Contrary to
+  expectations", SST does not dominate the weights across the layer; the
+  jet expert gains significant weight in the log region, which the authors
+  read as weight shifts there having "little impact" on accuracy
+  (Fig. 11c).
 
 ## Mean-flow reconstruction with physics-informed networks
 
@@ -400,6 +479,16 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
   later in §2. Their structural-damping coefficient is fitted to the measured
   panel displacement of the same experiment (§3).
 
+- [Mukha et al. (2025)](/sources/mukha-2025.md) print the Spalding
+  intercept for the boundary layer as $B=5.2$ in §IV.A and $B=5.5$ in
+  App. A, so the value used in the simulations is not certain; their node
+  counts are $N^3$ per element in Table V but $(N+1)^3$ in Table I
+  *(compiler check, not in the sources)*. Their Fig. 20 caption says DNS
+  input where the text uses the wall-resolved LES.
+- [Wu et al. (2025)](/sources/wu-2025.md) give the $\beta$ distribution of
+  Fig. 48 "at $Re_x=1.5\times10^6$" while the text says $x=0.3$; the plate
+  length is not printed, so the two cannot be checked against each other.
+
 # Citations
 
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Results pp. 6–8, Fig. 5; Methods p. 14 (preprint v1).
@@ -414,3 +503,6 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §5.1, Fig. 5-2.
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §3.1, §3.3, Eqs. (5)–(12), Fig. 3.
 - [Chen et al. (2024)](/sources/chen-2024.md) — §1; §2.1–2.3, Table 1; §3.1–3.3, Figs. 3–6; §4, Table 2, Figs. 7–13; §5.1; App. A–B.
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §IV.A–B, Table V, Figs. 12–17; App. A, Figs. 19–21.
+- [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §2.1, Eqs. 3–4; Table 1; §4.5, Figs. 47–48.
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §5.1.1, Table 9, Fig. 11.

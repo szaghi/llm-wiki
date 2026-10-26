@@ -5,7 +5,7 @@ description: "An LES closure built for the discrete equations actually solved, s
 status: established
 aliases: [filter-consistent closure, discretize-first closure, model-data consistency, computational subgrid stress]
 tags: [les, sgs-model, implicit-les, data-driven, numerical-dissipation]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:54:00Z
 ---
 
 # Discretization-consistent closure
@@ -178,7 +178,18 @@ neural operators as possible remedies for 2D and 3D (§5).
 - **DG/finite-volume blending as an implicit model.** Beck & Kurz (2023,
   §V C) also control the blending factor $\alpha$ of the hybrid
   DG/finite-volume subcell scheme by RL. It is a closure made of
-  discretization alone.
+  discretization alone. [Kurz et al. (2025)](/sources/kurz-2025.md) (§2.3)
+  cite this result: the blending has "been demonstrated to yield a
+  sensible turbulence model if tuned correctly". Their GPU code
+  [GALÆXI](/software/galaexi.md) runs every LES of the paper (the
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at Mach 0.1
+  and 1.25, the [NASA Rotor 37](/benchmarks/nasa-rotor-37.md) cascade)
+  with no explicit subgrid model, the split-form DG (with the
+  DG/finite-volume blending in the supersonic vortex and the cascade)
+  supplying the only dissipation; in the cascade the blending factor
+  stays between 0.1 and 0.7 near the leading-edge shock only (§2, §5.2, §6.3, Fig. 13). The paper calls the
+  cascade run "wall-resolved LES" and does not use the term implicit LES;
+  no blending factor is tuned as a turbulence model there.
 - **Resolution-specific policies in DG.** Kurz et al. (2023, §4.2, §4.4,
   Figs. 6, 8) train an element-local Smagorinsky coefficient by RL at four
   DG resolutions. The coefficient distribution depends on the resolution
@@ -300,6 +311,18 @@ solver.
   two routes are not compared on one case. Kim et al. themselves note that
   their a priori-trained models do not remove the a priori/a posteriori
   inconsistency (§5).
+- **The same argument in RANS data assimilation.**
+  [Fanizza et al. (2025)](/sources/fanizza-2025.md) (§1) argue that a
+  correction field inferred on a diffusive second-order finite-volume
+  RANS discretization absorbs discretization error as well as model error,
+  so it may not extrapolate to other meshes or codes, and that high-order
+  discretizations will be "mandatory" if learned corrections are to carry
+  modelling error only. They run the inversion on a high-order modal DG
+  discretization and recommend the lowest polynomial degree at which the
+  baseline is free of grid dependence (§4.1, §4.3.2; see
+  [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
+  The argument is stated, not tested: no finite-volume inversion is run
+  for comparison.
 - **Definitions of "implicit LES" differ.** Agdestein & Sanderse (2025,
   §1) call any LES that keeps the DNS equations in their original form and
   adds a closure, whether or not the filter is known, "implicit LES".
@@ -319,3 +342,5 @@ solver.
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.5 (solver-consistent training data), §5(3) (re-training per solver).
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §2.3–2.6, Eqs. 15–32 (discrete filter, closure term, energy split, momentum); App. A, Eqs. A.1–A.4; §3.1 (structure-preserving closure); §5 (dependence on $J$).
 - [Kim et al. (2024)](/sources/kim-2024.md) — p. A6-21, Eqs. 4.2–4.3, Table 4 (discretization-error estimate); Table 3; §5.
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §2.3 (blending as a turbulence model, cited), §5.2, §6.3, Fig. 13 (LES without explicit subgrid model, local blending).
+- [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §1 (discretization error in inferred RANS corrections), §4.1, §4.3.2 (lowest grid-converged degree).

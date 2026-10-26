@@ -5,7 +5,7 @@ description: "HORSES3D is an open-source Fortran DGSEM framework for compressibl
 status: established
 aliases: [HORSES3D, High-Order Spectral Element Solver 3D, horses2plt]
 tags: [software, dg, les, implicit-les, entropy-stable, mesh-adaptation]
-timestamp: 2026-10-26T07:30:00Z
+timestamp: 2026-10-26T15:52:00Z
 ---
 
 # HORSES3D
@@ -122,8 +122,9 @@ run (§4.2–4.3). Details are on
 
 Artificial-compressibility incompressible solver with dual time stepping;
 entropy-stable Navier–Stokes/Cahn–Hilliard multiphase solver; two-way
-coupled Lagrangian point particles with radiative heating; Ffowcs
-Williams–Hawkings acoustics (convective form, solid or permeable surfaces,
+coupled Lagrangian point particles with radiative heating;
+[Ffowcs Williams–Hawkings](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)
+acoustics (convective form, solid or permeable surfaces,
 quadrupoles neglected; about 7% amplitude error for a monopole in a
 $M=0.5$ stream); and a volume-penalization
 [immersed boundary method](/methods/immersed-boundary-method.md) with STL
@@ -137,6 +138,11 @@ the authors in June 2022; HORSES3D is the only one ticked for RANS and has
 all twelve, from which the authors conclude it "provides a unique set of
 capabilities". For [FLEXI](/software/flexi.md) see its page;
 [Nek5000](/software/nek5000.md) is a continuous spectral element code.
+[Kurz et al. (2025)](/sources/kurz-2025.md), §1, introducing the GPU code
+[GALÆXI](/software/galaexi.md), name HORSES3D and
+[Nektar++](/software/nektar-plus-plus.md) as the spectral element codes that
+solve both the compressible and the incompressible Navier–Stokes equations.
+They do not say whether either runs on GPUs.
 
 ## Reproducibility
 
@@ -159,3 +165,4 @@ parallel (§5.1–5.2).
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — Program summary; §1 (degree-of-freedom estimate); §2, Table 1; §3.1–3.8, Figs. 1–5 (numerics, split forms, adaptation, solvers, scaling); §4.1, Figs. 6–7 (turbulence closures); §4.2–4.7, Figs. 8–14 (other physics); §5.
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §5–§6 (the SVV-filtered artificial viscosity used for shock capturing).
 - [Kou et al. (2023)](/sources/kou-2023.md) — §2.2, Eqs. (15)–(25) (jump penalties in HORSES3D); §4.2–4.3 (Taylor–Green vortex, Kelvin–Helmholtz instability).
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §1 (HORSES3D among high-order solvers).

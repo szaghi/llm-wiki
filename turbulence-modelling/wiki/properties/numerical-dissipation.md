@@ -5,7 +5,7 @@ description: "Numerical dissipation is the kinetic-energy loss a discretization 
 status: established
 aliases: [artificial dissipation, scheme dissipation, upwind dissipation, Riemann-solver dissipation, numerical viscosity]
 tags: [numerical-dissipation, implicit-les, les, dg, kinetic-energy-preserving]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T15:49:00Z
 ---
 
 # Numerical dissipation in scale-resolving simulation
@@ -117,18 +117,17 @@ model ([kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
   or Roe inside (§2.4.2, a numerical experiment stated without figures).
   HLLC is more robust than Roe: on the LS89 vane it is stable with less
   filtering (Tables 7–8), which the author relates to Roe's known weakness
-  near vacuum states (Toro, as recalled); when both are stable the mean
+  near vacuum states (Toro, cited); when both are stable the mean
   results are nearly identical, but their pressure spectra downstream of
   the T106C trailing edge differ at high frequencies for a reason the
   author leaves open (§4.2, Fig. 6; §4.3.2). The heat transfer coefficient
   depends more on the threshold of the local modal filter than on the
   Riemann solver (§4.3.2, Fig. 17). The entropy filter of Dzanic &
-  Witherden (as recalled) stabilizes without tuning but resolves trailing-edge
+  Witherden (cited) stabilizes without tuning but resolves trailing-edge
   pressure waves less sharply, decays faster at high frequency and costs
   about 15% more per iteration than the local modal filter (§4.3.2,
   §4.4.3, Figs. 15–16); the author's run is less dissipative at high
-  frequency than an implicit-time-stepping CPR run of Jia et al. (as
-  recalled), which the author attributes, as a possibility, to that code's
+  frequency than an implicit-time-stepping CPR run of Jia et al. (cited), which the author attributes, as a possibility, to that code's
   limiter. See [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
   and [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md).
 
@@ -240,6 +239,36 @@ base-flow discussion they attribute the faster transition of the separated
 shear layer jointly to "the reduction in numerical dissipation from the
 shock capturing sensor" and "the reduced overall dissipation" (§4.4).
 
+**Central/upwind flux blending in transitional DDES.**
+[Möller et al. (2024)](/sources/moller-2024.md) (§II.C, Eq. 26; §III.B.3,
+Figs. 19–22) run transitional delayed
+[DES](/methods/detached-eddy-simulation.md) of the V103
+[compressor cascade](/benchmarks/compressor-cascade.md) at $Re=138\,500$ in
+the second-order finite-volume code [TRACE](/software/trace.md). The
+convective flux blends a central and a Roe upwind flux, with a fraction
+$\sigma_b$ of upwind flux (page-local):
+
+$$F=(1-\sigma_b)F_{\mathrm{central}}+\sigma_bF_{\mathrm{upwind}}.$$
+
+The dynamic blending of Travin et al. (cited), designed for a clear
+RANS/LES distinction, goes almost fully upwind ($\sigma_b\approx1$) in the
+boundary layers on both blade sides. It damps the resolved scales there.
+With synthetic inflow turbulence, constant blending gives:
+
+- 0% (pure central): oscillations, and the suction-side laminar
+  separation is suppressed;
+- 25% (the value of Yin & Durbin): the synthetic scales are damped, bypass
+  transition is delayed and the separation bubble is overpredicted;
+- 5%: the best agreement with DNS in skin friction on both sides.
+
+Without synthetic turbulence, varying the blending changes little. The
+authors take this as evidence of the interdependence between resolved
+inflow scales and numerical dissipation (§III.B.3). They caution that 5%
+is "another adjustable parameter" that may need re-tuning for other
+cases or meshes.
+With it, bypass transition relies on resolved scales, so the model "acts
+more like an LES model" (pp. 25–26).
+
 ## Where it acts in the element
 
 [Beck & Kurz (2023)](/sources/beck-2023.md) (§V A–C) contrast two DG-based
@@ -278,7 +307,7 @@ dissipation (Fig. 11).
   reference as support for [implicit LES](/definitions/implicit-les.md).
 - **Subdomain energy budget with the model terms.** [Saini et al. (2023)](/sources/saini-2023.md)
   (§2.2–2.3, Eqs. 2–12) extend the budget-residual method of Schranner et
-  al. (as recalled) to LES with an explicit model. The resolved-energy
+  al. (cited) to LES with an explicit model. The resolved-energy
   budget is integrated over an arbitrary subdomain, with the rate of
   change, viscous, subgrid (or SVV) dissipation and the surface fluxes,
   and the residual of its discrete form is minus the numerical dissipation
@@ -288,7 +317,7 @@ dissipation (Fig. 11).
   be dissipative (of the size of the main geometric features) and away
   from laminar regions; time derivative by central differences over the
   solver time step. Validated on the Taylor–Green vortex at $Re=3000$
-  against Castiglioni & Domaradzki (as recalled) (§4, Figs. 5–6), it is
+  against Castiglioni & Domaradzki (cited) (§4, Figs. 5–6), it is
   then applied to a second-order finite-volume code with
   [WALE](/methods/wale-model.md) and a fifth-order continuous-Galerkin
   code with [SVV](/methods/spectral-vanishing-viscosity.md) (results under
@@ -425,7 +454,7 @@ measuring it:
   interface flux of a kinetic-energy-preserving split-form DGSEM ($N=5$)
   carry the subgrid dissipation of their turbine-cascade implicit LES,
   citing the dispersion and dissipation analyses of DG (Gassner & Kopriva;
-  Moura et al., as recalled).
+  Moura et al., cited).
 - [Cai et al. (2022)](/sources/cai-2022.md) (§II.A, Eqs. 7, 9) use a
   hybrid recursive regularized lattice Boltzmann collision, because plain
   BGK is unstable at high Reynolds number; it adds a hyper-viscous term
@@ -455,7 +484,7 @@ measuring it:
   to 5.37 (experiment 4.83) and degrades the Reynolds stresses; on the
   fine mesh, where the residual is small, the time step matters little
   (Table 5). The authors relate this to earlier stabilized-method studies
-  (as recalled). See [implicit LES](/definitions/implicit-les.md).
+  (cited). See [implicit LES](/definitions/implicit-les.md).
 - [Ruan et al. (2023)](/sources/ruan-2023.md) (§2) simulate solar-flare
   MHD turbulence with the HLL flux and a third-order limiter on the
   coarser adaptive levels, and the second-order van Leer limiter on the
@@ -468,7 +497,7 @@ measuring it:
 - **Detrimental excess.** [Goc et al. (2021)](/sources/goc-2021.md)
   (§2.3) state that low-dissipation discretization is essential and that
   numerical dissipation is "extremely detrimental" for coarse LES (Mittal &
-  Moin 1997, as recalled); many unsteady solvers inherit dissipative RANS
+  Moin 1997, cited); many unsteady solvers inherit dissipative RANS
   discretizations. Their aircraft LES use charLES, with entropy- and
   kinetic-energy-preserving fluxes, and Alya, with an energy-conserving
   Galerkin convective form and no upwinding. [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md)
@@ -520,7 +549,7 @@ measuring it:
   comes mainly from its lower numerical dissipation, and that the result
   "challenges the usual assumption in LES practice that all or most of the
   required subgrid dissipation is imparted by the SGS model", in line with
-  Ghosal (as recalled). Goc et al. (above) call numerical dissipation
+  Ghosal (cited). Goc et al. (above) call numerical dissipation
   "extremely detrimental" for coarse LES.
 - **Explicit model on top of an implicit one.** Lederer et al. (2023, §4.1,
   §6) find that a WALE-based variational multiscale model added to DG-type
@@ -568,6 +597,138 @@ measuring it:
   works in their hybrid model, but its numerical dissipation is not counted
   in their resolution-adequacy parameter, an inconsistency the authors
   acknowledge.
+
+- **Kinetic-energy- and entropy-preserving baseline for model testing.**
+  [Maejima & Kawai (2025)](/sources/maejima-2025.md) (§4) choose a
+  second-order non-dissipative central scheme of this kind "so that SGS
+  dissipation is not contaminated by numerical dissipation" (citing Asada
+  et al.). They need it to read a learned model's backscatter from the
+  Reynolds-stress budgets (see
+  [energy backscatter](/definitions/energy-backscatter.md)).
+- **Spectral elements called dissipation-free.** [Reddy et al. (2026)](/sources/reddy-2026.md)
+  (§1) call a continuous spectral-element discretization "ideal" for
+  comparing subgrid models "due to the lack of inherent numerical
+  dissipation present". They do not measure it. In the Taylor–Green vortex
+  they define an effective viscosity from the kinetic-energy dissipation
+  rate and the enstrophy, $\varepsilon=\nu_{\mathrm{eff}}\langle\omega_i\omega_i\rangle$
+  ($\nu_{\mathrm{eff}}$ page-local). It includes subgrid and numerical
+  dissipation together (§7.1).
+
+  [Mukha et al. (2025)](/sources/mukha-2025.md) (§II.B, §III.C) find the
+  continuous-Galerkin [Nek5000](/software/nek5000.md) discretization not
+  benign in coarse wall-modelled LES:
+  - velocity derivatives jump across element boundaries, which produces
+    spikes in the subgrid viscosity, "just numerical artifacts";
+  - global momentum is not conserved;
+  - the explicit subgrid model doubles as the stabilizer, and higher
+    near-wall model dissipation reduces the artifacts. A modal relaxation
+    filter alone "does not introduce enough damping".
+
+  They call continuity of velocity derivatives "a missing component in the
+  current WMLES methodology". See
+  [spectral-element method](/methods/spectral-element-method.md) and
+  [wall-modelled LES](/methods/wall-modelled-les.md).
+
+## Shock capturing and dissipation in compressible turbulence
+
+Four sources measure what shock capturing does to the turbulent scales,
+in decaying and driven compressible turbulence and in a transonic
+cascade.
+
+- **Seven schemes on the supersonic Taylor–Green vortex.**
+  [Chapelier et al. (2024)](/sources/chapelier-2024.md) (§III–V, Figs. 5–8)
+  compare seven codes at $Re=1600$, $M_0=1.25$ at $64^3$ to $512^3$
+  degrees of freedom. They read the solenoidal dissipation (vorticity
+  based) as a small-scale measure and the dilatational dissipation as a
+  shock-sharpness measure. Its oscillations in time signal Gibbs
+  oscillations.
+  - **Riemann-flux codes.** Modal DG, spectral difference and TENO
+    under-estimate the early kinetic energy at $64^3$. The authors
+    attribute this to the dissipation of their Riemann-based interface
+    fluxes.
+  - **Second order.** The second-order code (H3AMR) under-estimates the
+    kinetic energy at $64^3$, which the authors attribute to the excess
+    numerical dissipation typical of second-order upwind schemes.
+  - **Dissipation-free central schemes.** They are accurate to
+    $t\approx12$, then pile energy up at the cutoff.
+  - **Shock-capturing families.** Localized artificial diffusivity gives
+    thick, oscillation-free shocks and the lowest dilatational dissipation.
+    Local switching to a low-order scheme gives sharp but oscillating
+    shocks on coarse grids, except TENO, which is sharp and
+    oscillation-free at all resolutions. A high-order filter without shock
+    capturing gives the strongest oscillations.
+  - **Small scales.** DG, spectral difference and DGSEM capture the small
+    scales well on coarse grids, as do high-order finite differences with
+    high-order filtering. Finite differences with local switching and TENO
+    "yield more small-scale dissipation" (§V).
+  - **The authors' synthesis.** Shock capturing has "a low impact" on the
+    turbulent scales overall (§V).
+  - **Shock sharpening.** The first dilatational-dissipation peak is not
+    converged even at $2048^3$, because shocks sharpen until molecular
+    viscosity resolves them (§II.C).
+
+  See [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md),
+  [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)
+  and [WENO schemes](/methods/weno-scheme.md).
+- **DG against finite volume in supersonic driven turbulence.**
+  [Cernetic et al. (2024)](/sources/cernetic-2024.md) (§3.1, §5–7) find
+  that a modal DG scheme with a von Neumann–Richtmyer viscosity at internal
+  Gauss points extends the resolved range over second-order finite volume.
+  - **Subsonic against supersonic.** The extension is large in subsonic
+    driven turbulence and "nearly disappears" in supersonic turbulence.
+    Below the sonic scale at $M=3.2$ it returns: DG at $512^3$ is "nearly
+    as good as" finite volume at $1024^3$.
+  - **Entropy at shocks.** The authors note that DG has no sub-cell entropy
+    source at shocks, unlike finite volume, whose cell averaging produces
+    entropy at every step. This is advantageous for advection and an
+    impediment at shocks, hence the artificial viscosity.
+  - **Bottleneck.** The lower dissipation of DG also gives a more
+    pronounced [bottleneck](/definitions/bottleneck-effect.md).
+  - **Cost.** With many shocks, their cost model expects orders 2–3 to be
+    the "sweet spot" (§7).
+- **Locality of the DG/finite-volume blending.** In the GPU code
+  [GALÆXI](/software/galaexi.md), [Kurz et al. (2025)](/sources/kurz-2025.md)
+  (§2.3, §5.2, §6.3) report two results.
+  - **Supersonic Taylor–Green vortex.** With the same maximum blending
+    factor at all resolutions, the solenoidal dissipation converges to the
+    reference of Chapelier et al. at $512^3$ degrees of freedom.
+  - **Rotor 37 cascade.** The finite-volume part is active only near the
+    leading-edge shock, with blending factor $\alpha$ between 0.1 and 0.7,
+    which keeps the scheme high order elsewhere.
+- **Shock buffet damped by dissipation.** In implicit LES and URANS of a
+  transonic compressor cascade, [Klose et al. (2025)](/sources/klose-2025.md)
+  (§5–6, Table 2) find a maximum shock-oscillation amplitude of 0.072
+  chords with URANS; 0.278, 0.172 and 0.158 with coarse LES at spans of 5,
+  10 and 20% of the chord; and 0.231 with the refined LES at 10% span. The authors "assume that
+  the increased numerical dissipation of the URANS and, to a lesser extent,
+  the coarser LES, damps out flow structures that are driving the larger
+  shock oscillations". In the coarse LES the shocklets appear more diffused
+  "given the increased numerical dissipation" (§7.1).
+
+## Dissipation of compressible modes
+
+When the only physical viscosity is shear viscosity, the compressible
+(dilatational) velocity modes are damped by the scheme.
+[Beattie et al. (2025)](/sources/beattie-2025.md) (§1, §6, App. D, §9.1)
+show this in trans-sonic MHD turbulence with the finite-volume code FLASH
+(MUSCL–Hancock, five-wave Riemann solver):
+
+- without [bulk viscosity](/definitions/bulk-viscosity.md), compressible-mode
+  decay is "governed completely by numerical dissipation", set by the flux
+  discretization, the number of waves in the Riemann solver and the
+  resolution;
+- the compressible modes pile up at high wavenumbers in a
+  [bottleneck](/definitions/bottleneck-effect.md);
+- the run never converges in those modes, so that a nominal DNS is an
+  [implicit LES](/definitions/implicit-les.md) for them.
+
+An explicit bulk viscosity about ten times the shear viscosity removes the
+pile-up and gives convergence at $512^3$.
+
+[Cao et al. (2024)](/sources/cao-2024.md) (§1) rely on the scheme's
+dissipation as the model in a gas-kinetic iLES: the "built-in numerical
+dissipation acts as the subgrid-scale (SGS) dissipation". The paper gives
+no measure of it.
 
 ## Too little dissipation
 
@@ -733,3 +894,13 @@ two-point flux, with entropy-dissipative surface terms added.
 - [Duan & Wang (2024)](/sources/duan-2024.md) — §1, Figs. 1–2; §3; §5.1, Figs. 5–6.
 - [Domaradzki (2024)](/sources/domaradzki-2024.md) — §3.3.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §II.A.
+- [Möller et al. (2024)](/sources/moller-2024.md) — accepted manuscript: §II.C, Eq. (26); §II.D; §III.B.3, Figs. 19–22.
+- [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §4.
+- [Reddy et al. (2026)](/sources/reddy-2026.md) — preprint of 4 March 2021: §1; §7.1.
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §II.B; §III.C, Figs. 6–8; §V.
+- [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL accepted manuscript: §II.C, Figs. 2–4; §III.A–B; §IV.A–B, Figs. 5–8; §V.
+- [Cernetic et al. (2024)](/sources/cernetic-2024.md) — arXiv v2: §3.1; §5, Fig. 5; §6, Figs. 8, 10–11; §7.
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §2.3, Eq. (21); §5.2, Fig. 11; §6.3, Fig. 13.
+- [Klose et al. (2025)](/sources/klose-2025.md) — ASME accepted manuscript: §6, Table 2; §7.1.
+- [Beattie et al. (2025)](/sources/beattie-2025.md) — arXiv v4: §1; §6.1–6.2, Fig. 9; §9.1; App. D.
+- [Cao et al. (2024)](/sources/cao-2024.md) — arXiv v1: §1.

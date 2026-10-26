@@ -142,10 +142,11 @@ and recorded as printed. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26). This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunk 6. This source is cited on:
 
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
+- [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)
 - [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Nektar++](/software/nektar-plus-plus.md)

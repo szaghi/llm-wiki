@@ -144,13 +144,14 @@ are recorded as printed.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26). This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunk 6. This source is cited on:
 
 - [ACAT1 fan stage](/benchmarks/acat1-fan-stage.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)
 - [Detached-eddy simulation and its delayed and zonal forms](/methods/detached-eddy-simulation.md)
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
+- [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)
 - [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [WALE model](/methods/wale-model.md)

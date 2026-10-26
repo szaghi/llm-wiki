@@ -5,7 +5,7 @@ description: "FLEXI is an open-source high-order DGSEM framework for compressibl
 status: established
 aliases: [FLEXI framework, HOPR, POSTI]
 tags: [software, dg, les, kinetic-energy-preserving, reinforcement-learning]
-timestamp: 2026-10-26T07:30:00Z
+timestamp: 2026-10-26T15:52:00Z
 ---
 
 # FLEXI
@@ -90,6 +90,31 @@ $10^4$ and latency dominating below; the hybrid DG/FV operator 15–20% slower.
 The memory per degree of freedom is 0.74 KiB at $N=5$ (Table 4). The DGSEM
 volume integral costs $O(N)$ operations per degree of freedom (Table 3).
 
+Later sources extend these figures. [Chapelier et al. (2024)](/sources/chapelier-2024.md),
+§III.B.f, state superlinear strong scaling "up to 262.000 CPUs" (read as 262,000,
+the point being a thousands separator *(compiler check, not in the
+sources)*) down to one element per
+process. They cite it to the FLEXI exascale preprint of Blind et al. (2023),
+a study other than the measured one of Krais et al. above.
+[Kurz et al. (2025)](/sources/kurz-2025.md), §4.4, put CPU FLEXI's optimum
+in a "narrow band" of 3000–10 000 degrees of freedom per core. At higher
+load the cache is exhausted and memory bandwidth limits the code; at lower
+load latency dominates. They cite Krais et al. (2021) and Blind et al. for
+this band.
+
+## GPU port: GALÆXI
+
+[GALÆXI](/software/galaexi.md) is FLEXI ported to NVIDIA GPUs in CUDA
+Fortran. It keeps FLEXI's data structures, MPI strategy (space-filling-curve
+partition, sorted contiguous MPI face data, non-blocking messages with MPI
+faces first) and parameter files, so that FLEXI set-ups run on it unchanged.
+On the Taylor–Green vortex the two codes give results identical "up to
+machine precision" at $M_0=0.1$, and identical dissipation histories at
+$M_0=1.25$. On a NASA Rotor 37 cascade, FLEXI on 32 768 cores of HAWK used
+339 kWh per convective time unit, against 147 kWh for GALÆXI on 128 A100
+GPUs (Kurz et al. 2025, §1, §3.1, §5.2, §6.3, Table 3). The GPU code's
+kernels, scaling and energy accounting are on its page.
+
 ## Reproducibility
 
 Unit tests at every build, check-in tests in GitLab CI, and nightly and weekly
@@ -164,6 +189,31 @@ and super-samples high-order data to linear output (Krais et al. 2021, §2.3,
   save up to about half of the elements (§3–§4; see
   [wall-modelled LES](/methods/wall-modelled-les.md)).
 
+- **Supersonic Taylor–Green vortex** in the seven-code comparison of
+  [Chapelier et al. (2024)](/sources/chapelier-2024.md) at $Re=1600$,
+  $M_0=1.25$ (§III.B.f, Tables I–II; HAL accepted manuscript): fourth-order
+  DGSEM ($N=3$) on $16^3$ to $128^3$ elements ($64^3$ to $512^3$ degrees of
+  freedom), Roe flux with the second Harten–Hyman entropy fix, BR1,
+  fourth-order low-storage Runge–Kutta and no explicit subgrid model
+  ([implicit LES](/definitions/implicit-les.md)). Shocks are captured by the
+  [subcell finite-volume](/methods/subcell-finite-volume-shock-capturing.md)
+  switch: troubled elements are solved with a second-order TVD finite-volume
+  scheme with a generalized minmod limiter, flagged by a modal-decay
+  indicator on the pressure. FLEXI's kinetic energy lies closer to the
+  finite-difference codes than to the two other Riemann-flux element codes
+  (CODA and SD3D, both with localized artificial diffusivity), which the
+  authors attribute to the finite-volume subcells (§IV.A). FLEXI is among
+  the three codes with the highest solenoidal dissipation on every grid. Its
+  dilatational dissipation oscillates on the coarse grids, which the
+  authors attribute to the DG–FV switching per element. It gives the
+  sharpest shocks of all codes, matching the reference Mach profile at
+  $256^3$ and oscillating below (§IV.A–B, Figs. 6–8; see
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)).
+- **NASA Rotor 37 cascade, CPU reference** for GALÆXI (Kurz et al. 2025,
+  §6.3, Table 3): $2.6\times10^8$ degrees of freedom at $N=5$ on 32 768
+  cores (about 7900 per core), PID $1.02\times10^{-6}$ s, 7538 s of wall
+  time per convective time unit; see [NASA Rotor 37](/benchmarks/nasa-rotor-37.md).
+
 Ferrer et al. (2023, §2, Table 1), comparing high-order codes, tick for
 Flexi/Fluxo a Fortran DG code for compressible flow with energy- or
 entropy-stable formulations, $p$-adaptation, LES and shock capturing, and no
@@ -197,6 +247,13 @@ Flad & Gassner (2017) ran their study of kinetic-energy-preserving DG LES in an
   $N=7$, against 216 ($N=5$) in the channel tables *(compiler check, not in
   the sources)*. The version read is the arXiv v1 preprint, retitled at
   publication.
+- Kurz et al. (2025, Eq. 22) define the PID with the total number of
+  Runge–Kutta stages in the denominator. Krais et al. (2021, Eq. 68) write
+  time steps times stages per step. The two definitions are the same
+  quantity *(compiler check, not in the sources)*.
+- Chapelier et al. (2024, App. A, Fig. 9) show a FLEXI run at $384^3$
+  degrees of freedom in the subsonic verification case, which their text
+  does not list among the resolutions used.
 
 # Citations
 
@@ -206,3 +263,5 @@ Flad & Gassner (2017) ran their study of kinetic-energy-preserving DG LES in an
 - [Blind et al. (2023)](/sources/blind-2023.md) — §2.1, §2.3 (FLEXI set-up, Vreman length scale, modal test filter); §3.1–3.3, Tables 1–4 (channels, mortars); §4, Tables 5–6 (NACA 64A-110).
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §2, Table 1 (Flexi/Fluxo capabilities as judged by the HORSES3D authors).
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §3.2 (linear forcing); §3.5, Table 2 (FLEXI set-up, Relexi); §4.1–4.2 (training cost, policy cost); App. A (element-wise dynamic Smagorinsky in FLEXI).
+- [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL accepted manuscript: §III.B.f, Tables I–II (FLEXI configuration, scaling claim); §IV.A–B, Figs. 5–8 (supersonic Taylor–Green results); App. A, Fig. 9.
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §1, §3.1 (GALÆXI as a FLEXI port, MPI strategy); §4.4 (CPU optimum per core); §5.2 (identical Taylor–Green results); §6.3, Table 3 (Rotor 37 CPU reference, energy).

@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T15:49:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -77,7 +77,8 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Kim et al. (2024)](/sources/kim-2024.md), §2.1, §3.2, §4.2 | DSM (Germano et al. 1991; Lilly 1992), baseline of neural-network models of a cylinder wake, finite differences with an immersed boundary | box test filter in the spanwise (homogeneous) direction only, $\hat\Delta_z=2\Delta_z$ ($\Delta_z$ page-local, the spanwise grid size); coefficient averaged over $z$ |
 | [Wang et al. (2023c)](/sources/wang-2023-c.md), §II.A, Eq. (12) | DSM (Lilly's least-squares form) and a two-coefficient dynamic mixed model, baselines in isotropic turbulence and a temporal mixing layer, pseudo-spectral | Gaussian, $\hat\Delta=2\Delta$; average over homogeneous directions |
 | [Domaradzki (2024)](/sources/domaradzki-2024.md), §3.3, Eqs. (3.4)–(3.7) | identity in energy form, applied to the coefficient of the [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md) | the model's own graded filter; local and domain average |
-| [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md), §2.4, §3.3.2 | DSM of the reference LES (LESOCC, Breuer et al.) of the periodic hill, as recalled | not printed |
+| [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md), §2.4, §3.3.2 | DSM of the reference LES (LESOCC, Breuer et al.) of the periodic hill, as cited there | not printed |
+| [Li et al. (2024)](/sources/li-2024.md), §II B, Eqs. (7)–(11) | DSM (Lilly's least squares) and a two-coefficient dynamic mixed model, baselines of a neural-operator surrogate in forced isotropic turbulence and a temporal mixing layer, pseudo-spectral | test filter $\hat\Delta=2\Delta$, and a second filter of width $4\Delta$ for the mixed model's structural term; average over the whole domain, so the coefficients are spatially uniform at each time |
 
 Fowler et al. (2022, §4.2) borrow the Lagrangian averaging of the dynamic
 model for the time integration of their wall model (semi-Lagrangian upstream
@@ -90,7 +91,7 @@ learned wall models alike.
 ## Two-parameter mixed models
 
 [Kang et al. (2023)](/sources/kang-2023.md) (§3.3, Eqs. 3.5–3.8; after
-Anderson & Meneveau, as recalled) apply the identity to a model with two
+Anderson & Meneveau, cited) apply the identity to a model with two
 coefficients, $\tau_{ij}=-2C_1\Delta^2\lvert\bar S\rvert\bar S_{ij}+C_2B_{ij}$,
 with $B_{ij}$ (page-local) a structural term: the resolved stress $L_{ij}$
 (their DTM$_{\mathrm{sim}}$) or the Clark [gradient](/methods/gradient-model.md)
@@ -107,9 +108,19 @@ $-2\hat\Delta^2\lvert\hat{\bar S}\rvert\hat{\bar S}_{ij}+2\Delta^2\widehat{\lver
 which is $M'_{ij}$ here, so their one-parameter coefficient
 $\langle L_{ij}M'_{ij}\rangle/\langle M'_{ij}M'_{ij}\rangle$ is $C_s^2$
 *(compiler check, not in the sources)*. The one-parameter dynamic mixed
-model (after Zang, Street & Koseff, modified by Vreman et al., as recalled)
+model (after Zang, Street & Koseff, modified by Vreman et al., cited)
 subtracts the similarity part from $L_{ij}$ before the least squares (see
 [scale-similarity models](/methods/scale-similarity-model.md)).
+
+[Li et al. (2024)](/sources/li-2024.md) (§II B, Eqs. 9–11) print the same
+two-coefficient least squares for a dynamic mixed model. Their structural
+term is the similarity stress formed with the test filter ($2\Delta$), and
+its test-level counterpart uses a second filter of width $4\Delta$. Their Eqs. (10)–(11)
+build the Smagorinsky part of the identity from
+$-2\Delta^2\lvert\bar S\rvert\bar S_{ij}$, so the coefficient $C_1$
+multiplies that term. The model as printed in their Eq. (9),
+$C_1\Delta^2\lvert\bar S\rvert\bar S_{ij}$, lacks the factor $-2$ (see
+Qualifications).
 
 ## The identity on forces
 
@@ -239,8 +250,7 @@ filter-width question.
   steps". In decaying isotropic turbulence the DTM$_{\mathrm{sim}}$ similarity
   coefficient $C_2$ turns negative and is clipped to zero after
   $t/T_{e,0}\ge1.62$ ($T_{e,0}$ the initial eddy-turnover time), so the
-  model then behaves like DSM, consistent with Anderson & Meneveau (as
-  recalled), for whom this happens when the test filter exceeds the
+  model then behaves like DSM, consistent with Anderson & Meneveau (cited), for whom this happens when the test filter exceeds the
   integral scale. A priori the DSM stress correlates worst with the
   filtered-DNS stress (0.27–0.30 in isotropic turbulence, 0.19 for the
   shear stress in channel flow), DTM$_{\mathrm{nl}}$ best (0.91). In channel
@@ -313,6 +323,31 @@ filter-width question.
   subgrid flux is strictly positive. An ensemble-Kalman-calibrated mixed
   model does better (see [gradient model](/methods/gradient-model.md) and
   [ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md)).
+- **Baseline of a neural-operator surrogate**
+  ([Li et al. 2024](/sources/li-2024.md), §V, Figs. 6–21, Tables I–II).
+  The setting is a posteriori LES on $64^3$ in forced
+  [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)
+  at $Re_\lambda\approx100$, with sharp spectral filtering at $k_c=21$. The
+  DSM run also applies the filtered-DNS forcing at the two largest
+  wavenumbers.
+  - **DSM in isotropic turbulence.** DSM is closest to filtered DNS in the
+    rms velocity and vorticity, and more accurate than the learned
+    surrogate in the spectrum for $k\ge18$.
+  - **Mixed model in isotropic turbulence.** The dynamic mixed model
+    underestimates the spectrum at low wavenumbers and "significantly
+    overestimates" it at high ones.
+  - **Velocity increments.** Both models deviate in the PDFs of velocity
+    increments beyond $0.5$ rms.
+  - **Temporal mixing layer.** In the
+    [temporal mixing layer](/benchmarks/temporal-mixing-layer.md) DSM
+    underestimates the momentum thickness during transition and
+    overestimates it in the linear-growth region. Both models predict
+    larger vortical structures than filtered DNS, in line with Wang et al.
+    (2023c) above.
+  - **Global averaging.** Both models average their coefficients over the
+    whole domain, in the mixing layer as in isotropic turbulence (§II B).
+    See
+    [neural-operator surrogates](/methods/neural-operator-les-surrogate.md).
 - **A dynamic coefficient that fails.** Applied to the constant $C_{\mathrm A}$
   (page-local, the non-dimensional constant of the constant variant) of the
   [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md),
@@ -341,7 +376,7 @@ filter-width question.
   §2.2, recalling Germano et al. 1991 and Meneveau & Katz 2000). The
   learned 1D closure of [van Gastelen et al. (2024)](/sources/vangastelen-2024.md)
   (§1) cites the dynamic localization model with a subgrid-energy equation
-  (Ghosal et al., as recalled) as an earlier way to admit backscatter
+  (Ghosal et al., cited) as an earlier way to admit backscatter
   stably by modelling the subgrid energy, the route their own closure
   takes (see [energy backscatter](/definitions/energy-backscatter.md)).
 
@@ -388,6 +423,14 @@ squares from a 6×4 system; see the
   and resolutions differ between the two papers of the same group, and
   both find the DSM weakest at 24 degrees of freedom, so the statements are
   not recorded as a contradiction.
+- Li et al. (2024, arXiv v2) print the dynamic mixed model as
+  $\tau_{ij}=C_1\Delta^2\lvert\bar S\rvert\bar S_{ij}+C_2(\cdots)$ (Eq. 9).
+  Their Germano tensors (Eqs. 10–11) use
+  $h_{1,ij}=-2\Delta^2\lvert\bar S\rvert\bar S_{ij}$, and the least-squares
+  formulas solve $L_{ij}\approx C_1M_{ij}+C_2N_{ij}$, which is consistent
+  only with $-2C_1\Delta^2\lvert\bar S\rvert\bar S_{ij}$ in the model. The
+  printed Eq. (9) is therefore off by a factor $-2$ *(compiler check, not
+  in the sources)*.
 
 # Citations
 
@@ -418,3 +461,4 @@ squares from a 6×4 system; see the
 - [Domaradzki (2024)](/sources/domaradzki-2024.md) — §3.3, Eqs. (3.4)–(3.7).
 - [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §2.4, Table 1; §3.3.2.
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — §1.
+- [Li et al. (2024)](/sources/li-2024.md) — arXiv v2: §II B, Eqs. (7)–(11); §V A 2, Figs. 6–10; §V B 2, Figs. 16–21.

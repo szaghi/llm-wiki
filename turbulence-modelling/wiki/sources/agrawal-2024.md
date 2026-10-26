@@ -146,7 +146,7 @@ References [7] and [8] are the ingested sources
 
 # Pages created or updated
 
-Chunk 5 (2026-10-26). This source is cited on:
+Chunk 5 (2026-10-26), cited further in chunk 6. This source is cited on:
 
 - [Backward-facing step](/benchmarks/backward-facing-step.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
@@ -158,3 +158,4 @@ Chunk 5 (2026-10-26). This source is cited on:
 - [Differential Reynolds-stress models](/methods/reynolds-stress-model.md)
 - [Tensor-basis neural network and the integrity basis](/methods/tensor-basis-neural-network.md)
 - [WALE model](/methods/wale-model.md)
+- [OpenFOAM](/software/openfoam.md)

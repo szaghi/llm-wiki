@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Law of the wall"
-description: "The inner-layer mean-velocity profile of wall-bounded turbulence — viscous sublayer, buffer layer and logarithmic layer in wall units — with the constants, composite fits and damping functions the sources use, its compressible and outer-layer (defect-law) extensions, and its role as the target every wall model must reproduce."
+description: "The inner-layer mean-velocity profile of wall-bounded turbulence — viscous sublayer, buffer layer and logarithmic layer in wall units — with the constants, composite fits and damping functions the sources use, its compressible, displaced (canopy) and outer-layer (defect-law) extensions, and its role as the target every wall model and data-driven RANS correction must reproduce."
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:52:00Z
 ---
 
 # Law of the wall
@@ -57,6 +57,11 @@ and the choice is part of the model.
 | [Constant et al. (2024)](/sources/constant-2024.md), §3.2, Eq. (8) | 0.41 | not printed | Musker's law (form not printed); van Driest damping $1-e^{-y^+/19}$ in the target-point eddy viscosity | wall function at immersed-boundary target points in RANS |
 | [Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §2.2, Eqs. (12)–(15) | $\approx0.41$ | $\kappa^{-1}\ln E$, $E\approx7.9$ | blend constants $s=86.58$, $p=0.7894$ | explicit equilibrium wall model in a lattice Boltzmann solver |
 | [Chen et al. (2024)](/sources/chen-2024.md), §2.3, Eqs. (2.7), (2.10) | 0.40 | — | $A^+=26$ divided by the square root of the local total shear stress in wall units; Johnson–King reference damping with 17 | mixing length of the algebraic [Baldwin–Lomax model](/methods/baldwin-lomax-model.md) (a RANS closure, not an LES wall model) |
+| [Mukha et al. (2025)](/sources/mukha-2025.md), §III.A, App. A | 0.387 | 4.2 | Spalding's law (formula not printed); values from the channel DNS of Yamamoto & Tsuji at $Re_\tau\approx8000$, as cited | algebraic wall model of spectral-element WMLES of channel flow in [Nek5000](/software/nek5000.md) |
+| Mukha et al. (2025), §IV.A; App. A | 0.41 | 5.2 (§IV.A) or 5.5 (App. A) | Spalding's law | the same model for a zero-pressure-gradient flat-plate boundary layer (see Qualifications) |
+| [Lohrer & Fröhlich (2025)](/sources/lohrer-2025.md), §5.2, Eqs. (5.7)–(5.8) | 0.41 (0.38 when fitted) | 5.5 | roughness function $\Delta U^+_{\mathrm{vo}}=15.4$ (17.4 with fitted $\kappa$); $B$ after Nezu & Nakagawa (1993), as cited | displaced log law above a submerged flexible canopy (below) |
+| [Oulghelou et al. (2025)](/sources/oulghelou-2025.md), Figs. 4, 11 | 0.41 | 5.2 | | reference log law for blended data-driven RANS corrections in channel and flat-plate flow |
+| [Wu et al. (2025)](/sources/wu-2025.md), §2.1, Eq. (3) | 0.41 | — | | log-layer calibration constraint of the $k$-$\omega$ SST $\omega$ equation (below) |
 
 Zhao et al. (2023a) attribute $\kappa=0.40$, $B=5.5$ to the channel DNS of
 Kim et al. (1987), as they cite it; Wang et al. (2023b) give the same values
@@ -178,7 +183,22 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   otherwise; the constants are not printed.
 - **Spalding's law** is the algebraic wall model of Blind et al. (2023,
   §3.3), solved by Newton's method in every Runge–Kutta stage; the formula
-  and its constants are not printed.
+  and its constants are not printed. Mukha et al. (2025, §II.C.1) use it in
+  the same role in a continuous spectral-element code and, without printing
+  the formula, measure its accuracy against reference profiles (App. A,
+  Figs. 18–21). In channel flow at $Re_\tau\approx8000$, with the constants
+  $\kappa=0.387$, $B=4.2$ taken from the same DNS, the law reproduces the
+  DNS velocity in the log region within 0.2 %, and the wall stress it
+  returns from the exact DNS velocity is within $\pm0.2$ % for matching
+  heights $0.05\le h_{\mathrm{wm}}/\delta\lesssim0.25$ ($-0.04$ % at
+  $h_{\mathrm{wm}}=0.2\delta$ in §III.B.3, "about 0.05 %" in App. A). With
+  $\kappa=0.41$ and reference flat-plate profiles the stress error
+  is about $\pm1$ %, an order of magnitude larger; the law reaches its
+  logarithmic limit only near $y^+\approx150$, which at low Reynolds numbers
+  lies near the wake region, and where the error crosses zero depends on
+  whether wall-resolved LES or DNS supplies the reference profile (App. A,
+  Figs. 20–21). Constant et al. (2024, Fig. 7) compare Spalding's law with
+  Musker's law (above).
 - **Mixing length with van Driest damping**, the differential form behind
   the fit of Fowler et al.: the eddy viscosity is $\nu_t=\kappa y\,u_\tau(1-e^{-y^+/A^+})^2$,
   and integrating the constant-stress equation gives $f$ (Griffin et al.
@@ -250,6 +270,28 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   velocity over $0.2\lesssim y/\delta\lesssim0.9$ with $n_{pl}=5$ (Eqs.
   4.6–4.7; page-local $n_{pl}$, $\delta_\infty$ the height where the mean
   velocity first reaches $U_\infty$).
+- **Vegetated (canopy) walls: the displaced log law.** Over a submerged
+  canopy of flexible blades in open-channel flow,
+  [Lohrer & Fröhlich (2025)](/sources/lohrer-2025.md) (§5.2, Eqs. 5.6–5.8),
+  after Nepf (2012) as they cite it, write the mean velocity above the
+  canopy as
+
+  $$\frac{\langle u\rangle}{u_{\tau,\mathrm{vo}}}=\frac1\kappa\ln\frac{y-y_{\mathrm{vo}}}{\nu/u_{\tau,\mathrm{vo}}}+B-\Delta U^+_{\mathrm{vo}},$$
+
+  with $y_{\mathrm{vo}}$ the displacement height (virtual origin),
+  $u_{\tau,\mathrm{vo}}$ the friction velocity built from the total shear
+  stress at $y_{\mathrm{vo}}$ and $\Delta U^+_{\mathrm{vo}}$ a roughness
+  function (all page-local; the viscous length $\nu/u_{\tau,\mathrm{vo}}$
+  "plays the same role as the roughness length in rough-wall boundary
+  layers"). A fit over $2.5h_c\le y\le0.8H$ ($h_c=0.20H$ the mean hull height of
+  the reconfigured canopy, $H$ the water depth, page-local) with $\kappa=0.41$, $B=5.5$ gives
+  $y_{\mathrm{vo}}=0.18H$, $\Delta U^+_{\mathrm{vo}}=15.4$ and
+  $u_{\tau,\mathrm{vo}}=0.16U$; fitting $\kappa$ as well gives $\kappa=0.38$,
+  $y_{\mathrm{vo}}=0.13H$ and $\Delta U^+_{\mathrm{vo}}=17.4$, so the
+  displacement height is sensitive to the assumed $\kappa$. Below the canopy,
+  scaled with the bed friction velocity, $u^+=y^+$ holds only up to
+  $y^+\approx2$. The flow is a fluid–structure-interaction problem resolved by
+  LES with an immersed boundary, not a wall-modelled flow.
 - **Low Reynolds number.** [Kim et al. (2022)](/sources/kim-2022.md) (§III D,
   Fig. 12) recall, citing the channel DNS of Moser, Kim & Mansour, that the
   DNS mean velocity at $Re_\tau=180$ deviates slightly from the log law in the
@@ -307,6 +349,49 @@ recovers $u^+=0.4^{-1}\ln y^++5$ in half-channel WMLES up to
 $Re_\tau=10^{10}$ whenever the matching height lies in the log layer, while
 at $Re_\tau=180$ its profile lies above the DNS (§III.A, Fig. 6).
 
+**Data-driven RANS corrections.** Two sources make the same point for
+learned corrections of the [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md):
+a correction trained on separated flows breaks the log law unless it is
+kept out of the attached boundary layer.
+[Wu et al. (2025)](/sources/wu-2025.md) (§2.1, Eqs. 3–4) recall, after
+Wilcox as they cite it, the log-layer calibration of the $\omega$ equation,
+
+$$\beta_\omega-\beta^*\gamma_\omega=\kappa^2\sqrt{\beta^*}\,\sigma_\omega,\qquad\kappa=0.41,$$
+
+with $\gamma_\omega$, $\beta_\omega$ the production and destruction
+coefficients of the $\omega$ equation (page-local; the source's $\gamma$
+and $\theta$), a "necessary condition for accurate resolution of the log
+layer". A [field-inversion](/methods/field-inversion-machine-learning.md)
+multiplier $\beta(\boldsymbol x)$ on the destruction term turns the
+left-hand side into $\beta(\boldsymbol x)\beta_\omega-\beta^*\gamma_\omega$,
+so the constraint holds only where $\beta=1$. Their conditioned inversion
+switches the multiplier off inside the boundary layer with the DDES shielding
+function; on a zero-pressure-gradient flat plate at $Re_L=10^7$ the
+conditioned symbolic model keeps $\beta=1$ there and matches SST and the
+viscous and log layers, while the unconditioned one gives $\beta\approx1.06$
+in the boundary layer, an "erroneous log layer", a thicker boundary layer
+and an over-predicted $C_f$ (§4.5, Figs. 47–48).
+[Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (§4.2.1, Table 3)
+quantify the same effect for sparse symbolic corrections in channel flow at
+$Re_\tau=1000$: the mean absolute error of $u^+$ is 0.44 for the baseline
+SST, 2.41 for a correction trained on separated flows and 8.97 for one
+trained on a near-sonic jet, which strongly lowers the eddy viscosity; their
+locally weighted blend of the three gives the baseline's 0.44, with a
+weight of the baseline close to one across the channel. On the unseen flat
+plate the blend's error is 0.7 against 0.42 for SST and 6.27 for the jet
+correction, although the jet correction receives a significant weight in
+the log region, which the authors read as weight shifts there having "little
+impact on the overall accuracy" (§5.1.1, Table 9, Fig. 11). See
+[turbulence-model aggregation](/methods/turbulence-model-aggregation.md).
+
+**A diagnostic of logarithmic behaviour.** The premultiplied gradient
+$y^+\,du^+/dy^+$ is constant, equal to $1/\kappa$, in a log layer: Huang et
+al. (2022, Eq. 4.5) use it on transformed hypersonic profiles (above), and
+Mukha et al. (2025, §III.B.2, Fig. 3) use $\kappa y^+\,du^+/dy^+$, equal to
+one in a log layer, to expose the jumps of the velocity derivative at the
+element boundaries of their spectral-element WMLES (see
+[log-layer mismatch](/definitions/log-layer-mismatch.md)).
+
 The friction velocity is also the first quantity a near-wall LES must get
 right without a wall model: [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md)
 (§7.2–7.4) report $u_\tau$ errors in pipe flow at $Re_\tau=1000$ of $+15.3$ %
@@ -332,6 +417,15 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
   function that tends to the undamped mixing length away from the wall, which
   holds only for $(1-e^{-y^+/A^+})^2$. In §3 they print "$\kappa$ … 4.1" for
   the 0.41 stated in §1 and at the end of §3.
+- **Intercept of Mukha et al. (2025) for the boundary layer.** §IV.A
+  prints "here with $\kappa=0.41$ and $B=5.2$" for the flat-plate WMLES, and
+  App. A prints "$\kappa=0.41$ and $B=5.5$" for the accuracy analysis of the
+  same law on the same flow; which value the simulations used cannot be
+  told from the arXiv v1 read.
+- Oulghelou et al. (2025) and Wu et al. (2025) write the steady
+  incompressible RANS equations and solve them in OpenFOAM (Wu et al. also run CFL3D for a
+  compressible airfoil case); their log-law statements concern RANS
+  profiles, not LES.
 
 ## Contradictions
 
@@ -378,3 +472,7 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 - [Constant et al. (2024)](/sources/constant-2024.md) — §3.2, Eqs. (6)–(8), Fig. 7 (HAL author manuscript).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §2.2, Eqs. (9)–(15); ref. [8] (HAL accepted manuscript).
 - [Chen et al. (2024)](/sources/chen-2024.md) — §2.3, Eqs. (2.7)–(2.10); §3.1, Eqs. (3.1)–(3.4), Fig. 3; §3.2, Eqs. (3.9)–(3.12), Fig. 5.
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — §II.C.1; §III.A; §III.B.2–III.B.3, Fig. 3; §IV.A; App. A, Figs. 18–21 (arXiv v1).
+- [Lohrer & Fröhlich (2025)](/sources/lohrer-2025.md) — §5.2, Eqs. (5.6)–(5.8).
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — §4.2.1, Table 3, Fig. 4; §5.1.1, Table 9, Fig. 11 (arXiv v2).
+- [Wu et al. (2025)](/sources/wu-2025.md) — §2.1, Eqs. (3)–(4); §4.5, Figs. 47–48 (authors' manuscript).

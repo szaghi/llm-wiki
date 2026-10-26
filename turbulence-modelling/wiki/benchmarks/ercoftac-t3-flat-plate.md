@@ -5,7 +5,7 @@ description: "The ERCOFTAC T3 series of flat-plate boundary layers under free-st
 status: established
 aliases: [T3 flat plates, ERCOFTAC T3A, T3A, T3B, T3A-, T3C, T3C1–T3C5, Rolls-Royce T3 plates, Savill T3 test cases]
 tags: [benchmark, transition, rans, boundary-layer]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:57:00Z
 ---
 
 # ERCOFTAC T3 flat-plate transition cases
@@ -145,6 +145,22 @@ and a different turbulent $C_f$ level, so the constants "should be
 retouched" per turbulence model
 ([Pacciani et al. (2025)](/sources/pacciani-2025.md), §5.1.1, Fig. 5).
 
+**A check of a transitional hybrid.** [Möller et al. (2024)](/sources/moller-2024.md),
+§II.F, run T3C5 (bypass transition at a free-stream turbulence intensity
+comparable to their compressor cascade) with DDES-$\gamma$, their coupling
+of SST-based [delayed DES](/methods/detached-eddy-simulation.md) with
+Menter's one-equation
+[$\gamma$ model](/methods/local-correlation-based-transition-model.md), and
+state that it gives results identical to RANS-$\gamma$ (results not shown).
+The authors argue that in a laminar or transitional layer $\gamma=0$
+keeps the modelled turbulent kinetic energy and the RANS length scale near
+zero, so the region is declared "RANS mode" although it is "more a laminar
+mode" (§II.D, Fig. 1); on their cascade the attached pressure-side layer
+likewise stays in RANS mode and the hybrid does not improve bypass
+transition over RANS-$\gamma$ without resolved inflow turbulence (§III.B,
+§IV). Their cascade results are on the
+[compressor cascade](/benchmarks/compressor-cascade.md) page.
+
 ## Qualifications
 
 - The inlet values of the table are simulation settings, each source
@@ -177,7 +193,8 @@ retouched" per turbulence model
   validation on airfoils and cascades: the S809 airfoil in
   [Menter et al. (2022)](/sources/menter-2022.md) and
   [Pacciani et al. (2025)](/sources/pacciani-2025.md), compressor cascades
-  in [Liu et al. (2024)](/sources/liu-2024.md), and
+  in [Liu et al. (2024)](/sources/liu-2024.md) (see
+  [compressor cascades](/benchmarks/compressor-cascade.md)), and
   [turbine cascades](/benchmarks/turbine-cascade.md) in Menter et al. and
   Pacciani et al. On S809 Menter et al. report natural transition starting
   at $\alpha=6^\circ$ (algebraic) and $7^\circ$ (transport models) against
@@ -190,3 +207,4 @@ retouched" per turbulence model
 - [Menter et al. (2022)](/sources/menter-2022.md) — §2.2, Fig. 1; §2.3, Figs. 2–3; §3, §3.1, Tables 2–3, Figs. 7–9; §3 (S809), Figs. 20–22; §4, Fig. 26.
 - [Liu et al. (2024)](/sources/liu-2024.md) — Introduction; numerical setup, Tables 2–3, Figs. 3–6.
 - [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §4.2, Fig. 1; §5.1.1–5.1.3, Tables 1, 3, Figs. 2–13; §6.3, Figs. 24–25.
+- [Möller et al. (2024)](/sources/moller-2024.md) — accepted manuscript: §II.D, Fig. 1; §II.F; §III.B; §IV.

@@ -5,7 +5,7 @@ description: "The wall-adapting local eddy-viscosity (WALE) model builds a stati
 status: established
 aliases: [WALE, wall-adapting local eddy-viscosity model, Nicoud–Ducros model]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-26T10:06:00Z
+timestamp: 2026-10-26T15:49:00Z
 ---
 
 # WALE model
@@ -65,6 +65,9 @@ channel LES, which all their cases capture accurately.
 | 0.325 quoted ("often estimated"), value used not printed | $V^{1/3}$, $V^{1/3}/\sqrt{N+1}$, $V^{1/3}/(N+1)$ for an element of volume $V$ | high-order flux-reconstruction LES, wall-resolved and wall-modelled | Duan & Wang (2024), §2.3, §3 |
 | not printed (model cited to an application paper) | not printed | compressible finite-difference LES of channel and periodic hill | [Wang et al. (2024)](/sources/wang-2024.md), §3.2–3.3 |
 | not printed | not printed | second-order OpenFOAM reference LES of a low-Reynolds-number backward-facing step, training data for a learned RANS closure | [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md), §3.2 |
+| not printed | not printed | wall-resolved incompressible finite-volume LES (ANSYS Fluent) of a pitching NACA 0012 in deep dynamic stall | [Baldan & Guardone (2025)](/sources/baldan-2025.md), §1.2 |
+| not printed | not printed | wall-resolved incompressible OpenFOAM LES of a model wind turbine | [Rismondo et al. (2025)](/sources/rismondo-2025.md), §2.1 |
+| not printed | not printed | second-order finite-volume reference LES of a compressor cascade (DLR TRACE) | [Möller et al. (2024)](/sources/moller-2024.md), §III.A |
 
 The printed constants belong to different codes, filter widths and
 uses (a small-scale VMS viscosity against a classical LES model); no
@@ -144,6 +147,44 @@ instead (below).
   (Tables 2–3), a DG ($N=3$) WALE LES of De La Llave Plata et al. gives a
   reattachment at $x/h=3.9$ ($Re=10\,600$) and 3.2 ($Re=37\,000$), against
   Rapp's measured 4.21 and 3.76.
+- **Near-wall asymptote as the reason for choosing it.**
+  [Baldan & Guardone (2025)](/sources/baldan-2025.md) (§1.2) choose WALE
+  for wall-resolved LES of the
+  [pitching NACA 0012](/benchmarks/naca-0012-airfoil.md) at
+  $Re=1.35\times10^5$, because it "grants the right eddy viscosity trend in
+  near-wall areas without requiring any [damping] function". They give the
+  near-wall subgrid viscosity as $\nu_t/\nu\sim O(y^+)^3$, citing Chapman &
+  Kuhn. [Mukha et al. (2025)](/sources/mukha-2025.md)
+  (§II.D, §III.C) attribute the same cubic asymptote to WALE when
+  introducing the Sigma model, which they call its successor. In their
+  spectral-element wall-modelled channel, Sigma reduces $\nu_t$ toward the
+  wall more visibly than [Vreman](/methods/vreman-model.md), and the
+  solution is more oscillatory.
+- **Disagreement in wall-modelled LES, as cited by Mukha et al.** Mukha
+  et al. (§II.D, §III.C) cite earlier OpenFOAM wall-modelled LES studies,
+  including their own, in which WALE performs well, while Blanchard et al.
+  report that
+  WALE and Sigma over-predict the wall stress in channel wall-modelled LES.
+  They conclude that accuracy is "a strong function of the combination of
+  the boundary conditions, SGS model and numerical method". Compare the
+  degree-dependent WALE results of Duan & Wang (2024) above. See
+  [wall-modelled LES](/methods/wall-modelled-les.md).
+- **Rotor and cascade LES.**
+  - **Wind turbine.** [Rismondo et al. (2025)](/sources/rismondo-2025.md)
+    (§2.1, §3, Fig. 8c) close a wall-resolved, geometry-resolved
+    incompressible LES of a model wind turbine with WALE. The LES runs in
+    [OpenFOAM](/software/openfoam.md) with PISO and second-order central
+    differences on about 144 million cells, with $y^+<1$ and
+    $D=0.18$ m, $Re_D=9.6\times10^4$. The ratio $\nu_t/\nu$ lies mostly
+    between 0 and 10 and peaks in tip-vortex cores, which the authors read
+    as a sign of high resolution. The LES feeds a
+    [Ffowcs Williams–Hawkings](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)
+    acoustic computation.
+  - **Compressor cascade.** [Möller et al. (2024)](/sources/moller-2024.md)
+    use their own WALE LES (10.86 million cells, DLR TRACE) as a reference
+    for transitional DDES of the V103
+    [compressor cascade](/benchmarks/compressor-cascade.md)
+    (§III.A, Table 3); no constant is printed.
 - **Listed in codes.** WALE is among the explicit LES models of the DG code
   [HORSES3D](/software/horses3d.md) ([Ferrer et al. 2023](/sources/ferrer-2023.md),
   §4.1), with no formula printed. [Haering et al. (2022)](/sources/haering-2022.md)
@@ -173,3 +214,7 @@ instead (below).
 - [Wang et al. (2024)](/sources/wang-2024.md) — §3.2–3.3.
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — §3.2.
 - [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — Tables 2–3.
+- [Baldan & Guardone (2025)](/sources/baldan-2025.md) — arXiv v2: §1.2.
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §II.D; §III.C.
+- [Rismondo et al. (2025)](/sources/rismondo-2025.md) — §2.1; §3, Fig. 8(c).
+- [Möller et al. (2024)](/sources/moller-2024.md) — accepted manuscript: §III.A, Table 3.

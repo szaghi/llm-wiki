@@ -5,7 +5,7 @@ description: "A neural network that predicts the scalar coefficients of Pope's t
 status: established
 aliases: [TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features]
 tags: [neural-network, machine-learning, rans, data-driven, symbolic-regression]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:57:00Z
 ---
 
 # Tensor-basis neural network and the integrity basis
@@ -122,6 +122,7 @@ are represented.
 | gene-expression programming (Weatheritt & Sandberg 2016, 2017) | explicit algebraic expressions in the invariants | Duraisamy et al. (2019, §5.3); Duraisamy (2021, §III.A) |
 | sparse regression, SpaRTA (Schmelzer et al.) | sparse linear combination of tensor-polynomial candidate functions of the invariants | Duraisamy (2021, §III.A, §IV.A) |
 | deep symbolic regression (an LSTM expression generator trained by a risk-seeking policy gradient) | explicit polynomial-type expressions in two normalized invariants, on the 2D three-tensor basis | read directly: Tang et al. (2023) |
+| sparse Bayesian regression, SBL-SpaRTA (Cherroud et al. 2022) | sparse selection from monomials of $I_1$, $I_2$ with Gaussian posteriors, on the 2D three-tensor basis normalized by $\omega$; used for an additive anisotropy and a $k$-equation correction of SST | used by Oulghelou et al. (2025), as recalled there |
 
 For sparse regression, Duraisamy (2021, §IV.A) prints the loss as a squared
 error plus an $\ell_1$ penalty on the weights. The sparsity-enforcing
@@ -342,6 +343,17 @@ eigen-decomposition, or the integrity basis itself. See
   $\mathsf W\mathsf S\mathsf W^2-\mathsf W^2\mathsf S\mathsf W$ is the
   symmetric combination, and the other nine printed tensors are symmetric
   *(compiler check, not in the sources)*.
+- Oulghelou et al. (2025, Eqs. 7–10) normalize the strain and rotation of
+  the basis by the specific dissipation rate, $S_{ij}/\omega$ and
+  $\Omega_{ij}/\omega$, instead of by $\varepsilon/k$; with
+  $\omega=\varepsilon/(\beta^*k)$ their $T^{(1)}$ is $\beta^*\mathsf S$ and
+  their $T^{(2)}$, $T^{(3)}$ carry $\beta^{*2}$, so their coefficients
+  differ from those of the $k/\varepsilon$ normalization by these factors
+  *(compiler check, not in the sources)*. Their basis corrects an SST
+  model additively, $b_{ij}=-\nu_t\langle S_{ij}\rangle/k+b^\Delta_{ij}$
+  (page-local $b^\Delta_{ij}$), and a second expansion feeds a
+  production-like term of the $k$ equation; the blending of such models
+  is on [model aggregation](/methods/turbulence-model-aggregation.md).
 - Tang et al. (2023) write the coefficients $G^m$ and the basis
   $\boldsymbol T^m$ (labelled $\lambda_i$, $T^i$ in their Fig. 11); this page
   writes $G^m$, $T^{(m)}$. Their $\boldsymbol R$ is the normalized rotation
@@ -361,7 +373,20 @@ eigen-decomposition, or the integrity basis itself. See
   are written as tensor polynomials of the aforementioned invariants".
   Both sources recall Schmelzer et al. (2020), which is not ingested (Tang
   et al. also Beetham & Capecelatro); neither prints a sparse-regression
-  model. *Open.*
+  model. [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (arXiv v2)
+  print two corrected models (three non-zero terms), from the sparse
+  Bayesian variant SBL-SpaRTA, and bear on
+  both sides without deciding the question. On Duraisamy's side, they
+  describe the method as regressing the coefficients from "a large
+  dictionary of monomials" of the invariants $I_1$, $I_2$ (§2.1, Eqs.
+  8–10). On Tang et al.'s side, every printed model has constant
+  coefficients: $5.21\,T^{(2)}$ and $0.681\,T^{(1)}$ for the
+  separated-flow expert, $0.25\,T^{(1)}$ for the jet expert (Table 1).
+  Whether sparse regression can return invariant-dependent coefficients
+  is thus supported by the method description; whether it does so in
+  practice is shown only for constant selections. What would decide it is
+  a printed sparse-regression model with an invariant-dependent term, or
+  the dictionary-and-selection record of one. *Open.*
 
 # Citations
 
@@ -371,4 +396,5 @@ eigen-decomposition, or the integrity basis itself. See
 - [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: §II E (tensor-basis network tried in DRL, no conclusive gain).
 - [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I, §II C 2, Eqs. 10–16 (2D basis, convention, linear/non-linear split, conditioning), §III B (claim on constant coefficients), §III C, Fig. 11 (contributions), §IV.
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §2.1 (Galilean but not rotational invariance), §7 (tensor-basis networks as future work).
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §2, Eqs. 1–2, 7–10 (additive correction on the 2D basis, $\omega$ normalization); §2.1, Table 1 (SBL-SpaRTA dictionary and printed constant-coefficient models).
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — arXiv v2: §1, §2.2–2.2.5, Eqs. 9–10, 14–17, Table 1 (basis, invariants, $k$-$\varepsilon$ limit, locality); §3.3, Table 3 (architecture, pre-training); §3.4, Fig. 7 (learned stress); App. A.

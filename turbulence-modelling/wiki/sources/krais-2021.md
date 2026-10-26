@@ -141,7 +141,7 @@ prints its DOI as a URL. No printed duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4, 6. This source is cited on:
 
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
@@ -153,6 +153,7 @@ Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
 - [Subcell finite-volume shock capturing for DG](/methods/subcell-finite-volume-shock-capturing.md)
 - [Vreman model](/methods/vreman-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)
+- [Geometric conservation law and free-stream preservation](/properties/geometric-conservation-law.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [FLEXI](/software/flexi.md)

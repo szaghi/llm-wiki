@@ -141,10 +141,11 @@ place of a DOI field. No printed duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-26). This source is cited on:
+Chunk 3 (2026-10-26), cited further in chunk 6. This source is cited on:
 
 - [Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
+- [Artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Shock-generated turbulence and turbulent shock jump relations](/results/shock-generated-turbulence.md)

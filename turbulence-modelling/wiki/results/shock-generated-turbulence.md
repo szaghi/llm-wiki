@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Shock-generated turbulence and turbulent shock jump relations"
-description: "A strong shock crossing a medium with order-one density fluctuations generates turbulence whose velocity dispersion scales with shock speed times a pre-shock Atwood number, whose turbulent Mach number saturates for strong shocks, and whose Reynolds stress lowers the post-shock pressure and density through Favre-averaged jump relations."
+description: "A strong shock crossing a medium with order-one density fluctuations generates turbulence whose velocity dispersion scales with shock speed times a pre-shock Atwood number and whose Reynolds stress lowers post-shock pressure and density; conversely, shocks form inside supersonic turbulence and the supersonic Taylor–Green vortex, where they test shock capturing."
 status: established
-aliases: [shock–inhomogeneity interaction, shock through a non-uniform medium, turbulent Rankine–Hugoniot relations, turbulent jump conditions, shock-driven turbulence]
-tags: [compressible, implicit-les, plasma, astrophysics]
-timestamp: 2026-10-25T20:39:00Z
+aliases: [shock–inhomogeneity interaction, shock through a non-uniform medium, turbulent Rankine–Hugoniot relations, turbulent jump conditions, shock-driven turbulence, shocklets, shock networks, shock–turbulence interaction, supersonic isothermal turbulence, sonic scale]
+tags: [compressible, implicit-les, plasma, astrophysics, dg, numerical-dissipation]
+timestamp: 2026-10-26T15:53:00Z
 ---
 
 # Shock-generated turbulence and turbulent shock jump relations
@@ -25,7 +25,10 @@ which the post-shock Reynolds stress lowers the mean post-shock pressure and
 density. The application is the controlled generation of compressible
 turbulence in laser-driven high-energy-density shock tubes; the paper is
 peripheral to closure modelling, and its "model" content is the scaling and
-jump relations.
+jump relations. The converse process, shocks formed by the turbulence itself,
+is the subject of the last section: driven supersonic turbulence and the
+supersonic [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), used
+by three further sources as tests of shock-capturing discretizations.
 
 **Page notation** (page-local unless in the registry): $x$ is the
 shock-normal direction (the shock moves toward $-x$), $y$, $z$ the
@@ -171,6 +174,105 @@ relations can be closed from pre-shock quantities alone (§III). Moving the
 window downstream lowers the anisotropy toward isotropy, as in wind-tunnel
 shock–turbulence experiments (not shown).
 
+## The converse: shocks formed inside compressible turbulence
+
+When the turbulence itself is supersonic, or becomes so locally, it builds
+its own shocks; nothing is imposed from outside. Three sources of the bundle
+use such flows to test discretizations, and one more offers decaying data.
+Page-local symbols here: $l_s$ and $L_{\mathrm{inj}}$ the sonic and injection
+scales, $v(l)$ the velocity increment at separation $l$ from the
+second-order structure function, $\varepsilon_s$ and $\varepsilon_d$ the
+solenoidal (enstrophy) and dilatational dissipation of the Stokes stress.
+
+**Driven supersonic isothermal turbulence.**
+[Cernetic et al. (2024)](/sources/cernetic-2024.md) (read in arXiv v2) drive
+isothermal turbulence (solenoidal Ornstein–Uhlenbeck forcing at half the box)
+at rms Mach numbers 0.1 to 12.8, doubling each step, in which the flow is "a
+network of interacting shocks", with a GPU modal discontinuous Galerkin code
+(Legendre basis of total degree $N$, HLLC flux; not the nodal
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)) and a
+second-order finite-volume baseline, with no explicit viscosity or subgrid
+model (§4–§6, Table 1):
+
+- **Cascade transition.** All schemes reproduce the change from
+  $E(k)\propto k^{-5/3}$ (subsonic) to $k^{-2}$ (supersonic); at $256^3$ the
+  structure-function slopes of $v(l)$ fitted over $0.1<l<0.25$ are 0.32 for
+  the most subsonic and 0.47 for the most supersonic run, against expected
+  $1/3$ and $1/2$ (§5, Figs. 5–6). Density PDFs are close to log-normal,
+  widen strongly with Mach number and are nearly identical for all schemes
+  at $256^3$ (Fig. 7).
+- **The sonic scale.** With $v(l)\propto l^{1/2}$ from injection, the scale
+  where the increment equals the sound speed is $l_s=L_{\mathrm{inj}}/M^2$
+  (Eq. 22), about ten times below injection at Mach 3.2. At $1024^3$ and
+  Mach 3.2, DG with $N=1$ (second order) shows $v(l)\propto l^{0.49}$ down
+  to a sudden change to $l^{0.43}$, identified as the sonic point, and a
+  spectrum going from $k^{-2}$ towards $k^{-5/3}$ with the intersection of the
+  two fits "reasonably close" to it; the finite-volume run at $1024^3$
+  washes it out, DG at $512^3$ "does nearly as well as" finite volumes at
+  $1024^3$, and finite volumes at $512^3$ show no sonic point (§6,
+  Figs. 8, 10–11).
+- **High order and shocks.** DG extends the resolved spectral range in the
+  subsonic runs, but in the supersonic ones the gain "nearly disappears"
+  (§5). A cost model (cost $\propto N_x^4N^8$ to a fixed time in 3D, with
+  $N_x$ cells per direction) and an error model for a planar shock lead the
+  authors to a "sweet spot" of second- or third-order DG ($N=1$ or 2) once
+  many shocks are present (§7, Eqs. 33–35; Conclusions). Stability at
+  Mach 12.8 needs a von Neumann–Richtmyer viscous pressure applied only at
+  interior quadrature points and a projection of primitive variables
+  before extrapolation to faces (§3); the total dissipation at a shock is
+  "fixed by the conservation laws", the viscosity coefficient only setting
+  its sharpness and post-shock oscillations (§3.1). See
+  [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
+  and [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md).
+
+**The supersonic Taylor–Green vortex.**
+[Chapelier et al. (2024)](/sources/chapelier-2024.md) (HAL accepted
+manuscript) compare seven high-order codes on the Taylor–Green vortex at
+$Re=1600$ and reference Mach number 1.25, which develops "transition,
+decaying turbulence, strong shocks and shock–turbulence interaction" from a
+smooth analytic initial field (§I). The closest physical flow, they state,
+is compressible isotropic turbulence with shocklets (§I). On the reference
+sixth-order TENO runs from $64^3$ to $2048^3$ (§II.C, Figs. 2–4):
+
+- the kinetic energy converges by $128^3$, $\varepsilon_s$ needs $512^3$;
+- $\varepsilon_d$ has two peaks, the first linked to shocks with little
+  vortex interaction, the second to the onset of shock–turbulence
+  interaction; the first is **not mesh-converged even at $2048^3$**, because
+  the shocks keep sharpening until molecular viscosity smooths them, while
+  the second converges faster;
+- the $2048^3$ run cost about 1.96 million core hours (57,600 cores, 34 h).
+
+Across codes (§IV, Figs. 5–8): artificial-diffusion schemes give smooth but
+thick shocks and the lowest $\varepsilon_d$; local switching to lower-order
+schemes gives sharp shocks that oscillate on coarse grids, except TENO,
+sharp and oscillation-free at all resolutions; filtering without shock
+capturing gives the largest oscillations. The authors conclude that shock
+capturing has "a low impact" on the turbulent scales overall (§V), while
+noting that the "strong shock capturing strategy" of the spectral-difference
+code SD3D "is probably hindering" small-scale development on finer grids
+(§IV.A). See [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md),
+[subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)
+and [WENO schemes](/methods/weno-scheme.md).
+
+[Kurz et al. (2025)](/sources/kurz-2025.md) (read in arXiv v2) use the same
+case to validate the GPU code [GALÆXI](/software/galaexi.md): with DG/finite-volume
+subcell blending at the same maximum blending factor on all grids and $N=7$,
+GALÆXI and [FLEXI](/software/flexi.md) give identical $\varepsilon_s(t)$,
+"almost identical" to the Chapelier et al. reference at $512^3$ degrees of
+freedom (§5.2, Fig. 11).
+
+**Shocklets in decaying compressible turbulence.** In decaying isotropic
+turbulence at turbulent Mach numbers 0.8 to 1.6,
+[Cao et al. (2022)](/sources/cao-2022.md), §3.4, Fig. 15, find shocklets
+(dilatation below $-3$ times its rms) as long narrow ribbons next to
+block-like expansion regions (detail on
+[homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)).
+
+Unlike the shock-tube runs above, none of these flows has a single mean
+shock, so the Favre-averaged jump relations do not apply to them; their
+shocks are the dissipative structures of the turbulence, and the sources
+judge discretizations by how they resolve or smear them.
+
 ## Qualifications
 
 - The $r_v^{1/3}$ dependence is the authors' dimensional hypothesis, fitted
@@ -203,6 +305,23 @@ shock–turbulence experiments (not shown).
   [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md);
   values from the two definitions are not compared by any source.
 
+- **Printed slips in the shock-network sources.** Cernetic et al. (2024)
+  state that doubling the Mach number needs a tripled driving strength
+  $E_{\mathrm{inj}}$, while their Eq. (32), $M\propto E_{\mathrm{inj}}^{1/3}$,
+  gives a factor $2^3=8$ *(compiler check, not in the sources)*; their
+  Eq. (35) prints a coefficient 315 where the printed ingredients of the
+  cost model (their Eq. 33, which they reproduce exactly, and the first line
+  of Eq. 35) give 351 *(compiler check, not in the sources)*; the leading
+  order $N_x^4N^8$ is unaffected.
+  Chapelier et al. (2024) print the equation of state without $\rho$ in the
+  kinetic term and $Re=\rho_0U_0/\mu_0$ without a length (§II.A–B); the
+  Fig. 8 legend names a "TENO6 512" reference where the text uses the
+  $2048^3$ run.
+
 # Citations
 
 - [Davidovits et al. (2022)](/sources/davidovits-2022.md) — §I; §II A–B, Eq. (1), Table I, Fig. 1; §III, Eqs. (2)–(11), Figs. 3–9; §IV; App. A–B.
+- [Cernetic et al. (2024)](/sources/cernetic-2024.md) — §3.1, Eqs. (14)–(16); §3.2; §4.1–4.2, Eqs. (22), (26)–(32); §5, Figs. 5–7; §6, Figs. 8, 10–11; §7, Eqs. (33)–(35); Conclusions (shock networks in driven supersonic isothermal turbulence, sonic scale, DG against finite volumes).
+- [Chapelier et al. (2024)](/sources/chapelier-2024.md) — §I; §II.A–C, Eqs. (5)–(11), Figs. 2–4; §IV.A–B, Figs. 5–8; §V (supersonic Taylor–Green vortex, non-converged first dilatational peak, shock-capturing comparison).
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — §5.2, Fig. 11 (supersonic Taylor–Green vortex as GALÆXI validation).
+- [Cao et al. (2022)](/sources/cao-2022.md) — §3.4, Fig. 15 (shocklets in decaying compressible isotropic turbulence).

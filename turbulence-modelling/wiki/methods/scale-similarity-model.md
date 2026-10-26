@@ -5,7 +5,7 @@ description: "Scale-similarity and deconvolution models build the subgrid stress
 status: established
 aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model]
 tags: [les, sgs-model, filtering, combustion]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T15:49:00Z
 ---
 
 # Scale-similarity and mixed subgrid-scale models
@@ -68,8 +68,8 @@ model as a similarity-type model, the one link between the two classes.
   same assessment: similarity models reproduce the stress structure and
   give numerically stable [backscatter](/definitions/energy-backscatter.md)
   but are insufficiently dissipative, hence the mixed model (Zang, Street &
-  Koseff 1993, as recalled); the tensor-diffusivity model (Winckelmans et
-  al. 2001, as recalled) behaves the same way.
+  Koseff 1993, cited); the tensor-diffusivity model (Winckelmans et
+  al. 2001, cited) behaves the same way.
   [Prakash et al. (2022)](/sources/prakash-2022.md) (§I–II), citing earlier
   a priori studies, state the same for the whole structural class
   (gradient, similarity, approximate deconvolution): high stress and flux
@@ -175,7 +175,7 @@ coefficient; it is on the [gradient-model](/methods/gradient-model.md) page.
 **Compressible dynamic mixed model.** [Helm & Martín (2022)](/sources/helm-2022.md)
 (§II, Eqs. 9–10) run LES of hypersonic compression-ramp interactions with
 the one-coefficient dynamic mixed model of Martín, Piomelli & Candler
-(2000, as recalled), for the Favre-filtered subgrid stress
+(2000, cited), for the Favre-filtered subgrid stress
 $\tau_{ij}=\bar\rho(\widetilde{u_iu_j}-\tilde u_i\tilde u_j)$ and the
 subgrid heat flux. In registry notation (Favre filter written with the
 tilde; the paper writes it with a hat and the test filter with a second
@@ -238,20 +238,56 @@ the [gradient-model](/methods/gradient-model.md) page. They also recall
 that the gradient model is more accurate a priori than the
 scale-similarity model (§II.A).
 
+[Li et al. (2024)](/sources/li-2024.md) (§II B, Eqs. 9–11; §V) use a
+two-coefficient dynamic mixed model, a Smagorinsky term plus the resolved
+stress, as a baseline for a
+[neural-operator surrogate](/methods/neural-operator-les-surrogate.md) in
+the same two flows. The coefficients are fitted by least squares over the
+whole domain, and the structural term at test level needs a second filter
+of width $4\Delta$; see the
+[dynamic procedure](/methods/dynamic-procedure.md), which also records a
+printed factor slip in their Eq. (9). The results are a posteriori:
+
+- **Forced isotropic turbulence** ($Re_\lambda\approx100$, $64^3$). The
+  mixed model underestimates the spectrum at low wavenumbers and
+  "significantly overestimates" it at high ones. It overestimates the
+  structure functions at short separations, and its vorticity PDF deviates
+  significantly from filtered DNS. It is less accurate than dynamic
+  Smagorinsky there (Figs. 6–10).
+- **Temporal mixing layer.** It overestimates the momentum thickness, its
+  spectrum is too high at low wavenumbers and too low at high ones, and it
+  predicts larger vortical structures than filtered DNS (Figs. 16–21).
+  This matches the over-prediction of structure size reported by Wang et
+  al. (2023c).
+- **Cost.** Its cost per time node is 166.4 CPU s against 105.6 s for
+  dynamic Smagorinsky in isotropic turbulence (Table I).
+
+**Splitting dissipative and non-dissipative parts.**
+[Maejima & Kawai (2025)](/sources/maejima-2025.md) (§1) recall the same
+assessment as the agreed properties above. The scale-similarity model of
+Bardina et al. reproduces the stress components "more accurately" but
+poorly predicts the dissipation. Abe's 2013 model, which they cite, splits the
+subgrid stress into dissipative and non-dissipative parts and so improves
+coarse-grid wall turbulence. Analyses of that model, they write, showed
+that the added terms redistribute velocity fluctuations among directions.
+Their own [super-resolution model](/methods/super-resolution-sgs-model.md)
+reaches a similar redistribution through spanwise
+[backscatter](/definitions/energy-backscatter.md) (§6.2.3).
+
 **Dynamic mixed models with one and two parameters.** [Kang et al. (2023)](/sources/kang-2023.md)
 (§3.3, Eqs. 3.4–3.8) compare three algebraic dynamic mixed models with a
 learned one in isotropic turbulence and channel flow:
 
 - the one-parameter dynamic mixed model (DMM; Zang, Street & Koseff,
-  modified by Vreman, Geurts & Kuerten, as recalled),
+  modified by Vreman, Geurts & Kuerten, cited),
   $\tau^d_{ij}=-2C\Delta^2\lvert\bar S\rvert\bar S_{ij}+\big[\overline{\bar u_i\bar u_j}-\bar{\bar u}_i\bar{\bar u}_j\big]^d$,
   whose similarity part is the modified Leonard term (Bardina et al.;
-  Germano, as recalled) and whose coefficient comes from the
+  Germano, cited) and whose coefficient comes from the
   [dynamic procedure](/methods/dynamic-procedure.md) applied to $L_{ij}$
   minus the test-level difference of the similarity term. The second term
   of that difference, Eq. (3.4), is illegible in the version of record
   (colliding accents); it is not reconstructed here;
-- two two-parameter models after Anderson & Meneveau (as recalled), with
+- two two-parameter models after Anderson & Meneveau (cited), with
   dynamic coefficients on both the Smagorinsky term and the structural term,
   the resolved stress $L_{ij}$ (DTM$_{\mathrm{sim}}$) or the Clark
   [gradient](/methods/gradient-model.md) term (DTM$_{\mathrm{nl}}$); the
@@ -293,7 +329,7 @@ removed, but with small intensity. The gradient version is farther from
 filtered DNS, and a quadratic strain–rotation model gives the wrong sign of
 the spanwise component. Variants that keep the energy transfer of the
 structural term give strongly negative streamwise redistribution, far from
-filtered DNS. Their earlier study (Inagaki & Kobayashi 2020, as recalled)
+filtered DNS. Their earlier study (Inagaki & Kobayashi 2020, cited)
 found the similarity version better than the gradient version a
 posteriori, because it amplifies small-scale fluctuations near the cutoff.
 
@@ -326,8 +362,7 @@ Agrawal et al. (2022, App. C, Eq. C3) show that their
 [dynamic tensor-coefficient Smagorinsky model](/methods/dynamic-tensor-coefficient-smagorinsky-model.md)
 can be rewritten as a Smagorinsky term plus a strain–rotation commutator
 term $\propto\Delta^2(\bar S_{ik}\bar\Omega_{kj}-\bar\Omega_{ik}\bar S_{kj})$,
-the form of the two-term velocity-gradient expansion of Lund & Novikov (as
-recalled). They list the Bardina similarity model, the Clark gradient model
+the form of the two-term velocity-gradient expansion of Lund & Novikov (cited). They list the Bardina similarity model, the Clark gradient model
 and Stolz–Adams deconvolution as earlier non-Boussinesq models that need an
 added Smagorinsky term, whereas their dynamic coefficients supply enough
 dissipation without one (§I, §VII.A).
@@ -374,8 +409,9 @@ paper prints no equation.
 test a different mixture: Smagorinsky ($C_s=0.1$, 0.18) added to an
 implicit [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md).
 The Smagorinsky part restores the low-wavenumber plateau of the spectral
-eddy viscosity and removes the bottleneck, but the total dissipation does
-not improve.
+eddy viscosity and removes the
+[bottleneck](/definitions/bottleneck-effect.md), but the total dissipation
+does not improve.
 
 ## Qualifications
 
@@ -397,6 +433,8 @@ not improve.
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §6.5, Figs. 20–22.
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §II, Eqs. (9)–(10); §IV F, Figs. 30–33; §V.
 - [Kim et al. (2022)](/sources/kim-2022.md) — §I; §II; §II D.
+- [Li et al. (2024)](/sources/li-2024.md) — arXiv v2: §II B, Eqs. (9)–(11); §V A 2–3, Figs. 6–10, Table I; §V B 2, Figs. 16–21.
+- [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1; §6.2.3.
 - [Kang et al. (2023)](/sources/kang-2023.md) — §3.3, Eqs. (3.4)–(3.8), Tables 4, 6, 9, Figs. 19–22, 24; §3.7; App. C.
 - [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §I; §IV B, Eqs. (19)–(21), Fig. 13.
 - [Domaradzki (2024)](/sources/domaradzki-2024.md) — §1, Eqs. (1.3)–(1.4); §2.3–2.4, Eqs. (2.36)–(2.47); §3.1.

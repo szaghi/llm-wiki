@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-26T10:28:00Z
+timestamp: 2026-10-26T15:58:00Z
 ---
 
 # Notation registry
@@ -226,3 +226,15 @@ that uses one still says what it means.
 | $\vartheta_m$, $\alpha_f$, $s_f$ | modal index, strength and order of an exponential modal filter | spectral vanishing viscosity, subcell finite-volume shock capturing |
 | $\lambda_{\theta l}$, $Tu_l$ | local pressure-gradient parameter and local turbulence intensity of correlation-based transition models | local-correlation-based transition models, laminar kinetic energy transition models |
 | $L_r$ | recirculation length behind a bluff body | circular-cylinder wake, neural-network SGS models, LES pages |
+| $\mu_b$, $\nu_b$, $P_\nu=\nu/\nu_b$, $Re_{\mathrm{bulk}}$ | dynamic and kinematic bulk viscosity; viscous Prandtl number of shear to bulk viscosity; bulk-viscous Reynolds number | bulk viscosity, bottleneck effect, compressible MHD turbulence, small-scale dynamo, numerical dissipation, high-order gas-kinetic scheme |
+| $\boldsymbol u_{\mathrm c}$, $\boldsymbol u_{\mathrm s}$, $E_{\mathrm c}(k)$, $E_{\mathrm s}(k)$ | compressive and solenoidal Helmholtz parts of the velocity and their spectra (never $\parallel$/$\perp$, which refer to the magnetic field) | bulk viscosity, bottleneck effect, compressible MHD turbulence, small-scale dynamo |
+| $\varepsilon_s$, $\varepsilon_d$ | solenoidal and dilatational parts of the viscous dissipation (on weak-wave turbulence $\varepsilon_s$ is that page's energy flux) | isotropic turbulence, artificial-viscosity shock capturing, shock-generated turbulence, bulk viscosity |
+| $\beta_\omega$, $\gamma_\omega$ | destruction and production coefficients of the SST $\omega$ equation as recalibrated in data-driven work (the source's $\theta$, $\gamma$); $\beta(\boldsymbol x)$ stays the field-inversion multiplier | $k$-$\omega$ SST, field inversion, model-form uncertainty, law of the wall, turbulent boundary layer, Reynolds-stress model ($\beta_\omega$) |
+| $g_{\tilde\nu}$ | data-assimilated multiplicative source correction of the SA equation | field inversion, model-form uncertainty, Boussinesq hypothesis, square cylinder, shock/boundary-layer interaction |
+| $b^\Delta_{ij}$, $b^R_{ij}$ | additive anisotropy correction; frozen production correction (the $k$-equation residual $R$) of data-driven RANS | Boussinesq hypothesis, symbolic-regression closures, tensor-basis neural network, model aggregation |
+| $\nu_{\mathrm{eff}}$, $\nu_{\mathrm{clip}}$ | effective viscosity of a stress projected on the resolved strain; its clipping floor | gradient model, super-resolution SGS models, numerical dissipation, spectral-element method |
+| $\sigma_b$ | upwind fraction of a blended convective flux (on symbolic-regression closures a normalizing scale) | numerical dissipation, detached-eddy simulation, TRACE |
+| $\mathcal J$ | Jacobian determinant of the reference-to-physical element map | geometric conservation law, DGSEM, flux reconstruction, high-order gas-kinetic scheme, kinetic-energy preservation |
+| $T_E$ | large-eddy turnover time | DNS, isotropic-turbulence surrogates, a priori and a posteriori testing, multi-resolution independent simulations |
+| $\tau_\theta$ | time unit of the temporal mixing layer, $\theta_0/\Delta U$ | temporal mixing layer, neural-operator LES surrogates |
+| $c_{ax}$ | axial chord of a cascade blade | compressor cascade, laminar separation bubble, detached-eddy simulation |

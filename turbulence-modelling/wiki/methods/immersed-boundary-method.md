@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Immersed boundary methods"
-description: "Immersed boundary methods impose walls on non-conforming grids by reconstruction at boundary or ghost points, penalization or direct forcing; this page covers the DNS, LES and RANS variants, the Lagrangian weight, wall functions with a modelling height, wall-pressure reconstruction, and the near-wall errors the sources report."
+description: "Immersed boundary methods impose walls on non-conforming grids by reconstruction at boundary or ghost points, penalization or direct forcing; this page covers the DNS, LES and RANS variants, the Lagrangian weight, flexible blades, wall functions with a modelling height, wall-pressure reconstruction, Reynolds averaging of penalized flows, and the near-wall errors reported."
 status: established
-aliases: [IBM, immersed boundary, ghost-point forcing, volume penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing]
+aliases: [IBM, volume penalization immersed boundary method, VP-IBM, fluid resistance, immersed boundary, ghost-point forcing, volume penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing]
 tags: [immersed-boundary, wall-model, lattice-boltzmann, les, dns, rans]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T15:48:00Z
 ---
 
 # Immersed boundary methods
@@ -152,6 +152,26 @@ by inverse-distance weighting of the nearest degrees of freedom. The
 demonstration is a horizontal-axis wind turbine with rotating blades
 ($N=3$ near the rotor and wake, $N=2$ elsewhere), shown qualitatively.
 
+**Direct forcing for zero-thickness flexible blades (staggered finite
+volume).** [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md), §2.3, couple
+672 highly flexible ribbons of an aquatic canopy, each a Cosserat rod, to a
+second-order finite-volume LES on a staggered Cartesian grid with the
+direct-forcing IBM of Tschisgale & Fröhlich (as recalled): Lagrangian
+markers carry the ribbon velocity, and the coupling force is interpolated
+and spread with the three-dimensional smoothed delta function of Roma,
+Peskin & Berger. The blades are thinner than the grid, so each rod element
+is a zero-thickness quadrangle carrying markers at half the grid spacing
+$\Delta_g=(\Delta x\Delta y\Delta z)^{1/3}$ (page-local), with marker area
+about $(\Delta_g/2)^2$ and the condition $S_{ml}\Delta_g\le\Delta_g^3$
+($S_{ml}$ the marker area, page-local); the
+[Smagorinsky](/methods/smagorinsky-model.md) viscosity ($C_s=0.15$) is damped
+near the blades with the same delta function. Because the blades are not
+boundaries of the fluid domain, the double-averaged canopy force equals the
+averaged IBM force exactly, so form and viscous drag cannot be separated
+(§5.1, §5.3). The authors call DNS of the problem "not feasible" and their
+LES "close to a DNS" (§3.2–3.3, App. C). [Rismondo et al. (2025)](/sources/rismondo-2025.md)
+recall IBM-based LES of rotor wakes by Posa et al. but use body-fitted meshes.
+
 **Direct forcing with Lagrangian markers (lattice Boltzmann).** In the
 [ProLB](/software/prolb.md) set-up of Cheylan et al. (2023, §2.2, Eqs. 5–10)
 the body surface carries Lagrangian markers $\boldsymbol X_k$, distinct from
@@ -193,6 +213,76 @@ usable whatever the solid/fluid size ratio and kernel (§2.4.2). It is the
 reciprocal of the row sum of $A_{kl}$, i.e. exact for the linear system
 when $W$ is uniform *(compiler check, not in the sources)*. On uniform grids
 a single mean weight is used for all markers (§3.1.4, §3.2).
+
+## Reynolds averaging of a volume-penalized flow
+
+[Llorente (2024)](/sources/llorente-2024.md), a theoretical letter with no
+computations, asks how the URANS equations should be penalized when a body
+is represented by volume penalization. Page-local symbols: $\chi$ the mask
+(1 in the body, 0 outside; registry $\chi$ is the Spalart–Allmaras ratio,
+which does not occur here), $\eta_p$ the penalization parameter (the
+source's $\eta$, called permeability; typical values $10^{-7}$ to
+$10^{-10}$, citing Ménez et al.; it has the dimension of time in Eq. 2b,
+*compiler check, not in the sources*), $\boldsymbol u_b$ the body velocity,
+$u^{\mathrm{rel}}_i=u_i-u_{b,i}$ the relative velocity (the source's $w_i$,
+renamed because $w_i$ are the registry's quadrature weights),
+$\mathcal R=\chi/\eta_p$ the **fluid resistance** (inverse permeability; the
+source's $\mathscr R_\eta$), $\mathcal T_c=\mathcal L/\mathcal U$ and
+$\mathcal T_d=\mathcal L^2/\nu$ convective and diffusive times of
+characteristic scales $\mathcal L$, $\mathcal U$. The source's overbar is
+the Reynolds (ensemble) average, written $\langle\cdot\rangle$ here as in the
+registry; its tilde is the Favre average, written $\langle\cdot\rangle_\rho$.
+
+**Penalized equations.** The incompressible momentum equation carries the
+source $s_i=\mathcal R\,(u_i-u_{b,i})$ (Eqs. 2a–2b), and, as the letter
+cites from Angot, Bruneau & Fabrie, the penalized solution converges to the
+no-slip one as $\eta_p\to0$ with error $\propto\eta_p^{1/2}$ for Dirichlet
+conditions (p. 2). Articles on penalized turbulent flow, of which the
+letter cites Yu & Yu (2022) as an example, add
+$\chi\eta_p^{-1}(\langle u_i\rangle-\langle u_{b,i}\rangle)$ to the URANS
+equations (p. 3, Eqs. 3–4).
+
+**Time-scale condition.** Non-dimensionalizing and multiplying by
+$\eta_p/\mathcal U$ shows the penalty dominating when
+$\eta_p\ll\mathcal T_c\ll\mathcal T_d$ (Eq. 6), which the author identifies
+with the intermediate damping regime of Hester, Vasil & Burns (2021).
+Inside the body the mean velocity then obeys
+$\partial_t\langle u_i\rangle+\langle u_i\rangle/\eta_p=\langle u_{b,i}\rangle/\eta_p$, whose solution,
+expanded by repeated integration by parts, is
+$$\langle u_i\rangle=\langle u_{b,i}\rangle+\sum_{k=1}^{\infty}(-1)^k\eta_p^k\Big[\frac{\partial^k\langle u_{b,i}\rangle}{\partial t^k}-\frac{\partial^k\langle u_{b,i}\rangle}{\partial t^k}\Big|_{t=0}e^{-t/\eta_p}\Big]\qquad(\text{Eq. 7c}),$$
+an "artificial velocity" that vanishes only for a body at rest or in uniform
+motion.
+
+**Averaging the penalized equations.** Treating $\mathcal R$ as a fluid
+property that fluctuates when the body moves, Reynolds averaging of the
+penalty source gives
+$$\langle s_i\rangle=\langle\mathcal R\rangle\langle u^{\mathrm{rel}}_i\rangle+\langle\mathcal R'u^{\mathrm{rel}\prime}_i\rangle\qquad(\text{Eq. 9c}),$$
+with a resistance–velocity correlation that "arises because the body is
+moving". Requiring $\langle u_i\rangle=\langle u_{b,i}\rangle$ in the body at all times closes
+it as $\langle\mathcal R'u^{\mathrm{rel}\prime}_i\rangle=-\partial_t\langle u_{b,i}\rangle$ (Eq. 11),
+so the closed URANS-VP momentum equation carries the extra source
+$-\chi\,\partial_t\langle u_{b,i}\rangle$, minus the body acceleration
+(Eqs. 12a–12d). For a fixed body the two procedures, penalizing URANS and
+averaging the penalized Navier–Stokes equations, coincide. Theorem 1 bounds
+the $L^2$ norm of the solution by that of the body velocity when
+$\nu+\nu_t\ge0$, a continuous-level energy estimate (contrast the discrete
+property of [kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+Sketches extend the argument to a Neumann thermal condition imposed by
+characteristics-based penalization and to compressible flow with Favre
+averaging, where $\langle\rho\mathcal R'u^{\mathrm{rel}\prime\prime}_i\rangle=-\partial_t\big(\langle\rho\rangle\langle u_{b,i}\rangle_\rho\big)$
+(pp. 9–10). The author concludes that deriving penalized turbulence
+equations "without due care may lead to overlooking terms crucial for
+accurately modelling turbulence in such penalized flows".
+
+**Eddy-viscosity form as printed.** The letter writes the Reynolds stress as
+$R_{ij}:=-\overline{u_i'u_j'}=\nu_t\,\partial\overline u_i/\partial x_j$ (p. 4,
+overbar the Reynolds average), i.e. $\langle u_i'u_j'\rangle=-\nu_t\,\partial_j\langle u_i\rangle$
+in registry notation: the opposite sign convention to the registry's
+$R_{ij}=\langle u_i'u_j'\rangle$, the non-symmetric velocity gradient instead
+of $2\langle S_{ij}\rangle$, and no $\tfrac23k\delta_{ij}$ term, so it is not
+the [Boussinesq](/definitions/boussinesq-hypothesis.md) closure
+$R_{ij}-\tfrac23k\delta_{ij}=-2\nu_t\langle S_{ij}\rangle$. In Theorem 1 it
+enters only through the sign of the total viscosity $\nu+\nu_t$.
 
 ## Resolution near an immersed wall
 
@@ -471,6 +561,19 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
   "the normal and tangential components", in swapped order. Table 3 prints
   a lift error of 5.6% for the global-height case, while its own values
   give $(1.516-1.416)/1.516=6.6\%$ *(compiler check, not in the sources)*.
+- **Closure by requirement (Llorente 2024).** The correlation
+  $\langle\mathcal R'u^{\mathrm{rel}\prime}_i\rangle$ is called one that "cannot … be closed, like
+  for the Reynolds stress tensor" (p. 6) and is then closed exactly by
+  requiring perfect penalization in the body, which the letter's own
+  Eq. (7c) shows does not hold for finite $\eta_p$; Theorem 1 uses the same
+  assumption ($\langle u^{\mathrm{rel}}_i\rangle=0$ in the body). The result is a kinematic body
+  acceleration forcing, independent of turbulence. Printed slips: the final
+  energy identity of Theorem 1 lacks the time integral that Eq. (13)
+  carries; the dissipation integral is called "negative semi-definite"
+  although it is non-negative for $\nu+\nu_t\ge0$; the diffusive flux of
+  the penalized heat equation is printed with a $+$ sign that makes it
+  anti-diffusive *(compiler check, not in the sources)*. The version read
+  is the author accepted manuscript.
 - **Printed slips (Cheylan et al.).** Eq. (12) raises the kernel to the
   power $k$ in the moment condition; the beam case prints a solid density
   of $10^4$ kg/m³ with a fluid density of $10^3$ kg/m³ and a density ratio
@@ -487,3 +590,6 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
 - [Constant et al. (2024)](/sources/constant-2024.md) — HAL author manuscript hal-04731107v1: §1; §3, Eqs. (5)–(11), Figs. 3, 6 (ghost-cell direct forcing, modelling height, Musker wall function); §4.1–4.2, Eq. (19), Figs. 10–11 (adaptation); §5.1–5.2, Eqs. (20)–(25), Figs. 12–15 (second image layer, wall-pressure reconstruction); §6.1–6.3, Tables 3, 6, 8–9, Figs. 18–28 (NACA 0012, 2DMEA, HL-CRM); §7.
 - [Kim et al. (2024)](/sources/kim-2024.md) — §2.1, Eqs. (2.1)–(2.2) (mass source and momentum forcing, discretization); §4.2.1, Fig. 9 (QUICK near the cylinder front).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — HAL accepted manuscript hal-04921212v1: §2.2, Fig. 1 (reference-point reconstruction with a wall model); §3.3, Figs. 16–24, Table 3 (Ahmed body, wall model against no-slip).
+- [Llorente (2024)](/sources/llorente-2024.md) — author accepted manuscript: pp. 2–4, Eqs. (1)–(6) (penalized and conventionally penalized URANS equations, time-scale condition); p. 5, Eq. (7) (artificial velocity); pp. 6–8, Eqs. (8)–(12) (fluid resistance, averaged source, closure, closed system); pp. 8–10, Theorem 1, thermal and compressible extensions.
+- [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md) — §2.3 (direct-forcing IBM for flexible ribbons, Roma kernel, marker condition); §3.2–3.3; §5.1, §5.3 (canopy force equals the averaged IBM force); App. C.
+- [Rismondo et al. (2025)](/sources/rismondo-2025.md) — introduction (IBM-based LES of rotor wakes by Posa et al. recalled; body-fitted meshes used).

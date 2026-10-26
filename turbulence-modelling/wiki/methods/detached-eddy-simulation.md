@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Detached-eddy simulation and its delayed and zonal forms"
-description: "The single-model hybrid RANS/LES in which a RANS model's length scale is capped by a grid length so that the model acts as a subgrid model away from walls; the DES switch and its failure on ambiguous grids, the DDES shielding function, IDDES, ZDES modes, grid lengths and the shear-layer-adapted length, calibration with the numerical scheme, and applications."
+description: "The single-model hybrid RANS/LES in which a RANS model's length scale is capped by a grid length so that the model acts as a subgrid model away from walls; the DES switch and ambiguous grids, the DDES shielding function, IDDES, ZDES modes, grid lengths and the shear-layer-adapted length, calibration with the numerical scheme, transitional DDES, and applications."
 status: established
-aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area]
+aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-26T10:25:00Z
+timestamp: 2026-10-26T15:50:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -119,6 +119,34 @@ They state, without derivation, that under local equilibrium the DDES
 subgrid model reduces to the Smagorinsky–Lilly model (§4.1.3; see
 [Smagorinsky model](/methods/smagorinsky-model.md)).
 
+Möller et al. (2024) print the SST-DDES of the DLR solver
+[TRACE](/software/trace.md) with the destruction
+$\rho k^{3/2}/l_{\mathrm{DDES}}$, the $l_{\mathrm{DDES}}$ of Carlsson et al.,
+$l_{\mathrm{RANS}}=\sqrt k/(\beta^*\omega)$, $l_{\mathrm{LES}}=C_{\mathrm{DES}}\Delta_{\mathrm{SLA}}$
+(the shear-layer-adapted length below) with $C_{\mathrm{DES}}=0.65$, and the
+shielding function with $C_{d1}=20$, $C_{d2}=3$ and
+$$r_d=\frac{\nu_t+\nu}{\sqrt{\partial_ju_i\,\partial_ju_i}\;\kappa^2d^2},$$
+in kinematic form; $\kappa$, "the Kármán constant", has no printed value
+([Möller et al. (2024)](/sources/moller-2024.md), §II.B.1, Eqs. 17–21;
+accepted manuscript). They verified the calibration of $C_{\mathrm{DES}}$ in
+their code on decaying isotropic turbulence, without showing it. They read
+$f_d$ as an "enabler" of LES mode, not an activator: LES mode needs both
+$l_{\mathrm{RANS}}>C_{\mathrm{DES}}\Delta$ and $f_d\neq0$, and they monitor the
+mode by the ratio $l_{\mathrm{RANS}}/l_{\mathrm{DDES}}$, one in RANS regions and
+above one in LES regions (page-local; §II.B.1, Eq. 22).
+
+Wu et al. (2025) reuse the shielding function outside DES, as a
+boundary-layer mask for a field-inversion correction of SST: they print
+$f_d=1-\tanh\big[(8r_d)^3\big]$, with $r_d$ the kinematic form above and
+$\kappa=0.41$, and state that it is 0 inside the boundary layer and 1
+outside ([Wu et al. (2025)](/sources/wu-2025.md), §2.1, Eqs. 5–6, Fig. 2;
+authors' manuscript; see
+[field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
+François et al. instead print $\sqrt{\partial_ju_i\,\partial_iu_j}$ under the
+root and $\tilde\nu$ in place of $\nu_t$ (above); the two differ by the index
+order under the root and by the eddy-viscosity variable, conventions none
+of the sources discusses.
+
 Haering et al. (2022) count the delaying function of DDES among the ad hoc
 unified switches "tuned per flow", which make such methods possibly not
 predictive in general (§I). In the AIAA Third High-Lift Prediction Workshop
@@ -175,6 +203,83 @@ continuously with a resolution ratio instead of switching (see
 RANS–LES transition is thin with IDDES and smooth with continuous eddy
 simulation (§3.2, Fig. 11).
 
+## Transitional DDES
+
+Möller et al. (2024) couple SST-DDES to the one-equation intermittency
+model of Menter et al. (2015) (see
+[local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)),
+a model they introduced in earlier work and call DDES-$\gamma$
+([Möller et al. (2024)](/sources/moller-2024.md), §II.B.3, Eqs. 24–25, 27;
+accepted manuscript). With $\gamma$ the intermittency (registry, transition
+pages) and $P_k$ the production of the modelled $k$:
+
+$$P_k\to\gamma P_k,\qquad \rho\frac{k^{3/2}}{l_{\mathrm{DDES}}}\to\max(0.1,\gamma)\,\rho\frac{k^{3/2}}{l_{\mathrm{DDES}}},$$
+
+and the extra production that the RANS $\gamma$ model adds in separated
+shear layers is removed, which "needs to be eliminated for a coupled
+DDES-$\gamma$ model", as their earlier paper showed. Their introduction
+lists other couplings of DES with transition models, among them
+$\gamma$-$Re_\theta$ and $k$-$k_L$-$\omega$ hosts (§I).
+
+**Mode bookkeeping in transitional flow.** In a laminar region $\gamma=0$
+removes the production and leaves 10% of the destruction, so the modelled
+$k$ and $l_{\mathrm{RANS}}$ stay near zero and the length-scale test reports
+RANS mode where the model behaves as "more a laminar mode", even as an
+implicit LES; LES mode there would need extremely fine meshes (§II.D,
+Fig. 1, p. 10). The dynamic central/upwind flux blending of Travin et al.,
+designed for the fully turbulent RANS/LES distinction, loses its meaning
+(§II.D; see [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+
+**V103 compressor cascade** ($Re=138\,500$ on the axial chord $c_{ax}$,
+page-local, $M=0.1$,
+inflow $Tu=3.25\%$, span $0.1c_{ax}$; separation-induced transition on the
+suction side, bypass transition on the pressure side; DNS of Zaki et al.,
+own WALE LES on 10.9 million cells; §III; see
+[compressor cascades](/benchmarks/compressor-cascade.md)):
+
+- *Mesh.* Coarse, medium and fine DDES meshes of 0.68, 1.08 and 4.32
+  million cells, 40 spanwise cells, $y^+<1$; the integral total-pressure
+  loss converges towards the LES with refinement, and the medium mesh,
+  comparable to the 1.47 million cells of Yin & Durbin's DDES, is used
+  (§III.A, Tables 2–3, Fig. 3).
+- *Baseline.* Fully turbulent DDES misses the suction-side
+  [laminar separation bubble](/definitions/laminar-separation-bubble.md)
+  and "transitions" the pressure side just behind the leading edge;
+  DDES-$\gamma$ captures the bubble, but on the pressure side follows RANS
+  with the $\gamma$ model, since the attached layer stays in RANS mode
+  without resolved content (§III.B.1, Figs. 5–10, §IV). On the ERCOFTAC
+  T3C5 plate it gives results identical to RANS-$\gamma$, not shown
+  (§II.F; see [ERCOFTAC T3 flat plates](/benchmarks/ercoftac-t3-flat-plate.md)).
+- *Free-stream decay.* Without inflow turbulence both DDES variants lose
+  the modelled free-stream turbulence intensity rapidly ahead of the
+  leading edge, unlike DNS, LES and RANS: $f_d=1$ in the free stream and
+  the very small $\Delta_{\mathrm{SLA}}$ there "spuriously" enable the LES-mode
+  destruction (§III.B.1, Figs. 11–12).
+- *Synthetic inflow turbulence.* The generator of Shur et al. restores the
+  free-stream intensity, slightly improves the bubble, and moves bypass
+  transition onto resolved scales ($x=0.3$–$0.55c_{ax}$, against modelled
+  $k$ at $0.5$–$0.65c_{ax}$ without it), yet the pressure-side $C_f$ barely
+  changes because $f_d=0$ near the wall enforces RANS mode; hence, in the
+  authors' words, assessing transition by surface values such as the skin
+  friction alone "may lead to wrong conclusions" (§III.B.2, Figs. 13–18).
+  The inlet $\omega=\sqrt k/(\beta^*L)$, with $L$ the inlet turbulent length
+  scale, uses $L=0.055c_{ax}$ with the generator and $0.003c_{ax}$ without
+  (Eq. 28; see
+  [inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
+  The authors suggest that with resolved inflow scales the near-wall mesh
+  is fine enough that shielding "might not be required" (§III.B.2, p. 21).
+- *Flux blending.* The dynamic blending is fully upwind ($\sigma_b\approx1$,
+  page-local upwind fraction of the Roe flux) in both boundary layers and
+  damps the resolved scales; a constant upwind fraction of 0% oscillates and
+  suppresses the bubble, 25% (Yin & Durbin's value) damps the synthetic
+  turbulence and overpredicts the bubble, and 5% predicts both transitions
+  best, agreeing with Yin & Durbin's DDES and closer to the DNS on the
+  pressure side (§III.B.3, Figs. 19–22). The authors caution that bypass
+  transition then relies on resolved scales, so the model may act "more
+  like an LES model", and that 5% is a further adjustable parameter that
+  may need re-tuning for other cases or meshes (pp. 25–26; see
+  [numerical dissipation](/properties/numerical-dissipation.md)).
+
 ## Zonal DES
 
 Zonal detached-eddy simulation (ZDES, Deck) lets the user assign to each
@@ -218,6 +323,7 @@ The variants differ in the length $\Delta$ that caps the RANS length:
 | SST-DES and SST-DDES in a cell-centred finite-volume code | $\Delta_{\max}$, $C_{\mathrm{DES}}=0.78F_1+0.61(1-F_1)$ | Delassaux et al. (2023), §4.1.3, Eq. 9 |
 | IDDES | $\Delta_{dw}$ (Eq. 19 above) | Carlsson et al. (2023), §3 |
 | SA-DDES with grey-area mitigation | $\Delta_{\mathrm{SLA}}$ (below), $C_{\mathrm{DES}}=0.65$ | Carlsson et al. (2023), §3.1, §4.4 |
+| SST-DDES and transitional DDES in a cell-centred finite-volume code | $\Delta_{\mathrm{SLA}}$, $C_{\mathrm{DES}}=0.65$ | Möller et al. (2024), §II.B.1, Eq. 21 |
 | ZDES of the supersonic base flow (Simon et al.) | $\Delta_{\mathrm{vol}}$, $C_{\mathrm{DES}}=0.55$ | as recalled by Carlsson et al. (2023), §4.4 |
 
 Basile et al. divide by $N+1$, the number of one-dimensional degrees of
@@ -432,6 +538,16 @@ RANS-adapted mesh (§3.3).
   which motivates their transition-coupled
   [Reynolds-stress model](/methods/reynolds-stress-model.md)
   ([Liu et al. (2024)](/sources/liu-2024.md), Introduction).
+- **Dynamic stall**, as recalled by Baldan & Guardone (2025, Introduction):
+  the DES best practice of Shur et al. requires a span of at least one
+  chord to reproduce the dynamic-stall vortex, a requirement the authors
+  confirm for wall-resolved LES of a pitching NACA 0012 in the downstroke
+  ([Baldan & Guardone (2025)](/sources/baldan-2025.md), §2.1; arXiv v2; see
+  [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+- **Wind-turbine noise**, as recalled by Rismondo et al. (2025, §1): Nelson
+  et al. used delayed DES with Farassat's linear acoustic formulation for a
+  full wind turbine ([Rismondo et al. (2025)](/sources/rismondo-2025.md),
+  §1; see [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)).
 - **Capsule wakes**, as recalled by Placco et al. (2023, §1). DES of
   planetary-entry capsule wakes was restricted to the near-body wake and
   disagreed with experiment in the backshell area, which the cited work
@@ -479,6 +595,16 @@ RANS-adapted mesh (§3.3).
   base-flow studies recalled by Carlsson et al. use 0.55 with
   $\Delta_{\mathrm{vol}}$. Carlsson et al. call the constant code dependent, so
   these are different calibrations, not a disagreement.
+  Möller et al. (2024) use 0.65, citing Travin et al., with an SST host and
+  $\Delta_{\mathrm{SLA}}$, where Carlsson et al. and Delassaux et al. blend
+  0.61 and 0.78 for SST; Möller et al. checked their value on decaying
+  isotropic turbulence without showing it (§II.B.1).
+- Möller et al. use $\kappa$ both for the ratio of specific heats (1.4) and
+  for the von Kármán constant of $r_d$ (§II.A, Eq. 20). They write that
+  values $l_{\mathrm{RANS}}/l_{\mathrm{DDES}}<0$ are not possible (p. 7); by their
+  Eq. 18, $l_{\mathrm{DDES}}\le l_{\mathrm{RANS}}$, so the ratio is at least one
+  wherever $l_{\mathrm{DDES}}>0$, the stronger bound their text uses
+  *(compiler check, not in the sources)*.
 
 # Citations
 
@@ -498,3 +624,7 @@ RANS-adapted mesh (§3.3).
 - [Wang et al. (2024)](/sources/wang-2024.md) — §4, Figs. 8–12.
 - [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — §1.
 - [Liu et al. (2024)](/sources/liu-2024.md) — Introduction.
+- [Möller et al. (2024)](/sources/moller-2024.md) — §I, §II.B.1 Eqs. 17–22, §II.B.3 Eqs. 24–25, 27, §II.D Fig. 1, §II.F, §III.A–B Figs. 3–22, Tables 2–3, Eq. 28, §IV (accepted manuscript).
+- [Wu et al. (2025)](/sources/wu-2025.md) — §2.1, Eqs. 5–6, Fig. 2 (authors' manuscript).
+- [Baldan & Guardone (2025)](/sources/baldan-2025.md) — Introduction, §2.1 (arXiv v2).
+- [Rismondo et al. (2025)](/sources/rismondo-2025.md) — §1.

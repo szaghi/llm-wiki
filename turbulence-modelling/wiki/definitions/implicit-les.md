@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T15:49:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -65,7 +65,7 @@ can carry.
    [Delassaux et al. (2023)](/sources/delassaux-2023.md) (§4.1) define
    implicit LES in this sense, as "use of the truncation error of high order
    numerical scheme to mimic a sub-grid model". [Zhao et al. (2023a)](/sources/zhao-2023.md)
-   (§1) date the idea to Boris et al. (1992, as recalled), and recall MILES
+   (§1) date the idea to Boris et al. (1992, cited), and recall MILES
    and residual-based variational multiscale modelling as relatives; their
    high-order [gas-kinetic](/methods/high-order-gas-kinetic-scheme.md) ILES
    has molecular viscosity only, and they state that numerical dissipation
@@ -91,6 +91,48 @@ can carry.
    of MPI-AMRVAC and no subgrid model; the paper does not use the term
    implicit LES and does not discuss numerical dissipation or resolution
    convergence.
+
+   Further no-model runs:
+
+   - **Gas-kinetic iLES.** [Cao et al. (2024)](/sources/cao-2024.md) (§1)
+     run their curvilinear
+     [high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md)
+     as "iLES": "the built-in numerical dissipation acts as the
+     subgrid-scale (SGS) dissipation, thus no explicit SGS model is
+     utilized".
+   - **Supersonic Taylor–Green vortex.**
+     [Chapelier et al. (2024)](/sources/chapelier-2024.md) (§IV.A) run
+     seven high-order codes on the supersonic
+     [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) ($Re=1600$,
+     $M_0=1.25$) without a subgrid model. They assume that at this low
+     Reynolds number "the inherent dissipative properties" of the schemes
+     mimic the subgrid dissipation on the coarse grids.
+   - **Supersonic isothermal turbulence.**
+     [Cernetic et al. (2024)](/sources/cernetic-2024.md) (§2–5) drive
+     supersonic isothermal turbulence with a GPU modal
+     discontinuous-Galerkin code. The code uses a Legendre total-degree
+     basis, not the nodal DGSEM. There is no explicit viscosity or subgrid
+     model; the dissipation is numerical plus a von Neumann–Richtmyer
+     [artificial viscosity](/methods/artificial-viscosity-shock-capturing.md)
+     at compressions.
+   - **Compressor cascade.** [Klose et al. (2025)](/sources/klose-2025.md)
+     (§2) choose "the implicit (no-model) LES approach … such that
+     dissipation is added implicitly via the numerical dissipation of the
+     Riemann solver". The setting is a transonic
+     [compressor cascade](/benchmarks/compressor-cascade.md) at
+     $Re=1.35\times10^6$. The code is the DGSEM of
+     [TRACE](/software/trace.md) ($N=3$, Chandrashekar entropy-conserving
+     split form with its Riemann solver, BR1) with
+     [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md).
+   - **GPU DGSEM.** [Kurz et al. (2025)](/sources/kurz-2025.md) run all
+     scale-resolving cases of the GPU code [GALÆXI](/software/galaexi.md)
+     without an explicit model. The cases are a supersonic Taylor–Green
+     vortex and a wall-resolved
+     [NASA Rotor 37](/benchmarks/nasa-rotor-37.md) cascade. The
+     kinetic-energy-preserving split form and the DG/finite-volume blending
+     are the only dissipation. The paper calls the Rotor 37 run
+     "wall-resolved LES" and does not use the term implicit LES (§2.2–2.3,
+     §6).
 2. **Designed numerical regularization.** The numerical dissipation is
    built to act as a model. Vicente Cruz & Lamballais (2023, §5.1) use the
    [implicit spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
@@ -144,13 +186,16 @@ can carry.
    the scheme, and adds local solution filtering for robustness: an
    exponential modal filter applied only in elements whose Persson–Peraire
    smoothness indicator exceeds a threshold (local modal filter), or the
-   positivity-preserving entropy filter of Dzanic & Witherden (as
-   recalled). Filtering adds local numerical dissipation to the dissipation
+   positivity-preserving entropy filter of Dzanic & Witherden (cited). Filtering adds local numerical dissipation to the dissipation
    on which ILES relies as a subgrid model (citing Edoh et al.); the
    Riemann solver contributes too: Rusanov on wall faces, HLLC or Roe
    inside. The filter and solver comparisons are on the
    [subcell finite-volume shock-capturing](/methods/subcell-finite-volume-shock-capturing.md)
    and [numerical dissipation](/properties/numerical-dissipation.md) pages.
+   Kurz et al. (2025, §2.3) recall, citing Beck & Kurz, that the
+   Hennemann-type DG/finite-volume blending of
+   [GALÆXI](/software/galaexi.md) "has also been demonstrated to yield a
+   sensible turbulence model if tuned correctly", the RL-Blend idea above.
 3. **Implicitly filtered LES.** The filter is the one induced by grid and
    discrete operator, whatever closure is added. Beck & Kurz (2023, §I)
    use the term in this sense: the filter width and shape are
@@ -181,6 +226,14 @@ can carry.
    solution onto the piecewise-polynomial space is a space-filtering
    operation, so flux reconstruction without a subgrid model is ILES, and
    adding a model adds dissipative fluxes.
+   [Reddy et al. (2026)](/sources/reddy-2026.md) (§1, §2.1) take this
+   position with explicit closures. Their continuous spectral-element LES
+   is implicitly (grid-)filtered, the quadrature-point values being the
+   filtered quantities. It carries explicit eddy-viscosity models,
+   including the
+   [residual-based dynamic model](/methods/residual-based-dynamic-sgs-model.md).
+   They call implicit LES in the sense of usage 1 "very different" from
+   their approach.
 
 Usages 1 and 2 concern the closure (none, or numerical); usage 3 concerns
 the filter. A page or claim about "ILES" should say which.
@@ -245,7 +298,7 @@ interpretation they flag as needing further work).
   named in this paper.
 - **Supersonic capsule wake.** Placco et al. (2023, §2–5) justify their
   WENO-based ILES by turbulent-boundary-layer studies that found it
-  comparable to coarse DNS (Poggie et al.; Ritos et al., as recalled). They
+  comparable to coarse DNS (Poggie et al.; Ritos et al., cited). They
   run a $2048\times672\times672$ grid with an
   [immersed boundary](/methods/immersed-boundary-method.md) at
   $M_\infty=2$, $Re=10^6$ based on the capsule diameter, and report wake
@@ -329,6 +382,43 @@ interpretation they flag as needing further work).
   refinement, and a spanwise spacing $z^+\approx45$–60 suffices for its
   mean (Wang 2024, §4.1–4.3, Figs. 2–3, 8, 13–14; see
   [turbine cascades](/benchmarks/turbine-cascade.md)).
+- **Gas-kinetic iLES of a supersonic channel and a compressible hill.**
+  Cao et al. (2024, §3.3–3.4, Tables 4–6, Figs. 5–16).
+  - **Channel at $M=1.5$, $Re=3000$ (isothermal walls).** iLES on $128^3$
+    gives $Re_\tau=211$, against 213 for their own $160^3$ run labelled
+    DNS and 222 and 218 for the reference DNS of Coleman et al. and
+    Morinishi et al. (cited by Cao et al.). The non-dimensional wall heat flux is
+    −0.047 against −0.049 and −0.048.
+  - **Sensitivities in the channel.** Halving the streamwise box "almost
+    does not affect" the wall statistics but visibly changes the rms density
+    and temperature. Keeping the native unit Prandtl number of the BGK model
+    "changes the mean density, temperature and Ma number profiles greatly",
+    and $Re_\tau$ rises to 221.
+  - **Compressible periodic hill ($Re_b=2800$).** On $10^6$ to
+    $1.6\times10^7$ cells the separation and reattachment points are
+    0.23/5.18, 0.20/5.15 and 0.24/5.52, against 0.21/5.41 from DNS (Table 6).
+  - **The authors' conclusion.** "Coarse grids is enough for iLES" in
+    low-Reynolds-number separated flow. The tabulated reattachment points
+    (5.18, 5.15, 5.52 from coarse to fine) do not converge monotonically
+    *(compiler check, not in the sources)*.
+- **Supersonic Taylor–Green vortex, seven codes.** Chapelier et al. (2024,
+  §IV.A, Figs. 5–7) find the large-scale kinetic energy captured by all
+  solvers from $128^3$ degrees of freedom, and "most turbulent dynamics"
+  from $256^3$. On coarser grids "high-order schemes are still able to
+  capture a significant part of the small-scale dynamics", and the
+  discontinuous finite-element schemes (modal DG, spectral difference,
+  DGSEM) "seem to be efficient in that respect".
+- **High-order DG against finite volume in supersonic turbulence.**
+  Cernetic et al. (2024, §5–6, Figs. 5, 8, 10–11) compare modal DG with a
+  second-order finite-volume scheme at equal cell count.
+  - **Subsonic Mach numbers.** DG extends the resolved spectral range
+    markedly.
+  - **Supersonic Mach numbers.** The advantage "nearly disappears".
+  - **Sonic scale at $M=3.2$.** Second-order DG at $1024^3$ resolves the
+    sonic scale. DG at $512^3$ "does nearly as well as" finite volume at
+    $1024^3$, and finite volume at $512^3$ shows no trace of it.
+  - **Bottleneck.** Lower numerical dissipation also gives DG a more
+    pronounced [bottleneck](/definitions/bottleneck-effect.md).
 
 ## Evidence: when it fails
 
@@ -391,7 +481,7 @@ interpretation they flag as needing further work).
   $\Delta t$ three times, from 0.1 to 0.0125, moves the reattachment from
   $x/h=4.73$ to 5.37 and degrades the Reynolds stresses in the bulk;
   the authors explain this by the shrinking stabilization, consistently
-  with earlier stabilized-method studies (as recalled). On the fine mesh
+  with earlier stabilized-method studies (cited). On the fine mesh
   the residual, and so the stabilization, matters less. The implicit model
   of this scheme therefore depends on $\Delta t$ through the stabilization
   parameter (§2.4, Eq. 10; §4.2). At $Re_h=10\,600$ and
@@ -439,7 +529,7 @@ interpretation they flag as needing further work).
   (2023) above.
 - **Unpenalized DG.** Kou et al. (2023) see standard DG diverge in the
   Taylor–Green vortex ($32^3$ elements, $N=3$), which they relate to
-  aliasing following Gassner et al. (as recalled), and in a 2D compressible
+  aliasing following Gassner et al. (cited), and in a 2D compressible
   Kelvin–Helmholtz instability ($Re=10^4$, $M=0.5$, $64^2$ elements, $N=3$)
   at $t/t_c\simeq4$; only the solution penalty completes the
   Kelvin–Helmholtz run (§4.2–4.3).
@@ -465,6 +555,62 @@ interpretation they flag as needing further work).
   by more than 12% at $Re_\tau=2000$ with $\Delta x^+=18$ (Vicente Cruz &
   Lamballais 2023, §7.4), so it "cannot be used alone in the context of
   WMLES".
+- **Modal relaxation filter in wall-modelled spectral-element LES.**
+  [Mukha et al. (2025)](/sources/mukha-2025.md) (§III.C, Fig. 8) follow
+  Gillyns et al. in using Nek5000's high-pass relaxation filter as an
+  implicit subgrid model. They filter two modes with strength 100.
+  - In channel flow at $Re_\tau\approx8000$ ($N=7$) the filter gives
+    stronger near-wall oscillations and over-predicts $\langle u'u'\rangle$.
+  - The wall stress computed from the mean wall gradient then misses the
+    modelled one by −84.85%.
+  - The authors conclude that filtering alone "does not introduce enough
+    damping to avoid the contamination of the solution with numerical
+    artifacts". Explicit models stabilize better (see
+    [Vreman model](/methods/vreman-model.md) and
+    [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)).
+- **Pile-up with dissipation-free central schemes.** On the supersonic
+  Taylor–Green vortex at $64^3$, the central finite-difference codes
+  without dissipation (kinetic-energy- and entropy-preserving, or compact
+  with a high-order filter) predict the kinetic energy very accurately up
+  to $t\approx12$. Their levels are slightly too high afterwards, which the
+  authors explain by a small-scale energy pile-up at the cutoff "and the
+  lack of an SGS closure" (Chapelier et al. 2024, §IV.A, Fig. 5).
+- **Under-resolved shock buffet.** In the compressor-cascade LES of Klose
+  et al. (2025, §6–7, Table 2) the coarse-grid solutions "should be
+  considered under-resolved". The shock-oscillation amplitude grows from
+  0.172 to 0.231 chords when the resolution is refined at fixed span. The
+  authors "assume that the increased numerical dissipation of the URANS
+  and, to a lesser extent, the coarser LES, damps out flow structures that
+  are driving the larger shock oscillations". Shocklets in the coarse run
+  also appear more diffused.
+
+## A DNS that is an implicit LES for some modes
+
+[Beattie et al. (2025)](/sources/beattie-2025.md) (§6, App. D, §9.1) apply
+the no-model diagnosis to compressible "DNS" that set only a shear
+viscosity. In their finite-volume MHD runs at rms Mach number about 1
+(FLASH, $Re=1000$), the compressible velocity modes have no physical
+dissipation when the [bulk viscosity](/definitions/bulk-viscosity.md) is
+zero. Their decay is then "governed completely by numerical dissipation",
+set by the flux discretization, the Riemann solver and the resolution
+(§1).
+
+- **Pile-up.** The compressible modes pile up at high wavenumbers in a
+  [bottleneck](/definitions/bottleneck-effect.md).
+- **No convergence.** The ratio of compressible to solenoidal spectra
+  should "grow unbounded" with resolution, "exactly what one expects for an
+  ILES" (App. D).
+- **The authors' conclusion (§9.1).** Without bulk viscosity "the grid
+  controls the dissipation of the compressible modes". This turns "what is
+  usually considered a direct numerical simulation (DNS) into an implicit
+  large eddy simulation for the compressible modes". They hold that a
+  compressible DNS needs a bulk viscosity comparable to the shear one.
+- **Resolution evidence (App. D).** With bulk viscosity ten times the shear
+  viscosity, their run converges on all scales at $512^3$. With equal
+  viscosities the bulk-viscous scale is not resolved even at $1024^3$.
+
+See [direct numerical simulation](/definitions/direct-numerical-simulation.md)
+and [compressible MHD turbulence](/results/compressible-mhd-turbulence.md).
 
 ## Flux reconstruction and PANS (inline)
 
@@ -530,7 +676,7 @@ dissipation is imparted by the SGS model". Details on
 - [Goc et al. (2021)](/sources/goc-2021.md) (§2.3), who run explicit SGS
   models, state that low-dissipation numerics are essential because
   numerical dissipation is "extremely detrimental" for coarse LES (Mittal &
-  Moin 1997, as recalled): the opposite design choice to usage 2.
+  Moin 1997, cited): the opposite design choice to usage 2.
 
 - Ferrer et al. (2023, §4.1) call DG "very suitable for ILES" because its
   numerical dissipation is confined to high wavenumbers, and give no
@@ -579,6 +725,22 @@ dissipation is imparted by the SGS model". Details on
   configuration, so the two are not recorded as a contradiction. Cao et
   al.'s verdict also sits beside their own report of a large peak-dissipation
   discrepancy on the two coarsest grids.
+- Cao et al. (2024, §3.3) label a $160^3$ run of the same gas-kinetic
+  scheme "DNS" and a $128^3$ run "iLES". The boundary between DNS and
+  implicit LES is then a matter of resolution only, the scheme being
+  identical. Beattie et al. (2025) make the converse point: a run labelled
+  DNS can be an implicit LES for the modes it does not dissipate
+  physically.
+- Chapelier et al. (2024, §IV.A, §V) treat their coarse runs as implicit
+  LES on the assumption that numerical dissipation mimics subgrid
+  dissipation at $Re=1600$. Their synthesis of a "low impact" of shock
+  capturing on the turbulent scales (§V) stands next to their per-code
+  remark (§IV.A) that the "strong shock capturing strategy" of SD3D "is
+  probably hindering to some extent the development of small scales on the
+  finer grids".
+- The version read for Cao et al. (2024) is the 2021 arXiv preprint, and
+  for Reddy et al. (2026) a 2021 preprint; their versions of record may
+  differ.
 
 # Citations
 
@@ -623,3 +785,11 @@ dissipation is imparted by the SGS model". Details on
 - [Wang (2024)](/sources/wang-2024-b.md) — §2.3–2.4; §4.1–4.3, Figs. 2–3, 8, 13–14.
 - [Duan & Wang (2024)](/sources/duan-2024.md) — §1, Fig. 2; §3; §5.1–5.4, Figs. 5–15; §6.
 - [Kim et al. (2024)](/sources/kim-2024.md) — §2.1; Table 3; App. C.
+- [Cao et al. (2024)](/sources/cao-2024.md) — arXiv v1: §1; §3.3, Tables 4–5, Figs. 5–9; §3.4, Table 6, Figs. 10–16.
+- [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL accepted manuscript: §III.B; §IV.A, Figs. 5–7; §V.
+- [Cernetic et al. (2024)](/sources/cernetic-2024.md) — arXiv v2: §2–3.1; §5, Fig. 5; §6, Figs. 8, 10–11.
+- [Klose et al. (2025)](/sources/klose-2025.md) — ASME accepted manuscript: §2; §3; §6, Table 2; §7.1.
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §2.2–2.3; §5.2; §6.
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §II.A, Eq. (4); §III.C, Fig. 8.
+- [Reddy et al. (2026)](/sources/reddy-2026.md) — preprint of 4 March 2021: §1; §2.1.
+- [Beattie et al. (2025)](/sources/beattie-2025.md) — arXiv v4: §1; §6.1–6.2, Fig. 9; §9.1; App. D.

@@ -127,10 +127,11 @@ duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-26). This source is cited on:
+Chunk 5 (2026-10-26), cited further in chunk 6. This source is cited on:
 
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)
 - [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)
+- [OpenFOAM](/software/openfoam.md)

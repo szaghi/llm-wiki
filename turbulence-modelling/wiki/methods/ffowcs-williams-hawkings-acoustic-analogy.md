@@ -1,0 +1,232 @@
+---
+type: Method
+title: "Ffowcs Williams–Hawkings acoustic analogy"
+description: "The Ffowcs Williams–Hawkings analogy turns a scale-resolving flow solution into far-field sound through surface (thickness, loading) and volume (quadrupole) integrals; this page gives its convective form, surface and quadrupole choices, retarded-time handling and the accuracy reported for jets, fan stages and a wind turbine."
+status: established
+aliases: [FW-H, FWH, Ffowcs Williams-Hawkings equation, acoustic analogy, hybrid aeroacoustic prediction]
+tags: [aeroacoustics, les, hybrid-rans-les, turbomachinery]
+timestamp: 2026-10-26T15:52:00Z
+---
+
+# Ffowcs Williams–Hawkings acoustic analogy
+
+The **Ffowcs Williams–Hawkings (FW-H) analogy** computes the sound radiated
+by a flow from a fluid-dynamic solution, without resolving the acoustic
+field in the flow solver. As recalled by
+[Rismondo et al. (2025)](/sources/rismondo-2025.md), §1.2, Lighthill (1952)
+rearranged the compressible Navier–Stokes equations into an inhomogeneous
+wave equation for the acoustic field. Ffowcs Williams & Hawkings (1969)
+extended it to bodies in relative motion and solved it with the free-space
+Green function. The radiated pressure then splits into a **linear**
+surface part and a **nonlinear** volume part. The surface part holds the
+*thickness* term (fluid displaced by the body) and the *loading* term
+(pressure and viscous stress on it). The volume part is the *quadrupole*
+term of the fluctuating velocity field around the body. The analogy assumes that the
+sound does not act back on the flow. The computation is therefore a
+two-step **hybrid** method: an LES, a
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md) or a direct noise
+computation supplies the sources, and an integral gives the sound at the
+observers. Rismondo et al. call this "particularly advantageous" in
+low-speed flows ($M<0.3$), where the flow can be computed as incompressible.
+
+In this bundle the analogy is the downstream user of turbulence
+simulations. The sources use it on a jet, a fan stage, a wind turbine and
+code verification. Its accuracy depends on the scale-resolving simulation
+that feeds it.
+
+## Convective form
+
+Page-local symbols: $c_0$, $\rho_0$, $p_0$ the ambient sound speed, density
+and pressure; $\rho'=\rho-\rho_0$ and $p'$ the acoustic density and
+pressure ($p'=c_0^2\rho'$ in the far field); $U_{0,i}$ a uniform stream,
+$M_0=\lvert\boldsymbol U_0\rvert/c_0$, $\beta_M=\sqrt{1-M_0^2}$; $g(\boldsymbol x,t)=0$ the
+integration surface $S$ with outward unit normal $n_i$, $H$ the Heaviside
+function and $\delta(g)$ the surface delta; $Q_i$ the thickness (mass-flux)
+source; $\ell_{ij}$ the loading tensor; $T^{\mathrm L}_{ij}$ the Lighthill
+tensor; $\boldsymbol x$ the observer, $\boldsymbol s$ the source point and
+$t_e$ the emission (retarded) time. $\sigma_{ij}$ is the registry's viscous
+stress.
+
+[Ferrer et al. (2023)](/sources/ferrer-2023.md), §4.6, Eq. (23), write the
+convective FW-H equation for a medium in uniform motion:
+
+$$\Big(\partial_t^2+U_{0,i}U_{0,j}\partial_i\partial_j+2U_{0,i}\partial_i\partial_t-c_0^2\partial_i\partial_i\Big)\big(H\rho'\big)=\big(\partial_t+U_{0,i}\partial_i\big)\big(Q_in_i\,\delta(g)\big)-\partial_i\big(\ell_{ij}n_j\,\delta(g)\big)+\partial_i\partial_j\big(T^{\mathrm L}_{ij}H\big).$$
+
+Rismondo et al. (2025), §2.2, Eqs. (2.3)–(2.7), give its integral solution
+with the stream along $x_1$. They use the linear terms of Najafi-Yazdi,
+Brès & Mongeau (2011) and the volume terms of Cianferra et al. (2019):
+
+$$\begin{aligned}
+4\pi p'(\boldsymbol x,t)=&\;\frac{\partial}{\partial t}\int_S\Big[(1-M_0)\frac{Q_in_i}{R^*}\Big]_{t_e}dS-\int_S\Big[U_{0}\frac{r^*_1Q_in_i}{R^{*2}}\Big]_{t_e}dS\\
+&+\frac1{c_0}\frac{\partial}{\partial t}\int_S\Big[\frac{\ell_{ij}n_jr_i}{R^*}\Big]_{t_e}dS+\int_S\Big[\frac{\ell_{ij}n_jr^*_i}{R^{*2}}\Big]_{t_e}dS\\
+&+\frac1{c_0^2}\frac{\partial^2}{\partial t^2}\int_V\Big[T^{\mathrm L}_{ij}\frac{r_ir_j}{R^*}\Big]_{t_e}dV
++\frac1{c_0}\frac{\partial}{\partial t}\int_V\Big[T^{\mathrm L}_{ij}\Big(\frac{2r_ir^*_j}{R^{*2}}+\frac{r^*_ir^*_j-\Lambda_{ij}}{R^{*2}}\Big)\Big]_{t_e}dV\\
+&+\int_V\Big[T^{\mathrm L}_{ij}\frac{3r^*_ir^*_j-\Lambda_{ij}}{R^{*3}}\Big]_{t_e}dV,
+\end{aligned}$$
+
+with $U_0=\lvert\boldsymbol U_0\rvert$, the advective distance
+$R^*=\sqrt{(x_1-s_1)^2+\beta_M^2[(x_2-s_2)^2+(x_3-s_3)^2]}$, the radiation
+vectors $r^*_1=(x_1-s_1)/R^*$, $r^*_{2,3}=\beta_M^2(x_{2,3}-s_{2,3})/R^*$,
+$r_1=(r^*_1-M_0)/\beta_M^2$, $r_{2,3}=(x_{2,3}-s_{2,3})/R^*$, and
+$\Lambda_{ij}=\mathrm{diag}(1,\beta_M^2,\beta_M^2)$ (all page-local). The
+first two terms are thickness, the next two loading, and the last three
+quadrupole. For an impermeable surface moving with velocity $v_i$,
+$Q_i=\rho v_i$. As printed, $\ell_{ij}=(p-p_0)\delta_{ij}+\sigma_{ij}$ and
+$T^{\mathrm L}_{ij}=\rho u_iu_j+[(p-p_0)-c_0^2(\rho-\rho_0)]\delta_{ij}-\sigma_{ij}$.
+At low Mach number, with negligible viscous stress and a barotropic
+incompressible flow, they reduce it to $T^{\mathrm L}_{ij}\approx\rho u_iu_j$.
+Ferrer et al. (Eqs. 24–26) write the thickness and loading integrals of
+the same convective formulation (Najafi-Yazdi and Ghorbaniasl) with the time
+derivatives of the sources inside the integrals.
+
+The three implementations in the sources build on the same convective
+formulation of Najafi-Yazdi et al. These are HORSES3D (Ferrer et al.), the
+SherFWH code of [Lewis et al. (2023)](/sources/lewis-2023.md) (§5.3, after
+Casalino and Najafi-Yazdi et al.) and the solver of Rismondo et al.
+
+## Choices of the integration surface
+
+- **Solid (impermeable) body surface.** The surface carries thickness and
+  loading terms from the wall pressure of the flow solution. Lewis et al.
+  (2023, §5.3) use the rotor and stator wall pressure of a fan stage, with
+  the loading (dipole) term only. Rismondo et al. (2025) integrate over the
+  turbine surface.
+- **Permeable surface.** A closed surface in the fluid encloses the source
+  region, so that its integrals carry the quadrupoles inside it.
+  [Basile et al. (2023)](/sources/basile-2023.md), §4.3, wrap a jet in four
+  cylindrical–conical surfaces (radii $0.68D$–$1.7D$ at the nozzle) closed
+  by downstream discs at $x/D=20$, 25, 30. They add the extra flux terms of
+  Rahier et al. that stabilize the low-frequency result of a closed
+  downstream surface, and report results "globally independent" of the
+  surface choice, showing one combination only. HORSES3D supports both
+  solid and permeable surfaces (Ferrer et al. 2023, §4.6). As recalled by
+  Rismondo et al. (§1.2), marine-propeller studies use the porous
+  formulation of Di Francescantonio (1997) and its modifications.
+
+## Quadrupole terms: neglect or integrate
+
+Two of the four sources that evaluate FW-H integrals drop the volume
+integral. Ferrer et al. (2023, §4.6) neglect
+quadrupoles in HORSES3D. Lewis et al. (2023, §5.3) neglect quadrupole and
+monopole sources because the fan's relative tip Mach number is 0.57.
+Rismondo et al. (2025, §1.2) note that the wake contribution has
+"historically" been omitted because the loading term dominates in many
+situations, especially in the far field. They keep it, over a cylinder of
+radius $0.9D$ that holds the wake of a model wind turbine to $x/D=7$
+($D=0.18$ m, $Re_D=9.6\times10^4$, tip Mach number about 0.11). Their
+results bound where the neglect is safe (§4.2–4.3, Figs. 18–25):
+
+- the nonlinear (quadrupole) part is significant only below about four
+  times the rotation frequency $f_T$ (page-local). At $r/D=1$ it dominates
+  the lowest frequencies, and the linear part dominates from the blade
+  passing frequency $3f_T$ upward;
+- in the near field ($K_\lambda<1$, with $K_\lambda$ the distance over the
+  blade-passing wavelength, page-local) the linear part decays as $r^{-4}$
+  in the rotor plane, steeper than $r^{-1}$. The authors explain this by
+  Ianniello's rotpole model ($r^{-(n+1)}$ for $n=3$ blades). The quadrupole
+  part therefore matters at intermediate distances, and both decay as
+  $r^{-1}$ beyond about $4D$;
+- the nonlinear noise at a near-field microphone comes mostly from the wake
+  directly beneath it, so the whole wake must be inside $V$.
+
+Lewis et al. neglect quadrupoles on a Mach-number argument (relative tip
+Mach number 0.57), and Rismondo et al. find them significant at a tip Mach
+number of about 0.11. The two
+claims concern different quantities and distances: Lewis et al. predict
+in-duct and far-field fan broadband noise, and Rismondo et al. find the
+quadrupole important in the near field and at low frequency. This is no
+contradiction.
+
+## Retarded time and source compactness
+
+Every term is evaluated at the emission time $t_e$ that solves
+$t-t_e-\lvert\boldsymbol x(t)-\boldsymbol s(t_e)\rvert/c_0=0$. HORSES3D evaluates the
+integrals with a source-time-dominant algorithm on the Gauss nodes of each
+face of the FW-H surface (Ferrer et al. 2023, §4.6). Ferrer et al. write the
+emission time as $t_e=t-R/c_0$. Rismondo et al. (2025,
+§4.2, Eqs. 4.3–4.5) neglect the retarded-time differences across the
+source region, which they call compressibility delays. They justify this
+by the criterion of Cianferra et al. (2019), page-local:
+$$\mathrm{MFP}=\frac{1}{\Delta_{\mathrm{del}}f_{\max}},\qquad \Delta_{\mathrm{del}}=\frac{\max_{\boldsymbol s\in S,V}\lvert\boldsymbol s(t_e)-\boldsymbol x(t)\rvert-\min_{\boldsymbol s\in S,V}\lvert\boldsymbol s(t_e)-\boldsymbol x(t)\rvert}{c_0}.$$
+The source prints the differences $\boldsymbol s(t_e)-\boldsymbol x(t)$
+without the modulus and writes the definition as "$\mathrm{MFP}=\dots=1$".
+Delays may be ignored below $f_{\max}$, where $\mathrm{MFP}>1$. At the
+nearest microphone they find $f_{\max}=30f_T$ for the surface terms and
+$3.85f_T$ for the volume terms (Tables 3–4). The volume terms thus become
+uncertain above about $4f_T$, the range where the authors note a rise of
+the nonlinear spectrum above $20f_T$ and which they flag themselves.
+
+## Accuracy reported
+
+| Source | Flow solver feeding FW-H | Case | Surface, terms | Result |
+|---|---|---|---|---|
+| Ferrer et al. (2023), §4.6 | HORSES3D DGSEM | stationary monopole in a $M_0=0.5$ stream, observer at 500 source lengths; NACA 0012 at $Re=10^5$, $M=0.4$ | solid or permeable, no quadrupoles | frequency "good", amplitude error "around 7%"; dipole directivity at $r=2c$ (qualitative) |
+| Basile et al. (2023), §4.4 | hp-adaptive modal DG, ZDES mode 0+1 ([detached-eddy simulation](/methods/detached-eddy-simulation.md)) | PPRIME jet, $M_j=0.9$, $Re_D\simeq10^6$ | permeable closed surfaces, Rahier terms | finest mesh OASPL ($0.05<St<3$) about 1 dB (polar) and 2 dB (cylindrical array) high at high angles, 1–2 dB low below $40^\circ$; coarser meshes overpredict at all angles |
+| Lewis et al. (2023), §5.3.1 | AVBP [wall-modelled LES](/methods/wall-modelled-les.md), WALE | [ACAT1 fan stage](/benchmarks/acat1-fan-stage.md) at approach | solid blades and vanes, loading only | free-field FW-H overpredicts stator noise by 5–7 dB upstream (1–5 kHz) and about 4 dB (upstream), 2 dB (downstream) above 5 kHz |
+| Rismondo et al. (2025), §4 | OpenFOAM wall-resolved LES, WALE ([OpenFOAM](/software/openfoam.md)) | model wind turbine, $Re_D=9.6\times10^4$ | solid turbine surface plus wake volume | tonal noise at $3f_T$ plus trailing-edge broadband (linear); low-frequency wake broadband (nonlinear); near-field asymmetric, far-field symmetric dipole directivity (no acoustic measurement compared) |
+
+Two lessons recur:
+
+- **The source simulation decides the result.** Lewis et al. find a
+  mesh as fine as their refined WMLES ("LES2") "mandatory" for reliable
+  noise. Their coarser mesh LES1, which also meets the published WMLES
+  wall-mesh criteria, is almost 5 dB worse at low and mid frequency
+  (§5.3.1, §6). Basile et al.
+  find that refining the jet mesh lowers the predicted noise, most at low
+  frequency, and attribute the remaining excess at high angles to the
+  untripped nozzle (§4.4).
+- **Free-field propagation is a model error in ducts.** For the ducted
+  fan, Goldstein's in-duct analogy, which accounts for duct cut-off,
+  predicts at least 2 dB less than FW-H, about 5 dB less between 3 and
+  6 kHz. With an indicative $\pm3$ dB rotor-shielding correction it agrees
+  "very well" with the measurements (Lewis et al. 2023, §5.3.1).
+
+## Alternatives in the sources
+
+- **Goldstein's in-duct analogy** (Lewis et al. 2023), above.
+- **Acoustic perturbation equations.**
+  [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md), §2,
+  propagate installed-jet noise by solving APE-4 with a high-order DG
+  method in [Nektar++](/software/nektar-plus-plus.md). The source is the
+  Lamb vector from a finite-volume LES, coupled one-way in memory. This
+  hybrid method solves a propagation PDE on a grid instead of evaluating an
+  FW-H integral. It lets a plate scatter and reflect the sound, and carries
+  high-frequency waves that the LES itself dissipates (§4.3–4.4). The
+  authors recall that the LES/FW-H study of Wang et al. (2020) at $M=0.6$
+  underpredicts isolated-jet noise. A different result of Ffowcs Williams,
+  the $\sin^2(\theta/2)$ edge-scattering directivity of Ffowcs Williams &
+  Hall (1970), is the law their installed-jet noise increments follow on
+  the unshielded side up to $110^\circ$ (§4.3).
+- **Direct noise computation**, in which the compressible solver resolves
+  the acoustic field itself, is shown with HORSES3D (Ferrer et al. 2023,
+  §4.6, dilatation field of the NACA 0012).
+- As recalled by Rismondo et al. (§1.2), Nelson et al. (2012) combined
+  delayed DES with Farassat's linear formulation for a full wind turbine.
+
+## Qualifications
+
+- Rismondo et al. print $\ell_{ij}=(p-p_0)\delta_{ij}+\sigma_{ij}$ and
+  $T^{\mathrm L}_{ij}=\dots-\sigma_{ij}$ with opposite signs on the same
+  viscous stress. Both tensors come from the momentum flux
+  $\rho u_iu_j+(p-p_0)\delta_{ij}-\sigma_{ij}$ of the Navier–Stokes momentum
+  equation (registry $\sigma_{ij}$), the loading as its surface part and
+  $T^{\mathrm L}_{ij}$ as its volume part, so the two printed signs cannot
+  both hold; the printed $T^{\mathrm L}_{ij}$ matches the momentum
+  equation *(compiler check, not in the sources)*. Rismondo et al. drop
+  the viscous stress from $T^{\mathrm L}_{ij}$ at low Mach number. They also say Eq. (2.3) "contains seven terms" but plot
+  "six terms" (the first two merged in their Fig. 19). Their nonlinear
+  frequency range is printed "$f<4.0f/f_T$" in §4.2 and $f<4f_T$ in §5.
+- Ferrer et al. (2023, §4.6) call $Q_i$, $\ell_{ij}$, $T^{\mathrm L}_{ij}$ the
+  "loading, thickness, and quadrupole" terms, swapping the first two
+  relative to their own Eqs. (25)–(26).
+- Basile et al. assert the surface independence without showing the other
+  surfaces. Rismondo et al. assert independence from the volume radius
+  ($0.7D$–$0.9D$) without showing it, and compare no acoustic measurement.
+
+# Citations
+
+- [Rismondo et al. (2025)](/sources/rismondo-2025.md) — §1.2 (history, quadrupole omission, porous formulation, recalled studies); §2.2, Eqs. (2.3)–(2.7) (advective FW-H); §4.1–4.3, Eqs. (4.3)–(4.6), Tables 3–4, Figs. 18–27 (spectra, MFP criterion, source regions, directivity, decay); §5.
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — arXiv v1: §4.6, Eqs. (23)–(26), Figs. 12–13 (convective FW-H in HORSES3D, monopole test, NACA 0012).
+- [Basile et al. (2023)](/sources/basile-2023.md) — HAL accepted manuscript: §4.3 (permeable surfaces, Rahier terms); §4.4, Figs. 14–15 (jet PSD and OASPL).
+- [Lewis et al. (2023)](/sources/lewis-2023.md) — HAL accepted manuscript: §5.3 (SherFWH, SherGoldstein, neglected sources); §5.3.1, Figs. 36–42 (FW-H and Goldstein predictions, shielding correction); §6.
+- [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md) — §2.2–2.3 (LES/APE alternative); §4.3–4.4 (Ffowcs Williams & Hall directivity, recalled LES/FW-H of Wang et al.).

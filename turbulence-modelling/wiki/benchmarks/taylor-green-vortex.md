@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "The triply periodic vortex flow that transitions from a single-mode analytic field to decaying turbulence: at Re 40,000 against a 5400³ DNS to separate Smagorinsky and implicit LES errors, at Re 1600 and 5000 to split numerical dissipation and test subgrid models, filter widths and filters, inviscid for energy conservation, and in 2D for commutator errors."
+description: "The triply periodic vortex flow that transitions from a single-mode analytic field to decaying turbulence: at Re 40,000 against a 5400³ DNS to separate Smagorinsky and implicit LES errors, at Re 1600 and 5000 to split numerical dissipation and test subgrid models, supersonic at Mach 1.25 for shock capturing, inviscid for energy conservation, and in 2D for commutator errors."
 status: established
-aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex]
-tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation]
-timestamp: 2026-10-26T10:27:00Z
+aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex]
+tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible]
+timestamp: 2026-10-26T15:57:00Z
 ---
 
 # Taylor–Green vortex
@@ -106,6 +106,7 @@ to the fully turbulent state.
 | [Wang et al. (2023b)](/sources/wang-2023-b.md) | the same gas-kinetic scheme with 5th-order WENO, on GPUs; also Mach 0.25 to 1.0 | $64^3$ to $512^3$ cells | the authors' earlier CPU runs |
 | [Duan & Wang (2024)](/sources/duan-2024.md) | [flux reconstruction](/methods/flux-reconstruction.md) (hpMusic), $N=4$, Mach 0.1; Smagorinsky, WALE and Vreman with three filter widths, against no model | inviscid: $16^3$ elements; $Re=1600$: $64^3$ elements | $Re=1600$: DNS of van Rees et al. |
 | [Wang (2024)](/sources/wang-2024-b.md) | flux reconstruction recovering nodal DG (ATHOS), $N=3$, HLLC flux, local modal filter; $Re=1600$ and 5000 | $64^3$ elements | DNS of Gassner & Beck and of Carton de Wiart et al. ($Re=1600$), Incompact3d DNS of Dairay et al. ($Re=5000$) |
+| [Kurz et al. (2025)](/sources/kurz-2025.md) | split-form DGSEM, $N=7$, on GPUs ([GALÆXI](/software/galaexi.md)) and CPUs ([FLEXI](/software/flexi.md)), no model; Mach 0.1, constant initial temperature | $64^3$ to $512^3$ degrees of freedom | DeBonis |
 | [Wang et al. (2024)](/sources/wang-2024.md) | finite differences, second-order kinetic-energy-preserving split form KGP2 against sixth-order optimized upwind OPT6, MUSCL3 and WENO5; inviscid with flow reversal | $30^3$ cells | the initial field (time reversal) |
 
 **Numerical dissipation of a no-model DNS scheme.**
@@ -283,6 +284,40 @@ truncated-Euler run of
 [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) above
 ($K$ within 1% to $t=20$).
 
+**A GPU port reproduces its CPU parent.** [Kurz et al. (2025)](/sources/kurz-2025.md)
+(read in arXiv v2), §5.2, run the $Re=1600$ case at $M_0=0.1$ on $8^3$ to
+$64^3$ elements at $N=7$: the GPU code and the CPU code give the same
+solenoidal dissipation rate "up to machine precision", which converges to
+the DeBonis reference with resolution and matches it "almost perfectly" at
+$512^3$ degrees of freedom (Fig. 11).
+
+**Inviscid TGV for subgrid models on continuous spectral elements.**
+[Reddy et al. (2026)](/sources/reddy-2026.md) (read in a 2021 preprint),
+§7, run the TGV with $u_0=100$ m/s, $\rho=1.178$ kg/m³ and unit wavenumber
+in a $2\pi$ box on $32^3$ elements at $N=4$ of the
+[continuous-Galerkin spectral-element method](/methods/spectral-element-method.md)
+of the atmospheric model NUMA, solving the compressible Euler equations
+with an eddy-viscosity closure and no molecular viscosity. They compare
+the [Smagorinsky](/methods/smagorinsky-model.md) and
+[Vreman](/methods/vreman-model.md) models with element-wise and nodal
+variants of a [residual-based dynamic model](/methods/residual-based-dynamic-sgs-model.md):
+
+- the element-wise residual-based variants are the most dissipative on all
+  four integral quantities (kinetic energy, its decay rate, enstrophy,
+  effective viscosity); the nodal residual-based variant conserves kinetic
+  energy best before $t^*\approx12$ but has dissipated more by
+  $t^*\approx24$ (Fig. 7a);
+- all models peak in dissipation rate at $t^*\approx8$, which the authors
+  call in "good agreement" with the peak near $t^*\approx9$ of the DNS of
+  Brachet et al.; all show an inflection near $t^*\approx5$, read as
+  vortex-tube breakdown (Fig. 7b);
+- the nodal variants give the largest enstrophy; all spectra peak at
+  $k\approx3$ and follow $k^{-5/3}$ below $k=32$ (Figs. 7c, 8).
+
+The authors call the TGV "homogeneous, isotropic turbulence". Their
+equations carry no molecular viscosity, and the comparison with the DNS of
+Brachet et al. that they print is the time of the dissipation peak (§7.2).
+
 **Recalled uses.** As recalled by [Basile et al. (2023)](/sources/basile-2023.md),
 §3.2 and §4.2.1, Chapelier et al. fixed a modal-decay smoothness threshold
 close to the $-5/3$ slope a priori from TGV DNS at $Re=5000$, and the
@@ -292,6 +327,80 @@ order at equal degrees of freedom. As recalled by
 [partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
 on the transitional TGV found that the coherent structures driving
 transition must be resolved, which fixes the minimum physical resolution.
+
+## Supersonic TGV at $M_0=1.25$
+
+**Set-up.** [Chapelier et al. (2024)](/sources/chapelier-2024.md) (read in
+the HAL accepted manuscript), §II.B, take the case of Lusher & Sandham:
+the periodic cube $[-\pi L,\pi L]^3$ with the 3D velocity field above
+scaled by $U_0$ and $L$, the same pressure field, a uniform initial
+temperature $T_0$ (so the initial density follows the pressure),
+$Re=1600$, $M_0=U_0/\sqrt{\gamma p_0/\rho_0}=1.25$, $\gamma=1.4$,
+$Pr=0.71$ and Sutherland's law, run to $t=20$ (Eqs. 6–8). It combines
+transition, decaying turbulence, strong shocks and shock–turbulence
+interaction from an analytic initial condition that any solver can
+reproduce; the authors present it as the first multi-code comparison on
+this case (§I). Diagnostics are the volume-averaged kinetic energy, the
+solenoidal dissipation (from the enstrophy, weighted by $\mu(T)$) and the
+dilatational dissipation (from $(\partial_ku_k)^2$), plus the Mach-number
+profile along $y$ at $x=z=0$ at $t=2.5$, the first dilatational peak
+(Eqs. 9–11).
+
+**Reference and its convergence.** A sixth-order TENO finite-difference
+run (OpenSBLI) at $64^3$ to $2048^3$ points converges in kinetic energy
+from $128^3$ and in solenoidal dissipation at about $512^3$; the first
+dilatational-dissipation peak, set by the shocks, is not converged even at
+$2048^3$, because the shocks keep sharpening until molecular viscosity
+resolves them (§II.C, Figs. 2–4). The $2048^3$ run took 57,600 A64FX cores
+for 34 h, 1.96 million core hours.
+
+**Seven solvers without a subgrid model** at $64^3$ to $512^3$ degrees of
+freedom (Table I), the coarse runs taken as
+[implicit LES](/definitions/implicit-les.md):
+
+| Code | Discretization | Order | Shock capturing |
+|---|---|---|---|
+| CODA | modal DG | 4 | localized artificial diffusivity |
+| SPADE | central kinetic-energy- and entropy-preserving FD with upwind/WENO switching by a Ducros sensor | 8 | local upwinding |
+| OpenSBLI | TENO finite differences | 6 | built into TENO |
+| NS3D | compact central FD | 6 | high-order filter only |
+| SD3DvisP | spectral difference | 4 | localized artificial diffusivity |
+| [FLEXI](/software/flexi.md) | DGSEM | 4 | [subcell finite volumes](/methods/subcell-finite-volume-shock-capturing.md) (second-order TVD) |
+| H3AMR | [flux reconstruction](/methods/flux-reconstruction.md) | 2 | model-based "block spectral stresses" |
+
+- *Kinetic energy.* All solvers capture it from $128^3$. At $64^3$ the
+  Riemann-flux codes (CODA, SD3D, OpenSBLI) underestimate it early, the
+  dissipation-free central codes (SPADE, NS3D) follow it to $t\approx12$ and
+  then exceed it, which the authors attribute to energy pile-up near the
+  cutoff without a subgrid closure, and the second-order H3AMR is too
+  dissipative (§IV.A, Fig. 5).
+- *Dilatational dissipation* ranks the strength of shock capturing: NS3D
+  highest and oscillating, then FLEXI with oscillations on coarse grids;
+  OpenSBLI oscillation-free at all resolutions; SPADE, SD3D and H3AMR
+  lowest (Fig. 6).
+- *Solenoidal dissipation.* CODA, FLEXI and NS3D give the highest levels on
+  all grids; most of the turbulent dynamics is captured by all solvers from
+  $256^3$, and the discontinuous element schemes resolve small scales well
+  on coarse grids; high order beats second order (Fig. 7, §V).
+- *Shocks.* Artificial diffusivity gives thick, smooth shocks on coarse
+  grids; local switching to low order gives sharp but oscillating ones,
+  except TENO, sharp and oscillation-free; the filter-only scheme oscillates
+  most (§IV.B, Fig. 8, §V). See
+  [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md),
+  [WENO and hybrid schemes](/methods/weno-scheme.md) and
+  [numerical dissipation](/properties/numerical-dissipation.md).
+
+A subsonic verification at $Re=500$, $M_0=0.5$ shows all codes agreeing on
+kinetic energy and solenoidal dissipation to $t=10$ (App. A).
+
+**A second use of the case.** [Kurz et al. (2025)](/sources/kurz-2025.md),
+§5.2, run it with constant initial temperature, Sutherland's law and the
+subcell finite-volume blending at the same maximum blending factor on all
+grids, at $N=7$ and $64^3$ to $512^3$ degrees of freedom: the GPU and CPU
+codes give identical solenoidal dissipation, which converges to the
+Chapelier et al. reference and is "almost identical" at $512^3$ (Fig. 11).
+For shock–boundary-layer configurations see
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
 ## TGV as a parallel-performance test
 
@@ -304,6 +413,15 @@ scalability for up to 1000 processors". The paper states neither the
 Reynolds number nor whether $64^3$ counts elements or degrees of freedom,
 and reports no flow statistics for this run; it cites the TGV as a case
 widely used to report subgrid and implicit-LES capabilities.
+
+[Kurz et al. (2025)](/sources/kurz-2025.md), §4.4, use the incompressible
+TGV set-up at $N=7$ on $32$ to $256^3$ elements (16,384 to
+$8.6\times10^9$ degrees of freedom, 100 time steps) as the scaling test of
+the GPU code [GALÆXI](/software/galaexi.md) on 1 to 1024 A100 GPUs: weak
+and strong scaling are almost perfect while each GPU holds more than about
+$10^6$ degrees of freedom, below which kernel-launch overhead and then
+communication dominate; prioritized CUDA streams give up to 92% more
+speed-up at low load (Figs. 6–8).
 
 ## Two-dimensional analytic TGV as a commutator test
 
@@ -392,6 +510,30 @@ sources)*.
   of their inviscid run; the comparison involves schemes of different order
   (second and sixth) as well as different dissipation.
 
+- [Chapelier et al. (2024)](/sources/chapelier-2024.md) print the
+  equation of state as $p=(\gamma-1)(\rho E-\tfrac12\boldsymbol u\cdot\boldsymbol u)$,
+  missing $\rho$ in the kinetic term, and $Re=\rho_0U_0/\mu_0$ without
+  the length $L$ *(compiler check, not in the sources)*. The legend of
+  their Fig. 8 names the Mach-profile reference "TENO6 512" while the text
+  gives the $2048^3$ run as reference. They describe the SD3D artificial
+  diffusion as a bulk viscosity on momentum and a diffusivity on energy
+  only (§III.B.e) and as a Laplacian on all conservative variables
+  (§III.B.h). Their summary states that shock capturing has "a low
+  impact" on the representation of turbulent scales (§V), while the same
+  section says that finite differences with local switching and TENO
+  "yield more small-scale dissipation", and §IV.A that the SD3D shock
+  capturing is "probably hindering" small scales on the finer grids.
+- [Kurz et al. (2025)](/sources/kurz-2025.md) cite the Chapelier et al.
+  reference as submitted; their Fig. 11 caption marks both references
+  "(left)"; their scaling mesh, "doubled in each direction" from
+  $4\times4\times2$, cannot reach $256^3$ *(compiler check, not in the
+  sources)*.
+- [Reddy et al. (2026)](/sources/reddy-2026.md) title the paper on the
+  Navier–Stokes equations but solve the Euler equations (§2); they state
+  that the Brachet DNS Reynolds number is "similar" to theirs without
+  defining a viscosity for their runs, and they describe the most
+  dissipative variants inconsistently within §7.2.
+
 # Citations
 
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §3; §5.3; §6.1–6.5, Eqs. (43)–(46), Figs. 4–22.
@@ -409,3 +551,6 @@ sources)*.
 - [Duan & Wang (2024)](/sources/duan-2024.md) — §3, Eqs. (26)–(30); §5.1, Figs. 5–7; §6.
 - [Wang (2024)](/sources/wang-2024-b.md) — §2.3, Eqs. (17)–(19); §4.1, Eq. (23), Figs. 2–3.
 - [Wang et al. (2024)](/sources/wang-2024.md) — §2.3–2.5; §3.1, Eq. (14), Fig. 2.
+- [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL accepted manuscript: §I; §II.A–C, Eqs. 1–11, Figs. 2–4; §III.A–B, Tables I–II; §IV.A–B, Figs. 5–8; §V; App. A, Figs. 9–10.
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §4.4, Figs. 6–8; §5.2, Figs. 10–11.
+- [Reddy et al. (2026)](/sources/reddy-2026.md) — 2021 preprint: §1; §7.1–7.2, Figs. 7–8; §9.

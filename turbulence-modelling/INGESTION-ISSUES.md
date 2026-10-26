@@ -6,6 +6,161 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 6 — 2024–2026 papers: transitional DDES and cascade buffet, conditioned field inversion and model blending, neural-operator and super-resolution LES, shock capturing on the supersonic Taylor–Green vortex, GALÆXI, spectral-element WMLES, exascale DNS, bulk viscosity (2026-10-26)
+
+Sources (20): moller-2024, cao-2024, cernetic-2024, chapelier-2024,
+li-2024, llorente-2024, wu-2025, fanizza-2025, kurz-2025, oulghelou-2025,
+zhao-2025, lohrer-2025, maejima-2025, rismondo-2025, yeung-2025,
+klose-2025, beattie-2025, baldan-2025, mukha-2025, reddy-2026. 120 of 134
+ingested, 134 concept pages plus the registry, 5882 bibliography entries.
+Deep lint A1–A8 over the chunk-6 content done.
+
+### Decisions for the human
+
+1. **New contradiction** (below, Ahmed body): close by fiat, or keep open
+   until a source that reports the Lienhart et al. PIV on the slant is
+   ingested.
+2. **Versions read.** Fifteen of the 20 files are preprints, author
+   manuscripts or accepted manuscripts. Two differ materially from the
+   published paper: cao-2024 is the arXiv v1 of July 2021 (five authors,
+   Crossref lists four) and reddy-2026 is a preprint of 4 March 2021,
+   five years before the CiCP version; mukha-2025's preprint has two
+   authors, Crossref three. The pages carry the published metadata and
+   the claims of the version read. Replace these files with the versions
+   of record if you want the published claims.
+3. **Bibliography calls left by the resolver:**
+   - `suder-1996-b` (Suder's PhD thesis) is kept separate from `suder-1996`
+     (the NASA report of the same title and year); chunk 5 folded
+     Bardina's thesis and report into one entry. Fold or keep?
+   - `mayle-1991` carried the DOI of Walker's 1993 discussion; replaced by
+     Mayle's own DOI (Crossref-verified).
+   - `kingma-2014`: maejima-2025 prints Gulrajani's arXiv number for Adam;
+     the correct number is kept with a note.
+4. **Candidate pages that now qualify** (≥2 sources): discrete-adjoint
+   method (Fanizza, Wu, Cato, Yan); sigma model (Mukha,
+   Moratilla-Vega); wall-stress boundary condition (Bae, Gillyns, Mukha);
+   Ducros sensor (four or more sources); cutoff pile-up and
+   thermalization in under-resolved LES (Vicente Cruz, Prakash, Kurz 2023,
+   Flad, Chapelier); curved backward-facing step (Wu, Oulghelou);
+   volume penalization (Ferrer, Llorente); plus the earlier lists
+   (turbulent Prandtl number, modal/entropy filters, S809, Kelvin–Helmholtz,
+   Hall MHD, interior-penalty DG, linear forcing, anisotropy-invariant map,
+   optimal eddy viscosity, PVD cascade).
+5. **Tag synonyms** reported by every auditor: `wall-modelled-les` (1) /
+   `wmles` (42); `isotropic-turbulence` / `decaying-turbulence`;
+   `machine-learning` / `data-driven` / `neural-network`; `high-order` /
+   `dg`; single-use benchmark tags (`ahmed-body`, `periodic-hill`,
+   `taylor-green-vortex`, `channel-flow`, `cylinder-wake`, `k-omega-sst`).
+   A bundle-wide tag merge is proposed for the whole-bundle deep lint
+   with chunk 7.
+6. **Still open from chunk 5:** the `fusion-mhd-simulation` tab character
+   in `tearing-mode.md` line 247, `ge-2015`, `jameson-1988`.
+
+### Contradictions
+
+- **Topology of the mean slant flow of the 25° Ahmed body.** Wu et al.
+  (2025, §4.4) state that the experiment (Lienhart et al. PIV) "remains
+  attached all along the slant"; Cai et al. (2022) describe the 25° shear
+  layer as separating and reattaching on the slant, and Delassaux et al.
+  (2023, §5) find the hybrids that separate and reattach closest to their
+  own experiment. *Open* on [Ahmed body](wiki/benchmarks/ahmed-body.md).
+- Reclassified: Gillyns et al. (2022) against Mukha et al. (2025) on
+  time-averaging the wall-model input in Nek5000 — Mukha et al. tie the
+  divergence to the filter settings and each paper reports on its own
+  set-up; now a qualification on
+  [equilibrium wall model](wiki/methods/equilibrium-wall-model.md),
+  Nek5000, spectral-element method and turbulent channel flow.
+- Updated: the open sparse-regression entry on
+  [tensor-basis neural network](wiki/methods/tensor-basis-neural-network.md)
+  now cites Oulghelou et al. (2025) on both sides. Four contradictions
+  are open in the bundle: sparse-regression coefficients, gas-kinetic
+  dissipation, the Cai & Sagaut wall-law constants and the Ahmed slant.
+
+Kept as attributed qualifications: Fanizza et al. against Cato et al. on
+corrections constrained to the Boussinesq form; Wu et al. against Yan et
+al. on correcting the attached boundary layer; Möller et al.'s
+$C_{\mathrm{DES}}=0.65$ against Carlsson et al. and Delassaux et al.;
+Kim et al. (2022) against Maejima & Kawai on backscatter in channel flow;
+Wang et al. (2023b) against Yeung et al. on single-precision DNS; Beattie
+et al. ("shear-viscous compressible DNS is an implicit LES of the
+compressible modes") against Seta & Federrath (2022), who state no bulk
+viscosity; Lewis et al. (2023) against Rismondo et al. on FW-H quadrupole
+terms; the NASA Rotor 37 design data (TP 1338, pressure ratio 1.82, cited
+by Alauzet et al.; TP 1659, 2.05, cited by Kurz et al.; tip Mach 1.48
+against 1.4939).
+
+### Printed slips (recorded on the Source pages)
+
+- moller-2024: reference [12] year; $\kappa$ for two quantities;
+  "$l_{\mathrm{ratio}}<0$ not possible" (compiler check: the bound is
+  $\ge1$). cao-2024: Eq. 11 metric terms, $(x_\eta)$ for $(x_\zeta)$,
+  $C_f$, $C_p$ without ½, $Re_\tau$ from $\Delta x^+$ (compiler checks).
+- cernetic-2024: Eq. 35 coefficient 351 printed as 315, Eq. 13 factor ½,
+  "triple" for ×8, Eq. 8 index, swapped Fig. 2 panels (compiler checks).
+  chapelier-2024: Eq. 5 without $\rho$, $Re$ without $L$, two descriptions
+  of the SD3D artificial diffusion.
+- li-2024: Eq. 9 against Eqs. 10–11 (factor −2), Eq. 23, "three times
+  slower" (CPU only). llorente-2024: non-symmetric closure, heat-flux
+  sign, missing time integral, "negative semi-definite".
+- wu-2025: table and figure cross-references, Eq. 21 dimensions,
+  misattributed author names. fanizza-2025: text against Tables 1–4,
+  Fig. 3 against Eq. 40 (compiler check).
+- kurz-2025: Eq. 15 indices, swapped captions, the 4×4×2 → 256³ mesh
+  path. oulghelou-2025: $Re$ 13600/12600, OpenFOAM version labels,
+  feature bounds. zhao-2025: Eq. 5, "∇τ" for the divergence, Algorithm 1
+  pressure term, §5.4 directions.
+- lohrer-2025: $T_f^{-1}$, Eq. A2 inverted ratio, $(0.0058U)^2$,
+  stiffness factor, 66 against 288 hull iterations (compiler checks).
+  maejima-2025: §6.2.2 signs, $k_z^+$ for $\lambda_z^+$, Kingma & Ba
+  arXiv number.
+- rismondo-2025: blockage 0.005% (compiler check 0.51%), tip Mach,
+  "deviatoric" for antisymmetric, the $\ell_{ij}$/$T_{ij}$ viscous-stress
+  sign. yeung-2025: Eq. 4.1 parenthesis, Fig. 5 intercept $\ln a$, cost
+  (compiler checks).
+- klose-2025: malformed inequalities, "Bassy-Rebay", overloaded $t$ and
+  $N$. beattie-2025: Eq. 47 factor 3, E1 $\nu/3$, signs of Eqs. 56–57,
+  $\gamma=1-R/c_V$, $k_0=\ell_0/(2\pi)$, e-fold time (compiler checks).
+- baldan-2025: $\omega$ "18.67 Hz" (rad/s), Table 1 quad count, a running
+  header from another paper. mukha-2025: $B=5.2$/5.5, mesh labels, node
+  counts. reddy-2026: $S_{ij}$ without ½, filter width $/N$ against
+  $/(N+1)$, Euler under a Navier–Stokes title.
+
+### Bibliography
+
+5882 entries (+895 from 1439 printed references); 229 aliases, 87
+verified silences, 5 printed duplicates folded (reddy-2026 Favre and
+Deardorff; oulghelou-2025 t-SNE; cao-2024 [26]/[55]; beattie-2025
+Schekochihin 2002b/c, one work on Crossref), `FLAGS: 0`. Citations under
+a Source's own slug: `yeung-2025-b`, `lohrer-2025-b`, `beattie-2025-b`
+(and the 2025b preprint `beattie-2025-c`). Re-keyed away from Source
+slugs: `kim-2024-b`, `morsbach-2024-b`, `huang-2022-c`, `liu-2024-b`,
+`liu-2022-f`, `blind-2023-b` (FLEXI exascale preprint, cited by two
+sources), `cao-2020-b`, `cao-2021-b`, `li-2022-h`/`-i`, `dang-2022-b`,
+`zhao-2023-c`, `wang-2024-c`…`-f`, `chen-2024-b`. Preprints distinct:
+`chapelier-2024-b` (cited as submitted), `cao-2021` (the preprint of
+cao-2024). Identified on Crossref: `smith-2020` (printed "Marilyn J."),
+`bin-2024` (AIAA J. 62:1434).
+
+### Bundle fit (D17 candidates, no copy made)
+
+- lohrer-2025 (aquatic canopy fluid–structure interaction) and
+  rismondo-2025 (wind-turbine aeroacoustics): peripheral; turbulence
+  modelling is a tool.
+- cernetic-2024, beattie-2025 (astrophysical compressible turbulence):
+  `astrophysical-simulation-codes` shares the subject.
+- chapelier-2024, kurz-2025, cao-2024 (high-order numerics): `weno-teno`
+  and `high-order-capturing-schemes` share their subjects.
+
+### Candidate pages (kept inline until a second source)
+
+Dynamic stall (Baldan); bypass transition (Möller); transitional DDES;
+spectral proper orthogonal decomposition and the TCTA cascade (Klose);
+Helmholtz decomposition and sonic scale (Beattie, Cernetic); small-scale
+intermittency and dissipative anomaly (Yeung); LES activity parameter and
+submerged canopy flow (Löhrer); wind-turbine wake (Rismondo); DAFoam;
+converging–diverging channel; Straka density current; primitive-variable
+projection; spectral difference method.
+
 ## Chunk 5 — 2023–2025 papers: autonomous and recalibrated SGS models, Bayesian and ensemble calibration, RL wall models, RSM and LKE transition, immersed-boundary and LBM wall treatments, flux reconstruction, tabulated chemistry (2026-10-26)
 
 Sources (20): vadrot-2023, wang-2023-c, bottler-2023, steinhausen-2023,

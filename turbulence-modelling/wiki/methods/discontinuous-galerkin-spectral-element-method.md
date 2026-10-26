@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Discontinuous Galerkin spectral element method"
-description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra; this page states its weak and strong forms, SBP property, modal filtering and filtered artificial viscosity, cost, how interface dissipation and penalties shape LES on it, its implicit filter, element-local filters and mortars, and modal, interior-penalty and continuous relatives."
+description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra; this page states its weak and strong forms, SBP property, modal filtering, cost and GPU implementation, how interface dissipation and penalties shape LES on it, its use in shock–turbulence tests, and modal, interior-penalty and continuous relatives."
 status: established
-aliases: [DGSEM, nodal discontinuous Galerkin, collocation DG, DG spectral element method]
+aliases: [DGSEM, modal DG, nodal discontinuous Galerkin, collocation DG, DG spectral element method]
 tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns, flux-reconstruction]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T15:48:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -506,9 +506,169 @@ model dissipation about a quarter of that of a second-order finite-volume
 LES at similar cost ("around 1/4th", §6; see [numerical dissipation](/properties/numerical-dissipation.md));
 [Slaughter et al. (2023)](/sources/slaughter-2023.md), §3.1, combine
 spectral/hp elements in the plane with Fourier modes in the span,
-stabilized by gradient-jump penalisation and SVV.
+stabilized by gradient-jump penalisation and SVV. The continuous method,
+including its weakly imposed wall stress and the derivative jumps that
+matter for wall-modelled LES ([Mukha et al. 2025](/sources/mukha-2025.md);
+[Reddy et al. 2026](/sources/reddy-2026.md)), has its own page,
+[continuous-Galerkin spectral-element method](/methods/spectral-element-method.md).
+
+## The DGSEM on GPUs (GALÆXI)
+
+[Kurz et al. (2025)](/sources/kurz-2025.md) port FLEXI's DGSEM, with split
+form, BR1 lifting, low-storage Runge–Kutta schemes and the
+[subcell finite-volume blending](/methods/subcell-finite-volume-shock-capturing.md),
+to NVIDIA GPUs in CUDA Fortran as [GALÆXI](/software/galaexi.md), keeping
+FLEXI's data structures and user interface. Their semi-discrete form (§2.2,
+Eqs. 10–19) is the weak form above, with curl-form metric terms (Eq. 11; see
+[geometric conservation law](/properties/geometric-conservation-law.md)),
+written with the code routines that compute each term:
+
+- **Operation counts** (Table 1): the volume integral costs $O(N^4)$ per
+  element, conversion to primitive variables $O(N^3)$ or $O(N^2)$, the
+  prolongation to faces, the face fluxes and the surface integral $O(N^2)$,
+  the Jacobian scaling $O(N^3)$; at $N=7$ with the split form the volume
+  integral takes 39.0% of the run time and the volume–surface routines
+  about 15%, so the overhead of the unstructured mesh is "negligible"
+  (§3.3, Fig. 5).
+- **Kernels** (§3.3, App. A): one thread per degree of freedom for pointwise
+  operations; a race-free surface integral in which each thread owns one
+  volume node and loops over the six faces of its element; one thread
+  block per element for the volume integral, all fluxes kept in shared
+  memory.
+- **Streams** (§3.2): three prioritized CUDA streams (element interiors,
+  inner faces, MPI faces at top priority) hide the communication behind
+  local work, worth up to 92% more speed-up at low loads (Fig. 8).
+- **Memory** (§4.3, Table 2): 1.457 KiB per degree of freedom at $N=1$
+  falling to 0.787 KiB at $N=12$, with the surface-to-volume ratio
+  $6(N+1)^2/(N+1)^3$; 48 million degrees of freedom fit on a 40 GiB A100 at
+  $N=7$.
+- **Scaling** (§4.4, Figs. 6–8): weak and strong scaling on up to 1024 A100
+  GPUs of JUWELS Booster are almost perfect as long as each GPU holds more
+  than about $10^6$ degrees of freedom; below that the code is
+  "low-load-bound" (kernel launches, tail effects, then communication),
+  whereas CPU FLEXI has a narrow optimum of 3000 to 10,000 degrees of
+  freedom per core and loses performance at high loads (cache and memory
+  bandwidth, as recalled).
+- **Verification** (§5.1, Fig. 9): manufactured solutions converge at design
+  order for $N=2$ to 9, both for standard DG on Legendre–Gauss nodes and
+  for split-form DG on LGL nodes.
+
+On the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at
+$Re=1600$ ($N=7$, $64^3$ to $512^3$ degrees of freedom) GALÆXI and FLEXI give
+identical results ("up to machine precision" at Mach 0.1), converging to the
+references of DeBonis (Mach 0.1) and of Chapelier et al. (Mach 1.25) (§5.2,
+Fig. 11). A wall-resolved LES of a [NASA Rotor 37](/benchmarks/nasa-rotor-37.md)
+mid-span cascade ($N=5$, $2.6\times10^8$ degrees of freedom, no subgrid
+model) on 128 A100 GPUs costs about 147 kWh per convective time against
+339 kWh for FLEXI on 32,768 CPU cores, an energy saving of 56.8% that the
+authors call "a rough estimate" (§6.3, Table 3).
+
+## The DGSEM and modal DG in compressible shock–turbulence tests
+
+**Supersonic Taylor–Green vortex.** In the comparison of
+[Chapelier et al. (2024)](/sources/chapelier-2024.md) ($Re=1600$, $M_0=1.25$,
+$64^3$ to $512^3$ degrees of freedom, no subgrid model), FLEXI runs a
+fourth-order DGSEM ($N=3$) with a Roe flux and the second Harten–Hyman
+entropy fix, BR1 and fourth-order low-storage Runge–Kutta, and the modal DG
+code CODA a fourth-order total-degree hierarchical orthonormal basis
+(20 modes per element at degree 3) with a Roe flux, BR1 and
+localized [artificial diffusivity](/methods/artificial-viscosity-shock-capturing.md)
+(§III.B.a, f). Both give, with the filtered compact finite differences of
+NS3D, the highest solenoidal dissipation on all grids; at $64^3$ CODA
+under-estimates the early kinetic energy, attributed to the dissipation of
+the Riemann flux, while FLEXI stays closer to the central-difference codes
+(§IV.A, Figs. 5, 7). The authors conclude that DG, spectral difference and
+DGSEM "capture small scales well on coarse grids", better than finite
+differences with local scheme switching or TENO, and that high order beats
+second order in this compressible setting (§V).
+
+**Supersonic isothermal turbulence with modal DG.**
+[Cernetic et al. (2024)](/sources/cernetic-2024.md) use their GPU modal DG
+code (Legendre basis on Cartesian cells, truncated to total degree $N$, so
+$(N+1)(N+2)(N+3)/6$ coefficients per field; HLLC flux; strong-stability-preserving
+Runge–Kutta of matching order) for driven isothermal turbulence at rms Mach
+0.1 to 12.8. It is a modal relative, not the nodal collocated DGSEM. Two
+changes make high Mach numbers stable (§3): a von Neumann–Richtmyer viscous
+pressure at the internal quadrature points (see
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)),
+and the re-projection of the primitive variables onto the basis from their
+values at the internal Gauss points, $\frac{1}{|K|}\int_Kf\phi_l\,dV$ ($K$ a
+cell, $\phi_l$ the basis, $f$ a primitive variable; page-local), before
+extrapolation to the faces, instead of taking the face velocity as the
+ratio of the momentum and density polynomials, which can produce extreme
+values in shocked turbulence (§3.2, Eq. 17, Fig. 3). At $256^3$ cells DG of
+orders 2 and 3 extends the resolved spectral range markedly against a
+second-order finite-volume scheme in subsonic turbulence, but the advantage
+"nearly disappears" in the supersonic regime (§5, Fig. 5); at Mach 3.2, DG of
+order 2 resolves the sonic scale at $1024^3$, and at $512^3$ "does nearly
+as well as" finite volumes at $1024^3$ (§6, Figs. 8, 11).
+
+**Cost against order with shocks.** For $N_x^3$ cells ($N_x$ cells per direction) and
+degree $N$, Cernetic et al. (2024, §7, Eqs. 33–35) count about $(N+1)^6$
+operations per cell and evaluation for their modal scheme and a total cost
+$\propto N_x^4N^8$ to a fixed time; with an idealized error model, high order
+pays for smooth problems and small target errors, but for a single planar
+shock with error $\propto N_x^{-1}(N+1)^{-1}$ it is "always computationally
+favorable" to refine the mesh rather than raise the degree. They conclude
+that with many shocks orders above 3 are unlikely to be cost-effective, a
+"sweet spot" at order 2 or 3 ($N=1$ or 2), and suggest $h$-refinement at
+shocks with $p$-refinement in smooth regions. The count assumes a
+total-degree basis, $(N+1)^3$ volume quadrature points and $N+1$
+Runge–Kutta stages per step; the collocated tensor-product DGSEM above has
+$O(N^4)$ volume work per element, $O(N)$ per degree of freedom (Krais et
+al. 2021; Kurz et al. 2025, Table 1), so the scaling does not transfer to it
+*(compiler check, not in the sources)*; Cernetic et al. give no timing.
+
+**Modal DG for adjoint RANS.** [Fanizza et al. (2025)](/sources/fanizza-2025.md),
+§2.3, discretize steady compressible RANS with the Spalart–Allmaras model in
+ONERA's Aghora code: modal DG with a hierarchical orthonormal basis of total
+degree $N$, $(N+d)!/(N!\,d!)$ functions per element in $d$ dimensions,
+diagonal mass matrix, Roe or local Lax–Friedrichs fluxes, BR2 viscous terms
+and Gauss–Legendre quadrature with $(N+1)^d$ points. The discrete adjoint of
+this discretization drives their [field inversion](/methods/field-inversion-machine-learning.md);
+on a laminar cylinder the lowest cost minimum is reached at $N=2$, the
+lowest degree at which the baseline is free of grid dependence, and they
+recommend assimilating at that degree (§4.1).
+
+## The DGSEM in a transonic implicit LES
+
+[Klose et al. (2025)](/sources/klose-2025.md), §2–3, run DLR's
+[TRACE](/software/trace.md) DGSEM as implicit LES ("dissipation is added
+implicitly via the numerical dissipation of the Riemann solver") of a
+transonic [compressor cascade](/benchmarks/compressor-cascade.md) at inlet
+Mach 1.21 and $Re=1.35\times10^6$: LGL collocation, $N=3$, the
+entropy-conserving Chandrashekar split form with its matching Riemann
+solver, BR1 with a central flux, explicit third-order Runge–Kutta, and
+subcell finite-volume blending at shocks. Spans of 5%, 10% and 20% of the
+chord on a coarse grid (54.6 to 218 million degrees of freedom, 15,583 to
+77,950 CPU hours per convective time) and a refined 10% span (375 million,
+152,850 CPU hours) give the same buffet frequency, $fc/U\approx0.16$ against
+about 0.14 in the experiment, but an amplitude of the shock oscillation that
+falls with span on the coarse grid and rises with refinement (Tables 1–2);
+the authors call the coarse runs under-resolved. Wall-unit spacings divided
+by $N$ have maxima $(65,2.5,40)$ on the coarse grid and $(35,2,25)$ on the
+fine one (§3). See
+[shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
 ## Qualifications
+
+- **Memory per degree of freedom.** Krais et al. (2021, Table 4) report for
+  CPU FLEXI 1.47 KiB at $N=1$ and 0.567 KiB at $N=12$; Kurz et al. (2025,
+  Table 2) report for GALÆXI 1.457 and 0.787 KiB. The codes differ, so the
+  numbers are not in conflict.
+- **Printed slips (Cernetic et al. 2024, arXiv v2).** Eq. (35) prints the
+  total cost as $\tfrac56N_x^4(1+N)^4(10N^4+100N^3+315N^2+523N+372)$; the
+  paper's own ingredients, which reproduce its Eq. (33), give $351N^2$ in
+  place of $315N^2$ *(compiler check, not in the sources)*; the leading
+  scaling is unaffected. Eq. (8) prints the Kronecker index of the
+  orthonormality as $\delta_{l,k}$ for $\delta_{l,m}$, and the context of
+  Eq. (10) writes the error $\propto h^{-(N+1)}$ with $h$ the cell size,
+  while elsewhere the paper writes $\propto N_x^{-(N+1)}$ with $N_x$ cells
+  per direction.
+- **Printed slip (Kurz et al. 2025, arXiv v2).** Eq. (15) prints the
+  Lagrange polynomial with the product index equal to its own label and the
+  factor $(x_i-x)$, which cannot satisfy the Kronecker property of their
+  Eq. (16); the correct form is the one at the top of this page.
 
 - **Test-level eddy viscosity.** Blind et al. (2023, §2.3) state that the
   test-level eddy viscosity is "a factor of $[(P+1)/(N_f+1)]^{2/3}\approx1.59$
@@ -573,3 +733,10 @@ stabilized by gradient-jump penalisation and SVV.
 - [Duan & Wang (2024)](/sources/duan-2024.md) — §3, Eqs. (26)–(30) (element-averaged eddy viscosity, filter widths); §5.4; §6.
 - [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §1; §3.1 (SUPG/PSPG continuous Galerkin in Lethe); Table 1 (DG under-resolved DNS and DNS of Krank et al., as tabulated).
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §3.1, Eqs. (3-1)–(3-10) (improved IPDG, fluxes, artificial viscosity); §3.2 (finite-volume SST equations, BDF2); §4, Tables 4-1–4-2.
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv 2404.12703v2: §2.2, Eqs. (10)–(19), Table 1 (DGSEM routines and operation counts); §3.2–3.3, Fig. 5, App. A (streams, kernels, time breakdown); §4.3–4.4, Table 2, Figs. 6–8 (memory, scaling); §5.1–5.2, Figs. 9–11 (manufactured solutions, Taylor–Green vortex); §6.3, Table 3 (Rotor 37 cascade, energy).
+- [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL hal-04582857v1: §III.B.a, f (CODA modal DG, FLEXI DGSEM); §IV.A, Figs. 5, 7; §V.
+- [Cernetic et al. (2024)](/sources/cernetic-2024.md) — arXiv 2401.06841v2: §2, Eqs. (5)–(9) (modal DG); §3.1–3.2, Eq. (17), Fig. 3 (artificial viscosity, primitive-variable projection); §5–6, Figs. 5, 8, 11; §7, Eqs. (33)–(35), Figs. 13–14 (cost model); Conclusions.
+- [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §2.3, Eqs. (6)–(15) (modal DG in Aghora); §4.1 (degree for data assimilation).
+- [Klose et al. (2025)](/sources/klose-2025.md) — ASME accepted manuscript: §2–3, Tables 1–2 (TRACE DGSEM implicit LES of a transonic cascade).
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv 2404.05378v1: §II.B (continuous spectral elements in Nek5000).
+- [Reddy et al. (2026)](/sources/reddy-2026.md) — preprint of 4 March 2021: §4 (continuous spectral elements in NUMA).

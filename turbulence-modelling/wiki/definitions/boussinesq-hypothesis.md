@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-26T10:25:00Z
+timestamp: 2026-10-26T11:04:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -160,6 +160,48 @@ and treatments of the trace; translated to the registry they agree.
   recall that PANS inherits the Boussinesq form with an eddy viscosity
   reduced through $f_k$ ([Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md),
   §2; see [PANS](/methods/partially-averaged-navier-stokes.md)).
+- **Hybrid RANS/LES, Favre form with the modelled energy only.** Möller et
+  al. (2024) write the Favre-averaged stress of their transitional DDES in
+  the $-\langle\rho u_i''u_j''\rangle$ convention as $\mu_t$ times twice the
+  deviatoric strain of the Favre-averaged velocity minus
+  $\tfrac23\langle\rho\rangle k\delta_{ij}$, with $k$ the *modelled* part of
+  the kinetic energy (the source's $k_{\mathrm{mod}}$; the resolved part is
+  carried by the grid): the registry form multiplied by $-\rho$
+  ([Möller et al. (2024)](/sources/moller-2024.md), §II.A, Eq. 13; accepted
+  manuscript; see [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+- **RANS, compressible Spalart–Allmaras, as a stress added to the viscous
+  one.** Fanizza et al. (2025) add
+  $\mu_t\big(\nabla\boldsymbol u+\nabla\boldsymbol u^{\top}-\tfrac23(\nabla\cdot\boldsymbol u)\mathbf I\big)$
+  to the viscous stress, with no isotropic $k$ term, the model carrying no
+  $k$; the turbulent heat flux is the matching eddy conductivity with
+  $Pr_t=0.9$ ([Fanizza et al. (2025)](/sources/fanizza-2025.md), §2.1).
+- **LES, viscous and subgrid stresses together.** Mukha et al. (2025) write
+  one stress $(\nu+\nu_t)(\partial_j\bar u_i+\partial_i\bar u_j)$ for both,
+  their strain tensor printed without the factor $\tfrac12$ and entering the
+  momentum equation as $+\partial_j(\cdot)$: in registry terms
+  $\tau^d_{ij}=-2\nu_t\bar S_{ij}$ with the sign of a stress added to the
+  viscous one ([Mukha et al. (2025)](/sources/mukha-2025.md), §II.A,
+  Eqs. 2–3; arXiv v1; see [wall-modelled LES](/methods/wall-modelled-les.md)).
+- **URANS with volume penalization, as a gradient closure.** Llorente
+  (2024) closes the Reynolds stress of penalized URANS as
+  $-\langle u_i'u_j'\rangle=\nu_t\partial_j\langle u_i\rangle$ (the source writes
+  the Reynolds average as an overbar and calls the left side $R_{ij}$, with
+  the sign opposite to the registry's), i.e. in registry notation
+  $R_{ij}=-\nu_t\partial_j\langle u_i\rangle$: the velocity gradient in place of
+  $2\langle S_{ij}\rangle$ and no $\tfrac23k\delta_{ij}$
+  ([Llorente (2024)](/sources/llorente-2024.md), p. 4, carried into the
+  total tensor of Eqs. 3–4; author accepted manuscript; see
+  [immersed boundary methods](/methods/immersed-boundary-method.md)). For
+  incompressible flow and uniform $\nu_t$ the divergence of this stress
+  equals that of $-2\nu_t\langle S_{ij}\rangle$, because
+  $\partial_j\partial_i\langle u_j\rangle=0$; for a variable $\nu_t$ they differ
+  *(compiler check, not in the sources)*. See Qualifications.
+- **A feature built on the hypothesis.** Wu et al. (2025) compute the
+  production-to-dissipation feature $P_k/\varepsilon$ of their learned
+  correction from the Boussinesq Reynolds stress of the
+  [SST model](/methods/k-omega-sst-model.md)
+  ([Wu et al. (2025)](/sources/wu-2025.md), §2.2, Table 2; authors'
+  manuscript).
 
 ### A traceless Reynolds stress
 
@@ -316,6 +358,37 @@ show that the mean flow can be accurate while the Reynolds stresses are
 wrong, "as long as the Reynolds force vector is correctly represented"
 (§V C, Figs. 16–19).
 
+**Corrections inside and outside the hypothesis, in a shock interaction.**
+Fanizza et al. (2025) compare four corrections of the compressible
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md), inferred by
+adjoint data assimilation on a high-order discontinuous Galerkin
+discretization: a momentum and energy source, which corrects the divergence
+of the Reynolds stress directly, and three that act through the eddy
+viscosity (a multiplier of $\mu_t$, a source and a production multiplier in
+the $\tilde\nu$-equation). On the square cylinder at $Re=22\,000$ their
+ranking agrees with Cato et al.'s (§4.2). On an oblique shock reflecting on
+a turbulent boundary layer ($M_\infty=2.28$, $9.5^\circ$ deflection), with
+dense velocity data weighted towards the wall, only the source reduces the
+cost, by one to two orders of magnitude, while the other three stay on a
+plateau; normalized errors of velocity, $C_p$ and $C_f$ (Table 1):
+
+| Correction | velocity | $C_p$ | $C_f$ |
+|---|---|---|---|
+| momentum and energy source | 0.049 | 0.1825 | 0.0998 |
+| eddy-viscosity multiplier | 0.250 | 0.5788 | 0.5689 |
+| source in the $\tilde\nu$-equation | 0.257 | 0.2076 | 0.8920 |
+| production multiplier | 0.339 | 0.2829 | 1.1450 |
+
+Only the source improves quantities absent from the cost function. The
+authors give as a second reason for the source's better near-wall
+reconstruction that the three other corrections "are still constrained by the Boussinesq
+assumption", whereas in this interaction the Reynolds stress is not aligned
+with the viscous stress (§4.3.1). With wall-pressure data only, the three
+Boussinesq-type corrections make $C_f$ worse than the baseline over the
+whole wall (§4.3.3, Table 2; see
+[shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+and [field inversion](/methods/field-inversion-machine-learning.md)).
+
 **Locality.** Seyedi & Zayernouri (2022) recall that the hypothesis assumes
 the stress proportional to the *local* mean velocity gradient, that
 Bradshaw (1973) showed it to fail over curved surfaces, and that Hinze et
@@ -446,6 +519,30 @@ show that the linear part and $T^{(1)}$ dominate the shear component, while
 $T^{(2)}$ contributes most to the streamwise and $T^{(3)}$ to the spanwise
 normal component (§III C, Fig. 11).
 
+Oulghelou et al. (2025) keep the same split in the
+[$k$-$\omega$ SST model](/methods/k-omega-sst-model.md): the anisotropy is
+$b_{ij}=b^0_{ij}+b^\Delta_{ij}$, with $b^0_{ij}=-\nu_t\langle S_{ij}\rangle/k$ the
+Boussinesq part (the registry form divided by $2k$ *(compiler check, not in
+the sources)*) and $b^\Delta_{ij}$ (page-local) an additive correction on
+the first three integrity-basis tensors, built here on strain and rotation
+normalized by $\omega$ rather than by $\varepsilon/k$; a second correction
+of the same form enters the $k$-equation as a production-like term
+([Oulghelou et al. (2025)](/sources/oulghelou-2025.md), §2, Eqs. 1–10;
+arXiv v2). They state that leaving the linear term unaltered "has the
+benefit of enhanced numerical stability", citing earlier work (§2, p. 6),
+the conditioning argument of Tang et al. and McConkey et al. Their expert
+corrections, found by [symbolic regression](/methods/symbolic-regression-closure.md),
+are $b^\Delta=5.21\,T^{(2)}$ (with a $k$-equation term $0.681\,T^{(1)}$) for
+separated flows and $b^\Delta=0.25\,T^{(1)}$ for a near-sonic jet (Table 1).
+A $T^{(1)}$ term is collinear with $b^0$ and only rescales the eddy
+viscosity: $0.25\,T^{(1)}$ turns $\nu_t$ into $\nu_t-0.25k/\omega$, i.e.
+$0.75\,\nu_t$ where the SST limiter is inactive ($\nu_t=k/\omega$)
+*(compiler check, not in the sources)*, consistent with the authors'
+statement that the jet expert reduces the eddy viscosity "to compensate for
+the so-called jet anomaly" (§4.2.1). How the experts are blended in space
+is on the [turbulence-model aggregation](/methods/turbulence-model-aggregation.md)
+page.
+
 ## The best-fit eddy viscosity
 
 If a reference stress is known, the scalar $\nu_t$ that brings the
@@ -563,6 +660,27 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
   $\mathbf R^{DA}$ of the same equation and the Boussinesq form of §II A,
   which §V C calls "the traceless Reynolds stress tensor", drops the
   divergence *(compiler check, not in the sources)*.
+- Cato et al. (2023) conclude that "missing the proper stress alignment does
+  not play a large role for predicting the mean flow" from a
+  converging–diverging channel, a periodic hill and a square cylinder,
+  where corrections within the hypothesis approach a free momentum forcing;
+  Fanizza et al. (2025) agree on the square cylinder but, in a supersonic
+  shock/boundary-layer interaction, find the three Boussinesq-type
+  corrections unable to fix the near-wall flow and $C_f$ (above). The flows
+  differ, and Fanizza et al. offer the Boussinesq constraint as a second
+  reason, not an isolated one (§4.3.1), so the two findings are not
+  incompatible; no source of this bundle tests corrections inside and
+  outside the hypothesis on a shock interaction with a stress diagnostic
+  like Cato et al.'s $c_{RS}$.
+- Llorente (2024) equates the symmetric Reynolds stress to the
+  non-symmetric $\nu_t\partial_j\langle u_i\rangle$ (p. 4), so the printed
+  closure is not a symmetric tensor; the letter's results (an averaged
+  penalty term and an energy bound for $\nu+\nu_t\ge0$) do not use its
+  symmetry *(compiler check, not in the sources)*.
+- Fanizza et al. (2025) print the stress of their eddy-viscosity
+  multiplier as $(1+\chi_h)\mu_t\big(\nabla\boldsymbol u+\nabla\boldsymbol u^{\top}-\tfrac23\mathrm{Tr}(\nabla\boldsymbol u)\big)$,
+  without the identity that their §2.1 writes (§3.3; $\chi_h$ the source's
+  correction field).
 
 # Citations
 
@@ -597,3 +715,9 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [Liu et al. (2024)](/sources/liu-2024.md) — Introduction, Conclusions.
 - [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) — §2.2.
 - [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §3.2, §4.5.
+- [Möller et al. (2024)](/sources/moller-2024.md) — §II.A, Eq. 13 (accepted manuscript).
+- [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §2.1, §3.3, §4.2, §4.3.1 Table 1, §4.3.3 Table 2.
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — §II.A, Eqs. 2–3 (arXiv v1).
+- [Llorente (2024)](/sources/llorente-2024.md) — p. 4, Eqs. 3–4 (author accepted manuscript).
+- [Wu et al. (2025)](/sources/wu-2025.md) — §2.2, Table 2 (authors' manuscript).
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — §2 Eqs. 1–10, §4.2.1, Table 1 (arXiv v2).

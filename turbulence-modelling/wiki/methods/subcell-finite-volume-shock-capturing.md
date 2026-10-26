@@ -4,8 +4,8 @@ title: "Subcell finite-volume shock capturing for DG"
 description: "Troubled DG elements are recomputed as (N+1)^3 finite-volume subcells with the same degrees of freedom, switched by an indicator or blended convexly with the DG operator (the blend also learned as an implicit subgrid model); indicator-switched modal and entropy filters are the alternative that keeps the polynomial."
 status: established
 aliases: [hybrid DG/FV, DG/FV subcell scheme, finite-volume subcell limiting, DG/FV blending, RL-Blend, local modal filter, LMF, entropy filter]
-tags: [dg, numerical-dissipation, implicit-les, reinforcement-learning, compressible, flux-reconstruction]
-timestamp: 2026-10-26T10:04:00Z
+tags: [shock-capturing, dg, numerical-dissipation, implicit-les, reinforcement-learning, compressible, flux-reconstruction]
+timestamp: 2026-10-26T15:48:00Z
 ---
 
 # Subcell finite-volume shock capturing for DG
@@ -197,12 +197,73 @@ analogue to future work (§2.3, §5); filtering adds to the
 [numerical dissipation](/properties/numerical-dissipation.md) that
 [implicit LES](/definitions/implicit-les.md) relies on (§2.3).
 
+## Applications in compressible turbulence
+
+**Switching FV subcells in a code comparison.** In the supersonic
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) comparison of
+[Chapelier et al. (2024)](/sources/chapelier-2024.md) ($Re=1600$,
+$M_0=1.25$, $64^3$ to $512^3$ degrees of freedom), [FLEXI](/software/flexi.md)
+runs a fourth-order DGSEM ($N=3$) whose troubled elements are projected onto
+element-local subcells solved with a second-order TVD finite-volume scheme
+and a generalized minmod limiter, the indicator being the exponential decay
+rate of the modal coefficients of the **pressure** (§III.B.f). It gives the
+sharpest shocks of the seven solvers and matches the reference Mach profile
+at $256^3$, but oscillates on the coarser grids (§IV.B, Fig. 8); its
+dilatational dissipation is high and oscillates on the low resolutions,
+which the authors attribute to the switching between DG and FV per element
+(§IV.A, Fig. 6). Its kinetic energy at $64^3$ is closer to the
+central-difference codes than to the other Riemann-flux codes, which they
+attribute to the subcell capturing rather than artificial diffusivity, and
+its solenoidal dissipation is among the highest on all grids. In the
+authors' classification, local switching to lower-order schemes gives
+"sharp but oscillating shocks" on coarse grids (§V; see
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
+for the comparison).
+
+**Convex blending on GPUs.** The GPU code [GALÆXI](/software/galaexi.md)
+keeps the Hennemann blending with an a priori indicator,
+$\partial_tU=(1-\alpha)R_{DG}+\alpha R_{FV}$, blending only the element
+interiors because the outer face fluxes of DG and FV coincide
+([Kurz et al. 2025](/sources/kurz-2025.md), §2.3, Eq. 21). In the supersonic
+Taylor–Green vortex ($N=7$, $64^3$ to $512^3$ degrees of freedom) the
+maximum $\alpha$ is the same at all resolutions and the solenoidal
+dissipation converges to that of Chapelier et al.'s reference (§5.2,
+Fig. 11); in a wall-resolved LES of a [NASA Rotor 37](/benchmarks/nasa-rotor-37.md)
+mid-span cascade ($N=5$, $2.6\times10^8$ degrees of freedom) $\alpha$ is
+active only near the leading-edge shock, with values 0.1 to 0.7 (§6.3,
+Fig. 13). Kurz et al. recall (§2.3, citing Beck & Kurz) that the blending
+"has also been demonstrated to yield a sensible turbulence model if tuned
+correctly" (see above).
+
+**Convex blending with a dilatation–vorticity sensor.** [Klose et al.
+(2025)](/sources/klose-2025.md), §2, Eq. (1), write the same blend as
+$\partial_t\boldsymbol q+\alpha R^{FV}+(1-\alpha)R^{DG}=0$ with a
+**first-order** FV residual, in DLR's TRACE DGSEM ($N=3$, entropy-conserving
+Chandrashekar split form, BR1, implicit LES; see [TRACE](/software/trace.md)),
+and select troubled elements with the dilatation–vorticity sensor of
+Fernandez et al., with time and space relaxation factors 0.7 (formula not
+printed). It carries implicit LES of a transonic
+[compressor cascade](/benchmarks/compressor-cascade.md) at inlet Mach 1.21
+and $Re=1.35\times10^6$, whose suction-side normal shock oscillates at low
+frequency (see
+[shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+
+**An alternative that keeps the polynomial.**
+[Cernetic et al. (2024)](/sources/cernetic-2024.md), §3.1, capture shocks in
+modal DG up to high order with a von Neumann–Richtmyer viscous pressure at
+the internal quadrature points instead of subcells; see
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md).
+
 ## Convention difference
 
 The two variants place the subcells differently: equispaced subcells of width
 $2/(N+1)$ in reference space (Krais et al. 2021, Eq. 59) against subcells sized
 by the LGL weights (Beck & Kurz 2023, Fig. 4). The difference is part of the
-schemes, not a disagreement.
+schemes, not a disagreement. The FV operator is second order in the
+switching scheme of FLEXI (Krais et al. 2021; Chapelier et al. 2024) and
+first order in the blend of Klose et al. (2025); Klose et al. put the
+operators on the left-hand side, Beck & Kurz (2023) and Kurz et al. (2025)
+on the right.
 
 ## Qualifications
 
@@ -227,6 +288,15 @@ schemes, not a disagreement.
   order of the polynomial"; §4.4.1 prints the $N=3$ range as "[-5.5:4]".
   The entropy filter is attributed in the text to ref. [31], a different
   Dzanic et al. preprint; the filter paper is ref. [42].
+- **Provable stability.** Kurz et al. (2025, §1) count "provable stability
+  near shocks" among GALÆXI's distinguishing features, from the
+  entropy-stable construction of Hennemann et al.; their runs use the
+  Pirozzoli kinetic-energy-preserving split flux, which Ferrer et al. (2023, §3.3)
+  list as a split form distinct from the entropy-conserving ones, and the
+  paper does not state that the proof covers this configuration.
+- Chapelier et al. (2024) attribute the oscillations of FLEXI's dilatational
+  dissipation to DG/FV switching without a run that isolates it; Klose et
+  al. (2025) do not show the distribution of $\alpha$.
 
 # Citations
 
@@ -235,3 +305,7 @@ schemes, not a disagreement.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §2, Table 1; §4.4, Eqs. (15)–(19), Fig. 9 (SVV-filtered artificial viscosity instead of subcells).
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §1, §6.3 (filtered artificial viscosity against order-lowering approaches).
 - [Wang (2024)](/sources/wang-2024-b.md) — arXiv v2: §2.3, Eqs. (17)–(22), Tables 1–2, App. A (local modal filter, Persson–Peraire indicator, entropy filter); §4.1, Figs. 2–3; §4.2, Tables 3–4, Fig. 8; §4.3, Tables 5–8, Figs. 13–17; §4.4, Figs. 18–21; §5.
+- [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL hal-04582857v1: §III.B.f, h (FLEXI FV subcells, pressure modal-decay indicator); §IV.A–B, Figs. 5–8 (energy, dissipation, shock profiles); §V.
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv 2404.12703v2: §1; §2.3, Eq. (21) (Hennemann blending in GALÆXI); §5.2, Fig. 11 (supersonic Taylor–Green vortex); §6.3, Fig. 13 (Rotor 37 cascade, $\alpha$ near the shock).
+- [Klose et al. (2025)](/sources/klose-2025.md) — ASME accepted manuscript: §2, Eq. (1) (blending with first-order FV, dilatation–vorticity sensor); §3.
+- [Cernetic et al. (2024)](/sources/cernetic-2024.md) — arXiv 2401.06841v2: §3.1 (artificial viscosity instead of subcells).

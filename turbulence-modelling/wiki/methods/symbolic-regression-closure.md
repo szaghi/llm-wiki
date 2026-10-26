@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Symbolic-regression turbulence closures"
-description: "Closures whose model terms are explicit algebraic expressions found by a search over expression space (gene-expression programming, sparse regression, deep symbolic regression), usually as coefficients of Pope's integrity basis in RANS; covers a deep-symbolic-regression closure of k-ε, its rewards, learned models and tests on separated flows."
+description: "Closures whose model terms are explicit algebraic expressions found by a search over expression space (gene-expression programming, sparse and sparse Bayesian regression, deep symbolic regression, PySR), as integrity-basis coefficients or as a scalar multiplier of a model term; covers learned k-ε and SST corrections and tests on separated flows."
 status: established
-aliases: [symbolic regression, deep symbolic regression, DSR, gene-expression programming, GEP, sparse regression, SpaRTA, explicit algebraic closure discovery, DSRRANS]
+aliases: [symbolic regression, PySR, SBL-SpaRTA, SR-CLS, SR-CND, deep symbolic regression, DSR, gene-expression programming, GEP, sparse regression, SpaRTA, explicit algebraic closure discovery, DSRRANS]
 tags: [symbolic-regression, rans, data-driven, machine-learning, separated-flow]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:56:00Z
 ---
 
 # Symbolic-regression turbulence closures
@@ -33,6 +33,8 @@ scenarios.
 | CFD-driven gene-expression programming (Zhao et al. 2020) | candidates evaluated in the RANS solver during training | recalled by Tang et al. (2023, §I) |
 | sparse regression, SpaRTA (Schmelzer et al.) | $\ell_1$-penalized linear regression over a library of candidate functions | recalled by Duraisamy (2021, §III.A, §IV.A), Tang et al. (2023, §III B) |
 | deep symbolic regression, DSR (Petersen et al.) | a recurrent network samples expressions; trained by a risk-seeking policy gradient | read directly: Tang et al. (2023) |
+| PySR (Cranmer) | genetic search over several populations with a complexity penalty | read directly: Wu et al. (2025) |
+| sparse Bayesian regression, SBL-SpaRTA (Cherroud et al. 2022) | sparse Bayesian selection over a dictionary of invariant monomials; Gaussian posteriors of the coefficients | used, as recalled, by Oulghelou et al. (2025) |
 
 Tang et al. (2023, §I, §II C 1) contrast DSR with gene-expression
 programming: GEP is "by nature a non-deterministic method", its
@@ -167,6 +169,85 @@ the linear part is iterated to reconvergence (§II D; see
   each RANS run converges in hundreds of seconds, at a cost "basically the
   same" as $k$-$\varepsilon$ (§III A–B).
 
+## Symbolic regression of a field-inversion multiplier (Wu et al. 2025)
+
+[Wu et al. (2025)](/sources/wu-2025.md) (author manuscript) fit a scalar,
+not a tensor-basis coefficient: the multiplier $\beta$ of the
+$\omega$-destruction term of the [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md),
+inferred by [field inversion](/methods/field-inversion-machine-learning.md)
+on a curved backward-facing step and the NASA wall-mounted hump, either
+everywhere (classic) or only outside attached boundary layers
+(conditioned). The label is $\beta-1$.
+
+**Features (Table 2).** Three invariants of the mean strain and rotation
+normalized by $\beta^*\omega$, $\operatorname{tr}(\hat{\mathbf S}^2)$,
+$\operatorname{tr}(\hat{\boldsymbol\Omega}^2)$ and
+$\operatorname{tr}(\hat{\boldsymbol\Omega}^2\hat{\mathbf S}^2)$ (the third and
+fourth of Pope's five vanish in 2-D), plus the vorticity Reynolds number
+$\lvert\Omega\rvert d^2/\nu$, $P_k/\varepsilon$ from the Boussinesq stress, and
+a feature found in the authors' earlier work. Since $\beta^*\omega=\varepsilon/k$,
+the normalization is that of the page-local $\mathsf S$, $\mathsf W$ above,
+so the first two invariants are $I_1$ and $I_2$ of Tang et al.; write
+$I_5=\operatorname{tr}(\mathsf W^2\mathsf S^2)$ (page-local) for the third
+*(compiler check, not in the sources)*.
+
+**Search (§2.2, §3.2, Eqs. 16–17, 19–20, Table 3).** PySR with 20
+populations of 80 expressions and 1000 iterations; unary operators exp,
+tanh, $1/(1+x)$, $1/x$, binary $+,-,\times,\div$, min, max and power; a
+weighted mean squared error; complexity
+$C=N_{\mathrm{opr}}+2N_{\mathrm{var}}+4N_{\mathrm{const}}$ (page-local:
+numbers of operators, variables and constants) capped at 16, the most
+accurate expression within the cap being kept. Samples with
+$\lvert\beta-1\rvert<0.05$ ("trivial") are randomly downsampled to the
+number of the others and reweighted by the original ratio, after Yan et
+al., leaving about 3000 samples per dataset; about 10 000 samples could
+take "dozens of hours".
+
+**Learned models (Table 4).**
+
+$$\text{SR-CLS:}\quad\beta-1=-\tfrac{3}{500}\,I_5\tanh(-0.092\,I_2),\qquad\text{SR-CND:}\quad\beta-1=\min\big(0.00435\,I_2^2,\ 3.806\big).$$
+
+Only the two rotation-carrying invariants survive. Both raise $\beta$ where
+rotation or strain is large; a larger $\beta$ lowers $\omega$, raises the
+eddy viscosity and the momentum diffusion into the recirculation, and
+shrinks the separation, which the authors relate to the underestimated
+eddy viscosity of RANS in separated shear layers, as recalled there
+(§3.2, §4.2). Since $I_2^2\ge0$, SR-CND never lowers $\beta$ below 1 and
+saturates at $\beta=1+3.806=4.806$ *(compiler check, not in the
+sources)*. The models add about 15% (SR-CLS) and 10% (SR-CND) to the
+runtime, against about 30 times for a random forest called every
+iteration, as reported by Yin et al., whom they cite (§3.2). Results on separated flows,
+the flat plate and the airfoil are on
+[field inversion and machine learning](/methods/field-inversion-machine-learning.md):
+both models improve separated flows similarly, and only SR-CND, inserted
+behind the boundary-layer gate, leaves attached flow at the SST solution.
+
+## Sparse Bayesian experts for model blending (Oulghelou et al. 2025)
+
+[Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (arXiv v2, §2–3,
+Table 1) use three SST models whose corrections were regressed with
+SBL-SpaRTA, citing Cherroud et al. (2022, 2025): an
+additive anisotropy $b^\Delta_{ij}$ and a $k$-equation term
+$2k\,b^R_{ij}\partial_j\langle u_i\rangle$ (page-local), each a sum over the
+three 2-D basis tensors built from $S_{ij}/\omega$ and $\Omega_{ij}/\omega$,
+with coefficients selected from a dictionary of monomials of the two
+invariants and Gaussian posteriors (§2.1). The printed models are
+
+| Expert | $b^\Delta_{ij}$ | $b^R_{ij}$ | Training data |
+|---|---|---|---|
+| separated flows | $(5.21\pm0.0173)\,T^{(2)}_{ij}$ | $(0.681\pm0.02)\,T^{(1)}_{ij}$ | periodic hill, converging–diverging channel, curved backward-facing step |
+| near-sonic jet | $(0.25\pm7.26\times10^{-3})\,T^{(1)}_{ij}$ | 0 | PIV of an axisymmetric jet |
+
+with the basis tensors of this paper normalized by $\omega$ rather than
+$k/\varepsilon$, i.e. $T^{(1)}=\beta^*\mathsf S$ *(compiler check, not in the
+sources)*. The posterior standard deviations are small, so the coefficients
+are treated as deterministic (§3). Each expert helps its own class and
+hurts others: the separated-flow model raises the eddy viscosity and
+spoils the channel log layer (mean absolute error of $u^+$ 2.41 against
+0.44 for SST), the jet model lowers it and fails in the channel (8.97)
+(§4.2.1, Table 3). The paper combines them with learned spatial weights;
+see [model aggregation](/methods/turbulence-model-aggregation.md).
+
 ## Symbolic regression in transition modelling (Pacciani et al. 2025)
 
 [Pacciani et al. (2025)](/sources/pacciani-2025.md) do not run a symbolic
@@ -216,6 +297,17 @@ not report a learned expression.
   the description of sparse regression by Duraisamy (2021, §III.A); the
   open entry is under Contradictions on
   [tensor-basis neural network](/methods/tensor-basis-neural-network.md).
+  The SBL-SpaRTA experts printed by Oulghelou et al. (2025, Table 1) have
+  constant coefficients although their dictionary contains invariant
+  monomials (§2.1); the open entry on that page records this.
+- **Scalar against tensor targets.** Wu et al. (2025) regress one scalar
+  multiplier of a transport-equation term, so their models keep the
+  Boussinesq form; the other closures on this page regress coefficients of
+  the anisotropy basis.
+- **Generalization claims of Wu et al. (2025)** rest on two training
+  flows and six test geometries (periodic hills at three slopes, the
+  NLR-7301 airfoil, the SAE notchback, the Ahmed body, the flat plate, the
+  NACA 0012), all steady RANS (§3–4).
 - **Printed slips in Tang et al. (2023).**
   - Eq. 16 writes the non-linear part as $\sum G^m T^m$ without the factor
     $\beta_T/10$ that Eq. 19 includes; the printed coefficients of Eqs. 20
@@ -241,4 +333,6 @@ not report a learned expression.
 - [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I (GEP, CFD-driven GEP recalled), §II C 1, Algorithm 1, Apps. A–B, Eq. B1 (DSR), §II C 2, Eqs. 4–19 (closure, constants, split, squashing, rewards), §II D–E (coupling, workflow), §III A–E, Table I–II, Eqs. 20–22, Figs. 7–19, §IV, §V.
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §III.A, §IV.A (symbolic and sparse regression, $\ell_1$ loss), §VII (interpretability does not imply generalization).
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3 (gene-expression programming recalled; uncertainty on the periodic hill when trained on a backward-facing step).
+- [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §2.2, Eqs. 16–17, 19–20, Tables 2–4 (PySR set-up, features, rebalancing, learned models); §3.2 (interpretation, cost); §4.2.
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §2–2.1, Eqs. 7–10, Table 1 (SBL-SpaRTA experts); §3; §4.2.1, Table 3.
 - [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §1, §3.2 (GEP corrections of the earlier model recalled), §4.1, Eq. 10 (length scale from trained expressions), §4.5, Eqs. 23–27 (separation switch as a training candidate).

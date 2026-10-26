@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Compressible MHD turbulence"
-description: "Compressible MHD turbulence carries Alfvénic, slow, fast and non-wave fluctuations; a spatio-temporal decomposition puts most power off the dispersion branches, subsonic Hall-MHD cascades depend little on Mach number, and a 3D flare simulation finds Kelvin–Helmholtz-generated Alfvénic turbulence."
+description: "Compressible MHD turbulence carries Alfvénic, slow, fast and non-wave fluctuations; a spatio-temporal decomposition puts most power off the dispersion branches, subsonic Hall-MHD cascades depend little on Mach number, trans-sonic compressive modes pile up at high wavenumber unless a bulk viscosity dissipates them, and a 3D flare simulation finds Kelvin–Helmholtz-generated Alfvénic turbulence."
 status: established
-aliases: [compressible MHD turbulence, MHD wave-mode decomposition, fast modes, slow modes, non-wave fluctuations, compressible Hall MHD turbulence, weakly compressible MHD, solar-flare turbulence, flare plasma turbulence]
+aliases: [compressible MHD turbulence, MHD wave-mode decomposition, fast modes, slow modes, non-wave fluctuations, compressible Hall MHD turbulence, weakly compressible MHD, solar-flare turbulence, flare plasma turbulence, compressive-mode bottleneck, Helmholtz-decomposed spectra]
 tags: [mhd, compressible, plasma, astrophysics, dns]
-timestamp: 2026-10-26T10:20:00Z
+timestamp: 2026-10-26T15:53:00Z
 ---
 
 # Compressible MHD turbulence
@@ -19,8 +19,11 @@ fluctuation power actually behaves as each linear wave mode, studied by
 [Gan et al. (2022)](/sources/gan-2022.md) on driven runs, and whether the
 energy cascade of compressible Hall MHD depends on the Mach number, studied
 by [Ferrand et al. (2022)](/sources/ferrand-2022.md) on decaying runs through
-[exact laws](/results/turbulence-exact-laws.md). Both are diagnostics of
-simulated turbulence; neither proposes a closure.
+[exact laws](/results/turbulence-exact-laws.md). A third, what dissipates the
+compressive velocity modes, is studied by
+[Beattie et al. (2025)](/sources/beattie-2025.md) with an explicit
+[bulk viscosity](/definitions/bulk-viscosity.md). All are diagnostics of
+simulated turbulence; none proposes a closure.
 
 Page-local notation: $f_c$ is the compressibility parameter of Gan et al.'s
 velocity forcing; $A$, $F$, $S$ denote the Alfvén, fast and slow fractions of
@@ -273,12 +276,69 @@ invariant, namely gravity, conduction, radiative losses, explicit
 resistivity and a fixed finest cell size, and it reports no resolution
 study.)*
 
+## Compressive modes and bulk viscosity at trans-sonic Mach number
+
+[Beattie et al. (2025)](/sources/beattie-2025.md) (read in arXiv v4) split
+the velocity of forced, isothermal, visco-resistive MHD turbulence without a
+mean field ($M_t\approx1$, $Re=Rm=1000$, $Pm=1$, $128^3$–$1024^3$, modified
+FLASH; set-up on [small-scale dynamo](/results/small-scale-dynamo.md)) by a
+Helmholtz decomposition into a compressive (curl-free) part
+$\boldsymbol u_{\mathrm c}$ and a solenoidal (divergence-free) part
+$\boldsymbol u_{\mathrm s}$, with kinetic-energy spectra
+$E_{\mathrm c}(k)$ and $E_{\mathrm s}(k)$ (page-local; the source writes
+$\parallel$ and $\perp$, which on this page would read as directions
+relative to the field), computed by Fourier projection on $\boldsymbol k$
+(§4.5, Eq. 49). They vary the bulk viscosity through the viscous Prandtl
+number $P_\nu=\nu/\nu_b$ (page-local, defined on
+[bulk viscosity](/definitions/bulk-viscosity.md)), from $\infty$ (no bulk
+viscosity) to 0.001. Findings:
+
+- **Spectral slopes.** $E_{\mathrm c}(k)\sim k^{-2}$ (Burgers-like) in the
+  runs with low bulk viscosity, not the $k^{-3}$ pseudo-acoustic spectrum
+  that Wang et al. (2017) and Sakurai & Ishihara (2023) find, which the
+  authors place below $M_t\approx0.4$; $E_{\mathrm s}(k)$ is
+  roughly $k^{-5/3}$ over a very truncated range (§6.2, Fig. 9).
+- **A compressive-mode bottleneck without bulk viscosity.** For $P_\nu=\infty$
+  and 1, compressive power piles up at high $k$: $E_{\mathrm c}/E_{\mathrm s}$
+  grows from about $10^{-1}$ at large scales to about $10^2$ at small
+  scales, the "sub-shear-viscous range" of their Eq. (32), where
+  compressive power exceeds solenoidal power, which disappears for $P_\nu\le0.1$; at the smallest $P_\nu$ the low-$k$
+  compressive modes lose "roughly $10^2$ in total power" (§6.1–6.2, Fig. 9).
+  See [bottleneck effect](/definitions/bottleneck-effect.md).
+- **Compressive energy fraction.** $\langle E_{\mathrm c}\rangle/\langle E_{\mathrm{kin}}\rangle$
+  falls from about $10^{-1}$ to about $10^{-3}$ as $P_\nu$ goes from $\infty$
+  to 0.001, roughly $\propto P_\nu$ for $P_\nu<1$ (Eq. 54, Fig. 6).
+- **Alfvénic character of the compressive modes.** At saturation the
+  compressive modes hold 1 to 10 times less energy than the magnetic field
+  (sub- to trans-Alfvénic), the solenoidal modes about ten times more
+  (§5.1, Fig. 6); for $P_\nu=0.01$ the magnetic-to-compressive spectral ratio
+  reaches about $10^3$ at high $k$ (§8, Fig. 13).
+- **Coupling between the families.** In the Stokes limit the viscous
+  operators act on the two families separately (§6.2, Eqs. 56–57, App. E),
+  yet low $P_\nu$ also suppresses high-$k$ solenoidal and magnetic modes; the
+  authors attribute the coupling to the reduced compressive energy
+  available for small-scale enstrophy production through
+  $\boldsymbol\omega(\nabla\cdot\boldsymbol u)$, citing Touber (2019)
+  (§6.2).
+- **Resolution.** Without explicit bulk viscosity the compressive modes are
+  dissipated by the grid and the Riemann solver, so that a shear-viscous
+  "DNS" is "an implicit large eddy simulation for the compressible modes"
+  (§9.1, App. D); see [bulk viscosity](/definitions/bulk-viscosity.md),
+  [implicit LES](/definitions/implicit-les.md) and
+  [numerical dissipation](/properties/numerical-dissipation.md).
+
+The authors add that a Braginskii (anisotropic) viscosity contains a
+bulk-viscous-type term built on the field direction that would preferentially
+damp fast and slow magnetosonic waves (§9.3, stated without simulation).
+
 ## Qualifications
 
 - **Different regimes.** Gan et al. drive at $M_t\le0.18$ with a strong
   guide field and analyse a statistically steady state; Ferrand et al.
   analyse decay at initial Mach numbers 0.25–0.5 with and without a mean
-  field. Neither reaches supersonic turbulence. Foldes et al. run at
+  field. Neither reaches supersonic turbulence. Beattie et al. (2025) are
+  trans-sonic ($M_t\approx0.90$–$0.96$), without a mean field and with 2:1
+  solenoidal-to-compressive forcing. Foldes et al. run at
   $M\le0.025$ only to approximate incompressible dynamics.
 - **Reference frame.** Gan et al. define $k_\parallel\simeq k_x$ along
   the guide field $\boldsymbol B_0$ (§3, p. 3) and do not state whether the
@@ -327,3 +387,4 @@ study.)*
 - [Schekochihin (2022)](/sources/schekochihin-2022.md) — §5.3, Eq. (5.8) (local-field measurement of anisotropy).
 - [Foldes et al. (2023)](/sources/foldes-2023.md) — §2.2, Eqs. (2.10)–(2.14); §4.2, Fig. 5; §5; §7 (weakly compressible lattice Boltzmann formulation of Hall MHD, density fluctuations, acoustic time step, compressible extension).
 - [Ruan et al. (2023)](/sources/ruan-2023.md) — §1; §2, Eqs. (1)–(5); §3.1–§3.5, Eqs. (6)–(8), Figs. 2–5; §4 (Kelvin–Helmholtz-generated, Alfvénic turbulence in a 3D resistive MHD flare simulation; nonthermal velocity and turbulent energy diagnostics).
+- [Beattie et al. (2025)](/sources/beattie-2025.md) — §4.5, Eq. (49); §5.1, Eq. (54), Fig. 6; §6.1–6.2, Eqs. (56)–(57), Fig. 9; §8, Fig. 13; §9.1, §9.3; App. D; App. E (Helmholtz-decomposed spectra, compressive-mode bottleneck and bulk viscosity in trans-sonic MHD turbulence).

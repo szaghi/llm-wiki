@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Ahmed body"
-description: "The Ahmed body, a bluff car-like body with a slanted rear whose angle sets the separation regime: at 35° a test of immersed-boundary wall-modelled LES and of SST-based hybrid RANS/LES on lattice Boltzmann grids, at 25° the calibration case of a DDES procedure applied to an estate car."
+description: "The Ahmed body, a bluff car-like body with a slanted rear whose angle sets the separation regime: at 35° a test of immersed-boundary wall-modelled LES and of SST-based hybrid RANS/LES on lattice Boltzmann grids, at 25° the calibration case of a DDES procedure and a generalization test of symbolic-regression RANS corrections."
 status: established
 aliases: [Ahmed car body, Ahmed reference model, 25° Ahmed body, 35° Ahmed body]
-tags: [benchmark, separated-flow, hybrid-rans-les, des, wmles, immersed-boundary, lattice-boltzmann]
-timestamp: 2026-10-26T10:26:00Z
+tags: [benchmark, separated-flow, hybrid-rans-les, des, wmles, immersed-boundary, lattice-boltzmann, field-inversion]
+timestamp: 2026-10-26T15:57:00Z
 ---
 
 # Ahmed body
@@ -24,7 +24,8 @@ and lift coefficients $C_D$ and $C_L$, the pressure on the slant and base,
 and velocity profiles over the slant and in the wake. In this bundle the
 case tests near-wall treatments of scale-resolving simulation on a separated
 bluff body: immersed-boundary wall-modelled LES and the choice of hybrid
-RANS/LES model.
+RANS/LES model. It is also a three-dimensional generalization test of
+data-driven RANS corrections trained on two-dimensional flows.
 
 ## Configurations in the sources
 
@@ -39,6 +40,14 @@ RANS/LES model.
 | Grid | coarse $1.36\times10^7$ cells ($\Delta x_{\min}=9.0\times10^{-3}H$), fine $4.03\times10^7$ ($4.5\times10^{-3}H$) | 20 prism layers at $y^+<1$, 3–4 mm surface cells, 5 mm wake tetrahedra |
 | Time | 200 flow-through times $H/U_\infty$, last 150 averaged; Mach number raised from 0.12 to 0.24 to enlarge the time step | $\Delta t=5\times10^{-5}$ s (also $1.5\times10^{-5}$ s) |
 | Reference data | Lienhart & Becker velocity profiles; drag of Ahmed et al., Meile et al., Liu et al.; body-fitted RANS and DES of Guilmineau et al. | experimental $C_D$, $C_L$, $C_p$ (source not detailed) |
+
+[Wu et al. (2025)](/sources/wu-2025.md), §4.4, run the 25° body as a
+half model at a Reynolds number of $2.78\times10^6$ on the body length,
+$U_\infty=40$ m/s, with steady RANS (OpenFOAM simpleFoam) on three
+structured meshes of about $3.6\times10^6$, $7.2\times10^6$ and
+$1.4\times10^7$ cells, against the PIV of Lienhart et al. This length-based
+value corresponds to $Re_H\approx7.67\times10^5$ with the printed length
+and height of the other sources *(compiler check, not in the sources)*.
 
 The data of [Delassaux et al. (2023)](/sources/delassaux-2023.md), §5,
 are a recapitulation of the authors' earlier paper, used to calibrate the
@@ -172,6 +181,38 @@ shows no separation or a massive one (§5). Rounded separation lines remain the 
 authors find DDES under-predicting $C_p$ there, "consistent" with the
 Ahmed-body results, and relate it to grid-induced separation (§7.3).
 
+**Data-driven RANS corrections at 25°.**
+[Wu et al. (2025)](/sources/wu-2025.md), §4.4, use the 25° body as an
+"L3" test, a separation mechanism like the training flows with a different
+geometry and Reynolds number, for two
+[symbolic-regression](/methods/symbolic-regression-closure.md) corrections
+of the $\omega$-destruction term of
+[$k$-$\omega$ SST](/methods/k-omega-sst-model.md), trained on
+[field-inversion](/methods/field-inversion-machine-learning.md) data of a
+curved backward-facing step and the
+[NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md): SR-CLS
+(classic inversion) and SR-CND (inversion gated by the DDES shielding
+function, so that the correction vanishes in attached boundary layers).
+Baseline SST predicts "a large separation starting from the beginning of
+the slant"; both corrected models keep the flow "attached all along the
+slant, agreeing with the experiment" (Fig. 45). Both raise the correction
+$\beta$ in the separated shear layers from the upper and lower surfaces;
+near the slant only SR-CLS raises it at the wall (Fig. 44). Velocity-profile
+error against the PIV, normalized by $U_\infty$, on the fine mesh
+(Table 7):
+
+| Model | error | relative to SST |
+|---|---|---|
+| SST | 0.677 | 100.0% |
+| SR-CND | 0.072 | 10.6% |
+| SR-CLS | 0.069 | 10.2% |
+
+The corrected models change $C_D$ by about 0.005 from the coarse to the
+medium mesh and by 0.001–0.002 from medium to fine, while the SST drag
+"fluctuates" with refinement (Fig. 42); no drag values are printed for the
+Ahmed body. Steady RANS with an eddy-viscosity closure is thus the third
+modelling route on this page, next to wall-modelled LES and hybrid RANS/LES.
+
 **What the two studies share.** In both, whether and where the slant flow
 separates changes with the near-wall treatment: the boundary condition
 (wall law or no-slip) and the grid of the immersed boundary in
@@ -196,6 +237,13 @@ Cai et al. for the statement that the equilibrium wall model is acceptable
 in fully separated flows (lines 149–152).
 
 ## Qualifications
+
+- [Wu et al. (2025)](/sources/wu-2025.md) were read in the authors' Word
+  manuscript. The caption of their Table 7 says "MSEs", the text "mean
+  square error", and the row label "RMSE"; the metric is ambiguous. The
+  caption of Fig. 44 names the classic-inversion model "SST-CLS" for
+  SR-CLS. Their slant-flow statement rests on the streamline plots of
+  Fig. 45.
 
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) were read in the
   HAL accepted manuscript. Their no-slip runs impose a zero velocity at
@@ -223,8 +271,26 @@ in fully separated flows (lines 149–152).
   check, not in the sources)*. They do not give
   the Reynolds number or the source of the experimental data in this paper.
 
+## Contradictions
+
+- **Topology of the mean slant flow of the 25° body.** *Open.*
+  [Wu et al. (2025)](/sources/wu-2025.md), §4.4 and Fig. 45, state that in
+  the experiment (Lienhart et al. PIV) the flow "remains attached all along
+  the slant", and credit their corrected RANS models for reproducing it. As
+  recalled by [Cai et al. (2022)](/sources/cai-2022.md), §I and §V, the
+  25° shear layer separates and reattaches on the slant, and
+  [Delassaux et al. (2023)](/sources/delassaux-2023.md), §5, recapitulating
+  their earlier paper, find the hybrids that separate and reattach (SAS,
+  DDES, SBES) closer to their experiment than the realizable
+  $k$-$\varepsilon$ model, which does not separate on the slant, with DDES
+  closest. Wu et al. describe the Lienhart et al. PIV; Cai et al. describe
+  the 25° regime without naming a data set; Delassaux et al. compare with
+  their own experiment on four edge variants and do not name it in this
+  paper.
+
 # Citations
 
 - [Cai et al. (2022)](/sources/cai-2022.md) — §I; §II.C; §III, Tables I–II, Figs. 2–3; §IV, Table III, Figs. 4–9; §V.
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §1; §4.4; §5, Table 2, Figs. 11–12; §7.3.
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §2.2; §3.3, Table 3, Figs. 16–24; §4.
+- [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §1, Table 1 (L1–L4 levels); §4.4, Figs. 41–45, Table 7.

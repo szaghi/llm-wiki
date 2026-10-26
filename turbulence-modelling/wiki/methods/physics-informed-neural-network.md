@@ -5,7 +5,7 @@ description: "A neural network maps the coordinates to the mean velocity, pressu
 status: established
 aliases: [PINN, PINNs, physics-informed neural network, physics-informed RANS solver]
 tags: [machine-learning, neural-network, data-driven, rans, boundary-layer]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:57:00Z
 ---
 
 # Physics-informed neural networks for RANS
@@ -142,6 +142,32 @@ time". Their own [closure](/methods/neural-network-sgs-model.md) is of a
 different kind: a discrete coarse-grid closure whose energy conservation
 is built into the architecture (§3).
 
+## From PINNs to physics-informed neural operators (Zhao et al. 2025)
+
+[Zhao et al. (2025)](/sources/zhao-2025.md) (§2.2, Eq. 8) recall the
+generic PINN loss for $\partial_tu=\mathcal N(u)$ (page-local
+$\mathcal N$, the PDE operator): the squared residual over the domain and
+time, plus weighted boundary and initial-condition misfits, with
+derivatives by automatic differentiation. As recalled there, PINNs
+struggle on multiscale problems, and the physics-informed neural operator
+(PINO) of Li et al. combines a data loss with the PDE loss on a Fourier
+neural operator; on 2-D turbulence it reaches 6% relative error at
+$T=0.125$ but about 74% at $T=0.5$ (§2.4, recalled). The authors name three
+drawbacks of that PINO: long-time error, competing losses (initial,
+equation, data), and overlapping training and prediction windows.
+
+Their LESnets apply the physics-informed loss to the time advance of
+LES: the network is an operator
+from one filtered velocity field to the next ten, trained only on the
+residuals of continuity and of the filtered momentum equation closed by
+the Smagorinsky model, with the initial field as input rather than as a
+loss term, so that the trained operator can be rolled out (§2.5). Unlike
+the PINN of Eivazi et al., which represents one flow as a function of the
+coordinates, the operator is trained on 5000 initial fields and applied
+to unseen ones (§3.1). With the original initial-condition loss the
+rollout diverges (App. A). Details and results are on
+[neural-operator surrogates of LES](/methods/neural-operator-les-surrogate.md).
+
 ## Qualifications
 
 - **Data requirement.** The reconstruction of each turbulent case uses
@@ -177,4 +203,5 @@ is built into the architecture (§3).
 
 - [Eivazi et al. (2022)](/sources/eivazi-2022.md) — arXiv v1: Abstract; §1 (underdetermined RANS, precedent); §2, Fig. 1, Eqs. 1–2 (network, residuals, loss, error metric); §3, Figs. 2–6, Table 1 (five cases); §4 (conclusions).
 - [Domingo & Vervisch (2023)](/sources/domingo-2023.md) — §7 (physics-informed techniques as a perspective for combustion DNS).
+- [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §2.2, Eq. 8 (PINN loss); §2.4 (PINO and its drawbacks, recalled); §2.5, Eq. 17 (LESnets); §3.1; App. A.
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §1 (PINNs mentioned among machine-learning work on Burgers' equation; ref. [29] as printed); §3 (energy-conserving architecture).

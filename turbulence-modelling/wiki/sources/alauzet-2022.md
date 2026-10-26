@@ -148,8 +148,9 @@ printed duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25), cited further in chunk 5. This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunks 5–6. This source is cited on:
 
+- [NASA Rotor 37](/benchmarks/nasa-rotor-37.md)
 - [Turbine cascades (T106, T161, VKI LS89)](/benchmarks/turbine-cascade.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)

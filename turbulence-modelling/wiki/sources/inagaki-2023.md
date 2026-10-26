@@ -149,7 +149,7 @@ turbulent channel up to Reτ = 590" without "flow", recorded as printed.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26). This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunk 6. This source is cited on:
 
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
@@ -162,4 +162,5 @@ Chunk 4 (2026-10-26). This source is cited on:
 - [Gradient (Clark) model and the clipping of structural SGS models](/methods/gradient-model.md)
 - [Scale-similarity and mixed subgrid-scale models](/methods/scale-similarity-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
+- [Super-resolution subgrid-scale models](/methods/super-resolution-sgs-model.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)

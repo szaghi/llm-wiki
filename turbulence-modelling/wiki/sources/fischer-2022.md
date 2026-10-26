@@ -136,9 +136,11 @@ author "X. chuan Cai"; all recorded as printed. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-26). This source is cited on:
+Chunk 3 (2026-10-26), cited further in chunk 6. This source is cited on:
 
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
+- [Continuous-Galerkin spectral-element method](/methods/spectral-element-method.md)
+- [GALÆXI](/software/galaexi.md)
 - [Nek5000 and NekRS](/software/nek5000.md)

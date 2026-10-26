@@ -138,13 +138,15 @@ printed duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 6. This source is cited on:
 
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+- [Bulk viscosity](/definitions/bulk-viscosity.md)
 - [Compressible velocity transformations](/definitions/compressible-velocity-transformation.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)
 - [Log-layer mismatch](/definitions/log-layer-mismatch.md)
+- [Artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
 - [Inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md)

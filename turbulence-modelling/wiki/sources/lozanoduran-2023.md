@@ -181,7 +181,7 @@ corporate author.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26), cited further in chunk 5. This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunks 5–6. This source is cited on:
 
 - [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)
 - [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md)
@@ -201,6 +201,7 @@ Chunk 4 (2026-10-26), cited further in chunk 5. This source is cited on:
 - [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)
 - [Machine-learning wall models](/methods/machine-learning-wall-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
+- [Aggregation and blending of data-driven turbulence models](/methods/turbulence-model-aggregation.md)
 - [Vreman model](/methods/vreman-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)

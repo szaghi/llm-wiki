@@ -5,7 +5,7 @@ description: "LES that resolves the outer-layer eddies and replaces the near-wal
 status: established
 aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:52:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -75,6 +75,69 @@ requires the stress formulation of the momentum equations. Bae & Koumoutsakos (2
 no slip and impose the stress through a wall eddy viscosity chosen so that the
 resolved wall gradient gives the modelled stress, a choice they call better
 against [log-layer mismatch](/definitions/log-layer-mismatch.md).
+
+**Weak Neumann against viscosity-based imposition.**
+[Mukha et al. (2025)](/sources/mukha-2025.md) (§II.C.2–II.C.4, Eqs. 7–14)
+analyse the two routes in a continuous Galerkin spectral-element code
+([Nek5000](/software/nek5000.md), polynomial degree $N=7$). Integrating the
+weak form of the stress divergence by parts gives, for a test function $v_i$
+and the total (viscous plus subgrid) kinematic stress $\sigma^{\mathrm t}_{ij}$
+with wall traction $t_i=\sigma^{\mathrm t}_{ij}n_j$ (page-local symbols),
+
+$$\int_\Omega\frac{\partial v_i}{\partial x_j}\sigma^{\mathrm t}_{ij}\,dV=\int_{\partial\Omega}\big[v_it_{w,i}+(t_jn_j)\,v_in_i\big]\,dA,\qquad t_{w,i}=t_i-(t_jn_j)n_i .$$
+
+The second term vanishes because non-penetration is enforced strongly; the
+first vanishes for no slip (test functions zero at the wall) and, for a
+Neumann condition, is where the modelled stress enters, as a natural
+boundary term. Two consequences follow.
+
+- *Neumann (weak).* The wall stress computed from the mean velocity gradient
+  at the wall, $\tau_w^{\mathrm{wall}}$, equals the modelled one,
+  $\tau_w^{\mathrm{wm}}$, only asymptotically under refinement. In channel
+  flow at $Re_\tau\approx8000$ on meshes of 2, 4 and 8 elements per $\delta$
+  the errors of $\tau_w^{\mathrm{wm}}$ are 0.71 %, 0.76 % and $-0.54$ %, those
+  of $\tau_w^{\mathrm{wall}}$ 12.58 %, 10.86 % and 8.07 %, and those of the
+  stress implied by the driving pressure gradient, $\tau_w^{\nabla p}$,
+  1.95 %, 0.96 % and $-3.84$ % (Table II; superscripts page-local).
+  $\tau_w^{\mathrm{wall}}$ "should essentially be disregarded":
+  $\tau_w^{\mathrm{wm}}$ sets the slope of the linear Reynolds shear-stress
+  profile, and the gap between $\tau_w^{\nabla p}$ and $\tau_w^{\mathrm{wm}}$
+  measures the global momentum imbalance of the discretization (§III.B.2).
+  The authors call the issue "unique to the finite element method". Duan &
+  Wang (2024, §4) also impose the wall condition weakly, at the wall flux
+  points of a flux-reconstruction scheme, and report no comparison of the
+  two stresses.
+- *Viscosity-based (strong).* No slip is kept and the subgrid viscosity at
+  the wall is set so that the resolved gradient carries the modelled stress,
+  $\nu_t|_w=\tau_w^{\mathrm{wm}}/\big(\rho\sqrt{(\partial u/\partial y)_w^2+(\partial w/\partial y)_w^2}\big)-\nu$
+  (Eq. 14 in registry notation, $\tau_w$ dynamic: at a no-slip wall the
+  source's strain components, printed without the factor $\tfrac12$, reduce
+  to the wall-normal derivatives *(compiler check, not in the sources)*). This is the condition
+  of Bae & Koumoutsakos (2022) above; Mukha et al. recall its long use in
+  OpenFOAM, its use to blend wall-resolved and wall-modelled regions by
+  setting the wall viscosity to zero where the inner layer is resolved, and
+  a finite-difference comparison by Bae & Lozano-Durán that found it
+  somewhat more accurate than the Neumann condition (as they cite it). A
+  scalar viscosity cannot set the direction of the stress, so with spanwise
+  strain the streamwise stress is under-predicted even for an exact
+  magnitude (§II.C.4). In the spectral-element channel it fails:
+  $\tau_w^{\mathrm{wm}}=\tau_w^{\mathrm{wall}}$ by construction (errors
+  $-0.91$ %, $-0.85$ %, $-2.26$ %), but $\tau_w^{\nabla p}$ is off by 38.05 %,
+  25.73 % and 15.65 %, the mean velocity is strongly under-predicted for
+  $y^+\lesssim2500$ and over-predicted in the core, all Reynolds stresses are
+  over-predicted, and at fixed $Re_\tau$ the stress is strongly
+  under-predicted; the authors attribute this to strong violation of
+  momentum conservation and judge the attempt "largely unsuccessful"
+  (§III.D, Table IV, Figs. 9–10; §V).
+
+The continuous discretization conserves mass globally when the velocity is
+locally divergence-free, but not momentum, because velocity derivatives jump
+across element boundaries; the jumps are negligible at wall-resolved
+resolution and significant at WMLES resolution (§II.B). The peaks at
+element boundaries that the jumps leave in their Reynolds-stress profiles
+are "similar to the results in Gillyns et al." (§III.C), who report the same
+spikes in the same code (below).
+
 On non-body-fitted Cartesian grids the stress reaches the LES through an
 [immersed boundary](/methods/immersed-boundary-method.md): Cai et al. (2022,
 §II.C.1, Fig. 1b) invert the wall model at the fluid points next to the
@@ -318,6 +381,30 @@ same under-resolved first cells.
   under-resolved first element, which they attribute, without a same-mesh
   comparison, to the spectral element method (§7, §10).
 
+- **SGS model as stabilizer in a continuous spectral-element code.**
+  Mukha et al. (2025, §II.D, §III.C, Figs. 6–8) compare on their finest
+  channel mesh the [Vreman model](/methods/vreman-model.md) (single constant
+  $2.5C_s^2$ with $C_s=0.16$), the sigma model ($C_\sigma=1.35$, page-local;
+  near-wall viscosity $\propto y^3$, as for [WALE](/methods/wale-model.md))
+  and Nek5000's high-pass relaxation filter as implicit SGS model (two modes,
+  weight 100), with the SGS length scale set for the whole element by its
+  largest GLL spacing and $\nu_t$ not forced to zero at the wall. All three
+  give an accurate $\tau_w^{\mathrm{wm}}$ and no
+  [log-layer mismatch](/definitions/log-layer-mismatch.md), but less
+  near-wall dissipation gives a more oscillatory solution: the error of
+  $\tau_w^{\mathrm{wall}}$ is 8.07 % with Vreman, $-25.72$ % with the sigma
+  model and $-84.85$ % with the filter, and the filter alone "does not
+  introduce enough damping" and over-predicts $\langle u'u'\rangle$. Jumps of
+  the velocity derivative at element boundaries become spikes of $\nu_t$,
+  "just numerical artifacts"; ensuring derivative continuity is called "a
+  missing component in the current WMLES methodology". Vreman shows no
+  visible near-wall decrease of $\nu_t$ although its asymptote is linear in
+  $y$, so "how fast the model transitions towards the asymptote" matters.
+  Against reports that WALE and sigma over-predict the wall stress in
+  channel WMLES (Blanchard et al., as cited) they conclude that accuracy is
+  "a strong function of the combination of the boundary conditions, SGS
+  model and numerical method"; Vreman "could, perhaps, be preferred due to
+  smoother derivatives" and is used for their boundary-layer runs.
 - **High-order schemes need added dissipation at WMLES resolution.**
   [Duan & Wang (2024)](/sources/duan-2024.md) state that high-order implicit
   LES "often runs into robustness and accuracy issues" in WMLES because the
@@ -502,6 +589,30 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
   and 2 counts (500 M LES, 1 %), and the GPU cost figures of Goc et al.
   (2021); their own full-scale car study uses
   [detached-eddy simulation](/methods/detached-eddy-simulation.md).
+- **Spectral-element channel and boundary layer at higher Reynolds number**
+  (Mukha et al. 2025, §III–IV): Spalding's law, Neumann condition and Vreman
+  model in Nek5000 at $N=7$. Channel flow at $Re_\tau\approx8000$ against
+  the DNS of Yamamoto & Tsuji (as cited) on $8\delta\times2\delta\times6\delta$
+  with 2, 4 and 8 elements per $\delta$: the mean velocity is within 1 % for
+  $y>0.1\delta$ on all three meshes, with no gain from the middle to the
+  finest; second-order statistics over-predict $\langle u'u'\rangle$ and
+  under-predict $\langle v'v'\rangle$, $\langle w'w'\rangle$ near the wall
+  and improve strongly only on the finest, from which they require "at
+  least 4 elements across the boundary layer in all three spatial
+  directions" (§III.B.1, Figs. 1–2; §IV.A); Gillyns et al. (2022, §8),
+  at $Re_\tau=1000$, call five wall-normal elements per half-height
+  "acceptable" and four "not sufficiently resolved". A zero-pressure-gradient flat-plate boundary
+  layer from $Re_\theta=790$ to about 6000 (inflow from a precursor
+  simulation) gives $C_f$ within 2 % of a wall-resolved LES on the finest
+  mesh and Reynolds stresses "on par with" published WMLES; its mean
+  velocity improves with spanwise refinement although the outer scales are
+  already resolved, which they note "would violate" the premise of WMLES
+  being independent of inner-scale resolution (§IV.B, Figs. 13–17). They
+  quote, for comparison, the 10–30 % velocity and 5–15 % wall-stress
+  deviations of Lozano-Durán & Bae (2023) on coarser meshes, matching that
+  source's own §4.3 (see [building-block-flow wall model](/methods/building-block-flow-wall-model.md)).
+  Mesh details are on the [grid-point requirements](/results/les-grid-point-requirements.md)
+  page.
 - **Learned wall models** (Bae & Koumoutsakos 2022): channel flow from
   $Re_\tau=5200$ to $10^6$ at $\Delta x=\Delta z=0.05\delta$, and a zero-pressure-gradient
   flat-plate boundary layer at $Re_\theta=1000$–7000; see
@@ -544,6 +655,9 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
   of their Table 5 ($\Delta y^+=30$–150, $\Delta x^+=100$–600,
   $\Delta z^+=100$–300); the maxima (66, 64; 300, 195) lie inside. The paper does not
   say whether the ranges are meant as upper limits only.
+- Locators of Mukha et al. (2025) refer to the arXiv v1 preprint read
+  (two authors; the Physics of Fluids version lists three). Their Fig. 10
+  legend labels the meshes M0–M2 where text and Table IV use M1–M3.
 - Locators of Blind et al. (2023) refer to the arXiv v1 preprint read
   (titled "Grid-Adaptation for Wall-Modeled Large Eddy Simulation Using
   Unstructured High-Order Methods"), not the Computers & Fluids version.
@@ -576,3 +690,4 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §3.3, Figs. 16–24, Table 3; conclusions (HAL accepted manuscript, lines 413–418, 510–515).
 - [Chen et al. (2024)](/sources/chen-2024.md) — §1; §2.3; §3.3.
 - [Constant et al. (2024)](/sources/constant-2024.md) — §7 (HAL author manuscript).
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — §II.B–II.D, Eqs. (7)–(14); §III.B–III.D, Tables II–IV, Figs. 1–10; §IV, Figs. 12–17; §V (arXiv v1).

@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:52:00Z
 ---
 
 # Equilibrium wall model
@@ -31,7 +31,7 @@ every wall-modelled source of this bundle:
 [Blind et al. (2023)](/sources/blind-2023.md),
 [Duan & Wang (2024)](/sources/duan-2024.md) and
 [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) (with hybrid RANS/LES
-rather than LES), and the wall law of the
+rather than LES), [Mukha et al. (2025)](/sources/mukha-2025.md), and the wall law of the
 fan-stage WMLES of [Lewis et al. (2023)](/sources/lewis-2023.md); it is the comparison
 baseline of the learned models of [Bae & Koumoutsakos (2022)](/sources/bae-2022.md)
 and of the [building-block-flow wall model](/methods/building-block-flow-wall-model.md)
@@ -129,7 +129,15 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 - **Spalding's law** (Blind et al. 2023, §3.3): an algebraic wall model in
   the DG spectral element code [FLEXI](/software/flexi.md), solved by
   Newton's method in every Runge–Kutta stage; formula and constants not
-  printed.
+  printed. Mukha et al. (2025, §II.C.1, §IV.A) use the same law in the
+  continuous spectral-element code [Nek5000](/software/nek5000.md), with
+  $\kappa=0.387$, $B=4.2$ for channel flow at $Re_\tau\approx8000$ and
+  $\kappa=0.41$ with $B=5.2$ (§IV.A) or 5.5 (App. A), a printed
+  inconsistency, for a flat-plate boundary layer; the stress is aligned with the sampled wall-parallel velocity, and
+  the matching height can be set per wall node, the velocity there being
+  obtained by spectral interpolation inside the element that contains it.
+  Their accuracy analysis of the law itself is on the
+  [law of the wall](/definitions/law-of-the-wall.md) page.
 - **Explicit inversion** (Cai et al. 2022, §II.C.1, Eqs. 24–26, from the
   authors' earlier work as they cite it): a fitted closed-form inverse
   $y^+(Re_y)$ of a tanh-blended viscous/log profile, with the Lambert $W$
@@ -201,6 +209,7 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | Vadrot et al. (2023a, §II.B.1) | LESGO, uniform $48^3$ half channel | first point, $\Delta y/2$ | filtered, after Yang et al. (2017) as cited |
 | Duan & Wang (2024, §4, Fig. 4) | hpMusic, flux reconstruction of degree $N=2$–5 | interface between the first and second elements, $h_{\mathrm{wm}}$ equal to the first element height; data from the second element | element-wise constant SGS viscosity (no wall-model filtering stated) |
 | Mozaffari et al. (2024, §2.2) | ProLB lattice Boltzmann, octree Cartesian grid, immersed boundary | reference point one local grid size along the normal from each boundary node | none stated |
+| Mukha et al. (2025, §II.C.1, §III–IV) | Nek5000, continuous spectral elements of degree 7 | channel: $0.2\delta$, inside the first element on meshes of 2 and 4 elements per $\delta$ and in the second on 8, if the elements are of equal height, as the stated node resolution of about $\delta/15$ "in all directions" on the coarsest mesh suggests *(compiler check, not in the sources)*; boundary layer: $0.2\delta_{99}(x)$, $\delta_{99}$ from a power-law estimate | none by default; exponential moving average of 5–500 time steps tested (channel), 10 time steps (boundary layer) |
 | Constant et al. (2024, §3.1, §4.2), RANS | FastS finite volume, octree Cartesian grid, immersed boundary | modelling height $H_{\mathrm{mod}}$ from a flat-plate estimate of a target $y^+$ (50–500), then lowered locally after a first converged run (see below) | steady RANS, no filtering |
 
 Gillyns et al. (2022, §5) find that without the moving average ($C_t=0$) the
@@ -214,6 +223,35 @@ time averaging". The matching height barely matters while it stays below
 $0.15\delta$: errors grow slightly from the lowest to the highest first
 element, so a first element ending near $y^+\simeq150$ "is not necessarily
 the best choice" (§7, Table 1).
+
+Mukha et al. (2025, §II.C.1, Eqs. 5–6) apply the same exponential filter in
+the same code: their weight $\Delta t/(\Delta t+\Delta t_{\mathrm{avrg}})$ is
+$\alpha_e$ with $C_t=\Delta t_{\mathrm{avrg}}$ *(compiler check, not in the
+sources)*. Their study separates a priori from a posteriori effects
+(§III.B.3, Tables II–III, Figs. 4–5):
+
+- **A priori**, feeding the wall model with the simulation's mean velocity
+  at $h_{\mathrm{wm}}$ (the limit of infinite averaging) changes the
+  mean-stress error from 0.71 %, 0.76 % and $-0.54$ % to 0.06 %, 0.2 % and
+  $-1.07$ % on their three channel meshes; fluctuations of the input shift
+  the stress error towards over-prediction (after Hultmark et al., as they
+  cite it). With recorded probe data, most of the reduction is obtained by
+  $\Delta t_{\mathrm{avrg}}=50\Delta t=0.01\,\delta/u_\tau$, where the mean
+  stress magnitude and the magnitude of the mean stress begin to coincide,
+  i.e. where the spanwise velocity is averaged out; this lies in the
+  inertial range of the temporal spectrum of $u'$ at $h_{\mathrm{wm}}$, far
+  below the diffusion time $h_{\mathrm{wm}}/(\kappa u_\tau)\approx0.51\,\delta/u_\tau$
+  that others recommend (as they cite it). The temporal stability of the
+  direction of the modelled stress is proposed as a criterion for choosing
+  $\Delta t_{\mathrm{avrg}}$ automatically.
+- **A posteriori**, runs with $\Delta t_{\mathrm{avrg}}=5$, 10, 50 and
+  $500\Delta t$ show "no systematic accuracy gain", because the velocity at
+  the sampling point itself changes with $\Delta t_{\mathrm{avrg}}$, which
+  violates the a priori assumption. For algebraic models they conclude that
+  $h_{\mathrm{wm}}$ matters more than $\Delta t_{\mathrm{avrg}}$, "at odds
+  with" Yang et al., as they cite them; for non-equilibrium RANS-based wall
+  models averaging may matter more. Running without averaging, they did not
+  see the divergence reported by Gillyns et al. (see Qualifications).
 
 The choice is tied to [log-layer mismatch](/definitions/log-layer-mismatch.md):
 matching away from the wall or filtering the input are the recalled remedies,
@@ -282,6 +320,14 @@ $\phi$ (page-local symbols). Two error classes follow:
   resilient to internal errors than to external errors"; but internal errors
   mean WMLES may not converge to DNS until the grid reaches wall resolution.
   Errors of the two kinds can also cancel and give a fortuitously good $u_\tau$.
+
+Mukha et al. (2025, §III.B.3, App. A, Fig. 19) observe the linear
+propagation directly for Spalding's law with relative input errors of about
+1–2 %: the mean-stress error is about twice the velocity-input error, and its
+slope against the input error is twice that of the $u_\tau$ error. Since
+$\tau_w=\rho_wu_\tau^2$, a relative error $e$ in $u_\tau$ gives $2e+e^2$ in
+$\tau_w$, which accounts for the factor two between the stress and $u_\tau$
+errors *(compiler check, not in the sources)*.
 
 Lozano-Durán & Bae (2023, §4) measure both classes a posteriori by
 replacing the SGS model with an "exact-for-the-mean" correction that removes
@@ -469,6 +515,37 @@ profile lies above the DNS).
 - Cai et al. (2022) never print the value of $\kappa$ used in their
   explicit model; the blend constants (180.8 and 0.789 for the inverse,
   10.71 and 1.526 for the forward profile) and $E=11.27$ are printed.
+- Mukha et al. (2025) print their filter, Eq. (5), with the same symbol for
+  the averaged and the instantaneous input on both sides; the reading above
+  (instantaneous sample on the right) is the only one consistent with their
+  weight $\epsilon$ *(compiler check, not in the sources)*. They print $t_{\mathrm{diff}}\approx0.51\,\delta/u_\tau$,
+  where $0.2/0.387=0.517$ rounds to 0.52 *(compiler check, not in the
+  sources)*. Their locators refer to the arXiv v1 preprint read, whose author
+  list (Mukha, Schlatter) lacks the third author of the Physics of Fluids
+  version.
+- **Time averaging of the wall-model input in Nek5000: two set-ups.**
+  [Gillyns et al. (2022)](/sources/gillyns-2022.md) (§5) report that their
+  algebraic wall model diverges without the moving average ($C_t=0$),
+  "most likely due to the Gibbs phenomenon at the element boundary", and
+  conclude that the law of the wall "still requires a minimal time
+  averaging" (channel at $Re_\tau=1000$ and 5200, Reichardt's law sampled at
+  the top node of the first element, $h_{\mathrm{wm}}=0.05\delta$–$0.15\delta$,
+  with Nek5000's approximate-deconvolution model, a high-pass relaxation
+  filter of weight 10, as SGS treatment).
+  [Mukha et al. (2025)](/sources/mukha-2025.md) (§II.C.1, §III.B.3) run their
+  own implementation in the same code with Spalding's law at
+  $h_{\mathrm{wm}}=0.2\delta$ and no averaging by default, on channel flow at
+  $Re_\tau\approx8000$ with the Vreman model, and state that they did not
+  see this divergence; their a posteriori averaging study finds no
+  systematic gain. They tie the difference to the set-up (§III.C): Gillyns
+  et al. filter only the highest mode with weight 10, settings Mukha et al.
+  find "more suitable for DNS", and the reported divergence "indicates the
+  need for stronger filtering"; when they test the filter as SGS model they
+  filter two modes with weight 100. Each statement concerns its own set-up
+  (wall law, sampling height, Reynolds number, SGS treatment), so the two
+  are not in conflict; the observations that would test one set-up against
+  the other are not in the sources. (Recorded as a contradiction during
+  chunk-6 compilation and reclassified at the deep lint.)
 
 # Citations
 
@@ -492,3 +569,4 @@ profile lies above the DNS).
 - [Duan & Wang (2024)](/sources/duan-2024.md) — §4, Fig. 4.
 - [Constant et al. (2024)](/sources/constant-2024.md) — §1; §3.1–3.2, Eqs. (5)–(11); §4.1–4.2, Figs. 10–11; §5.1–5.2, Figs. 12–15; §6.1, Figs. 18–25, Table 3; §6.3, Table 9; §7 (HAL author manuscript).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §2.2, Eqs. (9)–(15); §3.2; §3.3, Figs. 16–20 (HAL accepted manuscript).
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — §II.C.1, Eqs. (5)–(6); §III.A; §III.B.3, Tables II–III, Figs. 4–5; §III.C; §IV.A; App. A, Fig. 19 (arXiv v1).

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Local-correlation-based transition models"
-description: "RANS laminar–turbulent transition models that evaluate an empirical onset correlation with local variables and switch on the turbulence model through an intermittency; the γ-Reθ model and its separation correction, the one-equation γ model and its Reynolds-stress coupling, algebraic γ-alg-SST, hysteresis, low-Reynolds airfoils, cascades and mesh requirements."
+description: "RANS laminar–turbulent transition models that evaluate an empirical onset correlation with local variables and switch on the turbulence model through an intermittency; the γ-Reθ model and its separation correction, the one-equation γ model and its Reynolds-stress coupling, algebraic γ-alg-SST, coupling to delayed DES, hysteresis, low-Reynolds airfoils, cascades and mesh requirements."
 status: established
 aliases: [LCTM, γ-Reθ-SST, separation-induced transition correction, Suluksna–Juntasaro calibration, Langtry–Menter calibration, local correlation-based transition modelling, γ-Reθ model, gamma-Re-theta, γ-SST, one-equation γ model, γ-alg-SST, algebraic LCTM model, algebraic intermittency model]
 tags: [rans, transition, eddy-viscosity, boundary-layer, separated-flow]
-timestamp: 2026-10-26T10:25:00Z
+timestamp: 2026-10-26T15:42:00Z
 ---
 
 # Local-correlation-based transition models
@@ -319,6 +319,46 @@ compressor cascades it captures the mid-chord
 [laminar separation bubbles](/definitions/laminar-separation-bubble.md) that
 the fully turbulent models miss (Figs. 8–17).
 
+## Coupling to hybrid RANS/LES, and comparisons with scale-resolving simulation
+
+**Transitional DDES.** Möller et al. (2024) choose the one-equation
+$\gamma$ model of Menter et al. (2015) over $\gamma$-$Re_\theta$ for its lower
+cost and its Galilean-invariant formulation, and couple it to SST-based
+delayed DES: the intermittency multiplies the production of the modelled
+$k$, the DDES destruction is multiplied by $\max(0.1,\gamma)$ (the bound of
+the Reynolds-stress couplings above), and the model's extra production for
+separated shear layers, which the RANS model uses to accelerate
+separation-induced transition, is set to zero, since it "needs to be
+eliminated for a coupled DDES-$\gamma$ model", as their earlier paper
+showed ([Möller et al. (2024)](/sources/moller-2024.md), §II.B.2–3,
+Eqs. 23–25; accepted manuscript). On the V103 compressor cascade the
+coupled model captures the suction-side
+[laminar separation bubble](/definitions/laminar-separation-bubble.md) that
+fully turbulent DDES misses, while for the pressure-side bypass transition
+it reproduces RANS with the $\gamma$ model, not the DNS, unless resolved
+inflow turbulence and a low upwind fraction let the resolved scales carry
+the transition; on the ERCOFTAC T3C5 plate it is identical to RANS-$\gamma$
+(not shown) (§II.F, §III.B; details and the mode argument on the
+[DES page](/methods/detached-eddy-simulation.md); see
+[compressor cascades](/benchmarks/compressor-cascade.md)).
+
+**Transonic buffet.** In a URANS of the TCTA transonic compressor cascade
+(inlet $M=1.21$, $Re=1.35\times10^6$), Langtry–Menter $\gamma$-$Re_\theta$ on
+SST with Kato–Launder production predicts a mainly laminar suction side
+with a substantially lower $C_f$ than the implicit LES, in which the
+boundary layer ahead of the shock is driven by intermittent turbulence; the
+buffet frequency is captured but not its amplitude or the mean shock
+position ([Klose et al. (2025)](/sources/klose-2025.md), §2, §6, Fig. 7,
+Table 2; ASME accepted manuscript; see the
+[SST page](/methods/k-omega-sst-model.md)).
+
+**Dynamic stall.** SST with an intermittency transport equation (cited as
+Menter et al. 2004) agrees with a wall-resolved LES of a NACA 0012 pitching
+into deep dynamic stall within 0.1 in $C_L$ while the flow is attached, and
+gives the same peak-lift angle, $22^\circ$ against $24^\circ$ in the
+experiment ([Baldan & Guardone (2025)](/sources/baldan-2025.md), §1.2,
+§2.2, Fig. 9; arXiv v2; see [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+
 ## Laminar-kinetic-energy models as a sibling family
 
 The [laminar-kinetic-energy models](/methods/laminar-kinetic-energy-transition-model.md),
@@ -447,3 +487,6 @@ larger than $\delta$; wall-function meshes are unsuitable (§4, Figs. 26–28).
 - [Slaughter et al. (2023)](/sources/slaughter-2023.md) — §4.1, §5 (Research Square preprint v1).
 - [Liu et al. (2024)](/sources/liu-2024.md) — Introduction, Eqs. 10–21, Figs. 6, 8–17.
 - [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §4.2, §4.4 Eq. 21, §4.5, §5.1.1 Figs. 7–8.
+- [Möller et al. (2024)](/sources/moller-2024.md) — §II.B.2–3 Eqs. 23–25, §II.F, §III.B (accepted manuscript).
+- [Klose et al. (2025)](/sources/klose-2025.md) — §2, §6, Fig. 7, Table 2 (ASME accepted manuscript).
+- [Baldan & Guardone (2025)](/sources/baldan-2025.md) — §1.2, §2.2, Fig. 9 (arXiv v2).

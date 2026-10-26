@@ -5,7 +5,7 @@ description: "Spectral vanishing viscosity concentrates an added viscosity on th
 status: established
 aliases: [SVV, implicit SVV, ISVV, implicit spectral vanishing viscosity, spectral viscosity, SVV-LES, entropy-stable SVV, modal SVV filter]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg, entropy-stable]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T15:49:00Z
 ---
 
 # Spectral vanishing viscosity
@@ -25,7 +25,7 @@ use it in two different constructions:
   kernel that grows with the mode index.
 
 A third construction, a modal SVV term in continuous spectral/hp
-element codes (Karamanos & Karniadakis, as recalled), is used by
+element codes (Karamanos & Karniadakis, cited), is used by
 [Saini et al. (2023)](/sources/saini-2023.md) and
 [Slaughter et al. (2023)](/sources/slaughter-2023.md) in
 [Nektar++](/software/nektar-plus-plus.md) (section below).
@@ -51,7 +51,7 @@ with LES (SVV-LES; Kirby & Karniadakis; Pasquetti et al.).
 ## Implicit SVV (finite differences)
 
 In the form used by Vicente Cruz & Lamballais (2023, §5.1), after Lamballais
-et al. and Dairay et al. (as recalled), no term is added to the equations.
+et al. and Dairay et al. (cited), no term is added to the equations.
 Instead, the coefficients of the sixth-order compact second-derivative
 scheme of the viscous term are chosen so that its modified square
 wavenumber $k''_i(k_i)$ (page-local) exceeds $k_i^2$ near $k_c$ while the
@@ -69,7 +69,7 @@ it as [implicit LES](/definitions/implicit-les.md).
 
 ### Choosing $\nu_0$
 
-Following Dairay et al. (as recalled), $\nu_0$ is set by a Pao-like spectral
+Following Dairay et al. (cited), $\nu_0$ is set by a Pao-like spectral
 closure (§5.2, Eqs. 31–36). Pao's equilibrium $T(k)=\varepsilon(k)$ is
 written with the modified wavenumber, a Pao-type ODE is integrated for the
 kernel, and $\nu_0$ is chosen so that the LES spectrum at $k_c$ equals the
@@ -244,10 +244,10 @@ approach in the paper's introduction.
 
 **Form.** [Saini et al. (2023)](/sources/saini-2023.md) (§2.2, §2.3,
 Eqs. 6–8, 13–15) write the SVV term of Nektar++'s incompressible solver,
-after Karamanos & Karniadakis (as recalled), as
+after Karamanos & Karniadakis (cited), as
 $\epsilon_{\mathrm{svv}}\partial_j\big(Q\star\partial_j\bar u_i\big)$, with
 $Q\star$ a modal convolution and the amplitude and kernel of Moura et al.
-(as recalled),
+(cited),
 
 $$\epsilon_{\mathrm{svv}}=\epsilon_0\,U_l\,h/N,\qquad \hat Q(m)=(m/N)^{P_{\mathrm{SVV}}},\quad 0\le m\le N,$$
 
@@ -289,7 +289,7 @@ solver comes mainly from its lower numerical dissipation, with the closure
 **SVV in one direction, gradient-jump penalty in the others.**
 Slaughter et al. (2023) (§3.1, §3.6, Fig. 5) run a Fourier spectral/hp
 implicit LES of a multi-element wing with polynomial degree 6, using SVV
-with an exponential kernel (after Karniadakis & Sherwin, as recalled) only
+with an exponential kernel (after Karniadakis & Sherwin, cited) only
 in the Fourier direction, active on modes above the product of a cut-off
 ratio and the polynomial order (ratio not printed), and the gradient-jump
 penalty of Moura et al. in the plane. Relaying Moura et al., they state
@@ -342,7 +342,7 @@ simulation of turbulent and supersonic flows", citing the group's work.
   [Wang (2024)](/sources/wang-2024-b.md) stabilizes a DG-recovering
   [flux-reconstruction](/methods/flux-reconstruction.md) implicit LES of
   turbine cascades with the exponential modal filter of Hesthaven &
-  Warburton (as recalled), with modal weights
+  Warburton (cited), with modal weights
   $\exp\{-\alpha_f[(\vartheta_m-\vartheta_c)/(1-\vartheta_c)]^{s_f}\}$
   above a cutoff $\vartheta_c$ of the normalized mode index $\vartheta_m$
   ($\alpha_f=36$, $s_f=6$; all page-local, as on the subcell
@@ -360,6 +360,31 @@ simulation of turbulent and supersonic flows", citing the group's work.
   [subcell finite-volume shock-capturing](/methods/subcell-finite-volume-shock-capturing.md)
   and [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)
   pages.
+- **Modal relaxation filter in continuous spectral elements.**
+  [Mukha et al. (2025)](/sources/mukha-2025.md) (§II.A, §III.C, Fig. 8) use
+  the high-pass relaxation term of [Nek5000](/software/nek5000.md) as an
+  implicit subgrid model in
+  [wall-modelled LES](/methods/wall-modelled-les.md). The term is a
+  momentum source $\chi(\boldsymbol u-\boldsymbol u_{\mathrm{lp}})$, with
+  $\boldsymbol u_{\mathrm{lp}}$ the velocity low-pass filtered in each
+  element's Legendre modal expansion and $\chi$ a constant (both
+  page-local; the source writes $\tilde u$). Following Gillyns et al., they
+  filter the two highest modes with $\chi=100$. Like SVV it acts only on
+  the highest modes *(compiler check, not in the sources)*.
+  - On the finest channel mesh at $Re_\tau\approx8000$ ($N=7$) the filter
+    gives more near-wall oscillations and core velocity variance than the
+    [Vreman](/methods/vreman-model.md) model, and it over-predicts
+    $\langle u'u'\rangle$.
+  - The wall stress computed from the mean wall gradient then misses the
+    modelled stress by −84.85%.
+  - The authors conclude that filtering alone "does not introduce enough
+    damping to avoid the contamination of the solution with numerical
+    artifacts".
+  - Mukha et al. also cite (§I, §III.B.3) Huang et al., who ran
+    wall-modelled LES with spectral vanishing viscosity and polynomial
+    refinement in a spectral/hp-element code and found no significant
+    effect of time-averaging the wall-model input; Mukha et al. state that
+    this agrees with their a posteriori result.
 
 ## Qualifications
 
@@ -398,3 +423,4 @@ simulation of turbulent and supersonic flows", citing the group's work.
 - [Slaughter et al. (2023)](/sources/slaughter-2023.md) — §3.1; §3.6, Fig. 5.
 - [Kou et al. (2023)](/sources/kou-2023.md) — §1.
 - [Wang (2024)](/sources/wang-2024-b.md) — §2.3, Eqs. (17)–(19); §5.
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §I; §II.A, Eq. (4); §III.B.3; §III.C, Fig. 8.

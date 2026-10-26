@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Backward-facing step"
-description: "Turbulent flow over a sudden channel expansion, with fixed separation at the step edge, a free shear layer and downstream reattachment: the reattachment length as a measure of LES filter widths at Re_H about 5700, of adaptive IDDES meshes at 28,000, of a transferred learned RANS closure at 5000, and of a probabilistic learned closure at 300–1100."
+description: "Turbulent flow over a sudden channel expansion with fixed separation at the step edge and downstream reattachment: the reattachment length measures LES filter widths at Re_H about 5700, adaptive IDDES meshes at 28,000 and learned RANS closures at 300 to 5000, and the curved-step variant at 13,700 trains corrected SST models."
 status: established
-aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step]
-tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification]
-timestamp: 2026-10-26T10:26:00Z
+aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step, curved backward-facing step, CBFS]
+tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification, field-inversion]
+timestamp: 2026-10-26T15:57:00Z
 ---
 
 # Backward-facing step
@@ -146,6 +146,48 @@ learned closure is trained and tested in the same geometry at different
 Reynolds numbers, because its discrepancy field is tied to the grid and
 geometry (§2.2.3, §2.2.5).
 
+**The curved backward-facing step as training data.** Two sources use
+the curved variant (CBFS), a step of height $H$ with a curved surface, at
+$Re_H=13{,}700$ (on the step height and the inlet centre-channel velocity,
+[Oulghelou et al. (2025)](/sources/oulghelou-2025.md)), with the wall-resolved LES of Bentaleb et al. as reference, to
+train corrections of the [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md)
+in OpenFOAM:
+
+- [Wu et al. (2025)](/sources/wu-2025.md), §3.1.1 and §3.3.1, run
+  [field inversion](/methods/field-inversion-machine-learning.md) of a
+  multiplier $\beta(\boldsymbol x)$ of the $\omega$-destruction term against the
+  LES streamwise velocity at 30 random points in the separation region
+  ($H=1$ m, inlet centre velocity 1 m/s). Classic inversion lowers the
+  objective by 88.3% and the conditioned inversion, whose correction is
+  switched off in attached boundary layers by the DDES shielding function,
+  by 74.7% (Fig. 4); the classic one also raises $\beta$ in the attached
+  layer upstream of the step, the conditioned one only in the separated
+  shear layer (Fig. 7); both inversions fix the separation zone that SST
+  overpredicts (Fig. 5). Baseline SST reattaches at $x=6.0$ (Fig. 15);
+  both [symbolic-regression](/methods/symbolic-regression-closure.md)
+  models trained on the inversion data improve the reattachment and $C_f$
+  in the reattachment region (Figs. 15–17). No LES reattachment value is
+  printed.
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (arXiv v2), §4.2.3,
+  use the CBFS (grid $140\times150$; at $x=-7.34H$, $Re_\theta\approx1190$
+  and $\delta\approx0.8H$) as one of the three training flows of a
+  separated-flow expert correction and of a learned
+  [blend of expert models](/methods/turbulence-model-aggregation.md).
+  Separation and reattachment, in $x/H$ (Table 6):
+
+| Model | separation | reattachment | bubble length |
+|---|---|---|---|
+| LES (Bentaleb et al.) | 0.81 | 4.36 | 3.55 |
+| SST | 1.06 | 4.65 | 3.59 |
+| separated-flow expert | 1.33 | 3.84 | 2.51 |
+| jet expert | 0.81 | 6.33 | 5.52 |
+| blend | 1.08 | 4.52 | 3.44 |
+
+  Here baseline SST already gives the bubble length within 0.04$H$ and the
+  lowest $C_f$ error ($4.83\times10^{-4}$ against $5.05\times10^{-4}$ for
+  the blend, Table 7); the separated-flow expert, trained partly on this
+  flow, gives a bubble $1.04H$ shorter than the LES.
+
 **RANS corrections.** As recalled by
 [Yan et al. (2022)](/sources/yan-2022.md), §1, Rumsey found that enhancing
 the mixing in the separated shear layer of the $k$-$\omega$ SST model
@@ -166,6 +208,14 @@ step showed a high level of uncertainty when applied to the periodic hill.
   the second, $2.00\times10^{-3}$, corresponds to the test case $Re_H=500$
   *(compiler check, not in the sources)*.
 
+- On the CBFS the two sources print different baseline SST reattachment
+  points: $x=6.0$ ([Wu et al. (2025)](/sources/wu-2025.md), Fig. 15, with
+  $H=1$ m) against $x/H=4.65$
+  ([Oulghelou et al. (2025)](/sources/oulghelou-2025.md), Table 6), at the
+  same $Re_H$ and against the same LES. Neither paper states the origin of
+  $x$ in a way that lets the two be compared, so the difference is recorded
+  here, not as a contradiction. Wu et al. call the SST separation
+  overpredicted; Oulghelou et al. find SST nearly exact in bubble length.
 - The two configurations differ in expansion ratio (1.5 against 1.25),
   Reynolds number ($Re_H\approx5700$ against 28,000), inflow and modelling
   level (wall-resolved LES against IDDES), so their reattachment errors are
@@ -200,3 +250,5 @@ step showed a high level of uncertainty when applied to the periodic hill.
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3 (recalled result).
 - [Tang et al. (2023)](/sources/tang-2023.md) — §III A, §III D, Table I, Fig. 16.
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — §2.2.3, §2.2.5; §3.1–3.4, Tables 2–5, Figs. 4–12.
+- [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §3.1.1, Eq. 18, Figs. 3–7; §3.3.1, Figs. 15–18.
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §4.1; §4.2.3, Tables 5–7, Figs. 7–9.

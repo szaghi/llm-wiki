@@ -5,7 +5,7 @@ description: "STREAmS is an open-source multi-GPU finite-difference solver for c
 status: established
 aliases: [STREAmS-2.0, STREAMS]
 tags: [software, gpu, dns, compressible, implicit-les, immersed-boundary]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-26T11:08:00Z
 ---
 
 # STREAmS
@@ -68,6 +68,11 @@ performance figures of the code.
 
 ## Qualifications
 
+- [Kurz et al. (2025)](/sources/kurz-2025.md), §1, describe STREAmS (citing
+  both releases) as a solver of "high-order finite difference methods with
+  WENO-type shock capturing", contrasting it with DG and flux
+  reconstruction codes. The description agrees with Cogo et al. and Placco
+  et al. and adds no figures.
 - The two sources describe the convective discretization differently
   (energy-preserving central plus Ducros-switched WENO; fifth-order WENO
   only). Whether the central part was active in the capsule runs is not
@@ -77,3 +82,4 @@ performance figures of the code.
 
 - [Cogo et al. (2022)](/sources/cogo-2022.md) — §2, Table 1 (STREAmS numerics, CUDA Fortran, boundary-layer DNS set-up).
 - [Placco et al. (2023)](/sources/placco-2023.md) — §2 (STREAmS and STREAmS-2.0, WENO, central viscous terms, Wray Runge–Kutta, ghost-point immersed boundary, implicit LES); §3, Table 1 (grid, 32 GPUs); §4, Table 3, Fig. 11.
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §1 (STREAmS as a high-order finite-difference WENO code).

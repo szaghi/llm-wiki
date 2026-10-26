@@ -3,9 +3,9 @@ type: Method
 title: "WENO and hybrid shock-capturing schemes in scale-resolving simulation"
 description: "WENO schemes capture shocks by nonlinear weighting of candidate stencils; in DNS and LES of compressible turbulence their dissipation is reduced by optimized weights and limiters, by linear weights in smooth flow, or by hybrids that apply WENO only where a shock sensor fires, and in implicit LES it serves as the subgrid dissipation."
 status: established
-aliases: [WENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-SYMBO, HWENO, Hermite WENO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme]
-tags: [numerical-dissipation, dns, compressible, implicit-les, gpu]
-timestamp: 2026-10-26T10:03:00Z
+aliases: [WENO, TENO, targeted ENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-SYMBO, HWENO, Hermite WENO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme]
+tags: [shock-capturing, numerical-dissipation, dns, compressible, implicit-les, gpu]
+timestamp: 2026-10-26T15:48:00Z
 ---
 
 # WENO and hybrid shock-capturing schemes in scale-resolving simulation
@@ -39,6 +39,9 @@ in turbulence (see [numerical dissipation](/properties/numerical-dissipation.md)
 | Fifth-order WENO (Jiang–Shu and WENO-Z cited), dimension by dimension | reconstruction kernel of the single- and multi-GPU gas-kinetic DNS code | [Wang et al. (2023b)](/sources/wang-2023-b.md), §2, §3.1 |
 | Ducros-sensor hybrid of the KGP split form and an HLLC upwind flux (WENO hybridization cited in §1 as a stabilization of divergence-form schemes) | comparison scheme for density-wave advection in real-gas flow | [Bernades et al. (2023)](/sources/bernades-2023.md), §1, §4.1.1 |
 | Fifth-order WENO (Jiang–Shu) and third-order MUSCL | comparison schemes in the inviscid Taylor–Green time-reversal test, against a second-order kinetic-energy-preserving scheme and an optimized sixth-order linear upwind scheme | [Wang et al. (2024)](/sources/wang-2024.md), §3.1 |
+| Sixth-order TENO (targeted ENO, cutoff $C_T=10^{-6}$, local Lax–Friedrichs splitting) | OpenSBLI reference and test solver of the supersonic Taylor–Green vortex, up to $2048^3$ | [Chapelier et al. (2024)](/sources/chapelier-2024.md), §II.C, §III.B.c |
+| Eighth-order kinetic-energy- and entropy-preserving central scheme blended with a third-order upwind/WENO flux by a linear homotopy in the Ducros sensor | SPADE, same comparison | Chapelier et al. (2024), §III.B.b, h |
+| Fifth-order WENO of the Jacobian and Jacobian-weighted conservative variables in computational space | curvilinear gas-kinetic scheme used as implicit LES of a compressible channel and a periodic hill | [Cao et al. (2024)](/sources/cao-2024.md), §2.3 |
 
 The upwind schemes act on split fluxes or on characteristic variables.
 [OpenCFD-SCU](/software/opencfd-scu.md) splits the flux with Steger–Warming
@@ -132,6 +135,14 @@ initial shear layer of a supersonic base flow, compared with the Jameson
 sensor alone; in that comparison the dissipation coefficient and the face
 extrapolation change too (Table 1).
 
+**Homotopy hybrid (SPADE).** In Chapelier et al. (2024, §III.B.b) the
+central kinetic-energy- and entropy-preserving scheme of Kuya et al. and
+Totani et al. (order 8 in their runs; orders 2 to 8 available) and a
+third-order upwind reconstruction are combined by a linear homotopy whose
+parameter is the Ducros sensor, which tends to 0 where the vorticity
+magnitude dominates the dilatation and to 1 otherwise (§III.B.h). No
+subgrid model is used.
+
 Dang et al. (2022, §1) add that for Mach numbers "generally exceeding 6" a
 dissipative scheme is usually introduced for robustness at strong shocks.
 
@@ -144,6 +155,40 @@ Ducros sensor dissipates the density wave at a slightly lower rate than pure
 HLLC, the sensor being "mostly activated by the oscillations" of the
 non-pressure-equilibrium-preserving central scheme (see
 [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)).
+
+## TENO and hybrids against element methods: the supersonic Taylor–Green vortex
+
+[Chapelier et al. (2024)](/sources/chapelier-2024.md) compare seven
+high-order solvers, all without subgrid model, on the supersonic
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) ($Re=1600$,
+$M_0=1.25$) at $64^3$ to $512^3$ degrees of freedom. Targeted ENO (TENO, Fu,
+Hu & Adams 2016, as recalled) is described as an ENO-family scheme with a
+staggered stencil layout and a "strong scale-separation procedure", giving
+"considerably lower numerical dissipation" than ENO and WENO with robust
+shock capturing (§II.C; no TENO formula printed); its cutoff
+$C_T=10^{-6}$ is chosen as "a good balance between low numerical
+dissipation and robust shock-capturing" (§III.B.c).
+
+- **Reference.** OpenSBLI with sixth-order TENO is run from $64^3$ to
+  $2048^3$: the kinetic energy converges at $128^3$, the solenoidal
+  dissipation needs $512^3$, and the first peak of the dilatational
+  dissipation is not converged even at $2048^3$, since the shocks sharpen
+  until molecular viscosity smooths them (§II.C, Figs. 2–4). The $2048^3$ run
+  cost 1.96 million core hours (see
+  [DNS](/definitions/direct-numerical-simulation.md)).
+- **Shocks.** TENO gives sharp and oscillation-free shocks at all
+  resolutions, the only order-lowering approach to do so; the hybrid SPADE
+  is among the solvers with the lowest dilatational dissipation, i.e. the
+  strongest shock capturing (§IV.A–B, Figs. 6, 8; §V).
+- **Turbulence.** At $64^3$ OpenSBLI under-predicts the early kinetic energy,
+  attributed with the DG and spectral-difference codes to the dissipation of
+  Riemann-type fluxes, while SPADE, a central scheme without dissipation in
+  smooth flow, is accurate up to $t\approx12$ and slightly too energetic
+  afterwards (pile-up near the cut-off, no subgrid closure). OpenSBLI's
+  solenoidal dissipation is low on coarse grids but converges well; the
+  conclusions state that finite differences with local scheme switching and
+  high-order TENO "yield more small-scale dissipation" than DG, spectral
+  difference, DGSEM or filtered compact differences (§IV.A, Figs. 5, 7; §V).
 
 ## Cost on GPUs
 
@@ -180,7 +225,21 @@ profiled; Tables 2–3).
   bundle compares two WENO variants on the same turbulent flow. Wang et
   al. (2024) compare WENO5 with other schemes only in the inviscid
   time-reversal test, which measures energy loss, not accuracy in
-  turbulence.
+  turbulence. Chapelier et al. (2024) compare one TENO scheme and one
+  central/upwind hybrid with element methods on one turbulent flow, not
+  two WENO variants.
+- **Low dissipation of TENO.** Chapelier et al. (2024) recall that TENO has
+  "considerably lower numerical dissipation" than WENO (§II.C) and find, in
+  their own comparison, that TENO yields "more small-scale dissipation" than
+  the element methods and lower solenoidal dissipation on coarse grids
+  (§IV.A, §V). The two statements compare TENO with different schemes, so
+  they do not conflict.
+- Chapelier et al.'s conclusions group SPADE with the "sharp but
+  oscillating" order-lowering schemes, while their §IV.A ranks it among the
+  strongest shock-capturing solvers and §IV.B does not describe its Mach
+  profiles. The Mach-profile reference of their Fig. 8 is labelled
+  "TENO6 512", while the text and Figs. 5–7 use the $2048^3$ run. The version
+  read is the HAL accepted manuscript.
 
 # Citations
 
@@ -195,3 +254,5 @@ profiled; Tables 2–3).
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — arXiv v1: §2 (fifth-order WENO in the gas-kinetic scheme); §3.1 (GPU kernels); §4.1, Tables 2–3 (memory-bandwidth-bound speedup).
 - [Bernades et al. (2023)](/sources/bernades-2023.md) — §1 (upwind and WENO hybridization of divergence-form schemes); §3.2, §4.1.1, Fig. 1 (Ducros-sensor hybrid of KGP and HLLC).
 - [Wang et al. (2024)](/sources/wang-2024.md) — §3.1, Eq. (14), Fig. 2 (inviscid Taylor–Green time reversal: KGP2, OPT6, MUSCL3, WENO5); §5.
+- [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL hal-04582857v1: §II.C, Figs. 2–4 (TENO reference and convergence); §III.B.b, c, h (SPADE homotopy hybrid, OpenSBLI TENO, Ducros sensor); §IV.A–B, Figs. 5–8; §V.
+- [Cao et al. (2024)](/sources/cao-2024.md) — arXiv 2107.08609v1: §2.3 (WENO in computational space on curvilinear meshes).

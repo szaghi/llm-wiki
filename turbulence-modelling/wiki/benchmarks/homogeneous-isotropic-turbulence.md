@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Homogeneous isotropic turbulence (decaying and forced)"
-description: "Turbulence in a triply periodic box, decaying (including Comte-Bellot–Corrsin grid turbulence) or forced: a priori and a posteriori test of subgrid closures, learned, ensemble-calibrated and autonomous ones included, of filter widths for high-order LES and of scheme dissipation, DNS up to supersonic turbulent Mach numbers, and driven MHD turbulence."
+description: "Turbulence in a triply periodic box, decaying or forced: a priori and a posteriori test of subgrid closures, learned closures and neural-operator surrogates, of filter widths and scheme dissipation, DNS up to Taylor-scale Reynolds number 2500 on 32768^3 points, supersonic isothermal and compressible runs, and driven MHD turbulence with and without bulk viscosity."
 status: established
-aliases: [HIT, DHIT, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation]
+aliases: [HIT, DHIT, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation, supersonic isothermal turbulence, driven supersonic turbulence, exascale DNS of isotropic turbulence]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:53:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -47,6 +47,11 @@ notation registry.)
 | [Domaradzki (2024)](/sources/domaradzki-2024.md), §3.1–3.3, Table 1 | forced | nominal $1.2\times10^4$ to $1.6\times10^4$ ($\nu=2.5\times10^{-7}$) | none: inertial-range theory ($k^{-5/3}$, Kolmogorov constant 1.4–2.1) is the reference | de-aliased pseudo-spectral LES, $64^3$ and $32^3$, Gaussian or top-hat filter of width $2\Delta x$ | $k^{-5/3}$ or pulse initial spectrum, random phases, 50–100 precursor DNS steps; forcing of Sullivan, Mahalingam & Kerr at $k=3$; about 10 large-eddy turnover times |
 | [Domaradzki (2024)](/sources/domaradzki-2024.md), §3.1–3.2, Table 2 | decaying (grid turbulence of Comte-Bellot & Corrsin) | measured 71.6, 65.3, 60.7 at $tU_0/M_g=42$, 98, 171 | experiment | de-aliased pseudo-spectral LES, $64^3$, $k_c=30$ | initialised from the measured spectrum at $tU_0/M_g=42$ |
 | [Duan & Wang (2024)](/sources/duan-2024.md), §5.2 | decaying (grid turbulence of Comte-Bellot & Corrsin) | not given; $U_0M_g/\nu=34{,}000$ | experiment, spectra at $tU_0/M_g=42$, 98, 171 | flux reconstruction, $32^3$ cells, $N=2$ to 5 | box of $11M_g$; field matched to the measured spectrum at $tU_0/M_g=42$ (method of Kwak et al.) |
+| [Li et al. (2024)](/sources/li-2024.md), §V A, Table I | forced | about 100 (training); 160, 250 (extrapolation) | pseudo-spectral, $256^3$, 2/3 de-aliasing, $\nu=0.00625$; 100 fields × 600 time nodes | sharp spectral filter $k_c=21$, $64^3$; LES with dynamic Smagorinsky and dynamic mixed models | large-scale forcing; LES forced at the two lowest wavenumbers like the filtered DNS |
+| [Zhao et al. (2025)](/sources/zhao-2025.md), §3.1, Table 1 | decaying (from a forced state) | about 60 | pseudo-spectral, $128^3$, 2/3 de-aliasing, $\nu=0.015625$; 5000 training cases | sharp spectral filter $k_c=10$, $32^3$; Smagorinsky LES with $C_s=0.1$ | spectrum $\propto k^4\exp[-2(k/k_0)^2]$, forced in the first two shells for 10,000 steps, then released for 5000 steps |
+| [Yeung et al. (2025)](/sources/yeung-2025.md), §2, Table 1 | forced | about 390, 650, 1000, 1600, 2500 | pseudo-spectral on GPUs, $2048^3$ to $32\,768^3$, single precision, final $k_{\max}\eta\approx2.8$ | DNS only | constant energy in the first three shells ($k<2.5$), after Donzis & Yeung |
+| [Cernetic et al. (2024)](/sources/cernetic-2024.md), §4–§6, Table 1 | forced, isothermal, supersonic | not given; rms Mach 0.1 to 12.8 | none | no explicit model: modal DG ($N=1$, 2) and second-order finite volumes, $256^3$; $512^3$ and $1024^3$ at Mach 3.2 | solenoidal Ornstein–Uhlenbeck forcing at $k\in[2\pi,4\pi]$ ($L=1$) |
+| [Beattie et al. (2025)](/sources/beattie-2025.md), §4, Table 1 | forced, isothermal MHD with explicit bulk viscosity | not given; $Re=Rm=1000$ on half the box, $M_t\approx1$ | none | DNS-type, finite volumes, $128^3$ to $1024^3$ | Ornstein–Uhlenbeck forcing at $kL/2\pi=2$, 2:1 solenoidal to compressive; seed magnetic energy $10^{-10}\rho_0c_s^2$ ($\rho_0$ mean density, $c_s$ sound speed) |
 
 The beck-2023 DNS used 16,384 cores of the HAWK system for almost two hours
 (about 30,000 CPU hours). [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md)
@@ -200,6 +205,94 @@ earlier work. The authors state that compact finite differences are limited
 to $M_t\le0.8$ and that spectral and lattice Boltzmann methods fail to capture
 shocklets (§1, §3.4).
 
+**Small-scale statistics at record Reynolds number.**
+[Yeung et al. (2025)](/sources/yeung-2025.md) reach $Re_\lambda\approx2500$
+on a $32\,768^3$ grid with a GPU Fourier pseudo-spectral code on the Frontier
+exascale machine (13 s per step on 44% of it). A long run at that size being
+unaffordable, they use
+[multi-resolution independent simulations](/methods/multi-resolution-independent-simulations.md):
+a long run at $k_{\max}\eta\approx1.4$ and Courant number 0.6, a short one
+at halved time step, and a short one at halved grid spacing
+($k_{\max}\eta\approx2.8$), each of a few Kolmogorov times, averaged over
+three or four independent segments; the Reynolds number is raised by
+lowering $\nu\propto N_x^{-4/3}$ at fixed forcing, so that
+$Re_\lambda\propto N_x^{2/3}$ (§2.2, Table 1). Findings (§3–§4, Figs. 2–6):
+
+- **Dissipative anomaly.** The normalized dissipation
+  $C_\varepsilon=\langle\varepsilon\rangle L/u'^3$ (page-local; $L$ the
+  longitudinal integral scale, $u'$ the rms of one component) has a weak
+  trend up to $Re_\lambda\approx1500$ and then stays at a constant "slightly
+  larger than 0.4": the zeroth law holds beyond $Re_\lambda=2500$. The
+  classical scalings $Re_L=C_\varepsilon Re_\lambda^2/15$,
+  $L/\eta\propto Re_\lambda^{3/2}$ and a turnover time over $\tau_\eta$
+  proportional to $Re_\lambda$ hold. The authors note that these
+  conclusions "would differ" without the two highest Reynolds numbers (§5).
+- **No inertial plateau.** The compensated spectrum
+  $E(k)\langle\varepsilon\rangle^{-2/3}k^{5/3}$ has no plateau: the slope is
+  steeper than $-5/3$ (an intermittency correction), and a
+  [bottleneck](/definitions/bottleneck-effect.md) peaks at
+  $k\eta\approx0.1$–0.2, just below the peak of the dissipation spectrum
+  $k^2E(k)$, weaker in the one-dimensional spectrum than in $E(k)$ (§3,
+  Fig. 3).
+- **Intermittency of dissipation and enstrophy.** Very low and very high
+  values of enstrophy are both more probable than those of dissipation. The
+  left tails of the PDFs follow chi-square laws of order 3 (enstrophy) and 5
+  (dissipation), so that the enstrophy PDF goes as the cube root of the
+  dissipation PDF at small arguments, a kinematic result holding at
+  $Re_\lambda=390$ and 2500 (Eq. 4.1); the right tails are stretched
+  exponentials with about equal exponents; normalized moments of orders 2
+  to 4 are larger for enstrophy, but their ratio is nearly independent of
+  $Re_\lambda$, which the authors call consistent with the argument of
+  Nelkin (1999) (§4, Eq. 4.2, Fig. 6).
+- **Data.** One $32\,768^3$ snapshot (velocity and pressure, about half a
+  petabyte) is in the Johns Hopkins Turbulence Database (§2.2).
+
+See [direct numerical simulation](/definitions/direct-numerical-simulation.md).
+
+**Supersonic isothermal turbulence.**
+[Cernetic et al. (2024)](/sources/cernetic-2024.md) drive isothermal
+turbulence from Mach 0.1 to 12.8 with no explicit viscosity, comparing a
+GPU modal DG code with a second-order finite-volume scheme. All schemes
+reproduce the change of spectrum from $k^{-5/3}$ to $k^{-2}$ with
+increasing Mach number; DG extends the resolved range in the subsonic runs,
+with a more pronounced bottleneck at $N=2$, but the gain "nearly
+disappears" in the supersonic ones; density PDFs are nearly
+scheme-independent at $256^3$ (§5, Figs. 5–7). At Mach 3.2 and $1024^3$,
+DG resolves the sonic scale $l_s=L_{\mathrm{inj}}/M^2$ (page-local, Eq. 22)
+where the finite-volume run does not (§6). Turbulence is fully developed only
+after two turnover times, and statistics are averaged over three to eight
+(§4.2, Fig. 9). Detail on
+[shock-generated turbulence](/results/shock-generated-turbulence.md).
+[Chapelier et al. (2024)](/sources/chapelier-2024.md), §I, name compressible
+isotropic turbulence with shocklets as the flow closest to the late stages
+of the supersonic [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md).
+
+**Neural-operator surrogates of LES.** Two sources from one group replace the
+LES solver by a network that advances the filtered field, tested a posteriori
+against filtered DNS (see [neural-operator LES surrogates](/methods/neural-operator-les-surrogate.md)):
+
+- [Li et al. (2024)](/sources/li-2024.md) (read in arXiv v2), §V A: in forced
+  HIT at $Re_\lambda\approx100$ a transformer-based neural operator is
+  comparable to dynamic Smagorinsky and better than a Fourier neural
+  operator and the dynamic mixed model. Its spectrum is closer to filtered
+  DNS than dynamic Smagorinsky for $3\le k\le17$ and less close for
+  $k\ge18$; the dynamic mixed model under-predicts low and "significantly
+  overestimates" high wavenumbers; velocity-increment PDFs stay consistent
+  with filtered DNS where both dynamic models deviate (Figs. 6–10). Per time
+  node it costs 12.48 CPU s or 1.021 GPU s against 105.6 and 166.4 CPU s for
+  the two LES (Table I). Applied without retraining at $Re_\lambda\approx160$
+  and 250, it gives better structure functions and increment PDFs than both
+  dynamic models but a worse spectrum than dynamic Smagorinsky (Figs. 12–13).
+- [Zhao et al. (2025)](/sources/zhao-2025.md) (read in arXiv v3), §3.1: in
+  decaying HIT at $Re_\lambda\approx60$ a physics-informed neural operator
+  trained only on the residual of the Smagorinsky-closed filtered equations
+  stays stable and close to Smagorinsky LES over five turnover times, while a
+  data-driven Fourier neural operator, best in test loss, deviates
+  significantly after about two (Figs. 6–8); inference is about 30 times faster than the LES
+  (Table 5). Learning the coefficient from one trajectory recovers
+  $C_s\approx0.1$ from Smagorinsky-LES data and gives about 0.19 from
+  filtered DNS, with comparable a posteriori results (§4).
+
 **Driven MHD turbulence and the small-scale dynamo.**
 [Seta & Federrath (2022)](/sources/seta-2022.md) drive turbulence in a
 triply periodic box with heating and cooling, so that the gas splits into a
@@ -216,7 +309,14 @@ explain the equal growth rates through a vorticity budget (§4.2). As
 recalled by [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md),
 turbulent-box simulations of this kind (Balsara et al.; Federrath;
 Schekochihin et al.) are the reference for the growth rates and the
-resolution scaling expected of the dynamo in galaxy simulations. See
+resolution scaling expected of the dynamo in galaxy simulations.
+[Beattie et al. (2025)](/sources/beattie-2025.md) add an explicit
+[bulk viscosity](/definitions/bulk-viscosity.md) to a forced trans-sonic
+isothermal MHD box ($Re=Rm=1000$): without it the compressive velocity modes
+pile up at high wavenumber, and the authors call such shear-viscous runs
+"an implicit large eddy simulation for the compressible modes" (§6, §9.1);
+growth rate and saturation of the dynamo barely change until the bulk
+viscosity acts on the turnover time scale (§5). See
 [small-scale dynamo](/results/small-scale-dynamo.md).
 
 **A priori structure of the subgrid flux.**
@@ -415,7 +515,10 @@ DES constant $C_{DES}=0.65$ is calibrated on decaying homogeneous turbulence
 (see [detached-eddy simulation](/methods/detached-eddy-simulation.md)), the
 value with which [Carlsson et al. (2023)](/sources/carlsson-2023.md)
 reproduce the Comte-Bellot–Corrsin decay once the scheme's dissipation is
-low enough. As
+low enough; [Möller et al. (2024)](/sources/moller-2024.md), §II.B.1, state
+that they verified the same value in their TRACE implementation of
+shear-stress-transport DDES on decaying isotropic turbulence (results not
+shown). As
 recalled by [Pereira et al. (2021)](/sources/pereira-2021.md), §III, Fig. 4,
 from the authors' companion paper, explicit filtering of forced HIT DNS of
 Silva et al. at $Re_\lambda=140$ and 300 supports setting the dissipation
@@ -508,11 +611,36 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
   $-0.02x>0$, a non-monotone function, whereas $\max[0.02x,x]$ has slope
   0.02 for negative arguments *(compiler check, not in the sources)*; the
   paper does not say which form the code uses.
+- [Reddy et al. (2026)](/sources/reddy-2026.md) (read in a 2021 preprint)
+  label their Taylor–Green vortex runs "homogenous, isotropic turbulence"
+  (abstract, §1, §9); the case is recorded on
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), not here.
+- [Cernetic et al. (2024)](/sources/cernetic-2024.md) state that doubling
+  the Mach number needs a tripled driving strength, while their Eq. (32),
+  $M\propto E_{\mathrm{inj}}^{1/3}$, gives a factor 8 *(compiler check, not
+  in the sources)*; realized Mach numbers "fall slightly short" of the
+  intended doubling above Mach 1 (§5). They print the density-weighted Mach
+  number with $c_s$ not squared next to an equivalent form with $c_s^2$
+  (§4.1).
+- [Li et al. (2024)](/sources/li-2024.md) define $Re_\lambda$ with the rms of
+  the velocity magnitude divided by $\sqrt3$ (Eq. 3), equivalent to the
+  one-component form, and do not say how the $Re_\lambda\approx160$ and 250
+  data were generated.
+- [Yeung et al. (2025)](/sources/yeung-2025.md) rest the short multi-resolution
+  segments (about two Kolmogorov times at the top Reynolds number) on an
+  equilibration time of about $2\tau_\eta$ and on one unplotted
+  $27\tau_\eta$ segment at $Re_\lambda=1000$ (§2.2); all their runs are in
+  single precision, and "rigorous testing is not readily available".
+  Eq. (4.1) is printed with an unclosed parenthesis.
 - The set-ups differ in what is forced: velocity modes below a wavenumber
   at fixed power ([Prakash et al. (2022)](/sources/prakash-2022.md),
   Eqs. 21–23), solenoidal or compressive acceleration fields
-  ([Seta & Federrath (2022)](/sources/seta-2022.md)), or nothing (the
-  decaying runs).
+  ([Seta & Federrath (2022)](/sources/seta-2022.md)), Ornstein–Uhlenbeck
+  acceleration fields, solenoidal ([Cernetic et al. (2024)](/sources/cernetic-2024.md))
+  or mixed ([Beattie et al. (2025)](/sources/beattie-2025.md)), constant
+  energy in the lowest shells ([Yeung et al. (2025)](/sources/yeung-2025.md),
+  [Zhao et al. (2025)](/sources/zhao-2025.md) before release), or nothing
+  (the decaying runs).
 
 # Citations
 
@@ -539,3 +667,11 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §II.A–B, Eq. (14); §III, Tables I–II, Figs. 2–9; App. A–C, Table V, Figs. 18–24.
 - [Domaradzki (2024)](/sources/domaradzki-2024.md) — §2.4; §3.1–3.3, Tables 1–2, Figs. 1–10.
 - [Duan & Wang (2024)](/sources/duan-2024.md) — §3, Eqs. (26)–(30); §5.2, Fig. 8.
+- [Li et al. (2024)](/sources/li-2024.md) — §II A, Eqs. (1)–(4); §V A, Table I, Figs. 6–13.
+- [Zhao et al. (2025)](/sources/zhao-2025.md) — §3.1, Eqs. (19)–(20), Tables 1–2, 5, Figs. 6–8; §4.
+- [Yeung et al. (2025)](/sources/yeung-2025.md) — §1; §2.1–2.2, Table 1, Fig. 1; §3, Figs. 2–3; §4, Eqs. (4.1)–(4.2), Figs. 4–6; §5.
+- [Cernetic et al. (2024)](/sources/cernetic-2024.md) — §4.1–4.2, Eqs. (18)–(32), Fig. 9; §5, Figs. 5–7; §6.
+- [Beattie et al. (2025)](/sources/beattie-2025.md) — §4, Table 1; §5; §6; §9.1.
+- [Chapelier et al. (2024)](/sources/chapelier-2024.md) — §I (compressible isotropic turbulence as the closest flow to the supersonic Taylor–Green vortex).
+- [Möller et al. (2024)](/sources/moller-2024.md) — §II.B.1 (calibration check of $C_{DES}$, not shown).
+- [Reddy et al. (2026)](/sources/reddy-2026.md) — abstract, §1, §9 (Taylor–Green vortex labelled isotropic turbulence).

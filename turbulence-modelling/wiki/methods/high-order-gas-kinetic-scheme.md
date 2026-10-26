@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "High-order gas-kinetic schemes for turbulence simulation"
-description: "A high-order gas-kinetic scheme is a finite-volume Navier–Stokes solver whose interface flux comes from the time-dependent BGK solution; this page gives its flux, collision time, non-compact and compact reconstructions and two-stage fourth-order time stepping, its use as DNS and implicit LES, and its multi-GPU cost and precision."
+description: "A high-order gas-kinetic scheme is a finite-volume Navier–Stokes solver whose interface flux comes from the time-dependent BGK solution; this page gives its flux, collision time, reconstructions, two-stage fourth-order time stepping, curvilinear extension, its use as DNS and implicit LES of compressible wall-bounded flows, and its multi-GPU cost."
 status: established
-aliases: [HGKS, high-order GKS, gas-kinetic scheme, GKS, BGK finite-volume scheme]
+aliases: [HGKS, HGKS-cur, high-order GKS, gas-kinetic scheme, GKS, BGK finite-volume scheme]
 tags: [gas-kinetic, dns, implicit-les, compressible, numerical-dissipation, gpu]
-timestamp: 2026-10-26T07:42:00Z
+timestamp: 2026-10-26T15:48:00Z
 ---
 
 # High-order gas-kinetic schemes for turbulence simulation
@@ -89,7 +89,7 @@ dissipation of the scheme lives in the collision time.
 $\mu_b=\frac{2K_{\mathrm{int}}}{3(K_{\mathrm{int}}+3)}\mu$ (Cao et al. 2022,
 §3.1, citing Xu), which is $\mu_b=\tfrac{4}{15}\mu$ for a diatomic gas
 *(compiler check, not in the sources)*. It enters the dissipation budget
-below.
+below; see [bulk viscosity](/definitions/bulk-viscosity.md).
 
 ## Reconstruction and time stepping
 
@@ -161,6 +161,72 @@ turbulence runs therefore use $2\times2$ points, so the seventh-order labels
 of those runs refer to the reconstruction, whose asymptotic order with four
 Gauss points the same test shows to be about four. [Wang et al. (2023b)](/sources/wang-2023-b.md)
 and Cao et al. (2022) use the fifth-order scheme with $2\times2$ points.
+
+## Curvilinear meshes from discrete points (HGKS-cur)
+
+[Cao et al. (2024)](/sources/cao-2024.md) extend the scheme from Cartesian
+and analytically mapped meshes to general curvilinear meshes given only by
+discrete grid points. The BGK equation is written in computational
+coordinates $(\xi,\eta,\zeta)$ (page-local here, as on the
+[geometric conservation law](/properties/geometric-conservation-law.md)
+page) with the Jacobian $\mathcal J$ and the Jacobian-scaled metric terms
+(§2.1, Eqs. 3–5),
+$$\partial_t(\mathcal Jf)+\partial_\xi\big[(c_1\hat\xi_x+c_2\hat\xi_y+c_3\hat\xi_z)f\big]+\partial_\eta[\dots]+\partial_\zeta[\dots]=\frac{g-f}{\tau_{\mathrm{col}}}\,\mathcal J,$$
+and the finite-volume update on the uniform computational mesh advances the
+cell averages of the Jacobian-weighted conservative variables $\mathcal JQ$
+(Eq. 6). On each face the gas-kinetic flux is evaluated at $2\times2$ Gauss
+points in a local frame whose normal is the normalized metric vector, and
+weighted by the face metric magnitude (Eq. 7). The metric terms are built
+from fourth-order central differences of the grid points in a symmetric
+conservative form that satisfies the geometric conservation law, then
+interpolated to the Gauss points with cubic Lagrange formulae (Eqs. 10–11);
+fifth-order WENO reconstructs the cell-averaged $\mathcal J$ and
+$\mathcal JQ$ dimension by dimension in computational space, point values
+follow as $Q=(\mathcal JQ)/\mathcal J$, and the gradients needed by the
+gas-kinetic flux follow by the chain rule in the local orthogonal frame
+(§2.3). Time stepping is the same S2O4 scheme (Eqs. 12–13), and the code is
+parallelized by MPI with a two-dimensional domain decomposition in $y$ and
+$z$ (§3).
+
+**Verification** (§3.1–3.2, Tables 1–3, Fig. 3): an advected density wave on
+two sinusoidally perturbed meshes converges at $L^1$ orders between 4.03
+and 4.65 from $10^3$ to $160^3$ cells; a uniform flow stays uniform to
+$O(10^{-14})$; the three-dimensional lid-driven cavity at $Re=1000$ ($33^3$)
+and 3200 ($65^3$) agrees with a Chebyshev-collocation solution and an
+experiment.
+
+**Compressible channel as implicit LES** (§3.3, Tables 4–5): isothermal
+walls, bulk Mach 1.5, bulk $Re=3000$, $\mu\propto T^{0.7}$, domain
+$4\pi H\times2H\times4\pi H/3$, against the DNS of Coleman et al. and of
+Morinishi et al. and a constrained LES of Jiang et al. The $128^3$ implicit
+LES (G1: $\Delta y^+_{\min}=0.50$, $\Delta x^+=21.18$, $\Delta z^+=7.06$)
+gives $Re_\tau=211$ and a non-dimensional wall heat flux $-0.047$, a $160^3$
+run of the same scheme that the authors call DNS (G4) 213 and $-0.048$,
+against 222 and $-0.049$ (Coleman) and 218 and $-0.048$ (Morinishi). Halving
+the streamwise box leaves the wall statistics nearly unchanged but visibly
+changes the r.m.s. of density and temperature; the native BGK Prandtl number
+$Pr=1$ instead of the target 0.70 (corrected, as in Xu 2001, by modifying
+the energy flux) changes the mean density, temperature and Mach profiles
+"greatly" and raises $Re_\tau$ to 221. The authors conclude that a long
+enough streamwise box and the target Prandtl number "are essential" in
+compressible wall-bounded turbulence. The peak turbulent Mach number stays
+below 0.25, "no strong shock-lets".
+
+**Compressible periodic hill as implicit LES** (§3.4, Table 6, Figs. 12–16):
+volume-averaged Mach 0.2, target $Re_b=2800$ (realized about 2730), mesh
+built from discrete bottom-wall points, $10^6$ to $1.6\times10^7$ cells. The
+separation and reattachment points ($x/H$) are 0.23/5.18 ($100^3$),
+0.20/5.15 ($200\times100^2$) and 0.24/5.52 ($400\times200^2$), against
+0.21/5.41 for the DNS of Peller & Manhart and 0.21/5.30 for the LES with the
+approximate deconvolution model of Ziefle et al.; the implicit LES $C_p$
+"agrees well" with the DNS, "better than the explicit LES", and the authors
+state that the explicit LES over-predicts the Reynolds stresses and "may
+pollute" this low-Reynolds-number separated flow, while noting that its
+statistics are density-weighted and theirs are not. They judge that "coarse
+grids is enough" for implicit LES of such flows given the cost of the
+finest grid. See [periodic hill](/benchmarks/periodic-hill.md),
+[turbulent channel flow](/benchmarks/turbulent-channel-flow.md) and
+[implicit LES](/definitions/implicit-les.md).
 
 ## GPU implementation
 
@@ -329,8 +395,8 @@ differences between precisions (Figs. 10–13).
 
 ## Qualifications
 
-- The version read is the arXiv v1 preprint (May 2020); the journal version
-  may differ in text and numbers.
+- **Version read (Cao et al. 2022).** The arXiv v1 preprint (May 2020); the
+  journal version may differ in text and numbers.
 - **Implicit-LES reading.** Cao et al. (2022, §3.1) write both that "a large
   discrepancy is observed in the peak dissipation rate" on $128^3$ and
   $256^3$ and that "$\varepsilon(E_k)$ is well predicted at all grid levels";
@@ -374,6 +440,32 @@ differences between precisions (Figs. 10–13).
   (e.g. $5.355/2.761=1.94$, *compiler check, not in the sources*); the text
   says the coarse channel grids ran on one GPU while Table 8 states two.
 
+- **Version read (Cao et al. 2024).** The file is the arXiv 2107.08609v1
+  preprint of July 2021, with five authors (Cao, Pan, Wan, Xu, Chen); the
+  version of record (J. Sci. Comput., 2024) lists four. Claims and
+  locators are those of the preprint.
+- **Recalled limits of other schemes.** Cao et al. (2022, §1, §3.4) state
+  that compact finite differences are limited to $M_t\le0.8$; Cao et al.
+  (2024, §1) recall a limit $M_t\le1.2$ for high-order finite-difference DNS
+  of supersonic isotropic turbulence and an HGKS run at $M_t=2.0$ (both as
+  recalled from cited works), above the $M_t=1.6$ of Cao et al. (2022). The
+  limits concern different scheme classes and are recalled, not tested.
+- **Printed slips (Cao et al. 2024).** Eq. (11) does not reproduce the
+  metric terms of Eq. (5) (see the
+  [geometric conservation law](/properties/geometric-conservation-law.md));
+  the bulk velocity and density are printed as integrals over $[-H,H]$
+  without the factor $1/(2H)$; $C_f$ and $C_p$ of the hill are normalized
+  by $\rho_bU_b^2$ without the factor $\tfrac12$ (so their values are half
+  those of a normalization by $\tfrac12\rho_bU_b^2$, *compiler check, not in
+  the sources*); with $\eta\in[-1.5\pi,1.5\pi]$ the printed
+  wall-normal mapping does not span $[-H,H]$; and the wall-unit spacings
+  of G1 and G4 imply $Re_\tau\approx216$, against the tabulated 211 and 213
+  *(compiler check, not in the sources)*.
+- The DNS/implicit-LES boundary of Cao et al. (2024) is set by resolution
+  only: G4 ($160^3$) is called DNS, G1 ($128^3$) implicit LES, with the same
+  scheme. Their hill separation points do not converge monotonically with
+  the grid.
+
 ## Contradictions
 
 - **Is the numerical dissipation of the fifth-order scheme right for
@@ -398,3 +490,4 @@ differences between precisions (Figs. 10–13).
 - [Cao et al. (2022)](/sources/cao-2022.md) — §1 (motivation, finite-volume DNS, competing methods); §2.1, Eqs. (1)–(7) (BGK model, gas-kinetic flux, WENO, S2O4), Remark 1; §2.2 (MPI decomposition); §3 (collision time); §3.1 (Taylor–Green vortex, bulk viscosity, numerical-dissipation decomposition); §3.2, Tables 1–4 (scaling, cost); §3.3, Tables 5–7, Figs. 10–12 (channel); §3.4, Table 8, Figs. 13–15 (compressible isotropic turbulence).
 - [Zhao et al. (2023a)](/sources/zhao-2023.md) — arXiv v1: §1 (implicit LES, compact stencils); §2, Eqs. (1)–(10) (BGK flux, Gauss quadrature); §3.1–3.3, Eqs. (11)–(15), Figs. 1–2 (seventh-order non-compact and fifth-order compact reconstruction); §4, Tables 2–5 (accuracy, Gauss-point rule, cost of 16 points); §5.1, Eqs. (19)–(23), Figs. 3–7 (Taylor–Green vortex, numerical dissipation); §5.2, Eqs. (24)–(28), Tables 6–9, Figs. 8–17 (channel flow); Table 7 (cost).
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — arXiv v1: §2, Eqs. (1)–(8) (BGK flux, S2O4); §3.1–3.2, Algs. 1–2, Figs. 2–4 (single- and multi-GPU implementation); §4.1, Tables 2–5, Figs. 5–8 (speedups, scaling, compressible Taylor–Green vortex); §4.2, Tables 6–8, Figs. 10–14 (channel flow, single against double precision); §5.
+- [Cao et al. (2024)](/sources/cao-2024.md) — arXiv 2107.08609v1: §1 (implicit LES, recalled $M_t$ limits); §2.1, Eqs. (3)–(9) (transformed BGK equation, curvilinear flux); §2.3, Eqs. (10)–(11) (metrics, WENO in computational space); §2.4, Eqs. (12)–(13); §3.1–3.2, Tables 1–3, Fig. 3 (accuracy, free-stream preservation, cavity); §3.3, Tables 4–5, Figs. 5–9 (compressible channel); §3.4, Table 6, Figs. 11–16 (compressible periodic hill).

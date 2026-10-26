@@ -137,7 +137,7 @@ no unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25), cited further in chunk 3. This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunks 3, 6. This source is cited on:
 
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [Wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)
@@ -149,6 +149,7 @@ Chunk 2 (2026-10-25), cited further in chunk 3. This source is cited on:
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
 - [Lagrangian relaxation towards equilibrium (LaRTE) wall model](/methods/lagrangian-relaxation-towards-equilibrium-wall-model.md)
 - [Scale-similarity and mixed subgrid-scale models](/methods/scale-similarity-model.md)
+- [Continuous-Galerkin spectral-element method](/methods/spectral-element-method.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)

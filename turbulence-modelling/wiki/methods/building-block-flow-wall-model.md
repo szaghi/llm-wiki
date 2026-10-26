@@ -5,7 +5,7 @@ description: "Supervised wall-stress model for wall-modelled LES that classifies
 status: established
 aliases: [BFWM, building-block flow wall model, machine-learning building-block-flow wall model]
 tags: [wall-model, wmles, machine-learning, neural-network, data-driven]
-timestamp: 2026-10-26T07:39:00Z
+timestamp: 2026-10-26T15:52:00Z
 ---
 
 # Building-block-flow wall model
@@ -206,6 +206,21 @@ preliminary version trained on filtered DNS; no side-by-side data are shown
 classifier-plus-predictor model of Lozano-Durán & Bae as poor in the
 separation zones of the Juncture Flow, citing the 2020 arXiv preprint of the
 preliminary version (their ref. [85]), not the version of record read here.
+[Mukha et al. (2025)](/sources/mukha-2025.md) (§IV.B) quote the
+zero-pressure-gradient boundary-layer results of the version of record,
+mean-velocity deviations of 10–30 % and wall-stress errors of 5–15 %,
+obtained with a finite-volume solver on an "even coarser mesh" than theirs,
+and call them "rather poor" next to their spectral-element WMLES with an
+algebraic equilibrium model; the figures agree with §4.3 above (profiles
+10–30 % from DNS, total errors 5–15 %).
+
+**A classifier-weighted mixture, seen from RANS.**
+[Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (§1) cite the model
+as an internal-blending-like approach, in which a classifier identifies the
+similarity of the local flow to the training conditions alongside
+data-driven predictors; their own method blends data-driven corrections of
+a RANS model with locally learned weights (see
+[turbulence-model aggregation](/methods/turbulence-model-aggregation.md)).
 
 ## The authors' conclusion: external errors dominate
 
@@ -258,3 +273,5 @@ model, without optimization of the implementation (§2.6).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §1; §2.1–2.6, Eqs. (2.1)–(2.6), Figs. 1–7; §3.1–3.2, Eq. (3.1); §4.1–4.8, Figs. 8–18, Table 1; §5; §6.
 - [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) — §IV.C.
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §I.
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — §IV.B (arXiv v1).
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — §1 (arXiv v2).

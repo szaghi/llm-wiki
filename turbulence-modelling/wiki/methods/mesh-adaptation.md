@@ -5,7 +5,7 @@ description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an e
 status: established
 aliases: [adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation]
 tags: [mesh-adaptation, hybrid-rans-les, rans, dg, numerical-dissipation, wmles]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:41:00Z
 ---
 
 # Mesh adaptation for turbulent-flow simulation
@@ -548,6 +548,17 @@ smoother meshes.
   surface mesh with a prescribed minimum near-wall spacing (§3.1). It is a
   static, single-pass change of which cells are modelled, recorded here
   for contrast only.
+- **Operator adaptation on a fixed mesh, for contrast.** The
+  [NASA Rotor 37](/benchmarks/nasa-rotor-37.md) blade that Alauzet et al.
+  (2022) treat by RANS mesh adaptation is computed by
+  [Kurz et al. (2025)](/sources/kurz-2025.md) (§6) as a mid-span linear
+  cascade with wall-resolved LES on a fixed hexahedral mesh
+  ($1.2\times10^6$ elements, $N=5$, $2.6\times10^8$ degrees of freedom) in
+  [GALÆXI](/software/galaexi.md). What adapts there is the element-wise
+  blending factor of the
+  [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md),
+  between 0.1 and 0.7 near the leading-edge shock only (Fig. 13), not the
+  mesh.
 - Mozaffari et al. (2022, §3.3) state that, to their knowledge, no
   refinement criterion had been evaluated for hybrid RANS/LES; Basile et
   al. (2023) is later and uses a different (DG-specific) criterion.
@@ -564,3 +575,4 @@ smoother meshes.
 - [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) — App. A, Eqs. A.1–A.3, Fig. 32 (metric-based $L^2$ adaptation, kinetic-energy sensor, loop, wall treatment); §3 (validation mesh); §4.2.2, Fig. 12 (circulation against iterations).
 - [Ruan et al. (2023)](/sources/ruan-2023.md) — §2 (five-level AMR, no criterion stated, numerical scheme).
 - [Constant et al. (2024)](/sources/constant-2024.md) — HAL author manuscript: §3.1 (octree Cartesian meshes), §4.2 (modelling-height adaptation without mesh change).
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §6, Fig. 13 (Rotor 37 cascade LES on a fixed mesh, local shock-capturing blending).

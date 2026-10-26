@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Laminar separation bubble"
-description: "A closed region of reversed flow formed when a laminar boundary layer separates under an adverse pressure gradient, transitions in the detached shear layer and reattaches turbulent; its signatures, unsteadiness and frequencies in scale-resolving simulations, and why RANS transition models struggle to size it."
+description: "A closed region of reversed flow formed when a laminar boundary layer separates under an adverse pressure gradient, transitions in the detached shear layer and reattaches turbulent; its signatures, unsteadiness, role in dynamic stall and shock interactions, and why RANS and hybrid transition models struggle to size it."
 status: established
 aliases: [LSB, separation-induced transition, laminar separation, transitional separation bubble]
 tags: [transition, separated-flow, boundary-layer, rans, implicit-les, turbomachinery]
-timestamp: 2026-10-26T10:25:00Z
+timestamp: 2026-10-26T15:50:00Z
 ---
 
 # Laminar separation bubble
@@ -173,6 +173,66 @@ model built for that purpose, with transition lengths that remain too
 short (§7); they do not compute the T161 cascade or the very-low-Reynolds
 airfoils.
 
+- **Hybrid RANS/LES of a compressor cascade.** On the suction side of the
+  V103 compressor cascade ($Re=138\,500$ on the axial chord $c_{ax}$,
+  page-local, $Tu=3.25\%$,
+  separation-induced transition; pressure side bypass transition), Möller
+  et al. (2024) find that fully turbulent SST-DDES misses the bubble,
+  producing modelled $k$ ahead of separation and ending in an open
+  separation near the trailing edge, while their transitional DDES
+  (DDES coupled to the one-equation $\gamma$ model) reproduces $C_p$ and the
+  bubble of the LES and DNS, with $C_f$ almost identical to the DNS up to
+  separation and transition near $x/c_{ax}\approx0.65$ but too low after
+  reattachment, because $\gamma$ suppresses the near-wall modelled
+  production while the resolved $k$ is slightly low
+  ([Möller et al. (2024)](/sources/moller-2024.md), §III.B.1, Figs. 5–9;
+  accepted manuscript). Synthetic inflow turbulence closes the bubble
+  slightly earlier, in better agreement with the DNS (§III.B.2, Figs.
+  13–14). The bubble is sensitive to numerical dissipation: a purely
+  central flux oscillates and suppresses the laminar separation, a 25%
+  upwind fraction overpredicts the bubble, 5% agrees best with the DNS
+  (§III.B.3, Fig. 19; see [DES](/methods/detached-eddy-simulation.md),
+  [numerical dissipation](/properties/numerical-dissipation.md) and
+  [compressor cascades](/benchmarks/compressor-cascade.md)).
+- **Transonic compressor cascade.** Klose et al. (2025) find that URANS
+  with SST and the $\gamma$-$Re_\theta$ model predicts a mainly laminar
+  suction side, with a substantially lower $C_f$ than the implicit LES, in
+  which the layer ahead of the shock is driven by intermittent turbulence
+  ([Klose et al. (2025)](/sources/klose-2025.md), §6, Fig. 7; ASME accepted
+  manuscript; below).
+
+## Bubbles in unsteady and shock-loaded flows
+
+**Dynamic stall.** On a NACA 0012 pitching as
+$\alpha=10^\circ+15^\circ\sin(\omega t)$ at $Re_c=1.35\times10^5$ and reduced
+frequency 0.1, the wall-resolved LES of Baldan & Guardone (2025) shows the
+bubble forming near the leading edge in the upstroke; while it is present
+the loads do not depend on the spanwise domain extent (maximum $C_L$
+difference 0.05 across spans of $0.2c$–$1.2c$ up to $\alpha\approx22^\circ$),
+and its bursting at about $22^\circ$ triggers the dynamic-stall vortex
+([Baldan & Guardone (2025)](/sources/baldan-2025.md), §2.1, Figs. 3–6; arXiv
+v2). In span-averaged space–time maps transition starts at the trailing edge
+near $\alpha=2^\circ$ and progresses towards the bubble, reached at $10^\circ$;
+the vortex develops beyond $15^\circ$ (Fig. 6). See
+[NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md).
+
+**Shock-induced separation of a laminar layer.** In the transonic TCTA
+compressor cascade (inlet $M=1.21$, $Re=1.35\times10^6$ on the chord), the
+time-averaged implicit LES of Klose et al. (2025) shows a slender
+separation bubble beneath the oscillating mid-chord shock, followed by a
+large recirculation reaching the trailing edge, "indicating an open
+separation bubble" (§4, Fig. 4). The bubble shrinks as the spanwise domain
+grows from 5% to 20% of the chord, in partial agreement with Touber &
+Sandham, as the authors recall, while the shock-oscillation frequency
+barely changes ($ft_c=0.165$, 0.164, 0.163); the simulated separation
+lengths, $0.12\le L_{\mathrm{sep}}/c\le0.22$ ($L_{\mathrm{sep}}$ page-local),
+match the $0.18c$ given by Touber & Sandham's $St_{\mathrm{sep}}\approx0.03$
+(§5, Table 2, Fig. 6). During the buffet cycle the growing bubble forces
+velocity perturbations upstream through the subsonic part of the boundary
+layer, which thickens it and produces intermittent oblique compression
+waves (§7, §8). See
+[shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+
 ## Resolution in scale-resolving simulation
 
 Wall-resolved LES resolves the bubble directly but is sensitive to
@@ -215,6 +275,10 @@ see [flux reconstruction](/methods/flux-reconstruction.md) and
   the LES, not of the experiment, so that LES–RANS differences can be
   attributed to modelling (§3.3); the LES itself decays faster than the
   experiment by design (reduced length scale).
+- Baldan & Guardone describe the dynamic-stall phase of bubble formation
+  with transition "initiating at the trailing edge and progressing
+  downstream" (Introduction); from the trailing edge the progression is
+  upstream, as their §2.1 says ("progresses towards the LSB").
 
 # Citations
 
@@ -225,3 +289,6 @@ see [flux reconstruction](/methods/flux-reconstruction.md) and
 - [Liu et al. (2024)](/sources/liu-2024.md) — Figs. 1, 8–9, 12, 15, 18, Discussion.
 - [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §4.5, §6.2 Figs. 18–23, §6.3, §7.
 - [Wang (2024)](/sources/wang-2024-b.md) — §4.2, Table 4, Figs. 7–8 (arXiv v2).
+- [Möller et al. (2024)](/sources/moller-2024.md) — §III.B.1–3, Figs. 5–9, 13–14, 19 (accepted manuscript).
+- [Baldan & Guardone (2025)](/sources/baldan-2025.md) — Introduction, §2.1, Figs. 3–6 (arXiv v2).
+- [Klose et al. (2025)](/sources/klose-2025.md) — §4 Fig. 4, §5 Table 2 Fig. 6, §6 Fig. 7, §7, §8 (ASME accepted manuscript).

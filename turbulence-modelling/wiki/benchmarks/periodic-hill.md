@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Periodic hill"
-description: "The streamwise-periodic channel with a hill constriction, a smooth-wall separation and reattachment test: at hill-height Reynolds number about 10,600 for hybrid RANS/LES, implicit LES and scheme dissipation, at 5600 for stabilized finite-element implicit LES and, as a parametrized family, learned RANS corrections, and at 2800 for data assimilation and DG implicit LES."
+description: "The streamwise-periodic channel with a hill constriction, a smooth-wall separation and reattachment test: at hill-height Reynolds number about 10,600 for hybrid RANS/LES, implicit LES and learned RANS corrections, at 5600 for finite-element implicit LES and, as a parametrized family, learned RANS corrections, and at 2800 for data assimilation and DG and gas-kinetic implicit LES."
 status: established
 aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow, parametrized periodic hills]
-tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion, implicit-les]
-timestamp: 2026-10-26T10:26:00Z
+tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion, implicit-les, gas-kinetic]
+timestamp: 2026-10-26T15:57:00Z
 ---
 
 # Periodic hill
@@ -268,6 +268,78 @@ over-predicts, while the WALE model brings little or no improvement (§5.1,
 Figs. 8–9). The jump indicator of the no-model run peaks near the
 separation point and along the lower wall (Fig. 10).
 
+**Symbolic-regression corrections of SST on the parametrized family.**
+[Wu et al. (2025)](/sources/wu-2025.md), §4.1, test two corrections of the
+$\omega$-destruction term of [$k$-$\omega$ SST](/methods/k-omega-sst-model.md),
+fitted by [symbolic regression](/methods/symbolic-regression-closure.md)
+to [field-inversion](/methods/field-inversion-machine-learning.md) data of a
+curved backward-facing step and the
+[NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md), on the
+hills of Xiao et al. with width factors $\alpha_h=0.5$, 0.8 and 1.0 at
+$Re=5600$, against the DNS of that database. The hill is therefore a test
+of transfer to a new geometry, not a training case. Three grids with
+$\Delta y^+<1$ (OpenFOAM simpleFoam) change the integrated friction
+coefficient by less than $10^{-4}$, and by about $5\times10^{-5}$ between
+medium and fine. For $\alpha_h=0.8$ baseline SST does not reattach before
+the next hill, both corrected models reattach at about $x=6.0$ (in units
+of the hill height), and the DNS at about 5.2 (Figs. 24–27). Both models
+improve velocity profiles and $C_f$; the correction of the gated model
+(SR-CND), switched off in attached boundary layers by the DDES shielding
+function, sits in the separated shear layer, while that of the ungated
+model (SR-CLS) is more diffuse and active near the attached upper wall
+(§4.1).
+
+**Expert blending at $Re_h=10{,}595$.**
+[Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (arXiv v2), §4.2.3,
+use the Fröhlich configuration ($Re_h=10{,}595$ on the hill height and the
+bulk velocity at the crest, 2D steady RANS on a $120\times130$ grid, LES of
+Breuer et al. and Temmerman et al. as reference) as one of three training
+flows of a separated-flow correction of SST and of a learned
+[blend of expert models](/methods/turbulence-model-aggregation.md).
+Separation and reattachment, in $x/h$ (Table 6):
+
+| Model | separation | reattachment | bubble length |
+|---|---|---|---|
+| LES | 0.21 | 4.7 | 4.49 |
+| SST | 0.25 | 7.67 | 7.42 |
+| separated-flow expert | 0.25 | 4.4 | 4.15 |
+| jet expert | 0.25 | 8.23 | 7.98 |
+| blend | 0.265 | 4.82 | 4.555 |
+
+The blend has the lowest $C_f$ error ($2.07\times10^{-3}$ against
+$2.37\times10^{-3}$ for SST and $2.65\times10^{-3}$ for the separated-flow
+expert), while the separated-flow expert has the lowest velocity error
+(0.06 against 0.09 for the blend and 1.37 for SST; Table 7).
+
+**Compressible implicit LES with a gas-kinetic scheme at $Re=2800$.**
+[Cao et al. (2024)](/sources/cao-2024.md) (read in arXiv v1), §3.4, run
+the [high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md)
+on curvilinear meshes built from discrete points (bottom-wall points of
+Gloerfelt & Cinnella) as an [implicit LES](/definitions/implicit-les.md),
+with no subgrid model. The flow is compressible at $M=0.2$ (on the bulk
+velocity), constant viscosity, $Pr=0.72$, isothermal walls, domain
+$9h\times3.036h\times4.5h$; the target $Re=2800$ is held only to about
+2730 because the mass flux varies over the cross-section (Fig. 12).
+Separation and reattachment, in $x/h$ (Table 6):
+
+| Run | cells | separation | reattachment |
+|---|---|---|---|
+| DNS, Peller & Manhart (incompressible, immersed boundary) | 47.68 M | 0.21 | 5.41 |
+| LES with approximate deconvolution, Ziefle et al. | 0.64 M | 0.21 | 5.30 |
+| H1, $100^3$ | 1.0 M | 0.23 | 5.18 |
+| H2, $200\times100\times100$ | 2.0 M | 0.20 | 5.15 |
+| H3, $400\times200\times200$ | 16.0 M | 0.24 | 5.52 |
+
+The authors find $C_p$ closer to the DNS than the explicit LES, and state
+that the explicit LES overpredicts the normalized Reynolds stresses,
+especially the shear stress, so that "the explicit LES model may pollute"
+this low-Reynolds-number separated flow, while the implicit LES agrees
+with the DNS (Figs. 14–16). They note in the same paragraph that the
+explicit-LES statistics are density-weighted while the DNS and implicit-LES
+ones are not. H3 improves the Reynolds stresses, but the authors judge the
+improvement not worth its cost and conclude that coarse grids suffice for
+implicit LES of low-Reynolds-number separated flows (§3.4).
+
 **Stabilized finite-element implicit LES at $Re_h=5600$, 10,600 and 37,000.**
 [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) run the
 open-source code Lethe, continuous-Galerkin $Q_1$–$Q_1$ finite elements
@@ -405,6 +477,24 @@ or, with the budget terms, depend on the grid and the scheme
 
 ## Qualifications
 
+- The reattachment of [Cao et al. (2024)](/sources/cao-2024.md) does not
+  change monotonically with the grid (H1 5.18, H2 5.15, H3 5.52 against DNS
+  5.41; Table 6), and their conclusion that coarse grids suffice is drawn
+  from H1 and H2 (§3.4). They normalize $C_f$ and $C_p$ by
+  $\langle\rho_b\rangle\langle U_b\rangle^2$, without the factor
+  $\tfrac12$ (§3.4), so their values are twice those normalized with it.
+  Their printed wall-normal mapping
+  $y=\tfrac{3-y_0}{2}\tanh(b_g(\eta/1.5\pi-1))/\tanh(b_g)+\tfrac{3+y_0}{2}$,
+  on the printed computational range $\eta\in[-1.5\pi,1.5\pi]$, gives
+  $y=(3+y_0)/2$ at $\eta=1.5\pi$, not the top wall of the
+  $3.036h$-high domain *(compiler check, not in the sources)*.
+- [Wu et al. (2025)](/sources/wu-2025.md) print the integrated friction
+  coefficient (Eq. 21) as the integral of $C_f$ divided by
+  $\tfrac12\rho U_b^2L$, dimensionally inconsistent unless the integrand
+  is the wall shear stress *(compiler check, not in the sources)*.
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) give the reference
+  length of the hill as the hill height (Table 5, Fig. 9) but as "the
+  channel half-height (full channel height $=2L$)" in the Fig. 7 caption.
 - [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) call the
   value 5.09 of Breuer et al. "experimental" in the Table 5 caption,
   although it is the LES value; print the fine-mesh uncertainties as
@@ -494,3 +584,6 @@ or, with the budget terms, depend on the grid and the scheme
 - [Lederer et al. (2023)](/sources/lederer-2023.md) — §5, §5.1, Table 3, Figs. 7–10.
 - [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §1–2; §3.2–3.3, Tables 1–4; §4.1–4.4, Table 5, Figs. 4–16; §5; App. A–C, Tables B.6–B.8, C.9.
 - [Wang et al. (2024)](/sources/wang-2024.md) — §2.3–2.5; §3.3, Table 2, Figs. 5–6; §5.
+- [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §4.1, Eq. 21, Figs. 23–27.
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §4.2.3, Tables 5–7, Figs. 7–9.
+- [Cao et al. (2024)](/sources/cao-2024.md) — arXiv v1: §1; §3.4, Table 6, Figs. 10–16.

@@ -3,9 +3,9 @@ type: Method
 title: "Neural-network subgrid-scale models"
 description: "LES closures in which a neural network maps resolved-field features to the subgrid stress, its divergence, a model coefficient or an energy-conserving operator; trained a priori, by reinforcement learning or through the solver. Covers inputs, multi-filter fusion, normalization, invariance, structure preservation, cost against dynamic models and backscatter."
 status: established
-aliases: [ANN-SGS model, fusion network, T-SR-FU, energy-conserving neural closure, structure-preserving closure, ANN-SGS mixed model, deep-learning LES closure, DL-LES, neural-network LES closure, data-driven SGS model, S-106H, SL-106H, SL-180C, DL-AR1, DL-AR2]
+aliases: [ANN-SGS model, GAN SGS model, fusion network, T-SR-FU, energy-conserving neural closure, structure-preserving closure, ANN-SGS mixed model, deep-learning LES closure, DL-LES, neural-network LES closure, data-driven SGS model, S-106H, SL-106H, SL-180C, DL-AR1, DL-AR2]
 tags: [neural-network, sgs-model, les, machine-learning, data-driven]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T15:41:00Z
 ---
 
 # Neural-network subgrid-scale models
@@ -39,6 +39,7 @@ errors in the momentum equation".
 | [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) | a $3\times3$ tensor $h_{ij}$ whose divergence replaces all unclosed terms | the filtered velocity-gradient tensor | gated feed-forward, tanh, 50 units per layer | adjoint-based, in the LES |
 | [Kurz et al. (2023)](/sources/kurz-2023.md) | one Smagorinsky $C_s\in[0,0.5]$ per DG element | the element's momentum field (or five velocity-gradient invariants) | 3D CNN, four convolution layers | PPO in the running LES |
 | [Kim et al. (2024)](/sources/kim-2024.md) | 6 components of $\tau_{ij}$ | single point: $\bar S_{ij}$ or $\partial_j\bar u_i$, alone (G) or with their test-filtered copies (T) | fully connected; "fusion" variant with two 64-node branches subtracted | supervised on box-filtered DNS of a cylinder wake |
+| [Maejima & Kawai (2025)](/sources/maejima-2025.md) | a velocity field 8 times finer in $x$ and $z$, from which $\tau_{ij}$ is filtered | wall-parallel planes of $(u,v,w)$ of a very coarse LES | 2-D CNNs: CycleGAN generator, then conditional Wasserstein GAN | unsupervised on unpaired LES/filtered-DNS planes, then supervised on filtered-DNS/DNS pairs |
 | [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) | skew-symmetric and dissipative operators acting on the coarse solution and auxiliary SGS variables (1D) | coarse solution, SGS variables, coarse right-hand side | CNN, two hidden layers, kernel 5 | hybrid derivative and trajectory fitting |
 
 Agdestein & Sanderse (2025) train a CNN on the discrete commutator error
@@ -269,6 +270,45 @@ structure-preserving model has $2I$):
 For 3D the authors expect the analogue of $\boldsymbol s$ to be "probably
 the sub-grid scale stress tensor", with several SGS equations (§5).
 
+## Super-resolution closure for very coarse wall-bounded LES (Maejima & Kawai 2025)
+
+Maejima & Kawai (2025) reconstruct a fine velocity field from the coarse
+LES and filter products of its sub-cell fluctuations to obtain the stress;
+the method, data and budgets are on
+[super-resolution SGS models](/methods/super-resolution-sgs-model.md).
+Points that bear on neural SGS models in general:
+
+- **Training input.** On grids where the energetic near-wall eddies are
+  not resolved ($\Delta x^+=72$, $\Delta z^+=36$ in channel flow at
+  $Re_\tau\approx1000$), the resolved field differs from filtered DNS, so
+  models trained on filtered DNS meet a different input in use; the
+  authors therefore train the first stage without paired data (§1, §3.1;
+  see [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+- **Spatial against pointwise inputs.** Pointwise velocity-gradient inputs
+  "may not be able to appropriately distinguish the non-physical
+  structures" that convolutional networks see (§7).
+- **Grid dependence.** Convolutions act in computational coordinates, so
+  the wall-unit resolution must be similar in training and use (§7).
+  Within that limit the model trained at $Re_\tau\approx1000$ runs at
+  $Re_\tau\approx2000$ on the same wall-unit grid with mean velocity in
+  good agreement with DNS (Figs. 28–29).
+- **Backscatter kept, not removed.** Stresses are clipped only where the
+  effective viscosity falls below about $-2\mu_w$; less clipping gives a
+  better mean velocity, about $-3\mu_w$ is unstable (§3.2, App. C; see
+  [energy backscatter](/definitions/energy-backscatter.md)).
+- **Result.** In the coarsest LES the bulk flow rate is over-predicted by
+  10%, against 23% with the selective mixed-scale model (§6.1).
+
+## Networks that replace the solver instead of the closure
+
+[Li et al. (2024)](/sources/li-2024.md) and
+[Zhao et al. (2025)](/sources/zhao-2025.md) learn the time advance of the
+filtered velocity on the LES grid with neural operators and roll it out
+without an LES solver; Zhao et al. train it on the residual of the
+Smagorinsky-closed filtered equations. Neither models $\tau_{ij}$; both
+compare with dynamic or static Smagorinsky LES on the same grid. See
+[neural-operator surrogates of LES](/methods/neural-operator-les-surrogate.md).
+
 ## Stabilization that a priori networks need
 
 Wang et al. (2023c, §V), recalling the literature, state that
@@ -394,3 +434,6 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 - [Kim et al. (2024)](/sources/kim-2024.md) — §1, §2.2, §3.1–3.3, Table 2, Eqs. 3.1–3.3 (data, inputs, fusion architecture); §4.1–4.2, Table 3 (a priori, a posteriori, grids and Reynolds numbers); App. C (clipping on coarse grids); App. D (channel); App. E, Table 6 (cost).
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §3.1–3.3, Eqs. 33–50 (closure, SGS variables, momentum constraint); App. B, App. C; §4.2–4.8, Figs. 7–16; §5; §6.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — arXiv v3: §V (stabilization of a priori networks, recalled).
+- [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1, §3.1–3.2 (training input, pipeline, clipping); §6.1, Fig. 22; §7, Figs. 28–29 (Reynolds-number transfer, CNN grid dependence, pointwise inputs); App. C.
+- [Li et al. (2024)](/sources/li-2024.md) — arXiv v2: §I, §IV–V (neural operator replacing the LES solver).
+- [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §2.5, §3 (physics-informed neural operator replacing the LES solver).

@@ -5,7 +5,7 @@ description: "Energy backscatter is a negative local subgrid energy flux, energy
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T15:49:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -62,8 +62,8 @@ isotropic turbulence at $Re_\lambda=240$ for the smaller of their two
 filters (filter size $\ell_\Delta=4$, with $\ell_\Delta$ the filter width
 over twice the DNS grid spacing, page-local as on the
 [fractional SGS model](/methods/fractional-sgs-model.md) page), and 30%
-for a filter twice as wide ($\ell_\Delta=8$). They recall that the
-fraction depends on the filter type (Piomelli et al. 1991, as recalled).
+for a filter twice as wide ($\ell_\Delta=8$). They state, citing Piomelli et al. (1991), that the
+fraction depends on the filter type.
 The box-filter fractions lie between the Gaussian and sharp-filter values
 above, from a different flow and filter scales *(compiler check, not in
 the sources)*.
@@ -249,7 +249,7 @@ The sources reach different design choices from different questions.
   $y^+\approx50$ without instability, so backscatter "does not necessarily
   cause numerical instability" (Fig. 14b). They add that backscatter is
   correlated with strong Reynolds shear stress in near-wall events
-  (Piomelli et al., as recalled) and that training on more statistics
+  (citing Piomelli et al.) and that training on more statistics
   (skewness, temporal correlation) might be needed to produce it. See
   [reinforcement-learning closures](/methods/reinforcement-learning-closure.md).
 
@@ -339,6 +339,39 @@ The sources reach different design choices from different questions.
   filtered DNS (§4.5, Fig. 10). The authors contrast this with
   eddy-viscosity models and clipping, which remove backscatter for
   stability (§1). See [discretization-consistent closure](/definitions/discretization-consistent-closure.md).
+- **Backscatter as the mechanism of a coarse wall-bounded LES.**
+  [Maejima & Kawai (2025)](/sources/maejima-2025.md) credit their
+  [super-resolution SGS model](/methods/super-resolution-sgs-model.md)'s
+  success on a very coarse channel grid to backscatter. The test is a
+  posteriori LES at $Re_\tau\approx1000$ with
+  $(\Delta x^+,\Delta z^+)\approx(72,36)$ and a non-dissipative
+  kinetic-energy- and entropy-preserving central scheme.
+  - **Budget evidence (§6.2.1, Fig. 25).** In the budget of the resolved
+    Reynolds stresses, the subgrid term of the spanwise component is
+    productive (backscatter) for $y^+\lesssim100$ with their model, and
+    dissipative with the conventional selective mixed-scale model. The
+    wall-normal subgrid term is negligible for both.
+  - **Spectral evidence (§6.2.2, Fig. 27).** The pressure–strain term then
+    moves energy from the spanwise to the wall-normal component at resolved
+    wavelengths $130\lesssim\lambda_z^+\lesssim210$, peaking near
+    $\lambda_z^+\approx160$. In DNS this redistribution occurs at
+    $\lambda_z^+\lesssim60$, which the grid cannot resolve.
+  - **Proposed mechanism (§6.2.3, §8).** Spanwise backscatter raises
+    $\langle w'w'\rangle$ near the wall. Redistribution raises
+    $\langle v'v'\rangle$ and the near-wall Reynolds shear stress, and the
+    mean velocity then follows DNS. The mass flow rate is overpredicted by
+    10%, against 23% with the conventional model (§6.1).
+  - **Agreement with Inagaki & Kobayashi.** The authors call this
+    consistent with the productive spanwise subgrid term of
+    [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) above. It also
+    agrees, by the authors' account, with the redistribution produced by
+    Abe's stabilized mixed model in coarse LES (Inagaki & Kobayashi 2020,
+    cited by Maejima & Kawai, §6.2.3).
+  - **Bounded, not removed (App. C).** The model admits backscatter down to
+    an effective viscosity of about −2 times the mean wall viscosity.
+    Allowing more backscatter improves the mean velocity, and −3 is
+    unstable. The floor construction is on the
+    [gradient-model](/methods/gradient-model.md) page.
 
 The two claims of Seyedi & Zayernouri and Kim et al. concern different
 flows (isotropic turbulence against a channel) and different measures (a priori stress correlation and a
@@ -353,6 +386,16 @@ exchange" between the smallest resolved scales and the subgrid scales,
 beside the "dissipative drain" of the eddy viscosity (see
 [scale-similarity models](/methods/scale-similarity-model.md)); the paper
 does not use the word backscatter.
+
+Kim et al. (2022) and Maejima & Kawai (2025) both work in channel flow
+and reach different emphases. Kim et al. find backscatter unnecessary for
+the mean velocity at $Re_\tau=180$ on
+$(\Delta x^+,\Delta z^+)=(70.7,35.3)$. Maejima & Kawai find that admitting
+more backscatter brings the mean velocity closer to DNS at
+$Re_\tau\approx1000$ on $(72,36)$. Their own run with no projected
+backscatter (floor zero) still beats the conventional model (App. C). The
+models, Reynolds numbers and a priori targets differ, so no contradiction
+is recorded.
 
 ## Interpretation and scope
 
@@ -432,3 +475,4 @@ Other sources treat backscatter as a physical effect to be represented:
 - [Kim et al. (2024)](/sources/kim-2024.md) — §4.1, Fig. 6; §4.2.1; App. C.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §III, Eq. (21), Fig. 8; App. B.
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — §1; §2.5, Eqs. (28)–(29); §3.1–3.2, Eqs. (33)–(39); §4.5, Fig. 10; App. A.
+- [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §3.2, Eq. (3.2); §6.1; §6.2.1–6.2.3, Figs. 25–27; §8; App. C, Fig. 37.

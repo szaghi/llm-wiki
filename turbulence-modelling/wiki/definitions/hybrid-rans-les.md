@@ -3,9 +3,9 @@ type: Definition
 title: "Hybrid RANS/LES"
 description: "Scale-resolving approaches that model all turbulence with RANS in some regions or limits and resolve part of it as in LES elsewhere; the distinction from wall-modelled LES, operating modes, continuous eddy simulation and sequential RANS-to-LES coupling, the deficiencies the sources identify, and applications."
 status: established
-aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES]
+aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-26T10:25:00Z
+timestamp: 2026-10-26T15:50:00Z
 ---
 
 # Hybrid RANS/LES
@@ -333,6 +333,27 @@ only a small mismatch at the interface ($y^+\approx200$ at $Re_\tau=2400$,
 $\approx2000$ at $18\,000$) (Carlsson et al. 2023, §4.3, Fig. 4; see
 [low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md)).
 
+**Transition blurs the modes.** Möller et al. (2024) couple SST-based DDES
+to a one-equation intermittency transition model and argue that in a
+laminar or transitional boundary layer the RANS/LES distinction loses its
+meaning: with $\gamma=0$ the production of the modelled $k$ is switched off
+and its destruction cut to 10%, so $k$ and the RANS length stay near zero and
+the length-scale test declares "RANS mode" where the model is "more a
+laminar mode"; there the model "acts more like an implicit LES model", its
+subgrid viscosity minimal, which explains the demand for finer meshes
+([Möller et al. (2024)](/sources/moller-2024.md), §II.D, Fig. 1, p. 10;
+accepted manuscript). The dynamic central/upwind flux blending of DDES,
+designed for the fully turbulent RANS/LES distinction, then runs fully
+upwind in the boundary layers and damps resolved inflow turbulence, and the
+authors obtain their best transition predictions on a compressor cascade
+only with a constant 5% upwind fraction and synthetic inflow turbulence,
+noting that bypass transition is then carried by resolved scales and that
+the model may act "more like an LES model" (§III.B.3, pp. 25–26). They add
+that assessing transition by surface values such as the skin friction
+$C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
+[DES page](/methods/detached-eddy-simulation.md) and the
+[transition-model page](/methods/local-correlation-based-transition-model.md).
+
 ## Evidence from applications
 
 - **Transitional Rayleigh–Taylor mixing.** With variable-density PANS
@@ -429,6 +450,28 @@ $\approx2000$ at $18\,000$) (Carlsson et al. 2023, §4.3, Fig. 4; see
   solution approach", with disagreements in the backshell area attributed to
   the model's prediction of transition after shoulder separation; they use
   [implicit LES](/definitions/implicit-les.md) instead (§1, §2).
+- **Dynamic stall.** Baldan & Guardone (2025) compare a wall-resolved LES of
+  a NACA 0012 pitching sinusoidally between $-5^\circ$ and $25^\circ$
+  ($Re_c=1.35\times10^5$, reduced frequency 0.1, span $1.2c$, WALE) with
+  their earlier two-dimensional URANS and three-dimensional stress-blended
+  eddy simulation (SBES), both on SST coupled to an intermittency transport
+  equation ([Baldan & Guardone (2025)](/sources/baldan-2025.md), §2.2,
+  Fig. 9; arXiv v2). The three agree within 0.1 in $C_L$ in attached flow,
+  all place peak lift at $22^\circ$ against $24^\circ$ in the experiment,
+  diverge somewhat in the early stalled downstroke ($24^\circ$–$18^\circ$)
+  and reconverge later, with a $C_L$ offset of 0.2 from the experiment
+  persisting. The authors infer that the experiment–simulation differences
+  are "not primarily due to turbulence models, as commonly reported" but
+  to wind-tunnel effects or surface roughness (§3); they compute one cycle,
+  without phase averaging (§2.2); see [model-form uncertainty](/definitions/model-form-uncertainty.md)
+  and [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md). They cite
+  the DES best practice of Shur et al. that the span must be at least one
+  chord to reproduce the dynamic-stall vortex (Introduction), and find the
+  same requirement for their LES in the downstroke (§2.1).
+- **Transitional compressor cascade.** Transitional DDES of the V103
+  cascade at $Re=138\,500$ (Möller et al. 2024, §III; see
+  [compressor cascades](/benchmarks/compressor-cascade.md) and the
+  [DES page](/methods/detached-eddy-simulation.md)).
 
 ## Qualifications
 
@@ -489,3 +532,5 @@ $\approx2000$ at $18\,000$) (Carlsson et al. 2023, §4.3, Fig. 4; see
 - [Liu et al. (2024)](/sources/liu-2024.md) — Introduction.
 - [Constant et al. (2024)](/sources/constant-2024.md) — §7 (HAL author manuscript).
 - [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — Table 3.
+- [Möller et al. (2024)](/sources/moller-2024.md) — §II.D Fig. 1, §III, §III.B.2–3 (accepted manuscript).
+- [Baldan & Guardone (2025)](/sources/baldan-2025.md) — Introduction, §2.1, §2.2 Fig. 9, §3 (arXiv v2).

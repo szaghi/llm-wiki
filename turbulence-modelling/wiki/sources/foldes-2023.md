@@ -156,9 +156,10 @@ preprint. All are recorded as printed.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26). This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunk 6. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
+- [Bulk viscosity](/definitions/bulk-viscosity.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Lattice Boltzmann methods for turbulent flow](/methods/lattice-boltzmann-method.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)

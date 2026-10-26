@@ -5,7 +5,7 @@ description: "Flux reconstruction (FR/CPR) builds a degree-N discontinuous flux 
 status: established
 aliases: [FR, flux reconstruction method, correction procedure via reconstruction, CPR, FR/CPR, lifting collocation penalty, Huynh flux reconstruction]
 tags: [flux-reconstruction, dg, implicit-les, numerical-dissipation, les, wmles]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T11:38:00Z
 ---
 
 # Flux reconstruction
@@ -243,8 +243,40 @@ first-point distance.
   [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md),
   wall-resolved and wall-modelled channels (Duan & Wang 2024, §5).
 
+## Low-order FR and the spectral-difference relative in a shock–turbulence comparison
+
+In the multi-code comparison of [Chapelier et al. (2024)](/sources/chapelier-2024.md)
+on the supersonic [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+($Re=1600$, $M_0=1.25$), the FR code H3AMR (HySonic Technology) runs on
+unstructured meshes in a block-spectral form with $N+1$ Gauss–Legendre
+points per direction and element, correction functions averaged over Radau
+polynomials of different orders, a Rusanov interface flux and third-order
+Runge–Kutta (§III.B.g). Its shock capturing is the "Block Spectral
+Stresses" model, which computes sub-filter stresses, heat flux and pressure
+work from the spectra of the velocity gradient, is activated by the energy
+of the highest polynomial mode of momentum, and is meant to capture shocks
+and model turbulence at once (see
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
+Run at second order ($N=1$, $32^3$ to $256^3$ elements, Table II), it
+under-estimates the kinetic energy at $64^3$ degrees of freedom and gives
+the lowest solenoidal dissipation of all solvers on every grid, the excess
+numerical dissipation "typical of second-order upwind schemes" (§IV.A,
+Figs. 5, 7); in the subsonic verification case it runs at fourth order and
+agrees with the other codes (App. A). The comparison also includes
+SD3DvisP, a fourth-order spectral-difference code on unstructured hexahedra
+(Roe flux with entropy fix, centred viscous flux, subcell artificial
+viscosity), which captures small scales well on coarse grids but whose
+strong shock capturing "probably" hinders them on the finer ones (§III.B.e,
+§IV.A, §V). High-order element methods resolve both large and small scales
+better than second order in this compressible setting (§V). The PyFR
+compressible FR code is named by [Kurz et al. (2025)](/sources/kurz-2025.md),
+§1, among the GPU high-order solvers.
+
 ## Qualifications
 
+- Chapelier et al. (2024) print H3AMR's order as the number of points per
+  direction ("$N$ = spatial order of accuracy", §III.B.g), here translated
+  to the registry's degree $N$ (order $N+1$).
 - Duan & Wang (2024) do not print the coefficient values used in the runs;
   only the "often estimated" $C_s=0.16$, WALE constant $0.325$ and the
   relation $c_v\approx\sqrt{2.5}\,C_s$ for the Vreman constant (§2.2–2.4).
@@ -268,3 +300,5 @@ first-point distance.
 - [Wang (2024)](/sources/wang-2024-b.md) — arXiv v2: §2.2, Eqs. (9)–(16) (FR with DG-recovering correction, Riemann solvers, LDG); §2.3 (solution filtering); §2.4.2 (wall flux); §3 (ATHOS); §4.1, Figs. 2–3; §4.2, Eq. (26); §4.3, Tables 5–8; §4.4.3; §5.
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — arXiv v1: §2.2, Eqs. (18)–(22) (Huynh FR, correction functions, generalization of nodal DG); §2.3 (PyFR, Rusanov, BR2, RK4, equal degrees of freedom); Eq. (26); §3.1–3.2, Figs. 3–5, 11–13; §4.
 - [Saini et al. (2023)](/sources/saini-2023.md) — §1 (relayed cost and accuracy comparisons of FR against finite volumes).
+- [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL hal-04582857v1: §III.B.e, g, Tables I–II (H3AMR flux reconstruction, Block Spectral Stresses, SD3DvisP spectral difference); §IV.A, Figs. 5, 7; §V; App. A.
+- [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv 2404.12703v2: §1 (PyFR among GPU high-order codes).
