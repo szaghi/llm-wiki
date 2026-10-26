@@ -5,7 +5,7 @@ description: "Critical balance equates the linear Alfvén time and the nonlinear
 status: established
 aliases: [CB, Goldreich–Sridhar theory, GS95, strong MHD turbulence, weak MHD turbulence, imbalanced MHD turbulence, residual energy]
 tags: [mhd, astrophysics, plasma, anisotropy, energy-cascade]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-26T10:20:00Z
 ---
 
 # Critical balance and the anisotropic MHD cascade
@@ -264,6 +264,29 @@ Kolmogorov-scaled cutoff $\sim(\nu^3/\varepsilon_m)^{1/4}$, where
 $\varepsilon_m$ (page-local) is the flux surviving into the subviscous
 magnetic cascade.
 
+## Field-perpendicular anisotropy in a flare simulation
+
+[Ruan et al. (2023)](/sources/ruan-2023.md) do not invoke critical balance
+by name, but their diagnostics of a 3D resistive MHD solar-flare
+simulation rest on the same field-perpendicular anisotropy. They assume
+that the turbulence is Alfvénic and develops only perpendicular to the
+mean field, so their turbulent energies use only the field-perpendicular
+line-of-sight components (§3.5, Eqs. 7–8). They report that vortices form
+preferentially in planes perpendicular to the local field, and they
+conclude that the "turbulence is anisotropic due to magnetic tension"
+(§3.3, §4). Their mechanism is a
+Kelvin–Helmholtz instability of a flow shear lying across the guide field.
+As recalled from Keppens et al. (1999), a shear flow parallel to
+$\boldsymbol B$ is Kelvin–Helmholtz unstable only when half the velocity
+jump exceeds the local $v_A$. A shear across the field meets no
+stabilizing tension and is "unconditionally unstable" (§3.3). The review
+states, in its heuristic account of residual energy recalled above
+(Schekochihin 2022, §10.4), that shear layers are Kelvin–Helmholtz
+unstable while current sheets are stabilized by the field. Ruan et al. measure neither $l_\parallel$ nor $\lambda$, and
+fit no anisotropy exponent $m_a$. Their evidence for anisotropy is
+qualitative, from one simulation (set-up and energetics on [compressible
+MHD turbulence](/results/compressible-mhd-turbulence.md)).
+
 ## Scope
 
 The review advocates CB as a universal principle for turbulence carrying
@@ -292,3 +315,4 @@ debated" (§8.2).
 - [Schekochihin (2022)](/sources/schekochihin-2022.md) — §2 (Eqs. 2.1–2.11); §4 (Eqs. 4.2–4.13), §4.4; §5 (Eqs. 5.1–5.12), §5.2, §5.3; §8.2; §9 (Eqs. 9.1–9.28), §9.2, §9.6; §10 (Eqs. 10.1–10.4), §10.4; §11 (Eqs. 11.1–11.17); §14; App. A.2–A.5 (Eqs. A15, A23, A25–A41); App. C (Eqs. C3–C29).
 - [Gan et al. (2022)](/sources/gan-2022.md) — §3, p. 3; §3, Figs. 4–5, p. 6 (anisotropy exponents of mode components).
 - [Kochurin et al. (2022)](/sources/kochurin-2022.md) — Eq. (3); pp. 2, 4–5; Conclusion (weak shear-Alfvén spectrum constant; magneto-capillary analogue; critical balance as an open question).
+- [Ruan et al. (2023)](/sources/ruan-2023.md) — §3.3; §3.5, Eqs. (7)–(8); §4 (field-perpendicular anisotropy assumed and observed in a flare simulation; Kelvin–Helmholtz criterion for parallel and perpendicular shear).

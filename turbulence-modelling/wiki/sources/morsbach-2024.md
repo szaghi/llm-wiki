@@ -152,8 +152,9 @@ in the text, is not in the list. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26). This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunk 5. This source is cited on:
 
+- [Turbine cascades (T106, T161, VKI LS89)](/benchmarks/turbine-cascade.md)
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
@@ -165,7 +166,9 @@ Chunk 4 (2026-10-26). This source is cited on:
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
+- [Laminar kinetic energy transition models](/methods/laminar-kinetic-energy-transition-model.md)
 - [Local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)
+- [Differential Reynolds-stress models](/methods/reynolds-stress-model.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)

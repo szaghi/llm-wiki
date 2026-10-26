@@ -5,7 +5,7 @@ description: "Menter's two-equation shear-stress-transport eddy-viscosity model,
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-26T07:38:00Z
+timestamp: 2026-10-26T10:25:00Z
 ---
 
 # k-ω SST model
@@ -205,6 +205,56 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
   DDES shielding function, raising $C_{d1}$ to 30 for more shielding
   (§4.1.3, Eqs. 6–11, §4.4).
 
+### Implementation in a lattice Boltzmann solver
+
+Mozaffari et al. (2024) implement SST, and SST-based IDDES and continuous
+eddy simulation, in a research version of the lattice Boltzmann solver
+[ProLB](/software/prolb.md), claiming that SST "has never been used in the
+standard LBM framework", a non-standard finite-volume lattice Boltzmann
+method on unstructured grids being the one precedent they cite
+([Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §1, lines 43–46,
+68–69; HAL accepted manuscript). They print the model of the Equations
+section with the limiter $\nu_t=(k/\omega)/\max\{1,\lvert\Omega\rvert F_2/(a_1\omega)\}$,
+$a_1=0.31$, $\lvert\Omega\rvert$ "the absolute value of the vorticity", and
+$0.09$ in place of $\beta^*$ inside $F_1$ and $F_2$ (§2.3, Eqs. 16–21), the
+same rotation-based limiter as Dzanic et al. and the same literal 0.09 as
+Zhao et al. (2023b); no other coefficient is printed. The eddy viscosity
+enters the lattice Boltzmann scheme only through the relaxation time (see
+[lattice Boltzmann methods](/methods/lattice-boltzmann-method.md)). The two
+transport equations are solved by finite differences on the Cartesian grid
+inside the collision step: fourth-order centred derivatives, one-sided
+differences at walls, second-order centred differences at grid-level
+transitions, and a hybrid centred/upwind TVD advection with a modified
+Van Albada limiter calibrated on an inclined flat plate to avoid large
+$\omega$ fluxes near the wall (§2.3, lines 201–209). Wall values of $k$
+and $\omega$ come from wall functions that switch at $y^+=11.06$ (after
+Kalitzin et al.) between the viscous-sublayer values
+$k=C_ku_\tau^2y^{+3.23}$, $\omega=6u_\tau^2/(\nu\beta_1y^{+2})$ and the
+log-layer values $k=u_\tau^2/\sqrt{C_\mu}$, $\omega=u_\tau^2/(\nu\sqrt{C_\mu}\kappa y^+)$,
+with an optional blend of the two $\omega$ values after Knopp et al.
+($C_k$, $\beta_1$, $C_\mu$ not given values; §2.3, Eqs. 22–25).
+
+### PANS form with a dynamic resolution parameter
+
+Petrocchi & Barakos (2024) print the compressible SST-PANS model of Luo et
+al. that their HMB3 solver uses, with the unresolved $k_u$, $\omega_u$
+written without subscripts
+([Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md), §2, Eqs. 3–5):
+the diffusion coefficients and the cross-diffusion term carry the factor
+$f_\omega/f_k$, the $\omega$-destruction coefficient becomes
+
+$$\beta'=\alpha\beta^*-\frac{\alpha\beta^*}{f_\omega}+\frac{\beta}{f_\omega}$$
+
+(the source's $\gamma$ is the registry's SST $\alpha$), and the limiter is
+$\mu_t=\min(\rho k/\omega,\ \rho a_1k/(\lvert S\rvert F_2))$ with $a_1=0.31$,
+a strain magnitude whose normalization is not printed. At $f_\omega=1$,
+$\beta'=\beta$ *(compiler check, not in the sources)*. This $\beta'$
+multiplies $\rho\omega^2$, so Petrocchi & Barakos's destruction has the
+dimensions of the left side, unlike the bracket printed by Dzanic et al.
+(see Qualifications) *(compiler check, not in the sources)*. Their
+dynamic $f_k$ and its effect on buffet are on the
+[PANS page](/methods/partially-averaged-navier-stokes.md).
+
 ## What the transported $k$ represents
 
 Haering et al. (2022) exclude SST as the base model of their
@@ -315,6 +365,62 @@ operational role and need not match their DNS counterparts
 - **PANS.** Dzanic et al. (2022) use SST as the PANS closure on the
   [periodic hill](/benchmarks/periodic-hill.md) and the circular cylinder at
   $Re_D=3900$, with high-order flux reconstruction.
+- **Transonic buffet.** On the OAT15A supercritical airfoil at
+  $M_\infty=0.73$, $Re_c=3\times10^6$, Petrocchi & Barakos (2024) find that
+  SST URANS in HMB3 predicts no self-sustained shock oscillation at
+  $\alpha=3.5^\circ$, in two dimensions (even at $3.9^\circ$) and in a
+  three-dimensional model of half the wind tunnel, where it converges to a
+  steady state, while SST-PANS on the same grids predicts buffet (§4.3,
+  §4.5.5, Table 2). They attribute the three-dimensional failure to
+  excessive corner separation at the wing–wall junction, which deflects the
+  trailing-edge flow spanwise and keeps the shock-foot and trailing-edge
+  separations apart, and to too high a post-shock eddy viscosity (§4.5.5).
+  Their compilation of earlier URANS of this case shows wide scatter
+  between models and solvers, with Thiery & Coustols reporting buffet with
+  SST in [elsA](/software/elsa.md) (App. A, Table A.4).
+- **Lattice Boltzmann airfoils and bluff bodies.** In ProLB, SST and
+  Spalart–Allmaras RANS give close eddy-viscosity fields on the NACA 23012
+  at $Re_c=1.88\times10^6$, $M=0.18$, except at $0^\circ$, where SST gives
+  a lower $\nu_t$; lift coefficients are 0.12, 0.83, 1.12 (SST) and 0.12,
+  0.79, 1.175 (SA) against 0.12, 0.79, 1.07 measured at $0^\circ$,
+  $6.2^\circ$, $9.3^\circ$, and the drag error grows with incidence,
+  largest for SST at $9.3^\circ$ (Mozaffari et al. 2024, §3.1, Table 1,
+  Figs. 4–5). On the three-dimensional NACA 0012 at $Re_c=3\times10^6$ and
+  $45^\circ$, SST RANS gives $C_L=2.238$, $C_D=2.053$ against reference
+  values of 1.097 and 1.180, which the SST-based hybrids bring to
+  1.23/1.04 (IDDES) and 1.19/0.99 (CES) (§3.2, Table 2; see
+  [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+- **Compressor cascades.** Liu et al. (2024) find that SST overpredicts
+  the suction-side corner separation of the PVD linear compressor cascade
+  ($Re\approx2.3\times10^5$) at $-7^\circ$ and $0^\circ$ incidence, predicts
+  an endwall separation at $0^\circ$ "much larger" than measured and
+  underpredicts $C_p$ over 50–100% of the axial chord; the fully turbulent
+  SSG/LRR-$\omega$ Reynolds-stress model is "only slightly more accurate"
+  ([Liu et al. (2024)](/sources/liu-2024.md), Figs. 8–13, Conclusions; see
+  [Reynolds-stress models](/methods/reynolds-stress-model.md)). On the
+  ERCOFTAC T3 flat plates, fully turbulent SST and SSG/LRR-$\omega$ have
+  similar accuracy (Fig. 6). The SST $F_1$ is the function that blends the
+  inner and outer coefficient sets of SSG/LRR-$\omega$ (Eq. 9).
+- **Host of a laminar-kinetic-energy transition model.** Pacciani et al.
+  (2025) couple their reformulated
+  [laminar-kinetic-energy model](/methods/laminar-kinetic-energy-transition-model.md)
+  to SST through an intermittency that multiplies $P_k$ and, bounded below
+  by 0.1, the destruction, keeping the SST limiter
+  $\mu_t=\rho a_1k/\max(a_1\omega,F_2\lvert S\rvert)$
+  ([Pacciani et al. (2025)](/sources/pacciani-2025.md), §4.2, Eqs. 15–18,
+  App. A Eq. A14). They chose SST over the Wilcox $k$-$\omega$ model for its
+  "more reliable response to freestream turbulence": with Wilcox's model
+  the leading-edge heat transfer of the VKI LS89 vane stayed below the
+  measurements even with an exaggerated inlet length scale, and the
+  realizability constraint was "mandatory" for physically consistent
+  results (§4.2, §6.1). With the same transition model, Wilcox $k$-$\omega$
+  gives the same onset on T3A as SST but a quicker transition and a
+  different turbulent $C_f$, so the constants "should be retouched" per
+  host model (§5.1.1, Fig. 5).
+- **Aircraft wake precursor.** Bouhafid et al. (2024) use an SST RANS on an
+  adapted mesh as the precursor of a temporal LES of a NACA 0012 wing with a
+  jet ([Bouhafid et al. (2024)](/sources/bouhafid-2024.md), §2.2, §3; see
+  [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
 
 ## Qualifications
 
@@ -356,6 +462,16 @@ version read (arXiv v1):
   diffusion term with an unbalanced parenthesis,
   $\nabla\cdot[(\mu+\sigma_k\mu_t)\nabla k)]$; the form above drops the stray
   ")".
+- Mozaffari et al. (2024) print the production in both transport equations
+  as $\tau_{ij}\partial u_j/\partial x_j$, with the index $j$ repeated, which
+  leaves a free index $i$ in a scalar equation; a scalar production needs
+  the contraction with $\partial u_i/\partial x_j$ (Eqs. 16–17) *(compiler
+  check, not in the sources)*. They also attribute SST to
+  "Menter et al. [41]", a single-author 2009 review, after citing Menter
+  (1994) for it (line 196).
+- Petrocchi & Barakos (2024) expand SST as "Shear Stress Tensor" in the
+  nomenclature and "Shear Stress Model" in a table caption, against
+  "Shear-Stress Transport" in the text (nomenclature, Table A.4, §1).
 
 # Citations
 
@@ -377,3 +493,8 @@ version read (arXiv v1):
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §4.1.2–4.1.3 Eqs. 6–11, §4.4, §5, §6–§7 Table 3 Figs. 17–23 (HAL author manuscript).
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §2, §3.3, §4.1 Figs. 7–9, §4.2 Figs. 10–15.
 - [Lewis et al. (2023)](/sources/lewis-2023.md) — §4.1, §4.2.2, §4.3.1, Tables 9–10 (HAL accepted manuscript).
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §1, §2.3 Eqs. 16–25, §3.1 Table 1 Figs. 4–5, §3.2 Table 2 (HAL accepted manuscript).
+- [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — §2 Eqs. 3–5, §4.3, §4.5.5, Table 2, App. A Table A.4.
+- [Liu et al. (2024)](/sources/liu-2024.md) — Eq. 9, Figs. 6, 8–13, Conclusions.
+- [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §4.2 Eqs. 15–18, §5.1.1 Fig. 5, §6.1, App. A Eq. A14.
+- [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) — §2.2, §3.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Backward-facing step"
-description: "Turbulent flow over a sudden expansion of a channel, with fixed separation at the step edge, a free shear layer and reattachment downstream; here the reattachment length as a measure of filter-width choices in wall-resolved LES at Re_H about 5700 and of adaptive meshing for IDDES at Re_H 28,000, and an out-of-geometry test of a learned RANS closure at 5000."
+description: "Turbulent flow over a sudden channel expansion, with fixed separation at the step edge, a free shear layer and downstream reattachment: the reattachment length as a measure of LES filter widths at Re_H about 5700, of adaptive IDDES meshes at 28,000, of a transferred learned RANS closure at 5000, and of a probabilistic learned closure at 300–1100."
 status: established
 aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step]
-tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven]
-timestamp: 2026-10-26T07:40:00Z
+tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification]
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Backward-facing step
@@ -104,6 +104,48 @@ the near-step region shown (Fig. 16). The comparison is restricted to that
 region because full-field reference data were not available to the authors,
 and no reattachment length is printed.
 
+**Probabilistic learned closure at low Reynolds number.**
+[Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) (read in arXiv
+v2), §3, use a step of expansion ratio 2 (downstream channel height $2H$),
+with $Re_H$ built on the step height and the inlet bulk velocity, as the
+test of their Bayesian closure (see
+[model-form uncertainty](/definitions/model-form-uncertainty.md)): a
+[tensor-basis neural network](/methods/tensor-basis-neural-network.md) for
+the Reynolds stress plus a stochastic discrepancy field, trained through an
+adjoint of a finite-element RANS solver
+([model-consistent training](/methods/model-consistent-training.md)) on
+sparse mean velocity and pressure only.
+
+- Reference data: OpenFOAM LES with the [WALE model](/methods/wale-model.md),
+  domain $27H\times2H\times H$ periodic in $z$, 1,428,920 degrees of
+  freedom, averaged in time and span (§3.2). Training at $Re_H=300$, 700,
+  900 and 1100; test at $Re_H=500$. About 8% of the 12,180 nodes of the 2D
+  RANS mesh ("approximately 1000" points) are observed (§3.2, Fig. 4).
+- Baseline: the [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md)
+  (simpleFoam, 35,709 degrees of freedom), which "underestimates the size
+  of the first recirculation zone and almost completely misses the second
+  one"; the learned model predicts both (§3.4, Fig. 8).
+- Reattachment length at $Re_H=500$ (Table 5):
+
+| Model | $x_R/H$ |
+|---|---|
+| LES (reference) | 9.10 |
+| Biswas et al. (as recalled; expansion ratio 1.9423) | 8.9 |
+| $k$-$\varepsilon$ baseline | 5.61 |
+| TBNN of Geneva & Zabaras (as recalled) | 5.52 |
+| probabilistic closure, mean ± 3 std | $10.06\pm1.21$ |
+
+  Only the probabilistic prediction envelops the LES value; the authors
+  attribute the short bubble of Geneva & Zabaras to "the lack of the
+  stochastic, model correction term", a conjecture they do not test (§3.4).
+- Cost relative to one baseline RANS run (Table 4): LES 7679, the
+  differentiable RANS solver 1.3.
+
+The step here plays a different role from the other configurations: the
+learned closure is trained and tested in the same geometry at different
+Reynolds numbers, because its discrepancy field is tied to the grid and
+geometry (§2.2.3, §2.2.5).
+
 **RANS corrections.** As recalled by
 [Yan et al. (2022)](/sources/yan-2022.md), §1, Rumsey found that enhancing
 the mixing in the separated shear layer of the $k$-$\omega$ SST model
@@ -114,6 +156,15 @@ generalize. As recalled by [Duraisamy et al. (2019)](/sources/duraisamy-2019.md)
 step showed a high level of uncertainty when applied to the periodic hill.
 
 ## Qualifications
+
+- The configuration of [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md)
+  ($Re_H$ from 300 to 1100) lies below those of the other configurations
+  on this page ($Re_H$ 5000 to 28,000); the authors cite Armaly et al. for the existence of the
+  secondary recirculation zone above $Re_H\approx400$ but do not discuss
+  whether the regime is turbulent, and use $k$-$\varepsilon$ and LES there.
+  Their Table 2 lists five viscosities for four training Reynolds numbers;
+  the second, $2.00\times10^{-3}$, corresponds to the test case $Re_H=500$
+  *(compiler check, not in the sources)*.
 
 - The two configurations differ in expansion ratio (1.5 against 1.25),
   Reynolds number ($Re_H\approx5700$ against 28,000), inflow and modelling
@@ -148,3 +199,4 @@ step showed a high level of uncertainty when applied to the periodic hill.
 - [Yan et al. (2022)](/sources/yan-2022.md) — §1 (recalled result of Rumsey).
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3 (recalled result).
 - [Tang et al. (2023)](/sources/tang-2023.md) — §III A, §III D, Table I, Fig. 16.
+- [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — §2.2.3, §2.2.5; §3.1–3.4, Tables 2–5, Figs. 4–12.

@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-26T07:19:00Z
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -74,6 +74,10 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Kurz et al. (2023)](/sources/kurz-2023.md), App. A, Eqs. (A.1)–(A.3) | DSM element by element in DG (FLEXI), baseline of a learned closure | modal cut-off to degree 2 ($N=5$) or 3 ($N=7$); numerator and denominator averaged over the element; $\mu_t$ clipped to $[-100\mu,1000\mu]$ |
 | [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md), §3.2; §2.5 | DSM with Lilly's modification in charLES; also the baseline stress of a mean-matching corrected SGS model used to generate wall-model training data | not printed |
 | [Sirignano & MacArt (2023)](/sources/sirignano-2023.md), §3.2 | DSM, "the standard approach", baseline of learned closures | test filter, least squares, average over homogeneous directions |
+| [Kim et al. (2024)](/sources/kim-2024.md), §2.1, §3.2, §4.2 | DSM (Germano et al. 1991; Lilly 1992), baseline of neural-network models of a cylinder wake, finite differences with an immersed boundary | box test filter in the spanwise (homogeneous) direction only, $\hat\Delta_z=2\Delta_z$ ($\Delta_z$ page-local, the spanwise grid size); coefficient averaged over $z$ |
+| [Wang et al. (2023c)](/sources/wang-2023-c.md), §II.A, Eq. (12) | DSM (Lilly's least-squares form) and a two-coefficient dynamic mixed model, baselines in isotropic turbulence and a temporal mixing layer, pseudo-spectral | Gaussian, $\hat\Delta=2\Delta$; average over homogeneous directions |
+| [Domaradzki (2024)](/sources/domaradzki-2024.md), §3.3, Eqs. (3.4)–(3.7) | identity in energy form, applied to the coefficient of the [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md) | the model's own graded filter; local and domain average |
+| [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md), §2.4, §3.3.2 | DSM of the reference LES (LESOCC, Breuer et al.) of the periodic hill, as recalled | not printed |
 
 Fowler et al. (2022, §4.2) borrow the Lagrangian averaging of the dynamic
 model for the time integration of their wall model (semi-Lagrangian upstream
@@ -282,11 +286,64 @@ filter-width question.
   "incorrectly large" resolved Reynolds stresses in the boundary layers;
   the [AMD model](/methods/anisotropic-minimum-dissipation-model.md) and
   the learned closures do better.
+- **Circular-cylinder wake** ([Kim et al. 2024](/sources/kim-2024.md),
+  §4.1–4.2, Table 3, Figs. 6, 8–13). Against filtered DNS at $Re_D=3900$,
+  DSM gives a recirculation length $L_r/D=1.32$ (DNS 1.56; $L_r$
+  page-local) on the training grid $449\times271\times64$, 0.80 on the
+  coarser $353\times213\times64$ and 1.45 on the finer $545\times301\times64$,
+  where it "agrees well" with DNS; its base pressure is $-C_{pb}=0.94$
+  against 0.87. At untrained $Re_D=5000$ it gives 1.35 against 1.39, and at
+  $Re_D=10\,000$ 0.62 against the measured 0.82 (no model 0.51). A priori
+  its backscatter is zero. The pointwise neural-network models with
+  grid- and test-filtered inputs fused by subtraction keep their accuracy
+  on the untrained grids; the authors motivate the subtraction by the
+  Germano identity, the difference of the two levels standing for $L_{ij}$
+  (§3.2; see [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)
+  and [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+  A full time step costs about 2 (fused model) to 2.5 (grid-filtered
+  input only) times a DSM step on the same grid (App. E).
+- **Over-dissipation in isotropic turbulence and a mixing layer**
+  ([Wang et al. 2023c](/sources/wang-2023-c.md), §III–IV, Figs. 3–17). DSM
+  and the dynamic mixed model slightly over-estimate large-scale and
+  under-estimate small-scale energy in forced isotropic turbulence at
+  $Re_\lambda\approx160$ and give narrower PDFs of strain and rotation. In
+  a temporal mixing layer DSM delays transition (the dynamic mixed model
+  captures it better), and both over-predict the kinetic energy in the
+  linear-growth region and the size of vortical structures; the DSM
+  subgrid flux is strictly positive. An ensemble-Kalman-calibrated mixed
+  model does better (see [gradient model](/methods/gradient-model.md) and
+  [ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md)).
+- **A dynamic coefficient that fails.** Applied to the constant $C_{\mathrm A}$
+  (page-local, the non-dimensional constant of the constant variant) of the
+  [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md),
+  the energy form of the identity gives wildly fluctuating local values and
+  a domain-averaged $C_{\mathrm A}=-3.9$ with standard deviation of order $10^3$ in
+  forced isotropic turbulence (Domaradzki 2024, §3.3). In the
+  domain-averaged identity the two terms multiplied by $C_{\mathrm A}$ are
+  comparable, so a large $C_{\mathrm A}$, and excessive dissipation, would be
+  needed (Eq. 3.7). The author's argument: the procedure picks a model first and fits its coefficient,
+  so the predicted subgrid transfer for the same field depends on the
+  model chosen; Domaradzki judges it not useful for the method. The paper
+  also recalls,
+  as Vicente Cruz & Lamballais do above, that Thiry, Winckelmans &
+  Duponcheel found the spectral viscosity of DSM "essentially uniform over
+  all wavenumbers" (§3.3).
+- **Periodic hill reference LES.** Breuer et al.'s LESOCC LES with DSM
+  (12.4 million cells, $Re_h=5600$) reattaches at $x/h=5.09$ against Rapp's
+  measured 4.83; Breuer et al. attribute the slightly under-predicted
+  pressure to the SGS model, which delays separation and lengthens the
+  bubble, as recalled by Prieto Saavedra et al. (2024, §3.3.2, Table 1).
+  See [periodic hill](/benchmarks/periodic-hill.md).
 - **Negative viscosity.** The local coefficient can become negative (local
   [backscatter](/definitions/energy-backscatter.md)), which generally
   destabilizes the computation; clipping or homogeneous averaging restores
   $\nu_t>0$ everywhere ([Vela-Martín 2022](/sources/velamartin-2022.md),
-  §2.2, recalling Germano et al. 1991 and Meneveau & Katz 2000).
+  §2.2, recalling Germano et al. 1991 and Meneveau & Katz 2000). The
+  learned 1D closure of [van Gastelen et al. (2024)](/sources/vangastelen-2024.md)
+  (§1) cites the dynamic localization model with a subgrid-energy equation
+  (Ghosal et al., as recalled) as an earlier way to admit backscatter
+  stably by modelling the subgrid energy, the route their own closure
+  takes (see [energy backscatter](/definitions/energy-backscatter.md)).
 
 ## Dynamic wall models (inline)
 
@@ -356,3 +413,8 @@ squares from a 6×4 system; see the
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — §4.2; §4.5, Figs. 6, 9; App. A, Eqs. (A.1)–(A.3).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.5; §3.2; §4.2–4.8.
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §3.2; §4.1–4.3, Table 2, Figs. 8–10.
+- [Kim et al. (2024)](/sources/kim-2024.md) — §2.1; §3.2; §4.1–4.2, Table 3, Figs. 6, 8–13; App. E.
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — §II.A, Eq. (12); §III–IV, Figs. 3–17.
+- [Domaradzki (2024)](/sources/domaradzki-2024.md) — §3.3, Eqs. (3.4)–(3.7).
+- [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §2.4, Table 1; §3.3.2.
+- [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — §1.

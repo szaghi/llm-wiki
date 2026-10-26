@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Low-dissipation low-dispersion schemes with shock sensor"
-description: "The LD2 scheme pairs a skew-symmetric energy-preserving central flux, with gradient-extrapolated face values that cut dispersion, and a much-reduced fourth-difference matrix dissipation; its compressible extension LD2C adds extrapolated density and sound speed and a Ducros-weighted shock sensor, and removes the excess dissipation that spoils hybrid RANS/LES."
+description: "The LD2 scheme pairs an energy-preserving central flux and gradient-extrapolated face values with much-reduced matrix dissipation; LD2C adds a Ducros-weighted shock sensor for compressible hybrid RANS/LES; an optimized sixth-order upwind reconstruction is compared with a second-order energy-preserving central scheme for turbulent kinetic energy budgets."
 status: established
-aliases: [LD2, LD2C, LD2-Compressible, low-dissipation low-dispersion scheme, Kok flux with JST dissipation]
+aliases: [LD2, LD2C, LD2-Compressible, low-dissipation low-dispersion scheme, Kok flux with JST dissipation, OPT6, optimized upwind scheme, approximate dispersion relation]
 tags: [numerical-dissipation, hybrid-rans-les, des, compressible, kinetic-energy-preserving]
-timestamp: 2026-10-26T07:42:00Z
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Low-dissipation low-dispersion schemes with shock sensor
@@ -191,6 +191,53 @@ differences (§3.2, Table 2; §4):
   [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md),
   which keeps the runs stable with no artificial dissipation (§4.2).
 
+**Optimized high-order upwind reconstruction.**
+[Wang et al. (2024)](/sources/wang-2024.md) take the opposite route to LD2:
+instead of a central flux with minimal added dissipation, a
+dispersion-optimized upwind reconstruction whose dissipation is kept. Their
+OPT6 is the linear part of the OMP6 scheme of Li et al. (as recalled), a
+cell-centred eight-point reconstruction of the left interface state with
+two free parameters, $a_{\mathrm o}$ and $b_{\mathrm o}$ (page-local), set
+to 0 and 0.001 as Li et al. recommend, the two interface states combined by
+a Roe flux (§2.4, Eqs. 12–13). With $a_{\mathrm o}=b_{\mathrm o}=0$ the
+stencil reduces to the symmetric sixth-order interpolation
+$\tfrac1{60}(1,-8,37,37,-8,1)$ and $b_{\mathrm o}$ adds the upwind
+dissipation *(compiler check, not in the sources)*. Its comparison scheme,
+KGP2, is the second-order kinetic-energy-preserving split form (see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+
+Wang et al. characterize both by Pirozzoli's approximate dispersion
+relation, the modified wavenumber whose real part measures dispersion and
+imaginary part dissipation, reporting the largest accurately resolved
+wavenumber and the points per wavelength it implies (§2.5, Fig. 1,
+Table 1; the tolerance is not stated):
+
+| Scheme | dispersion: $k_{\max}\Delta x$, points per wavelength | dissipation: $k_{\max}\Delta x$, points per wavelength |
+|---|---|---|
+| KGP2 (central, second order) | 0.48, 14 ("poor") | $\pi$, 2 ("perfect") |
+| OPT6 (upwind, sixth order) | 1.65, 4 ("good") | 1.15, 6 ("good") |
+
+($k_{\max}$ the largest resolved wavenumber, page-local.) In WALE LES of
+[channel flow](/benchmarks/turbulent-channel-flow.md) at $Re_\tau=180$,
+$M_b=0.2$ ($128\times66\times128$ cells, $\Delta x^+\approx9$,
+$\Delta z^+\approx4.5$) both give the same mean velocity, while OPT6 is
+closer to DNS at the Reynolds-shear-stress peak and in the budget of the
+turbulent kinetic energy, "especially for the dissipation term" (§3.2,
+Figs. 3–4). On the [periodic hill](/benchmarks/periodic-hill.md) at
+$Re_b=10\,595$, $M=0.2$, first-order statistics are grid-insensitive and
+second-order ones and budget terms are not; OPT6 agrees with the reference
+even on $48^3$, whereas KGP2 shows a grid-convergence trend (separation at
+$x/H=0.26$, 0.24, 0.20, 0.20 on $48^3$ to $196\times128\times186$, against
+0.20 in the DNS of Krank et al.) (§3.3, Table 2, Figs. 5–6). The authors
+recommend high-order upwind schemes for budget analysis and use OPT6 for an
+SA-based [DDES](/methods/detached-eddy-simulation.md) of the 30P30N
+three-element airfoil ($M_\infty=0.17$, $Re=1.7\times10^6$, about 27 million
+cells), in agreement with measured pressure distributions and slat-cove
+spectra (§4–5). They use a nonzero sum of the budget terms as an indicator
+of insufficient resolution (§3.3, §4). The central scheme compared is
+second order and the upwind one sixth order, and no high-order central
+scheme is tested (§2.3–2.4).
+
 Bernades et al. distinguish *numerical* dissipation (an undesired property
 of the method) from *artificial* dissipation (deliberately added) (§1,
 footnote 1); in these terms the JST matrix dissipation of LD2 and LD2C is
@@ -208,6 +255,24 @@ artificial dissipation *(compiler check, not in the sources)*.
   18 000, but stresses are plotted only for $Re_\tau=395$.
 - The recommended range is printed as "1/512 to 1/1024" (§2.2.1) and "1/512
   or smaller" (§5).
+- **Two answers to one problem.** Carlsson et al. (2023) reduce the
+  artificial dissipation added to an energy-preserving central flux so that
+  only the subgrid model dissipates; Wang et al. (2024) keep the
+  dissipation of a dispersion-optimized upwind scheme and find it better
+  than a non-dissipative second-order central scheme for turbulent kinetic
+  energy budgets. Carlsson et al. vary the added dissipation of one
+  central scheme, against the RANS-level coefficient $1/128$ of their
+  solver; Wang et al. vary order and dissipation together (second-order
+  central against sixth-order upwind). Neither runs the other's
+  comparison, so the entry is recorded as a qualification.
+- Wang et al. (2024, §2.3) state that the KGP form follows from the
+  general combination of five convective forms with "$\xi=1/2$,
+  $\alpha=\beta=\delta=1/4$, and $\varepsilon=0$"; $\xi$ is not defined and
+  the weight of the $C^u$ form is not given. In the one-parameter family
+  recalled by Bernades et al. (2023) the KGP form is the parameter value
+  $\tfrac12$ and carries weight $\tfrac14$ on that form too
+  *(compiler check, not in the sources)*; see
+  [kinetic-energy preservation](/properties/kinetic-energy-preservation.md).
 - Printed slips: §5 attributes LD2 to "Löwe et al. [28]", while ref. [28] is
   Probst et al. and LD2 is Löwe et al. [10] elsewhere; §4.3 cites Fig. 4(b) for
   both $Re_\tau=2400$ and 18 000 (the latter is Fig. 4(c)); the text refers to
@@ -217,4 +282,5 @@ artificial dissipation *(compiler check, not in the sources)*.
 # Citations
 
 - [Bernades et al. (2023)](/sources/bernades-2023.md) — §1, footnote 1 (numerical against artificial dissipation; filtering); §3.2, Eq. (29), Table 2 (compact filter, hybrid); §4.1–4.2.
+- [Wang et al. (2024)](/sources/wang-2024.md) — §2.3–2.5, Eqs. (5)–(13), Fig. 1, Table 1 (split forms, OPT6, Roe flux, approximate dispersion relation); §3.2, Figs. 3–4 (channel); §3.3, Table 2, Figs. 5–6 (periodic hill); §4–5 (30P30N DDES, recommendation).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §2, Eqs. (1)–(8) (M-Edge discretization, Kok flux, extrapolation, JST dissipation); §2.2.2, Eqs. (9)–(11) (preconditioning); §2.2.3, Eqs. (12)–(15) (Jameson and Ducros sensors); §2.3, Fig. 1 (dispersion/dissipation analysis, choice of $a$); Table 1; §4.1, Eq. (22), Fig. 2 (Sod); §4.2, Fig. 3 (decaying isotropic turbulence); §4.3, Table 2, Figs. 4–6 (channel); §4.4, Figs. 7–10 (base flow); §5.

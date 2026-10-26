@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Morkovin's hypothesis and Reynolds analogies"
-description: "Morkovin's hypothesis holds that, while density fluctuations stay small against the mean, compressible wall turbulence behaves like incompressible turbulence once mean property variations are scaled out; this page gives Morkovin scaling, the strong Reynolds analogy and its extensions, and how DNS up to Mach 11 and LES of separated hypersonic interactions confirm or break them."
+description: "Morkovin's hypothesis holds that, while density fluctuations stay small, compressible wall turbulence behaves like incompressible turbulence once mean property variations are scaled out; this page gives Morkovin scaling, the strong Reynolds analogy and its extensions, the turbulent Prandtl number in DNS and RANS closures, and where DNS to Mach 14 and separated-flow LES confirm or break them."
 status: established
-aliases: [Morkovin hypothesis, Morkovin scaling, Morkovin's scaling, strong Reynolds analogy, SRA, HSRA, Reynolds analogy factor]
+aliases: [Morkovin hypothesis, Morkovin scaling, Morkovin's scaling, strong Reynolds analogy, SRA, HSRA, Reynolds analogy factor, turbulent Prandtl number]
 tags: [compressible, boundary-layer, dns, hypersonic, rans]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Morkovin's hypothesis and Reynolds analogies
@@ -226,6 +226,86 @@ Helm & Martín (2022, §II) was initialized with incompressible DNS
 fluctuations scaled by the mean density (see
 [direct numerical simulation](/definitions/direct-numerical-simulation.md)).
 
+## Turbulent Prandtl number in a compressible RANS closure
+
+[Chen et al. (2024)](/sources/chen-2024.md) carry these relations into an
+algebraic RANS closure: a compressible recalibration of the
+[Baldwin–Lomax model](/methods/baldwin-lomax-model.md), which their title
+calls a "wall model" but which closes the whole boundary layer with an
+eddy viscosity $\mu_t$ and an eddy conductivity $c_p\mu_t/Pr_t$, solved by
+boundary-layer marching; it is not an LES wall model. They test it against
+twelve DNS of zero-pressure-gradient boundary layers at free-stream Mach 2
+to 13.64 with $T_w/T_r$ from 0.18 (cold) to 1.9 (heated) (Table 1).
+Notation: the source writes the Reynolds average with an overbar and the
+Favre average with a tilde, translated as above; $\mu_t$ is extracted from
+the DNS as $-\langle\rho u''v''\rangle/\partial_y\langle u\rangle_\rho$.
+
+**Morkovin scaling inside the mixing length.** Chen et al. (2024, §3.1,
+Eqs. 3.1–3.2) write the modelled shear stress normalized by $\tau_w$, which
+they identify with the semi-local stress of Morkovin scaling, and show that
+the inner eddy viscosity of the semi-local Baldwin–Lomax model (mixing
+length with $y^*$ in the van Driest damping) is equivalent to applying the
+Trettel–Larsson transformation; their modification replaces it by the
+total-stress transformation of Griffin, Fu & Moin (see
+[compressible velocity transformations](/definitions/compressible-velocity-transformation.md)).
+They recall that the transformation of Hasan et al. (HLPP), which adds a
+friction-Mach-number dependence to the damping, questions Morkovin's
+hypothesis through intrinsic compressibility effects (§1, §3.1), and find
+mean errors of 2.2% (Griffin et al.) and 2.4% (HLPP) of the two
+transformations over their database (App. B, Fig. 16).
+
+**DNS turbulent Prandtl number.** With the definition of $Pr_t$ printed
+above (their Eq. 3.15), Chen et al. (2024, §3.3, Fig. 6a) recall values of
+0.7 to 1.1 above the buffer layer and about 0.85 in the log region from the
+literature, and find in the DNS of three cold-wall layers that near the
+temperature peak both $\partial_y\langle T\rangle_\rho$ and the wall-normal
+turbulent heat flux change sign, so that $Pr_t$ becomes negative or
+singular, with $Pr_t<0.5$ between the singular point and the wall; a
+singular point appears also in an adiabatic Mach 2.5 layer at
+$y^*\approx2$. Huang et al. (2022, §4.3.2) likewise report a near-wall
+overshoot where the wall-normal heat flux changes sign (above). Chen et al.
+conclude that monotone wall-distance formulae, among them the outer fit
+$Pr_t=1-\tfrac14(y/\delta)$ of Subbareddy & Candler that Huang et al. use,
+cannot represent this near-wall behaviour; with the baseline model that
+formula behaves like $Pr_t=1$ (Fig. 6b). The two statements concern
+different regions: Huang et al. fit the outer layer only.
+
+**Consequences for the closure.** With the baseline model, the mean
+temperature above $y^*\approx100$ is insensitive to $Pr_t$, while below it
+the temperature falls with $Pr_t$; the constant $Pr_t=0.9$ over-predicts
+the peak temperature of cold-wall layers, the best constant being 0.8 for a
+Mach 7.87 layer at $T_w/T_r=0.48$ and 0.6 for a Mach 5.84 layer at
+$T_w/T_r=0.25$ (§3.3). Their remedy is a two-layer temperature: the energy
+equation with constant $Pr_t$ above a matching height $y_{\mathrm{mT}}$
+($y^*_{\mathrm{mT}}=100$), and below it the quadratic temperature–velocity
+relation of Duan & Martín and Zhang et al. anchored at that height,
+$$\langle T\rangle_\rho=T_w+C_T(T_r-T_w)\Big(1-\frac{\langle u\rangle_\rho}{U_{\mathrm m}}\Big)\frac{\langle u\rangle_\rho}{U_\delta}+(T_{\mathrm m}-T_w)\Big(\frac{\langle u\rangle_\rho}{U_{\mathrm m}}\Big)^2,\qquad y<y_{\mathrm{mT}},$$
+(Eq. 3.17; page-local: $U_{\mathrm m}$, $T_{\mathrm m}$ the mean velocity
+and temperature at $y_{\mathrm{mT}}$, $U_\delta$ the edge velocity, $C_T$ the
+relation's constant), with $C_T=0.8259$ (Duan & Martín), recast by Zhang et
+al. as $sPr$ with the Reynolds analogy factor $s=1.14$, and the recovery
+factor $r=Pr^{1/3}$ (§3.3, Eq. 3.16; Cogo et al. and Huang et al. take
+$r=0.89$). This is one of the quadratic relations of the
+"Mean temperature" section, written in two-layer form after Griffin et
+al. (as recalled), and results change little for $y^*_{\mathrm{mT}}$ from
+50 to 150 (App. A, Fig. 15). The value $s=1.14$ lies inside the range
+$1.1<R_{af}<1.2$ that Huang et al. (2022) measure for $2C_h/C_f$
+*(compiler check, not in the sources; Chen et al. do not print the
+definition of $s$)*.
+
+**Results.** The implied $Pr_t$ of the modified model reproduces the DNS
+singularity a posteriori (at $y^*\approx8$ for the Mach 7.87 case; §4,
+Fig. 7). For heated and moderately cooled walls ($T_w/T_r>0.5$) the
+modified eddy viscosity alone already improves the temperature; for
+$T_w/T_r\le0.5$ modifying $\mu_t$ is insufficient and the
+temperature–velocity relation is needed (§4, Fig. 11). Over all cases the
+mean relative temperature error falls from 1.4% to 0.4% in the logarithmic
+inner coordinate and from 8.8% to 3.4% in the linear outer coordinate, the
+velocity errors from 1.2% to 0.7% and 2.5% to 1.3% (§4, Fig. 13). The
+authors restrict these modifications to attached thin layers and expect a
+smaller gain in channels and pipes, where the Trettel–Larsson
+transformation is accurate and $Pr_t$ has no near-wall singularity (§5.1).
+
 ## Qualifications
 
 - Helm & Martín (2022) print the friction velocity with the edge density,
@@ -246,4 +326,5 @@ fluctuations scaled by the mean density (see
 
 - [Cogo et al. (2022)](/sources/cogo-2022.md) — §1 (Morkovin's hypothesis, Reynolds analogies, SRA); §2, Table 1 (Eckert number); §3.1; §4, Eqs. (4.3)–(4.4), Fig. 9 (temperature–velocity relations); §5.1, Eq. (5.1), Fig. 10 (Morkovin scaling); §5.2, Figs. 11–12 (TKE budget); §5.3 (pressure fluctuations).
 - [Huang et al. (2022)](/sources/huang-2022.md) — §3.2, Figs. 4, 6, 8 (Reynolds analogy factor, peak stresses, wall pressure); §4.2, Figs. 13–14 (Morkovin and semi-local scaling); §4.3, Eqs. (4.9)–(4.13), Table 5, Figs. 15–18 (temperature relations, SRA, HSRA, $Pr_t$); §4.4, Fig. 19; §5, Figs. 20–21; §6.
+- [Chen et al. (2024)](/sources/chen-2024.md) — §1, §3.1, Eqs. (3.1)–(3.2) (Morkovin-scaled stress in the Baldwin–Lomax mixing length; HLPP and Morkovin's hypothesis); §3.3, Eqs. (3.15)–(3.17), Fig. 6 (DNS $Pr_t$, singularity, two-layer temperature); §4, Figs. 7, 11, 13 (a posteriori $Pr_t$ and errors); §5.1; Table 1; App. A, Fig. 15; App. B, Fig. 16.
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §II (Morkovin-scaled DNS initialization); §IV E, Figs. 28–29 (Reynolds analogy factor, QP85 law, $Pr_t$, SRA and modified SRA in separated hypersonic interactions); §V.

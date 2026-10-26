@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Periodic hill"
-description: "The streamwise-periodic channel with a hill constriction, a smooth-wall separation and reattachment test: at hill-height Reynolds number about 10,600 for hybrid RANS/LES and implicit LES on coarse grids, as the parametrized hill family at 5600 for learned RANS corrections, and at 2800 for data assimilation, physics-informed networks and high-order DG implicit LES."
+description: "The streamwise-periodic channel with a hill constriction, a smooth-wall separation and reattachment test: at hill-height Reynolds number about 10,600 for hybrid RANS/LES, implicit LES and scheme dissipation, at 5600 for stabilized finite-element implicit LES and, as a parametrized family, learned RANS corrections, and at 2800 for data assimilation and DG implicit LES."
 status: established
 aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow, parametrized periodic hills]
 tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion, implicit-les]
-timestamp: 2026-10-26T07:40:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Periodic hill
@@ -23,7 +23,11 @@ training and testing case for data-driven RANS corrections and wall models.
 The sources use three Reynolds numbers, each with its own reference data:
 $Re_h\approx10{,}600$ (the configuration of Fröhlich et al. and ERCOFTAC),
 5600 (the parametrized family of Xiao et al.), and 2800; the ingested sources
-do not relate the three.
+do not relate the three. [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md)
+add the configuration of Fröhlich et al. ($9h\times3.035h\times4.5h$) itself
+at $Re_h=5600$, 10,600 and 37,000, against the experiment of Rapp and,
+at the first two, the LES of Breuer et al., so that this geometry, not the
+parametrized family, is also run at 5600.
 
 ## Configuration
 
@@ -264,6 +268,91 @@ over-predicts, while the WALE model brings little or no improvement (§5.1,
 Figs. 8–9). The jump indicator of the no-model run peaks near the
 separation point and along the lower wall (Fig. 10).
 
+**Stabilized finite-element implicit LES at $Re_h=5600$, 10,600 and 37,000.**
+[Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) run the
+open-source code Lethe, continuous-Galerkin $Q_1$–$Q_1$ finite elements
+with SUPG/PSPG stabilization and implicit BDF2 time stepping, with no SGS
+model: the stabilization term, a stabilization parameter times the strong
+momentum residual, is the only added dissipation, which they call
+[implicit LES](/definitions/implicit-les.md) (§1, §2). The domain is
+$9h\times3.035h\times4.5h$ with a flow-rate controller; one flow-through
+takes 9 s in their units, and statistics start after 207 s. The meshes
+have $2.5\times10^5$ (coarse), $5\times10^5$, $10^6$ (regular) and
+$4\times10^6$ (fine) hexahedra, 1.1 to 16 million degrees of freedom,
+against 12.4 million cells of the reference LES of Breuer et al. (Tables
+1, 4). At $Re_h=5600$ the averaged $\Delta y^+$ is 1.66, 1.16 and 0.61,
+$\Delta x^+$ 2.96, 2.40, 1.39 and $\Delta z^+$ 4.20, 2.26, 1.51 on the
+coarse, regular and fine meshes, with $\Delta y^+$ built on half the
+distance of the wall-nearest node (App. B, Table B.6).
+
+- **Validation.** Mean velocity and Reynolds stresses agree well with the
+  experiment of Rapp and the LES of Breuer et al. (§4.1, Figs. 4–5).
+- **Time step.** Reattachment points $x_R/h$, with the CFL number in
+  parentheses (Table 5; Rapp 4.83, Breuer et al. 5.09):
+
+| $\Delta t$ [s] | coarse | regular | fine |
+|---|---|---|---|
+| 0.1 | 4.73 (2.2) | 4.40 (3.2) | 4.35 (5.1) |
+| 0.05 | 4.87 (0.9) | 4.59 (1.6) | 4.74 (2.8) |
+| 0.025 | 5.07 (0.5) | 4.80 (0.7) | 4.83 (1.2) |
+| 0.0125 | 5.37 (0.2) | 4.88 (0.4) | 4.85 (0.6) |
+
+  On the coarse mesh a smaller time step degrades the mean velocity and
+  above all the Reynolds stresses, which the authors explain by the
+  stabilization parameter decreasing with $\Delta t$ and so removing
+  dissipation; on the fine mesh all time steps except the largest give
+  similar results close to Breuer et al., even at CFL ≈ 2.8 (§4.2,
+  Figs. 6–8).
+- **Averaging.** Profiles change very little between averaging end times
+  of 500 and 1000 s; error bands of the reattachment point by the
+  $\pm c/\sqrt{T}$ method of Krank et al. shrink markedly after 500 to 600
+  s, from which the authors require at least 700 s (§4.3, Fig. 12). The
+  reattachment point approaches the experiment non-monotonically with mesh
+  refinement, and the $10^6$- and $4\times10^6$-cell meshes give very close
+  values (§4.3, §5).
+- **Higher Reynolds numbers** ($\Delta t=0.025$ s, 800 s of averaging; very
+  coarse $1.2\times10^5$, coarse and intermediate meshes): at
+  $Re_h=10{,}600$ reattachment at 4.54, 4.90 and 4.01 against Rapp 4.21 and
+  Breuer et al. 4.69, good mean velocity and over-predicted Reynolds
+  stresses; at 37,000 reattachment at 4.20, 4.09 and 3.49 against Rapp
+  3.76, velocity under-predicted in the lower and over-predicted in the
+  upper channel, and all Reynolds stresses over-predicted (§4.4,
+  Figs. 13–16).
+- **Cost** on 40-core Skylake nodes: 3647 to 9400 core-hours on the coarse
+  mesh and 116,667 to 188,000 on the fine mesh for 1000 s at $Re_h=5600$,
+  depending on the time step (App. C, Table C.9). The authors leave a
+  comparison with explicit time stepping out of scope and conclude, without
+  an equal-accuracy cost comparison, that implicit LES "can reduce the
+  computational effort" (§5).
+
+**Upwind against central convection in LES at $Re_h=10{,}595$.**
+[Wang et al. (2024)](/sources/wang-2024.md), §3.3, run LES with the
+[WALE model](/methods/wale-model.md) at $M=0.2$ on grids of $48^3$,
+$64^3$, $96^3$ and $196\times128\times186$ cells, with about 100
+flow-through times averaged, comparing the second-order
+kinetic-energy-preserving split form KGP2 (see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md))
+with OPT6, the linear sixth-order optimized upwind reconstruction with a Roe
+flux. The separation point $x/h$ is (Table 2):
+
+| Grid or reference | KGP2 | OPT6 |
+|---|---|---|
+| $48^3$ | 0.26 | — |
+| $64^3$ | 0.24 | — |
+| $96^3$ | 0.20 | — |
+| $196\times128\times186$ | 0.20 | 0.20 |
+| DNS of Krank et al. / LES of Breuer et al. / LES of Fröhlich et al. (as cited) | 0.20 / 0.19 / 0.22 | |
+
+First-order statistics change little with the grid, second-order statistics
+and the terms of the turbulent-kinetic-energy budget do; OPT6 agrees with
+the references "even in $48^3$ grids", above all in the budget balance,
+while KGP2 converges with refinement. The authors read a budget imbalance as
+a sign of insufficient resolution and recommend the high-order upwind
+scheme for budget analysis (§3.3, §5, Figs. 5–6); see
+[numerical dissipation](/properties/numerical-dissipation.md). The two
+schemes differ in order of accuracy (second against sixth) as well as in
+dissipation (§2.3–2.5).
+
 ## What the case shows
 
 Two sources agree that the case discriminates between models chiefly
@@ -298,15 +387,41 @@ reasonable: [Lederer et al. (2023)](/sources/lederer-2023.md), §5.1, find
 the Reynolds stresses of their coarse runs mostly over-estimated and
 reduce the error with adaptive high-order projection-based upwinding, which
 their jump indicator places near the separation point and the lower wall,
-while the WALE model gives slight to no improvement; at $Re_hpprox10{,}600$
+while the WALE model gives slight to no improvement; at $Re_h\approx10{,}600$
 the $N=3$ no-model run of [Dzanic et al. (2022)](/sources/dzanic-2022.md)
-over-predicts $\langle u'u'
-angle$ and oscillates in $\langle v'v'
-angle$
-and $\langle u'v'
-angle$, which PANS removes.
+over-predicts $\langle u'u'\rangle$ and oscillates in $\langle v'v'\rangle$
+and $\langle u'v'\rangle$, which PANS removes.
+
+Three sources now give the reattachment or separation of the Fröhlich
+configuration against the same references: at $Re_h\approx10{,}600$
+Haering et al. quote a reference reattachment of about $x=4$, Prieto
+Saavedra et al. print Rapp 4.21 and Breuer et al. 4.69, and Wang et al.
+print the separation point (0.19 to 0.22 across the cited references). In
+the two studies that vary the grid at $Re_h\approx10{,}600$, the mean
+velocity is good on all grids, while the Reynolds stresses are
+over-predicted ([Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md), §4.4)
+or, with the budget terms, depend on the grid and the scheme
+([Wang et al. (2024)](/sources/wang-2024.md), §3.3).
 
 ## Qualifications
+
+- [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) call the
+  value 5.09 of Breuer et al. "experimental" in the Table 5 caption,
+  although it is the LES value; print the fine-mesh uncertainties as
+  "±0.4" against ±0.05 for the other meshes; name the $10^6$- and
+  $4\times10^6$-cell meshes "regular" and "fine" in the text and "fine" and
+  "very fine" in the Fig. 12 caption; and call 500 s and 1000 s "averaging
+  periods" of 44 and 88 flow-throughs. With the 9 s flow-through implied by
+  "207 s, or after 23 hills", 500 s and 1000 s are about 56 and 111
+  flow-throughs, while 44 and 88 flow-throughs (396 and 792 s) are close to
+  averaging windows from 207 s to 600 s and to 1000 s *(compiler check,
+  not in the sources)*. Their Appendix A hill polynomials
+  are printed with intervals in units of $h$ but coefficients that work
+  with $x$ in millimetres for a 28 mm hill *(compiler check, not in the
+  sources)*.
+- [Wang et al. (2024)](/sources/wang-2024.md) print the domain as
+  $9H\times4.5H$ without the channel height, and list OPT6 in Table 2 only
+  for the finest grid while Figs. 5–6 show it on all four.
 
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) print "cross-section ...
   in the streamwise-spanwise plane" (§3.1, Fig. 2 caption) for a section
@@ -377,3 +492,5 @@ angle$, which PANS removes.
 - [Eivazi et al. (2022)](/sources/eivazi-2022.md) — §3, Table 1, Fig. 6; §4.
 - [Tang et al. (2023)](/sources/tang-2023.md) — §II D; §III A–E, Table I, Figs. 7–19.
 - [Lederer et al. (2023)](/sources/lederer-2023.md) — §5, §5.1, Table 3, Figs. 7–10.
+- [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §1–2; §3.2–3.3, Tables 1–4; §4.1–4.4, Table 5, Figs. 4–16; §5; App. A–C, Tables B.6–B.8, C.9.
+- [Wang et al. (2024)](/sources/wang-2024.md) — §2.3–2.5; §3.3, Table 2, Figs. 5–6; §5.

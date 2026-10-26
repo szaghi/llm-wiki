@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-26T07:43:00Z
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -77,6 +77,20 @@ can carry.
    and use it as the reference for RANS closures. [Sirignano & MacArt (2023)](/sources/sirignano-2023.md)
    (§3.2) and [Kurz et al. (2023)](/sources/kurz-2023.md) (§3.3, "iLES")
    use no-model LES as a baseline for learned closures.
+   [Wang et al. (2023c)](/sources/wang-2023-c.md) (§II.A) recall the
+   usage: $\tau_{ij}$ is neglected, numerical dissipation is "entirely
+   responsible" for the subgrid energy transfer, the solution depends on
+   grid and numerics, and extra numerical viscosity is often needed.
+   [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) (§1)
+   define ILES as "often referred to in the literature as under resolved
+   DNS", with no subgrid model; in their stabilized finite-element solver
+   the added dissipation is the SUPG/PSPG term, a stabilization parameter
+   times the strong residual of the momentum equation (below). The 3D
+   solar-flare MHD run of [Ruan et al. (2023)](/sources/ruan-2023.md) (§2)
+   resolves its turbulence with the HLL Riemann solver and slope limiters
+   of MPI-AMRVAC and no subgrid model; the paper does not use the term
+   implicit LES and does not discuss numerical dissipation or resolution
+   convergence.
 2. **Designed numerical regularization.** The numerical dissipation is
    built to act as a model. Vicente Cruz & Lamballais (2023, §5.1) use the
    [implicit spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
@@ -124,6 +138,19 @@ can carry.
    mixed finite-element method as the only dissipation, and then restrict
    it to the high-order part of the jump: the
    [HOPU method](/methods/high-order-projection-based-upwind-method.md).
+   [Wang (2024)](/sources/wang-2024-b.md) (§2.3–2.4) runs
+   [flux-reconstruction](/methods/flux-reconstruction.md) ILES of turbine
+   cascades with no subgrid model, relying on the built-in dissipation of
+   the scheme, and adds local solution filtering for robustness: an
+   exponential modal filter applied only in elements whose Persson–Peraire
+   smoothness indicator exceeds a threshold (local modal filter), or the
+   positivity-preserving entropy filter of Dzanic & Witherden (as
+   recalled). Filtering adds local numerical dissipation to the dissipation
+   on which ILES relies as a subgrid model (citing Edoh et al.); the
+   Riemann solver contributes too: Rusanov on wall faces, HLLC or Roe
+   inside. The filter and solver comparisons are on the
+   [subcell finite-volume shock-capturing](/methods/subcell-finite-volume-shock-capturing.md)
+   and [numerical dissipation](/properties/numerical-dissipation.md) pages.
 3. **Implicitly filtered LES.** The filter is the one induced by grid and
    discrete operator, whatever closure is added. Beck & Kurz (2023, §I)
    use the term in this sense: the filter width and shape are
@@ -150,6 +177,10 @@ can carry.
    MacArt (2023, §3.1) box-filter and downsample DNS, with the filter width
    equal to the local LES spacing, and treat the result as an implicitly
    filtered LES solution.
+   [Duan & Wang (2024)](/sources/duan-2024.md) (§3) state that projecting a
+   solution onto the piecewise-polynomial space is a space-filtering
+   operation, so flux reconstruction without a subgrid model is ILES, and
+   adding a model adds dissipative fluxes.
 
 Usages 1 and 2 concern the closure (none, or numerical); usage 3 concerns
 the filter. A page or claim about "ILES" should say which.
@@ -262,6 +293,43 @@ interpretation they flag as needing further work).
   0.6–1.0%, against 1.1–13.4% for ILES and 2.7–16.3% for the VMS model
   (Table 2), an error measure the authors call rough.
 
+- **High-order flux reconstruction, well resolved.** Duan & Wang (2024,
+  §5.1–5.3, Figs. 5–10) find ILES better than explicit
+  [Smagorinsky](/methods/smagorinsky-model.md), [WALE](/methods/wale-model.md)
+  and [Vreman](/methods/vreman-model.md) models whenever the flow is well
+  resolved: on the viscous Taylor–Green vortex at $Re=1600$ ($64^3$
+  elements, $N=4$) the ILES enstrophy is "almost on top of" the DNS, and in
+  the wall-resolved channel at $Re_\tau=180$ ($N=3$, per-degree-of-freedom
+  spacings $\Delta x^+=\Delta z^+=5.7$, $\Delta y^+=0.68$) it "agrees very
+  well" with DNS; the subgrid models add much more dissipation than the
+  Riemann solver of the scheme (§5.1). This confirms, in the authors'
+  words, earlier findings that subgrid models are detrimental in
+  high-order wall-resolved LES (§1, §6).
+- **Stabilized finite elements, periodic hill.** Prieto Saavedra et al.
+  (2024, §4.1–4.3, Figs. 4–12) run the
+  [periodic hill](/benchmarks/periodic-hill.md) at $Re_h=5600$ in the
+  continuous-Galerkin code Lethe ($Q_1$–$Q_1$ SUPG/PSPG, BDF2) on 0.25 to 4
+  million cells (1.1 to 16 million degrees of freedom), against 12.4
+  million cells for the reference explicit LES. Mean velocity and Reynolds
+  stresses agree well with Rapp's experiment and Breuer et al.'s LES; the
+  reattachment approaches the measured $x/h=4.83$ with refinement,
+  non-monotonically, and on the fine mesh all time steps but the largest
+  give similar results even at a Courant number of about 2.8 (Table 5).
+  The authors conclude that ILES needs no calibration of a subgrid model
+  and can reduce mesh size and degrees of freedom (§5); no cost comparison
+  at equal accuracy is given, and the fine runs cost up to 188 000
+  core-hours (App. C).
+- **Flux-reconstruction turbine cascades.** With the local modal filter,
+  the Taylor–Green vortex at $Re=1600$ and 5000 ($64^3$, $N=3$) shows no
+  visible change of dissipation rate or spectrum against the unfiltered
+  run and DNS, at 5.5% overhead; the T106C cascade at $Re=80\,000$ ($N=3$,
+  7.9 million degrees of freedom per equation) matches the measured
+  isentropic Mach number; on the LS89 vane at $Re=1.13\times10^6$ the heat
+  transfer coefficient converges towards experiment with $N$ and spanwise
+  refinement, and a spanwise spacing $z^+\approx45$–60 suffices for its
+  mean (Wang 2024, §4.1–4.3, Figs. 2–3, 8, 13–14; see
+  [turbine cascades](/benchmarks/turbine-cascade.md)).
+
 ## Evidence: when it fails
 
 - **Applicability plateau.** At $48^3$ degrees of freedom ($6^3$ elements,
@@ -298,7 +366,37 @@ interpretation they flag as needing further work).
   §3, Fig. 4) obtain the same $k^2$ spectrum from the dissipation-free
   split-form DG at $48^3$, stable but without a model. Agrawal et al. (2022,
   §VII.C) see $k^2$ equipartition in a no-model run of HIT at
-  $Re_\lambda\to\infty$.
+  $Re_\lambda\to\infty$. [Kim et al. (2024)](/sources/kim-2024.md) (§2.1,
+  Table 3, App. C) state that their second-order central,
+  kinetic-energy-conserving scheme has no numerical dissipation: no-model
+  LES of the [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)
+  is stable but inaccurate (recirculation length $L_r/D=1.25$ against 1.56
+  from DNS at $Re_D=3900$; $L_r$ page-local) and diverges on very coarse
+  grids.
+- **Under-resolved wall-modelled LES at high order.** Duan & Wang (2024,
+  §1, §5.4) state that high-order ILES in severely under-resolved LES, wall
+  modelled above all, "often runs into robustness and accuracy issues due
+  to the low dissipation embedded in these methods"; their wall-modelled
+  channel at $Re_\tau=5200$ ($60\times16\times40$ elements, element sizes
+  $\Delta x^+=1088$, $\Delta y^+=650$, $\Delta z^+=544$) is not stable
+  without a model. The alternative, solution limiting, makes the result
+  depend on the amount of limiting (their Fig. 2), which they call ad hoc;
+  they recommend an explicit Vreman model instead. In decaying isotropic
+  turbulence ($32^3$ cells, $N=2$–5) the ILES spectra differ most from
+  experiment at high wavenumbers (§5.2, Fig. 8).
+- **Dissipation tied to the time step.** In the stabilized finite-element
+  ILES of Prieto Saavedra et al. (2024, §4.2, Table 5, Figs. 6–8) the
+  stabilization parameter contains $1/\Delta t$, so its dissipation falls
+  as the time step falls. On the coarse mesh (0.25 million cells) halving
+  $\Delta t$ three times, from 0.1 to 0.0125, moves the reattachment from
+  $x/h=4.73$ to 5.37 and degrades the Reynolds stresses in the bulk;
+  the authors explain this by the shrinking stabilization, consistently
+  with earlier stabilized-method studies (as recalled). On the fine mesh
+  the residual, and so the stabilization, matters less. The implicit model
+  of this scheme therefore depends on $\Delta t$ through the stabilization
+  parameter (§2.4, Eq. 10; §4.2). At $Re_h=10\,600$ and
+  37 000 the velocity is reasonable but the Reynolds stresses are
+  over-predicted, more so at 37 000 (§4.4).
 - **Aliasing.** On the periodic hill at $Re_b=10\,595$ with 64×64×32
   degrees of freedom, fourth-order URDNS shows large spurious oscillations
   in the $\langle v'v'\rangle$ and $\langle u'v'\rangle$ profiles that the
@@ -457,7 +555,11 @@ dissipation is imparted by the SGS model". Details on
   backward-facing step (above), finds that "the performance of the ILES
   suddenly decreases" and favours a high-quality SGS model on coarse
   grids. The schemes, models and flows differ, so the two are not
-  recorded as a contradiction.
+  recorded as a contradiction. Duan & Wang (2024) find both verdicts in
+  one flux-reconstruction code, split by resolution: ILES is best when the
+  flow is well resolved (Taylor–Green vortex, wall-resolved channel) and
+  fails in the wall-modelled channel, where an explicit model is needed
+  (§5–6).
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) (§4.2, §5), after
   comparing single and double precision in DNS of channel flow with a
   GPU gas-kinetic code, state that single precision "may not be safe" for
@@ -515,3 +617,9 @@ dissipation is imparted by the SGS model". Details on
 - [Saini et al. (2023)](/sources/saini-2023.md) — Abstract; §5; §6.
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4.2; §5.
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §1.
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — §II.A.
+- [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §1; §2.4; §4.1–4.4, Tables 4–5, Figs. 4–16; §5; App. C.
+- [Ruan et al. (2023)](/sources/ruan-2023.md) — §2.
+- [Wang (2024)](/sources/wang-2024-b.md) — §2.3–2.4; §4.1–4.3, Figs. 2–3, 8, 13–14.
+- [Duan & Wang (2024)](/sources/duan-2024.md) — §1, Fig. 2; §3; §5.1–5.4, Figs. 5–15; §6.
+- [Kim et al. (2024)](/sources/kim-2024.md) — §2.1; Table 3; App. C.

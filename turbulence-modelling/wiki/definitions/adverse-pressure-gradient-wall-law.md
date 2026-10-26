@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity law of adverse-pressure-gradient tur
 status: established
 aliases: [APG wall law, log-law/half-power-law wall law, extended wall law, half-power law, pressure-gradient wall law]
 tags: [boundary-layer, rans, wall-model, separated-flow]
-timestamp: 2026-10-25T19:43:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Wall law in adverse pressure gradient
@@ -148,6 +148,52 @@ while Coles' wake has not reached the top of the first element. See the
 [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md) benchmark
 page for the APG database.
 
+## Evidence that missing pressure-gradient terms matter
+
+Two sources, both using an equilibrium wall law without any
+pressure-gradient term on non-body-fitted Cartesian grids, point to the
+missing term where their results fail; neither implements or tests an
+APG-aware law, so the evidence is the failure of the equilibrium law, not
+the success of a replacement.
+
+- **Strong incidence in RANS.** [Constant et al. (2024)](/sources/constant-2024.md)
+  impose Musker's equilibrium wall function at the target points of a
+  Spalart–Allmaras RANS [immersed boundary method](/methods/immersed-boundary-method.md).
+  On the NACA 0012 at $15^\circ$ ($M=0.15$, $Re_c=6\times10^6$) the
+  velocity profile is not representable by the wall function over the
+  first 10 % of chord, while the log region is established beyond it
+  (§6.1, Figs. 19–21). The tangential pressure gradient along the
+  second layer of image points shows strong adverse and favourable regions
+  on the suction side and near the leading edge, where the
+  immersed-boundary solution departs from the body-fitted reference, and the
+  authors state that a pressure-gradient-aware wall model "would certainly
+  improve the solution" (§6.1, Fig. 22b). A drag error of almost 20 %
+  remains at $15^\circ$, which they compare with the deviations of Berger &
+  Aftosmis (as cited) and say could be removed only by applying the wall
+  model in the viscous sublayer at the leading edge (§6.1, lines 747–757);
+  on a multi-element airfoil they trace a residual lift error to the wall
+  model's inability to represent a boundary layer without an established
+  logarithmic region (§6.2, lines 876–879). They list a non-equilibrium wall
+  model as future work (§7).
+  The same paper also removes a second pressure assumption, the zero
+  wall-normal pressure gradient across the modelled layer (see the
+  [equilibrium wall model](/methods/equilibrium-wall-model.md)).
+- **Mild adverse gradient before separation, hybrid RANS/LES.**
+  [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) apply the explicit
+  equilibrium law of Cai & Sagaut (as cited) on the Ahmed body in a lattice
+  Boltzmann solver and obtain no separation on the $35^\circ$ slant, against
+  the fully detached reference flow (§3.3, HAL manuscript lines 459–464).
+  They relate the attachment to the equilibrium law, which does not take
+  the adverse pressure gradient into account: in low and mild adverse
+  gradients separation "can be delayed or may not even happen", and the
+  absence of instability on the slant, which keeps the hybrid model from
+  switching from RANS to LES, "can be the cause of this behavior"
+  (lines 465–470, 516–519). They report "primary findings", without data, that the
+  APG-extended explicit model of Wilhelm et al. (as cited) improves the
+  Ahmed-body result substantially (lines 553–557). See the
+  [Ahmed body](/benchmarks/ahmed-body.md) and
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md) pages.
+
 ## Qualifications
 
 - The constant of Eq. (35) appears twice in the paper: 1.78 (Eq. 35, used in
@@ -170,3 +216,5 @@ page for the APG database.
 - [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §1.
 - [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §3.
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Methods (training and testing).
+- [Constant et al. (2024)](/sources/constant-2024.md) — §6.1, Figs. 19–22, lines 747–757; §6.2, lines 876–879; §7 (HAL author manuscript).
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §3.3; conclusions (HAL accepted manuscript, lines 459–470, 516–519, 553–557).

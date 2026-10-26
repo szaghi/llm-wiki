@@ -4,8 +4,8 @@ title: "Discontinuous Galerkin spectral element method"
 description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra; this page states its weak and strong forms, SBP property, modal filtering and filtered artificial viscosity, cost, how interface dissipation and penalties shape LES on it, its implicit filter, element-local filters and mortars, and modal, interior-penalty and continuous relatives."
 status: established
 aliases: [DGSEM, nodal discontinuous Galerkin, collocation DG, DG spectral element method]
-tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns]
-timestamp: 2026-10-26T07:42:00Z
+tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns, flux-reconstruction]
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -180,6 +180,19 @@ schemes. The choice of $P_{\mathrm{SVV}}$ has no systematic rule: $O(1)$
 suits supersonic flow, about $10^{-2}$ turbulent flow, and the admissible
 range is found by trial and error (App. A, Fig. 8).
 
+**Indicator-switched modal filter.** The modal filter can also be applied
+to the solution itself, element by element. Wang (2024, §2.3, Eqs. 17–19)
+applies the exponential filter $\mathcal V\Lambda\mathcal V^{-1}$ of
+Hesthaven and Warburton after every Runge–Kutta stage, but only in elements
+whose Persson–Peraire smoothness indicator of the density exceeds a
+threshold, and compares it with the entropy filter of Dzanic and
+Witherden, which chooses the filter strength per element to enforce a
+discrete minimum entropy principle and positivity; on the Taylor–Green
+vortex the switched filter leaves the solution unchanged at a 5.5% cost,
+and the entropy filter costs about 15% more per iteration than the switched
+filter on the LS89 vane (§4.1, §4.4.3). Formulas, thresholds and results are
+on [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md).
+
 ## Cost per degree of freedom
 
 Krais et al. (2021, §5.6, Table 3) count, per element and variable, $3(N+1)^4$
@@ -285,6 +298,13 @@ dimension of classical DES. [Lederer et al. (2023)](/sources/lederer-2023.md),
 §3.1, use $\Delta=(\Delta x\Delta y\Delta z)^{1/3}/(N+1)$ for the WALE
 viscosity of their hybrid mixed method. Flad & Gassner (2017, App. A) print the filter
 width as the cell volume divided by $(N+1)^3$ (see Qualifications).
+[Duan & Wang (2024)](/sources/duan-2024.md), §3, Eqs. (28)–(30), test the
+same width ("d3") against $V_e^{1/3}$ and an intermediate
+$V_e^{1/3}/\sqrt{N+1}$ in FR/CPR wall-modelled LES with element-averaged
+eddy viscosity, and recommend the intermediate width with the Vreman model,
+arguing that the subgrid models were calibrated on second-order schemes and
+that $V_e^{1/3}/(N+1)$ under-dissipates on high-order ones (§5.4, §6; see
+[flux reconstruction](/methods/flux-reconstruction.md)).
 
 **Resolution per wavelength.** Flad & Gassner (2017, §1, §3) estimate the
 resolved wavenumber with 3 points per wavelength (optimistic) and state the
@@ -314,6 +334,30 @@ interfaces (2:1 and 4:1) with Kopriva-type mortars: interpolation to the small
 sides and $L^2$ projection of their fluxes back to the large side. The flux
 reconstruction scheme used with [PANS](/methods/partially-averaged-navier-stokes.md)
 by Dzanic et al. (2022) is described there as a generalization of nodal DG.
+
+**Flux reconstruction recovering nodal DG.** The
+[flux-reconstruction](/methods/flux-reconstruction.md) solver ATHOS of
+[Wang (2024)](/sources/wang-2024-b.md), §2.2, §3, Fig. 1, places solution
+and flux points on LGL nodes of tensor-product quadrilaterals and hexahedra
+and chooses the correction functions "in such a way that the nodal
+discontinuous Galerkin approach is recovered", with LDG viscous fluxes
+(zero solution-jump penalty) and Rusanov, Roe or HLLC interface fluxes. Its implicit LES of turbine cascades, the robustness ranking of
+the Riemann solvers and the indicator-switched filters are on the
+flux-reconstruction page and on
+[subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md).
+
+**Residual-stabilized continuous Galerkin.** At the low-order end of the
+continuous family, [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md)
+run implicit LES of the [periodic hill](/benchmarks/periodic-hill.md) with
+SUPG/PSPG-stabilized trilinear ($Q_1$) continuous finite elements in Lethe,
+the stabilization term supplying the dissipation (§1, §3.1; see
+[jump-penalty stabilization](/methods/jump-penalty-stabilization.md) for
+the formulation and its time-step dependence). Their literature table
+(Table 1, $Re_h=5600$) lists the high-order DG under-resolved DNS of Krank
+et al. ($N=6$, 65K cells, 22.5M degrees of freedom, reattachment
+$x_R/h=4.82\pm0.09$) next to Krank et al.'s $N=7$ DNS ($x_R/h=5.04\pm0.09$),
+as tabulated by Prieto Saavedra et al., against their own $Q_1$ runs with
+0.5M to 16M degrees of freedom.
 
 **Modal DG on simplices and hp-adaptation.** Basile et al. (2023, §2.1) use
 the modal DG solver CODA (Airbus, ONERA, DLR) on hybrid prism/tetrahedron
@@ -495,6 +539,11 @@ stabilized by gradient-jump penalisation and SVV.
   $\min(N_K+1,N_{\max})$ would raise the degree by one step
   *(compiler check, not in the sources)*. The version read is the HAL
   author manuscript.
+- **Wall units on element grids.** Morsbach et al. (2024, §3.1) give blade
+  resolutions in wall units divided by $N$; Wang (2024, §4.2, Eq. 26, after
+  Jia et al.) divides the first-cell $y^+$ by $N+1$. The two are different
+  conventions for a per-degree-of-freedom spacing, not a disagreement, but
+  their values are not directly comparable.
 - The 40% applicability plateau is inferred by Flad & Gassner (2017) from two
   resolutions of one test case at $N=7$; the authors present it as a
   finding, not a bound.
@@ -520,4 +569,7 @@ stabilized by gradient-jump penalisation and SVV.
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §2 (TRACE DGSEM); §3.1, Table 2 (resolution, cost); §4.1.
 - [Saini et al. (2023)](/sources/saini-2023.md) — §2.1, Table 1 (Nektar++ continuous Galerkin); §5–6.
 - [Slaughter et al. (2023)](/sources/slaughter-2023.md) — Research Square preprint v1: §3.1 (Fourier spectral/hp, GJP, SVV).
+- [Wang (2024)](/sources/wang-2024-b.md) — arXiv v2: §2.2, Eqs. (9)–(16), Fig. 1 (FR recovering nodal DG on LGL points, LDG); §2.3, Eqs. (17)–(19) (switched modal filter, entropy filter); §3; §4.1; §4.2, Eq. (26); §4.4.3.
+- [Duan & Wang (2024)](/sources/duan-2024.md) — §3, Eqs. (26)–(30) (element-averaged eddy viscosity, filter widths); §5.4; §6.
+- [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §1; §3.1 (SUPG/PSPG continuous Galerkin in Lethe); Table 1 (DG under-resolved DNS and DNS of Krank et al., as tabulated).
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §3.1, Eqs. (3-1)–(3-10) (improved IPDG, fluxes, artificial viscosity); §3.2 (finite-volume SST equations, BDF2); §4, Tables 4-1–4-2.

@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "elsA"
-description: "ONERA's compressible cell-centred finite-volume solver for structured multi-block grids, as used in the sources: host of the zonal detached-eddy simulation of a turbofan fan stage, and the structured Spalart–Allmaras RANS reference against which mesh-adaptive RANS of NASA Rotor 37 is compared."
+description: "ONERA's compressible cell-centred finite-volume solver for structured multi-block grids, as used in the sources: host of the zonal detached-eddy simulation of a turbofan fan stage, structured Spalart–Allmaras RANS reference for NASA Rotor 37, and a recalled URANS and wall-resolved reference for buffet and airfoil studies."
 status: established
 aliases: [elsA solver, ONERA elsA]
 tags: [software, rans, des, turbomachinery, hybrid-rans-les]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-26T10:25:00Z
 ---
 
 # elsA
@@ -77,8 +77,31 @@ total-pressure and total-temperature characteristics lie above the experimental 
 literature they cite, which they attribute mainly to computing the cold
 instead of the hot blade geometry (§8.2.4). Neither attribution is tested.
 
+**URANS of transonic buffet, as recalled** (Petrocchi & Barakos 2024). In
+the compilation of earlier URANS of the OAT15A buffet at $M_\infty=0.73$,
+$Re_c=3\times10^6$, $\alpha=3.5^\circ$, the elsA computations of Thiery &
+Coustols and of Sartor et al. are among the entries, Thiery & Coustols
+reporting a self-sustained shock oscillation with
+[SST](/methods/k-omega-sst-model.md), whereas the authors' own SST URANS in
+the HMB3 solver gives none; the table documents a wide scatter between
+models and solvers
+([Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md), App. A, Table
+A.4; see [PANS](/methods/partially-averaged-navier-stokes.md)). The
+authors also motivate their 1% inlet–outlet pressure drop in the confined
+wind-tunnel model by Thiery & Coustols (§4.5.2).
+
+**Wall-resolved reference for an airfoil** (Mozaffari et al. 2024). A
+wall-resolved elsA computation ($y^+<1$) and Xfoil are the skin-friction
+references against which the lattice Boltzmann SST and Spalart–Allmaras
+RANS of the NACA 23012 at $Re_c=1.88\times10^6$ are compared; both RANS
+disagree with them near the leading edge
+([Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §3.1, Fig. 7; HAL
+accepted manuscript; see [ProLB](/software/prolb.md)).
+
 ## Qualifications
 
+- The two recalled uses above are third-party results; neither source
+  states elsA's numerical settings for them.
 - *Compiler check, not in the sources:* in Alauzet et al.'s Table 2 the
   normalized mass flow MFR/MFR* of the elsA rows does not follow from the
   printed MFR divided by the printed choke value 20.71 (20.46/20.71 = 0.988
@@ -92,3 +115,5 @@ instead of the hot blade geometry (§8.2.4). Neither attribution is tested.
 
 - [François et al. (2022)](/sources/francois-2022.md) — §3.1, §3.3, §3.4–3.5, §4.2 Figs. 8–9, Table 1.
 - [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §8.2.2, §8.2.4 Fig. 31, §8.2.5 Figs. 42–43, Table 2.
+- [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — §4.5.2, App. A Table A.4.
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §3.1, Fig. 7 (HAL accepted manuscript).

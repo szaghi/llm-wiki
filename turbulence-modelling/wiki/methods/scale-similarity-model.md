@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Scale-similarity and mixed subgrid-scale models"
-description: "Scale-similarity and deconvolution models build the subgrid stress from the resolved field itself rather than from an eddy viscosity; the sources give Bardina-type and modified-Leonard forms, agree that they reproduce the stress structure but are under-dissipative or unstable alone, and mix them with an eddy viscosity."
+description: "Scale-similarity and deconvolution models build the subgrid stress from the resolved field itself rather than from an eddy viscosity; the sources give Bardina-type and modified-Leonard forms, agree that they reproduce the stress structure but are under-dissipative or unstable alone, mix them with an eddy viscosity, or use their energy flux to derive one."
 status: established
 aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model]
 tags: [les, sgs-model, filtering, combustion]
-timestamp: 2026-10-26T07:41:00Z
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Scale-similarity and mixed subgrid-scale models
@@ -44,6 +44,20 @@ and $k_{\mathrm{sgs}}=\tfrac{C_L}2L_{kk}$. The superscript $d$ denotes the
 deviatoric part. The author states that $C_B$ and $C_L$ "were determined
 only to successfully predict a reasonable level of the SGS values".
 
+[Domaradzki (2024)](/sources/domaradzki-2024.md) (§1, Eqs. 1.3–1.4)
+recalls the original Bardina form, built with the grid filter applied
+twice, $\overline{\bar u_i\bar u_j}-\bar{\bar u}_i\bar{\bar u}_j$, and the
+form of Liu, Meneveau & Katz with a wider test filter,
+$c_L(\widehat{\bar u_i\bar u_j}-\hat{\bar u}_i\hat{\bar u}_j)=c_LL_{ij}$,
+tested with $c_L=1$ for the full tensor ($c_L$ page-local). Abe's
+$C_L=0.5$ multiplies the deviatoric part of $L_{ij}$ in Abe's own model,
+so the two printed coefficients scale different tensors and are not
+recorded as a disagreement. As
+recalled by Domaradzki, Liu et al. found good correlations with box and
+Gaussian filters and much weaker ones with a sharp spectral cutoff, and
+Brun, Friedrich & da Silva recast the Métais–Lesieur structure-function
+model as a similarity-type model, the one link between the two classes.
+
 ## Agreed properties
 
 - **Good a priori structure, too little dissipation.** The Bardina model
@@ -60,7 +74,14 @@ only to successfully predict a reasonable level of the SGS values".
   a priori studies, state the same for the whole structural class
   (gradient, similarity, approximate deconvolution): high stress and flux
   correlation, under-predicted local dissipation, and an energy pile-up at
-  high resolved wavenumbers.
+  high resolved wavenumbers. Domaradzki (2024, §1, §2.3) and
+  [Kim et al. (2024)](/sources/kim-2024.md) (§1) recall the same: high
+  correlation and accurate backscatter a priori (Bardina et al.; Liu et
+  al.), insufficient dissipation, and divergent or inaccurate LES a
+  posteriori. Domaradzki explains the missing dissipation by the missing
+  information: the similarity stress built from the LES field contains no
+  interaction with the true subgrid scales beyond the mesh cutoff, which
+  sit in the remainder of the full stress.
 - **Instability when used alone.** Abe (2021, §V) states that a pure
   scale-similarity model "often causes numerical instability", and recalls
   from the author's earlier work that the $k_{\mathrm{sgs}}$ of BRD did not
@@ -202,6 +223,21 @@ effect is shown for one separated case, computed by LES only (the paper's
 DNS cover the boundary layers, the Mach 3 ramp and the attached Mach 7
 ramp); see [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
+**Dynamic mixed model as a baseline.** [Wang et al. (2023c)](/sources/wang-2023-c.md)
+(§II.A, §III–IV) use a two-coefficient dynamic mixed model, a Smagorinsky
+term plus the deviatoric resolved stress $L_{ij}$ at test-filter level
+($\hat\Delta=2\Delta$), both coefficients from the Germano identity by
+least squares. In forced isotropic turbulence and a temporal mixing layer
+it over-dissipates the small scales like dynamic Smagorinsky, though its
+subgrid-stress PDFs are better than those of dynamic Smagorinsky (Fig. 4);
+its similarity part gives some backscatter in the PDF
+of $\Pi=-\tau_{ij}\bar S_{ij}$, where dynamic Smagorinsky is strictly
+positive (Fig. 8). The authors' own mixed model, a gradient term with an
+ensemble-Kalman-calibrated Smagorinsky coefficient, does better; it is on
+the [gradient-model](/methods/gradient-model.md) page. They also recall
+that the gradient model is more accurate a priori than the
+scale-similarity model (§II.A).
+
 **Dynamic mixed models with one and two parameters.** [Kang et al. (2023)](/sources/kang-2023.md)
 (§3.3, Eqs. 3.4–3.8) compare three algebraic dynamic mixed models with a
 learned one in isotropic turbulence and channel flow:
@@ -268,6 +304,21 @@ itself was numerically unstable, which suggests that clipping is needed,
 in line with the instability noted above; they do not use it as a
 baseline "because the DSM usually outperforms it" (§II, §I). No results
 are shown for either statement.
+
+**Similarity stress as the source of an eddy viscosity.** Domaradzki
+(2024, §2.4) uses the similarity stress not as the closure but as the
+carrier of the energy transfer: its local flux $-L_{ij}\hat{\bar S}_{ij}$,
+filtered once more, divided by $\lvert\hat{\bar S}\rvert^2$, gives an
+eddy viscosity with no adjustable constant, applied in Boussinesq form (the
+[autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md)).
+Its subgrid transfer correlates with that of the similarity stress at
+0.81, against about 0.4 quoted for Smagorinsky, and it keeps local
+backscatter without instability in isotropic turbulence (§3.1). The author
+reads $L_{ij}$ of a Gaussian filter also as a deconvolution model, the
+Gaussian being exactly invertible (§3.1). The statement that similarity
+and deconvolution models fail in actual LES (§1) is recalled from
+Bardina et al. and Liu et al.; the paper runs no LES with the similarity
+stress itself as the closure (§3).
 
 ## Velocity-gradient (nonlinear) form
 
@@ -348,3 +399,6 @@ not improve.
 - [Kim et al. (2022)](/sources/kim-2022.md) — §I; §II; §II D.
 - [Kang et al. (2023)](/sources/kang-2023.md) — §3.3, Eqs. (3.4)–(3.8), Tables 4, 6, 9, Figs. 19–22, 24; §3.7; App. C.
 - [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §I; §IV B, Eqs. (19)–(21), Fig. 13.
+- [Domaradzki (2024)](/sources/domaradzki-2024.md) — §1, Eqs. (1.3)–(1.4); §2.3–2.4, Eqs. (2.36)–(2.47); §3.1.
+- [Kim et al. (2024)](/sources/kim-2024.md) — §1.
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — §II.A; §III, Figs. 3–8; §IV.

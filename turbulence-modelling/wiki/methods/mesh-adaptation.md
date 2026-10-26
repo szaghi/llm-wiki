@@ -5,7 +5,7 @@ description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an e
 status: established
 aliases: [adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation]
 tags: [mesh-adaptation, hybrid-rans-les, rans, dg, numerical-dissipation, wmles]
-timestamp: 2026-10-25T20:30:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Mesh adaptation for turbulent-flow simulation
@@ -50,7 +50,14 @@ adapt for [wall-modelled LES](/methods/wall-modelled-les.md) of
 airfoil. [Dahlin et al. (2022)](/sources/dahlin-2022.md) (§3) run their
 solar coronal MHD simulations in the adaptive-mesh code ARMS, with the
 maximally refined grid covering the separatrix dome and a volume above it;
-they state no refinement criterion.
+they state no refinement criterion. [Ruan et al. (2023)](/sources/ruan-2023.md)
+(§2) run a 3D resistive MHD solar-flare simulation in MPI-AMRVAC with a
+$64^3$ base grid and five refinement levels, an effective $1024^3$ with
+cells below 100 km in a 100 Mm box; they too state no refinement
+criterion. The scheme is HLL with a third-order limiter on the coarse
+levels and the second-order van Leer limiter on the fine levels in
+high-gradient regions; no SGS model is used, and the paper does not
+discuss numerical dissipation.
 
 ## Hessian and metric criteria
 
@@ -90,6 +97,36 @@ the turbulence equation is left out of the estimate (Remarks 5.1, 6.1).
 The output functionals are turbomachinery quantities (mass flow,
 total-pressure and total-temperature ratios, isentropic efficiency, loss
 coefficient), differentiated including the rotating-frame chain rule (§5).
+
+**The same metric for a wake to 20 spans (Bouhafid et al. 2024).**
+[Bouhafid et al. (2024)](/sources/bouhafid-2024.md) (App. A, Eqs.
+A.1–A.3, Fig. 32) use the continuous-mesh $L^p$ metric of Loseille and
+Alauzet with the Feflo.a remesher for steady RANS of a full aircraft (the
+NASA Common Research Model in cruise with engines, $M_\infty=0.85$, not
+the high-lift version), as the first stage of a RANS-then-LES wake computation.
+Their choices differ from Alauzet et al.'s turbomachinery ones:
+
+- *Sensor and norm.* A kinetic-energy sensor $\tfrac12\lvert\boldsymbol u\rvert^2+k$
+  in the $L^2$ norm, which, as recalled there, gives more wake resolution
+  than $L^4$ (App. A).
+- *Hessian.* Recovered from a P2 reconstruction of the solution by double
+  $L^2$ projection or a Green formula, with absolute eigenvalues.
+- *Loop.* Solve, metric, mesh, interpolate, three to five times per
+  complexity, then raise the complexity; twelve iterations in all, to
+  about $110\times10^6$ cells.
+- *Walls.* The aircraft surface mesh is fixed, with ten prism layers and
+  wall functions at $y^+\approx80$ (about 40 million prisms), whereas
+  Alauzet et al. adapt purely tetrahedral meshes to the wall.
+
+The initial coarse mesh underpredicts the wake circulation through
+numerical diffusion; iterations 6, 9 and 12 approach the elliptic-loading
+value $\Gamma=528\ \mathrm{m^2/s}$ (page-local $\Gamma$, circulation;
+$C_L=0.5$), and the vortex core radius, growing linearly with distance,
+is mesh-converged over the last three iterations (§4.2.2, Fig. 12). On a
+validation wing with a jet the adapted RANS mesh has 10 M tetrahedra and
+0.85 M prisms (§3). The adapted RANS field is then sliced and passed to a
+temporal LES on a fixed mesh (see
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
 
 Mozaffari et al. (2022, §3.3) note that Toosi and Larsson derive "an almost
 identical criterion for LES starting from a directional equidistribution
@@ -500,6 +537,17 @@ smoother meshes.
   describe truncation-error p-adaptation as a code capability and
   illustrate it on laminar and multiphase cases; its behaviour in
   turbulent flow is not shown there.
+- **Not every "adaptation" changes the mesh.** The modelling-height
+  adaptation of the [immersed boundary method](/methods/immersed-boundary-method.md)
+  of [Constant et al. (2024)](/sources/constant-2024.md) (§4.2) turns some
+  target (wall-modelled) points of a fixed octree Cartesian mesh into
+  computed points where the stored $y^+$ one layer below already exceeds
+  the target value; the mesh
+  and the wall distance are not recomputed, and the run restarts from the
+  converged solution. Their octree meshes are generated once from the
+  surface mesh with a prescribed minimum near-wall spacing (§3.1). It is a
+  static, single-pass change of which cells are modelled, recorded here
+  for contrast only.
 - Mozaffari et al. (2022, §3.3) state that, to their knowledge, no
   refinement criterion had been evaluated for hybrid RANS/LES; Basile et
   al. (2023) is later and uses a different (DG-specific) criterion.
@@ -513,3 +561,6 @@ smoother meshes.
 - [Blind et al. (2023)](/sources/blind-2023.md) — arXiv v1: §1 (earlier resolution measures), §2.1–2.5, Eqs. 1–7 (modelling residual, DG test filter, optimal spacing, workflow), §3.1–3.3, Tables 1–4, Figs. 1–11 (channels), §4, Tables 5–6, Figs. 12–14 (airfoil), §5.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — arXiv v1: §3.6–3.6.2, Figs. 1–2 (anisotropic p-adaptation, $\tau$-estimation, interface tracking), §4.7, Fig. 14.
 - [Dahlin et al. (2022)](/sources/dahlin-2022.md) — arXiv v1: §3 (ARMS adaptive mesh, refined region; no criterion stated).
+- [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) — App. A, Eqs. A.1–A.3, Fig. 32 (metric-based $L^2$ adaptation, kinetic-energy sensor, loop, wall treatment); §3 (validation mesh); §4.2.2, Fig. 12 (circulation against iterations).
+- [Ruan et al. (2023)](/sources/ruan-2023.md) — §2 (five-level AMR, no criterion stated, numerical scheme).
+- [Constant et al. (2024)](/sources/constant-2024.md) — HAL author manuscript: §3.1 (octree Cartesian meshes), §4.2 (modelling-height adaptation without mesh change).

@@ -5,7 +5,7 @@ description: "A neural network that predicts the scalar coefficients of Pope's t
 status: established
 aliases: [TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features]
 tags: [neural-network, machine-learning, rans, data-driven, symbolic-regression]
-timestamp: 2026-10-26T07:37:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Tensor-basis neural network and the integrity basis
@@ -47,10 +47,64 @@ Its parts are:
   basis and not from the network.
 - **Scales.** $k$ is the model's own turbulent kinetic energy.
 
-The sources print neither the individual tensors nor the normalization of
-the strain and rotation inside them; they refer to Pope (1975). Duraisamy
-(2021, Table I, §V) gives the strain-rate tensor times $k/\varepsilon$ as an
-example of the local non-dimensionalization of RANS features.
+The two reviews print neither the individual tensors nor the normalization
+of the strain and rotation inside them; they refer to Pope (1975).
+Duraisamy (2021, Table I, §V) gives the strain-rate tensor times
+$k/\varepsilon$ as an example of the local non-dimensionalization of RANS
+features. [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md)
+print the full basis (next section).
+
+## The ten tensors and five invariants (Agrawal & Koutsourelakis 2024)
+
+Agrawal & Koutsourelakis (2024, §2.2.1, Eqs. 14–17, Table 1) restate Pope's
+basis after Ling et al. With the mean strain and rotation made
+dimensionless by $k/\varepsilon$, $\mathsf S_{ij}=\tfrac{k}{\varepsilon}\langle S_{ij}\rangle$
+and $\mathsf W_{ij}=\tfrac{k}{\varepsilon}\langle\Omega_{ij}\rangle$
+(page-local, as above; matrix products, $\mathsf I$ the identity), the
+tensors are
+
+$$\begin{aligned}
+T^{(1)}&=\mathsf S, & T^{(2)}&=\mathsf S\mathsf W-\mathsf W\mathsf S,\\
+T^{(3)}&=\mathsf S^2-\tfrac13\operatorname{tr}(\mathsf S^2)\mathsf I, & T^{(4)}&=\mathsf W^2-\tfrac13\operatorname{tr}(\mathsf W^2)\mathsf I,\\
+T^{(5)}&=\mathsf W\mathsf S^2-\mathsf S^2\mathsf W, & T^{(6)}&=\mathsf W^2\mathsf S+\mathsf S\mathsf W^2-\tfrac23\operatorname{tr}(\mathsf S\mathsf W^2)\mathsf I,\\
+T^{(7)}&=\mathsf W\mathsf S\mathsf W^2+\mathsf W^2\mathsf S\mathsf W, & T^{(8)}&=\mathsf S\mathsf W\mathsf S^2-\mathsf S^2\mathsf W\mathsf S,\\
+T^{(9)}&=\mathsf W^2\mathsf S^2+\mathsf S^2\mathsf W^2-\tfrac23\operatorname{tr}(\mathsf S^2\mathsf W^2)\mathsf I, & T^{(10)}&=\mathsf W\mathsf S^2\mathsf W^2-\mathsf W^2\mathsf S^2\mathsf W,
+\end{aligned}$$
+
+as printed in Table 1 ($T^{(7)}$: see Qualifications), with the
+coefficients functions of the five invariants
+$\operatorname{tr}(\mathsf S^2)$, $\operatorname{tr}(\mathsf W^2)$,
+$\operatorname{tr}(\mathsf S^3)$, $\operatorname{tr}(\mathsf W^2\mathsf S)$,
+$\operatorname{tr}(\mathsf W^2\mathsf S^2)$ (Eq. 16), and
+$R_{ij}=2k b_{ij}+\tfrac23k\delta_{ij}$ as in the registry (Eqs. 14, 17).
+With $g^{(1)}=-0.09$ and all other coefficients zero the expansion
+"degenerates" to the standard $k$-$\varepsilon$ model (§2.2.1); in
+registry form $b_{ij}=-C_\mu\mathsf S_{ij}$ with $C_\mu=0.09$, the
+Boussinesq closure *(compiler check, not in the sources)*. The authors
+state that the linear model restricts the anisotropy to the plane-strain
+line of the barycentric map and, citing Kaandorp & Dwight, that the TBNN
+can reach other realizable states (§2.2.1). Their $k$ and $\varepsilon$
+come from the standard transport equations (App. A).
+
+**A TBNN trained a posteriori.** Unlike the a priori TBNNs surveyed above,
+their network (8 hidden layers of 30 nodes, Leaky ReLU, as in Ling et al.;
+6970 parameters, Table 3) is trained without any Reynolds-stress data,
+from sparse LES mean velocity and pressure through an adjoint RANS solver,
+together with a stochastic stress discrepancy (§2.2–2.2.4; see
+[model-consistent training](/methods/model-consistent-training.md) and
+[model-form uncertainty](/definitions/model-form-uncertainty.md)). A random
+initialization "led to divergence of the solution even after applying the
+stabilization schemes"; the network was pre-trained on baseline
+$k$-$\varepsilon$ closure data with added noise (§3.3). On a
+[backward-facing step](/benchmarks/backward-facing-step.md) at step-height
+Reynolds number 500 the learned stress "captures the basic features" of
+the LES stress although no stress data were used, with the largest errors
+at $5<x/h<10$ (§3.4, Fig. 7). The authors also state that, for
+prediction, their network needs no baseline RANS fields as input, unlike
+the TBNNs of Ling et al., Kaandorp & Dwight, Wang et al. and Geneva &
+Zabaras (§2.2.5), and that a direct comparison with those works is not
+possible because they blend the predicted stress with the baseline
+near-wall stress through case-dependent functions (§3.4).
 
 **Extensions.** As recalled by Duraisamy (2021, §III.A), the TBNN idea has
 been extended to turbulent heat fluxes and scalar fluxes.
@@ -224,7 +278,13 @@ a priori and a posteriori results are on
   rotationally invariant. They name tensor-basis networks and rotationally
   invariant inputs as future work (§7; see
   [neural-network SGS models](/methods/neural-network-sgs-model.md)).
-- **Locality.** Existing feature sets use only local quantities.
+- **Locality.** Agrawal & Koutsourelakis (2024, §2.2.1) call the
+  postulate that the stress at a point depends only on flow features at
+  that point "a very strong assumption for flows that exhibit strong
+  inhomogeneity", and model the resulting error with a stochastic
+  discrepancy that remains "random even in the limit of infinite data"
+  (§1, §2.2).
+- **Locality (reviews).** Existing feature sets use only local quantities.
   Non-local, non-equilibrium features, such as streamline integration
   (Hamlington & Dahm), could extend predictive capability (Duraisamy et al.
   2019, §5.3).
@@ -267,6 +327,21 @@ eigen-decomposition, or the integrity basis itself. See
   integrity-basis tensors as $B_n$; this page uses $\Omega_{ij}$ and
   $\mathcal B_n$, because $R_{ij}$ is the Reynolds stress and $B$ the
   log-law intercept in the registry. The version read is arXiv v1.
+- Agrawal & Koutsourelakis (2024) print $\dim\boldsymbol\theta=6970$ for
+  5 inputs, 8 hidden layers of 30 and 10 outputs (Table 3); a fully
+  connected network of that shape with biases on every layer has 7000
+  parameters, 30 more than printed *(compiler check, not in the
+  sources)*. Their Eq. 9 defines the
+  Reynolds stress with a minus sign, $-\langle u_i'u_j'\rangle$, while
+  Eqs. 10, 14 and 17 use the positive-trace form adopted here.
+- Agrawal & Koutsourelakis (2024, Table 1) call the basis tensors
+  symmetric but print $T^{(7)}=\mathsf W\mathsf S\mathsf W^2+\mathsf W^2\mathsf S\mathsf W$.
+  With $\mathsf S$ symmetric and $\mathsf W$ antisymmetric,
+  $(\mathsf W\mathsf S\mathsf W^2)^T=-\mathsf W^2\mathsf S\mathsf W$, so the
+  printed sum is antisymmetric; the difference
+  $\mathsf W\mathsf S\mathsf W^2-\mathsf W^2\mathsf S\mathsf W$ is the
+  symmetric combination, and the other nine printed tensors are symmetric
+  *(compiler check, not in the sources)*.
 - Tang et al. (2023) write the coefficients $G^m$ and the basis
   $\boldsymbol T^m$ (labelled $\lambda_i$, $T^i$ in their Fig. 11); this page
   writes $G^m$, $T^{(m)}$. Their $\boldsymbol R$ is the normalized rotation
@@ -296,3 +371,4 @@ eigen-decomposition, or the integrity basis itself. See
 - [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: §II E (tensor-basis network tried in DRL, no conclusive gain).
 - [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I, §II C 2, Eqs. 10–16 (2D basis, convention, linear/non-linear split, conditioning), §III B (claim on constant coefficients), §III C, Fig. 11 (contributions), §IV.
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §2.1 (Galilean but not rotational invariance), §7 (tensor-basis networks as future work).
+- [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — arXiv v2: §1, §2.2–2.2.5, Eqs. 9–10, 14–17, Table 1 (basis, invariants, $k$-$\varepsilon$ limit, locality); §3.3, Table 3 (architecture, pre-training); §3.4, Fig. 7 (learned stress); App. A.

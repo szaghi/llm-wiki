@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-26T07:38:00Z
+timestamp: 2026-10-26T10:25:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -126,6 +126,40 @@ and treatments of the trace; translated to the registry they agree.
   arXiv v1; the source writes $\epsilon(u)$ for the strain). The sign is
   that of a stress added to the viscous one, opposite to the registry's
   $\tau_{ij}$.
+
+- **RANS, compressible, zero-equation, with an eddy conductivity.** Chen
+  et al. (2024) close the Favre-averaged Reynolds stress
+  $\langle\rho u_i''u_j''\rangle$ by a scalar $\mu_t$ in the viscosity-sum form
+  and the turbulent heat flux by an eddy conductivity $c_p\mu_t/Pr_t$, both
+  from the algebraic [Baldwin–Lomax model](/methods/baldwin-lomax-model.md);
+  they note that algebraic models cannot represent Reynolds–Favre
+  differences ([Chen et al. (2024)](/sources/chen-2024.md), §2.1, Eq. 2.1).
+  Their DNS diagnostic of $\mu_t$ is the projection
+  $-\langle\rho u''v''\rangle/\partial_y\langle u\rangle_\rho$ (§2.3), and the
+  gradient-diffusion analogue for heat fails near the temperature peak of
+  cold-wall boundary layers, where the turbulent Prandtl number becomes
+  negative or singular (§3.3; see
+  [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md)).
+- **LES, with a viscosity derived from the resolved transfer.** Domaradzki
+  (2024) applies the Boussinesq form to the unfiltered LES field with an
+  eddy viscosity computed, at each step and with no adjustable constant,
+  from the dissipation of a similarity-type stress of the resolved field,
+  filtered once more for stability: in registry sign, the flux-matching
+  viscosity $\nu_t^{\mathrm{opt}}$ below applied to the similarity stress
+  ([Domaradzki (2024)](/sources/domaradzki-2024.md), §2.4, Eq. 2.47; see
+  [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md)).
+  Pointwise inversion without the second filtering "will cause numerical
+  instabilities" because the flux changes sign; with it, regions of negative
+  viscosity (backscatter) remain and no instability appeared (§2.4, §3.1).
+- **LES, comparison baseline of a learned model.** Kim et al. (2024) close
+  the deviatoric subgrid stress of their dynamic Smagorinsky baseline in the
+  registry form, while their neural networks predict the stress components
+  directly ([Kim et al. (2024)](/sources/kim-2024.md), §1; see
+  [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+- **PANS on a dynamic resolution parameter.** Petrocchi & Barakos (2024)
+  recall that PANS inherits the Boussinesq form with an eddy viscosity
+  reduced through $f_k$ ([Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md),
+  §2; see [PANS](/methods/partially-averaged-navier-stokes.md)).
 
 ### A traceless Reynolds stress
 
@@ -307,6 +341,32 @@ the peak secondary loss more than SST (48% against 34%)
 anisotropy on the periodic hill lies close to the plane-strain line of the
 barycentric map at all stations, with the normal components far from DNS
 (§III C, Figs. 7–8; see [k-ε models](/methods/k-epsilon-model.md)).
+Agrawal & Koutsourelakis (2024) state the same restriction for the linear
+model in general, the anisotropy being confined to the plane-strain line,
+and, citing barycentric-map studies, that a tensor-basis closure can reach
+other realizable states; with $g^{(1)}=-0.09$ and the other coefficients
+zero their closure reduces to the linear $k$-$\varepsilon$ model
+([Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md), §2.2.1;
+arXiv v2; see [model-form uncertainty](/definitions/model-form-uncertainty.md)).
+
+**Rotation, non-equilibrium and the second-moment alternative.** Liu et al.
+(2024) recall that linear eddy-viscosity models need added
+rotation–curvature, quadratic-constitutive or non-equilibrium corrections
+to predict the anisotropy and non-equilibrium of compressor corner flows,
+whereas a [differential Reynolds-stress model](/methods/reynolds-stress-model.md)
+carries the stress production and the Coriolis terms exactly; their
+fully turbulent Reynolds-stress model is nevertheless "only slightly more
+accurate" than SST for corner separation
+([Liu et al. (2024)](/sources/liu-2024.md), Introduction, Conclusions).
+Bouhafid et al. (2024) choose a Reynolds-stress model for an aircraft wake
+because, as they recall from the literature, the Reynolds stress and the
+mean strain are misaligned in wing-tip vortices owing to rotation
+([Bouhafid et al. (2024)](/sources/bouhafid-2024.md), §2.2; cited, not
+shown). Pacciani et al. (2025) recall that linear eddy-viscosity models
+need a boosted turbulent production in separated shear layers to avoid
+overpredicted reattachment lengths, the motivation of the separation terms
+of their [transition model](/methods/laminar-kinetic-energy-transition-model.md)
+([Pacciani et al. (2025)](/sources/pacciani-2025.md), §3.2, §4.5).
 
 **What the energy-matching viscosity leaves out.** Inagaki & Kobayashi
 (2023) split the deviatoric subgrid stress of filtered channel DNS
@@ -529,3 +589,11 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §2.1, §3.2 Eq. 3.3.
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §2, Eq. 2-1.
 - [Lederer et al. (2023)](/sources/lederer-2023.md) — §3.1, Eqs. 10–14 (arXiv v1).
+- [Chen et al. (2024)](/sources/chen-2024.md) — §2.1 Eq. 2.1, §2.3, §3.3.
+- [Domaradzki (2024)](/sources/domaradzki-2024.md) — §2.4 Eq. 2.47, §3.1.
+- [Kim et al. (2024)](/sources/kim-2024.md) — §1.
+- [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — §2.
+- [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — §2.2.1 (arXiv v2).
+- [Liu et al. (2024)](/sources/liu-2024.md) — Introduction, Conclusions.
+- [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) — §2.2.
+- [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §3.2, §4.5.

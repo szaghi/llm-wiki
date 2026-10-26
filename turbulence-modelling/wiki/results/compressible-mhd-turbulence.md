@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Compressible MHD turbulence"
-description: "In compressible MHD turbulence fluctuations can be Alfvénic, slow or fast magnetosonic, or none of these; a spatio-temporal decomposition finds most power off the linear dispersion branches and few fast modes, and subsonic compressible Hall-MHD runs show little Mach-number dependence of the cascade."
+description: "Compressible MHD turbulence carries Alfvénic, slow, fast and non-wave fluctuations; a spatio-temporal decomposition puts most power off the dispersion branches, subsonic Hall-MHD cascades depend little on Mach number, and a 3D flare simulation finds Kelvin–Helmholtz-generated Alfvénic turbulence."
 status: established
-aliases: [compressible MHD turbulence, MHD wave-mode decomposition, fast modes, slow modes, non-wave fluctuations, compressible Hall MHD turbulence, weakly compressible MHD]
+aliases: [compressible MHD turbulence, MHD wave-mode decomposition, fast modes, slow modes, non-wave fluctuations, compressible Hall MHD turbulence, weakly compressible MHD, solar-flare turbulence, flare plasma turbulence]
 tags: [mhd, compressible, plasma, astrophysics, dns]
-timestamp: 2026-10-26T07:35:00Z
+timestamp: 2026-10-26T10:20:00Z
 ---
 
 # Compressible MHD turbulence
@@ -182,6 +182,97 @@ numbers 0.25–0.5 and measure its cascade; Foldes et al. run at Mach
 numbers of $6\times10^{-5}$–$2.5\times10^{-2}$ (Tables 1–2, §4.4) to approximate
 incompressible dynamics.
 
+## Turbulence generated in a 3D solar-flare simulation
+
+[Ruan et al. (2023)](/sources/ruan-2023.md) study how compressible MHD
+turbulence forms, rather than how it cascades. Their setting is a stratified,
+reconnection-driven solar flare. The run has no turbulence closure and no
+subgrid model: the turbulence is whatever the resistive MHD scheme resolves.
+The paper does not discuss numerical dissipation, and it does not use the
+term implicit LES.
+
+**Set-up** (§2). The code is MPI-AMRVAC. It solves resistive MHD with
+gravity, field-aligned thermal conduction (with the transition-region
+adaptive conduction treatment), optically thin radiative losses and a
+static background heating. The box spans $100\times100\times100$ Mm, with
+a base grid of $64^3$ and five levels of [mesh
+adaptation](/methods/mesh-adaptation.md). This gives an effective $1024^3$,
+with smallest cells below 100 km. The flux is HLL, with the third-order
+Cada3 limiter on coarse levels and the van Leer limiter on fine levels.
+Time integration is three-stage strong-stability-preserving Runge–Kutta.
+The initial field is a sheared current sheet of strength 30 G and
+half-width 10 Mm (Eqs. 1–3). Reconnection is triggered by a two-stage
+anomalous magnetic diffusivity $\eta_m$ (the source's $\eta$), given in
+code units with no stated normalization (Eqs. 4–5). The local enhancement
+switches on at $t=450$ s and off at $t=480$ s. No Reynolds, Mach or
+Lundquist numbers are quoted.
+
+**Diagnostics** (page-local symbols). Turbulence is measured as the
+fluctuation of a single snapshot about an average along the line of sight
+$x$. It is a spatial decomposition, not an ensemble or time average. With
+$n_e$ the electron number density and $u_x$ the line-of-sight velocity,
+the nonthermal velocity (Eq. 6) is the $n_e$-weighted standard deviation
+
+$$v_{\mathrm{nth}}=\left[\frac{\int n_e u_x^2\,dx-\left(\int n_e u_x\,dx\right)^2\big/\int n_e\,dx}{\int n_e\,dx}\right]^{1/2}.$$
+
+The turbulent kinetic and magnetic column energies (Eqs. 7–8, page-local
+$\mathcal E_u$, $\mathcal E_b$) are printed as
+
+$$\begin{aligned}\mathcal E_u&=\int\rho u_x^2\,dx-\left(\int\rho u_x\,dx\right)^2\Big/\int\rho\,dx,\\ \mathcal E_b&=\int B_x^2\,dx-\left(\int B_x\,dx\right)^2\Big/\int dx.\end{aligned}$$
+
+Only the $x$ components enter. The authors justify this with the
+assumption that Alfvénic turbulence develops only perpendicular to the mean
+field, and in this view $x$ is perpendicular to the flare loops (§3.5).
+
+**Findings** (§3.2–§3.5; one simulation, compared qualitatively with
+spectroscopic observations):
+
+- **Kelvin–Helmholtz generation.** Reconnection downflows collide with the
+  flare arcade and form a termination shock and reflected upflows. Vortices
+  appear where the vertical velocity jumps by more than 1000 km s$^{-1}$
+  over about 2 arcsec. The shear lies in planes perpendicular to the local
+  guide field, where tension cannot stabilize it. A growth estimate
+  $\sigma_{\mathrm{KH}}=kv_0$ (the source's $\omega$; recalled from Goedbloed
+  et al. 2019, with $\sigma_{\mathrm{KH}}$ the page-local growth rate, $k$ the
+  inverse of several Mm and $v_0$ the half shear speed, hundreds to 1000 km s$^{-1}$)
+  gives growth times of seconds. That is the same order as the vortex
+  formation in the run (§3.3). *(Compiler check, not in the sources:
+  $1/k=2$–5 Mm and $v_0=300$–1000 km s$^{-1}$ give 2–17 s.)* The
+  Rayleigh–Taylor and Richtmyer–Meshkov fingers at the arcade top appear
+  later and lie below the region of maximum nonthermal velocity
+  (§3.1, §3.3; see [Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md)).
+  The perpendicular-shear mechanism is said to be "missed in 2D settings"
+  (§4). Its anisotropy is discussed on [critical
+  balance](/properties/critical-balance.md).
+- **Magnitude.** The synthetic nonthermal velocity peaks above the loop top,
+  near the termination shock, at more than 200 km s$^{-1}$. Gaussian fits
+  of synthetic Fe XXIV 255 Å spectra give 245 and 148 km s$^{-1}$ in two
+  boxes (§3.2, Fig. 2). The maximum lies where the mean field is below
+  25 G (§3.2).
+- **Alfvénic character.** Low in the atmosphere, the fluctuations are
+  carried down the field rather than generated locally. $B_x$ and $u_x$
+  are in antiphase for structures propagating along the field and in phase
+  for those propagating against it. Fitted propagation speeds (430 and
+  1600 km s$^{-1}$) are close to the local $v_A$. Motions reach about
+  10 km s$^{-1}$ at 2 Mm height, where $n_e\sim10^{11}$ cm$^{-3}$ (§3.4,
+  Fig. 4). $\mathcal E_u$ and $\mathcal E_b$ have similar magnitude and
+  spatial distribution, and $\mathcal E_u$ follows $\mathcal E_b$ in time,
+  which the authors call "a feature of Alfvénic motions" (§3.5, Fig. 5).
+- **Energy fraction.** The domain-integrated turbulent energy
+  $E_{\mathrm{tur}}$ (the sum of $\mathcal E_u$ and $\mathcal E_b$) is about
+  10% of $E_{\mathrm{dn}}$, the time-integrated kinetic energy of the
+  reconnection downflow across $z=45$ Mm (both page-local). The time-integrated
+  transfer exceeds the instantaneous turbulent energy, because turbulent
+  energy is continuously transported to the chromosphere and diffused (§3.5, Fig. 5(d);
+  the abstract says "more than 10%").
+
+The authors claim that the mechanism holds for any reconnecting flare,
+whatever its size, because MHD is scale invariant (§4). *(Compiler check,
+not in the sources: the run also contains physics that is not scale
+invariant, namely gravity, conduction, radiative losses, explicit
+resistivity and a fixed finest cell size, and it reports no resolution
+study.)*
+
 ## Qualifications
 
 - **Different regimes.** Gan et al. drive at $M_t\le0.18$ with a strong
@@ -207,6 +298,23 @@ incompressible dynamics.
   A and 0.206 for run C; the increase holds from run B (0.028) to run C.
   The set-up prints $v_A=8$ with $B_0=8$, $\rho_0=1$ (no $4\pi$) next to the
   Gaussian $\beta_p=8\pi p/B^2$; the sound speed is not printed.
+- **Printed inconsistencies** (Ruan et al. 2023). §3.5, p. 9 calls $E_k$
+  (this page's $E_{\mathrm{dn}}$) "the instantaneous turbulence energy".
+  The preceding paragraph defines $E_k$ as the time-integrated downflow
+  kinetic energy, so the sentence fits only the turbulent energy
+  $E_{\mathrm{tur}}$. Eqs. 7–8 print no factor $\tfrac12$, and Eq. 8 prints
+  no $1/(8\pi)$, while Fig. 5 gives the energies in erg cm$^{-2}$ and the
+  text quotes fields in gauss. The paper does not state the units of
+  $B_x$ in Eq. 8, so the printed near-equality of $\mathcal E_u$ and
+  $\mathcal E_b$ cannot be converted to a physical equipartition ratio
+  from the paper alone.
+- **Turbulence as dispersion.** Ruan et al.'s turbulence is a
+  line-of-sight velocity dispersion of one snapshot (Eqs. 6–7).
+  *(Compiler check, not in the sources: by construction, such a dispersion
+  also counts coherent motions along the line of sight, such as
+  counter-flows, not only a cascade.)* For the unresolved mass motions of
+  observed flares, the authors note that whether energy cascades occur is
+  "impossible to know" from remote observations (§1).
 - **Numerics unreported.** Gan et al. give no Riemann solver,
   reconstruction or dissipation details; the fractions come from $512^3$
   runs analysed over about $10\tau_A$, and the authors note that resolving its low-frequency part
@@ -218,3 +326,4 @@ incompressible dynamics.
 - [Ferrand et al. (2022)](/sources/ferrand-2022.md) — §2.1, Eq. (9); §3.1, Fig. 1; §4, Fig. 4; §5.2.
 - [Schekochihin (2022)](/sources/schekochihin-2022.md) — §5.3, Eq. (5.8) (local-field measurement of anisotropy).
 - [Foldes et al. (2023)](/sources/foldes-2023.md) — §2.2, Eqs. (2.10)–(2.14); §4.2, Fig. 5; §5; §7 (weakly compressible lattice Boltzmann formulation of Hall MHD, density fluctuations, acoustic time step, compressible extension).
+- [Ruan et al. (2023)](/sources/ruan-2023.md) — §1; §2, Eqs. (1)–(5); §3.1–§3.5, Eqs. (6)–(8), Figs. 2–5; §4 (Kelvin–Helmholtz-generated, Alfvénic turbulence in a 3D resistive MHD flare simulation; nonthermal velocity and turbulent energy diagnostics).

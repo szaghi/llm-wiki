@@ -5,7 +5,7 @@ description: "Buoyancy-driven mixing of a heavy fluid placed above a light one: 
 status: established
 aliases: [Rayleigh-Taylor instability, RT mixing layer, Rayleigh–Taylor flow, variable-density mixing layer]
 tags: [benchmark, pans, hybrid-rans-les, rans]
-timestamp: 2026-10-26T05:07:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Rayleigh–Taylor mixing
@@ -106,6 +106,27 @@ $At$ of this page; the scaling and the turbulent jump relations are on
 [shock-generated turbulence](/results/shock-generated-turbulence.md). No
 ingested source compares the two configurations.
 
+## Rayleigh–Taylor fingers in a solar-flare simulation
+
+[Ruan et al. (2023)](/sources/ruan-2023.md) run a three-dimensional
+resistive MHD simulation of a solar flare (MPI-AMRVAC, effective $1024^3$
+by adaptive refinement, cells below 100 km) in which reconnection downflows
+hit the flare arcade below a termination shock. Rayleigh–Taylor and
+Richtmyer–Meshkov fingers form at the interface, as in the earlier
+simulation of Shen et al. that the authors cite, which attributed the
+turbulence there to them; in this run the fingers appear later than the
+analysed phase and below the region of largest nonthermal velocity, where
+the velocity at the upper border of the loops stays below 50 km/s. The
+authors find the turbulent zone "most likely driven by" the
+Kelvin–Helmholtz instability of the shear between downflows and reflected
+upflows, which is unstable in planes perpendicular to the guide field
+(§1, §3.1, §3.3, Fig. 3). The run has no subgrid closure, and the paper
+reports no resolution study; see
+[compressible MHD turbulence](/results/compressible-mhd-turbulence.md) and
+[mesh adaptation](/methods/mesh-adaptation.md). It is a buoyancy-driven
+interface in a magnetized, stratified plasma, not the two-fluid mixing
+layer of this page.
+
 ## Qualifications
 
 - Only one ingested source runs the case; the page records its set-up and
@@ -130,3 +151,4 @@ ingested source compares the two configurations.
 
 - [Pereira et al. (2021)](/sources/pereira-2021.md) — §I, Fig. 1; §II, Eqs. (1)–(3), Table I; §III; §IV.1–IV.3, Table II, Figs. 8–17; App. A–B, Fig. 18.
 - [Davidovits et al. (2022)](/sources/davidovits-2022.md) — §III, §IV (Richtmyer–Meshkov scaling with a pre-shock Atwood number).
+- [Ruan et al. (2023)](/sources/ruan-2023.md) — §1, §2, §3.1, §3.3, Fig. 3 (Rayleigh–Taylor fingers against Kelvin–Helmholtz turbulence in a flare).

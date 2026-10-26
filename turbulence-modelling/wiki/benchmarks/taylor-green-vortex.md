@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "The triply periodic vortex flow that transitions from a single-mode analytic field to decaying turbulence: at Re 40,000 against a 5400³ DNS to separate Smagorinsky and implicit LES errors, at Re 1600 to split numerical dissipation and test subgrid models and stabilizations, inviscid to tune spectral vanishing viscosity, in 2D for commutator errors, and for GPU timing and parallel scaling."
+description: "The triply periodic vortex flow that transitions from a single-mode analytic field to decaying turbulence: at Re 40,000 against a 5400³ DNS to separate Smagorinsky and implicit LES errors, at Re 1600 and 5000 to split numerical dissipation and test subgrid models, filter widths and filters, inviscid for energy conservation, and in 2D for commutator errors."
 status: established
 aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex]
 tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation]
-timestamp: 2026-10-26T07:40:00Z
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Taylor–Green vortex
@@ -104,6 +104,9 @@ to the fully turbulent state.
 | [Saini et al. (2023)](/sources/saini-2023.md) | second-order finite volume (OpenFOAM) with [WALE](/methods/wale-model.md); $N=4$ continuous Galerkin ([Nektar++](/software/nektar-plus-plus.md)) with spectral vanishing viscosity | $64^3$, $128^3$ cells; $8^3$, $16^3$ elements | $512^3$ spectral DNS of van Rees et al. |
 | [Zhao et al. (2023a)](/sources/zhao-2023.md) | [high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md), 5th- and 7th-order non-compact and 5th-order compact reconstruction, no model | $256^3$ cells | DNS (source of the curve not stated) |
 | [Wang et al. (2023b)](/sources/wang-2023-b.md) | the same gas-kinetic scheme with 5th-order WENO, on GPUs; also Mach 0.25 to 1.0 | $64^3$ to $512^3$ cells | the authors' earlier CPU runs |
+| [Duan & Wang (2024)](/sources/duan-2024.md) | [flux reconstruction](/methods/flux-reconstruction.md) (hpMusic), $N=4$, Mach 0.1; Smagorinsky, WALE and Vreman with three filter widths, against no model | inviscid: $16^3$ elements; $Re=1600$: $64^3$ elements | $Re=1600$: DNS of van Rees et al. |
+| [Wang (2024)](/sources/wang-2024-b.md) | flux reconstruction recovering nodal DG (ATHOS), $N=3$, HLLC flux, local modal filter; $Re=1600$ and 5000 | $64^3$ elements | DNS of Gassner & Beck and of Carton de Wiart et al. ($Re=1600$), Incompact3d DNS of Dairay et al. ($Re=5000$) |
+| [Wang et al. (2024)](/sources/wang-2024.md) | finite differences, second-order kinetic-energy-preserving split form KGP2 against sixth-order optimized upwind OPT6, MUSCL3 and WENO5; inviscid with flow reversal | $30^3$ cells | the initial field (time reversal) |
 
 **Numerical dissipation of a no-model DNS scheme.**
 [Cao et al. (2022)](/sources/cao-2022.md), §3.1, Figs. 2–5, measure the
@@ -229,6 +232,57 @@ failure, a pile-up at the cutoff, for a model with too little dissipation,
 the unclipped gradient model, in forced
 [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md).
 
+**Subgrid models and filter widths in flux reconstruction.**
+[Duan & Wang (2024)](/sources/duan-2024.md), §5.1, Figs. 5–7, add the
+[Smagorinsky](/methods/smagorinsky-model.md), [WALE](/methods/wale-model.md)
+and [Vreman](/methods/vreman-model.md) models to $N=4$ flux reconstruction,
+with the eddy viscosity constant in each element and the interface fluxes of
+the SGS stress set to zero, and three filter widths built on the cube root
+$h$ of the element volume: $h$, $h/\sqrt{N+1}$ and $h/(N+1)$. On the
+inviscid TGV ($16^3$ elements) every model with every width dissipates the
+eddies heavily compared with the no-model run, and the SGS dissipation is
+much larger than the Riemann-solver dissipation of the scheme; the two
+smaller widths dissipate clearly less than $h$, and the ranking is WALE
+least, then Vreman, then Smagorinsky. At $Re=1600$ ($64^3$ elements) the
+no-model enstrophy lies almost on the DNS of van Rees et al.; the models
+degrade it significantly with the widths $h$ and $h/\sqrt{N+1}$ and much
+less with $h/(N+1)$ (§5.1). The Smagorinsky over-dissipation agrees with
+[Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) and
+[Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) above. On this
+well-resolved case the authors find implicit LES best; the width
+$h/\sqrt{N+1}$ that they recommend comes from decaying grid turbulence and
+wall-modelled channel flow (see
+[homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)
+and [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
+
+**A localized modal filter that stays off in smooth flow.**
+[Wang (2024)](/sources/wang-2024-b.md) (read in arXiv v2), §4.1, Figs.
+2–3, uses the TGV at $Re=1600$ and 5000 ($64^3$ elements, $N=3$, HLLC
+flux) to check that the author's local modal filter, an exponential modal filter
+applied only in elements whose Persson–Peraire smoothness indicator exceeds
+a threshold (here $-4$), adds no dissipation: the dissipation-rate history
+to $t=20$ and the spectra at $t=9$ ($Re=1600$) and $t=14$ ($Re=5000$) are
+indistinguishable from the unfiltered run, and both agree "excellently"
+with the DNS; the filter costs about 5.5% more per step. The case shows
+the filter inactive in smooth flow; its dissipation where it acts is
+tested on the [turbine cascades](/benchmarks/turbine-cascade.md); see
+[subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)
+and [discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md).
+
+**Time reversal of the inviscid TGV.** [Wang et al. (2024)](/sources/wang-2024.md),
+§3.1, Fig. 2, run the inviscid TGV on $30^3$ cells to $t=20$, reverse the
+velocity and advance to $t=40$, after Modesti & Pirozzoli. With the
+second-order kinetic-energy-preserving split form KGP2 the kinetic energy
+stays constant and the vorticity field at $t=40$ is identical to the
+initial one, "verifying" its "non-dissipative energy conservation"; OPT6,
+MUSCL3 and WENO5 lose kinetic energy monotonically and do not recover the
+initial field, MUSCL3 the most. See
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md).
+The same conservation by a kinetic-energy-conserving scheme appears in the
+truncated-Euler run of
+[Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) above
+($K$ within 1% to $t=20$).
+
 **Recalled uses.** As recalled by [Basile et al. (2023)](/sources/basile-2023.md),
 §3.2 and §4.2.1, Chapelier et al. fixed a modal-decay smoothness threshold
 close to the $-5/3$ slope a priori from TGV DNS at $Re=5000$, and the
@@ -317,6 +371,26 @@ sources)*.
 - [Prakash et al. (2022)](/sources/prakash-2022.md) run no no-model case
   on the TGV and stop the analysis at the end of transition, so their
   ranking does not cover the decay phase.
+- [Duan & Wang (2024)](/sources/duan-2024.md) find the SGS dissipation
+  much larger than the scheme's in $N=4$ flux reconstruction, while
+  [Saini et al. (2023)](/sources/saini-2023.md) find the numerical part
+  dominant in second-order finite volumes and $N=4$ continuous Galerkin.
+  The set-ups differ: explicit Smagorinsky, WALE and Vreman models on
+  $16^3$ (inviscid) and $64^3$ flux-reconstruction elements against WALE
+  on $64^3$ and $128^3$ finite-volume cells and spectral vanishing
+  viscosity on $8^3$ and $16^3$ continuous-Galerkin elements. Each verdict
+  is stated for its own models, schemes and grids (Duan & Wang §5.1; Saini
+  et al. §5), so it is recorded as a difference of set-up, not a conflict
+  of claims. Duan & Wang do not state the model coefficients
+  used.
+- [Wang (2024)](/sources/wang-2024-b.md) sets $V_0=0.1\sqrt{p/\rho}$ and
+  calls the case Mach 0.1; with the sound speed $\sqrt{\gamma p/\rho}$ that
+  is Mach $0.1/\sqrt{1.4}\approx0.085$ *(compiler check, not in the
+  sources)*. The initial field (Eq. 23) is printed without the amplitude
+  $V_0$.
+- [Wang et al. (2024)](/sources/wang-2024.md) do not state the Mach number
+  of their inviscid run; the comparison involves schemes of different order
+  (second and sixth) as well as different dissipation.
 
 # Citations
 
@@ -332,3 +406,6 @@ sources)*.
 - [Saini et al. (2023)](/sources/saini-2023.md) — §2.2, Eqs. (6)–(11); §3.1, Fig. 1; §4, Figs. 5–6; §5.1, Figs. 7–8.
 - [Zhao et al. (2023a)](/sources/zhao-2023.md) — §4, Tables 3–4; §5.1, Eqs. (18)–(23), Figs. 3–7.
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4.1, Tables 3–5, Figs. 5–8.
+- [Duan & Wang (2024)](/sources/duan-2024.md) — §3, Eqs. (26)–(30); §5.1, Figs. 5–7; §6.
+- [Wang (2024)](/sources/wang-2024-b.md) — §2.3, Eqs. (17)–(19); §4.1, Eq. (23), Figs. 2–3.
+- [Wang et al. (2024)](/sources/wang-2024.md) — §2.3–2.5; §3.1, Eq. (14), Fig. 2.

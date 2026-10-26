@@ -151,8 +151,9 @@ undated software.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-26), cited further in chunk 4. This source is cited on:
+Chunk 3 (2026-10-26), cited further in chunks 4–5. This source is cited on:
 
+- [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)

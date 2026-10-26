@@ -5,7 +5,7 @@ description: "An LES closure built for the discrete equations actually solved, s
 status: established
 aliases: [filter-consistent closure, discretize-first closure, model-data consistency, computational subgrid stress]
 tags: [les, sgs-model, implicit-les, data-driven, numerical-dissipation]
-timestamp: 2026-10-26T07:37:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Discretization-consistent closure
@@ -27,7 +27,9 @@ adjoint of the LES equations (see
 [model-consistent training](/methods/model-consistent-training.md)).
 Agdestein & Sanderse (2025) discretize first and filter next: training data
 then satisfy the coarse discrete equations exactly (see
-[divergence-consistent LES](/methods/divergence-consistent-les.md)).
+[divergence-consistent LES](/methods/divergence-consistent-les.md));
+van Gastelen et al. (2024) do the same for 1D model equations and show
+that a cell-averaging filter splits the discrete energy exactly.
 [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) generate the
 training data of a wall model with the deployment solver itself.
 
@@ -123,6 +125,45 @@ convective commutator is $-\tfrac{\Delta^4}{480}\sin 2x+O(\Delta^6)$
 (Eq. F.12). The discrete one has the same $\sin 2x$ dependence but a
 different coefficient, which depends on the DNS spacing (Eqs. F.29–F.30).
 A model fitted to one is therefore inconsistent with the other.
+
+## Discrete energy and momentum under the filter (van Gastelen et al. 2024)
+
+[van Gastelen et al. (2024)](/sources/vangastelen-2024.md) take the same
+discretize-first route for 1D Burgers and Korteweg–de Vries equations and
+add a structural result. Page-local notation: $\boldsymbol u\in\mathbb R^{N_x}$
+is the fine-grid ("DNS") solution of $d\boldsymbol u/dt=f_h(\boldsymbol u)$,
+the coarse grid has $I$ cells of $J$ fine cells each ($N_x=IJ$),
+$\mathbf W$ is the discrete cell-averaging filter, $\bar{\boldsymbol u}=\mathbf W\boldsymbol u$,
+$\mathbf R$ the piecewise-constant reconstruction (a right inverse,
+$\mathbf W\mathbf R=\mathbf I$), $f_H$ the same scheme on the coarse grid,
+and $\boldsymbol u^<=\boldsymbol u-\mathbf R\bar{\boldsymbol u}$ the subgrid
+content (the paper's $\boldsymbol u'$), with $\mathbf W\boldsymbol u^<=0$ (§2.3, Eqs. 15–22). The exact
+coarse equation is (§2.4, Eqs. 23–24)
+
+$$\frac{d\bar{\boldsymbol u}}{dt}=f_H(\bar{\boldsymbol u})+\underbrace{\mathbf Wf_h(\boldsymbol u)-f_H(\bar{\boldsymbol u})}_{c(\boldsymbol u)},$$
+
+and the closure term $c$ is "the discrete equivalent of the commutator
+error" that "also includes the discretization error", as in Agdestein &
+Sanderse.
+
+With this filter–reconstruction pair, inner products are invariant under
+reconstruction and $\mathbf R\bar{\boldsymbol u}$ is orthogonal to
+$\boldsymbol u^<$ in the fine-grid mass-weighted inner product (App. A,
+Eqs. A.1–A.3). The discrete kinetic energy therefore splits exactly into a
+resolved and a subgrid part, and the discrete momentum is invariant under
+filtering, so the exact closure term adds no momentum (§2.5–2.6, Eqs.
+28–32; proofs in App. A). The authors chose the piecewise-constant
+reconstruction on purpose: a more accurate one would shrink $\boldsymbol u^<$
+but lose the energy invariance (§2.3). On this exact split they build an
+[energy-conserving neural closure](/methods/neural-network-sgs-model.md)
+that is stable for any network weights and still lets the resolved energy
+rise (backscatter) while the total falls (see
+[energy backscatter](/definitions/energy-backscatter.md)).
+
+The price of the discrete route, in their words, is the dependence of the
+trained closure on the compression factor $J$; they list training over
+several $J$, finite-element formulations, graph convolutions and Fourier
+neural operators as possible remedies for 2D and 3D (§5).
 
 ## Closures built this way
 
@@ -240,6 +281,25 @@ solver.
   numerics. Both transfers are within one discretization family; no source
   moves a closure across scheme families (DG to finite differences, say)
   *(compiler check, not in the sources)*.
+- **A supervised closure that judges the discretization error small.**
+  [Kim et al. (2024)](/sources/kim-2024.md) train pointwise
+  [neural-network SGS models](/methods/neural-network-sgs-model.md) on
+  box-filtered DNS of a cylinder wake and run them in a second-order
+  central-difference LES, i.e. on filter-first data. Following Sirignano
+  et al., they estimate the discretization error as the mean relative
+  difference between velocity gradients differenced on the LES and on the
+  DNS grid: 0.4986 to 0.5690 over five LES grids (Eqs. 4.2–4.3, Table 4).
+  They call these errors "not so significant" and state that the networks
+  "may not suffer" from them (p. A6-21). Their grid-filtered and fusion
+  networks are accurate on the training grid, and the fusion networks also
+  on untrained coarser and finer grids (Table 3); on still coarser grids
+  the LES with the fusion network, the dynamic Smagorinsky model and no
+  model all diverge, and the fusion network runs only with its stresses
+  clipped where backscatter occurs (App. C). The
+  paper does not train a discretization-consistent counterpart, so the
+  two routes are not compared on one case. Kim et al. themselves note that
+  their a priori-trained models do not remove the a priori/a posteriori
+  inconsistency (§5).
 - **Definitions of "implicit LES" differ.** Agdestein & Sanderse (2025,
   §1) call any LES that keeps the DNS equations in their original form and
   adds a closure, whether or not the filter is known, "implicit LES".
@@ -257,3 +317,5 @@ solver.
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §1, §3.3, Fig. 3 (implicit DG filter, supervised learning ill-posed); §4.2, §4.4, Figs. 6, 8 (resolution-specific policies, cross-resolution runs); §5.
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §2, Eqs. 2.2–2.3 (all unclosed terms learned), §6, Fig. 15 (solver transfer), §7.
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.5 (solver-consistent training data), §5(3) (re-training per solver).
+- [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §2.3–2.6, Eqs. 15–32 (discrete filter, closure term, energy split, momentum); App. A, Eqs. A.1–A.4; §3.1 (structure-preserving closure); §5 (dependence on $J$).
+- [Kim et al. (2024)](/sources/kim-2024.md) — p. A6-21, Eqs. 4.2–4.3, Table 4 (discretization-error estimate); Table 3; §5.

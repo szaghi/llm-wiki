@@ -5,7 +5,7 @@ description: "The one-equation eddy-viscosity RANS model transporting the workin
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-26T07:20:00Z
+timestamp: 2026-10-26T10:25:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -299,6 +299,35 @@ shear-layer-adapted length; in channel flow SA-IDDES gives results "very
 similar" to SST-IDDES (not shown)
 ([Carlsson et al. (2023)](/sources/carlsson-2023.md), §3, §4.2–4.4).
 
+### SA with wall functions on immersed-boundary Cartesian grids
+
+Constant et al. (2024) close steady RANS on octree Cartesian grids with the
+standard 1992 SA model ($\nu_t=\tilde\nu f_{v1}$, $c_{v1}=7.1$) and an
+[immersed boundary](/methods/immersed-boundary-method.md) whose forcing
+points carry a wall function
+([Constant et al. (2024)](/sources/constant-2024.md), §2.1 Eq. 2, §3.2;
+HAL author manuscript). At each forcing point at wall distance $d_A$
+(page-local), the eddy viscosity $\nu_t=\kappa u_\tau d_AD$ with
+$D=1-\exp(-y_A^+/19)$ and $\kappa=0.41$, "valid in the log layer and down to
+the wall", is inverted for the working variable through the quartic
+
+$$\tilde\nu^4-\kappa u_\tau d_AD\,\tilde\nu^3-\kappa u_\tau d_AD\,\nu^3c_{v1}^3=0$$
+
+(Eq. 8, solved by Ferrari's method), which is $\tilde\nu f_{v1}=\nu_t$
+written out *(compiler check, not in the sources)*. The friction velocity
+comes from Musker's equilibrium wall law at an image point above the
+forcing points. Moving the forcing region below an a-priori modelling height,
+and adapting that height where the boundary layer is thin at the leading
+edge, removes the spurious near-wall oscillations of the coupling and,
+with a higher-order wall-pressure reconstruction, cuts the near-field drag
+error on NACA 0012 at $15^\circ$ ($M=0.15$, $Re=6\times10^6$) from 94% to 17%
+against a body-fitted wall-resolved reference, and on the NASA CRM
+high-lift configuration at $17.05^\circ$ from 9.1% to 1.5% against a body-fitted LAVA solution (Tables 3, 9; see
+the immersed-boundary page and
+[NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)). The
+remaining error near stall is attributed to the equilibrium wall model at
+the leading edge (§6.1).
+
 ## Evidence
 
 ### Compressor corner separation and a transonic rotor
@@ -332,6 +361,12 @@ million points, $y^+\approx0.8$), against experiment only:
   predict the stall point "very accurately"; all models overpredict the
   adiabatic efficiency, the helicity correction lowering it by about 0.5%
   (§5, Figs. 17–19).
+
+Liu et al. (2024) cite this work among the rotation–curvature, QCR and
+helicity corrections that linear eddy-viscosity models (SA and SST) need
+for compressor corner flows, and take the opposite route of a
+[Reynolds-stress model](/methods/reynolds-stress-model.md)
+([Liu et al. (2024)](/sources/liu-2024.md), Introduction).
 
 ### Mesh-converged RANS of a transonic rotor
 
@@ -384,7 +419,33 @@ meshes as future work (§9).
   algebraic models with compressibility corrections (Rumsey 2010; Gnoffo et
   al. 2013), and find their cold-wall Mach 11 DNS within 1.9% ($\tau_w$) and
   1.7% (wall heat flux) of a Baldwin–Lomax RANS
-  ([Huang et al. (2022)](/sources/huang-2022.md), §1, App. A.2).
+  ([Huang et al. (2022)](/sources/huang-2022.md), §1, App. A.2); see
+  [Baldwin–Lomax model](/methods/baldwin-lomax-model.md).
+- **Transonic buffet.** In the compilation of URANS predictions of the
+  OAT15A buffet at $\alpha=3.5^\circ$ by Petrocchi & Barakos (2024), SA mostly
+  gives no shock oscillation, while some variants (SALSA, Edwards–Chandra
+  forms with compressibility correction) and Reynolds-stress models do,
+  at Strouhal numbers of about 0.066–0.074
+  ([Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md), App. A, Table
+  A.4; a compilation of other authors' results; see
+  [PANS](/methods/partially-averaged-navier-stokes.md)).
+- **Lattice Boltzmann.** SA, already validated in the lattice Boltzmann
+  solver [ProLB](/software/prolb.md), is the reference against which
+  Mozaffari et al. (2024) check their SST implementation on the NACA 23012
+  at $Re_c=1.88\times10^6$: the two give close eddy-viscosity fields and
+  lift coefficients of 0.12, 0.79, 1.175 (SA) against 0.12, 0.79, 1.07
+  measured at $0^\circ$, $6.2^\circ$, $9.3^\circ$; both under-predict $C_p$
+  near the leading edge, which the authors attribute to the missing
+  transition, and one extra refinement level reduces the $C_p$ error at
+  $9.3^\circ$ by "almost 50%"
+  ([Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §3.1, Table 1,
+  Figs. 4–8; HAL accepted manuscript).
+- **Host of DDES.** Wang et al. (2024) run SA-based delayed DES of the 30P30N
+  three-element high-lift airfoil ($M_\infty=0.17$, $Re=1.7\times10^6$,
+  $\alpha=5.5^\circ$, about 27 million cells) with a sixth-order upwind
+  scheme, without printing the model
+  ([Wang et al. (2024)](/sources/wang-2024.md), §4; see
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
 
 ## Qualifications
 
@@ -435,3 +496,8 @@ meshes as future work (§9).
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §3.5, §3.7, §4.1 Fig. 6 (arXiv v1).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §3, §4.2–4.4.
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §1, §5.2.
+- [Constant et al. (2024)](/sources/constant-2024.md) — §2.1 Eq. 2, §3.2 Eq. 8, §6.1 Table 3, §6.3 Table 9 (HAL author manuscript).
+- [Liu et al. (2024)](/sources/liu-2024.md) — Introduction.
+- [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — App. A, Table A.4.
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §3.1, Table 1, Figs. 4–8 (HAL accepted manuscript).
+- [Wang et al. (2024)](/sources/wang-2024.md) — §4.

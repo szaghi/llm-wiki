@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Turbulent boundary layers: zero and adverse pressure gradient, compressible"
-description: "Spatially developing turbulent boundary layers on flat walls: zero- and adverse-pressure-gradient layers as wall-model, log-law and physics-informed-network tests, supersonic and hypersonic layers on cooled walls as DNS databases for compressibility transformations and as LES validation, and the incoming layer of shock interactions."
+description: "Spatially developing turbulent boundary layers on flat walls: zero- and adverse-pressure-gradient layers as wall-model, log-law and physics-informed-network tests, supersonic and hypersonic layers on cooled walls as DNS databases for compressibility transformations, LES validation and the calibration of algebraic RANS, and the incoming layer of shock interactions."
 status: established
 aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
 tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles]
-timestamp: 2026-10-26T07:40:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -255,6 +255,58 @@ the cold walls of Mach 6–8 and 11–14, and the wall shear-stress rms reaches
 0.45–0.5 of its mean on cold walls (§3.2, Figs. 8–9). The two statements
 concern different cooling levels.
 
+**Algebraic RANS calibrated against the DNS databases.**
+[Chen et al. (2024)](/sources/chen-2024.md) use twelve published DNS
+datasets of zero-pressure-gradient layers (Mach 2 to 14, $T_w/T_r=0.18$
+to 1.9, $Re_\tau$ from 100 to 1272, plus the incompressible layer of
+Schlatter & Örlü), among them case M6Tw076R17 of Zhang, Duan & Choudhari
+that the Mach 5.86 low-Reynolds-number case of
+[Cogo et al. (2022)](/sources/cogo-2022.md) matches, to modify the
+[Baldwin–Lomax model](/methods/baldwin-lomax-model.md). The paper calls this
+model a "wall model", but it is an algebraic RANS eddy-viscosity closure
+of the whole boundary layer, solved here by marching the boundary-layer
+equations, not a wall-stress model for LES (§1, §2.2). Three established
+relations replace the semilocal inner scaling of the baseline:
+
+- the inner eddy viscosity of the baseline is shown to be equivalent to the
+  Trettel–Larsson transformation inside a van Driest mixing length, and is
+  replaced by the total-stress transformation of Griffin, Fu & Moin, whose
+  semilocal eddy viscosity follows the incompressible curve into the log
+  region for diabatic cases (§3.1, Fig. 3); see
+  [compressible velocity transformations](/definitions/compressible-velocity-transformation.md);
+- the outer eddy viscosity is rescaled with the van Driest defect scaling
+  (§3.2);
+- below $y^*=100$ the temperature follows the quadratic
+  temperature–velocity relation of Duan & Martín and Zhang et al. instead of
+  the energy equation with constant $Pr_t=0.9$, because the DNS turbulent
+  Prandtl number is non-monotonic and singular near the temperature peak of
+  cold-wall layers (§3.3, Fig. 6); see
+  [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md).
+
+Mean relative errors over all cases fall from 1.2% to 0.7% (velocity, log
+coordinate), 2.5% to 1.3% (velocity, outer coordinate), 1.4% to 0.4% and
+8.8% to 3.4% (temperature) (§4, Fig. 13); for walls with
+$T_w/T_r\le0.5$ modifying the eddy viscosity alone is insufficient, and
+the temperature–velocity relation is required (§4, Fig. 11). Wall and
+integral quantities (Table 2):
+
+| Case | $C_f\times10^3$ DNS / baseline / modified | $\delta^*/\theta$ DNS / baseline / modified |
+|---|---|---|
+| M2p5Tw10R17 | 2.31 / 2.07 / 2.13 | 4.1 / 4.29 / 4.17 |
+| M6Tw025R11 | 1.70 / 1.55 / 1.52 | 8.4 / 8.96 / 8.35 |
+| M6Tw076R17 | 1.00 / 0.85 / 0.97 | 13.6 / 14.4 / 13.7 |
+| M8Tw048R20 | 0.77 / 0.66 / 0.76 | 17.4 / 20.1 / 19.0 |
+| M14Tw018R24 | 0.40 / 0.35 / 0.39 | 37.6 / 43.8 / 40.9 |
+
+(The DNS $C_f$ is inferred by the authors from $\rho_w$ and $u_\tau$.) The
+model choices coincide with DNS findings recorded above: the total-stress
+transformation, which [Huang et al. (2022)](/sources/huang-2022.md) rank
+best across the inner layer and [Cogo et al. (2022)](/sources/cogo-2022.md)
+find equivalent to that of Volpiani et al., and the temperature–velocity
+relation of Zhang et al., which both databases find accurate. The
+modifications are restricted to attached thin layers; extension to pressure
+gradients and separation is left open (§5.1).
+
 ## End-wall boundary layers built from a DNS template
 
 [Morsbach et al. (2024)](/sources/morsbach-2024.md), §3.3, Eqs. (5)–(11),
@@ -361,3 +413,4 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §4.1–4.3, Figs. 8–9.
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §5.1, Fig. 5-2.
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §3.1, §3.3, Eqs. (5)–(12), Fig. 3.
+- [Chen et al. (2024)](/sources/chen-2024.md) — §1; §2.1–2.3, Table 1; §3.1–3.3, Figs. 3–6; §4, Table 2, Figs. 7–13; §5.1; App. A–B.

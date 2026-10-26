@@ -4,8 +4,8 @@ title: "Jump-penalty stabilization of high-order methods"
 description: "Jump-penalty stabilization adds to a high-order element method face terms that penalize the jump of the solution or of its gradient across element interfaces; it acts as localized numerical diffusion and serves as the implicit subgrid dissipation of DG and spectral/hp implicit LES of under-resolved turbulence."
 status: established
 aliases: [jump penalty, solution jump penalty, gradient jump penalty, gradient-jump penalisation, GJP, continuous interior penalty, edge stabilization, interior penalty stabilization]
-tags: [dg, implicit-les, numerical-dissipation, spectral-element]
-timestamp: 2026-10-26T07:42:00Z
+tags: [dg, implicit-les, numerical-dissipation, spectral-element, flux-reconstruction]
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Jump-penalty stabilization of high-order methods
@@ -87,6 +87,55 @@ which avoids forming the Jacobian of the viscous flux. The
 of [Lederer et al. (2023)](/sources/lederer-2023.md) works on the other jump
 term, the upwind penalty of the convective flux, and restricts it to the
 high-order part of the velocity jump.
+
+**Zero solution penalty in LDG.** In the
+[flux-reconstruction](/methods/flux-reconstruction.md) implicit LES of
+[Wang (2024)](/sources/wang-2024-b.md), §2.2, Eq. (16), the local DG viscous
+flux carries a penalty on the solution jump, set to zero, "the minimum
+dissipation version of LDG", plus a directional term of weight $\pm0.5$
+chosen locally for an upwind or downwind bias. The stabilization of that
+solver comes instead from the Riemann solver and from indicator-switched
+solution filters (see
+[subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)),
+not from face penalties. [Duan & Wang (2024)](/sources/duan-2024.md), §3,
+compute the common face gradients of their FR/CPR scheme with BR2, whose
+interface penalty on the solution jump is described on the
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) page,
+and add dissipation by explicit subgrid models rather than penalties.
+
+## Contrast: residual-based stabilization of continuous Galerkin
+
+Continuous finite elements carry no jump of the solution itself across faces
+(the gradient-jump penalties above act on its gradient).
+[Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) stabilize
+their continuous discretization with element residuals instead: they run
+[implicit LES](/definitions/implicit-les.md) of the
+[periodic hill](/benchmarks/periodic-hill.md) with the SUPG/PSPG-stabilized
+continuous Galerkin solver Lethe (equal-order trilinear $Q_1$ velocity and
+pressure, BDF2, Newton–GMRES; §3.1). The stabilization adds, over element
+interiors, the strong residual of the momentum equation tested against
+$\tau_u\nabla q$ (PSPG, pressure test function $q$) and
+$\tau_u\,\boldsymbol u\cdot\nabla\boldsymbol v$ (SUPG, velocity test
+function $\boldsymbol v$), with the transient stabilization parameter
+$$\tau_u=\Big[\Big(\frac{1}{\Delta t}\Big)^2+\Big(\frac{2|\boldsymbol u|}{h}\Big)^2+9\Big(\frac{4\nu}{h^2}\Big)^2\Big]^{-1/2}$$
+(Eqs. 8–10; $\tau_u$ and $\boldsymbol v$ page-local, $h$ the diameter of the
+sphere with the cell's volume, used for both the convective and the diffusive
+size in Lethe). The authors state that in stabilized approaches the
+additional dissipation of ILES comes from this "stabilization term that
+comprises a stabilization parameter and the strong residual" (§1).
+
+Unlike the jump penalties above, which Kou et al. (2023, §1) call
+independent of the time discretization, $\tau_u$ contains the time step, and
+Prieto Saavedra et al. (§4.2, Table 5) measure the consequence at
+$Re_h=5600$: on the coarse mesh (250K cells) the reattachment length grows
+from $x_R/h=4.73$ to $5.37$ as $\Delta t$ falls from 0.1 to 0.0125,
+against 4.83 measured by Rapp, and the Reynolds stresses degrade, which they
+attribute to $\tau_u$ shrinking with $\Delta t$ and so reducing the
+stabilization dissipation (consistent with Hsu et al., Calderer et al. and
+Gamnitzer et al. as cited); on the fine mesh (4M cells) the residual is
+smaller, the stabilization matters less, and all but the largest time step
+give similar, accurate results, at CFL numbers up to about 2.8. The
+benchmark numbers are on [periodic hill](/benchmarks/periodic-hill.md).
 
 ## Eigenanalysis and parameter choice
 
@@ -204,3 +253,6 @@ penalty does not change with $N$.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1 (interior-penalty parameter as an implicit-LES dissipation source).
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §3.1, Eqs. (3-1)–(3-9) (interior-penalty viscous flux with jump-based lifting quantity).
 - [Lederer et al. (2023)](/sources/lederer-2023.md) — §3.3 (projection of the upwind jump penalty).
+- [Wang (2024)](/sources/wang-2024-b.md) — arXiv v2: §2.2, Eq. (16) (LDG with zero solution-jump penalty).
+- [Duan & Wang (2024)](/sources/duan-2024.md) — §3 (BR2 face gradients in FR/CPR; explicit SGS dissipation instead).
+- [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §1 (stabilization term as ILES dissipation); §3.1, Eqs. (8)–(10) (SUPG/PSPG, $\tau_u$); §4.2, Table 5 (time-step dependence).

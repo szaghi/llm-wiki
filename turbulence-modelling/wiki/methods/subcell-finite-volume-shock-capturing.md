@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Subcell finite-volume shock capturing for DG"
-description: "Troubled DG elements are recomputed as (N+1)^3 finite-volume subcells with the same degrees of freedom, either switched by an indicator or blended convexly with the DG operator; the blending factor has also been controlled by reinforcement learning as an implicit subgrid model."
+description: "Troubled DG elements are recomputed as (N+1)^3 finite-volume subcells with the same degrees of freedom, switched by an indicator or blended convexly with the DG operator (the blend also learned as an implicit subgrid model); indicator-switched modal and entropy filters are the alternative that keeps the polynomial."
 status: established
-aliases: [hybrid DG/FV, DG/FV subcell scheme, finite-volume subcell limiting, DG/FV blending, RL-Blend]
-tags: [dg, numerical-dissipation, implicit-les, reinforcement-learning, compressible]
-timestamp: 2026-10-26T05:06:00Z
+aliases: [hybrid DG/FV, DG/FV subcell scheme, finite-volume subcell limiting, DG/FV blending, RL-Blend, local modal filter, LMF, entropy filter]
+tags: [dg, numerical-dissipation, implicit-les, reinforcement-learning, compressible, flux-reconstruction]
+timestamp: 2026-10-26T10:04:00Z
 ---
 
 # Subcell finite-volume shock capturing for DG
@@ -109,6 +109,94 @@ with order-lowering subcell approaches; see the
 In the authors' comparison table of high-order codes (Ferrer et al. 2023,
 §2, Table 1), shock capturing is ticked for both HORSES3D and Flexi/Fluxo.
 
+## Indicator-switched modal and entropy filters
+
+A third family keeps the polynomial and damps it instead.
+[Wang (2024)](/sources/wang-2024-b.md) stabilizes implicit LES of
+turbomachinery with the [flux-reconstruction](/methods/flux-reconstruction.md)
+solver ATHOS, whose correction functions recover nodal DG on LGL points, by
+two solution filters applied after every Runge–Kutta stage (§2.3, App. A,
+Algorithm 1). Page-local symbols: $\vartheta_m\in[0,1]$ the normalized index
+of Legendre mode $m$, $\vartheta_c$ the filter cutoff, $\alpha_f$ the filter
+strength and $s_f$ its order (the source's $\eta$, $\eta_c$, $\alpha$, $s$,
+renamed to avoid the Kolmogorov length and the blending factor); $s_e$ the
+Persson–Peraire indicator of an element and $s_0$ its activation threshold;
+$\mathcal S=\rho\ln(p\rho^{-\gamma})$ the entropy function and
+$\epsilon_{\mathcal S}$ its tolerance.
+
+**Local modal filter (LMF).** The exponential modal filter of Hesthaven and
+Warburton, $\mathcal V\Lambda\mathcal V^{-1}$ with
+$$\Lambda_{mm}=\begin{cases}1,&\vartheta_m<\vartheta_c,\\ \exp\!\Big[-\alpha_f\Big(\dfrac{\vartheta_m-\vartheta_c}{1-\vartheta_c}\Big)^{s_f}\Big],&\vartheta_c<\vartheta_m<1,\end{cases}$$
+(Eqs. 17–18; $\alpha_f=36$, i.e. $-\log_{10}$ of double-precision machine
+epsilon, and $s_f=6$ throughout, §4.2; the cutoff value used is not printed)
+is applied only in elements whose density smoothness indicator
+$$s_e=\log_{10}\frac{(\rho-\rho_{N-1},\,\rho-\rho_{N-1})_e}{(\rho,\rho)_e}$$
+(Eq. 19, $\rho_{N-1}$ the truncation of the density to degree $N-1$, the
+$L_2$ inner product over the element) satisfies $s_e\ge s_0$. The Persson–Peraire
+indicator is one of the a priori indicators listed for the FLEXI switching
+scheme above; here it switches a filter instead of subcells. The only
+tuning parameter is $s_0$. Starting from the
+Li–Wang classification centred at $-C_0\ln N$ with $C_0=4$ (after Klöckner
+et al.) and ramp width 4, the author finds that the lower edge filters too
+many elements and the upper edge does not stabilize, and recommends
+$s_0\in[-3.7,-2.7]$ for $N=2$ and $[-5.3,-4.3]$ for $N=3$, a ramp of width
+about 1 below the centre (Table 2b), summarized in the conclusions as
+$s_0\in[-(N+2),-(N+1)]$ (§5). A posteriori maps of $s_e$ in both turbines
+place the wake and transitional regions in that range, with only a tiny
+fraction of elements filtered (§4.4, Figs. 18–20). A single $s_0$ can be
+kept while the order is raised, since the threshold of the higher order is
+conservative for lower orders (§4.4.1).
+
+**Entropy filter (EF)** of Dzanic and Witherden, as implemented by Wang
+(2024, §2.3, Eqs. 20–22): a second-order modal filter
+$\Lambda_{mm}=e^{-\alpha_f\vartheta_m^2}$ whose strength $\alpha_f$ is found
+per element so that the discrete minimum entropy principle
+$$\mathcal S\big(U(\boldsymbol x,t+\Delta t)\big)\ge\min\mathcal S\big(U(\boldsymbol x,t)\big)-\epsilon_{\mathcal S}$$
+and positivity $\rho\ge\rho_{\min}$, $p\ge p_{\min}$ hold, the minimum
+taken over the element and its immediate neighbours (the domain of influence
+for CFL below one); $\epsilon_{\mathcal S}=10^{-4}$,
+$\rho_{\min}=p_{\min}=10^{-8}$, and $\alpha_f=0$ means no filtering.
+
+**Comparison** (Wang 2024, §4):
+
+- **Smooth flow.** On the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+  at $Re=1600$ and $5000$ ($64^3$ elements, $N=3$, HLLC, $s_0=-4$) the LMF
+  run and the unfiltered run give the same dissipation rate and spectra, both
+  in excellent agreement with DNS; the filter costs about 5.5% (overhead of
+  computing $s_e$) (§4.1, Figs. 2–3). The author notes that the filter is
+  then essentially never activated.
+- **T106C low-pressure turbine** (exit $Re=80{,}000$, Mach 0.65; 122 904
+  hexahedra, $N=3$, 7 865 856 degrees of freedom per equation;
+  $\Delta y^+\approx0.5$ after division by $N+1$, $\Delta x^+\approx20$,
+  $\Delta z^+\approx6$): with $s_0=-4.0$ both HLLC and Roe are stable, and
+  the isentropic Mach number agrees with the experiment of Michálek et al.
+  and with a CPR $N=3$ reference; the filter has negligible effect on it
+  (§4.2, Table 4, Fig. 8). The smooth upstream flow has $s_e<-7$, so a
+  threshold below $-7$ filters essentially everything (§4.2, Fig. 18).
+- **VKI LS89 vane** (MUR129, exit $Re=1.13\times10^6$, heat transfer; 6.6
+  to 31.3 million degrees of freedom, Table 6): at $N=3$ HLLC is stable with
+  $s_0=-4.0$ and $-4.3$, Roe only with $-4.3$; at $N=2$ HLLC is stable with
+  $-3.3$ and $-3.7$, Roe only with $-3.7$ (Tables 7–8). The heat-transfer
+  coefficient in the turbulent region depends more on $s_0$ than on the
+  Riemann solver; the transition location does not depend on $s_0$
+  (Fig. 17).
+- **EF against LMF.** EF stabilizes LS89 "without any tuning parameters",
+  but resolves the trailing-edge pressure waves less sharply and decays
+  faster at high frequency in the pressure spectrum than LMF with
+  $s_0=-4.0$, consistent with Gao et al. as cited; it filters more elements
+  (with small $\alpha_f$ in most) and costs about 15% more per iteration
+  than LMF, which is also simpler to implement (§4.3.2, §4.4.2–4.4.3,
+  Figs. 15–16, 19, 21). Its heat-transfer prediction lies between those of
+  the two LMF thresholds (Fig. 17).
+
+The cascades are on [turbine cascades](/benchmarks/turbine-cascade.md). The
+author connects solution filtering to
+[spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md) in
+finite differences, as cited from Lamballais et al., and leaves the FR
+analogue to future work (§2.3, §5); filtering adds to the
+[numerical dissipation](/properties/numerical-dissipation.md) that
+[implicit LES](/definitions/implicit-les.md) relies on (§2.3).
+
 ## Convention difference
 
 The two variants place the subcells differently: equispaced subcells of width
@@ -126,6 +214,19 @@ schemes, not a disagreement.
   $(U^{FV-},U^{FV-})$ while the three other faces carry $(U^{FV-},U^{FV+})$.
 - Beck & Kurz (2023, Eq. 17) admit $0\le\alpha\le1$ but map the RL action to
   $[0,0.5]$ (Table I).
+- **Printed slips (Wang 2024, arXiv v2).** Table 2a prints the upper Li–Wang
+  edge for $N=2$ as $2.77$, against $-2.7+4=1.3$ from its own centre and ramp
+  width (the $N=3$ row, $-8.3$, $-4.3$, $-0.3$, is consistent); the centres
+  $-2.7$ and $-4.3$ are truncations of $-4\ln2\approx-2.77$ and
+  $-4\ln3\approx-4.39$ *(compiler check, not in the sources)*. The
+  recommended ranges of Table 2b ($[-3.7,-2.7]$, $[-5.3,-4.3]$) and the
+  conclusions' $[-(N+2),-(N+1)]$ ($[-4,-3]$, $[-5,-4]$) overlap but differ.
+  Eq. (19) prints the numerator inner product with a single argument;
+  Eq. (18) leaves $\vartheta_m=\vartheta_c$ and $\vartheta_m=1$ uncovered
+  and defines the mode index as $i/(N_p-1)$ with $N_p$ called "the maximum
+  order of the polynomial"; §4.4.1 prints the $N=3$ range as "[-5.5:4]".
+  The entropy filter is attributed in the text to ref. [31], a different
+  Dzanic et al. preprint; the filter paper is ref. [42].
 
 # Citations
 
@@ -133,3 +234,4 @@ schemes, not a disagreement.
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §III C, Eqs. (16)–(17), Figs. 4–5; §V C, Figs. 8, 12–14; Table I.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §2, Table 1; §4.4, Eqs. (15)–(19), Fig. 9 (SVV-filtered artificial viscosity instead of subcells).
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §1, §6.3 (filtered artificial viscosity against order-lowering approaches).
+- [Wang (2024)](/sources/wang-2024-b.md) — arXiv v2: §2.3, Eqs. (17)–(22), Tables 1–2, App. A (local modal filter, Persson–Peraire indicator, entropy filter); §4.1, Figs. 2–3; §4.2, Tables 3–4, Fig. 8; §4.3, Tables 5–8, Figs. 13–17; §4.4, Figs. 18–21; §5.

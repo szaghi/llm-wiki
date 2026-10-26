@@ -269,7 +269,7 @@ al. 2017, Weatheritt & Sandberg 2017).
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4, 5. This source is cited on:
 
 - [Backward-facing step](/benchmarks/backward-facing-step.md)
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
@@ -278,6 +278,7 @@ Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Model-form uncertainty in turbulence closures](/definitions/model-form-uncertainty.md)
+- [Ensemble Kalman filter calibration of turbulence closures](/methods/ensemble-kalman-closure-calibration.md)
 - [Field inversion and machine learning](/methods/field-inversion-machine-learning.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)
 - [Symbolic-regression turbulence closures](/methods/symbolic-regression-closure.md)

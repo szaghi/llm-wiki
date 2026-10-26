@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Ahmed body"
-description: "The Ahmed body, a bluff car-like body with a slanted rear, whose slant angle sets the separation regime: at 35° (massive separation) a test of immersed-boundary wall-modelled LES on lattice Boltzmann grids, at 25° (separation and reattachment) the calibration case of a DDES procedure later applied to a full-scale estate car."
+description: "The Ahmed body, a bluff car-like body with a slanted rear whose angle sets the separation regime: at 35° a test of immersed-boundary wall-modelled LES and of SST-based hybrid RANS/LES on lattice Boltzmann grids, at 25° the calibration case of a DDES procedure applied to an estate car."
 status: established
 aliases: [Ahmed car body, Ahmed reference model, 25° Ahmed body, 35° Ahmed body]
-tags: [benchmark, separated-flow, hybrid-rans-les, des, wmles, immersed-boundary]
-timestamp: 2026-10-26T07:40:00Z
+tags: [benchmark, separated-flow, hybrid-rans-les, des, wmles, immersed-boundary, lattice-boltzmann]
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Ahmed body
@@ -84,6 +84,67 @@ also farther from Meile et al. than the fine no-slip run, the body-fitted
 SST, EARSM and DES, and the coarse wall-law run whose slant flow does not
 separate *(compiler check, not in the sources)*.
 
+**SST-based hybrids with and without the wall model.**
+[Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §3.3, run the
+same geometry ($1044\times389\times288$ mm, $U_\infty=40$ m/s,
+$Re_H=7.68\times10^5$, ERCOFTAC domain $8L\times2L\times1.35L$) in the
+same code, [ProLB](/software/prolb.md), but replace the subgrid model by
+two hybrids built on [$k$-$\omega$ SST](/methods/k-omega-sst-model.md):
+SST-IDDES ([detached-eddy simulation](/methods/detached-eddy-simulation.md))
+and Heinz's continuous eddy simulation (CES, see
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md)). The grid has 7
+refinement levels, $\Delta x_{\min}=1.3$ mm, $45.8\times10^6$ nodes for
+both slant angles, with more than 100 flow-through times $H/U_\infty$ and
+the last 50 averaged. Two body-surface conditions are compared: the explicit
+[equilibrium wall model](/methods/equilibrium-wall-model.md) of Cai &
+Sagaut ("WM") and a zero-velocity Dirichlet condition imposed although
+$y^+\gg1$ ("NS"; $y^+\approx100$–$150$ on the slant).
+
+- With the wall model, neither hybrid separates on the slant at either
+  angle, contrary to the fully detached 35° reference flow (Fig. 16). The
+  authors attribute it to the equilibrium wall model, which has no
+  pressure-gradient term, delaying or suppressing separation in the mild
+  adverse pressure gradient, and to the missing instability on the slant,
+  which keeps the hybrid from switching to LES (lines 465–470, 516–519).
+- With the no-slip condition, IDDES at 35° reproduces the reference wake
+  topology, including a small recirculation near the end of the slant also
+  seen in the body-fitted IDDES of Guilmineau et al., with a recirculation
+  extending just over 200 mm as in the experiment (Figs. 18–19). CES
+  separates already on the roof, and its separation extends into the wake
+  (Figs. 17, 19, 20).
+- At 25° IDDES-NS separates late and does not reattach, which the authors
+  attribute to the $y^+\approx100$–$150$ resolution on the slant
+  (Figs. 22–24).
+- The authors report "primary findings", without data, that the
+  adverse-pressure-gradient wall model of Wilhelm et al. improves the
+  results substantially (lines 553–557); see
+  [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md).
+
+Drag coefficients of [Mozaffari et al. (2024)](/sources/mozaffari-2024.md),
+Table 3:
+
+| Run | $C_D$, 35° | $C_D$, 25° |
+|---|---|---|
+| IDDES-WM | 0.2878 | 0.2510 |
+| CES-WM | 0.2738 | — |
+| IDDES-NS | 0.2819 | 0.2970 |
+| CES-NS | 0.3779 | — |
+| experiment, Ahmed et al. ($Re_H=1.2\times10^6$) | 0.2580 | 0.2850 |
+| experiment, Meile et al. ($Re_H=7.68\times10^5$) | 0.2790 | 0.2990 |
+| experiment, Liu et al. ($Re_H=1.4\times10^5$) | 0.32 | — |
+| experiment, Thacker et al. ($Re_H=1.4\times10^5$) | — | 0.3840 |
+| body-fitted SST-NS / IDDES-NS (Guilmineau et al.) | 0.2999 / 0.3452 | 0.3218 / 0.3802 |
+
+The 35° literature values quoted by both ProLB studies agree: Meile et
+al. 0.279, Liu et al. 0.32, Guilmineau et al. SST 0.2999 and IDDES 0.3452
+([Cai et al. (2022)](/sources/cai-2022.md), Table III;
+[Mozaffari et al. (2024)](/sources/mozaffari-2024.md), Table 3); Ahmed et
+al. is printed 0.26 and 0.2580. The 25° IDDES-NS drag (0.2970) lies within
+0.002 of Meile et al. (0.2990) *(compiler check, not in the sources)*,
+although its slant flow does not reattach (Figs. 22–24). The authors state that IDDES-NS "could
+recover" the 35° WMLES solution of [Cai et al. (2022)](/sources/cai-2022.md)
+at lower cost, without giving cost figures (lines 510–515).
+
 **Choice of hybrid model at 25°.** As recalled by
 [Delassaux et al. (2023)](/sources/delassaux-2023.md), §5, from their
 earlier calibration on the four 25° bodies: the realizable
@@ -117,9 +178,32 @@ separates changes with the near-wall treatment: the boundary condition
 [Cai et al. (2022)](/sources/cai-2022.md), §IV; the turbulence model, the
 prism layers, the surface-mesh size and the CFL number of the hybrid
 simulation in [Delassaux et al. (2023)](/sources/delassaux-2023.md), §5;
-see [hybrid RANS/LES](/definitions/hybrid-rans-les.md).
+see [hybrid RANS/LES](/definitions/hybrid-rans-les.md). In
+[Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §3.3, it changes
+with the body-surface condition (equilibrium wall model or no-slip) and
+with the hybrid model (IDDES or CES) at a fixed grid.
+
+The two ProLB studies differ on the wall-model runs at 35°: the fine-grid
+Vreman WMLES of [Cai et al. (2022)](/sources/cai-2022.md) separates
+massively with the wall law, while the SST hybrids of
+[Mozaffari et al. (2024)](/sources/mozaffari-2024.md) with an explicit
+equilibrium wall model that both papers credit to Cai & Sagaut (printed
+with different constants; see [law of the wall](/definitions/law-of-the-wall.md))
+do not separate. The runs differ in turbulence model and near-wall eddy
+viscosity (constrained-LES eddy viscosity against SST-based IDDES and CES),
+and neither paper sets the two outcomes side by side; Mozaffari et al. cite
+Cai et al. for the statement that the equilibrium wall model is acceptable
+in fully separated flows (lines 149–152).
 
 ## Qualifications
+
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) were read in the
+  HAL accepted manuscript. Their no-slip runs impose a zero velocity at
+  $y^+\approx100$–$150$, an under-resolved wall condition. The conclusion
+  (lines 557–558) calls it a "non-zero Dirichlet velocity", while §3.3
+  (lines 475–476) and the caption of Table 3 call it "zero-velocity" and
+  "zero-Dirichlet". Lines 535–536 call the "lift and drag coefficients"
+  close to the references, but Table 3 gives only drag.
 
 - The two sources print different widths, 0.389 m
   ([Cai et al. (2022)](/sources/cai-2022.md)) and 380 mm
@@ -143,3 +227,4 @@ see [hybrid RANS/LES](/definitions/hybrid-rans-les.md).
 
 - [Cai et al. (2022)](/sources/cai-2022.md) — §I; §II.C; §III, Tables I–II, Figs. 2–3; §IV, Table III, Figs. 4–9; §V.
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §1; §4.4; §5, Table 2, Figs. 11–12; §7.3.
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §2.2; §3.3, Table 3, Figs. 16–24; §4.

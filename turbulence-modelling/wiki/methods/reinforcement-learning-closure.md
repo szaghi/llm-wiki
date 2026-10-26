@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Reinforcement-learning turbulence closures"
-description: "Closures set or learned online by a policy trained with reinforcement learning, the running LES being the environment and the reward a solver statistic: element-local SGS coefficients in DG-LES, pointwise SGS stress tensors for channel LES trained on mean profiles, multi-agent wall-stress models with disputed extrapolation; RL also drives offline symbolic-expression search."
+description: "Closures set or learned online by a policy trained with reinforcement learning, the running LES being the environment and the reward a solver statistic: element-local SGS coefficients in DG-LES, pointwise SGS stress tensors for channel LES trained on mean profiles, multi-agent wall-stress models with disputed extrapolation and Reynolds-number-independent states; RL also drives offline symbolic-expression search."
 status: established
-aliases: [RL closure, PPO closure, reinforcement-learning SGS model, deep reinforcement learning SGS model, DRL SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM, DRL180]
+aliases: [RL closure, VYBA23, RLWM, PPO closure, reinforcement-learning SGS model, deep reinforcement learning SGS model, DRL SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM, DRL180]
 tags: [reinforcement-learning, sgs-model, data-driven, implicit-les, wall-model, neural-network]
-timestamp: 2026-10-26T07:37:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Reinforcement-learning turbulence closures
@@ -33,7 +33,9 @@ Kurz (2023) use it for SGS models in discontinuous Galerkin LES.
 stress tensor for wall-resolved LES of channel flow from two mean profiles.
 [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) use it, with many
 cooperating agents, for wall-stress models in wall-modelled LES, and
-Vadrot et al. (2023b) assess one of those wall models in another code.
+Vadrot et al. (2023b) assess one of those wall models in another code;
+[Vadrot et al. (2023a)](/sources/vadrot-2023.md) then redesign its states
+so that it extrapolates in Reynolds number.
 
 ## SGS closures for DG-LES (Beck & Kurz 2023)
 
@@ -430,12 +432,12 @@ supervised learning using expensive filtered DNS data" (see
 
 ## Comparison of the RL closures
 
-| | Kurz et al. (2023) | Beck & Kurz (2023) | Kim et al. (2022) | Bae & Koumoutsakos (2022) |
-|---|---|---|---|---|
-| Closure | element-local Smagorinsky coefficient | element-local Smagorinsky coefficient (constant or quadratic) or DG/FV blending | full SGS stress tensor (or $\nu_t$) at every grid point | multiplicative update of the local wall stress |
-| Flow | forced isotropic turbulence, DG-LES, $N=5,7$ | forced isotropic turbulence, DG-LES, $N=3,5,8$ | wall-resolved channel LES, $Re_\tau=180$, 360 | wall-modelled channel LES |
-| Reward | LES energy spectrum against DNS | LES energy spectrum against DNS | mean viscous and resolved Reynolds shear stress profiles against fDNS | true mean wall stress |
-| Algorithm | PPO, Gaussian actions | PPO, beta-distributed actions | DDPG/TD3 with truncated return | V-RACER |
+| | Kurz et al. (2023) | Beck & Kurz (2023) | Kim et al. (2022) | Bae & Koumoutsakos (2022) | Vadrot et al. (2023a) |
+|---|---|---|---|---|---|
+| Closure | element-local Smagorinsky coefficient | element-local Smagorinsky coefficient (constant or quadratic) or DG/FV blending | full SGS stress tensor (or $\nu_t$) at every grid point | multiplicative update of the local wall stress | as Bae & Koumoutsakos, with Reynolds-number-independent states |
+| Flow | forced isotropic turbulence, DG-LES, $N=5,7$ | forced isotropic turbulence, DG-LES, $N=3,5,8$ | wall-resolved channel LES, $Re_\tau=180$, 360 | wall-modelled channel LES | wall-modelled half channel, $48^3$, trained at $Re_\tau=10^4$ |
+| Reward | LES energy spectrum against DNS | LES energy spectrum against DNS | mean viscous and resolved Reynolds shear stress profiles against fDNS | true mean wall stress | true mean wall stress |
+| Algorithm | PPO, Gaussian actions | PPO, beta-distributed actions | DDPG/TD3 with truncated return | V-RACER | V-RACER |
 
 The two DG studies overlap at 24 and 36 DOF with $N=5$ and agree there:
 Kurz et al. (2023, §4.2) find the dynamic model as accurate as RL at 36
@@ -630,6 +632,103 @@ wall model that produced that field.
 See [machine-learning wall models](/methods/machine-learning-wall-model.md)
 for the supervised models compared in the same study.
 
+## Reynolds-number-independent states (Vadrot et al. 2023a)
+
+[Vadrot et al. (2023a)](/sources/vadrot-2023.md) (arXiv v3) develop a
+new multi-agent RL wall model, named VYBA23, as a correction of the
+log-law model of Bae & Koumoutsakos (BK22 in their naming), in
+[LESGO](/software/lesgo.md) half-channel flow. Page-local notation as in
+the section above: $1/\kappa_{\mathrm{wm}}$ and $B_{\mathrm{wm}}$ are the
+local log-law slope and intercept at $h_{\mathrm{wm}}$; $\kappa=0.4$,
+$B=5$ are the reference log-law constants; $\Delta a$ is the action range,
+$a_n\in[1-\Delta a,1+\Delta a]$; $\Delta t_{\mathrm{RL}}$ the action
+interval (registry §11), in LES time steps $\Delta t$.
+
+**Diagnosis (§II.B.3, Eq. 9, Fig. 3a).** The neutral line of the state
+plane, on which the LES velocity at $h_{\mathrm{wm}}$ equals the log law,
+
+$$\frac{1}{\kappa_{\mathrm{wm}}}\ln h^+_{\mathrm{wm}}+B_{\mathrm{wm}}-\Big(\frac1\kappa\ln h^+_{\mathrm{wm}}+B\Big)=0,$$
+
+has slope $-1/\ln h^+_{\mathrm{wm}}$ in the $(B_{\mathrm{wm}},1/\kappa_{\mathrm{wm}})$
+plane, which the paper writes $-1/(\ln(\Delta y/\delta)+\ln Re_\tau)$
+with $h_{\mathrm{wm}}$ one wall-normal spacing $\Delta y$ (wall-normal $z$
+in the paper). It rotates with $Re_\tau$ and saturates at large
+$Re_\tau$, which the authors give as the cause of BK22's saturating
+large-$Re_\tau$ [log-layer mismatch](/definitions/log-layer-mismatch.md),
+following their survey (Vadrot et al. 2023b).
+
+**New state (Eq. 10).** The first state is replaced by
+
+$$s_1=\Big(\frac{1}{\kappa_{\mathrm{wm}}}-\frac1\kappa\Big)\ln h^+_{\mathrm{wm}},\qquad s_2=B_{\mathrm{wm}},$$
+
+so that the neutral line becomes $s_1+s_2-B=0$ for every $Re_\tau$ (Fig.
+3b). Action, reward and algorithm are those of BK22: $\tau_w$ multiplied
+by $a_n$, reward on the distance from the true mean wall stress
+$\tau_w=-\delta\,dp_0/dx$ of the pressure-driven channel, V-RACER in the
+smarties library (§II.B.2–3, Eqs. 3–6).
+
+**Training and tests (Table I, §III).** One training Reynolds number,
+$Re_\tau=10^4$, on a $48^3$ grid, 256 agents spaced three cells apart,
+$\Delta a=0.10$, $\Delta t_{\mathrm{RL}}=10\Delta t$, started from an
+equilibrium-wall-model field. Tests at eleven $Re_\tau$ from 180 to
+$10^{10}$ against the equilibrium model and BK22 retrained by the authors
+in LESGO at $Re_\tau=10^4$.
+
+- VYBA23 recovers the log law up to $Re_\tau=10^{10}$ whenever
+  $h_{\mathrm{wm}}$ lies in the log layer; at $Re_\tau=180$ its profile
+  lies above DNS (§III.A, Fig. 6).
+- The retrained BK22 loses its low-$Re_\tau$ mismatch but keeps the
+  large-$Re_\tau$ one (§II.B.2, Fig. 2); the authors attribute the
+  difference from the original BK22 to the training Reynolds number, the
+  RL settings and possibly the solver.
+- Accuracy of the sign of $a_n-1$ against the neutral line (Table III):
+
+  | $Re_\tau$ | 180 | $10^3$ | $10^5$ | $10^{10}$ |
+  |---|---|---|---|---|
+  | BK22 | 0.49 | 0.50 | 0.53 | 0.49 |
+  | VYBA23 | 0.92 | 0.91 | 0.83 | 0.64 |
+
+**Agent parameters (§III.B, §IV, Figs. 9–12).** Mean velocity is
+essentially insensitive to $\Delta a$, $\Delta t_{\mathrm{RL}}$ and agent
+spacing, "the only exception being when the time-step between actions
+becomes too large" ($\Delta t_{\mathrm{RL}}>10\Delta t$). Wall-stress
+fluctuations grow with $\Delta a$ and fall with $\Delta t_{\mathrm{RL}}$;
+agent spacing matters little. Repeated maximal actions give the
+similarity rule (Eqs. 15–17)
+
+$$\frac{\ln(1+a_1)}{b_1}=\frac{\ln(1+a_2)}{b_2}\ \Rightarrow\ \frac{a_1}{b_1}=\frac{a_2}{b_2}\quad(a\ll1)$$
+
+for two models with $(\Delta a,\Delta t_{\mathrm{RL}})=(a_1,b_1\Delta t)$
+and $(a_2,b_2\Delta t)$, confirmed by overlapping fluctuation curves for
+ratios 2 and 10 (Fig. 12). The setting closest to filtered-DNS wall-stress
+fluctuations is $\Delta a=0.10$, $\Delta t_{\mathrm{RL}}=5\Delta t$,
+spacing of three cells, "possibly" solver dependent.
+
+**Claims about RL.** The authors state that the model "does not rely on
+high-fidelity data, as the back-propagation process is based on a reward
+rather than output error", that the two-state map makes the policy
+interpretable, and that RL "surpass[es] supervised ML" by removing the
+need for filtered DNS and the a priori/a posteriori input inconsistency
+(Abstract, §IV, §V). The same conclusion says that "the purpose of this
+paper is not to establish the superiority of the RL approach" (§V).
+Training was "challenging and time-consuming": "hundreds of simulations
+and millions of policy gradient updates", several rewards tried (§II.B.3).
+See [machine-learning wall models](/methods/machine-learning-wall-model.md).
+
+## RL as seen by other data-driven sources
+
+- [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) (§1) name RL
+  as the other route to stable learned closures, one that needs no
+  gradients, and build their own stability into the network architecture
+  instead (see [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+- [Kim et al. (2024)](/sources/kim-2024.md) (§1, §5) argue that RL, like
+  adjoint training, needs target statistics that are "unknown a priori"
+  for flows over complex geometries, and train their cylinder-wake
+  networks on filtered DNS instead. The rewards of the RL closures above
+  use DNS spectra (Beck & Kurz; Kurz et al.), filtered-DNS mean profiles
+  (Kim et al. 2022) or the known mean wall stress of a pressure-driven
+  channel (Bae & Koumoutsakos; Vadrot et al. 2023a).
+
 ## Qualifications
 
 - **Reward sign in Beck & Kurz (2023, Eq. 18).** The reward is printed as
@@ -727,6 +826,21 @@ for the supervised models compared in the same study.
   $\bar\alpha_{ij}=\partial\bar u_j/\partial x_i$; its tilde is the test
   filter. This page uses $\pi_{\boldsymbol\theta}$ for the policy,
   $\gamma_{\mathrm{RL}}$, $\mathcal S_i$, $\partial_i\bar u_j$ and the hat.
+- **Printed slips in Vadrot et al. (2023a).** Eq. 4 prints the reward as
+  $\big(\lvert\tau_w-\tau_{w,\mathrm m}(t_n)\rvert-\lvert\tau_w-\tau_{w,\mathrm m}(t_{n-1})\rvert\big)/\tau_w$
+  plus a bonus ($\tau_w$ the true mean wall stress, $\tau_{w,\mathrm m}$ the
+  modelled one, as in the reward-sign item above), in the same order as Bae & Koumoutsakos (2022, Eq. 9; see
+  their [Source page](/sources/bae-2022.md)), so that as printed the first
+  term is positive when the error grows *(compiler check, not in the
+  sources)*.
+  Eq. 6 writes $\tau_w(x,z,t_n)$ in its condition, where the agents' plane
+  coordinates are $(x,y)$ in the paper's convention. Eq. 12, presented as a
+  rewriting of the equilibrium model (Eq. 2), prints
+  $\tau_w=\rho\,\kappa\tilde U_{\mathrm{LES}}/(\ln h^+_{\mathrm{wm}}+B)$,
+  without the square, while Eq. 2 with the printed definition of the
+  roughness-like length gives $[\kappa U_{\mathrm{LES}}/(\ln h^+_{\mathrm{wm}}+\kappa B)]^2$
+  *(compiler check, not in the sources)*. The paper does not state which
+  SGS model its LES used (§II.A).
 - **Robustness to numerics.** Bae & Koumoutsakos (2022, pp. 3, 10) claim
   robustness to the discretization because numerical errors enter
   training; the preprint uses one solver and one SGS model (see
@@ -742,3 +856,6 @@ for the supervised models compared in the same study.
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §1, §2, Eqs. 8–11 (policy gradient, PPO), §3.1–3.5, Table 1–2, Fig. 4, Eqs. 19, 21 (MDP, policy, reward, training), §4.1–4.5, Figs. 5–9 (results, inputs, generalization, cost), §5, App. A (dynamic baseline in DG), footnote 3.
 - [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I (RL closures recalled), §II C (RL-trained expression generator), §IV.
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1 (RL against adjoint training).
+- [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — arXiv v3: Abstract; §II.A; §II.B.2–3, Eqs. 3–6, 9–10, Table I, Figs. 2–3; §III.A–B, Figs. 6, 9–10; §IV, Eqs. 12–17, Table III, Figs. 11–12; §V.
+- [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §1 (RL as a gradient-free route to stability).
+- [Kim et al. (2024)](/sources/kim-2024.md) — §1, §5 (targets unknown for complex geometries).

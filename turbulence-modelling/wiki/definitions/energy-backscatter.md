@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Energy backscatter and the subgrid energy flux"
-description: "Energy backscatter is a negative local subgrid energy flux, energy moving from subgrid to resolved scales; the sources define the flux, show that its local sign depends on the gauge of the subgrid stress and on the filter, and disagree in emphasis on whether models must reproduce it or remove it for stability."
+description: "Energy backscatter is a negative local subgrid energy flux, energy moving from subgrid to resolved scales; the sources define the flux, show that its local sign depends on the gauge of the subgrid stress and on the filter, and disagree in emphasis on whether models must reproduce it, remove it for stability, or admit it in stable form."
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-26T07:41:00Z
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -67,6 +67,13 @@ fraction depends on the filter type (Piomelli et al. 1991, as recalled).
 The box-filter fractions lie between the Gaussian and sharp-filter values
 above, from a different flow and filter scales *(compiler check, not in
 the sources)*.
+
+[Domaradzki (2024)](/sources/domaradzki-2024.md) (§3.1) recalls, from
+Piomelli et al. (1991) and Domaradzki, Liu & Brachet (1993), that with a
+sharp spectral filter the forward and inverse subgrid transfers are of the
+same order and the net forward transfer is much smaller than each, in line
+with the sharp-filter values of Vela-Martín (2022, §5.3) above; Domaradzki's
+own conclusions are drawn for graded (Gaussian and box) filters.
 
 In channel flow, [Kim et al. (2022)](/sources/kim-2022.md) (§III E,
 Fig. 14a) filter DNS with a cut-off filter in the homogeneous directions
@@ -269,6 +276,70 @@ The sources reach different design choices from different questions.
   clipped to $-100\mu\le\mu_t\le1000\mu$, which admits bounded backscatter
   (App. A).
 
+- **Backscatter in a learned model of a separated flow.**
+  [Kim et al. (2024)](/sources/kim-2024.md) (§4.1, Fig. 6) measure the
+  backward subgrid dissipation $\langle\Pi^-\rangle=\tfrac12\langle\Pi-\lvert\Pi\rvert\rangle$
+  ($\Pi^-$ page-local; average over span and time) a priori in the
+  [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md) at
+  $Re_D=3900$. Their pointwise
+  [neural-network models](/methods/neural-network-sgs-model.md), all six
+  variants, predict mean backscatter better than the dynamic Smagorinsky
+  model, whose backscatter is zero. The variants that concatenate grid- and
+  test-filtered inputs in one network produce wrong-signed subgrid shear
+  stress and dissipation in the near shear layers, and degrade a
+  posteriori (recirculation lengths 0.79 and 1.28 against 1.56 in DNS,
+  Table 3, §4.2.1). On two very coarse grids the networks run only with
+  the stress set to zero wherever backscatter occurs (App. C; see
+  [gradient model](/methods/gradient-model.md) for clipping).
+- **Too much backscatter in a structural model.** In forced isotropic
+  turbulence [Wang et al. (2023c)](/sources/wang-2023-c.md) (§III, Fig. 8)
+  compare a posteriori PDFs of $\Pi$: the dynamic Smagorinsky model is
+  strictly positive, the dynamic mixed model gives some backscatter through
+  its similarity part, and the pure [gradient model](/methods/gradient-model.md)
+  gives a PDF wider than filtered DNS, over-estimating backscatter, which
+  the authors attribute mostly to its poor prediction of the filtered
+  strain; it diverges at $Re_\lambda=259$ with filter width $16$ DNS grid
+  spacings (App. B). Their mixed model, the
+  gradient term plus an ensemble-Kalman-calibrated Smagorinsky term, gives
+  the PDF closest to filtered DNS.
+- **Backscatter in an eddy viscosity, stable.** The
+  [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md)
+  of Domaradzki (2024, §3.1) has regions of negative eddy viscosity, local
+  backscatter, yet none of its isotropic-turbulence runs at $32^3$ and
+  $64^3$ showed "any hints of instability". The total forward transfer
+  exceeded backscatter by at least an order of magnitude, which the author
+  suspects explains the stability. Its viscosity is the flux of a
+  similarity stress filtered once more, a smoothing the author introduces
+  because the pointwise version "will cause numerical instabilities"
+  (§2.4). Domaradzki sets this against the common view that backscatter in
+  an eddy-viscosity model leads to instability (§3.1), the view recalled
+  above by Vela-Martín (2022, §2.2) for the local dynamic coefficient, with
+  the qualifier "generally". No contradiction is recorded: Vela-Martín's
+  statement is qualified, and Domaradzki states the same instability for
+  the pointwise (unfiltered) viscosity (§2.4) and reports stability only
+  for the filtered one.
+- **Backscatter by energy exchange with subgrid variables, stable by
+  construction.** [van Gastelen et al. (2024)](/sources/vangastelen-2024.md)
+  build a learned closure for 1D Burgers and Korteweg–de Vries equations
+  on a discrete box filter (cell average) with piecewise-constant
+  reconstruction, for which the discrete energy splits exactly into a
+  resolved and a subgrid part, $E=\bar E+E'$ (page-local; §2.5, Eq. 28,
+  App. A). In the inviscid limit only the sum is conserved, so the resolved
+  energy can rise, backscatter, while the total falls (Eq. 29). Their model
+  adds one subgrid variable per coarse cell, a linear compression of the
+  subgrid content whose square approximates $E'$ (§3.2), and closes the
+  extended state with a skew-symmetric learned operator, which exchanges
+  energy between resolved and subgrid variables without creating it, plus
+  a negative semi-definite dissipative one. The model energy then obeys
+  $dE_s/dt=(\text{coarse-scheme term})-(\text{non-negative dissipation})$
+  (Eq. 37; $E_s$ page-local), so stability holds for any network weights
+  when the coarse discretization conserves energy, while backscatter
+  remains possible (§3.1). On Burgers the resolved energy of the model
+  oscillates through backscatter while its total energy decreases, as in
+  filtered DNS (§4.5, Fig. 10). The authors contrast this with
+  eddy-viscosity models and clipping, which remove backscatter for
+  stability (§1). See [discretization-consistent closure](/definitions/discretization-consistent-closure.md).
+
 The two claims of Seyedi & Zayernouri and Kim et al. concern different
 flows (isotropic turbulence against a channel) and different measures (a priori stress correlation and a
 posteriori decay against two trained mean statistics), so they are not
@@ -357,3 +428,7 @@ Other sources treat backscatter as a physical effect to be represented:
 - [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §II A, Eqs. (3)–(5); §II C, Eqs. (8)–(10); §III, Figs. 3–8; §IV A 2, Fig. 12; §IV B.
 - [Kang et al. (2023)](/sources/kang-2023.md) — §3.1, Figs. 4, 6, 8; §3.3, Fig. 20a.
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — §3.4; App. A.
+- [Domaradzki (2024)](/sources/domaradzki-2024.md) — §2.4; §3.1.
+- [Kim et al. (2024)](/sources/kim-2024.md) — §4.1, Fig. 6; §4.2.1; App. C.
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — §III, Eq. (21), Fig. 8; App. B.
+- [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — §1; §2.5, Eqs. (28)–(29); §3.1–3.2, Eqs. (33)–(39); §4.5, Fig. 10; App. A.

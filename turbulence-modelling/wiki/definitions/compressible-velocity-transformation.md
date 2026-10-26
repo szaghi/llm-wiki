@@ -5,7 +5,7 @@ description: "Maps that turn the mean velocity of a variable-property compressib
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-26T07:39:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Compressible velocity transformations
@@ -66,6 +66,16 @@ translated from their $z$.
   $y^+$ (Yang & Lv 2018, as recalled by Griffin et al. 2023, §3).
 - **Trettel–Larsson (2016).** Implied by the same damping written in
   semi-local units $y^*$ (Yang & Lv 2018, as recalled, §3).
+  [Chen et al. (2024)](/sources/chen-2024.md) (§3.1, Eqs. 3.1–3.2) derive
+  the same equivalence for the inner eddy viscosity of the semi-local
+  [Baldwin–Lomax model](/methods/baldwin-lomax-model.md): written with the
+  density-weighted Reynolds shear stress (Morkovin scaling), its mixing-length
+  relation is the incompressible one in the variables $y^*$ and $U^+_{TL}$
+  (the Trettel–Larsson velocity, page-local). Their DNS diagnostic of the
+  semi-local eddy viscosity built on $U^+_{TL}$ falls below the incompressible
+  curve in the log region, especially in diabatic boundary layers (§3.1,
+  Fig. 3a), which motivates their switch to the total-stress-based
+  transformation below.
 - **Data-driven** transformation of Volpiani et al. (2020), used by Kumar &
   Larsson (2022) in the same inverse procedure (as recalled, §2.3).
 - **Total-stress-based** transformation of Griffin, Fu & Moin (2021), which
@@ -97,6 +107,17 @@ translated from their $z$.
   constant-stress version ($\tau/\tau_w\approx1$) deviates by no more than
   0.3 % from the full one on their data (§4). Huang et al. (2022, Eq. 4.4)
   print the definitions above.
+
+- **Intrinsic-compressibility correction (HLPP).** Chen et al. (2024,
+  App. B, Eq. B1) also test the transformation of Hasan et al. (2023b, as
+  cited),
+
+  $$U^+_{HLPP}=\int_0^{U^+}\frac{1+\kappa y^*D^i}{1+\kappa y^*D^c}\,\mu^+\frac{dy^*}{dy^+}\,dU^+,\qquad D^c=\left[1-e^{-y^*/(17+19.3M_\tau)}\right]^2,$$
+
+  with $D^i$ the same damping with 17 alone and $M_\tau$ the friction Mach
+  number (page-local $D^i$, $D^c$, $M_\tau$); its damping depends on Mach
+  number, which Chen et al. (§1, §3.1) present as questioning Morkovin's
+  hypothesis (see [Morkovin hypothesis](/definitions/morkovin-hypothesis.md)).
 
 ## Inversion
 
@@ -131,6 +152,21 @@ $$T=T_w+s\,Pr\,(T_r-T_w)\frac{U}{U_e}\left(1-\frac{U}{U_m}\right)+\left(\frac{U}
 which ties the wall heat flux to the wall stress, $q_w=s\,\tau_wc_p(T_w-T_r)/U_e$.
 They judge the constant-$Pr_t$ energy equation of the classical model less
 accurate than the GRA (citing Zhang et al. 2014).
+
+Chen et al. (2024, §3.3, Eqs. 3.16–3.17) write the same quadratic with
+the constant $C_T=0.8259$ of Duan & Martín (2011), recast as $s\,Pr$ with
+$s=1.14$ after Zhang et al. (2014) as they cite them, and use the
+matching-anchored form below $y^*_{mT}=100$ inside an algebraic RANS model;
+they do not re-examine the relation against their DNS (details on the
+[inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md)
+page). Their motivation is the turbulent Prandtl number: in cold-wall
+boundary layers the DNS value of $Pr_t$ is non-monotonic and becomes
+negative or singular near the temperature peak, where the mean temperature
+gradient and the turbulent heat flux change sign, and is below 0.5 between
+that point and the wall in the three cold-wall cases shown, so a constant $Pr_t=0.9$ over-predicts the peak
+temperature and no monotone wall-distance formula can follow it (§3.3,
+Fig. 6; see the [Morkovin hypothesis](/definitions/morkovin-hypothesis.md)
+page for $Pr_t$).
 
 ## Ranking by the sources
 
@@ -185,6 +221,29 @@ emphasis on whether Volpiani et al.'s transformation can be told apart. Griffin 
 Iyer & Malik (2019) found the classical (van Driest-consistent) scaling more
 accurate for adiabatic walls, while Yang & Lv (2018) and Fu, Bose & Moin (2022)
 found semi-local damping better for cold walls.
+
+A third DNS-based comparison, over twelve published zero-pressure-gradient
+boundary layers at $M_\infty=2$–13.64 and $T_w/T_r=0.18$–1.9 (Chen et al.
+2024, App. B, Fig. 16), gives mean absolute errors of 2.2 % for the
+total-stress-based and 2.4 % for the HLPP transformation; the authors note
+that their error measure differs from that of Hasan et al. Built into their
+algebraic RANS model, the two give comparable a posteriori errors (velocity
+0.7 % against 0.6 % in log-inner coordinates). They also recall reports, as
+cited, that the total-stress-based transformation can degrade for
+supercritical or non-air-like flows (§1).
+
+**Outer layer.** The transformations above are designed for the region at
+and below the log layer (Chen et al. 2024, §3.1). For the outer layer Chen et
+al. (§3.2, Eqs. 3.11–3.12, Figs. 4–5) use the van Driest transformation in
+defect form, after Smits & Dussauge (2006) and Pirozzoli & Bernardini (2011)
+as they cite them: the diagnostic $y\,dU^+_{VD}/dy=\sqrt{\rho^+}\,y\,dU^+/dy$
+collapses the outer peaks of cold-wall layers better than the untransformed
+one, which implies an outer velocity scale $u_\tau/\sqrt{\rho^+}$, and the
+outer eddy viscosity normalized with a van Driest displacement thickness
+varies as little across the cases as the classical normalization. The
+authors call the van Driest outer scaling of diabatic layers "somewhat
+insufficiently examined" and raise error cancellation in the integral
+thickness as a possible reason for its success (§3.2).
 
 ## Transformations as a validation yardstick
 
@@ -289,3 +348,4 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 - [Helm & Martín (2022)](/sources/helm-2022.md) — Sec. III B, Tables I–II, Fig. 3; Sec. IV F, Fig. 31.
 - [Dang et al. (2022)](/sources/dang-2022.md) — §5.1, Fig. 17.
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4.2, Eqs. (10)–(11), Figs. 11, 13 (arXiv v1).
+- [Chen et al. (2024)](/sources/chen-2024.md) — §1; §3.1, Eqs. (3.1)–(3.7), Fig. 3; §3.2, Eqs. (3.11)–(3.14), Figs. 4–5; §3.3, Eqs. (3.15)–(3.17), Fig. 6; App. B, Eq. (B1), Fig. 16.

@@ -181,8 +181,9 @@ corporate author.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26). This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunk 5. This source is cited on:
 
+- [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)
 - [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md)
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)

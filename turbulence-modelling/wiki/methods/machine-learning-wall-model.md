@@ -5,7 +5,7 @@ description: "Wall-stress models for wall-modelled LES learned by supervised reg
 status: established
 aliases: [MLWM, ML wall model, neural-network wall model, data-driven wall model, reinforcement-learning wall model, RLWM, SciMARL wall model, BFWM]
 tags: [wall-model, wmles, machine-learning, neural-network, reinforcement-learning]
-timestamp: 2026-10-26T07:39:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Machine-learning wall models
@@ -38,6 +38,7 @@ in its Research Square preprint (v1, June 2021).
 | HYK19 (Huang, Yang & Kunz 2019) | supervised | $y^+$, $y^+/l^+_\Omega$ → departure of $U^+_{\mathrm{LES}}$ from an empirical rotating-channel profile; $u_\tau$ found iteratively | DNS of spanwise-rotating channels, $Re_\tau=180$–$1500$ | 4-4-2 hidden neurons, sigmoid |
 | ZHY21 (Zhou, He & Yang 2021) | supervised | velocity components and pressure gradients at three heights $h_{\mathrm{wm}}$, $+0.03\delta$, $+0.06\delta$, scaled with $\delta$, bulk velocity and a near-wall scale → two wall-stress components | channel and [periodic hill](/benchmarks/periodic-hill.md) at hill Reynolds numbers 5600–10 595 | 6 × 20, ReLU |
 | ZYZY22 (Zhou, Yang, Zhang & Yang 2022) | supervised | as ZHY21 | re-trained with another activation, adding law-of-the-wall channel data $Re_\tau=10^3$–$10^9$ | 6 × 15 |
+| VYBA23 ([Vadrot et al. 2023a](/sources/vadrot-2023.md)) | multi-agent RL | states $(1/\kappa_{\mathrm{wm}}-1/\kappa)\ln h^+_{\mathrm{wm}}$, $B_{\mathrm{wm}}$ → action $a_t\in[0.9,1.1]$ multiplying $\tau_w$ | inside WMLES in LESGO at $Re_\tau=10^4$ only, from an equilibrium-model field | two hidden layers of 128, Gaussian policy (mean, standard deviation) |
 | BK22 (Bae & Koumoutsakos 2022) | multi-agent RL | states $1/\kappa_{\mathrm{wm}}$, $B_{\mathrm{wm}}$ → action $a_t\in[0.9,1.1]$ with $\tau_w(t_{n+1})=a_t\,\tau_w(t_n)$ | inside WMLES at $Re_\tau=2000$, 4200, 8000, from equilibrium-model fields, no high-fidelity data (Vadrot et al.'s account; see Qualifications) | not given by Vadrot et al.; Bae & Koumoutsakos (2022, Methods): two hidden layers of 128 units, softsign, with skip connections |
 
 (Vadrot et al. 2023b, §II.B, Eqs. 3–8, Table I, Figs. 1–2; $l_\Omega$ is a
@@ -180,6 +181,64 @@ Bae and colleagues among the first applications of RL to closure modelling.
   value they recall, where the equilibrium model's correlation is one
   (Figs. 6–7); the authors read this as the policy replicating "the natural
   mechanisms of wall-shear stress control".
+
+## VYBA23: states that do not move with Reynolds number
+
+Vadrot et al. (2023a) correct BK22 rather than test it as published. They
+retrain BK22 themselves in LESGO at $Re_\tau=10^4$ (the original was trained
+in a second-order finite-difference code): the retrained model loses the
+low-$Re_\tau$ mismatch but keeps the high-$Re_\tau$ one, a difference they
+assign to the training Reynolds number, the RL settings and possibly the
+solver (§II.B.2, Fig. 2). Following their survey (Vadrot et al. 2023b), they
+trace the large-$Re_\tau$ mismatch to the neutral line
+$u^+_{\mathrm{LES}}=\kappa^{-1}\ln h^+_{\mathrm{wm}}+B$ of the state map: in
+BK22's states its slope $-1/(\ln(\Delta y/\delta)+\ln Re_\tau)$ rotates with
+$Re_\tau$ (Eq. 9, Fig. 3a). Their model VYBA23 keeps the RL algorithm, the
+action, the reward and the second state, and replaces the first state by
+
+$$s_1=\left(\frac1{\kappa_{\mathrm{wm}}}-\frac1\kappa\right)\ln h^+_{\mathrm{wm}},\qquad \kappa=0.4,$$
+
+so that the neutral line becomes $s_1+s_2-B=0$ for every $Re_\tau$ (Eq. 10,
+Fig. 3b). The state now depends on the chosen $\kappa$, whose empirical
+values span 0.36–0.44 as they cite (§II.B.3). Training uses 256 agents at
+spacing $3\Delta x\times3\Delta z$ on a $48^3$ half channel, action range
+$\pm0.10$ and an action every ten LES steps (Table I), with V-RACER in the
+smarties library coupled to LESGO; the authors call training "challenging and
+time-consuming", with "hundreds of simulations and millions of policy
+gradient updates" and several rewards tried before this one (§II.B.3).
+
+**A posteriori** (half channel, $48^3$, eleven $Re_\tau$ from 180 to
+$10^{10}$): VYBA23 recovers the log law whenever $h_{\mathrm{wm}}$ is in the
+log layer, up to $Re_\tau=10^{10}$, where BK22 keeps its mismatch; at
+$Re_\tau=180$ its profile lies above the DNS (§III.A, Figs. 6, 9). Mean
+velocity is nearly insensitive to the agent parameters except an action
+interval above ten LES steps; wall-stress fluctuations grow with the action
+range and fall with the action interval, agent spacing matters little, and
+an action range of 0.10 with an interval of five steps and spacing
+$3\Delta x\times3\Delta z$ comes closest to filtered DNS (§III.B, Fig. 10).
+
+**Policy diagnostics.** Classifying each action by the side of the neutral
+line on which it is taken, VYBA23 has accuracy 0.92, 0.91, 0.83 and 0.64 at
+$Re_\tau=180$, $10^3$, $10^5$ and $10^{10}$, against 0.49, 0.50, 0.53 and
+0.49 for BK22 (§IV, Eqs. 13–14, Table III). Assuming repeated maximal
+actions of one sign, two models with action range and interval
+$(a_1,b_1)$ and $(a_2,b_2)$ act alike when $\ln(1+a_1)/b_1=\ln(1+a_2)/b_2$,
+i.e. $a_1/b_1=a_2/b_2$ for small $a$ (Eqs. 15–17; page-local $a$, $b$), which
+matching wall-stress fluctuation curves confirm for ratios 2 and 10
+(Fig. 12); a larger range is cheaper than a longer interval for the same
+effect (§IV).
+
+**Claims about RL.** The authors hold that the model "does not rely on
+high-fidelity data, as the back-propagation process is based on a reward
+rather than output error" (Abstract, §V), and that RL therefore avoids the
+mismatch between a priori training inputs and a posteriori inputs. The
+reward uses the true mean wall stress, known in LESGO's pressure-driven
+channel as $\tau_w=-\delta\,dP_0/dx$ ($P_0$ the imposed mean pressure,
+page-local; Eq. 5), "obtained from the equations of motion for an
+unidirectional mean flow" (§II.B.2). They call the
+two-state model interpretable through its state–action map (§IV, §V), and
+note that the optimal agent settings "may be influenced by the numerical
+schemes" (§III.B), which is not tested.
 
 ## The neighbouring case: in-solver learning of the SGS model
 
@@ -328,7 +387,10 @@ shown in one solver on one family of grids, and with matching heights tied
 to finer LESGO grids the same policy leaves mismatches between $+2.2$ and
 $-3.2$ over $Re_\tau=180$–$10^{10}$ and a weak grid dependence (Table III,
 Fig. 10). The version of record of Bae &
-Koumoutsakos, cited by Vadrot et al., was not read.
+Koumoutsakos, cited by Vadrot et al., was not read. Vadrot et al. (2023a,
+§II.B.2, Fig. 2) add a third data point: BK22 retrained by them in LESGO at
+$Re_\tau=10^4$ shows no low-$Re_\tau$ mismatch but the same large-$Re_\tau$
+mismatch as the published policy in LESGO.
 
 ## Qualifications
 
@@ -362,6 +424,15 @@ Koumoutsakos, cited by Vadrot et al., was not read.
   $Re_\tau=2\times10^4$ and $5\times10^4$ as VWM failures, while by their
   Table 1 the $Re_\tau=10^5$ and $10^6$ cases also lie outside the trained
   range (the Fig. 4 caption omits them).
+- Vadrot et al. (2023a, Eq. 4) print the reward of their BK22-based framework
+  with the same order of terms, so as printed it too is positive when the
+  error grows *(compiler check, not in the sources)*; their bonus (Eq. 6)
+  applies when the relative error is below 0.1, whereas Bae & Koumoutsakos
+  (2022, Eq. 9) print 1 %. Vadrot et al. attribute only the action range
+  $[0.9,1.1]$ explicitly to Bae & Koumoutsakos ("In Ref. 22") and do not say
+  whether the threshold differs on purpose. Their Eq. (6) also writes the condition
+  at $(x,z,t_n)$ where the rest uses the wall-parallel pair $(x,y)$ of their
+  $z$-normal convention.
 
 # Citations
 
@@ -372,3 +443,4 @@ Koumoutsakos, cited by Vadrot et al., was not read.
 - [Kim et al. (2022)](/sources/kim-2022.md) — Abstract; §II A, §II C; §IV (arXiv v2).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §1; §2, Eq. (2.3); §2.5–2.6; §4.7–4.8, Table 1; §5(3); §6.
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1; §2, §2.1; §4.3, Fig. 10; §7.
+- [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — Abstract; §II.A; §II.B.2–II.B.3, Eqs. (3)–(10), Table I, Figs. 2–3; §III.A–III.B, Figs. 6, 9–10; §IV, Eqs. (13)–(17), Table III, Figs. 11–12; §V (arXiv v3).

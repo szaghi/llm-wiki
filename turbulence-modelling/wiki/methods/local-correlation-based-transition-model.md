@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Local-correlation-based transition models"
-description: "RANS laminar–turbulent transition models that evaluate an empirical onset correlation with local variables and switch on the turbulence model through an intermittency; the γ-Reθ model, its calibrations and separation-induced correction, the one-equation γ and algebraic γ-alg-SST members, hysteresis, very-low-Reynolds airfoils, a turbine cascade and mesh requirements."
+description: "RANS laminar–turbulent transition models that evaluate an empirical onset correlation with local variables and switch on the turbulence model through an intermittency; the γ-Reθ model and its separation correction, the one-equation γ model and its Reynolds-stress coupling, algebraic γ-alg-SST, hysteresis, low-Reynolds airfoils, cascades and mesh requirements."
 status: established
 aliases: [LCTM, γ-Reθ-SST, separation-induced transition correction, Suluksna–Juntasaro calibration, Langtry–Menter calibration, local correlation-based transition modelling, γ-Reθ model, gamma-Re-theta, γ-SST, one-equation γ model, γ-alg-SST, algebraic LCTM model, algebraic intermittency model]
 tags: [rans, transition, eddy-viscosity, boundary-layer, separated-flow]
-timestamp: 2026-10-26T07:38:00Z
+timestamp: 2026-10-26T10:25:00Z
 ---
 
 # Local-correlation-based transition models
@@ -270,6 +270,71 @@ Morsbach et al. report no re-tuned separation correction.
 The cases differ in Reynolds number, free-stream turbulence and geometry,
 so the two results do not test the same configuration.
 
+## The one-equation $\gamma$ model as printed, and its coupling to a Reynolds-stress model
+
+Liu et al. (2024) print Menter's one-equation $\gamma$ model (Menter et
+al. 2015) as implemented in OpenFOAM ([Liu et al. (2024)](/sources/liu-2024.md),
+Eqs. 10–19). With the page-local functions named as in the source:
+
+$$\rho\frac{D\gamma}{Dt}=F_{\mathrm{length}}\rho\lvert S\rvert\gamma(1-\gamma)F_{\mathrm{onset}}+\nabla\cdot\Big[\Big(\mu+\frac{\mu_t}{\sigma_\gamma}\Big)\nabla\gamma\Big]-c_{a2}\rho\lvert\Omega\rvert\gamma F_{\mathrm{turb}}(c_{e2}\gamma-1),$$
+
+$$F_{\mathrm{onset}}=\max\Big[\min(F_{\mathrm{onset1}},2)-\max\Big(1-\Big(\frac{R_T}{3.5}\Big)^3,0\Big),0\Big],\qquad F_{\mathrm{onset1}}=\frac{d^2\lvert S\rvert/\nu}{2.2\,Re_{\theta c}},\qquad F_{\mathrm{turb}}=e^{-(R_T/2)^4},$$
+
+$$Re_{\theta c}=c_{Tu1}+c_{Tu2}\exp\big[-c_{Tu3}Tu_lF_{PG}(\lambda_{\theta l})\big],\quad Tu_l=\min\Big(100\frac{\sqrt{2k/3}}{\omega d},100\Big),\quad \lambda_{\theta l}=-7.57\times10^{-3}\frac{dV}{dn}\frac{d^2}{\nu}+0.0128,$$
+
+with $R_T=k/(\nu\omega)$ the eddy-viscosity ratio, $F_{\mathrm{length}}=100$,
+$c_{e2}=50$, $c_{Tu1}=100$, $c_{Tu2}=1000$, $c_{Tu3}=1$; $c_{a2}$,
+$\sigma_\gamma$ and the function $F_{PG}$ are not printed ("refer to Ref.
+[52]"), and the source does not print the normalization of its strain
+modulus. The destruction drives $\gamma$ toward $1/c_{e2}$ in the laminar
+layer, and $F_{\mathrm{turb}}$ activates it at low eddy-viscosity ratio. Liu
+et al. note that at $Tu_l=0$ the critical value does not depend on
+$\lambda_{\theta l}$, but the pressure gradient still enters through
+$F_{\mathrm{onset1}}$, because the maximum of $d^2\lvert S\rvert/(2.2\nu)$
+across the layer equals $Re_\theta$ only for zero-pressure-gradient flat
+plates and exceeds it (falls below it) in adverse (favourable) gradient.
+The local pressure-gradient parameter of this model,
+$-7.57\times10^{-3}(\cdot)+0.0128$, differs in its coefficients from the
+$-0.1111(\cdot)+0.1875$ of γ-alg-SST above: they belong to different
+models, not to one model printed two ways. Pacciani et al. (2025) also use
+this parameter, calling it local and Galilean invariant but liable to need
+extra logic near corners between walls
+([Pacciani et al. (2025)](/sources/pacciani-2025.md), §4.4, Eq. 21).
+
+Liu et al. state that the $\gamma$ model "overcomes the Galilean invariance
+defect of the γ–Reθ model" and, being calibrated on SST, is "more
+compatible" with the SSG/LRR-$\omega$
+[Reynolds-stress model](/methods/reynolds-stress-model.md) than the
+laminar-kinetic-energy $k$-$k_L$-$\omega$ model (Introduction; stated, not
+shown). Their SSG/LRR-$\omega$-$\gamma$ coupling multiplies the stress
+production and pressure–strain by $\gamma$ and the dissipation by
+$\max(\gamma,0.1)$, the form Morsbach et al. use with $\gamma$-$Re_\theta$
+after Nie et al.; the equations are on the Reynolds-stress page. On the
+ERCOFTAC T3 plates the coupled model matches the measured onset at zero
+and favourable pressure gradient and delays it under adverse pressure
+gradient (T3C2–T3C4), "similar to the problem existing in the SST–γ model
+as documented" by Menter et al. (2015) (Fig. 6; see
+[ERCOFTAC T3 flat plates](/benchmarks/ercoftac-t3-flat-plate.md)). On
+compressor cascades it captures the mid-chord
+[laminar separation bubbles](/definitions/laminar-separation-bubble.md) that
+the fully turbulent models miss (Figs. 8–17).
+
+## Laminar-kinetic-energy models as a sibling family
+
+The [laminar-kinetic-energy models](/methods/laminar-kinetic-energy-transition-model.md),
+listed outside this family by Menter et al. (2022), borrow several of its
+ingredients in the reformulation of Pacciani et al. (2025): an intermittency
+that multiplies the SST production with the destruction bounded below by
+0.1, the separation-induced production $P_{sep}$ of Menter et al. (2015), a
+separation switch designed to resemble those of Menter et al. (2015) and
+Kubacki et al. (2020), and the local parameter $\lambda_{\theta l}$ (§4.2,
+§4.4–4.5). Their intermittency is algebraic, a ratio of fluctuation
+energies, not the transported or correlation-based $\gamma$ of this page.
+On all ERCOFTAC T3 cases $\gamma$-$Re_\theta$ (Menter et al. 2006) is their
+comparison model; on the low-$Tu$ T3A– and Schubauer–Klebanoff plates both
+models give a transition path "definitely too steep", in line with Menter et
+al. (2015) (§5.1.1, Figs. 7–8).
+
 ## Benchmarks proposed for calibration
 
 Slaughter et al. (2023) offer an implicit LES of the
@@ -353,6 +418,11 @@ larger than $\delta$; wall-function meshes are unsuitable (§4, Figs. 26–28).
   above $y^+_{\max}=6$.
 - The hysteresis of the Kubacki and Sandhu–Ghosh models is stated, not
   shown in this paper.
+- Liu et al. (2024) call $\rho d^2S/\mu$ the "vorticity Reynolds number" in
+  their nomenclature and the "eddy Reynolds number" in the text, and build
+  it on the strain modulus (Eq. 16); they reuse $c_1$ for the onset
+  constant 2.2 and for a pressure–strain coefficient of their
+  Reynolds-stress model.
 - Carreño Ruiz & D'Ambrosio attribute the two $\gamma_{\mathrm{sep}}$ forms
   inconsistently: §2 places the 3.235 form in Menter et al. (2006) and the
   2.193 form in a first version by Langtry et al. (2006), while §3.5 says the
@@ -375,3 +445,5 @@ larger than $\delta$; wall-function meshes are unsuitable (§4, Figs. 26–28).
 - [Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md) — §1, §2 Eqs. 1–20, §3.4 Table 4, §3.5 Tables 5–9 Fig. 7, §4 Table 10 Fig. 8, §5 Table 11, §6.1–6.3, §7.
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §2, §4.1 Figs. 4, 7–9, §5.
 - [Slaughter et al. (2023)](/sources/slaughter-2023.md) — §4.1, §5 (Research Square preprint v1).
+- [Liu et al. (2024)](/sources/liu-2024.md) — Introduction, Eqs. 10–21, Figs. 6, 8–17.
+- [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §4.2, §4.4 Eq. 21, §4.5, §5.1.1 Figs. 7–8.

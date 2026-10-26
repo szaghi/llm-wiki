@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Model-form uncertainty in turbulence closures"
-description: "The epistemic uncertainty that comes from the structure of a turbulence closure rather than from its inputs or coefficients; the four layers of RANS assumptions, physics-based bounds by eigenspace perturbation and random matrices, Bayesian calibration and discrepancy fields, where to place the correction, non-unique inversions, physics-based priors, identifiability limits, confidence scores of learned closures, and compensating errors."
+description: "The uncertainty that comes from the structure of a turbulence closure rather than from its inputs or coefficients; the four layers of RANS assumptions, physics-based bounds, Bayesian calibration and discrepancy fields, stochastic discrepancies trained on indirect data, where to place the correction, non-unique inversions, identifiability, confidence scores and compensating errors."
 status: established
-aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation]
+aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, aleatoric model uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation, stochastic discrepancy closure]
 tags: [uncertainty-quantification, rans, data-driven, field-inversion]
-timestamp: 2026-10-26T07:38:00Z
+timestamp: 2026-10-26T10:25:00Z
 ---
 
 # Model-form uncertainty in turbulence closures
@@ -257,6 +257,75 @@ linear closure based on it
 ([McConkey et al. (2022)](/sources/mcconkey-2022.md), §II B, Figs. 1–4;
 details on the [Boussinesq page](/definitions/boussinesq-hypothesis.md)).
 
+## A stochastic discrepancy inside the closure, trained on indirect data
+
+Agrawal & Koutsourelakis (2024) build the discrepancy into a learned
+Reynolds-stress closure and quantify it by Bayesian inference from mean
+velocity and pressure only
+([Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md); arXiv v2). In
+registry form the closure is
+
+$$R=R_{\boldsymbol\theta}(\langle\boldsymbol u\rangle)+\boldsymbol\delta_R,\qquad R_{\boldsymbol\theta}=2k\,b_{\boldsymbol\theta}+\tfrac23k\,I,\qquad b_{\boldsymbol\theta}=\sum_{n=1}^{10}g^{(n)}_{\boldsymbol\theta}T^{(n)},$$
+
+with the parametric part the
+[tensor-basis neural network](/methods/tensor-basis-neural-network.md) of
+Ling et al. (eight hidden layers of 30 nodes, 6970 parameters, $k$ and
+$\varepsilon$ from the standard [$k$-$\varepsilon$](/methods/k-epsilon-model.md)
+equations) and $\boldsymbol\delta_R$ (page-local) a latent random field of
+stress discrepancies (§2.2, Eqs. 13–17, Table 3). The field is reduced to
+$\boldsymbol\delta_R=W\boldsymbol E$, piecewise constant on $N_d$ subdomains
+through a Boolean matrix $W$ ($W$, $\boldsymbol E$, $N_d$ page-local; 52
+subdomains on a 12,180-node mesh), with an automatic-relevance-determination
+prior: each component $E_{J\ell}$ is Gaussian with zero mean and precision
+$\Lambda^E_{J\ell}$ (page-local; Gamma hyperprior with both parameters
+$10^{-3}$), so that a large precision switches the discrepancy off and the
+parametric closure accounts for most of the domain (§2.2.2, Eqs. 19–21).
+The posterior over $(\boldsymbol\theta,\boldsymbol E,\Lambda^E)$ given sparse
+observations is approximated by stochastic variational inference with point
+masses on $\boldsymbol\theta$ and $\Lambda^E$ and diagonal Gaussians on
+$\boldsymbol E$; the gradients come from a discrete adjoint of a
+finite-element RANS solver coupled to automatic differentiation, i.e.
+[model-consistent training](/methods/model-consistent-training.md) (§2.2.3–2.2.4,
+App. B). Predictions sample $\boldsymbol E$ from its prior at the inferred
+precisions and solve the RANS equations once per sample (§2.2.5, Eq. 32).
+
+**Classification of the uncertainty.** The authors call the parametric
+uncertainty in $\boldsymbol\theta$ epistemic, since its posterior collapses to
+a point with infinite data, and the closure's model-form error *aleatoric*:
+it stems from an insufficient parametric form and from the loss of
+information in local (Markovian) input features, and the latent
+$\boldsymbol\delta_R$ "remain random even in the limit of infinite data"
+(title, §1, §2.2 after Eq. 13). See Qualifications for the difference in
+terms from Duraisamy et al. (2019).
+
+**Results on a backward-facing step.** Trained on LES mean fields at step
+Reynolds numbers 300, 700, 900 and 1100 (observations at about 8% of the
+nodes, no Reynolds-stress data) and tested at 500, with expansion ratio 2
+(§3.1–3.2; see [backward-facing step](/benchmarks/backward-facing-step.md)):
+
+- the learned parametric stress captures the main features of the LES
+  stress, which the baseline badly misrepresents; the inferred precision is
+  small, i.e. the discrepancy large, where the parametric stress errs most
+  ($5<x/h<10$) and very large far downstream (§3.4, Fig. 7);
+- the predicted mean fields agree with the LES although the stresses do
+  not, which the authors read as non-uniqueness of the inverse problem, as
+  "also reported by other works" (§3.4); this is the identifiability point of
+  the next section;
+- the predictive standard deviation is largest around the shear layers, and
+  the credible intervals envelop the LES "in most areas" (Figs. 8–12);
+- the reattachment length is $10.06\pm1.21$ step heights ($\pm3$ standard
+  deviations) against 9.10 for the LES, 5.61 for the baseline
+  $k$-$\varepsilon$ model and 5.52 for the tensor-basis network of Geneva &
+  Zabaras, whose low value the authors attribute, as a conjecture, to the
+  missing stochastic correction (Table 5);
+- one run costs 1.3 baseline RANS runs, the LES 7679 (Table 4).
+
+The authors state that the discrepancy depends on grid and geometry, so it
+transfers to new flow conditions in the same geometry but not to a new
+geometry (§2.2.3, §2.2.5), and they claim that uncertainty quantification
+"has not been addressed for data-driven turbulence model training with
+indirect observations" (§1).
+
 ## Identifiability and data–model consistency
 
 Duraisamy (2021) shows a channel-flow inference of an anisotropy perturbation
@@ -355,6 +424,27 @@ however, not been achieved" and calls for community benchmarks (§VII).
   channel in their summary (Table III) although their Table I gives the two
   nearly equal errors ($E_u$ $8.4\times10^{-3}$ against $8.1\times10^{-3}$,
   skin-friction error 0.18 against 0.19).
+- **Terms differ between sources.** Duraisamy et al. (2019) file the
+  limitations of the physical model under *epistemic and model-form*
+  uncertainty and reserve *aleatory* for imprecise or naturally variable
+  inputs (box "Uncertainty quantification", p. 5); Agrawal & Koutsourelakis
+  (2024) call the model-form error of a closure *aleatoric*, because it
+  remains random with infinite data, and keep *epistemic* for the parameter
+  uncertainty that data remove (§1, §2.2). The two sources classify by
+  different criteria, as their definitions print them: the origin of the
+  error (inputs against physical model) for Duraisamy et al., reducibility
+  by data for Agrawal & Koutsourelakis. The difference is one of
+  terminology, not of fact, so it is recorded here rather than as a
+  contradiction. This page keeps the review's usage in its title and lead.
+- Agrawal & Koutsourelakis print the Reynolds stress with a minus sign,
+  $-\langle u_i'u_j'\rangle$, and $k=-\tfrac12\mathrm{tr}$ of it (Eqs. 9–10),
+  while their Eqs. 10, 14 and 17 write the positive isotropic part
+  $\tfrac23kI$; the registry form above follows Eqs. 14 and 17. They call
+  the marginal of their sparsity prior "a light-tailed, Student's
+  t-distribution" (§2.2.2); a Student-t has polynomially decaying, i.e.
+  heavy, tails *(compiler check, not in the sources)*. Their 10%
+  Bernoulli selection of nodes is said to yield about 8% of the nodes
+  (§3.2).
 - Cato et al. rate the production multiplier $\beta$ in their middle class
   in all three flows (Table III), while Yan et al. use it as their only
   correction (above). The settings differ as the sources state them: Cato
@@ -371,3 +461,4 @@ however, not been achieved" and calls for community benchmarks (§VII).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.6, §4.1, §4.2, §4.5, §4.7–4.8 Table 1 Figs. 8, 11, 16, 18, §5, §6.
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §6, Fig. 13 (HAL author manuscript).
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §4.1, Figs. 8–9.
+- [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — §1, §2.2–2.2.5 Eqs. 9–21, 32, §3.1–3.4 Figs. 7–12 Tables 3–5, App. B (arXiv v2).

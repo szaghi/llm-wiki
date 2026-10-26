@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-26T07:41:00Z
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Smagorinsky model
@@ -50,9 +50,20 @@ are variants of the same eddy-viscosity idea.
 | 0.2 | viscosity amplitude of an SVV-filtered LES in DG ($N=8$) | [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md), §6.1, Eq. (125) |
 | 0.17 | static baseline in DG LES of forced HIT, "theoretical $C_s=0.17$ suggested" in the literature (no citation) | [Kurz et al. (2023)](/sources/kurz-2023.md), §3.5 |
 | 0–0.5 | element-wise range of a reinforcement-learned coefficient | Kurz et al. (2023), §3.4 |
+| 0.16 | "estimated … by Lilly for isotropic turbulence", as printed; the value used in the runs is not stated | [Duan & Wang (2024)](/sources/duan-2024.md), §2.2 |
+| 0.16 | "classical" value, "determined through theoretical arguments for isotropic turbulence", stated to be over-dissipative in transition | [Wang et al. (2023c)](/sources/wang-2023-c.md), §II.A |
+| $\sqrt{0.01/2}\approx0.071$ | coefficient of a Smagorinsky term alone, calibrated a posteriori by an ensemble Kalman filter against filtered-DNS spectra of forced isotropic turbulence ($C_{\mathrm f}=2C_s^2=0.01$, $C_{\mathrm f}$ page-local, the paper's $C_D$) | Wang et al. (2023c), App. C |
+| trained, value not reported | 1D Burgers closure baseline, filter width the coarse grid spacing | [van Gastelen et al. (2024)](/sources/vangastelen-2024.md), §4.1.1 |
 
 Lilly's value is consistent with the recalled formula: $\pi^{-1}(2.1)^{-3/4}\approx0.18$
-*(compiler check, not in the sources)*. The fitted 2D coefficients of
+*(compiler check, not in the sources)*. The square root in the Wang et
+al. row is a *compiler check, not in the sources*: they write the
+Smagorinsky part as $-C_{\mathrm f}\Delta^2\lvert\bar S\rvert\bar S_{ij}$ and state
+$C_{\mathrm f}=2C_s^2$; inside their mixed model the same calibration gives
+$C_{\mathrm f}\approx0.00738$, about 0.061 in $C_s$ (see the
+[gradient model](/methods/gradient-model.md)). The EnKF-calibrated
+coefficient alone is "about 36 percent larger" than the mixed one and
+about a fifth of the classical $C_{\mathrm f}\approx0.05$ (App. C, §III). The fitted 2D coefficients of
 Agdestein & Sanderse decrease with resolution and reach 0.000 for the
 divergence-inconsistent formulation at $\bar n=256$, which the authors
 explain by the Smagorinsky term not being divergence-free; they are
@@ -80,6 +91,20 @@ $\Delta x=\Delta/5$ with $C_s=0.1$ is the same model as $\Delta=\Delta x$
 with $C_s=0.5$. [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md)
 (§6.1, Eq. 125) define $\Delta^3=\mathrm{Vol}/(N+1)^3$ for DG elements, the
 cube of the Beck & Kurz width.
+
+[Duan & Wang (2024)](/sources/duan-2024.md) (§3, Eqs. 28–30) compare the
+widths $V^{1/3}$, $V^{1/3}/\sqrt{N+1}$ and $V^{1/3}/(N+1)$ ($V$ the
+element volume, $N$ the paper's $P$) for Smagorinsky,
+[WALE](/methods/wale-model.md) and [Vreman](/methods/vreman-model.md) in a
+flux-reconstruction solver, with an element-averaged eddy viscosity and
+zero interface flux of the subgrid stress (Eqs. 26–27). Smagorinsky is the
+most dissipative of the three on the Taylor–Green vortex (§5.1, Figs.
+5–7), and in the wall-resolved channel at $Re_\tau=180$ ($N=3$) it
+"performs very poorly" with all three widths because of its large
+near-wall eddy viscosity (§5.3, Figs. 9–10); their wall-modelled
+comparisons use only WALE and Vreman (§5.4). Their stress has the sign of
+the viscous stress, $+2\bar\rho\nu_tS_{ij}$ added to it, with the full
+(not deviatoric) strain (§2.1–2.2).
 
 ## Filter width on high-aspect-ratio cells
 
@@ -228,6 +253,27 @@ limiting behavior".
   wave–number ranges in turbulent regimes" (citing Manzanero et al.). The
   paper prints no model equation, constant or filter width.
 
+- **Compressible temporal LES of aircraft wakes.** [Bouhafid et al. (2024)](/sources/bouhafid-2024.md)
+  (§2.2, Eq. 2.6; §4.1) model both the Favre-filtered subgrid stress
+  $\bar\rho(\widetilde{u_iu_j}-\tilde u_i\tilde u_j)$ and the subgrid heat
+  flux with the Smagorinsky model in the ONERA finite-volume solver CHARME
+  (second-order HLLC fluxes), in a periodic box that continues a RANS
+  solution of the aircraft into the vortex and dissipation regimes of the
+  wake (160 million cells, $\Delta/r_c=0.1$ in the descent zone, $r_c$ the
+  vortex core radius, page-local). The constant, filter width and subgrid
+  Prandtl number are not printed.
+- **1D Burgers baseline.** In the 1D closure study of van Gastelen et al.
+  (2024, §4.1.1, Eqs. 54–55) the constant-coefficient model, written on
+  the coarse grid with filter width equal to the grid spacing, is trained
+  like the network parameters. It is chosen because a cited study found it
+  "the best performing non-machine learning closure … outperforming the
+  dynamic Smagorinsky model" on Burgers (as recalled). It is too
+  dissipative in the spectra (§4.6), yet it beats no closure over the
+  whole viscosity range of the extrapolation test, where a vanilla
+  convolutional network degrades as $\nu$ decreases and the
+  structure-preserving closure is best (§4.7, Fig. 13); see
+  [neural-network SGS models](/methods/neural-network-sgs-model.md).
+
 ## A priori and a posteriori behaviour
 
 [Duraisamy (2021)](/sources/duraisamy-2021.md) (§IV.A) cites Smagorinsky
@@ -253,7 +299,9 @@ a learned closure; in 2D decaying turbulence it is more dissipative than no
 model (App. G.1). In DG LES of forced HIT at $N=5$ it over-damps the high
 wavenumbers where no-model LES piles energy up (Beck & Kurz 2023, §V B,
 Fig. 9). Smagorinsky is among the SGS models available in FLEXI ([Krais et al. 2021](/sources/krais-2021.md), §2.2.3)
-and LESGO ([Vadrot et al. 2023b](/sources/vadrot-2023-b.md), §II A), and is
+and LESGO ([Vadrot et al. 2023b](/sources/vadrot-2023-b.md), §II A;
+[Vadrot et al. 2023a](/sources/vadrot-2023.md), §II.A, which does not say
+which of LESGO's models its runs use), and is
 the base of the dynamic model used in the wall-modelled LES of
 [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) (§II.B).
 Prakash et al. (2022, §II), citing a priori studies, state that the
@@ -288,6 +336,23 @@ stress with correlation $-0.82$ between $\bar S_{12}$ and $\tau_{12}$,
 against $-0.28$ in filtered DNS of forced isotropic turbulence; it "only
 rescales the given input", predicts no backscatter, and performs a
 posteriori almost identically to the dynamic Smagorinsky model.
+
+[Domaradzki (2024)](/sources/domaradzki-2024.md) (§3.1) quotes "the
+value around 0.4 found for the standard Smagorinsky model" for the
+correlation of subgrid transfers, against 0.81 between the subgrid
+transfer of the
+[autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md),
+an eddy-viscosity model too, and that of the similarity stress it is built
+from; the paper sets this against the common view that eddy-viscosity
+models correlate poorly with exact subgrid quantities. Domaradzki adds
+that Smagorinsky and Chollet–Lesieur models must assume the
+inertial-range form and the Kolmogorov constant, which the autonomous
+model predicts (§3.3), and recalls that the spectral viscosity of the
+Smagorinsky model is approximately uniform in wavenumber (Siegel &
+Domaradzki 1994; for the dynamic form, Thiry et al. 2019), consistent with
+the nearly constant a posteriori spectral viscosity found by Vicente Cruz
+& Lamballais (2023, §6.3; see
+[spectral eddy viscosity](/methods/spectral-eddy-viscosity.md)).
 
 **Isotropic turbulence a posteriori.** In decaying isotropic turbulence at
 $Re_\lambda=240$, the authors call Smagorinsky "one of the most dissipative
@@ -377,3 +442,9 @@ page.
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §3.2, Eq. (3.4).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §3.2.
 - [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §IV B, Eq. (22).
+- [Duan & Wang (2024)](/sources/duan-2024.md) — §2.1–2.2, Eqs. (8)–(10); §3, Eqs. (26)–(30); §5.1, §5.3, Figs. 5–10.
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — §II.A, Eqs. (11), (14); §III; App. C.
+- [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — §4.1.1, Eqs. (54)–(55); §4.6–4.7, Fig. 13.
+- [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) — §2.2, Eq. (2.6); §4.1.
+- [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — §II.A.
+- [Domaradzki (2024)](/sources/domaradzki-2024.md) — §3.1; §3.3.

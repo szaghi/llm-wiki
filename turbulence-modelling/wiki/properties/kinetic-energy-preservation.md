@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Kinetic-energy preservation and split forms"
-description: "A discretization is kinetic-energy preserving when its convective terms neither create nor destroy discrete kinetic energy; this page gives the split-form families and two-point fluxes, kinetic energy as an entropy, why a dissipation-free baseline is robust but thermalizes without a subgrid model, and why it does not control pressure."
+description: "A discretization is kinetic-energy preserving when its convective terms neither create nor destroy discrete kinetic energy; this page gives the split-form families and two-point fluxes, kinetic energy as an entropy, why a dissipation-free baseline is robust but thermalizes or disperses without help, and what it does not control."
 status: established
 aliases: [KEP, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-26T07:42:00Z
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -141,6 +141,16 @@ al. state that the KEP property "depends only" on the discretization of the
 continuity and momentum equations (§3.1.2); the energy discretization decides
 instead [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md).
 
+The same five forms and the KGP choice are recalled by
+[Wang et al. (2024)](/sources/wang-2024.md), §2.3, Eqs. (5)–(11), for the
+second-order scheme **KGP2** of a cell-centred compressible finite-difference
+solver; they print the KGP weights as "$\xi=1/2$, $\alpha=\beta=\delta=1/4$,
+and $\varepsilon=0$" without defining $\xi$ or giving the weight of $C^u$.
+With $a_{\mathrm K}=\tfrac12$ the family above puts weight $\tfrac14$ on each
+of $C^D$, $C^\phi$, $C^u$, $C^\rho$ and none on $C^L$, so their $\xi$ is
+Bernades et al.'s and the missing weight is $\tfrac14$ *(compiler check, not
+in the sources)*.
+
 **Kennedy–Gruber volume flux in a DG turbomachinery code.** The DGSEM of
 DLR's TRACE solver used by [Morsbach et al. (2024)](/sources/morsbach-2024.md),
 §2, for implicit LES of a low-pressure-turbine cascade stabilizes the
@@ -247,6 +257,63 @@ dissipation supplies 80–90% of the non-viscous dissipation of those runs
 in the turbulent subdomains, the explicit WALE model the rest (§5.2; see
 [numerical dissipation](/properties/numerical-dissipation.md)).
 
+**Reversibility, and the cost of second order.** Wang et al. (2024, §3.1,
+Fig. 2) run the inviscid [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+on $30^3$ cells to $t=20L/V_0$, reverse the velocity and run to
+$t=40L/V_0$: KGP2 keeps the kinetic energy constant and returns to the
+initial vorticity field, "verifying that the KGP2 scheme has the property
+of non-dissipative energy conservation", while a sixth-order optimized
+upwind scheme (OPT6), fifth-order WENO and third-order MUSCL lose energy
+monotonically and do not recover the initial state. Exact conservation is
+not accuracy, however: by an approximate dispersion-relation analysis KGP2
+needs 14 points per wavelength for dispersion against 4 for OPT6 (§2.5,
+Table 1), and in WALE LES of channel flow at $Re_\tau=180$ and of the
+[periodic hill](/benchmarks/periodic-hill.md) OPT6 predicts the budget of
+the turbulent kinetic energy better, especially on coarse grids, so the
+authors recommend high-order upwind schemes for budget analysis (§3.2–3.3,
+§5). The comparison sets a second-order KEP scheme against a sixth-order
+upwind one; no high-order KEP scheme is tested (§2.3–2.4). See
+[low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md).
+
+**Stable but inaccurate without a model.**
+[Kim et al. (2024)](/sources/kim-2024.md), §2.1, run DNS and LES of the
+flow over a circular cylinder at $Re_D=3900$ with second-order central
+differences on a staggered mesh, a scheme that "conserves kinetic energy
+as well as continuity and momentum, and does not exhibit numerical
+dissipation"; they state that LES without a subgrid model can then be
+stable but inaccurate, and unstable on very coarse grids. On their coarser untrained
+grid the no-model LES gives a recirculation length $0.74D$ against
+$1.56D$ in the DNS (Table 3), and on the two coarsest grids the LES with no
+model, the dynamic Smagorinsky model or their neural-network model diverge,
+the network model running only when its stress is clipped to zero wherever
+it backscatters (App. C). Near the front of the cylinder the central scheme
+produces spurious oscillations, removed by QUICK upwinding for $x/D<-0.25$
+(§4.2.1). See
+[neural-network SGS models](/methods/neural-network-sgs-model.md).
+
+**An energy-conserving coarse operator as the stability guarantee of a
+learned closure.** [van Gastelen et al. (2024)](/sources/vangastelen-2024.md),
+§2.2, Eqs. (8)–(14), discretize Burgers' equation with a skew-symmetric
+convection operator $\boldsymbol C(\boldsymbol u)$ satisfying
+$\boldsymbol u^{\mathsf T}\boldsymbol C(\boldsymbol u)\boldsymbol u=0$, and
+the Korteweg–de Vries equation with skew-symmetric stencils for both the
+nonlinear and the third-derivative terms, so that the discrete energy
+decays only by viscosity (Burgers) or is conserved (KdV). Their neural
+closure adds to the coarse operator a skew-symmetric term, which exchanges
+energy between the resolved field and auxiliary subgrid variables, and a
+negative semi-definite dissipative term; the total model energy then
+obeys a balance in which the closure can only dissipate, so stability holds
+for any network weights "provided that" the coarse discretization is
+structure preserving (§3.1, Eq. 37). Without a closure, the coarse KdV
+discretization conserves the resolved energy exactly (§4.8). The
+construction is described on
+[discretization-consistent closure](/definitions/discretization-consistent-closure.md)
+and [neural-network SGS models](/methods/neural-network-sgs-model.md). The
+authors' §4.5 reports energy conserved "up to machine precision", their
+conclusion "up to a time discretization error" (§6), with explicit
+Runge–Kutta time stepping; see the Qualifications below on KEP as a
+semi-discrete property.
+
 **What KEP does not control.** Kinetic-energy preservation constrains momentum,
 not density and pressure. Flad & Gassner (2017, §5.1, Fig. 10) find that
 neither the KEP split form nor the Smagorinsky model damps pressure and density
@@ -277,7 +344,18 @@ polynomial de-aliasing in their in-house code, without timings.
 ## Qualifications
 
 - KEP is a property of the semi-discrete spatial operator; time integration
-  breaks it at the order of the scheme (Vicente Cruz & Lamballais 2023, §6.2).
+  breaks it at the order of the scheme (Vicente Cruz & Lamballais 2023, §6.2;
+  van Gastelen et al. 2024, §6).
+- **Dissipation as an asset or a defect.** Flad & Gassner (2017), Goc et
+  al. (2021) and Carlsson et al. (2023) treat a dissipation-free convective
+  operator as the baseline to which only model dissipation should be
+  added; Wang et al. (2024) prefer a dissipative sixth-order upwind scheme
+  to a second-order KEP scheme for turbulent kinetic energy budgets. Wang
+  et al. vary order and dissipation together (second-order central against
+  sixth-order upwind, §2.3–2.5) on channel and periodic-hill LES, while
+  Carlsson et al. vary the added dissipation of one central scheme; no
+  source compares the two at fixed order on the same flow, so the entry is
+  recorded as a qualification.
 - The "first" claims of Flad & Gassner (2017, §3, §4) are priority statements
   of the authors.
 - That Goc et al. (2021) and Lozano-Durán et al. (2022) describe the charLES
@@ -306,3 +384,6 @@ polynomial de-aliasing in their in-house code, without timings.
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §3.5 (KEP split-form FLEXI baseline); §4.2 (pile-up without a model).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §3.1 (charLES: kinetic-energy-conserving, approximately entropy-preserving finite volumes).
 - [Saini et al. (2023)](/sources/saini-2023.md) — §2.1 (central/upwind blend for stability); §5.2 (numerical share of the non-viscous dissipation).
+- [Wang et al. (2024)](/sources/wang-2024.md) — §2.3, Eqs. (5)–(11) (five convective forms, KGP2); §2.5, Table 1 (dispersion and dissipation); §3.1, Fig. 2 (inviscid Taylor–Green time reversal); §3.2–3.3, §5 (TKE budgets, recommendation).
+- [Kim et al. (2024)](/sources/kim-2024.md) — §2.1 (energy-conserving second-order central scheme, no-model stability); §4.2.1, Table 3 (no-model LES, QUICK near the front); App. C (divergence on the coarsest grids).
+- [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv 2301.13770v5: §2.2, Eqs. (8)–(14) (skew-symmetric Burgers and KdV discretizations); §3.1, Eq. (37) (stability conditional on an energy-conserving coarse operator); §4.5, §4.8, §6.

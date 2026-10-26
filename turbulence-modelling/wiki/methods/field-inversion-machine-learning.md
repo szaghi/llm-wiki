@@ -5,7 +5,7 @@ description: "Field inversion infers a spatial correction field of a RANS model 
 status: established
 aliases: [FIML, field inversion, field-inversion and machine-learning, inference before learning, variational data assimilation, non-parametric correction, Reynolds-force vector]
 tags: [field-inversion, data-driven, machine-learning, rans, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-26T07:37:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Field inversion and machine learning
@@ -84,7 +84,16 @@ the Tapenade automatic-differentiation tool, with one adjoint solve giving
 the gradient with respect to every $\beta_j$. An augmented discrete adjoint
 holds a constraint fixed during the inversion: the lift coefficient on the
 airfoils, the bulk velocity on the hills, where the driving volume force
-is adjusted automatically.
+is adjusted automatically. Yan et al. (2022, §1) list Markov-chain Monte
+Carlo and the ensemble Kalman filter for the full posterior, and call the
+MAP estimate "field inversion or data assimilation". The ensemble route is
+described on
+[ensemble Kalman calibration of closures](/methods/ensemble-kalman-closure-calibration.md),
+where [Wang et al. (2023c)](/sources/wang-2023-c.md) use it in LES to
+calibrate one constant of a subgrid model against filtered-DNS energy
+spectra; in their §V they place adjoint-based variational methods, nudging
+and the ensemble Kalman filter side by side as a posteriori alternatives
+to a priori learning.
 
 **What is inverted.** Duraisamy et al. (2019, §5.1) recall three kinds of
 inversion:
@@ -421,6 +430,43 @@ $g_{\tilde\nu}$ best in all three cases. For skin friction the conclusions
 name the same three (§VII). Only dense velocity data were treated; sparse
 data are left to future work.
 
+## A stochastic stress discrepancy (Agrawal & Koutsourelakis 2024)
+
+[Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) infer a
+correction of a different kind and in one stage. Their closure of steady
+incompressible RANS is the sum of a parametric part, a
+[tensor-basis neural network](/methods/tensor-basis-neural-network.md),
+and an additive discrepancy $\boldsymbol\delta(\boldsymbol x)$ of the
+discrete Reynolds-stress field (§2.2.2, Eq. 13). The discrepancy is a
+latent random field, piecewise constant on $N_d=52$ fixed subdomains of
+the 12 180-node mesh, with a separate realization for each training flow
+and an automatic-relevance-determination prior that switches it off where
+the parametric part suffices (Eqs. 19–21, Table 3). Network weights and
+the discrepancy are inferred together, by stochastic variational inference,
+from sparse LES mean velocity and pressure at about 8% of the mesh nodes;
+the gradients come from a discrete adjoint of a FEniCS finite-element RANS
+solver coupled to PyTorch (§2.2.3–2.2.4, App. B). Prediction propagates
+samples of the discrepancy through the solver (§2.2.5, Eq. 32); details are
+on [model-form uncertainty](/definitions/model-form-uncertainty.md).
+
+The authors contrast this with the field inversions above: earlier
+adjoint-based inversions "retain" the linear eddy-viscosity model, and
+others ignore the model error of the learned closure (§1). Their
+discrepancy is tied to the grid and geometry: it carries over to other
+Reynolds numbers or boundary conditions in the same geometry, not to a new
+geometry (§2.2.3, §2.2.5). On a [backward-facing step](/benchmarks/backward-facing-step.md)
+(expansion ratio 2, trained at four step-height Reynolds numbers from 300
+to 1100, tested at 500) the predicted reattachment length is
+$x_R/h=10.06\pm1.21$ (three standard deviations) against 9.10 in LES,
+5.61 for the baseline $k$-$\varepsilon$ model and 5.52 for a tensor-basis
+network trained on stress data by Geneva & Zabaras (§3.4, Table 5). The
+inferred discrepancy is largest at $5<x/h<10$, where the parametric
+stress errs most, and practically zero far downstream (Fig. 7). The mean
+fields agree with LES although the learned stresses do not, which the
+authors read as non-uniqueness of the inverse problem, "also reported by
+other works" (§3.4). One run of their solver costs 1.3 baseline RANS runs; the LES cost
+7679 (Table 4).
+
 ## Consistency claims
 
 Both reviews argue that FIML is preferable to learning directly from DNS,
@@ -487,6 +533,14 @@ is used:
   neither the Reynolds stresses (square cylinder, §V C) nor the eddy
   viscosity (channel, §III B, Fig. 6). The tensor correction
   $\boldsymbol\Psi$ is non-unique by construction (§II B).
+- **Regime of the stochastic-discrepancy test.** The backward-facing-step
+  cases of Agrawal & Koutsourelakis (2024) have step-height Reynolds
+  numbers of 300 to 1100, with WALE LES references and a
+  $k$-$\varepsilon$ baseline (§3.1–3.2).
+  The paper also prints the isotropic part of the Reynolds stress with a
+  sign inconsistent with its Eq. 9 definition $-\langle u_i'u_j'\rangle$
+  (Eqs. 10, 14), and its Table 2 lists five viscosities for four training
+  Reynolds numbers; this page uses the positive registry convention.
 - **Generalization.** Duraisamy (2021, §VII) states that "the goal of more
   generalizable models has, however, not been achieved". Machine-learning
   regressions are interpolative in feature space (§V), and a model with
@@ -559,3 +613,5 @@ is used:
 - [Eivazi et al. (2022)](/sources/eivazi-2022.md) — arXiv v1: §1–2 (RANS closed by boundary data, no turbulence model).
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1 (adjoint-based RANS closures recalled), §2, §2.2, Eqs. 2.9–2.10, §7 (integrated adjoint training of an LES closure).
 - [Yan et al. (2022)](/sources/yan-2022.md) — accepted manuscript, §1, §2.1–2.3, Eqs. 5–11, 14–17; §3.1 (S809, Figs. 4–7, 10, Table 1); §3.2 (parametrized hills, Figs. 11, 13–22, Table 2); §3.3 (GLC305/944, Figs. 25–33, Tables 3–4).
+- [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — arXiv v2: §1 (earlier adjoint inversions), §2.2.2–2.2.5, Eqs. 13, 19–21, 32, App. B (stochastic discrepancy, adjoint, variational inference); §3.1–3.4, Fig. 7, Tables 2–5 (backward-facing step).
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — arXiv v3: §II.B (ensemble Kalman calibration), §V (data-assimilation alternatives).

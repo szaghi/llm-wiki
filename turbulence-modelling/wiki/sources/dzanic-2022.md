@@ -136,14 +136,16 @@ is recorded with the printed year 2005.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 5. This source is cited on:
 
+- [Circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)
 - [Periodic hill](/benchmarks/periodic-hill.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Hybrid RANS/LES](/definitions/hybrid-rans-les.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
+- [Flux reconstruction](/methods/flux-reconstruction.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)

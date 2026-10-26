@@ -152,13 +152,14 @@ as printed; no item is unparseable.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26). This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunk 5. This source is cited on:
 
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
+- [Flux reconstruction](/methods/flux-reconstruction.md)
 - [Spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
 - [WALE model](/methods/wale-model.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)

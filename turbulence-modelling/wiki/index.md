@@ -20,7 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–4 of 7 ingested (80 of the 134 sources planned; the
+**Corpus:** chunks 1–5 of 7 ingested (100 of the 134 sources planned; the
 archive is still growing). Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
@@ -70,6 +70,15 @@ model, hybrid RANS/LES of cars and turbomachinery, separation-bubble
 transition, kinetic-energy- and pressure-equilibrium-preserving schemes,
 jump-penalty and upwind stabilization of high-order methods, gas-kinetic
 schemes on GPUs, lattice Boltzmann methods, and Hall-MHD turbulence.
+Chunk 5 (2023–2025 papers): an autonomous eddy-viscosity model,
+filter-width recalibration for high-order LES, ensemble-Kalman and
+Bayesian calibration of closures, energy-conserving and fusion neural
+SGS models, a reinforcement-learning wall model, Reynolds-stress and
+laminar-kinetic-energy transition models, the compressible Baldwin–Lomax
+model, immersed-boundary and lattice-Boltzmann wall treatments, flux
+reconstruction and modal filtering, stabilized finite elements as implicit
+LES, tabulated chemistry for flame–wall interaction, and turbulence in a
+solar flare.
 
 ## Reading guide
 
@@ -83,7 +92,10 @@ schemes on GPUs, lattice Boltzmann methods, and Hall-MHD turbulence.
 [Spalart–Allmaras model](/methods/spalart-allmaras-model.md),
 [k-ω SST model](/methods/k-omega-sst-model.md),
 [k-ε models](/methods/k-epsilon-model.md),
+[differential Reynolds-stress models](/methods/reynolds-stress-model.md),
+[Baldwin–Lomax model](/methods/baldwin-lomax-model.md),
 [local-correlation-based transition models](/methods/local-correlation-based-transition-model.md),
+[laminar kinetic energy transition models](/methods/laminar-kinetic-energy-transition-model.md),
 [laminar separation bubble](/definitions/laminar-separation-bubble.md),
 [model-form uncertainty](/definitions/model-form-uncertainty.md).
 
@@ -97,6 +109,7 @@ schemes on GPUs, lattice Boltzmann methods, and Hall-MHD turbulence.
 [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
 [fractional SGS model](/methods/fractional-sgs-model.md),
 [WALE model](/methods/wale-model.md),
+[autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md),
 [anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md);
 [energy backscatter](/definitions/energy-backscatter.md);
 [gradient model and clipping](/methods/gradient-model.md);
@@ -131,7 +144,8 @@ schemes on GPUs, lattice Boltzmann methods, and Hall-MHD turbulence.
 [physics-informed neural networks](/methods/physics-informed-neural-network.md),
 [neural-network SGS models](/methods/neural-network-sgs-model.md),
 [symbolic-regression closures](/methods/symbolic-regression-closure.md),
-[Relexi](/software/relexi.md);
+[Relexi](/software/relexi.md),
+[ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md);
 [discretization-consistent closure](/definitions/discretization-consistent-closure.md),
 [divergence-consistent LES](/methods/divergence-consistent-les.md);
 [mesh adaptation](/methods/mesh-adaptation.md).
@@ -145,6 +159,8 @@ schemes on GPUs, lattice Boltzmann methods, and Hall-MHD turbulence.
 [low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md),
 [immersed boundary methods](/methods/immersed-boundary-method.md),
 [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md),
+[flux reconstruction](/methods/flux-reconstruction.md),
+[flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md),
 [jump-penalty stabilization](/methods/jump-penalty-stabilization.md),
 [high-order projection-based upwind method](/methods/high-order-projection-based-upwind-method.md),
 [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md);
@@ -171,7 +187,12 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [shock-generated turbulence](/results/shock-generated-turbulence.md),
 [Ahmed body](/benchmarks/ahmed-body.md),
 [ACAT1 fan stage](/benchmarks/acat1-fan-stage.md),
-[Imperial front wing](/benchmarks/imperial-front-wing.md);
+[Imperial front wing](/benchmarks/imperial-front-wing.md),
+[ERCOFTAC T3 flat plates](/benchmarks/ercoftac-t3-flat-plate.md),
+[NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md),
+[circular-cylinder wake](/benchmarks/circular-cylinder-wake.md),
+[NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md),
+[turbine cascades](/benchmarks/turbine-cascade.md);
 [inflow turbulence generation](/methods/inflow-turbulence-generation.md).
 
 **9. MHD, plasma and wave turbulence.**

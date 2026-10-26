@@ -5,7 +5,7 @@ description: "A wall-stress model that transports the friction-velocity vector a
 status: established
 aliases: [LaRTE, LaRTE wall model, relaxation-towards-equilibrium wall model, quasi-equilibrium wall model]
 tags: [wall-model, wmles, boundary-layer]
-timestamp: 2026-10-25T16:24:00Z
+timestamp: 2026-10-26T10:04:00Z
 ---
 
 # Lagrangian relaxation towards equilibrium (LaRTE) wall model
@@ -192,6 +192,15 @@ interpolation stands in for the neglected horizontal diffusion (§4.2).
   at $Re_\tau=1000$ in Fowler et al.'s channel, about 180 times longer
   *(compiler check, not in the sources)*. The two filters serve different
   purposes: Gillyns et al. need theirs to keep the model from diverging (§5).
+- [Vadrot et al. (2023a)](/sources/vadrot-2023.md) (§I) cite Fowler et al.
+  (2022) twice: as evidence that the equilibrium model's "ability to
+  accurately capture strong non-equilibrium effects in certain flow scenarios
+  can be limited", and, with the integral, non-equilibrium and slip wall
+  models, among recent models that "seek improvements by incorporating a
+  lower level of simplifications". Their own route to the same deficiency is
+  a learned model ([machine-learning wall models](/methods/machine-learning-wall-model.md)),
+  which they test only in equilibrium channel flow; neither paper compares
+  the two approaches.
 
 ## Qualifications
 
@@ -206,10 +215,12 @@ interpolation stands in for the neglected horizontal diffusion (§4.2).
   Eq. (2.1); §2.3 gives $h^+_{\mathrm{wm}}\approx34$ and Table 1 gives 33 for
   $Re_\tau=1000$.
 - The sources of this bundle offer no second test of LaRTE; its evidence is
-  that of its authors. Gillyns et al. (2022) cite it but do not implement it.
+  that of its authors. Gillyns et al. (2022) and Vadrot et al. (2023a) cite
+  it but do not implement it.
 
 # Citations
 
 - [Fowler et al. (2022)](/sources/fowler-2022.md) — §2, Eqs. (2.1)–(2.21); §3, Eqs. (3.1)–(3.7); §4, Eqs. (4.1)–(4.15); §5, Figs. 2–16; Apps. A–E.
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §II.A.
 - [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §3, Eq. (4); §5.
+- [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — §I (arXiv v3).

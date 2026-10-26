@@ -5,7 +5,7 @@ description: "The single-model hybrid RANS/LES in which a RANS model's length sc
 status: established
 aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-26T07:38:00Z
+timestamp: 2026-10-26T10:25:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -151,6 +151,29 @@ $M_b=1.5$ ($Re_\tau=500$ to 5000) on wall-modelled-LES grids
 Reichardt's law once the scheme's dissipation is low enough (§4.3, Table 2,
 Figs. 4–6; see [hybrid RANS/LES](/definitions/hybrid-rans-les.md) and
 [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
+
+**SST-DDES and SST-IDDES in a lattice Boltzmann solver.** Mozaffari et al.
+(2024) print the SST hybrids they implement in
+[ProLB](/software/prolb.md) as multipliers of the $k$-destruction,
+$\beta^*\omega k\to\beta^*\omega k\,F$ with $F=l_{\mathrm{RANS}}/l_{\mathrm{DDES}}$ or
+$l_{\mathrm{RANS}}/l_{\mathrm{IDDES}}$, the $l_{\mathrm{DDES}}$ of Carlsson et al. and
+the IDDES blending above
+([Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §2.3, Eqs. 26–32;
+HAL accepted manuscript). Their shielding function is
+
+$$f_d=1-\tanh\big[(C_{d1}r_d)^{C_{d2}}\big],\qquad r_d=\frac{\nu_t+\nu}{\kappa^2d^2\sqrt{\tfrac12(S^2+\Omega^2)}},\qquad C_{d1}=20,\ C_{d2}=3,\ \kappa=0.41,$$
+
+with $S$ and $\Omega$ the strain and vorticity magnitudes (normalization
+not printed), and $l_{\mathrm{LES}}=C_{\mathrm{DES}}h_{\max}$, $h_{\max}$ the
+largest cell edge (equal to the cell size on the cubic lattice cells) and
+$C_{\mathrm{DES}}=0.78F_1+0.61(1-F_1)$, the values Delassaux et al. use.
+$l_{\mathrm{RANS}}$, $\hat f_d$, $f_e$ and the IDDES grid length are not
+printed ("can be found in" Gritskevich et al.). Beside IDDES they test
+Heinz's continuous eddy simulation, whose dissipation multiplier varies
+continuously with a resolution ratio instead of switching (see
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md)). In their runs the
+RANS–LES transition is thin with IDDES and smooth with continuous eddy
+simulation (§3.2, Fig. 11).
 
 ## Zonal DES
 
@@ -368,6 +391,47 @@ RANS-adapted mesh (§3.3).
   in the sources)*
   ([Cai et al. (2022)](/sources/cai-2022.md), §I, §IV, Table III; see
   [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+- **Lattice Boltzmann airfoil and Ahmed body** (Mozaffari et al. 2024).
+  On the NACA 0012 at $Re_c=3\times10^6$, SST-IDDES reproduces RANS while
+  the flow is attached ($\alpha\le15^\circ$, the fine leading-edge grid
+  running the outer boundary layer in LES mode at $15^\circ$); at $45^\circ$
+  it gives $C_L=1.231$, $C_D=1.038$ against reference values of 1.097 and
+  1.180 and RANS values of 2.238 and 2.053 (§3.2, Table 2, Figs. 10–12). On
+  the [Ahmed body](/benchmarks/ahmed-body.md) ($Re_H=7.68\times10^5$, 45.8
+  million nodes) with the equilibrium wall model on the body, neither IDDES
+  nor continuous eddy simulation separates on the $25^\circ$ or $35^\circ$
+  slant, which the authors attribute to the wall model's missing pressure
+  gradient and to the missing instability that would switch the hybrid to
+  LES; with a zero-velocity condition at $y^+\gg1$ instead, IDDES
+  reproduces the $35^\circ$ wake topology and drag (0.2819 against
+  0.258–0.32 measured) but at $25^\circ$ separates late and does not
+  reattach, attributed to $y^+\approx100$–$150$ on the slant (§3.3,
+  Figs. 16–24, Table 3).
+- **High-lift airfoil** (Wang et al. 2024). SA-based DDES of the 30P30N
+  three-element airfoil ($M_\infty=0.17$, $Re=1.7\times10^6$,
+  $\alpha=5.5^\circ$, span $0.74C$, about 27 million cells,
+  $\Delta tU_\infty/C=2\times10^{-5}$) with a sixth-order optimized upwind
+  scheme agrees with the measured mean $C_p$, slat-cove profiles and the
+  slat-trailing-edge pressure spectrum (tone near 21 kHz); the authors use
+  it to classify the spatial patterns of the turbulent-kinetic-energy budget
+  terms across the shear layers and attribute the budget imbalance to grid
+  resolution ([Wang et al. (2024)](/sources/wang-2024.md), §4, Figs. 8–12).
+- **Transonic buffet**, as recalled by Petrocchi & Barakos (2024, §1) for
+  the OAT15A airfoil: Deck's basic DES failed to predict the shock
+  oscillation, ZDES over-predicted the trailing-edge unsteadiness, a DDES of
+  Grossi et al. gave higher leading-edge unsteadiness, and an IDDES of Huang
+  et al. with a time step more than an order of magnitude larger placed the
+  shock too far upstream; Petrocchi & Barakos attribute such problems to
+  overly fine grids in separated regions and to the time step, and argue
+  that DES-family methods in LES mode reintroduce LES grid and time-step
+  requirements that [PANS](/methods/partially-averaged-navier-stokes.md)
+  avoids on RANS-like grids
+  ([Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md), §1).
+- **Turbomachinery design**, as stated by Liu et al. (2024): DES, SAS and
+  related hybrids are too expensive for routine turbomachinery design,
+  which motivates their transition-coupled
+  [Reynolds-stress model](/methods/reynolds-stress-model.md)
+  ([Liu et al. (2024)](/sources/liu-2024.md), Introduction).
 - **Capsule wakes**, as recalled by Placco et al. (2023, §1). DES of
   planetary-entry capsule wakes was restricted to the near-body wake and
   disagreed with experiment in the backshell area, which the cited work
@@ -430,3 +494,7 @@ RANS-adapted mesh (§3.3).
 - [Placco et al. (2023)](/sources/placco-2023.md) — §1.
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §4.1.3 Eqs. 6–11, §4.2, §4.4 Fig. 8, §5 Table 2, §6–§7 Table 3 Figs. 15–28, §7.3 Fig. 21, §7.6 (HAL author manuscript).
 - [Lewis et al. (2023)](/sources/lewis-2023.md) — §4.3, §5.3.1 (HAL accepted manuscript).
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §2.3 Eqs. 26–32, §3.2 Table 2 Figs. 10–12, §3.3 Figs. 16–24 Table 3 (HAL accepted manuscript).
+- [Wang et al. (2024)](/sources/wang-2024.md) — §4, Figs. 8–12.
+- [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — §1.
+- [Liu et al. (2024)](/sources/liu-2024.md) — Introduction.

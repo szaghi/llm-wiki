@@ -5,7 +5,7 @@ description: "A one-ODE wall-stress model for compressible wall-modelled LES wit
 status: established
 aliases: [compressible wall model based on an inverse velocity transformation, Griffin–Fu–Moin wall model, inverse-transformation wall model]
 tags: [wall-model, wmles, compressible, hypersonic, boundary-layer]
-timestamp: 2026-10-25T13:44:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Inverse-velocity-transformation wall model
@@ -118,6 +118,42 @@ variable properties.
 depending on Reynolds number, matching height and Mach number, with an
 unoptimized implementation and no load balancing (§4).
 
+## Transfer to an algebraic RANS closure
+
+[Chen et al. (2024)](/sources/chen-2024.md) carry the two ingredients of this
+model from WMLES into the algebraic RANS eddy viscosity of a whole
+compressible boundary layer, the [Baldwin–Lomax model](/methods/baldwin-lomax-model.md);
+they call the result a "wall model", but it supplies no wall stress to an LES
+(§1). They state that the Griffin et al. model outperforms the classical ODE
+wall model and cite it as the origin of both steps (§1, §3.3):
+
+- **Velocity.** The inner-layer mixing length is rewritten for the
+  Griffin–Fu–Moin transformed velocity instead of the Trettel–Larsson one
+  that the semi-local Baldwin–Lomax model implies; the semi-local eddy
+  viscosity diagnosed from DNS with this transformation scatters less and
+  follows the incompressible curve more closely in the log region than with
+  the Trettel–Larsson one (§3.1, Eqs. 3.5–3.7, Fig. 3).
+- **Temperature.** The energy equation with constant $Pr_t=0.9$ is solved
+  only above a matching height $y^*_{mT}=100$; below it the temperature is
+  overwritten by the same matching-anchored quadratic relation as Eq. (2.5)
+  above, with $C_T=0.8259$ (written $s\,Pr$ with $s=1.14$ after Zhang et al.
+  2014, as cited) and the matching values sampled at $y_{mT}$ (Eq. 3.17,
+  "following Griffin et al. 2023"). The results change little for
+  $y^*_{mT}=50$–150 (App. A, Fig. 15).
+
+Against twelve DNS of zero-pressure-gradient boundary layers at
+$M_\infty=2$–13.64 and $T_w/T_r=0.18$–1.9, the combination lowers the mean
+temperature error in outer coordinates from 8.8 % to 3.4 % and the velocity
+error from 2.5 % to 1.3 % relative to the baseline semi-local model, and the
+turbulent Prandtl number implied a posteriori reproduces the near-wall
+singularity of the DNS (§4, Figs. 7, 13). For highly cooled walls
+($T_w/T_r\le0.5$) the velocity transformation alone is insufficient and the
+temperature–velocity relation is required (§4, Fig. 11); Griffin et al.
+(2023, §1) had judged the constant-$Pr_t$ energy equation of the classical
+model less accurate than the generalized Reynolds analogy. The evidence is for attached thin layers; Chen
+et al. expect a smaller gain in channels and pipes, where the Trettel–Larsson
+transformation is accurate and $Pr_t$ has no near-wall singularity (§5.1).
+
 ## Limits stated by the authors
 
 The accuracy is bounded by that of the forward transformation (documented
@@ -142,3 +178,4 @@ data-driven transformation (§2.3, as recalled).
 # Citations
 
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §1, Eqs. (1.1)–(1.3); §2, Eqs. (2.1)–(2.5); §3, Eqs. (3.1)–(3.2), Figs. 1–7; §4, Table 1, Figs. 8–15; §5.
+- [Chen et al. (2024)](/sources/chen-2024.md) — §1; §3.1, Eqs. (3.5)–(3.7), Fig. 3; §3.3, Eqs. (3.16)–(3.17); §4, Figs. 7, 11, 13; §5.1; App. A, Fig. 15.

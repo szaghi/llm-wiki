@@ -5,7 +5,7 @@ description: "LES that resolves the outer-layer eddies and replaces the near-wal
 status: established
 aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-26T07:39:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -50,6 +50,19 @@ propagated from the wall.
 | Inverse velocity transformation | incompressible ODE mapped to compressible profiles plus an algebraic temperature–velocity relation | [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md) |
 | Learned (supervised or reinforcement learning) | network maps LES state to $\tau_w$ or to its update | [machine-learning wall models](/methods/machine-learning-wall-model.md) |
 | Building-block flow | classifier over seven canonical flows blends per-flow learned predictions of $\tau_w$, with a confidence score | [building-block-flow wall model](/methods/building-block-flow-wall-model.md) |
+
+**Not every "wall model" is a WMLES wall model.** [Chen et al. (2024)](/sources/chen-2024.md)
+call their compressible [Baldwin–Lomax model](/methods/baldwin-lomax-model.md)
+an "algebraic wall model", but it is an algebraic RANS eddy viscosity for
+the whole boundary layer, solved with the boundary-layer equations; it
+supplies no wall stress to an LES. It borrows ingredients from WMLES work:
+the semi-local damping of mixing-length wall models and the
+velocity-transformation and temperature–velocity combination of the
+[inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md)
+(§1, §2.3, §3.3). [Constant et al. (2024)](/sources/constant-2024.md) use an
+equilibrium wall function as the near-wall closure of steady RANS on an
+[immersed boundary](/methods/immersed-boundary-method.md), with no LES
+region; they name a hybrid RANS/LES extension as future work (§7).
 
 [Cai et al. (2022)](/sources/cai-2022.md) (§I, §II.C.1) put the motivation
 in the same terms: without a wall model the no-slip condition requires grids
@@ -305,6 +318,43 @@ same under-resolved first cells.
   under-resolved first element, which they attribute, without a same-mesh
   comparison, to the spectral element method (§7, §10).
 
+- **High-order schemes need added dissipation at WMLES resolution.**
+  [Duan & Wang (2024)](/sources/duan-2024.md) state that high-order implicit
+  LES "often runs into robustness and accuracy issues" in WMLES because the
+  schemes carry little dissipation (§1). Their flux-reconstruction
+  ([flux reconstruction](/methods/flux-reconstruction.md)) WMLES of channel
+  flow at $Re_\tau=5200$ on $60\times16\times40$ elements (element sizes
+  $\Delta x^+=1088$, $\Delta y^+=650$, $\Delta z^+=544$) was not stable without
+  an SGS model (§5.4). Stabilization by solution limiting works, but in an
+  earlier fourth-order WMLES they show (Fig. 2, from earlier work as
+  cited), too little limiting
+  over-predicts the wall friction and under-predicts the velocity and too
+  much does the reverse, which they call "very ad hoc" (§1, Fig. 2; §5.4).
+  With explicit eddy-viscosity models, element-wise constant $\nu_t$ and
+  zero interface SGS flux, they recalibrate the filter width instead of the
+  constant: the [Vreman model](/methods/vreman-model.md) with
+  $\Delta=V^{1/3}/\sqrt{N+1}$ ($V$ the element volume, page-local) gives the
+  best mean velocity at every degree $N=2$–5 and at $Re_\tau=544$, while the
+  [WALE model](/methods/wale-model.md) is best with $\Delta=V^{1/3}$ at
+  $N=2$–4 and with $V^{1/3}/\sqrt{N+1}$ at $N=5$, a reversal they call
+  unexpected (§3, §5.4, Figs. 11–15). They recommend Vreman with
+  $V^{1/3}/\sqrt{N+1}$ for high-order WMLES (§6); the comparisons are visual,
+  without tabulated errors. In wall-resolved LES at $Re_\tau=180$ implicit LES
+  agrees very well with the DNS, the Smagorinsky model performs very poorly
+  at every width, and WALE and Vreman agree well only with the two smaller
+  widths (§5.3, Figs. 9–10), so the recommendation is specific to
+  wall-modelled resolution.
+- **Element-based matching.** Duan & Wang (2024, §4, Fig. 4) place the
+  exchange location of their equilibrium model on the interface between the
+  first and second elements off the wall and take the data from the second
+  element, because the scales in the first element are always
+  under-resolved; a near-wall element aspect ratio of one is desirable.
+  Gillyns et al. (2022) sample at the same height, the top node of the first
+  element, where their continuous spectral-element velocity is single-valued;
+  in the discontinuous flux-reconstruction solution the interface carries two
+  values, and Duan & Wang choose the outer one *(compiler check, not in the
+  sources)*.
+
 Low numerical dissipation is a precondition: Goc et al. (2021, §2.3) call
 [numerical dissipation](/properties/numerical-dissipation.md) "extremely
 detrimental" for coarse LES and use kinetic-energy- and entropy-preserving
@@ -395,6 +445,40 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
   SST), 0.2603 (EARSM), 0.3156 (DES) and 0.3452 (IDDES), as they list them.
   The authors judge the fine wall-law case better overall by its velocity
   profiles and closer to Meile et al. than the body-fitted IDDES.
+- **The same bluff body with SST-based hybrids** ([Mozaffari et al. 2024](/sources/mozaffari-2024.md),
+  §3.3, Table 3): ProLB again, $35^\circ$ and $25^\circ$ slants at the same
+  $Re_H$, 45.8 M nodes with finest cells of 1.3 mm (the finest cell of Cai
+  et al.'s fine grid, $4.5\times10^{-3}H$ with $H=288$ mm, is also 1.3 mm
+  *(compiler check, not in the sources)*), but with
+  [SST-IDDES](/methods/detached-eddy-simulation.md) or continuous eddy
+  simulation (see [hybrid RANS/LES](/definitions/hybrid-rans-les.md)) in place
+  of Vreman LES with the constrained-LES viscosity. With the explicit
+  equilibrium wall model on the body neither hybrid separates on the slant
+  at either angle (drag 0.2878 IDDES and 0.2738 CES at $35^\circ$); with a
+  zero-velocity condition at $y^+\gg1$ the IDDES reproduces the $35^\circ$
+  wake topology and drag (0.2819, against 0.2580–0.32 in the experiments
+  they list), while at $25^\circ$ it separates late without reattachment
+  ($y^+\approx100$–150 on the slant). The authors attribute the attached
+  wall-model solution to the missing pressure-gradient term (see the
+  [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)).
+  Cai et al. (2022) had stated that, without their near-wall stress
+  enhancement, "the flow stays attached even by refining the grid";
+  Mozaffari et al., whose hybrids do not use that constrained-LES
+  viscosity, give the missing pressure-gradient term, not the near-wall
+  stress, as the cause of their attached solution. They conclude that SST-based hybrids "can
+  be an alternative for the wall-modeled LES in the LBM framework" and that
+  IDDES with the no-slip condition "could recover the WMLES solution" of
+  Cai et al. at lower cost, without cost figures (HAL manuscript lines
+  413–418, 510–515).
+- **Learned wall model up to $Re_\tau=10^{10}$** ([Vadrot et al. 2023a](/sources/vadrot-2023.md),
+  §III): half-channel WMLES in [LESGO](/software/lesgo.md) on a uniform
+  $48^3$ grid at eleven $Re_\tau$ from 180 to $10^{10}$, with a
+  reinforcement-learning wall model trained only at $10^4$; at this
+  resolution neither the inner peak ($y^+\approx15$) nor the outer peak
+  ($y^+\approx3\sqrt{Re_\tau}$) of the streamwise velocity variance is
+  resolved, by any of the wall models tested (§III.A, Fig. 7), and the SGS
+  model used is not stated (§II.A). See
+  [machine-learning wall models](/methods/machine-learning-wall-model.md).
 - **Transonic airfoil on adapted DG grids** (Blind et al. 2023, §4): see
   the section above; 222 426 elements on the last grid, about half of what a mesh
   of the same spacings without spanwise mortar zones would need.
@@ -487,3 +571,8 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §1; §4.1 (HAL author manuscript).
 - [Lederer et al. (2023)](/sources/lederer-2023.md) — §4, Table 1; §6 (arXiv v1).
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §4.3, Fig. 10; §7.
+- [Duan & Wang (2024)](/sources/duan-2024.md) — §1, Fig. 2; §3, Eqs. (26)–(30); §4, Fig. 4; §5.3–5.4, Figs. 9–15; §6.
+- [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — §II.A; §III.A, Figs. 6–7 (arXiv v3).
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §3.3, Figs. 16–24, Table 3; conclusions (HAL accepted manuscript, lines 413–418, 510–515).
+- [Chen et al. (2024)](/sources/chen-2024.md) — §1; §2.3; §3.3.
+- [Constant et al. (2024)](/sources/constant-2024.md) — §7 (HAL author manuscript).

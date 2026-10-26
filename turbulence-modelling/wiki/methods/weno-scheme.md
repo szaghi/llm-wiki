@@ -5,7 +5,7 @@ description: "WENO schemes capture shocks by nonlinear weighting of candidate st
 status: established
 aliases: [WENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-SYMBO, HWENO, Hermite WENO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme]
 tags: [numerical-dissipation, dns, compressible, implicit-les, gpu]
-timestamp: 2026-10-26T07:42:00Z
+timestamp: 2026-10-26T10:03:00Z
 ---
 
 # WENO and hybrid shock-capturing schemes in scale-resolving simulation
@@ -38,6 +38,7 @@ in turbulence (see [numerical dissipation](/properties/numerical-dissipation.md)
 | Seventh-order WENO with linear weights (normal direction); fifth-order WENO-Z-type baseline; fifth-order Hermite WENO (HWENO) on a three-cell stencil of cell averages and cell-averaged derivatives | reconstructions of the gas-kinetic scheme used as implicit LES of the Taylor–Green vortex and channel flow | [Zhao et al. (2023a)](/sources/zhao-2023.md), §3 |
 | Fifth-order WENO (Jiang–Shu and WENO-Z cited), dimension by dimension | reconstruction kernel of the single- and multi-GPU gas-kinetic DNS code | [Wang et al. (2023b)](/sources/wang-2023-b.md), §2, §3.1 |
 | Ducros-sensor hybrid of the KGP split form and an HLLC upwind flux (WENO hybridization cited in §1 as a stabilization of divergence-form schemes) | comparison scheme for density-wave advection in real-gas flow | [Bernades et al. (2023)](/sources/bernades-2023.md), §1, §4.1.1 |
+| Fifth-order WENO (Jiang–Shu) and third-order MUSCL | comparison schemes in the inviscid Taylor–Green time-reversal test, against a second-order kinetic-energy-preserving scheme and an optimized sixth-order linear upwind scheme | [Wang et al. (2024)](/sources/wang-2024.md), §3.1 |
 
 The upwind schemes act on split fluxes or on characteristic variables.
 [OpenCFD-SCU](/software/opencfd-scu.md) splits the flux with Steger–Warming
@@ -60,6 +61,17 @@ each Gauss point for their supersonic cases.
   Martín (2022, §III C), recalling Wu & Martín, note that excess numerical
   dissipation suppresses the wall-pressure plateau of a separated
   compression-ramp interaction, which their limited WENO reproduces.
+- **Measured irreversibility.** Wang et al. (2024, §3.1, Fig. 2) run the
+  inviscid [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) on
+  $30^3$ to $t=20L/V_0$, reverse the flow and run to $t=40L/V_0$: the
+  second-order kinetic-energy-preserving KGP2 scheme keeps the kinetic
+  energy constant and returns to the initial vorticity field, while
+  fifth-order WENO, third-order MUSCL and their optimized sixth-order
+  upwind OPT6 lose energy monotonically and do not, MUSCL3 departing most.
+  They nonetheless recommend the dissipative OPT6 over KGP2 for budgets of
+  the turbulent kinetic energy because of its lower dispersion (see
+  [low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md));
+  WENO is not run in their LES.
 - **Remedies within WENO.** Bandwidth optimization and limiters lower the
   dissipation of the nonlinear weights (Helm & Martín 2022, §II; Huang et
   al. 2022, §2.2); linear weights avoid "the numerical dissipation from
@@ -165,7 +177,10 @@ profiled; Tables 2–3).
   kernel in Table 6 and 262 manually counted operations in §5.4. The version
   read is an author manuscript.
 - The variants above are compared within each source only; no source of this
-  bundle compares two WENO variants on the same turbulent flow.
+  bundle compares two WENO variants on the same turbulent flow. Wang et
+  al. (2024) compare WENO5 with other schemes only in the inviscid
+  time-reversal test, which measures energy loss, not accuracy in
+  turbulence.
 
 # Citations
 
@@ -179,3 +194,4 @@ profiled; Tables 2–3).
 - [Zhao et al. (2023a)](/sources/zhao-2023.md) — arXiv v1: §3.1–3.3, Fig. 2 (seventh-order WENO, WENO-Z baseline, HWENO); §4, Table 3 (order with four Gauss points); §5.1 (over-dissipation of the fifth-order scheme).
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — arXiv v1: §2 (fifth-order WENO in the gas-kinetic scheme); §3.1 (GPU kernels); §4.1, Tables 2–3 (memory-bandwidth-bound speedup).
 - [Bernades et al. (2023)](/sources/bernades-2023.md) — §1 (upwind and WENO hybridization of divergence-form schemes); §3.2, §4.1.1, Fig. 1 (Ducros-sensor hybrid of KGP and HLLC).
+- [Wang et al. (2024)](/sources/wang-2024.md) — §3.1, Eq. (14), Fig. 2 (inviscid Taylor–Green time reversal: KGP2, OPT6, MUSCL3, WENO5); §5.

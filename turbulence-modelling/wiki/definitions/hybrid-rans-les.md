@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Hybrid RANS/LES"
-description: "Scale-resolving approaches that model all turbulence with RANS in some regions or limits and resolve part of it as in LES elsewhere; the distinction from wall-modelled LES, the operating modes and unified against interfaced transitions, the deficiencies the sources identify (modelled-stress depletion, grid measures, grid changes), and applications."
+description: "Scale-resolving approaches that model all turbulence with RANS in some regions or limits and resolve part of it as in LES elsewhere; the distinction from wall-modelled LES, operating modes, continuous eddy simulation and sequential RANS-to-LES coupling, the deficiencies the sources identify, and applications."
 status: established
-aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS]
+aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-26T07:20:00Z
+timestamp: 2026-10-26T10:25:00Z
 ---
 
 # Hybrid RANS/LES
@@ -141,6 +141,61 @@ shielding function detects them (mode 2) *(compiler check, not in the
 sources)*; Basile et al. (2023) force RANS inside a jet nozzle
 and François et al. (2022) in the core flow of a fan stage
 ([Basile et al. (2023)](/sources/basile-2023.md), §2.2).
+
+### Continuous eddy simulation
+
+Mozaffari et al. (2024) implement in an SST host Heinz's continuous eddy
+simulation (CES), which adjusts the modelled viscosity to the actual degree
+of resolution so that modelled and resolved motion stay balanced under grid
+and Reynolds-number changes, a construction they call "theory-based"
+([Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §2.3, Eqs. 33–34; HAL
+accepted manuscript). The $k$-destruction is multiplied by a factor,
+
+$$\beta^*\omega k\;\to\;\beta^*\omega k\,\psi_\beta,\qquad \psi_\beta=\beta_c+R(1-\beta_c),\qquad R=L_+^2,\qquad
+L_+=\frac{\Delta_{C+}}{(1+\Delta_{C+}^3)^{1/3}},\quad \Delta_{C+}=C_+\frac{\Delta}{L_{\mathrm{tot}}},$$
+
+with $L_+$ the ratio of the modelled to the total length scale,
+$L_{\mathrm{tot}}=\sqrt k/(C_\mu\omega)$ the RANS length of SST, and
+page-local symbols $\psi_\beta$, $R$, $L_+$, $\Delta_{C+}$, $C_+$, $L_{\mathrm{tot}}$,
+$\beta_c$. The source writes $\beta_c$ as $\beta$, the symbol of the SST
+destruction coefficient, without defining it, and gives no value of $C_+$
+nor the definition of $\Delta$. For $\Delta_{C+}\to\infty$, $L_+\to1$ and
+$\psi_\beta\to1$ (the RANS dissipation); for $\Delta_{C+}\to0$,
+$\psi_\beta\to\beta_c$ *(compiler check, not in the sources)*. Unlike the
+thin transition of IDDES, the CES transition from RANS near the wall to LES
+away from it is smooth (§3.2, Fig. 11). On the NACA 0012 at $45^\circ$ CES and
+IDDES perform "almost the same without any superiority" ($C_L=1.192$ and
+1.231, $C_D=0.993$ and 1.038, reference 1.097 and 1.180; Table 2); on the
+$35^\circ$ Ahmed body with a no-slip body surface CES separates already on the
+roof and over-predicts the drag (0.3779), where IDDES matches the wake
+(0.2819) (§3.3, Table 3). See
+[detached-eddy simulation](/methods/detached-eddy-simulation.md).
+
+### Sequential RANS-to-LES coupling
+
+Bouhafid et al. (2024) couple the two models in time rather than in space
+to compute an aircraft wake from the jet regime to the vortex-dissipation
+regime with one solver
+([Bouhafid et al. (2024)](/sources/bouhafid-2024.md), §1, §2.1, Fig. 1). A
+steady RANS of the whole aircraft in the aircraft frame (a
+[Reynolds-stress model](/methods/reynolds-stress-model.md) on adapted meshes
+for the NASA CRM, [SST](/methods/k-omega-sst-model.md) for a wing with jet)
+is sliced normal to the flight direction where streamwise gradients are
+negligible against transverse ones; the slice is extruded over one Crow
+wavelength ($\approx8.6b_0$, $b_0$ the vortex spacing, page-local) into a
+periodic box in the ground frame, where a compressible temporal LES with
+the [Smagorinsky model](/methods/smagorinsky-model.md) continues. The RANS
+turbulence passes to the LES as an initial synthetic field (Fourier modes
+on a Pao spectrum, rescaled cell by cell to the RANS Reynolds stresses, in
+the jet region only), which is no longer divergence-free after rescaling,
+judged acceptable for an initial condition (§2.1; see
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
+Without the synthetic field the LES misses the jet roll-up of a wind-tunnel
+wing–jet case; with it the 22.5-million-cell temporal LES resembles an
+89-million-cell zonal DES at much lower cost, no timings being given (§3.2,
+Figs. 4–6). The authors contrast it with the hybrid RANS/LES near field of
+Misaka et al., which captures vortex meandering better but must be at least
+one Crow wavelength long (§2.1).
 
 ### Mean-and-fluctuation splitting
 
@@ -331,6 +386,42 @@ $\approx2000$ at $18\,000$) (Carlsson et al. 2023, §4.3, Fig. 4; see
   base flow ($M_\infty=2.46$) and SST-IDDES of channels at $M_b=0.15$ and 1.5
   with low-dissipation schemes (Carlsson et al. 2023, §4.3–§4.4; on the
   DES page).
+- **Lattice Boltzmann solvers.** Mozaffari et al. (2024) present SST-based
+  IDDES and CES in the lattice Boltzmann code
+  [ProLB](/software/prolb.md), on immersed-boundary Cartesian grids with an
+  algebraic equilibrium wall model, as "an alternative for the wall-modeled
+  LES in the LBM framework" that behaves as wall-modelled LES only where
+  the flow separates (§3.2, lines 413–418). On the Ahmed body the
+  equilibrium wall model, which has no pressure-gradient term, suppresses
+  the slant separation for both hybrids at $25^\circ$ and $35^\circ$, and a
+  zero-velocity wall condition at $y^+\gg1$ restores it; IDDES with that
+  condition is said to recover the wall-modelled LES solution of Cai et
+  al. at lower cost, with no cost figure (§3.3, lines 510–515; see
+  [Ahmed body](/benchmarks/ahmed-body.md) and
+  [equilibrium wall model](/methods/equilibrium-wall-model.md)).
+- **Transonic buffet.** SST-PANS with a dynamic resolution parameter
+  predicts the OAT15A shock buffet on grids where SST URANS converges to a
+  steady state, at about 3% more cost per time step; the authors argue that
+  PANS works on RANS-like grids while DES-family methods in LES mode bring
+  back LES grid and time-step requirements
+  ([Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md), §1, §4.5–4.6;
+  see [PANS](/methods/partially-averaged-navier-stokes.md)).
+- **Aircraft wakes.** The sequential coupling above gives, on the NASA CRM,
+  vortex lifespans between 4 and 5 descent times for non-zero atmospheric
+  turbulence, in agreement with the Crow–Bate and Sarpkaya models for weak
+  and medium turbulence, and a secondary wake much more turbulent and a
+  plume about three times less diluted than an analytic Lamb–Oseen
+  initialization with uncorrelated noise (Bouhafid et al. 2024, §4.3,
+  Figs. 18, 23).
+- **Turbomachinery design.** Liu et al. (2024) list DES, scale-adaptive
+  simulation and related hybrids as too expensive for routine
+  turbomachinery design, and pursue a transition-coupled Reynolds-stress
+  RANS instead ([Liu et al. (2024)](/sources/liu-2024.md), Introduction).
+  Constant et al. (2024) name the transposition of their immersed-boundary
+  RANS method to hybrid RANS/LES, which their solver already runs in DDES
+  and zonal DES form, as future work
+  ([Constant et al. (2024)](/sources/constant-2024.md), §7; HAL author
+  manuscript).
 - **Planetary-entry capsule wakes.** Placco et al. (2023) recall that DES
   studies of capsule wakes showed the importance of the turbulence model and
   the limits of RANS in separated flow, but were "restricted to the
@@ -355,6 +446,25 @@ $\approx2000$ at $18\,000$) (Carlsson et al. 2023, §4.3, Fig. 4; see
 - The periodic hill has been simulated successfully at about one million
   cells with second-order delayed DES, PANS and PITM, as recalled by Haering
   et al. (2022, §V B); see [periodic hill](/benchmarks/periodic-hill.md).
+  Prieto Saavedra et al. (2024) list, for the hill at $Re_b=37\,000$, PITM
+  hybrid results of Chaouat & Schiestel with reattachment at 4.30, 4.26,
+  3.54 and 3.68 hill heights and a DLUM result of Mokhtarpoor et al. at
+  3.8, beside LES and implicit-LES values between 3.2 and 3.8
+  ([Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md),
+  Table 3).
+- Mozaffari et al. (2024) conclude that their averaged solutions "are
+  largely consistent with the reference data, even for states where the
+  flow is not in equilibrium and under large adverse pressure gradients"
+  (Conclusions, lines 544–546), while §3.3 calls the slant attachment with
+  the wall model "nonphysical" (line 502) and the $25^\circ$ no-slip IDDES "a
+  wrong representation of the flow structures in the wake" (line 526). That
+  $25^\circ$ IDDES drag (0.2970) is close to the 0.2990 measured by Meile et
+  al. (Table 3).
+- Bouhafid et al. (2024) state in the abstract that atmospheric turbulence
+  and stratification "both accelerate the vortex decay", and in §4.3.1 that
+  atmospheric turbulence intensity "does not seem to significantly impact
+  the vortex pair lifespan", while the lifespan decreases with the
+  normalized dissipation; the emphasis differs within the paper.
 
 # Citations
 
@@ -373,3 +483,9 @@ $\approx2000$ at $18\,000$) (Carlsson et al. 2023, §4.3, Fig. 4; see
 - [Cai et al. (2022)](/sources/cai-2022.md) — §I, §II C 1 Eq. 27, §IV Table III (HAL v1).
 - [Placco et al. (2023)](/sources/placco-2023.md) — §1, §2.
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §1, §4.1, §6 Table 3 Fig. 13, §7, §7.6 (HAL author manuscript).
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §2.3 Eqs. 33–34, §3.2 Table 2 Fig. 11, §3.3 Table 3, Conclusions (HAL accepted manuscript).
+- [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) — Abstract, §1, §2.1 Fig. 1, §3.2 Figs. 4–6, §4.3 Figs. 18, 23.
+- [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — §1, §4.5–4.6.
+- [Liu et al. (2024)](/sources/liu-2024.md) — Introduction.
+- [Constant et al. (2024)](/sources/constant-2024.md) — §7 (HAL author manuscript).
+- [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — Table 3.

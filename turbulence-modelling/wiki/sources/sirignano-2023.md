@@ -162,8 +162,9 @@ Slotnick et al. (2014) a NASA contractor report.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26). This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunk 5. This source is cited on:
 
+- [Circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)

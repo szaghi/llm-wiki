@@ -149,12 +149,13 @@ unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25). This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunk 5. This source is cited on:
 
 - [Backward-facing step](/benchmarks/backward-facing-step.md)
 - [Hybrid RANS/LES](/definitions/hybrid-rans-les.md)
 - [Detached-eddy simulation and its delayed and zonal forms](/methods/detached-eddy-simulation.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Mesh adaptation for turbulent-flow simulation](/methods/mesh-adaptation.md)
+- [Differential Reynolds-stress models](/methods/reynolds-stress-model.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)

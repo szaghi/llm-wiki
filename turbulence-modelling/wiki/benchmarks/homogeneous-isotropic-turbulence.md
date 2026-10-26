@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Homogeneous isotropic turbulence (decaying and forced)"
-description: "Turbulence in a triply periodic box, decaying from a prescribed spectrum or sustained by forcing: a priori database and a posteriori test of subgrid closures, learned ones included (Re_λ 70 to 418, LES of 24³ to 144³ degrees of freedom), a dissipation test of schemes for hybrid RANS/LES, DNS up to supersonic turbulent Mach numbers, and driven MHD turbulence."
+description: "Turbulence in a triply periodic box, decaying (including Comte-Bellot–Corrsin grid turbulence) or forced: a priori and a posteriori test of subgrid closures, learned, ensemble-calibrated and autonomous ones included, of filter widths for high-order LES and of scheme dissipation, DNS up to supersonic turbulent Mach numbers, and driven MHD turbulence."
 status: established
 aliases: [HIT, DHIT, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-26T07:40:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -43,6 +43,10 @@ notation registry.)
 | [Gan et al. (2022)](/sources/gan-2022.md), §2 | forced, compressible isothermal MHD with a strong guide field | not given | none | ideal MHD, $512^3$ ($8\pi\times2\pi\times2\pi$ in one run), ATHENA++ | Ornstein–Uhlenbeck forcing at $0<\lvert\boldsymbol k\rvert\le2$, incompressible or compressible velocity driving; $v_A=8$, $\beta_p=0.4$, turbulent Mach number 0.12–0.18 |
 | [Kurz et al. (2023)](/sources/kurz-2023.md), §3–4, Table 2 | forced | about 180 (training and tests); about 240 (generalization) | DNS spectrum and velocity PDF, resolution not stated | DG: $N=5$ on $4^3$, $6^3$, $8^3$ elements and $N=7$ on $4^3$ (24, 36, 48 and 32 DOF per direction) | Rogallo initialization, linear (Lundgren) forcing; Mach 0.1; large-eddy turnover time about 0.7 |
 | [Kang et al. (2023)](/sources/kang-2023.md), §2, §3, App. A | forced (training, a posteriori); decaying (a posteriori) | 106 and 286 (training), 164 (validation) | pseudo-spectral, $192^3$, $512^3$ ($256^3$ at 164); 37 to 50 snapshots | pseudo-spectral LES, $24^3$, $48^3$, $96^3$ at 106; $128^3$ at 286 | set-ups of Mohan et al. (106) and Chumakov (286), forcing wavenumbers 2 and 1.5; decaying runs started from the converged filtered field |
+| [Wang et al. (2023c)](/sources/wang-2023-c.md), §III, App. A–B, Tables I, V | forced; decaying from the forced field (App. B) | about 160 (calibration); 259 (generalization) | pseudo-spectral, $512^3$ ($\nu=0.0025$) and $1024^3$ ($\nu=0.001$), 2/3 de-aliasing | pseudo-spectral LES, $64^3$, Gaussian filter $\Delta=16$ DNS spacings, filter-to-grid ratio 2; also $\Delta=32$ spacings at 259 | LES started from filtered fully developed DNS; forcing fixes the energy of the two lowest wavenumber shells |
+| [Domaradzki (2024)](/sources/domaradzki-2024.md), §3.1–3.3, Table 1 | forced | nominal $1.2\times10^4$ to $1.6\times10^4$ ($\nu=2.5\times10^{-7}$) | none: inertial-range theory ($k^{-5/3}$, Kolmogorov constant 1.4–2.1) is the reference | de-aliased pseudo-spectral LES, $64^3$ and $32^3$, Gaussian or top-hat filter of width $2\Delta x$ | $k^{-5/3}$ or pulse initial spectrum, random phases, 50–100 precursor DNS steps; forcing of Sullivan, Mahalingam & Kerr at $k=3$; about 10 large-eddy turnover times |
+| [Domaradzki (2024)](/sources/domaradzki-2024.md), §3.1–3.2, Table 2 | decaying (grid turbulence of Comte-Bellot & Corrsin) | measured 71.6, 65.3, 60.7 at $tU_0/M_g=42$, 98, 171 | experiment | de-aliased pseudo-spectral LES, $64^3$, $k_c=30$ | initialised from the measured spectrum at $tU_0/M_g=42$ |
+| [Duan & Wang (2024)](/sources/duan-2024.md), §5.2 | decaying (grid turbulence of Comte-Bellot & Corrsin) | not given; $U_0M_g/\nu=34{,}000$ | experiment, spectra at $tU_0/M_g=42$, 98, 171 | flux reconstruction, $32^3$ cells, $N=2$ to 5 | box of $11M_g$; field matched to the measured spectrum at $tU_0/M_g=42$ (method of Kwak et al.) |
 
 The beck-2023 DNS used 16,384 cores of the HAWK system for almost two hours
 (about 30,000 CPU hours). [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md)
@@ -256,6 +260,106 @@ filtered DNS than that of dynamic Smagorinsky at filter size 4 and, more
 markedly, at the very-large-eddy filter size 20, where dynamic Smagorinsky
 decays too fast (§IV, Fig. 9).
 
+**An ensemble-calibrated mixed model.**
+[Wang et al. (2023c)](/sources/wang-2023-c.md) (read in arXiv v3), §III,
+calibrate a mixed model, the [gradient model](/methods/gradient-model.md)
+with its Taylor-expansion coefficient $\Delta^2/12$ plus a Smagorinsky
+term $-C_{\mathrm f}\Delta^2\lvert\bar S\rvert\bar S_{ij}$ ($C_{\mathrm f}$
+page-local, the functional coefficient; the authors relate it to $C_s$ by
+$C_{\mathrm f}=2C_s^2$), on forced HIT at
+$Re_\lambda\approx160$ with an
+[ensemble Kalman filter](/methods/ensemble-kalman-closure-calibration.md)
+whose observations are the filtered-DNS energy spectra at several instants.
+The calibrated $C_{\mathrm f}\approx0.00738$ (ensembles of 10 and 20
+members, 50 iterations; Fig. 2, Table II) is much smaller than the
+"classical" $2C_s^2\approx0.05$ with $C_s=0.16$ that the authors quote
+(§III). A posteriori against filtered DNS (Figs. 3–9):
+
+- the dynamic Smagorinsky and dynamic mixed models slightly over-predict
+  large-scale and under-predict small-scale energy, the pure gradient model
+  does the reverse, and the calibrated model is closest in spectrum and
+  kinetic-energy history;
+- the gradient model gives the best SGS-stress PDF but the worst kinetic
+  energy, which the authors read as "accurately reconstructing the SGS
+  stress may not guarantee the adequate prediction of other important flow
+  statistics" (see [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md));
+- the PDF of the SGS flux $\Pi$ is strictly positive for dynamic
+  Smagorinsky, too wide (too much backscatter) for the gradient model, and
+  closest to filtered DNS for the calibrated model (Fig. 8; see
+  [energy backscatter](/definitions/energy-backscatter.md));
+- longitudinal structure functions of order 2 to 8 are best predicted by
+  the calibrated model, with an error that grows with the order (Fig. 9).
+
+Without recalibration the model also beats the dynamic models at
+$Re_\lambda=259$ with filter widths of 16 and 32 DNS spacings, where the
+pure gradient model diverges at 16, and in decaying HIT from
+$Re_\lambda=259$ (App. B, Figs. 19–21); the functional part alone,
+recalibrated to $C_{\mathrm f}=0.01$, is markedly worse in the strain and rotation
+PDFs and the SGS flux (App. C).
+
+**An autonomous eddy viscosity at very high Reynolds number.**
+[Domaradzki (2024)](/sources/domaradzki-2024.md) runs the
+[autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md),
+whose viscosity is computed at each step from the energy flux of a
+similarity stress of the LES field with no adjustable constant, in forced
+HIT at nominal $Re_\lambda$ above $10^4$ (Table 1). The spectra recover a
+$k^{-5/3}$ range with a compensated Kolmogorov function between 1.4 and 2.1
+outside the forcing band, with minor departures near $k_c$ (§3.1,
+Fig. 1); halving the resolution to $32^3$ causes "no visible
+deterioration", the top-hat filter over-damps the highest wavenumbers
+slightly, and a pulse initial spectrum settles at a higher energy level
+with nearly the same Kolmogorov function (Figs. 2–3). The author stresses
+that the model assumes neither the inertial-range exponent nor the
+Kolmogorov constant, which the Smagorinsky and Chollet–Lesieur models do
+(§3.1, §3.3). With a constant $0.8$ that enforces the global SGS transfer
+of the Gaussian filter, the Kolmogorov function rises steeply near $k_c$,
+which the author reads as insufficient SGS dissipation there (§3.2, Figs. 7–8), and the model
+then acts as a time-dependent, spatially near-uniform viscosity (§3.3,
+Fig. 10); see [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md).
+The author states that the de-aliased spectral code makes numerical
+dissipation negligible, so the observed effects are those of the model
+(§3.3).
+
+**Decaying grid turbulence of Comte-Bellot and Corrsin.** Two sources
+start an LES from the measured spectrum at $tU_0/M_g=42$ ($M_g$ the grid
+mesh size, 5.08 cm, and $U_0=10$ m/s in both; $U_0M_g/\nu=34{,}000$ in
+Duan & Wang) and compare later spectra, at 98 and 171 in Domaradzki and
+at 98 in Duan & Wang; a third uses the case for scheme dissipation:
+
+- [Domaradzki (2024)](/sources/domaradzki-2024.md), §3.1, Figs. 4–5:
+  under-resolved DNS without a model fails on $64^3$, the autonomous LES
+  predicts the spectrum evolution "quite well". LES against experiment
+  (Table 2):
+
+| $tU_0/M_g$ | $u'$ | $\varepsilon$ | $\lambda$ | $L$ | $Re_\lambda$ |
+|---|---|---|---|---|---|
+| 98, LES / exp. | 1.21 / 1.28 | 5.58 / 6.33 | 0.0774 / 0.0764 | 0.41 / 0.345 | 63.0 / 65.3 |
+| 171, LES / exp. | 0.865 / 0.895 | 1.73 / 1.74 | 0.099 / 0.102 | 0.48 / 0.490 | 57.2 / 60.7 |
+
+  (in the author's converted units, length unit 10 cm). With the constant
+  0.8 the LES over-predicts the measured spectrum at high wavenumbers at 98
+  and under-predicts its peak at 171 (§3.2, Fig. 9).
+- [Duan & Wang (2024)](/sources/duan-2024.md), §5.2, Fig. 8, test filter
+  widths for explicit SGS models in [flux reconstruction](/methods/flux-reconstruction.md)
+  on $32^3$ cells: $\Delta=h$, $h/\sqrt{N+1}$ and $h/(N+1)$, with $h$ the
+  cube root of the cell volume. At $N=2$ and 3 the spectra pile up at high
+  wavenumbers, which the authors attribute to aliasing; at $N=4$ and 5 the
+  low wavenumbers agree with experiment, and unmodelled
+  [implicit LES](/definitions/implicit-les.md) departs most from it at high
+  wavenumbers. The [WALE](/methods/wale-model.md) and
+  [Vreman](/methods/vreman-model.md) models give similar spectra, Vreman
+  slightly more damped; $h/(N+1)$ adds very little dissipation, $h$ too
+  much (the range of resolved wavenumbers is considerably reduced), and the intermediate $h/\sqrt{N+1}$ is "a good balance" (see
+  [large-eddy simulation](/definitions/large-eddy-simulation.md)).
+- [Carlsson et al. (2023)](/sources/carlsson-2023.md), §4.2 (below): the
+  case measures the scheme dissipation of hybrid RANS/LES.
+
+In all three sources the departures that separate the models lie at
+high wavenumbers: the constant-0.8 variant (Domaradzki, Fig. 9) and
+unmodelled implicit LES (Duan & Wang, Fig. 8) depart there, as do the
+widest filter width (Duan & Wang) and the RANS-type artificial dissipation
+(Carlsson et al., Fig. 3) by damping.
+
 **Numerical dissipation of hybrid RANS/LES schemes.**
 [Carlsson et al. (2023)](/sources/carlsson-2023.md), §4.2, Fig. 3, run the
 decaying grid turbulence of Comte-Bellot & Corrsin with the LES branch of
@@ -319,6 +423,25 @@ ratio of [partially-averaged Navier–Stokes](/methods/partially-averaged-navier
 to $f_\varepsilon=1$ for $f_k\ge0.20$.
 
 ## Qualifications
+
+- [Domaradzki (2024)](/sources/domaradzki-2024.md) uses the sign
+  convention in which the SGS dissipation $\tau_{ij}\bar S_{ij}$ is
+  negative for forward transfer, the opposite of the registry's $\Pi$; the
+  description above is in words. The Table 1 Taylor microscales depart by
+  up to about 6% from the printed definition
+  $\lambda=(15u'^2\nu/\varepsilon)^{1/2}$ evaluated with the tabulated
+  $u'$ and $\varepsilon$, while the tabulated $Re_\lambda$ are consistent
+  with the tabulated $\lambda$ *(compiler check, not in the sources)*; the
+  Table 2 caption gives the length unit as "[L] = 0.1 cm", whereas the
+  text's conversion makes it 10 cm.
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) calibrate on the energy
+  spectrum, a second-order statistic, and recalibrate separately for a
+  temporal mixing layer ($C_{\mathrm f}\approx0.01$); their generalization tests stay
+  within HIT.
+- [Duan & Wang (2024)](/sources/duan-2024.md) set the model eddy viscosity
+  constant in each element and the interface fluxes of the SGS stress to
+  zero (§3, Eqs. 26–27); their filter-width ranking is obtained with these
+  choices, and they do not state the model coefficients used.
 
 - Forcing differs between sources (linear forcing at the nodes; linear
   momentum forcing; Kolmogorov forcing at a single wavenumber). [Beck & Kurz (2023)](/sources/beck-2023.md)
@@ -413,3 +536,6 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — §1, §3.4–3.5, Table 2; §4.1–4.5, Figs. 5–9.
 - [Kang et al. (2023)](/sources/kang-2023.md) — §2, Table 1; §3.1–3.4, Tables 3–6, Figs. 4–24; App. A, Table 14.
 - [Foldes et al. (2023)](/sources/foldes-2023.md) — §4.4, §5 (contrast only: Orszag–Tang initial field).
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — §II.A–B, Eq. (14); §III, Tables I–II, Figs. 2–9; App. A–C, Table V, Figs. 18–24.
+- [Domaradzki (2024)](/sources/domaradzki-2024.md) — §2.4; §3.1–3.3, Tables 1–2, Figs. 1–10.
+- [Duan & Wang (2024)](/sources/duan-2024.md) — §3, Eqs. (26)–(30); §5.2, Fig. 8.

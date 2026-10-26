@@ -5,7 +5,7 @@ description: "Nektar++ is an open-source spectral/hp element framework with cont
 status: established
 aliases: [Nektar, NektarPlusPlus, IncNavierStokesSolver, AcousticSolver, NekMesh, FieldConvert]
 tags: [software, spectral-element, les, implicit-les, aeroacoustics]
-timestamp: 2026-10-26T07:42:00Z
+timestamp: 2026-10-26T10:03:00Z
 ---
 
 # Nektar++
@@ -110,6 +110,17 @@ grid of about $10^6$ elements carries $216\times10^6$ solution points
 | Slaughter et al. (2023), §3 | Fourier spectral/hp, $N=6/5$, GJP + SVV | [Imperial front wing](/benchmarks/imperial-front-wing.md), $Re=2.2\times10^5$ | 64 Fourier modes; first quadrature point at $y^+\lesssim1$ except two small regions | not stated (ARCHER2 and CSD3) |
 | Moratilla-Vega et al. (2024), §3 | acoustic DG, $N=5$ | installed and isolated subsonic jet | about $10^6$ elements | not stated |
 
+A further Nektar++ study is known in the bundle only as recalled: in
+their literature survey of the [periodic hill](/benchmarks/periodic-hill.md)
+at $Re_h=10\,600$, [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md),
+§2.4, Table 2, list an implicit LES with Nektar++ by Wang et al. (hp
+spectral elements of degree 4 and 7 on meshes of 246 000 and 500 000 cells,
+140 flow-throughs, time step 0.001), one of the two earlier
+finite-element implicit LES of that case they name, the other being the DG
+study of Krank et al. (§1). Prieto Saavedra et al. themselves use the
+stabilized finite-element code Lethe, not Nektar++; see
+[implicit LES](/definitions/implicit-les.md).
+
 Saini et al. (2023, §6) attribute the accuracy-per-cost advantage of the
 Nektar++ runs over second-order OpenFOAM runs primarily to lower numerical
 dissipation, the model playing a secondary role. Slaughter et al. (2023)
@@ -133,3 +144,4 @@ case is shown.
 - [Slaughter et al. (2023)](/sources/slaughter-2023.md) — Research Square preprint v1: §3, §3.1 (Fourier spectral/hp, velocity correction, static condensation, IMEX, GJP, SVV); §3.2 (NekMesh); §3.3 (orders, boundary conditions); §3.6, §4.
 - [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md) — §2.2, Eqs. (11)–(12) (AcousticSolver); §2.3 (CWIPI coupling); §3, Table 1; §4.4.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §2, Table 1.
+- [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §1, §2.4, Table 2 (Nektar++ implicit LES of the periodic hill by Wang et al., as recalled).

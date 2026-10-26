@@ -5,7 +5,7 @@ description: "Closures whose model terms are explicit algebraic expressions foun
 status: established
 aliases: [symbolic regression, deep symbolic regression, DSR, gene-expression programming, GEP, sparse regression, SpaRTA, explicit algebraic closure discovery, DSRRANS]
 tags: [symbolic-regression, rans, data-driven, machine-learning, separated-flow]
-timestamp: 2026-10-26T07:37:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Symbolic-regression turbulence closures
@@ -167,6 +167,36 @@ the linear part is iterated to reconvergence (§II D; see
   each RANS run converges in hundreds of seconds, at a cost "basically the
   same" as $k$-$\varepsilon$ (§III A–B).
 
+## Symbolic regression in transition modelling (Pacciani et al. 2025)
+
+[Pacciani et al. (2025)](/sources/pacciani-2025.md) do not run a symbolic
+search, but their reformulated
+[laminar-kinetic-energy transition model](/methods/laminar-kinetic-energy-transition-model.md)
+is shaped by earlier gene-expression-programming results and built as a
+base for later ones (§1, §3.2):
+
+- *Motivation.* As recalled there, Fang et al. (2024) trained the
+  production and transfer terms of the authors' earlier model with a
+  multi-objective, multi-case machine-learning algorithm and found
+  opposite correction trends for separated-flow and bypass transition; the
+  authors read this as a lack of generality of the baseline (§1, §3.2).
+- *Inputs taken from learned expressions.* The new laminar-fluctuation
+  production uses the length scale $\lvert\Omega\rvert d^2/U$
+  (page-local: $U$ the local velocity magnitude, $d$ the wall distance;
+  vorticity or strain magnitude, Eq. 10), "taken from" expressions trained
+  by gene-expression programming in Akolekar et al. (2021, 2022) (§4.1).
+  The separation switch uses $r=\lvert S\rvert d/U$ because that group
+  "appears" in machine-learnt threshold terms (Akolekar et al.; Fang et al.)
+  (§4.5, Eqs. 23–27).
+- *Training targets left open.* The onset threshold, the separation
+  switch, its critical vorticity Reynolds number and the production term
+  are designed as candidate functions for later GEP training; the
+  separation switch "has no ambition of generality" (§4.5).
+
+The paper itself calibrates its constants by hand on the
+[ERCOFTAC T3 flat plates](/benchmarks/ercoftac-t3-flat-plate.md) and does
+not report a learned expression.
+
 ## Qualifications
 
 - **Evidence base.** Tang et al. (2023) train on one 2D case and compare
@@ -211,3 +241,4 @@ the linear part is iterated to reconvergence (§II D; see
 - [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I (GEP, CFD-driven GEP recalled), §II C 1, Algorithm 1, Apps. A–B, Eq. B1 (DSR), §II C 2, Eqs. 4–19 (closure, constants, split, squashing, rewards), §II D–E (coupling, workflow), §III A–E, Table I–II, Eqs. 20–22, Figs. 7–19, §IV, §V.
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §III.A, §IV.A (symbolic and sparse regression, $\ell_1$ loss), §VII (interpretability does not imply generalization).
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3 (gene-expression programming recalled; uncertainty on the periodic hill when trained on a backward-facing step).
+- [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §1, §3.2 (GEP corrections of the earlier model recalled), §4.1, Eq. 10 (length scale from trained expressions), §4.5, Eqs. 23–27 (separation switch as a training candidate).

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Immersed boundary methods"
-description: "Immersed boundary methods impose solid walls on grids that do not conform to them, by reconstruction at boundary or ghost points, a penalization source or direct forcing spread from Lagrangian markers; this page covers the variants used for DNS and LES, the Lagrangian weight, wall models in a lattice Boltzmann solver and the near-wall errors they cause."
+description: "Immersed boundary methods impose walls on non-conforming grids by reconstruction at boundary or ghost points, penalization or direct forcing; this page covers the DNS, LES and RANS variants, the Lagrangian weight, wall functions with a modelling height, wall-pressure reconstruction, and the near-wall errors the sources report."
 status: established
-aliases: [IBM, immersed boundary, ghost-point forcing, volume penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight]
-tags: [immersed-boundary, wall-model, lattice-boltzmann, les, dns]
-timestamp: 2026-10-26T07:42:00Z
+aliases: [IBM, immersed boundary, ghost-point forcing, volume penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing]
+tags: [immersed-boundary, wall-model, lattice-boltzmann, les, dns, rans]
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Immersed boundary methods
@@ -19,15 +19,23 @@ the body from the wall value and the surrounding fluid, or by a
 velocity inside a mask, or by **direct forcing** computed on Lagrangian
 surface markers and spread to the grid. In the sources it carries DNS of pipe flow on a
 Cartesian mesh, implicit LES of a capsule wake, wall-modelled LES of a car
-body in a lattice Boltzmann code, rotating blades in a DG code, and an
-elastic beam in turbulent cross-flow in a lattice Boltzmann code. Three
+body in a lattice Boltzmann code, rotating blades in a DG code, an
+elastic beam in turbulent cross-flow in a lattice Boltzmann code, DNS and
+neural-network LES of a cylinder wake on a staggered finite-volume mesh
+([Kim et al. 2024](/sources/kim-2024.md)), hybrid RANS/LES in a lattice
+Boltzmann code ([Mozaffari et al. 2024](/sources/mozaffari-2024.md)) and
+steady wall-function RANS of high-lift aircraft on octree Cartesian grids
+([Constant et al. 2024](/sources/constant-2024.md)). Three
 sources report a less accurate near-wall field: the wall distance of the
 near-wall nodes varies along the surface and the method does not conserve
 fluxes across the immersed surface (Cai et al. 2022), a softly imposed
 no-slip condition can leave a residual wall velocity (Vicente Cruz &
 Lamballais 2023), and with direct forcing the interpolation and spreading
 operators are not reciprocal, which leaves a boundary slip error
-([Cheylan et al. 2023](/sources/cheylan-2023.md)).
+([Cheylan et al. 2023](/sources/cheylan-2023.md)). A fourth error concerns
+the wall pressure: extrapolating it unchanged from the first fluid point
+across a modelled layer misplaces the suction peak and corrupts the
+near-field pressure drag at strong incidence (Constant et al. 2024).
 
 ## Variants
 
@@ -46,6 +54,74 @@ condition is $q_b=q_1$ (Eq. 19). The lattice populations at boundary points
 are rebuilt from the macroscopic state as the equilibrium plus a
 non-equilibrium part computed from the finite-difference strain rate
 (Eq. 20); bounce-back is noted as limited to no-slip walls.
+Mozaffari et al. (2024, §2.2, Fig. 1) describe the same ProLB treatment:
+reference points at successive distances of the local grid size along the
+normal, linear or quadratic reconstruction by boundary type (Dirichlet for
+inflow or no-slip velocity, Neumann for outflow), populations rebuilt from
+the equilibrium and the symmetric velocity gradient; with a wall model the
+tangential velocity at the reference point gives $u_\tau$, and the
+velocity and turbulence quantities of the first off-wall node follow from
+the wall law. They state that, with the isotropic mesh of ProLB, refining
+the grid enough to resolve the boundary layer at high Reynolds number is
+"too expensive", hence the wall model.
+
+**Mass source and momentum forcing (staggered finite volume).**
+Kim et al. (2024, §2.1, Eqs. 2.1–2.2) use the immersed boundary method of
+Kim, Kim & Choi (2001, as recalled), which adds a mass source/sink $q$ to
+the continuity equation, $\partial_i\bar u_i-q=0$, and a momentum forcing
+$f_i$ to the momentum equations, on a staggered Cartesian mesh with
+second-order central differences (energy-conserving, no numerical
+dissipation, as stated), a fractional-step method with third-order
+Runge–Kutta for convection and Crank–Nicolson for diffusion. The same
+formulation carries both the DNS ($\tau_{ij}=0$, $1025\times501\times128$
+points) and the LES of the circular cylinder at $Re_D=3900$; see
+[circular-cylinder wake](/benchmarks/circular-cylinder-wake.md) and
+[neural-network SGS models](/methods/neural-network-sgs-model.md). Second-order
+central differences produce spurious oscillations near the front of the
+cylinder, removed by switching to QUICK upwinding for $x/D<-0.25$ without
+changing the wake at this Reynolds number (§4.2.1, Fig. 9 inset).
+
+**Ghost-cell direct forcing with a modelling height (RANS, octree
+Cartesian grids).** Constant et al. (2024, §3) extend the ghost-cell
+direct-forcing method of Péron et al. (as recalled) in ONERA's FastS
+second-order finite-volume solver for steady RANS with the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md). Three point
+families are used: **target (forcing) points**, at least two layers on the
+solid side; **image points**, the projection of each target point along the
+wall normal onto a watertight surface built from the first computed cell
+centres, where the solution is interpolated (second order) from computed
+donors; and **wall points**, the projection onto the body surface, which
+store wall data for post-processing (§3, Figs. 3, 6). The values at a
+target point A are set from the image point B by an
+[equilibrium wall model](/methods/equilibrium-wall-model.md), Musker's
+algebraic law $M(y^+)$ (page-local) inverted by Newton–Raphson for $u_\tau$,
+held constant along the normal (§3.2, Eqs. 6–11):
+
+- tangential velocity $u_A=u_\tau M(y_A^+)$, normal velocity linear to
+  zero at the wall, $v_A=(y_A/y_B)v_B$;
+- the SA working variable from $\nu_t=\kappa u_\tau y_AD$ with van Driest
+  damping $D=1-\exp(-y_A^+/19)$ and $\kappa=0.41$, which the authors state
+  valid "in the log layer and down to the wall", by solving
+  $\tilde\nu_A^4-\nu_t\tilde\nu_A^3-\nu_t\nu^3c_{v1}^3=0$ (Eq. 8), the
+  inversion of $\nu_t=\tilde\nu f_{v1}$ (*compiler check, not in the
+  sources*: substituting $f_{v1}=\chi^3/(\chi^3+c_{v1}^3)$ gives this
+  quartic);
+- temperature by the Crocco–Busemann relation (adiabatic walls), density
+  from the ideal gas, and **pressure $p_A=p_B$**, the constant
+  wall-normal-pressure hypothesis.
+
+The **modelling height** $H_{\mathrm{mod}}$ (page-local; it plays the role
+of the matching height $h_{\mathrm{wm}}$) is the distance below which grid
+points are target points rather than computed ones. In the authors' earlier
+"F42" approach (Constant et al. 2021, as recalled) it is one global value
+estimated from a flat-plate correlation and a user target $y^+_{\mathrm{target}}$
+"ideally set between 50 and 500" for the first computed cells,
+$$H_{\mathrm{mod}}=\sqrt2\,\frac{y^+_{\mathrm{target}}\,L}{Re\sqrt{f(Re)}},\qquad f(Re)=0.058\,Re^{-0.2}$$
+(Eq. 5, $L$ the reference length); placing all forcing points below
+$H_{\mathrm{mod}}$ removes the spurious near-wall oscillations of $C_p$ and
+$C_f$ of the original IBM–wall-function coupling (§3.1, Fig. 6). Cai et
+al. (2022) report such oscillations for wall models on immersed boundaries
+too (next section), with a different remedy.
 
 **Ghost-point forcing (finite differences).** In [STREAmS](/software/streams.md),
 [Placco et al. (2023)](/sources/placco-2023.md), §2, tag grid nodes as fluid
@@ -192,6 +268,77 @@ layers and to the LES viscosity in separated ones; see
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md) and
 [wall-modelled LES](/methods/wall-modelled-les.md).
 
+## Local modelling height and wall-pressure reconstruction
+
+Constant et al. (2024) identify two failures of a single global
+$H_{\mathrm{mod}}$ at strong incidence and correct both outside the solver.
+
+**Modelling-height adaptation.** On the
+[NACA 0012](/benchmarks/naca-0012-airfoil.md) at $M=0.15$, $Re_c=6\times10^6$,
+the flat-plate estimate holds at zero incidence, but on the suction side at
+high incidence the image-point $y^+$ departs strongly from
+$y^+_{\mathrm{target}}$: for $y^+_{\mathrm{target}}=300$ the leading-edge
+maximum is "close to 300%" above it at $15^\circ$ (§4.1, Fig. 10), so the
+wall function is applied where the boundary layer is thin and not yet in
+equilibrium. After a converged run, the stored $y^+$ is used to convert
+target points into computed points wherever the $y^+$ one layer below,
+estimated as $y^+_{n-1}\approx y^+_n(1-h/y_n)$ for a mesh aligned with the
+wall (Eq. 19), still exceeds $y^+_{\mathrm{target}}$; the first two target
+rows are never changed (§4.2, Fig. 11). Only the interpolation data are
+recomputed (no mesh change, no new wall distance) and the run restarts warm;
+the authors contrast this static single-pass update with the dynamic
+relocation of forcing points of Xu & Liu (as recalled, §4.2). At $15^\circ$
+($y^+_{\mathrm{target}}=100$) it lowers the maximum suction-side image-point
+$y^+$ from 435 to 243 (§6.1, Fig. 18). For the first 10% of the chord the
+equilibrium law still cannot represent the velocity profile; beyond it the
+log region is established (§6.1, Figs. 19–21). On the two-dimensional
+multi-element airfoil a warm restart costs about a third of the initial
+run, and the non-adapted run on the finest mesh needs four times the
+iterations of the coarsest (§6.2, Fig. 28).
+
+**Wall pressure from a second image layer.** The default wall pressure is
+the zeroth-order $p_w=p_{B_1}$ (Eq. 21). Pressure gradients at the first
+image points oscillate strongly, especially at the leading edge, while at a
+**second layer of image points**, placed at $H_{\mathrm{mod}}+\epsilon$ with
+$\epsilon=2\sqrt{d_s}\,h$ ($d_s$ the space dimension, page-local; Eq. 20),
+they are smooth without filtering (§6.1, Fig. 22). The wall pressure is then
+extrapolated along the normal $\boldsymbol n$ to first or second order,
+$$p_w=p_{B_2}-\partial_np\big|_{B_2}\,\lvert WB_2\rvert+\tfrac12\,\partial_{nn}p\big|_{B_2}\,\lvert WB_2\rvert^2$$
+(Eqs. 22–25; the first-order form drops the last term), the derivatives
+computed with the solver's gradient operator, applied twice for the second
+derivative. The reconstruction acts only in post-processing: refining the
+IBM mesh at fixed $y^+_{\mathrm{target}}=100$ divides by four the distance
+over which the zero-normal-gradient assumption acts yet changes the error
+little, which the authors read as evidence that correcting the pressure at
+the target points during the run would gain little (§5.1, Figs. 12–13).
+They agree with Cai et al. (2021, as recalled) that far-field integration
+of the drag beats near-field integration on immersed boundaries, but locate
+the near-field error in the post-processed wall pressure, not in the field
+solution (§5.1).
+
+**Effect on forces.** NACA 0012 at $15^\circ$ against a body-fitted
+wall-resolved RANS ($C_D=20.85\times10^{-3}$, $C_L=1.516$): global
+$H_{\mathrm{mod}}$ with zeroth-order pressure gives $C_D=40.44\times10^{-3}$
+(94% error), adaptation alone $30.57\times10^{-3}$ (47%), adaptation and
+second-order pressure $24.51\times10^{-3}$ (17%) with $C_L=1.476$ (2.6%)
+(Table 3). Friction drag stays close to the reference; the error is pressure
+drag, and with first- or second-order reconstruction near-field and
+far-field drag agree (§6.1, Fig. 25). The residual ≈20% at $15^\circ$ is
+attributed to the equilibrium wall model at the leading edge and to the
+sensitivity of the case (§6.1). On the multi-element airfoil ($M=0.2$,
+$Re=5\times10^6$, $16^\circ$) the adapted second-order drag error falls with
+the mesh, 42%, 27%, 23%, 22% against a body-fitted FUN3D solution
+(Table 6), and the authors conclude that both corrections are needed
+whatever the resolution (§6.2). On the
+[NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)
+($M=0.2$, $Re=5.49\times10^6$ on the mean aerodynamic chord,
+$17.05^\circ$; 2.4 billion Cartesian cells with $y^+_{\mathrm{target}}=500$,
+built in under seven hours from the surface mesh alone) the drag error
+falls from 9.1% to 1.5% and the lift error from 13% to 8.4% against a
+550-million-cell body-fitted LAVA solution (§6.3, Tables 8–9). The authors
+name a non-equilibrium (pressure-gradient-aware) wall model and a hybrid
+RANS/LES extension as the next steps (§7).
+
 ## The lattice Boltzmann host solver
 
 ProLB (see also [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md)), as summarized by Cai et al. (2022, §II.A): D3Q19 lattice, a
@@ -249,6 +396,23 @@ wall-law fine 0.2347/0.2380, coarse 0.2742/0.2912; no-slip fine
 0.2553/0.2588, coarse 0.2548/0.2486; experiments 0.279 (Meile et al., same
 $Re_H$) and 0.26 (Ahmed et al.).
 
+Mozaffari et al. (2024, §3.3, Figs. 16–24, Table 3) revisit the case in
+the same solver with $k$-$\omega$ SST-based hybrids (IDDES and continuous
+eddy simulation, see [hybrid RANS/LES](/definitions/hybrid-rans-les.md))
+instead of LES, on a $45.8\times10^6$-node octree grid with
+$\Delta x_{\min}=1.3$ mm, and the explicit equilibrium wall model of Cai &
+Sagaut (no pressure-gradient term). With the wall model on the body
+**neither hybrid separates on the slant**, at $25^\circ$ or $35^\circ$,
+which the authors attribute to the equilibrium wall model in a mild adverse
+pressure gradient and to the missing instability that would switch the
+hybrid to LES mode. With a zero-velocity Dirichlet condition instead
+(although $y^+\approx100$–150 on the slant) the flow separates; IDDES then
+reproduces the $35^\circ$ wake topology with $C_D=0.2819$ against
+0.2580–0.32 in the experiments listed, while continuous eddy simulation
+separates already on the roof ($C_D=0.3779$); at $25^\circ$ IDDES separates
+late and does not reattach, attributed to $y^+\approx100$–150 on the slant. See
+[Ahmed body](/benchmarks/ahmed-body.md).
+
 ## Qualifications
 
 - Cai et al. (2022) print the quadratic reconstructions as
@@ -282,6 +446,31 @@ $Re_H$) and 0.26 (Ahmed et al.).
   use $0.00628/0.005=0.01256/0.01=1.256$ *(compiler check, not in the
   sources)*; Table 8 shows a crash at 0.785 itself, the text a limit
   "below 0.785".
+- **Wall model or no-slip on the Ahmed slant.** Cai et al. (2022) find
+  that, on their fine grid, the wall law with the near-wall stress
+  enhancement outperforms a no-slip condition on slant and base, while
+  Mozaffari et al. (2024) find that the equilibrium wall model suppresses
+  slant separation and a no-slip condition restores the observed topology.
+  The finest spacings coincide ($4.5\times10^{-3}H$ with $H=288$ mm is
+  1.3 mm, *compiler check, not in the sources*), but the turbulence
+  treatments and wall laws differ (Vreman LES with a constrained-LES
+  near-wall viscosity and stress enhancement against SST-based IDDES with
+  the explicit Cai & Sagaut law), so the two findings concern different
+  set-ups, and neither source runs the other's. Both agree that the coarse or
+  wall-model-dominated runs fail to separate (Cai et al. 2022, coarse grid;
+  Mozaffari et al. 2024, §3.3).
+- **Constant normal pressure.** Constant et al. (2024, §1) state that most
+  recent IBM work for high-Reynolds-number flow assumes constant pressure
+  across the whole modelled boundary layer, which "can ultimately lead to
+  significant errors" in direct force integration.
+- **Printed slips (Constant et al.).** §3.1 defines the flat-plate height
+  $y_0$ as that of a first cell "for which $y^+=0$"; Eq. 5 is the height
+  for $y^+=1$ times $y^+_{\mathrm{target}}$ (with $C_f=f(Re)$ and
+  $u_\tau=U\sqrt{f/2}$, *compiler check, not in the sources*). §3.2
+  calls $u=\boldsymbol u\cdot\boldsymbol t$ and $v=\boldsymbol u\cdot\boldsymbol n$
+  "the normal and tangential components", in swapped order. Table 3 prints
+  a lift error of 5.6% for the global-height case, while its own values
+  give $(1.516-1.416)/1.516=6.6\%$ *(compiler check, not in the sources)*.
 - **Printed slips (Cheylan et al.).** Eq. (12) raises the kernel to the
   power $k$ in the moment condition; the beam case prints a solid density
   of $10^4$ kg/m³ with a fluid density of $10^3$ kg/m³ and a density ratio
@@ -295,3 +484,6 @@ $Re_H$) and 0.26 (Ahmed et al.).
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.7, Eqs. (27)–(29), Fig. 14 (volume penalization, ray tracing, wind turbine).
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §2.1; §3, footnote 6 (reconstruction inside the solid, soft no-slip); §7.1, Fig. 24 (pipe DNS and LES).
 - [Cheylan et al. (2023)](/sources/cheylan-2023.md) — §1; §2.1–2.4, Eqs. (1)–(28) (lattice Boltzmann host, direct forcing, kernels, Lagrangian weight); §2.5–2.7, Eqs. (29)–(38) (structural scheme, coupling, LES); §3.1–3.2, Tables 2–11 (cylinder, Poiseuille); §3.3–3.4, Tables 12–13, Figs. 12–19 (flag, beam); §4.
+- [Constant et al. (2024)](/sources/constant-2024.md) — HAL author manuscript hal-04731107v1: §1; §3, Eqs. (5)–(11), Figs. 3, 6 (ghost-cell direct forcing, modelling height, Musker wall function); §4.1–4.2, Eq. (19), Figs. 10–11 (adaptation); §5.1–5.2, Eqs. (20)–(25), Figs. 12–15 (second image layer, wall-pressure reconstruction); §6.1–6.3, Tables 3, 6, 8–9, Figs. 18–28 (NACA 0012, 2DMEA, HL-CRM); §7.
+- [Kim et al. (2024)](/sources/kim-2024.md) — §2.1, Eqs. (2.1)–(2.2) (mass source and momentum forcing, discretization); §4.2.1, Fig. 9 (QUICK near the cylinder front).
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — HAL accepted manuscript hal-04921212v1: §2.2, Fig. 1 (reference-point reconstruction with a wall model); §3.3, Figs. 16–24, Table 3 (Ahmed body, wall model against no-slip).

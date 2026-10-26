@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Partially-averaged Navier–Stokes"
-description: "Girimaji's bridging hybrid model that solves RANS-form transport equations for the unresolved fractions of kinetic energy and dissipation; its SST form on high-order flux reconstruction, its variable-density BHR form for Rayleigh–Taylor mixing, the choice of resolution parameters, and the criticism of feeding RANS equations fluctuating inputs."
+description: "Girimaji's bridging hybrid model that solves RANS-form transport equations for the unresolved fractions of kinetic energy and dissipation; its SST form on high-order flux reconstruction and with a dynamic resolution parameter for transonic buffet, its variable-density BHR form, the choice of resolution parameters, and the criticism of fluctuating inputs."
 status: established
 aliases: [PANS, partially averaged Navier-Stokes, PANS k-ω SST, bridging model, PANS BHR-LEVM, variable-density PANS, BHR model]
 tags: [pans, hybrid-rans-les, flux-reconstruction, numerical-dissipation, separated-flow]
-timestamp: 2026-10-26T07:20:00Z
+timestamp: 2026-10-26T10:25:00Z
 ---
 
 # Partially-averaged Navier–Stokes
@@ -98,7 +98,7 @@ $f_k$ is "not supported" at this resolution (§3.1):
   due to the suppression of aliasing errors" by a physically appropriate
   eddy viscosity (Fig. 5); no de-aliasing test is reported.
 
-**Circular cylinder at $Re_D=3900$** (inline here; no page). The authors run
+**Circular cylinder at $Re_D=3900$** (see [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)). The authors run
 a new $N=3$ DNS with about 55.6 million degrees of freedom (minimum
 $\eta/D=0.011$), giving a shedding Strouhal number $St=0.209$ and a
 Kelvin–Helmholtz frequency $0.668\,U_\infty/D$, and compare PANS with
@@ -120,6 +120,100 @@ The authors conclude that high order benefits PANS proportionally more than
 implicit LES, makes PANS less sensitive to $f_k$, and does so "without a
 significant increase in computational effort" (§4); no timings are given.
 They attribute the gains to lower [numerical dissipation](/properties/numerical-dissipation.md).
+
+## Dynamic resolution parameter and transonic buffet
+
+Petrocchi & Barakos (2024) apply SST-PANS, implemented in the Glasgow HMB3
+finite-volume solver (fully implicit, Osher flux, MUSCL with Van Albada
+limiter, dual time stepping), to transonic buffet on the ONERA OAT15A
+supercritical airfoil at $M_\infty=0.73$, $Re_c=3\times10^6$
+([Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md); equations on the
+[SST page](/methods/k-omega-sst-model.md)). They keep $f_\varepsilon=1$, so
+$f_\omega=1/f_k$, and in their implementation the PANS change amounts to
+$f_k$ in the diffusion, $\omega$-destruction and cross-diffusion terms (§2,
+§3).
+
+**Three strategies for $f_k$.** They classify the PANS literature, about
+forty works tabulated in Table B.5, by how $f_k$ is set (§2.1):
+
+- *constant* in space and time: it lets modelling and discretization errors
+  be quantified, but needs a sensitivity study and is "unreasonable" with
+  confined high-turbulence regions and anisotropic grids;
+- *static*: an optimal distribution computed from a preliminary steady
+  RANS, suited to localized, statistically steady turbulence;
+- *dynamic*: a function of space updated in time, at extra cost, which they
+  call "required" for intrinsically unsteady flows such as buffet and adopt.
+
+**Two dynamic estimates.** With $L_t=\sqrt{k_u}/(C_\mu\omega_u)$ the
+turbulent length scale of the modelled quantities and $h$ the local
+grid size (the source's $\Delta$; page-local $L_t$; the paper lists the largest, smallest,
+diagonal and cube-root cell sizes as options but does not say which it
+uses), they compare (§2.1, Eqs. 6–7)
+
+$$f_k=C_{\mathrm{PANS}}\Big(\frac{h}{L_t}\Big)^{2/3},\qquad
+f_k=\frac{1+\tanh\big(2\pi(\Lambda-0.5)\big)}{2},\quad \Lambda=\frac{1}{1+(L_t/h)^{4/3}},$$
+
+the second attributed to Elmiligui et al. (page-local $C_{\mathrm{PANS}}$,
+$\Lambda$). $C_{\mathrm{PANS}}=0.5$, from the authors' earlier conference
+study, is lower than the $1/\sqrt{C_\mu}$ of static estimates because $L_t$
+built from unresolved quantities is smaller and would raise $f_k$ too much;
+higher values gave no centreplane boundary-layer separation and too much
+corner separation (§2.1, §4.5.1). The two estimates give similar
+distributions; the tanh form is preferred because it needs no calibrated
+constant, leaves the boundary layer in RANS slightly further out, and is
+bounded in $[0,1]$, whereas the power law can exceed one in the far field
+(§4.5.1, Fig. 6). $f_k$ is clipped to $[f_{k,\min},1]$; a lower clip of 0.4
+gave too upstream a shock and too much trailing-edge unsteadiness, 0.6
+better agreement at $3.5^\circ$ and $3.9^\circ$ (App. C.2, Fig. C.20); lower
+values reduce the eddy viscosity excessively and demand finer resolution
+(§3). A zonal option sets $f_k=1$ a priori in chosen grid blocks, used for
+the first layer of blocks at the tunnel side wall (§3, §4.4).
+
+**Time step.** They propose an "unresolved Kolmogorov time scale"
+$t_{ku}=(\nu_u/\varepsilon_u)^{1/2}=\sqrt{C_\mu f_k}/\omega$ (Eq. 8; $t_{ku}$,
+$\nu_u$ page-local, $\nu_u$ not defined in the paper), its minimum outside
+the boundary layer, where it vanishes, to bound the time step (§2.2); how
+it fixed the time steps of the runs (0.1 to 0.005, units not stated) is not
+shown.
+
+**Results.** The configuration models half of the S3Ch wind tunnel (slip
+upper and lower walls shaped from a 2D RANS to mimic the adaptive walls, a
+no-slip side wall, a symmetry plane at $1.7c$), on grids of 5.0, 10 and 16.7
+million cells with $\Delta y^+<1$ (Table 1):
+
+- at $\alpha=2.5^\circ$ (pre-buffet) PANS recovers the URANS solution, the
+  shock position depending slightly on the grid because the grid-dependent
+  $f_k$ is lower on finer grids (§4.4, Figs. 4–5);
+- at $\alpha=3.5^\circ$ three-dimensional SST URANS converges to a steady
+  state, while PANS predicts buffet on all three grids, even the coarse
+  "RANS-like" one; in two dimensions URANS shows no buffet even at
+  $3.9^\circ$, PANS with constant $f_k=0.7$ does (§4.3, §4.5.5, Table 2);
+- the coarse grid cannot resolve three-dimensional structures in the
+  separated layer, the medium one resolves mainly spanwise trailing-edge
+  shedding, and the fine one, with half the time step, reproduces the stall
+  cells and undulating shock front of the oil-flow and schlieren
+  observations (§4.5.3, Fig. 8); mean $C_p$ differs from the experiment by
+  less than 0.06 (suction side) and 0.08 (pressure side), and mean and RMS
+  velocities agree with LDV except where boundary-layer fluctuations are
+  not resolved (§4.5.3–4.5.4, Figs. 9–11);
+- the buffet frequency is 50–60 Hz against 69 Hz measured ($St\approx0.06$),
+  with further spectral bumps at 1000–2000 Hz and 5000–6000 Hz associated,
+  after Szubert et al., with von Kármán shedding and Kelvin–Helmholtz
+  instability (§4.5.6, Figs. 14–15);
+- results are sensitive to the tunnel back pressure (a 1% drop increases
+  the oscillation amplitude), the trip location ($x/c=0.07$) and the $f_k$
+  clip (§4.3, §4.5.2, App. C);
+- per time step PANS costs about 3% more than URANS on the same grid and
+  processors (2.00 s against 1.95 s per inner iteration), mostly in the
+  residual Jacobian (+7%), with more linear-solver iterations (4.59 against
+  3.86) (§4.6, Table 3).
+
+The authors argue that PANS improves results on RANS-like grids as long as
+$f_k$ and $f_\varepsilon$ stay reasonably high, whereas DES-family methods
+switching to LES mode reintroduce LES grid and time-step requirements (§1;
+see [detached-eddy simulation](/methods/detached-eddy-simulation.md)), and
+conclude that "no definitive conclusions can be drawn in the absence of the
+correct setup" (§5).
 
 ## Variable-density PANS with the BHR closure
 
@@ -258,6 +352,18 @@ second-order numerics among the successful hybrid results on that case
   $(\nu+\sigma_\omega\nu_tf_\omega/f_k)\,\partial_j\ln\omega_u\,\partial_j\ln\omega_u$ that
   the change of variable produces from the diffusion; the form implemented
   in PyFR cannot be inferred from the text.
+- On constant against variable $f_k$ the sources take different positions
+  without testing the same question: Dzanic et al. (2022) keep $f_k$
+  constant "to avoid commutation-error terms" (§2.1), Petrocchi & Barakos
+  (2024) call constant $f_k$ unreasonable for confined, highly turbulent
+  regions on anisotropic grids and a dynamic $f_k$ "required" for buffet
+  (§2.1), and do not discuss the commutation error of a varying $f_k$. They
+  attribute their tanh estimate to Elmiligui et al., whom their Table B.5
+  lists under the static approach; here it is evaluated dynamically.
+- Petrocchi & Barakos report the PANS cost increase as "+3.1%" from printed
+  times of 2.00 s and 1.95 s, which give 2.6% *(compiler check, not in the
+  sources)*; the text says "about 3%". Their Table 2 repeats run labels
+  ("P3M25b/c" for runs on the fine grid, "P3C35d" twice).
 - The cylinder reference data disagree with each other: at $N=1$, $f_k=0.1$
   matches the LES of Parnaudeau et al. and $f_k=0.3$ the new DNS, so the
   "optimal" $f_k$ depends on which reference is preferred.
@@ -295,3 +401,4 @@ second-order numerics among the successful hybrid results on that case
 - [Cai et al. (2022)](/sources/cai-2022.md) — §I (HAL v1).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §1.
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §6 (HAL author manuscript).
+- [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — §1, §2–§2.2 Eqs. 1–8, §3, §4.3–4.6 Tables 1–3 Figs. 4–15, §5, App. B Table B.5, App. C.2 Fig. C.20.

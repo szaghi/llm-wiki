@@ -6,6 +6,125 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 5 — 2023–2025 papers: autonomous and recalibrated SGS models, Bayesian and ensemble calibration, RL wall models, RSM and LKE transition, immersed-boundary and LBM wall treatments, flux reconstruction, tabulated chemistry (2026-10-26)
+
+Sources (20): vadrot-2023, wang-2023-c, bottler-2023, steinhausen-2023,
+ruan-2023, duan-2024, wang-2024, bouhafid-2024, liu-2024, petrocchi-2024,
+prietosaavedra-2024, wang-2024-b, pacciani-2025, agrawal-2024,
+constant-2024, mozaffari-2024, vangastelen-2024, chen-2024,
+domaradzki-2024, kim-2024. 100 of 134 ingested, 115 concept pages plus the
+registry, 4987 bibliography entries. Deep lint A1–A7 over the chunk-5
+content done.
+
+### Decisions for the human
+
+1. **New contradiction** (below): ingest Cai & Sagaut (2021), close by
+   fiat, or keep open.
+2. **Bibliography calls left by the resolver:** `ge-2015` carries the DOI
+   of Ge's dissertation (printed by an earlier source) while pacciani-2025
+   cites the FTC 93:37 article (DOI 10.1007/s10494-014-9533-9): replace or
+   split? `jameson-1988` records pages 3:377–401, which Crossref assigns to
+   the 1989 Lecture Notes chapter of the same title (the 1988 paper is
+   3:233–260): note added, pages unchanged.
+3. **Escape-sequence damage in committed content.** The chunk-4 commit
+   carried one bell character (a mangled `\approx`) in
+   `benchmarks/periodic-hill.md`; repaired here. Outside this bundle,
+   `fusion-mhd-simulation/wiki/definitions/tearing-mode.md` line 247 has a
+   tab where `\to` belongs (`$3/1\to2/1$`); not touched (other bundle) —
+   say whether to fix it in a separate commit.
+4. **Versions read.** Nine of the 20 files are preprints or manuscripts
+   (seven arXiv, two HAL).
+5. **Candidate pages that now qualify:** turbulent Prandtl number (Chen et
+   al. 2024, Huang et al. 2022, Helm & Martín 2022); modal and entropy
+   filters for DG (Wang 2024, Dzanic & Witherden cited); S809 airfoil
+   (Menter et al. 2022, Pacciani et al. 2025); Kelvin–Helmholtz instability
+   (Ruan et al. 2023, Kou et al. 2023); plus the earlier list (Hall MHD,
+   interior-penalty DG, linear forcing, anisotropy-invariant map, optimal
+   eddy viscosity).
+6. **Bundle fit:** bottler-2023 (laminar premixed hydrogen flames, no
+   turbulence) is the weakest fit of the archive so far; it is ingested
+   with a minimal footprint (its Source page and the tabulated-chemistry
+   page).
+
+### Contradictions
+
+- **Constants of the Cai & Sagaut (2021) explicit inverse wall law.**
+  Cai et al. (2022) print the blend scale 180.8, exponent 0.789 and
+  $E=11.27$; Mozaffari et al. (2024) print 86.58, 0.7894 and $E\approx7.9$
+  for the same form attributed to the same work; neither calls its set a
+  recalibration. *Open* on [law of the wall](wiki/definitions/law-of-the-wall.md).
+
+Kept as attributed qualifications after checking the PDFs: the T3
+Schubauer–Klebanoff inlet turbulence intensity (0.03% in Menter et al.
+2022, 0.3% in Pacciani et al. 2025, each an inlet setting tuned to the
+measured decay); model-form error called "aleatoric" (Agrawal &
+Koutsourelakis) and "epistemic" (Duraisamy et al. 2019) under different
+definitions; the Parnaudeau et al. reference data called experiment and
+LES (one experimental and numerical study); Domaradzki against Vela-Martín
+on negative eddy viscosity; Wang et al. (2024) against Goc et al. on
+numerical dissipation; Duan & Wang against Saini et al. on the
+Taylor–Green dissipation shares; Vadrot et al. (2023a) against Bae &
+Koumoutsakos on the reward bonus and the log-layer mismatch; Cai et al.
+against Mozaffari et al. on the Ahmed slant.
+
+### Printed slips (recorded on the Source pages)
+
+- vadrot-2023: Eq. 12 against Eq. 2 (compiler check); Eq. 6 index.
+  wang-2023-c: integration limits of Eq. 24; duraisamy-2019 page printed
+  537.
+- steinhausen-2023: $\delta_L$ definition; "vertical" for vortical.
+  ruan-2023: $E_k$/$E_{tur}$; Eqs. 7–8 without ½ and $1/(8\pi)$.
+- duan-2024: $Re_\tau$ definition, P2/P3 legend, model constants not
+  printed. wang-2024: undefined ξ and γ after Eq. 11; Eq. 2 indices; swapped
+  diffusion labels.
+- bouhafid-2024: Eq. 4.3 without the square; abstract against §4.3.1 on
+  the vortex lifespan; $t_b$ (compiler check).
+- liu-2024: Table 1 row assignment; dissipation multiplied by max(γ, 0.1).
+  petrocchi-2024: duplicated run IDs; Eq. 8 and Table 3 (compiler checks).
+- prietosaavedra-2024: Table 5 caption; flow-through counts; Appendix A
+  units (compiler checks). wang-2024-b: Table 2a, "[-5.5:4]", Eq. 7, the
+  TGV Mach number (compiler check), entropy filter credited to the wrong
+  reference.
+- pacciani-2025: $f_{\mu,\ell}$ exponent without the minus sign (compiler
+  check); figure references. agrawal-2024: Reynolds-stress sign, $T^{(7)}$
+  antisymmetric as printed (compiler check), Table 2 viscosities.
+- constant-2024: "$y^+=0$" for the first-cell height; normal/tangential
+  swap; Table 3 and 9 errors. mozaffari-2024: production index in Eqs.
+  16–17; "Exp." column from a DES paper.
+- vangastelen-2024: duplicate [29]/[32]; [29] cited as PINN work;
+  "machine precision" against "up to a time discretization error".
+  chen-2024: Eq. 3.14 step; $y/\delta_{99}$ labels. domaradzki-2024: Table 1
+  and 2 $\lambda$; Table 2 caption units. kim-2024: grid sizes in App. D;
+  "LES390ccc".
+
+### Bibliography
+
+4987 entries (+746); 198 aliases, 67 verified silences, 2 printed
+duplicates folded (agrawal-2024 [53]/[64]; vangastelen-2024 [29]/[32]),
+`FLAGS: 0`, `--dupes` clean. Re-keyed away from Source slugs: `li-2022-g`,
+`cao-2022-b`, `liu-2022-c`/`-d`/`-e`, `wang-2023-e`/`-f`,
+`dzanic-2022-b`, `kang-2023-b`, `petrocchi-2022` (conference paper with the
+same title). Preprints distinct: `vadrot-2022`, `kurz-2022-d`,
+`prakash-2022-b`. Surname normalizations: `rai-1991`, `martin-2000`,
+`vanalbada-1982`, `dileoni-2021`. DOIs corrected from Crossref:
+`spalart-2007`, `cai-2021-b`, `ahmed-1984`.
+
+### Bundle fit (D17 candidates, no copy made)
+
+- bottler-2023, steinhausen-2023 (combustion chemistry), ruan-2023 (solar
+  flare MHD: `astrophysical-simulation-codes`), bouhafid-2024 (aircraft
+  wake vortices): peripheral to closure modelling.
+- wang-2024, wang-2024-b, duan-2024 (high-order numerics): `weno-teno` and
+  `high-order-capturing-schemes` share their subjects.
+
+### Candidate pages (kept inline until a second source)
+
+OAT15A transonic buffet; PVD compressor cascade (Liu et al. 2024, Li &
+Liu 2022 — qualifies); continuous eddy simulation; TKE budget; Lethe;
+energy-conserving neural closure; fusion SGS network; stochastic
+variational inference; states–action map of RL wall models; aircraft
+wake vortex; flame–wall interaction.
+
 ## Chunk 4 — 2023–2024 papers: learned SGS models, symbolic regression, anisotropic SGS stress, hybrid RANS/LES of cars and turbomachinery, stabilized high-order methods, lattice Boltzmann, Hall MHD (2026-10-26)
 
 Sources (20): delassaux-2023, zhao-2023, zhao-2023-b, moratillavega-2024,

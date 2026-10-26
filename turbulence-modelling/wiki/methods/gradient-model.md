@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Gradient (Clark) model and the clipping of structural SGS models"
-description: "Clark's gradient model approximates the subgrid stress by a truncated Taylor expansion of the filter; it correlates well with the exact stress but under-dissipates and backscatters, so it is clipped or mixed. Optimal clipping is the Frobenius-nearest backscatter-free stress, a parameter-free mixed model."
+description: "Clark's gradient model approximates the subgrid stress by a truncated Taylor expansion of the filter; it correlates well with the exact stress but under-dissipates and backscatters, so it is clipped or mixed. Optimal clipping is the Frobenius-nearest backscatter-free stress, a parameter-free mixed model; an ensemble Kalman filter calibrates the mixed coefficient a posteriori."
 status: established
 aliases: [Clark model, gradient model, nonlinear gradient model, tensor-diffusivity model, optimal clipping, standard clipping, GM-OC, GM-SC]
 tags: [les, sgs-model, filtering, eddy-viscosity]
-timestamp: 2026-10-26T07:41:00Z
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Gradient (Clark) model and the clipping of structural SGS models
@@ -222,6 +222,87 @@ for wall-resolved LES of wall-bounded flow it "may yield significantly
 improved results", and that where clipping is needed for stability optimal
 clipping "should be selected over standard clipping" (§IV).
 
+## Mixed model calibrated a posteriori by an ensemble Kalman filter
+
+[Wang et al. (2023c)](/sources/wang-2023-c.md) (§II.A, Eq. 14) keep the
+gradient model, which they call the velocity gradient model (VGM), at its
+Taylor-expansion coefficient and add a Smagorinsky-type dissipative part
+with one constant coefficient (the **EnKF-MM**):
+
+$$\tau_{ij}=\frac{\Delta^2}{12}\,\partial_k\bar u_i\,\partial_k\bar u_j-C_{\mathrm f}\,\Delta^2\lvert\bar S\rvert\,\bar S_{ij},$$
+
+for the full stress, with $C_{\mathrm f}$ page-local (the paper's $C_D$, a
+symbol the registry keeps for the drag coefficient; the same symbol as on
+the [ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md)
+page); the authors state that $C_{\mathrm f}$ corresponds to $2C_s^2$ (§III), so this is the mixed model of Prakash et al.'s Eq. (7)
+above with $C_G^2=C_{\mathrm f}/2$ *(compiler check, not in the sources)*. Keeping
+the structural coefficient at $1/12$ is a design choice, justified by the
+authors' earlier adjoint calibration, in which the structural coefficient
+stayed close to its original value even when optimized (§II.A, citing
+Yuan et al.). $C_{\mathrm f}$ alone is calibrated *a posteriori*: an ensemble of
+LES with different $C_{\mathrm f}$, started from the same filtered-DNS field, is
+compared with filtered DNS through the kinetic-energy spectra at several
+instants, and an ensemble Kalman analysis updates the coefficients,
+iterated over restarts (§II.B; see
+[ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md)).
+The spectrum, not the pointwise field, is the target because turbulence is
+chaotic.
+
+- **Calibrated values.** $C_{\mathrm f}\approx0.00738$ in forced
+  [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)
+  at $Re_\lambda\approx160$ (DNS $512^3$, LES $64^3$, Gaussian filter
+  $\Delta=16h_{\mathrm{DNS}}$ with $h_{\mathrm{DNS}}$ the DNS grid spacing,
+  page-local; filter-to-grid ratio 2) for ensembles of 10
+  and 20; $C_{\mathrm f}\approx0.01$ in a temporally evolving mixing layer (DNS
+  $256\times512\times512$, LES $64\times128\times128$,
+  $\Delta=8h_{\mathrm{DNS}}$), where a shifting of the ensemble towards its
+  best member is needed for convergence (§III, §IV, Eq. 25, Tables II, IV).
+  Both are far below the value $C_{\mathrm f}=2C_s^2\approx0.05$ of the classical
+  $C_s=0.16$, which the authors read as the dominance of the structural
+  part ("no more than 20 percent of its original value", App. C). In
+  registry terms $C_s=\sqrt{C_{\mathrm f}/2}\approx0.061$ and 0.071 *(compiler check,
+  not in the sources)*.
+- **Pure gradient model a posteriori.** In forced isotropic turbulence the
+  VGM strongly under-estimates large-scale and over-estimates small-scale
+  energy (insufficient dissipation), and its PDF of the subgrid flux
+  $\Pi=-\tau_{ij}\bar S_{ij}$ is wider than the filtered DNS, over-estimating
+  backscatter, which the authors attribute mostly to its poor prediction
+  of the filtered strain (§III, Figs. 3, 8). At $Re_\lambda=259$ with
+  $\Delta=16h_{\mathrm{DNS}}$ it diverges (App. B). Yet it gives the best
+  PDF of the subgrid stress of all models: "accurately reconstructing the
+  SGS stress may not guarantee the adequate prediction of other important
+  flow statistics" (§III, Figs. 3–4; see
+  [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+- **Against dynamic models.** The dynamic Smagorinsky and dynamic mixed
+  models over-dissipate the small scales in both flows; the EnKF-MM is
+  closest to filtered DNS in spectra, kinetic-energy evolution, PDFs of
+  strain, rotation and subgrid flux, structure functions up to eighth
+  order (degrading with order, the target being a second-order statistic)
+  and, in the mixing layer, momentum-thickness growth and Reynolds shear
+  stress (§III–IV, Figs. 3–17). Calibrated at $Re_\lambda=160$ it also beats
+  them at $Re_\lambda=259$ with $\Delta=16$ and $32h_{\mathrm{DNS}}$, in
+  decaying turbulence and with a top-hat filter without recalibration
+  (Apps. A–B); the authors state that flows of a different configuration
+  need recalibration (§II.B).
+- **The structural part matters.** With the gradient coefficient set to
+  zero and $C_{\mathrm f}$ recalibrated (EnKF-FM, $C_{\mathrm f}=0.01$), the spectrum is
+  reasonable but the PDFs of $\lvert\bar S\rvert$ and $\lvert\bar\Omega\rvert$
+  are tangibly worse, and its subgrid flux is the worst of all models
+  (App. C, Figs. 22–24).
+
+## Clipping a learned model
+
+[Kim et al. (2024)](/sources/kim-2024.md) (App. C) apply standard
+clipping, setting the subgrid stress to zero wherever backscatter occurs
+(after Zhou et al. and Park & Choi, as recalled), to their pointwise
+[neural-network SGS model](/methods/neural-network-sgs-model.md) of the
+[circular-cylinder wake](/benchmarks/circular-cylinder-wake.md): on two
+very coarse grids on which the unclipped network, the dynamic Smagorinsky
+model and the no-model LES all diverge, the clipped network runs; on the
+first of these grids the result resembles that of the next finer grid, on
+the coarsest it is "not good". Clipping is used only to stabilize these
+two grids.
+
 ## Related construction: the stabilized mixed model
 
 [Abe (2021)](/sources/abe-2021.md) (§II C, Eqs. 12–16) uses a
@@ -338,3 +419,5 @@ directional widths (*compiler check, not in the sources*; see that page).
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §I; §VII.A.
 - [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §IV B, Eqs. (19)–(20), Fig. 13.
 - [Kang et al. (2023)](/sources/kang-2023.md) — §3.2, Fig. 10; §3.3, Eq. (3.8), Table 6, Figs. 19, 21, 24; §3.5; App. C.
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — §II.A, Eqs. (13)–(14); §II.B; §III, Figs. 3–9, Table II; §IV, Eq. (25), Figs. 11–17, Table IV; Apps. A–C, Figs. 18–24.
+- [Kim et al. (2024)](/sources/kim-2024.md) — App. C.

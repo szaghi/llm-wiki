@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Vreman model"
-description: "Vreman's static eddy-viscosity model builds the subgrid viscosity from an invariant of the resolved velocity-gradient tensor so that it vanishes in many laminar flows; the sources print it in two index orders with constants from 0.08 to 0.17, and use it in aircraft, channel, lattice Boltzmann, DG and shock-interaction LES."
+description: "Vreman's static eddy-viscosity model builds the subgrid viscosity from an invariant of the resolved velocity-gradient tensor that vanishes in many laminar flows; the sources print it in two index orders with constants from 0.08 to 0.17, use it in aircraft, channel, lattice Boltzmann, DG and shock-interaction LES, and recommend it with a recalibrated filter width for high-order wall-modelled LES."
 status: established
 aliases: [Vreman eddy-viscosity model, Vreman (2004) model, static-coefficient Vreman model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-26T07:19:00Z
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Vreman model
@@ -52,6 +52,16 @@ for the velocity-gradient matrix $G$, which share their invariants, and
 $\alpha_{ij}\alpha_{ij}$ is the same *(compiler check, not in the
 sources)*. With direction-dependent $\Delta_m$ only the form of Kim et al.
 is defined.
+[Duan & Wang (2024)](/sources/duan-2024.md) (§2.4, Eq. 15) assume an
+isotropic filter width and take it out of $\beta_{ij}$:
+$\nu_t=(C_v\Delta)^2\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$ with
+$\beta_{ij}=\alpha_{mi}\alpha_{mj}$ in the index order of Kim et al.
+($\alpha_{ij}=\partial_i\bar u_j$), and relate the Vreman coefficient to the
+Smagorinsky one by $C_v\approx\sqrt{2.5}\,C_s$ ($C_v$ page-local). This is
+the form of Agrawal et al.: $B_\beta$ is quadratic in $\beta$, so a
+$\Delta^2$ inside $\beta$ comes out of the square root as $\Delta^2$, and
+$C_v^2=2.5C_s^2$ *(compiler check, not in the sources)*. Duan & Wang do
+not print the value of $C_v$ used in their runs.
 
 | $C_s$ in $\nu_t=2.5C_s^2\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$ | Context | Source |
 |---|---|---|
@@ -168,6 +178,49 @@ $N$ (the paper's $P$), with $N=5$.
   dissipation before the peak and significant dissipation at mid
   wavenumbers. No constant or filter width is printed.
 
+## Filter width for high-order wall-modelled LES
+
+Duan & Wang (2024) keep the model coefficients and recalibrate the filter
+width instead, in the flux-reconstruction (FR/CPR) solver hpMusic with an
+element-averaged eddy viscosity and zero interface flux of the subgrid
+stress (§3, Eqs. 26–27; see
+[flux reconstruction](/methods/flux-reconstruction.md)). For an element of
+volume $V$ and polynomial degree $N$ (the paper's $P$) they test three
+widths (Eqs. 28–30):
+
+$$\text{d1: }\Delta=V^{1/3},\qquad\text{d2: }\Delta=\frac{V^{1/3}}{\sqrt{N+1}},\qquad\text{d3: }\Delta=\frac{V^{1/3}}{N+1}.$$
+
+d1 is the finite-volume convention, d3 the per-degree-of-freedom choice
+the paper calls natural (it is also the length scale
+$\mathrm{Vol}^{1/3}/(N+1)$ of [Blind et al.](/sources/blind-2023.md)
+above), and d2 their new intermediate value,
+introduced because subgrid models were calibrated on second-order schemes
+and high-order schemes carry less numerical dissipation, so d3 is expected
+to under-dissipate (§3).
+
+- In the wall-modelled [channel](/benchmarks/turbulent-channel-flow.md) at
+  $Re_\tau=5200$ ($60\times16\times40$ elements, $\Delta x^+=1088$,
+  $\Delta y^+=650$, $\Delta z^+=544$ element sizes, $N=2$ to 5, equilibrium
+  wall model with the exchange point at the first element interface), the
+  Vreman results are consistent across degrees: d1 always too dissipative,
+  d3 too little, d2 best in the mean velocity (§5.4, Figs. 11–14). The same
+  holds at $Re_\tau=544$ on the same mesh at $N=3$ (Fig. 15). No-model
+  implicit LES was not stable on this mesh (§5.4).
+- In the dissipation ranking of the three models tested, Vreman sits
+  between [WALE](/methods/wale-model.md) (least dissipative) and
+  [Smagorinsky](/methods/smagorinsky-model.md) (§5.1–5.2, §6); in decaying
+  isotropic turbulence WALE and Vreman give similar spectra, Vreman
+  slightly more damped.
+- In the wall-resolved channel at $Re_\tau=180$ ($N=3$), Vreman and WALE
+  match DNS in the viscous sublayer $y^+<10$; with d1 both are poor in the
+  buffer and log regions, with d2 and d3 they agree well (§5.3, Figs.
+  9–10).
+
+The authors recommend Vreman with d2 for high-order wall-modelled LES
+(§6); the recommendation rests on visual comparison of profiles with DNS,
+no error norm being tabulated. It was obtained with their element-averaged
+viscosity and zero interface subgrid flux (§3).
+
 ## Fluctuating viscosity and the mean stress
 
 [Haering et al. (2022)](/sources/haering-2022.md) (§V D) list Vreman with
@@ -202,3 +255,4 @@ computed and subtracted from the mean-stress model.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1.
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §3.2; §4.2–4.5; §6.
 - [Kou et al. (2023)](/sources/kou-2023.md) — §4.2, Fig. 12.
+- [Duan & Wang (2024)](/sources/duan-2024.md) — §2.4, Eq. (15); §3, Eqs. (26)–(30); §5.1–5.4, Figs. 5–15; §6.

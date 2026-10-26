@@ -5,7 +5,7 @@ description: "A closed region of reversed flow formed when a laminar boundary la
 status: established
 aliases: [LSB, separation-induced transition, laminar separation, transitional separation bubble]
 tags: [transition, separated-flow, boundary-layer, rans, implicit-les, turbomachinery]
-timestamp: 2026-10-26T07:38:00Z
+timestamp: 2026-10-26T10:25:00Z
 ---
 
 # Laminar separation bubble
@@ -27,7 +27,7 @@ al., as they recall, "LSBs are amplifiers of other instabilities"
 ([Slaughter et al. (2023)](/sources/slaughter-2023.md), §4.1, §4.3;
 Research Square preprint v1).
 
-Bubbles of this kind govern three of the bundle's cases: airfoils at chord
+Bubbles of this kind govern several of the bundle's cases, among them airfoils at chord
 Reynolds numbers $Re_c=2\times10^4$–$2\times10^5$ (Carreño Ruiz &
 D'Ambrosio 2022), the suction side of a low-pressure-turbine blade at an
 exit Reynolds number of $9\times10^4$ (Morsbach et al. 2024), and the
@@ -90,7 +90,7 @@ average is a closed bubble (Carreño Ruiz & D'Ambrosio 2022, §5, Table 11).
 ## Prediction with RANS transition models
 
 Correlation-based transition models size the bubble through the production
-of $k$ in the separated shear layer. Both RANS sources find this the
+of $k$ in the separated shear layer. The RANS sources find this the
 weak point; details of the models are on the
 [transition-model page](/methods/local-correlation-based-transition-model.md).
 
@@ -124,13 +124,54 @@ weak point; details of the models are on the
   transition is not predicted and that tuned transition-model versions or
   laminar-kinetic-energy models may be needed (§5).
 
-Both RANS sources find the bubble extent, and with it the
+- **Compressor cascades.** Liu et al. (2024) find that a
+  [Reynolds-stress model](/methods/reynolds-stress-model.md) coupled to
+  Menter's one-equation intermittency model (SSG/LRR-$\omega$-$\gamma$)
+  resolves the mid-chord bubbles on the suction side of the PVD compressor
+  cascade ($Re\approx2.3\times10^5$) and of the NACA65 K48 cascade, with the
+  $C_p$ plateaus near 45% ($-7^\circ$ incidence) and 35% ($0^\circ$) of the
+  axial chord, which fully turbulent SST and SSG/LRR-$\omega$ miss; the
+  separation-induced transition agrees with oil flow only when the
+  $\omega$-production is $\gamma$-blended with a Kato–Launder term, the
+  original production giving upstream bypass transition instead
+  ([Liu et al. (2024)](/sources/liu-2024.md), Figs. 1, 8–9, 12, 15). They
+  explain why the bubble matters downstream: in the transitional model the
+  laminar layer separates, the separation raises the strain and triggers
+  intermittency production, and the turbulent layer after reattachment is
+  fuller than the fully turbulent one and resists the corner separation
+  further downstream (Discussion, Fig. 18).
+- **Turbine cascades and an airfoil with a laminar-kinetic-energy model.**
+  Pacciani et al. (2025) attribute the overlong bubbles of many closures to
+  the delayed response of the turbulence model, and target them with a
+  separation switch that adds a production of laminar fluctuation energy and
+  boosts its transfer to turbulence (see
+  [laminar-kinetic-energy transition models](/methods/laminar-kinetic-energy-transition-model.md);
+  [Pacciani et al. (2025)](/sources/pacciani-2025.md), §4.5). On the
+  aft-loaded T106C cascade at $Tu=0.8\%$ their model reproduces the
+  measured bursting of the bubble into an open separation at
+  $Re_{2,is}=0.8\times10^5$, with transition too early, a smaller separated
+  region and an underestimated loss, and closed bubbles at $1.2$ and
+  $1.6\times10^5$ with the isentropic Mach number in the bubble slightly
+  underestimated; on the front-loaded T108 the short bubbles, wake loss
+  and lapse rate are matched, but the post-reattachment wall shear is
+  lower than measured, attributed to the turbulence model (§6.2, Figs.
+  18–23). The authors call the T106C result satisfactory for two-dimensional
+  RANS, given the three-dimensional secondary flows that an LES of the case
+  shows (§6.2). On the S809 airfoil at $Re=2\times10^6$, $Tu=0.2\%$,
+  transition is separation-induced on both sides up to about $5.5^\circ$
+  (§6.3).
+
+Carreño Ruiz & D'Ambrosio and Morsbach et al. both find the bubble extent, and with it the
 post-reattachment recovery, mispredicted. Carreño Ruiz & D'Ambrosio
 tune the coefficient $s_1$ (page-local) of the separation-induced correction and propose a second
 parameter for it, which they do not implement (§4, §7); Morsbach et al. suggest tuned transition-model
 versions or laminar-kinetic-energy models (§5). The cases differ (airfoils
 against a turbine cascade), and no source of the bundle tests both remedies
-on one case.
+on one case. Pacciani et al. (2025) implement the second remedy and report
+separated-flow predictions as accurate as those of their earlier LKE
+model built for that purpose, with transition lengths that remain too
+short (§7); they do not compute the T161 cascade or the very-low-Reynolds
+airfoils.
 
 ## Resolution in scale-resolving simulation
 
@@ -149,7 +190,16 @@ resolution by the first quadrature point inside the high-order elements
 ($y^+$ slightly above one only in two small mainplane regions) and by the
 spanwise Fourier modal energy, with no grid-convergence study (§3.6, Figs.
 4–5; see [Nektar++](/software/nektar-plus-plus.md) and
-[implicit LES](/definitions/implicit-les.md)).
+[implicit LES](/definitions/implicit-les.md)). Wang (2024) computes the
+T106C cascade at an exit Reynolds number of $8\times10^4$ with no
+free-stream turbulence, where the suction-side layer separates laminar and
+transitions in the reattachment zone, by flux-reconstruction implicit LES
+($N=3$, 7.87 million degrees of freedom per equation, mean $y^+\approx0.5$,
+$x^+\approx20$, $z^+\approx6$), and obtains an isentropic Mach number in
+"excellent agreement" with the experiment for two Riemann solvers
+([Wang (2024)](/sources/wang-2024-b.md), §4.2, Table 4, Figs. 7–8; arXiv v2;
+see [flux reconstruction](/methods/flux-reconstruction.md) and
+[turbine cascades](/benchmarks/turbine-cascade.md)).
 
 ## Qualifications
 
@@ -172,3 +222,6 @@ spanwise Fourier modal energy, with no grid-convergence study (§3.6, Figs.
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §3.1, §3.3, §4.1 Figs. 4, 7–9, §4.2 Figs. 12, 15, §5.
 - [Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md) — §2 Eqs. 5–6, §3.5 Tables 5, 7, §4, §5 Table 11, §6.1 Fig. 17, §7.
 - [Menter et al. (2022)](/sources/menter-2022.md) — §1, §2 Eqs. 13–18, Figs. 4–5, 10, 16–19, 24.
+- [Liu et al. (2024)](/sources/liu-2024.md) — Figs. 1, 8–9, 12, 15, 18, Discussion.
+- [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §4.5, §6.2 Figs. 18–23, §6.3, §7.
+- [Wang (2024)](/sources/wang-2024-b.md) — §4.2, Table 4, Figs. 7–8 (arXiv v2).

@@ -5,7 +5,7 @@ description: "How the grid-point and time-step counts of DNS, wall-resolved and 
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-26T07:39:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -156,6 +156,33 @@ not printed) except two small regions where $y^+$ is "slightly above one".
 Morsbach et al. (2024, §3.1, Fig. 2) normalize the element size by the
 polynomial degree $N$ and keep the ratio of mean solution-point spacing to the
 estimated Kolmogorov length below 6 in the free stream.
+[Wang (2024)](/sources/wang-2024-b.md) (§4.2, Eq. 26, after Jia et al. as
+cited) make the per-degree-of-freedom convention explicit for DG and flux
+reconstruction: the first-cell $y^+$ computed from the cell height $d$ is
+divided by $N+1$, $y^+=\rho u_\tau d/\big(\mu(N+1)\big)$, with $u_\tau$ of the
+time-averaged flow. [Duan & Wang (2024)](/sources/duan-2024.md) print "equivalent
+resolutions" $(\Delta x^+,\Delta y^+_{\min},\Delta z^+)=(5.7,0.68,5.7)$ for
+their wall-resolved channel ($Re_\tau=180$, $N=3$, $100\times20\times33$
+elements), which are the element sizes divided by $N+1=4$, but for their
+wall-modelled channels the undivided element sizes (§5.3–5.4) *(compiler
+check, not in the sources)*; Blind et al.
+(2023) divide by $N+1=6$ (below). A spacing in wall units for an element
+method is therefore comparable across sources only after checking which
+convention is used.
+
+For stabilized finite elements of lowest order, [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md)
+(§3.2, App. B) place implicit-LES resolution between DNS and wall-resolved
+LES: they quote, for the [periodic hill](/benchmarks/periodic-hill.md) DNS of
+Krank et al. (as cited), $\Delta y^+_{\max}<0.86$ and
+$\Delta x^+_{\max}=\Delta z^+_{\max}=7.2$, and for wall-resolved LES
+$\Delta x^+\approx50$–100, $\Delta y^+\approx1$, $\Delta z^+\approx15$–30,
+and call a mesh in between "exactly the definition of implicit LES when it
+comes to mesh resolution". Apart from $y^+$ criteria they found no a
+posteriori mesh-quality criterion in the literature on stabilized methods
+(§3.2). Their averages are listed in the next section; on their finer
+meshes the averaged wall-parallel spacings ($\Delta x^+\approx1.4$–2.4) lie
+below the DNS maxima they quote, a comparison of averages with maxima at
+$Q_1$ against high order *(compiler check, not in the sources)*.
 
 ## What resolution sufficed in practice
 
@@ -247,6 +274,62 @@ estimated Kolmogorov length below 6 in the free stream.
   they recall that $y^+<1$ and "at least 15 or 20 prism layers" are needed.
   The constraint is the reverse of WMLES sizing (see
   [boundary-layer-conforming grid](/methods/boundary-layer-conforming-grid.md)).
+- **Implicit LES with stabilized $Q_1$ finite elements.** Prieto Saavedra
+  et al. (2024, §3.2, §4.2–4.4, Tables 4–5, B.6) run the
+  [periodic hill](/benchmarks/periodic-hill.md) at $Re_h=5600$ with SUPG/PSPG
+  stabilization and no SGS model ([implicit LES](/definitions/implicit-les.md))
+  on 250 K to 4 M hexahedra (1.1 M to 16 M DoFs), against 12.4 M cells for
+  the LESOCC reference LES. Averaged wall spacings are
+  $(\Delta x^+,\Delta y^+,\Delta z^+)=(2.96,1.66,4.20)$, $(2.40,1.16,2.26)$
+  and $(1.39,0.61,1.51)$ on 250 K, 1 M and 4 M cells ($\Delta y^+_{\max}$
+  4.30, 3.15, 1.73). The 1 M and 4 M meshes give reattachment points close
+  enough that the authors call the result mesh independent (§5). The time
+  step is not independent of the mesh: on the 250 K mesh refining $\Delta t$
+  from 0.1 to 0.0125 moves the reattachment point from 4.73 to 5.37 hill
+  heights (Rapp's experiment gives 4.83), which the authors read as a loss of
+  accuracy caused by the stabilization parameter, and hence the added
+  dissipation, shrinking with $\Delta t$; on the 4 M mesh all
+  but the largest step agree (§4.2, Table 5). At $Re_h=10\,600$ and 37 000
+  they use 120 K–500 K cells, with Reynolds stresses over-predicted (§4.4).
+- **Turbine cascades at high order.** Wang (2024, §4.2–4.3, Tables 3, 6)
+  runs implicit DG LES with shock-capturing filters: the T106C low-pressure
+  cascade (exit $Re=80\,000$) at $N=3$ on 122 904 hexahedra (7.87 M DOFs per
+  equation) with $(y^+,x^+,z^+)\approx(0.5,20,6)$, and the LS89 high-pressure
+  vane (exit $Re=1.13\times10^6$) on 6.6 M to 31.3 M DOFs with
+  $y^+\approx0.75$, $x^+\approx30$ and $z^+\approx90$, 60, 45 for 10, 15 and
+  20 spanwise layers. The isentropic Mach number on the LS89 vane is
+  insensitive to resolution (an inviscid 2D run already predicts it, as
+  cited), so it cannot validate the resolution; the heat-transfer
+  coefficient improves from $N=2$ to $N=3$ and with spanwise refinement, and
+  15 layers ($z^+\approx60$) are judged cost-effective (§4.3.1, Figs. 13–14).
+  See [turbine cascade](/benchmarks/turbine-cascade.md).
+- **High-order wall-modelled channels.** Duan & Wang (2024, §5.4) run
+  flux-reconstruction WMLES of channel flow on $60\times16\times40$ elements
+  of degree $N=2$–5 at $Re_\tau=5200$, element sizes
+  $(\Delta x^+,\Delta y^+,\Delta z^+)=(1088,650,544)$, and at $Re_\tau=544$
+  on the same mesh, $(114,68,57)$; with the
+  [Vreman model](/methods/vreman-model.md) and filter width
+  $V^{1/3}/\sqrt{N+1}$ the mean velocity is consistent with DNS at every $N$
+  (see [wall-modelled LES](/methods/wall-modelled-les.md)).
+- **One fixed grid across ten decades.** Vadrot et al. (2023a) run
+  half-channel WMLES on the same uniform $48^3$ grid at every $Re_\tau$ from
+  180 to $10^{10}$ and recover the log law with a learned wall model whenever
+  the matching height lies in the log layer, while neither near-wall nor
+  outer peak of the streamwise velocity variance is resolved (§III.A,
+  Figs. 6–7; [Vadrot et al. 2023a](/sources/vadrot-2023.md)).
+- **Hybrid RANS/LES of transonic buffet.** [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md)
+  (§4.5.3, Table 1, Fig. 8) run [PANS](/methods/partially-averaged-navier-stokes.md)
+  of the OAT15A airfoil in half of the wind tunnel on grids of 5.0 M, 10 M
+  and 16.7 M cells, all with $\Delta y^+<1$: the coarse grid resolves no
+  three-dimensional structure in the separated boundary layer, the medium
+  grid mainly spanwise trailing-edge shedding, and only the fine grid, with
+  half the time step, the stall cells of the experiment; buffet itself
+  appears on all three.
+- **Under-resolved no-slip walls in hybrid LBM.** Mozaffari et al. (2024,
+  §3.3) impose no slip on the Ahmed body at $y^+\approx100$–150 on the slant
+  (45.8 M nodes, finest cell 1.3 mm): the $35^\circ$ wake is reproduced but
+  at $25^\circ$ separation is late with no reattachment, which they
+  attribute to this resolution ([Mozaffari et al. 2024](/sources/mozaffari-2024.md)).
 - **Training grids of a learned wall model.** [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md)
   (§2.6) train their wall model on WMLES with isotropic grids $\Delta=\delta/n$,
   $n=5$ to 380 ($\delta$ the channel half-height, $n$ page-local), and below
@@ -313,6 +396,26 @@ report 25 852 CPU-hours per convective time unit for their fine turbine LES
 (5120 MPI ranks) and 5861 for the coarse one (hardware not stated).
 Lozano-Durán & Bae (2023, §2.6) report that their learned wall model makes
 WMLES 1.1–1.3 times as expensive as the algebraic equilibrium model.
+
+Prieto Saavedra et al. (2024, App. C, Table C.9; Intel Skylake, 40 cores per
+node) report the core-hours for 1000 s of periodic-hill flow at $Re_h=5600$
+(about 110 flow-throughs at 9 s each *(compiler check, not in the sources)*)
+for time steps 0.1, 0.05, 0.025 and 0.0125: 3647, 5180, 6933 and 9400 on
+250 K cells; 16 800, 24 667, 36 667 and 39 933 on 1 M; 116 667, 174 000,
+188 000 and 167 333 on 4 M. They conclude that implicit LES "can reduce the
+computational effort, in terms of mesh size and degrees of freedom", without
+an equal-accuracy comparison with an explicit LES (§5). Petrocchi & Barakos
+(2024, §4.6, Table 3) measure PANS at "+3.1%" wall time per inner
+iteration against URANS on the same grid and processors (2.00 s against
+1.95 s as printed, whose ratio is 2.6 % *(compiler check, not in the
+sources)*; "about 3%" in the text), the largest increase being in the
+residual Jacobian. [Constant et al. (2024)](/sources/constant-2024.md)
+(§6.3, Tables 8–9) run steady RANS of the NASA CRM high-lift configuration
+on an immersed-boundary Cartesian mesh of 2.4 billion cells, four times the
+550 M cells of the body-fitted reference, on $20\times28$ Broadwell cores,
+and report the mesh pre-processing at under seven hours from the surface
+mesh alone, against weeks for a comparable curvilinear grid (as they state
+it, without breakdown).
 
 ## Qualifications
 
@@ -407,3 +510,10 @@ WMLES 1.1–1.3 times as expensive as the algebraic equilibrium model.
 - [Slaughter et al. (2023)](/sources/slaughter-2023.md) — §3.6, Figs. 4–5 (Research Square preprint v1).
 - [Zhao et al. (2023a)](/sources/zhao-2023.md) — §5.2, Table 6; §5.2.3 (arXiv v1).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.6; §4.7.
+- [Wang (2024)](/sources/wang-2024-b.md) — §4.2, Eq. (26), Table 3; §4.3, Tables 5–6, Figs. 13–14 (arXiv v2).
+- [Duan & Wang (2024)](/sources/duan-2024.md) — §5.3–5.4.
+- [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §3.2, Table 4; §4.2–4.4, Table 5; §5; App. B, Table B.6; App. C, Table C.9.
+- [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — §III.A, Figs. 6–7 (arXiv v3).
+- [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — §4.5.3, Table 1, Fig. 8; §4.6, Table 3.
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §3.3 (HAL accepted manuscript).
+- [Constant et al. (2024)](/sources/constant-2024.md) — §6.3, Tables 8–9 (HAL author manuscript).

@@ -5,7 +5,7 @@ description: "Two-equation RANS eddy-viscosity models transporting the turbulent
 status: established
 aliases: [k-epsilon, standard k-ε, Launder–Sharma k-ε, realizable k-ε, RKE, Shih k-ε, enhanced wall treatment, EWT, two-layer k-ε]
 tags: [rans, eddy-viscosity, separated-flow, boundary-layer]
-timestamp: 2026-10-26T07:38:00Z
+timestamp: 2026-10-26T10:25:00Z
 ---
 
 # k-ε models
@@ -145,6 +145,34 @@ and on [symbolic-regression closures](/methods/symbolic-regression-closure.md).
 They report that a converged RANS with the learned correction costs
 "basically the same" as the baseline (§III A).
 
+**Low-Reynolds backward-facing step.** Agrawal & Koutsourelakis (2024) use
+the standard model (OpenFOAM simpleFoam, 35,709 degrees of freedom, $k$ and
+$\varepsilon$ "obtained by solving the respective standard transport
+equations") as the baseline of their probabilistic learned closure on a
+two-dimensional step of expansion ratio 2 at $Re=500$ on the step height
+and inlet bulk velocity
+([Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md), §3.2, §3.4,
+App. A; arXiv v2). Against a spanwise-periodic WALE LES, the baseline
+"underestimates the size of the first recirculation zone and almost
+completely misses the second one", gives a reattachment length of
+$5.61h$ against $9.10h$, and "severely under/over-estimates" the magnitude
+of the Reynolds stress and "misrepresents its spatial variability" (§3.4,
+Figs. 7–8, Table 5). The authors recall that their tensor-basis closure
+reduces to this model for $g^{(1)}=-0.09$ and all other coefficients zero
+(§2.2.1, Eq. 15); with the Boussinesq closure and $\nu_t=C_\mu k^2/\varepsilon$
+the coefficient of $T^{(1)}=\mathsf S$ in the registry's $b_{ij}$ is
+$-C_\mu=-0.09$ *(compiler check, not in the sources)*; see the
+[tensor-basis neural network](/methods/tensor-basis-neural-network.md),
+[model-form uncertainty](/definitions/model-form-uncertainty.md) and
+[backward-facing step](/benchmarks/backward-facing-step.md).
+
+**Lattice Boltzmann hosts.** Mozaffari et al. (2024) recall
+$k$-$\varepsilon$ implementations in lattice Boltzmann solvers, including
+a $k$-$\varepsilon$-based hybrid RANS/LES of Sajjadi et al., as the
+precedent of their SST implementation in a standard lattice Boltzmann
+code ([Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §1; HAL accepted
+manuscript; see [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md)).
+
 ## Qualifications
 
 - Delassaux et al. print neither the realizable model nor the Wolfshtein
@@ -164,3 +192,5 @@ They report that a converged RANS with the learned correction costs
 - [Haering et al. (2022)](/sources/haering-2022.md) — §II D Eqs. 1–2, §IV B, App. A.
 - [McConkey et al. (2022)](/sources/mcconkey-2022.md) — Eqs. 10–16 (arXiv v1).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §4.2.
+- [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — §2.2.1 Eq. 15, §3.2, §3.4 Figs. 7–8 Table 5, App. A (arXiv v2).
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §1 (HAL accepted manuscript).

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Spectral eddy viscosity"
-description: "Kraichnan's spectral eddy viscosity expresses the energy transfer across a cutoff as a wavenumber-dependent viscosity with a low-wavenumber plateau and a cusp near the cutoff; the sources use it to diagnose explicit and implicit LES and to build a modal plateau–cusp model for DG."
+description: "Kraichnan's spectral eddy viscosity expresses the energy transfer across a cutoff as a wavenumber-dependent viscosity with a low-wavenumber plateau and a cusp near the cutoff; the sources use it to diagnose explicit and implicit LES, to build a modal plateau–cusp model for DG, and to compute it from the LES field itself."
 status: established
 aliases: [Kraichnan spectral eddy viscosity, Chollet–Lesieur model, plateau–cusp eddy viscosity, EDQNM eddy viscosity]
 tags: [les, sgs-model, eddy-viscosity, implicit-les, dg]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Spectral eddy viscosity
@@ -49,6 +49,15 @@ where 0.267 is the plateau value for an infinite Kolmogorov spectrum and the
 exponential is an empirical fit of the cusp. Métais & Lesieur made the
 plateau depend on the spectral slope (spectral-dynamic model), as recalled
 by Vicente Cruz & Lamballais (§6.4).
+[Domaradzki (2024)](/sources/domaradzki-2024.md) (Eq. 2.25) recalls the
+same Chollet fit (TFM/EDQNM, infinite $k^{-5/3}$ range) with the Kolmogorov
+constant $C_K$ kept explicit,
+
+$$\nu_t(k\mid k_c)=\Big(\frac{E(k_c)}{k_c}\Big)^{1/2}C_K^{-3/2}\Big(0.441+15.2\,e^{-3.03\,k_c/k}\Big),$$
+
+with $C_K$ "taken usually as 1.4"; with that value the two printed forms
+coincide ($0.441\cdot1.4^{-3/2}=0.266$, $15.2/0.441=34.5$, *compiler check,
+not in the sources*). Domaradzki places the plateau at $k\lesssim0.4k_c$ (§1).
 
 ## A priori estimates against the model
 
@@ -83,6 +92,33 @@ From this missing plateau the authors conclude that the plateau "cannot
 be ignored, making somewhat inconsistent the concept of
 [implicit LES](/definitions/implicit-les.md) except when the mesh is close
 to DNS" (§6.4).
+
+## Eddy viscosity derived from the LES field
+
+Domaradzki (2024, §2.2) recalls the author's spectral "autonomous" LES, in
+which $\nu_t(k\mid k_c)$ is not modelled but computed at every step from
+the LES field: the subgrid transfer across a sharp test cutoff $k_c/2$
+gives, by Kraichnan's definition, a resolved eddy viscosity that is
+rescaled to $k_c$ in the similarity variable $k/k_c$, its plateau taken
+from the limit $k\to0$, and its total level set by the ultraviolet-flux
+relation: the transfer across $k_c$ is the resolved transfer across $ak_c$
+divided by $1-a^{4/3}$, a factor 1.66 for $a=1/2$ (Eqs. 2.26–2.27). The
+physical-space version is the
+[autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md).
+Domaradzki compares three spectral viscosities (§3.3, Fig. 10): the
+Chollet–Lesieur fit, an LES-derived cusp with a plateau at $p_{\mathrm{pl}}=0.37$ of the
+cusp value at $k_c$ ($p_{\mathrm{pl}}$ page-local), and a $k$-independent viscosity
+matched to the total transfer. The plateau–cusp LES-derived viscosity
+agrees best with the inertial range up to $k_c$; the physical-space model
+with constant $C_{\mathrm A}=0.8$ (page-local, the non-dimensional constant
+of its constant variant) practically overlaps the $k$-independent one.
+Domaradzki also recalls
+that Thiry, Winckelmans & Duponcheel (2019) found the spectral viscosity
+of the dynamic Smagorinsky model "essentially uniform over all
+wavenumbers", and Siegel & Domaradzki (1994) found Smagorinsky spectra
+approximately uniform in $k$ (§3.3), in line with the nearly constant
+a posteriori Smagorinsky viscosity of Vicente Cruz & Lamballais (§6.3,
+Fig. 11) above.
 
 ## Plateau–cusp model in modal DG space
 
@@ -121,3 +157,4 @@ leaves the pressure–dilatation oscillations unchanged (§5, §5.1, Figs. 8,
 
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §2.2, Eqs. (16)–(23), (27)–(29); §6.3, Fig. 11; §6.4, Eq. (55), Figs. 16–19.
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — §3.1; §5, Fig. 8; §5.1, Fig. 10; App. C, Eqs. (C.1)–(C.5).
+- [Domaradzki (2024)](/sources/domaradzki-2024.md) — §1; §2.2, Eqs. (2.24)–(2.27); §3.3, Fig. 10.

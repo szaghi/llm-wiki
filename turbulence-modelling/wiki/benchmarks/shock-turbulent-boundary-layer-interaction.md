@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock–turbulent boundary layer interaction"
-description: "A supersonic or hypersonic turbulent boundary layer meeting a shock from a compression ramp or an impinging oblique shock: separation length, low-frequency unsteadiness and wall heating test the subgrid model, the span of the domain and the DNS cost, here from Mach 2.9 to 9.1 by LES, DNS and wall-modelled LES, with a RANS compressibility-correction test at Mach 2.92."
+description: "A turbulent boundary layer meeting a shock from a compression ramp, an impinging oblique shock or a transonic airfoil: separation length, low-frequency unsteadiness and wall heating test subgrid models, domain span and DNS cost from Mach 2.9 to 9.1, with RANS tests at Mach 2.92 and the transonic buffet of the OAT15A airfoil for PANS."
 status: established
-aliases: [STBLI, SWBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction]
-tags: [benchmark, compressible, hypersonic, boundary-layer, separated-flow, les]
-timestamp: 2026-10-26T07:19:00Z
+aliases: [STBLI, SWBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet]
+tags: [benchmark, compressible, hypersonic, boundary-layer, separated-flow, les, pans]
+timestamp: 2026-10-26T10:12:00Z
 ---
 
 # Shock–turbulent boundary layer interaction
@@ -209,7 +209,44 @@ separation length or wall heat transfer, the quantities on which Helm &
 Martín judge RANS unreliable. On the transonic NACA 0012 at Mach 0.804 the
 same solver places the shock near $x/c\approx0.47$ in agreement with the
 ONERA data but ends it slightly downstream, which the authors attribute to
-an over-estimated shock–boundary-layer interaction (§5.3, Figs. 5-9–5-11).
+an over-estimated shock–boundary-layer interaction (§5.3, Figs. 5-9–5-11);
+see [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md).
+
+**Transonic buffet on a supercritical airfoil.** At transonic speed the
+shock on the suction side of an airfoil interacts with the turbulent
+boundary layer and, past a critical incidence, the shock-foot and
+trailing-edge separations couple into a self-sustained shock oscillation
+(buffet). [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) compute
+the ONERA OAT15A airfoil of the experiment of Jacquin et al. (chord 0.23 m,
+$M_\infty=0.73$, $Re_c=3\times10^6$; as recalled, unsteadiness from
+$\alpha=3.1^\circ$ and established buffet at $3.5^\circ$ with a single
+frequency of 69 Hz, $St=0.06$) in half of the S3Ch wind tunnel, with slip
+upper and lower walls shaped from a preliminary RANS, a viscous side wall
+and transition fixed at $x/c=0.07$ (§1, §4.1, Table 1):
+
+- [partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
+  on [$k$-$\omega$ SST](/methods/k-omega-sst-model.md), with $f_\varepsilon=1$
+  and $f_k$ recomputed every step from the ratio of grid size to modelled
+  length scale, clipped below at 0.6, predicts buffet at $\alpha=3.5^\circ$
+  on all three grids ($5.0$, $10$ and $16.7$ million cells), whereas SST
+  URANS converges to a steady state; in two dimensions SST URANS gives no
+  buffet even at $3.9^\circ$ (§4.3, §4.5.5, Table 2);
+- on the finest grid PANS reproduces the stall cells and undulating shock
+  front of the oil-flow and schlieren images, mean and RMS $C_p$ and the
+  LDV velocity profiles, with a buffet frequency of 50–60 Hz against 69 Hz
+  (§4.5.3–4.5.6, Figs. 8–15);
+- the results depend on the tunnel back pressure (an inlet–outlet ratio of
+  0.99 raises the oscillation amplitude), the trip location and the lower
+  clip of $f_k$ (0.4 puts the shock too far upstream) (§4.5.2, App. C);
+- PANS costs about 3% more than URANS per time step (§4.6, Table 3).
+
+The authors attribute the URANS failure to excessive corner separation at
+the side wall, which keeps the shock-foot and trailing-edge separations
+from merging, and to a too high post-shock eddy viscosity (§4.5.5). Their
+literature table (App. A, Table A.4) shows a wide scatter of URANS buffet
+predictions on this case across models and solvers. This is a transonic,
+two-dimensional-airfoil interaction in a confined tunnel, not the
+supersonic flat-wall configurations above.
 
 **Fluid–structure coupling.** In the impinging-shock case of
 [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md), §4.3, panel flexibility
@@ -251,6 +288,14 @@ dominant frequencies down.
   reattaching cavity shear layer, not the boundary layer meeting a ramp or
   an impinging shock of the other configurations; its incoming Reynolds
   number and grid resolution are not printed.
+- [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) compare only
+  with the experiment of Jacquin et al. and do not state the filter width
+  $\Delta$ that enters their dynamic $f_k$. Their Table 3 percentages of
+  the cost increase (for example "+3.1%" for total times of 2.00 against
+  1.95 s, which give +2.6%) cannot be reproduced from the printed times
+  *(compiler check, not in the sources)*; the text says "about 3%". Their
+  own SST URANS gives no buffet at $3.5^\circ$, while other SST URANS
+  results in their Table A.4 do; the scatter is recorded by the authors.
 
 # Citations
 
@@ -258,3 +303,4 @@ dominant frequencies down.
 - [Dang et al. (2022)](/sources/dang-2022.md) — §1; §5.1, Figs. 16–18; §6.1, Table 8, Figs. 22–25; §7.
 - [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) — §1–3; §4.3.
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §3.1–3.2, Eq. (3-10); §5.3, Figs. 5-9–5-12; §5.4, Figs. 5-13–5-15.
+- [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — §1; §2.1; §4.1–4.6, Tables 1–3, Figs. 4–17; App. A, Table A.4; App. C.

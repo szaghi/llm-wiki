@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Lattice Boltzmann methods for turbulent flow"
-description: "Lattice Boltzmann methods advance particle populations on a discrete velocity lattice by local collision and streaming, recovering weakly compressible Navier–Stokes; this page gives the scheme, regularized and central-moment collisions, the eddy viscosity in the relaxation time, immersed boundaries, an MHD extension with the Hall term, and cost and accuracy."
+description: "Lattice Boltzmann methods advance particle populations on a discrete velocity lattice by local collision and streaming, recovering weakly compressible Navier–Stokes; this page gives the scheme, regularized and central-moment collisions, LES and RANS/hybrid eddy viscosities in the relaxation time, immersed boundaries, a Hall-MHD extension, and cost and accuracy."
 status: established
 aliases: [LBM, lattice Boltzmann, LB, lattice Boltzmann equation, LBE, HRR collision, central-moment collision, lattice Boltzmann MHD, FLAME]
-tags: [lattice-boltzmann, les, dns, gpu, mhd, immersed-boundary]
-timestamp: 2026-10-26T07:42:00Z
+tags: [lattice-boltzmann, les, dns, hybrid-rans-les, gpu, mhd, immersed-boundary]
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Lattice Boltzmann methods for turbulent flow
@@ -21,8 +21,10 @@ Navier–Stokes equations for Mach numbers below about 0.3
 ([Cai et al. 2022](/sources/cai-2022.md), §II.A, Eqs. 1–6). Cai et al. list
 its advantages as an explicit collision–streaming algorithm with local
 collision and streaming that is a memory shift. In the bundle it carries
-wall-modelled LES of a car body and LES of turbulent fluid–structure
-interaction in the [ProLB](/software/prolb.md) solver, and model-free
+wall-modelled LES of a car body, LES of turbulent fluid–structure
+interaction, and $k$-$\omega$ SST RANS and SST-based hybrid RANS/LES
+([Mozaffari et al. 2024](/sources/mozaffari-2024.md)) in the
+[ProLB](/software/prolb.md) solver, and model-free
 Hall-MHD turbulence on GPUs in the FLAME code of
 [Foldes et al. (2023)](/sources/foldes-2023.md).
 
@@ -49,7 +51,12 @@ $1/\omega_{\mathrm{LB}}=\nu/(c_s^2\Delta t)+1/2$, and expand the equilibrium
 to **sixth order** in the velocity on D3Q27, following groups that report
 gains in accuracy and stability (App. A). The D3Q27 weights are $8/27$
 (centre), $2/27$ (faces), $1/54$ (edges) and $1/216$ (corners) (§3.1.1; see
-Qualifications).
+Qualifications). Mozaffari et al. (2024, §2.1, Eqs. 1–4, 7–8) write the
+same trapezoidal form with shifted populations
+$\bar f_q=f_q-\tfrac12\Delta t\,\Omega_q$ on D3Q19 and a second-order
+Hermite equilibrium
+$f^{\mathrm{eq}}_q=w_q\rho\big(1+\boldsymbol u\cdot\boldsymbol c_q/c_s^2+\mathcal H^{(2)}_q:\boldsymbol u\boldsymbol u/(2c_s^4)\big)$,
+$\mathcal H^{(2)}_q=\boldsymbol c_q\boldsymbol c_q-c_s^2\boldsymbol I$.
 
 **Time step and Mach number.** The time step is tied to the lattice:
 $\Delta t=(c_s/c_0)\Delta x_{\min}$ with $c_0$ the physical sound speed
@@ -81,7 +88,12 @@ sources use two remedies.
   are the Favre-filtered LES equations plus a negligible high-order low-Mach
   term and a hyper-viscous term in the fourth velocity derivative (Eq. 9).
   Cheylan et al. describe the regularization as removing the trace of the
-  non-equilibrium tensor for stability, on D3Q19.
+  non-equilibrium tensor for stability, on D3Q19. Mozaffari et al. (2024,
+  §2.1, Eq. 5) print the same operator with $\sigma_{\mathrm{HRR}}=0.98$
+  and state, citing Astoul et al., that because $\boldsymbol S^{\mathrm{FD}}$
+  comes from second-order centred differences the blend introduces a
+  bi-Laplacian hyper-viscosity that damps non-physical modes while limiting
+  the dissipation of physical ones.
 - **Central-moment multi-relaxation-time collision** (De Rosis et al., as
   used by Foldes et al. 2023, §3.1.2, Eqs. 3.14–3.17, App. A): the
   populations are transformed into central moments in the frame moving with
@@ -109,6 +121,48 @@ explicit equilibrium wall model on the immersed boundary (see
 [immersed boundary methods](/methods/immersed-boundary-method.md) and
 [wall-modelled LES](/methods/wall-modelled-les.md)).
 
+**RANS and hybrid RANS/LES eddy viscosity.** Mozaffari et al. (2024,
+§2.1, Eq. 6) couple a RANS or hybrid closure through the same relation,
+$\tau_{\mathrm{LB}}=\Delta t/2+(\nu+\nu_t)/c_s^2$, so the turbulence model
+enters the lattice only through the relaxation time. The
+[$k$-$\omega$ SST](/methods/k-omega-sst-model.md) transport equations are
+solved by finite differences on the lattice inside the collision step:
+fourth-order centred derivatives, one-sided differences at walls,
+second-order centred differences at grid-level transitions, and a hybrid
+TVD centred/upwind advection with a modified van Albada limiter calibrated
+on an inclined flat plate to avoid large $\omega$ fluxes near the wall
+(§2.3). Near-wall $k$ and $\omega$ are imposed by viscous-sublayer and
+log-layer wall functions switching at $y^+=11.06$ (Kalitzin et al., as
+recalled; Eqs. 22–25). The same machinery hosts SST-based IDDES and
+continuous eddy simulation, the hybrid modifying only the dissipation term
+$\beta^*\omega k$ (Eqs. 26–34; see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) and
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md)). The authors state that
+SST "has never been used in the standard LBM framework" (§1), having
+cited Wang et al.'s use of it in a finite-volume lattice Boltzmann
+formulation on unstructured grids. Forces are obtained by far-field
+momentum integration over a control volume because the boundary-node
+pressure and stress do not lie on the surface (§3.1, after Wilhelm et
+al.); at $45^\circ$ incidence on a NACA 0012 this needed 234 flow-through
+times (§3.2).
+
+**Results** (Mozaffari et al. 2024, §3): on the two-dimensional NACA 23012
+at $Re_c=1.88\times10^6$, $M=0.18$, SST and the Spalart–Allmaras model
+already validated in ProLB give close lift and drag (e.g. $C_L$ 1.12 and
+1.175 against 1.07 measured at $9.3^\circ$, Table 1) and both
+under-predict $C_p$ near the leading edge; one more refinement level
+reduces the $C_p$ error at $9.3^\circ$ by "almost 50%" (Fig. 8). On the
+[NACA 0012](/benchmarks/naca-0012-airfoil.md) at $Re_c=3\times10^6$ the
+hybrids equal RANS for attached flow and at $45^\circ$ correct its force
+over-prediction ($C_L/C_D$: RANS 2.238/2.053, IDDES 1.231/1.038, continuous
+eddy simulation 1.192/0.993, reference 1.097/1.180, Table 2). On the
+[Ahmed body](/benchmarks/ahmed-body.md) the equilibrium wall model
+suppresses slant separation (see
+[immersed boundary methods](/methods/immersed-boundary-method.md)). The
+authors conclude that SST-based hybrids are a cheaper alternative to
+wall-modelled LES in a lattice Boltzmann code, but give no run time or
+hardware.
+
 ## Walls on Cartesian lattices
 
 Both ProLB sources impose walls by
@@ -123,7 +177,10 @@ gas-kinetic scheme with lattice Boltzmann results for channel flow, state
 that the lattice Boltzmann run needs equidistant grids with
 $\Delta x^+\approx0.3$ everywhere to resolve the viscous layer. Cai et al.
 (2022, §III) call resolving the near-wall layer of a car body on a
-hierarchical lattice "not feasible", which motivates their wall model.
+hierarchical lattice "not feasible", which motivates their wall model;
+Mozaffari et al. (2024, §2.2) state likewise that, with the isotropic
+mesh of ProLB, refining enough to resolve the boundary layer at high
+Reynolds number is "too expensive".
 
 ## Lattice Boltzmann MHD with the Hall term
 
@@ -204,7 +261,16 @@ lattice Boltzmann sources here are all weakly compressible.
   while their own spectra show the central-moment collision over-damping
   high wavenumbers at $512^3$ (§4.4).
 - The version of Foldes et al. read is the arXiv v2 author manuscript;
-  Cai et al. a HAL deposit of the published article.
+  Cai et al. a HAL deposit of the published article; Mozaffari et al. the
+  HAL accepted manuscript hal-04921212v1.
+- **Relaxation time in lattice units.** Mozaffari et al. write
+  $\tau_{\mathrm{LB}}=\nu/c_s^2+0.5$ in §2.1 and
+  $\Delta t/2+(\nu+\nu_t)/c_s^2$ in Eq. 6; the two agree for $\Delta t=1$
+  and $\nu_t=0$ *(compiler check, not in the sources)*. Their SST
+  production terms (Eqs. 16–17) are printed as
+  $\tau_{ij}\,\partial u_j/\partial x_j$, which leaves a free index $i$ in a
+  scalar equation *(compiler check, not in the sources)*. No SST
+  coefficient value except $a_1=0.31$ is printed.
 
 # Citations
 
@@ -212,3 +278,4 @@ lattice Boltzmann sources here are all weakly compressible.
 - [Cheylan et al. (2023)](/sources/cheylan-2023.md) — §2.1, Eqs. (1)–(4) (D3Q19, HRR, Guo forcing); §2.2 (direct forcing); §2.7, Eqs. (37)–(38) (shear-improved Smagorinsky in the relaxation time).
 - [Foldes et al. (2023)](/sources/foldes-2023.md) — arXiv v2: §1; §3.1, Eqs. (3.4)–(3.17), App. A (BGK, sixth-order equilibrium, Lorentz force, central-moment collision); §3.2–3.4, Eqs. (3.18)–(3.44), App. B (vector BGK induction, Hall term, current solve, whistler CFL); §4.2–4.4, Figs. 3–12 (accuracy, Orszag–Tang against GHOST); §5 (cost, turnaround); §7.
 - [Cao et al. (2022)](/sources/cao-2022.md) — §1, §3.3–3.4 (lattice Boltzmann grids in channel flow; shocks).
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — HAL accepted manuscript hal-04921212v1: §1; §2.1, Eqs. (1)–(8) (trapezoidal D3Q19, HRR with $\sigma=0.98$, eddy viscosity in the relaxation time); §2.2 (immersed boundary, wall model); §2.3, Eqs. (16)–(34) (SST by finite differences, wall functions, IDDES, CES); §3.1–3.3, Tables 1–3 (NACA 23012, NACA 0012, Ahmed body).

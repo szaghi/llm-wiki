@@ -5,7 +5,7 @@ description: "The shift, in wall units, between the mean velocity of a wall-mode
 status: established
 aliases: [LLM, log-layer shift, super-buffer layer error]
 tags: [wmles, wall-model, hybrid-rans-les, boundary-layer]
-timestamp: 2026-10-25T20:36:00Z
+timestamp: 2026-10-26T10:04:00Z
 ---
 
 # Log-layer mismatch
@@ -116,7 +116,8 @@ under-resolved first cells of the LES, not to the log law itself.
 | Several cells below the matching height: $h_{\mathrm{wm}}=0.1\delta_0$ with four uniform cells below it ($\Delta y=0.25h_{\mathrm{wm}}$), "to reduce numerical errors from the LES transferred to the wall model (Kawai & Larsson, 2012) and avoid the log-layer mismatch" | [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) (§3), Mach 3 shock/boundary-layer interaction |
 | Impose the wall stress through a wall eddy viscosity, $\nu_t\rvert_w=\tau^{\mathrm m}_w/\big(\rho\,(\partial u/\partial y)_w\big)-\nu$ with no slip kept ("viscosity augmentation"), instead of a Neumann condition | [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) (Methods, Eq. 10), stated, citing earlier work, to be "better at resolving the so-called log-layer mismatch"; $\tau^{\mathrm m}_w$ the modelled wall stress (page-local) |
 | Short exponential moving average of the wall-model input in time | [Gillyns et al. (2022)](/sources/gillyns-2022.md) (§3, §5, Eq. 4), who recall Yang et al. (2017) and Fowler et al. (2022) for time filtering; without it ($C_t=0$) their wall model diverged, which they attribute "most likely" to Gibbs oscillations at the element boundary, not to the mismatch |
-| Elevating function $f_e$ of IDDES, which raises the RANS length scale near the RANS–LES interface, and the wall-distance-based subgrid length of IDDES, meant to "give a correct log-layer behavior in WMLES without the need to alter the value of the modeling constant" | recalled from Shur et al. (2008) by Carlsson et al. (2023, §2, Eqs. 18–19), who use IDDES; a small mismatch remains at the interface with their low-dissipation schemes (§4.3) |
+| Elevating function $f_e$ of IDDES, which raises the RANS length scale near the RANS–LES interface, and the wall-distance-based subgrid length of IDDES, meant to "give a correct log-layer behavior in WMLES without the need to alter the value of the modeling constant" | recalled from Shur et al. (2008) by Carlsson et al. (2023, §2, Eqs. 18–19), who use IDDES; a small mismatch remains at the interface with their low-dissipation schemes (§4.3); recalled also by [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) (Eqs. 30–32; formulas of $f_e$ not printed) for their SST-IDDES in a lattice Boltzmann solver |
+| Redefine the states of a reinforcement-learning wall model so that the neutral line does not move with $Re_\tau$ | Vadrot et al. (2023a, §II.B.3, Eq. 10): removes the large-$Re_\tau$ mismatch of BK22 (below) |
 | Low-dissipation convective scheme in the LES region | Carlsson et al. (2023, §4.3, Figs. 4–5): reduces a significant mismatch to a small one at the RANS–LES interface (above) |
 | Near-wall eddy viscosity that enforces the total (modelled plus resolved) stress of a mixing-length RANS model, "several grid points from wall" (constrained LES) | Cai et al. (2022, §II.C.1, Eq. 27) at an immersed boundary; the mean velocity in the log layer is not shown, so its effect on mismatch is not reported (see [wall-modelled LES](/methods/wall-modelled-les.md)) |
 | Active forcing of resolved fluctuations at the rate the modelled stress is reduced | [active model split](/methods/active-model-split.md): Haering et al. (2022, §V.A.1) report no LLM in channel flow at $Re_\tau\approx5200$ on four grids with $\Delta x^+\approx700$–$1550$ |
@@ -169,6 +170,33 @@ the difference mainly to grid resolution. The comparison is a qualification
 on the [machine-learning wall models](/methods/machine-learning-wall-model.md)
 page, not a contradiction.
 
+[Vadrot et al. (2023a)](/sources/vadrot-2023.md) retrain BK22 themselves in
+LESGO at $Re_\tau=10^4$ ($48^3$ half-channel grid, $h_{\mathrm{wm}}=\Delta y$):
+the retrained model no longer shows the low-Reynolds-number mismatch but
+keeps the high-Reynolds-number one, and they ascribe the differences from
+the original to the training Reynolds number, the RL settings and possibly
+the solver (§II.B.2, Fig. 2). They restate the cause found in their survey:
+the mismatch "does not result from directly using velocity at the first
+off-wall grid point" but from the rotation of the neutral line with
+$Re_\tau$, whose slope $-1/(\ln(\Delta y/\delta)+\ln Re_\tau)$ saturates at
+large $Re_\tau$ and so explains why the mismatch saturates (§II.B.3, Eq. 9,
+Fig. 3a). The cure is a change of state variable rather than of matching
+height or input filter: with the first state
+$(1/\kappa_{\mathrm{wm}}-1/\kappa)\ln h^+_{\mathrm{wm}}$ in place of
+$1/\kappa_{\mathrm{wm}}$, the neutral line becomes the same straight line
+for every $Re_\tau$, and the resulting model VYBA23 recovers the log law up
+to $Re_\tau=10^{10}$ whenever $h_{\mathrm{wm}}$ lies in the log layer, while
+BK22 keeps its large-$Re_\tau$ mismatch (Eq. 10, Figs. 3b, 6, 9). The
+parameters of the agents barely move the mean velocity, except an action
+interval above ten LES time steps; a smaller action range or an action
+interval of five time steps gives less mismatch together with wall-stress
+fluctuations closer to filtered DNS (§III.B, §IV, Figs. 9–10). The equilibrium
+baseline of the same paper matches at $\Delta y/2$ with a filtered LES
+velocity, after Yang et al. (2017) as cited, to remove its mismatch
+(§II.B.1). For scale, they quote that a 2.5 % uncertainty in $\kappa$ alone
+corresponds to about one to two wall units of mismatch (§III.B, after Yang
+et al. 2019 as cited).
+
 ## Qualifications
 
 - Vadrot et al. (2023b) are internally inconsistent about where BK22 errs:
@@ -198,3 +226,5 @@ page, not a contradiction.
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §2, Eqs. (18)–(19); Table 1; §4.3, Table 2, Figs. 4–5.
 - [Kim et al. (2022)](/sources/kim-2022.md) — §III E, Table IV.
 - [Cai et al. (2022)](/sources/cai-2022.md) — §I; §II.C.1, Eq. (27).
+- [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — §II.B.1–II.B.3, Eqs. (2), (9)–(10), Figs. 2–3; §III.A–III.B, Figs. 6, 9–10; §IV (arXiv v3).
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — Eqs. (30)–(32) (HAL accepted manuscript).

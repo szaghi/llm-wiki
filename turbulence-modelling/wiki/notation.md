@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-26T07:43:00Z
+timestamp: 2026-10-26T10:28:00Z
 ---
 
 # Notation registry
@@ -221,3 +221,8 @@ that uses one still says what it means.
 | $N_x$ | number of grid points per direction (not the polynomial degree $N$) | GHOST, lattice Boltzmann methods, MHD pages, DNS |
 | $B_{\mathrm{OT}}$ | field amplitude of the Orszag–Tang vortex (no mean field) | decaying MHD turbulence, GHOST |
 | $d_i$, $\alpha_H$, $\epsilon_H$ | ion inertial length; Hall coefficient and its normalized strength | exact laws, decaying MHD turbulence, GHOST, lattice Boltzmann methods |
+| $C_{\mathrm f}$ | dissipative coefficient of the ensemble-Kalman-calibrated mixed model of Wang et al. (2023c), $C_{\mathrm f}=2C_s^2$ (the source's $C_D$) | gradient model, Smagorinsky model, ensemble Kalman calibration, model-consistent training, isotropic turbulence |
+| $C_{\mathrm A}$ | constant of the autonomous eddy-viscosity model | autonomous eddy-viscosity model, spectral eddy viscosity, dynamic procedure |
+| $\vartheta_m$, $\alpha_f$, $s_f$ | modal index, strength and order of an exponential modal filter | spectral vanishing viscosity, subcell finite-volume shock capturing |
+| $\lambda_{\theta l}$, $Tu_l$ | local pressure-gradient parameter and local turbulence intensity of correlation-based transition models | local-correlation-based transition models, laminar kinetic energy transition models |
+| $L_r$ | recirculation length behind a bluff body | circular-cylinder wake, neural-network SGS models, LES pages |

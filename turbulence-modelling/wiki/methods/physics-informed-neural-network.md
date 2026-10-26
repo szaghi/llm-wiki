@@ -5,7 +5,7 @@ description: "A neural network maps the coordinates to the mean velocity, pressu
 status: established
 aliases: [PINN, PINNs, physics-informed neural network, physics-informed RANS solver]
 tags: [machine-learning, neural-network, data-driven, rans, boundary-layer]
-timestamp: 2026-10-25T20:39:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Physics-informed neural networks for RANS
@@ -134,6 +134,13 @@ turbulence with PINNs by Jin et al. (2021), recalled as agreeing well with
 DNS (§1). [Domingo & Vervisch (2023)](/sources/domingo-2023.md) (§7) name
 physics-informed techniques that couple PDE solution and network training
 as a coming perspective for combustion DNS, without a method.
+[van Gastelen et al. (2024)](/sources/vangastelen-2024.md) (§1) mention
+PINNs among machine-learning work on Burgers' equation in the same terms:
+"the PDE is encoded into the loss function", with the advantage of
+approximating the solution "without explicitly discretizing space and
+time". Their own [closure](/methods/neural-network-sgs-model.md) is of a
+different kind: a discrete coarse-grid closure whose energy conservation
+is built into the architecture (§3).
 
 ## Qualifications
 
@@ -154,6 +161,13 @@ as a coming perspective for combustion DNS, without a method.
   Reynolds stresses: Eq. 1 is the general form. The Fig. 4 caption labels a
   panel (d) that the figure, which has panels (a)–(c), does not contain;
   the text refers to Fig. 4(c).
+- **A citation to check.** van Gastelen et al. (2024, §1) write that "in
+  [29] physics-informed neural networks (PINNs) were succesfully applied to
+  Burgers' equation"; their ref. [29] is Shankar et al., a
+  differentiable-physics closure for Burgers turbulence, printed again
+  identically as ref. [32]; the title printed for it names a
+  differentiable-physics closure, not a PINN, and the PINN work meant is
+  not identified.
 - The convention of the Reynolds stresses in the version read (positive
   correlations $\overline{uv}$ on the left-hand side of momentum, kinematic)
   matches the registry $R_{ij}$; the paper writes the means as $U$, $V$,
@@ -163,3 +177,4 @@ as a coming perspective for combustion DNS, without a method.
 
 - [Eivazi et al. (2022)](/sources/eivazi-2022.md) — arXiv v1: Abstract; §1 (underdetermined RANS, precedent); §2, Fig. 1, Eqs. 1–2 (network, residuals, loss, error metric); §3, Figs. 2–6, Table 1 (five cases); §4 (conclusions).
 - [Domingo & Vervisch (2023)](/sources/domingo-2023.md) — §7 (physics-informed techniques as a perspective for combustion DNS).
+- [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §1 (PINNs mentioned among machine-learning work on Burgers' equation; ref. [29] as printed); §3 (energy-conserving architecture).

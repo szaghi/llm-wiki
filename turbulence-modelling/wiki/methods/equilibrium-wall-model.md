@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-26T07:39:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Equilibrium wall model
@@ -28,12 +28,20 @@ every wall-modelled source of this bundle:
 [Gillyns et al. (2022)](/sources/gillyns-2022.md) and
 [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md),
 [Cai et al. (2022)](/sources/cai-2022.md) and
-[Blind et al. (2023)](/sources/blind-2023.md), and the wall law of the
+[Blind et al. (2023)](/sources/blind-2023.md),
+[Duan & Wang (2024)](/sources/duan-2024.md) and
+[Mozaffari et al. (2024)](/sources/mozaffari-2024.md) (with hybrid RANS/LES
+rather than LES), and the wall law of the
 fan-stage WMLES of [Lewis et al. (2023)](/sources/lewis-2023.md); it is the comparison
 baseline of the learned models of [Bae & Koumoutsakos (2022)](/sources/bae-2022.md)
 and of the [building-block-flow wall model](/methods/building-block-flow-wall-model.md)
-of [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md). It is the boundary
+of [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) and of the
+reinforcement-learning model of [Vadrot et al. (2023a)](/sources/vadrot-2023.md). It is the boundary
 condition that defines [wall-modelled LES](/methods/wall-modelled-les.md).
+The same equilibrium wall function also closes steady RANS at coarse
+near-wall resolution: [Constant et al. (2024)](/sources/constant-2024.md)
+use it with the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
+on an [immersed boundary](/methods/immersed-boundary-method.md).
 
 ## Assumptions
 
@@ -90,7 +98,10 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
   $\tau_w=\rho\left[\kappa U_{\mathrm{LES}}/\ln(h_{\mathrm{wm}}/y_0)\right]^2$
   with $y_0=\nu e^{-\kappa B}/u_\tau$, $\kappa\approx0.4$, $B\approx5$
   (let $y_0$ denote this viscous length, page-local); implicit in $u_\tau$, so
-  solved iteratively.
+  solved iteratively. Vadrot et al. (2023a, §II.B.1, Eqs. 1–2) print the
+  same model as the baseline of their reinforcement-learning study, with
+  $h_{\mathrm{wm}}=\Delta y/2$ and the LES velocity filtered after Yang et
+  al. (2017) as cited.
 - **Piecewise profile** (Lozano-Durán et al. 2022, Eq. 1): $u^+=y^++a_1(y^+)^2$
   for $y^+<23$, $\kappa^{-1}\ln y^++B$ otherwise, $\kappa=0.41$, $B=5.2$, $a_1$
   from $C^1$ continuity; walls adiabatic. Agrawal et al. (2022, §VIII) use an
@@ -130,7 +141,35 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
   stability; because it is cheap, it can be inverted at all fluid points
   next to an immersed boundary (no cost figures). Only the equilibrium model
   is used because a proper implementation of non-equilibrium terms is "still
-  arguable" (as they cite it).
+  arguable" (as they cite it). [Mozaffari et al. (2024)](/sources/mozaffari-2024.md)
+  (§2.2, Eqs. 9–15) use the same explicit form in the same code with other
+  printed constants ($s=86.58$, $p=0.7894$, $E\approx7.9$, $\kappa\approx0.41$;
+  both papers attribute the form and their constants to Cai & Sagaut 2021,
+  a disagreement recorded under Contradictions on the
+  [law of the wall](/definitions/law-of-the-wall.md) page): the
+  tangential velocity at a reference point placed one local grid size along
+  the wall normal gives $u_\tau$, and the wall law sets the tangential
+  velocity and the turbulence quantities of the first off-wall node. They
+  ignore pressure-gradient effects knowingly, citing Cai et al. (2022) for
+  the claim that in fully separated flows the model operates at low $y^+$,
+  comparable to a linear reconstruction (§2.2).
+- **Musker's law with RANS variables** (Constant et al. 2024, §3.2,
+  Eqs. 6–11): at each immersed-boundary target point $A$ below the
+  modelling height, $u_\tau$ from Newton–Raphson on Musker's law at the
+  image point $B$ (assumed constant along the normal), tangential velocity
+  $u_\tau f(y_A^+)$, normal velocity linear to zero at the wall, the
+  Spalart–Allmaras variable from $\nu_t=\kappa u_\tau y\,[1-e^{-y^+/19}]$
+  ($\kappa=0.41$; a quartic in $\tilde\nu$ solved by Ferrari's method),
+  Crocco–Busemann temperature for adiabatic walls, and pressure equal to the
+  image-point pressure. The quartic is exactly $\nu_t=\tilde\nu f_{v1}$ of the
+  Spalart–Allmaras model solved for $\tilde\nu$ *(compiler check, not in the
+  sources)*.
+- **Unprinted law of the wall in a high-order code** (Duan & Wang 2024,
+  §4): the model takes the wall-parallel velocity, density and viscosity at
+  the exchange point, "solves a nonlinear equation to obtain $u_\tau$" from
+  the law of the wall (formula deferred to the authors' earlier papers, as
+  cited) and imposes $\tau_w=\rho u_\tau^2$ weakly at the wall flux points of
+  a [flux-reconstruction](/methods/flux-reconstruction.md) scheme.
 - **Fitted equilibrium solution with pressure gradient** (Meneveau 2020, as
   used by Fowler et al. 2022, Eqs. 2.19–2.20, Algorithm 1): a fit returns
   $\langle u_\tau\rangle h_{\mathrm{wm}}/\nu$ from
@@ -159,6 +198,10 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | Blind et al. (2023, §3.3, §4) | FLEXI, DG spectral elements of degree 5, residual-adapted grids | channel: $0.1h$ ($h^+_{\mathrm{wm}}=200$ at $Re_\tau=2000$), in the first or, on the finest adapted grid, the second cell; airfoil: $0.0134c$, about 10 % of the mean $\delta_{99}$, chosen by the exchange-location algorithm of Kahraman & Larsson on wall-resolved reference data | none stated |
 | Cai et al. (2022, §II.C.1) | ProLB lattice Boltzmann, octree Cartesian grid, [immersed boundary](/methods/immersed-boundary-method.md) | first fluid points next to the boundary; $u_\tau$ (not the velocity) interpolated to the boundary points, e.g. by inverse distance weighting | none stated |
 | Bae & Koumoutsakos (2022, Methods) | staggered finite differences | $0.1\delta$ in the correlation analysis (Figs. 6–7) | formulation not printed ("RANS-based", coefficients "tuned for this particular case") |
+| Vadrot et al. (2023a, §II.B.1) | LESGO, uniform $48^3$ half channel | first point, $\Delta y/2$ | filtered, after Yang et al. (2017) as cited |
+| Duan & Wang (2024, §4, Fig. 4) | hpMusic, flux reconstruction of degree $N=2$–5 | interface between the first and second elements, $h_{\mathrm{wm}}$ equal to the first element height; data from the second element | element-wise constant SGS viscosity (no wall-model filtering stated) |
+| Mozaffari et al. (2024, §2.2) | ProLB lattice Boltzmann, octree Cartesian grid, immersed boundary | reference point one local grid size along the normal from each boundary node | none stated |
+| Constant et al. (2024, §3.1, §4.2), RANS | FastS finite volume, octree Cartesian grid, immersed boundary | modelling height $H_{\mathrm{mod}}$ from a flat-plate estimate of a target $y^+$ (50–500), then lowered locally after a first converged run (see below) | steady RANS, no filtering |
 
 Gillyns et al. (2022, §5) find that without the moving average ($C_t=0$) the
 model diverges, "most likely due to the Gibbs phenomenon at the element
@@ -175,6 +218,48 @@ the best choice" (§7, Table 1).
 The choice is tied to [log-layer mismatch](/definitions/log-layer-mismatch.md):
 matching away from the wall or filtering the input are the recalled remedies,
 and first-point matching on Voronoi grids is reported to work without them.
+
+**Modelling height chosen from the solution (RANS on an immersed
+boundary).** Constant et al. (2024) set the height below which grid points
+are modelled from a flat-plate skin-friction correlation and a user target
+$y^+$ (§3.1, Eq. 5). At strong incidence this estimate fails near the
+leading edge: on the NACA 0012 at $15^\circ$ the image-point $y^+$ there
+exceeds a target of 300 by close to 300 % (§4.1, Fig. 10), so the wall
+function is applied where the boundary layer is thin and not in
+equilibrium. Their remedy converts modelled points back into computed ones
+after a first converged run wherever the $y^+$ one layer below already
+exceeds the target, a static single-pass update with a warm restart that
+lowers the maximum suction-side image-point $y^+$ from 435 to 243 for a
+target of 100 (§4.2, §6.1, Fig. 18). Details on the
+[immersed boundary method](/methods/immersed-boundary-method.md) page.
+
+## Pressure across the modelled layer
+
+Constant et al. (2024, §1, lines 44–47) state that most recent
+immersed-boundary work for high-Reynolds-number flow assumes a constant
+wall-normal pressure across the whole turbulent boundary layer, and their own
+wall function sets the target-point and wall pressures equal to the
+image-point pressure (Griffin et al. 2023 likewise state constant pressure
+across the inner layer for their compressible ODE). Constant et al. (§5)
+show that this assumption, not the field solution, corrupts the
+near-field pressure drag at strong incidence when the modelled layer is
+thick: on the NACA 0012 at $15^\circ$ the zeroth-order extrapolation
+$p_w=p_B$ misplaces the suction peak and gives a 94 % drag error against a
+wall-resolved body-fitted reference, which local lowering of the modelling
+height reduces to 47 %, and a second-order Taylor reconstruction of the
+wall pressure from a second layer of image points (placed at the modelling
+height plus $2\sqrt{d}\,h$, $d$ the space dimension and $h$ the near-wall
+cell size, page-local) to 17 % (Table 3; $C_L$ error 2.6 %). The
+reconstruction is applied only in post-processing; the authors justify this
+by a mesh study in which refining at fixed target $y^+$ barely changes the
+error although the distance over which the assumption acts falls by four
+(§5.1, Figs. 12–13). On the NASA CRM high-lift configuration at
+$17.05^\circ$ the same steps take the drag error from 9.1 % to 1.5 % and the
+lift error from 13 % to 8.4 % against a body-fitted reference (§6.3,
+Table 9). They agree with Cai et al. (2021, as cited) that far-field
+integration gives a better pressure drag than near-field integration, but
+attribute the near-field error to the wall-pressure reconstruction rather
+than to the field (§5.1).
 
 ## Error propagation: external against internal errors
 
@@ -228,6 +313,14 @@ perfectly correlated with the LES velocity at the sampling location, whereas
 DNS gives a correlation of about 0.3, as they recall; their log-law-based
 reinforcement-learning model reproduces about 0.3 at $h_{\mathrm{wm}}=0.1\delta$
 (see [machine-learning wall models](/methods/machine-learning-wall-model.md)).
+
+Vadrot et al. (2023a, §III.B, Fig. 10) find that the wall-stress
+fluctuations of all their models, the equilibrium model included, decrease
+with increasing $Re_\tau$, and explain it with the algebraic form: the
+fluctuation of $\tau_w$ scales as $1/(\ln h^+_{\mathrm{wm}}+B)$ times the
+fluctuation of the input velocity, which falls as $h^+_{\mathrm{wm}}$ grows
+(Eq. 12, a heuristic argument). Their printed Eq. (12) differs from their
+Eq. (2) (see Qualifications).
 
 ## Cost
 
@@ -306,6 +399,31 @@ the algebraic equilibrium model.
   0.057 at $Re_\tau=1000$ and 0.0057 at $Re_\tau=2500$ *(compiler check, not in
   the sources)*. Gillyns et al. (2022, §1) expect
   their algebraic model to fail once Coles' wake reaches the matching point.
+- **Thin leading-edge boundary layers at strong incidence (RANS).**
+  Constant et al. (2024, §6.1, Figs. 19–21) find that over the first 10 % of
+  chord of the NACA 0012 at $15^\circ$ ($M=0.15$, $Re_c=6\times10^6$) the
+  velocity profile cannot be represented by the equilibrium wall function,
+  which holds once the log region is established downstream, and that the
+  leading-edge error is carried downstream to the trailing-edge eddy
+  viscosity. A residual drag error of about 20 % remains after both
+  corrections; they relate it to the test-case sensitivity reported by
+  others (as cited) and state that removing it would need the wall model
+  applied only in the viscous sublayer at the leading edge (§6.1), with a
+  non-equilibrium model as future work (§7).
+- **Suppressed separation in hybrid RANS/LES.** Mozaffari et al. (2024,
+  §3.3) apply the explicit model on the Ahmed body with SST-IDDES and
+  continuous eddy simulation in a lattice Boltzmann solver: no separation
+  appears on the $35^\circ$ slant, against a fully detached reference flow,
+  while a zero-velocity condition at $y^+\gg1$ separates. They relate the
+  attachment to the absence of a pressure-gradient term and conclude that
+  under high adverse pressure gradient and mild separation "these wall
+  models may introduce some error", proposing an APG-aware model as next
+  step (§3.3, §4, lines 465–470, 550–557; see
+  [wall-modelled LES](/methods/wall-modelled-les.md) for the comparison with
+  Cai et al. 2022, whose Vreman LES with an enhanced near-wall stress does
+  separate on the fine grid). For the NACA 0012 they also
+  report that the equilibrium model under strong adverse pressure gradient
+  degrades the surface forces (§3.2).
 - **Equilibrium as a limit.** Fowler et al. (2022, §2.2) derive the classical
   model as the limit $T_s\to0$ of their relaxation equation (page-local $T_s$,
   the relaxation time of the fluid layer below $h_{\mathrm{wm}}$); applying the
@@ -337,6 +455,17 @@ profile lies above the DNS).
   and use it with the Vreman SGS model in a zonal LES of an open cavity at
   $N=7$ with a wall-adjacent spacing of $y^+=15$; no equations or matching
   height are printed.
+- **Printed Eq. (12) of Vadrot et al. (2023a).** Presented as a rewriting
+  of their Eq. (2), it reads
+  $\tau_w=\rho\,\kappa U_{\mathrm{LES}}/(\ln h^+_{\mathrm{wm}}+B)$, without
+  the square. With their $y_0=\nu e^{-\kappa B}/u_\tau$,
+  $\ln(h_{\mathrm{wm}}/y_0)=\ln h^+_{\mathrm{wm}}+\kappa B$, so Eq. (2) gives
+  $\tau_w=\rho[\kappa U_{\mathrm{LES}}/(\ln h^+_{\mathrm{wm}}+\kappa B)]^2$
+  *(compiler check, not in the sources)*. The text after it prints an
+  unbalanced "$1/(\ln(h^+_{wm}+B)$".
+- Constant et al. (2024, §3.1) define the flat-plate first-cell height as the
+  height "for which $y^+=0$"; their Eq. (5) is the height at which $y^+=1$
+  *(compiler check, not in the sources)*.
 - Cai et al. (2022) never print the value of $\kappa$ used in their
   explicit model; the blend constants (180.8 and 0.789 for the inverse,
   10.71 and 1.526 for the forward profile) and $E=11.27$ are printed.
@@ -359,3 +488,7 @@ profile lies above the DNS).
 - [Blind et al. (2023)](/sources/blind-2023.md) — §3.3; §4.
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.6; §3.2, Eq. (3.1); §4.2–4.8, Figs. 8–13.
 - [Lewis et al. (2023)](/sources/lewis-2023.md) — §3.2.2; §3.3, Table 6.
+- [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — §II.B.1, Eqs. (1)–(2); §III.B, Eq. (12), Fig. 10 (arXiv v3).
+- [Duan & Wang (2024)](/sources/duan-2024.md) — §4, Fig. 4.
+- [Constant et al. (2024)](/sources/constant-2024.md) — §1; §3.1–3.2, Eqs. (5)–(11); §4.1–4.2, Figs. 10–11; §5.1–5.2, Figs. 12–15; §6.1, Figs. 18–25, Table 3; §6.3, Table 9; §7 (HAL author manuscript).
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §2.2, Eqs. (9)–(15); §3.2; §3.3, Figs. 16–20 (HAL accepted manuscript).

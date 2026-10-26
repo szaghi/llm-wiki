@@ -5,7 +5,7 @@ description: "Training a learned closure with the solver in the loop, so the los
 status: established
 aliases: [a posteriori training, a-posteriori training, solver-in-the-loop training, integrated inference and learning, embedded learning, differentiable-physics training, online learning]
 tags: [data-driven, machine-learning, neural-network, sgs-model, rans, les]
-timestamp: 2026-10-26T07:37:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Model-consistent (a posteriori) training of learned closures
@@ -163,6 +163,46 @@ An explicit Runge–Kutta integrator was chosen because it is easier to
 differentiate (§2.4). As recalled there, others have used unroll lengths
 of 30–60 (List et al., 2D incompressible flow), 32 (Kochkov et al.), and 30
 (good) versus 120 (poor) for Kuramoto–Sivashinsky (Melchers et al.).
+[van Gastelen et al. (2024)](/sources/vangastelen-2024.md) (§3.4, Eqs.
+51–52, App. E.2) combine the two losses for 1D Burgers and
+Korteweg–de Vries closures: 100 iterations of "derivative fitting" (the
+closure's right-hand side against the filtered fine-grid right-hand
+side), then 20 of "trajectory fitting" (unrolled coarse solutions against
+filtered fine-grid trajectories, 5 steps of $0.01$ for Burgers and 20
+steps of $5\times10^{-3}$ for KdV), because trajectory fitting is the more
+expensive. Derivative fitting alone left a vanilla convolutional closure
+unstable and inaccurate, "especially in the KdV case", while their
+energy-conserving closure was already reasonable with it (§4.2; see
+[neural-network SGS models](/methods/neural-network-sgs-model.md)).
+
+**Variational inference through an adjoint RANS solver.**
+[Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) train a
+[tensor-basis neural network](/methods/tensor-basis-neural-network.md)
+together with a stochastic Reynolds-stress discrepancy on indirect data,
+sparse LES mean velocity and pressure, which they call "model-consistent"
+learning after Duraisamy (2021) and "trajectory regression" after their
+ref. [64] (§1, §2.2). The loss is the evidence lower bound of a Bayesian
+posterior; each iteration draws $K=5$ discrepancy samples, solves the
+discrete RANS equations for each, and back-propagates the log-likelihood
+through a discrete adjoint of the FEniCS solver coupled to PyTorch
+autograd via Pyro (Algorithm 1, App. B, Eqs. B.1–B.12). The learning rate
+is $10^{-6}$, "relatively small … due to the Monte Carlo noise" (§3.3). A
+randomly initialized network "led to divergence of the solution even
+after applying the stabilization schemes", so the network was first
+pre-trained on baseline $k$-$\varepsilon$ closure data with added noise
+(§3.3). See [model-form uncertainty](/definitions/model-form-uncertainty.md).
+
+**Ensemble (derivative-free) calibration.**
+[Wang et al. (2023c)](/sources/wang-2023-c.md) calibrate the one
+functional coefficient of a mixed SGS model inside the LES with an
+ensemble Kalman filter: an ensemble of LES runs, each with its own
+coefficient, restarted from the same filtered-DNS field, is updated toward
+the filtered-DNS energy spectra (§II.B; see
+[ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md)).
+No solver gradient is needed. They call the method "numerically more
+convenient" than adjoint-based variational calibration, note that finite
+differences would also serve for a single parameter, and expect the
+ensemble method to pay off in high-dimensional problems (§V).
 
 **Reinforcement learning.** Beck & Kurz (2023) pose the choice of closure
 parameters as a Markov decision process. The LES with its actual
@@ -274,6 +314,26 @@ and they call for a quantitative comparison of the two (§IV). See
   over the static Vreman, dynamic Smagorinsky and no-model LES. As recalled
   there, a supervised network with the same local inputs (Park & Choi 2021)
   "did not predict" the two target profiles well a posteriori (§III C).
+- **One coefficient, calibrated in the LES.** Wang et al. (2023c, §III–IV,
+  Figs. 3–17) obtain a functional coefficient $C_{\mathrm f}\approx0.00738$
+  (page-local, the paper's $C_D$, which it identifies with $2C_s^2$, §III;
+  as on [ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md)) in forced isotropic
+  turbulence at
+  $Re_\lambda\approx160$ and $C_{\mathrm f}\approx0.01$ in a temporal mixing layer.
+  With these values the mixed model is closer to filtered DNS than the
+  dynamic Smagorinsky, dynamic mixed and pure gradient models in spectra,
+  kinetic energy, PDFs, structure functions and, in the mixing layer,
+  momentum-thickness growth. The coefficient calibrated at
+  $Re_\lambda\approx160$ also does better than those models at
+  $Re_\lambda\approx259$, at twice the filter width and in decaying
+  turbulence (App. B); the mixing layer was recalibrated.
+- **Stability without accuracy loss in 1D.** van Gastelen et al. (2024,
+  §4.3–4.4, Figs. 7–8) train ten replicas per method that differ only in
+  the random seed. All energy-conserving models give only stable runs and
+  nearly overlapping errors; the vanilla convolutional closures, trained
+  with the same hybrid loss, are "hit or miss", two of them 100% unstable
+  on the Burgers inflow–outflow case. In accuracy the two are roughly on
+  par, the vanilla network being better on KdV at most resolutions.
 - **Open-loop RANS correction trained a priori.** McConkey et al. (2022,
   §IV B, Fig. 21) inject the predictions of their DNS-trained networks into
   a $v^2$-$f$-type RANS on a held-out periodic hill. The reattachment-point
@@ -296,6 +356,8 @@ and they call for a quantitative comparison of the two (§IV). See
 | Kim et al. (2022, §II F) | DRL of a pointwise SGS network in channel LES, 10,000–15,000 iterations, eight parallel LES; supervised pretraining of 50,000 iterations | about 2–4 days on one NVIDIA Titan Xp GPU; pretraining "only a few minutes" |
 | Kurz et al. (2023, §4.1) | PPO of an element-local Smagorinsky coefficient in DG-LES, 16 or 32 episodes per update | 1 day (smallest) to 5 days (largest case) on HAWK, up to 1024 CPU cores for the LES plus one GPU node for the policy |
 | Sirignano & MacArt (2023, §2.3) | adjoint-based training, distributed RMSprop | "tens to hundreds of GPUs"; no timing given |
+| van Gastelen et al. (2024, §4.3.2) | hybrid derivative and trajectory fitting of a 1D convolutional closure | about 20 min per network; each training DNS at most 5 s on a laptop CPU |
+| Agrawal & Koutsourelakis (2024, §3.4, Table 4) | variational inference through an adjoint FE RANS solver (for prediction cost) | one prediction run 1.3 times a baseline $k$-$\varepsilon$ run; the reference LES 7679 times; no training time given |
 | Tang et al. (2023, §III B) | a priori symbolic regression with an RL-trained expression generator (for contrast) | about 100 h on 20 cores (Intel Xeon E5-2650) |
 
 Duraisamy (2021, §IV.B) names the obstacles to adjoint-based integrated
@@ -379,6 +441,22 @@ the convergence of these training methods and the choice of loss function
   window. The rewards of the RL closures use only statistics (Kurz et al.
   2023, §3.5; Kim et al. 2022), although Kurz et al. start their training
   episodes from DNS fields projected onto the LES grid (§3.5).
+- **Targets that complex flows do not provide.** Kim et al. (2024, §1,
+  §5), who train their cylinder-wake networks a priori, state that their
+  models do not remove the a priori/a posteriori inconsistency, and argue
+  that the adjoint route (Sirignano et al.) and the RL route (Kim et al.
+  2022) need target statistics that are "unknown a priori" for complex
+  geometries. The RL wall model of Vadrot et al. (2023a, §II.B.2–3) takes
+  as target the true mean wall stress, "obtained from the equations of
+  motion for an unidirectional mean flow" (after Eq. 4).
+- **Differentiable RANS solvers.** Agrawal & Koutsourelakis (2024, §1)
+  state that a differentiable RANS solver in an automatic-differentiation
+  framework "has not been accomplished yet" to their knowledge, and use an
+  adjoint instead; they cite in the same paper Ströfer & Xiao's
+  "end-to-end differentiable" learning with adjoints. The statement names
+  automatic differentiation of the whole solver; adjoint-based training
+  also appears in Yan et al. (2022) and Sirignano & MacArt (2023)
+  (sections above).
 - **Noise.** Agdestein & Sanderse (2025, §6) report that adding noise to
   the training data, a common stabilizer, can destroy the divergence-free
   property. Validation errors were better without noise; no data are
@@ -398,3 +476,8 @@ the convergence of these training methods and the choice of loss function
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1 (adjoints against RL), §2, Eqs. 2.3, 2.8–2.10 (adjoint training), §2.2–§2.3 (algorithm, GPUs, convergence result recalled), §3.2, §4.1, Table 2, §5, Figs. 11–12, §6, Figs. 13–15, §7.
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §1, §2, Eq. 8 (no solver gradient), §3.5, §4.1 (cost), §4.2, Fig. 6.
 - [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I (CFD-driven GEP recalled), §II D–E (loose and tight coupling), §III B (cost), §IV.
+- [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §3.4, Eqs. 51–52, App. E.2 (derivative and trajectory fitting); §4.2–4.4, Figs. 7–8 (stability across seeds); §4.3.2 (cost).
+- [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — arXiv v2: §1, §2.2, Algorithm 1, App. B (variational inference through an adjoint solver); §3.3 (learning rate, pre-training); §3.4, Table 4 (cost).
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — arXiv v3: §II.B (ensemble calibration in the LES); §III–IV, Figs. 3–17; App. B; §V (against adjoint calibration).
+- [Kim et al. (2024)](/sources/kim-2024.md) — §1, §5 (targets for complex geometries).
+- [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — arXiv v3: §II.B.3 (reward on the known mean wall stress).

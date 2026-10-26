@@ -5,7 +5,7 @@ description: "Spectral vanishing viscosity concentrates an added viscosity on th
 status: established
 aliases: [SVV, implicit SVV, ISVV, implicit spectral vanishing viscosity, spectral viscosity, SVV-LES, entropy-stable SVV, modal SVV filter]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg, entropy-stable]
-timestamp: 2026-10-26T07:41:00Z
+timestamp: 2026-10-26T10:27:00Z
 ---
 
 # Spectral vanishing viscosity
@@ -338,6 +338,28 @@ simulation of turbulent and supersonic flows", citing the group's work.
   element-wise quadratic Smagorinsky coefficient (RL-Quad) to spectral
   vanishing viscosity, but defined in physical rather than wavenumber
   space.
+- **Modal solution filtering in flux reconstruction.**
+  [Wang (2024)](/sources/wang-2024-b.md) stabilizes a DG-recovering
+  [flux-reconstruction](/methods/flux-reconstruction.md) implicit LES of
+  turbine cascades with the exponential modal filter of Hesthaven &
+  Warburton (as recalled), with modal weights
+  $\exp\{-\alpha_f[(\vartheta_m-\vartheta_c)/(1-\vartheta_c)]^{s_f}\}$
+  above a cutoff $\vartheta_c$ of the normalized mode index $\vartheta_m$
+  ($\alpha_f=36$, $s_f=6$; all page-local, as on the subcell
+  finite-volume page; the source's $\eta$, $\eta_c$, $\alpha$, $s$;
+  $\vartheta_c$ not printed), applied after every
+  Runge–Kutta stage only in elements whose Persson–Peraire smoothness
+  indicator exceeds a threshold (§2.3, Eqs. 17–19). Like SVV it damps only
+  the highest modes, but as a filter on the solution rather than a
+  viscous flux. The author recalls that Lamballais et al. connected
+  solution filtering to SVV in finite differences and leaves the FR
+  analogue to future work (§2.3, §5); filtering adds local dissipation to
+  the numerical dissipation on which implicit LES relies, and may cause
+  time inconsistency (§2.3, §5, citing Edoh et al.). The method and its
+  thresholds are on the
+  [subcell finite-volume shock-capturing](/methods/subcell-finite-volume-shock-capturing.md)
+  and [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)
+  pages.
 
 ## Qualifications
 
@@ -375,3 +397,4 @@ simulation of turbulent and supersonic flows", citing the group's work.
 - [Saini et al. (2023)](/sources/saini-2023.md) — §2.2, Eqs. (6)–(8), (10); §2.3, Eqs. (13)–(15); §5.1–5.2, Figs. 7–15; §6.
 - [Slaughter et al. (2023)](/sources/slaughter-2023.md) — §3.1; §3.6, Fig. 5.
 - [Kou et al. (2023)](/sources/kou-2023.md) — §1.
+- [Wang (2024)](/sources/wang-2024-b.md) — §2.3, Eqs. (17)–(19); §5.

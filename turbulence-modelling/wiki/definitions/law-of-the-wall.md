@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Law of the wall"
-description: "The inner-layer mean-velocity profile of wall-bounded turbulence — viscous sublayer, buffer layer and logarithmic layer in wall units — with the constants, composite fits and damping functions the sources use, and its role as the target every wall model must reproduce."
+description: "The inner-layer mean-velocity profile of wall-bounded turbulence — viscous sublayer, buffer layer and logarithmic layer in wall units — with the constants, composite fits and damping functions the sources use, its compressible and outer-layer (defect-law) extensions, and its role as the target every wall model must reproduce."
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-26T07:39:00Z
+timestamp: 2026-10-26T10:26:00Z
 ---
 
 # Law of the wall
@@ -53,6 +53,10 @@ and the choice is part of the model.
 | [Kang et al. (2023)](/sources/kang-2023.md), figures | 0.41 | 5.2 | | reference line for LES of channel flow at $Re_\tau=180$ and 395 with learned SGS models |
 | [Wang et al. (2023b)](/sources/wang-2023-b.md), Eq. (10) | 0.40 | 5.5 | "for the low Reynolds number turbulent channel flow" | reference for van Driest-transformed compressible channel DNS |
 | [Zhao et al. (2023a)](/sources/zhao-2023.md), Eqs. (25)–(26) | 0.40 | 5.5 | "selected for the low-Reynolds-number turbulent channel flow" | sets the viscosity of a channel at a target $Re_\tau$ |
+| [Vadrot et al. (2023a)](/sources/vadrot-2023.md), §II.B.1, Eq. (1); §II.B.3 | $\approx0.4$ (0.4 in the states and figures) | $\approx5$ | | algebraic wall model and reference log law of reinforcement-learning wall models in LESGO |
+| [Constant et al. (2024)](/sources/constant-2024.md), §3.2, Eq. (8) | 0.41 | not printed | Musker's law (form not printed); van Driest damping $1-e^{-y^+/19}$ in the target-point eddy viscosity | wall function at immersed-boundary target points in RANS |
+| [Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §2.2, Eqs. (12)–(15) | $\approx0.41$ | $\kappa^{-1}\ln E$, $E\approx7.9$ | blend constants $s=86.58$, $p=0.7894$ | explicit equilibrium wall model in a lattice Boltzmann solver |
+| [Chen et al. (2024)](/sources/chen-2024.md), §2.3, Eqs. (2.7), (2.10) | 0.40 | — | $A^+=26$ divided by the square root of the local total shear stress in wall units; Johnson–King reference damping with 17 | mixing length of the algebraic [Baldwin–Lomax model](/methods/baldwin-lomax-model.md) (a RANS closure, not an LES wall model) |
 
 Zhao et al. (2023a) attribute $\kappa=0.40$, $B=5.5$ to the channel DNS of
 Kim et al. (1987), as they cite it; Wang et al. (2023b) give the same values
@@ -75,13 +79,27 @@ $Re_\tau^*=590$, so they keep $\kappa=0.41$, $A^+=17$. Gillyns et al. (2022,
 $\kappa\simeq0.383$, $B\simeq4.25$, but keep 0.38 and 4.1; the effect of the
 choice on $u_\tau$ is not assessed.
 
+Vadrot et al. (2023a, §II.B.3) note that empirical values of $\kappa$ range
+over 0.36–0.44 (as they cite it), which matters for their learned wall model
+because its first state is built from the chosen $\kappa=0.4$ (see
+[machine-learning wall models](/methods/machine-learning-wall-model.md)).
+Mozaffari et al. (2024) write the log law as $u^+=\kappa^{-1}\ln(Ey^+)$, as
+Cai et al. (2022) do, but with $E\approx7.9$ against 11.27 (see
+Contradictions); with $\kappa=0.41$ for both (Cai et al. print no value of
+$\kappa$) these correspond to $B\approx5.0$ and $B\approx5.9$
+*(compiler check, not in the sources)*.
+
 How much the constants matter is quantified by Lozano-Durán et al. (2022,
 §IV.C, Eq. 12): a 10 % error in $\kappa$ or in $B$ produces about 6 % or 3 %
 error in $u_\tau$, less than a 10 % error in the LES velocity at the matching
 point; their fuselage WMLES errors saturate at about 2 %, which they attribute
 to a 3 % deviation in $\kappa$ (§V.C). The constants therefore set an accuracy
 floor of wall-modelled LES that grid refinement does not remove (details on the
-[equilibrium wall model](/methods/equilibrium-wall-model.md) page).
+[equilibrium wall model](/methods/equilibrium-wall-model.md) page). Vadrot et
+al. (2023a, §III.B) quote a comparable sensitivity, after Yang et al. (2019)
+as they cite it: a 2.5 % uncertainty in $\kappa$ gives about a 5 % error in
+the predicted wall stress, that is about one to two wall units of
+[log-layer mismatch](/definitions/log-layer-mismatch.md).
 
 ## Composite profiles across the buffer layer
 
@@ -132,6 +150,29 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   asymptotically; its buffer-layer accuracy is not shown in the source
   *(compiler check, not in the sources)*. See the
   [equilibrium wall model](/methods/equilibrium-wall-model.md).
+- **The same explicit inverse with other constants** (Mozaffari et al.
+  2024, §2.2, Eqs. 9–15, after Cai & Sagaut as they cite it): the viscous
+  branch $y^+=\sqrt{Re_y}$, the log branch $y^+=E^{-1}e^{W(\kappa ERe_y)}$ and
+  the unified inverse
+
+  $$y^+(Re_y)=\left[1-\tanh\frac{Re_y}{s}\right]^pRe_y^{1/2}+\left[\tanh\frac{Re_y}{s}\right]^p\frac{e^{W(\kappa ERe_y)}}{E},\qquad u^+=\frac{Re_y}{y^+},$$
+
+  with $s=86.58$, $p=0.7894$, $\kappa\approx0.41$, $E\approx7.9$ ($s$, $p$
+  page-local); the exponent $p$ applies to the bracketed blending functions,
+  as in the form of Cai et al. (2022) above (manuscript p. 5, Eq. 15, checked
+  visually). No pressure-gradient term. See Contradictions for the
+  comparison with Cai et al. (2022).
+- **Musker's law** (Constant et al. 2024, §3.2, Eq. 6, after Musker as
+  cited): an equilibrium profile fitting viscous, buffer and log layers,
+  $u_A=u_\tau f(y_A^+)$ at an immersed-boundary target point $A$, with
+  $u_\tau$ from Newton–Raphson at the image point and assumed constant along
+  the wall normal; the formula is not printed. Their Fig. 7 compares it with
+  Spalding's law and a body-fitted flat-plate RANS profile. The eddy
+  viscosity at the target points is $\nu_t=\kappa u_\tau y\,[1-e^{-y^+/19}]$
+  with $\kappa=0.41$ (Eq. 8), stated "valid in the log layer and down to the
+  wall", and inverted for the Spalart–Allmaras variable $\tilde\nu$; the
+  damping enters to the first power and with the constant 19, unlike the
+  squared $A^+=17$ form of Griffin et al. (2023).
 - **Linear/log switch** (Lewis et al. 2023, §3.2.2, after Schmitt et
   al. as cited): a linear law $u^+=y^+$ for $y^+<11$ and a logarithmic law
   otherwise; the constants are not printed.
@@ -158,6 +199,27 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   Griffin et al. (2023, §3) report, citing Yang & Lv, that the classical van
   Driest damping is consistent with the van Driest transformation and its
   semi-local version (written in $y^*$) with the Trettel–Larsson one.
+  [Chen et al. (2024)](/sources/chen-2024.md) (§3.1, Eqs. 3.1–3.2) derive
+  the same equivalence for the inner layer of the algebraic
+  [Baldwin–Lomax model](/methods/baldwin-lomax-model.md): a mixing length
+  $\kappa y[1-e^{-y^*/A^+}]$ ($\kappa=0.40$) with semi-local damping is the
+  mixing-length relation written for the Trettel–Larsson velocity. Their
+  DNS diagnostic of the semi-local eddy viscosity, compared with the
+  Johnson–King inner scaling $\kappa y^*[1-e^{-y^*/17}]^2$, collapses up to
+  the buffer layer but falls below it in the log region of diabatic
+  boundary layers, and follows it more closely with the Griffin–Fu–Moin
+  transformation (§3.1, Fig. 3).
+- **Outer (defect) layer.** Chen et al. (2024, §3.2, Eqs. 3.9–3.12) use
+  Clauser's defect law $u_e^+-u^+=g(y/\Delta_{RC})$ with the Rotta–Clauser
+  thickness $\Delta_{RC}=u_e^+\delta^*$ (page-local $u_e^+$, $g$,
+  $\Delta_{RC}$); for the incompressible zero-pressure-gradient layer they
+  take, from Monkewitz et al. (2007) as they cite it, the outer maximum 5.55
+  of $y\,\partial u^+/\partial y$ at $y/\Delta_{RC}=0.155$. For compressible
+  layers the van Driest-transformed defect collapses better, with outer
+  velocity scale $u_\tau/\sqrt{\langle\rho\rangle/\rho_w}$, after Smits &
+  Dussauge as they cite it (Eq. 3.12, Fig. 5); this is the basis of their
+  outer-layer correction (see
+  [compressible velocity transformation](/definitions/compressible-velocity-transformation.md)).
 - **Adverse pressure gradients.** [Knopp (2022)](/sources/knopp-2022.md)
   finds the log law robust in adverse-pressure-gradient boundary layers but
   confined below $y^+_{\log,\max}=1.78\,Re_\tau^{1/2}(\Delta p_s^+)^{-1/5}$, with
@@ -237,6 +299,13 @@ slope and intercept of the log law at the matching height, so that the agent
 learns to raise or lower $\tau_w$ according to whether the local state lies
 above or below $u^+=0.41^{-1}\ln y^++5.2$ (Fig. 2); see
 [machine-learning wall models](/methods/machine-learning-wall-model.md).
+Vadrot et al. (2023a, §V) state the same position for their own
+reinforcement-learning model: recovering the log law is "an essential
+step", since "if a model cannot capture the log law, it would be hard for it
+to capture other flow phenomena"; their model, trained at $Re_\tau=10^4$,
+recovers $u^+=0.4^{-1}\ln y^++5$ in half-channel WMLES up to
+$Re_\tau=10^{10}$ whenever the matching height lies in the log layer, while
+at $Re_\tau=180$ its profile lies above the DNS (§III.A, Fig. 6).
 
 The friction velocity is also the first quantity a near-wall LES must get
 right without a wall model: [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md)
@@ -249,6 +318,9 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 
 - The constants are source choices, not measurements of this bundle; the
   table records them and no value is preferred here.
+- Mozaffari et al. (2024) print for Cai & Sagaut (2021), their ref. [8], a
+  DOI identical to the one they print for Wilhelm et al. (2021), ref. [63];
+  one of the two DOIs is a slip.
 - **Printed viscosity of Zhao et al. (2023a).** For $Re_\tau=180$ they print
   $\mu=2.83\times10^{-4}$ (§5.2). With their Eqs. (25)–(26), $\rho=1$, $\delta=1$
   and $U_c=1$: $U_c^+=2.5\ln180+5.5\approx18.48$, $u_\tau\approx0.0541$ and
@@ -260,6 +332,22 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
   function that tends to the undamped mixing length away from the wall, which
   holds only for $(1-e^{-y^+/A^+})^2$. In §3 they print "$\kappa$ … 4.1" for
   the 0.41 stated in §1 and at the end of §3.
+
+## Contradictions
+
+- **Constants of the explicit inverse wall law of Cai & Sagaut (2021).**
+  [Cai et al. (2022)](/sources/cai-2022.md) (§II.C.1, Eqs. 24–26) present
+  the tanh-blended explicit inverse $y^+(Re_y)$ as the model "proposed in
+  Refs. 23 and 29" (ref. 29 is Cai & Sagaut 2021) and print the blend scale
+  180.8, the exponent 0.789 and, in the companion forward profile, $E=11.27$.
+  [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) (§2.2, Eqs. 12–15,
+  lines 160–164) give the same functional form "in the form [8]" (ref. [8]
+  is Cai & Sagaut 2021) with $s=86.58$, $p=0.7894$ and $E\approx7.9$,
+  $\kappa\approx0.41$. Cai is a co-author of both and both run in ProLB;
+  neither paper says that its constants recalibrate the cited model, so the
+  two sources disagree on the constants of the same attributed law (the
+  blend scales differ by a factor of about two and the log branches through
+  $E$). Cai & Sagaut (2021) is not ingested. *Open.*
 
 # Citations
 
@@ -286,3 +374,7 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4.2, Eqs. (10)–(11), Fig. 11 (arXiv v1).
 - [Zhao et al. (2023a)](/sources/zhao-2023.md) — §5.2, Eqs. (25)–(26) (arXiv v1).
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §5.1, Fig. 5-2.
+- [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — §II.B.1, Eq. (1); §II.B.3; §III.A–III.B, Fig. 6; §V (arXiv v3).
+- [Constant et al. (2024)](/sources/constant-2024.md) — §3.2, Eqs. (6)–(8), Fig. 7 (HAL author manuscript).
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §2.2, Eqs. (9)–(15); ref. [8] (HAL accepted manuscript).
+- [Chen et al. (2024)](/sources/chen-2024.md) — §2.3, Eqs. (2.7)–(2.10); §3.1, Eqs. (3.1)–(3.4), Fig. 3; §3.2, Eqs. (3.9)–(3.12), Fig. 5.
