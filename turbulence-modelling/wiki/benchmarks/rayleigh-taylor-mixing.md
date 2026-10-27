@@ -5,7 +5,7 @@ description: "Buoyancy-driven mixing of a heavy fluid placed above a light one: 
 status: established
 aliases: [Rayleigh-Taylor instability, RT mixing layer, Rayleigh–Taylor flow, variable-density mixing layer]
 tags: [benchmark, pans, hybrid-rans-les, rans]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T10:36:00Z
 ---
 
 # Rayleigh–Taylor mixing
@@ -109,14 +109,22 @@ ingested source compares the two configurations.
 ## Single-mode inviscid instability as a shock-capturing test
 
 [Takagi et al. (2022)](/sources/takagi-2022.md), §4.7,
-[Liang & Fu (2024)](/sources/liang-2024.md), §4.7, and
-[Huang et al. (2025)](/sources/huang-2025.md), §5.7, run the inviscid
+[Liang & Fu (2024)](/sources/liang-2024.md), §4.7,
+[Huang et al. (2025)](/sources/huang-2025.md), §5.7, and
+[Kumar & Ghosh (2022)](/sources/kumar-2022-b.md), §3.1.7, run the inviscid
 two-dimensional single-mode instability (densities 2 and 1, $\gamma=5/3$,
 $At=1/3$ *(compiler check, not in the sources)*, grids $64\times256$ to
-$300\times1200$, $t=1.95$) only as a small-scale resolution test of
-[WENO and TENO schemes](/methods/weno-scheme.md), where its results are;
-it has no viscosity, mixing statistics or turbulence and is not the
-mixing-layer flow of this page.
+$300\times1200$, $t=1.95$; Kumar & Ghosh on $[0,1/4]\times[0,1]$ with
+spacings $1/480$ and $1/960$, initial perturbation
+$v=-0.025\,c\cos(8\pi x)$, $c$ the sound speed) only as a small-scale
+resolution test of [WENO and TENO schemes](/methods/weno-scheme.md), where
+its results are; it has no viscosity, mixing statistics or turbulence and
+is not the mixing-layer flow of this page. Kumar & Ghosh find that the
+less dissipative schemes resolve more roll-up and are the ones that lose
+the left–right symmetry of the single mode (their four-point
+bandwidth-optimized scheme on the coarser grid, the three-point one only
+marginally on the finer), which they call consistent with an earlier
+finding of Fu et al. (Figs. 19–22).
 
 ## Rayleigh–Taylor fingers in a solar-flare simulation
 
@@ -167,3 +175,4 @@ layer of this page.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.7, Eq. (32) (single-mode inviscid instability, numerics test).
 - [Liang & Fu (2024)](/sources/liang-2024.md) — §4.7, Eq. (60), Fig. 14 (same).
 - [Huang et al. (2025)](/sources/huang-2025.md) — §5.7, Fig. 8 (same).
+- [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §3.1.7, Figs. 19–22 (same, bandwidth-optimized WENO against WENO-JS, WENO-BS, TENO6 and TENO8).

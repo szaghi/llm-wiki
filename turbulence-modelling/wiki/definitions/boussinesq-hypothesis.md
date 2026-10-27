@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -259,6 +259,11 @@ and treatments of the trace; translated to the registry they agree.
   $-\tfrac23\rho k\delta_{ij}$ part is absent from the printed equation, and
   the paper does not say whether it is absorbed into the pressure
   ([Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §2, Eqs. 1–4).
+  Monfaredi et al. (2021) write the same total stress,
+  $(\mu+\mu_t)\big(\partial_mv_k+\partial_kv_m-\tfrac23\delta_{km}\partial_\ell v_\ell\big)$,
+  in compressible Spalart–Allmaras URANS, also without a
+  $-\tfrac23\rho k\delta_{ij}$ term ([Monfaredi et al. (2021)](/sources/monfaredi-2021.md),
+  §2.1, Eqs. 1–2; source's $v_k$ the velocity).
 - **RANS, compressible Spalart–Allmaras, with an eddy conductivity.**
   Lodares et al. (2022) write the total stress as
   $(\mu+\mu_t)\big(2S_{ij}-\tfrac23\partial_ku_k\delta_{ij}\big)$ and the heat
@@ -278,6 +283,26 @@ and treatments of the trace; translated to the registry they agree.
   "follows Boussinesq's hypothesis"
   ([Volpiani (2024)](/sources/volpiani-2024.md), App. 2, Eqs. 26–28; see
   [Smagorinsky model](/methods/smagorinsky-model.md)).
+- **RANS, compressible, as the linear part of an algebraic stress model.**
+  Sandberg & Michelassi (2022) define the Reynolds stress as
+  $-\overline{\rho u_i''u_j''}$ (their overbar a time average) and write the
+  explicit algebraic model trained by Akolekar et al. (2019) with
+  gene-expression programming as (Eq. 2, in registry symbols with
+  $\langle\rho\rangle R_{ij}$ the density-weighted stress of positive trace,
+  which is the convention this equation needs, see Qualifications)
+  $$\langle\rho\rangle R_{ij}-\tfrac23\langle\rho\rangle k\delta_{ij}=-2\mu_t\langle S^d_{ij}\rangle_\rho+2\langle\rho\rangle k\,G^1T^{(1)}_{ij}+2\langle\rho\rangle k\sum_{m=2}^{4}G^mT^{(m)}_{ij},$$
+  labelled "linear Boussinesq", "additional linear term" and "additional
+  nonlinear terms", with $\langle S^d_{ij}\rangle_\rho$ the Favre-averaged
+  deviatoric strain, $T^{(m)}$ basis tensors built from the
+  non-dimensional strain and rotation (Pope 1975) and $G^m(I_1,I_2)$
+  functions of two invariants found by the regression (the source's
+  $V^k_{ij}$, $\zeta_k$, $I_k$)
+  ([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §2.2.2.1,
+  §4.3, Eq. 2; see [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+  The same review lists the scalar eddy viscosities of the
+  $k$-$\varepsilon$, $k$-$\omega$ and $k$-$L$ models as
+  $\mu_t=0.09\langle\rho\rangle k^2/\varepsilon$, $\langle\rho\rangle k/\omega$ and
+  $0.09\langle\rho\rangle L\sqrt k$ (§2.2.2.1).
 
 ### A traceless Reynolds stress
 
@@ -327,6 +352,28 @@ from the displacement of fluid particles over a decorrelation time $T_\phi$,
 which under isotropy gives $\nu_\phi=C\,k_cT_\phi$ with $k_c$ the energy of
 the convecting fluctuations ([Haering et al. (2022)](/sources/haering-2022.md),
 §III B, Eqs. 12–14). The LES version holds only in expectation.
+
+Heinz (2020) derives the hypothesis from a stochastic model instead: the
+Reynolds (or subgrid) stress is the variance of a velocity probability
+(or filtered) density governed by a Fokker–Planck equation with relaxation
+time $\tau_L$ and diffusion parameter $0\le c_0\le1$ (page-local), and the
+simplest balance of the resulting anisotropy equation,
+$b_{ij}=-\tau_L\langle S_{ij}\rangle/3$, gives
+$R_{ij}=\tfrac23k\delta_{ij}-2\nu_t\langle S_{ij}\rangle$ with
+$\nu_t=k\tau_L/3=C_\mu k^2/\varepsilon$ and $C_\mu=2(1-c_0)/3$
+([Heinz (2020)](/sources/heinz-2020.md), §2.2, Eqs. 2–7; constants on the
+[$k$-$\varepsilon$ page](/methods/k-epsilon-model.md)). The same author
+writes the hypothesis three times in a hybrid simulation, for the total
+(RANS) stress with $\nu_{t,\mathrm{tot}}$, for the mean resolved stress
+$R^{\mathrm{res}}_{ij}$ with $\nu_{t,\mathrm{res}}$, and for the modelled
+stress with $\nu_t$ (page-local subscripts), and links the three viscosities
+through $R_{ij}=R^{\mathrm{res}}_{ij}+\langle\tau_{ij}\rangle$ (§2.4, Eqs. 14,
+19–20; see [hybrid RANS/LES](/definitions/hybrid-rans-les.md)). The
+stochastic view also grounds the realizability Heinz requires of any
+stress model: physically, the stress must be the variance of a realizable
+stochastic process; mathematically (after Schumann), the modelled stress
+must be positive semi-definite, which carries over to subgrid stresses
+when the filter is positive (§2.1).
 
 ## Limits of a single scalar eddy viscosity
 
@@ -543,6 +590,20 @@ overpredicted reattachment lengths, the motivation of the separation terms
 of their [transition model](/methods/laminar-kinetic-energy-transition-model.md)
 ([Pacciani et al. (2025)](/sources/pacciani-2025.md), §3.2, §4.5).
 
+**Distorted wakes in blade passages.** Sandberg & Michelassi (2022) state
+that the acceleration and turning of the mean flow in a blade passage
+misalign the Reynolds stress and the strain in the wake cores, which
+invalidates the linear hypothesis, and name non-linear closures or full
+Reynolds-stress transport as possible cures (§3.2.3, citing Wu & Durbin
+2001, Michelassi et al. 2002, Stieger & Hodson 2005, Michelassi & Wissink
+2015). They cite the same failure for the heat flux: in a DNS of a
+pulsating flow with intermittent separation and temperature stratification
+(Wissink et al. 2004) the turbulent shear stress was rarely aligned with the
+velocity deformation and the turbulent heat flux rarely with the
+temperature gradient, and the turbulent Prandtl number took values between
+0.4 and 4 instead of a constant of about 0.9 (§3.2.3, §3.3). See
+[turbine cascades](/benchmarks/turbine-cascade.md).
+
 **What the energy-matching viscosity leaves out.** Inagaki & Kobayashi
 (2023) split the deviatoric subgrid stress of filtered channel DNS
 ($Re_\tau=400$) into the part carried by the flux-matching eddy viscosity
@@ -708,6 +769,13 @@ in the closure prediction" (§IV B, Fig. 20; see
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md),
 [model-consistent training](/methods/model-consistent-training.md) and
 [tensor-basis neural network](/methods/tensor-basis-neural-network.md)).
+Sandberg & Michelassi (2022) cite earlier evidence for the same
+point: even the true DNS Reynolds stress injected into RANS does not
+guarantee an accurate mean flow (Parneix et al. 1998) and can jeopardize
+robustness (Wu et al. 2019), and they present field inversion followed by
+machine learning as the remedy that yields model-consistent closures, at
+the cost of an inverse problem (§4.3; see
+[field inversion](/methods/field-inversion-machine-learning.md)).
 
 **Bypassing the hypothesis.** Eivazi et al. (2022) avoid any eddy-viscosity
 relation: a [physics-informed neural network](/methods/physics-informed-neural-network.md)
@@ -783,6 +851,16 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
   multiplier as $(1+\chi_h)\mu_t\big(\nabla\boldsymbol u+\nabla\boldsymbol u^{\top}-\tfrac23\mathrm{Tr}(\nabla\boldsymbol u)\big)$,
   without the identity that their §2.1 writes (§3.3; $\chi_h$ the source's
   correction field).
+- Sandberg & Michelassi (2022) define $\tau^R_{ij}=-\overline{\rho u_i''u_j''}$
+  (§2.2.2.1), whose trace is $-2\langle\rho\rangle k$, so that its deviatoric
+  part is $\tau^R_{ij}+\tfrac23\langle\rho\rangle k\delta_{ij}$ and its
+  Boussinesq form carries $+2\mu_t$; their Eq. 2 writes
+  $\tau^R_{ij}-\tfrac23\langle\rho\rangle k\delta_{ij}=-2\mu_t[\cdots]+\cdots$,
+  the form of the positive-trace stress. Eq. 2 is therefore consistent only
+  with the opposite sign convention to the definition, and the page writes
+  it in that convention *(compiler check, not in the sources)*. Their
+  summation index $k$ in Eq. 2 is also the symbol of the turbulent kinetic
+  energy.
 
 # Citations
 
@@ -833,3 +911,6 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §2, Eqs. 1–4.
 - [Lodares et al. (2022)](/sources/lodares-2022.md) — §2 Eqs. 9–13, §3.1.
 - [Volpiani (2024)](/sources/volpiani-2024.md) — App. 2, Eqs. 26–28.
+- [Monfaredi et al. (2021)](/sources/monfaredi-2021.md) — §2.1, Eqs. 1–2.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1, §3.2.3, §3.3, §4.3, Eq. 2.
+- [Heinz (2020)](/sources/heinz-2020.md) — §2.1, §2.2 Eqs. 2–7, §2.4 Eqs. 14, 19–20.

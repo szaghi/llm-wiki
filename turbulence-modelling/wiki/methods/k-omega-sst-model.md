@@ -5,7 +5,7 @@ description: "Menter's two-equation shear-stress-transport eddy-viscosity model,
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-27T06:13:00Z
+timestamp: 2026-10-27T10:56:00Z
 ---
 
 # k-ω SST model
@@ -320,7 +320,18 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
   largest cell edge, $F_2$ serving as shielding against grid-induced
   separation and modelled-stress depletion
   ([Yang & Ma (2022)](/sources/yang-2022-b.md), §2.1, Eqs. 1–5; page-local
-  $L_t$).
+  $L_t$). Zangeneh (2021) runs SST-IDDES (after Gritskevich et al. 2012)
+  as a wall-modelled LES of supersonic flows, solving the RANS inner
+  layer on an auxiliary wall grid embedded in the coarse LES mesh; in the
+  printed $k$ equation the destruction is $\rho\sqrt{k^3}/l_{\mathrm{IDDES}}$,
+  with $l_{\mathrm{IDDES}}$ the IDDES blend of the RANS and LES lengths, and
+  the eddy viscosity keeps the SST limiter
+  $\mu_t=\rho a_1k/\max(a_1\omega,F_2S)$, with $S$ a strain measure the
+  source does not define (page-local); no coefficient is printed, the paper
+  referring to Gritskevich et al.
+  ([Zangeneh (2021)](/sources/zangeneh-2021.md), §II.A–B, Eqs. 1, 5–7;
+  see [detached-eddy simulation](/methods/detached-eddy-simulation.md) and
+  [wall-modelled LES](/methods/wall-modelled-les.md)).
 - **Roughness.** D'Ayer et al. (2026) cite roughness corrections of SST
   (Aupoix, their ref. [7]) among the roughness models whose development
   their rough-wall DNS databases are meant to support
@@ -356,6 +367,15 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
   to SST and blend several such experts in space (§2–§3; see the
   [Boussinesq page](/definitions/boussinesq-hypothesis.md) and
   [turbulence-model aggregation](/methods/turbulence-model-aggregation.md)).
+- **Wall-flux correction of an SST-IDDES.** Zangeneh (2021) leaves the
+  SST-IDDES equations untouched and corrects its outputs: a random forest
+  predicts the error of the wall shear stress and wall heat flux of the
+  baseline from local mean-flow features, and the corrected values are used
+  to correct $\mu_t$ and $Pr_t$, which are fed back to the solver, "a
+  corrective approach and not 'standard' turbulence model"; how $\mu_t$ and
+  $Pr_t$ are obtained from the corrected fluxes is not printed (§II.F–G,
+  §III; details on the
+  [machine-learning wall-model page](/methods/machine-learning-wall-model.md)).
 
 ### Implementation in a lattice Boltzmann solver
 
@@ -727,6 +747,18 @@ version read (arXiv v1):
   Oulghelou et al., Möller et al., Mozaffari et al. (2024) and Petrocchi &
   Barakos print 0.31; the
   paper gives no reason for the value.
+- Zangeneh (2021) prints the convective term of the $k$ equation as
+  $\nabla\cdot(\rho\boldsymbol u\omega)$, the term of the $\omega$ equation
+  (Eq. 6), prints the cross diffusion with a factor 2 on both sides of a
+  line break (Eq. 5), and expands SST as "shear stress tensor" while citing
+  Gritskevich et al.'s "$k$-$\omega$ shear stress transport model"
+  (§II.B), like the Petrocchi & Barakos nomenclature above.
+- Monfaredi et al. (2021) attribute part of the differences between their
+  Spalart–Allmaras URANS of a rod–airfoil configuration and two published
+  2D URANS of the same case to the closure ("may be due"), those URANS
+  using SST; they do not run SST themselves
+  ([Monfaredi et al. (2021)](/sources/monfaredi-2021.md), §4.2, Fig. 7; see
+  the [SA page](/methods/spalart-allmaras-model.md)).
 
 ## Contradictions
 
@@ -778,3 +810,5 @@ version read (arXiv v1):
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §1.1 Eqs. 1–20 Table 1, §1.2 Eq. 38, §3.3.1 Eq. 88, §4.1 Figs. 9–10.
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.1 Table 1, §3.3, §3.4 Tables 3–4, §4.
 - [Batther & Lee (2022)](/sources/batther-2022.md) — §3.1, §4.3.1, Fig. 17.
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) — §II.A–B Eqs. 1, 5–7, §II.F–G, §III.
+- [Monfaredi et al. (2021)](/sources/monfaredi-2021.md) — §4.2, Fig. 7.

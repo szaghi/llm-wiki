@@ -5,7 +5,7 @@ description: "A strong shock crossing a medium with order-one density fluctuatio
 status: established
 aliases: [shock–inhomogeneity interaction, shock through a non-uniform medium, turbulent Rankine–Hugoniot relations, turbulent jump conditions, shock-driven turbulence, shocklets, shock networks, shock–turbulence interaction, supersonic isothermal turbulence, sonic scale]
 tags: [compressible, implicit-les, plasma, astrophysics, dg, numerical-dissipation]
-timestamp: 2026-10-26T15:53:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Shock-generated turbulence and turbulent shock jump relations
@@ -178,7 +178,9 @@ shock–turbulence experiments (not shown).
 
 When the turbulence itself is supersonic, or becomes so locally, it builds
 its own shocks; nothing is imposed from outside. Three sources of the bundle
-use such flows to test discretizations, and one more offers decaying data.
+use such flows to test discretizations, one more offers decaying data,
+and a shock train in a channel gives a wall-bounded counterpart with
+imposed shocks.
 Page-local symbols here: $l_s$ and $L_{\mathrm{inj}}$ the sonic and injection
 scales, $v(l)$ the velocity increment at separation $l$ from the
 second-order structure function, $\varepsilon_s$ and $\varepsilon_d$ the
@@ -268,8 +270,35 @@ turbulence at turbulent Mach numbers 0.8 to 1.6,
 block-like expansion regions (detail on
 [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)).
 
-Unlike the shock-tube runs above, none of these flows has a single mean
-shock, so the Favre-averaged jump relations do not apply to them; their
+**Turbulence amplified through a shock train.** A wall-bounded counterpart,
+with the shocks imposed by back pressure rather than formed by the
+turbulence, is the shock train that
+[Kumar & Ghosh (2022)](/sources/kumar-2022-b.md), §3.2.3, compute in a
+plane isolator channel ($4\pi h\times2h\times4\pi h/3$, $h$ the half-width,
+$192\times128\times151$ points, isothermal walls) fed by a concurrently
+run periodic channel at centreline Mach 1.5 and $Re_\tau=247$, with an
+outlet pressure nearly twice the inlet pressure, using a three-point
+bandwidth-optimized [WENO scheme](/methods/weno-scheme.md) with a relative
+total-variation limiter and no model. The shock train extends to
+$x/L_x=0.3$ ($L_x$ the channel length) and its shocks are not always
+symmetric about the centreline. Along the centreline the streamwise
+Reynolds stress, normalized by the inlet wall shear stress, jumps in the
+compression regions and drops in the expansions, grows gradually in the
+mixing region up to $x/L_x=0.78$ and then declines, staying above its
+inlet value at the outlet; the other normal stresses follow with smaller
+magnitudes (Fig. 36). Near the shocks the boundary layers thicken and
+separate, and near-wall sweep–ejection activity intensifies (Figs. 30–32).
+The evidence is qualitative: there is no reference data for the shock
+train beyond a qualitative match of centreline density and pressure with
+an earlier pipe-flow LES that the authors cite, and the paper reports
+neither the wall-unit resolution nor the averaging time. The
+"one-dimensional shock–turbulence interaction" of the same paper is the
+inviscid Shu–Osher shock/entropy-wave problem, not turbulence (§3.1). See
+also [shock/turbulent boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+and [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
+
+Unlike the shock-tube runs above, none of the turbulence-generated
+flows has a single mean shock, so the Favre-averaged jump relations do not apply to them; their
 shocks are the dissipative structures of the turbulence, and the sources
 judge discretizations by how they resolve or smear them.
 
@@ -317,6 +346,10 @@ judge discretizations by how they resolve or smear them.
   kinetic term and $Re=\rho_0U_0/\mu_0$ without a length (§II.A–B); the
   Fig. 8 legend names a "TENO6 512" reference where the text uses the
   $2048^3$ run.
+- Kumar & Ghosh (2022) give the periodic channel as centreline Mach
+  1.49 and $Re_\tau=240$ (Table 4, §3.2.2) and the inflow channel of the
+  shock train, on the same domain and grid, as Mach 1.5 and
+  $Re_\tau=247$ (§3.2.3), without saying whether these are the same run.
 
 # Citations
 
@@ -325,3 +358,4 @@ judge discretizations by how they resolve or smear them.
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — §I; §II.A–C, Eqs. (5)–(11), Figs. 2–4; §IV.A–B, Figs. 5–8; §V (supersonic Taylor–Green vortex, non-converged first dilatational peak, shock-capturing comparison).
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — §5.2, Fig. 11 (supersonic Taylor–Green vortex as GALÆXI validation).
 - [Cao et al. (2022)](/sources/cao-2022.md) — §3.4, Fig. 15 (shocklets in decaying compressible isotropic turbulence).
+- [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §3.1 (Shu–Osher problem labelled shock–turbulence interaction); §3.2.2, Table 4; §3.2.3, Figs. 30–36 (shock-train DNS in an isolator channel, Reynolds-stress amplification).

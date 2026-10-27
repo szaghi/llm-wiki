@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Equilibrium wall model
@@ -39,7 +39,13 @@ baseline of the learned models of [Bae & Koumoutsakos (2022)](/sources/bae-2022.
 and of the [building-block-flow wall model](/methods/building-block-flow-wall-model.md)
 of [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) and of the
 reinforcement-learning model of [Vadrot et al. (2023a)](/sources/vadrot-2023.md). It is the boundary
-condition that defines [wall-modelled LES](/methods/wall-modelled-les.md).
+condition that defines [wall-modelled LES](/methods/wall-modelled-les.md). The review of [Bose & Park (2018)](/sources/bose-2018.md) (§2.1)
+places it as the special case of the thin-boundary-layer-equation model in
+which only the wall-normal diffusion is kept, and [Heinz (2020)](/sources/heinz-2020.md)
+(§3.1) as the case $F_i=0$ of the same equation; the models that keep the
+dropped terms are on the [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)
+page, where [Lv et al. (2021)](/sources/lv-2021.md) use the model of Kawai &
+Larsson (2012), as cited, as the baseline of their integrated wall model.
 The same equilibrium wall function also closes steady RANS at coarse
 near-wall resolution: [Constant et al. (2024)](/sources/constant-2024.md)
 use it with the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
@@ -87,6 +93,20 @@ wall heat flux $q_w$ from an analogous energy-equation approximation. Agrawal et
 al. (2022, §VII.D) use the Cabot–Moin form, a boundary-value problem solved
 for given matching height and LES velocity.
 
+Bose & Park (2018, §2.1, Eq. 6) write the same closure as
+$\mu_t=\rho\kappa u_\tau y\,D(y)$ with a damping function $D$ (van Driest,
+for example; page-local) and $\kappa\approx0.41$ for zero-pressure-gradient
+layers, after Wang & Moin (2002) as cited: the solution is a layer
+of constant total stress, $d\tau/dy=0$, that reproduces the linear sublayer
+and the log law. They read it as a steady RANS solution of the inner layer,
+i.e. as an ensemble of many eddies (after Piomelli & Balaras 2002, as
+cited), which presupposes wall-adjacent cells larger than a minimal
+channel, $\Delta x^+\gtrsim300$, $\Delta z^+\gtrsim100$, with experimental
+support for $\Delta^+\gtrsim1800$ (Nakayama et al. 2004, as cited). Data
+support the constant-stress premise only close to the wall:
+$0.95<\tau/\tau_w<1$ for $y/\delta\lesssim0.03$ at high enough Reynolds number
+(§2.1, Fig. 3; see [law of the wall](/definitions/law-of-the-wall.md)).
+
 **Compressible extension.** For compressible flow with heat transfer the
 momentum ODE is coupled with a total-energy ODE,
 
@@ -108,6 +128,17 @@ printed.
 When the ODE solution is replaced by its closed-form profile, the model is the
 inversion of a [law of the wall](/definitions/law-of-the-wall.md) for
 $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
+
+- **Review of the algebraic family** (Bose & Park 2018, §2.1, Eq. 3): the
+  log law $U_{\mathrm{LES}}=u_\tau[\kappa^{-1}\ln(h_{\mathrm{wm}}u_\tau/\nu)+B]$,
+  a nonlinear equation for $u_\tau$, assumed valid locally and
+  instantaneously with no penetration (Deardorff 1970; Schumann 1975;
+  Grötzbach 1987, as cited); the composites of Spalding (1961) and Werner &
+  Wengle (1993) that cover sublayer and buffer layer; the pressure-gradient
+  term of Manhart et al. (2008); and Monin–Obukhov similarity for stratified
+  atmospheric LES. The Werner–Wengle model is the wall model of the
+  cruise NASA Common Research Model WMLES they cite (Lehmkuhl et al. 2016;
+  §4.3).
 
 - **Log law only** (Vadrot et al. 2023b, Eqs. 1–2, after Moeng):
   $\tau_w=\rho\left[\kappa U_{\mathrm{LES}}/\ln(h_{\mathrm{wm}}/y_0)\right]^2$
@@ -468,7 +499,14 @@ CRM-HL to such cancellation ("it has been reported", with no citation,
 Goc et al. (2021, §2.2) recall the complementary bound of Bose & Park (2018):
 the equilibrium-model wall-stress error is bounded by the resolution of the
 matching location relative to the displacement or momentum thickness, even with
-pressure gradients, because the outer LES resolves the non-equilibrium effects.
+pressure gradients, because the outer LES resolves the non-equilibrium effects. The bound itself (Bose & Park 2018, §2.1, Eqs. 7–8) comes from
+integrating the boundary-layer momentum equation up to $h_{\mathrm{wm}}$: the
+pressure-gradient contribution to $\tau_w$ is at most the Clauser parameter
+times $h_{\mathrm{wm}}/\delta^*$, so it can be made negligible by a low matching
+height, but the height needed may depend on the pressure-gradient parameter
+rather than being a fixed fraction of $\delta$, and the argument fails near
+separation, where $\tau_w\to0$ (derivation and sign convention on the
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md) page).
 
 ## Wall-stress fluctuations
 
@@ -494,6 +532,10 @@ algebraic log-law model (a multiplication, two divisions, a logarithm, a
 square), recall that the ODE-based model adds 10–30 % overhead to an LES, and
 measure the ODE model at about four times the cost of the
 reinforcement-learning wall model BK22 (one cluster, no hardware detail).
+Lv et al. (2021, §I, §II B 4) quote, for the ODE form on grids of
+$O(10^6$–$10^7)$ points scaled up to 256 cores, an overhead of 30–40 %, and
+for algebraic equilibrium models usually not more than 5 %, as they cite
+earlier implementation studies.
 Griffin et al. (2023, §4) report that their one-ODE
 [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md)
 costs between 7 % less and 32 % more than the classical two-ODE compressible
@@ -514,6 +556,30 @@ further hardware detail).
 
 ## Limits shown by the sources
 
+- **Separation in the review.** Bose & Park (2018, §2.1) state that neither
+  presumed profiles nor eddy-viscosity closures handle separation reliably:
+  $u_\tau\to0$ there, and with it the mixing-length eddy viscosity. Earlier
+  studies imposed no slip in regions known to separate (Bodart et al. 2013)
+  or at corners (Cabot 1996), as cited, and the treatment of separation
+  points "remains a theoretical challenge".
+- **Secondary flows and compression corners.** Supersonic-duct WMLES with an
+  equilibrium model over-predict the secondary corner flow and the corner
+  shear stress (Vane et al. 2014), which suggests that the locally
+  one-dimensional equilibrium approximation is inadequate for secondary
+  flows, and a compression ramp shows a delayed initial pressure rise
+  (Dawson et al. 2013), as cited by Bose & Park (2018, §4.4).
+- **Laminar and transitional regions** in the review: equilibrium-type wall
+  models must be switched off upstream of transition; the sensor of Bodart &
+  Larsson (2012), as cited, suppresses the modelled turbulent stress where
+  the velocity fluctuation at the top of the wall-model layer relative to
+  $u_\tau$ falls below a threshold, and transition locations are then well
+  predicted (Bose & Park 2018, §4.1).
+- **Periodic hill.** Against the integrated wall model of Lv et al. (2021,
+  §IV B 2, Fig. 17), the equilibrium model (Kawai & Larsson 2012, as cited)
+  gives the less accurate skin friction on the leeside and near the crest at
+  $Re_b=10\,595$; neither captures $C_f$ between $x/H\approx0$ and 2, and the
+  grid matters more than the wall model (see
+  [periodic hill](/benchmarks/periodic-hill.md)).
 - **Strong wall heat transfer.** The classical compressible model is hard to
   converge (Fu et al. 2021, as recalled by Griffin et al. 2023, §1), and its
   wall-stress and heat-flux errors grow with the cooling parameter $-B_q$,
@@ -626,6 +692,22 @@ further hardware detail).
   the relaxation time of the fluid layer below $h_{\mathrm{wm}}$); applying the
   equilibrium stress instantaneously is justified only under full time-scale
   separation.
+
+**Relation to the slip wall.** Bose & Park (2018, §2.3) state that the
+dynamic slip-wall condition, derived without any assumption on the velocity
+profile or equilibrium, can be shown equivalent to an equilibrium wall-stress
+model in its resulting stress (Yang et al. 2016, as cited); see
+[wall-modelled LES](/methods/wall-modelled-les.md).
+
+**Thermal equilibrium.** The same assumptions applied to the total-energy
+equation with constant properties, $q_{\mathrm{turb}}\approx-\lambda_t\,\partial T/\partial y$
+and $\lambda_t=\mu_tc_p/Pr_t$ (Rannie 1956, as cited), give the strong
+Reynolds analogy $C_h=C_f/2$ in the absence of strong viscous heating, while
+the work terms carry the inner-layer viscous heating and the near-wall
+temperature peak (Bose & Park 2018, §2.5, Eq. 17; $q_{\mathrm{turb}}$,
+$\lambda_t$ page-local, $C_h$ the Stanton number as on the Morkovin page). The analogy fails near
+separation, where the skin friction vanishes but the heat transfer does not
+(see [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md)).
 
 In equilibrium flows the model is adequate: Fowler et al. (2022, §5.1) find
 equilibrium-model and LaRTE channel statistics "nearly indistinguishable" for
@@ -756,3 +838,6 @@ profile lies above the DNS).
 - [Wu & Lele (2026)](/sources/wu-2026.md) — §2.2; §6.2 (arXiv v2).
 - [Nuca et al. (2025)](/sources/nuca-2025.md) — §I–II, Fig. 2; §III–IV, Eqs. (1)–(24), Table I, Fig. 3; §V.A–V.B, Tables II–VI, Figs. 4–7; §VI, Tables VII–VIII, Figs. 8–9; §VII; App. A, Eqs. (A1)–(A3); App. B.
 - [Husson et al. (2024)](/sources/husson-2024.md) — §3.1–3.2; §4.2.2; §4.3.2.
+- [Bose & Park (2018)](/sources/bose-2018.md) — §2.1, Eqs. (3), (6)–(8), Fig. 3; §2.3; §2.5, Eq. (17); §4.1; §4.3; §4.4.
+- [Heinz (2020)](/sources/heinz-2020.md) — §3.1, Eq. (21).
+- [Lv et al. (2021)](/sources/lv-2021.md) — §I; §II B 4; §IV B 2, Fig. 17.

@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry of the bundle: averaging and filtering, stresses and closures, RANS, wall, element-discretization, data-driven, spectral, MHD and shared page-local symbols, with the sign and normalization conventions fixed here; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-27T06:13:00Z
+timestamp: 2026-10-27T11:02:00Z
 ---
 
 # Notation registry
@@ -265,3 +265,14 @@ that uses one still says what it means.
 | $d_{\mathrm{IP}}$ | distance of the image (interpolation) point from an immersed wall | immersed boundary methods, RANS wall functions |
 | $\alpha_{\mathrm{KT}}$, $\beta_{\mathrm{KT}}$, $a_s$, $b_s$, $E_D$, $\ell^\pm$ | von Kármán–Taylor constants and shear-source strengths of nearly incompressible MHD transport models; residual energy; Elsasser correlation lengths (not the registry's $\lambda$) | compressible MHD turbulence, critical balance |
 | $C_I$ | Yoshizawa coefficient of the isotropic subgrid stress | Smagorinsky model, explicit modal filtering, Boussinesq hypothesis |
+| $\tau_{\mathrm{col}}$, $\tau_{\mathrm{col},t}$ | collision time of a gas-kinetic (BGK) scheme and its turbulent increment, $\tau_{\mathrm{col}}+\tau_{\mathrm{col},t}=(\mu+\mu_t)/p$ (never $\tau_t$, the $k$-$\tau$ time scale) | high-order gas-kinetic scheme, large-eddy simulation, lattice Boltzmann method |
+| $C_{\mathrm{Th}}$, $M_{\mathrm{tip}}$, $\psi$ | rotor thrust coefficient (not the TENO cut-off $C_T$), tip Mach number and wake age | Caradonna–Tung rotor |
+| $C_h$ | Stanton number (the registry's $St$ is the Strouhal number) | Morkovin hypothesis, wall-modelled LES, non-equilibrium wall models |
+| $h_p$ | plunge amplitude of an oscillating body (not the cell size $h$) | circular-cylinder wake |
+| $F$, $D_{\mathrm m}$, $a_{\mathrm{cf}}$, $F_{\mathrm{num}}$, $F_{\mathrm{sgs}}$ | thickening factor, molecular diffusivity, counterflow strain rate; numerical and subgrid parts of the thickening | thickened flame model, flamelet-based tabulated chemistry |
+| $\alpha_\omega$, $\alpha^*_\omega$ | destruction coefficients of Heinz's $\omega=\varepsilon/k$ form (not $\beta$, $\beta^*$) | continuous eddy simulation, $k$-$\omega$ model, detached-eddy simulation |
+| $\mathsf s_{ij}$, $\mathsf w_{ij}$ | resolved strain and rotation normalized by the strain magnitude in tensor-basis SGS models | tensor-basis neural network, symbolic-regression closures |
+| $\beta_{RC}$ | Clauser pressure-gradient parameter | adverse-pressure-gradient wall law, non-equilibrium wall models |
+| $P_{\mathrm{TV}}$ | threshold of the relative total-variation limiter of bandwidth-optimized WENO | WENO schemes |
+| $\eta_Z$, $\zeta_Z$ | thickness and position coordinates of a counterflow mixing layer in mixture fraction | thickened flame model |
+| $C_{\mathrm{DM}}$ | constant of the Duan–Martín temperature–velocity relation (not the TENO cut-off $C_T$) | Morkovin hypothesis, compressible velocity transformations, Baldwin–Lomax model, inverse-velocity-transformation wall model |

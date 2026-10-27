@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-27T06:13:00Z
+timestamp: 2026-10-27T11:01:00Z
 ---
 
 # Smagorinsky model
@@ -71,6 +71,8 @@ are variants of the same eddy-viscosity idea.
 | 0.1 (figure legends only) | same code, Taylor–Green vortex | Ranjbar et al. (2026), Figs. 13–14 |
 | unstable below 0.15, inaccurate at 0.2 | same code, compressible channel at $Re_\tau=395$ | Ranjbar et al. (2026), §III.C |
 | $C=0.18$ (whether $C=C_s$ is not stated) | static baseline in Fourier-spectral LES of forced isotropic turbulence and channel flow | [Wu & Lele (2026)](/sources/wu-2026.md), §5.1 |
+| not printed; enters the Vreman constant $c=2.5C_s^2$ and the WALE relation $C_w^2\approx10.6C_s^2$ | gas-kinetic LES of channel flow, $\Delta=(\Delta x_1\Delta x_2\Delta x_3)^{1/3}$ | [Zhao et al. (2021)](/sources/zhao-2021-c.md), §III.A–C, Eq. (14) |
+| $\approx0.059$, the linear term of a learned tensor model | gene-expression-programming SGS model of forced isotropic turbulence | [Li et al. (2021)](/sources/li-2021.md), Eq. (22) (see below) |
 
 Wang et al. (2021, §3.1), citing earlier work, relate the coefficient to
 the Kolmogorov constant by $C_s\approx C_\Delta^{-1}(1.5C_K)^{-3/4}$
@@ -105,6 +107,25 @@ across flows, §II) and Smagorinsky "one of the most dissipative models"
 (§IV), and do not print the value used. The square root in Zhao et al.'s
 mixing-layer row is a *compiler check, not in the sources*: they print
 $C_{\mathrm{Smag}}=\sqrt{0.001}$.
+
+[Li et al. (2021)](/sources/li-2021.md) (§III D, §IV) state that the
+linear (eddy-viscosity) coefficient of their learned model is "much
+smaller" than in Smagorinsky and dynamic Smagorinsky models, so that the
+model is less dissipative. In the normalization of the
+[tensor-basis page](/methods/tensor-basis-neural-network.md) their linear
+term is $-0.01\cdot\tfrac12\Delta^2\lvert\bar S\rvert^2\,\mathsf s_{ij}$ with
+$\mathsf s_{ij}=\sqrt2\,\bar S_{ij}/\lvert\bar S\rvert$ (page-local), i.e.
+$\nu_t=0.005\,\Delta^2\lvert\bar S\rvert/\sqrt2$, an equivalent
+$C_s\approx0.059$ with $\Delta$ the top-hat width (16 DNS spacings)
+*(compiler check, not in the sources)*; the other three terms are
+nonlinear in the strain and rotation (see
+[gradient model](/methods/gradient-model.md)).
+
+The hybrid RANS/LES review of [Heinz (2020)](/sources/heinz-2020.md)
+(§2.3, App. C) sets the LES length scale as $L=C_+\Delta$ for small
+filter widths, with $C_+=(3C_K/2)^{3/2}/\pi$ ($C_+$ page-local, $C_K$ the
+Kolmogorov constant as in the Vicente Cruz & Lamballais row), and
+concludes from $C_K=1.3$–1.5 that "$L=\Delta$ is very reasonable".
 
 **A coefficient learned from data.** [Zhao et al. (2025)](/sources/zhao-2025.md)
 (§4, Eqs. 25–26, Table 4, Figs. 19–23) make $C_s$ a trainable parameter of
@@ -297,6 +318,19 @@ $\nu_t=(C_sf_S\Delta)^2\lvert\bar S\rvert$ with
 $f_S=1-\exp(-y^+/A^+)$, $A^+=25$; in §IV E (Eq. 20) the author switches to
 $f_S=\sqrt{1-\exp[-(y^+/A^+)^3]}$, "considering the correct near-wall
 limiting behavior".
+- **Coupling through a kinetic relaxation time.** In the gas-kinetic LES
+  of Zhao et al. (2021, §III, Eqs. 12–14) the Smagorinsky viscosity
+  $\mu_t=\bar\rho(C_s\Delta)^2\lvert\bar S\rvert$, $\lvert\bar S\rvert$ with
+  the factor two, enters the BGK collision time
+  $(\mu+\mu_t)/p$; the same coupling serves their dynamic, Vreman and WALE
+  variants (see [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md)).
+  They call the static model "too dissipative in the near-wall region and
+  not universal" (§I) and run only its dynamic form.
+- **Log-layer mismatch.** The wall-modelling review of
+  [Bose & Park (2018)](/sources/bose-2018.md) (§2.1) state, citing Wu &
+  Meyers, that the SGS model (e.g. the dynamic Smagorinsky model) can be
+  adjusted from the turbulent-kinetic-energy budget to prevent the
+  [log-layer mismatch](/definitions/log-layer-mismatch.md).
 - **Small–small VMS.** The strain is computed from high-pass filtered
   (polynomial-projection) gradients (Flad & Gassner 2017, App. B,
   Eq. B.1).
@@ -718,6 +752,10 @@ Fourier-spectral solver with two-thirds dealiasing.
 - Jakhar et al. (2026, App. D) write $\tau_{ij}=-2\nu_e\bar S_{ij}$ for the
   full (not deviatoric) two-dimensional stress.
 
+- Heinz (2020, §2.3 and App. C) prints $C_+=(0.876,1.0,1.074)$ for
+  $C_K=(1.3,1.43,1.5)$; the printed formula $C_+=(3C_K/2)^{3/2}/\pi$
+  gives 0.867, 1.000 and 1.074 *(compiler check, not in the sources)*.
+
 # Citations
 
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §II.A, Eqs. (4)–(5).
@@ -771,3 +809,7 @@ Fourier-spectral solver with two-thirds dealiasing.
 - [Husson et al. (2024)](/sources/husson-2024.md) — §1; §2.2.
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §V C, Tables VI–VII.
 - [Pan & Zhang (2023)](/sources/pan-2023.md) — §I.
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §I; §III, Eqs. (12)–(14); §III.A–C.
+- [Li et al. (2021)](/sources/li-2021.md) — §II B, Eq. (12); §III D, Eq. (22); §IV.
+- [Heinz (2020)](/sources/heinz-2020.md) — §2.3; App. C, Eq. (58).
+- [Bose & Park (2018)](/sources/bose-2018.md) — §2.1.

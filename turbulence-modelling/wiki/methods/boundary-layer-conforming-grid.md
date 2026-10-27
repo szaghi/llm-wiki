@@ -5,7 +5,7 @@ description: "Grids whose local isotropic cell size follows the local boundary-l
 status: established
 aliases: [BL-conforming grid, boundary-layer-conforming mesh, delta-conforming grid]
 tags: [wmles, mesh-adaptation, boundary-layer, wall-model]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Boundary-layer-conforming grids for wall-modelled LES
@@ -125,6 +125,39 @@ On the Juncture Flow at $Re=2.4\times10^6$ (crank chord), Lozano-Durán et al.
   is $0.3\delta$ thick on a grid of $\Delta\approx0.2\delta$, so it is spanned
   by about one grid point and external (SGS-model) errors dominate there; the
   learned model is better but "far from satisfactory" (Table 1).
+
+## The varying thickness as a known gap
+
+The WMLES review of [Bose & Park (2018)](/sources/bose-2018.md) (§3, Fig. 5)
+names the difficulty of grids that follow a varying thickness. Comparing published
+airfoil WMLES with Chapman-type estimates, they find that most calculations
+seem to need an outer-layer resolution of $n_xn_yn_z\gtrsim20^3$ points per
+$\delta^3$ ($n_i$ the points per $\delta$ in direction $i$, page-local), and
+that the scatter at equal Reynolds number "may be partially explained by
+the difficulty in generating optimal grids", i.e. grids with
+$\delta^3/(\Delta x\Delta y\Delta z)$ fixed, when $\delta=\delta(x)$: in
+practice grids for complex geometries are set from "a nominal or average
+boundary-layer thickness", as in Chapman's estimates, which "underscores
+the need for concurrent development of mesh generation technologies" with
+near-wall modelling. The same section treats the cost of thin laminar
+regions: with isotropic cells they can dominate the count, $N\propto\int\delta^{-2}dA$,
+but the isotropy assumption rests on outer-layer turbulence structure
+($y/\delta>0.1$) and modest aspect ratios, $AR=O(10)$, would cut the
+prefactor "by orders of magnitude"; relaxing the laminar resolution,
+however, presupposes that the LES captures transition (see
+[grid-point requirements](/results/les-grid-point-requirements.md)).
+
+[Lv et al. (2021)](/sources/lv-2021.md) (§V) cite two preprints of
+Lozano-Durán and co-workers, one of them the BL-conforming grid study, for
+the view that advances in WMLES require "novel modeling venues encompassing
+physical insights, together with improved gridding and numerical methods".
+On the [periodic hill](/benchmarks/periodic-hill.md) their own runs find
+that grid resolution "has a more notable impact on the results than the
+wall model": the coarse grid, which does not capture the pressure force, is
+noticeably worse than both regular-grid runs, one with an equilibrium and
+one with their integrated wall model (§IV B 2; see
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)). Their
+grids are body-fitted.
 
 ## Contrast: grids for detached-eddy simulation
 
@@ -276,3 +309,5 @@ RANS needs, the opposite of the isotropic $\delta$-sized cells of this page.
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §3.1; §4.8, Table 1, Fig. 18.
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §4.1.3; §4.4, Table 1, Fig. 8; §6, Table 3; §7.3, Fig. 21 (HAL author manuscript).
 - [Huang et al. (2022b)](/sources/huang-2022-d.md) — §1; §2.3, Eqs. (19)–(25); §2.4, Eqs. (26)–(51), Tables 1–3, Figs. 7–8; §3.2, Tables 4–6.
+- [Bose & Park (2018)](/sources/bose-2018.md) — §3, Eq. (2), Fig. 5.
+- [Lv et al. (2021)](/sources/lv-2021.md) — §IV B 2, Figs. 15–16; §V.

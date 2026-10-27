@@ -5,7 +5,7 @@ description: "RANS laminar–turbulent transition models that evaluate an empiri
 status: established
 aliases: [LCTM, γ-Reθ-SST, separation-induced transition correction, Suluksna–Juntasaro calibration, Langtry–Menter calibration, local correlation-based transition modelling, γ-Reθ model, gamma-Re-theta, γ-SST, one-equation γ model, γ-alg-SST, algebraic LCTM model, algebraic intermittency model]
 tags: [rans, transition, eddy-viscosity, boundary-layer, separated-flow]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T10:56:00Z
 ---
 
 # Local-correlation-based transition models
@@ -49,6 +49,25 @@ approximately at $250<Re_\theta<1200$, depending on $Tu$ and pressure gradient
 transport transition models are dominated by their source terms and settle
 quickly to a source equilibrium downstream of the inlet, convection and
 diffusion playing a minor but not negligible role (§1).
+
+Sandberg & Michelassi (2022) survey the same landscape from the
+turbomachinery side and state that "no transition models based on first
+principles exist" ([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md),
+§2.2.3, §3.3.3). Their list: a fixed transition point (for
+instance turbulent from the suction peak), the crudest and most unreliable
+choice; correlations of the momentum-thickness Reynolds number with
+free-stream disturbance and pressure gradient (Abu-Ghannam & Shaw 1980),
+which are non-local and lack three-dimensional generality; low-Reynolds
+RANS models, whose wall damping has "no obvious relation to the transition
+physics"; $e^N$ methods, which have no reason to be accurate in the
+high-disturbance environment of a blade row; and the $\gamma$-$Re_\theta$
+model of Langtry & Menter (2009), with an onset Reynolds number
+$Re_{\theta t}$ based on free-stream quantities and an intermittency equal
+to one in the free stream, which is the model routinely used. Beside it
+they list the $k$-$\overline{v^2}$-$\omega$ model of Lopez & Walters, the
+[laminar-kinetic-energy model](/methods/laminar-kinetic-energy-transition-model.md)
+of Pacciani et al. (2014), and the separation-induced corrections of Bode
+et al. (2014).
 
 ## The algebraic γ-alg-SST model
 
@@ -336,6 +355,20 @@ Morsbach et al. report no re-tuned separation correction.
 The cases differ in Reynolds number, free-stream turbulence and geometry,
 so the two results do not test the same configuration.
 
+**Wake-induced transition.** In a turbine stage the wakes of the upstream
+row, convecting through the passage as a "negative jet", trigger
+transition periodically on the downstream blades. Sandberg & Michelassi
+(2022) state that the $\gamma$-$Re_\theta$ model suppresses this route,
+because the low $Re_{\theta t}$ carried by the incoming wakes is not fed
+into the blade boundary layers, and state that the model's separation
+term raises the intermittency "above unity" in transitional separated
+regions (§3.3.3.3–§3.3.3.4). The periodic bubble of a low-pressure-turbine stage under wake
+passing is described on the
+[laminar-separation-bubble page](/definitions/laminar-separation-bubble.md);
+the laminar-kinetic-energy model of Pacciani et al. was built with
+requirements for the wake path (§3.3.3; see the
+[laminar-kinetic-energy page](/methods/laminar-kinetic-energy-transition-model.md)).
+
 ## The one-equation $\gamma$ model as printed, and its coupling to a Reynolds-stress model
 
 Liu et al. (2024) print Menter's one-equation $\gamma$ model (Menter et
@@ -614,3 +647,4 @@ finite-volume reference (§4.2).
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §1.2 Eqs. 21–46 Table 2, §3.2.3, §3.3, §4.1–4.3, Figs. 12–16.
 - [Batther & Lee (2022)](/sources/batther-2022.md) — §3.1, §4.3.1, Figs. 17–20, §5.
 - [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §II–§IV.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.3, §3.3.3, §3.3.3.3–§3.3.3.4.

@@ -5,7 +5,7 @@ description: "Field inversion infers a spatial correction field of a RANS model 
 status: established
 aliases: [FIML, field inversion, field-inversion and machine-learning, inference before learning, variational data assimilation, non-parametric correction, Reynolds-force vector]
 tags: [field-inversion, data-driven, rans, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Field inversion and machine learning
@@ -714,6 +714,30 @@ is used:
   The authors state that "traditional one- or two-equation closures", or
   any multiparametric closure, could replace the network in the same
   adjoint framework (§2, §7).
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) (§4.3) give
+  the consistency argument in turbomachinery terms. Citing Parneix et al.
+  (1998) and Wu et al. (2019), they state that even the true DNS Reynolds
+  stress used in RANS does not guarantee an accurate mean flow and can
+  jeopardize robustness; FIML (Parish & Duraisamy 2016, as cited) is the
+  remedy that yields model-consistent closures, though "the significant
+  cost of solving the resulting large-scale inverse problems presents a
+  challenge". Step 1 alone, an adjoint-based minimization of
+  the discrepancy between model and reference data, is an analysis tool
+  that answers "What should the Reynolds stress distribution be in a
+  particular flow?"; step 2 finds a functional form of the discrepancy by
+  machine learning. Their example, cited from Ferrero et al. (2020): a
+  field inversion coupled with a neural network modifies the
+  [Spalart–Allmaras model](/methods/spalart-allmaras-model.md) for a
+  low-Reynolds-number low-pressure-turbine cascade, and a posteriori tests
+  show accuracy similar to that of a much costlier two-equation model with a
+  $\gamma$-$Re_\theta$ transition model (see
+  [turbine cascades](/benchmarks/turbine-cascade.md)). The review sets
+  FIML beside CFD-driven gene-expression programming, which needs much
+  less data (see
+  [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+- Two further sources cite Parish & Duraisamy (2016) only among the
+  precedents of machine-learned closures: Zangeneh (2021, §I), with Singh
+  et al. (2017), and Ruggeri et al. (2022, §III).
 
 ## Qualifications
 
@@ -845,3 +869,6 @@ is used:
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §1, Table 1 (L1–L4, earlier work); §2.1, Eqs. 1–6 (log-layer constraint, conditioned inversion); Eqs. 7–15, 18 (cost, adjoint); §3.1, Figs. 4–12; §3.2 (cost of the learned models); §3.3, §4, Tables 5–7, Figs. 15–50; §5.
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §1 (discretization error, adjoints, earlier DG work); §2–3, Eqs. 1–41, Fig. 2 (DG RANS, corrections, discrete adjoint, gradient scaling, flexible GMRES); §4.1–4.3, Figs. 4–15, Tables 1–4; §5; App. A.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §1 (class-specific corrections, multi-flow training).
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3 (injected DNS stress, two-step FIML, Ferrero et al. on a turbine cascade, cost).
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) — §I (precedents cited, in passing).
+- [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §III (Parish & Duraisamy cited, in passing).

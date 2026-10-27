@@ -5,7 +5,7 @@ description: "Vreman's static eddy-viscosity model builds the subgrid viscosity 
 status: established
 aliases: [Vreman eddy-viscosity model, Vreman (2004) model, static-coefficient Vreman model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-26T16:26:00Z
+timestamp: 2026-10-27T11:01:00Z
 ---
 
 # Vreman model
@@ -69,6 +69,15 @@ not print the value of $C_v$ used in their runs.
 | 0.08 | static baseline and pretraining target in wall-resolved channel LES | Kim et al. (2022), §III C |
 | about 0.1, "the Smagorinsky constant" | lattice Boltzmann LES of the Ahmed body | Cai et al. (2022), §II.A |
 | 0.1 | compact-difference LES of the transitional Taylor–Green vortex | [Caban et al. (2026)](/sources/caban-2026.md), §2, Eq. (7) |
+| $\approx0.063$ ($c=2.5C_s^2=0.01$) and $\approx0.167$ ($c=0.07$) | gas-kinetic channel LES at $Re_\tau=180$ (best of $c=0.01$–0.1) and 395 (after Vreman 2004) | [Zhao et al. (2021)](/sources/zhao-2021-c.md), §III.B, §IV |
+
+[Zhao et al. (2021)](/sources/zhao-2021-c.md) (§III.B, Eq. 17) print the
+dynamic viscosity $\mu_t=\bar\rho\,c\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$
+in the index order of Kim et al. ($\alpha_{ij}=\partial_i\bar u_j$) with
+directional cell widths, $\beta_{ij}=\Delta_m^2\alpha_{mi}\alpha_{mj}$,
+and $c=2.5C_s^2$; "the grids themselves act as the filter". They print the
+constant $c$, not $C_s$; the $C_s$ values of the table are $\sqrt{c/2.5}$
+*(compiler check, not in the sources)*.
 
 Caban et al. (2026, §2, Eq. 7) print the model in the index order of
 Agrawal et al. ($\alpha_{lm}=\partial_m\bar u_l$,
@@ -198,6 +207,28 @@ $N$ (the paper's $P$), with $N=5$.
   with the same filter, because the total dissipation is too large. Their
   scale-similarity and deconvolution models do better (see
   [scale-similarity models](/methods/scale-similarity-model.md)).
+
+- **Gas-kinetic channel LES.** In wall-resolved channel flow with the
+  [high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md),
+  where the viscosity enters the BGK collision time, Zhao et al. (2021,
+  §IV–V, Tables III, V–VII) scan $c$ from 0.01 to 0.1 at $Re_\tau=180$
+  and keep the best, $c=0.01$ (results of the scan not shown), and take
+  $c=0.07$ at 395 from Vreman (2004). The realized $Re_\tau$ is 174.99
+  at 180 ($96^3$; DNS 178.12) and 351.36 and 370.13 at 395 ($96^3$,
+  $128^3$; DNS 392.24), below the dynamic Smagorinsky model and the
+  no-model run; the Vreman model is the cheapest explicit model (0.534 s
+  per step against 0.520 s without model; see
+  [implicit LES](/definitions/implicit-les.md)).
+- **Wall-model-integrated DG LES.** [Lv et al. (2021)](/sources/lv-2021.md)
+  (§III A, Eq. 15) close the compressible LES of their solver (discontinuous
+  Galerkin in the wall-adjacent cells, finite volume elsewhere) with the
+  Vreman model (Vreman 2004; You & Moin, cited) and an
+  eddy diffusivity with $Pr_t=0.9$, for channel flow up to
+  $Re_\tau=50\,000$ and the periodic hill at $Re_b=10\,595$; no constant
+  or formula is printed, and the paper does not define the strain in its
+  stress $\mu_t\tilde S$ (factor two, trace). The subgrid model is not
+  varied; the subject is the wall treatment (see
+  [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
 
 ## Spectral-element LES
 
@@ -337,3 +368,5 @@ computed and subtracted from the mean-stress model.
 - [Reddy et al. (2026)](/sources/reddy-2026.md) — preprint of 4 March 2021: §3.2, Eqs. (9a)–(9b); §5.2; §6.2; §7.2; §8.2.
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §II.D; §III.B–III.C, Figs. 1–8, Table II; §IV.B.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §2, Eq. (7); §5.3.1, Figs. 18, 20, 22, Table 4.
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III.B, Eq. (17); §IV; §V, Tables III, V–VII.
+- [Lv et al. (2021)](/sources/lv-2021.md) — §III A, Eqs. (13)–(15).

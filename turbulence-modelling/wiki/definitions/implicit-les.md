@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-27T06:03:00Z
+timestamp: 2026-10-27T11:01:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -94,6 +94,19 @@ can carry.
 
    Further no-model runs:
 
+   - **Gas-kinetic iLES against four explicit models.**
+     [Zhao et al. (2021)](/sources/zhao-2021-c.md) (§I, §III, §VI) run
+     wall-resolved channel flow with the
+     [high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md)
+     (fifth-order WENO with linear weights normal to the face) either with no
+     model ("iLES") or with the [Vreman](/methods/vreman-model.md),
+     clipped [dynamic Smagorinsky](/methods/dynamic-procedure.md),
+     [WALE](/methods/wale-model.md) or dynamic Clark
+     ([gradient](/methods/gradient-model.md)) model entering the kinetic
+     solver through an enlarged relaxation time. They state, citing
+     Bazilevs et al. and Kokkinakis & Drikakis, that implicit LES "can
+     overcome the problem of over-dissipation that arises in explicit LES
+     models" (§I); results below.
    - **Gas-kinetic iLES.** [Cao et al. (2024)](/sources/cao-2024.md) (§1)
      run their curvilinear
      [high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md)
@@ -175,6 +188,19 @@ can carry.
      (§1, §5) give the same motivation for a TENO–THINC hybrid but test
      turbulence only with the inviscid Taylor–Green vortex, deferring
      turbulent flows to a later paper.
+   - **Workshop case.** The SD7003 wing case (C3.3) of the first High-Order
+     CFD Workshop, summarized by [Wang et al. (2013)](/sources/wang-2013.md)
+     (§4.13), asks for "implicit LES approaches for handling, in a seamless
+     fashion, the mixed laminar, transitional, and turbulent flow regions"
+     at $Re_c=60\,000$, $M=0.1$, $\alpha=4^\circ$ and $8^\circ$ (see
+     [laminar separation bubble](/definitions/laminar-separation-bubble.md));
+     the paper shows no results for it. Its survey reports high-order
+     methods as "routinely chosen for LES and DNS of turbulent flows" (§2).
+   - **Future extension.** [Liu et al. (2022b)](/sources/liu-2022-g.md)
+     (§4) state that their laminar
+     [flux-reconstruction](/methods/flux-reconstruction.md)
+     fluid–structure solver "can be directly extended into an ILES one" at
+     moderately high Reynolds number.
    - **Lattice Boltzmann.** [Husson et al. (2024)](/sources/husson-2024.md)
      (§1) list, beside eddy-viscosity models, implicit LES "where the
      collision operator acts as a subgrid scale model" as an option of
@@ -459,6 +485,27 @@ interpretation they flag as needing further work).
   377.05–380.45 for the others, against 392.24) and improves mean velocity,
   r.m.s. fluctuations and spectra; the fifth-order compact scheme "can
   almost achieve the accuracy of the 7th-order non-compact scheme".
+- **Gas-kinetic iLES of channel flow, against explicit models.** Zhao et
+  al. (2021, §V, Tables V–VII, Figs. 2–19) compare the realized friction
+  Reynolds number. At nominal $Re_\tau=180$ ($96^3$) they find DNS 178.12,
+  iLES 177.89, Vreman 174.99, dynamic Smagorinsky 175.47, WALE 172.57,
+  dynamic Clark 172.06. At nominal 395 on $96^3$ the values are DNS 392.24,
+  iLES 360.35, Vreman 351.36, dynamic Smagorinsky 359.54, dynamic Clark
+  351.35, and on $128^3$ iLES 376.33 against 370.13, 375.22 and 369.57.
+  "For all cases, the resolved $Re_\tau$ value for iLES is higher than
+  those given by the LES schemes" (§V), and iLES is generally closest to
+  DNS in mean velocity, r.m.s. fluctuations and $Q$-criterion structures;
+  spectra show no visible difference between methods (§V.C). iLES is also
+  cheapest per step (0.520 s against 0.534–0.624 s on
+  $64\times96\times64$, 16 cores, Table III). The authors attribute the
+  outcome to the scheme's numerical dissipation already sufficing as
+  subgrid dissipation, so that an explicit model over-dissipates, lowers
+  the wall velocity gradient and $u_\tau$, and degrades the profiles
+  (Abstract, §VI); no dissipation budget is measured. They conclude that in
+  their high-order finite-volume approach iLES is "more suitable than
+  traditional LES models" (§VI). Their iLES value at nominal $Re_\tau=395$
+  on $96^3$, 360.35, is also the value Zhao et al. (2023a, above; the same
+  four authors) print for their fifth-order non-compact run on that grid.
 - **Jump penalties against explicit models.** On the Taylor–Green vortex
   at $Re=1600$, $M=0.1$ ($32^3$ elements, $N=3$), unpenalized DG diverges;
   solution and gradient jump penalties above $\tau_s>1.9$ and
@@ -695,7 +742,14 @@ interpretation they flag as needing further work).
   during the Taylor–Green breakdown, dramatically overestimates the total
   dissipation (Vicente Cruz & Lamballais 2023, §6.2); Flad & Gassner (2017,
   §3, Fig. 4) obtain the same $k^2$ spectrum from the dissipation-free
-  split-form DG at $48^3$, stable but without a model. Agrawal et al. (2022,
+  split-form DG at $48^3$, stable but without a model. Inviscid runs of
+  the non-dissipative second-order kinetic-energy- and entropy-preserving
+  central scheme of [Kuya et al. (2018)](/sources/kuya-2018.md) (§5,
+  Taylor–Green vortex on $64^3$, isotropic turbulence on $32^3$) are used
+  by the paper as stability tests at infinite Reynolds number, with no
+  model; they show which split forms stay bounded with no dissipation at
+  all (see
+  [kinetic-energy preservation](/properties/kinetic-energy-preservation.md)). Agrawal et al. (2022,
   §VII.C) see $k^2$ equipartition in a no-model run of HIT at
   $Re_\lambda\to\infty$. [Kim et al. (2024)](/sources/kim-2024.md) (§2.1,
   Table 3, App. C) state that their second-order central,
@@ -916,6 +970,25 @@ proportional to the cell size; see
 §IV.3.1, Eqs. 22–23) define an effective viscosity $\nu+\nu_t+\nu_n$ with
 $\nu_n$ the numerical viscosity, which they do not compute.
 
+## Numerical diffusion as a combustion closure (inline)
+
+[Cuenot et al. (2022)](/sources/cuenot-2022.md) (§1, §6) separate their
+[thickened flame model](/methods/thickened-flame-model.md), which they call
+"totally different from pdf-based or viscosity-based (ILES) methods", from
+implicit LES. On coarse grids numerical diffusion thickens a diffusion
+flame and raises its consumption rate (printed as up to +65% at a flame
+resolution of two cells in laminar counterflow, §4; their Table 2 value
+$F=2.575$ corresponds to +60.5% by their Eq. 14 *(compiler check, not in
+the sources)*, see
+[numerical dissipation](/properties/numerical-dissipation.md)), and their proposed
+correction divides the diffusivities by $F_{\mathrm{LES}}=F_{\mathrm{num}}F_{\mathrm{sgs}}$,
+a numerical factor times a subgrid one. $F_{\mathrm{LES}}\approx1$ means
+that "numerical diffusion compensates subgrid effects", which they offer
+as the reason why LES with and without a subgrid combustion model gave
+similar results in an earlier study (Breda et al., cited; §6). The
+correction is a proposal: $F_{\mathrm{sgs}}$ is not modelled and no
+turbulent flame is computed.
+
 ## Explicit models that act like implicit ones
 
 [Saini et al. (2023)](/sources/saini-2023.md) (Abstract, §5–6) measure, as
@@ -1024,6 +1097,17 @@ dissipation is imparted by the SGS model". Details on
   verdict to transitional free-shear flow, so no contradiction is
   recorded; it is the resolution split already seen in Duan & Wang (2024)
   above.
+- Zhao et al. (2021) state in the abstract and conclusions that iLES is
+  superior for the Reynolds stress, while their §V.B reports for
+  $Re_\tau=180$ that "for the Reynolds stress, the results for D-model
+  [dynamic Smagorinsky] match better with DNS, followed by iLES"; the iLES
+  advantage in Reynolds stress holds at $Re_\tau=395$ only. Their
+  explanation for the dynamic Smagorinsky model being the best explicit
+  model reads "the numerical dissipation in this model is relatively small
+  as a result of the dynamic coefficient" (§V.B; §VI). The Vreman constant
+  differs between the Reynolds numbers (0.01 at 180, best of a scan;
+  0.07 at 395, after Vreman; §IV), and no WALE results are shown at 395
+  although §IV gives its constant for that case.
 - Caban et al. (2026, §5.3.1) attribute the stability of Hickel et al.'s
   Smagorinsky run to its larger constant ($C_s=0.18$ against their 0.1),
   a hypothesis supported only by their $\Delta=4h$ run giving similar
@@ -1094,3 +1178,8 @@ dissipation is imparted by the SGS model". Details on
 - [Volpiani (2024)](/sources/volpiani-2024.md) — Abstract; §1; §2.2.2; §5, Figs. 6–18; §6.
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §I; §V A, Fig. 3.
 - [Pan & Zhang (2023)](/sources/pan-2023.md) — §II.D; §III.A.
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — Abstract; §I; §III; §IV; §V, Tables III, V–VII, Figs. 2–19; §V.B; §V.C; §VI.
+- [Wang et al. (2013)](/sources/wang-2013.md) — §2; §4.13 (case C3.3).
+- [Liu et al. (2022b)](/sources/liu-2022-g.md) — §4.
+- [Cuenot et al. (2022)](/sources/cuenot-2022.md) — §1; §4; §6.
+- [Kuya et al. (2018)](/sources/kuya-2018.md) — §5.

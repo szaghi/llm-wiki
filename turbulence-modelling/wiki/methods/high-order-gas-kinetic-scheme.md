@@ -5,7 +5,7 @@ description: "A high-order gas-kinetic scheme is a finite-volume Navier–Stokes
 status: established
 aliases: [HGKS, HGKS-cur, high-order GKS, gas-kinetic scheme, GKS, BGK finite-volume scheme]
 tags: [gas-kinetic, dns, implicit-les, compressible, numerical-dissipation, gpu]
-timestamp: 2026-10-26T15:48:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # High-order gas-kinetic schemes for turbulence simulation
@@ -341,6 +341,77 @@ The viscosity of these runs is set from the target $Re_\tau$ through a log
 law with $\kappa=0.40$, $B=5.5$ (Eqs. 24–26); each case uses one grid, with
 no convergence study of the statistics.
 
+## Explicit subgrid models inside the gas-kinetic flux
+
+[Zhao et al. (2021)](/sources/zhao-2021-c.md) compare the implicit LES of
+the fifth-order scheme (linear-weight WENO normal to the face, fourth-order
+tangential polynomials, $2\times2$ Gauss points, S2O4) with four explicit
+eddy-viscosity models in wall-resolved
+[channel flow](/benchmarks/turbulent-channel-flow.md) at $M=0.1$.
+
+**Coupling through the collision time.** An eddy viscosity enters the BGK
+model as an enlarged relaxation time (§III, Eqs. 12–13, citing Chen et al.
+2003 and 2004): with page-local $\tau_{\mathrm{col},t}$ the turbulent
+enlargement, the Chapman–Enskog expansion of
+$\partial_tf+\boldsymbol c\cdot\nabla f=(g-f)/(\tau_{\mathrm{col}}+\tau_{\mathrm{col},t})$
+gives
+$$\tau_{\mathrm{col}}+\tau_{\mathrm{col},t}=\frac{\mu+\mu_t}{p},$$
+so any model that supplies $\mu_t$ can be used. The models are the
+[Vreman model](/methods/vreman-model.md) (constant 0.01 at $Re_\tau=180$,
+the best of 0.01–0.1, and 0.07 at $Re_\tau=395$), the
+[dynamic Smagorinsky model](/methods/dynamic-procedure.md) with
+plane-averaged and clipped coefficient, the [WALE model](/methods/wale-model.md)
+($C_w=0.5$) and a dynamic Clark model whose
+[gradient](/methods/gradient-model.md) and Smagorinsky stress is converted
+to an equivalent eddy viscosity by matching its dissipation,
+$\nu_t=\Pi/(2\bar S_{ij}\bar S_{ij})$, with the coefficient taken from the
+dynamic Smagorinsky procedure instead of its own (§III.A–D, Eqs. 14–23).
+The scalar $\nu_t$ keeps only the contraction of the gradient term with
+the resolved strain, not its tensor structure *(compiler check, not in the
+sources)*.
+
+**Two interface distributions.** "Flux 1" is the smooth-flow simplification
+of the second-order distribution,
+$f=g_0\big[1-\tau_{\mathrm{col}}(a^{\mathrm e}_ic_i+A^{\mathrm e})+tA^{\mathrm e}\big]$
+($a^{\mathrm e}_i$, $A^{\mathrm e}$ page-local, the spatial and temporal
+slopes of the equilibrium state; Eq. 7). For under-resolved higher-Reynolds
+runs the authors propose "flux 2", which keeps a kinetic upwind part
+(Eq. 8):
+$$f=(1-e^{-t/\tau_{\mathrm{col}}})\,g_0+e^{-t/\tau_{\mathrm{col}}}\big[g^lH(c_1)+g^r(1-H(c_1))\big]+g_0\big[-\tau_{\mathrm{col}}(a^{\mathrm e}_ic_i+A^{\mathrm e})+tA^{\mathrm e}\big],$$
+with $g^l$, $g^r$ the reconstructed Maxwellians on the two sides and $H$ the
+Heaviside function. Flux 1 suffices at $Re_\tau=180$, where interface
+discontinuities are minor, and gives better results there; at
+$Re_\tau=395$ flux 2, whose dissipation "is a little larger", gives better
+turbulence intensities and is used, at about twice the cost (§IV, App. A,
+Figs. 22–27).
+
+**Results** (against the DNS of Kim, Moin & Moser and of Moser, Kim &
+Mansour; domain $2\pi\times2\times\pi$, statistics over $200\,\delta/U_c$
+after about $400\,\delta/U_c$, $U_c$ the centreline velocity):
+
+| Case | grid | resolved $Re_\tau$: DNS / implicit LES / Vreman / dynamic Smagorinsky / WALE / dynamic Clark |
+|---|---|---|
+| $Re_\tau=180$, flux 1 | $96^3$, $\Delta x^+=11.77$, $\Delta z^+=5.89$ | 178.12 / 177.89 / 174.99 / 175.47 / 172.57 / 172.06 |
+| $Re_\tau=395$, flux 2 | $96^3$, $\Delta x^+=25.84$, $\Delta z^+=12.92$ | 392.24 / 360.35 / 351.36 / 359.54 / — / 351.35 |
+| $Re_\tau=395$, flux 2 | $128^3$, $\Delta x^+=19.38$, $\Delta z^+=9.69$ | 392.24 / 376.33 / 370.13 / 375.22 / — / 369.57 |
+
+(Tables I, V–VII; no WALE results are shown at $Re_\tau=395$.) Every
+explicit model lowers the resolved friction velocity below that of the
+implicit LES; the implicit LES is closest to the DNS in mean velocity and,
+at $Re_\tau=395$, in the r.m.s. velocities and Reynolds shear stress, while
+at $Re_\tau=180$ the dynamic Smagorinsky model matches the Reynolds shear
+stress better, followed by the implicit LES; spectra at $y^+=30$ and 395
+show no visible differences between methods and the same "unnatural
+leveling-off" near the cut-off as above (§V, Figs. 2–19). The authors
+explain the ranking by the numerical dissipation of the high-order scheme
+already sufficing as subgrid dissipation, so that an explicit model
+over-dissipates and lowers the wall velocity gradient (Abstract, §VI); this
+is stated, not measured by a dissipation budget. Refining the $Re_\tau=180$
+grid from $64^3$ to $96^3$ "significantly" improves all statistics; they
+state that "when the grids are refined, the numerical dissipation
+decreases" (App. B, Table VIII). They conclude that implicit LES is "more suitable than traditional
+LES models" in this finite-volume approach (§VI).
+
 ## Cost
 
 Cao et al. (2022, §3.2) note that the finite-volume scheme "is considered
@@ -355,6 +426,13 @@ BB13 finite-difference code at $256^3$ and $512^3$ on a 2.6 GHz machine
 after correcting for processor speed, which the authors call "comparable and
 affordable" given its robustness. The comparison uses different machines and
 time steps.
+
+**Subgrid-model cost** (Zhao et al. 2021, Tables III–IV;
+$64\times96\times64$ cells, 16 cores): implicit LES 0.520 s per step,
+Vreman 0.534, WALE 0.552, dynamic Smagorinsky 0.613, dynamic Clark 0.624
+with flux 1; 1.014 to 1.123 s with flux 2, "almost twice" flux 1. On the
+same grid and core count Zhao et al. (2023a, Table 7) print 0.595 s for
+N5T5; neither paper names the hardware.
 
 **Reconstruction cost** (Zhao et al. 2023a, Table 7; $64\times96\times64$
 cells, 16 CPU cores, $2\times2$ Gauss points): 0.595 (N5T5), 0.649 (N7T5),
@@ -466,6 +544,40 @@ differences between precisions (Figs. 10–13).
   scheme. Their hill separation points do not converge monotonically with
   the grid.
 
+- **Kinetic fluxes in multi-material solvers.** The review of
+  [Maltsev et al. (2022)](/sources/maltsev-2022.md), §III E, §IV C–E,
+  cites gas-kinetic ideas in high-order multiphase codes: the discrete
+  unified gas-kinetic scheme as a finite-volume discretization of the
+  discrete-velocity BGK equation with double distributions, lattice
+  Boltzmann intercell fluxes in finite-volume solvers, and a non-oscillatory
+  kinetic flux in DG for Mie–Grüneisen materials; none is a turbulence
+  application.
+- **Printed slips (Zhao et al. 2021).** The same as in Zhao et al. (2023a):
+  the internal degrees of freedom are printed as the product
+  $(5-3\gamma)(\gamma-1)$, which gives 0.32 for $\gamma=1.4$ where the
+  quotient gives 2; $\mu=2.83\times10^{-4}$ is printed for
+  $Re_\tau=180$, while Eqs. (25)–(26) give $3.01\times10^{-4}$ and Table V
+  gives $u_\tau/Re_\tau=3.007\times10^{-4}$ for the implicit LES; Table VIII
+  prints $\Delta z^+=8.33$ for $N_z=64$, where $\pi\cdot180/64=8.84$ *(all
+  compiler checks, not in the sources)*. With the printed $L_{ij}$ and
+  $M_{ij}$ (no factor 2) and $\mu_t=\bar\rho C\Delta^2|\bar S|$, the
+  least-squares coefficient of the Germano identity carries a factor
+  $-\tfrac12$ that Eq. (16) does not print *(compiler check, not in the
+  sources)*. The DNS at $Re_\tau=180$ is credited to "Moser et al." where
+  ref. [1] is Kim, Moin & Moser.
+- **Internal inconsistency (Zhao et al. 2021).** The abstract and
+  conclusions give the implicit LES the better Reynolds stress, while §V.B
+  finds the dynamic Smagorinsky model better at $Re_\tau=180$; the claim
+  holds at $Re_\tau=395$. The Vreman constant changes sevenfold between the
+  two Reynolds numbers by tuning.
+- **Values shared by Zhao et al. (2021) and Zhao et al. (2023a).** The
+  implicit LES at nominal $Re_\tau=395$ on $96^3$ reaches 360.35 in both
+  (2021, Table VI, 360.3495; 2023a, Table 9, N5T5); the
+  $64\times96\times64$ grid has the same printed spacings in both
+  ($\Delta x^+=17.66$, $\Delta y^+$ 0.29 to 7.76, $\Delta z^+=8.33$; 2021,
+  Table VIII; 2023a, Table 6), and both print $\mu=2.83\times10^{-4}$ for
+  $Re_\tau=180$.
+
 ## Contradictions
 
 - **Is the numerical dissipation of the fifth-order scheme right for
@@ -484,6 +596,15 @@ differences between precisions (Figs. 10–13).
   LES as showing that high-order GKS "can provide appropriate numerical
   dissipation" and present their result as an improvement on it; they cite Cao et al. only
   for the dissipation decomposition (§5.1).
+  [Zhao et al. (2021)](/sources/zhao-2021-c.md), with the fifth-order
+  linear-weight scheme on channel flow, side with the first reading: the
+  numerical dissipation is "enough to replace" the subgrid dissipation and
+  explicit models only add to it (Abstract, §VI), a statement drawn from
+  profile comparisons, not from a dissipation measurement. Their $96^3$
+  implicit LES at $Re_\tau=180$ reaches $Re_\tau=177.89$ (Table V), whereas
+  Zhao et al. (2023a, Table 8) report 171.33 for N5T5 on
+  $64\times96\times64$ cells, and Zhao et al. (2021, App. B, Table VIII)
+  find their own $64\times96\times64$ results worse than the $96^3$ ones.
 
 # Citations
 
@@ -491,3 +612,5 @@ differences between precisions (Figs. 10–13).
 - [Zhao et al. (2023a)](/sources/zhao-2023.md) — arXiv v1: §1 (implicit LES, compact stencils); §2, Eqs. (1)–(10) (BGK flux, Gauss quadrature); §3.1–3.3, Eqs. (11)–(15), Figs. 1–2 (seventh-order non-compact and fifth-order compact reconstruction); §4, Tables 2–5 (accuracy, Gauss-point rule, cost of 16 points); §5.1, Eqs. (19)–(23), Figs. 3–7 (Taylor–Green vortex, numerical dissipation); §5.2, Eqs. (24)–(28), Tables 6–9, Figs. 8–17 (channel flow); Table 7 (cost).
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — arXiv v1: §2, Eqs. (1)–(8) (BGK flux, S2O4); §3.1–3.2, Algs. 1–2, Figs. 2–4 (single- and multi-GPU implementation); §4.1, Tables 2–5, Figs. 5–8 (speedups, scaling, compressible Taylor–Green vortex); §4.2, Tables 6–8, Figs. 10–14 (channel flow, single against double precision); §5.
 - [Cao et al. (2024)](/sources/cao-2024.md) — arXiv 2107.08609v1: §1 (implicit LES, recalled $M_t$ limits); §2.1, Eqs. (3)–(9) (transformed BGK equation, curvilinear flux); §2.3, Eqs. (10)–(11) (metrics, WENO in computational space); §2.4, Eqs. (12)–(13); §3.1–3.2, Tables 1–3, Fig. 3 (accuracy, free-stream preservation, cavity); §3.3, Tables 4–5, Figs. 5–9 (compressible channel); §3.4, Table 6, Figs. 11–16 (compressible periodic hill).
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §II, Eqs. (1)–(11) (BGK flux, flux 1 and flux 2, reconstruction); §III, Eqs. (12)–(23) (eddy viscosity through the collision time; Vreman, dynamic Smagorinsky, WALE, dynamic Clark); §IV, Table I (setup); §V, Tables III–VII, Figs. 2–21 (results, cost); §VI; App. A–B, Table VIII.
+- [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III E, §IV C–E (kinetic and lattice-Boltzmann fluxes in multi-material solvers, cited).

@@ -5,7 +5,7 @@ description: "A neural network that predicts the scalar coefficients of Pope's t
 status: established
 aliases: [TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features, LES tensor basis]
 tags: [neural-network, data-driven, rans, symbolic-regression]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Tensor-basis neural network and the integrity basis
@@ -122,6 +122,8 @@ are represented.
 | gene-expression programming (Weatheritt & Sandberg 2016, 2017) | explicit algebraic expressions in the invariants | Duraisamy et al. (2019, §5.3); Duraisamy (2021, §III.A) |
 | sparse regression, SpaRTA (Schmelzer et al.) | sparse linear combination of tensor-polynomial candidate functions of the invariants | Duraisamy (2021, §III.A, §IV.A) |
 | deep symbolic regression (an LSTM expression generator trained by a risk-seeking policy gradient) | explicit polynomial-type expressions in two normalized invariants, on the 2D three-tensor basis | read directly: Tang et al. (2023) |
+| gene-expression programming for the LES subgrid stress | constant coefficients of $T^{(1)}$–$T^{(4)}$ of the $\lvert\bar S\rvert$-normalized basis | read directly: Li et al. (2021) |
+| gene-expression programming on phase-locked turbine data (Akolekar et al. 2019) | functions of two invariants on four basis tensors | Sandberg & Michelassi (2022, §4.3, Eq. 2) |
 | sparse Bayesian regression, SBL-SpaRTA (Cherroud et al. 2022) | sparse selection from monomials of $I_1$, $I_2$ with Gaussian posteriors, on the 2D three-tensor basis normalized by $\omega$; used for an additive anisotropy and a $k$-equation correction of SST | used by Oulghelou et al. (2025), as recalled there |
 
 For sparse regression, Duraisamy (2021, §IV.A) prints the loss as a squared
@@ -177,6 +179,55 @@ A contribution analysis on the training hill finds the linear part and
 $T^{(1)}$ dominating the shear component of the anisotropy, $T^{(2)}$ the
 largest contributor to the streamwise normal component and $T^{(3)}$ to
 the spanwise one (§III C, Fig. 11).
+
+## Pope's basis for the subgrid stress, regressed by GEP (Li et al. 2021)
+
+[Li et al. (2021)](/sources/li-2021.md) (§II B, Eqs. 9–14) carry Pope's
+ten-tensor basis, "following Pope" via Schoepplein et al. (2018) as cited,
+to the deviatoric LES subgrid stress of isotropic turbulence, with the
+coefficients found by gene-expression programming instead of a network
+(the search and the model are on
+[symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+The scales are the filter width and the resolved strain magnitude instead
+of $k/\varepsilon$:
+
+$$\tau^d_{ij}=\frac{\Delta^2\lvert\bar S\rvert^2}{2}\sum_{n=1}^{10}g^{(n)}(I_1,\dots,I_4)\,T^{(n)}_{ij}(\mathsf s,\mathsf w),\qquad \mathsf s_{ij}=\frac{\sqrt2\,\bar S_{ij}}{\lvert\bar S\rvert},\quad \mathsf w_{ij}=\frac{\sqrt2\,\bar\Omega_{ij}}{\lvert\bar S\rvert},$$
+
+with $\mathsf s$, $\mathsf w$ page-local and the ten tensors those of the
+Agrawal & Koutsourelakis section above with $\mathsf S\to\mathsf s$, $\mathsf W\to\mathsf w$.
+The paper normalizes by $\sqrt{\bar S_{mn}\bar S_{mn}}=\lvert\bar S\rvert/\sqrt2$
+and writes the prefactor $(\Delta\sqrt{\bar S_{mn}\bar S_{mn}})^2$; the
+factors $\sqrt2$ and $\tfrac12$ above carry this into the registry's
+$\lvert\bar S\rvert$ *(compiler check, not in the sources)*. The
+coefficients take the first four of the five invariants
+$I_1=\operatorname{tr}(\mathsf s^2)$, $I_2=\operatorname{tr}(\mathsf w^2)$,
+$I_3=\operatorname{tr}(\mathsf s^3)$, $I_4=\operatorname{tr}(\mathsf w^2\mathsf s)$
+(page-local; Eq. 14). With this normalization
+$I_1=\mathsf s_{ij}\mathsf s_{ij}=2\bar S_{ij}\bar S_{ij}/\lvert\bar S\rvert^2=1$
+at every point, so one of the four features is constant *(compiler check,
+not in the sources)*; the paper does not comment.
+
+**How many tensors (Table II, Fig. 1).** The mean a priori correlation
+coefficient of $\tau^d_{ij}$ with filtered DNS, each value the best of 20
+GEP runs, is 0.321, 0.630, 0.640, 0.888, 0.889, 0.869, 0.883, 0.854, 0.774
+and 0.764 for $N_0=1,\dots,10$ basis tensors. It stops rising at four and
+falls beyond seven, which the authors attribute to the larger search space
+at fixed hyperparameters (100 individuals, 500 generations), not to the
+basis (§III B).
+
+**Which tensors (Table IV).** With constant coefficients, $T^{(2)}$ alone
+gives a correlation of 0.5403, $T^{(4)}$ alone 0.6944, the two together
+0.8792, adding $T^{(1)}$ 0.8831, adding $T^{(3)}$ 0.8874, all four 0.8885:
+the two rotation-carrying tensors carry the model. $T^{(1)}$ and $T^{(3)}$
+are spread evenly in space, $T^{(2)}$ and $T^{(4)}$ "concentrate in
+specific areas", with spiky PDFs and extreme values ($T^{(4)}$ between $-326.83$
+and $167.24$ against $\pm0.82$ for $\mathsf s$; Table V, Figs. 9–10), and
+$\lvert T^{(4)}\rvert$ correlates with the $Q$ criterion normalized by
+the paper's squared strain magnitude $\bar S_{mn}\bar S_{mn}$, which the
+paper writes as $\tfrac12(\lvert\omega\rvert^2-1)$ in its own symbols
+(Eqs. 24–25). The bound $\lvert\mathsf s_{ij}\rvert\le\sqrt{2/3}\approx0.8165$
+of a unit-norm trace-free symmetric tensor is consistent with the printed
+extremes 0.816 and $-0.817$ *(compiler check, not in the sources)*.
 
 ## An eight-term basis for the subgrid stress (Wu & Lele 2026)
 
@@ -318,6 +369,12 @@ a priori and a posteriori results are on
   results that are stable across architectures once inputs are simple and
   training uses several filters (above); unlike Kim et al. (2022), they do
   not compare against a network without a basis.
+- **Invariance by construction (turbomachinery review).** Sandberg &
+  Michelassi (2022, §4.3) cite Ling et al. (2016) and Weatheritt &
+  Sandberg (2016) for combining the Cayley–Hamilton theorem with machine
+  learning "to ensure that physical constraints are inherently
+  satisfied", and state that, to their knowledge, machine-learned subgrid
+  models "have yet to be employed" in blade- or stage-level simulations.
 - **Locality.** Agrawal & Koutsourelakis (2024, §2.2.1) call the
   postulate that the stress at a point depends only on flow features at
   that point "a very strong assumption for flows that exhibit strong
@@ -381,7 +438,28 @@ eigen-decomposition, or the integrity basis itself. See
   printed sum is antisymmetric; the difference
   $\mathsf W\mathsf S\mathsf W^2-\mathsf W^2\mathsf S\mathsf W$ is the
   symmetric combination, and the other nine printed tensors are symmetric
-  *(compiler check, not in the sources)*.
+  *(compiler check, not in the sources)*. Li et al. (2021, Eq. 13) print
+  $T^{(7)}$ as that difference, $\omega s\omega^2-\omega^2s\omega$ in their
+  symbols.
+- Li et al. (2021) print $\lvert T^{(4)}\rvert=\lvert\omega\rvert^2$ (Eq.
+  25, their normalized rotation $\omega$). With $T^{(4)}=\mathsf w^2-\tfrac13\operatorname{tr}(\mathsf w^2)\mathsf I$
+  and $\mathsf w$ antisymmetric, $\mathsf w^2$ has eigenvalues
+  $0,-c^2,-c^2$ with $2c^2=\lvert\mathsf w\rvert^2$ (here
+  $\lvert\mathsf w\rvert=\sqrt{\mathsf w_{ij}\mathsf w_{ij}}$, the paper's
+  norm, without the registry's factor two), so $T^{(4)}$ has
+  eigenvalues $\tfrac13\lvert\mathsf w\rvert^2$,
+  $-\tfrac16\lvert\mathsf w\rvert^2$, $-\tfrac16\lvert\mathsf w\rvert^2$
+  and $\lvert T^{(4)}\rvert=\lvert\mathsf w\rvert^2/\sqrt6$ *(compiler
+  check, not in the sources)*; the proportionality, which is what the
+  argument uses, holds. In Eq. 24 the middle expression carries the
+  normalized $\lvert s\rvert^2$ in the prefactor where the dimensional
+  strain magnitude is needed; the final form
+  $\tfrac12(\lvert\omega\rvert^2-1)$ is consistent with
+  $Q=\tfrac12(\lvert\Omega\rvert^2-\lvert S\rvert^2)$ in their unscaled
+  magnitudes *(compiler check, not in the sources)*. Their Table II
+  header prints the sixth stress component as $\tau_{12}$ a second time
+  where Fig. 5 shows $\tau_{23}$; §III D and Table V call the normalized
+  rotation $\Omega$, which Eq. 12 names $\omega$.
 - Oulghelou et al. (2025, Eqs. 7–10) normalize the strain and rotation of
   the basis by the specific dissipation rate, $S_{ij}/\omega$ and
   $\Omega_{ij}/\omega$, instead of by $\varepsilon/k$; with
@@ -435,4 +513,6 @@ eigen-decomposition, or the integrity basis itself. See
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §2.1 (Galilean but not rotational invariance), §7 (tensor-basis networks as future work).
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §2, Eqs. 1–2, 7–10 (additive correction on the 2D basis, $\omega$ normalization); §2.1, Table 1 (SBL-SpaRTA dictionary and printed constant-coefficient models).
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §3.1, Eqs. 3.5–3.8, Figs. 2–3 (eight-term LES basis, inputs, graph front end, normalization); §5.1.3, §7.
+- [Li et al. (2021)](/sources/li-2021.md) — §II B, Eqs. 9–14 (basis for the subgrid stress, normalization, invariants); §III B, Table II, Fig. 1 (number of tensors); Tables IV–V, §III D, Figs. 9–10, Eqs. 24–25 (ablation, vortical tensors, $Q$).
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3, Eq. 2 (GEP coefficients on four basis tensors; Ling et al. cited; ML subgrid models not yet used in turbomachinery).
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — arXiv v2: §1, §2.2–2.2.5, Eqs. 9–10, 14–17, Table 1 (basis, invariants, $k$-$\varepsilon$ limit, locality); §3.3, Table 3 (architecture, pre-training); §3.4, Fig. 7 (learned stress); App. A.

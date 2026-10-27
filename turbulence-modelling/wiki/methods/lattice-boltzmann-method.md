@@ -5,7 +5,7 @@ description: "Lattice Boltzmann methods advance particle populations on a discre
 status: established
 aliases: [LBM, lattice Boltzmann, LB, lattice Boltzmann equation, LBE, HRR collision, central-moment collision, lattice Boltzmann MHD, FLAME, ZDES-LBM]
 tags: [lattice-boltzmann, les, dns, hybrid-rans-les, gpu, mhd, immersed-boundary]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:57:00Z
 ---
 
 # Lattice Boltzmann methods for turbulent flow
@@ -234,6 +234,39 @@ authors conclude that SST-based hybrids are a cheaper alternative to
 wall-modelled LES in a lattice Boltzmann code, but give no run time or
 hardware.
 
+**The relaxation time as the place of the turbulence model.** In the
+appendix of a review of hybrid RANS/LES,
+[Heinz (2020)](/sources/heinz-2020.md), App. A, Eqs. (56)–(57), writes the
+continuous BGK equation for the velocity p.d.f. $f(\boldsymbol w,\boldsymbol x,t)$
+($\boldsymbol w$ the sample-space velocity, $g$ the equilibrium, $\tau_{\mathrm{BGK}}$ the
+relaxation time, all page-local),
+$$\partial_tf+\partial_k(w_kf)=-\frac{f-g}{\tau_{\mathrm{BGK}}},$$
+with $g$ an isotropic Gaussian around the mean velocity of variance
+$2k_{\mathrm{BGK}}/3$. Heinz states that the fluctuations it carries are
+molecular and turbulent together. Consistency with the momentum and
+stress equations gives
+$$\tau_{\mathrm{BGK}}=\frac{3(\nu+\nu_t)}{2(e+k)},\qquad k_{\mathrm{BGK}}=e+k,\qquad \nu=\tfrac23\tau_{\mathrm{BGK}}e,\qquad \nu_t=\tfrac23\tau_{\mathrm{BGK}}k,$$
+with $e$ and $k$ the molecular and the modelled turbulent kinetic energy
+(page-local $e$). Depending on how $\tau_{\mathrm{BGK}}$ is supplied as a
+function of $\nu_t$, lattice Boltzmann methods run as RANS, LES or hybrid
+RANS/LES. They are "not seen as modeling alternative" to these, but as a
+route to "more accurate and more efficient numerical solutions" of the
+same turbulence equations (App. A). With $k_{\mathrm{BGK}}=e+k$ the first
+relation reads $\nu+\nu_t=\tfrac23k_{\mathrm{BGK}}\tau_{\mathrm{BGK}}$,
+which has the form of the lattice relation
+$\nu_{\mathrm{tot}}=c_s^2(\tau_{\mathrm{LB}}-\Delta t/2)$ of the Scheme
+section with $c_s^2$ replaced by the per-component variance
+$2k_{\mathrm{BGK}}/3$ and without the discrete shift $\Delta t/2$
+*(compiler check, not in the sources)*. Heinz (2020, §2.3, Eq. 12) also rewrites the $k$,
+$\varepsilon$ and $\omega$ equations as BGK-type relaxations towards
+equilibrium values plus sink terms, citing Asinari et al. The finite-volume
+[high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md)
+couples subgrid models the same way, through an enlarged collision time
+$\tau_{\mathrm{col}}+\tau_{\mathrm{col},t}=(\mu+\mu_t)/p$ (page-local: the
+gas-kinetic collision time and its turbulent increment, $p$ the pressure;
+[Zhao et al. 2021](/sources/zhao-2021-c.md),
+§III, Eqs. 12–13, citing Chen et al.).
+
 ## Walls on Cartesian lattices
 
 Both ProLB sources impose walls by
@@ -272,6 +305,11 @@ implicit laws (log law, Reichardt, Spalding) need Newton iterations at
 every wall quadrature point. The DG implementation and its accuracy are on
 [RANS wall functions](/methods/rans-wall-function.md); Ghidoni et al. run
 no lattice Boltzmann computation.
+
+[Bose & Park (2018)](/sources/bose-2018.md), §3, cite the lattice
+Boltzmann wall model for LES of Malaspinas & Sagaut (2014); the review
+lists it among implementation
+studies it does not discuss.
 
 ## Lattice Boltzmann MHD with the Hall term
 
@@ -337,6 +375,21 @@ compressible flow with shocks, which is the regime their
 [gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md) targets; the
 lattice Boltzmann sources here are all weakly compressible.
 
+[Maltsev et al. (2022)](/sources/maltsev-2022.md), §III E, Eqs. (80)–(92),
+review the method for compressible multiphase flow and state its limits
+there: the classical scheme is restricted to low Mach number by the
+expansion of the Maxwellian, and the fixed velocity stencil restricts the
+attainable ratio of specific heats and Prandtl number. Compressible
+extensions need more discrete velocities, counterterms, double
+distributions or multiple relaxation times. Multiphase variants come in
+colour-gradient, Shan–Chen and free-energy families. Hybrid lattice
+Boltzmann/finite-volume schemes either discretize the discrete-velocity
+Boltzmann equation by finite volumes, which frees the velocities from the
+lattice, or store finite-volume data and take the intercell fluxes from a
+lattice Boltzmann step. In their conclusions (§V) the authors find
+hybrid finite-volume/lattice Boltzmann treatments of diffuse-interface
+multiphase models still at an early stage.
+
 ## Qualifications
 
 - **D3Q27 weights.** Foldes et al. print the edge weight as $1/54$ in
@@ -378,4 +431,8 @@ lattice Boltzmann sources here are all weakly compressible.
 - [Cao et al. (2022)](/sources/cao-2022.md) — §1, §3.3–3.4 (lattice Boltzmann grids in channel flow; shocks).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — HAL accepted manuscript hal-04921212v1: §1; §2.1, Eqs. (1)–(8) (trapezoidal D3Q19, HRR with $\sigma=0.98$, eddy viscosity in the relaxation time); §2.2 (immersed boundary, wall model); §2.3, Eqs. (16)–(34) (SST by finite differences, wall functions, IDDES, CES); §3.1–3.3, Tables 1–3 (NACA 23012, NACA 0012, Ahmed body).
 - [Husson et al. (2024)](/sources/husson-2024.md) — §1 (isotropic lattices and DES-type shielding); §2.1, Eqs. (1)–(17) (D3Q19 HRR with $\sigma=0.98$, improved equilibrium, relaxation time); §2.2, Eqs. (18)–(35) (SA and ZDES mode 2 (2020) by finite differences, lattice-specific concerns); §3 (immersed boundary, wall law); §4.1–4.3, Table 1, Figs. 4–19 (flat plate, step, LEISA2); §5.
+- [Heinz (2020)](/sources/heinz-2020.md) — §2.3, Eq. (12) (BGK form of the $k$, $\varepsilon$, $\omega$ equations); App. A, Eqs. (56)–(57) (BGK equation, relaxation time with $\nu_t$, RANS/LES/hybrid use).
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III, Eqs. (12)–(13) (enlarged collision time of the gas-kinetic scheme).
+- [Bose & Park (2018)](/sources/bose-2018.md) — §3 (lattice Boltzmann wall model, cited).
+- [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III E, Eqs. (80)–(92) (BGK, low-Mach limits, multiphase and compressible variants, hybrid LB–FV); §V (conclusions).
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §1; §3.3, Eqs. (12)–(14); reference [11] (the explicit power-law wall model of Wilhelm et al., devised for lattice Boltzmann RANS, reused in a DG solver).

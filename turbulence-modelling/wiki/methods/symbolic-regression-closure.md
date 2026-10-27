@@ -5,7 +5,7 @@ description: "Closures whose model terms are explicit algebraic expressions foun
 status: established
 aliases: [symbolic regression, PySR, SBL-SpaRTA, SR-CLS, SR-CND, deep symbolic regression, DSR, gene-expression programming, GEP, sparse regression, SpaRTA, explicit algebraic closure discovery, DSRRANS, relevance vector machine, RVM, NGM4, NGM6, equation discovery]
 tags: [symbolic-regression, rans, les, sgs-model, data-driven, separated-flow]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Symbolic-regression turbulence closures
@@ -21,7 +21,8 @@ can be implemented in a RANS code without a machine-learning runtime (Tang
 et al. 2023, §I, §IV; see
 [tensor-basis neural network](/methods/tensor-basis-neural-network.md)).
 Wu et al. (2025) fit instead a scalar multiplier of a model term, and
-Jakhar et al. (2026) the LES subgrid stress itself (sections below).
+Li et al. (2021) and Jakhar et al. (2026) the LES subgrid stress itself
+(sections below).
 The interpretability of an explicit expression is the reason given for
 the approach; Duraisamy (2021, §VII) adds that interpretable models from
 symbolic regression do not automatically generalize beyond their training
@@ -31,8 +32,8 @@ scenarios.
 
 | Method | Search | Recalled or read |
 |---|---|---|
-| gene-expression programming (Weatheritt & Sandberg 2016, 2017) | evolutionary search over expression trees | recalled by Duraisamy et al. (2019, §5.3), Duraisamy (2021, §III.A), Tang et al. (2023, §I) |
-| CFD-driven gene-expression programming (Zhao et al. 2020) | candidates evaluated in the RANS solver during training | recalled by Tang et al. (2023, §I) |
+| gene-expression programming (Weatheritt & Sandberg 2016, 2017) | evolutionary search over expression trees | recalled by Duraisamy et al. (2019, §5.3), Duraisamy (2021, §III.A), Tang et al. (2023, §I), Sandberg & Michelassi (2022, §4.3); read directly for an LES subgrid stress: Li et al. (2021) |
+| CFD-driven gene-expression programming (Zhao et al. 2020) | candidates evaluated in the RANS solver during training | recalled by Tang et al. (2023, §I), Sandberg & Michelassi (2022, §4.3), Ruggeri et al. (2022, §III) |
 | sparse regression, SpaRTA (Schmelzer et al.) | $\ell_1$-penalized linear regression over a library of candidate functions | recalled by Duraisamy (2021, §III.A, §IV.A), Tang et al. (2023, §III B) |
 | deep symbolic regression, DSR (Petersen et al.) | a recurrent network samples expressions; trained by a risk-seeking policy gradient | read directly: Tang et al. (2023) |
 | PySR (Cranmer) | genetic search over several populations with a complexity penalty | read directly: Wu et al. (2025) |
@@ -230,7 +231,8 @@ behind the boundary-layer gate, leaves attached flow at the SST solution.
 [Jakhar et al. (2026)](/sources/jakhar-2026.md) (arXiv v3; the
 Supplemental Material is not in the file read) apply equation discovery to
 the subgrid stress $\tau_{ij}=\overline{u_iu_j}-\bar u_i\bar u_j$ of LES of
-forced two-dimensional turbulence, the only LES application on this page.
+forced two-dimensional turbulence; the three-dimensional LES application
+on this page is that of Li et al. (2021), next section.
 
 **Library and regression (p. 2, Eq. 3).** Each element of $\tau_{ij}$ is
 regressed separately, for each case, on a library of 930 products of
@@ -302,6 +304,126 @@ PDF and give better short-term forecasts than the eddy-viscosity
 closures, which underestimate the large-scale enstrophy. NGM6 brings no a
 posteriori advantage, "suggesting that in practice, using NGM4 might be
 enough" (pp. 4–5).
+
+## Gene-expression programming for an LES subgrid stress (Li et al. 2021)
+
+[Li et al. (2021)](/sources/li-2021.md) use gene-expression programming
+(GEP) to learn an explicit algebraic subgrid model for LES of forced
+incompressible [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md);
+they call it the first GEP subgrid model applied to fully developed
+isotropic turbulence and tested both a priori and a posteriori, after
+Schoepplein et al. (2018, a priori only, on premixed-flame DNS) and
+Reissmann et al. (2021, a posteriori on the
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) without
+turbulence statistics), both cited in their §I.
+
+**The algorithm (§II B, Eqs. 15–16, Table I).** GEP is a genetic
+algorithm for symbolic regression: the coefficient functions are encoded
+as chromosomes, a population evolves over generations by selection,
+mutation (diversity) and crossover (coupling strong genes), and the
+fittest individual is written out as an expression. The search is a
+global random optimization, not a local gradient-based one. The fitness,
+minimized, is the mean relative Frobenius-norm error of the deviatoric
+stress over the $n_p$ training points (page-local),
+$\frac1{n_p}\sum_k\lVert\tau^{d,\mathrm{DNS}}(k)-\tau^{d,\mathrm{m}}(k)\rVert_F/\lVert\tau^{d,\mathrm{DNS}}(k)\rVert_F$.
+Hyperparameters: 100 individuals, 500 generations, probability of
+invariants 0.5, set from earlier experience and resources; the code is
+the in-house EVE3 (University of Melbourne). Sandberg & Michelassi (2022,
+margin definition, p. 267) define GEP in the same terms, as an algorithm that
+"evolves a population of syntactically correct candidate symbolic
+expressions over various generations toward a specified and constrained
+training objective".
+
+**Representation (Eqs. 9–14).** The deviatoric subgrid stress is expanded
+on Pope's ten-tensor basis of the filtered strain and rotation, scaled by
+$\Delta$ and the strain magnitude (details and the normalization on
+[tensor-basis neural network](/methods/tensor-basis-neural-network.md)).
+In registry notation, with page-local $\mathsf s_{ij}=\sqrt2\,\bar S_{ij}/\lvert\bar S\rvert$
+and $\mathsf w_{ij}=\sqrt2\,\bar\Omega_{ij}/\lvert\bar S\rvert$ (the paper
+normalizes by $\sqrt{\bar S_{mn}\bar S_{mn}}=\lvert\bar S\rvert/\sqrt2$),
+
+$$\tau^d_{ij}=\frac{\Delta^2\lvert\bar S\rvert^2}{2}\sum_{n=1}^{N_0}g^{(n)}(I_1,\dots,I_4)\,T^{(n)}_{ij}(\mathsf s,\mathsf w),$$
+
+with $N_0$ (page-local) the number of basis tensors offered to the
+search, from 1 to 10.
+
+**Data (§III A).** A $1024^3$ pseudospectral DNS at $Re_\lambda\approx260$
+(from Xie et al. 2020, as cited) is filtered with a top-hat filter of width
+$\Delta=16$ DNS spacings, in the inertial range with about 5% of the
+kinetic energy filtered, and coarse-grained to $64^3$ points; $8\times64^3$
+points are split 70/30 between training and testing.
+
+**The retained model GEP(4) (Eq. 22).** Trained with
+$T^{(1)}$–$T^{(4)}$, the search returns constant coefficients,
+
+$$\tau^d_{ij}=\frac{\Delta^2\lvert\bar S\rvert^2}{2}\left(-0.01\,T^{(1)}_{ij}-0.1\,T^{(2)}_{ij}+0.07\,T^{(3)}_{ij}-0.11\,T^{(4)}_{ij}\right).$$
+
+Over 30 training runs the coefficients are invariant-free constants in
+83% ($g^{(1)}\in[-0.02,0]$), 93% ($g^{(2)}\in[-0.11,-0.10]$), 60%
+($g^{(3)}\in[0.06,0.10]$) and 97% ($g^{(4)}\in[-0.11,-0.10]$) of the runs
+(Table III). The linear term is an eddy viscosity
+$\nu_t=\tfrac{0.01}{2\sqrt2}\Delta^2\lvert\bar S\rvert\approx3.5\times10^{-3}\Delta^2\lvert\bar S\rvert$,
+i.e. a Smagorinsky form with $C_s\approx0.059$ *(compiler check, not in
+the sources)*; the authors state only that this coefficient is much
+smaller than in (dynamic) Smagorinsky models, so the model is less
+dissipative, and relate the dominant terms $T^{(2)}$ and $T^{(4)}$ to the
+rotation rate and to intense vortex filaments (§III D, §IV).
+
+**Tests.** A priori, the correlation coefficient with filtered DNS rises
+from 0.321 for one tensor to 0.888 for four and falls beyond seven
+(Table II); a posteriori, $128^3$ LES (grid spacing $\Delta/2$) with GEP(4)
+matches filtered DNS in spectra, structure functions, stress PDFs and the
+backscatter tail of the SGS energy flux about as well as an artificial
+neural network of Xie et al. (2020) and better than the dynamic
+Smagorinsky and dynamic mixed models (§III C, Figs. 2–8); details on
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+and [neural-network SGS models](/methods/neural-network-sgs-model.md). Its
+cost per iteration is slightly above that of the dynamic Smagorinsky model
+and much below the network's (Fig. 13; no timings printed). The
+generalization to $64^3$ and $32^3$ LES and to $Re_\lambda=180$ and 250 is
+shown with energy spectra only (§III E, Figs. 11–12). The authors limit
+their conclusions to isotropic turbulence (§IV).
+
+## Gene-expression programming in turbomachinery RANS (Sandberg & Michelassi 2022)
+
+The review of [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md)
+(§3.2.3, §4.3) cites the GEP closures of Akolekar et al., Lav et al. and
+Zhao et al. for turbomachinery wakes. The explicit algebraic stress model
+that it cites from Akolekar et al. (2019) (Eq. 2) reads in registry
+notation
+
+$$\langle\rho u_i''u_j''\rangle-\tfrac23\langle\rho\rangle k\,\delta_{ij}=-2\mu_t\,S^d_{ij}+2\langle\rho\rangle k\sum_{n=1}^{4}g^{(n)}(I_1,I_2)\,T^{(n)}_{ij},$$
+
+with $S^d_{ij}$ the deviatoric strain of the Favre-averaged velocity, the
+$n=1$ term an "additional linear term" and $n=2$–4 the non-linear terms;
+GEP finds the $g^{(n)}$ (the review's $\zeta_k$) as functions of two
+invariants by minimizing a normalized mean-square error $J$ against
+phase-lock-averaged DNS, and the performance measure is the percentage
+reduction of $J$ over the linear baseline (Fig. 7). The review reports,
+citing the original works:
+
+- *Phase dependence.* Models trained on one phase of phase-locked
+  low-pressure-turbine data perform well on that phase but can perform
+  poorly on others (developed on phase 10, tested on phase 18); the
+  non-linear terms contribute more in phases with wake–wake interaction,
+  and two distinct models suffice to improve wake mixing over all phases
+  (Akolekar et al. 2019; §4.3, Fig. 7).
+- *Triple decomposition.* A closure trained on only the stochastic part of
+  a triple decomposition of wake LES data, so that the shedding is not
+  accounted twice in URANS, has a much smaller turbulent-diffusion
+  coefficient and improves near- and far-wake prediction (Lav et al. 2019;
+  §3.2.3).
+- *CFD-driven training.* With a full RANS solve per candidate (Zhao et al.
+  2020), much less data are needed, and models trained on high-pressure-
+  turbine data predicted low-pressure-turbine wake-loss profiles for other
+  geometries and very different Reynolds numbers (§4.3; see
+  [model-consistent training](/methods/model-consistent-training.md)).
+
+The authors' outlook is that machine learning will not yield models that
+predict all turbulent flow features in turbomachines, but will patch the
+weaknesses of specific mechanisms in multi-expression approaches (Future
+issue 5). Cascade context is on
+[turbine cascades](/benchmarks/turbine-cascade.md).
 
 ## Sparse Bayesian experts for model blending (Oulghelou et al. 2025)
 
@@ -419,6 +541,24 @@ not report a learned expression.
   these are the authors' claims. The result concerns 2-D turbulence, where
   NGM2 transfers no energy between scales; the gradient model in 3-D is
   treated on its own page.
+- **Li et al. (2021): scope and slips.** The a priori correlations of
+  Table II are each the best of 20 training runs. The coefficients of Eq.
+  22, $(-0.01,-0.1,0.07,-0.11)$, differ from those of the four-term model
+  of the ablation, $(-0.02,-0.11,0.07,-0.10)$ (Table IV, model 6); the
+  paper does not say which set the ablation uses. §III A states that
+  "every 17th grid point in each direction" of the $1024^3$ field gives
+  "$16^3$ different datasets of $64^3$" points; $1024/64=16$, so the
+  stated datasets correspond to a stride of 16 *(compiler check, not in
+  the sources)*. The LES uses a "high-order dissipative numerical method"
+  at high wavenumbers (§II A), whose share of the dissipation is not
+  separated from the model's.
+- **Sandberg & Michelassi (2022), Eq. 2 sign.** The review defines the
+  Reynolds stress as $-\overline{\rho u_i''u_j''}$ (p. 259), whose trace is
+  $-2\bar\rho k$; its Eq. 2 subtracts $\tfrac23\bar\rho k\delta_{ij}$ and
+  writes $-2\mu_t$ on the right, which is the form for the
+  positive-trace stress, so Eq. 2 is consistent only with the opposite
+  sign convention *(compiler check, not in the sources)*. The equation
+  above is written in the registry's positive convention.
 - **Symbol clashes in the source.** $\varepsilon$ is both the dissipation
   and the risk factor, $\alpha$ both the learning rate and the hill
   steepness, $\sigma$ both a standard deviation and the sigmoid.
@@ -431,4 +571,7 @@ not report a learned expression.
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §2.2, Eqs. 16–17, 19–20, Tables 2–4 (PySR set-up, features, rebalancing, learned models); §3.2 (interpretation, cost); §4.2.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §2–2.1, Eqs. 7–10, Table 1 (SBL-SpaRTA experts); §3; §4.2.1, Table 3.
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: pp. 1–5, Eqs. 3–4, Figs. 1–4 (library, RVM, criterion, NGM closures, a priori table, a posteriori results, cases); App. B, Eq. 5; App. C (solver); App. D (eddy-viscosity baselines).
+- [Li et al. (2021)](/sources/li-2021.md) — §I (earlier GEP-LES work), §II A–B, Eqs. 9–16, 22, Table I (representation, algorithm, fitness, hyperparameters, GEP(4)); §III A (data); Tables II–IV; §III C–F, Figs. 2–13; §IV.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §3.2.3 (triple decomposition, Lav et al.), §4.3, Eq. 2, Fig. 7, margin p. 267 (GEP definition, phase-locked EARSM, CFD-driven training); p. 259 (stress definition); Future issue 5.
+- [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §III (CFD-driven GEP of Zhao et al. cited, in passing).
 - [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §1, §3.2 (GEP corrections of the earlier model recalled), §4.1, Eq. 10 (length scale from trained expressions), §4.5, Eqs. 23–27 (separation switch as a training candidate).

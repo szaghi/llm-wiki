@@ -5,7 +5,7 @@ description: "The spectral difference method is a nodal high-order element schem
 status: established
 aliases: [SD, SD method, spectral difference, staggered-grid Chebyshev multidomain method]
 tags: [flux-reconstruction, dns, compressible, immersed-boundary, implicit-les, numerical-dissipation]
-timestamp: 2026-10-27T05:50:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Spectral difference method
@@ -166,6 +166,31 @@ applied to the nodal spectral difference method; Huang et al. build the
 analogous [shock sensor](/definitions/shock-sensor.md) and limiter for
 modal Runge–Kutta DG, not for SD.
 
+## Uses cited by other sources
+
+Three further sources mention SD only through the works they cite:
+
+- **Wall-modelled LES.** In their review of
+  [wall-modelled LES](/methods/wall-modelled-les.md),
+  [Bose & Park (2018)](/sources/bose-2018.md), §3, list the implementation
+  of wall models in "finite element or spectral differencing schemes"
+  among the implementation studies they do not discuss, citing the
+  structural wall-modelled LES of Lodato, Castonguay & Jameson (2014) with
+  a high-order SD scheme for unstructured meshes. They add
+  that the cost of wall modelling is often small against that of the rest
+  of the flow solution.
+- **Moving grids.** [Liu et al. (2022b)](/sources/liu-2022-g.md), §2.1,
+  enforce the temporal
+  [geometric conservation law](/properties/geometric-conservation-law.md)
+  of their moving-grid flux-reconstruction solver with a GCL
+  error-compensation approach whose references include a high-order SD
+  method for unstructured dynamic grids by Yu, Wang & Hu (2011).
+- **The First High-Order CFD Workshop.** [Wang et al. (2013)](/sources/wang-2013.md),
+  §1, cite the SD method of Liu, Vinokur & Wang among the high-order
+  methods developed for unstructured meshes. None of the workshop
+  participants in their Tables II–VII submitted SD results; the entries
+  are DG, CPR, finite-difference and finite-volume codes.
+
 ## Qualifications
 
 - Evidence for SD in turbulence is two sources: D'Ayer et al. validate an
@@ -195,3 +220,6 @@ modal Runge–Kutta DG, not for SD.
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL hal-04582857v1: §III.B.e, h, Tables I–II (SD3DvisP); §IV.A–B, Figs. 5–8; §V.
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §2 (VCJH, $c_{\mathrm{SD}}$ default); §3.1 (COOLFluiD modules); §4.2, Fig. 14 (T3A skin friction for three VCJH parameters).
 - [Huang et al. (2025)](/sources/huang-2025.md) — §1 (TENO limiter for spectral difference, recalled).
+- [Bose & Park (2018)](/sources/bose-2018.md) — §3 (wall-model implementation with SD, cited; cost of wall modelling).
+- [Liu et al. (2022b)](/sources/liu-2022-g.md) — §2.1 (GCL error compensation, SD on dynamic grids cited).
+- [Wang et al. (2013)](/sources/wang-2013.md) — §1 (SD cited among unstructured high-order methods); Tables II–VII (participants).

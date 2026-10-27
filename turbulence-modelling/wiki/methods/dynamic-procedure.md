@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-27T05:46:00Z
+timestamp: 2026-10-27T11:01:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -83,6 +83,8 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Li et al. (2024)](/sources/li-2024.md), §II B, Eqs. (7)–(11) | DSM (Lilly's least squares) and a two-coefficient dynamic mixed model, baselines of a neural-operator surrogate in forced isotropic turbulence and a temporal mixing layer, pseudo-spectral | test filter $\hat\Delta=2\Delta$, and a second filter of width $4\Delta$ for the mixed model's structural term; average over the whole domain, so the coefficients are spatially uniform at each time |
 | [Pan & Zhang (2023)](/sources/pan-2023.md), §II.D, Eqs. (16)–(19) | dynamic Smagorinsky–Lilly model of ANSYS-Fluent (Lilly's "minimum error method"), reference LES of a centrifugal impeller; printed as $L^d_{ij}=C_s^2M^{\mathrm P}_{ij}$ with $M^{\mathrm P}_{ij}=2\Delta^2\widehat{\lvert\bar S\rvert\bar S_{ij}}-2\hat\Delta^2\lvert\hat{\bar S}\rvert\hat{\bar S}_{ij}$ ($M^{\mathrm P}$ page-local) $=2\Delta^2M_{ij}$, and $C_s^2=\langle L_{ij}M^{\mathrm P}_{ij}\rangle/\langle M^{\mathrm P}_{ij}M^{\mathrm P}_{ij}\rangle$, the formula above *(compiler check, not in the sources)* | default Fluent test filter; averaging not specified |
 | [Volpiani (2024)](/sources/volpiani-2024.md), App. 2, Eqs. (33)–(40) | compressible Germano–Lilly model (Germano et al.; Lilly; Spyropoulos & Blaisdell, as recalled) with Favre-filtered strain and density-weighted $L_{ij}$ and $M_{ij}$, coefficient $C_d=C_s^2$, and a dynamic Yoshizawa coefficient $C_I=\langle L_{kk}\rangle/\langle2\hat\Delta^2\hat{\bar\rho}\lvert\hat{\tilde S}\rvert^2-2\Delta^2\widehat{\bar\rho\lvert\tilde S\rvert^2}\rangle$ for the isotropic part ($C_I$ page-local) | $\hat\Delta=2\Delta$; kernel and averaging not printed |
+| [Zhao et al. (2021)](/sources/zhao-2021-c.md), §III.A, Eqs. (15)–(16); §III.D | DSM (Germano et al. 1991; Vreman et al. 1997, as cited) in a high-order gas-kinetic finite-volume code, wall-resolved channel; its coefficient is reused unchanged as $C_d$ of a dynamic Clark mixed model | test filter $2\Delta$; average over the homogeneous $x$–$z$ planes; positive-part clipping "so that backscatter is eliminated" |
+| [Li et al. (2021)](/sources/li-2021.md), §III C | DSM (Moin et al. 1991, as cited), comparator of a gene-expression-programming model in forced isotropic turbulence, pseudospectral | not printed |
 | [Valencia et al. (2026)](/sources/valencia-2026.md), §I, §V C | DSM and dynamic mixed model as a priori baselines in explicitly filtered compressible isotropic turbulence | not printed |
 
 Fowler et al. (2022, §4.2) borrow the Lagrangian averaging of the dynamic
@@ -425,6 +427,37 @@ filter-width question.
   same 12.33-million-cell grid (maximum $y^+\approx1.2$). Its validation
   against PIV shows "remarkable discrepancy", which they attribute to the
   experimental rig; the impeller head is 3.75% above the measured value.
+- **Best explicit model behind implicit LES in a gas-kinetic channel**
+  ([Zhao et al. 2021](/sources/zhao-2021-c.md), §V, Tables V–VII,
+  Figs. 2–19). In wall-resolved channel flow at nominal $Re_\tau=180$
+  ($96^3$) and 395 ($96^3$, $128^3$), the clipped plane-averaged DSM gives
+  the highest realized $Re_\tau$ of the four explicit models (175.47 against
+  DNS 178.12 at 180; 359.54 and 375.22 against 392.24 at 395) and is
+  "superior" to the Vreman, WALE and dynamic Clark models, but below the
+  no-model run (see [implicit LES](/definitions/implicit-les.md)). At
+  $Re_\tau=180$ it matches the DNS Reynolds shear stress better than iLES
+  (§V.B). The authors explain its rank thus: "the numerical dissipation in
+  this model is relatively small as a result of the dynamic coefficient"
+  (§V.B; §VI). It costs 0.613 s per step
+  against 0.520 s for no model on $64\times96\times64$ (Table III).
+- **Comparator of a symbolic-regression model**
+  ([Li et al. 2021](/sources/li-2021.md), §III C, Figs. 2–6). In a
+  posteriori LES of forced isotropic turbulence ($128^3$, filter width 16
+  DNS spacings), DSM spectra are damped near the cutoff and "energy-rich"
+  at lower wavenumbers; DSM underpredicts the small-separation structure
+  functions, more for higher orders, and gives the narrowest PDFs of the
+  anisotropic stress components, which the authors attribute to its pure
+  dissipation. Its subgrid flux is strictly positive (see
+  [energy backscatter](/definitions/energy-backscatter.md)). A
+  gene-expression-programming tensor model and a neural network do better
+  at about the cost of DSM for the former (see
+  [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+- **Realizability.** [Heinz (2020)](/sources/heinz-2020.md) (§2.1), in a
+  hybrid RANS/LES review, states that dynamic LES that does not honour
+  realizability, the DSM, "is often computationally unstable", that the
+  averaging or clipping used against this reduces the backscatter of LES,
+  and that "fully realizable dynamic LES" (Mokhtarpoor & Heinz, cited) is
+  stable without either.
 - **Clipping as a reason to prefer another baseline.** [Wu & Lele (2026)](/sources/wu-2026.md)
   (§5.1) choose the [Sigma model](/methods/sigma-model.md) rather than DSM
   as the reference of their learned closures, because the Sigma coefficient
@@ -462,6 +495,21 @@ direction. They contrast this with the dynamic slip model of Bose & Moin
 (cited), which assumes a linear dependence on the width ratio, one slip
 length for all directions and a least-squares solution. The procedure is
 proposed but not tested. The slip model itself is on
+[wall-modelled LES](/methods/wall-modelled-les.md).
+
+The wall-modelling review of [Bose & Park (2018)](/sources/bose-2018.md)
+(§2.3, Eqs. 15–16) describes the first author's dynamic slip-wall model:
+a Germano differential filter whose regularization length vanishes at the
+wall gives the Robin condition $\bar u_i-C\Delta_w\partial_n\bar u_i=0$
+(slip length $C\Delta_w$, page-local), and the slip length is computed by a
+Germano-like dynamic procedure, so the model has no empirical coefficient.
+It reverts to no slip in laminar regions ($C\Delta_w\to0$, §4.1). The
+authors name the robustness of the dynamic procedure, which is "sensitive
+to SGS model and numerics", as its limit; Bae & Koumoutsakos (2022, above)
+also state that these models are sensitive to the numerical method and
+SGS model. Bose & Park also state, citing Sayadi & Moin, that dynamic
+procedures deactivate SGS models in laminar boundary layers (§4.1); see
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md) and
 [wall-modelled LES](/methods/wall-modelled-les.md).
 
 ## Extension to a coefficient tensor
@@ -517,6 +565,18 @@ squares from a 6×4 system; see the
   operation, and their test-filter width is larger than $\Delta$; the table
   above follows the low-pass reading.
 
+- Zhao et al. (2021, Eqs. 15–16) print $\mu_t=\bar\rho C\Delta^2\lvert\bar S\rvert$,
+  $L_{ij}$ in the registry sign,
+  $M^{\mathrm Z}_{ij}=\hat\Delta^2\lvert\hat{\bar S}\rvert\hat{\bar S}_{ij}-\Delta^2\widehat{\lvert\bar S\rvert\bar S_{ij}}$
+  ($M^{\mathrm Z}$ page-local, $-\Delta^2$ times the $M_{ij}$ of this page)
+  and $C=[\langle M^{\mathrm Z}_{ij}L_{ij}\rangle/\langle M^{\mathrm Z}_{kl}M^{\mathrm Z}_{kl}\rangle]_+$.
+  With the model stress $-2C\Delta^2\lvert\bar S\rvert\bar S_{ij}$ at both
+  levels the identity gives $L^d_{ij}=-2CM^{\mathrm Z}_{ij}$ and
+  $C=-\tfrac12\langle L_{ij}M^{\mathrm Z}_{ij}\rangle/\langle M^{\mathrm Z}_{kl}M^{\mathrm Z}_{kl}\rangle$;
+  the printed formula lacks the factor $-\tfrac12$, and with the printed
+  definitions its positive part would keep the anti-dissipative sign
+  *(compiler check, not in the sources)*. The paper states no other sign
+  convention.
 - Volpiani (2024, Eq. 38) prints the numerator of $C_d$ as
   $\langle(L_{ij}-\tfrac13L_{ij}\delta_{ij})M_{ij}\rangle$, where the
   deviatoric part needs the trace $L_{kk}$.
@@ -564,3 +624,7 @@ squares from a 6×4 system; see the
 - [Pan & Zhang (2023)](/sources/pan-2023.md) — §II.D, Eqs. (14)–(19); §III.A–C, Table II, Fig. 8.
 - [Volpiani (2024)](/sources/volpiani-2024.md) — §5, Fig. 15; App. 2, Eqs. (33)–(40).
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §I; §V C, Tables VI–VII.
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III.A, Eqs. (15)–(16); §III.D; §V, Tables III, V–VII, Figs. 2–19; §VI.
+- [Li et al. (2021)](/sources/li-2021.md) — §III C, Figs. 2–6.
+- [Heinz (2020)](/sources/heinz-2020.md) — §2.1.
+- [Bose & Park (2018)](/sources/bose-2018.md) — §2.3, Eqs. (15)–(16); §4.1.

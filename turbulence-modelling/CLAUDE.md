@@ -112,7 +112,12 @@ bundle's notation.
 
 ## Status
 
-**Chunk 8 staged 2026-10-27:** 20 papers of 2022–2026; 160 of 307
+**Chunk 9 staged 2026-10-27:** 20 papers of 2013–2022; 180 of 307
+ingested, 153 concept pages plus the registry, 8241 bibliography entries,
+deep lint done, five contradictions open. Chunk 10 follows with the
+whole-bundle deep lint (190 ingestions).
+
+**Chunk 8 committed 2026-10-27 (b24d200):** 20 papers of 2022–2026; 160 of 307
 ingested, 148 concept pages plus the registry, 7232 bibliography entries,
 deep lint done, five contradictions open (the fifth: the exponent of the
 Langtry–Menter $F_3$). Chunks 9–16 (the 147 papers added on 2026-10-27)

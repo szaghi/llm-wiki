@@ -5,7 +5,7 @@ description: "Flux reconstruction (FR/CPR) corrects a degree-N discontinuous flu
 status: established
 aliases: [FR, flux reconstruction method, correction procedure via reconstruction, CPR, FR/CPR, lifting collocation penalty, Huynh flux reconstruction, ESFR, energy-stable flux reconstruction, VCJH schemes, NSFR, nonlinearly stable flux reconstruction]
 tags: [flux-reconstruction, dg, implicit-les, numerical-dissipation, entropy-stable, wmles]
-timestamp: 2026-10-27T05:50:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Flux reconstruction
@@ -468,6 +468,45 @@ first-point distance.
 - **Canonical LES**: Taylor–Green vortex, Comte-Bellot–Corrsin decaying
   [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md),
   wall-resolved and wall-modelled channels (Duan & Wang 2024, §5).
+- **Moving and deforming grids** ([Liu et al. (2022b)](/sources/liu-2022-g.md),
+  §2.1–2.2, Eqs. 1–11, Fig. 1): FR/CPR for the compressible Navier–Stokes
+  equations in arbitrary Lagrangian–Eulerian form on moving triangles,
+  with Roe common fluxes for the inviscid and BR1 for the viscous part.
+  The two spatial metric identities of the
+  [geometric conservation law](/properties/geometric-conservation-law.md)
+  are satisfied by the high-order discretization and the temporal one is
+  enforced by GCL error compensation; the correction field is evaluated
+  in physical space, divided by the Jacobian determinant $\mathcal J$, to
+  minimize errors on curved elements. Solution points are the
+  $(N+1)(N+2)/2$ nodes of a high-strength triangle quadrature, flux points
+  Gauss–Legendre points on the edges. At $N=2$ the scalar-wave test
+  reaches third order on both stationary and deforming grids ($L_2$ error
+  $8.22\times10^{-3}\to1.25\times10^{-5}$, orders 3.4, 3.0, 3.0, and
+  $1.24\times10^{-2}\to1.76\times10^{-5}$, orders 3.1, 3.2, 3.2, from
+  $10\times10$ to $80\times80$ split quadrilaterals; §3.1.1, Table 1). The
+  applications are laminar fluid–structure interaction at $Re=100$–1000,
+  vortex-induced vibration of a cylinder (see
+  [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)) and a
+  pitching and plunging NACA 0012 energy harvester (§3.2–3.3); the
+  extension to implicit LES, RANS or wall-modelled LES is future work, with
+  robustness against non-smooth eddy-viscosity fields and the cost of
+  wall-distance-based models on moving grids named as the challenges (§4).
+- **Shock tubes with learned fluxes** ([Ruggeri et al. (2022)](/sources/ruggeri-2022.md),
+  §VI, Fig. 7): fourth-order FR ($N=3$) with the localized artificial
+  diffusivity of Haga & Kawai, as cited, runs one-dimensional real-fluid
+  shock tubes with neural-network, exact and Rusanov interface fluxes.
+  The differences between fluxes shrink against the first-order runs, the
+  largest being at the density contact where Rusanov oscillates more,
+  "because with high order, the interfaces of the mesh have a less
+  important role than for order 1". The flows are inviscid.
+- **The High-Order CFD Workshop** ([Wang et al. (2013)](/sources/wang-2013.md),
+  §5, Tables II–IV, VII): CPR–DG submissions of Iowa State University
+  entered the bump, NACA 0012, vortex-transport and
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) cases of the
+  first workshop, whose results are compared by error against work units
+  (see [NACA 0012](/benchmarks/naca-0012-airfoil.md)); Huynh's
+  flux-reconstruction paper appears only in the §1 list of high-order
+  methods for unstructured meshes.
 
 ## Low-order FR and the spectral-difference relative in a shock–turbulence comparison
 
@@ -561,4 +600,7 @@ laminar circular cylinder, with errors they call similar (§3.1).
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv 2404.12703v2: §1 (PyFR among GPU high-order codes).
 - [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §1 (FR lineage, ESFR, equivalences, iLES/ILES); §2.6–2.10, Eqs. (46)–(90) (SGS models, NSFR split form, Ismail–Roe flux, SSP-RK3, added Riemann dissipation, strong DG with over-integration); §3.1.1–3.1.8, Tables 1–5, Figs. 2–20 (Taylor–Green DNS and implicit LES: stability, cost, flux nodes, correction parameter, CFL, two-point fluxes, upwinding, SGS models); §3.2, Table 6 (Comte-Bellot–Corrsin).
 - [D'Ayer et al. (2026)](/sources/dayer-2026.md) — HAL hal-05075852v1: §1 (spectral difference against FR cost, as recalled); §3.1 (comparison with the FR penalization of Kou et al.).
+- [Liu et al. (2022b)](/sources/liu-2022-g.md) — §2.1–2.2, Eqs. 1–11, Fig. 1 (ALE FR/CPR on triangles, GCL compensation, physical-space correction field); §3.1.1, Table 1 (order on deforming grids); §4 (turbulence as future work).
+- [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §VI, Fig. 7 (fourth-order FR shock tubes with learned fluxes).
+- [Wang et al. (2013)](/sources/wang-2013.md) — §1 (Huynh cited); §5, Tables II–IV, VII (CPR–DG submissions to the first High-Order CFD Workshop).
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — Abstract, §1–1.1 (first FR-RANS with transition, $\ln\omega$ SST); §2, Eqs. (47)–(61) (FR, VCJH, BR2, AUSM$^+$-up); §3.2, Eqs. (62)–(87), Figs. 5–7 (implicit solver, semi-analytical and source Jacobians); §3.3.1, Eq. (88); §4.1–4.3, Figs. 9–17 (Wieghardt plate, T3 cases, VCJH parameters, $O(N^2)$ cost).

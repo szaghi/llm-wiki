@@ -250,7 +250,7 @@ ref. [78] ends its author list with "et al.".
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4, 9. This source is cited on:
 
 - [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md)
 - [Periodic hill](/benchmarks/periodic-hill.md)
@@ -265,6 +265,7 @@ Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
 - [Lagrangian relaxation towards equilibrium (LaRTE) wall model](/methods/lagrangian-relaxation-towards-equilibrium-wall-model.md)
 - [Machine-learning wall models](/methods/machine-learning-wall-model.md)
 - [Model-consistent (a posteriori) training of learned closures](/methods/model-consistent-training.md)
+- [Non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)
 - [Reinforcement-learning turbulence closures](/methods/reinforcement-learning-closure.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)

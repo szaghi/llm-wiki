@@ -5,7 +5,7 @@ description: "The NASA High-Lift Common Research Model (CRM-HL), a half-span tra
 status: established
 aliases: [CRM-HL, HL-CRM, NASA High-Lift Common Research Model, NASA CRM-HL, HLPW-4 CRM-HL, CRM-HL wing-body, HLPW-5 CRM-HL]
 tags: [benchmark, wmles, wall-model, rans, immersed-boundary, data-driven, mesh-adaptation, dg]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T11:00:00Z
 ---
 
 # NASA CRM high-lift configuration
@@ -143,6 +143,24 @@ stabilizes only the start-up iterations. The LEISA2 three-element airfoil
 run in ZDES on a lattice Boltzmann solver is recorded on
 [detached-eddy simulation](/methods/detached-eddy-simulation.md) and
 [lattice Boltzmann method](/methods/lattice-boltzmann-method.md).
+The 30P-30N conditions of Huang et al. are those that
+[Wang et al. (2013)](/sources/wang-2013.md), §4.11, specify as case C3.1 of
+the first High-Order CFD Workshop: two-dimensional RANS with the
+Spalart–Allmaras or $k$-$\omega$ model, $M=0.2$, $\alpha=16^\circ$,
+$Re=9\times10^6$, fully turbulent, reference chord 0.5588 m; no workshop
+results are shown for it. [Bose & Park (2018)](/sources/bose-2018.md),
+§4.3, cite the wall-modelled LES of the 30P/30N at $Re_c=9\times10^6$ with
+an equilibrium wall model by Bodart et al. (2013): the lift polar is
+"qualitatively similar" to the measurements and the maximal lift "well
+captured", but the stall angle is about $23^\circ$ against about $21^\circ$
+in the experiment, a discrepancy they attribute "potentially" to blockage
+corrections of the data, limited spanwise domains or statistical
+convergence; their Fig. 7b compares $C_p$ at $19^\circ$ without and with an
+equilibrium wall model (Bodart & Larsson 2011) against the experiment.
+The same review also cites a wall-modelled LES of the NASA Common
+Research Model at $M=0.85$, $\alpha=4^\circ$, $Re_c=5\times10^6$ (Lehmkuhl
+et al. 2016, algebraic Werner–Wengle wall-stress closure), which is not
+the high-lift configuration of this page and is not a high-lift result.
 
 **Wall-model robustness.** [Nuca et al. (2025)](/sources/nuca-2025.md), §I,
 cite CRM-HL wall-modelled LES among the complex applications that motivate
@@ -177,6 +195,9 @@ addresses in [Constant et al. (2024)](/sources/constant-2024.md).
   competing values for one case. [Schotte et al. (2026)](/sources/schotte-2026.md)
   print no force coefficients for the case (Figs. 20–21 only) and compare
   with other RANS solutions, not with experiment.
+- The 30P/30N and Common Research Model results of
+  [Bose & Park (2018)](/sources/bose-2018.md) are cited from the works
+  they review; the review prints no force coefficients for them.
 
 # Citations
 
@@ -185,3 +206,5 @@ addresses in [Constant et al. (2024)](/sources/constant-2024.md).
 - [Schotte et al. (2026)](/sources/schotte-2026.md) — §1; §3.2; §4.4, Table 5, Figs. 18–22.
 - [Huang et al. (2022b)](/sources/huang-2022-d.md) — §3.3, Figs. 33–35 (30P-30N, a separate configuration).
 - [Nuca et al. (2025)](/sources/nuca-2025.md) — §I (cited application only).
+- [Bose & Park (2018)](/sources/bose-2018.md) — §4.3, Fig. 7b (cited results: 30P/30N; the $M=0.85$ Common Research Model, not CRM-HL).
+- [Wang et al. (2013)](/sources/wang-2013.md) — §4.11 (case C3.1; specification only).

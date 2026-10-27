@@ -4,8 +4,8 @@ title: "A priori and a posteriori testing"
 description: "A priori testing evaluates or trains a closure on filtered or averaged reference data outside the solver; a posteriori testing runs it inside the solver. The sources show that a priori agreement neither guarantees nor is required for a posteriori accuracy, and name the mechanisms."
 status: established
 aliases: [a priori test, a posteriori test, offline and online evaluation, a-priori training, a-posteriori training]
-tags: [data-driven, sgs-model, les, rans]
-timestamp: 2026-10-27T06:08:00Z
+tags: [data-driven, a-priori-a-posteriori, sgs-model, les, rans]
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # A priori and a posteriori testing
@@ -119,6 +119,26 @@ turbulence, and the a posteriori evaluation is deferred (§I, §VI).
 [equilibrium wall models](/methods/equilibrium-wall-model.md) a priori
 on a stored LES velocity signal of a channel and then in the running
 WMLES of an airfoil, without naming the second test "a posteriori".
+[Li et al. (2021)](/sources/li-2021.md) (§III B–C) test their
+[gene-expression-programming](/methods/symbolic-regression-closure.md)
+subgrid model a priori by its correlation with the filtered-DNS stress
+and a posteriori in $128^3$ LES against filtered DNS.
+[Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) (§4.3) print
+the definitions for RANS: an a posteriori test is a full CFD run with the
+new model, "accounting for its interplay with the RANS transport
+equations or, in the case of multiple closures, between the different
+models"; an a priori test checks whether the
+trained model approximates training or other test data, for instance
+whether a Reynolds-stress closure fed with reference velocity gradients
+reproduces the reference Reynolds stress.
+[Zangeneh (2021)](/sources/zangeneh-2021.md) (§III) reports only
+"posteriori" tests of a random-forest wall-stress correction run in the
+solver (see
+[machine-learning wall models](/methods/machine-learning-wall-model.md)).
+[Ruggeri et al. (2022)](/sources/ruggeri-2022.md) use the words only for
+cited work (§III), not for their own tests: their neural Riemann solvers are first scored on held-out exact
+solutions and then run as the interface flux of a finite-volume code
+(§V–VI).
 The words carry seven further meanings that must be kept apart:
 
 - **Training rather than testing.** Duraisamy (2021, §IV) and Agdestein &
@@ -177,6 +197,14 @@ The words carry seven further meanings that must be kept apart:
   the coupled simulation. Steinhausen et al. state that the a priori test
   isolates the tabulation error from the errors of the transport equations
   of the control variables (§5).
+  [Berger et al. (2022)](/sources/berger-2022.md) (§3.4.1–3.4.3, Eqs.
+  22–24, Figs. 16, 22) choose manifold coordinates on DNS of turbulent
+  lean hydrogen flames by the irreducible error of an optimal estimator,
+  an out-of-solver assessment of candidate model inputs without the words
+  a priori; the progress-variable source term is well parametrized by
+  progress variable and mixture fraction, not by progress variable alone.
+  They state that the measure sees only the correlation of fluctuations
+  and is blind to a shift of the mean (§3.4.3).
 
 For wall models, a priori means that the matching data at $h_{\mathrm{wm}}$
 are taken from DNS and the model is run offline; a posteriori means the
@@ -671,6 +699,20 @@ $L_r/D=0.79$ and 1.28 against 1.56 in DNS, T-SR-nFU being worse than no
 model (1.25), and the authors trace the early shear-layer transition to the
 weak SGS dissipation seen a priori (§4.2.1, Fig. 9, Table 3).
 
+**A less exact flux, a more exact solution (Riemann solvers).** Ruggeri
+et al. (2022, §VI, Fig. 6) find on a supercritical-CO$_2$ shock tube that
+the network flux, whose stand-alone mean absolute percentage errors
+against the exact Riemann solution are at most 0.191% (variant with the
+exact relations) and 1.120% (stand-alone network) over the three real
+fluids (Tables III–V), gives a CFD
+solution closer to the exact Riemann solution than the exact solver used
+as the flux: "the small error made by the neural network … unexpectedly
+works in the direction of improving the CFD prediction". They state that
+an exact numerical flux "does not guarantee that the CFD solver will
+yield the exact solution" of the Riemann problem discretized over many
+cells, and that the advantage shrinks at fourth order (§VI, Fig. 7). The
+case is inviscid and laminar.
+
 **Cases where the verdicts agree.** Abe (2021) tests the filter width of
 eddy-viscosity models on cells of aspect ratio up to about 100 in the free
 shear layer behind a backward-facing step. A priori the
@@ -1057,6 +1099,9 @@ priori, obtaining fields that are discontinuous at element interfaces; see
   turbulence closure.
 - **One-sided studies.** Some sources run only one of the two tests, so
   the disagreement stated in the lead cannot arise in them.
+  Zangeneh (2021) reports no a priori evaluation of its random forest
+  (§III); Berger et al. (2022) assess manifold inputs on DNS without a
+  coupled simulation.
   Rickard & Kasbaoui (2026) run only the a priori analysis of their
   wall-slip models and present no forward simulation (§2, §7); Ranjbar
   et al. (2026) run only a posteriori tests. Valencia et al. (2026) are
@@ -1135,4 +1180,9 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 - [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §2, §3, §7 (a priori analysis only, a posteriori deferred).
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §I (a priori on the DNS grid overestimates accuracy); §II C, Eqs. 23–29 (total, grid-truncation and sub-filter stresses); §V A, Eqs. 53–54 (protocol, metrics); §V B–C, Tables III–VII, Figs. 5–23; §VI.
 - [Nuca et al. (2025)](/sources/nuca-2025.md) — §I–II, Fig. 2 (robustness only in complex flows); §VI, Tables VII–VIII, Fig. 8 (a priori channel signal, in-situ airfoil WMLES).
+- [Li et al. (2021)](/sources/li-2021.md) — §III B–C, Eq. 18 (a priori correlation, a posteriori LES against filtered DNS).
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3 (definitions for RANS closures).
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) — §III (a posteriori tests only).
+- [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §V, Tables III–V (stand-alone errors); §VI, Figs. 6–7 (network flux beats the exact flux in the CFD solution; fourth order).
+- [Berger et al. (2022)](/sources/berger-2022.md) — §3.4.1–3.4.3, Eqs. 22–24, Figs. 16, 22 (optimal-estimator assessment of manifold inputs; blind to mean shifts).
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §III, §III.B, Figs. 8–10 (a posteriori tests against coarse unmodelled runs).

@@ -5,7 +5,7 @@ description: "Spatially developing turbulent boundary layers on flat walls: zero
 status: established
 aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, Wieghardt flat plate, Samuel–Joubert boundary layer, DLR/UniBw APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
 tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven, rans, dg, flux-reconstruction, des, lattice-boltzmann]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T11:00:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -102,6 +102,46 @@ magnitude more than with the constants tuned for their channel; it reaches
 its logarithmic limit near $y^+=150$, close to the wake at low Reynolds
 number (App. A, Figs. 20–21). The channel runs are on
 [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
+
+**What the layer offers a wall model.** The review of
+[Bose & Park (2018)](/sources/bose-2018.md) uses ZPG layers to set the
+premises of [wall-modelled LES](/methods/wall-modelled-les.md):
+
+- near-wall eddies are of spanwise size $O(10^2)$ in wall units at the
+  edge of the buffer layer and grow linearly with $y$, so at
+  $Re_\theta=6500$ (the DNS of Sillero et al.) a grid of $\Delta/\delta\sim0.05$
+  cannot compute the wall gradient and leaves the inner peak of the
+  fluctuations subgrid (§1, Fig. 1);
+- measured total-stress profiles (DeGraaff & Eaton at $Re_\theta=5200$,
+  13,100 and 31,000; Klebanoff at 7500) show a constant-stress layer for
+  $y^+\lesssim100$ that then departs linearly in $y/\delta$, with
+  $0.95<\tau/\tau_w<1$ for $y/\delta\lesssim0.03$ at high enough Reynolds
+  number and the fit $\tau/\tau_w=1-0.6y/\delta$ of Spalart (1988) (§2.1,
+  Fig. 3; $\tau$ page-local: the total shear stress), the layer an
+  [equilibrium wall model](/methods/equilibrium-wall-model.md) assumes;
+- the statistical (ensemble) reading of the wall-model solution needs
+  cells larger than a minimal channel, $\Delta x^+\gtrsim300$,
+  $\Delta z^+\gtrsim100$, a limit the review states is reached for
+  $\Delta^+\gtrsim1800$, citing Nakayama et al. (2004) (§2.1);
+- WMLES has reached $10^4\lesssim Re_\theta\lesssim10^{12}$ in boundary
+  layers (the upper end with virtual-wall models), while whether it
+  captures the outer peak of the streamwise fluctuations at
+  $y/\delta\sim Re_\tau^{-1/2}$ is unclear: the review states that the
+  peak is "likely also unresolved" at the Choi–Moin resolution of about
+  ten points per $\delta$ (§4.1);
+- at wall-parallel resolution $\Delta x/\delta\lesssim0.05$ WMLES recovers
+  wall-pressure fluctuations within a few percent of DNS but still
+  under-predicts the wall-stress fluctuations (Park & Moin 2016b, §4.2).
+
+For transitional layers, an equilibrium-type wall model must suppress the
+turbulent wall stress upstream of transition: with the sensor of Bodart &
+Larsson, which switches the model off where the velocity fluctuations at
+the edge of the wall-model layer fall below a threshold, the
+[nonequilibrium wall model](/methods/nonequilibrium-wall-model.md) of
+Park & Moin predicts the H-type transition of the DNS of Sayadi et al. in
+$C_f$ against $Re_\theta$ up to about 3500, while the slip-wall model
+obtains laminar behaviour from its dynamic procedure (§4.1, Fig. 6a). All
+these results are cited from the works the review covers.
 
 ## Turbulent flat plate in RANS
 
@@ -415,6 +455,32 @@ performance index 94% above the code's baseline, which the authors
 attribute to load imbalance of the synthetic-eddy method, the forcing
 (5–10%) and statistics collection.
 
+**A supersonic layer in wall-modelled LES with a learned correction.**
+[Zangeneh (2021)](/sources/zangeneh-2021.md), §III.A, Table I, Figs. 4,
+6–9, runs SST-based improved delayed DES as a wall-modelled LES (an inner
+RANS layer on an auxiliary wall-refined grid returns wall stress and heat
+flux to the LES) on an adiabatic ZPG plate in a $15\delta\times10\delta\times6\delta$
+box with synthetic-turbulence inflow, and corrects it with a random-forest
+model of the wall-stress and heat-flux errors (see
+[machine-learning wall models](/methods/machine-learning-wall-model.md)):
+trained at $M=2.28$, $Re_\delta=57{,}300$ ($Re_\theta=5000$, $\Delta x^+\approx\Delta z^+=9.6$),
+tested at $M=1.69$, $Re_\delta=617{,}000$ ($Re_\theta=50{,}000$,
+$\Delta x^+\approx\Delta z^+=6.8$), both against the experiments of
+Souverein et al. The baseline predicts the log-law slope but a higher
+intercept, i.e. a lower skin friction, the
+[log-layer mismatch](/definitions/log-layer-mismatch.md) the paper
+targets; the corrected van Driest-transformed velocity is "almost
+identical" to the experiment, with a log region over $30<y^+<3000$ against
+$\ln(y^+)/0.41+5.2$. The corrected run also captures the near-wall peak of
+the density-weighted streamwise intensity normalized by $\tau_w$ (too high
+in the baseline because its $\tau_w$ is too low), improves the mean
+temperature and its fluctuations, and moves the barycentric anisotropy map
+toward the experiment's two-component state at the wall; the peak shear
+stress stays under-predicted. See
+[compressible velocity transformations](/definitions/compressible-velocity-transformation.md)
+and, for the separated corner of the same paper,
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+
 **Transition on a supersonic plate.**
 [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md), §IV C, use the
 spatially developing Mach 2.25 DNS of Pirozzoli et al. ($Tu_\infty=0.04\%$)
@@ -693,6 +759,12 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 - [Jiang et al. (2025)](/sources/jiang-2025.md) compare their plate with
   laws and correlations ("Turbulent theory", Blasius), not with a
   reference solution.
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) prints the test Reynolds
+  number as $Re_\delta=617{,}000$ in Table I and §III and as 617,300 in
+  §III.A.1, and describes the outer grid as "a uniformly spaced grid
+  $y^+=1.7$ from $y=1.4$ to $3\delta$" (as printed); the
+  averaging time is not printed, and the comparison is of plotted curves
+  without error norms.
 
 # Citations
 
@@ -721,3 +793,5 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 - [Husson et al. (2024)](/sources/husson-2024.md) — §2.2; §4.1.1–4.1.2, Figs. 3–5.
 - [Gao et al. (2022)](/sources/gao-2022.md) — §5.2, Eq. 19, Figs. 16–17.
 - [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §IV C, Table VIII, Fig. 23.
+- [Bose & Park (2018)](/sources/bose-2018.md) — §1, Fig. 1; §2.1, Fig. 3; §4.1, Fig. 6a; §4.2 (review; cited results).
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) — §II.B–E; §III.A, Table I, Figs. 4, 6–9.

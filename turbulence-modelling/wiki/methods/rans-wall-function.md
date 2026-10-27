@@ -5,7 +5,7 @@ description: "The near-wall closure of RANS that imposes a law of the wall at th
 status: established
 aliases: [wall function, WF, adaptive wall function, two-velocity-scale wall function, explicit wall function, RANS wall law]
 tags: [rans, wall-model, boundary-layer, dg]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:59:00Z
 ---
 
 # Wall functions for RANS
@@ -158,6 +158,56 @@ three-element airfoil (§4). The authors cite earlier successes of the
 linearization and state its limit: it rests, like the immersed-boundary
 treatment, on the equilibrium hypothesis, so discrepancies are expected
 near separation and in recirculation (§3.1).
+
+**The same linearization on a moving Cartesian grid.** [Sugaya & Imamura (2021)](/sources/sugaya-2021.md)
+(§2.2, Eqs. 10–15, Table 1) extend the immersed-boundary wall function of
+Tamaki et al. (2017), as cited, to Cartesian grids that move rigidly with a
+pitching airfoil or a rotor blade, for RANS and DDES with the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md) in the
+compressible solver UTCart. Wall conditions are imposed at the face centres
+between fluid cells and cells cut by the body; an image point lies on the
+wall normal through each face centre at $d_{\mathrm{IP}}=2\Delta x$ from the
+wall, located once at the start because the grid moves with the body, and
+its values are interpolated linearly with the gradient of the containing
+cell. The normal velocity varies linearly between the image point and the
+wall velocity, and the tangential velocity is extrapolated with the slope of
+the Spalart–Allmaras wall law $u^+=f_{\mathrm{wall}}(y^+)$ (formula not
+printed; page-local $f_{\mathrm{wall}}$) at the image point,
+
+$$u_{t,\mathrm{FC}}=u_{t,\mathrm{IP}}-u_\tau\,\frac{\partial f_{\mathrm{wall}}}{\partial y^+}\Big|_{y^+_{\mathrm{IP}}}\left(y^+_{\mathrm{IP}}-y^+_{\mathrm{FC}}\right),$$
+
+with $u_\tau$ from Newton–Raphson on
+$u_\tau f_{\mathrm{wall}}(y^+_{\mathrm{IP}})=u_{t,\mathrm{IP}}-V_{t,\mathrm{wall}}$,
+$V_{t,\mathrm{wall}}$ the tangential wall speed (subscripts FC and IP for
+face centre and image point, page-local); the original condition is
+recovered for a wall at rest. Temperature is extrapolated linearly, and the
+face-centre pressure is taken from the fluid cell next to the face instead of
+the image point, a modification credited with "a small improvement" in
+simple tests that are not shown. In the frame of the wall,
+$u_{t,\mathrm{IP}}-V_{t,\mathrm{wall}}=u_\tau f_{\mathrm{wall}}(y^+_{\mathrm{IP}})$,
+so the face-centre value lies on the tangent line of the wall law at the
+image point *(compiler check, not in the sources)*. Because the grid moves with
+the body, the boundary layer stays in the same cells and no cell changes
+from solid to fluid, so the "fresh-cell" pressure oscillations of moving
+immersed boundaries on fixed grids do not arise (§1, §2.2); the authors call
+the combination of immersed boundaries, wall functions and moving grids on
+Cartesian grids "the first study" of its kind (§1). The image-point heights
+are $y^+_{\mathrm{IP}}\approx230$ at mid-chord on a steady NACA 0012 at
+$Re=6\times10^6$, about 100 on the pitching NACA 0012 of AGARD Case 3 and up
+to about 500 on the coarser of two [Caradonna–Tung rotor](/benchmarks/caradonna-tung-rotor.md)
+grids; they rely on earlier work, as
+cited, for the statement that immersed boundaries with wall functions agree
+with body-fitted grids for surface pressure "when $y^+$ is approximately 500
+or less" (§3.1). On the steady airfoil the stationary and moving-grid runs
+give density residuals equal to machine zero and pressure, skin friction,
+velocity and eddy-viscosity profiles that agree with a body-fitted
+Spalart–Allmaras reference (FaSTAR), and on the pitching airfoil the
+lift hysteresis is reproduced and the pitching moment differs from the
+experiment by about 0.005, "almost the same" as the body-fitted FUN3D
+results, which the authors offer as indirect
+evidence that the non-conservation of the immersed boundary does not spoil
+the unsteady loads (§3.1–3.2; see [NACA 0012](/benchmarks/naca-0012-airfoil.md) and
+[immersed boundary methods](/methods/immersed-boundary-method.md)).
 
 ## Turbulence variables next to the wall
 
@@ -389,3 +439,4 @@ Five high-order sources resolve the wall instead, and say what it takes:
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — Abstract; §3.3.1, Eq. (88); §4.1, Figs. 9–10.
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §1–2; §3.1, Table 1; §4.
 - [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.1; §3.1.
+- [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §1; §2.2, Eqs. (10)–(15), Table 1; §3.1–3.2, Figs. 4–13; §4.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Circular-cylinder wake"
-description: "Flow past circular cylinders, chiefly at Re_D=3900, with separation, shear-layer roll-up and a turbulent wake: it tests neural-network SGS models, high-order PANS and immersed-boundary numerics; tandem cylinders at Re_D=1.6e5 test a Reynolds-stress-based IDDES, and laminar cylinders at Re_D 40 to 100 validate immersed boundaries and data assimilation."
+description: "Flow past circular cylinders, chiefly at Re_D=3900, with separation, shear-layer roll-up and a turbulent wake: it tests neural-network SGS models, high-order PANS and immersed-boundary numerics; tandem cylinders at Re_D=1.6e5 test a Reynolds-stress-based IDDES, and laminar cylinders at Re 40 to 1000 validate immersed boundaries, data assimilation, fluid–structure coupling and aeroacoustic adjoints."
 status: established
 aliases: [cylinder wake, flow over a circular cylinder, flow past a circular cylinder, cylinder at Re_D=3900, tandem cylinders, tandem cylinder benchmark]
 tags: [benchmark, separated-flow, les, neural-network, pans, immersed-boundary, field-inversion, des, aeroacoustics]
-timestamp: 2026-10-26T20:47:00Z
+timestamp: 2026-10-27T11:02:00Z
 ---
 
 # Circular-cylinder wake
@@ -249,6 +249,42 @@ mean flow does not need. The turbulent bluff-body test of the same paper
 is the
 [square cylinder](/benchmarks/square-cylinder-flow.md).
 
+**Laminar cylinders for fluid–structure interaction and aeroacoustic adjoints.**
+Two further sources use the laminar shedding cylinder to verify a solver,
+not a turbulence model.
+
+- [Liu et al. (2022b)](/sources/liu-2022-g.md), §3.1.2, Table 2, verify a
+  partitioned fluid–structure coupling in a third-order
+  [flux-reconstruction](/methods/flux-reconstruction.md) solver on moving
+  triangular grids. The test is the vortex-induced vibration of a
+  zero-mass cylinder free to move across the stream at $Re_D=100$,
+  $M=0.1$. On 1440, 3360 and 13,120 elements they obtain the plunge
+  amplitude $h_p/D=0.44$, 0.42, 0.41, $St=0.149$, 0.148, 0.145 and mean drag
+  $C_D=1.66$, 1.61, 1.58 ($h_p$ page-local, not the cell size $h$). The five
+  earlier studies they list span $h_p/D=0.42$–0.47, $St=0.146$–0.175 and
+  $C_D=1.60$–1.75. The coupling stays stable at zero body mass because the
+  fluid impedance enters the rigid-body equation as a damping term (§2.3,
+  Eq. 23). A second case adds a nonlinear energy sink at $Re_D=106$
+  (§3.2, Table 3; see the
+  [geometric conservation law](/properties/geometric-conservation-law.md)
+  for the moving-grid formulation).
+- [Monfaredi et al. (2021)](/sources/monfaredi-2021.md), §4.1, verify an
+  unsteady continuous adjoint of a URANS solver coupled with the
+  [Ffowcs Williams–Hawkings analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)
+  on a 2D cylinder "in a laminar flow" at $Re=1000$ and $M_\infty=0.2$,
+  with $D=0.019$ m. The O-grid has 49,280 nodes ($308\times160$) out to
+  $35D$, and about 50 time steps resolve one shedding period. They obtain
+  $St=0.24$ and $C_D=1.42$, which they call close to the 0.234 and 1.56
+  of an earlier URANS. Adjoint sensitivities of the mean lift, the mean
+  drag and a far-field noise objective agree with central finite
+  differences (Fig. 5). The same paper's turbulent case is the rod–airfoil
+  configuration, whose rod is a cylinder of diameter $C/10$ one chord
+  upstream of a NACA 0012 at $Re_C=4.8\times10^5$. There the 2D
+  Spalart–Allmaras URANS gives $St=0.24$, as an earlier 2D URANS does,
+  against an experimental value of about 0.19. The authors take this
+  overprediction of the shedding frequency as a known shortcoming of URANS
+  (§1, §4.2).
+
 **What the sources share.** In both scale-resolving studies at
 $Re_D=3900$ the recirculation length is the measure most sensitive to the
 model and the resolution: the SGS model and grid in
@@ -300,6 +336,12 @@ both lean on Parnaudeau et al. for reference data.
   114.3 dB against 116.5 dB, differs by 1.89% *(compiler check, not in the
   sources)*. The text compares the shedding frequency with "experimental
   data (180 Hz)", while Table 1 gives 179 Hz at A and 180 Hz at B.
+- The cylinders of [Liu et al. (2022b)](/sources/liu-2022-g.md)
+  ($Re_D=100$, 106) and [Monfaredi et al. (2021)](/sources/monfaredi-2021.md)
+  ($Re=1000$, reference length not stated) are
+  2D and laminar. Liu et al. print the implicit-time-stepping drag of
+  their 3360-element case as "$C_d$ is 0.159" and call it in agreement
+  with the explicit runs, whose Table 2 values are 1.58–1.66 (§3.1.2).
 - The tandem cylinders at $Re_D=1.6\times10^5$ lie far above the single
   cylinders of the other sources ($Re_D\le10^4$), and the downstream
   cylinder sits in the wake of the upstream one, so its pressure loads are
@@ -314,3 +356,5 @@ both lean on Parnaudeau et al. for reference data.
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §2.3; §4.1, Figs. 4–6.
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §2.4; §3.2, Table 1, Figs. 3–6; §3.3.
 - [D'Ayer et al. (2026)](/sources/dayer-2026.md) — submitted manuscript: §3.1, Eq. 26, Tables 1–2, Figs. 3–5.
+- [Liu et al. (2022b)](/sources/liu-2022-g.md) — §2.3, Eq. (23) (zero-mass coupling); §3.1.2, Table 2 (vortex-induced vibration at $Re_D=100$); §3.2, Table 3 (energy sink at $Re_D=106$).
+- [Monfaredi et al. (2021)](/sources/monfaredi-2021.md) — §1; §4.1, Figs. 4–5 (laminar cylinder, adjoint verification); §4.2 (rod wake Strouhal number).

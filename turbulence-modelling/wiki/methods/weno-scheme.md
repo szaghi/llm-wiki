@@ -5,7 +5,7 @@ description: "WENO and TENO schemes capture shocks by nonlinear weighting or sel
 status: established
 aliases: [WENO, TENO, targeted ENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-Z+, WENO-Z+M, WENO-ZQ, WENO-SYMBO, HWENO, Hermite WENO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme, TENO-THINC, TENO-S, TENOA, THINC, TENO limiter, boundary variation diminishing]
 tags: [shock-capturing, numerical-dissipation, dns, compressible, implicit-les, gpu]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T11:00:00Z
 ---
 
 # WENO and hybrid shock-capturing schemes in scale-resolving simulation
@@ -54,6 +54,11 @@ in turbulence (see [numerical dissipation](/properties/numerical-dissipation.md)
 | TENO-THINC limiter with a compact boundary-variation-diminishing selector, same RKDG and indicator | inviscid Euler tests, uniform Cartesian grids | [Huang et al. (2025)](/sources/huang-2025.md), §3–4 |
 | Hermite WENO (HWENO) limiting of the turbulent kinetic energy and, at shocks, of the mean flow in modal DG | steady and unsteady RANS with the $k$-$\sqrt kL$ model | [Jiang et al. (2025)](/sources/jiang-2025.md), §3.1, §4.2 |
 | Seventh-order WENO-Z interpolation of primitive variables inside a PPM Godunov scheme (PeleC) | $512^3$ DNS of decaying compressible isotropic turbulence, reference of an a priori study | [Valencia et al. (2026)](/sources/valencia-2026.md), §IV |
+| Bandwidth-optimized WENO on three- and four-point candidate stencils (six and eight points) with a relative total-variation limiter (WENO3P-LIM, WENO4P-LIM), characteristic-wise after Lax–Friedrichs splitting; compared with WENO-JS, WENO-BS, WENO-Z, WENO-CU6, TENO6, TENO8 | gas-dynamics tests, DNS of a supersonic channel and of a shock train in an isolator | [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md), §2–3 |
+| WENO-K: fifth-order WENO-JS weights over Gauss–Kriging sub-stencil interpolants of primitive variables, Roe flux; third-order MUSCL and WENO-JS as comparisons | SA URANS of the hovering [Caradonna–Tung rotor](/benchmarks/caradonna-tung-rotor.md) on dynamic overset grids | [Han et al. (2022)](/sources/han-2022-c.md), §3.2 |
+| Fifth-order WENO (Jiang–Shu) for the convection of species and temperature, second-order momentum | low-Mach DNS of lean hydrogen flames | [Berger et al. (2022)](/sources/berger-2022.md), §2.2 |
+| Fifth-order WENO with linear weights normal to the face, fourth-order polynomials tangentially | gas-kinetic implicit and explicit LES of channel flow | [Zhao et al. (2021)](/sources/zhao-2021-c.md), §II |
+| Unstructured mixed-element WENO (one central and several sectorial stencils) and CWENO; WENO-Z, WENO-M, WENO-SYMBO, MDCD-WENO; WENO as a DG limiter | diffuse-interface multi-material flow (review), no turbulence | [Maltsev et al. (2022)](/sources/maltsev-2022.md), §III D, §IV |
 
 The upwind schemes act on split fluxes or on characteristic variables.
 [OpenCFD-SCU](/software/opencfd-scu.md) splits the flux with Steger–Warming
@@ -114,7 +119,18 @@ each Gauss point for their supersonic cases.
   seventh-order reconstruction converges at only about fourth order in a
   smooth advection test (§4, Table 3). The two verdicts on the fifth-order
   scheme are recorded as an open contradiction on
-  [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md).
+  [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md),
+  where [Zhao et al. (2021)](/sources/zhao-2021-c.md), with the same
+  fifth-order linear-weight reconstruction, find its implicit LES of
+  channel flow generally closer to DNS than four explicit eddy-viscosity
+  models added to it (§V–VI).
+- **Spectral dissipation of WENO-JS.** Citing Johnsen et al. and
+  Pirozzoli, [Maltsev et al. (2022)](/sources/maltsev-2022.md), §IV, state
+  that the upwind-biased nonlinear reconstruction of WENO-JS
+  dissipates turbulent fluctuations at the higher resolvable wavenumbers;
+  [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md), §1, call it robust for
+  shocks but too dissipative for turbulence, and compact central schemes
+  unsuited to shock capturing.
 
 ## Nonlinear weights and the dissipation of the linear scheme
 
@@ -175,6 +191,140 @@ the least smooth substencil.
   better resolution than WENO-Z, WENO-Z+, ninth-order WENO-Z and WENO-IS-I,
   by visual comparison of the figures (§5); WENO-Z+ "falsely amplifies"
   the smooth waves of the Titarev–Toro problem (§5.2.3, Fig. 11).
+
+## Bandwidth-optimized WENO with a total-variation limiter
+
+Kumar & Ghosh (2022, §2.2) write out the schemes of Martín et al. with the
+limiter of Taylor et al. in a characteristic-wise, Lax–Friedrichs-split
+finite-difference code (Roe-averaged eigenvectors, fourth-order central
+viscous terms, third-order TVD Runge–Kutta, $\epsilon=10^{-6}$). In
+**WENO3P-LIM** the left-biased interface flux combines four three-point
+candidates on the symmetric stencil set $\{i-2,\dots,i+3\}$ (Eqs. 14–17),
+$$\begin{aligned}
+&\tfrac16(2f_{i-2}-7f_{i-1}+11f_i),\quad \tfrac16(-f_{i-1}+5f_i+2f_{i+1}),\\
+&\tfrac16(2f_i+5f_{i+1}-f_{i+2}),\quad \tfrac16(11f_{i+1}-7f_{i+2}+2f_{i+3}),
+\end{aligned}$$
+($f$ the positive split flux) with $a_k=d_k/(\epsilon+\mathrm{IS}_k)^q$,
+optimized linear weights $d_k$ (on
+[low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md)),
+Jiang–Shu indicators, and the indicator of the downwind stencil replaced by
+the largest one, $\mathrm{IS}_3=\max_k\mathrm{IS}_k$, so that it is the
+least influential near a discontinuity (Eqs. 18–23). **WENO4P-LIM** does the
+same with five four-point candidates on eight points (Eqs. 41–49). The
+exponent is $q=2$ in the comparisons with WENO-JS and WENO-BS and $q=1$
+otherwise and in the DNS, "as recommended by Martín et al." (lower $q$
+being less dissipative). The relative total-variation limiter (on
+[shock sensors](/definitions/shock-sensor.md)) sets every $\mathrm{IS}_k$ to
+zero, and so restores the linear weights, wherever the ratio of the largest
+to the smallest stencil total variation does not exceed a threshold, 3 to
+10 in the tests (Eqs. 24–26).
+
+The comparison schemes are printed in full (§2.2.2–2.2.8): WENO-JS,
+WENO-Z with $\tau_5=|\mathrm{IS}_0-\mathrm{IS}_2|$, WENO-CU6 ($C=20$,
+$d_k=(1,9,9,1)/20$, six-point indicator), TENO6 ($C_T=10^{-7}$, $q=6$,
+$C=1$), seventh-order WENO-BS and TENO8. Results, all with visual
+comparison except where numbers are given:
+
+- **Shu–Osher problem** (200 points, reference WENO-JS on 1600): with
+  $q=2$ WENO3P-LIM-5 is closer to the reference than the seventh-order
+  WENO-BS and WENO4P-LIM-5 closer still; with $q=1$ WENO3P-LIM-5 captures the
+  peaks better than WENO-Z, WENO-CU6, TENO6 and TENO8 except near $x=0.8$,
+  where WENO-CU6 and TENO6 are slightly better (§3.1.3, Figs. 6–8).
+- **Cost** per point and step relative to WENO-JS: WENO-Z 1.024,
+  WENO3P-LIM-5 1.045, WENO4P-LIM-5 1.371, WENO-BS 1.416, WENO-CU6 1.5, TENO6
+  2.126, TENO8 2.9 on the Shu–Osher problem (Table 1); 0.941 to 2.17 in the
+  same order on the two-dimensional Riemann problem (Table 2).
+- **Two-dimensional Riemann problem** ($\Delta x=1/400$): the
+  bandwidth-optimized schemes roll up the slip lines that WENO-JS damps;
+  WENO-CU6 resolves slightly more vortical structure than WENO3P-LIM-5, TENO6
+  and TENO8 clearly more, structures that in this inviscid flow are "purely
+  numerical-viscosity effects" (§3.1.5, Figs. 10–14).
+- **Double Mach reflection** ($\Delta x=1/480$): the three-point scheme is
+  unstable at threshold 7, the four-point one at 5, and TENO8 at this
+  resolution "due to its less dissipative nature near the shocks" (§3.1.6).
+- **Rayleigh–Taylor instability**: the less dissipative schemes roll up and
+  lose symmetry, WENO4P-LIM-5 on the coarse grid, WENO3P-LIM-5 marginally on
+  the fine one (§3.1.7, Figs. 19–22).
+- **Viscous shock tube** at $Re=1000$: triple-point heights ($\times10$) of
+  1.33, 1.38, 1.48 (WENO-JS, WENO3P-LIM-5, WENO4P-LIM-5) on $1/1000$ and
+  1.50, 1.52, 1.53 on $1/1500$, against 1.55 for the reference (§3.1.8,
+  Table 3).
+
+They choose WENO3P-LIM-5 as the compromise of cost and accuracy for
+[DNS](/definitions/direct-numerical-simulation.md) of a supersonic
+isothermal channel (centreline Mach 1.49, $Re_\tau=240$, in agreement with
+the DNS of Ghosh et al. in mean and r.m.s. profiles) and of a shock train in
+a constant-area isolator without sidewalls, inflow Mach 1.5, outlet
+pressure about twice the inlet one: the train extends to $x/L_x=0.3$, flow
+separates near the shocks, the shocks are not always symmetric about the
+centreline, and the centreline axial Reynolds stress jumps through
+compressions, falls through expansions and grows in the mixing region up to
+$x/L_x=0.78$ (§3.2, Figs. 26–36; $L_x$ the isolator length, page-local).
+The shock-train evidence is qualitative, from contours and profiles, with
+no reference data (see
+[shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+
+## Gauss–Kriging sub-stencils: WENO-K for rotor wakes
+
+[Han et al. (2022)](/sources/han-2022-c.md), §3.2.2, replace the three
+third-order sub-stencil interpolants of fifth-order WENO-JS by Gauss–Kriging
+interpolants with a hyper-parameter $\theta_{\mathrm K}$ (page-local; the
+source's $\theta$), keeping the WENO-JS weights (Eqs. 7–8):
+$$\begin{aligned}
+q^{(0)}_{i+1/2}&=\big(\tfrac13-\tfrac14\theta_{\mathrm K}\big)\bar q_{i-2}+\big(-\tfrac76+3\theta_{\mathrm K}\big)\bar q_{i-1}+\big(\tfrac{11}6-\tfrac{11}4\theta_{\mathrm K}\big)\bar q_i,\\
+q^{(1)}_{i+1/2}&=\big(-\tfrac16-\tfrac14\theta_{\mathrm K}\big)\bar q_{i-1}+\big(\tfrac56-\tfrac13\theta_{\mathrm K}\big)\bar q_i+\big(\tfrac13+\tfrac7{12}\theta_{\mathrm K}\big)\bar q_{i+1},\\
+q^{(2)}_{i+1/2}&=\big(\tfrac13+\tfrac7{12}\theta_{\mathrm K}\big)\bar q_i+\big(\tfrac56-\tfrac13\theta_{\mathrm K}\big)\bar q_{i+1}+\big(-\tfrac16-\tfrac14\theta_{\mathrm K}\big)\bar q_{i+2},
+\end{aligned}$$
+with $\bar q$ the cell averages of a primitive variable (an overbar here,
+not the LES filter) and
+$\theta_{\mathrm K}=\tfrac65(\bar q_{i-1}-3\bar q_i+3\bar q_{i+1}-\bar q_{i+2})/(\bar q_{i-1}-15\bar q_i+15\bar q_{i+1}-\bar q_{i+2})$
+(Eq. 9, derived in the authors' earlier paper). At
+$\theta_{\mathrm K}=0$ the scheme is WENO-JS; for every
+$\theta_{\mathrm K}$ the constant coefficients of each interpolant sum to 1
+and the $\theta_{\mathrm K}$ coefficients to 0, so consistency holds
+*(compiler check, not in the sources)*. Each interpolant is said to be fourth
+order and the combination "higher than fifth order", and the dissipation is
+"obviously lower" than WENO-JS over a substantial wavenumber range at
+comparable dispersion (Fig. 12, reproduced from the earlier paper); cells
+outside a comfort zone of a cell-average ratio revert to WENO-JS (see
+[shock sensors](/definitions/shock-sensor.md)).
+
+On the hovering [Caradonna–Tung rotor](/benchmarks/caradonna-tung-rotor.md)
+(18 million cells, SA URANS, Roe flux) the thrust-coefficient error is 0.9%
+(subsonic tip Mach 0.439) and 3.0% (transonic, 0.877) with WENO-K, against
+1.5% and 5.1% with WENO-JS and 3.5% and 8.2% with third-order MUSCL
+(Tables 6–7), and the tip vortex is captured to a wake age of $900^\circ$
+and $1000^\circ$ against $630^\circ$ and $720^\circ$ (WENO-JS) and
+$150^\circ$ and $250^\circ$ (MUSCL) (§4, Figs. 13, 17). At shocks WENO-K is
+"only slightly better" than WENO-JS (§4.2, Fig. 23). The cost per
+revolution on 157 processors is 12.5 h (MUSCL), 14.6 h (WENO-JS) and
+15.2 h (WENO-K), 4.1% above WENO-JS (Table 5). Three layers of overset
+fringe cells keep the five-point stencil whole at hole and outer overset
+boundaries (§2.2), with tri-linear donor interpolation between grids
+(§2.3).
+
+## WENO on unstructured meshes and in multi-material flow
+
+[Maltsev et al. (2022)](/sources/maltsev-2022.md), a review of high-order
+methods for diffuse-interface models of compressible multi-material flow
+without turbulence content, review the unstructured WENO of Tsoutsanis et
+al. (§III D, Eqs. 76–79): the reconstruction is a nonlinear combination
+$\sum_m\mathsf w_mp_m$ of the least-squares polynomials $p_m$ of one central
+and several sectorial stencils, with $a_m=d_m/(\epsilon+\mathrm{IS}_m)^q$,
+$d_0$ between $10^2$ and $10^5$ for the central stencil, $d_m=1$ for the
+sectorial ones, $q=4$, $\epsilon=10^{-6}$, and $\mathrm{IS}_m$ the integral
+of the squared derivatives of $p_m$ over the cell, which depends only on the
+reconstruction basis and can be precomputed per element. CWENO builds a
+single optimal polynomial from all stencils and so cuts the stencil cost;
+on mixed-element meshes it keeps the accuracy of WENO (orders up to 6.11 in
+$L_\infty$ at sixth order) at lower wall-clock time (§IV B, Table II). For
+interfaces the review states, citing the original works, that reconstruction is done on primitive
+variables in characteristic space, that the volume-fraction equation must
+be advected in non-conservative form to avoid oscillations (Abgrall), and
+that coupling THINC with WENO above third order is generally avoided to
+prevent over-sharpening, whereas the MUSCL-THINC/QQ boundary-variation
+selection with only second-order candidates gave less error than
+third-order WENO (§IV, §IV A–B; THINC hybrids of TENO are below).
 
 ## Hybrid schemes
 
@@ -641,6 +791,35 @@ profiled; Tables 2–3).
   four and five; §4.1 calls the two-dimensional time step
   $5\times10^{-6}$ s "smaller" than the one-dimensional $2\times10^{-6}$ s;
   MOOD is expanded in two different ways (abstract, §3.5).
+- **Printed slips (Kumar & Ghosh 2022).** The seventh-order WENO-BS
+  linear weights are printed $\tfrac1{35},\tfrac{12}{35},\tfrac8{35},\tfrac4{35}$
+  (Eq. 50), which sum to $\tfrac{25}{35}$, whereas linear weights of a
+  consistent reconstruction sum to 1; the other printed weight sets sum to 1
+  *(compiler check, not in the sources)*. "WENP4P" appears twice for WENO4P
+  (§3.1.3). The conclusion that thresholds of 7 to 10 "may also show better
+  performance" than WENO-CU6 is not shown, and §3.1.6 finds threshold 7
+  unstable for WENO3P in the double Mach reflection.
+- **Printed slips (Han et al. 2022).** The sub-stencils are printed
+  $S_k=(i-k,i-k+1,i-k+2)$, the reverse of the index order of Eqs. (8) and
+  (12); the second term of $\mathrm{IS}_1$ in Eq. (12) contains
+  $\bar q_{i-2}$, outside the stencil $\{i-1,i,i+1\}$ of $q^{(1)}$; the
+  printed $\mathrm{IS}_2$ is not the mirror image of $\mathrm{IS}_0$ about
+  the interface; and Eq. (6) for "third-order MUSCL", printed
+  $Q_{L,i+1/2}=Q_i+\tfrac s4\big[(1-\tfrac s4)\Delta_-+(1+\tfrac s4)\Delta_+\big]_i$
+  with the van Albada factor $s$ ($s=1$ for smooth data), gives
+  $Q_i+\tfrac3{16}\Delta_-+\tfrac5{16}\Delta_+$, whereas the paper's own
+  third-order interpolant ($q^{(1)}$ at $\theta_{\mathrm K}=0$) is
+  $Q_i+\tfrac16\Delta_-+\tfrac13\Delta_+$ ($\Delta_\pm$ the forward and
+  backward differences, page-local) *(compiler checks, not in the
+  sources)*. Each revolution time of Table 5 exceeds 360 physical steps
+  times the printed step time by 2.0 h (12.5 h against $360\times105$ s
+  $=10.5$ h for MUSCL), unexplained *(compiler check, not in the
+  sources)*.
+- **CWENO saving (Maltsev et al. 2022).** The text states "an
+  approximately 80% saving in computational time" for the higher orders;
+  Table II gives 38% at sixth order on 80 edges (1493.933 against 2417.527)
+  and at most 45% (sixth order, 20 edges) *(compiler check, not in the
+  sources)*; both order columns of Table II are labelled $L_\infty$.
 - Valencia et al. (2026) use WENO-Z only for their reference DNS and state
   nothing about its dissipation; their a priori study is on
   [scale-similarity models](/methods/scale-similarity-model.md).
@@ -677,3 +856,8 @@ profiled; Tables 2–3).
 - [Huang et al. (2025)](/sources/huang-2025.md) — §3.2–3.3, Eqs. (15)–(25); §4.2, Eqs. (27)–(36) (TENO-THINC limiter, compact BVD); §5, Tables 1–4, Figs. 1–8.
 - [Jiang et al. (2025)](/sources/jiang-2025.md) — §3.1 (HWENO limiting of $k$); §4.1, Fig. 1b (convergence with and without it); §4.2 (HWENO at the RAE2822 shock).
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §IV (PeleC with seventh-order WENO-Z inside PPM for the reference DNS).
+- [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §1; §2.2.1–2.2.8, Eqs. (12)–(50) (bandwidth-optimized WENO with relative total-variation limiter, comparison schemes); §3.1.1–3.1.8, Tables 1–3, Figs. 3–25 (gas-dynamics tests, cost); §3.2, Table 4, Figs. 26–36 (channel and shock-train DNS); §4.
+- [Han et al. (2022)](/sources/han-2022-c.md) — §2.2–2.3 (overset fringes, donor interpolation); §3.2.1–3.2.2, Eqs. (6)–(12), Table 4, Fig. 12 (MUSCL, WENO-JS, WENO-K); §4, Tables 5–7, Figs. 13–24 (Caradonna–Tung rotor, cost).
+- [Berger et al. (2022)](/sources/berger-2022.md) — §2.2 (fifth-order WENO for scalars in low-Mach flame DNS).
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §II (linear-weight WENO in the gas-kinetic flux); §V–VI (implicit against explicit LES).
+- [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III D, Eqs. (76)–(79) (unstructured WENO, reviewed); §IV, §IV A–B, Tables I–II (WENO variants for diffuse interfaces, CWENO, THINC coupling, spectral dissipation of WENO-JS, cited).

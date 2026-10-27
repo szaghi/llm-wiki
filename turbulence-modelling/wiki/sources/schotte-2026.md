@@ -126,9 +126,10 @@ the ingested source basile-2023. Undated web pages ([5], [6], [49], [51],
 
 # Pages created or updated
 
-Chunk 7 (2026-10-26), cited further in chunk 8. This source is cited on:
+Chunk 7 (2026-10-26), cited further in chunks 8–9. This source is cited on:
 
 - [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)
+- [RAE 2822 airfoil](/benchmarks/rae-2822-airfoil.md)
 - [Shock sensors and troubled-cell indicators](/definitions/shock-sensor.md)
 - [Artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)

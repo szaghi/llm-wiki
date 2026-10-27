@@ -5,7 +5,7 @@ description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on t
 status: established
 aliases: [DGSEM, DG-SEM, modal DG, nodal discontinuous Galerkin, collocation DG, DG spectral element method, hybridizable discontinuous Galerkin, HDG]
 tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns, flux-reconstruction]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:59:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -377,6 +377,67 @@ discontinuous Galerkin approach is recovered", with LDG viscous fluxes
 the Riemann solvers and the indicator-switched filters are on the
 flux-reconstruction page and on
 [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md).
+
+**DG in the first High-Order CFD Workshop.** The workshop summary of
+[Wang et al. (2013)](/sources/wang-2013.md) compares DG submissions (BR2,
+interior penalty, the DGSEM with five-stage Runge–Kutta, CPR, reconstructed
+DG) with finite-volume and finite-difference codes by error against cost,
+measured in TauBench work units; the authors caution that the cost of
+one case on different computers differed by as much as 30%, so that
+differences below 30% decide nothing (§3.2, §6). For smooth problems the
+high-order methods beat the second-order finite-volume TAU code in error
+against cost (bump and NACA 0012 cases; §5.1–5.2, §6); two BR2 DG
+codes on the laminar delta wing are "almost identical" in error against
+degrees of freedom, "a perfect cross-code verification", yet differ greatly
+in work units because of their solvers (§5.5). On the
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $Re=1600$ the
+DG-like schemes reach their order for two of the three error measures,
+unlike the finite-difference and finite-volume codes, and Beck's DGSEM
+order study at constant equivalent resolution converges spectrally at
+constant cost, a result the authors restrict to explicit time integration;
+the near-equality of twelfth-order central and fourth-order
+dispersion-relation-preserving finite differences "seems to indicate" that
+dispersion error dominates, consistent with DG being "dissipative but
+[having] particularly good dispersive accuracy" (§5.6). For RANS
+(RAE 2822 with SA, EARSM or Wilcox $k$-$\omega$, three DG groups) uniform
+refinement brought "virtually no improvement from high order" and a large
+spread among groups, while adaptive mesh optimization was "markedly
+superior" (§5.4; see
+[RAE 2822](/benchmarks/rae-2822-airfoil.md)); the authors find high-order
+RANS less robust than low-order RANS in reaching a steady state, believe
+this "related to nonsmoothness introduced in the turbulence models" and
+call for "smooth turbulence models", and note that line-implicit solvers
+for stiff near-wall meshes need memory scaling as $N^6$ (§6, the source's
+$p^6$).
+
+**A log-law basis in the wall-adjacent DG cell.** The SUPES solver used by
+[Lv et al. (2021)](/sources/lv-2021.md), §III, is a DG scheme on arbitrary
+elements that they extend with a piecewise-parabolic finite-volume method:
+only the wall-adjacent cells use the DG variational form, with a local
+Lax–Friedrichs flux, symmetric interior-penalty viscous traces, a strongly
+imposed wall state, the Vreman model and explicit third-order Runge–Kutta.
+In those cells one monomial of the wall-normal basis of their third-order
+(P3) scheme is replaced by the law of the wall,
+$\{1,\,y,\,\kappa^{-1}\ln((y+y_0)/y_0)\}$ ($y_0$ a viscous or roughness
+length, page-local), so that the DG solver itself computes the coefficient
+of the log term and the wall shear stress follows from the coefficients,
+$\tau_w/\rho=a_w^2+\nu a_1$ ($a_w$, $a_1$ the coefficients of the log and
+linear terms, page-local; §II A, Eqs. 3–6, §II C). They distinguish it from
+earlier DG wall modelling that computed the wall flux from the log law
+outside the polynomial (Frere et al.) or added the log function as an extra
+basis solved outside the LES (their earlier work; §II B 2); the wall-model content is on
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md) and
+[wall-modelled LES](/methods/wall-modelled-les.md). Citing earlier work,
+they state that SUPES can reach a tenfold speed-up over a finite-volume solver on unstructured
+meshes but "remains more costly on structured curvilinear meshes" (§III).
+
+**Modal and reconstructed DG for multi-material flow.** The review of
+diffuse-interface methods of [Maltsev et al. (2022)](/sources/maltsev-2022.md),
+§III B–C, §V, mentions modal DG with a Taylor basis and the $P_NP_M$
+reconstructed DG of Dumbser et al. (finite volumes at $N=0$, DG at $M=N$)
+for multi-material flow, without turbulence, and concludes that DG for
+diffuse-interface models is used mostly with reduced five-equation models
+on structured meshes.
 
 **Residual-stabilized continuous Galerkin.** At the low-order end of the
 continuous family, [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md)
@@ -952,6 +1013,10 @@ fine one (§3). See
 
 ## Qualifications
 
+- **The log basis of Lv et al. (2021).** Eq. (3) writes the basis function
+  $\kappa^{-1}\log((y+y_0)/y_0)$, Eq. (8) $\log((y-y_0)/y_0)$. The paper
+  does not say how $y_0$ is set in the runs.
+
 - **Memory per degree of freedom.** Krais et al. (2021, Table 4) report for
   CPU FLEXI 1.47 KiB at $N=1$ and 0.567 KiB at $N=12$; Kurz et al. (2025,
   Table 2) report for GALÆXI 1.457 and 0.787 KiB. The codes differ, so the
@@ -1085,3 +1150,6 @@ fine one (§3). See
 - [Gao et al. (2022)](/sources/gao-2022.md) — §1; §3.1, Eqs. (8)–(11) (split-form FLEXI DGSEM, implicit LES); §5.1–5.3, Table 2, Eq. (19), Figs. 16–22 (SWBLI resolution, performance, results).
 - [Huang & Fu (2024)](/sources/huang-2024.md) — §3, Eqs. (16)–(25) (modal RKDG).
 - [Huang et al. (2025)](/sources/huang-2025.md) — §1; §2, Eqs. (1)–(10) (modal RKDG).
+- [Wang et al. (2013)](/sources/wang-2013.md) — §3.2 (work units); §5.1–5.6, Figs. 15–27 (DG against finite volumes and differences; Taylor–Green; RAE 2822); §6 (RANS robustness, memory of line-implicit solvers).
+- [Lv et al. (2021)](/sources/lv-2021.md) — §II A–C, Eqs. (3)–(12) (log-law basis, wall shear from coefficients); §III, Eqs. (13)–(20) (SUPES DG with PPM finite volumes).
+- [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III B–C, §V (modal and reconstructed DG for multi-material flow, passing mention).

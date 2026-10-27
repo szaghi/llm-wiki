@@ -6,6 +6,150 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 9 — 2013–2022 papers: High-Order CFD Workshop, wall-modelled LES and hybrid RANS/LES reviews, turbomachinery data-driven review, KEEP schemes, GEP and random-forest closures, wall-model-integrated LES, gas-kinetic LES, thickened flames and flamelet ignition (2026-10-27)
+
+Sources (20): maltsev-2022, ruggeri-2022, wang-2013, bose-2018, kuya-2018,
+heinz-2020, agostinelli-2021, monfaredi-2021, sugaya-2021, li-2021,
+lv-2021, zangeneh-2021, zhao-2021-c, kumar-2022-b, sandberg-2022,
+liu-2022-g, han-2022-c, berger-2022, bottler-2022, cuenot-2022. 180 of 307
+ingested, 153 concept pages plus the registry, 8241 bibliography entries.
+Deep lint A1–A10 over the chunk-9 content done.
+
+### Decisions for the human
+
+1. **Bibliography calls left by the resolver:**
+   - han-2022-c's `cai-2012` prints the authors and title of Cai et al.
+     2016 (J. Sci. Comput. 68) with the volume and page of Zhang & Shu
+     2012; kept as printed with a note. Which work is it?
+   - cuenot-2022's "Pitsch 1988" is folded into `pitsch-2000` (its
+     authors and vol:page are those of Pitsch, Riesmeier & Peters 2000,
+     checked on Crossref); bottler-2022's own Pitsch 2000 paper becomes
+     `pitsch-2000-b`.
+   - bose-2018 prints Park (2017) and Lozano-Durán et al. (2017) as "In
+     press": kept as `park-2017-d` and `lozanoduran-2017-b`, following
+     the earlier in-press ruling.
+   - zangeneh-2021's twice-printed Lozano-Durán & Bae reference is folded
+     into `lozanoduran-2020-e` (the CTR brief), not the arXiv preprint
+     `lozanoduran-2020-b`.
+2. **Possible duplicate run:** zhao-2021-c and zhao-2023 (same four
+   authors) print the same channel grid tables with the same slips
+   ($\mu=2.83\times10^{-4}$, $\Delta z^+=8.33$) and the same implicit-LES
+   value at $Re_\tau=395$ on $96^3$ (360.35). The pages state the shared
+   values only; whether it is one run reported twice is not settled by
+   the papers.
+3. **Notation change in committed content:** the Duan–Martín
+   temperature–velocity constant, written $C_T$ on four concept pages and
+   chen-2024 since chunks 4–6, is renamed $C_{\mathrm{DM}}$: $C_T$ is the
+   TENO cut-off in registry §11 since chunk 8.
+4. **Candidate pages that now qualify** (two or more sources):
+   composition-space model (bottler-2022, bottler-2023); counterflow
+   diffusion flame (cuenot-2022, berger-2022, bottler-2022); kinetic
+   relaxation-time eddy-viscosity coupling (zhao-2021-c, heinz-2020, the
+   gas-kinetic and LES pages); integral wall model (lv-2021, bose-2018);
+   plus the chunk-8 list (three-element high-lift airfoil, explicit wall
+   models, log-ω formulation, THINC, deconvolution SGS models).
+5. **Older wording outside this chunk's audit depth:** many "as recalled"
+   phrasings from chunks 1–8 remain (immersed-boundary method about 25,
+   hybrid RANS/LES about 13, DNS, isotropic turbulence, Taylor–Green,
+   Morkovin, CES, FW-H, LBM, OpenFOAM). The whole-bundle deep lint due
+   with chunk 10 rewrites them.
+6. **Tags:** near-duplicates reported again (`k-omega`/`k-omega-sst`,
+   `wall-function`/`wall-model`, `isotropic-turbulence`/
+   `decaying-turbulence`, `supersonic-flow`/`compressible`,
+   `cylinder-wake`/`bluff-body`, `moving-grids`/`cartesian-grid`) and the
+   merged `machine-learning` tag reintroduced on one page (re-merged into
+   `data-driven`). The whole-bundle lint of chunk 10 sweeps them.
+7. **Still open from earlier chunks:** the chunk-8 calls (`wilcox-2004`,
+   `schubauer-1955`, journal versions absorbed by `berger-2017` and
+   `tamaki-2022-b`); `xiao-2015` and `ming-2019` key renames; the
+   `fusion-mhd-simulation` tab in `tearing-mode.md`; `ge-2015`;
+   `jameson-1988`; `suder-1996`; cao-2024 and reddy-2026 read from old
+   preprints; the chunk-7 preprint versions.
+
+### Contradictions
+
+None opened. Extended: the gas-kinetic dissipation entry
+([high-order gas-kinetic scheme](wiki/methods/high-order-gas-kinetic-scheme.md))
+gains Zhao et al. (2021) on the side of Cao et al. (2022). Five open in
+all.
+
+Moved to Qualifications by the compiler: the measured reattachment point of
+the [NASA wall-mounted hump](wiki/benchmarks/nasa-wall-mounted-hump.md),
+1.15 chords in Oulghelou et al. (2025, Table 11, citing the Naughton,
+Viken & Greenblatt skin-friction report) against 1.10 in Heinz (2020,
+Table 3, citing Greenblatt et al. Part 1): each source cites a different
+report of the experiment.
+
+Kept as attributed qualifications: DES as a zonal method (Sandberg &
+Michelassi) against a single model (Haering et al., Bose & Park); KEEP's
+entropy property (Kuya, "nominally satisfies") against Aiello et al.'s
+"approximately EC"; the Choi–Moin prefactor (Bose & Park against Goc et
+al.); the Caradonna–Tung thrust (Sugaya & Imamura against Han et al.);
+Lozano-Durán & Bae (2023) listing zangeneh-2021 among models needing
+inaccessible inputs.
+
+### Printed slips (recorded on the Source pages)
+
+- maltsev-2022: Eqs. 27, 48/61, 69, 86/88, 98, 140; Table II labels;
+  "80% saving" (35.6–45.3% in Table II). ruggeri-2022: Eq. D1 sign, HLL
+  branch, headline claims against Tables III–IX, network widths.
+- wang-2013: Ringleb $q_0$, tandem $\delta_1$/$\delta_2$, domain signs,
+  "P∞ = 105", DRP credited to Bogey & Bailly but cited to Kim & Lee.
+  bose-2018: Eq. 9 units, the inline sign before Eq. 7, Fig. 5 legend,
+  author names. kuya-2018: Fig. 9 Mach number, $k_0$ for $\kappa_0$,
+  derivative subscripts (corrigendum appended in the file).
+- heinz-2020: $C_+$ 0.876 (0.867), Table 5 5.3% (5.2%), duplicated
+  reference. agostinelli-2021: Eq. A.4 units, duplicated reference.
+  monfaredi-2021: receiver position, 3.7 against 3.6 dB, "third
+  harmonic". sugaya-2021: "Posa et al. [14]", missing §4.4, Eq. 22.
+- li-2021: Table II column label, stride 17 (16), Eq. 24 $Q$, Eq. 25
+  $\sqrt6$, Eq. 22 against Table IV coefficients. lv-2021: Eq. 3 against
+  Eq. 8, Table II Hill-Equil spacing, Fig. 15 Hill-C, section pointer.
+  zangeneh-2021: Eqs. 4, 6, 12, "shear stress tensor", reference numbers,
+  Re 617 000 against 617 300.
+- zhao-2021-c: $\mu$, $\Delta z^+$, $N$ product for quotient, Eq. 16
+  $-\tfrac12$, WALE Eq. 18 trace sign, DNS attribution. kumar-2022-b: Eq.
+  50 weights sum 25/35, channel Mach and $Re_\tau$, "WENP4P".
+  sandberg-2022: Eq. 2 sign convention, citation years and authors.
+- liu-2022-g: "Cd is 0.159", Eqs. 31, 33, 34, $P_f$ units. han-2022-c:
+  stencil indices, Eq. 6 MUSCL not third order, Table 2 cell count,
+  Table 5 timing. berger-2022: "TurbStable" twice, Eq. 7 for 9, Ka against
+  Table 1. bottler-2022: conclusions not in the body, Eq. 9 $\notin$.
+  cuenot-2022: Eq. 15, $\varepsilon_{\mathrm{num}}$ exponent, +65%
+  (+60.5%), Eq. 6 $C_{\mathrm{st}}^2$, reference mesh.
+
+### Bibliography
+
+8241 entries (+1009 from 1662 printed references); 62 verified silences,
+4 printed duplicates folded (sugaya [4]/[41], agostinelli [3]/[27], heinz
+[87]/[222], zangeneh 1/32), `FLAGS: 0`. Re-keyed: `agostinelli-2021-b`,
+`monfaredi-2021-b`, `lv-2021-b`, `heinz-2020-c`, `zangeneh-2021-b`/`-c`,
+`sugaya-2021-b`, `li-2021-i`; spelling variants folded (`lemetayer-2004`,
+`degraaff-2000`, `ffowcswilliams-1969`, `bhatnagar-1954`,
+`brouillette-2002`). The eleven Sources that were already cited works
+(maltsev-2022, wang-2013, bose-2018, kuya-2018, heinz-2020, li-2021,
+lv-2021, zangeneh-2021, zhao-2021-c, sandberg-2022, bottler-2022) keep
+their keys, completed from page 1.
+
+### Bundle fit (D17 candidates, no copy made)
+
+- maltsev-2022 (compressible multiphase numerics review), ruggeri-2022
+  (neural Riemann solver for real fluids and explosives), liu-2022-g
+  (laminar fluid–structure interaction): no turbulence content;
+  kumar-2022-b and han-2022-c (WENO variants) carry little. `weno-teno`
+  and `high-order-capturing-schemes` share their subjects.
+- bottler-2022 (laminar flamelet ignition), agostinelli-2021 (conjugate
+  heat transfer and thermoacoustics), monfaredi-2021 (aeroacoustic
+  adjoint optimization): applications of off-the-shelf closures.
+
+### Candidate pages (kept inline until a second source)
+
+High-Order CFD Workshop; SD7003 airfoil; spectral gap; bypass transition;
+realizability; Bachalo–Johnson transonic bump; dynamic slip-wall and
+virtual-wall models; inner–outer predictive model; optimal-estimator
+analysis; thermodiffusive instability; random-forest closures; overset
+grids; rod–airfoil configuration; shock train; neural Riemann solvers.
+
 ## Chunk 8 — 2022–2026 papers: high-order RANS and transition solvers, k-τ in Nek5000, ZDES in a lattice-Boltzmann solver, scale-adaptive simulation, dynamic stall, explicit wall-model fits, deconvolution SGS models, relaxation filtering, TENO shock capturing (2026-10-27)
 
 Sources (20): vandenhoeck-2022, batther-2022, gao-2022, huang-2022-d,

@@ -122,8 +122,9 @@ list of the version of record may differ.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-26). This source is cited on:
+Chunk 3 (2026-10-26), cited further in chunk 9. This source is cited on:
 
+- [NACA 4412 airfoil](/benchmarks/naca-4412-airfoil.md)
 - [Periodic hill](/benchmarks/periodic-hill.md)
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)

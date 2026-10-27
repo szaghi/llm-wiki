@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity profile of wall-bounded turbulence �
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:57:00Z
 ---
 
 # Law of the wall
@@ -53,6 +53,11 @@ and the choice is part of the model.
 | [Kang et al. (2023)](/sources/kang-2023.md), figures | 0.41 | 5.2 | | reference line for LES of channel flow at $Re_\tau=180$ and 395 with learned SGS models |
 | [Wang et al. (2023b)](/sources/wang-2023-b.md), Eq. (10) | 0.40 | 5.5 | "for the low Reynolds number turbulent channel flow" | reference for van Driest-transformed compressible channel DNS |
 | [Zhao et al. (2023a)](/sources/zhao-2023.md), Eqs. (25)–(26) | 0.40 | 5.5 | "selected for the low-Reynolds-number turbulent channel flow" | sets the viscosity of a channel at a target $Re_\tau$ |
+| [Zhao et al. (2021)](/sources/zhao-2021-c.md), §IV, Eqs. (25)–(26) | 0.40 | 5.5 | centreline form $U_c^+=2.5\ln y_c^++5.5$ | sets the viscosity of a gas-kinetic LES channel at $Re_\tau=180$ and 395, the procedure of Zhao et al. (2023a) below |
+| [Bose & Park (2018)](/sources/bose-2018.md), §2.1, Eq. (3) | $\approx0.41$ "for ZPG layers"; 0.4 in a non-equilibrium model of their Fig. 6b | not printed | Spalding and Werner–Wengle composites, a pressure-gradient variant, Monin–Obukhov similarity for stratified flow (as cited) | algebraic wall-stress model of their WMLES review |
+| [Heinz (2020)](/sources/heinz-2020.md), §2.3, Eqs. (9)–(11) | 0.43 implied by the $k$-$\varepsilon$ constants 1.44, 1.92, 1.3; 0.41 by the $k$-$\omega$ and SAS constants | — | log-layer values of $k$, $\varepsilon$, $\nu_t$ | consistency condition of RANS model constants (below) |
+| [Lv et al. (2021)](/sources/lv-2021.md), §II A, Eq. (3); Fig. 11 | 0.41 | 5.2 (Fig. 11) | basis $\kappa^{-1}\ln\big((y+y_0)/y_0\big)$ | the log law as a basis function of the wall-adjacent cell (below) |
+| [Zangeneh (2021)](/sources/zangeneh-2021.md), Fig. 6 | 0.41 | 5.2 | | reference for the van Driest-scaled velocity of WMLES of a supersonic plate |
 | [Vadrot et al. (2023a)](/sources/vadrot-2023.md), §II.B.1, Eq. (1); §II.B.3 | $\approx0.4$ (0.4 in the states and figures) | $\approx5$ | | algebraic wall model and reference log law of reinforcement-learning wall models in LESGO |
 | [Constant et al. (2024)](/sources/constant-2024.md), §3.2, Eq. (8) | 0.41 | not printed | Musker's law (form not printed); van Driest damping $1-e^{-y^+/19}$ in the target-point eddy viscosity | wall function at immersed-boundary target points in RANS |
 | [Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §2.2, Eqs. (12)–(15) | $\approx0.41$ | $\kappa^{-1}\ln E$, $E\approx7.9$ | blend constants $s=86.58$, $p=0.7894$ | explicit equilibrium wall model in a lattice Boltzmann solver |
@@ -78,7 +83,8 @@ and the choice is part of the model.
 
 Zhao et al. (2023a) attribute $\kappa=0.40$, $B=5.5$ to the channel DNS of
 Kim et al. (1987), as they cite it; Wang et al. (2023b) give the same values
-with the same wording. Zhao et al. (2023a, §5.2, Eqs. 25–26) use the law in the reverse
+with the same wording. Zhao et al. (2021, §IV) use the same values and the same
+reverse procedure in an earlier paper of the same group. Zhao et al. (2023a, §5.2, Eqs. 25–26) use the law in the reverse
 direction: with the centreline velocity $U_c=1$ and the target centreline
 value $y_c^+=Re_\tau=180$, they set $U_c^+=2.5\ln y_c^++5.5$,
 $u_\tau=U_c/U_c^+$ and the viscosity $\mu=\rho u_\tau\delta/Re_\tau$ ($\delta$ the
@@ -341,6 +347,28 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
 
 ## Generalizations carried by the sources
 
+- **Extent of the constant-stress layer.** The log law follows from a
+  layer of constant total stress, and [Bose & Park (2018)](/sources/bose-2018.md)
+  (§2.1, Fig. 3) state how far it extends: experimental and numerical data
+  show a constant-stress layer for $y^+\lesssim100$ that then departs
+  linearly in $y/\delta$, close to the fit $\tau/\tau_w=1-0.6\,y/\delta$ of
+  Spalart (1988), as cited, with $0.95<\tau/\tau_w<1$ for $y/\delta\lesssim0.03$
+  at high enough Reynolds number (zero-pressure-gradient data of DeGraaff &
+  Eaton and Klebanoff at $Re_\theta=5200$–31 000, as cited). They read the
+  inner-layer solution of a wall model as an ensemble of many eddies, valid
+  only for cells larger than a minimal channel (see
+  [equilibrium wall model](/methods/equilibrium-wall-model.md)), and cite
+  rough-wall forms with a downward shift $\Delta U^+=f(k^+)$ of the log law
+  ($k^+$ the roughness height in wall units, page-local; §4.1).
+- **The log law as a basis function.** [Lv et al. (2021)](/sources/lv-2021.md)
+  (§II A, Eqs. 3–6) put the law of the wall into the discretization: in the
+  wall-adjacent cell of a high-order LES one monomial of the reconstruction
+  basis is replaced by $\kappa^{-1}\ln\big((y+y_0)/y_0\big)$ ($y_0$ a viscous
+  or roughness length, page-local), whose coefficient is identified with
+  $u_\tau$; the remaining polynomial terms carry the departures from the law
+  (details on [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
+  Their WMLES recovers $\kappa^{-1}\ln y^++B$ ($\kappa=0.41$, $B=5.2$) in
+  channel flow at $Re_\tau=180$, 2000 and 50 000 (§IV B 1, Fig. 11).
 - **Rotating channels.** The supervised wall model HYK19 analysed by Vadrot
   et al. (2023b, §II.B.2, Eq. 5) learns the departure of the LES velocity from
   an empirical profile $g(y^+,l^+_\Omega)$ that equals $\kappa^{-1}\ln y^+$
@@ -554,6 +582,26 @@ the log region, which the authors read as weight shifts there having "little
 impact on the overall accuracy" (§5.1.1, Table 9, Fig. 11). See
 [turbulence-model aggregation](/methods/turbulence-model-aggregation.md).
 
+**Calibrating RANS constants on the log layer.** [Heinz (2020)](/sources/heinz-2020.md)
+(§2.3, Eqs. 8–11) writes the log-layer solution of two-equation models,
+$\partial\langle u\rangle/\partial y=u_\tau/(\kappa y)$, $k=u_\tau^2/C_\mu^{1/2}$,
+$\varepsilon=u_\tau^3/(\kappa y)$ and $\nu_t=\kappa yu_\tau$, and the conditions
+it imposes on the constants: $\kappa^2=C_\mu^{1/2}\sigma_\varepsilon(C_{\varepsilon2}-C_{\varepsilon1})$
+for the [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md), which with
+$C_{\varepsilon1}=1.44$, $C_{\varepsilon2}=1.92$, $\sigma_\varepsilon=1.3$
+requires "a relatively high value" $\kappa=0.43$, and
+$\kappa^2=C_\mu^{1/2}\sigma_\omega(C_{\omega2}/C_\mu-C_{\omega1})$ for the
+[$k$-$\omega$ model](/methods/k-omega-model.md), which with the constants of
+Bredberg et al. as cited, $(C_{\omega1},C_{\omega2},C_\mu,\sigma_\omega)=(0.49,0.072,0.09,1.8)$,
+gives $\kappa=0.41$ ($C_{\omega1}$, $C_{\omega2}$ page-local; the
+[scale-adaptive simulation](/methods/scale-adaptive-simulation.md) constants
+also give 0.41, §3.4, Eq. 33). Heinz's $k$-$\omega$ condition is the constraint of Wu
+et al. above with $C_{\omega2}=\beta_\omega$, $C_{\omega1}=\gamma_\omega$,
+$C_\mu=\beta^*$ and Heinz's $\sigma_\omega$ the
+reciprocal of theirs; with Heinz's constants,
+$0.3\times1.8\times(0.8-0.49)=0.167$ and $\sqrt{0.167}=0.409$ *(compiler check,
+not in the sources)*.
+
 **A diagnostic of logarithmic behaviour.** The premultiplied gradient
 $y^+\,du^+/dy^+$ is constant, equal to $1/\kappa$, in a log layer: Huang et
 al. (2022, Eq. 4.5) use it on transformed hypersonic profiles (above), and
@@ -580,7 +628,13 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
   $\mu=2.83\times10^{-4}$ (§5.2). With their Eqs. (25)–(26), $\rho=1$, $\delta=1$
   and $U_c=1$: $U_c^+=2.5\ln180+5.5\approx18.48$, $u_\tau\approx0.0541$ and
   $\mu\approx3.01\times10^{-4}$ *(compiler check, not in the sources)*; the
-  printed value is not reproduced.
+  printed value is not reproduced. Zhao et al. (2021, §IV) print the same
+  $\mu=2.83\times10^{-4}$ with the same Eqs. (25)–(26); their Table V,
+  however, gives resolved $U_\tau/Re_\tau=0.0535/177.8889\approx3.008\times10^{-4}$
+  and $0.0526/174.9860\approx3.006\times10^{-4}$, consistent with
+  $3.01\times10^{-4}$, not with the printed value, while their
+  $\mu=1.24\times10^{-4}$ at $Re_\tau=395$ is reproduced by the same
+  procedure ($1.238\times10^{-4}$) *(compiler check, not in the sources)*.
 - Griffin et al. (2023) print Eq. (1.2) as
   $\mu_t=\kappa y\langle\rho\rangle\sqrt{\tau_w/\langle\rho\rangle}\,(1-\exp(y^+/A^+))^2$,
   without the minus sign in the exponent; their own text describes a damping
@@ -694,4 +748,9 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 - [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §IV.A, Figs. 12–13.
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §4.1, Figs. 9–10.
 - [Lodares et al. (2022)](/sources/lodares-2022.md) — §7.3, Fig. 8.
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §IV, Eqs. (24)–(26), Table V.
+- [Bose & Park (2018)](/sources/bose-2018.md) — §2.1, Eqs. (3), (6), Fig. 3; §4.1.
+- [Heinz (2020)](/sources/heinz-2020.md) — §2.3, Eqs. (8)–(11); §3.4, Eq. (33).
+- [Lv et al. (2021)](/sources/lv-2021.md) — §II A, Eqs. (3)–(6); §IV B 1, Fig. 11.
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) — §III.A.1, Fig. 6.
 - [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.4.3, Eq. (52), Fig. 9.

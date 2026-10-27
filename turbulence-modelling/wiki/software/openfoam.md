@@ -5,7 +5,7 @@ description: "OpenFOAM is the open-source unstructured finite-volume toolbox tha
 status: established
 aliases: [OpenFOAM, simpleFoam, pimpleFoam, DAFoam, libWallModelledLES]
 tags: [software, rans, les, data-driven, numerical-dissipation]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:34:00Z
 ---
 
 # OpenFOAM
@@ -33,6 +33,7 @@ these is a default of the code.
 | [Liu et al. (2024)](/sources/liu-2024.md) | SSG/LRR-$\omega$ [Reynolds-stress model](/methods/reynolds-stress-model.md) coupled to Menter's $\gamma$ model | time-averaged URANS for the 3D cascades, first-order upwind for the turbulence variables and $\gamma$ | not printed |
 | [Nuca et al. (2025)](/sources/nuca-2025.md), §VI, App. B | incompressible wall-modelled LES, [$\sigma$ model](/methods/sigma-model.md), libWallModelledLES | `pimpleFoam`, PIMPLE with 1 outer and 4 inner correctors; conjugate gradient for pressure, BiCGStab for velocity; second-order linear convection and diffusion in the turbulent region, blended with second-order upwind convection in laminar and free-stream regions | v2306 |
 | [Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §3.1, §3.3 | steady RANS, [SST](/methods/k-omega-sst-model.md), wall value of $\omega$ by `omegaWallFunction` | `simpleFoam` | 12 |
+| [Böttler et al. (2022)](/sources/bottler-2022.md), §2.3 | laminar low-Mach reacting flow with a [flamelet/progress-variable](/methods/flamelet-tabulated-chemistry.md) table (transported H$_2$, O$_2$, H$_2$O and enthalpy); detailed-chemistry reference coupled with Cantera | second order in time and space | not printed |
 
 ## Roles in the bundle
 
@@ -146,7 +147,14 @@ flame quenching with an in-house finite-rate chemistry solver, OpenFOAM-based
 according to the titles of the works they cite for it, of fourth order in space and second order in time
 ([direct numerical simulation](/definitions/direct-numerical-simulation.md)).
 Domingo & Vervisch (2023, §1) list OpenFOAM among the DNS codes of second
-or fourth order. Goc et al. (2021, §1, §4) quote an OpenFOAM
+or fourth order. Böttler et al. (2022, §2.3) implement their
+flamelet/progress-variable model for laminar hydrogen–air ignition and
+flame propagation in an OpenFOAM framework (low-Mach, second order in time
+and space). Their 2D counterflow reference with detailed chemistry runs in
+OpenFOAM coupled with Cantera. The planar and curved 1D references use
+other codes (ULF, A-SURF). They state, without timings, that the tabulated
+model cuts the cost "by an order of magnitude" although it only halves the
+number of transport equations (§3). None of their cases is turbulent. Goc et al. (2021, §1, §4) quote an OpenFOAM
 Spalart–Allmaras RANS of the Third High-Lift Prediction Workshop on 109
 million cells at about $60\times10^3$ core-hours, about the cost of their
 medium-grid WMLES ([Spalart–Allmaras model](/methods/spalart-allmaras-model.md),
@@ -182,3 +190,4 @@ medium-grid WMLES ([Spalart–Allmaras model](/methods/spalart-allmaras-model.md
 - [Goc et al. (2021)](/sources/goc-2021.md) — §1, §4 (OpenFOAM SA RANS cost reference).
 - [Nuca et al. (2025)](/sources/nuca-2025.md) — §I (Newton divergence in libWallModelledLES practice); §VI, Table VIII, App. B (A-airfoil set-up, iteration counts, cost); §VI (OpenFOAM channel LES data).
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.1, Table 1 (channel, OpenFOAM v12 SST); §3.3, Figs. 9–12 (backward-facing step meshes and results).
+- [Böttler et al. (2022)](/sources/bottler-2022.md) — §2.3 (OpenFOAM flamelet/progress-variable solver, OpenFOAM–Cantera reference); §3 (stated cost reduction).

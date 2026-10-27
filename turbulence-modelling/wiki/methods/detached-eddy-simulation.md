@@ -5,7 +5,7 @@ description: "The single-model hybrid RANS/LES in which a RANS model's length sc
 status: established
 aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T10:56:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -200,6 +200,27 @@ Reichardt's law once the scheme's dissipation is low enough (§4.3, Table 2,
 Figs. 4–6; see [hybrid RANS/LES](/definitions/hybrid-rans-les.md) and
 [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
 
+**SST-IDDES as a wall-modelled LES of supersonic flows.** Zangeneh (2021)
+prints the same blending, $l_{\mathrm{IDDES}}=f_B(1+f_e)\,l_{\mathrm{RANS}}+(1-f_B)\,l_{\mathrm{LES}}$
+with $f_B$ (the source's symbol where Carlsson et al. print $\hat f_d$) an empirical
+function rising from 0 to 1 that switches rapidly from RANS mode with wall
+distance and $f_e$ a function that "corrects the RANS behavior", and uses
+it in the $k$ destruction $\rho\sqrt{k^3}/l_{\mathrm{IDDES}}$ of SST (after
+Gritskevich et al.; no coefficient printed), the RANS inner layer being
+solved on an auxiliary wall grid embedded in the coarse LES mesh
+([Zangeneh (2021)](/sources/zangeneh-2021.md), §II.A–B, Eqs. 1, 5–7). The
+author cites evidence that IDDES does not remove the
+[log-layer mismatch](/definitions/log-layer-mismatch.md): hybrid wall
+modelling gives skin friction "on the order of 15% too low" (Nikitin et
+al. 2000), IDDES under-predicted it by about 25% in supersonic boundary
+layers (Gieseking et al.), Peterson & Candler attributed the mismatch to the
+calibration of IDDES on low-speed channels, while Mockett et al. found it
+even in low-speed channel IDDES and suggested numerical sensitivity, so
+that "a concrete explanation for the problem of the IDDES model has
+remained elusive" (§I). The paper's remedy, a random-forest correction of
+the wall shear stress and heat flux fed back through $\mu_t$ and $Pr_t$, is
+on the [machine-learning wall-model page](/methods/machine-learning-wall-model.md).
+
 **SST-DDES and SST-IDDES in a lattice Boltzmann solver.** Mozaffari et al.
 (2024) print the SST hybrids they implement in
 [ProLB](/software/prolb.md) as multipliers of the $k$-destruction,
@@ -233,6 +254,13 @@ function $F_2$ shields the attached boundary layer against grid-induced
 separation and modelled-stress depletion and "can offer essentially
 asymptotic shielding" ([Yang & Ma (2022)](/sources/yang-2022-b.md), §2.1,
 Eqs. 1–5). The paper calls the method DES, DES-type, hybrid DES and DDES interchangeably.
+
+**DDES-p for Cartesian grids.** Sugaya & Imamura (2021) run DDES-p, an
+SA-based DDES variant of Tamaki, Imamura & Kawai that "introduces a simple
+modified shielding function to protect the RANS regions when the
+stream-wise grid size is small, meaning the model is suitable for unsteady
+flow simulations using Cartesian grids"; the function is not printed
+([Sugaya & Imamura (2021)](/sources/sugaya-2021.md), §2.1).
 
 ### A general construction through the dissipation term
 
@@ -548,6 +576,30 @@ $C_{\mathrm{DES}}$ when the inertial-range level is below experiment (§3.1).
 This agrees with Carlsson et al. that the constant is calibrated together
 with the scheme, though with lower values.
 
+**An estimate from continuous eddy simulation.** Heinz (2020) writes DES in
+$k$-equation form, $Dk/Dt=P_k-\psi_{\mathrm{DES}}\varepsilon+D_k$ with
+$\psi_{\mathrm{DES}}=\max\big(1,k^{3/2}/(C_{\mathrm{DES}}\Delta\varepsilon)\big)$,
+$C_{\mathrm{DES}}=0.65$ and $D_k$ the diffusion (page-local $\psi_{\mathrm{DES}}$,
+$D_k$), and equates its dissipation with that of
+[continuous eddy simulation](/methods/continuous-eddy-simulation.md)
+([Heinz (2020)](/sources/heinz-2020.md), §3.3, §4.4, Eqs. 22, 53–55):
+
+$$\alpha_\varepsilon-L_+^2(\alpha_\varepsilon-1)=\max\Big(1,\frac{L_+}{C_{\mathrm{DES}}\Delta_+}\Big),$$
+
+with $\alpha_\varepsilon=C_{\varepsilon2}/C_{\varepsilon1}=1.33$ ($k$-$\varepsilon$;
+for $k$-$\omega$ the ratio $\alpha_\omega=1.63$, the source's $\beta$),
+$\Delta_+=\Delta/L_{\mathrm{tot}}$ and $L_+$ the modelled-to-total length
+ratio (page-local $\alpha_\varepsilon$, $\alpha_\omega$, $\Delta_+$, $L_{\mathrm{tot}}$). The solution is
+$L_+=\min\big\{[\sqrt{1+4\alpha_\varepsilon(\alpha_\varepsilon-1)C_{\mathrm{DES}}^2\Delta_+^2}-1]/[2(\alpha_\varepsilon-1)C_{\mathrm{DES}}\Delta_+],\,1\big\}$,
+which tends to $\alpha_\varepsilon C_{\mathrm{DES}}\Delta_+$ for small $\Delta_+$.
+Matching it with the LES length $L=C_+\Delta$ at $C_+=1$ gives
+$C_{\mathrm{DES}}=1/\alpha_\varepsilon$, 0.75 for $k$-$\varepsilon$, and
+$1/\alpha_\omega$, 0.61 for $k$-$\omega$, which Heinz finds close to the standard 0.65 (§4.4, Fig. 5;
+$1/1.33=0.752$ and $1/1.63=0.613$ *(compiler check, not in the sources)*).
+Heinz draws two
+conclusions: the CES forms "generalize DES", and adjusting $\Delta_+$ to
+$L_+$ is "absurd", so that DES is unstable under grid variation (§4.4).
+
 ## Grid dependence and mesh adaptation
 
 Because the cell size sets the switch, any change of cell size perturbs a
@@ -811,6 +863,31 @@ RANS-adapted mesh (§3.3).
   [dynamic stall](/definitions/dynamic-stall.md),
   [laminar separation bubble](/definitions/laminar-separation-bubble.md) and
   [transition models](/methods/local-correlation-based-transition-model.md)).
+- **Hovering rotor on moving Cartesian grids** (Sugaya & Imamura 2021).
+  DDES-p of the two-bladed
+  [Caradonna–Tung rotor](/benchmarks/caradonna-tung-rotor.md) (tip Mach
+  0.439, collective $8^\circ$, $Re=4.44\times10^6$, fully turbulent) on 75
+  and 149 million cells of a hierarchical Cartesian grid moving rigidly with
+  the blades, with immersed-boundary wall functions ($y^+$ at the image
+  point up to about 500 on the coarser grid), 3600 steps per revolution and
+  averages over the last four of 22 revolutions: thrust coefficient
+  0.00514–0.00521 and figure of merit 0.594–0.618 over the two grids and two
+  schemes, $C_p$ at five stations and tip-vortex trajectories in agreement
+  with experiment, and finer wake vortices with secondary braids with the
+  high-order scheme than with MUSCL, the authors concluding that "the
+  numerical scheme greatly affects the prediction of the wake structure"
+  (§4, Tables 6–7, Figs. 17–19; see
+  [immersed boundary methods](/methods/immersed-boundary-method.md)). The
+  high-order runs took 99 h against 63 h with MUSCL for the last
+  revolutions, on 896 and 1792 cores (Table 6).
+- **Separated benchmarks, compiled** (Heinz 2020, §5). On the NASA
+  wall-mounted hump the compiled DES reattachment lengths lie at
+  1.114–1.152 chords against 1.10 measured, and DES, like wall-modelled
+  LES, misses the double peak of $C_f$; on the NACA 4412 airfoil a DES
+  under-predicts drag by more than 34% (§5.2, §5.4, Table 3; see
+  [NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md),
+  [NACA 4412 airfoil](/benchmarks/naca-4412-airfoil.md) and the
+  compilation on the [hybrid RANS/LES page](/definitions/hybrid-rans-les.md)).
 
 ## Qualifications
 
@@ -893,6 +970,17 @@ RANS-adapted mesh (§3.3).
   *(compiler check, not in the sources)*.
 - Husson et al. (2024) give the wall-resolved LES of the LEISA2 airfoil as
   $2.6\times10^9$ nodes (p. 15) and "$2700\cdot10^6$" (p. 18).
+- Zangeneh (2021) attributes two statements to "Peterson and Candler" with
+  the reference number 7, which in its list is Mockett, Fuchs & Thiele
+  (2012); Peterson & Candler are its ref. 9 (§I).
+- Heinz's verdicts on DES (unstable under grid variation, an "absurd"
+  grid adjustment, a framework "too narrow") are stated after the CES–DES
+  equivalence above (§4.4); the review runs no simulations, and its DES
+  results on the hump and the NACA 4412 are compiled from other authors'
+  runs (§5).
+- Sugaya & Imamura (2021) do not print the DDES-p shielding function, whose
+  origin is a Japanese-language conference paper and an AIAA paper they
+  cite (§2.1).
 
 # Citations
 
@@ -923,3 +1011,6 @@ RANS-adapted mesh (§3.3).
 - [Batther & Lee (2022)](/sources/batther-2022.md) — §2–§4, Tables 1–3, Figs. 4, 14, 17.
 - [Lodares et al. (2022)](/sources/lodares-2022.md) — §8.
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §4.
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) — §I, §II.A–B Eqs. 1, 5–7.
+- [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §2.1, §4, Tables 6–7, Figs. 17–19.
+- [Heinz (2020)](/sources/heinz-2020.md) — §3.3 Eq. 22, §4.4 Eqs. 53–55 Fig. 5, §5.2, §5.4 Table 3.

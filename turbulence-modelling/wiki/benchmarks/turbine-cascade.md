@@ -3,9 +3,9 @@ type: Benchmark
 title: "Turbine cascades (T106, T161, VKI LS89)"
 description: "Linear turbine cascades as transition, loss and vortex benchmarks: the high-lift low-pressure T106C, T108 and T161 cascades with laminar separation near exit Reynolds number 10⁵, the transonic VKI LS89 vane with bypass transition and heat transfer, and a transonic rotor cascade with tip clearance whose tip-leakage vortex a hybrid RANS/LES resolves."
 status: established
-aliases: [turbine cascade, linear turbine cascade, LPT cascade, T106C, T106c, T108, T161, MTU T161, VKI LS89, LS89 vane, Pak-B cascade, tip-leakage turbine cascade, Arts transonic turbine cascade]
+aliases: [turbine cascade, linear turbine cascade, LPT cascade, T106C, T106c, T108, T161, MTU T161, VKI LS89, LS89 vane, Pak-B cascade, Pack B, L2F, tip-leakage turbine cascade, Arts transonic turbine cascade]
 tags: [benchmark, turbomachinery, transition, implicit-les, rans, boundary-layer, des]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T10:55:00Z
 ---
 
 # Turbine cascades (T106, T161, VKI LS89)
@@ -146,6 +146,80 @@ with statistics over 0.002 s after 0.004 s of settling (§3.1). Unlike the
 other cascades of this page, no transition or loss is assessed. Tip
 leakage in a compressor appears on [NASA Rotor 37](/benchmarks/nasa-rotor-37.md).
 
+**What turbine blade rows demand of models (review).**
+[Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) review DNS and
+LES of turbine cascades and stages for what they reveal about RANS
+failures. The studies below are the authors' own or others' as the review
+cites them.
+
+- *Loading.* High-lift LPT profiles carry stronger pressure gradients,
+  measured by the Zweifel coefficient: 1.15 for Pack B and 1.59 for L2F
+  (Fig. 3b, after McQuilling 2007). In strongly favourable gradients a
+  boundary layer is "likely to eventually relaminarize" once the acceleration parameter
+  $K=(\nu/U_e^2)\,dU_e/ds$ exceeds $3.5\times10^{-6}$ ($U_e$ the edge
+  velocity, $s$ the surface coordinate, page-local; §3.3.1, Eq. 1).
+- *Inflow turbulence and heat transfer on HPT vanes.* In LES of an HPT
+  vane at the isentropic Reynolds number (page-local, as printed)
+  $Re_{is}=5.7\times10^5$ with inflow turbulence intensities of
+  6–20% and length scales of 5–20% of the chord, larger length scales give
+  an earlier rise and a higher overall heat transfer on both sides
+  (Pichler et al. 2017b; §3.2.1, Fig. 4a). In DNS/LES of an HPT vane at the
+  same $Re_{is}$ (Zhao & Sandberg 2020a), low intensity (6.5%, length scale 4.8% of the
+  axial chord) gives leading-edge streaks whose spanwise spacing follows
+  the inflow length scale and that break down through the sinuous mode in
+  the favourable and the varicose mode in the adverse gradient. High
+  intensity with a large length scale (20%, 20.1%) gives earlier
+  transition through breakdown of vortical structures without an obvious
+  streak instability (§3.3.3.2, Fig. 5).
+- *Where RANS loses accuracy on LS89.* An entropy-loss analysis of LES and
+  RANS of the VKI LS89 vane (Zhao & Sandberg 2020c) confines mean-flow
+  entropy generation to the suction-side boundary layer. It finds the
+  largest contribution in turbulence production in the near wake, where
+  RANS departs most from the high-fidelity data. This points to near-wake
+  production as the main cause of wrong RANS total loss (§4.2).
+- *Transonic trailing edges.* LES attributes the additional loss of a
+  transonic HPT vane to the interaction of the shock with the
+  trailing-edge vortex shedding just downstream of the trailing edge, not
+  to the passage shock itself (Zhao & Sandberg 2020b; §3.2.2).
+- *Incoming wakes on LPT blades.* In LES of an LPT stage at
+  $Re_{is}=10^5$ (Pichler et al. 2017a), once the wake apex passes the
+  separation point the separation and reattachment points move downstream
+  at about one half and one quarter of the local isentropic velocity, and
+  the bubble is absent for about 25% of the time (§3.3.3.4, Fig. 6; see
+  [laminar separation bubble](/definitions/laminar-separation-bubble.md)).
+  Unsteady losses from wake distortion do not grow monotonically with the
+  reduced frequency, because at high frequency the wakes merge before
+  entering the passage, "fogging" (§3.2.2).
+- *Consequences for RANS.* The
+  [$\gamma$-$Re_\theta$ model](/methods/local-correlation-based-transition-model.md)
+  suppresses wake-induced transition, since the low $Re_\theta$ of the
+  incoming wakes is not fed into the blade boundary layers (§3.3.3.4). The
+  [laminar kinetic energy model](/methods/laminar-kinetic-energy-transition-model.md)
+  of Pacciani et al. (2014) was built so that no laminar kinetic energy
+  forms on the wake-induced path (§3.3.3). Acceleration and turning in the
+  passage misalign the Reynolds stress and the strain rate in wake cores,
+  which invalidates the linear
+  [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)
+  (§3.2.3). URANS double-counts the trailing-edge shedding, once resolved
+  and once in the closure; a gene-expression-programming closure trained
+  on the stochastic part of a triple decomposition of wake LES data (Lav et
+  al. 2019) improves the near and far wake (§3.2.3). Reynolds averaging
+  needs a spectral gap between the deterministic (rotor–stator, shedding)
+  frequencies and the turbulence, and the authors state that without it
+  "any model based on Reynolds averaging will fail" (§3.1.2, Fig. 1).
+- *Data-driven closures trained on LPT data.* Gene-expression-programming
+  models of the explicit algebraic stress trained on single phases of
+  phase-locked LPT data perform well on the training phase and can perform
+  poorly on others; two distinct models suffice across all phases (Akolekar
+  et al. 2019; §4.3, Eq. 2, Fig. 7). CFD-driven training on HPT data
+  predicted LPT wake-loss profiles for other geometries and Reynolds
+  numbers (Zhao et al. 2020). Field inversion with a neural network on the
+  Spalart–Allmaras model in a low-Reynolds-number LPT cascade reached an a
+  posteriori accuracy similar to that of a costlier two-equation model with
+  $\gamma$-$Re_\theta$ transition (Ferrero et al. 2020; §4.3). See
+  [symbolic-regression closures](/methods/symbolic-regression-closure.md)
+  and [field inversion](/methods/field-inversion-machine-learning.md).
+
 **What the sources share.** Steady RANS with transition models captures
 the onset of separated-flow and bypass transition on these blades but not
 its extent: transition develops too quickly on LS89 and sets in too early
@@ -190,6 +264,13 @@ and [grid-point requirements](/results/les-grid-point-requirements.md).
   "the viscous diffusion effect dominates"; the abstract sides with the
   first. The anisotropy map is attributed to "Lumley et al. [31]", while
   reference [31] is Strelets' DES paper.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) is a review
+  without computations of its own: every result in its paragraph above is
+  cited from the works it names, with figures reproduced from them. It
+  prints its Reynolds numbers as $Re_{is}$ without saying whether they are
+  the exit values $Re_{2,is}$ used elsewhere on this page; the review writes the acceleration parameter in terms
+  of the isentropic Mach number without stating the reference length of
+  its $Re$ (Eq. 1).
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) print 67.9 million
   degrees of freedom for the coarse mesh, whose element count and $N=5$
   give 67.5 million *(compiler check, not in the sources)*.
@@ -202,3 +283,4 @@ and [grid-point requirements](/results/les-grid-point-requirements.md).
 - [Menter et al. (2022)](/sources/menter-2022.md) — Pak-B cascade, Fig. 24.
 - [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §8.1.2–8.1.3, Figs. 17–18.
 - [Yang & Ma (2022)](/sources/yang-2022-b.md) — §1; §2.1–2.3, Eqs. 1–6; §3.1–3.2, Figs. 4–9; §4.1–4.6, Figs. 10–19; §5.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — review: §3.1.2, Fig. 1 (spectral gap); §3.2.1–3.2.3, Fig. 4 (inflow turbulence, wakes, shedding, Boussinesq misalignment); §3.3.1, Eq. 1; §3.3.3, Figs. 5–6 (bypass and wake-induced transition); §4.2 (entropy loss on LS89); §4.3, Eq. 2, Fig. 7 (data-driven closures).

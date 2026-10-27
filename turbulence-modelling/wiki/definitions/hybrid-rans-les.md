@@ -5,7 +5,7 @@ description: "Scale-resolving approaches that model all turbulence with RANS in 
 status: established
 aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T10:54:00Z
 ---
 
 # Hybrid RANS/LES
@@ -83,7 +83,24 @@ LES/RANS, with RANS near the wall, LES outside and the interface set
 implicitly by the change of model, as one of two families of wall-modelled
 LES, the other being wall-flux models that replace the no-slip condition by
 a modelled wall stress ([Bae & Koumoutsakos (2022)](/sources/bae-2022.md),
-p. 2).
+p. 2). Bose & Park (2018) draw it the other way and exclude hybrids from
+their review of wall-modelled LES: there the LES equations with a formal
+subgrid model are solved everywhere and only the wall (or a virtual-wall)
+boundary condition changes, whereas hybrid RANS/LES and DES solve RANS
+near the wall, either with an explicit RANS/LES delineation (zonal) or
+implicitly through the closure (DES); they add that the
+[log-layer mismatch](/definitions/log-layer-mismatch.md) appears in hybrid
+formulations (Nikitin et al. 2000) as well as in wall-modelled LES
+([Bose & Park (2018)](/sources/bose-2018.md), §1, §2.1). Zangeneh (2021),
+after Shur et al., separates DES and DDES, which keep the attached boundary
+layer in RANS, from the wall-modelled-LES branch of hybrids, which keeps
+RANS only in a thin near-wall layer, and runs an SST-based IDDES in the
+second role, with the RANS inner layer solved on an auxiliary wall grid
+embedded in the coarse LES mesh and feeding the LES with wall shear stress
+and heat flux ([Zangeneh (2021)](/sources/zangeneh-2021.md), §I, §II.A–B;
+see [wall-modelled LES](/methods/wall-modelled-les.md)). Heinz (2020) goes
+furthest and counts wall-modelled LES as the first of four groups of
+hybrids (below).
 
 Where the whole boundary layer stays in RANS, the grid need only resolve
 the free shear regions. François et al. (2022) use this argument for a
@@ -208,6 +225,88 @@ of $C_{DES}$ from the coefficients of the length-scale equation
 the [DES page](/methods/detached-eddy-simulation.md)). They list PANS, PITM,
 DES and zonal DES as the main hybrid strategies (§1).
 
+**Zonal and unified, in turbomachinery usage.** Sandberg & Michelassi
+(2022) divide hybrids into *zonal* approaches with predetermined RANS and
+LES regions, "like in detached eddy simulations", and *unified* approaches
+that blend on flow, geometry and grid properties, such as
+[scale-adaptive simulation](/methods/scale-adaptive-simulation.md); they
+state that the difficulty of defining a robust URANS/LES blend has so far
+limited hybrids in industrial design
+([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §2.2.2.2). The
+placement of DES differs from that of Haering et al. above and of Bose &
+Park, see Qualifications.
+
+### A four-group classification and the mode relations
+
+Heinz (2020) organizes a review of hybrids around one question: how a
+method controls the balance of modelled and resolved motion under changes
+of grid and Reynolds number ([Heinz (2020)](/sources/heinz-2020.md), §1,
+§4.1). The premise is that RANS and LES equations have the same structure
+and differ only in the length or time scale they are supplied with, RANS
+scales being much larger (§1, §2.3). Ensemble-averaging the LES equations
+gives the mode relations
+
+$$R_{ij}=R^{\mathrm{res}}_{ij}+\langle\tau_{ij}\rangle,\qquad k_{\mathrm{tot}}=k_{\mathrm{res}}+k_{\mathrm{sgs}},\qquad \varepsilon_{\mathrm{tot}}=\varepsilon_{\mathrm{res}}+\varepsilon_{\mathrm{sgs}},$$
+
+with $R^{\mathrm{res}}_{ij}$ the mean resolved stress (registry §11),
+$\langle\tau_{ij}\rangle$ the mean modelled stress, $\varepsilon_{\mathrm{res}}$
+and $\varepsilon_{\mathrm{sgs}}$ the resolved and modelled dissipation
+(page-local); the dissipation split neglects a term that reaches at most
+about 2%, as cited (§2.4, Eqs. 13–18). With the total scales
+$L_{\mathrm{tot}}=k_{\mathrm{tot}}^{3/2}/\varepsilon_{\mathrm{tot}}$ and the
+registry's modelled-to-total ratios $k_+$, $\varepsilon_+$, $L_+$, the review
+sorts existing hybrids into four groups and names a weakness of each (§3):
+
+1. **Wall-modelled LES**, algebraic or with the thin-boundary-layer
+   equations between the wall and a matching height, including the
+   correction $\nu_t=\nu_{t,\mathrm{tot}}-\nu_{t,\mathrm{res}}$ of Park & Moin
+   (page-local subscripts: prescribed total and resolved viscosities). Its
+   results depend on three design parameters, the exchange location as a
+   fraction of an unknown boundary-layer thickness, the mesh distribution
+   and the prescribed total viscosity, and resolving the boundary layer
+   adequately makes it "orders of magnitude more expensive than original
+   DES", as cited (§3.1; see [wall-modelled LES](/methods/wall-modelled-les.md)).
+2. **Source-term methods**: Germano's hybrid filter, the consistent
+   dual-mesh method of Xiao & Jenny with relaxation forcing, Woodruff's
+   model-invariant hybrid. Their formulation is mathematically correct, but
+   reconstructing LES variables is an ill-posed deconvolution and their cost
+   exceeds that of LES (§3.2).
+3. **RANS-bound methods**: DES, which switches only the dissipation of the
+   $k$ equation, $\varepsilon\to\max\big(1,k^{3/2}/(C_{\mathrm{DES}}\Delta\varepsilon)\big)\varepsilon$
+   with $C_{\mathrm{DES}}=0.65$; the author's group's unified RANS-LES
+   (UNI-LES), which replaces the time scale $k/\varepsilon$ by
+   $\min(\Delta k^{-1/2},k/\varepsilon)$ in all terms of the $k$ and momentum
+   equations, with no $C_{\mathrm{DES}}$, and which Heinz calls "highly
+   beneficial" for fluctuations in transition regions; and
+   Reynolds-stress-constrained LES, which models only the fluctuation of the
+   modelled stress around $\langle\tau_{ij}\rangle=R_{ij}-R^{\mathrm{res}}_{ij}$
+   and can produce an unphysical mean modelled stress when the anisotropies
+   of $R_{ij}$ and $R^{\mathrm{res}}_{ij}$ disagree (§3.3, Eqs. 22–23; see the
+   mean-and-fluctuation splitting below).
+4. **RANS-coefficient methods**: [PANS](/methods/partially-averaged-navier-stokes.md),
+   PITM and SAS. PANS and PITM neglect the transport difference
+   $\partial_j\big[(1-\varepsilon_+/k_+^2)\nu_t\partial_jk\big]$, which is non-zero
+   in general, so that they hold strictly only for homogeneous turbulence;
+   PITM is "basically equal" to PANS with $\varepsilon_+=1$, the
+   maximum-transport Prandtl number and $k_+=L_+^{2/3}$ (§3.4, Eqs. 24–30).
+
+Speziale's continuous model, $\langle\tau_{ij}\rangle=[1-\exp(-\eta_S\Delta/\eta)]^nR_{ij}$
+with $\eta$ the Kolmogorov length, $n=1$ and $\eta_S=0.001$ (page-local), is
+criticized for imposing the model's response without reference to the
+actual resolution and for its Reynolds-number dependence through
+$L_{\mathrm{tot}}/\eta$ (§3). From these weaknesses Heinz sets three
+requirements for an optimal hybrid: it works from moderate to extreme
+Reynolds numbers on reasonable grids with a continuous modelled/resolved
+partition; it applies to many turbulence models with comparable resolution
+on one grid; and the relation between grid and resolution is known and
+matches the actual resolution (§4.1). The
+[continuous eddy simulation](/methods/continuous-eddy-simulation.md)
+derived to meet them follows. Heinz also treats lattice Boltzmann solvers
+as a solver choice, not a modelling alternative: the BGK relaxation time
+fixes $\nu+\nu_t$, so the same solver acts as RANS, LES or hybrid depending
+on how that time is supplied (App. A; see
+[lattice Boltzmann methods](/methods/lattice-boltzmann-method.md)).
+
 ### Continuous eddy simulation
 
 The method has its own page,
@@ -218,7 +317,13 @@ enough not to extinguish resolved motion on coarse grids, yet grow for
 coarser grids and higher Reynolds numbers, and "most hybrid methods" do not
 address it; CES and the partially integrated transport model (PITM) are the
 two the author names that do
-([Heinz (2022)](/sources/heinz-2022.md), §1, Table 1). From a variational
+([Heinz (2022)](/sources/heinz-2022.md), §1, Table 1). The earlier review
+derives the CES destruction coefficient $1+L_+^2(\cdot-1)$ by a variational
+analysis of the $k$-$\varepsilon$ and $k$-$\omega$ models, names four
+variants (CES-KES, CES-KEK, CES-KOS, CES-KOK, hybridizing either the scale
+equation or the $k$ equation), and from a CES–DES equivalence obtains
+$C_{\mathrm{DES}}=0.75$ ($k$-$\varepsilon$) and 0.61 ($k$-$\omega$), close to
+0.65 (Heinz 2020, §4.2–§4.4, Eqs. 38–55; details on the CES page). From a variational
 analysis of the $\varepsilon$ equation Heinz derives three ways of making its
 destruction coefficient depend on resolution: through the ratio of modelled
 to total length scale (the CES choice) or through the ratio of time scales
@@ -376,6 +481,19 @@ formulations.
    and its symptoms are masked by numerical dissipation, coefficient tuning
    or averaging (§II D, Eqs. 1–2).
 
+**No feedback from the resolved motion.** Heinz (2020) concludes that the
+classical hybrids, wall-modelled LES and DES, feed no information about the
+resolved motion back to the model, and that only PANS and PITM try, with the
+shortcomings listed above (§6). In DES, adjusting the grid ratio
+$\Delta/L_{\mathrm{tot}}$ to the length ratio $L_+$ is called "absurd", and
+DES is said to be unstable under grid variation, citing Spalart's grid
+guide (§4.4); the statements follow the CES–DES equivalence, and the review
+runs no simulations (§5). Heinz also requires a hybrid's stress
+model to be realizable, citing work in which dynamic LES that does not honour
+realizability (the dynamic Smagorinsky model) is often unstable while
+"fully realizable dynamic LES" is stable without averaging or clipping, as
+cited (§2.1; see the [Boussinesq page](/definitions/boussinesq-hypothesis.md)).
+
 **Grid changes perturb the turbulence.** Because the grid sets the split
 between modelled and resolved turbulence, Mozaffari et al. (2022) show
 with a DES of decaying turbulence crossing a fine-to-coarse interface that
@@ -462,6 +580,53 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
 [transition-model page](/methods/local-correlation-based-transition-model.md).
 
 ## Evidence from applications
+
+- **Four separated flows, compiled.** Heinz (2020) runs no simulation and
+  compiles published results to argue that existing hybrids show
+  prediction variability through their design parameters, resolution
+  deficiencies and inconsistent improvements (§5):
+  - on the [periodic hill](/benchmarks/periodic-hill.md) ($Re$ from 5600
+    to $10^5$ on the hill height), with the measured reattachment following
+    $x_R/h=0.49(Re/10^4)^{-1.4}+3.71$ (after Kähler et al.), PANS, PITM,
+    wall-modelled LES, DES and Reynolds-stress-constrained LES vary widely
+    with their design parameters, while SAS, source-term methods and
+    UNI-LES "apparently reduce the RANS error significantly"; two PANS
+    studies of the same flow recommend $f_k=0.4$ (Ma et al.) and $f_k=0.15$
+    (Razi et al.) and give different reattachment trends with $f_k$, and
+    PITM's modelled energy fraction does not follow the expected grid trend
+    near the wall on four grids (§5.1, Figs. 6–8);
+  - on the [NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md)
+    ($Re_c\approx936\,000$, $M=0.1$, measured $x_R/c=1.10$) the compiled
+    reattachment lies at 1.188–1.305 for RANS (errors 8–18.6%),
+    1.114–1.152 for DES, 1.035–1.105 for wall-modelled LES and 1.08–1.19
+    for source-term methods, and wall-modelled LES and DES miss the double
+    peak of $C_f$ (§5.2, Table 3, Figs. 10–11);
+  - on the Bachalo–Johnson transonic axisymmetric bump
+    ($M_\infty=0.875$, $Re_c=2.763\times10^6$, measured $x_R/c=1.10$),
+    wall-modelled LES cannot match both the shock and the reattachment
+    maxima of $C_f$ by any choice of exchange location (§5.3, Table 5,
+    Fig. 14);
+  - on the [NACA 4412 airfoil](/benchmarks/naca-4412-airfoil.md) no
+    methodology predicts both lift and drag accurately; DES under-predicts
+    drag by more than 34%, and Reynolds-stress-based PITM hybrids reduce the
+    RANS lift and drag errors from $+14\%$ and $-54\%$ to $+7\%$ and $-39\%$
+    (§5.4).
+- **Hovering rotor on moving Cartesian grids.** Sugaya & Imamura (2021) run
+  DDES-p, an SA-based DDES with a shielding function modified for small
+  streamwise grid sizes on Cartesian grids, for the
+  [Caradonna–Tung rotor](/benchmarks/caradonna-tung-rotor.md) on 75 and 149
+  million cells, with immersed-boundary wall functions; thrust and figure of
+  merit barely change with grid and scheme, and the high-order scheme
+  resolves finer wake vortices than MUSCL
+  ([Sugaya & Imamura (2021)](/sources/sugaya-2021.md), §2.1, §4.5,
+  Table 7, Fig. 19; details on the [DES page](/methods/detached-eddy-simulation.md)).
+- **Data-driven correction of an IDDES wall model.** Zangeneh (2021)
+  corrects the wall shear stress and heat flux of SST-IDDES used as a
+  wall-modelled LES of supersonic flows with a random forest, and reports
+  the [log-layer mismatch](/definitions/log-layer-mismatch.md) removed on a
+  flat plate at $Re_\theta=50\,000$ and better separation and reattachment
+  on an expansion–compression corner at $M=2.9$ (§III; details on the
+  [machine-learning wall-model page](/methods/machine-learning-wall-model.md)).
 
 - **Transitional Rayleigh–Taylor mixing.** With variable-density PANS
   (BHR closure), RANS ($f_k=1$) overpredicts mixing, with a growth rate
@@ -666,6 +831,36 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
   atmospheric turbulence intensity "does not seem to significantly impact
   the vortex pair lifespan", while the lifespan decreases with the
   normalized dissipation; the emphasis differs within the paper.
+- **Where DES sits.** Sandberg & Michelassi (2022, §2.2.2.2) class DES
+  as zonal, with "predetermined regions for RANS and LES"; Haering et al.
+  (2022, §I) make it the prototype of a single model that switches
+  internally, with a unified switch responding to model, flow and grid
+  parameters, and Bose & Park (2018, §1) contrast the explicit RANS/LES
+  delineation of zonal methods with DES, where it is implicit in the
+  closure. The DES page holds the switch itself. The sources state their
+  taxonomies without arguing for them, and the page records the
+  difference without a verdict.
+- **Which hybrids count.** Heinz (2020) counts wall-modelled LES as a
+  hybrid group, Bose & Park (2018) exclude hybrids from wall-modelled LES,
+  and Bae & Koumoutsakos (2022) count hybrid LES/RANS as a family of
+  wall-modelled LES; these are different scopes of the same words.
+- **Strong evaluative claims.** Heinz's statements that DES is unstable
+  under grid variation and that its framework is "too narrow" (§4.4), and
+  that "RANS equations can generate resolved motions if $L_+\le1$" (§4.3,
+  offered while §4.1 grants that an "exact mathematical proof … is
+  currently missing"), are made in a review that runs no simulations
+  (§5); the CES derivation assumes no dependence on the
+  material derivatives of $k$ and $\varepsilon$ and spatially constant
+  relative variations of both (§4.2). Heinz's claim that PANS and PITM need
+  a "much finer grid" than CES for the same resolution (§4.4) compares PANS
+  with CES; Petrocchi & Barakos's statement that PANS works on RANS-like
+  grids compares it with DES in LES mode, so the two do not conflict.
+- Heinz prints the Kolmogorov-constant mapping
+  $C_+=(3C_K/2)^{3/2}/\pi$ ($C_K$ the Kolmogorov constant) with $C_K=(1.3,1.43,1.5)$ giving
+  $C_+=(0.876,1.0,1.074)$ (§2.3, App. C); the formula gives 0.867 for
+  $C_K=1.3$ *(compiler check, not in the sources)*. Its Table 5 error of
+  5.3% for a reattachment at 1.157 against 1.10 evaluates to 5.2%
+  *(compiler check, not in the sources)*.
 
 # Citations
 
@@ -700,3 +895,8 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
 - [Husson et al. (2024)](/sources/husson-2024.md) — §1, §2.2 Fig. 1, §4, §5.
 - [Batther & Lee (2022)](/sources/batther-2022.md) — §1, §2.1, §4, §4.5.
 - [Pan & Zhang (2023)](/sources/pan-2023.md) — §II.C, §IV–§V.
+- [Heinz (2020)](/sources/heinz-2020.md) — §1, §2.1, §2.3–§2.4 Eqs. 13–18, §3.1–§3.4 Eqs. 21–30, §4.1–§4.4 Eqs. 38–55, §5.1–§5.4 Tables 3, 5 Figs. 6–8, 10–11, 14, §6, App. A, App. C.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.2.
+- [Bose & Park (2018)](/sources/bose-2018.md) — §1, §2.1.
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) — §I, §II.A–B, §III.
+- [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §2.1, §4.5 Table 7, Fig. 19.

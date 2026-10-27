@@ -5,7 +5,7 @@ description: "Maps that turn the mean velocity of a variable-property compressib
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T11:02:00Z
 ---
 
 # Compressible velocity transformations
@@ -154,7 +154,7 @@ They judge the constant-$Pr_t$ energy equation of the classical model less
 accurate than the GRA (citing Zhang et al. 2014).
 
 Chen et al. (2024, §3.3, Eqs. 3.16–3.17) write the same quadratic with
-the constant $C_T=0.8259$ of Duan & Martín (2011), recast as $s\,Pr$ with
+the constant $C_{\mathrm{DM}}=0.8259$ of Duan & Martín (2011), recast as $s\,Pr$ with
 $s=1.14$ after Zhang et al. (2014) as they cite them, and use the
 matching-anchored form below $y^*_{mT}=100$ inside an algebraic RANS model;
 they do not re-examine the relation against their DNS (details on the
@@ -247,7 +247,7 @@ thickness as a possible reason for its success (§3.2).
 
 ## Transformations as a validation yardstick
 
-Seven further sources use a transformation not to rank transformations but to
+Eight further sources use a transformation not to rank transformations but to
 judge a simulation.
 
 - **Hybrid RANS/LES of supersonic channels.** [Carlsson et al. (2023)](/sources/carlsson-2023.md)
@@ -364,6 +364,18 @@ judge a simulation.
   reference by construction; there is no external DNS. See
   [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
 
+- **Wall-modelled hybrid LES of a supersonic plate.** [Zangeneh (2021)](/sources/zangeneh-2021.md)
+  (§III.A.1, Fig. 6) plots the van Driest-scaled mean velocity of an SST-IDDES
+  used as wall-modelled LES of a zero-pressure-gradient boundary layer at
+  $M=1.69$, $Re_\theta=50\,000$ (adiabatic wall, Fig. 4) against the
+  incompressible log law $\ln(y^+)/0.41+5.2$ and the experiment of Souverein
+  et al. (as cited). The baseline has the right slope but a higher intercept,
+  read as too low a skin friction, i.e. a
+  [log-layer mismatch](/definitions/log-layer-mismatch.md), and the
+  random-forest-corrected run follows the experiment over $30<y^+<3000$ (see
+  [machine-learning wall models](/methods/machine-learning-wall-model.md)).
+  The choice of transformation is not discussed.
+
 ## Assessments of the temperature–velocity relation
 
 Cogo et al. (2022, §4, Fig. 9) compare Walz's relation with the generalized
@@ -437,3 +449,4 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 - [Chen et al. (2024)](/sources/chen-2024.md) — §1; §3.1, Eqs. (3.1)–(3.7), Fig. 3; §3.2, Eqs. (3.11)–(3.14), Figs. 4–5; §3.3, Eqs. (3.15)–(3.17), Fig. 6; App. B, Eq. (B1), Fig. 16.
 - [Aiello et al. (2026)](/sources/aiello-2026.md) — §2.2; §4.1, Fig. 1; §4.2, Table 3.
 - [Gao et al. (2022)](/sources/gao-2022.md) — §5.2, Figs. 16–17.
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) — §III.A.1, Figs. 4, 6.

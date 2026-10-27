@@ -5,7 +5,7 @@ description: "The Sigma model of Nicoud et al. builds a static subgrid eddy visc
 status: established
 aliases: [σ model, σ-model, sigma subgrid-scale model, Nicoud model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-27T05:46:00Z
+timestamp: 2026-10-27T10:34:00Z
 ---
 
 # Sigma model
@@ -60,6 +60,7 @@ asymptote.
 | 1.3, "the smallest coefficient in the recommended range" | reference model for learned closures in Fourier-spectral LES | [Wu & Lele (2026)](/sources/wu-2026.md), §5.1, §5.1.1 |
 | not printed | second-order finite-volume LES of a jet | Moratilla-Vega et al. (2024), §2.1 |
 | not printed | second-order finite-volume wall-modelled LES of an airfoil (OpenFOAM) | [Nuca et al. (2025)](/sources/nuca-2025.md), §II, §VI |
+| not printed | wall-resolved reacting LES of a swirl combustor (AVBP, TTGC scheme) | [Agostinelli et al. (2021)](/sources/agostinelli-2021.md), §2 |
 
 Wu & Lele (2026, §5.1) choose it as their baseline because its "coefficient
 range works for many different flows and does not require clipping for
@@ -111,6 +112,16 @@ $\nu_t$ to zero at the wall (§II.D).
   explicit approximations of algebraic and ODE
   [equilibrium wall models](/methods/equilibrium-wall-model.md), and no
   result is attributed to the Sigma model.
+- **Reacting LES of a swirl combustor.** Agostinelli et al. (2021, §2)
+  close the compressible multi-species LES of the PRECCINSTA burner in
+  AVBP with the Sigma model (cited to Nicoud et al.), the third-order TTGC
+  scheme and a dynamically thickened flame model (see
+  [thickened flame model](/methods/thickened-flame-model.md)), on 20.3
+  million tetrahedra with $y^+\approx1$ at the centre-body tip and
+  $y^+\sim3$ on chamber and back-plane walls, a wall-resolved grid. The
+  paper studies the thermal wall condition (heat-loss resistances against
+  conjugate heat transfer) and the predicted thermoacoustic stability; no
+  result is attributed to the subgrid model, which is not varied.
 - **Reference for learned closures.** Wu & Lele (2026) run Sigma
   ($C_\sigma=1.3$) and static Smagorinsky as references for
   [neural-network SGS models](/methods/neural-network-sgs-model.md) in the
@@ -139,7 +150,7 @@ $\nu_t$ to zero at the wall (§II.D).
   a density factor and print neither $C_\sigma$ nor $\Delta$; the density
   in $\mu_t=\bar\rho\nu_t$ is added here to make it a dynamic viscosity
   *(compiler check, not in the sources)*.
-- Mukha et al. (2025) and Wu & Lele (2026) print no formula; the form above
+- Mukha et al. (2025), Wu & Lele (2026) and Agostinelli et al. (2021) print no formula; the form above
   is that of Moratilla-Vega et al., and the constants of the table are
   assumed to multiply the same expression. Wu & Lele's 1.3 and Mukha et
   al.'s 1.35 come from different flows, codes and filter widths; none of
@@ -151,3 +162,4 @@ $\nu_t$ to zero at the wall (§II.D).
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §II.D; §III.C, Figs. 6–8.
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §5.1, §5.1.1, Table 3, Fig. 5; §6.1, Fig. 13; §6.2.1, Figs. 15–16.
 - [Nuca et al. (2025)](/sources/nuca-2025.md) — §II; §VI; App. B.
+- [Agostinelli et al. (2021)](/sources/agostinelli-2021.md) — §2.

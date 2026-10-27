@@ -5,7 +5,7 @@ description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an e
 status: established
 aliases: [adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation, Hessian scaling, error transport equations, ETE]
 tags: [mesh-adaptation, hybrid-rans-les, rans, dg, numerical-dissipation, wmles]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Mesh adaptation for turbulent-flow simulation
@@ -573,6 +573,45 @@ Their perspective is $hp$-adaptation, keeping $N=1$ at shocks, and curved
 boundary elements, without which $N=3$ meshes could not be coarsened to
 equal DOF (§4.2, §5).
 
+## Adaptation in the first High-Order CFD Workshop (Wang et al. 2013)
+
+The summary of the first International Workshop on High-Order CFD Methods
+(2012), [Wang et al. (2013)](/sources/wang-2013.md), compares methods by
+error against cost (work units of a benchmark code), so that adaptive and
+uniform refinement enter the same plots. Its findings on adaptation:
+
+- **Survey (§2, Q3, Q6).** p-adaptation is preferred in smooth regions and
+  h-adaptation at discontinuities; adjoint-based output adaptation is
+  effective for lift and drag; robust anisotropic adaptation remains a
+  challenge.
+- **Singular and shocked airfoil cases (§5.2, Figs. 16–19).** On the
+  inviscid subcritical [NACA 0012](/benchmarks/naca-0012-airfoil.md)
+  uniform refinement does not reach high-order rates because of the
+  trailing-edge singularity, and MIT's fixed-DOF output-based mesh
+  optimization gives the highest rates, at least for drag. On the
+  transonic case adaptive refinement generally beats uniform refinement;
+  one group used hp-adaptation with polynomial degree 1 to 4.
+- **RANS (§5.4, Fig. 23, Table V).** On the
+  [RAE 2822](/benchmarks/rae-2822-airfoil.md) case 9 ($M=0.734$,
+  $\alpha=2.79^\circ$, $Re=6.5\times10^6$), three DG groups with the
+  Spalart–Allmaras, EARSM and Wilcox $k$-$\omega$ models show "a large
+  spread among the groups and virtually no improvement from high order
+  under uniform mesh refinement", attributed partly to inadequate wake
+  alignment of the initial mesh and partly to the turbulence model;
+  adaptive mesh optimization (MIT, at fixed DOF) is "markedly superior"
+  (conditions in §4.8). Schotte et al. (2026, §4.3, Table 4) print the
+  same case-9 conditions (row of the table above).
+- **Conclusions and pacing items (§6).** Output-based or solution-based
+  hp-adaptation is "very effective"; output-adjoint, entropy-based and
+  residual-based indicators have proved effective, as cited; high-order
+  viscous meshing with hp-adaptation is one of the four pacing items, with
+  curved-mesh generation, scalable low-memory time integrators (the
+  memory of line-implicit solvers scales as the sixth power of the
+  polynomial degree) and parameter-free shock capturing. High-order RANS
+  is less robust than low-order RANS in reaching a steady state, which the
+  authors "believe" is related to non-smooth turbulence models: "smooth
+  turbulence models are needed".
+
 ## Discretization-error estimation by error transport equations (Wang & Roy 2023)
 
 [Wang & Roy (2023)](/sources/wang-2023.md) (journal pre-proof) estimate
@@ -752,5 +791,6 @@ Ollivier-Gooch as cited; the primal polynomial degree is $N=p-1$).
 - [Constant et al. (2024)](/sources/constant-2024.md) — HAL author manuscript: §3.1 (octree Cartesian meshes), §4.2 (modelling-height adaptation without mesh change).
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §6, Fig. 13 (Rotor 37 cascade LES on a fixed mesh, local shock-capturing blending).
 - [Schotte et al. (2026)](/sources/schotte-2026.md) — HAL deposit of the version of record: §1, §2.2–2.5 (DG, CODA, Tucanos), §3.1–3.2, Eqs. 15–25 (element Hessian, scaling, SSED and SSL), §3.3, Figs. 3–7, §4.1–4.5, Tables 2, 4, Figs. 9–25, §5.
+- [Wang et al. (2013)](/sources/wang-2013.md) — §2 (survey, Q3, Q6), §5.2, Figs. 16–19 (NACA 0012 adaptation), §4.8 (RAE 2822 case 9 conditions), §5.4, Fig. 23, Table V (RAE 2822 RANS), §6 (conclusions, pacing items, RANS robustness).
 - [Wang & Roy (2023)](/sources/wang-2023.md) — journal pre-proof: §3.1, Eqs. 11–16 (error transport equations, expected orders), §4.1, Table 1, Fig. 2, §4.2, §5.
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §II.B (invariants from mesh-adaptation work, normalization instead of thresholds).

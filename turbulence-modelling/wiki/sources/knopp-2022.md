@@ -134,7 +134,7 @@ unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25), cited further in chunk 7. This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunks 7, 9. This source is cited on:
 
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
 - [Wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)
@@ -142,4 +142,5 @@ Chunk 2 (2026-10-25), cited further in chunk 7. This source is cited on:
 - [Law of the wall](/definitions/law-of-the-wall.md)
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
+- [Non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)
 - [Wall functions for RANS](/methods/rans-wall-function.md)

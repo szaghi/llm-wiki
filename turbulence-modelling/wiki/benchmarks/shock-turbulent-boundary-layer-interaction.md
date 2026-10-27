@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock–turbulent boundary layer interaction"
-description: "A turbulent boundary layer meeting a shock from a compression ramp, an impinging oblique shock, a transonic airfoil or a compressor blade: separation length, interaction-length scaling, unsteadiness and wall heating test subgrid models, high-order implicit LES, span and DNS cost from Mach 2 to 9.1, RANS data assimilation, and transonic buffet."
+description: "A turbulent boundary layer meeting a shock from a compression ramp, an expansion–compression corner, an impinging oblique shock, a shock train, a transonic bump, airfoil or blade: separation length, interaction scaling, unsteadiness and wall heating test subgrid and wall models, implicit LES, DNS cost from Mach 1.5 to 9.1, data-driven corrections and buffet."
 status: established
-aliases: [STBLI, SWBLI, SWTBLI, SBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet]
-tags: [benchmark, compressible, hypersonic, boundary-layer, separated-flow, les, pans, field-inversion, turbomachinery, implicit-les, dg]
-timestamp: 2026-10-27T06:13:00Z
+aliases: [STBLI, SWBLI, SWTBLI, SBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet, shock train, pseudo-shock, expansion–compression corner, Bachalo–Johnson bump]
+tags: [benchmark, compressible, hypersonic, boundary-layer, separated-flow, les, pans, field-inversion, turbomachinery, implicit-les, dg, wmles, data-driven]
+timestamp: 2026-10-27T11:00:00Z
 ---
 
 # Shock–turbulent boundary layer interaction
@@ -42,6 +42,8 @@ expensive because the low-frequency cycle needs long records.
 | [Klose et al. (2025)](/sources/klose-2025.md), §3, Table 1 | transonic compressor cascade TCTA at its design point, suction-side bow shock oscillating at mid-chord | inlet 1.21 | the blade passage | laminar or transitional layer; $Re=1.35\times10^6$ on chord | implicit LES with DGSEM ($N=3$) and subcell finite-volume shock capturing; URANS for comparison | 47,319 or 108,564 elements per plane; 54.6 M to 375.2 M degrees of freedom |
 | [Gao et al. (2022)](/sources/gao-2022.md), §5.1, Tables 1–2 | impinging oblique shock, adiabatic wall | 2.0 | flow deflection 8°, shock angle 37.2°, $p_3/p_1=2.30$ | $Re_{\theta_0}=1628$ at the inlet, $Re_{\theta}=2188$ at the reference station $3\delta_r$ upstream of impingement ($\delta_r$ page-local: boundary-layer thickness there) | implicit LES, split-form DGSEM in FLEXI ($N=6$) with subcell finite-volume shock capturing; synthetic-eddy inflow with anisotropic linear forcing | $129\times81\times26$ elements, about $93\times10^6$ degrees of freedom; $\Delta x^+=30$, $\Delta y^+_{\min}=1.6$, $\Delta z^+=16$; span $3\delta_r$, periodic |
 | [Zhao et al. (2023b)](/sources/zhao-2023-b.md), §5.4 | Settles cavity–ramp | 2.92 | backward-facing step and cavity (depth 2.54 cm) closed by a 20° ramp, on which the cavity shear layer reattaches | not printed | steady RANS, $k$-$\omega$ SST with and without a compressibility correction, interior-penalty DG | 64.2 thousand cells |
+| [Zangeneh (2021)](/sources/zangeneh-2021.md), §III.B, Table I | tandem expansion–compression corner | 2.9 | an expansion corner $4\delta_r$ downstream of the reference plane, then a backward-facing 25° ramp closing on a parallel plate $3\delta_r$ higher; heated wall downstream | $Re_\delta=19{,}983.8$ (training), $40{,}934.2$ (prediction) | SST-IDDES used as wall-modelled LES with a random-forest correction of wall stress and heat flux | $y^+\approx1.1$–1.3, $z^+=5.6$–8.6, $x^+=5.1$–12.7 |
+| [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md), §3.2.3 | shock train in a constant-area isolator (plane channel, no sidewalls) | 1.5 at the inflow centreline | outlet pressure about twice the inlet pressure | inflow $Re_\tau=247$ from a concurrent periodic channel DNS | DNS, bandwidth-optimized WENO3P-LIM-5 | $4\pi h\times2h\times\tfrac43\pi h$, $192\times128\times151$ ($h$ the channel half-height) |
 
 Both sources run a Mach 2.9, 24° ramp: Dang et al. validate against the DNS
 of Martín et al. and the experiment of Bookey et al. (§5.1), and Helm &
@@ -426,6 +428,101 @@ $\gamma$-$Re_\theta$ transition model. Shock position $x_s$ along the chord
   $St\approx0.16$ against about 0.14 measured. The cascade itself is on the
   [compressor cascade](/benchmarks/compressor-cascade.md) page.
 
+**A learned correction of wall-modelled LES behind a ramp.**
+[Zangeneh (2021)](/sources/zangeneh-2021.md), §III.B–C, Figs. 10–19, runs
+the Mach 2.9 expansion–compression corner with SST-based improved delayed
+DES as a wall-modelled LES (the RANS inner layer solved on an auxiliary
+wall-refined grid that returns wall stress and heat flux to the LES) and
+corrects it with a random-forest regression of the wall-stress and
+heat-flux errors, trained at $Re_\delta=19{,}983.8$ against the DNS of
+Fang et al. and tested at $Re_\delta=40{,}934.2$; the corrected wall
+values are fed back through the eddy viscosity and the turbulent Prandtl
+number (see [machine-learning wall models](/methods/machine-learning-wall-model.md)).
+The baseline under-predicts $C_f$ on the plate, on the ramp and on the
+plateau of the separation; the corrected run improves the separation
+length, the mean reattachment point, the Stanton-number peak downstream of
+reattachment and the ramp heat flux, the size of the recirculation under
+the λ-shock system, the spanwise spacing of the Görtler-type convergence
+lines near reattachment, and the profiles and Reynolds stresses at eight
+stations, most in the separation region. A model trained on this flow and
+on the supersonic flat plate together (see
+[turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md))
+improves less, which the author reads as a training set "far from being
+representative" (§III.C, §IV). The evidence is the comparison of plotted
+curves; no error norm is printed.
+
+**An internal interaction: the shock train.**
+[Kumar & Ghosh (2022)](/sources/kumar-2022-b.md), §3.2.3, Figs. 30–36,
+run a DNS of a shock train in a plane isolator without sidewalls, fed by a
+periodic supersonic channel DNS run concurrently and coupled by MPI, with
+the outlet pressure held at about twice the inlet value (see
+[turbulent channel flow](/benchmarks/turbulent-channel-flow.md) for the
+inflow channel and [WENO scheme](/methods/weno-scheme.md) for the
+reconstruction). Several shocks form near the inlet and the train extends
+to $x/L_x=0.3$; centreline pressure and density rise in compressions, fall
+in expansions and grow slowly in the mixing region, with the Mach number
+doing the opposite, as in an LES of a shock train in a pipe that they cite;
+the shocks are not always symmetric about the centreline, the flow
+separates near the shocks with boundary-layer thickening, and near-wall
+sweeps and ejections intensify through them. The centreline streamwise
+Reynolds stress, normalized by the inlet wall shear stress, jumps in
+compressions, falls in expansions, grows up to $x/L_x=0.78$ in the mixing
+region and stays above its inlet value at the outlet. There is no
+reference data for this case; the comparison is qualitative.
+
+**Wall models in supersonic interactions.**
+[Bose & Park (2018)](/sources/bose-2018.md), §2.1, §4.4, Fig. 6b, cite a
+nonequilibrium wall model with a wall-normal variation of the von Kármán
+constant (Kawai & Larsson 2013) gives the skin friction of a Mach 1.7
+oblique-shock interaction (a $6^\circ$ shock generator) closer to the
+experiment of Souverein et al. than the same model with constant
+$\kappa=0.4$ (Balaras et al. 1996); WMLES with an equilibrium model
+over-predicts the secondary corner flow and corner shear stress in a
+supersonic square duct, which the review reads as an inadequacy of the
+locally one-dimensional equilibrium approximation for secondary flows;
+the review also lists a duct interaction at Mach about 2 and
+$Re_\theta\approx1.4\times10^4$ (Bermejo-Moreno et al.) and a compression
+ramp with a delayed initial pressure rise (Dawson et al.).
+See [nonequilibrium wall model](/methods/nonequilibrium-wall-model.md) and
+[equilibrium wall model](/methods/equilibrium-wall-model.md). The
+experimental interaction-length law of Souverein et al. is the one that
+Gao et al. assess above.
+
+**A transonic bump with shock-induced separation.**
+[Heinz (2020)](/sources/heinz-2020.md), §5.3, Tables 4–5, Figs. 12–14,
+compiles results on the axisymmetric transonic bump of Bachalo & Johnson
+($M_\infty=0.875$, $Re_c=2.763\times10^6$ on the bump chord of 20.32 cm,
+on a pipe of 15.24 cm diameter extending 61 cm upstream), where the flow
+separates under the shock and the adverse pressure gradient at a point
+not fixed by the geometry; the measured reattachment is $x_R=1.10$ in
+bump chords ($x_R$ registry §11). In the cited simulations, DES on
+$4.7\times10^8$ and $1.6\times10^9$ cells and DES with an embedded DNS on
+$8\times10^9$ cells (Spalart et al.) give a DNS reattachment of 1.18 (7.3%
+error, attributed to a small domain) and an LES of 1.08; wall-modelled LES
+with equilibrium and nonequilibrium models (Iyer et al.) cannot match both
+the $C_f$ maximum at the shock and the one at reattachment by any choice
+of the exchange location (first or third point). The author uses the case to
+argue "inconsistent improvements" of hybrid methods; see
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md).
+
+**Interactions in turbomachinery.** In the review of
+[Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §3.3.4, the
+interaction on curved transonic blades bifurcates into a λ-shock, its
+low-frequency oscillation lies about two orders of magnitude below the
+energetic frequencies of the boundary layer, and whether it is a global
+mode or triggered by the upstream layer is open; in a high-pressure
+turbine, turbulent spots modulate the interaction (Dupuy et al. 2020); in
+a transonic compressor the low-frequency shock oscillation moves the shock
+by up to 10% of the axial chord, and URANS does not predict the correct
+amplitude (Hergt et al. 2019). In an LES of a transonic turbine vane that
+they cite, the interaction of the shock with trailing-edge vortex
+shedding, not the passage shock itself, adds loss through additional
+turbulent-kinetic-energy production in the wake (§3.2.2). On the compressor cascade above,
+[Klose et al. (2025)](/sources/klose-2025.md) print a URANS shock
+amplitude of 0.072 against 0.158–0.278 for their LES runs (Table 2); see
+[compressor cascade](/benchmarks/compressor-cascade.md) and
+[turbine cascade](/benchmarks/turbine-cascade.md).
+
 **Shocks in decaying turbulence without a wall.** The supersonic
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $M_0=1.25$
 of [Chapelier et al. (2024)](/sources/chapelier-2024.md) tests the same
@@ -523,6 +620,25 @@ dominant frequencies down.
   statements concern different configurations (compression ramp, impinging
   shock) and are recorded side by side.
 
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) prints $Re_\delta$ with
+  one decimal and, in §III.B.1, without subscript; the DNS of Fang et al.
+  is the only reference named for both Reynolds numbers; the page records
+  the printed grid spacings, which the paper does not discuss.
+- [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) give the inflow channel
+  as Mach 1.5 and $Re_\tau=247$ in §3.2.3 and the validated periodic
+  channel on the same grid as Mach 1.49 and $Re_\tau=240$ in Table 4; the
+  paper does not say whether these are two runs. They print neither the
+  wall-unit resolution nor the averaging time.
+- [Heinz (2020)](/sources/heinz-2020.md) prints the WMLES error of
+  Table 5 as 5.3% for $x_R=1.157$ against 1.10, which is 5.2%
+  *(compiler check, not in the sources)*. The reattachment of the bump and
+  that of the [NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md)
+  are both printed as 1.10 chords by Heinz; they are distinct
+  experiments.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) and
+  [Bose & Park (2018)](/sources/bose-2018.md) are reviews; their
+  statements on this page are cited from the works they review.
+
 # Citations
 
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §I; §II, Eqs. (1)–(12), Fig. 1; §III B–D, Tables I–III, Figs. 2–14; §IV A–F, Table IV, Figs. 15–33; §V.
@@ -534,3 +650,8 @@ dominant frequencies down.
 - [Klose et al. (2025)](/sources/klose-2025.md) — accepted manuscript: §1–3, Table 1, Fig. 2; §5–7, Table 2, Figs. 5–14; §8.
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — §I (supersonic Taylor–Green vortex as shock–turbulence interaction).
 - [Gao et al. (2022)](/sources/gao-2022.md) — §1; §3.2, Figs. 2–7; §4.1–4.2, Figs. 9–13; §5.1–5.3, Tables 1–3, Figs. 16–26.
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) — §II.B–G, Figs. 1–3; §III.B–C, Table I, Figs. 5, 10–19; §IV.
+- [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §3.2.2–3.2.3, Table 4, Figs. 30–36.
+- [Bose & Park (2018)](/sources/bose-2018.md) — §2.1; §4.4, Fig. 6b (cited results).
+- [Heinz (2020)](/sources/heinz-2020.md) — §5.3, Tables 4–5, Figs. 12–14 (compiled results).
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §3.2.2; §3.3.4 (review).

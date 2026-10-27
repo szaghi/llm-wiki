@@ -5,7 +5,7 @@ description: "LES closures in which a neural network maps resolved-field feature
 status: established
 aliases: [ANN-SGS model, GAN SGS model, fusion network, T-SR-FU, energy-conserving neural closure, structure-preserving closure, ANN-SGS mixed model, deep-learning LES closure, DL-LES, neural-network LES closure, data-driven SGS model, S-106H, SL-106H, SL-180C, DL-AR1, DL-AR2, multi-filter training, TBNN-GNN]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-27T05:50:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Neural-network subgrid-scale models
@@ -62,6 +62,26 @@ a priori; in compressible isotropic turbulence those models reach
 correlations above 0.99 with the total unresolved stress at a
 filter-to-grid ratio of 4 (Table VII; see
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+
+**A network against an explicit expression.**
+[Li et al. (2021)](/sources/li-2021.md) run the artificial-neural-network
+model of Xie, Yuan & Wang (2020), as cited, as a comparator for their
+[gene-expression-programming](/methods/symbolic-regression-closure.md)
+subgrid model in $128^3$ LES of forced isotropic turbulence ($\Delta$ of
+16 DNS spacings, LES spacing $\Delta/2$, filtered DNS at
+$Re_\lambda\approx260$ as reference; §III C). Network and explicit model
+agree closely with filtered DNS in the energy spectrum, the longitudinal
+structure functions of order 2, 4 and 6, the PDFs of velocity increments
+and of the subgrid stress, where the network's PDFs are slightly wider,
+and the PDF of the SGS energy flux with its backscatter tail; the dynamic
+Smagorinsky and dynamic mixed models do not (Figs. 2–8). In the
+subgrid-stress PDFs network and explicit model differ only in the extreme
+tails (Fig. 5); they also differ in cost (below). Li et al. survey the
+earlier network SGS models in §I (Sarghini et al. 2003, Wang et al. 2018,
+Zhou et al. 2019, Beck et al. 2019, Xie et al. 2019–2020, Park & Choi
+2021, as cited). As for applications, Sandberg & Michelassi (2022, §4.3)
+state that, to their knowledge, machine-learned subgrid models "have yet
+to be employed" in blade- or stage-level turbomachinery simulations.
 
 ## Supervised mixed network (Kang et al. 2023)
 
@@ -488,6 +508,7 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 | Kim et al. (2024, App. E, Table 6) | 18 cores, cylinder LES at $Re_D=3900$, training grid | SGS-stress evaluation about 10 (G-SR) and 6.5 (T-SR-FU); whole time step about 2.5 and 2 |
 | Kim et al. (2024, App. E) | T-SR-FU on the coarser grid against dynamic Smagorinsky on the finer grid, similar accuracy | 2.113 s against 2.986 s per time step, about half the grid points |
 | Kurz et al. (2023, §4.2) | policy evaluation against the dynamic procedure, one CPU core, 48 DOF, unoptimized | about 1.1 |
+| Li et al. (2021, §III F, Fig. 13) | time per iteration, 16 cores (Intel Xeon E5-2670), several grids; network of Xie et al. (2020) against GEP, dynamic Smagorinsky and dynamic mixed models | not printed: the network "much more expensive" than all others, more so on larger grids; GEP slightly above the dynamic Smagorinsky model and below the dynamic mixed one |
 
 ## Qualifications
 
@@ -564,5 +585,7 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 - [Li et al. (2024)](/sources/li-2024.md) — arXiv v2: §I, §IV–V (neural operator replacing the LES solver).
 - [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §2.5, §3 (physics-informed neural operator replacing the LES solver).
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1, §2.1, §3–3.3, Eqs. 3.3–3.9, Figs. 1–4, Table 1 (model, filters, data); §5–6, Tables 3–4, Figs. 5–20 (a posteriori results); §7–8.
+- [Li et al. (2021)](/sources/li-2021.md) — §I (earlier network SGS models surveyed); §III C, Figs. 2–8 (network of Xie et al. as comparator); §III F, Fig. 13 (cost).
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3 (no machine-learned SGS model yet in turbomachinery simulations).
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: p. 1 (criticisms of deep-learning closures recalled).
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §I (data-driven extensions of deconvolution, recalled); Table VII (a priori level of non-learned deconvolution).

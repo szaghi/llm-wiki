@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Scale-adaptive simulation"
-description: "Menter's scale-adaptive simulation: an unsteady RANS approach whose length-scale equation carries the von Kármán length, so that the eddy viscosity falls in resolved unsteady regions; the k-√kL model as printed, its first high-order discontinuous Galerkin implementation, and comparisons with DES-type hybrids reported by other sources."
+description: "Menter's scale-adaptive simulation: an unsteady RANS approach whose length-scale equation carries the von Kármán length, so that the eddy viscosity falls in resolved unsteady regions; the k-√kL model as printed, its eddy-viscosity form and log-law calibration, its first high-order discontinuous Galerkin implementation, and comparisons with DES-type hybrids reported by other sources."
 status: established
 aliases: [SAS, k-√kL model, KSKL, k-sqrt(k)L, Menter–Egorov SAS, SAS-F, forced SAS]
 tags: [rans, hybrid-rans-les, eddy-viscosity, dg]
-timestamp: 2026-10-27T06:13:00Z
+timestamp: 2026-10-27T10:57:00Z
 ---
 
 # Scale-adaptive simulation
@@ -27,7 +27,15 @@ model is the $k$-$\sqrt kL$ (KSKL) model of Menter, Egorov & Rusch, derived
 from Rotta's approach; the bundle's one source that prints it is Jiang et
 al. (2025), whose subject is its first implementation in a high-order
 discontinuous Galerkin solver ([Jiang et al. (2025)](/sources/jiang-2025.md),
-§1–§2, App. A).
+§1–§2, App. A). Heinz (2020) prints the high-Reynolds-number form of the
+Menter–Egorov model as a transport equation for $\nu_t$ itself, derives its
+log-law calibration and the $k$-$\varepsilon$ and $k$-$\omega$ coefficients it
+implies, and classes SAS with PANS and PITM as a "RANS-coefficient" hybrid
+([Heinz (2020)](/sources/heinz-2020.md), §3.4, Eqs. 31–37). Sandberg &
+Michelassi (2022) cite it as the example of a *unified* hybrid, one that
+blends RANS and LES on flow, geometry and grid properties instead of on
+predetermined zones ([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md),
+§2.2.2.2).
 
 ## The $k$-$\sqrt kL$ model
 
@@ -65,6 +73,40 @@ magnitude is $\big[(\nabla^2u)^2+(\nabla^2v)^2\big]^{1/2}$ (A3). The
 original eddy viscosity is not printed; the modified one below,
 $\mu_t=C_\mu^{1/4}\rho\nu\psi$, reduces to $C_\mu^{1/4}\rho\Phi_L$ when the
 surrogate equals $\Phi_L/\nu$ *(compiler check, not in the sources)*.
+
+## The eddy-viscosity form and its log-law calibration
+
+Heinz (2020) writes the model, derived from a corrected Rotta $kL$
+equation, in its high-Reynolds-number form for the eddy viscosity
+(§3.4, Eqs. 31–32):
+
+$$\frac{D\nu_t}{Dt}=a^2k\big(\zeta_1-\zeta_2R_{\mathrm{SAS}}^2\big)-C_\mu^{1/4}\zeta_3k+\frac{\partial}{\partial x_j}\Big[\frac{\nu_t}{\sigma_\Phi}\frac{\partial\nu_t}{\partial x_j}\Big],$$
+
+$$a=-\frac{R_{12}}{k}=\frac{\nu_t\lvert S\rvert}{k},\qquad R_{\mathrm{SAS}}=\frac{C_\mu^{3/4}L}{L_{\mathrm{vK}}},\qquad L=\frac{\nu_t}{C_\mu k^{1/2}},\qquad L_{\mathrm{vK}}=\kappa\Big\lvert\frac{\lvert S\rvert}{S'}\Big\rvert,\qquad S'=\Big[\frac{\partial^2\langle u_i\rangle}{\partial x_k^2}\frac{\partial^2\langle u_i\rangle}{\partial x_j^2}\Big]^{1/2},$$
+
+with $a$, $R_{\mathrm{SAS}}$ and $S'$ page-local, $\lvert S\rvert$ with the
+registry's factor two (the source's $S$), and $\sigma_\Phi$ the diffusion
+constant, a divisor of $\nu_t$ (the source's own symbols).
+In the log layer $C_\mu^{3/4}L=L_{\mathrm{vK}}=\kappa y$, so
+$R_{\mathrm{SAS}}=1$, and log-law consistency requires (Eq. 33)
+
+$$\sigma_\Phi C_\mu^{1/2}\big(\zeta_2-\zeta_1+C_\mu^{-3/4}\zeta_3\big)=\kappa^2 .$$
+
+The standard set $(\zeta_1,\zeta_2,\zeta_3,\sigma_\Phi)=(0.8,1.47,0.0288,2/3)$
+with $C_\mu=0.09$ gives $\kappa=0.41$, which Heinz states; these are the
+values Jiang et al. (2025) list for the $k$-$\sqrt kL$ model, though their
+$\sigma_\phi=2/3$ multiplies $\mu_t$ in the $\Phi_L$ diffusion while Heinz's
+$\sigma_\Phi$ divides $\nu_t$. The left side evaluates to $0.1691$, $\kappa=0.411$
+*(compiler check, not in the sources)*. Rewritten as $\varepsilon$ and
+$\omega$ equations (Eqs. 34–36), the model carries the factor
+$1+\zeta_2R_{\mathrm{SAS}}^2/C_{\varepsilon1}$ on $P_k/\varepsilon$, and the
+equivalent coefficients (Eq. 37) are $C_{\varepsilon1}=2-\zeta_1=1.2$ and
+$C_{\varepsilon2}=2-\zeta_3C_\mu^{-3/4}=1.82$, against 1.44 and 1.92 of the
+standard [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md); in Heinz's
+$k$-$\omega$ form, whose $\omega=\varepsilon/k$ carries no $C_\mu$ (unlike the
+registry's $\omega$), the coefficients are $0.2$ and $0.82$. Heinz states the
+mechanism: resolved fluctuations reduce $L_{\mathrm{vK}}$, so $R_{\mathrm{SAS}}>1$ and the production of
+$\nu_t$ drops, lowering the modelled viscosity (§3.4).
 
 ## High-order discontinuous Galerkin implementation
 
@@ -144,7 +186,12 @@ adds resolved fluctuations at the RANS/LES interface, still showed
 ([Haering et al. (2022)](/sources/haering-2022.md), §II). Liu et al. (2024)
 list DES, SAS and related hybrids as too expensive for routine
 turbomachinery design ([Liu et al. (2024)](/sources/liu-2024.md),
-Introduction).
+Introduction). In Heinz's compilation of published
+[periodic-hill](/benchmarks/periodic-hill.md) results, SAS is among the
+methods (with source-term methods and unified RANS-LES) that "apparently
+reduce the RANS error significantly", while PANS, PITM, DES and
+wall-modelled LES show large variability through their design parameters
+(Heinz (2020), §5.1, Fig. 6; compiled from the literature, no new runs).
 
 ## Qualifications
 
@@ -172,3 +219,5 @@ Introduction).
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §5 (HAL author manuscript).
 - [Haering et al. (2022)](/sources/haering-2022.md) — §II.
 - [Liu et al. (2024)](/sources/liu-2024.md) — Introduction.
+- [Heinz (2020)](/sources/heinz-2020.md) — §3.4 Eqs. 31–37, §5.1 Fig. 6.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.2.

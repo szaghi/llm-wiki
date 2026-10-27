@@ -5,7 +5,7 @@ description: "Energy backscatter is a negative local subgrid energy flux, energy
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-27T06:13:00Z
+timestamp: 2026-10-27T11:02:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -133,7 +133,7 @@ reproduces its local flux exactly (Vela-Martín 2022, §7.1, Eqs. 7.2–7.5).
 Translated to the registry sign, minimizing
 $\int(-2\nu_t\bar S_{ij}-\tau_{ij})^2\,dV$ pointwise gives
 
-$$\nu_t^{\mathrm{opt}}=-\frac{\tau_{ij}\bar S_{ij}}{2\bar S_{ij}\bar S_{ij}}=\frac{\Pi}{\lvert\bar S\rvert^2},\qquad \nu_t^{\mathrm{opt}}\lvert\bar S\rvert^2=\Pi$$
+$$\nu_t^*=-\frac{\tau_{ij}\bar S_{ij}}{2\bar S_{ij}\bar S_{ij}}=\frac{\Pi}{\lvert\bar S\rvert^2},\qquad \nu_t^*\lvert\bar S\rvert^2=\Pi$$
 
 *(compiler check, not in the sources)*. It is gauge-dependent:
 negative over a large fraction of the domain for the filtered-DNS stress,
@@ -145,11 +145,23 @@ The same projection is used as an a priori diagnostic by [Abe (2021)](/sources/a
 (§IV C, Eq. 17): the "equivalent SGS eddy viscosity"
 $-\tau^d_{ij}\bar S_{ij}/(2\bar S_{kl}\bar S_{kl})$ of a reference or model
 stress, which the author notes reproduces exactly its resolved/subgrid
-energy transfer, forward and backward. It equals $\nu_t^{\mathrm{opt}}$
+energy transfer, forward and backward. It equals $\nu_t^*$
 above, since $\bar S_{ii}=0$ *(compiler check, not in the sources)*. Abe
 compares it between filtered fine-LES data and five models in a free shear
 layer (see [Smagorinsky model](/methods/smagorinsky-model.md) and
 [scale-similarity models](/methods/scale-similarity-model.md)).
+
+[Zhao et al. (2021)](/sources/zhao-2021-c.md) (§III.D, Eqs. 21–23) use the
+same projection as a coupling device, not a diagnostic: their gas-kinetic
+solver accepts only a scalar eddy viscosity, so the stress of a dynamic
+Clark (gradient plus Smagorinsky) model is replaced by
+$\nu_t=-\tau_{ij}\bar S_{ij}/(2\bar S_{ij}\bar S_{ij})$, obtained by matching
+the dissipation $-\tau_{ij}\bar S_{ij}=2\nu_t\bar S_{ij}\bar S_{ij}$. This is
+$\nu_t^*$ of the model stress, so the local flux $\Pi$ of the
+model is kept, backscatter included, while its tensorial structure is lost
+*(compiler check, not in the sources)*. Whether negative values of this
+viscosity are clipped is not stated (see
+[gradient model](/methods/gradient-model.md)).
 
 ## Energy-transfer-free remainder and anisotropic redistribution
 
@@ -159,11 +171,11 @@ optimal eddy viscosity to split the deviatoric subgrid stress of filtered
 DNS into a part that carries the whole local energy transfer and a
 remainder that carries none:
 
-$$\tau^d_{ij}=-2\nu_t^{\mathrm{opt}}\bar S_{ij}+\tau^{\mathrm{ani}}_{ij},\qquad \tau^{\mathrm{ani}}_{ij}\bar S_{ij}=0,$$
+$$\tau^d_{ij}=-2\nu_t^*\bar S_{ij}+\tau^{\mathrm{ani}}_{ij},\qquad \tau^{\mathrm{ani}}_{ij}\bar S_{ij}=0,$$
 
 with $\tau^{\mathrm{ani}}_{ij}$ (page-local) the "extra anisotropic" stress.
 The authors' "ideal" eddy viscosity $-\tau_{ij}\bar S_{ij}/(2\bar S_{kl}\bar S_{kl})$
-is $\nu_t^{\mathrm{opt}}$ above; they note that it is negative where the
+is $\nu_t^*$ above; they note that it is negative where the
 flow backscatters and call the decomposition "arbitrary" (§II A).
 Inserting it in the budget of the resolved Reynolds stress
 $R^{\mathrm{res}}_{ij}=\langle\bar u_i'\bar u_j'\rangle$ (fluctuations about
@@ -222,6 +234,18 @@ flux to zero where the base model backscatters. A priori on box-filtered
 isotropic turbulence at $Re_\lambda=418$, anisotropic (book- and
 pencil-type) filters lower the mean model dissipation, which the authors
 partly attribute to more model backscatter (§III.A.2, Figs. 2–3).
+
+Two further sources tie the removal of backscatter from the
+[dynamic procedure](/methods/dynamic-procedure.md) to stability.
+Zhao et al. (2021, §III.A, Eq. 16) clip the plane-averaged dynamic
+Smagorinsky coefficient to its positive part "so that backscatter is
+eliminated", in wall-resolved channel LES at $Re_\tau=180$ and 395.
+[Heinz (2020)](/sources/heinz-2020.md) (§2.1), reviewing hybrid RANS/LES,
+states that dynamic LES which does not honour realizability, the dynamic
+Smagorinsky model, is often computationally unstable, and that the
+remedies, averaged dynamic parameters or added clipping parameters,
+"reduce the backscatter ability of LES"; "fully realizable dynamic LES" is
+said to be stable without either (citing Mokhtarpoor & Heinz).
 
 Prakash et al. and Vela-Martín (2022) both arrive at models without local
 backscatter, from different premises: stability of the resolved energy for
@@ -318,6 +342,25 @@ The sources reach different design choices from different questions.
   spacings (App. B). Their mixed model, the
   gradient term plus an ensemble-Kalman-calibrated Smagorinsky term, gives
   the PDF closest to filtered DNS.
+- **Backscatter from a symbolic-regression tensor model.**
+  [Li et al. (2021)](/sources/li-2021.md) (§III C, Eq. 21, Fig. 6) compare a
+  posteriori PDFs of $\Pi$ in LES of forced isotropic turbulence ($128^3$,
+  filter width 16 DNS spacings, $Re_\lambda\approx260$) against filtered
+  DNS. The dynamic Smagorinsky model gives a strictly positive flux, no
+  backscatter; it and the dynamic mixed model "differ significantly" from
+  filtered DNS. Their gene-expression-programming model, four
+  integrity-basis tensors with constant coefficients (see
+  [symbolic-regression closures](/methods/symbolic-regression-closure.md)),
+  and the neural-network model of Xie et al. (2020) used as comparator
+  "predict both forward transfer and backscatter satisfactorily". The
+  coefficient of the learned model's linear (eddy-viscosity) basis tensor
+  is $-0.01$, against $-0.1$, $0.07$ and $-0.11$ for the other three
+  (Eq. 22); the authors connect its accuracy to the rotation-containing
+  terms and to the model being less dissipative (§III D). The test is at
+  nearly the Reynolds number and the filter width of the comparison of
+  Wang et al. (2023c) above ($Re_\lambda$ 260 against 259, 16 DNS
+  spacings), and both find the dynamic Smagorinsky flux strictly positive
+  *(compiler check, not in the sources)*.
 - **Backscatter in an eddy viscosity, stable.** The
   [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md)
   of Domaradzki (2024, §3.1) has regions of negative eddy viscosity, local
@@ -554,3 +597,6 @@ contradiction is recorded.
 - [Wu & Lele (2026)](/sources/wu-2026.md) — §3.1, Eq. (3.9); §3.2.2, Fig. 4.
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — pp. 1–6, Eq. (4), Figs. 1–2.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §2; §5.4.1–5.4.2.
+- [Li et al. (2021)](/sources/li-2021.md) — §III C, Eqs. (21)–(22), Fig. 6; §III D.
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III.A, Eq. (16); §III.D, Eqs. (21)–(23).
+- [Heinz (2020)](/sources/heinz-2020.md) — §2.1.

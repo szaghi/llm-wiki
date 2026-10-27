@@ -5,7 +5,7 @@ description: "A neural network maps the coordinates to the mean velocity, pressu
 status: established
 aliases: [PINN, PINNs, physics-informed neural network, physics-informed RANS solver]
 tags: [data-driven, neural-network, rans, boundary-layer]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Physics-informed neural networks for RANS
@@ -141,6 +141,39 @@ approximating the solution "without explicitly discretizing space and
 time". Their own [closure](/methods/neural-network-sgs-model.md) is of a
 different kind: a discrete coarse-grid closure whose energy conservation
 is built into the architecture (§3).
+[Ruggeri et al. (2022)](/sources/ruggeri-2022.md) (§III) cite the
+same paper as PINNs for RANS that use only boundary data, with an
+$\ell_2$ error of around 3% for turbulent flows; Eivazi et al. themselves
+state errors below 3% (above). [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md)
+(§4.3) call "initial work on LES wall modeling using physics-informed
+neural networks" (Yang et al. 2019, as cited) "a promising path" for
+reducing the cost of LES, without details (see [machine-learning wall models](/methods/machine-learning-wall-model.md)).
+
+## A label-free physics-informed loss outside turbulence (Ruggeri et al. 2022)
+
+Ruggeri et al. (2022, App. C, Fig. 10, Table XI) train a network without
+labels on the one-dimensional Riemann problem of the ideal-gas Euler
+equations, as an alternative to their supervised neural Riemann
+solvers. The inputs are pressure, velocity and sound speed of the two
+initial states, the output the velocity $u^*$ of the star region. From
+$u^*$ the pressures that the left and right states need to reach it are
+computed; the loss is their mismatch $\lvert p_{II}-p_{III}\rvert$
+(page-local: the pressures left and right of the contact), or the
+arbitrary value $10^{20}$ when a sound speed would become non-positive
+(e.g. too strong a rarefaction). Training is slower than supervised
+training, inference equally fast. Its mean absolute percentage errors,
+0.670% in $u^*$, 0.371% in $p^*$, 0.475% and 0.458% in the two star
+densities, beat their supervised stand-alone network (4.026% and 1.415%
+in $u^*$ and $p^*$, Table VIII) and fall short of the network that
+predicts one star value and computes the rest from the exact relations
+(0.435% and 0.134%). The authors conclude that for "a safe deployment of
+the model in the CFD solver, it is important to use a physics-informed
+neural network, or to avoid extreme cases" such as constant initial
+conditions (Conclusions). They call the label-free network
+physics-informed (App. C heading); its loss is the pressure mismatch
+above. Ruggeri et al. (§I) cite Wang's PINN for supercritical-fluid
+Riemann problems embedded in a CFD solver. The flows are inviscid and
+laminar.
 
 ## From PINNs to physics-informed neural operators (Zhao et al. 2025)
 
@@ -204,4 +237,6 @@ rollout diverges (App. A). Details and results are on
 - [Eivazi et al. (2022)](/sources/eivazi-2022.md) — arXiv v1: Abstract; §1 (underdetermined RANS, precedent); §2, Fig. 1, Eqs. 1–2 (network, residuals, loss, error metric); §3, Figs. 2–6, Table 1 (five cases); §4 (conclusions).
 - [Domingo & Vervisch (2023)](/sources/domingo-2023.md) — §7 (physics-informed techniques as a perspective for combustion DNS).
 - [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §2.2, Eq. 8 (PINN loss); §2.4 (PINO and its drawbacks, recalled); §2.5, Eq. 17 (LESnets); §3.1; App. A.
+- [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §I (Wang's PINN cited), §III (Eivazi et al. cited), App. C, Fig. 10, Tables VIII, XI (label-free Riemann-problem network); Conclusions.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3 (PINN-based LES wall modelling cited).
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §1 (PINNs mentioned among machine-learning work on Burgers' equation; ref. [29] as printed); §3 (energy-conserving architecture).

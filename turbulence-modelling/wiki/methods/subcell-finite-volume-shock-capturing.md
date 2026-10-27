@@ -5,7 +5,7 @@ description: "Troubled DG elements are recomputed as (N+1)^3 finite-volume subce
 status: established
 aliases: [hybrid DG/FV, DG/FV subcell scheme, finite-volume subcell limiting, DG/FV blending, RL-Blend, local modal filter, LMF, entropy filter]
 tags: [shock-capturing, dg, numerical-dissipation, implicit-les, reinforcement-learning, compressible, flux-reconstruction]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:59:00Z
 ---
 
 # Subcell finite-volume shock capturing for DG
@@ -310,6 +310,24 @@ tests only; the TENO-based indicator is on
 limiters on [WENO](/methods/weno-scheme.md). No source of this bundle
 compares the two routes on the same flow.
 
+## A posteriori subcell correction in multi-material DG
+
+A third variant is named in a multi-material context. In their
+review of diffuse-interface methods for compressible multi-material flow,
+[Maltsev et al. (2022)](/sources/maltsev-2022.md), §IV C, cite the a
+posteriori subcell finite-volume limiting of Dumbser et al. and Dumbser &
+Loubère (named, not described), and its use by Cheng, Zhang & Liu in a DG scheme for
+a $\gamma$-based two-medium model with an HLL flux; that DG scheme reduces
+at degree $N=0$ to a quasi-conservative finite-volume scheme and keeps
+uniform pressure and velocity at isolated material interfaces. They also
+review the $P_NP_M$ reconstructed DG, which spans the range between finite
+volumes ($N=0$) and DG ($M=N$) by reconstruction instead of by subcells
+(§III C; see the
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) page),
+and conclude that DG for diffuse-interface models is still mostly
+restricted to reduced five-equation models on structured meshes (§V).
+None of these is a turbulence application.
+
 ## Convention difference
 
 The two variants place the subcells differently: equispaced subcells of width
@@ -375,3 +393,4 @@ on the right.
 - [Gao et al. (2022)](/sources/gao-2022.md) — §3.2, Figs. 1–2, 5–7 (Sonntag–Munz subcells, filtered indicator, positivity-preserving limiter); §4.1–4.2, Figs. 9, 13 (laminar interaction, DG against FV cost); §5.3.1, Eq. (19) (performance index of the hybrid).
 - [Huang et al. (2025)](/sources/huang-2025.md) — §1 (subcell approaches recalled; polynomial limiting chosen).
 - [Huang & Fu (2024)](/sources/huang-2024.md) — §1, §4 (indicator–limiter route of RKDG).
+- [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III C, §IV C, §V (a posteriori subcell limiting and reconstructed DG in multi-material DG, cited).

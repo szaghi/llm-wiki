@@ -5,7 +5,7 @@ description: "RANS transition closures that transport the energy of pre-transiti
 status: established
 aliases: [LKE model, laminar kinetic energy model, k-kL-ω, k-kl-ω, three-equation transition model, LKE-SST]
 tags: [rans, transition, eddy-viscosity, turbomachinery, separated-flow, boundary-layer]
-timestamp: 2026-10-27T06:13:00Z
+timestamp: 2026-10-27T10:56:00Z
 ---
 
 # Laminar kinetic energy transition models
@@ -61,6 +61,24 @@ motivated by Fang et al. (2024), whose multi-objective machine-learnt
 corrections of the production and transfer found opposite trends for
 separated-flow and bypass transition (§1, §3.2; see
 [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+
+**Requirements from wake-passing flows.** Sandberg & Michelassi (2022)
+describe the LKE model of Pacciani et al. (2014), built for separated-flow
+transition under incoming wakes, through the two requirements it was
+designed to meet: on the wake-induced path no laminar kinetic energy is
+created, transition being triggered by the wake velocity deficit (the
+"negative jet") and the wake turbulence; between wakes, $k_L$ develops to
+model the instabilities of the laminar layer. They report "realistic"
+predictions for high-lift low-pressure-turbine cascades with incoming
+wakes, and cite the $k$-$\overline{v^2}$-$\omega$ model of Lopez &
+Walters (2016), which transports the wall-normal fluctuation to model the
+growth of Klebanoff distortions driven by the wall-normal free-stream
+component, as an alternative that predicted the separation bubble of a
+low-Reynolds-number turbine accurately (citing Akolekar et al. 2018)
+([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §3.3.3; see
+[laminar separation bubble](/definitions/laminar-separation-bubble.md) and
+[turbine cascades](/benchmarks/turbine-cascade.md)). The review does not
+print the model's equations.
 
 ## The multi-mode reformulation
 
@@ -469,3 +487,4 @@ LKE models may be needed ([Morsbach et al. (2024)](/sources/morsbach-2024.md),
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §5.
 - [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §I, §II Eqs. 1–27, §III Eqs. 28–33, §IV A–C Tables I–IX Figs. 4–23, Eq. 34, §V Figs. 25–29, Appendix.
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §1.2, Eqs. 33–34.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §3.3.3.

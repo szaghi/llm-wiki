@@ -5,7 +5,7 @@ description: "How a scale-resolving simulation is fed with turbulence at its inf
 status: established
 aliases: [turbulent inflow generation, synthetic inflow turbulence, synthetic turbulence generator, STG, recycling–rescaling inflow, recycling inflow, digital filter inflow, precursor inflow, MDSRFG, random flow generation]
 tags: [les, dns, boundary-layer, wmles, compressible]
-timestamp: 2026-10-27T06:13:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Inflow turbulence generation
@@ -329,6 +329,41 @@ the RANS practice of shrinking the inflow length scale to fix a laminar
 separation bubble gives the right loss for the wrong reason (§4.1, see
 [local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)).
 
+## Inflow turbulence as a physical parameter, and at RANS–LES interfaces
+
+In turbomachinery the inflow turbulence is not only a boundary condition
+to be matched but a parameter the blade responds to. The review of
+[Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §3.2.1 and
+§3.3.3.2, cites highly resolved LES of a high-pressure-turbine nozzle
+fed synthetically generated inflow turbulence at intensities of 6%–20% of
+the inlet velocity and length scales of 5%–20% of the chord (Pichler et
+al. 2017b), in which the boundary layer was strongly sensitive to the
+incoming turbulence through different transition routes and larger length
+scales gave an earlier rise and a higher overall level of heat transfer on
+suction and pressure sides (Fig. 4a); and DNS and LES of a vane with inflow
+intensities of 6.5%–20% and integral lengths of 4.8%–20.1% of the axial
+chord (Zhao & Sandberg 2020a), in which the competition of inflow intensity
+and stabilizing pressure gradient decides the path to transition while the
+integral length sets the scale of the leading-edge streaks (Fig. 5). The
+review adds, from Verma et al. (2019), that the hot-streak migration
+induced on a transonic vane by the large-scale fluctuations of a reacting,
+swirling combustor is captured only by a fully coupled combustor–turbine
+LES, not by a segregated one (§3.2.1). See
+[turbine cascade](/benchmarks/turbine-cascade.md).
+
+In zonal [hybrid RANS/LES](/definitions/hybrid-rans-les.md) the same
+problem appears inside the domain, at the RANS-to-LES interface. The
+review of [Heinz (2020)](/sources/heinz-2020.md), §1, states that
+"empirical approaches for adding fluctuations in RANS-LES transition
+regions have been suggested, but such methods introduce other
+inconsistencies", the argument it uses for consistent single-equation
+hybrids such as
+[continuous eddy simulation](/methods/continuous-eddy-simulation.md); on
+the [NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md) it
+cites two zonal DES variants that differ in the synthetic-turbulence
+generator at the interface, next to a non-zonal one, among the results it
+compiles (§5.2).
+
 ## Qualifications
 
 - The sources measure recovery differently (momentum-integral balance in
@@ -376,3 +411,5 @@ separation bubble gives the right loss for the wrong reason (§4.1, see
 - [Gao et al. (2022)](/sources/gao-2022.md) — §1; §5.2, Figs. 15–17; §5.3.2, Fig. 24 (reformulated synthetic eddy method with anisotropic linear forcing for a Mach 2 shock/boundary-layer interaction).
 - [Ahn et al. (2023)](/sources/ahn-2023.md) — §I; §III, Fig. 3; §IV A–B, Figs. 4–10 (geometric step tripping of a laminar nozzle boundary layer in implicit LES of twin supersonic jets).
 - [Husson et al. (2024)](/sources/husson-2024.md) — §1 (inflow turbulence as a burden of wall-modelled LES that hybrid RANS/LES avoids).
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §3.2.1, Fig. 4a (cited inflow-turbulence sensitivity of turbine heat transfer; coupled combustor–turbine LES); §3.3.3.2, Fig. 5 (inflow intensity and length scale in vane transition).
+- [Heinz (2020)](/sources/heinz-2020.md) — §1 (fluctuations added at RANS–LES interfaces); §5.2 (zonal DES with synthetic-turbulence generators on the hump, cited).

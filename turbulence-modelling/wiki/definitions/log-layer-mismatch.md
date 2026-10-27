@@ -5,7 +5,7 @@ description: "The shift, in wall units, between the mean velocity of a wall-mode
 status: established
 aliases: [LLM, log-layer shift, super-buffer layer error]
 tags: [wmles, wall-model, hybrid-rans-les, boundary-layer]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Log-layer mismatch
@@ -34,6 +34,20 @@ ZYZY22, whose WMLES log law has slope $1/0.32$, Vadrot et al. (2023b, Eq. 9)
 write $\mathrm{LLM}\sim(1/\kappa_{\mathrm{ZYZY22}}-1/\kappa)\ln y^+$, which
 grows with $Re_\tau$.
 
+[Zangeneh (2021)](/sources/zangeneh-2021.md) (§I) gives the size of the
+wall-stress error in hybrid RANS/LES wall modelling, citing the
+literature: a skin friction "on the order of 15% too low" (after Nikitin et
+al. 2000, as cited), and about 25 % under-prediction with IDDES in
+supersonic boundary layers (Gieseking et al., as cited). In the review of
+[Bose & Park (2018)](/sources/bose-2018.md) (§2.1, Fig. 4) the mismatch is
+compiled from three WMLES that match at the first cell: a Mach 1.7
+boundary layer at $Re_\theta=5\times10^4$ (Kawai & Larsson 2012, first
+against third point) and channels at $Re_\tau=4000$ (Templeton et al. 2006)
+and 2000 (Lee et al. 2013), as cited; the mismatch appears both in hybrid
+RANS/LES (Nikitin et al. 2000) and in wall-stress WMLES (Cabot & Moin 2000;
+Nicoud et al. 2001; Lee et al. 2013), with the largest errors in the first
+cell.
+
 ## Mechanisms recalled by the sources
 
 The sources attribute LLM to the coupling between the wall model and the
@@ -54,10 +68,24 @@ under-resolved first cells of the LES, not to the log law itself.
   mechanism for their dynamic SGS models: both under-predict the SGS stress in
   the under-resolved first cells, which raises the resolved fluctuations and
   flattens the mean-velocity slope.
+  Bose & Park (2018, §2.1, Eq. 13) quantify the numerical part after Wu &
+  Meyers (2013), as cited: for a log profile differenced at $y=d\,\Delta y$
+  by an $n$th-order scheme the discrete mean shear is
+  $(d\langle u\rangle/dy)\,(1+c_n n!/d^n)$, with $c_n$ the constant of the
+  Taylor remainder (page-local $c_n$, $d$, $n$); in the first cell, $d=1/2$
+  or 1, the remainder is large and does not vanish as $n$ grows. Kawai &
+  Larsson (2012), as cited, found the Reynolds shear stress
+  converged for $\Delta y/h_{\mathrm{wm}}\lesssim0.3$ — the "third grid point" —
+  but advocate a matching height that is a fraction of $\delta$.
 - **Instantaneous local use of a mean law.** [Fowler et al. (2022)](/sources/fowler-2022.md)
   (§1) recall the argument of Bou-Zeid et al. (2005): by the Schwarz
   inequality, applying the law of the wall locally and instantaneously
-  over-predicts the mean wall stress.
+  over-predicts the mean wall stress. Bose & Park (2018, §2.1) state the same
+  argument, citing Bou-Zeid et al. with the year 2004 (Fowler et al. print 2005): an algebraic model
+  gives $\langle\tau_w\rangle\propto\langle u(h_{\mathrm{wm}})^2\rangle$ where
+  the law of the wall gives $\langle\tau_w\rangle\propto\langle u(h_{\mathrm{wm}})\rangle^2$,
+  and $\langle u^2\rangle>\langle u\rangle^2$, so that spatial filtering of the
+  input relieves the mismatch.
 - **Numerical dissipation of the scheme in the LES region.**
   [Carlsson et al. (2023)](/sources/carlsson-2023.md) (§4.3, Fig. 4, Table 2)
   run SST-IDDES of channel flow at $M_b=0.15$ and $Re_\tau=395$, 2400 and
@@ -93,6 +121,37 @@ under-resolved first cells of the LES, not to the log law itself.
   model is perfectly correlated with the LES velocity at the sampling
   location, against about 0.3 in DNS (see
   [equilibrium wall model](/methods/equilibrium-wall-model.md)).
+  Bose & Park (2018, §2.1) summarize the mechanism of Yang, Park & Moin
+  (2017) as an unphysically high correlation between the wall stress and the
+  first-cell LES data, which damps the near-wall Reynolds shear stress and
+  raises the velocity gradient; it "deviates from the common perception" that
+  numerical or SGS errors near the wall are responsible, would unify the
+  filtering and off-wall-matching remedies, but does not explain a
+  *negative* mismatch (a velocity deficit), which remains unexplained. The
+  control-based wall models they review point the same way: the computed
+  streamwise stress correlates best with the LES streamwise fluctuations at
+  the second wall-normal point, and with the matching point at the
+  wall-adjacent cell, minimizing the deviation from a target profile
+  necessarily over-predicts the near-wall intensities (Templeton et al.
+  2008, as cited; §2.4).
+- **Inconsistent RANS and LES eddy viscosities at the interface.**
+  Zangeneh (2021, §II.C) argues, for an IDDES whose RANS inner layer is
+  solved on an embedded grid, that the resolved velocity, density and
+  temperature are identical in the LES and the RANS layer at the matching
+  location, because the LES supplies them as boundary values, so the
+  discrepancy in total shear stress and heat flux there "arises due to the
+  discrepancies between $\mu_{t,\mathrm{LES}}$ and $\mu_{t,\mathrm{RANS}}$ and
+  also $Pr_{t,\mathrm{LES}}$ and $Pr_{t,\mathrm{RANS}}$"; the paper gives no
+  derivation. The author cites, without resolving it, that Peterson &
+  Candler attributed the IDDES mismatch in supersonic boundary layers to the
+  calibration of IDDES on low-speed channels, while Mockett et al. found it
+  even in low-speed channel IDDES and suggested numerical sensitivity, so that
+  "a concrete explanation … has remained elusive" (§I).
+  [Heinz (2020)](/sources/heinz-2020.md) (§1) states, citing the
+  literature, that the "fundamental inconsistency of RANS and LES equations"
+  — LES equations produce fluctuations, RANS equations are not designed to
+  deal with them — "is known to be the reason" that hybrid methods fail to
+  obtain the logarithmic law of the wall.
 - **Modelled-stress depletion in hybrid methods.** [Haering et al. (2022)](/sources/haering-2022.md)
   (§II.A) argue that a hybrid RANS/LES method which reduces the modelled
   stress and waits for resolved turbulence to grow passively must have regions
@@ -130,6 +189,8 @@ under-resolved first cells of the LES, not to the log law itself.
 | Match the wall model away from the wall, $h_{\mathrm{wm}}\ge3\Delta$ (Kawai & Larsson 2012) | recalled by Griffin et al. (2023, §4.1), who use $h_{\mathrm{wm}}=0.3\delta$ with 12 points per half-height; Agrawal et al. (2022, §VII.D) match at the second off-wall point of a staggered mesh |
 | Filter the wall-model input in space (the "2Δ spatial filter" of Bou-Zeid et al. 2005) or in time and/or wall-parallel space (Yang, Park & Moin 2017) | recalled by Fowler et al. (2022, §1), who apply a "2Δ spatial filter, like that used in Bou-Zeid et al. (2005)" to $U_{\mathrm{LES}}$ (§5.1; their $\Delta$ is the matching height, the first grid point at half the wall-normal spacing); Vadrot et al. (2023b, §II.B.1, Table II) filter the input of their equilibrium model with a sharp filter of twice the grid spacing |
 | Random forcing near the wall | recalled by Vadrot et al. (2023b, §I) |
+| Third-point matching, $\Delta y/h_{\mathrm{wm}}\lesssim0.3$ (Kawai & Larsson 2012); adjusting the SGS eddy-viscosity coefficient from the turbulent-kinetic-energy budget (Wu & Meyers 2013); filtering the input (Bou-Zeid et al.) | recalled by Bose & Park (2018, §2.1), who note that in concave junctions a matching point a few cells off the wall is hard to combine with a fixed $h_{\mathrm{wm}}/\delta$ (Park & Moin 2016c, as cited) |
+| Random-forest correction of the modelled wall stress and heat flux, fed back through corrected $\mu_t$ and $Pr_t$ | [Zangeneh (2021)](/sources/zangeneh-2021.md) (§II.F–G, §III.A, Fig. 6): removes the mismatch of an SST-IDDES WMLES of a Mach 1.69 flat plate at $Re_\theta=50\,000$ (below) |
 | Stochastic forcing at the RANS/LES interface (Piomelli et al.) | recalled by Haering et al. (2022, §II): removes LLM but is problem-dependent; the SAS-F forcing of Menter et al. still showed LLM in channel flow |
 | Several cells below the matching height: $h_{\mathrm{wm}}=0.1\delta_0$ with four uniform cells below it ($\Delta y=0.25h_{\mathrm{wm}}$), "to reduce numerical errors from the LES transferred to the wall model (Kawai & Larsson, 2012) and avoid the log-layer mismatch" | [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) (§3), Mach 3 shock/boundary-layer interaction |
 | Impose the wall stress through a wall eddy viscosity, $\nu_t\rvert_w=\tau^{\mathrm m}_w/\big(\rho\,(\partial u/\partial y)_w\big)-\nu$ with no slip kept ("viscosity augmentation"), instead of a Neumann condition | [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) (Methods, Eq. 10), stated, citing earlier work, to be "better at resolving the so-called log-layer mismatch"; $\tau^{\mathrm m}_w$ the modelled wall stress (page-local). In a continuous spectral-element code the same condition fails: Mukha et al. (2025, §III.D, Table IV, Figs. 9–10) find the mean velocity strongly under-predicted for $y^+\lesssim2500$ and over-predicted in the core, which they attribute to the lack of global momentum conservation of the discretization, not to a mismatch mechanism (see [wall-modelled LES](/methods/wall-modelled-les.md)) |
@@ -229,6 +290,22 @@ velocity, after Yang et al. (2017) as cited, to remove its mismatch
 corresponds to about one to two wall units of mismatch (§III.B, after Yang
 et al. 2019 as cited).
 
+**A learned correction instead of a learned wall model.** Zangeneh (2021)
+targets the mismatch of an SST-IDDES used as WMLES of supersonic flows with a
+random-forest regression trained to predict the discrepancy of the modelled
+wall stress and wall heat flux against DNS or experiment, from local mean
+features on a seven-point stencil centred at the second off-wall point (see
+[machine-learning wall models](/methods/machine-learning-wall-model.md)). On
+a zero-pressure-gradient flat plate trained at $M=2.28$, $Re_\theta=5000$ and
+predicted at $M=1.69$, $Re_\theta=50\,000$, the baseline IDDES has the right
+log slope but a higher intercept, i.e. too low a skin friction, while the
+corrected profile is "almost identical to the experimental result" of
+Souverein et al. (as cited), with a log region over $30<y^+<3000$ "without
+showing LLM" (§III.A.1, Fig. 6; van Driest-scaled velocity against
+$\ln(y^+)/0.41+5.2$). The author calls it "a corrective approach and not
+'standard' turbulence model" (§III): the correction is trained on the same
+geometry at lower Reynolds number.
+
 ## Qualifications
 
 - Vadrot et al. (2023b) are internally inconsistent about where BK22 errs:
@@ -262,3 +339,6 @@ et al. 2019 as cited).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — Eqs. (30)–(32) (HAL accepted manuscript).
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §1; §2.4, Eq. (20).
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — §II.C.1; §II.D; §III.B.2–III.B.3, Table III, Figs. 3–5; §III.C–III.D, Table IV, Figs. 6, 9–10; §V (arXiv v1).
+- [Bose & Park (2018)](/sources/bose-2018.md) — §2.1, Eq. (13), Fig. 4; §2.4.
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) — §I; §II.C; §II.F–G; §III, §III.A.1, Fig. 6.
+- [Heinz (2020)](/sources/heinz-2020.md) — §1.

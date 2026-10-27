@@ -5,7 +5,7 @@ description: "Morkovin's hypothesis holds that, while density fluctuations stay 
 status: established
 aliases: [Morkovin hypothesis, Morkovin scaling, Morkovin's scaling, strong Reynolds analogy, SRA, HSRA, Reynolds analogy factor, turbulent Prandtl number]
 tags: [compressible, boundary-layer, dns, hypersonic, rans]
-timestamp: 2026-10-27T05:46:00Z
+timestamp: 2026-10-27T11:02:00Z
 ---
 
 # Morkovin's hypothesis and Reynolds analogies
@@ -279,10 +279,10 @@ $T_w/T_r=0.25$ (§3.3). Their remedy is a two-layer temperature: the energy
 equation with constant $Pr_t$ above a matching height $y_{\mathrm{mT}}$
 ($y^*_{\mathrm{mT}}=100$), and below it the quadratic temperature–velocity
 relation of Duan & Martín and Zhang et al. anchored at that height,
-$$\langle T\rangle_\rho=T_w+C_T(T_r-T_w)\Big(1-\frac{\langle u\rangle_\rho}{U_{\mathrm m}}\Big)\frac{\langle u\rangle_\rho}{U_\delta}+(T_{\mathrm m}-T_w)\Big(\frac{\langle u\rangle_\rho}{U_{\mathrm m}}\Big)^2,\qquad y<y_{\mathrm{mT}},$$
+$$\langle T\rangle_\rho=T_w+C_{\mathrm{DM}}(T_r-T_w)\Big(1-\frac{\langle u\rangle_\rho}{U_{\mathrm m}}\Big)\frac{\langle u\rangle_\rho}{U_\delta}+(T_{\mathrm m}-T_w)\Big(\frac{\langle u\rangle_\rho}{U_{\mathrm m}}\Big)^2,\qquad y<y_{\mathrm{mT}},$$
 (Eq. 3.17; page-local: $U_{\mathrm m}$, $T_{\mathrm m}$ the mean velocity
-and temperature at $y_{\mathrm{mT}}$, $U_\delta$ the edge velocity, $C_T$ the
-relation's constant), with $C_T=0.8259$ (Duan & Martín), recast by Zhang et
+and temperature at $y_{\mathrm{mT}}$, $U_\delta$ the edge velocity, $C_{\mathrm{DM}}$ the
+relation's constant), with $C_{\mathrm{DM}}=0.8259$ (Duan & Martín), recast by Zhang et
 al. as $sPr$ with the Reynolds analogy factor $s=1.14$, and the recovery
 factor $r=Pr^{1/3}$ (§3.3, Eq. 3.16; Cogo et al. and Huang et al. take
 $r=0.89$). This is one of the quadratic relations of the
@@ -369,6 +369,41 @@ boundary-layer DNS of Cogo et al. (2022) and Huang et al. (2022) above. See [ent
 [kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
 and [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
 
+## In thermal wall models for LES
+
+The review of wall models by [Bose & Park (2018)](/sources/bose-2018.md),
+§2.5, Eq. (17), states the equilibrium thermal wall model as the
+wall-normal total-energy balance of the wall-model layer with constant
+properties, printed as
+$$\frac{\partial}{\partial y}\left(-u\,\tau^{\mathrm{wm}}_{12}-q_{\mathrm{turb}}\right)+\frac{\partial}{\partial y}\left(\mu u\frac{\partial u}{\partial y}+\lambda_{\mathrm c}\frac{\partial T}{\partial y}\right)=0$$
+($u$, $T$ the wall-model velocity and temperature, the source's tilde
+quantities; $\tau^{\mathrm{wm}}_{12}$ the modelled turbulent shear stress,
+$q_{\mathrm{turb}}$ the turbulent heat flux, $\lambda_{\mathrm c}$ the
+molecular conductivity; all page-local). The turbulent heat flux is
+closed by the gradient-diffusion model of Rannie,
+$q_{\mathrm{turb}}\approx-\lambda_t\,\partial T/\partial y$ with the
+turbulent conductivity $\lambda_t=\mu_tc_p/Pr_t$. The terms
+$-u\,\tau^{\mathrm{wm}}_{12}+\mu u\,\partial u/\partial y$ carry
+the inner-layer viscous heating, so the model can capture the near-wall
+temperature peak; without strong viscous heating the balance gives the
+strong Reynolds analogy in its mean-flow form, $C_h=C_f/2$ ($C_h$ the
+Stanton number, whose normalization the review does not print). Bose & Park state, citing earlier work, that this relation has been shown
+experimentally to hold within less than 30% for Mach numbers below 10,
+weakly dependent on $Re_\theta$ from $10^3$ to $10^5$, and confirmed by DNS
+with wall heating (Wu & Moin 2010); that it fails near separation, where
+the skin friction vanishes and the heat transfer does not; and that
+law-of-the-wall errors in adverse-pressure-gradient flows appear amplified
+in temperature and heat-flux predictions (§2.5; see
+[adverse-pressure-gradient wall laws](/definitions/adverse-pressure-gradient-wall-law.md)).
+In their outlook (§4.4) they state that scaling incompressible closures to
+variable inertia works when the turbulent Mach number is small
+($M_t\lesssim0.2$, after Lele 1994), and that thermal predictions may fail
+where the strong Reynolds analogy fails, with significant stagnation-temperature
+variation at strongly heated or cooled walls. The wall-stress models these
+thermal balances accompany are on
+[equilibrium wall models](/methods/equilibrium-wall-model.md) and
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md).
+
 ## As working tools in a supersonic LES
 
 [Gao et al. (2022)](/sources/gao-2022.md) use both relations as tools, not
@@ -419,3 +454,4 @@ hypothesis across Mach numbers.
 - [Aiello et al. (2026)](/sources/aiello-2026.md) — §1 (restated hypothesis, intrinsic compressibility, Chu–Kovásznay modes); §2.1–2.2 (thermally perfect gas, scalings); §3.3, Table 2 (set-up); §4.1, Fig. 1 (transformed velocity, $\kappa$, $B$); §4.2, Table 3, Figs. 2–3 (scheme dependence of stresses, wall pressure and fluctuations).
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §II (Morkovin-scaled DNS initialization); §IV E, Figs. 28–29 (Reynolds analogy factor, QP85 law, $Pr_t$, SRA and modified SRA in separated hypersonic interactions); §V.
 - [Gao et al. (2022)](/sources/gao-2022.md) — §5.2, Figs. 16–17 (strong Reynolds analogy in the synthetic-eddy inflow; Morkovin density-scaled Reynolds stresses as a validation of a Mach 2 DG implicit LES).
+- [Bose & Park (2018)](/sources/bose-2018.md) — §2.5, Eq. (17) (equilibrium thermal wall model, strong Reynolds analogy $C_h=C_f/2$, its range and failure near separation); §4.4 (Morkovin-type scaling of closures for $M_t\lesssim0.2$).

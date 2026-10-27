@@ -5,7 +5,7 @@ description: "Unsteady stall of an airfoil pitched beyond its static stall angle
 status: established
 aliases: [deep dynamic stall, dynamic stall onset, dynamic-stall vortex, DSV, pitching-airfoil stall]
 tags: [separated-flow, transition, hybrid-rans-les, des, les, boundary-layer, dynamic-stall]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T10:39:00Z
 ---
 
 # Dynamic stall
@@ -182,8 +182,20 @@ compare with an LES, Baldan & Guardone with an experiment.
   per model, without phase averaging or cycle-to-cycle statistics (§2.2);
   their Introduction says transition progresses "downstream" from the
   trailing edge, while §2.1 has it moving towards the bubble.
+- Not every pitching-airfoil benchmark is a dynamic-stall case. The
+  transonic AGARD Case 3 pitching NACA 0012 that
+  [Sugaya & Imamura (2021)](/sources/sugaya-2021.md), §3.2, run with
+  Spalart–Allmaras RANS on a moving Cartesian grid ($M_\infty=0.6$,
+  $Re=4.8\times10^6$, $\alpha=4.86^\circ+2.44^\circ\sin\varpi_{\mathrm p}t$,
+  reduced frequency 0.081, pivot at quarter chord) stays between
+  $2.42^\circ$ and $7.30^\circ$ *(compiler check, not in the sources)*; the
+  authors report shock motion and the $C_L$ and pitching-moment hysteresis
+  loops, with an inversion of the lift trajectory near $6^\circ$, and
+  describe no stall vortex (Figs. 10–13). The case is recorded on
+  [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md).
 
 # Citations
 
 - [Batther & Lee (2022)](/sources/batther-2022.md) — §1; §2.1, Eq. (1); §2.2, Tables 1–2; §3; §4.1, Fig. 3; §4.2.1–4.2.5, Table 3, Figs. 4–16; §4.3.1, Figs. 17–20; §4.4, Figs. 21–22; §4.5; §5.
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — arXiv v2: Introduction, Fig. 1; §2.1, Figs. 3–8; §2.2, Fig. 9; §3.
+- [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §3.2, Figs. 10–13 (a pitching case outside the definition).

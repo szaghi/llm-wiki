@@ -5,7 +5,7 @@ description: "Artificial-viscosity shock capturing adds a dissipative term, swit
 status: established
 aliases: [artificial viscosity, localized artificial diffusivity, LAD, von Neumann–Richtmyer artificial viscosity, viscous pressure, Persson–Peraire artificial viscosity, entropy-stable artificial viscosity]
 tags: [shock-capturing, numerical-dissipation, dg, compressible, implicit-les, entropy-stable]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:59:00Z
 ---
 
 # Artificial-viscosity shock capturing
@@ -178,6 +178,30 @@ authors to call their runs implicit LES rather than DNS (see
 physical bulk viscosity is a different matter, treated on
 [bulk viscosity](/definitions/bulk-viscosity.md).
 
+**LAD in flux reconstruction for real-fluid shock tubes.**
+[Ruggeri et al. (2022)](/sources/ruggeri-2022.md), §VI, run their
+fourth-order [flux-reconstruction](/methods/flux-reconstruction.md) shock
+tube of supercritical CO$_2$ with the localized
+artificial diffusivity of Haga & Kawai (no formula or coefficient printed),
+as the setting in which they compare interface fluxes; at fourth order the
+differences between exact, Rusanov and neural-network Riemann solvers shrink,
+the largest remaining at the density contact, where Rusanov oscillates most,
+because "with high order, the interfaces of the mesh have a less important
+role than for order 1" (Fig. 7; the networks are on
+[physics-informed neural networks](/methods/physics-informed-neural-network.md)).
+
+**An open item in 2012.** The first High-Order CFD Workshop lists robust,
+parameter-free, accuracy-preserving shock capturing that also converges for
+steady problems among the four pacing items of high-order methods:
+artificial viscosity "involves user-specified parameters", solution
+limiting "often causes iterative convergence to stall", and the surveyed
+participants add that subcell resolution in shocked cells may be needed
+([Wang et al. 2013](/sources/wang-2013.md), §2 Q5, §6). For non-smooth
+problems the workshop found that high-order accuracy was not attained and
+that there was "not enough evidence" to rank high against low order (§6);
+on the transonic NACA 0012 the benefit of $N=2$ over $N=1$ was "not as
+great as for smooth problems" (§5.2).
+
 **Where the sources choose something else.** The sources on reconstruction
 schemes list artificial viscosity among the established shock-capturing
 families and take another route: hybrid TENO schemes switched by a
@@ -284,3 +308,5 @@ Fig. 6). Findings:
 - [Jiang et al. (2025)](/sources/jiang-2025.md) — §3.1, §4.2 (Persson–Peraire indicator driving HWENO limiting instead of AV).
 - [Liang & Fu (2024)](/sources/liang-2024.md) — §1 (artificial viscosity among shock-capturing families).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1 (same).
+- [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §VI, Fig. 7 (Haga–Kawai LAD in fourth-order flux reconstruction; interface fluxes at high order).
+- [Wang et al. (2013)](/sources/wang-2013.md) — §2, Q5; §5.2; §6 (shock capturing as a pacing item; artificial viscosity against limiting).

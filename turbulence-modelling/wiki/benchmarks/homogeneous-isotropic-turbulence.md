@@ -5,7 +5,7 @@ description: "Turbulence in a triply periodic box, decaying or forced: a priori 
 status: established
 aliases: [HIT, DHIT, HID, DIT, Comte-Bellot–Corrsin experiment, CBC experiment, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation, supersonic isothermal turbulence, driven supersonic turbulence, exascale DNS of isotropic turbulence]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-27T06:03:00Z
+timestamp: 2026-10-27T10:34:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -59,6 +59,8 @@ notation registry.)
 | [Wu & Lele (2026)](/sources/wu-2026.md), §3.2.1, §5, §6.1 | forced | 433 | Johns Hopkins database, $1024^3$, 5 snapshots | $64^3$ ($\Delta=16$ DNS spacings) in a Fourier code with 2/3 de-aliasing (PadeOps) and a sixth-order compact code without it (PadeLibs); $32^3$ ($\Delta=32$ spacings) in PadeOps | run to statistical stationarity; forcing not described in the version read |
 | [Liang & Fu (2024)](/sources/liang-2024.md), §4.12 | decaying, compressible | 100 (initial) | filtered DNS on $256^3$ | no model: hybrid TENO / skew-symmetric-split finite differences (TENO-S), WENO-CU6, TENO6, TENO8, $64^3$ | solenoidal field, $E(k)\propto k^4\exp[-2(k/k_0)^2]$ ($k_0$ not printed), $M_t=0.6$ (with $\sqrt3\,u_{\mathrm{rms}}$ over the mean sound speed), other parameters as in the case of Johnsen et al. that the authors cite |
 | [Valencia et al. (2026)](/sources/valencia-2026.md), §IV, §V A | decaying, compressible | 100 (initial, with the Taylor microscale set to $2/k_0$) | finite-volume DNS in PeleC (Godunov, PPM with seventh-order WENO-Z), $512^3$, CFL 0.5, run to four initial eddy-turnover times $2/(k_0u_{\mathrm{rms},0})$; verified against the Motheau–Wakefield data | a priori only: top-hat filter and downsampling to $128^3$, $64^3$, $32^3$, then a Gaussian filter of width $\Delta=4h$, $2h$, $h$ (all $\Delta=16$ DNS spacings) | $E(k)\propto k^4\exp[-2(k/k_0)^2]$, $k_0=4$, $M_t=0.6$ (with $\sqrt{\langle u_iu_i\rangle}$), $T_0=1200$ K, $p_0=101.3$ kPa, $Pr=0.71$, constant viscosity and conductivity |
+| [Kuya et al. (2018)](/sources/kuya-2018.md), §5.1, §5.3, App. C | decaying, compressible, inviscid (Euler) | infinite (no viscosity) | none; the de-aliased spectral run of Honein & Moin is the comparison at $M_{t0}=0.07$ | no model: second-order central split-form fluxes, $32^3$, classical fourth-order Runge–Kutta at CFL about 0.1, run to $t/T_E=180$ | $E(k)=A(k/k_0)^4e^{-2(k/k_0)^2}$, $k_0=6$, $A$ set by the initial turbulent Mach number $M_{t0}=0.07$ or 0.3; uniform initial $T$ and $\rho$; set-up of Honein & Moin except the CFL |
+| [Li et al. (2021)](/sources/li-2021.md), §II A, §III A, §III C, §III E | forced, incompressible | about 260 (training and main tests); 180 and 250 (generalization) | pseudo-spectral, $1024^3$ (data of Xie et al.), second-order Adams–Bashforth, 2/3 de-aliasing | pseudo-spectral LES, $128^3$, top-hat filter $\Delta=16$ DNS spacings (filter-to-grid ratio 2); also $64^3$ and $32^3$ ($\Delta=32$, 64 DNS spacings) | energy spectrum held fixed in the two lowest wavenumbers; a "high-order dissipative numerical method" carries the energy flux at the highest wavenumbers |
 
 The beck-2023 DNS used 16,384 cores of the HAWK system for almost two hours
 (about 30,000 CPU hours). [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md)
@@ -703,6 +705,60 @@ authors' companion paper and by Gassner et al.); their own test is a
 compressible channel (see
 [entropy conservation](/properties/entropy-conservation.md)).
 
+**Inviscid compressible decay as a stability test of split-form fluxes.**
+[Kuya et al. (2018)](/sources/kuya-2018.md), §5.3, run the inviscid
+decaying case at $32^3$ with twelve combinations of second-order central
+fluxes for mass, momentum, kinetic energy, internal energy and pressure
+diffusion (Table 3), with no dissipation of any kind, the large-eddy
+turnover time being $T_E=2\sqrt3/(k_0M_{t0})$ (printed with $k_0$ for the
+peak wavenumber, which the paper names $\kappa_0$). At $M_{t0}=0.07$ every
+scheme with a divergence-form mass flux and quadratic-split momentum flux
+blows up by $t/T_E=40$, while the four with a quadratic-split mass flux and
+cubic-split (Kennedy–Gruber-type) momentum flux run to at least
+$t/T_E=180$; of these, only the scheme whose energy fluxes are consistent
+with the discrete mass and momentum equations (their QC$_C$, the KEEP
+scheme) keeps the total entropy constant and the RMS density and
+temperature fluctuations bounded, the others showing entropy reduction
+and growing thermodynamic fluctuations (Figs. 8–9). At $M_{t0}=0.3$ only
+QC$_C$ gives a stable, entropy-conserving solution (Figs. 10–11). At
+CFL about 1 and $M_{t0}=0.07$ QC$_C$ keeps the kinetic energy constant
+and its normalized RMS density and temperature fluctuations converge to
+about 0.32, which the authors call "fairly good agreement" with about 0.35
+in Honein & Moin's de-aliased spectral simulation (App. C, Fig. 16); the
+same appendix judges CFL about 1 not time-converged and finds that the
+third-order strong-stability-preserving Runge–Kutta scheme produces
+entropy. The flux construction is on
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
+and [entropy conservation](/properties/entropy-conservation.md); the
+companion test is the inviscid
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md).
+
+**A gene-expression-programming SGS model.**
+[Li et al. (2021)](/sources/li-2021.md) train an explicit algebraic model
+of the deviatoric SGS stress, a tensor-basis expansion in Pope's tensors
+$T^{(1)}$–$T^{(4)}$ with constant coefficients found by gene-expression
+programming (on
+[symbolic-regression closures](/methods/symbolic-regression-closure.md)),
+on the top-hat-filtered $1024^3$ forced DNS at $Re_\lambda\approx260$
+coarse-grained to $64^3$ samples, $8\times64^3$ points in all, 70% for
+training (§III A). A posteriori at $128^3$ (§III C, Figs. 2–8), against
+the filtered DNS, the GEP model and the neural-network model of Xie et
+al. nearly overlap the filtered-DNS spectrum, while the
+[dynamic Smagorinsky](/methods/dynamic-procedure.md) and dynamic mixed
+models are damped near the cutoff and "energy-rich" at lower
+wavenumbers, and the run without a model deviates strongly near the
+cutoff. At small separations the dynamic models underpredict the
+longitudinal structure functions of orders 2, 4 and 6, more for higher
+orders, and give too narrow PDFs of the velocity increments and of the
+stress components; the dynamic Smagorinsky flux $\Pi$ is strictly
+positive, whereas GEP and the network reproduce both forward transfer and
+[backscatter](/definitions/energy-backscatter.md) (Fig. 6). The
+generalization tests at $64^3$, $32^3$ and at $Re_\lambda=180$ and 250
+compare energy spectra only (§III E, Figs. 11–12), and the authors limit
+the model's validation to isotropic turbulence (§IV). The cost per
+iteration of GEP is slightly above dynamic Smagorinsky and far below the
+network (16 cores, Fig. 13; no timings printed).
+
 **Closure constants.** As recalled by
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md), decay rates of grid
 turbulence (Comte-Bellot & Corrsin 1966) constrain the coefficients of RANS
@@ -866,6 +922,22 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
   network is trained on HIT and channel data together.
 - [Caban et al. (2026)](/sources/caban-2026.md) do not say whether their
   $Re_\lambda=100$ DNS is forced or decaying.
+- [Kuya et al. (2018)](/sources/kuya-2018.md) compare $M_{t0}=0.3$ with
+  "$M_{t0}=0.05$ shown in Fig. 9(a)" (§5.3), but Fig. 9 is the
+  $M_{t0}=0.07$ run (0.05 is the Mach number of their Taylor–Green
+  vortex). Their appended corrigendum (J. Comput. Phys. 391:397) relabels
+  the kinetic-energy axis of Figs. 8–17(a) as $\rho k/(\rho_0k_0)$ (density
+  times specific kinetic energy, normalized by its initial value). Their
+  runs are inviscid stability tests at infinite Reynolds number, not LES
+  with a model, and the Honein & Moin comparison is made at a time step the
+  paper itself judges not time-converged.
+- [Li et al. (2021)](/sources/li-2021.md) state that they sample "every
+  17th grid point" of the $1024^3$ field to get $16^3$ datasets of $64^3$
+  points (§III A); $1024/64=16$, so the stride that gives $64^3$ points
+  and $16^3$ offsets is 16 *(compiler check, not in the sources)*. Their
+  LES solver adds a "high-order dissipative numerical method" at high
+  wavenumbers (§II A) in all runs, and the paper does not separate its
+  dissipation from that of the models.
 
 # Citations
 
@@ -908,3 +980,5 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Aiello et al. (2026)](/sources/aiello-2026.md) — §4, §4.2 (recalled kinetic-energy imbalance of the Gouasmi et al. pressure term in inviscid HIT).
 - [Liang & Fu (2024)](/sources/liang-2024.md) — §4.12, Fig. 21 (no-model TENO-S and WENO/TENO schemes on decaying compressible isotropic turbulence, $64^3$, against filtered DNS).
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §I; §II C, Eqs. (23)–(29); §IV, Eqs. (51)–(52), Figs. 1–2; §V A–C, Tables III–VII, Fig. 3 (a priori deconvolution closures under explicit filtering on compressible decaying HIT).
+- [Kuya et al. (2018)](/sources/kuya-2018.md) — §5.1, Eq. (73) (set-up); §5.3, Table 3, Figs. 8–11; App. C, Figs. 16–17 (inviscid compressible decay as a stability and entropy test of split-form fluxes); appended corrigendum.
+- [Li et al. (2021)](/sources/li-2021.md) — §II A, Eq. (17); §III A (training data); §III C, Figs. 2–8 (a posteriori against filtered DNS); §III E, Figs. 11–12; §III F, Fig. 13; §IV.

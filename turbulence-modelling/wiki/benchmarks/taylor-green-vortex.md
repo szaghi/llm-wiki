@@ -3,9 +3,9 @@ type: Benchmark
 title: "Taylor–Green vortex"
 description: "The triply periodic vortex flow that transitions from a single-mode analytic field to decaying turbulence: at Re 40,000 to separate Smagorinsky and implicit LES errors; at Re 100 to 10,000 to split numerical dissipation and test subgrid models, filters and split forms; supersonic for shock capturing; inviscid for energy conservation; laminar and 2D for filter and commutator analysis."
 status: established
-aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex, laminar Taylor–Green vortex, Brachet Taylor–Green vortex]
+aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex, laminar Taylor–Green vortex, Brachet Taylor–Green vortex, High-Order CFD Workshop case C3.5]
 tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible, filtering, kinetic-energy-preserving]
-timestamp: 2026-10-27T06:13:00Z
+timestamp: 2026-10-27T11:00:00Z
 ---
 
 # Taylor–Green vortex
@@ -113,6 +113,48 @@ to the fully turbulent state.
 | [Volpiani (2024)](/sources/volpiani-2024.md) | finite differences in the Python solver BASIC, $M=0.085$, $p_0=100$: divergence form with relaxation filtering (standard and optimized 11-point schemes and filters) against three [kinetic-energy-preserving](/properties/kinetic-energy-preservation.md) split forms (Feiereisen, Ducros, Kennedy–Gruber) without filter; Smagorinsky, two multi-scale Smagorinsky variants and dynamic Smagorinsky; also inviscid and $Re=2500$–10,000 | inviscid $64^3$; $Re=1600$: $64^3$ to $512^3$; $Re\ge2500$: $128^3$ | inviscid: Brachet et al. and the codes compared by Johnsen et al.; viscous: DNS of Dairay et al. |
 | [Liang & Fu (2024)](/sources/liang-2024.md) | hybrid finite differences TENO-S (non-dissipative split central flux, eight-point TENO at flagged cells); WENO-CU6, TENO6, TENO8 for comparison; inviscid to $t=100$ and viscous $Re=100$ to 10,000 | inviscid $64^3$; viscous $64^3$ ($Re\le3000$) and $128^3$ ($Re=5000$, 10,000) | DNS of Brachet et al. ($256^3$) and Dairay et al. ($1280^3$, $2048^3$) |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) | finite differences TENO-THINC against WENO5-Z and TENO5; inviscid, $p_0=100$, to $t=10$ | $64^3$ | none named in the text |
+| [Wang et al. (2013)](/sources/wang-2013.md) (workshop summary, case C3.5) | seven participants: DGSEM with RK5 (IAG Stuttgart), DG with interior penalty (Cenaero), DG/BR2 (ONERA), 4th- to 12th-order central and 4th-order DRP finite differences (NASA Glenn), DG-CPR (Iowa State), reconstructed finite volumes (ONERA), reconstructed DG (Michigan) | baseline $256^3$ degrees of freedom; the DG curves of Fig. 13 are labelled $N=2$, $128^3$; $N=3$, $96^3$; $N=4$, $64^3$ (the Fig. 14 caption calls the $96^3$ a mesh) | de-aliased incompressible pseudo-spectral solution, grid-converged on $512^3$, low-storage three-step Runge–Kutta, $\Delta t=10^{-3}$ |
+| [Kuya et al. (2018)](/sources/kuya-2018.md) | second-order central split-form fluxes (twelve combinations, no dissipation), classical fourth-order Runge–Kutta at CFL about 0.1; inviscid, $M_0=0.05$ and 0.4 | $64^3$ | none: conservation of kinetic energy and entropy is the criterion |
+
+**The workshop case definition.** The $Re=1600$ case as most of these
+sources run it is case C3.5 of the first International Workshop on
+High-Order CFD Methods (Nashville, January 2012), whose summary is
+[Wang et al. (2013)](/sources/wang-2013.md), §4.15 and §5.6: the initial
+field above on the periodic cube $[-\pi L,\pi L]^3$, incompressible or
+compressible at $M_0=V_0/c_0=0.1$ ($c_0$ the reference sound speed,
+page-local), $Re=\rho_0V_0L/\mu=1600$, $Pr=0.71$, zero bulk viscosity, run
+to $t=20\,L/V_0$, with the dissipation peak near $t=8\,L/V_0$. The
+diagnostics are the density-weighted volume averages of the kinetic
+energy, $E_{\mathrm{TG}}=(\rho_0|\Omega_{\mathrm{TG}}|)^{-1}\int\tfrac12\rho u_iu_i\,dV$,
+and of the enstrophy, $\mathcal Z=(\rho_0|\Omega_{\mathrm{TG}}|)^{-1}\int\tfrac12\rho\,\omega_i\omega_i\,dV$
+($\Omega_{\mathrm{TG}}$ the box, $E_{\mathrm{TG}}$, $\mathcal Z$
+page-local), with $-dE_{\mathrm{TG}}/dt=2(\mu/\rho_0)\mathcal Z$ exact for
+incompressible and approximate for low-Mach compressible flow. Three
+errors are defined: of $-dE_{\mathrm{TG}}/dt$ against the reference, of
+$2(\mu/\rho_0)\mathcal Z$ against the reference, and the difference of the
+two, which needs no reference. The authors note that the third would be
+identically zero for a truly kinetic-energy-preserving method, such as
+skew-symmetric central differences, but that such methods add
+dissipation through de-aliasing filters in practice. They state that the
+transition at $Re=1600$ "is sufficiently robust such that it is not
+initiated by truncation errors", which makes a detailed temporal
+comparison possible, and that $256^3$ is adequate and "seems to
+correspond to the Nyquist criterion" (§5.6). Results are compared as
+error against cost in work units (one work unit is the CPU time of the
+TauBench benchmark for ten steps at 250,000 degrees of freedom, uncertain
+to about 30% across machines; §3.2, §6). In that comparison
+(§5.6, Figs. 25–27) the finite-difference and finite-volume schemes reach
+their projected orders in none of the three errors; the DG-like schemes
+reach it in the first and third, and the second converges suboptimally for all.
+The 12th-order central scheme's error is comparable with that of the
+formally fourth-order dispersion-relation-preserving scheme, while the
+standard fourth-order error is much higher, which the authors read as
+dispersion error dominating. Unstructured methods reach the convergence
+rate of the most precise finite differences at higher cost and higher
+precision. Beck's DGSEM order study at constant equivalent resolution
+converges spectrally at constant cost, a result the authors restrict to
+explicit time integration (see
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)).
 
 **Numerical dissipation of a no-model DNS scheme.**
 [Cao et al. (2022)](/sources/cao-2022.md), §3.1, Figs. 2–5, measure the
@@ -449,6 +491,48 @@ Figs. 19–20). [Volpiani (2024)](/sources/volpiani-2024.md) (above) also
 compares a no-model $128^3$ run with the Dairay et al. DNS up to
 $Re=10{,}000$.
 
+**Consistent energy fluxes and entropy in the inviscid compressible TGV.**
+[Kuya et al. (2018)](/sources/kuya-2018.md), §5.1–5.2, start the inviscid
+TGV from $\rho=1$, the velocity field above with amplitude $M_0$ and
+$p=1/\gamma+\tfrac1{16}\rho_0M_0^2(\cos2x+\cos2y)(\cos2z+2)$ (velocities
+in units of the sound speed, $L=1$), on $64^3$ points, and plot against
+$M_0t$. Their twelve flux combinations (Table 3) differ in the split form
+of the mass and momentum fluxes and in whether the kinetic-energy,
+internal-energy and pressure-diffusion fluxes of the total-energy equation
+are consistent with the discrete mass and momentum equations (see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
+and [entropy conservation](/properties/entropy-conservation.md)):
+
+- *$M_0=0.05$* (Figs. 1–2): all four divergence-mass, quadratic-split-momentum
+  schemes with consistent or partly consistent energy fluxes become
+  unstable by $M_0t=28$, the fully consistent one lasting longest; the two
+  with enthalpy fluxes run longer and keep kinetic energy, but every
+  scheme of this family produces or destroys entropy and lets the density
+  and temperature fluctuations grow. All schemes with quadratic-split mass
+  and cubic-split momentum keep the total kinetic energy, and only the
+  fully consistent one (their QC$_C$, the KEEP scheme) keeps the total
+  entropy with bounded density and temperature fluctuations.
+- *$M_0=0.4$* (Figs. 3–7): the divergence-mass family is unstable by
+  $M_0t=20$; QC$_C$ loses kinetic energy around $M_0t\approx20$, which the
+  authors attribute to pressure work (the volume-averaged pressure–dilatation
+  rate jumps there, Fig. 5), and then stays almost constant to $M_0t=160$
+  with a "negligibly small" long-run entropy reduction they attribute to
+  the non-conservative pressure–dilatation term; the scheme with an
+  inconsistent kinetic-energy flux stays stable but gains kinetic energy
+  and thermodynamic fluctuations with entropy reduction; the two schemes
+  with enthalpy fluxes (one of them the Jameson/Pirozzoli QC scheme) lose
+  kinetic energy around $M_0t\approx40$–60, then gain it and diverge, the
+  density PDF of one of them spreading continuously until it fails near
+  $M_0t\approx120$.
+
+The authors offer reduced aliasing of the cubic split form as a partial
+explanation of why the consistent QC scheme is stable and the consistent
+DQ scheme is not, and call for further study (§5.3); they also note that
+the enthalpy-flux DQ schemes outlast the consistent DQ scheme, a result
+"not fully understood" and possibly problem-dependent. The companion
+test is inviscid compressible decaying
+[isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md).
+
 **Eddy-viscosity models in high-order TGV runs.** Several sources agree
 that adding an eddy-viscosity model to a high-order or low-dissipation
 TGV run at $Re=1600$ degrades it: Smagorinsky, WALE and Vreman on $N=4$
@@ -780,6 +864,22 @@ sources)*.
   number or the Reynolds-number definition of their viscous runs, and
   [Takagi et al. (2022)](/sources/takagi-2022.md) name no reference curve
   for their inviscid run.
+- [Wang et al. (2013)](/sources/wang-2013.md) announce "two errors with
+  respect to the reference results" and then define a third, which is not
+  relative to the reference (§5.6); the $512^3$ reference is called
+  grid-converged, with a spectral convergence study of van Rees et al.
+  cited for it, and no convergence study is displayed (§4.15). Their efficiency comparisons rest
+  on work units declared uncertain to about 30%, with no hardware or
+  timings reported.
+- [Kuya et al. (2018)](/sources/kuya-2018.md) run the inviscid TGV as a
+  stability test with no reference solution; the appended corrigendum
+  (J. Comput. Phys. 391:397) relabels the kinetic-energy axis of
+  Figs. 1–4(a) as $\rho k/(\rho_0k_0)$ (density times specific kinetic
+  energy over its initial value). Their "entropy conservation" is that of
+  the total $\rho s$ through consistent discrete mass and internal-energy
+  equations, semi-discrete only: CFL about 1 and the third-order
+  strong-stability-preserving Runge–Kutta scheme both produce entropy
+  (App. C).
 
 # Citations
 
@@ -807,3 +907,5 @@ sources)*.
 - [Volpiani (2024)](/sources/volpiani-2024.md) — §1; §4, Table 1, Figs. 4–5; §5, Figs. 6–18; §6.
 - [Liang & Fu (2024)](/sources/liang-2024.md) — §4.10, Figs. 17–18; §4.11, Figs. 19–20.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.10, Fig. 21.
+- [Wang et al. (2013)](/sources/wang-2013.md) — §3.2 (work unit); §4.15 (case C3.5 definition and diagnostics); §5.6, Table VII, Figs. 13–14, 25–27 (participants, error against work units); §6.
+- [Kuya et al. (2018)](/sources/kuya-2018.md) — §5.1, Eq. (72); §5.2, Table 3, Figs. 1–7 (inviscid compressible TGV, $M_0=0.05$ and 0.4); §5.3; App. C, Figs. 12–15; appended corrigendum.

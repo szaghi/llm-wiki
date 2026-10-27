@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "k-ε models"
-description: "Two-equation RANS eddy-viscosity models transporting the turbulent kinetic energy and its dissipation rate: the standard high-Reynolds form and its constants, the realizable variant with a two-layer wall treatment, low-Reynolds and elliptic-relaxation relatives, and evidence on bluff-body wakes, periodic hills and learned non-linear corrections."
+description: "Two-equation RANS eddy-viscosity models transporting the turbulent kinetic energy and its dissipation rate: the standard high-Reynolds form, its constants and log-law calibration, the realizable variant with a two-layer wall treatment, low-Reynolds and elliptic-relaxation relatives, and evidence on bluff-body wakes, periodic hills and learned non-linear corrections."
 status: established
 aliases: [k-epsilon, standard k-ε, Launder–Sharma k-ε, realizable k-ε, RKE, Shih k-ε, enhanced wall treatment, EWT, two-layer k-ε]
 tags: [rans, eddy-viscosity, separated-flow, boundary-layer]
-timestamp: 2026-10-27T05:46:00Z
+timestamp: 2026-10-27T10:56:00Z
 ---
 
 # k-ε models
@@ -75,6 +75,53 @@ Bremhorst) and lacks a natural wall boundary condition for $\varepsilon$
 zero, by these defects and by the wall singularity of $\omega$
 ([Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §1).
 
+**Log-law calibration.** Heinz (2020) writes the $\varepsilon$ equation as
+$D\varepsilon/Dt=C_{\varepsilon1}(\varepsilon^2/k)(P_k/\varepsilon-\alpha_\varepsilon)+D_\varepsilon$,
+with $\alpha_\varepsilon=C_{\varepsilon2}/C_{\varepsilon1}=1.33$ (page-local,
+the source's $\alpha$; the $\alpha^*_\varepsilon$ of the next paragraph is its
+resolution-dependent form) and $D_\varepsilon$ the diffusion term, and inserts
+the log-layer relations $\partial_y\langle u\rangle=u_\tau/(\kappa y)$,
+$k=u_\tau^2/C_\mu^{1/2}$, $\varepsilon=u_\tau^3/(\kappa y)$, which give
+$\nu_t=\kappa yu_\tau$ ([Heinz (2020)](/sources/heinz-2020.md), §2.3,
+Eqs. 8–10). The $\varepsilon$ equation is then consistent with the
+[law of the wall](/definitions/law-of-the-wall.md) only if
+
+$$\kappa^2=C_\mu^{1/2}\sigma_\varepsilon\big(C_{\varepsilon2}-C_{\varepsilon1}\big),$$
+
+which the standard constants (1.44, 1.92, 1.3) satisfy only with "a
+relatively high value" $\kappa=0.43$, against $\kappa=0.41$ for the
+$k$-$\omega$ constants Heinz uses (§2.3; see the
+[Wilcox $k$-$\omega$ page](/methods/k-omega-model.md)). The right side is
+$0.1872$, $\kappa=0.433$ *(compiler check, not in the sources)*. Heinz's
+analogous condition for the scale-adaptive model gives $\kappa=0.41$ with
+that model's standard settings (see [scale-adaptive simulation](/methods/scale-adaptive-simulation.md)).
+
+**A stochastic derivation of the eddy viscosity.** Heinz derives the
+algebraic Boussinesq stress from a Fokker–Planck model of the velocity
+probability density: its simplest anisotropy balance gives
+$R_{ij}=\tfrac23k\delta_{ij}-2\nu_t\langle S_{ij}\rangle$ with
+$\nu_t=C_\mu k^2/\varepsilon$ and $C_\mu=2(1-c_0)/3$, where $0\le c_0\le1$ is
+the diffusion parameter of the stochastic model (page-local, the source's
+$c_0$), so that $C_\mu=0.09$ corresponds to $c_0=0.865$ *(compiler check,
+not in the sources)*. The $k$ and $\varepsilon$ equations can also be
+rewritten as BGK-type relaxations towards the equilibrium values
+$k_{\mathrm{eq}}=kP_k/\varepsilon$ and $\varepsilon_{\mathrm{eq}}=P_k$, with
+relaxation times $k/\varepsilon$ and $k/(C_{\varepsilon2}\varepsilon)$ and a
+sink $(1-\alpha_\varepsilon^{-1})\varepsilon_{\mathrm{eq}}C_{\varepsilon2}\varepsilon/k$
+in the $\varepsilon$ equation (§2.2–§2.3, Eqs. 2–7, 12, following Asinari et
+al.); see the [Boussinesq page](/definitions/boussinesq-hypothesis.md).
+
+**Eddy viscosity in compressible turbomachinery form.** Sandberg &
+Michelassi (2022) list the model, with $\mu_t=0.09\langle\rho\rangle k^2/\varepsilon$
+after Jones & Launder (1972), among the eddy-viscosity closures of
+turbomachinery RANS, state that realizability conditions mitigate the
+overproduction of $k$ at stagnation points (citing Durbin 1996), and list
+the low-Reynolds models of Jones & Launder (1973) among transition
+predictors whose wall damping has "no obvious relation to the transition
+physics" ([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md),
+§2.2.2.1, §2.2.3, §3.3.1; see
+[local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)).
+
 **A resolution-dependent destruction coefficient.** In
 [continuous eddy simulation](/methods/continuous-eddy-simulation.md) the
 same model, with $C_{\varepsilon1}=1.44$, $C_{\varepsilon2}=1.92$,
@@ -88,7 +135,13 @@ scale falls ([Heinz (2022)](/sources/heinz-2022.md), §2, Eqs. 1–2,
 Table 2). The time-scale form of the same coefficient, used in the
 partially integrated transport model, is consistent only for homogeneous
 flow when the transport terms carry the modelled viscosity, by Heinz's
-argument (§2–§3).
+argument (§2–§3). Heinz (2020) gives the variational origin of the
+reduction, $\alpha^*_\varepsilon=1+L_+^2(\alpha_\varepsilon-1)$ with $L_+$ the
+modelled-to-total length-scale ratio, under the assumptions stated on the
+continuous-eddy-simulation page, and its $k$-equation (DES-like) variant
+$\alpha^*_\varepsilon=1+\alpha_\varepsilon-\psi_\alpha$, with $\psi_\alpha$ the
+multiplier of $\varepsilon$ in the $k$ equation (page-local) (§4.2–§4.3,
+Eqs. 38–46).
 
 **A length-scale equation in general form.** Wang et al. (2021) treat
 $k$-$\varepsilon$ and $k$-$\omega$ as members of a family with length-scale
@@ -248,3 +301,5 @@ Boltzmann hybrid on the Spalart–Allmaras-based zonal DES instead
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §2.3 Eqs. 11–12.
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §1.
 - [Husson et al. (2024)](/sources/husson-2024.md) — §1.
+- [Heinz (2020)](/sources/heinz-2020.md) — §2.2–§2.3 Eqs. 2–12, §4.2–§4.3 Eqs. 38–46.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1, §2.2.3, §3.3.1.

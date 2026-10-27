@@ -5,7 +5,7 @@ description: "Wilcox's two-equation k-ω eddy-viscosity model and its unblended 
 status: established
 aliases: [k-omega model, Wilcox k-ω, Wilcox 1998, Wilcox 2006, Wilcox 07, k-ω 2006, TNT, turbulent/non-turbulent k-ω, k-log-ω, k-ln ω]
 tags: [rans, eddy-viscosity, dg, boundary-layer]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T10:56:00Z
 ---
 
 # Wilcox k-ω model
@@ -89,6 +89,38 @@ $\alpha=0.5532$ for TNT; with the Wilcox (1998) constants and $\kappa=0.41$
 it gives 0.520, matching 13/25, and with the Wilcox (2006) constants it
 gives 0.520 for $\kappa=0.40$ but 0.507 for $\kappa=0.41$ *(compiler check,
 not in the sources)*.
+
+**A form with $\omega=\varepsilon/k$.** Heinz (2020) writes a $k$-$\omega$
+model whose frequency is $1/\tau=\varepsilon/k$, without the $\beta^*$ of the
+registry's $\omega$, so that $\nu_t=C_\mu k/(\varepsilon/k)$; in that variable
+the $\omega$ equation is a production–destruction balance with coefficient
+$C_{\omega1}$ and destruction ratio $\alpha_\omega=C_{\omega2}/(C_\mu C_{\omega1})$
+(page-local; the source's $\beta$, $\approx1.63$), plus an
+optional cross diffusion
+$C_\omega k^{-1}(\nu+\nu_t)\partial_jk\,\partial_j(\varepsilon/k)$ that "acts
+like a damping function" ([Heinz (2020)](/sources/heinz-2020.md), §2.3,
+Eq. 11; $C_{\omega1}$, $C_{\omega2}$, $C_\omega$ the source's names). The
+constants, attributed to Bredberg et al., are
+$(C_{\omega1},C_{\omega2},C_\mu,C_\omega,\sigma_\omega)=(0.49,0.072,0.09,1.1,1.8)$,
+with $\sigma_\omega$ a divisor of $\nu_t$. Heinz's log-law condition is
+
+$$\kappa^2=C_\mu^{1/2}\sigma_\omega\Big(\frac{C_{\omega2}}{C_\mu}-C_{\omega1}\Big),$$
+
+which gives $\kappa=0.41$, against $0.43$ for the standard
+[$k$-$\varepsilon$](/methods/k-epsilon-model.md) constants (§2.3). Rewritten
+in the registry's $\omega=\varepsilon/(\beta^*k)$ with $\beta^*=C_\mu$, the
+model is a Wilcox-type equation with $\alpha=C_{\omega1}=0.49$,
+$\beta=C_{\omega2}=0.072$ and multiplier $1/1.8=0.556$ on $\nu_t$ in the
+$\omega$ diffusion, and the condition above is the TNT log-layer expression
+of the table (Elzaabalawy et al.'s form of the equations above) solved for
+$\kappa$; its value is $0.1674$, $\kappa=0.409$
+*(compiler check, not in the sources)*. Heinz also records that transforming
+the $k$-$\varepsilon$ model into this variable gives $C_{\omega1}=C_{\varepsilon1}-1$
+and $C_{\omega2}/C_\mu=C_{\varepsilon2}-1$ (§2.3), and builds on the same
+form the resolution-dependent destruction ratio
+$\alpha^*_\omega=1+L_+^2(\alpha_\omega-1)$ of
+[continuous eddy simulation](/methods/continuous-eddy-simulation.md)
+(§4.3, Eqs. 47–51).
 
 ### Near-wall behaviour of $\omega$ and $k$
 
@@ -290,6 +322,18 @@ stepping (§2.2; see
   about 2 for $k$-$\tau$, because its additional non-linear sources cannot
   be treated implicitly; its slight departure from $k$-$\tau$ in the core
   is attributed to wall-distance errors near the sharp corner (§3.5, §4).
+- **High-order RANS of the RAE 2822.** At the first High-Order CFD
+  Workshop the Bergamo group ran the Wilcox $k$-$\omega$ model (and an
+  explicit algebraic Reynolds-stress model) with DG on the
+  [RAE 2822 airfoil](/benchmarks/rae-2822-airfoil.md), alongside two
+  Spalart–Allmaras DG submissions; the organizers report "a large spread
+  among the groups and virtually no improvement from high order under
+  uniform mesh refinement", attributed partly to the wake alignment of the
+  initial mesh and partly to the choice of turbulence model
+  ([Wang et al. (2013)](/sources/wang-2013.md), §5.4, Table V, Fig. 23).
+  Sandberg & Michelassi (2022) list the model's eddy viscosity
+  $\mu_t=\langle\rho\rangle k/\omega$ among the turbomachinery closures
+  ([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §2.2.2.1).
 - **Outlook.** Elzaabalawy et al. propose the $k$-$kl$ model, with $kl=0$
   at the wall and second velocity derivatives available element-wise in DG,
   and a "negative $k$-$kl$" analogue of negative
@@ -311,6 +355,12 @@ stepping (§2.2; see
   regression and drop it (§5.3).
 - Elzaabalawy et al. print the limiter floor as "$\epsilon=1^{-12}$"
   (§4.2).
+- Sandberg & Michelassi cite the model as "Wilcox et al. (1998)" in the
+  text (§2.2.2.1), while their reference list prints the single-author
+  Wilcox (1998) book.
+- By the rewriting above, Heinz's $C_{\omega1}$ plays the role of Wilcox's
+  $\alpha$, and Heinz's destruction ratio $\alpha_\omega$ (printed $\beta$) is
+  not Wilcox's $\beta$; the names in the table above are Wilcox's.
 
 # Citations
 
@@ -321,3 +371,6 @@ stepping (§2.2; see
 - [Lodares et al. (2022)](/sources/lodares-2022.md) — §1, §8.
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §0, §1.1, §4.1.
 - [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §II, §IV B, §V.
+- [Heinz (2020)](/sources/heinz-2020.md) — §2.3 Eq. 11, §4.3 Eqs. 47–51.
+- [Wang et al. (2013)](/sources/wang-2013.md) — §5.4 Table V Fig. 23.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1.

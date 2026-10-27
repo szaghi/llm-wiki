@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity law of adverse-pressure-gradient tur
 status: established
 aliases: [APG wall law, log-law/half-power-law wall law, extended wall law, half-power law, pressure-gradient wall law]
 tags: [boundary-layer, rans, wall-model, separated-flow]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T10:56:00Z
 ---
 
 # Wall law in adverse pressure gradient
@@ -148,6 +148,26 @@ while Coles' wake has not reached the top of the first element. See the
 [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md) benchmark
 page for the APG database.
 
+**Pressure-gradient scaling in LES wall models.** [Bose & Park (2018)](/sources/bose-2018.md)
+(§2.1, Eq. 11) cite LES wall-stress models that rescale the wall law with
+the pressure-gradient velocity $u_p=\lvert\nu\rho^{-1}\partial\langle p\rangle/\partial x\rvert^{1/3}$
+— the $u_p$ of Nickels' scale above — and the mixed velocity
+$u_{\tau p}=\sqrt{u_\tau^2+u_p^2}$ (Manhart et al. 2008; Duprat et al. 2011;
+Maheu et al. 2012, after Simpson 1983, as cited; $u_{\tau p}$ page-local).
+They predict better than the equilibrium form, but Hickel et al. (2012), as
+cited, call a pressure-gradient term without the convective and unsteady
+terms inconsistent with the outer momentum equation. Bose & Park's own
+integral analysis (§2.1, Eqs. 7–8) bounds the pressure-gradient part of the
+modelled wall stress by the Clauser parameter times $h_{\mathrm{wm}}/\delta^*$,
+so the matching height needed for an equilibrium model may depend on the
+pressure-gradient parameter, unlike fixed fractions $h_{\mathrm{wm}}\approx0.1$–$0.2\delta$
+(Larsson et al. 2016, as cited). The
+derivation, its sign convention and the non-equilibrium alternatives are on
+the [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)
+page. Bose & Park (2018, §2.5) add, citing Bradshaw & Huang (1995), that
+law-of-the-wall errors in adverse-pressure-gradient flows appear amplified
+in the predicted temperature and heat flux.
+
 ## Evidence that missing pressure-gradient terms matter
 
 Two sources, both using an equilibrium wall law without any
@@ -240,3 +260,4 @@ it appears.
 - [Constant et al. (2024)](/sources/constant-2024.md) — §6.1, Figs. 19–22, lines 747–757; §6.2, lines 876–879; §7 (HAL author manuscript).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §3.3; conclusions (HAL accepted manuscript, lines 459–470, 516–519, 553–557).
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §3.3, Eq. (13); §4.2, Figs. 6–8.
+- [Bose & Park (2018)](/sources/bose-2018.md) — §2.1, Eqs. (7)–(8), (11); §2.5.

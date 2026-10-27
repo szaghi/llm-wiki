@@ -5,7 +5,7 @@ description: "A closed region of reversed flow formed when a laminar boundary la
 status: established
 aliases: [LSB, separation-induced transition, laminar separation, transitional separation bubble]
 tags: [transition, separated-flow, boundary-layer, rans, implicit-les, turbomachinery]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T10:54:00Z
 ---
 
 # Laminar separation bubble
@@ -55,7 +55,14 @@ $Re=2.2\times10^5$ (Slaughter et al. 2023).
   ([Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md), §3.5).
   Slaughter et al. see two-dimensional Tollmien–Schlichting-type waves at
   the start of the mainplane bubble breaking down quickly to turbulence,
-  the exact route being unclear (§4.3, Fig. 22b).
+  the exact route being unclear (§4.3, Fig. 22b). Sandberg & Michelassi
+  (2022) describe the separated-flow route as Kelvin–Helmholtz roll-up of the
+  separated shear layer followed by secondary instability, with
+  Tollmien–Schlichting waves possibly dominant at large Reynolds number and
+  small adverse pressure gradient (citing Hatman & Wang 1999) and a
+  three-dimensional absolute instability of two-dimensional shedding
+  (citing Jones et al. 2008) as a further path
+  ([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §3.3.3).
 - **Thickness and adverse pressure gradient.** A strong adverse pressure
   gradient "thins" the bubbles on the mainplane and first flap; the bubble
   on the ground plane under the wing is larger and thicker (Slaughter et
@@ -87,6 +94,17 @@ shedding raises the mean lift by 22.8% over the steady solution, and near
 bubble bursting the RANS either settles or keeps shedding whose time
 average is a closed bubble (Carreño Ruiz & D'Ambrosio 2022, §5, Table 11).
 
+**Wake passing.** In turbomachinery the incoming wakes of the upstream row
+make the bubble periodic. Sandberg & Michelassi (2022) cite the LES of a
+low-pressure-turbine stage by Pichler et al. (2017a) at an isentropic exit
+Reynolds number of $10^5$: once the wake apex passes the separation point,
+the separation and reattachment points move downstream at roughly one half
+and one quarter of the local isentropic velocity, and the bubble disappears
+for about 25% of the time (§3.3.3.4, Fig. 6). The stakes are large: changing
+the leading-edge geometry, and with it the bubble, changed the overall
+blade loss by up to 30% (citing Wheeler et al. 2009; §3.3.2). See
+[turbine cascades](/benchmarks/turbine-cascade.md).
+
 ## Prediction with RANS transition models
 
 Correlation-based transition models size the bubble through the production
@@ -103,7 +121,16 @@ weak point; details of the models are on the
   the Eppler 387 bubble at $Re=10^5$ is far too large and lift drops at
   $4^\circ$–$8^\circ$; the one-equation γ-SST overpredicts bubble size at low
   Reynolds number on Eppler 387 and Pak-B (Menter et al. 2022, Figs. 4–5,
-  10, 16–19, 24).
+  10, 16–19, 24). Sandberg & Michelassi (2022) cite the same device of
+  Langtry & Menter (2009), a separation-aware term that raises the
+  intermittency "above unity" in transitional separated regions, and add
+  that the $\gamma$-$Re_\theta$ model suppresses wake-induced
+  transition, because the low
+  $Re_\theta$ of the incoming wakes is not fed into the blade boundary
+  layers; they also cite the $k$-$\overline{v^2}$-$\omega$ model of
+  Lopez & Walters, which transports the wall-normal fluctuation energy, as
+  having predicted the bubble accurately in a low-Reynolds-number turbine
+  (citing Akolekar et al. 2018) (§3.3.3.3–§3.3.3.4).
 - **Airfoils.** On SD7003 at $Re_c=60{,}000$, $\alpha=4^\circ$, the best
   calibration places separation, transition and reattachment at 0.202,
   0.518 and 0.660 chords against 0.23, 0.55 and 0.65 of the reference LES;
@@ -320,6 +347,17 @@ $x^+\approx20$, $z^+\approx6$), and obtains an isentropic Mach number in
 see [flux reconstruction](/methods/flux-reconstruction.md) and
 [turbine cascades](/benchmarks/turbine-cascade.md)).
 
+The bubble is also a workshop target for scale-resolving methods. The
+first High-Order CFD Workshop posed the SD7003 wing at $Re_c=60{,}000$,
+$M=0.1$, spanwise periodic over $0.2c$, as its implicit-LES case, with
+$\alpha=4^\circ$ giving a relatively long bubble and $\alpha=8^\circ$ a
+shorter one, and asked for methods that handle "in a seamless fashion, the
+mixed laminar, transitional, and turbulent flow regions"; the summary
+specifies the case without showing results
+([Wang et al. (2013)](/sources/wang-2013.md), §4.13, case C3.3). It is the
+airfoil and Reynolds number of the RANS calibration of Carreño Ruiz &
+D'Ambrosio above, whose reference is an LES.
+
 Lederer et al. (2026) compute the Eppler 387 airfoil by implicit LES with a
 mass-conserving mixed-stress discretization of degree $N=3$, with and
 without the [high-order projection-based upwind](/methods/high-order-projection-based-upwind-method.md)
@@ -378,3 +416,5 @@ instabilities leading to transition (§4.1, §5, Table 2; see
 - [Lederer et al. (2026)](/sources/lederer-2026.md) — §4, §4.1–§4.2 Tables 1–2 Fig. 10, §5 (arXiv v1).
 - [Batther & Lee (2022)](/sources/batther-2022.md) — §4.2.2–4.2.5, §4.4, Table 3, Figs. 6–8, 14–16, 22.
 - [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §II, §IV A, §V Fig. 29, Appendix.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §3.3.2, §3.3.3, §3.3.3.3–§3.3.3.4, Fig. 6.
+- [Wang et al. (2013)](/sources/wang-2013.md) — §4.13 (case C3.3).

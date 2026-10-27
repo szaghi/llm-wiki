@@ -5,7 +5,7 @@ description: "How the grid-point and time-step counts of DNS, wall-resolved and 
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T11:00:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -50,7 +50,7 @@ wall-resolved LES. [Delassaux et al. (2023)](/sources/delassaux-2023.md)
 (§4.1) recall Spalart's forecast that wall-resolved LES and DNS of a
 full-scale high-Reynolds-number geometry would become available in 2050 and
 2080 respectively. [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md)
-(§1, Fig. 1) recall, from Spalart as they cite him, that accurate "pure"
+(§1, Fig. 1) recall, from Spalart as cited, that accurate "pure"
 WMLES of a full-size airliner wing will not be possible before 2045, because
 $\delta$ grows from about 1 mm at the leading edge to tens of centimetres at
 the trailing edge and LES needs near-isotropic cells where RANS accepts high
@@ -62,6 +62,26 @@ $Re^{13/7}$ for wall-resolved and $Re$ for wall-modelled LES
 ($37/14\approx2.64$ *(compiler check, not in the sources)*), and from
 Piomelli (2014) that above $Re=O(10^5)$ more than 90 % of the points of a
 wall-resolved LES resolve less than 10 % of the domain.
+
+The differential forms behind these exponents are written out by
+[Bose & Park (2018)](/sources/bose-2018.md) (§1, Eqs. 1–2), after Chapman
+(1979) and Choi & Moin (2012) as cited: per wall area $dx\,dz$,
+
+$$dN_{\mathrm{wr}}=\frac{n_y}{\Delta x_w^+\Delta z_w^+}\frac{\tau_w\,dx\,dz}{\rho\nu^2},\qquad dN_{\mathrm{wm}}=\frac{n_xn_yn_z\,dx\,dz}{\delta^2},$$
+
+with $n_i$ the points per $\delta$ in direction $i$ and $\Delta x_w^+$,
+$\Delta z_w^+$ the wall-unit spacings that resolve the near-wall eddies
+(page-local); integrated over a plate they give $Re_L^{37/14}$ for DNS,
+$Re_L^{13/7}$ for WRLES and $Re_L$ for WMLES. The WMLES count depends on the
+wall only through $\delta$, $N\propto\int\delta^{-2}dA$, the form of
+Lozano-Durán et al.'s Eq. (5) above with $n_\delta^3$ points per $\delta^3$
+*(compiler check, not in the sources)*. [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md)
+(§2.1) apply the DNS estimate to turbomachinery: for evolving boundary
+layers on bladed components the cost scales as $Re_{L_x}^{37/14}$, and the
+domain must also hold the blade passages and the gaps between rows.
+[Heinz (2020)](/sources/heinz-2020.md) (§1) states, citing the literature, that LES of wall-bounded
+flows "can become computationally extremely expensive (almost as expensive
+as DNS)", the motivation of hybrid methods.
 
 ## DNS
 
@@ -233,6 +253,45 @@ meshes the averaged wall-parallel spacings ($\Delta x^+\approx1.4$–2.4) lie
 below the DNS maxima they quote, a comparison of averages with maxima at
 $Q_1$ against high order *(compiler check, not in the sources)*.
 
+## Points per thickness in published airfoil WMLES
+
+Bose & Park (2018, §3, Fig. 5) set the estimates against what published
+airfoil WMLES used: cell counts of NACA 0012, NACA 4412, Aérospatiale-A,
+cruise NASA CRM and MD 30P/30N simulations, scaled to a span-to-chord ratio
+of 4, compared with Chapman's estimate at
+$n_xn_yn_z=10^3$ and $20^3$. "Strong conclusions cannot be drawn" from the
+few points, but "the majority of calculations performed seem to require
+outer-layer resolution of $n_xn_yn_z\gtrsim20^3$ for accuracy", which raises
+the cost prefactor assumed by Choi & Moin by a factor of three to five; the
+scatter is partly the difficulty of keeping $\delta^3/(\Delta x\Delta y\Delta z)$
+fixed when $\delta$ varies, since practical grids follow a nominal thickness
+(see [boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md)).
+Three further statements of the same section bear on cost:
+
+- the wall model itself is often cheap relative to the flow solution, the
+  full non-equilibrium boundary-layer equations costing about twice the
+  baseline LES, and load imbalance at large processor counts can matter more
+  (see [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md));
+- the claim that laminar regions dominate the cost, because $N\propto\int\delta^{-2}dA$
+  and the laminar layer is thin, is "overly pessimistic": it presumes
+  isotropic cells, which outer-layer turbulence ($y/\delta>0.1$) justifies but
+  a laminar layer may not need, and aspect ratios $AR=O(10)$ would cut the
+  prefactor "by orders of magnitude";
+- the conclusion of Slotnick et al. (2014), as cited, that petascale
+  resources are needed for airfoils with span equal to chord at $Re_c\sim10^6$
+  is "inconsistent with the cost incurred by the recent wall-modeled
+  simulations" in that range, although, as Slotnick et al. pointed out,
+  relaxing the laminar resolution presupposes that the LES captures
+  transition.
+
+Goc et al. (2021, §1) also call the estimates of Spalart, Choi & Moin and
+Slotnick et al. too pessimistic, for integrated forces, and obtain
+$C_{L,\max}$ with about ten points per $\delta_{99}$ at the trailing edge
+(next section). Bose & Park (§3, above) read the published airfoil WMLES as
+needing more than the Choi & Moin prefactor, and expect (§4.1) the outer
+peak of the streamwise fluctuations to be likely unresolved with the
+Choi & Moin resolution, $\delta/\Delta x_i\sim10$.
+
 ## What resolution sufficed in practice
 
 - **Integrated forces at about ten points per boundary layer.** Goc et al.
@@ -370,6 +429,18 @@ $Q_1$ against high order *(compiler check, not in the sources)*.
   [Vreman model](/methods/vreman-model.md) and filter width
   $V^{1/3}/\sqrt{N+1}$ the mean velocity is consistent with DNS at every $N$
   (see [wall-modelled LES](/methods/wall-modelled-les.md)).
+- **Uniform grids without near-wall refinement and an integrated wall
+  model.** [Lv et al. (2021)](/sources/lv-2021.md) (§IV A–B 1, Table I) run
+  channel WMLES on grids uniform in all three directions: $Re_\tau=2000$ on
+  $32^3$, $64^3$ and $128^3$ cells (first-cell heights $y_1^+=125$, 63 and 31),
+  $Re_\tau=50\,000$ on $64^3$ ($y_1^+=1.6\times10^3$) and $Re_\tau=180$ on
+  $64\times128\times64$ ($y_1^+=2.81$, wall resolved; $y_1$ page-local). The
+  mean velocity follows DNS on every grid at $Re_\tau=2000$, and second-order
+  statistics approach DNS under refinement. With $y_1=2\delta/n_y$ the printed
+  heights are $2Re_\tau/n_y$, i.e. 125, 62.5, 31.25, 1562.5 and 2.8125
+  *(compiler check, not in the sources)*. Their wall model adds, by their
+  statement, no cost to the LES (see
+  [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
 - **One fixed grid across ten decades.** Vadrot et al. (2023a) run
   half-channel WMLES on the same uniform $48^3$ grid at every $Re_\tau$ from
   180 to $10^{10}$ and recover the log law with a learned wall model whenever
@@ -624,6 +695,14 @@ it, without breakdown).
   arXiv v2 preprint read.
 - Cai et al. (2022, §III) call $\lambda_H$ "the Taylor scale describing the
   integral motions in the wake"; the estimate is printed as such.
+- **Colours of Bose & Park's Fig. 5.** The caption assigns green to
+  Chapman's estimate with $n_xn_yn_z=10^3$ and blue to $20^3$; the labels
+  inside the figure assign blue to $10^3$ and green to $20^3$. The text
+  ("require $n_xn_yn_z\gtrsim20^3$ … increase the cost prefactor") does not
+  depend on which assignment is meant.
+- Heinz (2020, §3.1) writes, citing the literature, that an adequate
+  resolution of the boundary-layer thickness makes WM-LES "orders of
+  magnitude more expensive than original DES"; no estimate is printed.
 
 # Citations
 
@@ -664,3 +743,7 @@ it, without breakdown).
 - [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §1.
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — p. 4 (arXiv v3).
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — §III.C, Table III (arXiv v1).
+- [Bose & Park (2018)](/sources/bose-2018.md) — §1, Eqs. (1)–(2), Fig. 1; §3, Fig. 5; §4.1.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.1.
+- [Heinz (2020)](/sources/heinz-2020.md) — §1; §3.1.
+- [Lv et al. (2021)](/sources/lv-2021.md) — §IV A–B 1, Table I; §II B 4.

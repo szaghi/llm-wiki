@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Flamelet-based tabulated chemistry"
-description: "Flamelet-based tabulated chemistry stores the thermochemical state of one-dimensional flames in a table indexed by mixture fraction, progress variables and enthalpy; this page gives the manifold construction, the extensions for curvature, wall quenching and exhaust-gas recirculation, the subgrid mixture-fraction variance in LES of supersonic combustion, and assessments against flame-resolved simulations and experiment."
+description: "Flamelet-based tabulated chemistry stores the thermochemical state of one-dimensional flames in a table indexed by mixture fraction, progress variables and enthalpy; this page gives manifold construction and coupling by major species, extensions for curvature, ignition, wall quenching and exhaust-gas recirculation, subgrid mixture-fraction variance in supersonic LES, and assessments against detailed-chemistry, DNS and experimental references."
 status: established
-aliases: [tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, premixed flamelet tabulation, subgrid mixture-fraction variance, scalar variance model]
+aliases: [tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, FPV-h, composition space model, ignition source-term patch, optimal estimator, premixed flamelet tabulation, subgrid mixture-fraction variance, scalar variance model]
 tags: [combustion, dns, tabulated-chemistry, flame-wall-interaction, hybrid-rans-les]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T10:55:00Z
 ---
 
 # Flamelet-based tabulated chemistry
@@ -44,8 +44,8 @@ the eddy viscosity of Tang et al.'s wall-distance-blended hybrid RANS/LES
 
 ## The manifold family
 
-As recalled by Böttler et al. (2023, §1), the flamelet/progress-variable
-(FPV) approach of Pierce & Moin stores the state in a low-dimensional
+Böttler et al. (2023, §1) cite the flamelet/progress-variable
+(FPV) approach of Pierce & Moin, which stores the state in a low-dimensional
 manifold parametrized by control variables; flamelet-generated manifolds
 (FGM) and flame prolongation of ILDM (FPI) are related approaches,
 non-premixed manifolds are built from stretched non-premixed flamelets,
@@ -55,7 +55,7 @@ ILDM and REDIM as the manifold family for chemistry reduction, separate
 from the turbulence–chemistry interaction closure that RANS or LES of a
 reacting flow also needs.
 
-The four sources build their tables from different flame families:
+The sources build their tables from different flame families:
 
 | Source | Flames tabulated | Control variables |
 |---|---|---|
@@ -65,6 +65,7 @@ The four sources build their tables from different flame families:
 | Steinhausen et al. (2023), QFM (§5, after Efimov et al.) | one transient head-on quenching flame of an undiluted mixture on a 300 K wall | progress variable and enthalpy |
 | Steinhausen et al. (2023), QFM-EGR (§4, contribution) | 63 transient head-on quenching flames with cold exhaust-gas dilution $0\le Y_{\mathrm{EGR}}\le0.3$, plus preheated flames 300–750 K | $(c,c_2,h_t)$, $c$ from $\mathrm{CO_2}$, $c_2$ from $\mathrm{CO}$ |
 | Tang et al. (2022), FPV of Pierce & Moin (§2.2) | laminar counterflow (non-premixed) flamelets, all three branches, 9-species 19-step H$_2$–air mechanism, unity Lewis number, at 1.1 and 1.9 bar | $(\tilde Z,Z_v,\tilde c)$, presumed $\beta$-PDF in $Z$ and $\delta$-PDF in $c$ |
+| [Böttler et al. (2022)](/sources/bottler-2022.md), §2.2 (the FPV-$h$ of Böttler et al. 2023) | composition-space-model solutions blending unstretched premixed flames with constant-pressure homogeneous ignition, over $0.35\le\phi_{\mathrm{eq}}\le2.0$ and fresh-gas temperatures 300–3500 K, plus exhaust-diluted flames for the low-enthalpy bound; Li et al. hydrogen mechanism, mixture-averaged diffusion | $(Z,H_{\mathrm n},c)$, $H_{\mathrm n}$ the normalized enthalpy |
 
 ## Construction
 
@@ -102,6 +103,43 @@ assumptions on the transport properties of composed quantities such as
 mixture fraction and progress variable; this is how differential diffusion
 of hydrogen enters.
 
+The coupling is set out in [Böttler et al. (2022)](/sources/bottler-2022.md),
+§2.1–2.2, Fig. 3, the earlier work that Böttler et al. (2023) cite for it.
+The solver transports $Y_{\mathrm{H_2}}$, $Y_{\mathrm{O_2}}$,
+$Y_{\mathrm{H_2O}}$ with mixture-averaged fluxes, whose Lewis numbers and
+source terms are read from the table, and the enthalpy (Eqs. 1–3); the
+gradient of the mean molecular mass and Soret diffusion are neglected.
+The mixture fraction is an *approximate* Bilger mixture fraction built
+from the three transported species only, defined the same way in the
+table so that the coupling is consistent; the authors state that it
+recovers the characteristics of the full definition with "no significant
+modeling error", without showing a comparison (§2.1). Because the
+enthalpy equation needs the diffusive fluxes of all species (radicals
+such as H weigh little in the element balance but much in the formation
+enthalpy), the contribution of the species *not* transported is
+tabulated from the one-dimensional flamelets as a closure term (Eq. 9).
+The table is generated by the composition space model in $Y_c$-space
+(Eqs. 5–8): at low fresh-gas temperature its solution is the unstretched
+premixed flame with eigenvalue $s_L$ (the laminar burning velocity), and
+in the limit $g_c\to0$ of vanishing progress-variable gradient ($g_c$
+page-local) all diffusive terms vanish and it becomes constant-pressure
+homogeneous ignition, so one set of equations covers deflagration and
+autoignition. The state is stored as $\psi(Z,H_{\mathrm n},c)$ with
+$H_{\mathrm n}=(h_t-h_{t,\min})/(h_{t,\max}-h_{t,\min})$ normalized
+between bounds conditioned on $(Z,Y_c)$ and $c$ normalized between bounds
+conditioned on $(Z,H_{\mathrm n})$ (Eqs. 12–13). Under differential
+diffusion the enthalpy bounds depend on $Y_c$ and the look-up would be
+iterative; the lower bound is extrapolated to a constant minimum and the
+upper bound (homogeneous-ignition solutions) is already constant, which
+gives a two-step look-up. Since a mixture at $c=0$ has zero tabulated
+source terms and could never ignite, the source terms of the transported
+species at $c=0$ are replaced, above a critical normalized enthalpy (value
+not printed), by their mean over $0\le c\le10^{-9}$ (Eq. 14, adapted from
+Sun et al.). The authors state that the model cuts the cost "by an order
+of magnitude" against detailed chemistry while halving the number of
+transport equations, without timings (§3), and that more complex fuels
+would need more transported species (§4).
+
 **Stretch and curvature.** Laminar canonical flames are limited in the
 strain and curvature they can reach; the composition space model of the
 authors' group, solved in composition space with respect to $Y_c$ and
@@ -116,8 +154,8 @@ $\kappa_{\mathrm f}=-1500$ m⁻¹ for their lean hydrogen–air flame (Fig. 1).
 **Wall quenching and exhaust-gas recirculation.** For flame–wall
 interaction the building blocks are transient one-dimensional head-on
 quenching flames, which include the wall enthalpy loss (quenching
-flamelet-generated manifold, QFM, of Efimov et al., as recalled by
-Steinhausen et al. 2023, §1, §5). Steinhausen et al. (2023, §4) extend it
+flamelet-generated manifold, QFM, of Efimov et al., which
+Steinhausen et al. 2023, §1, §5, cite). Steinhausen et al. (2023, §4) extend it
 by diluting the fresh side of a freely propagating flame with cold exhaust
 gas at the inflow temperature, quenching each diluted flame on a 300 K
 wall, and spanning the manifold in flamelet coordinate, time and
@@ -125,9 +163,9 @@ $Y_{\mathrm{EGR}}$ (the mass fraction of cold burnt gas mixed into the
 fresh gas, page-local).
 
 **Subgrid variance of the mixture fraction.** In LES with a presumed PDF
-the table needs the subgrid variance $Z_v$ as an extra coordinate. As
-recalled by [Tang et al. (2022)](/sources/tang-2022.md), §2.2, Eqs.
-(10)–(11), the flamelet/progress-variable model of Pierce & Moin stores
+the table needs the subgrid variance $Z_v$ as an extra coordinate.
+[Tang et al. (2022)](/sources/tang-2022.md), §2.2, Eqs.
+(10)–(11), cite the flamelet/progress-variable model of Pierce & Moin, which stores
 $\psi(Z,c)$ from counterflow flamelets, the progress variable selecting
 among the burning, unstable and extinguished branches, and filters it as
 $$\tilde\psi=\iint\psi(Z,c)\,P_\beta(Z;\tilde Z,Z_v)\,\delta(c-\tilde c)\,dZ\,dc,$$
@@ -143,8 +181,8 @@ et al. compare two closures for $Z_v$ (§2.2):
   (Eqs. 15–16; $c_{\mathrm{ss}}$ page-local, its value not printed, the
   discrete form corresponding to $c_{\mathrm{ss}}=1$);
 - a **transport equation** (Eq. 17)
-$$\partial_t(\bar\rho Z_v)+\partial_j(\bar\rho\tilde u_jZ_v)=\partial_j\Big[\Big(\bar\rho D+\frac{\mu_t^{\mathrm{bl}}}{Sc_t}\Big)\partial_jZ_v\Big]+2\frac{\mu_t^{\mathrm{bl}}}{Sc_t}\partial_j\tilde Z\,\partial_j\tilde Z-\bar\rho\chi_Z,$$
-  with molecular diffusivity $D$, production by the resolved mixture-fraction
+$$\partial_t(\bar\rho Z_v)+\partial_j(\bar\rho\tilde u_jZ_v)=\partial_j\Big[\Big(\bar\rho D_{\mathrm m}+\frac{\mu_t^{\mathrm{bl}}}{Sc_t}\Big)\partial_jZ_v\Big]+2\frac{\mu_t^{\mathrm{bl}}}{Sc_t}\partial_j\tilde Z\,\partial_j\tilde Z-\bar\rho\chi_Z,$$
+  with molecular diffusivity $D_{\mathrm m}$, production by the resolved mixture-fraction
   gradient, a modelled dissipation proportional to $\mu_t^{\mathrm{bl}}Z_v/Sc_t$
   with constant $c_q=40.0$, $Sc_t=0.5$ (printed form in Qualifications),
   and $\mu_t^{\mathrm{bl}}$ the blended eddy
@@ -228,6 +266,86 @@ the flamelet-manifold hypothesis itself under curvature and unsteady strain
 (§3.2). See also
 [direct numerical simulation](/definitions/direct-numerical-simulation.md).
 
+**Forced ignition and propagation of laminar hydrogen flames** (Böttler
+et al. 2022, §3). The table above, coupled to a second-order low-Mach
+[OpenFOAM](/software/openfoam.md) solver, is compared with fully resolved
+detailed chemistry (Li et al. mechanism, mixture-averaged diffusion) for
+hydrogen–air at 300 K and 1 atm, $\phi_{\mathrm{eq}}=0.7$, 1.0, 1.4
+(effective Lewis numbers about 0.5, 0.95, 1.4); every case is laminar.
+
+- *Planar flame* ($\phi_{\mathrm{eq}}=0.7$, Fig. 5): "very good agreement"
+  for all quantities, including the variation of $Z$ and enthalpy across
+  the flame that differential diffusion produces, with minor deviations in
+  $Y_{\mathrm{OH}}$ on the burned side.
+- *Cylindrical and spherical expanding flames* ignited by a Gaussian hot
+  spot (radius 0.2 mm, duration 0.2 ms; cells of 11 µm; Figs. 6–8): with
+  the propagation speed split as $dR_f/dt=u_g+s_d$ (flame radius $R_f$,
+  unburned-gas velocity $u_g$, displacement speed $s_d$, page-local), the
+  offset comes from an under-predicted $u_g$ while $s_d$ agrees "very
+  well"; the authors trace it to a small shift of $Z$ toward leaner
+  mixture, which changes the density. The largest deviations are in the
+  lean case: about 7% in $u_g$ for the cylindrical flame and about 8% in
+  propagation speed for the spherical one, against less than 1% (rich
+  cylindrical) and less than 2% otherwise.
+- *Igniting counterflow* (global strain 1000 s⁻¹, Figs. 9–10): slightly
+  slower radial propagation and an axial position slightly closer to the
+  centre, slightly higher $Z$ on the burned side and over-predicted
+  $Y_{\mathrm{OH}}$ near the stagnation plane, temperature insensitive.
+- *Minimum ignition energy* by bisection (Fig. 11): the trend with
+  $\phi_{\mathrm{eq}}$ is reproduced with slightly over-estimated values,
+  well at $\phi_{\mathrm{eq}}=1.0$ and 1.4 and worse toward the lean case.
+
+Extension to LES with a turbulence–chemistry closure is left to future
+work (§4).
+
+**What a manifold for unstable lean hydrogen flames must contain**
+([Berger et al. (2022)](/sources/berger-2022.md)). Three-dimensional
+detailed-chemistry [DNS](/definitions/direct-numerical-simulation.md) of a
+turbulent premixed slot jet, hydrogen–air at $\phi_{\mathrm{eq}}=0.4$,
+$Re=11\,000$ on the slot width and Karlovitz number about 15, are run with
+realistic Lewis numbers and Soret diffusion (thermodiffusively unstable)
+and with unit Lewis numbers (stable); the second follows the unstretched
+premixed flamelet closely in the progress-variable source term, the first
+scatters strongly through local equivalence-ratio variations (§3.4.1,
+Fig. 15). An optimal-estimator analysis, the irreducible error
+$\langle(\dot\omega_c-\langle\dot\omega_c|\boldsymbol\psi\rangle)^2\,|\,c_{\mathrm{H_2}}\rangle$
+of the source term $\dot\omega_c$ of the progress variable
+$c_{\mathrm{H_2}}=1-Y_{\mathrm{H_2}}/Y_{\mathrm{H_2},u}$ for a set of
+parameters $\boldsymbol\psi$ (page-local; Eqs. 22–23), finds large errors
+with $c_{\mathrm{H_2}}$ alone, a strong reduction when the Bilger mixture
+fraction is added, about the same with temperature instead, and much less
+gain from adding stretch, tangential strain or curvature, singly or
+together (Fig. 16). The authors read this as the source term depending
+not on the instantaneous stretch but possibly on its history, while $Z$
+records the result of differential diffusion; the mixture-fraction
+fluctuations themselves are set by curvature, not strain (Figs. 21–22).
+Because an irreducible error measures only correlated fluctuations and is
+blind to a shift of the mean (§3.4.3), they compare the conditional mean
+$\langle Z|c_{\mathrm{H_2}}\rangle$ with laminar premixed counterflow
+flamelets at the turbulent flame's mean tangential strain, which
+reproduce its shift to richer mixture (counterflow consumption speed 0.49
+m/s against 0.17 m/s unstretched with the unstable diffusivity model; 0.32
+against 0.34 m/s with unit Lewis numbers; §3.4.4, Figs. 27–29). They
+conclude that turbulent combustion models must account for the
+thermodiffusive instability (§4); the paper builds no table.
+
+**Mixture-fraction space and the diffusion-flame structure.**
+[Cuenot et al. (2022)](/sources/cuenot-2022.md), §1–2, cite the
+pre-tabulated flamelet approach of Peters and state that it loses the direct interaction of
+the local flame structure with the flow, and the
+[thickened flame model](/methods/thickened-flame-model.md) can be combined
+with tabulated flamelets instead of replacing them. Their analysis of the
+steady strained counterflow diffusion flame writes it in mixture-fraction
+space as $-\chi_Z\,\partial^2\phi_k/\partial Z^2=\dot\omega_{\phi_k}$ for any
+species or temperature $\phi_k$ (Eq. 4, $\chi_Z=2D_{\mathrm m}(\partial_xZ)^2$ the scalar
+dissipation rate of the one-dimensional flame, $D_{\mathrm m}$ the molecular diffusivity; page-local), whose solution for a
+steady strained flame is insensitive to the diffusion coefficients; in
+physical space the consumption speed then scales as $\sqrt{a_{\mathrm{cf}}D_{\mathrm m}}$ with the
+strain rate $a_{\mathrm{cf}}$ (detail on the thickened-flame page).
+[Agostinelli et al. (2021)](/sources/agostinelli-2021.md), §2, use
+analytically reduced chemistry with a dynamically thickened flame rather
+than a table in their LES of a swirl combustor.
+
 **Supersonic hydrogen combustion in hybrid RANS/LES** (Tang et al.
 2022). The solver blends the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
 in a wall layer of 10–20% of the boundary-layer thickness with a
@@ -269,11 +387,10 @@ scatter plots and profiles; no error norm is given.
 - **Printed forms in Tang et al. (2022).** The variance dissipation is
   printed as $\bar\rho\chi_Z=\frac{\mu_t^{\mathrm{bl}}}{Sc_t}\frac{c_q}{\Delta^{1/3}}\bar\rho Z_v$
   (Eq. 17), with units kg$^2$ m$^{-13/3}$ s$^{-1}$ against the kg m$^{-3}$
-  s$^{-1}$ of the other terms; the intended form cannot be recovered from
-  the paper *(compiler check, not in the sources)*. Eqs. (12)–(13) add the
+  s$^{-1}$ of the other terms; the paper prints no other form *(compiler check, not in the sources)*. Eqs. (12)–(13) add the
   turbulent flux $(\mu_t^{\mathrm{bl}}/Pr_t)\nabla\tilde Z$ inside the
   divergence with the sign opposite to the molecular flux
-  $-\bar\rho D\nabla\tilde Z$, which as printed is anti-diffusive, and use
+  $-\bar\rho D_{\mathrm m}\nabla\tilde Z$, which as printed is anti-diffusive, and use
   $Pr_t$ for a scalar where Eq. (17) uses $Sc_t$ *(compiler check, not in
   the sources)*. The constant $c_{\mathrm{ss}}$ of Eq. (15) is not given.
 - **Scope of Tang et al.'s recommendation.** It rests on two configurations
@@ -304,9 +421,30 @@ scatter plots and profiles; no error norm is given.
 - The versions read are arXiv preprints (Böttler et al. 2301.06780v1;
   Steinhausen et al. 2212.03762v1) and the HAL author manuscript of Domingo
   & Vervisch.
+- **Böttler et al. (2022)** compare with detailed chemistry only in
+  laminar flames. Their Conclusions state agreement in "ignition delay
+  times" and minimum-ignition-energy deviations "below 3 %" (§4), but the
+  body reports no ignition delay times and gives no number for the
+  minimum ignition energy, whose evidence is Fig. 11 alone. Eq. (9)
+  prints the closure over the species $k\notin\{\mathrm{H_2},\mathrm{O_2},\mathrm{H_2O}\}$;
+  text extraction of the PDF renders it as $\in$. They neglect Soret
+  diffusion after Liang et al. while citing Grcar et al. for its growing
+  importance in very lean hydrogen flames; their leanest case is
+  $\phi_{\mathrm{eq}}=0.7$.
+- **Berger et al. (2022)** print the Karlovitz number $(l_{\mathrm F}/\eta)^2$
+  as 20 and 16 for the unstable and stable flames (Table 1), while the
+  $l_{\mathrm F}$ and $\eta$ of the same table give about 15.7 and 17.3
+  *(compiler check, not in the sources)*. In §3.5 "TurbStable" is printed twice where the argument is
+  about the unstable flame, and $I_0$ is said to appear in Eq. (7) where it
+  appears in Eq. (9). Claims on halving the lateral laminar domain and on a
+  half-resolution run rest on supplementary material not in the file read.
 
 # Citations
 
+- [Böttler et al. (2022)](/sources/bottler-2022.md) — §1; §2.1–2.2, Eqs. (1)–(14), Figs. 2–3 (coupling by major species, approximate Bilger mixture fraction, enthalpy closure, composition-space manifold with homogeneous ignition, normalization, ignition patch); §3.1–3.5, Figs. 5–11 (laminar planar, expanding and counterflow flames, minimum ignition energy); §4.
+- [Berger et al. (2022)](/sources/berger-2022.md) — §2.1–2.2, Table 1; §3.4.1, Eqs. (21)–(23), Figs. 15–16 (flamelet comparison, optimal estimator); §3.4.2, Figs. 21–22; §3.4.3–3.4.4, Figs. 23–29 (strained counterflow flamelets); §3.5.
+- [Cuenot et al. (2022)](/sources/cuenot-2022.md) — §1 (pre-tabulated flamelets; thickened flame with tabulated chemistry); §2, Eqs. (2)–(4) (counterflow diffusion flame in mixture-fraction space).
+- [Agostinelli et al. (2021)](/sources/agostinelli-2021.md) — §2 (analytically reduced chemistry with a thickened flame instead of tabulation).
 - [Böttler et al. (2023)](/sources/bottler-2023.md) — arXiv 2301.06780v1: §1 (FPV family); §2–2.1, Eqs. (1)–(4), Figs. 1–2 (FPV-$h$, FPV-$\kappa$, composition space model, coupling by major species); §3.1, Fig. 3 (a priori); §3.2, Fig. 4 (linear stability); §3.3, Figs. 5–8 (expanding flame); §4.
 - [Steinhausen et al. (2023)](/sources/steinhausen-2023.md) — arXiv 2212.03762v1: §1 (manifold family, QFM); §2.1, Table 1 (reacting channel); §3, Eqs. (1)–(2), Figs. 2–5 (flame–vortex interaction); §4, Eqs. (3)–(5), Fig. 6 (QFM-EGR); §5, Eqs. (6)–(9), Figs. 7–9 (a priori assessment); §6.
 - [Tang et al. (2022)](/sources/tang-2022.md) — §2.1, Eq. (14) (hybrid RANS/LES, blended eddy viscosity); §2.2, Eqs. (10)–(18) (FPV, presumed PDFs, scale-similarity and transport closures of the subgrid variance, flame index); §3.1, Figs. 5–8; §3.2, Figs. 12–16; §4.

@@ -5,7 +5,7 @@ description: "A one-ODE wall-stress model for compressible wall-modelled LES wit
 status: established
 aliases: [compressible wall model based on an inverse velocity transformation, Griffin–Fu–Moin wall model, inverse-transformation wall model]
 tags: [wall-model, wmles, compressible, hypersonic, boundary-layer]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-27T11:02:00Z
 ---
 
 # Inverse-velocity-transformation wall model
@@ -136,7 +136,7 @@ wall model and cite it as the origin of both steps (§1, §3.3):
 - **Temperature.** The energy equation with constant $Pr_t=0.9$ is solved
   only above a matching height $y^*_{mT}=100$; below it the temperature is
   overwritten by the same matching-anchored quadratic relation as Eq. (2.5)
-  above, with $C_T=0.8259$ (written $s\,Pr$ with $s=1.14$ after Zhang et al.
+  above, with $C_{\mathrm{DM}}=0.8259$ (written $s\,Pr$ with $s=1.14$ after Zhang et al.
   2014, as cited) and the matching values sampled at $y_{mT}$ (Eq. 3.17,
   "following Griffin et al. 2023"). The results change little for
   $y^*_{mT}=50$–150 (App. A, Fig. 15).

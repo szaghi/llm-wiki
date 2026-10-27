@@ -5,7 +5,7 @@ description: "Pressure-driven flow between two parallel walls, periodic in the w
 status: established
 aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow, minimal channel, rough-wall channel]
 tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns, data-driven, compressible, immersed-boundary, rans, spectral-element]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T11:00:00Z
 ---
 
 # Turbulent channel flow
@@ -64,6 +64,9 @@ closures.
 | [Aiello et al. (2026)](/sources/aiello-2026.md), §3.3 | compressible DNS of a thermally perfect gas (CO₂) | about 470, 630, 800 (bulk Mach 3, 4, 5 on wall sound speed) | $10\delta\times2\delta\times3\delta$ | up to $816\times356\times512$; $\Delta x^+\le9.7$, $\Delta y^+_w\le0.32$, $\Delta z^+\le4.6$ |
 | [Ranjbar et al. (2026)](/sources/ranjbar-2026.md), §III.C | compressible LES with explicit modal filtering | 395 (bulk $Re=7095$, Mach 0.3) | $2\pi\delta\times2\delta\times\pi\delta$ | $14\times12\times16$ elements, $N=6$, 921,984 points, 6 inside $y^+=10$ |
 | [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md), §3 | a priori volume filtering for immersed-boundary WMLES | 5200 (Lee & Moser DNS) | as the DNS | filter sizes $\Delta_f^+=50$ to 300 (page-local) |
+| [Zhao et al. (2021)](/sources/zhao-2021-c.md), §IV, Tables I, VIII | implicit against explicit LES with a gas-kinetic scheme, Mach 0.1 | 180, 395 | $2\pi\times2\times\pi$ (units $\delta$) | $96^3$ at 180 ($\Delta x^+=11.77$, $\Delta z^+=5.89$, $\Delta y^+_{\min}=0.29$); $96^3$ (25.84, 12.92, 0.58) and $128^3$ (19.38, 9.69, 0.43) at 395 |
+| [Lv et al. (2021)](/sources/lv-2021.md), §IV A, Table I | wall model integrated in the LES discretization | 180, 2000, 50,000 | $2\pi\delta\times2\delta\times2\pi\delta$ | uniform: $32^3$, $64^3$, $128^3$ at 2000 (first cell $\Delta_1^+=125$, 63, 31); $64\times128\times64$ at 180 (2.81); $64^3$ at 50,000 ($1.6\times10^3$) |
+| [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md), §3.2.2, Table 4 | DNS with a bandwidth-optimized WENO scheme; supersonic, isothermal walls | 240 (centreline Mach 1.49) | $4\pi\delta\times2\delta\times\tfrac43\pi\delta$ | $192\times128\times151$ ($x$, $z$, $y$), stretched in $y$ |
 
 Reference DNS named by the sources: Kim, Moin & Moser at $Re_\tau=180$
 (Cao et al.); Moser, Kim & Mansour at $Re_\tau=590$ (Flad & Gassner;
@@ -721,6 +724,112 @@ average $y^+\approx0.8$): $u_\tau=0.0523$ ($k$-$\tau$) and 0.0528
 1% and 2%; the low-Reynolds variant captures the near-wall peak of $k$,
 slightly offset from the DNS (§3.2, Table 2, Figs. 5–6).
 
+**A wall model inside the LES discretization.**
+[Lv et al. (2021)](/sources/lv-2021.md), §II, §IV B 1, Figs. 5–12, drop the
+separate wall-model solver of [wall-modelled LES](/methods/wall-modelled-les.md):
+in the wall-adjacent cell the solution is reconstructed in a basis in which
+one monomial is replaced by the log law, $\kappa^{-1}\ln((y+y_0)/y_0)$ with
+$\kappa=0.41$ ($y_0$ page-local: a viscous or roughness length, whose
+value is not stated), so that the LES itself computes the coefficients and
+the wall stress follows from them as $\tau_w/\rho=a_w^2+\nu a_1$ ($a_w$,
+$a_1$ page-local: the coefficients of the log and linear terms; $a_w$ is
+identified with $u_\tau$). They run it in the DG/finite-volume solver
+SUPES (third-order, P3, DG treatment of the wall cells, the
+[Vreman model](/methods/vreman-model.md)) on uniform grids with no
+near-wall refinement, driven by a constant body force:
+
+- at $Re_\tau=2000$ the mean velocity "follows the DNS data closely,
+  irrespective of the grid resolution" ($32^3$ to $128^3$), and the rms
+  velocities and Reynolds shear stress approach the DNS of Hoyas &
+  Jiménez as the grid is refined (Figs. 5–6);
+- the log-term coefficient correlates with the instantaneous streamwise
+  velocity at the first off-wall point, and the linear coefficient with the
+  sum of the convective and pressure-gradient terms there, a
+  nonequilibrium measure; the correlation persists on all three grids
+  (Figs. 7–10);
+- when the grid resolves the wall layer ($Re_\tau=180$, $\Delta_1^+=2.81$)
+  the linear term takes over and the run follows the DNS of Kim, Moin &
+  Moser into the viscous sublayer and the buffer layer, with the Reynolds
+  stresses slightly off in the buffer layer (Figs. 11–12);
+- the log law is captured at $Re_\tau=180$, 2000 and 50,000 (Fig. 11,
+  against $\kappa=0.41$, $B=5.2$).
+
+They claim the integrated model has "exactly 0" cost over an LES without
+wall model, against 30%–40% for an ODE equilibrium model and 100%–150% for
+a nonequilibrium one as reported by others (§II B 4), a structural claim
+without timings. See [nonequilibrium wall model](/methods/nonequilibrium-wall-model.md)
+and [law of the wall](/definitions/law-of-the-wall.md); the periodic-hill
+runs of the same paper are on [periodic hill](/benchmarks/periodic-hill.md).
+
+**Implicit against explicit LES with a gas-kinetic scheme.**
+[Zhao et al. (2021)](/sources/zhao-2021-c.md) run the
+[high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md)
+(fifth-order WENO reconstruction with linear weights normal to the face,
+two-stage fourth-order time stepping) as wall-resolved LES at $Re_\tau=180$
+and 395, Mach 0.1, against the DNS of Kim, Moin & Moser and of Moser, Kim
+& Mansour, with no model ([implicit LES](/definitions/implicit-les.md)) or
+with four eddy-viscosity models entering the kinetic solver through an
+enlarged relaxation time: the [Vreman model](/methods/vreman-model.md)
+(constant 0.01 at 180, the best of a scan from 0.01 to 0.1, and 0.07 at
+395), [dynamic Smagorinsky](/methods/dynamic-procedure.md) with clipping,
+[WALE](/methods/wale-model.md) ($C_w=0.5$, at 180 only) and a dynamic
+Clark ([gradient](/methods/gradient-model.md)) model converted to an
+eddy viscosity by matching dissipation. A smooth-flow interface flux is
+used at 180 and a modified flux with an upwind kinetic part at 395 (§III–IV).
+The realized $Re_\tau$ (Tables V–VII):
+
+| Run | nominal 180, $96^3$ | nominal 395, $96^3$ | nominal 395, $128^3$ |
+|---|---|---|---|
+| DNS | 178.12 | 392.24 | 392.24 |
+| implicit LES | 177.89 | 360.35 | 376.33 |
+| Vreman | 174.99 | 351.36 | 370.13 |
+| dynamic Smagorinsky | 175.47 | 359.54 | 375.22 |
+| WALE | 172.57 | — | — |
+| dynamic Clark | 172.06 | 351.35 | 369.57 |
+
+Implicit LES gives the highest resolved $Re_\tau$ everywhere and dynamic
+Smagorinsky is the best explicit model; implicit LES is best for the
+$U^+$ profile and the peaks of the rms velocities, while for the Reynolds
+shear stress at 180 "the results for D-model match better with DNS,
+followed by iLES" and at 395 implicit LES is best (§V.A–B, Figs. 2–13);
+the spectra show no visible differences, all levelling off near the cutoff
+(Figs. 14–15). Per time step on $64\times96\times64$ cells and 16 cores,
+implicit LES costs 0.520 s, Vreman 0.534, WALE 0.552, dynamic Smagorinsky
+0.613 and dynamic Clark 0.624 with the smooth flux, and the modified flux
+about twice as much (Tables III–IV). The authors explain the ranking by
+the numerical dissipation of the scheme already sufficing as subgrid
+dissipation, so that an explicit model lowers the near-wall velocity
+gradient and $u_\tau$; no dissipation budget is shown (Abstract, §VI). At
+395 on $96^3$ the resolved $Re_\tau$ is 8.1% to 10.4% below the DNS value
+392.24 *(compiler check, not in the sources)*.
+These runs precede the reconstruction study of
+[Zhao et al. (2023a)](/sources/zhao-2023.md) above, which uses the same
+domain, flow set-up and $64\times96\times64$ and $96^3$ grids.
+
+**A supersonic channel for shock-capturing DNS.**
+[Kumar & Ghosh (2022)](/sources/kumar-2022-b.md), §3.2.2, Figs. 26–29,
+validate the bandwidth-optimized [WENO scheme](/methods/weno-scheme.md)
+WENO3P-LIM-5 for DNS of shock–turbulence interaction on an isothermal-wall
+supersonic channel driven by a homogeneous momentum source, against the
+DNS of Ghosh et al.: centreline Mach 1.49 and $Re_\tau=240$ against 1.48
+and 246 (Table 4). Mean density, temperature and Mach number agree well,
+the rms velocities agree, and small differences in the anisotropy are
+attributed to differences in mean density. A channel of the same domain
+and grid feeds the shock-train DNS on
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+
+**Wall-modelled channels in a review.**
+[Bose & Park (2018)](/sources/bose-2018.md) cite the following: WMLES of the channel has
+reached $Re_\tau\sim10^6$–$10^8$ (§4.1); the compilation of their Fig. 4
+shows the [log-layer mismatch](/definitions/log-layer-mismatch.md) of
+first-point matching in channels at $Re_\tau=4000$ (Templeton et al.) and
+2000 (Lee et al.), against a boundary layer matched at the third point
+(§2.1); control-based (adjoint) wall models reproduce the channel up to
+$Re_\tau=20{,}000$, their computed streamwise stress correlating best with
+the LES fluctuations at the second wall-normal point (§2.4); and the
+$Re_\tau=4200$ DNS of Lozano-Durán & Jiménez illustrates how coarse an
+outer-scaled grid is against the near-wall structures (§1, Fig. 2).
+
 **Discretization of a thermally perfect gas.**
 [Aiello et al. (2026)](/sources/aiello-2026.md) run DNS of a supersonic and
 hypersonic channel of CO₂ with temperature-dependent specific heats in the
@@ -977,6 +1086,31 @@ tests are left to future work. See
   gives $C\approx6.66$ for $\kappa=0.387$, $B=4.21$, against the fitted
   range 6.8–7.7 of Table II *(compiler check, not in the sources)*.
 
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) print the same two
+  values that the entry of [Zhao et al. (2023a)](/sources/zhao-2023.md)
+  above records: $\mu=2.83\times10^{-4}$ at $Re_\tau=180$, where their own
+  Eqs. 25–26 give $u_\tau=1/(2.5\ln180+5.5)=0.0541$ and
+  $\mu=u_\tau/180=3.006\times10^{-4}$ (and the realized values of Table V
+  $0.0535/177.89=3.007\times10^{-4}$), and $\Delta z^+=8.33$ for 64 points
+  where $\pi\cdot180/64=8.84$ (Table VIII) *(compiler check, not in the
+  sources)*. They credit the $Re_\tau=180$ DNS to "Moser et al." while
+  their reference is Kim, Moin & Moser; their abstract and conclusion claim
+  implicit-LES superiority for the Reynolds stress, which §V.B qualifies
+  at 180; and they quote a WALE constant for 395 without WALE results
+  there.
+- [Lv et al. (2021)](/sources/lv-2021.md) print the log basis as
+  $\ln((y+y_0)/y_0)$ in Eq. 3 and $\ln((y-y_0)/y_0)$ in Eq. 8; only the
+  first is regular at the wall. They print neither the Mach number nor
+  the averaging time of the channel runs. Their term $\tau_w/\rho=a_w^2$
+  rests on the identification $a_w=u_\tau$ (Eq. 4); the wall gradient of
+  the printed log basis, $\nu\,\partial(a_w\phi_w)/\partial y$ at $y=0$
+  with $\phi_w=\kappa^{-1}\ln((y+y_0)/y_0)$ (page-local), is
+  $\nu a_w/(\kappa y_0)$ *(compiler check, not in the sources)*.
+- [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) print neither the
+  wall-unit resolution nor the averaging time of their channel, and give
+  the inflow channel of the shock train (same grid) as Mach 1.5,
+  $Re_\tau=247$ (§3.2.3) against 1.49, 240 in Table 4.
+
 # Citations
 
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §V, Figs. 1–2; §VII.D, Figs. 7–10.
@@ -1023,3 +1157,7 @@ tests are left to future work. See
 - [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §1; §2.3; §3.2–3.3, Figs. 5–10; §4.1–4.2, Eqs. 4.2–4.27, Figs. 11–13; §5, Tables 1–2.
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.1, Table 1, Figs. 1–3; §3.2, Table 2, Figs. 4–6.
 - [Nuca et al. (2025)](/sources/nuca-2025.md) — §II; §VI, Table VII.
+- [Lv et al. (2021)](/sources/lv-2021.md) — §I; §II A–C, Eqs. (1)–(12); §III; §IV A, §IV B 1, Table I, Figs. 5–12.
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III–IV, Eqs. (12)–(26), Tables I–VIII; §V.A–D, Figs. 2–21; §VI; App. A–B.
+- [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §3.2.1–3.2.3, Table 4, Figs. 26–29.
+- [Bose & Park (2018)](/sources/bose-2018.md) — §1, Fig. 2; §2.1, Fig. 4; §2.4; §4.1 (review; cited results).

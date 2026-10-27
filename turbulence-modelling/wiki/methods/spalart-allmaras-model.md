@@ -5,7 +5,7 @@ description: "The one-equation eddy-viscosity RANS model transporting the workin
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T10:57:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -264,6 +264,18 @@ discretizations, each a different answer to the oscillations that a
 high-order polynomial of $\tilde\nu$ develops at the under-resolved edge of
 the boundary layer.
 
+The need was stated early. The first High-Order CFD Workshop, whose RANS
+cases (the RAE 2822, the 30P-30N multi-element airfoil, the DPW III wing)
+list SA first among the recommended models, beside the Wilcox $k$-$\omega$
+model (and, for the RAE 2822, an explicit algebraic Reynolds-stress model),
+concluded that high-order methods "are still
+not as robust as low-order ones" in converging RANS to a steady state, a
+difficulty its organizers "believe" related to the non-smoothness
+introduced in the turbulence models and met with ad hoc fixes, so that
+"smooth turbulence models are needed"
+([Wang et al. (2013)](/sources/wang-2013.md), §4.8, §4.11–4.12,
+§6, conclusion 4).
+
 **An entropy for the SA equation.** Lodares et al. (2022) build an
 entropy-stable discontinuous Galerkin spectral element discretization of
 the compressible RANS–SA system. They add to the Navier–Stokes entropy the
@@ -448,7 +460,15 @@ In all cases the regularized correction both lowers the production at the
 start of the separating shear layer and raises it downstream, in the region
 where production greatly exceeds dissipation (§3.2.1, §3.3.1). This
 continues the curved-channel field inversion recalled by Duraisamy et al.
-(2019) below.
+(2019) below. In turbomachinery, Sandberg & Michelassi (2022) cite
+field inversion with a neural network modifying SA in a low-Reynolds-number
+low-pressure-turbine cascade (Ferrero et al. 2020) as giving a posteriori
+accuracy similar to a much costlier two-equation model combined with the
+$\gamma$-$Re_\theta$ transition model
+([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §4.3; see
+[field inversion](/methods/field-inversion-machine-learning.md)); in the
+same review SA is listed among the turbomachinery closures as one equation
+for a scaled eddy viscosity (§2.2.2.1).
 
 **Comparison of correction sites.** Cato et al. (2023) compare the
 production multiplier with five other space-dependent corrections of the
@@ -517,7 +537,13 @@ where production and destruction balance $\nu_t\approx\lvert\Omega\rvert\ell^2$,
 a Smagorinsky-like viscosity when $\ell\approx\Delta$, which is what
 motivates hybridization through $\ell$ (§2.2, Eqs. 29–35). Batther & Lee
 (2022) run fully turbulent SA and two SA-based transition models
-inside delayed DES of a pitching airfoil (§3.1; Evidence below). These formulations are on the [DES page](/methods/detached-eddy-simulation.md).
+inside delayed DES of a pitching airfoil (§3.1; Evidence below). Sugaya &
+Imamura (2021) run DDES-p, an SA-based DDES whose modified shielding
+function protects the RANS regions when the streamwise grid size is small,
+which makes it "suitable for unsteady flow simulations using Cartesian
+grids" (the function is not printed), for a hovering rotor on moving
+Cartesian grids ([Sugaya & Imamura (2021)](/sources/sugaya-2021.md), §2.1,
+§4). These formulations are on the [DES page](/methods/detached-eddy-simulation.md).
 
 ### SA with wall functions on immersed-boundary Cartesian grids
 
@@ -547,6 +573,31 @@ the immersed-boundary page and
 [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)). The
 remaining error near stall is attributed to the equilibrium wall model at
 the leading edge (§6.1).
+
+Sugaya & Imamura (2021) use the immersed-boundary wall condition of
+Tamaki et al. with the Spalart–Allmaras wall model $u^+=f_{\mathrm{wall}}(y^+)$
+(page-local $f_{\mathrm{wall}}$, not printed) and extend it to moving
+Cartesian grids (§2.2, Eqs. 10–15, Table 1). At the face between a fluid and
+a wall cell, the tangential velocity is extrapolated linearly from an image
+point at $d_{\mathrm{IP}}=2\Delta x$ along the wall normal with the slope of
+the wall model there, and $u_\tau$ comes from Newton–Raphson iterations on
+$u_\tau f_{\mathrm{wall}}(y^+_{\mathrm{IP}})=u_{t,\mathrm{IP}}-V_{t,\mathrm{wall}}$,
+with $u_{t,\mathrm{IP}}$ the tangential velocity at the image point and
+$V_{t,\mathrm{wall}}$ the tangential wall speed (page-local), which recovers
+Tamaki et al.'s condition for a wall at rest; the near-wall modification of
+$\tilde\nu$ of Tamaki et al. is used and not printed. Because the grid moves
+rigidly with the body, the turbulent boundary layer stays in the same cells
+(§2.2). With SA RANS on a NACA 0012 at $Re=6\times10^6$, $\alpha=10^\circ$,
+relative Mach 0.15 and $y^+_{\mathrm{IP}}\approx230$ at mid-chord, a
+stationary grid in a free stream and a moving grid in quiescent air give
+density residuals that differ "in the order of machine zero" and identical
+$C_p$, $C_f$, velocity and eddy-viscosity profiles, in agreement with the
+body-fitted code FaSTAR on the Turbulence Modeling Resource grid (§3.1,
+Table 3, Figs. 4–8). The authors cite agreement of immersed boundaries with
+wall functions and body-fitted grids for the surface pressure "when $y^+$ is
+approximately 500 or less" (§3.1). Details on the
+[immersed-boundary page](/methods/immersed-boundary-method.md) and
+[RANS wall functions](/methods/rans-wall-function.md).
 
 ## Evidence
 
@@ -687,6 +738,50 @@ meshes as future work (§9).
   incidence ([Batther & Lee (2022)](/sources/batther-2022.md), §4.3.1,
   §4.4, Figs. 17, 21–22; see [dynamic stall](/definitions/dynamic-stall.md)
   and the [transition-model page](/methods/local-correlation-based-transition-model.md)).
+- **High-order RANS of the RAE 2822.** At the first High-Order CFD
+  Workshop two of the three DG submissions on the
+  [RAE 2822 airfoil](/benchmarks/rae-2822-airfoil.md) (case 9, $M=0.734$,
+  $\alpha=2.79^\circ$, $Re=6.5\times10^6$, transition fixed at 3% chord) used
+  SA; across SA, $k$-$\omega$ and an algebraic Reynolds-stress model the
+  organizers find "a large spread among the groups and virtually no
+  improvement from high order under uniform mesh refinement", attributed
+  partly to the wake alignment of the initial mesh and partly to the choice
+  of turbulence model, with adaptive mesh optimization "markedly superior"
+  (Wang et al. 2013, §4.8, §5.4, Table V, Fig. 23; see
+  [mesh adaptation](/methods/mesh-adaptation.md)).
+- **Pitching airfoil and hovering rotor on moving Cartesian grids.** With
+  SA RANS on the AGARD Case 3 NACA 0012 pitching at $M_\infty=0.6$,
+  $Re=4.8\times10^6$ ($y^+\sim100$ at mid-chord), Sugaya & Imamura (2021)
+  reproduce the shock position, the $C_l$ and $C_m$ hysteresis loops and the
+  lift-trajectory inversion of the experiment and of FUN3D on a body-fitted
+  grid, the moment within about 0.005 of experiment, as is the body-fitted
+  solution (§3.2, Figs. 10–13). With DDES-p of the
+  [Caradonna–Tung rotor](/benchmarks/caradonna-tung-rotor.md) on 75 and 149
+  million cells, the thrust coefficient (0.00514–0.00521) and figure of
+  merit (0.594–0.618) depend little on grid and scheme (§4.5, Table 7).
+- **Rotor wake with URANS.** Han et al. (2022) close URANS of the same
+  rotor with SA, no variant stated, to compare reconstructions on an
+  18-million-cell overset grid; at tip Mach 0.439 and 0.877 the thrust
+  coefficient errors against experiment are 3.5% and 8.2% with third-order
+  MUSCL, 1.5% and 5.1% with fifth-order WENO-JS and 0.9% and 3.0% with
+  WENO-K ([Han et al. (2022)](/sources/han-2022-c.md), §4, Tables 6–7; see
+  [WENO schemes](/methods/weno-scheme.md) and
+  [numerical dissipation](/properties/numerical-dissipation.md)).
+- **Aeroacoustic shape optimization with an adjoint SA.** Monfaredi et al.
+  (2021) run two-dimensional compressible SA URANS (no equation, constant or
+  variant printed) as the near field of a permeable Ffowcs Williams–Hawkings
+  prediction, and solve the continuous adjoint of the SA equation and of the
+  Eikonal wall-distance equation in the unsteady adjoint, the SA adjoint
+  formulation being deferred to a thesis
+  ([Monfaredi et al. (2021)](/sources/monfaredi-2021.md), §1, §2.1, §3; see
+  [FW-H analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)). On a
+  rod–airfoil configuration ($M_\infty=0.2$, $Re=4.8\times10^5$ on the airfoil
+  chord, $y^+<1$) the shedding Strouhal number is 0.24, as in a published 2D
+  URANS and above the measured value of about 0.19, and the mean velocity
+  agrees with one published 2D URANS and "seem[s] to outperform" another; at
+  $x/C=0.25$ all URANS overpredict the measured profile. The authors ascribe
+  part of the differences to SA against the SST of the other URANS, without
+  running SST (§4.2, Figs. 7, 10).
 - **Square cylinder.** Jiang et al. (2025) compare SA URANS with the
   $k$-$\sqrt kL$ model on a two-dimensional square cylinder at $Re=10^4$,
   calling the comparison possibly unfair because SA was designed for steady
@@ -822,3 +917,8 @@ computed at high order:
 - [Jiang et al. (2025)](/sources/jiang-2025.md) — §3.1 Eqs. 10–13, §4.3.
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.4, Tables 3–4.
 - [Batther & Lee (2022)](/sources/batther-2022.md) — §3.1, §4.3.1, §4.4, Figs. 17, 21–22.
+- [Wang et al. (2013)](/sources/wang-2013.md) — §4.8, §4.11–4.12, §5.4 Table V Fig. 23, §6.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1, §4.3.
+- [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §2.1, §2.2 Eqs. 10–15 Table 1, §3.1 Table 3 Figs. 4–8, §3.2 Figs. 10–13, §4.5 Table 7.
+- [Han et al. (2022)](/sources/han-2022-c.md) — §4, Tables 6–7.
+- [Monfaredi et al. (2021)](/sources/monfaredi-2021.md) — §1, §2.1, §3, §4.2 Figs. 7, 10.

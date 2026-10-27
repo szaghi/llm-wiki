@@ -5,7 +5,7 @@ description: "Large-eddy simulation resolves the filtered velocity and models th
 status: established
 aliases: [LES, filtered Navier–Stokes equations, subgrid-scale stress, SGS stress, subfilter stress, coarse-grained equations]
 tags: [les, filtering, sgs-model, compressible]
-timestamp: 2026-10-27T06:13:00Z
+timestamp: 2026-10-27T11:01:00Z
 ---
 
 # Large-eddy simulation: filtering and the subgrid-scale stress
@@ -120,6 +120,22 @@ limitation they leave open. [Lederer et al. (2023)](/sources/lederer-2023.md)
 (§3.1) list the commutation error, dissipation in laminar regions and a
 model acting on all resolved scales as drawbacks of classical explicit LES
 that motivate a variational multiscale formulation.
+
+**Kinetic coupling of an eddy viscosity.** [Zhao et al. (2021)](/sources/zhao-2021-c.md)
+(§III, Eqs. 12–13; citing Chen et al. 2003, 2004) solve compressible LES
+with a [gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md),
+in which no stress divergence is added: the eddy viscosity of any model
+enters the BGK collision time,
+$\tau_{\mathrm{col}}+\tau_{\mathrm{col},t}=(\mu+\mu_t)/p$ (the collision
+time $\tau_{\mathrm{col}}$ and its turbulent increment
+$\tau_{\mathrm{col},t}$ page-local, as on the gas-kinetic page; the
+paper's $\tau$, $\tau_t$), which by the Chapman–Enskog expansion adds
+$\mu_t$ to the molecular viscosity. Because the solver needs an eddy
+viscosity, the stress of their structural (Clark) model is first
+converted to one (§III.D; see
+[gradient model](/methods/gradient-model.md)). The resolved variables are
+filtered cell averages with an implicit grid filter; no Favre filtering is
+mentioned (§III.A).
 
 **Volume filtering at walls.** [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md)
 (§2.1–2.3, Eqs. 2.3–2.27) filter the incompressible equations up to and
@@ -251,6 +267,11 @@ Further sources split the same way.
     write a dynamic (density-multiplied) stress that enters the total
     stress as $\boldsymbol\sigma_h-\boldsymbol\tau_{\mathrm{sgs}}$, which is
     the registry's sign.
+  - [Li et al. (2021)](/sources/li-2021.md) (§II A, Eqs. 6–8) write the
+    incompressible filtered equations with the full kinematic tensor, the
+    registry's $\tau_{ij}=\overline{u_iu_j}-\bar u_i\bar u_j$, entering as
+    $-\partial_j\tau_{ij}$ (their tilde is the LES filter, the registry's
+    overbar, not a Favre filter); they model its deviatoric part.
 - **Negative convention.**
   [Maejima & Kawai (2025)](/sources/maejima-2025.md) (§2.1, Eq. 2.9;
   §3.2) put the subgrid term with a minus sign in the filtered momentum
@@ -258,6 +279,9 @@ Further sources split the same way.
   product of sub-cell fluctuations. Their strain $S_{ij}$ is twice the
   registry's deviatoric strain.
 - **Combined or unstated.**
+  - [Zhao et al. (2021)](/sources/zhao-2021-c.md) (§III.D, Eq. 21) write
+    the modelled stress as $-2\nu_t\bar S_{ij}$, the registry's sign,
+    without a deviatoric projection or a statement of the trace.
   - [Mukha et al. (2025)](/sources/mukha-2025.md) (§II.A, Eq. 3) combine
     viscous and subgrid stresses in one kinematic tensor,
     $(\nu+\nu_t)(\partial_ju_i+\partial_iu_j)$, with a strain lacking the
@@ -453,6 +477,8 @@ LES is approximated by the super-Gaussian above.
 | [Tang et al. (2022)](/sources/tang-2022.md), §2.1 | "box-filter width", definition not stated |
 | [Volpiani (2024)](/sources/volpiani-2024.md), App. 2 | $(\Delta x\Delta y\Delta z)^{1/3}$, test filter twice that |
 | [Valencia et al. (2026)](/sources/valencia-2026.md), §V A | explicit Gaussian filter of width $\Delta=1$, 2 or 4 grid spacings $h$ (filter-to-grid ratio), on a grid itself top-hat filtered at $h$ |
+| [Li et al. (2021)](/sources/li-2021.md), §III A, Eq. (17) | discrete top-hat of width $\Delta=16$ DNS spacings ($1024^3$ isotropic DNS, about 5% of the kinetic energy filtered); a posteriori LES spacing $\Delta/2$, so that LES–filtered-DNS differences are "mainly due to" the SGS model |
+| [Zhao et al. (2021)](/sources/zhao-2021-c.md), §III.A–B | $(\Delta x_1\Delta x_2\Delta x_3)^{1/3}$, test filter twice the grid filter; directional cell widths in the Vreman model, where "the grids themselves act as the filter" |
 | [Pan & Zhang (2023)](/sources/pan-2023.md), §II.B–D | "grid filter scale", not defined beyond the DES grid length $\max(\Delta x,\Delta y,\Delta z)$ of the same paper |
 
 In implicitly filtered LES the filter width and the grid spacing $h$
@@ -825,6 +851,16 @@ field to a filtered-DNS-like field without paired data; see
     Smagorinsky-closed filtered equations. They state that, to their
     knowledge, the LES equations had not been used as the constraint of
     such a network for 3D turbulence.
+- **Grid filtering of diffusion flames.** [Cuenot et al. (2022)](/sources/cuenot-2022.md)
+  (§1, §2.2) use the grid filter as the LES filter and draw a consequence
+  for non-premixed combustion: grid filtering lowers the resolved strain
+  rate and numerical diffusion adds to the physical one, so a diffusion
+  flame, which has no intrinsic thickness, thickens on an LES grid by
+  itself; see [thickened flame model](/methods/thickened-flame-model.md).
+  [Böttler et al. (2022)](/sources/bottler-2022.md) (§4) leave the LES
+  closure of their laminar
+  [flamelet tabulation](/methods/flamelet-tabulated-chemistry.md)
+  (turbulence–chemistry interaction) to future work.
 - **LES in a rotating frame.** Rismondo et al. (2025, §2.1, Eq. 2.2) write
   the filtered incompressible equations in a multiple reference frame,
   with Coriolis and centrifugal terms acting on the filtered inertial
@@ -935,7 +971,21 @@ Further explicit closures in this bundle's applications:
   al. 2026, §I, pp. 3–4; §III);
 - higher-order truncations of the [gradient model](/methods/gradient-model.md)
   against Smagorinsky, dynamic Smagorinsky and dynamic Leith in 2-D
-  turbulence (Jakhar et al. 2026).
+  turbulence (Jakhar et al. 2026);
+- the [Sigma model](/methods/sigma-model.md), with no constant printed, in
+  the wall-resolved reacting LES of a swirl combustor with the AVBP code
+  by [Agostinelli et al. (2021)](/sources/agostinelli-2021.md) (§2:
+  20.3 million tetrahedra, $y^+\approx1$–3, dynamically thickened flame,
+  see [thickened flame model](/methods/thickened-flame-model.md)); the
+  paper varies the thermal wall condition, not the closure;
+- Vreman, clipped dynamic Smagorinsky, WALE and a dynamic Clark model
+  reduced to an eddy viscosity against implicit LES in a gas-kinetic
+  channel solver (Zhao et al. 2021; ranking on
+  [implicit LES](/definitions/implicit-les.md));
+- a gene-expression-programming tensor model against dynamic Smagorinsky,
+  dynamic mixed and neural-network models in forced isotropic turbulence
+  (Li et al. 2021; see
+  [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
 
 ## Testing a closure
 
@@ -996,6 +1046,26 @@ coarse LES itself rather than on filtered DNS. A super-resolution network
 applied directly to coarse-LES input overpredicts the streamwise and shear
 stresses a priori, and the same model overpredicts the velocity a
 posteriori (§6.1).
+
+**Where LES stands among closures.** In their turbomachinery review
+[Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) (§2.2.2.1,
+Fig. 1) place RANS, URANS, hybrid URANS/LES, LES and DNS along the energy
+spectrum and state that RANS closure errors affect predictions far more
+than LES closure errors, because RANS models carry all turbulent scales and
+LES only the high-wavenumber part. They note that machine-learned SGS
+models "have yet to be employed" in blade- or stage-level simulations, to
+their knowledge (§4.3), and cite an entropy-loss analysis that also
+quantifies the entropy generation of the LES subgrid terms as a
+grid-resolution indicator (Zhao & Sandberg, cited; §4.2). The
+High-Order CFD Workshop summary of [Wang et al. (2013)](/sources/wang-2013.md)
+reports from its survey high-order methods as "routinely chosen for LES
+and DNS of turbulent flows" (§2) and calls accurate vortex transport "very
+important for LES and detached-eddy simulations" (§4.6, case C1.6). For the rod–airfoil configuration,
+[Monfaredi et al. (2021)](/sources/monfaredi-2021.md) (§1, §4.2, §5) note
+that most earlier studies used 3D LES or DES with an acoustic analogy;
+their own adjoint shape optimization is 2D URANS, and LES and DES adjoints
+are named as future work (see
+[Ffowcs Williams–Hawkings analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)).
 
 **Explicit against implicit LES as references.** [Cao et al. (2024)](/sources/cao-2024.md)
 (§3.4, Figs. 14–16) compare their high-order gas-kinetic
@@ -1145,3 +1215,11 @@ flow problems", citing their 2023 study and Fernandez et al.; see
 - [Ahn et al. (2023)](/sources/ahn-2023.md) — §IV C 1, Fig. 12.
 - [Batther & Lee (2022)](/sources/batther-2022.md) — §2.1; §4.2.1; §4.5.
 - [Gao et al. (2022)](/sources/gao-2022.md) — §5.1, Table 2.
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III, Eqs. (12)–(14), (17), (21); §III.A–D.
+- [Li et al. (2021)](/sources/li-2021.md) — §II A, Eqs. (6)–(8); §III A, Eq. (17); §III C.
+- [Cuenot et al. (2022)](/sources/cuenot-2022.md) — §1; §2.2.
+- [Böttler et al. (2022)](/sources/bottler-2022.md) — §4.
+- [Agostinelli et al. (2021)](/sources/agostinelli-2021.md) — §2.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1, Fig. 1; §4.2; §4.3.
+- [Wang et al. (2013)](/sources/wang-2013.md) — §2; §4.6.
+- [Monfaredi et al. (2021)](/sources/monfaredi-2021.md) — §1; §4.2; §5.

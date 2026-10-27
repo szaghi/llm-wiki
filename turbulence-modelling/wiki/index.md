@@ -20,7 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–8 ingested (160 of the 307 sources planned in 16
+**Corpus:** chunks 1–9 ingested (180 of the 307 sources planned in 16
 chunks; the archive is still growing). Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
@@ -144,6 +144,7 @@ shock-capturing schemes for real gases and kinetic equations.
 [Law of the wall](/definitions/law-of-the-wall.md) →
 [wall-modelled LES](/methods/wall-modelled-les.md) →
 [equilibrium wall model](/methods/equilibrium-wall-model.md),
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md),
 [LaRTE wall model](/methods/lagrangian-relaxation-towards-equilibrium-wall-model.md),
 [compressible velocity transformations](/definitions/compressible-velocity-transformation.md) and the
 [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md),
@@ -199,6 +200,7 @@ shock-capturing schemes for real gases and kinetic equations.
 [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md),
 [flux reconstruction](/methods/flux-reconstruction.md),
 [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md),
+[thickened flame model](/methods/thickened-flame-model.md),
 [jump-penalty stabilization](/methods/jump-penalty-stabilization.md),
 [high-order projection-based upwind method](/methods/high-order-projection-based-upwind-method.md),
 [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md);
@@ -231,6 +233,9 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [Imperial front wing](/benchmarks/imperial-front-wing.md),
 [ERCOFTAC T3 flat plates](/benchmarks/ercoftac-t3-flat-plate.md),
 [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md),
+[NACA 4412 airfoil](/benchmarks/naca-4412-airfoil.md),
+[RAE 2822 airfoil](/benchmarks/rae-2822-airfoil.md),
+[Caradonna–Tung rotor](/benchmarks/caradonna-tung-rotor.md),
 [Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md),
 [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md),
 [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md),

@@ -5,7 +5,7 @@ description: "Clark's gradient model truncates the Taylor expansion of the filte
 status: established
 aliases: [Clark model, gradient model, nonlinear gradient model, tensor-diffusivity model, optimal clipping, standard clipping, GM-OC, GM-SC, NGM2, NGM4, NGM6, higher-order gradient model]
 tags: [les, sgs-model, filtering, eddy-viscosity]
-timestamp: 2026-10-27T06:03:00Z
+timestamp: 2026-10-27T11:01:00Z
 ---
 
 # Gradient (Clark) model and the clipping of structural SGS models
@@ -454,6 +454,62 @@ The eddy viscosity of the
 is proportional to the positive part of the gradient-model flux with
 directional widths (*compiler check, not in the sources*; see that page).
 
+## Dynamic Clark model reduced to an eddy viscosity
+
+[Zhao et al. (2021)](/sources/zhao-2021-c.md) (§III.D, Eqs. 19–23) state
+that the pure Clark model is unstable and that Clark et al.'s
+Smagorinsky-augmented version "yielded excessive dissipation", and use the
+dynamic Clark model of Vreman et al. (cited), printed as
+$\tau_{ij}=\tfrac1{12}\Delta^2\partial_k\bar u_i\partial_k\bar u_j-C_d\Delta^2\overline{\lvert\bar S\rvert\bar S}_{ij}$
+(Eq. 20; their $\lvert\bar S\rvert$ carries the factor two, their stress
+the registry sign). Two simplifications are theirs:
+
+- **Borrowed coefficient.** $C_d$ is not computed by its own dynamic
+  procedure; the coefficient of the clipped
+  [dynamic Smagorinsky model](/methods/dynamic-procedure.md) is used
+  directly.
+- **Projection on the strain.** Their gas-kinetic solver takes only a
+  scalar viscosity (see
+  [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md)),
+  so the model stress is replaced by $-2\nu_t\bar S_{ij}$ with
+  $\nu_t=-\tau_{ij}\bar S_{ij}/(2\bar S_{ij}\bar S_{ij})$ (Eq. 23), the
+  dissipation-matching viscosity. This keeps the model's local flux and
+  discards the rest of the tensor; it is the optimal eddy viscosity of
+  [energy backscatter](/definitions/energy-backscatter.md) applied to a
+  model stress *(compiler check, not in the sources)*. The paper does not
+  say whether negative values are clipped.
+
+In wall-resolved channel flow at nominal $Re_\tau=180$ and 395 this
+"DC-model" gives the lowest realized $Re_\tau$ of their runs (172.06 at
+180; 351.35 and 369.57 at 395, against DNS 178.12 and 392.24) and the
+highest cost per step (0.624 s against 0.520 s for no model) (§V, Tables
+III, V–VII); implicit LES does better (see
+[implicit LES](/definitions/implicit-les.md)).
+
+## The gradient term inside a learned tensor-basis model
+
+[Li et al. (2021)](/sources/li-2021.md) cite the gradient model only in
+their introduction (§I). Their gene-expression-programming model for
+forced isotropic turbulence (see
+[symbolic-regression closures](/methods/symbolic-regression-closure.md))
+is, in the normalization of the
+[tensor-basis page](/methods/tensor-basis-neural-network.md),
+$\tau^d_{ij}=\tfrac12\Delta^2\lvert\bar S\rvert^2(-0.01T^{(1)}-0.1T^{(2)}+0.07T^{(3)}-0.11T^{(4)})$
+(Eq. 22), with $\Delta$ the top-hat filter width and
+$T^{(1)}=\mathsf s$, $T^{(2)}=\mathsf s\mathsf w-\mathsf w\mathsf s$,
+$T^{(3)}=\mathsf s^2-\tfrac13\mathrm{tr}(\mathsf s^2)I$,
+$T^{(4)}=\mathsf w^2-\tfrac13\mathrm{tr}(\mathsf w^2)I$ of
+$\mathsf s_{ij}=\sqrt2\,\bar S_{ij}/\lvert\bar S\rvert$ and
+$\mathsf w_{ij}=\sqrt2\,\bar\Omega_{ij}/\lvert\bar S\rvert$ (page-local).
+With $\partial_j\bar u_i=\bar S_{ij}+\bar\Omega_{ij}$ the Clark stress is
+$\tfrac{\Delta^2}{12}(\bar S+\bar\Omega)(\bar S-\bar\Omega)$, whose
+deviatoric part in the same basis is
+$\tfrac12\Delta^2\lvert\bar S\rvert^2\cdot\tfrac1{12}(T^{(3)}-T^{(4)}-T^{(2)})$,
+coefficients $(0,-0.083,0.083,-0.083)$ against the learned
+$(-0.01,-0.1,0.07,-0.11)$ *(compiler check, not in the sources)*. Li et
+al.'s a priori ablation (Table IV) finds $T^{(2)}$ and $T^{(4)}$ the
+leading terms.
+
 ## Higher-order Taylor truncations in two-dimensional turbulence
 
 [Jakhar et al. (2026)](/sources/jakhar-2026.md) extend the gradient model
@@ -570,3 +626,5 @@ higher-order structural terms rather than an eddy viscosity or clipping.
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — pp. 1–5, Eqs. (3)–(4), Figs. 1–4.
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §I; §III B, Eqs. (37), (40).
 - [Pan & Zhang (2023)](/sources/pan-2023.md) — §I.
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III.D, Eqs. (19)–(23); §V, Tables III, V–VII.
+- [Li et al. (2021)](/sources/li-2021.md) — §I; §II B, Eqs. (9)–(13); Eq. (22), Table IV.

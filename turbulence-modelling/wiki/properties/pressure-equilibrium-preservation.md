@@ -5,7 +5,7 @@ description: "A scheme is pressure-equilibrium preserving when uniform pressure 
 status: established
 aliases: [PEP, pressure equilibrium preserving scheme, KGP-Pt, KGP-PT scheme, pressure-equilibrium-preserving split form, CDHD, central differential flux with high-order dissipation, primitive-variable hybrid scheme]
 tags: [pressure-equilibrium, kinetic-energy-preserving, compressible, real-gas, numerical-dissipation, dns]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:34:00Z
 ---
 
 # Pressure-equilibrium preservation
@@ -253,6 +253,25 @@ the sources)*; the paper's only test, the Taylor–Green vortex at $M=0.085$ wit
 uniform initial density, does not probe the property (see
 [kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
 
+**The KEEP scheme at a density wave.** The kinetic-energy- and
+entropy-preserving scheme of [Kuya et al. (2018)](/sources/kuya-2018.md)
+(the KEEP row of the tables on
+[entropy conservation](/properties/entropy-conservation.md); its fluxes are
+on [kinetic-energy preservation](/properties/kinetic-energy-preservation.md))
+evolves total energy with an internal-energy flux
+$\{\!\{\rho\}\!\}\{\!\{u\}\!\}\{\!\{p/\rho\}\!\}/(\gamma-1)$ and the
+pressure-diffusion flux $\tfrac12(u_mp_{m+1}+u_{m+1}p_m)$ (§3, Eq. 54).
+The source makes no pressure-equilibrium claim and its tests start from
+uniform density (§5.1). In one dimension with uniform $u_0$ and $p_0$ and an
+ideal gas, its fluxes give $\partial_tu=0$ and
+$$\partial_tp\big|_m=-\frac{u_0p_0}{h}\Big[\{\!\{\rho\}\!\}\{\!\{1/\rho\}\!\}\Big]_{m-1/2}^{m+1/2},\qquad
+\{\!\{\rho\}\!\}\{\!\{1/\rho\}\!\}=\frac{(\rho_m+\rho_{m+1})^2}{4\rho_m\rho_{m+1}}\ge1,$$
+which vanishes only where the face values of this ratio agree, so the
+scheme is not pressure-equilibrium preserving at a density wave; in the
+terms of Bernades et al. its internal-energy convection is not the
+$\tfrac12(C^D_{\rho e}+C^u_{\rho e})$ of PEP-IG *(compiler check, not in the
+sources)*.
+
 ## Qualifications
 
 - The analysis is for second-order centred differences in one dimension;
@@ -291,5 +310,6 @@ uniform initial density, does not probe the property (see
 - [Xu et al. (2026)](/sources/xu-2026.md) — arXiv 2508.21599v1: §1 (conservative against primitive formulations, prior PEP schemes); §3, §3.4–3.5, Eqs. (18)–(23) (hybrid, PVRS sensor, CDHD); §4, Eqs. (24)–(41) (truncation analysis); §5.1–5.3, Table 1, Figs. 2–7.
 - [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §3.1.6, Fig. 16 (Chandrashekar–Ranocha PEP flux on the Taylor–Green vortex).
 - [Aiello et al. (2026)](/sources/aiello-2026.md) — §3.2, Table 1 (Ranocha PEP; Gouasmi pressure term); §4.2, Table 3; §5.
+- [Kuya et al. (2018)](/sources/kuya-2018.md) — §3, Eq. (54) (KEEP fluxes, from which the compiler check above is derived); §5.1 (uniform initial density in the tests).
 - [Volpiani (2024)](/sources/volpiani-2024.md) — §2.2.3, Eqs. (14)–(17) (split forms with enthalpy splitting; PEP schemes named, not treated); §3.2 (Taylor–Green setup).
 - [Bernades et al. (2023)](/sources/bernades-2023.md) — §1 (definition, requirements); §2.1, Eqs. (2)–(4) (pressure equation); §3.1, Eqs. (8)–(13) (semi-discrete framework, split forms, KEP family); §3.1.2, Eqs. (14)–(28) (induced pressure and energy equations, chain rule, CR class, KGP-Pt); §3.1.3, Table 1; §3.2, Table 2 (comparison schemes); §4.1, Figs. 1–3; §4.2, Figs. 4–7; §4.3, Figs. 8–10; §5.

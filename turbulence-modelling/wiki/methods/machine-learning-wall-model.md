@@ -5,7 +5,7 @@ description: "Wall-stress models for wall-modelled LES learned by supervised reg
 status: established
 aliases: [MLWM, ML wall model, neural-network wall model, data-driven wall model, reinforcement-learning wall model, RLWM, SciMARL wall model, BFWM]
 tags: [wall-model, wmles, data-driven, neural-network, reinforcement-learning]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-27T10:59:00Z
 ---
 
 # Machine-learning wall models
@@ -115,12 +115,93 @@ al. (2021) and Bae & Koumoutsakos (2022), as they list them — for relying "on
 information about the flow that is typically inaccessible in real-world
 applications, such as the boundary layer thickness" and for being limited to
 simple configurations (§1). The ZHY21 and ZYZY22 inputs of the table above are
-scaled with $\delta$ (Vadrot et al. 2023b, §II.B). Among the models on this
+scaled with $\delta$ (Vadrot et al. 2023b, §II.B). Among the wall-stress models on this
 page, only the BFWM is tested a posteriori in three-dimensional and separated flows: the NASA CRM-HL near
 stall and the [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md), where
 it beats the equilibrium model in the wing–body juncture and in the
 trailing-edge corner separation, there "far from satisfactory" (§4.7–4.8,
-Table 1).
+Table 1). The random-forest correction of Zangeneh (2021, next section),
+which corrects a hybrid WMLES rather than replacing its wall model, is tested
+a posteriori in a separated supersonic corner flow.
+
+## A discrepancy correction for supersonic separated flow
+
+[Zangeneh (2021)](/sources/zangeneh-2021.md) learns not the wall stress but
+the error of a baseline. The baseline is an SST-IDDES used as wall-modelled
+LES, with its RANS inner layer on an auxiliary wall grid embedded in the
+coarse LES mesh and the modelled wall shear stress $\tau_w$ and wall heat
+flux $q_w$ imposed as Neumann conditions (§II.A–B; see
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)). A
+random-forest regression maps local mean features of the baseline solution
+to the discrepancies $\tau_w^e$, $q_w^e$ against DNS or experiment
+(page-local superscripts), and the corrected values
+$\tau_w^{\mathrm{rfr}}=\tau_w^{\mathrm{wmles}}+\tau_w^e$, $q_w^{\mathrm{rfr}}=q_w^{\mathrm{wmles}}+q_w^e$
+are used to correct the eddy viscosity $\mu_t$ and the turbulent Prandtl
+number $Pr_t$, which are fed back into the solver; how $\mu_t$ and $Pr_t$
+are obtained from the corrected wall values is not given (§II.F, §III,
+Fig. 3). The author stresses that "this is a corrective approach and not
+'standard' turbulence model".
+
+**Inputs** (§II.E, Eqs. 8–11, Fig. 2). Following Lozano-Durán & Bae (2020,
+as cited, who first used the stencil),
+features are taken on a seven-point stencil centred at the second off-wall
+point, $h=2\Delta$, with neighbours at $\pm\Delta$ in each direction: the
+velocity relative to the wall velocity (Galilean invariant), the symmetric
+and antisymmetric velocity-difference tensors built from central differences
+over $2\Delta$ on the stencil (not the LES gradient), the grid size, wall
+distance, density, viscosity and free-stream velocity, and two velocity and
+length scales — $\sqrt{\tau_w/\rho}$ and $h$ for the attached plate (after
+Townsend, as cited), and a scale built from the streamwise gradients of
+mean pressure and temperature, with the length $\nu$ over that velocity, for
+separated flow (after Stratford, as cited) — all made dimensionless by these
+scales, with $\tau_w$ and $q_w$ from the previous step. The
+pressure–temperature scale has units of velocity *(compiler check, not in
+the sources)*.
+
+**Regressor** (§II.F–G, Eq. 12). A forest of regression trees (Breiman
+2001, as cited), each splitting the feature space greedily by minimizing
+the sum of squared errors over the two halves, averaged without weights;
+300 trees, chosen when the out-of-bag error stabilized. Random forests are
+said to be robust "with only a small set of training parameters", unlike
+networks; no depth, feature-subset size or training-sample count is printed.
+
+**A posteriori tests** (§III, Table I), all comparisons of plotted curves
+without tabulated error norms:
+
+- *Zero-pressure-gradient supersonic plate*, trained at $M=2.28$,
+  $Re_\delta=57\,300$ ($Re_\theta=5000$) and predicted at $M=1.69$,
+  $Re_\delta=617\,000$ ($Re_\theta=50\,000$) against the experiments of
+  Souverein et al. (as cited): the corrected mean velocity is "almost
+  identical to the experimental result" and shows no
+  [log-layer mismatch](/definitions/log-layer-mismatch.md) over
+  $30<y^+<3000$; Reynolds stresses normalized by $\tau_w$, too high in the
+  baseline "primarily because of the lower wall shear stress", improve, as do
+  mean and fluctuating temperature and the barycentric anisotropy map
+  (Figs. 6–9).
+- *Mach 2.9 tandem expansion–compression corner* (25° ramp), trained at
+  $Re_\delta=19\,983.8$ and predicted at $40\,934.2$ against the DNS of Fang
+  et al. (as cited): skin friction, separation length, mean reattachment,
+  the Stanton-number peak, profiles on eight sampling lines and Reynolds
+  stresses improve; the heat flux in the bubble improves "by correcting the
+  turbulent Prandtl number" (Figs. 10–18). See
+  [shock–turbulent boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+- *General model* trained on both flows and predicted on the corner: still
+  better than the baseline, but less than the corner-only model, with the
+  Stanton peak poorly predicted; the author concludes that the training set
+  "is far from being representative" and must be broadened (§III.C, Fig. 19;
+  §IV).
+
+The motivation is that the wall model takes the instantaneous,
+under-resolved LES solution at the matching point as input, so that "even a
+perfect wall model would not be able to accurately predict skin friction"
+(§II.C), and that "no modification for WMLES has been tested on supersonic
+flows with separation and reattachment" (§I). Against Yang et al. (2019),
+the author writes that their network wall model "relied on information
+about the flow that is typically inaccessible in real-world applications,
+such as the boundary layer thickness, and was limited to channel flow
+configurations" (§I) — the wording that Lozano-Durán & Bae (2023, §1) later
+apply to a list of models that includes Zangeneh (2021) itself (above; see
+Qualifications).
 
 Vadrot et al. (2023b, §I) also recall earlier models they do not test: the
 first network wall model of Yang et al. (2019), trained at $Re_\tau=1000$;
@@ -324,6 +405,18 @@ bias-free networks and is "often applicable" to general ones.
   stress diverges where it should tend to zero; a ReLU network can still be
   designed with the right asymptote (§IV.B).
 
+## Two other positions
+
+[Lv et al. (2021)](/sources/lv-2021.md) (§V), whose own wall model puts the
+log law into the reconstruction basis of the wall-adjacent cell (see
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)), argue
+that machine learning for WMLES "ought to focus on finding the most
+appropriate basis functions (rather than finding a network that predicts the
+wall-shear stress)". [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md)
+(§4.3), reviewing data-driven closures for turbomachinery, call LES wall
+modelling with physics-informed neural networks (Yang et al. 2019, as cited)
+"a promising path"; they test none.
+
 ## Position: preserve the law of the wall
 
 Vadrot et al. (2023b, §V) conclude that a learned wall model must preserve the
@@ -394,12 +487,31 @@ mismatch as the published policy in LESGO.
 
 ## Qualifications
 
-- The evidence for the regression and RL models is channel flow, plus the
+- The evidence for the regression and RL wall-stress models is channel flow, plus the
   original authors' training cases; only the building-block-flow model of
   Lozano-Durán & Bae (2023) is tested in separated and three-dimensional
-  flows, by its own authors and in one solver. Its authors find the total
+  flows, by its own authors and in one solver. Zangeneh's (2021) correction
+  is tested in a separated supersonic flow, also by its author and in one
+  solver, and trained on the same geometry at lower Reynolds number. Its authors find the total
   error dominated by the SGS-model error at the matching point, not by the
   wall model (§4.7, §6).
+- **Inputs of Zangeneh (2021) against the criticism of Lozano-Durán & Bae
+  (2023).** The printed input set (Eq. 11) contains no boundary-layer
+  thickness, but it contains the free-stream velocity relative to the wall
+  and mean streamwise gradients of pressure and temperature; Lozano-Durán &
+  Bae name the boundary-layer thickness only as an example and do not say
+  which input of this model they mean.
+- **Printed items of Zangeneh (2021).** The split criterion (Eq. 12) squares
+  the difference between the reference wall stress and the mean *error* in
+  each region, while the target is the error; aggregation is described as
+  "the unweighted average" (§II.F) and as "the weighted vote from each
+  individual tree" (§II.G), with class weights and a "minority class" for a
+  regression; the central difference defining the stencil tensors is
+  typeset with index $i$ on the velocity where $j$ is defined; §II.E names
+  channel flows among the building blocks, but none is used; the
+  prediction Reynolds number is $617\,000$ in Table I and $617\,300$ in
+  §III.A.1. Its grid spacings, $\Delta x^+\approx\Delta z^+=6.8$ and 9.6 on the
+  plates and $\Delta y^+=1.1$–1.3 in the corner, are printed in §III.
 - Vadrot et al. print $l^+_\Omega=u_\tau/(2\Omega_{\mathrm{rot}})$ and
   $l_\Omega=u_\tau/(2\Omega_{\mathrm{rot}})$ for the inner-scaled and the
   dimensional rotation length (§II.B.2, l. 139, 143); the expression has units
@@ -444,3 +556,6 @@ mismatch as the published policy in LESGO.
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §1; §2, Eq. (2.3); §2.5–2.6; §4.7–4.8, Table 1; §5(3); §6.
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1; §2, §2.1; §4.3, Fig. 10; §7.
 - [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — Abstract; §II.A; §II.B.2–II.B.3, Eqs. (3)–(10), Table I, Figs. 2–3; §III.A–III.B, Figs. 6, 9–10; §IV, Eqs. (13)–(17), Table III, Figs. 11–12; §V (arXiv v3).
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) — §I; §II.A–II.G, Eqs. (8)–(12), Figs. 1–3; §III.A–III.C, Table I, Figs. 6–19; §IV.
+- [Lv et al. (2021)](/sources/lv-2021.md) — §V.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3.

@@ -5,7 +5,7 @@ description: "The wall-adapting local eddy-viscosity (WALE) model builds a stati
 status: established
 aliases: [WALE, wall-adapting local eddy-viscosity model, Nicoud–Ducros model]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-27T05:46:00Z
+timestamp: 2026-10-27T11:01:00Z
 ---
 
 # WALE model
@@ -44,6 +44,11 @@ random traceless gradient)*. Duan & Wang state the advantages as an
 eddy viscosity containing both strain and rotation, reduced near the wall
 with the proper asymptotic behaviour.
 
+[Zhao et al. (2021)](/sources/zhao-2021-c.md) (§III.C, Eq. 18) print the
+dynamic viscosity $\mu_t=\bar\rho\nu_t$ with the Duan & Wang quotient and
+their own $\mathcal S_{ij}$, whose isotropic term differs in sign from
+Duan & Wang's (see Qualifications).
+
 ## Behaviour in pure shear
 
 For a unidirectional shear $\bar u(y)$ with $\partial_y\bar u=a$:
@@ -68,6 +73,7 @@ channel LES, which all their cases capture accurately.
 | not printed | not printed | wall-resolved incompressible finite-volume LES (ANSYS Fluent) of a pitching NACA 0012 in deep dynamic stall | [Baldan & Guardone (2025)](/sources/baldan-2025.md), §1.2 |
 | not printed | not printed | wall-resolved incompressible OpenFOAM LES of a model wind turbine | [Rismondo et al. (2025)](/sources/rismondo-2025.md), §2.1 |
 | not printed | not printed | second-order finite-volume reference LES of a compressor cascade (DLR TRACE) | [Möller et al. (2024)](/sources/moller-2024.md), §III.A |
+| 0.5, after the channel calibration of Weickert et al. at $Re_\tau=395$ and the pipe recommendation of Nicoud & Ducros (cited); $C_w^2\approx10.6C_s^2$ stated for isotropic turbulence | $(\Delta x_1\Delta x_2\Delta x_3)^{1/3}$ | gas-kinetic finite-volume LES of channel flow at $Re_\tau=180$ | [Zhao et al. (2021)](/sources/zhao-2021-c.md), §III.C, §IV |
 
 The printed constants belong to different codes, filter widths and
 uses (a small-scale VMS viscosity against a classical LES model); no
@@ -185,6 +191,14 @@ instead (below).
     for transitional DDES of the V103
     [compressor cascade](/benchmarks/compressor-cascade.md)
     (§III.A, Table 3); no constant is printed.
+- **Gas-kinetic channel LES.** Zhao et al. (2021, §IV–V, Table V)
+  run WALE ($C_w=0.5$) only at $Re_\tau=180$ ($96^3$), although §IV says
+  the same $C_w$ is used at 395; Tables VI–VII contain no WALE results.
+  Its realized $Re_\tau$, 172.57 against DNS 178.12, is the second lowest
+  of the four explicit models, ahead of the dynamic Clark model only, and
+  below the no-model run (177.89); its cost per step is 0.552 s against
+  0.520 s without model (Table III). See
+  [implicit LES](/definitions/implicit-les.md).
 - **Listed in codes.** WALE is among the explicit LES models of the DG code
   [HORSES3D](/software/horses3d.md) ([Ferrer et al. 2023](/sources/ferrer-2023.md),
   §4.1), with no formula printed. [Haering et al. (2022)](/sources/haering-2022.md)
@@ -205,7 +219,13 @@ instead (below).
   it is read here as $\bar\Omega_{kl}\bar\Omega_{kl}$ by analogy. They
   write the products $\epsilon^2\epsilon^2$ and $\omega^2\omega^2$ as
   products of scalars, as transcribed above.
-- Only Lederer et al. print the formula; Saini et al. and Lewis et al. use
+- Zhao et al. (2021, Eq. 18) print
+  $\mathcal S_{ij}=\bar S_{ik}\bar S_{kj}+\bar\Omega_{ik}\bar\Omega_{kj}-\tfrac13\delta_{ij}(\bar S_{mn}\bar S_{mn}+\bar\Omega_{mn}\bar\Omega_{mn})$.
+  Since $\bar\Omega_{ik}\bar\Omega_{ki}=-\bar\Omega_{mn}\bar\Omega_{mn}$, the
+  tensor is traceless only with the minus sign of Duan & Wang's form; the
+  printed plus sign leaves a trace of $-2\bar\Omega_{mn}\bar\Omega_{mn}$
+  *(compiler check, not in the sources)*.
+- Lederer et al., Duan & Wang and Zhao et al. print the formula; Saini et al. and Lewis et al. use
   the model without it, so the page cannot check whether their
   implementations use the same invariant or filter width.
 
@@ -225,3 +245,4 @@ instead (below).
 - [Rismondo et al. (2025)](/sources/rismondo-2025.md) — §2.1; §3, Fig. 8(c).
 - [Möller et al. (2024)](/sources/moller-2024.md) — accepted manuscript: §III.A, Table 3.
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §I.
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III.C, Eq. (18); §IV; §V, Tables III, V.

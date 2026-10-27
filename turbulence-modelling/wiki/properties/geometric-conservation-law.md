@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Geometric conservation law and free-stream preservation"
-description: "On curvilinear grids a discretization preserves a uniform flow only if its discrete metric terms satisfy the metric identities; the sources obtain this geometric conservation law with curl-form metrics in DGSEM codes and with a symmetric conservative metric form in a curvilinear gas-kinetic finite-volume scheme."
+description: "On curvilinear grids a discretization preserves a uniform flow only if its discrete metric terms satisfy the metric identities, and on moving grids also a temporal identity; the sources meet this geometric conservation law with curl-form DGSEM metrics, a symmetric conservative gas-kinetic metric form and GCL error compensation in moving-grid flux reconstruction."
 status: established
 aliases: [GCL, geometric conservation law, free-stream preservation, freestream preservation, metric identities, discrete metric identities]
-tags: [dg, gas-kinetic, high-order, compressible]
-timestamp: 2026-10-26T20:44:00Z
+tags: [dg, gas-kinetic, flux-reconstruction, high-order, compressible]
+timestamp: 2026-10-27T10:59:00Z
 ---
 
 # Geometric conservation law and free-stream preservation
@@ -88,6 +88,61 @@ then used as [implicit LES](/definitions/implicit-les.md) of a compressible
 [periodic hill](/benchmarks/periodic-hill.md) whose mesh is built from
 discrete bottom-wall points (§3.3–3.4).
 
+## Moving and deforming grids: the temporal identity
+
+When the map depends on time, $\boldsymbol x(\boldsymbol\xi,t)$, the
+transformed equations carry the grid velocity, and a third identity joins
+the two spatial ones. [Liu et al. (2022b)](/sources/liu-2022-g.md), §2.1,
+Eqs. (2)–(8), write it for the two-dimensional arbitrary
+Lagrangian–Eulerian (ALE) Navier–Stokes equations of their
+[flux-reconstruction](/methods/flux-reconstruction.md) (FR/CPR) solver on
+moving triangular grids ($(\xi,\eta)$ the reference coordinates as above,
+$\xi_x$, $\xi_t$, … the metric terms, $\boldsymbol V_g=(x_t,y_t)$ the grid
+velocity, page-local):
+$$\begin{aligned}
+&\partial_\xi(\mathcal J\xi_x)+\partial_\eta(\mathcal J\eta_x)=0,\qquad \partial_\xi(\mathcal J\xi_y)+\partial_\eta(\mathcal J\eta_y)=0,\\
+&\partial_t\mathcal J+\partial_\xi(\mathcal J\xi_t)+\partial_\eta(\mathcal J\eta_t)=0,\qquad \xi_t=-\boldsymbol V_g\cdot\nabla\xi,\quad \eta_t=-\boldsymbol V_g\cdot\nabla\eta .
+\end{aligned}$$
+With these identities the equations take the physical-domain form
+$\partial_tQ+\partial_xF+\partial_yG-\boldsymbol V_g\cdot\nabla Q=0$
+($Q$ the conservative variables, $F$, $G$ the fluxes; Eq. 8), which is the
+form they discretize. They state that "the first two laws can easily be
+satisfied when high-order spatial discretization is used", while the
+third, which involves both temporal and spatial derivatives of the
+Jacobian and the metrics, "needs special treatment". They enforce it with
+a **GCL error compensation** approach, citing earlier moving-grid
+spectral-difference and CPR work (their refs. 58, 61, 62; see
+[spectral difference method](/methods/spectral-difference-method.md)).
+Their third-order FR/CPR scheme keeps its order on a grid deformed by a
+prescribed sinusoidal motion: the $L_2$ errors of a scalar wave fall from
+$1.24\times10^{-2}$ to $1.76\times10^{-5}$ on $10\times10$ to $80\times80$
+quadrilaterals split into triangles, observed orders 3.1–3.2, against
+3.0–3.4 on the stationary grids (§3.1.1, Table 1). The grid itself moves
+by an algebraic quintic blending of the boundary displacement (§2.5). All
+their flows are laminar ($Re=100$–1000); turbulence models are named as
+future work (§4).
+
+[Sugaya & Imamura (2021)](/sources/sugaya-2021.md) avoid grid
+deformation altogether. Their hierarchical Cartesian grid moves rigidly
+with the body, and they separate this rigid-grid "moving grid method"
+from the deformable-grid approach, for which they cite the GCL paper of
+Thomas & Lombard (§1). The grid-motion flux $Q\,V_n$ ($V_n$
+the normal grid velocity of a face, page-local) is folded into the
+inviscid flux by a Galilean transformation (§2.1, Eqs. 1–9; see
+[immersed boundary methods](/methods/immersed-boundary-method.md)). They
+do not discuss a GCL. For a rigid motion $\mathcal J$ does not change in
+time and the grid velocity $\boldsymbol V_{\mathrm{trans}}+\boldsymbol\omega_{\mathrm g}\times\boldsymbol r$
+($\boldsymbol\omega_{\mathrm g}$ the angular velocity of the grid, page-local)
+is divergence-free, so the temporal identity of Liu et al. above holds
+exactly *(compiler check, not in the sources)*. Their test of the moving formulation is a Galilean one: a steady
+Spalart–Allmaras RANS of a NACA 0012 at $Re=6\times10^6$, relative Mach
+number 0.15, $\alpha=10^\circ$, run with the stream on a fixed grid and
+with the grid moving through quiescent air. The two runs give density
+residual norms of $4.85717\times10^{-11}$ and $4.85718\times10^{-11}$ at
+step 15,000. They call the differences "in the order of machine zero",
+and $C_p$, $C_f$ and eddy-viscosity profiles are identical (§3.1, Table 3,
+Figs. 5–8).
+
 ## Qualifications
 
 - **Printed metric formula (Cao et al. 2024, arXiv v1, Eq. 11).** The
@@ -104,6 +159,9 @@ discrete bottom-wall points (§3.3–3.4).
   metric evaluation (Krais et al. 2021; Kurz et al. 2025) and show no
   free-stream test on curved meshes (Krais et al.'s free-stream runs are
   Cartesian scaling tests, §5.8); Cao et al. (2024) test it.
+- Liu et al. (2022b) do not print the error-compensation terms, and give
+  no free-stream test on the deforming grid; the deforming-grid result
+  they show is the order of accuracy of Table 1.
 
 # Citations
 
@@ -112,3 +170,5 @@ discrete bottom-wall points (§3.3–3.4).
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv 2404.12703v2: §2.2, Eqs. (11)–(13) (curl-form metric terms in GALÆXI).
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §3 (conservative Kopriva form of the metric terms).
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §2 (free-stream preservation in the TRACE DGSEM).
+- [Liu et al. (2022b)](/sources/liu-2022-g.md) — §2.1, Eqs. (2)–(8) (ALE transformation, three GCL identities, error compensation); §2.5 (grid deformation); §3.1.1, Table 1 (order on stationary and deforming grids); §4.
+- [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §1 (rigid against deformable moving grids); §2.1, Eqs. (1)–(9) (moving-grid flux); §3.1, Table 3, Figs. 5–8 (stationary against moving grid).

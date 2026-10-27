@@ -5,7 +5,7 @@ description: "Second-moment RANS closures that transport the six Reynolds stress
 status: established
 aliases: [Reynolds-stress model, RSM, DRSM, differential Reynolds-stress model, second-moment closure, Reynolds stress transport model, RSTM, SSG/LRR-ω, SSG/LRR-ω-γ, ATAAC DRSM]
 tags: [rans, reynolds-stress-model, transition, turbomachinery, separated-flow]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T10:57:00Z
 ---
 
 # Differential Reynolds-stress models
@@ -51,7 +51,15 @@ non-linear eddy-viscosity models, Reynolds-stress transport models and
 algebraic stress models "have not received widespread attention because
 they lack the robustness of LEVM and involve more parameters that need to
 be calibrated" ([Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md),
-§2.1.2; arXiv v2).
+§2.1.2; arXiv v2). Sandberg & Michelassi (2022) make the same two points
+for turbomachinery: full Reynolds-stress models' "high cost and lack of
+robustness" have so far precluded their widespread use in turbomachinery
+prediction, yet nonlinear closures or full Reynolds-stress transport are
+the possible cure for the misalignment of Reynolds stress and strain that
+passage acceleration and turning impose on wake cores, which invalidates
+the linear [Boussinesq](/definitions/boussinesq-hypothesis.md) relation
+([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §2.2.2.1,
+§3.2.3; see [turbine cascades](/benchmarks/turbine-cascade.md)).
 
 ## The SSG/LRR-$\omega$ model
 
@@ -180,6 +188,14 @@ Heinz (2022) records that both the partially integrated transport model and
 in Reynolds-stress versions, and states that the author's conclusions on the
 resolution-dependent destruction coefficient, derived for $k$-$\varepsilon$,
 carry over to them ([Heinz (2022)](/sources/heinz-2022.md), Table 1, §4).
+In Heinz's earlier review, Reynolds-stress hosts of the partially
+integrated transport model appear on the
+[NACA 4412 airfoil](/benchmarks/naca-4412-airfoil.md): with about three
+million points, RSM-based PITM hybrids reduce the RANS errors in lift and
+drag from $+14\%$ and $-54\%$ to $+7\%$ and $-39\%$, though no method in the
+compilation predicts both coefficients accurately
+([Heinz (2020)](/sources/heinz-2020.md), §5.4; compiled from the cited
+studies).
 
 ## The ATAAC DRSM
 
@@ -263,6 +279,19 @@ give self-sustained shock oscillation, at Strouhal numbers of about
 ([Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md), App. A, Table
 A.4; a compilation of other authors' results).
 
+**Airfoils.** In the RANS evaluation of thirteen models on the NACA 4412
+that Heinz (2020) cites ($7\times10^5\le Re\le9\times10^6$, angles of
+attack from $-10^\circ$ to $20^\circ$, two-dimensional grids up to about
+300,000 elements), the Reynolds-stress model is the top performer for lift
+but overpredicts drag, while the hybrids of the same compilation
+underpredict it (§5.4). At the first High-Order CFD Workshop an explicit
+algebraic Reynolds-stress model (an algebraic, not a differential, closure)
+was one of the DG RANS submissions on the
+[RAE 2822 airfoil](/benchmarks/rae-2822-airfoil.md), within "a large spread
+among the groups" that the organizers attribute partly to mesh wake
+alignment and partly to the choice of turbulence model
+([Wang et al. (2013)](/sources/wang-2013.md), §5.4, Table V).
+
 **Strong adverse pressure gradient.** Ghidoni et al. (2026) use
 SSG/LRR-$\omega$ solutions of Knopp et al., with an adverse-pressure-gradient
 modification as cited, as the computed reference for the skin friction of
@@ -313,3 +342,6 @@ assessing their $k$-$\omega$ [wall function](/methods/rans-wall-function.md)
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §1, §2.2–§2.4 Eqs. 2–5, 16–20, §3.1, §3.2–§3.3 Table 1 Fig. 10, §4.
 - [Heinz (2022)](/sources/heinz-2022.md) — Table 1, §4.
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §4.2, Fig. 8.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1, §3.2.3.
+- [Heinz (2020)](/sources/heinz-2020.md) — §5.4.
+- [Wang et al. (2013)](/sources/wang-2013.md) — §5.4, Table V.

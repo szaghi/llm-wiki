@@ -5,7 +5,7 @@ description: "An LES closure that reconstructs a fine-grid velocity field from t
 status: established
 aliases: [super-resolution SGS model, super-resolution-based subgrid scale model, unsupervised-supervised pipeline, CycleGAN SGS model, GAN super-resolution closure, vLES]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-26T15:53:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Super-resolution subgrid-scale models
@@ -29,7 +29,10 @@ compressible LES; the printed definition carries no density factor. The
 flow is at bulk Mach number about 0.1, and the SGS terms of the energy
 equation are neglected (§2.1). Maejima & Kawai (2025, §1) cite Bode et al.
 (2021), who modelled the SGS stresses as the difference between filtered
-DNS data and a reconstructed DNS field. See
+DNS data and a reconstructed DNS field; [Ruggeri et al. (2022)](/sources/ruggeri-2022.md)
+(§III) cite the same paper as a generative adversarial network with
+physics-informed losses for the subgrid of reactive LES that "gives good
+results in a priori and a posteriori tests", without details. See
 [neural-network SGS models](/methods/neural-network-sgs-model.md) for
 closures that output the stress itself.
 
@@ -233,4 +236,5 @@ no net local backscatter, beats the conventional model.
 
 # Citations
 
+- [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §III (physics-informed GAN of Bode et al. cited, in passing).
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1 (fDNS against vLES, supervised super-resolution, Bode et al. cited); §2.1–2.2, Eqs. 2.1–2.22 (equations, cGAN, CycleGAN); §3, Eqs. 3.1–3.2, Figs. 3–4 (pipeline, stress extraction, clipping); §4, Tables 1–4, Eq. 4.1 (channel set-up, networks, data); §5, Figs. 6–21 (a priori); §6, Eqs. 6.1–6.15, Figs. 22–27 (a posteriori, budgets, mechanism); §7, Figs. 28–29 ($Re_\tau\approx2000$, CNN limits, pointwise inputs); §8; App. A–C, Figs. 30–37.

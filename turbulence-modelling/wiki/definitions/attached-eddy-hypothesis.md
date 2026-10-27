@@ -5,7 +5,7 @@ description: "The attached-eddy hypothesis models the logarithmic region of wall
 status: established
 aliases: [attached eddy model, attached-eddy model, Townsend's attached eddies, wall-attached eddies, inactive motions, uniform momentum zones]
 tags: [boundary-layer, dns, compressible, hypersonic]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T10:57:00Z
 ---
 
 # Attached-eddy hypothesis
@@ -102,6 +102,17 @@ Normalizing $\lambda_z$ by $l_{12}^*$ collapses the velocity and temperature
 spectra at $y/\delta=0.2$–$0.8$ better than $\delta$, and the new scale
 slightly better still, especially at Mach 5.86 (Figs. 15–16).
 
+## Eddy size as the argument for wall modelling
+
+In passing, the WMLES review of [Bose & Park (2018)](/sources/bose-2018.md)
+(§1, Fig. 1) states, after Jiménez (2012) as cited, that near the edge of the
+buffer layer the near-wall eddies are of spanwise size $O(10^2)$ wall units
+and grow linearly with wall distance, so that they shrink relative to
+$\delta$ as $Re_\tau$ grows and a grid that resolves them becomes
+prohibitive (see [wall-modelled LES](/methods/wall-modelled-les.md) and
+[grid-point requirements](/results/les-grid-point-requirements.md)). The
+review does not name the attached-eddy hypothesis.
+
 ## Departures under strong wall cooling
 
 Huang et al. (2022) find that the Mach 10.9 boundary layer with
@@ -138,3 +149,4 @@ are in the cooled Mach 2 and 5.86 cases of Cogo et al. (2022, §3.1).
 
 - [Cogo et al. (2022)](/sources/cogo-2022.md) — §3.1 (superstructures); §3.2, Figs. 6–7 (uniform momentum and temperature zones, attached-eddy model); §5.1, Fig. 10 (inactive motions, equilibrium layer); §5.2; §5.4, Eqs. (5.9)–(5.10), Figs. 15–16 (eddy-size scale).
 - [Huang et al. (2022)](/sources/huang-2022.md) — §4.1, Fig. 11; §4.2, Eq. (4.8), Figs. 13–14 (logarithmic stresses, plateaus, inactive modes); §5, Figs. 21–26 (spectra, scale separation under cooling).
+- [Bose & Park (2018)](/sources/bose-2018.md) — §1, Fig. 1 (eddy size and WMLES resolution; passing mention).

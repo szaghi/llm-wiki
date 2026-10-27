@@ -5,7 +5,7 @@ description: "The continuous-Galerkin spectral-element method expands the soluti
 status: established
 aliases: [SEM, CG-SEM, continuous Galerkin spectral element method, spectral/hp continuous Galerkin, direct stiffness summation]
 tags: [spectral-element, les, wmles, sgs-model, numerical-dissipation]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Continuous-Galerkin spectral-element method
@@ -226,6 +226,15 @@ codes (§1); see [$k$-$\omega$ model](/methods/k-omega-model.md).
   the two concern different set-ups (wall law, matching height, subgrid
   treatment), as recorded on the
   [equilibrium wall model](/methods/equilibrium-wall-model.md) page.
+- **Not among the methods of the First High-Order CFD Workshop.** The summary of the First
+  High-Order CFD Workshop by [Wang et al. (2013)](/sources/wang-2013.md)
+  cites Patera's spectral element method among the
+  high-order methods for unstructured meshes (§1) and defines the acronym
+  SEM in its Table I, but none of the participants of Tables II–VII
+  submitted CG-SEM results. The only spectral-element entry is Stuttgart's
+  discontinuous DGSEM on the
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) (Table VII),
+  whose order study is reported on the DGSEM page.
 
 # Citations
 
@@ -234,4 +243,5 @@ codes (§1); see [$k$-$\omega$ model](/methods/k-omega-model.md).
 - [Fischer et al. (2022)](/sources/fischer-2022.md) — §2.1–2.3 (spectral elements, gather–scatter, time stepping).
 - [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §2, §6 ($C^0$ continuity, Gibbs spikes at element faces).
 - [Saini et al. (2023)](/sources/saini-2023.md) — §2.1, §6 (Nektar++ continuous Galerkin with SVV, dissipation against finite volumes).
+- [Wang et al. (2013)](/sources/wang-2013.md) — §1 (Patera's method cited); Tables I–VII (acronyms and participants).
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §1 (oscillations of high-order $k$-$\omega$); §2.2, Eqs. (32)–(38) (implicit source terms in the Helmholtz operator); §3.1, Figs. 1–2; §3.4–3.5 ($N$-convergence, CFL on the T-junction).

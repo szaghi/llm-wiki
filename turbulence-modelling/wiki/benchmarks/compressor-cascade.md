@@ -5,7 +5,7 @@ description: "Linear compressor cascades as turbomachinery benchmarks: the low-s
 status: established
 aliases: [compressor cascade, linear compressor cascade, V103 cascade, PVD cascade, NACA65 K48 cascade, TCTA, Transonic Cascade TEAMAero, compressor corner separation]
 tags: [benchmark, turbomachinery, transition, des, rans, implicit-les]
-timestamp: 2026-10-26T20:47:00Z
+timestamp: 2026-10-27T10:54:00Z
 ---
 
 # Compressor cascades
@@ -133,6 +133,44 @@ page. Costs (Table 1): the coarse LES at 10% span used 30,933 CPU hours per
 convective time on 8192 ranks, the fine one 152,850 on 16,384 ranks,
 against 74.6 for URANS.
 
+**What compressor cascades show, as reviewed.**
+[Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) cite
+high-fidelity compressor-cascade studies alongside the turbine ones (see
+[turbine cascades](/benchmarks/turbine-cascade.md)); the results below are
+those of the works they name.
+
+- *Free-stream disturbances and wakes.* After the first rows of an axial
+  compressor the background turbulence intensity can exceed 4–5%. In
+  high-fidelity simulations of a compressor cascade with background
+  turbulence and incoming wakes, the background intensity and length
+  scale affect loss and off-design stability, but become secondary once
+  discrete wakes arrive (Leggett et al. 2018; §3.2.1). Incoming wakes are
+  stretched and their low-momentum core is re-accelerated by the pressure
+  gradient, so wake-induced losses in compressors are typically below the
+  constant-pressure mixed-out value, the opposite of turbines (§3.2.2,
+  citing Smith 1966 and Praisner et al. 2006).
+- *Loss measures.* Applied to LES and RANS of a high-pressure compressor
+  cascade with incident wakes, a mechanical-work-potential loss
+  coefficient accounts, unlike the pressure-loss coefficient, for how the
+  operating pressure of a stage affects its performance in the engine
+  (Leggett et al. 2020; §4.2).
+- *Transition.* In DNS of a compressor cascade under low-intensity
+  vortical disturbances, Klebanoff distortions interact with
+  Tollmien–Schlichting waves to form $\Lambda$ structures like those of
+  the secondary instability of natural transition (Zaki et al. 2010;
+  §3.3.3.2). Short leading-edge bubbles can be used to force early
+  transition, and leading-edge changes of the bubble produced up to 30%
+  difference in blade loss (Wheeler et al. 2009; §3.3.2; see
+  [laminar separation bubble](/definitions/laminar-separation-bubble.md)).
+- *Transonic shock oscillation.* In modern transonic compressor blades
+  low-frequency oscillations move the shock by up to 10% of the axial
+  chord, and URANS does not predict the amplitude (Hergt et al. 2019).
+  The review names as "one possible reason" that the shock oscillation
+  frequencies are higher as they clock with the stator–rotor interaction,
+  which reduces the spectral gap that Reynolds averaging needs (§3.3.4).
+  In the TCTA of Klose et al. (2025) above, URANS under-predicts the
+  amplitude by more than half.
+
 **What the sources share.** In every cascade the decisive quantity is
 where and how the suction-side layer transitions or separates, and every
 source finds that the treatment of the laminar or transitional state
@@ -158,6 +196,11 @@ one-equation $\gamma$ model, of Menter et al. (2015), to different hosts.
   $\kappa$ both for the ratio of specific heats (1.4) and for the von
   Kármán constant, whose value they do not print. Their T3C5 check is on
   the [ERCOFTAC T3 page](/benchmarks/ercoftac-t3-flat-plate.md).
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) is a review;
+  the compressor studies it cites (Leggett et al., Zaki et al., Hergt et
+  al.) are not ingested, and none of them is one of the four
+  configurations of the table. Its reference list prints the volume of
+  Leggett et al. (2018) as 7.
 - The TCTA amplitude is not grid-converged in
   [Klose et al. (2025)](/sources/klose-2025.md) (0.172 to 0.231 under
   refinement at fixed span), and they print the frequency as
@@ -170,3 +213,4 @@ one-equation $\gamma$ model, of Menter et al. (2015), to different hosts.
 - [Li & Liu (2022)](/sources/li-2022.md) — §2.1, Table 1; §3–4, Table 3, Figs. 3–15.
 - [Liu et al. (2024)](/sources/liu-2024.md) — Introduction; Flow solvers; Tables 4–5; Figs. 1, 8–18; Discussion; Conclusions.
 - [Klose et al. (2025)](/sources/klose-2025.md) — accepted manuscript: §2–4, Table 1, Figs. 2–4; §5–7, Table 2, Figs. 5–14; §8.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — review: §3.2.1–3.2.2 (free-stream turbulence and wakes); §3.3.2–3.3.3 (bubbles, $\Lambda$ structures); §3.3.4 (transonic shock oscillation, spectral gap); §4.2 (mechanical work potential).

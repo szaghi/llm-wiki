@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Periodic hill"
-description: "The streamwise-periodic channel with a hill constriction, a smooth-wall separation and reattachment test: at hill-height Reynolds number about 10,600 for hybrid RANS/LES, implicit LES and learned RANS corrections, at 5600 for finite-element implicit LES and, as a parametrized family, learned RANS corrections, and at 2800 for data assimilation and DG and gas-kinetic implicit LES."
+description: "The streamwise-periodic channel with a hill constriction, a smooth-wall separation and reattachment test: at hill-height Reynolds number about 10,600 for hybrid RANS/LES, wall models, implicit LES and learned corrections; from 5600 to 37,000 for implicit LES and compiled hybrid results; as a parametrized family at 5600; and at 2800 for data assimilation and implicit LES."
 status: established
 aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow, parametrized periodic hills]
-tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion, implicit-les, gas-kinetic]
-timestamp: 2026-10-26T20:48:00Z
+tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion, implicit-les, gas-kinetic, wmles, wall-model]
+timestamp: 2026-10-27T11:00:00Z
 ---
 
 # Periodic hill
@@ -18,8 +18,9 @@ floor, so it tests the prediction of smooth-body separation, of the
 reattachment length and of the Reynolds stresses in a separated shear layer
 without the ambiguity of an inflow condition. The Reynolds number $Re_h$ is
 built on the bulk velocity and $h$. In this bundle it serves three purposes:
-a coarse-grid test of hybrid RANS/LES and of high-order implicit LES, and a
-training and testing case for data-driven RANS corrections and wall models.
+a coarse-grid test of hybrid RANS/LES, of wall-modelled LES and of
+high-order implicit LES, and a training and testing case for data-driven
+RANS corrections and wall models.
 The sources use three Reynolds numbers, each with its own reference data:
 $Re_h\approx10{,}600$ (the configuration of Fröhlich et al. and ERCOFTAC),
 5600 (the parametrized family of Xiao et al.), and 2800; the ingested sources
@@ -451,6 +452,81 @@ scheme for budget analysis (§3.3, §5, Figs. 5–6); see
 schemes differ in order of accuracy (second against sixth) as well as in
 dissipation (§2.3–2.5).
 
+**A compilation of hybrid RANS/LES on the hill.**
+[Heinz (2020)](/sources/heinz-2020.md), §5.1, Table 1, Figs. 1, 6–8,
+reviews published hybrid results for the Fröhlich configuration (the
+modification by Mellen et al. of the Almeida hill, with channel height
+halved and hill spacing doubled; $9h\times3.035h\times4.5h$, crest at
+$(x,y)/h=(0,1)$, no-slip top and bottom walls, periodic in $x$ and $z$):
+
+- the cited experiments run at $Re_h=5600$, 10,600, 19,000 and
+  37,000, which the author relates to channel-equivalent $Re_\tau$ of roughly 470,
+  830, 1400 and 2500; the experimental reattachment follows the fit
+  $x_R/h=0.49(Re_h/10^4)^{-1.4}+3.71$ of Kähler et al., levelling off at
+  3.71 ($x_R$ registry §11);
+- reference simulations disagree with experiment too: the DNS of
+  Balakumar et al. deviates at $Re_h=10{,}600$, and an LES of Gloerfelt &
+  Cinnella at 37,000 on 33.6 million points still deviates; a cited study
+  run up to $Re_h=100{,}000$ disagrees at the higher Reynolds numbers;
+- PANS, PITM, wall-modelled LES, DES and Reynolds-stress-constrained LES
+  show a large variability through their design parameters, while
+  scale-adaptive simulation, source-term methods and the author's unified RANS–LES
+  "apparently reduce the RANS error significantly", the last agreeing
+  "very well" with experiment at 37,000 (Fig. 6);
+- two PANS studies of the same flow recommend $f_k=0.4$ (Ma et al.) and
+  $f_k=0.15$ (Razi et al.) and give different trends of $x_R$ with $f_k$;
+  Ma et al.'s LES reference has separation at $x/h=0.2$ and reattachment at
+  4.7 (Fig. 7);
+- on four PITM grids at 37,000 ($80\times30\times100$ to
+  $160\times60\times100$, about 0.25 to 1 million points) the modelled
+  energy fraction near the wall does not follow the expected grid trend,
+  and two grids of about the same point count give different fractions
+  (Fig. 8, from the cited work).
+
+The author reads the case as evidence of "prediction variability" of existing
+hybrids. See [partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md),
+[continuous eddy simulation](/methods/continuous-eddy-simulation.md) and
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md); the energy-partition
+result of [Heinz (2022)](/sources/heinz-2022.md) above is a later argument
+of the same author on the same geometry.
+
+**Wall models in wall-modelled LES at $Re_h=10{,}595$.**
+[Bose & Park (2018)](/sources/bose-2018.md), §4.3, cite wall-modelled LES
+with slip-wall, equilibrium and nonequilibrium wall models that agree
+favourably with the DNS of Balakumar et al., the
+[nonequilibrium wall model](/methods/nonequilibrium-wall-model.md)
+slightly more accurate near the separation point; the review adds that
+the differences "may be more attributable to differences in the
+numerical methods in the outer-layer LES than the different wall models
+employed".
+
+[Lv et al. (2021)](/sources/lv-2021.md), §IV B 2, Table II, Figs. 15–17,
+test their wall-model-integrated LES, in which the wall-adjacent cell is
+reconstructed in a basis containing the log law and the LES solver itself
+computes the wall stress (see [wall-modelled LES](/methods/wall-modelled-les.md)),
+on the domain $9H\times3.036H\times4.5H$ ($H$ the hill height) at
+$Re_b=10{,}595$ on $H$ and the bulk velocity at the hill top, with a
+third-order (P3) DG treatment of the wall cells, the
+[Vreman model](/methods/vreman-model.md) and a constant body force:
+
+| Case | grid | wall treatment | first-cell height $\Delta_1/H$ (page-local) |
+|---|---|---|---|
+| Hill-C | $64\times32\times32$ | integrated wall model | 0.063–0.094 |
+| Hill-R | $64^3$ | integrated wall model | 0.031–0.047 |
+| Hill-Equil | $64^3$ | [equilibrium wall model](/methods/equilibrium-wall-model.md) of Kawai & Larsson | 0.063–0.094 (as printed; see Qualifications) |
+
+References are the ERCOFTAC experiment (Rapp & Manhart) and a
+wall-resolved LES of Zhou et al. for $C_p$ and $C_f$. Grid resolution has
+"a more notable impact on the results than the wall model": Hill-C is
+noticeably worse than Hill-R and Hill-Equil, because the coarse grid does
+not capture the pressure force as well (Fig. 16), consistent with a study
+they cite in which the pressure force matters more than skin friction
+when pressure is the dominant momentum sink. Calling the friction
+coefficient "the acid test for a wall model", they find that no wall
+model captures $C_f$ between $x/H\approx0$ and 2, but Hill-R gives
+"considerable more accurate" $C_f$ than Hill-Equil on the leeside and near
+the hill crest (Fig. 17).
+
 ## What the case shows
 
 Two sources agree that the case discriminates between models chiefly
@@ -489,6 +565,22 @@ while the WALE model gives slight to no improvement; at $Re_h\approx10{,}600$
 the $N=3$ no-model run of [Dzanic et al. (2022)](/sources/dzanic-2022.md)
 over-predicts $\langle u'u'\rangle$ and oscillates in $\langle v'v'\rangle$
 and $\langle u'v'\rangle$, which PANS removes.
+
+Of the two wall-model sources,
+[Bose & Park (2018)](/sources/bose-2018.md), §4.3, attribute the
+differences between the cited wall-model runs possibly to the outer-LES
+numerics rather than to the wall models, and
+[Lv et al. (2021)](/sources/lv-2021.md), §IV B 2, find grid resolution
+more influential than the wall model; Bose & Park report the
+nonequilibrium model slightly more accurate near separation, Lv et al.
+the integrated wall model more accurate than the equilibrium one on the
+leeside and near the crest.
+
+The reattachment fit that [Heinz (2020)](/sources/heinz-2020.md) quotes
+from Kähler et al. gives $x_R/h=4.81$, 4.16 and 3.79 at $Re_h=5600$,
+10,600 and 37,000, close to the values of Rapp that
+[Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) print
+(4.83, 4.21, 3.76) *(compiler check, not in the sources)*.
 
 Three sources now give the reattachment or separation of the Fröhlich
 configuration against the same references: at $Re_h\approx10{,}600$
@@ -599,6 +691,24 @@ or, with the budget terms, depend on the grid and the scheme
   naming the reference velocity and length, so it is quoted above as $Re$,
   not $Re_h$. In that paper a subscript "+" marks modelled-to-total
   ratios, not wall units.
+- [Heinz (2020)](/sources/heinz-2020.md) defines $Re=U_bh/\nu$ on the hill
+  height and the bulk velocity above the crest and lists the experimental
+  Reynolds number as 10,600 where the cited simulations use 10,595. The channel-equivalent $Re_\tau$ values
+  are labelled rough. All results there are compiled from cited work.
+- [Lv et al. (2021)](/sources/lv-2021.md) print the skin-friction
+  coefficient as $C_f=\tau_w/(2\rho U_b^2)$ (§IV B 2); the other sources
+  on this page print no $C_f$ definition, so $C_f$ magnitudes are not
+  compared across them here. Their Table II prints for Hill-Equil
+  ($64^3$) the first-cell heights 0.063–0.094 of Hill-C
+  ($64\times32\times32$), not the 0.031–0.047 of Hill-R ($64^3$); the
+  local heights $2.036H$ (crest) and $3.036H$ (inlet) divided by 32 give
+  0.064–0.095 and divided by 64 give 0.032–0.047 *(compiler check, not in
+  the sources)*. The paper does not say whether the equilibrium model is
+  matched elsewhere than at the first cell. In the discussion of Fig. 15
+  they write that "both Hill-C and Hill-Equil capture the mean flow very
+  well" and, a few sentences later, that Hill-C "is noticeably worse than
+  Hill-R and Hill-Equil" and "does not do very well in capturing the mean
+  flow"; both statements are printed.
 
 # Citations
 
@@ -618,3 +728,6 @@ or, with the budget terms, depend on the grid and the scheme
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §4.2.3, Tables 5–7, Figs. 7–9.
 - [Cao et al. (2024)](/sources/cao-2024.md) — arXiv v1: §1; §3.4, Table 6, Figs. 10–16.
 - [Heinz (2022)](/sources/heinz-2022.md) — §1, Table 1; §3, Fig. 1 (reproduced result of Heinz et al. 2020).
+- [Heinz (2020)](/sources/heinz-2020.md) — §5.1, Table 1, Figs. 1, 6–8 (compiled results).
+- [Bose & Park (2018)](/sources/bose-2018.md) — §4.3 (cited results).
+- [Lv et al. (2021)](/sources/lv-2021.md) — §III; §IV A, §IV B 2, Table II, Figs. 4, 15–17.

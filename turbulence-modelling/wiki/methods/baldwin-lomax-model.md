@@ -5,7 +5,7 @@ description: "The two-layer algebraic RANS eddy viscosity of Baldwin and Lomax, 
 status: established
 aliases: [Baldwin–Lomax model, BL model, BL-local, BL-GFM-VD-TV, Cebeci–Smith model, algebraic eddy-viscosity model, zero-equation model, algebraic wall model]
 tags: [rans, eddy-viscosity, compressible, hypersonic, boundary-layer]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T11:02:00Z
 ---
 
 # Baldwin–Lomax algebraic model and its compressible recalibration
@@ -129,9 +129,9 @@ above $y^*_{mT}=100$ and imposes below it the quadratic
 temperature–velocity relation of Duan & Martín and Zhang et al., anchored
 at the matching height (Eq. 3.17):
 
-$$T=T_w+C_T(T_r-T_w)\Big(1-\frac{U}{U_m}\Big)\frac{U}{U_\delta}+(T_m-T_w)\Big(\frac{U}{U_m}\Big)^2,\qquad y<y_{mT},$$
+$$T=T_w+C_{\mathrm{DM}}(T_r-T_w)\Big(1-\frac{U}{U_m}\Big)\frac{U}{U_\delta}+(T_m-T_w)\Big(\frac{U}{U_m}\Big)^2,\qquad y<y_{mT},$$
 
-with $C_T=0.8259$, $T_r$ the recovery temperature (recovery factor
+with $C_{\mathrm{DM}}=0.8259$, $T_r$ the recovery temperature (recovery factor
 $Pr^{1/3}$), subscripts $m$ and $\delta$ the matching height and the edge
 (page-local symbols). The matched form follows the wall model of Griffin et
 al. (2023) (see

@@ -5,7 +5,7 @@ description: "Scale-similarity and deconvolution models build the subgrid stress
 status: established
 aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, approximate deconvolution model, ADM, D3M, DIAD, DDM, direct deconvolution model, Layton–Lewandowski model, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model]
 tags: [les, sgs-model, filtering, combustion]
-timestamp: 2026-10-27T06:13:00Z
+timestamp: 2026-10-27T11:01:00Z
 ---
 
 # Scale-similarity and mixed subgrid-scale models
@@ -261,6 +261,21 @@ printed factor slip in their Eq. (9). The results are a posteriori:
   al. (2023c).
 - **Cost.** Its cost per time node is 166.4 CPU s against 105.6 s for
   dynamic Smagorinsky in isotropic turbulence (Table I).
+
+[Li et al. (2021)](/sources/li-2021.md) (§III C, Figs. 2–8) run the
+dynamic mixed model of Liu, Meneveau & Katz (cited; formula not printed)
+as a comparator of a gene-expression-programming model in a posteriori LES
+of forced isotropic turbulence ($128^3$, filter width 16 DNS spacings,
+$Re_\lambda\approx260$). Its spectrum is damped near the cutoff like that
+of dynamic Smagorinsky, and it underpredicts the small-separation
+structure functions. Its anisotropic-stress PDFs are better than dynamic
+Smagorinsky's, which the authors attribute to the scale-similarity part,
+but its PDF of the subgrid flux $\Pi$ still "differs significantly" from
+filtered DNS, and its stress structures are larger and more diffuse,
+attributed to extra dissipation. The learned tensor-basis model (see
+[gradient model](/methods/gradient-model.md) for its coefficients) does
+better on all these measures at a lower cost per iteration than this
+model (§III F, Fig. 13).
 
 **Splitting dissipative and non-dissipative parts.**
 [Maejima & Kawai (2025)](/sources/maejima-2025.md) (§1) recall the same
@@ -670,3 +685,4 @@ does not improve.
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — p. 5.
 - [Tang et al. (2022)](/sources/tang-2022.md) — §2.2, Eqs. (15)–(17); §3.1, Figs. 5–7; §3.2, Figs. 12–16; §4.
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §I; §II C, Eqs. (23)–(29); §III A–D, Eqs. (30)–(50), Tables I–II; §V A–C, Tables III–VII, Figs. 20–23; §VI.
+- [Li et al. (2021)](/sources/li-2021.md) — §III C, Figs. 2–8; §III F, Fig. 13.

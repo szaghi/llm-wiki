@@ -5,7 +5,7 @@ description: "A shock sensor or troubled-cell indicator is the switch that decid
 status: established
 aliases: [shock sensor, shock indicator, troubled-cell indicator, troubled-cell detector, discontinuity indicator, Ducros sensor, Jameson pressure sensor, Persson–Peraire indicator, KXRCF indicator, TVB minmod indicator, TENO troubled-cell indicator, filtered shock indicator]
 tags: [shock-capturing, numerical-dissipation, compressible, dg, implicit-les, boundary-layer]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T11:02:00Z
 ---
 
 # Shock sensors and troubled-cell indicators
@@ -109,6 +109,14 @@ uses in the sources:
   the vortical complement (page-local)
   ([Ahn et al. 2023](/sources/ahn-2023.md), §III, Eqs. 1–6; formulas on
   [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
+
+The Ducros sensor also switches the scheme in the in-house finite-volume
+code of [Zangeneh (2021)](/sources/zangeneh-2021.md), §II.D, for
+wall-modelled LES of supersonic boundary layers and a compression corner:
+a skew-symmetric collocated second-order low-dissipation scheme in the
+turbulent regions, a "semi-discrete, central difference scheme to capture
+discontinuities" where the sensor flags (formula and threshold not
+printed).
 
 A dilatation–vorticity sensor of Fernandez et al., with time and space
 relaxation factors 0.7, selects the elements of the DG/FV blend of
@@ -222,6 +230,57 @@ Reported behaviour, all on inviscid Euler problems:
   cells, 9.63% of the domain, of which the boundary-variation selector of
   the TENO-THINC limiter sends 6476 (1.8% of the domain) to the jump
   reconstruction (Huang et al. 2025, §5.5, Fig. 6).
+
+**Troubled-cell detection for DG limiting in multi-material flow.** In
+their review of diffuse-interface methods,
+[Maltsev et al. (2022)](/sources/maltsev-2022.md), §III D, §IV C, cite
+these ways of localizing DG limiting: the TVB troubled-cell detection of Qiu & Shu
+followed by a WENO or Hermite-WENO reconstruction of the higher moments, the
+monotonicity-preserving troubled-zone indicator of Balsara et al., a
+troubled-cell detector with minmod limiting of the Legendre slopes in the
+local DG solver of Gryngarten & Menon, a minmod detector with a WENO limiter
+in the DG solver of Saleem et al., and a TVB minmod detector selecting the
+cells whose second moments are WENO-reconstructed in the reconstructed DG
+of Pandare et al. (the
+[subcell finite-volume](/methods/subcell-finite-volume-shock-capturing.md)
+a posteriori route is on its page). They also note that a contact
+discontinuity such as a material interface, unlike a shock, has parallel
+characteristics that do not counteract numerical diffusion, so that
+interface smearing is unavoidable without corrections to the governing
+equations (§IV A).
+
+## Switches inside WENO reconstructions (finite differences and volumes)
+
+**Relative total-variation limiter.** The bandwidth-optimized WENO schemes
+that [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md), §2.2.1,
+Eqs. (24)–(26), use for DNS of shock trains carry the limiter of Taylor et
+al.: on the $r+1$ candidate stencils of $r$ points the stencil total
+variations $TV_k=\sum_l|f_{i+k+l-r+1}-f_{i+k+l-r}|$ (page-local, with $f$
+the split flux) give
+$$R_{TV}=\frac{\max_kTV_k}{\epsilon+\min_kTV_k},$$
+and when $R_{TV}$ does not exceed a threshold $P_{\mathrm{TV}}$
+(page-local; the source's $\alpha^{RL}_{TV}$ or 'P', which they call "an
+arbitrary constant") every smoothness indicator $\mathrm{IS}_k$ is set to
+zero; otherwise the nonlinear WENO weights act. With all $\mathrm{IS}_k$
+zero the weights of their Eq. (19) reduce to the optimized linear ones
+*(compiler check, not in the sources)*. The threshold is the sensor's only parameter
+and decides the resolution: raising it from 3 to 10 resolves more small
+scales on the Shu–Osher, two-dimensional Riemann, double-Mach and
+Rayleigh–Taylor tests, but the three-point scheme is unstable in the double
+Mach reflection at threshold 7 and the four-point one at 5, and very large
+values give Gibbs oscillations at shocks; the authors take 5 for their DNS
+(§3.1, §3.2.1). Their conclusion that thresholds of 7 to 10 "may also show
+better performance" than WENO-CU6 is stated, not shown (§4).
+
+**Comfort-zone indicator of WENO-K.** In the Gauss–Kriging WENO of
+[Han et al. (2022)](/sources/han-2022-c.md), §3.2.2, Table 4, every cell
+starts as troubled ($\theta_{\mathrm K}=0$, plain WENO-JS) and becomes smooth when the
+ratio $a_{\mathrm{cz}}=(\bar q_{i-1}-\bar q_{i+2})/(\bar q_{i+1}-\bar q_i)$ of cell
+averages lies in the "comfort zone" $-6.5<a_{\mathrm{cz}}<5$, a range "determined by a
+large number of tests"; there the Kriging hyper-parameter is
+$\theta_{\mathrm K}=\tfrac65\big(1-\tfrac{12}{15+a_{\mathrm{cz}}}\big)$ ($a_{\mathrm{cz}}$,
+$\theta_{\mathrm K}$ page-local, the source's $a$, $\theta$;
+see [WENO](/methods/weno-scheme.md)).
 
 ## Indicators built from TENO stencil flags (finite differences)
 
@@ -362,3 +421,7 @@ the hybrid scheme (§3.2, §5.3.1). The resulting interaction is on
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §6.2–6.3, Eqs. (127)–(128) (density-gradient sensors).
 - [Jiang et al. (2025)](/sources/jiang-2025.md) — §3.1 (element-resolution indicator for HWENO limiting of $k$).
 - [Xu et al. (2026)](/sources/xu-2026.md) — arXiv 2508.21599v1: §3, Eq. (18) (pressure-ratio sensor).
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) — §II.D (Ducros-switched skew-symmetric and shock-capturing schemes).
+- [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III D, §IV C–D (troubled-cell detectors of DG limiting, cited); §IV A (contact discontinuities).
+- [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §2.2.1, Eqs. (24)–(26) (relative total-variation limiter); §3.1, §3.2.1 (threshold and stability); §4.
+- [Han et al. (2022)](/sources/han-2022-c.md) — §3.2.2, Table 4 (comfort-zone indicator of WENO-K).

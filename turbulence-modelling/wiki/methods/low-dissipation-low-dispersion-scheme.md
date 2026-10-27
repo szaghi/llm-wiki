@@ -5,7 +5,7 @@ description: "The LD2 scheme pairs an energy-preserving central flux with much-r
 status: established
 aliases: [LD2, LD2C, LD2-Compressible, low-dissipation low-dispersion scheme, Kok flux with JST dissipation, OPT6, optimized upwind scheme, approximate dispersion relation, dispersion-relation-preserving scheme, optimized selective filter, FDo11p, RFo11p]
 tags: [numerical-dissipation, hybrid-rans-les, des, compressible, kinetic-energy-preserving]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T11:00:00Z
 ---
 
 # Low-dissipation low-dispersion schemes with shock sensor
@@ -254,6 +254,52 @@ WENO-Z+M is reported better than the linear fifth-order upwind scheme over
 shock tests, none of them turbulent, are on
 [WENO and hybrid schemes](/methods/weno-scheme.md).
 
+**Dispersion against formal order in the first High-Order CFD Workshop.**
+In the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) case at
+$Re=1600$ of [Wang et al. (2013)](/sources/wang-2013.md), §5.6, NASA Glenn
+submitted standard central finite differences of fourth, eighth and twelfth
+order and a fourth-order dispersion-relation-preserving (DRP) scheme, a
+family that, in the authors' words, attempts "to minimize dispersion errors
+instead of directly addressing the formal order of accuracy": the
+error of the twelfth-order central scheme is comparable with that of the
+formally fourth-order DRP scheme, and that of the standard fourth-order
+scheme much higher, which "seems to indicate that the dispersion error
+already dominates". None of the finite-difference schemes attains its
+projected order for any of the three error measures (Figs. 25–27).
+
+**Bandwidth-optimized WENO for shock trains.**
+[Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) apply the
+bandwidth-optimized WENO schemes of Martín et al., whose linear weights are
+optimized for resolution rather than for maximal order, so that in smooth
+regions their dispersion is "comparable" to that of the sixth-order compact
+central scheme (§1, §2.2.1): on a symmetric set of four three-point stencils
+(six points) the optimized weights are 0.094647545896, 0.428074212384,
+0.408289331408 and 0.068988910311, on five four-point stencils (eight
+points) 0.040195483373, 0.249380000671, 0.480268625626, 0.200977547673
+and 0.029178342658 (Eqs. 20, 47, from Martín et al.'s Table 7); a relative
+total-variation limiter keeps the nonlinear weights off in smooth flow (see
+[shock sensors](/definitions/shock-sensor.md)). On a Gaussian advection
+test their limited schemes match the $L_\infty$ errors of the linear
+optimized schemes of three and four points, which the authors read as third
+and fourth order (§3.1.1, Fig. 3); they cost 1.045 and 1.371 times WENO-JS
+per point and step on the Shu–Osher problem, against 1.5 for WENO-CU6, 2.126
+for TENO6 and 2.9 for TENO8 (Table 1). The formulas and the gas-dynamics
+comparisons are on [WENO and hybrid schemes](/methods/weno-scheme.md).
+
+**Minimized dispersion and controllable dissipation (MDCD) in multi-material
+flow.** [Maltsev et al. (2022)](/sources/maltsev-2022.md), §IV, cite the
+MDCD scheme of Sun et al., whose free parameters set dispersion and
+dissipation separately, and its hybrid with WENO (Wang et al.; Ren et al.),
+claimed more efficient than WENO-JS when 10 to 20 cells per
+wavelength resolve the highest wavenumber. On the multi-species advection
+test of Wong & Lele at 128 cells they tabulate (Table I, adapted from Wang
+et al.) orders 1.666 (MUSCL), 4.743 (WENO-JS), 4.339 (bandwidth-optimized
+WENO-SYMBO) and 4.619 (MDCD-WENO), with errors $1.153\times10^{-3}$,
+$3.223\times10^{-8}$, $5.541\times10^{-8}$ and $2.814\times10^{-8}$; citing
+Johnsen et al. and Pirozzoli, they also state that the upwind-biased
+nonlinear reconstruction of WENO-JS dissipates turbulent fluctuations at the
+higher resolvable wavenumbers (§IV).
+
 ## Optimizing stencils, filters and time integrators by a spectral objective
 
 Three sources build the coefficients of their schemes by
@@ -395,6 +441,15 @@ artificial dissipation *(compiler check, not in the sources)*.
   a reconstruction later limited at start-up by a WBAP limiter, §3.3), and
   the robustness verdict of Huang et al. on the unconstrained weights is
   asserted, not displayed.
+- **Attribution of the workshop DRP scheme.** Wang et al. (2013)
+  attribute the fourth-order DRP finite differences to "Bogey and Bailly",
+  who are not in their reference list, and cite "DRP methods [35]", which
+  is Kim & Lee's optimized compact schemes; the reference titled
+  "dispersion-relation-preserving" is [6], Tam & Webb.
+- Kumar & Ghosh (2022, Eqs. 16, 43) name the candidate-flux coefficients
+  with the letter of their nonlinear weights; their reading of third and
+  fourth order rests on the agreement of error curves with the linear
+  optimized schemes, without tabulated rates (§3.1.1).
 - Printed slips: §5 attributes LD2 to "Löwe et al. [28]", while ref. [28] is
   Probst et al. and LD2 is Löwe et al. [10] elsewhere; §4.3 cites Fig. 4(b) for
   both $Re_\tau=2400$ and 18 000 (the latter is Fig. 4(c)); the text refers to
@@ -410,3 +465,6 @@ artificial dissipation *(compiler check, not in the sources)*.
 - [Liang & Fu (2024)](/sources/liang-2024.md) — §3.3.1, Eqs. (36)–(46) (split dispersion/dissipation optimization, approximate dispersion relation, $e_0=0.01$).
 - [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.4.1–2.4.2, Eqs. (26)–(51), Tables 1–2, Fig. 4 (Ponziani objective for variational-reconstruction weights); §3.3 (WBAP limiter at start-up).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §2, Eqs. (1)–(8) (M-Edge discretization, Kok flux, extrapolation, JST dissipation); §2.2.2, Eqs. (9)–(11) (preconditioning); §2.2.3, Eqs. (12)–(15) (Jameson and Ducros sensors); §2.3, Fig. 1 (dispersion/dissipation analysis, choice of $a$); Table 1; §4.1, Eq. (22), Fig. 2 (Sod); §4.2, Fig. 3 (decaying isotropic turbulence); §4.3, Table 2, Figs. 4–6 (channel); §4.4, Figs. 7–10 (base flow); §5.
+- [Wang et al. (2013)](/sources/wang-2013.md) — §5.6, Figs. 25–27 (central and DRP finite differences on the Taylor–Green vortex).
+- [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §1; §2.2.1, §2.2.6, Eqs. (20), (47) (optimized linear weights); §3.1.1, Fig. 3; §3.1.3, Table 1 (grind times).
+- [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §IV, Table I (MDCD, MDCD-WENO, WENO-SYMBO, cited orders and errors; WENO-JS spectral dissipation, cited).

@@ -150,8 +150,9 @@ Fluids"; ref. [5] prints "Fran-ranchina".
 
 # Pages created or updated
 
-Chunk 8 (2026-10-27). This source is cited on:
+Chunk 8 (2026-10-27), cited further in chunk 9. This source is cited on:
 
+- [RAE 2822 airfoil](/benchmarks/rae-2822-airfoil.md)
 - [Flow past a square cylinder](/benchmarks/square-cylinder-flow.md)
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)

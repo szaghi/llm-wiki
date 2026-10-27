@@ -5,7 +5,7 @@ description: "Training a learned closure with the solver in the loop, so the los
 status: established
 aliases: [a posteriori training, a-posteriori training, solver-in-the-loop training, integrated inference and learning, embedded learning, differentiable-physics training, online learning]
 tags: [data-driven, neural-network, sgs-model, rans, les]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T10:58:00Z
 ---
 
 # Model-consistent (a posteriori) training of learned closures
@@ -153,6 +153,22 @@ during gradient calculations", whereas RL depends on the fidelity of the
 learning, CFD-driven machine learning and closed-loop training move toward
 model consistency without adjoints, though some still need full-field DNS
 (Duraisamy 2021, §IV.B).
+
+**CFD-driven symbolic regression in turbomachinery.** Sandberg &
+Michelassi (2022, §4.3) cite the CFD-driven machine learning of Zhao
+et al. (2020) as gene-expression programming whose cost function is
+evaluated on the RANS solution of each candidate model: it needs only
+selected profiles of one variable, "the model is being used for its
+ultimate, a posteriori predictive purpose", and its cost becomes limiting
+for URANS and complex configurations. Models trained this way on
+high-pressure-turbine data predicted the wake-loss profiles of
+low-pressure turbines of other geometries at very different Reynolds
+numbers. The same review gives the consistency argument for field
+inversion, citing Parneix et al. (1998) and Wu et al. (2019): even the
+true DNS Reynolds stress used in RANS does not guarantee an accurate mean
+flow and can jeopardize robustness (§4.3; see
+[field inversion and machine learning](/methods/field-inversion-machine-learning.md)
+and [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
 
 **Unrolled differentiable solver.** Agdestein & Sanderse (2025, §4.3,
 Eq. 25) minimize a trajectory loss: the relative error between the LES
@@ -491,6 +507,7 @@ the convergence of these training methods and the choice of loss function
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1 (adjoints against RL), §2, Eqs. 2.3, 2.8–2.10 (adjoint training), §2.2–§2.3 (algorithm, GPUs, convergence result recalled), §3.2, §4.1, Table 2, §5, Figs. 11–12, §6, Figs. 13–15, §7.
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §1, §2, Eq. 8 (no solver gradient), §3.5, §4.1 (cost), §4.2, Fig. 6.
 - [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I (CFD-driven GEP recalled), §II D–E (loose and tight coupling), §III B (cost), §IV.
+- [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3 (CFD-driven GEP of Zhao et al. cited, cost, transfer from high- to low-pressure turbines; injected DNS stress).
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §3.4, Eqs. 51–52, App. E.2 (derivative and trajectory fitting); §4.2–4.4, Figs. 7–8 (stability across seeds); §4.3.2 (cost).
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — arXiv v2: §1, §2.2, Algorithm 1, App. B (variational inference through an adjoint solver); §3.3 (learning rate, pre-training); §3.4, Table 4 (cost).
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — arXiv v3: §II.B (ensemble calibration in the LES); §III–IV, Figs. 3–17; App. B; §V (against adjoint calibration).

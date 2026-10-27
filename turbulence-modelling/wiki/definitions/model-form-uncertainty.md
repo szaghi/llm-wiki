@@ -5,7 +5,7 @@ description: "The uncertainty that comes from the structure of a turbulence clos
 status: established
 aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, aleatoric model uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation, stochastic discrepancy closure]
 tags: [uncertainty-quantification, rans, data-driven, field-inversion]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T10:34:00Z
 ---
 
 # Model-form uncertainty in turbulence closures
@@ -296,6 +296,26 @@ findings bear on the data side of the problem:
 
 They propose the inferred correction fields as detectors of where a RANS
 model fails (§5).
+
+**A discrepancy at the wall of a wall-modelled LES.**
+[Zangeneh (2021)](/sources/zangeneh-2021.md) places the learned
+discrepancy not in the closure equations but in the wall boundary
+condition: a random forest maps local mean-flow features of an
+IDDES-based [wall-modelled LES](/methods/wall-modelled-les.md) to the
+discrepancies $\boldsymbol\delta$ of the wall shear stress and wall heat
+flux against experiment or DNS, and the corrected wall values (baseline
+plus predicted discrepancy) are used to correct the eddy viscosity and
+turbulent Prandtl number fed back to the solver (§II.F, §III, Fig. 3;
+the procedure for the corrected $\mu_t$ and $Pr_t$ is not printed). The
+author calls this "a corrective approach and not 'standard' turbulence
+model" (§III). The discrepancy is trained on the same geometry at a
+lower Reynolds number; a model trained on both training flows corrects
+less than the single-flow one, and the author concludes that the
+training set "is far from being representative" of the flow physics
+(§III.C, §IV). Details are on
+[machine-learning wall models](/methods/machine-learning-wall-model.md);
+the paper cites discrepancy-modelling work on Reynolds stresses (Xiao et
+al. 2016; Wang et al. 2017) only as background (§I).
 
 ## Generalizability and the attached boundary layer
 
@@ -600,4 +620,5 @@ however, not been achieved" and calls for community benchmarks (§VII).
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §1, §3.3, §4.1 Fig. 6, §4.2 Figs. 7–8, §4.3.1 Table 1, §4.3.3–4.3.4 Tables 2–4, §5.
 - [Wu et al. (2025)](/sources/wu-2025.md) — §1 Table 1, §2.1 Eqs. 3–4, §4.1–4.5 Figs. 47–50 (authors' manuscript).
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — §1 Fig. 1, §3, §4.2.1 Table 3 (arXiv v2).
+- [Zangeneh (2021)](/sources/zangeneh-2021.md) — §I (discrepancy modelling cited), §II.F, §III, Fig. 3 (wall-stress and heat-flux discrepancy, feedback), §III.C, §IV (generalization).
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — Introduction, §2.2 Fig. 9, §3 (arXiv v2).

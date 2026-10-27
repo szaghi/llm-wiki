@@ -5,7 +5,7 @@ description: "A discretization is entropy conservative when its convective terms
 status: established
 aliases: [EC, entropy-conservative scheme, entropy-conserving flux, entropy-stable discretization, entropy stability, Ismail–Roe flux, Chandrashekar flux, EC-TP scheme, nonlinear stability, entropy-stable RANS]
 tags: [entropy-stable, kinetic-energy-preserving, compressible, dg, dns, numerical-dissipation]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:57:00Z
 ---
 
 # Entropy conservation and entropy stability
@@ -109,6 +109,48 @@ averaging, a low-dissipation Roe flux and BR1 or BR2 viscous fluxes.
 [HORSES3D](/software/horses3d.md) offers entropy-conserving and Chandrashekar
 split forms beside the kinetic-energy-preserving ones
 ([Ferrer et al. 2023](/sources/ferrer-2023.md), §3.5).
+
+## Entropy through consistent energy fluxes (KEEP)
+
+[Kuya et al. (2018)](/sources/kuya-2018.md) reach entropy conservation by
+another route than an entropy-conservative two-point flux: they solve no
+entropy equation and make the discrete energy fluxes consistent with the
+continuous energy relations. From the Gibbs relation $T\,ds=de-(p/\rho^2)\,d\rho$
+(citing Subbareddy & Candler) they write (§1.2, Eq. 6)
+$$\frac{\partial\rho s}{\partial t}+\frac{\partial\rho su_j}{\partial x_j}=\frac1T\Big[\Big(sT-e-\frac p\rho\Big)\Big(\frac{\partial\rho}{\partial t}+\frac{\partial\rho u_j}{\partial x_j}\Big)+\frac{\partial\rho e}{\partial t}+\frac{\partial\rho eu_j}{\partial x_j}+p\frac{\partial u_j}{\partial x_j}\Big],$$
+so that total entropy is preserved in a periodic domain whenever the mass
+equation and the internal-energy equation
+$\partial_t(\rho e)+\partial_j(\rho eu_j)+p\,\partial_ju_j=0$ hold (Eq. 7).
+A scheme that evolves total energy satisfies the internal-energy equation
+implicitly only if its kinetic-energy, internal-energy and
+pressure-diffusion fluxes are consistent with the mass and momentum fluxes
+(the three Analytical Relations; the fluxes of their QC$_C$ scheme are on
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+Each inconsistency leaves a spurious source in the implicit internal-energy
+equation: with a kinetic-energy flux that differs from the consistent one
+by $\Delta_j$ (page-local) the entropy equation acquires
+$\frac1T\,\partial\Delta_j/\partial x_j$ (§4.2, Eqs. 59–62), which is a flux
+divergence, and so harmless to total entropy, only at uniform temperature
+(Eq. 63), and the same holds for an inconsistent internal-energy flux
+(§4.3, Eqs. 64–65). A divergence-form pressure-diffusion flux evaluates the
+dilatation implicitly from cells $m\pm1$ (§4.4, Eq. 66), and the enthalpy
+fluxes of Jameson and Pirozzoli split into a consistent internal-energy flux
+plus a pressure diffusion written as $\partial(\rho u_j\,p/\rho)/\partial x_j$,
+which lets density variations into the pressure-diffusion term (§4.5,
+Eqs. 67–71); the authors find it "apparently very challenging to formulate
+consistent enthalpy numerical fluxes". In their inviscid Taylor–Green and
+isotropic-turbulence tests every inconsistent QC variant, including the
+Jameson–Pirozzoli scheme, shows entropy reduction and growing density and
+temperature fluctuations, while QC$_C$ keeps the total entropy (§5.2–5.3,
+Figs. 1–11).
+
+This is the KEEP scheme of the comparison table below, which Aiello et al.
+(2026) class as approximately, not exactly, EC for a calorically perfect
+gas. Kuya et al.'s own long run at $M_0=0.4$ shows a "negligibly small"
+entropy reduction, which they attribute to the non-conservative
+pressure-dilatation term (§5.2, Fig. 4); they state that it
+"nominally satisfies" kinetic-energy and entropy conservation in the
+semi-discrete sense (App. C).
 
 ## Entropy conservation depends on the equation of state
 
@@ -311,7 +353,10 @@ global entropy although it is not entropy preserving.
   Gauss–Lobatto nodes (§3.3).
 - **Time integration** adds entropy errors, "typically less significant in
   practice" than the spatial ones (Aiello et al. 2026, §3.3); the
-  properties on this page are semi-discrete.
+  properties on this page are semi-discrete. Kuya et al. (2018, App. C,
+  Figs. 12–17) find that their KEEP scheme produces entropy at CFL
+  $\approx1$ and with third-order TVD Runge–Kutta, and run classical RK4 at
+  CFL $\approx0.1$, which overlaps CFL $\approx0.01$.
 - **Real gases.** Bernades et al. (2023, §5) liken their chain-rule barrier
   to pressure-equilibrium preservation to the difficulty of entropy
   conservation with arithmetic-average fluxes, and name non-linear-average
@@ -362,4 +407,5 @@ global entropy although it is not entropy preserving.
 - [Klose et al. (2025)](/sources/klose-2025.md) — ASME accepted manuscript: §2 (Chandrashekar entropy-conserving split form with subcell blending in TRACE).
 - [Bernades et al. (2023)](/sources/bernades-2023.md) — §3.1.2 (KEP depends on continuity and momentum only); §4.2 (global entropy of KGP-Pt); §5 (analogy with entropy conservation, non-linear averages).
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv 2512.03315v1: §II.A (split form with Chandrashekar averaging in HORSES3D).
+- [Kuya et al. (2018)](/sources/kuya-2018.md) — version of record with appended corrigendum: §1.2, Eqs. (6)–(7) (entropy from the Gibbs relation); §4.1–4.5, Eqs. (55)–(71) (spurious entropy from inconsistent kinetic-energy, internal-energy, pressure-diffusion and enthalpy fluxes); §5.2–5.3, Figs. 1–11; App. C, Figs. 12–17 (time step and integrator).
 - [Lodares et al. (2022)](/sources/lodares-2022.md) — §1; §2, Eqs. (13)–(17) (compressible SA, negative variant, clipped diffusion); §3.1–3.2, Eqs. (29)–(50) (SA entropy, split analysis); §4.3–4.5, Eqs. (68)–(77) (two-point flux, interface flux, walls); §5, Eqs. (83)–(118) (semi-discrete entropy laws); §7.1–7.2, Figs. 3–6.

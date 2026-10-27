@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Immersed boundary methods"
-description: "Immersed boundary methods impose walls on non-conforming grids by reconstruction, ghost points, volume penalization or direct forcing; this page covers DNS, LES and RANS variants, stiff penalization by Strang splitting, the Lagrangian weight, wall functions with a modelling height or linearization, volume filtering with wall-slip models for LES, Reynolds averaging of penalized flows, and the near-wall errors reported."
+description: "Immersed boundary methods impose walls on non-conforming grids by reconstruction, ghost points, volume penalization or direct forcing; this page covers DNS, LES and RANS variants, stiff penalization, the Lagrangian weight, wall functions with a modelling height or linearization, rigidly moving Cartesian grids, volume filtering with wall-slip models, Reynolds averaging of penalized flows, and the near-wall errors reported."
 status: established
-aliases: [IBM, volume penalization immersed boundary method, VP-IBM, fluid resistance, immersed boundary, ghost-point forcing, volume penalization, Brinkman penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing, volume-filtering immersed boundary method, IBMLES, immersed boundary-modelled LES, wall-slip model, slip-length model]
+aliases: [IBM, moving Cartesian grid, volume penalization immersed boundary method, VP-IBM, fluid resistance, immersed boundary, ghost-point forcing, volume penalization, Brinkman penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing, volume-filtering immersed boundary method, IBMLES, immersed boundary-modelled LES, wall-slip model, slip-length model]
 tags: [immersed-boundary, wall-model, lattice-boltzmann, les, dns, rans]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:57:00Z
 ---
 
 # Immersed boundary methods
@@ -26,7 +26,9 @@ neural-network LES of a cylinder wake on a staggered finite-volume mesh
 Boltzmann code ([Mozaffari et al. 2024](/sources/mozaffari-2024.md);
 [Husson et al. 2024](/sources/husson-2024.md)) and
 steady wall-function RANS of high-lift aircraft on octree Cartesian grids
-([Constant et al. 2024](/sources/constant-2024.md)), DNS of a heated
+([Constant et al. 2024](/sources/constant-2024.md)), RANS and DDES of
+pitching airfoils and a hovering rotor on Cartesian grids that move
+rigidly with the body ([Sugaya & Imamura 2021](/sources/sugaya-2021.md)), DNS of a heated
 rough-wall channel in a spectral difference code
 ([D'Ayer et al. 2026](/sources/dayer-2026.md)), and an a priori
 volume-filtering framework for wall-modelled LES in which the wall slip is
@@ -503,6 +505,111 @@ three-element airfoil (§4.2.2, §4.3.2). They mention ODE wall models on
 embedded grids as costlier and possibly unstable on non-body-fitted grids
 (§3.1).
 
+[Bose & Park (2018)](/sources/bose-2018.md), §2.1, §3, cite an
+extension of the integral wall model of Yang et al. (2015) to immersed
+boundaries and the wall-modelled sharp immersed boundary of Dhamankar et
+al. (2016); the review lists both among
+implementation studies it does not discuss (see
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
+
+## Moving bodies on rigidly moving Cartesian grids
+
+[Sugaya & Imamura (2021)](/sources/sugaya-2021.md) extend the
+hierarchical Cartesian-grid solver UTCart to bodies in motion by moving
+the whole Cartesian grid rigidly with the body. They contrast this with
+fixed-grid immersed boundaries, in which cells change from body to fluid
+as the body moves (the "fresh cell" problem, with spurious pressure
+oscillations; they cite Seo & Mittal) and in which a boundary layer has
+to be resolved while it sweeps through the cells (§1). With the grid
+attached to the body, the wall-cell classification and the image points
+are computed once at the start, and the turbulent boundary layer stays in
+the same cells, so the wall-function treatment of the stationary solver
+carries over (§2.2, Conclusion). They call theirs the first study that
+combines immersed boundaries and wall functions on Cartesian grids with a
+moving grid for unsteady turbulent flow around moving bodies (§1).
+
+**Moving-grid flux.** The grid-motion flux $Q\,V_n$ ($Q$ the conservative
+variables, $V_n=\boldsymbol V\cdot\boldsymbol n$ the face-normal grid
+velocity, page-local) is folded into the inviscid flux by a Galilean
+transformation $\mathsf T$ (page-local) to variables relative to the grid,
+$$F(Q,\boldsymbol n)-Q\,V_n=\mathsf T^{-1}F(\mathsf TQ,\boldsymbol n),\qquad \mathsf TQ=\big(\rho,\ \rho(\boldsymbol u-\boldsymbol V),\ \rho e_{\mathrm i}+\tfrac12\rho\lvert\boldsymbol u-\boldsymbol V\rvert^2\big),$$
+($e_{\mathrm i}$ the internal energy per unit mass, page-local), so that the
+SLAU approximate Riemann solver acts on grid-relative states and the result
+is transformed back (§2.1, Eqs. 4–9, after Nishikawa and Muffo et al.).
+For the cell-to-cell flux they use the
+dimension-by-dimension finite-volume scheme of Tamaki & Imamura, which
+they cite: fourth order where the grid is uniform and second order at faces
+where the cell size changes, because the least-squares gradient is first
+order there; they therefore call it a "high-order scheme". A rigid grid
+velocity $\boldsymbol V=\boldsymbol V_{\mathrm{trans}}+\boldsymbol\omega_{\mathrm g}\times\boldsymbol r$
+($\boldsymbol\omega_{\mathrm g}$ the angular velocity of the grid,
+page-local) varies linearly over a face, which adds the correction
+$-\frac{h^2}{12}(\partial_YV_n)(\partial_YQ)$ ($Y$ the face-tangential
+coordinate) to the quadrature-modification flux and keeps the
+face-averaged flux $O(h^4)$ (§2.3, Eqs. 22–26). Only the inviscid flux is
+high order; the viscous flux is second-order central.
+
+**Wall condition at the face centre** (§2.2, Table 1, Eqs. 10–15,
+extending Tamaki et al. 2017). Walls are imposed at the face
+centres (FC) between fluid cells and cells cut by the body. The image
+point (IP) lies on the wall normal through the face centre at
+$d_{\mathrm{IP}}=2\Delta x$ from the wall ($\Delta x$ the near-wall cell
+size), its values interpolated linearly with the gradient of the fluid
+cell that contains it. With $u_n$, $u_t$ the wall-normal and tangential
+velocities, $V_{n,w}$, $V_{t,w}$ those of the wall, $d_{\mathrm{FC}}$ the
+wall distance of the face centre and $f(y^+)$ the Spalart–Allmaras wall law
+(page-local subscripts):
+$$\begin{aligned}
+u_{n,\mathrm{FC}}&=u_{n,\mathrm{IP}}-\frac{u_{n,\mathrm{IP}}-V_{n,w}}{d_{\mathrm{IP}}}\,(d_{\mathrm{IP}}-d_{\mathrm{FC}}),\\
+u_{t,\mathrm{FC}}&=u_{t,\mathrm{IP}}-u_\tau\,f'(y^+_{\mathrm{IP}})\,(y^+_{\mathrm{IP}}-y^+_{\mathrm{FC}}),\\
+u_\tau f(y^+_{\mathrm{IP}})&=u_{t,\mathrm{IP}}-V_{t,w},
+\end{aligned}$$
+the last solved for $u_\tau$ by Newton–Raphson with
+$\partial f/\partial u_\tau=(y^+/u_\tau)f'(y^+)$. For a wall at rest it is
+the original condition of Tamaki et al. The temperature is extrapolated
+linearly from the image point; the pressure at the face centre is taken
+from the fluid cell that owns the face instead of the image point, a
+change the authors report as "a small improvement" in simple tests,
+without showing it; the density follows from the equation of state. The
+near-wall Spalart–Allmaras modification of Tamaki et al. is used but not
+printed. See [RANS wall functions](/methods/rans-wall-function.md).
+
+**Validation** (§3–4):
+
+- *Galilean invariance.* A steady Spalart–Allmaras RANS of the
+  [NACA 0012](/benchmarks/naca-0012-airfoil.md) at $Re=6\times10^6$,
+  $\alpha=10^\circ$ and relative Mach number 0.15 gives the same residual
+  history (differences "in the order of machine zero") and the same $C_p$,
+  $C_f$, velocity and eddy-viscosity profiles with the stream on a fixed
+  grid and with the grid moving through quiescent air, in agreement with
+  the body-fitted code FaSTAR; $y^+_{\mathrm{IP}}\approx230$ at $x/c=0.5$
+  (§3.1, Table 3, Figs. 4–8; see the
+  [geometric conservation law](/properties/geometric-conservation-law.md)).
+- *Pitching airfoil.* On AGARD Case 3 (NACA 0012, $M_\infty=0.6$,
+  $Re=4.8\times10^6$, $\alpha=4.86^\circ+2.44^\circ\sin\omega t$, reduced
+  frequency 0.081), the $C_l$ hysteresis loop with its inversion near
+  $\alpha\approx6^\circ$ and the shock and suction-peak positions agree with
+  experiment and with the body-fitted FUN3D; the pitching-moment
+  difference from experiment is about 0.005, "almost the same" as with the
+  body-fitted grid (§3.2, Figs. 10–13). Because the conservation laws are
+  not strictly satisfied near the body with immersed boundaries, the
+  authors compare with this conservative body-fitted solution (§3.2).
+- *Hovering rotor.* DDES-p (a delayed detached-eddy simulation whose
+  modified shielding protects RANS regions where the streamwise spacing is
+  small on Cartesian grids, not printed) of the
+  [Caradonna–Tung rotor](/benchmarks/caradonna-tung-rotor.md) on 75 and
+  149 million cells, $y^+_{\mathrm{IP}}$ up to about 500 on the coarser
+  grid: thrust coefficient 0.00514–0.00521 and figure of merit 0.594–0.618
+  across grids and schemes, surface pressure and tip-vortex trajectories
+  in agreement with experiment, and finer wake vortices with secondary
+  braid structures with the high-order scheme than with MUSCL (§4,
+  Tables 6–7, Figs. 17–19; see
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+
+They cite earlier work for the acceptability of immersed boundaries with
+wall functions "when $y^+$ is approximately 500 or less" for the surface
+pressure (§3.1).
+
 ## Volume filtering and wall-slip models for LES
 
 [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) derive the IB force
@@ -871,6 +978,16 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
   interpolation point while the left-hand side is at the forcing node
   *(compiler check, not in the sources)*. Eq. (41) uses a wall distance $y$
   that the paper does not define.
+- **Moving grids (Sugaya & Imamura 2021).** No order-of-accuracy test of
+  the moving-grid extension is shown: the fourth-order claim on uniform
+  patches rests on the cited Tamaki & Imamura (2017). The "first study"
+  claim is the authors'; they cite earlier immersed-boundary DES of
+  rotorcraft (Park, Linton & Thornber 2020). Their Eq. (22)
+  prints the prefactor $1/\Delta x$ against limits $\pm\Delta X/2$ and
+  expands $Q$ without the $1/2!$ of their Eq. (16); the printed final line
+  follows from $\frac1h\int_{-h/2}^{h/2}\eta^2\,d\eta=h^2/12$ with the
+  $\eta^2$ term absorbed into the face average *(compiler check, not in the
+  sources)*.
 - **No-slip forcing or modelled wall law.** Rickard & Kasbaoui (2026) state
   that the no-slip forcing of most IB methods is not valid at wall-modelled
   filter sizes and model the filtered slip; Cai et al. (2022), Constant et
@@ -894,4 +1011,6 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
 - [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md) — §2.3 (direct-forcing IBM for flexible ribbons, Roma kernel, marker condition); §3.2–3.3; §5.1, §5.3 (canopy force equals the averaged IBM force); App. C.
 - [Rismondo et al. (2025)](/sources/rismondo-2025.md) — introduction (IBM-based LES of rotor wakes by Posa et al. recalled; body-fitted meshes used).
 - [D'Ayer et al. (2026)](/sources/dayer-2026.md) — HAL submitted manuscript hal-05075852v1: §1; §2.2 (spectral difference in JAGUAR); §2.3, Eqs. (11)–(15) (Brinkman penalization, error decomposition); §2.4, Eqs. (16)–(23) (stiffness limits, Strang splitting, exact penalization sub-steps); §3.1, Eqs. (24)–(26), Tables 1–2, Figs. 3–5 (cylinder at $Re_D=40$); §3.2, Eqs. (27)–(28), Table 3, Figs. 7–10 (rough minimal channel at $Re_\tau=400$); §4.
+- [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §1 (fixed against moving grids, fresh cells); §2.1, Eqs. (1)–(9) (moving-grid flux, Galilean transformation); §2.2, Eqs. (10)–(15), Table 1 (face-centre wall condition with wall velocity); §2.3, Eqs. (16)–(26) (high-order flux and its moving-grid correction); §3.1–3.2, Tables 2–3, Figs. 4–13 (NACA 0012, AGARD Case 3); §4, Tables 6–7, Figs. 17–19 (Caradonna–Tung rotor).
+- [Bose & Park (2018)](/sources/bose-2018.md) — §2.1, §3 (integral wall model and wall-modelled sharp immersed boundary, cited).
 - [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §1 (IB in LES, non-uniform grids, no-slip at WMLES filter sizes); §2.1–2.3, Eqs. (2.1)–(2.27), Fig. 1 (volume filter, commutation identities, residual viscous stress, IB force, wall slip); §3, Figs. 5–10 (a priori channel at $Re_\tau=5200$); §4.1, Eqs. (4.1)–(4.5), Fig. 11 (Van Driest slip); §4.2, Eqs. (4.6)–(4.27), Figs. 12–13 (slip length); §5, Tables 1–2 (kernels); §6, Eqs. (6.1)–(6.9) (dynamic slip length); §7.

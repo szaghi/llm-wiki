@@ -5,7 +5,7 @@ description: "Numerical dissipation is the kinetic-energy loss a discretization 
 status: established
 aliases: [artificial dissipation, scheme dissipation, upwind dissipation, Riemann-solver dissipation, numerical viscosity]
 tags: [numerical-dissipation, implicit-les, les, dg, kinetic-energy-preserving]
-timestamp: 2026-10-27T06:03:00Z
+timestamp: 2026-10-27T11:01:00Z
 ---
 
 # Numerical dissipation in scale-resolving simulation
@@ -190,6 +190,14 @@ model ([kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
   effect is largest when the interpolation order is comparable to the
   derivative order (§4.1, Fig. 5). See [implicit LES](/definitions/implicit-les.md).
 
+- **Vortex-dominated fluid–structure interaction.** [Liu et al. (2022b)](/sources/liu-2022-g.md)
+  (§1) motivate high-order
+  [flux reconstruction](/methods/flux-reconstruction.md) for
+  vortex-induced vibration by its sensitivity to numerical dissipation and
+  dispersion, and note that the low dissipation of high-order methods
+  makes the fluid–structure coupling harder to stabilize for light bodies;
+  their test flows are laminar.
+
 ## Dissipation against dispersion: upwind and central schemes
 
 [Wang et al. (2024)](/sources/wang-2024.md) compare, for the
@@ -256,6 +264,74 @@ subgrid model. The scheme produces spurious oscillations near the front
 stagnation region, a dispersive error, which a QUICK upwind scheme confined
 to $x/D<-0.25$ removes without changing the wake at $Re_D=3900$; they note
 that a hybrid scheme may be needed at much higher Reynolds number.
+
+The summary of the first High-Order CFD Workshop by
+[Wang et al. (2013)](/sources/wang-2013.md) frames the same trade at the
+level of scheme families. First- and second-order methods "strongly
+dissipate unsteady vortices" (§1), and DG schemes are "dissipative but
+[have] particularly good dispersive accuracy" (§5.6). On the
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $Re=1600$
+the error of a twelfth-order central finite-difference scheme is
+comparable with that of a formally fourth-order dispersion-relation-preserving
+scheme, while the standard fourth-order scheme's error is much higher,
+which "seems to indicate that the dispersion error already dominates"
+(§5.6, Figs. 25–27). Of the workshop's three error measures, the
+difference between $-dE_k/dt$ and the enstrophy-based dissipation
+needs no reference solution and would vanish for a truly
+[kinetic-energy-preserving](/properties/kinetic-energy-preservation.md)
+method such as skew-symmetric central differences, which in practice add
+dissipation through dealiasing filters (§5.6).
+
+**Dissipation and vortex preservation in rotor wakes.** Two rotorcraft
+sources measure scheme dissipation by how far a tip vortex survives on
+the [Caradonna–Tung rotor](/benchmarks/caradonna-tung-rotor.md) in hover.
+
+- **WENO variants in URANS.** [Han et al. (2022)](/sources/han-2022-c.md)
+  (§4, Figs. 12, 17–24) compare third-order MUSCL, fifth-order WENO-JS
+  and their Gauss–Kriging WENO-K, whose lower dissipation over a range of
+  wavenumbers is reproduced from their earlier paper (Fig. 12), on an
+  overset grid of 18.1 million cells with the
+  [Spalart–Allmaras model](/methods/spalart-allmaras-model.md). The tip
+  vortex is resolved to a wake age of $900^\circ$ against $630^\circ$ and
+  $150^\circ$ at tip Mach number 0.439, and to $1000^\circ$ against $720^\circ$
+  and $250^\circ$ at 0.877; the thrust-coefficient errors are 0.9%, 1.5% and
+  3.5% (subsonic) and 3.0%, 5.1% and 8.2% (transonic), at 4.1% extra cost
+  per revolution for WENO-K over WENO-JS. For the shocks WENO-K is "only
+  slightly better" than WENO-JS (§4.2). See [WENO schemes](/methods/weno-scheme.md).
+- **High-order finite volume in DDES.** [Sugaya & Imamura (2021)](/sources/sugaya-2021.md)
+  (§4.5, Tables 6–7, Figs. 18–19) run the same rotor at tip Mach 0.439 by
+  delayed detached-eddy simulation on moving Cartesian grids of 75 and 149
+  million cells, with MUSCL or their fourth-order scheme. Thrust
+  coefficient and figure of merit change little with grid and scheme
+  (thrust coefficient $C_{\mathrm{Th}}$ 0.00514–0.00521, page-local), but the high-order scheme resolves finer wake
+  vortices and secondary braid structures: "the numerical scheme greatly
+  affects the prediction of the wake structure". It costs 99 h against
+  63 h for MUSCL for the same revolutions (Table 6). See
+  [immersed boundary methods](/methods/immersed-boundary-method.md).
+
+**Bandwidth-optimized WENO.** [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md)
+(§1, §3.1, Tables 1–2) state that fifth-order WENO-JS is robust "but too
+dissipative for turbulent flows", and test bandwidth-optimized WENO with a
+total-variation limiter whose threshold sets how much of the domain uses
+the nonlinear weights. Raising the threshold from 3 to 10 resolves more
+small-scale structure in inviscid problems, structures they call "purely
+numerical-viscosity effects"; the three-point variant is unstable in double
+Mach reflection at threshold 7 and the four-point one at 5, and TENO8 is
+unstable there "due to its less dissipative nature near the shocks"
+(§3.1.6); less dissipative schemes lose the symmetry of the Rayleigh–Taylor
+instability, as Fu et al. (cited) found (§3.1.7). The chosen variant costs
+1.045 times WENO-JS per point and step against 2.9 for TENO8 (Table 1),
+and runs a supersonic channel DNS (centreline Mach 1.49, $Re_\tau=240$)
+and a shock train (§3.2). The review of compressible multiphase numerics
+by [Maltsev et al. (2022)](/sources/maltsev-2022.md) (§IV, Table I) states,
+citing Johnsen et al. and Pirozzoli, that WENO-JS dissipates
+turbulent fluctuations at the higher resolvable wavenumbers and degrades
+spectral properties through its upwind-biased nonlinear reconstruction;
+it lists the low-dissipation variants (WENO-Z, WENO-M, bandwidth-optimized,
+WCNS, MDCD-WENO with free dissipation and dispersion parameters) and the
+interface-sharpening and anti-diffusion techniques that counter the
+numerical smearing of material interfaces, which, like contacts, lack
+characteristic steepening (§IV).
 
 ## Dissipation of RANS-type schemes in hybrid RANS/LES
 
@@ -740,6 +816,30 @@ measuring it:
   (§II.A) filter explicitly with a filter-to-grid ratio of 2, in a
   pseudo-spectral code, "to ensure that the influence of the numerical
   errors is much less compared to that of the SGS model".
+- **Scheme dissipation as the reason explicit models lose.**
+  [Zhao et al. (2021)](/sources/zhao-2021-c.md) (Abstract, §IV, §VI,
+  Apps. A–B) find gas-kinetic implicit LES of channel flow better than
+  four explicit eddy-viscosity models (see
+  [implicit LES](/definitions/implicit-les.md)) and explain it by the
+  high-order scheme's numerical dissipation already sufficing as subgrid
+  dissipation: an explicit model over-dissipates, lowers the wall velocity
+  gradient and $u_\tau$, and degrades the profiles. They measure no
+  dissipation. Two further statements are theirs: the modified interface
+  flux needed at $Re_\tau=395$ (an upwind kinetic part for the
+  non-equilibrium initial state, "flux 2") is "a little" more dissipative
+  than the smooth-flow flux, which works at 180 because the central
+  character of the scheme keeps dissipation small (§IV, App. A), and
+  "when the grids are refined, the numerical dissipation decreases"
+  (App. B). See [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md).
+- **Scheme dissipation inside a learned-model test.** In the pseudospectral
+  LES of [Li et al. (2021)](/sources/li-2021.md) (§II A, §III C) a
+  "high-order dissipative numerical method" taken from Xie et al. (2020,
+  cited) mimics the kinetic-energy flux to small scales at high
+  wavenumbers, in DNS and LES alike. Their learned tensor model has a
+  small eddy-viscosity term (see [gradient model](/methods/gradient-model.md)),
+  and the no-model LES at $128^3$ "deviates strongly" near the cutoff;
+  the paper does not separate the dissipation of the numerics from that of
+  the model.
 - **Uncounted dissipation.** The upwinding-based energy-transfer model iSGET
   of [Haering et al. (2022)](/sources/haering-2022.md) (App. C, §V D)
   works in their hybrid model, but its numerical dissipation is not counted
@@ -1032,6 +1132,25 @@ differently:
   without over-integration fails in transition (Brillon & Nadarajah 2026,
   §3.1.2–3.1.3, Figs. 8, 11). With a split form it costs about half the CPU
   time of over-integrated strong DG for $N=5$ to 12 (Fig. 12);
+- [Kuya et al. (2018)](/sources/kuya-2018.md) (§5, Figs. 1–11) run
+  non-dissipative second-order central split-form schemes on the inviscid
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) ($64^3$,
+  $M_0=0.05$ and 0.4) and inviscid decaying isotropic turbulence ($32^3$,
+  $M_{t0}=0.07$ and 0.3) with no added dissipation. Every variant with a
+  divergence-form mass flux and quadratic-split momentum (DQ type) blows
+  up, the consistent one included; of the quadratic–cubic (QC) variants
+  only the one whose energy fluxes are consistent with the discrete
+  kinetic- and internal-energy relations keeps total entropy and bounded
+  density and temperature fluctuations. The inconsistent variants,
+  including those of Jameson and Pirozzoli, reduce entropy and let the
+  thermodynamic fluctuations grow. That the consistent DQ variant is
+  unstable while the consistent QC one is not, the authors suggest "could
+  partly be explained by the reduction of aliasing errors" of cubic split
+  forms (§5.3; see
+  [kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
+  and [entropy conservation](/properties/entropy-conservation.md)). Time
+  integration matters too: third-order TVD Runge–Kutta, and the classical
+  fourth-order one at CFL about 1, produce entropy (App. C);
 - in DNS of compressible channel flow of a thermally perfect gas at bulk
   Mach numbers 3 to 5, run fully central after a WENO transient,
   [Aiello et al. (2026)](/sources/aiello-2026.md) (§3.3, §4.2, Fig. 3,
@@ -1097,6 +1216,35 @@ from the de-aliasing. [Krais et al. (2021)](/sources/krais-2021.md)
 (§3.3) list both as stabilizations available in FLEXI. Split-form DG can be
 made kinetic-energy-preserving or entropy-conserving by the choice of
 two-point flux, with entropy-dissipative surface terms added.
+
+## Numerical diffusion of flames
+
+[Cuenot et al. (2022)](/sources/cuenot-2022.md) (§2–5, Tables 2–3,
+Figs. 5–7, 9) measure numerical diffusion through a flame property. In
+steady laminar counterflow diffusion flames at high Damköhler number the
+consumption speed scales as $\sqrt{a_{\mathrm{cf}}D_{\mathrm m}}$
+($a_{\mathrm{cf}}$ the counterflow strain rate, $D_{\mathrm m}$ the
+diffusivity; page-local, as on the Source page), so on a coarse grid the
+extra diffusion of the scheme raises it. With the first-order upwind
+discretization of CANTERA, whose dissipation error the authors give as
+$\sin(kh)/(kh)$ ($k$ the wavenumber, $h$ the grid step), at most a factor
+$2/\pi$ at the highest discrete wavenumber (§4), the total heat release
+of a methane–air flame (two-step chemistry,
+$a_{\mathrm{cf}}=100\,\mathrm{s^{-1}}$) deviates from the reference for
+flame resolutions $\delta_{\mathrm f}/h\le20$ ($\delta_{\mathrm f}$ the
+thermal thickness, page-local) and rises by up to 65% at
+$\delta_{\mathrm f}/h=2$ (as printed; see Qualifications). They define
+an effective diffusivity ratio $F=D^*_{\mathrm m}/D_{\mathrm m}$ equal to
+the square of the heat-release ratio (Eq. 14), with
+$F=1.113$, 1.27, 1.505 and 2.575 at resolutions 20, 10, 6 and 2 (Table 2),
+and 1.01 to 1.46 for a 14-species methane–oxygen flame at 54 bar
+(resolutions 30 to 0.9, Table 3). Dividing all diffusivities by $F$ on the
+coarse mesh recovers the reference consumption within 3% (two-step) and
+2% (except the mesh with no point near stoichiometry), and about five
+points in the reaction zone keep the inner chemical structure (§5). For
+LES they propose $F_{\mathrm{LES}}=F_{\mathrm{num}}F_{\mathrm{sgs}}$
+(§6; see [thickened flame model](/methods/thickened-flame-model.md)). The
+evidence is one-dimensional and laminar.
 
 ## Grid-size changes
 
@@ -1188,6 +1336,22 @@ two-point flux, with entropy-dissipative surface terms added.
   which was therefore "more dissipative than it should be": by their own
   definition that scheme is the less dissipative one.
 
+- Cuenot et al. (2022) print "+65%" for the coarsest two-step mesh, while
+  their Eq. (14) and Table 2 ($F=2.575$) give a heat-release ratio of
+  $\sqrt{2.575}=1.605$, +60.5%; they quote the Table 3 values 1.46 and
+  1.12 as heat-release ratios, which by Eq. (14) are $F$, the ratios
+  being 1.21 and 1.06; and their error relation
+  $\varepsilon_{\mathrm{num}}=(F_{\mathrm{num}}^2-1)\dot\Omega_{\mathrm{exact}}$
+  ($\dot\Omega$ the consumption rate, page-local) does not follow from
+  Eq. (14), which gives the exponent $1/2$ *(compiler check, not in the
+  sources)*. The text names M1000 as reference mesh while Table 2 and
+  Fig. 6 use M500.
+- Kumar & Ghosh (2022, §4) suggest that thresholds of 7–10 "may also show
+  better performance" than WENO-CU6, while their §3.1.6 finds the
+  three-point scheme unstable at threshold 7 in double Mach reflection.
+  They print the WENO-BS linear weights as 1/35, 12/35, 8/35, 4/35
+  (Eq. 50), which sum to 25/35 *(compiler check, not in the sources)*.
+
 # Citations
 
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — §1; §3, Fig. 4; §3.1, Figs. 5–6; §4; §5, Figs. 8–9; §5.1, Fig. 10.
@@ -1274,3 +1438,13 @@ two-point flux, with entropy-dissipative surface terms added.
 - [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.4.1, Fig. 4; §3.2–3.3, Fig. 35.
 - [Lodares et al. (2022)](/sources/lodares-2022.md) — §4.4; §5.3.
 - [Batther & Lee (2022)](/sources/batther-2022.md) — §3.1.2; §5.
+- [Wang et al. (2013)](/sources/wang-2013.md) — §1; §5.6, Figs. 25–27.
+- [Han et al. (2022)](/sources/han-2022-c.md) — §4, Figs. 12, 17–24; §4.2.
+- [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §4.5, Tables 6–7, Figs. 18–19.
+- [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §1; §3.1.3–3.1.7, Tables 1–2; §3.2; §4; Eq. (50).
+- [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §IV, Table I.
+- [Zhao et al. (2021)](/sources/zhao-2021-c.md) — Abstract; §IV; §VI; Apps. A–B.
+- [Li et al. (2021)](/sources/li-2021.md) — §II A; §III C.
+- [Kuya et al. (2018)](/sources/kuya-2018.md) — §5, Figs. 1–11; App. C.
+- [Cuenot et al. (2022)](/sources/cuenot-2022.md) — §2–6, Eq. (14), Tables 2–3, Figs. 5–7, 9.
+- [Liu et al. (2022b)](/sources/liu-2022-g.md) — §1.

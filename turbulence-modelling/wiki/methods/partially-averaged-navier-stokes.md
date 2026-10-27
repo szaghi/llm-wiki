@@ -5,7 +5,7 @@ description: "Girimaji's bridging hybrid model that solves RANS-form transport e
 status: established
 aliases: [PANS, partially averaged Navier-Stokes, PANS k-ω SST, bridging model, PANS BHR-LEVM, variable-density PANS, BHR model]
 tags: [pans, hybrid-rans-les, flux-reconstruction, numerical-dissipation, separated-flow]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T10:57:00Z
 ---
 
 # Partially-averaged Navier–Stokes
@@ -346,7 +346,47 @@ length scale, is said to overcome the energy-partition problems of the
 partially integrated transport model and "similar problems seen in" PANS,
 citing Girimaji (2006) and Tazraei & Girimaji (2019); no PANS computation
 supports the statement in the paper
-([Heinz (2022)](/sources/heinz-2022.md), §4, conclusion 1). Wang et al.
+([Heinz (2022)](/sources/heinz-2022.md), §4, conclusion 1).
+
+The earlier review by [Heinz (2020)](/sources/heinz-2020.md), §3.4 and
+§4.4, gives the argument in full, in its own notation translated here
+(its modelled-to-total ratios $k_+$, $\varepsilon_+$ are $f_k$,
+$f_\varepsilon$). Writing the $k_u$ and $\varepsilon_u$ equations of the
+$k$-$\varepsilon$ form of PANS with $f_k$ and $f_\varepsilon$ constant, the
+review obtains the destruction ratio
+$\alpha_{\mathrm{PANS}}=1+(\alpha_\varepsilon-1)f_k/f_\varepsilon$ in
+place of the RANS $\alpha_\varepsilon=C_{\varepsilon2}/C_{\varepsilon1}$, and the
+$\omega$-equation analogue with the $k$-$\omega$ ratio (Eqs. 24–28;
+$\alpha_{\mathrm{PANS}}$, $\alpha_\varepsilon$ page-local). The derivation
+neglects the transport difference
+$$D_{k_u}-f_kD_k=\partial_j\Big[\Big(1-\frac{f_\varepsilon}{f_k^2}\Big)\nu_t\,\partial_jk_u\Big],$$
+with $D_{k_u}$ and $D_k$ the turbulent transport of the unresolved and
+total kinetic energy and $\nu_t$ the unresolved eddy viscosity, which
+follows from $\nu_t^{\mathrm{tot}}=\nu_tf_\varepsilon/f_k^2$ (Eq. 29;
+$\nu_t^{\mathrm{tot}}$ page-local) and is non-zero in general; the review
+concludes that PANS "is strictly valid only for homogeneous turbulence".
+It distinguishes a zero-transport form, with turbulent Prandtl number
+$\sigma_\varepsilon f_k^2/f_\varepsilon$ for $\varepsilon_u$, suited to
+high Reynolds number, from a maximum-transport form keeping
+$\sigma_\varepsilon$, suited to low Reynolds number, and notes that usually
+$f_\varepsilon=1$ (Eq. 30). The partially integrated transport model
+(PITM) is "basically equal" to PANS with $f_\varepsilon=1$, the
+maximum-transport form and $f_k=L_+^{2/3}$ computed from a length-scale
+law ($L_+$ the modelled-to-total length-scale ratio). A variational test
+(§4.4, Eq. 52) finds the PANS coefficient consistent with the
+[continuous-eddy-simulation](/methods/continuous-eddy-simulation.md)
+relation only with vanishing transport, and with $f_\varepsilon=1$ PANS uses
+$1+L_+^{2/3}(\alpha_\varepsilon-1)$ against the CES
+$1+L_+^2(\alpha_\varepsilon-1)$, from which the author concludes that PANS
+and PITM "require a much finer grid" for the same resolution. The review
+also states that constant prescribed $f_k$ and $f_\varepsilon$ cannot
+follow changes of grid or Reynolds number, and, from the
+[periodic-hill](/benchmarks/periodic-hill.md) literature it compiles,
+cites that Ma et al. recommend $f_k=0.4$ and Razi et al. $f_k=0.15$ for
+the same flow, with different trends of the reattachment length with $f_k$
+(§5.1, Fig. 7), and that PITM energy ratios on four grids at
+$Re=37\,000$ do not follow the expected grid trend near the wall (Fig. 8).
+The review runs no simulations; these are results of the works it cites. Wang et al.
 (2021) list PANS with PITM, DES and zonal DES as the main hybrid strategies,
 and build theirs on DES instead
 ([Wang et al. (2021)](/sources/wang-2021-l.md), §1; see
@@ -417,3 +457,4 @@ and build theirs on DES instead
 - [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — §1, §2–§2.2 Eqs. 1–8, §3, §4.3–4.6 Tables 1–3 Figs. 4–15, §5, App. B Table B.5, App. C.2 Fig. C.20.
 - [Heinz (2022)](/sources/heinz-2022.md) — §4.
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §1.
+- [Heinz (2020)](/sources/heinz-2020.md) — §3.4, Eqs. (24)–(30) (PANS and PITM coefficients, neglected transport, zero- and maximum-transport forms); §4.4, Eq. (52) (consistency test against CES, resolution comparison); §5.1, Figs. 6–8 (cited periodic-hill $f_k$ recommendations and PITM grid study).

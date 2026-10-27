@@ -5,7 +5,7 @@ description: "A discretization is kinetic-energy preserving when its convective 
 status: established
 aliases: [KEP, KEEP, kinetic-energy and entropy preserving scheme, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T10:57:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -226,8 +226,76 @@ volume integral, of $O(N^4)$ operations per element against $O(N^3)$ or
 less for the other routines, takes 39% of the run time of a split-form
 case at $N=7$ (Table 1, Fig. 5).
 
+**The KEEP scheme: consistency of the energy fluxes.**
+[Kuya et al. (2018)](/sources/kuya-2018.md) build the second-order
+kinetic-energy- and entropy-preserving (KEEP) scheme that later sources use,
+for the compressible Euler equations written as interface fluxes on a
+uniform grid (§2–3). They split the total-energy flux into a kinetic-energy,
+an internal-energy and a pressure-diffusion flux, and call a discretization
+**consistent** when it satisfies three "Analytical Relations" discretely
+(§1.2, §4.1, Eqs. 55–58): (1) the kinetic-energy equation follows from the
+discrete mass and momentum equations; (2) internal and kinetic energy are
+convected by the same velocity; (3) the pressure-diffusion term
+$\partial(u_jp)/\partial x_j$ is the sum of the pressure work of the
+kinetic-energy equation and the pressure dilatation of the internal-energy
+equation, a discrete product rule. Once the mass and momentum fluxes are
+chosen, the three relations fix the three energy fluxes. Of the
+combinations they list, only two give a consistent kinetic-energy flux
+(Table 1, §2.3.1): divergence mass with quadratic-split momentum (the "DQ"
+family, whose kinetic-energy flux coincides with Kok's and with Subbareddy
+& Candler's), and quadratic-split mass with cubic-split momentum (the new
+"QC" family). The proposed scheme QC$_C$ is, at the face $m+\tfrac12$ in
+direction $j$, with $\{\!\{\cdot\}\!\}$ the mean of the states at $m$ and
+$m+1$ (Eq. 54):
+$$\begin{aligned}
+&\text{mass } \{\!\{\rho\}\!\}\{\!\{u_j\}\!\},\qquad
+\text{momentum } \{\!\{\rho\}\!\}\{\!\{u_i\}\!\}\{\!\{u_j\}\!\}+\{\!\{p\}\!\}\delta_{ij},\\
+&\text{kinetic energy } \{\!\{\rho\}\!\}\{\!\{u_j\}\!\}\,\tfrac12u_{i,m}u_{i,m+1},\qquad
+\text{internal energy } \{\!\{\rho\}\!\}\{\!\{u_j\}\!\}\,\frac{\{\!\{p/\rho\}\!\}}{\gamma-1},\\
+&\text{pressure diffusion } \tfrac12\big(u_{j,m+1}\,p_m+u_{j,m}\,p_{m+1}\big),
+\end{aligned}$$
+the total-energy flux being the sum of the last three; only $\rho$,
+$\rho u_i$ and $E$ are integrated in time (§3), and the pointwise
+finite-difference form is printed in App. A, Eq. (A.1). The kinetic-energy
+flux carries the product of the two nodal velocities, the internal-energy
+flux the mean of $e$ (Eqs. 42–43 for a general equation of state), and the
+pressure-diffusion flux follows from discretizing the pressure work as
+$u_{j,m}(p_{m+1}-p_{m-1})/(2h)$ and the dilatation as
+$p_m(u_{j,m+1}-u_{j,m-1})/(2h)$ (§2.4.2, Eqs. 47–50; Kuya et al. state
+that Kok also showed this flux). The KEP schemes of Jameson and Pirozzoli conserve kinetic energy
+globally but use the arithmetic mean of $\tfrac12u_iu_i$ in place of the
+nodal product, which is inconsistent with Relation 1, and their enthalpy
+flux treats the pressure diffusion as $\partial(\rho u_j\,p/\rho)/\partial x_j$,
+which violates Relation 3 (§2.3.2, §4.5, Eqs. 34–35, 67–71). The mass and
+momentum fluxes of QC$_C$ are the Kennedy–Gruber–Pirozzoli form
+$a_{\mathrm K}=\tfrac12$ above, and its kinetic-energy flux is the one that
+Aiello et al. (2026) derive as induced by $\mathcal F_{\rho u}=\mathcal F_\rho\{\!\{u\}\!\}$
+*(compiler check, not in the sources)*. The entropy side of the
+construction is on [entropy conservation](/properties/entropy-conservation.md).
+
+On the inviscid compressible
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) ($64^3$,
+$M_0=0.05$ and 0.4) and inviscid decaying
+[isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)
+($32^3$, initial turbulent Mach number 0.07 and 0.3), with classical
+fourth-order Runge–Kutta at CFL $\approx0.1$, Kuya et al. compare twelve
+flux combinations (Table 3, §5): the four DQ-type schemes without an
+enthalpy flux blow up by $M_0t=28$ at $M_0=0.05$ (the two with the
+enthalpy flux run longer), every DQ-type scheme blows up by $M_0t=20$ at
+$M_0=0.4$ and by 40 eddy-turnover times at initial turbulent Mach number
+0.07, every QC-type scheme keeps the kinetic energy at
+$M_0=0.05$, and only QC$_C$ also keeps the total entropy and bounded rms
+density and temperature fluctuations; at $M_0=0.4$ it loses kinetic energy
+around $M_0t\approx20$, which the authors attribute to pressure work, and
+then stays almost constant up to $M_0t=160$ (§5.2–5.3, Figs. 1–11). Both
+DQ$_C$ and QC$_C$ are consistent, yet only QC$_C$ is stable; the authors
+suggest that this "could partly be explained by the reduction of aliasing
+errors" of the cubic split form and leave it open (§5.3). The scheme is
+second order, extendable to higher order after Pirozzoli and to curvilinear
+grids (§6).
+
 **Kinetic-energy- and entropy-preserving central finite differences
-(KEEP).** [Maejima & Kawai (2025)](/sources/maejima-2025.md), §2, run DNS
+(KEEP) in use.** [Maejima & Kawai (2025)](/sources/maejima-2025.md), §2, run DNS
 and LES of compressible channel flow at $Re_\tau\approx1000$, $M_b\approx0.1$,
 with the second-order kinetic-energy- and entropy-preserving split-form
 central scheme of Kuya, Totani & Kawai, non-dissipative, chosen so that the
@@ -384,6 +452,18 @@ form on LGL nodes ($N=5$ and 7) as the implicitly filtered baseline on which a
 learns the Smagorinsky coefficient; without a model that baseline "exhibits
 a buildup of energy in the upper wavenumbers due to lacking dissipation" in
 forced isotropic turbulence (§4.2).
+
+**A KEP scheme as a diagnostic.** In the
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) case of the first
+High-Order CFD Workshop, [Wang et al. (2013)](/sources/wang-2013.md), §5.6,
+define a third error, the difference between the time derivative of the
+kinetic energy and the numerically evaluated dissipation rate
+$2(\mu/\rho_0)\mathcal E$ (§4.15; $E_k$ the volume-averaged kinetic energy
+and $\mathcal E$ the enstrophy, page-local), which needs no reference
+solution; as "a potential drawback" they note that it "should be zero for
+any truly kinetic energy preserving method, such as the skew-symmetric
+central FDM", which in practice adds dissipation through de-aliasing
+filters.
 
 **Thermalization.** Without dissipation, energy reaching the cut-off has nowhere
 to go. Flad & Gassner (2017, §3) observe an approximate $E(k)\propto k^2$
@@ -587,7 +667,27 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
 
 - KEP is a property of the semi-discrete spatial operator; time integration
   breaks it at the order of the scheme (Vicente Cruz & Lamballais 2023, §6.2;
-  van Gastelen et al. 2024, §6).
+  van Gastelen et al. 2024, §6). Kuya et al. (2018, §5.1, App. C) call
+  their scheme "nominally" conservative in the semi-discrete sense only:
+  CFL $\approx0.1$ and 0.01 give overlapping histories, CFL $\approx1$ does
+  not, and third-order TVD Runge–Kutta is as stable as classical RK4 but
+  produces entropy. Their only comparison with an external reference, the
+  de-aliased spectral simulation of Honein & Moin for isotropic turbulence
+  (rms temperature fluctuation about 0.32 against 0.35), is made at
+  CFL $\approx1$, the step they judge not time-converged (App. C, Fig. 16).
+- **Consistency is not sufficient for stability.** In Kuya et al. (2018,
+  §5.3) the consistent DQ$_C$ blows up while the inconsistent DQ schemes
+  with an enthalpy flux run longer; the authors write that it "is not fully
+  understood why" and that it "might be problem dependent".
+- **Printed slips in Kuya et al. (2018).** §5.3 compares Fig. 11(a) with "$M_{t0}=0.05$ shown in Fig. 9(a)",
+  whereas Fig. 9 is at $M_{t0}=0.07$; the eddy-turnover time is printed
+  $\tau=2\sqrt3/(k_0M_{t0})$ with $k_0$ where the most energetic wavenumber
+  is defined as $\kappa_0$ (§5.1); Eq. (24) and App. B print some
+  derivative subscripts as $x$ or $x_i$ where the summed index is $j$. The
+  publisher's appended corrigendum (J. Comput. Phys. 391:397, 2019)
+  corrects the kinetic-energy axis label of Figs. 1–4(a) and 8–17(a) to
+  $\rho k/(\rho_0k_0)$ in the source's symbols (specific kinetic energy
+  $k$), without changing the results.
 - **Dissipation as an asset or a defect.** Flad & Gassner (2017), Goc et
   al. (2021) and Carlsson et al. (2023) treat a dissipation-free convective
   operator as the baseline to which only model dissipation should be
@@ -663,3 +763,5 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
 - [Liang & Fu (2024)](/sources/liang-2024.md) — §2.3, Eqs. (21)–(30) (quadratic and cubic split forms, arbitrary-order skew-symmetric flux); §3.2; §4.10, Fig. 17 (inviscid Taylor–Green vortex to $t=100$).
 - [Lodares et al. (2022)](/sources/lodares-2022.md) — §3.1–3.2, Eqs. (30)–(50) (kinetic energy and SA energy as entropies); §4.3, Eq. (68); §4.6; §5.1.2, Eqs. (87)–(89); §5.3, Eq. (116); §7.2–7.4, Figs. 5–6.
 - [Gao et al. (2022)](/sources/gao-2022.md) — §3.1 (split-form FLEXI with Pirozzoli flux for an implicit LES with shocks).
+- [Kuya et al. (2018)](/sources/kuya-2018.md) — version of record with appended corrigendum: §1.1–1.2 (Analytical Relations); §2.2–2.4, Eqs. (14)–(53), Table 1 (split-form fluxes, consistent and inconsistent energy fluxes); §3, Eq. (54) (QC$_C$ KEEP scheme); §4.1, §4.5, Eqs. (55)–(71); §5.1–5.3, Table 3, Figs. 1–11 (inviscid Taylor–Green vortex and isotropic turbulence); §6; App. A, Eq. (A.1); App. C, Figs. 12–17 (time step and integrator).
+- [Wang et al. (2013)](/sources/wang-2013.md) — §4.15 (dissipation rate from the enstrophy); §5.6 (third Taylor–Green error, zero for a truly KEP method).
