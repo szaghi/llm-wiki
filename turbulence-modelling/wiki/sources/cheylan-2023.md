@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 492:112418"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Computational_Physics_Cheylan_Analysis_of_the_immersed_boundary_method_for_turbulent_fluid.pdf"
 tags: [immersed-boundary, lattice-boltzmann, fluid-structure-interaction, les]
-timestamp: 2026-10-26T07:42:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Summary
@@ -138,7 +138,7 @@ archive and take suffixed keys (`huang-2022-b`, `li-2022-f`, `wang-2023-d`): ref
 Fluids 2022) is not the Source [huang-2022](/sources/huang-2022.md); ref.
 [55] (Li, Oger & Le Touzé, J. Comput. Phys. 449:110786) is not the Source
 [li-2022](/sources/li-2022.md); ref. [24] (Wang, Liu & Rajamuni, Proc.
-IMechE C 237) is not the archive paper keyed `wang-2023`. Same-author
+IMechE C 237) is not the Source [wang-2023](/sources/wang-2023.md). Same-author
 same-year works are keyed in printed order (Piperno 1997, Jacob 2018, Feng
 2019). [18] prints no page or article number, [20] no volume or page, [60]
 no book title; [50] is keyed by its printed first author (`lima-2003`). No

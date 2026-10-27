@@ -8,8 +8,8 @@ authors: [Domingo P., Vervisch L.]
 year: 2023
 venue: "Proc. Combust. Inst. 39:2055-2076"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Proceedings_of_the_Combustion_Institute_Domingo_Recent_developments_in_DNS_of_turbulent_combustion.pdf"
-tags: [dns, review, combustion, les, a-priori-a-posteriori, machine-learning]
-timestamp: 2026-10-25T13:42:00Z
+tags: [dns, review, combustion, les, a-priori-a-posteriori, data-driven]
+timestamp: 2026-10-26T20:47:00Z
 ---
 
 # Summary
@@ -85,7 +85,7 @@ manuscript.
 # Printed slips
 
 - Fig. 12 caption: "bout: c ∈ [0, 8, 0.98]"; the neighbouring bands (pheat $[0.6,0.8]$, burned $[0.98,0.99]$) show it is $[0.8,0.98]$.
-- §3.1 after Eq. (7): "Because $C_s\approx2$ [254], the mean turbulent flame brush adjusts to turbulence with a characteristic time of the order of half the eddy turnover time ($b_2$ = 1.78)". By Eq. (7) the relaxation time is $\tau_T/C_s$, so the half follows from $C_s\approx2$; the parenthetical "$b_2=1.78$" repeats the growth constant out of place.
+- §3.1 after Eq. (7): "Because $C_s\approx2$ [254], the mean turbulent flame brush adjusts to turbulence with a characteristic time of the order of half the eddy turnover time ($b_2$ = 1.78)". By Eq. (7) the relaxation time is $\tau_T/C_s$, so the half follows from $C_s\approx2$; the parenthetical "$b_2=1.78$" repeats the growth constant out of place *(compiler check, not in the sources)*.
 - Eq. (8) and the text after it: the diffusivity is $D_\phi$ in Eq. (8) and in $\tau_T=\Delta^2/(24D_\phi)$, but the text then names "$D_c$ the molecular diffusion coefficient". The same passage reuses $\tau_T$ for a micro-mixing time (the integral time of Eq. 3), and Eq. (10) reuses $\tau_c$ for an unresolved flux (the chemical time of §2).
 - §1: the premixed-flame citation range is printed "[21, 27, 37, 38, 41–43, 49–75, 75–190]", counting ref. 75 twice.
 - §3.1: a box of 12 mm × 18 mm × 18 mm at a "fixed resolution of 50µm" is given as "28.58 million nodes". *(Compiler check, not in the sources: $240\times360\times360\approx3.11\times10^7$; the paper does not say how nodes are counted, so the difference is recorded, not asserted as a slip.)*

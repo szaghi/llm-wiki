@@ -9,7 +9,7 @@ year: 2024
 venue: "Mon. Not. R. Astron. Soc. 534:1963–1984"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Monthly_Notices_of_the_Royal_Astronomical_Society_Cernetic_Supersonic_turbulence_simulations_with_GPU-based_high-order.pdf"
 tags: [dg, compressible, astrophysics, numerical-dissipation, implicit-les, gpu]
-timestamp: 2026-10-26T15:48:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Summary
@@ -89,7 +89,7 @@ placeholder. Title and authors match Crossref.
 18. The expected sonic wavenumber is $k_s\simeq k_{\mathrm{inj}}M_t^2$ ($l_s=L_{\mathrm{inj}}/M_t^2$), so at $M_t=3.2$ the sonic point is "only about a factor of 10 away from the injection scale" (§4.1, Eq. 22; §6). **Derived** (from $v(l)\propto l^{1/2}$)
 19. Following Pan et al. (2022), the density-weighted Mach number scales as $M_t^{0.96}$ in the supersonic regime, "which matches our own findings very closely" (§4.1). **Stated** (no data shown)
 20. The turbulence is fully developed only for $t\ge2T$; dissipation starts after about one eddy turnover and quasi-stationarity is reached by $t\simeq3T$; statistics are averaged over $3T<t<8T$ (§4.2, Fig. 9). **Shown**
-21. With a fixed driving recipe the realized Mach numbers match the intended doubling in the subsonic regime and "fall slightly short" well above unity (§5). **Shown** (not tabulated)
+21. With a fixed driving recipe the realized Mach numbers match the targeted doubling in the subsonic regime and "fall slightly short" well above unity (§5). **Shown** (not tabulated)
 22. One evaluation of the right-hand side costs $C_{\dot w}=\tfrac53N_x^3(N+1)^2(5N^4+50N^3+175N^2+259N+183)$ operations, i.e. $\propto N^6$ per cell (§7, Eq. 33). **Derived** (operation count)
 23. The total cost to a fixed end time is $C_{\mathrm{tot}}\propto N_x^4N^8$ in three dimensions (§7, Eq. 35). **Derived**
 24. For a smooth problem with $L_1=a_NN_x^{-(N+1)}$, high order is cheapest for large problems and small target errors; for a single planar shock with $L_1=b\,N_x^{-1}(N+1)^{-1}$ it is "always computationally favorable" to raise $N_x$ rather than $N$ (§7, Figs. 13–14). **Derived** (model, no timings)
@@ -99,8 +99,11 @@ placeholder. Title and authors match Crossref.
 The viscous pressure (Eqs. 14–16), with $h$ the cell size and $h/(N+1)$ the
 effective resolution, applied only where $\nabla\cdot\boldsymbol u<0$:
 
-$$p_{\mathrm{av}}=\alpha_{\mathrm{visc}}\,\rho\Big(\frac{h}{N+1}\Big)^2\lvert\nabla\cdot\boldsymbol u\rvert^2\;\Big[+\;\beta_{\mathrm{visc}}\,\rho c_s\frac{h}{N+1}\lvert\nabla\cdot\boldsymbol u\rvert\Big],\qquad p_{\mathrm{av}}\le\frac12\rho\Big(\frac{h}{N+1}\Big)^2\frac{\lvert\nabla\cdot\boldsymbol u\rvert}{\Delta t}.$$
+$$p_{\mathrm{av}}=C_{\mathrm q}\,\rho\Big(\frac{h}{N+1}\Big)^2\lvert\nabla\cdot\boldsymbol u\rvert^2\;\Big[+\;C_{\mathrm l}\,\rho c_s\frac{h}{N+1}\lvert\nabla\cdot\boldsymbol u\rvert\Big],\qquad p_{\mathrm{av}}\le\frac12\rho\Big(\frac{h}{N+1}\Big)^2\frac{\lvert\nabla\cdot\boldsymbol u\rvert}{\Delta t}.$$
 
+$C_{\mathrm q}$ and $C_{\mathrm l}$ are the printed $\alpha_{\mathrm{visc}}$
+and $\beta_{\mathrm{visc}}$ (names of the
+[artificial-viscosity page](/methods/artificial-viscosity-shock-capturing.md)).
 The paper prints the two forms separately and says the linear one "augments"
 the quadratic one.
 

@@ -5,7 +5,7 @@ description: "How the grid-point and time-step counts of DNS, wall-resolved and 
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -49,7 +49,19 @@ Moin (2012), a cost of roughly $Re^{3.5}$ for DNS and $Re^{2.5}$ for
 wall-resolved LES. [Delassaux et al. (2023)](/sources/delassaux-2023.md)
 (§4.1) recall Spalart's forecast that wall-resolved LES and DNS of a
 full-scale high-Reynolds-number geometry would become available in 2050 and
-2080 respectively.
+2080 respectively. [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md)
+(§1, Fig. 1) recall, from Spalart as they cite him, that accurate "pure"
+WMLES of a full-size airliner wing will not be possible before 2045, because
+$\delta$ grows from about 1 mm at the leading edge to tens of centimetres at
+the trailing edge and LES needs near-isotropic cells where RANS accepts high
+aspect ratios (their Fig. 1 maps $1/\delta^2$ over the wing); they add that
+wall-resolved LES requirements are "almost identical to those of DNS".
+[Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) (§1) recall from
+Choi & Moin (2012) grid counts growing as $Re^{37/14}$ for DNS,
+$Re^{13/7}$ for wall-resolved and $Re$ for wall-modelled LES
+($37/14\approx2.64$ *(compiler check, not in the sources)*), and from
+Piomelli (2014) that above $Re=O(10^5)$ more than 90 % of the points of a
+wall-resolved LES resolve less than 10 % of the domain.
 
 ## DNS
 
@@ -247,6 +259,16 @@ $Q_1$ against high order *(compiler check, not in the sources)*.
   $Re_\tau\approx5200$ with fractions up to 0.4 at the centre and the
   [periodic hill](/benchmarks/periodic-hill.md) on 0.2–0.9 M cells, 14–62
   times fewer than the 13 M-cell wall-resolved LES reference (§V.B).
+- **Resolved fraction as a stability condition.** [Jakhar et al. (2026)](/sources/jakhar-2026.md)
+  (p. 4) find that LES of forced two-dimensional turbulence with their
+  fourth- and sixth-order [gradient models](/methods/gradient-model.md)
+  stays stable over long times only when the grid captures more than 80 %
+  of the DNS enstrophy, and compare it with the requirement, recalled from
+  Pope, that three-dimensional LES resolve at least 80 % of the kinetic
+  energy; the stability runs are in the Supplemental Material, not in the
+  file read. Haering et al.'s recalled bound above, an unresolved fraction of
+  at most about 0.1, is the stricter of the two recalled criteria
+  *(compiler check, not in the sources)*.
 
 - **Wall-modelled grids in wall units and per $\delta$.** Gillyns et al.
   (2022, §6–9) run spectral-element WMLES of channel flow at $Re_\tau=1000$
@@ -272,7 +294,7 @@ $Q_1$ against high order *(compiler check, not in the sources)*.
   $\Delta x^+=78$ and 58, $\Delta z^+=39$ and 29, first off-wall
   $\Delta y^+=1$, and find their optimally clipped gradient model and the
   dynamic mixed model close to DNS on the medium mesh. They argue, after
-  Baggett et al. as recalled, that in anisotropic wall-bounded flows at
+  Baggett et al. as they cite it, that in anisotropic wall-bounded flows at
   moderate resolution an accurate SGS stress, not only an accurate
   dissipation, is needed for accurate statistics, and hypothesize that
   structurally accurate models therefore lower mesh requirements (§I–II).
@@ -412,6 +434,16 @@ $Q_1$ against high order *(compiler check, not in the sources)*.
   (Table 2). At $10^\circ$ in the downstroke the $1.2c$ span is completely
   stalled while the $0.8c$ span still shows oscillatory wake patterns
   (§2.1, Fig. 4); no span beyond $1.2c$ is run. See [NACA 0012](/benchmarks/naca-0012-airfoil.md).
+- **Coarse DG "DNS" of a compressible channel.** [Ranjbar et al. (2026)](/sources/ranjbar-2026.md)
+  (§III.C, Table III) run channel flow at $Re_\tau=395$ ($M=0.3$) in
+  [HORSES3D](/software/horses3d.md) on $14\times12\times16$ elements of
+  degree $N=6$, 921 984 solution points with six inside $y^+=10$, elements
+  clustered at the walls and uniform in $x$ and $z$, a resolution they place
+  "within the suitable range for LES without wall modeling, as recommended
+  by Choi and Moin (2012)"; they call it a coarse DNS and use it to test
+  [explicit modal filtering](/methods/explicit-modal-filtering.md).
+  $14\cdot12\cdot16\cdot7^3=921\,984$ confirms $(N+1)^3$ points per element
+  *(compiler check, not in the sources)*.
 - **Training grids of a learned wall model.** [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md)
   (§2.6) train their wall model on WMLES with isotropic grids $\Delta=\delta/n$,
   $n=5$ to 380 ($\delta$ the channel half-height, $n$ page-local), and below
@@ -508,8 +540,7 @@ it, without breakdown).
 
 ## Qualifications
 
-- **WMLES cost exponent: $Re_c^{4/3}$ or $Re^{1.1}$** (reclassified from
-  Contradictions in the chunk-1 deep lint, 2026-10-25). The two exponents are
+- **WMLES cost exponent: $Re_c^{4/3}$ or $Re^{1.1}$.** The two exponents are
   not incompatible statements about one quantity under one set of
   assumptions. Goc et al. (2021, §4) extrapolate their own JAXA runs to
   flight Reynolds numbers: assuming, after Choi & Moin (2012), a grid-point
@@ -629,3 +660,7 @@ it, without breakdown).
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1; §4.1, Tables 1–2, Fig. 5; §6.1; §7; App. B.
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — §III.A–III.B, Table I; §IV.A–IV.B, Table V, Fig. 12 (arXiv v1).
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — §1.1, Tables 1–2; §2.1, Figs. 3–7; §3 (arXiv v2).
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §1, Fig. 1.
+- [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §1.
+- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — p. 4 (arXiv v3).
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — §III.C, Table III (arXiv v1).

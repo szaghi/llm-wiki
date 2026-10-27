@@ -127,8 +127,8 @@ $\epsilon_{\mathcal S}$ its tolerance.
 **Local modal filter (LMF).** The exponential modal filter of Hesthaven and
 Warburton, $\mathcal V\Lambda\mathcal V^{-1}$ with
 $$\Lambda_{mm}=\begin{cases}1,&\vartheta_m<\vartheta_c,\\ \exp\!\Big[-\alpha_f\Big(\dfrac{\vartheta_m-\vartheta_c}{1-\vartheta_c}\Big)^{s_f}\Big],&\vartheta_c<\vartheta_m<1,\end{cases}$$
-(Eqs. 17–18; $\alpha_f=36$, i.e. $-\log_{10}$ of double-precision machine
-epsilon, and $s_f=6$ throughout, §4.2; the cutoff value used is not printed)
+(Eqs. 17–18; $\alpha_f=36$, printed as $-\log_{10}$ of double-precision machine
+epsilon; it equals $-\ln$ of it *(compiler check, not in the sources)*, and $s_f=6$ throughout, §4.2; the cutoff value used is not printed)
 is applied only in elements whose density smoothness indicator
 $$s_e=\log_{10}\frac{(\rho-\rho_{N-1},\,\rho-\rho_{N-1})_e}{(\rho,\rho)_e}$$
 (Eq. 19, $\rho_{N-1}$ the truncation of the density to degree $N-1$, the

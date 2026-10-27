@@ -5,7 +5,7 @@ description: "The one-equation eddy-viscosity RANS model transporting the workin
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-26T15:44:00Z
+timestamp: 2026-10-26T17:35:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -110,6 +110,18 @@ solver (§2.3; see
 [discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 for the nodal relative).
 
+Tang et al. (2022) print the incompressible equation with the constants of
+Alauzet et al., $c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma$, no $f_{t2}$ and no
+trip, but build the modified vorticity on the strain magnitude
+$\lvert S\rvert=\sqrt{2S_{ij}S_{ij}}$, as Yan et al. do, while citing
+Spalart & Allmaras for the model
+([Tang et al. (2022)](/sources/tang-2022.md), §2.1, Eq. 2). They use it as
+the near-wall branch of a zonal hybrid RANS/LES in which one transported
+$\tilde\nu$ blends the SA terms with those of a one-equation subgrid model
+through a wall-distance function $F$, and switch the damping off in the LES
+region through $f_{v1}=\chi^3/(\chi^3+F^{20}c_{v1}^3)$ (Eqs. 6–9; see
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+
 **Negative SA.** Basile et al. (2023) use the negative-$\tilde\nu$ model with
 $\mu_t=\rho\tilde\nu f_{v1}$ for $\tilde\nu\ge0$ and $\mu_t=0$ for $\tilde\nu<0$
 (§2.2, Eq. 5), the same treatment of the mean-flow equations that Li & Liu
@@ -146,6 +158,24 @@ equations, implemented in HORSES3D, where the implicit solvers use an
 analytic Jacobian for the Navier–Stokes part and a numerical Jacobian with
 colouring once SA is included (§3.5, §3.7; see
 [discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)).
+
+Elzaabalawy et al. (2023) note that high-order DG RANS work has focused on
+SA because it is simpler than two-equation models and has no blending
+functions that reduce the smoothness of the solution, and recall the
+devices used, as cited: an algebraic modification against negative eddy
+viscosity (Nguyen, Persson & Peraire), artificial dissipation against
+oscillations (Oliver & Darmofal, and similarly Crivellini et al.), wall
+modelling by function enrichment for an explicit SA with operator
+splitting (Krank et al.), a modification against negative viscosity in an
+HDG method (Moro et al.), the negative model of Allmaras et al. for coarse
+meshes, and an HDG implementation for an exactly divergence-free
+incompressible formulation (Peters & Evans, printed "Peter et al.")
+([Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §1). They
+propose a "negative $k$-$kl$" model on the same pattern (§7; see the
+[Wilcox $k$-$\omega$ page](/methods/k-omega-model.md)). Ghidoni et al.
+(2026) cite Crivellini et al.'s DG implementation among the model
+modifications that improve robustness
+([Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §1, ref. [6]).
 
 For discontinuous Galerkin RANS, Zhao et al. (2023b) recall two ways of
 keeping the SA variable admissible: Crivellini et al. modify the source and
@@ -442,6 +472,14 @@ meshes as future work (§9).
   hexahedral mesh with split-form inviscid fluxes; only surface pressure
   contours are shown ([Ferrer et al. (2023)](/sources/ferrer-2023.md), §4.1,
   Fig. 6).
+- Schotte et al. (2026) run SA-neg (Allmaras, Johnson & Spalart 2012,
+  equations not printed) as the closure of every case of their anisotropic
+  mesh adaptation for a high-order modal DG solver (CODA): the HLPW4
+  three-element airfoil with $N=1$–3, the RAE2822 airfoil, the HLPW5 CRM
+  high-lift wing–body and the ONERA M6 wing
+  ([Schotte et al. (2026)](/sources/schotte-2026.md), §2.1, §4; HAL deposit
+  of the version of record; see [mesh adaptation](/methods/mesh-adaptation.md)
+  and [NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md)).
 - FLEXI initialises scale-resolving runs with an SA RANS solution obtained
   by pseudo-time stepping ([Krais et al. (2021)](/sources/krais-2021.md),
   §2.2.3; see [FLEXI](/software/flexi.md)).
@@ -544,3 +582,7 @@ meshes as future work (§9).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §3.1, Table 1, Figs. 4–8 (HAL accepted manuscript).
 - [Wang et al. (2024)](/sources/wang-2024.md) — §4.
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §2.2 Eqs. 1–5, §2.3, §3.3–3.4, §4.2 Figs. 7–8, §4.3 Tables 1–2, App. A.
+- [Tang et al. (2022)](/sources/tang-2022.md) — §2.1, Eqs. 2, 6–9.
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §1, §7.
+- [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §1.
+- [Schotte et al. (2026)](/sources/schotte-2026.md) — §2.1, §4 (HAL deposit of the version of record).

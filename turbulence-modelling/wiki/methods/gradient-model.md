@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Gradient (Clark) model and the clipping of structural SGS models"
-description: "Clark's gradient model approximates the subgrid stress by a truncated Taylor expansion of the filter; it correlates well with the exact stress but under-dissipates and backscatters, so it is clipped or mixed. Optimal clipping is the Frobenius-nearest backscatter-free stress, a parameter-free mixed model; an ensemble Kalman filter calibrates the mixed coefficient a posteriori."
+description: "Clark's gradient model truncates the Taylor expansion of the filter; it correlates well with the exact stress but under-dissipates and backscatters, so it is clipped (optimal clipping is a parameter-free mixed model) or mixed with a calibrated eddy viscosity. Its fourth- and sixth-order truncations run stably in two-dimensional LES."
 status: established
-aliases: [Clark model, gradient model, nonlinear gradient model, tensor-diffusivity model, optimal clipping, standard clipping, GM-OC, GM-SC]
+aliases: [Clark model, gradient model, nonlinear gradient model, tensor-diffusivity model, optimal clipping, standard clipping, GM-OC, GM-SC, NGM2, NGM4, NGM6, higher-order gradient model]
 tags: [les, sgs-model, filtering, eddy-viscosity]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-26T16:24:00Z
 ---
 
 # Gradient (Clark) model and the clipping of structural SGS models
@@ -435,6 +435,84 @@ The eddy viscosity of the
 is proportional to the positive part of the gradient-model flux with
 directional widths (*compiler check, not in the sources*; see that page).
 
+## Higher-order Taylor truncations in two-dimensional turbulence
+
+[Jakhar et al. (2026)](/sources/jakhar-2026.md) extend the gradient model
+by the next terms of the same Taylor series and test the truncations in
+LES of forced two-dimensional (geophysical) turbulence. For a Gaussian
+filter of width $\Delta$ they write (p. 3, Eq. 4)
+
+$$\begin{aligned}
+\tau_{ij}={}&\underbrace{\frac{1}{1!}\frac{\Delta^2}{12}\,\partial_k\bar u_i\,\partial_k\bar u_j}_{\text{NGM2}}
++\frac{1}{2!}\frac{\Delta^4}{12^2}\,\partial_k\partial_l\bar u_i\,\partial_k\partial_l\bar u_j\\
+&+\frac{1}{3!}\frac{\Delta^6}{12^3}\,\partial_k\partial_l\partial_m\bar u_i\,\partial_k\partial_l\partial_m\bar u_j+O(\Delta^8),
+\end{aligned}$$
+
+and call the truncations after the first, second and third term NGM2
+(the gradient model above), NGM4 and NGM6 (names of the source). The
+coefficients are fixed by $\Delta$ alone, with no fitted constant. For a
+Gaussian filter with transfer function $\exp(-k^2\Delta^2/24)$, a pair of
+Fourier modes of wavevectors $\boldsymbol p$, $\boldsymbol q$ gives
+$\hat G(\boldsymbol p+\boldsymbol q)-\hat G(\boldsymbol p)\hat G(\boldsymbol q)=\hat G(\boldsymbol p)\hat G(\boldsymbol q)\,[\exp(-\Delta^2\boldsymbol p\cdot\boldsymbol q/12)-1]$,
+and expanding the exponential reproduces the general term
+$\frac1{n!}(\Delta^2/12)^n$ times the $n$-fold contracted product of
+derivatives of $\bar u_i$ and $\bar u_j$: the series is exact for this
+filter *(compiler check, not in the sources)*. The authors place the
+general expansion in the Supplemental Material, which is not in the
+version read.
+
+**How the truncations were found.** The authors discover closures for
+each stress component by sparse Bayesian linear regression (relevance
+vector machine) over a 930-term library of products of velocity,
+vorticity and strain derivatives up to total order eight, including
+material-derivative "memory" terms, trained on 100 filtered-DNS snapshots
+(p. 2, Eq. 3; see
+[symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+Choosing the sparsity level at the elbow of the curve of stress
+correlation recovers NGM2 (two terms per component), as in earlier work
+cited by them. Choosing it at the elbow of the minimum of the correlations
+of the stress, of the inter-scale energy transfer and of its forward and
+backscatter parts gives a five-term closure, NGM4; a larger threshold
+gives the nine-term NGM6 with negligible gain. Memory terms never emerge
+(pp. 2–3, Fig. 1).
+
+**Results** (four setups of forced two-dimensional turbulence, including
+a $\beta$-plane case, at $Re=2\times10^4$ and $10^5$, DNS on $1024^2$ or
+$2048^2$ points, LES on $N_x=128$ or 512 points per direction, filter
+width twice the LES grid spacing; Fig. 2 and p. 4):
+
+- a priori, NGM4 and NGM6 correlate with the filtered-DNS stress at about
+  0.99, reproduce the domain-averaged enstrophy transfer (ratio
+  $1.00\pm0.01$, as does NGM2), and recover $0.62\pm0.04$ and
+  $0.78\pm0.04$ of the domain-averaged energy transfer, backscatter
+  included; NGM2 recovers none, and the eddy-viscosity models have the
+  wrong sign (see [energy backscatter](/definitions/energy-backscatter.md),
+  where the zero transfer of NGM2 in two dimensions is checked);
+- a posteriori, LES with NGM4 or NGM6 is long-term stable without clipping
+  when the resolution captures more than 80% of the DNS enstrophy; NGM2 is
+  unstable "for any case and any LES resolution";
+- NGM4 and NGM6 reproduce the tails of the vorticity PDF and give better
+  short-term forecasts than the Smagorinsky, dynamic Smagorinsky and
+  dynamic Leith models, whose excess diffusion lowers the large-scale
+  enstrophy; NGM6 brings no a posteriori gain over NGM4.
+
+The authors call NGM4 generalizable because its coefficients depend only
+on $\Delta$ (p. 4), view the finite-order closures as local truncations of
+the nonlocal deconvolution operator, NGM4 being "the minimal local
+truncation" that meets their criteria, and name rational (Padé-type)
+approximations or nonlocal kernels as extensions (p. 5). They write that
+the analytical expansion to higher order "had not been previously
+pursued" and that the link to the Taylor series became clear only after
+the discovery (pp. 4–5).
+
+The two-dimensional setting differs from the three-dimensional studies
+above. Prakash et al. (2022) and Wang et al. (2023c) find a gradient model
+that dissipates too little on average and backscatters locally; in two
+dimensions its transfer vanishes pointwise, so its instability there
+cannot come from local backscatter *(compiler check, not in the
+sources)*. Jakhar et al. stabilize it by adding
+higher-order structural terms rather than an eddy viscosity or clipping.
+
 ## Qualifications
 
 - Prakash et al. (2022) define C.C. (Eq. 19) as a plain double sum of
@@ -470,3 +548,4 @@ directional widths (*compiler check, not in the sources*; see that page).
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §II.A, Eqs. (13)–(14); §II.B; §III, Figs. 3–9, Table II; §IV, Eq. (25), Figs. 11–17, Table IV; Apps. A–C, Figs. 18–24.
 - [Kim et al. (2024)](/sources/kim-2024.md) — App. C.
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §3.2, Eq. (3.2); §4.1, Table 1; App. C, Fig. 37.
+- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — pp. 1–5, Eqs. (3)–(4), Figs. 1–4.

@@ -4,8 +4,8 @@ title: "Aggregation and blending of data-driven turbulence models"
 description: "Several RANS models, each trained for one flow class, are combined with space-dependent convex weights learned from local flow features: externally, by mixing the solutions of separate runs, or internally, by blending the experts' corrections inside one RANS solve; tested on separated flows, a jet, a hump and an airfoil."
 status: established
 aliases: [model aggregation, space-dependent model aggregation, XMA, mixture of experts, model blending, internal model blending, M_blend, expert models]
-tags: [rans, data-driven, machine-learning, symbolic-regression, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-26T15:53:00Z
+tags: [rans, data-driven, symbolic-regression, uncertainty-quantification, separated-flow]
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Aggregation and blending of data-driven turbulence models
@@ -219,4 +219,4 @@ Neither paper compares the two routes.
 
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §1, Fig. 1 (external aggregation recalled, internal blending, related approaches); §2, Eqs. 1–10 (augmented SST, tensor basis, frozen-RANS targets); §2.1, §3, Table 1 (SBL-SpaRTA experts); §3, Eqs. 11–13, Algorithms 1–2 (blending, Gaussian weights, random forest); §3.1, Fig. 3, Table 2; §4.1–4.2, Tables 3–7, Figs. 4–9 (training flows); §5, Tables 9–11, Figs. 10–16 (unseen flows, latent-space coverage); §6; App. A, Table 12 (features); App. B (SST constants).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — classifier of flow similarity in the building-block-flow wall model, as recalled by Oulghelou et al. (2025, §1).
-- [Wu et al. (2025)](/sources/wu-2025.md) — §2.1, Eqs. 5–6 (shielding-function mask on the field-inversion correction).
+- [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §2.1, Eqs. 5–6 (shielding-function mask on the field-inversion correction).

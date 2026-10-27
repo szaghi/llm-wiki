@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity law of adverse-pressure-gradient tur
 status: established
 aliases: [APG wall law, log-law/half-power-law wall law, extended wall law, half-power law, pressure-gradient wall law]
 tags: [boundary-layer, rans, wall-model, separated-flow]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Wall law in adverse pressure gradient
@@ -24,7 +24,7 @@ $$\Delta p_s^+=\frac{\nu}{\rho u_\tau^3}\frac{dP}{ds}\qquad\text{(Eq. 2)},$$
 
 with $P$ the mean pressure and $s$ the wall-tangential coordinate along the
 mean velocity as $y\to0$ (page-local symbols $\Delta p_s^+$, $s$). The law is
-aimed at RANS turbulence models and wall functions; the paper itself is an
+aimed at RANS turbulence models and [wall functions](/methods/rans-wall-function.md); the paper itself is an
 analysis of experimental mean-velocity profiles at $Re_\theta>8000$ and
 implements no model.
 
@@ -90,7 +90,7 @@ the log law ends at $y^+=92$ for $Re_\tau=800$ and about 162 for
 $Re_\tau=2500$; Knopp (§7.4) notes that this edge lies below "the widely
 believed start of the log-law region in ZPG flows" (citing Marusic et al.)
 and reads it as agreeing with the log-law breakdown at $\Delta p_s^+>0.05$ of
-Alving & Fernholz, as recalled.
+Alving & Fernholz, as Knopp cites it.
 
 ## Pressure-gradient parameters
 
@@ -102,7 +102,7 @@ separation ($u_T\to Re_c^{1/3}u_p$, $Re_c=12$, $u_p=|\nu\rho^{-1}dP/ds|^{1/3}$,
 Eqs. 17–20; page-local). Because Eq. (35) depends on $Re_\tau$ as well as on
 the pressure gradient, inner-layer self-similarity cannot be expected at
 equal $\beta_{RC}$ alone, in agreement with Bobke et al. and Vila et al. as
-recalled (§8).
+Knopp cites them (§8).
 
 ## Equilibrium and history
 
@@ -118,7 +118,7 @@ $\Delta p_s^+\gtrsim0.004$: the inner layer relaxes rapidly but not
 instantaneously, so history matters more in the half-power region than in the
 log region (§7.1). The author's conjecture is a local wall law governed at
 leading order by $\Delta p_s^+$ and $Re_\tau$ (the moving equilibrium of Kader
-& Yaglom, as recalled), perturbed by higher-order local and history effects.
+& Yaglom, as cited), perturbed by higher-order local and history effects.
 
 ## Use in models
 
@@ -194,6 +194,27 @@ the success of a replacement.
   [Ahmed body](/benchmarks/ahmed-body.md) and
   [detached-eddy simulation](/methods/detached-eddy-simulation.md) pages.
 
+A third source measures the limit on body-fitted grids, in steady RANS.
+[Ghidoni et al. (2026)](/sources/ghidoni-2026.md) impose an explicit
+zero-pressure-gradient power law ($u^+=8.3\,(y^+)^{1/7}$ above $y^+=11.81$)
+as a [RANS wall function](/methods/rans-wall-function.md) with the Wilcox
+$k$-$\omega$ model in a high-order DG solver, on meshes whose first element
+reaches $y_1^+=320$ (page-local $y_1^+$). In the weak adverse gradient of
+Samuel & Joubert (Rotta–Clauser parameter 1.5–4.5) the skin friction agrees
+for every first-element height, at the price of one polynomial degree more
+than in zero pressure gradient (§4.2, Figs. 6–7). On the strong-gradient
+DLR/UniBw plates DM2 and DM3 of Knopp et al. (as cited; Rotta–Clauser
+parameter 25–45, $Re=3.4$ and $5.2\times10^7$), flows that are also in Knopp (2022)'s
+database, where they show history effects (above), agreement deteriorates for
+$y_1^+>80$, and at degree 6 the skin-friction error grows for $y_1^+=160$ and
+320 near the end of the pressure-gradient region, $0.8<x/L<0.85$, which the
+authors attribute to a wall law that "refers only to ZPG" layers (§4.2,
+Fig. 8; their reference solution there is the SSG/LRR-$\omega$
+[Reynolds-stress model](/methods/reynolds-stress-model.md) of Knopp et al.,
+as cited). The evidence is again the failure of a law without
+pressure-gradient term, now quantified by the first-element height at which
+it appears.
+
 ## Qualifications
 
 - The constant of Eq. (35) appears twice in the paper: 1.78 (Eq. 35, used in
@@ -218,3 +239,4 @@ the success of a replacement.
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Methods (training and testing).
 - [Constant et al. (2024)](/sources/constant-2024.md) — §6.1, Figs. 19–22, lines 747–757; §6.2, lines 876–879; §7 (HAL author manuscript).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §3.3; conclusions (HAL accepted manuscript, lines 459–470, 516–519, 553–557).
+- [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §3.3, Eq. (13); §4.2, Figs. 6–8.

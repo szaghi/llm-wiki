@@ -5,7 +5,7 @@ description: "Energy backscatter is a negative local subgrid energy flux, energy
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-26T16:22:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -80,6 +80,22 @@ Fig. 14a) filter DNS with a cut-off filter in the homogeneous directions
 and describe the backscatter of the filtered DNS as "a non-negligible
 quantity" with "considerably large negative dissipation" in the PDF of
 the subgrid dissipation at $y^+\approx15$ and 50 (§III C).
+
+The filter dependence extends to filters that mimic a solver.
+[Wu & Lele (2026)](/sources/wu-2026.md) (§3.2.2, Fig. 4) compare the
+filtered-DNS fields of $\Pi$ for three kernels at the same width: a box
+filter, a compact positive raised-cosine kernel, and a box filter followed
+by the two-thirds dealiasing cutoff of a Fourier-spectral code. The box and
+raised-cosine fields look alike. The dealiased one is "far more
+oscillatory", and its probability density of $\Pi$ has "far more variance";
+the density peak is highest for the box filter, then the raised-cosine
+kernel, with "quite a large gap" to the dealiased filter. The authors do not
+discuss the sign of $\Pi$. They conclude that a network trained on
+box-filtered data meets a different flux distribution in a dealiased
+spectral solver, and train on several filters instead (see
+[neural-network SGS models](/methods/neural-network-sgs-model.md)); their
+training loss includes the error in $\Pi$ beside the stress error (§3.1,
+Eq. 3.9).
 
 ## Gauge dependence
 
@@ -372,6 +388,39 @@ The sources reach different design choices from different questions.
     Allowing more backscatter improves the mean velocity, and −3 is
     unstable. The floor construction is on the
     [gradient-model](/methods/gradient-model.md) page.
+- **Backscatter as a selection criterion for a discovered closure, in two
+  dimensions.** [Jakhar et al. (2026)](/sources/jakhar-2026.md) discover
+  closures for LES of forced two-dimensional (geophysical) turbulence by
+  sparse Bayesian regression and select them with a criterion that
+  requires the correlation with filtered DNS of the total inter-scale
+  energy transfer and of its parts of either sign, "diffusion" and
+  "backscattering", not only of the stress (p. 3, Fig. 1b). Their transfer
+  has the sign convention of $\Pi$ (positive = diffusion, negative =
+  backscatter); its definition is in the Supplemental Material, which is
+  not in the version read. The second-order
+  [gradient model](/methods/gradient-model.md) has zero inter-scale energy
+  transfer in two dimensions, "neither diffusion nor backscattering", and
+  is unstable a posteriori in every case (p. 3, p. 4). For a traceless
+  two-dimensional velocity gradient $A_{ij}=\partial_j\bar u_i$
+  (page-local) the Cayley–Hamilton identity gives
+  $A^2=-\det(A)\,I$, so both terms of
+  $\Pi\propto-A_{ik}A_{jk}(A_{ij}+A_{ji})$ are traces of $A^{\mathsf T}A^2$
+  or $A(A^{\mathsf T})^2$, which vanish: the transfer is zero pointwise
+  *(compiler check, not in the sources)*. The closures selected with the
+  new criterion add the next Taylor-series terms (fourth and sixth order in
+  $\Delta$) and "capture the energy backscatter that is seen in the FDNS".
+  A priori, the domain-averaged energy transfer, as a ratio to filtered
+  DNS, is $0.62\pm0.04$ and $0.78\pm0.04$ for the fourth- and sixth-order
+  models, $0$ for the gradient model, and $-62.24\pm37.80$, $-28.48\pm15.38$
+  and $-6.91\pm2.73$ for Smagorinsky, dynamic Smagorinsky and dynamic Leith,
+  which are "purely and excessively diffusive" (Fig. 2, mean over four
+  setups). The fourth-order model runs stably a posteriori without
+  clipping when the LES resolves more than 80% of the DNS enstrophy (p. 4).
+  A negative ratio for purely diffusive models means that the
+  domain-averaged transfer of the filtered DNS has the backscatter sign in
+  these flows *(compiler check, not in the sources)*: a net inverse
+  transfer, the two-dimensional case that Vela-Martín (2022, §8) places
+  outside the scope of its conclusions (see Interpretation and scope).
 
 The two claims of Seyedi & Zayernouri and Kim et al. concern different
 flows (isotropic turbulence against a channel) and different measures (a priori stress correlation and a
@@ -435,6 +484,32 @@ Other sources treat backscatter as a physical effect to be represented:
   [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md). This
   measures the net transfer at each wavenumber and cannot show the spatial
   sign of $\Pi$ *(compiler check, not in the sources)*.
+- Jakhar et al. (2026, p. 1) call backscatter "an important process in
+  atmospheric and oceanic flows", which eddy-viscosity closures "miss".
+  They note that their higher-order gradient closures violate the
+  [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md), "the need
+  to go beyond classical turbulence tensors to represent backscatter"
+  (p. 5), and propose them for weather and climate models, which run as
+  [implicit LES](/definitions/implicit-les.md), where "an explicit
+  representation of backscatter is desired" (p. 6).
+
+[Caban et al. (2026)](/sources/caban-2026.md) (§2) recall that
+[approximate deconvolution and other scale-similarity models](/methods/scale-similarity-model.md)
+have no explicit dissipative character and, depending on the local flow,
+"may cause energy transfer from small to large scales (backscatter)", a
+phenomenon that "occurs in real flows and may lead to solution instability
+in practical LES applications", with the nonlinear (Clark) model as their
+cited example. In their own LES of the Taylor–Green vortex at $Re=1600$ on
+$64^3$ the Layton–Lewandowski model ($N_{\mathrm{ADM}}=0$, with
+$N_{\mathrm{ADM}}$ the number of deconvolution terms, page-local) is stable with
+every explicit filter tested and non-dissipative interpolation, while the
+deconvolution model with $N_{\mathrm{ADM}}=5$ needs added numerical
+dissipation; they attribute its instability to the amplification of
+subfilter energy and of the aliasing of the deconvolved product, not to
+backscatter (§5.4.1–5.4.2). Vela-Martín (2022, §8) instead names
+similarity models as models with numerically stable backscatter. Both
+statements are hedged ("may"; "may be unnecessary or undesirable"), so no
+contradiction is recorded.
 
 ## Qualifications
 
@@ -476,3 +551,6 @@ Other sources treat backscatter as a physical effect to be represented:
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §III, Eq. (21), Fig. 8; App. B.
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — §1; §2.5, Eqs. (28)–(29); §3.1–3.2, Eqs. (33)–(39); §4.5, Fig. 10; App. A.
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §3.2, Eq. (3.2); §6.1; §6.2.1–6.2.3, Figs. 25–27; §8; App. C, Fig. 37.
+- [Wu & Lele (2026)](/sources/wu-2026.md) — §3.1, Eq. (3.9); §3.2.2, Fig. 4.
+- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — pp. 1–6, Eq. (4), Figs. 1–2.
+- [Caban et al. (2026)](/sources/caban-2026.md) — §2; §5.4.1–5.4.2.

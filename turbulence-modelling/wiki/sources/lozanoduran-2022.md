@@ -9,7 +9,7 @@ year: 2022
 venue: "AIAA J. 60:747-766"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_AIAA_Journal_Lozano-Durán_Performance_of_Wall-Modeled_LES_with_Boundary-Layer-Conformi.pdf"
 tags: [wmles, wall-model, les, boundary-layer, grid-requirements, separated-flow]
-timestamp: 2026-10-25T13:44:00Z
+timestamp: 2026-10-26T20:47:00Z
 ---
 
 # Summary
@@ -79,9 +79,9 @@ figure and page numbers on this page are those of the preprint.
 10. In WMLES of channel flow at $Re_\tau=4200$ with CharLES (dynamic Smagorinsky, equilibrium wall model, isotropic grids $\Delta/\delta=1/3,1/5,1/10$), $e_u\approx0.08\,\Delta/\delta$; a staggered finite-difference solver gives the same linear trend (§IV.B, Fig. 7b). **Shown**
 11. The DNS–inviscid difference, about 15%, bounds the mean-velocity error in canonical flows: "even a low performance WMLES is bounded by a maximum error of ∼15%" (§IV.B, Fig. 7b). **Shown**
 12. Near a corner the error is set by the shear length $L_s\approx u_\tau/S$; with $S\sim u_\tau/d$, $e_u\sim\Delta/d$, which motivates the compensated error $e_u d_{\min}/\delta$ (§IV.B, after [61]). **Derived**
-13. In the equilibrium wall model, external errors (in the LES velocity at $h_{\mathrm{wm}}$) propagate roughly linearly, $\varepsilon_{u_\tau}\propto\varepsilon_{u_\parallel}$; internal errors $\varepsilon_\kappa=10\%$ and $\varepsilon_B=10\%$ give $\varepsilon_{u_\tau}\approx6\%$ and $\approx3\%$, both below the $\approx10\%$ of an external error $\varepsilon_{u_\parallel}=10\%$: "wall models are more resilient to internal errors than to external errors" (§IV.C, Eq. 12, Fig. 8). **Derived** (Eq. 12) and **Shown** (channel points on Fig. 8a)
+13. In the equilibrium wall model, external errors (in the LES velocity at $h_{\mathrm{wm}}$) propagate roughly linearly, $e_{u_\tau}\propto e_{u_\parallel}$; internal errors $e_\kappa=10\%$ and $e_B=10\%$ give $e_{u_\tau}\approx6\%$ and $\approx3\%$, both below the $\approx10\%$ of an external error $e_{u_\parallel}=10\%$: "wall models are more resilient to internal errors than to external errors" (§IV.C, Eq. 12, Fig. 8). **Derived** (Eq. 12) and **Shown** (channel points on Fig. 8a)
 14. Internal errors set a floor, so WMLES may not converge to DNS until $\Delta$ and $h_{\mathrm{wm}}$ reach the wall-resolved regime; external errors raise $b_u$ without changing $a_u$ appreciably (§IV.C). **Stated**
-15. On the fuselage (station 1) mean-velocity errors are about 3–8% and scale as $e_u\approxb_u\,\Delta/\delta$ with $b_u\approx0.14$, above the channel value 0.08, which the authors attribute to upstream error propagation (§V.B, Fig. 15a). **Shown**
+15. On the fuselage (station 1) mean-velocity errors are about 3–8% and scale as $e_u\approx b_u\,\Delta/\delta$ with $b_u\approx0.14$, above the channel value 0.08, which the authors attribute to upstream error propagation (§V.B, Fig. 15a). **Shown**
 16. Errors are about 15% at the wing–body juncture (station 2) and about 100% at the separated trailing edge (station 3); after compensation by $d_{\min}/\delta$ the juncture converges at $a_u\approx0.4$, the trailing edge at $a_u\approx0.6$ with a larger $b_u$ (§V.B, Fig. 15). **Shown**
 17. On constant-size grids the juncture and trailing edge have roughly 30–80 points per $\delta$, an order of magnitude more than the fuselage, yet worse accuracy (§V.B). **Shown**
 18. Conforming case C-N5-R2e3 (12 M control volumes) outperforms constant-size case C-D2 (31 M) at the juncture and trailing edge "using only one fourth of the number of grid points in each spatial direction"; the number of control volumes is "a misleading metric" of WMLES quality (§V.C, Fig. 16). **Shown**

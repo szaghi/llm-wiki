@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Flux reconstruction"
-description: "Flux reconstruction (FR/CPR) builds a degree-N discontinuous flux polynomial per element and corrects it with interface corrections fed by a Riemann solver; with suitable correction functions it recovers nodal DG. This page covers its formulation, its use as implicit LES, explicit SGS models and filter width on it, and its stabilization."
+description: "Flux reconstruction (FR/CPR) corrects a degree-N discontinuous flux polynomial per element with Riemann-solver interface corrections; its correction functions recover nodal DG or spectral difference. This page covers its formulation, the correction parameter as a filter, nonlinearly stable split-form FR, its use as implicit LES, explicit SGS models and filter width, and its stabilization."
 status: established
-aliases: [FR, flux reconstruction method, correction procedure via reconstruction, CPR, FR/CPR, lifting collocation penalty, Huynh flux reconstruction]
-tags: [flux-reconstruction, dg, implicit-les, numerical-dissipation, les, wmles]
-timestamp: 2026-10-26T11:38:00Z
+aliases: [FR, flux reconstruction method, correction procedure via reconstruction, CPR, FR/CPR, lifting collocation penalty, Huynh flux reconstruction, ESFR, energy-stable flux reconstruction, VCJH schemes, NSFR, nonlinearly stable flux reconstruction]
+tags: [flux-reconstruction, dg, implicit-les, numerical-dissipation, entropy-stable, wmles]
+timestamp: 2026-10-26T16:22:00Z
 ---
 
 # Flux reconstruction
@@ -29,13 +29,23 @@ or under-resolved DNS ([Dzanic et al. 2022](/sources/dzanic-2022.md);
 [wall-modelled LES](/methods/wall-modelled-les.md)
 ([Duan & Wang 2024](/sources/duan-2024.md)), and with
 [PANS](/methods/partially-averaged-navier-stokes.md) as the hybrid closure
-(Dzanic et al. 2022).
+(Dzanic et al. 2022). A provably entropy-stable split-form variant,
+nonlinearly stable FR, is assessed as DNS and implicit LES of free-shear
+turbulence without any added dissipation by
+[Brillon & Nadarajah (2026)](/sources/brillon-2026.md); another choice of
+correction functions recovers the
+[spectral difference method](/methods/spectral-difference-method.md)
+(Brillon & Nadarajah 2026, §1, §3.1.5).
 
 Page-local symbols: $\boldsymbol g_{f,k}$ the correction function of flux
 point $k$ on face $f$; $N_{sp}$ the number of solution points of an element;
 $\ell_i$ the nodal Lagrange basis; $c_{q,f,l}$ the CPR lifting coefficients
 (the source's $\alpha_{q,f,l}$, renamed because $\alpha$ is the DG/FV blending
-factor of the registry); $V_e$ the element volume.
+factor of the registry); $V_e$ the element volume; $c_{\mathrm{FR}}$ the
+correction parameter of energy-stable FR (Brillon & Nadarajah's $c$), with
+the named values $c_{\mathrm{DG}}=0$, $c_{\mathrm{SD}}$, $c_{\mathrm{HU}}$,
+$c_+$; $\mathsf M$, $\mathsf K$ the element mass matrix and the FR
+correction operator.
 
 ## Formulation
 
@@ -87,6 +97,155 @@ the solution jump is set to zero, "the minimum dissipation version of LDG"
 (§2.2, Eq. 16; see [jump-penalty stabilization](/methods/jump-penalty-stabilization.md)).
 Wang's ATHOS is a new in-house C++ FR solver on linear quadrilaterals and
 hexahedra, which raises the order by restarts $N=0\to1\to2\to3$ (§3, §4.2).
+
+## The FR family, the correction parameter and nonlinear stability
+
+**Lineage**, as recalled by Brillon & Nadarajah (2026, §1): after Huynh's
+FR, Wang and Gao's lifting collocation penalty applied a "correction field"
+to the surface integral; Haga et al. merged the two into CPR, and Jameson
+et al. proved the FR surface reconstruction identical to the CPR
+correction field, so that "FR" and "CPR" became "loosely
+interchangeable". The **energy-stable FR (ESFR)** or
+Vincent–Castonguay–Jameson–Huynh schemes form a family of provably
+linearly stable schemes, extended to linear advection–diffusion by
+Castonguay et al., some of which allow "significantly higher explicit
+time-step limits than DG schemes while maintaining the expected order of
+accuracy"; with suitable correction functions ESFR recovers DG and the
+[spectral difference](/methods/spectral-difference-method.md) method.
+Allaneau and Jameson read ESFR in one dimension as a filtered DG scheme,
+and Zwanenburg and Nadarajah extended the equivalence to three-dimensional
+elements and to weak and strong modal DG (all as recalled, §1).
+
+**Correction parameter as a filter** (Brillon & Nadarajah 2026, §3.1.5,
+citing those works). The FR mass matrix $\mathsf M+\mathsf K$ "effectively
+acts as a linear filtering operator" on the DG residual. For
+$c_{\mathrm{FR}}<0$ the filter amplifies the highest mode of the residual;
+$c_{\mathrm{FR}}=c_{\mathrm{DG}}=0$ is unfiltered DG; $0<c_{\mathrm{FR}}\le c_+$
+damps the highest mode, $c_+$ being the largest stable value determined by
+Castonguay for $N\in[2,5]$. Two further values recover known schemes:
+$c_{\mathrm{SD}}$ the stable spectral difference scheme and
+$c_{\mathrm{HU}}$ Huynh's $g_2$ scheme. No numerical values of the
+parameter are printed.
+
+**Nonlinearly stable FR (NSFR).** Brillon & Nadarajah (2026, §2.7,
+Eqs. 62–72) use the NSFR scheme of Cicchino et al. (as recalled; proofs in
+the cited works), implemented in the open-source PHiLiP code on deal.II.
+On tensor-product hexahedra with a modal basis of degree $N$ and
+Gauss–Lobatto–Legendre (GLL) solution nodes, the convective volume term is
+written in split form,
+$$(\mathsf M+\mathsf K)\frac{d\hat U}{dt}=-\chi^{\mathsf T}\big[(\tilde Q-\tilde Q^{\mathsf T})\odot F^{\#}\big]\mathbf 1-(\text{surface flux term})+(\text{viscous volume and surface terms}),$$
+with $\hat U$ the modal coefficients, $\chi$ the basis evaluated at the
+volume and face flux nodes, $\tilde Q-\tilde Q^{\mathsf T}$ Chan's
+skew-symmetric stiffness operator, $\odot$ the Hadamard product, and
+$F^{\#}$ the matrix of two-point fluxes $f^{\#}$ between all pairs of
+volume and face flux nodes, each multiplied by the average of the two
+nodes' metric cofactor matrices (page-local symbols). The two-point fluxes
+are evaluated on **entropy-projected variables**, which the authors call
+"key in enabling entropy stability on uncollocated solution and flux or
+integration nodes", so the flux nodes may be Gauss–Legendre (GL,
+uncollocated) or GLL (collocated). The correction operator $\mathsf K$
+carries $c_{\mathrm{FR}}$; the auxiliary (gradient) equation always uses
+$c_{\mathrm{DG}}$; viscous fluxes use the symmetric interior penalty;
+tensor and Hadamard products use sum factorization. The authors present
+the scheme as "provably nonlinear stable by construction, i.e. entropy
+stability", stable "on the coarsest of meshes", "without over-integration"
+and "without upwind-type dissipation" (§1); the baseline uses the
+entropy-conserving Ismail–Roe two-point flux with no upwind interface
+dissipation (§2.7.1, Eqs. 73–79), and time stepping is SSP-RK3. See
+[entropy conservation](/properties/entropy-conservation.md) and
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
+for the split-form framework, and the collocated GLL variant, which the
+authors call "also known as DG-SEM" (§3.1.4), on
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md).
+
+## Nonlinearly stable FR on free-shear turbulence
+
+Brillon & Nadarajah (2026, §3) assess NSFR on the viscous
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) ($Re=1600$,
+$M=0.1$) and on the Comte-Bellot–Corrsin decaying grid turbulence (see
+[isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)).
+Baseline: $c_{\mathrm{DG}}$, Ismail–Roe flux, GL flux nodes, no upwinding,
+no over-integration, CFL 0.1. Comparison scheme: classical strong-form DG
+with a Roe flux and over-integration on $2(N+1)$ quadrature points per
+direction ("OI").
+
+- **DNS.** At $256^3$ degrees of freedom ($N=7$ on $32^3$ elements, and
+  $N=3$ on $64^3$) NSFR without added dissipation reproduces the
+  kinetic energy and dissipation rate of the $512^3$ reference of Dairay
+  et al., and its effective viscosity, the dissipation rate over twice the
+  enstrophy times $Re$, stays within 4.5% of the physical one; the
+  schemes with Roe interface dissipation are briefly more dissipative than
+  the reference and lower the peak enstrophy (§3.1.1, Figs. 2, 4; see
+  [direct numerical simulation](/definitions/direct-numerical-simulation.md)).
+- **Under-resolved runs** ($96^3$, $64^3$, $48^3$, $24^3$ degrees of
+  freedom, mostly $N=5$): NSFR is stable at every resolution without added
+  dissipation, whereas strong DG without over-integration at $N=7$,
+  $64^3$, fails around $t^*=6$, "a linearly stable scheme can be unstable
+  in the absence of over-integration" (§3.1.2–3.1.3, Figs. 8, 11). NSFR
+  reaches a higher peak enstrophy than over-integrated strong DG at all
+  resolutions, while at $64^3$ the latter's dissipation rate is slightly
+  more accurate through transition (§3.1.3).
+- **Cost.** Per SSP-RK3 step on $4^3$ elements and 16 MPI ranks,
+  over-integrated strong DG costs about twice the CPU time of split-form
+  NSFR for $N\in[5,12]$ (§3.1.3, Fig. 12).
+- **Flux nodes.** GL nodes integrate exactly to degree $2N+1$ and GLL to
+  $2N-1$; at $N=5$, $96^3$, the collocated GLL scheme departs from the
+  expected dissipation rate near $t^*\approx5$, while with three extra
+  quadrature points both node sets agree and the uncollocated GL scheme
+  without over-integration already matches them: "with sufficient
+  integration accuracy, the solution is independent of the choice of flux
+  nodes" (§3.1.4, Fig. 13).
+- **Correction parameter.** The dissipation peak orders as
+  $c_+>c_{\mathrm{HU}}>c_{\mathrm{SD}}>c_{\mathrm{DG}}$, "the added
+  dissipation associated with larger c values", with similar spectra. The
+  authors' CFL limits at $N=5$, $96^3$, defined as the largest CFL that is
+  stable and keeps the kinetic energy non-increasing, are 0.26 for
+  $c_{\mathrm{DG}}$ NSFR, 0.36 for $c_+$ NSFR and 0.14 for over-integrated
+  strong DG with Roe flux, so that $c_+$ gives "a solution similar to that
+  of $c_{\mathrm{DG}}$ and strong DG at about half the computational cost"
+  (§3.1.5, Table 5, Figs. 14–15).
+- **Two-point flux.** Ismail–Roe (entropy conserving), Kennedy–Gruber
+  (kinetic-energy preserving), Chandrashekar (both) and Chandrashekar as
+  modified by Ranocha (both, plus pressure-equilibrium preserving) give
+  nearly indistinguishable spectra, energies and dissipation rates on the
+  viscous case; Kennedy–Gruber is the cheapest, having no logarithmic mean
+  (§3.1.6, Fig. 16; see
+  [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)).
+- **Added interface dissipation.** Roe or low-dissipation (L2) Roe
+  dissipation lowers the peak enstrophy; added Lax–Friedrichs upwinding
+  gives a higher peak enstrophy and more small-scale energy than the
+  projected DNS, which the authors call "anti-dissipative" behaviour; all
+  three almost remove the oscillations of the node-wise pressure-dilatation
+  term that the dissipation-free scheme shows, as Flad & Gassner reported
+  for split-form DG (§3.1.1, §3.1.7, Figs. 3, 17–18). The oscillations
+  are much smaller with collocated GLL flux nodes, which the authors read
+  as coming from interpolating the flux to the face nodes (§3.1.4).
+- **Explicit subgrid models.** Smagorinsky ($C_s=0.10$), shear-improved,
+  high-pass-filtered and dynamic Smagorinsky models, all with a
+  low-Reynolds-number correction and filter width $V_e^{1/3}/(N+1)$,
+  raise the dissipation rate marginally, lower the peak enstrophy and
+  drain energy at wavenumbers where the baseline already has a deficit, so
+  "the SGS models considered in this work are not recommended for the LES
+  of transitional turbulent free-shear flows using NSFR" (§3.1.8, Fig. 19;
+  see [Smagorinsky model](/methods/smagorinsky-model.md) and
+  [implicit LES](/definitions/implicit-les.md)). Collocated strong DG
+  without over-integration at $N=5$ is stabilized by a high-pass-filtered
+  shear-improved Smagorinsky model, but inaccurately: "a stable scheme
+  without any de-aliasing can lead to inaccuracies" (§3.1.8, Fig. 20).
+- **Decaying grid turbulence.** Collocated NSFR at $N=3$ on $32^3$
+  elements ($128^3$ degrees of freedom, $96^3$ unique) reproduces the
+  measured spectra; its kinetic-energy error against the integrated
+  measured spectrum at the last station is 1.36% (5.30% when its spectrum is
+  truncated at $k_c=31$), against 29.81% for a sixth-order
+  finite-difference LES at $64^3$ and 15.55% and 29.75% for CPR at $N=5$
+  ($78^3$) and $N=1$ ($126^3$), as tabulated from the cited works; the
+  authors expect the lower error to be "partially due" to more unique
+  degrees of freedom and to oversampling in the post-processing (§3.2,
+  Table 6).
+
+The authors state it is, to their knowledge, "the first study on the use of
+a provably entropy conserving and stable high-order flux reconstruction
+method for the simulation of viscous turbulent flows" (§1).
 
 ## FR as implicit LES
 
@@ -263,7 +422,8 @@ the lowest solenoidal dissipation of all solvers on every grid, the excess
 numerical dissipation "typical of second-order upwind schemes" (§IV.A,
 Figs. 5, 7); in the subsonic verification case it runs at fourth order and
 agrees with the other codes (App. A). The comparison also includes
-SD3DvisP, a fourth-order spectral-difference code on unstructured hexahedra
+SD3DvisP, a fourth-order [spectral-difference](/methods/spectral-difference-method.md)
+code on unstructured hexahedra
 (Roe flux with entropy fix, centred viscous flux, subcell artificial
 viscosity), which captures small scales well on coarse grids but whose
 strong shock capturing "probably" hinders them on the finer ones (§III.B.e,
@@ -271,6 +431,15 @@ strong shock capturing "probably" hinders them on the finer ones (§III.B.e,
 better than second order in this compressible setting (§V). The PyFR
 compressible FR code is named by [Kurz et al. (2025)](/sources/kurz-2025.md),
 §1, among the GPU high-order solvers.
+
+**Spectral difference against FR.** [D'Ayer et al. (2026)](/sources/dayer-2026.md),
+§1, recall from earlier studies that the computing time of the spectral
+difference method is equivalent to that of FR "under favourable
+conditions" or slightly higher in some circumstances, and validate their
+spectral-difference volume-penalization
+[immersed boundary](/methods/immersed-boundary-method.md) against the
+FR implementation of the same penalization by Kou et al. (2022) on a
+laminar circular cylinder, with errors they call similar (§3.1).
 
 ## Qualifications
 
@@ -293,6 +462,18 @@ compressible FR code is named by [Kurz et al. (2025)](/sources/kurz-2025.md),
   de-aliasing test for its attribution of the $N=3$ oscillations to
   aliasing, and prints no timings for its statement that the high order
   comes "without a significant increase in computational effort" (§4).
+- Brillon & Nadarajah (2026) is the arXiv v1 preprint (November 2024) of
+  the Computers & Fluids paper; their evidence is two free-shear,
+  nearly incompressible flows, and the recommendation against eddy-viscosity
+  models rests on the Taylor–Green vortex at $96^3$, $N=5$. They use
+  "iLES" for implicitly filtered LES *with* an explicit subgrid model and
+  "ILES" for implicit LES without one (§1), a usage that differs from
+  sources where the two abbreviations are synonyms. Their CFL limits use
+  their own criterion (stable and non-increasing kinetic energy), and the
+  timing comparison is for one code (PHiLiP) on one machine. The
+  equivalences of ESFR with DG and spectral difference, and the filter
+  interpretation of the correction parameter, are recalled from the
+  cited works, not derived there.
 
 # Citations
 
@@ -302,3 +483,5 @@ compressible FR code is named by [Kurz et al. (2025)](/sources/kurz-2025.md),
 - [Saini et al. (2023)](/sources/saini-2023.md) — §1 (relayed cost and accuracy comparisons of FR against finite volumes).
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL hal-04582857v1: §III.B.e, g, Tables I–II (H3AMR flux reconstruction, Block Spectral Stresses, SD3DvisP spectral difference); §IV.A, Figs. 5, 7; §V; App. A.
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv 2404.12703v2: §1 (PyFR among GPU high-order codes).
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §1 (FR lineage, ESFR, equivalences, iLES/ILES); §2.6–2.10, Eqs. (46)–(90) (SGS models, NSFR split form, Ismail–Roe flux, SSP-RK3, added Riemann dissipation, strong DG with over-integration); §3.1.1–3.1.8, Tables 1–5, Figs. 2–20 (Taylor–Green DNS and implicit LES: stability, cost, flux nodes, correction parameter, CFL, two-point fluxes, upwinding, SGS models); §3.2, Table 6 (Comte-Bellot–Corrsin).
+- [D'Ayer et al. (2026)](/sources/dayer-2026.md) — HAL hal-05075852v1: §1 (spectral difference against FR cost, as recalled); §3.1 (comparison with the FR penalization of Kou et al.).

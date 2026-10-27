@@ -5,7 +5,7 @@ description: "Second-moment RANS closures that transport the six Reynolds stress
 status: established
 aliases: [Reynolds-stress model, RSM, DRSM, differential Reynolds-stress model, second-moment closure, Reynolds stress transport model, RSTM, SSG/LRR-ω, SSG/LRR-ω-γ, ATAAC DRSM]
 tags: [rans, reynolds-stress-model, transition, turbomachinery, separated-flow]
-timestamp: 2026-10-26T10:20:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Differential Reynolds-stress models
@@ -73,10 +73,11 @@ registry's $b_{ij}=R_{ij}/(2k)-\tfrac13\delta_{ij}$ (Eq. 5).
 **Length-scale equation.** With $\nu_t=k/\omega$ (the source's $\upsilon_t$)
 and $\tfrac12\mathcal P_{kk}$ the production of $k$,
 
-$$\partial_t\omega+\langle u_k\rangle\partial_k\omega=\frac{\alpha_\omega}{\nu_t}\tfrac12\mathcal P_{kk}+\partial_j\big[(\nu+\sigma_\omega\nu_t)\partial_j\omega\big]-\beta_\omega\omega^2+\frac{\sigma_d}{\omega}\max\big(\partial_jk\,\partial_j\omega,0\big)$$
+$$\partial_t\omega+\langle u_k\rangle\partial_k\omega=\frac{\gamma_\omega}{\nu_t}\tfrac12\mathcal P_{kk}+\partial_j\big[(\nu+\sigma_\omega\nu_t)\partial_j\omega\big]-\beta_\omega\omega^2+\frac{\sigma_d}{\omega}\max\big(\partial_jk\,\partial_j\omega,0\big)$$
 
-(Eq. 2); the coefficients $\alpha_\omega$, $\beta_\omega$, $\sigma_\omega$,
-$\sigma_d$ (page-local) are not printed.
+(Eq. 2); the production and destruction coefficients $\gamma_\omega$,
+$\beta_\omega$ (registry §11) and $\sigma_\omega$, $\sigma_d$ (page-local)
+are not printed.
 
 **Closures.** The dissipation is isotropic,
 $\varepsilon_{ij}=\tfrac23\varepsilon\delta_{ij}$ with $\varepsilon=C_\mu k\omega$
@@ -124,7 +125,7 @@ $$\partial_tR_{ij}+\langle u_k\rangle\partial_kR_{ij}=\gamma\mathcal P_{ij}+\gam
 
 and the production of the $\omega$-equation becomes
 
-$$\frac{\alpha_\omega}{\nu_t}\tfrac12\widetilde{\mathcal P}_{kk}=\alpha_\omega(1-\gamma)\lvert S\rvert\lvert\Omega\rvert+\gamma\frac{\alpha_\omega}{\nu_t}\tfrac12\mathcal P_{kk},$$
+$$\frac{\gamma_\omega}{\nu_t}\tfrac12\widetilde{\mathcal P}_{kk}=\gamma_\omega(1-\gamma)\lvert S\rvert\lvert\Omega\rvert+\gamma\frac{\gamma_\omega}{\nu_t}\tfrac12\mathcal P_{kk},$$
 
 a $\gamma$-blend of a Kato–Launder production, which avoids overproduction
 at stagnation points, and the original one (the tilde marks the modified
@@ -145,6 +146,40 @@ compatible" with SSG/LRR-$\omega$ (Introduction). Morsbach et al. (2024)
 couple SSG/LRR-$\omega$ to $\gamma$-$Re_\theta$ in TRACE, the intermittency
 modifying production, dissipation and pressure–strain after Nie et al.,
 the same kind of coupling (§2).
+
+## Host of hybrid RANS/LES
+
+Wang et al. (2021) build an improved delayed
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) on the
+Favre-averaged SSG/LRR-$\omega$ model (RSM-IDDES) in the unstructured
+finite-volume solver HUNS3D, motivated by "problem" flows "where eddy
+viscosity model may fail to predict separation accurately"
+([Wang et al. (2021)](/sources/wang-2021-l.md), §1, §2.2–§2.4). They keep
+the exact production and replace the isotropic dissipation tensor by
+$\varepsilon_{ij}=\tfrac23\big(k^{3/2}/l_{\mathrm{IDDES}}\big)\delta_{ij}$, with
+$k=\tfrac12R_{ii}$ and the IDDES length blending the RANS length
+$\sqrt k/(C_\mu\omega)$ of the BSL $\omega$-equation with
+$C_{\mathrm{DES}}\Delta$ (Eqs. 2–5, 16–20). Because the theoretical detached-eddy
+constant depends only on the coefficients of the length-scale equation and
+the Smagorinsky constant, the LRR and SSG branches get the values of the
+$k$-$\omega$ and $k$-$\varepsilon$ branches of SST, 0.805 and 0.630, blended
+by $F_1$; calibrated with their scheme on decaying isotropic turbulence the
+values are 0.5 and 0.3 (§2.3, §3.1). In the LES region the transported
+stress acts as the subgrid stress, and on a transonic hammerhead launch
+vehicle all its components are smaller than those of SST-IDDES, which, in
+Spalart's view as the authors recall, unlocks the Kelvin–Helmholtz
+instability faster (§3.3, Fig. 10). On the tandem cylinders and the
+hammerhead RSM-IDDES gives a shorter shear layer, finer resolved
+structures, better $C_p$ RMS peaks and a shedding frequency of 176 Hz
+against 172 Hz for SST-IDDES and 179–180 Hz measured (§3.2–§3.3, Table 1);
+the authors credit the anisotropy captured "because the exact production
+terms" (§4). Details on the DES page.
+
+Heinz (2022) records that both the partially integrated transport model and
+[continuous eddy simulation](/methods/continuous-eddy-simulation.md) exist
+in Reynolds-stress versions, and states that the author's conclusions on the
+resolution-dependent destruction coefficient, derived for $k$-$\varepsilon$,
+carry over to them ([Heinz (2022)](/sources/heinz-2022.md), Table 1, §4).
 
 ## The ATAAC DRSM
 
@@ -228,10 +263,22 @@ give self-sustained shock oscillation, at Strouhal numbers of about
 ([Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md), App. A, Table
 A.4; a compilation of other authors' results).
 
+**Strong adverse pressure gradient.** Ghidoni et al. (2026) use
+SSG/LRR-$\omega$ solutions of Knopp et al., with an adverse-pressure-gradient
+modification as cited, as the computed reference for the skin friction of
+the DLR/UniBw DM2 and DM3 plates ($25<\beta_{RH}<45$, $\beta_{RH}$ the
+pressure-gradient parameter, page-local), beside the experiment, when
+assessing their $k$-$\omega$ [wall function](/methods/rans-wall-function.md)
+([Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §4.2, Fig. 8; see
+[wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)).
+
 ## Qualifications
 
+- Wang et al. (2021) call the Favre average "the hat" while printing a
+  tilde (§2.2).
+
 - Liu et al. (2024) print several values the model needs without giving
-  them: $\alpha_\omega$, $\beta_\omega$, $\sigma_\omega$, $\sigma_d$ and their
+  them: $\gamma_\omega$, $\beta_\omega$, $\sigma_\omega$, $\sigma_d$ and their
   blending, so the model is not reproducible from that paper alone.
 - In their Table 1 the caption defines $c_2^{(\mathrm{LRR})}=0.52$, while the
   LRR row lists $c_2=0$ and the expressions in $c_2^{(\mathrm{LRR})}$ for
@@ -252,8 +299,8 @@ A.4; a compilation of other authors' results).
   with too much $k$ over a delta wing (Mozaffari et al. 2022), and a
   recalled claim of better wing-tip-vortex predictions than two-equation
   models (Bouhafid et al. 2024). The first two are computations of
-  different flows with different solvers and grids, the third is not shown;
-  none of them is a general statement about RSMs in vortices.
+  different flows with different solvers and grids; the third is recalled,
+  not shown.
 
 # Citations
 
@@ -263,3 +310,6 @@ A.4; a compilation of other authors' results).
 - [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) — §2.2, §4, §4.2, App. A.
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — §2.1.2 (arXiv v2).
 - [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — App. A, Table A.4.
+- [Wang et al. (2021)](/sources/wang-2021-l.md) — §1, §2.2–§2.4 Eqs. 2–5, 16–20, §3.1, §3.2–§3.3 Table 1 Fig. 10, §4.
+- [Heinz (2022)](/sources/heinz-2022.md) — Table 1, §4.
+- [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §4.2, Fig. 8.

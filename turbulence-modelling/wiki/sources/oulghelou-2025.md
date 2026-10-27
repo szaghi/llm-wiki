@@ -8,7 +8,7 @@ authors: [Oulghelou M., Cherroud S., Merle X., Cinnella P.]
 year: 2025
 venue: "Flow Turbul. Combust. 115:1095-1132"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Flow_Turbulence_and_Combustion_Oulghelou_Machine-Learning-Assisted_Blending_of_Data-Driven_Turbulence.pdf"
-tags: [rans, data-driven, symbolic-regression, machine-learning, separated-flow, uncertainty-quantification]
+tags: [rans, data-driven, symbolic-regression, separated-flow, uncertainty-quantification]
 timestamp: 2026-10-26T15:38:00Z
 ---
 

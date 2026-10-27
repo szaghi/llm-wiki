@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Turbomach. 147:091002"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Turbomachinery_Klose_The_Unsteady_ShockBoundary_Layer_Interaction_in_a_Compressor.pdf"
 tags: [implicit-les, dg, shock-capturing, turbomachinery, transition, rans]
-timestamp: 2026-10-26T15:57:00Z
+timestamp: 2026-10-26T20:47:00Z
 ---
 
 # Summary
@@ -130,7 +130,7 @@ $\alpha$ set by the shock indicator; the time and space relaxation factors of th
 | $C_f$ | $C_f$ | |
 | $Q=(\lVert\boldsymbol\Omega\rVert^2-\lVert\mathbf S\rVert^2)/2$ | Q-criterion with $\Omega_{ij}$, $S_{ij}$ | norms not specified in the source |
 | $u'$, $v'$, $w'$ | $u'$, $v'$, $w'$ | fluctuations about the time mean |
-| $\mathbf X$, $\tilde{\mathbf X}$, $\tilde{\mathbf C}$, $\mathbf W$, $\boldsymbol\Phi$, $\boldsymbol\Lambda$, $N_{\mathrm{blk}}$, $N_{\mathrm{fft}}$ | (SPOD snapshot matrix, Fourier blocks, cross-spectral matrix, weights, modes, eigenvalues, block and frequency counts) | Schmidt & Colonius notation, page-local |
+| $\mathbf X$, $\tilde{\mathbf X}$, $\tilde{\mathbf C}$, $\mathbf W$, $\boldsymbol\Phi$, $\boldsymbol\Lambda$, $N_{\mathrm{blk}}$, $N_{\mathrm{fft}}$ | (SPOD snapshot matrix, Fourier blocks, cross-spectral matrix, weights, modes, eigenvalues, block and frequency counts) | Schmidt & Colonius notation, page-local; **collision:** $\boldsymbol\Lambda$ is not the slip-length tensor of the wall-model pages |
 
 # Reference list
 
@@ -144,7 +144,7 @@ and takes the key `morsbach-2024-b`; [42] (Fernandez et al. 2018) and [51] print
 
 # Pages created or updated
 
-Chunk 6 (2026-10-26). This source is cited on:
+Chunk 6 (2026-10-26), cited further in chunk 7. This source is cited on:
 
 - [Compressor cascades](/benchmarks/compressor-cascade.md)
 - [Shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
@@ -154,6 +154,7 @@ Chunk 6 (2026-10-26). This source is cited on:
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)
 - [Subcell finite-volume shock capturing for DG](/methods/subcell-finite-volume-shock-capturing.md)
+- [Entropy conservation and entropy stability](/properties/entropy-conservation.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [TRACE](/software/trace.md)

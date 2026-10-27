@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Tensor-basis neural network and the integrity basis"
-description: "A neural network that predicts the scalar coefficients of Pope's ten-tensor integrity basis from invariants of the mean strain and rotation, so the learned Reynolds-stress anisotropy is objective by construction; random forests, gene-expression programming, sparse and deep symbolic regression learn the same expansion, and larger integrity bases supply invariant input features."
+description: "A neural network that predicts the scalar coefficients of Pope's ten-tensor integrity basis from invariants of the mean strain and rotation, so the learned Reynolds-stress anisotropy is objective by construction; other regressors learn the same expansion, larger bases supply invariant features, and an eight-term basis carries the idea to LES subgrid stresses."
 status: established
-aliases: [TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features]
-tags: [neural-network, machine-learning, rans, data-driven, symbolic-regression]
-timestamp: 2026-10-26T15:57:00Z
+aliases: [TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features, LES tensor basis]
+tags: [neural-network, data-driven, rans, symbolic-regression]
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Tensor-basis neural network and the integrity basis
@@ -178,6 +178,40 @@ $T^{(1)}$ dominating the shear component of the anisotropy, $T^{(2)}$ the
 largest contributor to the streamwise normal component and $T^{(3)}$ to
 the spanwise one (§III C, Fig. 11).
 
+## An eight-term basis for the subgrid stress (Wu & Lele 2026)
+
+[Wu & Lele (2026)](/sources/wu-2026.md) (arXiv v2, §3.1, Eq. 3.5) carry
+the tensor-basis output to LES. With $\bar{\mathbf S}$ and
+$\bar{\boldsymbol\Omega}$ the matrices of the resolved $\bar S_{ij}$ and
+$\bar\Omega_{ij}$ (not normalized by $k/\varepsilon$), $\mathbf I$ the
+identity and $c_1,\dots,c_8$ (page-local) the coefficients the network
+predicts, the full subgrid stress (not only its deviator) is
+
+$$\begin{aligned}\tau_{ij}={}&c_1\mathbf I+c_2\bar{\mathbf S}+c_3\bar{\mathbf S}^2+c_4\bar{\boldsymbol\Omega}^2+c_5(\bar{\mathbf S}\bar{\boldsymbol\Omega}-\bar{\boldsymbol\Omega}\bar{\mathbf S})+c_6\bar{\boldsymbol\Omega}\bar{\mathbf S}\bar{\boldsymbol\Omega}\\&+c_7(\bar{\mathbf S}^2\bar{\boldsymbol\Omega}-\bar{\boldsymbol\Omega}\bar{\mathbf S}^2)+c_8(\bar{\boldsymbol\Omega}\bar{\mathbf S}\bar{\boldsymbol\Omega}^2-\bar{\boldsymbol\Omega}^2\bar{\mathbf S}\bar{\boldsymbol\Omega}),\end{aligned}$$
+
+after Stallcup & Dahm (2022) and the authors' earlier work, as cited. All
+eight tensors are symmetric *(compiler check, not in the sources)*. The
+basis has an identity term in place of Pope's trace-free forms, so the
+isotropic part of $\tau_{ij}$ is learned too.
+
+**Inputs.** The paper lists seven invariants of $\bar{\mathbf S}$ and
+$\bar{\boldsymbol\Omega}$ (Eq. 3.6) but, because they are costly,
+replaces them by the three invariants of the resolved velocity-gradient
+tensor and the magnitudes $\lvert\bar S\rvert$, $\lvert\bar\Omega\rvert$
+("complex" inputs), or by the first invariant and the two magnitudes
+("simple" inputs). A graph network, not a perceptron, maps the inputs on
+a mesh stencil to the coefficients, so that the stencil is learned
+(after Abekawa et al., as cited). The basis tensors and the stress are
+normalized locally by powers of the velocity-gradient magnitude (Eqs.
+3.7–3.8).
+
+**Outcome.** The basis is the same in every network of the paper; what
+decides the a posteriori quality is the training filter and the input
+set. Simple inputs make the a posteriori results consistent across
+architectures, because higher powers of the velocity gradient "suffer
+more from numerical artifacts such as aliasing" (§5.1.3, §7). Details are
+on [neural-network SGS models](/methods/neural-network-sgs-model.md).
+
 ## Integrity bases as sources of invariant features
 
 An integrity basis can also serve the input side of a learned closure. Its
@@ -279,6 +313,11 @@ a priori and a posteriori results are on
   rotationally invariant. They name tensor-basis networks and rotationally
   invariant inputs as future work (§7; see
   [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+- **Tensor basis in a supervised LES closure.** Wu & Lele (2026) keep
+  the tensor-basis output for the subgrid stress and obtain a posteriori
+  results that are stable across architectures once inputs are simple and
+  training uses several filters (above); unlike Kim et al. (2022), they do
+  not compare against a network without a basis.
 - **Locality.** Agrawal & Koutsourelakis (2024, §2.2.1) call the
   postulate that the stress at a point depends only on flow features at
   that point "a very strong assumption for flows that exhibit strong
@@ -384,9 +423,7 @@ eigen-decomposition, or the integrity basis itself. See
   separated-flow expert, $0.25\,T^{(1)}$ for the jet expert (Table 1).
   Whether sparse regression can return invariant-dependent coefficients
   is thus supported by the method description; whether it does so in
-  practice is shown only for constant selections. What would decide it is
-  a printed sparse-regression model with an invariant-dependent term, or
-  the dictionary-and-selection record of one. *Open.*
+  practice is shown only for constant selections. *Open.*
 
 # Citations
 
@@ -397,4 +434,5 @@ eigen-decomposition, or the integrity basis itself. See
 - [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I, §II C 2, Eqs. 10–16 (2D basis, convention, linear/non-linear split, conditioning), §III B (claim on constant coefficients), §III C, Fig. 11 (contributions), §IV.
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §2.1 (Galilean but not rotational invariance), §7 (tensor-basis networks as future work).
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §2, Eqs. 1–2, 7–10 (additive correction on the 2D basis, $\omega$ normalization); §2.1, Table 1 (SBL-SpaRTA dictionary and printed constant-coefficient models).
+- [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §3.1, Eqs. 3.5–3.8, Figs. 2–3 (eight-term LES basis, inputs, graph front end, normalization); §5.1.3, §7.
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — arXiv v2: §1, §2.2–2.2.5, Eqs. 9–10, 14–17, Table 1 (basis, invariants, $k$-$\varepsilon$ limit, locality); §3.3, Table 3 (architecture, pre-training); §3.4, Fig. 7 (learned stress); App. A.

@@ -4,8 +4,8 @@ title: "Model-consistent (a posteriori) training of learned closures"
 description: "Training a learned closure with the solver in the loop, so the loss is evaluated on the model's own solution: field inversion, FIML, adjoint-based integrated training, differentiable-solver unrolling and reinforcement learning, contrasted with open-loop injection of a priori-trained corrections, with consistency arguments, costs and limits."
 status: established
 aliases: [a posteriori training, a-posteriori training, solver-in-the-loop training, integrated inference and learning, embedded learning, differentiable-physics training, online learning]
-tags: [data-driven, machine-learning, neural-network, sgs-model, rans, les]
-timestamp: 2026-10-26T10:26:00Z
+tags: [data-driven, neural-network, sgs-model, rans, les]
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Model-consistent (a posteriori) training of learned closures
@@ -269,9 +269,9 @@ and they call for a quantitative comparison of the two (§IV). See
   The authors summarize that the learned models "consistently perform as
   well or better" than dynamic Smagorinsky and AMD, AMD being outperformed
   "by the in-sample or nearest DL model" (§4.1). By the table, DL-AR1 is
-  less accurate than AMD on the AR2, $Re=2000$ and AR4 cases, where the
-  other learned model is the more accurate one *(compiler check, not in
-  the sources)*. Both learned models also run in a second solver on an
+  less accurate than AMD on every case except its training case AR1, and
+  on each of those three cases DL-AR2 is the more accurate one *(compiler
+  check, not in the sources)*. Both learned models also run in a second solver on an
   equilateral triangular prism and a circular cylinder never seen in
   training; for the cylinder they "suppress all artificial primary
   recirculation", as DNS does, while no-model LES and AMD predict two
@@ -457,6 +457,21 @@ the convergence of these training methods and the choice of loss function
   automatic differentiation of the whole solver; adjoint-based training
   also appears in Yan et al. (2022) and Sirignano & MacArt (2023)
   (sections above).
+- **The case against binding the closure to the solver.**
+  [Wu & Lele (2026)](/sources/wu-2026.md) (arXiv v2, §1) argue that
+  end-to-end training through a differentiable solver (Sirignano & MacArt
+  2023; Duraisamy 2021; a differentiable-physics closure on unstructured
+  grids by Kim, Shankar, Viswanathan & Maulik, preprint, as they cite it),
+  like reinforcement learning, learns the combined effect of solver
+  numerics and physics, so its models are likely "limited in their
+  transferability to other solvers", and that it costs more because the
+  LES must run during training. They train supervised instead, on DNS
+  filtered with several filter shapes, and run one network in two solvers
+  without retraining (§5.2.1, §7; see
+  [neural-network SGS models](/methods/neural-network-sgs-model.md) and
+  [discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
+  The non-transferability is stated, not tested; Sirignano & MacArt
+  (2023, §6) report a partial transfer to a second solver (above).
 - **Noise.** Agdestein & Sanderse (2025, §6) report that adding noise to
   the training data, a common stabilizer, can destroy the divergence-free
   property. Validation errors were better without noise; no data are
@@ -481,3 +496,4 @@ the convergence of these training methods and the choice of loss function
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — arXiv v3: §II.B (ensemble calibration in the LES); §III–IV, Figs. 3–17; App. B; §V (against adjoint calibration).
 - [Kim et al. (2024)](/sources/kim-2024.md) — §1, §5 (targets for complex geometries).
 - [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — arXiv v3: §II.B.3 (reward on the known mean wall stress).
+- [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1 (transferability and cost of end-to-end and RL training), §5.2.1, §7 (multi-filter supervised alternative).

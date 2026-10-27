@@ -5,7 +5,7 @@ description: "Compressible MHD turbulence carries Alfvénic, slow, fast and non-
 status: established
 aliases: [compressible MHD turbulence, MHD wave-mode decomposition, fast modes, slow modes, non-wave fluctuations, compressible Hall MHD turbulence, weakly compressible MHD, solar-flare turbulence, flare plasma turbulence, compressive-mode bottleneck, Helmholtz-decomposed spectra]
 tags: [mhd, compressible, plasma, astrophysics, dns]
-timestamp: 2026-10-26T15:53:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Compressible MHD turbulence
@@ -270,11 +270,10 @@ spectroscopic observations):
   the abstract says "more than 10%").
 
 The authors claim that the mechanism holds for any reconnecting flare,
-whatever its size, because MHD is scale invariant (§4). *(Compiler check,
-not in the sources: the run also contains physics that is not scale
-invariant, namely gravity, conduction, radiative losses, explicit
-resistivity and a fixed finest cell size, and it reports no resolution
-study.)*
+whatever its size, because MHD is scale invariant (§4). The run itself
+includes gravity, thermal conduction, radiative losses, an anomalous
+resistivity and a finest cell size (§2), and the paper reports no
+resolution study.
 
 ## Compressive modes and bulk viscosity at trans-sonic Mach number
 

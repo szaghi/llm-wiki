@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "HORSES3D"
-description: "HORSES3D is an open-source Fortran DGSEM framework for compressible and incompressible flow with RANS, explicit and implicit LES, shock capturing, multiphase, particles, aeroacoustics and immersed boundaries; this page records its numerics, turbulence options including jump-penalty implicit LES, adaptation, solvers and parallel performance."
+description: "HORSES3D is an open-source Fortran DGSEM framework for compressible and incompressible flow with RANS, explicit and implicit LES, shock capturing, multiphase, particles, aeroacoustics and immersed boundaries; this page records its numerics, turbulence options including jump-penalty implicit LES and self-tuning explicit modal filtering, adaptation, solvers and parallel performance."
 status: established
 aliases: [HORSES3D, High-Order Spectral Element Solver 3D, horses2plt]
 tags: [software, dg, les, implicit-les, entropy-stable, mesh-adaptation]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # HORSES3D
@@ -44,7 +44,9 @@ simulations at 50 to 100 million degrees of freedom.
 - **Discretization.** [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)
   on curvilinear hexahedra with Gauss or Gauss–Lobatto nodes; Gauss nodes
   are "more accurate", Gauss–Lobatto nodes allow energy- or entropy-stable
-  formulations through the summation-by-parts property (§3.3, §3.5).
+  formulations through the summation-by-parts property (§3.3, §3.5);
+  [Ranjbar et al. (2026)](/sources/ranjbar-2026.md), §II.A, repeat the
+  preference for Gauss–Lobatto nodes in energy- or entropy-stable schemes.
 - **Fluxes.** Convective: central, Lax–Friedrichs, Rusanov, Roe,
   low-dissipation Roe, Roe–Pike, matrix dissipation. Viscous: BR1, BR2,
   symmetric interior penalty (§3.3).
@@ -118,6 +120,46 @@ on a Kelvin–Helmholtz instability only the solution penalty completes the
 run (§4.2–4.3). Details are on
 [jump-penalty stabilization](/methods/jump-penalty-stabilization.md).
 
+**Self-tuning explicit modal filtering.** Ranjbar et al. (2026) implement
+in HORSES3D their self-tuning dynamic explicit modal filter (STDEMF), an LES
+closure that filters the solution itself in modal space instead of adding
+an SVV flux: nodal values on Gauss–Lobatto points are mapped to Legendre
+modes by precomputed matrices, mode groups above an element-wise,
+time-dependent cut-off are attenuated by a tanh kernel, and the result is
+blended back with weight 0.01 at every step, only in elements whose local
+Kolmogorov length is smaller than the mean grid spacing (§II.B–C; details
+on [explicit modal filtering](/methods/explicit-modal-filtering.md)). They
+describe HORSES3D as an object-oriented Fortran DG code with explicit time
+marching, extended to incompressible, multiphase, acoustic and particle
+flows, shock capturing, turbulence models, energy- and entropy-stable
+schemes, polynomial adaptation and immersed boundaries, available under
+MIT on GitHub (§II.C). Their settings: Williamson's low-storage third-order
+Runge–Kutta, MPI+OpenMP on CPUs; the low-dissipation Roe flux with BR1 and
+zero penalty (interface averaging) for the periodic boxes, the "standard
+form" (no split form) for decaying isotropic turbulence and the split form with Chandrashekar
+averaging for the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md);
+for the [channel](/benchmarks/turbulent-channel-flow.md) the split form
+with BR2 and penalty 1.5, because "the presence of walls in channel flow
+necessitates BR2" (§II.A, §III). Test cases, all a posteriori on coarse
+unmodelled meshes ("coarse DNS"): decaying
+[isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md) at
+$Re=450$ on $6^3$ elements with $N=7$ (DNS $12^3$, $N=8$, validated against
+the DSEM code of Ranjbar et al. (2024c, as recalled)); the Taylor–Green vortex at
+$Re=200$ on $11^3$ elements, $N=4$, and at $Re=800$ on $7^3$, $N=10$; and the
+compressible channel at $Re_\tau=395$, $M=0.3$, on
+$14\times12\times16$ elements with $N=6$. The filter, with constant 0.65,
+0.25 and 0.5 respectively, comes closest to the reference DNS in all three,
+while the [Smagorinsky model](/methods/smagorinsky-model.md) with
+$C_s=0.12$ over-dissipates late in the decay, is called "not a suitable
+option" for the Taylor–Green vortex, and in the channel crashes for
+$C_s<0.15$ and deviates "significantly" at $C_s=0.2$ (results not shown).
+The filter costs 1.31% extra wall time on the $Re=800$ Taylor–Green case
+and 0.96–2.5% on the channel, depending on the averaging used by its sensor,
+with the same number of processors (§III.D.3; hardware not stated). The
+unmodelled channel run keeps non-zero velocity fluctuations at the wall,
+which the authors attribute to the weak imposition of the boundary
+condition, and filtering drives them to zero (§III.C).
+
 ## Other physics
 
 Artificial-compressibility incompressible solver with dual time stepping;
@@ -155,6 +197,8 @@ parallel (§5.1–5.2).
 
 - The version read (arXiv v1, June 2022) leaves the program-summary links
   unfilled and lists a private repository; the published version may differ.
+  Ranjbar et al. (2026, §II.C) give a public GitHub repository under the MIT
+  licence.
 - Printed slips: Eq. (2) has $\rho u_3$ where the other entries use $v$;
   §3.2 mixes $e$ and $E$ for the total energy; §4.6 swaps "loading" and
   "thickness" relative to the paper's own Eqs. (25)–(26); the reference list
@@ -166,3 +210,4 @@ parallel (§5.1–5.2).
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §5–§6 (the SVV-filtered artificial viscosity used for shock capturing).
 - [Kou et al. (2023)](/sources/kou-2023.md) — §2.2, Eqs. (15)–(25) (jump penalties in HORSES3D); §4.2–4.3 (Taylor–Green vortex, Kelvin–Helmholtz instability).
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §1 (HORSES3D among high-order solvers).
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §II.A (DGSEM settings, Gauss–Lobatto preference, time integration, MPI+OpenMP); §II.B (modal filter); §II.C (HORSES3D description, licence); §III.A–C, Figs. 3, 13–15 (isotropic turbulence, Taylor–Green vortex, channel, Smagorinsky comparison); §III.D.3 (cost overhead).

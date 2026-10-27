@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Scale-similarity and mixed subgrid-scale models"
-description: "Scale-similarity and deconvolution models build the subgrid stress from the resolved field itself rather than from an eddy viscosity; the sources give Bardina-type and modified-Leonard forms, agree that they reproduce the stress structure but are under-dissipative or unstable alone, mix them with an eddy viscosity, or use their energy flux to derive one."
+description: "Scale-similarity and deconvolution models build the subgrid stress, or a subgrid scalar variance, from the resolved field rather than from an eddy viscosity; the sources agree that they reproduce the stress structure but are under-dissipative or unstable alone, and mix them with an eddy viscosity, add numerical dissipation, or derive an eddy viscosity from their flux."
 status: established
-aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model]
+aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, approximate deconvolution model, ADM, Layton–Lewandowski model, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model]
 tags: [les, sgs-model, filtering, combustion]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-26T20:50:00Z
 ---
 
 # Scale-similarity and mixed subgrid-scale models
@@ -403,6 +403,119 @@ model, a high-pass-filter model "not a simple eddy-viscosity SGS model"
 whose relaxation parameter (`filterWeight`, 10) sets the dissipation; the
 paper prints no equation.
 
+**The approximate deconvolution model (ADM) and its two filters.**
+[Caban et al. (2026)](/sources/caban-2026.md) (§2, Eqs. 8–12) write the
+Stolz–Adams model for incompressible LES as
+$\tau_{ij}=\overline{u^*_iu^*_j}-\bar u_i\bar u_j$, with the deconvolved
+velocity $u^*_i=Q\,\bar u_i$ from the truncated van Cittert series
+
+$$Q=\sum_{n=0}^{N_{\mathrm{ADM}}}(I-G_{\mathrm{EF}})^n,\qquad \hat Q=\frac{1-(1-\hat G_{\mathrm{EF}})^{N_{\mathrm{ADM}}+1}}{\hat G_{\mathrm{EF}}},$$
+
+so that the momentum equation carries $\partial_j\overline{u^*_iu^*_j}$ and
+no explicit dissipation. Here $N_{\mathrm{ADM}}$ (page-local) is the number
+of series terms, $N_{\mathrm{ADM}}=5$ in their LES, and $G_{\mathrm{EF}}$
+(page-local) is the "effective filter" assumed in the inversion, which
+need not be the LES filter $G$ that forms $\overline{u^*_iu^*_j}$ (§4). The
+authors model the filter that the discretization itself imposes,
+$\mathcal F_h$ (registry), as the product of the filters induced by the
+first-derivative scheme and by the interpolations of their half-staggered
+grid (see [numerical dissipation](/properties/numerical-dissipation.md)),
+and try $G_{\mathrm{EF}}=\mathcal F_hG$, $G$, $\mathcal F_h$, or explicit
+compact and finite-difference filters of orders 2–10. If the true filter
+acting on the solution is $H$ (page-local), the deconvolution error is
+$\hat{\mathcal E}=1-\hat Q\hat H$ (page-local), which tends to
+$1-\hat H/\hat G_{\mathrm{EF}}$ as $N_{\mathrm{ADM}}\to\infty$ and so does
+not vanish (§4.1, Eqs. 36–37): deconvolving with a filter of higher order
+than $H$ attenuates $u^*$, one of lower order amplifies it near the filter
+cutoff. A priori on isotropic-turbulence DNS at $Re_\lambda=100$
+($384^3$, LES grid $64^3$, Gaussian $G$ with $\Delta=2h$), the stress error
+is largest at high wavenumbers for every $G_{\mathrm{EF}}$, including the
+exact numerical one; with a second-order finite-difference
+$G_{\mathrm{EF}}$ it grows with $N_{\mathrm{ADM}}$, with second- and
+fourth-order compact filters it falls up to $N_{\mathrm{ADM}}=4$–6 and
+then stays constant, and the authors advise a small $N_{\mathrm{ADM}}$
+(§4.2, Fig. 8).
+
+The **Layton–Lewandowski model** is the case $N_{\mathrm{ADM}}=0$,
+$u^*_i=\bar u_i$ (Caban et al. 2026, Eq. 12):
+$\tau_{ij}=\overline{\bar u_i\bar u_j}-\bar u_i\bar u_j$, so that the
+resolved momentum equation is the unclosed one with its advective term
+filtered, $\partial_t\bar u_i+\partial_j\overline{\bar u_i\bar u_j}+\dots$.
+The authors place it in the scale-similarity family of Bardina; its second
+term is not re-filtered, unlike the Bardina form recalled by Domaradzki
+above *(compiler check, not in the sources)*. They note it "has not gained
+widespread popularity".
+
+**Results in the transitional Taylor–Green vortex** at $Re=1600$, LES on
+$64^3$ against their own DNS, error of the kinetic-energy history up to
+$t=20$ (Caban et al. 2026, §5.4, Tables 4–9; see
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)):
+
+- the Layton–Lewandowski model is stable with every explicit LES filter
+  tested (finite-difference and compact, orders 2–6) even with the
+  non-dissipative spectral interpolation, with which the no-model,
+  Smagorinsky and Vreman runs at $\Delta=2h$ are unstable; its best error,
+  $2.03\times10^{-2}$ with a sixth-order compact filter and explicit
+  regularization, is about 10% below the best implicit LES (§5.4.1,
+  Table 5);
+- ADM with $N_{\mathrm{ADM}}=5$ is unstable with non-dissipative
+  interpolation for most filter combinations, which the authors attribute
+  to deconvolution amplifying the subfilter energy and the aliasing of
+  $u^*_iu^*_j$; it is stable with dissipative interpolation or explicit
+  regularization, so it "requires some level of numerical dissipation", in
+  line with the relaxation term of Stolz and Adams (§5.4.2, §6);
+- the best ADM ($G$ and $G_{\mathrm{EF}}$ both sixth-order compact filters,
+  dissipative interpolation) gives $2.31\times10^{-2}$, about twice as
+  accurate as the eddy-viscosity models but no better than the
+  Layton–Lewandowski model or [implicit LES](/definitions/implicit-les.md);
+  ADM "does not deliver the anticipated improvement" (§5.4.2, §6);
+- building the numerically induced filter into $G_{\mathrm{EF}}$ helps only
+  when $G$ is of low order (§5.4.2, Tables 7–9).
+
+The authors restrict these conclusions to $Re=1600$ on $64^3$, and the
+interpolation effects to staggered or half-staggered algorithms (§6).
+Their treatment of the numerically induced filter as part of the
+closure is the theme of [discretization-consistent closures](/definitions/discretization-consistent-closure.md).
+
+[Jakhar et al. (2026)](/sources/jakhar-2026.md) (p. 5) view the
+finite-order gradient closures as truncations of the nonlocal
+deconvolution operator, their fourth-order one being "the minimal local
+truncation" that captures the leading nonlocal effects (see
+[gradient model](/methods/gradient-model.md)).
+
+## Similarity model for a subgrid scalar variance
+
+The similarity idea also closes scalar second moments. In LES of
+supersonic hydrogen combustion with a flamelet/progress-variable table,
+[Tang et al. (2022)](/sources/tang-2022.md) (§2.2, Eqs. 15–16) compare two
+closures of the subgrid variance of the mixture fraction $Z$ (page-local),
+$\widetilde{Z''^2}$, one of the three look-up coordinates of the table (see
+[flamelet-tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)).
+The algebraic one is a scale-similarity estimate with a test filter of
+twice the grid-filter width,
+
+$$\widetilde{Z''^2}=c_Z\big(\widehat{\tilde Z^2}-\hat{\tilde Z}^2\big),\qquad \hat\Delta=2\Delta,$$
+
+($c_Z$ page-local, value not printed) evaluated by a seven-point discrete
+formula (Eq. 16), whose printed form contains no coefficient, which
+amounts to $c_Z=1$ *(compiler check, not in the sources)*. The other is a transport equation for $\widetilde{Z''^2}$
+with modelled scalar dissipation (turbulent Schmidt number 0.5 and a
+dissipation constant of 40, Eq. 17). The
+authors describe the similarity estimate as having "no historical
+effects": it carries no transport or dissipation of the variance. In the
+DLR strut-injector scramjet it gives variances locally up to about 0.01
+but concentrated below 0.001, against a lower-peaked, wider distribution
+below 0.002 from the transport equation; it raises the heat release
+near the injector and shortens the flame lift-off, and the transport
+equation agrees better with the measured temperature at $x=125$ mm
+(§3.1, Figs. 5–7). In a cavity-stabilized combustor with transverse
+injection the similarity variance is higher over almost the whole jet
+wake, which the authors link to over-intense combustion and an upstream
+boundary-layer separation; the transport equation matches the wall
+pressure better (§3.2, Figs. 12–16). They recommend the transport
+equation "if computing resources allow" (§4). The evidence is visual
+comparison on two cases.
+
 ## Mixed explicit–implicit model
 
 [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) (§6.5)
@@ -440,3 +553,6 @@ does not improve.
 - [Domaradzki (2024)](/sources/domaradzki-2024.md) — §1, Eqs. (1.3)–(1.4); §2.3–2.4, Eqs. (2.36)–(2.47); §3.1.
 - [Kim et al. (2024)](/sources/kim-2024.md) — §1.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §II.A; §III, Figs. 3–8; §IV.
+- [Caban et al. (2026)](/sources/caban-2026.md) — §2, Eqs. (8)–(12); §4.1–4.2, Eqs. (36)–(39), Figs. 6–8; §5.4.1–5.4.2, Tables 4–9; §6.
+- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — p. 5.
+- [Tang et al. (2022)](/sources/tang-2022.md) — §2.2, Eqs. (15)–(17); §3.1, Figs. 5–7; §3.2, Figs. 12–16; §4.

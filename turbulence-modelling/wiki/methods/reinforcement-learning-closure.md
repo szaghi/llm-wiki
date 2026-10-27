@@ -5,7 +5,7 @@ description: "Closures set or learned online by a policy trained with reinforcem
 status: established
 aliases: [RL closure, VYBA23, RLWM, PPO closure, reinforcement-learning SGS model, deep reinforcement learning SGS model, DRL SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM, DRL180]
 tags: [reinforcement-learning, sgs-model, data-driven, implicit-les, wall-model, neural-network]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T16:22:00Z
 ---
 
 # Reinforcement-learning turbulence closures
@@ -728,6 +728,17 @@ See [machine-learning wall models](/methods/machine-learning-wall-model.md).
   use DNS spectra (Beck & Kurz; Kurz et al.), filtered-DNS mean profiles
   (Kim et al. 2022) or the known mean wall stress of a pressure-driven
   channel (Bae & Koumoutsakos; Vadrot et al. 2023a).
+- [Wu & Lele (2026)](/sources/wu-2026.md) (arXiv v2, §1) cite Kim et al.
+  (2022), Bae & Koumoutsakos (2022), Kurz et al. (2023) and Guan et al.
+  as RL closures that learn "the combined effect of solver numerics and
+  physics", hence "limited in their transferability to other solvers",
+  and costlier to train because LES must run during training. Their own
+  route is supervised training on several filter shapes (see
+  [neural-network SGS models](/methods/neural-network-sgs-model.md) and
+  [discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
+  The transferability claim is not tested there; Kurz et al. (2023, §4.4)
+  report RL policies that stay stable and accurate across two DG
+  resolutions, within one code.
 
 ## Qualifications
 
@@ -859,3 +870,4 @@ See [machine-learning wall models](/methods/machine-learning-wall-model.md).
 - [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — arXiv v3: Abstract; §II.A; §II.B.2–3, Eqs. 3–6, 9–10, Table I, Figs. 2–3; §III.A–B, Figs. 6, 9–10; §IV, Eqs. 12–17, Table III, Figs. 11–12; §V.
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §1 (RL as a gradient-free route to stability).
 - [Kim et al. (2024)](/sources/kim-2024.md) — §1, §5 (targets unknown for complex geometries).
+- [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1 (RL closures as solver-specific, transferability and cost).

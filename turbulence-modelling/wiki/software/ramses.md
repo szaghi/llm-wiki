@@ -5,7 +5,7 @@ description: "RAMSES is an octree adaptive-mesh-refinement code with a second-or
 status: established
 aliases: [ramses, RAMSES-MHD]
 tags: [software, astrophysics, mhd, implicit-les, mesh-adaptation, dynamo]
-timestamp: 2026-10-25T19:44:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # RAMSES
@@ -51,7 +51,8 @@ role of numerical dissipation and of subgrid models in astrophysical codes.
 
 ## Mesh refinement
 
-- **Quasi-Lagrangian refinement** (the standard criterion in both sources).
+- **Quasi-Lagrangian refinement** (used in both sources; the baseline
+  against which Martin-Alvarez et al. compare).
   A cell is refined when it holds more than the mass of eight dark-matter
   particles (Martin-Alvarez et al. 2022, §2.1), or more than eight
   dark-matter particles or a baryonic mass above eight baryonic particle

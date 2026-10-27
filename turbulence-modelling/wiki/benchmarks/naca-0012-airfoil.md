@@ -5,7 +5,7 @@ description: "The symmetric NACA 0012 airfoil, static at chord Reynolds numbers 
 status: established
 aliases: [NACA0012, NACA 0012, NACA-0012]
 tags: [benchmark, rans, hybrid-rans-les, les, data-driven, immersed-boundary, dg, separated-flow]
-timestamp: 2026-10-26T15:57:00Z
+timestamp: 2026-10-26T20:47:00Z
 ---
 
 # NACA 0012 airfoil
@@ -31,7 +31,7 @@ domain size.
 | Item | [Zhao et al. (2023b)](/sources/zhao-2023-b.md) | [Constant et al. (2024)](/sources/constant-2024.md) | [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) |
 |---|---|---|---|
 | Flow | $M=0.15$, $Re_c\approx6\times10^6$, $\alpha=0^\circ$, $10^\circ$; transonic $M=0.804$, $Re_c=4.09\times10^6$, $\alpha=0.05^\circ$ | $M=0.15$, $Re_c=6\times10^6$, $\alpha=0^\circ$ to $15^\circ$ | $Re_c=3\times10^6$, $\alpha=2^\circ$, $6^\circ$, $10^\circ$, $15^\circ$ and $45^\circ$; Mach number not stated |
-| Model | [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) RANS, wall-resolved | [Spalart–Allmaras](/methods/spalart-allmaras-model.md) RANS with Musker's wall function | SST RANS, SST-IDDES and SST-based continuous eddy simulation |
+| Model | [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) RANS, wall-resolved | [Spalart–Allmaras](/methods/spalart-allmaras-model.md) RANS with Musker's wall function | SST RANS, SST-IDDES and SST-based [continuous eddy simulation](/methods/continuous-eddy-simulation.md) |
 | Discretization | interior-penalty DG of degree $N=2$ for the mean flow, first-order finite volumes for SST | ghost-cell [immersed boundary](/methods/immersed-boundary-method.md) on octree Cartesian grids, second-order finite volumes (FastS) | [lattice Boltzmann](/methods/lattice-boltzmann-method.md) D3Q19 on octree Cartesian grids with immersed boundaries ([ProLB](/software/prolb.md)) |
 | Grid | 5883 elements (grid independence on 6834, 8844, 10854); 8954 cells transonic | IBM6: $h_{\min}/c=10^{-4}$, target $y^+=100$, $3.8\times10^6$ cells; body-fitted wall-resolved reference with $h_{\min}/c=10^{-6}$, $y^+=1$, $8\times10^6$ cells | 7 refinement levels to $\Delta_{\min}\approx0.18\%c$; span equal to chord, periodic |
 | Reference | Ladson ($C_p$), McCroskey (forces), ONERA data (transonic) | the body-fitted wall-resolved solution | Ladson (forces, $C_p$); for $45^\circ$ the data of Shur et al. as cited |
@@ -46,6 +46,18 @@ deep dynamic stall ([Baldan & Guardone (2025)](/sources/baldan-2025.md)):
 | Model | $k$-$\omega$ SST and two symbolic-regression corrections of it (SR-CLS, SR-CND) | SST, two expert corrections and their learned blend | wall-resolved LES with the [WALE model](/methods/wale-model.md); 2D URANS and 3D SBES of the authors' earlier work |
 | Discretization | OpenFOAM simpleFoam; C-grid of 640 surface, 120 wake and 136 wall-normal cells, $\Delta y^+\approx0.6$ | OpenFOAM (modified), $225\times65$ grid of the NASA TMR | ANSYS Fluent, second-order finite volume, SIMPLEC, rigidly rotating O-grid of $934\times334$ nodes, first cell $10^{-4}c$, far field $50c$ |
 | Reference | SST itself (NASA TMR) for $C_f$ | Ladson; Gregory & O'Reilly; Abbott & von Doenhoff | experiment of Lee & Gerontakos (loads) |
+
+High-order RANS discretizations of the $k$-$\omega$ family
+([Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §5.4;
+[Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §4.4):
+
+| Item | Elzaabalawy et al. (2023) | Ghidoni et al. (2026) |
+|---|---|---|
+| Flow | $Re_c=6\times10^6$, $\alpha=0^\circ$, steady incompressible; inlet eddy-viscosity ratio 6 | $Re_c=6\times10^6$, $M=0.15$, $-15^\circ\le\alpha\le15^\circ$, steady |
+| Model | two-equation [$k$-$\omega$ models](/methods/k-omega-model.md) (the model of this case is not named in §5.4), wall-resolved | Wilcox $k$-$\omega$ (2006/2007 version) in log-$\omega$ form, with an explicit [wall function](/methods/rans-wall-function.md) |
+| Discretization | hybridizable DG, degree $N=3$ triangles | modal DG, $N=1$ to 6 |
+| Grid | first element at $y^+=2$, clustered at leading and trailing edges, $x^+<3$ at the trailing edge | hybrid meshes (hexahedra in the boundary layer, prisms outside), far field at $50c$; wall-resolved reference of 6535 elements with 200 on the airfoil; meshes with first-element height $y_1^+$ up to 320 |
+| Reference | Ladson ($C_p$); NASA TMR SST ($C_f$) | the wall-resolved $N=6$ solution; FUN3D $k$-$\omega$ (NASA TMR); Ladson, Gregory & O'Reilly, Abbott & von Doenhoff |
 
 ## What the case tests
 
@@ -105,6 +117,30 @@ Only the adapted solution keeps the lift error below 3% at every incidence
 (Fig. 25). The authors relate the remaining drag error of about 20% at
 $15^\circ$ to the sensitivity of this test case reported by others, and to
 the equilibrium wall model at the leading edge (§6.1).
+
+**High-order RANS of the $k$-$\omega$ family.**
+[Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §5.4, use the
+airfoil to show that their hybridizable DG treatment of the
+$\omega$ equation (interpolation of $1/\omega$, removal of the
+wall-touching elements from the $\omega$ problem) works on curved geometry.
+$C_f$ is over-estimated against the NASA TMR SST solution, which they
+attribute to the raised inlet eddy viscosity; $C_p$ lies slightly below
+the TMR reference but closer to Ladson's experiment. $\omega$ oscillates in
+the wake, and at lower inlet eddy-viscosity ratios the oscillations
+"obstruct the convergence of the solver", "one of the drawbacks of using
+high-order methods while using the $k-\omega$ model" (Figs. 28–36).
+
+[Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §4.4, test the
+first-element height that a wall function tolerates on a modal DG
+discretization: $C_p$, $C_f$, $C_D$ and $C_L$ agree with the wall-resolved
+reference for all $y_1^+$ and degrees (Figs. 13–14). At $N=6$ the $C_f$
+difference grows for $y_1^+>80$ near the leading edge; at $y_1^+=320$ the
+$C_f$ peak is under-estimated and recovers from $x/c=0.15$, so the effect on
+$C_D$ and $C_L$ is negligible. At $\alpha=15^\circ$ the suction side shows
+incipient separation from $x/c=0.72$ that reattaches only at the trailing
+edge; the wall function avoids the $C_f$ under-estimation it shows in the
+recirculation of the [backward-facing step](/benchmarks/backward-facing-step.md),
+which the authors attribute to the smaller recirculation.
 
 **Massive separation at $45^\circ$.** [Mozaffari et al. (2024)](/sources/mozaffari-2024.md),
 §3.2, Table 2, after 234 flow-through times with 110 averaged:
@@ -214,11 +250,16 @@ in [Zhao et al. (2023b)](/sources/zhao-2023-b.md), the wall-function
 leading-edge error at $15^\circ$ in
 [Constant et al. (2024)](/sources/constant-2024.md), the $15^\circ$ RANS
 discrepancy in [Mozaffari et al. (2024)](/sources/mozaffari-2024.md).
+The two high-order $k$-$\omega$ studies place their difficulty at the
+leading edge as well (the $C_f$ peak at $y_1^+=320$ in
+[Ghidoni et al. (2026)](/sources/ghidoni-2026.md)) and, for the
+discretization itself, in the wake (the $\omega$ oscillations of
+[Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md)).
 
 ## Qualifications
 
-- The configurations differ in Reynolds number ($10^6$, $3\times10^6$,
-  $6\times10^6$) and reference ($C_p$ and forces of experiments, a
+- The configurations differ in Reynolds number ($1.35\times10^5$, $10^6$,
+  $3\times10^6$, $4.09\times10^6$, $6\times10^6$) and reference ($C_p$ and forces of experiments, a
   body-fitted computation); no source compares its errors with another's.
 - [Constant et al. (2024)](/sources/constant-2024.md) print a lift error
   of 5.6% for the non-adapted solution in Table 3, while the table's own
@@ -240,10 +281,15 @@ discrepancy in [Mozaffari et al. (2024)](/sources/mozaffari-2024.md).
   The $C_L$ offset from experiment is printed as about 0.25 (§2.1) and 0.2
   (§2.2).
 - Their inference that turbulence modelling is not the main source of
-  discrepancy is not tested: each model is run for one recorded cycle
-  without phase averaging (§1.2, §2.2), the URANS and SBES come from the
-  authors' earlier work with the same solver, and the 0.8$c$ and 1.2$c$
-  spans still differ at $10^\circ$ in the downstroke (Fig. 4).
+  discrepancy rests on one recorded cycle per model without phase
+  averaging (§1.2, §2.2); the URANS and SBES come from the authors' earlier
+  work with the same solver, and the 0.8$c$ and 1.2$c$ spans still differ
+  at $10^\circ$ in the downstroke (Fig. 4).
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) caption their
+  Fig. 33 with $Re=6.6\times10^6$, while the text and the other figures of
+  the case give $6\times10^6$. [Ghidoni et al. (2026)](/sources/ghidoni-2026.md)
+  print the element counts of their coarser meshes as
+  "$5\,929<n_e<2\,899$" (§4.4), an inverted inequality.
 - [Wu et al. (2025)](/sources/wu-2025.md) refer to "Figure 45" for the
   airfoil C-grid, which is their Fig. 49. The NACA 0012 claims of
   [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) ("accurate
@@ -257,4 +303,6 @@ discrepancy in [Mozaffari et al. (2024)](/sources/mozaffari-2024.md).
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1, Fig. 7 (recalled result).
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: Table 1; §4.5, Figs. 49–50.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §5.1, Fig. 10; §5.1.3, Figs. 15–16; §6.
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §5.4, Figs. 28–36.
+- [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §4.4, Figs. 13–14.
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — arXiv v2: Introduction; §1.1–1.2, Eq. 1, Tables 1–2; §2.1, Figs. 3–8; §2.2, Fig. 9; §3.

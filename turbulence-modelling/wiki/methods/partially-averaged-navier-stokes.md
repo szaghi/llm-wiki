@@ -5,7 +5,7 @@ description: "Girimaji's bridging hybrid model that solves RANS-form transport e
 status: established
 aliases: [PANS, partially averaged Navier-Stokes, PANS k-ω SST, bridging model, PANS BHR-LEVM, variable-density PANS, BHR model]
 tags: [pans, hybrid-rans-les, flux-reconstruction, numerical-dissipation, separated-flow]
-timestamp: 2026-10-26T10:25:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Partially-averaged Navier–Stokes
@@ -339,6 +339,19 @@ PANS simulations of the periodic hill at about one million cells with
 second-order numerics among the successful hybrid results on that case
 (§V B, citing Razi et al. 2017).
 
+Heinz (2022) mentions PANS in passing, from the side of mode control:
+[continuous eddy simulation](/methods/continuous-eddy-simulation.md), whose
+$\varepsilon$-destruction coefficient follows the ratio of modelled to total
+length scale, is said to overcome the energy-partition problems of the
+partially integrated transport model and "similar problems seen in" PANS,
+citing Girimaji (2006) and Tazraei & Girimaji (2019); no PANS computation
+supports the statement in the paper
+([Heinz (2022)](/sources/heinz-2022.md), §4, conclusion 1). Wang et al.
+(2021) list PANS with PITM, DES and zonal DES as the main hybrid strategies,
+and build theirs on DES instead
+([Wang et al. (2021)](/sources/wang-2021-l.md), §1; see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+
 ## Qualifications
 
 - Dzanic et al. state that PANS blends "between DNS ($f_k=f_\omega=0$) and
@@ -364,9 +377,9 @@ second-order numerics among the successful hybrid results on that case
   times of 2.00 s and 1.95 s, which give 2.6% *(compiler check, not in the
   sources)*; the text says "about 3%". Their Table 2 repeats run labels
   ("P3M25b/c" for runs on the fine grid, "P3C35d" twice).
-- The cylinder reference data disagree with each other: at $N=1$, $f_k=0.1$
-  matches the LES of Parnaudeau et al. and $f_k=0.3$ the new DNS, so the
-  "optimal" $f_k$ depends on which reference is preferred.
+- The cylinder references favour different $f_k$: at $N=1$ the centreline
+  velocity with $f_k=0.1$ agrees with the LES of Parnaudeau et al. and with
+  $f_k=0.3$ with the new DNS (Dzanic et al. 2022, §3.2, Fig. 8).
 
 - The reference of Pereira et al. is the same code at $f_k=0$ with no
   closure and no artificial viscosity, which the authors call a
@@ -402,3 +415,5 @@ second-order numerics among the successful hybrid results on that case
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §1.
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §6 (HAL author manuscript).
 - [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) — §1, §2–§2.2 Eqs. 1–8, §3, §4.3–4.6 Tables 1–3 Figs. 4–15, §5, App. B Table B.5, App. C.2 Fig. C.20.
+- [Heinz (2022)](/sources/heinz-2022.md) — §4.
+- [Wang et al. (2021)](/sources/wang-2021-l.md) — §1.

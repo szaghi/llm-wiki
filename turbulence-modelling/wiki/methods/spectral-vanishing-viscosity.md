@@ -5,7 +5,7 @@ description: "Spectral vanishing viscosity concentrates an added viscosity on th
 status: established
 aliases: [SVV, implicit SVV, ISVV, implicit spectral vanishing viscosity, spectral viscosity, SVV-LES, entropy-stable SVV, modal SVV filter]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg, entropy-stable]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-26T20:50:00Z
 ---
 
 # Spectral vanishing viscosity
@@ -97,7 +97,8 @@ $Re=40\,000$ (DNS $5400^3$; LES $216^3$ and $540^3$), §6.4:
   peak of the breakdown (Figs. 13–14);
 - at fixed filter scale, runs with $\Delta=\Delta x$ and $\Delta=2.5\Delta x$
   are "virtually identical" (data not shown), so SVV LES is numerically
-  converged at standard resolution, unlike [Smagorinsky](/methods/smagorinsky-model.md);
+  converged in what the authors call the standard condition
+  $\Delta=\Delta x$, unlike [Smagorinsky](/methods/smagorinsky-model.md);
 - its effective filter is approximated by the super-Gaussian
   $\exp(-k^6\Delta^6/256)$, with a bump peaking near $k_c/4$: a
   **bottleneck**, i.e. a soft pile-up below $k_c/2$ that the authors call
@@ -345,8 +346,7 @@ simulation of turbulent and supersonic flows", citing the group's work.
   Warburton (cited), with modal weights
   $\exp\{-\alpha_f[(\vartheta_m-\vartheta_c)/(1-\vartheta_c)]^{s_f}\}$
   above a cutoff $\vartheta_c$ of the normalized mode index $\vartheta_m$
-  ($\alpha_f=36$, $s_f=6$; all page-local, as on the subcell
-  finite-volume page; the source's $\eta$, $\eta_c$, $\alpha$, $s$;
+  ($\alpha_f=36$, $s_f=6$, registry §11 shared symbols; the source's $\eta$, $\eta_c$, $\alpha$, $s$;
   $\vartheta_c$ not printed), applied after every
   Runge–Kutta stage only in elements whose Persson–Peraire smoothness
   indicator exceeds a threshold (§2.3, Eqs. 17–19). Like SVV it damps only
@@ -386,6 +386,26 @@ simulation of turbulent and supersonic flows", citing the group's work.
     effect of time-averaging the wall-model input; Mukha et al. state that
     this agrees with their a posteriori result.
 
+- **Explicit filtering of the solution as an alternative to SVV.**
+  [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) (§I, §II.B) review SVV
+  from Tadmor to Mateo-Gabín et al. and argue for filtering the DGSEM
+  solution in modal space instead: SVV's extra flux "increases the
+  mathematical complexity and alters the structure of the governing
+  equations" and needs its own von Neumann and dispersion–dissipation
+  analyses (citing Manzanero et al.; Moura et al.). Their kernel acts on
+  three-dimensional modes grouped by the radius of the mode index, not on a
+  tensor product of one-dimensional kernels as in SVV, and its cutoff
+  changes in each element and time step with the ratio of grid spacing to
+  Kolmogorov length and with strain and rotation, against the fixed cutoff
+  $M=5\sqrt N$ of Karamanos & Karniadakis recalled above and the fixed
+  cutoffs of later SVV work. The construction and its results are on the
+  [explicit modal filtering](/methods/explicit-modal-filtering.md) page.
+- [Caban et al. (2026)](/sources/caban-2026.md) (§1) list SVV among the
+  ways of adding dissipation in implicit LES; their own implicit LES uses
+  an explicit compact filter of approximate-deconvolution form applied to
+  the velocity at every time step (see
+  [explicit modal filtering](/methods/explicit-modal-filtering.md)).
+
 ## Qualifications
 
 - The two constructions are not the same model: the implicit form is a
@@ -424,3 +444,5 @@ simulation of turbulent and supersonic flows", citing the group's work.
 - [Kou et al. (2023)](/sources/kou-2023.md) — §1.
 - [Wang (2024)](/sources/wang-2024-b.md) — §2.3, Eqs. (17)–(19); §5.
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §I; §II.A, Eq. (4); §III.B.3; §III.C, Fig. 8.
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §I; §II.B.
+- [Caban et al. (2026)](/sources/caban-2026.md) — §1.

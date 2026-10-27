@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-26T11:04:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -65,8 +65,9 @@ and treatments of the trace; translated to the registry they agree.
   ([Alauzet et al. (2022)](/sources/alauzet-2022.md), §2.1, Eq. 1).
 - **Variable-density PANS.** Pereira et al. (2021) close the unresolved stress
   of their [PANS](/methods/partially-averaged-navier-stokes.md) BHR model as
-  $2\nu_u\{S_{ij}\}-\tfrac23k_u\delta_{ij}$, with $\{\cdot\}$ their
-  density-weighted resolved field and $\nu_u$ the unresolved eddy viscosity:
+  $2\nu_t\tilde S_{ij}-\tfrac23k_u\delta_{ij}$, with the tilde the
+  density-weighted resolved field and $\nu_t$ the unresolved eddy viscosity
+  (the source's $\{\cdot\}$ and $\nu_u$):
   the registry form with the opposite sign, i.e. in the
   $-\langle u_i'u_j'\rangle$ convention. The eddy viscosity is built from
   the unresolved energy and a transported length scale rather than from $k$
@@ -203,6 +204,39 @@ and treatments of the trace; translated to the registry they agree.
   ([Wu et al. (2025)](/sources/wu-2025.md), §2.2, Table 2; authors'
   manuscript).
 
+- **RANS, incompressible, with the viscous stress included.** Elzaabalawy
+  et al. (2023) write $2\nu_eS_{ij}-\tfrac23k\delta_{ij}$ with
+  $\nu_e=\nu+\nu_t$ as one "modeled Reynolds stress" that already contains
+  the molecular stress: the registry form with the opposite sign plus the
+  viscous term, the $\tfrac23k$ being absorbed into a modified pressure in
+  their first-order form, where the auxiliary unknown is $2S_{ij}$
+  ([Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §2, Eqs.
+  3–8; see the [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md)).
+- **RANS, compressible, with limited inputs.** Ghidoni et al. (2026) write
+  the turbulent stress as
+  $2\bar\mu_t\big(S_{ij}-\tfrac13\partial_ku_k\delta_{ij}\big)-\tfrac23\rho\bar k\delta_{ij}$
+  and the total stress as the viscous one plus this term, i.e. the
+  $-\rho\langle u_i''u_j''\rangle$ convention, with $\bar k=\max(0,k)$ and an
+  eddy viscosity built from $\bar k$ and a floored $\omega$, so that a
+  negative $k$ of the high-order solution never enters the stress
+  ([Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §2, Eq. 1; the bars
+  of the source denote these limited values, not filtering).
+- **Hybrid RANS/LES, as the LES target.** Wang et al. (2021) take the
+  Boussinesq subgrid stress $2\bar\rho\nu_t\tilde S_{ij}-\tfrac23\bar\rho k\delta_{ij}$
+  (the opposite sign to the registry's) with the Smagorinsky viscosity as
+  the LES branch that their detached-eddy construction must reproduce under
+  equilibrium; in the LES region of their Reynolds-stress-based IDDES the
+  transported Reynolds stress itself acts as the subgrid stress, with no
+  Boussinesq closure ([Wang et al. (2021)](/sources/wang-2021-l.md), §2.3,
+  Eqs. 6–10; see [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+- **URANS against resolved stresses.** Yang & Ma (2022) compare the
+  Boussinesq stress of SST URANS,
+  $\mu_t(\partial_ju_i+\partial_iu_j)-\tfrac23(\rho k+\mu_t\partial_ku_k)\delta_{ij}$
+  in the $-\rho\langle u_i'u_j'\rangle$ convention, with the resolved
+  stress $-\rho\langle u_i'u_j'\rangle$ of a DES, the modelled part of the
+  DES being left out ([Yang & Ma (2022)](/sources/yang-2022-b.md), §3.2,
+  Eqs. 8–9).
+
 ### A traceless Reynolds stress
 
 A model that carries no $k$, such as Spalart–Allmaras, supplies only the
@@ -265,6 +299,32 @@ most of all near the wall, while the two models have identical dissipation
 correlations, because only the isotropic part of the coefficient tensor
 dissipates ([Agrawal et al. (2022)](/sources/agrawal-2022.md), §V, Figs. 1–2).
 The authors add that these correlations do not measure alignment.
+
+**Isotropy blamed for lost anisotropy and unsteadiness.** Yang & Ma (2022)
+state that "the isotropic hypothesis of the eddy viscosity model" ignores
+the anisotropic nature of turbulence, and that the large eddy viscosity
+chosen in RANS for robustness "might erase some unsteadiness of small-scale
+flow structures" (§1); in their transonic turbine cascade SST URANS
+over-predicts the Reynolds shear stress along the tip-leakage vortex and
+misses the trailing-edge mixing (§3.2, Fig. 8), and the resolved anisotropy
+of the vortex core moves from one-component towards two-component and then
+isotropic states on the Lumley map (§4.6, Fig. 19). Wang et al. (2021)
+motivate a Reynolds-stress host for detached-eddy simulation in the same
+terms: most DES methods "invoke the eddy-viscosity assumption", and a
+[Reynolds-stress model](/methods/reynolds-stress-model.md), "abandoning the
+isotropic eddy-viscosity hypothesis", is preferred for "problem" flows
+where eddy-viscosity models "may fail to predict separation accurately"
+(§1).
+
+**Higher-order gradient closures.** Jakhar et al. (2026) note that the
+fourth- and sixth-order truncations of the Taylor expansion of the subgrid
+stress (NGM4, NGM6), which their sparse regression selects for forced
+two-dimensional turbulence, "violate the Boussinesq hypothesis as they
+depend on second-order velocity gradients", and present this as the "need to
+go beyond classical turbulence tensors to represent backscatter and
+anisotropic effects" ([Jakhar et al. (2026)](/sources/jakhar-2026.md),
+p. 5; arXiv v3; see [gradient model](/methods/gradient-model.md) and
+[energy backscatter](/definitions/energy-backscatter.md)).
 
 **Mean stress against energy transfer.** Haering et al. (2022) argue that
 one scalar eddy viscosity cannot represent both the mean subgrid stress and
@@ -721,3 +781,8 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [Llorente (2024)](/sources/llorente-2024.md) — p. 4, Eqs. 3–4 (author accepted manuscript).
 - [Wu et al. (2025)](/sources/wu-2025.md) — §2.2, Table 2 (authors' manuscript).
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — §2 Eqs. 1–10, §4.2.1, Table 1 (arXiv v2).
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §2, Eqs. 3–8.
+- [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §2, Eq. 1.
+- [Wang et al. (2021)](/sources/wang-2021-l.md) — §1, §2.3 Eqs. 6–10.
+- [Yang & Ma (2022)](/sources/yang-2022-b.md) — §1, §3.2 Eqs. 8–9 Fig. 8, §4.6 Fig. 19.
+- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — p. 5 (arXiv v3).

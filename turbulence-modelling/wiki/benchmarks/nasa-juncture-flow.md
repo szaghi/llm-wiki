@@ -4,7 +4,7 @@ title: "NASA Juncture Flow"
 description: "The NASA Juncture Flow wing–fuselage model, with smooth-body corner separation at the wing-root trailing edge (crank-chord Reynolds number 2.4 million, Mach 0.189, 5°): wall-modelled LES predicts wall pressure within 5% but mean velocity only within 3–8% on the fuselage and about 100% in the corner, which a learned wall model does not fix."
 status: established
 aliases: [Juncture Flow experiment, NASA JF, wing-body juncture flow]
-tags: [benchmark, wmles, separated-flow, boundary-layer, machine-learning]
+tags: [benchmark, wmles, separated-flow, boundary-layer, data-driven]
 timestamp: 2026-10-26T07:41:00Z
 ---
 

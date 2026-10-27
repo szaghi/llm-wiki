@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Turbul. 24:235-279"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Turbulence_Vicente_Physicalnumerical_duality_of_explicitimplicit_subgrid-scale.pdf"
 tags: [les, implicit-les, sgs-model, numerical-dissipation, eddy-viscosity, a-priori-a-posteriori]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Summary
@@ -42,7 +42,7 @@ Smagorinsky restores the plateau and removes the bump, but does not improve the 
 pipe at $\Delta x^+=\Delta y^+\approx9$, implicit spectral vanishing viscosity predicts $u_\tau$
 within 1.8% without wall treatment, but fails at $\Delta x^+=18$, so it cannot serve alone as
 [wall-modelled LES](/methods/wall-modelled-les.md). The authors conclude that explicit models can
-be read as an ersatz of regularization, the reverse of the usual reading.
+be read as an ersatz of regularization, rather than the reverse (§8).
 
 # Version read
 

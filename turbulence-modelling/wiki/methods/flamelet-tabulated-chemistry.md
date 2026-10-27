@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Flamelet-based tabulated chemistry"
-description: "Flamelet-based tabulated chemistry stores the thermochemical state of one-dimensional flames in a low-dimensional table indexed by mixture fraction, progress variables and enthalpy; this page gives the manifold construction, the extensions for curvature, wall quenching and exhaust-gas recirculation, and their a priori and a posteriori assessment against flame-resolved simulations."
+description: "Flamelet-based tabulated chemistry stores the thermochemical state of one-dimensional flames in a table indexed by mixture fraction, progress variables and enthalpy; this page gives the manifold construction, the extensions for curvature, wall quenching and exhaust-gas recirculation, the subgrid mixture-fraction variance in LES of supersonic combustion, and assessments against flame-resolved simulations and experiment."
 status: established
-aliases: [tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, premixed flamelet tabulation]
-tags: [combustion, dns, tabulated-chemistry, flame-wall-interaction]
-timestamp: 2026-10-26T10:27:00Z
+aliases: [tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, premixed flamelet tabulation, subgrid mixture-fraction variance, scalar variance model]
+tags: [combustion, dns, tabulated-chemistry, flame-wall-interaction, hybrid-rans-les]
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Flamelet-based tabulated chemistry
@@ -34,7 +34,13 @@ normalized progress variable; $h_t$ the total (sensible plus formation)
 enthalpy ($h$ is the registry's element size); $\kappa_{\mathrm f}$ the
 flame-front curvature and $K_{\mathrm f}$ the flame strain rate (the
 registry's $\kappa$ is the von Kármán constant); $l_{\mathrm F}$ the
-thermal flame thickness; $\phi_{\mathrm{eq}}$ the equivalence ratio.
+thermal flame thickness; $\phi_{\mathrm{eq}}$ the equivalence ratio;
+$Z_v=\widetilde{Z^2}-\tilde Z^2$ the subgrid (Favre-filtered) variance of
+the mixture fraction (the sources' $\widetilde{Z''^2}$), $\chi_Z$ its
+scalar dissipation rate ($\chi$ is the registry's Spalart–Allmaras ratio),
+$Sc_t$ the turbulent Schmidt number; $\mu_t^{\mathrm{bl}}=\bar\rho\nu_t^{\mathrm{bl}}$
+the eddy viscosity of Tang et al.'s wall-distance-blended hybrid RANS/LES
+(not the constrained-LES $\nu_t^{\mathrm{hyb}}$ of the registry).
 
 ## The manifold family
 
@@ -49,7 +55,7 @@ ILDM and REDIM as the manifold family for chemistry reduction, separate
 from the turbulence–chemistry interaction closure that RANS or LES of a
 reacting flow also needs.
 
-The three sources build their tables from different flame families:
+The four sources build their tables from different flame families:
 
 | Source | Flames tabulated | Control variables |
 |---|---|---|
@@ -58,6 +64,7 @@ The three sources build their tables from different flame families:
 | Böttler et al. (2023), FPV-$\kappa$ (printed FPV-$\kappa_c$; §2.1, contribution) | composition-space-model flames over $0.275\le\phi_{\mathrm{eq}}\le0.6$, $-1500\le\kappa_{\mathrm f}\le5000$ m⁻¹, at fixed strain $K_{\mathrm f}=500$ s⁻¹ | $(Z,c,c_2)$, $c_2$ from the H radical |
 | Steinhausen et al. (2023), QFM (§5, after Efimov et al.) | one transient head-on quenching flame of an undiluted mixture on a 300 K wall | progress variable and enthalpy |
 | Steinhausen et al. (2023), QFM-EGR (§4, contribution) | 63 transient head-on quenching flames with cold exhaust-gas dilution $0\le Y_{\mathrm{EGR}}\le0.3$, plus preheated flames 300–750 K | $(c,c_2,h_t)$, $c$ from $\mathrm{CO_2}$, $c_2$ from $\mathrm{CO}$ |
+| Tang et al. (2022), FPV of Pierce & Moin (§2.2) | laminar counterflow (non-premixed) flamelets, all three branches, 9-species 19-step H$_2$–air mechanism, unity Lewis number, at 1.1 and 1.9 bar | $(\tilde Z,Z_v,\tilde c)$, presumed $\beta$-PDF in $Z$ and $\delta$-PDF in $c$ |
 
 ## Construction
 
@@ -116,6 +123,36 @@ gas at the inflow temperature, quenching each diluted flame on a 300 K
 wall, and spanning the manifold in flamelet coordinate, time and
 $Y_{\mathrm{EGR}}$ (the mass fraction of cold burnt gas mixed into the
 fresh gas, page-local).
+
+**Subgrid variance of the mixture fraction.** In LES with a presumed PDF
+the table needs the subgrid variance $Z_v$ as an extra coordinate. As
+recalled by [Tang et al. (2022)](/sources/tang-2022.md), §2.2, Eqs.
+(10)–(11), the flamelet/progress-variable model of Pierce & Moin stores
+$\psi(Z,c)$ from counterflow flamelets, the progress variable selecting
+among the burning, unstable and extinguished branches, and filters it as
+$$\tilde\psi=\iint\psi(Z,c)\,P_\beta(Z;\tilde Z,Z_v)\,\delta(c-\tilde c)\,dZ\,dc,$$
+with a $\beta$-PDF $P_\beta$ (page-local) in $Z$ and, by a fast-chemistry
+assumption, a $\delta$-PDF in $c$; $\tilde Z$ and $\tilde c$ are
+transported, $\tilde c$ with the tabulated source term (Eqs. 12–13). Tang
+et al. compare two closures for $Z_v$ (§2.2):
+
+- an algebraic **scale-similarity** estimate (see
+  [scale-similarity models](/methods/scale-similarity-model.md)),
+  $Z_v=c_{\mathrm{ss}}(\widehat{\tilde Z^2}-\hat{\tilde Z}^2)$ with a test
+  filter of width $\hat\Delta=2\Delta$, evaluated by a seven-point stencil
+  (Eqs. 15–16; $c_{\mathrm{ss}}$ page-local, its value not printed, the
+  discrete form corresponding to $c_{\mathrm{ss}}=1$);
+- a **transport equation** (Eq. 17)
+$$\partial_t(\bar\rho Z_v)+\partial_j(\bar\rho\tilde u_jZ_v)=\partial_j\Big[\Big(\bar\rho D+\frac{\mu_t^{\mathrm{bl}}}{Sc_t}\Big)\partial_jZ_v\Big]+2\frac{\mu_t^{\mathrm{bl}}}{Sc_t}\partial_j\tilde Z\,\partial_j\tilde Z-\bar\rho\chi_Z,$$
+  with molecular diffusivity $D$, production by the resolved mixture-fraction
+  gradient, a modelled dissipation proportional to $\mu_t^{\mathrm{bl}}Z_v/Sc_t$
+  with constant $c_q=40.0$, $Sc_t=0.5$ (printed form in Qualifications),
+  and $\mu_t^{\mathrm{bl}}$ the blended eddy
+  viscosity of their [hybrid RANS/LES](/definitions/hybrid-rans-les.md)
+  (Eq. 14).
+
+The authors describe the scale-similarity estimate as having no transport
+or dissipation of the variance, "no historical effects" (§3.1).
 
 ## Assessment
 
@@ -178,7 +215,7 @@ The coupled LES evaluation is left to future work (§6).
 **Flame-resolved simulations with tabulated chemistry** (Domingo & Vervisch
 2023). A premixed Bunsen jet at $Re=24\,000$ is computed as well-resolved
 LES with a nested DNS-resolution box, premixed flamelet tabulation in both
-zones (§3.1); deconvolution by one-dimensional filtered flamelets,
+zones (§3.1); deconvolution by one-dimensional filtered flamelets
 over-estimates methane and oxygen consumption more than three-dimensional
 approximate deconvolution and enhances the CO over-estimation a
 posteriori, its error growing with the subgrid flame wrinkling (§3.1,
@@ -191,8 +228,57 @@ the flamelet-manifold hypothesis itself under curvature and unsteady strain
 (§3.2). See also
 [direct numerical simulation](/definitions/direct-numerical-simulation.md).
 
+**Supersonic hydrogen combustion in hybrid RANS/LES** (Tang et al.
+2022). The solver blends the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
+in a wall layer of 10–20% of the boundary-layer thickness with a
+one-equation subgrid-energy LES model elsewhere, prescribed by wall
+distance (§2.1), with fifth-order [WENO](/methods/weno-scheme.md) inviscid
+fluxes. Two experiments are computed:
+
+- *DLR strut-injection scramjet* (Mach 2 air, sonic parallel H$_2$
+  injection; §3.1, Figs. 5–7). The scale-similarity variance peaks near
+  0.01 but is mostly below 0.001, concentrated where mixture-fraction
+  gradients are large; the transport-equation variance is mostly below
+  0.002 and more widely spread. The scale-similarity run releases more
+  heat near the injector ($x=80$–90 mm), shortens the flame lift-off and
+  moves the flame core upstream; the transport-equation run agrees better
+  with the measured temperature at $x=125$ mm and is more consistent in
+  velocity.
+- *NUDT cavity combustor* (Mach 2.52, transverse sonic H$_2$ injection
+  30 mm upstream of the cavity, equivalence ratio 0.28; §3.2,
+  Figs. 12–16). The scale-similarity variance is higher across almost the
+  whole jet wake, which the authors attribute to the confined, high-gradient
+  fuel of transverse injection; combustion is over-intensified and the
+  thermal disturbance propagates upstream through the subsonic boundary
+  layer, separating it ahead of the cavity. Both closures give acceptable
+  lower-wall pressures, the transport equation relatively better.
+
+In both cases the variance from the two closures differs by "almost [an]
+order of magnitude" at some mixture fractions (§4), and higher variance gives
+"a bit higher heat release" in the table (§3.1, not shown). A Takeno flame
+index $\nabla Y_{\mathrm{H_2}}\cdot\nabla Y_{\mathrm{O_2}}/(\lvert\nabla Y_{\mathrm{H_2}}\rvert\lvert\nabla Y_{\mathrm{O_2}}\rvert)$
+(Eq. 18), positive in premixed and negative in diffusion burning, shows
+diffusion combustion over almost the whole reacting zone in both combustors,
+which the authors take as support for a non-premixed flamelet model there
+(Figs. 8, 15). They recommend the transport equation when computing
+resources allow (§4). The evidence is visual comparison of contours,
+scatter plots and profiles; no error norm is given.
+
 ## Qualifications
 
+- **Printed forms in Tang et al. (2022).** The variance dissipation is
+  printed as $\bar\rho\chi_Z=\frac{\mu_t^{\mathrm{bl}}}{Sc_t}\frac{c_q}{\Delta^{1/3}}\bar\rho Z_v$
+  (Eq. 17), with units kg$^2$ m$^{-13/3}$ s$^{-1}$ against the kg m$^{-3}$
+  s$^{-1}$ of the other terms; the intended form cannot be recovered from
+  the paper *(compiler check, not in the sources)*. Eqs. (12)–(13) add the
+  turbulent flux $(\mu_t^{\mathrm{bl}}/Pr_t)\nabla\tilde Z$ inside the
+  divergence with the sign opposite to the molecular flux
+  $-\bar\rho D\nabla\tilde Z$, which as printed is anti-diffusive, and use
+  $Pr_t$ for a scalar where Eq. (17) uses $Sc_t$ *(compiler check, not in
+  the sources)*. The constant $c_{\mathrm{ss}}$ of Eq. (15) is not given.
+- **Scope of Tang et al.'s recommendation.** It rests on two configurations
+  compared visually with experiment (§3, §4); both variance closures run in
+  the same hybrid RANS/LES solver with the same numerics (§2.1).
 - **Agreement on the failure mode.** Böttler et al. (2023) and Steinhausen
   et al. (2023) both find that a table built from flames without the
   relevant physics (unstretched flames; undiluted quenching flames) fails
@@ -223,4 +309,5 @@ the flamelet-manifold hypothesis itself under curvature and unsteady strain
 
 - [Böttler et al. (2023)](/sources/bottler-2023.md) — arXiv 2301.06780v1: §1 (FPV family); §2–2.1, Eqs. (1)–(4), Figs. 1–2 (FPV-$h$, FPV-$\kappa$, composition space model, coupling by major species); §3.1, Fig. 3 (a priori); §3.2, Fig. 4 (linear stability); §3.3, Figs. 5–8 (expanding flame); §4.
 - [Steinhausen et al. (2023)](/sources/steinhausen-2023.md) — arXiv 2212.03762v1: §1 (manifold family, QFM); §2.1, Table 1 (reacting channel); §3, Eqs. (1)–(2), Figs. 2–5 (flame–vortex interaction); §4, Eqs. (3)–(5), Fig. 6 (QFM-EGR); §5, Eqs. (6)–(9), Figs. 7–9 (a priori assessment); §6.
+- [Tang et al. (2022)](/sources/tang-2022.md) — §2.1, Eq. (14) (hybrid RANS/LES, blended eddy viscosity); §2.2, Eqs. (10)–(18) (FPV, presumed PDFs, scale-similarity and transport closures of the subgrid variance, flame index); §3.1, Figs. 5–8; §3.2, Figs. 12–16; §4.
 - [Domingo & Vervisch (2023)](/sources/domingo-2023.md) — HAL author manuscript: §3.1, Figs. 5–6 (LES-embedded DNS with premixed flamelet tabulation, flamelet deconvolution); §3.2 (flame-resolved bluff-body burner, flamelet-hypothesis test proposed).

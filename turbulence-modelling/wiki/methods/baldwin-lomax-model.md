@@ -5,7 +5,7 @@ description: "The two-layer algebraic RANS eddy viscosity of Baldwin and Lomax, 
 status: established
 aliases: [Baldwin–Lomax model, BL model, BL-local, BL-GFM-VD-TV, Cebeci–Smith model, algebraic eddy-viscosity model, zero-equation model, algebraic wall model]
 tags: [rans, eddy-viscosity, compressible, hypersonic, boundary-layer]
-timestamp: 2026-10-26T10:25:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Baldwin–Lomax algebraic model and its compressible recalibration
@@ -19,9 +19,9 @@ two branches cross. Chen et al. (2024) recalibrate its semilocal form for
 supersonic and hypersonic zero-pressure-gradient boundary layers with
 "established" mean-flow scalings and no newly fitted coefficients
 ([Chen et al. (2024)](/sources/chen-2024.md)). Their title calls the model
-an "algebraic wall model", but it is an algebraic RANS closure of the
-whole boundary layer, not a wall-stress model for
-[wall-modelled LES](/methods/wall-modelled-les.md), although it borrows
+an "algebraic wall model"; it supplies the eddy viscosity across the whole
+boundary layer, solved by boundary-layer marching (§2.2), not a wall stress
+for [wall-modelled LES](/methods/wall-modelled-les.md), although it borrows
 ingredients from that literature.
 
 On this page all flow quantities are means: $U$ and $T$ the Favre-averaged

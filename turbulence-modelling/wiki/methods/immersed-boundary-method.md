@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Immersed boundary methods"
-description: "Immersed boundary methods impose walls on non-conforming grids by reconstruction at boundary or ghost points, penalization or direct forcing; this page covers the DNS, LES and RANS variants, the Lagrangian weight, flexible blades, wall functions with a modelling height, wall-pressure reconstruction, Reynolds averaging of penalized flows, and the near-wall errors reported."
+description: "Immersed boundary methods impose walls on non-conforming grids by reconstruction, ghost points, volume penalization or direct forcing; this page covers DNS, LES and RANS variants, stiff penalization by Strang splitting, the Lagrangian weight, wall functions with a modelling height, volume filtering with wall-slip models for LES, Reynolds averaging of penalized flows, and the near-wall errors reported."
 status: established
-aliases: [IBM, volume penalization immersed boundary method, VP-IBM, fluid resistance, immersed boundary, ghost-point forcing, volume penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing]
+aliases: [IBM, volume penalization immersed boundary method, VP-IBM, fluid resistance, immersed boundary, ghost-point forcing, volume penalization, Brinkman penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing, volume-filtering immersed boundary method, IBMLES, immersed boundary-modelled LES, wall-slip model, slip-length model]
 tags: [immersed-boundary, wall-model, lattice-boltzmann, les, dns, rans]
-timestamp: 2026-10-26T15:48:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Immersed boundary methods
@@ -25,7 +25,11 @@ neural-network LES of a cylinder wake on a staggered finite-volume mesh
 ([Kim et al. 2024](/sources/kim-2024.md)), hybrid RANS/LES in a lattice
 Boltzmann code ([Mozaffari et al. 2024](/sources/mozaffari-2024.md)) and
 steady wall-function RANS of high-lift aircraft on octree Cartesian grids
-([Constant et al. 2024](/sources/constant-2024.md)). Three
+([Constant et al. 2024](/sources/constant-2024.md)), DNS of a heated
+rough-wall channel in a spectral difference code
+([D'Ayer et al. 2026](/sources/dayer-2026.md)), and an a priori
+volume-filtering framework for wall-modelled LES in which the wall slip is
+the modelled quantity ([Rickard & Kasbaoui 2026](/sources/rickard-2026.md)). Three
 sources report a less accurate near-wall field: the wall distance of the
 near-wall nodes varies along the surface and the method does not conserve
 fluxes across the immersed surface (Cai et al. 2022), a softly imposed
@@ -36,6 +40,12 @@ operators are not reciprocal, which leaves a boundary slip error
 the wall pressure: extrapolating it unchanged from the first fluid point
 across a modelled layer misplaces the suction peak and corrupts the
 near-field pressure drag at strong incidence (Constant et al. 2024).
+With volume penalization in a high-order code, D'Ayer et al. (2026)
+report wall-vorticity oscillations confined to cells that the body cuts.
+Rickard & Kasbaoui (2026, §1) recall that IB forcing on non-uniform grids
+can produce spurious stress oscillations that corrupt the near-wall eddy
+viscosity, and that Verzicco (2023, as recalled) suggests IBs in LES may
+only be possible on uniform grids with IB-adapted wall models.
 
 ## Variants
 
@@ -151,6 +161,59 @@ k-d tree, parallel in OpenMP and MPI, and surface quantities are recovered
 by inverse-distance weighting of the nearest degrees of freedom. The
 demonstration is a horizontal-axis wind turbine with rotating blades
 ($N=3$ near the rotor and wake, $N=2$ elsewhere), shown qualitatively.
+
+**Volume penalization with an exactly integrated stiff source (spectral
+difference).** D'Ayer et al. (2026, §2.2–2.4) implement Brinkman volume
+penalization in JAGUAR, the CERFACS–ONERA compressible
+[spectral difference](/methods/spectral-difference-method.md) solver, on
+hexahedra (solution points at first-kind Chebyshev nodes, flux points at
+the two cell ends and the $N-1$ interior Legendre–Gauss points, Roe flux,
+BR1 gradients, five-stage fourth-order SSP Runge–Kutta). Page-local:
+$\boldsymbol U=(\rho,\rho\boldsymbol u,\rho e)$ the conservative state with
+$e=E/\rho$ the total energy per unit mass, $\boldsymbol F_c$, $\boldsymbol F_v$
+the convective and viscous fluxes, $\Omega$ the solid, $\chi$ and $\eta_p$
+the mask and permeability as above, $\boldsymbol s_p$ the penalization source. The system
+$\partial_t\boldsymbol U+\nabla\cdot(\boldsymbol F_c-\boldsymbol F_v)+\boldsymbol s_p=0$
+carries
+$$\boldsymbol s_p=-\frac{\chi}{\eta_p}\big(0,\ \rho\boldsymbol u_\Omega-\rho\boldsymbol u,\ \rho e_\Omega-\rho e\big)$$
+(Eqs. 12–13, 16), with target velocity $\boldsymbol u_\Omega=0$ and target
+energy $e_\Omega=c_vT_\Omega$ ($c_v$ the specific heat at constant volume,
+page-local) for an isothermal wall. Density is not penalized, only
+Dirichlet conditions can be imposed, and the authors call this form
+"adapted for flow at subsonic Mach numbers" (§2.3). Where the HORSES3D
+source of Ferrer et al. drives the energy towards the kinetic energy of the
+body velocity, this one relaxes the total energy to the internal energy of
+the wall temperature, a convention difference between the two
+implementations.
+
+The source is stiff as $\eta_p\to0$. D'Ayer et al. (§2.4) recall explicit
+stability limits $\Delta t_{\max}=\eta_p$ for a pseudo-spectral scheme with
+second-order Adams–Bashforth (Kolomenskiy & Schneider) and
+$\Delta t_{\max}=\tfrac{6}{11}\eta_p$ with third-order Adams–Bashforth
+(Jause-Labert), both as recalled. Their remedy is a two-part Strang
+splitting: a half step of the penalization sub-problem, a full step of the
+unchanged spectral-difference Runge–Kutta update, and a second half step,
+the penalization sub-problems being integrated exactly,
+$$\boldsymbol U(t)=\chi\big[(1-r_p)\mathsf A\boldsymbol U_\Omega+r_p\mathsf B\boldsymbol U_0\big]+(1-\chi)\boldsymbol U_0,\qquad r_p=e^{-t/\eta_p},$$
+at $t=\Delta t/2$ (Eqs. 18–23; page-local $\boldsymbol U_0$ the sub-step
+initial state, $\boldsymbol U_\Omega=(\rho,\rho\boldsymbol u_\Omega,\rho e_\Omega)$,
+$\mathsf A=\mathrm{diag}(0,\boldsymbol I,1)$, $\mathsf B=\mathrm{diag}(1,\boldsymbol I,1)$).
+The splitting error is printed as $O(\Delta t^3)$ (Eq. 21, citing Strang).
+The authors state that this "makes possible the use of any value of
+$\eta$ without limiting the time step", fix $\eta_p=10^{-10}$ s in every run,
+leave $\Delta t$ to the CFL condition, and state that the exact sub-steps do
+not increase the cost (no timings given). They also recall (Eq. 15, after
+Engels et al.) that the total error splits into the modelling error of the
+penalized problem and its discretization error, which can depend on
+$\eta_p$, so lowering $\eta_p$ need not lower the total error; $\eta_p$ is not
+varied in the paper. The drag follows from the volume integral of the
+penalization term, $C_D=\big(\tfrac12\rho_\infty u_\infty^2D\big)^{-1}\int_\Omega(\rho/\eta_p)(\boldsymbol u_\Omega-\boldsymbol u)\,dV$
+in its streamwise component (Eq. 26), and wall data by inverse-distance
+weighting at interpolation points, as in the flux-reconstruction
+penalization of Kou et al. (2022, as recalled). Citing Mittal & Iaccarino,
+the authors call continuous IBMs such as penalization "usually restricted
+to first-order accuracy near the boundary" (§1); they report no
+order-of-accuracy study.
 
 **Direct forcing for zero-thickness flexible blades (staggered finite
 volume).** [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md), §2.3, couple
@@ -317,6 +380,36 @@ enters only through the sign of the total viscosity $\nu+\nu_t$.
   about three times. The weight corrects the slip but not the wall velocity
   gradient, which the regularized kernels diffuse, so the near-wall solution
   is first order in grid size while the far field is insensitive (§3.2).
+- **Penalization at high order** (D'Ayer et al. 2026, §3, Tables 1–3). On
+  the steady [cylinder](/benchmarks/circular-cylinder-wake.md) at $Re_D=40$,
+  $M=0.2$, $N=2$ (body-fitted mesh 182k cells and 1.63M solution points,
+  IBM mesh 263k cells and 2.37M points, near-wall cell size $0.01D$), the
+  body-fitted and penalized runs give recirculation length $2.27D$ and
+  $2.25D$, separation angle $52.2^\circ$ and $52.1^\circ$, drag coefficient
+  1.55 and 1.54, against 2.27, $52.0^\circ$, 1.52 of Kou et al. (2022) and of
+  Choi et al. (as recalled): differences below 1%. Wall $C_p$ agrees; the
+  wall vorticity oscillates near the surface, which the authors attribute
+  to cells partly inside the body, where a polynomial cannot represent the
+  discontinuous solution (a Runge phenomenon), and they find the penalized
+  run more sensitive to mesh resolution than the body-fitted one (study not
+  shown); they avoid local refinement to limit cost and propose automatic
+  $hp$-refinement near the interface as future work (§4). In the
+  [turbulent channel](/benchmarks/turbulent-channel-flow.md) at
+  $Re_\tau=400$ over staggered hemispheres of height $k=\delta/20$ (Wu et
+  al.'s RH400-20-4 geometry, as recalled), heated by a volumetric source
+  with isothermal walls, cropped to a minimal channel of
+  $L_x^+\approx1009$, $L_z^+\approx240$ (as printed), with $N=3$, the
+  penalized DNS (25M degrees of freedom, $\Delta x^+=1.73$,
+  $\Delta z^+=1.50$, $\Delta y^+_0=0.51$) is compared with a body-fitted
+  JAGUAR run (17M), a body-fitted finite-volume AVBP run (14M, the thermal
+  reference) and the DNS of Wu et al. (859M): mean velocity and temperature
+  agree below the minimal-channel critical height $y^+_c=0.4L_z^+$, and the
+  Reynolds stresses and turbulent heat fluxes agree within about 5%, the
+  over-predicted $\langle v'v'\rangle^+$ and under-predicted
+  $\langle w'w'\rangle^+$ being common to all minimal-channel runs (§3.2,
+  Figs. 7–10). They argue that in the fully rough regime the drag increase
+  is mainly pressure drag, so the near-wall gradient errors of the IBM,
+  which affect viscous drag, should not spoil the roughness effect (§3.1).
 
 ## Wall models on immersed boundaries
 
@@ -357,6 +450,114 @@ sources)*. The authors state that it tends to the RANS viscosity in attached
 layers and to the LES viscosity in separated ones; see
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md) and
 [wall-modelled LES](/methods/wall-modelled-les.md).
+
+## Volume filtering and wall-slip models for LES
+
+[Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) derive the IB force
+from filtering rather than from a discretization, extending the
+volume-filtering IB method of Dave et al. (as recalled), valid in its "DNS
+limit", to wall-modelled LES, which they call **immersed boundary-modelled
+LES (IBMLES)**. Page-local symbols: $\mathbb I_f$ the fluid indicator,
+$\varphi_f$ the fluid volume fraction ($\alpha_f$ in the source, renamed
+because $\alpha$ is the registry's blending factor and $\alpha_f$ its
+modal-filter strength), $\Delta_f$ the support
+width of the kernel ($\delta_f$ in the source), $S_w$ the wall surfaces,
+$\boldsymbol n$ the wall normal pointing into the fluid, $\boldsymbol u_w$
+the wall velocity, $\boldsymbol T=-p\boldsymbol I+2\mu\boldsymbol S$ the
+total fluid stress (incompressible), $\boldsymbol F_{\mathrm{IB}}$ the IB
+force density, $\boldsymbol u_{\mathrm{slip}}$ the wall slip,
+$\boldsymbol\ell$ the slip lengths and $\boldsymbol\Lambda$ the gradient
+ratios, one per direction, with streamwise components $\ell_x$, $\Lambda_x$
+(the source's $\boldsymbol\lambda$, renamed because $\lambda$ is the Taylor
+microscale).
+
+**Filter.** The incompressible equations are convolved with a unitary,
+symmetric kernel $G$ of compact support ($G=0$ for
+$\lVert\boldsymbol y\rVert\ge\Delta_f/2$) that is truncated by $\mathbb I_f$
+and **not rescaled** near walls, unlike wall-resolved LES (filter refined
+near the wall) and the truncated-and-rescaled filter of Bose & Moin
+(as recalled) (§2.1, Fig. 1):
+$$\varphi_f=G*\mathbb I_f,\qquad \varphi_f\,\bar{\boldsymbol u}=G*(\mathbb I_f\boldsymbol u)$$
+(Eqs. 2.6–2.7), so $\varphi_f=\tfrac12$ at a planar wall for any symmetric
+kernel and filtered fields extend $\Delta_f/2$ into the solid. The commutation
+terms are then exact surface integrals,
+$$\overline{\nabla\phi}-\nabla\bar\phi=\frac1{\varphi_f}\Big((\nabla\varphi_f)\,\bar\phi-\iint_{S_w}\boldsymbol n\,\phi\,G(\boldsymbol x-\boldsymbol y)\,dS\Big)$$
+(Eq. 2.11, with analogues for divergence and time derivative), which the
+authors contrast with the commutation errors that most wall-resolved and
+wall-modelled LES ignore and that "can be of the order of the subgrid
+terms" (§2.1, as recalled from Ghosal & Moin and others).
+
+**Filtered momentum equation.** With $\tau_{ij}$ the registry's SGS stress
+(here the full, not deviatoric, $\overline{u_iu_j}-\bar u_i\bar u_j$),
+$$\rho\big(\partial_t(\varphi_f\bar{\boldsymbol u})+\nabla\cdot(\varphi_f\bar{\boldsymbol u}\bar{\boldsymbol u})\big)=\varphi_f\nabla\cdot\big(\boldsymbol T^{R}+\boldsymbol T^{\mathrm{res}}-\rho\boldsymbol\tau\big)+\boldsymbol F_{\mathrm{IB}}$$
+(Eq. 2.22), where $\boldsymbol T^R$ is the stress built from $\bar p$ and
+$\bar{\boldsymbol u}$ (including a $-\tfrac23\nabla\cdot\bar{\boldsymbol u}$
+term, since $\bar{\boldsymbol u}$ is not solenoidal near walls) and
+$\boldsymbol T^{\mathrm{res}}=\overline{\boldsymbol T}-\boldsymbol T^R$ the
+**residual viscous stress**, closed but non-trivial (Eqs. 2.16–2.18): at the
+wall it is linear in the slip (Eq. 2.27). The IB force, to
+$O(\Delta_f^2)$,
+$$\boldsymbol F_{\mathrm{IB}}\approx-\iint_{S_w}\boldsymbol n\cdot\big(\boldsymbol T-\boldsymbol T^R-\boldsymbol T^{\mathrm{res}}+\rho\boldsymbol\tau\big)\,G\,dS$$
+(Eq. 2.24), is non-zero only in a band of width $\Delta_f$ around the surface.
+Eq. (2.25) expresses the wall stress through the wall values of the
+filtered stresses and the time derivative of the slip velocity $\boldsymbol u_{\mathrm{slip}}=\bar{\boldsymbol u}|_w-\boldsymbol u_w$
+(Eq. 2.19), which is therefore the only unclosed wall quantity: "modelling
+the wall slip is in essence a turbulence wall model" (§4), an alternative to
+supplying the wall stress from a conventional wall model, which the
+authors note could also be done (§2.3). No-slip holds only in the DNS limit
+$\Delta_f^+<1$ (§2.3); at wall-modelled filter sizes the no-slip forcing of
+most IB methods "is not valid" (§1). See
+[wall-modelled LES](/methods/wall-modelled-les.md).
+
+**A priori magnitudes** (§3, Figs. 5–10; Lee & Moser
+[channel](/benchmarks/turbulent-channel-flow.md) DNS at $Re_\tau=5200$
+filtered with a cosine kernel at $\Delta_f^+=50$–300 on a uniform
+post-processing grid of spacing $\Delta_f/16$): the mean streamwise slip is
+$6.93u_\tau$ at $\Delta_f^+=50$ and $13.5u_\tau$ at $\Delta_f^+=300$, growing
+logarithmically; mean wall-normal and spanwise slips are negligible; the
+slip r.m.s. is about $1.5u_\tau$ streamwise, $0.3u_\tau$ spanwise and
+$0.02u_\tau$ wall-normal, and the slip field carries near-wall streaks at
+$\Delta_f^+=50$ and outer-layer structures at $\Delta_f^+=300$. Above
+$y^+\approx\Delta_f^+$ the filtered mean velocity recovers the log law; the
+peak SGS stress grows from $0.24\tau_w$ to $0.57\tau_w$ over the range; the
+residual viscous stress, of compact support within $\Delta_f/2$ of the wall,
+exceeds the filtered viscous stress at every filter size.
+
+**Slip closures** (§4–§5). (i) A **Van Driest slip model**: the slip of the
+volume-filtered Van Driest profile ($\kappa=0.41$, $A^+=26$; Eq. 4.2),
+approximated for $\Delta_f^+\ge100$ by
+$$\frac{\langle u_{\mathrm{slip}}\rangle}{u_\tau}\approx\frac{1}{\varphi_{f,w}}\Big(\frac{1}{2\kappa}\ln\frac{\Delta_f^+}{2}+a_0+b_0\,(\Delta_f^+)^{-n_0}\Big)$$
+(Eqs. 4.5, 5.4, 7.1; page-local constants $(a_0,b_0,n_0)=(0.972,-72.0,0.9523)$
+for the cosine kernel, $0.81\pm0.21$, $-67.5\pm4.5$, $0.92\pm0.03$ across four
+kernels), in "excellent agreement" with the filtered DNS. (ii) A
+**slip-length model** from the exact commutation identity at the wall,
+$$\boldsymbol u_{\mathrm{slip}}=\frac{\varphi_{f,w}}{\partial_n\varphi_f|_w}\Big(\overline{\partial_n\boldsymbol u}\big|_w-\partial_n\bar{\boldsymbol u}\big|_w\Big),\qquad \boldsymbol\ell=\frac{\varphi_{f,w}\,(\boldsymbol\Lambda-1)}{\partial_n\varphi_f|_w}$$
+(Eqs. 4.8, 4.13; $\boldsymbol\Lambda$ the ratio of the mean filtered wall gradient to
+the mean wall gradient of the filtered velocity, per direction), which the
+authors present as a derivation, valid for curved and moving walls whose
+curvature the filter resolves, of the Bose & Moin slip condition that they
+say "suffers from the commutation errors" and handles only planar static
+walls. Fitted on the channel, $\Lambda_y=\Lambda_z=1$ and
+$\Lambda_x=1+0.251(\Delta_f^+)^{0.5385}$, giving
+$\ell_x^+=0.0798(\Delta_f^+)^{1.5385}$ for the cosine kernel (Eqs. 4.25–4.27),
+roughly $\Lambda_x\approx1+0.3(\Delta_f^+)^{0.5}$ and
+$\ell_x^+\approx0.08(\Delta_f^+)^{1.5}$ across kernels; with $\varphi_{f,w}=\tfrac12$
+and $\partial_y\varphi_f|_w=G_1(0)=\pi/(2\Delta_f)$ for the cosine kernel
+($G_1$ the one-dimensional factor of the tensor-product kernel, page-local),
+$0.5\times0.251\times2/\pi=0.0799$ *(compiler check, not in the sources)*.
+$\boldsymbol\Lambda\to(1,1,1)$ and $\boldsymbol\ell\to0$ as $\Delta_f\to0$, recovering no-slip. Cosine,
+triangle, parabolic and triweight kernels change the results little
+(stress profiles within 1% at $\Delta_f^+=300$). (iii) A dynamic slip length
+from the [Germano identity](/methods/dynamic-procedure.md), with the test
+level scaled as $\hat\ell_x=(\hat\Delta_f/\Delta_f)^{n_1+1}\ell_x$ ($n_1$ the
+exponent of $\Lambda_x$) and solved explicitly rather than by least
+squares, is proposed but not tested (§6).
+
+The study is a priori only: no forward IBMLES is run, a posteriori tests
+are deferred, the SGS stress is expected to be closed by existing models
+such as dynamic Smagorinsky, the constants come from a single
+$Re_\tau=5200$, and rough, deforming or strongly separated walls are
+excluded (§4.2, §7).
 
 ## Local modelling height and wall-pressure reconstruction
 
@@ -579,6 +780,42 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
   of $10^4$ kg/m³ with a fluid density of $10^3$ kg/m³ and a density ratio
   of 1, and a time step of $1.15\times10^4$ s (Table 12); Eq. (40) calls a
   profile linear in $r$ parabolic.
+- **Penalization error exponent.** D'Ayer et al. (2026) print the
+  modelling error as $\lVert\boldsymbol U-\boldsymbol U_\eta\rVert=O(\eta_p^{-1/2})$
+  (Eq. 14; $\boldsymbol U_\eta$ the penalized solution, page-local), which
+  grows as $\eta_p\to0$, against their own statement that the
+  penalized solution converges as $\eta_p\to0$; Llorente (2024) recalls the
+  Angot–Bruneau–Fabrie estimate as an error $\propto\eta_p^{1/2}$.
+- **Printed slips (D'Ayer et al.).** With $\mathsf A=\mathrm{diag}(0,\boldsymbol I,1)$
+  as printed, Eq. (23) gives the density $\chi r_p\rho_0$ in the solid,
+  decaying to zero, while the density row of $\boldsymbol s_p$ is zero, so
+  the exact sub-problem keeps $\rho_0$ *(compiler check, not in the
+  sources)*. The channel of 8 roughness patterns of length $\sqrt3\,d$,
+  $d=4k$, $k=\delta/20$, has $L_x=2.77\delta$, i.e. $L_x^+\approx1109$ at
+  $Re_\tau=400$, against the printed 1009; $L_z^+=240$ checks *(compiler
+  check, not in the sources)*. Both values satisfy the minimal-channel
+  condition $L_x^+\ge1000$ that the authors quote. The version read is the
+  HAL submitted manuscript (May 2025), which prints four authors where the
+  published record lists three.
+- **Printed inconsistencies (Rickard & Kasbaoui).** The Fig. 6 caption calls
+  the streamwise slip fluctuations "approximately 10 % or less of mean slip
+  values", while the text gives r.m.s. $1.5u_\tau$ against means of
+  $6.93u_\tau$ and $13.5u_\tau$, i.e. 22% at $\Delta_f^+=50$ and 11% at 300
+  *(compiler check, not in the sources)*. §4.1 calls the Van Driest slip
+  approximation accurate for $\Delta_f^+\ge50$, while Fig. 11(b), Eq. (5.4) and
+  Eq. (7.1) state $\Delta_f^+\ge100$; Eq. (4.5) gives $6.32u_\tau$ at
+  $\Delta_f^+=50$ against the filtered-DNS $6.93u_\tau$, and $13.5u_\tau$ at
+  300 *(compiler check, not in the sources)*. In Eq. (2.25) the bracket adds
+  an acceleration to the divergence of $\boldsymbol T^R+\boldsymbol T^{\mathrm{res}}$,
+  a force per unit volume, so a factor $1/\rho$ is missing there *(compiler
+  check, not in the sources)*.
+- **No-slip forcing or modelled wall law.** Rickard & Kasbaoui (2026) state
+  that the no-slip forcing of most IB methods is not valid at wall-modelled
+  filter sizes and model the filtered slip; Cai et al. (2022), Constant et
+  al. (2024) and Mozaffari et al. (2024) instead impose a wall law at
+  off-wall reconstruction points. The approaches act on different
+  quantities, the first is tested only a priori, and no source compares
+  them.
 
 # Citations
 
@@ -593,3 +830,5 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
 - [Llorente (2024)](/sources/llorente-2024.md) — author accepted manuscript: pp. 2–4, Eqs. (1)–(6) (penalized and conventionally penalized URANS equations, time-scale condition); p. 5, Eq. (7) (artificial velocity); pp. 6–8, Eqs. (8)–(12) (fluid resistance, averaged source, closure, closed system); pp. 8–10, Theorem 1, thermal and compressible extensions.
 - [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md) — §2.3 (direct-forcing IBM for flexible ribbons, Roma kernel, marker condition); §3.2–3.3; §5.1, §5.3 (canopy force equals the averaged IBM force); App. C.
 - [Rismondo et al. (2025)](/sources/rismondo-2025.md) — introduction (IBM-based LES of rotor wakes by Posa et al. recalled; body-fitted meshes used).
+- [D'Ayer et al. (2026)](/sources/dayer-2026.md) — HAL submitted manuscript hal-05075852v1: §1; §2.2 (spectral difference in JAGUAR); §2.3, Eqs. (11)–(15) (Brinkman penalization, error decomposition); §2.4, Eqs. (16)–(23) (stiffness limits, Strang splitting, exact penalization sub-steps); §3.1, Eqs. (24)–(26), Tables 1–2, Figs. 3–5 (cylinder at $Re_D=40$); §3.2, Eqs. (27)–(28), Table 3, Figs. 7–10 (rough minimal channel at $Re_\tau=400$); §4.
+- [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §1 (IB in LES, non-uniform grids, no-slip at WMLES filter sizes); §2.1–2.3, Eqs. (2.1)–(2.27), Fig. 1 (volume filter, commutation identities, residual viscous stress, IB force, wall slip); §3, Figs. 5–10 (a priori channel at $Re_\tau=5200$); §4.1, Eqs. (4.1)–(4.5), Fig. 11 (Van Driest slip); §4.2, Eqs. (4.6)–(4.27), Figs. 12–13 (slip length); §5, Tables 1–2 (kernels); §6, Eqs. (6.1)–(6.9) (dynamic slip length); §7.

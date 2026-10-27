@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 262:105935"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Computers_amp_Fluids_Delassaux_Numerical_analysis_of_unsteady_flow_features_around_a_realis.pdf"
 tags: [hybrid-rans-les, des, rans, separated-flow, grid-requirements]
-timestamp: 2026-10-26T07:38:00Z
+timestamp: 2026-10-26T20:45:00Z
 ---
 
 # Summary
@@ -127,7 +127,7 @@ cited on this page are those of the manuscript.
 | $\Delta_{max}=\max(\Delta_x,\Delta_y,\Delta_z)$ | DES grid scale | not the registry's filter width in general |
 | $\delta$ | $\delta$ | boundary-layer thickness |
 | $r=\Delta_{max}/\delta$, $f_d$, $r_d$ | grid-to-boundary-layer ratio; DDES delay function and its argument | $r_d$ formula not printed |
-| $Re_y=\rho y\sqrt k/\mu$ | $R_y=d\sqrt k/\nu$ (wall-distance turbulent Reynolds number, page-local, as on the [k-ε](/methods/k-epsilon-model.md) and [SST](/methods/k-omega-sst-model.md) pages) | **collision:** not the registry's $Re_y=Uy/\nu$ of explicit wall laws; switch value 200 |
+| $Re_y=\rho y\sqrt k/\mu$ | $R_y=d\sqrt k/\nu$ (wall-distance turbulent Reynolds number, registry §11, as on the [k-ε](/methods/k-epsilon-model.md) and [SST](/methods/k-omega-sst-model.md) pages) | **collision:** not the registry's $Re_y=Uy/\nu$ of explicit wall laws; switch value 200 |
 | $\omega^+_{sub}$, $\omega^+_{log}$ (printed "$w^+$") | viscous-sublayer and log-layer $\omega$ in wall units | $C_{\omega2}$ not printed |
 | $\Delta x^+=u_\tau\Delta x/\nu$ | $\Delta x^+$ | |
 | $\tau$ (Eq. 5) | $\sigma_{ij}$ | viscous stress, not a turbulent stress |

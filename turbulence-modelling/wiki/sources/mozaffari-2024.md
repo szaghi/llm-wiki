@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 514:113269"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Journal_of_Computational_Physics_Mozaffari_Lattice_Boltzmann_k-ω_SST_based_hybrid_RANSLES_simulations_o.pdf"
 tags: [lattice-boltzmann, hybrid-rans-les, k-omega-sst, wall-model, ahmed-body, immersed-boundary]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-26T20:47:00Z
 ---
 
 # Summary
@@ -19,7 +19,7 @@ and two SST-based [hybrid RANS/LES](/definitions/hybrid-rans-les.md) models in a
 research version of the [lattice Boltzmann](/methods/lattice-boltzmann-method.md)
 solver [ProLB](/software/prolb.md): IDDES, a form of
 [detached-eddy simulation](/methods/detached-eddy-simulation.md), and Heinz's
-continuous eddy simulation (CES). ProLB runs a D3Q19 lattice with a hybrid
+[continuous eddy simulation](/methods/continuous-eddy-simulation.md) (CES). ProLB runs a D3Q19 lattice with a hybrid
 recursive regularized collision on octree Cartesian grids. The wall is handled by
 [immersed-boundary](/methods/immersed-boundary-method.md) reconstruction and by
 the explicit algebraic [equilibrium wall model](/methods/equilibrium-wall-model.md)
@@ -88,11 +88,12 @@ identity problem. No hardware, timing or cost figures are given.
 
 The CES modification of the SST dissipation term (Eqs. 33–34), with the
 source's symbols renamed (see the Notation map):
-$$\beta^*\omega k\;\to\;\beta^*\omega k\,\psi_\beta,\qquad \psi_\beta=\beta_{\mathrm{CES}}+L_+^2(1-\beta_{\mathrm{CES}}),\qquad L_+=\frac{C_+\Delta/L_{\mathrm{tot}}}{\big(1+(C_+\Delta/L_{\mathrm{tot}})^3\big)^{1/3}},\qquad L_{\mathrm{tot}}=\frac{\sqrt k}{C_\mu\omega}.$$
+$$\beta^*\omega k\;\to\;\beta^*\omega k\,\psi_\beta,\qquad \psi_\beta=\beta_{\mathrm{CES}}+L_+^2(1-\beta_{\mathrm{CES}}),\qquad L_+=\frac{\Delta_{C+}}{(1+\Delta_{C+}^3)^{1/3}},\quad \Delta_{C+}=C_+\frac{\Delta}{L_{\mathrm{tot}}},\quad L_{\mathrm{tot}}=\frac{\sqrt k}{C_\mu\omega}.$$
 The paper prints neither $C_+$, nor the value of the coefficient written
-$\beta_{\mathrm{CES}}$ here, nor the definition of $\Delta$ used in ProLB.
-For $C_+\Delta/L_{\mathrm{tot}}\to\infty$, $L_+\to1$ and $\psi_\beta\to1$
-(RANS dissipation); for $C_+\Delta/L_{\mathrm{tot}}\to0$,
+$\beta_{\mathrm{CES}}$ here (as on the [continuous eddy simulation](/methods/continuous-eddy-simulation.md)
+page), nor the definition of $\Delta$ used in ProLB.
+For $\Delta_{C+}\to\infty$, $L_+\to1$ and $\psi_\beta\to1$
+(RANS dissipation); for $\Delta_{C+}\to0$,
 $\psi_\beta\to\beta_{\mathrm{CES}}$ *(compiler check, not in the sources)*.
 
 # Printed slips
@@ -131,7 +132,7 @@ $\psi_\beta\to\beta_{\mathrm{CES}}$ *(compiler check, not in the sources)*.
 | $p$, $s$ (Eq. 15) | $p_{\mathrm{wm}}$, $s_{\mathrm{wm}}$ | page-local blending constants of the unified wall law; $p$ is not the pressure |
 | $Re_y=uy/\nu$ | $Re_y$ | §11 |
 | $h_{max}$ | $h$ (maximum cell edge) | cubic cells |
-| $\beta$ in $\psi_\beta$ (CES) | $\beta_{\mathrm{CES}}$ | page-local; **collision** with the SST coefficient $\beta$ |
+| $\beta$ in $\psi_\beta$ (CES) | $\beta_{\mathrm{CES}}$ | page-local, as on the CES page; **collision** with the SST coefficient $\beta$ |
 | $\psi_\beta$, $R=L_+^2$, $L_+$, $L_{tot}$, $\Delta_+$, $\Delta_{C+}$, $C_+$ | same, page-local | CES resolution indicators |
 | $\phi$ (Ahmed slant angle; also wall-function blend, SST generic coefficient) | written out | **collision**: three meanings in the source |
 | $Re_c$, $Re_H$ | $Re_c$, $Re_H$ | chord and body height |
@@ -151,7 +152,7 @@ ProLB web page (author printed "CS") is keyed `cs-2017`, the ERCOFTAC page `erco
 
 # Pages created or updated
 
-Chunk 5 (2026-10-26). This source is cited on:
+Chunk 5 (2026-10-26), cited further in chunk 7. This source is cited on:
 
 - [Ahmed body](/benchmarks/ahmed-body.md)
 - [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)
@@ -159,12 +160,14 @@ Chunk 5 (2026-10-26). This source is cited on:
 - [Hybrid RANS/LES](/definitions/hybrid-rans-les.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)
 - [Log-layer mismatch](/definitions/log-layer-mismatch.md)
+- [Continuous eddy simulation](/methods/continuous-eddy-simulation.md)
 - [Detached-eddy simulation and its delayed and zonal forms](/methods/detached-eddy-simulation.md)
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
 - [Immersed boundary methods](/methods/immersed-boundary-method.md)
 - [k-ε models](/methods/k-epsilon-model.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Lattice Boltzmann methods for turbulent flow](/methods/lattice-boltzmann-method.md)
+- [Wall functions for RANS](/methods/rans-wall-function.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Symbolic-regression turbulence closures"
-description: "Closures whose model terms are explicit algebraic expressions found by a search over expression space (gene-expression programming, sparse and sparse Bayesian regression, deep symbolic regression, PySR), as integrity-basis coefficients or as a scalar multiplier of a model term; covers learned k-ε and SST corrections and tests on separated flows."
+description: "Closures whose model terms are explicit algebraic expressions found by a search over expression space (gene-expression programming, sparse and sparse Bayesian regression, deep symbolic regression, PySR), as integrity-basis coefficients, a scalar multiplier of a model term or an LES subgrid stress; covers learned k-ε and SST corrections and the higher-order gradient model."
 status: established
-aliases: [symbolic regression, PySR, SBL-SpaRTA, SR-CLS, SR-CND, deep symbolic regression, DSR, gene-expression programming, GEP, sparse regression, SpaRTA, explicit algebraic closure discovery, DSRRANS]
-tags: [symbolic-regression, rans, data-driven, machine-learning, separated-flow]
-timestamp: 2026-10-26T15:56:00Z
+aliases: [symbolic regression, PySR, SBL-SpaRTA, SR-CLS, SR-CND, deep symbolic regression, DSR, gene-expression programming, GEP, sparse regression, SpaRTA, explicit algebraic closure discovery, DSRRANS, relevance vector machine, RVM, NGM4, NGM6, equation discovery]
+tags: [symbolic-regression, rans, les, sgs-model, data-driven, separated-flow]
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Symbolic-regression turbulence closures
@@ -13,13 +13,15 @@ timestamp: 2026-10-26T15:56:00Z
 A **symbolic-regression closure** is a turbulence model whose unknown
 terms are explicit algebraic expressions in local flow invariants, found
 by a search over a space of expressions (operators, input variables,
-constants) rather than by fitting a fixed form. In the sources the target
-is the coefficient set $g^{(n)}$ of Pope's integrity-basis expansion of the
-Reynolds-stress anisotropy $b_{ij}$, so the result is an explicit
-non-linear eddy-viscosity model, objective by construction, that can be
-implemented in a RANS code without a machine-learning runtime (Tang et al.
-2023, §I, §IV; see
+constants) rather than by fitting a fixed form. In the RANS sources the
+target is mostly the coefficient set $g^{(n)}$ of Pope's integrity-basis
+expansion of the Reynolds-stress anisotropy $b_{ij}$, so the result is an
+explicit non-linear eddy-viscosity model, objective by construction, that
+can be implemented in a RANS code without a machine-learning runtime (Tang
+et al. 2023, §I, §IV; see
 [tensor-basis neural network](/methods/tensor-basis-neural-network.md)).
+Wu et al. (2025) fit instead a scalar multiplier of a model term, and
+Jakhar et al. (2026) the LES subgrid stress itself (sections below).
 The interpretability of an explicit expression is the reason given for
 the approach; Duraisamy (2021, §VII) adds that interpretable models from
 symbolic regression do not automatically generalize beyond their training
@@ -35,6 +37,7 @@ scenarios.
 | deep symbolic regression, DSR (Petersen et al.) | a recurrent network samples expressions; trained by a risk-seeking policy gradient | read directly: Tang et al. (2023) |
 | PySR (Cranmer) | genetic search over several populations with a complexity penalty | read directly: Wu et al. (2025) |
 | sparse Bayesian regression, SBL-SpaRTA (Cherroud et al. 2022) | sparse Bayesian selection over a dictionary of invariant monomials; Gaussian posteriors of the coefficients | used, as recalled, by Oulghelou et al. (2025) |
+| relevance vector machine, RVM (Tipping) | sparse Bayesian linear regression; basis functions pruned by the uncertainty of their weights | read directly: Jakhar et al. (2026), for an LES subgrid stress |
 
 Tang et al. (2023, §I, §II C 1) contrast DSR with gene-expression
 programming: GEP is "by nature a non-deterministic method", its
@@ -222,6 +225,84 @@ the flat plate and the airfoil are on
 both models improve separated flows similarly, and only SR-CND, inserted
 behind the boundary-layer gate, leaves attached flow at the SST solution.
 
+## Discovering an LES closure: the higher-order gradient model (Jakhar et al. 2026)
+
+[Jakhar et al. (2026)](/sources/jakhar-2026.md) (arXiv v3; the
+Supplemental Material is not in the file read) apply equation discovery to
+the subgrid stress $\tau_{ij}=\overline{u_iu_j}-\bar u_i\bar u_j$ of LES of
+forced two-dimensional turbulence, the only LES application on this page.
+
+**Library and regression (p. 2, Eq. 3).** Each element of $\tau_{ij}$ is
+regressed separately, for each case, on a library of 930 products of
+derivatives of the filtered velocity components (derivative orders up to
+8 in total, powers up to 2) and of material derivatives of the filtered
+vorticity or strain, included to represent memory effects. The relevance
+vector machine minimizes the mean squared error over $n=100$
+filtered-DNS snapshots and prunes the basis functions whose weight
+uncertainty exceeds a threshold $\alpha_{\mathrm{RVM}}$ (page-local); a
+higher threshold keeps more terms. The filter is Gaussian with $\Delta$
+twice the LES grid spacing; 20 independent snapshots are used for testing.
+
+**Selection criterion (pp. 2–3, Fig. 1).** The model is chosen at the
+elbow of an L-curve of an a priori score against $\alpha_{\mathrm{RVM}}$.
+With the correlation coefficient (CC) of $\tau_{ij}$ as score, as in
+Zanna & Bolton and Jakhar et al. (2024) as cited, the elbow returns the
+two-term second-order gradient model. With the authors' physics-informed
+score, the minimum of the CCs of $\tau_{ij}$, of the inter-scale energy
+transfer $P_\tau$ (page-local, the paper's symbol) and of its positive and
+negative parts, the elbow moves to a five-term closure; a nine-term one
+follows at higher thresholds, with negligible gain. Memory terms "never
+emerged".
+
+**The discovered closures (p. 3, Eq. 4)** are the truncations of the
+Taylor expansion of $\tau_{ij}$ in the filter width:
+
+$$\tau_{ij}=\frac{\Delta^2}{12}\frac{\partial\bar u_i}{\partial x_k}\frac{\partial\bar u_j}{\partial x_k}+\frac1{2!}\frac{\Delta^4}{12^2}\frac{\partial^2\bar u_i}{\partial x_k\partial x_l}\frac{\partial^2\bar u_j}{\partial x_k\partial x_l}+\frac1{3!}\frac{\Delta^6}{12^3}\frac{\partial^3\bar u_i}{\partial x_k\partial x_l\partial x_m}\frac{\partial^3\bar u_j}{\partial x_k\partial x_l\partial x_m}+O(\Delta^8),$$
+
+whose first term is the [gradient model](/methods/gradient-model.md)
+(NGM2), the first two NGM4, all three NGM6. The coefficients are those of
+the exact expansion
+$\overline{fg}-\bar f\bar g=\sum_{n\ge1}\frac1{n!}(\Delta^2/12)^n\,\partial^n\bar f\cdot\partial^n\bar g$
+for a Gaussian filter of transfer function $\hat G(k)=\exp(-k^2\Delta^2/24)$
+*(compiler check, not in the sources)*. No coefficient is fitted: only
+$\Delta$ enters, which is the authors' argument that NGM4 is
+"generalizable" (p. 4). In their reading the closures are truncations of
+the non-local deconvolution operator, NGM4 "the minimal local truncation"
+that meets their criteria (p. 5; see
+[scale-similarity model](/methods/scale-similarity-model.md)).
+
+**Tests (pp. 3–4, Figs. 2–4).** Four doubly periodic cases, solved
+pseudo-spectrally (vorticity–streamfunction, Adams–Bashforth and
+Crank–Nicolson): $Re=2\times10^4$ with forcing wavenumbers $(4,0)$, the
+same on a $\beta$-plane with $(4,4)$ (zonal jets), $(25,25)$, and
+$Re=10^5$ with $(25,25)$; DNS on $1024^2$ ($2048^2$ for the last), LES on
+$128^2$ (cases 1–2) and $512^2$ (cases 3–4). A priori, mean $\pm$ standard
+deviation over the four cases:
+
+| Closure | mean energy transfer / filtered DNS | mean enstrophy transfer / filtered DNS |
+|---|---|---|
+| NGM2 | 0 | $1.00\pm0.01$ |
+| NGM4 | $0.62\pm0.04$ | $1.00\pm0.01$ |
+| NGM6 | $0.78\pm0.04$ | $1.00\pm0.01$ |
+| Smagorinsky, $C_s=0.17$ | $-62.24\pm37.80$ | $-3.22\pm1.18$ |
+| dynamic Smagorinsky | $-28.48\pm15.38$ | $-1.49\pm0.45$ |
+| dynamic Leith | $-6.91\pm2.73$ | $-0.37\pm0.06$ |
+
+NGM4 and NGM6 reach a CC near 0.99 for $\tau_{ij}$ and reproduce the
+backscatter of filtered DNS (see
+[energy backscatter](/definitions/energy-backscatter.md)); the
+eddy-viscosity closures, $\nu_t=(C_s\Delta)^2\lvert\bar S\rvert$ and the
+Leith form $\nu_t=(C_l\Delta)^3\lvert\nabla\bar\omega_z\rvert$ (page-local
+$C_l$, $\bar\omega_z$ the filtered 2-D vorticity), with dynamic
+coefficients clipped to $\nu_t\ge0$, are "purely and excessively
+diffusive" (App. D). A posteriori, NGM2 is unstable "for any case and any
+LES resolution"; NGM4 and NGM6 are long-term stable when the LES resolves
+more than 80% of the DNS enstrophy, capture the tails of the vorticity
+PDF and give better short-term forecasts than the eddy-viscosity
+closures, which underestimate the large-scale enstrophy. NGM6 brings no a
+posteriori advantage, "suggesting that in practice, using NGM4 might be
+enough" (pp. 4–5).
+
 ## Sparse Bayesian experts for model blending (Oulghelou et al. 2025)
 
 [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (arXiv v2, §2–3,
@@ -302,8 +383,10 @@ not report a learned expression.
   monomials (§2.1); the open entry on that page records this.
 - **Scalar against tensor targets.** Wu et al. (2025) regress one scalar
   multiplier of a transport-equation term, so their models keep the
-  Boussinesq form; the other closures on this page regress coefficients of
-  the anisotropy basis.
+  Boussinesq form; Tang et al. (2023) and the experts of Oulghelou et al.
+  (2025) regress coefficients of the anisotropy basis, and Jakhar et al.
+  (2026) each component of the LES subgrid stress over a library of
+  derivative products.
 - **Generalization claims of Wu et al. (2025)** rest on two training
   flows and six test geometries (periodic hills at three slopes, the
   NLR-7301 airfoil, the SAE notchback, the Ahmed body, the flat plate, the
@@ -324,6 +407,18 @@ not report a learned expression.
     $U_p-U_{\mathrm{DNS}}$ a relative error.
   - The input of the learned map is written $\omega_i(\boldsymbol S,\boldsymbol R)$
     in §II E, never defined.
+- **Jakhar et al. (2026): what the version read supports.** The
+  definitions of $P_\tau$ and of the enstrophy transfer, the stability
+  runs (Fig. S2) and the generalized Taylor expansion are in the
+  Supplemental Material, absent from the file read. The text states
+  coarse-graining to "4 to 64×" coarser LES grids, while case 4 is also
+  run at $N_x=1024$ against a $2048^2$ DNS, a factor 2 *(compiler check,
+  not in the sources)*. The paper states that the expansion "had not been
+  previously pursued" and that NGM4 is "the first closure to
+  simultaneously excel in both a priori and a posteriori tests" (pp. 4–5);
+  these are the authors' claims. The result concerns 2-D turbulence, where
+  NGM2 transfers no energy between scales; the gradient model in 3-D is
+  treated on its own page.
 - **Symbol clashes in the source.** $\varepsilon$ is both the dissipation
   and the risk factor, $\alpha$ both the learning rate and the hill
   steepness, $\sigma$ both a standard deviation and the sigmoid.
@@ -335,4 +430,5 @@ not report a learned expression.
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3 (gene-expression programming recalled; uncertainty on the periodic hill when trained on a backward-facing step).
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §2.2, Eqs. 16–17, 19–20, Tables 2–4 (PySR set-up, features, rebalancing, learned models); §3.2 (interpretation, cost); §4.2.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §2–2.1, Eqs. 7–10, Table 1 (SBL-SpaRTA experts); §3; §4.2.1, Table 3.
+- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: pp. 1–5, Eqs. 3–4, Figs. 1–4 (library, RVM, criterion, NGM closures, a priori table, a posteriori results, cases); App. B, Eq. 5; App. C (solver); App. D (eddy-viscosity baselines).
 - [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §1, §3.2 (GEP corrections of the earlier model recalled), §4.1, Eq. 10 (length scale from trained expressions), §4.5, Eqs. 23–27 (separation switch as a training candidate).

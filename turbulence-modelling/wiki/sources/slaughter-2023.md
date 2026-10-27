@@ -9,7 +9,7 @@ year: 2023
 venue: "Flow Turbul. Combust. 110:917-944"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Flow_Turbulence_and_Combustion_Slaughter_Large_Eddy_Simulation_of_an_Inverted_Multi-element_Wing_in_G.pdf"
 tags: [implicit-les, transition, high-order, benchmark, spectral-vanishing-viscosity]
-timestamp: 2026-10-26T07:40:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Summary
@@ -89,7 +89,7 @@ kinetic energy (the source's $\hat{\mathbf u}_k$, $E_k$); $t^*=tU_\infty/L_c$.
 14. Mainplane suction-side boundary layer: inflection point near $x/c=0.4$, reversed flow until about $x/c=0.5$, reversed region extending to $y/c\sim0.001$ (§4.1, Fig. 12). **Shown**
 15. Lift spectra (Welch's method): a dominant narrowband mode at $St=60$ on all three elements; $St=140$ and 200 on the mainplane; $St=40$ on all elements, strongest on the first flap; $St=30$ on the second flap only (§4.2, Fig. 13). **Shown**
 16. Surface-pressure variance is largest within and around the bubbles; the maximum of $\mathrm{RMS}(C_p)-\overline{C_p}$ lies at $x/c\sim0.55$ (mainplane) and $\sim0.61$ (first flap) (§4.3, Fig. 14). **Shown**
-17. The spectrum at the mainplane maximum-RMS point "coincides perfectly" with the lift peaks at $St=60$, 140, 200; with almost no upstream pressure fluctuation, "the LSB is causal of these pressure fluctuations - on the mainplane"; for the first flap causality cannot be asserted, but the frequencies are "locked" for both bubbles (§4.3, Fig. 15). **Shown** (inference from coincident peaks)
+17. The spectrum at the mainplane maximum-RMS point "coincides perfectly" with the lift peaks at $St=60$, 140, 200; with almost no upstream pressure fluctuation, "the LSB is causal of these pressure fluctuations - on the mainplane"; for the first flap causality cannot be asserted, but the frequencies are "locked" for both bubbles (§4.3, Fig. 15). **Shown** (causality argued from coincident spectral peaks)
 18. The cross-spectral phase of mainplane and first-flap lift is in phase at $St=40$ and out of phase at $St=60$ (§4.3, Fig. 16; Abstract; §6). **Shown**
 19. The mainplane bubble shows Kelvin–Helmholtz roll-up, bursting and ejection of low-momentum fluid; quasi-periodic streaky structures leave the transition location (§4.3, Figs. 17, 18). **Shown**
 20. On the second-flap pressure side, $St=60$, 140, 200 appear at the leading edge, transition peak ($x/c\sim0.35$) and trailing edge, "probably convected or caused by the changes in blockage/downwash on the upstream elements"; energy at $St=10$–20 at the transition location is attributed to the pressure-side bubble (§4.3, Figs. 19, 20). **Shown**

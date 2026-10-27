@@ -5,7 +5,7 @@ description: "Vreman's static eddy-viscosity model builds the subgrid viscosity 
 status: established
 aliases: [Vreman eddy-viscosity model, Vreman (2004) model, static-coefficient Vreman model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-26T16:26:00Z
 ---
 
 # Vreman model
@@ -68,6 +68,14 @@ not print the value of $C_v$ used in their runs.
 | about 0.17 | the Smagorinsky coefficient | Agrawal et al. (2022), §II.C |
 | 0.08 | static baseline and pretraining target in wall-resolved channel LES | Kim et al. (2022), §III C |
 | about 0.1, "the Smagorinsky constant" | lattice Boltzmann LES of the Ahmed body | Cai et al. (2022), §II.A |
+| 0.1 | compact-difference LES of the transitional Taylor–Green vortex | [Caban et al. (2026)](/sources/caban-2026.md), §2, Eq. (7) |
+
+Caban et al. (2026, §2, Eq. 7) print the model in the index order of
+Agrawal et al. ($\alpha_{lm}=\partial_m\bar u_l$,
+$\beta_{lm}=\Delta^2\alpha_{kl}\alpha_{km}$) and write the stress as
+$-2C_v\sqrt{B_\beta/(\alpha_{lm}\alpha_{lm})}\,\bar S_{ij}$ with
+$C_v=2.5C_s^2$, i.e. $C_v=0.025$ for their $C_s=0.1$ *(compiler check, not
+in the sources)*.
 
 [Blind et al. (2023)](/sources/blind-2023.md) (§2.3, §3, §3.3) use "the
 Vreman model constant" 0.03 for wall-resolved channels, the value of
@@ -177,6 +185,19 @@ $N$ (the paper's $P$), with $N=5$.
   $Re=1600$ ($32^3$ elements, $N=3$): lower peak dissipation rate, higher
   dissipation before the peak and significant dissipation at mid
   wavenumbers. No constant or filter width is printed.
+
+- **Compact-difference Taylor–Green vortex.** [Caban et al. (2026)](/sources/caban-2026.md)
+  (§5.3.1, Figs. 18, 20, 22, Table 4) find Vreman "very similar" to
+  [Smagorinsky](/methods/smagorinsky-model.md) at $Re=1600$ on $64^3$ in a
+  sixth-order compact-difference code. Without numerical filtering both are
+  unstable at $\Delta=2h$ and stable but inaccurate at $\Delta=4h$. With
+  an explicit regularization filter, Vreman at $\Delta=2h$ gives the best
+  eddy-viscosity result of the paper, an energy error at $t=20$ of
+  $4.33\times10^{-2}$ against $4.76\times10^{-2}$ for Smagorinsky, but
+  about twice the $2.23\times10^{-2}$ of [implicit LES](/definitions/implicit-les.md)
+  with the same filter, because the total dissipation is too large. Their
+  scale-similarity and deconvolution models do better (see
+  [scale-similarity models](/methods/scale-similarity-model.md)).
 
 ## Spectral-element LES
 
@@ -315,3 +336,4 @@ computed and subtracted from the mean-stress model.
 - [Duan & Wang (2024)](/sources/duan-2024.md) — §2.4, Eq. (15); §3, Eqs. (26)–(30); §5.1–5.4, Figs. 5–15; §6.
 - [Reddy et al. (2026)](/sources/reddy-2026.md) — preprint of 4 March 2021: §3.2, Eqs. (9a)–(9b); §5.2; §6.2; §7.2; §8.2.
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §II.D; §III.B–III.C, Figs. 1–8, Table II; §IV.B.
+- [Caban et al. (2026)](/sources/caban-2026.md) — §2, Eq. (7); §5.3.1, Figs. 18, 20, 22, Table 4.

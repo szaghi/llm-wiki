@@ -8,7 +8,7 @@ authors: [Eivazi H., Tahani M., Schlatter P., Vinuesa R.]
 year: 2022
 venue: "Phys. Fluids 34:075117"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physics_of_Fluids_Eivazi_Physics-informed_neural_networks_for_solving_Reynolds-averag.pdf"
-tags: [rans, data-driven, neural-network, machine-learning, boundary-layer]
+tags: [rans, data-driven, neural-network, boundary-layer]
 timestamp: 2026-10-25T20:39:00Z
 ---
 

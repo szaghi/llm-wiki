@@ -5,7 +5,7 @@ description: "An LES closure built for the discrete equations actually solved, s
 status: established
 aliases: [filter-consistent closure, discretize-first closure, model-data consistency, computational subgrid stress]
 tags: [les, sgs-model, implicit-les, data-driven, numerical-dissipation]
-timestamp: 2026-10-26T15:54:00Z
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Discretization-consistent closure
@@ -165,6 +165,114 @@ trained closure on the compression factor $J$; they list training over
 several $J$, finite-element formulations, graph convolutions and Fourier
 neural operators as possible remedies for 2D and 3D (§5).
 
+## Filters induced by compact differences and interpolation (Caban et al. 2026)
+
+[Caban et al. (2026)](/sources/caban-2026.md) write the filters of a
+linear compact-difference discretization explicitly, building on van der
+Bos & Geurts, Salvetti & Beux and Boguslawski et al. as they cite them
+(§3.2). Page-local: $a$ an advection speed, $\phi_k$ the Fourier
+coefficient of a 1D periodic field at wavenumber $k$, $\mathcal F_h^{(r)}$
+the filter induced by the discrete $r$-th derivative, defined by
+$\delta^{(r)}_x\phi=\mathcal F_h^{(r)}*\partial^{(r)}_x\phi$ (Eq. 24), and
+$\hat{\mathcal F}_h^{(r)}(k)$ its transfer function, the ratio of the
+discrete to the exact derivative amplitude; for $r=1$ it is the modified
+wavenumber over $k$ (Eqs. 25, 28–29). For a linear scheme on a periodic
+grid the convolution commutes with the derivative,
+$\mathcal F_h^{(1)}*\partial_x\phi=\partial_x(\mathcal F_h^{(1)}*\phi)$, so
+$\mathcal F_h^{(1)}$ is the $\mathcal F_h$ of the computational subgrid
+stress of Beck & Kurz (Eq. 5) for the convective term *(compiler check,
+not in the sources)*.
+
+**What each derivative filter does (§3.2.1, Eqs. 26–27).** The
+semi-discrete advection–diffusion equation with central schemes reads
+
+$$\frac{d\phi_k}{dt}+ia\,\hat{\mathcal F}_h^{(1)}(k)\,k\,\phi_k=-\nu\,\hat{\mathcal F}_h^{(2)}(k)\,k^2\phi_k,$$
+
+so $\phi_k(t)=\phi_k(0)\exp\!\big(-\nu\hat{\mathcal F}_h^{(2)}k^2t\big)\exp\!\big(-ia\hat{\mathcal F}_h^{(1)}kt\big)$:
+the first-derivative filter changes only the phase speed, and the
+second-derivative filter lowers the viscosity of each mode to
+$\nu\hat{\mathcal F}_h^{(2)}\le\nu$. In physical space both filters have
+non-zero weights over the whole periodic stencil, the central one
+dominant and the others decaying with alternating sign (Eq. 30, Fig. 3,
+32 points), for the second-order scheme as for the sixth- and tenth-order
+compact ones. The authors add, citing global spectral analysis, that once
+time integration is included the effective viscosity can exceed $\nu$ in
+some wavenumber ranges (§3.2.1).
+
+**Interpolation filter (§3.2.2, Eqs. 31–35).** On their half-staggered
+grid (code SAILOR), velocities are interpolated to half nodes and back at
+each projection step. For second-order interpolation one step has
+transfer function $\cos(kh/2)$, and the two steps together are the
+trapezoidal filter $(\phi_{i-1}+2\phi_i+\phi_{i+1})/4$, of transfer
+function $\tfrac12+\tfrac12\cos kh=\cos^2(kh/2)$; the authors state that
+the squaring holds for higher-order compact interpolation too. Their
+model of the full numerical filter is the product of the first-derivative
+filter and the squared interpolation filter, and they stress that it is
+an approximation: no single filter represents the first- and
+second-derivative filters jointly (§4.1).
+
+**Use in deconvolution (§4–5).** The authors insert this numerical filter
+into the effective filter of the
+[approximate deconvolution model](/methods/scale-similarity-model.md),
+multiplied by the LES filter, which, to their knowledge, "has not been
+done before" (§1). In LES of the transitional
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $Re=1600$ on
+$64^3$ points:
+
+- *Benefit only for a low-order LES filter.* Including the numerically
+  induced filters in the effective filter helps only when the LES filter
+  is of low order (§5.4.2, §6).
+- *The interpolation filter adds nothing.* With dissipative compact
+  interpolation, deconvolution with the first-derivative filter alone and
+  with the product of it and the squared interpolation filter give
+  "virtually the same" errors, because the interpolation filter acts on
+  low-energy scales; adding the LES filter improves only minimally on
+  the Layton–Lewandowski model (§5.4.2, Table 8).
+- *Exact numerical filter, unstable run.* With spectral interpolation and
+  no regularization, deconvolution with the sixth-order derivative filter
+  and compact LES filters is unstable shortly after the peak of
+  dissipation, which the authors attribute to the amplification of
+  subfilter energy and the aliasing of the deconvolved product (§5.4.2,
+  Table 6).
+- *Effective Reynolds number.* In the laminar Taylor–Green vortex the
+  derivative-induced filters leave the Reynolds number inferred from the
+  energy decay at about its nominal value, while dissipative interpolation
+  or explicit regularization lowers it, by several times for fourth-order
+  compact interpolation (§5.1, Eq. 42, Figs. 10–11). Their conclusion is
+  that "the overall effect of discretization-induced filtering is
+  non-dissipative". Their classification of dissipative interpolation and
+  regularization without a model as implicit LES is on
+  [implicit LES](/definitions/implicit-les.md).
+
+The interpolation results apply, in the authors' words, to algorithms
+with explicit interpolation (staggered or half-staggered grids); collocated
+grids with discrete kinetic-energy-conserving schemes do not have this
+dissipation (§6).
+
+## A contrary stance: filter-agnostic supervised training (Wu & Lele 2026)
+
+[Wu & Lele (2026)](/sources/wu-2026.md) (arXiv v2) share the diagnosis
+and reject the remedy. They agree that the filter of an LES "is
+implicit and is a product of both the grid and the numerical method", and
+that a network trained on box-filtered DNS meets a different stress field
+in the solver (§1, §3). But they argue that reinforcement learning and
+end-to-end differentiable-solver training, citing Kim et al. (2022), Bae
+& Koumoutsakos (2022), Kurz et al. (2023), Sirignano & MacArt (2023) and
+others, learn "the combined effect of solver numerics and physics", and
+that such models are therefore likely "limited in their transferability
+to other solvers" and costlier to train, since LES must run during
+training (§1). Their alternative is supervised training on data filtered
+with several filter shapes that "do not mimic any specific solver's
+transfer function": a box filter, a positive raised-cosine kernel, and a
+box filter followed by the two-thirds dealiasing cutoff. A network trained
+on all three runs, without retraining, in a Fourier-spectral solver with
+dealiasing and in a sixth-order compact finite-difference solver without
+it, and beats the box-only network in both (§5.2.1, §7–8; see
+[neural-network SGS models](/methods/neural-network-sgs-model.md)). It is
+not optimal in either: the authors trace its over-predicted tails of
+enstrophy production in the compact solver to training on a filter (the
+dealiasing one) that does not apply there.
+
 ## Closures built this way
 
 - **Element-local Smagorinsky coefficients in DG.** Beck & Kurz (2023, §V)
@@ -323,6 +431,27 @@ solver.
   [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
   The argument is stated, not tested: no finite-volume inversion is run
   for comparison.
+- **Binding against robustness: what each side prints.** Kurz et al.
+  (2023, §1) call supervised learning of an implicitly filtered DG-LES
+  closure ill-posed and recall that surrogate targets from an explicit
+  filter cause "severe inconsistencies"; Beck & Kurz (2023) and
+  Lozano-Durán & Bae (2023) bind the closure to its solver on purpose.
+  Wu & Lele (2026, §1) call that binding a limit on transferability and
+  train on explicitly filtered data, with several filters. The claims do
+  not collide on one case: the binding side works in DG (Kurz et al.;
+  Beck & Kurz), staggered finite volumes (Agdestein & Sanderse) or charLES
+  (Lozano-Durán & Bae), Wu & Lele in a Fourier-spectral and a sixth-order
+  compact solver; Wu & Lele do not run an in-the-loop closure, and the
+  in-the-loop sources do not run a multi-filter one. The transfer tests
+  that exist are those of Kurz et al. (2023) across resolutions and of
+  Sirignano & MacArt (2023) across two solvers (above); Wu & Lele state
+  the "limited transferability" without a test of their own. No source
+  runs both kinds of closure on one flow, so no contradiction is opened.
+- **"Dissipative" in Caban et al. (2026).** The paper calls the effect of
+  the first-derivative filter "non-dissipative" (§1, §3.2.1), "dissipative
+  … without inducing numerical diffusion" (abstract) and "only dissipative
+  … (not diffusive)" (§5.1). By its Eq. 27 that filter changes only the
+  phase speed; the word "dissipative" is used in two senses there.
 - **Definitions of "implicit LES" differ.** Agdestein & Sanderse (2025,
   §1) call any LES that keeps the DNS equations in their original form and
   adds a closure, whether or not the filter is known, "implicit LES".
@@ -344,3 +473,5 @@ solver.
 - [Kim et al. (2024)](/sources/kim-2024.md) — p. A6-21, Eqs. 4.2–4.3, Table 4 (discretization-error estimate); Table 3; §5.
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §2.3 (blending as a turbulence model, cited), §5.2, §6.3, Fig. 13 (LES without explicit subgrid model, local blending).
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §1 (discretization error in inferred RANS corrections), §4.1, §4.3.2 (lowest grid-converged degree).
+- [Caban et al. (2026)](/sources/caban-2026.md) — §1; §3.2.1, Eqs. 24–30, Fig. 3 (derivative-induced filters); §3.2.2, Eqs. 31–35 (interpolation filter); §4.1 (effective numerical filter); §5.1, Eq. 42, Figs. 10–11 (effective Reynolds number); §5.4.2, Tables 6, 8; §6.
+- [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1 (stance on RL and end-to-end training, overfitting to one filter), §3 (training filters), §5.2.1, §7–8 (three-filter network in two solvers).

@@ -1,18 +1,18 @@
 ---
 type: Benchmark
 title: "Circular-cylinder wake"
-description: "Flow past a circular cylinder, chiefly at Re_D=3900 in the shear-layer transition regime, with separation, shear-layer roll-up and a turbulent wake: the test of neural-network SGS models across grids and Reynolds numbers, of high-order PANS against unmodelled under-resolved simulation, and of immersed-boundary lattice Boltzmann numerics; at Re_D=80 the laminar validation of mean-flow data assimilation on a discontinuous Galerkin discretization."
+description: "Flow past circular cylinders, chiefly at Re_D=3900, with separation, shear-layer roll-up and a turbulent wake: it tests neural-network SGS models, high-order PANS and immersed-boundary numerics; tandem cylinders at Re_D=1.6e5 test a Reynolds-stress-based IDDES, and laminar cylinders at Re_D 40 to 100 validate immersed boundaries and data assimilation."
 status: established
-aliases: [cylinder wake, flow over a circular cylinder, flow past a circular cylinder, cylinder at Re_D=3900]
-tags: [benchmark, separated-flow, les, neural-network, pans, immersed-boundary, field-inversion]
-timestamp: 2026-10-26T15:57:00Z
+aliases: [cylinder wake, flow over a circular cylinder, flow past a circular cylinder, cylinder at Re_D=3900, tandem cylinders, tandem cylinder benchmark]
+tags: [benchmark, separated-flow, les, neural-network, pans, immersed-boundary, field-inversion, des, aeroacoustics]
+timestamp: 2026-10-26T20:47:00Z
 ---
 
 # Circular-cylinder wake
 
 A uniform stream of velocity $U_\infty$ passes a circular cylinder of
 diameter $D$; the Reynolds number is $Re_D=U_\infty D/\nu$. In the regime
-used by the sources ($Re_D$ of a few thousand to $10^4$) the boundary layer
+used by most sources ($Re_D$ of a few thousand to $10^4$) the boundary layer
 is laminar and separates on the cylinder, the separated shear layers roll
 up through a Kelvin–Helmholtz instability and become turbulent, and vortices
 shed into a turbulent wake. The case is a bluff body without a geometric
@@ -158,6 +158,65 @@ $Re_D=10{,}000$, computed as LES with a shear-improved
 [Smagorinsky model](/methods/smagorinsky-model.md): Strouhal numbers 0.185
 and 0.101 against 0.175 and 0.103 of Breuer et al. (§3.4, Table 13).
 
+**Tandem cylinders for hybrid RANS/LES.** [Wang et al. (2021)](/sources/wang-2021-l.md),
+§3.2, use the tandem-cylinder configuration (two cylinders of diameter $D$
+in line, spacing $L=3.7D$, with the experiments of Jenkins et al.
+and Neuhart et al. and the grid of the ATAAC project) at $M=0.1285$ and
+$Re_D=1.6\times10^5$ to compare an IDDES built on the SSG/LRR-$\omega$
+[Reynolds-stress model](/methods/reynolds-stress-model.md) (RSM-IDDES)
+with SST-IDDES (see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)). The
+2D grid of 92,500 cells is extruded over 120 spanwise layers (11.1 million
+cells), with pressure far field, no-slip walls and periodic span; the
+solver is a cell-centred second-order finite-volume code with an
+adaptive-dissipation Roe scheme.
+
+- Mean $C_p$ on both cylinders is "almost identical" for the two models and
+  agrees with experiment (Fig. 4). On the downstream cylinder SST-IDDES
+  slightly over-predicts the peaks of the RMS pressure coefficient at the
+  vortex-impingement angles $45^\circ$ and $315^\circ$; RSM-IDDES agrees
+  better, including the separation positions near $110^\circ$ and
+  $250^\circ$ (Fig. 5).
+- SST-IDDES delays the onset of the shear-layer instability; RSM-IDDES
+  gives a shorter shear layer and more small-scale structures, closer to
+  the PIV (Fig. 6). On the separate launch-vehicle test of the same paper
+  the authors find the RSM-IDDES subgrid stresses smaller than those of
+  SST-IDDES and, following Spalart, link smaller subgrid stress to a faster
+  Kelvin–Helmholtz instability (§3.3).
+- Primary shedding frequency and sound pressure level at the upstream (A)
+  and downstream (B) cylinder (Table 1):
+
+| | SST-IDDES | RSM-IDDES | experiment |
+|---|---|---|---|
+| frequency (Hz) | 172 | 176 | 179 (A), 180 (B) |
+| SPL at A (dB) | 115.6 | 114.3 | 116.5 |
+| SPL at B (dB) | 137.6 | 136.8 | 138.6 |
+
+**Laminar cylinder for a high-order immersed boundary.**
+[D'Ayer et al. (2026)](/sources/dayer-2026.md) (read in the submitted
+manuscript), §3.1, validate a volume-penalization
+[immersed boundary method](/methods/immersed-boundary-method.md) in the
+[spectral difference](/methods/spectral-difference-method.md) code JAGUAR
+on the steady 2D cylinder at $Re_D=40$ and $M=0.2$, polynomial degree
+$N=2$, against a body-fitted run of the same code. The domain is
+$[-30,50]\times[-30,30]$ in units of $D$, with near-wall cells of $0.01D$; the body-fitted mesh has 182,000 cells
+(1.63 million solution points), the immersed one 263,000 (2.37 million)
+(Table 1). Values in Table 2:
+
+| | recirculation length (printed $L/D$) | separation angle | $C_D$ |
+|---|---|---|---|
+| Kou et al. (flux reconstruction, as reported) | 2.27 | $52.0^\circ$ | 1.52 |
+| Choi et al. (as reported) | 2.27 | $52.0^\circ$ | 1.52 |
+| JAGUAR body-fitted | 2.27 | $52.2^\circ$ | 1.55 |
+| JAGUAR immersed boundary | 2.25 | $52.1^\circ$ | 1.54 |
+
+Body-fitted and immersed values differ by less than 1%. The wall $C_p$
+agrees closely; the wall vorticity of the immersed run oscillates near the
+cylinder, which the authors attribute to cells cut by the discontinuous
+mask, inside which a polynomial cannot represent the jump (a Runge
+phenomenon) (Figs. 3–5). The immersed $C_D$ is the volume integral of the
+penalization force (Eq. 26).
+
 **Unseen geometry for adjoint-trained closures.** As reported on
 [model-consistent training](/methods/model-consistent-training.md),
 [Sirignano & MacArt (2023)](/sources/sirignano-2023.md), §6, run their
@@ -229,6 +288,22 @@ both lean on Parnaudeau et al. for reference data.
 - The cylinder of [Cheylan et al. (2023)](/sources/cheylan-2023.md) at
   $Re_D=100$ is laminar; it tests immersed-boundary numerics, not a
   turbulence model.
+- The cylinder of [D'Ayer et al. (2026)](/sources/dayer-2026.md) at
+  $Re_D=40$ is steady and laminar; like that of Cheylan et al. it tests
+  immersed-boundary numerics. Its Table 2 prints identical values for Kou
+  et al. and Choi et al.; the paper does not say whether the second set is
+  taken from the first. §3.1 calls the separation angle $\theta$, Table 2
+  $\alpha$.
+- [Wang et al. (2021)](/sources/wang-2021-l.md) state that the pressure
+  fluctuation magnitude is "captured well by both DDES within 1.8% error
+  margin" (§3.2): both methods are IDDES, and the RSM-IDDES level at A,
+  114.3 dB against 116.5 dB, differs by 1.89% *(compiler check, not in the
+  sources)*. The text compares the shedding frequency with "experimental
+  data (180 Hz)", while Table 1 gives 179 Hz at A and 180 Hz at B.
+- The tandem cylinders at $Re_D=1.6\times10^5$ lie far above the single
+  cylinders of the other sources ($Re_D\le10^4$), and the downstream
+  cylinder sits in the wake of the upstream one, so its pressure loads are
+  set by vortex impingement rather than by its own separation.
 
 # Citations
 
@@ -237,3 +312,5 @@ both lean on Parnaudeau et al. for reference data.
 - [Cheylan et al. (2023)](/sources/cheylan-2023.md) — §3.1, Tables 2–3; §3.4, Table 13.
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §6, Figs. 13–14.
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §2.3; §4.1, Figs. 4–6.
+- [Wang et al. (2021)](/sources/wang-2021-l.md) — §2.4; §3.2, Table 1, Figs. 3–6; §3.3.
+- [D'Ayer et al. (2026)](/sources/dayer-2026.md) — submitted manuscript: §3.1, Eq. 26, Tables 1–2, Figs. 3–5.

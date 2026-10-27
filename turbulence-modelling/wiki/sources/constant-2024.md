@@ -158,7 +158,7 @@ and no unparseable item.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-26). This source is cited on:
+Chunk 5 (2026-10-26), cited further in chunk 7. This source is cited on:
 
 - [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)
 - [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)
@@ -168,6 +168,7 @@ Chunk 5 (2026-10-26). This source is cited on:
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
 - [Immersed boundary methods](/methods/immersed-boundary-method.md)
 - [Mesh adaptation for turbulent-flow simulation](/methods/mesh-adaptation.md)
+- [Wall functions for RANS](/methods/rans-wall-function.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)

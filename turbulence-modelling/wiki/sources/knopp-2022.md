@@ -9,7 +9,7 @@ year: 2022
 venue: "Flow Turbul. Combust. 109:571-601"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Flow_Turbulence_and_Combustion_Knopp_An_Empirical_Wall_Law_for_the_Mean_Velocity_in_an_Adverse_Pr.pdf"
 tags: [rans, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-25T19:43:00Z
+timestamp: 2026-10-26T20:44:00Z
 ---
 
 # Summary
@@ -93,7 +93,7 @@ identity problem.
 - **Name spelling.** "Spangenberg" in the running text and the Table 1 acronyms, "Sprangenberg" in the reference list and the Table 1 reference column.
 - **Fig. 12 caption.** "(left)" appears twice.
 - **Overloaded symbols.** In §6.1.1 $s$ is both the streamwise coordinate and the $Re_\tau$ exponent. The $\lambda$ of Telbany & Reynolds in §1 and the $\lambda$ of Eq. (10) are different quantities.
-- **Reference list.** Maciel et al. (2018) prints the author list "Maciel, Y., Wei, T., Simens, A.G.G.M.P.". Perry (1966) prints "presssure" in its title. Several page fields ("17–132", "30–136", "3–1311", "051205–115", "105102–1") look like mangled article numbers.
+- **Reference list.** Maciel et al. (2018) prints the author list "Maciel, Y., Wei, T., Simens, A.G.G.M.P.". Perry (1966) prints "presssure" in its title. Several page fields are printed in irregular forms ("17–132", "30–136", "3–1311", "051205–115", "105102–1").
 
 # Notation map
 
@@ -134,7 +134,7 @@ unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25). This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunk 7. This source is cited on:
 
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
 - [Wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)
@@ -142,3 +142,4 @@ Chunk 2 (2026-10-25). This source is cited on:
 - [Law of the wall](/definitions/law-of-the-wall.md)
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
+- [Wall functions for RANS](/methods/rans-wall-function.md)

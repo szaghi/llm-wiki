@@ -3,9 +3,9 @@ type: Property
 title: "Pressure-equilibrium preservation"
 description: "A scheme is pressure-equilibrium preserving when uniform pressure and velocity stay uniform under density variations; for a general equation of state, evolving total or internal energy makes this exact only with a discrete chain rule (second order at best), while evolving pressure makes it exact at the price of total-energy conservation."
 status: established
-aliases: [PEP, pressure equilibrium preserving scheme, KGP-Pt, KGP-PT scheme, pressure-equilibrium-preserving split form]
+aliases: [PEP, pressure equilibrium preserving scheme, KGP-Pt, KGP-PT scheme, pressure-equilibrium-preserving split form, CDHD, central differential flux with high-order dissipation, primitive-variable hybrid scheme]
 tags: [pressure-equilibrium, kinetic-energy-preserving, compressible, real-gas, numerical-dissipation, dns]
-timestamp: 2026-10-26T07:42:00Z
+timestamp: 2026-10-26T20:44:00Z
 ---
 
 # Pressure-equilibrium preservation
@@ -169,6 +169,77 @@ Table 2).
   no deviation. There "pressure oscillations are mitigated by physical
   viscosity and standard KEP schemes can be profitably applied" (§4.3, §5).
 
+## Primitive-variable hybrids for transcritical flow
+
+[Xu et al. (2026)](/sources/xu-2026.md) also evolve the pressure where
+the flow is smooth, for inviscid real-gas (Peng–Robinson nitrogen) flow
+without turbulence. Their premise (§1) is that conservative schemes
+"often generate severe unphysical pressure oscillations" at transcritical
+interfaces, while non-conservative formulations (double flux, pressure
+evolution) "come at the cost of energy conservation error", which can
+misplace shocks; fully conservative PEP schemes (Fujiwara et al., Terashima
+et al., and Bernades et al. 2023) are judged "not easily extended to general
+transcritical flows", and the DG $L^2$-projection approach of Ching et al.
+"can still result in small deviations from pressure equilibrium" (§1; these
+are the authors' judgements, not tested). Their scheme is a hybrid (§3):
+
+- in cells flagged by a pressure-ratio sensor built on the
+  primitive-variable Riemann solver (threshold 0.05 on the interface
+  pressure ratio with a compressive wave speed, Eq. 18), a conservative
+  finite-volume update with fifth-order [WENO](/methods/weno-scheme.md)
+  reconstruction of the primitive variables and a real-gas Roe flux;
+- elsewhere a primitive update of $(\rho,u,p)$, whose third row is the
+  pressure equation $\partial_tp+u\,\partial_xp+\rho c^2\partial_xu=0$,
+  discretized by the **central differential flux with high-order
+  dissipation (CDHD)**: a two-point central difference of the WENO-5
+  interface states, multiplied by the quasi-linear matrix at the cell
+  average, plus an upwind dissipation built from the path-integral
+  fluctuations of the Dumbser–Osher–Toro solver evaluated on the
+  high-order interface jump (§3.5, Eqs. 20–23).
+
+By a formal Taylor argument, with $h$ the uniform cell size, the interface
+jump is $O(h^5)$, the dissipation term $O(h^4)$ and the central term
+$O(h^2)$, so
+the scheme is second order in smooth flow, the WENO-5 interface accuracy
+not raising the order of the central difference (§4, Eqs. 24–41; the
+expansion assumes no eigenvalue sign change along the integration path).
+In periodic advection of a transcritical "droplet" (512 points, ten
+traversals) the primitive update keeps velocity and pressure uniform, and
+the relative total-energy error at the end is about $3.95\times10^{-4}$,
+against about 10% for a first-order primitive Dumbser–Osher–Toro scheme
+(§5.1.1–5.1.2, Figs. 2–3); the abstract's "two order of magnitude"
+reduction "compared to traditional primitive-variable approaches" rests on
+that first-order comparator only. Without the dissipation term the central
+primitive update develops density and temperature oscillations that "blow
+up the simulation quickly" (600 steps at CFL 0.8, §5.1.4, Fig. 5). A
+two-dimensional droplet ($151\times151$ cells) keeps its shape and uniform
+pressure and velocity (§5.3, Fig. 7, contour plots only).
+
+The trade is the one Bernades et al. (2023) identify for KGP-Pt: exact
+pressure equilibrium from evolving the pressure, a total-energy error that
+decays with resolution (§5.1.3, Table 1, observed order approaching 2 for
+the total energy), and a conservative scheme kept for shocks.
+
+**Pressure-equilibrium-preserving fluxes in turbulence runs.**
+[Brillon & Nadarajah (2026)](/sources/brillon-2026.md), §3.1.6, include
+Ranocha's modification of the Chandrashekar flux, which is
+entropy-conserving, kinetic-energy preserving and PEP, among the two-point
+fluxes of their split-form flux reconstruction; on the viscous Taylor–Green
+vortex at $M_\infty=0.1$ it is "nearly indistinguishable" from the fluxes
+without the PEP property. [Aiello et al. (2026)](/sources/aiello-2026.md),
+§3.2 and Table 1, list Ranocha's flux as PEP, exactly
+[entropy-conserving](/properties/entropy-conservation.md) for a calorically
+perfect gas but not for a thermally perfect one; in their Mach 5 channel
+DNS of CO$_2$ it lies between the entropy-conserving and the
+non-entropy-conserving schemes (§4.2, Table 3). They also find that the
+discretization of the pressure term of the momentum equation matters: the
+entropy-conserving scheme of Gouasmi et al., whose pressure term is
+$R\{\!\{\rho\}\!\}/\{\!\{1/T\}\!\}$ instead of $\{\!\{p\}\!\}$
+($R$ the gas constant, page-local), differs from EC-TP by 5.25% in the
+streamwise Reynolds stress (max-norm relative difference) at Mach 5 (§4.2, Table 3), so that "appropriate
+thermodynamic coupling in the pressure treatment" is, with entropy
+consistency, "essential" (§5).
+
 ## Qualifications
 
 - The analysis is for second-order centred differences in one dimension;
@@ -189,7 +260,22 @@ Table 2).
   Table 2 gives $N_f=1$ for the F4 filter, whose three coefficients need
   $N_f=2$ in Eq. (29) *(compiler check, not in the sources)*. The PEP-IG row of Table 1 lists a pressure-equation
   entry although that scheme evolves internal energy.
+- Xu et al. (2026) is an arXiv preprint (v1) of an inviscid one- and
+  two-dimensional study; it has no viscous term and no turbulence. Printed
+  slips: §5.1.3 states that "least-squares fits over the three finest
+  meshes yield convergence rates of $r=(2.17,2.17,2.21)$", values equal to
+  the finest-pair rates of Table 1 (2.1740, 2.1740, 2.2075), whereas a
+  least-squares slope over the three finest grids of Table 1 gives about
+  2.02, 2.02 and 2.05 *(compiler check, not in the sources)*; §3 calls the
+  quasi-linear matrix "the Jacobian of the inviscid flux written in
+  primitive variables", which it is not (it is the primitive-variable
+  matrix of Eq. 3) *(compiler check, not in the sources)*; the $\pm$
+  labels of the interface states in §3.4 and §4.1 are the opposite of
+  those of §3.2.
 
 # Citations
 
+- [Xu et al. (2026)](/sources/xu-2026.md) — arXiv 2508.21599v1: §1 (conservative against primitive formulations, prior PEP schemes); §3, §3.4–3.5, Eqs. (18)–(23) (hybrid, PVRS sensor, CDHD); §4, Eqs. (24)–(41) (truncation analysis); §5.1–5.3, Table 1, Figs. 2–7.
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §3.1.6, Fig. 16 (Chandrashekar–Ranocha PEP flux on the Taylor–Green vortex).
+- [Aiello et al. (2026)](/sources/aiello-2026.md) — §3.2, Table 1 (Ranocha PEP; Gouasmi pressure term); §4.2, Table 3; §5.
 - [Bernades et al. (2023)](/sources/bernades-2023.md) — §1 (definition, requirements); §2.1, Eqs. (2)–(4) (pressure equation); §3.1, Eqs. (8)–(13) (semi-discrete framework, split forms, KEP family); §3.1.2, Eqs. (14)–(28) (induced pressure and energy equations, chain rule, CR class, KGP-Pt); §3.1.3, Table 1; §3.2, Table 2 (comparison schemes); §4.1, Figs. 1–3; §4.2, Figs. 4–7; §4.3, Figs. 8–10; §5.

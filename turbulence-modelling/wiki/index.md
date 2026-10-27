@@ -9,7 +9,7 @@ turbulence-modelling bibliography of 2017–2026: Reynolds-averaged closures
 and transition models, large-eddy simulation and its subgrid-scale models,
 wall models, hybrid RANS/LES, data-driven and learned closures, the
 high-order discretizations and codes used for scale-resolving simulation,
-direct numerical simulation, and MHD turbulence.
+direct numerical simulation, turbulent combustion, and MHD turbulence.
 
 **Start here:** the [Notation registry](/notation.md), which is normative for
 every page ($\langle\cdot\rangle$ the Reynolds average, $\bar\cdot$ the LES
@@ -20,7 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–6 of 7 ingested (120 of the 134 sources planned; the
+**Corpus:** chunks 1–7 of 8 ingested (140 of the 160 sources planned; the
 archive is still growing). Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
@@ -86,7 +86,16 @@ SGS model, artificial viscosity and shock-capturing comparisons for the
 supersonic Taylor–Green vortex, the GPU code GALÆXI, wall-modelled LES with
 spectral elements, LES of dynamic stall, canopy flow and wind-turbine noise,
 exascale DNS of isotropic turbulence, and bulk viscosity in compressible
-MHD turbulence.
+MHD turbulence. Chunk 7 (2021–2026 papers): the Wilcox $k$-$\omega$ model and
+wall functions in high-order RANS, RSM-based IDDES, continuous eddy
+simulation and PITM, tip-leakage vortices, supersonic combustion with
+flamelets, explicit modal filtering, numerically induced filters and
+approximate deconvolution, higher-order gradient models and multi-filter
+training of neural closures, the sigma model, volume-filtered immersed
+boundaries with slip-wall models, spectral difference and nonlinearly
+stable flux reconstruction, entropy-conservative schemes for thermally
+perfect gases, DG error estimation and anisotropic mesh adaptation, and
+shock-capturing schemes for real gases and kinetic equations.
 
 ## Reading guide
 
@@ -98,6 +107,7 @@ MHD turbulence.
 
 **2. RANS and transition.**
 [Spalart–Allmaras model](/methods/spalart-allmaras-model.md),
+[Wilcox k-ω model](/methods/k-omega-model.md),
 [k-ω SST model](/methods/k-omega-sst-model.md),
 [k-ε models](/methods/k-epsilon-model.md),
 [differential Reynolds-stress models](/methods/reynolds-stress-model.md),
@@ -118,6 +128,8 @@ MHD turbulence.
 [fractional SGS model](/methods/fractional-sgs-model.md),
 [WALE model](/methods/wale-model.md),
 [residual-based dynamic SGS model](/methods/residual-based-dynamic-sgs-model.md),
+[sigma model](/methods/sigma-model.md),
+[explicit modal filtering](/methods/explicit-modal-filtering.md),
 [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md),
 [anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md);
 [energy backscatter](/definitions/energy-backscatter.md),
@@ -134,7 +146,8 @@ MHD turbulence.
 [compressible velocity transformations](/definitions/compressible-velocity-transformation.md) and the
 [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md),
 [machine-learning wall models](/methods/machine-learning-wall-model.md),
-[building-block-flow wall model](/methods/building-block-flow-wall-model.md);
+[building-block-flow wall model](/methods/building-block-flow-wall-model.md),
+[wall functions for RANS](/methods/rans-wall-function.md);
 [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md),
 [log-layer mismatch](/definitions/log-layer-mismatch.md),
 [boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md).
@@ -143,6 +156,7 @@ MHD turbulence.
 [Hybrid RANS/LES](/definitions/hybrid-rans-les.md) →
 [partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md),
 [active model split](/methods/active-model-split.md),
+[continuous eddy simulation](/methods/continuous-eddy-simulation.md),
 [detached-eddy simulation](/methods/detached-eddy-simulation.md).
 
 **6. Data-driven closures.**
@@ -170,6 +184,9 @@ MHD turbulence.
 [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md),
 [continuous-Galerkin spectral elements](/methods/spectral-element-method.md),
 [geometric conservation law](/properties/geometric-conservation-law.md),
+[entropy conservation](/properties/entropy-conservation.md),
+[spectral difference method](/methods/spectral-difference-method.md),
+[method of manufactured solutions](/methods/method-of-manufactured-solutions.md),
 [multi-resolution independent simulations](/methods/multi-resolution-independent-simulations.md),
 [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md),
 [WENO and hybrid shock-capturing schemes](/methods/weno-scheme.md),
@@ -209,6 +226,7 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [Imperial front wing](/benchmarks/imperial-front-wing.md),
 [ERCOFTAC T3 flat plates](/benchmarks/ercoftac-t3-flat-plate.md),
 [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md),
+[Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md),
 [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md),
 [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md),
 [turbine cascades](/benchmarks/turbine-cascade.md),

@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Rev. E 105:065206"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physical_Review_E_Davidovits_Turbulence_generation_by_shock_interaction_with_a_highly_non.pdf"
 tags: [compressible, implicit-les, anisotropy, astrophysics]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Summary
@@ -38,7 +38,7 @@ radius; six 3D runs supplement it.
 The results are collected on
 [shock-generated turbulence](/results/shock-generated-turbulence.md). The
 post-shock velocity dispersion follows a scaling inspired by linear
-Richtmyer–Meshkov theory, $\sigma_v\proptoA_\sigma U_s$ with a pre-shock
+Richtmyer–Meshkov theory, $\sigma_v\propto A_\sigma U_s$ with a pre-shock
 "average Atwood number" $A_\sigma$, times a dimensional-analysis factor
 $r_v^{1/3}$ in the void radius. The turbulent Mach number obeys the same
 law with the shock speed replaced by the shock Mach number relative to the
@@ -68,7 +68,7 @@ the Fig. 6 caption inconsistency below may have been corrected in print.
 3. Doubling the resolution in each direction for a subset of 2D cases leaves the reported scalings unchanged; for $r_v\approx45\ \mu$m, $(\sigma_\rho/\langle\rho\rangle)_0\sim1.05$, $M_s\sim18$ the analysis-region averages change by 0.6%–2.9% depending on the quantity (§II A). **Shown**
 4. In a 3D run ($r_v=90\ \mu$m, $(\sigma_\rho/\langle\rho\rangle)_0\sim0.9$, $M_s\sim18$) the PDF of the fluctuating speed is close to a Maxwell–Boltzmann distribution set by $\langle\sigma_v\rangle_{\mathrm{AR}}$, "the velocity distribution observed for fully-developed turbulent flows, even at high Mach number" (Fig. 3b, citing Federrath [34]). **Shown** / **Stated**
 5. The transverse velocity spectra are broad, with a peak at the mode number set by the void diameter, $n_\perp\approx11$ for $r_v=90\ \mu$m and $\approx8$ for $r_v=120\ \mu$m (Fig. 3c). **Shown**
-6. The post-shock velocity dispersion follows the linear-Richtmyer–Meshkov-inspired proportionality $\sigma_v\proptoA_\sigma U_s$, with $A_\sigma=(\sigma_\rho/\langle\rho\rangle)_0/[1+(\sigma_\rho/\langle\rho\rangle)_0]$, as Inoue et al. [4] observed for young supernova remnants (§III, Fig. 4). **Shown**
+6. The post-shock velocity dispersion follows the linear-Richtmyer–Meshkov-inspired proportionality $\sigma_v\propto A_\sigma U_s$, with $A_\sigma=(\sigma_\rho/\langle\rho\rangle)_0/[1+(\sigma_\rho/\langle\rho\rangle)_0]$, as Inoue et al. [4] observed for young supernova remnants (§III, Fig. 4). **Shown**
 7. The void radius affects the dispersion; a dimensional argument (energy injection rate $\sim u^3/l$, comparable injection, forcing scale $\propto r_v$) suggests $\sigma_v\propto r_v^{1/3}$, and the 2D suite is fitted by $\langle\sigma_{v,2D}\rangle_{\mathrm{AR}}=0.52(r_v/45)^{1/3}A_\sigma U_s$ (Eq. 2; $r_v$ in microns, velocities in km/s). The coefficient is "chosen to approximately fit the data" and depends on set-up choices such as the averaging window; "it is possible there is some alternate explanation" (§III). **Shown** (fit) / **Derived** (dimensional hypothesis)
 8. For a given drive the shock speed is relatively insensitive to $r_v$, consistent with Kim et al. [35] (§III). **Shown**
 9. The 3D runs follow the scalings of Eq. 2 with a coefficient $\sim0.6$; the authors cannot firmly attribute the difference to geometry rather than statistical variation (§III). **Shown**

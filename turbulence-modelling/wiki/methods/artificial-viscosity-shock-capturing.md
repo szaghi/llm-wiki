@@ -5,7 +5,7 @@ description: "Artificial-viscosity shock capturing adds a dissipative term, swit
 status: established
 aliases: [artificial viscosity, localized artificial diffusivity, LAD, von Neumann–Richtmyer artificial viscosity, viscous pressure, Persson–Peraire artificial viscosity, entropy-stable artificial viscosity]
 tags: [shock-capturing, numerical-dissipation, dg, compressible, implicit-les, entropy-stable]
-timestamp: 2026-10-26T15:48:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Artificial-viscosity shock capturing
@@ -98,6 +98,23 @@ $0.5\Delta\,\big\||\boldsymbol u|+c\big\|_\infty$, designed to stabilize
 high-order Galerkin solvers at sharp gradients and used "as a by-product" as
 a subgrid model.
 
+**Sensor-switched Laplacian AV in steady high-order RANS.** In the modal DG
+discretization of CODA used by [Schotte et al. (2026)](/sources/schotte-2026.md)
+for adaptive steady RANS (Spalart–Allmaras, negative variant), the transonic
+cases (RAE2822 airfoil, ONERA M6 wing) are stabilized by a Laplacian
+artificial viscosity driven by the Persson–Peraire sensor with the
+calibration of Glaubitz et al., the same sensor and calibration as in
+CODA's LAD above, combined with the positivity-preserving limiter of Wang
+et al., which rescales the polynomial coefficients to keep pressure and
+density positive when the cell averages are (§2.2, §4.3). They run the
+ONERA M6 wing at degree $N=1$ only, because systematic residual convergence
+of high-order steady implicit computations with shocks is "problematic" and
+non-converged solutions corrupt the error estimators of their
+[mesh adaptation](/methods/mesh-adaptation.md) (§4.5), and they name
+$hp$-adaptation, keeping $N=1$ around shocks and raising $N$ in smooth
+regions of high error, as a perspective (§4.5, §5). No AV formula or
+coefficient is printed, and the AV's own effect is not assessed.
+
 **Artificial bulk viscosity in finite volumes and ALE codes.** The
 [charLES](/software/charles.md) solver adds an artificial bulk viscosity at
 discontinuities ([Griffin et al. 2023](/sources/griffin-2023.md), §4), and
@@ -127,7 +144,7 @@ Chapelier et al. (2024) compare seven high-order solvers on the supersonic
 $M_0=1.25$) at $64^3$ to $512^3$ degrees of freedom against a $2048^3$
 sixth-order TENO reference, all without subgrid model. They rank shock
 capturing by the dilatational dissipation
-$\varepsilon_d\propto\int\mu(\nabla\cdot\boldsymbol u)^2$ (page-local): low
+$\varepsilon_d\propto\int\mu(\nabla\cdot\boldsymbol u)^2$ (registry §11; $\varepsilon_s$ the solenoidal part): low
 $\varepsilon_d$ marks strong capturing with smooth thick shocks, high and
 oscillating $\varepsilon_d$ sharp shocks with Gibbs oscillations (§IV.A,
 Fig. 6). Findings:
@@ -173,6 +190,9 @@ Fig. 6). Findings:
   forms, codes and tests, so they are not recorded as a contradiction.
 - Cernetic et al.'s recommended coefficients are empirical ("from our
   experience"), with no sensitivity study printed.
+- Schotte et al. (2026, §4.3) print "the artificial viscosity method
+  described in is employed", with the cross-reference missing; their
+  artificial viscosity is described in §2.2.
 
 # Citations
 
@@ -184,3 +204,4 @@ Fig. 6). Findings:
 - [Reddy et al. (2026)](/sources/reddy-2026.md) — preprint of 4 March 2021: §1, §3.3, Eqs. (10)–(14) (residual-based diffusivity with upwind cap as stabilization).
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §4 (artificial bulk viscosity in charLES).
 - [Davidovits et al. (2022)](/sources/davidovits-2022.md) — §II A (artificial viscosity, no physical viscosity).
+- [Schotte et al. (2026)](/sources/schotte-2026.md) — HAL hal-05567956v2 (version of record): §2.2 (Laplacian AV with Persson–Peraire sensor and Glaubitz calibration, positivity-preserving limiter in CODA); §4.3, §4.5, §5 (transonic RANS cases, $N=1$ for the shocked M6 wing, $hp$ perspective).

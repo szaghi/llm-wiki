@@ -5,7 +5,7 @@ description: "The streamwise-periodic channel with a hill constriction, a smooth
 status: established
 aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow, parametrized periodic hills]
 tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion, implicit-les, gas-kinetic]
-timestamp: 2026-10-26T15:57:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Periodic hill
@@ -76,6 +76,32 @@ structured grid, or about 1.6M with a streamwise-varying grid, both above
 the 0.9M of their fine grid (§V B). Lowering the resolution coefficient to
 $C_r=0.2$ on the coarse grid gives the best mean velocity, through error
 cancellation, with over-predicted stresses (§V C).
+
+**Energy-partition control of hybrid RANS/LES at $Re=37{,}000$.**
+[Heinz (2022)](/sources/heinz-2022.md), §3, Fig. 1, reproduces a result of
+Heinz et al. (2020), not a new simulation: the Fröhlich geometry
+($9h\times3.035h\times4.5h$, no-slip top and bottom walls, periodic in $x$
+and $z$) at a Reynolds number printed as "$Re=37$K", with no reference
+velocity or length named, on grids of 120,000, 250,000 and 500,000 points
+(G120, G250, G500), run with a
+[continuous eddy simulation](/methods/continuous-eddy-simulation.md)
+$k$-$\omega$ model whose own mode control is replaced by a prescription of
+the PITM type for the unresolved energy fraction. Let $k_+$ be the
+modelled (unresolved) over total turbulent kinetic energy (page-local, the
+source's symbol, as on [continuous eddy simulation](/methods/continuous-eddy-simulation.md),
+where its relation to the registry's §11 $\beta_k$ is stated; the "+" is not wall
+units), $L_{\mathrm{tot}}=k_{\mathrm{tot}}^{3/2}/\varepsilon_{\mathrm{tot}}$
+the total length scale and $\Delta=(\Delta x\Delta y\Delta z)^{1/3}$; the
+prescribed fraction is $C_\Delta(\Delta/L_{\mathrm{tot}})^{2/3}$ with
+$C_\Delta=1.06$. At $x/h=4$ the actual $k_+$ does not follow the
+prescribed one: there are significant discrepancies, small changes of the
+prescription imply significant changes of $k_+$, and near the upper and lower
+walls the response is unphysical (Fig. 1). The author uses the result
+against PITM-type energy-partition control with the time-scale coefficient
+form, in favour of the length-scale form of continuous eddy simulation (see
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md)). The comparison is
+between prescribed and actual energy fractions; no reference data are
+shown, and the averaging time is not stated.
 
 **High-order PANS and implicit LES at equal degrees of freedom.**
 [Dzanic et al. (2022)](/sources/dzanic-2022.md), §3.1, Table 1, Figs. 3–6,
@@ -569,6 +595,10 @@ or, with the budget terms, depend on the grid and the scheme
   equation numbers of their two models in the captions of Figs. 17–18. Their
   anisotropy is $R_{ij}/k-\tfrac23\delta_{ij}=2b_{ij}$ in this bundle's
   notation (Eq. 10).
+- [Heinz (2022)](/sources/heinz-2022.md) prints "$Re=37$K" without
+  naming the reference velocity and length, so it is quoted above as $Re$,
+  not $Re_h$. In that paper a subscript "+" marks modelled-to-total
+  ratios, not wall units.
 
 # Citations
 
@@ -587,3 +617,4 @@ or, with the budget terms, depend on the grid and the scheme
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §4.1, Eq. 21, Figs. 23–27.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §4.2.3, Tables 5–7, Figs. 7–9.
 - [Cao et al. (2024)](/sources/cao-2024.md) — arXiv v1: §1; §3.4, Table 6, Figs. 10–16.
+- [Heinz (2022)](/sources/heinz-2022.md) — §1, Table 1; §3, Fig. 1 (reproduced result of Heinz et al. 2020).

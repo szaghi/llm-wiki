@@ -9,7 +9,7 @@ year: 2022
 venue: "Comput. Fluids 232:105202"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Computers_amp_Fluids_Mozaffari_Average-based_mesh_adaptation_for_hybrid_RANSLES_simulation.pdf"
 tags: [hybrid-rans-les, des, mesh-adaptation, separated-flow, rans]
-timestamp: 2026-10-25T19:46:00Z
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Summary
@@ -61,7 +61,7 @@ numbers on this page are the manuscript's printed numbers.
 
 1. Any change of cell size perturbs hybrid RANS/LES turbulence: in a DES of decaying turbulence crossing a fine-to-coarse interface, resolved TKE drops abruptly, modelled TKE decays more slowly on the coarser mesh, but "the loss of resolved turbulence is never equal to the gain in modeled turbulence"; "a single change in mesh size causes a lasting perturbation of the turbulence" (§1, Fig. 1, from the thesis [23]). **Shown**
 2. Refinement driven by time-averaged criteria gives meshes that "do not evolve rapidly in time"; for statistically steady flows "the grid adaptation converges to a static mesh" (§3). **Shown** (backward-facing step, Fig. 6)
-3. Instantaneous refinement (AGR-100, every 2 time steps, $T_r=0.01$) on the step reaches about 20 million cells at times, ends with 6.6 million and gives $L_r/H=8.35$, 25% above the experimental 6.66, with perturbed $C_f$ (§4.1, Figs. 6a, 8, Table 2). **Shown**
+3. Instantaneous refinement (AGR-100, every 2 time steps, $T_r=0.01$) on the step reaches about 20 million cells at times, ends with 6.6 million and gives $x_R/H=8.35$, 25% above the experimental 6.66, with perturbed $C_f$ (§4.1, Figs. 6a, 8, Table 2). **Shown**
 4. Averaged criteria are smaller, so the threshold must fall from 0.01 to 0.0025 to keep a similar cell count (§4.2). **Stated**/**Shown**
 5. Averaging the criterion (AC) converges to a constant mesh of 1.3 million cells, about half the CA mesh (2.4 million), which "never becomes steady" (§4.2, Fig. 6a, Table 2). **Shown**
 6. CA meshes are irregular: the linear interpolation of the averaged solution onto refined cells has discontinuous derivatives at coarse-cell faces, so the second-derivative criterion is spuriously high there (§4.2, Fig. 9). **Shown** (explanation **Stated**)
@@ -70,10 +70,10 @@ numbers on this page are the manuscript's printed numbers.
 9. Lowering the threshold refines the AC mesh and converges the solution: $T_r=0.0025$, 1.3 million cells, 18.7% error; $0.0020$, 2.5 million, 5.1%; $0.0015$, 9.9 million, 3.6% (§4.3, Table 2, Fig. 11a). **Shown**
 10. Even at the lowest threshold the Hessian criterion does not refine the forward recirculation zone (low velocities give small second derivatives), which may explain the overestimated $C_f$ near $X/H=2$ (§4.3, §4.5). **Shown** (cause **Stated**)
 11. Spectra of the fine IDDES: Kelvin–Helmholtz $St=0.86$ and vortex pairing 0.43 at $X/H=0.52$; step mode 0.22 and shedding 0.11 at $X/H=6.67$; flapping 0.008; periods of about 500 (shedding) and 7000 (flapping) time steps (§4.4, Fig. 13). **Shown**
-12. A sliding window of 1250 steps (2.5 shedding periods, AC50-25) converges the mesh faster, doubles the final cell count (2.5 against 1.3 million) and gives $L_r/H=7.7$ (15.6%); the whole-run AC@-25 is judged "not fully converged" (§4.4, Figs. 6b, 10d, 12e, Table 2). **Shown**
+12. A sliding window of 1250 steps (2.5 shedding periods, AC50-25) converges the mesh faster, doubles the final cell count (2.5 against 1.3 million) and gives $x_R/H=7.7$ (15.6%); the whole-run AC@-25 is judged "not fully converged" (§4.4, Figs. 6b, 10d, 12e, Table 2). **Shown**
 13. A window of one refinement interval (25 steps, AC01-25) made the cell count grow until the run "became too expensive to continue and was stopped manually" (§4.4). **Shown** (no numbers)
 14. To average out a phenomenon "the window should span at least 4 to 10 of its characteristic periods"; for the step, 10–15 periods (5000–8000 steps) average out the shedding and leave the flapping visible (§4.4, §6). **Stated**
-15. Refinement boxes on the initial mesh (recirculation zone plus shear layer, or shear layer only) give similar final meshes of about 2 million cells, $L_r/H=6.5$ (−2.5%) and 6.3 (−5.4%), and good $C_f$; faster generation of resolved content, not small recirculation-zone eddies, drives the improvement (§4.5, Fig. 15, Table 2). **Shown**
+15. Refinement boxes on the initial mesh (recirculation zone plus shear layer, or shear layer only) give similar final meshes of about 2 million cells, $x_R/H=6.5$ (−2.5%) and 6.3 (−5.4%), and good $C_f$; faster generation of resolved content, not small recirculation-zone eddies, drives the improvement (§4.5, Fig. 15, Table 2). **Shown**
 16. This supports "refining where the most intense flow features occur": RANS-derived Hessian criteria with averaging "make sense" for hybrid RANS/LES, and a converged RANS adapted solution can replace manual refinement boxes (§4.5). **Stated**
 17. Toosi & Larsson [34] derive "an almost identical criterion for LES starting from a directional equidistribution of the turbulence", so the Hessian "probably remains a valid choice" for hybrid RANS/LES (§3.3). **Stated**
 18. DTMB 5512 at 10° drift: RANS underestimates the vortex-core TKE "by a factor of 10 to 100"; DES shows vortex cores made of unsteady horseshoe-like vortices rotating around the core (§5.1, citing [36, 37, 45]). **Stated**
@@ -122,7 +122,7 @@ $\boldsymbol u$ before each refinement.
 | $n=1/2$ | (equidistribution exponent) | |
 | $p$, $u,v,w$, $U$ | $p$, $u,v,w$, (velocity magnitude) | instantaneous or time-averaged per CA/AC |
 | "averaged" | (running time average, whole run or sliding window) | no averaging operator printed |
-| $H$, $L_r$ | (step height 0.038 m, reattachment length) | |
+| $H$, $L_r$ | (step height 0.038 m), $x_R$ | reattachment length (registry §11) |
 | $Re$ | $Re_H$ (step), $Re_L$ (hull length, wing chord) | |
 | $St_h=fH/U_\infty$ | $St$ | on the step height |
 | $\Delta x^+$, $\Delta z^+$, $y^+$ | $\Delta x^+$, $\Delta z^+$, $y^+$ | |

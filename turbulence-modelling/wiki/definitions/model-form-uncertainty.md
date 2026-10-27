@@ -5,7 +5,7 @@ description: "The uncertainty that comes from the structure of a turbulence clos
 status: established
 aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, aleatoric model uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation, stochastic discrepancy closure]
 tags: [uncertainty-quantification, rans, data-driven, field-inversion]
-timestamp: 2026-10-26T15:50:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Model-form uncertainty in turbulence closures
@@ -315,7 +315,7 @@ one (§1).
 The L2 failure has an algebraic cause in the
 [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md): its log-layer
 solution requires $\beta_\omega-\beta^*\gamma_\omega=\kappa^2\sqrt{\beta^*}\sigma_\omega$
-(page-local $\beta_\omega$, $\gamma_\omega$: the SST $\omega$-destruction and
+(registry-§11 $\beta_\omega$, $\gamma_\omega$: the SST $\omega$-destruction and
 $\omega$-production coefficients, $\beta$ and $\alpha$ on the SST page), and a
 multiplier $\beta(\boldsymbol x)$ of the $\omega$-destruction turns the left
 side into $\beta(\boldsymbol x)\beta_\omega-\beta^*\gamma_\omega$, so the calibration holds
@@ -486,8 +486,7 @@ HAL author manuscript). Morsbach et al. (2024) show that reducing the RANS
 inflow length scale brings the turbine wake loss within 2.7% of the LES
 while leaving an open separation that the LES does not have, "a lucky
 cancellation of errors" ([Morsbach et al. (2024)](/sources/morsbach-2024.md),
-§4.1, Figs. 8–9). Agreement in an integrated quantity does not, therefore,
-validate the model form.
+§4.1, Figs. 8–9).
 
 **Agreement between models as an argument against model-form error.**
 Baldan & Guardone (2025) argue the converse case: a wall-resolved LES,

@@ -4,7 +4,7 @@ title: "Super-resolution subgrid-scale models"
 description: "An LES closure that reconstructs a fine-grid velocity field from the coarse LES field with a neural network and computes the subgrid stress by filtering products of the reconstructed sub-cell fluctuations; for very coarse wall-bounded LES an unsupervised CycleGAN first maps the LES field to filtered-DNS quality, with a clipping that keeps moderate backscatter."
 status: established
 aliases: [super-resolution SGS model, super-resolution-based subgrid scale model, unsupervised-supervised pipeline, CycleGAN SGS model, GAN super-resolution closure, vLES]
-tags: [neural-network, sgs-model, les, machine-learning, data-driven]
+tags: [neural-network, sgs-model, les, data-driven]
 timestamp: 2026-10-26T15:53:00Z
 ---
 

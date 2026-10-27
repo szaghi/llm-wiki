@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "NASA CRM high-lift configuration"
-description: "The NASA High-Lift Common Research Model (CRM-HL), a half-span transport in landing configuration at Mach 0.2 and mean-chord Reynolds number 5.49 million: a test of a learned wall model in wall-modelled LES at 7° and 19°, and of immersed-boundary wall-function RANS at 17.05° on a 2.4-billion-cell Cartesian grid."
+description: "The NASA High-Lift Common Research Model (CRM-HL), a half-span transport in landing configuration at Mach 0.2: at mean-chord Reynolds number 5.49 million it tests a learned wall model in WMLES and immersed-boundary wall-function RANS, and its wing-body form at root-chord Reynolds number 5.6 million tests anisotropic mesh adaptation for DG RANS."
 status: established
-aliases: [CRM-HL, HL-CRM, NASA High-Lift Common Research Model, NASA CRM-HL, HLPW-4 CRM-HL]
-tags: [benchmark, wmles, wall-model, rans, immersed-boundary, machine-learning]
-timestamp: 2026-10-26T10:26:00Z
+aliases: [CRM-HL, HL-CRM, NASA High-Lift Common Research Model, NASA CRM-HL, HLPW-4 CRM-HL, CRM-HL wing-body, HLPW-5 CRM-HL]
+tags: [benchmark, wmles, wall-model, rans, immersed-boundary, data-driven, mesh-adaptation, dg]
+timestamp: 2026-10-26T20:47:00Z
 ---
 
 # NASA CRM high-lift configuration
@@ -13,8 +13,11 @@ timestamp: 2026-10-26T10:26:00Z
 The NASA High-Lift Common Research Model (CRM-HL) is the half model of a
 civil transport with deployed slats and flaps, a nacelle and pylon,
 used as the test case of the Fourth AIAA High-Lift Prediction Workshop
-(HLPW-4). Both sources run it at freestream Mach number $M_\infty=0.20$ and
-$Re=5.49\times10^6$ based on the mean aerodynamic chord. The flow combines
+(HLPW-4), and in a wing-body form without nacelle and pylon in the fifth
+workshop (HLPW-5). The two HLPW-4 sources run it at freestream Mach number
+$M_\infty=0.20$ and $Re=5.49\times10^6$ based on the mean aerodynamic
+chord; the HLPW-5 source runs the wing-body at $M_\infty=0.2$ and
+$Re=5.6\times10^6$ based on the root chord. The flow combines
 thin leading-edge boundary layers on slats, main wing and flaps, wakes
 merging over the flaps, and separation that spreads with incidence until
 maximum lift. The quantities compared are the lift, drag and pitching-moment
@@ -22,7 +25,9 @@ coefficients $C_L$, $C_D$ and $C_M$ against incidence $\alpha$ (page-local:
 angle of attack), and $C_p$ and $C_f$ on spanwise sections. In this bundle
 it tests near-wall modelling at aircraft scale: a learned wall model in
 [wall-modelled LES](/methods/wall-modelled-les.md) and a wall function at an
-[immersed boundary](/methods/immersed-boundary-method.md) in RANS. A
+[immersed boundary](/methods/immersed-boundary-method.md) in RANS, and
+[mesh adaptation](/methods/mesh-adaptation.md) for high-order
+discontinuous Galerkin RANS. A
 second high-lift workshop configuration is the
 [JAXA Standard Model](/benchmarks/jaxa-standard-model.md).
 
@@ -35,6 +40,17 @@ second high-lift workshop configuration is the
 | Incidence | $7^\circ$ and $19^\circ$ for the learned wall model | $17.05^\circ$, below maximum lift "to avoid massive separation" |
 | Grid | 30 million points, 0 to 20 points per boundary-layer thickness | octree Cartesian, $h_{\min}=3.5$ mm on slats, flaps and pylon, $2h_{\min}$ on the rest of the wing and nacelle, $8h_{\min}$ on the fuselage, target $y^+=500$, $2.4\times10^9$ cells |
 | Reference | wind-tunnel data corrected to free air | body-fitted RANS of the LAVA structured solver on grid D ($5.5\times10^8$ cells, target $y^+=0.75$) |
+
+The wing-body case of [Schotte et al. (2026)](/sources/schotte-2026.md),
+§4.4: HLPW-5 CRM-HL wing-body, $M_\infty=0.2$, $\alpha=11^\circ$,
+$Re=5.6\times10^6$ on the root chord; steady RANS with the negative
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md); modal
+discontinuous Galerkin of degree $N=1$ and 2 in the ONERA–DLR–Airbus
+solver CODA, remeshed by the Tucanos library from an initial mesh of
+244,561 cells; target complexities $3\times10^5$ to $2.4\times10^6$ at
+$N=1$ and $1.2\times10^5$ to $4.8\times10^5$ at $N=2$ (Table 5);
+references are the finite-volume solvers FUN3D, USM3D, CHAMPS and CODA FV
+under uniform refinement.
 
 ## What the case tests
 
@@ -82,7 +98,32 @@ five runs of 15,000 iterations, the adaptation after the third (§6.3). The
 $C_p$ and $C_f$ on sections D, E and F and the off-body vorticity are
 compared in Figs. 37–39.
 
-**What the two studies share.** Both locate the weak point at the leading
+**Anisotropic mesh adaptation for high-order RANS.**
+[Schotte et al. (2026)](/sources/schotte-2026.md) adapt the mesh with a
+metric built from the Hessian of the Mach number, which sets the
+orientations and anisotropy, scaled at $N\ge2$ by an isotropic DG
+spectral error estimator that sets the element size (§3.2). On the
+wing-body (§4.4, Figs. 18–22):
+
+- all adapted DG strategies "clearly outperform FUN3D, CHAMPS and CODA FV
+  solutions" in drag and lift at equal degrees of freedom; the $N=1$ drag
+  is slightly less accurate, except at the finest complexity, and is
+  equivalent to USM3D;
+- at $N=2$ the scaling by the small-scale lifted estimator captures the
+  wing-tip vortex better than the unscaled Hessian, a change of "+2 drag
+  counts and +0.1 lift counts", and $N=2$ needs about $8\times10^6$ fewer
+  degrees of freedom than $N=1$ for similar integrated values;
+- the unscaled Mach Hessian "still performs well" at $N=2$, which the
+  authors call "surprising", since the Hessian does not describe the
+  interpolation error above second order;
+- adaptation reaches a near-wall $y^+$ close to 1 at $N=1$, with
+  anisotropic ratios up to $10^5$ near the wall (Fig. 22).
+
+The authors present the case as the first published high-order DG
+metric-based adaptation for "a full high-lift aircraft configuration"
+(§1); the configuration run is the wing-body.
+
+**What the two HLPW-4 studies share.** Both locate the weak point at the leading
 edges of the high-lift elements, where the boundary layers are thinnest
 relative to the grid: the low confidence of the learned wall model there in
 [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md), and the
@@ -96,14 +137,22 @@ addresses in [Constant et al. (2024)](/sources/constant-2024.md).
   (wind-tunnel data corrected to free air against a body-fitted RANS);
   neither compares its errors with the other's.
 - The immersed-boundary errors of [Constant et al. (2024)](/sources/constant-2024.md)
-  are relative to another RANS solution on a grid four times smaller, not
-  to experiment; their lift error stays at 8.4% after both corrections.
+  are relative to another RANS solution ($5.5\times10^8$ cells against
+  their $2.4\times10^9$), not to experiment; their lift error stays at 8.4% after both corrections.
   Their Table 9 drag error of 9.1% for the first row is 9.0% by the table's
   own coefficients *(compiler check, not in the sources)*.
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) give their
   force comparison only in figures (Fig. 15); no coefficients are printed.
+- The Reynolds numbers $5.49\times10^6$ (HLPW-4, on the mean aerodynamic
+  chord) and $5.6\times10^6$ ([Schotte et al. (2026)](/sources/schotte-2026.md),
+  HLPW-5 wing-body, on the root chord) refer to different reference
+  lengths and different configurations of the same model; they are not
+  competing values for one case. [Schotte et al. (2026)](/sources/schotte-2026.md)
+  print no force coefficients for the case (Figs. 20–21 only) and compare
+  with other RANS solutions, not with experiment.
 
 # Citations
 
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.3; §4.7, Figs. 14–16; §5(4); §6.
 - [Constant et al. (2024)](/sources/constant-2024.md) — §6.3, Tables 7–9, Figs. 35–39; §7.
+- [Schotte et al. (2026)](/sources/schotte-2026.md) — §1; §3.2; §4.4, Table 5, Figs. 18–22.

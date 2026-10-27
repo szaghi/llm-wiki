@@ -5,7 +5,7 @@ description: "Linear compressor cascades as turbomachinery benchmarks: the low-s
 status: established
 aliases: [compressor cascade, linear compressor cascade, V103 cascade, PVD cascade, NACA65 K48 cascade, TCTA, Transonic Cascade TEAMAero, compressor corner separation]
 tags: [benchmark, turbomachinery, transition, des, rans, implicit-les]
-timestamp: 2026-10-26T15:57:00Z
+timestamp: 2026-10-26T20:47:00Z
 ---
 
 # Compressor cascades
@@ -87,8 +87,8 @@ RANS $\gamma$ model dropped (§II.B.3, Eqs. 24–25).
   the bubble, and 25% (Yin & Durbin's value) damps the synthetic
   turbulence (§III.B.3, Figs. 19–22). The authors caution that bypass
   transition then rests on resolved scales, so the model may act "more
-  like an LES model", and that the 5% is a tunable, likely case- and
-  mesh-dependent parameter (pp. 25–26); see
+  like an LES model", and that the 5% is another adjustable parameter that
+  may need re-tuning for other cases or meshes (pp. 25–26); see
   [numerical dissipation](/properties/numerical-dissipation.md).
 
 **Corner separation in RANS: PVD and K48.**

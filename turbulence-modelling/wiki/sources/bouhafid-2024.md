@@ -161,7 +161,7 @@ as printed, with notes); ref. [39] is a discussion paper; refs. [3], [37],
 
 # Pages created or updated
 
-Chunk 5 (2026-10-26). This source is cited on:
+Chunk 5 (2026-10-26), cited further in chunk 7. This source is cited on:
 
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Hybrid RANS/LES](/definitions/hybrid-rans-les.md)
@@ -169,5 +169,6 @@ Chunk 5 (2026-10-26). This source is cited on:
 - [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Mesh adaptation for turbulent-flow simulation](/methods/mesh-adaptation.md)
+- [Wall functions for RANS](/methods/rans-wall-function.md)
 - [Differential Reynolds-stress models](/methods/reynolds-stress-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)

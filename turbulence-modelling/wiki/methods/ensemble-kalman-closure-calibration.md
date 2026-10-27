@@ -5,7 +5,7 @@ description: "Derivative-free calibration of closure parameters from data with a
 status: established
 aliases: [EnKF, ensemble Kalman filter, ensemble Kalman inversion, ensemble data assimilation, EnKF-MM, EnKF mixed model, EnKF-FM]
 tags: [data-driven, field-inversion, sgs-model, les, uncertainty-quantification]
-timestamp: 2026-10-26T15:55:00Z
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Ensemble Kalman filter calibration of turbulence closures
@@ -132,7 +132,7 @@ the observation noise.
 | Flow | DNS | LES | EnKF settings | Calibrated $C_{\mathrm f}$ |
 |---|---|---|---|---|
 | forced [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md), $Re_\lambda\approx160$ | $512^3$ pseudospectral | $64^3$, Gaussian filter $\Delta=16$ DNS spacings, filter-to-grid ratio 2 | $N_e=10$ and 20, 50 iterations, observations every $0.3$ large-eddy turnover times over 6 | about 0.00738 for both ensemble sizes |
-| temporal mixing layer | $256\times512\times512$ | $64\times128\times128$, $\Delta=8$ DNS spacings | $N_e=10$, 20, 40, 20 iterations, observations every $10\theta_0/\Delta U$ from 50 to 800 such units (page-local: $\theta_0$ initial momentum thickness, $\Delta U$ velocity difference); shifting, inflation for $N_e=10$ | about 0.01 |
+| temporal mixing layer | $256\times512\times512$ | $64\times128\times128$, $\Delta=8$ DNS spacings | $N_e=10$, 20, 40, 20 iterations, observations every $10\tau_\theta$ from $50\tau_\theta$ to $800\tau_\theta$ ($\tau_\theta=\theta_0/\Delta U$, $\theta_0$ the initial momentum thickness, $\Delta U$ the velocity difference); shifting, inflation for $N_e=10$ | about 0.01 |
 
 (§III–IV, Tables I–IV.) The isotropic value is far below the
 $2C_s^2\approx0.05$ of the classical $C_s=0.16$: the authors call the tuned

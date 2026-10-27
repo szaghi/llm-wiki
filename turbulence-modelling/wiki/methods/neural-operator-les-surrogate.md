@@ -4,7 +4,7 @@ title: "Neural-operator surrogates of large-eddy simulation"
 description: "A neural operator (Fourier, implicit Fourier or transformer-based) learns the time advance of the filtered velocity field on the LES grid and replaces the whole LES solver in an autoregressive rollout; trained on filtered DNS or, physics-informed, on the residual of the Smagorinsky-closed filtered equations, and compared with dynamic and static Smagorinsky LES."
 status: established
 aliases: [neural operator, Fourier neural operator, FNO, IFNO, implicit Fourier neural operator, transformer-based neural operator, TNO, LESnets, LESnets-I, physics-informed neural operator, PINO, data-driven LES surrogate]
-tags: [neural-network, machine-learning, les, data-driven, sgs-model]
+tags: [neural-network, data-driven, les, sgs-model]
 timestamp: 2026-10-26T15:52:00Z
 ---
 

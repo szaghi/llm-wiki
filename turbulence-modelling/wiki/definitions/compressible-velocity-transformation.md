@@ -5,7 +5,7 @@ description: "Maps that turn the mean velocity of a variable-property compressib
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Compressible velocity transformations
@@ -65,7 +65,7 @@ translated from their $z$.
   classical mixing length with van Driest damping written in wall units
   $y^+$ (Yang & Lv 2018, as recalled by Griffin et al. 2023, §3).
 - **Trettel–Larsson (2016).** Implied by the same damping written in
-  semi-local units $y^*$ (Yang & Lv 2018, as recalled, §3).
+  semi-local units $y^*$ (Yang & Lv 2018, as recalled by Griffin et al., §3).
   [Chen et al. (2024)](/sources/chen-2024.md) (§3.1, Eqs. 3.1–3.2) derive
   the same equivalence for the inner eddy viscosity of the semi-local
   [Baldwin–Lomax model](/methods/baldwin-lomax-model.md): written with the
@@ -77,7 +77,7 @@ translated from their $z$.
   Fig. 3a), which motivates their switch to the total-stress-based
   transformation below.
 - **Data-driven** transformation of Volpiani et al. (2020), used by Kumar &
-  Larsson (2022) in the same inverse procedure (as recalled, §2.3).
+  Larsson (2022) in the same inverse procedure (as recalled by Griffin et al., §2.3).
 - **Total-stress-based** transformation of Griffin, Fu & Moin (2021), which
   maps the compressible mean strain rate to the incompressible
   non-dimensional strain rate $S_t^+$ at the same $Re_\tau^*$ (Eq. 2.1):
@@ -92,7 +92,7 @@ translated from their $z$.
   $\mu^+=1$. The transformation assumes a constant-stress layer in the buffer
   region, which Griffin et al. (2021) found harmless in equilibrium flows and
   Bai, Griffin & Fu (2022) under moderate pressure gradients (§2.1, as
-  recalled).
+  recalled by Griffin et al.).
 
   **Convention difference.** Cogo et al. (2022, Eq. 4.2) write the same
   transformation as a total-stress balance,
@@ -183,7 +183,7 @@ layers:
   (substantially for the cooled wall at $M_e=11.46$, slightly for the heated
   wall at $M_e=4.327$), and the temperature only slightly.
 - The total-stress-based transformation has a documented error at
-  $Re_\tau^*\lesssim200$ (Griffin et al. 2021, as recalled, §3), which accounts
+  $Re_\tau^*\lesssim200$ (Griffin et al. 2021, as recalled by Griffin et al. 2023, §3), which accounts
   for the residual mismatch of their low-$Re_\tau^*$ cases.
 
 Two independent DNS studies of boundary layers extend the comparison:
@@ -247,7 +247,7 @@ thickness as a possible reason for its success (§3.2).
 
 ## Transformations as a validation yardstick
 
-Five further sources use a transformation not to rank transformations but to
+Six further sources use a transformation not to rank transformations but to
 judge a simulation.
 
 - **Hybrid RANS/LES of supersonic channels.** [Carlsson et al. (2023)](/sources/carlsson-2023.md)
@@ -315,6 +315,33 @@ judge a simulation.
   wall is isothermal with a non-zero heat flux ($B_q=-0.047$); Carlsson et al. (above) call it
   inaccurate for non-adiabatic walls on the strength of the studies they
   cite. See [implicit LES](/definitions/implicit-les.md).
+- **DNS of a thermally perfect gas: the transformation as a scheme
+  discriminator.** [Aiello et al. (2026)](/sources/aiello-2026.md) (§2.2,
+  §4.1–4.2, Fig. 1, Table 3) run DNS of isothermal-wall channels of CO$_2$,
+  modelled as a thermally perfect gas ($c_v(T)$ from NASA polynomials), at
+  bulk Mach numbers based on the wall sound speed of 3, 4 and 5
+  ($Re_\tau\approx470$, 630 and 800, $Re_\tau^*$ between 160 and 190 with
+  centreline properties) in [STREAmS](/software/streams.md), and compare
+  convective discretizations that differ in
+  [entropy conservation](/properties/entropy-conservation.md) and in the
+  pressure term, all [kinetic-energy preserving](/properties/kinetic-energy-preservation.md).
+  With the Trettel–Larsson transformation every profile collapses on
+  $U^+_{TL}=y^*$ in the viscous sublayer regardless of scheme and Mach
+  number, and a narrow log region appears for $y^*\ge40$, fitted with
+  $\kappa=0.41$ and $B=6.0$ on the entropy-conservative results; the authors
+  attribute the large intercept to the low $Re_\tau^*$, consistent with
+  low-Reynolds-number incompressible flow and earlier supersonic channel DNS
+  of calorically perfect gas (§4.1). As the Mach number grows, the
+  non-entropy-conservative KEEP scheme over-predicts the transformed
+  velocity in the log region: its max-norm relative difference to the
+  entropy-conservative EC-TP scheme is 0.23 %, 1.05 % and 1.98 % at Mach 3,
+  4 and 5, against 0.57 %, 0.23 % and 0.78 % for the entropy-conservative
+  scheme of Gouasmi et al. with a different pressure term, and 0.55 % for
+  Ranocha's scheme (Mach 5 only). The transformation leaves these
+  differences almost unchanged (relative differences of the untransformed
+  and transformed velocity nearly equal; §4.2, Table 3). EC-TP is the
+  reference by construction; there is no external DNS. See
+  [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
 
 ## Assessments of the temperature–velocity relation
 
@@ -355,6 +382,16 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
   Huang et al. (2022) write the velocity stretching of the same
   transformation without a square root, $g_I=\mu^+dy^*/dy^+$ (table above).
   Both printed forms are recorded here without deciding between them.
+  [Aiello et al. (2026)](/sources/aiello-2026.md) (§2.2) print a third
+  form,
+  $U^+_{TL}=\int_0^{U^+}\sqrt{\rho^+}\left(1+\frac{y}{2\langle\rho\rangle}\frac{d\langle\rho\rangle}{dy}-\frac{y}{\langle\mu\rangle}\frac{d\langle\mu\rangle}{dy}\right)dU^+$,
+  without square root over the bracket; expanding
+  $g_I=\mu^+\,d(y^+\sqrt{\rho^+}/\mu^+)/dy^+$ of the table gives exactly this
+  integrand, so Aiello et al. agree with Cogo et al. and Huang et al.
+  *(compiler check, not in the sources)*.
+- Aiello et al. (2026) evaluate $Re_\tau^*$ with centreline density and
+  viscosity. Their Fig. 1 caption writes the log law in $y^+$ where the text
+  writes it in $y^*$ (§4.1).
 - Cao et al. (2024) print the bulk velocity and density as integrals over
   $[-\delta,\delta]$ without the factor $1/(2\delta)$ (§3.3), and their
   printed wall-unit spacings imply $Re_\tau\approx216$ where Table 5 gives
@@ -377,3 +414,4 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4.2, Eqs. (10)–(11), Figs. 11, 13 (arXiv v1).
 - [Cao et al. (2024)](/sources/cao-2024.md) — §3.3, Tables 4–5, Figs. 7–8 (arXiv v1).
 - [Chen et al. (2024)](/sources/chen-2024.md) — §1; §3.1, Eqs. (3.1)–(3.7), Fig. 3; §3.2, Eqs. (3.11)–(3.14), Figs. 4–5; §3.3, Eqs. (3.15)–(3.17), Fig. 6; App. B, Eq. (B1), Fig. 16.
+- [Aiello et al. (2026)](/sources/aiello-2026.md) — §2.2; §4.1, Fig. 1; §4.2, Table 3.

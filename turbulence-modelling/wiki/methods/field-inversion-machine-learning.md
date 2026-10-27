@@ -4,8 +4,8 @@ title: "Field inversion and machine learning"
 description: "Field inversion infers a spatial correction field of a RANS model from data by solving a PDE-constrained inverse problem; FIML learns that field from local flow features and embeds it in the solver. Sources compare which term to correct, show non-unique and over-fitted inversions, gate corrections out of attached layers, and invert on high-order DG."
 status: established
 aliases: [FIML, field inversion, field-inversion and machine-learning, inference before learning, variational data assimilation, non-parametric correction, Reynolds-force vector]
-tags: [field-inversion, data-driven, machine-learning, rans, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-26T15:56:00Z
+tags: [field-inversion, data-driven, rans, uncertainty-quantification, separated-flow]
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Field inversion and machine learning
@@ -436,8 +436,8 @@ data are left to future work.
 correction of a different kind and in one stage. Their closure of steady
 incompressible RANS is the sum of a parametric part, a
 [tensor-basis neural network](/methods/tensor-basis-neural-network.md),
-and an additive discrepancy $\boldsymbol\delta(\boldsymbol x)$ of the
-discrete Reynolds-stress field (§2.2.2, Eq. 13). The discrepancy is a
+and an additive discrepancy $\boldsymbol\delta_R$ (page-local, as on the
+model-form-uncertainty page) of the discrete Reynolds-stress field (§2.2.2, Eq. 13). The discrepancy is a
 latent random field, piecewise constant on $N_d=52$ fixed subdomains of
 the 12 180-node mesh, with a separate realization for each training flow
 and an automatic-relevance-determination prior that switches it off where
@@ -464,7 +464,7 @@ inferred discrepancy is largest at $5<x/h<10$, where the parametric
 stress errs most, and practically zero far downstream (Fig. 7). The mean
 fields agree with LES although the learned stresses do not, which the
 authors read as non-uniqueness of the inverse problem, "also reported by
-other works" (§3.4). One run of their solver costs 1.3 baseline RANS runs; the LES cost
+other works" (§3.4). One run of their solver costs 1.3 baseline RANS runs, the reference LES
 7679 (Table 4).
 
 ## Conditioned field inversion (Wu et al. 2025)

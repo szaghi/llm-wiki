@@ -9,7 +9,7 @@ year: 2023
 venue: "Proc. Combust. Inst. 39:1567-1576"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Proceedings_of_the_Combustion_Institute_Böttler_Flamelet_modeling_of_thermo-diffusively_unstable_hydrogen-ai.pdf"
 tags: [combustion, tabulated-chemistry, a-priori-a-posteriori]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Summary
@@ -72,7 +72,7 @@ described only as the text describes them.
 12. Since the mean cell size relates to the fastest-growing modes, the dispersion relations imply smaller cells with FPV-$\kappa_c$ and smaller still with FPV-h than with DC (§3.2). **Derived** (from Fig. 4 and the cited result)
 13. At a flame radius of about 6 cm, DC forms cells of nearly uniform size; FPV-h adds smaller secondary cells; FPV-$\kappa_c$ forms secondary cells too but fewer small cells (§3.3, Fig. 5). **Shown** (visual inspection, as printed)
 14. The cell-size distributions peak at smaller sizes for both FPV models than for DC, consistently with the stability analysis (§3.3, Fig. 6). **Shown**
-15. The most likely DC cell wavelength is 7–8 flame thicknesses, larger than the about 6 of Berger et al. for planar flames; the authors attribute the difference to the curved configuration and the limited sample (§3.3). **Shown** / **Stated**
+15. The most frequent (modal) DC cell wavelength is 7–8 flame thicknesses, larger than the about 6 of Berger et al. for planar flames; the authors attribute the difference to the curved configuration and the limited sample (§3.3). **Shown** / **Stated**
 16. The perturbation amplitude shows three regimes (unperturbed propagation, linear growth, non-linear growth with interacting cells); in the linear regime both FPV models grow faster than DC (§3.3, Fig. 7). **Shown**
 17. The two-dimensional flames follow the one-dimensional instability-free flame in the first two regimes and accelerate in the third; both FPV models propagate faster than DC owing to more small cells (§3.3, Fig. 7). **Shown**
 18. Flame-speed deviations of 15% between the FPV models and DC appear at the largest radii; a similar overprediction was reported with a two-dimensional unstretched manifold by Schlup & Blanquart [17] (§3.3). **Shown** / **Stated**

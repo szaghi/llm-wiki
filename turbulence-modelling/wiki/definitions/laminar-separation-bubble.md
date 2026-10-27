@@ -5,7 +5,7 @@ description: "A closed region of reversed flow formed when a laminar boundary la
 status: established
 aliases: [LSB, separation-induced transition, laminar separation, transitional separation bubble]
 tags: [transition, separated-flow, boundary-layer, rans, implicit-les, turbomachinery]
-timestamp: 2026-10-26T15:50:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Laminar separation bubble
@@ -38,7 +38,7 @@ $Re=2.2\times10^5$ (Slaughter et al. 2023).
 
 - **Pressure plateau.** The bubble shows as a plateau in the surface
   pressure followed by a recovery at reattachment. On the T161 turbine
-  cascade the plateau lies between $x/C_{ax}=0.7$ and 0.9 of the axial chord
+  cascade the plateau lies between $x/c_{ax}=0.7$ and 0.9 of the axial chord $c_{ax}$ (registry §11)
   ([Morsbach et al. (2024)](/sources/morsbach-2024.md), §4.1, Fig. 7). On the
   inverted wing the pressure decreases monotonically along the suction sides
   except on the mainplane between $x/c=0.50$ and 0.65 (Slaughter et al.
@@ -261,6 +261,30 @@ $x^+\approx20$, $z^+\approx6$), and obtains an isentropic Mach number in
 see [flux reconstruction](/methods/flux-reconstruction.md) and
 [turbine cascades](/benchmarks/turbine-cascade.md)).
 
+Lederer et al. (2026) compute the Eppler 387 airfoil by implicit LES with a
+mass-conserving mixed-stress discretization of degree $N=3$, with and
+without the [high-order projection-based upwind](/methods/high-order-projection-based-upwind-method.md)
+(HOPU) stabilization, on three meshes of 2352 to 14 400 hexahedra, and
+compare with the NASA TM 4062 measurements
+([Lederer et al. (2026)](/sources/lederer-2026.md), §4, Tables 1–2; arXiv
+v1; see [Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md)). At
+$Re=3\times10^5$, $\alpha=4^\circ$ the finest mesh places separation and
+reattachment at $x/c=0.467$ and 0.560 against 0.40 and 0.58 measured, the
+experiment separating earlier; at $Re=10^5$, $\alpha=10^\circ$ a small
+leading-edge bubble from 0.010 to 0.027 appears (Table 2). The bubble
+extent grows with resolution, and the coarse meshes fail to predict a
+meaningful bubble at $Re=10^5$, giving a smaller separation or "an
+(unphysical) almost natural transition"; the sharp peak of the
+displacement thickness at separation and its subsequent fall are missed on
+the two coarser meshes (§4.1–§4.2, Fig. 10). HOPU leaves the pressure
+distribution, lift, drag and the separation and reattachment points
+essentially unchanged, e.g. $C_L=1.274$ and 1.271, $C_D=0.0432$ and 0.0436 on
+the coarsest mesh at $Re=10^5$, while improving the turbulent boundary
+layer after reattachment; the authors read the finest-mesh agreement as an
+advantage of a low-dissipation discretization that preserves the laminar
+instabilities leading to transition (§4.1, §5, Table 2; see
+[implicit LES](/definitions/implicit-les.md)).
+
 ## Qualifications
 
 - Slaughter et al. print the pressure coefficient as "$C_p=\frac12\rho V^2$"
@@ -292,3 +316,4 @@ see [flux reconstruction](/methods/flux-reconstruction.md) and
 - [Möller et al. (2024)](/sources/moller-2024.md) — §III.B.1–3, Figs. 5–9, 13–14, 19 (accepted manuscript).
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — Introduction, §2.1, Figs. 3–6 (arXiv v2).
 - [Klose et al. (2025)](/sources/klose-2025.md) — §4 Fig. 4, §5 Table 2 Fig. 6, §6 Fig. 7, §7, §8 (ASME accepted manuscript).
+- [Lederer et al. (2026)](/sources/lederer-2026.md) — §4, §4.1–§4.2 Tables 1–2 Fig. 10, §5 (arXiv v1).

@@ -5,7 +5,7 @@ description: "A discretization is kinetic-energy preserving when its convective 
 status: established
 aliases: [KEP, KEEP, kinetic-energy and entropy preserving scheme, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-26T11:35:00Z
+timestamp: 2026-10-26T20:44:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -97,6 +97,11 @@ are stated: the split forms need the Gauss–Lobatto nodes, whereas the
 authors call the Gauss–Legendre nodes "more accurate" (§3.3), and the mortar
 coupling of faces between elements of different polynomial degree "does not
 retain entropy stability" (§3.6).
+[Ranjbar et al. (2026)](/sources/ranjbar-2026.md), §II.A, use in HORSES3D
+the split form with Chandrashekar averaging, a low-dissipation Roe flux and
+BR1 (no penalty) or BR2 (penalty 1.5, "necessitated" by walls) for the
+Taylor–Green vortex and channel flow, but the standard form for decaying
+isotropic turbulence.
 [Blind et al. (2023)](/sources/blind-2023.md), §2.1, run
 [FLEXI](/software/flexi.md) with the skew-symmetric split form and Pirozzoli's
 fluxes "to obtain a dissipation-free and kinetic-energy preserving
@@ -141,6 +146,23 @@ al. state that the KEP property "depends only" on the discretization of the
 continuity and momentum equations (§3.1.2); the energy discretization decides
 instead [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md).
 
+**The KEP condition in flux form.** [Aiello et al. (2026)](/sources/aiello-2026.md),
+§3.2, Eq. (7), state the same separation for a node-indexed second-order
+finite-difference scheme with face fluxes $\mathcal F_{\rho\phi}$
+(page-local): as recalled from Jameson and Veldman, kinetic energy is
+preserved when the convective momentum flux is the mass flux times the
+arithmetic mean of the velocity, $\mathcal F_{\rho u}=\mathcal F_\rho\{\!\{u\}\!\}$,
+whatever the mass flux $\mathcal F_\rho$ and the pressure term; the induced
+kinetic-energy flux is then $\mathcal F_\rho u_iu_{i+1}/2$. KEP is
+therefore independent of the internal-energy flux, and the remaining
+freedom (the face density inside $\mathcal F_\rho$ and the internal-energy
+flux) can be spent on
+[entropy conservation](/properties/entropy-conservation.md). For the same
+reason KEP survives a change of the gas model, whereas entropy conservation
+designed for a calorically perfect gas does not (§3.2). Kinetic energy and
+entropy are, in their words, induced variables of the discretization
+(§3.1).
+
 The same five forms and the KGP choice are recalled by
 [Wang et al. (2024)](/sources/wang-2024.md), §2.3, Eqs. (5)–(11), for the
 second-order scheme **KGP2** of a cell-centred compressible finite-difference
@@ -171,6 +193,19 @@ kinetic-energy or entropy-conserving split forms "cancel numerical errors
 and stabilize the high-order scheme", and add
 [subcell finite-volume blending](/methods/subcell-finite-volume-shock-capturing.md)
 at the shocks.
+
+**Split-form flux reconstruction.** The nonlinearly stable
+[flux reconstruction](/methods/flux-reconstruction.md) assessed by
+[Brillon & Nadarajah (2026)](/sources/brillon-2026.md), §2.7, uses the same
+split-form volume term (with a Hadamard product and Chan's skew-symmetric
+stiffness operator) with the entropy-conserving Ismail–Roe flux as
+baseline. On the viscous Taylor–Green vortex at $Re=1600$, $M_\infty=0.1$,
+$96^3$ degrees of freedom, swapping it for the Kennedy–Gruber (KEP), Chandrashekar
+(entropy-conserving and KEP) or Chandrashekar–Ranocha (also
+pressure-equilibrium preserving) flux gives "nearly indistinguishable"
+spectra, kinetic energy, dissipation and enstrophy, Kennedy–Gruber being
+the cheapest (§3.1.6, Fig. 16; see
+[entropy conservation](/properties/entropy-conservation.md)).
 
 **Pirozzoli split flux on GPUs.** The GPU DGSEM code
 [GALÆXI](/software/galaexi.md) keeps FLEXI's split-flux formulation of
@@ -317,6 +352,19 @@ authors recommend high-order upwind schemes for budget analysis (§3.2–3.3,
 upwind one; no high-order KEP scheme is tested (§2.3–2.4). See
 [low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md).
 
+**Without discrete kinetic-energy conservation.**
+[Caban et al. (2026)](/sources/caban-2026.md), §3.2.2, run the incompressible
+Taylor–Green vortex in a half-staggered compact-difference code that has no
+discrete kinetic-energy-conserving formulation; aliasing is controlled by
+the filtering that the interpolation between staggered nodes induces, or by
+an explicit filter, and with error-free (Fourier) interpolation and no
+filter the kinetic energy can grow. On $64^3$ such runs are unstable without
+a model (at $t\approx3.5$) and with Smagorinsky or Vreman models at
+$\Delta=2h$ (§5.3.1, Fig. 18; see [implicit LES](/definitions/implicit-les.md)).
+The authors restrict their interpolation-related conclusions to staggered
+and half-staggered algorithms: "collocated grids with discrete
+kinetic-energy-conserving schemes" lack this dissipation (§6).
+
 **Stable but inaccurate without a model.**
 [Kim et al. (2024)](/sources/kim-2024.md), §2.1, run DNS and LES of the
 flow over a circular cylinder at $Re_D=3900$ with second-order central
@@ -363,7 +411,17 @@ fluctuations, so the pressure–dilatation work oscillates strongly; only an
 interface flux whose dissipation acts on density and pressure (the low-Mach
 L2Roe solver, which scales the velocity jump by the local Mach number) removes
 the oscillations, and the authors rank "split form + L2Roe + Smagorinsky" best
-overall (§5.1, §6.1). Bernades et al. (2023, §4.2) reach a related conclusion
+overall (§5.1, §6.1). Brillon & Nadarajah (2026) confirm the effect of
+upwinding in split-form flux reconstruction: Roe, low-dissipation Roe and
+Lax–Friedrichs face dissipation "almost completely" attenuate the
+pressure-dilatation oscillations (§3.1.7, Fig. 17), but they add that the
+collocated scheme (flux nodes equal to the Gauss–Lobatto solution nodes)
+has much smaller oscillations than the uncollocated one even without
+dissipation, which suggests to them that the oscillations come from
+interpolating the flux to the face nodes (§3.1.4, Fig. 13c), and that
+collocated plus upwind is best (§3.1.7, Fig. 18); no value of the
+correction parameter and no eddy-viscosity model removes them (§3.1.5,
+§3.1.8). Bernades et al. (2023, §4.2) reach a related conclusion
 for real-gas (transcritical) flow: with a Peng–Robinson equation of state the
 KGP scheme with total energy (KGP-Et) is not pressure-equilibrium
 preserving, produces noisy pressure that contaminates the velocity and
@@ -374,6 +432,17 @@ property alone is not sufficient to tackle transcritical flows"; adding
 DNS at $Re_\tau=100$ the two schemes agree, physical viscosity mitigating the
 oscillations (§4.3). Vicente Cruz & Lamballais (2023, footnote 6) note that
 their immersed-boundary treatment is not kinetic-energy conserving.
+For a thermally perfect gas, Aiello et al. (2026, §4) find KEP without
+entropy conservation insufficient at high Mach number: in DNS of
+compressible channel flow at bulk Mach 3 to 5 the KEP-only KEEP scheme
+overpredicts the thermodynamic fluctuations, its fluctuations drift after a
+long stationary period, and its streamwise Reynolds stress differs by
+10.98% (max-norm relative difference) from the entropy-conserving EC-TP
+scheme at Mach 5 (Table 3); the
+authors write that KEEP, "although reliable in calorically perfect
+simulations, develops significant stability issues under thermally perfect
+conditions" (§5; see
+[entropy conservation](/properties/entropy-conservation.md)).
 
 **A continuous energy bound is not a discrete property.**
 [Llorente (2024)](/sources/llorente-2024.md), Theorem 1 (pp. 8–9), proves for
@@ -392,6 +461,11 @@ for the split-form airfoil run, larger than in their scaling tests "mostly
 because of the extra work of the split-form volume integral". Flad & Gassner
 (2017, §6.1) state that split forms cost at least three times less than
 polynomial de-aliasing in their in-house code, without timings.
+Brillon & Nadarajah (2026, §3.1.3, Fig. 12) time one Runge–Kutta step on
+$4^3$ elements for $N=1$ to 12: strong-form DG with over-integration costs
+about twice the CPU time of the split-form flux reconstruction for
+$N\in[5,12]$, and without over-integration the strong form is unstable on
+the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
 
 ## Qualifications
 
@@ -444,3 +518,7 @@ polynomial de-aliasing in their in-house code, without timings.
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §2 (second-order KEEP central scheme for DNS and LES).
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL hal-04582857v1: §III.B.b–c (KEEP-based SPADE, split forms in OpenSBLI); §IV.A, Fig. 5 (late-time pile-up of the central codes).
 - [Llorente (2024)](/sources/llorente-2024.md) — author accepted manuscript: Theorem 1, Eqs. (13)–(14) (continuous energy bound of penalized URANS).
+- [Aiello et al. (2026)](/sources/aiello-2026.md) — §3.1 (induced variables); §3.2, Eq. (7) (KEP condition in flux form, independence of the energy flux and of the gas model); §4, Table 3; §5 (KEEP for a thermally perfect gas).
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §2.7 (split-form NSFR); §3.1.3, Figs. 11–12 (stability and cost against over-integration); §3.1.4, Fig. 13c; §3.1.5; §3.1.6, Fig. 16 (two-point flux choice); §3.1.7, Figs. 17–18 (upwinding and pressure dilatation); §3.1.8.
+- [Caban et al. (2026)](/sources/caban-2026.md) — §3.2.2 (half-staggered code without discrete kinetic-energy conservation); §5.3.1, Fig. 18; §6.
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv 2512.03315v1: §II.A (split form with Chandrashekar averaging, BR1/BR2).

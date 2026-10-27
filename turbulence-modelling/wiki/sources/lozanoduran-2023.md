@@ -8,7 +8,7 @@ authors: [Lozano-Durán A., Bae H.J.]
 year: 2023
 venue: "J. Fluid Mech. 963:A35"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Fluid_Mechanics_Lozano-Durán_Machine_learning_building-block-flow_wall_model_for_large-ed.pdf"
-tags: [wall-model, wmles, machine-learning, neural-network, high-lift]
+tags: [wall-model, wmles, data-driven, neural-network, high-lift]
 timestamp: 2026-10-26T07:39:00Z
 ---
 

@@ -4,7 +4,7 @@ title: "LESGO"
 description: "LESGO is an open-source incompressible LES code, pseudo-spectral in the wall-parallel directions and second-order finite-difference on a staggered wall-normal grid, used as the host of wall-model studies: the LaRTE model, an a posteriori comparison of machine-learning wall models, and the training of a reinforcement-learning wall model coupled to the Smarties library."
 status: established
 aliases: [lesgo]
-tags: [software, les, wmles, wall-model, machine-learning, reinforcement-learning]
+tags: [software, les, wmles, wall-model, data-driven, reinforcement-learning]
 timestamp: 2026-10-26T10:27:00Z
 ---
 

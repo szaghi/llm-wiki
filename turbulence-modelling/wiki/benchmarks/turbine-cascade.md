@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Turbine cascades (T106, T161, VKI LS89)"
-description: "Linear turbine cascades as transition and loss benchmarks: the high-lift low-pressure T106C, T108 and T161 cascades with laminar separation at exit Reynolds numbers near 10⁵, and the transonic VKI LS89 vane with bypass transition and heat transfer, run by implicit DG and flux-reconstruction LES and by RANS transition models."
+description: "Linear turbine cascades as transition, loss and vortex benchmarks: the high-lift low-pressure T106C, T108 and T161 cascades with laminar separation near exit Reynolds number 10⁵, the transonic VKI LS89 vane with bypass transition and heat transfer, and a transonic rotor cascade with tip clearance whose tip-leakage vortex a hybrid RANS/LES resolves."
 status: established
-aliases: [turbine cascade, linear turbine cascade, LPT cascade, T106C, T106c, T108, T161, MTU T161, VKI LS89, LS89 vane, Pak-B cascade]
-tags: [benchmark, turbomachinery, transition, implicit-les, rans, boundary-layer]
-timestamp: 2026-10-26T10:26:00Z
+aliases: [turbine cascade, linear turbine cascade, LPT cascade, T106C, T106c, T108, T161, MTU T161, VKI LS89, LS89 vane, Pak-B cascade, tip-leakage turbine cascade, Arts transonic turbine cascade]
+tags: [benchmark, turbomachinery, transition, implicit-les, rans, boundary-layer, des]
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Turbine cascades (T106, T161, VKI LS89)
@@ -23,7 +23,9 @@ open at the lowest Reynolds numbers). The **VKI LS89 high-pressure-turbine
 vane** runs transonic, with a shock on the suction side and exit Reynolds
 numbers of $6\times10^5$ to $2\times10^6$, where free-stream turbulence
 drives bypass transition and the measured wall heat transfer is the
-discriminating quantity. The quantities compared are the isentropic Mach
+discriminating quantity. A third use is a **transonic high-pressure
+turbine rotor cascade with tip clearance**, where the tip-leakage vortex,
+not the blade boundary layer, is the object. The quantities compared are the isentropic Mach
 number $M_{is}$ (page-local: from the wall pressure and the inlet total
 pressure) along the blade, the wake total-pressure loss and its integral,
 secondary-flow losses near the end walls, and on LS89 the heat-transfer
@@ -42,6 +44,7 @@ exit state, $Re_{2,is}$ and $M_{2,is}$ (page-local), on the chord.
 | VKI LS89 (transonic HPT vane) | [Wang (2024)](/sources/wang-2024-b.md), §4.3, Tables 5–6 | MUR129: exit $Re=1.13\times10^6$, no free-stream turbulence in the computation (0.8% measured), wall temperature 297.75 K | implicit LES, $N=2$ and 3, 10 to 20 spanwise layers, $6.6\times10^6$ to $31.3\times10^6$ degrees of freedom |
 | VKI LS89 | [Pacciani et al. (2025)](/sources/pacciani-2025.md), §6.1, Table 4 | Mur224, Mur228 ($Re_{2,is}\approx6\times10^5$), Mur239, Mur247 ($\approx2.1\times10^6$), $M_{2,is}\approx0.92$–0.93, $Tu=6\%$ and 1% | steady 2D RANS, laminar kinetic energy model, $3\times10^5$ cells |
 | VKI LS89 | [Alauzet et al. (2022)](/sources/alauzet-2022.md), §8.1 | several exit pressure ratios | steady RANS with the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md) on adapted tetrahedral meshes |
+| Transonic HPT rotor cascade with flat-tip clearance $0.07c$ (SNECMA profile, experiment of Arts et al.) | [Yang & Ma (2022)](/sources/yang-2022-b.md), §2.2–2.3 | $M_{2,is}=0.95$, inlet total pressure 183 kPa and temperature 380 K, outlet static pressure 101 kPa, inlet $Tu=5\%$, zero incidence; Reynolds number not printed | SST-based DES with the $F_2$ shielding of ANSYS CFX ($C_{DES}=0.61$), about $1.3\times10^7$ hexahedra, $y^+\approx1$; URANS with SST and $k$-$\omega$ for comparison |
 
 ## What the case tests
 
@@ -113,6 +116,36 @@ reproduce the bubble-size trends; γ-alg-SST is on the small-bubble side at
 $Re=5\times10^4$, $Tu=0.08\%$, and γ-SST over-predicts the bubble at
 $Re=5\times10^4$, $Tu=2.85\%$ (Fig. 24).
 
+**Tip-leakage vortex in a transonic turbine rotor cascade.**
+[Yang & Ma (2022)](/sources/yang-2022-b.md) compute one passage of the
+cascade of Arts et al. (chord $c=71.8$ mm, blade height 100 mm, solidity
+1.315, inlet and exit flow angles $53.36^\circ$ and $-65^\circ$, a tip gap of
+$0.07c$, about 5% of the span) with a
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) on the
+[$k$-$\omega$ SST model](/methods/k-omega-sst-model.md); the paper calls the
+simulation "DES", "DES-type" and "DDES". The convective flux blends
+central and upwind differences; the authors take the blending factor near
+zero along the vortex and the wake, and a $-5/3$ range in velocity spectra
+at monitor points, as evidence of resolution, instead of a grid study
+(§3.1, Figs. 4–5). The only experimental comparison is the mid-span
+isentropic Mach number, which DES and URANS reproduce comparably except
+near the suction-side shock (Fig. 6). Against URANS the DES gives more
+small-scale structures near the tip, a longer-lived wake vortex layer and
+sharper shocks, and URANS over-predicts the Reynolds shear stress along
+the vortex (§3.2, Figs. 7–9). The vortex starts near $0.2c$, keeps a
+supersonic core, wanders with one characteristic frequency of about
+2200 Hz inside the passage, and breaks down near the trailing edge behind
+the shock in a "spiral-type" breakdown that the authors describe as found
+for the first time in a transonic turbine (§4.1, Figs. 10–11). Along the
+vortex the turbulent kinetic energy and the Reynolds stresses are nearly
+zero upstream of $z/c=0.8$ and rise sharply through the shocks near the
+trailing edge; an anisotropy map of the vortex core moves from
+one-component through two-component states to near isotropy downstream of
+the trailing edge (§4.5–4.6, Figs. 18–19). All results come from one grid,
+with statistics over 0.002 s after 0.004 s of settling (§3.1). Unlike the
+other cascades of this page, no transition or loss is assessed. Tip
+leakage in a compressor appears on [NASA Rotor 37](/benchmarks/nasa-rotor-37.md).
+
 **What the sources share.** Steady RANS with transition models captures
 the onset of separated-flow and bypass transition on these blades but not
 its extent: transition develops too quickly on LS89 and sets in too early
@@ -147,6 +180,16 @@ and [grid-point requirements](/results/les-grid-point-requirements.md).
   but differ *(compiler check, not in the sources)*. The paper attributes
   the entropy filter to ref. [31], while the entropy-filter paper of Dzanic
   & Witherden in its list is ref. [42].
+- [Yang & Ma (2022)](/sources/yang-2022-b.md) call the blade row a
+  "transonic turbine cascade" (high-pressure turbine rotor profile), not a
+  compressor; their $x$ is spanwise and $z$ axial. Their grid of
+  $169\times155\times404$ points is about $1.06\times10^7$, against "about 13
+  million" cells printed *(compiler check, not in the sources)*; the text
+  does not give the size of the 69-layer tip-gap block. The vorticity-transport section
+  (§4.2) finds the stretching–tilting term dominant and then closes with
+  "the viscous diffusion effect dominates"; the abstract sides with the
+  first. The anisotropy map is attributed to "Lumley et al. [31]", while
+  reference [31] is Strelets' DES paper.
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) print 67.9 million
   degrees of freedom for the coarse mesh, whose element count and $N=5$
   give 67.5 million *(compiler check, not in the sources)*.
@@ -158,3 +201,4 @@ and [grid-point requirements](/results/les-grid-point-requirements.md).
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §3.1–3.3, Tables 1–2; §4.1–4.2, Figs. 7–15; §5.
 - [Menter et al. (2022)](/sources/menter-2022.md) — Pak-B cascade, Fig. 24.
 - [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §8.1.2–8.1.3, Figs. 17–18.
+- [Yang & Ma (2022)](/sources/yang-2022-b.md) — §1; §2.1–2.3, Eqs. 1–6; §3.1–3.2, Figs. 4–9; §4.1–4.6, Figs. 10–19; §5.

@@ -5,7 +5,7 @@ description: "On curvilinear grids a discretization preserves a uniform flow onl
 status: established
 aliases: [GCL, geometric conservation law, free-stream preservation, freestream preservation, metric identities, discrete metric identities]
 tags: [dg, gas-kinetic, high-order, compressible]
-timestamp: 2026-10-26T15:48:00Z
+timestamp: 2026-10-26T20:44:00Z
 ---
 
 # Geometric conservation law and free-stream preservation
@@ -56,7 +56,8 @@ element following Kopriva and Gassner (2016).
 meshes given only by discrete points (HGKS-cur). Their metric terms are the
 Jacobian-scaled cofactors of the map, e.g. for the first computational
 direction (§2.1, Eq. 5; $(\xi,\eta,\zeta)$ the computational coordinates,
-subscripts derivatives)
+page-local, not the Kolmogorov length or input features; subscripts
+derivatives; the hat marks a metric term, not the test filter)
 $$\hat\xi_x=y_\eta z_\zeta-z_\eta y_\zeta,\qquad \hat\xi_y=z_\eta x_\zeta-x_\eta z_\zeta,\qquad \hat\xi_z=x_\eta y_\zeta-y_\eta x_\zeta,$$
 and cyclically for $\eta$ and $\zeta$. To satisfy the GCL they (§2.3):
 

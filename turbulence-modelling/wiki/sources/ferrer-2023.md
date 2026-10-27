@@ -151,7 +151,7 @@ undated software.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-26), cited further in chunks 4–6. This source is cited on:
+Chunk 3 (2026-10-26), cited further in chunks 4–7. This source is cited on:
 
 - [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
@@ -170,6 +170,7 @@ Chunk 3 (2026-10-26), cited further in chunks 4–6. This source is cited on:
 - [Subcell finite-volume shock capturing for DG](/methods/subcell-finite-volume-shock-capturing.md)
 - [Vreman model](/methods/vreman-model.md)
 - [WALE model](/methods/wale-model.md)
+- [Entropy conservation and entropy stability](/properties/entropy-conservation.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [FLEXI](/software/flexi.md)

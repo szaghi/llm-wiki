@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 493:112477"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Computational_Physics_Bernades_Kinetic-energy-_and_pressure-equilibrium-preserving_schemes.pdf"
 tags: [kinetic-energy-preserving, pressure-equilibrium, compressible, dns, real-gas]
-timestamp: 2026-10-26T07:42:00Z
+timestamp: 2026-10-26T20:44:00Z
 ---
 
 # Summary
@@ -17,7 +17,7 @@ timestamp: 2026-10-26T07:42:00Z
 Bernades et al. (2023) address compressible turbulence with a real-gas
 (Peng–Robinson) equation of state in the high-pressure transcritical
 regime, where conventional schemes generate spurious pressure oscillations
-and the usual remedies (double-flux models, pressure-based formulations)
+and the remedies in use (double-flux models, pressure-based formulations)
 discretize convection in divergence form and stabilize it with filtering or
 upwind ([WENO](/methods/weno-scheme.md), HLLC) hybridization, adding
 dissipation. The authors seek schemes that are both
@@ -156,12 +156,13 @@ report; [45] and [46] are arXiv preprints; [60] carries the printed volume
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26). This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunk 7. This source is cited on:
 
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Low-dissipation low-dispersion schemes with shock sensor](/methods/low-dissipation-low-dispersion-scheme.md)
 - [WENO and hybrid shock-capturing schemes in scale-resolving simulation](/methods/weno-scheme.md)
+- [Entropy conservation and entropy stability](/properties/entropy-conservation.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)

@@ -4,8 +4,8 @@ title: "Physics-informed neural networks for RANS"
 description: "A neural network maps the coordinates to the mean velocity, pressure and Reynolds stresses and is trained on the RANS residuals plus boundary data; the RANS system is closed by data rather than by a turbulence model, with errors reported for boundary layers, an airfoil and the periodic hill."
 status: established
 aliases: [PINN, PINNs, physics-informed neural network, physics-informed RANS solver]
-tags: [machine-learning, neural-network, data-driven, rans, boundary-layer]
-timestamp: 2026-10-26T15:57:00Z
+tags: [data-driven, neural-network, rans, boundary-layer]
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Physics-informed neural networks for RANS
@@ -187,7 +187,7 @@ rollout diverges (App. A). Details and results are on
   Reynolds stresses: Eq. 1 is the general form. The Fig. 4 caption labels a
   panel (d) that the figure, which has panels (a)–(c), does not contain;
   the text refers to Fig. 4(c).
-- **A citation to check.** van Gastelen et al. (2024, §1) write that "in
+- **A mismatched citation.** van Gastelen et al. (2024, §1) write that "in
   [29] physics-informed neural networks (PINNs) were succesfully applied to
   Burgers' equation"; their ref. [29] is Shankar et al., a
   differentiable-physics closure for Burgers turbulence, printed again

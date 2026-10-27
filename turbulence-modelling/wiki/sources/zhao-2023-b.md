@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 263:105967"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Computers_amp_Fluids_Zhao_Turbulence_simulations_with_an_improved_interior_penalty_dis.pdf"
 tags: [rans, dg, compressible, eddy-viscosity]
-timestamp: 2026-10-26T07:38:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Summary
@@ -57,7 +57,7 @@ DOI).
 
 # Key claims
 
-1. The standard IPDG viscous penalty needs the fourth-order homogeneity tensor $\partial F^\nu/\partial\nabla U$, "difficult to calculate"; the lifting quantity $L=-F^\nu(U,[U])$, which uses the linearity of the viscous flux in its gradient argument, removes it and gives the weak form Eq. 3-7 (§1, §3.1, Eqs. 3-1–3-7). **Derived** (from the authors' earlier work, ref. [34])
+1. The IPDG viscous penalty in the form the paper calls standard needs the fourth-order homogeneity tensor $\partial F^\nu/\partial\nabla U$, "difficult to calculate"; the lifting quantity $L=-F^\nu(U,[U])$, which uses the linearity of the viscous flux in its gradient argument, removes it and gives the weak form Eq. 3-7 (§1, §3.1, Eqs. 3-1–3-7). **Derived** (from the authors' earlier work, ref. [34])
 2. The mean flow is discretized by IPDG and the SST equations by first-order finite volumes in a "hybrid framework of DG and FVM … to pursue numerical stability and positivity"; turbulence quantities are piecewise constant per element and the velocity gradients are $L^2$-projected onto the finite-volume space (§1, §3.2; idea attributed to Burgess & Mavriplis, ref. [22]). **Stated**
 3. The convective flux is local Lax–Friedrichs with $\lambda_{\max}=|\boldsymbol u\cdot\boldsymbol n|+c$ (Eq. 3-8); the viscous flux is the average of the two viscous fluxes plus the penalty $C_{IP}(N^2/h_f)L\cdot\boldsymbol n$, $C_{IP}$ "a sufficiently large constant" whose value is not printed (Eq. 3-9). **Stated**
 4. Shocks are stabilized by the artificial viscosity $\nu_s=C_\varepsilon h^{2-\beta_s}|-\nabla\cdot(F^c-F^\nu)|$ of Hartmann (ref. [40]) (Eq. 3-10), which concentrates around the shock in the transonic case (§3.1, §5.3, Fig. 5-12). **Shown** (qualitative)
@@ -102,7 +102,7 @@ DOI).
 | $\tau_{ij}$ | (total Boussinesq stress, sign not printed) | **collision:** not the SGS stress $\tau_{ij}$ |
 | $\Omega=\lvert S_{ij}\rvert$ | $\lvert S\rvert$ | **collision:** not the rotation rate; normalization not printed; also the element domain |
 | $k$, $\omega$, $F_1$, $F_2$, $\beta^*$, $\sigma_k$, $\sigma_\omega$, $d$ | same | agree |
-| $\beta$ (SST) | $\beta$ (SST destruction coefficient) | values not printed |
+| $\beta$ (SST) | $\beta$ (SST destruction coefficient, as on the [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) page) | values not printed |
 | $a_1$, $CD_{k\omega}$, $\sigma_{\omega2}$ | SST limiter constant (0.31), cross-diffusion term, its coefficient | |
 | $M_t$, $\overline{p''d''}$, $\alpha_1,\alpha_2,\alpha_3$ | $M_t$, (modelled pressure dilatation), (correction constants 1.0, 0.4, 0.2) | **collision:** the double prime is not a Favre fluctuation here |
 | $g$, $\Theta$, $L$, $T$, $\psi$ | (homogeneity tensor, viscous-flux auxiliary variable, jump-based lifting quantity, tensor and scalar test functions; page-local) | |
@@ -131,7 +131,7 @@ refs. [41], [47], [49], [50] are reports. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26), cited further in chunks 5–6. This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunks 5–7. This source is cited on:
 
 - [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)
 - [Shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
@@ -142,6 +142,7 @@ Chunk 4 (2026-10-26), cited further in chunks 5–6. This source is cited on:
 - [Artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Jump-penalty stabilization of high-order methods](/methods/jump-penalty-stabilization.md)
+- [Wilcox k-ω model](/methods/k-omega-model.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)

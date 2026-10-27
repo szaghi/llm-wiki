@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 471:111618"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Mateo-Gabín_An_entropy_stable_spectral_vanishing_viscosity_for_discontin.pdf"
 tags: [dg, entropy-stable, sgs-model, numerical-dissipation, kinetic-energy-preserving]
-timestamp: 2026-10-25T19:46:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Summary
@@ -119,7 +119,7 @@ the preprint.
 | $\hat{\mathcal F}_k$, $\mathcal F\star$, $\mathcal H$ | (filter-kernel coefficients, filtering operator, nodal filter matrix) | **collision:** $\mathcal F\star$ weights the dissipative flux (high values = more dissipated mode), not the solution |
 | $P_{SVV}$ | (kernel exponent) | kernel $(i/N)^{P_{SVV}}$ after Moura et al. |
 | $\{\{\cdot\}\}$, $[\![\cdot]\!]$ | $\{\!\{\cdot\}\!\}$, (jump) | |
-| $J$ | (mapping Jacobian) | |
+| $J$ | $\mathcal J$ (registry §11) | Jacobian determinant of the element map |
 | $E(k)$ | $E(k)$ | kinetic-energy spectrum; $E$ also the reference element |
 | $s_1$, $s_2$ | (density-gradient sensors) | |
 
@@ -140,7 +140,7 @@ unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25), cited further in chunks 3, 6. This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunks 3, 6, 7. This source is cited on:
 
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
@@ -151,6 +151,7 @@ Chunk 2 (2026-10-25), cited further in chunks 3, 6. This source is cited on:
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
 - [Subcell finite-volume shock capturing for DG](/methods/subcell-finite-volume-shock-capturing.md)
+- [Entropy conservation and entropy stability](/properties/entropy-conservation.md)
 - [Geometric conservation law and free-stream preservation](/properties/geometric-conservation-law.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)

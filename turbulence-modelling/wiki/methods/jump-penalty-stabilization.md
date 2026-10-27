@@ -5,7 +5,7 @@ description: "Jump-penalty stabilization adds to a high-order element method fac
 status: established
 aliases: [jump penalty, solution jump penalty, gradient jump penalty, gradient-jump penalisation, GJP, continuous interior penalty, edge stabilization, interior penalty stabilization]
 tags: [dg, implicit-les, numerical-dissipation, spectral-element, flux-reconstruction]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Jump-penalty stabilization of high-order methods
@@ -86,7 +86,13 @@ which avoids forming the Jacobian of the viscous flux. The
 [high-order projection-based upwind method](/methods/high-order-projection-based-upwind-method.md)
 of [Lederer et al. (2023)](/sources/lederer-2023.md) works on the other jump
 term, the upwind penalty of the convective flux, and restricts it to the
-high-order part of the velocity jump.
+high-order part of the velocity jump. [Lederer et al. (2026)](/sources/lederer-2026.md),
+§1, note that "jump penalty stabilization methods for under-resolved
+turbulence in DG have sparked interest", citing Kou et al. (2023) among
+others, and set their projection-based treatment of the upwind jump beside
+them; they describe the upwind jump term itself as "an additional numerical
+diffusion with an implicitly defined 'eddy viscosity'" that damps the whole
+resolved range (§3.2).
 
 **Zero solution penalty in LDG.** In the
 [flux-reconstruction](/methods/flux-reconstruction.md) implicit LES of
@@ -224,7 +230,7 @@ penalty does not change with $N$.
 ## Qualifications
 
 - Evidence is numerical (eigenanalysis and simulations); no stability or
-  consistency theorem is proved in either source.
+  consistency theorem is proved in any of the sources on this page.
 - **Sign of the gradient penalty.** The one-dimensional analysis and the
   Burgers test favour a negative $\tau_g$ with an upwind flux, whereas in
   the Taylor–Green vortex positive values above $6.3\times10^{-4}$ remove
@@ -256,3 +262,4 @@ penalty does not change with $N$.
 - [Wang (2024)](/sources/wang-2024-b.md) — arXiv v2: §2.2, Eq. (16) (LDG with zero solution-jump penalty).
 - [Duan & Wang (2024)](/sources/duan-2024.md) — §3 (BR2 face gradients in FR/CPR; explicit SGS dissipation instead).
 - [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §1 (stabilization term as ILES dissipation); §3.1, Eqs. (8)–(10) (SUPG/PSPG, $\tau_u$); §4.2, Table 5 (time-step dependence).
+- [Lederer et al. (2026)](/sources/lederer-2026.md) — arXiv 2408.06698v1: §1 (interest in jump penalties, citing Kou et al.); §3.2 (upwind jump as implicit eddy viscosity).

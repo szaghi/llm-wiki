@@ -5,7 +5,7 @@ description: "The attached-eddy hypothesis models the logarithmic region of wall
 status: established
 aliases: [attached eddy model, attached-eddy model, Townsend's attached eddies, wall-attached eddies, inactive motions, uniform momentum zones]
 tags: [boundary-layer, dns, compressible, hypersonic]
-timestamp: 2026-10-25T19:47:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Attached-eddy hypothesis
@@ -128,9 +128,8 @@ are in the cooled Mach 2 and 5.86 cases of Cogo et al. (2022, §3.1).
 - Cogo et al. (2022) print Eqs. (5.9)–(5.10) as
   $l_{12}^*\sim(u_\tau\delta)(\partial\tilde u/\partial y)^{-1/2}$; as
   printed the right-hand side is not a length, which requires the factor
-  $(u_\tau\delta)^{1/2}$ *(compiler check, not in the sources)*. The "$\sim$"
-  may denote a proportionality; the cited Pirozzoli (2012) form is not in
-  the bundle.
+  $(u_\tau\delta)^{1/2}$ *(compiler check, not in the sources)*; the cited
+  Pirozzoli (2012) form is not in the bundle.
 - Huang et al. (2022, §4.2) print the range of their $B_2$ (here $B_3$) as ending at "M5Tw020", a
   case that does not exist; the sentence concerns the quasi-adiabatic Mach
   4.9 case M5Tw091.

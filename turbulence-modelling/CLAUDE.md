@@ -48,6 +48,9 @@ bundle's notation.
   files present on 2026-10-25; files added later are appended to the plan
   (ghidoni-2026, wang-2023, elzaabalawy-2023, chunk 7; 134 files on
   2026-10-25) or ingested in further chunks after them, found with `tools/worklist.sh turbulence-modelling`.
+  On 2026-10-26 the archive held 160 files: the 26 added since founding
+  (all distinct works, identified by page 1 and Crossref) fill chunk 7 to
+  20 and make chunk 8.
 - The page-1 and checksum check of 2026-10-25 found 131 distinct works and
   no byte copies. The year in the filename is the online year (the slug
   uses the year of the published issue), and more than half of the files
@@ -106,12 +109,18 @@ bundle's notation.
 
 ## Status
 
-**Chunk 6 staged 2026-10-26:** 20 papers of 2024–2026; 120 of 134
+**Chunk 7 staged 2026-10-26:** 20 papers of 2021–2026; 140 of 160
+ingested, 143 concept pages plus the registry, 6521 bibliography entries,
+first whole-bundle deep lint done (D26; due again by 190 ingestions or
+with the chunk that completes the archive), four contradictions open.
+Chunk 8 (20 papers added in October 2026) follows, with the closing
+bibliography sweeps (`--dupes`, fuzzy titles).
+
+**Chunk 6 committed 2026-10-26 (58aad80):** 20 papers of 2024–2026; 120 of 134
 ingested, 134 concept pages plus the registry, 5882 bibliography entries,
 deep lint done, four contradictions open (sparse-regression coefficients;
 gas-kinetic dissipation; constants of the Cai & Sagaut inverse wall law;
-Ahmed-body slant topology). Chunk 7 (14 papers) completes the founding
-plan, with the whole-bundle deep lint and the closing bibliography sweeps.
+Ahmed-body slant topology).
 
 **Chunk 5 committed 2026-10-26 (fdc020d):** 20 papers of 2023–2025; 100 of 134
 ingested, 115 concept pages plus the registry, 4987 bibliography entries,

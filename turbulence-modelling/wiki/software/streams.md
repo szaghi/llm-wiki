@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "STREAmS"
-description: "STREAmS is an open-source multi-GPU finite-difference solver for compressible wall-bounded flows on Cartesian grids, combining energy-preserving central schemes with WENO shock capturing; this page records its numerics and its use for supersonic and hypersonic boundary-layer DNS and for implicit LES of a capsule wake with immersed boundaries."
+description: "STREAmS is an open-source multi-GPU finite-difference solver for compressible wall-bounded flows on Cartesian grids, combining energy-preserving central schemes with WENO shock capturing; this page records its numerics and its use for supersonic and hypersonic boundary-layer DNS, implicit LES of a capsule wake with immersed boundaries, and channel DNS of a thermally perfect gas with entropy-conservative fluxes."
 status: established
-aliases: [STREAmS-2.0, STREAMS]
+aliases: [STREAmS-2.0, STREAmS 2.1, STREAMS]
 tags: [software, gpu, dns, compressible, implicit-les, immersed-boundary]
-timestamp: 2026-10-26T11:08:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # STREAmS
@@ -15,8 +15,11 @@ the compressible Navier–Stokes equations on Cartesian grids for canonical
 wall-bounded flows, by Bernardini and co-workers (Bernardini et al. 2021,
 and STREAmS-2.0, Bernardini et al. 2023, as recalled by
 [Placco et al. 2023](/sources/placco-2023.md), §2). It runs on multiple GPUs
-through CUDA Fortran ([Cogo et al. 2022](/sources/cogo-2022.md), §2). Both
-studies of this bundle that use it ran on the Marconi100 system of CINECA.
+through CUDA Fortran ([Cogo et al. 2022](/sources/cogo-2022.md), §2). The
+first two studies of this bundle that use it ran on the Marconi100 system of
+CINECA; [Aiello et al. (2026)](/sources/aiello-2026.md), §3.3, use the
+open-source GPU release STREAmS 2.1 (Salvadore et al. 2025, as recalled),
+with CINECA resources (machine not named).
 
 ## Numerics
 
@@ -38,8 +41,29 @@ studies of this bundle that use it ran on the Marconi100 system of CINECA.
   that imposes no-slip and no-penetration through ghost nodes filled from the
   fluid.
 
-Neither source gives orders of accuracy for the central schemes or
-performance figures of the code.
+Neither Cogo et al. nor Placco et al. gives orders of accuracy for the
+central schemes or performance figures of the code.
+
+**STREAmS 2.1 as configured by Aiello et al. (2026, §3.3).** Sixth-order
+central differences for both convective and diffusive terms, Wray's
+low-storage third-order Runge–Kutta with an adaptive step at CFL 0.6, and
+fifth-order WENO only during the initial transition (until a dimensionless
+time of about 25), after which shock capturing is switched off and the run
+is fully central. The built-in convective option is the KEEP scheme of Kuya
+et al. (as recalled), a kinetic-energy-preserving split form; the authors
+add to the code the entropy-conservative fluxes of their EC-TP scheme, of
+Gouasmi et al., of Ranocha and an asymptotic variant (see
+[entropy conservation](/properties/entropy-conservation.md) and
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+They remove the ghost nodes at the walls, using second-order boundary
+formulae on a stretched grid whose first nodes sit off the wall, because
+negative temperatures occasionally appeared at ghost nodes during
+hypersonic transients (an SCM3 test, not shown, found the boundary order
+reduction negligible), and they discretize the viscous terms in
+conservative divergence form, which they found more robust in these tests
+than the non-conservative form "often employed to avoid odd-even
+decoupling effects (Bernardini et al. 2021)". No performance figures are
+given.
 
 ## Applications in the sources
 
@@ -65,6 +89,28 @@ performance figures of the code.
   coefficient falls from 1.5685 at $0^\circ$ to 1.5349 at $15^\circ$ and the lift spectrum peaks at
   $St=fD/U_\infty\approx0.2$–$0.3$ (Table 3, Fig. 11). The resolution in wall
   units is not reported and no reference data are compared.
+- **DNS of a thermally perfect gas in a channel** (Aiello et al. 2026,
+  §2–§4, Tables 2–3): compressible [channel flow](/benchmarks/turbulent-channel-flow.md)
+  of CO$_2$ as a non-reacting thermally perfect gas (temperature-dependent
+  specific heats from the NASA Glenn polynomials, Sutherland viscosity,
+  $Pr=0.72$), isothermal walls at 298.15 K, box $10\delta\times2\delta\times3\delta$,
+  constant mass flow; bulk Mach numbers on the wall sound speed 3, 4 and 5
+  at $Re_\tau\approx470$, 630 and 800, on $512\times256\times324$ to
+  $816\times356\times512$ points ($\Delta x^+\le9.68$, $\Delta y^+_w\le0.32$,
+  $\Delta z^+\le4.62$); the centreline reaches about 1000 K at Mach 5. The
+  study isolates the convective discretization: the non-entropy-conservative
+  KEEP scheme over-predicts the pressure and density fluctuations, which
+  drift after long times while both entropy-conservative schemes stay
+  statistically stationary over a run extended by 50%; at Mach 5 KEEP's
+  peak streamwise Reynolds stress differs from EC-TP by 10.98% and Gouasmi
+  et al.'s (entropy-conservative, different pressure term) by 5.25%, and the
+  wall-pressure r.m.s. is $2.57$ (EC-TP), $3.55$ (KEEP), $2.55$ (Gouasmi)
+  and $2.78$ (Ranocha) in wall units. Differences are measured relative to
+  EC-TP, with no external reference DNS. The authors state that with
+  entropy-conservative fluxes no shock capturing was needed in this fully
+  central set-up, and that KEEP or Ranocha's scheme would in practice be
+  hybridized with WENO, at the price of dissipation (§4.2). Details are on
+  [entropy conservation](/properties/entropy-conservation.md).
 
 ## Qualifications
 
@@ -73,7 +119,7 @@ performance figures of the code.
   WENO-type shock capturing", contrasting it with DG and flux
   reconstruction codes. The description agrees with Cogo et al. and Placco
   et al. and adds no figures.
-- The two sources describe the convective discretization differently
+- Cogo et al. and Placco et al. describe the convective discretization differently
   (energy-preserving central plus Ducros-switched WENO; fifth-order WENO
   only). Whether the central part was active in the capsule runs is not
   stated; this is a gap in the description, not a contradiction.
@@ -83,3 +129,4 @@ performance figures of the code.
 - [Cogo et al. (2022)](/sources/cogo-2022.md) — §2, Table 1 (STREAmS numerics, CUDA Fortran, boundary-layer DNS set-up).
 - [Placco et al. (2023)](/sources/placco-2023.md) — §2 (STREAmS and STREAmS-2.0, WENO, central viscous terms, Wray Runge–Kutta, ghost-point immersed boundary, implicit LES); §3, Table 1 (grid, 32 GPUs); §4, Table 3, Fig. 11.
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §1 (STREAmS as a high-order finite-difference WENO code).
+- [Aiello et al. (2026)](/sources/aiello-2026.md) — §3.3 (STREAmS 2.1, sixth-order central schemes, Wray Runge–Kutta, WENO transient, KEEP baseline, ghost-node removal, conservative viscous terms); §2, §4, Tables 2–3, Figs. 1–3 (thermally perfect CO$_2$ channel DNS); acknowledgements (CINECA).

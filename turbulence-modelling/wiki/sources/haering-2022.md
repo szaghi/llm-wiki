@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Rev. Fluids 7:014603"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physical_Review_Fluids_Haering_Active_model_split_hybrid_RANSLES.pdf"
 tags: [hybrid-rans-les, les, rans, sgs-model, eddy-viscosity, log-layer-mismatch]
-timestamp: 2026-10-25T13:54:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Summary
@@ -120,8 +120,8 @@ translated (see the Notation map).
 | $\{\cdot\}$, $[\cdot]$ | — | pseudo-mean (causal exponential time filter, $C_\phi=1$ and $4$) |
 | $\nu_s$, $\nu_e$, $\nu_{tot}$ | $\nu_t$ family | mean-stress, energy-transfer and total eddy viscosities |
 | $k_{tot}$, $k_{sgs}$, $k_{res}$ | $k_{\mathrm{tot}}$, $k_{\mathrm{sgs}}$, $k_{\mathrm{res}}$ | as in the registry; $k_{tot}$ from the RANS $k$-equation |
-| $\alpha$ | $\alpha_k$ (local) | $k_{sgs}/k_{tot}$; **collision** with the DG blending factor |
-| $\beta$ | $\beta_k$ (local) | $1-k_{res}/k_{tot}$; **collision** with the field-inversion $\beta(\boldsymbol x)$ |
+| $\alpha$ | $\alpha_k$ (registry §11) | $k_{sgs}/k_{tot}$; **collision** with the DG blending factor |
+| $\beta$ | $\beta_k$ (registry §11) | $1-k_{res}/k_{tot}$; **collision** with the field-inversion $\beta(\boldsymbol x)$ |
 | $\langle S\rangle=(\langle S_{ij}\rangle\langle S_{ij}\rangle)^{1/2}$ | $\lvert\langle S\rangle\rvert/\sqrt2$ | **no factor two** (App. A) |
 | $\zeta$ | — | anisotropy measure $3\overline{v^2}/(2k)$ (Eq. 33), overloaded in Table V; **collision** with the feature vector $\boldsymbol\zeta$ |
 | $\mathcal M_{ij}$, $r_{\mathcal M}$, $C_r$ | — | resolution tensor, resolution-adequacy parameter and its coefficient |

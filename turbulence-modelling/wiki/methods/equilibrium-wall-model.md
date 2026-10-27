@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Equilibrium wall model
@@ -41,7 +41,15 @@ condition that defines [wall-modelled LES](/methods/wall-modelled-les.md).
 The same equilibrium wall function also closes steady RANS at coarse
 near-wall resolution: [Constant et al. (2024)](/sources/constant-2024.md)
 use it with the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
-on an [immersed boundary](/methods/immersed-boundary-method.md).
+on an [immersed boundary](/methods/immersed-boundary-method.md), and
+[Ghidoni et al. (2026)](/sources/ghidoni-2026.md) with the $k$-$\omega$
+model in a high-order DG solver, borrowing the WMLES practice of sampling
+away from the wall and the constant-stress hypothesis (see
+[RANS wall function](/methods/rans-wall-function.md)).
+[Wu & Lele (2026)](/sources/wu-2026.md) (§2.2, §6.2) run their wall-modelled
+channel LES with "a classic wall model" identical to that of Bou-Zeid et al.
+(2005), as cited, without printing its form, so that it is an equilibrium
+model is not stated in the source.
 
 ## Assumptions
 
@@ -172,6 +180,13 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
   image-point pressure. The quartic is exactly $\nu_t=\tilde\nu f_{v1}$ of the
   Spalart–Allmaras model solved for $\tilde\nu$ *(compiler check, not in the
   sources)*.
+- **Explicit power law** (Ghidoni et al. 2026, §3.3, Eqs. 13–17, after
+  Wilhelm et al. as cited), in RANS: $u^+=y^+$ below $y^+=11.81$ and
+  $u^+=8.3\,(y^+)^{1/7}$ above, each branch inverted in closed form for
+  $u_\tau$ and the two blended as $(u_{\tau,\mathrm{vis}}^4+u_{\tau,\log}^4)^{1/4}$
+  (Menter et al., as cited); a second velocity scale built from $k$ keeps
+  $\tau_w$ non-zero at separation. Formulas on the
+  [RANS wall function](/methods/rans-wall-function.md) page.
 - **Unprinted law of the wall in a high-order code** (Duan & Wang 2024,
   §4): the model takes the wall-parallel velocity, density and viscosity at
   the exchange point, "solves a nonlinear equation to obtain $u_\tau$" from
@@ -209,7 +224,8 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | Vadrot et al. (2023a, §II.B.1) | LESGO, uniform $48^3$ half channel | first point, $\Delta y/2$ | filtered, after Yang et al. (2017) as cited |
 | Duan & Wang (2024, §4, Fig. 4) | hpMusic, flux reconstruction of degree $N=2$–5 | interface between the first and second elements, $h_{\mathrm{wm}}$ equal to the first element height; data from the second element | element-wise constant SGS viscosity (no wall-model filtering stated) |
 | Mozaffari et al. (2024, §2.2) | ProLB lattice Boltzmann, octree Cartesian grid, immersed boundary | reference point one local grid size along the normal from each boundary node | none stated |
-| Mukha et al. (2025, §II.C.1, §III–IV) | Nek5000, continuous spectral elements of degree 7 | channel: $0.2\delta$, inside the first element on meshes of 2 and 4 elements per $\delta$ and in the second on 8, if the elements are of equal height, as the stated node resolution of about $\delta/15$ "in all directions" on the coarsest mesh suggests *(compiler check, not in the sources)*; boundary layer: $0.2\delta_{99}(x)$, $\delta_{99}$ from a power-law estimate | none by default; exponential moving average of 5–500 time steps tested (channel), 10 time steps (boundary layer) |
+| Mukha et al. (2025, §II.C.1, §III–IV) | Nek5000, continuous spectral elements of degree 7 | channel: $0.2\delta$, inside the first element on meshes of 2 and 4 elements per $\delta$ and in the second on 8, for elements of equal height *(compiler check, not in the sources)*; boundary layer: $0.2\delta_{99}(x)$, $\delta_{99}$ from a power-law estimate | none by default; exponential moving average of 5–500 time steps tested (channel), 10 time steps (boundary layer) |
+| Ghidoni et al. (2026, §3.3, Fig. 1, Alg. 1), RANS | modal DG, $N\le6$, body-fitted | internal quadrature point of the wall element farthest from the wall (nearest the opposite face), first-element heights $y_1^+=1$–320 | steady RANS, no filtering |
 | Constant et al. (2024, §3.1, §4.2), RANS | FastS finite volume, octree Cartesian grid, immersed boundary | modelling height $H_{\mathrm{mod}}$ from a flat-plate estimate of a target $y^+$ (50–500), then lowered locally after a first converged run (see below) | steady RANS, no filtering |
 
 Gillyns et al. (2022, §5) find that without the moving average ($C_t=0$) the
@@ -254,8 +270,9 @@ sources)*. Their study separates a priori from a posteriori effects
   see the divergence reported by Gillyns et al. (see Qualifications).
 
 The choice is tied to [log-layer mismatch](/definitions/log-layer-mismatch.md):
-matching away from the wall or filtering the input are the recalled remedies,
-and first-point matching on Voronoi grids is reported to work without them.
+matching away from the wall or filtering the input are the remedies the
+sources recall, and Lozano-Durán et al. (2022) and Agrawal et al. (2022)
+report first-point matching on Voronoi grids without them.
 
 **Modelling height chosen from the solution (RANS on an immersed
 boundary).** Constant et al. (2024) set the height below which grid points
@@ -380,7 +397,11 @@ Griffin et al. (2023, §4) report that their one-ODE
 costs between 7 % less and 32 % more than the classical two-ODE compressible
 model. Lozano-Durán & Bae (2023, §2.6) report that their learned
 building-block-flow model makes a CharLES WMLES 1.1–1.3 times as expensive as
-the algebraic equilibrium model.
+the algebraic equilibrium model. In RANS, Ghidoni et al. (2026, §4.1,
+Table 2) measure the gain of an explicit over an implicit law: with the
+first element at $y_1^+=320$ the computing time falls on average by 68.96 %
+with the explicit power law and by 63.73 % with the Newton-iterated
+Spalding law, against the wall-resolved run, over degrees $N=1$–6.
 
 ## Limits shown by the sources
 
@@ -415,14 +436,14 @@ the algebraic equilibrium model.
 - **Shock-induced separation.** Hoy & Bermejo-Moreno (2022) apply the model
   to a Mach 3 impinging shock/boundary-layer interaction with a separation
   length of 8–13 $\delta_0$, resting its validity in such non-equilibrium
-  separated flows on earlier work (Bermejo-Moreno et al. 2014, as recalled,
+  separated flows on earlier work (Bermejo-Moreno et al. 2014, as they cite it,
   §1).
 - **Massive separation on a bluff body.** Cai et al. (2022, §II.C.2, §IV)
   apply the explicit equilibrium model on the whole Ahmed body (a generic car
   body) with a 35° slant ($Re_H=7.68\times10^5$, $H$ the body height), including
   the front where they acknowledge pressure-gradient effects, arguing that
   the wall stress in the recirculation is small, that the model then acts in
-  the linear range and that the flow is insensitive to it there (as recalled).
+  the linear range and that the flow is insensitive to it there (as they cite it).
   On their coarse grid this "wall-law" case does not separate on the slant,
   which they attribute to the assumed alignment of wall stress and tangential
   velocity at the boundary points and to too little near-wall turbulent
@@ -470,6 +491,14 @@ the algebraic equilibrium model.
   separate on the fine grid). For the NACA 0012 they also
   report that the equilibrium model under strong adverse pressure gradient
   degrades the surface forces (§3.2).
+- **Strong adverse pressure gradient and recirculation (RANS, DG).**
+  Ghidoni et al. (2026, §4.2–4.3, Figs. 8, 10) find their zero-pressure-gradient
+  power law accurate for first-element heights up to $y_1^+=320$ on a flat
+  plate and in weak adverse gradient, but degrading for $y_1^+>80$ near the
+  end of the strong-gradient region of the DM2/DM3 plates and, at $N=6$, for
+  $y_1^+>10$ in the recirculation of a backward-facing step, where the law
+  of the wall gives wrong $u_\tau$ (details on the
+  [RANS wall function](/methods/rans-wall-function.md) page).
 - **Equilibrium as a limit.** Fowler et al. (2022, §2.2) derive the classical
   model as the limit $T_s\to0$ of their relaxation equation (page-local $T_s$,
   the relaxation time of the fluid layer below $h_{\mathrm{wm}}$); applying the
@@ -544,8 +573,7 @@ profile lies above the DNS).
   filter two modes with weight 100. Each statement concerns its own set-up
   (wall law, sampling height, Reynolds number, SGS treatment), so the two
   are not in conflict; the observations that would test one set-up against
-  the other are not in the sources. (Recorded as a contradiction during
-  chunk-6 compilation and reclassified at the deep lint.)
+  the other are not in the sources.
 
 # Citations
 
@@ -570,3 +598,5 @@ profile lies above the DNS).
 - [Constant et al. (2024)](/sources/constant-2024.md) — §1; §3.1–3.2, Eqs. (5)–(11); §4.1–4.2, Figs. 10–11; §5.1–5.2, Figs. 12–15; §6.1, Figs. 18–25, Table 3; §6.3, Table 9; §7 (HAL author manuscript).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §2.2, Eqs. (9)–(15); §3.2; §3.3, Figs. 16–20 (HAL accepted manuscript).
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — §II.C.1, Eqs. (5)–(6); §III.A; §III.B.3, Tables II–III, Figs. 4–5; §III.C; §IV.A; App. A, Fig. 19 (arXiv v1).
+- [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §3.3, Eqs. (12)–(17), Fig. 1, Alg. 1; §4.1, Table 2; §4.2–4.3, Figs. 8, 10.
+- [Wu & Lele (2026)](/sources/wu-2026.md) — §2.2; §6.2 (arXiv v2).

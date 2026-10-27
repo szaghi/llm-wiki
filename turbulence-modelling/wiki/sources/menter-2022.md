@@ -126,8 +126,9 @@ volume or pages; none is unparseable and no printed duplicate was found.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2, 4, 5. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4, 5, 7. This source is cited on:
 
+- [Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md)
 - [ERCOFTAC T3 flat-plate transition cases](/benchmarks/ercoftac-t3-flat-plate.md)
 - [Turbine cascades (T106, T161, VKI LS89)](/benchmarks/turbine-cascade.md)
 - [Laminar separation bubble](/definitions/laminar-separation-bubble.md)

@@ -3,9 +3,9 @@ type: Benchmark
 title: "Homogeneous isotropic turbulence (decaying and forced)"
 description: "Turbulence in a triply periodic box, decaying or forced: a priori and a posteriori test of subgrid closures, learned closures and neural-operator surrogates, of filter widths and scheme dissipation, DNS up to Taylor-scale Reynolds number 2500 on 32768^3 points, supersonic isothermal and compressible runs, and driven MHD turbulence with and without bulk viscosity."
 status: established
-aliases: [HIT, DHIT, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation, supersonic isothermal turbulence, driven supersonic turbulence, exascale DNS of isotropic turbulence]
+aliases: [HIT, DHIT, HID, DIT, Comte-Bellot–Corrsin experiment, CBC experiment, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation, supersonic isothermal turbulence, driven supersonic turbulence, exascale DNS of isotropic turbulence]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-26T15:53:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -52,6 +52,11 @@ notation registry.)
 | [Yeung et al. (2025)](/sources/yeung-2025.md), §2, Table 1 | forced | about 390, 650, 1000, 1600, 2500 | pseudo-spectral on GPUs, $2048^3$ to $32\,768^3$, single precision, final $k_{\max}\eta\approx2.8$ | DNS only | constant energy in the first three shells ($k<2.5$), after Donzis & Yeung |
 | [Cernetic et al. (2024)](/sources/cernetic-2024.md), §4–§6, Table 1 | forced, isothermal, supersonic | not given; rms Mach 0.1 to 12.8 | none | no explicit model: modal DG ($N=1$, 2) and second-order finite volumes, $256^3$; $512^3$ and $1024^3$ at Mach 3.2 | solenoidal Ornstein–Uhlenbeck forcing at $k\in[2\pi,4\pi]$ ($L=1$) |
 | [Beattie et al. (2025)](/sources/beattie-2025.md), §4, Table 1 | forced, isothermal MHD with explicit bulk viscosity | not given; $Re=Rm=1000$ on half the box, $M_t\approx1$ | none | DNS-type, finite volumes, $128^3$ to $1024^3$ | Ornstein–Uhlenbeck forcing at $kL/2\pi=2$, 2:1 solenoidal to compressive; seed magnetic energy $10^{-10}\rho_0c_s^2$ ($\rho_0$ mean density, $c_s$ sound speed) |
+| [Wang et al. (2021)](/sources/wang-2021-l.md), §3.1, App. B | decaying (grid turbulence of Comte-Bellot & Corrsin) | not given | experiment, spectra compared at $t^*=2.0$ | LES branch of Reynolds-stress-model IDDES, second-order finite volumes, $64^3$ cells | field from the inverse Fourier transform of the measured spectrum; implicit dual time stepping, $\Delta t=0.001$ |
+| [Brillon & Nadarajah (2026)](/sources/brillon-2026.md), §3.2, Table 6 | decaying (grid turbulence of Comte-Bellot & Corrsin) | 71.6 to 60.6 (experiment, as printed) | experiment, spectra at $tU_0/M_g=42$, 98, 171 | no-model nonlinearly stable flux reconstruction, $N=3$, $32^3$ elements ($128^3$ DOF, $96^3$ unique), $k_c=48$ | field from the measured spectrum at $tU_0/M_g=42$, Misra–Lund scaling, $M_\infty=7.874\times10^{-4}$, CFL 0.2 |
+| [Ranjbar et al. (2026)](/sources/ranjbar-2026.md), §III.A, Table I | decaying (case idc96 of Blaisdell et al.) | not given; $Re_c=450$ | DGSEM, $N=8$, $12^3$ elements (1,259,712 points), checked against the authors' earlier DSEM code | DGSEM, $N=7$, $6^3$ elements (110,592 points): no model, Smagorinsky, modal filters | top-hat spectrum on $8\le k\le16$ for velocity and temperature; $\gamma=1.4$, $Pr=0.72$ |
+| [Caban et al. (2026)](/sources/caban-2026.md), §4.2 | not stated | 100 | $384^3$ ("closely corresponding" to an earlier database) | a priori only: Gaussian filter $\Delta=2h$ on a 64-node grid, $k_c=16$ | not stated |
+| [Wu & Lele (2026)](/sources/wu-2026.md), §3.2.1, §5, §6.1 | forced | 433 | Johns Hopkins database, $1024^3$, 5 snapshots | $64^3$ ($\Delta=16$ DNS spacings) in a Fourier code with 2/3 de-aliasing (PadeOps) and a sixth-order compact code without it (PadeLibs); $32^3$ ($\Delta=32$ spacings) in PadeOps | run to statistical stationarity; forcing not described in the version read |
 
 The beck-2023 DNS used 16,384 cores of the HAWK system for almost two hours
 (about 30,000 CPU hours). [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md)
@@ -420,11 +425,13 @@ The author states that the de-aliased spectral code makes numerical
 dissipation negligible, so the observed effects are those of the model
 (§3.3).
 
-**Decaying grid turbulence of Comte-Bellot and Corrsin.** Two sources
-start an LES from the measured spectrum at $tU_0/M_g=42$ ($M_g$ the grid
-mesh size, 5.08 cm, and $U_0=10$ m/s in both; $U_0M_g/\nu=34{,}000$ in
-Duan & Wang) and compare later spectra, at 98 and 171 in Domaradzki and
-at 98 in Duan & Wang; a third uses the case for scheme dissipation:
+**Decaying grid turbulence of Comte-Bellot and Corrsin.** Five sources use
+this experiment. Three start a simulation from the measured spectrum at
+$tU_0/M_g=42$ ($M_g$ the grid mesh size, 5.08 cm, and $U_0=10$ m/s in
+Domaradzki, Duan & Wang and Brillon & Nadarajah; $U_0M_g/\nu=34{,}000$ in
+Duan & Wang and Brillon & Nadarajah) and compare later spectra, at 98 and
+171 in Domaradzki and in Brillon & Nadarajah and at 98 in Duan & Wang; two
+use the case to set the dissipation of hybrid RANS/LES:
 
 - [Domaradzki (2024)](/sources/domaradzki-2024.md), §3.1, Figs. 4–5:
   under-resolved DNS without a model fails on $64^3$, the autonomous LES
@@ -451,10 +458,36 @@ at 98 in Duan & Wang; a third uses the case for scheme dissipation:
   slightly more damped; $h/(N+1)$ adds very little dissipation, $h$ too
   much (the range of resolved wavenumbers is considerably reduced), and the intermediate $h/\sqrt{N+1}$ is "a good balance" (see
   [large-eddy simulation](/definitions/large-eddy-simulation.md)).
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) (read in arXiv
+  v1), §3.2, run the case with no subgrid model in their entropy-stable
+  [flux reconstruction](/methods/flux-reconstruction.md) (collocated
+  $N=3$ on Gauss–Lobatto nodes, $32^3$ elements), the measured times
+  $tU_0/M_g=42$, 98, 171 mapping to their $t^*=0$, 1, 2; the spectra at
+  $t^*=1$ and 2 are "in good agreement with the experiment" (Fig. 22).
+  They score the kinetic energy obtained by integrating each spectrum to
+  the scheme's cutoff against the integrated measured spectrum at $t^*=2$
+  (Eq. 112, Table 6):
+
+| Scheme | DOF (unique) | $k_c$ | Relative error |
+|---|---|---|---|
+| sixth-order flux-difference splitting (Jefferson-Loveday & Tucker) | $64^3$ | 31 | 29.81% |
+| CPR, $N=5$ (Vermeire et al.) | $78^3$ ($65^3$) | 31 | 15.55% |
+| CPR, $N=1$ (Vermeire et al.) | $126^3$ ($63^3$) | 31 | 29.75% |
+| nonlinearly stable FR, $N=3$ | $128^3$ ($96^3$) | 48 | 1.36% |
+| the same, truncated | $128^3$ ($96^3$) | 31 | 5.30% |
+
+  The authors expect the lower errors to be "partially due" to the larger
+  number of unique DOF and to oversampling the high-order field onto
+  $2(N+1)$ equidistant points per element before the FFT, which their
+  Taylor–Green tests show is needed to avoid an apparent energy pile-up
+  near $k_c$ (§3.1.1, Table 4; see
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md), §4.2 (below): the
   case measures the scheme dissipation of hybrid RANS/LES.
+- [Wang et al. (2021)](/sources/wang-2021-l.md), §3.1 (below): the case
+  calibrates $C_{DES}$ of Reynolds-stress-model IDDES.
 
-In all three sources the departures that separate the models lie at
+In Domaradzki, Duan & Wang and Carlsson et al. the departures that separate the models lie at
 high wavenumbers: the constant-0.8 variant (Domaradzki, Fig. 9) and
 unmodelled implicit LES (Duan & Wang, Fig. 8) depart there, as do the
 widest filter width (Duan & Wang) and the RANS-type artificial dissipation
@@ -477,6 +510,30 @@ results (not shown). The authors conclude that in this case the numerical
 dissipation of the convection scheme dominates the decay of turbulent
 kinetic energy (§5). See [numerical dissipation](/properties/numerical-dissipation.md).
 
+**Calibrating $C_{DES}$ of a Reynolds-stress-model DES.**
+[Wang et al. (2021)](/sources/wang-2021-l.md), §2.3, derive under an
+equilibrium assumption a theoretical DES constant that depends only on
+the coefficients of the length-scale equation and on $C_s$: with $C_s=0.18$
+it is 0.805 for the $\omega$ branch and 0.630 for the $\varepsilon$ branch,
+the same for the LRR and SSG
+[Reynolds-stress models](/methods/reynolds-stress-model.md) as for SST,
+against the calibrated SST-DES values 0.78 and 0.61 they recall. They state
+that the theoretical value "only provides a reference" because numerical
+dissipation shifts it, and calibrate on the Comte-Bellot–Corrsin decay
+($64^3$ cells, spectra at $t^*=2.0$) with the adaptive-dissipation Roe
+scheme of their applications: $C_{DES,SSG}=0.3$ and $C_{DES,LRR}=0.5$ fit
+the measured spectra, while SSG 0.4, 0.5, 0.61 and LRR 0.65, 0.78 "yield
+too much dissipation in the small turbulent scales" (§3.1, Fig. 1). With
+the plain Roe scheme and its dissipation factor lowered to 0.05, the same
+values "show better performance at the high-wavenumber" (App. B, Fig. B1).
+They set the direction of a calibration from the inertial-range level:
+$C_{DES}$ is lowered when the spectrum lies below the experiment (§3.1).
+See [detached-eddy simulation](/methods/detached-eddy-simulation.md).
+Wang et al. and Carlsson et al. agree that scheme dissipation decides the
+constant that matches this experiment; their hosts (Reynolds-stress model
+against Spalart–Allmaras and SST) and schemes differ, and neither runs the
+other's combination, so their different constants are not in conflict.
+
 **Driven compressible MHD turbulence with a guide field.**
 [Gan et al. (2022)](/sources/gan-2022.md) drive isothermal compressible MHD
 in a periodic box threaded by a strong uniform field and decompose the
@@ -494,6 +551,98 @@ to fast modes and 0.73 to 0.79 to fluctuations on no linear branch
 triply periodic box too, but their initial field is the deterministic 3D
 Orszag–Tang vortex, not isotropic turbulence (§4.4, §5); that test is
 recorded on [decaying MHD turbulence](/results/decaying-mhd-turbulence.md).
+
+**A self-tuning explicit modal filter in DGSEM.**
+[Ranjbar et al. (2026)](/sources/ranjbar-2026.md) (read in arXiv v1),
+§III.A, test their
+[explicit modal filter](/methods/explicit-modal-filtering.md) in
+[HORSES3D](/software/horses3d.md) first on decaying HIT, chosen as the case
+for "small-scale turbulence". On the coarse mesh ($N=7$, $6^3$ elements,
+110,592 points against 1,259,712) the unmodelled run over-predicts the
+turbulent kinetic energy, which the authors attribute to the missing
+subgrid dissipation. A [Smagorinsky model](/methods/smagorinsky-model.md)
+with $C_s=0.12$, the value that "yields the optimal results in this case",
+agrees with the DNS but over-dissipates for $t>2.4$. Their earlier filter
+with a user-chosen number of removed mode groups brackets the DNS (six
+groups better early, seven better after $t=3.6$), and the self-tuning
+filter with its constant $c=0.65$ agrees best (Fig. 3). Its cut-off mode,
+averaged over the elements, rises from 3.815 at $t=2$ to 5.923 at $t=6$
+with standard deviations of 0.08 to 0.15, so the filtering weakens as the
+turbulence decays and varies little in space (Fig. 5); element averages of
+the strain and rotation invariants, too large on the unmodelled coarse
+mesh, come "very close to the DNS results" with the filter (Fig. 6). A
+10% and 20% decrease of $c$ gives values 0.042 and 0.105 of their error measure (Eq. 51),
+and in the late, nearly laminar decay the energy above the cut-off becomes
+negligible, so the filter switches itself off (§III.D.2, §III.D.4,
+Figs. 17–18).
+
+**Training filters for neural-network closures.**
+[Wu & Lele (2026)](/sources/wu-2026.md) (read in arXiv v2) train a
+tensor-basis graph [neural-network SGS model](/methods/neural-network-sgs-model.md)
+on the forced Johns Hopkins database at $Re_\lambda=433$ (and channel
+flow), filtered at 16 and 32 DNS spacings with a box filter, a compact
+raised-cosine filter, or a box filter followed by a 2/3 spectral cutoff,
+and run it a posteriori in forced HIT on $64^3$ in two solvers (§3.2, §5).
+Their sum spectral error (SSE), the summed absolute difference of the
+logarithms of the filtered-DNS and LES spectra, ranks the models (Tables
+3–4); the authors warn that it is "artificially sensitive" to the
+dissipative range and needs visual inspection (§5).
+
+- In the Fourier code (Table 3, §5.1): static Smagorinsky with coefficient
+  0.18 (SSE 16.6) and the [sigma model](/methods/sigma-model.md) with
+  coefficient 1.3 (13.34) over-dissipate; the network trained on box-filtered
+  data with the full set of velocity-gradient invariants as inputs
+  under-dissipates and piles up energy at high wavenumbers (18.87); trained
+  on box plus box-and-cutoff data it is best (4.0). The algebraic models
+  reproduce the longitudinal flatness better, which the authors attribute to
+  over-dissipation lowering its denominator; the networks reproduce the PDF
+  of resolved enstrophy production far better (Fig. 5).
+- In the sixth-order compact code without de-aliasing (Table 4, §5.2): the
+  box-only network shows "an extreme buildup of high wavenumber energy"
+  (SSE 32.58), box plus raised-cosine training gives 11.93, and a single
+  three-filter network, run in both codes without retraining, beats the
+  box-only one in both (14.22 here).
+- With "simple" inputs, the strain and rotation magnitudes (plus the
+  velocity-gradient trace, masked to zero), all variants give consistent spectra (SSE 3.68–4.98 in the Fourier
+  code; §5.1.3); an extra layer normalization alone rescues the box-only
+  network (SSE 5.56), so single-filter results are "very sensitive to the
+  neural network architecture" (§5.1.2).
+- On $32^3$ (Fourier code only) two-filter training again removes the
+  under-dissipation; the sigma model over-dissipates less than at $64^3$
+  "despite using the same coefficient", and no model captures the
+  enstrophy-production PDF (§6.1, Figs. 13–14).
+
+A priori, all networks agree within 5% in stress and dissipation error and
+correlation (Table 2), so the filter choice shows only a posteriori; see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+and [discretization-consistent closure](/definitions/discretization-consistent-closure.md).
+
+**A priori error of approximate deconvolution with a mismatched filter.**
+[Caban et al. (2026)](/sources/caban-2026.md), §4.2, Fig. 8, filter a
+$384^3$ HIT DNS at $Re_\lambda=100$ with a Gaussian of width $\Delta=2h$ to
+a 64-node grid and measure the error of the SGS stress reconstructed by
+approximate deconvolution when the filter assumed in the deconvolution
+differs from the true one (the true numerical filter being mimicked by the
+filters induced by their compact interpolation and derivative schemes).
+The error is largest at high wavenumbers and of the order of the filtered
+product itself for every assumed filter, the exact numerical one included;
+at low wavenumbers, compact filters of second and fourth order give errors
+about two orders of magnitude below the Layton–Lewandowski model and the
+second-order explicit filter. With the second-order explicit filter more
+deconvolution terms increase the total error; with the compact filters it
+falls up to 4–6 terms and then stays constant, and the authors advise
+keeping the number of terms small. Their a posteriori tests are on the
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md); see
+[scale-similarity models](/methods/scale-similarity-model.md).
+
+**Pressure terms of entropy-conservative fluxes.** As recalled by
+[Aiello et al. (2026)](/sources/aiello-2026.md), §4 and §4.2, the
+pressure discretization of the entropy-conservative flux of Gouasmi et al.
+(and of Chandrashekar's, to which it reduces for a calorically perfect gas)
+was shown to spoil the kinetic-energy balance in inviscid HIT (by the
+authors' companion paper and by Gassner et al.); their own test is a
+compressible channel (see
+[entropy conservation](/properties/entropy-conservation.md)).
 
 **Closure constants.** As recalled by
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md), decay rates of grid
@@ -641,6 +790,23 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
   energy in the lowest shells ([Yeung et al. (2025)](/sources/yeung-2025.md),
   [Zhao et al. (2025)](/sources/zhao-2025.md) before release), or nothing
   (the decaying runs).
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) print the
+  experiment's final $Re_\lambda$ as 60.6, [Domaradzki (2024)](/sources/domaradzki-2024.md)
+  as 60.7 (Table 2). They call the truncated error "nearly a quarter" of the
+  flux-difference-splitting one; Table 6 gives $5.30/29.81=0.18$
+  *(compiler check, not in the sources)*. Their comparison schemes were
+  scored from published data limited to $k_c=31$, below the cutoffs 32 and
+  32.5 their own Eq. (103) would give (§3.2.2).
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) tune the filter
+  constant per flow (0.65 here, 0.25 on the Taylor–Green vortex, 0.5 in the
+  channel; optimum range $0.2\le c\le0.7$, §III.D.2) and compare with one
+  Smagorinsky constant per flow, without a dynamic procedure.
+- [Wu & Lele (2026)](/sources/wu-2026.md) print no formula for their
+  Smagorinsky and sigma baselines, only the coefficients 0.18 and 1.3, the
+  latter "the smallest coefficient in the recommended range" (§5.1); every
+  network is trained on HIT and channel data together.
+- [Caban et al. (2026)](/sources/caban-2026.md) do not say whether their
+  $Re_\lambda=100$ DNS is forced or decaying.
 
 # Citations
 
@@ -675,3 +841,9 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — §I (compressible isotropic turbulence as the closest flow to the supersonic Taylor–Green vortex).
 - [Möller et al. (2024)](/sources/moller-2024.md) — §II.B.1 (calibration check of $C_{DES}$, not shown).
 - [Reddy et al. (2026)](/sources/reddy-2026.md) — abstract, §1, §9 (Taylor–Green vortex labelled isotropic turbulence).
+- [Wang et al. (2021)](/sources/wang-2021-l.md) — §2.3, Eqs. (13)–(18) (theoretical $C_{DES}$); §3.1, Fig. 1; App. B, Fig. B1 (calibration on Comte-Bellot–Corrsin decay).
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §3.1.1, Table 4 (spectrum oversampling); §3.2, Eqs. (108)–(112), Table 6, Figs. 21–22 (Comte-Bellot–Corrsin decay).
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv 2512.03315v1: §III.A, Eq. (45), Table I, Figs. 3, 5–6; §III.D.2, §III.D.4, Figs. 17–18.
+- [Caban et al. (2026)](/sources/caban-2026.md) — §4.2, Eqs. (38)–(39), Figs. 7–8 (a priori deconvolution error on HIT data).
+- [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv 2511.17475v2: §3.2.1; §4, Table 2; §5, Eq. (5.1), Tables 3–4, Figs. 5–12; §6.1, Figs. 13–14.
+- [Aiello et al. (2026)](/sources/aiello-2026.md) — §4, §4.2 (recalled kinetic-energy imbalance of the Gouasmi et al. pressure term in inviscid HIT).

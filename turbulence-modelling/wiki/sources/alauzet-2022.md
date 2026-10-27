@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 450:110814"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Alauzet_Periodic_adjoints_and_anisotropic_mesh_adaptation_in_rotatin.pdf"
 tags: [mesh-adaptation, rans, turbomachinery, spalart-allmaras, numerical-dissipation]
-timestamp: 2026-10-25T19:46:00Z
+timestamp: 2026-10-26T20:45:00Z
 ---
 
 # Summary
@@ -67,7 +67,7 @@ and reference numbers on this page are those of this version.
 3. Exact differentiation of all implicit terms (convective, viscous, source, boundary conditions) "greatly improves the flow solver convergence"; only the MUSCL part is not differentiated, because it would raise the matrix pattern from about twenty to about a hundred entries per row in 3D (§4.2, footnote 1). **Stated**
 4. Without exact differentiation of the inhomogeneous Dirichlet condition $\boldsymbol u=-\boldsymbol\Omega_{\mathrm{rot}}\times\boldsymbol r$ on fixed walls in the rotating frame, the residual stalls even with limiters frozen after iteration 800, and the pressure ratio oscillates and drops (Rotor 37, initial mesh) (§4.2.3, Fig. 2). **Shown**
 5. Breadth-first-search renumbering is more effective than Hilbert space-filling-curve renumbering for implicit convergence; Hilbert ordering is better for cache misses (§4.2). **Stated**
-6. SGS relaxation: at most $k_{max}$ iterations (usually 20), stopped when the relative linear residual drops by a factor 0.01 (§4.2.4). **Stated**
+6. Symmetric Gauss–Seidel (SGS) relaxation of the implicit linear system: at most $k_{max}$ iterations (usually 20), stopped when the relative linear residual drops by a factor 0.01 (§4.2.4). **Stated**
 7. The RANS discrete-adjoint system has no mass matrix (infinite CFL) and is much stiffer than the flow system, the more so on finer adapted meshes. GMRES preconditioned by LU-SGS reduced the residual by only 3–5 orders after 10 000 iterations with a Krylov space of 1 000; GMRES preconditioned by 20–40 SGS passes converges with Krylov spaces up to 200, by twelve orders (§5.3). **Shown**
 8. The adjoint is discontinuous at Dirichlet boundaries; for error estimation it is replaced there by a quadratic least-squares extrapolation from the interior (§5.2). **Stated**
 9. The optimal $L^p$ continuous metric (Eq. 34) and its interpolation error (Eq. 35) are recalled from earlier work; the paper uses $L^4$ of the Mach number following Park & Balan's finding of faster boundary-layer adaptation in RANS (§6.1). **Stated**
@@ -95,6 +95,12 @@ and reference numbers on this page are those of this version.
 # Printed slips
 
 - **Sign of the SA destruction term (Eq. 13, p. 7).** Eq. 9 prints the destruction as $-c_{w1}f_w\rho(\tilde\nu/d)^2$; the last row of the source vector Eq. 13 prints $\frac{c_{b2}\rho}{\sigma}\|\nabla\tilde\nu\|^2+\rho c_{b1}\tilde S\tilde\nu+c_{w1}f_w\rho\big(\frac{\tilde\nu}{d}\big)^2$, with a plus sign.
+- **$c_{w1}$ (§2.3).** Printed $c_{w1}=c_{b1}/\kappa+(1+c_{b2})/\sigma$;
+  [Cato et al. (2023)](/sources/cato-2023.md) (§II A) print
+  $c_{b1}/\kappa^2$ with the same constants, and the log-layer balance of
+  the printed SA equation requires $\kappa^2$ (see the
+  [Spalart–Allmaras page](/methods/spalart-allmaras-model.md))
+  *(compiler check, not in the sources)*.
 - **Number of complexities (§8.1.2).** "seven complexities" for LS89, while the printed list has eight values, $\{4\,000,\dots,512\,000\}$, and so does the vertex list.
 - **Rotor 37 low complexities (§8.2.4).** "for very low complexities (40 000 and 80 000), the simulations start to diverge"; the Rotor 37 complexity list of §8.2.3 starts at 160 000.
 - **Pressure ratio 1.305 (Table 2).** The goal-oriented "Wolf Stall" row prints a CFD P ratio of 1.305; the largest $\beta$ in the lists of §8.2.3 and §8.2.4 is 1.300.

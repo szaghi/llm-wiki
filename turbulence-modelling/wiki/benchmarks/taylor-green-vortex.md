@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "The triply periodic vortex flow that transitions from a single-mode analytic field to decaying turbulence: at Re 40,000 against a 5400³ DNS to separate Smagorinsky and implicit LES errors, at Re 1600 and 5000 to split numerical dissipation and test subgrid models, supersonic at Mach 1.25 for shock capturing, inviscid for energy conservation, and in 2D for commutator errors."
+description: "The triply periodic vortex flow that transitions from a single-mode analytic field to decaying turbulence: at Re 40,000 to separate Smagorinsky and implicit LES errors; at Re 200 to 5000 to split numerical dissipation, test subgrid models, deconvolution and modal filters; supersonic at Mach 1.25 for shock capturing; inviscid for energy conservation; laminar and 2D for filter and commutator analysis."
 status: established
-aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex]
-tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible]
-timestamp: 2026-10-26T15:57:00Z
+aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex, laminar Taylor–Green vortex, Brachet Taylor–Green vortex]
+tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible, filtering]
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Taylor–Green vortex
@@ -108,6 +108,8 @@ to the fully turbulent state.
 | [Wang (2024)](/sources/wang-2024-b.md) | flux reconstruction recovering nodal DG (ATHOS), $N=3$, HLLC flux, local modal filter; $Re=1600$ and 5000 | $64^3$ elements | DNS of Gassner & Beck and of Carton de Wiart et al. ($Re=1600$), Incompact3d DNS of Dairay et al. ($Re=5000$) |
 | [Kurz et al. (2025)](/sources/kurz-2025.md) | split-form DGSEM, $N=7$, on GPUs ([GALÆXI](/software/galaexi.md)) and CPUs ([FLEXI](/software/flexi.md)), no model; Mach 0.1, constant initial temperature | $64^3$ to $512^3$ degrees of freedom | DeBonis |
 | [Wang et al. (2024)](/sources/wang-2024.md) | finite differences, second-order kinetic-energy-preserving split form KGP2 against sixth-order optimized upwind OPT6, MUSCL3 and WENO5; inviscid with flow reversal | $30^3$ cells | the initial field (time reversal) |
+| [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) | nonlinearly stable (entropy-stable split-form) [flux reconstruction](/methods/flux-reconstruction.md), Ismail–Roe two-point flux, no upwinding, no over-integration; Mach 0.1; implicit LES and five eddy-viscosity models | DNS: $N=7$ on $32^3$ and $N=3$ on $64^3$ elements ($256^3$ degrees of freedom); LES: $96^3$ ($N=5$), $64^3$ ($N=7$), $48^3$, $24^3$ ($N=5$) | Dairay et al. ($512^3$ compact FD), DeBonis, Chapelier et al., Carton de Wiart et al., van Rees et al. |
+| [Caban et al. (2026)](/sources/caban-2026.md) | incompressible half-staggered compact differences (SAILOR) of order 2, 6 and 10, with spectral or compact interpolation and optional explicit regularization filter; implicit LES, Smagorinsky, Vreman, Layton–Lewandowski, approximate deconvolution; also $Re=400$ | DNS $256^3$ and $384^3$; LES $64^3$ | Brachet et al., van Rees et al., $512^3$ pseudo-spectral DNS of the first high-order CFD workshop; LES of Hickel et al. |
 
 **Numerical dissipation of a no-model DNS scheme.**
 [Cao et al. (2022)](/sources/cao-2022.md), §3.1, Figs. 2–5, measure the
@@ -291,6 +293,111 @@ solenoidal dissipation rate "up to machine precision", which converges to
 the DeBonis reference with resolution and matches it "almost perfectly" at
 $512^3$ degrees of freedom (Fig. 11).
 
+**An entropy-stable flux reconstruction with and without models.**
+[Brillon & Nadarajah (2026)](/sources/brillon-2026.md) (read in arXiv
+v1, 2024), §3.1, run the compressible TGV at $Re=1600$, Mach 0.1, to
+$t=20$, with nonlinearly stable flux reconstruction on Gauss–Lobatto
+solution nodes and Gauss (uncollocated) flux nodes, no upwind dissipation
+and no over-integration.
+
+- *DNS* ($256^3$ degrees of freedom): kinetic energy, dissipation rate,
+  enstrophy, spectra and vorticity contours agree with the references. The
+  pressure-dilatation dissipation obtained as the residual of the
+  kinetic-energy budget agrees with the literature, while computed
+  pointwise it oscillates spuriously; the oscillations are smaller on
+  collocated (Gauss–Lobatto) flux nodes and are damped by Roe dissipation
+  at the faces (§3.1.1, Figs. 2–4). The authors' measure of
+  effective viscosity (decay rate over enstrophy, normalized by the
+  physical viscosity) stays within 4.5% of 1 for all DNS schemes (Fig. 4b).
+- *Spectra.* Before the FFT the high-order field is resampled on $2(N+1)$
+  equidistant points per element and direction; without this an apparent
+  pile-up appears near the cutoff, and the kinetic energy integrated from
+  the spectrum at $t=9$ misses the volume average by up to 5.0% instead of
+  0.5% (Table 4, $64^3$ at $N=7$; §3.1.1–3.1.2, Figs. 6, 9).
+- *Implicit LES.* The scheme is stable on all under-resolved grids without
+  added dissipation; at $96^3$ the dissipation rate follows the DNS to its
+  peak at $t\approx8$ (§3.1.2, Fig. 8). Classical strong-form DG without
+  over-integration diverges near $t=6$ (§3.1.3, Fig. 11); with
+  over-integration it is stable and costs about twice as much as the split
+  form for $N=5$ to 12 (Fig. 12).
+- *Choices that do not matter* at $96^3$: the two-point flux (Ismail–Roe,
+  Kennedy–Gruber, Chandrashekar, Chandrashekar–Ranocha; see
+  [kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
+  and [entropy conservation](/properties/entropy-conservation.md)), and the
+  FR correction parameter, whose largest stable value raises the CFL limit
+  from 0.26 to 0.36, against 0.14 for over-integrated strong DG (Table 5,
+  Figs. 14–16).
+- *Added dissipation.* Roe and low-dissipation Roe face dissipation lower
+  the enstrophy peak; added Lax–Friedrichs dissipation gives a higher
+  enstrophy peak than the projected DNS, which the authors call
+  "anti-dissipative" (§3.1.7, Fig. 17).
+- *Subgrid models.* Smagorinsky ($C_s=0.10$), shear-improved and
+  high-pass-filtered Smagorinsky and dynamic Smagorinsky, all with a
+  low-Reynolds-number correction, slightly raise the dissipation rate,
+  lower the enstrophy peak and remove energy at wavenumbers 25 to 40,
+  where the no-model run already lacks energy; they are "not recommended"
+  for this flow with this scheme (§3.1.8, Fig. 19).
+
+**Discretization-induced filters, regularization and deconvolution.**
+[Caban et al. (2026)](/sources/caban-2026.md), §5.2–5.4, run the
+incompressible TGV of Brachet et al. at $Re=1600$ (dissipation peak near
+$t=9$, run to $t=20$) on a half-staggered compact-difference code in
+which the derivative scheme and the interpolation between velocity and
+pressure nodes can be switched. They distinguish three variants: spectral
+(non-dissipative) interpolation, dissipative compact interpolation, and
+spectral interpolation plus an explicit regularization filter (an
+eighth-order compact filter combined with its approximate inverse truncated
+at $N_{\mathrm{ADM}}=2$) applied every step. They measure accuracy by the time-integrated
+relative error of the resolved kinetic energy against DNS up to $t=20$
+(Eq. 45). On $64^3$:
+
+- with spectral interpolation and no model the LES diverges near $t=3.5$,
+  at the same time as the no-model run of Hickel et al.; Smagorinsky
+  ($C_s=0.1$) and Vreman with $\Delta=2h$ diverge near $t=4$, and with
+  $\Delta=4h$ they are stable but inaccurate (§5.3.1, Fig. 18);
+- dissipative interpolation or the regularization filter alone make the
+  runs stable; used without a model they are an
+  [implicit LES](/definitions/implicit-les.md) whose error,
+  $2.23\times10^{-2}$, is about half that of the best eddy-viscosity run
+  (Vreman with regularization, $4.33\times10^{-2}$; Smagorinsky
+  $4.76\times10^{-2}$), and they "surpass" the adaptive local deconvolution
+  of Hickel et al.; fourth-order instead of tenth-order interpolation
+  raises the implicit-LES error to $2.84\times10^{-1}$ (Table 4, Figs.
+  19–23);
+- the Layton–Lewandowski model (the zeroth term of approximate
+  deconvolution, a [scale-similarity model](/methods/scale-similarity-model.md))
+  is stable for every filter even with spectral interpolation and gives the
+  lowest error, $2.03\times10^{-2}$ with a sixth-order compact filter and
+  regularization, 10% below the best implicit LES (Table 5);
+- approximate deconvolution with five terms needs added dissipation
+  (dissipative interpolation or regularization) to remain stable; its best
+  error, $2.31\times10^{-2}$, is about twice as accurate as the
+  eddy-viscosity models but not better than Layton–Lewandowski or implicit
+  LES; building the discretization-induced filters into the deconvolution
+  helps only when the LES filter is of low order (§5.4.2, Tables 6–9; see
+  [discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
+
+Most of the error accumulates during transition, $t\approx5$ to 12
+(Fig. 23b). The authors' DNS on $384^3$ almost overlaps the $512^3$
+pseudo-spectral reference; the $256^3$ run with spectral interpolation
+becomes unstable near $t=10$ (§5.2, Figs. 16–17). Their interpolation
+results hold for staggered and half-staggered algorithms only; collocated
+kinetic-energy-conserving schemes lack that dissipation (§6).
+
+**Eddy-viscosity models in high-order TGV runs.** Several sources agree
+that adding an eddy-viscosity model to a high-order or low-dissipation
+TGV run at $Re=1600$ degrades it: Smagorinsky, WALE and Vreman on $N=4$
+flux reconstruction, least with the filter width $h/(N+1)$
+([Duan & Wang (2024)](/sources/duan-2024.md)); Smagorinsky and Vreman
+against jump penalties on DG ([Kou et al. (2023)](/sources/kou-2023.md));
+five Smagorinsky variants on entropy-stable flux reconstruction
+([Brillon & Nadarajah (2026)](/sources/brillon-2026.md)); Smagorinsky and
+Vreman against implicit LES on compact differences
+([Caban et al. (2026)](/sources/caban-2026.md)). In the last two the
+eddy-viscosity runs are also compared with alternatives that win: the
+no-model scheme in Brillon & Nadarajah, implicit LES and the
+Layton–Lewandowski model in Caban et al.
+
 **Inviscid TGV for subgrid models on continuous spectral elements.**
 [Reddy et al. (2026)](/sources/reddy-2026.md) (read in a 2021 preprint),
 §7, run the TGV with $u_0=100$ m/s, $\rho=1.178$ kg/m³ and unit wavenumber
@@ -317,6 +424,47 @@ variants of a [residual-based dynamic model](/methods/residual-based-dynamic-sgs
 The authors call the TGV "homogeneous, isotropic turbulence". Their
 equations carry no molecular viscosity, and the comparison with the DNS of
 Brachet et al. that they print is the time of the dissipation peak (§7.2).
+
+**Self-tuning modal filtering at $Re=200$ and 800.**
+[Ranjbar et al. (2026)](/sources/ranjbar-2026.md) (read in arXiv v1,
+2025), §III.B, test an
+[explicit modal filter](/methods/explicit-modal-filtering.md) for
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) in
+[HORSES3D](/software/horses3d.md) on the compressible TGV at $Re=200$ and
+800 (split form with Chandrashekar averaging, low-dissipation Roe flux;
+the Mach number is not stated). DNS: $18^3$ elements at $N=7$ ($Re=200$)
+and $20^3$ at $N=12$ ($Re=800$), reproducing the dissipation rate of Fehn
+et al.; coarse runs: $11^3$ elements at $N=4$ and $7^3$ at $N=10$.
+
+- The unmodelled coarse runs over-predict the dissipation rate after $t=4$
+  and under-predict it after $t=7$ ($Re=200$) or $t=9$ ($Re=800$).
+- A filter that removes a fixed number of the highest mode groups brackets
+  the DNS with two neighbouring settings, and needs more removed groups at
+  the higher degree.
+- Smagorinsky ($C_s=0.1$) over-predicts the
+  dissipation for $t<6$ and under-predicts it after $t=7$ at $Re=200$, and
+  deviates from $t=2$ at $Re=800$, while the flow is still mostly laminar;
+  the authors call it "not a suitable option" (Figs. 13–14).
+- The self-tuning filter, whose cut-off follows the local ratio of grid
+  spacing to Kolmogorov length and the strain and rotation invariants, is
+  closest to the DNS with one constant ($c=0.25$) at both degrees,
+  slightly under-predicting near $t=8$–12; it costs 1.31% more wall time at
+  $N=10$ (§III.B, §III.D.3).
+- Joint distributions on the coarse runs tie energy accumulation in the
+  highest mode groups to large strain and rotation invariants, which
+  motivates the cut-off (Figs. 8–10).
+
+**Laminar TGV as a dissipation test of the discretization.**
+[Caban et al. (2026)](/sources/caban-2026.md), §5.1, also use the
+analytic laminar TGV with seven vortices per period ($Re=1600$, run to
+$t=3.772$, when the energy has halved) on $16^3$ to $128^3$ grids. They
+define an effective Reynolds number from the energy decay assuming the
+analytic decay law (Eq. 42). With spectral interpolation it stays close to
+$Re$, so the filters induced by the derivative schemes alone do not lower
+it; dissipative interpolation and the regularization filter lower it, the
+fourth-order compact interpolation to "several times lower" than $Re$
+(Figs. 9–11). The authors read the first result as showing that the
+filtering induced by central derivative schemes is non-dissipative.
 
 **Recalled uses.** As recalled by [Basile et al. (2023)](/sources/basile-2023.md),
 §3.2 and §4.2.1, Chapelier et al. fixed a modal-decay smoothness threshold
@@ -528,6 +676,25 @@ sources)*.
   "(left)"; their scaling mesh, "doubled in each direction" from
   $4\times4\times2$, cannot reach $256^3$ *(compiler check, not in the
   sources)*.
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) print the
+  spectral cutoff of the $N=7$, $32^3$-element DNS as 122 (Table 2), while
+  their own Eq. (103) gives $32\times7/2=112$, the value of the other rows'
+  rule; they print the grid cutoff of the $4^3$-element run as 4 where
+  Eq. (104) gives 2 *(compiler check, not in the sources)*. They clip the
+  dynamic coefficient to $[0,C_s^2]$ in §2.6.4 and "at $C_{max}=0.1$" in
+  §3.1.8. They use "iLES" for implicitly filtered LES with an explicit
+  model and "ILES" for implicit LES without one.
+- [Caban et al. (2026)](/sources/caban-2026.md) call the filter induced by
+  first-derivative central schemes "non-dissipative" in §1 and §3.2.1 and
+  "dissipative … without inducing numerical diffusion" in the abstract and
+  §6. They point to "Table 7" for the implicit-LES and eddy-viscosity
+  errors, which are in Table 4. Their conclusions are for $Re=1600$ on
+  $64^3$ only.
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) use a different
+  filter constant per flow (0.65 for decaying isotropic turbulence, 0.25
+  for the TGV, 0.5 for the channel) and give the optimal range as
+  $[0.2,0.7]$ (§III.D.2); the Smagorinsky constant of the TGV runs is
+  printed only in the legends of Figs. 13–14.
 - [Reddy et al. (2026)](/sources/reddy-2026.md) title the paper on the
   Navier–Stokes equations but solve the Euler equations (§2); they state
   that the Brachet DNS Reynolds number is "similar" to theirs without
@@ -554,3 +721,6 @@ sources)*.
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL accepted manuscript: §I; §II.A–C, Eqs. 1–11, Figs. 2–4; §III.A–B, Tables I–II; §IV.A–B, Figs. 5–8; §V; App. A, Figs. 9–10.
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §4.4, Figs. 6–8; §5.2, Figs. 10–11.
 - [Reddy et al. (2026)](/sources/reddy-2026.md) — 2021 preprint: §1; §7.1–7.2, Figs. 7–8; §9.
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv v1: §2.5, §2.9; §3.1.1–3.1.8, Eqs. (91)–(107), Tables 2–5, Figs. 2–19.
+- [Caban et al. (2026)](/sources/caban-2026.md) — §5.1, Eq. (42), Figs. 9–11; §5.2, Figs. 14–17; §5.3.1, Eq. (45), Table 4, Figs. 18–23; §5.4, Tables 5–9; §6.
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §III.B, Eq. (46), Figs. 7–14; §III.D.3.

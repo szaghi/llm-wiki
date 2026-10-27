@@ -4,7 +4,7 @@ title: "Building-block-flow wall model"
 description: "Supervised wall-stress model for wall-modelled LES that classifies the local near-wall state among seven canonical building-block flows and blends per-flow neural-network predictions by the class probabilities, trained on solver-consistent WMLES data, with a confidence score, and tested from laminar plates to the CRM-HL and the NASA Juncture Flow."
 status: established
 aliases: [BFWM, building-block flow wall model, machine-learning building-block-flow wall model]
-tags: [wall-model, wmles, machine-learning, neural-network, data-driven]
+tags: [wall-model, wmles, data-driven, neural-network]
 timestamp: 2026-10-26T15:52:00Z
 ---
 

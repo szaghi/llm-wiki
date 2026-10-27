@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 456:110992"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Dzanic_Partially-averaged_NavierStokes_simulations_of_turbulence_wi.pdf"
 tags: [pans, hybrid-rans-les, flux-reconstruction, implicit-les, numerical-dissipation]
-timestamp: 2026-10-25T13:45:00Z
+timestamp: 2026-10-26T20:45:00Z
 ---
 
 # Summary
@@ -102,7 +102,7 @@ figure numbers on this page are those of the arXiv v1.
 | $\tau'_{ij}=2\mu_uS_{ij}-\tfrac23k_u\delta_{ij}$ (Eq. 7) | $-\tau_{ij}$ (density-weighted) | **sign:** the source adds $\tau'_{ij}$ to the viscous stress, so it is the negative of the registry's positive-trace subfilter stress; no $\rho$ on $k_u$ and no deviatoric projection of $S_{ij}$ as printed |
 | $\mu_u$ (Eq. 12), $\mu_t$ (Eqs. 10, 11, 23) | $\mu_t$ | unresolved eddy viscosity; see Printed slips |
 | $k$, $\omega$ | $k$, $\omega$ | total kinetic energy and specific dissipation |
-| $k_u$, $\omega_u$ | $f_kk$, $f_\omega\omega$ | unresolved (modelled) parts |
+| $k_u$, $\omega_u$ | $k_u=f_kk$, $\omega_u=f_\omega\omega$ | unresolved (modelled) parts; registry §11 shared symbols |
 | $f_k$, $f_\omega$, $f_\epsilon$ | $f_k$, $f_\omega$, $f_\varepsilon$ | $f_\varepsilon=1$, $f_\omega=1/f_k$ |
 | $\tilde\omega_u=\log\omega_u$ | $\ln(f_\omega\omega)$ | **collision:** this tilde is neither a Favre filter nor the SA variable |
 | $P_k$ | (production of $f_kk$) | printed with the molecular stress, see Printed slips; registry $P_k=-R_{ij}\partial_j\langle u_i\rangle$ |

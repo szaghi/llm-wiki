@@ -3,9 +3,9 @@ type: Method
 title: "WENO and hybrid shock-capturing schemes in scale-resolving simulation"
 description: "WENO schemes capture shocks by nonlinear weighting of candidate stencils; in DNS and LES of compressible turbulence their dissipation is reduced by optimized weights and limiters, by linear weights in smooth flow, or by hybrids that apply WENO only where a shock sensor fires, and in implicit LES it serves as the subgrid dissipation."
 status: established
-aliases: [WENO, TENO, targeted ENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-SYMBO, HWENO, Hermite WENO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme]
+aliases: [WENO, TENO, targeted ENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-Z+, WENO-Z+M, WENO-ZQ, WENO-SYMBO, HWENO, Hermite WENO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme]
 tags: [shock-capturing, numerical-dissipation, dns, compressible, implicit-les, gpu]
-timestamp: 2026-10-26T15:48:00Z
+timestamp: 2026-10-26T20:44:00Z
 ---
 
 # WENO and hybrid shock-capturing schemes in scale-resolving simulation
@@ -42,6 +42,11 @@ in turbulence (see [numerical dissipation](/properties/numerical-dissipation.md)
 | Sixth-order TENO (targeted ENO, cutoff $C_T=10^{-6}$, local Lax–Friedrichs splitting) | OpenSBLI reference and test solver of the supersonic Taylor–Green vortex, up to $2048^3$ | [Chapelier et al. (2024)](/sources/chapelier-2024.md), §II.C, §III.B.c |
 | Eighth-order kinetic-energy- and entropy-preserving central scheme blended with a third-order upwind/WENO flux by a linear homotopy in the Ducros sensor | SPADE, same comparison | Chapelier et al. (2024), §III.B.b, h |
 | Fifth-order WENO of the Jacobian and Jacobian-weighted conservative variables in computational space | curvilinear gas-kinetic scheme used as implicit LES of a compressible channel and a periodic hill | [Cao et al. (2024)](/sources/cao-2024.md), §2.3 |
+| Fifth-order WENO (Jiang–Shu) for the inviscid fluxes, second-order central viscous fluxes, implicit dual time stepping | zonal hybrid RANS/LES of a hydrogen-fuelled scramjet combustor | [Tang et al. (2022)](/sources/tang-2022.md), §2.1 |
+| Fifth-order WENO during the initial transient only, then sixth-order central (kinetic-energy- and entropy-preserving) fluxes | STREAmS DNS of thermally perfect CO$_2$ channel flow at bulk Mach 3–5 | [Aiello et al. (2026)](/sources/aiello-2026.md), §3.3 |
+| Fifth-order WENO-Z+ (Acker et al., recalled) and the authors' WENO-Z+M, with weights above the ideal ones for the least smooth substencil | one- and two-dimensional Euler shock tests, one Navier–Stokes shock/shear-layer test | [Luo & Wu (2021)](/sources/luo-2021-b.md), §2.3, §3.2 |
+| Fifth-order WENO (Jiang–Shu, $\epsilon=10^{-6}$) applied component-wise to primitive variables, in both the conservative shock update and the primitive smooth-flow update of a sensor-switched hybrid | inviscid transcritical (real-gas) flow, no turbulence | [Xu et al. (2026)](/sources/xu-2026.md), §3.2–3.5 |
+| Truly two-dimensional fourth-order WENO-ZQ: a cubic polynomial on a 13-cell stencil blended with four linear ones | semi-Lagrangian finite-volume transport of Vlasov and two-dimensional incompressible Euler problems, no turbulence | [Zheng et al. (2022)](/sources/zheng-2022.md), §2.2 |
 
 The upwind schemes act on split fluxes or on characteristic variables.
 [OpenCFD-SCU](/software/opencfd-scu.md) splits the flux with Steger–Warming
@@ -104,6 +109,66 @@ each Gauss point for their supersonic cases.
   scheme are recorded as an open contradiction on
   [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md).
 
+## Nonlinear weights and the dissipation of the linear scheme
+
+[Luo & Wu (2021)](/sources/luo-2021-b.md), a short note on fifth-order WENO
+for hyperbolic conservation laws without turbulence content, separate two
+sources of dissipation in a WENO scheme: the linear dissipation of the
+underlying fifth-order upwind scheme (UD5, all weights at their ideal
+values) and the nonlinear dissipation of the weighting (§4). Page-local
+notation: $d_k=(1/10,6/10,3/10)$ the ideal weights of the three
+substencils $k=0,1,2$, $\mathsf w_k$ the nonlinear weights, $\mathrm{IS}_k$ the
+Jiang–Shu smoothness indicators (the source's $\beta_k$, renamed because
+$\alpha_k$, $\beta_k$ are the kinetic-energy fractions of registry §11),
+$\mathrm{IS}_{\mathrm G}=|\mathrm{IS}_2-\mathrm{IS}_0|$ the
+global indicator (the source's $\tau_5$), $r_k=(\mathrm{IS}_{\mathrm G}+\epsilon)/(\mathrm{IS}_k+\epsilon)$
+(the source's $\xi_k$), $\epsilon=10^{-40}$. With the WENO-Z exponent 2
+(Eqs. 4–9):
+$$\begin{aligned}
+\text{WENO-Z:}\quad &\mathsf w_k=\frac{a_k}{\sum_la_l},\qquad a_k=d_k\big(1+r_k^2\big),\\
+\text{WENO-Z+:}\quad &a_k=d_k\big(1+r_k^2+\lambda_{\mathrm Z}\,r_k^{-1}\big),\\
+\text{WENO-Z+M:}\quad &a_k=d_k\big(1+r_k^2+\lambda_{\mathrm Z}\,z_{\mathrm M}\,r_k^{-1/2}\big),\qquad z_{\mathrm M}=\frac{1+r_{\min}^2}{\sum_kd_k\big(1+r_k^2\big)},
+\end{aligned}$$
+with $\lambda_{\mathrm Z}$ (page-local, the source's $\lambda$) the
+coefficient of the extra term and $r_{\min}=\min_kr_k$, which belongs to
+the least smooth substencil.
+
+- **Why weights above ideal.** In WENO-Z the weight of the least smooth
+  substencil is always below its ideal value; the extra term of WENO-Z+
+  raises it (§1). The authors' interpretation: a weight below ideal adds
+  positive dissipation, as in all earlier WENO schemes, which are
+  therefore more dissipative than their linear scheme; a weight above ideal
+  adds negative dissipation that offsets part of the linear dissipation
+  (§4, Figs. 5–7). They present this as an alternative to optimized linear
+  coefficients (see
+  [low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md)),
+  against the view that nonlinear mechanisms always hurt spectral
+  properties (§6).
+- **The risk.** By the approximate dispersion relation (computed
+  numerically for nonlinear schemes, after Pirozzoli), WENO-Z+ with
+  Acker et al.'s $\lambda_{\mathrm Z}=\Delta x^{2/3}$ has negative
+  dissipation in a band of reduced wavenumbers near 1.1834, which lowering
+  $\lambda_{\mathrm Z}$ hardly removes (§3.1, Fig. 1). WENO-Z+M weakens the
+  extra term by the square root ($r_k^{-1/2}$, the smallest root the
+  authors found free of negative dissipation) and scales it by
+  $z_{\mathrm M}$, the ratio of the WENO-Z weight of the least smooth
+  substencil to its ideal weight, which is $1+O(\Delta x^6)$ in smooth flow
+  and $O(\Delta x^4)$ at discontinuities (orders cited, §3.2, Eqs. 7–9).
+  The constant is then raised to $\lambda_{\mathrm Z}=579$, the largest
+  value with which the interacting-blast-wave problem runs ($580$ fails)
+  (§3.2).
+- **Results.** In the two-dimensional Euler accuracy test the WENO-Z+M
+  errors at $641\times641$ are $L_1=0.3913\times10^{-13}$ against
+  $0.7896\times10^{-13}$ for UD5, about half (§5.3.1, Table 1); at
+  $21\times21$ they are larger than UD5's ($0.4060\times10^{-5}$ against
+  $0.2612\times10^{-5}$), and WENO-Z+M is ahead only from $81\times81$ on
+  (Table 1). In the shock tests (Shu–Osher, Titarev–Toro, Lax, interacting
+  blast waves, two-dimensional Riemann problem, double Mach reflection,
+  forward-facing step, shock/shear-layer interaction) the authors report
+  better resolution than WENO-Z, WENO-Z+, ninth-order WENO-Z and WENO-IS-I,
+  by visual comparison of the figures (§5); WENO-Z+ "falsely amplifies"
+  the smooth waves of the Titarev–Toro problem (§5.2.3, Fig. 11).
+
 ## Hybrid schemes
 
 **Sensor-switched upwind/WENO (OpenCFD-SCU).** Dang et al. (2022, §2.2.3,
@@ -145,6 +210,31 @@ subgrid model is used.
 
 Dang et al. (2022, §1) add that for Mach numbers "generally exceeding 6" a
 dissipative scheme is usually introduced for robustness at strong shocks.
+
+**Conservative WENO at shocks, primitive update elsewhere.**
+[Xu et al. (2026)](/sources/xu-2026.md) switch, cell by cell, between a
+conservative finite-volume update (WENO-5 reconstruction of the primitive
+variables and a real-gas Roe flux) where a pressure-ratio sensor built on
+the primitive-variable Riemann solver detects a compressive jump (Eq. 18,
+threshold 0.05), and a non-conservative primitive-variable update
+elsewhere, which preserves pressure equilibrium at transcritical density
+interfaces (§3; see
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)).
+They reconstruct primitive variables component by component "to avoid
+characteristic projections through potentially ill-conditioned real-gas
+eigenstructures near the critical point" (§3), and stress that a two-point
+central difference of fifth-order WENO interface states is only second
+order (§3.5, §4.2).
+
+**WENO as the fallback of non-entropy-conserving central schemes.**
+[Aiello et al. (2026)](/sources/aiello-2026.md) run their thermally perfect
+channel DNS fully central after a WENO5 transient (§3.3) and note that the
+non-entropy-conserving schemes they test (KEEP, Ranocha's) would in practice
+be coupled with WENO-type procedures, which "could potentially mitigate
+such issues" at "the price of" reduced formal cleanliness and added
+dissipation, whereas the
+[entropy-conserving](/properties/entropy-conservation.md) schemes needed no
+shock capturing in these shock-free cases (§4.2).
 
 **Upwind hybrids at density interfaces.** Bernades et al. (2023, §1) list
 HLLC and WENO hybridization, with filtering, as the stabilization of the
@@ -190,6 +280,22 @@ dissipation and robust shock-capturing" (§III.B.c).
   high-order TENO "yield more small-scale dissipation" than DG, spectral
   difference, DGSEM or filtered compact differences (§IV.A, Figs. 5, 7; §V).
 
+## Multidimensional reconstruction for semi-Lagrangian transport
+
+[Zheng et al. (2022)](/sources/zheng-2022.md), a numerics paper on
+kinetic-plasma and two-dimensional inviscid transport without turbulence
+content, need reconstructed values at arbitrary points of a cell, which
+they state WENO-JS-type reconstructions cannot supply (§1, §2.2). Their
+truly two-dimensional WENO-ZQ (after Zhu & Qiu) reconstructs a cubic
+polynomial per cell from a 13-cell stencil, blended with four linear
+polynomials on three-cell stencils by nonlinear weights built from a global
+smoothness indicator, with linear weights 0.8 for the cubic and 0.05 for
+each linear polynomial and $\epsilon=10^{-14}$; it degrades towards the
+linear polynomials near discontinuities (§2.2, Eqs. 7–16). Combined with
+cubic-curved upstream cells, it gives a fourth-order, mass-conservative
+semi-Lagrangian finite-volume scheme run at CFL numbers up to 10.2 (§3,
+§4).
+
 ## Cost on GPUs
 
 On the AMD MI60 GPU the inviscid upwind difference takes 70% of the
@@ -222,7 +328,9 @@ profiled; Tables 2–3).
   kernel in Table 6 and 262 manually counted operations in §5.4. The version
   read is an author manuscript.
 - The variants above are compared within each source only; no source of this
-  bundle compares two WENO variants on the same turbulent flow. Wang et
+  bundle compares two WENO variants on the same turbulent flow. Luo & Wu
+  (2021) compare WENO variants on shock and acoustic tests only; their
+  "broadband" sound-wave test is a synthetic acoustic spectrum (§5.2.1). Wang et
   al. (2024) compare WENO5 with other schemes only in the inviscid
   time-reversal test, which measures energy loss, not accuracy in
   turbulence. Chapelier et al. (2024) compare one TENO scheme and one
@@ -240,6 +348,19 @@ profiled; Tables 2–3).
   profiles. The Mach-profile reference of their Fig. 8 is labelled
   "TENO6 512", while the text and Figs. 5–7 use the $2048^3$ run. The version
   read is the HAL accepted manuscript.
+- Luo & Wu (2021) calibrate $\lambda_{\mathrm Z}=579$ on one problem at
+  one resolution (§3.2, Fig. 13), and their abstract's claim of accuracy
+  "superior to the underlying linear scheme" is borne out by their Table 1
+  only from $81\times81$ on. Printed slips: §2.1 writes the ideal weights
+  with indices 1–3 against $k=0,1,2$ elsewhere; the broadband-sound initial
+  velocity of Eq. (12), $u_0+\frac{2}{\gamma-1}(c/c_0)$, does not reduce to
+  the stated mean $u_0$ for an unperturbed state *(compiler check, not in
+  the sources)*.
+- Zheng et al. (2022) state fourth-order accuracy for the swirling
+  deformation test, whose Table 2 orders are 3.47 to 3.71 up to $1280^2$
+  (Example 4.2); their $L^2$-stability proposition checks the amplification
+  factor by sampling (Prop. 3.9, App. C). Table 5's caption gives CFL 1 and
+  the text CFL 10.2 for the same runs.
 
 # Citations
 
@@ -256,3 +377,8 @@ profiled; Tables 2–3).
 - [Wang et al. (2024)](/sources/wang-2024.md) — §3.1, Eq. (14), Fig. 2 (inviscid Taylor–Green time reversal: KGP2, OPT6, MUSCL3, WENO5); §5.
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL hal-04582857v1: §II.C, Figs. 2–4 (TENO reference and convergence); §III.B.b, c, h (SPADE homotopy hybrid, OpenSBLI TENO, Ducros sensor); §IV.A–B, Figs. 5–8; §V.
 - [Cao et al. (2024)](/sources/cao-2024.md) — arXiv 2107.08609v1: §2.3 (WENO in computational space on curvilinear meshes).
+- [Luo & Wu (2021)](/sources/luo-2021-b.md) — §1; §2.1–2.3, Eqs. (1)–(6) (WENO-JS, WENO-Z, WENO-Z+); §3.1–3.2, Eqs. (7)–(9), Figs. 1–3 (approximate dispersion relation, WENO-Z+M); §4, Figs. 4–7 (linear and nonlinear dissipation); §5, Table 1, Figs. 8–18; §6.
+- [Xu et al. (2026)](/sources/xu-2026.md) — arXiv 2508.21599v1: §3, §3.2–3.5, Eqs. (11)–(23) (WENO-5 on primitive variables, sensor-switched conservative/primitive hybrid); §4.2.
+- [Zheng et al. (2022)](/sources/zheng-2022.md) — §1, §2.2, Eqs. (7)–(16) (two-dimensional WENO-ZQ); §3–4, Tables 2, 5, App. C.
+- [Tang et al. (2022)](/sources/tang-2022.md) — §2.1 (WENO-5 in a hybrid RANS/LES combustor solver).
+- [Aiello et al. (2026)](/sources/aiello-2026.md) — §3.3 (WENO5 transient in STREAmS); §4.2 (WENO hybridization of non-entropy-conserving schemes).

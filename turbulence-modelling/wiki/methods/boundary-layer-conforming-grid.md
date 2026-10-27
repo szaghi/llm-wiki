@@ -5,7 +5,7 @@ description: "Grids whose local isotropic cell size follows the local boundary-l
 status: established
 aliases: [BL-conforming grid, boundary-layer-conforming mesh, delta-conforming grid]
 tags: [wmles, mesh-adaptation, boundary-layer, wall-model]
-timestamp: 2026-10-26T07:19:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Boundary-layer-conforming grids for wall-modelled LES
@@ -68,9 +68,9 @@ Counting only points inside the boundary layer (Eq. 5),
 $N_{\mathrm{pts}}=\iint_{S}n_\delta\,\Delta^{-2}\,dA$, and for a flat plate with
 $\delta/x=0.16\,Re_x^{-1/7}$ and $Re\gg Re_\Delta^{\min}$ (Eq. 6, App. A),
 
-$$N_{\mathrm{pts}}\sim n_\delta^{13/6}\,Re\,\left(Re_\Delta^{\min}\right)^{-5/6},\qquad N_{\mathrm{steps}}\sim\tilde t\,Re\left(Re_\Delta^{\min}\right)^{-1},$$
+$$N_{\mathrm{pts}}\sim n_\delta^{13/6}\,Re\,\left(Re_\Delta^{\min}\right)^{-5/6},\qquad N_{\mathrm{steps}}\sim t_{\mathrm{run}}\,Re\left(Re_\Delta^{\min}\right)^{-1},$$
 
-with $\tilde t$ the run length in flow-through times (page-local). With the
+with $t_{\mathrm{run}}$ the run length in flow-through times (page-local, as on the [grid-point requirements](/results/les-grid-point-requirements.md) page). With the
 leading-edge extent fixed instead of $Re_\Delta^{\min}$ the exponent of
 $n_\delta$ becomes 3 (Eq. 14). Further consequences are on the
 [grid-point requirements](/results/les-grid-point-requirements.md) page.
@@ -89,7 +89,7 @@ On the Juncture Flow at $Re=2.4\times10^6$ (crank chord), Lozano-Durán et al.
 
 - BL-conforming grids are more accurate at all three stations; at the
   wing–body juncture and the separated trailing edge they lower the error
-  constant $c_u$ of $e_u=c_u(\Delta/\delta)^{a_u}$ (page-local, see
+  constant $b_u$ of $e_u=b_u(\Delta/\delta)^{a_u}$ (registry §11, see
   [wall-modelled LES](/methods/wall-modelled-les.md)) and leave the rate
   $a_u$ unchanged (§V.C, Fig. 17a).
 - C-N5-R2e3 (12 M cells) beats the constant-size C-D2 (31 M) at the juncture

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Turbulent channel flow"
-description: "Pressure-driven flow between two parallel walls, periodic in the wall-parallel directions: DNS at Re_τ 100 to 395, wall-resolved, implicit and very coarse LES at 180 to 2000 (learned and super-resolution subgrid models, schemes, grid adaptation), wall-modelled LES at Re_τ 544 to 10¹⁰, hybrid RANS/LES to 20,000, RANS training data, and compressible channels."
+description: "Pressure-driven flow between two parallel walls, periodic in the wall-parallel directions: DNS at Re_τ 100 to 800 (including rough walls and thermally perfect gases), wall-resolved, implicit and very coarse LES at 180 to 2000, wall-modelled and immersed-boundary LES at Re_τ 544 to 10¹⁰, hybrid RANS/LES to 20,000, high-order RANS, and compressible channels."
 status: established
-aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow]
-tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns, data-driven]
-timestamp: 2026-10-26T15:57:00Z
+aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow, minimal channel, rough-wall channel]
+tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns, data-driven, compressible, immersed-boundary]
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Turbulent channel flow
@@ -58,6 +58,12 @@ closures.
 | [Maejima & Kawai (2025)](/sources/maejima-2025.md), §4, Tables 1–2 | very coarse LES with a super-resolution SGS model; compressible at bulk Mach 0.1 | 1000 (training and test), 2000 (test) | $6\pi\delta\times2\delta\times2\pi\delta$ | DNS $\Delta x^+=9$, $\Delta z^+=4.5$; LESx4 $(36,18)$; LESx8 $(72,36)$ |
 | [Oulghelou et al. (2025)](/sources/oulghelou-2025.md), §4.2.1 | 2D RANS training case of blended SST corrections | 1000 | — | $40\times60$, wall-refined |
 | [Steinhausen et al. (2023)](/sources/steinhausen-2023.md), §2.1 | inflow of a flame–wall interaction simulation | bulk $Re=U_bH/\nu\approx2770$ on the half-width $H$ (page-local) | precursor $14H\times3H\times2H$ (periodic) | 60 million cells, wall spacing 25 µm ($y^+=0.24$) |
+| [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §5.2 | high-order RANS verification | bulk $Re=2\times10^6$ and $2\times10^8$ on $\delta$ ($Re_\tau$ not printed) | periodic in $x$ | hybridizable DG, $N=3$ triangles; 60 and 120 degrees of freedom across $y$; 30 to 300 elements in the grid study |
+| [Wu & Lele (2026)](/sources/wu-2026.md), §6.2 | a posteriori WMLES of neural-network SGS models | 1000 | as the Johns Hopkins database | $128\times96\times32$ (as printed), filter width 16 DNS spacings |
+| [D'Ayer et al. (2026)](/sources/dayer-2026.md), §3.2 | DNS over hemispherical roughness with an immersed boundary | 400 | minimal channel, $L_x^+\approx1009$, $L_z^+\approx240$ | spectral difference $N=3$; 17 to 25 million degrees of freedom |
+| [Aiello et al. (2026)](/sources/aiello-2026.md), §3.3 | compressible DNS of a thermally perfect gas (CO₂) | about 470, 630, 800 (bulk Mach 3, 4, 5 on wall sound speed) | $10\delta\times2\delta\times3\delta$ | up to $816\times356\times512$; $\Delta x^+\le9.7$, $\Delta y^+_w\le0.32$, $\Delta z^+\le4.6$ |
+| [Ranjbar et al. (2026)](/sources/ranjbar-2026.md), §III.C | compressible LES with explicit modal filtering | 395 (bulk $Re=7095$, Mach 0.3) | $2\pi\delta\times2\delta\times\pi\delta$ | $14\times12\times16$ elements, $N=6$, 921,984 points, 6 inside $y^+=10$ |
+| [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md), §3 | a priori volume filtering for immersed-boundary WMLES | 5200 (Lee & Moser DNS) | as the DNS | filter sizes $\Delta_f^+=50$ to 300 (page-local) |
 
 Reference DNS named by the sources: Kim, Moin & Moser at $Re_\tau=180$
 (Cao et al.); Moser, Kim & Mansour at $Re_\tau=590$ (Flad & Gassner;
@@ -566,7 +572,7 @@ low-speed channel.
 $Re_\tau\approx5200$ on four grids from $\Delta x^+\approx701$ to 1552
 (84K to 408K times fewer cells than the DNS). The mean is nearly
 grid-independent with no log-layer mismatch, and the computable unresolved fraction
-$\beta_k=1-k_{\mathrm{res}}/k_{\mathrm{tot}}$ (page-local) falls to 0.4 at
+$\beta_k=1-k_{\mathrm{res}}/k_{\mathrm{tot}}$ (registry §11) falls to 0.4 at
 the centreline on the fine grid. Started from
 RANS, the hybrid state develops in time with a transient overshoot that heals
 by eight flow-throughs, and in space (a $16\pi$-long channel with a RANS
@@ -581,7 +587,7 @@ tensor-coefficient model than for dynamic Smagorinsky, mostly near the wall,
 and identical dissipation correlations. [Haering et al. (2022)](/sources/haering-2022.md),
 §III B, Fig. 1, box-filter DNS at $Re_\tau=1000$ (excluding $y^+<300$) to
 fit $\alpha_k=\beta_k^{1.7}$ between the modelled-energy fraction
-$\alpha_k=k_{\mathrm{sgs}}/k_{\mathrm{tot}}$ (page-local) and $\beta_k$. [Fowler et al. (2022)](/sources/fowler-2022.md),
+$\alpha_k=k_{\mathrm{sgs}}/k_{\mathrm{tot}}$ (registry §11) and $\beta_k$. [Fowler et al. (2022)](/sources/fowler-2022.md),
 §2.3, Fig. 2, time-filter Johns Hopkins DNS at $Re_\tau=1000$ to show that
 filtering at their relaxation time collapses near-wall profiles onto the law
 of the wall.
@@ -646,8 +652,124 @@ region with a 12 µm wall spacing ($y^+=0.14$) on 200 million cells; see
 [inflow turbulence generation](/methods/inflow-turbulence-generation.md)
 and [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md).
 
+**High-order RANS of the $k$-$\omega$ family.**
+[Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §5.2, solve the
+RANS channel with the Wilcox (1998) [$k$-$\omega$ model](/methods/k-omega-model.md)
+on a hybridizable DG discretization of degree $N=3$. At equal degrees of
+freedom and equal first-point $y^+$ it predicts the near-wall velocity,
+$k$ and $\omega$ better than a second-order finite-volume solution, and at
+$Re=2\times10^6$ the whole velocity profile (Figs. 7–12). Refining from 30
+to 300 elements across $y$, the convergence rates are close to $N+1$ up to
+150 elements and then degrade, which the authors attribute to the wall
+singularity of $\omega$, making the global rate "first-order accurate at
+most"; with an algebraic mixing-length model the mean velocity converges
+at the optimal rate $N+1$ (Table 2, Figs. 13–16). The wall shear computed
+from the HDG auxiliary strain variable converges one order faster than
+from the velocity gradient: errors fall from 1.0% to 0.025% against 6.4% to
+0.13% (§5.2.1, Fig. 15).
+
+**Discretization of a thermally perfect gas.**
+[Aiello et al. (2026)](/sources/aiello-2026.md) run DNS of a supersonic and
+hypersonic channel of CO₂ with temperature-dependent specific heats in the
+GPU code [STREAmS](/software/streams.md) (sixth-order central differences,
+no shock capturing after the initial transient), isothermal walls at
+298.15 K, and compare convective discretizations that share the same
+[kinetic-energy-preserving](/properties/kinetic-energy-preservation.md)
+mass and momentum fluxes but differ in
+[entropy conservation](/properties/entropy-conservation.md) for this
+equation of state. Mean velocities transformed after Trettel & Larsson
+collapse on the viscous sublayer for all schemes; a narrow log region
+appears for $y^*\ge40$ with $\kappa=0.41$ and $B=6.0$, the large intercept
+attributed to the low semi-local $Re_\tau^*$ of 160 to 190 (§4.1, Fig. 1).
+With the authors' entropy-conserving scheme as the reference (Table 3):
+
+| Scheme | $\max$ rel. diff. of transformed $u^+$ (M3 / M4 / M5) | rel. diff. of peak $R_{11}^+$ | wall-pressure r.m.s. $p'^+_w$ |
+|---|---|---|---|
+| entropy-conserving for the gas (reference) | — | — | 1.97 / 2.33 / 2.57 |
+| Gouasmi et al. (entropy-conserving, other pressure term) | 0.57 / 0.23 / 0.78% | 1.38 / 1.21 / 5.25% | 1.97 / 2.31 / 2.55 |
+| KEEP (not entropy-conserving) | 0.23 / 1.05 / 1.98% | 0.60 / 1.59 / 10.98% | 2.89 / 3.23 / 3.55 |
+| Ranocha (entropy-conserving for a calorically perfect gas; M5 only) | 0.55% | 1.32% | 2.78 |
+
+The non-entropy-conserving schemes over-predict the pressure and density
+fluctuations, which drift after long times, while both entropy-conserving
+schemes stay statistically stationary over a run extended by 50% (§4.2,
+Fig. 3). The Reynolds shear stress does not differ between schemes. No
+external DNS is used.
+
+**Immersed-boundary roughness in a minimal channel.**
+[D'Ayer et al. (2026)](/sources/dayer-2026.md) (read in the submitted
+manuscript), §3.2, validate a volume-penalization
+[immersed boundary method](/methods/immersed-boundary-method.md) in the
+[spectral difference](/methods/spectral-difference-method.md) code JAGUAR
+on the heated channel over staggered hemispheres of Wu et al. (roughness
+height $\delta/20$) at $Re_\tau=400$, cropped to a minimal channel of
+$8\times3$ roughness patterns, at $N=3$. Against a body-fitted run of the
+same code, a finite-volume run (AVBP, the thermal reference) and the DNS of
+Wu et al. (859 million degrees of freedom): the mean velocity and
+temperature agree below the minimal-channel critical height
+$y^+=0.4L_z^+$ (above it all minimal-channel runs over-predict the
+velocity); $R_{11}^+$ and the turbulent heat fluxes differ by at most about
+5%; all minimal-channel runs over-predict $R_{22}^+$ and under-predict
+$R_{33}^+$, which the authors attribute to the minimal domain (Figs.
+7–10, Table 3).
+
+**Explicit modal filtering in a compressible DG channel.**
+[Ranjbar et al. (2026)](/sources/ranjbar-2026.md) (read in arXiv v1),
+§III.C, run the channel at $Re_\tau=395$ and Mach 0.3 in
+[HORSES3D](/software/horses3d.md) against Moser et al. (1999). The
+unmodelled run over-predicts all r.m.s. velocities and keeps non-zero wall
+fluctuations, from the weak imposition of the wall condition; an
+[explicit modal filter](/methods/explicit-modal-filtering.md) drives them
+to zero, and its self-tuning form ($c=0.5$) gives the closest r.m.s.
+profiles; Smagorinsky is unstable for $C_s<0.15$ and inaccurate at 0.2
+(no data shown); the filter costs 0.96% to 2.5% more wall time (Fig. 15,
+§III.D.3).
+
+**Multi-filter neural-network SGS models in wall-modelled LES.**
+[Wu & Lele (2026)](/sources/wu-2026.md) (read in arXiv v2), §6.2, run
+networks trained on filtered isotropic and channel data of the Johns
+Hopkins database, without retraining, in wall-modelled LES at
+$Re_\tau=1000$ with the wall model of Bou-Zeid et al. A network trained on
+box-filtered data only "completely fails" with unphysical spectra and
+over-predicts $R_{11}$ and $R_{33}$, and static Smagorinsky piles energy at
+high wavenumbers, while the [σ model](/methods/sigma-model.md) and the
+network trained on two filter types reproduce the spectra; the latter's
+mean profile "lines up very well" with the filtered DNS and its stresses
+are "oftentimes" the most accurate (Figs. 15–16). See
+[neural-network SGS models](/methods/neural-network-sgs-model.md).
+
+**The channel filtered for immersed-boundary wall-modelled LES.**
+[Rickard & Kasbaoui (2026)](/sources/rickard-2026.md), §3–4, volume-filter
+the Lee & Moser DNS at $Re_\tau=5200$ with a compact kernel truncated by
+the wall and not rescaled, with filter sizes (kernel widths, page-local)
+$\Delta_f^+=50$ to 300. The filtered velocity at the wall, a slip velocity
+$\boldsymbol u_{\mathrm{slip}}$, has a mean of $6.93u_\tau$ at $\Delta_f^+=50$
+and $13.5u_\tau$ at 300, growing logarithmically,
+fluctuations of about $1.5u_\tau$, and negligible wall-normal and
+spanwise means; the subfilter stress peak grows from 0.24 to 0.57 $\tau_w$
+(Figs. 6–10). Away from the wall ($y\gtrsim\Delta_f$) the filtered mean
+profile collapses on the DNS. From these data they fit a Van Driest slip
+model and a streamwise slip length $\ell_x^+=0.0798\,\Delta_f^{+1.5385}$ for the
+cosine kernel, nearly independent of the kernel (§4–5); a posteriori
+tests are left to future work. See
+[immersed boundary method](/methods/immersed-boundary-method.md) and
+[wall-modelled LES](/methods/wall-modelled-les.md).
+
 ## Qualifications
 
+- [Wu & Lele (2026)](/sources/wu-2026.md) write $z$ wall-normal;
+  [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) write $\delta_f$
+  for the kernel width, written $\Delta_f$ here (page-local, as on
+  [immersed boundary methods](/methods/immersed-boundary-method.md)),
+  since $\Delta$ alone is the registry's LES filter width. [Aiello et al.
+  (2026)](/sources/aiello-2026.md) print the sample spacing as
+  "$\Delta t_s=1.5U_b/h$", which has the dimension of an inverse time
+  *(compiler check, not in the sources)*; they measure all differences
+  against their own entropy-conserving scheme, with no external DNS. [D'Ayer et al.
+  (2026)](/sources/dayer-2026.md) print $L_x^+\approx1009$, while eight
+  patterns of length $\sqrt3$ times four roughness heights of $\delta/20$
+  give $L_x=2.77\delta$, i.e. $L_x^+\approx1109$ at $Re_\tau=400$
+  *(compiler check, not in the sources)*.
 - [Vadrot et al. (2023a)](/sources/vadrot-2023.md) report a large-$Re_\tau$
   log-layer mismatch of the log-law model of
   [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) after retraining it in
@@ -828,3 +950,9 @@ and [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.m
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1; §3; §4.1, Tables 1–2, Fig. 5; §5; §6.1–6.2, Figs. 22–27; §7, Figs. 28–29; App. C.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §4.2.1, Table 3, Fig. 4.
 - [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md) — §5.3, Eqs. 5.12–5.14.
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §5.2, §5.2.1, Tables 2–3, Figs. 7–16.
+- [Aiello et al. (2026)](/sources/aiello-2026.md) — §3.3, Table 2; §4.1–4.2, Table 3, Figs. 1–3; §5.
+- [D'Ayer et al. (2026)](/sources/dayer-2026.md) — submitted manuscript: §3.2, Eq. 28, Table 3, Figs. 7–10.
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §III.C, Figs. 15–16; §III.D.2–3.
+- [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §3.2.1; §6.2.1, Figs. 15–20.
+- [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §1; §2.3; §3.2–3.3, Figs. 5–10; §4.1–4.2, Eqs. 4.2–4.27, Figs. 11–13; §5, Tables 1–2.

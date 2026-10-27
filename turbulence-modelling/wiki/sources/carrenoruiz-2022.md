@@ -9,7 +9,7 @@ year: 2022
 venue: "Flow Turbul. Combust. 109:279-308"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Flow_Turbulence_and_Combustion_Carreño_Validation_of_the_gamma_text-Re__theta_Transition_Model_for.pdf"
 tags: [rans, transition, separated-flow, eddy-viscosity]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Summary
@@ -119,7 +119,7 @@ that of page 1. There is no identity problem.
 | $s_1$ | (separation-correction coefficient) | default 2; 6 recommended with Suluksna–Juntasaro |
 | $F_{\theta_t}$, $F_{onset}$, $F_{turb}$, $F_{length}$, $F_{sublayer}$ | (blending, onset, relaminarization and transition-length functions) | |
 | $c_{a1}$, $c_{a2}$, $c_{e1}$, $c_{e2}$, $c_{\theta_t}$, $\sigma_\gamma$, $\sigma_{\theta_t}$ | (model constants) | values of Menter et al. (2006), not printed |
-| $S$, $W$ (in Eqs. 8–9) | $\lvert S\rvert$, $\lvert\Omega\rvert$ | not defined in the paper; the transition page reads them as the strain-rate and vorticity magnitudes (compiler identification) |
+| $S$, $W$ (in Eqs. 8–9) | $\lvert S\rvert$, $\lvert\Omega\rvert$ | not defined in the paper; read as the strain-rate and vorticity magnitudes on the transition page |
 | $P_k=G_k+G_{nl}+G_b$, $D_k$ | $P_k$, (destruction of $k$) | turbulent, nonlinear and buoyancy production |
 | $\beta^*$, $f_{\beta^*}$, $k_0$, $\omega_0$ | $\beta^*$, (free-shear factor, ambient values of Spalart & Rumsey 2007) | |
 | $\mu_t$, $\sigma_k$ | $\mu_t$, $\sigma_k$ | |
@@ -152,8 +152,9 @@ unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25), cited further in chunk 4. This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunks 4, 7. This source is cited on:
 
+- [Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Laminar separation bubble](/definitions/laminar-separation-bubble.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)

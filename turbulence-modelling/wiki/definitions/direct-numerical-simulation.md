@@ -5,7 +5,7 @@ description: "DNS solves the Navier–Stokes equations with no turbulence model 
 status: established
 aliases: [DNS, quasi-DNS, flame-resolved DNS, under-resolved DNS, DNS embedded in LES, downsized DNS, DNS-like simulation, fully resolved simulation with detailed chemistry]
 tags: [dns, les, combustion, boundary-layer, compressible, gpu]
-timestamp: 2026-10-26T15:48:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Direct numerical simulation
@@ -74,6 +74,11 @@ $Re^{2.5}$ (see [grid-point requirements](/results/les-grid-point-requirements.m
 [Delassaux et al. (2023)](/sources/delassaux-2023.md), §4.1, recall
 Spalart's forecast that wall-resolved LES and DNS of a full-scale
 high-Reynolds-number geometry would become available around 2050 and 2080.
+[Rickard & Kasbaoui (2026)](/sources/rickard-2026.md), §1, recall from
+Choi & Moin the grid-point counts, $Re^{37/14}$ for DNS, $Re^{13/7}$ for
+wall-resolved LES and linear in $Re$ for wall-modelled LES, and place the
+frontier of channel DNS at $Re_\tau\approx12\,000$ (Pirozzoli 2024), after
+10,000 (Hoyas et al.) and 8000 (Yamamoto & Tsuji), all as recalled.
 
 **Exascale isotropic turbulence.** [Yeung et al. (2025)](/sources/yeung-2025.md)
 reach $Re_\lambda\approx2500$ on a $32\,768^3$ grid with a GPU Fourier
@@ -135,6 +140,14 @@ better small-scale resolution than is often practised (§1).
 | Compressible channel, $Re_\tau\approx1000$ and 2000, $M_b\approx0.1$ | second-order kinetic-energy- and entropy-preserving central differences; $\Delta x^+=9.0$, $\Delta z^+=4.5$, $\Delta y^+$ 0.5–6.0; $2160\times1440\times669$ and $4320\times2880\times819$ points ($x$, $z$, $y$) | [Maejima & Kawai (2025)](/sources/maejima-2025.md), §2, Tables 1–2 |
 | Forced isotropic turbulence, $Re_\lambda\approx100$; temporal mixing layer | pseudo-spectral, 2/3 de-aliasing, second-order Adams–Bashforth; $256^3$ and $256\times256\times128$ (training and reference data of a neural operator) | [Li et al. (2024)](/sources/li-2024.md), §V A–B |
 | Decaying isotropic turbulence, $Re_\lambda\approx60$; temporal mixing layer | pseudo-spectral, $128^3$ and $256\times256\times128$, $\Delta t=0.001$ | [Zhao et al. (2025)](/sources/zhao-2025.md), §3.1–3.2 |
+| Compressible channel of CO$_2$ as a thermally perfect gas, bulk Mach 3, 4, 5 on the wall sound speed, $Re_\tau\approx470$, 630, 800, isothermal walls | sixth-order central differences ([STREAmS](/software/streams.md) 2.1, GPU), box $10\delta\times2\delta\times3\delta$; $512\times256\times324$ to $816\times356\times512$ points; $\Delta x^+$ 8.21–9.68, $\Delta z^+$ 3.93–4.62, first wall-normal spacing $\Delta y^+$ 0.28–0.32; no external DNS reference | [Aiello et al. (2026)](/sources/aiello-2026.md), §3.3, Table 2 |
+| [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), $Re=1600$, $M=0.1$, nonlinearly stable [flux reconstruction](/methods/flux-reconstruction.md) | $256^3$ degrees of freedom: $N=7$ on $32^3$ elements ($224^3$ unique) or $N=3$ on $64^3$ ($192^3$ unique); against the $512^3$ compact-difference DNS of Dairay et al. and other $512^3$ references | [Brillon & Nadarajah (2026)](/sources/brillon-2026.md), §3.1.1, Table 2 |
+| Taylor–Green vortex, $Re=1600$ and 400, incompressible, compact differences (SAILOR) | sixth-order compact derivatives, $384^3$ with spectral interpolation or $256^3$ with tenth-order compact interpolation; the $384^3$ run "almost overlaps" the $512^3$ pseudo-spectral reference at $Re=1600$ | [Caban et al. (2026)](/sources/caban-2026.md), §5.2, Figs. 14–17 |
+| Isotropic turbulence, $Re_\lambda=100$ (a priori data) | $384^3$ on $[0,2\pi]^3$ | Caban et al. (2026), §4.2 |
+| Heated rough-wall minimal channel (staggered hemispheres), $Re_\tau=400$ | spectral difference $N=3$ with volume-penalization [immersed boundary](/methods/immersed-boundary-method.md): 25 M degrees of freedom, $\Delta x^+=1.73$, $\Delta z^+=1.50$, first $\Delta y^+=0.51$ (body-fitted: 17 M, 2.04, 1.11, 0.92), against the 859 M-degree-of-freedom DNS of Wu et al. ($\Delta x^+=9.97$, $\Delta z^+=5.61$, $\Delta y^+=0.15$) on a domain cropped to $L_x^+\approx1009$ (as printed), $L_z^+\approx240$ | [D'Ayer et al. (2026)](/sources/dayer-2026.md), §3.2, Table 3 |
+| Forced two-dimensional turbulence, $Re=20\,000$ and $100\,000$ | pseudo-spectral (py2d), $1024^2$ and $2048^2$ | [Jakhar et al. (2026)](/sources/jakhar-2026.md), Fig. 4 |
+| Decaying isotropic turbulence, $Re=450$ (idc96 initial field); Taylor–Green vortex, $Re=200$ and 800 | DGSEM ([HORSES3D](/software/horses3d.md)): $12^3$ elements at $N=8$ (1,259,712 points); $18^3$ at $N=7$ (2,985,984); $20^3$ at $N=12$ (17,576,000); validated against an earlier DSEM code and the dissipation rates of Fehn et al. | [Ranjbar et al. (2026)](/sources/ranjbar-2026.md), §III.A–B |
+| Channel, $Re_\tau=5200$ (the Lee & Moser DNS, filtered a priori) | $\Delta x^+\sim12$, $\Delta z^+\simeq6$, $\Delta y^+$ from about 0.5 to 10, as quoted | [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md), §3.1 |
 
 From their pipe DNS, Vicente Cruz & Lamballais (2023, §7.1) suggest that the
 recommendation of about one wall unit for the first wall-normal spacing
@@ -218,6 +231,57 @@ at the price of an $O(h^2)$ total-energy error. In their channel DNS (run with
 the C++ code RHEA) both schemes agree to plotting accuracy, "pressure
 oscillations are mitigated by physical viscosity", and the lack of
 total-energy conservation causes no deviation (§4.3, §5).
+
+**Entropy conservation and the gas model.** [Aiello et al. (2026)](/sources/aiello-2026.md)
+run their CO$_2$ channel DNS with four
+[kinetic-energy-preserving](/properties/kinetic-energy-preservation.md)
+central schemes that differ in
+[entropy conservation](/properties/entropy-conservation.md) for a thermally
+perfect gas (temperature-dependent specific heats) and in the pressure
+term. Non-entropy-conserving schemes overpredict the pressure, density and
+temperature fluctuations, and these fluctuations drift after long times in
+the statistically stationary state, while the two entropy-conserving
+schemes stay stationary over a run extended by 50% (§4.2, Fig. 3); at bulk
+Mach 5 the built-in kinetic-energy-preserving scheme of STREAmS (KEEP)
+differs from their entropy-conserving one by 10.98% in the streamwise
+Reynolds-stress profile (maximum-norm relative difference, Table 3). With entropy-conserving fluxes "no
+shock-capturing was needed" in these fully central runs, after an initial
+WENO transient (§3.3, §4.2). Removing ghost nodes in favour of second-order
+boundary formulae made the hypersonic cases more robust, and viscous terms
+in conservative form were more robust than the non-conservative form (§3.3).
+Their accuracy measure is the difference from their own entropy-conserving
+scheme, not from external data (Table 3).
+
+**Provably stable high-order DNS without added dissipation.**
+[Brillon & Nadarajah (2026)](/sources/brillon-2026.md), §3.1.1, run the
+viscous Taylor–Green vortex as a DNS with an entropy-stable split-form
+[flux reconstruction](/methods/flux-reconstruction.md) scheme with no
+upwinding, no over-integration and no model; the kinetic energy and
+dissipation rate agree with the $512^3$ reference of Dairay et al., and the
+effective viscosity, $Re\,\varepsilon$ over twice the enstrophy (Eq. 100),
+stays within 4.5% of the physical viscosity for all their DNS schemes
+(Fig. 4b). Spectra of the high-order field need oversampling to $2(N+1)$
+equidistant points per element and direction before the FFT, which removes
+an apparent energy pile-up near the cutoff (Fig. 6, Table 4). The
+pressure–dilatation term computed node-wise oscillates spuriously, less so
+for collocated flux nodes, and Roe or Lax–Friedrichs upwinding at the faces
+almost removes it (§3.1.1, §3.1.7). For incompressible compact differences,
+[Caban et al. (2026)](/sources/caban-2026.md), §5.2–5.3, find their
+$384^3$ Taylor–Green DNS with spectral (non-dissipative) interpolation
+stable, while the same scheme on $256^3$ becomes unstable around $t=10$;
+dissipative tenth-order compact interpolation keeps the $256^3$ run stable,
+and the two DNS spectra differ only for wavenumbers above 100, at least four
+orders of magnitude below the energetic scales (Fig. 14).
+
+**High-order immersed boundaries for DNS databases.** [D'Ayer et al. (2026)](/sources/dayer-2026.md)
+add a volume-penalization [immersed boundary](/methods/immersed-boundary-method.md)
+to the [spectral difference](/methods/spectral-difference-method.md) code
+JAGUAR, with the stiff penalization term integrated analytically in a Strang
+splitting so that the time step is set by the CFL condition alone (§2.4),
+to build DNS databases of flows over rough heated walls for roughness models
+(§1, §4). In a minimal channel at $Re_\tau=400$ the immersed-boundary
+Reynolds stresses and turbulent heat fluxes differ from the body-fitted and
+reference computations by at most about 5% (§3.2, Figs. 9–10). The version read is a submitted manuscript.
 
 **Lattice Boltzmann against pseudo-spectral.** Foldes et al. (2023, §4.4)
 find their [lattice Boltzmann](/methods/lattice-boltzmann-method.md) MHD
@@ -371,6 +435,15 @@ are tested.
   decaying grid turbulence fails to follow the measured spectra, which the author's
   [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md)
   follows on the same mesh.
+  [Ranjbar et al. (2026)](/sources/ranjbar-2026.md), §III, call their
+  no-model baseline on coarse meshes "coarse DNS" (an order of magnitude
+  fewer points than their DGSEM DNS, about 18 times for the $Re=200$
+  Taylor–Green vortex): it over-predicts the kinetic energy of decaying
+  isotropic turbulence and, in a channel at $Re_\tau=395$ ($N=6$, 921,984
+  points), all r.m.s. velocities, with non-zero wall fluctuations from the
+  weak imposition of the wall condition; their
+  [explicit modal filter](/methods/explicit-modal-filtering.md) corrects
+  both (§III.A, §III.C, Figs. 3, 15).
 - **DNS-like reacting simulations.** Steinhausen et al. (2023) call their
   turbulent side-wall-quenching flame a "fully resolved simulation with
   detailed chemistry" (Abstract), run with a solver validated for
@@ -421,8 +494,8 @@ use or avoid the word in other senses:
   "direct numerical simulation" a pseudo-spectral integration ($1024^2$
   harmonics) of quadratically truncated Hamiltonian equations for
   magneto-capillary surface waves, with an imposed damping
-  $-\nu_d(k-k_d)^2$ of the Fourier amplitudes above a wavenumber $k_d=150$
-  (page-local $\nu_d$, the source's $\nu$, and $k_d$, $k_a$) and a spectral cut-off at $k_a=212$ that
+  $-\nu_h(k-k_d)^2$ of the Fourier amplitudes above a wavenumber $k_d=150$
+  (page-local $\nu_h$, the source's $\nu$, and $k_d$, $k_a$, as on the Source page) and a spectral cut-off at $k_a=212$ that
   the authors interpret as "superviscosity" (p. 2) (see [weak wave turbulence](/results/weak-wave-turbulence.md)).
 - **Resolved one-dimensional model equations.** [van Gastelen et al. (2024)](/sources/vangastelen-2024.md)
   call "DNS" the fine-grid solutions of the one-dimensional Burgers
@@ -462,7 +535,7 @@ the filtered Navier–Stokes equations, they run wall-modelled LES in the
 target solver with a mean-flow correction that forces the DNS mean profile
 (§2.5; see [discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
 
-Chunk-2 sources use published DNS as the reference for model calibration and
+Other sources use published DNS as the reference for model calibration and
 validation: the channel DNS of Lee & Moser at $Re_\tau=1000$ and 5200 for
 wall-modelled LES (Gillyns et al. 2022, §5–§9), the SD7003 airfoil DNS of
 Carton de Wiart & Hillewaert at $Re=60{,}000$, $\alpha=4^\circ$
@@ -570,7 +643,7 @@ Two further uses of DNS as reference:
   single-precision solver", because the observations come from DNS
   (Table II).
 
-Chunk-6 sources use DNS in the same roles:
+Field inversion and learned LES use DNS in the same roles:
 
 - **Reference data for field inversion.** [Fanizza et al. (2025)](/sources/fanizza-2025.md),
   §4, assimilate a time-averaged DNS of a laminar cylinder at $Re=80$
@@ -590,6 +663,36 @@ Chunk-6 sources use DNS in the same roles:
   mean subgrid activity of 0.11, they call "close to a DNS" (App. C; see
   [large-eddy simulation](/definitions/large-eddy-simulation.md)).
 
+Closure and numerics studies of 2026 use DNS in the same roles:
+
+- **A priori database.** Rickard & Kasbaoui (2026, §3) volume-filter the
+  $Re_\tau=5200$ channel DNS of Lee & Moser with filter widths of 50 to 300
+  wall units to measure the wall-slip velocity that their immersed-boundary
+  wall model must supply; filters below 50 wall units are excluded to avoid
+  contamination by the interpolation of the DNS onto the finer
+  post-processing grid (§3.1; see
+  [wall-modelled LES](/methods/wall-modelled-les.md)). Caban et al. (2026,
+  §4.2) filter their $384^3$ isotropic DNS to a $64^3$ LES grid to measure
+  the subgrid-stress error of mismatched deconvolution filters. Jakhar et
+  al. (2026) discover their
+  [higher-order gradient closures](/methods/gradient-model.md) from 100
+  Gaussian-filtered DNS snapshots of forced two-dimensional turbulence,
+  coarse-grained 4 to 64 times, and test them on 20 independent snapshots
+  (p. 2); see [symbolic-regression closures](/methods/symbolic-regression-closure.md).
+- **Reference of a posteriori LES.** Brillon & Nadarajah (2026, §3.1.2–3.1.8)
+  judge their under-resolved runs against their own $256^3$ DNS and against
+  its projection to degree $N=2$ on $32^3$ elements ("projected DNS");
+  Ranjbar et al. (2026, §III) judge their modal filter against their DGSEM
+  DNS and, for the channel, against Moser et al.; Caban et al. (2026,
+  §5.3–5.4) measure the LES error as the time-integrated difference of the
+  kinetic energy from DNS (Eq. 45); Jakhar et al. (2026, p. 4) require the
+  LES to resolve more than 80% of the DNS enstrophy for their closures to be
+  stable.
+- **Reference for an immersed-boundary method.** D'Ayer et al. (2026,
+  §3.2) take the rough-channel DNS of Wu et al. as the velocity reference
+  and, because it has no heat transfer, a finite-volume AVBP computation as
+  the thermal one.
+
 Domingo & Vervisch (2023, §1) list DNS codes and orders: SENGA, DINO, S3D,
 FK³, KARFS and HOLOMAC of sixth to tenth order; Nek5000 with spectral elements;
 NGA, PsiPhi, AVBP and OpenFOAM of fourth or second order. They estimate the
@@ -602,7 +705,7 @@ layers (§7).
 ## Qualifications
 
 - The $h=2\eta$ criterion is the one Domingo & Vervisch (2023) adopt; other
-  works use other criteria, and the sources of this chunk do not compare them.
+  works use other criteria, and the sources on this page do not compare them.
 - Dzanic et al. (2022, §3.2) print a spanwise spacing of $0.85\,\eta$; their
   grid has 96 spanwise degrees of freedom over a span of $\pi D$, i.e. a mean
   spacing of $0.0327D$, which is $2.97$ times the stated minimum $\eta=0.011D$.
@@ -635,8 +738,7 @@ layers (§7).
   run stationary isotropic DNS in single precision and judge the effect on
   their averaged small-scale statistics unlikely to be strong. The flows,
   quantities and arguments differ, and neither source tests the other's
-  case, so no contradiction is recorded; a single- against double-precision
-  comparison of dissipation-range statistics would decide it.
+  case, so no contradiction is recorded.
 - **Shear-viscous compressible DNS.** Beattie et al. (2025) argue that
   without explicit bulk viscosity a compressible run is an implicit LES for
   the compressible modes. Seta & Federrath (2022), recorded above, justify
@@ -648,6 +750,14 @@ layers (§7).
   large-eddy times are $3\times10^6$ steps, about 1.2 years at 13 s per
   step, against "two years or more" in the text, which does not say what
   else the estimate includes *(compiler check, not in the sources)*.
+- **Two recalls of Choi & Moin.** Morsbach et al. (2024) recall a DNS cost
+  growing as $Re^{3.5}$, Rickard & Kasbaoui (2026) a DNS grid-point count
+  growing as $Re^{37/14}$; the first counts cost, the second grid points,
+  so the exponents are not in conflict (cost adds the number of time
+  steps) *(compiler check, not in the sources)*.
+- Aiello et al. (2026, §3.3) print the sample spacing of their statistics
+  as "$\Delta t_s=1.5U_b/h$", where a time spacing has the dimension of
+  $h/U_b$ *(compiler check, not in the sources)*.
 
 # Citations
 
@@ -708,3 +818,10 @@ layers (§7).
 - [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv 2411.04502v3: §3.1–3.2 (pseudo-spectral DNS as training and reference data).
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §4.1–4.3 (DNS references assimilated into RANS).
 - [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md) — §3.2–3.3 (DNS not feasible); App. C (activity parameter).
+- [Aiello et al. (2026)](/sources/aiello-2026.md) — §3.3, Table 2 (thermally perfect CO$_2$ channel DNS, grids, numerics, robustness measures); §4.2, Fig. 3, Table 3 (drift of non-entropy-conserving schemes, differences in statistics, no shock capturing).
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §3.1.1, Table 2, Figs. 2–6, Table 4 (Taylor–Green DNS with nonlinearly stable FR, effective viscosity, oversampled spectra, pressure–dilatation oscillations); §3.1.2–3.1.8 (DNS and projected DNS as reference).
+- [Caban et al. (2026)](/sources/caban-2026.md) — §4.2 (isotropic DNS as a priori data); §5.2–5.4, Eq. (45), Figs. 14–18 (compact-difference Taylor–Green DNS, stability with and without dissipative interpolation, LES error against DNS).
+- [D'Ayer et al. (2026)](/sources/dayer-2026.md) — HAL hal-05075852v1 (submitted manuscript): §1, §2.4, §4 (spectral-difference immersed-boundary DNS for roughness databases); §3.2, Table 3, Figs. 9–10 (rough minimal channel, grids, references).
+- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv 2509.20365v3: p. 2 (filtered-DNS training and test snapshots); p. 4 (80% of DNS enstrophy); Fig. 4 (two-dimensional DNS cases).
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv 2512.03315v1: §III.A–C, Figs. 3, 15 (DGSEM DNS of isotropic turbulence and Taylor–Green vortex, "coarse DNS" baseline, channel against Moser et al.).
+- [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §1 (recalled grid-point scalings and channel-DNS frontier); §3–3.1 (volume-filtered $Re_\tau=5200$ channel DNS as a priori data).

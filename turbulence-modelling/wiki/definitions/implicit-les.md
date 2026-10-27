@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-26T20:50:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -60,7 +60,7 @@ can carry.
    regarded as direct numerical simulation" but are "in the spirit of
    implicit large eddy simulations" (citing Sagaut), and analyse only
    large-scale averages, "expected to be least influenced by the
-   (numerical) dissipation details\"
+   (numerical) dissipation details"
    (see [shock-generated turbulence](/results/shock-generated-turbulence.md)).
    [Delassaux et al. (2023)](/sources/delassaux-2023.md) (§4.1) define
    implicit LES in this sense, as "use of the truncation error of high order
@@ -133,6 +133,18 @@ can carry.
      are the only dissipation. The paper calls the Rotor 37 run
      "wall-resolved LES" and does not use the term implicit LES (§2.2–2.3,
      §6).
+   - **Mixed-stress finite elements, transitional airfoil.**
+     [Lederer et al. (2026)](/sources/lederer-2026.md) (§3, §3.1) call
+     "ILES" their exactly divergence-free hybrid mixed-stress method with
+     the upwind jump term as the only dissipation, which acts on the
+     high-order part of the solution (citing Moura et al.). They exclude
+     explicit SGS models "due to their inferior performance compared to
+     ILES in a DG framework for wall-bounded flow problems", citing their
+     2023 study and Fernandez et al.
+   - **Coarse DGSEM baseline.** [Ranjbar et al. (2026)](/sources/ranjbar-2026.md)
+     (§III) run "coarse DNS", the unmodelled DGSEM of
+     [HORSES3D](/software/horses3d.md) on the coarse meshes, as the
+     baseline of their filter.
 2. **Designed numerical regularization.** The numerical dissipation is
    built to act as a model. Vicente Cruz & Lamballais (2023, §5.1) use the
    [implicit spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
@@ -196,6 +208,37 @@ can carry.
    Hennemann-type DG/finite-volume blending of
    [GALÆXI](/software/galaexi.md) "has also been demonstrated to yield a
    sensible turbulence model if tuned correctly", the RL-Blend idea above.
+
+   **Dissipative interpolation and regularization filters.**
+   [Caban et al. (2026)](/sources/caban-2026.md) (§3.2, §5) classify as
+   ILES two no-model variants of their half-staggered compact-difference
+   code: dissipative compact interpolation between velocity and pressure
+   nodes (orders 4 to 10), whose induced filter is the square of the
+   interpolation transfer function, and spectral (error-free)
+   interpolation plus an explicit regularization filter applied to the
+   velocity after every time step. That filter is an eighth-order compact
+   filter composed with its van Cittert approximate inverse truncated at $N_{\mathrm{ADM}}=2$,
+   which acts mainly on the smallest scales and is equivalent to the
+   relaxation term of the approximate deconvolution model (§3.1, Eq. 17;
+   see [scale-similarity models](/methods/scale-similarity-model.md)).
+   The derivative-induced filter alone, with spectral interpolation and no
+   regularization, is not enough (below); the induced filters are on
+   [large-eddy simulation](/definitions/large-eddy-simulation.md).
+
+   **Explicit modal filtering.** Ranjbar et al. (2026, §I, pp. 3–4) present
+   low-pass filtering of the DGSEM modes, restricted to elements where the
+   local Kolmogorov length is below the grid spacing, as "an alternative
+   or complement to subgrid-scale modeling" that "mimics the effects of"
+   spectral vanishing viscosity without its extra flux. The method and its
+   results are on [explicit modal filtering](/methods/explicit-modal-filtering.md).
+
+   **HOPU, second version.** Lederer et al. (2026, §2.3, §3.2) reuse the
+   [HOPU method](/methods/high-order-projection-based-upwind-method.md)
+   with a Chorin-type projection time integrator instead of the earlier
+   IMEX Runge–Kutta scheme, and with other settings of the adaptive
+   projection order (thresholds, reversion to standard upwinding, update
+   every tenth step); the two settings are versions of the method, listed
+   on the HOPU page.
 3. **Implicitly filtered LES.** The filter is the one induced by grid and
    discrete operator, whatever closure is added. Beck & Kurz (2023, §I)
    use the term in this sense: the filter width and shape are
@@ -234,6 +277,31 @@ can carry.
    [residual-based dynamic model](/methods/residual-based-dynamic-sgs-model.md).
    They call implicit LES in the sense of usage 1 "very different" from
    their approach.
+   [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) (§1, §2.3)
+   name the two senses apart: "implicitly filtered LES (iLES)", where the
+   numerical dissipation performs the filtering and an explicit SGS model
+   is added, against "implicit LES (ILES)", where the truncation error is
+   the SGS model. Their "iLES" is usage 3, whereas Kurz et al. (2023) and
+   Cao et al. (2024) use "iLES" for no-model runs (usage 1); the
+   abbreviation alone does not identify the sense. They add that a scheme
+   stable without upwind dissipation lets SGS models "function as
+   intended without dissipation interference from upwinding" (§1).
+   [Wu & Lele (2026)](/sources/wu-2026.md) (§1, §3.3) state the
+   usage-3 premise for supervised learning: the filter of a running LES
+   "is implicit and is a product of both the grid and the numerical
+   method" (citing Sagaut), and the subgrid-stress statistics depend on
+   that filter, so a network trained on one explicit filter (usually a box)
+   meets a distribution shift a posteriori. Their remedy is to train on
+   several filter shapes rather than to match a solver's filter; see
+   [neural-network SGS models](/methods/neural-network-sgs-model.md) and,
+   for the opposing design of matching the discretization,
+   [discretization-consistent closure](/definitions/discretization-consistent-closure.md).
+   [Jakhar et al. (2026)](/sources/jakhar-2026.md) (p. 6) note that
+   weather and climate models often operate in implicit-LES regimes and
+   propose their closed-form gradient closure there as a diagnostic target
+   for interscale transfers, or as an add-on "when an explicit
+   representation of backscatter is desired" (see
+   [energy backscatter](/definitions/energy-backscatter.md)).
 
 Usages 1 and 2 concern the closure (none, or numerical); usage 3 concerns
 the filter. A page or claim about "ILES" should say which.
@@ -270,7 +338,8 @@ interpretation they flag as needing further work).
   Fig. 8).
 - **Designed SVV.** Implicit SVV beats constant-coefficient Smagorinsky in
   Taylor–Green-vortex spectra and dissipation at $Re=40\,000$ and is
-  numerically converged at standard resolution (Vicente Cruz & Lamballais
+  numerically converged in what the authors call the standard condition,
+  $\Delta x=\Delta$ (Vicente Cruz & Lamballais
   2023, §6.4). In pipe flow at $Re_\tau=1000$ with
   $\Delta x^+=\Delta y^+\approx9$ it predicts $u_\tau$ within 1.8%, against
   +9.6% for Smagorinsky with van Driest damping and +15.3% for no model
@@ -419,6 +488,59 @@ interpretation they flag as needing further work).
     $1024^3$, and finite volume at $512^3$ shows no trace of it.
   - **Bottleneck.** Lower numerical dissipation also gives DG a more
     pronounced [bottleneck](/definitions/bottleneck-effect.md).
+- **Regularized compact differences, transitional Taylor–Green vortex.**
+  Caban et al. (2026, §5.3–5.4, Tables 4–9) run LES on $64^3$ at $Re=1600$
+  (DNS on $256^3$ and $384^3$) and rank by the time-integrated relative
+  error of the kinetic energy up to $t=20$.
+  - **ILES.** With the regularization filter, or with tenth-order
+    dissipative interpolation, the error is $2.23\times10^{-2}$, about half
+    the best eddy-viscosity result (Vreman with the regularization filter,
+    $4.33\times10^{-2}$; Smagorinsky $4.76\times10^{-2}$, both at
+    $\Delta=2h$). With sixth- or tenth-order derivatives and the
+    regularization filter, ILES is stable and more accurate than the ALDM
+    implicit LES of Hickel et al. (cited) (§5.3.1, Fig. 19).
+  - **Explicit models on top.** Eddy-viscosity models combined with the
+    dissipative interpolation or the regularization filter are stable but
+    worse than ILES: the total dissipation is too large (§5.3.1, Fig. 20).
+  - **Overall ranking.** Layton–Lewandowski model with the regularization
+    filter (best $2.03\times10^{-2}$, "10% lower" than the best ILES)
+    $\lesssim$ ILES $<$ best approximate deconvolution model
+    ($\approx2.3\times10^{-2}$) $<$ eddy-viscosity models (§5.4, §6). The
+    deconvolution model "requires some level of numerical dissipation" to
+    stay stable (§5.4.2). The authors limit the ranking to this Reynolds
+    number and grid.
+- **Entropy-stable flux reconstruction, free-shear turbulence.** Brillon &
+  Nadarajah (2026) run nonlinearly stable
+  [flux reconstruction](/methods/flux-reconstruction.md) (split form,
+  entropy-conserving two-point flux, no upwinding, no over-integration).
+  - **Stability.** It is stable on every under-resolved Taylor–Green grid
+    ($Re=1600$, 96$^3$ to 24$^3$ degrees of freedom, $N=5$ and 7) without
+    added dissipation, and at $96^3$ ($N=5$) the dissipation rate follows
+    the DNS up to its peak (§3.1.2, Fig. 8).
+  - **Explicit models.** Smagorinsky, shear-improved, high-pass-filtered
+    and dynamic variants marginally raise the dissipation rate, lower the
+    peak enstrophy and remove energy at the smallest resolved scales,
+    where the no-model run already has a deficit; "the SGS models
+    considered in this work are not recommended for the LES of
+    transitional turbulent free-shear flows using NSFR" (§3.1.8, Fig. 19).
+  - **Decaying grid turbulence.** At $128^3$ degrees of freedom ($N=3$)
+    the Comte-Bellot–Corrsin spectra agree with experiment and the
+    kinetic-energy error at the last station is 1.36%, against 29.81%
+    (finite differences, $64^3$) and 15.55% and 29.75% (CPR, $78^3$ and
+    $126^3$), lower errors the authors expect to be "partially due" to more
+    unique degrees of freedom and to oversampled spectra (§3.2, Table 6).
+- **Transitional airfoil.** On the [Eppler 387](/benchmarks/eppler-387-airfoil.md)
+  airfoil ($Re=10^5$ at $10^\circ$, $3\times10^5$ at $4^\circ$; $k=3$
+  elements, the paper's $k$ being the polynomial degree $N$), ILES and HOPU
+  give essentially the same pressure distribution, lift, drag and
+  separation-bubble positions, e.g. lift 1.274 and 1.271 against 1.200
+  measured at $10^\circ$ on the coarsest mesh. In the turbulent boundary
+  layer HOPU overpredicts the mean velocity and turbulent kinetic energy
+  less for $n^+>10$ ($n$ the wall distance), and on the coarsest mesh does
+  "almost as well as" ILES on the finest (Lederer et al. 2026, §4.1–4.2,
+  Table 2, Figs. 7–9). The finest ILES mesh predicts transition well
+  against experiment, which the authors credit to the low dissipation of
+  the method (§5).
 
 ## Evidence: when it fails
 
@@ -429,7 +551,7 @@ interpretation they flag as needing further work).
   adding a Smagorinsky or small–small VMS model on top does not help.
   Flad & Gassner (2017, §1) conclude that roughly 40% of the total
   dissipation must be resolved for de-aliased upwind DG ILES to work, a
-  threshold inferred from two resolutions of one case. The remedy they
+  threshold drawn from two resolutions of one case. The remedy they
   propose is a dissipation-free [kinetic-energy-preserving](/properties/kinetic-energy-preservation.md)
   split-form baseline plus an explicit [Smagorinsky model](/methods/smagorinsky-model.md)
   (§4).
@@ -583,6 +705,36 @@ interpretation they flag as needing further work).
   and, to a lesser extent, the coarser LES, damps out flow structures that
   are driving the larger shock oscillations". Shocklets in the coarse run
   also appear more diffused.
+- **Derivative-induced filtering is not a closure.** In the laminar
+  Taylor–Green vortex the effective Reynolds number from the energy decay
+  stays at about the physical one with spectral interpolation, so the
+  derivative-induced filtering removes no energy, whereas dissipative
+  interpolation or the regularization filter lower it, fourth-order
+  interpolation "several times" (Caban et al. 2026, §5.1, Figs. 10–11). In
+  the transitional case on $64^3$, spectral interpolation without a model
+  is unstable near $t=3.5$, the time at which Hickel et al.'s no-model run
+  fails, and near $t=10$ on $256^3$; Smagorinsky and Vreman at
+  $\Delta=2h$ do not stabilize it (§5.3.1, Fig. 18). With second-order
+  derivatives and the regularization filter the ILES is unstable
+  ($\varepsilon<0$ for $t=5.5$–7), which the authors attribute to the
+  second-derivative filter damping the viscous dissipation; fourth-order
+  instead of tenth-order interpolation raises the ILES error by an order
+  of magnitude, to $2.84\times10^{-1}$ (Table 4).
+- **Over-predicted energy on coarse DGSEM.** Without filtering, the coarse
+  DGSEM runs of Ranjbar et al. (2026, §III.A–C, Figs. 3, 13–15)
+  over-predict the kinetic energy of decaying isotropic turbulence,
+  over- and then under-predict the Taylor–Green dissipation rate, and
+  over-predict all r.m.s. velocities in channel flow at $Re_\tau=395$,
+  with non-zero wall fluctuations from the weakly imposed boundary
+  condition.
+- **Not de-aliased.** Strong-form DG without over-integration fails in the
+  transitional phase of the Taylor–Green vortex ($t^*\approx6$, $64^3$,
+  $N=7$): "a linearly stable scheme can be unstable in the absence of
+  over-integration" (Brillon & Nadarajah 2026, §3.1.3, Fig. 11). A
+  high-pass-filtered shear-improved Smagorinsky model stabilizes the
+  non-de-aliased $N=5$ scheme but gives inaccurate dissipation and
+  spectra, whereas the over-integrated scheme follows the DNS (§3.1.8,
+  Fig. 20).
 
 ## A DNS that is an implicit LES for some modes
 
@@ -667,7 +819,7 @@ dissipation is imparted by the SGS model". Details on
 - Krais et al. (2021) validate their ILES airfoil only against XFoil.
 - Vicente Cruz & Lamballais (2023, §8) conclude that for
   $\Delta_{\mathrm{LES}}/\Delta x_{\mathrm{DNS}}\lesssim5$ the usefulness of
-  explicit SGS modelling "cannot be evidenced", and invert the usual
+  explicit SGS modelling "cannot be evidenced", and invert the
   justification of ILES: explicit models such as Smagorinsky's "should be
   seen as an ersatz of regularization". Beck & Kurz (2023, §V A) reach a
   related conclusion from the other side: no reference model is best for
@@ -740,7 +892,23 @@ dissipation is imparted by the SGS model". Details on
   finer grids".
 - The version read for Cao et al. (2024) is the 2021 arXiv preprint, and
   for Reddy et al. (2026) a 2021 preprint; their versions of record may
-  differ.
+  differ. Brillon & Nadarajah (2026, arXiv v1 of 2024), Lederer et al.
+  (2026, arXiv v1 of 2024), Ranjbar et al. (2026, arXiv v1), Jakhar et al.
+  (2026, arXiv v3) and Wu & Lele (2026, arXiv v2) are also cited in the
+  versions read.
+- Brillon & Nadarajah (2026, §3.1.8) find explicit eddy-viscosity models
+  unhelpful on dissipation-free entropy-stable flux reconstruction at
+  $96^3$ degrees of freedom, while Flad & Gassner (2017, §4) propose a
+  dissipation-free kinetic-energy-preserving DG baseline plus an explicit
+  Smagorinsky model for decaying isotropic turbulence at $48^3$. Flows,
+  resolutions and schemes differ, and Brillon & Nadarajah limit their
+  verdict to transitional free-shear flow, so no contradiction is
+  recorded; it is the resolution split already seen in Duan & Wang (2024)
+  above.
+- Caban et al. (2026, §5.3.1) attribute the stability of Hickel et al.'s
+  Smagorinsky run to its larger constant ($C_s=0.18$ against their 0.1),
+  a hypothesis supported only by their $\Delta=4h$ run giving similar
+  discrepancies.
 
 # Citations
 
@@ -793,3 +961,9 @@ dissipation is imparted by the SGS model". Details on
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §II.A, Eq. (4); §III.C, Fig. 8.
 - [Reddy et al. (2026)](/sources/reddy-2026.md) — preprint of 4 March 2021: §1; §2.1.
 - [Beattie et al. (2025)](/sources/beattie-2025.md) — arXiv v4: §1; §6.1–6.2, Fig. 9; §9.1; App. D.
+- [Caban et al. (2026)](/sources/caban-2026.md) — §3.1, Eq. (17); §3.2; §5.1, Figs. 10–11; §5.3.1, Table 4, Figs. 18–20; §5.4, Tables 5–9; §6.
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv v1: §1; §2.3; §3.1.2, Fig. 8; §3.1.3, Fig. 11; §3.1.8, Figs. 19–20; §3.2, Table 6.
+- [Lederer et al. (2026)](/sources/lederer-2026.md) — arXiv v1: §2.3; §3–3.2; §4.1–4.2, Table 2, Figs. 7–9; §5.
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §I, pp. 3–4; §III.A–C, Figs. 3, 13–15.
+- [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1; §3.3.
+- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: p. 6.

@@ -5,7 +5,7 @@ description: "The Ahmed body, a bluff car-like body with a slanted rear whose an
 status: established
 aliases: [Ahmed car body, Ahmed reference model, 25° Ahmed body, 35° Ahmed body]
 tags: [benchmark, separated-flow, hybrid-rans-les, des, wmles, immersed-boundary, lattice-boltzmann, field-inversion]
-timestamp: 2026-10-26T15:57:00Z
+timestamp: 2026-10-26T20:47:00Z
 ---
 
 # Ahmed body
@@ -100,8 +100,8 @@ $Re_H=7.68\times10^5$, ERCOFTAC domain $8L\times2L\times1.35L$) in the
 same code, [ProLB](/software/prolb.md), but replace the subgrid model by
 two hybrids built on [$k$-$\omega$ SST](/methods/k-omega-sst-model.md):
 SST-IDDES ([detached-eddy simulation](/methods/detached-eddy-simulation.md))
-and Heinz's continuous eddy simulation (CES, see
-[hybrid RANS/LES](/definitions/hybrid-rans-les.md)). The grid has 7
+and Heinz's [continuous eddy simulation](/methods/continuous-eddy-simulation.md)
+(CES, see also [hybrid RANS/LES](/definitions/hybrid-rans-les.md)). The grid has 7
 refinement levels, $\Delta x_{\min}=1.3$ mm, $45.8\times10^6$ nodes for
 both slant angles, with more than 100 flow-through times $H/U_\infty$ and
 the last 50 averaged. Two body-surface conditions are compared: the explicit

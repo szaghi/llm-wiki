@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-26T20:50:00Z
 ---
 
 # Smagorinsky model
@@ -29,7 +29,8 @@ $\Pi=-\tau_{ij}\bar S_{ij}=\nu_t\lvert\bar S\rvert^2\ge0$ is purely
 dissipative, so it cannot represent [backscatter](/definitions/energy-backscatter.md).
 The sources attribute it to Smagorinsky (1963). The coefficient can be
 computed from the resolved field by the [dynamic procedure](/methods/dynamic-procedure.md),
-and [Vreman's model](/methods/vreman-model.md) and the
+[Vreman's model](/methods/vreman-model.md), the
+[Sigma model](/methods/sigma-model.md) and the
 [tensor-coefficient model](/methods/dynamic-tensor-coefficient-smagorinsky-model.md)
 are variants of the same eddy-viscosity idea.
 
@@ -58,8 +59,27 @@ are variants of the same eddy-viscosity idea.
 | 0.15 | wall-resolved LES of a flexible aquatic canopy; the value of earlier canopy LES (0.17 in another group) | [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md), §2.1 |
 | 0.1 | decaying isotropic turbulence, sharp spectral filter at $k_c=10$; constraint of a physics-informed neural operator | [Zhao et al. (2025)](/sources/zhao-2025.md), §3.1 |
 | $\sqrt{0.001}\approx0.032$ | temporal mixing layer, same use | Zhao et al. (2025), §3.2 |
-| 0.098–0.112 / 0.186–0.198 | learned from one trajectory of Smagorinsky-LES data / of filtered-DNS data, for weights $\gamma'\ge5$ of the coefficient loss | Zhao et al. (2025), §4, Table 4 |
+| 0.098–0.112 / 0.186–0.189 | learned from one trajectory of Smagorinsky-LES data / of filtered-DNS data, for weights $w_C\ge5$ of the coefficient loss ($w_C$ page-local, the source's $\gamma'$) | Zhao et al. (2025), §4, Table 4 |
 | 0.16, inside the Vreman constant $2.5C_s^2$ | spectral-element wall-modelled LES | [Mukha et al. (2025)](/sources/mukha-2025.md), §II.D |
+| 0.18, "recommended value" | LES-region target of a DES construction on a Reynolds-stress model | [Wang et al. (2021)](/sources/wang-2021-l.md), §2.3, Eq. (6) |
+| 0.10 (Deardorff, cited) | implicitly filtered LES of the Taylor–Green vortex with nonlinearly stable flux reconstruction | [Brillon & Nadarajah (2026)](/sources/brillon-2026.md), §2.6.1, Eq. (47) |
+| 0.1, with $\Delta=2h$ or $4h$ ($h$ the grid spacing) | compact-difference LES of the transitional Taylor–Green vortex | [Caban et al. (2026)](/sources/caban-2026.md), §2, Eq. (6); §5.3.1 |
+| 0.18 | the Smagorinsky run of Hickel et al., as cited | Caban et al. (2026), §5.3.1 |
+| 0.17, "as proposed in" Lilly (1967, cited) | LES of forced two-dimensional turbulence | [Jakhar et al. (2026)](/sources/jakhar-2026.md), App. D |
+| 0.12, called optimal | DGSEM LES of decaying isotropic turbulence | [Ranjbar et al. (2026)](/sources/ranjbar-2026.md), §III.A |
+| 0.1 (figure legends only) | same code, Taylor–Green vortex | Ranjbar et al. (2026), Figs. 13–14 |
+| unstable below 0.15, inaccurate at 0.2 | same code, compressible channel at $Re_\tau=395$ | Ranjbar et al. (2026), §III.C |
+| $C=0.18$ (whether $C=C_s$ is not stated) | static baseline in Fourier-spectral LES of forced isotropic turbulence and channel flow | [Wu & Lele (2026)](/sources/wu-2026.md), §5.1 |
+
+Wang et al. (2021, §3.1), citing earlier work, relate the coefficient to
+the Kolmogorov constant by $C_s\approx C_\Delta^{-1}(1.5C_K)^{-3/4}$
+($C_\Delta$ a filter-shape constant, page-local); with $C_\Delta=\pi$ this
+is the Lilly formula of the Vicente Cruz & Lamballais row *(compiler check,
+not in the sources)*. They use it to decide the direction of a calibration:
+if the inertial-range energy level of an LES lies below the experiment,
+the coefficient should be lowered. Caban et al. (2026, §1) recall, from
+error-landscape studies (cited), that the optimal $\Delta$ and $C_s$ that
+minimize the total error depend on the mesh and on the numerical scheme.
 
 Lilly's value is consistent with the recalled formula: $\pi^{-1}(2.1)^{-3/4}\approx0.18$
 *(compiler check, not in the sources)*. The square root in the Wang et
@@ -93,10 +113,11 @@ single 11-frame trajectory, while the operator is trained on the
 Smagorinsky-closed equations.
 
 - **Smagorinsky-LES data.** With data from an LES run at $C_s=0.1$, the
-  learned value is 0.0982–0.1123 for loss weights $\gamma'\ge5$; the
+  learned value is 0.0982–0.1123 for loss weights $w_C\ge5$; the
   method recovers the coefficient that generated the data.
 - **Filtered-DNS data.** With filtered DNS of decaying isotropic turbulence
-  ($32^3$, sharp cutoff at $k_c=10$), it settles at 0.1856–0.1983.
+  ($32^3$, sharp cutoff at $k_c=10$), it settles at 0.1856–0.1892 for
+  the same weights (0.1983 at $w_C=0.5$).
 - **Same a posteriori result.** Both coefficients give comparable a
   posteriori results, and the authors note that the learned value "is not
   always unique".
@@ -119,7 +140,14 @@ $C_s$ and $\Delta/\Delta x$ are not separately identifiable: running
 $\Delta x=\Delta/5$ with $C_s=0.1$ is the same model as $\Delta=\Delta x$
 with $C_s=0.5$. [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md)
 (§6.1, Eq. 125) define $\Delta^3=\mathrm{Vol}/(N+1)^3$ for DG elements, the
-cube of the Beck & Kurz width.
+cube of the Beck & Kurz width. [Brillon & Nadarajah (2026)](/sources/brillon-2026.md)
+(§2.6, Eq. 46, citing Duan & Wang) take the Beck & Kurz width,
+$\Delta=V^{1/3}/(N+1)$, in flux reconstruction.
+[Ranjbar et al. (2026)](/sources/ranjbar-2026.md) (§II.B, Eq. 42) define
+the element spacing $\mathcal J^{1/3}/\prod_i(N_i+1)^{1/3}$ ($\mathcal J$
+the Jacobian of the element map, $N_i$ the degree in direction $i$) for
+their filtering sensor, and do not state which width their Smagorinsky
+runs use.
 
 [Duan & Wang (2024)](/sources/duan-2024.md) (§3, Eqs. 28–30) compare the
 widths $V^{1/3}$, $V^{1/3}/\sqrt{N+1}$ and $V^{1/3}/(N+1)$ ($V$ the
@@ -200,6 +228,62 @@ The model does not damp pressure and density fluctuations, so the
 pressure–dilatation oscillates unless a low-dissipation Roe flux is added
 (§5.1).
 
+**Stability depends on the numerical filtering.** [Caban et al. (2026)](/sources/caban-2026.md)
+(§5.3.1, Figs. 18, 20, Table 4) run Smagorinsky ($C_s=0.1$) in a
+sixth-order compact-difference code on a half-staggered grid for the
+transitional [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at
+$Re=1600$ on $64^3$. They vary only the filtering that the discretization
+adds (see [implicit LES](/definitions/implicit-les.md)).
+
+- **No numerical filtering.** With spectral (non-dissipative)
+  interpolation, the no-model run becomes unstable near $t=3.5$, and
+  Smagorinsky at $\Delta=2h$ only delays the instability to $t\approx4$.
+  At $\Delta=4h$ the runs are stable but inaccurate, with errors comparable
+  to those of the Smagorinsky run of Hickel et al. ($C_s=0.18$, $\Delta=2h$,
+  stable but "notably inaccurate"). The authors ascribe Hickel et al.'s
+  stability to the larger constant, since doubling $\Delta$ "has a similar
+  effect to increasing $C_s$"; they call this a hypothesis.
+- **With numerical filtering.** With dissipative compact interpolation or
+  an explicit regularization filter, Smagorinsky at $\Delta=2h$ is stable
+  but less accurate than the same discretization without a model: the
+  energy error at $t=20$ is $4.76\times10^{-2}$ against $2.23\times10^{-2}$
+  for implicit LES, because the total dissipation is too large. Lowering
+  the interpolation order from 10 to 4 raises the error about fivefold
+  (from $5.02\times10^{-2}$ to $2.87\times10^{-1}$).
+
+Caban et al. also note (§2) that with $\nu_t\ge0$ the model only lowers
+the effective Reynolds number of the resolved field, a strictly dissipative
+action.
+
+[Brillon & Nadarajah (2026)](/sources/brillon-2026.md) (§3.1.8, Figs.
+19–20) reach the same conclusion on an entropy-stable, dissipation-free
+[flux-reconstruction](/methods/flux-reconstruction.md) baseline that is
+stable without any model, in the Taylor–Green vortex at $Re=1600$ with
+$96^3$ degrees of freedom ($N=5$). Adding Smagorinsky or its variants below
+raises the dissipation rate slightly, lowers the peak enstrophy (Smagorinsky
+most) and removes energy at wavenumbers 25–40, where the baseline already
+has a deficit. The authors conclude that these models "are not recommended
+for the LES of transitional turbulent free-shear flows" with that scheme.
+On a strong-form DG scheme without over-integration, which is unstable at
+$N=5$ on Gauss–Lobatto nodes, the high-pass-filtered shear-improved variant
+restores stability but gives inaccurate dissipation and spectra: "a stable
+scheme without any de-aliasing can lead to inaccuracies" (Fig. 20).
+
+[Ranjbar et al. (2026)](/sources/ranjbar-2026.md) (§III, Figs. 3, 13–14)
+use Smagorinsky as the comparator of an
+[explicit modal filter](/methods/explicit-modal-filtering.md) in DGSEM.
+
+- **Decaying isotropic turbulence ($C_s=0.12$).** It agrees with DNS
+  initially but over-dissipates for $t>2.4$.
+- **Taylor–Green vortex.** At $Re=200$ it over-predicts the dissipation
+  rate before $t=6$ and under-predicts it after $t=7$. At $Re=800$ it
+  deviates from $t=2$, because it acts while the flow is still mostly
+  laminar ($t<4$). The authors call it "not a suitable option", whereas
+  the filter vanishes in the laminar limit.
+- **Channel at $Re_\tau=395$.** The runs crash for $C_s<0.15$ and deviate
+  significantly from DNS at $C_s=0.2$, so no Smagorinsky result is
+  reported (§III.C). No wall damping is mentioned.
+
 ## Variants
 
 - **Wall damping.** The model does not vanish at a wall; Van Driest damping
@@ -252,6 +336,34 @@ limiting behavior".
   dissipation) the subgrid model of SST-based delayed
   [detached-eddy simulation](/methods/detached-eddy-simulation.md)
   reduces to the Smagorinsky–Lilly model; the derivation is not given.
+  [Wang et al. (2021)](/sources/wang-2021-l.md) (§2.3, Eqs. 6–16) give
+  such a derivation for any RANS model with a length-scale equation. With
+  production equal to dissipation and the homogeneous forms of the $k$
+  and length-scale equations, the model viscosity in the LES branch takes
+  the Smagorinsky form, $\nu_t\propto\ell^2\lvert\bar S\rvert$ with the model
+  length $\ell\propto C_s\Delta$. Matching it to $C_s=0.18$ fixes the DES
+  constant, which they evaluate to 0.805 and 0.630 for the two branches of
+  SST, against the calibrated 0.78 and 0.61 (see
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md)). They
+  add that a dynamic DES constant yields a dynamic Smagorinsky model in the
+  LES region.
+- **Shear-improved, high-pass-filtered and low-Reynolds-number variants in
+  flux reconstruction.** [Brillon & Nadarajah (2026)](/sources/brillon-2026.md)
+  (§2.6.2–2.6.5, Eqs. 48–60) implement, besides Smagorinsky:
+  - the shear-improved model of Lévêque et al. (cited), which subtracts
+    from $\lvert\bar S\rvert$ the magnitude of the element-averaged strain
+    (their own choice of mean);
+  - high-pass-filtered (HPF) versions, which evaluate $\nu_t$ from the
+    velocity and its gradient with the Legendre modes of degree up to 3
+    removed (at $N=5$), after the variational multiscale DG of Chapelier et
+    al. (cited);
+  - the low-Reynolds-number correction of Meyers & Sagaut (cited),
+    $\nu_t^\star=\sqrt{\nu_t^2+\nu^2}-\nu$ ($\nu_t^\star$ page-local),
+    applied to every model;
+  - a subgrid heat flux with $Pr_t=0.6$.
+  
+  The HPF shear-improved variant reduces the peak enstrophy least of the
+  variants (§3.1.8).
 - **Mixed explicit–implicit.** Smagorinsky added to implicit SVV
   (Vicente Cruz & Lamballais 2023, §6.5); see
   [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md).
@@ -316,6 +428,11 @@ limiting behavior".
   - The LES activity parameter (defined on the
     [large-eddy simulation](/definitions/large-eddy-simulation.md) page)
     has mean 0.11.
+- **Volume-filtered immersed boundaries.** [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md)
+  (abstract, §7) expect existing subgrid models such as dynamic
+  Smagorinsky to close the subfilter stress of their immersed-boundary
+  wall-modelled LES, whose wall closure is a slip model (see
+  [wall-modelled LES](/methods/wall-modelled-les.md)); the paper runs no LES.
 - **Spectral-element LES with discontinuities.**
   [Reddy et al. (2026)](/sources/reddy-2026.md) (§5–9) compare Smagorinsky
   with [Vreman](/methods/vreman-model.md) and the
@@ -462,6 +579,45 @@ and of the a priori analysis of [Inagaki & Kobayashi (2023)](/sources/inagaki-20
 (§IV B); results are on the [dynamic procedure](/methods/dynamic-procedure.md)
 page.
 
+**Two-dimensional turbulence.** [Jakhar et al. (2026)](/sources/jakhar-2026.md)
+(p. 1, p. 4, Figs. 2–3, App. D) test Smagorinsky ($C_s=0.17$), its dynamic form and
+a dynamic Leith model against filtered DNS of four cases of forced
+two-dimensional turbulence (Gaussian filter, $\Delta$ twice the LES grid
+spacing).
+
+- **A priori.** The ratio of the domain-averaged interscale energy transfer
+  of the model to that of filtered DNS is $-62.24\pm37.80$ for
+  Smagorinsky, and the ratio for the enstrophy transfer $-3.22\pm1.18$
+  (mean and standard deviation over the four set-ups). The authors call
+  the eddy-viscosity closures "purely and excessively diffusive", and they
+  "miss backscattering". The ratio of a purely dissipative model can be
+  negative only if the filtered-DNS mean transfer runs from the subgrid to
+  the resolved scales, a net [backscatter](/definitions/energy-backscatter.md)
+  *(compiler check, not in the sources)*.
+- **A posteriori.** The eddy-viscosity LES are stable but underestimate the
+  large-scale enstrophy, which the authors attribute "likely" to excessive
+  diffusion, and fail to capture the vorticity extremes, especially for
+  the two cases forced at high wavenumber (Fig. 3). The structural
+  higher-order [gradient models](/methods/gradient-model.md) of the paper
+  do better.
+
+**Learned closures in high-order spectral solvers.** [Wu & Lele (2026)](/sources/wu-2026.md)
+(§5.1, §6.2.1, Table 3, Figs. 5, 15–16) use static Smagorinsky ($C=0.18$)
+and the [Sigma model](/methods/sigma-model.md) as references for
+[neural-network SGS models](/methods/neural-network-sgs-model.md) in a
+Fourier-spectral solver with two-thirds dealiasing.
+
+- **Forced isotropic turbulence ($64^3$, $Re_\lambda=433$).** Smagorinsky
+  is over-dissipative. Its sum of log-spectrum errors, a metric of the
+  paper, is 16.6, against 13.34 for Sigma and 4.0 for the best network.
+  Both traditional models reproduce the longitudinal flatness better than
+  the networks, which the authors attribute to their over-dissipation
+  lowering the variance in its denominator, and the enstrophy-production
+  PDF worse.
+- **Wall-modelled channel at $Re_\tau=1000$ ($128\times96\times32$).**
+  Smagorinsky shows "a large buildup" of energy at high wavenumbers and
+  poor Reynolds-stress profiles, while Sigma reproduces the spectrum.
+
 ## Qualifications
 
 - Cheylan et al. (2023, Eq. 37) print the viscosity as
@@ -491,6 +647,18 @@ page.
   $C_s=0.2\cdot2^{-1/4}\approx0.17$ *(compiler check, not in the sources)*.
   Mateo-Gabín et al. write the viscosity $\mu_a=C_S^2\Delta^2\lvert\mathsf S\rvert$
   without a density factor, immaterial for their test with $\rho\approx1$.
+- Brillon & Nadarajah (2026, Eq. 20) write the modelled stress
+  $2\bar\rho\nu_t(S_{ij}-\tfrac13S_{kk}\delta_{ij})$ with the sign of the
+  viscous stress, i.e. minus the registry's $\tau^d_{ij}$ in Favre form.
+- Ranjbar et al. (2026, Eq. 45) print $\mu_t=(C_s\Delta)^2\lvert S\rvert$
+  without defining $\lvert S\rvert$ or the $\Delta$ used, and the value
+  $C_s=0.1$ for the Taylor–Green vortex appears only in the legends of
+  Figs. 13–14.
+- Wu & Lele (2026, §5.1) print no formula and call their value only "a
+  coefficient set to $C=0.18$", so whether it is $C_s$ or $C_s^2$ is not
+  stated.
+- Jakhar et al. (2026, App. D) write $\tau_{ij}=-2\nu_e\bar S_{ij}$ for the
+  full (not deviatoric) two-dimensional stress.
 
 # Citations
 
@@ -534,3 +702,10 @@ page.
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1.
 - [Li et al. (2024)](/sources/li-2024.md) — arXiv v2: §II B, Eqs. (7)–(8); §V A 2.
 - [Cao et al. (2024)](/sources/cao-2024.md) — arXiv v1: §3.3.
+- [Wang et al. (2021)](/sources/wang-2021-l.md) — §2.3, Eqs. (6)–(18); §3.1.
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv v1: §2.4, Eq. (20); §2.6, Eqs. (46)–(60); §3.1.8, Figs. 19–20.
+- [Caban et al. (2026)](/sources/caban-2026.md) — §1; §2, Eq. (6); §5.3.1, Figs. 18, 20, Table 4.
+- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: p. 1; p. 4, Figs. 2–3; App. D.
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §II.B, Eq. (42); Eq. (45); §III.A, Fig. 3; §III.B, Figs. 13–14; §III.C.
+- [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — abstract; §7.
+- [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §5.1, Table 3, Fig. 5; §6.2.1, Figs. 15–16.

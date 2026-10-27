@@ -9,7 +9,7 @@ year: 2021
 venue: "Comput. Math. Appl. 81:186-219"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Computers_amp_Mathematics_with_Applications_Krais_FLEXI_A_high_order_discontinuous_Galerkin_framework_for_hype.pdf"
 tags: [software, dg, kinetic-energy-preserving, implicit-les, aeroacoustics]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Summary
@@ -110,7 +110,7 @@ Two printed statements differ in magnitude. §2.2.2 claims "perfect strong scali
 | $\xi_i$, $\omega_i$ | $\xi_i$, $w_i$ | quadrature nodes and weights (LG or LGL) |
 | $D_{rs}$, $\hat D_{ij}$ | $D_{ij}$, (weak-form differentiation matrix) | |
 | $\ell_j$ | (Lagrange polynomial) | |
-| $\mathcal J$, $\mathcal J\vec a^i$ | (mapping Jacobian, contravariant metric terms) | |
+| $\mathcal J$, $\mathcal J\vec a^i$ | $\mathcal J$ (registry §11), (contravariant metric terms) | Jacobian determinant of the element map |
 | $\vec f^*$ | $f^*$ | interface numerical flux, convective part only |
 | $\vec F^{\#,l}$, $\vec{\mathcal F}^{\#,l}$ | $f^{\#}$ | two-point volume flux (physical, contravariant) |
 | $\{\!\{\cdot\}\!\}$ | $\{\!\{\phi\}\!\}$ | agrees |
@@ -141,7 +141,7 @@ prints its DOI as a URL. No printed duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2, 4, 6. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4, 6, 7. This source is cited on:
 
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
@@ -153,6 +153,7 @@ Chunk 1 (2026-10-25), cited further in chunks 2, 4, 6. This source is cited on:
 - [Subcell finite-volume shock capturing for DG](/methods/subcell-finite-volume-shock-capturing.md)
 - [Vreman model](/methods/vreman-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)
+- [Entropy conservation and entropy stability](/properties/entropy-conservation.md)
 - [Geometric conservation law and free-stream preservation](/properties/geometric-conservation-law.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)

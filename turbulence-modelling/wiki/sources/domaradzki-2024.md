@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Fluid Mech. 985:A48"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Journal_of_Fluid_Mechanics_Domaradzki_Autonomous_large-eddy_simulations_of_turbulence_using_eddy_v.pdf"
 tags: [sgs-model, eddy-viscosity, scale-similarity, spectral-eddy-viscosity, backscatter, isotropic-turbulence]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T20:44:00Z
 ---
 
 # Summary
@@ -122,7 +122,7 @@ with $C_{\mathrm A}=1$ for the autonomous model and $\lvert\hat{\bar S}\rvert^2=
 | $C_K$, $C_K(k)$ | same, page-local | Kolmogorov constant; compensated spectrum $E(k)/(\varepsilon^{2/3}k^{-5/3})$ |
 | $C_m$, $f_1$, $a$, $D$, $p$ | same; $p_{\mathrm{pl}}$ for $p$ | spectral-model coefficient and shape, test-cutoff ratio $1/2$, $D=1/(1-a^{4/3})$, plateau fraction |
 | $N$ | $N_x$ | **collision** with the polynomial degree |
-| $u'$ (rms velocity), $L_{int}$, $T_e$ | $u_{\mathrm{rms}}$, $L$, $T_e$ | page-local $u_{\mathrm{rms}}$, $T_e$ |
+| $u'$ (rms velocity), $L_{int}$, $T_e$ | $u_{\mathrm{rms}}$, $L$, $T_E$ | page-local $u_{\mathrm{rms}}$; $T_E$ the large-eddy turnover time of registry §11 |
 | $\varepsilon$, $\lambda$, $Re_\lambda$, $\eta$ | same | |
 | $\langle\cdot\rangle$ | $\langle\cdot\rangle$ | shell average or average over all mesh points |
 

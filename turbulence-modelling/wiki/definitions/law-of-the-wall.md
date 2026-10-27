@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity profile of wall-bounded turbulence �
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Law of the wall
@@ -38,7 +38,7 @@ and the choice is part of the model.
 | [Fowler et al. (2022)](/sources/fowler-2022.md), App. C | 0.4 | 4.95 | $\kappa_2=9.753$, $\beta=1.903$ (fit) | composite fit (C1); their Fig. 4 log law uses $B=5.0$ |
 | [Griffin et al. (2023)](/sources/griffin-2023.md), §1 | 0.41 | — | $A^+=17$ | mixing length with van Driest damping |
 | [Agrawal et al. (2022)](/sources/agrawal-2022.md), §VII.D | 0.38 (DNS value at $Re_\tau=4200$) | — | | reference slope for the log-layer error of WMLES |
-| [Gillyns et al. (2022)](/sources/gillyns-2022.md), §3, Eq. (3) | 0.38 | 4.1 | Reichardt profile; Österlund et al. values, as recalled | algebraic wall model in a spectral-element code |
+| [Gillyns et al. (2022)](/sources/gillyns-2022.md), §3, Eq. (3) | 0.38 | 4.1 | Reichardt profile; Österlund et al. values, as they cite them | algebraic wall model in a spectral-element code |
 | [Bae & Koumoutsakos (2022)](/sources/bae-2022.md), Eq. (3), Fig. 2 | 0.41 | 5.2 | | reference log law of the reinforcement-learning wall models |
 | [Cao et al. (2022)](/sources/cao-2022.md), Eq. (8) | 0.40 | 5.5 | "for the low Reynolds number turbulent channel flow" | estimate of $u_\tau$ for a channel DNS at $Re_\tau=180$ |
 | [Knopp (2022)](/sources/knopp-2022.md), §4, Eq. (26) | 0.41 | 5.0 | with Coles' wake, after Coles & Hirst | fit of boundary-layer thickness in adverse pressure gradient |
@@ -62,6 +62,11 @@ and the choice is part of the model.
 | [Lohrer & Fröhlich (2025)](/sources/lohrer-2025.md), §5.2, Eqs. (5.7)–(5.8) | 0.41 (0.38 when fitted) | 5.5 | roughness function $\Delta U^+_{\mathrm{vo}}=15.4$ (17.4 with fitted $\kappa$); $B$ after Nezu & Nakagawa (1993), as cited | displaced log law above a submerged flexible canopy (below) |
 | [Oulghelou et al. (2025)](/sources/oulghelou-2025.md), Figs. 4, 11 | 0.41 | 5.2 | | reference log law for blended data-driven RANS corrections in channel and flat-plate flow |
 | [Wu et al. (2025)](/sources/wu-2025.md), §2.1, Eq. (3) | 0.41 | — | | log-layer calibration constraint of the $k$-$\omega$ SST $\omega$ equation (below) |
+| [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §5.2.1, Eqs. (93)–(94) | 0.39 | — | $A^+=26$ in the mixing length, $\nu_t=l^2\lvert\partial u/\partial y\rvert$ | mixing-length model used to verify a high-order HDG RANS solver in channel flow; their flat-plate profile is compared with Coles' law (§5.3) |
+| [Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §3.3, Eqs. (12)–(13); §4 | $\sim0.41$ | 5 | power law $u^+=8.3\,(y^+)^{1/7}$ above $y^+=11.81$; Spalding's law for comparison | explicit [RANS wall function](/methods/rans-wall-function.md) in a high-order DG solver (below) |
+| [Lederer et al. (2026)](/sources/lederer-2026.md), §4.2 | 0.41 | 5.2 | log layer quoted as $40<y^+<200$; constants "experimentally fitted for mild adverse pressure gradients" | reference for implicit DG LES of the transitional [Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md) |
+| [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md), §4.1, Eq. (4.1) | 0.41 | — | van Driest profile, $A^+=26$ | volume-filtered to model the wall slip of immersed-boundary WMLES (below) |
+| [Aiello et al. (2026)](/sources/aiello-2026.md), §4.1, Fig. 1 | 0.41 | 6.0 (fitted) | in $y^*$, log region from $y^*\ge40$ | Trettel–Larsson-transformed DNS of a thermally perfect CO$_2$ channel at $Re_\tau^*=160$–190 |
 
 Zhao et al. (2023a) attribute $\kappa=0.40$, $B=5.5$ to the channel DNS of
 Kim et al. (1987), as they cite it; Wang et al. (2023b) give the same values
@@ -75,7 +80,7 @@ corresponds to $B=\kappa^{-1}\ln E\approx2.42/\kappa$, about 5.9 for
 $\kappa=0.41$ *(compiler check, not in the sources)*.
 
 Griffin et al. (2023, §3) test Reynolds-number-dependent constants fitted to
-the incompressible channel DNS of Lee & Moser (as recalled by them): at
+the incompressible channel DNS of Lee & Moser (as they cite it): at
 $Re_\tau=\{182,543,1000,1990,5190\}$, $\kappa=\{0.400,0.408,0.400,0.391,0.391\}$
 and $A^+=\{18.2,17.4,17.0,16.5,16.5\}$. The fitted values improve their
 compressible wall model only modestly at $Re_\tau^*=190$ and not at all at
@@ -93,6 +98,18 @@ Cai et al. (2022) do, but with $E\approx7.9$ against 11.27 (see
 Contradictions); with $\kappa=0.41$ for both (Cai et al. print no value of
 $\kappa$) these correspond to $B\approx5.0$ and $B\approx5.9$
 *(compiler check, not in the sources)*.
+
+Aiello et al. (2026, §4.1) attribute their large fitted intercept,
+$B=6.0$, to the low transformed friction Reynolds number of their DNS
+($Re_\tau^*=160$–190), consistent, they state, with low-Reynolds-number
+incompressible flow and earlier supersonic channel DNS (see
+[compressible velocity transformation](/definitions/compressible-velocity-transformation.md)).
+Lederer et al. (2026, §4.2) take $\kappa=0.41$, $B=5.2$ as constants fitted
+for mild adverse pressure gradients and compare the profiles of their
+implicit LES in the turbulent part of the airfoil boundary layer, where all
+runs follow $u^+=y^+$ for $y^+<5$ and differ from one another above
+$y^+=10$ (Fig. 7; see
+[high-order projection-based upwind method](/methods/high-order-projection-based-upwind-method.md)).
 
 How much the constants matter is quantified by Lozano-Durán et al. (2022,
 §IV.C, Eq. 12): a 10 % error in $\kappa$ or in $B$ produces about 6 % or 3 %
@@ -125,7 +142,7 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   and below 2.25 % for $0\le y^+\le5$. Fowler et al. reject Reichardt's (1951)
   profile, as they recall it, because its error exceeds 3 % near $y^+\sim10$.
 - **Reichardt's profile** (Gillyns et al. 2022, Eq. 3, as in Frère et al.
-  2017, as recalled):
+  2017, as they cite it):
 
   $$u^+=\frac1\kappa\ln(1+\kappa y^+)+\left(B-\frac1\kappa\ln\kappa\right)\left(1-e^{-y^+/11}-\frac{y^+}{11}e^{-y^+/3}\right),$$
 
@@ -198,12 +215,43 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   lies near the wake region, and where the error crosses zero depends on
   whether wall-resolved LES or DNS supplies the reference profile (App. A,
   Figs. 20–21). Constant et al. (2024, Fig. 7) compare Spalding's law with
-  Musker's law (above).
+  Musker's law (above). Ghidoni et al. (2026, §3.3, Eq. 12) print the law,
+  up to the quadratic term, as
+  $y^+=u^++e^{-\kappa B}\big(e^{\kappa u^+}-1-\kappa u^+-(\kappa u^+)^2/2!\big)$
+  with $\kappa\sim0.41$, $B=5$, and use it as the implicit reference against
+  which their explicit power law (next item) is timed.
+- **Power law with a closed-form inverse** (Ghidoni et al. 2026, §3.3,
+  Eqs. 13–15, after Wilhelm et al. as cited): $u^+=y^+$ for
+  $y^+\le y_c^+=11.81$ and $u^+=8.3\,(y^+)^{1/7}$ above, which is continuous
+  at $y_c^+$ ($8.3\times11.81^{1/7}=11.81$ *(compiler check, not in the
+  sources)*). Each branch inverts explicitly for $u_\tau$ given the velocity
+  at a distance $y$, and the two friction velocities are blended as
+  $(u_{\tau,\mathrm{vis}}^4+u_{\tau,\log}^4)^{1/4}$ after Menter et al. (as
+  cited), so no Newton iteration is needed; the law assumes zero pressure
+  gradient. Formulas, cost and accuracy are on the
+  [RANS wall function](/methods/rans-wall-function.md) page.
 - **Mixing length with van Driest damping**, the differential form behind
   the fit of Fowler et al.: the eddy viscosity is $\nu_t=\kappa y\,u_\tau(1-e^{-y^+/A^+})^2$,
   and integrating the constant-stress equation gives $f$ (Griffin et al.
   2023, Eq. 1.2, in its incompressible form; see Qualifications for the
-  printed form).
+  printed form). Rickard & Kasbaoui (2026, §4.1, Eq. 4.1) write the van
+  Driest profile in closed integral form,
+
+  $$u^+(y^+)=\int_0^{y^+}\frac{2\,d\eta'}{1+\sqrt{1+4\big[\kappa\eta'\big(1-e^{-\eta'/A^+}\big)\big]^2}},\qquad\kappa=0.41,\ A^+=26$$
+
+  ($\eta'$ the integration variable, page-local). The integrand is the
+  root of the constant-stress balance $(1+\nu_t^+)\,du^+/dy^+=1$ with the
+  mixing length $l^+=\kappa y^+(1-e^{-y^+/A^+})$ and
+  $\nu_t=l^2\lvert\partial u/\partial y\rvert$, the form with the damping
+  inside the squared length; it is not the profile of Griffin et al.'s
+  eddy viscosity, which is linear in $u_\tau$ and gives
+  $du^+/dy^+=1/\big(1+\kappa y^+(1-e^{-y^+/A^+})^2\big)$ *(compiler check,
+  not in the sources)*. Elzaabalawy et al. (2023,
+  §5.2.1, Eqs. 93–94) use the mixing length $l=0.39\,y\,(1-e^{-y^+/26})$ with
+  $\nu_t=l^2\lvert\partial u/\partial y\rvert$ ($l$ page-local) as an
+  algebraic RANS model for verifying a high-order solver: without the
+  singular wall value of $\omega$, their mean velocity converges at the
+  optimal order (Fig. 16).
 
 ## Generalizations carried by the sources
 
@@ -292,6 +340,19 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   scaled with the bed friction velocity, $u^+=y^+$ holds only up to
   $y^+\approx2$. The flow is a fluid–structure-interaction problem resolved by
   LES with an immersed boundary, not a wall-modelled flow.
+- **Volume-filtered law of the wall: the wall slip.** Filtering the flow
+  with a compact kernel of support width $\Delta_f$ (page-local) that is
+  truncated at the wall but not rescaled leaves a non-zero filtered velocity
+  at the wall, the slip. Rickard & Kasbaoui (2026, §4.1, Eqs. 4.2–4.5) obtain
+  a model of the mean slip by filtering the van Driest profile above; for
+  $\Delta_f^+\gg1$ it tends to $\varphi_{f,w}^{-1}(2\kappa)^{-1}\ln(\Delta_f^+/2)$,
+  with $\varphi_{f,w}$ the fluid volume fraction at the wall (1/2 at a planar
+  wall; page-local), and a fitted correction makes it accurate within 1 %
+  for $\Delta_f^+\ge100$. The slip grows logarithmically with the filter
+  width, $6.93u_\tau$ at $\Delta_f^+=50$ and $13.5u_\tau$ at $\Delta_f^+=300$
+  in filtered channel DNS at $Re_\tau=5200$ (§3.2). The law of the wall
+  thus survives filtering as a law for the slip; see
+  [wall-modelled LES](/methods/wall-modelled-les.md).
 - **Low Reynolds number.** [Kim et al. (2022)](/sources/kim-2022.md) (§III D,
   Fig. 12) recall, citing the channel DNS of Moser, Kim & Mansour, that the
   DNS mean velocity at $Re_\tau=180$ deviates slightly from the log law in the
@@ -476,3 +537,8 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 - [Lohrer & Fröhlich (2025)](/sources/lohrer-2025.md) — §5.2, Eqs. (5.6)–(5.8).
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — §4.2.1, Table 3, Fig. 4; §5.1.1, Table 9, Fig. 11 (arXiv v2).
 - [Wu et al. (2025)](/sources/wu-2025.md) — §2.1, Eqs. (3)–(4); §4.5, Figs. 47–48 (authors' manuscript).
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §5.2.1, Eqs. (93)–(94), Fig. 16; §5.3.
+- [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §3.3, Eqs. (12)–(15); §4.
+- [Lederer et al. (2026)](/sources/lederer-2026.md) — §4.2, Fig. 7 (arXiv v1).
+- [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §3.2, Fig. 6; §4.1, Eqs. (4.1)–(4.5), Fig. 11.
+- [Aiello et al. (2026)](/sources/aiello-2026.md) — §4.1, Fig. 1.

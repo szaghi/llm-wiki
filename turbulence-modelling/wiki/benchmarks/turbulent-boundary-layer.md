@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Turbulent boundary layers: zero and adverse pressure gradient, compressible"
-description: "Spatially developing turbulent boundary layers on flat walls: zero- and adverse-pressure-gradient layers as wall-model, log-law and physics-informed-network tests and as the non-regression test of data-driven RANS corrections, supersonic and hypersonic layers on cooled walls as DNS databases for compressibility transformations, LES validation and the calibration of algebraic RANS, and the incoming layer of shock interactions."
+description: "Spatially developing turbulent boundary layers on flat walls: zero- and adverse-pressure-gradient layers test wall models, RANS wall functions, high-order RANS discretizations, the log law, physics-informed networks and data-driven corrections; supersonic and hypersonic layers on cooled walls are DNS databases for compressibility transformations, LES validation and algebraic RANS, and feed shock interactions."
 status: established
-aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
-tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven]
-timestamp: 2026-10-26T15:57:00Z
+aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, Wieghardt flat plate, Samuel–Joubert boundary layer, DLR/UniBw APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
+tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven, rans, dg]
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -113,6 +113,49 @@ flow. The velocity profile agrees with the reference of Georgiadis et al.
 in the log layer and the turbulent kinetic energy with that of Yoder &
 Georgiadis; grid size and polynomial degree are not printed.
 
+**High-order RANS of the $k$-$\omega$ family.**
+[Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §5.3 and §6,
+run the NASA TMR plate at $Re_L=10^7$ with a hybridizable DG discretization
+of degree $N=3$ and four [$k$-$\omega$ models](/methods/k-omega-model.md)
+(Wilcox 1998, Kok's TNT, BSL and [SST](/methods/k-omega-sst-model.md)),
+with $y^+<3$ at the wall and $x^+<3$ at the leading edge:
+
+- With TNT and inlet $\nu_t/\nu=0.1$, the velocity profile at
+  $Re_\theta=10{,}000$ lies very close to Coles' law, and $C_f$ is about 2%
+  above an SST finite-volume solution, which the authors attribute to the
+  leading-edge singularity and the lower dissipation of the finer HDG
+  leading-edge mesh (Figs. 18–20).
+- $k$ and $\omega$ oscillate at the boundary-layer edge; BSL and SST are
+  less robust than TNT and Wilcox 1998 at low inlet eddy viscosity, and an
+  inlet ratio of 100 is "one of the simplest remedies", at the price of an
+  over-estimated $C_f$ (SST: 1.6% above the reference). Wilcox 1998 is the
+  most sensitive to the inlet condition (Figs. 21–27).
+- On four grids ($228\times72$ to $380\times120$ elements) the observed
+  order of $C_f$ is 1.84 computed from the velocity gradient and 3.33
+  from the HDG auxiliary strain variable, with extrapolated values
+  $2.919602\times10^{-3}$ and $2.918802\times10^{-3}$ (Table 4).
+- Against 26 grids of the finite-volume code ReFRESCO, the HDG solution
+  gives the same extrapolated drag and a "significantly smaller" numerical
+  error at equal degrees of freedom, for integral, surface and local
+  quantities (§6, Figs. 37–45).
+
+**Wall functions on a high-order discretization.**
+[Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §4.1, run the
+Wieghardt–Tillmann plate ($Re_L=11.1\times10^6$, $M_\infty=0.096$; the
+same experiment as Wu et al. below) with an explicit
+[RANS wall function](/methods/rans-wall-function.md) for the Wilcox
+$k$-$\omega$ model on a modal DG discretization, $N=1$ to 6, on meshes
+whose first element has height $y_1^+=1$ to 320, obtained by removing
+wall layers from the wall-resolved mesh. $C_f$ agrees with the reference
+for all $y_1^+$ and degrees (Figs. 2–4). Relative $C_f$ errors at
+$x/L=0.923$ against the wall-resolved $N=6$ run (Table 1) are below 1%
+from $N=3$ up to $y_1^+=10$; at $y_1^+=20$ they are non-monotone in $N$
+(0.04% at $N=2$, 5.5% at $N=6$), because the feeding points of the wall
+function fall in the buffer layer where the wall law blends its viscous
+and power-law branches. The computing time falls with $y_1^+$, on average
+over the degrees by 29.8%, 34.1%, 45.9%, 59.5% and 69.0% at $y_1^+=20$, 40,
+80, 160 and 320; at 320 the implicit Spalding law saves 63.7% (Table 2).
+
 **Non-regression of data-driven corrections.** Two sources use the
 incompressible ZPG plate to check that a RANS correction trained on
 separated flows does not spoil an attached layer, the "L2" level of the
@@ -153,6 +196,14 @@ generalizability scale of [Wu et al. (2025)](/sources/wu-2025.md), Table 1.
   read as weight shifts there having "little impact" on accuracy
   (Fig. 11c).
 
+**Boundary layers on an airfoil.** The turbulent part of the
+suction-side layer of the [Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md)
+tests the near-wall numerical dissipation of a high-order implicit LES
+([Lederer et al. (2026)](/sources/lederer-2026.md), §4.2): its mean
+velocity in wall units, against $\kappa=0.41$ and an intercept of 5.2, is
+over-predicted for $y^+>10$ on coarse meshes, less so with
+projection-based upwinding (Figs. 7–10).
+
 ## Mean-flow reconstruction with physics-informed networks
 
 [Eivazi et al. (2022)](/sources/eivazi-2022.md), §3, Table 1, Figs. 3–5, solve
@@ -190,6 +241,21 @@ half-power law. The calibrated correlation and the half-power slope are on
 [the wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md).
 Only a few experiments reach $\Delta p_s^+>0.02$, and few exceed
 $Re_\theta=30{,}000$ (Fig. 2).
+
+**A ZPG wall function in adverse pressure gradient.**
+[Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §4.2, run two of the
+experiments of Knopp's collection with their power-law wall function
+(Figs. 6–8). On the weak-APG layer of Samuel & Joubert
+($Re_L=5.95\times10^6$, $M_\infty=0.07$, Clauser-type parameter 1.5 to 4.5,
+the upper wall of the channel shaped to match the measured outer flow)
+$C_f$ agrees for all $y_1^+$ and degrees, though every mesh needs one
+degree more than on the ZPG plate. On the strong-APG DLR/UniBw layers DM2
+and DM3 ($Re_L=3.4$ and $5.2\times10^7$, parameter 25 to 45) the agreement
+deteriorates for $y_1^+>80$, and at $N=6$ the $C_f$ difference grows for
+$y_1^+=160$ and 320 near the end of the APG region, $0.8<x/L<0.85$; the
+authors attribute this to a wall law that holds only for ZPG layers,
+consistent with the shrinking log layer above (see
+[wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)).
 
 ## Supersonic and hypersonic layers on cooled walls (DNS)
 
@@ -485,6 +551,21 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
   counts are $N^3$ per element in Table V but $(N+1)^3$ in Table I
   *(compiler check, not in the sources)*. Their Fig. 20 caption says DNS
   input where the text uses the wall-resolved LES.
+- [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) define their $C_f$
+  error as an average over 1000 wall points (Eq. 20), while Table 1 is
+  captioned "at $x/L=0.923$"; its printed $C_f$ values reproduce its
+  errors as pointwise relative differences at that station (at
+  $y_1^+=1$: $|2.479-2.431|/2.431=1.97\%$ for $N=1$, $0.41\%$ for $N=2$,
+  $0.21\%$ for $N=3$) *(compiler check, not in the sources)*. Their text
+  states errors "below 0.5%" at $y_1^+=1$ from $N=1$, where Table 1 prints
+  1.970%, and "<3%" at $y_1^+=40$ from $N=3$, where it prints 3.833%
+  (§4.1). Their Table 2 savings are not monotone in $N$ at fixed mesh,
+  although the text says they increase with it.
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) compare
+  $C_f(Re_\theta)$ with a "K-S correlation" whose reference entry [40] is
+  titled as a paper on the Kolmogorov–Smirnov test, and their
+  finite-volume reference ISIS-CFD with an entry [41] titled as a fire
+  simulation code; the Table 4 caption prints "Re = ×10^7".
 - [Wu et al. (2025)](/sources/wu-2025.md) give the $\beta$ distribution of
   Fig. 48 "at $Re_x=1.5\times10^6$" while the text says $x=0.3$; the plate
   length is not printed, so the two cannot be checked against each other.
@@ -506,3 +587,6 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §IV.A–B, Table V, Figs. 12–17; App. A, Figs. 19–21.
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §2.1, Eqs. 3–4; Table 1; §4.5, Figs. 47–48.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §5.1.1, Table 9, Fig. 11.
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §5.3, Table 4, Figs. 18–27; §6, Figs. 37–45.
+- [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §4.1, Eq. 20, Tables 1–2, Figs. 2–5; §4.2, Figs. 6–8.
+- [Lederer et al. (2026)](/sources/lederer-2026.md) — arXiv v1: §4.2, Figs. 7–10.

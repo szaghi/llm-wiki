@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Discontinuous Galerkin spectral element method"
-description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra; this page states its weak and strong forms, SBP property, modal filtering, cost and GPU implementation, how interface dissipation and penalties shape LES on it, its use in shock–turbulence tests, and modal, interior-penalty and continuous relatives."
+description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra; this page states its forms, SBP property, de-aliasing, modal filtering, cost and GPU implementation, how dissipation and penalties shape LES on it, and its modal, hybridized, mixed and continuous relatives in shock–turbulence, RANS and error-estimation work."
 status: established
-aliases: [DGSEM, modal DG, nodal discontinuous Galerkin, collocation DG, DG spectral element method]
+aliases: [DGSEM, DG-SEM, modal DG, nodal discontinuous Galerkin, collocation DG, DG spectral element method, hybridizable discontinuous Galerkin, HDG]
 tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns, flux-reconstruction]
-timestamp: 2026-10-26T15:48:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -110,6 +110,38 @@ produces aliasing. Two remedies appear in the sources:
   de-aliasing into the volume term. Flad & Gassner (2017, §6.1) state that it
   costs at least three times less than polynomial de-aliasing in their
   in-house code (no timing given).
+
+**Measured comparison in a flux-reconstruction code.**
+[Brillon & Nadarajah (2026)](/sources/brillon-2026.md) compare the
+split-form, entropy-stable nonlinearly stable flux reconstruction
+(described on [flux reconstruction](/methods/flux-reconstruction.md);
+its collocated LGL variant is "also known as DG-SEM", §3.1.4) with
+strong-form DG with a Roe flux and over-integration on $2(N+1)$
+quadrature points per direction, the number they state is needed to
+integrate the cubic non-linearity of the viscous flux exactly (§2.10,
+§3.1.4). On the viscous Taylor–Green vortex:
+
+- strong DG without over-integration at $N=7$ on $64^3$ degrees of
+  freedom fails in the transition near $t^*=6$: "a linearly stable scheme
+  can be unstable in the absence of over-integration" (§3.1.3, Fig. 11);
+- per Runge–Kutta step on $4^3$ elements, over-integrated strong DG costs
+  about twice the CPU time of the split form for $N\in[5,12]$, with sum
+  factorization in both (§3.1.3, Fig. 12);
+- GL nodes integrate exactly to degree $2N+1$ and LGL to $2N-1$, as above;
+  at $N=5$ the collocated LGL split form departs from the expected
+  dissipation rate near $t^*\approx5$, while the uncollocated split form
+  on GL flux nodes, made entropy stable by evaluating the two-point fluxes
+  on entropy-projected variables, does not; with three extra quadrature
+  points both agree, "with sufficient integration accuracy, the solution
+  is independent of the choice of flux nodes" (§3.1.4, Fig. 13);
+- a collocated strong-form scheme without de-aliasing is stabilized by an
+  added high-pass-filtered Smagorinsky model, but "a stable scheme without
+  any de-aliasing can lead to inaccuracies" (§3.1.8, Fig. 20).
+
+The factor of three of Flad & Gassner and the factor of two of Brillon &
+Nadarajah come from different codes and different over-integration rules
+($\lfloor\tfrac32(N+1)\rfloor$ against $2(N+1)$ points); they are not in
+conflict.
 
 ## Modal filtering and filtered artificial viscosity
 
@@ -411,6 +443,102 @@ Lederer et al. (2023, §2.2) is a DG relative for incompressible flow, with
 an exactly divergence-free $H(\mathrm{div})$ velocity, hybrid facet
 unknowns and a DG upwind convective form; its upwind penalty is the object of
 the [high-order projection-based upwind method](/methods/high-order-projection-based-upwind-method.md).
+[Lederer et al. (2026)](/sources/lederer-2026.md), §2.3, replace its IMEX
+time integration by a Chorin-type projection: a statically condensed
+Stokes-like step solved with an element-wise BDDC preconditioner, then a
+hybridized mixed Poisson projection solved with algebraic multigrid; they
+call exact quadrature of all bilinear forms "crucial for maintaining the
+stability of the method" (§2.2). Details are on the HOPU page.
+
+**Hybridizable DG for steady RANS.**
+[Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §2–4, solve
+the steady incompressible RANS equations with $k$-$\omega$ closures (see
+[Wilcox $k$-$\omega$ model](/methods/k-omega-model.md)) by a hybridizable
+DG (HDG) method: element unknowns (velocity of degree $N$, a reduced
+pressure space, the symmetric velocity gradient as auxiliary unknown) are
+eliminated by static condensation, leaving a global system in the facet
+traces of velocity and pressure (Eqs. 72–75); the velocity is exactly
+divergence free and $H(\mathrm{div})$-conforming, and the method energy
+stable, as recalled from the authors' earlier work. The convective trace
+is upwinded, and the diffusive trace carries the stabilization
+$\tau_{\mathrm{HDG}}=Re/\ell$ (page-local; the source's $\tau$) with a problem-dependent length $\ell$; manufactured
+solutions give the smallest error near $\ell\approx10^2$ at $Re=10^5$,
+$10^7$ and $10^9$, with optimal rates (about $N+1$ for velocity and $N$
+for pressure at $N=3$) (§2.1, §5.1, Table 1, Figs. 4–6; see
+[method of manufactured solutions](/methods/method-of-manufactured-solutions.md)).
+The wall shear computed from the auxiliary gradient unknown (degree $N$)
+converges at order $N+1$, one order above the shear from the gradient of
+the velocity polynomial (degree $N-1$) (§5.2.1, Table 3, Fig. 15). Their
+list of obstacles to high-order RANS, stiffness, positivity of $k$ and
+$\omega$, the singular wall value of $\omega$, and min/max switches that
+put discontinuities inside elements, and their remedies (interpolating
+$1/\omega$, removing wall-touching elements from the $\omega$ problem, a
+mean-preserving scaling limiter on $k$ and $1/\omega$, segregated
+fixed-point coupling) concern the turbulence model (see the
+$k$-$\omega$ page). At equal degrees of
+freedom the fourth-order HDG has a much smaller numerical error than a
+second-order finite-volume code on a flat plate at $Re=10^7$ (§6,
+Figs. 37–45).
+
+## Modal DG for steady RANS: wall functions, adaptation, error estimation
+
+**Wall functions on high-order DG.** [Ghidoni et al. (2026)](/sources/ghidoni-2026.md),
+§2, discretize the compressible RANS equations with the Wilcox
+$k$-$\log\omega$ model by a modal DG with an orthogonal hierarchical basis
+defined in physical space ($(N+1)(N+2)(N+3)/6$ functions per element,
+degrees up to $N=6$), primitive variables, exact local Riemann problems
+for the inviscid flux, a BR2-type viscous flux, and linearized backward
+Euler with pseudo-transient continuation, GMRES and block Jacobi (PETSc).
+They state that a wall-resolved DG solution needs a first element of height
+$y^+\sim10$, against $\sim1$ for finite volumes, with $y^+$ measured on the
+element height (§1); the wall value of $\omega$ in the wall-resolved runs
+is set from an effective distance that shrinks with the degree,
+$r_Ny_1$ with $r_N=\exp(-\sum_{n=1}^N1/n)$ and $y_1$ the
+first-element height (Eq. 4; page-local symbols, the source's $\alpha^l$,
+renamed because $\alpha$ is the registry's DG/FV blending factor). Their explicit wall
+function takes its input at the interior quadrature point of the wall
+element closest to the opposite face, a choice borrowed from
+[wall-modelled LES](/methods/wall-modelled-les.md), so that all work stays
+element-local; it is described, with its errors and time savings, on
+[wall functions for RANS](/methods/rans-wall-function.md).
+
+**Modal DG in CODA for anisotropic adaptation.**
+[Schotte et al. (2026)](/sources/schotte-2026.md), §2.2, §4.1, run steady
+RANS with the negative Spalart–Allmaras model in the modal DG of CODA
+(the hierarchical orthonormal basis described above for Basile et al.):
+Roe flux with a Harten-type entropy fix for transonic cases or a
+Liu–Vinokur fix for subsonic ones, BR2 with stabilization parameter 3 on
+triangles and 4 on tetrahedra, a Laplacian artificial viscosity driven by
+the Persson–Peraire sensor with the calibration of Glaubitz et al. at
+shocks, a positivity-preserving limiter, implicit backward Euler with
+GMRES, and degree staging ($N=0$, then 1, 2, …). They state that the
+compact DG stencil allows exact residual Jacobians, unlike finite-volume
+schemes on skewed tetrahedra (§1), and call degrees $N=2$ and 3 "a sweet
+spot for modal DG applied to complex configurations" (§3). Two pieces
+of their metric-based adaptation are DG-specific (§3, Eqs. 15–25): the
+element Hessian of the Mach number is computed from a DG weak form, a face
+integral of the averaged lifted (BR1) gradients projected onto constants,
+and the element size comes from spectral error estimators built on the
+energy of the degree-$N$ modes of the momentum. The adaptation strategy
+and results: see [mesh adaptation](/methods/mesh-adaptation.md).
+
+**Discretization-error transport.** [Wang & Roy (2023)](/sources/wang-2023.md)
+estimate the discretization error of a modal DG solution of the steady
+two-dimensional Euler equations (tensor-product Legendre basis,
+Gauss–Legendre quadrature, backward-Euler pseudo-time marching; §2.1) by
+error transport equations: subtracting the DG weak form evaluated at the
+projected exact solution from the discrete equations gives a nonlinear
+equation for the error whose source is the negative truncation error
+(Eq. 12), and its linearization about the discrete solution reuses the
+Jacobian of the implicit solver (Eq. 13). With the truncation error
+estimated from a reconstruction of degree $r-1$, the corrected solution
+reaches order $r$ on smooth problems once an iterative correction is
+applied; on problems with singularities the estimate barely improves on
+the uncorrected error, which the authors trace to the truncation-error
+estimate (§4–5); see
+[mesh adaptation](/methods/mesh-adaptation.md) and
+[method of manufactured solutions](/methods/method-of-manufactured-solutions.md).
+Wang & Roy write the order of accuracy as $p$, so their degree is $N=p-1$.
 
 ## DGSEM in a turbomachinery code
 
@@ -457,6 +585,30 @@ without adjudicating between them. HORSES3D also adapts the polynomial
 degree anisotropically, one degree per element and direction, from a
 $\tau$-estimate of the truncation error (§3.6; see
 [mesh adaptation](/methods/mesh-adaptation.md)).
+
+**HORSES3D settings for explicitly filtered LES.**
+[Ranjbar et al. (2026)](/sources/ranjbar-2026.md), §II.A, §III, run the
+HORSES3D DGSEM on Gauss–Lobatto nodes with Williamson's third-order
+low-storage Runge–Kutta scheme and choose per case: the standard (non-split)
+form with a low-dissipation Roe flux and BR1 without penalty for decaying
+isotropic turbulence; the Chandrashekar split form with the same flux and
+BR1 for the Taylor–Green vortex; and the split form with BR2 and penalty
+1.5 for a channel at $Re_\tau=395$, "presence of walls necessitates BR2".
+Gauss–Lobatto nodes are stated to be preferred for energy- or
+entropy-stable SBP-SAT and split-form schemes. Their element filter width
+is $\Delta=\mathcal J^{1/3}/\prod_{i=1}^3(N_i+1)^{1/3}$ with $N_i$ the
+degree per direction (Eq. 42, after Komperda et al.). They build the
+nodal–modal transform for any orthogonal basis and any collocation grid
+from discrete orthogonality under the nodal quadrature, three
+one-dimensional matrix products per element in three dimensions (§II.B,
+Eqs. 17–27), and use it for a self-tuning modal filter, described on
+[explicit modal filtering](/methods/explicit-modal-filtering.md). On
+their coarse no-model channel mesh the r.m.s. velocities do not vanish
+at the wall, which they attribute to the weak enforcement of the wall
+condition, and jump between elements; the modal filter removes both
+(§III.C, Fig. 15). A static [Smagorinsky](/methods/smagorinsky-model.md)
+model on that channel crashed for $C_s<0.15$ and was inaccurate at
+$C_s=0.2$ (§III.C, results not shown).
 
 ## Element-local filters, mortars and grid adaptation
 
@@ -708,7 +860,21 @@ fine one (§3). See
   resolutions of one test case at $N=7$; the authors present it as a
   finding, not a bound.
 - The factor-3 saving of split forms over de-aliasing (Flad & Gassner 2017,
-  §6.1) is stated without timings or hardware.
+  §6.1) is stated without timings or hardware; the factor-2 measurement of
+  Brillon & Nadarajah (2026, §3.1.3) is for one code (PHiLiP, flux
+  reconstruction) on one cluster, in the arXiv v1 preprint.
+- **Two "sweet spots".** Cernetic et al. (2024) place the cost-effective
+  order of modal DG for shocked turbulence at order 2 or 3 ($N=1$ or 2);
+  Schotte et al. (2026, §3) call $N=2$ and 3 a sweet spot for modal DG on
+  complex RANS configurations. The statements concern different flows and
+  criteria (an idealized cost model with many shocks against practice on
+  steady aerodynamic cases) and are not competing claims.
+- Ghidoni et al. (2026)
+  measure $y^+$ on the first-element height, not on a node distance or
+  the element height over $N+1$ (§1), a third convention beside those of
+  Morsbach et al. and Wang (2024) above.
+- Ranjbar et al. (2026) is the arXiv v1 preprint; their Smagorinsky
+  channel runs are reported without data.
 
 # Citations
 
@@ -740,3 +906,10 @@ fine one (§3). See
 - [Klose et al. (2025)](/sources/klose-2025.md) — ASME accepted manuscript: §2–3, Tables 1–2 (TRACE DGSEM implicit LES of a transonic cascade).
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv 2404.05378v1: §II.B (continuous spectral elements in Nek5000).
 - [Reddy et al. (2026)](/sources/reddy-2026.md) — preprint of 4 March 2021: §4 (continuous spectral elements in NUMA).
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §2.10 (strong DG with over-integration); §3.1.3, Figs. 11–12 (instability without over-integration, cost); §3.1.4, Fig. 13 (GL against LGL flux nodes, DG-SEM); §3.1.8, Fig. 20.
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv 2512.03315v1: §II.A (HORSES3D settings, Gauss–Lobatto nodes); §II.B, Eqs. (17)–(27), (42) (nodal–modal transform, filter width); §III.C, Fig. 15 (wall fluctuations, Smagorinsky).
+- [Lederer et al. (2026)](/sources/lederer-2026.md) — arXiv 2408.06698v1: §2.2–2.3 (mixed-stress method, exact quadrature, projection splitting).
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §2–2.1, Eqs. (6)–(37) (HDG RANS, stabilization); §4, Eqs. (72)–(75) (static condensation); §5.1, Table 1, Figs. 4–6; §5.2.1, Table 3, Fig. 15 (wall shear from the auxiliary unknown); §6, Figs. 37–45.
+- [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §1 (DG wall resolution); §2, Eqs. (2)–(11) (modal DG RANS, BR2, wall $\omega$, implicit solver); §3.3, Fig. 1 (wall-function feeding point).
+- [Schotte et al. (2026)](/sources/schotte-2026.md) — §1 (compact stencil); §2.2, Eqs. (5)–(7) (modal DG in CODA); §3, Eqs. (15)–(25) (sweet spot, DG Hessian, spectral estimators); §4.1 (degree staging, solver).
+- [Wang & Roy (2023)](/sources/wang-2023.md) — Journal Pre-proof: §2.1, Eqs. (1)–(10) (modal DG); §3.1, Eqs. (11)–(16) (error transport equations, orders); §4–5.

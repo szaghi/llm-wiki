@@ -5,7 +5,7 @@ description: "How a scale-resolving simulation is fed with turbulence at its inf
 status: established
 aliases: [turbulent inflow generation, synthetic inflow turbulence, synthetic turbulence generator, STG, recycling–rescaling inflow, recycling inflow, digital filter inflow, precursor inflow, MDSRFG, random flow generation]
 tags: [les, dns, boundary-layer, wmles, compressible]
-timestamp: 2026-10-26T15:53:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Inflow turbulence generation
@@ -220,6 +220,42 @@ to reproduce the LES decay of free-stream turbulence. They specify the
 inflow by total pressure, as is turbomachinery practice, which makes the
 near-wall velocity a result of the simulated static pressure and requires a
 chosen centre-line Mach number (0.362) that may need iteration.
+
+
+## Triggering transition instead
+
+[Dang et al. (2022)](/sources/dang-2022.md), §5.1, generate the Mach 2.9
+boundary layer upstream of a compression ramp by blowing and suction on the
+wall between 350 and 200 mm upstream of the corner, instead of the
+recycling of the reference DNS of Martín et al., and validate the van
+Driest-transformed mean velocity against it.
+
+## Choosing no inflow turbulence
+
+Three turbomachinery and jet sources inject no inflow turbulence, two of
+them with a stated reason.
+[François et al. (2022)](/sources/francois-2022.md), §3.2.1, compute the
+region upstream of the [ACAT1 fan](/benchmarks/acat1-fan-stage.md) in URANS
+because the measured inflow turbulence is about 0.3% and fan noise from it
+is negligible against rotor–stator interaction noise; the
+[ACAT1](/benchmarks/acat1-fan-stage.md) LES of
+[Lewis et al. (2023)](/sources/lewis-2023.md), §3.2.2, likewise injects no
+turbulence at the inlet. [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md),
+§3, run a subsonic round-jet LES with laminar inflow and no wall model,
+expecting the nozzle contraction to relaminarize the boundary layer and
+stating that synthetic inflow turbulence without experimental
+characterization "can generate spurious noise"; they then attribute a 3–4 dB
+over-prediction of the far-field spectrum at $0.7<St<1.4$ "possibly" to the
+laminar inlet (§4.3).
+
+The opposite case: [Morsbach et al. (2024)](/sources/morsbach-2024.md), §1,
+recall that earlier simulations of the same turbine cascade with laminar
+end-wall boundary layers and no free-stream turbulence (Rasquin et al.;
+Iyer et al.) reached "no satisfactory agreement" with the experiment, and
+attribute their own agreement to the turbulent inflow. They also show that
+the RANS practice of shrinking the inflow length scale to fix a laminar
+separation bubble gives the right loss for the wrong reason (§4.1, see
+[local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)).
 
 ## Qualifications
 

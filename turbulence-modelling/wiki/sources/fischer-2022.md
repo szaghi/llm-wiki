@@ -9,7 +9,7 @@ year: 2022
 venue: "Parallel Comput. 114:102982"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Parallel_Computing_Fischer_NekRS_a_GPU-accelerated_spectral_element_NavierStokes_solver.pdf"
 tags: [software, gpu, spectral-element, incompressible-flow]
-timestamp: 2026-10-25T20:25:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Summary
@@ -62,7 +62,7 @@ claims and locators here are those of the preprint.
 
 1. NekRS is an open-source C++/OCCA incompressible Navier–Stokes solver for GPUs based on the spectral element method, combining Nek5000's scalable infrastructure with libParanumal's kernels; it keeps the Nek5000 interface and features such as conjugate heat transfer (§1, §5). **Stated**
 2. Calculations with up to 60 billion grid points scale to 27,648 V100 GPUs on OLCF Summit (Abstract; §4.2, Table 3: $175{,}618{,}000$ elements, $N=7$). **Shown**
-3. The standard integrator is BDF$k$/EXT$k$ (Eq. 6), typically $k=3$ at Courant number 0.5; the characteristics alternative (Eqs. 7–8) is typically run at Courant numbers 2–4 but only at second order, because its fully dealiased hyperbolic substeps are expensive (§2.1). **Stated**
+3. The integrator the paper calls standard is BDF$k$/EXT$k$ (Eq. 6), typically $k=3$ at Courant number 0.5; the characteristics alternative (Eqs. 7–8) is typically run at Courant numbers 2–4 but only at second order, because its fully dealiased hyperbolic substeps are expensive (§2.1). **Stated**
 4. The pressure Poisson problem carries the fastest (acoustic, infinitely fast) modes and is the stiffest and most communication-intensive substep; isolating it avoids evaluating the viscous and advection operators at each iteration (§2.2, §3.4). **Stated**
 5. With GLL tensor-product bases the leading $O(nN)$ work becomes small dense matrix–matrix products and storage is $O(n)$; a full gradient needs $10E(N+1)^3\approx10n$ memory references and $6E(N+1)^4+15E(N+1)^3$ operations, printed as $\approx n(15+6N)$; the local stiffness product needs $7(N+1)^3$ references and $12(N+1)^4+15(N+1)^3$ operations per element (§2.3). **Derived** (see Printed slips)
 6. GLL quadrature is exact for affine elements when the integrand has degree $\le2N-1$, enough for the Poisson operator but not for the advection operator, whose integrand has degree $3N$ and needs over-integration (§2.3). **Stated**

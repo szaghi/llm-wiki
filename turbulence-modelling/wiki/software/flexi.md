@@ -5,7 +5,7 @@ description: "FLEXI is an open-source high-order DGSEM framework for compressibl
 status: established
 aliases: [FLEXI framework, HOPR, POSTI]
 tags: [software, dg, les, kinetic-energy-preserving, reinforcement-learning]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # FLEXI
@@ -91,10 +91,8 @@ The memory per degree of freedom is 0.74 KiB at $N=5$ (Table 4). The DGSEM
 volume integral costs $O(N)$ operations per degree of freedom (Table 3).
 
 Later sources extend these figures. [Chapelier et al. (2024)](/sources/chapelier-2024.md),
-§III.B.f, state superlinear strong scaling "up to 262.000 CPUs" (read as 262,000,
-the point being a thousands separator *(compiler check, not in the
-sources)*) down to one element per
-process. They cite it to the FLEXI exascale preprint of Blind et al. (2023),
+§III.B.f, state superlinear strong scaling "up to 262.000 CPUs" (as
+printed) down to one element per process. They cite it to the FLEXI exascale preprint of Blind et al. (2023),
 a study other than the measured one of Krais et al. above.
 [Kurz et al. (2025)](/sources/kurz-2025.md), §4.4, put CPU FLEXI's optimum
 in a "narrow band" of 3000–10 000 degrees of freedom per core. At higher

@@ -9,7 +9,7 @@ year: 2022
 venue: "Flow Turbul. Combust. 109:1111-1131"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Flow_Turbulence_and_Combustion_Gillyns_Implementation_and_Validation_of_an_Algebraic_Wall_Model_for.pdf"
 tags: [wall-model, wmles, les, spectral-element]
-timestamp: 2026-10-25T19:43:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Summary
@@ -105,7 +105,7 @@ metadata, and there is no identity problem.
 | $p$ | $p$ | includes "any no-modelled trace of the SGS tensor" |
 | $f$ | $f_i$ | forcing; the channel is run at constant flow rate |
 | $u_\parallel$, $u_{\parallel_i}$ | $U_{\mathrm{LES}}$ | wall-parallel LES velocity at the top of the first element, node $i$ |
-| $\overline{u}_{i_n}$ | $\bar U_n$ (page-local; $U_n$ the sampled $U_{\mathrm{LES}}$) | exponential moving average at time step $n$ (node index dropped) | **collision:** this overbar is a time filter, not the LES filter |
+| $\overline{u}_{i_n}$ | $\bar U_n$ (page-local; $U_n$ the sampled $U_{\mathrm{LES}}$) | exponential moving average at time step $n$ (node index dropped); **collision:** this overbar is a time filter, not the LES filter |
 | $\overline{u'u'}$, $\overline{v'v'}$, $\overline{w'w'}$ | $R_{11}$, $R_{22}$, $R_{33}$ | here the overbar is a statistical average |
 | $\alpha=\Delta t/(C_t+\Delta t)$ | $\alpha_e$ (filter weight, page-local) | **collision:** not the DG/FV blending factor |
 | $C_t$ | (filter time constant) | in units of $\delta/u_\tau$; 0.0025 chosen |

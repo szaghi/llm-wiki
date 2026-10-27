@@ -4,8 +4,8 @@ title: "Divergence-consistent discretize-first LES"
 description: "Agdestein & Sanderse's framework for learned LES closures: discretize, differentiate the constraint, filter with a face-averaging filter that maps discretely divergence-free fields to divergence-free fields, and close inside the pressure projection; it yields exact closure targets and a stable CNN closure."
 status: established
 aliases: [discretize first filter next, discretize-differentiate-filter-close, DCF formulation, face-averaging filter, discrete commutator error]
-tags: [les, sgs-model, neural-network, data-driven, machine-learning]
-timestamp: 2026-10-25T13:44:00Z
+tags: [les, sgs-model, neural-network, data-driven]
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Divergence-consistent discretize-first LES
@@ -143,7 +143,7 @@ the coarse Poisson equation (Eq. 19).
 | DCF | face averaging | yes | yes |
 
 DCF with face averaging is the preferred combination. The authors stress
-that Eq. 23 looks like classical filter-first LES, but here the filter is
+that Eq. 23 has the form of classical filter-first LES, but here the filter is
 precisely defined and the training data are consistent with the discrete
 target.
 

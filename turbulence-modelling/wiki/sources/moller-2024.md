@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Propuls. Power 40:533–546"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Journal_of_Propulsion_and_Power_Möller_Transitional_Delayed_Detached-Eddy_Simulation_for_a_Compress.pdf"
 tags: [hybrid-rans-les, des, transition, turbomachinery, numerical-dissipation]
-timestamp: 2026-10-26T15:50:00Z
+timestamp: 2026-10-26T20:45:00Z
 ---
 
 # Summary
@@ -128,8 +128,8 @@ D_{k,\mathrm{trans}}&=\max(0.1,\gamma)\,\frac{\rho\,k_{\mathrm{sgs}}^{3/2}}{l_{\
 | $\kappa$ | $\gamma$ (Eqs. 10–11) and $\kappa$ (Eq. 20) | **collision:** two meanings in the source |
 | $\gamma$ | $\gamma$ (intermittency) | transition-page meaning |
 | $P_k^{\lim}$ | (separation-induced extra production of the $\gamma$ model) | set to zero in DDES-$\gamma$ |
-| $\sigma_b$ | (upwind fraction of the inviscid flux, page-local) | **collision:** $\sigma$ is not the viscous stress |
-| $c_{\mathrm{ax}}$ | (axial chord, 0.204 m) | Reynolds-number length |
+| $\sigma_b$ | $\sigma_b$ (upwind fraction of the inviscid flux, registry §11) | **collision:** $\sigma$ is not the viscous stress |
+| $c_{\mathrm{ax}}$ | $c_{ax}$ (axial chord, registry §11), 0.204 m | Reynolds-number length |
 | $TI$, FSTI | $Tu$ | |
 | $l_t$ | $L$ (inlet turbulent length scale) | |
 | $c_p$, $c_f$ | $C_p$, $C_f$ | definitions not printed |

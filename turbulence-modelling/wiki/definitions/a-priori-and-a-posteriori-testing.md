@@ -4,8 +4,8 @@ title: "A priori and a posteriori testing"
 description: "A priori testing evaluates or trains a closure on filtered or averaged reference data outside the solver; a posteriori testing runs it inside the solver. The sources show that a priori agreement neither guarantees nor is required for a posteriori accuracy, and name the mechanisms."
 status: established
 aliases: [a priori test, a posteriori test, offline and online evaluation, a-priori training, a-posteriori training]
-tags: [data-driven, sgs-model, machine-learning, les, rans]
-timestamp: 2026-10-26T15:54:00Z
+tags: [data-driven, sgs-model, les, rans]
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # A priori and a posteriori testing
@@ -20,8 +20,8 @@ the model, fed with the same reference inputs, is compared with it. An
 solver and compares the solver's output with reference statistics. The two
 differ because, in the solver, the model's inputs are the model's own
 solution, errors accumulate and compensate in time, and the discretization
-adds its own error to the closure. Every source of this bundle that uses
-the pair reports cases in which the two verdicts disagree.
+adds its own error to the closure. Every source of this bundle that runs
+both tests reports cases in which the two verdicts disagree.
 
 ## Usage across the sources
 
@@ -88,6 +88,28 @@ from training (Li et al. §V: 10 fields; Zhao et al. §3: 5 fields).
 [Mukha et al. (2025)](/sources/mukha-2025.md) (§III.B.3) compute an "a
 priori" wall stress by feeding the wall model with velocity recorded in
 the running WMLES, then compare with a posteriori runs.
+Five further sources use the pair in the same sense.
+[Wu & Lele (2026)](/sources/wu-2026.md) (arXiv v2, §4–6) evaluate their
+[neural-network SGS models](/methods/neural-network-sgs-model.md) a priori
+on a box-filtered hold-out set and a posteriori in two LES solvers.
+[Jakhar et al. (2026)](/sources/jakhar-2026.md) (arXiv v3, pp. 1–4) use
+the pair for tests on filtered DNS and in the running LES, and build
+the a priori selection criterion of their
+[symbolic-regression closure](/methods/symbolic-regression-closure.md)
+so that it anticipates the a posteriori behaviour.
+[Caban et al. (2026)](/sources/caban-2026.md) measure the subgrid-stress
+error of approximate deconvolution a priori on filtered DNS of isotropic
+turbulence (§4.2) and run the same models a posteriori in LES of the
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) (§5).
+[Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) volume-filter
+channel DNS a priori to calibrate a wall-slip model of
+[immersed-boundary](/methods/immersed-boundary-method.md) WMLES and defer
+the a posteriori tests to future work (§3, §7).
+[Ranjbar et al. (2026)](/sources/ranjbar-2026.md) (arXiv v1, §III) test
+their [explicit modal filter](/methods/explicit-modal-filtering.md) only
+a posteriori, against an unmodelled run on the same coarse mesh ("coarse
+DNS"); their joint PDFs of filter inputs and modal energy levels are
+computed on those coarse runs (§III.B, Figs. 8–10), not on filtered DNS.
 The words carry seven further meanings that must be kept apart:
 
 - **Training rather than testing.** Duraisamy (2021, §IV) and Agdestein &
@@ -256,6 +278,38 @@ model is coupled to the WMLES (Griffin et al. 2023, §§3–4; Vadrot et al.
   flamelet manifolds and detailed chemistry in a laminar hydrogen flame:
   up to 5% in $T$ and 40% in $Y_{\mathrm{OH}}$ for the enthalpy-based
   manifold, smaller and more localized for the curvature-based one.
+- **Correlation of the energy transfer, split by sign.** Jakhar et al.
+  (2026, App. B, Eq. 5, Figs. 1–2) use the domain-averaged correlation
+  coefficient (CC) between model and filtered-DNS stresses, and also the
+  CC of the inter-scale energy transfer $P_\tau$ (page-local, the paper's
+  symbol; positive for forward transfer, which the paper calls diffusion,
+  negative for backscatter), of its positive part and of its negative part,
+  plus the ratios of the domain-mean energy and enstrophy transfers to
+  their filtered-DNS values. The definitions of $P_\tau$ and of the
+  enstrophy transfer are in the Supplemental Material, which is not in
+  the version read.
+- **Stress and dissipation errors.** Wu & Lele (2026, §3.1, §4, Table 2)
+  report the root-mean-square error of $\tau_{ij}$, the same error of the
+  SGS dissipation $\Pi=-\tau_{ij}\bar S_{ij}$ (their DRMSE) and the
+  correlation coefficient, as mean and standard deviation over the test
+  set.
+- **Spectral error of the subgrid stress under a mismatched filter.**
+  Caban et al. (2026, §4.2, Eqs. 38–39, Fig. 8) deconvolve filtered DNS
+  of isotropic turbulence ($Re_\lambda=100$, $384^3$, LES grid of 64
+  points, Gaussian filter with $\Delta=2h$) with a filter other than the
+  true one and integrate the resulting stress error over wavenumber; see
+  [scale-similarity model](/methods/scale-similarity-model.md) for the
+  approximate deconvolution model and
+  [discretization-consistent closure](/definitions/discretization-consistent-closure.md)
+  for the filters.
+
+**A posteriori metric.** Wu & Lele (2026, §5, Eq. 5.1) sum the absolute
+difference of the logarithms of the filtered-DNS and LES energy spectra
+over the resolved wavenumbers (their "sum spectral error", SSE,
+page-local). They call it "artificially sensitive to deviations in the
+higher-wavenumber, dissipative range": it can rate a dissipative spectrum
+worse than a spectrum with high-wavenumber pile-up, so visual inspection
+of the spectra stays necessary (§5).
 
 ## Evidence that the two verdicts disagree
 
@@ -383,6 +437,62 @@ model is coupled to the WMLES (Griffin et al. 2023, §§3–4; Vadrot et al.
   conclude that for algebraic models the matching height matters more
   than the averaging, "at odds with" Yang et al. as they cite them (see
   [wall-modelled LES](/methods/wall-modelled-les.md)).
+- Wu & Lele (2026, §4, Table 2) find the ten networks they test a priori
+  indistinguishable: RMSE 0.750–0.772, DRMSE 0.661–0.693, correlation
+  0.636–0.661, "within 5 percent of each other". A posteriori the same
+  networks spread widely in their sum spectral error: 3.68 to 18.87 in a
+  Fourier-spectral solver with two-thirds dealiasing and 5.59 to 35.33 in
+  a sixth-order compact finite-difference solver without dealiasing, in
+  forced isotropic turbulence at $Re_\lambda=433$ on $64^3$ (Tables 3–4;
+  the sets of networks in the a priori and a posteriori tables are not
+  identical). A network trained on box-filtered data only with
+  higher-order velocity-gradient inputs is badly under-dissipative in both
+  solvers (18.87 and 32.58), with a pile-up of high-wavenumber energy
+  (§5.1.1, §5.2.1). Two-filter training removes most of the gap (4.0 and
+  11.93) at no a priori cost (see
+  [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+- Jakhar et al. (2026, pp. 1, 4) recall that the second-order
+  [gradient model](/methods/gradient-model.md) reaches a priori pattern
+  correlations "above 0.9" with filtered DNS, and find that in forced 2-D
+  turbulence its LES is unstable "for any case and any LES resolution".
+  As they state, the model produces no inter-scale energy transfer in 2-D
+  (ratio of mean transfers 0, Fig. 2 table).
+
+**An a priori criterion chosen for its a posteriori consequence.** Jakhar
+et al. (2026, pp. 2–4, Figs. 1–3) select a closure from a 930-term
+library by an L-curve of an a priori score against the sparsity
+threshold. Scored by the CC of $\tau_{ij}$ alone, the elbow returns the
+unstable second-order gradient model. Scored by the minimum of the CCs of
+$\tau_{ij}$, of $P_\tau$ and of its positive and negative parts, it returns
+a five-term closure, the fourth-order truncation of the gradient
+expansion. That closure keeps a CC of about 0.99 for $\tau_{ij}$, recovers
+62% of the filtered-DNS mean energy transfer including backscatter, and
+runs stably a posteriori when the LES resolves more than 80% of the DNS
+enstrophy. The authors call it "the first closure to simultaneously excel
+in both a priori and a posteriori tests" (p. 4); see
+[symbolic-regression closures](/methods/symbolic-regression-closure.md).
+The two verdicts agree here once the a priori score contains the energy
+transfer; the stress correlation alone did not discriminate.
+
+**Deconvolution filters: one verdict agrees, one does not.** Caban et al.
+(2026) test the approximate deconvolution model both ways. A priori
+(§4.1–4.2, Eqs. 36–37, Figs. 6, 8) a deconvolution filter of lower order than the true filter
+amplifies the deconvolved field, and with the second-order finite-difference
+filter the stress error grows with the number of deconvolution terms,
+while compact filters of second and fourth order give low-wavenumber
+errors about two orders of magnitude below those of that filter and of
+the Layton–Lewandowski model (no deconvolution). A posteriori, in LES of
+the transitional Taylor–Green vortex at $Re=1600$ on $64^3$, deconvolution
+with second- to fourth-order finite-difference filters on a sixth-order
+compact LES filter and the explicit regularization filter (their N-DI-R
+variant) is unstable, which the authors attribute to the
+amplification of resolved scales by low-order deconvolution (§5.4.2,
+Table 9): the two tests agree on the low-order filters. Yet the best
+Layton–Lewandowski run (energy error $2.03\times10^{-2}$) beats the best
+deconvolution run ($2.31\times10^{-2}$; §5.4, Tables 5, 9), against the
+a priori ranking. The a priori test uses a Gaussian LES filter and the
+LES runs compact or finite-difference ones, so the two rankings are not
+on the same filter *(compiler check, not in the sources)*.
 
 **A priori failure on the deployment input predicts a posteriori
 failure.** Maejima & Kawai (2025) test a supervised super-resolution
@@ -688,12 +798,36 @@ interpolation in the steepness factor.
    literature). Their remedy is to normalize inputs and outputs so that the
    normalized distributions do not change with $Re$ and resolution (see
    [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+   Wu & Lele (2026, §1, §3, §7) read the whole a priori/a posteriori gap
+   of supervised SGS networks as a distribution shift between training
+   data and LES (citing Hu et al. 2025) and name two spatial sources,
+   setting aside the error accumulation of mechanism 2. On the *output*
+   side, the statistics of $\tau_{ij}$ depend on the filter shape, and
+   the implicit filter of the LES, "a product of both the grid and the
+   numerical method" (two-thirds dealiasing, for instance), differs from
+   the box filter of the training data; applying the dealiasing cutoff on
+   top of the box filter "completely changes the subgrid stress field"
+   (§3.2.2, Fig. 4). A network trained on one filter can then "overfit to
+   filter peculiarities". On the *input* side, higher powers of the
+   velocity-gradient tensor "suffer more from numerical artifacts such as
+   aliasing, especially at the grid cutoff resolution". Their remedies are
+   training on several filter shapes and simpler inputs (see
+   [neural-network SGS models](/methods/neural-network-sgs-model.md)).
 8. **The solver changes the input the a priori test froze.** Mukha et al.
    (2025, §III.B.3) find that time-averaging the wall-model input, which
    helps a priori on recorded velocity, alters the velocity at the
    sampling point once the model is coupled, so the a priori gain does
    not carry over. Model and input are coupled through the solution,
    which an a priori test with fixed inputs does not represent.
+9. **A score that does not see the energy transfer.** A stress
+   correlation can be high for a model that transfers no energy between
+   scales. Jakhar et al. (2026, pp. 1–3) find this for the second-order
+   gradient model in 2-D turbulence and repair the selection score by
+   adding the correlations of the energy transfer and of its forward and
+   backscatter parts (above). Prakash et al. (2022) separate structure
+   and dissipation with two metrics (C.C. and R.E.F., above); Jakhar et
+   al. combine the two kinds of score into one selection criterion
+   *(compiler check, not in the sources)*.
 
 ## Testbeds that allow both tests
 
@@ -826,6 +960,21 @@ priori, obtaining fields that are discontinuous at element interfaces; see
   both and find the curvature-based manifold better in each (§3.1–3.3).
   Both are laminar or DNS-resolved combustion configurations without a
   turbulence closure.
+- **One-sided studies.** Some sources run only one of the two tests, so
+  the disagreement stated in the lead cannot arise in them.
+  Rickard & Kasbaoui (2026) run only the a priori analysis of their
+  wall-slip models and present no forward simulation (§2, §7); Ranjbar
+  et al. (2026) run only a posteriori tests.
+- **What Jakhar et al. (2026) show in the version read.** The a priori
+  tables of the main text and the stated stability threshold (80% of the
+  DNS enstrophy) are printed; the stability runs, Table S1 and the
+  domain-averaged energies are in the Supplemental Material, which is not
+  in the arXiv file read. The claim that the closure is "generalizable"
+  rests on its having no tunable coefficient besides $\Delta$ (p. 4).
+- **The a priori test set of Wu & Lele (2026)** is box-filtered for every
+  network (§4), whatever filters the network was trained on; Table 2
+  lists ten of the eighteen networks of Table 1, while the text speaks of
+  "all" networks.
 
 # Citations
 
@@ -874,3 +1023,8 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §2–3 (frozen-RANS targets, features from the baseline solution), §4–5 (a posteriori).
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: Fig. 14 (a priori check of the correction), §3.3, §4 (a posteriori).
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §3.5 (iterative and a posteriori metrics of data assimilation).
+- [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1, §3, §3.2.2, Fig. 4 (distribution shift, filter dependence of $\tau_{ij}$); §4, Table 2 (a priori metrics); §5, Eq. 5.1, Tables 3–4 (sum spectral error, a posteriori spread); §5.1.1, §5.2.1; §7.
+- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: pp. 1–4, Figs. 1–3 (criterion, a priori table, a posteriori stability and threshold); App. B, Eq. 5 (CC).
+- [Caban et al. (2026)](/sources/caban-2026.md) — §4.1–4.2, Eqs. 36–39, Figs. 6, 8 (a priori deconvolution error); §5.4, Tables 5, 9 (a posteriori Taylor–Green vortex).
+- [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §2, §3, §7 (a priori analysis only, a posteriori deferred).
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §III, §III.B, Figs. 8–10 (a posteriori tests against coarse unmodelled runs).

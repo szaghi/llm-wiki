@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Morkovin's hypothesis and Reynolds analogies"
-description: "Morkovin's hypothesis holds that, while density fluctuations stay small, compressible wall turbulence behaves like incompressible turbulence once mean property variations are scaled out; this page gives Morkovin scaling, the strong Reynolds analogy and its extensions, the turbulent Prandtl number in DNS and RANS closures, and where DNS to Mach 14 and separated-flow LES confirm or break them."
+description: "Morkovin's hypothesis holds that, while density fluctuations stay small, compressible wall turbulence behaves like incompressible turbulence once mean property variations are scaled out; this page gives Morkovin scaling, the strong Reynolds analogy, the turbulent Prandtl number, and where DNS to Mach 14, thermally perfect channel DNS and separated-flow LES confirm or break them."
 status: established
 aliases: [Morkovin hypothesis, Morkovin scaling, Morkovin's scaling, strong Reynolds analogy, SRA, HSRA, Reynolds analogy factor, turbulent Prandtl number]
 tags: [compressible, boundary-layer, dns, hypersonic, rans]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Morkovin's hypothesis and Reynolds analogies
@@ -306,6 +306,69 @@ authors restrict these modifications to attached thin layers and expect a
 smaller gain in channels and pipes, where the Trettel–Larsson
 transformation is accurate and $Pr_t$ has no near-wall singularity (§5.1).
 
+## Channel flow of a thermally perfect gas, and the numerical caveat
+
+**The hypothesis as restated.** [Aiello et al. (2026)](/sources/aiello-2026.md),
+§1, restate Morkovin's hypothesis in a weaker form than the mapping quoted
+above: "at sufficiently high Reynolds number and moderate Mach number,
+compressibility effects influence wall turbulence primarily through
+spatial variations of mean density and transport properties, while density
+fluctuations play a secondary role". They recall the support of the early
+isothermal-wall channel DNS of Coleman et al. and Huang et al. (1995) up to
+bulk Mach number about 3, the semi-local scalings that followed, and,
+against it, recent evidence that "intrinsic compressibility effects can be
+dynamically significant" near the wall (Hasan et al. 2023, 2025), with cold
+walls further modifying vortex topology and production (Yu et al.). The
+transformation of Hasan et al. is the one that Chen et al. (2024) recall as
+questioning the hypothesis (above), so the two sources agree on where the
+current challenge comes from. Aiello et al. add that the Chu–Kovásznay split
+into vortical, acoustic and entropy modes "does not constitute a derivation
+of Morkovin's hypothesis" but is an interpretive frame: entropy modes are
+linearly passive yet act through density, temperature and transport
+properties, so all components must be computed accurately as the bulk Mach
+number grows (§1).
+
+**DNS beyond the calorically perfect gas.** Aiello et al. (2026, §2.1,
+§3.3, Table 2) compute isothermal-wall channels of $\mathrm{CO_2}$ as a
+thermally perfect gas (temperature-dependent specific heats from NASA
+polynomials, Sutherland viscosity, $Pr=0.72$) at wall-based bulk Mach
+number 3, 4 and 5 and $Re_\tau\approx470$, 630 and 800 with
+[STREAmS](/software/streams.md) (sixth-order central differences,
+$\Delta x^+\approx8$–10, $\Delta z^+\approx4$–5, first wall point at
+$\Delta y^+\approx0.3$); for such gases "entropy variations are no longer
+trivially related to temperature" (§1), and the Mach 5 centreline reaches
+about 1000 K (§4.1). Their reductions use the Morkovin and semi-local forms
+above: Reynolds stresses $\langle\rho\rangle\langle u_i''u_j''\rangle_\rho/\tau_w$
+against $y^*$, and the Trettel–Larsson transformed mean velocity (see
+[compressible velocity transformations](/definitions/compressible-velocity-transformation.md)).
+For every scheme and Mach number the transformed profiles collapse on
+the viscous-sublayer law $u^+_{TL}=y^*$, and a narrow logarithmic region
+appears for $y^*\ge40$ with $\kappa=0.41$ and $B=6.0$ fitted to the
+entropy-conservative runs, an intercept they attribute to the low semi-local friction Reynolds number (160 to 190), as in
+low-$Re_\tau$ incompressible flow and earlier calorically perfect channel
+DNS (§4.1, Fig. 1; see [law of the wall](/definitions/law-of-the-wall.md)).
+
+**How much of the departure is numerical.** The same flows run with
+different convective discretizations differ in exactly the statistics this
+page uses to test the hypothesis (Aiello et al. 2026, §4.1–4.2, Table 3):
+
+| Bulk Mach (wall) | $p'_{w,\mathrm{rms}}/\tau_w$, entropy-conservative / KEEP | max difference of the transformed velocity, KEEP | max difference of the streamwise stress $\langle\rho\rangle\langle u''u''\rangle_\rho/\tau_w$, KEEP / Gouasmi et al. |
+|---|---|---|---|
+| 3 | 1.97 / 2.89 | 0.23% | 0.60% / 1.38% |
+| 4 | 2.33 / 3.23 | 1.05% | 1.59% / 1.21% |
+| 5 | 2.57 / 3.55 | 1.98% | 10.98% / 5.25% |
+
+(differences in the maximum norm relative to the authors' entropy-conservative
+scheme, which serves as the reference; no external DNS is compared). The
+kinetic-energy-preserving but not entropy-conservative KEEP scheme
+over-predicts thermodynamic fluctuations, raises the streamwise stress
+peak, "abnormally high" at Mach 5, and over-predicts the logarithmic-region
+velocity, increasingly with Mach number; the shear stress is
+scheme-independent (§4.2, Fig. 2). Aiello et al. do not discuss the
+boundary-layer DNS of Cogo et al. (2022) and Huang et al. (2022) above. See [entropy conservation](/properties/entropy-conservation.md),
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
+and [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
+
 ## Qualifications
 
 - Helm & Martín (2022) print the friction velocity with the edge density,
@@ -318,6 +381,11 @@ transformation is accurate and $Pr_t$ has no near-wall singularity (§5.1).
   zero-pressure-gradient flat-plate boundary layers only; Huang et al. (2022) contrast them with isothermal
   cold-wall channels, where the Trettel–Larsson transformation collapses
   the data that it does not collapse in their boundary layers (§4.1).
+- [Aiello et al. (2026)](/sources/aiello-2026.md) write the fitted log
+  law with $y^*$ in the text and with $y^+$ in the Fig. 1 caption; the
+  value $B=6.0$ is fitted to their entropy-conservative runs. Their
+  Table 3 differences are taken relative to their own entropy-conservative
+  scheme (Table 3 caption), not to an independent reference.
 - Printed inconsistencies of the two papers that do not bear on these
   scalings (shape factors, Reynolds-number tables) are recorded on their
   Source pages.
@@ -327,4 +395,5 @@ transformation is accurate and $Pr_t$ has no near-wall singularity (§5.1).
 - [Cogo et al. (2022)](/sources/cogo-2022.md) — §1 (Morkovin's hypothesis, Reynolds analogies, SRA); §2, Table 1 (Eckert number); §3.1; §4, Eqs. (4.3)–(4.4), Fig. 9 (temperature–velocity relations); §5.1, Eq. (5.1), Fig. 10 (Morkovin scaling); §5.2, Figs. 11–12 (TKE budget); §5.3 (pressure fluctuations).
 - [Huang et al. (2022)](/sources/huang-2022.md) — §3.2, Figs. 4, 6, 8 (Reynolds analogy factor, peak stresses, wall pressure); §4.2, Figs. 13–14 (Morkovin and semi-local scaling); §4.3, Eqs. (4.9)–(4.13), Table 5, Figs. 15–18 (temperature relations, SRA, HSRA, $Pr_t$); §4.4, Fig. 19; §5, Figs. 20–21; §6.
 - [Chen et al. (2024)](/sources/chen-2024.md) — §1, §3.1, Eqs. (3.1)–(3.2) (Morkovin-scaled stress in the Baldwin–Lomax mixing length; HLPP and Morkovin's hypothesis); §3.3, Eqs. (3.15)–(3.17), Fig. 6 (DNS $Pr_t$, singularity, two-layer temperature); §4, Figs. 7, 11, 13 (a posteriori $Pr_t$ and errors); §5.1; Table 1; App. A, Fig. 15; App. B, Fig. 16.
+- [Aiello et al. (2026)](/sources/aiello-2026.md) — §1 (restated hypothesis, intrinsic compressibility, Chu–Kovásznay modes); §2.1–2.2 (thermally perfect gas, scalings); §3.3, Table 2 (set-up); §4.1, Fig. 1 (transformed velocity, $\kappa$, $B$); §4.2, Table 3, Figs. 2–3 (scheme dependence of stresses, wall pressure and fluctuations).
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §II (Morkovin-scaled DNS initialization); §IV E, Figs. 28–29 (Reynolds analogy factor, QP85 law, $Pr_t$, SRA and modified SRA in separated hypersonic interactions); §V.

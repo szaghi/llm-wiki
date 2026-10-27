@@ -9,7 +9,7 @@ year: 2025
 venue: "Phys. Fluids 37:105158"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Physics_of_Fluids_Mukha_Wall-modeled_large-eddy_simulation_based_on_spectral-element.pdf"
 tags: [wmles, wall-model, spectral-element, sgs-model, log-layer-mismatch, channel-flow]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-26T20:44:00Z
 ---
 
 # Summary
@@ -99,14 +99,14 @@ The code is released as `nekwmles` (GitHub, printed in the preprint).
 24. The viscosity-based condition allows blending wall-resolved and wall-modelled LES by setting the wall $\nu_t=0$ where the grid resolves the inner layer (De Vanna et al.); it has long been used in OpenFOAM; Bae & Lozano-Durán found it somewhat more accurate than Neumann in a finite-difference code (§II.C.4). **Stated**
 25. Flat-plate boundary layer: the shape factor agrees with references after the inflow adapts; the outer-scaled mean velocity is slightly over-predicted, improving with spanwise refinement (M3 "virtually indistinguishable" at $Re_\theta=4000$); Reynolds stresses are more accurate than in the channel; $C_f$ from $\tau_w^{\mathrm{wm}}$ is within 2% of wall-resolved LES on the finest mesh (§IV.B, Figs. 13–16). **Shown**
 26. The gain from spanwise refinement, with outer scales already resolved, suggests a dependence on $\Delta z^+$, which "would violate th[e] premise of WMLES being independent of inner-scale resolution" (§IV.B). **Stated** (speculation)
-27. Spalding's law with $\kappa=0.41$ and $B=5.5$ (App. A; \"a more classical set of values\" in §IV.A, which prints $B=5.2$) gives about ±1% stress error with boundary-layer DNS or wall-resolved LES input, an order of magnitude above the tuned channel case; the law reaches its logarithmic limit near $y^+=150$, close to the wake at low $Re$ (§IV.A, App. A, Figs. 20–21). **Shown**
+27. Spalding's law with $\kappa=0.41$ and $B=5.5$ (App. A; "a more classical set of values" in §IV.A, which prints $B=5.2$) gives about ±1% stress error with boundary-layer DNS or wall-resolved LES input, an order of magnitude above the tuned channel case; the law reaches its logarithmic limit near $y^+=150$, close to the wake at low $Re$ (§IV.A, App. A, Figs. 20–21). **Shown**
 28. Published comparisons: OpenFOAM WMLES (Mukha et al. 2021, about 2 elements per $\delta_{99}$) is less accurate; Lozano-Durán & Bae (2023) report 10–30% velocity and 5–15% stress deviations on coarser meshes; a dynamic-slip wall model is "well within" 4% in $C_f$; the present results are "on par with the state of the art, possibly outperforming it" for $R_{11}$ (§IV.B). **Stated**
 29. Sampling inside the wall-adjacent element by spectral interpolation to arbitrary $h_{\mathrm{wm}}$ caused no accuracy problem (§II.C.1, §V). **Shown**
 30. A structured mesh cannot keep the spanwise element size adapted to $\delta_{99}$, which grows about eightfold over the domain; 4 elements per $\delta_{99}$ at the inlet is already wall-resolved-like (about $10\delta_\nu$), so WMLES needs coarsening in $x$ and $y$ (§IV.A, Fig. 12). **Shown** / **Stated**
 
-The momentum equation (Eqs. 1–4), translated: with $u_i$, $p$ implicitly grid-filtered (the source prints no overbar),
-$$\frac{\partial u_i}{\partial t}+u_j\frac{\partial u_i}{\partial x_j}=-\frac1\rho\frac{\partial p}{\partial x_i}+\frac{\partial}{\partial x_j}\Big[2(\nu+\nu_t)S_{ij}\Big]+f_{\mathrm{hp},i},\qquad f_{\mathrm{hp}}=\chi\,(u-\mathcal F_{\mathrm{lp}}u),$$
-with $\mathcal F_{\mathrm{lp}}$ the modal low-pass filter of Nek5000 and $\chi$ its strength (sign as printed). The viscosity-based condition (Eqs. 13–14), with $\tau_w$ kinematic:
+The momentum equation (Eqs. 1–4), translated, with the overbar of the implicit grid filter omitted ($u_i$, $p$, $S_{ij}$ stand for $\bar u_i$, $\bar p$, $\bar S_{ij}$; the source prints none):
+$$\frac{\partial u_i}{\partial t}+u_j\frac{\partial u_i}{\partial x_j}=-\frac1\rho\frac{\partial p}{\partial x_i}+\frac{\partial}{\partial x_j}\Big[2(\nu+\nu_t)S_{ij}\Big]+f_{\mathrm{hp},i},\qquad f_{\mathrm{hp},i}=\chi_{\mathrm{hp}}\,(u_i-u^{\mathrm{lp}}_i),$$
+with $u^{\mathrm{lp}}_i$ the velocity passed through the modal low-pass filter of Nek5000 and $\chi_{\mathrm{hp}}$ its strength (sign as printed), the symbols of the [spectral-element](/methods/spectral-element-method.md) page. The viscosity-based condition (Eqs. 13–14), with $\tau_w$ kinematic:
 $$\nu_t\big|_{\mathrm{wall}}=\frac{\lvert\tau_w^{\mathrm{wm}}\rvert}{2\sqrt{S_{xy}^2+S_{zy}^2}}-\nu .$$
 Input averaging (Eqs. 5–6): $u^{\mathrm{wm}}_n\leftarrow\epsilon_{\mathrm{avg}}u^{\mathrm{wm}}_n+(1-\epsilon_{\mathrm{avg}})u^{\mathrm{wm}}_{n-1}$, $\epsilon_{\mathrm{avg}}=\Delta t/(\Delta t+\Delta t_{\mathrm{avg}})$. Model constants: Vreman constant $2.5C_s^2$ with $C_s=0.16$; Sigma constant 1.35; the subgrid length scale is the largest GLL spacing of the element (§II.D).
 
@@ -129,8 +129,8 @@ Input averaging (Eqs. 5–6): $u^{\mathrm{wm}}_n\leftarrow\epsilon_{\mathrm{avg}
 | $S_{ij}=\partial_ju_i+\partial_iu_j$ | $2S_{ij}$ | **collision:** no factor $\tfrac12$ in the source |
 | $\tau_{ij}=(\nu+\nu_{sgs})S_{ij}$ | $2(\nu+\nu_t)S_{ij}=\sigma_{ij}/\rho-\tau^d_{ij}$ | **collision:** viscous plus subgrid, opposite sign to the registry's $\tau_{ij}$ |
 | $\nu_{sgs}$ | $\nu_t$ | not forced to zero at the wall |
-| $\tilde u$ | $\mathcal F_{\mathrm{lp}}u$ (modal low-pass filter, page-local) | **collision:** not a Favre filter |
-| $f_{hp}$, $\chi$ | $f_{\mathrm{hp},i}$, $\chi$ (relaxation term and strength, page-local) | |
+| $\tilde u$ | $u^{\mathrm{lp}}$ (modally low-pass-filtered velocity, page-local) | **collision:** not a Favre filter |
+| $f_{hp}$, $\chi$ | $f_{\mathrm{hp},i}$, $\chi_{\mathrm{hp}}$ (relaxation term and strength, page-local) | **collision:** $\chi$ is the SA ratio |
 | $N$ | $N$ | $N=7$ |
 | $h$ | $h_{\mathrm{wm}}$ | **collision:** not an element size; $0.2\delta$ or $0.2\delta_{99}(x)$ |
 | $\tau_w^{wm}$, $\tau_w^{wall}$, $\tau_w^{\nabla p}$, $\tau_w^{apri}$ | $\tau_w$ with page-local superscripts | modelled; from the mean wall gradient; from the driving pressure gradient; a priori |
@@ -160,7 +160,7 @@ duplicates.
 
 # Pages created or updated
 
-Chunk 6 (2026-10-26). This source is cited on:
+Chunk 6 (2026-10-26), cited further in chunk 7. This source is cited on:
 
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
@@ -174,6 +174,7 @@ Chunk 6 (2026-10-26). This source is cited on:
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
 - [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)
+- [Sigma model](/methods/sigma-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Continuous-Galerkin spectral-element method](/methods/spectral-element-method.md)
 - [Spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)

@@ -5,7 +5,7 @@ description: "Lattice Boltzmann methods advance particle populations on a discre
 status: established
 aliases: [LBM, lattice Boltzmann, LB, lattice Boltzmann equation, LBE, HRR collision, central-moment collision, lattice Boltzmann MHD, FLAME]
 tags: [lattice-boltzmann, les, dns, hybrid-rans-les, gpu, mhd, immersed-boundary]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Lattice Boltzmann methods for turbulent flow
@@ -182,6 +182,19 @@ Mozaffari et al. (2024, §2.2) state likewise that, with the isotropic
 mesh of ProLB, refining enough to resolve the boundary layer at high
 Reynolds number is "too expensive".
 
+**An explicit wall law from lattice Boltzmann RANS reused elsewhere.**
+[Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §1 and §3.3, adopt in a
+high-order discontinuous Galerkin $k$-$\omega$ RANS solver the power-law wall
+model of Wilhelm, Jacob & Sagaut (2018), which their reference list ([11])
+titles "An explicit power-law-based wall model for lattice Boltzmann
+method–Reynolds-averaged numerical simulations of the flow around
+airfoils": $u^+=y^+$ for $y^+\le11.81$ and $u^+=8.3\,(y^+)^{1/7}$ above
+(Eq. 13), inverted in closed form for $u_\tau$ (Eq. 14), chosen because
+implicit laws (log law, Reichardt, Spalding) need Newton iterations at
+every wall quadrature point. The DG implementation and its accuracy are on
+[RANS wall functions](/methods/rans-wall-function.md); Ghidoni et al. run
+no lattice Boltzmann computation.
+
 ## Lattice Boltzmann MHD with the Hall term
 
 Foldes et al. (2023) solve the weakly compressible Hall-MHD equations with
@@ -217,7 +230,7 @@ $N_x$ the lattice points per reference length; Eqs. 3.40–3.44).
 **Accuracy** (Foldes et al. 2023, §4.2–4.4): on an exact damped-wave
 solution of dissipative Hall-MHD ($N_x=32$ to 128 lattice points per direction) all runs were stable,
 density fluctuations stayed at $10^{-7}$–$10^{-6}$, and the dispersion,
-dissipation and numerical-viscosity errors all decay as $N^{-2}$, the
+dissipation and numerical-viscosity errors all decay as $N_x^{-2}$, the
 numerical viscosity being "only a small percentage" of the physical one and
 independent of viscosity and Mach number. On the decaying
 [Orszag–Tang problem](/results/decaying-mhd-turbulence.md) at $512^3$
@@ -279,3 +292,4 @@ lattice Boltzmann sources here are all weakly compressible.
 - [Foldes et al. (2023)](/sources/foldes-2023.md) — arXiv v2: §1; §3.1, Eqs. (3.4)–(3.17), App. A (BGK, sixth-order equilibrium, Lorentz force, central-moment collision); §3.2–3.4, Eqs. (3.18)–(3.44), App. B (vector BGK induction, Hall term, current solve, whistler CFL); §4.2–4.4, Figs. 3–12 (accuracy, Orszag–Tang against GHOST); §5 (cost, turnaround); §7.
 - [Cao et al. (2022)](/sources/cao-2022.md) — §1, §3.3–3.4 (lattice Boltzmann grids in channel flow; shocks).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — HAL accepted manuscript hal-04921212v1: §1; §2.1, Eqs. (1)–(8) (trapezoidal D3Q19, HRR with $\sigma=0.98$, eddy viscosity in the relaxation time); §2.2 (immersed boundary, wall model); §2.3, Eqs. (16)–(34) (SST by finite differences, wall functions, IDDES, CES); §3.1–3.3, Tables 1–3 (NACA 23012, NACA 0012, Ahmed body).
+- [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §1; §3.3, Eqs. (12)–(14); reference [11] (the explicit power-law wall model of Wilhelm et al., devised for lattice Boltzmann RANS, reused in a DG solver).

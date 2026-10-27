@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Plasma Phys. 89:905890413"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Plasma_Physics_Foldes_Efficient_kinetic_Lattice_Boltzmann_simulation_of_three-dime.pdf"
 tags: [mhd, plasma, lattice-boltzmann, gpu, dns, decaying-turbulence]
-timestamp: 2026-10-26T07:35:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Summary
@@ -127,9 +127,9 @@ page are those of this version.
 | $d_i$, $L_H$, $k_H$ | $d_i$ (page-local ion inertial length), (Hall length, Hall wavenumber $2\pi/(\epsilon_HL_0)$) | **collision:** $d_i$ is not the wall distance $d$ |
 | $\rho_i$ | (ion gyroradius, §6) | **collision:** not the density |
 | $N$ | $N_x$ | lattice points per reference length; **collision:** not a polynomial degree |
-| $f_i$, $\bar f_i$, $f_i^{(0)}$, $f_i^{mhd(0)}$ | (distribution functions and equilibria, page-local) | **collision:** not the body force $f_i$ |
-| $\mathbf c_i$, $\bar{\mathbf c}_i=\mathbf c_i-\mathbf U$, $c_s$ | (lattice and central velocities, lattice sound speed) | $\Delta x/\Delta t=\sqrt3c_s$ |
-| $w_i$, $W_i$ | (lattice weights, D3Q27 and D3Q7; page-local) | **collision:** not quadrature weights |
+| $f_i$, $\bar f_i$, $f_i^{(0)}$, $f_i^{mhd(0)}$ | $f_q$ (lattice distribution functions, registry §11), $\bar f_q$, $f_q^{(0)}$, $f_q^{mhd(0)}$ (page-local) | **collision:** not the body force $f_i$ |
+| $\mathbf c_i$, $\bar{\mathbf c}_i=\mathbf c_i-\mathbf U$, $c_s$ | $\boldsymbol c_q$ (discrete velocities, registry §11), (central velocities, lattice sound speed) | $\Delta x/\Delta t=\sqrt3c_s$ |
+| $w_i$, $W_i$ | $w_q$ (lattice weights, registry §11, D3Q27), $W_i$ (D3Q7, page-local) | **collision:** not quadrature weights |
 | $\tau$, $\omega$, $\omega_B$ | $\tau_{\mathrm{LB}}$, $\omega_{\mathrm{LB}}$, $\omega_B$ (relaxation time and frequencies, page-local) | **collision:** not the SGS stress, the specific dissipation rate or the vorticity |
 | $\lvert k\rangle$, $T$, $S$ | (central moments, transformation and relaxation matrices) | **collision:** $S$ is not the strain rate, $k$ not the kinetic energy |
 | $\mathbf g_i$, $\boldsymbol\xi_i$, $C$ | (vector-valued magnetic distributions, their lattice velocities, $\Delta x/\Delta t=2C$) | **collision:** $\boldsymbol\xi_i$ are not quadrature nodes |

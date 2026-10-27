@@ -8,7 +8,7 @@ authors: [Maejima S., Kawai S.]
 year: 2025
 venue: "J. Fluid Mech. 1013:A28"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Fluid_Mechanics_Maejima_Unsupervised_and_supervised_machine_learning_pipeline_for_su.pdf"
-tags: [les, sgs-model, neural-network, machine-learning, backscatter, a-priori-a-posteriori]
+tags: [les, sgs-model, neural-network, data-driven, backscatter, a-priori-a-posteriori]
 timestamp: 2026-10-26T15:49:00Z
 ---
 

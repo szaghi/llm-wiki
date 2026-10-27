@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Mesh adaptation for turbulent-flow simulation"
-description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an error estimate or refinement criterion in a turbulent-flow computation: Hessian and metric criteria for RANS, time-averaged criteria for hybrid RANS/LES, LES modelling-residual and truncation-error estimators for high-order DG, and refinement strategy as a dissipation control."
+description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an error estimate or refinement criterion in a turbulent-flow computation: Hessian and metric criteria for RANS, Hessians scaled by DG error estimators, time-averaged criteria for hybrid RANS/LES, LES modelling-residual and truncation-error estimators, error transport equations, and refinement as a dissipation control."
 status: established
-aliases: [adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation]
+aliases: [adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation, Hessian scaling, error transport equations, ETE]
 tags: [mesh-adaptation, hybrid-rans-les, rans, dg, numerical-dissipation, wmles]
-timestamp: 2026-10-26T15:41:00Z
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Mesh adaptation for turbulent-flow simulation
@@ -30,12 +30,12 @@ from an estimate of $\delta$, not adapted from the solution.
 
 Every adaptive procedure in the sources has the same four parts.
 
-| Part | Mozaffari et al. (2022) | Alauzet et al. (2022) | Basile et al. (2023) | Blind et al. (2023) | Ferrer et al. (2023) | Martin-Alvarez et al. (2022) |
-|---|---|---|---|---|---|---|
-| Flow and model | incompressible hybrid RANS/LES (IDDES, DDES-SST) and RANS, ISIS-CFD | steady compressible RANS, Spalart–Allmaras without $f_{t2}$, Wolf | compressible ZDES on the negative Spalart–Allmaras model, modal DG (CODA) | wall-resolved and wall-modelled LES with the Vreman model, DGSEM ([FLEXI](/software/flexi.md)) | compressible and multiphase flows, DGSEM ([HORSES3D](/software/horses3d.md)) | ideal MHD, cosmological galaxy formation, RAMSES |
-| Criterion | Hessians of $p$ and $u_i$, time-averaged | $L^4$ Mach-number interpolation error or adjoint-weighted goal-oriented estimate | modal small-scale energy plus inter-element jumps; modal-decay smoothness | directional LES modelling residual from a modal test filter, time- and element-averaged | truncation error ($\tau$-estimation); interface tracking for multiphase | mass per cell (quasi-Lagrangian) or a density threshold (quasi-Eulerian) |
-| Operation | anisotropic h-refinement and derefinement of hexahedra by cell division | anisotropic remeshing of tetrahedra to a metric (Feflo.a) | isotropic remeshing (MMG) plus p-enrichment, $N\in\{1,2,3\}$; prism layer frozen | anisotropic hexahedral grids built by hand to the target spacing, 2-to-1 mortars | anisotropic p-adaptation, a degree per element and direction, mortar faces | octree refinement, at most one level jump |
-| Driver | refinement every 25 steps (backward-facing step) | mesh-convergence loop at doubled complexity | static steps, dof count doubled per step | post-processing between full LES runs, about four times the elements per step | one step on a converged moderate-degree solution (steady) or at fixed intervals (unsteady) | every step, on the running flow |
+| Part | Mozaffari et al. (2022) | Alauzet et al. (2022) | Basile et al. (2023) | Blind et al. (2023) | Ferrer et al. (2023) | Martin-Alvarez et al. (2022) | Schotte et al. (2026) |
+|---|---|---|---|---|---|---|---|
+| Flow and model | incompressible hybrid RANS/LES (IDDES, DDES-SST) and RANS, ISIS-CFD | steady compressible RANS, Spalart–Allmaras without $f_{t2}$, Wolf | compressible ZDES on the negative Spalart–Allmaras model, modal DG (CODA) | wall-resolved and wall-modelled LES with the Vreman model, DGSEM ([FLEXI](/software/flexi.md)) | compressible and multiphase flows, DGSEM ([HORSES3D](/software/horses3d.md)) | ideal MHD, cosmological galaxy formation, RAMSES | steady compressible RANS, negative Spalart–Allmaras, modal DG with $N=1$–3 (CODA) |
+| Criterion | Hessians of $p$ and $u_i$, time-averaged | $L^4$ Mach-number interpolation error or adjoint-weighted goal-oriented estimate | modal small-scale energy plus inter-element jumps; modal-decay smoothness | directional LES modelling residual from a modal test filter, time- and element-averaged | truncation error ($\tau$-estimation); interface tracking for multiphase | mass per cell (quasi-Lagrangian) or a density threshold (quasi-Eulerian) | $L^4$ Mach-number Hessian for the anisotropy, a DG small-scale estimator for the size |
+| Operation | anisotropic h-refinement and derefinement of hexahedra by cell division | anisotropic remeshing of tetrahedra to a metric (Feflo.a) | isotropic remeshing (MMG) plus p-enrichment, $N\in\{1,2,3\}$; prism layer frozen | anisotropic hexahedral grids built by hand to the target spacing, 2-to-1 mortars | anisotropic p-adaptation, a degree per element and direction, mortar faces | octree refinement, at most one level jump | anisotropic remeshing of triangles and tetrahedra to a metric (Tucanos) |
+| Driver | refinement every 25 steps (backward-facing step) | mesh-convergence loop at doubled complexity | static steps, dof count doubled per step | post-processing between full LES runs, about four times the elements per step | one step on a converged moderate-degree solution (steady) or at fixed intervals (unsteady) | every step, on the running flow | fixed-complexity loop of 5–20 iterations, then a higher complexity |
 
 The models and codes have their own pages:
 [detached-eddy simulation](/methods/detached-eddy-simulation.md) (the
@@ -419,7 +419,7 @@ adaptation lowers $\mu_t$ in the shear layer step by step (§4.2.2).
 
 **Refinement strategy as a dissipation control (Martin-Alvarez et al.
 2022).** In ideal-MHD galaxy simulations ($\eta_m=0$, so all dissipation is
-numerical), standard quasi-Lagrangian refinement (refine when a cell's mass
+numerical), quasi-Lagrangian refinement (refine when a cell's mass
 exceeds that of eight dark-matter particles) resolves the cold dense phase
 finely and the warm and hot phases coarsely. The authors' quasi-Eulerian
 refinement forces the finest level (cell size $h_{\min}$) wherever the gas
@@ -483,6 +483,144 @@ Mozaffari et al. (2022, §5.2) add the RANS limit of their method: for
 steady flows instantaneous and average-based refinement are equivalent,
 and for RANS solutions with some unsteadiness the averaged criterion gives
 smoother meshes.
+
+## Anisotropic adaptation for high-order DG RANS (Schotte et al. 2026)
+
+[Schotte et al. (2026)](/sources/schotte-2026.md) carry the continuous-mesh
+metric of Alauzet et al. to a modal DG discretization of steady RANS with
+the negative [Spalart–Allmaras model](/methods/spalart-allmaras-model.md),
+in the ONERA–DLR–Airbus solver CODA with the remesher Tucanos (§2). The
+version read is the HAL deposit of the version of record.
+
+**The difficulty (§1, §3).** The optimal $L^p$ metric above controls the
+interpolation error exactly only for piecewise-linear approximations. For
+polynomial degree $N\ge2$ the interpolation error is not quadratic and has
+no direct link to a metric. The authors set aside the high-order
+approaches that address this (log-simplex fitting, Coulaud et al.;
+directional derivatives, Rangarajan et al.) as "too computationally
+demanding for industrial applications" and follow Venditti & Darmofal: the
+Hessian of the Mach number supplies the orientations and anisotropic
+quotients of the metric, an isotropic DG error estimator supplies the
+element size. They assume that the Hessian's anisotropy stays adequate at
+$N=2$ and 3, "a sweet spot for modal DG applied to complex
+configurations", and expect the assumption to weaken as the order rises
+(§3).
+
+**Element Hessian (§3.1, Eqs. 15–19).** Elements are linear, so a constant
+Hessian per element suffices. Projecting the gradient of $\partial_iw$ (page-local: $w$
+the scalar sensor) onto constants on element $K$ gives
+
+$$H^*_K=\frac1{\lvert K\rvert}\int_{\partial K}\nabla w\,\boldsymbol n^{\mathsf T}\,d\Gamma,\qquad H_K=\tfrac12\big(H^*_K+H^{*\mathsf T}_K\big),$$
+
+with the face gradient the average of the two lifted gradients (BR1 or
+BR2) and the symmetrization needed because quadrature breaks the symmetry.
+The sensor is the Mach number with BR1 gradients.
+
+**Hessian scaling (§3.2, Eq. 21).** The element Hessian is divided by its
+"global density" and multiplied by an isotropic estimator $e_K$,
+
+$$H^{\mathrm{sc}}_K=e_K\,\frac{H_K}{\big[\sqrt{\det H_K}\,\lvert K\rvert\big]^{2/d}},$$
+
+($d$ the space dimension), which removes the element-size content of the
+Hessian and keeps its orientations and anisotropic quotients; $H^{\mathrm{sc}}_K$
+then enters the $L^4$ optimal metric. Two estimators, both on momentum
+(Eqs. 22–25):
+
+- *SSED*, the small-scale energy density of Kuru et al. with the volume
+  normalization of Naddei et al., $e_K=\lVert(\rho\boldsymbol u)_N-(\rho\boldsymbol u)_{N-1}\rVert_{L^2(K)}/\lvert K\rvert^{1/2}$,
+  the energy of the highest modes; this is the square root of the
+  small-scale energy density of Basile et al. (2023) above *(compiler
+  check, not in the sources)*, which the same group used for isotropic
+  h- and p-adaptation;
+- *SSL*, the small-scale lifted estimator of Naddei & de la Llave Plata,
+  designed to capture vortices in LES, which adds to the SSED norm the
+  lifting operator of momentum projected on the element's characteristic
+  length vectors.
+
+**Numerics (§2.2, §4.1).** Roe flux with entropy fixes, BR2 viscous terms
+(penalty 3 on triangles, 4 on tetrahedra), Laplacian
+[artificial viscosity](/methods/artificial-viscosity-shock-capturing.md)
+with the Persson–Peraire sensor and a positivity limiter in transonic
+cases, implicit backward Euler with restarted GMRES. Each new mesh is
+started by $p$-staging ($N=0$, then higher), and solutions are transferred
+between meshes with their modes up to $N=1$. Metric gradation and a
+curvature metric bound the mesh (§2.5).
+
+**Hessian check (§3.3, Figs. 3–7).** On an analytic 2-D X-shaped function
+($N=1$, complexity 5000) and a 3-D smooth-shock function (complexity
+$10^5$), the BR1 Hessian adapts meshes whose interpolation error is close
+to that of the exact Hessian and below those of Tucanos' least-squares and
+$L^2$-projection Hessians, which use a nodally interpolated solution and
+miss the small 3-D variations.
+
+**RANS results.**
+
+| Case | Conditions | Outcome |
+|---|---|---|
+| HLPW4 three-element airfoil (§4.2, Table 2) | $M_\infty=0.2$, $\alpha=16^\circ$, $Re_c=5\times10^6$ | at about $10^5$ DOF: $N=1$ $C_L=3.796$, $C_D=0.06172$; $N=2$ unscaled 3.798, 0.06104; SSED 3.802, 0.06106; SSL 3.802, 0.06092. Scaling beats the unscaled Hessian at $N=2$, SSL slightly ahead; at $N=3$ the unscaled Hessian leaves very large isotropic elements on the lower wing and "needs a correction". Every strategy is more efficient than FUN3D uniform refinement; goal-oriented adaptation on lift (GGNS) is more efficient at the coarse complexity, $N=2$ SSL slightly more accurate in drag at the finer ones |
+| RAE2822, case 9 (§4.3, Table 4) | $M_\infty=0.734$, $\alpha=2.79^\circ$, $Re_c=6.5\times10^6$ | $N=1$: 67,395 DOF, $C_L=0.8235$, $C_D=0.01893$; $N=2$ unscaled 63,378, 0.8238, 0.01894; SSED 69,954, 0.8222, 0.01884; SSL 37,560, 0.8229, 0.01885; finite volume on hexahedra 230,084, 0.816, 0.0189. The scaled strategies are less accurate on very coarse meshes but converge earlier, SSL with the fewest DOF |
+| [NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md), HLPW5 wing–body (§4.4, Figs. 19–22) | $M_\infty=0.2$, $\alpha=11^\circ$, $Re=5.6\times10^6$ on the root chord | SSL scaling captures the tip vortex better than the unscaled Hessian at $N=2$ ("+2 drag counts and +0.1 lift counts"); $N=2$ needs "≈ 8e6 less DOFS" than $N=1$ for similar forces; all adapted DG strategies "clearly outperform" FUN3D, CHAMPS and CODA finite-volume results; $y^+$ near 1 reached at $N=1$, anisotropic ratios up to $10^5$ |
+| ONERA M6 wing, NASA case 2308 (§4.5, Figs. 23–25) | $M_\infty=0.84$, $\alpha=3.06^\circ$, $Re=14.6\times10^6$ on the root chord; $N=1$ only | "overly dissipative at lower mesh complexities", then close to the adaptive node-based finite-volume results (Wolf with Feflo.a, same estimator) and to the NASA $C_p$ cuts |
+
+Higher degrees are not run on the M6 wing because steady implicit
+high-order computations with shocks do not converge systematically, and
+non-converged solutions corrupt the estimators (§4.5). The authors
+call the good $N=2$ result of the unscaled Hessian on the CRM
+"surprising" (§4.4) and claim the first published high-order DG
+metric-based adaptation of complex 3-D cases, "including a full high-lift
+aircraft configuration" (§1); the configuration run is the wing–body.
+Their perspective is $hp$-adaptation, keeping $N=1$ at shocks, and curved
+boundary elements, without which $N=3$ meshes could not be coarsened to
+equal DOF (§4.2, §5).
+
+## Discretization-error estimation by error transport equations (Wang & Roy 2023)
+
+[Wang & Roy (2023)](/sources/wang-2023.md) (journal pre-proof) estimate
+the discretization error of a modal DG solution of the steady 2-D Euler
+equations, the quantity that error-based adaptation needs; the paper
+adapts no mesh and has no turbulence content. Page-local: $\boldsymbol q_h$
+the DG solution, $I^h\boldsymbol q$ the projection of the exact solution,
+$\boldsymbol\epsilon_h=\boldsymbol q_h-I^h\boldsymbol q$ the
+discretization error, $\boldsymbol\tau_h$ the truncation error (the
+residual of the discrete operator at $I^h\boldsymbol q$, Eq. 11), and
+$p$, $q$, $r$ the orders of accuracy of the primal solution, of the error
+solve and of the truncation-error estimate (the triplet of Yan &
+Ollivier-Gooch as cited; the primal polynomial degree is $N=p-1$).
+
+- *Equations (§3.1, Eqs. 12–14).* Subtracting the discrete equations
+  at $I^h\boldsymbol q$ from those at $\boldsymbol q_h$ gives a nonlinear
+  error transport equation for an estimate $\bar{\boldsymbol\epsilon}_h$
+  driven by $-\boldsymbol\tau_h$; linearizing about $\boldsymbol q_h$
+  gives the linearized one, which reuses the Jacobian of the implicit
+  primal solver. The corrected solution is $\boldsymbol q_h-\bar{\boldsymbol\epsilon}_h$.
+- *Expected order (Eqs. 15–16, derivation cited to Banks et al.).*
+  $O(h^{\min(p+q,r)})$ for the nonlinear and $O(h^{\min(2p,p+q,r)})$ for
+  the linearized equation, for smooth solutions and grid metrics; $q=p$
+  throughout.
+- *Truncation-error estimate.* $\boldsymbol\tau_h$ is estimated by
+  substituting a higher-order reconstruction of $\boldsymbol q_h$ from
+  neighbouring elements, with an "iterative correction" that re-estimates
+  it (generalized from Tyson et al.'s relinearization); without that
+  correction the estimate misses its expected order (§4.1.1, Fig. 2).
+- *Smooth problems (§4.1).* On a sinusoidal manufactured solution and
+  Ringleb's flow with curved walls, for primal orders 2–4, the
+  estimates with estimated truncation error reach order $r$ after the
+  correction; the estimate costs less than the primal solve once the
+  number of DOF is large enough (Table 1; see
+  [method of manufactured solutions](/methods/method-of-manufactured-solutions.md)).
+- *Non-smooth problems (§4.2).* Across a supersonic expansion fan and on a
+  Kármán–Trefftz airfoil with a trailing-edge singularity the primal order
+  falls to 1, the truncation-error estimate falls below first order (fan)
+  or to nearly zeroth order (airfoil), and the corrected error barely
+  improves on the base error; the linearized equation fails to be
+  higher order on the fan even with the exact truncation error. The lift
+  coefficient of the corrected airfoil solution is nevertheless second
+  order.
+- *Conclusion (§5).* Truncation-error estimation, not the error
+  equation, limits non-smooth problems; the remedies proposed are grids
+  aligned with discontinuities and embedded-grid truncation-error
+  estimation ($\tau$-estimation), the sensor of
+  [Ferrer et al. (2023)](/sources/ferrer-2023.md) above.
 
 ## Qualifications
 
@@ -559,6 +697,43 @@ smoother meshes.
   [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md),
   between 0.1 and 0.7 near the leading-edge shock only (Fig. 13), not the
   mesh.
+- **Filter adaptation on a fixed mesh, for contrast.**
+  [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) (arXiv v1, §II.B)
+  set the cut-off of an element-local
+  [explicit modal filter](/methods/explicit-modal-filtering.md) from the
+  second invariants of the strain- and rotation-rate tensors, taken from
+  the machine-learning mesh adaptation of Tlales et al. as they cite it,
+  and normalize them by averages over under-resolved elements instead of
+  thresholds, which they recall to be problem-dependent (Pang et al.).
+  The mesh does not change.
+- **Claims and slips in Schotte et al. (2026).**
+  - *Eq. 20.* The element Hessian is written as $d_K^{2/d}$ times the
+    orientation–quotient factor, with $d_K=\sqrt{\det H_K}\,\lvert K\rvert$.
+    With the pointwise density $\sqrt{\det H_K}$ of their Eq. 14 that
+    product is $H_K$; with $d_K$ as defined it is $\lvert K\rvert^{2/d}H_K$.
+    Eq. 21 is then a definition, $e_K\lvert K\rvert^{-2/d}$ times the
+    orientation–quotient factor; whether the factor $\lvert K\rvert^{-2/d}$
+    is intended is not stated *(compiler check, not in the sources)*.
+  - *RAE2822 drag.* §4.3 states that the adapted strategies "always
+    provide a higher $C_l$ and lower $C_d$" than the finite-volume
+    results, while Table 4 prints $C_D=0.01893$ ($N=1$) and 0.01894
+    ($N=2$ unscaled) against 0.0189 for finite volume, given to three
+    digits.
+  - *Residuals.* §2.4 gives convergence "up to $10^{-6}$ for all
+    residuals", §4.1 gives $10^{-10}$ for the 2-D cases and $10^{-6}$ for
+    the 3-D ones. The Fig. 10 caption names a complexity of 80,000 that
+    Table 1 does not list.
+  - *Reynolds number of the CRM.* Schotte et al. give $5.6\times10^6$ on
+    the root chord for the HLPW5 wing–body; the benchmark page gives the
+    values of other workshops and reference lengths (see
+    [NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md)).
+- **Wang & Roy (2023)** report the linearized error solve as taking
+  "approximately 2/3" of the time of the nonlinear one; their Table 1
+  ratios range from about 0.48 to 0.77 (e.g. 3.28/6.82 and 112.25/145.22)
+  *(compiler check, not in the sources)*. With the exact truncation error
+  the nonlinear error equation is satisfied by the exact discretization
+  error itself, so the round-off-level corrected error they report there
+  holds by construction *(compiler check, not in the sources)*.
 - Mozaffari et al. (2022, §3.3) state that, to their knowledge, no
   refinement criterion had been evaluated for hybrid RANS/LES; Basile et
   al. (2023) is later and uses a different (DG-specific) criterion.
@@ -576,3 +751,6 @@ smoother meshes.
 - [Ruan et al. (2023)](/sources/ruan-2023.md) — §2 (five-level AMR, no criterion stated, numerical scheme).
 - [Constant et al. (2024)](/sources/constant-2024.md) — HAL author manuscript: §3.1 (octree Cartesian meshes), §4.2 (modelling-height adaptation without mesh change).
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §6, Fig. 13 (Rotor 37 cascade LES on a fixed mesh, local shock-capturing blending).
+- [Schotte et al. (2026)](/sources/schotte-2026.md) — HAL deposit of the version of record: §1, §2.2–2.5 (DG, CODA, Tucanos), §3.1–3.2, Eqs. 15–25 (element Hessian, scaling, SSED and SSL), §3.3, Figs. 3–7, §4.1–4.5, Tables 2, 4, Figs. 9–25, §5.
+- [Wang & Roy (2023)](/sources/wang-2023.md) — journal pre-proof: §3.1, Eqs. 11–16 (error transport equations, expected orders), §4.1, Table 1, Fig. 2, §4.2, §5.
+- [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §II.B (invariants from mesh-adaptation work, normalization instead of thresholds).

@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Fluid Mech. 937:A14"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Fluid_Mechanics_Vela-Martín_Subgrid-scale_models_of_isotropic_turbulence_need_not_produc.pdf"
 tags: [les, sgs-model, eddy-viscosity, a-priori-a-posteriori, energy-cascade]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Summary
@@ -87,15 +87,15 @@ optimised representation.
 # Printed slips
 
 - §3, p. A14-6: "To $\tau^S_{ij}$ … we can add any tensor field with zero divergence … and $\tau^S_{ij}$ produces the same physical effect": the second $\tau^S_{ij}$ is evidently $\tau^A_{ij}$.
-- Eq. (3.5) prints $\langle u_j\partial_i\tau^S_{ij}\rangle=\langle u_j\partial_i\tau^A_{ij}\rangle=\langle T^S\rangle=\langle T^A\rangle$, with unfiltered $u$ and indices swapped relative to Eq. (3.3) $\bar u_i\partial_j\tau^S_{ij}$. by Eq. 2.5 and $\langle D\rangle=0$, $\langle\bar u_i\partial_j\tau^S_{ij}\rangle=-\langle T^S\rangle$; the conclusion $\langle T^S\rangle=\langle T^A\rangle$ is unaffected *(compiler check, not in the sources)*.
+- Eq. (3.5) prints $\langle u_j\partial_i\tau^S_{ij}\rangle=\langle u_j\partial_i\tau^A_{ij}\rangle=\langle T^S\rangle=\langle T^A\rangle$, with unfiltered $u$ and indices swapped relative to Eq. (3.3) $\bar u_i\partial_j\tau^S_{ij}$. By Eq. 2.5 and $\langle D\rangle=0$, $\langle\bar u_i\partial_j\tau^S_{ij}\rangle=-\langle T^S\rangle$; the conclusion $\langle T^S\rangle=\langle T^A\rangle$ is unaffected *(compiler check, not in the sources)*.
 - §6.1: "the PSD algorithm", for PGD.
 - §6.3: "For the standard SGS fluxes, $\rho(T^S_s,T^O_g)=0.4$": for the standard fluxes the superscript should be S on both.
 - Fig. 6 and Fig. 7 captions and §6.4 give $Re_\lambda=320$ for the $1024^3$ case; Table 1 and §5.1 give 324.
 - §8 says intermittency "remains as part of the total SGS interactions (§ 6.2)"; the flatness of $D-T$ is discussed in §6.3.
 - §6.1 gives sharp-filter starting values "$f^-\approx0.6$ and $v^-\approx0.4$" at $\Delta=0.33L$, $Re_\lambda=240$, while §5.3 states in general that sharp-filter backscatter occupies "around half of the points" with net backscatter "close to unity".
 - Eq. (A4) writes $\partial\gamma_i\,\delta\tau_{ij}$ without the index $j$ (Eq. B5 prints $\partial_j\gamma_i$).
-- Eqs. (A5)/(B6): $\mu_{ij}(\delta\tau_{ij}-\delta\tau_{ji})=(\mu_{ij}-\mu_{ji})\delta\tau_{ji}$. relabelling the dummy indices gives $(\mu_{ij}-\mu_{ji})\delta\tau_{ij}$, the negative of the printed right side; (A6)/(B7) use $\delta\tau_{ij}$. Harmless, since $\mu_{ij}$ is eliminated *(compiler check, not in the sources)*.
-- Appendix B signs: (B4) prints the derivative of $\tfrac12(\tau^*_{ij}-\tau^P_{ij})^2$ with respect to $\tau^P_{ij}$ as $+(\tau^*_{ij}-\tau^P_{ij})$, and (B9) prints $2(\tau^P_{ij}-\tau^*_{ij})$ while (B10) and (B14) follow the opposite sign. the derivative is $-(\tau^*_{ij}-\tau^P_{ij})$; since $\gamma_i$ is a free multiplier, (B12)–(B14) remain self-consistent and (B14) satisfies the constraint *(compiler check, not in the sources)*.
+- Eqs. (A5)/(B6): $\mu_{ij}(\delta\tau_{ij}-\delta\tau_{ji})=(\mu_{ij}-\mu_{ji})\delta\tau_{ji}$. Relabelling the dummy indices gives $(\mu_{ij}-\mu_{ji})\delta\tau_{ij}$, the negative of the printed right side; (A6)/(B7) use $\delta\tau_{ij}$. Harmless, since $\mu_{ij}$ is eliminated *(compiler check, not in the sources)*.
+- Appendix B signs: (B4) prints the derivative of $\tfrac12(\tau^*_{ij}-\tau^P_{ij})^2$ with respect to $\tau^P_{ij}$ as $+(\tau^*_{ij}-\tau^P_{ij})$, and (B9) prints $2(\tau^P_{ij}-\tau^*_{ij})$ while (B10) and (B14) follow the opposite sign. The derivative is $-(\tau^*_{ij}-\tau^P_{ij})$; since $\gamma_i$ is a free multiplier, (B12)–(B14) remain self-consistent and (B14) satisfies the constraint *(compiler check, not in the sources)*.
 - Eq. (B10) writes $\partial_i\tau^*_{ij}$ for $\partial_j\tau^*_{ij}$, and the text before it writes the constraint as $\partial_i\tau^P_{ij}=Q_i$ for $\partial_j\tau^P_{ij}=Q_i$ (B3).
 - Reference list: Kraichnan (1967) "Phys. Fluids 10, 1417–1413" (end page below start page).
 - Typo: "practial relevance" (§8).
@@ -125,7 +125,7 @@ optimised representation.
 | $\rho(\phi,\psi)$ | — | correlation coefficient (Eq. 6.5); **collision** with the density |
 | $s$, $\kappa$ | — | skewness, flatness; $\kappa$ **collides** with the von Kármán constant |
 | $H(T)$ | — | indicator, 1 for $T<0$ |
-| $v^-$, $f^-$ | — | backscatter volume fraction and net backscatter (Eqs. 5.7–5.8) |
+| $v^-$, $f^-$ | $v^-$, $f^-$ (registry §11) | backscatter volume fraction and net backscatter (Eqs. 5.7–5.8) |
 
 # Reference list
 

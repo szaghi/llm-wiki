@@ -5,7 +5,7 @@ description: "RANS laminar–turbulent transition models that evaluate an empiri
 status: established
 aliases: [LCTM, γ-Reθ-SST, separation-induced transition correction, Suluksna–Juntasaro calibration, Langtry–Menter calibration, local correlation-based transition modelling, γ-Reθ model, gamma-Re-theta, γ-SST, one-equation γ model, γ-alg-SST, algebraic LCTM model, algebraic intermittency model]
 tags: [rans, transition, eddy-viscosity, boundary-layer, separated-flow]
-timestamp: 2026-10-26T15:42:00Z
+timestamp: 2026-10-26T17:20:00Z
 ---
 
 # Local-correlation-based transition models
@@ -441,6 +441,14 @@ meshes: $y^+\le1$ in the transition region, a wall-normal expansion ratio
 of at most 1.15 (ratios above 1.2 to be avoided), a streamwise step not much
 larger than $\delta$; wall-function meshes are unsuitable (§4, Figs. 26–28).
 
+Elzaabalawy et al. (2023) argue the converse for high-order discretizations:
+"thanks to the low dissipation of the high-order methods", adding transition
+models on coarser meshes becomes feasible, naming Menter et al.'s
+one-equation local-correlation model as the candidate for their
+hybridizable discontinuous Galerkin $k$-$\omega$ solver; they do not test it
+([Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §7, ref. [45];
+see the [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md)).
+
 ## Qualifications
 
 - *Compiler check, not in the sources:* with the Table 1 values
@@ -490,3 +498,4 @@ larger than $\delta$; wall-function meshes are unsuitable (§4, Figs. 26–28).
 - [Möller et al. (2024)](/sources/moller-2024.md) — §II.B.2–3 Eqs. 23–25, §II.F, §III.B (accepted manuscript).
 - [Klose et al. (2025)](/sources/klose-2025.md) — §2, §6, Fig. 7, Table 2 (ASME accepted manuscript).
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — §1.2, §2.2, Fig. 9 (arXiv v2).
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §7.

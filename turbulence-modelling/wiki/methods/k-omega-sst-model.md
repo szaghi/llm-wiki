@@ -5,7 +5,7 @@ description: "Menter's two-equation shear-stress-transport eddy-viscosity model,
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-26T15:50:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # k-ω SST model
@@ -22,7 +22,9 @@ the turbulence model coupled to the
 [local-correlation-based transition models](/methods/local-correlation-based-transition-model.md),
 and one of the two model families of the high-lift workshop RANS
 submissions compared with wall-modelled LES. On this page the strain and
-rotation magnitudes are those of the mean velocity.
+rotation magnitudes are those of the mean velocity. The unblended Wilcox
+model from which the inner branch derives, with its 1998, 2006 and TNT
+variants, is on the [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md).
 
 ## Equations
 
@@ -112,7 +114,7 @@ et al.'s 0.44 is the rounding of 0.4403, while their $5/9\approx0.5556$
 differs from 0.5532 in the third digit, so it is not a rounding of the
 log-layer value *(compiler check, not in the sources)*. The same condition,
 written as $\beta_\omega-\beta^*\gamma_\omega=\kappa^2\sqrt{\beta^*}\sigma_\omega$
-with page-local $\beta_\omega$, $\gamma_\omega$ for the $\beta$ and $\alpha$ of
+with the registry-§11 $\beta_\omega$, $\gamma_\omega$ for the $\beta$ and $\alpha$ of
 the equations above (Wu et al.'s $\theta$ and $\gamma$), is the one Wu et al.
 (2025) use to argue that a field-inversion multiplier of the destruction
 must equal one in the log layer (below). Oulghelou et al. call SST itself
@@ -127,6 +129,18 @@ Kato–Launder production with the $\gamma$-$Re_\theta$ model in the
 finite-volume part of [TRACE](/software/trace.md)
 ([Klose et al. (2025)](/sources/klose-2025.md), §2; ASME accepted
 manuscript).
+
+**A fourth printed form, for a high-order solver.** Elzaabalawy et al.
+(2023) print Menter's 2003 SST and BSL ("SST without viscosity limiter") in
+incompressible kinematic form with $\sigma_k=(0.85,1.0)$,
+$\sigma_\omega=(0.5,0.856)$, $\beta=(0.75,0.0828)$ as printed,
+$\alpha=(5/9,0.44)$ (the source's $\zeta$), $\beta^*=0.09$ and $a_1=0.43$,
+the limiter $\nu_t=a_1k/\max(a_1\omega,F_2S)$ with a strain norm $S$ not
+defined, and the cross-diffusion floor $10^{-10}$ of Dzanic et al.; the
+production is limited by $15\beta^*\omega k$ for all their models
+([Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §3.1.1 Eq. 55,
+§3.2, Eq. 71; see Qualifications for $\beta_1$ and $a_1$). Their blending
+functions evaluate $\omega$ through the interpolant of $1/\omega$ (§3.2).
 
 ### Compressibility correction
 
@@ -161,6 +175,21 @@ high-order accuracy therefore applies to the mean-flow variables only
 *(compiler check, not in the sources)*. They
 recall the opposite choice of Bassi et al., who solve for $\log\omega$ at high
 order to enhance stability (§1).
+
+Elzaabalawy et al. (2023) solve SST and BSL at high order with a
+hybridizable DG method. Because the max and min functions of SST make the
+eddy viscosity only $C^0$ inside an element, they evaluate it at quadrature
+points and fit a degree-$N$ polynomial by regression; the derivative of the
+fit "was found" unstable, so the diffusion terms are written in weak form
+for SST and BSL (§3.2.1). In their flat-plate tests BSL and SST are less
+robust than the unblended TNT and Wilcox (1998) models when the inlet eddy
+viscosity is low, and they conclude that "the robustness of the SST model in
+the high-order framework is questionable due to the polynomial regression",
+excluding it from the rest of the study (§5.3), while recommending models
+less sensitive to inlet turbulence, "such as SST", if the $C^0$ viscosity
+can be handled (§7). The remedies common to the $k$-$\omega$ family
+(interpolation of $1/\omega$, wall-element removal, scaling limiter on $k$ and
+$1/\omega$) are on the [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md).
 
 ### Implementation variants
 
@@ -239,6 +268,25 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
   $C_{\mathrm{DES}}=0.78F_1+0.61(1-F_1)$, and use $C_{d1}=20$, $C_{d2}=3$ in the
   DDES shielding function, raising $C_{d1}$ to 30 for more shielding
   (§4.1.3, Eqs. 6–11, §4.4).
+  Wang et al. (2021) derive these two constants from the length-scale
+  equation and the Smagorinsky constant $C_s=0.18$: the theoretical values
+  are 0.805 for the $k$-$\omega$ branch and 0.630 for the
+  $k$-$\varepsilon$ branch, "with calibration values of 0.78 and 0.61",
+  blended through $F_1$, with the RANS length $\sqrt k/(C_\mu\omega)$
+  ([Wang et al. (2021)](/sources/wang-2021-l.md), §2.3, Eqs. 17–18; details
+  on the [DES page](/methods/detached-eddy-simulation.md)). Yang & Ma (2022)
+  use the SST-DES of ANSYS CFX, in which the $k$ destruction is multiplied
+  by $\max\big(L_t(1-F_2)/(C_{\mathrm{DES}}\Delta),1\big)$ with
+  $L_t=\sqrt k/(\beta^*\omega)$, $C_{\mathrm{DES}}=0.61$ and $\Delta$ the
+  largest cell edge, $F_2$ serving as shielding against grid-induced
+  separation and modelled-stress depletion
+  ([Yang & Ma (2022)](/sources/yang-2022-b.md), §2.1, Eqs. 1–5; page-local
+  $L_t$).
+- **Roughness.** D'Ayer et al. (2026) cite roughness corrections of SST
+  (Aupoix, their ref. [7]) among the roughness models whose development
+  their rough-wall DNS databases are meant to support
+  ([D'Ayer et al. (2026)](/sources/dayer-2026.md), §1, refs. [6]–[8]; HAL
+  submitted manuscript).
 
 - **Transitional DDES.** Möller et al. (2024) couple SST-DDES to the
   one-equation $\gamma$ model by multiplying the production of $k$ by
@@ -523,6 +571,24 @@ operational role and need not match their DNS counterparts
   within 0.1 in $C_L$ in attached flow and gives the same $22^\circ$ peak-lift
   angle ([Baldan & Guardone (2025)](/sources/baldan-2025.md), §2.2,
   Fig. 9; arXiv v2; see [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+- **High-order flat plate.** On the NASA zero-pressure-gradient plate at
+  $Re=10^7$, HDG with SST and an inlet eddy-viscosity ratio of 100
+  overestimates the skin friction by 1.6% against an SST finite-volume
+  reference (ISIS-CFD) (Elzaabalawy et al. 2023, §5.3, Figs. 21–23; see
+  [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)).
+- **Tandem cylinders.** SST-IDDES gives a primary shedding frequency of
+  172 Hz against 179–180 Hz measured and slightly overpredicts the $C_p$
+  RMS peaks of the downstream cylinder, where an IDDES on the SSG/LRR-$\omega$
+  [Reynolds-stress model](/methods/reynolds-stress-model.md) gives 176 Hz and
+  better peaks; on a transonic hammerhead launch vehicle SST-IDDES places
+  the $C_p$ RMS peak at $x=0.62$ against 0.58 estimated from experiment
+  (Wang et al. 2021, §3.2–§3.3, Table 1, Figs. 5, 11).
+- **Turbine tip-leakage vortex.** In a transonic turbine cascade with a tip
+  gap, SST URANS over-predicts the Reynolds shear stress along the
+  tip-leakage vortex and misses the trailing-edge mixing that SST-DES
+  resolves; both agree with the measured midspan isentropic Mach number
+  except near the suction-side shock (Yang & Ma 2022, §3.1–§3.2, Figs. 6, 8;
+  see [turbine cascades](/benchmarks/turbine-cascade.md)).
 - **Aircraft wake precursor.** Bouhafid et al. (2024) use an SST RANS on an
   adapted mesh as the precursor of a temporal LES of a NACA 0012 wing with a
   jet ([Bouhafid et al. (2024)](/sources/bouhafid-2024.md), §2.2, §3; see
@@ -579,6 +645,16 @@ version read (arXiv v1):
   nomenclature and "Shear Stress Model" in a table caption, against
   "Shear-Stress Transport" in the text (nomenclature, Table A.4, §1).
 
+- Elzaabalawy et al. (2023, §3.2) print $\beta_1=0.75$; with their printed
+  $\alpha_1=5/9$ and $\sigma_{\omega1}=0.5$, the log-layer relation
+  $\alpha=\beta/\beta^*-\sigma_\omega\kappa^2/\sqrt{\beta^*}$ that they state
+  for TNT needs $\beta_1=0.075$ (giving 0.553, against 8.05 for 0.75), the
+  value of every other source above *(compiler check, not in the sources)*.
+  They also print $a_1=0.43$, where Dzanic et al., Zhao et al. (2023b),
+  Oulghelou et al., Möller et al., Mozaffari et al. (2024) and Petrocchi &
+  Barakos print 0.31; the
+  paper gives no reason for the value.
+
 # Citations
 
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §2.1 Eqs. 10–17, §3 Eq. 26, App. A.
@@ -609,3 +685,7 @@ version read (arXiv v1):
 - [Klose et al. (2025)](/sources/klose-2025.md) — §2, §6, Tables 1–2, Fig. 7 (ASME accepted manuscript).
 - [Wu et al. (2025)](/sources/wu-2025.md) — §2.1 Eqs. 2–6, §3.2, §4.1–4.5, Tables 5–7 (authors' manuscript).
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — §2.2, Fig. 9 (arXiv v2).
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §3.1.1 Eq. 55, §3.2–3.2.1 Eq. 71, §5.3 Figs. 21–23, §7.
+- [Wang et al. (2021)](/sources/wang-2021-l.md) — §2.3 Eqs. 17–18, §3.2–§3.3 Table 1, Figs. 5, 11.
+- [Yang & Ma (2022)](/sources/yang-2022-b.md) — §2.1 Eqs. 1–5, §3.1–§3.2 Figs. 6, 8.
+- [D'Ayer et al. (2026)](/sources/dayer-2026.md) — §1, refs. [6]–[8] (HAL submitted manuscript).

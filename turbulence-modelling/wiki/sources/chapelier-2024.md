@@ -9,7 +9,7 @@ year: 2024
 venue: "Phys. Fluids 36:055146"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Physics_of_Fluids_Chapelier_Comparison_of_high-order_numerical_methodologies_for_the_sim.pdf"
 tags: [compressible, implicit-les, numerical-dissipation, dg, high-order, dns]
-timestamp: 2026-10-26T15:48:00Z
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Summary
@@ -31,7 +31,7 @@ and their shock capturing are:
   ([WENO and TENO](/methods/weno-scheme.md));
 - NS3D: sixth-order compact finite differences with a tenth-order compact
   filter and no shock capturing;
-- SD3DvisP: fourth-order spectral difference with artificial diffusivity
+- SD3DvisP: fourth-order [spectral difference](/methods/spectral-difference-method.md) with artificial diffusivity
   ([artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md));
 - [FLEXI](/software/flexi.md): fourth-order
   [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) with a
@@ -158,7 +158,7 @@ arXiv preprint without identifier. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 6 (2026-10-26). This source is cited on:
+Chunk 6 (2026-10-26), cited further in chunk 7. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
@@ -169,6 +169,7 @@ Chunk 6 (2026-10-26). This source is cited on:
 - [Artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Flux reconstruction](/methods/flux-reconstruction.md)
+- [Spectral difference method](/methods/spectral-difference-method.md)
 - [Subcell finite-volume shock capturing for DG](/methods/subcell-finite-volume-shock-capturing.md)
 - [WENO and hybrid shock-capturing schemes in scale-resolving simulation](/methods/weno-scheme.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)

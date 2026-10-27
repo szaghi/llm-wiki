@@ -5,7 +5,7 @@ description: "The bulk (volume) viscosity multiplies the velocity divergence in 
 status: established
 aliases: [volume viscosity, dilatational viscosity, second viscosity, bulk viscous Reynolds number, viscous Prandtl number, Stokes hypothesis]
 tags: [compressible, dns, implicit-les, numerical-dissipation, mhd]
-timestamp: 2026-10-26T15:53:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Bulk viscosity
@@ -100,6 +100,21 @@ second *(compiler check, not in the sources)*. The sources use both pieces:
   [Chapelier et al. (2024)](/sources/chapelier-2024.md), §II.C, Eq. (11), is
   the dilatational part of the shear-viscous (Stokes) dissipation, not a
   bulk-viscous term.
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) (read in arXiv
+  v1) state the Stokes hypothesis explicitly, second viscosity coefficient
+  $\lambda_{\mathrm v}=-\tfrac23\mu$ (§2.1, Eq. 3), i.e. $\mu_b=0$. Their
+  kinetic-energy budget of the compressible
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) therefore has
+  only two terms, the pressure dilatation $\langle p\,\nabla\cdot\boldsymbol u\rangle$
+  and the viscous dissipation of the deviatoric strain,
+  $\tfrac{2}{Re_\infty}\langle\mu S^d_{ij}S^d_{ij}\rangle$ in their
+  non-dimensional form (Eq. 37). They obtain an "observed" pressure
+  dilatation as the residual of the measured energy decay rate minus the
+  viscous term (Eq. 105), which agrees with published DNS, while the
+  pressure dilatation computed node by node oscillates spuriously; a
+  collocated scheme reduces and Riemann-solver (upwind) dissipation removes
+  the oscillations (§3.1.1, §3.1.7, Figs. 3–4, 17–18); see
+  [numerical dissipation](/properties/numerical-dissipation.md).
 
 **Damping of compressive modes.** With constant coefficients the viscous force
 is $\partial_j\sigma_{ij}/\rho=\nu\nabla^2u_i+(\tfrac13\nu+\nu_b)\partial_i(\nabla\cdot\boldsymbol u)$,
@@ -271,3 +286,4 @@ physical $\nu_b$ of Beattie et al., which is constant in space and time.
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — §II.C, Eq. (11); §III.B.e, §III.B.h (artificial bulk viscosity of SD3DvisP).
 - [Cernetic et al. (2024)](/sources/cernetic-2024.md) — §3.1, Eq. (15) (bulk-viscosity contribution to the von Neumann–Richtmyer viscous pressure).
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §4 (artificial bulk viscosity in CharLES).
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §2.1, Eq. (3) (Stokes hypothesis); §2.5.1, Eq. (37); §3.1.1, Eq. (105), Figs. 3–4; §3.1.7, Figs. 17–18 (pressure dilatation in the kinetic-energy budget).

@@ -3,9 +3,9 @@ type: Method
 title: "Neural-network subgrid-scale models"
 description: "LES closures in which a neural network maps resolved-field features to the subgrid stress, its divergence, a model coefficient or an energy-conserving operator; trained a priori, by reinforcement learning or through the solver. Covers inputs, multi-filter fusion, normalization, invariance, structure preservation, cost against dynamic models and backscatter."
 status: established
-aliases: [ANN-SGS model, GAN SGS model, fusion network, T-SR-FU, energy-conserving neural closure, structure-preserving closure, ANN-SGS mixed model, deep-learning LES closure, DL-LES, neural-network LES closure, data-driven SGS model, S-106H, SL-106H, SL-180C, DL-AR1, DL-AR2]
-tags: [neural-network, sgs-model, les, machine-learning, data-driven]
-timestamp: 2026-10-26T15:41:00Z
+aliases: [ANN-SGS model, GAN SGS model, fusion network, T-SR-FU, energy-conserving neural closure, structure-preserving closure, ANN-SGS mixed model, deep-learning LES closure, DL-LES, neural-network LES closure, data-driven SGS model, S-106H, SL-106H, SL-180C, DL-AR1, DL-AR2, multi-filter training, TBNN-GNN]
+tags: [neural-network, sgs-model, les, data-driven]
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Neural-network subgrid-scale models
@@ -40,6 +40,7 @@ errors in the momentum equation".
 | [Kurz et al. (2023)](/sources/kurz-2023.md) | one Smagorinsky $C_s\in[0,0.5]$ per DG element | the element's momentum field (or five velocity-gradient invariants) | 3D CNN, four convolution layers | PPO in the running LES |
 | [Kim et al. (2024)](/sources/kim-2024.md) | 6 components of $\tau_{ij}$ | single point: $\bar S_{ij}$ or $\partial_j\bar u_i$, alone (G) or with their test-filtered copies (T) | fully connected; "fusion" variant with two 64-node branches subtracted | supervised on box-filtered DNS of a cylinder wake |
 | [Maejima & Kawai (2025)](/sources/maejima-2025.md) | a velocity field 8 times finer in $x$ and $z$, from which $\tau_{ij}$ is filtered | wall-parallel planes of $(u,v,w)$ of a very coarse LES | 2-D CNNs: CycleGAN generator, then conditional Wasserstein GAN | unsupervised on unpaired LES/filtered-DNS planes, then supervised on filtered-DNS/DNS pairs |
+| [Wu & Lele (2026)](/sources/wu-2026.md) | 8 coefficients of a tensor basis for $\tau_{ij}$ | invariants and magnitudes of the resolved velocity gradient on a mesh stencil | graph network front end, tensor-basis output, about 24,000 parameters | supervised on DNS filtered with one to three filter shapes |
 | [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) | skew-symmetric and dissipative operators acting on the coarse solution and auxiliary SGS variables (1D) | coarse solution, SGS variables, coarse right-hand side | CNN, two hidden layers, kernel 5 | hybrid derivative and trajectory fitting |
 
 Agdestein & Sanderse (2025) train a CNN on the discrete commutator error
@@ -208,6 +209,98 @@ LES diverges, including the dynamic model and no model; T-SR-FU runs only
 when the SGS stress is clipped to zero wherever backscatter occurs (App.
 C; see [energy backscatter](/definitions/energy-backscatter.md)).
 
+## Multi-filter training for solver robustness (Wu & Lele 2026)
+
+[Wu & Lele (2026)](/sources/wu-2026.md) (arXiv v2) attribute the a
+posteriori degradation of supervised networks to a distribution shift
+between training data and LES, with an output source (the stress
+statistics depend on the filter shape) and an input source (complex
+inputs are sensitive to aliasing and to the numerical method); see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
+
+**Model (§3.1, Figs. 2–3, Eqs. 3.5–3.9).** A graph network with skip and
+residual connections learns the input stencil (after Abekawa et al., as
+cited) and feeds two branches of $1\times1$ convolutions that return the
+coefficients of an eight-term tensor basis for the full $\tau_{ij}$ (see
+[tensor-basis neural network](/methods/tensor-basis-neural-network.md)).
+Inputs are either "complex", the three invariants of the resolved
+velocity-gradient tensor $\bar A_{ij}=\partial_j\bar u_i$ (page-local: its
+trace $P_A$, $Q_A=\tfrac12[P_A^2-\operatorname{tr}(\bar A^2)]$ and
+$R_A=\det\bar A$, with $P_A$ masked to zero in incompressible flow) plus
+$\lvert\bar S\rvert$ and $\lvert\bar\Omega\rvert$, or "simple",
+$P_A$, $\lvert\bar S\rvert$, $\lvert\bar\Omega\rvert$. Inputs are max–min
+normalized; the basis and the stress are normalized locally by powers of
+$\lvert\bar A\rvert$ and by $\Delta^2\lvert\bar A\rvert^2$. The loss adds
+the relative root-mean-square errors of $\tau_{ij}$ and of the SGS
+dissipation $\Pi=-\tau_{ij}\bar S_{ij}$ (Eq. 3.9). A variant with three
+more layer-normalization layers (ALN) serves as an architecture
+perturbation.
+
+**Training filters (§3.0.1–3.0.2, Eqs. 3.3–3.4).** Training data are
+built with up to three filter shapes, used together as one training set:
+
+- the box filter;
+- a "discrete spatial cosine filter", the compact positive kernel
+  $G(r)=\Delta^{-1}[1+\cos(2\pi r/\Delta)]$ for $\lvert r\rvert\le\Delta/2$,
+  a 33-point stencil for $\Delta=16$ DNS spacings, whose spectral
+  oscillations peak at 0.028 against 0.22 for the box filter;
+- the box filter followed by the two-thirds dealiasing cutoff
+  $\mathcal D$ (page-local), $\tau^{\mathcal D}_{ij}=\mathcal D(\overline{u_iu_j})-\mathcal D(\bar u_i)\mathcal D(\bar u_j)$,
+  which "completely changes the subgrid stress field" (§3.2.2, Fig. 4).
+
+The filters do not mimic any solver's transfer function; the aim is to
+keep the network from overfitting "to filter peculiarities". A sharp
+spectral cutoff is excluded because a filter oscillatory in physical
+space creates spurious small scales (§2.1). Data: forced isotropic
+turbulence at $Re_\lambda=433$ ($1024^3$) and channel flow at
+$Re_\tau=1000$, filtered to 16 and 32 DNS spacings, 80/10/10 split; every
+network sees both flows (§3.2.1).
+
+**Results (§5–6, Tables 3–4).** Sum spectral errors (page-local SSE, the
+summed absolute log-difference of LES and filtered-DNS spectra) in forced
+isotropic turbulence on $64^3$:
+
+| Network (complex inputs; original architecture unless stated) | Fourier-spectral solver, 2/3 dealiasing | sixth-order compact solver |
+|---|---|---|
+| box only | 18.87 | 32.58 |
+| box + dealiasing filter | 4.0 | — |
+| box + cosine filter | — | 11.93 |
+| cosine filter only | — | 35.33 |
+| all three filters | 4.58 | 14.22 |
+| box only, ALN architecture | 5.56 | 9.50 |
+| static Smagorinsky, $C=0.18$ | 16.6 | — |
+| [sigma model](/methods/sigma-model.md), $C=1.3$ | 13.34 | — |
+
+A dash marks a run not reported. Findings:
+
+- *Single-filter networks are fragile.* The box-only network is
+  under-dissipative with high-wavenumber pile-up, and its error changes
+  markedly with the architecture, which the authors read as layer
+  normalization "masking its lack of robust physical knowledge" (§5.1.2,
+  §6.2.2). Two-filter results barely move (4.0 against 3.93 with ALN).
+- *Simple inputs make the variants consistent* (SSE 3.68–4.98 and
+  7.56–15.84 in the two solvers), and two-filter training "will often do
+  no worse than training on one filter" (§5.1.3, §5.2.3).
+- *One network, two solvers.* The three-filter network runs in both
+  solvers without retraining and beats the box-only network in both; it
+  is not optimal because it was also trained on a filter that does not
+  apply to the compact solver (§5.2.1, §8).
+- *Coarser grid and channel.* On $32^3$ two-filter training again
+  corrects the box-only network. In wall-modelled channel LES at
+  $Re_\tau=1000$ ($128\times96\times32$, the wall model of Bou-Zeid et
+  al. as cited) the box-only complex network "completely fails" with
+  unphysical spectra, and the box + dealiasing network gives mean
+  velocity and Reynolds stresses "oftentimes" more accurate than the
+  sigma model (§6.1–6.2).
+- *Baselines.* The static Smagorinsky model and the sigma model are
+  over-dissipative in isotropic turbulence; they reproduce the
+  longitudinal flatness better than the networks, which the authors
+  attribute to over-dissipation, while the networks reproduce the PDF of
+  resolved enstrophy production far better (§5.1.1).
+
+The authors limit the conclusion to two high-order solvers; lower-order
+solvers remain to be tested (§7–8).
+
 ## Energy-conserving closure with SGS variables (van Gastelen et al. 2024)
 
 van Gastelen et al. (2024) build a closure that is stable for any network
@@ -365,6 +458,11 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 - van Gastelen et al. (2024, §3.3) build translation equivariance into
   the convolutional operators and enforce momentum and energy
   conservation exactly (to the time-integration error, §6).
+- Wu & Lele (2026, §3.1) feed invariants and magnitudes of the resolved
+  velocity gradient and return the coefficients of a tensor basis, so the
+  tensorial structure comes from the basis; they replace the
+  tensor-basis invariants by the velocity-gradient invariants because the
+  former are costly.
 
 ## Cost against the dynamic model
 
@@ -396,9 +494,9 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
   fourth-order finite-difference channel (Kang et al. 2023, §2–§3). The
   cost ratios are relative to dynamic Smagorinsky with test filtering in
   the authors' solvers; no static model is timed.
-- **Comparisons are not on common cases.** The four models of the first
-  table are tested on isotropic turbulence, channel flow and bluff-body
-  wakes, with different solvers and references; no source compares
+- **Comparisons are not on common cases.** The models of the first table
+  are tested on isotropic turbulence, channel flow, bluff-body wakes and
+  1D model equations, with different solvers and references; no source compares
   supervised, RL and adjoint training of the same network on one case
   except Sirignano & MacArt (2023, §5), who compare supervised and adjoint
   training (see
@@ -417,6 +515,19 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
   time-integration error *(compiler check, not in the sources)*.
 - **1D only.** The energy-conserving closure is demonstrated on Burgers
   and KdV, not on Navier–Stokes turbulence (van Gastelen et al. 2024, §5).
+- **Scope and printed slips of Wu & Lele (2026).** The Smagorinsky
+  coefficient 0.18 is not said to be $C_s$ rather than another
+  convention, and no SSE is printed for the baselines in the compact
+  solver. Table 1 names the local-normalization two-filter networks
+  "ALN-L" and Tables 3–4 "Original-L"; the conclusion (§8) reverses the
+  one-filter/two-filter comparison of the abstract and §4. The version
+  read is the post-review arXiv v2, not the journal typesetting.
+- **Deep-learning closures as seen from equation discovery.**
+  [Jakhar et al. (2026)](/sources/jakhar-2026.md) (arXiv v3, p. 1) recall
+  criticisms of deep-learning SGS closures (large training data, lack of
+  interpretability, poor out-of-distribution generalization) and obtain
+  their closure from 100 filtered-DNS snapshots by sparse regression (see
+  [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
 - **Notation.** Kang et al. write the third filter level of their
   two-parameter models as a tilde, which this bundle reserves for the
   Favre filter. Sirignano & MacArt write the adjoint variables with a
@@ -437,3 +548,5 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1, §3.1–3.2 (training input, pipeline, clipping); §6.1, Fig. 22; §7, Figs. 28–29 (Reynolds-number transfer, CNN grid dependence, pointwise inputs); App. C.
 - [Li et al. (2024)](/sources/li-2024.md) — arXiv v2: §I, §IV–V (neural operator replacing the LES solver).
 - [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §2.5, §3 (physics-informed neural operator replacing the LES solver).
+- [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1, §2.1, §3–3.3, Eqs. 3.3–3.9, Figs. 1–4, Table 1 (model, filters, data); §5–6, Tables 3–4, Figs. 5–20 (a posteriori results); §7–8.
+- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: p. 1 (criticisms of deep-learning closures recalled).

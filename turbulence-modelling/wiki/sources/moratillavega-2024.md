@@ -9,7 +9,7 @@ year: 2024
 venue: "Flow Turbul. Combust. 113:667–693"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Flow_Turbulence_and_Combustion_Moratilla-Vega_Installed_Jet_Noise_Analysis_Using_a_Coupled_LESAPE_High-Ord.pdf"
 tags: [les, aeroacoustics, numerical-dissipation, dg]
-timestamp: 2026-10-26T07:41:00Z
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Summary
@@ -20,8 +20,8 @@ aeroacoustics method to installed jet noise. A cold, single-stream round jet
 $D_j$) runs isolated and below a flat plate whose trailing edge lies $4D_j$
 downstream of the nozzle exit and $1D_j$ from the jet axis, after the ISVR
 experiments of Lawrence. The flow step is a compressible
-[large-eddy simulation](/definitions/large-eddy-simulation.md) with the σ
-subgrid model of Nicoud et al. (2011). It uses a second-order cell-vertex
+[large-eddy simulation](/definitions/large-eddy-simulation.md) with the
+[σ subgrid model](/methods/sigma-model.md) of Nicoud et al. (2011). It uses a second-order cell-vertex
 finite-volume code with a Roe-type flux whose upwind dissipation is scaled by a
 smoothing parameter of 0.3–1. The parameter is lowered in the source region
 and raised near the boundaries, where the dissipation damps outgoing waves.
@@ -59,7 +59,7 @@ the issue year is 2024.
 # Key claims
 
 1. A two-step hybrid method is used: the LES produces the noise sources and the APE propagate them to the far field, with one-way coupling (§2, §2.3). **Stated**
-2. The LES uses the σ model, $\mu_t=(C_m\Delta)^2\mathcal D_m$, $\mathcal D_m=\sigma_3(\sigma_1-\sigma_2)(\sigma_2-\sigma_3)/\sigma_1^2$ with $\sigma_1\ge\sigma_2\ge\sigma_3\ge0$ the singular values of the resolved velocity-gradient tensor; neither $C_m$ nor $\Delta$ is printed (§2.1, Eqs. 4–5). **Stated**
+2. The LES uses the σ model, $\mu_t=(C_\sigma\Delta)^2\mathcal D_\sigma$, $\mathcal D_\sigma=\varsigma_3(\varsigma_1-\varsigma_2)(\varsigma_2-\varsigma_3)/\varsigma_1^2$ with $\varsigma_1\ge\varsigma_2\ge\varsigma_3\ge0$ the singular values of the resolved velocity-gradient tensor; neither $C_\sigma$ nor $\Delta$ is printed (§2.1, Eqs. 4–5). **Stated**
 3. The LES flux is a second-order Roe-type scheme, $F_{ij}=\tfrac12[F(Q_i)+F(Q_j)]-\tfrac12\epsilon|A_{ij}|[L_j(Q)-L_i(Q)]$ with $L$ a pseudo-Laplacian; $\epsilon$ ranges 0.3–1 in this study, smaller in the near-field source region and larger near boundaries to limit reflections; time integration is a four-stage Runge–Kutta scheme (§2.1, Eq. 6). **Stated**
 4. APE-4 rather than APE-2 is used "since the case considered is a compressible flow problem" (§2.2). **Stated**
 5. In isothermal flows with strong vortical motion the vortex-sound source $-(\boldsymbol\omega\times\boldsymbol u)'$ is "several orders of magnitude greater than the other terms combined" (citing Gröschel et al. 2008), so only this source is kept (§2.2). **Stated** (cited)
@@ -108,8 +108,8 @@ the issue year is 2024.
 | $\tilde\tau_{ij}$ | $\sigma_{ij}$ (resolved viscous stress) | **collision:** not the SGS stress |
 | $\mathcal L_j$ | (subgrid energy-flux term, undefined in the source) | |
 | $\mu_{SGS}$ | $\mu_t$ | |
-| $C_m$, $\Delta$ | (σ-model constant), $\Delta$ | not printed |
-| $\sigma_1\ge\sigma_2\ge\sigma_3$, $\mathcal D_m$ | (singular values of the velocity gradient, σ-model operator; page-local) | **collision:** not the viscous stress $\sigma_{ij}$ |
+| $C_m$, $\Delta$ | $C_\sigma$, $\Delta$ | σ-model constant (page-local, as on [sigma model](/methods/sigma-model.md)); not printed |
+| $\sigma_1\ge\sigma_2\ge\sigma_3$, $\mathcal D_m$ | $\varsigma_1\ge\varsigma_2\ge\varsigma_3$, $\mathcal D_\sigma$ | singular values of the velocity gradient, σ-model operator (page-local, as on the sigma-model page); **collision:** not the viscous stress $\sigma_{ij}$ |
 | $\epsilon$, $L(\cdot)$, $\lvert A_{ij}\rvert$ | (smoothing parameter, pseudo-Laplacian, Roe matrix) | not a dissipation rate |
 | $p'$, $\mathbf u'$ | (acoustic pressure and velocity) | **collision:** the prime is an acoustic perturbation about the time average |
 | $q_c$, $\mathbf q_m$, $L'$, $L'_r$ | (APE sources, Lamb-vector perturbation, its radial part) | |
@@ -142,11 +142,12 @@ and recorded as printed. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26), cited further in chunk 6. This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunks 6–7. This source is cited on:
 
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)
 - [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)
+- [Sigma model](/methods/sigma-model.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Nektar++](/software/nektar-plus-plus.md)

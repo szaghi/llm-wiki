@@ -5,7 +5,7 @@ description: "The LD2 scheme pairs an energy-preserving central flux and gradien
 status: established
 aliases: [LD2, LD2C, LD2-Compressible, low-dissipation low-dispersion scheme, Kok flux with JST dissipation, OPT6, optimized upwind scheme, approximate dispersion relation]
 tags: [numerical-dissipation, hybrid-rans-les, des, compressible, kinetic-energy-preserving]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Low-dissipation low-dispersion schemes with shock sensor
@@ -117,7 +117,7 @@ the authors state distinguishes shocks from compressible turbulence
   The reference scheme gives too steep a spectral decay at high wavenumbers on
   all three grids; LD2 with $\kappa^{(4)}=1/512$ or $1/1024$ matches the
   experimental spectra, $1/512$ being slightly more dissipative. With LD2 the
-  standard [DES](/methods/detached-eddy-simulation.md) constants work without
+  [DES](/methods/detached-eddy-simulation.md) constants work without
   recalibration ($C_{DES}=0.65$ for SA, $0.61$ for the SST $k$-$\varepsilon$
   branch; $0.78$ for the $k$-$\omega$ branch gives nearly identical results,
   not shown). The authors conclude that the convective numerical dissipation
@@ -179,8 +179,9 @@ others for real-gas (transcritical) flow, on second-order centred
 differences (§3.2, Table 2; §4):
 
 - **Implicit compact filtering** of the divergence form, the fourth-order
-  filter of Lele and of Visbal & Gaitonde with $\alpha_f=0.495$ (page-local
-  filter parameter) applied to every conservative variable at every
+  filter of Lele and of Visbal & Gaitonde with $\alpha_{\mathrm{cf}}=0.495$
+  (page-local filter parameter, not the modal-filter strength $\alpha_f$ of
+  registry §11) applied to every conservative variable at every
   Runge–Kutta stage (Eq. 29): it "does not suppress" the spurious pressure
   oscillations at a real-gas density interface (§4.1.2), and filtering is
   cited as able to amplify them through thermodynamic non-linearities (§1);
@@ -238,6 +239,21 @@ of insufficient resolution (§3.3, §4). The central scheme compared is
 second order and the upwind one sixth order, and no high-order central
 scheme is tested (§2.3–2.4).
 
+**A nonlinear route instead of optimized linear coefficients.**
+[Luo & Wu (2021)](/sources/luo-2021-b.md), §6, contrast one route to
+high resolution, optimizing the coefficients of a linear scheme (Tam & Webb's
+dispersion-relation-preserving schemes, optimized WENO of Wang & Chen, as
+recalled), with designing the nonlinear weights of a WENO scheme so that the
+least smooth substencil is weighted above its ideal value, which offsets
+part of the dissipation of the underlying linear scheme. They assess it with
+the same approximate dispersion relation of Pirozzoli, computed numerically
+for the nonlinear scheme, whose imaginary part turns positive (negative
+dissipation) for an over-strong weighting (§3.1, Fig. 1). Their fifth-order
+WENO-Z+M is reported better than the linear fifth-order upwind scheme over
+"a much broader wavenumber range" (§4, Fig. 4); its formulation and the
+shock tests, none of them turbulent, are on
+[WENO and hybrid schemes](/methods/weno-scheme.md).
+
 Bernades et al. distinguish *numerical* dissipation (an undesired property
 of the method) from *artificial* dissipation (deliberately added) (§1,
 footnote 1); in these terms the JST matrix dissipation of LD2 and LD2C is
@@ -283,4 +299,5 @@ artificial dissipation *(compiler check, not in the sources)*.
 
 - [Bernades et al. (2023)](/sources/bernades-2023.md) — §1, footnote 1 (numerical against artificial dissipation; filtering); §3.2, Eq. (29), Table 2 (compact filter, hybrid); §4.1–4.2.
 - [Wang et al. (2024)](/sources/wang-2024.md) — §2.3–2.5, Eqs. (5)–(13), Fig. 1, Table 1 (split forms, OPT6, Roe flux, approximate dispersion relation); §3.2, Figs. 3–4 (channel); §3.3, Table 2, Figs. 5–6 (periodic hill); §4–5 (30P30N DDES, recommendation).
+- [Luo & Wu (2021)](/sources/luo-2021-b.md) — §3.1, Fig. 1; §4, Fig. 4 (approximate dispersion relation of WENO-Z+ and WENO-Z+M against UD5); §6 (nonlinear weighting against optimized linear coefficients).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §2, Eqs. (1)–(8) (M-Edge discretization, Kok flux, extrapolation, JST dissipation); §2.2.2, Eqs. (9)–(11) (preconditioning); §2.2.3, Eqs. (12)–(15) (Jameson and Ducros sensors); §2.3, Fig. 1 (dispersion/dissipation analysis, choice of $a$); Table 1; §4.1, Eq. (22), Fig. 2 (Sod); §4.2, Fig. 3 (decaying isotropic turbulence); §4.3, Table 2, Figs. 4–6 (channel); §4.4, Figs. 7–10 (base flow); §5.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Wall-modelled large-eddy simulation"
-description: "LES that resolves the outer-layer eddies and replaces the near-wall viscous region by a wall-stress model: its definition and cost advantage, the grid-dependent error scaling of mean quantities, the dominance of SGS-model errors, non-monotonic grid convergence, the insufficiency of wall-mesh criteria, grid adaptation, immersed-boundary coupling, and demonstrations on aircraft, fan stages and separated flows."
+description: "LES that resolves the outer-layer eddies and replaces the near-wall viscous region by a wall-stress model: its definition and cost advantage, the grid-dependent error scaling of mean quantities, the dominance of SGS-model errors, non-monotonic grid convergence, the insufficiency of wall-mesh criteria, grid adaptation, immersed-boundary coupling and wall-slip models, and demonstrations on aircraft, fan stages and separated flows."
 status: established
-aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions]
+aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions, IBMLES, immersed boundary-modelled LES]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-26T20:49:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -37,7 +37,7 @@ latter into models based on the law of the wall, on the full unsteady
 three-dimensional RANS equations, and on wall-normal diffusion only (ODEs),
 plus the coefficient-free dynamic slip model. The modelled region is the inner
 layer up to about 10 % of $\delta$ ([Hoy & Bermejo-Moreno 2022](/sources/hoy-2022.md),
-§1, as recalled) or $y/\delta\lesssim0.15$ ([Gillyns et al. 2022](/sources/gillyns-2022.md),
+§1, as they cite it) or $y/\delta\lesssim0.15$ ([Gillyns et al. 2022](/sources/gillyns-2022.md),
 §1), the outer region being driven by the pressure gradient and by the stress
 propagated from the wall.
 
@@ -50,6 +50,7 @@ propagated from the wall.
 | Inverse velocity transformation | incompressible ODE mapped to compressible profiles plus an algebraic temperature–velocity relation | [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md) |
 | Learned (supervised or reinforcement learning) | network maps LES state to $\tau_w$ or to its update | [machine-learning wall models](/methods/machine-learning-wall-model.md) |
 | Building-block flow | classifier over seven canonical flows blends per-flow learned predictions of $\tau_w$, with a confidence score | [building-block-flow wall model](/methods/building-block-flow-wall-model.md) |
+| Wall slip (volume filtering) | the filtered velocity at the wall is modelled by a filtered van Driest profile or a slip length; the stress follows | section below |
 
 **Not every "wall model" is a WMLES wall model.** [Chen et al. (2024)](/sources/chen-2024.md)
 call their compressible [Baldwin–Lomax model](/methods/baldwin-lomax-model.md)
@@ -63,6 +64,9 @@ velocity-transformation and temperature–velocity combination of the
 equilibrium wall function as the near-wall closure of steady RANS on an
 [immersed boundary](/methods/immersed-boundary-method.md), with no LES
 region; they name a hybrid RANS/LES extension as future work (§7).
+[Ghidoni et al. (2026)](/sources/ghidoni-2026.md) (§3.3) borrow the WMLES
+choice of sampling point, away from the wall inside the first element, for
+a steady RANS [wall function](/methods/rans-wall-function.md).
 
 [Cai et al. (2022)](/sources/cai-2022.md) (§I, §II.C.1) put the motivation
 in the same terms: without a wall model the no-slip condition requires grids
@@ -179,7 +183,72 @@ Fowler et al. (2022, §1) and [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md)
 (§I, §II.A) also recall zonal two-layer models on a separate RANS mesh (whose
 cost can approach wall-resolved LES), the integral wall model of Yang et al.
 (2015), the dynamic slip wall model of Bose & Moin (2014) and Bae et al. (2019),
-and a POD-inspired model; none is formulated in the sources read.
+and a POD-inspired model; none of these is formulated in those sources. The
+slip approach is formulated by Rickard & Kasbaoui (2026), next section.
+
+## Wall-slip models with volume filtering
+
+[Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) derive a wall model
+for [immersed-boundary](/methods/immersed-boundary-method.md) LES from the
+filtering itself, which they name immersed boundary-modelled LES (IBMLES).
+The incompressible equations are convolved with a compact, symmetric kernel
+of support width $\Delta_f$ that is truncated by the fluid indicator and,
+unlike the treatment of Bose & Moin (2014) as they recall it, not rescaled
+near the wall; the deficit is carried by the fluid volume fraction
+$\varphi_f$ (1/2 at a planar wall), and filtered quantities extend
+$\Delta_f/2$ into the solid (§2.1; page-local $\Delta_f$, $\varphi_f$,
+$\varphi_{f,w}$ its wall value). Exact commutation identities turn the wall
+terms into an immersed-boundary body force and leave, besides the SGS
+stress, a closed "residual viscous stress" that is linear in the slip at the
+wall (§2.2–2.3, Eqs. 2.17–2.27). The only unclosed wall quantity is the
+filtered velocity at the wall, the slip
+$\boldsymbol u_{\mathrm{slip}}=\bar{\boldsymbol u}|_w-\boldsymbol u_w$, and
+the wall stress follows from it (Eq. 2.25), so "modelling the wall slip is
+in essence a turbulence wall model"; no slip holds only in the DNS limit
+$\Delta_f^+<1$ (§2.3).
+
+**A priori magnitudes** (§3, filtered channel DNS of Lee & Moser at
+$Re_\tau=5200$, $\Delta_f^+=50$–300, four kernels): the mean streamwise
+slip is $6.93u_\tau$ at $\Delta_f^+=50$ and $13.5u_\tau$ at 300, growing
+logarithmically; wall-normal and spanwise mean slips are negligible;
+streamwise slip fluctuations are about $1.5u_\tau$ at all widths and carry
+the near-wall streaks at small $\Delta_f$ and outer-layer structures at
+large $\Delta_f$. The residual viscous stress exceeds the filtered viscous
+stress at every width tested, and the peak SGS shear stress grows from 0.24
+to 0.57 $\tau_w$ (Figs. 6–10).
+
+**Two closures** (§4–5):
+
+- *Van Driest slip model*: the volume-filtered van Driest profile (see
+  [law of the wall](/definitions/law-of-the-wall.md)), with a fitted
+  approximation
+  $\langle u_{\mathrm{slip}}\rangle/u_\tau=\varphi_{f,w}^{-1}\big[(2\kappa)^{-1}\ln(\Delta_f^+/2)+a_0+b_0(\Delta_f^+)^{-n_0}\big]$,
+  $\kappa=0.41$, within 1 % of the exact filtered profile for
+  $\Delta_f^+\ge100$; across kernels $a_0=0.81\pm0.21$, $b_0=-67.5\pm4.5$,
+  $n_0=0.92\pm0.03$ (Eqs. 4.2–4.5, 7.1, Table 1; page-local constants).
+- *Slip-length model*: the commutation identity gives
+  $\boldsymbol u_{\mathrm{slip}}=\mathrm{diag}(\boldsymbol\ell)\,\partial\bar{\boldsymbol u}/\partial n|_w$
+  with slip lengths $\boldsymbol\ell=\varphi_{f,w}(\boldsymbol\Lambda-1)/(\partial\varphi_f/\partial n)|_w$,
+  $\boldsymbol\Lambda$ the ratio of the filtered wall gradient to the
+  gradient of the filtered velocity, which tends to one as
+  $\Delta_f\to0$ and so recovers no slip (Eqs. 4.13, 4.24). The fit
+  $\Lambda_x=1+0.251\,(\Delta_f^+)^{0.5385}$ gives
+  $\ell_x^+=0.0798\,(\Delta_f^+)^{1.5385}$ for the cosine kernel, roughly
+  $\ell_x^+\approx0.08(\Delta_f^+)^{1.5}$ for all four kernels; the
+  wall-normal and spanwise ratios are set to one (Eqs. 4.25–4.27, 7.3).
+  The derivation holds for curved (with curvature resolved by $\Delta_f$)
+  and moving walls, which the authors say the Taylor-series argument of
+  Bose & Moin does not.
+
+A dynamic slip length from the Germano identity, with a separate length per
+direction and an explicit positive root instead of a least-squares fit, is
+derived but not tested (§6; see [dynamic procedure](/methods/dynamic-procedure.md)).
+There are no a posteriori runs: the constants come from one Reynolds number,
+and rough, deforming or strongly separated walls are outside the stated
+scope (§4.2, §7). Existing SGS models, such as dynamic Smagorinsky, are
+expected to close the SGS stress (§7). The authors note, after Verzicco (as
+cited), that immersed boundaries on non-uniform grids produce spurious
+stress oscillations that corrupt the near-wall eddy viscosity (§1).
 
 ## Error scaling: WMLES as a convergence study
 
@@ -431,6 +500,21 @@ same under-resolved first cells.
   at every width, and WALE and Vreman agree well only with the two smaller
   widths (§5.3, Figs. 9–10), so the recommendation is specific to
   wall-modelled resolution.
+- **Learned SGS models under a wall model.** [Wu & Lele (2026)](/sources/wu-2026.md)
+  (§6.2, Figs. 15–20) run their [neural-network SGS models](/methods/neural-network-sgs-model.md),
+  trained on filtered isotropic and channel DNS, in WMLES of channel flow at
+  $Re_\tau=1000$ ($128\times96\times32$ points, $\Delta=16$ DNS spacings,
+  Fourier wall-parallel and sixth-order staggered wall-normal schemes, the
+  wall model of Bou-Zeid et al. as cited) without retraining. The network
+  trained on box-filtered data with complex inputs "completely fails" with
+  unphysical spectra and over-predicts the Reynolds stresses, notably
+  $R_{11}$ and $R_{33}$ (their wall-normal direction is $z$), and static
+  [Smagorinsky](/methods/smagorinsky-model.md) ($C=0.18$) piles up energy at
+  high wavenumbers, while the [sigma model](/methods/sigma-model.md)
+  ($C=1.3$) and the network trained on two filter shapes reproduce the
+  spectra; the latter's mean velocity "lines up very well" with filtered DNS
+  and its stresses are "oftentimes" the most accurate, even against sigma.
+  The SGS model, not the wall model, separates success from failure here.
 - **Element-based matching.** Duan & Wang (2024, §4, Fig. 4) place the
   exchange location of their equilibrium model on the interface between the
   first and second elements off the wall and take the data from the second
@@ -517,7 +601,7 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
   moves separation about $3\delta_0$ upstream and lengthens the separation by
   about 60 % ($L_{sep}/\delta_0\approx7.8\to12.6$; §4.3). The authors rest the
   validity of the equilibrium model in this strongly separated flow on earlier
-  work (Bermejo-Moreno et al. 2014, as recalled), not on a test here.
+  work (Bermejo-Moreno et al. 2014, as they cite it), not on a test here.
 - **Bluff body with massive separation on an immersed boundary** (Cai et al.
   2022, §III–IV): Ahmed body with 35° slant, $Re_H=7.68\times10^5$, lattice
   Boltzmann solver ProLB with the Vreman model, explicit equilibrium wall
@@ -583,7 +667,7 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
 - **Fan stage** (Lewis et al. 2023): see the section on wall-mesh criteria;
   the WMLES wall-pressure fluctuations feed Ffowcs Williams–Hawkings and
   Goldstein acoustic analogies for broadband noise (§5).
-- **Automotive, as recalled.** Delassaux et al. (2023, §1) recall a GPU
+- **Automotive, as cited by Delassaux et al.** Delassaux et al. (2023, §1) recall a GPU
   wall-function LES of the notchback DrivAer car by Menter et al. on 250 M
   and 500 M cells, with drag errors of 24 counts (SBES), 10 counts (250 M LES)
   and 2 counts (500 M LES, 1 %), and the GPU cost figures of Goc et al.
@@ -634,6 +718,24 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
   backed by a cost comparison in the source; they recall WMLES of fan stages
   by others.
 - Locators of Lozano-Durán et al. (2022) refer to the arXiv v1 preprint read, not the AIAA Journal version.
+- **WMLES against RANS for thin attached layers.** [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md)
+  (§1, Fig. 1) argue for high-order RANS rather than high-order WMLES on
+  industrial geometries: boundary layers of ships and submarines reach
+  $Re\sim10^9$, and over a full-size wing $\delta$ grows from about 1 mm at
+  the leading edge to tens of centimetres at the trailing edge, which LES,
+  needing near-isotropic cells, must follow with sub-millimetre spacings.
+  They endorse Spalart's view, as they cite it, that accurate "pure" WMLES
+  of such a wing will not be possible before 2045, and call WMLES of a thin
+  attached boundary layer "a fantastic waste of resources"; they point to
+  hybrid RANS/LES for separated regions. Their reference [5] for Spalart is
+  listed as a book by Durbin (2021).
+- Locators of Wu & Lele (2026) refer to the arXiv v2 preprint read.
+- **Printed inconsistencies of Rickard & Kasbaoui (2026).** The Fig. 6
+  caption gives the streamwise slip fluctuations as "approximately 10 % or
+  less" of the mean slip, while their $1.5u_\tau$ against $6.93u_\tau$ at
+  $\Delta_f^+=50$ is about 22 % *(compiler check, not in the sources)*; §4.1
+  states the fitted slip formula is accurate for $\Delta_f^+\ge50$, against
+  $\ge100$ in Fig. 11(b) and Eqs. (5.4), (7.1).
 - **Drag of the Ahmed body.** Against Meile et al.'s 0.279, the fine-grid
   wall-law drag of Cai et al. (2022, Table III) is closer than the
   body-fitted IDDES (0.3452) but farther than their fine no-slip case
@@ -691,3 +793,7 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
 - [Chen et al. (2024)](/sources/chen-2024.md) — §1; §2.3; §3.3.
 - [Constant et al. (2024)](/sources/constant-2024.md) — §7 (HAL author manuscript).
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — §II.B–II.D, Eqs. (7)–(14); §III.B–III.D, Tables II–IV, Figs. 1–10; §IV, Figs. 12–17; §V (arXiv v1).
+- [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §1; §2.1–2.3, Eqs. (2.6)–(2.27); §3, Figs. 6–10; §4.1–4.2, Eqs. (4.2)–(4.27), Figs. 11–13; §5, Tables 1–2; §6; §7.
+- [Wu & Lele (2026)](/sources/wu-2026.md) — §2.2; §6.2, Figs. 15–20 (arXiv v2).
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §1, Fig. 1.
+- [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §3.3.

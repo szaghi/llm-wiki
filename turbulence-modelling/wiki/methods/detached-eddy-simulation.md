@@ -5,7 +5,7 @@ description: "The single-model hybrid RANS/LES in which a RANS model's length sc
 status: established
 aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-26T15:50:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -199,9 +199,62 @@ $l_{\mathrm{RANS}}$, $\hat f_d$, $f_e$ and the IDDES grid length are not
 printed ("can be found in" Gritskevich et al.). Beside IDDES they test
 Heinz's continuous eddy simulation, whose dissipation multiplier varies
 continuously with a resolution ratio instead of switching (see
-[hybrid RANS/LES](/definitions/hybrid-rans-les.md)). In their runs the
+[continuous eddy simulation](/methods/continuous-eddy-simulation.md)). In their runs the
 RANS–LES transition is thin with IDDES and smooth with continuous eddy
 simulation (§3.2, Fig. 11).
+
+**SST-DES with $F_2$ shielding in ANSYS CFX.** Yang & Ma (2022) print the
+SST-DES of Strelets as a multiplier of the $k$-destruction,
+$\beta^*k\omega\to\beta^*k\omega\max\big(L_t/(C_{\mathrm{DES}}\Delta),1\big)$ with
+$L_t=\sqrt k/(\beta^*\omega)$ (page-local), $\Delta$ the largest cell edge and
+$C_{\mathrm{DES}}=0.61$, and its CFX form
+$\max\big(L_t(1-F_2)/(C_{\mathrm{DES}}\Delta),1\big)$, in which the SST
+function $F_2$ shields the attached boundary layer against grid-induced
+separation and modelled-stress depletion and "can offer essentially
+asymptotic shielding" ([Yang & Ma (2022)](/sources/yang-2022-b.md), §2.1,
+Eqs. 1–5). The paper calls the method DES, DES-type, hybrid DES and DDES interchangeably.
+
+### A general construction through the dissipation term
+
+Wang et al. (2021) derive DES-type models for any RANS model with a
+length-scale variable $\phi$ ($\varepsilon$, $\omega$, …) by modifying only the
+dissipation of the modelled kinetic energy
+([Wang et al. (2021)](/sources/wang-2021-l.md), §2.3, Eqs. 11–16). Writing
+the length-scale equation of homogeneous turbulence with production and
+destruction coefficients $C_{\phi1}$, $C_{\phi2}$ (page-local; for a
+"standard" $\phi$-equation $C_{\phi1}=m+nC_{\varepsilon1}$, $C_{\phi2}=m+nC_{\varepsilon2}$
+with $\phi\propto k^m\varepsilon^n$), assuming local equilibrium of
+production and dissipation and requiring the LES branch to reduce to the
+[Smagorinsky model](/methods/smagorinsky-model.md) $\nu_t=(C_s\Delta)^2\lvert\bar S\rvert$
+gives a model length proportional to $\Delta$ and
+
+$$\varepsilon=\begin{cases}k^{3/2}/(C_{\mathrm{DES}}\Delta) & \text{LES region},\\ k^{3/2}/l_{\mathrm{RANS}} & \text{RANS region},\end{cases}\qquad
+C_{\mathrm{DES}}=C_s\Big(\frac{C_{\phi1}}{C_{\ell\varepsilon}C_{\phi2}}\Big)^{3/4},$$
+
+with $C_{\ell\varepsilon}=0.09$ (page-local). With $C_s=0.18$ and the
+$\omega$-equation coefficients of SST, $(C_{\phi1},C_{\phi2})=(0.55,0.83)$ and
+$(0.44,0.92)$, the theoretical constants are $C_{\mathrm{DES},k\text{-}\omega}=0.805$
+and $C_{\mathrm{DES},k\text{-}\varepsilon}=0.630$, "with calibration values of
+0.78 and 0.61, respectively", blended by $F_1$, with
+$l_{\mathrm{RANS}}=\sqrt k/(C_\mu\omega)$ (§2.3, Eqs. 17–18). Substituting the
+printed values reproduces 0.805 and 0.630 *(compiler check, not in the
+sources)*. Because $C_{\mathrm{DES}}$ sets the effective Smagorinsky
+coefficient of the LES branch, a dynamic $C_{\mathrm{DES}}$ yields a dynamic
+Smagorinsky model there (§2.3). The authors call the argument "a rigorous
+proof"; it rests on the equilibrium and homogeneous-turbulence
+assumptions stated above.
+
+**Reynolds-stress IDDES.** Applied to the SSG/LRR-$\omega$
+[Reynolds-stress model](/methods/reynolds-stress-model.md), whose length
+scale comes from the same BSL $\omega$-equation, the construction replaces
+the isotropic dissipation tensor by $\tfrac23(k^{3/2}/l_{\mathrm{IDDES}})\delta_{ij}$
+with $k=\tfrac12R_{ii}$ and the IDDES length of Shur et al. (as in the
+blending above, with $C_w=0.15$); the theoretical constants are the same as
+for SST, $C_{\mathrm{DES,SSG}}=0.630$ and $C_{\mathrm{DES,LRR}}=0.805$, blended
+by $F_1$ (§2.3–§2.4, Eqs. 19–20). In the LES region the transported stress
+acts as the subgrid stress (§3.3, Fig. 10). The authors implement it as
+RSM-IDDES in the unstructured finite-volume solver HUNS3D and calibrate it
+with the scheme (below).
 
 ## Transitional DDES
 
@@ -325,6 +378,8 @@ The variants differ in the length $\Delta$ that caps the RANS length:
 | SA-DDES with grey-area mitigation | $\Delta_{\mathrm{SLA}}$ (below), $C_{\mathrm{DES}}=0.65$ | Carlsson et al. (2023), §3.1, §4.4 |
 | SST-DDES and transitional DDES in a cell-centred finite-volume code | $\Delta_{\mathrm{SLA}}$, $C_{\mathrm{DES}}=0.65$ | Möller et al. (2024), §II.B.1, Eq. 21 |
 | ZDES of the supersonic base flow (Simon et al.) | $\Delta_{\mathrm{vol}}$, $C_{\mathrm{DES}}=0.55$ | as recalled by Carlsson et al. (2023), §4.4 |
+| SST-DES with $F_2$ shielding (ANSYS CFX) | $\Delta_{\max}$, $C_{\mathrm{DES}}=0.61$ | Yang & Ma (2022), §2.1, Eqs. 3–5 |
+| RSM-IDDES (SSG/LRR-$\omega$) in a cell-centred finite-volume code | IDDES $\Delta=\min[\max(C_wd,C_w\Delta_{\max},\Delta_{wn}),\Delta_{\max}]$, $C_w=0.15$; $C_{\mathrm{DES}}=0.5F_1+0.3(1-F_1)$ calibrated | Wang et al. (2021), §2.4, §3.1 |
 
 Basile et al. divide by $N+1$, the number of one-dimensional degrees of
 freedom, following Lorteau et al., and take $C_{\mathrm{DES}}=0.65$ ("usually
@@ -378,6 +433,24 @@ fourth-difference dissipation coefficient of the scheme is lowered to
 dissipative on all grids; the constant is thus calibrated together with
 the scheme (see [numerical dissipation](/properties/numerical-dissipation.md)
 and [low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md)).
+
+Wang et al. (2021, §3.1, Fig. 1) calibrate RSM-IDDES on the
+Comte-Bellot–Corrsin decay ($64^3$ cells, spectra at $t^*=2.0$) with the
+adaptive-dissipation Roe scheme of their applications, which blends low
+dissipation in LES regions with stability in RANS regions and itself
+contains $C_{\mathrm{DES}}$ (App. A): $C_{\mathrm{DES,SSG}}=0.3$ and
+$C_{\mathrm{DES,LRR}}=0.5$ match the spectra, while 0.4, 0.5 and 0.61 (SSG)
+and 0.65 and 0.78 (LRR) "yield too much dissipation in the small turbulent
+scales". The calibrated values are about half of the theoretical ones; the
+authors attribute the difference to numerical dissipation and say the
+theoretical value "only provides a reference" (§2.3). With a plain Roe
+scheme whose dissipation is reduced to 5%, the same values perform better at
+high wavenumbers (App. B, Fig. B1). The direction of a correction follows,
+in their reading, from $C_s\approx C_\Delta^{-1}(1.5C_K)^{-3/4}$ (as recalled;
+page-local $C_\Delta$, $C_K$ the Kolmogorov constant): reduce
+$C_{\mathrm{DES}}$ when the inertial-range level is below experiment (§3.1).
+This agrees with Carlsson et al. that the constant is calibrated together
+with the scheme, though with lower values.
 
 ## Grid dependence and mesh adaptation
 
@@ -548,6 +621,34 @@ RANS-adapted mesh (§3.3).
   et al. used delayed DES with Farassat's linear acoustic formulation for a
   full wind turbine ([Rismondo et al. (2025)](/sources/rismondo-2025.md),
   §1; see [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)).
+- **Tandem cylinders and a launch-vehicle buffet** (Wang et al. 2021,
+  §3.2–§3.3). On the ATAAC tandem cylinders ($L=3.7D$, $M=0.1285$,
+  $Re_D=1.6\times10^5$, 11.1 million cells) RSM-IDDES and SST-IDDES give
+  "almost identical" mean $C_p$; RSM-IDDES gives better $C_p$ RMS peaks on
+  the downstream cylinder, an earlier shear-layer instability closer to the
+  PIV, and a primary shedding frequency of 176 Hz against 172 Hz for
+  SST-IDDES and 179 Hz (upstream sensor) and 180 Hz (downstream sensor)
+  measured, with sound pressure levels 114.3 and 136.8 dB against 115.6 and
+  137.6 dB (SST-IDDES) and 116.5 and 138.6 dB measured (Table 1, Figs. 4–6;
+  see [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)). On
+  the NASA Model 11 hammerhead at $M=0.81$, $Re=4.2\times10^6$ (18.5 million
+  cells), RSM-IDDES has smaller subgrid stresses in all components, an
+  earlier Kelvin–Helmholtz instability, a shorter shear layer and a smaller
+  separation bubble, and places the $C_p$ RMS peak at $x=0.58$, the position
+  estimated from experiment, against 0.62 for SST-IDDES; both overpredict
+  its magnitude, RSM-IDDES less. Both resolve more than 80% of the kinetic
+  energy along the extraction line (Figs. 9–14).
+- **Turbine tip-leakage vortex** (Yang & Ma 2022). SST-DES of one passage
+  of a transonic high-pressure turbine rotor cascade (exit isentropic Mach
+  0.95, tip gap $0.07c$, $y^+\approx1$, $\Delta t=10^{-6}$ s) resolves the
+  wandering of the tip-leakage vortex, with a single characteristic
+  frequency of about 2200 Hz upstream of breakdown, and a "spiral-type"
+  breakdown near the trailing edge promoted by the shock-enhanced adverse
+  pressure gradient (§4.1, Figs. 10–11). Mesh adequacy is argued on one grid
+  from the central/upwind blending factor, near zero in the vortex and
+  wake, and from $-5/3$ ranges in velocity spectra (§3.1, Figs. 4–5); only
+  the midspan isentropic Mach number is compared with experiment (Fig. 6).
+  See [turbine cascades](/benchmarks/turbine-cascade.md).
 - **Capsule wakes**, as recalled by Placco et al. (2023, §1). DES of
   planetary-entry capsule wakes was restricted to the near-body wake and
   disagreed with experiment in the backshell area, which the cited work
@@ -567,8 +668,9 @@ RANS-adapted mesh (§3.3).
   Neither source discusses the form further. At $r_d=1$ both readings give
   $f_d\approx0$ ($\tanh8\approx1$), so François et al.'s description does
   not decide between them *(compiler check, not in the sources)*.
-- None of the three applications of chunks 1–2 prints the DES equations in
-  full; Mozaffari et al. print none. Carlsson et al. (2023) print the DDES
+- François et al. (2022), Basile et al. (2023) and Mozaffari et al. (2022)
+  do not print the DES equations in full; Mozaffari et al. (2022) print
+  none. Carlsson et al. (2023) print the DDES
   and IDDES length scales but not $f_d$, $\hat f_d$ or $f_e$.
 - Carlsson et al. print $C_{dw}$ in their Eq. 19 and "$C_w=0.15$" below it.
   They credit their conclusion on grey-area mitigation partly to the
@@ -605,6 +707,19 @@ RANS-adapted mesh (§3.3).
   Eq. 18, $l_{\mathrm{DDES}}\le l_{\mathrm{RANS}}$, so the ratio is at least one
   wherever $l_{\mathrm{DDES}}>0$, the stronger bound their text uses
   *(compiler check, not in the sources)*.
+- Wang et al. (2021) print the subscript of the $k$-$\omega$ constant of
+  their Eq. 18 as "$C_{DES,k-\varpi}$"; they say the pressure-fluctuation
+  magnitude is captured "by both DDES within 1.8% error margin" for two
+  IDDES runs, while their Table 1 gives 114.3 dB against 116.5 dB for
+  RSM-IDDES at the upstream sensor, a difference of 1.89% *(compiler check,
+  not in the sources)*; and the text compares with "experimental data
+  (180 Hz)" where Table 1 lists 179 Hz and 180 Hz for the two sensors
+  (§3.2). The SST-IDDES values of $C_{\mathrm{DES}}$ used in their
+  comparisons are not printed.
+- Yang & Ma (2022) print a grid of $169\times155\times404$ points and "about
+  13 million" cells; the product is $1.06\times10^7$ *(compiler check, not
+  in the sources)*; the 69-layer tip-gap block is not counted separately in
+  the text.
 
 # Citations
 
@@ -628,3 +743,5 @@ RANS-adapted mesh (§3.3).
 - [Wu et al. (2025)](/sources/wu-2025.md) — §2.1, Eqs. 5–6, Fig. 2 (authors' manuscript).
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — Introduction, §2.1 (arXiv v2).
 - [Rismondo et al. (2025)](/sources/rismondo-2025.md) — §1.
+- [Wang et al. (2021)](/sources/wang-2021-l.md) — §2.3 Eqs. 11–18, §2.4 Eqs. 19–20, §3.1 Fig. 1, §3.2 Table 1 Figs. 4–6, §3.3 Figs. 9–14, App. A–B Fig. B1.
+- [Yang & Ma (2022)](/sources/yang-2022-b.md) — §2.1 Eqs. 1–5, §3.1 Figs. 4–6, §4.1 Figs. 10–11.

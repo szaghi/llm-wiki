@@ -4,7 +4,7 @@ title: "Machine-learning wall models"
 description: "Wall-stress models for wall-modelled LES learned by supervised regression, classification over building-block flows or multi-agent reinforcement learning: the published models, a posteriori behaviour from channel flow up to Re_tau = 10^10 to aircraft configurations, solver-consistent training data, the extrapolation argument, log-law preservation as the acceptance test, and cost."
 status: established
 aliases: [MLWM, ML wall model, neural-network wall model, data-driven wall model, reinforcement-learning wall model, RLWM, SciMARL wall model, BFWM]
-tags: [wall-model, wmles, machine-learning, neural-network, reinforcement-learning]
+tags: [wall-model, wmles, data-driven, neural-network, reinforcement-learning]
 timestamp: 2026-10-26T10:26:00Z
 ---
 

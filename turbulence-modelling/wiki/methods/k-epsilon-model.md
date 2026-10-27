@@ -5,7 +5,7 @@ description: "Two-equation RANS eddy-viscosity models transporting the turbulent
 status: established
 aliases: [k-epsilon, standard k-ε, Launder–Sharma k-ε, realizable k-ε, RKE, Shih k-ε, enhanced wall treatment, EWT, two-layer k-ε]
 tags: [rans, eddy-viscosity, separated-flow, boundary-layer]
-timestamp: 2026-10-26T10:25:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # k-ε models
@@ -56,6 +56,40 @@ mean quantities that acquires spurious correlations when evaluated on
 fluctuating fields inside a hybrid simulation; see
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md)
 ([Haering et al. (2022)](/sources/haering-2022.md), §II D, Eqs. 1–2).
+
+**Near-wall integration.** Elzaabalawy et al. (2023) recall that
+wall-resolved versions of the model need ad hoc damping functions near the
+wall "that increase the stiffness of the model and can present problems",
+so that wall functions are usually employed with $k$-$\varepsilon$, whereas
+the $k$-$\omega$ model integrates to the wall without damping functions but
+with $\omega\to\infty$ there
+([Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §1; see the
+[Wilcox $k$-$\omega$ page](/methods/k-omega-model.md) and
+[RANS wall functions](/methods/rans-wall-function.md)).
+
+**A resolution-dependent destruction coefficient.** In
+[continuous eddy simulation](/methods/continuous-eddy-simulation.md) the
+same model, with $C_{\varepsilon1}=1.44$, $C_{\varepsilon2}=1.92$,
+$\sigma_\varepsilon=1.3$ and no $\sigma_k$ printed (the $k$-diffusion carries
+$\nu_t$ alone), runs as a
+hybrid RANS/LES model on the filtered velocity; the $\varepsilon$
+destruction is written $C_{\varepsilon1}\alpha^*_\varepsilon\varepsilon^2/k$, with
+$\alpha^*_\varepsilon$ (page-local) equal to $C_{\varepsilon2}/C_{\varepsilon1}=1.33$
+in RANS and reduced towards one as the ratio of modelled to total length
+scale falls ([Heinz (2022)](/sources/heinz-2022.md), §2, Eqs. 1–2,
+Table 2). The time-scale form of the same coefficient, used in the
+partially integrated transport model, is consistent only for homogeneous
+flow when the transport terms carry the modelled viscosity, by Heinz's
+argument (§2–§3).
+
+**A length-scale equation in general form.** Wang et al. (2021) treat
+$k$-$\varepsilon$ and $k$-$\omega$ as members of a family with length-scale
+variable $\phi\propto k^m\varepsilon^n$ ($m=0$, $n=1$ for $k$-$\varepsilon$),
+whose homogeneous-flow production and destruction coefficients are
+$m+nC_{\varepsilon1}$ and $m+nC_{\varepsilon2}$, and derive from them the
+detached-eddy constant of each branch
+([Wang et al. (2021)](/sources/wang-2021-l.md), §2.3, Eqs. 11–12; see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)).
 
 ## The realizable model and a two-layer wall treatment
 
@@ -137,9 +171,9 @@ predicts the shear component of the anisotropy reasonably but the normal
 components "far removed" from DNS, especially near the bottom wall, and its
 anisotropy lies close to the plane-strain line of the barycentric map at
 all stations (§III C, Figs. 7–9; see [periodic hill](/benchmarks/periodic-hill.md)
-and [backward-facing step](/benchmarks/backward-facing-step.md)). The linear
-model cannot produce such normal-stress anisotropy because it ties the
-anisotropy to the strain; the non-linear correction Tang et al. learn on top
+and [backward-facing step](/benchmarks/backward-facing-step.md)). Morsbach et
+al. (2024) and Agrawal & Koutsourelakis (2024) state that a linear model ties
+the anisotropy to the strain (see the Boussinesq page); the non-linear correction Tang et al. learn on top
 of it is described on the [Boussinesq page](/definitions/boussinesq-hypothesis.md)
 and on [symbolic-regression closures](/methods/symbolic-regression-closure.md).
 They report that a converged RANS with the learned correction costs
@@ -182,7 +216,7 @@ manuscript; see [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md
   page records the form as printed.
 - Delassaux et al. call the drag agreement of both RANS models fortuitous:
   "There is no valid reason that RANS predicts a more accurate $C_d$ than
-  DDES" (§6). The agreement is therefore not evidence for the model; see
+  DDES" (§6), and do not take the agreement as evidence for the model; see
   [model-form uncertainty](/definitions/model-form-uncertainty.md).
 
 # Citations
@@ -194,3 +228,6 @@ manuscript; see [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §4.2.
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — §2.2.1 Eq. 15, §3.2, §3.4 Figs. 7–8 Table 5, App. A (arXiv v2).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §1 (HAL accepted manuscript).
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §1.
+- [Heinz (2022)](/sources/heinz-2022.md) — §2 Eqs. 1–2, Table 2, §3.
+- [Wang et al. (2021)](/sources/wang-2021-l.md) — §2.3 Eqs. 11–12.

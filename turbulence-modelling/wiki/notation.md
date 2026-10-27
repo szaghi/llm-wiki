@@ -1,10 +1,10 @@
 ---
 type: Definition
 title: "Notation registry"
-description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
+description: "Normative symbol registry of the bundle: averaging and filtering, stresses and closures, RANS, wall, element-discretization, data-driven, spectral, MHD and shared page-local symbols, with the sign and normalization conventions fixed here; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-26T15:58:00Z
+timestamp: 2026-10-26T20:52:00Z
 ---
 
 # Notation registry
@@ -207,7 +207,7 @@ that uses one still says what it means.
 | $\kappa^{(2)}$, $\kappa^{(4)}$, $\Psi_i$, $\Phi_i$ | second- and fourth-difference dissipation coefficients of JST-type artificial dissipation; Jameson pressure sensor, Ducros vorticity factor | numerical dissipation, low-dissipation low-dispersion scheme, log-layer mismatch |
 | $N_f$ | highest modal degree kept by a modal test filter | LES, Vreman model, mesh adaptation, DGSEM |
 | $\ell_\Delta$ | filter width in grid units | fractional SGS model, energy backscatter |
-| $\alpha_k$, $\beta_k$ | resolved and unresolved fractions of the turbulent kinetic energy | active model split, turbulent channel flow |
+| $\alpha_k$, $\beta_k$ | modelled (subgrid) fraction $k_{\mathrm{sgs}}/k_{\mathrm{tot}}$ and unresolved fraction $1-k_{\mathrm{res}}/k_{\mathrm{tot}}$ of the turbulent kinetic energy (equal only when the mixed resolved–subgrid terms vanish) | active model split, turbulent channel flow |
 | $m_a$ | anisotropy exponent, $l_\parallel\propto\lambda^{m_a}$ | critical balance, compressible MHD turbulence |
 | $A_\sigma$ | pre-shock average Atwood number | shock-generated turbulence, Rayleigh–Taylor mixing |
 | $R_y=d\sqrt k/\nu$ | wall-distance Reynolds number of low-Reynolds-number RANS damping | $k$-$\varepsilon$ models, $k$-$\omega$ SST |
@@ -229,7 +229,7 @@ that uses one still says what it means.
 | $\mu_b$, $\nu_b$, $P_\nu=\nu/\nu_b$, $Re_{\mathrm{bulk}}$ | dynamic and kinematic bulk viscosity; viscous Prandtl number of shear to bulk viscosity; bulk-viscous Reynolds number | bulk viscosity, bottleneck effect, compressible MHD turbulence, small-scale dynamo, numerical dissipation, high-order gas-kinetic scheme |
 | $\boldsymbol u_{\mathrm c}$, $\boldsymbol u_{\mathrm s}$, $E_{\mathrm c}(k)$, $E_{\mathrm s}(k)$ | compressive and solenoidal Helmholtz parts of the velocity and their spectra (never $\parallel$/$\perp$, which refer to the magnetic field) | bulk viscosity, bottleneck effect, compressible MHD turbulence, small-scale dynamo |
 | $\varepsilon_s$, $\varepsilon_d$ | solenoidal and dilatational parts of the viscous dissipation (on weak-wave turbulence $\varepsilon_s$ is that page's energy flux) | isotropic turbulence, artificial-viscosity shock capturing, shock-generated turbulence, bulk viscosity |
-| $\beta_\omega$, $\gamma_\omega$ | destruction and production coefficients of the SST $\omega$ equation as recalibrated in data-driven work (the source's $\theta$, $\gamma$); $\beta(\boldsymbol x)$ stays the field-inversion multiplier | $k$-$\omega$ SST, field inversion, model-form uncertainty, law of the wall, turbulent boundary layer, Reynolds-stress model ($\beta_\omega$) |
+| $\beta_\omega$, $\gamma_\omega$ | destruction and production coefficients of the $\omega$ equation ($k$-$\omega$, SST, the $\omega$ equation of Reynolds-stress models), used where a page needs a name distinct from the field-inversion multiplier $\beta(\boldsymbol x)$ or the DG blending factor $\alpha$; a page quoting a model's constant table may keep the original names | $k$-$\omega$ SST, field inversion, model-form uncertainty, law of the wall, turbulent boundary layer, Reynolds-stress model ($\beta_\omega$), $k$-$\omega$ model, RANS wall functions |
 | $g_{\tilde\nu}$ | data-assimilated multiplicative source correction of the SA equation | field inversion, model-form uncertainty, Boussinesq hypothesis, square cylinder, shock/boundary-layer interaction |
 | $b^\Delta_{ij}$, $b^R_{ij}$ | additive anisotropy correction; frozen production correction (the $k$-equation residual $R$) of data-driven RANS | Boussinesq hypothesis, symbolic-regression closures, tensor-basis neural network, model aggregation |
 | $\nu_{\mathrm{eff}}$, $\nu_{\mathrm{clip}}$ | effective viscosity of a stress projected on the resolved strain; its clipping floor | gradient model, super-resolution SGS models, numerical dissipation, spectral-element method |
@@ -238,3 +238,14 @@ that uses one still says what it means.
 | $T_E$ | large-eddy turnover time | DNS, isotropic-turbulence surrogates, a priori and a posteriori testing, multi-resolution independent simulations |
 | $\tau_\theta$ | time unit of the temporal mixing layer, $\theta_0/\Delta U$ | temporal mixing layer, neural-operator LES surrogates |
 | $c_{ax}$ | axial chord of a cascade blade | compressor cascade, laminar separation bubble, detached-eddy simulation |
+| $\varphi_f$, $\Delta_f$, $\boldsymbol\Lambda$, $\boldsymbol\ell$, $\boldsymbol u_{\mathrm{slip}}$ | fluid volume fraction, kernel width, filtered-gradient ratio, slip length and wall slip velocity of volume-filtered immersed boundaries (Rickard & Kasbaoui) | immersed boundary methods, wall-modelled LES, law of the wall, LES, turbulent channel flow |
+| $\eta_p$ | permeability of volume penalization | immersed boundary methods |
+| $k_+$, $\varepsilon_+$, $L_+$, $\tau_+$ | ratios of modelled to total turbulent kinetic energy, dissipation, length and time scale of continuous eddy simulation and PITM (not wall units; not the $\alpha_k$, $\beta_k$ above, whose total energy is defined differently) | continuous eddy simulation, hybrid RANS/LES, periodic hill, PANS |
+| $\beta_{\mathrm{CES}}$, $\psi_\beta$ | coefficient and factor of the CES modification of the SST destruction term | continuous eddy simulation, hybrid RANS/LES |
+| $\mu_t^{\mathrm{bl}}$ | wall-distance-blended eddy viscosity of a hybrid RANS/LES (not $\nu_t^{\mathrm{hyb}}$ of constrained LES) | flamelet-based tabulated chemistry, hybrid RANS/LES |
+| $\phi^{\ln}$ | logarithmic mean of a two-point flux | entropy conservation, kinetic-energy preservation |
+| $\mathrm{IS}_k$, $a_k$, $\mathsf w_k$ | smoothness indicator, unnormalized and normalized weight of WENO stencil $k$ (not $\alpha_k$, $\beta_k$ above) | WENO schemes |
+| $A_{\mathrm{pl}}$, $m_{\mathrm{pl}}$, $y_1^+$ | constants of a power-law wall function; first-element height in wall units | RANS wall functions, $k$-$\omega$ model, DGSEM |
+| $\varsigma_i$, $C_\sigma$, $\mathcal D_\sigma$ | singular values of the velocity gradient, constant and differential operator of the $\sigma$ model | sigma model, neural-network SGS models |
+| $P_A$, $Q_A$, $R_A$ | invariants of the resolved velocity-gradient tensor | neural-network SGS models, tensor-basis neural network |
+| $t_{\mathrm{run}}$ | run length in flow-through times | grid-point requirements, boundary-layer-conforming grids |

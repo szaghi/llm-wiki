@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-26T20:50:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -78,6 +78,8 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Wang et al. (2023c)](/sources/wang-2023-c.md), §II.A, Eq. (12) | DSM (Lilly's least-squares form) and a two-coefficient dynamic mixed model, baselines in isotropic turbulence and a temporal mixing layer, pseudo-spectral | Gaussian, $\hat\Delta=2\Delta$; average over homogeneous directions |
 | [Domaradzki (2024)](/sources/domaradzki-2024.md), §3.3, Eqs. (3.4)–(3.7) | identity in energy form, applied to the coefficient of the [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md) | the model's own graded filter; local and domain average |
 | [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md), §2.4, §3.3.2 | DSM of the reference LES (LESOCC, Breuer et al.) of the periodic hill, as cited there | not printed |
+| [Brillon & Nadarajah (2026)](/sources/brillon-2026.md), §2.6.4, Eqs. (53)–(58); §3.1.8 | DSM in nonlinearly stable flux reconstruction, with the low-Reynolds-number correction of Meyers & Sagaut; coefficient written $C_D$ in $\nu_t=C_D\Delta^2\lvert\bar S\rvert$, i.e. $C_D=C_s^2$ | modal test filter to degree 3 at $N=5$, width $V^{1/3}/4$ against $\Delta=V^{1/3}/6$ ($V$ the element volume), so $\hat\Delta/\Delta=1.5$ *(compiler check, not in the sources)*; element averages of numerator and denominator; clipped (see Qualifications) |
+| [Jakhar et al. (2026)](/sources/jakhar-2026.md), App. D | DSM (Germano et al., cited) and a dynamic Leith model, baselines in forced two-dimensional turbulence | not printed; "positive clipping" enforces $\nu_t\ge0$ |
 | [Li et al. (2024)](/sources/li-2024.md), §II B, Eqs. (7)–(11) | DSM (Lilly's least squares) and a two-coefficient dynamic mixed model, baselines of a neural-operator surrogate in forced isotropic turbulence and a temporal mixing layer, pseudo-spectral | test filter $\hat\Delta=2\Delta$, and a second filter of width $4\Delta$ for the mixed model's structural term; average over the whole domain, so the coefficients are spatially uniform at each time |
 
 Fowler et al. (2022, §4.2) borrow the Lagrangian averaging of the dynamic
@@ -188,7 +190,7 @@ filter-width question.
   $Re_\tau=395$; the Kármán-constant error is 7% (Agrawal et al. 2022,
   §VII.D, Figs. 8, 10). Lozano-Durán et al. (2022, §IV.B, App. B) calibrate
   the mean-velocity error of charLES WMLES with DSM at
-  $\varepsilon_u\approx0.08\,\Delta/\delta$ and observe a non-monotonic
+  $e_u\approx0.08\,\Delta/\delta$ and observe a non-monotonic
   convergence around $\Delta/\delta\approx0.03$–$0.05$ (see
   [wall-modelled LES](/methods/wall-modelled-les.md)).
 - **Finite-element LES** (Prakash et al. 2022, §III.B, Table 4, Figs. 4–10).
@@ -380,6 +382,32 @@ filter-width question.
   stably by modelling the subgrid energy, the route their own closure
   takes (see [energy backscatter](/definitions/energy-backscatter.md)).
 
+- **Not needed on an entropy-stable baseline.** In implicitly filtered LES
+  of the Taylor–Green vortex at $Re=1600$ with nonlinearly stable
+  [flux reconstruction](/methods/flux-reconstruction.md) ($96^3$ degrees
+  of freedom, $N=5$), DSM, like the static Smagorinsky variants, lowers the
+  peak enstrophy and removes energy at wavenumbers 25–40, where the
+  dissipation-free scheme already has a deficit; the authors recommend none
+  of these models for that scheme ([Brillon & Nadarajah 2026](/sources/brillon-2026.md),
+  §3.1.8, Fig. 19; see [Smagorinsky model](/methods/smagorinsky-model.md)).
+- **Two-dimensional turbulence** ([Jakhar et al. 2026](/sources/jakhar-2026.md),
+  Fig. 2, App. D). The dynamic Leith model takes
+  $\nu_t=(C_l\Delta)^3\lvert\nabla\bar\omega_z\rvert$ ($C_l$ page-local,
+  $\bar\omega_z$ the filtered out-of-plane vorticity, as on the Source page) with $C_l$ computed
+  dynamically. A priori, over four cases of forced two-dimensional
+  turbulence, the ratio of the domain-averaged interscale energy transfer
+  to that of filtered DNS is $-28.48\pm15.38$ for DSM and $-6.91\pm2.73$ for
+  dynamic Leith, against $-62.24\pm37.80$ for static Smagorinsky; the
+  ratios for the enstrophy transfer are $-1.49\pm0.45$ and $-0.37\pm0.06$
+  against $-3.22\pm1.18$. The dynamic forms give ratios of smaller magnitude but keep the
+  sign of a purely diffusive closure (see
+  [energy backscatter](/definitions/energy-backscatter.md)).
+- **Clipping as a reason to prefer another baseline.** [Wu & Lele (2026)](/sources/wu-2026.md)
+  (§5.1) choose the [Sigma model](/methods/sigma-model.md) rather than DSM
+  as the reference of their learned closures, because the Sigma coefficient
+  "does not require clipping for channel flow", whereas DSM "may need
+  clipping" (Meneveau et al. 1996, as cited).
+
 ## Dynamic wall models (inline)
 
 [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) (Introduction, p. 2)
@@ -394,6 +422,24 @@ incompressible solvers. This motivates their
 whose states they argue "do not depend heavily on numerics or SGS models,
 unlike filtered velocities or eddy viscosity values required in the dynamic
 model" (p. 10).
+
+[Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) (§6, Eqs. 6.1–6.9)
+derive a dynamic slip length for their volume-filtered
+[immersed-boundary](/methods/immersed-boundary-method.md) wall-modelled LES
+from the Germano identity, with a test filter of the same kernel type and
+width $\hat\Delta>\Delta$. They assume that the slip relation (wall slip
+velocity equal to a slip length times the wall-normal gradient of the
+filtered velocity) holds instantaneously at both filter levels, and that
+for a flat wall the slip length scales as
+$(\hat\Delta/\Delta)^{n_1+1}$ between the levels, with $n_1\approx0.53$
+the exponent of their a priori fit (page-local). The wall-parallel normal
+component of the identity then gives a quadratic for the slip length,
+solved explicitly by its positive root, with a separate slip length per
+direction. They contrast this with the dynamic slip model of Bose & Moin
+(cited), which assumes a linear dependence on the width ratio, one slip
+length for all directions and a least-squares solution. The procedure is
+proposed but not tested. The slip model itself is on
+[wall-modelled LES](/methods/wall-modelled-les.md).
 
 ## Extension to a coefficient tensor
 
@@ -431,6 +477,22 @@ squares from a 6×4 system; see the
   only with $-2C_1\Delta^2\lvert\bar S\rvert\bar S_{ij}$ in the model. The
   printed Eq. (9) is therefore off by a factor $-2$ *(compiler check, not
   in the sources)*.
+- Brillon & Nadarajah (2026, arXiv v1) print two different clippings:
+  $C_D\in[0,C_S^2]$ with $C_S=0.10$, i.e. an upper bound of 0.01 (§2.6.4),
+  and a coefficient "clipped at $C_{max}=0.1$ so that it is never more
+  dissipative than the classical Smagorinsky model" (§3.1.8). They print
+  $C_D=-\tfrac12\langle L_{ij}M_{ij}\rangle_e/\langle M_{ij}M_{ij}\rangle_e$
+  (Eq. 54, $\langle\cdot\rangle_e$ the element average) with $L_{ij}$ in the
+  registry sign and
+  $M_{ij}=\Delta^2\widehat{\lvert\bar S\rvert\bar S^d_{ij}}-\hat\Delta^2\lvert\hat{\bar S}\rvert\hat{\bar S}^d_{ij}$,
+  which is $\Delta^2$ times the $M_{ij}$ of this page; the identity above
+  then gives $C_D=+\tfrac12\langle L_{ij}M_{ij}\rangle/\langle M_{ij}M_{ij}\rangle$,
+  so the printed minus sign is inconsistent with the printed $L_{ij}$ and
+  $M_{ij}$ *(compiler check, not in the sources)*. They describe the test
+  filter as "similar to" their modal high-pass filter (§2.6.4) but also as
+  a Galerkin projection to degree 3 (§3.1.8), which is a low-pass
+  operation, and their test-filter width is larger than $\Delta$; the table
+  above follows the low-pass reading.
 
 # Citations
 
@@ -462,3 +524,7 @@ squares from a 6×4 system; see the
 - [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §2.4, Table 1; §3.3.2.
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — §1.
 - [Li et al. (2024)](/sources/li-2024.md) — arXiv v2: §II B, Eqs. (7)–(11); §V A 2, Figs. 6–10; §V B 2, Figs. 16–21.
+- [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv v1: §2.6.4, Eqs. (53)–(58); §3.1.8, Fig. 19.
+- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: Fig. 2; App. D.
+- [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §5.1.
+- [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §6, Eqs. (6.1)–(6.9).

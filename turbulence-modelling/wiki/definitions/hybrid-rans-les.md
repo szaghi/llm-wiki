@@ -5,7 +5,7 @@ description: "Scale-resolving approaches that model all turbulence with RANS in 
 status: established
 aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-26T15:50:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Hybrid RANS/LES
@@ -99,6 +99,19 @@ for the long integration times needed, and that the experiment they compute
 had been simulated with a dynamic hybrid RANS/LES by Zope et al.
 ([Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md), §1).
 
+Elzaabalawy et al. (2023) argue from the same cost picture that RANS cannot
+be dropped: thin attached boundary layers at Reynolds numbers up to $10^9$
+(ships, submarines) and Spalart's estimate, as recalled, that wall-modelled
+LES of a full wing will not be possible before 2045 make RANS and hybrid
+RANS/LES indispensable, with RANS kept in attached layers and a seamless
+RANS/LES hybridization for separation; "it is unrealistic to discard RANS
+equations if one wishes to extend high-order accurate schemes to industrial
+applications" ([Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md),
+§1, Fig. 1). Yang & Ma (2022) give the same motivation for a
+turbomachinery passage: RANS in attached boundary layers, LES away from them,
+and grid savings at high Reynolds number
+([Yang & Ma (2022)](/sources/yang-2022-b.md), §1).
+
 ## How hybrids operate
 
 Haering et al. (2022, §I) sort HRL methods into three modes:
@@ -142,7 +155,60 @@ sources)*; Basile et al. (2023) force RANS inside a jet nozzle
 and François et al. (2022) in the core flow of a fan stage
 ([Basile et al. (2023)](/sources/basile-2023.md), §2.2).
 
+**Wall-distance blending of one transported viscosity.** Tang et al. (2022)
+use an interfaced two-model hybrid of the second kind in a single transport
+equation: the [Spalart–Allmaras](/methods/spalart-allmaras-model.md) equation
+near the wall and the one-equation Yoshizawa subgrid-energy model, rewritten
+as a transport equation for the eddy viscosity by substituting
+$k_{\mathrm{sgs}}=\nu_t^2/(C_\mu^2\Delta^2)$, are blended term by term into
+one equation for $\tilde\nu$ with a function $F$ of the wall distance alone
+($F=1$ below $y_{\mathrm{RANS}}$, $F=0$ above $y_{\mathrm{LES}}$, a
+hyperbolic-tangent ramp between, constants $C_{f1}=2.0$, $C_{f2}=0.2$),
+after Wang et al. and Sánchez-Rocha & Menon as recalled
+([Tang et al. (2022)](/sources/tang-2022.md), §2.1, Eqs. 1–9; page-local
+$F$, $y_{\mathrm{RANS}}$, $y_{\mathrm{LES}}$). The RANS layer is "quite
+thin", $y_{\mathrm{RANS}}$ about 10–20% of the boundary-layer thickness; the
+SA damping $f_{v1}$ is switched off in the LES region through
+$\chi^3/(\chi^3+F^{20}c_{v1}^3)$, "for the sake of fast transition"; the
+subgrid constants are $C_\mu=0.02075$, $C_d=1.0$, $Pr_t=0.9$, and the scalar
+fluxes use the blended viscosity
+$\mu_t^{\mathrm{bl}}=F\mu_t^{\mathrm{RANS}}+(1-F)\mu_t^{\mathrm{LES}}$ (Eqs. 9, 14;
+page-local $\mu_t^{\mathrm{bl}}$, $\mu_t^{\mathrm{RANS}}$, $\mu_t^{\mathrm{LES}}$, a
+wall-distance blend, not the constrained-LES $\nu_t^{\mathrm{hyb}}$ of registry
+§11 below). The Yoshizawa part also carries terms from a spatially varying
+filter width (Eq. 4). The interface height is prescribed by the wall
+distance, so in Haering et al.'s terms the switch is interfaced, not
+unified *(compiler check, not in the sources)*.
+
+**Bridging in the dissipation term.** Wang et al. (2021) give a general
+construction of DES-type hybrids for any RANS model with a length-scale
+equation: only the dissipation of the modelled kinetic energy is modified,
+$\varepsilon=k^{3/2}/l$ with $l$ the RANS length in the RANS region and
+$C_{DES}\Delta$ in the LES region, which returns the RANS model in the RANS
+region and the [Smagorinsky model](/methods/smagorinsky-model.md) in the LES
+region under local equilibrium; the construction yields a theoretical value
+of $C_{DES}$ from the coefficients of the length-scale equation
+([Wang et al. (2021)](/sources/wang-2021-l.md), §2.3, Eqs. 11–16; details on
+the [DES page](/methods/detached-eddy-simulation.md)). They list PANS, PITM,
+DES and zonal DES as the main hybrid strategies (§1).
+
 ### Continuous eddy simulation
+
+The method has its own page,
+[continuous eddy simulation](/methods/continuous-eddy-simulation.md). Heinz
+(2022) frames the design problem of every hybrid as the "communication"
+between modelled and resolved motion: the modelled viscosity must be small
+enough not to extinguish resolved motion on coarse grids, yet grow for
+coarser grids and higher Reynolds numbers, and "most hybrid methods" do not
+address it; CES and the partially integrated transport model (PITM) are the
+two the author names that do
+([Heinz (2022)](/sources/heinz-2022.md), §1, Table 1). From a variational
+analysis of the $\varepsilon$ equation Heinz derives three ways of making its
+destruction coefficient depend on resolution: through the ratio of modelled
+to total length scale (the CES choice) or through the ratio of time scales
+(the PITM-type choice), and argues that the second is consistent only for
+homogeneous flow unless the turbulent transport terms carry the total
+viscosity (§2–§3, Table 2).
 
 Mozaffari et al. (2024) implement in an SST host Heinz's continuous eddy
 simulation (CES), which adjusts the modelled viscosity to the actual degree
@@ -151,17 +217,17 @@ and Reynolds-number changes, a construction they call "theory-based"
 ([Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §2.3, Eqs. 33–34; HAL
 accepted manuscript). The $k$-destruction is multiplied by a factor,
 
-$$\beta^*\omega k\;\to\;\beta^*\omega k\,\psi_\beta,\qquad \psi_\beta=\beta_c+R(1-\beta_c),\qquad R=L_+^2,\qquad
+$$\beta^*\omega k\;\to\;\beta^*\omega k\,\psi_\beta,\qquad \psi_\beta=\beta_{\mathrm{CES}}+R(1-\beta_{\mathrm{CES}}),\qquad R=L_+^2,\qquad
 L_+=\frac{\Delta_{C+}}{(1+\Delta_{C+}^3)^{1/3}},\quad \Delta_{C+}=C_+\frac{\Delta}{L_{\mathrm{tot}}},$$
 
 with $L_+$ the ratio of the modelled to the total length scale,
 $L_{\mathrm{tot}}=\sqrt k/(C_\mu\omega)$ the RANS length of SST, and
 page-local symbols $\psi_\beta$, $R$, $L_+$, $\Delta_{C+}$, $C_+$, $L_{\mathrm{tot}}$,
-$\beta_c$. The source writes $\beta_c$ as $\beta$, the symbol of the SST
+$\beta_{\mathrm{CES}}$. The source writes $\beta_{\mathrm{CES}}$ as $\beta$, the symbol of the SST
 destruction coefficient, without defining it, and gives no value of $C_+$
 nor the definition of $\Delta$. For $\Delta_{C+}\to\infty$, $L_+\to1$ and
 $\psi_\beta\to1$ (the RANS dissipation); for $\Delta_{C+}\to0$,
-$\psi_\beta\to\beta_c$ *(compiler check, not in the sources)*. Unlike the
+$\psi_\beta\to\beta_{\mathrm{CES}}$ *(compiler check, not in the sources)*. Unlike the
 thin transition of IDDES, the CES transition from RANS near the wall to LES
 away from it is smooth (§3.2, Fig. 11). On the NACA 0012 at $45^\circ$ CES and
 IDDES perform "almost the same without any superiority" ($C_L=1.192$ and
@@ -468,6 +534,30 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
   the DES best practice of Shur et al. that the span must be at least one
   chord to reproduce the dynamic-stall vortex (Introduction), and find the
   same requirement for their LES in the downstroke (§2.1).
+- **Reynolds-stress host.** IDDES built on the SSG/LRR-$\omega$
+  [Reynolds-stress model](/methods/reynolds-stress-model.md) shortens the
+  separated shear layer and advances its Kelvin–Helmholtz instability
+  against SST-IDDES on the tandem cylinders ($Re_D=1.6\times10^5$) and the
+  transonic buffet of a hammerhead launch vehicle ($M=0.81$), with a primary
+  shedding frequency of 176 Hz against 172 Hz (SST-IDDES) and 179–180 Hz
+  measured (Wang et al. 2021, §3.2–§3.3, Table 1; see
+  [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md) and the
+  [DES page](/methods/detached-eddy-simulation.md)).
+- **Turbine tip-leakage vortex.** An SST-based DES with $F_2$ shielding
+  (ANSYS CFX) on one passage of a transonic high-pressure turbine cascade
+  with a tip gap of $0.07c$ resolves the wandering and breakdown of the tip
+  leakage vortex that the authors say URANS erases (Yang & Ma 2022, §3–§4;
+  see [turbine cascades](/benchmarks/turbine-cascade.md)). They argue that
+  mesh adequacy of a DES-type method "cannot be conducted by just comparing
+  flow parameters among different mesh amounts", and instead show, on one
+  grid of about 13 million cells, that the central/upwind blending factor of
+  the convective flux is near zero (LES mode) in the vortex and wake and
+  that velocity spectra follow a $-5/3$ range (§3.1, Figs. 4–5).
+- **Supersonic combustion.** The SA/Yoshizawa wall-distance hybrid above,
+  with WENO-5 fluxes, carries flamelet/progress-variable combustion in the
+  DLR strut scramjet and a cavity-stabilized combustor at Mach 2.52 (Tang et
+  al. 2022, §3; see
+  [flamelet tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)).
 - **Transitional compressor cascade.** Transitional DDES of the V103
   cascade at $Re=138\,500$ (Möller et al. 2024, §III; see
   [compressor cascades](/benchmarks/compressor-cascade.md) and the
@@ -534,3 +624,8 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
 - [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — Table 3.
 - [Möller et al. (2024)](/sources/moller-2024.md) — §II.D Fig. 1, §III, §III.B.2–3 (accepted manuscript).
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — Introduction, §2.1, §2.2 Fig. 9, §3 (arXiv v2).
+- [Heinz (2022)](/sources/heinz-2022.md) — §1 Table 1, §2–§3 Table 2.
+- [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §1 Fig. 1.
+- [Wang et al. (2021)](/sources/wang-2021-l.md) — §1, §2.3 Eqs. 11–16, §3.2–§3.3 Table 1.
+- [Yang & Ma (2022)](/sources/yang-2022-b.md) — §1, §3.1 Figs. 4–5, §3–§4.
+- [Tang et al. (2022)](/sources/tang-2022.md) — §2.1 Eqs. 1–9, 14, §3.

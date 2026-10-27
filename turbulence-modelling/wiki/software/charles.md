@@ -5,7 +5,7 @@ description: "CharLES is Cascade Technologies' compressible, low-dissipation, se
 status: established
 aliases: [charLES, Cascade charLES]
 tags: [software, les, wmles, kinetic-energy-preserving, gpu]
-timestamp: 2026-10-26T07:42:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # CharLES
@@ -122,7 +122,7 @@ code (implementation not optimized, no hardware stated).
   boundary-layer-conforming grids beat a 31-million-cell constant-size grid
   (Lozano-Durán et al. 2022, §V).
 - [Channel flow](/benchmarks/turbulent-channel-flow.md) at $Re_\tau=4200$: the
-  mean-velocity error scales as $\varepsilon_u\approx0.08\,\Delta/\delta$, with
+  mean-velocity error scales as $e_u\approx0.08\,\Delta/\delta$ (registry $e_q$), with
   a non-monotonic convergence at $\Delta/\delta\approx0.03$–$0.05$ seen in both
   charLES and a staggered finite-difference code (Lozano-Durán et al. 2022,
   §IV.B, App. B).

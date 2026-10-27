@@ -9,7 +9,7 @@ year: 2023
 venue: "Phys. Rev. Fluids 8:064603"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Physical_Review_Fluids_Vadrot_Survey_of_machine-learning_wall_models_for_large-eddy_simula.pdf"
 tags: [wmles, wall-model, reinforcement-learning, log-layer-mismatch]
-timestamp: 2026-10-25T13:45:00Z
+timestamp: 2026-10-26T20:51:00Z
 ---
 
 # Summary
@@ -234,10 +234,11 @@ The accepted manuscript prints 116 numbered references ([1]–[116]) in
 Physical Review style (first page or article number only). The list is merged
 complete into the [bibliography](/bibliography.md) with `citedby`
 vadrot-2023-b; same-key works take suffixes in printed order. Four cited works
-are ingested sources or planned ones: [Duraisamy et al. (2019)](/sources/duraisamy-2019.md)
+are ingested sources: [Duraisamy et al. (2019)](/sources/duraisamy-2019.md)
 (ref. [16]), [Goc et al. (2021)](/sources/goc-2021.md) (ref. [45]), [Fowler et
-al. (2022)](/sources/fowler-2022.md) (ref. [76]) and Bae & Koumoutsakos (2022) (ref. [83], printed "Nat.
-Commun. 13, 1 (2022)"). Two printed works share a bundle slug without being
+al. (2022)](/sources/fowler-2022.md) (ref. [76]) and
+[Bae & Koumoutsakos (2022)](/sources/bae-2022.md) (ref. [83], printed "Nat.
+Commun. 13, 1 (2022)"; the bundle reads its preprint). Two printed works share a bundle slug without being
 that source: ref. [9] (Cai et al. 2022, physics-informed networks review, Acta
 Mech. Sin.) and ref. [41] (Li, Yang & Kunz 2022, Phys. Fluids) are recorded
 under distinct keys. Pre-publication items are their own entries (ref. [82],

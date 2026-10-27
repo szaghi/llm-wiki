@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Backward-facing step"
-description: "Turbulent flow over a sudden channel expansion with fixed separation at the step edge and downstream reattachment: the reattachment length measures LES filter widths at Re_H about 5700, adaptive IDDES meshes at 28,000 and learned RANS closures at 300 to 5000, and the curved-step variant at 13,700 trains corrected SST models."
+description: "Turbulent flow over a sudden channel expansion with fixed separation at the step edge and downstream reattachment: it measures LES filter widths at Re_H about 5700, adaptive IDDES meshes at 28,000, learned RANS closures at 300 to 5000 and high-order RANS wall functions at 36,000; the curved-step variant at 13,700 trains corrected SST models."
 status: established
-aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step, curved backward-facing step, CBFS]
-tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification, field-inversion]
-timestamp: 2026-10-26T15:57:00Z
+aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step, Driver–Seegmiller step, curved backward-facing step, CBFS]
+tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification, field-inversion, rans, dg]
+timestamp: 2026-10-26T20:47:00Z
 ---
 
 # Backward-facing step
@@ -21,8 +21,9 @@ Reynolds number $Re_H$ is built on $H$ and a reference velocity of the
 incoming flow. Because separation is fixed, the case isolates what a model
 or a grid does to the free shear layer: its growth rate sets $x_R$. In this
 bundle it tests the definition of the LES filter width on cells of high
-aspect ratio, mesh adaptation for hybrid RANS/LES, and the transfer of a
-learned RANS closure to a geometry it was not trained on.
+aspect ratio, mesh adaptation for hybrid RANS/LES, the transfer of a
+learned RANS closure to a geometry it was not trained on, and the limit of
+a RANS wall function in the recirculation.
 
 ## Configurations in the sources
 
@@ -88,6 +89,31 @@ find the error to be an over-long bubble on under-resolved or poorly
 modelled shear layers: the coarse grids and the cube-root filter width in
 [Abe (2021)](/sources/abe-2021.md), the instantaneous or coarse adapted
 meshes in [Mozaffari et al. (2022)](/sources/mozaffari-2022.md).
+
+**Wall function in the recirculation.**
+[Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §4.3, use the step of
+Driver & Seegmiller at $Re_H=36{,}000$ (on $H$ and the free-stream
+velocity at $x/H=-4$) and $M_\infty=0.128$ to test an explicit
+[RANS wall function](/methods/rans-wall-function.md) in a high-order
+modal discontinuous Galerkin solver for the
+[Wilcox $k$-$\omega$ model](/methods/k-omega-model.md), run steady.
+The domain spans $-115<x/H<50$ and $0<y/H<9$, with a symmetry boundary for
+$-115<x/H<-110$; the wall-resolved reference mesh has 4750 elements, and
+meshes whose first element has height $y_1^+=5$, 10, 20, 40 and 80 (2300
+to 3700 elements; the outer resolution is also coarsened here) are run at
+polynomial degrees $N=1$ to 6. The case stops at $y_1^+=80$, where only six
+wall-normal elements are left across the step. Pressure and skin-friction
+coefficients on the lower wall and profiles of the mean streamwise
+velocity and of the turbulence intensity agree with the reference and with
+the experiment for all $y_1^+\le80$ and all $N$; at $N=6$ the $C_f$
+difference grows for $y_1^+>10$, and only in the recirculation region,
+where the [law of the wall](/definitions/law-of-the-wall.md), valid only
+for fully developed boundary layers, returns a wrong $u_\tau$. Because the
+underestimated $C_f$ affects only the velocity in the viscous sublayer,
+the velocity and turbulence-intensity profiles still agree (§4.3, Figs.
+10–11). No reattachment length is printed. On the zero-pressure-gradient
+plate the same function stays accurate up to $y_1^+=320$ (see
+[turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)).
 
 **Out-of-geometry test of a learned RANS closure.**
 [Tang et al. (2023)](/sources/tang-2023.md) (read in arXiv v1), §III A
@@ -193,7 +219,12 @@ in OpenFOAM:
 the mixing in the separated shear layer of the $k$-$\omega$ SST model
 improves the [periodic hill](/benchmarks/periodic-hill.md) but worsens
 backward-facing-step flows, an example of a separation fix that does not
-generalize. As recalled by [Duraisamy et al. (2019)](/sources/duraisamy-2019.md),
+generalize. [Wang et al. (2021)](/sources/wang-2021-l.md), §3.3, describe
+the transonic flow behind the boat tail of the NASA Model 11 hammerhead
+launch vehicle, on which they test a Reynolds-stress-based IDDES (see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)), as one
+that "can be regarded as an axisymmetric back-step flow", citing earlier
+work. As recalled by [Duraisamy et al. (2019)](/sources/duraisamy-2019.md),
 §5.3, gene-expression-programming RANS models trained on a backward-facing
 step showed a high level of uncertainty when applied to the periodic hill.
 
@@ -201,7 +232,7 @@ step showed a high level of uncertainty when applied to the periodic hill.
 
 - The configuration of [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md)
   ($Re_H$ from 300 to 1100) lies below those of the other configurations
-  on this page ($Re_H$ 5000 to 28,000); the authors cite Armaly et al. for the existence of the
+  on this page ($Re_H$ 5000 to 36,000); the authors cite Armaly et al. for the existence of the
   secondary recirculation zone above $Re_H\approx400$ but do not discuss
   whether the regime is turbulent, and use $k$-$\varepsilon$ and LES there.
   Their Table 2 lists five viscosities for four training Reynolds numbers;
@@ -216,7 +247,8 @@ step showed a high level of uncertainty when applied to the periodic hill.
   $x$ in a way that lets the two be compared, so the difference is recorded
   here, not as a contradiction. Wu et al. call the SST separation
   overpredicted; Oulghelou et al. find SST nearly exact in bubble length.
-- The two configurations differ in expansion ratio (1.5 against 1.25),
+- The configurations of [Abe (2021)](/sources/abe-2021.md) and
+  [Mozaffari et al. (2022)](/sources/mozaffari-2022.md) differ in expansion ratio (1.5 against 1.25),
   Reynolds number ($Re_H\approx5700$ against 28,000), inflow and modelling
   level (wall-resolved LES against IDDES), so their reattachment errors are
   not comparable with each other.
@@ -252,3 +284,5 @@ step showed a high level of uncertainty when applied to the periodic hill.
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — §2.2.3, §2.2.5; §3.1–3.4, Tables 2–5, Figs. 4–12.
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §3.1.1, Eq. 18, Figs. 3–7; §3.3.1, Figs. 15–18.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §4.1; §4.2.3, Tables 5–7, Figs. 7–9.
+- [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §4.3, Figs. 9–11 (Driver–Seegmiller step, wall function).
+- [Wang et al. (2021)](/sources/wang-2021-l.md) — §3.3 (hammerhead flow likened to an axisymmetric step).

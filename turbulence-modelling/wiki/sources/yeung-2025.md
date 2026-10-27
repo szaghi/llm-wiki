@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Fluid Mech. 1019:R2"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Fluid_Mechanics_Yeung_Small-scale_properties_from_exascale_computations_of_turbule.pdf"
 tags: [dns, isotropic-turbulence, intermittency, gpu, energy-cascade]
-timestamp: 2026-10-26T15:53:00Z
+timestamp: 2026-10-26T20:48:00Z
 ---
 
 # Summary
@@ -109,7 +109,7 @@ constant, $k_F=2.5$, after Donzis & Yeung 2010):
 - **§2.2, p. R2-6:** "$R_\lambda(0)=R_{\lambda1}/0.6814$, then decreases to approximately $0.84R_{\lambda0}=1.23R_{\lambda1}$": $R_\lambda(0)$ and $R_{\lambda0}$ denote the same quantity.
 - **Fig. 2:** the text says "The dashed line corresponds to $C_\epsilon R_\lambda^2/15$", the caption "Dotted lines in (a) and (b) show expected power laws".
 - **Fig. 5:** "Perfect fits give straight lines of slope equal to the exponent and intercepts on the y-axis equal to the prefactor"; for $f\propto\exp(-ax^b)$ the large-$x$ intercept of $\ln(-\ln[f(x)/f(1)])$ against $\ln x$ is $\ln a$, not $a$ *(compiler check, not in the sources)*. The axis label prints "$f_X(x)/f_x(1)$".
-- **§1 cost estimate:** the printed figures (13 s per step, about 1000 steps per $\tau_\eta$, $T_E\approx300\tau_\eta$) give about $3.9\times10^7$ s, about 1.2 years, for $10T_E$, against "two years or more" *(compiler check, not in the sources; flag only, the printed timing excludes overheads)*.
+- **§1 cost estimate:** the printed figures (13 s per step, about 1000 steps per $\tau_\eta$, $T_E\approx300\tau_\eta$) give about $3.9\times10^7$ s, about 1.2 years, for $10T_E$, against "two years or more" *(compiler check, not in the sources)*; the paper does not say what else the estimate includes.
 - Typos: "Srenivasan" (p. R2-8 and the Yeung, Donzis & Sreenivasan 2012 reference), "itsname" (p. R2-5), "postponeed" and "size,with" (p. R2-10).
 
 # Notation map

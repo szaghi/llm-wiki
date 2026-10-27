@@ -6,6 +6,139 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 7 — 2021–2026 papers: k-ω and wall functions in high-order RANS, CES and PITM, modal filtering and induced filters, multi-filter neural closures, volume-filtered immersed boundaries, entropy-conservative schemes; first whole-bundle deep lint (2026-10-26)
+
+Sources (20): brillon-2026, caban-2026, dayer-2026, schotte-2026,
+aiello-2026, lederer-2026, xu-2026, rickard-2026, wu-2026, jakhar-2026,
+ranjbar-2026, ghidoni-2026, wang-2023, elzaabalawy-2023, wang-2021-l,
+heinz-2022, luo-2021-b, tang-2022, yang-2022-b, zheng-2022. 140 of 160
+ingested, 143 concept pages plus the registry, 6521 bibliography entries.
+Deep lint A1–A10 over the whole bundle done.
+
+### Decisions for the human
+
+1. **Damage in committed content, repaired here.** The chunk-6 commit
+   (58aad80) lost two sections of `wiki/methods/inflow-turbulence-generation.md`
+   ("Triggering transition instead", "Choosing no inflow turbulence"),
+   deleted by a compiler edit that removed one section by slicing to the
+   next heading. They are restored verbatim from fdc020d. A scan of every
+   chunk commit for lost headings and lines found no other loss.
+2. **Overdue whole-bundle deep lint.** D26 requires one every 50
+   ingestions; none ran before this chunk (120 ingested). It ran now, over
+   all 284 pages. The next one is due by 190 ingestions, or with the chunk
+   that completes the archive.
+3. **The archive grew to 160 files.** The 26 new files fill chunk 7 to 20
+   and make chunk 8 (20); the plan and the bundle law record it.
+4. **Bibliography calls left by the resolver:**
+   - `xiao-2015` is a 2006 J. Aircraft paper (43:1377, DOI
+     10.2514/1.20127); its key and year come from zhao-2023-b's misprint.
+     Rename the key?
+   - `ming-2019`: the first author's surname is Yu (Yu, Xu & Pirozzoli),
+     not "Ming". Rename the key?
+   - `cockburn-1990` carried the DOI of Cockburn & Shu (1998); replaced by
+     the Math. Comp. 54:545 DOI printed by dayer-2026 (Crossref-verified).
+5. **Versions read.** Eight files are preprints or manuscripts
+   (brillon-2026 and lederer-2026 are 2024 arXiv versions of 2026 papers;
+   dayer-2026 is the submitted manuscript, four authors printed against
+   three on Crossref; jakhar-2026's Supplemental Material is not in the
+   file, and four of its claims rest on it). Replace with versions of
+   record if you want the published claims.
+6. **Candidate pages that now qualify:** approximate deconvolution model
+   (caban-2026, cao-2024, the scale-similarity page); partially integrated
+   transport model, PITM (heinz-2022, haering-2022, prietosaavedra-2024);
+   Comte-Bellot–Corrsin grid turbulence (five sources); mass-conserving
+   mixed-stress method (lederer-2023, lederer-2026); plus the chunk-6 list
+   (discrete-adjoint method, wall-stress boundary condition, Ducros sensor,
+   cutoff pile-up, curved backward-facing step, volume penalization) and
+   the earlier ones.
+7. **Tags:** synonyms merged bundle-wide (log entry). Left as they are:
+   `k-omega`/`k-omega-sst` (different models), `wall-function`/`wall-model`
+   (RANS against LES), `isotropic-turbulence`/`decaying-turbulence` (forced
+   against decaying), and about 45 single-use tags.
+8. **Still open from earlier chunks:** the `fusion-mhd-simulation` tab in
+   `tearing-mode.md` line 247; `ge-2015`; `jameson-1988`; `suder-1996`
+   thesis vs report; cao-2024 and reddy-2026 read from old preprints.
+
+### Contradictions
+
+Four open, all re-verified by the whole-bundle audit and kept:
+sparse-regression coefficients
+([tensor-basis neural network](wiki/methods/tensor-basis-neural-network.md));
+gas-kinetic dissipation
+([high-order gas-kinetic scheme](wiki/methods/high-order-gas-kinetic-scheme.md));
+Cai & Sagaut wall-law constants ([law of the wall](wiki/definitions/law-of-the-wall.md));
+Ahmed slant topology ([Ahmed body](wiki/benchmarks/ahmed-body.md)). No
+chunk-7 source bears on them, and none was opened in chunk 7.
+
+Kept as attributed qualifications: Wu & Lele (2026) against Kurz et al.,
+Beck & Kurz and Sirignano & MacArt on discretization-consistent training
+(no source runs both on one flow); Aiello et al. against Brillon &
+Nadarajah on the weight of entropy conservation (Mach 3–5 thermally
+perfect gas against Mach 0.1); Ghidoni et al. against Constant et al. on
+wall functions for the NACA 0012 (body-fitted DG against immersed
+boundary); Elzaabalawy et al. against Ghidoni et al. on the $k$–$\ln\omega$
+form (method choices); the CRM-HL Reynolds numbers (5.49e6 on the mean
+chord, 5.6e6 on the root chord); lederer-2023 against lederer-2026 HOPU
+settings (two versions of the method); Rickard & Kasbaoui's no-slip forcing
+against the wall-law immersed boundaries of Cai, Constant and Mozaffari
+(different quantities).
+
+### Printed slips (recorded on the Source pages)
+
+- brillon-2026: $\kappa_c$ 122 for 112, $\kappa_{\mathrm{grid}}$ 4 for 2,
+  Eq. 54 sign, clipping bound stated twice. caban-2026: Eqs. 16, 23, 32,
+  42, 43; table pointers.
+- dayer-2026: Eq. 14 order, $L_x^+$ 1009 for 1109, figure pointers,
+  heat-flux sign, Eqs. 23, 25. schotte-2026: $\mathbf S$ without ½, Eq. 20,
+  domain, residual thresholds, RAE2822 drag claim.
+- aiello-2026: $\Delta t_s$ units, table pointers, garbled references.
+  lederer-2026: Eqs. 5, 12, convective time, a DOI printed twice.
+- xu-2026: least-squares rates, the "flux Jacobian", Eq. 33, duplicate
+  references. rickard-2026: Eq. 2.25, the Fig. 6 ratio, the
+  $\Delta_f^+\ge50$ against $\ge100$ threshold.
+- wu-2026: network names across tables, Table 2 subset, reversed
+  conclusion. jakhar-2026: Case 4 coarse-graining, caption symbols.
+- ranjbar-2026: Eq. 7 $Ma_c$ for $Ma_c^2$, "internal energy", $Q_S$
+  sign. ghidoni-2026: text against Table 1, inverted mesh range, Eq. 8.
+- wang-2023: Ringleb credited to a book, figure caption, "≈2/3".
+  elzaabalawy-2023: $\beta_1=0.75$, Table 3 percentages, $\varepsilon$
+  printed "1⁻¹²", references [40]/[41] titles.
+- wang-2021-l: Favre "hat", 1.8 % against 1.89 %, $C_{DES,k-\varpi}$.
+  heinz-2022: one typo. luo-2021-b: Eq. 12, weight indices.
+- tang-2022: Eqs. 3, 12–13, 17; Yoshizawa cited as [20].
+  yang-2022-b: convection against viscous dominance, Lumley vertex, cell
+  count. zheng-2022: CFL in Table 5, Appendix C, Eq. 23.
+
+### Bibliography
+
+6521 entries (+639 from 1089 printed references); 175 aliases, 24
+verified silences, 5 printed duplicates folded, `FLAGS: 0`. Re-keyed away
+from Source slugs: `aiello-2026-b`, `li-2024-d`, `li-2024-e`,
+`wang-2024-g`, `liu-2024-c`, `kim-2024-c`, `wu-2025-b`, `lee-2013-c`,
+`yang-2022-c`, `wu-2018-f`; `maejima-2024` (printed "Maejimam") kept
+distinct from the Source `maejima-2025`; xu-2026's `bernades-2023`/`-b`
+swapped to their identities; `chaouat-2021` and `jakhar-2025` separated
+from Source keys they had matched by title.
+
+### Bundle fit (D17 candidates, no copy made)
+
+- wang-2023 (DG error transport, inviscid Euler), luo-2021-b (WENO-Z+M),
+  xu-2026 (real-gas shock capturing), zheng-2022 (semi-Lagrangian WENO for
+  Vlasov and 2-D Euler): no turbulence content; `weno-teno` and
+  `high-order-capturing-schemes` share their subjects.
+- schotte-2026 (mesh adaptation, RANS only), yang-2022-b (tip-leakage
+  vortex), tang-2022 (supersonic combustion): applications of
+  off-the-shelf closures.
+
+### Candidate pages (kept inline until a second source)
+
+Error transport equations; hybridizable DG; multi-filter training
+augmentation; forced two-dimensional turbulence; Leith model; tandem
+cylinders; tip-leakage vortex; minimal-span channel; JAGUAR; volume-filtered
+immersed boundaries and slip-wall models; thermally perfect gas and EC-TP
+flux; CDHD flux; nonlinearly stable flux reconstruction; subgrid scalar
+variance closure.
+
 ## Chunk 6 — 2024–2026 papers: transitional DDES and cascade buffet, conditioned field inversion and model blending, neural-operator and super-resolution LES, shock capturing on the supersonic Taylor–Green vortex, GALÆXI, spectral-element WMLES, exascale DNS, bulk viscosity (2026-10-26)
 
 Sources (20): moller-2024, cao-2024, cernetic-2024, chapelier-2024,
