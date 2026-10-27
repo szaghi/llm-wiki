@@ -5,7 +5,7 @@ description: "Compressible MHD turbulence carries Alfvénic, slow, fast and non-
 status: established
 aliases: [compressible MHD turbulence, MHD wave-mode decomposition, fast modes, slow modes, non-wave fluctuations, compressible Hall MHD turbulence, weakly compressible MHD, solar-flare turbulence, flare plasma turbulence, compressive-mode bottleneck, Helmholtz-decomposed spectra, nearly incompressible MHD, NI MHD, solar-wind turbulence transport model, turbulence transport model]
 tags: [mhd, compressible, plasma, astrophysics, dns]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Compressible MHD turbulence
@@ -43,7 +43,7 @@ $l_\parallel\propto\lambda^{m_a}$.
 ## Wave-mode content of driven turbulence
 
 **Set-up** (Gan et al. 2022, §2.1, §3). Three isothermal ideal-MHD runs with
-ATHENA++ (Stone et al. 2020, as recalled) at $512^3$, uniform density
+ATHENA++ (the authors cite Stone et al. 2020) at $512^3$, uniform density
 $\rho_0=1$, guide field $\boldsymbol B_0=(8,0,0)$ and $v_A=8$, plasma beta
 $\beta_p=8\pi p/B^2=0.4$, driven at $0<|\boldsymbol k|\le2$ by an
 Ornstein–Uhlenbeck process with correlation time $0.5\tau_A$
@@ -61,13 +61,13 @@ dissipation](/properties/numerical-dissipation.md)).
 
 **Two decompositions** (§2.2):
 
-- **Spatial-only** (after Cho & Lazarian 2003 and Yang et al. 2018, as
-  recalled): each instantaneous velocity field is projected in Fourier space
+- **Spatial-only** (after Cho & Lazarian 2003 and Yang et al. 2018, whom
+  the authors cite): each instantaneous velocity field is projected in Fourier space
   on the Alfvén, fast and slow eigenvector polarizations of linear MHD, so
   every fluctuation is forced into one of the three modes. The authors call
   its physical meaning "a bit unclear" for strong turbulence, where
   nonlinear interactions matter.
-- **Spatio-temporal (4D FFT)** (after Svidzinski et al. 2009, as recalled): a
+- **Spatio-temporal (4D FFT)** (after Svidzinski et al. 2009, whom the authors cite): a
   3D spatial FFT at each of about 100 frames per $\tau_A$ over about
   $10\tau_A$, then a temporal FFT with a Hanning window; power at
   $(\boldsymbol k,\omega)$ is assigned to a mode only if $\omega$ lies within
@@ -94,7 +94,7 @@ With the injection range included, the spatial-only fractions are
   dispersion branches and is concentrated at low frequency; the authors
   compare it with the "1/f noise" of Dmitruk & Matthaeus (2007, 2009) and
   with the 80%–20% two-dimensional/slab decomposition of solar-wind
-  turbulence (Bieber et al. 1996), as recalled (§3, §4).
+  turbulence that they cite from Bieber et al. (1996) (§3, §4).
 - **Few fast modes.** In compressibly driven run C the fast fraction drops
   from 0.137 (spatial-only) to 0.024 (4D FFT, the abstract's "∼2%"); with
   incompressible driving it is negligible. Among waves the Alfvén mode
@@ -104,9 +104,10 @@ With the injection range included, the spatial-only fractions are
 - **Method dependence.** The authors conclude that spatial projection "might
   be too optimistic" about the fraction of fast and compressible modes, and
   that the non-wave component should enter models of particle transport and
-  energization (§4). Their spatial-only results with the injection range
-  agree with Makwana & Yan (2020), who found fast-mode power up to about 30%
-  of the total with highly compressible driving (§1, §3, as recalled).
+  energization (§4). They state that their spatial-only results with the
+  injection range agree with Makwana & Yan (2020), whom they cite for
+  fast-mode power up to about 30% of the total with highly compressible
+  driving (§1, §3).
 
 **Anisotropy** (§3, Figs. 4–5). Contours of second-order velocity structure
 functions of the separated components, fitted as $l_\parallel\propto\lambda^{m_a}$:
@@ -122,7 +123,7 @@ With incompressible driving the spatial-only method reproduces the
 Goldreich–Sridhar anisotropy $m_a=2/3$ of [critical
 balance](/properties/critical-balance.md) for the total, Alfvén and slow
 components and the near-isotropy ($m_a=1$) of fast modes (Cho & Lazarian
-2003, as recalled); compressible driving changes the total to 5/6 and the
+2003, which the authors cite); compressible driving changes the total to 5/6 and the
 fast component to 4/5. The 4D FFT gives the same or slightly steeper slopes;
 the fast slope is 1 in both runs, and the total follows the non-wave slope
 because non-wave fluctuations carry most of the power. The authors call the
@@ -146,7 +147,7 @@ compressibility:
   0.25 to 0.5 "does not bring significant changes to the total dynamics" of
   the cascade rate, in agreement with Andrés et al. (2018) up to 0.5;
   supersonic flows can develop a dominant compressible, source-like cascade
-  component (Ferrand et al. 2020, as recalled; §4, Fig. 4).
+  component (the authors cite Ferrand et al. 2020; §4, Fig. 4).
 - **Compressible terms in the exact law.** The cascade rate of compressible
   MHD contains, besides the flux term, source terms built from the
   dilatation and density increments (Eq. 9); for weakly compressible runs
@@ -175,12 +176,12 @@ Eqs. 2.10–2.14). Points that bear on compressibility:
   $M=0.003$–$0.01$ (§4.2, Fig. 5).
 - **Acoustic time step.** Because the scheme resolves sound waves, its time
   step in plain MHD is smaller than that of an incompressible pseudo-spectral
-  solver by roughly the Mach number (Horstmann et al. 2022, as recalled), so
+  solver by roughly the Mach number (the authors cite Horstmann et al. 2022), so
   the weakly compressible route pays off only in Hall MHD, where whistler
   waves limit both (§5; see [GHOST](/software/ghost.md)).
 - **Extension.** An incompressible or weakly compressible formulation is
-  "usually justified" for space plasmas (Andrés et al. 2022, Brodiano et
-  al. 2023, as recalled); accounting for compressibility explicitly would
+  "usually justified" for space plasmas (the authors cite Andrés et al. 2022
+  and Brodiano et al. 2023); accounting for compressibility explicitly would
   need an additional equation of state and a coupled lattice scheme for
   temperature or density (§7; cf. §2.2).
 
@@ -193,8 +194,8 @@ incompressible dynamics.
 
 [Ruan et al. (2023)](/sources/ruan-2023.md) study how compressible MHD
 turbulence forms, rather than how it cascades. Their setting is a stratified,
-reconnection-driven solar flare. The run has no turbulence closure and no
-subgrid model: the turbulence is whatever the resistive MHD scheme resolves.
+reconnection-driven solar flare. The paper uses no turbulence closure and
+no subgrid model: the turbulence is what the resistive MHD run resolves.
 The paper does not discuss numerical dissipation, and it does not use the
 term implicit LES.
 
@@ -239,8 +240,8 @@ spectroscopic observations):
   appear where the vertical velocity jumps by more than 1000 km s$^{-1}$
   over about 2 arcsec. The shear lies in planes perpendicular to the local
   guide field, where tension cannot stabilize it. A growth estimate
-  $\sigma_{\mathrm{KH}}=kv_0$ (the source's $\omega$; recalled from Goedbloed
-  et al. 2019, with $\sigma_{\mathrm{KH}}$ the page-local growth rate, $k$ the
+  $\sigma_{\mathrm{KH}}=kv_0$ (the source's $\omega$, which the authors cite from Goedbloed
+  et al. 2019; with $\sigma_{\mathrm{KH}}$ the page-local growth rate, $k$ the
   inverse of several Mm and $v_0$ the half shear speed, hundreds to 1000 km s$^{-1}$)
   gives growth times of seconds. That is the same order as the vortex
   formation in the run (§3.3). *(Compiler check, not in the sources:
@@ -336,9 +337,9 @@ damp fast and slow magnetosonic waves (§9.3, stated without simulation).
 
 ## Nearly incompressible MHD and a turbulence transport model
 
-**The expansion.** Nearly incompressible (NI) MHD, as recalled by
-[Adhikari et al. (2023)](/sources/adhikari-2023.md) (§1–§2, after Zank &
-Matthaeus and Hunana & Zank), expands the fluctuations about a
+**The expansion.** Nearly incompressible (NI) MHD, which [Adhikari et al.
+(2023)](/sources/adhikari-2023.md) (§1–§2) cite from Zank & Matthaeus and
+Hunana & Zank, expands the fluctuations about a
 slowly varying, inhomogeneous background (here the solar wind, with
 velocity $\boldsymbol U$, field $\boldsymbol B_{\mathrm{sw}}$, density
 $\rho_{\mathrm{sw}}$ and Alfvén velocity $\boldsymbol V_A$, all page-local)
@@ -348,8 +349,8 @@ $$\boldsymbol u'=\boldsymbol u^{(0)}+M_t\,\boldsymbol u^{(1)},\quad p'=M_t^2\big
 
 (Eq. 3; superscripts $(0)$ and $(1)$, page-local, mark the leading and
 higher orders). Which fluctuations sit at leading order depends on the
-plasma beta $\beta_p$. For $\beta_p\ll1$ and $\beta_p\sim1$, as recalled
-from Zank et al. (2017), the leading order is two-dimensional
+plasma beta $\beta_p$. For $\beta_p\ll1$ and $\beta_p\sim1$, Adhikari et al. state, citing
+Zank et al. (2017), the leading order is two-dimensional
 (structures such as flux ropes and magnetic islands, without the Alfvén
 velocity) and the slab (Alfvénic) and compressible magnetosonic parts are
 higher-order corrections. For $\beta_p\gg1$ Adhikari et al. derive (§2,
@@ -471,10 +472,7 @@ residual energy are on [critical balance](/properties/critical-balance.md).
   $\mathcal E_b$ cannot be converted to a physical equipartition ratio
   from the paper alone.
 - **Turbulence as dispersion.** Ruan et al.'s turbulence is a
-  line-of-sight velocity dispersion of one snapshot (Eqs. 6–7).
-  *(Compiler check, not in the sources: by construction, such a dispersion
-  also counts coherent motions along the line of sight, such as
-  counter-flows, not only a cascade.)* For the unresolved mass motions of
+  line-of-sight velocity dispersion of one snapshot (Eqs. 6–7). For the unresolved mass motions of
   observed flares, the authors note that whether energy cascades occur is
   "impossible to know" from remote observations (§1).
 - **Nearly incompressible MHD transport** ([Adhikari et al.

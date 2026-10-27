@@ -5,7 +5,7 @@ description: "The triply periodic vortex flow that transitions from a single-mod
 status: established
 aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex, laminar Taylor–Green vortex, Brachet Taylor–Green vortex, High-Order CFD Workshop case C3.5]
 tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible, filtering, kinetic-energy-preserving]
-timestamp: 2026-10-27T11:00:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Taylor–Green vortex
@@ -115,6 +115,8 @@ to the fully turbulent state.
 | [Takagi et al. (2022)](/sources/takagi-2022.md) | finite differences TENO-THINC against WENO5-Z and TENO5; inviscid, $p_0=100$, to $t=10$ | $64^3$ | none named in the text |
 | [Wang et al. (2013)](/sources/wang-2013.md) (workshop summary, case C3.5) | seven participants: DGSEM with RK5 (IAG Stuttgart), DG with interior penalty (Cenaero), DG/BR2 (ONERA), 4th- to 12th-order central and 4th-order DRP finite differences (NASA Glenn), DG-CPR (Iowa State), reconstructed finite volumes (ONERA), reconstructed DG (Michigan) | baseline $256^3$ degrees of freedom; the DG curves of Fig. 13 are labelled $N=2$, $128^3$; $N=3$, $96^3$; $N=4$, $64^3$ (the Fig. 14 caption calls the $96^3$ a mesh) | de-aliased incompressible pseudo-spectral solution, grid-converged on $512^3$, low-storage three-step Runge–Kutta, $\Delta t=10^{-3}$ |
 | [Kuya et al. (2018)](/sources/kuya-2018.md) | second-order central split-form fluxes (twelve combinations, no dissipation), classical fourth-order Runge–Kutta at CFL about 0.1; inviscid, $M_0=0.05$ and 0.4 | $64^3$ | none: conservation of kinetic energy and entropy is the criterion |
+| [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) | [flux reconstruction](/methods/flux-reconstruction.md) recovering nodal DG, $N=3$, 4, 5, Gauss points, Rusanov and BR2; time-step-independent optimized exponential modal filters of five strengths against no filter; Mach 0.1, also on a sinusoidally perturbed curved mesh; inviscid runs (Mach 0.1–0.5) for the filter optimization | $Re=1600$: nominally $64^3$ DOF; inviscid: $16^3$ DOF | DNS of van Rees et al., extended in time with the workshop data |
+| [Svärd (2022)](/sources/svard-2022.md) | finite volumes, Chandrashekar's entropy-conservative flux with artificial diffusion on the mass flux only (entropy stable, positivity preserving), first-order viscous terms, forward Euler; Mach 0.1, zero bulk viscosity | $32^3$, $64^3$, $128^3$ | second-order energy-stable finite differences of van der Weide et al. ($65^3$, $129^3$), as quoted; reference enstrophy peak about 10.3 |
 
 **The workshop case definition.** The $Re=1600$ case as most of these
 sources run it is case C3.5 of the first International Workshop on
@@ -222,8 +224,8 @@ $64^3$ finite-volume grid a peak of model-plus-numerical dissipation near
 $t=5$ is about 75% numerical and moves the dissipation peak earlier, and its
 ratio to the viscous dissipation approaches 4; on $16^3$ elements at $N=4$
 that ratio is at most 1.2 and the peak about a quarter of the $64^3$
-finite-volume one, 90–95% numerical (§5.1, Figs. 7–8). As recalled from
-the authors' earlier paper, the $16^3$, $N=4$ run costs 1.3 times the
+finite-volume one, 90–95% numerical (§5.1, Figs. 7–8). The authors (§3.1)
+cite their earlier paper for the result that the $16^3$, $N=4$ run costs 1.3 times the
 $64^3$ finite-volume run and is about ten times more accurate in the $L_2$
 sense (§3.1, Fig. 1). The authors conclude that the gain of the high-order
 solver comes mainly from lower
@@ -316,6 +318,37 @@ the filter inactive in smooth flow; its dissipation where it acts is
 tested on the [turbine cascades](/benchmarks/turbine-cascade.md); see
 [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)
 and [discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md).
+
+**Optimized modal filters that do not depend on the time step.**
+[Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) stabilize
+under-resolved [flux reconstruction](/methods/flux-reconstruction.md) with an
+exponential modal filter, $\sigma=\exp\{-\alpha_f[(\vartheta^{\mathrm t}_m-\vartheta^{\mathrm t}_c)/(\vartheta^{\mathrm t}_{\max}-\vartheta^{\mathrm t}_c)]^{s_f}\}$
+above a cut-off total degree $\vartheta^{\mathrm t}_c$ (page-local; $\vartheta^{\mathrm t}_m$ the
+unnormalized total degree of a 3D orthonormal mode, not the normalized index
+of the registry form on [explicit modal filtering](/methods/explicit-modal-filtering.md), $\alpha_f$, $s_f$ the strength and
+order of the registry), and make its effect independent of the time step
+by applying the diagonal filter matrix raised to the power $\Delta t/T_{\mathrm c}$
+after every step ($T_{\mathrm c}=L/U_0$, page-local), so that the
+cumulative damping per characteristic time is fixed (§3.2, Eqs. 28–30).
+The parameters come from more than 14,000 **inviscid** TGV runs on a
+deliberately unstable $16^3$-DOF mesh, $N=3$, 4, 5, Mach 0.1 to 0.5: a
+bisection finds, for each Mach number, the weakest filter that keeps
+density and pressure physical to $20T_{\mathrm c}$, and the "best" stable
+filter, which damps the highest modes most and leaves the low ones
+untouched, always has $s_f=16$ (§3.4, Tables 4–6). The filter optimized at
+Mach 0.5 is the strongest. At $Re=1600$ ($64^3$ DOF, Mach 0.1) the filtered
+runs dissipate the kinetic energy slightly faster, increasingly with
+filter strength, and then reverse the trend later; the enstrophy-based
+dissipation is slightly under-predicted because the filter removes
+enstrophy-carrying small scales; high-wavenumber energy is lower and the
+visible structures larger; the kinetic energy is "always less than the
+DNS results except for" $N=3$ (§4.2, Figs. 9–13). The authors conclude
+that the filters slightly increase numerical dissipation but do not
+affect the overall accuracy significantly, also on a fully curved mesh
+(§4.3, Figs. 15–18). They tie the parameters to the Rusanov flux, the
+DG-recovering correction function and a high-order explicit time
+integrator away from its stability limit (§2.1, §3.2); the filter is on
+[explicit modal filtering](/methods/explicit-modal-filtering.md).
 
 **Time reversal of the inviscid TGV.** [Wang et al. (2024)](/sources/wang-2024.md),
 §3.1, Fig. 2, run the inviscid TGV on $30^3$ cells to $t=20$, reverse the
@@ -544,7 +577,7 @@ five Smagorinsky variants on entropy-stable flux reconstruction
 Vreman against implicit LES on compact differences
 ([Caban et al. (2026)](/sources/caban-2026.md)); Smagorinsky, multi-scale
 and dynamic Smagorinsky against filtered implicit LES on central
-differences ([Volpiani (2024)](/sources/volpiani-2024.md)). In the last two the
+differences ([Volpiani (2024)](/sources/volpiani-2024.md)). In two of them the
 eddy-viscosity runs are also compared with alternatives that win: the
 no-model scheme in Brillon & Nadarajah, implicit LES and the
 Layton–Lewandowski model in Caban et al.
@@ -605,6 +638,84 @@ et al.; coarse runs: $11^3$ elements at $N=4$ and $7^3$ at $N=10$.
   highest mode groups to large strain and rotation invariants, which
   motivates the cut-off (Figs. 8–10).
 
+**A first-order-viscous entropy-stable scheme against a second-order one.**
+[Svärd (2022)](/sources/svard-2022.md), §5.3, runs the $Re=1600$ case
+(Mach 0.1, $Pr=0.71$, to $t=20$) with a finite-volume scheme designed to
+approximate weak entropy solutions, whose local averages the author
+interprets a posteriori as LES-filtered quantities (see
+[implicit LES](/definitions/implicit-les.md) and
+[entropy conservation](/properties/entropy-conservation.md)). The peak
+kinetic-energy dissipation is 0.008551 at $t=10.451$ on $32^3$, 0.011565 at
+$t=9.0722$ on $64^3$ and 0.013569 at $t=8.6238$ on $128^3$ (Table 5). The
+author calls the scheme "significantly more accurate" in dissipation than
+the second-order energy-stable scheme of van der Weide et al., whose
+$129^3$ peak is about 0.0115 at $t\approx8.3$ as quoted, because it reaches
+the same peak with $64^3$ points and later in time, nearer the reference
+time $t\approx9$. Enstrophy peaks stay far below the reference value of
+about 10.3: about 4 and 5 for the author's scheme, against at most 2 and 4
+printed for the second-order scheme on $65^3$ and $129^3$ (§5.3, Fig. 6). Chandrashekar's
+flux without the mass-flux diffusion gives very similar results, since
+the flow breaks down into turbulence anyway, with a more oscillatory
+dissipation curve on $32^3$, which the author ties to its locally unstable
+continuity equation (Fig. 7).
+
+**Weighted compact nonlinear schemes in implicit LES.**
+[Ma et al. (2022)](/sources/ma-2022.md), §3.1, run the compressible TGV
+at $U_0/c_0=0.28$ ($c_0$ the initial sound speed) with no subgrid model,
+comparing a weighted compact nonlinear scheme whose explicit fifth-order
+nonlinear interpolation is replaced by a nonlinear tri-diagonal compact
+interpolation of seventh order on the same five-point stencil (WCNS-T)
+with the original scheme (WCNS-E), which the earlier studies they cite
+find to act as a strongly dissipative subgrid model.
+WCNS-T reproduces the DNS dissipation rate $-dK/dt$ "quite good" in peak
+height and onset time, and its spectra show a $k^{-5/3}$ range (Figs. 4–6).
+The Reynolds number, grid and DNS source are not printed; the case set-up
+is delegated to Drikakis et al. The scheme's other tests (cylinder wake,
+T106A cascade, open cavity) are on
+[circular-cylinder wake](/benchmarks/circular-cylinder-wake.md) and
+[turbine cascades](/benchmarks/turbine-cascade.md).
+
+**Temporal LES with a lattice Boltzmann method at $Re=800$ and 3000.**
+[Simonis et al. (2022)](/sources/simonis-2022.md) filter the
+incompressible equations in **time** with a causal exponential kernel of
+width $\Theta$ (page-local), close the temporal residual stress with the
+temporal direct deconvolution model of Oberle, Pruett & Jenny that they
+cite, and embed it in a D3Q19 multiple-relaxation-time
+[lattice Boltzmann](/methods/lattice-boltzmann-method.md) scheme in OpenLB.
+The TGV ($[0,2\pi]^3$, run to $t=20$) is their only test (§3):
+
+- **Calibration** at $Re=800$ on $N_x=64$: with $\Theta/\Delta t=5$ the
+  model barely acts; 10 and 20 bring the peak of the total dissipation
+  rate toward the spectral-element DNS; 40 drives the model dissipation
+  into "complete overdrive", and above 10 its oscillations are "clearly
+  unphysical"; $\Theta/\Delta t=10$ and lattice Mach number 0.1 are chosen,
+  the latter as the lowest without an overly increased dissipation tail
+  (§3.2, Figs. 2–5).
+- **Comparison** at $Re=3000$ with a spectral-element temporal LES and
+  DNS in [Nek5000](/software/nek5000.md) (DNS at 50 elements of order 7 per
+  direction, 351 points): under-resolved lattice Boltzmann runs without a
+  model under-predict the dissipation peak at $N_x=64$, less at 128; with
+  the model the lattice Boltzmann runs recover a distinct peak near $t=9$
+  already at $N_x=64$, where the spectral-element temporal LES shows a
+  "distorted crown"; spectra stay similar or improve slightly (§3.3,
+  Figs. 7–8). The spectral-element temporal LES needs the regularization of
+  Pruett instead of its original one, whose phase lag is severe in this
+  transient flow (§3.3).
+- **Errors** from $N_x=24$ to 192: the subgrid activity decreases with
+  refinement with and without the model, and the spectrum error falls at
+  second order up to $N_x=64$ and then reaches a plateau, which the authors
+  attribute to the compressibility defect of the lattice Boltzmann method
+  (§3.4, Fig. 9). In App. B the temporal model raises the experimental
+  order of convergence of the dissipation-rate error for single- and
+  multiple-relaxation-time collisions under acoustic and diffusive scaling
+  (Table 3).
+
+The authors conjecture that the unmodelled multiple-relaxation-time
+lattice Boltzmann run already acts as an implicit LES, because its model
+dissipation, total minus enstrophy-based, is about half of the total at
+$N_x=64$ (§3.3.2, Fig. 7a). See
+[large-eddy simulation](/definitions/large-eddy-simulation.md).
+
 **Laminar TGV as a dissipation test of the discretization.**
 [Caban et al. (2026)](/sources/caban-2026.md), §5.1, also use the
 analytic laminar TGV with seven vortices per period ($Re=1600$, run to
@@ -617,14 +728,14 @@ fourth-order compact interpolation to "several times lower" than $Re$
 (Figs. 9–11). The authors read the first result as showing that the
 filtering induced by central derivative schemes is non-dissipative.
 
-**Recalled uses.** As recalled by [Basile et al. (2023)](/sources/basile-2023.md),
-§3.2 and §4.2.1, Chapelier et al. fixed a modal-decay smoothness threshold
+**Cited uses.** [Basile et al. (2023)](/sources/basile-2023.md),
+§3.2 and §4.2.1, cite two TGV studies: Chapelier et al. fixed a modal-decay smoothness threshold
 close to the $-5/3$ slope a priori from TGV DNS at $Re=5000$, and the
 authors' earlier TGV tests showed high-order DG more accurate than low
-order at equal degrees of freedom. As recalled by
-[Pereira et al. (2021)](/sources/pereira-2021.md), the companion study of
+order at equal degrees of freedom.
+[Pereira et al. (2021)](/sources/pereira-2021.md), §IV.3.4, cite the companion study of
 [partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
-on the transitional TGV found that the coherent structures driving
+on the transitional TGV, which found that the coherent structures driving
 transition must be resolved, which fixes the minimum physical resolution.
 
 ## Supersonic TGV at $M_0=1.25$
@@ -880,6 +991,38 @@ sources)*.
   equations, semi-discrete only: CFL about 1 and the third-order
   strong-stability-preserving Runge–Kutta scheme both produce entropy
   (App. C).
+- [Svärd (2022)](/sources/svard-2022.md) prints the initial velocity with
+  $\sin(z/L)$ in both $u$ and $v$ together with the pressure of the other sources
+  $p_0+\tfrac{1}{16}\rho_0V_0^2(\cos2x+\cos2y)(\cos2z+2)$; that pressure
+  satisfies the incompressible pressure Poisson equation for the
+  $\cos(z/L)$ velocity of the other sources and not for the printed
+  $\sin(z/L)$ one *(compiler check, not in the sources)*, and the paper
+  does not say which the code used. The author's statement that the
+  reference dissipation peak is "close to 0.0013" (§5.3) is a factor ten
+  below the author's own Table 5 and below the van der Weide et al. value
+  quoted next (0.0115). The scheme's viscous terms are first order and the
+  time stepping is forward Euler, so the comparison with a second-order
+  scheme is of peak values at matching resolution, not of formal order.
+  The abstract announces a "turbulent Rayleigh-Taylor problem" as third
+  test; the paper runs this Taylor–Green vortex instead.
+- [Ma et al. (2022)](/sources/ma-2022.md) print neither the Reynolds
+  number, nor the grid, nor the DNS source of their comparison, so their
+  agreement cannot be placed against the other $Re=1600$ runs.
+- [Simonis et al. (2022)](/sources/simonis-2022.md) print in Table 1, for
+  $N_x=128$ at Mach 0.1, the time step 0.00288, while the rule that gives
+  every other $N_x=128$ row, lattice velocity times $\Delta x$, gives
+  $0.05776\times0.04947=0.002857$, the value that also reproduces the
+  printed relaxation time of that row; Table 2 prints 0.00285 for the same
+  setting *(compiler check, not in the sources)*. They write the filter
+  width as "$\Theta=10$" where the calibrated quantity is the
+  dimensionless $\Theta/\Delta t=10$ (§3.3, Fig. 6), and word the
+  numerical convergence of §3.4 as "the present work proves".
+- [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) write the
+  polynomial degree $\mathcal P$ (here $N$). Their time-step independence
+  holds exactly for repeated application of a diagonal modal operator;
+  with the nonlinear dynamics acting between steps, the authors call the
+  two procedures "analogous" and add the high-order-integrator condition
+  (§3.2).
 
 # Citations
 
@@ -888,8 +1031,8 @@ sources)*.
 - [Cao et al. (2022)](/sources/cao-2022.md) — §3.1–3.2, Tables 1–4, Figs. 2–6.
 - [Prakash et al. (2022)](/sources/prakash-2022.md) — §III.B.2, Eqs. (25)–(27), Figs. 5–7; §IV.
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §6.1, Eqs. (123)–(125), Fig. 4.
-- [Basile et al. (2023)](/sources/basile-2023.md) — §3.2, §4.2.1 (recalled TGV studies).
-- [Pereira et al. (2021)](/sources/pereira-2021.md) — §IV.3.4 (recalled companion TGV study).
+- [Basile et al. (2023)](/sources/basile-2023.md) — §3.2, §4.2.1 (cited TGV studies).
+- [Pereira et al. (2021)](/sources/pereira-2021.md) — §IV.3.4 (cited companion TGV study).
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — Abstract; §3.8, Fig. 5.
 - [Kou et al. (2023)](/sources/kou-2023.md) — §3, Table 1; §4.2, Eq. (28), Figs. 10–12.
 - [Saini et al. (2023)](/sources/saini-2023.md) — §2.2, Eqs. (6)–(11); §3.1, Fig. 1; §4, Figs. 5–6; §5.1, Figs. 7–8.
@@ -909,3 +1052,7 @@ sources)*.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.10, Fig. 21.
 - [Wang et al. (2013)](/sources/wang-2013.md) — §3.2 (work unit); §4.15 (case C3.5 definition and diagnostics); §5.6, Table VII, Figs. 13–14, 25–27 (participants, error against work units); §6.
 - [Kuya et al. (2018)](/sources/kuya-2018.md) — §5.1, Eq. (72); §5.2, Table 3, Figs. 1–7 (inviscid compressible TGV, $M_0=0.05$ and 0.4); §5.3; App. C, Figs. 12–15; appended corrigendum.
+- [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §2.1; §3.2, Eqs. (28)–(30); §3.3, Eq. (32); §3.4, Algorithms 1–4, Tables 4–6 (filter optimization on the inviscid TGV); §4.2, Figs. 9–13; §4.3, Eqs. (50)–(52), Figs. 15–18 ($Re=1600$ on linear and curved meshes).
+- [Svärd (2022)](/sources/svard-2022.md) — Abstract; §5.3, Eqs. (44)–(46), Table 5, Figs. 6–7 (entropy-stable finite volumes, $32^3$ to $128^3$).
+- [Ma et al. (2022)](/sources/ma-2022.md) — §1; §3.1, Eq. (33), Figs. 4–6 (WCNS-T against WCNS-E in implicit LES).
+- [Simonis et al. (2022)](/sources/simonis-2022.md) — §2.1–2.4; §3.2–3.4, Tables 1–2, Figs. 2–9; App. B, Table 3, Fig. 10 (temporal LES with lattice Boltzmann at $Re=800$ and 3000).

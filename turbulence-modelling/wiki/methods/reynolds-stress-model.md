@@ -5,7 +5,7 @@ description: "Second-moment RANS closures that transport the six Reynolds stress
 status: established
 aliases: [Reynolds-stress model, RSM, DRSM, differential Reynolds-stress model, second-moment closure, Reynolds stress transport model, RSTM, SSG/LRR-ω, SSG/LRR-ω-γ, ATAAC DRSM]
 tags: [rans, reynolds-stress-model, transition, turbomachinery, separated-flow]
-timestamp: 2026-10-27T10:57:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Differential Reynolds-stress models
@@ -41,8 +41,8 @@ Liu et al. (2024) give the motivation and the lineage
   stress-$\omega$ model near the wall with SSG away from it through
   Menter's $F_1$, obtaining the robust SSG/LRR-$\omega$ model.
 
-Bouhafid et al. (2024) justify a DRSM for wing-tip vortices by recalling
-that the Reynolds stress and the mean strain are misaligned there because
+Bouhafid et al. (2024) justify a DRSM for wing-tip vortices by stating,
+from the literature, that the Reynolds stress and the mean strain are misaligned there because
 of rotation, which makes DRSMs "more accurate than two-equations models"
 for such flows; the statement is cited, not shown
 ([Bouhafid et al. (2024)](/sources/bouhafid-2024.md), §2.2). Agrawal &
@@ -60,6 +60,25 @@ passage acceleration and turning impose on wake cores, which invalidates
 the linear [Boussinesq](/definitions/boussinesq-hypothesis.md) relation
 ([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §2.2.2.1,
 §3.2.3; see [turbine cascades](/benchmarks/turbine-cascade.md)).
+Sandberg & Zhao (2022) repeat that the cost of Reynolds-stress models
+precludes their widespread use, citing Roos Launchbury et al. (2020) on
+robustness, and recall that the classical
+[explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)
+are obtained from the stress-transport equations under weak equilibrium
+(Rodi 1976), the algebraic route that keeps the non-linear stress–strain
+dependence without transporting the stresses
+([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md), §3.2). Cherroud et
+al. (2022) compare their learned corrections of SST with BSL-EARSM, which
+they call a "physics-based" Reynolds-stress $k$-$\omega$ model, and find the
+learned models significantly better on three 2-D separated flows
+([Cherroud et al. (2022)](/sources/cherroud-2022.md), App. C; details on
+the EARSM page). He et al. (2022) read one of the effects their
+random-forest correction of Spalart–Allmaras with the quadratic
+constitutive relation learns, eddy viscosity
+increased by shear and reduced by rotation, as a re-discovery of an
+effect "explicitly written in the Reynolds stress transport equations"
+([He et al. (2022)](/sources/he-2022-b.md), abstract, §5.3, §6; see
+[field inversion](/methods/field-inversion-machine-learning.md)).
 
 ## The SSG/LRR-$\omega$ model
 
@@ -143,7 +162,7 @@ credited to Nie et al. (2018), who applied it with the
 $\gamma$-$Re_\theta$ model to correct too-short transition lengths caused
 by the different near-wall $\omega$ production of SST and SSG/LRR-$\omega$;
 Kuya et al. (2022) instead activate the modified production only in
-favourable pressure gradients (§ Blending, as recalled by Liu et al.).
+favourable pressure gradients (§ Blending; both cited by Liu et al.).
 On the PVD compressor cascade at 25% span, with the modified production
 the model predicts separation-induced transition consistent with oil flow,
 whereas with the original production transition moves upstream as bypass
@@ -175,7 +194,7 @@ by $F_1$; calibrated with their scheme on decaying isotropic turbulence the
 values are 0.5 and 0.3 (§2.3, §3.1). In the LES region the transported
 stress acts as the subgrid stress, and on a transonic hammerhead launch
 vehicle all its components are smaller than those of SST-IDDES, which, in
-Spalart's view as the authors recall, unlocks the Kelvin–Helmholtz
+Spalart's view, which the authors cite, unlocks the Kelvin–Helmholtz
 instability faster (§3.3, Fig. 10). On the tandem cylinders and the
 hammerhead RSM-IDDES gives a shorter shear layer, finer resolved
 structures, better $C_p$ RMS peaks and a shedding frequency of 176 Hz
@@ -284,8 +303,8 @@ that Heinz (2020) cites ($7\times10^5\le Re\le9\times10^6$, angles of
 attack from $-10^\circ$ to $20^\circ$, two-dimensional grids up to about
 300,000 elements), the Reynolds-stress model is the top performer for lift
 but overpredicts drag, while the hybrids of the same compilation
-underpredict it (§5.4). At the first High-Order CFD Workshop an explicit
-algebraic Reynolds-stress model (an algebraic, not a differential, closure)
+underpredict it (§5.4). At the first High-Order CFD Workshop an [explicit
+algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md) (an algebraic, not a differential, closure)
 was one of the DG RANS submissions on the
 [RAE 2822 airfoil](/benchmarks/rae-2822-airfoil.md), within "a large spread
 among the groups" that the organizers attribute partly to mesh wake
@@ -326,9 +345,9 @@ assessing their $k$-$\omega$ [wall function](/methods/rans-wall-function.md)
 - The vortex evidence differs by flow: too little $k$ and too compact
   vortices in the turbine passage (Morsbach et al. 2024), a smeared vortex
   with too much $k$ over a delta wing (Mozaffari et al. 2022), and a
-  recalled claim of better wing-tip-vortex predictions than two-equation
+  cited claim of better wing-tip-vortex predictions than two-equation
   models (Bouhafid et al. 2024). The first two are computations of
-  different flows with different solvers and grids; the third is recalled,
+  different flows with different solvers and grids; the third is cited,
   not shown.
 
 # Citations
@@ -345,3 +364,6 @@ assessing their $k$-$\omega$ [wall function](/methods/rans-wall-function.md)
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1, §3.2.3.
 - [Heinz (2020)](/sources/heinz-2020.md) — §5.4.
 - [Wang et al. (2013)](/sources/wang-2013.md) — §5.4, Table V.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.2.
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) — App. C.
+- [He et al. (2022)](/sources/he-2022-b.md) — abstract, §5.3, §6.

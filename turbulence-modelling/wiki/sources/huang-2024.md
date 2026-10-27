@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Methods Appl. Mech. Engrg. 421:116795"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Computer_Methods_in_Applied_Mechanics_and_Engineering_Huang_A_new_troubled_cell_indicator_and_a_new_limiter_based_on_TEN.pdf"
 tags: [shock-capturing, dg, high-order, numerical-dissipation, weno]
-timestamp: 2026-10-27T06:09:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -120,7 +120,7 @@ page-local).
 | $t_n$ | $t_k$ (page-local) | 1 or 10 |
 | $u_i^{(l)}$, $u_{ij}^{(l)}$; $v_l^{(i)}$; $c_l$, $a_l$ | (DG moments, scaled Legendre basis, basis norms) | modal DG; $a_l$ unrelated to split-form weights |
 | $p_n$, $q$ | $p_k$, $q$ (candidate and target reconstruction polynomials, page-local) | $q$ also the exponent 6 |
-| $M$; $I_i^{KXRCF}$, $h$ (KXRCF) | (TVB parameter; KXRCF quantity and circumscribed radius) | KXRCF's $h$ **collides** with the registry's cell size |
+| $M$; $I_i^{KXRCF}$, $h$ (KXRCF) | $M_{\mathrm{TVB}}$ (TVB parameter, page-local as on [shock sensors](/definitions/shock-sensor.md)); $I^{\mathrm{KXRCF}}_i$, (circumscribed radius) | KXRCF's $h$ **collides** with the registry's cell size |
 | $\hat f_{i+1/2}$ | $f^*$ (interface numerical flux) | Rusanov in all tests |
 | $\rho,u,v,p,E$; $\gamma$ | $\rho$, $u$, $v$, $p$, $E$; $\gamma=1.4$ | Euler variables |
 
@@ -130,7 +130,7 @@ page-local).
 complete into the [bibliography](/bibliography.md) with `citedby` this slug.
 Same-author same-year works take suffixes in printed order (Cockburn 1989,
 Qiu 2005, Zhu 2020 — J. Zhu and H. Zhu —, six Fu 2019 papers, Fu 2022).
-Ref. [39] (Li, Fu & Adams 2021, J. Comput. Phys. 428:109960) is a different work from the planned source `li-2021` and is keyed `li-2021-h`; ref. [36] is
+Ref. [39] (Li, Fu & Adams 2021, J. Comput. Phys. 428:109960) is a different work from the ingested source [Li et al. (2021)](/sources/li-2021.md) and is keyed `li-2021-h`; ref. [36] is
 [Takagi et al. (2022)](/sources/takagi-2022.md). Incomplete items: [5] (no
 volume or pages beyond "4 (2024)"), [12] and [29] (no volume), [63] (one
 author only). No printed duplicates.

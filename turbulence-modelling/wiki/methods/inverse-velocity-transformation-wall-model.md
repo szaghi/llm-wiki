@@ -5,7 +5,7 @@ description: "A one-ODE wall-stress model for compressible wall-modelled LES wit
 status: established
 aliases: [compressible wall model based on an inverse velocity transformation, Griffin–Fu–Moin wall model, inverse-transformation wall model]
 tags: [wall-model, wmles, compressible, hypersonic, boundary-layer]
-timestamp: 2026-10-27T11:02:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Inverse-velocity-transformation wall model
@@ -32,8 +32,8 @@ Griffin et al. (2023, §1) state two defects of the classical model, Eqs.
 (1.1)–(1.3) on the equilibrium-wall-model page:
 
 - **Robustness**: two coupled nonlinear boundary-value problems can be
-  difficult to converge with strong heat transfer (Fu et al. 2021, as
-  recalled).
+  difficult to converge with strong heat transfer (Griffin et al. cite Fu
+  et al. 2021).
 - **Accuracy**: its damping function implicitly embeds the van Driest
   transformation, and its energy equation a constant $Pr_t=0.9$; both degrade
   with wall heat transfer (§3, §5).
@@ -41,7 +41,7 @@ Griffin et al. (2023, §1) state two defects of the classical model, Eqs.
 ## Algorithm
 
 Inputs: $U_m$, $T_m$, $\langle\rho\rangle_m$ at $h_{\mathrm{wm}}$; $U_e$, $T_e$ at
-the edge (located by the method of Griffin, Fu & Moin 2021, as recalled); the
+the edge (located by the method of Griffin, Fu & Moin 2021, which Griffin et al. cite); the
 wall temperature; an ideal gas, a viscosity law and constant pressure across
 the inner layer (§2.3).
 
@@ -65,7 +65,7 @@ the inner layer (§2.3).
    $q_w=s\,\tau_wc_p(T_w-T_r)/U_e$.
 
 Anchoring the quadratic $T(U)$ at the matching point rather than at the edge
-(as Zhang et al. 2014 do, as recalled) enforces the exact matching temperature.
+(as Zhang et al. 2014 do, whom Griffin et al. cite) enforces the exact matching temperature.
 The model outputs the mean profiles $U(y)$, $T(y)$ as well as $\tau_w$, $q_w$;
 Griffin et al. (§5) suggest it also as a boundary condition for outer LES or
 RANS, for inflow generation and as a base flow for perturbation methods.
@@ -162,7 +162,7 @@ model ties $q_w$ algebraically to $\tau_w$ through the Reynolds analogy;
 validation in complex flows is pending (§3, §5). Intermediate versions appear
 in a CTR brief of the same title (Griffin, Fu & Moin 2022) and in Griffin's
 thesis; Kumar & Larsson (2022) apply the same inverse procedure with a
-data-driven transformation (§2.3, as recalled).
+data-driven transformation (Griffin et al., §2.3, cite both).
 
 ## Qualifications
 

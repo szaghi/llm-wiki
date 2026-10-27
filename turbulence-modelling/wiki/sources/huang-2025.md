@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Comput. Phys. 520:113459"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Computational_Physics_Huang_A_new_high-order_RKDG_method_based_on_the_TENO-THINC_scheme.pdf"
 tags: [shock-capturing, dg, weno, numerical-dissipation, high-order]
-timestamp: 2026-10-27T06:09:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -23,7 +23,7 @@ handling of discontinuities in the
 [DG](/methods/discontinuous-galerkin-spectral-element-method.md) family (a
 modal RKDG, not DGSEM), next to the
 [subcell finite-volume](/methods/subcell-finite-volume-shock-capturing.md)
-alternatives the introduction recalls.
+alternatives the introduction cites (§1).
 
 The method has three parts. A TENO
 [troubled-cell indicator](/definitions/shock-sensor.md), from the authors'

@@ -5,14 +5,14 @@ description: "RAMSES is an octree adaptive-mesh-refinement code with a second-or
 status: established
 aliases: [ramses, RAMSES-MHD]
 tags: [software, astrophysics, mhd, implicit-les, mesh-adaptation, dynamo]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # RAMSES
 
 **RAMSES** is an adaptive-mesh-refinement (AMR) code for self-gravitating
-gas, dark matter and stars, introduced by Teyssier (2002) as recalled by both
-sources: an octree mesh, a second-order Godunov solver for the gas and the
+gas, dark matter and stars, introduced by Teyssier (2002), whom both sources
+cite: an octree mesh, a second-order Godunov solver for the gas and the
 magnetic field, and N-body particles coupled through gravity. Two ingested
 sources run it on cosmological zoom-in simulations of Milky Way-like galaxies
 with magnetic fields: [Liu et al. (2022)](/sources/liu-2022.md), who add a
@@ -27,11 +27,11 @@ role of numerical dissipation and of subgrid models in astrophysical codes.
 
 - **Solver.** Ideal MHD with gravity, heating and cooling, solved with the
   second-order unsplit Godunov scheme of Fromang et al. (2006) based on
-  MUSCL–Hancock (Liu et al. 2022, §2.1, Eqs. 1–6, as recalled); "a second
+  MUSCL–Hancock, which Liu et al. (2022, §2.1, Eqs. 1–6) cite; "a second
   order Godunov scheme" (Martin-Alvarez et al. 2022, §2, §3.2). Ideal
   monatomic gas, $\gamma=5/3$ (Martin-Alvarez et al. 2022, §2).
 - **Constrained transport.** The induction equation is advanced by
-  constrained transport (Teyssier, Fromang & Dormy 2006, as recalled), with
+  constrained transport (Teyssier, Fromang & Dormy 2006, as cited), with
   the magnetic field stored on cell faces, which keeps
   $\nabla\cdot\boldsymbol B=0$ to machine precision (Liu et al. 2022, §2.1)
   or "by construction" (Martin-Alvarez et al. 2022, §2). Martin-Alvarez et
@@ -44,10 +44,10 @@ role of numerical dissipation and of subgrid models in astrophysical codes.
   in our simulations are of numerical nature"; they estimate the resulting
   numerical magnetic Prandtl number $Pm\sim2$ (§3.3.5). Liu et al. (2022, §1)
   likewise take the dissipation to be "provided by local truncation errors".
-  The flow part is thus an [implicit LES](/definitions/implicit-les.md) in
-  this bundle's sense, although neither source uses the term, and the
-  effective Reynolds number is set by [numerical
-  dissipation](/properties/numerical-dissipation.md) and the cell size.
+  Neither source uses the term
+  [implicit LES](/definitions/implicit-les.md); with no explicit diffusion,
+  all dissipation is the [numerical
+  dissipation](/properties/numerical-dissipation.md) of the scheme.
 
 ## Mesh refinement
 
@@ -91,7 +91,7 @@ role of numerical dissipation and of subgrid models in astrophysical codes.
   turbulent kinetic energy, with production by resolved shear and
   destruction modelling the cascade to viscous scales, in the lineage of
   Schmidt et al. (2006), Semenov et al. (2016) and Kretschmer & Teyssier
-  (2020), as recalled by Liu et al. (2022, §2.3); its equation is not printed
+  (2020), which Liu et al. (2022, §2.3) cite; its equation is not printed
   there. It sets the star-formation efficiency per free-fall time through the
   cell virial parameter and turbulent Mach number.
 - **Subgrid turbulent dynamo.** The [subgrid turbulent dynamo
@@ -117,8 +117,8 @@ and produce considerably lower amplification rates", which that literature
 attributes to the numerical diffusivity of the solver. All their own runs use
 constrained transport; their argument is that the quasi-Lagrangian
 refinement, not only the induction scheme, is responsible for part of the
-slow growth. This is a statement about un-ingested works, not tested here
-across divergence treatments.
+slow growth. The works cited are not ingested, and the paper compares no
+divergence treatments.
 
 ## Qualifications
 

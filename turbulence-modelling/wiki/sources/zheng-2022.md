@@ -9,7 +9,7 @@ year: 2022
 venue: "Comput. Methods Appl. Mech. Eng. 395:114973"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Computer_Methods_in_Applied_Mechanics_and_Engineering_Zheng_A_fourth-order_conservative_semi-Lagrangian_finite_volume_WE.pdf"
 tags: [weno, semi-lagrangian, finite-volume, vlasov]
-timestamp: 2026-10-26T16:21:00Z
+timestamp: 2026-10-27T15:53:00Z
 ---
 
 # Summary
@@ -57,7 +57,7 @@ matches Crossref.
 3. The SL finite-volume update (new average = average of the old solution over the upstream cell) follows exactly from the Reynolds transport theorem (§2, Eqs. 4–5). **Derived**
 4. Upstream cells are approximated by cubic-curved quadrilaterals: four Gauss–Lobatto points per Eulerian edge are traced back with fourth-order Runge–Kutta, and a parametric cubic is interpolated through the feet (§2.1, App. A). **Derived**
 5. WENO-JS-type reconstructions cannot be used because SL schemes need values at arbitrary points; WENO-ZQ gives a full cubic polynomial per cell, fourth order where smooth and degrading to lower order near discontinuities (§1, §2.2). **Stated**
-6. WENO-ZQ parameters: $\epsilon_W=10^{-14}$, $\gamma_0=0.8$, $\gamma_1=\dots=\gamma_4=0.05$ (§2.2). **Stated**
+6. WENO-ZQ parameters: $\epsilon_W=10^{-14}$, linear weights $d_0=0.8$, $d_1=\dots=d_4=0.05$ (§2.2). **Stated**
 7. Area integrals over the clipped curved polygons become line integrals by Green's theorem with auxiliary functions $\tilde P$, $\tilde Q$ (Eqs. 18–20); three-point Gauss–Legendre quadrature is exact on mesh-line segments and sixth-order accurate on cubic-curve segments (§2.3.2, Eqs. 17–21). **Stated**
 8. Taking the minimum of the reconstruction at Gauss–Legendre points does not suffice for positivity here; the exact cell minimum is found from the critical points, an intersection of conic sections (§2.3.3, Remark 2.1). **Stated** (from numerical tests, no data printed)
 9. Proposition 3.1: mass conservation with periodic boundary conditions (§3, Eq. 25). **Proved**
@@ -77,13 +77,16 @@ matches Crossref.
 23. The scheme is mass conservative, positivity preserving, unconditionally stable in the linearized setting and fourth order in space and time (§5). **Stated**
 24. Floating-point truncation can misplace an intersection near a curve end close to a mesh line, or misindex outer segments when a cubic nearly overlaps a mesh line; both "cause chaos" in the integration, and no standard remedy is given (App. B.3). **Stated**
 
-The WENO-ZQ weights (Eqs. 13–15), with $\beta^{\mathrm{ZQ}}_0$ the
-smoothness indicator of the cubic $q_0$ and $\beta^{\mathrm{ZQ}}_{1..4}$ those
-of the linear $q_k$:
+The WENO-ZQ weights (Eqs. 13–15), in the symbols of the
+[WENO](/methods/weno-scheme.md) page and registry §11, with
+$\mathrm{IS}_0$ the smoothness indicator of the cubic $q_0$,
+$\mathrm{IS}_{1..4}$ those of the linear $q_k$, $d_k$ the linear and
+$\mathsf w_k$ the nonlinear weights, and $\mathrm{IS}_{\mathrm G}$ the
+global indicator:
 
-$$\tau_{\mathrm{ZQ}}=\Big(\frac14\sum_{k=1}^4\big|\beta^{\mathrm{ZQ}}_0-\beta^{\mathrm{ZQ}}_k\big|\Big)^2,\qquad \omega^{\mathrm{ZQ}}_k=\frac{\gamma_k\big(1+\tau_{\mathrm{ZQ}}/(\beta^{\mathrm{ZQ}}_k+\epsilon_W)\big)}{\sum_l\gamma_l\big(1+\tau_{\mathrm{ZQ}}/(\beta^{\mathrm{ZQ}}_l+\epsilon_W)\big)},$$
+$$\mathrm{IS}_{\mathrm G}=\Big(\frac14\sum_{k=1}^4\big|\mathrm{IS}_0-\mathrm{IS}_k\big|\Big)^2,\qquad \mathsf w_k=\frac{d_k\big(1+\mathrm{IS}_{\mathrm G}/(\mathrm{IS}_k+\epsilon_W)\big)}{\sum_ld_l\big(1+\mathrm{IS}_{\mathrm G}/(\mathrm{IS}_l+\epsilon_W)\big)},$$
 
-$$\tilde u_s=\frac{\omega^{\mathrm{ZQ}}_0}{\gamma_0}\Big(q_0-\sum_{k=1}^4\gamma_kq_k\Big)+\sum_{k=1}^4\omega^{\mathrm{ZQ}}_kq_k .$$
+$$\tilde u_s=\frac{\mathsf w_0}{d_0}\Big(q_0-\sum_{k=1}^4d_kq_k\Big)+\sum_{k=1}^4\mathsf w_kq_k .$$
 
 # Printed slips
 
@@ -105,8 +108,8 @@ $$\tilde u_s=\frac{\omega^{\mathrm{ZQ}}_0}{\gamma_0}\Big(q_0-\sum_{k=1}^4\gamma_
 | $\Delta$ (Laplacian, Eqs. 60, 64) | $\nabla^2$ | **collision** with the filter width |
 | $\mu_i$, $\nu_j$ | (scaled cell coordinates, page-local) | **collision** with $\mu$, $\nu$ (viscosities) |
 | $\xi$ | $\xi$ (curve parameter) | also wavenumbers $\xi_1$, $\xi_2$ in App. C |
-| $\beta_k$, $\tau$ | $\beta^{\mathrm{ZQ}}_k$, $\tau_{\mathrm{ZQ}}$ (page-local) | **collision** with $\beta(\boldsymbol x)$ and $\tau_{ij}$ |
-| $\gamma_k$, $\omega_k$, $\epsilon$ | $\gamma_k$, $\omega^{\mathrm{ZQ}}_k$, $\epsilon_W$ (page-local) | **collision** with $\gamma$ and $\omega$ |
+| $\beta_k$, $\tau$ | $\mathrm{IS}_k$, $\mathrm{IS}_{\mathrm G}$ (smoothness indicators, registry §11 and the WENO page) | **collision** with $\beta(\boldsymbol x)$ and $\tau_{ij}$ |
+| $\gamma_k$, $\omega_k$, $\epsilon$ | $d_k$, $\mathsf w_k$, $\epsilon_W$ (linear and nonlinear weights, registry §11; small number, page-local) | **collision** with $\gamma$ and $\omega$ |
 | $\tilde u^{(i,j)}$ | $\tilde u_s$ (cell reconstruction, page-local) | **collision:** not a Favre filter |
 | $\theta_{i,j}$, $m_{ij}$ | (limiter factor, cell minimum, page-local) | |
 | $\kappa_1$, $\kappa_2$, $A$ | (directional Courant numbers, amplification factor, page-local) | **collision** with $\kappa$ (von Kármán constant) |

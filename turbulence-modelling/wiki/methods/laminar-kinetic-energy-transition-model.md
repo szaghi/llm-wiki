@@ -5,19 +5,19 @@ description: "RANS transition closures that transport the energy of pre-transiti
 status: established
 aliases: [LKE model, laminar kinetic energy model, k-kL-ω, k-kl-ω, three-equation transition model, LKE-SST]
 tags: [rans, transition, eddy-viscosity, turbomachinery, separated-flow, boundary-layer]
-timestamp: 2026-10-27T10:56:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Laminar kinetic energy transition models
 
 A laminar-kinetic-energy (LKE) model adds to a two-equation RANS closure a
-transport equation for $k_L$ (page-local), the kinetic energy of the
+transport equation for $k_L$ (registry §11), the kinetic energy of the
 non-turbulent fluctuations that grow in a laminar boundary layer before
 transition (Klebanoff streaks, Tollmien–Schlichting waves). Transition is
 modelled as a transfer term $\mathcal R$ (page-local) that moves energy
 from $k_L$ to the turbulent kinetic energy $k$, leaving the total
-fluctuation energy $k_L+k$ unchanged. As recalled by Pacciani et al.
-(2025), the concept goes back to Mayle & Schulz (1997) and was used for
+fluctuation energy $k_L+k$ unchanged. Pacciani et al. (2025) trace the
+concept to Mayle & Schulz (1997) and cite its use for
 transition-sensitive closures by Walters & Leylek (2004), Walters &
 Cokljat (2008) and Lardeau et al. (2007); a variant of Lopez & Walters
 (2016) replaces $k_L$ by the wall-normal fluctuation energy
@@ -118,7 +118,7 @@ $$\begin{aligned}
 \frac{Dk}{Dt}&=\gamma P_k+\mathcal R-\max(\gamma,0.1)\,\beta^*k\omega+\partial_j\Big[\Big(\nu+\frac{\nu_t}{\sigma_k}\Big)\partial_jk\Big],
 \end{aligned}$$
 
-with the $\omega$-equation and the eddy viscosity of standard SST (limiter
+with the $\omega$-equation and the eddy viscosity of SST (limiter
 $\mu_t=\rho a_1k/\max(a_1\omega,F_2\lvert S\rvert)$, App. A Eq. A14). The
 factor $(1-\gamma)$ drives $k_L$ and $\mathcal R$ to zero after transition:
 $\mathcal R$ controls the onset, and once turbulent production starts the
@@ -252,15 +252,17 @@ $k_L$-$k$-$\omega$ model of Walters & Leylek (2004) and Walters & Cokljat
 replace the case-dependent thresholds of its two transfer terms by
 critical momentum-thickness Reynolds numbers from the empirical onset
 correlations of the intermittency models
-([Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md), §II–§III). Page-local
-symbols in this section: $\tilde\omega_\ell=\ln\omega$ the transported
+([Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md), §II–§III). Symbols
+in this section (page-local unless registry §11 lists them:
+$\tilde\omega_\ell$, $k_L$, $R_{\mathrm{TRG}}$, $c_\theta$, $\gamma_A$,
+$\gamma_B$, $\lambda_{\theta l}$, $Tu_l$): $\tilde\omega_\ell=\ln\omega$ the transported
 variable (as on the [Wilcox page](/methods/k-omega-model.md)),
 $k_{\mathrm{tot}}=k_L+k$, $k_{T,s}$ and $k_{T,l}$ the small- and large-scale
 parts of $k$ (as above), $\ell_T=\sqrt k/\omega$ and
 $\ell_{\mathrm{eff}}=\min(C_\lambda d,\ell_T)$ the turbulent and wall-limited
 length scales (the source's $\lambda_T$, $\lambda_{\mathrm{eff}}$),
 $R_{\mathrm{TRG}}$ the second transfer term, $c_\theta$, PGC and
-$\lambda_\theta$ the scale factor, pressure-gradient correction and
+$\lambda_{\theta l}$ the scale factor, pressure-gradient correction and
 pressure-gradient parameter below, $M_e$ the boundary-layer-edge Mach number.
 
 **Structure.** The compressible model transports $k_L$, $k$ and
@@ -362,7 +364,7 @@ maximum (after Jacobs & Durbin), or from $C_p$ where the experiment used
 it. For comparison with intermittency-based measurements the authors
 propose $\gamma_B=(k-k_{\min})/(k_{\max}-k_{\min})$ along the plate, beside
 $\gamma_A=k/k_{\mathrm{tot}}$, each set to 0.5 at onset ($\gamma_A$,
-$\gamma_B$ page-local, not a transported intermittency; §IV, Eq. 34).
+$\gamma_B$ registry §11, not a transported intermittency; §IV, Eq. 34).
 
 **Discretization.** The model runs in a modal discontinuous Galerkin RANS
 solver with primitive logarithmic variables ($\ln p$, $\ln T$,
@@ -438,6 +440,23 @@ low-pressure turbine at midspan, suggest that tuned transition models or
 LKE models may be needed ([Morsbach et al. (2024)](/sources/morsbach-2024.md),
 §5).
 
+## Data-driven corrections
+
+Sandberg & Zhao (2022) list the laminar-kinetic-energy line (Mayle &
+Schulz 1997; Pacciani & Marconcini 2011, cited) among the transport
+models a machine-learnt transition closure can build on, and review one
+such correction: CFD-driven, multi-expression and multi-objective
+gene-expression training of corrections to a laminar-kinetic-energy model
+for low-pressure turbines, with non-dimensional $\Pi$-group features
+(Akolekar et al. 2021), in which every candidate model is run in RANS and
+scored on the mean flow ([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md),
+§3.4, §4.3; see [model-consistent training](/methods/model-consistent-training.md)
+and [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+Their verdict on data-driven transition modelling as a whole is that it
+is "still far from mature" (§4.3); the field-inversion corrections of
+intermittency models they cite are on the
+[correlation-based page](/methods/local-correlation-based-transition-model.md).
+
 ## Qualifications
 
 - Pacciani et al. print $f_{\mu,L}=1-e^{R_T^{2.5}}$ with a positive exponent
@@ -488,3 +507,4 @@ LKE models may be needed ([Morsbach et al. (2024)](/sources/morsbach-2024.md),
 - [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §I, §II Eqs. 1–27, §III Eqs. 28–33, §IV A–C Tables I–IX Figs. 4–23, Eq. 34, §V Figs. 25–29, Appendix.
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §1.2, Eqs. 33–34.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §3.3.3.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.4, §4.3.

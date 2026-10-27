@@ -5,13 +5,13 @@ description: "The anisotropic minimum-dissipation (AMD) model is an eddy-viscosi
 status: established
 aliases: [AMD model, AMD, minimum-dissipation model, Rozema model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-27T05:46:00Z
+timestamp: 2026-10-27T15:48:00Z
 ---
 
 # Anisotropic minimum-dissipation model
 
 The **anisotropic minimum-dissipation (AMD) model** of Rozema et al.
-(2015, as recalled by the sources) is an eddy-viscosity closure of the
+(2015, cited by the sources) is an eddy-viscosity closure of the
 deviatoric [subgrid stress](/definitions/large-eddy-simulation.md),
 $\tau^d_{ij}=-2\nu_t\bar S_{ij}$, whose viscosity uses the grid spacing of
 each direction separately and vanishes where the resolved velocity gradient
@@ -42,15 +42,15 @@ pressure (§3.2, Eq. 3.3).
   the numerator is negative.
 - **Relation to the gradient model.** The numerator is, up to the factor
   12, the local energy flux $\Pi$ of the [gradient model](/methods/gradient-model.md)
-  with directional widths, $\tau_{ij}=\tfrac1{12}\sum_k\Delta_k^2\partial_k\bar u_i\partial_k\bar u_j$;
-  hence $\nu_t=12\,C_{\mathrm{AMD}}\max(\Pi_{\mathrm{grad}},0)/(\partial_l\bar u_m\partial_l\bar u_m)$
-  with $\Pi_{\mathrm{grad}}$ (page-local) that flux *(compiler check, not in
-  the sources)*. The AMD model thus keeps the forward-scatter part of the
-  gradient-model flux and delivers it as an eddy viscosity *(compiler
-  check, not in the sources)*.
+  with directional widths, $\tau_{ij}=\tfrac1{12}\sum_k\Delta_k^2\partial_k\bar u_i\partial_k\bar u_j$
+  (the form printed by [Qi et al. (2022)](/sources/qi-2022-b.md), Eq. 3.12,
+  with $C_0=1/12$); hence
+  $\nu_t=12\,C_{\mathrm{AMD}}\max(\Pi_{\mathrm{grad}},0)/(\partial_l\bar u_m\partial_l\bar u_m)$
+  with $\Pi_{\mathrm{grad}}$ (page-local) that flux, so only its positive
+  (forward-scatter) part enters the viscosity *(compiler check, not in
+  the sources)*.
 - **Minimum dissipation.** [Vela-Martín (2022)](/sources/velamartin-2022.md)
-  (§8) cites minimum-dissipation models (Verstappen; Rozema et al., as
-  recalled) as already embodying the idea that strong positive fluctuations
+  (§8) cites minimum-dissipation models (Verstappen; Rozema et al.) as already embodying the idea that strong positive fluctuations
   of the flux need not be modelled, in line with its own
   backscatter-free reformulation of the subgrid flux. [Prakash et al. (2022)](/sources/prakash-2022.md)
   (§II) list AMD among the remedies for a flow-dependent Smagorinsky
@@ -105,8 +105,8 @@ DNS points; second-order staggered finite differences, no wall model):
 
 ## Qualifications
 
-- The cited advantage on anisotropic meshes (Bae & Koumoutsakos 2022;
-  Sirignano & MacArt 2023) is recalled from other work; in Sirignano &
+- The advantage on anisotropic meshes is cited from other work (Bae &
+  Koumoutsakos 2022; Sirignano & MacArt 2023, citing Zahiri & Roohi); in Sirignano &
   MacArt's own tests AMD beats DS on drag but is the least accurate model
   on the triangular prism.
 - $C_{\mathrm{AMD}}=0.3$ is tied by Sirignano & MacArt to second-order
@@ -132,3 +132,4 @@ DNS points; second-order staggered finite differences, no wall model):
 - [Vela-Martín (2022)](/sources/velamartin-2022.md) — §8.
 - [Prakash et al. (2022)](/sources/prakash-2022.md) — §II.
 - [Pan & Zhang (2023)](/sources/pan-2023.md) — §I.
+- [Qi et al. (2022)](/sources/qi-2022-b.md) — §3.2, Eq. (3.12) (gradient-model form used in a compiler check).

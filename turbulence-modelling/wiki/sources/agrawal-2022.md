@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Rev. Fluids 7:074602"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physical_Review_Fluids_Agrawal_Non-Boussinesq_subgrid-scale_model_with_dynamic_tensorial_co.pdf"
 tags: [sgs-model, non-boussinesq, wmles, separated-flow]
-timestamp: 2026-10-25T13:45:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Summary
@@ -92,7 +92,7 @@ manuscript.
 24. Both dynamic models capture the small mid-span $C_p$ rise at the apex and the counter-rotating vortex pair of the oil-flow pictures; Vreman misses the separation, the pressure rise and the vortex pair even on the finest grid (§VIII.B; Figs. 17–19). **Shown**
 25. Both dynamic models predict the suction peak because it is mainly inviscid; a free-slip run (not shown) also predicts it (§VIII.B). **Stated**
 26. DTCSM costs up to about 1.15 times DSM: 15 against 13 GPU-node-hours per flow-through on the 52 M-cell spanwise-periodic mesh, 112 against 100 on the 452 M-cell 3D mesh (NVIDIA V100 nodes) (§IX; Tables IV–V). **Shown**
-27. With the constraints, DTCSM can be rewritten as $\tau^d_{ij}=-2C_{11}\Delta^2\lvert\bar S\rvert\bar S_{ij}-\Lambda\Delta^2(\bar S_{ik}\bar\Omega_{kj}-\bar\Omega_{ik}\bar S_{kj})$, with $\lvert\bar S\rvert C^d_{ij}=-\Lambda\bar\Omega_{ij}$; this is the form of the two-term velocity-gradient expansion of Lund & Novikov [39], so DTCSM accounts explicitly for large-scale rotation (App. C; Eq. C3). **Derived**
+27. With the constraints, DTCSM can be rewritten as $\tau^d_{ij}=-2C_{11}\Delta^2\lvert\bar S\rvert\bar S_{ij}-\Lambda\Delta^2(\bar S_{ik}\bar\Omega_{kj}-\bar\Omega_{ik}\bar S_{kj})$, with $\lvert\bar S\rvert C^a_{ij}=-\Lambda\bar\Omega_{ij}$ ($C^a_{ij}$ the antisymmetric part of $C_{ij}$, the paper's $C^d_{ij}$); this is the form of the two-term velocity-gradient expansion of Lund & Novikov [39], so DTCSM accounts explicitly for large-scale rotation (App. C; Eq. C3). **Derived**
 28. Prior work [20] shows that DSM gives more accurate integrated quantities and separation extents than static-coefficient models on realistic aircraft (§I). **Stated**
 
 # Printed slips
@@ -113,8 +113,8 @@ manuscript.
 | $\tau^{sgs}_{ij}=\overline{u_iu_j}-\bar u_j\bar u_i$ | $\tau_{ij}$ | same positive-trace convention |
 | $\bar S_{ij}$, $\lvert S\rvert=\sqrt{2\bar S_{ij}\bar S_{ij}}$ | $\bar S_{ij}$, $\lvert\bar S\rvert$ | factor two present; overbars often dropped in §III and the appendices |
 | $L_{ij}=-\widehat{\bar u_i\bar u_j}+\hat{\bar u}_i\hat{\bar u}_j$ | $-L_{ij}$ | **opposite sign** to the registry's $L_{ij}$ |
-| $M_{ij}$ | $M_{ij}$ | $\Delta^2$ kept outside |
-| $C_{ij}$, $C^d_{ij}$, $\Lambda$ | — | DTCSM coefficient tensor, its antisymmetric part, rotation-term coefficient |
+| $M_{ij}$ | $-M_{ij}$ of the [dynamic procedure](/methods/dynamic-procedure.md) | **opposite sign**, as for $L_{ij}$, so the coefficients are unchanged; $\Delta^2$ kept outside |
+| $C_{ij}$, $C^d_{ij}$, $\Lambda$ | $C_{ij}$, $C^a_{ij}$, $\Lambda$ (page-local, [DTCSM page](/methods/dynamic-tensor-coefficient-smagorinsky-model.md)) | DTCSM coefficient tensor, its antisymmetric part (renamed: superscript $d$ marks the deviatoric part in the registry), rotation-term coefficient |
 | $R_{ij}$ (App. C) | $\bar\Omega_{ij}$ | **collision**: rotation-rate tensor, not the Reynolds stress $R_{ij}$; not defined in the paper |
 | $C_s$ | $C_s$ | |
 | $\alpha_{ij}=\partial\bar u_i/\partial x_j$, $\beta_{ij}$, $B_\beta$ (Vreman) | — | **collision** with $\alpha$ (DG/FV blending) and $\beta(\boldsymbol x)$ (field inversion) |

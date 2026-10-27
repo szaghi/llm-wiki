@@ -5,7 +5,7 @@ description: "TRACE is DLR's turbomachinery flow solver, with a second-order fin
 status: established
 aliases: [DLR TRACE, TRACE DG, TRACE solver]
 tags: [software, turbomachinery, dg, implicit-les, des, transition]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # TRACE
@@ -74,7 +74,7 @@ Klose et al. impose no inflow turbulence, since the measured level is below
   "DDES-$\gamma$" of Möller et al. (§II.B).
 - **Inviscid-flux blending for DDES.** Möller et al. (2024, §II.C, Eq. 26)
   blend a central and a Roe upwind flux, $F=(1-\sigma_b)F_{\mathrm{central}}+\sigma_bF_{\mathrm{upwind}}$,
-  with $\sigma_b$ (page-local) the upwind fraction. In transitional DDES the
+  with $\sigma_b$ the upwind fraction (registry §11). In transitional DDES the
   dynamic blending of Travin et al. is fully upwind in the boundary layers
   and damps the synthetic turbulence there. A constant $\sigma_b$ of 5% gives
   the best skin friction on both sides of the V103

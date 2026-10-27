@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Geometric conservation law and free-stream preservation"
-description: "On curvilinear grids a discretization preserves a uniform flow only if its discrete metric terms satisfy the metric identities, and on moving grids also a temporal identity; the sources meet this geometric conservation law with curl-form DGSEM metrics, a symmetric conservative gas-kinetic metric form and GCL error compensation in moving-grid flux reconstruction."
+description: "On curvilinear grids a discretization preserves a uniform flow only if its discrete metric terms satisfy the metric identities, and on moving grids also a temporal identity; the sources meet this geometric conservation law with curl-form DGSEM metrics, conservative finite-difference and gas-kinetic metric forms and GCL error compensation in moving-grid flux reconstruction, and note curved elements as an aliasing source."
 status: established
 aliases: [GCL, geometric conservation law, free-stream preservation, freestream preservation, metric identities, discrete metric identities]
-tags: [dg, gas-kinetic, flux-reconstruction, high-order, compressible]
-timestamp: 2026-10-27T10:59:00Z
+tags: [dg, gas-kinetic, flux-reconstruction, high-order, compressible, implicit-les]
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Geometric conservation law and free-stream preservation
@@ -88,6 +88,38 @@ then used as [implicit LES](/definitions/implicit-les.md) of a compressible
 [periodic hill](/benchmarks/periodic-hill.md) whose mesh is built from
 discrete bottom-wall points (§3.3–3.4).
 
+## Finite differences: metrics with the flux scheme
+
+[Ma et al. (2022)](/sources/ma-2022.md), §2, Eqs. (1)–(2), solve the
+compressible equations in curvilinear coordinates with a weighted compact
+nonlinear finite-difference scheme (Jacobian-scaled conservative
+variables and transformed fluxes, page-local as above) and compute the
+grid metrics "with the same scheme as the flux derivatives" so that the
+geometric conservation law is satisfied, citing Deng et al. (2011) and a
+second GCL study (refs. 35–36). They print no free-stream test; their
+implicit LES of a cylinder, the T106A
+[turbine cascade](/benchmarks/turbine-cascade.md) and an open cavity run
+on curvilinear block-structured grids (§3). The same Deng et al. (2011)
+is one of the two works Cao et al. (2024) cite for their symmetric
+conservative form above.
+
+## Curved elements as a source of aliasing
+
+[Hamedi & Vermeire (2022)](/sources/hamedi-2022.md), §2.2, Eqs. (19)–(21),
+note a second effect of the element map in high-order
+[flux reconstruction](/methods/flux-reconstruction.md): a non-constant,
+non-linear isoparametric Jacobian is a "geometrical-aliasing source",
+besides the non-linearity of the equations. They test their
+[modal filters](/methods/explicit-modal-filtering.md) on a
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $Re=1600$
+whose grid points are displaced sinusoidally,
+$x'=x+(l/n_x)A\sin(k_g\pi y/l)\sin(k_g\pi z/l)$ and cyclically, with
+$k_g=4$, $A=0.4$, $l=2\pi$ ($n_x$ elements per direction; all page-local,
+after Abe et al. and Trojak et al., cited), and find the results
+similar to those on the undistorted mesh (§4.3, Eqs. 50–52,
+Figs. 15–18). The test addresses stability and accuracy of the filtered
+scheme on curved elements, not free-stream preservation.
+
 ## Moving and deforming grids: the temporal identity
 
 When the map depends on time, $\boldsymbol x(\boldsymbol\xi,t)$, the
@@ -153,8 +185,7 @@ Figs. 5–8).
   does reproduce it *(compiler check, not in the sources)*. In the printed
   $\hat\xi_y$ the last two terms are identical and cancel, and $\hat\xi_z$
   has the printed structure of $\hat\xi_x$. The free-stream test of Table 3
-  shows that the code preserves the GCL; the version of record may print
-  the formula differently.
+  shows that the code preserves the GCL.
 - The DGSEM sources state free-stream preservation as a property of their
   metric evaluation (Krais et al. 2021; Kurz et al. 2025) and show no
   free-stream test on curved meshes (Krais et al.'s free-stream runs are
@@ -171,4 +202,6 @@ Figs. 5–8).
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §3 (conservative Kopriva form of the metric terms).
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) — §2 (free-stream preservation in the TRACE DGSEM).
 - [Liu et al. (2022b)](/sources/liu-2022-g.md) — §2.1, Eqs. (2)–(8) (ALE transformation, three GCL identities, error compensation); §2.5 (grid deformation); §3.1.1, Table 1 (order on stationary and deforming grids); §4.
+- [Ma et al. (2022)](/sources/ma-2022.md) — §2, Eqs. (1)–(2) (curvilinear transformation; metrics computed with the flux scheme for the GCL).
+- [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §2.2, Eqs. (19)–(21) (curved-element Jacobian as a geometric aliasing source); §4.3, Eqs. (50)–(52), Figs. 15–18 (Taylor–Green vortex on a sinusoidally perturbed mesh).
 - [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §1 (rigid against deformable moving grids); §2.1, Eqs. (1)–(9) (moving-grid flux); §3.1, Table 3, Figs. 5–8 (stationary against moving grid).

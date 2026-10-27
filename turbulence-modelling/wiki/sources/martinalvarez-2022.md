@@ -9,7 +9,7 @@ year: 2022
 venue: "Mon. Not. R. Astron. Soc. 513:3326–3344"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Monthly_Notices_of_the_Royal_Astronomical_Society_Martin-Alvarez_Towards_convergence_of_turbulent_dynamo_amplification_in_cos.pdf"
 tags: [dynamo, mhd, astrophysics, numerical-dissipation, mesh-adaptation]
-timestamp: 2026-10-25T19:44:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -22,9 +22,9 @@ magnetohydrodynamic simulations of a Milky Way-like galaxy. The code is the
 authors' modified [RAMSES](/software/ramses.md): octree refinement, a
 second-order Godunov solver and constrained transport for a face-centred
 magnetic field. The induction equation is ideal ($\eta_m=0$), so all
-dissipation is [numerical](/properties/numerical-dissipation.md), as in an
-[implicit LES](/definitions/implicit-les.md) (a term the paper does not
-use). The seed, $3\times10^{-20}$ G comoving, stays kinematically
+dissipation is [numerical](/properties/numerical-dissipation.md) (see
+[implicit LES](/definitions/implicit-les.md); the paper does not use the
+term). The seed, $3\times10^{-20}$ G comoving, stays kinematically
 unimportant throughout.
 
 The contribution is a quasi-Eulerian refinement, one form of

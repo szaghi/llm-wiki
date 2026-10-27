@@ -5,7 +5,7 @@ description: "An LES closure that reconstructs a fine-grid velocity field from t
 status: established
 aliases: [super-resolution SGS model, super-resolution-based subgrid scale model, unsupervised-supervised pipeline, CycleGAN SGS model, GAN super-resolution closure, vLES]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:47:00Z
 ---
 
 # Super-resolution subgrid-scale models
@@ -105,10 +105,13 @@ the local backscatter is extreme:
 $$\nu_{\mathrm{eff}}=-\frac{\tau_{ij}\,\partial_j\bar u_i}{2\bar S^d_{ij}\,\partial_j\bar u_i},\qquad \tau^{\mathrm{clip}}_{ij}=\begin{cases}\tau_{ij}, & \nu_{\mathrm{eff}}>\nu_{\mathrm{clip}},\\ \tau_{ij}+2(\nu_{\mathrm{eff}}-\nu_{\mathrm{clip}})\,\bar S^d_{ij}, & \text{otherwise}.\end{cases}$$
 
 The clipped stress has effective viscosity exactly $\nu_{\mathrm{clip}}$,
-and $\nu_{\mathrm{eff}}$ (the stress carries no density factor, as on the
-[gradient model](/methods/gradient-model.md) page) is the analogue of the
-equivalent eddy viscosity $\Pi/\lvert\bar S\rvert^2$ used as an a priori
-metric on [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+and, since $\bar S^d_{ij}\partial_j\bar u_i=\bar S^d_{ij}\bar S^d_{ij}$ and
+$\tau_{ij}\partial_j\bar u_i=\tau_{ij}\bar S_{ij}$,
+$\nu_{\mathrm{eff}}=\Pi/\lvert\bar S^d\rvert^2$ with the registry flux $\Pi$
+(the stress carries no density factor, as on the
+[gradient model](/methods/gradient-model.md) page): the same projection as
+Abe's equivalent eddy viscosity on
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 *(compiler check, not in the sources)*. The run uses
 $\nu_{\mathrm{clip}}/\bar\nu_w\approx-2$ (page-local $\bar\nu_w$: mean kinematic viscosity at the wall), so backscatter is weakened, not
 removed; this contrasts with the clipping of structural models that sets

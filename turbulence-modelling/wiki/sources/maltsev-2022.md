@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Fluids 34:021301"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/0000_manual_no_journal_Unknown_10106350077314titleHigh-order.pdf"
 tags: [review, shock-capturing, weno, dg, lattice-boltzmann, compressible]
-timestamp: 2026-10-27T10:54:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -23,7 +23,7 @@ the model hierarchy: the seven-equation Baer–Nunziato model, Kapila's and
 Allaire's five-equation reductions, the $\gamma$-based four-equation model of
 Abgrall and Shyue, the six-equation pressure-non-equilibrium model of Saurel
 et al., the closing equations of state, and fluid–solid diffuse-interface
-models. Section III recalls the discretizations: unstructured high-order
+models. Section III reviews the discretizations: unstructured high-order
 finite-volume reconstruction with MUSCL limiting and
 [WENO](/methods/weno-scheme.md) on central and sectorial stencils, CWENO,
 discontinuous Galerkin and reconstructed DG ($P_NP_M$), and

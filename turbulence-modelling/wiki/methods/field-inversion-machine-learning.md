@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Field inversion and machine learning"
-description: "Field inversion infers a spatial correction field of a RANS model from data by solving a PDE-constrained inverse problem; FIML learns that field from local flow features and embeds it in the solver. Sources compare which term to correct, show non-unique and over-fitted inversions, gate corrections out of attached layers, and invert on high-order DG."
+description: "Field inversion infers a spatial correction field of a RANS model from data by solving a PDE-constrained inverse problem; FIML learns that field from local flow features and embeds it in the solver. Sources compare which term to correct, show non-unique and over-fitted inversions, gate corrections, use discrete adjoints and high-order DG, and train single-use surrogates."
 status: established
 aliases: [FIML, field inversion, field-inversion and machine-learning, inference before learning, variational data assimilation, non-parametric correction, Reynolds-force vector]
 tags: [field-inversion, data-driven, rans, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Field inversion and machine learning
@@ -111,8 +111,8 @@ from deliberately scarce data: the experimental lift coefficient alone
 (S809 airfoil), DNS mean-velocity profiles at a few stations (parametrized
 hills), and lift alone or lift and drag (iced airfoil).
 
-**Representative example.** As recalled by Duraisamy et al. (2019, §5.1,
-Figs. 4–5, from Singh & Duraisamy 2016), $\beta$ multiplies the production
+**Representative example.** In the example that Duraisamy et al. (2019,
+§5.1, Figs. 4–5) present from Singh & Duraisamy (2016), $\beta$ multiplies the production
 term of Spalart–Allmaras in a channel with a convex wall. It is inferred
 only from LES $C_f$ on the lower convex wall. The inverted model reproduces
 the LES velocity and Reynolds stresses well and improves considerably on
@@ -150,11 +150,11 @@ pressure-gradient features have proved important as non-local surrogates.
 
 The learned $f$ is embedded in the solver, so the RANS equations are solved
 with $\beta=f(\boldsymbol\zeta_{\mathrm m};\boldsymbol\theta)$ evaluated
-from the running solution. As recalled by Duraisamy et al. (2019, §5.4,
-Fig. 8, from Singh et al. 2017), a data-driven Spalart–Allmaras model for
-airfoils with separation improves the surface pressure markedly over the
+from the running solution. In the example that Duraisamy et al. (2019,
+§5.4, Fig. 8) cite from Singh et al. (2017), a data-driven Spalart–Allmaras
+model for airfoils with separation improves the surface pressure markedly over the
 baseline, even when the data are "very limited experimental measurements,
-such as the lift coefficient". As recalled by Duraisamy (2021, §VII),
+such as the lift coefficient". Duraisamy (2021, §VII) states that
 FIML-augmented models improve predictions on cases close to their training
 set, e.g. an airfoil of slightly different shape. Duraisamy (2021, §IV.B)
 states that FIML has been used in transition modelling as well as
@@ -168,11 +168,12 @@ RANS of three separated flows, with $\beta(\boldsymbol x)$ multiplying only
 the production term $c_{b1}\tilde S\tilde\nu$ ($\beta=1$ recovers the
 baseline; §2.1, Eq. 5), the same form as the representative example above.
 
-**Physical motivation.** As recalled there (§1), models are calibrated in
+**Physical motivation.** Yan et al. (§1), citing earlier work, state that
+models are calibrated in
 equilibrium shear flows where $P_k/\varepsilon$ is about 1.4 to 1.8, while
 in separating shear layers, corner separation and compressor boundary
 layers production can greatly exceed dissipation. Ad hoc fixes generalize
-poorly: as recalled by the authors, Rumsey's separation fix of SST improves
+poorly: as the authors cite them, Rumsey's separation fix of SST improves
 the periodic hill but worsens backward-step flows, and LES of Fang et al.
 shows production both increased and decreased in such regions, where the
 authors' own earlier separating-shear-layer fix only increased it. The
@@ -360,7 +361,7 @@ $\beta$ recover the mean velocity "very accurately", but "at the expense of
 large eddy-viscosity corrections, which very strongly overshoot the
 reference values"; the authors call this "a classical over-learning
 situation" (§III B, Fig. 6). The reference is a DNS estimate of the eddy
-viscosity (Eq. 18, recalled from Volpiani et al. 2022), which the authors
+viscosity (Eq. 18, citing Volpiani et al. 2022), which the authors
 call an approximation that is good for attached flows. Translated to the
 registry it reads
 $\nu_t=-(R_{ij}-\tfrac23k\delta_{ij})S_{ij}/(2S_{kl}S_{kl})$, the
@@ -412,8 +413,8 @@ Eqs. 7–8, the gradient part being absorbed in the pressure).
   capture a realistic stress tensor especially in the wake region", and its
   force field approximates the DNS better in the recirculation (Figs.
   17–19).
-- *As a learning target.* As recalled there (§I), Cruz et al. and Berrone &
-  Oberto proposed the Reynolds-force vector as the target of machine
+- *As a learning target.* Cato et al. (§I) cite Cruz et al. and Berrone &
+  Oberto, who proposed the Reynolds-force vector as the target of machine
   learning, to avoid the ill-conditioning of injecting learned stresses.
 
 **What to learn next (§VI, Table III).**
@@ -652,6 +653,144 @@ failure (§5). Discrete adjoints give more accurate gradients than
 continuous ones, the authors state, at higher cost in large 3-D problems
 (§1).
 
+## A frozen eddy-viscosity multiplier and a discrete adjoint (Brenner et al. 2022)
+
+[Brenner et al. (2022)](/sources/brenner-2022.md) run step 1 only, with
+no learning, and put the correction on the eddy viscosity of a linear
+model: the steady incompressible RANS momentum equation is solved with
+the effective viscosity $\nu+\beta(\boldsymbol x)\nu_t$, where $\nu_t$ is
+frozen from a converged [$k$-$\varepsilon$](/methods/k-epsilon-model.md)
+solution (OpenFOAM `kEpsilon`, low-Reynolds wall function) and $\beta$
+(the paper's $\alpha$; one value per cell, initial value 1) is the only unknown
+(§2.1, Eq. 7). The $k$-$\varepsilon$ equations are solved once, for the
+initial state, and never again. The inverse problem minimizes a
+volume-weighted velocity misfit at the reference cells plus a
+regularization, subject to the discrete RANS residual and $\beta>0$
+(§2.1.2, §2.5, Eqs. 8–9, 25).
+
+**Discrete adjoint (inline).** The gradient comes from the stationary
+adjoint of the discrete residual, $(\partial\mathcal R/\partial U)^\top\boldsymbol\lambda_{\mathrm{adj}}=(\partial\mathcal L/\partial U)^\top$,
+$\mathrm d\mathcal L/\mathrm d\beta=\partial\mathcal L/\partial\beta-\boldsymbol\lambda_{\mathrm{adj}}^\top\partial\mathcal R/\partial\beta$
+(page-local $\mathcal R$, $U$, $\boldsymbol\lambda_{\mathrm{adj}}$: residual,
+discrete state, adjoint; $\mathcal L$ the cost), at about the cost of one forward solve whatever the number of
+parameters (§2.1.3–2.1.4, Eqs. 11–16). It is built in foam-extend 4.0
+on a fully coupled pressure–velocity solver: the adjoint matrix is the
+converged forward matrix with its lower and upper triangles exchanged, so
+the boundary contributions come with it and no adjoint boundary
+conditions need deriving (§2.8–2.9, Eq. 34). The parameter Jacobian is
+"semi-analytical": the only $\beta$-dependent term,
+$\nabla\cdot(\beta\nu_t\nabla\langle\boldsymbol u\rangle)$, is discretized as a linear operator
+acting on $\beta$ with the solver's own implicit operators, instead of
+finite differences, complex step or automatic differentiation (§2.1.4,
+Eqs. 17, 37–38). The pressure-residual contribution
+$\boldsymbol\lambda_{\mathrm{adj},p}^\top\partial\mathcal R_p/\partial\beta$ is dropped because no implicit
+operator is available for it, and its effect "was not further
+investigated" (§2.3, Eqs. 21–22). Against finite differences at 156
+cells, the adjoint gradient differs "significantly" in some cells and has
+the correct sign for 84% of the field at a step of $10^{-2}$ (§3.3, Fig.
+8). Positivity is kept by an exponential-linear map from an unconstrained
+parameter (value 1, slope 1 at zero; Eq. 32), and the update is a
+Gauss–Newton step toward a target cost (Eq. 39). Warm-starting each
+forward solve from the previous one makes later iterations much cheaper
+than the first (§3.4).
+
+**Regularization of sparse data.** On the
+[periodic hill](/benchmarks/periodic-hill.md) at $Re_h=10\,595$
+($180\times130$ cells, first-cell $y^+\approx5$, averaged LES of Gloerfelt
+& Cinnella as reference), three reference lattices are tested: dense (1408
+reference and 1485 test points), intermediate (234 and 234) and sparse (48
+and 63), with staggered test points (§3.5, Fig. 10):
+
+- without regularization, sparse data give unphysical peaks of $\beta$
+  at the reference points and large errors at the test points (dense:
+  $\beta\in[0.01,11.9]$);
+- a penalty on squared differences of neighbouring cells, which the
+  authors call total variation, with weight $10^{-12}$, gives smooth
+  fields and, in the sparse case only, a lower test-point cost (Eqs.
+  26–27, Figs. 12, 14–15); a penalty on the deviation from the initial
+  field "did not prove to perform well";
+- large weights produce checkerboards in $\beta$ that do not affect the
+  velocity; a final Helmholtz filter of width $0.033$ removes them
+  ($\beta\in[0.44,4.60]$ after filtering) at a slightly higher cost
+  (§2.7, Eq. 33, Fig. 11).
+
+With full-field LES streamwise velocity, the profiles match except near
+the crest peaks, and the wall shear stress is not improved (§3.4, Fig.
+9); adding skin-friction-derived wall velocities recovers $C_f$ but
+reveals a trade-off with the interior (§3.6, Fig. 16; see
+[model-form uncertainty](/definitions/model-form-uncertainty.md)). The
+stress–strain alignment is not consistently improved (§3.5, Fig. 13; see
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)). The
+authors propose the inferred fields as training data for later closures
+(abstract, §4). Their correction has the form of the eddy-viscosity
+multiplier that Cato et al. (2023) and Fanizza et al. (2025) found the
+hardest to optimize (above), there with the eddy viscosity transported,
+here with $\nu_t$ frozen.
+
+## Single-use field inversion for error estimation (Fidkowski 2022)
+
+[Fidkowski (2022)](/sources/fidkowski-2022.md) uses FIML not for a
+general closure but as a disposable surrogate retrained at every mesh of
+an adaptation loop. The unsteady, chaotic simulations (2-D airfoils,
+high-order DG) have time-averaged outputs, but their unsteady adjoints are
+unstable (Figs. 4, 11, 17). A steady SA RANS system whose production is
+multiplied by $\beta(\boldsymbol x)$ (Eq. 2; $\beta$ as on this page,
+nominal 1, one linear DG polynomial per element) is fitted to the
+time-averaged unsteady state, and its steady adjoint, restricted to the
+original Navier–Stokes components, replaces the averaged unsteady
+adjoint in the error estimate (§3–4, Eqs. 7, 23; see
+[mesh adaptation](/methods/mesh-adaptation.md)). Features of the method:
+
+- **Inversion.** L-BFGS with 10 stored updates, 20 iterations (each a
+  warm-started steady RANS solve), continuous Tikhonov penalty
+  $\tfrac{\gamma_{\mathrm T}}{2}(\boldsymbol\beta-\boldsymbol1)^\top\mathbf M(\boldsymbol\beta-\boldsymbol1)$
+  with weight $\gamma_{\mathrm T}=10^{-7}$ (page-local; $\mathbf M$ the DG
+  mass matrix) and "a broad range" acceptable; the cost falls by two to
+  three orders of magnitude and stagnates, and the inversion costs at
+  least an order of magnitude less than the unsteady run (§3.1, Eqs.
+  10–11).
+- **A new objective.** Besides the misfit of the surface stress, an
+  adjoint-weighted state misfit: per element, the state error multiplied
+  by the output adjoint times the residual Jacobian, which turns state
+  errors into output-relevant residuals, is invariant to the scaling of
+  state components and focuses the inversion where the output is
+  sensitive (§3.1, Eq. 13). It gives tighter error estimates though the
+  actual errors change little (Tables 1–2).
+- **Learning.** A single-hidden-layer perceptron (30 sigmoid neurons) maps
+  the dimensional state, its gradient and the wall distance to $\beta$;
+  Adam, learning rate 0.001, mini-batches of 1000, 500,000 iterations,
+  at least two orders of magnitude cheaper than the unsteady solve; the
+  network is linearized into the Newton and adjoint Jacobians (§3.2, Fig.
+  1).
+- **Generality not sought.** The author calls the generality of FIML
+  "still in debate" and requires only local, single-use accuracy (§3.2).
+
+Uncorrected SA RANS on the same meshes converges to the wrong mean lift
+(§6), the modelling error that the corrected surrogate removes.
+
+## Correcting the eddy viscosity from frozen fields with a random forest (He et al. 2022)
+
+[He et al. (2022)](/sources/he-2022-b.md) follow the physics-informed
+regression route of Wu et al. (2018), as they cite it, rather than
+inversion: the eddy viscosity of SA-QCR is corrected additively,
+$\nu_t+\Delta\nu_t$, where the target
+$\Delta\nu_t$ is the difference between an eddy viscosity fitted to
+high-fidelity Reynolds stresses and the one obtained by solving the SA
+equation on the frozen high-fidelity mean flow (§2.2, §2.7, Eqs. 6–8).
+The LES eddy viscosity is the least-squares fit of the
+quadratic-constitutive-relation stress to the LES stress, with a positivity
+clip and a floor $S_{\mathrm{ref}}=10^3\ \mathrm{s^{-1}}$ on the
+denominator (page-local), samples touched by the limiters being excluded
+(App., Fig. 19). A random forest maps nine bounded features to the
+normalized $\Delta\nu_t$ (Table 2). On the transonic bump, with $k$-$\omega$
+SST-QCR solutions as surrogate truth at six Mach numbers, the $L_2$ error
+is 11.0–12.4% for interpolation ($M_\infty=0.9$) and 14.7–16.3% for
+extrapolation ($M_\infty=0.925$) across four forest settings (Table 4).
+The corrected model is evaluated offline only (§2.2). The paper's
+contribution is the explanation of the forest by Shapley additive
+explanations and complexity reduction, described on
+[model-form uncertainty](/definitions/model-form-uncertainty.md).
+
 ## Generalization across flow classes
 
 [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (§1) state that
@@ -707,10 +846,10 @@ is used:
   integrated route for LES, with no inferred field in between: the
   network parameters $\boldsymbol\theta$ are optimized directly through the
   continuous adjoint of the LES equations (§2.2, Eqs. 2.9–2.10; see
-  [model-consistent training](/methods/model-consistent-training.md)). As
-  recalled there (§1), adjoint-based model-consistent RANS closures go
-  back to Parish & Duraisamy (2016), with further work by He, Liu & Gan
-  (2018) and an adjoint eddy-viscosity correction by Brenner et al. (2022).
+  [model-consistent training](/methods/model-consistent-training.md)). They
+  cite (§1) adjoint-based model-consistent RANS closures from Parish &
+  Duraisamy (2016) on, with further work by He, Liu & Gan (2018) and an
+  adjoint eddy-viscosity correction by Brenner et al. (2022).
   The authors state that "traditional one- or two-equation closures", or
   any multiparametric closure, could replace the network in the same
   adjoint framework (§2, §7).
@@ -738,6 +877,20 @@ is used:
 - Two further sources cite Parish & Duraisamy (2016) only among the
   precedents of machine-learned closures: Zangeneh (2021, §I), with Singh
   et al. (2017), and Ruggeri et al. (2022, §III).
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) (§3.4) list FIML
+  first among "model-consistent" frameworks: adjoint-based inversion of a
+  discrepancy, then machine learning of its functional form; the advanced
+  FIML of Holland et al. (2019), as they cite it, does both at once; the
+  cost is prohibitive for complex 3-D flows, the first 3-D attempt being
+  that of Ho & West (2021). They recall FIML corrections of intermittency
+  and of the $k$-$\omega$-$\gamma$-$A_r$ transition model (§4.3) and state
+  that coupled multiple closures (anisotropy and heat flux together) have
+  "to date not been considered with field inversion" (§4.5).
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) (§1) recall Parish
+  & Duraisamy (2016) and note that a model corrected by a scalar field
+  remains a linear eddy-viscosity model; they correct the anisotropy and
+  the production instead, from frozen-RANS targets (see
+  [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
 
 ## Qualifications
 
@@ -854,6 +1007,31 @@ is used:
   $8.4\times10^{-3}$; $E_{C_f}$ 0.19 against 0.18). On the hill the ranking
   follows Table II. All three cases are 2D steady RANS with dense velocity
   data.
+- **Brenner et al. (2022): gradient accuracy and printed forms.** The
+  conclusion states that the method "is able to produce accurate cost
+  function gradients" (§4), while §3.3 reports significant adjoint–finite
+  difference differences in some cells and 84% correct signs, and §2.3
+  leaves the effect of the dropped pressure term uninvestigated; the
+  page records both. Their Eq. 6 keeps only
+  $\partial_j\big((\nu+\beta\nu_t)\partial_j\langle u_i\rangle\big)$ of the Boussinesq
+  divergence, which they say keeps momentum conserved because the
+  divergence acts on the modified term (§2.1.1); from their Eqs. 2–3 the
+  full divergence also contains $\partial_j(\beta\nu_t)\,\partial_i\langle u_j\rangle$
+  (continuity removes the rest), non-zero for a spatially varying
+  $\beta\nu_t$, and the paper does not say whether the implementation
+  keeps it *(compiler check, not in the sources)*. Their Helmholtz filter
+  (Eq. 33) as printed multiplies a uniform field by $1+\ell_H^2$ (1.0011 at
+  $\ell_H=0.033$, page-local $\ell_H$ the filter width) *(compiler check, not in the sources)*. The term the authors
+  call total variation (Eq. 26) is a quadratic penalty of neighbour
+  differences.
+- **Fidkowski (2022): assumption behind the surrogate adjoint.** The
+  correlation of adjoint and residual fluctuations in time is assumed
+  negligible for chaotic statistically steady flows (§4, Eqs. 17–18); no
+  regularized unsteady adjoint is computed to check it. The estimates are
+  stated to be good only when the FIML correction is small (§4).
+- **He et al. (2022)** report no online test: the "matches well"
+  statement for the corrected viscosity ratio (§4.3, Fig. 12) is a priori
+  (see [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
 
 # Citations
 
@@ -862,7 +1040,7 @@ is used:
 - [Cato et al. (2023)](/sources/cato-2023.md) — HAL author manuscript: §I (FIML rationale, Reynolds-force targets), §II A–E, Eqs. 2–12 (model, six corrections, cost, adjoint, optimizer, discretization), §III B–C, Figs. 3–7, Table I, Eqs. 18–21 (channel, over-learning, alignment), §IV, Figs. 8–10, Table II (hill), §V, Figs. 11–19 (square cylinder, stresses, Reynolds force), §VI–VII, Table III; App. B, Figs. 20–21.
 - [McConkey et al. (2022)](/sources/mcconkey-2022.md) — arXiv v1: §II A, Eq. 6 (optimal eddy viscosity, compared with Cato et al.'s Eq. 18), §II D (open-loop injection).
 - [Eivazi et al. (2022)](/sources/eivazi-2022.md) — arXiv v1: §1–2 (RANS closed by boundary data, no turbulence model).
-- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1 (adjoint-based RANS closures recalled), §2, §2.2, Eqs. 2.9–2.10, §7 (integrated adjoint training of an LES closure).
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1 (adjoint-based RANS closures cited), §2, §2.2, Eqs. 2.9–2.10, §7 (integrated adjoint training of an LES closure).
 - [Yan et al. (2022)](/sources/yan-2022.md) — accepted manuscript, §1, §2.1–2.3, Eqs. 5–11, 14–17; §3.1 (S809, Figs. 4–7, 10, Table 1); §3.2 (parametrized hills, Figs. 11, 13–22, Table 2); §3.3 (GLC305/944, Figs. 25–33, Tables 3–4).
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — arXiv v2: §1 (earlier adjoint inversions), §2.2.2–2.2.5, Eqs. 13, 19–21, 32, App. B (stochastic discrepancy, adjoint, variational inference); §3.1–3.4, Fig. 7, Tables 2–5 (backward-facing step).
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — arXiv v3: §II.B (ensemble Kalman calibration), §V (data-assimilation alternatives).
@@ -872,3 +1050,8 @@ is used:
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3 (injected DNS stress, two-step FIML, Ferrero et al. on a turbine cascade, cost).
 - [Zangeneh (2021)](/sources/zangeneh-2021.md) — §I (precedents cited, in passing).
 - [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §III (Parish & Duraisamy cited, in passing).
+- [Brenner et al. (2022)](/sources/brenner-2022.md) — §1–1.1; §2.1–2.10, Eqs. 7–39 (frozen-$\nu_t$ multiplier, discrete adjoint, semi-analytical Jacobian, regularization, Helmholtz filter, parameter map, Gauss–Newton update); §3.2–3.6, Figs. 6–16; §4.
+- [Fidkowski (2022)](/sources/fidkowski-2022.md) — §2.1, Eq. 2; §3.1–3.2, Eqs. 10–13, Fig. 1 (inversion, adjoint-weighted objective, network); §4, Eqs. 17–18, 23; §6, Tables 1–2.
+- [He et al. (2022)](/sources/he-2022-b.md) — §2.2, §2.7, Eqs. 6–8, Table 2, App. Fig. 19 (framework, target, features); §4.3, Table 4, Fig. 12.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.4, §4.3, §4.5 (FIML among model-consistent frameworks, cost, transition, coupled closures).
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1 (field inversion cited; the corrected model stays linear).

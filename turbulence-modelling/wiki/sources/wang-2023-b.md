@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 476:111899"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Computational_Physics_Wang_Multiple-GPU_accelerated_high-order_gas-kinetic_scheme_for_d.pdf"
 tags: [gpu, gas-kinetic, dns, compressible]
-timestamp: 2026-10-26T07:42:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -101,7 +101,7 @@ equation, table and figure numbers on this page are those of arXiv v1.
 |---|---|---|
 | $\boldsymbol u=(u,v,w)$ (§2) | $\boldsymbol c$ (particle velocity, page-local, as on the [cao-2022](/sources/cao-2022.md) page) | **collision:** lower case is the microscopic velocity of the BGK equation |
 | $\boldsymbol U=(U,V,W)$ | $u_i$ | macroscopic velocity |
-| $f$, $g$, $\tau$ | $f$, $g$, $\tau_{\mathrm{col}}$ (distribution function, Maxwellian, collision time $\mu/p$; page-local) | **collision:** $\tau$ is not a stress |
+| $f$, $g$, $\tau$ | $f$, $g$ (distribution function, Maxwellian; page-local), $\tau_{\mathrm{col}}$ (collision time $\mu/p$, registry §11) | **collision:** $\tau$ is not a stress |
 | $\xi$, $N$ (§2) | $\vartheta$, $K_{\mathrm{int}}=(5-3\gamma)/(\gamma-1)$ (page-local) | **collision:** $\xi$ is not a reference coordinate; $N$ is also the number of GPUs (§3.2) |
 | $\omega_{mn}$ | $w_i$ | Gauss weights; **collision:** $\boldsymbol\omega$ is the vorticity in §4 |
 | $Q$, $L$, $F_p$ | (conservative variables, spatial operator, face flux) | **collision:** $L$ is also the Taylor–Green reference length |

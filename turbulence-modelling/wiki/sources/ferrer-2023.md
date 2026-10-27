@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Phys. Commun. 287:108700"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Computer_Physics_Communications_Ferrer_A_high-order_discontinuous_Galerkin_solver_for_flow_simulat.pdf"
 tags: [software, dg, les, implicit-les, mesh-adaptation, entropy-stable]
-timestamp: 2026-10-25T20:39:00Z
+timestamp: 2026-10-27T15:53:00Z
 ---
 
 # Summary
@@ -73,7 +73,7 @@ page are those of arXiv v1.
 
 1. HORSES3D solves compressible Navier–Stokes (with or without shocks), incompressible Navier–Stokes, RANS and LES turbulence models, particle dynamics, multiphase flows and aeroacoustics in a DGSEM framework, parallelized with MPI and OpenMP and "showing good scalability for up to 1000 processors" (Abstract). **Stated**
 2. Program summary: Fortran 2008, MIT licence, optional METIS, MPI, HDF5, MKL, PETSc; curvilinear conforming hexahedral meshes in GMSH, HDF5 and SpecMesh/HOHQMesh formats; §3 calls it "a Fortran 2003 object-oriented solver" (Program summary, §3.1). **Stated**
-3. With an error scaling as $(\mathrm{dof})^{N}$, equal accuracy of a low- and a high-order method gives $(\mathrm{dof})_{HO}=\exp[(N_{LO}/N_{HO})\log(\mathrm{dof})_{LO}]$; for $N_{LO}=2$, $N_{HO}=5$ and $10^8$ low-order dof this is about 1.6k dof, "a factor of 60000 decrease", acknowledged as optimistic because of near-wall resolution (§1). **Derived** *(compiler check, not in the sources: $10^{3.2}\approx1585$, consistent)*
+3. With an error scaling as $(\mathrm{dof})^{p}$ ($p$ the order, page-local; the source writes $N$), equal accuracy of a low- and a high-order method gives $(\mathrm{dof})_{HO}=\exp[(p_{LO}/p_{HO})\log(\mathrm{dof})_{LO}]$; for $p_{LO}=2$, $p_{HO}=5$ and $10^8$ low-order dof this is about 1.6k dof, "a factor of 60000 decrease", acknowledged as optimistic because of near-wall resolution (§1). **Derived** *(compiler check, not in the sources: $10^{3.2}\approx1585$, consistent)*
 4. Aircraft aerodynamics with low-order methods typically needs "an order of 50 to 100M" dof (§1). **Stated**
 5. In Table 1 (12 capabilities, eight codes) HORSES3D is the only code ticked for RANS and the only one ticked for all twelve; the authors conclude it "provides a unique set of capabilities" (§2, Table 1). **Stated**
 6. Convective fluxes: central, Lax–Friedrichs, Rusanov, Roe, low-dissipation Roe, Roe–Pike, matrix dissipation; viscous fluxes: Bassi–Rebay 1 and 2, symmetric interior penalty (§3.3). **Stated**
@@ -134,7 +134,7 @@ page are those of arXiv v1.
 | $s_\rho$ | (density-gradient sensor) | page-local |
 | $\beta$ (§4.5) | (particles per parcel) | **collision:** not the field-inversion correction $\beta$ |
 | $St$ (Fig. 11) | (Stokes number) | **collision:** the registry's $St$ is the Strouhal number |
-| $T_{ij}$, $Q_i$, $L_{ij}$ | (Lighthill tensor, thickness and loading terms) | **collision:** $L_{ij}$ is not the Leonard stress, $T_{ij}$ not a temperature |
+| $T_{ij}$, $Q_i$, $L_{ij}$ | $T^{\mathrm L}_{ij}$, $Q_i$, $\ell_{ij}$ (Lighthill tensor, thickness and loading terms, page-local as on the [FW-H page](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)) | **collision:** $L_{ij}$ is not the Leonard stress, $T_{ij}$ not a temperature |
 | $\chi$, $\eta$ (§4.7) | (immersed-boundary mask, permeability) | **collision:** $\chi$ is not the SA ratio $\tilde\nu/\nu$ |
 
 # Reference list

@@ -9,7 +9,7 @@ year: 2026
 venue: "Commun. Comput. Phys. 40:701–732"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Communications_in_Computational_Physics_Reddy_Comparison_of_Sub-Grid_Scale_Models_for_Large-Eddy_Simulatio.pdf"
 tags: [sgs-model, les, spectral-element, residual-based, atmospheric-flows, taylor-green-vortex]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Summary
@@ -131,7 +131,7 @@ and the momentum residual $\mathcal R(\tilde u_i)$ is the left-hand side plus $g
 | $\mathrm{Pr}$ | $Pr$ (artificial, 0.7) | |
 | $C_s$, $c$, $\beta_{ij}$, $B_\beta$, $\Delta_k$ | $C_s$, Vreman constant, Vreman tensor and invariant, $\Delta_k$ | |
 | $N$ | $N$ | $N=4$ |
-| $\Delta x$, $\Delta y$, $\Delta z$ | $h_x/N$, $h_y/N$, $h_z/N$ ("effective resolution") or $h_x$, $h_y$, $h_z$ (element sizes, page-local) | the printed resolutions of Cases 1–3 equal the element size over $N$ *(compiler check, not in the sources)*; the filter width $\min(\Delta x,\Delta y,\Delta z)/(N+1)$ is written with the element sizes on the concept pages |
+| $\Delta x$, $\Delta y$, $\Delta z$ | $\Delta x$, $\Delta y$, $\Delta z$ (grid spacings, page-local) | the printed resolutions of Cases 1–3 equal the element size over $N$ *(compiler check, not in the sources)*; the paper does not say whether the filter width $\min(\Delta x,\Delta y,\Delta z)/(N+1)$ uses these values or the element sizes, so the concept pages keep the printed form |
 | $\chi_i$, $\omega_i$, $\psi_i$, $\mathcal P_N$ | $\xi_i$, $w_i$, (Lagrange basis), (Legendre polynomial) | **collision:** $\omega_i$ is the vorticity in the registry |
 | $E$, $E^*$, $\varepsilon$, $\langle\omega^2\rangle$, $\nu_{eff}$ | $K$ (volume-averaged kinetic energy), normalized, $\varepsilon$, enstrophy, (effective viscosity, $\varepsilon=\nu_{\mathrm{eff}}\langle\omega^2\rangle$) | **collision:** $E$ is total energy in the registry |
 | $k$ | Taylor–Green wavenumber (1 m$^{-1}$) and spectral wavenumber | |

@@ -5,7 +5,7 @@ description: "A discretization is kinetic-energy preserving when its convective 
 status: established
 aliases: [KEP, KEEP, kinetic-energy and entropy preserving scheme, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-27T10:57:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -38,7 +38,7 @@ summation-by-parts property $(MD)+(MD)^{\mathsf T}=B$, which allows its
 strong-form volume term to be replaced by a flux-differencing one. In one
 Cartesian direction (Flad & Gassner 2017, Eq. 12; Krais et al. 2021, Eqs. 52–53):
 $$\frac{\partial f}{\partial\xi}\Big|_{i}\approx\frac{1}{w_i}\Big(\delta_{iN}\big[f^*-f\big]_{N}-\delta_{i0}\big[f^*-f\big]_{0}\Big)+\sum_{m=0}^{N}2D_{im}\,f^{\#}(U_i,U_m).$$
-As recalled by both sources from Gassner, Winters & Kopriva, any consistent and
+Both sources cite Gassner, Winters & Kopriva for the result that any consistent and
 symmetric two-point flux $f^{\#}$ yields a valid split-form scheme; specific
 choices give kinetic-energy preservation (Jameson's definition) or entropy
 conservation (Tadmor's), and reproduce known finite-difference split forms of
@@ -84,6 +84,24 @@ limiter-optimized seventh-order WENO by the eighth-order split convective
 finite-difference scheme of Pirozzoli (2011), which "runs about twice as fast
 as the conventional WENO method" and was shown robust up to edge Mach 4; the
 paper does not discuss its energy-preservation properties.
+Two further DNS use the same STREAmS construction: [Yu et al. (2022)](/sources/yu-2022-e.md),
+§2.1, the sixth-order kinetic-energy-preserving scheme of Pirozzoli (2010)
+with fifth-order WENO switched in by the Ducros criterion, for an oblique
+shock/boundary-layer interaction at $M_\infty=2.28$; and
+[Zhang et al. (2022)](/sources/zhang-2022-b.md), §2, the eighth-order
+energy-preserving scheme of Pirozzoli (2010), applied throughout at
+$M_\infty=0.5$ and 2 and hybridized with seventh-order WENO only at
+$M_\infty=8$, with viscous terms "expanded to Laplacian form to avoid
+odd–even decoupling" and sixth-order central differences. The URANOS solver
+of [De Vanna et al. (2022)](/sources/devanna-2022.md), §3.1.1–3.1.3, uses
+Pirozzoli's (2010) sixth-order "fully-split" energy-preserving convection,
+which preserves the total kinetic energy semi-discretely in the
+incompressible inviscid limit with "theoretically negligible numerical
+dissipation", hybridized with fifth-order WENO-Z near shocks, and
+semi-conservative sixth-order viscous terms which, the authors state, give
+"strong preservation and proper telescoping" of variable-viscosity
+diffusion terms; their wall-modelled LES of a shock/boundary-layer
+interaction is on [wall-modelled LES](/methods/wall-modelled-les.md).
 
 **Catalogue of split forms in a DG code.** [HORSES3D](/software/horses3d.md)
 offers the Morinishi, Ducros, Kennedy–Gruber, Pirozzoli, entropy-conserving
@@ -129,9 +147,9 @@ authors argue that the dissipation should ideally come only
 from the subgrid model (§2.3), the premise of a dissipation-free baseline
 discussed below.
 
-**The one-parameter family of locally conservative split forms.** As
-recalled by [Bernades et al. (2023)](/sources/bernades-2023.md), §3.1.1,
-Eqs. (9)–(11), from Coppola et al., the semi-discrete convective term
+**The one-parameter family of locally conservative split forms.**
+[Bernades et al. (2023)](/sources/bernades-2023.md), §3.1.1,
+Eqs. (9)–(11), citing Coppola et al., state that the semi-discrete convective term
 $C_{\rho\phi}$ of a quantity $\rho\phi$ ($\phi=1$ for mass, $u$ for
 momentum; page-local symbols, $D_x$ a centred difference matrix with
 summation by parts) can be written in five forms: divergence
@@ -156,7 +174,7 @@ instead [pressure-equilibrium preservation](/properties/pressure-equilibrium-pre
 **The KEP condition in flux form.** [Aiello et al. (2026)](/sources/aiello-2026.md),
 §3.2, Eq. (7), state the same separation for a node-indexed second-order
 finite-difference scheme with face fluxes $\mathcal F_{\rho\phi}$
-(page-local): as recalled from Jameson and Veldman, kinetic energy is
+(page-local), citing Jameson and Veldman: kinetic energy is
 preserved when the convective momentum flux is the mass flux times the
 arithmetic mean of the velocity, $\mathcal F_{\rho u}=\mathcal F_\rho\{\!\{u\}\!\}$,
 whatever the mass flux $\mathcal F_\rho$ and the pressure term; the induced
@@ -170,8 +188,8 @@ designed for a calorically perfect gas does not (§3.2). Kinetic energy and
 entropy are, in their words, induced variables of the discretization
 (§3.1).
 
-The same five forms and the KGP choice are recalled by
-[Wang et al. (2024)](/sources/wang-2024.md), §2.3, Eqs. (5)–(11), for the
+[Wang et al. (2024)](/sources/wang-2024.md), §2.3, Eqs. (5)–(11), recall
+the same five forms and the KGP choice for the
 second-order scheme **KGP2** of a cell-centred compressible finite-difference
 solver; they print the KGP weights as "$\xi=1/2$, $\alpha=\beta=\delta=1/4$,
 and $\varepsilon=0$" without defining $\xi$ or giving the weight of $C^u$.
@@ -306,12 +324,20 @@ comparison of [Chapelier et al. (2024)](/sources/chapelier-2024.md),
 al.; orders 2 to 8, order 8 in the runs) blended with a third-order upwind
 flux by the Ducros sensor (see [WENO and hybrid schemes](/methods/weno-scheme.md)),
 and OpenSBLI offers central differences of arbitrary order in quadratic and
-cubic split forms (Coppola et al., as recalled). On the supersonic
+cubic split forms (citing Coppola et al.). On the supersonic
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $64^3$ the two
 dissipation-free central codes, SPADE and NS3D, predict the kinetic energy
 very accurately up to $t\approx12$ and slightly too high afterwards, which
 the authors explain by a small-scale pile-up near the cut-off without
 subgrid closure (§IV.A, Fig. 5), the thermalization discussed below.
+In the immersed-boundary wall-modelled LES of
+[van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.3, §2.8, the
+fourth-order version of the same scheme (Kuya et al., Totani et al.),
+reduced to second order at the boundary, is the centred part of a convex
+blend with a third-order WENO flux whose weight is set by hand (interior
+value 0.0125 in channel flow, 0.02 in hypersonic cases; see
+[WENO](/methods/weno-scheme.md)); below 0.0125 the channel run produces
+significant noise (§3.1, Fig. 12).
 
 **Three split forms against relaxation filtering on central differences.**
 [Volpiani (2024)](/sources/volpiani-2024.md), §2.2.3, Eqs. (9)–(17),
@@ -321,8 +347,8 @@ the five forms of Coppola et al. ($C^D$, $C^\phi$, $C^u$, $C^\rho$ as above):
 SF1 (Feiereisen et al.) $\tfrac12C^D+\tfrac12C^\phi$ for momentum and
 energy only; SF2 (Ducros et al.) $\tfrac12C^D+\tfrac12C^u$ for all
 equations; SF3 (Kennedy–Gruber) $\tfrac14(C^D+C^u+C^\phi+C^\rho)$ for all
-equations, which is the Kennedy–Gruber family at $\alpha=\beta=1/4$
-(page-local parameters) and, as Volpiani recalls from Coppola et al., conserves the
+equations, which is the Kennedy–Gruber family at $\alpha_{\mathrm{KG}}=\beta_{\mathrm{KG}}=1/4$
+(page-local parameters, the source's $\alpha$, $\beta$) and, Volpiani states citing Coppola et al., conserves the
 generalized energy $\rho\phi^2/2$. The energy equation is split on the
 total specific enthalpy $e+p/\rho$, after Pirozzoli (2010), not on $\rho e$
 and pressure separately; the Blaisdell et al. form applied to momentum and
@@ -345,7 +371,7 @@ stencil width, page-local) (Table 1, §4).
 **Arbitrary-order skew-symmetric fluxes in a shock-capturing hybrid.**
 [Liang & Fu (2024)](/sources/liang-2024.md), §2.3, Eqs. (21)–(30), write
 the quadratic (Feiereisen) and cubic (Kennedy–Gruber) split forms of
-$\partial(\rho\phi u)/\partial x$ and recall, from Pirozzoli, that the
+$\partial(\rho\phi u)/\partial x$ and cite Pirozzoli for the result that the
 interface flux $\{\!\{\rho\}\!\}\{\!\{\phi\}\!\}\{\!\{u\}\!\}$ recovers the
 second-order cubic form in conservative form, and that it extends to order
 $2L$ as
@@ -365,6 +391,23 @@ judges smooth (see [WENO](/methods/weno-scheme.md) and
 Taylor–Green vortex at $64^3$ TENO-S keeps the total kinetic energy to
 $t=100$ while WENO-CU6 and TENO schemes dissipate it (§4.10, Fig. 17).
 
+**At least as diffusive as KEP: a condition for weak solutions.**
+[Svärd (2022)](/sources/svard-2022.md), §3, Condition C, requires of a
+scheme meant to approximate weak entropy solutions of the Navier–Stokes
+equations that it be "equal or more diffusive than kinetic-energy-preserving
+fluxes", KEP referring to the inviscid flux and artificial viscosity that
+diffuses kinetic energy being allowed. The reason (§4): the discrete
+kinetic-energy balance alone does not bound the velocity gradients, since
+the pressure work is not bounded, so the scheme must also give an
+internal-energy balance free of velocity remainders, which follows when the
+convective and viscous terms of the kinetic-energy equation are
+approximated exactly as in the total-energy equation (Eq. 34). The
+proposed scheme modifies the KEP and entropy-conservative Chandrashekar
+flux only through a diffused mass flux (formulas on
+[entropy conservation](/properties/entropy-conservation.md)), the
+diffusion acting on density alone (Condition E). Mateo-Gabín et al.
+(below) invoke the same unbounded pressure work.
+
 ## Kinetic energy as an entropy
 
 [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md), §2, treat kinetic
@@ -380,9 +423,7 @@ the entropy variables printed in Eq. 24. Kinetic energy is **not a strict
 entropy**: its balance contains the pressure work
 $\int_\Omega\boldsymbol u\cdot\nabla p\,d\Omega$, which cannot be bounded
 (Eqs. 33–35), so kinetic-energy "stability" is weaker than entropy stability.
-This is the continuous counterpart of the observation of Flad & Gassner
-(2017) below that kinetic-energy preservation leaves density and pressure
-uncontrolled. For an artificial viscosity $\mu_a$ added to the Navier–Stokes
+For an artificial viscosity $\mu_a$ added to the Navier–Stokes
 viscous flux, the kinetic-energy dissipation is
 $\mu_a\big(2S_{ij}S_{ij}-\tfrac23(\nabla\cdot\boldsymbol u)^2\big)\ge0$ (Eq. 25),
 which is $2\mu_aS^d_{ij}S^d_{ij}$ *(compiler check, not in the sources)*.
@@ -515,7 +556,7 @@ strictly separate. On that baseline a [Smagorinsky model](/methods/smagorinsky-m
 with $C_s=0.12$ beats DG implicit LES at $48^3$ (§4, Fig. 7); a
 [dynamic Smagorinsky](/methods/dynamic-procedure.md) model gives better
 Reynolds stresses than DG implicit LES in [channel flow](/benchmarks/turbulent-channel-flow.md)
-at $Re_\tau=590$ (§6.2). Goc et al. (2021, §2.3) state, recalling Mittal &
+at $Re_\tau=590$ (§6.2). Goc et al. (2021, §2.3) state, citing Mittal &
 Moin, that numerical dissipation is "extremely detrimental" for coarse LES,
 which motivates low-dissipation (entropy- and KEP) schemes for
 [wall-modelled LES](/methods/wall-modelled-les.md) of aircraft; the same
@@ -607,7 +648,7 @@ fluctuations, so the pressure–dilatation work oscillates strongly; only an
 interface flux whose dissipation acts on density and pressure (the low-Mach
 L2Roe solver, which scales the velocity jump by the local Mach number) removes
 the oscillations, and the authors rank "split form + L2Roe + Smagorinsky" best
-overall (§5.1, §6.1). Brillon & Nadarajah (2026) confirm the effect of
+overall (§5.1, §6.1). Brillon & Nadarajah (2026) report the same effect of
 upwinding in split-form flux reconstruction: Roe, low-dissipation Roe and
 Lax–Friedrichs face dissipation "almost completely" attenuate the
 pressure-dilatation oscillations (§3.1.7, Fig. 17), but they add that the
@@ -710,7 +751,7 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
   as a contradiction.
 - **Naming of the split forms.** Volpiani (2024, Eq. 15) and Liang & Fu
   (2024, Eq. 22) call $\tfrac12(C^D+C^\phi)$ the Feiereisen form; in the
-  family recalled by Bernades et al. (2023) that combination is
+  family that Bernades et al. (2023) cite that combination is
   $a_{\mathrm K}=1$, the "C" form, while $a_{\mathrm K}=0$,
   $\tfrac12(C^u+C^\rho)$, is called Feiereisen. The forms printed are
   unambiguous; only the attribution differs *(compiler check, not in the
@@ -765,3 +806,8 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
 - [Gao et al. (2022)](/sources/gao-2022.md) — §3.1 (split-form FLEXI with Pirozzoli flux for an implicit LES with shocks).
 - [Kuya et al. (2018)](/sources/kuya-2018.md) — version of record with appended corrigendum: §1.1–1.2 (Analytical Relations); §2.2–2.4, Eqs. (14)–(53), Table 1 (split-form fluxes, consistent and inconsistent energy fluxes); §3, Eq. (54) (QC$_C$ KEEP scheme); §4.1, §4.5, Eqs. (55)–(71); §5.1–5.3, Table 3, Figs. 1–11 (inviscid Taylor–Green vortex and isotropic turbulence); §6; App. A, Eq. (A.1); App. C, Figs. 12–17 (time step and integrator).
 - [Wang et al. (2013)](/sources/wang-2013.md) — §4.15 (dissipation rate from the enstrophy); §5.6 (third Taylor–Green error, zero for a truly KEP method).
+- [Yu et al. (2022)](/sources/yu-2022-e.md) — §2.1 (sixth-order KEP convection with WENO5 in STREAmS).
+- [Zhang et al. (2022)](/sources/zhang-2022-b.md) — §2 (eighth-order energy-preserving fluxes, WENO7 at $M_\infty=8$ only, Laplacian viscous terms).
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §3.1.1–3.1.3 (sixth-order fully split energy-preserving convection, WENO-Z hybrid, semi-conservative viscous terms).
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.3, §2.8 (fourth-order KE/EP central flux in a WENO blend); §3.1, Fig. 12.
+- [Svärd (2022)](/sources/svard-2022.md) — §3, Condition C; §4, Eq. (34) (KEP-diffusive requirement, internal-energy balance).

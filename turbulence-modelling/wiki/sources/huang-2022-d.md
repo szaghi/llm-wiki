@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 467:111458"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Huang_High-order_compact_finite_volume_schemes_for_solving_the_Rey.pdf"
 tags: [rans, spalart-allmaras, high-order, numerical-dissipation, high-lift]
-timestamp: 2026-10-27T05:49:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Summary
@@ -137,7 +137,7 @@ identity problem. Numbering on this page is that of this version.
 70 printed references, numbered. The list is merged complete into the
 [bibliography](/bibliography.md) with `citedby` this slug. Ref. [1]
 (Wang et al. 2013, Int. J. Numer. Methods Fluids 72) is the same work as
-the planned source wang-2013. Ref. [67] (Li, Chen & Ren, J. Comput. Phys.
+the ingested [Wang et al. (2013)](/sources/wang-2013.md). Ref. [67] (Li, Chen & Ren, J. Comput. Phys.
 448:110770) is a different work from the ingested [Li et al. (2022)](/sources/li-2022.md) and is keyed `li-2022-c`; ref. [37] (Wang L. et al. 2013, AIAA) is keyed `wang-2013-e`. Ref. [65], the NASA Turbulence Modeling Resource web page,
 is undated. Same-author same-year works take suffixes in printed order
 (Wang 2016, [2], [3]; Bassi 1997, [14], [15]; Zhang 2012, [23], [24];

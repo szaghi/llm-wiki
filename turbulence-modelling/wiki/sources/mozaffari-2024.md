@@ -8,8 +8,8 @@ authors: [Mozaffari S., Cai S.-G., Jacob J., Sagaut P.]
 year: 2024
 venue: "J. Comput. Phys. 514:113269"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Journal_of_Computational_Physics_Mozaffari_Lattice_Boltzmann_k-ω_SST_based_hybrid_RANSLES_simulations_o.pdf"
-tags: [lattice-boltzmann, hybrid-rans-les, k-omega-sst, wall-model, ahmed-body, immersed-boundary]
-timestamp: 2026-10-26T20:47:00Z
+tags: [lattice-boltzmann, hybrid-rans-les, k-omega, wall-model, bluff-body, immersed-boundary]
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Summary
@@ -132,8 +132,8 @@ $\psi_\beta\to\beta_{\mathrm{CES}}$ *(compiler check, not in the sources)*.
 | $p$, $s$ (Eq. 15) | $p_{\mathrm{wm}}$, $s_{\mathrm{wm}}$ | page-local blending constants of the unified wall law; $p$ is not the pressure |
 | $Re_y=uy/\nu$ | $Re_y$ | §11 |
 | $h_{max}$ | $h$ (maximum cell edge) | cubic cells |
-| $\beta$ in $\psi_\beta$ (CES) | $\beta_{\mathrm{CES}}$ | page-local, as on the CES page; **collision** with the SST coefficient $\beta$ |
-| $\psi_\beta$, $R=L_+^2$, $L_+$, $L_{tot}$, $\Delta_+$, $\Delta_{C+}$, $C_+$ | same, page-local | CES resolution indicators |
+| $\beta$ in $\psi_\beta$ (CES) | $\beta_{\mathrm{CES}}$ | registry §11, as on the CES page; **collision** with the SST coefficient $\beta$ |
+| $\psi_\beta$, $R=L_+^2$, $L_+$, $L_{tot}$, $\Delta_+$, $\Delta_{C+}$, $C_+$ | same ($\psi_\beta$, $L_+$ registry §11; the others page-local) | CES resolution indicators |
 | $\phi$ (Ahmed slant angle; also wall-function blend, SST generic coefficient) | written out | **collision**: three meanings in the source |
 | $Re_c$, $Re_H$ | $Re_c$, $Re_H$ | chord and body height |
 

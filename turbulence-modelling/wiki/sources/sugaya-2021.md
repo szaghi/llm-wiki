@@ -9,7 +9,7 @@ year: 2021
 venue: "Comput. Fluids 231:105173"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Computers_amp_Fluids_Sugaya_Unsteady_turbulent_flow_simulations_on_moving_Cartesian_grid.pdf"
 tags: [immersed-boundary, des, spalart-allmaras, wall-model, high-order, compressible]
-timestamp: 2026-10-27T10:59:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Summary
@@ -80,7 +80,7 @@ average, $h$ the cell size (see the Notation map).
 10. Steady NACA 0012 (SA RANS, $Re_c=6.0\times10^6$, relative Mach 0.15, $\alpha=10^\circ$): density $L_2$ norms of $4.85717\times10^{-11}$ (stationary grid) and $4.85718\times10^{-11}$ (moving grid) at step 15,000, and $4.20906\times10^{-16}$ and $4.49798\times10^{-16}$ at 30,000, differences "in the order of machine zero" (§3.1, Table 3, Fig. 5). **Shown**
 11. The two cases give identical $C_p$, $C_f$, relative-velocity and eddy-viscosity profiles at $x/c\sim0.3$, in agreement with the body-fitted code FaSTAR on the Turbulence Modeling Resource grid (§3.1, Figs. 6–8). **Shown**
 12. $y^+_{\mathrm{IP}}\approx230$ at $x/c=0.5$ in the steady case; immersed boundaries with wall functions agree with body-fitted grids for surface pressure "when $y^+$ is approximately 500 or less" (§3.1, Fig. 4, citing four studies). **Stated** (cited)
-13. AGARD Case 3 ($M_\infty=0.6$, $Re_c=4.8\times10^6$, $\alpha=4.86^\circ+2.44^\circ\sin\omega_pt$, reduced frequency 0.081, pivot at quarter chord): shock and suction-peak positions at $\alpha=5.92^\circ$ pitching up agree with FUN3D on a body-fitted grid and with experiment (§3.2, Figs. 10–11). **Shown**
+13. AGARD Case 3 ($M_\infty=0.6$, $Re_c=4.8\times10^6$, $\alpha=4.86^\circ+2.44^\circ\sin\varpi_{\mathrm p}t$, reduced frequency 0.081, pivot at quarter chord): shock and suction-peak positions at $\alpha=5.92^\circ$ pitching up agree with FUN3D on a body-fitted grid and with experiment (§3.2, Figs. 10–11). **Shown**
 14. The $C_L$–$\alpha$ hysteresis loop and the inversion of the lift trajectory near $\alpha\sim6^\circ$ are reproduced, consistent with experiment and FUN3D (§3.2, Fig. 12). **Shown**
 15. The pitching-moment difference from experiment is "around 0.005, which is almost the same as with the simulation using the body-fitted grid" (§3.2, Fig. 13). **Shown**
 16. Since immersed boundaries do not strictly conserve, the pitching results are compared with a body-fitted conservative simulation; the agreement is offered as evidence that non-conservation does not spoil the unsteady aerodynamics (§3.2). **Shown** (indirectly)
@@ -113,7 +113,7 @@ $f(y^+)$ and the near-wall SA modification of Tamaki et al.
 | $\overline Q_{c,i}$ | (cell average, page-local) | **collision:** the source's overbar is a cell average, not the LES filter |
 | $V=[V_x,V_y,V_z]^T$, $V_n$, $V_{trans}$ | $\boldsymbol V$, $V_n$, $\boldsymbol V_{\mathrm{trans}}$ (grid velocity, page-local) | |
 | $\omega$ (rigid rotation), $\Omega$ (rotor) | $\boldsymbol\Omega_{\mathrm{rot}}$ | **collision** with $\omega$ and $\Omega_{ij}$ |
-| $\omega$ (pitching) | $\omega_p$ (page-local) | **collision** with $\omega$ |
+| $\omega$ (pitching) | $\varpi_{\mathrm p}$ (page-local, as on [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)) | **collision** with $\omega$ |
 | $\mathcal T_c$, $\mathcal T_p$ | same (Galilean transformations, page-local) | |
 | $\Delta X=\Delta Y$, $\Delta x$ | $h$ | cell size; not the filter width $\Delta$ |
 | $X$, $Y$, $\eta$ | same (face-normal, face-tangential coordinates; tangential offset, page-local) | **collision** with the Kolmogorov length $\eta$ |
@@ -124,7 +124,7 @@ $f(y^+)$ and the near-wall SA modification of Tamaki et al.
 | $u_{n}$, $u_{t}$, $V_{n,wall}$, $V_{t,wall}$ | same (page-local) | normal and tangential fluid and wall velocities |
 | $\alpha$, $\alpha_m$, $\alpha_0$, $k_r$ | same (angle of attack, mean, amplitude, reduced frequency, page-local) | **collision** with the DG blending factor $\alpha$ and with $k$ |
 | $C_l$, $C_m$ | $C_L$, $C_m$ | |
-| $C_T$, $C_Q$, FM, $M_{tip}$, $R$, $\theta_c$ | $C_{\mathrm{Th}}$, $C_Q$, FM, $M_{tip}$, $R$, $\theta_c$ (rotor thrust and torque coefficients, figure of merit, tip Mach number, radius, collective, page-local) | **collision:** the registry $C_T$ is the TENO cut-off threshold |
+| $C_T$, $C_Q$, FM, $M_{tip}$, $R$, $\theta_c$ | $C_{\mathrm{Th}}$, $C_Q$, FM, $M_{\mathrm{tip}}$, $R_{\mathrm r}$, $\theta_c$ (rotor thrust and torque coefficients, figure of merit, tip Mach number, radius, collective, page-local) | **collision:** the registry $C_T$ is the TENO cut-off threshold |
 | $Re$ | $Re_c$ | rotor: chord and **sonic speed** ($4.44\times10^6$); airfoils: chord and relative velocity |
 
 # Reference list

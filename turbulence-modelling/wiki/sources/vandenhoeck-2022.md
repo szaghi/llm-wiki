@@ -8,8 +8,8 @@ authors: [Vandenhoeck R., Lani A., Steelant J.]
 year: 2022
 venue: "Comput. Phys. Commun. 278:108408"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Computer_Physics_Communications_Vandenhoeck_Development_of_an_implicit_high-order_flux_reconstruction_so.pdf"
-tags: [rans, transition, flux-reconstruction, k-omega-sst, high-order, software]
-timestamp: 2026-10-27T06:07:00Z
+tags: [rans, transition, flux-reconstruction, k-omega, high-order, software]
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -92,7 +92,7 @@ that of this version.
 - **Symbol clash:** $P$ is both the production of $k$ (Eq. 6) and the polynomial degree (§2 onward).
 - **References:** [64] prints "Y. Saad, M.H. Schultz Gmres" (a title word fused into the author list); [9] "AIAA Paper 4079, 2007, 2007" and [19] "AIAA Pap. 44 (2011) 2011" repeat the year.
 - **Typo:** "straightforward to extend to solver" (§3.2.2).
-- *(compiler check, not in the sources)* The piecewise correlations of $F_{l1}$ and $Re_{\theta c}$ (Eqs. 24, 29) join at their breakpoints to within about 1%, with no jump larger than the correlations' rounding suggests ($F_{l1}$: 13.837 against 13.840 at 400, 0.496 against 0.5 at 596, 0.3188 on both sides at 1200; $Re_{\theta c}$: 1278.07 against 1276.89 at 1870), and the element counts of the meshes ($(22+6)\times28=784$, $(22+6)\times14=392$, $(10+3)\times11=143$) agree with the totals: no slip there.
+- *(compiler check, not in the sources)* The piecewise correlations of $F_{l1}$ and $Re_{\theta c}$ (Eqs. 24, 29) join at their breakpoints to within about 1% ($F_{l1}$: 13.837 against 13.840 at 400, 0.496 against 0.5 at 596, 0.3188 on both sides at 1200; $Re_{\theta c}$: 1278.07 against 1276.89 at 1870), and the element counts of the meshes ($(22+6)\times28=784$, $(22+6)\times14=392$, $(10+3)\times11=143$) agree with the totals: no slip there.
 
 # Notation map
 
@@ -102,7 +102,7 @@ that of this version.
 | $\tau_{ij}=2\mu_t(S_{ij}-\tfrac13\partial_ku_k\delta_{ij})-\tfrac23\rho k\delta_{ij}$ | $-\langle\rho u_i''u_j''\rangle$ | **sign convention:** force-per-area (negative-trace) Reynolds stress; registry $R_{ij}$ has positive trace |
 | $\tilde\tau_{ij}$ | (total viscous plus Reynolds stress) | **collision:** tilde means "total", not a Favre filter |
 | $S=\sqrt{2S_{ij}S_{ij}}$, $\sqrt{2\Omega_{ij}\Omega_{ij}}$ | $\lvert S\rvert$, $\lvert\Omega\rvert$ | agree (factor two) |
-| $\tilde\omega=\ln\omega$ | $\ln\omega$ | **collision:** the registry tilde is the Favre filter or the SA variable $\tilde\nu$ |
+| $\tilde\omega=\ln\omega$ | $\tilde\omega_\ell=\ln\omega$ (registry §11) | **collision:** the registry tilde is the Favre filter or the SA variable $\tilde\nu$ |
 | $P$ (Eq. 6), limited by $10\beta^*\rho\omega k$ | $P_k$ (limited, dynamic form $\langle\rho\rangle P_k$) | **collision:** $P$ also the polynomial degree |
 | $P$ (§2 on), P0–P6 | $N$, $N=0$–$6$ | polynomial degree; order $N+1$ |
 | $\hat\gamma_1$, $\hat\gamma_2$ | $\gamma_\omega$ (registry §11) | $5/9$, $0.44$; the hat is not a test filter |

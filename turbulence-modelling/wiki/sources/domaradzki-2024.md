@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Fluid Mech. 985:A48"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Journal_of_Fluid_Mechanics_Domaradzki_Autonomous_large-eddy_simulations_of_turbulence_using_eddy_v.pdf"
 tags: [sgs-model, eddy-viscosity, scale-similarity, spectral-eddy-viscosity, backscatter, isotropic-turbulence]
-timestamp: 2026-10-26T20:44:00Z
+timestamp: 2026-10-27T15:59:00Z
 ---
 
 # Summary
@@ -108,7 +108,7 @@ with $C_{\mathrm A}=1$ for the autonomous model and $\lvert\hat{\bar S}\rvert^2=
 | $u^<$ (LES field, projection on the mesh, sharp cutoff $k_c=\pi/\Delta x$) | $\bar u$ | as on the concept page; the source's $<$ marks the *resolved* field, the opposite of the registry's $\phi^<$ |
 | $u^>$ (true subgrid scales, $k>k_c$) | $u^<$ | unresolved part |
 | $\bar f$ (graded Gaussian or box filter, $\Delta=2\Delta x$) | $\bar f$ on the full field (Eqs. 1.1–1.2); $\hat f$, $\hat\Delta=2\Delta x$, when applied to the LES field | so $\bar u^<\to\hat{\bar u}$ |
-| $\hat f$ (Liu et al. test filter, Eq. 1.4) | $\hat f$ | used only in the recalled Eq. (1.4) |
+| $\hat f$ (Liu et al. test filter, Eq. 1.4) | $\hat f$ | used only in Eq. (1.4), cited from Liu et al. |
 | $u'_i=u_i-\bar u_i$ | subfilter velocity | **collision:** the prime is the registry's Reynolds fluctuation |
 | $\tau_{ij}=\overline{u_iu_j}-\bar u_i\bar u_j$ | $\tau_{ij}$ | positive trace, full tensor |
 | $\tau^{res}_{ij}$ | $L_{ij}=\widehat{\bar u_i\bar u_j}-\hat{\bar u}_i\hat{\bar u}_j$ | resolved (similarity-like) stress |
@@ -116,7 +116,7 @@ with $C_{\mathrm A}=1$ for the autonomous model and $\lvert\hat{\bar S}\rvert^2=
 | $S^<_{ij}$, $\bar S^<_{ij}$; $(\bar S^<_{ij})^2$ | $\bar S_{ij}$, $\hat{\bar S}_{ij}$; $\tfrac12\lvert\hat{\bar S}\rvert^2$ | the source's square has no factor two |
 | $\epsilon_{SGS}=\tau_{ij}\bar S_{ij}$, $\epsilon^{res}_{SGS}$, $\bar\epsilon^{res}_{SGS}$ | $-\Pi$, $-\Pi_L$, $-\widehat{\Pi_L}$ | **sign collision:** the source's flux is negative for forward transfer; $\Pi_L$ page-local |
 | $\nu_{eddy}(\boldsymbol x)$, $\nu^{(C)}_{eddy}$ | $\nu_t$ | |
-| $C$ (Eq. 3.3) | $C_{\mathrm A}$ | page-local; not the Smagorinsky $C_s$ |
+| $C$ (Eq. 3.3) | $C_{\mathrm A}$ | registry §11; not the Smagorinsky $C_s$ |
 | $\nu_{eddy}(k\mid k_c)$ | $\nu_t(k\mid k_c)$ | spectral eddy viscosity |
 | $T_{SGS}(k\mid k_c)$, $T_{SGS}(k_c)$, $T^{res}_{SGS}$ | same, page-local | spectral subgrid transfer (negative for a drain) |
 | $C_K$, $C_K(k)$ | same, page-local | Kolmogorov constant; compensated spectrum $E(k)/(\varepsilon^{2/3}k^{-5/3})$ |

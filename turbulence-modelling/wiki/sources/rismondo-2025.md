@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Fluid Mech. 1024:A33"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Fluid_Mechanics_Rismondo_Wind_turbine_noise_generation_and_propagation_through_large.pdf"
 tags: [les, aeroacoustics, eddy-viscosity, software, separated-flow]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Summary
@@ -54,7 +54,7 @@ sections, equations, figures and tables.
 # Key claims
 
 Page-local symbols: $f_T$ rotation frequency (blade passing frequency $3f_T$);
-$c_0$ speed of sound; $M_0=U_\infty/c_0$; $p'$ acoustic pressure; $C_T$,
+$c_0$ speed of sound; $M_0=U_\infty/c_0$; $p'$ acoustic pressure; $C_{\mathrm{Th}}$ (registry §11),
 $C_P$ thrust and power coefficients; $K_\lambda$ observer distance over the
 blade-passing wavelength; $\mathcal S=\partial_i\partial_j(u_iu_j)$ the
 kinematic Lighthill source.
@@ -63,7 +63,7 @@ kinematic Lighthill source.
 2. The time step $1.0\times10^{-6}$ s gives a maximum Courant number about 10 in a few cells near the blade tips and an average of order 0.017 (§2.1). **Stated**
 3. Initialization by a potential solver, then RANS, then LES; statistics over 10 revolutions, collected after 31 revolutions (§2.1). **Stated**
 4. Mesh: about 144 million hexa-dominant cells, about $5\times10^5$ surface elements, 28 prism-like layers with first-cell height $y/D\approx4.4\times10^{-5}$, $y^+<1$ except $O(1)$ at the trailing edge of the outer radii, chordwise and spanwise spacings below 15 wall units and about 5 at the tip and trailing edge (§2.3, Figs. 3–5). **Stated**
-5. Validation: $C_T=0.71$ (LES) against 0.80 (experiment), $C_P=0.183$ against 0.20; errors 11.25% and 8.5%, attributed to the absent mast, the wind-tunnel blockage (4.7%) and the floor boundary layer of the experiment (§3, Table 2). **Shown**
+5. Validation: $C_{\mathrm{Th}}=0.71$ (LES) against 0.80 (experiment), $C_P=0.183$ against 0.20; errors 11.25% and 8.5%, attributed to the absent mast, the wind-tunnel blockage (4.7%) and the floor boundary layer of the experiment (§3, Table 2). **Shown**
 6. Resolved load fluctuations are broadband up to $100f_T$ (§3, Fig. 7). **Shown**
 7. The SGS eddy-viscosity ratio $\nu_t/\nu$ lies mostly in 0–10, peaking in the tip-vortex core and thin wake vortices, which the authors take as indicating high resolution (§3, Fig. 8c). **Shown**
 8. The wake has a near region to about $1.0D$ (synchronized tip and root vortices, trailing-edge vortex sheet), an intermediate region to about $7D$ (loss of coherence, kinetic-energy increase at outer radii) and a far region with homogenized kinetic energy over the disk (§3.1, Figs. 9–10). **Shown**
@@ -128,7 +128,7 @@ $x/D=-0.5$ to 7 (results stated to be independent of radii 0.7–0.9, not shown)
 | $R^*$, $\tilde R_i$, $\tilde R^*_i$, $\hat R_{ij}$ | $R^*$, $r_i$, $r^*_i$, $\Lambda_{ij}$ (page-local) | advective radiation distance and vectors, Eqs. (2.4)–(2.7); tildes are not Favre filters |
 | $y$, $[\cdot]_\tau$, $U_\infty$ (Eq. 2.3) | $\boldsymbol s$, $[\cdot]_{t_e}$, $U_0$ (page-local) | source point, evaluation at emission time, uniform stream |
 | $c_0$, $M_0$, $M_{tip}$ | page-local | $c_0=330$ m/s, $M_0\approx0.02$ |
-| $C_T$, $C_P$, $C_p$ | page-local, $C_p$ | **collision:** the power coefficient $C_P$ differs from the pressure coefficient $C_p$ only by case |
+| $C_T$, $C_P$, $C_p$ | $C_{\mathrm{Th}}$ (rotor thrust coefficient, registry §11), $C_P$ (page-local), $C_p$ | **collision:** the power coefficient $C_P$ differs from the pressure coefficient $C_p$ only by case |
 | $\lambda=c_0/3f_T$, $K_\lambda$ | page-local | blade-passing wavelength; **collision** with the Taylor microscale |
 | $x_b,y_b,z_b$, $y_b^+$ | $y^+$ | blade-local coordinates; $u_\tau$ estimated from a flat-plate $C_f$ correlation |
 | $n$, $N$ | $n$ (page-local) | number of blades / rotating sources; the source's $N$ **collides** with the polynomial degree |

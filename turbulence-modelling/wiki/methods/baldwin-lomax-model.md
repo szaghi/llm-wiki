@@ -5,7 +5,7 @@ description: "The two-layer algebraic RANS eddy viscosity of Baldwin and Lomax, 
 status: established
 aliases: [Baldwin–Lomax model, BL model, BL-local, BL-GFM-VD-TV, Cebeci–Smith model, algebraic eddy-viscosity model, zero-equation model, algebraic wall model]
 tags: [rans, eddy-viscosity, compressible, hypersonic, boundary-layer]
-timestamp: 2026-10-27T11:02:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Baldwin–Lomax algebraic model and its compressible recalibration
@@ -219,8 +219,9 @@ transformations but left temperature deviations for cold walls (§1).
 - Chen et al. state that the denominator $\sqrt{\rho_w}$ is "moved out" of
   $F_{VD,\max}$ to combine with other factors, while Eq. 3.14 divides by the
   local $\sqrt\rho$; the step is not derived in the paper. On p. A7-10 the
-  range "$0.09<y_{m\mu}/\delta_{99}\lesssim0.27$" should read $y/\delta_{99}$
-  for the stated region.
+  range of a region of the layer is printed
+  "$0.09<y_{m\mu}/\delta_{99}\lesssim0.27$", with the crossing height
+  $y_{m\mu}$ in place of the wall distance $y$.
 
 # Citations
 

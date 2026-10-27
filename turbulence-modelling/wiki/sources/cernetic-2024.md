@@ -9,7 +9,7 @@ year: 2024
 venue: "Mon. Not. R. Astron. Soc. 534:1963–1984"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Monthly_Notices_of_the_Royal_Astronomical_Society_Cernetic_Supersonic_turbulence_simulations_with_GPU-based_high-order.pdf"
 tags: [dg, compressible, astrophysics, numerical-dissipation, implicit-les, gpu]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Summary
@@ -151,7 +151,7 @@ the quadratic one.
 | $l_s$, $k_s$ | (sonic scale, sonic wavenumber; page-local) | $v(l_s)=c_s$ |
 | $L$, $L_{\mathrm{inj}}$, $k_{\mathrm{inj}}$ | (box size, injection scale $L/2$, injection wavenumber) | **collision:** $L$ is not the integral length scale |
 | $E_v(\boldsymbol k)$, $E(k)=4\pi k^2\langle E_v\rangle$ | $E(k)$ | built from $\lvert\boldsymbol u_{\boldsymbol k}\rvert^2$ without the factor $\tfrac12$ |
-| $T=L/(2c_s\mathcal M)$ | (large-eddy turnover time) | |
+| $T=L/(2c_s\mathcal M)$ | $T_E$ (large-eddy turnover time, registry §11) | |
 | $t_c$, $\sigma$, $f$, $E_{\mathrm{inj}}$ | (Ornstein–Uhlenbeck correlation time, amplitude, decay factor, driving strength) | **collision:** $f$ also counts the conserved fields (§7) and is not the body force $f_i$ |
 | $b_k$ | (coefficients per field; prefactor of the shock error model) | overloaded in §7 |
 | DG-$n$, FV-2 | order-$n$ DG ($N=n-1$), second-order finite volume | |

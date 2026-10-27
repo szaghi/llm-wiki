@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Rev. E 105:L063101"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physical_Review_E_Kochurin_Three-dimensional_direct_numerical_simulation_of_free-surfac.pdf"
 tags: [mhd, anisotropy, energy-cascade, dns]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -24,10 +24,10 @@ and the surface velocity potential $\psi$, truncated at quadratic
 nonlinearity, with a hyperviscous dissipation operator at small scales, a
 spectral cutoff that the authors interpret as "superviscosity", and
 isotropic forcing at large scales; it is integrated pseudo-spectrally with
-$1024^2$ harmonics and fourth-order Runge–Kutta. The title's "direct
-numerical simulation" thus names a truncated, hyperviscous model of
-surface waves, not the resolved Navier–Stokes computation of
-[DNS](/definitions/direct-numerical-simulation.md).
+$1024^2$ harmonics and fourth-order Runge–Kutta. What the title calls
+"direct numerical simulation" solves this truncated, hyperviscous model of
+surface waves, not the Navier–Stokes equations (compare
+[DNS](/definitions/direct-numerical-simulation.md)).
 
 Raising the nondimensional field parameter $V_A^2$ from 0 to 300 turns
 isotropic capillary [wave turbulence](/results/weak-wave-turbulence.md),
@@ -42,10 +42,11 @@ plasma, the transverse-only cascade discussed on
 [critical balance](/properties/critical-balance.md), and with a
 phenomenological model the authors derive. The $\varepsilon_s^{1/2}$ scaling is
 consistent with three-wave interactions, and the resonant triads reported
-in the Supplemental Material are local. The authors conclude that Alfvén
+in the Supplemental Material are "suggesting that wave interactions are
+local" (p. 5). The authors conclude that Alfvén
 wave turbulence in plasma and surface-wave turbulence on magnetic fluids
 are quantitatively analogous, although the energy-transfer mechanisms
-differ. The paper is peripheral to closure modelling.
+differ.
 
 # Version read
 

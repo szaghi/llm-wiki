@@ -9,7 +9,7 @@ year: 2023
 venue: "Aerosp. Sci. Technol. 143:108709"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Aerospace_Science_and_Technology_Placco_Large-Eddy_Simulation_of_the_unsteady_supersonic_flow_around.pdf"
 tags: [les, implicit-les, compressible, separated-flow, gpu]
-timestamp: 2026-10-26T05:09:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Summary
@@ -88,7 +88,7 @@ of this version.
 
 # Printed slips
 
-- **Eq. (3), pressure coefficient.** Printed $C_P=\frac{2}{\gamma Ma_\infty}\left(\frac{p}{p_\infty}-1\right)$. *(compiler check, not in the sources)* With $C_p=(p-p_\infty)/(\tfrac12\rho_\infty U_\infty^2)$ and $\rho_\infty U_\infty^2=\gamma p_\infty M_\infty^2$ for an ideal gas, $C_p=\frac{2}{\gamma M_\infty^2}\left(\frac{p}{p_\infty}-1\right)$: the square on the Mach number is missing.
+- **Eq. (3), pressure coefficient.** Printed $C_P=\frac{2}{\gamma Ma_\infty}\left(\frac{p}{p_\infty}-1\right)$. *(compiler check, not in the sources)* With $C_p=(p-p_\infty)/(\tfrac12\rho_\infty U_\infty^2)$ and $\rho_\infty U_\infty^2=\gamma p_\infty M_\infty^2$ (the printed $a_\infty=235.40$ m/s equals $\sqrt{\gamma p_\infty/\rho_\infty}=235.39$ m/s from Table 1), $C_p=\frac{2}{\gamma M_\infty^2}\left(\frac{p}{p_\infty}-1\right)$: the square on the Mach number is missing.
 - **§4, normalization of $k$.** "$K_\infty$ which corresponds to the specific kinetic energy of the free-stream flow ($K_\infty=0.5\cdot\rho_\infty U_\infty^2$)": the expression carries the density, so it is an energy per unit volume, not a specific one; consistent with Eq. (2), whose $k$ also carries the density.
 - **§4, rms of the coefficients.** The text says the rms values show "lower amplitude fluctuations (around one order of magnitude of difference) from the respective average value as the angle-of-attack increases" and that drag and lift both "follow this characteristic behaviour". *(compiler check, not in the sources)* Table 3 gives ratios between $0^\circ$ and the other angles of about 2.2–2.5 for $C_{D,\mathrm{rms}}$ and 4.1–4.6 for $C_{L,\mathrm{rms}}$, and $C_{D,\mathrm{rms}}$ is not monotone ($9.3\cdot10^{-4}$ at $15^\circ$ against $8.1\cdot10^{-4}$ at $10^\circ$). The text does not say between which quantities the order of magnitude is taken.
 - **Reference names.** The text cites "Allen [1]" while ref. [1] prints "A. Julien, A. Eggers" (NACA TN-4047); "Campbell [4]" against ref. [4] "J. Cumpbell"; "Micheltree and Gnoffo" (§1) against refs. [17,18] "Mitcheltree"; "Peterson [47]" against the garbled author list of ref. [47] ("J.R. Charbel Farhat").

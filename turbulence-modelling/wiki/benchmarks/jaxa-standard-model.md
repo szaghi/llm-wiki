@@ -5,7 +5,7 @@ description: "The JAXA Standard Model, a half-span civil transport in landing co
 status: established
 aliases: [JSM, JAXA high-lift model, HLPW3 JSM]
 tags: [benchmark, wmles, separated-flow, gpu, software]
-timestamp: 2026-10-25T13:45:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # JAXA Standard Model high-lift configuration
@@ -90,7 +90,7 @@ The headline claim is $C_{L,\max}$ "consistently being predicted to within
 five lift counts", with $\Delta C_L\le0.03$ and $\Delta C_D\le0.0010$ at
 maximum lift (Abstract, §1). The authors contrast this with the scatter of
 the HLPW3 RANS submissions (35 participants, 79 data sets, mostly
-Spalart–Allmaras or $k$-$\omega$ SST) near maximum lift, as recalled from
+Spalart–Allmaras or $k$-$\omega$ SST) near maximum lift, citing
 Rumsey et al. (2019).
 
 ## Cost

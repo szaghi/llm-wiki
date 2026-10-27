@@ -9,7 +9,7 @@ year: 2022
 venue: "Flow Turbul. Combust. 108:927-933"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Flow_Turbulence_and_Combustion_Heinz_Remarks_on_Energy_Partitioning_Control_in_the_PITM_Hybrid_RA.pdf"
 tags: [hybrid-rans-les, continuous-eddy-simulation, pitm, k-epsilon, energy-partition]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Summary
@@ -125,7 +125,7 @@ $C_\Delta=3C_K/(2\pi^{2/3})=1.06$ with $C_K$ the Kolmogorov constant.
 | $C_{\epsilon_1}$, $C_{\epsilon_2}$, $\sigma_\epsilon$ | $C_{\varepsilon1}$, $C_{\varepsilon2}$, $\sigma_\varepsilon$ | 1.44, 1.92, 1.3 |
 | $\alpha$, $\alpha^*$, $\alpha^*_{1,2,3}$, $\alpha^*_{1k,2k}$ | $\alpha_\varepsilon$, $\alpha^*_\varepsilon$ (page-local, as on [continuous eddy simulation](/methods/continuous-eddy-simulation.md)); subscripts kept on this page | **collision** with the DG/FV blending factor $\alpha$ and the Wilcox constant $\alpha^*$ |
 | $\tau=k/\epsilon$ | $\tau_k=k/\varepsilon$ (page-local) | **collision** with $\tau_{ij}$ and $\tau_w$ |
-| $L_+$, $\tau_+$, $k_+$, $\epsilon_+$ | $L_+$, $\tau_+$, $k_+$, $\varepsilon_+$ (modelled-to-total ratios, page-local) | **collision:** "+" is not wall units; $L_+$ as on [hybrid RANS/LES](/definitions/hybrid-rans-les.md) |
+| $L_+$, $\tau_+$, $k_+$, $\epsilon_+$ | $L_+$, $\tau_+$, $k_+$, $\varepsilon_+$ (modelled-to-total ratios, registry §11) | **collision:** "+" is not wall units; $L_+$ as on [hybrid RANS/LES](/definitions/hybrid-rans-les.md) |
 | $k_{res}$, $\epsilon_{res}$, $k_{tot}$, $\epsilon_{tot}$, $L$, $L_{tot}$ | $k_{\mathrm{res}}$, $\varepsilon_{\mathrm{res}}$, $k_{\mathrm{tot}}$, $\varepsilon_{\mathrm{tot}}$, $L$, $L_{\mathrm{tot}}$ | $L$ a RANS-type length, not the integral scale of §8 |
 | $\langle\cdot\rangle$ | $\langle\cdot\rangle$ | time average |
 | $\nu_t^*$, $\nu_{t,tot}$ | (viscosity in the transport terms; total viscosity, page-local) | |

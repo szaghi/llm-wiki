@@ -5,7 +5,7 @@ description: "The single-model hybrid RANS/LES in which a RANS model's length sc
 status: established
 aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-27T10:56:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -34,7 +34,7 @@ the cell volume), $r_d$ and $f_d$ the DDES shielding parameter and function.
 
 ## The DES switch and its failure on ambiguous grids
 
-As recalled by Basile et al. (2023, §1), the original DES is non-zonal: a
+Basile et al. (2023, §1) describe the original DES as non-zonal: a
 mesh-size sensor switches the model from RANS to LES automatically. On
 "ambiguous" meshes, whose wall-parallel spacing is fine enough to activate
 the switch but too coarse to resolve boundary-layer turbulence, the switch
@@ -332,7 +332,7 @@ designed for the fully turbulent RANS/LES distinction, loses its meaning
 (§II.D; see [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
 
 **V103 compressor cascade** ($Re=138\,500$ on the axial chord $c_{ax}$,
-page-local, $M=0.1$,
+registry §11, $M=0.1$,
 inflow $Tu=3.25\%$, span $0.1c_{ax}$; separation-induced transition on the
 suction side, bypass transition on the pressure side; DNS of Zaki et al.,
 own WALE LES on 10.9 million cells; §III; see
@@ -384,8 +384,8 @@ own WALE LES on 10.9 million cells; §III; see
 ## Zonal DES
 
 Zonal detached-eddy simulation (ZDES, Deck) lets the user assign to each
-part of the domain either URANS or one of several ZDES *modes*. As recalled
-by the two sources that use it:
+part of the domain either URANS or one of several ZDES *modes*. The two
+sources that use it describe them:
 
 - **mode 0** is RANS; **mode 1** is meant for separation fixed by the
   geometry; modes 1 and 3 need user-defined zones, mode 2 detects the
@@ -395,7 +395,7 @@ by the two sources that use it:
   DDES $f_d$ computed from $\tilde\nu$; it differs from DDES mainly in the
   length scale, which switches with $f_d$ (François et al. 2022, §3.1, p. 6);
   Deck's comparisons on a mixing layer, a backward-facing step and an
-  airfoil, as recalled by François et al., show that it keeps the
+  airfoil, which François et al. cite, show that it keeps the
   attached-boundary-layer treatment of DDES and shortens the delay in the
   formation of instabilities;
 - ZDES aims at a faster decay of the eddy viscosity in LES mode than DES and
@@ -491,7 +491,7 @@ The variants differ in the length $\Delta$ that caps the RANS length:
 
 | Variant | $\Delta$ | Source |
 |---|---|---|
-| DES, DDES | $\Delta_{\max}$ | as recalled by François et al. (2022, §3.1) and Basile et al. (2023, §2.2) |
+| DES, DDES | $\Delta_{\max}$ | cited by François et al. (2022, §3.1) and Basile et al. (2023, §2.2) |
 | ZDES mode 2 | $\Delta_{\max}$ where $f_d<0.8$, $\Delta_{\mathrm{vol}}$ where $f_d>0.8$ | François et al. (2022), §3.1 |
 | ZDES mode 0+1 on high-order DG | $\Delta_{\mathrm{vol}}/(N+1)$, $\Delta_{\mathrm{vol}}$ the cube root of the element volume, $N$ the local polynomial degree; $C_{\mathrm{DES}}=0.65$ | Basile et al. (2023), §2.2 |
 | DDES in an edge-based finite-volume code | $\Delta_{\max}$ = longest edge of the dual control volume | Carlsson et al. (2023), §3 |
@@ -499,7 +499,7 @@ The variants differ in the length $\Delta$ that caps the RANS length:
 | IDDES | $\Delta_{dw}$ (Eq. 19 above) | Carlsson et al. (2023), §3 |
 | SA-DDES with grey-area mitigation | $\Delta_{\mathrm{SLA}}$ (below), $C_{\mathrm{DES}}=0.65$ | Carlsson et al. (2023), §3.1, §4.4 |
 | SST-DDES and transitional DDES in a cell-centred finite-volume code | $\Delta_{\mathrm{SLA}}$, $C_{\mathrm{DES}}=0.65$ | Möller et al. (2024), §II.B.1, Eq. 21 |
-| ZDES of the supersonic base flow (Simon et al.) | $\Delta_{\mathrm{vol}}$, $C_{\mathrm{DES}}=0.55$ | as recalled by Carlsson et al. (2023), §4.4 |
+| ZDES of the supersonic base flow (Simon et al.) | $\Delta_{\mathrm{vol}}$, $C_{\mathrm{DES}}=0.55$ | cited by Carlsson et al. (2023), §4.4 |
 | SST-DES with $F_2$ shielding (ANSYS CFX) | $\Delta_{\max}$, $C_{\mathrm{DES}}=0.61$ | Yang & Ma (2022), §2.1, Eqs. 3–5 |
 | SA-DES and SA-DDES in ANSYS Fluent | $\Delta_{\max}$, $C_{\mathrm{DES}}=0.65$ | Pan & Zhang (2023), §II.B–C, Eqs. 7–9 |
 | ZDES mode 2 (2020) on isotropic lattice Boltzmann grids | $\Delta_{\max}$, $\Delta_{\mathrm{vol}}$ or $\Delta_\omega$, "not significant" since $\Delta x=\Delta y=\Delta z$; $C_{\mathrm{DES}}=0.65$ | Husson et al. (2024), §2.2, Eq. 24 |
@@ -570,8 +570,8 @@ authors attribute the difference to numerical dissipation and say the
 theoretical value "only provides a reference" (§2.3). With a plain Roe
 scheme whose dissipation is reduced to 5%, the same values perform better at
 high wavenumbers (App. B, Fig. B1). The direction of a correction follows,
-in their reading, from $C_s\approx C_\Delta^{-1}(1.5C_K)^{-3/4}$ (as recalled;
-page-local $C_\Delta$, $C_K$ the Kolmogorov constant): reduce
+in their reading, from $C_s\approx C_\Delta^{-1}(1.5C_K)^{-3/4}$ (which they
+cite; page-local $C_\Delta$, $C_K$ the Kolmogorov constant): reduce
 $C_{\mathrm{DES}}$ when the inertial-range level is below experiment (§3.1).
 This agrees with Carlsson et al. that the constant is calibrated together
 with the scheme, though with lower values.
@@ -589,12 +589,14 @@ $$\alpha_\varepsilon-L_+^2(\alpha_\varepsilon-1)=\max\Big(1,\frac{L_+}{C_{\mathr
 with $\alpha_\varepsilon=C_{\varepsilon2}/C_{\varepsilon1}=1.33$ ($k$-$\varepsilon$;
 for $k$-$\omega$ the ratio $\alpha_\omega=1.63$, the source's $\beta$),
 $\Delta_+=\Delta/L_{\mathrm{tot}}$ and $L_+$ the modelled-to-total length
-ratio (page-local $\alpha_\varepsilon$, $\alpha_\omega$, $\Delta_+$, $L_{\mathrm{tot}}$). The solution is
+ratio (page-local $\alpha_\varepsilon$, $\Delta_+$, $L_{\mathrm{tot}}$; $\alpha_\omega$ and $L_+$
+registry §11). The solution is
 $L_+=\min\big\{[\sqrt{1+4\alpha_\varepsilon(\alpha_\varepsilon-1)C_{\mathrm{DES}}^2\Delta_+^2}-1]/[2(\alpha_\varepsilon-1)C_{\mathrm{DES}}\Delta_+],\,1\big\}$,
 which tends to $\alpha_\varepsilon C_{\mathrm{DES}}\Delta_+$ for small $\Delta_+$.
 Matching it with the LES length $L=C_+\Delta$ at $C_+=1$ gives
 $C_{\mathrm{DES}}=1/\alpha_\varepsilon$, 0.75 for $k$-$\varepsilon$, and
-$1/\alpha_\omega$, 0.61 for $k$-$\omega$, which Heinz finds close to the standard 0.65 (§4.4, Fig. 5;
+$1/\alpha_\omega$, 0.61 for $k$-$\omega$, which Heinz finds "not far from the
+standard value" 0.65 (§4.4, Fig. 5;
 $1/1.33=0.752$ and $1/1.63=0.613$ *(compiler check, not in the sources)*).
 Heinz draws two
 conclusions: the CES forms "generalize DES", and adjusting $\Delta_+$ to
@@ -619,8 +621,36 @@ fixed-mesh accuracy with fewer cells (§4–§5; see
 (2023) adapt a ZDES on high-order DG with an $hp$ strategy started from a
 RANS-adapted mesh (§3.3).
 
+Fidkowski (2022) removes the grid dependence altogether for an
+output-based adaptation study: the SA wall distance is replaced by the
+fixed attenuation $d_{\max}\tanh(d/d_{\max})$ with $d_{\max}$ 2% of the chord,
+independent of the mesh, "to eliminate modelling variability due to
+changing meshes across adaptations"; the author calls the extension to
+realistic, mesh-dependent DES models natural but leaves it open
+([Fidkowski (2022)](/sources/fidkowski-2022.md), §2.1, Eq. 3, §7). With
+this model on a high-lift airfoil ($M=0.2$, $\alpha=17^\circ$, $Re=10^6$),
+anisotropic output-based adaptation driven by a field-inversion-corrected
+steady surrogate converges the mean lift, where uncorrected RANS
+under-predicts it with a larger separation; at the finest meshes the
+error estimates exceed the actual error by about a factor of two (§6.3,
+Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
+
 ## Applications in the sources
 
+- **Cylinder at $Re=1.4\times10^5$ as a reference** (Ghidoni et al. 2022).
+  The SA-DES of Travin et al., in laminar-separation and
+  turbulent-separation variants, is one of the reference results for the
+  two-dimensional URANS of the cylinder, beside experiments, RANS–ILES and
+  LES ([Ghidoni et al. (2022)](/sources/ghidoni-2022.md), §6.2, Table 12;
+  see Qualifications on the citation). The authors name hybrid RANS/LES
+  among the motivations and future targets of their adaptive time
+  integration.
+- **Shielding function rejected as a feature** (He et al. 2022). For a
+  learned eddy-viscosity correction of SA-QCR, He et al. consider the DDES
+  shielding function $f_d$ as a wall-proximity input and reject it as
+  "mostly binary", using the SA function $f_w$ instead
+  ([He et al. (2022)](/sources/he-2022-b.md), §2.6; see the
+  [Spalart–Allmaras page](/methods/spalart-allmaras-model.md)).
 - **Fan–outlet-guide-vane stage** (François et al. 2022). ZDES mode 2 with
   SA in [elsA](/software/elsa.md): URANS in the core flow and upstream of
   the fan, mode 2 in the bypass; 380 million cells, free-shear cells of
@@ -678,7 +708,7 @@ RANS-adapted mesh (§3.3).
   and a delta wing at $\alpha=24^\circ$ (§5).
 - **Supersonic axisymmetric base flow** (Carlsson et al. 2023, §4.4).
   Herrin–Dutton experiment, $M_\infty=2.46$, $Re_R=1.632\times10^6$ on the base
-  radius $R$. As the authors recall, DESider SA-DES with $\Delta_{\max}$ and
+  radius $R$. The authors cite earlier runs: DESider SA-DES with $\Delta_{\max}$ and
   $C_{\mathrm{DES}}=0.65$ (0.9–3.6 million cells) gave a good flat base
   pressure but an over-long recirculation and low early shear stresses,
   attributed to excess $\mu_t$ from $\Delta_{\max}$; ZDES of Simon et al. (13.5
@@ -695,7 +725,7 @@ RANS-adapted mesh (§3.3).
   (experiment flat near $C_p=-0.102$): "improved numerics in the initial
   shear layer does not produce a better prediction of the base pressure
   profile" (Figs. 9–10).
-- **Ahmed body**, as recalled by Delassaux et al. (2023, §5, Table 2) from
+- **Ahmed body**, as reported by Delassaux et al. (2023, §5, Table 2) from
   their own calibration on four 25° bodies (sharp and rounded edges): RANS
   gives no separation (realizable $k$-$\varepsilon$) or massive separation
   (SST) on the slant; scale-adaptive simulation overestimates and
@@ -705,7 +735,7 @@ RANS-adapted mesh (§3.3).
   $5\times10^{-5}$ s give globally the same results, while a CFL number
   above 10 gives no or massive separation on the slant (see
   [Ahmed body](/benchmarks/ahmed-body.md)).
-- **Ahmed body**, as recalled by Cai et al. (2022, §I). Menter & Kuntz
+- **Ahmed body**, as cited by Cai et al. (2022, §I). Menter & Kuntz
   obtained the partial reattachment of the 25° slant with DES where RANS
   gave fully attached or fully separated flow; Guilmineau et al.'s DES and
   IDDES on body-fitted grids predicted the massive 35° separation with a
@@ -743,7 +773,7 @@ RANS-adapted mesh (§3.3).
   it to classify the spatial patterns of the turbulent-kinetic-energy budget
   terms across the shear layers and attribute the budget imbalance to grid
   resolution ([Wang et al. (2024)](/sources/wang-2024.md), §4, Figs. 8–12).
-- **Transonic buffet**, as recalled by Petrocchi & Barakos (2024, §1) for
+- **Transonic buffet**, as cited by Petrocchi & Barakos (2024, §1) for
   the OAT15A airfoil: Deck's basic DES failed to predict the shock
   oscillation, ZDES over-predicted the trailing-edge unsteadiness, a DDES of
   Grossi et al. gave higher leading-edge unsteadiness, and an IDDES of Huang
@@ -759,13 +789,13 @@ RANS-adapted mesh (§3.3).
   which motivates their transition-coupled
   [Reynolds-stress model](/methods/reynolds-stress-model.md)
   ([Liu et al. (2024)](/sources/liu-2024.md), Introduction).
-- **Dynamic stall**, as recalled by Baldan & Guardone (2025, Introduction):
+- **Dynamic stall**, as cited by Baldan & Guardone (2025, Introduction):
   the DES best practice of Shur et al. requires a span of at least one
   chord to reproduce the dynamic-stall vortex, a requirement the authors
   confirm for wall-resolved LES of a pitching NACA 0012 in the downstroke
   ([Baldan & Guardone (2025)](/sources/baldan-2025.md), §2.1; arXiv v2; see
   [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
-- **Wind-turbine noise**, as recalled by Rismondo et al. (2025, §1): Nelson
+- **Wind-turbine noise**, as cited by Rismondo et al. (2025, §1): Nelson
   et al. used delayed DES with Farassat's linear acoustic formulation for a
   full wind turbine ([Rismondo et al. (2025)](/sources/rismondo-2025.md),
   §1; see [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)).
@@ -797,7 +827,7 @@ RANS-adapted mesh (§3.3).
   wake, and from $-5/3$ ranges in velocity spectra (§3.1, Figs. 4–5); only
   the midspan isentropic Mach number is compared with experiment (Fig. 6).
   See [turbine cascades](/benchmarks/turbine-cascade.md).
-- **Capsule wakes**, as recalled by Placco et al. (2023, §1). DES of
+- **Capsule wakes**, as cited by Placco et al. (2023, §1). DES of
   planetary-entry capsule wakes was restricted to the near-body wake and
   disagreed with experiment in the backshell area, which the cited work
   attributed to the model's prediction of transition after shoulder
@@ -928,7 +958,7 @@ RANS-adapted mesh (§3.3).
   the printed figures give 54 *(compiler check, not in the sources)*.
 - $C_{\mathrm{DES}}=0.65$ goes with $\Delta_{\mathrm{vol}}/(N+1)$ in Basile et al.
   and with $\Delta_{\max}$ or $\Delta_{\mathrm{SLA}}$ in Carlsson et al.; the ZDES
-  base-flow studies recalled by Carlsson et al. use 0.55 with
+  base-flow studies cited by Carlsson et al. use 0.55 with
   $\Delta_{\mathrm{vol}}$. Carlsson et al. call the constant code dependent, so
   these are different calibrations, not a disagreement.
   Möller et al. (2024) use 0.65, citing Travin et al., with an SST host and
@@ -982,6 +1012,14 @@ RANS-adapted mesh (§3.3).
   origin is a Japanese-language conference paper and an AIAA paper they
   cite (§2.1).
 
+- Ghidoni et al. (2022) attribute the Travin et al. SA-DES cylinder results
+  of their Table 12 to their reference 44, which is printed as a DES of an
+  airfoil at high angle of attack by Shur, Spalart, Strelets and Travin.
+- The "DES" of Fidkowski (2022) has no grid length: it is a RANS model
+  with a capped wall distance, and conclusions on mesh adaptation drawn
+  with it do not transfer directly to grid-dependent DES, as the author
+  states (§2.1, §7).
+
 # Citations
 
 - [François et al. (2022)](/sources/francois-2022.md) — §1, §3.1 (pp. 5–6, footnote 2), §3.2.1, §3.4–3.5, §4.1–4.2 Fig. 9, §5.3–5.4 Figs. 12–15.
@@ -1014,3 +1052,6 @@ RANS-adapted mesh (§3.3).
 - [Zangeneh (2021)](/sources/zangeneh-2021.md) — §I, §II.A–B Eqs. 1, 5–7.
 - [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §2.1, §4, Tables 6–7, Figs. 17–19.
 - [Heinz (2020)](/sources/heinz-2020.md) — §3.3 Eq. 22, §4.4 Eqs. 53–55 Fig. 5, §5.2, §5.4 Table 3.
+- [Fidkowski (2022)](/sources/fidkowski-2022.md) — §2.1 Eq. 3, §6.3 Table 3 Fig. 18, §7.
+- [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §6.2 Table 12.
+- [He et al. (2022)](/sources/he-2022-b.md) — §2.6.

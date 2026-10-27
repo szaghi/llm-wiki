@@ -5,7 +5,7 @@ description: "Energy backscatter is a negative local subgrid energy flux, energy
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-27T11:02:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -45,22 +45,23 @@ $0.08$–$0.65$ of the integral scale), Vela-Martín (2022, §5.3, Fig. 2)
 measures the backscatter volume fraction $v^-$ (the fraction of the domain
 with $\Pi<0$) and the net backscatter $f^-$ (minus the integral of the
 negative part of $\Pi$ divided by the integral of $\Pi$); both symbols are
-page-local:
+in registry §11:
 
 - sharp Fourier filter: $v^-\approx0.5$, $f^-$ close to one;
 - Gaussian filter: $v^-\approx0.15$, $f^-\approx0.05$;
 - both grow as the filter scale decreases.
 
 Backscatter is therefore not a property of the flow alone: its amount
-depends on the filter kernel. Literature values recalled in §2.1 are about
-40% of the domain for sharp filters and 15% for Gaussian filters.
+depends on the filter kernel. The literature values that Vela-Martín
+(§2.1) cites are about 40% of the domain for sharp filters and 15% for
+Gaussian filters.
 
 With a three-dimensional box filter at grid and test level,
 [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) (§III.2, p. 15,
 Fig. 5) find backscatter at 26% of the points of filtered DNS of forced
 isotropic turbulence at $Re_\lambda=240$ for the smaller of their two
 filters (filter size $\ell_\Delta=4$, with $\ell_\Delta$ the filter width
-over twice the DNS grid spacing, page-local as on the
+over twice the DNS grid spacing, registry §11, as on the
 [fractional SGS model](/methods/fractional-sgs-model.md) page), and 30%
 for a filter twice as wide ($\ell_\Delta=8$). They state, citing Piomelli et al. (1991), that the
 fraction depends on the filter type.
@@ -68,8 +69,9 @@ The box-filter fractions lie between the Gaussian and sharp-filter values
 above, from a different flow and filter scales *(compiler check, not in
 the sources)*.
 
-[Domaradzki (2024)](/sources/domaradzki-2024.md) (§3.1) recalls, from
-Piomelli et al. (1991) and Domaradzki, Liu & Brachet (1993), that with a
+[Domaradzki (2024)](/sources/domaradzki-2024.md) (§3.1) cites
+Piomelli et al. (1991) and Domaradzki, Liu & Brachet (1993) for the
+finding that with a
 sharp spectral filter the forward and inverse subgrid transfers are of the
 same order and the net forward transfer is much smaller than each, in line
 with the sharp-filter values of Vela-Martín (2022, §5.3) above; Domaradzki's
@@ -173,7 +175,7 @@ remainder that carries none:
 
 $$\tau^d_{ij}=-2\nu_t^*\bar S_{ij}+\tau^{\mathrm{ani}}_{ij},\qquad \tau^{\mathrm{ani}}_{ij}\bar S_{ij}=0,$$
 
-with $\tau^{\mathrm{ani}}_{ij}$ (page-local) the "extra anisotropic" stress.
+with $\tau^{\mathrm{ani}}_{ij}$ (registry §11) the "extra anisotropic" stress.
 The authors' "ideal" eddy viscosity $-\tau_{ij}\bar S_{ij}/(2\bar S_{kl}\bar S_{kl})$
 is $\nu_t^*$ above; they note that it is negative where the
 flow backscatters and call the decomposition "arbitrary" (§II A).
@@ -182,7 +184,7 @@ $R^{\mathrm{res}}_{ij}=\langle\bar u_i'\bar u_j'\rangle$ (fluctuations about
 the Reynolds average of the filtered field) splits the subgrid
 dissipation tensor into an eddy-viscosity dissipation and an **anisotropic
 redistribution** $\xi^{\mathrm{AR}}_{ij}=\langle\tau^{\mathrm{ani}}_{i\ell}\partial_\ell\bar u_j'+\tau^{\mathrm{ani}}_{j\ell}\partial_\ell\bar u_i'\rangle$
-(page-local; positive = productive) (§II C, Eqs. 8–9). Unlike the
+(registry §11; positive = productive) (§II C, Eqs. 8–9). Unlike the
 pressure redistribution it is not traceless; from
 $\langle\tau^{\mathrm{ani}}_{ij}\bar S_{ij}\rangle=0$ its trace is the
 exchange of the anisotropic stress with the mean strain,
@@ -371,9 +373,9 @@ The sources reach different design choices from different questions.
   similarity stress filtered once more, a smoothing the author introduces
   because the pointwise version "will cause numerical instabilities"
   (§2.4). Domaradzki sets this against the common view that backscatter in
-  an eddy-viscosity model leads to instability (§3.1), the view recalled
-  above by Vela-Martín (2022, §2.2) for the local dynamic coefficient, with
-  the qualifier "generally". No contradiction is recorded: Vela-Martín's
+  an eddy-viscosity model leads to instability (§3.1), the view that
+  Vela-Martín (2022, §2.2) states above for the local dynamic coefficient,
+  with the qualifier "generally". No contradiction is recorded: Vela-Martín's
   statement is qualified, and Domaradzki states the same instability for
   the pointwise (unfiltered) viscosity (§2.4) and reports stability only
   for the filtered one.
@@ -489,6 +491,107 @@ backscatter (floor zero) still beats the conventional model (App. C). The
 models, Reynolds numbers and a priori targets differ, so no contradiction
 is recorded.
 
+## Compressible flows: the spherical part of the flux
+
+In compressible LES the Favre subgrid stress has a trace,
+$\tau_{kk}=2\bar\rho k_{\mathrm{sgs}}$, and the local flux
+$\Pi=-\tau_{ij}\tilde S_{ij}$ splits into a deviatoric and a spherical part,
+
+$$\Pi=\Pi^{d}+\Pi^{s},\qquad \Pi^{d}=-\tau^d_{ij}\tilde S^d_{ij},\qquad \Pi^{s}=-\tfrac23\,\bar\rho k_{\mathrm{sgs}}\,\nabla\cdot\tilde{\boldsymbol u},$$
+
+with $\Pi^{d}$, $\Pi^{s}$ page-local. [Tonicello et al. (2022)](/sources/tonicello-2022.md)
+(§5, Eqs. 5.1–5.3) introduce this split as an a priori diagnostic. Their
+stress carries the opposite sign to the registry, their budget term $K_3$
+equals $-\Pi$, their spherical transfer $\Lambda$ equals $\Pi^{s}$, and their
+"deviatoric contribution" $K_3+\Lambda$ equals $-\Pi^{d}$
+*(compiler check, not in the sources)*. With a deviatoric eddy viscosity,
+$\Pi^{d}=\bar\rho\nu_t\lvert\tilde S^d\rvert^2$, which defines an equivalent
+eddy viscosity from filtered DNS (Eq. 5.3). Because
+$k_{\mathrm{sgs}}>0$ for non-spectral filters (citing Vreman et al. 1994),
+$\Pi^{s}$ is forward in compression and backscatter in expansion.
+
+The authors evaluate the terms in their DNS of a Mach 2.91 boundary layer
+over a $24^\circ$ compression ramp followed by an expansion corner (see
+[shock/turbulent boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)),
+with both Favre time–span averaging (the RANS sense) and Germano's
+differential filter at $\Delta=2h$, $4h$, $8h$ (the LES sense, $h$ the DNS
+spacing):
+
+- **Mean backscatter.** Even in the Favre mean, a large region near the
+  expansion corner shows $\Pi<0$, energy returned from the fluctuations to
+  the mean flow (§4.1, Fig. 14). The authors take this as confirming "also
+  on average" the link of compression with forward transfer and of
+  expansion with backscatter that they cite from O'Brien et al. (2014) and
+  Wang et al. (2018a, 2020).
+- **Filtered fields.** Probability densities of $\Pi$ are much wider than
+  for the averaged fields but with a similar mean, consistent with
+  eddy-viscosity models reproducing the mean transfer but not the local one
+  (§4.2, Fig. 19). Compression enhances forward transfer and expansion
+  backscatter, more so for wider filters (Figs. 23–24). The correlation of
+  $\Pi$ with the resolved [pressure dilatation](/definitions/pressure-dilatation.md)
+  $\bar p\,\nabla\cdot\tilde{\boldsymbol u}$ is 0.2775 for the averaged
+  field and 0.1936 and 0.2682 for $\Delta=4h$ and $8h$ (Table 4); the
+  authors conclude that the weight of compressibility in modelling is set
+  "not entirely by the physics of the problem" but strongly by the filter
+  width (§4.2). The subgrid Mach number, $M_{\mathrm{sgs}}=\sqrt{2\bar\rho k_{\mathrm{sgs}}/(3\gamma\bar p)}$
+  (page-local, Eq. 4.14), reaches about 0.32 in the mean and about 0.42 for
+  the filtered fields, above the value 0.3 at which they expect
+  compressibility effects (Figs. 20–22).
+- **The deviatoric part does not backscatter on average.** The averaged
+  $\Pi^{d}$ is positive in the whole domain: the mean backscatter near the
+  expansion corner comes entirely from $\Pi^{s}$, so a positive eddy
+  viscosity is "fairly accurate" on average for the deviatoric stress
+  (§5, Figs. 27–28). In filtered fields a large share of the equivalent eddy
+  viscosity is negative. Removing $\Pi^{s}$ also removes most of the
+  correlation with the pressure dilatation: 0.1081 (averaged), 0.0370
+  ($4h$) and 0.0889 ($8h$) (Table 6, Fig. 29).
+
+They conclude that an eddy viscosity suits the deviatoric part, that the
+trace needs a different model, and propose by analogy, without testing it,
+a [bulk-viscosity](/definitions/bulk-viscosity.md)-type subgrid model for
+the trace, $\tfrac23\bar\rho k_{\mathrm{sgs}}\sim-\mu_b\nabla\cdot\tilde{\boldsymbol u}$
+with $\mu_b$ a subgrid bulk viscosity (registry §11; the source's $\beta$)
+(§5, Eq. 5.5; §6).
+
+[Qi et al. (2022)](/sources/qi-2022-b.md) (§3.2, Eqs. 3.13–3.21) build a
+compressible one-equation model, the quasi-dynamic $k_{\mathrm{sgs}}$
+model, on the same split: the isotropic stress is set to
+$2\bar\rho k_{\mathrm{sgs}}$ from the transported $k_{\mathrm{sgs}}$, and the
+Smagorinsky coefficient is fixed by equating the anisotropic part of the
+model flux to that of a gradient-model estimate of $\Pi$ (see the
+[dynamic procedure](/methods/dynamic-procedure.md) and
+[gradient model](/methods/gradient-model.md) pages). Inserting their
+Eq. (3.21) into their eddy viscosity cancels $\Delta$ and $\lvert\tilde S\rvert$
+and gives $\nu_t=\Pi^{d}_{\mathrm{est}}/\big(2\bar\rho\tilde S^d_{ij}\tilde S_{ij}\big)$,
+with $\Pi^{d}_{\mathrm{est}}$ (page-local) the anisotropic part of the
+estimated flux, so the model viscosity is negative wherever that estimate
+backscatters *(compiler check, not in the sources)*; the paper states no
+clipping. A posteriori, on a supersonic flat-plate boundary layer at
+$y^+=15$, the model's flux field resembles the DNS flux "in distribution,
+intensity, structure and even the energy backscatters" (§4.2, Fig. 19).
+
+## Backscatter-like transfers outside the subgrid flux (inline)
+
+- **A numerical closure term.** In residual-based
+  [variational multiscale](/methods/variational-multiscale-method.md) LES,
+  [Chen et al. (2022)](/sources/chen-2022-g.md) (§5, Figs. 4–5) find that
+  one cross-stress term of the resolved-energy budget has a positive average
+  over most of a channel at $Re_\tau=180$: it "increases energy" of the
+  resolved field, contrary to "the intention of the turbulent model", and
+  they reverse its sign in a modified formulation. The authors do not call
+  it backscatter.
+- **Spectral transfer in a DNS.** [Yu et al. (2022)](/sources/yu-2022-e.md)
+  (§6.4, Fig. 13) derive a scale-by-scale budget in spanwise wavenumber for
+  an impinging-shock boundary-layer interaction at Mach 2.28. The
+  inter-scale transfer is forward overall; upstream of the interaction a
+  small inverse transfer from $\lambda_z^+\approx100$ to
+  $\lambda_z/\delta_0\gtrsim1$ exists, as in the channel flows of Lee &
+  Moser (2015) and Cho et al. (2018) that the authors cite, but contributes
+  little to the genesis of
+  the large scales beside production. This is a transfer between resolved
+  scales of a DNS, not a subgrid flux; the authors leave its use for
+  subgrid modelling to future work (§8).
+
 ## Interpretation and scope
 
 Vela-Martín (2022, §7.2, §8) concludes that, in isotropic turbulence away
@@ -512,8 +615,7 @@ Other sources treat backscatter as a physical effect to be represented:
   "is correlated with the turbulent energy backscatter", citing earlier
   work (their ref. [22]). They attribute the lower eddy viscosity of the
   corrected model to strong backscatter in strongly rotating turbulence
-  (§3.2). This is a RANS argument in a rotation-dominated flow;
-  Vela-Martín (2022, §8) limits the conclusions to isotropic turbulence
+  (§3.2). Vela-Martín (2022, §8) limits the conclusions to isotropic turbulence
   and names shear- or rotation-dominated flows as a further application of
   the method.
 - The [dynamic tensor-coefficient Smagorinsky model](/methods/dynamic-tensor-coefficient-smagorinsky-model.md)
@@ -544,7 +646,7 @@ phenomenon that "occurs in real flows and may lead to solution instability
 in practical LES applications", with the nonlinear (Clark) model as their
 cited example. In their own LES of the Taylor–Green vortex at $Re=1600$ on
 $64^3$ the Layton–Lewandowski model ($N_{\mathrm{AD}}=0$, with
-$N_{\mathrm{AD}}$ the number of deconvolution terms, page-local) is stable with
+$N_{\mathrm{AD}}$ the number of deconvolution terms, registry §11) is stable with
 every explicit filter tested and non-dissipative interpolation, while the
 deconvolution model with $N_{\mathrm{AD}}=5$ needs added numerical
 dissipation; they attribute its instability to the amplification of
@@ -600,3 +702,7 @@ contradiction is recorded.
 - [Li et al. (2021)](/sources/li-2021.md) — §III C, Eqs. (21)–(22), Fig. 6; §III D.
 - [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III.A, Eq. (16); §III.D, Eqs. (21)–(23).
 - [Heinz (2020)](/sources/heinz-2020.md) — §2.1.
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §4.1, Eqs. (4.4)–(4.10), Fig. 14; §4.2, Eq. (4.14), Table 4, Figs. 19–24; §5, Eqs. (5.1)–(5.5), Tables 5–6, Figs. 27–29; §6.
+- [Qi et al. (2022)](/sources/qi-2022-b.md) — §3.2, Eqs. (3.13)–(3.21); §4.2, Fig. 19.
+- [Chen et al. (2022)](/sources/chen-2022-g.md) — §5, Figs. 4–5; §6, Eq. (38).
+- [Yu et al. (2022)](/sources/yu-2022-e.md) — §6.4, Fig. 13; §8.

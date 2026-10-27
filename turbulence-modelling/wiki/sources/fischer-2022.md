@@ -9,7 +9,7 @@ year: 2022
 venue: "Parallel Comput. 114:102982"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Parallel_Computing_Fischer_NekRS_a_GPU-accelerated_spectral_element_NavierStokes_solver.pdf"
 tags: [software, gpu, spectral-element, incompressible-flow]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T15:53:00Z
 ---
 
 # Summary
@@ -23,11 +23,9 @@ roofline-tuned kernels forked from libParanumal. The discretization is the
 continuous Galerkin spectral element method on curvilinear hexahedra with
 Gauss–Lobatto–Legendre (GLL) nodal bases of degree $N$, tensor-product sum
 factorization, matrix-free operators, a diagonal mass matrix and
-over-integration (dealiasing) of the advection term; it is the continuous
-relative of the
-[discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md),
-which the paper cites only through a GPU DG incompressible solver of
-libParanumal. Time stepping is semi-implicit BDF$k$/EXT$k$ or a
+over-integration (dealiasing) of the advection term. The paper cites the
+[discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
+only through a GPU DG incompressible solver of libParanumal. Time stepping is semi-implicit BDF$k$/EXT$k$ or a
 characteristics (operator-integration-factor) variant that allows Courant
 numbers 2–4, with a fractional-step split into a pressure Poisson problem
 and Helmholtz problems for the velocity.
@@ -95,7 +93,7 @@ claims and locators here are those of the preprint.
 - **Malformed number (§4.1).** "80% strong-scale limit timings would be realized at $P\approx 5,242,88$ ranks".
 - **Node count as rank count (§4.2).** "the partitioning for $P = 271$ resulted in a 2D decomposition": 271 is the node count of that row of Table 3, which has 1,626 GPUs, while $P$ is defined as the number of ranks.
 - **Undefined quantity (§4.2).** "the large $n_{0.8}$ values": no $n_{0.8}$ is defined or tabulated.
-- **Pipe-flow mesh (§4.3, Table 4).** The text and the Table 4 caption give "$E = 6840$" and "$n = 2,346,120$"; the Table 4 header and rows give $E=6480$ and $n=2{,}222{,}640$. Both pairs are internally consistent ($6840\times343=2{,}346{,}120$, $6480\times343=2{,}222{,}640$), so they describe different meshes; the "$n/P=6615$" of claim 22 equals $2{,}222{,}640/336$ *(compiler check, not in the sources)*.
+- **Pipe-flow mesh (§4.3, Table 4).** The text and the Table 4 caption give "$E = 6840$" and "$n = 2,346,120$"; the Table 4 header and rows give $E=6480$ and $n=2{,}222{,}640$. Both pairs are internally consistent ($6840\times343=2{,}346{,}120$, $6480\times343=2{,}222{,}640$); the "$n/P=6615$" of claim 22 equals $2{,}222{,}640/336$ *(compiler check, not in the sources)*.
 - **CPU speed ratio (§4.3).** "Summit's single V100 ... is only 248× faster than a single CPU"; Table 4 gives $19.9/0.0851=234$ *(compiler check, not in the sources)*.
 - **A100 model.** "Nvidia A100 SXM2" (Table 4 caption) against "A100 SXM4" (Table 5 caption) for the same ThetaGPU nodes; Table 5's title prints "Singe Node".
 - **Operation count (§2.3).** $6(N+1)^4+15(N+1)^3=(N+1)^3(6N+21)$, so with $n=E(N+1)^3$ the count is $n(21+6N)$, not the printed $\approx n(15+6N)$ *(compiler check, not in the sources)*.

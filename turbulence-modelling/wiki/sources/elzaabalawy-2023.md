@@ -8,7 +8,7 @@ authors: [Elzaabalawy H., Deng G., Eça L., Visonneau M.]
 year: 2023
 venue: "J. Comput. Phys. 483:112059"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Computational_Physics_Elzaabalawy_Assessment_of_solving_the_RANS_equations_with_two-equation_e.pdf"
-tags: [k-omega, rans, dg, high-order, verification, k-omega-sst]
+tags: [k-omega, rans, dg, high-order, verification]
 timestamp: 2026-10-26T20:47:00Z
 ---
 

@@ -6,6 +6,151 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 10 — 2022 papers: variational multiscale LES, learned EARSMs and CFD-driven training, discrete-adjoint field inversion, output-based adaptation, Rosenbrock DG, temporal LES, BVD and compact schemes, hypersonic WMLES, pressure dilatation; second whole-bundle deep lint (2026-10-27)
+
+Sources (20): mardani-2022, chen-2022-g, fidkowski-2022, hamedi-2022,
+ma-2022, ghidoni-2022, cherroud-2022, devanna-2022, he-2022-b,
+sandberg-2022-b, brenner-2022, deng-2022, kang-2022, simonis-2022,
+svard-2022, vannoordt-2022, qi-2022-b, tonicello-2022, yu-2022-e,
+zhang-2022-b. 200 of 307 ingested, 158 concept pages plus the registry,
+8894 bibliography entries. Deep lint A1–A12 over the whole bundle done
+(the second; the next is due by 250 ingestions or with the chunk that
+completes the archive).
+
+### Decisions for the human
+
+1. **Keys taken from Crossref surnames:** chen-2022-g prints "G. Motlagh"
+   and "M.F.P.T. Eikelder"; the resolver keyed them `ghaffarimotlagh-2013`
+   and `teneikelder-2018`/`-b` (full surnames, particles joined, as the
+   bundle law asks). Keep, or key by the printed forms?
+2. **Possible reprint:** qi-2022-b's Garnier et al. (Springer, 2013) is
+   kept apart from `garnier-2009` as a possible reprint or edition.
+3. **Candidate pages that now qualify** (three or more sources each):
+   converging–diverging channel benchmark (cherroud-2022, cato-2023,
+   oulghelou-2025); discrete-adjoint method (brenner-2022,
+   fidkowski-2022, fanizza-2025, yan-2022); k-corrective-frozen procedure
+   (cherroud-2022, oulghelou-2025, sandberg-2022-b); boundary-variation-
+   diminishing reconstruction (deng-2022, takagi-2022, huang-2025,
+   li-2024-c); SUPG/PSPG stabilized finite elements (chen-2022-g,
+   prietosaavedra-2024, prakash-2022); turbulent heat-flux models
+   GDH/GGDH/HoGGDH (sandberg-2022-b, sandberg-2022). Two sources:
+   Rosenbrock/peer linearly implicit time integration (ghidoni-2022,
+   liu-2022-g); weighted compact nonlinear schemes (ma-2022, with
+   wu-2024-b in chunk 14). Plus the chunk-8 and chunk-9 lists.
+4. **Duplicated subsection:** the dynamic-slip-wall subsection of
+   wall-modelled LES nearly repeats the new slip-wall-model page; cut it
+   to a pointer?
+5. **Constant names on the SST page:** the page quotes Menter's table
+   ($\alpha$, $\beta$, as the registry allows); cherroud-2022 maps the same
+   constant to $\gamma_\omega$, oulghelou-2025 to $\alpha$. Both are
+   permitted; unify on $\gamma_\omega$ if preferred.
+6. **Still open from earlier chunks:** the chunk-9 calls (han-2022-c
+   `cai-2012`; `pitsch-1988`→`pitsch-2000`; in-press `park-2017-d`,
+   `lozanoduran-2017-b`; `lozanoduran-2020-e`; the zhao-2021-c /
+   zhao-2023 shared tables); the chunk-8 calls (`wilcox-2004`,
+   `schubauer-1955`, `berger-2017`, `tamaki-2022-b`); `xiao-2015` and
+   `ming-2019` renames; the `fusion-mhd-simulation` tab in
+   `tearing-mode.md`; `ge-2015`; `jameson-1988`; `suder-1996`; the old
+   preprint versions (cao-2024, reddy-2026, chunk 7).
+
+### Contradictions
+
+None opened. The five open entries were re-verified in the whole-bundle
+audit, all genuine, attributed on both sides and Open:
+sparse-regression coefficients (tensor-basis neural network; Cherroud et
+al. 2022 now on both sides: invariant-dependent coefficients at
+$\lambda=10^2$, Eq. A.1, but constant coefficients in every selected
+model), gas-kinetic dissipation, Cai & Sagaut wall-law constants, Ahmed
+slant topology, Langtry–Menter $F_3$ exponent. Recorded side by side, not
+as conflicts: Duraisamy et al. (2019) and Sandberg & Zhao (2022) on the
+same gene-expression-programming step-to-hill transfer (two second-hand
+accounts); Hopkins & Inouye as quoted by Huang et al. (1.16) and Zhang et
+al. (≈1.1); Svärd against Aiello and Brillon on entropy-conservative
+fluxes (different flows and measures); Brenner against Wang (2023c) on
+ensemble Kalman methods in high dimension (different baselines); Mardani
+& Nazari's trend against Parente and Romero-Anton (the authors' own
+statement); tandem-cylinder $Re$ 1.66×10⁵ (Ghidoni) and 1.6×10⁵ (Wang).
+
+### Printed slips (recorded on the Source pages)
+
+- chen-2022-g: Eq. 21 $\gamma=\tfrac12+\alpha_m+\alpha_f$ gives first
+  order (second with $-\alpha_f$); Eq. 14 $\tau_{\mathrm C}$ units; Eq. 30
+  $\Delta y^+=0.879$ only over one half-height *(compiler checks)*.
+- mardani-2022: Eq. 20 bound 0.7568 (root 0.75488); Table 3 $C_\tau$
+  0.6369 (0.6396 from Eq. 24); Eq. 25 exponent ½ (Table 3 follows ¼);
+  two definitions of $Re_T$; "$C_{D1}=2.137$".
+- ma-2022: the boundary row of $B$ sums to zero; Eq. 3 "pvu"; a missing
+  $B$ row.
+- ghidoni-2022: ROS3PL "three stages" (four in Table 1); Table 2 order
+  5.00 (3.05 from its errors); Eq. 62 missing $q_r$; Tables 13–14
+  percentages; text against Table 9 (1.19/1.13, 0.225/0.23); wrong
+  cross-references.
+- deng-2022: Eq. 15 coefficient 11/501 (sum 84179/84168; 11/504 sums to
+  1); [20] = [50].
+- simonis-2022: Eq. 25 $2\pi\nu\mathcal Z$ (the paper's Eqs. 22–23 give
+  $\nu\mathcal Z$); Eq. 14 against Eq. 15; Table 1 $\Delta t$; "Table 1"
+  for Table 2; "$\Theta=10$".
+- svard-2022: the Taylor–Green initial pressure fits a $\cos z$ velocity,
+  not the printed $\sin z$; dissipation peak "close to 0.0013" (Table 5,
+  0.0115 in the text); the abstract announces a Rayleigh–Taylor test that
+  is not run.
+- vannoordt-2022: Table 5 spacings imply $Re_\tau\approx5400$; Eq. 9
+  sensor exceeds 1 as printed; "50% larger" domain.
+- tonicello-2022: 54M printed degrees of freedom (58.8M from elements and
+  points).
+- qi-2022-b: Eq. 3.9 gives $C_0=1/6$ for the box filter, not the stated
+  1/12; $Pr$ definition; heat-flux sign.
+- yu-2022-e: Eq. 3.16 a factor 2 against Eqs. 6.2–6.4.
+- brenner-2022: Eq. 6 omits $\partial_j(\beta\nu_t)\,\partial_i\langle u_j\rangle$
+  (derivation only, no verdict on "momentum conserved"); Fig. 13 caption
+  threshold reversed.
+- cherroud-2022: Eq. 11 production sign; Eq. 26 missing inverse.
+- he-2022-b: "traceless" $S^*_{ij}$ is not; 87.5% against 87.2%; two
+  inconsistent maps of the $f_w$ regions.
+- sandberg-2022-b: Eq. 1 trace sign; GGDH/HoGGDH dimensions.
+- zhang-2022-b: §6.1 $\partial p/\partial y$ against Table 4
+  $\partial/\partial x$; "modified strong" against "generalized" Reynolds
+  analogy; typos.
+- rickard-2026 (on the slip-wall page): validity bound 50 and 100; caption
+  10% against 22%.
+
+### Bibliography
+
+8241 → 8894 entries, `FLAGS: 0`, 251 aliases, 57 verified silences, 3
+printed duplicates folded (henrick-2005, mcquaid-2021, gatski-1993).
+Same key, different work, re-keyed: `wang-2013-g` (fidkowski),
+`wang-2013-h` (sandberg-2022-b, visual tracking), `wang-2013-i` (deng),
+`li-2021-j`, `liu-2022-j`, `zangeneh-2021-d` (SciTech 2021),
+`lee-2015-c`, `ihme-2012-b`, `li-2017-d`, `zhou-2019-f`, `yu-2016-c`,
+`bernardini-2011-c`, `tang-2020-b`; `devanna-2022-b`, `kang-2022-b` for
+the authors' other 2022 papers. The cited Sandberg & Michelassi "2021" is
+the ingested `sandberg-2022`; Hopkins & Inouye (1971) volume 9 confirmed
+on Crossref (the master said 6); poinsot-1992 keeps the master DOI (the
+printed one resolves to another JCP record); the master author of
+tonicello-2022 is now "Tonicello". Preprints and conference versions kept
+apart (eivazi-2021-b, cai-2021-d, navah-2018-b, milani-2021,
+pichler-2015-b, alhawwary-2018-c).
+
+### Bundle fit (D17 candidates, no copy made)
+
+deng-2022 (BVD shock capturing), ma-2022 (weighted compact nonlinear
+schemes), svard-2022 (entropy-stable weak solutions) and ghidoni-2022
+(time integration for high-order DG) are numerics papers that fit
+`high-order-capturing-schemes` or `weno-teno` as well; here they sit only
+on the numerics pages they bear on and on their benchmarks.
+
+### Whole-bundle deep lint (A1–A12)
+
+About 650 "as recalled" phrasings rewritten as "X (§…) cites Y"; about
+120 compiler judgements removed or attributed; checks resting on
+unprinted data removed (Hamedi's $\eta_{\max}=3N$ from figure axes;
+Zhang's $T_w/T_e$; a remembered sound speed; Wang's machine-precision
+reading of $\alpha_f=36$; a remembered leaky-ReLU form; a remembered
+Student-$t$ property); Tonicello's Eq. 5.5 restored to the printed
+$\tfrac23$ (drafters had $\tfrac32$); Simonis's relaxation-time check
+redone on the right row of Table 1; symbols aligned bundle-wide (see the
+log); 18 tag synonyms merged.
+
 ## Chunk 9 — 2013–2022 papers: High-Order CFD Workshop, wall-modelled LES and hybrid RANS/LES reviews, turbomachinery data-driven review, KEEP schemes, GEP and random-forest closures, wall-model-integrated LES, gas-kinetic LES, thickened flames and flamelet ignition (2026-10-27)
 
 Sources (20): maltsev-2022, ruggeri-2022, wang-2013, bose-2018, kuya-2018,

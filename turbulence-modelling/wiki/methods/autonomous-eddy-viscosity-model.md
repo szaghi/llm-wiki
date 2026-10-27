@@ -5,7 +5,7 @@ description: "Domaradzki's autonomous LES derives the eddy viscosity at every st
 status: established
 aliases: [autonomous LES, autonomous large-eddy simulation, similarity-derived eddy viscosity]
 tags: [les, sgs-model, eddy-viscosity, backscatter]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Autonomous eddy-viscosity model
@@ -22,8 +22,8 @@ LES velocity, filters it once more in place of the shell average of
 spectral theory, and turns it into an eddy viscosity applied in Boussinesq
 form, $\tau^d_{ij}=-2\nu_t\bar S_{ij}$. No constant enters ("fully
 autonomous", an implicit coefficient of 1). The same author's earlier
-spectral version (Domaradzki 2021a,b, 2022, recalled in §2.2) is the origin
-of the idea.
+spectral version (Domaradzki 2021a,b, 2022), which the paper recalls in
+§2.2, is the origin of the idea.
 
 **Notation on this page.** Domaradzki writes the LES field as $u^<$ (the
 DNS field projected on the LES mesh, sharp cutoff $k_c=\pi/\Delta x$) and a
@@ -66,7 +66,7 @@ is what Domaradzki calls the resolved (similarity-like) SGS stress
 $\tau^{\mathrm{res}}_{ij}$ (Eq. 2.36): the part of the full stress on the
 LES mesh that contains no true subgrid scales, the remainder
 $\tau^{\mathrm{phy}}_{ij}$ (Eq. 2.37) holding all interactions with modes
-beyond $k_c$ (after Domaradzki et al. 2002, as recalled in §2.3). Its local
+beyond $k_c$ (after Domaradzki et al. 2002, cited in §2.3). Its local
 energy flux, written here $\Pi_L=-L_{ij}\hat{\bar S}_{ij}$ (page-local; the
 paper's $\epsilon^{\mathrm{res}}_{SGS}$ with the opposite sign, Eq. 2.40),
 is the physical-space analogue of the resolved spectral transfer: with a
@@ -116,7 +116,8 @@ order $10^3$ (§3.3). With constant $C_{\mathrm A}$ the domain-averaged identity
 $$\langle\Pi_L\rangle=C_{\mathrm A}\Big(\langle\widehat{\Pi_L}\rangle-\Big\langle\widehat{\big(\widehat{\Pi_L}/\hat{\bar S}_{kl}\hat{\bar S}_{kl}\big)\bar S_{ij}}\,\hat{\bar S}_{ij}\Big\rangle\Big),$$
 
 where $\langle\cdot\rangle$ is the average over all mesh points; the two
-bracketed terms are comparable in value (confirmed by direct calculation),
+bracketed terms are comparable in value (the paper confirms this by
+direct calculation),
 so a large $C_{\mathrm A}$, and an excessive dissipation, would be needed. Domaradzki
 judges the dynamic procedure unsuited to the method: it chooses a model
 first and fits its coefficient, so its subgrid transfer depends on the
@@ -155,8 +156,9 @@ observed effects are those of the model (§3.3; see
   exceeded backscatter by at least an order of magnitude, which the author
   suspects explains the stability (§3.1).
 - **The $C_{\mathrm A}=0.8$ variant** keeps the $-5/3$ range but its Kolmogorov
-  function rises steeply near $k_c$, consistent with too little subgrid
-  dissipation there; against Comte-Bellot–Corrsin it dissipates less near
+  function rises steeply near $k_c$, which the author reads as
+  insufficient subgrid dissipation there, "more likely" from the scale
+  distribution of the transfer than from its lower total; against Comte-Bellot–Corrsin it dissipates less near
   the cutoff than the spectral method (§3.2, Figs. 7–9). Compared with
   three spectral eddy viscosities it practically overlaps a
   $k$-independent one: in practice a time-dependent, spatially near-uniform

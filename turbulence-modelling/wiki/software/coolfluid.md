@@ -5,7 +5,7 @@ description: "COOLFluiD is an open-source C++ component-based multi-physics plat
 status: established
 aliases: [COOLFluiD platform, Computational Object-Oriented Library for Fluid Dynamics]
 tags: [software, flux-reconstruction, rans, transition]
-timestamp: 2026-10-27T05:46:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # COOLFluiD
@@ -39,7 +39,7 @@ core FR solver of earlier group work:
 
 **Logarithmic $\omega$.** The SST model is rewritten to transport
 $\ln\omega$ instead of $\omega$, an idea the authors take from Bassi et al.
-(2005, as recalled) for discontinuous Galerkin with the Wilcox model and
+(2005), which they cite, for discontinuous Galerkin with the Wilcox model and
 extend to SST-2003, which adds a transformed cross-diffusion term and a
 term in $(\nu+\sigma_\omega\nu_t)\lvert\nabla\ln\omega\rvert^2$ from the
 diffusion (§1.1, Eqs. 5, 17–18). They report that with the original
@@ -77,8 +77,8 @@ the local or free-stream value).
 **Source-term Jacobian** (§3.2.3, Figs. 6–7). On the ERCOFTAC T3A plate at
 $N=2$, with the CFL raised exponentially from 10 to 1250, the authors
 compare a full analytical source Jacobian (limiters ignored, blending
-functions frozen), the approximate treatment of Merci et al. (as recalled:
-only the negative part implicit, with or without a source-based time-step
+functions frozen), the approximate treatment of Merci et al., which they cite
+(only the negative part implicit, with or without a source-based time-step
 limit), a **decoupled** treatment (no derivatives with respect to the
 mean-flow variables, SST and transition blocks separated), a diagonal one,
 none, and a fully numerical Jacobian. All analytical variants run at CFL
@@ -151,8 +151,9 @@ transition model for high-speed flows with shock capturing (§5).
 
 - Vandenhoeck et al. print "$_fu^n_j$ and $_fu^n_j$" between Eqs. (82) and
   (83), where the second is the current-element value $_fu^c_j$ of their
-  Eq. (82); and in §3.2.2 they write the derivatives of $F^D$ where, by
-  context, those of the interface flux $F^I$ are meant.
+  Eq. (82); and in §3.2.2 they state that the derivatives of $F^D$
+  "need to be computed for the specific interface flux scheme", the scheme
+  that defines the interface flux $F^I$ (Eqs. 58–59).
 - They give the free-stream turbulence intensity of the Wieghardt plate as
   "$10^{-2}$" (§4.1), having defined $Tu_\infty$ in percent (§3.3.2), so the
   unit of that value is ambiguous.

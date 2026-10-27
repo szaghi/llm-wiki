@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Fluids 34:035104"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physics_of_Fluids_Seyedi_A_data-driven_dynamic_nonlocal_subgrid-scale_model_for_turbu.pdf"
 tags: [les, sgs-model, data-driven, energy-cascade, a-priori-a-posteriori]
-timestamp: 2026-10-26T05:09:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -70,7 +70,7 @@ contraction term.
 
 1. D-FSGS is presented as the first SGS model that combines nonlocality and a dynamic procedure ("both nonlocality and dynamic features have been leveraged together for the first time") (§I, p. 4). **Stated**
 2. Existing nonlocal models suffer from sensitivity to the model constant and fractional order, low correlation with the true SGS stress, and no backscatter; D-FSGS is designed to remove all three (§I, p. 4). **Stated**
-3. The FSGS force is $\partial_j\tau_{ij}=\nu_s(-\nabla^2)^s\bar u_i$, $s\in(0,1]$, with $\nu_s=C_{\mathrm{fr}}F(s)$, $F(s)=2^{2s}\Gamma(\tfrac{2s+3}{2})\Gamma(2s+1)/(\pi^{3/2}|\Gamma(-s)|)$, and $C_{\mathrm{fr}}$ proportional to $U^{2s}\mathcal T_r^{2s-1}$ from kinetic theory (Eqs. 11, 14, 15, §II.1). **Stated** (recalled from Samiee et al. 2020)
+3. The FSGS force is $\partial_j\tau_{ij}=\nu_s(-\nabla^2)^s\bar u_i$, $s\in(0,1]$, with $\nu_s=C_{\mathrm{fr}}F(s)$, $F(s)=2^{2s}\Gamma(\tfrac{2s+3}{2})\Gamma(2s+1)/(\pi^{3/2}|\Gamma(-s)|)$, and $C_{\mathrm{fr}}$ proportional to $U^{2s}\mathcal T_r^{2s-1}$ from kinetic theory (Eqs. 11, 14, 15, §II.1). **Stated** (the paper recalls it from Samiee et al. 2020)
 4. Filtering commutes with integer-order derivatives (homogeneous filter) but not with fractional-order ones: for $s=0.6$ the PDFs of the test-filtered fractional derivative and of the fractional derivative of the test-filtered field differ (§II.2, Fig. 1). **Shown**
 5. The Germano identity in force form, $\partial_j\mathcal T_{ij}-\widehat{\partial_j\tau_{ij}}=\partial_jL_{ij}$, with Lilly's least squares gives $C_{\mathrm{fr}}=\langle\partial_jL_{ij}Q_i\rangle/\langle Q_iQ_i\rangle$, $Q_i=F(s)(-\nabla^2)^s\hat{\bar u}_i-\widehat{F(s)(-\nabla^2)^s\bar u_i}$, assuming the same coefficient at grid and test level and a spatially uniform coefficient (Eqs. 16–22). **Derived**
 6. To avoid instability from negative eddy viscosity over long periods, the coefficient is averaged over directions of statistical homogeneity (§II.2, p. 10). **Stated**
@@ -89,11 +89,11 @@ contraction term.
 19. With the power-law $s^{\mathrm{opt}}$ or with $s=0.5$, D-FSGS still correlates better than the other models for all filter sizes tested ($\ell_\Delta$ from 2 to 10) (§III.2, Fig. 7). **Shown**
 20. The dynamic model is less sensitive to $s$ near 0.5 because the dynamic coefficient compensates (§III.2, p. 17). **Shown** (Fig. 7); the explanation is **Stated**
 21. An optimal order of 0.5 "validates that the overall scaled up and nonlocal behavior of the closure term in our dynamic model emerges of total" first order ($2s^{\mathrm{opt}}=1$), consistent with a closure originating from the first-order nonlinear convective term (§III.2, p. 17). **Stated**
-22. A posteriori (decaying turbulence, $Re_\lambda=240$, $\ell_\Delta=4$), the spectra are compared at $t/\tau_L\simeq2$ and 4, long times chosen "to address the numerical stability of models"; Smagorinsky is called "one of the most dissipative models", the no-model run is expected to accumulate energy at high wavenumbers, and D-FSGS "should be ideally placed between" them (§IV, Fig. 8). **Stated** (the text gives no measure of the spectra)
+22. A posteriori (decaying turbulence, $Re_\lambda=240$, $\ell_\Delta=4$), the spectra are compared at $t/T_E\simeq2$ and 4, long times chosen "to address the numerical stability of models"; Smagorinsky is called "one of the most dissipative models", the no-model run is expected to accumulate energy at high wavenumbers, and D-FSGS "should be ideally placed between" them (§IV, Fig. 8). **Stated** (the text gives no measure of the spectra)
 23. Resolved kinetic energy decays closer to the filtered DNS with D-FSGS than with dynamic Smagorinsky at $\ell_\Delta=4$ and, more markedly, at $\ell_\Delta=20$ (very-large-eddy range), where dynamic Smagorinsky decays too fast (§IV, Fig. 9). **Shown**
-24. All models nearly preserve the second-order structure function at $\ell_\Delta=4$, $t/\tau_L\simeq2$; the Smagorinsky-based models deviate more on the third-order one (§IV, Fig. 10). **Shown**
+24. All models nearly preserve the second-order structure function at $\ell_\Delta=4$, $t/T_E\simeq2$; the Smagorinsky-based models deviate more on the third-order one (§IV, Fig. 10). **Shown**
 25. "Bigger filter sizes rather than the conventional LES filter sizes" show "promising potential" with D-FSGS and could compensate the cost of fractional operators (§V). **Stated**
-26. Large-eddy turnover time of the a posteriori case $\tau_L\simeq2.7$; time step with CFL below one (§IV, p. 17). **Stated**
+26. Large-eddy turnover time of the a posteriori case $T_E\simeq2.7$; time step with CFL below one (§IV, p. 17). **Stated**
 
 # Printed slips
 
@@ -133,8 +133,8 @@ contraction term.
 | $\langle\cdot\rangle$ | $\langle\cdot\rangle$ | ensemble average over snapshots (§III), homogeneous-direction average (Eq. 22) |
 | $E(K)$, $K$ | $E(k)$, $k$ | energy spectrum |
 | $E_f$, $E_r$, $\phi$ | $\tfrac12\bar u_i\bar u_i$, $k_{\mathrm{sgs}}$, (modelled-energy percentage) | see Printed slips |
-| $\tau_\mathcal L$ | $\tau_L$ (page-local) | large-eddy turnover time |
-| $\delta_r\bar u_L$, $r$ | (longitudinal increment, separation) | Eq. 25 |
+| $\tau_\mathcal L$ | $T_E$ (registry §11) | large-eddy turnover time; **collision:** $\tau$ is not a stress |
+| $\delta_r\bar u_L$, $r$ | (longitudinal increment, separation) | Eq. 25; **collision:** $\delta_r$ is not the reference boundary-layer thickness of registry §11 |
 | UNS | (no-model run on the LES grid) | |
 
 # Reference list

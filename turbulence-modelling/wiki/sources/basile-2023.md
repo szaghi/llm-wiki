@@ -9,7 +9,7 @@ year: 2023
 venue: "Flow Turbul. Combust. 110:239-273"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Flow_Turbulence_and_Combustion_Basile_Hybrid_RANSLES_Simulations_and_Aeroacoustic_Analysis_of_Jet.pdf"
 tags: [hybrid-rans-les, des, dg, mesh-adaptation, aeroacoustics]
-timestamp: 2026-10-25T16:03:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Summary
@@ -105,7 +105,7 @@ year is 2023. There is no identity problem.
 | $K$, $\lvert K\rvert$, $\mathcal T_K$ | (element, its volume, tessellation) | |
 | $h$ | $h$ | element size, as in the registry |
 | $\phi_K^l$, $u_K^l$, $d_q$ | (hierarchical orthonormal modal basis, modal coefficient, index set of total degree $q$) | modal DG on simplices and prisms, not DGSEM |
-| $\{\{\cdot\}\}$, $[[\cdot]]$ | $\{\!\{\cdot\}\!\}$, (jump) | |
+| $\{\{\cdot\}\}$, $[[\cdot]]$ | $\{\!\{\cdot\}\!\}$, $[\![\cdot]\!]$ (jump) | |
 | $\boldsymbol\sigma_h$, $\mathbf L_h$ | (BR1 auxiliary gradient, global lifting operator) | **collision:** not the viscous stress $\sigma_{ij}$ and not the smoothness indicator |
 | $\tilde\nu$, $f_{v1}$, $f_{v2}$, $f_w$, $\tilde S$ | $\tilde\nu$, $f_{v1}$, $f_{v2}$, $f_w$, $\tilde S$ | SA working variable and functions; $\kappa=0.41$ |
 | $\mu_t=\rho\tilde\nu f_{v1}$ ($\tilde\nu\ge0$), $0$ ($\tilde\nu<0$) | $\mu_t$ | negative SA, Eq. 5 |

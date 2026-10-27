@@ -5,7 +5,7 @@ description: "The bottleneck is a bump of excess energy just ahead of the range 
 status: established
 aliases: [bottleneck, spectral bottleneck, bottleneck bump, compressible-mode bottleneck, soft pile-up]
 tags: [dns, implicit-les, numerical-dissipation, compressible, astrophysics]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Bottleneck effect in the energy spectrum
@@ -145,12 +145,12 @@ visco-resistive compressible MHD at rms $M\approx1$. The code is a modified
 FLASH: finite volume, second-order MUSCL–Hancock, a five-wave Riemann solver.
 The runs use $Re=Rm=1000$ and grids of $128^3$–$1024^3$.
 
-They add an explicit bulk viscosity, written here $\nu_b$ (page-local, the
-kinematic bulk-viscosity coefficient), and vary the ratio $P_\nu=\nu/\nu_b$
-(page-local; the source's "viscous Prandtl number"). They split the
+They add an explicit bulk viscosity, written here $\nu_b$ (the kinematic
+bulk viscosity, registry §11), and vary the ratio $P_\nu=\nu/\nu_b$
+(registry §11; the source's "viscous Prandtl number"). They split the
 spectrum into compressible and solenoidal parts by a Helmholtz
 decomposition, written $E_{\mathrm c}(k)$ (compressive part) and
-$E_{\mathrm s}(k)$ (solenoidal part), page-local (the source's
+$E_{\mathrm s}(k)$ (solenoidal part), registry §11 (the source's
 $E_{\rm kin,\parallel}$, $E_{\rm kin,\perp}$; the subscripts $\parallel$,
 $\perp$ are kept for the magnetic-field directions on the MHD pages).
 
@@ -189,7 +189,7 @@ is "an implicit large eddy simulation for the compressible modes" (see
 ## Distinguishing the bottleneck from cutoff pile-up and thermalization
 
 The sources describe three spectral symptoms of dissipation that is missing
-or misplaced. The bottleneck is the mildest of them.
+or misplaced.
 
 | symptom | where the excess sits | cause in the sources | examples |
 |---|---|---|---|
@@ -221,7 +221,7 @@ it creates the bump at $k_c/4$ (Vicente Cruz & Lamballais 2023, §6.4).
 
 ## Qualifications
 
-- **"Bottleneck" is a label, not a theory, in these sources.** Yeung et al.
+- **No source models the bump quantitatively.** Yeung et al.
   give a qualitative viscous argument and defer to the literature. Cernetic
   et al. attribute the DG bump to lower numerical dissipation without a
   spectral analysis of the scheme. Beattie et al. call their pile-up one that
@@ -247,9 +247,8 @@ it creates the bump at $k_c/4$ (Vicente Cruz & Lamballais 2023, §6.4).
   *(compiler check, not in the sources)*.
 - **Cernetic et al. (2024) label orders, not degrees.** Their "$p=2$, 3" (and
   in one place "$k=2$" for the order-2 runs, §5) are convergence orders, so
-  the stronger bottleneck belongs to the degree-$N=2$ modal scheme. Their
-  modal, total-degree DG differs from the nodal DGSEM of FLEXI-type codes,
-  so the observation does not transfer automatically to those codes.
+  the stronger bottleneck belongs to the degree-$N=2$ modal scheme, a
+  modal, total-degree DG, not the nodal DGSEM.
 - **Yeung et al. (2025) add a note in proof.** It points to Okamoto et al.
   (2025b, under review) for "new insights relevant to figure 3(b)" (the
   spectrum and bottleneck panel); its content is not given.

@@ -9,7 +9,7 @@ year: 2022
 venue: "Astrophys. J. 941:79"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_The_Astrophysical_Journal_Dahlin_STITCH_A_Subgrid-scale_Model_for_Energy_Buildup_in_the_Solar.pdf"
 tags: [mhd, astrophysics, sgs-model, mesh-adaptation, reconnection]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -30,11 +30,12 @@ with the single parameter $\mathcal Z=\langle a_c^2\Omega_c\rangle/2$. The term 
 divergence-free, leaves the normal field unchanged and injects relative
 helicity at the rate $-2\iint \mathcal ZB_n^2\,d\sigma$. Its finite-volume form is
 a difference of vertex values on the side faces of the bottom cell layer,
-which is a discrete Gauss law. The paper's "subgrid-scale model" is
-therefore a parametrized boundary source term (a modified Ohm's law at the
-coronal base), not an LES closure: no filter, subgrid stress or
-electromotive force is derived. It is a different object from the mean-field
-closure of the [subgrid turbulent dynamo model](/methods/subgrid-turbulent-dynamo-model.md).
+which is a discrete Gauss law. The paper's "subgrid-scale model" is a
+parametrized boundary source term, which the authors read as a modified
+Ohm's law at the coronal base (§7); the paper derives no filter, subgrid
+stress or electromotive force. The mean-field closure of the [subgrid
+turbulent dynamo model](/methods/subgrid-turbulent-dynamo-model.md) instead
+closes a filtered electromotive force in the volume.
 
 All runs use the [adaptive-mesh](/methods/mesh-adaptation.md) code ARMS in
 spherical geometry, with ideal MHD and an adiabatic temperature equation.

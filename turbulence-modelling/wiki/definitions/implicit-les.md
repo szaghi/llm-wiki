@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-27T11:01:00Z
+timestamp: 2026-10-27T15:56:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -217,9 +217,9 @@ can carry.
    as an implicit SGS model whose value a reinforcement-learning policy
    chooses (RL-Blend); [Haering et al. (2022)](/sources/haering-2022.md)
    (App. C) use an upwinding weight driven by a subgrid cell Reynolds
-   number (iSGET) as the energy-transfer part of a hybrid model; MILES is
-   recalled as the origin of the idea by Vicente Cruz & Lamballais (2023,
-   §1) and Beck & Kurz (2023, §III C). [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md)
+   number (iSGET) as the energy-transfer part of a hybrid model; Vicente
+   Cruz & Lamballais (2023, §1) and Beck & Kurz (2023, §III C) cite MILES
+   as the origin of the idea. [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md)
    (§1) describe implicit LES as benefiting "from the scheme's numerical
    dissipation", against explicit LES which models the small scales; their
    own SVV-filtered Smagorinsky viscosity sits between the two.
@@ -509,8 +509,8 @@ interpretation they flag as needing further work).
 - **Jump penalties against explicit models.** On the Taylor–Green vortex
   at $Re=1600$, $M=0.1$ ($32^3$ elements, $N=3$), unpenalized DG diverges;
   solution and gradient jump penalties above $\tau_s>1.9$ and
-  $\tau_g>6.3\times10^{-4}$ (page-local penalty parameters, defined on the
-  [jump-penalty](/methods/jump-penalty-stabilization.md) page) remove a
+  $\tau_g>6.3\times10^{-4}$ (penalty parameters, registry §11, defined on
+  the [jump-penalty](/methods/jump-penalty-stabilization.md) page) remove a
   spurious second peak of the dissipation rate, and both are "clearly
   superior" to [Smagorinsky](/methods/smagorinsky-model.md) and
   [Vreman](/methods/vreman-model.md) models adapted to DG (Kou et al. 2023,
@@ -659,8 +659,8 @@ interpretation they flag as needing further work).
   dissipation rate $-d\mathcal K/dt$ ($\mathcal K$ the volume-averaged kinetic energy, page-local) well on $64^3$ to $512^3$ while
   under-predicting the enstrophy-based rate on coarse grids, which the author reads
   as under-resolved structures whose energy drain the filter carries; with
-  the new optimized filter on $128^3$ it agrees with DNS of Dairay et al.
-  (as recalled) at $Re=2500$, 5000 and 10000. "Regardless of the model, the
+  the new optimized filter on $128^3$ it agrees with the DNS of Dairay et
+  al. (2017, cited) at $Re=2500$, 5000 and 10000. "Regardless of the model, the
   best result is achieved for the implicit LES with RF with the optimized
   filter and no SGS model": Smagorinsky, multiscale Smagorinsky and
   dynamic models on split forms do worse, and the author concludes that
@@ -690,6 +690,57 @@ interpretation they flag as needing further work).
   surface, and its velocity spectra follow the $-5/3$ slope "for about one
   order of magnitude", which the authors take as sufficient resolution
   (§IV C 1, Fig. 12).
+- **Shock-capturing scheme with one dissipation knob.** [Deng et al. (2022)](/sources/deng-2022.md)
+  add to their polynomial/THINC boundary-variation-diminishing finite-volume
+  schemes a stage that blends the two face values with a parameter
+  $\lambda_{\mathrm{AD}}$ (page-local): $\lambda_{\mathrm{AD}}=1$ is the
+  upwind-biased scheme of order $n+1$, $\lambda_{\mathrm{AD}}=0.5$ the
+  non-dissipative central scheme of order $n+2$ (§3.2). In ILES of decaying
+  compressible isotropic turbulence with eddy shocklets ($M_t=0.6$,
+  Taylor-scale Reynolds number 100) on $64^3$ with
+  $\lambda_{\mathrm{AD}}=0.75$, every order gives a velocity spectrum at
+  four eddy-turnover times closer to the $256^3$ DNS than ninth-order
+  WENO-M ILES, and the tenth-order variant is close to the DNS; lowering
+  $\lambda_{\mathrm{AD}}$ improves the spectrum further, and on $128^3$ both
+  0.75 and 0.5 converge to the DNS (§4.15, Figs. 23–25). The authors
+  recommend $\lambda_{\mathrm{AD}}=0.5$ for DNS and explicit LES and a
+  larger value as the ILES dissipation, which "is believed to work" in
+  place of a subgrid model (Remark 2); see
+  [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md).
+- **Compact interpolation instead of explicit.** [Ma et al. (2022)](/sources/ma-2022.md)
+  replace the explicit fifth-order nonlinear interpolation of the weighted
+  compact nonlinear scheme (WCNS) by a seventh-order nonlinear tri-diagonal
+  compact interpolation on the same five-point stencil (WCNS-T, §2.2). With
+  no subgrid model, WCNS-T follows the DNS dissipation rate of the
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) in peak height
+  and transition time, and gives better near-wake profiles and wake spectra
+  of the [circular cylinder](/benchmarks/circular-cylinder-wake.md) at
+  $Re_D=3900$ and better wall pressure on the T106A
+  [turbine cascade](/benchmarks/turbine-cascade.md) than the explicit
+  version (§3.1–3.3, Figs. 5–12). The authors conclude that WCNS "is not
+  over-dissipative anymore for ILES" (§4); no error norms are given for the
+  ILES cases.
+- **Filter as the only model.** [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md)
+  call their unfiltered flux-reconstruction runs ILES and their runs with an
+  optimized [explicit modal filter](/methods/explicit-modal-filtering.md)
+  "LES"; in a channel at $Re_\tau=395$ with 3/8 of the DNS degrees of
+  freedom the unfiltered runs are stable at $N=3$ and $4$, and the $N=5$
+  run is stable only with the filter (§5.1). On a stalled NACA0020 at
+  $Re_c=20\,000$, unfiltered ILES and filtered LES give $C_L=0.639$, $0.651$
+  and $C_D=0.353$, $0.357$ against 0.64 and 0.35 in DNS (§5.2, Table 3).
+- **Lattice Boltzmann without a model.** [Simonis et al. (2022)](/sources/simonis-2022.md)
+  conjecture that under-resolved multiple-relaxation-time lattice Boltzmann
+  simulation "already acts as an implicit LES": in the Taylor–Green vortex
+  at $Re=3000$ on $64^3$ the dissipation not accounted for by the enstrophy,
+  $\epsilon_{\mathrm{mod}}=\epsilon_{\mathrm{tot}}-\epsilon_{\mathrm{res}}$ in
+  their notation, is about half of the total, and its share decreases with
+  refinement at the same magnitude with and without their explicit temporal
+  closure (§3.3.2, §3.4, Figs. 7, 9); see the
+  [lattice Boltzmann method](/methods/lattice-boltzmann-method.md). The
+  "model" share includes every dissipation not captured by the enstrophy,
+  compressibility effects of the weakly compressible scheme included
+  (§3.4, where the compressibility defect is named the main cause of an
+  error plateau).
 
 ## Evidence: when it fails
 
@@ -699,8 +750,8 @@ interpretation they flag as needing further work).
   $Re=1600$: aliased energy builds up at high wavenumber for every split
   form and contaminates even low wavenumbers, so the split forms are
   "unsuited to perform implicit large-eddy simulations" (Abstract); a
-  weak relaxation filter ($\chi_f=0.01$, page-local strength of
-  [explicit modal filtering](/methods/explicit-modal-filtering.md)) removes
+  weak relaxation filter ($\chi_f=0.01$, the filter strength of registry
+  §11, see [explicit modal filtering](/methods/explicit-modal-filtering.md)) removes
   the pile-up (Fig. 18).
 - **Near-nozzle shear layers.** In the jet MILES of Ahn et al. (2023,
   §IV B, Figs. 6–10) both runs give much higher turbulent kinetic energy
@@ -756,7 +807,7 @@ interpretation they flag as needing further work).
   kinetic-energy-conserving scheme has no numerical dissipation: no-model
   LES of the [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)
   is stable but inaccurate (recirculation length $L_r/D=1.25$ against 1.56
-  from DNS at $Re_D=3900$; $L_r$ page-local) and diverges on very coarse
+  from DNS at $Re_D=3900$; $L_r$ registry §11) and diverges on very coarse
   grids.
 - **Under-resolved wall-modelled LES at high order.** Duan & Wang (2024,
   §1, §5.4) state that high-order ILES in severely under-resolved LES, wall
@@ -782,7 +833,7 @@ interpretation they flag as needing further work).
   parameter (§2.4, Eq. 10; §4.2). At $Re_h=10\,600$ and
   37 000 the velocity is reasonable but the Reynolds stresses are
   over-predicted, more so at 37 000 (§4.4).
-- **Aliasing.** On the periodic hill at $Re_b=10\,595$ with 64×64×32
+- **Aliasing.** On the periodic hill at $Re_h=10\,595$ with 64×64×32
   degrees of freedom, fourth-order URDNS shows large spurious oscillations
   in the $\langle v'v'\rangle$ and $\langle u'v'\rangle$ profiles that the
   authors attribute to aliasing, absent when the
@@ -793,7 +844,7 @@ interpretation they flag as needing further work).
   [backward-facing step](/benchmarks/backward-facing-step.md) (10 nodes per
   step height, $\Delta x/\Delta y\sim100$ in the shear layer), a no-model run
   of [Abe (2021)](/sources/abe-2021.md) (App. B, Table IV, Fig. 14) gives a
-  reattachment length (page-local $x_R$) $x_R/H=7.60$ (+16.7% against the experimental 6.51),
+  reattachment length ($x_R$, registry §11) $x_R/H=7.60$ (+16.7% against the experimental 6.51),
   against 7.19 with the author's stabilized mixed model; on the fine and
   medium grids the explicit-model LES gives 6.54 and 6.67 (Table II). Citing
   the author's earlier work, Abe states that "as the grid resolution
@@ -908,6 +959,25 @@ interpretation they flag as needing further work).
   non-de-aliased $N=5$ scheme but gives inaccurate dissipation and
   spectra, whereas the over-integrated scheme follows the DNS (§3.1.8,
   Fig. 20).
+- **Explicit WCNS interpolation.** Ma et al. (2022, §1, §2.2) recall,
+  citing Ishiko & Shimada and Matsukawa, that the dissipation of the
+  original weighted compact nonlinear scheme "imitates" a strongly
+  dissipative subgrid model, so that WCNS-based ILES is ineffective, and
+  trace it to the explicit interpolation step. On the T106A cascade even
+  its *linear* version captures the leading-edge separation that the
+  nonlinear version misses (§3.3, Fig. 12).
+- **Linearly unstable continuity equation.** [Svärd (2022)](/sources/svard-2022.md)
+  (§3, §5.2) recalls that entropy-conservative and kinetic-energy-preserving
+  split fluxes are not locally linearly stable, and shows on a 2-D
+  Kelvin–Helmholtz instability that numerical errors amplified by such
+  schemes "trip" spurious roll-ups. With physical viscosity
+  $\mu=\kappa=10^{-4}$, the box mean of the density changes by 4.1% from
+  $128^2$ to $512^2$ with Chandrashekar's flux against 1.8% with the
+  author's stabilized flux (Tables 1, 3); without viscosity the box means
+  are not on a convergent path up to $1024^2$ (Table 2). "What may look
+  like turbulent features in under-resolved simulations may be unphysical
+  numerical errors amplified by the scheme"; the most detailed solutions
+  are the least accurate (§5.2.1).
 
 ## A DNS that is an implicit LES for some modes
 
@@ -988,6 +1058,60 @@ as the reason why LES with and without a subgrid combustion model gave
 similar results in an earlier study (Breda et al., cited; §6). The
 correction is a proposal: $F_{\mathrm{sgs}}$ is not modelled and no
 turbulent flame is computed.
+
+## Residual-based stabilization as the closure (inline)
+
+In stabilized finite elements the implicit closure is a set of
+residual-driven terms rather than a truncation error.
+[Chen et al. (2022)](/sources/chen-2022-g.md) (§1, §7) classify
+residual-based [variational multiscale](/methods/variational-multiscale-method.md)
+LES as an implicit LES whose small-scale model is "an addition of purely
+dissipative numerical terms and no eddy viscosity is introduced", and
+budget the dissipation of each term in a channel at $Re_\tau=180$; one
+cross-stress term turns out to add energy on average, and reversing its
+sign improves the outer-layer mean velocity on their coarse mesh (§5–6).
+They hold that, being residual-based, this closure keeps numerical
+consistency and full convergence rate, "whereas, e.g. the convergence rate
+of the classical LES is limited to $O(h^{4/3})$ due to the artificial
+viscosity effects" (§1, citing Bazilevs et al. and Hughes et al.).
+Prieto Saavedra et al. (2024), above, use the SUPG/PSPG truncation of the
+same closure.
+
+## Weak entropy solutions as an a posteriori filter (inline)
+
+[Svärd (2022)](/sources/svard-2022.md) gives implicit LES a rationale
+different from the truncation-error-as-filter one. The author distinguishes
+three senses (§2.2): fixed-width LES, whose grid-converged solution solves
+the filtered equations; "vanishing LES" with $\Delta\propto h$; and ILES.
+Only the last two converge, if at all, to a DNS, and "there are no strong
+reasons to assume" that they do without the a priori estimates a
+convergence theory needs. Instead, a scheme that converges weakly to a
+weak entropy solution makes integrals against a fixed test function
+converge, $(\Phi,U_h)\to\int\phi u\,dx$, before point values do: local
+averages over a fixed support are LES-like quantities filtered *a
+posteriori*, and the larger the support the coarser the grid on which
+they converge (§2.3, Eq. 9). Accuracy is judged by refining until the
+functional of interest stops changing.
+
+From the estimates of the compressible Navier–Stokes–Fourier system the
+author conjectures five necessary conditions on such a scheme (§3):
+conservation form; [entropy stability](/properties/entropy-conservation.md);
+at least the diffusion of a [kinetic-energy-preserving](/properties/kinetic-energy-preservation.md)
+flux; positive density; and a linearly stable (non-anti-diffusive)
+continuity equation; a temperature-dependent conductivity
+$\kappa\propto1+T^2$ is also required. The proposed finite-volume flux adds
+an artificial diffusion $\lambda^\rho_{i+1/2}=\lvert\bar u\rvert/2+\lvert\Delta u\rvert/4$
+(page-local; arithmetic mean and jump of the face states) to the mass flux
+of Chandrashekar's entropy-conservative flux only, and reuses that mass
+flux in the momentum and energy fluxes; Proposition 4.1 states that it
+satisfies the five conditions (§4, Eqs. 20–23). The author also argues that
+upwind dissipation, $\nu_t\sim h\lvert u\rvert$, corresponds to a turbulent
+cell Reynolds number of order one and "can not be ruled out" as a subgrid
+model (§3.1). On the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+at $Re=1600$ the scheme, first order in its viscous terms and with forward
+Euler stepping, reaches peak dissipation 0.0116 on $64^3$ (Table 5), which
+the author calls the same peak as that of a second-order scheme on $129^3$
+quoted from earlier work ($\approx0.0115$, §5.3).
 
 ## Explicit models that act like implicit ones
 
@@ -1070,11 +1194,9 @@ dissipation is imparted by the SGS model". Details on
   al.'s verdict also sits beside their own report of a large peak-dissipation
   discrepancy on the two coarsest grids.
 - Cao et al. (2024, §3.3) label a $160^3$ run of the same gas-kinetic
-  scheme "DNS" and a $128^3$ run "iLES". The boundary between DNS and
-  implicit LES is then a matter of resolution only, the scheme being
-  identical. Beattie et al. (2025) make the converse point: a run labelled
-  DNS can be an implicit LES for the modes it does not dissipate
-  physically.
+  scheme "DNS" and a $128^3$ run "iLES". Beattie et al. (2025) call a run
+  labelled DNS an implicit LES for the modes it does not dissipate
+  physically (above).
 - Chapelier et al. (2024, §IV.A, §V) treat their coarse runs as implicit
   LES on the assumption that numerical dissipation mimics subgrid
   dissipation at $Re=1600$. Their synthesis of a "low impact" of shock
@@ -1095,8 +1217,7 @@ dissipation is imparted by the SGS model". Details on
   Smagorinsky model for decaying isotropic turbulence at $48^3$. Flows,
   resolutions and schemes differ, and Brillon & Nadarajah limit their
   verdict to transitional free-shear flow, so no contradiction is
-  recorded; it is the resolution split already seen in Duan & Wang (2024)
-  above.
+  recorded.
 - Zhao et al. (2021) state in the abstract and conclusions that iLES is
   superior for the Reynolds stress, while their §V.B reports for
   $Re_\tau=180$ that "for the Reynolds stress, the results for D-model
@@ -1112,6 +1233,22 @@ dissipation is imparted by the SGS model". Details on
   Smagorinsky run to its larger constant ($C_s=0.18$ against their 0.1),
   a hypothesis supported only by their $\Delta=4h$ run giving similar
   discrepancies.
+- Svärd (2022) announces in the abstract "a turbulent Rayleigh-Taylor
+  problem" as the third test; the paper runs a Taylor–Green vortex. In §5.3
+  the reference peak dissipation is printed "close to 0.0013", against
+  0.0086–0.0136 in the author's own Table 5 and "$\approx0.0115$" for the
+  quoted second-order scheme.
+- Simonis et al. (2022, Eq. 25) print the enstrophy-based dissipation as
+  $\epsilon_{\mathrm{res}}=2\pi\nu\zeta$ with $\zeta$ the volume average of
+  $\lvert\nabla\times\boldsymbol u\rvert^2$ (Eq. 23); for incompressible
+  periodic flow the paper's own definitions give $-dk/dt=\nu\zeta$, without
+  the factor $2\pi$ *(compiler check, not in the sources)*. Whether the
+  factor enters their computed $\epsilon_{\mathrm{mod}}$ is not determinable
+  from the paper.
+- Hamedi & Vermeire (2022) optimize their filters on the inviscid
+  Taylor–Green vortex and apply them unchanged to the other cases (§3.4,
+  §4–5); Deng et al. (2022) vary $\lambda_{\mathrm{AD}}$ in their isotropic
+  ILES and compare each value with the DNS spectrum (§4.15).
 
 # Citations
 
@@ -1183,3 +1320,9 @@ dissipation is imparted by the SGS model". Details on
 - [Liu et al. (2022b)](/sources/liu-2022-g.md) — §4.
 - [Cuenot et al. (2022)](/sources/cuenot-2022.md) — §1; §4; §6.
 - [Kuya et al. (2018)](/sources/kuya-2018.md) — §5.
+- [Deng et al. (2022)](/sources/deng-2022.md) — §1; §3.2, Remarks 1–2; §4.15, Figs. 23–25.
+- [Ma et al. (2022)](/sources/ma-2022.md) — §1; §2.2; §3.1–3.3, Figs. 5–12; §4.
+- [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §1; §3.4; §4; §5.1; §5.2, Table 3.
+- [Simonis et al. (2022)](/sources/simonis-2022.md) — Eqs. (23)–(26); §3.3.2, Fig. 7; §3.4, Fig. 9.
+- [Svärd (2022)](/sources/svard-2022.md) — Abstract; §2.2–2.3, Eq. (9); §3–3.1; §4, Eqs. (20)–(23), Prop. 4.1; §5.2–5.2.1, Tables 1–3; §5.3, Table 5.
+- [Chen et al. (2022)](/sources/chen-2022-g.md) — §1; §5–6; §7.

@@ -9,7 +9,7 @@ year: 2025
 venue: "Int. J. Heat Fluid Flow 112:109679"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_International_Journal_of_Heat_and_Fluid_Flow_Tomboulides_A_robust_spectral_element_implementation_of_the_mmlmath_xmln.pdf"
 tags: [rans, k-omega, spectral-element, high-order, eddy-viscosity, separated-flow]
-timestamp: 2026-10-27T05:46:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Summary
@@ -18,7 +18,7 @@ Tomboulides et al. (2025) implement, verify and validate the
 [$k$-$\tau$ model](/methods/k-tau-model.md) in the
 [spectral element](/methods/spectral-element-method.md) codes
 [Nek5000 and NekRS](/software/nek5000.md). The transported time scale is
-$\tau_t=1/\omega$ (page-local symbol). The motivation is the wall
+$\tau_t=1/\omega$ (registry §11). The motivation is the wall
 singularity of the [Wilcox $k$-$\omega$ model](/methods/k-omega-model.md),
 $\omega\sim d^{-2}$. Prescribing a large wall value of $\omega$ leaves
 grid-sensitive solutions and, in high-order codes with little numerical
@@ -128,14 +128,14 @@ $R_k=6$, $R_\beta=8$, $R_\tau=2.95$, $\alpha_0^*=\beta_\omega/3$.
 | $\mathbf v=(u,v,w)$ | $\langle u_i\rangle$ | ensemble-averaged mean velocity |
 | $\underline{\mathbf S}$, $S=\sqrt{2\underline{\mathbf S}:\underline{\mathbf S}}$ | $\langle S_{ij}\rangle$, $\lvert S\rvert$ | factor two included, as in the registry |
 | $\underline{\boldsymbol\tau}=2\mu_t\underline{\mathbf S}$ | $-\rho R_{ij}$ (deviatoric part) | **collision:** negative convention; not $\tau_{ij}$ (SGS) |
-| $\tau=1/\omega$ | $\tau_t$ (page-local) | **collision:** turbulent time scale, not a stress or $\tau_w$ |
+| $\tau=1/\omega$ | $\tau_t$ (registry §11) | **collision:** turbulent time scale, not a stress or $\tau_w$ |
 | $\tau^+=\tau u_\tau^2/\nu$ | $\tau_t^+$ (page-local) | |
 | $k$, $\omega$, $\varepsilon$ | $k$, $\omega$, $\varepsilon$ | |
 | $\mu_t=\rho k\tau$ | $\mu_t$ | $\alpha^*\rho k\tau_t$ in the low-Re variant |
 | $P=\mu_tS^2$ | $P_k$ (limited) | |
 | $\beta$, $\beta^*$, $\alpha$ | $\beta_\omega$, $\beta^*$, $\gamma_\omega$ | registry §11; Wilcox (2006) values |
 | $\sigma_k$, $\sigma_\omega$, $\sigma_d$ | $\sigma_k$, $\sigma_\omega$, $\sigma_d$ | divide $\mu_t$: $\sigma_k=1/0.6$, $\sigma_\omega=2$ |
-| $\Gamma_k$, $\Gamma_\omega$, $\Gamma_\tau$ | (page-local diffusivities) | $\Gamma_\tau=\Gamma_\omega$ |
+| $\Gamma_k$, $\Gamma_\omega$, $\Gamma_\tau$ | $\Gamma_k$, $\Gamma_\omega$ (registry §11), $\Gamma_\tau$ (page-local) | $\Gamma_\tau=\Gamma_\omega$ |
 | $C_{D_\omega}$, $C_{D_\tau}$ | (cross-diffusion terms, page-local) | |
 | $S_\tau=\nabla\tau^{1/2}\cdot\nabla\tau^{1/2}$, $S_{lim}$ | (page-local), $S_{\lim}$ | **collision:** not a strain rate |
 | $R$, $r$, $y_{lim}$, $D_h$ | $R_{\mathrm{fs}}$, $r$, $d_{\lim}$, $D_h$ (page-local) | **collision:** $R$ is not $R_{ij}$ |

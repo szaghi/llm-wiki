@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-27T11:01:00Z
+timestamp: 2026-10-27T15:47:00Z
 ---
 
 # Smagorinsky model
@@ -41,7 +41,7 @@ are variants of the same eddy-viscosity idea.
 | about 0.17 | isotropic turbulence, inertial-range resolution (Lilly, cited) | Agrawal et al. (2022, §II.A) |
 | about 0.1 | shear flows (Deardorff, cited) | Agrawal et al. (2022, §II.A) |
 | 0.18 | Lilly's analytical value $\pi^{-1}(3C_K/2)^{-3/4}$ with Kolmogorov constant $C_K=1.4$ (page-local symbol), as cited | Vicente Cruz & Lamballais (2023, §6.5) |
-| 0.1 | reference constant for the Taylor–Green vortex and pipe; a dynamic procedure is recalled to give about 0.1 after breakdown | Vicente Cruz & Lamballais (2023, §4.1) |
+| 0.1 | reference constant for the Taylor–Green vortex and pipe; the authors cite a dynamic procedure (Dairay et al.) giving about 0.1 after breakdown | Vicente Cruz & Lamballais (2023, §4.1) |
 | 0.17 | static baseline (SSM) in DG LES of forced HIT; the authors remark it is valid in principle only for specific explicit filters | Beck & Kurz (2023, §V) |
 | 0.12 | on a dissipation-free split-form DG baseline | [Flad & Gassner (2017)](/sources/flad-2017.md), Fig. 7 |
 | 0.17 | small–small VMS variant on DG ILES | Flad & Gassner (2017), Fig. 3 |
@@ -55,7 +55,7 @@ are variants of the same eddy-viscosity idea.
 | 0.16 | "classical" value, "determined through theoretical arguments for isotropic turbulence", stated to be over-dissipative in transition | [Wang et al. (2023c)](/sources/wang-2023-c.md), §II.A |
 | $\sqrt{0.01/2}\approx0.071$ | coefficient of a Smagorinsky term alone, calibrated a posteriori by an ensemble Kalman filter against filtered-DNS spectra of forced isotropic turbulence ($C_{\mathrm f}=2C_s^2=0.01$, $C_{\mathrm f}$ page-local, the paper's $C_D$) | Wang et al. (2023c), App. C |
 | trained, value not reported | 1D Burgers closure baseline, filter width the coarse grid spacing | [van Gastelen et al. (2024)](/sources/vangastelen-2024.md), §4.1.1 |
-| 0.14 (0.21 for a Burgers test); range "usually" $0.12<C_s<0.21$ | continuous spectral-element LES of atmospheric-type flows, $\Delta=\min(h_x,h_y,h_z)/(N+1)$ | [Reddy et al. (2026)](/sources/reddy-2026.md), §3.1 |
+| 0.14 (0.21 for a Burgers test); range "usually" $0.12<C_s<0.21$ | continuous spectral-element LES of atmospheric-type flows, $\Delta$ printed as $\min(\Delta x,\Delta y,\Delta z)/(N+1)$ with the paper's grid spacings (see the [residual-based dynamic model](/methods/residual-based-dynamic-sgs-model.md)) | [Reddy et al. (2026)](/sources/reddy-2026.md), §3.1 |
 | 0.15 | wall-resolved LES of a flexible aquatic canopy; the value of earlier canopy LES (0.17 in another group) | [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md), §2.1 |
 | 0.1 | decaying isotropic turbulence, sharp spectral filter at $k_c=10$; constraint of a physics-informed neural operator | [Zhao et al. (2025)](/sources/zhao-2025.md), §3.1 |
 | "usually taken between 0.1 and 0.18"; value used not printed, 0.1 tried without improvement | compressible finite-difference LES of the Taylor–Green vortex, $\Delta$ the cube root of the cell volume | [Volpiani (2024)](/sources/volpiani-2024.md), App. 2, Eq. (27); §5 |
@@ -73,6 +73,9 @@ are variants of the same eddy-viscosity idea.
 | $C=0.18$ (whether $C=C_s$ is not stated) | static baseline in Fourier-spectral LES of forced isotropic turbulence and channel flow | [Wu & Lele (2026)](/sources/wu-2026.md), §5.1 |
 | not printed; enters the Vreman constant $c=2.5C_s^2$ and the WALE relation $C_w^2\approx10.6C_s^2$ | gas-kinetic LES of channel flow, $\Delta=(\Delta x_1\Delta x_2\Delta x_3)^{1/3}$ | [Zhao et al. (2021)](/sources/zhao-2021-c.md), §III.A–C, Eq. (14) |
 | $\approx0.059$, the linear term of a learned tensor model | gene-expression-programming SGS model of forced isotropic turbulence | [Li et al. (2021)](/sources/li-2021.md), Eq. (22) (see below) |
+| 0.1 | finite-difference reference LES of a channel at $Re_\tau=180$ on a coarse $32\times64\times32$ mesh, no wall damping mentioned | [Chen et al. (2022)](/sources/chen-2022-g.md), §4.1, Eq. (26) |
+| 0.1, printed as the coefficient $C_{\mathrm{sm}}$ that multiplies $\Delta^2$ in $\mu_t=\bar\rho C_{\mathrm{sm}}\Delta^2\lvert\tilde S\rvert$ (so $C_s^2$ in the registry form); with $Pr_t=0.9$ and a subgrid Schmidt number 0.35 | constant-coefficient comparison in a converging Richtmyer–Meshkov mixing layer | [Qi et al. (2022)](/sources/qi-2022-b.md), §2, Eq. (2.13); §4.3 |
+| not printed; written $\nu_t\mathbb S=(c_s\Delta^2)\lvert\bar{\mathbb S}\rvert\bar{\mathbb S}$ | cited for a filtered Burgers prototype | [Svärd (2022)](/sources/svard-2022.md), §2.2, Eq. (8) |
 
 Wang et al. (2021, §3.1), citing earlier work, relate the coefficient to
 the Kolmogorov constant by $C_s\approx C_\Delta^{-1}(1.5C_K)^{-3/4}$
@@ -84,7 +87,7 @@ the coefficient should be lowered. Caban et al. (2026, §1) recall, from
 error-landscape studies (cited), that the optimal $\Delta$ and $C_s$ that
 minimize the total error depend on the mesh and on the numerical scheme.
 
-Lilly's value is consistent with the recalled formula: $\pi^{-1}(2.1)^{-3/4}\approx0.18$
+Lilly's value is consistent with the formula Wang et al. cite: $\pi^{-1}(2.1)^{-3/4}\approx0.18$
 *(compiler check, not in the sources)*. The square root in the Wang et
 al. row is a *compiler check, not in the sources*: they write the
 Smagorinsky part as $-C_{\mathrm f}\Delta^2\lvert\bar S\rvert\bar S_{ij}$ and state
@@ -308,8 +311,8 @@ use Smagorinsky as the comparator of an
 
 ## Variants
 
-- **Wall damping.** The model does not vanish at a wall; Van Driest damping
-  is recalled as the classical fix (Agrawal et al. 2022, §II.A) and is used
+- **Wall damping.** The model does not vanish at a wall; Agrawal et al.
+  (2022, §II.A) cite Van Driest damping as the classical fix, which is used
   with Smagorinsky in the pipe LES of Vicente Cruz & Lamballais (2023,
   §7.3), where the SGS viscosity reaches about $3\nu$ instantaneously and
   $0.3\nu$ on average near the wall; the damping form is not printed there.
@@ -406,7 +409,7 @@ limiting behavior".
   Yoshizawa (cited there), $\tau_{kk}=2C_I\bar\rho\Delta^2\lvert\tilde S\rvert^2$
   with $C_I=0.0066$ (registry §11), and a subgrid heat flux with $Pr_t=0.6$
   (after Vreman et al., cited there). Two multiscale Smagorinsky models
-  after the variational multiscale method of Hughes et al. (as recalled)
+  after the variational multiscale method of Hughes et al. (cited)
   split the resolved field into large and small resolved scales and apply
   the eddy viscosity to the small-scale strain only: "large–small"
   (MSSM-LS) with $\nu_t$ from the full resolved strain, "small–small"
@@ -710,6 +713,42 @@ Fourier-spectral solver with two-thirds dealiasing.
   Smagorinsky shows "a large buildup" of energy at high wavenumbers and
   poor Reynolds-stress profiles, while Sigma reproduces the spectrum.
 
+**Coarse channel, no damping.** On the $Re_\tau=180$ channel with
+$32\times64\times32$ cells, static Smagorinsky ($C_s=0.1$) under-predicts
+the mean velocity, most for $y/\delta<0.1$, moves the peak of
+$u'_{\mathrm{rms}}$ above $y^+\approx15$ and "engenders very high
+dissipation in the viscous sublayer ($y^+<5$)", which [Chen et al. (2022)](/sources/chen-2022-g.md)
+(§4.2, §5, Figs. 1–3) give as the cause of its poor statistics; its
+dissipation sits mainly in the streamwise component. The
+[dynamic model](/methods/dynamic-procedure.md) and the residual-based
+[variational multiscale method](/methods/variational-multiscale-method.md)
+do better on the same mesh. No near-wall damping is mentioned for the
+Smagorinsky run.
+
+**Transitional mixing.** In a converging spherical Richtmyer–Meshkov
+instability (SF$_6$/N$_2$, $M\approx1.5$, LES on $384^3$ against DNS on
+$2048^3$), constant-coefficient Smagorinsky "grossly underestimates" the
+bubble and spike heights between 0.04 and 0.12 ms, which [Qi et al. (2022)](/sources/qi-2022-b.md)
+(§4.3, Fig. 23) relate to its known inability to predict transition
+(citing Piomelli & Zang; Meneveau & Katz; Sayadi & Moin; Zhou et al.).
+The same paper's one-equation model keeps a Smagorinsky form but sets its
+coefficient locally from a constraint on the anisotropic subgrid energy
+flux and replaces Yoshizawa's isotropic part by $2\bar\rho k_{\mathrm{sgs}}$
+from a transported $k_{\mathrm{sgs}}$ (§3.2, Eq. 3.21; see the
+[dynamic procedure](/methods/dynamic-procedure.md)).
+
+**Scaling arguments.** [Svärd (2022)](/sources/svard-2022.md) (§3.1)
+writes $\nu_t\sim l_tu_t$ with $u_t\sim l_t\lvert\nabla\bar{\boldsymbol u}\rvert$
+and $l_t\sim\Delta$ ($l_t$, $u_t$ page-local turbulent length and velocity)
+and contrasts it with an upwind flux, which gives $\nu_t\sim h\lvert u\rvert$
+and a turbulent cell Reynolds number of order one; the author concludes
+that upwind dissipation "can not be ruled out" as a subgrid model and that
+Galilean invariance, which the strain-based form secures, matters only for
+fixed-width LES (see [implicit LES](/definitions/implicit-les.md)).
+[Simonis et al. (2022)](/sources/simonis-2022.md) (§1) list the
+Smagorinsky model as the first LES model used with lattice Boltzmann
+methods (Hou et al., cited).
+
 ## Qualifications
 
 - Cheylan et al. (2023, Eq. 37) print the viscosity as
@@ -813,3 +852,7 @@ Fourier-spectral solver with two-thirds dealiasing.
 - [Li et al. (2021)](/sources/li-2021.md) — §II B, Eq. (12); §III D, Eq. (22); §IV.
 - [Heinz (2020)](/sources/heinz-2020.md) — §2.3; App. C, Eq. (58).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §2.1.
+- [Chen et al. (2022)](/sources/chen-2022-g.md) — §4.1, Eq. (26); §4.2, Figs. 1–2; §5, Fig. 3.
+- [Qi et al. (2022)](/sources/qi-2022-b.md) — §2, Eqs. (2.11)–(2.15); §3.2, Eq. (3.21); §4.3, Fig. 23.
+- [Svärd (2022)](/sources/svard-2022.md) — §2.2, Eq. (8); §3.1.
+- [Simonis et al. (2022)](/sources/simonis-2022.md) — §1.

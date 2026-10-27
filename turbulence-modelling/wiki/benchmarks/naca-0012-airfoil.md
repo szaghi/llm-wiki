@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "NACA 0012 airfoil"
-description: "The symmetric NACA 0012 airfoil: static RANS at chord Reynolds numbers of 1 to 6 million up to 45° and transonic, high-order workshop cases, pitching in dynamic stall and transonic hysteresis, and a rod–airfoil noise case: it validates high-order RANS discretizations, near-wall and immersed-boundary treatments, data-driven corrections, and LES and DDES of dynamic stall."
+description: "The symmetric NACA 0012 airfoil: static RANS at chord Reynolds numbers of 1 to 6 million up to 45° and transonic, high-order workshop cases, low-Reynolds-number unsteady separation, pitching in dynamic stall, and a rod–airfoil noise case: it validates high-order RANS, near-wall and immersed-boundary treatments, data-driven corrections, output-based adaptation, and LES and DDES of dynamic stall."
 status: established
 aliases: [NACA0012, NACA 0012, NACA-0012]
 tags: [benchmark, rans, hybrid-rans-les, les, data-driven, immersed-boundary, dg, separated-flow, des, transition, aeroacoustics]
-timestamp: 2026-10-27T11:00:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # NACA 0012 airfoil
@@ -18,7 +18,7 @@ leading-edge boundary layer dominate the forces; at very high incidence the
 flow separates massively from the leading edge. The quantities compared are
 the lift and drag coefficients $C_L$ and $C_D$, the pressure coefficient
 $C_p$ and the skin friction $C_f$ along the chord $c$. Reference data
-recalled by the sources are the measurements of Ladson (forces and $C_p$) and
+cited by the sources are the measurements of Ladson (forces and $C_p$) and
 the compilation of McCroskey. In this bundle the static airfoil validates
 discretizations and near-wall treatments of RANS and hybrid RANS/LES, and
 is a non-regression test of data-driven RANS corrections: an attached flow
@@ -27,7 +27,8 @@ airfoil tests wall-resolved LES and its spanwise domain size in deep
 [dynamic stall](/definitions/dynamic-stall.md), and DDES with transition
 closures in the onset of dynamic stall under a constant-rate pitch-up.
 The airfoil also defines inviscid and laminar order-of-accuracy cases of
-the first High-Order CFD Workshop, a transonic pitching case for moving
+the first High-Order CFD Workshop, low-Reynolds-number unsteady separated
+cases for output-based mesh adaptation, a transonic pitching case for moving
 immersed-boundary grids, and the downstream body of the rod–airfoil noise
 configuration.
 
@@ -98,6 +99,18 @@ Workshop, moving-grid and aeroacoustic configurations
 | Model | Euler and laminar Navier–Stokes (no turbulence model) | [Spalart–Allmaras](/methods/spalart-allmaras-model.md) RANS, Spalart–Allmaras wall function at an [immersed boundary](/methods/immersed-boundary-method.md) | 2D URANS with Spalart–Allmaras; permeable [Ffowcs Williams–Hawkings](/methods/ffowcs-williams-hawkings-acoustic-analogy.md) surface; continuous adjoint |
 | Discretization | participants' DG, [flux-reconstruction](/methods/flux-reconstruction.md) (CPR), high-order FV and FD codes at $N=1$ to 4, against the second-order finite-volume TAU code | hierarchical Cartesian grid moving rigidly with the body, SLAU finite volumes; about 45,000 cells with $h_{\min}/c=5\times10^{-4}$ (steady) and 85,000 with $2.5\times10^{-4}$ (AGARD) | quadrilateral grid of 161,906 nodes (414 on the airfoil), first node $10^{-5}c$, $y^+<1$ |
 | Reference | each participant's own reference solution; force errors against hp-independent values | the body-fitted code FaSTAR on the TMR grid (steady); the experiment of Landon and body-fitted FUN3D (AGARD) | the experiment and LES of Jacob et al., other LES and URANS, as cited |
+
+Low-Reynolds-number unsteady separation
+([Fidkowski (2022)](/sources/fidkowski-2022.md), §6.1–6.2): $M=0.2$,
+$\alpha=7^\circ$, $Re_c=10^4$ (unsteady laminar separation; the upper
+boundary layer breaks into vortices near mid-chord) and $Re_c=2\times10^4$
+(breakdown near 40% chord and a separation bubble reattaching near 60%
+chord); two-dimensional compressible Navier–Stokes with no turbulence
+model, modal DG (Roe and BR2 fluxes, $N=2$ by default, up to 5) on
+unstructured triangles with cubic curved elements at the wall, far field
+about 100 chords, third-order extended BDF in time. The reference
+("exact") mean lift comes from $N=3$ on a uniformly refined adapted mesh
+(§6.1) or a refined mesh at $N=3$ (§6.2).
 
 The airfoil appears with less weight in three further roles: as the
 subject, cited by [Bose & Park (2018)](/sources/bose-2018.md), §4.5, of a wall-modelled LES
@@ -290,8 +303,8 @@ behind", attributed to an overestimated shock–boundary-layer interaction
 (Figs. 5-9–5-11); see
 [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
-**Implicit LES polars.** As recalled by [Ferrer et al. (2023)](/sources/ferrer-2023.md),
-§4.1, Fig. 7, from the group's earlier paper, a DG implicit LES at
+**Implicit LES polars.** [Ferrer et al. (2023)](/sources/ferrer-2023.md),
+§4.1, Fig. 7, cite the group's earlier paper: a DG implicit LES at
 $Re_c=10^6$ on 18,000 hexahedra with $N=4$ (2.2 million degrees of freedom)
 gives lift and drag polars in "very good agreement" with experimental data
 not named in that paper; see [implicit LES](/definitions/implicit-les.md)
@@ -438,9 +451,57 @@ a lift change of $-0.018$ (§4.2, Fig. 16). The acoustic method is on
 **Wall-modelled LES of trailing-edge noise.**
 [Bose & Park (2018)](/sources/bose-2018.md), §4.5, cite a wall-modelled LES of
 the airfoil's trailing-edge noise at $Re_c=1.5\times10^6$ (Kocheemoolayil &
-Lele) is within 3 dB of the measurements, but on a grid with
+Lele) that is within 3 dB of the measurements, but on a grid with
 $\Delta y^+\lesssim10$ and $\Delta x_i^+\sim40$, close to wall-resolved
 resolution; see [wall-modelled LES](/methods/wall-modelled-les.md).
+
+**Output-based adaptation of an unsteady separated flow.**
+[Fidkowski (2022)](/sources/fidkowski-2022.md) uses the two low-Reynolds
+cases to adapt meshes for the time-averaged lift without an unsteady
+adjoint, which is unstable on both (Figs. 4, 11). A steady
+[Spalart–Allmaras](/methods/spalart-allmaras-model.md) RANS whose
+production is multiplied by a field $\beta(\boldsymbol x)$, obtained by
+[field inversion](/methods/field-inversion-machine-learning.md) of the
+time-averaged unsteady state and fitted by a one-hidden-layer network
+(30 neurons, inputs the dimensional state, its gradient and the wall
+distance), supplies a surrogate adjoint; two estimates, E1 (the
+time-averaged fine-space unsteady residual weighted by that adjoint) and E2
+(the adjoint-weighted residual of the corrected RANS itself), drive
+fixed-fraction $N$-adaptation and anisotropic metric optimization (MOESS);
+see [mesh adaptation](/methods/mesh-adaptation.md).
+
+- $Re_c=10^4$: the uncorrected RANS converges quickly to an under-predicted
+  mean lift, a modelling error since RANS "was not designed" for this
+  flow; corrected-RANS MOESS gives very good lift already at 3000 degrees
+  of freedom (500 elements); lift-based $N$-adaptation is the only other
+  close strategy, and residual-based $N$-adaptation does not approach the
+  correct lift (Fig. 5). Estimates are "reasonably accurate (within a
+  factor of 2)" (Fig. 7). The output-adapted meshes refine the boundary
+  layer more thickly and isotropically and refine mid-chord on the upper
+  surface, where the laminar flow breaks into vortices, while RANS-adapted
+  meshes put highly anisotropic elements along the surface (Fig. 9).
+- $Re_c=2\times10^4$: the uncorrected RANS has no separation bubble and a
+  persistent, mesh-independent lift error with "imperceptibly small" error
+  estimates; residual-based $N$-refinement oscillates away from the exact
+  value in its last iterations (Figs. 10, 12).
+
+Lift at the finest target (Tables 1–2):
+
+| Case, strategy | dof | mean lift | estimate | actual error |
+|---|---|---|---|---|
+| $Re_c=10^4$, E1, surface-stress inversion | 9000 | 0.7355 | 0.0057 | 0.0045 |
+| $Re_c=10^4$, E1, adjoint-weighted inversion | 9000 | 0.7353 | 0.0051 | 0.0047 |
+| $Re_c=10^4$, E2, surface-stress inversion | 9000 | 0.7175 | 0.0087 | 0.0225 |
+| $Re_c=2\times10^4$, E1, adjoint-weighted inversion | 20,250 | 0.6569 | 0.0024 | 0.0011 |
+
+Each table implies a single exact value, 0.7400 and 0.6580, as the sum of
+every printed lift and its actual error *(compiler check, not in the
+sources)*. E2 converges slowest and its estimate misses the larger error,
+which the author attributes to less trailing-edge refinement: the
+trailing edge matters more to the unsteady simulation than to the steady
+RANS (§6.1). The adjoint-weighted inversion objective tightens the
+estimates while leaving the actual errors nearly unchanged. Only two to
+four unsteady runs per adapted mesh are needed (§5.2).
 
 **What the sources share.** Away from stall the RANS solutions of all
 three discretizations match the reference forces; the discrepancies
@@ -471,7 +532,7 @@ $\omega$ (§1–§2).
 
 ## Qualifications
 
-- The configurations differ in Reynolds number ($1.35\times10^5$,
+- The configurations differ in Reynolds number ($10^4$, $2\times10^4$, $1.35\times10^5$,
   $2\times10^5$, $10^6$, $2.88\times10^6$, $3\times10^6$,
   $4.09\times10^6$, $6\times10^6$) and reference ($C_p$ and forces of experiments, a
   body-fitted computation); no source compares its errors with another's.
@@ -494,8 +555,8 @@ $\omega$ (§1–§2).
   $933\times333$ quads per layer *(compiler check, not in the sources)*.
   The $C_L$ offset from experiment is printed as about 0.25 (§2.1) and 0.2
   (§2.2).
-- Their inference that turbulence modelling is not the main source of
-  discrepancy rests on one recorded cycle per model without phase
+- Their conclusion that turbulence modelling is not the main source of
+  discrepancy is drawn from one recorded cycle per model without phase
   averaging (§1.2, §2.2); the URANS and SBES come from the authors' earlier
   work with the same solver, and the 0.8$c$ and 1.2$c$ spans still differ
   at $10^\circ$ in the downstroke (Fig. 4).
@@ -537,6 +598,13 @@ $\omega$ (§1–§2).
   improvement" from taking the face-centre pressure from the fluid cell
   instead of the image point without showing it (§2.2, Table 1), and give
   their Reynolds number on the velocity relative to the grid.
+- [Fidkowski (2022)](/sources/fidkowski-2022.md) describes the
+  $Re_c=10^4$ case as compressible Navier–Stokes without a subgrid model
+  (§6.1) and calls it a "low-Reynolds number large-eddy simulation" in §7;
+  the runs are two-dimensional. The author warns that both cases were
+  chosen outside the usual range of RANS, so the failure of uncorrected
+  RANS adaptation is not representative of attached high-Reynolds-number
+  flows (§7). No averaging length or time step is printed.
 - [Monfaredi et al. (2021)](/sources/monfaredi-2021.md) give the peak
   reduction as about 3.7 dB in §4.2 and 3.6 dB in the Conclusions, and call
   3456 Hz the "third harmonic" of the 1728 Hz tone, whose frequency it
@@ -548,7 +616,7 @@ $\omega$ (§1–§2).
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §5.2, Table 5-1, Figs. 5-4–5-6; §5.3, Figs. 5-9–5-11.
 - [Constant et al. (2024)](/sources/constant-2024.md) — §4.1, Fig. 10; §5.1, Figs. 12–13; §6.1, Tables 1–3, Figs. 18–25.
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §3.2, Table 2, Figs. 9–12.
-- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1, Fig. 7 (recalled result).
+- [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1, Fig. 7 (cited result).
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: Table 1; §4.5, Figs. 49–50.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §5.1, Fig. 10; §5.1.3, Figs. 15–16; §6.
 - [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §5.4, Figs. 28–36.
@@ -564,3 +632,4 @@ $\omega$ (§1–§2).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §4.5 (cited result).
 - [Liu et al. (2022b)](/sources/liu-2022-g.md) — §3.3, Table 4 (laminar harvester).
 - [Han et al. (2022)](/sources/han-2022-c.md) — §4 (blade section of the Caradonna–Tung rotor).
+- [Fidkowski (2022)](/sources/fidkowski-2022.md) — §2–§5, Eqs. (2), (13), (22)–(23); §6.1–6.2, Tables 1–2, Figs. 3–12; §7.

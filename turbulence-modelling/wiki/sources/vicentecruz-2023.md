@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Turbul. 24:235-279"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Turbulence_Vicente_Physicalnumerical_duality_of_explicitimplicit_subgrid-scale.pdf"
 tags: [les, implicit-les, sgs-model, numerical-dissipation, eddy-viscosity, a-priori-a-posteriori]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T16:01:00Z
 ---
 
 # Summary
@@ -85,8 +85,8 @@ equation, figure and page numbers on this page are those of the manuscript.
 
 # Printed slips
 
-- Eq. (23), the a priori estimator, is printed without a leading minus sign. *(Compiler check, not in the sources: from Eqs. 18, 20 and 21 as printed, $-T_>/\bar\varepsilon$ equals minus the printed ratio, since the factors $-4\pi k^2$ cancel.)*
-- Eq. (38) lacks the factor $4\pi k^2$ in its numerator. *(Compiler check, not in the sources: with Eq. 12 for $E$ and Eq. 13 with Eq. 37 for $\varepsilon$, the ratio $\varepsilon/(2\nu k^2E)-1$ carries $4\pi k^2\langle k''\hat u_i^*\hat u_i\rangle$ in the numerator.)*
+- Eq. (23), the a priori estimator, is printed without a leading minus sign. From Eqs. 18, 20 and 21 as printed, $-T_>/\bar\varepsilon$ equals minus the printed ratio, since the factors $-4\pi k^2$ cancel *(compiler check, not in the sources)*.
+- Eq. (38) lacks the factor $4\pi k^2$ in its numerator: with Eq. 12 for $E$ and Eq. 13 with Eq. 37 for $\varepsilon$, the ratio $\varepsilon/(2\nu k^2E)-1$ carries $4\pi k^2\langle k''\hat u_i^*\hat u_i\rangle$ in the numerator *(compiler check, not in the sources)*.
 - Eq. (39), $\langle\hat u_i^*\hat L_i(\hat u_i)\rangle\approx-\langle k''\rangle\langle\hat u_i^*\hat u_i\rangle$, drops the factor $\nu$ present in Eq. (37).
 - Fig. 24 legend reads "DNS [26]" while the text and caption cite [29] (El Khoury et al.).
 - Fig. 16 legend labels the theoretical curve "from (40)" while the caption and text refer to (42).

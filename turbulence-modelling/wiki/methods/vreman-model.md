@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Vreman model"
-description: "Vreman's static eddy-viscosity model builds the subgrid viscosity from an invariant of the resolved velocity-gradient tensor that vanishes in many laminar flows; the sources print it in two index orders with constants from 0.08 to 0.17, use it in aircraft, channel, lattice Boltzmann, DG and shock-interaction LES, and recommend it with a recalibrated filter width for high-order wall-modelled LES."
+description: "Vreman's static eddy-viscosity model builds the subgrid viscosity from an invariant of the resolved velocity-gradient tensor that vanishes in many laminar flows; the sources print it in two index orders with coefficients $C_s$ of 0.06 to 0.17, use it in aircraft, channel, lattice Boltzmann, DG and shock-interaction LES; one recommends it with a recalibrated filter width for high-order wall-modelled LES."
 status: established
 aliases: [Vreman eddy-viscosity model, Vreman (2004) model, static-coefficient Vreman model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-27T11:01:00Z
+timestamp: 2026-10-27T15:47:00Z
 ---
 
 # Vreman model
@@ -14,8 +14,8 @@ The **Vreman model** is an eddy-viscosity closure of the deviatoric
 [subgrid stress](/definitions/large-eddy-simulation.md),
 $\tau^d_{ij}=-2\nu_t\bar S_{ij}$, with a static coefficient and a viscosity
 built from an invariant of the resolved velocity-gradient tensor. The
-sources cite Vreman (2004). Only
-[Agrawal et al. (2022)](/sources/agrawal-2022.md) print it (§II.C, Eqs. 9–10):
+sources cite Vreman (2004).
+[Agrawal et al. (2022)](/sources/agrawal-2022.md) print it as (§II.C, Eqs. 9–10)
 
 $$\nu_t=2.5\,C_s^2\sqrt{\frac{B_\beta}{\alpha_{ij}\alpha_{ij}}},\qquad
 \alpha_{ij}=\partial_j\bar u_i,\qquad
@@ -89,8 +89,8 @@ in the sources)*.
 [Blind et al. (2023)](/sources/blind-2023.md) (§2.3, §3, §3.3) use "the
 Vreman model constant" 0.03 for wall-resolved channels, the value of
 Toosi & Larsson (cited), and 0.11 for the wall-modelled channel,
-"from previous experience". The paper does not print the model formula,
-so it cannot be decided whether these values are $C_s$ or the prefactor
+"from previous experience". The paper does not print the model formula
+and does not state whether these values are $C_s$ or the prefactor
 $2.5C_s^2$ of the table. Their length scale is the DG one,
 $\Delta=\mathrm{Vol}^{1/3}/(N+1)$ for an element of volume Vol and degree
 $N$ (the paper's $P$), with $N=5$.
@@ -125,8 +125,8 @@ $N$ (the paper's $P$), with $N=5$.
   (Figs. 13–14). On the 3D bump ($Re_L=3.41\times10^6$, up to 452 million
   cells) it misses the separation, the apex pressure peak and the
   counter-rotating vortex pair even on the finest grid (Figs. 15–19),
-  agreeing with Iyer & Malik, who are recalled to find no separation with
-  Vreman up to 450 million control volumes.
+  agreeing with Iyer & Malik, whom Agrawal et al. cite as finding no
+  separation with Vreman up to 450 million control volumes.
 
 - **Shock/boundary-layer interaction over a flexible panel.**
   [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) (§3) use the Vreman
@@ -224,11 +224,16 @@ $N$ (the paper's $P$), with $N=5$.
   Galerkin in the wall-adjacent cells, finite volume elsewhere) with the
   Vreman model (Vreman 2004; You & Moin, cited) and an
   eddy diffusivity with $Pr_t=0.9$, for channel flow up to
-  $Re_\tau=50\,000$ and the periodic hill at $Re_b=10\,595$; no constant
+  $Re_\tau=50\,000$ and the periodic hill at $Re_h=10\,595$; no constant
   or formula is printed, and the paper does not define the strain in its
   stress $\mu_t\tilde S$ (factor two, trace). The subgrid model is not
   varied; the subject is the wall treatment (see
   [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
+- **Listed only.** [Qi et al. (2022)](/sources/qi-2022-b.md) (§1) list the
+  Vreman model as "a low dissipation eddy-viscosity model … for turbulent
+  shear flows" that "can also predict transitional flow well", among
+  eddy-viscosity models that they call purely dissipative and poorly
+  correlated with the real subgrid stress; they do not test it.
 
 ## Spectral-element LES
 
@@ -246,7 +251,7 @@ Two sources use the model in continuous-Galerkin
   *(compiler check, not in the sources)*. To the authors' knowledge the
   model "has not been previously studied within the spectral element
   framework or in the context of atmospheric flows" (§3.2).
-- **Results in NUMA ($N=4$, filter width $\min(h_x,h_y,h_z)/(N+1)$).**
+- **Results in NUMA ($N=4$, filter width printed as $\min(\Delta x,\Delta y,\Delta z)/(N+1)$; see the [residual-based dynamic model](/methods/residual-based-dynamic-sgs-model.md) for the grid spacings).**
   Reddy et al. compare Vreman with Smagorinsky and the
   [residual-based dynamic model](/methods/residual-based-dynamic-sgs-model.md):
   - In passive-tracer transport, the errors in the extrema are about
@@ -326,9 +331,9 @@ to under-dissipate (§3).
   9–10).
 
 The authors recommend Vreman with d2 for high-order wall-modelled LES
-(§6); the recommendation rests on visual comparison of profiles with DNS,
-no error norm being tabulated. It was obtained with their element-averaged
-viscosity and zero interface subgrid flux (§3).
+(§6), from profiles compared with DNS (Figs. 9–15); the paper tabulates no
+error norm. The runs use their element-averaged viscosity and zero
+interface subgrid flux (§3).
 
 ## Fluctuating viscosity and the mean stress
 
@@ -342,9 +347,9 @@ computed and subtracted from the mean-stress model.
 
 - Blind et al. (2023, §2.3) state that the test-level eddy viscosity is "a
   factor of $[(P+1)/(M+1)]^{2/3}\approx1.59$ larger"; with the printed
-  $P=5$ (the registry's $N$) and $M=3$ (here $N_f$), $(6/4)^{2/3}\approx1.31$ *(compiler
-  check, not in the sources)*, so the printed number or the printed
-  exponent is wrong. The page records the version read (arXiv
+  $P=5$ (the registry's $N$) and $M=3$ (here $N_f$) the printed formula
+  gives $(6/4)^{2/3}\approx1.31$, not 1.59 *(compiler check, not in the
+  sources)*. The Source page records the version read (arXiv
   2301.03199v1).
 - The constants in the table belong to different flows, filter-width
   definitions and codes; none of the sources calibrates the constant.
@@ -370,3 +375,4 @@ computed and subtracted from the mean-stress model.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §2, Eq. (7); §5.3.1, Figs. 18, 20, 22, Table 4.
 - [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III.B, Eq. (17); §IV; §V, Tables III, V–VII.
 - [Lv et al. (2021)](/sources/lv-2021.md) — §III A, Eqs. (13)–(15).
+- [Qi et al. (2022)](/sources/qi-2022-b.md) — §1.

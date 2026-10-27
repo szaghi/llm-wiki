@@ -9,7 +9,7 @@ year: 2022
 venue: "Nucl. Fusion 62:074004"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Nuclear_Fusion_Coelho_Global_fluid_simulation_of_plasma_turbulence_in_a_stellarato.pdf"
 tags: [plasma, numerical-dissipation]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Summary
@@ -51,7 +51,7 @@ eigenvalue analysis reproduces an edge-localized $m=4$, $n=5$ eigenmode
 whose flux-balance amplitude matches the nonlinear run; removing the
 curvature drive changes it, removing the drift-wave drive does not, so the
 authors call the mode "ballooning-like", pending a linear analysis in more
-complex geometry. The paper is peripheral to closure modelling.
+complex geometry.
 
 # Version read
 

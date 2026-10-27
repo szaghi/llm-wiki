@@ -5,7 +5,7 @@ description: "The residual-based dynamic SGS model sets the eddy viscosity from 
 status: established
 aliases: [DSGS, Dyn-SGS, dynamic sub-grid scale model, R-DSGS, T-DSGS, residual-based eddy viscosity, residual-based artificial viscosity]
 tags: [les, sgs-model, eddy-viscosity, spectral-element, numerical-dissipation]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Residual-based dynamic subgrid-scale model
@@ -119,11 +119,15 @@ atmospheric model NUMA with polynomial degree $N=4$ (§4). Its main features:
 - direct stiffness summation across elements;
 - implicit (grid) filtering.
 
-The filter width is
+The filter width is printed as
 
-$$\Delta=\frac{\min(h_x,h_y,h_z)}{N+1},$$
+$$\Delta=\frac{\min(\Delta x,\Delta y,\Delta z)}{N+1},$$
 
-with $h_x$, $h_y$, $h_z$ the element sizes (page-local). Table 1 lists
+with $\Delta x$, $\Delta y$, $\Delta z$ the paper's grid spacings
+(page-local); the values it prints for the tracer, Burgers and
+Taylor–Green cases equal the element size divided by $N$ *(compiler
+check, not in the sources)*, and the paper does not say whether the
+formula uses those values or the element sizes. Table 1 lists
 alternatives for anisotropic grids (§3.4). Time integration is a
 five-stage third-order Runge–Kutta scheme, or an implicit–explicit
 additive Runge–Kutta scheme for the density current. The authors call the
@@ -136,8 +140,8 @@ the lack of inherent numerical dissipation" (§1); see
 Reddy et al. compare the four DSGS variants with the
 [Smagorinsky model](/methods/smagorinsky-model.md) ($C_s=0.14$, 0.21 for
 the Burgers test) and the [Vreman model](/methods/vreman-model.md)
-($c\approx2.5C_s^2$). All results are a posteriori and mostly qualitative;
-the only table is of density-current front positions.
+($c\approx2.5C_s^2$). All results are a posteriori; the only table is of
+density-current front positions.
 
 - **Passive tracers in a reversing deformational flow** (§5, Figs. 2–3).
   The test transports two slotted cylinders on $80\times40$ elements.
@@ -202,7 +206,7 @@ to an implicitly (grid-)filtered solution (§2.1).
 ## Qualifications
 
 - **Version read.** The claims are those of a preprint dated 4 March 2021;
-  the 2026 version of record may differ.
+  the 2026 version of record was not read.
 - **Euler or Navier–Stokes.** The title speaks of the Navier–Stokes
   equations, but §2 solves the compressible Euler equations, and no
   molecular viscosity appears in any test.

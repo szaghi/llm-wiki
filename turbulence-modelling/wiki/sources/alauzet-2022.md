@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 450:110814"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Alauzet_Periodic_adjoints_and_anisotropic_mesh_adaptation_in_rotatin.pdf"
 tags: [mesh-adaptation, rans, turbomachinery, spalart-allmaras, numerical-dissipation]
-timestamp: 2026-10-26T20:45:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -70,7 +70,7 @@ and reference numbers on this page are those of this version.
 6. Symmetric Gauss–Seidel (SGS) relaxation of the implicit linear system: at most $k_{max}$ iterations (usually 20), stopped when the relative linear residual drops by a factor 0.01 (§4.2.4). **Stated**
 7. The RANS discrete-adjoint system has no mass matrix (infinite CFL) and is much stiffer than the flow system, the more so on finer adapted meshes. GMRES preconditioned by LU-SGS reduced the residual by only 3–5 orders after 10 000 iterations with a Krylov space of 1 000; GMRES preconditioned by 20–40 SGS passes converges with Krylov spaces up to 200, by twelve orders (§5.3). **Shown**
 8. The adjoint is discontinuous at Dirichlet boundaries; for error estimation it is replaced there by a quadratic least-squares extrapolation from the interior (§5.2). **Stated**
-9. The optimal $L^p$ continuous metric (Eq. 34) and its interpolation error (Eq. 35) are recalled from earlier work; the paper uses $L^4$ of the Mach number following Park & Balan's finding of faster boundary-layer adaptation in RANS (§6.1). **Stated**
+9. The optimal $L^p$ continuous metric (Eq. 34) and its interpolation error (Eq. 35) are cited from earlier work; the paper uses $L^4$ of the Mach number following Park & Balan's finding of faster boundary-layer adaptation in RANS (§6.1). **Stated**
 10. The goal-oriented error is bounded by an adjoint-weighted sum of $L^1$ interpolation errors of the conservative variables, with the 3D weights given explicitly (Eq. 38 and following, §6.2). **Derived** (from cited work)
 11. The turbulence equation is omitted from the goal-oriented estimate; turbulence enters only through $\mu_t$ and $\lambda_t$ (Remarks 5.1, 6.1). **Stated**
 12. Periodic remeshing takes four steps (remesh, migrate, remesh, migrate back), keeps the original domain, and needs a remesher that handles non-manifold geometry; 5 element layers are migrated, and with $N_l$ layers at least $2N_l$ layers must span the narrowest periodic width (§7.2). **Stated**

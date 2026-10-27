@@ -5,7 +5,7 @@ description: "A shock sensor or troubled-cell indicator is the switch that decid
 status: established
 aliases: [shock sensor, shock indicator, troubled-cell indicator, troubled-cell detector, discontinuity indicator, Ducros sensor, Jameson pressure sensor, Persson–Peraire indicator, KXRCF indicator, TVB minmod indicator, TENO troubled-cell indicator, filtered shock indicator]
 tags: [shock-capturing, numerical-dissipation, compressible, dg, implicit-les, boundary-layer]
-timestamp: 2026-10-27T11:02:00Z
+timestamp: 2026-10-27T15:47:00Z
 ---
 
 # Shock sensors and troubled-cell indicators
@@ -110,6 +110,17 @@ uses in the sources:
   ([Ahn et al. 2023](/sources/ahn-2023.md), §III, Eqs. 1–6; formulas on
   [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
 
+The same switch between an energy-preserving central flux and WENO runs
+two further STREAmS DNS: [Yu et al. (2022)](/sources/yu-2022-e.md),
+§2.1, switch a sixth-order kinetic-energy-preserving scheme to fifth-order
+WENO near strong compressions detected by the Ducros criterion in an
+oblique shock/boundary-layer interaction at $M_\infty=2.28$ (threshold not
+printed); [Zhang et al. (2022)](/sources/zhang-2022-b.md), §2, use a
+modified Ducros sensor with threshold 0.15 between an eighth-order
+energy-preserving flux and seventh-order WENO only in their $M_\infty=8$
+boundary layers, and apply the energy-preserving flux throughout at
+$M_\infty=0.5$ and 2, where no shocklets are expected.
+
 The Ducros sensor also switches the scheme in the in-house finite-volume
 code of [Zangeneh (2021)](/sources/zangeneh-2021.md), §II.D, for
 wall-modelled LES of supersonic boundary layers and a compression corner:
@@ -135,6 +146,48 @@ dilatation of an expansion fan then gives negative values, whereas the
 squared form flags expansion fans as it flags weak shocks; the scaled
 variant is "not easy to be generalized for different cases". Neither is
 used in their final runs.
+
+[De Vanna et al. (2022)](/sources/devanna-2022.md), §3.1.2, Eq. (8), run a
+compression-only form in the hybrid energy-preserving/WENO-Z solver URANOS
+for wall-modelled LES of an oblique shock/boundary-layer interaction at
+$M_\infty=2.28$:
+$$\Phi^{\mathrm c}=\max\left(-\frac{\nabla\cdot\boldsymbol u}{\sqrt{(\nabla\cdot\boldsymbol u)^2+|\nabla\times\boldsymbol u|^2+\epsilon}},\,0\right),\qquad \epsilon=\Big(\frac{U_\infty}{\delta_0}\Big)^2,$$
+($\Phi^{\mathrm c}$ page-local, the source's $\theta$) evaluated at cell
+interfaces; above $0.1$ the cell is "shocked" and WENO-Z replaces the
+energy-preserving flux in it and in its neighbours. The square root makes
+it the unsquared form, and the maximum discards expansions as Gao et al.'s
+signed variants do.
+
+[van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.3, Eq. (9), blend
+a fourth-order kinetic-energy- and entropy-preserving central flux with a
+third-order WENO flux, $\hat f=(1-\alpha_{\mathrm b})\hat f_{\mathrm{cent}}+\alpha_{\mathrm b}\hat f_{\mathrm{diss}}$
+($\alpha_{\mathrm b}$ page-local, the source's $\alpha$, renamed because
+$\alpha$ is the DG/FV blending factor of the registry), with a sensor
+printed "following Ducros et al." as
+$$\alpha_{\mathrm b}\big|_{\mathrm{volume}}=\frac{(\nabla\cdot\boldsymbol u)^2+|\nabla\times\boldsymbol u|^2}{(\nabla\cdot\boldsymbol u)^2+(U_\infty/\delta_0)^2},$$
+whose $U_\infty/\delta_0$ term, they state, "shields the boundary layer"
+from artificial dissipation near the wall; in the first three irregular
+cells next to their immersed boundary $\alpha_{\mathrm b}$ is prescribed by
+hand, independent of the solution. Their results are reported with
+constant interior values ($\alpha_{\mathrm b}=0.0125$ in a channel,
+$0.02$ in hypersonic cases) and irregular-cell triplets (§3.1–3.2); see
+the qualification below.
+
+**Modal sensor multiplied by a compression factor.**
+[Tonicello et al. (2022)](/sources/tonicello-2022.md), §2.2, Eq. (2.10),
+App. B, switch the bulk artificial viscosity of their spectral-difference
+DNS of a compression–expansion ramp with the Persson–Peraire-type modal
+sensor $s_{\mathrm{modal}}$ (truncation to degree $N-1$, characteristic
+variables after Lodato; thresholds self-calibrated on a manufactured
+solution) multiplied by a Ducros-type factor built from element averages
+$\{\cdot\}_e$ (page-local):
+$$s_e^{\mathrm D}=s_{\mathrm{modal}}\times\frac{\big[\tfrac12\big(|\{\nabla\cdot\boldsymbol u\}_e|-\{\nabla\cdot\boldsymbol u\}_e\big)\big]^2}{\{\nabla\cdot\boldsymbol u\}_e^2+\{\omega_k\omega_k\}_e+\epsilon},$$
+with $\epsilon$ "of order machine epsilon squared". The numerator is
+non-zero only in compression; the authors state that the factor keeps the
+viscosity off at walls and in strongly vortical regions with negligible
+compression, and the mean viscosity is non-zero only near the shock
+(§3.2, Fig. 12; scheme on
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
 
 ## Modal-decay and gradient sensors in element methods
 
@@ -326,6 +379,30 @@ pattern and stay with TENO. Li & Fu (2024, §3.2.3, Eqs. 59–61) reuse the
 same pattern for five- to seven-point adaptive TENO in compressible
 multiphase flow.
 
+## Schemes that replace the sensor
+
+**Boundary-variation selection.** [Deng et al. (2022)](/sources/deng-2022.md),
+§1, state that the performance of hybrid central/upwind schemes "relies on"
+the shock indicator and, citing a comparison of indicators, that none is
+universally best; their $P_nT_m$-BVD-AD finite-volume schemes need no
+explicit sensor: a cell takes a THINC jump reconstruction instead of its
+polynomial when that lowers its total boundary variation (the sum of the
+face jumps), and the dissipation-adjusting stage acts only on faces where
+neither neighbour has switched (§3.2, Eqs. 17–25; scheme on
+[WENO](/methods/weno-scheme.md)).
+
+**Nonlinear weights as the detector.** In the weighted compact nonlinear
+scheme WCNS-T of [Ma et al. (2022)](/sources/ma-2022.md), §2.2, Eqs.
+(21)–(29), the discontinuity detection is carried by the Z-type nonlinear
+weights of four compact sub-interpolations, with the global indicator
+$|\mathrm{IS}_0+3\mathrm{IS}_1-3\mathrm{IS}_2-\mathrm{IS}_3|$ and
+third-derivative-including smoothness indicators on four-point stencils;
+with idealized weights (zero on stencils that cross the jump) the
+tri-diagonal interpolation system splits into two independent systems on
+the two sides of a discontinuity, which the authors call the
+shock-capturing mechanism, so no switch between compact and explicit
+interpolation families is needed (the paper does not call this a sensor).
+
 ## Filtering the field before sensing
 
 [Gao et al. (2022)](/sources/gao-2022.md), §3.2, a FLEXI implicit LES of
@@ -398,6 +475,23 @@ the hybrid scheme (§3.2, §5.3.1). The resulting interaction is on
   *(compiler check, not in the sources)*.
 - The Jameson threshold of Gao et al. (2022) is not printed, nor is
   Fernandez et al.'s sensor formula in Klose et al. (2025).
+- **Printed form of van Noordt et al. (2022), Eq. (9).** As printed, the
+  vorticity sits in the numerator together with the dilatation and the
+  shielding term $(U_\infty/\delta_0)^2$ in the denominator. Where
+  $\nabla\cdot\boldsymbol u\approx0$ the expression reduces to
+  $|\nabla\times\boldsymbol u|^2/(U_\infty/\delta_0)^2$, which is not
+  bounded by 1 and is not small where the vorticity is of order
+  $U_\infty/\delta_0$ or larger, as in near-wall shear *(compiler check,
+  not in the sources)*; the paper does not state a clipping or how the
+  sensor combines with the constant values $\alpha_{\mathrm b}$ it reports.
+  The form differs from the Ducros factor $\Phi_i$ above, in which the
+  vorticity enters the denominator.
+- Deng et al.'s (2022) statement that no indicator is universally best is
+  a citation, not a comparison run in the paper; Ma et al.'s (2022)
+  decoupling at discontinuities is derived under idealized weights
+  (exactly zero on stencils that cross the jump, proportional to the
+  linear weights otherwise), which the authors call "a theoretical
+  analysis".
 
 # Citations
 
@@ -425,3 +519,10 @@ the hybrid scheme (§3.2, §5.3.1). The resulting interaction is on
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III D, §IV C–D (troubled-cell detectors of DG limiting, cited); §IV A (contact discontinuities).
 - [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §2.2.1, Eqs. (24)–(26) (relative total-variation limiter); §3.1, §3.2.1 (threshold and stability); §4.
 - [Han et al. (2022)](/sources/han-2022-c.md) — §3.2.2, Table 4 (comfort-zone indicator of WENO-K).
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §3.1.1–3.1.2, Eq. (8) (compression-only modified Ducros sensor, threshold 0.1, WENO-Z in the cell and its neighbours).
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.3, Eqs. (8)–(9) (Ducros-type blending sensor with boundary-layer shielding, prescribed irregular-cell values); §3.1–3.2 (constant dissipation factors).
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.2, Eq. (2.10), App. B, Eq. (B3) (modal sensor times compression-only Ducros factor); §3.2, Fig. 12.
+- [Yu et al. (2022)](/sources/yu-2022-e.md) — §2.1 (Ducros criterion switching KEP to WENO5 in STREAmS).
+- [Zhang et al. (2022)](/sources/zhang-2022-b.md) — §2 (modified Ducros sensor, threshold 0.15, at $M_\infty=8$ only).
+- [Deng et al. (2022)](/sources/deng-2022.md) — §1 (dependence of hybrid schemes on the indicator); §3.2, Eqs. (17)–(25) (BVD selection instead of a sensor).
+- [Ma et al. (2022)](/sources/ma-2022.md) — §2.2, Eqs. (21)–(29) (nonlinear weights and decoupling of the compact system at a discontinuity).

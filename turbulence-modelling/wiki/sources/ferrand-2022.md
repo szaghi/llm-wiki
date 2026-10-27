@@ -8,8 +8,8 @@ authors: [Ferrand R., Sahraoui F., Galtier S., Andrés N., Mininni P., Dmitruk P
 year: 2022
 venue: "Astrophys. J. 927:205"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_The_Astrophysical_Journal_Ferrand_An_In-depth_Numerical_Study_of_Exact_Laws_for_Compressible_H.pdf"
-tags: [mhd, plasma, energy-cascade, compressible, dns, decaying-turbulence]
-timestamp: 2026-10-26T05:06:00Z
+tags: [mhd, plasma, energy-cascade, compressible, dns, isotropic-turbulence]
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -105,7 +105,7 @@ internal) energy cascade rate.
 - **Ion inertial length of Run I-512 (§4).** "$d_i=0.05/L_0$", where §3.1 and Table 1 give $d_i=0.02L_0$ for the other runs; a length divided by $L_0$ is not a length.
 - **CGL closure (§4).** "Chew, Goldenberg and Low"; the reference list prints Goldberger.
 - **$\mu_0$ factor in Eq. 23** *(compiler check, not in the sources)*. With $\boldsymbol v_A=\boldsymbol B/\sqrt{\mu_0\rho}$ (§2.2) and $\boldsymbol d_\eta=\eta\nabla^2\boldsymbol B$ (Eq. 6), each left-hand term of Eq. 23, e.g. $\rho\boldsymbol v_A\cdot\boldsymbol d_\eta^\dagger/\sqrt{\rho^\dagger}=\sqrt{\rho/\rho^\dagger}\,\boldsymbol B\cdot\boldsymbol d_\eta^\dagger/\sqrt{\mu_0}$, carries $1/\sqrt{\mu_0}$, and the four terms sum to $\frac{1}{2\sqrt{\mu_0}}\langle(\sqrt{\rho/\rho^\dagger}+\sqrt{\rho^\dagger/\rho})(\boldsymbol B\cdot\boldsymbol d_\eta^\dagger+\boldsymbol B^\dagger\cdot\boldsymbol d_\eta)\rangle$; the right-hand side prints $1/(2\mu_0)$. The two sides agree if the resistive term of the $\boldsymbol v_A$ equation (Eq. 17) is $\boldsymbol d_\eta/\sqrt{\mu_0\rho}$ rather than the printed $\boldsymbol d_\eta/\sqrt\rho$.
-- **Forcing label (§5.1).** "$-\partial_t\langle R_E+R_E^\dagger\rangle\equiv\mathcal F_{F21}$" in the A18 discussion, where $\mathcal F_{A18}$ is meant; harmless since Eq. 25 makes them equal.
+- **Forcing label (§5.1).** "$-\partial_t\langle R_E+R_E^\dagger\rangle\equiv\mathcal F_{F21}$" in the A18 discussion, where the A18 term $\mathcal F_{A18}$ stands; Eq. 25 makes the two equal.
 
 # Notation map
 

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Mesh adaptation for turbulent-flow simulation"
-description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an error estimate or refinement criterion in a turbulent-flow computation: Hessian and metric criteria for RANS, Hessians scaled by DG error estimators, time-averaged criteria for hybrid RANS/LES, LES modelling-residual and truncation-error estimators, error transport equations, and refinement as a dissipation control."
+description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an error estimate or refinement criterion in a turbulent-flow computation: Hessian and metric criteria for RANS, Hessians scaled by DG error estimators, time-averaged criteria for hybrid RANS/LES, LES modelling-residual and truncation-error estimators, error transport equations, output-based estimates for chaotic flows, and refinement as a dissipation control."
 status: established
 aliases: [adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation, Hessian scaling, error transport equations, ETE]
 tags: [mesh-adaptation, hybrid-rans-les, rans, dg, numerical-dissipation, wmles]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Mesh adaptation for turbulent-flow simulation
@@ -107,8 +107,8 @@ the high-lift version), as the first stage of a RANS-then-LES wake computation.
 Their choices differ from Alauzet et al.'s turbomachinery ones:
 
 - *Sensor and norm.* A kinetic-energy sensor $\tfrac12\lvert\boldsymbol u\rvert^2+k$
-  in the $L^2$ norm, which, as recalled there, gives more wake resolution
-  than $L^4$ (App. A).
+  in the $L^2$ norm, which, citing earlier work, they state gives more
+  wake resolution than $L^4$ (App. A).
 - *Hessian.* Recovered from a P2 reconstruction of the solution by double
   $L^2$ projection or a Green formula, with absolute eigenvalues.
 - *Loop.* Solve, metric, mesh, interpolate, three to five times per
@@ -150,9 +150,9 @@ with two time-averaged indicators computed on momentum.
   of a least-squares fit $E^{(q)}\simeq C_Eq^{-\sigma}$ of the modal energy
   against the modal degree $q$, excluding $q=0$, so computable only for
   $N\ge2$. The threshold is $\sigma=5/3$, the inertial-range slope,
-  following Chapelier and Lodato's spectral-element dynamic model; as
-  recalled there, the threshold was evaluated a priori from Taylor–Green
-  DNS at $Re=5000$ (§3.2). Elements with $\sigma>5/3$ are p-enriched (up
+  following Chapelier and Lodato's spectral-element dynamic model, in which,
+  as Basile et al. cite it, the threshold was evaluated a priori from
+  Taylor–Green DNS at $Re=5000$ (§3.2). Elements with $\sigma>5/3$ are p-enriched (up
   to $N=3$), the others h-refined to the size
   $h^*=h(\epsilon^*/\epsilon)^{1/m}$ with $m=N+1$ if smooth and 1
   otherwise ($\epsilon$, $\epsilon^*$ the element and target errors,
@@ -168,7 +168,7 @@ higher cost per degree of freedom and aliasing instabilities (§1).
 ## LES modelling residual (Blind et al. 2023)
 
 [Blind et al. (2023)](/sources/blind-2023.md) transfer the grid-adaptation
-method of Toosi and Larsson (as recalled there, §1–2) from finite-difference
+method of Toosi and Larsson (as they cite it, §1–2) from finite-difference
 and finite-volume codes to the
 [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md). The
 version read is the arXiv v1, whose title differs from the published one.
@@ -305,8 +305,8 @@ read is arXiv v1.
 - *Criterion.* The truncation error, estimated by $\tau$-estimation, is the
   preferred sensor. It "targets the source of the discretisation error", is
   cheap compared with adjoint techniques, and comes as a by-product of a
-  multigrid cycle. As recalled from the group's earlier work, the
-  truncation error controls all functional errors (§3.6.1–3.6.2).
+  multigrid cycle. Citing the group's earlier work, the authors state
+  that the truncation error controls all functional errors (§3.6.1–3.6.2).
 - *Steady procedure.* Converge at a moderate degree until the residual is
   below the truncation-error threshold. Then estimate the truncation error
   for all lower degrees and choose, in one step, the lowest degree per
@@ -341,7 +341,13 @@ level, energy is "dissipated significantly more than expected for the
 $\Delta x_{\max}$ employed", and small-scale structure is lost when gas
 crosses into coarser levels. The two sources reach the same design
 conclusion from different flows: avoid changing the cell size along the
-path of the turbulence.
+path of the turbulence. [van Noordt et al. (2022)](/sources/vannoordt-2022.md)
+see a third effect in immersed-boundary WMLES on block-structured octree
+grids: coarse–fine interfaces (from $\Delta x$ to $2\Delta x$) partly
+reflect the acoustic radiation of the transition region back toward the
+boundary layer of a Mach 6 shock/boundary-layer interaction, visible in
+the wall-normal Reynolds stress and negligible on the means (§3.3.2, Fig.
+24; see [immersed boundary methods](/methods/immersed-boundary-method.md)).
 
 **Time-averaged criteria and static meshes.** Instantaneous refinement
 follows every eddy and keeps changing the mesh. Mozaffari et al. (2022,
@@ -661,6 +667,75 @@ Ollivier-Gooch as cited; the primal polynomial degree is $N=p-1$).
   estimation ($\tau$-estimation), the sensor of
   [Ferrer et al. (2023)](/sources/ferrer-2023.md) above.
 
+## Output-based adaptation of chaotic unsteady flows (Fidkowski 2022)
+
+[Fidkowski (2022)](/sources/fidkowski-2022.md) adapts high-order DG meshes
+(Roe flux, BR2 viscous flux, third-order modified extended BDF in time,
+$N=2$ by default) for time-averaged outputs of chaotic flows without an
+unsteady adjoint, which is unstable in all three test cases (Figs. 4, 11,
+17). The output error is estimated by the adjoint-weighted residual
+on the space enriched to degree $N+1$. Writing the adjoint and the
+residual as time mean plus fluctuation, the author assumes that the
+correlation of the fluctuations is negligible for chaotic statistically
+steady flows, so that only the time-mean adjoint is needed (§4, Eqs.
+17–18). That adjoint is replaced by the steady adjoint of a
+[field-inversion-corrected](/methods/field-inversion-machine-learning.md)
+Spalart–Allmaras RANS fitted to the averaged unsteady state, restricted
+to the Navier–Stokes components; this works because the augmented system
+keeps the original residuals additively (§2.2, §4, Eqs. 7, 23). Two
+estimates follow:
+
+- **E1** weights the time-averaged fine-space residual of the unsteady
+  run, accumulated during the run, by the surrogate adjoint;
+- **E2** is the steady adjoint-weighted residual of the corrected RANS
+  system alone, which allows several cheap steady adaptation passes per
+  unsteady run but measures the error of the surrogate, not of the
+  unsteady mesh (§4, Eq. 23; §5.2).
+
+Elemental indicators $|\delta\Psi_e^\top\delta R_e|$ (page-local: fine
+adjoint minus its coarse projection, times the fine residual of element
+$e$) drive either fixed-fraction $p$-adaptation (top 20% of elements) or
+MOESS, a metric-based anisotropic optimization that minimizes the output
+error at fixed degrees of freedom with error and cost models sampled
+locally (§5.1–5.2, Eq. 24). Their sum is called conservative: it avoids
+unpredictable cancellation between elements in chaotic simulations but
+is not a bound (§5.1). Only two to four unsteady runs per adapted mesh are
+needed, with no stored states or checkpointing (§5.2–5.3).
+
+Results on 2-D airfoils at $M=0.2$ (§6, Tables 1–3):
+
+- NACA 0012 at $7^\circ$, $Re=10^4$ (unsteady laminar separation;
+  Navier–Stokes with no model): field-inversion MOESS with E1 gives a mean
+  lift of 0.7355 at 9000 degrees of freedom, estimate 0.0057, actual error
+  0.0045; with E2, 0.7175, estimate 0.0087, actual 0.0225; E1 estimates
+  are "reasonably accurate (within a factor of 2)" (Table 1, Fig. 7);
+- NACA 0012 at $Re=2\times10^4$ (transitional, with a
+  [laminar separation bubble](/definitions/laminar-separation-bubble.md)):
+  E1 with the adjoint-weighted inversion objective is best, 0.6569 at
+  20,250 degrees of freedom with estimate 0.0024 and actual error 0.0011
+  (Table 2); residual-based $p$-refinement oscillates away from the
+  converged value in its last iterations;
+- a high-lift airfoil at $17^\circ$, $Re=10^6$, with "a variation of
+  the [detached-eddy simulation](/methods/detached-eddy-simulation.md)
+  (DES) model" in which the mesh-based wall-distance adjustment is replaced
+  by the fixed attenuation $d=d_{\max}\tanh(d/d_{\max})$, $d_{\max}$ 2% of
+  the chord, so that the model does not change as the mesh adapts (§2.1,
+  Eq. 3): the estimates over-predict the error by about a factor of two on the
+  finest meshes, which the author attributes to the lack of cancellation
+  in the conservative sum (Table 3, Fig. 18); from a poor isotropic
+  13,500-degree-of-freedom start the method recovers in about three
+  iterations (Fig. 19).
+
+In every case uncorrected RANS-based MOESS converges to a wrong lift with
+small error estimates (modelling error; see
+[model-form uncertainty](/definitions/model-form-uncertainty.md)), and
+residual-based adaptation, "distracted" by wake and far-field residuals,
+performs poorly (§7). Output-adapted meshes for the unsteady flows carry
+thicker, more isotropic boundary-layer refinement and refinement where the
+upper-surface laminar flow breaks into vortices, whereas RANS-adapted
+meshes are highly anisotropic along the surface (Fig. 9). The method is
+stated to extend directly to 3-D, not attempted for cost (§7).
+
 ## Qualifications
 
 - **Scope of each criterion.** Mozaffari et al. test their Hessian
@@ -669,6 +744,12 @@ Ollivier-Gooch as cited; the primal polynomial degree is $N=p-1$).
   Alauzet et al.'s goal-oriented estimate omits the turbulence equation;
   Basile et al.'s $5/3$ threshold identifies a modal degree with a Fourier
   wavenumber, which the paper presents as a "similarity" (§3.2).
+- **Fidkowski (2022)** calls the $Re=10^4$ airfoil case "low-Reynolds
+  number large-eddy simulation" (§7) while §6.1 solves the compressible
+  Navier–Stokes equations with no subgrid model, in 2-D; the negligible
+  correlation of adjoint and residual fluctuations (§4) is assumed, not
+  checked against a regularized unsteady adjoint; averaging lengths and
+  time steps are fixed a priori and not printed.
 - **Grid dependence is kept, not removed.** Mozaffari et al. (2022, §1,
   §3) average the criterion because the resolved/modelled split of hybrid
   RANS/LES depends on the cell size; the converged static mesh still sets
@@ -743,7 +824,7 @@ Ollivier-Gooch as cited; the primal polynomial degree is $N=p-1$).
   second invariants of the strain- and rotation-rate tensors, taken from
   the machine-learning mesh adaptation of Tlales et al. as they cite it,
   and normalize them by averages over under-resolved elements instead of
-  thresholds, which they recall to be problem-dependent (Pang et al.).
+  thresholds, which they state, citing Pang et al., are problem-dependent.
   The mesh does not change.
 - **Claims and slips in Schotte et al. (2026).**
   - *Eq. 20.* The element Hessian is written as $d_K^{2/d}$ times the
@@ -794,3 +875,5 @@ Ollivier-Gooch as cited; the primal polynomial degree is $N=p-1$).
 - [Wang et al. (2013)](/sources/wang-2013.md) — §2 (survey, Q3, Q6), §5.2, Figs. 16–19 (NACA 0012 adaptation), §4.8 (RAE 2822 case 9 conditions), §5.4, Fig. 23, Table V (RAE 2822 RANS), §6 (conclusions, pacing items, RANS robustness).
 - [Wang & Roy (2023)](/sources/wang-2023.md) — journal pre-proof: §3.1, Eqs. 11–16 (error transport equations, expected orders), §4.1, Table 1, Fig. 2, §4.2, §5.
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §II.B (invariants from mesh-adaptation work, normalization instead of thresholds).
+- [Fidkowski (2022)](/sources/fidkowski-2022.md) — §2.1–2.3, Eqs. 2–9 (DG, simplified DES, augmented system, adjoint); §4, Eqs. 14–23 (time-averaged adjoint-weighted residual, E1 and E2); §5.1–5.3, Eq. 24, Fig. 2 (indicators, $p$-adaptation, MOESS, loop); §6, Tables 1–3, Figs. 4–19; §7.
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §3.3.2, Fig. 24 (octree coarse–fine interfaces reflect acoustic waves).

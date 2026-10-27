@@ -5,7 +5,7 @@ description: "In magnetized fusion plasmas, ion-scale and electron-scale micro-t
 status: established
 aliases: [multi-scale plasma turbulence, cross-scale coupling, TEM/ETG interaction, ion-scale/electron-scale interaction, scale separation assumption]
 tags: [plasma, dns, energy-cascade]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-27T15:48:00Z
 ---
 
 # Cross-scale interaction in plasma turbulence
@@ -86,13 +86,13 @@ the gradients balances "the collisional dissipation in a steady state"
   run, ETG-driven zonal flows suppress transport after
   $tv_{ti}/R_0\ge50$ (stated, not shown); in the multi-scale run there are
   no significant zonal flows, so the authors attribute ETG suppression to
-  shearing by TEM eddies themselves — in contrast to earlier work (Asahi et
-  al. 2014, as recalled) attributing it to TEM-driven zonal flows (Results).
+  shearing by TEM eddies themselves — in contrast to the earlier work they cite
+  (Asahi et al. 2014), which attributes it to TEM-driven zonal flows (Results).
 
 ## Entropy-transfer diagnosis
 
 The interaction is quantified with gyrokinetic nonlinear entropy transfer
-(after the authors' earlier work, as recalled). For a triad
+(after the authors' earlier work, which they cite). For a triad
 $\boldsymbol k+\boldsymbol p+\boldsymbol q=0$ the transfer function
 $\mathcal T_{\boldsymbol k}^{\boldsymbol p,\boldsymbol q}$ (page-local; the
 source writes $J$) is the entropy gained by mode $\boldsymbol k$ through the
@@ -133,7 +133,7 @@ dominates even in the multi-scale run. Suppression of the near-marginal TEM
 by ETG upshifts the temperature ratio at which TEM-dominated flux rises from
 $T_e/T_i\sim2$ (ion-scale run) to $\sim3$ (multi-scale run), which the
 authors liken to the Dimits upshift of the critical ion temperature gradient
-by zonal flows (as recalled). The ETG contribution survives over
+by zonal flows (ref. [38], which they cite). The ETG contribution survives over
 $1<T_e/T_i<3$, a wider range than previously thought (Results, p. 5). The
 authors place reactor-relevant ratios at $1<T_e/T_i<2$ and note that ITER's
 first pre-fusion plasma operation can exceed 3 with electron cyclotron
@@ -148,7 +148,7 @@ to destroy large-scale structures (zonal flows, current sheets, resonances),
 a "mutual conjunction" beyond the single-scale picture of injection, cascade
 and dissipation. They note that TEM reduction by ETG contrasts with the
 earlier ITG/ETG multi-scale results but resembles the suppression of
-microtearing modes by ETG (as recalled), and that alpha particles, excluded
+microtearing modes by ETG reported in the work they cite, and that alpha particles, excluded
 here, are expected to interact weakly because they propagate in the opposite
 direction.
 
@@ -156,9 +156,9 @@ direction.
 
 - **One configuration.** The evidence is one flux-tube configuration with a
   temperature scan, compared with the authors' own single-scale runs; there
-  is no experimental validation. The Alcator C-Mod work they cite (ref. [3],
+  is no experimental validation. The authors cite Alcator C-Mod work (ref. [3],
   Howard et al., titled "Enhanced heat loss due to cross-scale coupling")
-  reports the opposite sign of effect; the authors state that they study the regime
+  and state that they study the regime
   $T_e>T_i$, $R_0/L_{Te}>R_0/L_{Ti}$, "which has not yet been analysed in
   existing devices" (Methods, p. 6).
 - **Printed phase velocities.** The text gives toroidal phase velocities

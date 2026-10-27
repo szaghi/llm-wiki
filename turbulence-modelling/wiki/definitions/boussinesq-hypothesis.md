@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -303,6 +303,66 @@ and treatments of the trace; translated to the registry they agree.
   $k$-$\varepsilon$, $k$-$\omega$ and $k$-$L$ models as
   $\mu_t=0.09\langle\rho\rangle k^2/\varepsilon$, $\langle\rho\rangle k/\omega$ and
   $0.09\langle\rho\rangle L\sqrt k$ (§2.2.2.1).
+  Sandberg & Zhao (2022) print the same definition and the same form for
+  the full ten-tensor expansion (Eqs. 1–2; on the
+  [explicit algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md)
+  page), with the same trace inconsistency (Qualifications), and the same
+  two eddy viscosities $0.09\langle\rho\rangle k^2/\varepsilon$ and
+  $\langle\rho\rangle k/\omega$ ([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md),
+  §3.2, Eqs. 1–2).
+- **RANS, incompressible, split into a Boussinesq and an extra
+  anisotropy.** Cherroud et al. (2022) use the registry convention,
+  $R_{ij}=\tfrac23k\delta_{ij}+2kb_{ij}$, and write the Boussinesq part of the
+  anisotropy as $2kb^0_{ij}=-2\nu_t\langle S_{ij}\rangle$, i.e.
+  $b^0_{ij}=-\nu_t\langle S_{ij}\rangle/k$, with $\nu_t$ from
+  [$k$-$\omega$ SST](/methods/k-omega-sst-model.md); the learned correction
+  $b^\Delta_{ij}$ is added to it ([Cherroud et al. (2022)](/sources/cherroud-2022.md),
+  §2.1, Eqs. 3–5), the split of Oulghelou et al. below.
+- **RANS, incompressible, with a corrected eddy viscosity in a modified
+  pressure.** Brenner et al. (2022) write
+  $R_{ij}=\tfrac23k\delta_{ij}-\nu_t(\partial_j\langle u_i\rangle+\partial_i\langle u_j\rangle)$,
+  the registry form, absorb $\tfrac23k$ into the modified pressure
+  $p/\rho+\tfrac23k$ and write the momentum equation with
+  $\partial_j\big((\nu+\nu_t)\partial_j\langle u_i\rangle\big)$ only; their
+  data-assimilated closure replaces $\nu_t$ by $\beta(\boldsymbol x)\nu_t$,
+  with $\nu_t$ frozen from a converged [$k$-$\varepsilon$](/methods/k-epsilon-model.md)
+  solution and $\beta$ the spatial multiplier (the source's $\alpha$)
+  ([Brenner et al. (2022)](/sources/brenner-2022.md), §2.1.1, Eqs. 1–7;
+  see Qualifications for the term the momentum equation omits, and
+  [field inversion](/methods/field-inversion-machine-learning.md)).
+- **RANS, compressible, with the quadratic constitutive relation.** He et
+  al. (2022) write the Reynolds stress in the $-\rho\langle u_i'u_j'\rangle$
+  convention as $2\rho\nu_tS^d_{ij}-\tfrac23\rho k\delta_{ij}$ and its QCR form
+  (Spalart 2000) with $c_{cr1}=0.3$ and the normalized rotation
+  $O_{ij}$ of the [Spalart–Allmaras page](/methods/spalart-allmaras-model.md);
+  the $k$ of the isotropic term, absent from SA, is approximated after
+  Rumsey et al. as $k=3c_{cr2}\nu_t\sqrt{2\Omega_{ij}\Omega_{ij}}=3c_{cr2}\nu_t\lvert\langle\Omega\rangle\rvert$
+  with $c_{cr2}=1.25$, which they call QCR2013V
+  ([He et al. (2022)](/sources/he-2022-b.md), §2.1, Eqs. 2–3, 5; the source's
+  $W_{ij}$ is the rotation tensor). The isotropic stress it adds,
+  $\tfrac23k=2.5\,\nu_t\lvert\langle\Omega\rangle\rvert$, has the coefficient of the
+  QCR2013 term $C_{cr2}\nu_t\lvert S^d\rvert$, $C_{cr2}=2.5$, which Li &
+  Liu (2022, §2.3) cite, with the rotation magnitude in place of the strain magnitude
+  *(compiler check, not in the sources)*.
+- **LES, compressible, with a Yoshizawa or a transported trace.** Qi et
+  al. (2022) write the deviatoric Favre subgrid stress as
+  $-2\mu_{\mathrm{sgs}}$ times the deviatoric filtered strain, with
+  $\mu_{\mathrm{sgs}}=\bar\rho C_{sm}\Delta^2\lvert\tilde S\rvert$ ($C_{sm}$ the
+  registry's $C_s^2$ *(compiler check, not in the sources)*), and recall the
+  Yoshizawa trace $\tau_{kk}=2C_I\bar\rho\Delta^2\lvert\tilde S\rvert^2$, the
+  registry's positive-trace convention, as Volpiani (2024) below
+  ([Qi et al. (2022)](/sources/qi-2022-b.md), §2, Eqs. 2.11–2.15). Their
+  one-equation model replaces the Yoshizawa trace by $2\bar\rho k_{\mathrm{sgs}}$
+  from a transported $k_{\mathrm{sgs}}$ and fixes $C_{sm}$ locally by matching
+  the anisotropic part of the energy flux (§3.2, Eq. 3.21; see the
+  [dynamic procedure](/methods/dynamic-procedure.md) page).
+- **LES and RANS of a compressible ramp, opposite sign.** Tonicello et al.
+  (2022) define the stress as $\bar\rho\tilde u_i\tilde u_j-\overline{\rho u_iu_j}$,
+  the registry's Favre $\tau_{ij}$ with the opposite sign, and write its
+  Boussinesq form as $2\bar\rho\nu_t\tilde S^d_{ij}-\tfrac23\bar\rho k\delta_{ij}$
+  for both a filter and a Favre time average
+  ([Tonicello et al. (2022)](/sources/tonicello-2022.md), §4, Eqs. 4.4,
+  4.7); their a priori test of it is below.
 
 ### A traceless Reynolds stress
 
@@ -340,8 +400,8 @@ closure issue", i.e. a coefficient choice
 Reynolds stress depends only on the local mean velocity gradient, the
 Cayley–Hamilton theorem gives an exact finite basis: the anisotropy is a
 combination $b_{ij}=\sum_ng^{(n)}T^{(n)}_{ij}$ of the ten integrity-basis
-tensors of Pope (1975), as recalled by Duraisamy et al. (2019, §2, §5.3,
-Eq. 11) and Duraisamy (2021, §III.A, Eq. 4). The Boussinesq hypothesis keeps
+tensors of Pope (1975), which Duraisamy et al. (2019, §2, §5.3, Eq. 11)
+and Duraisamy (2021, §III.A, Eq. 4) cite. The Boussinesq hypothesis keeps
 only the first term, $T^{(1)}\propto S_{ij}$; the
 [tensor-basis neural network](/methods/tensor-basis-neural-network.md) and
 the quadratic constitutive relation of the SA page add higher terms.
@@ -379,9 +439,8 @@ when the filter is positive (§2.1).
 
 **Misalignment.** Agrawal et al. (2022) build their model on the statement
 that the alignment of the subgrid stress with the resolved strain is invalid
-locally, as a priori analyses of DNS show; they quote the a priori
-misalignment results of Bardina et al. and of Meneveau & Liu as recalled in
-their introduction. On filtered channel DNS at $Re_\tau=395$ and $2000$ their
+locally, as a priori analyses of DNS show; their introduction cites the
+a priori misalignment results of Bardina et al. and of Meneveau & Liu. On filtered channel DNS at $Re_\tau=395$ and $2000$ their
 non-Boussinesq [dynamic tensor-coefficient Smagorinsky model](/methods/dynamic-tensor-coefficient-smagorinsky-model.md)
 correlates better with the exact stress than the dynamic Smagorinsky model,
 most of all near the wall, while the two models have identical dissipation
@@ -422,7 +481,7 @@ stress; the second is governed by the correlation between stress and
 resolved strain, which in filtered turbulence is "of order 20% or less" but
 equals one, or nearly so, for an eddy-viscosity model. Getting the transfer
 right therefore requires a smaller viscosity than getting the stress right.
-As recalled from Jiménez & Moser, the dynamic Smagorinsky model gives
+Citing Jiménez & Moser, they state that the dynamic Smagorinsky model gives
 channel-flow subgrid stresses "nearly five times smaller than the true
 filtered stress" ([Haering et al. (2022)](/sources/haering-2022.md), §II B,
 pp. 5–6). They derive the split
@@ -507,6 +566,22 @@ show that the mean flow can be accurate while the Reynolds stresses are
 wrong, "as long as the Reynolds force vector is correctly represented"
 (§V C, Figs. 16–19).
 
+Brenner et al. (2022) use the same indicator of Schmitt (the source's
+$\rho_{RS}$, with the anisotropic stress and the mean strain), equal to one
+for aligned tensors, with Schmitt's threshold 0.86 for alignment, which
+"in the case of vectors, corresponds to an angle of approximately 30°".
+After assimilating averaged LES velocity into a spatial multiplier
+$\beta(\boldsymbol x)$ of a frozen $k$-$\varepsilon$ eddy viscosity on the
+periodic hill at $Re=10\,595$, the mean velocities "definitely" improve
+but the alignment is "neither considerably nor consistently improved",
+remaining comparable to the baseline RANS; on synthetic data from a
+prescribed multiplier the velocity is recovered while the multiplier is
+not, so the inverse problem is non-unique
+([Brenner et al. (2022)](/sources/brenner-2022.md), §2.11, Eq. 42, §3.2,
+§3.5, Figs. 6–7, 13; see [periodic hill](/benchmarks/periodic-hill.md)).
+This agrees with Cato et al.'s finding that a misaligned
+Boussinesq-constrained correction can fit the mean flow.
+
 **Corrections inside and outside the hypothesis, in a shock interaction.**
 Fanizza et al. (2025) compare four corrections of the compressible
 [Spalart–Allmaras model](/methods/spalart-allmaras-model.md), inferred by
@@ -559,7 +634,7 @@ vortices; yet it underpredicts $k$ in the passage vortex and overpredicts
 the peak secondary loss more than SST (48% against 34%)
 ([Morsbach et al. (2024)](/sources/morsbach-2024.md), §3.3, §4.2, Figs. 4,
 10, 14–15; see the [SST page](/methods/k-omega-sst-model.md)). Tang et al.
-(2023) find the same restriction in a standard $k$-$\varepsilon$ model, whose
+(2023) find the same restriction in their baseline linear $k$-$\varepsilon$ model, whose
 anisotropy on the periodic hill lies close to the plane-strain line of the
 barycentric map at all stations, with the normal components far from DNS
 (§III C, Figs. 7–8; see [k-ε models](/methods/k-epsilon-model.md)).
@@ -581,7 +656,7 @@ fully turbulent Reynolds-stress model is nevertheless "only slightly more
 accurate" than SST for corner separation
 ([Liu et al. (2024)](/sources/liu-2024.md), Introduction, Conclusions).
 Bouhafid et al. (2024) choose a Reynolds-stress model for an aircraft wake
-because, as they recall from the literature, the Reynolds stress and the
+because, they state citing the literature, the Reynolds stress and the
 mean strain are misaligned in wing-tip vortices owing to rotation
 ([Bouhafid et al. (2024)](/sources/bouhafid-2024.md), §2.2; cited, not
 shown). Pacciani et al. (2025) recall that linear eddy-viscosity models
@@ -603,6 +678,82 @@ velocity deformation and the turbulent heat flux rarely with the
 temperature gradient, and the turbulent Prandtl number took values between
 0.4 and 4 instead of a constant of about 0.9 (§3.2.3, §3.3). See
 [turbine cascades](/benchmarks/turbine-cascade.md).
+
+Sandberg & Zhao (2022) add, in their review of data-driven RANS closures,
+that the hypothesis is invalid near the wall even in channel, pipe and
+boundary-layer flows because of Reynolds-stress anisotropy, while the
+mean flow is still obtainable from traditional models on a fine enough
+near-wall grid; that the secondary flow of a square duct is driven by the
+imbalance of the normal stresses and is "clearly beyond the scope of
+linear eddy-viscosity models", quadratic models not generally ensuring it
+either (citing Modesti 2020, with Speziale et al. 1992 as a case of
+adequate results); and that stress–strain misalignment in wakes and a
+non-constant turbulent Prandtl number in cooling flows defeat the linear
+stress and the gradient-diffusion heat flux alike
+([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md), §2.1–2.3).
+Their jet-in-crossflow illustration (jet Reynolds number 12 500 on the jet
+diameter, $Re_\tau=500$ upstream, blowing ratio 0.5) compares DNS with steady
+[SST](/methods/k-omega-sst-model.md) RANS and an eddy-diffusivity heat flux
+at $Pr_t=0.9$: the RANS gives a reduced spanwise spread of wall
+temperature, wrong values of two Reynolds shear stresses (the source's
+$\tau_{xz}$, $\tau_{yz}$), an underpredicted horseshoe vortex, a spanwise
+velocity of the wrong sign off the axis and a much too small heat flux
+near the wall (§2.3, Fig. 5).
+
+**Eddy viscosity for the deviatoric part only.** Tonicello et al. (2022)
+test the hypothesis a priori on a DNS of a Mach 2.91 boundary layer over a
+$24^\circ$ compression–expansion ramp, both for a Favre time average and for
+an explicit differential filter of width $2h$ to $8h$. They split the
+exchange term of the resolved kinetic energy, $K_3$ (the source's symbol,
+the registry's $-\Pi$; $K_3<0$ is forward transfer), into a deviatoric part and
+the work of the trace, $\Lambda=-\tfrac23\bar\rho k\,\partial_l\tilde u_l$
+(page-local), and define the equivalent eddy viscosity of the deviatoric
+part
+
+$$\nu_t=\frac{K_3+\Lambda}{-2\bar\rho\tilde S^d_{ij}\partial_j\tilde u_i}$$
+
+([Tonicello et al. (2022)](/sources/tonicello-2022.md), §5, Eqs.
+5.1–5.3). In registry terms $K_3+\Lambda=\bar\rho\,\tau^d_{ij}\tilde S^d_{ij}$
+with $\tau_{ij}$ the registry's positive Favre stress per unit density, so
+this $\nu_t=-\tau^d_{ij}\tilde S^d_{ij}/\lvert\tilde S^d\rvert^2$ is the
+flux-matching projection of the deviatoric stress, the compressible
+counterpart of $\nu_t^{\mathrm{opt}}$ below *(compiler check, not in the
+sources)*. In the averaged fields the joint PDF of $\Lambda$ and $K_3$ lies
+almost entirely on the side of positive $\nu_t$, and $K_3+\Lambda$ is
+negative (dissipative) everywhere: the mean backscatter near the expansion
+corner comes from the trace, not from the deviatoric stress, and a
+positive eddy viscosity is "fairly accurate" on average; in the filtered
+fields negative $\nu_t$ takes a large share of the points (§5, Figs.
+27–28). The authors conclude that an eddy viscosity suits the deviatoric
+part and that the trace needs its own model, and suggest heuristically a
+[bulk-viscosity](/definitions/bulk-viscosity.md) form
+$\tfrac23\bar\rho k\sim-\mu_b\,\partial_k\tilde u_k$ (the registry's bulk
+viscosity $\mu_b$, §11, the source's $\beta$), not tested (§5, Eq. 5.5; see
+[energy backscatter](/definitions/energy-backscatter.md) and
+[pressure dilatation](/definitions/pressure-dilatation.md)).
+
+**Separated 2-D flows: a tuned eddy viscosity suffices.** Cherroud et al.
+(2022) learn, by sparse Bayesian regression, both an extra anisotropy
+$b^\Delta_{ij}$ and a production correction $b^R_{ij}$ of SST on three
+separated flows (periodic hill at $Re=10\,595$, converging–diverging
+channel at $12\,600$, curved backward-facing step at $13\,700$). The
+cross-validated models with the best compromise over velocity, $k$, shear
+stress and $C_f$ have $b^\Delta=0$ and a single production term on
+$T^{(1)}$, which raises the eddy viscosity in the separated region; a
+Sobol analysis of a richer model finds the quantities of interest mostly
+sensitive to the production coefficient near the walls and to the linear
+$T^{(1)}$ part of $b^\Delta$ in shear layers and recirculation. They conclude
+that linear eddy-viscosity models "are overall sufficient for such 2D
+separated flows, provided that the eddy viscosity coefficient is properly
+tuned", and, citing Huijing et al. (2021), that this does not hold in 3-D,
+where non-linear terms become important
+([Cherroud et al. (2022)](/sources/cherroud-2022.md), §4.2–4.3, §5,
+Table 2, Fig. 8; see [symbolic-regression closures](/methods/symbolic-regression-closure.md)
+and the [explicit algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md)).
+Sandberg & Zhao (2022) quote the same 3-D result of Huijing et al. on a
+wall-mounted cube as "indicating that both a non-linear anisotropy model
+and a production correction in the transport equations is needed"
+(§4.1).
 
 **What the energy-matching viscosity leaves out.** Inagaki & Kobayashi
 (2023) split the deviatoric subgrid stress of filtered channel DNS
@@ -644,7 +795,7 @@ remainder models tested a priori (§IV B, Fig. 13).
 
 Tang et al. (2023) keep the Boussinesq term and add a learned non-linear
 remainder of the anisotropy on Pope's two-dimensional integrity basis. In
-registry notation, with the page-local normalized tensors
+registry notation, with the normalized tensors (registry §11)
 $\mathsf S_{ij}=(k/\varepsilon)\langle S_{ij}\rangle$ and
 $\mathsf W_{ij}=(k/\varepsilon)\langle\Omega_{ij}\rangle$,
 
@@ -706,12 +857,26 @@ the so-called jet anomaly" (§4.2.1). How the experts are blended in space
 is on the [turbulence-model aggregation](/methods/turbulence-model-aggregation.md)
 page.
 
+Cherroud et al. (2022) use the same split, $b_{ij}=b^0_{ij}+b^\Delta_{ij}$ with
+$b^\Delta$ on $T^{(1)}$–$T^{(3)}$ of strain and rotation normalized by $\omega$,
+plus a production correction $b^R_{ij}$ in the $k$- and $\omega$-equations, and
+note that the $T^{(1)}$ term is an additive correction of $\nu_t$ while
+$T^{(2)}$ and $T^{(3)}$ are the quadratic terms of the Gatski–Speziale and
+Wallin–Johansson explicit algebraic models
+([Cherroud et al. (2022)](/sources/cherroud-2022.md), §2.1, Eqs. 5–8,
+12–13). Sandberg & Zhao (2022) write the general form with all ten basis
+tensors and five invariants, labelling the three parts "linear
+Boussinesq", "additional linear term" and "additional non-linear terms",
+as Sandberg & Michelassi (2022) do for four tensors (§3.2, Eqs. 2–4). Both
+are on the [explicit algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md)
+page.
+
 ## The best-fit eddy viscosity
 
 If a reference stress is known, the scalar $\nu_t$ that brings the
 Boussinesq form closest to it in the least-squares sense is the projection
 of the stress on the strain. Wu et al.'s optimal eddy viscosity, as
-recalled by McConkey et al. (2022, §II A, Eqs. 5–6), is in registry
+cited by McConkey et al. (2022, §II A, Eqs. 5–6), is in registry
 notation
 
 $$\nu_t^{*}=\arg\min_{\nu_t}\big\lVert 2kb_{ij}+2\nu_t\langle S_{ij}\rangle\big\rVert=-\frac{2k\,b_{ij}\langle S_{ij}\rangle}{\lvert\langle S\rangle\rvert^2},$$
@@ -728,6 +893,27 @@ remainder $\tau^{\mathrm{ani}}_{ij}$ above is the part of the subgrid stress ort
 to the strain under that projection, the LES analogue of the remainder
 $a^\perp_{ij}$ below where its non-negativity constraint is inactive
 *(compiler check, not in the sources)*.
+
+He et al. (2022) extract an LES eddy viscosity for a learned correction
+of SA-QCR on a transonic bump the same way, as the minimizer of the
+Frobenius misfit between the LES Reynolds stress and the model stress.
+For the Boussinesq stress (their Eq. 6, which they attribute to Spalart et
+al. 2017) this is, in registry notation,
+$-R_{ij}\langle S^d_{ij}\rangle/\lvert\langle S^d\rangle\rvert^2$, McConkey et al.'s
+$\nu_t^*$ written for compressible flow *(compiler check, not in the
+sources)*; for the QCR2013V stress it is $\nu_t=-R_{ij}X_{ij}/(2X_{ij}X_{ij})$
+with $X_{ij}$ (page-local) the QCR tensor including the isotropic
+rotation term, which reduces to the Boussinesq form when $c_{cr1}=c_{cr2}=0$
+([He et al. (2022)](/sources/he-2022-b.md), §2.7, Eqs. 6–8). Two limiters
+are applied: $\nu_t\leftarrow\max(\nu_t,0)$, McConkey et al.'s constraint, and a
+floor $S_{\mathrm{ref}}^2$ on the magnitude of the denominator with
+$S_{\mathrm{ref}}=10^3\,\mathrm s^{-1}$; samples touched by either limiter are
+excluded from training. The QCR-based extraction is "less sensitive to the
+limiters and thus more reliable than the Boussinesq-based method"; a low
+$S_{\mathrm{ref}}$ leaves non-physical high $\nu_t/\nu$ above the shear layer,
+a high one contaminates the shear layer, separation bubble and reattached
+boundary layer, and the value was chosen "by trial-and-error" (§2.7,
+Appendix, Fig. 19; see [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
 
 **Non-negative optimum.** $\nu_t^*$ is negative where $b_{ij}$ and
 $\langle S_{ij}\rangle$ are poorly aligned, which destabilizes an implicit
@@ -861,6 +1047,35 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
   it in that convention *(compiler check, not in the sources)*. Their
   summation index $k$ in Eq. 2 is also the symbol of the turbulent kinetic
   energy.
+- Sandberg & Zhao (2022) print the same pair: the Reynolds stress defined
+  as $-\langle\rho\rangle\langle u_i''u_j''\rangle$ (§3.2) and its Boussinesq
+  form (Eq. 1) and extension (Eq. 2) written as
+  $\tau_{ij}-\tfrac23\langle\rho\rangle k\delta_{ij}=-2\mu_t[\cdots]$, consistent only
+  with the positive-trace stress; their production $P_k=\tau_{ij}\partial_ju_i$
+  (§4.1) uses the negative convention *(compiler check, not in the
+  sources)*. The page writes their equations in the registry convention.
+- He et al. (2022) call $S_{ij}-\mathrm{tr}(S_{ij})$ "the traceless strain rate
+  tensor" (§2.1, after Eq. 2); as printed its trace is $-2\,\mathrm{tr}(S)$,
+  and their own extraction formula (Eq. 6) follows from minimizing the
+  misfit with $S_{ij}-\tfrac13\mathrm{tr}(S)\delta_{ij}$ *(compiler check, not in
+  the sources)*. The page writes $S^d_{ij}$.
+- Brenner et al. (2022) state that with $\nu+\beta\nu_t$ in the momentum
+  equation the corrected model "satisf[ies] conservation of momentum since
+  the divergence operator is applied to the modified term" (§2.1.1), and
+  their momentum equation (Eq. 6) keeps only
+  $\partial_j\big((\nu+\beta\nu_t)\partial_j\langle u_i\rangle\big)$. From their Eqs.
+  2–3 the divergence of the Boussinesq stress also contains
+  $\partial_j(\beta\nu_t)\,\partial_i\langle u_j\rangle$ (using continuity), which
+  vanishes only for a uniform $\beta\nu_t$ *(compiler check, not in the
+  sources)*; the paper does not say whether the implementation keeps it.
+- Brenner et al.'s Fig. 13 caption calls values "smaller than 0.86" good
+  alignment and "larger than 0.86" bad, the reverse of their §2.11, where
+  $\rho_{RS}>0.86$ means aligned and 1 perfect alignment; Brenner et al.
+  print the Schmitt threshold 0.86 that Cato et al. attribute to Schmitt
+  but replace by 0.8.
+- Tonicello et al. (2022) define the stress with the sign opposite to the
+  registry's and include $\bar\rho$; their $K_3<0$ is forward transfer.
+  Translated, their $\nu_t$ (Eq. 5.3) keeps its sign.
 
 # Citations
 
@@ -914,3 +1129,9 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [Monfaredi et al. (2021)](/sources/monfaredi-2021.md) — §2.1, Eqs. 1–2.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1, §3.2.3, §3.3, §4.3, Eq. 2.
 - [Heinz (2020)](/sources/heinz-2020.md) — §2.1, §2.2 Eqs. 2–7, §2.4 Eqs. 14, 19–20.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.1–2.3 Fig. 5, §3.2 Eqs. 1–4, §4.1.
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §2.1 Eqs. 3–8, 12–13, §4.2–4.3 Table 2 Fig. 8, §5.
+- [Brenner et al. (2022)](/sources/brenner-2022.md) — §2.1.1 Eqs. 1–7, §2.11 Eq. 42, §3.2, §3.5 Figs. 6–7, 13.
+- [He et al. (2022)](/sources/he-2022-b.md) — §2.1 Eqs. 2–3, 5, §2.7 Eqs. 6–8, Appendix Fig. 19.
+- [Qi et al. (2022)](/sources/qi-2022-b.md) — §2 Eqs. 2.11–2.15, §3.2 Eq. 3.21.
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §4 Eqs. 4.4, 4.7, §5 Eqs. 5.1–5.5 Figs. 27–28.

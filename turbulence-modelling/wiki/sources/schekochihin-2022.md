@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Plasma Phys. 88:155880501"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Plasma_Physics_Schekochihin_MHD_turbulence_a_biased_review.pdf"
 tags: [mhd, critical-balance, dynamic-alignment, reconnection, dynamo, review]
-timestamp: 2026-10-25T13:42:00Z
+timestamp: 2026-10-27T15:53:00Z
 ---
 
 # Summary
@@ -18,9 +18,8 @@ Schekochihin (2022) is a 200-page, self-described "biased" and pedagogical
 review of phenomenological scaling theories of incompressible MHD turbulence,
 chiefly in the limit of a strong guide field described by
 [reduced MHD](/definitions/reduced-mhd.md) in Elsasser variables
-$\boldsymbol Z^\pm$. It is peripheral to closure modelling: it contains no
-RANS, LES or wall model, and bears on this bundle through the cascade
-phenomenology and the resolution requirements of MHD simulations. The method
+$\boldsymbol Z^\pm$. It contains no RANS, LES or wall model; it gives
+cascade phenomenology and resolution requirements of MHD simulations. The method
 throughout is order-of-magnitude scaling, checked against published and
 unpublished simulations and solar-wind data.
 
@@ -28,10 +27,10 @@ Part I runs chronologically from Kolmogorov and Iroshnikov–Kraichnan through
 Goldreich–Sridhar and [critical balance](/properties/critical-balance.md)
 ($\tau_A\sim\tau_{\mathrm{nl}}$, with the robust parallel spectrum
 $E(k_\parallel)\propto k_\parallel^{-2}$) to Boldyrev's
-[dynamic alignment](/properties/dynamic-alignment.md). Three results stand
-out: weak Alfvén-wave turbulence is asymptotically irrelevant and, in its
-standard form, incomplete, because its $k_\parallel=0$ condensate is strongly
-turbulent; Boldyrev's alignment violates the rescaling symmetry of reduced
+[dynamic alignment](/properties/dynamic-alignment.md). Three of its
+results: weak Alfvén-wave turbulence is asymptotically irrelevant, and its
+kinetic equation (Galtier et al. 2000) is "at best incomplete", because the
+$k_\parallel=0$ condensate is strongly turbulent; Boldyrev's alignment violates the rescaling symmetry of reduced
 MHD, but survives reinterpreted as an intermittency effect in which the
 parallel outer scale enters, giving $E(k_\perp)\propto k_\perp^{-3/2}$ and
 $\sin\theta_\lambda\sim(\lambda/\lambda_{CB})^{1/4}$; and aligned sheets are

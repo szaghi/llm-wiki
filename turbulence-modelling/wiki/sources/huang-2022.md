@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Fluid Mech. 937:A3"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Fluid_Mechanics_Huang_Direct_numerical_simulation_of_hypersonic_turbulent_boundary.pdf"
 tags: [dns, compressible, hypersonic, boundary-layer]
-timestamp: 2026-10-25T19:47:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -33,7 +33,7 @@ equation holds to 5%, grows from $20\delta_i$ at Mach 2.5 to $80\delta_i$ at
 Mach 14; a digital-filter inflow needs 15–$20\delta_i$ more than
 recycling–rescaling. Van Driest II with the Smits et al. power law gives the
 best skin-friction prediction, while neither van Driest II nor Spalding–Chi
-works for $T_w/T_r\lesssim0.3$. The paper recalls that standard
+works for $T_w/T_r\lesssim0.3$. The paper cites work showing that standard
 [Spalart–Allmaras](/methods/spalart-allmaras-model.md) and SST models predict
 hypersonic heat flux worse than algebraic models with compressibility
 corrections, and finds its Mach 10.9 wall stress and heat flux within 2% of
@@ -125,7 +125,7 @@ the registry's $y$ wall-normal and $z$ spanwise (see the notation map).
 | $\delta$, $\delta_i$, $\delta_\infty$ | $\delta_{99}$, (inflow thickness), (height where $\langle u\rangle$ first reaches $U_\infty$) | |
 | $H_{12}=\delta^*/\theta$ | (shape factor) | |
 | $Re_\theta$, $Re_{\delta2}$ | $Re_\theta$, (momentum-thickness Reynolds number with wall viscosity) | |
-| $C_f$, $C_h$, $R_{af}=2C_h/C_f$ | $C_f$, (Stanton number, Reynolds analogy factor) | |
+| $C_f$, $C_h$, $R_{af}=2C_h/C_f$ | $C_f$, $C_h$ (Stanton number, registry §11), (Reynolds analogy factor) | |
 | $F_c$, $F_\theta$ | (skin-friction and Reynolds-number transformation factors) | VD = van Driest II, SC = Spalding–Chi |
 | $T_r$, $r=0.89$, $r_g$ | (recovery temperature, recovery factor, generalized recovery factor) | |
 | $B_q=q_w/(\rho_wc_pu_\tau T_w)$, $M_\tau$ | (wall heat-flux parameter, friction Mach number) | Table 4 lists $-B_q$ |

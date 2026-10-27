@@ -5,7 +5,7 @@ description: "Turbulence in a triply periodic box, decaying or forced: a priori 
 status: established
 aliases: [HIT, DHIT, HID, DIT, Comte-Bellot–Corrsin experiment, CBC experiment, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation, supersonic isothermal turbulence, driven supersonic turbulence, exascale DNS of isotropic turbulence]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-27T10:34:00Z
+timestamp: 2026-10-27T15:47:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -58,6 +58,7 @@ notation registry.)
 | [Caban et al. (2026)](/sources/caban-2026.md), §4.2 | not stated | 100 | $384^3$ ("closely corresponding" to an earlier database) | a priori only: Gaussian filter $\Delta=2h$ on a 64-node grid, $k_c=16$ | not stated |
 | [Wu & Lele (2026)](/sources/wu-2026.md), §3.2.1, §5, §6.1 | forced | 433 | Johns Hopkins database, $1024^3$, 5 snapshots | $64^3$ ($\Delta=16$ DNS spacings) in a Fourier code with 2/3 de-aliasing (PadeOps) and a sixth-order compact code without it (PadeLibs); $32^3$ ($\Delta=32$ spacings) in PadeOps | run to statistical stationarity; forcing not described in the version read |
 | [Liang & Fu (2024)](/sources/liang-2024.md), §4.12 | decaying, compressible | 100 (initial) | filtered DNS on $256^3$ | no model: hybrid TENO / skew-symmetric-split finite differences (TENO-S), WENO-CU6, TENO6, TENO8, $64^3$ | solenoidal field, $E(k)\propto k^4\exp[-2(k/k_0)^2]$ ($k_0$ not printed), $M_t=0.6$ (with $\sqrt3\,u_{\mathrm{rms}}$ over the mean sound speed), other parameters as in the case of Johnsen et al. that the authors cite |
+| [Deng et al. (2022)](/sources/deng-2022.md), §4.15 | decaying, compressible, "with eddy shocklets" | 100 (initial) | $256^3$ DNS of Johnsen et al. | no model: finite-volume $P_nT_m$-BVD-AD schemes (polynomial and THINC candidates selected by boundary-variation diminishing, with adjustable dissipation), 6th to 10th order, and ninth-order WENO-M, $64^3$ and $128^3$ | $E(k)\propto u_{\mathrm{rms},0}^2k^4k_0^{-5}\exp(-2k^2/k_0^2)$, $k_0=4$, $M_t=0.6$, uniform initial density and pressure, power-law viscosity; spectra at $t/\tau=4$ ($\tau$ the initial eddy time of the case) |
 | [Valencia et al. (2026)](/sources/valencia-2026.md), §IV, §V A | decaying, compressible | 100 (initial, with the Taylor microscale set to $2/k_0$) | finite-volume DNS in PeleC (Godunov, PPM with seventh-order WENO-Z), $512^3$, CFL 0.5, run to four initial eddy-turnover times $2/(k_0u_{\mathrm{rms},0})$; verified against the Motheau–Wakefield data | a priori only: top-hat filter and downsampling to $128^3$, $64^3$, $32^3$, then a Gaussian filter of width $\Delta=4h$, $2h$, $h$ (all $\Delta=16$ DNS spacings) | $E(k)\propto k^4\exp[-2(k/k_0)^2]$, $k_0=4$, $M_t=0.6$ (with $\sqrt{\langle u_iu_i\rangle}$), $T_0=1200$ K, $p_0=101.3$ kPa, $Pr=0.71$, constant viscosity and conductivity |
 | [Kuya et al. (2018)](/sources/kuya-2018.md), §5.1, §5.3, App. C | decaying, compressible, inviscid (Euler) | infinite (no viscosity) | none; the de-aliased spectral run of Honein & Moin is the comparison at $M_{t0}=0.07$ | no model: second-order central split-form fluxes, $32^3$, classical fourth-order Runge–Kutta at CFL about 0.1, run to $t/T_E=180$ | $E(k)=A(k/k_0)^4e^{-2(k/k_0)^2}$, $k_0=6$, $A$ set by the initial turbulent Mach number $M_{t0}=0.07$ or 0.3; uniform initial $T$ and $\rho$; set-up of Honein & Moin except the CFL |
 | [Li et al. (2021)](/sources/li-2021.md), §II A, §III A, §III C, §III E | forced, incompressible | about 260 (training and main tests); 180 and 250 (generalization) | pseudo-spectral, $1024^3$ (data of Xie et al.), second-order Adams–Bashforth, 2/3 de-aliasing | pseudo-spectral LES, $128^3$, top-hat filter $\Delta=16$ DNS spacings (filter-to-grid ratio 2); also $64^3$ and $32^3$ ($\Delta=32$, 64 DNS spacings) | energy spectrum held fixed in the two lowest wavenumbers; a "high-order dissipative numerical method" carries the energy flux at the highest wavenumbers |
@@ -206,7 +207,8 @@ solenoidal part $\varepsilon_s=\langle\mu\,\omega_i\omega_i\rangle$ decreases
 and its dilatational part $\varepsilon_d=\tfrac43\langle\mu(\nabla\cdot\boldsymbol u)^2\rangle$
 increases; the pressure–dilatation correlation changes sign and stays small
 and positive later, as in the subsonic results of Sarkar et al. that the
-authors cite (Figs. 13–14; $\varepsilon_s$, $\varepsilon_d$ page-local).
+authors cite (Figs. 13–14; $\varepsilon_s$, $\varepsilon_d$ as in
+registry §11).
 Shocklets, regions where the dilatation is below $-3$ times its rms, appear as
 long narrow ribbons beside block-like expansion regions (Fig. 15). The
 resolution criterion $k_{\max}\eta_0\ge2.71$ is taken from the authors'
@@ -314,10 +316,10 @@ magnetic-to-kinetic energy ratio is the same in both phases, $0.37$ and
 $0.18$ per driving time for solenoidal and compressive driving, and both
 growth rate and saturation level are lower than the isothermal empirical
 model of Federrath et al. at matching Mach numbers (§4.1, Table 1); they
-explain the equal growth rates through a vorticity budget (§4.2). As
-recalled by [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md),
+explain the equal growth rates through a vorticity budget (§4.2).
+[Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md) cite
 turbulent-box simulations of this kind (Balsara et al.; Federrath;
-Schekochihin et al.) are the reference for the growth rates and the
+Schekochihin et al.) as the reference for the growth rates and the
 resolution scaling expected of the dynamo in galaxy simulations.
 [Beattie et al. (2025)](/sources/beattie-2025.md) add an explicit
 [bulk viscosity](/definitions/bulk-viscosity.md) to a forced trans-sonic
@@ -339,8 +341,8 @@ paper writes $T$ equals the registry's $\Pi$, because the paper's SGS
 stress has the opposite sign.
 
 **Learned closures, a priori against a posteriori.**
-As recalled by [Duraisamy (2021)](/sources/duraisamy-2021.md), §IV.B, Fig. 2,
-from Sirignano, MacArt & Freund, an a priori-trained SGS closure
+[Duraisamy (2021)](/sources/duraisamy-2021.md), §IV.B, Fig. 2, cites
+Sirignano, MacArt & Freund for the finding that an a priori-trained SGS closure
 over-predicts the resolved kinetic energy of decaying HIT, while a
 model-consistent (differentiable-physics) closure follows the filtered DNS.
 [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md), App. G.2, find
@@ -696,12 +698,45 @@ tests are the
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $64^3$ and
 $128^3$.
 
-**Pressure terms of entropy-conservative fluxes.** As recalled by
-[Aiello et al. (2026)](/sources/aiello-2026.md), §4 and §4.2, the
+[Deng et al. (2022)](/sources/deng-2022.md), §4.15, run the same case
+(initial $M_t=0.6$, Taylor-scale Reynolds number 100, $k_0=4$, DNS of
+Johnsen et al. on $256^3$) as the one turbulence test of finite-volume
+BVD schemes with an **adjustable-dissipation** stage: where both faces of
+a cell keep the polynomial reconstruction, the two face values are
+blended with a parameter $\lambda_{\mathrm{AD}}$ (page-local; not the
+Taylor microscale), $\lambda_{\mathrm{AD}}=1$ giving the upwind-biased
+scheme of order $n+1$ and $\lambda_{\mathrm{AD}}=0.5$ equal face values,
+hence no upwind term in the Riemann flux and the non-dissipative central
+scheme of order $n+2$ ($n$ the polynomial degree of the reconstruction).
+With no subgrid model, $\lambda_{\mathrm{AD}}$ supplies the dissipation
+of the implicit LES (see [implicit LES](/definitions/implicit-les.md)
+and [numerical dissipation](/properties/numerical-dissipation.md)):
+
+- on $64^3$ with $\lambda_{\mathrm{AD}}=0.75$ every scheme (the 6th-, 8th-
+  and 10th-order variants, named by their central order $n+2$, i.e.
+  $n=4$, 6, 8) gives a velocity spectrum at $t/\tau=4$ closer to the DNS than the
+  ninth-order WENO-M implicit LES, and the 10th-order variant is close to
+  the DNS (Fig. 23);
+- lowering $\lambda_{\mathrm{AD}}$ improves the $64^3$ spectrum
+  progressively: the 6th-order scheme ($n=4$) at $\lambda_{\mathrm{AD}}=0.65$ is
+  comparable to the original BVD scheme with $n=6$, i.e. without the
+  adjustable stage ($\lambda_{\mathrm{AD}}=1$, upwind-biased of order 7)
+  (Fig. 24);
+- on $128^3$, $\lambda_{\mathrm{AD}}=0.75$ and 0.5 both converge to the DNS
+  spectrum (Fig. 25).
+
+The comparison is of one quantity at one time; the fully central setting
+$\lambda_{\mathrm{AD}}=0.5$ is run only on the finer grid. The authors
+state that adjustable dissipation "is believed to work" in place of an
+explicit subgrid model (Remark 2). The scheme's shock tests are on
+[WENO schemes](/methods/weno-scheme.md).
+
+**Pressure terms of entropy-conservative fluxes.**
+[Aiello et al. (2026)](/sources/aiello-2026.md), §4 and §4.2, cite the
+authors' companion paper and Gassner et al. for the finding that the
 pressure discretization of the entropy-conservative flux of Gouasmi et al.
 (and of Chandrashekar's, to which it reduces for a calorically perfect gas)
-was shown to spoil the kinetic-energy balance in inviscid HIT (by the
-authors' companion paper and by Gassner et al.); their own test is a
+spoils the kinetic-energy balance in inviscid HIT; their own test is a
 compressible channel (see
 [entropy conservation](/properties/entropy-conservation.md)).
 
@@ -759,12 +794,12 @@ the model's validation to isotropic turbulence (§IV). The cost per
 iteration of GEP is slightly above dynamic Smagorinsky and far below the
 network (16 cores, Fig. 13; no timings printed).
 
-**Closure constants.** As recalled by
-[Duraisamy et al. (2019)](/sources/duraisamy-2019.md), decay rates of grid
-turbulence (Comte-Bellot & Corrsin 1966) constrain the coefficients of RANS
+**Closure constants.**
+[Duraisamy et al. (2019)](/sources/duraisamy-2019.md) cite the decay rates of grid
+turbulence (Comte-Bellot & Corrsin 1966) as a constraint on the coefficients of RANS
 closures (the coefficient layer of their taxonomy of
-[model-form uncertainty](/definitions/model-form-uncertainty.md)). As recalled by
-[Agrawal et al. (2022)](/sources/agrawal-2022.md), §II.A, Lilly derived
+[model-form uncertainty](/definitions/model-form-uncertainty.md)).
+[Agrawal et al. (2022)](/sources/agrawal-2022.md), §II.A, cite Lilly's derivation of
 $C_s\approx0.17$ for isotropic turbulence with an inertial-range cutoff;
 [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md), §6.5,
 quote Lilly's analytical value $C_s=\pi^{-1}(3C_K/2)^{-3/4}=0.18$ with
@@ -774,7 +809,7 @@ spectral reference used with HIT in both
 [Flad & Gassner (2017)](/sources/flad-2017.md), App. C, and
 [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md), Eq. (55)
 (see [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md)).
-As recalled by [Basile et al. (2023)](/sources/basile-2023.md), §2.2, the
+[Basile et al. (2023)](/sources/basile-2023.md), §2.2, state that the
 DES constant $C_{DES}=0.65$ is calibrated on decaying homogeneous turbulence
 (see [detached-eddy simulation](/methods/detached-eddy-simulation.md)), the
 value with which [Carlsson et al. (2023)](/sources/carlsson-2023.md)
@@ -782,9 +817,8 @@ reproduce the Comte-Bellot–Corrsin decay once the scheme's dissipation is
 low enough; [Möller et al. (2024)](/sources/moller-2024.md), §II.B.1, state
 that they verified the same value in their TRACE implementation of
 shear-stress-transport DDES on decaying isotropic turbulence (results not
-shown). As
-recalled by [Pereira et al. (2021)](/sources/pereira-2021.md), §III, Fig. 4,
-from the authors' companion paper, explicit filtering of forced HIT DNS of
+shown). [Pereira et al. (2021)](/sources/pereira-2021.md), §III, Fig. 4,
+cite their companion paper, in which explicit filtering of forced HIT DNS of
 Silva et al. at $Re_\lambda=140$ and 300 supports setting the dissipation
 ratio of [partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
 to $f_\varepsilon=1$ for $f_k\ge0.20$.
@@ -879,6 +913,14 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
   label their Taylor–Green vortex runs "homogenous, isotropic turbulence"
   (abstract, §1, §9); the case is recorded on
   [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), not here.
+  [Simonis et al. (2022)](/sources/simonis-2022.md) likewise frame their
+  Taylor–Green runs at $Re=800$ and 3000 as decaying homogeneous isotropic
+  turbulence; they too are on the Taylor–Green page.
+- [Deng et al. (2022)](/sources/deng-2022.md) label the Fig. 23 spectra
+  "$t/\pi=4$" where the text and the Fig. 24 caption give $t/\tau=4$, and
+  define the time unit as $\tau=\sigma/u_{\mathrm{rms},0}$ with $\sigma$
+  where the quantity defined is $\sigma_0=2/k_0$ (§4.15). They write the
+  initial Taylor-scale Reynolds number $Re_{\sigma,0}$.
 - [Cernetic et al. (2024)](/sources/cernetic-2024.md) state that doubling
   the Mach number needs a tripled driving strength, while their Eq. (32),
   $M\propto E_{\mathrm{inj}}^{1/3}$, gives a factor 8 *(compiler check, not
@@ -946,15 +988,15 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §IV A–B, §V, Figs. 6–14, App. A.
 - [Vela-Martín (2022)](/sources/velamartin-2022.md) — §5.1–5.3, Table 1, Figs. 1–7.
 - [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md) — §5, App. B.2, App. G.1–G.2.
-- [Duraisamy (2021)](/sources/duraisamy-2021.md) — §IV.B, Fig. 2 (recalled result).
-- [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — test-problem list (recalled grid-turbulence calibration).
+- [Duraisamy (2021)](/sources/duraisamy-2021.md) — §IV.B, Fig. 2 (cited result).
+- [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — test-problem list (cited grid-turbulence calibration).
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §6.2, §6.4–6.5, Eq. (55).
 - [Prakash et al. (2022)](/sources/prakash-2022.md) — §III.A, Tables 1–2, Figs. 1–3; §III.B.1, Eqs. (21)–(24), Fig. 4.
 - [Cao et al. (2022)](/sources/cao-2022.md) — §1; §3.4, Eqs. (9)–(11), Table 8, Figs. 13–15.
 - [Seta & Federrath (2022)](/sources/seta-2022.md) — §2, §2.4, §4.1–4.2, Table 1, Figs. 7–10.
-- [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md) — recalled turbulent-box references.
-- [Basile et al. (2023)](/sources/basile-2023.md) — §2.2 (recalled calibration of $C_{DES}$).
-- [Pereira et al. (2021)](/sources/pereira-2021.md) — §III, Fig. 4 (recalled a priori filtering).
+- [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md) — cited turbulent-box references.
+- [Basile et al. (2023)](/sources/basile-2023.md) — §2.2 (cited calibration of $C_{DES}$).
+- [Pereira et al. (2021)](/sources/pereira-2021.md) — §III, Fig. 4 (cited a priori filtering).
 - [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) — §III.1–III.2, Eq. (23), Table I, Figs. 3–7; §IV, Figs. 8–10.
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md) — §4.2, Fig. 3; §5.
 - [Gan et al. (2022)](/sources/gan-2022.md) — §2; §3, Figs. 1–3.
@@ -977,8 +1019,10 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv 2512.03315v1: §III.A, Eq. (45), Table I, Figs. 3, 5–6; §III.D.2, §III.D.4, Figs. 17–18.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §4.2, Eqs. (38)–(39), Figs. 7–8 (a priori deconvolution error on HIT data).
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv 2511.17475v2: §3.2.1; §4, Table 2; §5, Eq. (5.1), Tables 3–4, Figs. 5–12; §6.1, Figs. 13–14.
-- [Aiello et al. (2026)](/sources/aiello-2026.md) — §4, §4.2 (recalled kinetic-energy imbalance of the Gouasmi et al. pressure term in inviscid HIT).
+- [Aiello et al. (2026)](/sources/aiello-2026.md) — §4, §4.2 (cited kinetic-energy imbalance of the Gouasmi et al. pressure term in inviscid HIT).
 - [Liang & Fu (2024)](/sources/liang-2024.md) — §4.12, Fig. 21 (no-model TENO-S and WENO/TENO schemes on decaying compressible isotropic turbulence, $64^3$, against filtered DNS).
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §I; §II C, Eqs. (23)–(29); §IV, Eqs. (51)–(52), Figs. 1–2; §V A–C, Tables III–VII, Fig. 3 (a priori deconvolution closures under explicit filtering on compressible decaying HIT).
 - [Kuya et al. (2018)](/sources/kuya-2018.md) — §5.1, Eq. (73) (set-up); §5.3, Table 3, Figs. 8–11; App. C, Figs. 16–17 (inviscid compressible decay as a stability and entropy test of split-form fluxes); appended corrigendum.
+- [Deng et al. (2022)](/sources/deng-2022.md) — Remarks 1–2, p. 6 (adjustable dissipation); §4.15, Eq. (40), Figs. 23–25 (no-model BVD-AD schemes on decaying compressible isotropic turbulence, $64^3$ and $128^3$).
+- [Simonis et al. (2022)](/sources/simonis-2022.md) — §1, §3 (Taylor–Green vortex framed as decaying isotropic turbulence).
 - [Li et al. (2021)](/sources/li-2021.md) — §II A, Eq. (17); §III A (training data); §III C, Figs. 2–8 (a posteriori against filtered DNS); §III E, Figs. 11–12; §III F, Fig. 13; §IV.

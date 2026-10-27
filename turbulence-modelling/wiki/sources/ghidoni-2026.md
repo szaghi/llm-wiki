@@ -8,8 +8,8 @@ authors: [Ghidoni A., Mantecca E., Noventa G., Pasquale D.]
 year: 2026
 venue: "J. Comput. Phys. 550:114637"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Journal_of_Computational_Physics_Ghidoni_Assessment_of_an_explicit_wall_function_implementation_for_t.pdf"
-tags: [wall-function, k-omega, rans, dg, high-order, law-of-the-wall]
-timestamp: 2026-10-26T20:49:00Z
+tags: [wall-model, k-omega, rans, dg, high-order]
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Summary
@@ -73,8 +73,8 @@ read, with pp. 2–6 and 13 checked visually. Page 1 agrees with Crossref.
 11. The computing-time reduction against the $y_1^+=1$ wall-resolved run grows with $y_1^+$: averages over $N=1$–$6$ of 29.76, 34.14, 45.85, 59.54, 68.96% for $y_1^+=20,40,80,160,320$, maximum 71.77% ($y_1^+=320$, $N=3$) (Table 2). **Shown**
 12. At $y_1^+=320$ the explicit law saves more time than the implicit Spalding law: 68.96% against 63.73% on average (Table 2). **Shown**
 13. The reduction increases with $N$ on a fixed mesh, attributed to the wall function decoupling the modelled part of the boundary layer from the solution approximation (§4.1). **Shown** (Table 2 is not monotone: see Printed slips)
-14. Weak adverse pressure gradient (Samuel–Joubert, $1.5<\beta_{RH}<4.5$): $C_f$ agrees for all $y_1^+$ and $N$; the $y_1^+=1$ mesh converges from $N=2$, the $y_1^+=320$ mesh needs $N=4$, one degree more than at zero pressure gradient; at $N=6$ there is a discrepancy for $y_1^+>20$, mostly on the first part of the plate (§4.2, Figs. 6–7). **Shown**
-15. Strong adverse pressure gradient (DM2/DM3, $25<\beta_{RH}<45$): agreement deteriorates for $y_1^+>80$; at $N=6$ the $C_f$ difference grows for $y_1^+=160$ and 320 near the end of the adverse-gradient region, $0.8<x/L<0.85$, because the wall law refers to zero-pressure-gradient layers only (§4.2, Fig. 8). **Shown**
+14. Weak adverse pressure gradient (Samuel–Joubert, $1.5<\beta_{RC}<4.5$): $C_f$ agrees for all $y_1^+$ and $N$; the $y_1^+=1$ mesh converges from $N=2$, the $y_1^+=320$ mesh needs $N=4$, one degree more than at zero pressure gradient; at $N=6$ there is a discrepancy for $y_1^+>20$, mostly on the first part of the plate (§4.2, Figs. 6–7). **Shown**
+15. Strong adverse pressure gradient (DM2/DM3, $25<\beta_{RC}<45$): agreement deteriorates for $y_1^+>80$; at $N=6$ the $C_f$ difference grows for $y_1^+=160$ and 320 near the end of the adverse-gradient region, $0.8<x/L<0.85$, because the wall law refers to zero-pressure-gradient layers only (§4.2, Fig. 8). **Shown**
 16. Although the power law assumes zero pressure gradient, the wall function "remains accurate even with moderate pressure gradients" (§1). **Shown** (weak-gradient case)
 17. Backward-facing step (Driver–Seegmiller, $Re_H=36\,000$, $M_\infty=0.128$): $C_p$, $C_f$, velocity and $Tu$ profiles agree for all $y_1^+\le80$ and $N$; at $N=6$ the $C_f$ difference grows for $y_1^+>10$ only in the recirculation, where the law of the wall gives a wrong $u_\tau$; the effect is confined to the viscous sublayer, so the profiles still agree (§4.3, Figs. 10–11). **Shown**
 18. NACA 0012 ($Re_c=6\times10^6$, $M=0.15$, $-15^\circ$ to $15^\circ$): $C_p$, $C_f$, $C_D$, $C_L$ agree for all $y_1^+$ and $N$; at $N=6$ the $C_f$ difference grows for $y_1^+>80$ near the leading edge; $y_1^+=320$ under-predicts the $C_f$ peak and recovers from $x/c=0.15$, with negligible effect on $C_D$, $C_L$ (§4.4, Figs. 13–14). **Shown**
@@ -133,7 +133,7 @@ replaced by $-\tau_w\boldsymbol t$, $\boldsymbol t=\boldsymbol U_t/|\boldsymbol 
 | $\kappa$, $B=5$ | $\kappa$, $B$ | Spalding and log law |
 | $u_{\tau,vis}$, $u_{\tau,log}$, $u^*$ | same (page-local) | **collision:** $u^*$ is not semi-local scaling |
 | $\omega_{vis}$, $\omega_{log}$ | same (page-local) | |
-| $\beta_{RH}$ | $\beta_{RH}$ (page-local) | $(\delta^*/\tau_w)\,\partial p/\partial x$ |
+| $\beta_{RH}$ | $\beta_{RC}$ (registry §11) | Rotta–Clauser parameter, printed $(\delta^*/\tau_w)\,\partial p/\partial x$ |
 | $c_p$, $c_f$, $c_d$, $c_l$ | $C_p$, $C_f$, $C_D$, $C_L$ | |
 | $Re_\infty$ | $Re$ | plate length, step height $H$ or chord |
 | $Tu$ | $Tu$ | computed as $\sqrt{2k/3}/u_\infty$ |

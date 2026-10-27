@@ -5,7 +5,7 @@ description: "The dynamic tensor-coefficient Smagorinsky model (DTCSM) replaces 
 status: established
 aliases: [DTCSM, tensor-coefficient Smagorinsky model, non-Boussinesq dynamic SGS model]
 tags: [les, sgs-model, eddy-viscosity, wmles, separated-flow]
-timestamp: 2026-10-26T07:41:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Dynamic tensor-coefficient Smagorinsky model
@@ -17,7 +17,7 @@ subgrid-scale model: the scalar coefficient of the
 $3\times3$ tensor $C_{ij}$ (page-local symbol), so the model stress need
 not be aligned with the resolved strain. The coefficients are fitted by the
 [dynamic procedure](/methods/dynamic-procedure.md). The starting point is
-the tensor-coefficient form of Moin (1993), as recalled by Agrawal et al.
+the tensor-coefficient form of Moin (1993), which Agrawal et al. cite
 (§III.A, Eq. 11):
 
 $$\tau^d_{ij}=-\big(C_{ik}\bar S_{kj}+C_{jk}\bar S_{ki}\big)\lvert\bar S\rvert\Delta^2 ,$$
@@ -39,8 +39,8 @@ the model becomes (App. C, Eq. C3)
 $$\tau^d_{ij}=-2C_{11}\Delta^2\lvert\bar S\rvert\bar S_{ij}-\Lambda\Delta^2\big(\bar S_{ik}\bar\Omega_{kj}-\bar\Omega_{ik}\bar S_{kj}\big),$$
 
 a Smagorinsky term with $C_{11}$ in place of $C_s^2$ plus the strain–rotation
-term of the two-term velocity-gradient expansion of Lund & Novikov (as
-recalled). Agrawal et al. write the rotation-rate tensor as $R_{ij}$
+term of the two-term velocity-gradient expansion of Lund & Novikov
+(cited). Agrawal et al. write the rotation-rate tensor as $R_{ij}$
 without defining it; it is written $\bar\Omega_{ij}$ here. Only $C_{11}$
 dissipates resolved energy (§III.A): the second term gives
 $\Pi$-contribution
@@ -137,10 +137,9 @@ model (their ref. [9]) among the non-eddy-viscosity or anisotropic SGS
 models that "improve the prediction of the statistics of turbulent flows"
 (refs. [4–11]) and among the anisotropic models that "prohibit backward
 scatter" (refs. [4–9]), from which they conclude that "additional stress,
-apart from energy transfer, can improve the performance of LES". This
-matches the structure above: the coefficient
-tensor dissipates through its Smagorinsky-type part, and the antisymmetric
-part changes the stress without exchanging energy. Their own analysis of
+apart from energy transfer, can improve the performance of LES". In the
+DTCSM the antisymmetric part of the coefficient tensor is such a stress
+(see Constraints and dissipation). Their own analysis of
 such energy-transfer-free stresses in coarse channel LES is on
 [energy backscatter](/definitions/energy-backscatter.md).
 

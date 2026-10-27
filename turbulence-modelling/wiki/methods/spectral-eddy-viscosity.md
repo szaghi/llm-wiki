@@ -5,7 +5,7 @@ description: "Kraichnan's spectral eddy viscosity expresses the energy transfer 
 status: established
 aliases: [Kraichnan spectral eddy viscosity, Chollet–Lesieur model, plateau–cusp eddy viscosity, EDQNM eddy viscosity]
 tags: [les, sgs-model, eddy-viscosity, implicit-les, dg]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Spectral eddy viscosity
@@ -14,9 +14,9 @@ The **spectral eddy viscosity** $\nu_t(k\mid k_c)$ is the viscosity that,
 acting on the resolved spectrum at wavenumber $k<k_c$, removes the energy
 that nonlinear triads transfer to the scales beyond the cutoff $k_c$. On
 this page $k$ is the wavenumber magnitude, as the registry prescribes for
-spectral pages. As recalled by
-[Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) (§2.2),
-Kraichnan defined it from the resolved (supergrid) Lin equation. Let
+spectral pages. [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md)
+(§2.2) cite Kraichnan's definition from the resolved (supergrid) Lin
+equation. Let
 $\bar E(k)$ be the resolved spectrum, and $T_<(k)$, $T_>(k)$ the transfer
 into $k$ from resolved and from subgrid interactions (page-local symbols).
 With exact differentiation the resolved dissipation spectrum is
@@ -36,19 +36,19 @@ check, not in the sources)*; see [energy backscatter](/definitions/energy-backsc
 
 For a cutoff inside an infinite inertial range the spectral eddy viscosity
 is a constant **plateau** at low $k$ that rises to a **cusp** as
-$k\to k_c$ (Kraichnan, as recalled by [Flad & Gassner 2017](/sources/flad-2017.md),
-§3.1, and by Vicente Cruz & Lamballais 2023, §6.4). Lesieur's interpretation,
-recalled by Vicente Cruz & Lamballais, assigns the plateau to non-local
-triads and the cusp to local triads. The **Chollet–Lesieur model** (from
+$k\to k_c$ (Kraichnan, cited by [Flad & Gassner (2017)](/sources/flad-2017.md),
+§3.1, and by Vicente Cruz & Lamballais (2023), §6.4). Vicente Cruz &
+Lamballais also cite Lesieur's interpretation, which assigns the plateau to
+non-local triads and the cusp to local triads. The **Chollet–Lesieur model** (from
 EDQNM; Flad & Gassner 2017, App. C, Eq. C.1–C.2; Vicente Cruz & Lamballais
 2023, Eq. 55) fits both:
 
 $$\nu_t(k\mid k_c)=0.267\Big[1+34.5\,e^{-3.03\,k_c/k}\Big]\sqrt{\frac{E(k_c)}{k_c}},$$
 
 where 0.267 is the plateau value for an infinite Kolmogorov spectrum and the
-exponential is an empirical fit of the cusp. Métais & Lesieur made the
-plateau depend on the spectral slope (spectral-dynamic model), as recalled
-by Vicente Cruz & Lamballais (§6.4).
+exponential is an empirical fit of the cusp. Vicente Cruz & Lamballais
+(§6.4) cite Métais & Lesieur, who made the plateau depend on the spectral
+slope (spectral-dynamic model).
 [Domaradzki (2024)](/sources/domaradzki-2024.md) (Eq. 2.25) recalls the
 same Chollet fit (TFM/EDQNM, infinite $k^{-5/3}$ range) with the Kolmogorov
 constant $C_K$ kept explicit,
@@ -110,10 +110,10 @@ Chollet–Lesieur fit, an LES-derived cusp with a plateau at $p_{\mathrm{pl}}=0.
 cusp value at $k_c$ ($p_{\mathrm{pl}}$ page-local), and a $k$-independent viscosity
 matched to the total transfer. The plateau–cusp LES-derived viscosity
 agrees best with the inertial range up to $k_c$; the physical-space model
-with constant $C_{\mathrm A}=0.8$ (page-local, the non-dimensional constant
-of its constant variant) practically overlaps the $k$-independent one.
-Domaradzki also recalls
-that Thiry, Winckelmans & Duponcheel (2019) found the spectral viscosity
+with constant $C_{\mathrm A}=0.8$ (registry §11, the non-dimensional
+constant of its constant variant) practically overlaps the $k$-independent one.
+Domaradzki (§3.3) also cites
+Thiry, Winckelmans & Duponcheel (2019), who found the spectral viscosity
 of the dynamic Smagorinsky model "essentially uniform over all
 wavenumbers", and Siegel & Domaradzki (1994) found Smagorinsky spectra
 approximately uniform in $k$ (§3.3), in line with the nearly constant

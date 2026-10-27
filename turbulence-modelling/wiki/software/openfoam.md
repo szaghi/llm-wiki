@@ -3,9 +3,9 @@ type: Software
 title: "OpenFOAM"
 description: "OpenFOAM is the open-source unstructured finite-volume toolbox that many bundle sources use as baseline RANS solver for data-driven closures, as second-order LES solver, as host of in-house solvers and a wall-model library, and as reference for high-order codes; this page records the solvers, schemes and versions they report and what the comparisons with high-order codes say about its dissipation."
 status: established
-aliases: [OpenFOAM, simpleFoam, pimpleFoam, DAFoam, libWallModelledLES]
+aliases: [OpenFOAM, simpleFoam, pimpleFoam, DAFoam, libWallModelledLES, foam-extend, pUCoupledFoam]
 tags: [software, rans, les, data-driven, numerical-dissipation]
-timestamp: 2026-10-27T10:34:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # OpenFOAM
@@ -33,6 +33,8 @@ these is a default of the code.
 | [Liu et al. (2024)](/sources/liu-2024.md) | SSG/LRR-$\omega$ [Reynolds-stress model](/methods/reynolds-stress-model.md) coupled to Menter's $\gamma$ model | time-averaged URANS for the 3D cascades, first-order upwind for the turbulence variables and $\gamma$ | not printed |
 | [Nuca et al. (2025)](/sources/nuca-2025.md), §VI, App. B | incompressible wall-modelled LES, [$\sigma$ model](/methods/sigma-model.md), libWallModelledLES | `pimpleFoam`, PIMPLE with 1 outer and 4 inner correctors; conjugate gradient for pressure, BiCGStab for velocity; second-order linear convection and diffusion in the turbulent region, blended with second-order upwind convection in laminar and free-stream regions | v2306 |
 | [Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §3.1, §3.3 | steady RANS, [SST](/methods/k-omega-sst-model.md), wall value of $\omega$ by `omegaWallFunction` | `simpleFoam` | 12 |
+| [Brenner et al. (2022)](/sources/brenner-2022.md), §2.8–2.9, §3.1 | steady incompressible RANS, [$k$-$\varepsilon$](/methods/k-epsilon-model.md) (`kEpsilon`, `nutLowReWallFunction`) with a frozen eddy viscosity scaled by an assimilated field; hand-built discrete adjoint | foam-extend 4.0, block-coupled pressure–velocity solver `pUCoupledFoam` extended with the adjoint; second-order schemes; BiCGStab with Cholesky preconditioning; under-relaxation | foam-extend 4.0 |
+| [Cherroud et al. (2022)](/sources/cherroud-2022.md), §3 | steady RANS, SST with learned anisotropy and production corrections (general explicit algebraic stress implementation); BSL-EARSM for comparison | SIMPLE, linear upwind convection, second-order central viscous terms, Gauss–Seidel smoother; grids and settings of Schmelzer et al. (2020a) | not printed |
 | [Böttler et al. (2022)](/sources/bottler-2022.md), §2.3 | laminar low-Mach reacting flow with a [flamelet/progress-variable](/methods/flamelet-tabulated-chemistry.md) table (transported H$_2$, O$_2$, H$_2$O and enthalpy); detailed-chemistry reference coupled with Cantera | second order in time and space | not printed |
 
 ## Roles in the bundle
@@ -62,6 +64,37 @@ closures are trained and tested in OpenFOAM by several authors:
   solvers on the periodic hill. Agrawal & Koutsourelakis (2024) train on a
   [backward-facing step](/benchmarks/backward-facing-step.md), with OpenFOAM
   WALE LES as reference data (1,428,920 degrees of freedom).
+- [Brenner et al. (2022)](/sources/brenner-2022.md) assimilate sparse
+  LES velocity data on the [periodic hill](/benchmarks/periodic-hill.md)
+  ($Re=10595$, $180\times130$ cells, first-cell $y^+\approx5$) by
+  scaling a frozen $k$-$\varepsilon$ eddy viscosity with a spatial field
+  (see [field inversion](/methods/field-inversion-machine-learning.md)).
+  Their gradient comes from a discrete adjoint built inside foam-extend
+  4.0 rather than by automatic differentiation: the adjoint matrix is the
+  transposed converged block-coupled forward matrix, obtained by
+  exchanging the lower and upper triangles of the LDU storage, so the
+  forward boundary coefficients carry over and no adjoint boundary
+  conditions are derived; the parameter Jacobian is assembled with the
+  built-in implicit operators from the only field-dependent term, the
+  diffusion with the scaled eddy viscosity (§2.1.4, §2.8–2.9). The
+  contribution of the pressure residual is dropped because no implicit
+  operators are available for it (§2.3). Against finite differences at
+  156 cells the gradient differs significantly in some cells and has the
+  correct sign for 84% of the field (§3.3, Fig. 8); in their conclusions
+  (§4) the authors call the gradients "accurate".
+  Each optimization step becomes much cheaper after the first, because the
+  forward problem is warm-started (§3.4).
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) run their
+  sparse-Bayesian learned SST corrections in a modified OpenFOAM with a
+  general explicit algebraic stress implementation (a public repository of
+  Schmelzer), on the periodic hill, a converging–diverging channel and a
+  curved backward-facing step on the grids of Schmelzer et al. (2020a); the
+  solver runs each candidate model for a posteriori cross-validation of the
+  sparsity parameter, and propagating the maximum a posteriori model costs
+  one run (§2, §3, Conclusions). In App. C the learned single-term models
+  are almost as robust and cheap as SST and better than OpenFOAM's
+  BSL-EARSM (see
+  [explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)).
 - Liu et al. (2024) implement the SSG/LRR-$\omega$ model with Menter's
   one-equation $\gamma$ model in OpenFOAM, and test it on the
   [ERCOFTAC T3](/benchmarks/ercoftac-t3-flat-plate.md) plates and on
@@ -91,9 +124,9 @@ about 10 in a few cells near the blade tips, with an average of about 0.017
 **Wall-modelled LES with libWallModelledLES.** [Nuca et al. (2025)](/sources/nuca-2025.md)
 implement their explicit (non-iterative) forms of the Spalding, Reichardt
 and equilibrium-ODE wall models in libWallModelledLES, the OpenFOAM
-wall-modelling library of Mukha et al. (2019, as recalled), and run
+wall-modelling library of Mukha et al. (2019), which they cite, and run
 wall-modelled LES of the Aérospatiale A-airfoil near stall in the
-configuration of Tamaki & Kawai (2023, as recalled): a structured C-grid of
+configuration of Tamaki & Kawai (2023), which they cite: a structured C-grid of
 $18.7\times10^6$ cells, 40 across the span, 10–12 cells across the local
 boundary-layer thickness, the wall model on the whole suction side,
 statistics over one convective time $c/U_\infty$, which the authors call
@@ -115,10 +148,10 @@ $Re_\tau\approx1000$ from the same group. See
 [equilibrium wall model](/methods/equilibrium-wall-model.md) and
 [wall-modelled LES](/methods/wall-modelled-les.md).
 
-**Wall-modelled LES, as recalled.** [Mukha et al. (2025)](/sources/mukha-2025.md),
-§II.C.4, §IV.B, recall that the viscosity-based wall-stress condition
+**Wall-modelled LES, as cited.** [Mukha et al. (2025)](/sources/mukha-2025.md),
+§II.C.4, §IV.B, state that the viscosity-based wall-stress condition
 (no-slip plus a wall eddy viscosity that reproduces the modelled stress)
-"has long been used in OpenFOAM". They recall an earlier OpenFOAM WMLES of
+"has long been used in OpenFOAM". They cite an earlier OpenFOAM WMLES of
 a flat-plate boundary layer, at about 2 cells per boundary-layer thickness,
 as less accurate than their spectral-element results. In
 [Nek5000](/software/nek5000.md) the same condition fails (see that page and
@@ -170,6 +203,10 @@ medium-grid WMLES ([Spalart–Allmaras model](/methods/spalart-allmaras-model.md
   $+\partial_j\tau_{ij}$ without defining $\tau_{ij}$; for Eq. (2.2) to
   hold, their $\tau_{ij}$ is the negative of the registry's positive-trace
   $\tau_{ij}$, as their Source page's Notation map records.
+- Brenner et al. (2022) run foam-extend 4.0 and list OpenFOAM among their
+  keywords; their adjoint relies on the block-coupled `pUCoupledFoam`
+  solver of foam-extend. Their Fig. 8 caption swaps the subscripts of the
+  adjoint and finite-difference gradients relative to the axis labels.
 - Cost and accuracy statements on this page are those of each study's
   set-up (mesh, schemes, model). None isolates OpenFOAM from its
   configuration.
@@ -184,10 +221,12 @@ medium-grid WMLES ([Spalart–Allmaras model](/methods/spalart-allmaras-model.md
 - [McConkey et al. (2022)](/sources/mcconkey-2022.md) — Eqs. (10)–(16) (k-ε-φ-f model in OpenFOAM v2006).
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — §3.2, §3.4 (simpleFoam baseline, WALE LES reference).
 - [Liu et al. (2024)](/sources/liu-2024.md) — Eqs. (1)–(21), "Flow solvers" (SSG/LRR-ω with γ in OpenFOAM).
-- [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §II.C.4, §IV.B (viscosity-based wall condition and OpenFOAM WMLES, as recalled).
+- [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §II.C.4, §IV.B (viscosity-based wall condition and OpenFOAM WMLES, as cited).
 - [Steinhausen et al. (2023)](/sources/steinhausen-2023.md) — §2.1 (OpenFOAM-based DNS solver).
 - [Domingo & Vervisch (2023)](/sources/domingo-2023.md) — §1 (OpenFOAM among DNS codes).
 - [Goc et al. (2021)](/sources/goc-2021.md) — §1, §4 (OpenFOAM SA RANS cost reference).
 - [Nuca et al. (2025)](/sources/nuca-2025.md) — §I (Newton divergence in libWallModelledLES practice); §VI, Table VIII, App. B (A-airfoil set-up, iteration counts, cost); §VI (OpenFOAM channel LES data).
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.1, Table 1 (channel, OpenFOAM v12 SST); §3.3, Figs. 9–12 (backward-facing step meshes and results).
+- [Brenner et al. (2022)](/sources/brenner-2022.md) — §2.1.3–2.1.4, §2.3, §2.8–2.9 (discrete adjoint in foam-extend 4.0, LDU transposition, built-in operators for the parameter Jacobian, dropped pressure term); §3.1, §3.3–3.4, Fig. 8 (periodic hill set-up, gradient check, warm start); §4.
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §2 (a posteriori cross-validation in OpenFOAM); §3 (modified OpenFOAM, schemes, grids); App. C (BSL-EARSM comparison); Conclusions (cost of propagating the MAP model).
 - [Böttler et al. (2022)](/sources/bottler-2022.md) — §2.3 (OpenFOAM flamelet/progress-variable solver, OpenFOAM–Cantera reference); §3 (stated cost reduction).

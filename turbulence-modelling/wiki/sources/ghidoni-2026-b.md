@@ -9,7 +9,7 @@ year: 2026
 venue: "Phys. Fluids 38:054114"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Physics_of_Fluids_Ghidoni_A_transition_model_based_on_laminar_kinetic_energy_and_empir.pdf"
 tags: [transition, rans, dg, high-order, compressible]
-timestamp: 2026-10-27T06:09:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Summary
@@ -125,7 +125,7 @@ The original model's constants are printed in Table I.
 | $k_T$ | $k$ | turbulent kinetic energy |
 | $k_L$, $k_{TOT}=k_L+k_T$ | $k_L$, $k_L+k$ (page-local) | laminar kinetic energy |
 | $k_s$, $k_l$ | (small- and large-scale parts of $k$, page-local) | |
-| $\omega$, $\tilde\omega=\log\omega$ | $\omega$, $\ln\omega$ | **collision:** tilde is neither Favre nor SA |
+| $\omega$, $\tilde\omega=\log\omega$ | $\omega$, $\tilde\omega_\ell=\ln\omega$ (registry §11) | **collision:** tilde is neither Favre nor SA |
 | $\tilde p$, $\tilde T$ | $\ln p$, $\ln T$ | primitive log-variables |
 | $\nu_T$, $\nu_{T,s}$, $\nu_{T,l}$ | $\nu_t$ and its small- and large-scale parts | |
 | $\tau_{ij}=2\nu_T(\cdots)-\frac23\rho k_T\delta_{ij}$ | $-\bar\rho R_{ij}$ | **collision:** negative convention, not the SGS stress |

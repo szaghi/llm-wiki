@@ -5,7 +5,7 @@ description: "How a scale-resolving simulation is fed with turbulence at its inf
 status: established
 aliases: [turbulent inflow generation, synthetic inflow turbulence, synthetic turbulence generator, STG, recycling–rescaling inflow, recycling inflow, digital filter inflow, precursor inflow, MDSRFG, random flow generation]
 tags: [les, dns, boundary-layer, wmles, compressible]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Inflow turbulence generation
@@ -39,7 +39,11 @@ the target thickness at the inlet and fed back.
   the method of Pirozzoli, Bernardini & Grasso with the recycling station at
   $80\delta_{\mathrm{in}}$, "long enough" to decorrelate the recycled eddies;
   [Huang et al. (2022)](/sources/huang-2022.md), §2.3, a modified version of
-  Duan et al. with the recycling plane at $52.7\delta_i$.
+  Duan et al. with the recycling plane at $52.7\delta_i$;
+  [Zhang et al. (2022)](/sources/zhang-2022-b.md), §2, the
+  Pirozzoli–Bernardini–Grasso method in [STREAmS](/software/streams.md)
+  for six layers from Mach 0.5 to 8, chosen because it is "less noisy
+  than a synthetic inflow like the digital filtering method".
 - An **auxiliary box**: [Helm & Martín (2022)](/sources/helm-2022.md), §II,
   run a separate boundary layer with recycling–rescaling over a long box and
   interpolate its rescaling plane, in time and space, onto the inlet of the
@@ -86,6 +90,28 @@ superimposed on the mean inflow.
   wall-modelled shock interaction; [Huang et al. (2022)](/sources/huang-2022.md)
   use a digital filter (Dhamankar et al.; Huang & Duan) as the alternative
   to recycling in their recovery study below.
+- **Digital filters for shock interactions.** Three sources feed
+  supersonic shock/boundary-layer interactions with the filter of Klein,
+  Sadiki & Janicka, each with its own mean state:
+  [De Vanna et al. (2022)](/sources/devanna-2022.md), §4.1, in the
+  low-storage form of Kempf et al., superposed on a mean profile, with the
+  initial field from a van Driest-transformed Musker profile, for a
+  wall-modelled LES of the Mach 2.28 oblique interaction at inflow
+  $Re_\tau=700$;
+  [Yu et al. (2022)](/sources/yu-2022-e.md), §2.1, with a Musker mean
+  velocity and the mean temperature and temperature fluctuations from the
+  generalized Reynolds analogy of Zhang et al. (2014), for a DNS of the
+  same interaction at $Re_\tau=201$ on the reference plane; and
+  [Tonicello et al. (2022)](/sources/tonicello-2022.md), §2.1, in a form
+  generalized to their spectral-difference discretization, with mean
+  profiles from closed-form relations built on the van Driest-transformed
+  velocity, the correlation tensor extrapolated from the boundary-layer
+  DNS of Pirozzoli & Bernardini, and density and temperature fluctuations
+  from the strong Reynolds analogy (see
+  [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md)), for a DNS
+  of a Mach 2.91 compression/expansion ramp. Recovery is in the next
+  section; the interactions are on
+  [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 - **Fourier modes.** [Morsbach et al. (2024)](/sources/morsbach-2024.md),
   §2 and §3.3, feed the synthetic turbulence generator of Shur et al.
   (randomized Fourier modes) with spanwise profiles of the six Reynolds-stress
@@ -141,7 +167,7 @@ superimposed on the mean inflow.
   hypothesis](/definitions/morkovin-hypothesis.md)). The SEM acts on the
   lower part of the inflow plane, and anisotropic linear forcing (de Laage
   de Meux et al.) in a zone from $5\delta_r$ to $10\delta_r$ ($\delta_r$
-  the boundary-layer thickness at the reference station, page-local)
+  the boundary-layer thickness at the reference station, registry §11)
   shortens the recovery further at a cost of 5–10% in performance. No
   formula of either is printed. The authors choose the SEM because random
   superposition creates no spurious inflow correlations; they state,
@@ -254,6 +280,21 @@ zone, and the wall-pressure spectra of the interaction show no extra
 low-frequency content from the SEM, with the interaction peak at
 $St\approx0.03$ based on the interaction length.
 
+[Tonicello et al. (2022)](/sources/tonicello-2022.md), §2.1, place the
+digital-filter inlet $12\delta$ upstream of the reference station
+($\delta$ the reference 99% thickness), citing recovery distances in the
+literature from about $\tfrac23\delta$ (Adler et al.) to $15\delta$ (Morgan
+et al.). At the reference station the computed layer has $Re_\theta=2873$,
+$\delta^+=355$ and $C_f\times10^3=2.17$ against the target 2900, 340 and
+2.16, with the van Driest velocity and Reynolds stresses compared with DNS
+(Table 3, Fig. 5). [Yu et al. (2022)](/sources/yu-2022-e.md) validate
+their incoming layer on a reference plane $15\delta_i$ from the inlet
+($\delta_i$ the inflow thickness) against the Mach 2 DNS of Pirozzoli &
+Bernardini at $Re_\tau\approx200$ (§2, Fig. 2), and
+[De Vanna et al. (2022)](/sources/devanna-2022.md) theirs at
+$Re_\tau=840$ against the same DNS (§4.3, Figs. 3–4); neither states a
+recovery length.
+
 ## Triggering transition instead
 
 [Dang et al. (2022)](/sources/dang-2022.md), §5.1, generate the Mach 2.9
@@ -267,9 +308,9 @@ Driest-transformed mean velocity against it.
 temperature, zero turbulence intensity) on twin square supersonic nozzles
 ($M_j=1.36$, $Re=8.85\times10^5$ on an equivalent diameter) and disturb the
 nozzle boundary layer with a small step of height $0.02h_n$ ($h_n$ the exit
-height, page-local) mid-way along the converging section, following the
-$0.01D$ step that Langenais et al. used in a round jet, as recalled by the
-authors. The step sits in the converging rather than the diverging part
+height, registry §11) mid-way along the converging section, following the
+$0.01D$ step that Langenais et al., whom the authors cite, used in a round
+jet. The step sits in the converging rather than the diverging part
 to avoid a shock at the artificial geometry, and the larger height is
 justified by the lower wall slope of their convergent. The implicit LES
 (MILES with Jameson-type artificial dissipation, see
@@ -368,8 +409,13 @@ compiles (§5.2).
 
 - The sources measure recovery differently (momentum-integral balance in
   Huang et al.; match of a measured momentum-thickness growth and of the
-  free-stream decay in Morsbach et al.), so their recovery lengths are not comparable;
+  free-stream decay in Morsbach et al.; integral parameters at one station
+  in Tonicello et al.), so their recovery lengths are not comparable;
   Mukha et al. give no length for their "inflow adaptation".
+- Zhang et al.'s preference for recycling as "less noisy" and Huang et
+  al.'s longer induction length of the digital filter concern different
+  properties (the noise Zhang et al. name, against the distance to
+  equilibrium Huang et al. measure); neither source measures the other's.
 - [Möller et al. (2024)](/sources/moller-2024.md) find the 5% upwind
   fraction best but call it a tunable parameter likely to depend on case and
   mesh; their inflow length scales with and without the generator differ
@@ -393,6 +439,10 @@ compiles (§5.2).
 
 - [Huang et al. (2022)](/sources/huang-2022.md) — §2.3, Fig. 1; §3.1, Eq. (3.1), Table 3, Fig. 2; §6(i).
 - [Cogo et al. (2022)](/sources/cogo-2022.md) — §2 (recycling–rescaling set-up).
+- [Zhang et al. (2022)](/sources/zhang-2022-b.md) — §2 (recycling–rescaling preferred to digital filtering, Mach 0.5–8).
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §4.1 (low-storage digital filter, Musker initial field); §4.3, Figs. 3–4.
+- [Yu et al. (2022)](/sources/yu-2022-e.md) — §2.1 (digital filter, Musker profile, generalized Reynolds analogy); §2, Fig. 2.
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.1, Tables 1 and 3, Fig. 5 (generalized digital filter with strong-Reynolds-analogy thermodynamics, $12\delta$ development length).
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §II, Fig. 1; §III B.
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Methods p. 14 (preprint v1).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §4.3.

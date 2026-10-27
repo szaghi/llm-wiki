@@ -5,7 +5,7 @@ description: "Scale-similarity and deconvolution models build the subgrid stress
 status: established
 aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, approximate deconvolution model, ADM, D3M, DIAD, DDM, direct deconvolution model, Layton–Lewandowski model, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model]
 tags: [les, sgs-model, filtering, combustion]
-timestamp: 2026-10-27T11:01:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Scale-similarity and mixed subgrid-scale models
@@ -52,10 +52,10 @@ $c_L(\widehat{\bar u_i\bar u_j}-\hat{\bar u}_i\hat{\bar u}_j)=c_LL_{ij}$,
 tested with $c_L=1$ for the full tensor ($c_L$ page-local). Abe's
 $C_L=0.5$ multiplies the deviatoric part of $L_{ij}$ in Abe's own model,
 so the two printed coefficients scale different tensors and are not
-recorded as a disagreement. As
-recalled by Domaradzki, Liu et al. found good correlations with box and
-Gaussian filters and much weaker ones with a sharp spectral cutoff, and
-Brun, Friedrich & da Silva recast the Métais–Lesieur structure-function
+recorded as a disagreement. Domaradzki (§1) cites Liu et al., who found
+good correlations with box and Gaussian filters and much weaker ones with a
+sharp spectral cutoff, and Brun, Friedrich & da Silva, who recast the
+Métais–Lesieur structure-function
 model as a similarity-type model, the one link between the two classes.
 
 ## Agreed properties
@@ -87,6 +87,14 @@ model as a similarity-type model, the one link between the two classes.
   from the author's earlier work that the $k_{\mathrm{sgs}}$ of BRD did not
   always work a posteriori on coarse grids, which is why the author's mixed
   model carries a transport equation for $k_{\mathrm{sgs}}$ (below).
+  [Qi et al. (2022)](/sources/qi-2022-b.md) (§1) recall the same pairing
+  for compressible LES: gradient and scale-similarity models correlate
+  highly with the subgrid stress and energy flux but are unstable, citing
+  the linear stability analysis of Vreman et al. (1996), while
+  eddy-viscosity models are purely dissipative and correlate poorly. Their
+  answer, like Abe's, carries $k_{\mathrm{sgs}}$ in a transport equation,
+  and uses the structural (gradient) term to set the coefficients of an
+  eddy viscosity (see [gradient model](/methods/gradient-model.md)).
   Prakash et al. (2022, §II) attribute the instability risk to model
   backscatter through the resolved-energy balance (see
   [gradient model](/methods/gradient-model.md)).
@@ -151,14 +159,15 @@ $\Delta=\sqrt{\max(\Delta x\Delta y,\Delta y\Delta z,\Delta z\Delta x)}$,
 changed from the cube root of the author's original model. The author
 states, from earlier work, that the extra term "yields no undesirable extra
 energy transfer". On the coarse step grid the SMM gives
-a reattachment length (page-local $x_R$) $x_R/H=7.19$ against the experimental 6.51 (+10.4%), and its SGS energy
+a reattachment length ($x_R$, registry §11) $x_R/H=7.19$ against the experimental 6.51 (+10.4%), and its SGS energy
 and shear stress "generally correspond well" to the filtered reference
 (§IV A–B, Table II, Figs. 7–8). With the cube-root width (mSMM) the bubble
 lengthens to $x_R/H=7.43$ (+14.1%) (§IV D, Table III). The projection
 that the SMM removes everywhere is the one that
 [optimal clipping](/methods/gradient-model.md) removes where the structural
-model backscatters *(compiler check, not in the sources)*. Inagaki & Kobayashi (2020), as recalled by Abe (§V), report that
-an algebraic local-equilibrium $k_{\mathrm{sgs}}$ may work on coarse grids.
+model backscatters *(compiler check, not in the sources)*. Abe (§V) cites
+Inagaki & Kobayashi (2020), who report that an algebraic local-equilibrium
+$k_{\mathrm{sgs}}$ may work on coarse grids.
 
 **Constant and dynamic mixed models.** Prakash et al. (2022, §II, Eq. 7)
 recall the mixed model $\tau^{\mathrm M}_{ij}-2(C_G\Delta)^2\lvert\bar S\rvert\bar S_{ij}$
@@ -351,8 +360,8 @@ posteriori, because it amplifies small-scale fluctuations near the cutoff.
 **Similarity model as a pretraining target.** [Kim et al. (2022)](/sources/kim-2022.md)
 (§II D) report that pretraining their reinforcement-learning SGS model on
 the scale-similarity model made the training unstable because the LES
-itself was numerically unstable, which suggests that clipping is needed,
-in line with the instability noted above; they do not use it as a
+itself was numerically unstable, which, they write, suggests that clipping
+is needed; they do not use it as a
 baseline "because the DSM usually outperforms it" (§II, §I). No results
 are shown for either statement.
 
@@ -366,9 +375,9 @@ Its subgrid transfer correlates with that of the similarity stress at
 0.81, against about 0.4 quoted for Smagorinsky, and it keeps local
 backscatter without instability in isotropic turbulence (§3.1). The author
 reads $L_{ij}$ of a Gaussian filter also as a deconvolution model, the
-Gaussian being exactly invertible (§3.1). The statement that similarity
-and deconvolution models fail in actual LES (§1) is recalled from
-Bardina et al. and Liu et al.; the paper runs no LES with the similarity
+Gaussian being exactly invertible (§3.1). Domaradzki (§1) cites Bardina
+et al. and Liu et al. for the statement that similarity and deconvolution
+models fail in actual LES; the paper runs no LES with the similarity
 stress itself as the closure (§3).
 
 ## Velocity-gradient (nonlinear) form
@@ -405,7 +414,7 @@ CH$_4$ and O$_2$ consumption more than the three-dimensional deconvolution,
 and it enhances the overestimation of CO (Fig. 6).
 
 The same second-order operator appears as the continuous Germano
-differential filter $\bar u=(1-\Delta^2/24\,\nabla^2)^{-1}u$ recalled by
+differential filter $\bar u=(1-\Delta^2/24\,\nabla^2)^{-1}u$ cited by
 [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md) (§3.4, Eq. 20),
 which the formula above inverts exactly, since
 $(1-\Delta^2/24\,\nabla^2)\bar u=u$ *(compiler check, not in the sources)*. [Duraisamy (2021)](/sources/duraisamy-2021.md)
@@ -427,7 +436,7 @@ velocity $u^*_i=Q\,\bar u_i$ from the truncated van Cittert series
 $$Q=\sum_{n=0}^{N_{\mathrm{AD}}}(I-G_{\mathrm{EF}})^n,\qquad \hat Q=\frac{1-(1-\hat G_{\mathrm{EF}})^{N_{\mathrm{AD}}+1}}{\hat G_{\mathrm{EF}}},$$
 
 so that the momentum equation carries $\partial_j\overline{u^*_iu^*_j}$ and
-no explicit dissipation. Here $N_{\mathrm{AD}}$ (page-local) is the number
+no explicit dissipation. Here $N_{\mathrm{AD}}$ (registry §11) is the number
 of series terms, $N_{\mathrm{AD}}=5$ in their LES, and $G_{\mathrm{EF}}$
 (page-local) is the "effective filter" assumed in the inversion, which
 need not be the LES filter $G$ that forms $\overline{u^*_iu^*_j}$ (§4). The
@@ -457,7 +466,7 @@ $\tau_{ij}=\overline{\bar u_i\bar u_j}-\bar u_i\bar u_j$, so that the
 resolved momentum equation is the unclosed one with its advective term
 filtered, $\partial_t\bar u_i+\partial_j\overline{\bar u_i\bar u_j}+\dots$.
 The authors place it in the scale-similarity family of Bardina; its second
-term is not re-filtered, unlike the Bardina form recalled by Domaradzki
+term is not re-filtered, unlike the Bardina form cited by Domaradzki
 above *(compiler check, not in the sources)*. They note it "has not gained
 widespread popularity".
 
@@ -515,7 +524,8 @@ explicitly filtered difference
 
 $$\tau^{\mathrm{ef}}_{ij}=\overline{\rho^*u^*_iu^*_j}-\overline{\bar\rho^*\tilde u^*_i\tilde u^*_j}$$
 
-(§III, Eqs. 31–33; $\phi^*$, $D$, $\tau^{\mathrm{ef}}_{ij}$ page-local),
+(§III, Eqs. 31–33; $\phi^*$, $D$ page-local, $\tau^{\mathrm{ef}}_{ij}$
+registry §11),
 with the Gaussian kernel of transfer function
 $\hat G(k)=\exp(-k^2\Delta^2/24)$ (Eqs. 30, 48). The four operators are:
 
@@ -532,13 +542,13 @@ $\hat G(k)=\exp(-k^2\Delta^2/24)$ (Eqs. 30, 48). The four operators are:
   is the one-dimensional form of the operator of Domingo & Vervisch above
   (§III B, Eqs. 37–42, Table II); order 4 is selected;
 - **DIAD**, the dynamic iterative approximate deconvolution: weights on an
-  $N_{\mathrm{st}}^3$ stencil ($N_{\mathrm{st}}$ page-local) fitted by constrained least squares
+  $N_{\mathrm{st}}^3$ stencil ($N_{\mathrm{st}}$ registry §11) fitted by constrained least squares
   from resolved data only, with the weights summing to one, iterated
   (§III C, Eqs. 43–46); $N_{\mathrm{st}}=5$, filter-to-stencil ratio 2 and two
   iterations are selected;
 - **DDM**, the spectral direct deconvolution: exact inversion of
   $\hat G$, bounded in magnitude by $1/\varepsilon_{\mathrm{DD}}$ with
-  $\varepsilon_{\mathrm{DD}}=0.01$ (page-local), which needs FFTs, hence a
+  $\varepsilon_{\mathrm{DD}}=0.01$ (registry §11), which needs FFTs, hence a
   periodic uniform grid (§III D, Eqs. 47–50).
 
 **Protocol.** The DNS is top-hat filtered, to emulate the implicit filter
@@ -686,3 +696,4 @@ does not improve.
 - [Tang et al. (2022)](/sources/tang-2022.md) — §2.2, Eqs. (15)–(17); §3.1, Figs. 5–7; §3.2, Figs. 12–16; §4.
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §I; §II C, Eqs. (23)–(29); §III A–D, Eqs. (30)–(50), Tables I–II; §V A–C, Tables III–VII, Figs. 20–23; §VI.
 - [Li et al. (2021)](/sources/li-2021.md) — §III C, Figs. 2–8; §III F, Fig. 13.
+- [Qi et al. (2022)](/sources/qi-2022-b.md) — §1; §3.2.

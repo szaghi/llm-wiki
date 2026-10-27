@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Equilibrium wall model
@@ -33,7 +33,10 @@ every wall-modelled source of this bundle:
 [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) (with hybrid RANS/LES
 rather than LES), [Mukha et al. (2025)](/sources/mukha-2025.md),
 [Nuca et al. (2025)](/sources/nuca-2025.md), who reformulate the
-Spalding, Reichardt and ODE forms as explicit laws, and the wall law of the
+Spalding, Reichardt and ODE forms as explicit laws, the compressible ODE
+models of [De Vanna et al. (2022)](/sources/devanna-2022.md) and
+[van Noordt et al. (2022)](/sources/vannoordt-2022.md) in shock/boundary-layer
+interactions, and the wall law of the
 fan-stage WMLES of [Lewis et al. (2023)](/sources/lewis-2023.md); it is the comparison
 baseline of the learned models of [Bae & Koumoutsakos (2022)](/sources/bae-2022.md)
 and of the [building-block-flow wall model](/methods/building-block-flow-wall-model.md)
@@ -85,7 +88,7 @@ with van Driest damping,
 $$\mu_t=\kappa y\,\langle\rho\rangle\sqrt{\tau_w/\langle\rho\rangle}\,\left(1-e^{-y^+/A^+}\right)^2,$$
 
 with $\kappa=0.41$, $A^+=17$ (Griffin et al. 2023, Eqs. 1.1–1.2, after Cabot &
-Moin 2000 as they recall it). The problem is iterative because $\mu_t$ depends
+Moin 2000 as they cite it). The problem is iterative because $\mu_t$ depends
 on $\tau_w$. Goc et al. (2021, Eq. 2.6) write the same balance as
 $d\big(\mu\,dU/dy-\langle\rho u''v''\rangle\big)/dy=0$ with the Reynolds shear
 stress closed by a mixing-length eddy viscosity (constants not printed), and obtain the
@@ -115,13 +118,51 @@ $$\frac{d}{dy}\left[(\mu+\mu_t)U\frac{dU}{dy}+c_p\left(\frac{\mu}{Pr}+\frac{\mu_
 with $Pr_t=0.9$, an ideal gas, a viscosity law and constant pressure across the
 inner layer; the boundary conditions are the wall temperature and the matching
 temperature (Griffin et al. 2023, Eq. 1.3, after Larsson et al. 2016 as they
-recall it). Two coupled nonlinear boundary-value problems must then be iterated.
+cite it). Two coupled nonlinear boundary-value problems must then be iterated.
 Hoy & Bermejo-Moreno (2022, §3) use the compressible equilibrium model of
 Kawai & Larsson (2012), with a mixing-length eddy viscosity, solved on a
 separate one-dimensional grid from the wall to $h_{\mathrm{wm}}$, with the
 instantaneous LES velocity, pressure and temperature at $h_{\mathrm{wm}}$ as
 top condition and an adiabatic no-slip wall; equations and constants are not
 printed.
+
+De Vanna et al. (2022, §2.2, Eqs. 6a–b) and van Noordt et al. (2022, §2.5,
+Eqs. 34, 37) print the same pair in the split form
+
+$$\frac{d}{dy}\left[(\mu+\mu_t)\frac{dU}{dy}\right]=0,\qquad\frac{d}{dy}\left[c_p\left(\frac{\mu}{Pr}+\frac{\mu_t}{Pr_t}\right)\frac{dT}{dy}\right]=-\frac{d}{dy}\left[(\mu+\mu_t)U\frac{dU}{dy}\right],$$
+
+which is the total-energy equation above with the work term moved to the
+right-hand side. Both close $\mu_t$ with a mixing length whose van Driest
+damping is written in the semi-local wall distance $y^*$, with
+$\kappa=0.41$, $A^+=17$: De Vanna et al. as $\mu_t=\kappa\rho u_\tau y\,[1-e^{-y^*/A^+}]^2$
+with $\rho=p_{\mathrm{LES}}/(RT)$ and $Pr_t=0.9$, van Noordt et al. as
+$\mu_t=\kappa\mu y^*\,[1-e^{-y^*/A^+}]^2$ ($Pr_t$ not printed). With
+$y^*=y\sqrt{\langle\rho\rangle\tau_w}/\langle\mu\rangle$, $\mu y^*=\langle\rho\rangle y\sqrt{\tau_w/\langle\rho\rangle}$,
+so the second form is Griffin et al.'s eddy viscosity with the damping in
+$y^*$ in place of $y^+$ *(compiler check, not in the sources)*; De Vanna et
+al. do not say which $u_\tau$ enters their form. Both describe the equilibrium
+assumption as a balance of convection and pressure gradient (De Vanna et al.
+§1, §2.2; van Noordt et al. Eq. 33, with $v=w=0$, no spanwise, streamwise or
+temporal derivatives and $\partial(\rho uu)/\partial x=-\partial p/\partial x$),
+the wording of Goc et al. above. The semi-local damping is the
+Trettel–Larsson choice (see
+[compressible velocity transformations](/definitions/compressible-velocity-transformation.md)).
+
+**How the stress reaches the LES.** Most sources of this page replace no
+slip by the modelled $\tau_w$ (and $q_w$). Van Noordt et al. (§2.4–2.6) apply
+$\tau_w$ and $q_w$ explicitly as the viscous fluxes at the intersections of
+grid lines with an [immersed boundary](/methods/immersed-boundary-method.md),
+contrasting this with the dynamic slip condition of Bose & Moin (as cited;
+see [slip-wall models](/methods/slip-wall-model.md)). De Vanna et al.
+(§2.2, Eqs. 7a–b) keep no slip and the thermal wall condition and instead
+augment the wall viscosity and conductivity, $\tau_w=(\mu_w+\mu^w_{\mathrm{sgs}})\,\partial u_\parallel/\partial y$
+and $q_w=(\lambda_w+\lambda^w_{\mathrm{sgs}})\,\partial T/\partial y$
+with the resolved wall gradients ($u_\parallel$ the wall-parallel velocity,
+$\lambda$ the conductivity, $\mu^w_{\mathrm{sgs}}$, $\lambda^w_{\mathrm{sgs}}$
+the wall SGS increments; page-local), the viscosity-augmentation form that
+Bae & Koumoutsakos (2022) also use (see
+[log-layer mismatch](/definitions/log-layer-mismatch.md)); details on the
+[wall-modelled LES](/methods/wall-modelled-les.md) page.
 
 ## Algebraic forms
 
@@ -311,6 +352,8 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | Mukha et al. (2025, §II.C.1, §III–IV) | Nek5000, continuous spectral elements of degree 7 | channel: $0.2\delta$, inside the first element on meshes of 2 and 4 elements per $\delta$ and in the second on 8, for elements of equal height *(compiler check, not in the sources)*; boundary layer: $0.2\delta_{99}(x)$, $\delta_{99}$ from a power-law estimate | none by default; exponential moving average of 5–500 time steps tested (channel), 10 time steps (boundary layer) |
 | Nuca et al. (2025, §II, §VI, App. B) | OpenFOAM with the libWallModelledLES library, structured C-grid of 18.7 M cells, 10–12 cells across the boundary layer | airfoil: not printed; a priori channel test: $0.05\delta$, "the center of the second off-wall cell" of a notional WMLES grid | channel: LES velocity averaged over a cube of side $\delta/30$ around the sampling point; airfoil: none stated |
 | Ghidoni et al. (2026, §3.3, Fig. 1, Alg. 1), RANS | modal DG, $N\le6$, body-fitted | internal quadrature point of the wall element farthest from the wall (nearest the opposite face), first-element heights $y_1^+=1$–320 | steady RANS, no filtering |
+| De Vanna et al. (2022, §2.2, §3.2) | URANOS, uniform finite-difference grids | chosen dynamically from the local wall resolution, "sufficiently far from the wall and in an adequately resolved flow zone" (details deferred to their earlier work, as cited); model active only where $\Delta x^+_w<40$, $\Delta y^+_w<3$, $\Delta z^+_w<15$ (resolved $\tau_w$) is violated | none stated |
+| van Noordt et al. (2022, §2.6, §3.1, §3.4) | CHAMPS, Cartesian octree, immersed boundary | far point of a ray from each surface-triangle centroid at a fixed outer-unit distance: about $0.05\delta$, varied over 3–4 minimum grid spacings (channel); $0.11\delta_r$ (ramp) | none stated; insensitive to the exchange distance (channel) |
 | Constant et al. (2024, §3.1, §4.2), RANS | FastS finite volume, octree Cartesian grid, immersed boundary | modelling height $H_{\mathrm{mod}}$ from a flat-plate estimate of a target $y^+$ (50–500), then lowered locally after a first converged run (see below) | steady RANS, no filtering |
 
 Gillyns et al. (2022, §5) find that without the moving average ($C_t=0$) the
@@ -326,8 +369,8 @@ element, so a first element ending near $y^+\simeq150$ "is not necessarily
 the best choice" (§7, Table 1).
 
 Mukha et al. (2025, §II.C.1, Eqs. 5–6) apply the same exponential filter in
-the same code: their weight $\Delta t/(\Delta t+\Delta t_{\mathrm{avrg}})$ is
-$\alpha_e$ with $C_t=\Delta t_{\mathrm{avrg}}$ *(compiler check, not in the
+the same code: their weight $\Delta t/(\Delta t+\Delta t_{\mathrm{avg}})$ is
+$\alpha_e$ with $C_t=\Delta t_{\mathrm{avg}}$ *(compiler check, not in the
 sources)*. Their study separates a priori from a posteriori effects
 (§III.B.3, Tables II–III, Figs. 4–5):
 
@@ -337,26 +380,26 @@ sources)*. Their study separates a priori from a posteriori effects
   $-1.07$ % on their three channel meshes; fluctuations of the input shift
   the stress error towards over-prediction (after Hultmark et al., as they
   cite it). With recorded probe data, most of the reduction is obtained by
-  $\Delta t_{\mathrm{avrg}}=50\Delta t=0.01\,\delta/u_\tau$, where the mean
+  $\Delta t_{\mathrm{avg}}=50\Delta t=0.01\,\delta/u_\tau$, where the mean
   stress magnitude and the magnitude of the mean stress begin to coincide,
   i.e. where the spanwise velocity is averaged out; this lies in the
   inertial range of the temporal spectrum of $u'$ at $h_{\mathrm{wm}}$, far
   below the diffusion time $h_{\mathrm{wm}}/(\kappa u_\tau)\approx0.51\,\delta/u_\tau$
   that others recommend (as they cite it). The temporal stability of the
   direction of the modelled stress is proposed as a criterion for choosing
-  $\Delta t_{\mathrm{avrg}}$ automatically.
-- **A posteriori**, runs with $\Delta t_{\mathrm{avrg}}=5$, 10, 50 and
+  $\Delta t_{\mathrm{avg}}$ automatically.
+- **A posteriori**, runs with $\Delta t_{\mathrm{avg}}=5$, 10, 50 and
   $500\Delta t$ show "no systematic accuracy gain", because the velocity at
-  the sampling point itself changes with $\Delta t_{\mathrm{avrg}}$, which
+  the sampling point itself changes with $\Delta t_{\mathrm{avg}}$, which
   violates the a priori assumption. For algebraic models they conclude that
-  $h_{\mathrm{wm}}$ matters more than $\Delta t_{\mathrm{avrg}}$, "at odds
+  $h_{\mathrm{wm}}$ matters more than $\Delta t_{\mathrm{avg}}$, "at odds
   with" Yang et al., as they cite them; for non-equilibrium RANS-based wall
   models averaging may matter more. Running without averaging, they did not
   see the divergence reported by Gillyns et al. (see Qualifications).
 
 The choice is tied to [log-layer mismatch](/definitions/log-layer-mismatch.md):
 matching away from the wall or filtering the input are the remedies the
-sources recall, and Lozano-Durán et al. (2022) and Agrawal et al. (2022)
+sources cite, and Lozano-Durán et al. (2022) and Agrawal et al. (2022)
 report first-point matching on Voronoi grids without them.
 
 **Modelling height chosen from the solution (RANS on an immersed
@@ -496,7 +539,7 @@ Fig. 11). The authors also attribute its better lift at low incidence on the NAS
 CRM-HL to such cancellation ("it has been reported", with no citation,
 §4.7).
 
-Goc et al. (2021, §2.2) recall the complementary bound of Bose & Park (2018):
+Goc et al. (2021, §2.2) cite the complementary bound of Bose & Park (2018):
 the equilibrium-model wall-stress error is bounded by the resolution of the
 matching location relative to the displacement or momentum thickness, even with
 pressure gradients, because the outer LES resolves the non-equilibrium effects. The bound itself (Bose & Park 2018, §2.1, Eqs. 7–8) comes from
@@ -513,7 +556,7 @@ separation, where $\tau_w\to0$ (derivation and sign convention on the
 Bae & Koumoutsakos (2022, p. 8, Figs. 6–7) point out that in a deterministic
 wall model such as the equilibrium model the modelled wall stress is
 perfectly correlated with the LES velocity at the sampling location, whereas
-DNS gives a correlation of about 0.3, as they recall; their log-law-based
+DNS gives a correlation of about 0.3, as they cite it; their log-law-based
 reinforcement-learning model reproduces about 0.3 at $h_{\mathrm{wm}}=0.1\delta$
 (see [machine-learning wall models](/methods/machine-learning-wall-model.md)).
 
@@ -529,7 +572,7 @@ Eq. (2) (see Qualifications).
 
 Vadrot et al. (2023b, §IV.D) count 5 operations per evaluation for the
 algebraic log-law model (a multiplication, two divisions, a logarithm, a
-square), recall that the ODE-based model adds 10–30 % overhead to an LES, and
+square), cite earlier work for the statement that the ODE-based model adds 10–30 % overhead to an LES, and
 measure the ODE model at about four times the cost of the
 reinforcement-learning wall model BK22 (one cluster, no hardware detail).
 Lv et al. (2021, §I, §II B 4) quote, for the ODE form on grids of
@@ -577,11 +620,11 @@ further hardware detail).
 - **Periodic hill.** Against the integrated wall model of Lv et al. (2021,
   §IV B 2, Fig. 17), the equilibrium model (Kawai & Larsson 2012, as cited)
   gives the less accurate skin friction on the leeside and near the crest at
-  $Re_b=10\,595$; neither captures $C_f$ between $x/H\approx0$ and 2, and the
+  $Re_h=10\,595$; neither captures $C_f$ between $x/H\approx0$ and 2, and the
   grid matters more than the wall model (see
   [periodic hill](/benchmarks/periodic-hill.md)).
 - **Strong wall heat transfer.** The classical compressible model is hard to
-  converge (Fu et al. 2021, as recalled by Griffin et al. 2023, §1), and its
+  converge (Griffin et al. 2023, §1, citing Fu et al. 2021), and its
   wall-stress and heat-flux errors grow with the cooling parameter $-B_q$,
   both a priori on 48 DNS cases and a posteriori in nine channels at
   $M_b=0.7$–$4$; its log-intercept error persists under grid refinement, so
@@ -613,6 +656,45 @@ further hardware detail).
   length of 8–13 $\delta_0$, resting its validity in such non-equilibrium
   separated flows on earlier work (Bermejo-Moreno et al. 2014, as they cite it,
   §1).
+- **Shock-induced separation with no slip kept.** De Vanna et al. (2022,
+  §4.4–4.6, Figs. 5–7) apply the compressible ODE model through the
+  viscosity-augmentation coupling to the oblique interaction at
+  $M_\infty=2.28$, deflection $8^\circ$, $Re_\tau=700$ at the inflow. Because
+  no slip is retained, the mean skin friction becomes negative in the
+  bubble, which they present as a capability "mainly ruled out in classical
+  equilibrium wall-modeling formulations"; but the interaction length
+  $L_{\mathrm{int}}/\delta_r$ ($L_{\mathrm{int}}$ from the nominal impingement
+  to the reflected-shock foot, $\delta_r$ the inflow 99 % thickness,
+  page-local) is 7.0, 5.2 and 5.0 on the coarse, medium and fine
+  grids against 3.3 for a wall-resolved LES and 4.18 in experiment (§4.6),
+  and the reverse flow is "gentle" where the wall-resolved LES separates
+  clearly. They attribute the oversizing to the wall model and to SGS plus
+  shock-capturing dissipation that "laminarize" the bubble at low
+  resolution, and contrast it with Gross et al. (as cited), who found
+  separation "strongly under-predict[ed]" with a standard equilibrium model
+  (§1). The wall-model activation sensor drops from above 0.95 in the
+  attached layers to about 0.65 in the bubble, where small wall gradients
+  make the wall more often treated as resolved (Fig. 6b).
+- **Hypersonic compression ramp.** Van Noordt et al. (2022, §3.4, Figs.
+  26–27) find, for a Mach 7.2, $8^\circ$ ramp against DNS, the surface
+  pressure captured on the fine grid but an early pressure rise and too much
+  instantaneous separation on the coarse one, a minimum $C_f$ notably above
+  the DNS and a post-shock adjustment length of about $4\delta_r$ on the
+  coarse mesh; as a possible cause they name the imbalance between the
+  tangential pressure gradient and the convective terms that the
+  equilibrium model does not capture. They also warn that in hypersonic flow
+  a sampling point can lie beyond a thin shock layer and over-predict the
+  viscous fluxes (§2.5).
+- **Transitional hypersonic layers.** Van Noordt et al. (2022, §3.2, Eq.
+  58) switch off the wall-model eddy viscosity where the sensor
+  $\hat\rho\hat k/(\hat\mu\lvert\hat S\rvert)$ of Mettu & Subbareddy (as
+  cited; $\hat k$ a test-filtered subfilter energy, the filter not defined
+  in the paper) falls below $5/3$, a threshold tuned to the reference
+  transition location of a Mach 6 flat plate, so the transition location is
+  imposed rather than predicted; laminar surface quantities are not
+  accurately predicted by the wall model and the heat transfer is sensitive
+  to the numerical dissipation added at the immersed boundary (§3.2, §4).
+  This is the role of the Bodart–Larsson sensor described above.
 - **Massive separation on a bluff body.** Cai et al. (2022, §II.C.2, §IV)
   apply the explicit equilibrium model on the whole Ahmed body (a generic car
   body) with a 35° slant ($Re_H=7.68\times10^5$, $H$ the body height), including
@@ -678,7 +760,7 @@ further hardware detail).
   an immersed boundary).** Husson et al. (2024, §3.1) state that their
   immersed-boundary treatment and the linearized Spalart–Allmaras law both
   rest on the equilibrium hypothesis, so "significant discrepancies are to
-  be expected" near separation and in recirculation; they recall that
+  be expected" near separation and in recirculation; they cite work showing that
   non-equilibrium analytical laws and ODE models on embedded grids extend
   the validity, the latter at higher cost and with possible instability on
   non-body-fitted grids (as cited). In their results the near-wall
@@ -725,7 +807,7 @@ profile lies above the DNS).
   scaling in §4, while the same section attributes it to Choi & Moin (2012);
   their reference list gives the 1994 work as "Effects of the computational
   time step on numerical solutions of turbulent flow".
-- [Basile et al. (2023)](/sources/basile-2023.md) (§4.2.3) recall that the
+- [Basile et al. (2023)](/sources/basile-2023.md) (§4.2.3) state that the
   LES of the PPRIME jet by Brès et al. uses an equilibrium wall model inside
   the nozzle, which allows elements much larger than $y^+=1$, and note that
   dof comparisons with such a computation are not like-for-like.
@@ -776,8 +858,7 @@ profile lies above the DNS).
   need for stronger filtering"; when they test the filter as SGS model they
   filter two modes with weight 100. Each statement concerns its own set-up
   (wall law, sampling height, Reynolds number, SGS treatment), so the two
-  are not in conflict; the observations that would test one set-up against
-  the other are not in the sources.
+  are not in conflict.
 - **Sign of the bump exponent of Nuca et al. (2025).** Eq. (10) (checked
   on the page image) prints the correction as
   $\xi_i\,e^{\sigma_i(\log_{10}Re_y-\mu_i)^2}$ with no minus sign (the
@@ -841,3 +922,5 @@ profile lies above the DNS).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §2.1, Eqs. (3), (6)–(8), Fig. 3; §2.3; §2.5, Eq. (17); §4.1; §4.3; §4.4.
 - [Heinz (2020)](/sources/heinz-2020.md) — §3.1, Eq. (21).
 - [Lv et al. (2021)](/sources/lv-2021.md) — §I; §II B 4; §IV B 2, Fig. 17.
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §1; §2.2, Eqs. (6)–(7); §3.2, Eq. (9); §4.4–4.6, Figs. 5–7.
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.4–2.6, Eqs. (33)–(37); §3.1, Fig. 13; §3.2, Eq. (58); §3.4, Figs. 26–27; §4.

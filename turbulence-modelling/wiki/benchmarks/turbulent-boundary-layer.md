@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Turbulent boundary layers: zero and adverse pressure gradient, compressible"
-description: "Spatially developing turbulent boundary layers on flat walls: zero- and adverse-pressure-gradient layers test wall models, RANS wall functions, high-order RANS discretizations, hybrid RANS/LES shielding, the log law, physics-informed networks and data-driven corrections; supersonic and hypersonic layers are DNS databases for compressibility transformations, LES validation and algebraic RANS, and feed shock interactions."
+description: "Spatially developing turbulent boundary layers on flat walls: zero- and adverse-pressure-gradient layers test wall models, RANS wall functions, high-order RANS discretizations, hybrid RANS/LES shielding, the log law and data-driven corrections; supersonic and hypersonic layers are DNS databases for compressibility transformations, wall cooling and pressure fluctuations, test subgrid and wall models, and feed shock interactions."
 status: established
 aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, Wieghardt flat plate, Samuel–Joubert boundary layer, DLR/UniBw APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
 tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven, rans, dg, flux-reconstruction, des, lattice-boltzmann]
-timestamp: 2026-10-27T11:00:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -21,7 +21,7 @@ along the wall classifies it: zero (ZPG), adverse (APG, decelerating) or
 favourable. At high Mach number the wall temperature becomes a parameter,
 measured by the ratio $T_w/T_r$ of wall to recovery temperature
 $T_r=T_\infty(1+r\frac{\gamma-1}2M_\infty^2)$ (recovery factor $r=0.89$ in
-both compressible sources). In this bundle the case serves as a
+the compressible DNS databases). In this bundle the case serves as a
 generalization test for wall models trained in channels, as the data base of
 wall laws under pressure gradient, and as a DNS database for compressible
 wall scalings.
@@ -93,7 +93,7 @@ Fig. 12):
   LES of Eitel-Amor et al. on the finest mesh (Fig. 16).
 
 They place the results "on par with the state of the art, possibly
-outperforming it" for $\langle u'u'\rangle$, recalling the 10–30% velocity
+outperforming it" for $\langle u'u'\rangle$, citing the 10–30% velocity
 and 5–15% wall-stress deviations of Lozano-Durán & Bae (above) on coarser
 meshes and an OpenFOAM WMLES with about 2 cells per $\delta_{99}$ (§IV.B).
 A priori, Spalding's law with $\kappa=0.41$ and the classical intercept
@@ -381,6 +381,9 @@ consistent with the shrinking log layer above (see
 | M2p5HighRe | [Huang et al. (2022)](/sources/huang-2022.md) | 2.5 | 1.0 (adiabatic) | 395–1199 | three boxes, up to $5200\times680\times800$ |
 | M5Tw091 | [Huang et al. (2022)](/sources/huang-2022.md) | 4.9 | 0.91 | 726–1244 | three boxes, up to $5000\times550\times600$ |
 | M11Tw020 | [Huang et al. (2022)](/sources/huang-2022.md) | 10.9 | 0.20 | 672–1193 | three boxes, up to $6300\times690\times600$ |
+| M05T100 / M05T025 | [Zhang et al. (2022)](/sources/zhang-2022-b.md) | 0.5 | 1.0 / 0.25 | 650 / 659 | $2400\times320\times600$ |
+| M20T100 / M20T050 | [Zhang et al. (2022)](/sources/zhang-2022-b.md) | 2.0 | 1.0 / 0.5 | 650 | $2400\times320\times600$ |
+| M80T100 / M80T050 | [Zhang et al. (2022)](/sources/zhang-2022-b.md) | 8.0 | 1.0 / 0.5 | 623 / 650 | $3600\times320\times400$ |
 
 The two databases join: the low-Reynolds-number Mach 5.86 case of Cogo et al.
 matches case M6Tw076 of Zhang, Duan & Choudhari (2018), one of the five
@@ -394,7 +397,14 @@ are reordered in the table above to $x\times y\times z$ with $y$
 wall-normal). Cogo et al. use the GPU code STREAmS
 (energy-preserving central schemes with WENO switched by a shock sensor);
 Huang et al. a limiter-optimized seventh-order WENO scheme, or an
-eighth-order split central scheme for the Mach 2.5 case. Wall temperature
+eighth-order split central scheme for the Mach 2.5 case. The six layers of
+[Zhang et al. (2022)](/sources/zhang-2022-b.md) (§2, Tables 1–2) are
+compared at one station of $Re_\tau\approx650$, with $\Delta x^+=6.2$–12.9,
+$\Delta y^+_w=0.46$–0.77, $\Delta z^+=5.5$–7.7, run in
+[STREAmS](/software/streams.md) with recycling–rescaling inflow
+(energy-preserving central fluxes, with WENO switched in by a modified
+Ducros sensor only at Mach 8); the Mach 8 free stream is low-enthalpy, with
+no real-gas effects. Wall temperature
 alone does not fix the cooling effect: at equal $T_w/T_r=0.76$ the Mach 2
 layers behave as more strongly cooled, which
 [Cogo et al. (2022)](/sources/cogo-2022.md) relate to the lower Eckert
@@ -490,6 +500,79 @@ $C_f$ error 10.91% and onset error 6.96%, against 39.70% and 32.40% without
 the compressibility correction of the onset correlation and 64.42% and
 46.78% without both corrections (Fig. 23).
 
+**Transitional supersonic and hypersonic plates in LES.**
+[Qi et al. (2022)](/sources/qi-2022-b.md), §4.2, Table 8, run a
+spatially developing Mach 2.25 plate (unit Reynolds number 635,000 per
+inch, configuration of Pirozzoli, Grasso & Gatski as cited) in which
+blowing and suction at $4.5<x/L<5.0$ trigger transition, as LES with their
+quasi-dynamic subgrid kinetic-energy model (see
+[dynamic procedure](/methods/dynamic-procedure.md) and
+[Smagorinsky model](/methods/smagorinsky-model.md)) against the dynamic
+Smagorinsky model and a dynamic $k_{\mathrm{sgs}}$-equation model, and
+against their own DNS ($10{,}000\times90\times320$, $\Delta x^+=6.0$,
+$\Delta y^+_{\min}=0.58$, $\Delta z^+=5.47$):
+
+| LES grid | $N_x\times N_y\times N_z$ | $\Delta x^+$ | $\Delta y^+_{\min}$ | $\Delta z^+$ |
+|---|---|---|---|---|
+| A | $1500\times90\times100$ | 40.1 | 0.58 | 17.5 |
+| B | $1000\times90\times80$ | 60.2 | 0.58 | 21.9 |
+| C | $1000\times60\times50$ | 60.2 | 1.00 | 35.1 |
+
+Their model predicts the transition onset, the transition peak of $C_f$ and
+the van Driest velocity at $x/L=8.8$ on all three grids, while on grid C
+the two dynamic models are "not acceptable" (Figs. 16–17); on grid C its
+resolved wall-normal and spanwise intensities and turbulent heat flux are
+closer to the DNS, and its subgrid energy flux at $y^+=15$ resembles the
+DNS one in distribution, intensity and "even the energy backscatters"
+(Figs. 18–20; see [energy backscatter](/definitions/energy-backscatter.md)).
+A priori at $y^+=15$ the expansion coefficient inferred from each subgrid
+term agrees with the one fixed by $k_{\mathrm{sgs}}$ (Fig. 15).
+[Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) (above) also take a
+spatially developing Mach 2.25 DNS of Pirozzoli et al. as transitional
+reference; neither paper relates its case to the other's.
+
+[van Noordt et al. (2022)](/sources/vannoordt-2022.md), §3.2, Tables 6–8,
+run a Mach 6 transitional plate (unit Reynolds number $2.2\times10^7$,
+$T_\infty=254$ K, $T_w=300$ K) as wall-modelled LES on a Cartesian
+[immersed boundary](/methods/immersed-boundary-method.md) of 32M and 45M
+cells, with inflow density forcing and a transition sensor that switches
+off the eddy viscosity of the [equilibrium wall model](/methods/equilibrium-wall-model.md);
+the sensor threshold is tuned to the reference transition location, so
+transition is matched, not predicted. Against the DNS of Subbareddy &
+Candler as cited, the baseline heat transfer lies slightly above the DNS;
+more near-wall dissipation erodes the turbulent structures; taking two
+ghost cells into the upwind reconstruction "does not yield accurate
+results"; laminar surface quantities are not accurately predicted by the
+wall model; refinement changes the peak $C_f$ less than the dissipation
+settings and delays transition, because the forcing was tuned on the
+coarse grid (Figs. 15–17).
+
+**Incoming layers of shock interactions.** Three sources validate the
+supersonic layer that feeds their
+[shock interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md):
+
+- [De Vanna et al. (2022)](/sources/devanna-2022.md), §4.3, Figs. 3–4: at
+  $Re_\tau=840$ (Mach 2.28, digital-filter inflow) the wall-modelled $C_f$
+  matches the wall-resolved one "mostly regardless of the resolution", with a
+  slight under-estimation; the mean velocity agrees with experiment and the
+  Mach 2 DNS of Pirozzoli & Bernardini as cited; the fluctuation peaks lie
+  inside the modelled layer and cannot be predicted; the streamwise
+  intensity is grid-independent, the other components grid-sensitive, and
+  the medium grid fits the references best (see
+  [wall-modelled LES](/methods/wall-modelled-les.md)).
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md), §2.1, Table 3: at
+  $x=-8\delta$, $12\delta$ after a digital-filter inlet with van Driest mean
+  profiles and strong-Reynolds-analogy temperature fluctuations, the Mach
+  2.91 DNS gives $Re_\theta=2873$, $\delta^+=355$, shape factor 5.86 and
+  $C_f=2.17\times10^{-3}$ against the reference 2900, 340, 5.49 and
+  $2.16\times10^{-3}$ (Priebe & Martín as cited); the Reynolds stresses
+  follow Pirozzoli & Bernardini as cited (Fig. 5).
+- [Yu et al. (2022)](/sources/yu-2022-e.md), §2, Table 1, Fig. 2: at the
+  reference plane of their Mach 2.28 DNS, $Re_\tau=201$, $Re_\theta=982$,
+  $C_f=3.104\times10^{-3}$, shape factor 3.70 (1.54 incompressible); the van
+  Driest velocity and the Reynolds stresses agree with the Mach 2 DNS of
+  Pirozzoli & Bernardini at $Re_\tau\approx200$.
+
 **Inflow and domain length.** Both use recycling–rescaling inflow, at
 $80\delta_{\mathrm{in}}$ from the inlet in Cogo et al. Huang et al. measure
 the induction length, the distance after which the momentum-integral
@@ -579,9 +662,9 @@ Schlatter & Örlü), among them case M6Tw076R17 of Zhang, Duan & Choudhari
 that the Mach 5.86 low-Reynolds-number case of
 [Cogo et al. (2022)](/sources/cogo-2022.md) matches, to modify the
 [Baldwin–Lomax model](/methods/baldwin-lomax-model.md). The paper calls this
-model a "wall model", but it is an algebraic RANS eddy-viscosity closure
-of the whole boundary layer, solved here by marching the boundary-layer
-equations, not a wall-stress model for LES (§1, §2.2). Three established
+model a "wall model"; as the paper applies it, it is an algebraic
+eddy-viscosity closure of the whole boundary layer, solved by marching the
+boundary-layer equations, and supplies no wall stress to an LES (§1, §2.2). Three established
 relations replace the semilocal inner scaling of the baseline:
 
 - the inner eddy viscosity of the baseline is shown to be equivalent to the
@@ -622,6 +705,65 @@ find equivalent to that of Volpiani et al., and the temperature–velocity
 relation of Zhang et al., which both databases find accurate. The
 modifications are restricted to attached thin layers; extension to pressure
 gradients and separation is left open (§5.1).
+
+## Wall cooling and pressure fluctuations
+
+[Zhang et al. (2022)](/sources/zhang-2022-b.md) use their six layers to
+ask how wall cooling changes the pressure fluctuations. Integral and wall
+quantities at $Re_\tau\approx650$ (Table 3; $C_h$ the Stanton number):
+
+| Case | $Re_\theta$ | $\delta^*/\theta$ | $C_f\times10^3$ | $2C_h/C_f$ | wall $p'_{\mathrm{rms}}/\tau_w$ |
+|---|---|---|---|---|---|
+| M05T100 | 1773 | 1.51 | 3.67 | — | 2.56 |
+| M05T025 | 283 | 0.33 | 6.27 | 1.16 | 2.03 |
+| M20T100 | 3054 | 3.06 | 2.59 | — | 2.88 |
+| M20T050 | 1320 | 1.85 | 3.62 | 1.14 | 2.60 |
+| M80T100 | 34,239 | 22.81 | 0.48 | — | 3.00 |
+| M80T050 | 16,001 | 17.00 | 0.72 | 1.11 | 3.41 |
+
+- *Opposite effects of cooling.* Cooling lowers the wall pressure
+  fluctuation at Mach 0.5 and 2 but raises it near the wall at Mach 8,
+  where the wall value becomes the maximum of the profile (§5, Fig. 13).
+  The authors attribute the rise to travelling-wave-like "alternating
+  positive and negative structures" of dilatation and pressure in the
+  viscous sublayer and buffer layer, lying in cold low-speed streaks, with
+  streamwise wavelength $\lambda_x^+\approx100$ (§4, Fig. 12; §6.2). On the
+  quasi-adiabatic walls the rms peaks at $y/\delta\approx0.04$ at every Mach
+  number; in semi-local units the peaks collapse near $y^*\approx30$.
+- *Mean flow.* Cooling lowers the shape factor and raises $C_f$ in all
+  regimes; the Reynolds analogy factors are "all close to 1.1" (§3). Van
+  Driest fails on the cooled walls, Trettel–Larsson collapses only the
+  viscous sublayer, and the total-stress transformation of Griffin, Fu &
+  Moin agrees with the wall and log laws for all six cases (§3, Fig. 3),
+  the ranking that Cogo et al. and Huang et al. report above; Walz's
+  relation holds on the quasi-adiabatic walls only, the generalized
+  Reynolds analogy of Zhang et al. (2014) on all (Fig. 5). Cooling raises
+  the turbulent Mach number, locally above 0.3 at Mach 8, and the near-wall
+  streak spacing is $\lambda_z^*\approx100$ in all cases (§3–4).
+- *A wall-pressure correlation re-fitted.* For the Laganelli model of the
+  wall-pressure rms over the free-stream dynamic pressure,
+  $\sigma_L/[0.5+(T_w/T_r)(0.5+0.09M_\infty^2)+0.04M_\infty^2]^{\phi_L}$
+  ($\sigma_L$, $\phi_L$ page-local constants, originally 0.006 and 0.64),
+  the quasi-adiabatic simulations of the literature give $\sigma_L=0.01$,
+  $\phi_L=0.75$; the re-fitted model is reasonable for the moderately
+  cooled walls but misses the strongly cooled ones (§5, Eq. 5.1,
+  Fig. 14a). The free-stream fluctuation grows as
+  $(p'_{\mathrm{rms}}/\tau_w)_\infty=0.12M_\infty+0.08$ (Fig. 14b).
+- *Pressure decomposition.* Splitting the fluctuating-pressure Poisson
+  equation into rapid, slow, viscous, compressible and harmonic parts, with
+  all far-field pressure assigned to the compressible part, the authors find
+  cooling suppresses the rapid and slow parts (the vorticity mode) at Mach
+  0.5 and 2 and boosts the compressible part (the acoustic mode) at all Mach
+  numbers; in the cooled Mach 8 layer the compressible part dominates near
+  the wall, so the acoustic mode "should be considered when modelling
+  high-Mach-number wall-bounded turbulence" (§6, Eqs. 6.4–6.5, Table 4,
+  Figs. 16–23). The incompressible-limit components agree with a channel
+  at $Re_\tau=550$ (Hoyas & Jiménez, as cited) except near the
+  boundary-layer edge (Fig. 18a).
+
+The cooled hypersonic rise agrees in direction with
+[Huang et al. (2022)](/sources/huang-2022.md), whose cold walls at Mach 6–8
+reach about 3.6 (above).
 
 ## End-wall boundary layers built from a DNS template
 
@@ -759,6 +901,24 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 - [Jiang et al. (2025)](/sources/jiang-2025.md) compare their plate with
   laws and correlations ("Turbulent theory", Blasius), not with a
   reference solution.
+- [Zhang et al. (2022)](/sources/zhang-2022-b.md) find a near-wall streak
+  spacing $\lambda_z^*\approx100$ "in accordance with Huang et al. (2022)",
+  for whom this page records $\lambda_z^*\approx120$; both are
+  approximate values and are recorded side by side. Their quasi-adiabatic
+  Mach 8 wall value (3.00) lies above the 2.6–2.8 of Huang et al. for
+  (nearly) adiabatic walls, at a different Mach number. They compare cases
+  at equal $Re_\tau$, so the semi-local Reynolds number ranges from 96 to
+  20,696 across the six (Table 3), a choice they call "a matter of
+  controversy". Their §6.1 states $\partial p/\partial y=0$ at the streamwise
+  boundaries where Table 4 prints $\partial/\partial x$, and the Fig. 5
+  caption calls the generalized Reynolds analogy "modified strong".
+- [Qi et al. (2022)](/sources/qi-2022-b.md) change the blowing–suction
+  amplitude (0.02) from that of the reference configuration and compare
+  with their own DNS. [van Noordt et al. (2022)](/sources/vannoordt-2022.md)
+  point to Fig. 16 for the instantaneous fields shown in Fig. 15.
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) print a shape
+  factor of 5.86 with $\delta^*=2.72$ mm and $\theta=0.47$ mm, whose ratio
+  is 5.79 *(compiler check, not in the sources)*.
 - [Zangeneh (2021)](/sources/zangeneh-2021.md) prints the test Reynolds
   number as $Re_\delta=617{,}000$ in Table I and §III and as 617,300 in
   §III.A.1, and describes the outer grid as "a uniformly spaced grid
@@ -795,3 +955,9 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 - [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §IV C, Table VIII, Fig. 23.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §1, Fig. 1; §2.1, Fig. 3; §4.1, Fig. 6a; §4.2 (review; cited results).
 - [Zangeneh (2021)](/sources/zangeneh-2021.md) — §II.B–E; §III.A, Table I, Figs. 4, 6–9.
+- [Zhang et al. (2022)](/sources/zhang-2022-b.md) — §2, Tables 1–2; §3, Table 3, Figs. 3–9; §4, Figs. 10–12; §5, Eq. (5.1), Figs. 13–14; §6, Eqs. (6.4)–(6.5), Table 4, Figs. 15–23; §7.
+- [Qi et al. (2022)](/sources/qi-2022-b.md) — §4.2, Table 8, Figs. 15–20.
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §3.2, Tables 6–8, Figs. 15–17.
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §4.3, Figs. 3–4.
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.1, Table 3, Fig. 5.
+- [Yu et al. (2022)](/sources/yu-2022-e.md) — §2, Table 1, Fig. 2.

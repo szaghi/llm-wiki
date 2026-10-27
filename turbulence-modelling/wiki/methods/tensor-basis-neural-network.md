@@ -5,7 +5,7 @@ description: "A neural network that predicts the scalar coefficients of Pope's t
 status: established
 aliases: [TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features, LES tensor basis]
 tags: [neural-network, data-driven, rans, symbolic-regression]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Tensor-basis neural network and the integrity basis
@@ -18,8 +18,8 @@ $g^{(n)}$:
 $$b_{ij}=\sum_{n=1}^{10}g^{(n)}\,T^{(n)}_{ij},\qquad R_{ij}=2k\left(\tfrac13\delta_{ij}+b_{ij}\right).$$
 
 When the Reynolds stress depends only on the local mean velocity gradient,
-the Cayley–Hamilton theorem makes such a basis exact. This is recalled by
-Duraisamy et al. (2019, §2 L2) as an L2-level representation (see
+the Cayley–Hamilton theorem makes such a basis exact. Duraisamy et al.
+(2019, §2 L2) recall this as an L2-level representation (see
 [field inversion and machine learning](/methods/field-inversion-machine-learning.md)
 for the layers). The **tensor-basis neural network** (TBNN) of Ling,
 Kurzawski & Templeton (2016) keeps the basis. A neural network predicts the
@@ -31,8 +31,8 @@ Duraisamy et al. 2019, §5.3, Eqs. 11–12).
 
 ## Construction
 
-As recalled by Duraisamy (2021, §III.A, Eq. 4), the TBNN closure is, in
-registry notation,
+Duraisamy (2021, §III.A, Eq. 4) writes the TBNN closure as, in registry
+notation,
 
 $$R_{ij}=2k\left(\tfrac13\delta_{ij}+\sum_{n=1}^{10}g^{(n)}(\boldsymbol\zeta;\boldsymbol\theta)\,T^{(n)}_{ij}\right).$$
 
@@ -60,7 +60,7 @@ Agrawal & Koutsourelakis (2024, §2.2.1, Eqs. 14–17, Table 1) restate Pope's
 basis after Ling et al. With the mean strain and rotation made
 dimensionless by $k/\varepsilon$, $\mathsf S_{ij}=\tfrac{k}{\varepsilon}\langle S_{ij}\rangle$
 and $\mathsf W_{ij}=\tfrac{k}{\varepsilon}\langle\Omega_{ij}\rangle$
-(page-local, as above; matrix products, $\mathsf I$ the identity), the
+(registry §11; matrix products, $\mathsf I$ the identity), the
 tensors are
 
 $$\begin{aligned}
@@ -106,8 +106,58 @@ Zabaras (§2.2.5), and that a direct comparison with those works is not
 possible because they blend the predicted stress with the baseline
 near-wall stress through case-dependent functions (§3.4).
 
-**Extensions.** As recalled by Duraisamy (2021, §III.A), the TBNN idea has
-been extended to turbulent heat fluxes and scalar fluxes.
+**Extensions.** Duraisamy (2021, §III.A) cites extensions of the TBNN idea
+to turbulent heat fluxes and scalar fluxes.
+
+## The basis in a review of stress and heat-flux learning (Sandberg & Zhao 2022)
+
+[Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) (§3.2, Eqs. 2–4)
+print the same ten tensors and five invariants, built from the strain
+and rotation multiplied by a turbulence time scale (the frozen-$\omega$
+time scale of Parneix et al. in the works they review), and split the
+expansion into the Boussinesq term, an "additional linear term"
+$2k\,g^{(1)}T^{(1)}$ and nine non-linear terms; classic explicit algebraic
+models obtain the coefficients analytically under weak equilibrium (see
+[explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)).
+They recall, citing the original works (§4.1–4.2):
+
+- **Square duct.** A TBNN trained on duct, channel, jets in crossflow, a
+  square cylinder and a converging–diverging channel improved the
+  anisotropy a priori and the duct corner vortices a posteriori, on a duct
+  at another Reynolds number and on a wavy wall (Ling et al. 2016).
+- **Jets in crossflow.** A TBNN and a gene-expression model, trained on an
+  inline jet and tested a priori on a skewed one, both improved greatly on
+  the linear model and both failed where the streamwise vorticity is
+  strongest.
+- **Near-wall normalization.** Weatheritt & Sandberg (2017) found, with
+  barycentric maps, that normalizing the strain and rotation by the time
+  scale is inappropriate near walls.
+- **Heat flux.** The same construction gives a tensor-diffusivity
+  expansion of the turbulent heat flux (Younis et al. 2005), with ten
+  basis tensors built from the normalized strain, rotation and Reynolds
+  stress and eleven invariants $J_0$–$J_{10}$ that include the temperature
+  gradient (Eqs. 6–7); a deep TBNN-type network with embedded frame
+  invariance learns its coefficients (Milani et al. 2021). Including the
+  temperature gradient in the invariants violates the linearity principle
+  for a passive scalar, which the review accepts because temperature in
+  compressible flow is not strictly passive (§3.3). A TBNN trained on one
+  flow class and tested on another performed about as well as the
+  baseline, read by the review as "might not perform as poorly as
+  believed" (§4.2.1).
+
+## A data-driven explicit algebraic correction with posteriors (Cherroud et al. 2022)
+
+[Cherroud et al. (2022)](/sources/cherroud-2022.md) (§2.1, Eqs. 5–8) use
+the 2-D form, $T^{(1)}$–$T^{(3)}$ with the strain and rotation divided by
+$\omega$ and the two invariants $I_1$, $I_2$ (page-local: the squared
+norms of these normalized tensors, $I_2$ written without a minus sign),
+for an additive correction $b^\Delta_{ij}$ of the SST anisotropy and a
+production correction $b^R_{ij}$ (registry §11). They place the $T^{(1)}$
+term as an additive correction of $\nu_t$ and the $T^{(2)}$, $T^{(3)}$
+terms as the quadratic terms of the Gatski–Speziale and Wallin–Johansson
+explicit algebraic models, and contrast the "black-box" TBNN with their
+"open-box" sparse Bayesian expressions (§1). Their results are on
+[symbolic-regression closures](/methods/symbolic-regression-closure.md).
 
 ## Other regressors on the same basis
 
@@ -115,30 +165,30 @@ The integrity basis is the common skeleton of several learned RANS closures
 surveyed in both reviews. They differ in how the coefficients $g^{(n)}$
 are represented.
 
-| Regressor | Representation of $g^{(n)}$ | Recalled by |
+| Regressor | Representation of $g^{(n)}$ | Cited in |
 |---|---|---|
-| neural network (TBNN, Ling et al. 2016) | network of the invariants; no explicit expression | Duraisamy et al. (2019, §5.3); Duraisamy (2021, §III.A) |
+| neural network (TBNN, Ling et al. 2016) | network of the invariants; no explicit expression | Duraisamy et al. (2019, §5.3); Duraisamy (2021, §III.A); Sandberg & Zhao (2022, §4.1); He et al. (2022, §1); Cherroud et al. (2022, §1) |
 | random forests (Kaandorp & Dwight) | tree ensemble on the same basis | Duraisamy (2021, §III.A) |
-| gene-expression programming (Weatheritt & Sandberg 2016, 2017) | explicit algebraic expressions in the invariants | Duraisamy et al. (2019, §5.3); Duraisamy (2021, §III.A) |
-| sparse regression, SpaRTA (Schmelzer et al.) | sparse linear combination of tensor-polynomial candidate functions of the invariants | Duraisamy (2021, §III.A, §IV.A) |
+| gene-expression programming (Weatheritt & Sandberg 2016, 2017) | explicit algebraic expressions in the invariants | Duraisamy et al. (2019, §5.3); Duraisamy (2021, §III.A); Sandberg & Zhao (2022, §4.1) |
+| sparse regression, SpaRTA (Schmelzer et al.) | sparse linear combination of tensor-polynomial candidate functions of the invariants | Duraisamy (2021, §III.A, §IV.A); Sandberg & Zhao (2022, §3.4, Eq. 8); Cherroud et al. (2022, App. B, which print three SpaRTA models) |
 | deep symbolic regression (an LSTM expression generator trained by a risk-seeking policy gradient) | explicit polynomial-type expressions in two normalized invariants, on the 2D three-tensor basis | read directly: Tang et al. (2023) |
 | gene-expression programming for the LES subgrid stress | constant coefficients of $T^{(1)}$–$T^{(4)}$ of the $\lvert\bar S\rvert$-normalized basis | read directly: Li et al. (2021) |
 | gene-expression programming on phase-locked turbine data (Akolekar et al. 2019) | functions of two invariants on four basis tensors | Sandberg & Michelassi (2022, §4.3, Eq. 2) |
-| sparse Bayesian regression, SBL-SpaRTA (Cherroud et al. 2022) | sparse selection from monomials of $I_1$, $I_2$ with Gaussian posteriors, on the 2D three-tensor basis normalized by $\omega$; used for an additive anisotropy and a $k$-equation correction of SST | used by Oulghelou et al. (2025), as recalled there |
+| sparse Bayesian regression, SBL-SpaRTA (Cherroud et al. 2022) | sparse selection from monomials of $I_1$, $I_2$ with Gaussian posteriors, on the 2D three-tensor basis normalized by $\omega$; used for an additive anisotropy and a $k$-equation correction of SST | read directly: Cherroud et al. (2022); used by Oulghelou et al. (2025) |
 
 For sparse regression, Duraisamy (2021, §IV.A) prints the loss as a squared
 error plus an $\ell_1$ penalty on the weights. The sparsity-enforcing
 regularizer eliminates model terms and so simplifies the model form
-(§III.A). As recalled there, Beetham et al. extend the approach to
+(§III.A). The review cites Beetham et al., who extend the approach to
 multiphase RANS (drag production, drag exchange, pressure strain, viscous
 dissipation).
 
 ## The two-dimensional basis and the linear/non-linear split (Tang et al. 2023)
 
-[Tang et al. (2023)](/sources/tang-2023.md) (arXiv v1, §II C 2) print
-the reduced basis that Pope (1975) gives for statistically
-two-dimensional flow, as recalled there: the coefficients depend on at
-most two invariants and three tensors suffice. With the mean strain and
+[Tang et al. (2023)](/sources/tang-2023.md) (arXiv v1, §II C 2) print,
+citing Pope (1975), the reduced basis for statistically two-dimensional
+flow: the coefficients depend on at most two invariants and three tensors
+suffice. With the mean strain and
 rotation made dimensionless by $k/\varepsilon$,
 $\mathsf S_{ij}=\tfrac{k}{\varepsilon}\langle S_{ij}\rangle$ and
 $\mathsf W_{ij}=\tfrac{k}{\varepsilon}\langle\Omega_{ij}\rangle$
@@ -166,7 +216,7 @@ the $k$-$\varepsilon$ eddy viscosity with
 $C_\mu=0.09$, solved implicitly; only $b^\perp_{ij}$ is learned (§II C 2).
 The authors call this split "necessary": injecting the whole learned
 Reynolds stress explicitly is ill-conditioned and magnifies small errors
-in the RANS iterations (as recalled from their refs. 19, 46, 47; see
+in the RANS iterations (citing their refs. 19, 46, 47; see
 [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)).
 
 **Regressor.** The coefficients $G^m$ are found by deep symbolic
@@ -193,7 +243,7 @@ of $k/\varepsilon$:
 
 $$\tau^d_{ij}=\frac{\Delta^2\lvert\bar S\rvert^2}{2}\sum_{n=1}^{10}g^{(n)}(I_1,\dots,I_4)\,T^{(n)}_{ij}(\mathsf s,\mathsf w),\qquad \mathsf s_{ij}=\frac{\sqrt2\,\bar S_{ij}}{\lvert\bar S\rvert},\quad \mathsf w_{ij}=\frac{\sqrt2\,\bar\Omega_{ij}}{\lvert\bar S\rvert},$$
 
-with $\mathsf s$, $\mathsf w$ page-local and the ten tensors those of the
+with $\mathsf s$, $\mathsf w$ as in registry §11 and the ten tensors those of the
 Agrawal & Koutsourelakis section above with $\mathsf S\to\mathsf s$, $\mathsf W\to\mathsf w$.
 The paper normalizes by $\sqrt{\bar S_{mn}\bar S_{mn}}=\lvert\bar S\rvert/\sqrt2$
 and writes the prefactor $(\Delta\sqrt{\bar S_{mn}\bar S_{mn}})^2$; the
@@ -268,8 +318,8 @@ on [neural-network SGS models](/methods/neural-network-sgs-model.md).
 An integrity basis can also serve the input side of a learned closure. Its
 invariants are rotationally invariant scalars that a network can take as
 features, whatever it outputs.
-[McConkey et al. (2022)](/sources/mcconkey-2022.md) follow the procedure of
-Wu et al. (as recalled there, §III C) and build the Spencer–Rivlin minimal
+[McConkey et al. (2022)](/sources/mcconkey-2022.md) follow, citing it
+(§III C), the procedure of Wu et al. and build the Spencer–Rivlin minimal
 integrity basis of four tensors:
 
 - the mean strain-rate tensor $S_{ij}$ and rotation-rate tensor
@@ -319,7 +369,7 @@ than the first (§IV C, Fig. 22). The paper's Table II defines the basis
 tensors.
 
 **Dataset and training.** The training data are the authors' curated
-dataset (McConkey et al. 2021, as recalled in §III D). Its periodic-hill
+dataset (McConkey et al. 2021, cited in §III D). Its periodic-hill
 part pairs RANS fields of the base model with DNS of Xiao et al. for five
 hill-steepness factors 0.5, 0.8, 1.0, 1.2 and 1.5 of the parametrized
 [periodic hill](/benchmarks/periodic-hill.md) family at $Re_h=5600$, with
@@ -338,10 +388,15 @@ a priori and a posteriori results are on
   programming gives explicit algebraic stress models. Duraisamy (2021,
   §VII) adds that interpretable models from symbolic regression do not
   automatically generalize beyond their training scenarios.
-- **Generalization.** As recalled by Duraisamy et al. (2019, §5.3),
+- **Generalization.** Duraisamy et al. (2019, §5.3) cite
   gene-expression-programming models trained on low-Reynolds-number DNS of
-  a backward-facing step and used at high Reynolds number show "a high
-  level of uncertainty" on the [periodic hill](/benchmarks/periodic-hill.md).
+  a backward-facing step that show "a high level of uncertainty" when used
+  at high Reynolds number on the [periodic hill](/benchmarks/periodic-hill.md);
+  Sandberg & Zhao (2022, §4.1) describe GEP models trained on a
+  backward-facing step as giving excellent a posteriori periodic-hill
+  predictions, some individuals being non-realizable and unstable. Both are
+  second-hand accounts of cited work (see
+  [backward-facing step](/benchmarks/backward-facing-step.md)).
 - **Training.** In the TBNN as surveyed, targets and invariants are
   extracted from DNS, i.e. the network is trained a priori. Duraisamy
   (2021, §IV.A) states that such training "establishes the consistency of
@@ -488,20 +543,26 @@ eigen-decomposition, or the integrity basis itself. See
   comparison run. Duraisamy (2021, §III.A) describes the sparse regression
   of Schmelzer et al. as acting "on a library of candidate functions which
   are written as tensor polynomials of the aforementioned invariants".
-  Both sources recall Schmelzer et al. (2020), which is not ingested (Tang
+  Both sources cite Schmelzer et al. (2020), which is not ingested (Tang
   et al. also Beetham & Capecelatro); neither prints a sparse-regression
   model. [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (arXiv v2)
   print two corrected models (three non-zero terms), from the sparse
-  Bayesian variant SBL-SpaRTA, and bear on
-  both sides without deciding the question. On Duraisamy's side, they
-  describe the method as regressing the coefficients from "a large
-  dictionary of monomials" of the invariants $I_1$, $I_2$ (§2.1, Eqs.
-  8–10). On Tang et al.'s side, every printed model has constant
+  Bayesian variant SBL-SpaRTA. They describe the method as regressing the
+  coefficients from "a large dictionary of monomials" of the invariants
+  $I_1$, $I_2$ (§2.1, Eqs. 8–10), and every model they print has constant
   coefficients: $5.21\,T^{(2)}$ and $0.681\,T^{(1)}$ for the
   separated-flow expert, $0.25\,T^{(1)}$ for the jet expert (Table 1).
-  Whether sparse regression can return invariant-dependent coefficients
-  is thus supported by the method description; whether it does so in
-  practice is shown only for constant selections. *Open.*
+  [Cherroud et al. (2022)](/sources/cherroud-2022.md) (App. A–B) print
+  sparse Bayesian models with invariant-dependent coefficients at small
+  sparsity, e.g.
+  $[(-0.496\pm0.0133)+(21.6\pm0.366)I_1+(17.4\pm0.374)I_2]\,T^{(1)}$ in the
+  anisotropy correction at $\lambda=10^2$ (Eq. A.1). The models selected by a posteriori
+  cross-validation are constant ($0.8433\,T^{(1)}$, $0.382\,T^{(1)}$,
+  $0.197\,T^{(1)}$ for the production correction; Eqs. A.13–A.15), and the
+  three deterministic SpaRTA models of Schmelzer et al. that they reprint
+  are constant too (e.g. $0.1\,T^{(1)}+4.09\,T^{(2)}$, App. B). Tang et
+  al.'s text does not say whether the claim concerns the method or the
+  published models. *Open.*
 
 # Citations
 
@@ -516,3 +577,6 @@ eigen-decomposition, or the integrity basis itself. See
 - [Li et al. (2021)](/sources/li-2021.md) — §II B, Eqs. 9–14 (basis for the subgrid stress, normalization, invariants); §III B, Table II, Fig. 1 (number of tensors); Tables IV–V, §III D, Figs. 9–10, Eqs. 24–25 (ablation, vortical tensors, $Q$).
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3, Eq. 2 (GEP coefficients on four basis tensors; Ling et al. cited; ML subgrid models not yet used in turbomachinery).
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — arXiv v2: §1, §2.2–2.2.5, Eqs. 9–10, 14–17, Table 1 (basis, invariants, $k$-$\varepsilon$ limit, locality); §3.3, Table 3 (architecture, pre-training); §3.4, Fig. 7 (learned stress); App. A.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.2, Eqs. 2–4 (basis, time scale, linear and non-linear terms); §3.3, Eqs. 6–7 (heat-flux basis, invariants, linearity principle); §4.1–4.2.1 (TBNN and GEP results of cited works).
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1 (black-box against open-box); §2.1, Eqs. 5–8 (2-D basis normalized by $\omega$); App. A, Eqs. A.1, A.13–A.15; App. B (constant and invariant-dependent coefficients).
+- [He et al. (2022)](/sources/he-2022-b.md) — §1 (TBNN as an L2 correction, in passing).

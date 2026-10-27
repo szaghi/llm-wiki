@@ -5,7 +5,7 @@ description: "Maps that turn the mean velocity of a variable-property compressib
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-27T11:02:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Compressible velocity transformations
@@ -29,8 +29,8 @@ boundary-layer edge and matching height.
 ## Semi-local scaling
 
 Semi-local units replace the wall density and viscosity by their local mean
-values (Coleman, Kim & Moser 1995; Huang, Coleman & Bradshaw 1995, as recalled
-by Griffin et al. 2023, §3): $u_\tau^*=\sqrt{\tau_w/\langle\rho\rangle(y)}$ and
+values (Griffin et al. 2023, §3, cite Coleman, Kim & Moser 1995 and Huang,
+Coleman & Bradshaw 1995): $u_\tau^*=\sqrt{\tau_w/\langle\rho\rangle(y)}$ and
 $y^*=y\,u_\tau^*\langle\rho\rangle/\langle\mu\rangle$, so that
 $y^*=y^+\sqrt{\rho^+}/\mu^+$. The semi-local friction Reynolds number
 $Re_\tau^*=\langle\rho\rangle_e u_\tau^*\delta/\langle\mu\rangle_e$ (with
@@ -38,10 +38,18 @@ $u_\tau^*$ evaluated at the edge or centreline) is invariant under the
 transformation, so the incompressible constants are taken at $Re_\tau^*$ in
 place of $Re_\tau$ (§2.1).
 
+Semi-local scaling also organizes statistics other than the mean velocity.
+In six DNS of zero-pressure-gradient boundary layers at $M_\infty=0.5$, 2
+and 8 on quasi-adiabatic and cooled walls, [Zhang et al. (2022)](/sources/zhang-2022-b.md)
+find that it collapses the peak positions of the Reynolds stresses (§3,
+Fig. 4), the peaks of the pressure-fluctuation intensity at about $y^*=30$
+(§5, Fig. 13) and the near-wall streak spacing at about 100 in semi-local
+units for all cases (§4).
+
 ## General form
 
-Cogo et al. (2022, §4, Eq. 4.1, Table 3), after Modesti & Pirozzoli (2016) as
-they recall it, write every transformation as a stretching of the wall
+Cogo et al. (2022, §4, Eq. 4.1, Table 3), citing Modesti & Pirozzoli (2016),
+write every transformation as a stretching of the wall
 distance and of the velocity,
 
 $$y_I^+=\int_0^{y^+}f_I\,dy^+,\qquad U_I^+=\int_0^{U^+}g_I\,dU^+ ,$$
@@ -63,9 +71,9 @@ translated from their $z$.
 
 - **Van Driest (1951).** The classical transformation; it is implied by the
   classical mixing length with van Driest damping written in wall units
-  $y^+$ (Yang & Lv 2018, as recalled by Griffin et al. 2023, §3).
+  $y^+$ (Griffin et al. 2023, §3, citing Yang & Lv 2018).
 - **Trettel–Larsson (2016).** Implied by the same damping written in
-  semi-local units $y^*$ (Yang & Lv 2018, as recalled by Griffin et al., §3).
+  semi-local units $y^*$ (Griffin et al., §3, citing Yang & Lv 2018).
   [Chen et al. (2024)](/sources/chen-2024.md) (§3.1, Eqs. 3.1–3.2) derive
   the same equivalence for the inner eddy viscosity of the semi-local
   [Baldwin–Lomax model](/methods/baldwin-lomax-model.md): written with the
@@ -77,7 +85,7 @@ translated from their $z$.
   Fig. 3a), which motivates their switch to the total-stress-based
   transformation below.
 - **Data-driven** transformation of Volpiani et al. (2020), used by Kumar &
-  Larsson (2022) in the same inverse procedure (as recalled by Griffin et al., §2.3).
+  Larsson (2022) in the same inverse procedure (Griffin et al., §2.3, cite both).
 - **Total-stress-based** transformation of Griffin, Fu & Moin (2021), which
   maps the compressible mean strain rate to the incompressible
   non-dimensional strain rate $S_t^+$ at the same $Re_\tau^*$ (Eq. 2.1):
@@ -91,8 +99,8 @@ translated from their $z$.
   viscous stress and reduces to the incompressible strain rate when
   $\mu^+=1$. The transformation assumes a constant-stress layer in the buffer
   region, which Griffin et al. (2021) found harmless in equilibrium flows and
-  Bai, Griffin & Fu (2022) under moderate pressure gradients (§2.1, as
-  recalled by Griffin et al.).
+  Bai, Griffin & Fu (2022) under moderate pressure gradients (as Griffin et
+  al., §2.1, cite them).
 
   **Convention difference.** Cogo et al. (2022, Eq. 4.2) write the same
   transformation as a total-stress balance,
@@ -134,7 +142,7 @@ exactly *(compiler check, not in the sources)*.
 ## Temperature: the generalized Reynolds analogy
 
 A velocity transformation needs the density and viscosity profiles, hence the
-temperature. Griffin et al. (2023, §2.2) recall the Walz (modified
+temperature. Griffin et al. (2023, §2.2) cite the Walz (modified
 Crocco–Busemann) relation with recovery factor $r=Pr^{1/3}$, accurate for
 adiabatic walls but degraded by heat transfer, and its recasting by Zhang et
 al. (2014) as the generalized Reynolds analogy (GRA), with Reynolds-analogy
@@ -183,10 +191,10 @@ layers:
   (substantially for the cooled wall at $M_e=11.46$, slightly for the heated
   wall at $M_e=4.327$), and the temperature only slightly.
 - The total-stress-based transformation has a documented error at
-  $Re_\tau^*\lesssim200$ (Griffin et al. 2021, as recalled by Griffin et al. 2023, §3), which accounts
+  $Re_\tau^*\lesssim200$ (Griffin et al. 2023, §3, citing Griffin et al. 2021), which accounts
   for the residual mismatch of their low-$Re_\tau^*$ cases.
 
-Two independent DNS studies of boundary layers extend the comparison:
+Three independent DNS studies of boundary layers extend the comparison:
 
 - **Cogo et al. (2022, §4, Fig. 8)**: four zero-pressure-gradient boundary
   layers on a cold isothermal wall, $T_w/T_r=0.76$, at $M_\infty=2$ and 5.86,
@@ -203,7 +211,7 @@ Two independent DNS studies of boundary layers extend the comparison:
   collapses the viscous and buffer layers of all cases but leaves a scatter of
   the log-law intercept between flow conditions, also at matched
   $Re_\tau^*$, whereas it collapses isothermal cold-wall channels almost
-  perfectly (as they recall Trettel & Larsson 2016 and Yao & Hussain 2020);
+  perfectly (citing Trettel & Larsson 2016 and Yao & Hussain 2020);
   they suggest a stronger effect of cooling on the turbulent/viscous stress
   balance in external boundary layers. Volpiani et al. and the
   total-stress-based transformation collapse both viscous and log layers, the
@@ -211,16 +219,31 @@ Two independent DNS studies of boundary layers extend the comparison:
   $y\,dU_I^+/dy$; Huang et al. call the success of the data-driven
   transformation "not unexpected" since it was fitted on non-adiabatic
   boundary-layer data.
+- **Zhang et al. (2022, §3, Fig. 3)**: six spatially developing
+  zero-pressure-gradient boundary layers at $M_\infty=0.5$, 2 and 8, each
+  quasi-adiabatic ($T_w/T_r=1$) and cooled ($T_w/T_r=0.25$ at Mach 0.5, 0.5
+  at Mach 2 and 8), compared at $Re_\tau\approx650$ (DNS in
+  [STREAmS](/software/streams.md)). Van Driest fails for the cooled cases;
+  Trettel–Larsson collapses the viscous sublayer but is "less successful" in
+  the log region; the quasi-equilibrium transformation of Griffin et al.
+  (based on Zhang et al. 2012, as they cite it; the $S_{eq}^+$ scaling above)
+  gives a common slope but different additive constants; the
+  total-stress-based transformation agrees well with the wall law and with
+  the log law $\kappa=0.41$, $B=5.2$ for adiabatic and cooled cases alike.
+  The comparison holds $Re_\tau$ fixed, so the semi-local $Re_\tau^*$ ranges
+  from 96 to 20 696 across the six cases (Table 3); the authors call the
+  choice of similarity parameter "a matter of controversy" (§2).
 
 The sources thus agree that the total-stress-based transformation collapses
 compressible wall layers at least as well as any alternative, and that
 Trettel–Larsson succeeds in channels but not in the log layer of cooled
 boundary layers; Griffin et al.'s ranking of their own transformation is no
-longer the only evidence. Cogo et al. and Huang et al. differ only in
-emphasis on whether Volpiani et al.'s transformation can be told apart. Griffin et al. (§1) also recall that
-Iyer & Malik (2019) found the classical (van Driest-consistent) scaling more
-accurate for adiabatic walls, while Yang & Lv (2018) and Fu, Bose & Moin (2022)
-found semi-local damping better for cold walls.
+longer the only evidence, and Zhang et al. (2022) confirm both points on
+cooled walls from subsonic to hypersonic Mach number. Cogo et al. and Huang et al. differ only in
+emphasis on whether Volpiani et al.'s transformation can be told apart. Griffin et al. (§1) also cite
+Iyer & Malik (2019), who found the classical (van Driest-consistent) scaling
+more accurate for adiabatic walls, and Yang & Lv (2018) and Fu, Bose & Moin
+(2022), who found semi-local damping better for cold walls.
 
 A third DNS-based comparison, over twelve published zero-pressure-gradient
 boundary layers at $M_\infty=2$–13.64 and $T_w/T_r=0.18$–1.9 (Chen et al.
@@ -228,8 +251,8 @@ boundary layers at $M_\infty=2$–13.64 and $T_w/T_r=0.18$–1.9 (Chen et al.
 total-stress-based and 2.4 % for the HLPP transformation; the authors note
 that their error measure differs from that of Hasan et al. Built into their
 algebraic RANS model, the two give comparable a posteriori errors (velocity
-0.7 % against 0.6 % in log-inner coordinates). They also recall reports, as
-cited, that the total-stress-based transformation can degrade for
+0.7 % against 0.6 % in log-inner coordinates). They also cite reports
+that the total-stress-based transformation can degrade for
 supercritical or non-air-like flows (§1).
 
 **Outer layer.** The transformations above are designed for the region at
@@ -247,8 +270,8 @@ thickness as a possible reason for its success (§3.2).
 
 ## Transformations as a validation yardstick
 
-Eight further sources use a transformation not to rank transformations but to
-judge a simulation.
+Further sources use a transformation not to rank transformations but to
+judge, initialize or close a simulation.
 
 - **Hybrid RANS/LES of supersonic channels.** [Carlsson et al. (2023)](/sources/carlsson-2023.md)
   (§4.3, Eqs. 24–26) state, citing three earlier studies, that the van Driest
@@ -297,7 +320,7 @@ judge a simulation.
   the LES approaches both the DNS and the correlation quickly after the
   forcing zone. Gao et al. do not discuss the choice of van Driest over the
   alternatives above; their wall is adiabatic, the case for which Iyer &
-  Malik, as recalled by Griffin et al. (§1; above), found the classical
+  Malik, cited by Griffin et al. (§1; above), found the classical
   scaling the more accurate.
 - **DNS code validation.** [Dang et al. (2022)](/sources/dang-2022.md) (§5.1,
   Fig. 17) validate the GPU code [OpenCFD-SCU](/software/opencfd-scu.md) on
@@ -375,6 +398,39 @@ judge a simulation.
   random-forest-corrected run follows the experiment over $30<y^+<3000$ (see
   [machine-learning wall models](/methods/machine-learning-wall-model.md)).
   The choice of transformation is not discussed.
+- **LES with a one-equation SGS model.** [Qi et al. (2022)](/sources/qi-2022-b.md)
+  compare all mean velocities in van Driest form,
+  $u^+_{\mathrm{vD}}=\int_0^{u^+}\sqrt{\langle\rho\rangle/\rho_w}\,du^+$: in
+  channels at Mach 1.5 (three LES grids) and Mach 3.0 their
+  quasi-dynamic $k_{\mathrm{sgs}}$-equation model keeps the transformed log
+  region closest to the DNS as the grid coarsens (Figs. 5, 12), and in a
+  Mach 2.25 transitional flat-plate boundary layer it reproduces the van
+  Driest profile at $x/L=8.8$ on all three grids (Figs. 16–17; see the
+  [dynamic procedure](/methods/dynamic-procedure.md)).
+- **DNS validation of shock/boundary-layer interactions.** [Tonicello et al. (2022)](/sources/tonicello-2022.md)
+  (Fig. 5a) validate the incoming Mach 2.91 boundary layer of their
+  [spectral-difference](/methods/spectral-difference-method.md) DNS of a 24°
+  ramp with the van Driest velocity against $u^+=y^+$ and
+  $u^+=\ln(y^+)/0.41+5.25$ and earlier DNS; [Yu et al. (2022)](/sources/yu-2022-e.md)
+  (§2, Eq. 2.4a, Fig. 2) validate the Mach 2.28 incoming layer of their
+  oblique interaction with the van Driest velocity against the Mach 2 DNS of
+  Pirozzoli & Bernardini (as cited) at $Re_\tau\approx200$. Both walls are
+  at or near the recovery temperature (see
+  [shock/turbulent boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+- **Inside equilibrium wall models.** [De Vanna et al. (2022)](/sources/devanna-2022.md)
+  (§2.2, Eq. 6) and [van Noordt et al. (2022)](/sources/vannoordt-2022.md)
+  (§2.5, Eq. 35) write the van Driest damping of the mixing-length eddy
+  viscosity of their compressible ODE
+  [equilibrium wall model](/methods/equilibrium-wall-model.md) in the
+  semi-local $y^*$ with $A^+=17$, $\kappa=0.41$, i.e. the Trettel–Larsson
+  choice in the sense of Yang & Lv cited above. Van Noordt et al. (§1)
+  call the choice of coordinate transformation "critical" and cite Iyer &
+  Malik, who found results sensitive to the damping
+  parameter and a semi-empirical scaling to "perform slightly better" than
+  the Trettel–Larsson form used by Yang & Lv, while Chen et al. found the
+  Trettel–Larsson form good for heat transfer; they keep Trettel–Larsson. De
+  Vanna et al. (§4.1) also initialize their LES from a van Driest-transformed
+  Musker profile.
 
 ## Assessments of the temperature–velocity relation
 
@@ -389,7 +445,11 @@ they attribute to wall cooling too mild to stress it. Huang et al. (2022,
 (Crocco–Busemann, Walz, Huang et al. 1993, Duan & Martin 2011, Zhang et al.
 2014): all agree at Mach 2.5, while at Mach 10.9 with $T_w/T_r=0.20$ only Duan
 & Martin and Zhang et al. fit the DNS, Duan & Martin being "significantly
-simpler". The strong Reynolds analogies that relate the fluctuations are on
+simpler". Zhang et al. (2022, §3, Eqs. 3.1–3.2, Fig. 5) find the same split
+on their six cases: Walz is accurate for the quasi-adiabatic walls and
+deviates for the cooled ones, while the generalized relation of Zhang et al.
+(2014), written with the generalized recovery factor $r_g$ as by Cogo et al.,
+fits both. The strong Reynolds analogies that relate the fluctuations are on
 the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 
 ## Qualifications
@@ -402,9 +462,13 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
   upper limit should be the corresponding wall-distance value. Their §4.1
   quotes $Re_\tau^*=2626$, 9178 and 6213 at $Re_\tau=1172$ where their Table 4
   gives 2761, 9114 and 6149.
-- Cogo et al. (2022) evaluate their semi-local friction Reynolds number with
-  free-stream properties, Huang et al. (2022) and Griffin et al. (2023) with
-  boundary-layer edge or centreline properties.
+- Cogo et al. (2022) and Zhang et al. (2022, Table 3) evaluate their
+  semi-local friction Reynolds number with free-stream properties, Huang et
+  al. (2022) and Griffin et al. (2023) with boundary-layer edge or centreline
+  properties.
+- Zhang et al. (2022) call the generalized relation of Zhang et al. (2014)
+  the "generalized Reynolds analogy" in the text (§3) and the "modified
+  strong Reynolds analogy" in the caption of their Fig. 5.
 - The GRA with fixed $s=1.14$ and $r=Pr^{1/3}$ is validated, in the works
   Griffin et al. cite, for channels, pipes and boundary layers with and without
   heat transfer; Griffin et al. (§5) state that complex flows (for example
@@ -450,3 +514,11 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 - [Aiello et al. (2026)](/sources/aiello-2026.md) — §2.2; §4.1, Fig. 1; §4.2, Table 3.
 - [Gao et al. (2022)](/sources/gao-2022.md) — §5.2, Figs. 16–17.
 - [Zangeneh (2021)](/sources/zangeneh-2021.md) — §III.A.1, Figs. 4, 6.
+- [Zhang et al. (2022)](/sources/zhang-2022-b.md) — §2; §3, Eqs. (3.1)–(3.2), Table 3, Figs. 3–5; §4; §5, Fig. 13.
+- [Qi et al. (2022)](/sources/qi-2022-b.md) — §4, Figs. 5, 12, 16–17.
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — Fig. 5a.
+- [Yu et al. (2022)](/sources/yu-2022-e.md) — §2, Eq. (2.4a), Fig. 2.
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §2.2, Eq. (6); §4.1.
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §2.5, Eq. (35).
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §2.2, Eq. (6); §4.1.
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §2.5, Eq. (35).

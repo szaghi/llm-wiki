@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Fluid Mech. 1013:A28"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Fluid_Mechanics_Maejima_Unsupervised_and_supervised_machine_learning_pipeline_for_su.pdf"
 tags: [les, sgs-model, neural-network, data-driven, backscatter, a-priori-a-posteriori]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-27T16:00:00Z
 ---
 
 # Summary
@@ -59,7 +59,7 @@ journal's sections, equations, figures and tables.
 
 Page-local symbols: vLES = LESx8, $(\Delta x^+,\Delta z^+)\approx(72,36)$;
 LESx4 $\approx(36,18)$; $\nu_{\mathrm{eff}}$, $\nu_{\mathrm{clip}}$ the effective
-SGS viscosity and its floor; $\bar\nu_w$ the mean wall viscosity (the
+SGS viscosity and its floor (registry §11); $\bar\nu_w$ the mean wall viscosity (the
 source writes $\mu$; ratios as printed);
 $D^{\mathrm{sgs}}_{ij}$ and $D^{p}_{ij}$ the SGS-dissipation and
 pressure-redistribution terms of the resolved Reynolds-stress budget; $k_z$,
@@ -123,7 +123,7 @@ appears in the printed definition (low Mach number).
 | $\widehat{(\cdot)}$ (§3.2), $\widehat{(\cdot)}$ (§6.2.2) | $\overline{(\cdot)}^m$; $\phi_{\boldsymbol k}$ | **collision:** the hat is the sub-cell top-hat average and the Fourier transform, never the registry's test filter |
 | $u^*_{i,kl}$ | $u^\star_i$ | sub-cell fluctuation of the super-resolved field |
 | $\tau_{ij,SGS}=-\widehat{u_i^*u_j^*}$ | $-\tau_{ij}$ | **negative convention:** the source's SGS stress is the negative of the registry's |
-| $\mu_{eff}$, $\mu_{clip}$ | $\nu_{\mathrm{eff}}$, $\nu_{\mathrm{clip}}$ | page-local, as on the [gradient model](/methods/gradient-model.md) page; defined with the source's $S_{ij}$ and a stress without density factor |
+| $\mu_{eff}$, $\mu_{clip}$ | $\nu_{\mathrm{eff}}$, $\nu_{\mathrm{clip}}$ | registry §11, as on the [gradient model](/methods/gradient-model.md) page; defined with the source's $S_{ij}$ and a stress without density factor |
 | $\overline\mu_w$ | $\bar\nu_w$ (mean wall viscosity) | the ratio $\mu_{clip}/\overline\mu_w$ is quoted as printed |
 | $D_{SGS,ij}$, $D_{p,ij}$, $P_{ij}$, $T_{\cdot,ij}$ | page-local | resolved Reynolds-stress budget (Eqs. 6.2–6.11); $D^{\mathrm{sgs}}_{ii}>0$ read as backscatter |
 | $\check F_{ij}(k,y)$ | page-local | spanwise spectral density of a budget term |

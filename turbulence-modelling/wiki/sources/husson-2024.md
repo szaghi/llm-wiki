@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 502:112814"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Journal_of_Computational_Physics_Husson_A_comprehensive_framework_for_robust_hybrid_RANSLES_simulati.pdf"
 tags: [hybrid-rans-les, des, lattice-boltzmann, immersed-boundary, wall-model, spalart-allmaras]
-timestamp: 2026-10-27T06:09:00Z
+timestamp: 2026-10-27T15:53:00Z
 ---
 
 # Summary
@@ -41,7 +41,7 @@ linearized below the interpolation distance $2.5h$ as a
 [equilibrium](/methods/equilibrium-wall-model.md) law. The authors place it
 beside [wall-modelled LES](/methods/wall-modelled-les.md) in lattice
 Boltzmann, which needs [inflow turbulence](/methods/inflow-turbulence-generation.md),
-and recall that lattice Boltzmann LES mostly uses
+and state, citing earlier work, that lattice Boltzmann LES mostly uses
 [Smagorinsky](/methods/smagorinsky-model.md)-type models or the collision
 operator as an [implicit](/definitions/implicit-les.md) model; the PowerFLOW
 hybrid rests on an RNG [k-ε model](/methods/k-epsilon-model.md).
@@ -132,8 +132,8 @@ inhibition functions; $c_0$ physical sound speed (page-local; Notation map).
 | $\Delta$ (Eq. 20) | $\nabla^2$ | Laplacian; elsewhere $\Delta$ is the cell-size estimate |
 | $\Delta x$, $\Delta y$ | $h$ | lattice spacing, isotropic |
 | $C_{DES}$, $f_d$, $r_d$ | $C_{\mathrm{DES}}$, $f_d$, $r_d$ | |
-| $f_P$, $f_{P2}$, $f_R$, $\mathcal G_{\tilde\nu}$, $\mathcal G_\Omega$, test$_\Delta$, test$_w$ | page-local | ZDES mode 2 (2020) functions, sensors and switches |
-| $y_c$, $r_{lin}$, $d_{IP}$ | page-local | linearization distance, $y_c/d$, $2.5h$ |
+| $f_P$, $f_{P2}$, $f_R$, $\mathcal G_{\tilde\nu}$, $\mathcal G_\Omega$, test$_\Delta$, test$_w$ | $f_P$, $f_{P2}$, $f_R$, $\mathcal G_{\tilde\nu}$, $\mathcal G_\Omega$ (registry §11); test$_\Delta$, test$_w$ page-local | ZDES mode 2 (2020) functions, sensors and switches |
+| $y_c$, $r_{lin}$, $d_{IP}$ | $y_c$, $r_{\mathrm{lin}}$ (page-local), $d_{\mathrm{IP}}$ (registry §11) | linearization distance, $y_c/d$, $2.5h$ |
 | $B$, $a_k$, $b_k$, $c_k$ (Eq. 37) | page-local | SA wall-law constants; $B=5.0333908790505579$ **differs** from the registry's log-law intercept $B$ |
 | $u_t$, $u_n$ | page-local | wall-tangential and normal velocity |
 | $k_{2D}$, $\delta_\omega$, $Q^*$ | page-local | 2D resolved energy, vorticity thickness, normalized Q |

@@ -5,7 +5,7 @@ description: "Exact laws relate the energy cascade rate of MHD turbulence to two
 status: established
 aliases: [exact law, third-order law, Politano–Pouquet law, Kolmogorov–Yaglom law, energy cascade rate, A18 law, F21 law, compressible Hall MHD exact law]
 tags: [mhd, plasma, astrophysics, dns, compressible]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Exact laws of (Hall-)MHD turbulence
@@ -44,8 +44,8 @@ the exact law
 $$\langle\delta Z^\mp_L\,|\delta\boldsymbol Z^\pm_\lambda|^2\rangle=-2\varepsilon^\pm\lambda,$$
 
 with $\delta Z_L$ the longitudinal increment, $\lambda$ the perpendicular
-separation and $\varepsilon^\pm$ the Elsasser cascade rates; it is recalled
-as derived for isotropic MHD by Politano & Pouquet (1998) and adapted to
+separation and $\varepsilon^\pm$ the Elsasser cascade rates; the review
+cites it as derived for isotropic MHD by Politano & Pouquet (1998) and adapted to
 RMHD by Boldyrev et al. (2009), with the derivation sketched in the review's
 footnote 9. The review lists it among the properties of RMHD that every
 scaling theory must satisfy, and uses it as a consistency check on
@@ -154,8 +154,8 @@ turbulence](/results/compressible-mhd-turbulence.md) and [decaying MHD
 turbulence](/results/decaying-mhd-turbulence.md).
 
 - **Increment-space divergence.** Increments are integer multiples of 73
-  lattice base vectors joining grid points (the decomposition of Taylor,
-  Kurien & Eyink 2003, as recalled), so no interpolation is needed; under
+  lattice base vectors joining grid points (the decomposition the authors cite
+  from Taylor, Kurien & Eyink 2003), so no interpolation is needed; under
   isotropy $\nabla_l\cdot\langle\boldsymbol F\rangle=l^{-2}\partial_l[l^2\langle F_l\rangle(l)]$,
   the radial projection averaged over the 73 directions (§3.2, Eqs. 26–28;
   $\boldsymbol F$ a flux vector, page-local). An axisymmetric variant with
@@ -169,8 +169,8 @@ turbulence](/results/decaying-mhd-turbulence.md).
   components (MHD and Hall) of the cascade rate nearly at all scales", which
   the authors present as numerical validation of their inertial-range
   equivalence (§4, Fig. 3); a mathematical proof is lacking, whereas it
-  exists for the incompressible Hall-MHD laws (Ferrand et al. 2019, as
-  recalled; §6).
+  exists for the incompressible Hall-MHD laws (the authors cite Ferrand et
+  al. 2019; §6).
 - **Cascade rate against decay rate.** The inertial-range rate, centred
   around $l/d_i\simeq2$, roughly matches the energy decay rate from a linear
   fit, $\approx0.047$ (Run I) and $\approx0.087$ (Runs II–III) in code units
@@ -178,10 +178,10 @@ turbulence](/results/decaying-mhd-turbulence.md).
 - **Mach number.** Raising the initial sonic Mach number from 0.25 to 0.5
   "does not bring significant changes", in agreement with Andrés et al.
   (2018) up to 0.5; supersonic flows can develop a dominant compressible
-  cascade component (Ferrand et al. 2020, as recalled; §4, Fig. 4).
+  cascade component (the authors cite Ferrand et al. 2020; §4, Fig. 4).
 - **Hall range.** The Hall component never dominates the MHD one at sub-ion
   scales, "in contrast with" the CGL-closure simulations of Ferrand et al.
-  (2021b), as recalled; the authors attribute it to dissipation acting
+  (2021b) that they cite; the authors attribute it to dissipation acting
   before the Hall range develops. Run I-512 strengthens the Hall electric
   field at small scales (Fig. 5) but brings "little enhancement" of the Hall
   cascade (Fig. 7). The magnetic spectrum of Run I scales as $k^{-5/3}$ over
@@ -230,17 +230,17 @@ dissipated" (§6).
   The right-hand side and Eq. 24 follow if the resistive term of the
   $\boldsymbol v_A$ equation, Eq. 17, is $\boldsymbol d_\eta/\sqrt{\mu_0\rho}$,
   which is what $\partial_t(\boldsymbol B/\sqrt{\mu_0\rho})$ gives; Eq. 17 and
-  the left side of Eq. 23 print $\boldsymbol d_\eta/\sqrt\rho$. A notational
-  inconsistency, not an error in $\mathcal D_{A18}$.)*
+  the left side of Eq. 23 print $\boldsymbol d_\eta/\sqrt\rho$; with
+  $\boldsymbol d_\eta/\sqrt{\mu_0\rho}$ the printed $\mathcal D_{A18}$ of
+  Eq. 24 follows.)*
 - **Viscosity.** On this page $\nu$ is the source's coefficient, which it
   calls "the dynamic viscosity" (§2.1), consistent with its place in the
   $\rho$-weighted momentum equation (Eq. 2); the Alfvén-speed form (Eq. 16)
   adds $\boldsymbol d_\nu$ to $\partial_t\boldsymbol u$ without a factor
   $1/\rho$, and §3.1 sets $Re=1/\nu$ "due to the normalization of the
   variables".
-- The exact laws are statistical identities, not closures: they bear on
-  modelling as a closure-free diagnostic of the cascade rate in DNS, not as
-  a subgrid model.
+- Ferrand et al. (§1) state that exact laws need no closure model; neither
+  source uses them as a subgrid model.
 
 # Citations
 

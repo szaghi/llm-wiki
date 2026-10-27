@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Flamelet-based tabulated chemistry"
-description: "Flamelet-based tabulated chemistry stores the thermochemical state of one-dimensional flames in a table indexed by mixture fraction, progress variables and enthalpy; this page gives manifold construction and coupling by major species, extensions for curvature, ignition, wall quenching and exhaust-gas recirculation, subgrid mixture-fraction variance in supersonic LES, and assessments against detailed-chemistry, DNS and experimental references."
+description: "Flamelet-based tabulated chemistry stores the thermochemical state of one-dimensional flames in a table indexed by mixture fraction, progress variables and enthalpy; this page gives manifold construction and coupling by major species, extensions for curvature, ignition, wall quenching and exhaust-gas recirculation, subgrid mixture-fraction variance in supersonic LES, assessments against references, and the non-tabulated RANS eddy dissipation concept as contrast."
 status: established
-aliases: [tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, FPV-h, composition space model, ignition source-term patch, optimal estimator, premixed flamelet tabulation, subgrid mixture-fraction variance, scalar variance model]
+aliases: [eddy dissipation concept, EDC, tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, FPV-h, composition space model, ignition source-term patch, optimal estimator, premixed flamelet tabulation, subgrid mixture-fraction variance, scalar variance model]
 tags: [combustion, dns, tabulated-chemistry, flame-wall-interaction, hybrid-rans-les]
-timestamp: 2026-10-27T10:55:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Flamelet-based tabulated chemistry
@@ -338,7 +338,7 @@ with tabulated flamelets instead of replacing them. Their analysis of the
 steady strained counterflow diffusion flame writes it in mixture-fraction
 space as $-\chi_Z\,\partial^2\phi_k/\partial Z^2=\dot\omega_{\phi_k}$ for any
 species or temperature $\phi_k$ (Eq. 4, $\chi_Z=2D_{\mathrm m}(\partial_xZ)^2$ the scalar
-dissipation rate of the one-dimensional flame, $D_{\mathrm m}$ the molecular diffusivity; page-local), whose solution for a
+dissipation rate of the one-dimensional flame, page-local; $D_{\mathrm m}$ the molecular diffusivity), whose solution for a
 steady strained flame is insensitive to the diffusion coefficients; in
 physical space the consumption speed then scales as $\sqrt{a_{\mathrm{cf}}D_{\mathrm m}}$ with the
 strain rate $a_{\mathrm{cf}}$ (detail on the thickened-flame page).
@@ -382,8 +382,110 @@ which the authors take as support for a non-premixed flamelet model there
 resources allow (§4). The evidence is visual comparison of contours,
 scatter plots and profiles; no error norm is given.
 
+## Contrast: the eddy dissipation concept in RANS
+
+Not every turbulence–chemistry closure tabulates. In the **eddy
+dissipation concept** (EDC) of Magnussen, as restated by
+[Mardani & Nazari (2022)](/sources/mardani-2022.md), §2, reactions take
+place only in "fine structures" whose size and residence time follow from
+an energy-cascade model, and each fine structure is integrated as an
+isobaric batch (plug-flow) reactor with a detailed mechanism (here DRM-22,
+24 species and 104 reactions) from the current cell state: the chemistry is
+computed on the fly, not read from a flamelet table. The authors run it in
+two-dimensional axisymmetric RANS with the standard
+[$k$-$\varepsilon$ model](/methods/k-epsilon-model.md) (production constant
+raised from 1.4 to 1.6 for the round jet) for MILD (moderate or intense
+low-oxygen dilution) combustion in jet-in-hot-coflow burners, a regime in
+which, they state, the default constants are inadequate; their literature
+review lists flamelet-generated manifolds and flamelet models as the
+tabulated alternatives for MILD flames (§1).
+
+Page-local symbols: $\gamma_{\mathrm{fs}}$ the fine-structure length
+fraction (the source's $\gamma$; not the ratio of specific heats),
+$\tau_{\mathrm{fs}}$ its residence time, $C_{\mathrm{vf}}$ and $C_{\tau}$
+their constants (the source's $C_\gamma$, $C_\tau$), $C_{D1}$, $C_{D2}$
+the cascade constants (names as in the model), $Re_T=k^2/(\nu\varepsilon)$
+the turbulence Reynolds number, $Da$ the Damköhler number of the
+Kolmogorov time to a chemical time, $S_L$, $S_T$ the laminar and
+turbulent flame speeds, $\chi_{\mathrm{fs}}$ the reacting fraction of the
+fine structure, $Y_k^*$ the fine-structure mass fractions.
+
+**The cascade and the defaults** (§2, Eqs. 1–17). Matching the cascade
+eddy viscosity to the $k$-$\varepsilon$ one gives $\tfrac23C_{D1}=C_\mu=0.09$,
+$C_{D1}=0.135$; Magnussen's experimental value is $C_{D2}=0.5$. With a
+frequency doubling between cascade steps, three quarters of the
+dissipation occurs in the fine structures. Then
+
+$$\gamma_{\mathrm{fs}}=C_{\mathrm{vf}}Re_T^{-1/4},\qquad \tau_{\mathrm{fs}}=C_\tau\Big(\frac{\nu}{\varepsilon}\Big)^{1/2},\qquad \bar R_k=\frac{\rho\,\gamma_{\mathrm{fs}}^2\chi_{\mathrm{fs}}}{\tau_{\mathrm{fs}}(1-\gamma_{\mathrm{fs}}^3\chi_{\mathrm{fs}})}\big(Y_k^*-\langle Y_k\rangle\big),$$
+
+with defaults $C_{\mathrm{vf}}=2.1377$, $C_\tau=(C_{D2}/3)^{1/2}$ and
+$\chi_{\mathrm{fs}}=1$ ($\bar R_k$ the mean reaction rate of species $k$,
+page-local; Eqs. 11, 14, 17).
+
+**Validity limits** (§4, Eqs. 18–20, Fig. 2). The fine structure must be
+smaller than the cell, $\gamma_{\mathrm{fs}}<1$, i.e. $Re_T>20.8$; the
+time-scale fraction $\gamma_{\mathrm{fs}}^2/(1-\gamma_{\mathrm{fs}}^3)$ of
+De et al. must stay below one, which the authors print as
+$\gamma_{\mathrm{fs}}<0.7568$, $Re_T>64.31$. A 10% decrease or increase of
+$C_{\mathrm{vf}}$ moves the second limit to $Re_T>42$ or $Re_T>95$, so
+tuning the constants changes where the model is valid.
+
+**Cascade frequency ratio** (§4.1, §6.1–6.2, Eqs. 21–25, Table 3, Figs.
+4–5). With a general ratio $\alpha_{\mathrm c}$ (page-local; default 2)
+between the frequencies of successive cascade steps, the total-to-fine-structure
+dissipation ratio becomes $1/(1-\alpha_{\mathrm c}^{-2})$. On the Adelaide
+burner (case HM1) a larger $\alpha_{\mathrm c}$ lowers the error 30 and
+60 mm downstream of the jet exit, where $Da$ is low, and a smaller one at
+120 mm, where entrainment of wind-tunnel air ends the MILD regime; the
+fine-structure to Kolmogorov scale ratios behave alike: "finding an optimum
+α for all regions seems to be impossible".
+
+**A localized EDC** (§4.2, Eqs. 26–35; contribution). Following Parente
+et al., the fine-structure velocity is identified with the turbulent flame
+speed, $S_T\approx S_L\sqrt{Re_T+1}$, which gives
+$C_{D2}\approx3/[4(Re_T+1)Da^2]$ and, cell by cell,
+
+$$C_\tau=\frac{C_{D3}}{2Da\sqrt{Re_T+1}},\qquad C_{\mathrm{vf}}=C_{D4}\Big(\frac{9}{16C_{D1}^2(Re_T+1)Da^2}\Big)^{1/4},\qquad C_{D3}=1.0,\ C_{D4}=0.65,$$
+
+with $C_{D1}$ kept at 0.135 and $C_{D4}$ chosen from tests between 0.2 and
+1.0 against measurements. $Da$ uses the Arrhenius rate of one reaction
+(OH + H$_2$ ⇌ H$_2$O + H) or the fastest of the 104, and the constants are
+updated every iteration, without the precomputation with a global
+mechanism that Parente et al.'s variant needs. The authors note that
+their $C_{\mathrm{vf}}$ decreases with $Da$ and $Re_T$, the opposite of
+the correlations of Parente et al. and of Romero-Anton et al. that they
+cite.
+
+**Results** (§6.3, Figs. 6–12). On HM1 the local constants span
+$C_{\mathrm{vf}}$ 0.6–3.5 and $C_\tau$ 0.2–3, with $Da<8.5$ and
+$\gamma_{\mathrm{fs}}<0.75$, inside the validity limits. Against the
+standard EDC the maxima of temperature, OH and CO$_2$ improve by more than
+15% at 120 mm for HM1 and more than 12% for HM3, with comparable accuracy
+upstream; the accuracy on HM1 is near that of Parente et al.'s local
+approach, and the Delft burner's temperatures improve at 90–150 mm. The
+two definitions of $Da$ give similar results at "relatively the same" cost
+per iteration for the single-reaction one (no timings). Results for the
+Sandia flame D and the Sydney bluff-body burner are only in supplementary
+material, which is not in the file read.
+
 ## Qualifications
 
+- **Printed forms in Mardani & Nazari (2022)** *(compiler checks, not in
+  the sources, from the paper's own definitions)*. The root of
+  $\gamma_{\mathrm{fs}}^2=1-\gamma_{\mathrm{fs}}^3$ is 0.7549, which with
+  $C_{\mathrm{vf}}=2.1377$ gives the printed $Re_T>64.31$ and matches the
+  clipping value 0.7548 printed for their code (§6.3); the printed 0.7568
+  gives $Re_T>63.66$. The default $C_{\mathrm{vf}}=2.1377=(3C_{D2}/4C_{D1}^2)^{1/4}$
+  implies $C_{D1}=0.134$, not the stated 0.135, and the $C_{\mathrm{vf}}$
+  column of Table 3 follows the exponent $\tfrac14$ with $C_{D1}=0.134$, not
+  the $\tfrac12$ printed in Eq. (25); the Table 3 entry $C_\tau=0.6369$ at
+  $\alpha_{\mathrm c}=1.2$ is 0.6396 by Eq. (24), all other rows agreeing.
+  §4 calls the default "$C_{D1}=2.137$", the value of $C_{\mathrm{vf}}$.
+  $Re_T$ is defined as $k^2/(\nu\varepsilon)$ (Eqs. 11, 18, 34) and, before
+  Eq. (27), as $\nu_t/\nu$, which differ by the factor $C_\mu$; the
+  derivation of the local constants uses the second, their evaluation the
+  first. The improvement is quoted as more than 10% (abstract), 13%
+  (conclusions) and 12–15% (§6.3) for different subsets.
 - **Printed forms in Tang et al. (2022).** The variance dissipation is
   printed as $\bar\rho\chi_Z=\frac{\mu_t^{\mathrm{bl}}}{Sc_t}\frac{c_q}{\Delta^{1/3}}\bar\rho Z_v$
   (Eq. 17), with units kg$^2$ m$^{-13/3}$ s$^{-1}$ against the kg m$^{-3}$
@@ -448,4 +550,5 @@ scatter plots and profiles; no error norm is given.
 - [Böttler et al. (2023)](/sources/bottler-2023.md) — arXiv 2301.06780v1: §1 (FPV family); §2–2.1, Eqs. (1)–(4), Figs. 1–2 (FPV-$h$, FPV-$\kappa$, composition space model, coupling by major species); §3.1, Fig. 3 (a priori); §3.2, Fig. 4 (linear stability); §3.3, Figs. 5–8 (expanding flame); §4.
 - [Steinhausen et al. (2023)](/sources/steinhausen-2023.md) — arXiv 2212.03762v1: §1 (manifold family, QFM); §2.1, Table 1 (reacting channel); §3, Eqs. (1)–(2), Figs. 2–5 (flame–vortex interaction); §4, Eqs. (3)–(5), Fig. 6 (QFM-EGR); §5, Eqs. (6)–(9), Figs. 7–9 (a priori assessment); §6.
 - [Tang et al. (2022)](/sources/tang-2022.md) — §2.1, Eq. (14) (hybrid RANS/LES, blended eddy viscosity); §2.2, Eqs. (10)–(18) (FPV, presumed PDFs, scale-similarity and transport closures of the subgrid variance, flame index); §3.1, Figs. 5–8; §3.2, Figs. 12–16; §4.
+- [Mardani & Nazari (2022)](/sources/mardani-2022.md) — §1; §2, Eqs. (1)–(17) (Magnussen cascade, EDC); §4, Eqs. (18)–(20), Fig. 2 (validity limits); §4.1, Eqs. (21)–(25), Table 3; §4.2, Eqs. (26)–(35) (localized EDC); §5; §6.1–6.3, Figs. 4–12; §7.
 - [Domingo & Vervisch (2023)](/sources/domingo-2023.md) — HAL author manuscript: §3.1, Figs. 5–6 (LES-embedded DNS with premixed flamelet tabulation, flamelet deconvolution); §3.2 (flame-resolved bluff-body burner, flamelet-hypothesis test proposed).

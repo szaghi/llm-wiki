@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Explicit modal filtering as an LES closure"
-description: "Explicit filtering of the solution itself, in the modal space of a high-order element or by compact physical-space filters, damps the highest resolved modes in place of a subgrid stress. The sources gate it by a resolution or smoothness sensor, tie its cutoff to local flow characteristics, and compare it with Smagorinsky, entropy filtering, split forms and implicit LES."
+description: "Explicit filtering of the solution, in the modal space of a high-order element or by compact physical-space filters, damps the highest resolved modes in place of a subgrid stress. The sources gate it by a sensor, tie its cutoff to local flow characteristics, normalize its strength by the time step, optimize it, and compare it with Smagorinsky and implicit LES."
 status: established
 aliases: [explicit modal filter, modal filtering, solution filtering, dynamic explicit modal filter, DEMF, self-tuning dynamic explicit modal filter, STDEMF, local modal filter, LMF, explicit filtering regularization, relaxation filtering]
 tags: [les, filtering, implicit-les, dg, numerical-dissipation, sgs-model]
-timestamp: 2026-10-27T06:03:00Z
+timestamp: 2026-10-27T16:02:00Z
 ---
 
 # Explicit modal filtering as an LES closure
@@ -57,7 +57,7 @@ $\mathcal F=\mathcal V\Lambda\mathcal V^{-1}$ of Hesthaven & Warburton
 kernel on the diagonal $\Lambda$: modal weights $1$ below a cutoff
 $\vartheta_c$ of the normalized mode index $\vartheta_m$ and
 $\exp\{-\alpha_f[(\vartheta_m-\vartheta_c)/(1-\vartheta_c)]^{s_f}\}$ above
-it, with $\alpha_f=36$ (printed as $-\log_{10}$ of machine precision; see Qualifications) and
+it, with $\alpha_f=36$ (printed as $-\log_{10}$ of the machine zero; see Qualifications) and
 $s_f=6$ (registry symbols; the source's $\eta$, $\alpha$, $s$;
 $\vartheta_c$ not printed).
 
@@ -100,14 +100,15 @@ cutoff element-wise and time-dependent:
 
 $$M_c=n_g\Big(\frac{\Delta}{\eta}\Big)^{-c_{\mathrm{st}}}(1-X)^{c_{\mathrm{st}}},\qquad X=X_SX_\Omega,$$
 
-$$X_S=1-\exp\Big(\frac{-\lvert\bar Q_S\rvert}{\langle\lvert\bar Q_S\rvert\rangle+\kappa_{\mathrm r}}\Big),\qquad X_\Omega=1-\exp\Big(\frac{-\bar Q_\Omega}{\langle\bar Q_\Omega\rangle+\kappa_{\mathrm r}}\Big),$$
+$$X_S=1-\exp\Big(\frac{-\lvert\{Q_S\}_e\rvert}{\langle\lvert\{Q_S\}_e\rvert\rangle_u+\kappa_{\mathrm r}}\Big),\qquad X_\Omega=1-\exp\Big(\frac{-\{Q_\Omega\}_e}{\langle\{Q_\Omega\}_e\rangle_u+\kappa_{\mathrm r}}\Big),$$
 
 with $Q_S=\tfrac12[(\mathrm{tr}\,S)^2-\mathrm{tr}(S^2)]$ and
 $Q_\Omega=-\tfrac12\mathrm{tr}(\Omega^2)$ the second invariants of the
-strain- and rotation-rate tensors (after Tlales et al., cited), $\bar Q$
-their nodal average over the element, $\langle\cdot\rangle$ an average over
-the unresolved elements (over all of them in a periodic box, over
-homogeneous planes or time in a channel), $\kappa_{\mathrm r}$ a small
+strain- and rotation-rate tensors (after Tlales et al., cited),
+$\{\cdot\}_e$ their nodal average over the element, $\langle\cdot\rangle_u$
+an average over the unresolved elements (over all of them in a periodic
+box, over homogeneous planes or time in a channel; not the registry's
+Reynolds average), $\kappa_{\mathrm r}$ a small
 regularizing constant (value not printed) and $c_{\mathrm{st}}>0$ the one
 tunable constant ($M_c$, $X$, $X_S$, $X_\Omega$, $Q_S$, $Q_\Omega$,
 $\kappa_{\mathrm r}$, $c_{\mathrm{st}}$ page-local; the source's $M$, $X$,
@@ -135,6 +136,65 @@ $s_0\in[-(N+2),-(N+1)]$ for $N=2$, 3 (Table 2b, §5; see
 [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)
 for the indicator).
 
+## A filter strength independent of the time step
+
+[Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) use the same
+Vandermonde form, $\mathcal F=\mathcal V\Lambda\mathcal V^{-1}$, in a
+[flux-reconstruction](/methods/flux-reconstruction.md) scheme that recovers
+collocated nodal DG (Radau correction functions, Rusanov interface flux,
+BR2 viscous fluxes), with the exponential kernel
+
+$$\Lambda_{mm}=\begin{cases}1,&\vartheta^{\mathrm t}_m\le\vartheta^{\mathrm t}_c,\\ \exp\!\Big[-\alpha_f\Big(\dfrac{\vartheta^{\mathrm t}_m-\vartheta^{\mathrm t}_c}{\vartheta^{\mathrm t}_{\max}-\vartheta^{\mathrm t}_c}\Big)^{s_f}\Big],&\vartheta^{\mathrm t}_c<\vartheta^{\mathrm t}_m\le\vartheta^{\mathrm t}_{\max},\end{cases}$$
+
+where $\vartheta^{\mathrm t}_m$ is the total degree of the orthonormal mode
+$m$ (the sum of the exponents of its highest monomial, from Pascal's
+triangle in several layers), $\vartheta^{\mathrm t}_c$ the cut-off degree and
+$\vartheta^{\mathrm t}_{\max}$ the largest total degree (§3.3, Eqs. 31–32;
+the source's $\eta$, $\eta_c$, $\eta_{\max}$, $\alpha$, $s$). These degrees
+are integers, not normalized: $\vartheta^{\mathrm t}_m$ (page-local) is
+distinct from the normalized index $\vartheta_m\in[0,1]$ of Wang (2024)
+above. The paper does not print $\vartheta^{\mathrm t}_{\max}$ as a function
+of $N$.
+
+**Normalization by the time step.** Applying a fixed filter after every
+step makes its cumulative effect over a fixed time depend on $\Delta t$.
+The authors' first contribution (§3.2, Eqs. 28–30) applies after each step
+$\Lambda^*=\Lambda^{1/n_T}$ with $n_T=T_{\mathrm{char}}/\Delta t$ (page-local),
+so that $n_T$ applications are "analogous to applying $F$ after each
+characteristic time … only once" and the observed strength does not depend
+on $\Delta t$; the authors restrict this to time integrators of
+sufficiently high order run away from their stability limit, where the
+spatial operator governs the behaviour (§3.2). With the kernel above,
+$\Lambda^{1/n_T}$ has the damping exponent $\alpha_f/n_T$ per step
+*(compiler check, not in the sources)*; the $\alpha_f$ of the tables below
+are of order $10^5$–$10^{14}$, against $\alpha_f=36$ applied per stage,
+without such a normalization, by Wang (2024).
+
+**Optimized parameters.** Their second contribution (§3.4, Algorithms 1–4)
+searches, over more than 14 000 runs of the inviscid
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) on a deliberately
+coarse $16^3$-degree-of-freedom mesh at $N=3$, 4, 5, $s_f\in\{2,4,8,16\}$
+and $M=0.1$–0.5, for the weakest filter that keeps pressure and density
+physical up to $20\,T_{\mathrm{char}}$ (bisection on $\alpha_f$ for the
+highest stable $\vartheta^{\mathrm t}_c$), and among stable filters picks the one that
+damps the high modes most while leaving the low ones untouched. The
+optimum always has $s_f=16$ (Tables 4–6):
+
+| $N$ | $\vartheta^{\mathrm t}_c$ | $\alpha_f$ range over the five "strengths" |
+|---|---|---|
+| 3 | 5 | $2.2\times10^{5}$ to $1.5\times10^{9}$ |
+| 4 | 7 ($M=0.1$–0.4), 6 ($M=0.5$) | $2.9\times10^{11}$ to $1.6\times10^{13}$ |
+| 5 | 8 ($M=0.1$, 0.2), 6 ($M=0.3$–0.5) | $1.9\times10^{10}$ to $1.9\times10^{14}$ |
+
+A filter optimized at Mach number $M$ is labelled a "strength"; the
+$M=0.5$ one is the strongest and is used for the wall-bounded cases. The
+authors say the optimum splits the spectrum "in general" at about 2/3,
+tending to 1/2 as $N$ grows, "similar to the 2/3 rule of dealiasing"
+(§3.4). The filters are
+optimized for the DG-recovering correction function and the Rusanov flux,
+and the authors say they "would not be generally suitable for other
+correction functions" (§2.1, §3.4).
+
 ## Explicit filters as a regularization in finite differences
 
 [Caban et al. (2026)](/sources/caban-2026.md) (§3.1, Eqs. 13–17, Table 1)
@@ -150,7 +210,7 @@ regularization filter (N-DI-R) is the approximate-deconvolution form
 
 $$\hat G_{QG}=1-(1-\hat G_E)^{N_{\mathrm{AD}}+1}$$
 
-($\hat G_{QG}$, $N_{\mathrm{AD}}$ page-local), built from the eighth-order
+($\hat G_{QG}$ page-local, $N_{\mathrm{AD}}$ registry §11), built from the eighth-order
 compact filter with $N_{\mathrm{AD}}=2$ and applied in three dimensions to
 the velocity at the end of each time step. It is close to one over a much
 wider range than $\hat G_E$ and acts only on small scales; explicit
@@ -175,8 +235,8 @@ variables in all three directions at every time step,
 $$u^{\mathrm f}_j=u_j-\chi_f\sum_{l=-N_p}^{N_p}d_l\,u_{j+l},\qquad D_k(kh)=d_0+2\sum_{l=1}^{N_p}d_l\cos(l\,kh),$$
 
 with $d_{-l}=d_l$ (no dispersion), $0\le\chi_f\le1$ the strength, $2N_p+1$
-the stencil and $D_k$ the damping function ($u^{\mathrm f}$, $\chi_f$,
-$d_l$, $N_p$, $D_k$ page-local; the source writes $\Delta x$ for $h$).
+the stencil and $D_k$ the damping function ($\chi_f$ registry §11;
+$u^{\mathrm f}$, $d_l$, $N_p$, $D_k$ page-local; the source writes $\Delta x$ for $h$).
 The constraints $d_0+2\sum d_l=0$ and $d_0+2\sum(-1)^ld_l=1$ give
 $D_k(0)=0$ and $D_k(\pi)=1$, so the mean is left untouched and the
 grid-to-grid mode is the most damped *(compiler check, not in the
@@ -186,14 +246,14 @@ $D_k>0$ (purely dissipative), with a penalty on the slope of $D_k$
 ($d_0=0.22107796514583924$, $d_1=-0.19150151148699646$,
 $d_2=0.12311347506118175$, $d_3=-0.05624682921948344$,
 $d_4=0.0163475525925704$, $d_5=-0.002251669520191884$). By Fourier
-analysis it is more accurate than the optimized filter of Bogey & Bailly
-(2004, as recalled) at low wavenumbers and than that of Bogey et al.
-(2009, as recalled) at high wavenumbers; the 2004 filter, of lower formal
+analysis it is more accurate than the optimized filters that Volpiani
+cites from Bogey & Bailly (2004) at low wavenumbers and from Bogey et al.
+(2009) at high wavenumbers; the 2004 filter, of lower formal
 order, is "more dissipative for long waves", which shows as early
 kinetic-energy loss (App. 1, Fig. 20; §4). The strength is fixed at
 $\chi_f=0.1$; the author notes that the damping depends on the filtering
 frequency, hence on the time step (citing Edoh et al.; Lamballais et al.),
-and recalls from Aubard et al. (2013) that the solution becomes
+and cites Aubard et al. (2013) for the finding that the solution becomes
 independent of the finite-difference stencil beyond seven points while
 the filter shape strongly affects the LES (§2.2.2, §5).
 
@@ -218,8 +278,8 @@ the filter shape strongly affects the LES (§2.2.2, §5).
   grids, which the author reads as under-resolved structures whose energy
   drain is carried by the filter (§5, Figs. 6–8); the new filter is the
   least dissipative and best predicts the dissipation peak on $64^3$
-  (Fig. 9), and on $128^3$ it agrees with DNS of Dairay et al. (as
-  recalled) at $Re=2500$, 5000 and 10000 (Fig. 10).
+  (Fig. 9), and on $128^3$ it agrees with the DNS of Dairay et al. (2017,
+  cited) at $Re=2500$, 5000 and 10000 (Fig. 10).
 - **Against explicit LES.** Split forms with the
   [Smagorinsky](/methods/smagorinsky-model.md), multiscale Smagorinsky or
   [dynamic](/methods/dynamic-procedure.md) models stay noisy; adding the
@@ -286,6 +346,35 @@ Witherden (cited) stabilizes the same case without tuning but damps the
 high-frequency pressure spectrum more and costs about 15% more per
 iteration (§4.3.2, §4.4.3, Figs. 15–17).
 
+**Optimized filter in flux reconstruction.** Hamedi & Vermeire (2022,
+§4–5) report that the filters leave accuracy largely intact:
+
+- **Isentropic vortex.** Filtered and unfiltered runs are both
+  super-accurate with almost the same observed order: 7.6266 against
+  7.6266 at $N=3$, 9.1088 against 9.1043 at $N=4$, 10.633 against 10.427
+  at $N=5$ (§4.1, Table 1).
+- **Taylor–Green vortex, $Re=1600$, $64^3$ degrees of freedom.** The
+  filtered runs dissipate kinetic energy slightly faster, more so for
+  stronger filters, under-predict the enstrophy-based dissipation and the
+  high-wavenumber energy, and show larger vortical structures; "the overall
+  accuracy … is not impacted significantly" (§4.2, Figs. 9–13). The same
+  holds on a sinusoidally curved mesh (§4.3).
+- **Channel, $Re_\tau=395$**, 3/8 of the DNS degrees of freedom
+  ($\Delta x^+\approx25$, $\Delta y^+_{\min}\approx0.9$,
+  $\Delta z^+\approx17$): the unfiltered $N=5$ run is unstable and the
+  filtered one stable; filtering damps only the highest modes of the
+  velocity spectra, and at $N=3$ it improves the r.m.s. fluctuations for
+  $10<y^+<40$ (§5.1, Table 2, Figs. 19–25); see
+  [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
+- **Stalled NACA0020, $Re_c=20\,000$, $20^\circ$.** $C_L=0.651$ and
+  $C_D=0.357$ filtered against 0.639 and 0.353 unfiltered and 0.64 and 0.35
+  in DNS; nearly identical $C_p$ (§5.2, Table 3).
+
+They (§1) cite Park et al. as having concluded that
+filtering degrades the accuracy of high-order implicit LES of a NACA0021,
+and present their filters as designed to "stabilize the solution, while
+maintaining accuracy" (§1, §6).
+
 ## Relation to implicit LES and to SVV
 
 Ranjbar et al. (§I) present solution filtering as simpler than SVV, whose
@@ -300,15 +389,13 @@ runs without a subgrid model as implicit LES (§5). The relaxation filter of
 [Nek5000](/software/nek5000.md), used as an implicit subgrid model by Mukha
 et al. (2025), is on the
 [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
-page. In each source the filter is tuned against DNS of the same flow
-(the constant $c_{\mathrm{st}}$, the threshold $s_0$, the filter order).
+page.
 
 ## Qualifications
 
-- Ranjbar et al. (2026) re-tune $c_{\mathrm{st}}$ per flow (0.65, 0.25,
-  0.5), so the self-tuning removes the integer choice of DEMF but not the
-  dependence on the case; the Smagorinsky comparisons use one fixed $C_s$
-  per case, with no dynamic procedure or wall damping in the channel.
+- Ranjbar et al. (2026) use a different $c_{\mathrm{st}}$ per flow (0.65,
+  0.25, 0.5); the Smagorinsky comparisons use one fixed $C_s$ per case,
+  with no dynamic procedure and no wall damping mentioned for the channel.
 - Ranjbar et al. call the kernel decay above the cutoff "exponentially
   reducing" (§II.B), while Eq. (31) is a hyperbolic tangent of a quadratic;
   they once describe modal filtering as removing energy "from the large
@@ -316,21 +403,29 @@ page. In each source the filter is tuned against DNS of the same flow
   resolved scales; and §III.D.1 associates "more positive $Q_S$" with
   high-index levels, where p. 13 and the preceding sentence associate large
   negative $Q_S$ with them.
-- Wang (2024, §2.3) defines the filter strength as $-\log_{10}$ of machine
-  precision, $\approx36$ in double precision; $-\ln(2.2\times10^{-16})\approx36.0$,
-  whereas $-\log_{10}(2.2\times10^{-16})\approx15.7$, so the value 36 is the
-  natural logarithm *(compiler check, not in the sources)*.
+- Wang (2024, §2.3) defines the filter strength as $-\log_{10}$ of the
+  machine zero and gives $\approx36$ for double precision; the value of the
+  machine zero is not printed.
 - Volpiani (2024) labels the relaxation-filtered runs both implicit LES
   (no subgrid model) and LES "explicitly filtered with a well-defined
-  filter function" (§1, §5): the filter is a grid stencil applied to the
-  solution every step, whereas the explicitly filtered LES of Valencia et
-  al. (2026) on [large-eddy simulation](/definitions/large-eddy-simulation.md)
-  sets a filter width $\Delta$ by the filter-to-grid ratio. The value of
+  filter function" (§1, §5). The value of
   $C_s$ in Volpiani's Smagorinsky runs and the balancing constants of the
   time-integrator optimization are not printed; the Fig. 18 caption
   writes "RT" for RF.
 - Caban et al. (2026) print the middle rows of the filter-coefficient
   system (Eq. 16) with an index $j$ where the summation index is $l$.
+- Hamedi & Vermeire (2022) call their unfiltered runs "ILES" and the
+  filtered ones "LES" although the filter is the only model. Algorithm 1
+  prints the update of the unstable branch as "$\eta_c=\eta_{max}-1$",
+  which as printed sets the same value at every iteration and cannot carry
+  out the downward search the text describes; the search starts at
+  $\vartheta^{\mathrm t}_c=\vartheta^{\mathrm t}_{\max}$, where the middle branch of Eq. (32) has a
+  zero denominator. Their Rusanov flux (Eq. 44) is printed with the sum of
+  the two states, $+\tfrac s2(u_L+u_R)$, in the dissipative term. The
+  airfoil run is said to last 100 convective times (§5.2) while the Fig. 28
+  caption reads "after $200T_{char}$". The $\alpha_f$ of the "strength"
+  labels is not monotone: at $N=3$ the $M=0.3$ filter has a smaller
+  $\alpha_f$ than the $M=0.2$ one at the same $\vartheta^{\mathrm t}_c$ (Table 4).
 
 # Citations
 
@@ -338,3 +433,4 @@ page. In each source the filter is tuned against DNS of the same flow
 - [Wang (2024)](/sources/wang-2024-b.md) — §2.3, Eqs. (17)–(19), Algorithm 1, Table 2; §4.1–4.4, Figs. 2–3, 15–21; §5.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §3.1, Eqs. (13)–(17), Table 1, Fig. 2; §5.1, Figs. 10–11; §5.3.1, Table 4, Fig. 19; §5.
 - [Volpiani (2024)](/sources/volpiani-2024.md) — §1; §2.2.2, Eqs. (7)–(8), Table 3; §4, Table 1; §5, Figs. 6–10, 15–18; §6; App. 1, Fig. 20.
+- [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §1; §2.1; §3.1–3.4, Eqs. (27)–(32), Algorithms 1–4, Tables 4–6; §4.1–4.3, Table 1, Figs. 9–18; §5.1–5.2, Tables 2–3, Figs. 19–30; §6.

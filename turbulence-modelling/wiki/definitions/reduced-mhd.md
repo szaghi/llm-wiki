@@ -5,7 +5,7 @@ description: "Reduced MHD is the strong-guide-field, anisotropic limit of MHD wr
 status: established
 aliases: [RMHD, reduced magnetohydrodynamics, Strauss equations, Elsasser fields, Elsasser variables]
 tags: [mhd, plasma, astrophysics, dns]
-timestamp: 2026-10-27T05:46:00Z
+timestamp: 2026-10-27T15:46:00Z
 ---
 
 # Reduced MHD and Elsasser variables
@@ -21,9 +21,9 @@ model system on which the scaling theories of strong MHD turbulence reviewed
 by [Schekochihin (2022)](/sources/schekochihin-2022.md) are built: the
 [critically balanced cascade](/properties/critical-balance.md), [dynamic
 alignment](/properties/dynamic-alignment.md) and [tearing-mediated
-turbulence](/results/tearing-mediated-mhd-turbulence.md). As recalled by
-Schekochihin (2022, §3), RMHD is due to Kadomtsev & Pogutse (1974) and
-Strauss (1976), and the Elsasser variables to Elsasser (1950).
+turbulence](/results/tearing-mediated-mhd-turbulence.md). Schekochihin
+(2022, §3) credits RMHD to Kadomtsev & Pogutse (1974) and Strauss (1976),
+and the Elsasser variables to Elsasser (1950).
 
 ## Equations
 
@@ -44,7 +44,7 @@ are Elsasser forcings. $\boldsymbol Z^+$ propagates along $+\boldsymbol B_0$
 from compressible MHD with all perturbations ordered like the Mach number and
 like $k_\parallel/k_\perp\ll1$, with frequencies $\sim k_\parallel v_A$; it
 also describes the Alfvénic part of low-frequency collisionless plasma
-dynamics near a gyrotropic equilibrium (as recalled from Schekochihin et al.
+dynamics near a gyrotropic equilibrium (the review cites Schekochihin et al.
 2009 and Kunz et al. 2015). Section 13 of the review argues that even MHD
 turbulence without an imposed mean field "turns itself into" RMHD below the
 fold scale of the [small-scale dynamo](/results/small-scale-dynamo.md).
@@ -108,7 +108,7 @@ theory uses.
    $v_A$ is unchanged, so $\boldsymbol Z^\pm_\perp$ and $\nabla_\parallel$ are
    formally infinitesimal next to $v_A$ and $\nabla_\perp$: parallel and
    perpendicular distances are measured "in different units". Two corollaries
-   are drawn (§3, §5.2, §6.3, crediting Beresnyak 2011, 2012a, as recalled):
+   are drawn (§3, §5.2, §6.3, crediting Beresnyak 2011, 2012a):
    the parallel-to-perpendicular aspect ratio of an RMHD simulation box is an
    arbitrary parameter, and any scaling law containing $v_A$ and a parallel
    length must contain them only through the combination $l_\parallel/v_A$.
@@ -118,8 +118,8 @@ theory uses.
    perpendicular increments $\delta\boldsymbol Z^\pm_\lambda$ at separation
    $\lambda$,
    $$\langle\delta Z^\mp_L\,|\delta\boldsymbol Z^\pm_\lambda|^2\rangle=-2\varepsilon^\pm\lambda$$
-   (Eq. 3.7), recalled as derived for isotropic MHD by Politano & Pouquet
-   (1998) and adapted to RMHD by Boldyrev et al. (2009); the derivation is
+   (Eq. 3.7); the review (§3) cites it as derived for isotropic MHD by
+   Politano & Pouquet (1998) and adapted to RMHD by Boldyrev et al. (2009); the derivation is
    sketched in the review's footnote 9.
 
 ## Alignment and residual-energy diagnostics
@@ -135,7 +135,7 @@ angle between $\delta\boldsymbol u$ and $\delta\boldsymbol b$,
 
 $$\cos\theta=\frac{\sigma_r}{\sqrt{1-\sigma_c^2}},\qquad \cos\theta_{ub}=\frac{\sigma_c}{\sqrt{1-\sigma_r^2}}$$
 
-(Eq. B5, recalled from Wicks et al. 2013). The **residual energy**
+(Eq. B5; App. B cites Wicks et al. 2013 for it). The **residual energy**
 $\langle\boldsymbol Z^+\cdot\boldsymbol Z^-\rangle=\langle|\boldsymbol u_\perp|^2\rangle-\langle|\boldsymbol b_\perp|^2\rangle$
 (Eq. 10.4) is therefore non-zero whenever the Elsasser increments are
 aligned; the review prefers the Elsasser angle $\theta$ over $\theta_{ub}$
@@ -150,8 +150,9 @@ Four sources work with systems that RMHD does not describe.
   (2022)](/sources/gan-2022.md) drive isothermal compressible MHD with a
   strong guide field ($v_A=8$, plasma beta $\beta_p=0.4$, turbulent Mach
   number 0.12–0.18) and separate the fluctuation power into Alfvén, slow and
-  fast modes. Even there most of the power at finite frequency lies on none
-  of the linear dispersion branches; among the wave-like part the Alfvén
+  fast modes. Even there, outside the injection range, most of the power lies
+  on none of the linear dispersion branches (73–79% by the
+  spatio-temporal filter); among the wave-like part the Alfvén
   mode dominates, with fast modes negligible under incompressible driving
   and about 2% under compressible driving (§3); details on [compressible MHD
   turbulence](/results/compressible-mhd-turbulence.md). They solve the
@@ -167,7 +168,7 @@ Four sources work with systems that RMHD does not describe.
   structures and slab Alfvén waves at the same order, with the Alfvén
   velocity present, and its velocity is not solenoidal in the stratified
   background, so the Elsasser equation gains density-gradient and
-  background-shear terms. As the authors recall, for $\beta_p\ll1$ or
+  background-shear terms. Adhikari et al. (§1–§2), citing Zank et al. (2017), state that for $\beta_p\ll1$ or
   $\beta_p\sim1$ the leading order is instead two-dimensional and the slab
   part a higher-order correction. Their Elsasser energies carry no factor
   $\tfrac12$, and the residual energy is

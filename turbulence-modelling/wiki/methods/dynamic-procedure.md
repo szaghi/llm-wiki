@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-27T11:01:00Z
+timestamp: 2026-10-27T15:46:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -65,7 +65,7 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Beck & Kurz (2023)](/sources/beck-2023.md), §V | DSM after Moin et al. (1991) in DG (FLEXI) | not printed |
 | [Abe (2021)](/sources/abe-2021.md), §II A, Eq. (5) | DSM (Germano et al. 1991; Lilly 1992), $\nu_t=C\Delta^2\lvert\bar S\rvert$ with $C\Delta^2$ computed as one product | not printed |
 | [Prakash et al. (2022)](/sources/prakash-2022.md), §III | DSM and dynamic mixed model in the stabilized finite-element code PHASTA | $\hat\Delta/\Delta=\sqrt3$, filters of Tejada-Martínez & Jansen; homogeneous directions |
-| [Fowler et al. (2022)](/sources/fowler-2022.md), §5; [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md), App. B | Lagrangian scale-dependent dynamic model (Bou-Zeid et al. 2005) in LESGO | averaging along fluid-particle paths (Meneveau, Lund & Cabot 1996, as recalled by Fowler et al.) |
+| [Fowler et al. (2022)](/sources/fowler-2022.md), §5; [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md), App. B | Lagrangian scale-dependent dynamic model (Bou-Zeid et al. 2005) in LESGO | averaging along fluid-particle paths (Meneveau, Lund & Cabot 1996, cited by Fowler et al.) |
 | [Kim et al. (2022)](/sources/kim-2022.md), §II | DSM (Germano et al. 1991; Lilly 1992), baseline of a learned channel model; the coefficient written $C^2$ absorbs $\Delta^2$, i.e. $C^2=(C_s\Delta)^2$ in the form above | $\hat\Delta=2\Delta$; horizontal (wall-parallel) average |
 | [Helm & Martín (2022)](/sources/helm-2022.md), §II, Eqs. (9)–(10) | compressible one-coefficient dynamic mixed model of Martín, Piomelli & Candler (2000): dynamic eddy-viscosity, eddy-diffusivity coefficients and subgrid turbulent Prandtl number | top-hat test filter in computational space; local ensemble average in the spanwise direction; coefficients transformed to curvilinear coordinates after Armenio et al. |
 | [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md), §II.2 | DSM as baseline, and the identity on forces for the [fractional SGS model](/methods/fractional-sgs-model.md) | $\hat\Delta=2\Delta$, box filter; average over homogeneous directions |
@@ -82,10 +82,12 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Jakhar et al. (2026)](/sources/jakhar-2026.md), App. D | DSM (Germano et al., cited) and a dynamic Leith model, baselines in forced two-dimensional turbulence | not printed; "positive clipping" enforces $\nu_t\ge0$ |
 | [Li et al. (2024)](/sources/li-2024.md), §II B, Eqs. (7)–(11) | DSM (Lilly's least squares) and a two-coefficient dynamic mixed model, baselines of a neural-operator surrogate in forced isotropic turbulence and a temporal mixing layer, pseudo-spectral | test filter $\hat\Delta=2\Delta$, and a second filter of width $4\Delta$ for the mixed model's structural term; average over the whole domain, so the coefficients are spatially uniform at each time |
 | [Pan & Zhang (2023)](/sources/pan-2023.md), §II.D, Eqs. (16)–(19) | dynamic Smagorinsky–Lilly model of ANSYS-Fluent (Lilly's "minimum error method"), reference LES of a centrifugal impeller; printed as $L^d_{ij}=C_s^2M^{\mathrm P}_{ij}$ with $M^{\mathrm P}_{ij}=2\Delta^2\widehat{\lvert\bar S\rvert\bar S_{ij}}-2\hat\Delta^2\lvert\hat{\bar S}\rvert\hat{\bar S}_{ij}$ ($M^{\mathrm P}$ page-local) $=2\Delta^2M_{ij}$, and $C_s^2=\langle L_{ij}M^{\mathrm P}_{ij}\rangle/\langle M^{\mathrm P}_{ij}M^{\mathrm P}_{ij}\rangle$, the formula above *(compiler check, not in the sources)* | default Fluent test filter; averaging not specified |
-| [Volpiani (2024)](/sources/volpiani-2024.md), App. 2, Eqs. (33)–(40) | compressible Germano–Lilly model (Germano et al.; Lilly; Spyropoulos & Blaisdell, as recalled) with Favre-filtered strain and density-weighted $L_{ij}$ and $M_{ij}$, coefficient $C_d=C_s^2$, and a dynamic Yoshizawa coefficient $C_I=\langle L_{kk}\rangle/\langle2\hat\Delta^2\hat{\bar\rho}\lvert\hat{\tilde S}\rvert^2-2\Delta^2\widehat{\bar\rho\lvert\tilde S\rvert^2}\rangle$ for the isotropic part ($C_I$ page-local) | $\hat\Delta=2\Delta$; kernel and averaging not printed |
+| [Volpiani (2024)](/sources/volpiani-2024.md), App. 2, Eqs. (33)–(40) | compressible Germano–Lilly model (Germano et al.; Lilly; Spyropoulos & Blaisdell, cited) with Favre-filtered strain and density-weighted $L_{ij}$ and $M_{ij}$, coefficient $C_d=C_s^2$, and a dynamic Yoshizawa coefficient $C_I=\langle L_{kk}\rangle/\langle2\hat\Delta^2\hat{\bar\rho}\lvert\hat{\tilde S}\rvert^2-2\Delta^2\widehat{\bar\rho\lvert\tilde S\rvert^2}\rangle$ for the isotropic part ($C_I$ page-local) | $\hat\Delta=2\Delta$; kernel and averaging not printed |
 | [Zhao et al. (2021)](/sources/zhao-2021-c.md), §III.A, Eqs. (15)–(16); §III.D | DSM (Germano et al. 1991; Vreman et al. 1997, as cited) in a high-order gas-kinetic finite-volume code, wall-resolved channel; its coefficient is reused unchanged as $C_d$ of a dynamic Clark mixed model | test filter $2\Delta$; average over the homogeneous $x$–$z$ planes; positive-part clipping "so that backscatter is eliminated" |
 | [Li et al. (2021)](/sources/li-2021.md), §III C | DSM (Moin et al. 1991, as cited), comparator of a gene-expression-programming model in forced isotropic turbulence, pseudospectral | not printed |
 | [Valencia et al. (2026)](/sources/valencia-2026.md), §I, §V C | DSM and dynamic mixed model as a priori baselines in explicitly filtered compressible isotropic turbulence | not printed |
+| [Chen et al. (2022)](/sources/chen-2022-g.md), §4.1, Eqs. (26)–(29) | Germano–Lilly least squares, printed $C_s^2=\langle L^{\mathrm C}_{ij}M^{\mathrm C}_{ij}\rangle/\langle M^{\mathrm C}_{ij}M^{\mathrm C}_{ij}\rangle$ with $L^{\mathrm C}_{ij}=-L^d_{ij}$ and $M^{\mathrm C}_{ij}=-2\Delta^2M_{ij}$ ($L^{\mathrm C}$, $M^{\mathrm C}$ page-local), which is the formula above *(compiler check, not in the sources)*; finite-difference reference LES of a channel beside residual-based VMS | widths not printed; average over homogeneous directions |
+| [Qi et al. (2022)](/sources/qi-2022-b.md), §4.1 | compressible DSM (Germano et al.; Lilly) and the dynamic $k_{\mathrm{sgs}}$-equation model of Chai & Mahesh (cited), baselines of a test-filter-free model (below) | box test filter, $\hat\Delta=2\Delta$, $\Delta=(\Delta x\Delta y\Delta z)^{1/3}$ |
 
 Fowler et al. (2022, §4.2) borrow the Lagrangian averaging of the dynamic
 model for the time integration of their wall model (semi-Lagrangian upstream
@@ -175,11 +177,11 @@ filter-width question.
   after a transient, with decay exponent about $-1.35$ against $-1.37$; in
   forced HIT ($Re_\lambda=315$, $128^3$) and for $Re_\lambda\to\infty$ it
   recovers the $k^{-5/3}$ spectrum (Agrawal et al. 2022, §VII.A–C). In the
-  Taylor–Green vortex, Dairay et al. are recalled by
-  [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) (§4.1) to
-  find that the procedure gives $C_s\approx0.1$ after breakdown; Thiry et al.
-  are recalled to obtain a near-constant spectral eddy viscosity with DSM
-  (§6.3).
+  Taylor–Green vortex,
+  [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) (§4.1)
+  cite Dairay et al. as finding that the procedure gives $C_s\approx0.1$
+  after breakdown, and (§6.3) Thiry et al. as obtaining a near-constant
+  spectral eddy viscosity with DSM.
 - **Coarse DG.** In DG LES of forced HIT at $Re_\lambda\approx180$, DSM is
   close to DNS at 36 degrees of freedom per direction but deviates at 24.
   The authors call it plausible, without investigating it, that the test
@@ -191,8 +193,8 @@ filter-width question.
   $N=7$) gives better Reynolds-stress profiles than DG ILES (Flad &
   Gassner 2017, §6.2, Fig. 11). In the WMLES channel at $Re_\tau=4200$ with
   20 points per half-height, DSM needs clipping of the SGS stress at the
-  second off-wall point, as Morinishi & Vasilyev are recalled to report at
-  $Re_\tau=395$; the Kármán-constant error is 7% (Agrawal et al. 2022,
+  second off-wall point, as Agrawal et al. cite Morinishi & Vasilyev
+  reporting at $Re_\tau=395$; the Kármán-constant error is 7% (Agrawal et al. 2022,
   §VII.D, Figs. 8, 10). Lozano-Durán et al. (2022, §IV.B, App. B) calibrate
   the mean-velocity error of charLES WMLES with DSM at
   $e_u\approx0.08\,\Delta/\delta$ and observe a non-monotonic
@@ -374,7 +376,8 @@ filter-width question.
   (12.4 million cells, $Re_h=5600$) reattaches at $x/h=5.09$ against Rapp's
   measured 4.83; Breuer et al. attribute the slightly under-predicted
   pressure to the SGS model, which delays separation and lengthens the
-  bubble, as recalled by Prieto Saavedra et al. (2024, §3.3.2, Table 1).
+  bubble; Prieto Saavedra et al. (2024, §3.3.2, Table 1) cite these
+  results.
   See [periodic hill](/benchmarks/periodic-hill.md).
 - **Negative viscosity.** The local coefficient can become negative (local
   [backscatter](/definitions/energy-backscatter.md)), which generally
@@ -463,6 +466,76 @@ filter-width question.
   as the reference of their learned closures, because the Sigma coefficient
   "does not require clipping for channel flow", whereas DSM "may need
   clipping" (Meneveau et al. 1996, as cited).
+- **Coarse channel against a residual-based closure.** On a
+  $32\times64\times32$ channel mesh at $Re_\tau=180$, [Chen et al. (2022)](/sources/chen-2022-g.md)
+  (§4.2, §5, Figs. 1–3) find that DSM agrees with DNS in the inner layer,
+  unlike static [Smagorinsky](/methods/smagorinsky-model.md), and dissipates
+  less than Smagorinsky in the inner layer and more in the outer layer; the
+  residual-based [variational multiscale](/methods/variational-multiscale-method.md)
+  LES on the same mesh gives better mean velocity than both.
+- **Degradation on coarse compressible grids.** In compressible channel
+  flow at $M=1.5$ (DNS $Re_\tau=220$), DSM gives $Re_\tau=213$, 208 and 201
+  on three successively coarser LES grids, and the dynamic $k_{\mathrm{sgs}}$
+  model 215, 210 and 208 (Qi et al. 2022, Tables 2–4). In a converging
+  spherical Richtmyer–Meshkov mixing layer both dynamic models deviate from
+  DNS in the mixing-layer radii between 0.075 and 0.12 ms, which the authors
+  attribute, hedged with "Perhaps", to strong anisotropy and inhomogeneity
+  that "cannot meet the requirement of scale invariance for the traditional
+  dynamic procedure" (§4.3, Figs. 22–23).
+- **Spectral-element dynamic model.** [Tonicello et al. (2022)](/sources/tonicello-2022.md)
+  (§5) cite the "promising results" of their own preliminary LES of a
+  similar ramp configuration (Tonicello et al. 2021, cited) with the
+  spectral-element dynamic model of Chapelier & Lodato (2016, cited); the
+  paper shows no data of it.
+
+## A test-filter-free coefficient: the quasi-dynamic procedure
+
+[Qi et al. (2022)](/sources/qi-2022-b.md) (§3.2, Eqs. 3.8–3.26) fix the
+coefficients of a compressible one-equation model locally from the
+transported subgrid kinetic energy, with no test filter, hence
+"quasi-dynamic". The leading term of the series expansion of a filtered
+product (after Bedford & Yeo and Pomraning & Rutland, cited),
+
+$$\overline{fg}-\bar f\bar g\approx C_0\Delta_k^2\,\partial_k\bar f\,\partial_k\bar g,$$
+
+with $C_0$ (page-local) and $\Delta_k$ the grid spacing in direction $k$,
+gives the [gradient-model](/methods/gradient-model.md) stress
+$\tau_{ij}\approx C_0\Delta_k^2\bar\rho\,\partial_k\tilde u_i\partial_k\tilde u_j$,
+the gradient model for $C_0=1/12$ (Eq. 3.12). Two constraints close it:
+
+1. **Trace.** Equating the trace of the expanded stress to
+   $2\bar\rho k_{\mathrm{sgs}}$ gives
+   $C_0=2k_{\mathrm{sgs}}/(\Delta_l^2\,\partial_l\tilde u_k\partial_l\tilde u_k)$
+   (Eq. 3.15).
+2. **Flux.** The [Smagorinsky](/methods/smagorinsky-model.md) coefficient
+   is set by equating the anisotropic part of the Smagorinsky flux to the
+   anisotropic part of the expanded flux $-\tau_{ij}\tilde S_{ij}$
+   (Eq. 3.21), while the isotropic part of the stress is taken directly as
+   $2\bar\rho k_{\mathrm{sgs}}$ instead of from Yoshizawa's model.
+
+Because the same filter acts at a point, the authors assume the same
+$C_0$ for every expanded term, and so obtain a dynamic subgrid Prandtl
+number from the divergence of the expanded heat flux (Eq. 3.23), a dynamic
+subgrid Schmidt number (Eq. 4.8), and closures of the pressure-dilatation,
+solenoidal and dilatational dissipation terms of the
+$k_{\mathrm{sgs}}$ equation (Eqs. 3.24–3.26). A priori, on box-filtered DNS
+of the $M=1.5$ channel, the $C_0$ inferred from each expanded term agrees
+with that of Eq. (3.15), and the modelled flux and wall-normal heat flux
+correlate with the exact ones at about 0.95 or above, against "much lower"
+values for DSM and the dynamic $k_{\mathrm{sgs}}$ model (Figs. 2–4).
+A posteriori $C_0$ peaks near 0.08 and the subgrid Prandtl number near 0.8
+(Fig. 10). The quasi-dynamic model keeps $Re_\tau=220$, 221 and 218 on the
+three grids against 220 in the DNS (Tables 2–4), predicts transition onset
+and the skin-friction peak of a supersonic ($M=2.25$) flat-plate boundary
+layer on all three grids where DSM and the dynamic $k_{\mathrm{sgs}}$
+model fail on the coarsest (Figs. 16–17), and follows the Richtmyer–Meshkov
+mixing layer throughout (Figs. 22–23). The authors call the weaker grid
+dependence "a certain characteristic of scale adaptivity" (§4.1); it rests
+on three grids per flow (Figs. 5, 16). Per step on 112 CPUs it costs $7.22\times10^{-2}$ s
+against $4.13\times10^{-2}$ s for DSM and $7.38\times10^{-2}$ s for the
+dynamic $k_{\mathrm{sgs}}$ model (Table 5), which the authors call
+"slightly longer" than DSM; the ratio is 1.75 *(compiler check, not in the
+sources)*.
 
 ## Dynamic wall models (inline)
 
@@ -521,6 +594,12 @@ squares from a 6×4 system; see the
 
 ## Qualifications
 
+- Qi et al. (2022) state no clipping or averaging of $C_0$ or of the
+  Smagorinsky coefficient of Eq. (3.21), whose denominator can vanish, and
+  in Eqs. (3.23) and (4.8) take $\bar\rho$ and the subgrid Prandtl and
+  Schmidt numbers outside the divergence, which is exact only where they
+  are locally uniform *(compiler check, not in the sources)*.
+
 - Flad & Gassner (2017, App. D, Eqs. D.1–D.4) print
   $C_S\Delta^2=-\tfrac12\langle L_{ij}M_{ij}\rangle/\langle M_{ij}M_{ij}\rangle$
   with $L_{ij}$ in the registry sign,
@@ -552,12 +631,12 @@ squares from a 6×4 system; see the
   $C_D\in[0,C_S^2]$ with $C_S=0.10$, i.e. an upper bound of 0.01 (§2.6.4),
   and a coefficient "clipped at $C_{max}=0.1$ so that it is never more
   dissipative than the classical Smagorinsky model" (§3.1.8). They print
-  $C_D=-\tfrac12\langle L_{ij}M_{ij}\rangle_e/\langle M_{ij}M_{ij}\rangle_e$
-  (Eq. 54, $\langle\cdot\rangle_e$ the element average) with $L_{ij}$ in the
+  $C_D=-\tfrac12\{L_{ij}M_{ij}\}_e/\{M_{ij}M_{ij}\}_e$
+  (Eq. 54, with the element average written $\{\cdot\}_e$ here) with $L_{ij}$ in the
   registry sign and
   $M_{ij}=\Delta^2\widehat{\lvert\bar S\rvert\bar S^d_{ij}}-\hat\Delta^2\lvert\hat{\bar S}\rvert\hat{\bar S}^d_{ij}$,
   which is $\Delta^2$ times the $M_{ij}$ of this page; the identity above
-  then gives $C_D=+\tfrac12\langle L_{ij}M_{ij}\rangle/\langle M_{ij}M_{ij}\rangle$,
+  then gives $C_D=+\tfrac12\{L_{ij}M_{ij}\}_e/\{M_{ij}M_{ij}\}_e$,
   so the printed minus sign is inconsistent with the printed $L_{ij}$ and
   $M_{ij}$ *(compiler check, not in the sources)*. They describe the test
   filter as "similar to" their modal high-pass filter (§2.6.4) but also as
@@ -628,3 +707,6 @@ squares from a 6×4 system; see the
 - [Li et al. (2021)](/sources/li-2021.md) — §III C, Figs. 2–6.
 - [Heinz (2020)](/sources/heinz-2020.md) — §2.1.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §2.3, Eqs. (15)–(16); §4.1.
+- [Chen et al. (2022)](/sources/chen-2022-g.md) — §4.1, Eqs. (26)–(29); §4.2, Figs. 1–2; §5, Fig. 3.
+- [Qi et al. (2022)](/sources/qi-2022-b.md) — §3.2, Eqs. (3.8)–(3.26); §4.1, Tables 2–5, Figs. 2–5, 10; §4.2, Figs. 16–17; §4.3, Eqs. (4.6)–(4.8), Figs. 22–23.
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §5.

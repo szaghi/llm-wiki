@@ -5,7 +5,7 @@ description: "A wall-stress model that transports the friction-velocity vector a
 status: established
 aliases: [LaRTE, LaRTE wall model, relaxation-towards-equilibrium wall model, quasi-equilibrium wall model]
 tags: [wall-model, wmles, boundary-layer]
-timestamp: 2026-10-26T10:04:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Lagrangian relaxation towards equilibrium (LaRTE) wall model
@@ -26,7 +26,7 @@ flow is incompressible over smooth planar walls.
 ## Quasi-equilibrium ansatz
 
 Following Chung & Pullin (2009) and the integral wall model of Yang et al.
-(2015), as Fowler et al. recall them, the wall-parallel velocity of the layer
+(2015), as Fowler et al. cite them, the wall-parallel velocity of the layer
 $0\le y\le h_{\mathrm{wm}}$, filtered horizontally at the LES scale and
 implicitly in time, is written as (Eq. 2.1)
 
@@ -171,7 +171,7 @@ interpolation stands in for the neglected horizontal diffusion (§4.2).
 ## Relation to other models
 
 - Against the integral wall model of Yang et al. (2015), as Fowler et al.
-  recall it: that model's time filter, about $h_{\mathrm{wm}}/(\kappa u_\tau)$,
+  describe it: that model's time filter, about $h_{\mathrm{wm}}/(\kappa u_\tau)$,
   is shorter than $T_s$ by the factor $\kappa f(h^+_{\mathrm{wm}})$ and was
   tuned, while $T_s$ follows from momentum balance without tunable parameters
   (§2.1, §2.3); LaRTE also avoids that model's slope discontinuity in the buffer
@@ -221,6 +221,6 @@ interpolation stands in for the neglected horizontal diffusion (§4.2).
 # Citations
 
 - [Fowler et al. (2022)](/sources/fowler-2022.md) — §2, Eqs. (2.1)–(2.21); §3, Eqs. (3.1)–(3.7); §4, Eqs. (4.1)–(4.15); §5, Figs. 2–16; Apps. A–E.
-- [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §II.A.
+- [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §I; §II.A.
 - [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §3, Eq. (4); §5.
 - [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — §I (arXiv v3).

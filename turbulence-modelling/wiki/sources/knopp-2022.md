@@ -9,7 +9,7 @@ year: 2022
 venue: "Flow Turbul. Combust. 109:571-601"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Flow_Turbulence_and_Combustion_Knopp_An_Empirical_Wall_Law_for_the_Mean_Velocity_in_an_Adverse_Pr.pdf"
 tags: [rans, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-26T20:44:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Summary
@@ -112,7 +112,7 @@ identity problem.
 | $y^+_{log,max}$, $y^+_{sqrt,min}$, $y_{sqrt,max}$ | $y^+_{\log,\max}$, $y^+_{\mathrm{sqrt},\min}$, $0.21\delta$ | edges of the log and half-power regions |
 | $\delta$, $\delta^*$, $\theta$, $\delta_{99.5}$ | $\delta$, $\delta^*$, $\theta$, (99.5% thickness) | $\delta$ from the composite wall–wake fit |
 | $Re_\tau\equiv\delta^+$ | $Re_\tau$ | |
-| $\beta_{RC}=\frac{\delta^*}{\rho u_\tau^2}\frac{dP_w}{ds}$ | (Rotta–Clauser parameter) | |
+| $\beta_{RC}=\frac{\delta^*}{\rho u_\tau^2}\frac{dP_w}{ds}$ | $\beta_{RC}$ (Rotta–Clauser parameter, registry §11) | agrees |
 | $\beta_H$, $\beta_{H,red}$ | (Hartree and reduced Hartree parameters) | |
 | $\Pi$ | (Coles wake factor) | **collision:** not the SGS energy flux $\Pi$ |
 | $\eta=y/\delta$ | $y/\delta$ | **collision:** not the Kolmogorov length |

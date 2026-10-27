@@ -5,7 +5,7 @@ description: "The Ahmed body, a bluff car-like body with a slanted rear whose an
 status: established
 aliases: [Ahmed car body, Ahmed reference model, 25° Ahmed body, 35° Ahmed body]
 tags: [benchmark, separated-flow, hybrid-rans-les, des, wmles, immersed-boundary, lattice-boltzmann, field-inversion]
-timestamp: 2026-10-26T20:47:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Ahmed body
@@ -15,7 +15,8 @@ front, a slanted upper rear surface of angle $\varphi$ (page-local) and a
 vertical base, mounted on four cylindrical stilts above a ground plane. It
 is about 1.04 m long and 0.29 m high. The flow stays attached over the
 front and roof and separates at the rear, and the slant angle sets the
-regime: as recalled by [Cai et al. (2022)](/sources/cai-2022.md), drag
+regime: [Cai et al. (2022)](/sources/cai-2022.md), §I and §V, citing
+earlier work, state that drag
 falls sharply ("drag crisis") above about 30°, where the flow separates
 massively from the upstream edge of the slant, while at 25° the shear layer
 separates and reattaches on the slant, a regime that the authors leave as a
@@ -154,9 +155,9 @@ although its slant flow does not reattach (Figs. 22–24). The authors state tha
 recover" the 35° WMLES solution of [Cai et al. (2022)](/sources/cai-2022.md)
 at lower cost, without giving cost figures (lines 510–515).
 
-**Choice of hybrid model at 25°.** As recalled by
-[Delassaux et al. (2023)](/sources/delassaux-2023.md), §5, from their
-earlier calibration on the four 25° bodies: the realizable
+**Choice of hybrid model at 25°.**
+[Delassaux et al. (2023)](/sources/delassaux-2023.md), §5, recapitulate
+their earlier calibration on the four 25° bodies: the realizable
 [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md) gives no separation
 on the slant and [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) a
 massive one; SAS, SST DDES and SST SBES all separate and reattach, SAS
@@ -276,8 +277,9 @@ in fully separated flows (lines 149–152).
 - **Topology of the mean slant flow of the 25° body.** *Open.*
   [Wu et al. (2025)](/sources/wu-2025.md), §4.4 and Fig. 45, state that in
   the experiment (Lienhart et al. PIV) the flow "remains attached all along
-  the slant", and credit their corrected RANS models for reproducing it. As
-  recalled by [Cai et al. (2022)](/sources/cai-2022.md), §I and §V, the
+  the slant", and credit their corrected RANS models for reproducing it.
+  [Cai et al. (2022)](/sources/cai-2022.md), §I and §V, citing earlier
+  work, state that the
   25° shear layer separates and reattaches on the slant, and
   [Delassaux et al. (2023)](/sources/delassaux-2023.md), §5, recapitulating
   their earlier paper, find the hybrids that separate and reattach (SAS,

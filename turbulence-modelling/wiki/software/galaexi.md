@@ -5,7 +5,7 @@ description: "GALÆXI is the GPU port of the FLEXI DGSEM framework in CUDA Fortr
 status: established
 aliases: [GALAEXI, Galaexi, GPU FLEXI]
 tags: [software, dg, gpu, implicit-les, turbomachinery]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # GALÆXI
@@ -26,10 +26,10 @@ preprint (October 2024). Kurz and Kempf share the first authorship.
 The paper contains no turbulence model: the governing equations carry only
 the molecular viscous stress and Fourier heat flux, and every LES in it runs
 without an explicit subgrid model. The authors call their cascade run a
-"wall-resolved LES" and never use the term implicit LES; in this bundle's
-terms these are [implicit LES](/definitions/implicit-les.md), the split-form
-DGSEM and the shock-capturing blend supplying all the
-[numerical dissipation](/properties/numerical-dissipation.md).
+"wall-resolved LES" and never use the term implicit LES; the split-form
+DGSEM and the shock-capturing blend supply all the
+[numerical dissipation](/properties/numerical-dissipation.md) (see
+[implicit LES](/definitions/implicit-les.md)).
 
 ## Numerics
 
@@ -42,7 +42,7 @@ As described by Kurz et al. (2025, §2), all of it inherited from FLEXI:
   `FillFlux`, Jacobian scaling `ApplyJac`).
 - **Split form.** The [kinetic-energy-preserving](/properties/kinetic-energy-preservation.md)
   two-point flux of Pirozzoli on Gauss–Lobatto nodes, as the nonlinear
-  stabilization of under-resolved runs; the authors recall over-integration
+  stabilization of under-resolved runs; the authors cite over-integration
   and filtering as the alternatives and state that two-point fluxes increase
   the cost "considerably" (§2.2).
 - **Viscous terms** by BR1 lifting of the primitive-variable gradients,

@@ -5,7 +5,7 @@ description: "MRIS obtains dissipation-range DNS statistics at resolutions too c
 status: established
 aliases: [MRIS, multi-resolution independent simulation protocol]
 tags: [dns, gpu, intermittency, grid-requirements]
-timestamp: 2026-10-26T15:48:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Multi-resolution independent simulations
@@ -18,8 +18,8 @@ resolution adequate for scales larger than the Kolmogorov length $\eta$
 provides independent snapshots; from each, the simulation is continued for
 only a few Kolmogorov times $\tau_\eta$ at finer temporal and then spatial
 resolution, and the small-scale statistics of these short segments are
-ensemble averaged. The protocol was introduced by Yeung & Ravikumar (2020, as
-recalled by [Yeung et al. 2025](/sources/yeung-2025.md), §2.2) and extended by
+ensemble averaged. The protocol was introduced by Yeung & Ravikumar (2020, which
+[Yeung et al. 2025](/sources/yeung-2025.md), §2.2, cite) and extended by
 Yeung et al. (2025) to raise the Reynolds number; with it they obtain forced
 [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md) at
 $Re_\lambda\approx2500$ (the source's $R_\lambda$) on a $32\,768^3$ grid.
@@ -61,7 +61,7 @@ $N_1\to3N_1/2\to2N_1$. The resolution parameter of their Fourier
 pseudo-spectral code is $k_{\max}\eta=(\sqrt2N_x/3)\,\eta\approx2.96/(\Delta x/\eta)$
 (§2.2); with $\Delta x=2\pi/N_x$ the factor is $2\sqrt2\pi/3=2.96$
 *(compiler check, not in the sources)*. The authors note "conceptual
-similarities" with scale enrichment in LES (Ghate & Lele 2020, as recalled).
+similarities" with scale enrichment in LES (citing Ghate & Lele 2020).
 
 ## Extension: raising the Reynolds number
 
@@ -112,9 +112,9 @@ takes about 1000 steps and $T_E/\tau_\eta\approx300$, so a run over
 $10T_E$ would take "two years or more of virtually non-stop computing"
 (Yeung et al. 2025, §1).
 
-**Sensitivity check.** A single segment at $Re_\lambda=1000$ on $8192^3$
-spanning $27\tau_\eta$ suggests that the results do not depend on the values
-of $T_3/\tau_\eta$ in the table, "presumably because the energy of the large
+**Sensitivity check.** According to the authors, a single segment at
+$Re_\lambda=1000$ on $8192^3$ spanning $27\tau_\eta$ shows no dependence of
+the results on the values of $T_3/\tau_\eta$ in the table, "presumably because the energy of the large
 scales is kept frozen by the forcing scheme" (§2.2; the test is not plotted).
 
 ## Scope

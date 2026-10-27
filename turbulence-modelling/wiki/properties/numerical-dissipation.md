@@ -5,7 +5,7 @@ description: "Numerical dissipation is the kinetic-energy loss a discretization 
 status: established
 aliases: [artificial dissipation, scheme dissipation, upwind dissipation, Riemann-solver dissipation, numerical viscosity]
 tags: [numerical-dissipation, implicit-les, les, dg, kinetic-energy-preserving]
-timestamp: 2026-10-27T11:01:00Z
+timestamp: 2026-10-27T15:58:00Z
 ---
 
 # Numerical dissipation in scale-resolving simulation
@@ -134,7 +134,7 @@ model ([kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
   falls where strain and rotation are strong; its action vanishes as the
   flow relaminarizes (§III.D.4, Fig. 18) and costs 1–2.5% of wall time
   (§III.D.3).
-- **Order, recalled for DG.** [Zhao et al. (2023b)](/sources/zhao-2023-b.md)
+- **Order in DG.** [Zhao et al. (2023b)](/sources/zhao-2023-b.md)
   (§1) recall that raising the DG order increases the dissipation at the
   largest wavenumbers while narrowing the range where it acts.
 
@@ -210,8 +210,8 @@ parameters $a=0$, $b=0.001$, page-local, and a Roe flux; see
 [low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md)),
 in compressible LES with the [WALE](/methods/wale-model.md) model.
 
-- **Resolving power** (approximate dispersion relation of Pirozzoli, as
-  recalled; §2.5, Table 1). KGP2 needs 14 points per wavelength for
+- **Resolving power** (approximate dispersion relation of Pirozzoli, which
+  they cite; §2.5, Table 1). KGP2 needs 14 points per wavelength for
   dispersion and 2 for dissipation (resolved $k_{\max}\Delta x=0.48$ and
   $\pi$); OPT6 needs 4 and 6 ($k_{\max}\Delta x=1.65$ and 1.15), the
   tolerance being unprinted.
@@ -303,7 +303,7 @@ the [Caradonna–Tung rotor](/benchmarks/caradonna-tung-rotor.md) in hover.
   delayed detached-eddy simulation on moving Cartesian grids of 75 and 149
   million cells, with MUSCL or their fourth-order scheme. Thrust
   coefficient and figure of merit change little with grid and scheme
-  (thrust coefficient $C_{\mathrm{Th}}$ 0.00514–0.00521, page-local), but the high-order scheme resolves finer wake
+  (thrust coefficient $C_{\mathrm{Th}}$ 0.00514–0.00521, registry §11), but the high-order scheme resolves finer wake
   vortices and secondary braid structures: "the numerical scheme greatly
   affects the prediction of the wake structure". It costs 99 h against
   63 h for MUSCL for the same revolutions (Table 6). See
@@ -333,13 +333,38 @@ interface-sharpening and anti-diffusion techniques that counter the
 numerical smearing of material interfaces, which, like contacts, lack
 characteristic steepening (§IV).
 
+
+**Where the dissipation of a shock-capturing scheme comes from.** Two
+sources locate it in one step of the scheme and reduce it there.
+[Deng et al. (2022)](/sources/deng-2022.md) (§1, §4.1, Figs. 1–2), with the
+approximate-dispersion-relation analysis, find that a ninth-order linear
+upwind scheme still has inherent dissipation, and that ninth-order WENO-M
+dissipates more than the linear scheme of the same order at high
+wavenumbers because its nonlinear weights treat high-wavenumber waves as
+discontinuities. Their boundary-variation-diminishing schemes add a stage
+that blends the left and right face values with one parameter
+$\lambda_{\mathrm{AD}}$ (page-local): 1 gives the upwind-biased scheme of
+order $n+1$, 0.5 makes the two face values equal, so the upwind term of the
+Riemann flux vanishes and the scheme is the non-dissipative central scheme
+of order $n+2$ in smooth regions, while the THINC jump candidates still
+capture shocks, up to a Mach-198 shock in the strong Lax problem
+(§3.2, §4.7). [Ma et al. (2022)](/sources/ma-2022.md) (§1, §2.2–2.3)
+trace the dissipation of the weighted compact nonlinear scheme to its
+explicit fifth-order interpolation and replace it by a seventh-order
+nonlinear compact interpolation on the same stencil; the resolving ratio
+rises from 30.2% to 49.3% (Fourier analysis) and from 28.6% to 39.7%
+(approximate dispersion relation), and the new scheme on 200 points matches
+the old one on 300 in the shock–entropy-wave problem (Table 1, Fig. 2).
+Both papers then use the reduced dissipation in implicit LES (see
+[implicit LES](/definitions/implicit-les.md)).
+
 ## Dissipation of RANS-type schemes in hybrid RANS/LES
 
 [Carlsson et al. (2023)](/sources/carlsson-2023.md) quantify the
 artificial dissipation of a second-order node-based finite-volume scheme
 (Kok's energy-preserving central flux plus Jameson–Schmidt–Turkel matrix
 dissipation) in hybrid RANS/LES. The fourth-difference coefficient
-$\kappa^{(4)}$ (page-local, the global scaling of the background
+$\kappa^{(4)}$ (registry §11, the global scaling of the background
 dissipation) controls it (§2.2.1, §2.3, Fig. 1).
 
 - **Values.** Typical RANS values $\kappa^{(4)}=1/128$–$1/64$ "will
@@ -391,7 +416,7 @@ Figs. 19–22) run transitional delayed
 [compressor cascade](/benchmarks/compressor-cascade.md) at $Re=138\,500$ in
 the second-order finite-volume code [TRACE](/software/trace.md). The
 convective flux blends a central and a Roe upwind flux, with a fraction
-$\sigma_b$ of upwind flux (page-local):
+$\sigma_b$ of upwind flux (registry §11):
 
 $$F=(1-\sigma_b)F_{\mathrm{central}}+\sigma_bF_{\mathrm{upwind}}.$$
 
@@ -545,10 +570,12 @@ dissipation (Fig. 11).
   (§2.5, Eqs. 37, 45, 96–100, 105; §3.1.1, Figs. 2–4) take the numerical
   dissipation as the difference between the decay rate $-dE_k/dt$ and the
   enstrophy-based viscous dissipation, and the ratio of the two as an
-  effective viscosity, $-dE_k/dt=\nu_{\mathrm{eff}}\langle\omega_i\omega_i\rangle$
-  (the same definition as Reddy et al. below). In their
+  effective viscosity, $-dE_k/dt=\nu^\omega_{\mathrm{eff}}\langle\omega_i\omega_i\rangle$
+  ($\nu^\omega_{\mathrm{eff}}$ page-local, the sources' $\nu_{\mathrm{eff}}$,
+  distinct from the registry's projected viscosity $\nu_{\mathrm{eff}}$; the
+  same definition as Reddy et al. below). In their
   dissipation-free nonlinearly stable flux-reconstruction DNS ($256^3$
-  degrees of freedom) $\nu_{\mathrm{eff}}$ stays within 4.5% of $\nu$. The
+  degrees of freedom) $\nu^\omega_{\mathrm{eff}}$ stays within 4.5% of $\nu$. The
   pressure–dilatation term, obtained as the residual of the
   kinetic-energy budget, agrees with the literature; computed pointwise it
   oscillates spuriously, much less with collocated flux nodes, and upwind
@@ -571,6 +598,38 @@ dissipation (Fig. 11).
   (§IV.3.1, Eqs. 22–23) include a numerical viscosity $\nu_n$ in the
   effective viscosity $\nu+\nu_t+\nu_n$ that sets an effective Reynolds
   number, but leave it out of their plots because it is not computed.
+
+
+- **Enstrophy against energy.** [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md)
+  (§4.2, Eqs. 46–49) take, in the near-incompressible Taylor–Green vortex,
+  the gap between the kinetic-energy decay rate and the enstrophy-based rate
+  $2\mu\varepsilon_\omega/\rho$ ($\varepsilon_\omega$ the volume-averaged
+  enstrophy, page-local) as the numerical dissipation; their optimized
+  [modal filters](/methods/explicit-modal-filtering.md) raise it slightly,
+  more for stronger filters, and lower the enstrophy-based rate (Figs. 9–11).
+  [Simonis et al. (2022)](/sources/simonis-2022.md) (Eqs. 24–26) call the
+  same gap the "model" dissipation $\epsilon_{\mathrm{mod}}$ and compute it
+  also without a model, where it is numerical: about half of the total for
+  multiple-relaxation-time lattice Boltzmann on $64^3$ at $Re=3000$
+  (§3.3.2, Fig. 7). The lattice Boltzmann spectra roll off early at high
+  wavenumber where a spectral-element run of the same resolution piles up
+  energy, and the choice of relaxation rates changes the dissipation enough
+  to lower the observed order of convergence (§3.3.1; App. B, Table 3).
+- **Closing a budget.** [Tonicello et al. (2022)](/sources/tonicello-2022.md)
+  (§4.1, Figs. 17–18) evaluate the resolved kinetic-energy budget of a
+  spectral-difference DNS of a supersonic ramp at $y^+\approx30$; it closes
+  to nearly zero, which they take as negligible numerical dissipation. The
+  bulk artificial viscosity contributes a flux part and a sink
+  $-\mu_{b,\mathrm{AV}}(\nabla\cdot\tilde{\boldsymbol u})^2$
+  ($\mu_{b,\mathrm{AV}}$ the artificial bulk viscosity, as on the
+  [bulk viscosity](/definitions/bulk-viscosity.md) page; the source's
+  $\beta$), together of order $10^{-5}$ in units of
+  $\rho_\infty u_\infty^3/\delta$, small beside the other terms.
+- **Per term of a stabilized method.** [Chen et al. (2022)](/sources/chen-2022-g.md)
+  (§3, §5, Eqs. 24, 31–37) measure the dissipation of each residual-based
+  stabilization term of [variational multiscale](/methods/variational-multiscale-method.md)
+  LES in the resolved kinetic-energy equation of a channel; see the
+  subgrid-model comparison below.
 
 ## Scheme design against excess dissipation
 
@@ -659,7 +718,7 @@ measuring it:
   outgoing waves. The LES dissipates high-frequency acoustic waves within a
   few jet diameters, which they relate to the 22 points per wavelength a
   second-order scheme needs against 5 for their fifth-order DG acoustic
-  solver (values recalled from earlier work); hence the separate high-order
+  solver (values they cite from earlier work); hence the separate high-order
   acoustic step.
 - [Bernades et al. (2023)](/sources/bernades-2023.md) (§1, footnote 1;
   §4.1, Fig. 1) distinguish numerical dissipation, an undesired behaviour
@@ -715,6 +774,21 @@ measuring it:
   finer levels in the low atmosphere and flaring regions, with no subgrid
   model; the paper does not discuss the numerical dissipation of this
   combination or the resolution dependence of its turbulent energy.
+
+
+- **Diffusion only where the theory needs it.** [Svärd (2022)](/sources/svard-2022.md)
+  (§3–4) asks for "as little extra diffusion as possible" subject to five
+  conditions (conservation, entropy stability, at least the diffusion of a
+  kinetic-energy-preserving flux, positive density, a linearly stable
+  continuity equation), and adds artificial diffusion
+  $\lvert\bar u\rvert/2+\lvert\Delta u\rvert/4$ to the mass flux of
+  Chandrashekar's entropy-conservative flux only; momentum and energy are
+  then damped by the physical viscosity alone. Adding the same diffusion to
+  every variable is linearly stable but "significantly more diffusive and
+  less accurate" on a Kelvin–Helmholtz box mean (§5.2, Table 4). The author
+  also argues that upwind dissipation, $\nu_t\sim h\lvert u\rvert$, gives a
+  turbulent cell Reynolds number of order one and cannot be ruled out as a
+  subgrid model (§3.1); see [implicit LES](/definitions/implicit-les.md).
 
 ## Interaction with the subgrid model
 
@@ -858,8 +932,8 @@ measuring it:
   comparing subgrid models "due to the lack of inherent numerical
   dissipation present". They do not measure it. In the Taylor–Green vortex
   they define an effective viscosity from the kinetic-energy dissipation
-  rate and the enstrophy, $\varepsilon=\nu_{\mathrm{eff}}\langle\omega_i\omega_i\rangle$
-  ($\nu_{\mathrm{eff}}$ page-local). It includes subgrid and numerical
+  rate and the enstrophy, $\varepsilon=\nu^\omega_{\mathrm{eff}}\langle\omega_i\omega_i\rangle$
+  ($\nu^\omega_{\mathrm{eff}}$ as above). It includes subgrid and numerical
   dissipation together (§7.1).
 
   [Mukha et al. (2025)](/sources/mukha-2025.md) (§II.B, §III.C) find the
@@ -929,6 +1003,25 @@ measuring it:
   pile-up (sum spectral error 18.87 and 32.58); training on several filter
   shapes, including one that mimics the dealiasing, removes most of it.
   See [neural-network subgrid models](/methods/neural-network-sgs-model.md).
+
+
+- **Stabilization against subgrid dissipation, by direction.** On the same
+  coarse channel mesh ($Re_\tau=180$), the total dissipation of
+  residual-based VMS is much smaller than the subgrid dissipation of
+  Smagorinsky and dynamic LES in the inner layer and larger in the outer
+  layer, and its three directional components are comparable, whereas the
+  classical subgrid dissipation is mainly streamwise; one VMS cross-stress
+  term is anti-dissipative on average, and making it dissipative improves
+  the outer-layer mean velocity, which the authors explain by larger
+  numerical diffusion on a coarse mesh (Chen et al. 2022, §5–6,
+  Figs. 3–8). The classical runs use a different (finite-difference)
+  discretization.
+- **Non-monotone grid convergence.** In wall-modelled LES of a shock/boundary-layer
+  interaction, [De Vanna et al. (2022)](/sources/devanna-2022.md)
+  (§4.3, Fig. 4) find the medium grid closer to DNS than the fine one for
+  some Reynolds stresses, and attribute it to the grid moving the
+  dynamically chosen wall-model interface and to a nonlinear interaction of
+  WENO numerical viscosity with the wall model.
 
 ## Shock capturing and dissipation in compressible turbulence
 
@@ -1053,7 +1146,7 @@ turbulent scales by design:
   up to intermediate wavenumbers but that its stencil selection is
   dissipative at genuine discontinuities, and replace it there by the THINC
   jump reconstruction, which with steepness $\beta_{\mathrm{TH}}=1.6$
-  (page-local) is anti-diffusive (positive
+  (registry §11) is anti-diffusive (positive
   imaginary part of the modified wavenumber in some ranges) and therefore
   unsuited to smooth scales; their hybrid preserves the kinetic energy of
   the inviscid Taylor–Green vortex ($64^3$) better than WENO5-Z and TENO5
@@ -1072,6 +1165,42 @@ turbulent scales by design:
   symmetry breaking of their
   two-dimensional Riemann and Rayleigh–Taylor solutions to dissipation too
   low to damp round-off (Huang & Fu 2024, §6.6; Huang et al. 2025, §5.7).
+
+
+- **Dissipation enlarges a separation bubble.** De Vanna et al. (2022,
+  §4.5–4.6) attribute the oversized separation of their coarse wall-modelled
+  LES of an impinging shock at $M_\infty=2.28$ (interaction length
+  $5.0$–$7.0\,\delta_0$ against 3.3 wall-resolved and 4.18 measured) partly
+  to subgrid plus shock-capturing viscosity, which "tends to laminarize the
+  bubble, increasing its size" at low resolution, and the weaker
+  reflected-shock fluctuations to artificial viscosity smearing the shocks.
+  Their scheme switches a sixth-order energy-preserving central flux to
+  WENO-Z through a modified Ducros sensor with threshold 0.1 (§3.1.2).
+- **A constant blend in an immersed-boundary solver.** [van Noordt et al. (2022)](/sources/vannoordt-2022.md)
+  (§2.3, §3.1–3.3) blend a fourth-order kinetic-energy- and
+  entropy-preserving central flux with a third-order WENO flux,
+  $(1-\alpha)f^{\#}+\alpha f_{\mathrm{WENO}}$ with the registry's blending
+  factor $\alpha$, and report the runs by constant dissipation factors. In
+  channel flow at $Re_\tau=5200$, $\alpha<0.0125$ produces significant
+  noise and larger values accelerate the centreline flow and retard the
+  near-wall flow; the best setting is $\alpha=0.0125$ in the interior with
+  $(0.05,0.025,0.0125)$ in the first irregular cells at the immersed wall,
+  and doubling the latter changes little: interior dissipation matters more
+  than dissipation at the immersed boundary (Fig. 12). Surface heat transfer
+  of hypersonic transitional boundary layers is, however, "very sensitive"
+  to the dissipation added at the immersed boundary (§3.2, §4).
+- **Spectral budgets near shocks.** [Yu et al. (2022)](/sources/yu-2022-e.md)
+  (§7) caution that their scale-by-scale budget of an impinging-shock
+  interaction is unreliable near the shocks, because the numerical
+  dissipation added for shock stability (WENO switched in by a Ducros
+  sensor in STREAmS) reduces accuracy, "especially in spectral analysis".
+- **Artificial bulk viscosity kept off walls and vortices.** Tonicello et
+  al. (2022, §2.2, Eq. 2.10, Fig. 12) multiply their modal sensor by a
+  Ducros-type factor that is non-zero only in compression, so that the
+  artificial bulk viscosity, which unlike an eddy viscosity does not vanish
+  at walls, stays off walls and vortical regions; its mean is non-zero only
+  near the shock (see [shock sensor](/definitions/shock-sensor.md) and
+  [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
 
 ## Dissipation of compressible modes
 
@@ -1167,8 +1296,8 @@ differently:
   (normalized energy 0.998–0.999 at $t=5$ on $64^3$) but the viscous one
   at $Re=1600$ "extremely noisy" on $64^3$ and $128^3$: aliased energy
   builds up at high wavenumber for every split form, consistent with
-  aliasing beyond two thirds of the maximum wavenumber (as recalled from
-  Johnsen et al.), and contaminates the low wavenumbers. An eddy viscosity
+  aliasing beyond two thirds of the maximum wavenumber (which Volpiani
+  cites from Johnsen et al.), and contaminates the low wavenumbers. An eddy viscosity
   does not remove it; a weak relaxation filter does (see
   [explicit modal filtering](/methods/explicit-modal-filtering.md));
 - in a primitive-variable scheme for transcritical real-gas flow,
@@ -1217,6 +1346,20 @@ from the de-aliasing. [Krais et al. (2021)](/sources/krais-2021.md)
 made kinetic-energy-preserving or entropy-conserving by the choice of
 two-point flux, with entropy-dissipative surface terms added.
 
+
+**Linear instability without blow-up.** Svärd (2022, §3, §5.2) recalls that
+entropy-conservative and kinetic-energy-preserving fluxes are nonlinearly
+but not locally linearly stable, so they do not blow up but can amplify
+numerical errors that "erroneously trip" a dynamic instability. On a 2-D
+Kelvin–Helmholtz layer without viscosity, the stabilized scheme produces
+spurious roll-ups whose box means do not converge up to $1024^2$ (Table 2,
+Fig. 2); with Chandrashekar's flux and viscosity $10^{-4}$ there are more
+small roll-ups than with the author's linearly stable mass flux, and a
+coarse-to-fine density difference of 4.1% against 1.8% (Tables 1, 3,
+Fig. 4). On the Taylor–Green vortex the two schemes differ only by a more
+oscillatory dissipation curve for Chandrashekar's flux on $32^3$ (§5.3,
+Fig. 7).
+
 ## Numerical diffusion of flames
 
 [Cuenot et al. (2022)](/sources/cuenot-2022.md) (§2–5, Tables 2–3,
@@ -1224,7 +1367,7 @@ Figs. 5–7, 9) measure numerical diffusion through a flame property. In
 steady laminar counterflow diffusion flames at high Damköhler number the
 consumption speed scales as $\sqrt{a_{\mathrm{cf}}D_{\mathrm m}}$
 ($a_{\mathrm{cf}}$ the counterflow strain rate, $D_{\mathrm m}$ the
-diffusivity; page-local, as on the Source page), so on a coarse grid the
+diffusivity; registry §11), so on a coarse grid the
 extra diffusion of the scheme raises it. With the first-order upwind
 discretization of CANTERA, whose dissipation error the authors give as
 $\sin(kh)/(kh)$ ($k$ the wavenumber, $h$ the grid step), at most a factor
@@ -1259,7 +1402,7 @@ evidence is one-dimensional and laminar.
   gives faster [small-scale dynamo](/results/small-scale-dynamo.md) growth.
   Its growth rates "follow well" the reference scaling
   $\Gamma_E\propto Re^{1/2}\propto h_{\min}^{-1/2}$ drawn in Fig. 7 ($\Gamma_E$ the
-  growth rate and $h_{\min}$ the finest cell size, as on the
+  growth rate and $h_{\min}$ the finest cell size, registry §11, as on the
   [small-scale dynamo](/results/small-scale-dynamo.md) page), the scaling for Kolmogorov turbulence with a
   numerical viscosity proportional to the cell size, whereas mass-based
   refinement follows about $h_{\min}^{-0.3}$ (§3.2, Fig. 7). They
@@ -1330,7 +1473,7 @@ evidence is one-dimensional and laminar.
   the printed numbers are consistent with $\log E_d$ (the energy halves by
   $t=3.772$, $\exp(-6\cdot49\cdot3.772/1600)\approx0.50$) *(compiler check,
   not in the sources)*.
-- Brillon & Nadarajah (2026, §2.5) define $\nu_{\mathrm{eff}}<\nu$ as "less
+- Brillon & Nadarajah (2026, §2.5) define $\nu^\omega_{\mathrm{eff}}<\nu$ as "less
   dissipative than it should be", then write (§3.1.1) that for $t^*>5$ the
   effective viscosity "is greater than 1 at all times except for" one scheme,
   which was therefore "more dissipative than it should be": by their own
@@ -1448,3 +1591,13 @@ evidence is one-dimensional and laminar.
 - [Kuya et al. (2018)](/sources/kuya-2018.md) — §5, Figs. 1–11; App. C.
 - [Cuenot et al. (2022)](/sources/cuenot-2022.md) — §2–6, Eq. (14), Tables 2–3, Figs. 5–7, 9.
 - [Liu et al. (2022b)](/sources/liu-2022-g.md) — §1.
+- [Deng et al. (2022)](/sources/deng-2022.md) — §1; §3.2; §4.1, Figs. 1–2; §4.7.
+- [Ma et al. (2022)](/sources/ma-2022.md) — §1; §2.2–2.3, Table 1, Fig. 2.
+- [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §4.2, Eqs. (46)–(49), Figs. 9–11.
+- [Simonis et al. (2022)](/sources/simonis-2022.md) — Eqs. (24)–(26); §3.3.1–3.3.2, Fig. 7; App. B, Table 3.
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.2, Eq. (2.10), Fig. 12; §4.1, Eq. (4.13), Figs. 17–18.
+- [Chen et al. (2022)](/sources/chen-2022-g.md) — §3, Eq. (24); §5, Eqs. (31)–(37), Figs. 3–5; §6, Figs. 7–8.
+- [Svärd (2022)](/sources/svard-2022.md) — §3–3.1; §4; §5.2, Tables 1–4, Figs. 2–5; §5.3, Fig. 7.
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §3.1.2, Eq. (8); §4.3, Fig. 4; §4.5–4.6.
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.3, Eqs. (8)–(9); §3.1, Fig. 12; §3.2; §4.
+- [Yu et al. (2022)](/sources/yu-2022-e.md) — §2.1; §7.

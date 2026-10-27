@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity profile of wall-bounded turbulence �
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-27T10:57:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Law of the wall
@@ -80,6 +80,9 @@ and the choice is part of the model.
 | [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md), §IV.A, Figs. 12–13 | 0.41 | 5 | | reference profile for laminar-kinetic-energy transition RANS of the ERCOFTAC plates |
 | [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md), §4.1, Fig. 9 | not printed | not printed | Spalding's law, as cited | reference for high-order flux-reconstruction RANS of the Wieghardt plate |
 | [Huang et al. (2022b)](/sources/huang-2022-d.md), §2.4.3, Eq. (52) | not printed | not printed | Reichardt-type profile with damping lengths 11 and $1/0.33$ | manufactured boundary-layer profile for testing a high-order reconstruction |
+| [Zhang et al. (2022)](/sources/zhang-2022-b.md), §3, Fig. 3 caption | 0.41 | 5.2 | | reference for transformed mean velocities of cooled-wall boundary-layer DNS at $M_\infty=0.5$–8 (below) |
+| [Tonicello et al. (2022)](/sources/tonicello-2022.md), Fig. 5 | 0.41 | 5.25 | | reference for the van Driest velocity of the Mach 2.91 incoming boundary layer of a ramp DNS |
+| [De Vanna et al. (2022)](/sources/devanna-2022.md), §2.2, Eq. (6); [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.5, Eq. (35) | 0.41 | — | $A^+=17$ in semi-local $y^*$ | mixing length of a compressible ODE [equilibrium wall model](/methods/equilibrium-wall-model.md) |
 
 Zhao et al. (2023a) attribute $\kappa=0.40$, $B=5.5$ to the channel DNS of
 Kim et al. (1987), as they cite it; Wang et al. (2023b) give the same values
@@ -167,7 +170,7 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   is the fit exponent, page-local). The choice of $\kappa_1$ makes
   $f\to y^+$ in the viscous sublayer. The fit error is below 1 % for $y^+>5$
   and below 2.25 % for $0\le y^+\le5$. Fowler et al. reject Reichardt's (1951)
-  profile, as they recall it, because its error exceeds 3 % near $y^+\sim10$.
+  profile, as they cite it, because its error exceeds 3 % near $y^+\sim10$.
 - **Reichardt's profile** (Gillyns et al. 2022, Eq. 3, as in Frère et al.
   2017, as they cite it):
 
@@ -334,7 +337,7 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   not in the sources)*. Nuca et al. (2025, §III, Eq. 4) integrate exactly
   that equilibrium ODE, $u^+=\int_0^{y^+}d\eta'/\big(1+\kappa\eta'(1-e^{-\eta'/A^+})^2\big)$,
   with $\kappa=0.41$, $A^+=17$ after Kawai & Larsson (as cited; Cabot used
-  $A^+=19$, as they recall), and note that without damping it integrates to
+  $A^+=19$, as they cite it), and note that without damping it integrates to
   $\kappa^{-1}\ln(1+\kappa y^+)$, while with damping no closed form links the
   intercept $B$ to $A^+$, so $B$ is evaluated pointwise as
   $u^+(\hat y^+)-\kappa^{-1}\ln\hat y^+$ at some $\hat y^+\gg30$ (Eqs. 1, 8;
@@ -390,7 +393,13 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   Johnson–King inner scaling $\kappa y^*[1-e^{-y^*/17}]^2$, collapses up to
   the buffer layer but falls below it in the log region of diabatic
   boundary layers, and follows it more closely with the Griffin–Fu–Moin
-  transformation (§3.1, Fig. 3).
+  transformation (§3.1, Fig. 3). [Zhang et al. (2022)](/sources/zhang-2022-b.md)
+  (§3, Fig. 3) show the same dependence on the transformation in DNS of
+  zero-pressure-gradient boundary layers at $M_\infty=0.5$, 2 and 8 with
+  $T_w/T_r$ down to 0.25: of the van Driest, Trettel–Larsson,
+  quasi-equilibrium and total-stress-based transformations, only the last
+  brings the cooled and adiabatic profiles onto $u^+=y^+$ and the log law
+  with $\kappa=0.41$, $B=5.2$ together.
 - **Outer (defect) layer.** Chen et al. (2024, §3.2, Eqs. 3.9–3.12) use
   Clauser's defect law $u_e^+-u^+=g(y/\Delta_{RC})$ with the Rotta–Clauser
   thickness $\Delta_{RC}=u_e^+\delta^*$ (page-local $u_e^+$, $g$,
@@ -468,7 +477,7 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   thus survives filtering as a law for the slip; see
   [wall-modelled LES](/methods/wall-modelled-les.md).
 - **Low Reynolds number.** [Kim et al. (2022)](/sources/kim-2022.md) (§III D,
-  Fig. 12) recall, citing the channel DNS of Moser, Kim & Mansour, that the
+  Fig. 12) state, citing the channel DNS of Moser, Kim & Mansour, that the
   DNS mean velocity at $Re_\tau=180$ deviates slightly from the log law in the
   logarithmic region, and use this non-universality to explain why an SGS
   model trained by reinforcement learning at $Re_\tau=180$ under-estimates the
@@ -481,7 +490,7 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   and non-equilibrium wall models assume quasi-parallel near-wall flow and
   that their use under separation is "physically not appropriate", but that
   the small wall stress there keeps the model in the low-$y^+$ range "where
-  linear profile applies", and recall three studies finding the flow not very
+  linear profile applies", and cite three studies finding the flow not very
   sensitive to the wall model in the recirculation zone.
 - **Universality claimed for learned models.** Bae & Koumoutsakos (2022,
   Discussion) state, citing the literature, that all flows with inner–outer
@@ -551,8 +560,8 @@ at $Re_\tau=180$ its profile lies above the DNS (§III.A, Fig. 6).
 learned corrections of the [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md):
 a correction trained on separated flows breaks the log law unless it is
 kept out of the attached boundary layer.
-[Wu et al. (2025)](/sources/wu-2025.md) (§2.1, Eqs. 3–4) recall, after
-Wilcox as they cite it, the log-layer calibration of the $\omega$ equation,
+[Wu et al. (2025)](/sources/wu-2025.md) (§2.1, Eqs. 3–4) cite Wilcox for
+the log-layer calibration of the $\omega$ equation,
 
 $$\beta_\omega-\beta^*\gamma_\omega=\kappa^2\sqrt{\beta^*}\,\sigma_\omega,\qquad\kappa=0.41,$$
 
@@ -701,8 +710,7 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
   $e^{-Re_y/s}$ instead of $\tanh$, and say that they re-optimize $p$ and
   $s$; their constants therefore do not bear on the disagreement, but the
   functional form they attribute differs from that of the other two, so the
-  ingested sources do not fix the form either. What would decide it: the
-  printed equations and constants of Cai & Sagaut (2021). *Open.*
+  ingested sources do not fix the form either. *Open.*
 
 # Citations
 
@@ -754,3 +762,7 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 - [Lv et al. (2021)](/sources/lv-2021.md) — §II A, Eqs. (3)–(6); §IV B 1, Fig. 11.
 - [Zangeneh (2021)](/sources/zangeneh-2021.md) — §III.A.1, Fig. 6.
 - [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.4.3, Eq. (52), Fig. 9.
+- [Zhang et al. (2022)](/sources/zhang-2022-b.md) — §3, Fig. 3.
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — Fig. 5.
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §2.2, Eq. (6).
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.5, Eq. (35).

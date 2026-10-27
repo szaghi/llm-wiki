@@ -9,7 +9,7 @@ year: 2025
 venue: "Mon. Not. R. Astron. Soc. 542:2669–2697"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Monthly_Notices_of_the_Royal_Astronomical_Society_Beattie_Taking_control_of_compressible_modes_bulk_viscosity_and_the.pdf"
 tags: [mhd, dynamo, compressible, dns, implicit-les, astrophysics]
-timestamp: 2026-10-26T15:53:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Summary
@@ -58,7 +58,7 @@ metadata.
 
 # Key claims
 
-Notation: $\boldsymbol u$ velocity, $\boldsymbol B$ magnetic field (Gaussian units), $\nu$ the shear viscosity, $\eta_m$ the resistivity, $\Gamma_E=2\gamma_1$ the kinematic growth rate of the magnetic energy, $t_0$ the forcing correlation time, $\ell_0=L_{\mathrm{box}}/2$ the driving scale, $\boldsymbol u_{\mathrm c}$ and $\boldsymbol u_{\mathrm s}$ the compressive (curl-free) and solenoidal Helmholtz components and $E_{\mathrm c}(k)$, $E_{\mathrm s}(k)$ their kinetic-energy spectra, $E_B(k)$ the magnetic spectrum, $\nu_b$ the kinematic bulk viscosity, $P_\nu=\nu/\nu_b$ the viscous Prandtl number, $\gamma_B$ the instantaneous growth rate of $\langle B^2\rangle$ divided by two (page-local, as on [bulk viscosity](/definitions/bulk-viscosity.md) and [small-scale dynamo](/results/small-scale-dynamo.md); see the Notation map).
+Notation: $\boldsymbol u$ velocity, $\boldsymbol B$ magnetic field (Gaussian units), $\nu$ the shear viscosity, $\eta_m$ the resistivity, $\Gamma_E=2\gamma_1$ the kinematic growth rate of the magnetic energy, $t_0$ the forcing correlation time, $\ell_0=L_{\mathrm{box}}/2$ the driving scale, $\boldsymbol u_{\mathrm c}$ and $\boldsymbol u_{\mathrm s}$ the compressive (curl-free) and solenoidal Helmholtz components and $E_{\mathrm c}(k)$, $E_{\mathrm s}(k)$ their kinetic-energy spectra, $E_B(k)$ the magnetic spectrum, $\nu_b$ the kinematic bulk viscosity, $P_\nu=\nu/\nu_b$ the viscous Prandtl number, $\gamma_B$ the instantaneous growth rate of $\langle B^2\rangle$ divided by two ($\Gamma_E$, $\nu_b$, $P_\nu$, $\boldsymbol u_{\mathrm c}$, $\boldsymbol u_{\mathrm s}$, $E_{\mathrm c}$, $E_{\mathrm s}$ as in registry §11; the others page-local, as on [bulk viscosity](/definitions/bulk-viscosity.md) and [small-scale dynamo](/results/small-scale-dynamo.md); see the Notation map).
 
 1. Earlier supersonic-dynamo studies controlled only the shear viscosity; the decay of compressible modes was then "governed completely by numerical dissipation", set by the flux discretisation, the Riemann solver and the resolution (§1). **Stated**
 2. The Stokes hypothesis $\nu_b=0$ is exact for monoatomic gases; for diatomic and triatomic gases out of equilibrium $\nu_b$ "can vary between tens and thousands of times larger than the shear viscosity" (§1, citing Pan & Johnsen 2017, Sharma & Kumar 2019, 2023). **Stated**
@@ -67,7 +67,7 @@ Notation: $\boldsymbol u$ velocity, $\boldsymbol B$ magnetic field (Gaussian uni
 5. The non-dimensional momentum equation carries $1/Re$ on the deviatoric and $1/Re_{\mathrm{bulk}}$ on the bulk term; $P_\nu=\nu/\nu_b=Re_{\mathrm{bulk}}/Re\sim t_{\nu_b}/t_\nu$ (§2.2.1, Eqs. 20–24). **Derived**
 6. With $Pm=1$ fixed, the bulk magnetic Prandtl number is $Pm_{\mathrm{bulk}}=\nu_b/\eta_m=P_\nu^{-1}$ (§2.2.2, Eqs. 29–30). **Derived**
 7. For $P_\nu<1$ a sub-bulk-viscous range $\ell_0>\ell_{\nu_b}>\ell>\ell_\nu$ appears with $E_{\mathrm s}\gg E_{\mathrm c}$; for $P_\nu>1$ a sub-shear-viscous range $\ell_0>\ell_\nu>\ell>\ell_{\nu_b}$ with $E_{\mathrm c}\gg E_{\mathrm s}$; all $M_t>1$ simulations without explicit bulk viscosity "ought to be" in the second regime (§3.1, Eqs. 31–32, Fig. 1). **Derived** (schematic), **Shown** in §6
-8. The first-moment equation $\mathrm d\langle E_{\mathrm{mag}}\rangle/\mathrm dt=2\gamma_B\langle E_{\mathrm{mag}}\rangle-2\eta_mk_u^2\langle E_{\mathrm{mag}}\rangle$, with $\gamma_B=\langle B_iB_j[\partial_ju_i-\tfrac12S_{kk}\delta_{ij}]\rangle/\langle B^2\rangle$, splits $\gamma_B$ into stretching $\langle B_iB_jS^d_{ij}\rangle/\langle B^2\rangle$, winding (the rotation-tensor contraction) and compression $-\langle B^2\,\nabla\cdot\boldsymbol u\rangle/(6\langle B^2\rangle)$ (Eqs. 33–38; App. C). **Derived**
+8. The first-moment equation $\mathrm d\langle E_{\mathrm{mag}}\rangle/\mathrm dt=2\gamma_B\langle E_{\mathrm{mag}}\rangle-2\eta_mk_u^2\langle E_{\mathrm{mag}}\rangle$, with $k_u^2=\langle\partial_jB_i\,\partial_jB_i\rangle/\langle B^2\rangle$ (page-local; Eq. 35) and $\gamma_B=\langle B_iB_j[\partial_ju_i-\tfrac12S_{kk}\delta_{ij}]\rangle/\langle B^2\rangle$, splits $\gamma_B$ into stretching $\langle B_iB_jS^d_{ij}\rangle/\langle B^2\rangle$, winding (the rotation-tensor contraction) and compression $-\langle B^2\,\nabla\cdot\boldsymbol u\rangle/(6\langle B^2\rangle)$ (Eqs. 33–38; App. C). **Derived**
 9. The winding term vanishes identically because $B_iB_j$ is symmetric and $\Omega_{ij}$ antisymmetric; the simulations confirm it (§3.2, Eq. 39, §5.2, Fig. 7). **Derived** and **Shown**
 10. Compressions ($\nabla\cdot\boldsymbol u<0$) raise the local growth rate by $\tfrac16\lvert\nabla\cdot\boldsymbol u\rvert$ and rarefactions lower it by the same amount; only compressions perpendicular to the field contribute (§3.2, Eq. 40, footnote 6). **Derived**
 11. Earlier decompositions that kept the compressive part inside the stretching tensor overestimated the effect of compressions "by a factor of 3 in Seta & Federrath (2021) and 6 in Sur & Subramanian (2023)" (footnote 4). **Stated** (factors asserted, not derived)
@@ -133,15 +133,15 @@ with $\lambda_{\mathrm v}$ the second viscosity coefficient and the momentum flu
 | $\mathbb A$ | $\Omega_{ij}$ (Eq. 10 sign) | Eq. 9 gives $-\Omega_{ij}$ (Printed slips) |
 | $\boldsymbol\sigma$ | $\sigma_{ij}/\rho$ (kinematic) | includes the bulk term; momentum flux $\nabla\cdot(\rho\boldsymbol\sigma)$ |
 | $\nu_{\rm shear}$ | $\nu$ | |
-| $\nu_{\rm bulk}$ | $\nu_b$ (page-local, kinematic) | $=\lambda+\tfrac23\nu$; dynamic in App. F |
+| $\nu_{\rm bulk}$ | $\nu_b$ (registry §11, kinematic) | $=\lambda+\tfrac23\nu$; dynamic in App. F |
 | $\lambda$ | $\lambda_{\mathrm v}$ (page-local, second viscosity) | **collision:** not the Taylor microscale or the MHD perpendicular scale |
 | $\eta$ | $\eta_m$ | **collision:** not the Kolmogorov length |
 | $\mathrm{Re_{shear}}$, $\mathrm{Rm}$, $\mathrm{Pm_{shear}}$ | $Re$, $Rm$, $Pm$ | real-space, on $\ell_0$ and the rms velocity (footnote 3) |
-| $\mathrm{Re_{bulk}}$, $\mathrm P\nu$, $\mathrm{Pm_{bulk}}$ | $Re_{\mathrm{bulk}}$, $P_\nu=\nu/\nu_b$, $Pm_{\mathrm{bulk}}$ (page-local) | the paper's new numbers; $P_\nu=\infty$ means no explicit bulk viscosity |
+| $\mathrm{Re_{bulk}}$, $\mathrm P\nu$, $\mathrm{Pm_{bulk}}$ | $Re_{\mathrm{bulk}}$, $P_\nu=\nu/\nu_b$ (registry §11), $Pm_{\mathrm{bulk}}$ (page-local) | the paper's new numbers; $P_\nu=\infty$ means no explicit bulk viscosity |
 | $\mathcal M$ | $M_t$ | rms sonic Mach number |
 | $\mathcal M_A$ | (Alfvén Mach number) | |
 | $\gamma$, $\gamma_1$, $\gamma_2$ | $\gamma_B$ (page-local) instantaneous growth rate; $\Gamma_E=2\gamma_1$; (nonlinear growth rate) | **collision:** $\gamma$ is also the ratio of specific heats (§2.1, Apps. B, F) |
-| $\boldsymbol v_\parallel$, $\boldsymbol v_\perp$ | $\boldsymbol u_{\mathrm c}$, $\boldsymbol u_{\mathrm s}$ (page-local) | **collision:** $\parallel$ means longitudinal in $\boldsymbol k$, not along the magnetic field ($l_\parallel$) |
+| $\boldsymbol v_\parallel$, $\boldsymbol v_\perp$ | $\boldsymbol u_{\mathrm c}$, $\boldsymbol u_{\mathrm s}$ (registry §11) | **collision:** $\parallel$ means longitudinal in $\boldsymbol k$, not along the magnetic field ($l_\parallel$) |
 | $E_{\rm kin,\parallel}(k)$, $E_{\rm kin,\perp}(k)$, $E_{\rm mag}(k)$ | $E_{\mathrm c}(k)$, $E_{\mathrm s}(k)$, $E_B(k)$ | shell spectra with constant $\rho_0$ |
 | $\ell_0$, $k_0$, $L$ | $\ell_0$ (driving scale, page-local), (driving wavenumber), (box size) | $\ell_0=L/2$; **collision:** $L$ is not the integral scale |
 | $t_0$ | (forcing correlation time $\ell_0/\langle u^2\rangle^{1/2}$) | time unit |

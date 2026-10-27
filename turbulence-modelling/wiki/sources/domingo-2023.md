@@ -9,7 +9,7 @@ year: 2023
 venue: "Proc. Combust. Inst. 39:2055-2076"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Proceedings_of_the_Combustion_Institute_Domingo_Recent_developments_in_DNS_of_turbulent_combustion.pdf"
 tags: [dns, review, combustion, les, a-priori-a-posteriori, data-driven]
-timestamp: 2026-10-26T20:47:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Summary
@@ -27,7 +27,7 @@ and their orders of accuracy. The review also defines "quasi-DNS".
 
 Three lines of the authors' own work illustrate the trends. (1) **DNS embedded in
 [LES](/definitions/large-eddy-simulation.md):** a well-resolved LES of a premixed Bunsen jet (subgrid
-momentum flux closed by the [Vreman model](/methods/vreman-model.md)) carries a nested 50 µm DNS
+momentum flux "modeled" with a citation of the [Vreman model](/methods/vreman-model.md), which the text does not name) carries a nested 50 µm DNS
 box. The box serves as a test bed for
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md): approximate
 deconvolution, a structural closure related to

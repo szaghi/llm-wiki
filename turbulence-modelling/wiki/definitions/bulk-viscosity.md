@@ -1,16 +1,16 @@
 ---
 type: Definition
 title: "Bulk viscosity"
-description: "The bulk (volume) viscosity multiplies the velocity divergence in the Newtonian stress and damps only compressive motion; the page gathers its kinetic-theory origin, its role in the dissipation budget, its explicit use in compressible MHD turbulence, where it removes a compressible-mode bottleneck, and artificial bulk viscosity for shock capturing."
+description: "The bulk (volume) viscosity multiplies the velocity divergence in the Newtonian stress and damps only compressive motion; the page gathers its kinetic-theory origin, its role in the dissipation budget, its explicit use in compressible MHD turbulence, where it removes a compressible-mode bottleneck, artificial bulk viscosity for shock capturing, and a proposed bulk-viscosity model of the subgrid-stress trace."
 status: established
 aliases: [volume viscosity, dilatational viscosity, second viscosity, bulk viscous Reynolds number, viscous Prandtl number, Stokes hypothesis]
 tags: [compressible, dns, implicit-les, numerical-dissipation, mhd]
-timestamp: 2026-10-27T05:46:00Z
+timestamp: 2026-10-27T15:48:00Z
 ---
 
 # Bulk viscosity
 
-The **bulk viscosity** $\mu_b$ (page-local; kinematic $\nu_b=\mu_b/\rho$) is the
+The **bulk viscosity** $\mu_b$ (registry §11; kinematic $\nu_b=\mu_b/\rho$) is the
 coefficient of the isotropic, divergence-proportional part of the Newtonian
 viscous stress,
 
@@ -28,12 +28,12 @@ $\nu_{\rm shear}$". The sources use it in three ways: as a physical property
 of molecular gases, as an inherent property of a kinetic discretization, and
 as an artificial dissipation for shocks.
 
-Page-local symbols: $\mu_b$, $\nu_b$ as above; $\lambda_{\mathrm v}$ the
-second viscosity; $Re_{\mathrm{bulk}}$ and $P_\nu$ the bulk Reynolds number
+Symbols: $\mu_b$, $\nu_b$ as above; $Re_{\mathrm{bulk}}$ and $P_\nu$ the bulk Reynolds number
 and viscous Prandtl number defined below; $\boldsymbol u_{\mathrm c}$,
 $\boldsymbol u_{\mathrm s}$ the compressive (curl-free) and solenoidal
 (divergence-free) parts of the velocity in a Helmholtz decomposition, and
-$E_{\mathrm c}(k)$, $E_{\mathrm s}(k)$ their spectra; $\ell_0$, $t_0$ the
+$E_{\mathrm c}(k)$, $E_{\mathrm s}(k)$ their spectra (all registry §11).
+Page-local: $\lambda_{\mathrm v}$ the second viscosity; $\ell_0$, $t_0$ the
 driving scale and the turbulent correlation time $\ell_0/u_{\mathrm{rms}}$ of
 a forced box.
 
@@ -115,6 +115,14 @@ second *(compiler check, not in the sources)*. The sources use both pieces:
   collocated scheme reduces and Riemann-solver (upwind) dissipation removes
   the oscillations (§3.1.1, §3.1.7, Figs. 3–4, 17–18); see
   [numerical dissipation](/properties/numerical-dissipation.md).
+- [Svärd (2022)](/sources/svard-2022.md), §1, Eq. (1), writes the
+  stress with a bulk viscosity $\eta$ (page-local name in the source;
+  here $\mu_b$) and sets it to zero, keeping a constant shear viscosity;
+  the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) of §5.3
+  is run with "zero bulk viscosity". The kinetic-energy balance of the
+  author's entropy-stable scheme therefore contains only the pressure
+  work and the deviatoric viscous term (§4; see
+  [pressure dilatation](/definitions/pressure-dilatation.md)).
 - [Volpiani (2024)](/sources/volpiani-2024.md), §3.2, Eq. (25), writes the
   "theoretical" dissipation rate of the compressible
   [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) as the sum of
@@ -247,9 +255,62 @@ shock-capturing dissipation (see
   oscillations but is "less specific" than the quadratic form and damps
   sound waves if its coefficient is not small; they set it to zero or to
   about a tenth of the quadratic coefficient.
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md), §2.2, Eqs.
+  (2.6)–(2.10), App. B, regularize the shocks of a Mach 2.91
+  compression/expansion-ramp DNS in a spectral-difference code with an
+  artificial bulk viscosity $\mu_{b,\mathrm{AV}}$ (page-local; the source's
+  $\beta_{AV}$) in the stress $\sigma_{ij}=2\mu S^d_{ij}+\mu_{b,\mathrm{AV}}\,\partial_ku_k\,\delta_{ij}$,
+  constant in each element, $\mu_{b,\mathrm{AV}}=\rho f$ with $f$ rising
+  smoothly from 0 to $\varepsilon_0\propto\lambda_{\max}h/(N+1)$
+  ($\lambda_{\max}$ the largest wave speed, $h$ the element size, $N$ the
+  degree) as a modal-decay sensor crosses a self-calibrated threshold. The
+  sensor is multiplied by a Ducros-type factor, nonzero only in
+  compression and small where vorticity dominates, so that the viscosity
+  stays off at walls and in vortical regions, which the authors give as
+  the reason: unlike an eddy viscosity, an artificial viscosity does not
+  vanish at a wall (Eq. 2.10; see [shock sensors](/definitions/shock-sensor.md)).
+  An artificial conductivity $\mu_{b,\mathrm{AV}}c_p/Pr_{\mathrm{AV}}$
+  accompanies it, with $Pr_{\mathrm{AV}}=Pr\{1+\exp[-4(M-3)]\}$
+  (page-local; $M$ the local Mach number), chosen to avoid unnecessary
+  thermal dissipation at low Mach number (Eqs. 2.8–2.9). The mean
+  $\mu_{b,\mathrm{AV}}/\mu$ is nonzero only near the shock (Fig. 12). In
+  the resolved kinetic-energy budget the artificial term,
+  $\partial_j(\mu_{b,\mathrm{AV}}\partial_k\tilde u_k\tilde u_j)-\mu_{b,\mathrm{AV}}(\partial_k\tilde u_k)^2$,
+  is of order $10^{-5}$ in units of $\rho_\infty u_\infty^3/\delta$, small
+  against the other terms and dominated by its flux part; its sink part is
+  negative by construction and much smaller (§4.1, Eq. 4.13, Fig. 18).
 
 These are numerical devices with coefficients tied to the grid, unlike the
 physical $\nu_b$ of Beattie et al., which is constant in space and time.
+
+## A bulk viscosity for the trace of the subgrid stress
+
+[Tonicello et al. (2022)](/sources/tonicello-2022.md), §5–§6, turn the
+analogy around and propose a bulk viscosity as a *subgrid model*. Their a
+priori analysis of the ramp DNS above splits the subgrid (or
+Reynolds-stress) energy transfer into a deviatoric part and the spherical
+part $-\tfrac23\bar\rho k_{\mathrm{sgs}}\,\partial_j\tilde u_j$ (Eq. 5.1;
+detail on [energy backscatter](/definitions/energy-backscatter.md)). The
+Favre-averaged deviatoric transfer is forward everywhere, while the mean
+backscatter near the expansion corner and the mean correlation of the
+transfer with the dilatation come from the spherical part (§5,
+Figs. 27–29, Tables 5–6; see
+[pressure dilatation](/definitions/pressure-dilatation.md)). Near shocks,
+where $\partial_k\tilde u_k<0$, they compare a bulk-viscous term
+$\mu_b\,\partial_k\tilde u_k$ with the spherical part of the subgrid stress
+and obtain the heuristic scaling $\tfrac23\bar\rho k_{\mathrm{sgs}}\sim-\mu_b\,\partial_k\tilde u_k$
+(Eq. 5.5), a similarity they call less evident away from the shock.
+They add that "it can be proved easily" that a bulk-viscous term in the
+momentum equation dissipates large-scale kinetic energy, cite Wang et al.
+for a total subgrid dissipation scaling close to $(\partial_k\tilde u_k)^2$
+in compression regions, "the same form as a bulk viscosity term", and
+propose a shear (eddy) viscosity for the deviatoric part and a bulk
+viscosity for the trace, by analogy with the solenoidal/dilatational
+Helmholtz split (Pan & Johnsen, cited). The model is not formulated or
+tested in the paper; it is left to future work (§6). A preliminary LES of a
+similar configuration with a spectral-element dynamic model gave
+"promising results", as the authors report from their own earlier work
+(§5).
 
 ## Qualifications
 
@@ -269,8 +330,10 @@ physical $\nu_b$ of Beattie et al., which is constant in space and time.
   families, is unaffected.
 - **Where the two dissipations balance.** Footnote 5 and §6.1 state that the
   bulk and shear dissipation times are equal at $P_\nu\approx1/3$; the paper
-  does not derive it. With the decay rates above, the compressive and
-  solenoidal rates are never equal for $\nu_b>0$ *(compiler check, not in
+  does not derive it. With the paper's own Stokes-limit coefficients
+  (E5), $\nu$ for the solenoidal and $\nu+\nu_b$ for the compressive modes,
+  or with the decay rates above, the compressive and solenoidal rates are
+  never equal for $\nu_b>0$ *(compiler check, not in
   the sources)*.
 - **Where the bottleneck disappears.** The abstract says it disappears "for
   $\mathrm P\nu\approx1$", while §6.1 shows it at $P_\nu=1$ and its
@@ -288,6 +351,12 @@ physical $\nu_b$ of Beattie et al., which is constant in space and time.
   gas-kinetic scheme is $P_\nu=15/4=3.75$, the regime $P_\nu>1$
   *(compiler check, not in the sources)*. The registry's $\sigma_{ij}=2\mu S^d_{ij}$ records the Stokes
   hypothesis that these sources adopt.
+- **Status of the subgrid bulk viscosity.** Tonicello et al.'s proposal
+  rests on a priori correlations from one DNS of one shock interaction;
+  the relation (5.5) is a scaling, and its sign follows from the
+  compression the authors restrict it to. Their conclusion that the trace
+  carries the mean backscatter depends on $k_{\mathrm{sgs}}>0$, which they
+  note holds for non-spectral filters (Vreman et al., cited) (§5).
 - **Inconsistent description in Chapelier et al. (2024).** §III.B.h calls
   the SD3DvisP operator "a Laplacian operator impacting all conservative
   variables", which disagrees with the bulk-viscosity-and-thermal-diffusivity
@@ -304,3 +373,5 @@ physical $\nu_b$ of Beattie et al., which is constant in space and time.
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §4 (artificial bulk viscosity in CharLES).
 - [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §2.1, Eq. (3) (Stokes hypothesis); §2.5.1, Eq. (37); §3.1.1, Eq. (105), Figs. 3–4; §3.1.7, Figs. 17–18 (pressure dilatation in the kinetic-energy budget).
 - [Volpiani (2024)](/sources/volpiani-2024.md) — §2.1, Eq. (2); §3.2, Eqs. (24)–(25) (bulk term in the compressible dissipation budget of the Taylor–Green vortex, Stokes hypothesis).
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.2, Eqs. (2.6)–(2.10), App. B, Fig. 12 (artificial bulk viscosity with a Ducros-modified modal sensor); §4.1, Eq. (4.13), Fig. 18 (its budget term); §5, Eqs. (5.1)–(5.5), Figs. 27–29; §6 (bulk viscosity proposed for the subgrid-stress trace).
+- [Svärd (2022)](/sources/svard-2022.md) — §1, Eq. (1); §5.3 (bulk viscosity set to zero).

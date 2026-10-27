@@ -5,7 +5,7 @@ description: "STITCH replaces explicitly resolved photospheric vortical driving 
 status: established
 aliases: [STITCH, STatistical InjecTion of Condensed Helicity, helicity-condensation source term, statistical helicity injection]
 tags: [mhd, astrophysics, plasma, sgs-model]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-27T15:47:00Z
 ---
 
 # STITCH helicity-condensation model
@@ -20,19 +20,19 @@ twist flux to the boundaries of the flux system, where it accumulates as
 large-scale magnetic shear. [Dahlin et al. (2022)](/sources/dahlin-2022.md)
 name the term, give a flux-based discretization for finite-volume MHD codes,
 and test it against simulations that resolve the cyclonic cells (§1–§7); the
-term itself was derived earlier by Mackay et al. (2014, Eq. A1) for a
-magnetofrictional model, as recalled by Dahlin et al. (2022, §2).
+term itself, Dahlin et al. (2022, §2) state, was derived earlier by
+Mackay et al. (2014, Eq. A1) for a magnetofrictional model.
 
-The authors call STITCH a "subgrid-scale model", but it is **not an LES
-closure** in this bundle's sense: there is no filter, no
+The authors call STITCH a "subgrid-scale model", but the paper defines
+**no LES closure**: no filter, no
 [subgrid stress](/definitions/large-eddy-simulation.md) and no subgrid
-electromotive force derived from one. It is a boundary source term — an
-injected electric field at the base of the atmosphere — whose single
+electromotive force derived from one. The term is a boundary source term —
+an injected electric field at the base of the atmosphere (§7) — whose single
 parameter stands for unresolved photospheric driving together with the
-reconnection cascade it triggers. Its closest relative in the bundle, the
-[subgrid turbulent dynamo model](/methods/subgrid-turbulent-dynamo-model.md),
-also acts through the induction equation, but that one closes a
-grid-filtered electromotive force in the volume.
+reconnection cascade it triggers (§2). The
+[subgrid turbulent dynamo model](/methods/subgrid-turbulent-dynamo-model.md)
+also acts through the induction equation, but closes a grid-filtered
+electromotive force in the volume.
 
 Page-local notation: subscripts $n$ and $s$ denote the components normal and
 parallel (horizontal) to the solar surface, with $\nabla_s$ and $\nabla_n$
@@ -61,8 +61,8 @@ are small, numerous and nominally identical, though their properties may
 vary on large scales; and reconnection between cells is efficient enough
 that oppositely directed twist fields cancel algebraically. In practice the
 helicity is injected over the bottom layer of grid cells, as in the earlier
-magnetofrictional uses (Mackay et al. 2014, 2018; Lynch et al. 2021, as
-recalled, §7). The authors read the term as "adjusting the electric field,
+magnetofrictional uses that the authors cite (Mackay et al. 2014, 2018;
+Lynch et al. 2021; §7). The authors read the term as "adjusting the electric field,
 i.e. modifying Ohm's law in the coronal plasma, at the base of the
 atmosphere" (§7); field changes are strongest where $\mathcal ZB_n$ varies
 most rapidly across the surface, that is, at the boundaries of flux systems.
@@ -135,8 +135,8 @@ $(\phi_0,\psi_0)$ and widths $(\phi_w,\psi_w)$.
 
 ## Tests against resolved driving
 
-All runs use the adaptive-mesh code ARMS (DeVore & Antiochos 2008, as
-recalled) in spherical geometry, solving the ideal MHD equations, on an
+All runs use the adaptive-mesh code ARMS (the authors cite DeVore &
+Antiochos 2008) in spherical geometry, solving the ideal MHD equations, on an
 embedded-bipole active region: an elliptical bipole at 22.5° N with peak
 $|B_r|\approx50$ G in a 10 G background dipole, with a separatrix dome and a
 3D null; a spherically symmetric hydrostatic atmosphere with an inverse-$r$
@@ -144,7 +144,7 @@ temperature profile and base temperature $2\times10^6$ K, evolved with an
 adiabatic temperature equation (§3). Grid resolutions are not given. The reference is a
 **full helicity condensation** (FHC) run with 107 explicitly resolved
 cyclonic cells in the minority polarity, maximum surface speed about
-50 km s$^{-1}$ (configuration of Dahlin et al. 2019, as recalled).
+50 km s$^{-1}$ (the configuration of Dahlin et al. 2019, which the authors cite, §3).
 
 | Quantity (§3–§4) | FHC | STITCH, uniform $\mathcal Z_0=1.4\times10^{16}$ cm$^2$ s$^{-1}$ |
 |---|---|---|

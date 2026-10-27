@@ -5,7 +5,7 @@ description: "The thickened flame model of LES combustion widens the flame front
 status: established
 aliases: [TF model, TFLES, thickened-flame LES, dynamically thickened flame, DTF, DTFLES, artificially thickened flame, thickening factor, non-premixed thickened flame]
 tags: [combustion, les, numerical-dissipation, thickened-flame]
-timestamp: 2026-10-27T10:54:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Thickened flame model
@@ -17,9 +17,9 @@ combustion resolve a flame front that is much thinner than the grid. The
 laminar flame speed scales as $\sqrt{\dot\omega_{\mathrm r}D_{\mathrm m}}$ and the
 thermal thickness as $\sqrt{D_{\mathrm m}/\dot\omega_{\mathrm r}}$, with $D_{\mathrm m}$ the
 molecular diffusivity and $\dot\omega_{\mathrm r}$ a reaction-rate scale
-($1/\dot\omega_{\mathrm r}$ a chemical time; both page-local).
+($1/\dot\omega_{\mathrm r}$ a chemical time; $D_{\mathrm m}$ as in registry §11, $\dot\omega_{\mathrm r}$ page-local).
 Multiplying $D_{\mathrm m}$ and dividing $\dot\omega_{\mathrm r}$ by the same
-**thickening factor** $F$ (page-local; not the SST blending
+**thickening factor** $F$ (registry §11; not the SST blending
 functions $F_1$, $F_2$) keeps the flame speed and thickens the front by
 $F$, enough to place several grid points across it. Because
 the thickened front responds less to the turbulent eddies, a subgrid
@@ -66,7 +66,7 @@ Cuenot et al. (2022, §2) analyse the steady strained counterflow
 diffusion flame, a planar stagnation flow of strain rate
 $a_{\mathrm{cf}}=\lvert u_{\mathrm O}-u_{\mathrm F}\rvert/L_{\mathrm{inj}}$ between
 oxidizer and fuel injectors a distance $L_{\mathrm{inj}}$ apart, with one
-diffusivity $D_{\mathrm m}$ for all species and temperature (all symbols page-local).
+diffusivity $D_{\mathrm m}$ for all species and temperature ($a_{\mathrm{cf}}$, $D_{\mathrm m}$, $\eta_Z$, $\zeta_Z$ as in registry §11; the other symbols page-local).
 The mixture fraction (1 in fuel, 0 in oxidizer) is
 $$Z(x)=\tfrac12\big(1-\operatorname{erf}\eta_Z(x)\big),\qquad \eta_Z=\frac{\zeta_Z}{\sqrt{2D_{\mathrm m}/a_{\mathrm{cf}}}},\qquad \zeta_Z=\int_0^x\frac{\rho}{\rho_0}\,dx,$$
 with $x=0$ at the stagnation point and $\rho_0$ the density there
@@ -144,7 +144,7 @@ Damköhler number, so the flamelet regime is preserved (§5).
 For LES of non-premixed combustion Cuenot et al. (2022, §6) propose to
 divide all diffusion coefficients by
 $$F_{\mathrm{LES}}=F_{\mathrm{num}}\,F_{\mathrm{sgs}},\qquad F_{\mathrm{num}}=\frac{C_{\mathrm{st}}^2a_{\mathrm{cf}}^{\mathrm{LES}}/\pi}{\chi^{\mathrm{LES}}_{Z,\mathrm{st}}}$$
-(Eq. 15; page-local), estimated from the resolved strain rate
+(Eq. 15; $F_{\mathrm{num}}$, $F_{\mathrm{sgs}}$ as in registry §11), estimated from the resolved strain rate
 $a_{\mathrm{cf}}^{\mathrm{LES}}$ and the resolved stoichiometric scalar dissipation
 $\chi^{\mathrm{LES}}_{Z,\mathrm{st}}$, with $F_{\mathrm{num}}=1$ on a fine
 grid, and with a subgrid factor $F_{\mathrm{sgs}}\le1$ for subgrid strain

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Lattice Boltzmann methods for turbulent flow"
-description: "Lattice Boltzmann methods advance particle populations on a discrete velocity lattice by local collision and streaming, recovering weakly compressible Navier–Stokes; this page gives the scheme, regularized and central-moment collisions, LES and RANS/hybrid eddy viscosities in the relaxation time, immersed boundaries, a Hall-MHD extension, and cost and accuracy."
+description: "Lattice Boltzmann methods advance particle populations on a discrete velocity lattice by local collision and streaming, recovering weakly compressible Navier–Stokes; this page gives the scheme, regularized, central-moment and MRT collisions, eddy viscosities in the relaxation time, temporal LES closed in the collision, immersed boundaries, a Hall-MHD extension, and accuracy."
 status: established
-aliases: [LBM, lattice Boltzmann, LB, lattice Boltzmann equation, LBE, HRR collision, central-moment collision, lattice Boltzmann MHD, FLAME, ZDES-LBM]
+aliases: [LBM, lattice Boltzmann, LB, lattice Boltzmann equation, LBE, HRR collision, central-moment collision, MRT collision, lattice Boltzmann MHD, FLAME, ZDES-LBM, temporal LES with lattice Boltzmann, TLES-LBM, OpenLB]
 tags: [lattice-boltzmann, les, dns, hybrid-rans-les, gpu, mhd, immersed-boundary]
-timestamp: 2026-10-27T10:57:00Z
+timestamp: 2026-10-27T15:53:00Z
 ---
 
 # Lattice Boltzmann methods for turbulent flow
@@ -28,7 +28,9 @@ interaction, and $k$-$\omega$ SST RANS and SST-based hybrid RANS/LES
 detached-eddy simulation in a development branch of the same solver
 ([Husson et al. 2024](/sources/husson-2024.md)), and model-free
 Hall-MHD turbulence on GPUs in the FLAME code of
-[Foldes et al. (2023)](/sources/foldes-2023.md).
+[Foldes et al. (2023)](/sources/foldes-2023.md), and temporal LES of the
+Taylor–Green vortex with the residual stress advanced inside the
+collision in OpenLB ([Simonis et al. 2022](/sources/simonis-2022.md)).
 
 Page-local notation: $f_q$, $f^{\mathrm{eq}}_q$ the populations of lattice
 direction $q$ and their equilibrium (not the registry's body force $f_i$,
@@ -42,8 +44,8 @@ collision operator (not the rotation-rate tensor).
 
 ## Scheme
 
-**BGK lattice Boltzmann equation.** As recalled by Cai et al. (2022, §II.A,
-Eqs. 2, 5),
+**BGK lattice Boltzmann equation.** Cai et al. (2022, §II.A, Eqs. 2, 5)
+print
 $$f_q(\boldsymbol x+\boldsymbol c_q\Delta t,t+\Delta t)-f_q(\boldsymbol x,t)=-\frac{\Delta t}{\tau_{\mathrm{LB}}}\big(f_q-f^{\mathrm{eq}}_q\big),\qquad \nu_{\mathrm{tot}}=c_s^2\Big(\tau_{\mathrm{LB}}-\frac{\Delta t}{2}\Big),$$
 with $c_s=1/\sqrt3$ in lattice units on D3Q19 and $p=\rho c_s^2$, the
 equilibrium a truncated Maxwell–Boltzmann expansion. Foldes et al. (2023,
@@ -65,7 +67,7 @@ $\Delta t=(c_s/c_0)\Delta x_{\min}$ with $c_0$ the physical sound speed
 (Cai et al. 2022, Eq. 28). To enlarge it, Cai et al. raise the Mach number
 from 0.12 to 0.24 by lowering the physical sound speed, on the argument that
 it barely affects nearly incompressible results (§III, citing Fares).
-Foldes et al. (2023, §5), recalling Horstmann et al., state that in plain
+Foldes et al. (2023, §5), citing Horstmann et al., state that in plain
 MHD the LBM time step is smaller than that of an incompressible
 pseudo-spectral solver by roughly the Mach number, so the method has
 "little" turnaround advantage there; the advantage appears when another
@@ -77,8 +79,8 @@ Plain BGK collision is unstable at high Reynolds number or large velocity
 gradients (Cai et al. 2022, §II.A; Foldes et al. 2023, §1, §3.1.2). The
 sources use two remedies.
 
-- **Hybrid recursive regularized (HRR) collision** (Jacob et al., as
-  recalled by Cai et al. 2022, §II.A, Eq. 7, and by
+- **Hybrid recursive regularized (HRR) collision** (Jacob et al., cited
+  by Cai et al. 2022, §II.A, Eq. 7, and by
   [Cheylan et al. 2023](/sources/cheylan-2023.md), §2.1): the
   non-equilibrium part is rebuilt from its Hermite expansion and blended
   with a finite-difference strain rate,
@@ -142,8 +144,8 @@ second-order centred differences at grid-level transitions, and a hybrid
 TVD centred/upwind advection with a modified van Albada limiter calibrated
 on an inclined flat plate to avoid large $\omega$ fluxes near the wall
 (§2.3). Near-wall $k$ and $\omega$ are imposed by viscous-sublayer and
-log-layer wall functions switching at $y^+=11.06$ (Kalitzin et al., as
-recalled; Eqs. 22–25). The same machinery hosts SST-based IDDES and
+log-layer wall functions switching at $y^+=11.06$ (Mozaffari et al. cite
+Kalitzin et al.; Eqs. 22–25). The same machinery hosts SST-based IDDES and
 continuous eddy simulation, the hybrid modifying only the dissipation term
 $\beta^*\omega k$ (Eqs. 26–34; see
 [detached-eddy simulation](/methods/detached-eddy-simulation.md) and
@@ -198,7 +200,7 @@ solvers (§1, §4.1.2; definitions on
   [backward-facing step](/benchmarks/backward-facing-step.md)): with
   $44.7\times10^6$ lattice nodes and a wall law, against
   $3.9\times10^6$ points for the wall-resolved body-fitted Navier–Stokes
-  ZDES of Deck & Renard (2020, as recalled), the shielding field, the
+  ZDES of Deck & Renard (2020), which Husson et al. cite, the shielding field, the
   eddy-viscosity destruction, the vorticity-thickness growth and the mean
   profiles agree, and the authors conclude that the lattice adds "no
   further delay in the formation of instabilities" (Figs. 7–11, Table 1).
@@ -207,11 +209,11 @@ solvers (§1, §4.1.2; definitions on
   points in the plane $x=0$, §4.2).
 - **LEISA2 three-element high-lift airfoil** ($Re_c\approx1.23\times10^6$,
   $77\times10^6$ nodes against $2.6\times10^9$ for the wall-resolved LES of
-  Terracol & Manoha, as recalled): attached layers stay in RANS, there is
+  Terracol & Manoha, which Husson et al. cite): attached layers stay in RANS, there is
   no grid-induced separation and the mean $C_p$ agrees with experiment; a
   small delay of the slat shear-layer instability, which the authors
   attribute to grid and wall model because wall-modelled LES in the same
-  solver (Soni et al., as recalled) shows the same (§4.3).
+  solver (Soni et al., which the authors cite) shows the same (§4.3).
 
 They present the combination as a "fair alternative" to Navier–Stokes
 hybrids and to wall-modelled LES in lattice Boltzmann solvers, especially
@@ -266,6 +268,85 @@ $\tau_{\mathrm{col}}+\tau_{\mathrm{col},t}=(\mu+\mu_t)/p$ (page-local: the
 gas-kinetic collision time and its turbulent increment, $p$ the pressure;
 [Zhao et al. 2021](/sources/zhao-2021-c.md),
 §III, Eqs. 12–13, citing Chen et al.).
+
+## Temporal LES closed inside the collision
+
+[Simonis et al. (2022)](/sources/simonis-2022.md) combine, to their
+knowledge for the first time, temporal large-eddy simulation (TLES) with
+the lattice Boltzmann method (§1). The incompressible equations are
+filtered in **time** with a causal exponential kernel of width $\Theta$
+(page-local; the overbar in this section is that time filter, not a
+spatial one). Its differential form
+$\partial_t\bar\phi=(\phi-\bar\phi)/\Theta$ inverts exactly,
+$\phi=\bar\phi+\Theta\,\partial_t\bar\phi$ ("direct deconvolution"), and
+the temporal residual stress $T^{\mathrm t}_{ij}=\overline{u_iu_j}-\bar u_i\bar u_j$
+(page-local, positive trace like the registry's $\tau_{ij}$) obeys the
+closed relaxation equation
+$$\frac{\partial T^{\mathrm t}_{ij}}{\partial t}=-\frac{T^{\mathrm t}_{ij}}{\Theta}+\Theta\,\frac{\partial\bar u_i}{\partial t}\frac{\partial\bar u_j}{\partial t}$$
+(the temporal direct deconvolution model of Oberle, Pruett & Jenny, which
+Simonis et al. cite; §2.1, Eqs. 4–6), with no constant besides $\Theta$. In the
+filtered BGK equation of Malaspinas & Sagaut, which Simonis et al. cite, the residual of
+the filtered equilibrium has, in its Hermite expansion to second order,
+only a second-order coefficient equal to the residual stress plus a
+subgrid temperature times $\delta_{ij}$; for an isothermal model the
+latter is zero (§2.2, Eqs. 7–11). Simonis et al. read that stress as
+$T^{\mathrm t}_{ij}$ instead of closing it with an eddy viscosity, and add
+the forcing $w_q\mathcal H^{(2)}_q:T^{\mathrm t}/(2c_s^4)$, unrelaxed, to a
+D3Q19 multiple-relaxation-time collision in the orthogonal moment basis of
+d'Humières with Mach-dependent kinetic relaxation rates fitted to
+optimized values (§2.3–2.4, Eqs. 12–17). $T^{\mathrm t}_{ij}$ is advanced
+by forward Euler and the fields are deconvolved by backward differences
+(Eqs. 18–19; a second-order Adams–Bashforth variant in App. A.2), with
+$\Theta=\tilde\Theta\,\Delta t$ (Eq. 28). Both updates are local in space:
+a higher order costs stored time levels, not communication, which the
+authors contrast with the spatial approximate deconvolution of
+Malaspinas & Sagaut (§2.4, §4). The scheme is implemented in OpenLB.
+
+On the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+(§3, with $N_x$ lattice points per direction):
+
+- *Calibration* ($Re=800$, $N_x=64$): $\tilde\Theta=5$ has marginal effect,
+  10 and 20 bring the peak of the total dissipation rate towards the DNS,
+  40 drives the model dissipation into "complete overdrive"; above 10 the
+  oscillations are "clearly unphysical", so $\tilde\Theta=10$ is chosen.
+  Lattice Mach numbers from 0.05 to 0.2 were tried: at 0.05 the model
+  dissipation turns clearly negative, compensating an increased resolved
+  dissipation late in the run, and 0.1 is the lowest value without an
+  overly increased dissipation tail (§3.2, Figs. 2–5). The authors trace the
+  early dissipation-rate deviation to initialization errors of the LBM
+  that the model amplifies (§3.2.3).
+- *Against spectral elements* ($Re=3000$, $N_x=64$ and about 128):
+  unmodelled under-resolved LBM underpredicts the dissipation peak more
+  than the [spectral-element method](/methods/spectral-element-method.md)
+  of [Nek5000](/software/nek5000.md) and shows an early onset of the
+  dissipation range where the spectral elements pile up energy; with the
+  closure, the LBM recovers a distinct dissipation peak near $t\approx9$
+  already at $N_x=64$, while the spectral-element TLES shows a "distorted
+  crown" there (§3.3, Figs. 7–8).
+- *Implicit LES conjecture.* At $N_x=64$ the dissipation not accounted for
+  by the enstrophy of the unmodelled MRT run is about half the total; the
+  authors conjecture that MRT LBM without a model "already acts as" an
+  [implicit LES](/definitions/implicit-les.md) (§3.3.2, Fig. 7a).
+- *Error under acoustic scaling* ($Ma=0.1$, $N_x=24$ to 192): the subgrid
+  activity (the ratio of model to total dissipation, after Geurts &
+  Fröhlich) decreases with refinement and has about the same magnitude
+  with and without the closure; the energy-spectrum error falls at second
+  order up to $N_x=64$ and then saturates at a plateau that the authors
+  attribute mainly to the compressibility defect of the LBM (§3.4,
+  Fig. 9). The text states that the work "proves" convergence towards the
+  incompressible solution "up to a known combination of errors"; the
+  support is this numerical study.
+- *Order of convergence* (App. B, Table 3; $Re=800$, $N_x=64$, 128, 256):
+  the closure raises the experimental order of the dissipation-rate error
+  for single- and multiple-relaxation-time collisions under acoustic and
+  diffusive scaling, e.g. 1.70 (unmodelled), 1.78 (first-order closure) and
+  2.11 (second-order closure) for single relaxation under acoustic scaling,
+  and 1.52, 1.63, 1.81 for MRT; MRT lowers the order but is stable at
+  $N_x=32$ and at all tested Mach numbers. The authors call such regressed
+  orders "fuzzy".
+
+The method is summarized on the [LES](/definitions/large-eddy-simulation.md)
+page as a temporal filter.
 
 ## Walls on Cartesian lattices
 
@@ -322,7 +403,7 @@ MHD Experiments):
   that its second moment is $\rho\boldsymbol u\otimes\boldsymbol u+p\boldsymbol I+\tfrac12|\boldsymbol B|^2\boldsymbol I-\boldsymbol B\otimes\boldsymbol B$
   ($\boldsymbol B$ in Alfvén units; §3.1.1, Eqs. 3.12–3.13);
 - the **induction equation** with Dellar's vector-valued BGK scheme on D3Q7
-  (as recalled, §3.2, Eqs. 3.18–3.23), $\boldsymbol B$ the zeroth moment of
+  (which Foldes et al. cite, §3.2, Eqs. 3.18–3.23), $\boldsymbol B$ the zeroth moment of
   vector populations, with a relaxation frequency set by $\eta_m$; the
   magnetic equilibrium is kept to second order only, and upgrading the
   magnetic lattice to D3Q15 or D3Q27 brought "no significant improvement",
@@ -369,6 +450,14 @@ is given.
 
 ## Limits stated by other sources
 
+Simonis et al. (2022, §3.4, App. B) state that under diffusive scaling
+($\Delta t\propto\Delta x^2$) the method is consistent with the
+incompressible equations but first order in time, while under acoustic
+scaling (fixed Mach number) it suggests second order in space and time
+until a constant compressibility-error plateau; they argue that an
+incompressible closure is reasonable for the weakly compressible scheme
+at lattice Mach numbers up to 0.1.
+
 Cao et al. (2022, §1, §3.4) state that spectral and lattice Boltzmann
 methods "fail to capture shocklets and suffer from numerical instability" in
 compressible flow with shocks, which is the regime their
@@ -396,10 +485,11 @@ multiphase models still at an early stage.
   §3.1.1 and $8/27$ in App. A; only $1/54$ makes the weights sum to one
   *(compiler check, not in the sources)*.
 - **Current solve.** Eq. (3.27) of Foldes et al. lacks a factor
-  $-\omega_{\mathrm{LB}}/C^2$ on its right-hand side that App. B carries,
+  $-\omega_B/C^2$ on its right-hand side that App. B carries,
   and one leading term of $J_y$ in Eq. (B1) has the wrong sign, by
   substitution of their own Eq. (3.26) *(compiler check, not in the
-  sources)* ($C$ the magnetic lattice speed, page-local).
+  sources)* ($\omega_B$ the magnetic relaxation frequency and $C$ the
+  magnetic lattice speed, page-local).
 - Foldes et al. state (§7) that stability issues "are now mostly solved"
   by improved collision operators that "do not compromise the accuracy",
   while their own spectra show the central-moment collision over-damping
@@ -423,6 +513,18 @@ multiphase models still at an early stage.
   "$2.6\cdot10^9$ nodes" (p. 15) and "$2700\cdot10^6$ nodes" (p. 18). The
   version read is the version of record.
 
+- **Relaxation factor (Simonis et al.).** Simonis et al. print the
+  collision with the factor $\Delta t/(\tau_{\mathrm{LB}}+\Delta t/2)$
+  (Eq. 14) together with $\nu=c_s^2(\tau_{\mathrm{LB}}-\Delta t/2)$
+  (Eq. 15); the BGK form printed by Cai et al. in the Scheme section pairs
+  the same viscosity with the factor $\Delta t/\tau_{\mathrm{LB}}$. Their
+  Table 1 prints $\Delta t=0.00288$ for $N_x=128$ at Mach 0.1, while
+  Table 2 prints 0.00285 for the same configuration and the other
+  $N_x=128$ rows of Table 1 equal the lattice velocity times $\Delta x$
+  *(compiler check, not in the sources)*. §3.3 and the Fig. 6 caption write
+  the calibrated filter width as "$\Theta=10$" for the dimensionless
+  $\tilde\Theta=10$ of Eq. (28). The version read is the version of record.
+
 # Citations
 
 - [Cai et al. (2022)](/sources/cai-2022.md) — §II.A, Eqs. (1)–(15) (BGK lattice Boltzmann, HRR collision, Vreman model, equivalent LES equations); §II.B (boundary reconstruction); §III, Eq. (28) (time step, artificial Mach number, infeasible wall resolution).
@@ -435,4 +537,5 @@ multiphase models still at an early stage.
 - [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III, Eqs. (12)–(13) (enlarged collision time of the gas-kinetic scheme).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §3 (lattice Boltzmann wall model, cited).
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III E, Eqs. (80)–(92) (BGK, low-Mach limits, multiphase and compressible variants, hybrid LB–FV); §V (conclusions).
+- [Simonis et al. (2022)](/sources/simonis-2022.md) — §1; §2.1–2.4, Eqs. (1)–(19), (28) (time filter, direct deconvolution, filtered BGK, MRT with residual-stress forcing); §3.2–3.4, Table 1, Figs. 2–9 (Taylor–Green calibration, comparison with spectral elements, subgrid activity, error plateau); §4; App. A–B, Tables 2–3, Fig. 10.
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §1; §3.3, Eqs. (12)–(14); reference [11] (the explicit power-law wall model of Wilhelm et al., devised for lattice Boltzmann RANS, reused in a DG solver).

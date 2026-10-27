@@ -5,7 +5,7 @@ description: "Closures set or learned online by a policy trained with reinforcem
 status: established
 aliases: [RL closure, VYBA23, RLWM, PPO closure, reinforcement-learning SGS model, deep reinforcement learning SGS model, DRL SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM, DRL180]
 tags: [reinforcement-learning, sgs-model, data-driven, implicit-les, wall-model, neural-network]
-timestamp: 2026-10-26T16:22:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Reinforcement-learning turbulence closures
@@ -23,11 +23,11 @@ reward.
 
 The LES itself, with its actual discretization, is the environment. RL
 therefore optimizes the closure a posteriori, in the loop with the LES
-operator (Beck & Kurz 2023, §I), without gradients of the solver. This
-places it in the class that Duraisamy (2021, §IV.B) calls
-[model-consistent training](/methods/model-consistent-training.md), as a
-gradient-free, adjoint-free member; that review names RL only as a
-flow-control application (§I) and does not discuss RL closures. Beck &
+operator (Beck & Kurz 2023, §I), without gradients of the solver. See
+[model-consistent training](/methods/model-consistent-training.md) for the
+class of training inside the model environment that Duraisamy (2021,
+§IV.B) defines; that review names RL only as a flow-control application
+(§I) and does not discuss RL closures. Beck &
 Kurz (2023) use it for SGS models in discontinuous Galerkin LES.
 [Kim et al. (2022)](/sources/kim-2022.md) use it to learn a pointwise SGS
 stress tensor for wall-resolved LES of channel flow from two mean profiles.
@@ -318,7 +318,7 @@ intervals.
   for $N_s=200$ (Fig. 4).
 - *Return time scale.* $-\Delta t_{\mathrm{RL}}/\ln\gamma_{\mathrm{RL}}\approx100\,\Delta t_{\mathrm{RL}}$,
   "approximately 500 wall time units". The authors relate this to a
-  wall-shear-stress structure lifetime of about 60 wall units, recalled from
+  wall-shear-stress structure lifetime of about 60 wall units, citing
   Quadrio & Luchini, and argue for accumulating returns over about ten
   lifetimes.
 - *Noise.* The correlated parameter-space noise gives a "critical
@@ -420,9 +420,9 @@ $\bar S_{ij}$ is zero by construction for a linear eddy-viscosity model.
   eigenvalue ratios above; no model with the fDNS alignment but a
   different eddy-viscosity level is run (§III E).
 
-**Comparison with supervised learning (§III C, §III E).** As recalled by
-Kim et al., supervised network SGS models fed with local velocity
-gradients (Park & Choi 2021) reach a correlation of only about 0.5 with
+**Comparison with supervised learning (§III C, §III E).** Kim et al. cite
+supervised network SGS models fed with local velocity gradients (Park &
+Choi 2021) that reach a correlation of only about 0.5 with
 the fDNS stress. The supervised model of that study with the same inputs
 as here "did not predict" the two target profiles well and "highly
 overpredicted" $\lvert\tau_{xy}\rvert$. The authors conclude that "DRL using
@@ -462,7 +462,7 @@ consistency grounds; see
 [model-consistent training](/methods/model-consistent-training.md) for the
 characterization and its scope.
 
-As recalled by Kim et al. (2022, §I), Novati et al. (2021) found learning
+Kim et al. (2022, §I) cite Novati et al. (2021), who found learning
 with fully dispersed agents at all grid points unsuccessful in isotropic
 turbulence and restricted the actions to Smagorinsky-type eddy
 viscosities. Kim et al. use pointwise tensor actions at every grid point.
@@ -569,7 +569,7 @@ sources)*.
   Schlichting & Kestin (Fig. 5).
 - The LLWM wall stress correlates with the off-wall velocity at
   $h_{\mathrm{wm}}=0.1\delta$ at about 0.3, the DNS value the authors
-  recall, whereas the equilibrium model's correlation is perfect (Figs.
+  cite, whereas the equilibrium model's correlation is perfect (Figs.
   6–7). The authors read this as the policy replicating "the natural
   mechanisms of wall-shear stress control" (pp. 10–11).
 
@@ -596,7 +596,8 @@ $h_{\mathrm{wm}}$ from the LES velocity and its wall-normal derivative:
 a local inverse slope $1/\kappa_{\mathrm{wm}}$ and an intercept
 $B_{\mathrm{wm}}$ (page-local names, mirroring $\kappa$ and $B$).
 
-**Training.** As recalled there, the model was trained in WMLES at
+**Training.** Vadrot et al. state, citing the original work, that the
+model was trained in WMLES at
 $Re_\tau=2000$, 4200 and 8000, from fields generated with the equilibrium
 model ("EWM-generated flow fields", §II B 4) and without high-fidelity
 data, at about $10^7$ gradient steps (§IV D). The reward is not stated in this paper. The preprint of Bae &
@@ -811,8 +812,7 @@ See [machine-learning wall models](/methods/machine-learning-wall-model.md).
 - **What the channel DRL model guarantees.** Kim et al. (2022) state that
   training in the LES "guarantees the accuracy of the LES statistics used as
   the training target" (§III C). Their own §III D shows this holds in the training
-  environment only: the same model fails on an untrained coarser grid. The
-  backscatter conclusion likewise concerns only the two target statistics.
+  environment only: the same model fails on an untrained coarser grid.
   The authors also assume that SGS inputs in wall units are universal,
   "although it is not proven that subgrid-scale turbulence is universal in
   general" (§II F).
@@ -862,10 +862,10 @@ See [machine-learning wall models](/methods/machine-learning-wall-model.md).
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §I (motivation), §II B (MDP, PPO), §III B–C, Eqs. 11–17, Table I, §IV A–B, Eq. 18, §V A–C, Figs. 7–14, App. A, §VI.
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §II B 4, Eqs. 7–8; §III A–B, Figs. 8–10; §IV C, Eqs. 10–14, Table III; §IV D.
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §IV.B (model-consistent training as the class to which in-the-loop optimization belongs).
-- [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: Abstract; §I (Novati et al. recalled); §II B–F, Eqs. 11–25, Algorithm 1 (state, action, reward, truncated return, noise, pretraining, constraints, architecture, cost); §III A–B, Figs. 4–6; §III C, Figs. 7–11; §III D, Figs. 12–13; §III E, Eqs. 27–28, Table IV, Figs. 15–20; §IV; Tables I–III.
+- [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: Abstract; §I (Novati et al. cited); §II B–F, Eqs. 11–25, Algorithm 1 (state, action, reward, truncated return, noise, pretraining, constraints, architecture, cost); §III A–B, Figs. 4–6; §III C, Figs. 7–11; §III D, Figs. 12–13; §III E, Eqs. 27–28, Table IV, Figs. 15–20; §IV; Tables I–III.
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Research Square preprint v1: pp. 3–8, Eqs. 1–3, 9–10, Table 1, Figs. 2–7; Discussion pp. 10–11; Methods pp. 11–14, Eqs. 4–8.
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §1, §2, Eqs. 8–11 (policy gradient, PPO), §3.1–3.5, Table 1–2, Fig. 4, Eqs. 19, 21 (MDP, policy, reward, training), §4.1–4.5, Figs. 5–9 (results, inputs, generalization, cost), §5, App. A (dynamic baseline in DG), footnote 3.
-- [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I (RL closures recalled), §II C (RL-trained expression generator), §IV.
+- [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I (RL closures cited), §II C (RL-trained expression generator), §IV.
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1 (RL against adjoint training).
 - [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — arXiv v3: Abstract; §II.A; §II.B.2–3, Eqs. 3–6, 9–10, Table I, Figs. 2–3; §III.A–B, Figs. 6, 9–10; §IV, Eqs. 12–17, Table III, Figs. 11–12; §V.
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §1 (RL as a gradient-free route to stability).

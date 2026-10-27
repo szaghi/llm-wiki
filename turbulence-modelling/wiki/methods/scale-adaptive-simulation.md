@@ -5,7 +5,7 @@ description: "Menter's scale-adaptive simulation: an unsteady RANS approach whos
 status: established
 aliases: [SAS, k-√kL model, KSKL, k-sqrt(k)L, Menter–Egorov SAS, SAS-F, forced SAS]
 tags: [rans, hybrid-rans-les, eddy-viscosity, dg]
-timestamp: 2026-10-27T10:57:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Scale-adaptive simulation
@@ -16,7 +16,7 @@ contains the von Kármán length scale
 
 $$L_{\mathrm{vK}}=\kappa\frac{\lvert S\rvert}{\lvert\nabla^2\boldsymbol u\rvert},$$
 
-built from the first and second velocity derivatives (page-local
+built from the first and second velocity derivatives (registry §11
 $L_{\mathrm{vK}}$). Where the flow develops resolved unsteadiness the second
 derivatives grow, $L_{\mathrm{vK}}$ shrinks and the modelled length and eddy
 viscosity follow, so that the model can, in the words of Jiang et al.
@@ -40,7 +40,7 @@ predetermined zones ([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md),
 ## The $k$-$\sqrt kL$ model
 
 Jiang et al. transport $k$ and a length-scale variable $\Phi_L$
-(page-local, the source's $\Phi$, with the dimensions of $\sqrt k$ times a
+(registry §11, the source's $\Phi$, with the dimensions of $\sqrt k$ times a
 length; the paper never writes $\Phi_L=\sqrt kL$ explicitly) in the
 compressible RANS equations (App. A, Eqs. A1–A5; the source's $C_u$ read as
 $C_\mu$, see Qualifications):
@@ -92,7 +92,7 @@ $R_{\mathrm{SAS}}=1$, and log-law consistency requires (Eq. 33)
 
 $$\sigma_\Phi C_\mu^{1/2}\big(\zeta_2-\zeta_1+C_\mu^{-3/4}\zeta_3\big)=\kappa^2 .$$
 
-The standard set $(\zeta_1,\zeta_2,\zeta_3,\sigma_\Phi)=(0.8,1.47,0.0288,2/3)$
+Heinz's "standard settings" $(\zeta_1,\zeta_2,\zeta_3,\sigma_\Phi)=(0.8,1.47,0.0288,2/3)$
 with $C_\mu=0.09$ gives $\kappa=0.41$, which Heinz states; these are the
 values Jiang et al. (2025) list for the $k$-$\sqrt kL$ model, though their
 $\sigma_\phi=2/3$ multiplies $\mu_t$ in the $\Phi_L$ diffusion while Heinz's
@@ -125,7 +125,7 @@ GMRES for steady and ESDIRK for unsteady runs, they add three devices
    [shock sensors](/definitions/shock-sensor.md)).
 2. **A positive surrogate of $\Phi_L$.** Following Moro et al.'s treatment
    of the [Spalart–Allmaras](/methods/spalart-allmaras-model.md) variable,
-   with $\chi_\Phi=\Phi_L/\nu$ (page-local),
+   with $\chi_\Phi=\Phi_L/\nu$ (registry §11),
    $$\psi=\begin{cases}0.02\log\big(1+e^{50\chi_\Phi}\big),&\chi_\Phi\le5,\\ \chi_\Phi,&\chi_\Phi>5,\end{cases}$$
    and $\nu\psi$ replaces $\Phi_L$ in all source terms and in the eddy
    viscosity $\mu_t=C_\mu^{1/4}\rho\nu\psi$, while $\Phi_L$ remains the
@@ -174,7 +174,7 @@ All from Jiang et al. (2025, §4), two-dimensional:
   [square-cylinder flow](/benchmarks/square-cylinder-flow.md)).
 
 **Comparisons reported by other sources.** On four 25° [Ahmed bodies](/benchmarks/ahmed-body.md),
-Delassaux et al. (2023) recall from their own calibration that SAS, SST-DDES
+Delassaux et al. (2023) report from their own calibration that SAS, SST-DDES
 and stress-blended eddy simulation all separate and reattach on the slant,
 SAS overestimating the recirculation length, and that SST-DDES is closest
 to experiment, which is why they select it

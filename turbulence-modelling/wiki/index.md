@@ -20,7 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–9 ingested (180 of the 307 sources planned in 16
+**Corpus:** chunks 1–10 ingested (200 of the 307 sources planned in 16
 chunks; the archive is still growing). Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
@@ -95,7 +95,30 @@ training of neural closures, the sigma model, volume-filtered immersed
 boundaries with slip-wall models, spectral difference and nonlinearly
 stable flux reconstruction, entropy-conservative schemes for thermally
 perfect gases, DG error estimation and anisotropic mesh adaptation, and
-shock-capturing schemes for real gases and kinetic equations.
+shock-capturing schemes for real gases and kinetic equations. Chunk 8
+(2022–2026 papers): high-order RANS and transition solvers (COOLFluiD flux
+reconstruction, entropy-stable Spalart–Allmaras DGSEM, the $k$-$	au$ model,
+laminar-kinetic-energy onset correlations), DES of a pump, ZDES in a
+lattice-Boltzmann solver, scale-adaptive simulation, LES of dynamic stall
+and of a shock/boundary-layer interaction with subcell shock capturing,
+explicit wall-model fits, a priori deconvolution models, relaxation
+filtering, solar-wind turbulence transport and TENO-based schemes.
+Chunk 9 (2013–2022 papers): the High-Order CFD Workshop summary, the
+wall-modelled LES and hybrid RANS/LES reviews of Bose & Park and Heinz,
+the turbomachinery review of Sandberg & Michelassi, kinetic-energy- and
+entropy-preserving schemes, gene-expression programming and random-forest
+closures, wall-model-integrated LES, gas-kinetic LES, immersed boundaries
+on moving Cartesian grids, the thickened flame model and thermodiffusive
+DNS. Chunk 10 (2022 papers): variational multiscale LES and immersed
+boundaries, explicit algebraic Reynolds-stress models learned by sparse
+regression and CFD-driven training, discrete-adjoint field inversion and
+SHAP explanations of RANS corrections, output-based mesh adaptation,
+Rosenbrock time integration for DG, optimized modal filters, temporal LES
+with lattice Boltzmann, entropy-stable weak solutions, BVD and compact
+nonlinear schemes, wall-modelled LES of hypersonic and shock-dominated
+flows, pressure dilatation and bulk viscosity in compressible DNS, wall
+cooling and pressure fluctuations in hypersonic boundary layers, and the
+eddy dissipation concept for MILD combustion.
 
 ## Reading guide
 
@@ -112,6 +135,7 @@ shock-capturing schemes for real gases and kinetic equations.
 [k-ε models](/methods/k-epsilon-model.md),
 [k-τ model](/methods/k-tau-model.md),
 [differential Reynolds-stress models](/methods/reynolds-stress-model.md),
+[explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md),
 [Baldwin–Lomax model](/methods/baldwin-lomax-model.md),
 [local-correlation-based transition models](/methods/local-correlation-based-transition-model.md),
 [laminar kinetic energy transition models](/methods/laminar-kinetic-energy-transition-model.md),
@@ -133,7 +157,8 @@ shock-capturing schemes for real gases and kinetic equations.
 [sigma model](/methods/sigma-model.md),
 [explicit modal filtering](/methods/explicit-modal-filtering.md),
 [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md),
-[anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md);
+[anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md),
+[variational multiscale method](/methods/variational-multiscale-method.md);
 [energy backscatter](/definitions/energy-backscatter.md),
 [bottleneck effect](/definitions/bottleneck-effect.md);
 [gradient model and clipping](/methods/gradient-model.md);
@@ -145,6 +170,7 @@ shock-capturing schemes for real gases and kinetic equations.
 [wall-modelled LES](/methods/wall-modelled-les.md) →
 [equilibrium wall model](/methods/equilibrium-wall-model.md),
 [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md),
+[slip-wall models](/methods/slip-wall-model.md),
 [LaRTE wall model](/methods/lagrangian-relaxation-towards-equilibrium-wall-model.md),
 [compressible velocity transformations](/definitions/compressible-velocity-transformation.md) and the
 [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md),
@@ -161,7 +187,8 @@ shock-capturing schemes for real gases and kinetic equations.
 [active model split](/methods/active-model-split.md),
 [continuous eddy simulation](/methods/continuous-eddy-simulation.md),
 [scale-adaptive simulation](/methods/scale-adaptive-simulation.md),
-[detached-eddy simulation](/methods/detached-eddy-simulation.md).
+[detached-eddy simulation](/methods/detached-eddy-simulation.md);
+[spectral gap](/definitions/spectral-gap.md).
 
 **6. Data-driven closures.**
 [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md) →
@@ -214,7 +241,8 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [COOLFluiD](/software/coolfluid.md);
 [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md). Compressible wall turbulence:
 [Morkovin's hypothesis and Reynolds analogies](/definitions/morkovin-hypothesis.md),
-[attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md).
+[attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md),
+[pressure dilatation](/definitions/pressure-dilatation.md).
 
 **8. Benchmarks.**
 [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md),

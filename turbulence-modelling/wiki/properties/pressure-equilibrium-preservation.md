@@ -5,7 +5,7 @@ description: "A scheme is pressure-equilibrium preserving when uniform pressure 
 status: established
 aliases: [PEP, pressure equilibrium preserving scheme, KGP-Pt, KGP-PT scheme, pressure-equilibrium-preserving split form, CDHD, central differential flux with high-order dissipation, primitive-variable hybrid scheme]
 tags: [pressure-equilibrium, kinetic-energy-preserving, compressible, real-gas, numerical-dissipation, dns]
-timestamp: 2026-10-27T10:34:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Pressure-equilibrium preservation
@@ -65,16 +65,16 @@ without a discrete product rule. With $a_e=0$ and a pressure term that
 vanishes at equilibrium, the condition becomes (Eq. 22)
 $$\partial_tp=-u_0\,(p_\rho D_x\rho+p_eD_xe)\approx-u_0\,D_xp=0,$$
 which holds exactly only if the derivative operator satisfies a **discrete
-chain rule** $D_xp=p^h_\rho D_x\rho+p^h_eD_xe$ (Eq. 23). As recalled by
-Bernades et al. from Ranocha, second-order centred differences satisfy such
+chain rule** $D_xp=p^h_\rho D_x\rho+p^h_eD_xe$ (Eq. 23). Bernades et al.
+cite Ranocha: second-order centred differences satisfy such
 a chain rule with discrete Jacobians accurate to second order at interior
 nodes, and the result "cannot be generalized" to higher-order operators
 (§3.1.2).
 
 **Ideal gas.** For an ideal gas the first bracket of Eq. (20) cancels and
 PEP reduces to $C_{\rho e}+W_p=0$; Shima et al. achieve it with
-$C_{\rho e}=\tfrac12(C^D_{\rho e}+C^u_{\rho e})$ (the PEP-IG scheme, as
-recalled by Bernades et al. 2023, §3.1.2), where $C^D$ is the divergence
+$C_{\rho e}=\tfrac12(C^D_{\rho e}+C^u_{\rho e})$ (the PEP-IG scheme, which
+Bernades et al. 2023, §3.1.2, cite), where $C^D$ is the divergence
 form and $C^u$ the split form that factors the velocity out (Eq. 9).
 
 **Internal energy as the variable.** Evolving $\rho e$ with

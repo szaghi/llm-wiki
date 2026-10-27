@@ -9,7 +9,7 @@ year: 2023
 venue: "Phys. Rev. Fluids 8:064603"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Physical_Review_Fluids_Vadrot_Survey_of_machine-learning_wall_models_for_large-eddy_simula.pdf"
 tags: [wmles, wall-model, reinforcement-learning, log-layer-mismatch]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Summary
@@ -219,7 +219,7 @@ first author is Vadrot et al. (2023a) in this bundle.
 | $\delta$ | $\delta$ | half-channel height; agrees |
 | $u_\tau$, $\tau_w$, $Re_\tau$ | $u_\tau$, $\tau_w$, $Re_\tau$ | agree; $Re_\tau$ not defined explicitly |
 | $\kappa$, $B$ | $\kappa$, $B$ | $\kappa\approx0.4$, $B\approx5$ in the source |
-| $z_0=\nu\exp(-\kappa B)/u_\tau$ | roughness-length form of the log law | called "viscous scale" in the source |
+| $z_0=\nu\exp(-\kappa B)/u_\tau$ | $y_0$ (page-local on the [equilibrium wall model](/methods/equilibrium-wall-model.md) page) | roughness-length form of the log law; called "viscous scale" in the source |
 | $\Omega$, $l_\Omega$ | $\Omega_{\mathrm{rot}}$, rotation length $u_\tau/(2\Omega_{\mathrm{rot}})$ | system rotation rate |
 | $s_n$, $a_n$, $r_n$ | $s_t$, $a_t$, $r_t$ | RL state, action (multiplicative factor on $\tau_w$, in $[0.9,1.1]$), reward |
 | $\kappa_{wm}$, $B_{wm}$ ($\kappa_m$ in Eq. 12) | $\kappa_{\mathrm{wm}}$, $B_{\mathrm{wm}}$ | BK22 states, Eq. (8) |
@@ -250,7 +250,7 @@ ref. [78] ends its author list with "et al.".
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2, 4, 9. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4, 9, 10. This source is cited on:
 
 - [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md)
 - [Periodic hill](/benchmarks/periodic-hill.md)
@@ -267,6 +267,7 @@ Chunk 1 (2026-10-25), cited further in chunks 2, 4, 9. This source is cited on:
 - [Model-consistent (a posteriori) training of learned closures](/methods/model-consistent-training.md)
 - [Non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)
 - [Reinforcement-learning turbulence closures](/methods/reinforcement-learning-closure.md)
+- [Slip-wall models](/methods/slip-wall-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)

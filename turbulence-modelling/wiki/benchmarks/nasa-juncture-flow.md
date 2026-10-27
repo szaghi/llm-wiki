@@ -5,7 +5,7 @@ description: "The NASA Juncture Flow wing–fuselage model, with smooth-body cor
 status: established
 aliases: [Juncture Flow experiment, NASA JF, wing-body juncture flow]
 tags: [benchmark, wmles, separated-flow, boundary-layer, data-driven]
-timestamp: 2026-10-26T07:41:00Z
+timestamp: 2026-10-27T15:46:00Z
 ---
 
 # NASA Juncture Flow
@@ -15,8 +15,8 @@ wings are truncated DLR-F6-based wings with a leading-edge horn at the root,
 tested in the NASA Langley 14×22-ft wind tunnel. At the wing–body juncture
 near the trailing edge the flow separates in the corner from a smooth
 surface, a three-dimensional separation that RANS models predicted poorly
-in the Drag Prediction Workshops (as recalled by
-[Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md), §I). The data
+in the Drag Prediction Workshops, which
+[Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md), §I, cite. The data
 set (velocity profiles, Reynolds stresses, surface pressure, oil-film
 visualization; no skin friction) makes the case a quantitative test of
 [wall-modelled LES](/methods/wall-modelled-les.md) in a flow with corner
@@ -117,7 +117,7 @@ grid with $\Delta\approx0.2\delta$, one point across the bubble, and the
 authors attribute the remaining error there to the SGS model rather than
 the wall model (§4.8). They state, without side-by-side numbers, that this
 version is more accurate on the case than their preliminary version of
-2020 trained on filtered DNS. Vadrot et al. (2023b) recall a result on this case below; the work
+2020 trained on filtered DNS. Vadrot et al. (2023b) cite a result on this case (below); the work
 they cite (their ref. [85]) is the 2020 arXiv preprint of the preliminary
 version (Lozano-Durán & Bae 2020). The model was never trained on wing or aircraft flows
 (§2.3).
@@ -125,10 +125,21 @@ version (Lozano-Durán & Bae 2020). The model was never trained on wing or aircr
 Cost and error models built on this case are on
 [grid-point requirements](/results/les-grid-point-requirements.md) and
 [boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md).
-As recalled by [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md), §I, the
+[Vadrot et al. (2023b)](/sources/vadrot-2023-b.md), §I, cite the result that the
 classifier-plus-predictor machine-learning wall model of Lozano-Durán & Bae
 was tested on this case and performed poorly in the separation zones (see
 [machine-learning wall models](/methods/machine-learning-wall-model.md)).
+
+## Junction flows as a RANS modelling challenge
+
+The Juncture Flow model belongs to a wider class:
+[Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md), §2.1, list junction
+flows (finite objects protruding from a surface) among the "completely
+statistically three-dimensional" flows for which an eddy-viscosity closure
+is "even more ill-suited" (see
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)). The review
+does not mention the NASA model; the data-driven junction-flow work it cites
+(§4.1) is on [symbolic-regression closures](/methods/symbolic-regression-closure.md).
 
 ## Qualifications
 
@@ -147,9 +158,14 @@ was tested on this case and performed poorly in the separation zones (see
   as Lozano-Durán et al. (2022), and use the same aircraft frame for their
   station coordinates; their runs are a single grid, not a convergence
   study.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) do not mention
+  the NASA Juncture Flow model; their junction-flow statements concern the
+  class of flows and other geometries (a junction body, a wall-mounted
+  cube), not this case.
 
 # Citations
 
 - [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) — §I, §II.A–B, §III.A, §V.A–F, Figs. 3–22.
-- [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §I (recalled result).
+- [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §I (cited result).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.3; §4.8, Table 1, Fig. 18.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.1 (junction flows as a class; passing mention, the NASA model is not discussed); §4.1.

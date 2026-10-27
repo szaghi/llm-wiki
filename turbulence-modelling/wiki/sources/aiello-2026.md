@@ -9,7 +9,7 @@ year: 2026
 venue: "Flow Turbul. Combust. 117:8"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Flow_Turbulence_and_Combustion_Aiello_Impact_of_Structure-Preserving_Discretizations_on_Compressib.pdf"
 tags: [dns, compressible, hypersonic, kinetic-energy-preserving, entropy-stable, gpu]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Summary
@@ -61,7 +61,7 @@ Crossref. Locators are those of the published article.
 3. With the fluxes of Eq. 7, kinetic-energy preservation holds whatever the internal-energy flux; that flux and the density interpolant are degrees of freedom that can enforce entropy conservation (§3.2, Eq. 7). **Derived** (by reference to De Michele & Coppola 2023b)
 4. For gases that are not calorically perfect, entropy-conservative fluxes designed for calorically perfect gases (Chandrashekar, Ranocha, asymptotic EC) lose entropy conservation but keep kinetic-energy preservation, which depends only on mass and momentum (§3.2). **Stated**
 5. Entropy conservation for an arbitrary equation of state follows from discrete consistency with the Gibbs relation $\partial_t(\rho e)=T\partial_t(\rho s)+g\,\partial_t\rho$ (Aiello et al. 2025); the formulation is singular at uniform temperature, treated by the Ismail–Roe fix or an asymptotic expansion (§3.2). **Stated**
-6. The EC-TP flux (p. 10) is entropy conserving and kinetic-energy preserving for thermally perfect gases with $c_v(T)=\sum_{m=-\ell}^{r}c_mT^m$ (§3.2, Table 1). **Stated** (derivation in Aiello et al. 2026, J. Comput. Phys.)
+6. The EC-TP flux (p. 10) is entropy conserving and kinetic-energy preserving for thermally perfect gases with $c_v(T)=\sum_{m=-\ell}^{r}c_{v,m}T^m$ (§3.2, Table 1). **Stated** (derivation in Aiello et al. 2026, J. Comput. Phys.)
 7. Gouasmi et al. (2020) is entropy conserving for thermally perfect gases and kinetic-energy preserving "according to our definition", but its pressure discretization spoils the kinetic-energy balance in isotropic turbulence (Aiello et al. 2026; Gassner et al. 2016); it reduces to Chandrashekar (2013) for a calorically perfect gas (§4). **Stated**
 8. Removing ghost nodes and using second-order boundary formulae improved robustness at hypersonic Mach numbers (negative temperatures appeared at ghost nodes in transients); preliminary Mach-3 runs showed a negligible effect of the boundary order reduction (§3.3). **Stated** (not shown)
 9. Viscous terms in conservative form were more robust than the non-conservative form often used against odd–even decoupling (§3.3). **Stated**
@@ -100,15 +100,15 @@ Crossref. Locators are those of the published article.
 | $\overline\phi=(\phi^i+\phi^{i+1})/2$ | $\{\!\{\phi\}\!\}$ | **collision:** the overbar is a two-point mean, not the LES filter |
 | $\overline\phi^{\log}$ | $\phi^{\ln}$ (logarithmic mean, page-local as on [entropy conservation](/properties/entropy-conservation.md)) | |
 | $\overline{\overline{(u,p)}}$ | (product mean $(u^ip^{i+1}+u^{i+1}p^i)/2$) | page-local |
-| $\overline{\overline T}^m$, $\widetilde{\widetilde T}^m$ | (generalized two-point averages) | at equal states both reduce to $T^{m+1}$, not $T^m$ *(compiler check, not in the sources)*; **collision:** the tildes are not Favre filters |
-| $\mathcal F^c_{\rho\phi}$, $\mathcal P_{\rho\phi}$ | $f^*$ components (convective flux, pressure term) | |
+| $\overline{\overline T}^m$, $\widetilde{\widetilde T}^m$ | $\mathcal T_m$ (generalized two-point averages, page-local as on [entropy conservation](/properties/entropy-conservation.md)) | at equal states both reduce to $T^{m+1}$, not $T^m$ *(compiler check, not in the sources)*; **collision:** the tildes are not Favre filters |
+| $\mathcal F^c_{\rho\phi}$, $\mathcal P_{\rho\phi}$ | $\mathcal F_{\rho\phi}$ (convective face flux, page-local as on [entropy conservation](/properties/entropy-conservation.md)), (pressure term) | |
 | $\hat\rho$ | (density interpolant at $x_{i+1/2}$) | **collision:** not a test filter |
 | $e$, $k=u_iu_i/2$, $E$, $H$ | (internal, kinetic, total energy and total enthalpy per unit mass) | **collision:** $k$ is not the turbulent kinetic energy |
 | $s$, $g$ | (specific entropy, Gibbs free energy) | |
 | $\tau_{ij}$ | $\sigma_{ij}$ | viscous stress |
 | $\tau^+_{ij}=\langle\rho\rangle\widetilde{u''_iu''_j}/\tau_w$ | $R^+_{ij}=\langle\rho u_i''u_j''\rangle/\tau_w$ | positive convention; **collision:** $\tau$ is the SGS stress in the registry |
 | $\tilde\phi$, $\phi''$ | $\langle\phi\rangle_\rho$, $\phi''$ | Favre average; **collision** with the registry tilde |
-| $c_v(T)=\sum c_mT^m$, $c_m$, $\ell$, $r$ | (polynomial specific heat and its coefficients) | |
+| $c_v(T)=\sum c_mT^m$, $c_m$, $\ell$, $r$ | $c_{v,m}$, $\ell$, $r$ (polynomial specific heat and its coefficients, page-local) | |
 | $M_{bw}$, $M_b$, $M_\tau$ | (bulk Mach on the wall sound speed), $M_b$, (friction Mach) | |
 | $Re_b$, $Re_\tau$, $Re^*_\tau$ | $Re_b$, $Re_\tau$, (semi-local $Re_\tau$) | half-width $h=\delta$, wall viscosity |
 | $y^*$ | $y^*$ | semi-local wall distance, agrees |

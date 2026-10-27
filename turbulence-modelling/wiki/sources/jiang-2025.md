@@ -9,7 +9,7 @@ year: 2025
 venue: "Acta Mech. Sin. 41:324174"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Acta_Mechanica_Sinica_Jiang_Efficient_implementation_of_the_k-sqrtk_L_turbulence_model_w.pdf"
 tags: [rans, hybrid-rans-les, dg, eddy-viscosity, shock-capturing]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Summary
@@ -141,10 +141,10 @@ $$\psi=\begin{cases}0.02\log\big(1+e^{50\chi_\Phi}\big),&\chi_\Phi\le5,\\ \chi_\
 complete into the [bibliography](/bibliography.md) with `citedby` this
 slug. Ref. [8] (Zhao et al. 2023, Comput. Fluids 263:105967) is the
 ingested `zhao-2023-b`, not `zhao-2023`; ref. [12] (Wang L. et al. 2013,
-AIAA) is keyed `wang-2013-e`, distinct from the planned Source `wang-2013`, a different work. Refs. [17], [18], [23], [25], [26], [27] are the existing
+AIAA) is keyed `wang-2013-e`, distinct from the ingested [wang-2013](/sources/wang-2013.md), a different work. Refs. [17], [18], [23], [25], [26], [27] are the existing
 bibliography entries `lodares-2022`, `elzaabalawy-2023`, `ghidoni-2022`,
-`basile-2023`, `kou-2023` and `ferrer-2023` (all but `ghidoni-2022`
-ingested Sources). Two Fu et al. (2022) papers are keyed in
+`basile-2023`, `kou-2023` and `ferrer-2023`, all ingested Sources
+([ghidoni-2022](/sources/ghidoni-2022.md) among them). Two Fu et al. (2022) papers are keyed in
 printed order. Refs. [20] and [23] print the journal as "Numer. Methods
 Fluids"; ref. [5] prints "Fran-ranchina".
 

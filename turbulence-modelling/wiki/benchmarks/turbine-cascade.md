@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Turbine cascades (T106, T161, VKI LS89)"
-description: "Linear turbine cascades as transition, loss and vortex benchmarks: the high-lift low-pressure T106C, T108 and T161 cascades with laminar separation near exit Reynolds number 10⁵, the transonic VKI LS89 vane with bypass transition and heat transfer, and a transonic rotor cascade with tip clearance whose tip-leakage vortex a hybrid RANS/LES resolves."
+description: "Linear turbine cascades as transition, loss and vortex benchmarks: the high-lift low-pressure T106A, T106C, T108 and T161 cascades with laminar separation near exit Reynolds number 10⁵, the transonic VKI LS89 vane with bypass transition and heat transfer, and a transonic rotor cascade with tip clearance whose tip-leakage vortex a hybrid RANS/LES resolves."
 status: established
-aliases: [turbine cascade, linear turbine cascade, LPT cascade, T106C, T106c, T108, T161, MTU T161, VKI LS89, LS89 vane, Pak-B cascade, Pack B, L2F, tip-leakage turbine cascade, Arts transonic turbine cascade]
+aliases: [turbine cascade, linear turbine cascade, LPT cascade, T106A, T106C, T106c, T108, T161, MTU T161, VKI LS89, LS89 vane, Pak-B cascade, Pack B, L2F, tip-leakage turbine cascade, Arts transonic turbine cascade]
 tags: [benchmark, turbomachinery, transition, implicit-les, rans, boundary-layer, des]
-timestamp: 2026-10-27T10:55:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Turbine cascades (T106, T161, VKI LS89)
@@ -40,6 +40,7 @@ exit state, $Re_{2,is}$ and $M_{2,is}$ (page-local), on the chord.
 | T106C | [Pacciani et al. (2025)](/sources/pacciani-2025.md), §6.2, Table 5 | $Re_{2,is}=0.8$, 1.2, $1.6\times10^5$, $M_{2,is}=0.6$, $Tu=0.8\%$ | steady 2D RANS, [laminar kinetic energy model](/methods/laminar-kinetic-energy-transition-model.md) on [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) |
 | T108 (front-loaded LPT) | [Pacciani et al. (2025)](/sources/pacciani-2025.md), §6.2 | as T106C, pitch/chord 1.1 | as above |
 | T161 (high-lift LPT between diverging end walls) | [Morsbach et al. (2024)](/sources/morsbach-2024.md), §3.1–3.2, Tables 1–2 | $Re_{2,is}=9\times10^4$, $M_{2,is}=0.6$, inflow angle 41°, synthetic turbulent end-wall layers and free-stream turbulence | implicit LES, [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) $N=5$ with kinetic-energy-preserving split form, $1.89\times10^8$ degrees of freedom; RANS with SST and SSG/LRR-ω plus γ-$Re_\theta$ |
+| T106A (LPT) | [Ma et al. (2022)](/sources/ma-2022.md), §3.3 | $Re\approx6\times10^4$ on exit velocity and axial chord; single passage, pitchwise and spanwise periodic; geometry and boundary conditions from Wang et al.; Mach number and inflow turbulence not printed | implicit LES with weighted compact nonlinear schemes (WCNS-E, WCNS-T, linear WCNS-E), block-structured grid of about $1.2\times10^7$ points |
 | Pak-B (LPT) | [Menter et al. (2022)](/sources/menter-2022.md), Fig. 24 | $Re=5\times10^4$ to $1.72\times10^5$ on inlet velocity and axial chord, $Tu=0.08\%$ to 4% | RANS with three [local-correlation transition models](/methods/local-correlation-based-transition-model.md) |
 | VKI LS89 (transonic HPT vane) | [Wang (2024)](/sources/wang-2024-b.md), §4.3, Tables 5–6 | MUR129: exit $Re=1.13\times10^6$, no free-stream turbulence in the computation (0.8% measured), wall temperature 297.75 K | implicit LES, $N=2$ and 3, 10 to 20 spanwise layers, $6.6\times10^6$ to $31.3\times10^6$ degrees of freedom |
 | VKI LS89 | [Pacciani et al. (2025)](/sources/pacciani-2025.md), §6.1, Table 4 | Mur224, Mur228 ($Re_{2,is}\approx6\times10^5$), Mur239, Mur247 ($\approx2.1\times10^6$), $M_{2,is}\approx0.92$–0.93, $Tu=6\%$ and 1% | steady 2D RANS, laminar kinetic energy model, $3\times10^5$ cells |
@@ -66,6 +67,29 @@ Figs. 18–20). On T108 the bubbles are short at all three Reynolds numbers,
 with $M_{is}$, wake loss and its Reynolds-number lapse rate well matched
 but a post-reattachment wall shear stress below the measurement (§6.2,
 Figs. 21–23).
+
+**Scheme dissipation and leading-edge separation on T106A.**
+[Ma et al. (2022)](/sources/ma-2022.md), §3.3, run the T106A cascade at
+$Re\approx6\times10^4$ as [implicit LES](/definitions/implicit-les.md)
+with three variants of a weighted compact nonlinear finite-difference
+scheme: the original explicit fifth-order nonlinear interpolation
+(WCNS-E), the same with its weights frozen at the linear ones
+(WCNS-E(linear)), and the authors' seventh-order nonlinear tri-diagonal
+compact interpolation (WCNS-T; see [WENO schemes](/methods/weno-scheme.md)).
+Against the experiment of Stieger and the DNS of Michelassi et al.:
+
+- the WCNS-T wall pressure coefficient is "reasonably better" than that of
+  WCNS-E, with differences remaining on the front half of the suction side
+  (Fig. 11);
+- the early separation near the leading edge is not captured by nonlinear
+  WCNS-E, whereas WCNS-E(linear) gives a qualitatively correct behaviour,
+  so the nonlinear weighting of the explicit interpolation itself degrades
+  the prediction (Fig. 12); see
+  [numerical dissipation](/properties/numerical-dissipation.md);
+- both schemes capture transition, with finer vortical structures for
+  WCNS-T, especially far downstream (Fig. 13).
+
+The comparisons are graphical; no loss or separation length is printed.
 
 **Wall-resolved LES as reference for RANS.**
 [Morsbach et al. (2024)](/sources/morsbach-2024.md) compute T161 with
@@ -220,6 +244,45 @@ cites them.
   [symbolic-regression closures](/methods/symbolic-regression-closure.md)
   and [field inversion](/methods/field-inversion-machine-learning.md).
 
+**Machine-learnt closures for turbine wakes (second review).**
+[Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md), a review of
+machine-learnt stress and heat-flux closures from the same group, report
+the turbine studies with further detail; as above, every result is cited
+from the works the review names.
+
+- *Steady wake mixing.* CFD-driven gene-expression programming, in which
+  each candidate closure is run in the RANS solver during training, gave
+  simpler models than training on frozen high-fidelity data and improved
+  the wake profiles in all a posteriori tests on other high- and
+  low-pressure-turbine geometries; the improvement came "predominantly"
+  from increased diffusion (§4.1; see
+  [model-consistent training](/methods/model-consistent-training.md)).
+- *Phase-locked training with incoming wakes.* On LPT DNS with 20 phases
+  per wake-passing cycle (Akolekar et al. 2019), models trained on one
+  phase work on that phase and on some others (trained on phase 13, they
+  work on phase 5) but fail on others (trained on phase 10, they fail on
+  phase 18); the linear coefficient and the non-linear contribution follow
+  the wake–wake interaction, so two models trained on two representative
+  phases suffice (§4.4.1, Fig. 10), in agreement with the summary of
+  [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) above.
+- *No spectral gap.* When the deterministic unsteadiness overlaps the
+  turbulence spectrum (see [spectral gap](/definitions/spectral-gap.md)),
+  a triple decomposition into mean, deterministic and stochastic parts is
+  used instead; the stochastic anisotropy was insensitive to the
+  decomposition used (Fourier, POD or DMD), and the closure trained on it
+  sharply reduces the modelled diffusion, so that URANS resolves more
+  scales and improves the near and far wake (Lav et al. 2019; §4.4.2).
+- *Transition.* CFD-driven multi-expression training of corrections to a
+  [laminar kinetic energy model](/methods/laminar-kinetic-energy-transition-model.md)
+  for LPTs is listed among the data-driven transition models, which the
+  authors call "still far from mature" (§4.3).
+
+The two findings concern different contexts: added diffusion improves
+steady RANS wake mixing (§4.1), while reduced modelled diffusion improves
+URANS once the deterministic part is resolved (§4.4.2). The closure forms are on
+[explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)
+and [symbolic-regression closures](/methods/symbolic-regression-closure.md).
+
 **What the sources share.** Steady RANS with transition models captures
 the onset of separated-flow and bypass transition on these blades but not
 its extent: transition develops too quickly on LS89 and sets in too early
@@ -271,6 +334,10 @@ and [grid-point requirements](/results/les-grid-point-requirements.md).
   the exit values $Re_{2,is}$ used elsewhere on this page; the review writes the acceleration parameter in terms
   of the isentropic Mach number without stating the reference length of
   its $Re$ (Eq. 1).
+- [Ma et al. (2022)](/sources/ma-2022.md) print neither the Mach number nor
+  the inflow turbulence of their T106A run, and "about 12 million" points
+  without the grid dimensions; the T106A profile differs from the T106C
+  of Wang (2024) and Pacciani et al. (2025).
 - [Morsbach et al. (2024)](/sources/morsbach-2024.md) print 67.9 million
   degrees of freedom for the coarse mesh, whose element count and $N=5$
   give 67.5 million *(compiler check, not in the sources)*.
@@ -283,4 +350,6 @@ and [grid-point requirements](/results/les-grid-point-requirements.md).
 - [Menter et al. (2022)](/sources/menter-2022.md) — Pak-B cascade, Fig. 24.
 - [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §8.1.2–8.1.3, Figs. 17–18.
 - [Yang & Ma (2022)](/sources/yang-2022-b.md) — §1; §2.1–2.3, Eqs. 1–6; §3.1–3.2, Figs. 4–9; §4.1–4.6, Figs. 10–19; §5.
+- [Ma et al. (2022)](/sources/ma-2022.md) — §3.3, Figs. 10–13 (T106A implicit LES).
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — review: §2.5, Fig. 8; §4.1; §4.3; §4.4.1–4.4.2, Fig. 10.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — review: §3.1.2, Fig. 1 (spectral gap); §3.2.1–3.2.3, Fig. 4 (inflow turbulence, wakes, shedding, Boussinesq misalignment); §3.3.1, Eq. 1; §3.3.3, Figs. 5–6 (bypass and wake-induced transition); §4.2 (entropy loss on LS89); §4.3, Eq. 2, Fig. 7 (data-driven closures).

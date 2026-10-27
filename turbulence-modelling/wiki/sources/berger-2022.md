@@ -9,7 +9,7 @@ year: 2022
 venue: "Combust. Flame 244:112254"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Combustion_and_Flame_Berger_Synergistic_interactions_of_thermodiffusive_instabilities_an.pdf"
 tags: [combustion, dns, tabulated-chemistry]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -99,7 +99,8 @@ DNS set-up (§2.1–2.2, Table 1): TurbUnstable/TurbStable slot width 8/4 mm, bu
 
 # Notation map
 
-The registry has no combustion symbols; the page-local symbols follow
+The registry holds only the thickened-flame symbols of combustion (§11);
+the page-local symbols follow
 [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md).
 
 | Berger et al. (2022) | Registry ([notation](/notation.md)) | Note |

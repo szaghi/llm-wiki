@@ -9,7 +9,7 @@ year: 2026
 venue: "J. Fluid Mech. 1039:A17"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Journal_of_Fluid_Mechanics_Rickard_Modelling_the_wall_slip_in_large_eddy_simulations_with_immer.pdf"
 tags: [les, wall-model, wmles, immersed-boundary, filtering, a-priori-a-posteriori]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Summary
@@ -72,7 +72,7 @@ of the mean filtered wall gradient to the mean gradient of the filtered
 velocity (the source's $\boldsymbol\lambda$); $a_0,b_0,n_0$ and $a_1,n_1$
 the fit constants.
 
-1. Volume filtering with a truncated, non-rescaled kernel and a volume fraction $\varphi_f$ removes the commutation errors of wall-resolved and wall-modelled LES with variable filters, and turns boundary conditions into volumetric forcing, which gives an immersed boundary method directly (§2.1). **Stated** (identities derived in Dave et al. 2023, recalled as Eqs. 2.8–2.13)
+1. Volume filtering with a truncated, non-rescaled kernel and a volume fraction $\varphi_f$ removes the commutation errors of wall-resolved and wall-modelled LES with variable filters, and turns boundary conditions into volumetric forcing, which gives an immersed boundary method directly (§2.1). **Stated** (identities derived in Dave et al. 2023, which the paper recalls as Eqs. 2.8–2.13)
 2. The volume-filtered momentum equation (2.22) contains two unclosed terms, $\tau_{ij}$ and $\boldsymbol F_{\mathrm{IB}}$; the residual viscous stress $R^\mu_{ij}$ (2.17)/(2.18) is closed but non-trivial (§2.2). **Derived**
 3. $\boldsymbol F_{\mathrm{IB}}$ is approximated to $O(\Delta_f^2)$ by the surface integral (2.24) and is non-zero only in a band of width $\Delta_f$ around the interface for a compact kernel (§2.2). **Derived**
 4. The wall stress relates to the wall slip through (2.25), so the slip is the only unclosed term and modelling it is equivalent to specifying a wall model (§2.3). **Derived** (following Dave et al. 2023)
@@ -98,7 +98,7 @@ the fit constants.
 24. A dynamic slip-length procedure (6.9)/(7.4) follows from the Germano identity with the $n_1$ scaling between filter levels, $\hat\ell_{t_1}=(\hat\Delta_f/\Delta_f)^{n_1+1}\ell_{t_1}$; it is solved explicitly (positive root), not by least squares, with one slip length per direction, and is not evaluated (§6). **Derived**
 25. Existing subgrid models (e.g. dynamic Smagorinsky) are expected to apply to $\tau_{ij}$ in IBMLES (abstract, §7). **Stated**
 26. The $Re_\tau$ dependence of $\boldsymbol\Lambda$ is expected to be secondary to the $\Delta_f^+$ dependence but cannot be determined from one $Re_\tau$; the models are not expected to hold for rough, moving or deforming, or strongly separated flows (§4.2, §7). **Stated**
-27. Cost scalings recalled from Choi & Moin (2012): grid points $\sim Re^{37/14}$ (DNS), $Re^{13/7}$ (wall-resolved LES), linear in $Re$ (wall-modelled LES); from Piomelli (2014): for $Re>O(10^5)$ more than 90 % of the points resolve less than 10 % of the domain; channel DNS frontier $Re_\tau\approx12\,000$ (Pirozzoli 2024) (§1). **Stated**
+27. Cost scalings cited from Choi & Moin (2012): grid points $\sim Re^{37/14}$ (DNS), $Re^{13/7}$ (wall-resolved LES), linear in $Re$ (wall-modelled LES); from Piomelli (2014): for $Re>O(10^5)$ more than 90 % of the points resolve less than 10 % of the domain; channel DNS frontier $Re_\tau\approx12\,000$ (Pirozzoli 2024) (§1). **Stated**
 28. Immersed boundaries on non-uniform grids introduce spurious stress oscillations that can corrupt the near-wall turbulent viscosity; Verzicco (2023) suggests immersed-boundary LES may be possible only on uniform grids with immersed-boundary-adapted wall models (§1). **Stated**
 
 # Printed slips
@@ -147,7 +147,7 @@ duplicates and no same-key pairs within the list.
 
 # Pages created or updated
 
-Chunk 7 (2026-10-26). This source is cited on:
+Chunk 7 (2026-10-26), cited further in chunk 10. This source is cited on:
 
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
@@ -156,6 +156,7 @@ Chunk 7 (2026-10-26). This source is cited on:
 - [Law of the wall](/definitions/law-of-the-wall.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Immersed boundary methods](/methods/immersed-boundary-method.md)
+- [Slip-wall models](/methods/slip-wall-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Method of manufactured solutions"
-description: "The method of manufactured solutions verifies a flow solver by choosing an analytic solution, adding the residual it leaves in the governing equations as a source term, and measuring the observed order of accuracy; this page gives the manufactured solutions used for Euler, RANS and GPU DG codes and what they verify."
+description: "The method of manufactured solutions verifies a flow solver by choosing an analytic solution, adding the residual it leaves in the governing equations as a source term, and measuring the observed order of accuracy; this page gives the manufactured solutions used for Euler, RANS, GPU DG and immersed-boundary codes and what they verify."
 status: established
 aliases: [MMS, manufactured solution, manufactured solutions, code verification by manufactured solutions]
 tags: [verification, dg, rans, software]
-timestamp: 2026-10-27T06:08:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Method of manufactured solutions
@@ -95,6 +95,25 @@ also exercises the negative branch of their SA formulation (see
 [entropy conservation](/properties/entropy-conservation.md)) *(compiler
 check, not in the sources)*.
 
+**Radial solution around an immersed sphere.**
+[van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.7, Eqs.
+(43)–(44), verify the boundary closure of their Cartesian
+[immersed-boundary](/methods/immersed-boundary-method.md) finite-difference
+solver (CHAMPS) on a unit sphere with a field that depends on the radius
+$r$ only,
+$$u_r=4\sin(r-1)+\tfrac12(r-1)^2,\qquad u_\theta=u_\phi=0,\qquad p=T=15+\cos(r-1)+\tfrac16(r-1)^3,$$
+($u_r$, $u_\theta$, $u_\phi$ page-local spherical velocity components,
+$p$ and $T$ in the solver's non-dimensional units), and measure the slope
+of $\ln\varepsilon_{\mathrm{MMS}}$ against $\ln\Delta x$ for
+$\varepsilon_{\mathrm{MMS}}=\|(\mathcal D_h-\mathcal D)\phi\|$ in the $L_2$
+and $L_\infty$ norms (page-local: $\mathcal D_h$ the discrete and
+$\mathcal D$ the exact operator acting on a test function $\phi$). The
+test isolates three parts of the method separately: the interpolation to
+the image points, the filling of the single ghost cell, and the convective
+and viscous operators with the boundary closure. It is the only test in
+the sources where the manufactured field verifies a boundary treatment
+rather than the interior scheme.
+
 **Manufactured boundary-layer profile for a reconstruction.**
 [Huang et al. (2022b)](/sources/huang-2022-d.md), §2.4.3, Eq. (52), use a
 "manufactured" turbulent-boundary-layer velocity profile in a narrower
@@ -121,6 +140,7 @@ with Pan et al.'s geometric weight diverge on the first mesh (Table 3). See
 | HDG, RANS MMS at $Re=10^7$, $N=3$ triangles | 10, 13, 21, 28 cells per direction, first-cell $y^+$ 0.77 to 0.18 | velocity error $1.69\times10^{-4}$ to $2.70\times10^{-6}$, rates 4.62, 3.79, 3.82 ($\approx N+1$); pressure rates 2.84, 2.94, 2.97 ($\approx N$); $k$ and $\omega$ equations also optimal | Elzaabalawy et al. (2023), §5.1, Table 1 |
 | GALÆXI, DGSEM, travelling wave | $N=2$ to 9, 1 to $64^3$ elements | design order of the density $L_2$ error for standard DG on Gauss nodes and split-form DG on Gauss–Lobatto nodes | Kurz et al. (2025), §5.1, Fig. 9 |
 | Gauss–Lobatto DGSEM, RANS–SA travelling wave; standard, Pirozzoli (kinetic-energy-preserving) and Chandrashekar (entropy-conserving) volume fluxes | $4^3$ to $10^3$ elements, $N=2$–9 | spectral $p$-convergence for all three; $h$-rates of the total error (standard / Pirozzoli / Chandrashekar) 0.72 / 0.77 / 1.42 at $N=2$, 3.06 / 3.16 / 4.33 at $N=4$, 4.95 / 4.59 / 5.83 at $N=6$, 7.09 / 6.49 / 7.34 at $N=8$, 7.77 / 8.14 / 8.60 at $N=9$; for $\rho\tilde\nu$ at $N=9$ 5.83 / 5.21 / 7.74; the Chandrashekar form has a higher $L_2$ error and an even–odd behaviour in density | Lodares et al. (2022), §7.1, Table 1, Figs. 3–4 |
+| Cartesian immersed-boundary finite differences (fourth-order centred interior, third-order WENO boundary stencils, one ghost cell), unit sphere | refined Cartesian grids; slopes of $\ln\varepsilon$ against $\ln\Delta x$ | interpolation $L_2$/$L_\infty$ orders 2.30–3.00 (pressure 2.658/2.300, velocity components 2.994–2.998 in $L_2$, 2.712–2.831 in $L_\infty$); ghost-cell filling $L_2$ 2.84–2.96, $L_\infty$ 1.86–1.99; convective operator with the boundary 2.65–2.98 in $L_2$, 1.97–2.12 in $L_\infty$; viscous operator 2.01–2.32 in $L_2$, 2.05–2.38 in $L_\infty$ | van Noordt et al. (2022), §2.7, Tables 1–2 |
 
 Elzaabalawy et al. (2023, §5.1, Figs. 4–6) also use the manufactured
 solution to **calibrate** a free parameter: with
@@ -188,6 +208,18 @@ the estimated truncation error is the bottleneck (§4.2, §5).
   manufactured-solution studies of other groups and run no MMS for their own
   $k$-$\omega$ SST and transition solver (see
   [flux reconstruction](/methods/flux-reconstruction.md)).
+- van Noordt et al. (2022) read their convective result as third order in
+  the volume and second order at the boundary (§2.7), and state that
+  boundary conditions are applied "with second-order accuracy at a
+  minimum". Their boundary stencils reconstruct face values to third
+  order, but the flux derivative at the first irregular point is second
+  order because the leading truncation errors of its two faces do not
+  cancel (§2.3); the "third-order flux reconstruction at the boundary" of
+  their introduction refers to the face values (§1). The convective MMS
+  run uses the full upwind blend ($\alpha_{\mathrm b}=1$, page-local, the
+  source's $\alpha$, in their convex blend of centred and WENO fluxes,
+  Table 2), not the small blending factors of
+  their turbulent runs.
 - Kurz et al. show only the density error, and Wang & Roy state no hardware
   for the costs of their error equations (Table 1).
 - Wang & Roy print "discretion error" for discretization error (§3.1) and
@@ -201,3 +233,4 @@ the estimated truncation error is the bottleneck (§4.2, §5).
 - [Lodares et al. (2022)](/sources/lodares-2022.md) — §7.1, Eq. (124), Table 1, Figs. 3–4 (RANS–SA travelling wave, $h$- and $p$-convergence of three split forms).
 - [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.4.3, Eq. (52), Table 3 (manufactured boundary-layer profile for a static reconstruction test).
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §1 (order of FR-SA verified by MMS in earlier work).
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1, §2.3 (boundary stencils, face against derivative order); §2.7, Eqs. (43)–(44), Tables 1–2 (manufactured solution on a unit sphere, interpolation, ghost-cell and operator orders).

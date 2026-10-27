@@ -5,7 +5,7 @@ description: "Linear compressor cascades as turbomachinery benchmarks: the low-s
 status: established
 aliases: [compressor cascade, linear compressor cascade, V103 cascade, PVD cascade, NACA65 K48 cascade, TCTA, Transonic Cascade TEAMAero, compressor corner separation]
 tags: [benchmark, turbomachinery, transition, des, rans, implicit-les]
-timestamp: 2026-10-27T10:54:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Compressor cascades
@@ -167,7 +167,8 @@ those of the works they name.
   chord, and URANS does not predict the amplitude (Hergt et al. 2019).
   The review names as "one possible reason" that the shock oscillation
   frequencies are higher as they clock with the stator–rotor interaction,
-  which reduces the spectral gap that Reynolds averaging needs (§3.3.4).
+  which reduces the [spectral gap](/definitions/spectral-gap.md) that
+  Reynolds averaging needs (§3.3.4).
   In the TCTA of Klose et al. (2025) above, URANS under-predicts the
   amplitude by more than half.
 

@@ -5,7 +5,7 @@ description: "A subgrid closure of the induction equation for cosmological MHD: 
 status: established
 aliases: [subgrid dynamo, subgrid turbulent mean-field dynamo, alpha-effect subgrid dynamo, quenched alpha subgrid model]
 tags: [sgs-model, dynamo, mhd, astrophysics, les]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-27T15:47:00Z
 ---
 
 # Subgrid turbulent dynamo model
@@ -38,12 +38,12 @@ $q$ is the quenching parameter; $h$ is the cell size.
 
 ## Motivation: a resolution requirement the grid cannot meet
 
-As recalled by Liu et al. (2022, §1, from Brandenburg & Subramanian 2005), a
+Liu et al. (2022, §1), citing Brandenburg & Subramanian (2005), state that a
 turbulent dynamo operates only if the dissipation scale is at least about 30
 times smaller than the injection scale, i.e. above a critical Reynolds number
 estimated numerically at about 30–60. In a simulation whose dissipation comes
-from truncation errors (an [implicit LES](/definitions/implicit-les.md) in
-this bundle's terms; see [numerical dissipation](/properties/numerical-dissipation.md)),
+from truncation errors (see [numerical dissipation](/properties/numerical-dissipation.md)
+and [implicit LES](/definitions/implicit-les.md)),
 this becomes a resolution requirement: with the disc thickness as injection
 scale, a 1 kpc high-redshift disc needs $h\lesssim30$ pc and a 100 pc
 low-redshift thin disc about 3 pc. Under-resolved galaxy and cluster
@@ -63,8 +63,8 @@ equation of the resolved field as
 
 $$\frac{\partial\bar{\boldsymbol B}}{\partial t}=\nabla\times\big(\bar{\boldsymbol u}\times\bar{\boldsymbol B}+\boldsymbol{\mathcal E}\big),\qquad \boldsymbol{\mathcal E}=\overline{\boldsymbol u^<\times\boldsymbol B^<}$$
 
-(Eqs. 8–9; ideal MHD, no explicit $\eta_m$). The two-scale expansion
-(as recalled from Moffatt 1978)
+(Eqs. 8–9; ideal MHD, no explicit $\eta_m$). The two-scale expansion,
+which the authors cite from Moffatt (1978),
 
 $$\mathcal E_i=\alpha_{ij}\bar B_j+\beta_{ijk}\frac{\partial\bar B_j}{\partial x_k}+\dots$$
 
@@ -73,7 +73,7 @@ truncated to its first term (Eq. 11) and made isotropic,
 $\alpha_{ij}=\alpha_{\mathcal E}\delta_{ij}$, so that
 $\boldsymbol{\mathcal E}=\alpha_{\mathcal E}\bar{\boldsymbol B}$ (Eq. 12).
 The truncation keeps no $\beta_{ijk}$ term: the closure carries no turbulent
-magnetic diffusivity. The kinematic estimate recalled for the coefficient is
+magnetic diffusivity. The kinematic estimate the authors quote for the coefficient is
 the subgrid kinetic helicity times a correlation time $\tau_{\mathrm c}$
 (page-local),
 
@@ -103,7 +103,7 @@ Properties stated by the authors:
   (§2.2). It is interpreted as the saturation level of the subgrid dynamo,
   physically set by the back-reaction of the Lorentz force; saturated
   magnetic-to-turbulent energy ratios from 0.1% to 50% are quoted for
-  context (Schober et al. 2015, as recalled).
+  context (the authors cite Schober et al. 2015).
 - **Low $q$ by design.** The subgrid dynamo should only boost a marginally
   resolved dynamo; the resolved flow is expected to amplify the field
   further, up to equipartition. A larger $q$ would give "unrealistically large
@@ -126,7 +126,7 @@ Properties stated by the authors:
 $\sigma_{\mathrm{sgs}}$ comes from a transport equation for the subgrid
 turbulent kinetic energy evolved with the conservative MHD variables, in the
 lineage of Schmidt et al. (2006), Semenov et al. (2016) and Kretschmer &
-Teyssier (2020), as recalled by Liu et al. (2022, §2.3): production by the
+Teyssier (2020), which Liu et al. (2022, §2.3) cite: production by the
 resolved shear, destruction modelling the cascade to viscous scales. The
 paper prints neither the equation nor its constants. The same
 $\sigma_{\mathrm{sgs}}$ sets the star-formation efficiency per free-fall time
@@ -182,8 +182,8 @@ with one simulation that resolves the cells (§4).
 
 ## Qualifications
 
-- **Tuned, resolution-dependent parameter.** The authors state that $q$ is
-  likely resolution dependent, that many $\alpha$-dynamo models suggest $q$
+- **Tuned, resolution-dependent parameter.** The authors state that the adopted $q$ is
+  "likely resolution dependent", that many $\alpha$-dynamo models suggest $q$
   inversely proportional to the magnetic Reynolds number, and that $q$ "must
   be adjusted when changing the resolution" (§4.2, §7); this was not tested.
   There is no convergence study and no idealized test (such as a forced
@@ -192,8 +192,8 @@ with one simulation that resolves the cells (§4).
 - **Simplicity acknowledged.** The authors call the form "very simple
   (probably simplistic)" and propose two improvements: a pseudo-scalar
   $\alpha_{\mathcal E}$ from the local mean-field helicity, or a mean-field
-  evolution equation for $\alpha$ with sources and sinks (§6). Eq. (14) is
-  not derived from Eq. (13): the coefficient is independent of helicity.
+  evolution equation for $\alpha$ with sources and sinks (§6). Eq. (14) replaces Eq. (13) rather than following from it (§2.2):
+  its coefficient does not depend on helicity.
 - **Printed slips** (arXiv v2). Eq. (13) is printed
   $\alpha=-\frac{\tau_{\mathrm{corr}}}{3}\overline{\mathbf u\cdot(\nabla\times\mathbf u)}$
   without the primes that mark unresolved parts in Eq. (7), although the

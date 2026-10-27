@@ -3,9 +3,9 @@ type: Method
 title: "Model-consistent (a posteriori) training of learned closures"
 description: "Training a learned closure with the solver in the loop, so the loss is evaluated on the model's own solution: field inversion, FIML, adjoint-based integrated training, differentiable-solver unrolling and reinforcement learning, contrasted with open-loop injection of a priori-trained corrections, with consistency arguments, costs and limits."
 status: established
-aliases: [a posteriori training, a-posteriori training, solver-in-the-loop training, integrated inference and learning, embedded learning, differentiable-physics training, online learning]
+aliases: [a posteriori training, a-posteriori training, solver-in-the-loop training, integrated inference and learning, embedded learning, differentiable-physics training, online learning, CFD-driven machine learning, closed-loop training]
 tags: [data-driven, neural-network, sgs-model, rans, les]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Model-consistent (a posteriori) training of learned closures
@@ -46,10 +46,10 @@ inputs are features of a converged base RANS solution. The predictions are
 then injected once and held fixed while the mean-flow equations are
 iterated to convergence around them, with no turbulence transport
 equation solved after injection: a "one-time correction" in the term
-recalled from Ho & West. The eddy viscosity enters implicitly, as an added
+they cite from Ho & West. The eddy viscosity enters implicitly, as an added
 viscosity, and the divergence of the non-linear part explicitly, as a
-source. Training is a priori; only the evaluation happens in the solver. As
-recalled there, open-loop frameworks are limited to steady flows, while
+source. Training is a priori; only the evaluation happens in the solver. Citing
+earlier work, the authors state that open-loop frameworks are limited to steady flows, while
 iterative frameworks that call the network at every iteration (Liu et al.)
 can converge to solutions that depend on the initial field (§II D). The
 authors bound what such a framework can reach by a conditioning test that
@@ -62,9 +62,9 @@ offline from DNS, is evaluated once on the converged baseline solution
 and frozen ("loose coupling"), while the linear eddy-viscosity part is
 updated implicitly until the residuals reconverge. They distinguish
 "tight coupling", in which the learned term takes part in the RANS
-iterations, and do not use it. As recalled there (§I), the CFD-driven
-gene-expression programming of Zhao et al. evaluates candidate models in
-the solver during training; Tang et al. propose coupling their RL-driven
+iterations, and do not use it. They cite (§I) the CFD-driven
+gene-expression programming of Zhao et al., which evaluates candidate
+models in the solver during training; Tang et al. propose coupling their RL-driven
 search with RANS as future work (§IV).
 
 **Field inversion, then learning (FIML).** Field inversion is run for each
@@ -85,7 +85,8 @@ model selection, not in the loss.
 [Cato et al. (2023)](/sources/cato-2023.md) (§I) give the same rationale
 for the two-step procedure: the inversion keeps the learned correction
 consistent with the model structure, whereas learning Reynolds stresses
-directly from DNS is called potentially "ill-conditioned" (recalled). Their
+directly from DNS is called potentially "ill-conditioned" (citing
+earlier work). Their
 study of the inversion step shows that this consistency does not fix the
 inferred field. Several of their six correction fields fit the same mean
 velocity closely (Tables I–II). Some fits do so with eddy viscosities that "very
@@ -101,7 +102,7 @@ $\boldsymbol\theta$ minimizes
 $\mathcal L[\boldsymbol Y,\boldsymbol Y_{\mathrm m}(f(\boldsymbol\zeta_{\mathrm m};\boldsymbol\theta))]$
 subject to the augmented equations (Duraisamy 2021, Eq. 9). The author
 states that it "ensures full consistency between the learning and
-prediction environments". As recalled there, examples are embedded neural
+prediction environments". The review cites as examples embedded neural
 networks in RANS (Holland et al.) and the DPM closure for LES (Sirignano,
 MacArt & Freund). Its drawback is that features must be fixed before
 inference.
@@ -141,10 +142,11 @@ velocity is the sensitivity of the loss to the solution at each point, so
 the optimization "naturally focuses" on the regions that most reduce the
 loss. The problem is "highly non-convex". Training is synchronized
 distributed RMSprop over "tens to hundreds of GPUs" with MPI; each GPU
-holds $M$ forward and adjoint solutions as one tensor (§2.3). As
-recalled there (§2.2, from Sirignano, MacArt & Spiliopoulos 2023), global
-convergence of adjoint-trained network–PDE models is proven, as hidden
-units and training time tend to infinity, only for linear PDE operators.
+holds $M$ forward and adjoint solutions as one tensor (§2.3). Citing
+Sirignano, MacArt & Spiliopoulos (2023), the authors state (§2.2) that
+global convergence of adjoint-trained network–PDE models is proven, as
+hidden units and training time tend to infinity, only for linear PDE
+operators.
 The authors contrast adjoints with RL: adjoints "utilize the PDEs directly
 during gradient calculations", whereas RL depends on the fidelity of the
 "agent" to the flow dynamics (§1; see Qualifications).
@@ -170,14 +172,73 @@ flow and can jeopardize robustness (§4.3; see
 [field inversion and machine learning](/methods/field-inversion-machine-learning.md)
 and [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
 
+**A taxonomy of RANS frameworks (Sandberg & Zhao 2022).**
+[Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) (§3.4), a review of
+learned stress and heat-flux closures, largely of the authors' own
+group, among them CFD-driven training, attribute the term "model-consistent" to Parish &
+Duraisamy (2016) and list the frameworks that pursue it:
+
+- **FIML and its advanced, simultaneous form** (Holland et al. 2019, as
+  cited), costly for complex 3-D flows (see
+  [field inversion and machine learning](/methods/field-inversion-machine-learning.md));
+- **closed-loop feature consistency** (Taghizadeh et al. 2020, as cited):
+  open-loop training is inconsistent at two levels, because the closure
+  coefficients that generated the features differ from the trained ones
+  and the transport-equation coefficients were calibrated with the
+  original closure; the transport coefficients are iterated until
+  consistent;
+- **implicit treatment of the linear part** (Wu et al. 2018, as cited):
+  an optimal eddy viscosity enters implicitly and the non-linear remainder
+  is trained separately, against the ill-conditioning shown by Wu et al.
+  (2019);
+- **machine learning in the RANS loop** (Liu et al. 2021, as cited): a
+  regressor called at every RANS iteration supplies an eddy viscosity for
+  which the solver converges to the DNS velocity and pressure; trained on
+  channel flow and tested on periodic hills, its gain was smaller than that
+  of non-linear approaches, "presumably as only the linear part … was
+  used";
+- **CFD-driven machine learning** (Zhao et al. 2020, as cited): every
+  candidate closure of a gene-expression-programming population is run in
+  RANS and scored on quantities of interest, e.g. the mean squared
+  wall-temperature error of a cooling flow (Eq. 11). Its stated
+  advantages are much less training data (selected profiles, usable with
+  experiments at conditions that DNS or LES cannot reach), exclusion of
+  non-converging candidates during training, and a model already tested a
+  posteriori when training ends; its drawback is a "dramatically higher"
+  development cost, "currently intractable" for complex 3-D flows (§3.4,
+  §4.1). Multi-expression, multi-objective training (Waschkowski et al.
+  2022, as cited) trains a stress and a heat-flux closure together and
+  keeps a Pareto front of the velocity and temperature errors (Eq. 17)
+  instead of a weighted sum, which the authors call "at best an ad hoc
+  process" (§4.5);
+- **SpaRTA** (Schmelzer et al. 2020, as cited): sparse regression of
+  candidate functions in which cross-validation ranking in the solver is
+  the only expensive step (see
+  [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+
+**Frozen targets made consistent, solver only for selection (Cherroud et
+al. 2022).** [Cherroud et al. (2022)](/sources/cherroud-2022.md) (§2.1)
+extract their targets by the $k$-corrective-frozen procedure of Schmelzer
+et al. (2020a), as they cite it: the $k$ and $\omega$ equations of
+[$k$-$\omega$ SST](/methods/k-omega-sst-model.md) are solved with the
+high-fidelity mean velocity, $k$ and anisotropy frozen, so that only
+$\omega$ evolves, and the residual left in the $k$ equation becomes the
+target of a production correction (Eqs. 10–12). They argue that
+correcting the eddy viscosity and time scale indirectly through the
+transport equations favours models consistent with the RANS solver and
+reduces the propagation errors caused by ill-conditioning (citing Wu et
+al. 2019), without putting the solver in the training loop. The solver
+enters only in the a posteriori cross-validation that picks the sparsity
+parameter (§4.2, Table 2; see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+
 **Unrolled differentiable solver.** Agdestein & Sanderse (2025, §4.3,
 Eq. 25) minimize a trajectory loss: the relative error between the LES
 solution and the filtered DNS, averaged over $n_{\mathrm{unroll}}=50$ time
 steps that start from the same filtered state. Gradients come from
 reverse-mode automatic differentiation through the unrolled LES (Zygote.jl).
 An explicit Runge–Kutta integrator was chosen because it is easier to
-differentiate (§2.4). As recalled there, others have used unroll lengths
-of 30–60 (List et al., 2D incompressible flow), 32 (Kochkov et al.), and 30
+differentiate (§2.4). The authors cite unroll lengths of 30–60 (List et al., 2D incompressible flow), 32 (Kochkov et al.), and 30
 (good) versus 120 (poor) for Kuramoto–Sivashinsky (Melchers et al.).
 [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) (§3.4, Eqs.
 51–52, App. E.2) combine the two losses for 1D Burgers and
@@ -256,8 +317,8 @@ and they call for a quantitative comparison of the two (§IV). See
 
 ## Evidence
 
-- **Decaying isotropic turbulence.** As recalled by Duraisamy (2021,
-  §IV.B, Fig. 2, from Sirignano et al.), an a priori-trained SGS closure
+- **Decaying isotropic turbulence.** Duraisamy (2021, §IV.B, Fig. 2)
+  shows, from Sirignano et al., that an a priori-trained SGS closure
   overpredicts the resolved kinetic energy over the plotted interval. The
   model-consistent DPM closure follows the filtered DNS.
 - **Bluff-body wakes, same network trained both ways.** Sirignano & MacArt
@@ -327,8 +388,8 @@ and they call for a quantitative comparison of the two (§IV). See
   trained tensor models reproduce the filtered-DNS mean velocity and
   Reynolds shear stress almost exactly. They also improve unrewarded
   statistics (rms velocities, mean SGS shear stress and transport, spectra)
-  over the static Vreman, dynamic Smagorinsky and no-model LES. As recalled
-  there, a supervised network with the same local inputs (Park & Choi 2021)
+  over the static Vreman, dynamic Smagorinsky and no-model LES. They cite
+  a supervised network with the same local inputs (Park & Choi 2021) that
   "did not predict" the two target profiles well a posteriori (§III C).
 - **One coefficient, calibrated in the LES.** Wang et al. (2023c, §III–IV,
   Figs. 3–17) obtain a functional coefficient $C_{\mathrm f}\approx0.00738$
@@ -358,6 +419,32 @@ and they call for a quantitative comparison of the two (§IV). See
   conditions, the RANS equations can suppress rather than amplify errors in
   the closure prediction" (§IV B, §V). This is an a posteriori improvement
   from a priori training, shown for one geometry family in interpolation.
+- **CFD-driven against frozen training in turbomachinery and cooling
+  flows**, as Sandberg & Zhao (2022) cite them:
+  - CFD-driven gene-expression models of high- and low-pressure-turbine
+    wake mixing were simpler than frozen-trained ones and improved the
+    wake profiles in every a posteriori test on other geometries, the
+    gain coming "predominantly" from increased diffusion (§4.1);
+  - the first CFD-driven heat-flux training (Lav et al. 2021) worked best
+    with the wall temperature in the cost; a model trained at blowing ratio
+    1.26 predicted a mean turbulent Prandtl number of 0.32 and performed
+    well at two other blowing ratios, and training on several blowing
+    ratios at once generalized better (§4.2.1);
+  - a frozen-trained closure of the stochastic stress and heat flux in
+    URANS of a trailing-edge slot (Lav & Sandberg 2020) improved the
+    adiabatic effectiveness at blowing ratio 0.86 only up to $x/s=20$ ($s$
+    the lip thickness, page-local), which the review attributes to the
+    frozen, not model-consistent, training (§4.4.2, Fig. 11);
+  - multi-objective training of coupled stress and heat-flux closures
+    improved both mean velocity and temperature of vertical natural
+    convection over the baseline and over separately trained models
+    (§4.5, Figs. 12–13).
+- **Sparse Bayesian closures selected in the solver.** Cherroud et al.
+  (2022, §4.2, Fig. 5, App. C) find the selected single-term production
+  corrections nearly as robust and cheap as SST and clearly better in
+  velocity on three separated flows, and better than the physics-based
+  BSL-EARSM of Menter et al. (2012) in OpenFOAM (see
+  [explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)).
 
 ## Costs
 
@@ -367,7 +454,7 @@ and they call for a quantitative comparison of the two (§IV). See
 | Agdestein & Sanderse (2025, §5.2.7, Table 3) | a posteriori, 1000 iterations | 4449.3–5849.2 s, one H100 GPU |
 | Agdestein & Sanderse (2025, §5.2.7) | DNS and filtering of all data | $1.5739\times10^4$ s |
 | Beck & Kurz (2023, §IV B) | 2000 iterations of 16 parallel episodes | at most 0.8 CPU-hours per LES; 8 or 16 cores per LES |
-| Vadrot et al. (2023b, §IV D) | RL wall model of Bae & Koumoutsakos | about $10^7$ gradient steps (recalled) |
+| Vadrot et al. (2023b, §IV D) | RL wall model of Bae & Koumoutsakos | about $10^7$ gradient steps (cited) |
 | Bae & Koumoutsakos (2022, preprint pp. 8, 12–13) | multi-agent RL in WMLES, $10^7$ policy-gradient steps | $O(10^3)$ CPU-hours and under 1 GB at $Re_\tau=4200$, against $O(10^7)$ CPU-hours and over 100 TB to generate DNS data for supervised training (no hardware given) |
 | Kim et al. (2022, §II F) | DRL of a pointwise SGS network in channel LES, 10,000–15,000 iterations, eight parallel LES; supervised pretraining of 50,000 iterations | about 2–4 days on one NVIDIA Titan Xp GPU; pretraining "only a few minutes" |
 | Kurz et al. (2023, §4.1) | PPO of an element-local Smagorinsky coefficient in DG-LES, 16 or 32 episodes per update | 1 day (smallest) to 5 days (largest case) on HAWK, up to 1024 CPU cores for the LES plus one GPU node for the policy |
@@ -406,13 +493,12 @@ the convergence of these training methods and the choice of loss function
   (2022, §III C) find that models trained to the same two mean profiles
   give different mean SGS dissipation. Cato et al. (2023, §III B, §V C)
   find, for inversions on mean velocity, that an accurate mean flow can
-  come with wrong Reynolds stresses or overshooting eddy viscosity. In both
-  cases the solver-in-the-loop loss constrains only what it measures.
+  come with wrong Reynolds stresses or overshooting eddy viscosity.
 - **Robustness to the discretization is claimed, not tested.** Bae &
   Koumoutsakos (2022) train and test their wall models with one solver
   (staggered second-order finite differences) and one SGS model
   (anisotropic minimum dissipation); the robustness to numerics they
-  claim (pp. 3, 10) is an argument from the training setup. Beck & Kurz
+  claim (pp. 3, 10) is not tested with another solver or SGS model. Beck & Kurz
   (2023, §VI), who also train in the loop, present their SGS closures as
   discretization-specific rather than transferable.
 - **"No reference data" is relative.** The reward of Bae & Koumoutsakos
@@ -444,8 +530,8 @@ the convergence of these training methods and the choice of loss function
 - **Adjoints against RL, as characterized.** Sirignano & MacArt (2023, §1)
   write that RL "typically approximates the flow dynamics using a DNN
   model", so its consistency depends on the fidelity of the agent, and add
-  that "model-free reinforcement learning can also be used" (recalled
-  from Pino et al. 2023). In the RL closures of this bundle the
+  that "model-free reinforcement learning can also be used" (citing
+  Pino et al. 2023). In the RL closures of this bundle the
   environment is the running LES or WMLES itself, not a network model of
   the flow (Beck & Kurz 2023, §II B; Kurz et al. 2023, §2, Eq. 8; Kim et
   al. 2022, §II; Bae & Koumoutsakos 2022, pp. 3–4). No source compares the
@@ -488,6 +574,14 @@ the convergence of these training methods and the choice of loss function
   [discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
   The non-transferability is stated, not tested; Sirignano & MacArt
   (2023, §6) report a partial transfer to a second solver (above).
+- **The review's evidence is cited.** Sandberg & Zhao (2022) present
+  no new computation beyond a jet-in-crossflow illustration; the results
+  above are those of the cited works, mostly the authors' own group, shown
+  through reproduced figures. They attribute the downstream weakness of
+  the trailing-edge closure to the frozen training without a comparison
+  run, and write that the nearly perfect effectiveness at the training
+  blowing ratio "might be fortuitous" since the velocity profiles do not
+  match closely (§4.4.2).
 - **Noise.** Agdestein & Sanderse (2025, §6) report that adding noise to
   the training data, a common stabilizer, can destroy the divergence-free
   property. Validation errors were better without noise; no data are
@@ -504,9 +598,9 @@ the convergence of these training methods and the choice of loss function
 - [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: Abstract, §I, §II F (cost), §III C–E (results, comparison with supervised learning, non-unique SGS dissipation, generalization), §IV (differentiable-PDE training).
 - [Cato et al. (2023)](/sources/cato-2023.md) — HAL author manuscript: §I (two-step FIML rationale), §III B, Fig. 6 (over-learning), §V C (mean flow without the right stresses).
 - [McConkey et al. (2022)](/sources/mcconkey-2022.md) — arXiv v1: §II C–D, Fig. 7 (conditioning, open-loop injection), §IV B, Figs. 20–21, §V.
-- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1 (adjoints against RL), §2, Eqs. 2.3, 2.8–2.10 (adjoint training), §2.2–§2.3 (algorithm, GPUs, convergence result recalled), §3.2, §4.1, Table 2, §5, Figs. 11–12, §6, Figs. 13–15, §7.
+- [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1 (adjoints against RL), §2, Eqs. 2.3, 2.8–2.10 (adjoint training), §2.2–§2.3 (algorithm, GPUs, convergence result cited), §3.2, §4.1, Table 2, §5, Figs. 11–12, §6, Figs. 13–15, §7.
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §1, §2, Eq. 8 (no solver gradient), §3.5, §4.1 (cost), §4.2, Fig. 6.
-- [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I (CFD-driven GEP recalled), §II D–E (loose and tight coupling), §III B (cost), §IV.
+- [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I (CFD-driven GEP cited), §II D–E (loose and tight coupling), §III B (cost), §IV.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3 (CFD-driven GEP of Zhao et al. cited, cost, transfer from high- to low-pressure turbines; injected DNS stress).
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §3.4, Eqs. 51–52, App. E.2 (derivative and trajectory fitting); §4.2–4.4, Figs. 7–8 (stability across seeds); §4.3.2 (cost).
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — arXiv v2: §1, §2.2, Algorithm 1, App. B (variational inference through an adjoint solver); §3.3 (learning rate, pre-training); §3.4, Table 4 (cost).
@@ -514,3 +608,5 @@ the convergence of these training methods and the choice of loss function
 - [Kim et al. (2024)](/sources/kim-2024.md) — §1, §5 (targets for complex geometries).
 - [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — arXiv v3: §II.B.3 (reward on the known mean wall stress).
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1 (transferability and cost of end-to-end and RL training), §5.2.1, §7 (multi-filter supervised alternative).
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.4 (taxonomy of model-consistent frameworks, CFD-driven training, advantages and cost); §4.1, §4.2.1 Eq. 11, §4.4.2 Fig. 11, §4.5 Eq. 17 Figs. 12–13 (results of cited works).
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §2.1, Eqs. 10–12 ($k$-corrective-frozen targets, consistency argument); §4.2, Table 2, Fig. 5, App. C (a posteriori selection, results against SST and BSL-EARSM).

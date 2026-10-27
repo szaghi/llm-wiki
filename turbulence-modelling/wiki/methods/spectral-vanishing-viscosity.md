@@ -5,15 +5,15 @@ description: "Spectral vanishing viscosity concentrates an added viscosity on th
 status: established
 aliases: [SVV, implicit SVV, ISVV, implicit spectral vanishing viscosity, spectral viscosity, SVV-LES, entropy-stable SVV, modal SVV filter]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg, entropy-stable]
-timestamp: 2026-10-26T20:50:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Spectral vanishing viscosity
 
 **Spectral vanishing viscosity (SVV)** adds a viscosity that is small or
-zero at large scales and acts mainly near the resolution limit. It goes
-back to Tadmor's analysis of the Burgers equation, as recalled by
-[Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) (§4). The sources
+zero at large scales and acts mainly near the resolution limit.
+[Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) (§4) trace it to
+Tadmor's analysis of the Burgers equation, which they cite. The sources
 use it in two different constructions:
 
 - **implicit SVV** ([Vicente Cruz & Lamballais 2023](/sources/vicentecruz-2023.md)):
@@ -35,14 +35,14 @@ the parameters and the evidence differ, so the three are kept apart below.
 
 ## Classical form
 
-As recalled by Mateo-Gabín et al. (2022, §4, Eqs. 65–67), Tadmor's SVV for
-the Burgers equation is
+Mateo-Gabín et al. (2022, §4, Eqs. 65–67) cite Tadmor's SVV for the
+Burgers equation,
 
 $$\partial_tu+\tfrac12\partial_x(u^2)=\epsilon_N\,\partial_x\big[\mathcal F\star\partial_xu\big],\qquad \epsilon_N\sim\frac1{N^\beta\log N},\ \beta<1,$$
 
 with $\mathcal F\star$ a spectral filter whose coefficients $\varphi_k$
-(page-local) vanish below a cutoff mode $M$ (page-local). Two kernels are
-recalled: the step $\varphi_k=0$ for $k\le M$, 1 for $k>M$; and the smooth
+(page-local) vanish below a cutoff mode $M$ (page-local). They cite two
+kernels: the step $\varphi_k=0$ for $k\le M$, 1 for $k>M$; and the smooth
 kernel of Maday et al. and Kaber, $\varphi_k=\exp[-(k-N)^2/(k-M)^2]$ for
 $k>M$, with $M\approx5\sqrt N$. The authors recall SVV for under-resolved
 turbulence (Karamanos & Karniadakis; Kirby & Sherwin) and its combination
@@ -365,12 +365,11 @@ simulation of turbulent and supersonic flows", citing the group's work.
   the high-pass relaxation term of [Nek5000](/software/nek5000.md) as an
   implicit subgrid model in
   [wall-modelled LES](/methods/wall-modelled-les.md). The term is a
-  momentum source $\chi(\boldsymbol u-\boldsymbol u_{\mathrm{lp}})$, with
-  $\boldsymbol u_{\mathrm{lp}}$ the velocity low-pass filtered in each
-  element's Legendre modal expansion and $\chi$ a constant (both
-  page-local; the source writes $\tilde u$). Following Gillyns et al., they
-  filter the two highest modes with $\chi=100$. Like SVV it acts only on
-  the highest modes *(compiler check, not in the sources)*.
+  momentum source $\chi_f(\boldsymbol u-\boldsymbol u_{\mathrm{lp}})$, with
+  $\boldsymbol u_{\mathrm{lp}}$ (page-local; the source writes $\tilde u$)
+  the velocity low-pass filtered in each element's Legendre modal expansion
+  and $\chi_f$ a constant filter strength (registry §11). Following
+  Gillyns et al., they filter the two highest modes with $\chi_f=100$.
   - On the finest channel mesh at $Re_\tau\approx8000$ ($N=7$) the filter
     gives more near-wall oscillations and core velocity variance than the
     [Vreman](/methods/vreman-model.md) model, and it over-predicts
@@ -397,7 +396,7 @@ simulation of turbulent and supersonic flows", citing the group's work.
   tensor product of one-dimensional kernels as in SVV, and its cutoff
   changes in each element and time step with the ratio of grid spacing to
   Kolmogorov length and with strain and rotation, against the fixed cutoff
-  $M=5\sqrt N$ of Karamanos & Karniadakis recalled above and the fixed
+  $M=5\sqrt N$ of Karamanos & Karniadakis cited above and the fixed
   cutoffs of later SVV work. The construction and its results are on the
   [explicit modal filtering](/methods/explicit-modal-filtering.md) page.
 - [Caban et al. (2026)](/sources/caban-2026.md) (§1) list SVV among the

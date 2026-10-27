@@ -5,7 +5,7 @@ description: "Girimaji's bridging hybrid model that solves RANS-form transport e
 status: established
 aliases: [PANS, partially averaged Navier-Stokes, PANS k-ω SST, bridging model, PANS BHR-LEVM, variable-density PANS, BHR model]
 tags: [pans, hybrid-rans-les, flux-reconstruction, numerical-dissipation, separated-flow]
-timestamp: 2026-10-27T10:57:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Partially-averaged Navier–Stokes
@@ -20,8 +20,8 @@ $$f_k=\frac{k_u}{k},\qquad f_\varepsilon=\frac{\varepsilon_u}{\varepsilon},\qqua
 
 set how much of the turbulence the simulation resolves; $f_k=1$ recovers
 unsteady RANS and $f_k\to0$ approaches DNS. The subscript $u$ marks the
-unresolved part (page-local symbols $k_u=f_kk$, $\varepsilon_u$,
-$\omega_u=f_\omega\omega$). Since $\omega=\varepsilon/(\beta^*k)$, the ratios obey
+unresolved part ($k_u=f_kk$ and $\omega_u=f_\omega\omega$ as in registry
+§11; $\varepsilon_u$ page-local). Since $\omega=\varepsilon/(\beta^*k)$, the ratios obey
 $f_\omega=f_\varepsilon/f_k$. Dzanic et al. (2022) take $f_\varepsilon=1$
 (dissipation scales entirely unresolved, after Girimaji & Wallin and
 Pereira et al.), so $f_\omega=1/f_k$ and the model has the single parameter
@@ -82,7 +82,7 @@ under-resolved DNS (implicit LES with no model,
 aim is "not to evaluate the efficacy of the PANS method, but to show the
 effect of high-order discretizations" on it (§3).
 
-**[Periodic hill](/benchmarks/periodic-hill.md)**, $Re_b=10{,}595$, $64\times64\times32$
+**[Periodic hill](/benchmarks/periodic-hill.md)**, $Re_h=10{,}595$, $64\times64\times32$
 degrees of freedom (97% fewer than the reference LES of Fröhlich et al.,
 85% fewer than a low-order PANS of Razi et al.), $f_k=0.2$ and $0.3$; lower
 $f_k$ is "not supported" at this resolution (§3.1):
@@ -310,7 +310,7 @@ a different, fully developed flow; inside the solver, on the transitional
 flow, it is the one that fails (see
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
 
-## Other uses recalled
+## Other uses cited
 
 Cai et al. (2022) list PANS (Rao et al.) among the "advanced turbulence
 models" assessed on the Ahmed body, next to DES, IDDES, embedded LES,

@@ -106,11 +106,11 @@ total-energy conserving.
 
 # Printed slips
 
-- **§4.2, after Eq. (34):** "$k=6$ in order to trigger 3 vortices roll-ups within the domain (wavelength $\lambda=1/k=1/3$ m)", while the same section prints $t_c=\lambda/\Delta u=2/(k\Delta u)$; *(compiler check, not in the source)* $1/k=1/6$, and $2/k=1/3$ m is the wavelength of $\sin(k\pi x)$.
+- **§4.2, after Eq. (34):** "$k=6$ in order to trigger 3 vortices roll-ups within the domain (wavelength $\lambda=1/k=1/3$ m)", while the same section prints $t_c=\lambda/\Delta u=2/(k\Delta u)$; *(compiler check, not in the sources)* $1/k=1/6$, and $2/k=1/3$ m is the wavelength of $\sin(k\pi x)$.
 - **§4.2:** "$A=0.1$ is the amplitude factor reduction", but $A$ appears neither in Eq. (34) nor in $a_y$.
-- **§4.2, Eq. (33) against the text** *(compiler check, not in the source)*: with $u_0=25$ m/s and $A_u=3/8$, Eq. (33) gives far-field velocities $25(1\pm0.375)=15.625$ and $34.375$ m/s, a difference of 18.75 m/s, while the text gives $\Delta u=10$ m/s and $u_{bw}=20$ m/s. The temperature profile of Eq. (33) does give $0.75T_c$ on top and $1.5T_c$ at the bottom, as stated.
+- **§4.2, Eq. (33) against the text** *(compiler check, not in the sources)*: with $u_0=25$ m/s and $A_u=3/8$, Eq. (33) gives far-field velocities $25(1\pm0.375)=15.625$ and $34.375$ m/s, a difference of 18.75 m/s, while the text gives $\Delta u=10$ m/s and $u_{bw}=20$ m/s. The temperature profile of Eq. (33) does give $0.75T_c$ on top and $1.5T_c$ at the bottom, as stated.
 - **§3.1.1:** the generalized energy is defined as $G^\phi=\rho\phi^2/2$, but the text then writes "$G^E=\rho E^2$".
-- **Table 2:** D+F4 and D-Pt+F4 use "Eq. (29) with $\alpha_f=0.495$ and $N_f=1$"; *(compiler check, not in the source)* the F4 coefficients $a_0$, $a_1$, $a_2$ of §3.2.1 need $N_f=2$ in the sum $\sum_{n=0}^{N_f}$ of Eq. (29).
+- **Table 2:** D+F4 and D-Pt+F4 use "Eq. (29) with $\alpha_f=0.495$ and $N_f=1$"; *(compiler check, not in the sources)* the F4 coefficients $a_0$, $a_1$, $a_2$ of §3.2.1 need $N_f=2$ in the sum $\sum_{n=0}^{N_f}$ of Eq. (29).
 - **Table 1, PEP-IG row:** the energy equation is Eq. (24) (internal energy), yet the row carries a $C_{\rho k}=C^{KGP}_{\rho k}$ entry and "$\eta=0$" under the $C_p$ (pressure-equation convection) column.
 - **Notation:** "$v_0=1$ m/s" (§4.1.1) against $u_0$ (§4.1.2); Fig. 7 caption "$y/L_y=0.125$", "$x/L_x=0$" against the text's "$y/L$", "$x/L$"; §4.3 "Favre-averaged fluctuations for temperature are shown in Fig. 10(a) for bottom and walls" (missing "top").
 - **References:** [60] (Ducros et al. 1999) is printed with volume "1252", kept as printed and left to a venue check; [18] prints "F. Toro" and [58] "E.F. Toro" for the same author.

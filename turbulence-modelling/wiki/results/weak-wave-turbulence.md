@@ -5,7 +5,7 @@ description: "Weak wave turbulence describes cascades of weakly nonlinear waves 
 status: established
 aliases: [weak turbulence, wave turbulence, WT, Kolmogorov–Zakharov spectrum, KZ spectrum, weak Alfvén-wave turbulence, magneto-capillary wave turbulence, MHD wave turbulence]
 tags: [mhd, plasma, dns, anisotropy]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Weak wave turbulence (magneto-capillary waves)
@@ -37,7 +37,7 @@ Stated by Kochurin et al. (2022, pp. 1, 5) and, for MHD, by Schekochihin
   counter-propagating waves force one member of every triad to have
   $k_\parallel=0$, so energy moves only in $k_\perp$ at fixed $k_\parallel$
   (Schekochihin 2022, Eq. 4.2; the transfer is "frozen in the field
-  direction", Shebalin et al. 1983, as recalled by Kochurin et al. 2022).
+  direction", in the words of Kochurin et al. 2022, who cite Shebalin et al. 1983).
 - **Flux scaling.** For a three-wave system, the spectral amplitude scales as
   the square root of the energy flux; Kochurin et al. (p. 5) cite this
   $\varepsilon_s^{1/2}$ dependence ($\varepsilon_s$ the energy flux, defined
@@ -65,7 +65,7 @@ spectrum of anisotropic shear-Alfvén waves ($k_\perp\gg k_\parallel$),
 $$\mathcal S^m(k)=C_m\,\varepsilon_s^{1/2}v_A^{-3/2}k_\perp^{-3},\qquad C_m=1.467,\qquad E^m(k)=v_A^2k\,\mathcal S^m(k),$$
 
 with the constant taken from Galtier (2021) and the remark that "a
-$\sqrt{2\pi}$ factor was missing" in Galtier et al. (2000), as recalled
+$\sqrt{2\pi}$ factor was missing" in Galtier et al. (2000)
 ($\mathcal S^m$, $\varepsilon_s$ page-local, defined below). *(Compiler
 check, not in the sources: $E^m=v_A^2k\mathcal S^m\propto C_m\varepsilon_s^{1/2}v_A^{1/2}k_\perp^{-2}$,
 the $k_\perp^{-2}$ exponent and $(\varepsilon v_A)^{1/2}$ dependence of the
@@ -100,7 +100,7 @@ $\varsigma$); $\varepsilon_s$ is the energy flux per unit area and density
 (the source writes $P$).
 
 **Linear waves.** For an ideal ferrofluid of infinite depth, gravity
-neglected, Kochurin et al. (2022, Eq. 1, recalled from Melcher 1961) write
+neglected, Kochurin et al. (2022, Eq. 1, citing Melcher 1961) write
 
 $$\omega^2(\boldsymbol k)=\frac{B^2}{\mu_{\mathrm{eff}}\rho}k_x^2+\frac{\sigma_s}{\rho}k^3,\qquad v_A^2=\frac{B^2}{\mu_{\mathrm{eff}}\rho},$$
 
@@ -131,11 +131,11 @@ $V_A^2=0,25,100,300$, statistically stationary after $t\approx50$, run to
 $t=500$; mean steepness 0.16, almost independent of $B$. The authors note
 that surface waves collapse under an infinitely strong horizontal field for
 finite $\mu_r$, so viscosity and surface tension are needed to regularize
-the simulation. The title's "direct numerical simulation" thus denotes a
-truncated Hamiltonian model with hyperviscosity, not the Navier–Stokes sense
-of [DNS](/definitions/direct-numerical-simulation.md); "three-dimensional"
-refers to the liquid, while the computed field $\varsigma(x,y)$ is
-two-dimensional.
+the simulation. What the title calls "direct numerical simulation" solves
+this truncated Hamiltonian model with hyperviscosity, not the Navier–Stokes
+equations (compare [DNS](/definitions/direct-numerical-simulation.md));
+"three-dimensional" refers to the liquid, while the computed field
+$\varsigma(x,y)$ is two-dimensional.
 
 **Results** (pp. 3–5, Figs. 1–4):
 
@@ -172,7 +172,7 @@ two-dimensional.
   interactions mainly across $B$, with triads of comparable wavenumbers,
   "suggesting that wave interactions are local" — unlike the nonlocal
   interactions and flat spectrum predicted for 2D MHD weak turbulence by
-  Tronko et al. (2013), as recalled (p. 5).
+  Tronko et al. (2013), whom they cite (p. 5).
 
 **Different physics, same scaling.** The authors stress that in a plasma no
 wave propagates across the field and magnetic energy reaches the
@@ -198,8 +198,7 @@ as viscous as water, which would suppress wave interactions (Conclusion).
   $\mathcal S(\omega)=\mathcal S(k)\,dk/d\omega\propto k^{-15/4}k^{-1/2}=k^{-17/4}=\omega^{-17/6}$;
   the Fig. 2 caption correctly writes $\omega=k_y^{3/2}$.)* Eq. (3) prints the
   energy spectrum with a lowercase $v_a$ where $v_A$ is defined.
-- **Not a closure.** WT is a theory of spectra; it enters modelling only as a
-  reference against which simulations at finite resolution are judged.
+- **Not a closure.** Neither source proposes a turbulence closure.
 
 # Citations
 

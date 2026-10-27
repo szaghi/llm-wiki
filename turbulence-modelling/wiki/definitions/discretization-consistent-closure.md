@@ -5,7 +5,7 @@ description: "An LES closure built for the discrete equations actually solved, s
 status: established
 aliases: [filter-consistent closure, discretize-first closure, model-data consistency, computational subgrid stress]
 tags: [les, sgs-model, implicit-les, data-driven, numerical-dissipation]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T15:48:00Z
 ---
 
 # Discretization-consistent closure
@@ -87,9 +87,9 @@ the exact closure term of an implicitly filtered LES cannot be computed
 even from the full DNS solution: doing so would require applying the
 scheme's spatial and temporal operators. Supervised learning of the
 closure is then, "from our perspective, ill-posed, since the training
-targets are generally unknown" (§1). Training on targets from an
-approximating explicit filter (a box filter for finite volumes) is
-recalled from their ref. [8] to cause "severe inconsistencies between the
+targets are generally unknown" (§1). Citing their ref. [8], they state
+that training on targets from an approximating explicit filter (a box
+filter for finite volumes) causes "severe inconsistencies between the
 training and actual simulations" and inaccurate or unstable LES. RL
 avoids the problem because the policy is trained by interacting with the
 LES, so the implicit filter is in the training loop by design.
@@ -310,7 +310,7 @@ dealiasing one) that does not apply there.
 - **Learned closure of all unclosed terms.** Sirignano & MacArt (2023, §2,
   Eqs. 2.2–2.3) let one neural network replace the subgrid-stress
   divergence together with the extra terms of a non-uniform filter on a
-  non-uniform mesh (commutation errors, recalled from Ghosal 1996) and
+  non-uniform mesh (commutation errors, citing Ghosal 1996) and
   the boundary terms from filtering at an immersed body. The network is
   trained through the solver; the authors raise the risk of overfitting
   "to the numerical methods used for training" and test it
@@ -397,9 +397,7 @@ solver.
   the primary separation is similar and the wake less accurate, but the
   difference is smaller than the gap to the conventional models, and the
   models are "at least stable, and in some cases accurate" on out-of-sample
-  numerics. Both transfers are within one discretization family; no source
-  moves a closure across scheme families (DG to finite differences, say)
-  *(compiler check, not in the sources)*.
+  numerics.
 - **A supervised closure that judges the discretization error small.**
   [Kim et al. (2024)](/sources/kim-2024.md) train pointwise
   [neural-network SGS models](/methods/neural-network-sgs-model.md) on
@@ -433,8 +431,8 @@ solver.
   for comparison.
 - **Binding against robustness: what each side prints.** Kurz et al.
   (2023, §1) call supervised learning of an implicitly filtered DG-LES
-  closure ill-posed and recall that surrogate targets from an explicit
-  filter cause "severe inconsistencies"; Beck & Kurz (2023) and
+  closure ill-posed and, citing their ref. [8], state that surrogate
+  targets from an explicit filter cause "severe inconsistencies"; Beck & Kurz (2023) and
   Lozano-Durán & Bae (2023) bind the closure to its solver on purpose.
   Wu & Lele (2026, §1) call that binding a limit on transferability and
   train on explicitly filtered data, with several filters. The claims do
@@ -451,7 +449,7 @@ solver.
   the first-derivative filter "non-dissipative" (§1, §3.2.1), "dissipative
   … without inducing numerical diffusion" (abstract) and "only dissipative
   … (not diffusive)" (§5.1). By its Eq. 27 that filter changes only the
-  phase speed; the word "dissipative" is used in two senses there.
+  phase speed.
 - **Definitions of "implicit LES" differ.** Agdestein & Sanderse (2025,
   §1) call any LES that keeps the DNS equations in their original form and
   adds a closure, whether or not the filter is known, "implicit LES".

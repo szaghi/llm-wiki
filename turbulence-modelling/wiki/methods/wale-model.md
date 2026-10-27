@@ -5,7 +5,7 @@ description: "The wall-adapting local eddy-viscosity (WALE) model builds a stati
 status: established
 aliases: [WALE, wall-adapting local eddy-viscosity model, Nicoud–Ducros model]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-27T11:01:00Z
+timestamp: 2026-10-27T15:48:00Z
 ---
 
 # WALE model
@@ -74,6 +74,8 @@ channel LES, which all their cases capture accurately.
 | not printed | not printed | wall-resolved incompressible OpenFOAM LES of a model wind turbine | [Rismondo et al. (2025)](/sources/rismondo-2025.md), §2.1 |
 | not printed | not printed | second-order finite-volume reference LES of a compressor cascade (DLR TRACE) | [Möller et al. (2024)](/sources/moller-2024.md), §III.A |
 | 0.5, after the channel calibration of Weickert et al. at $Re_\tau=395$ and the pipe recommendation of Nicoud & Ducros (cited); $C_w^2\approx10.6C_s^2$ stated for isotropic turbulence | $(\Delta x_1\Delta x_2\Delta x_3)^{1/3}$ | gas-kinetic finite-volume LES of channel flow at $Re_\tau=180$ | [Zhao et al. (2021)](/sources/zhao-2021-c.md), §III.C, §IV |
+| 0.325 | $(\Delta x_1\Delta x_2\Delta x_3)^{1/3}$ | compressible finite-difference wall-modelled and wall-resolved LES of an impinging-shock boundary-layer interaction at $M_\infty=2.28$ (URANOS) | [De Vanna et al. (2022)](/sources/devanna-2022.md), §2.1, Eqs. (2)–(4) |
+| 0.55 | "usually $\Delta\approx3\Delta x_{\min}$" | compressible immersed-boundary wall-modelled LES up to Mach 7.2, finite differences on block-structured adaptive Cartesian grids (CHAMPS) | [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.2, Eq. (7) |
 
 The printed constants belong to different codes, filter widths and
 uses (a small-scale VMS viscosity against a classical LES model); no
@@ -84,7 +86,8 @@ instead (below).
 
 - **Variational multiscale model on DG-type ILES.** Lederer et al. (2023,
   §3.1, §4.1, §5.1, Figs. 1, 6, 8–9) let the WALE viscosity act only on the
-  small resolved scales: the strain is reduced by its $L^2$ projection on
+  small resolved scales (see the
+  [variational multiscale method](/methods/variational-multiscale-method.md)): the strain is reduced by its $L^2$ projection on
   element-wise polynomials of degree $m$ ($m=1$ for $N=3$, $m=3$ for $N=6$).
   In channel flow at $Re_\tau=392.24$ the model gives about the same
   statistics as the no-model [implicit LES](/definitions/implicit-les.md)
@@ -199,6 +202,26 @@ instead (below).
   below the no-model run (177.89); its cost per step is 0.552 s against
   0.520 s without model (Table III). See
   [implicit LES](/definitions/implicit-les.md).
+- **Compressible wall-modelled LES of shock interactions.**
+  [De Vanna et al. (2022)](/sources/devanna-2022.md) (§2.1) use WALE with
+  the isotropic part of the stress neglected and a subgrid Prandtl number
+  of 0.9, and recall that it damps the subgrid viscosity at walls without
+  any bulk-to-wall transition, $\mu_t/\mu\sim(y^+)^3$. In their wall-modelled
+  LES of an oblique shock/boundary-layer interaction, the separation bubble
+  is too long on coarse grids, interaction length $5.0$–$7.0\,\delta_0$
+  against 3.3 for wall-resolved LES and 4.18 in the experiment; the authors
+  attribute the oversizing to the wall model together with subgrid and
+  shock-capturing viscosity, which "tends to laminarize the bubble" at low
+  resolution (§4.5–4.6; see [wall-modelled LES](/methods/wall-modelled-les.md)).
+  In hypersonic wall-modelled LES, [van Noordt et al. (2022)](/sources/vannoordt-2022.md)
+  (§2.2) keep the incompressible WALE model unmodified, saying it "serves as an implicit filter" and that the results show no
+  significant deviation from experiment and DNS without a compressibility
+  correction; the model is not varied, and the paper's sensitivity study
+  concerns the numerical dissipation of the convective flux (§3.1–3.2; see
+  [numerical dissipation](/properties/numerical-dissipation.md)).
+- **Lattice Boltzmann LES.** [Simonis et al. (2022)](/sources/simonis-2022.md)
+  (§1) list WALE among the subgrid models already combined with lattice
+  Boltzmann methods (cited).
 - **Listed in codes.** WALE is among the explicit LES models of the DG code
   [HORSES3D](/software/horses3d.md) ([Ferrer et al. 2023](/sources/ferrer-2023.md),
   §4.1), with no formula printed. [Haering et al. (2022)](/sources/haering-2022.md)
@@ -246,3 +269,6 @@ instead (below).
 - [Möller et al. (2024)](/sources/moller-2024.md) — accepted manuscript: §III.A, Table 3.
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §I.
 - [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III.C, Eq. (18); §IV; §V, Tables III, V.
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §2.1, Eqs. (2)–(5); §4.5–4.6.
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.2, Eq. (7); §3.1–3.2.
+- [Simonis et al. (2022)](/sources/simonis-2022.md) — §1.

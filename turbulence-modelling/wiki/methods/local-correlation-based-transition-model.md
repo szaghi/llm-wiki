@@ -5,7 +5,7 @@ description: "RANS laminar–turbulent transition models that evaluate an empiri
 status: established
 aliases: [LCTM, γ-Reθ-SST, separation-induced transition correction, Suluksna–Juntasaro calibration, Langtry–Menter calibration, local correlation-based transition modelling, γ-Reθ model, gamma-Re-theta, γ-SST, one-equation γ model, γ-alg-SST, algebraic LCTM model, algebraic intermittency model]
 tags: [rans, transition, eddy-viscosity, boundary-layer, separated-flow]
-timestamp: 2026-10-27T10:56:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Local-correlation-based transition models
@@ -26,7 +26,7 @@ needs no transport equation
 
 ## Family and lineage
 
-As recalled by Menter et al. (2022, §1):
+Menter et al. (2022, §1) trace the lineage:
 
 - a one-equation intermittency model (Menter et al. 2002), calibrated on
   free-stream turbulence only;
@@ -73,7 +73,8 @@ et al. (2014).
 
 The symbols $Re_V$, $\Omega_V$, $\mathrm{Rat}$, $Tu_l$, $\lambda_{\theta l}$,
 $FPG$, $k_h$, $\gamma_b$, $\Phi_{1,2,3}$, $F_{RV}$ and the named coefficients
-below are page-local transcriptions of the source's; $\gamma$ is the
+below are page-local transcriptions of the source's ($Tu_l$ and
+$\lambda_{\theta l}$ as in registry §11); $\gamma$ is the
 intermittency (registry, transition pages only). Equations from Menter et
 al. (2022), §2, Eqs. 1–22.
 
@@ -138,8 +139,8 @@ model reads as an LCTM with $Re_{\theta c}\sim Tu_l^{-2}$ (Eqs. 23–24).
 
 Carreño Ruiz & D'Ambrosio (2022) print the two-equation $\gamma$-$Re_\theta$
 model coupled to [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) as
-implemented in STAR-CCM+ 14.06 (Menter et al. 2006; Langtry 2006; Langtry &
-Menter 2009, as recalled), and test it on airfoils at very low Reynolds
+implemented in STAR-CCM+ 14.06 (after Menter et al. 2006, Langtry 2006 and
+Langtry & Menter 2009, which they cite), and test it on airfoils at very low Reynolds
 number ([Carreño Ruiz & D'Ambrosio (2022)](/sources/carrenoruiz-2022.md),
 §2, Eqs. 1–20). Page-local symbols: $\mathcal R_{\theta t}$ the transported
 onset Reynolds number (the source writes it with an overbar, which the
@@ -508,6 +509,30 @@ ingested; not the Huang et al. (2025) of the bundle) does, "changes the
 meaning" of $Re_{\theta c}$ (§III). Their comparison model in the figures
 is labelled $\gamma$-SST and cited to Menter et al. (2022) (§IV).
 
+## Data-driven corrections
+
+Sandberg & Zhao (2022, §4.3) review machine-learnt corrections of
+transition models, as cited works ([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md)):
+
+- a field-inversion correction of the intermittency source term for
+  bypass transition (Duraisamy et al. 2015);
+- a convolutional network that maps integral quantities of the velocity
+  profile to the output of a transition model for Tollmien–Schlichting
+  transition (Zafar et al. 2020);
+- field inversion of the $k$-$\omega$-$\gamma$-$A_r$ model for airfoils
+  (Yang & Xiao 2020);
+- a neural-network production term in the transport equation of the
+  amplification factor, trained on linear-stability data (Barraza et al.
+  2021);
+- CFD-driven, multi-objective training of corrections to a
+  [laminar-kinetic-energy model](/methods/laminar-kinetic-energy-transition-model.md)
+  for low-pressure turbines (Akolekar et al. 2021).
+
+They call data-driven transition modelling "still far from mature" and
+illustrate the three transition paths a model must cover (natural, bypass
+in a compressor, wake-induced in a turbine) with published DNS (§2.1,
+Fig. 3; see [field inversion](/methods/field-inversion-machine-learning.md)).
+
 ## Benchmarks proposed for calibration
 
 Slaughter et al. (2023) offer an implicit LES of the
@@ -648,3 +673,4 @@ finite-volume reference (§4.2).
 - [Batther & Lee (2022)](/sources/batther-2022.md) — §3.1, §4.3.1, Figs. 17–20, §5.
 - [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §II–§IV.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.3, §3.3.3, §3.3.3.3–§3.3.3.4.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.1 Fig. 3, §4.3.

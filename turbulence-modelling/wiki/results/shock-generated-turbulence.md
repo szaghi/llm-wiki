@@ -5,17 +5,17 @@ description: "A strong shock crossing a medium with order-one density fluctuatio
 status: established
 aliases: [shock–inhomogeneity interaction, shock through a non-uniform medium, turbulent Rankine–Hugoniot relations, turbulent jump conditions, shock-driven turbulence, shocklets, shock networks, shock–turbulence interaction, supersonic isothermal turbulence, sonic scale]
 tags: [compressible, implicit-les, plasma, astrophysics, dg, numerical-dissipation]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Shock-generated turbulence and turbulent shock jump relations
 
 When a strong planar shock propagates into a medium whose density varies in
 space, the post-shock flow becomes turbulent, a process the source below
-scales with linear Richtmyer–Meshkov theory. As recalled by that source,
-most theory of
+scales with linear Richtmyer–Meshkov theory. That source cites the
+theory of
 shock–turbulence and shock–inhomogeneity interaction (linear interaction
-analysis, rapid distortion) assumes small upstream perturbations and a
+analysis, rapid distortion) as mostly assuming small upstream perturbations and a
 single passage of the fluid through one shock front.
 [Davidovits et al. (2022)](/sources/davidovits-2022.md) study the regime the
 theory excludes: density fluctuations of order one, which break the front
@@ -82,14 +82,14 @@ by [numerical dissipation](/properties/numerical-dissipation.md) (§II A).
 
 ## Velocity dispersion: a Richtmyer–Meshkov scaling
 
-As recalled by [Davidovits et al. (2022)](/sources/davidovits-2022.md),
-§III, earlier work on young supernova remnants (Inoue et al.) found the
+[Davidovits et al. (2022)](/sources/davidovits-2022.md), §III, cite
+earlier work on young supernova remnants (Inoue et al.) that found the
 post-shock velocity dispersion "reasonably predicted by the result of linear
 analysis of the Richtmyer-Meshkov instability". Adapting that result to a
 continuous density field, the authors (§III, Fig. 4) define a pre-shock
 average Atwood number
 $$A_\sigma=\frac{\sigma_\rho/\langle\rho\rangle}{1+\sigma_\rho/\langle\rho\rangle}$$
-(page-local; it is not the two-fluid Atwood number of
+(registry §11; it is not the two-fluid Atwood number of
 [Rayleigh–Taylor mixing](/benchmarks/rayleigh-taylor-mixing.md)) and find
 $\sigma_v\propto A_\sigma U_s$. The void size also matters. By a dimensional argument
 (energy injection $dE/dt\sim v^3/l$ at a comparable rate, forcing scale
@@ -117,8 +117,8 @@ dispersion over the mean post-shock sound speed (volume-weighted, which
 equals the mean local Mach number only for isothermal fluctuations), the same
 fit gives
 $$M_t=0.52\left(\frac{r_v}{45}\right)^{1/3}A_\sigma\,\mathcal M_s\qquad\text{(Eq. 3)}.$$
-For an unperturbed normal shock the Rankine–Hugoniot relations give, as
-recalled by the authors,
+For an unperturbed normal shock the Rankine–Hugoniot relations, which
+the authors cite, give
 $$\mathcal M_s=\frac{(\gamma+1)M_s^2}{\sqrt{(2\gamma M_s^2-\gamma+1)\big((\gamma-1)M_s^2+2\big)}}\;\xrightarrow{M_s\to\infty}\;\frac{\gamma+1}{\sqrt{2\gamma(\gamma-1)}},$$
 which is $4/\sqrt5\approx1.79$ for $\gamma=5/3$. A stronger drive therefore
 raises $\sigma_v$ but hardly $M_t$: "a rapidly diminishing return to driving
@@ -130,8 +130,8 @@ effective $\gamma$ once the material ionizes (§III, §IV, Fig. 5).
 ## Favre-averaged jump relations with Reynolds stress
 
 Following the turbulent jump conditions of Lele and the post-shock
-definitions of Larsson et al., as recalled by
-[Davidovits et al. (2022)](/sources/davidovits-2022.md), §III, the broken-up
+definitions of Larsson et al., which
+[Davidovits et al. (2022)](/sources/davidovits-2022.md), §III, cite, the broken-up
 transition is treated as one average normal shock, steady in its own frame.
 With no pre-shock turbulence, the triple correlation and the
 temperature–velocity correlation dropped, and $u$ the shock-normal velocity,
@@ -178,13 +178,15 @@ shock–turbulence experiments (not shown).
 
 When the turbulence itself is supersonic, or becomes so locally, it builds
 its own shocks; nothing is imposed from outside. Three sources of the bundle
-use such flows to test discretizations, one more offers decaying data,
-and a shock train in a channel gives a wall-bounded counterpart with
-imposed shocks.
+use such flows to test discretizations, one more offers decaying data and
+another uses decaying data as an implicit-LES test, and a shock train in a
+channel and a compression/expansion ramp give wall-bounded counterparts
+with imposed shocks.
 Page-local symbols here: $l_s$ and $L_{\mathrm{inj}}$ the sonic and injection
 scales, $v(l)$ the velocity increment at separation $l$ from the
-second-order structure function, $\varepsilon_s$ and $\varepsilon_d$ the
-solenoidal (enstrophy) and dilatational dissipation of the Stokes stress.
+second-order structure function; $\varepsilon_s$ and $\varepsilon_d$
+(registry §11) the solenoidal (enstrophy) and dilatational dissipation of
+the Stokes stress.
 
 **Driven supersonic isothermal turbulence.**
 [Cernetic et al. (2024)](/sources/cernetic-2024.md) (read in arXiv v2) drive
@@ -269,6 +271,11 @@ turbulence at turbulent Mach numbers 0.8 to 1.6,
 (dilatation below $-3$ times its rms) as long narrow ribbons next to
 block-like expansion regions (detail on
 [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)).
+[Deng et al. (2022)](/sources/deng-2022.md), §4.15, run the decaying
+case "with eddy shocklets" of Johnsen et al. only as an implicit-LES test
+of the velocity spectrum, with no shocklet statistics (recorded on
+[homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md));
+their shock tests are inviscid.
 
 **Turbulence amplified through a shock train.** A wall-bounded counterpart,
 with the shocks imposed by back pressure rather than formed by the
@@ -296,6 +303,34 @@ neither the wall-unit resolution nor the averaging time. The
 inviscid Shu–Osher shock/entropy-wave problem, not turbulence (§3.1). See
 also [shock/turbulent boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
 and [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
+
+**Turbulence through the shocks of a compression/expansion ramp.**
+[Tonicello et al. (2022)](/sources/tonicello-2022.md) run a DNS of a Mach
+2.91 boundary layer ($Re_\theta=2900$) over a 24° compression ramp
+followed by an expansion corner, in a spectral-difference code at $N=5$
+with an artificial bulk viscosity that regularizes the shocks, which stay
+under-resolved: the authors restrict the term DNS to the scales of the
+turbulence (§2.2; see
+[bulk viscosity](/definitions/bulk-viscosity.md) and
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+Downstream of the interaction the spectra keep an inertial range that is
+longer than upstream, with no energy accumulation near the grid Nyquist
+wavenumber (§3.2, Figs. 7–8). Conditioned on a local Mach number above
+one, the density PDF downstream extends to larger values while the
+pressure PDFs are insensitive to the sonic condition, which the authors
+attribute partly to shocklets (§3.2, Fig. 11). Their a priori analysis of
+the subgrid energy transfer finds compression associated with forward
+transfer and expansion with backscatter, also in the mean near the
+expansion corner (§4, Figs. 14, 23–24; detail on
+[energy backscatter](/definitions/energy-backscatter.md) and
+[pressure dilatation](/definitions/pressure-dilatation.md)). The subgrid
+Mach number $M_{\mathrm{sgs}}=\sqrt{2\bar\rho k_{\mathrm{sgs}}/(3\gamma\bar p)}$
+(page-local, Eq. 4.14) reaches about 0.32 in the Favre mean and about 0.42
+in the fields filtered at $4h$ and $8h$ ($h$ the DNS resolution), above
+the value of about 0.3 beyond which they expect non-negligible
+compressibility; larger $M_{\mathrm{sgs}}$ goes with stronger forward
+transfer in the mean and with both directions in the filtered fields
+(§4.2, Figs. 20–22, 25–26).
 
 Unlike the shock-tube runs above, none of the turbulence-generated
 flows has a single mean shock, so the Favre-averaged jump relations do not apply to them; their
@@ -359,3 +394,5 @@ judge discretizations by how they resolve or smear them.
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — §5.2, Fig. 11 (supersonic Taylor–Green vortex as GALÆXI validation).
 - [Cao et al. (2022)](/sources/cao-2022.md) — §3.4, Fig. 15 (shocklets in decaying compressible isotropic turbulence).
 - [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §3.1 (Shu–Osher problem labelled shock–turbulence interaction); §3.2.2, Table 4; §3.2.3, Figs. 30–36 (shock-train DNS in an isolator channel, Reynolds-stress amplification).
+- [Deng et al. (2022)](/sources/deng-2022.md) — §4.15, Eq. (40), Figs. 23–25 (decaying compressible isotropic turbulence with eddy shocklets as an implicit-LES test).
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.2; §3.2, Figs. 7–8, 11 (spectra and Mach-conditioned PDFs downstream of a compression/expansion ramp); §4.1–4.2, Eq. (4.14), Figs. 14, 20–26 (compression, expansion and subgrid Mach number in the energy transfer).

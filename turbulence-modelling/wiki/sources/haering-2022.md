@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Rev. Fluids 7:014603"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physical_Review_Fluids_Haering_Active_model_split_hybrid_RANSLES.pdf"
 tags: [hybrid-rans-les, les, rans, sgs-model, eddy-viscosity, log-layer-mismatch]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Summary
@@ -25,7 +25,7 @@ find in most hybrid methods:
 - RANS transport equations fed with fluctuating inputs.
 
 The core idea is model splitting. The [Boussinesq](/definitions/boussinesq-hypothesis.md) form is
-replaced by $\tau^d_{ij}\approx-2\nu_s\langle\bar S_{ij}\rangle-2\nu_eS^>_{ij}$, with two non-fluctuating
+replaced by $\tau^d_{ij}\approx-2\nu_s\langle\bar S_{ij}\rangle-2\nu_e\bar S'_{ij}$, with two non-fluctuating
 viscosities: $\nu_s$ acts on the mean strain and $\nu_e$ on the resolved fluctuating strain.
 Gradient-diffusion scaling on a triple decomposition gives $\nu_s=\alpha_k(2-\alpha_k)\nu_{\mathrm{tot}}$
 and $\nu_e=\alpha_k(1-\alpha_k)\nu_{\mathrm{tot}}$, with $\alpha_k=k_{\mathrm{sgs}}/k_{\mathrm{tot}}$.
@@ -69,7 +69,7 @@ translated (see the Notation map).
 4. The cube root of the cell volume tends to the smallest cell length at high aspect ratio and overestimates the effective resolution; cell-diagonal measures are preferable (§II C, p. 6). **Stated**.
 5. Feeding fluctuating $k$ and $\varepsilon$ to the RANS destruction term $C_{\varepsilon2}\varepsilon^2/k$ makes its mean a complicated function of the resolved fraction, shown by a second-order Taylor expansion (Eq. 2); "what goes in to, and what comes out of, RANS-based transport models must be expected values" (§II D, p. 7). **Derived**.
 6. Mean-flow accuracy requires two statistical conditions on the subgrid model: the mean deviatoric stress, $\langle\tau^d_{ij}\rangle\approx-\langle2\nu_t\bar S_{ij}\rangle$ (Eq. 4), and the mean energy transfer, $\langle\tau_{ij}\partial_j\bar u_i\rangle\approx-\langle2\nu_t\bar S_{ij}\partial_j\bar u_i\rangle$ (Eq. 5); RANS models are built for the first only, LES models calibrated for the second only (§III, pp. 8–9). **Derived/Stated**.
-7. The split form $\tau^d_{ij}\approx-2\nu_s\langle\bar S_{ij}\rangle-2\nu_eS^>_{ij}$ (Eq. 8) can meet both conditions for flows with a one-dimensional mean, provided $\nu_s$ and $\nu_e$ do not fluctuate; otherwise cross-contributions appear (§III A, p. 9). **Derived**.
+7. The split form $\tau^d_{ij}\approx-2\nu_s\langle\bar S_{ij}\rangle-2\nu_e\bar S'_{ij}$ (Eq. 8) can meet both conditions for flows with a one-dimensional mean, provided $\nu_s$ and $\nu_e$ do not fluctuate; otherwise cross-contributions appear (§III A, p. 9). **Derived**.
 8. Gradient-diffusion scaling on the triple decomposition gives $\nu_s=\alpha_k(2-\alpha_k)\nu_{\mathrm{tot}}$ and $\nu_e=\alpha_k(1-\alpha_k)\nu_{\mathrm{tot}}$ (Eq. 23), so $\tau^d_{ij}=-2\nu_t\bar S_{ij}$ "is not generally valid": mean and fluctuating gradients scale differently (§III B, Eqs. 15–24, pp. 11–12). **Derived**. *(Compiler check, not in the sources: Eq. 21 minus Eq. 22 gives the coefficients $2\alpha_k-\alpha_k^2$ and $\alpha_k-\alpha_k^2$, as printed.)*
 9. For filters and projections that minimize the $L^2$ error the mixed terms vanish; for second-order finite volume, closest to box filtering, they do not, so $\alpha_k\neq\beta_k$ (§III B, p. 12). **Stated**.
 10. Box filtering of channel DNS at $Re_\tau=1000$ ($y^+<300$ excluded, six filter sizes, six snapshots) gives $\alpha_k=\beta_k^{1.7}$; in isotropic turbulence at infinite Reynolds number the Kolmogorov spectrum gives $\alpha_k\propto\beta_k$ (§III B, Fig. 1a). **Shown**.

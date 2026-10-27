@@ -5,7 +5,7 @@ description: "The near-wall closure of RANS that imposes a law of the wall at th
 status: established
 aliases: [wall function, WF, adaptive wall function, two-velocity-scale wall function, explicit wall function, RANS wall law]
 tags: [rans, wall-model, boundary-layer, dg]
-timestamp: 2026-10-27T10:59:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Wall functions for RANS
@@ -230,8 +230,9 @@ The sublayer exponent of $k$ follows from the model constants:
 Elzaabalawy et al. (2023, §3.1.2, Eq. 58) print the viscous-sublayer
 solution $k^+=C_k(y^+)^{p_k}$ with $p_k=\tfrac12+\sqrt{\tfrac14+6\beta^*/\beta_\omega}$
 and $C_k$ between 0.0025 and 0.0032 depending on the $k$-$\omega$ version
-(after Eça & Hoekstra, as cited). With $\beta^*=0.09$ and $\beta_\omega=0.075$
-this gives $p_k=3.23$, the exponent of Mozaffari et al.; with Wilcox's 1998
+(after Eça & Hoekstra, as cited). With the constants Elzaabalawy et al.
+print, $\beta^*=0.09$ and $\beta_\omega=0.075$ (their TNT set), this
+gives $p_k=3.23$, the exponent of Mozaffari et al.; with their Wilcox 1998
 value $\beta_\omega=0.072$ it gives 3.28 and with Ghidoni et al.'s 0.0708 it
 gives 3.31 *(compiler check, not in the sources)*.
 

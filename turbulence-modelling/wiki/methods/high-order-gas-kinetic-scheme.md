@@ -5,7 +5,7 @@ description: "A high-order gas-kinetic scheme is a finite-volume Navier–Stokes
 status: established
 aliases: [HGKS, HGKS-cur, high-order GKS, gas-kinetic scheme, GKS, BGK finite-volume scheme]
 tags: [gas-kinetic, dns, implicit-les, compressible, numerical-dissipation, gpu]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # High-order gas-kinetic schemes for turbulence simulation
@@ -46,7 +46,7 @@ registry's $\boldsymbol u$.
 
 ## Kinetic model and interface flux
 
-The BGK equation, as recalled by Cao et al. (2022, §2.1, Eqs. 1–2), is
+The BGK equation, as stated by Cao et al. (2022, §2.1, Eqs. 1–2), is
 $$\partial_tf+\boldsymbol c\cdot\nabla f=\frac{g-f}{\tau_{\mathrm{col}}},$$
 with the compatibility condition $\int(g-f)\psi\,d\Xi=0$ for the collision
 invariants $\psi=(1,c_1,c_2,c_3,\tfrac12(|\boldsymbol c|^2+|\vartheta|^2))^{\mathsf T}$,
@@ -133,7 +133,7 @@ variants are labelled by the normal and tangential orders:
   fifth- or seventh-order tangential reconstruction done direction by
   direction (face averages to line averages to Gauss-point values);
 - **C5T5**, a **fifth-order compact** reconstruction following the compact
-  GKS of Ji et al. (as recalled by Zhao et al. 2023a, §3.2): each cell
+  GKS of Ji et al. (as Zhao et al. 2023a, §3.2, cite it): each cell
   carries its average and a cell-averaged derivative, the latter obtained
   from time-evolved interface values by the Newton–Leibniz formula
   $(Q_x)_i=(Q_{i+1/2}-Q_{i-1/2})/h$ (Eq. 15), and a fifth-order Hermite WENO
@@ -146,8 +146,8 @@ The authors argue that the compact stencil "has the consistent physical and
 numerical domains of dependence" (abstract, §1, §6); this is a design
 argument, not a test in the paper.
 
-**Gauss points decide the order.** As recalled by Zhao et al. (2023a, §4)
-from Ji's thesis, "to achieve a 2Mth- or (2M-1)th-order spatial accuracy, at
+**Gauss points decide the order.** Zhao et al. (2023a, §4) cite Ji's
+thesis: "to achieve a 2Mth- or (2M-1)th-order spatial accuracy, at
 least M×M Gaussian points are required for the cell interface", and the
 leading error is $O(h_n^{r_n}+h_t^{r_t}+\Delta t^4)$ for normal and
 tangential orders $r_n$, $r_t$ (page-local $h_n$, $h_t$ the normal and
@@ -522,12 +522,12 @@ differences between precisions (Figs. 10–13).
   preprint of July 2021, with five authors (Cao, Pan, Wan, Xu, Chen); the
   version of record (J. Sci. Comput., 2024) lists four. Claims and
   locators are those of the preprint.
-- **Recalled limits of other schemes.** Cao et al. (2022, §1, §3.4) state
+- **Cited limits of other schemes.** Cao et al. (2022, §1, §3.4) state
   that compact finite differences are limited to $M_t\le0.8$; Cao et al.
-  (2024, §1) recall a limit $M_t\le1.2$ for high-order finite-difference DNS
-  of supersonic isotropic turbulence and an HGKS run at $M_t=2.0$ (both as
-  recalled from cited works), above the $M_t=1.6$ of Cao et al. (2022). The
-  limits concern different scheme classes and are recalled, not tested.
+  (2024, §1) cite a limit $M_t\le1.2$ for high-order finite-difference DNS
+  of supersonic isotropic turbulence and an HGKS run at $M_t=2.0$ (both
+  from cited works), above the $M_t=1.6$ of Cao et al. (2022). The limits
+  concern different scheme classes and are cited, not tested.
 - **Printed slips (Cao et al. 2024).** Eq. (11) does not reproduce the
   metric terms of Eq. (5) (see the
   [geometric conservation law](/properties/geometric-conservation-law.md));
@@ -611,6 +611,6 @@ differences between precisions (Figs. 10–13).
 - [Cao et al. (2022)](/sources/cao-2022.md) — §1 (motivation, finite-volume DNS, competing methods); §2.1, Eqs. (1)–(7) (BGK model, gas-kinetic flux, WENO, S2O4), Remark 1; §2.2 (MPI decomposition); §3 (collision time); §3.1 (Taylor–Green vortex, bulk viscosity, numerical-dissipation decomposition); §3.2, Tables 1–4 (scaling, cost); §3.3, Tables 5–7, Figs. 10–12 (channel); §3.4, Table 8, Figs. 13–15 (compressible isotropic turbulence).
 - [Zhao et al. (2023a)](/sources/zhao-2023.md) — arXiv v1: §1 (implicit LES, compact stencils); §2, Eqs. (1)–(10) (BGK flux, Gauss quadrature); §3.1–3.3, Eqs. (11)–(15), Figs. 1–2 (seventh-order non-compact and fifth-order compact reconstruction); §4, Tables 2–5 (accuracy, Gauss-point rule, cost of 16 points); §5.1, Eqs. (19)–(23), Figs. 3–7 (Taylor–Green vortex, numerical dissipation); §5.2, Eqs. (24)–(28), Tables 6–9, Figs. 8–17 (channel flow); Table 7 (cost).
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — arXiv v1: §2, Eqs. (1)–(8) (BGK flux, S2O4); §3.1–3.2, Algs. 1–2, Figs. 2–4 (single- and multi-GPU implementation); §4.1, Tables 2–5, Figs. 5–8 (speedups, scaling, compressible Taylor–Green vortex); §4.2, Tables 6–8, Figs. 10–14 (channel flow, single against double precision); §5.
-- [Cao et al. (2024)](/sources/cao-2024.md) — arXiv 2107.08609v1: §1 (implicit LES, recalled $M_t$ limits); §2.1, Eqs. (3)–(9) (transformed BGK equation, curvilinear flux); §2.3, Eqs. (10)–(11) (metrics, WENO in computational space); §2.4, Eqs. (12)–(13); §3.1–3.2, Tables 1–3, Fig. 3 (accuracy, free-stream preservation, cavity); §3.3, Tables 4–5, Figs. 5–9 (compressible channel); §3.4, Table 6, Figs. 11–16 (compressible periodic hill).
+- [Cao et al. (2024)](/sources/cao-2024.md) — arXiv 2107.08609v1: §1 (implicit LES, cited $M_t$ limits); §2.1, Eqs. (3)–(9) (transformed BGK equation, curvilinear flux); §2.3, Eqs. (10)–(11) (metrics, WENO in computational space); §2.4, Eqs. (12)–(13); §3.1–3.2, Tables 1–3, Fig. 3 (accuracy, free-stream preservation, cavity); §3.3, Tables 4–5, Figs. 5–9 (compressible channel); §3.4, Table 6, Figs. 11–16 (compressible periodic hill).
 - [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §II, Eqs. (1)–(11) (BGK flux, flux 1 and flux 2, reconstruction); §III, Eqs. (12)–(23) (eddy viscosity through the collision time; Vreman, dynamic Smagorinsky, WALE, dynamic Clark); §IV, Table I (setup); §V, Tables III–VII, Figs. 2–21 (results, cost); §VI; App. A–B, Table VIII.
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III E, §IV C–E (kinetic and lattice-Boltzmann fluxes in multi-material solvers, cited).

@@ -5,7 +5,7 @@ description: "Two-equation RANS eddy-viscosity model transporting the turbulent 
 status: established
 aliases: [k-tau, k-τ RANS model, k–τ, Speziale k-τ, Kalitzin k-τ, Kok–Spekreijse k-τ]
 tags: [rans, eddy-viscosity, spectral-element, boundary-layer]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # The k-τ model
@@ -13,7 +13,7 @@ timestamp: 2026-10-27T06:07:00Z
 The $k$-$\tau$ model is a two-equation RANS closure of the
 $k$-$\omega$ family that transports, instead of the specific dissipation
 rate $\omega$, its inverse, the turbulence time scale. On this page the
-time scale is written $\tau_t=1/\omega$ (page-local; the sources' $\tau$,
+time scale is written $\tau_t=1/\omega$ (registry §11; the sources' $\tau$,
 not to be confused with the registry's stresses $\tau_{ij}$ or the wall
 shear $\tau_w$). With the [Boussinesq](/definitions/boussinesq-hypothesis.md)
 closure the eddy viscosity is
@@ -34,7 +34,8 @@ and NekRS ([Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §1–§2)
 
 Tomboulides et al. trace the model to Speziale et al. (1992), Kalitzin et
 al. (1996) and Kok & Spekreijse (2000), and take the base equations from
-Kalitzin et al. with the Wilcox (2006) constants (§1–§2). As they recall:
+Kalitzin et al. with the Wilcox (2006) constants (§1–§2). They state,
+citing earlier work:
 
 - the wall boundary condition is $\tau_t=0$ and all sources of the
   $\tau_t$ equation are bounded, so no regularization and no wall-distance
@@ -66,7 +67,7 @@ $$\begin{aligned}
 \partial_t(\rho\tau_t)+\nabla\cdot(\rho\tau_t\boldsymbol u)&=\nabla\cdot(\Gamma_\omega\nabla\tau_t)-\gamma_\omega\frac{\tau_t}{k}\rho P_k+\rho\beta_\omega-\frac{2\Gamma_\omega}{\tau_t}\nabla\tau_t\cdot\nabla\tau_t+C_{D\tau},
 \end{aligned}$$
 
-with $\Gamma_\omega=\mu+\mu_t/\sigma_\omega$ (page-local), the
+with $\Gamma_\omega=\mu+\mu_t/\sigma_\omega$ (registry §11), the
 cross-diffusion term
 
 $$C_{D\tau}=\rho\sigma_d\tau_t\min(\nabla k\cdot\nabla\tau_t,0),$$
@@ -174,7 +175,7 @@ degrees $N=2$–9 (the source's $p$).
   $u_\tau=0.0523$ ($k$-$\tau$) and 0.0528 (low-Reynolds) against 0.0519
   from the DNS of Wu & Moin, errors below 1% and 2% (Table 2); the
   low-Reynolds variant captures the near-wall peak of $k$, slightly offset
-  from DNS, and collapses on the standard model towards the axis (§3.2,
+  from DNS, and collapses on the base model towards the axis (§3.2,
   Fig. 6). The log layer follows the [law of the wall](/definitions/law-of-the-wall.md)
   with $\kappa=0.41$, $B=5.5$ (§3.2).
 - **[Backward-facing step](/benchmarks/backward-facing-step.md)** of Driver
@@ -192,8 +193,8 @@ degrees $N=2$–9 (the source's $p$).
   $C_D=0.01381$ and $C_L=1.0618$ against 0.012 and 1.075 measured, the
   NASA codes giving $C_D=0.01231$–0.01297 and $C_L=1.0778$–1.1012
   (Table 4). The $k$-$\tau$ model overpredicts drag and underpredicts lift
-  at $10^\circ$; its lift error is smaller than that of standard
-  $k$-$\omega$ in either NASA code. With the limiter $R_{\mathrm{fs}}$ the
+  at $10^\circ$; its lift error is smaller than that of the $k$-$\omega$
+  model in either NASA code. With the limiter $R_{\mathrm{fs}}$ the
   coefficients are consistent even for zero free-stream $k$ (§3.4).
 - **T-junction** (OECD/NEA 2010 benchmark, $Re=40{,}000$ at both inlets,
   41,304 elements, $N=5$–9): both RANS models overpredict the axial

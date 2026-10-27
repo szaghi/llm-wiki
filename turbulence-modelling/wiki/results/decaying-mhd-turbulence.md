@@ -4,8 +4,8 @@ title: "Decaying MHD turbulence and its invariants"
 description: "Decaying MHD turbulence is a selective decay whose power laws follow from the conserved quantity that constrains it and from a reconnection-controlled decay time (Schekochihin 2022, §12); decaying runs also serve as code tests and as probes of the Hall effect, as in the Orszag–Tang decay with and without the Hall term."
 status: established
 aliases: [selective decay, Orszag–Tang vortex, Orszag-Tang decay, decaying Hall MHD, Saffman invariant, Hosking invariant, Saffman helicity invariant, Loitsyansky invariant, reconnection-controlled decay, inverse transfer]
-tags: [mhd, astrophysics, plasma, decaying-turbulence, reconnection]
-timestamp: 2026-10-26T07:35:00Z
+tags: [mhd, astrophysics, plasma, isotropic-turbulence, reconnection]
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Decaying MHD turbulence and its invariants
@@ -14,11 +14,11 @@ Freely decaying MHD turbulence loses energy while some other quantity is
 conserved better than the energy; the decay laws — power laws in time of the
 mean kinetic and magnetic energies and of the energy-containing scale — are
 fixed by that constraint and by the decay rate. This **selective decay**
-(recalled from Taylor 1974 and, for hydrodynamics, from Kolmogorov 1941) is
+(the review cites Taylor 1974 and, for hydrodynamics, Kolmogorov 1941) is
 the organizing idea of §12 of [Schekochihin
 (2022)](/sources/schekochihin-2022.md), which reviews the classical laws,
-replaces the ideal decay time by a **reconnection-controlled** one (after
-Zhou et al. 2019 and Hosking & Schekochihin 2021, as recalled), and derives
+replaces the ideal decay time by a **reconnection-controlled** one (citing
+Zhou et al. 2019 and Hosking & Schekochihin 2021), and derives
 the non-helical laws from the **Hosking invariant**.
 
 Notation (page-local): $\langle u^2\rangle$ and $\langle b^2\rangle$ are the
@@ -33,15 +33,15 @@ densities of the registry.
 - **2D MHD, anastrophy.** The mean square of the out-of-plane vector
   potential $A_z$ obeys $d\langle A_z^2\rangle/dt=-2\eta_m\langle b^2\rangle\to0$
   as $\eta_m\to0$ (Eq. 12.2). With $\langle A_z^2\rangle\sim b^2L^2$ and an
-  ideal decay rate $U\sim b$, Hatori's (1984) laws follow (as recalled):
+  ideal decay rate $U\sim b$, Hatori's (1984) laws, which the review cites, follow:
   $\langle b^2\rangle\sim\langle u^2\rangle\propto t^{-1}$, $L\propto t^{1/2}$
   (Eq. 12.4), confirmed by Biskamp & Welter (1989).
 - **3D helical MHD.** Magnetic helicity decays as
   $d\langle H_m\rangle/dt=-2\eta_m\langle\boldsymbol B\cdot\boldsymbol J\rangle$,
   which vanishes like $\eta_m^{1/2}$ (Eq. 12.5; $\boldsymbol J$ the current,
   page-local). With $\langle H_m\rangle\sim b^2L$, the ideal laws are
-  $\langle b^2\rangle\propto t^{-2/3}$, $L\propto t^{2/3}$ (Eq. 12.7; Hatori
-  1984, Son 1999, as recalled). Simulations of Biskamp & Müller (1999, 2000)
+  $\langle b^2\rangle\propto t^{-2/3}$, $L\propto t^{2/3}$ (Eq. 12.7; the review cites Hatori
+  1984 and Son 1999). Simulations of Biskamp & Müller (1999, 2000)
   instead show $\langle b^2\rangle\propto t^{-1/2}$, $\langle u^2\rangle\propto t^{-1}$,
   $L\propto t^{1/2}$ (Eq. 12.8).
 
@@ -65,7 +65,7 @@ is magnetically dominated. The 2D laws (12.4) are unchanged, but helical
 Sweet–Parker decay gives $\langle b^2\rangle\propto t^{-4/7}$,
 $L\propto t^{4/7}$, $\langle u^2\rangle\propto t^{-5/7}$ (Eqs. 12.12–12.13).
 Hyper-resistivity changes the reconnection rate and hence the laws, which is
-the test used by Hosking & Schekochihin (2021), as recalled: their 2D run at
+the test the review cites from Hosking & Schekochihin (2021): their 2D run at
 $4608^2$ uses equal hyperviscosity and hyperresistivity of order $n=4$ in
 the source's indexing (Fig. 25 caption, §12.2.1).
 
@@ -92,8 +92,8 @@ of large scales"). Instances:
 | $H_c$ | Saffman cross-helicity $I_X$ | $U^2b^2L^3=$ const | below |
 
 **Hosking invariant (non-helical decay).** With $b^4L^5=$ const and
-reconnection-controlled decay, Hosking & Schekochihin (2021), as reviewed,
-obtain for magnetically dominated non-helical turbulence (Eqs. 12.26–12.27)
+reconnection-controlled decay, Hosking & Schekochihin (2021), cited by the
+review (§12.4.2), obtain for magnetically dominated non-helical turbulence (Eqs. 12.26–12.27)
 
 $$\begin{aligned}
 &\text{fast reconnection:}\quad \langle b^2\rangle\propto t^{-10/9},\quad L\propto t^{4/9};\\
@@ -114,12 +114,12 @@ are numerically hard to distinguish from them.
 **Saffman cross-helicity invariant.** $I_X$ together with magnetic helicity
 gives $U\propto b^2$ and recovers the Biskamp–Müller laws (12.8) exactly
 (Eq. 12.29), which the review reinterprets as a transient decay constrained
-by $I_X$ (§12.4.3, Eqs. 12.28–12.31). A kinetic-helicity analogue is recalled from
-Levich & Tsinober (1983).
+by $I_X$ (§12.4.3, Eqs. 12.28–12.31). The review cites a kinetic-helicity analogue
+from Levich & Tsinober (1983).
 
 ## Self-similar spectra and inverse transfer
 
-The Olesen rescaling (as recalled, §12.2.3) $\boldsymbol r\to a\boldsymbol r$,
+The Olesen rescaling, which the review cites (§12.2.3), $\boldsymbol r\to a\boldsymbol r$,
 $t\to a^{1-h_O}t$, $\boldsymbol u\to a^{h_O}\boldsymbol u$,
 $\boldsymbol B\to a^{h_O}\boldsymbol B$, $\nu\to a^{1+h_O}\nu$,
 $\eta_m\to a^{1+h_O}\eta_m$ (Eq. 12.14; $h_O$ page-local) gives
@@ -138,9 +138,9 @@ review's account of **inverse transfer** without helicity (§12.5,
 Eq. 12.33).
 
 In a driven setting, [Dahlin et al. (2022)](/sources/dahlin-2022.md) (§1–§2)
-recall helicity condensation (Antiochos 2013, building on the inverse
-cascade of magnetic helicity of Berger & Field 1984, Berger 1984, Finn &
-Antonsen 1985 and Biskamp 1993, as recalled): reconnection between the fields twisted by
+cite helicity condensation (Antiochos 2013), which builds on the inverse
+cascade of magnetic helicity of the works they also cite (Berger & Field
+1984, Berger 1984, Finn & Antonsen 1985, Biskamp 1993): reconnection between the fields twisted by
 neighbouring photospheric cells of the same rotation sense removes the twist
 between them and moves twist flux to ever larger scales, until it accumulates at the boundary of the flux
 system. Their [STITCH model](/methods/stitch-helicity-condensation-model.md)
@@ -149,7 +149,7 @@ in driven runs; the paper states no decay law.
 
 ## Decaying RMHD and imbalanced decay
 
-With a strong mean field (§12.6), Zhou et al. (2020), as recalled, find
+With a strong mean field (§12.6), the review cites Zhou et al. (2020), who find
 $b_\perp L_\perp\sim$ const, hence $\langle b_\perp^2\rangle\propto t^{-1}$,
 $L_\perp\propto t^{1/2}$, and by [critical
 balance](/properties/critical-balance.md) $L_\parallel\propto t$
@@ -160,8 +160,8 @@ separate parallel rescaling (Eq. 12.42), derives self-similar 2D spectra
 $I_\parallel=\int dl_\parallel\,\boldsymbol b_\perp(r_\parallel)\cdot\boldsymbol b_\perp(r_\parallel+l_\parallel)\sim b_\perp^2L_\parallel$
 (Eq. 12.48; $I_\parallel$ page-local). Imbalanced decay,
 $d(Z^\pm)^2/dt\sim-Z^\mp(Z^\pm)^2/L$, conserves $Z^+-Z^-$ and drives the
-system towards Elsasser states (§12.7, Eqs. 12.49–12.50; Dobrowolny et al. 1980,
-Maron & Goldreich 2001, as recalled), where $Z^\pm$ are the rms Elsasser
+system towards Elsasser states (§12.7, Eqs. 12.49–12.50, citing Dobrowolny et al. 1980
+and Maron & Goldreich 2001), where $Z^\pm$ are the rms Elsasser
 amplitudes of [reduced MHD](/definitions/reduced-mhd.md).
 
 ## Decay as a diagnostic problem
@@ -194,7 +194,7 @@ laws above.
 
 [Foldes et al. (2023)](/sources/foldes-2023.md) use freely decaying
 turbulence started from the three-dimensional **Orszag–Tang** vortex
-(Orszag & Tang 1979, as recalled), "often considered as a prototypical flow
+(the authors cite Orszag & Tang 1979), "often considered as a prototypical flow
 to study freely evolving MHD turbulence", first to validate a [lattice
 Boltzmann](/methods/lattice-boltzmann-method.md) MHD code against the
 pseudo-spectral code [GHOST](/software/ghost.md), then to study decaying
@@ -247,7 +247,7 @@ Findings (§5):
 
 - **Faster onset.** "Increasing the intensity of the Hall effect produces a
   faster development of turbulence", attributed to whistler and Hall-drift
-  waves that propagate faster than Alfvén waves (Huba 2003, as recalled),
+  waves that propagate faster than Alfvén waves (the authors cite Huba 2003),
   and said to be consistent with the magnetic-dissipation histories of
   Fig. 13.
 - **Spectral break.** Increasing $\epsilon_H$ moves the Hall scale to larger
@@ -255,11 +255,11 @@ Findings (§5):
   magnetic spectrum (Fig. 16). Beyond the Hall wavenumber the magnetic
   spectrum develops, as $\epsilon_H$ grows, a power law that the authors
   call "in perfect agreement" with the $k^{-2.73}$ sub-ion slope of
-  solar-wind spectra (Kiyani et al. 2015, as recalled; Figs. 14, 16).
+  solar-wind spectra (the authors cite Kiyani et al. 2015; Figs. 14, 16).
 - **Small-scale structure.** In run IV the current density and the
   vorticity show current sheets, Kelvin–Helmholtz instabilities and
   vortices, which the authors call the disordered structures characteristic
-  of the Hall effect (Miura & Araki 2014, as recalled; Fig. 15).
+  of the Hall effect (the authors cite Miura & Araki 2014; Fig. 15).
 
 Ferrand et al. (2022, §4) measure a different quantity in compressible
 Hall-MHD decay: the Hall part of the cascade rate of the [exact
@@ -269,8 +269,7 @@ dissipation stopping the cascade first, and they recommend hyperviscosity.
 Foldes et al. report the slope of magnetic spectra (Figs. 14, 16), Ferrand
 et al. the Hall and MHD components of the cascade rate (§4, Figs. 3, 7), in
 different set-ups (Orszag–Tang decay without mean field against random-phase
-initial modes at initial sonic Mach numbers 0.25–0.5); the two statements
-concern different quantities and are not in conflict as printed.
+initial modes at initial sonic Mach numbers 0.25–0.5).
 
 ## Qualifications
 
@@ -285,8 +284,7 @@ concern different quantities and are not in conflict as printed.
   not say which pair it means; the figure it cites is not read here.
 - **Section reference, §12.2.1, p. 83.** The text says the assumption of ideal
   dynamics "in § 12.4 was flawed"; the $U\sim b$ assumption is made in
-  §12.1.1 (Eq. 12.4), and §12.4 is the Saffman-invariant section — an
-  evident mix-up of the section with the equation number.
+  §12.1.1 (Eq. 12.4), and §12.4 is the Saffman-invariant section.
 - **Hall-MHD Orszag–Tang runs (Foldes et al. 2023, arXiv v2).** The
   $k^{-2.73}$ agreement is shown by overlaying a reference slope on the
   spectra (Figs. 14, 16); no fitted exponent or fit range is reported, the
@@ -298,7 +296,7 @@ concern different quantities and are not in conflict as printed.
   and 26.5 for $\epsilon_H=0.0025$, 0.01 and 0.025, are not monotone in
   $\epsilon_H$, and the runs also differ in $M$ and $Re$; the paper supports
   the "faster development" statement with Fig. 13 (§5).
-- Disagreements recalled by the review and not resolved by it: Brandenburg et
+- Disagreements the review cites and does not resolve: Brandenburg et
   al. (2019) and Banerjee & Jedamzik (2004) prefer the ideal helical law
   (12.7) (§12.2.1); Christensson et al. (2005) argue for $L\propto t^{1/2}$ along
   Campanelli's lines (§12.3, footnote 60).
@@ -307,5 +305,5 @@ concern different quantities and are not in conflict as printed.
 
 - [Schekochihin (2022)](/sources/schekochihin-2022.md) — §12 (Eqs. 12.1–12.50): §12.1.1–§12.1.2, §12.2.1–§12.2.3, §12.3, §12.4.1–§12.4.3, §12.5, §12.5.2, §12.6, §12.6.2, §12.7; Figs. 25–29 cited only as locations of the evidence the text describes.
 - [Ferrand et al. (2022)](/sources/ferrand-2022.md) — §3.1, Figs. 1–2; §4; §5–§6 (decay in compressible Hall-MHD DNS, non-stationary exact laws; Hall cascade component below the ion scale).
-- [Dahlin et al. (2022)](/sources/dahlin-2022.md) — §1–§2 (helicity condensation as inverse helicity transfer, recalled).
+- [Dahlin et al. (2022)](/sources/dahlin-2022.md) — §1–§2 (helicity condensation as inverse helicity transfer, cited).
 - [Foldes et al. (2023)](/sources/foldes-2023.md) — §2.1, Eq. (2.9); §3.3, Eqs. (3.32), (3.37)–(3.38); §4.4, Eqs. (4.10)–(4.12), Figs. 10–12; §5, Table 2, Figs. 13–16; §6; §7 (Orszag–Tang decay in MHD and Hall MHD).

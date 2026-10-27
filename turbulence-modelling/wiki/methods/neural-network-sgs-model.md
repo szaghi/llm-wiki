@@ -5,7 +5,7 @@ description: "LES closures in which a neural network maps resolved-field feature
 status: established
 aliases: [ANN-SGS model, GAN SGS model, fusion network, T-SR-FU, energy-conserving neural closure, structure-preserving closure, ANN-SGS mixed model, deep-learning LES closure, DL-LES, neural-network LES closure, data-driven SGS model, S-106H, SL-106H, SL-180C, DL-AR1, DL-AR2, multi-filter training, TBNN-GNN]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Neural-network subgrid-scale models
@@ -25,8 +25,8 @@ the running LES (Kim et al.; Kurz et al.), or through the adjoint of the
 LES equations (Sirignano & MacArt); see
 [model-consistent training](/methods/model-consistent-training.md) and
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
-As recalled by Duraisamy (2021, §III.A), other networks model the SGS
-force $\partial_j\tau_{ij}$ directly (Beck et al.; Xie et al.), "since
+Duraisamy (2021, §III.A) cites other networks that model the SGS force
+$\partial_j\tau_{ij}$ directly (Beck et al.; Xie et al.), "since
 small errors in the subgrid scale *stresses* can otherwise generate large
 errors in the momentum equation".
 
@@ -48,11 +48,11 @@ of a staggered grid (see
 [divergence-consistent LES](/methods/divergence-consistent-les.md) and
 [discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
 
-**Networks as deconvolution.** As recalled by
-[Valencia et al. (2026)](/sources/valencia-2026.md), §I, the approximate
-deconvolution framework of the
+**Networks as deconvolution.**
+[Valencia et al. (2026)](/sources/valencia-2026.md) (§I) write that the
+approximate deconvolution framework of the
 [scale-similarity model](/methods/scale-similarity-model.md) "has been
-extended later on with data-driven methods": neural-network blind
+extended later on with data-driven methods", citing neural-network blind
 deconvolution (Maulik & San; Maulik et al., two-dimensional turbulence)
 and deep-learning or GAN super-resolution of turbulent velocity fields
 (Liu et al.; Deng et al.), the line to which the
@@ -133,7 +133,7 @@ in isotropic turbulence, whose ratio to the filtered-DNS norm stays the
 most constant across $Re_\lambda$ and across training-to-test filter-width
 ratios $1/2$, 1 and 2 (Fig. 10); and $\langle\lvert L\rvert\rangle$ in the
 channel, because the gradient term has an incorrect near-wall scaling
-(recalled from Liu et al. 1994). The design rule is that the normalized
+(citing Liu et al. 1994). The design rule is that the normalized
 input and output distributions must not change with Reynolds number or
 resolution; otherwise a "prior probability shift" degrades the model.
 Normalizations by wall units, or by the rms velocity and Taylor
@@ -421,8 +421,10 @@ Points that bear on neural SGS models in general:
   $Re_\tau\approx2000$ on the same wall-unit grid with mean velocity in
   good agreement with DNS (Figs. 28–29).
 - **Backscatter kept, not removed.** Stresses are clipped only where the
-  effective viscosity falls below about $-2\mu_w$; less clipping gives a
-  better mean velocity, about $-3\mu_w$ is unstable (§3.2, App. C; see
+  effective viscosity falls below $\nu_{\mathrm{clip}}\approx-2\bar\nu_w$
+  ($\bar\nu_w$ the mean kinematic viscosity at the wall, page-local);
+  less clipping gives a better mean velocity, about $-3\bar\nu_w$ is
+  unstable (§3.2, App. C; see
   [energy backscatter](/definitions/energy-backscatter.md)).
 - **Result.** In the coarsest LES the bulk flow rate is over-predicted by
   10%, against 23% with the selective mixed-scale model (§6.1).
@@ -439,7 +441,7 @@ compare with dynamic or static Smagorinsky LES on the same grid. See
 
 ## Stabilization that a priori networks need
 
-Wang et al. (2023c, §V), recalling the literature, state that
+Wang et al. (2023c, §V), citing the literature, state that
 machine-learning SGS models with excellent a priori accuracy often
 under-perform or go unstable a posteriori, and need hyper-viscosity,
 regulation of negative SGS flux or additional filtering, which reduces
@@ -504,7 +506,7 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 | Source | Comparison | Ratio to the dynamic Smagorinsky model |
 |---|---|---|
 | Kang et al. (2023, §3.4, Figs. 23–24) | SGS-stress evaluation, 16 CPU cores, 100 steps, forward pass in the LES code | network 0.71 (12 neurons), 0.89 (24), 1.42 (48); algebraic mixed models 1.68–2.24 |
-| Kang et al. (2023, §1), recalled | earlier ANN-SGS models | 1.3 (Park & Choi 2021), 1.8 (Wang et al. 2018), 2.4 (Yuan et al. 2020), 15 (Xie & Wang 2019), 256 (Xie et al. 2020a) |
+| Kang et al. (2023, §1), cited | earlier ANN-SGS models | 1.3 (Park & Choi 2021), 1.8 (Wang et al. 2018), 2.4 (Yuan et al. 2020), 15 (Xie & Wang 2019), 256 (Xie et al. 2020a) |
 | Kim et al. (2024, App. E, Table 6) | 18 cores, cylinder LES at $Re_D=3900$, training grid | SGS-stress evaluation about 10 (G-SR) and 6.5 (T-SR-FU); whole time step about 2.5 and 2 |
 | Kim et al. (2024, App. E) | T-SR-FU on the coarser grid against dynamic Smagorinsky on the finer grid, similar accuracy | 2.113 s against 2.986 s per time step, about half the grid points |
 | Kurz et al. (2023, §4.2) | policy evaluation against the dynamic procedure, one CPU core, 48 DOF, unoptimized | about 1.1 |
@@ -576,16 +578,16 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §2, Eqs. 2.2–2.3; §2.1, Eq. 2.7; §4.2–§4.3, Figs. 8–10; §7.
 - [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: §II C, §II E (actor, outputs, constraints, tensor basis).
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §3.4, Fig. 4 (CNN policy, inputs), §4.2 (cost), §4.3, Fig. 7 (inputs compared).
-- [Duraisamy (2021)](/sources/duraisamy-2021.md) — §III.A (networks for the SGS force, recalled).
+- [Duraisamy (2021)](/sources/duraisamy-2021.md) — §III.A (networks for the SGS force, cited).
 - [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md) — §4.4.2 (CNN on the discrete commutator error).
 - [Kim et al. (2024)](/sources/kim-2024.md) — §1, §2.2, §3.1–3.3, Table 2, Eqs. 3.1–3.3 (data, inputs, fusion architecture); §4.1–4.2, Table 3 (a priori, a posteriori, grids and Reynolds numbers); App. C (clipping on coarse grids); App. D (channel); App. E, Table 6 (cost).
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §3.1–3.3, Eqs. 33–50 (closure, SGS variables, momentum constraint); App. B, App. C; §4.2–4.8, Figs. 7–16; §5; §6.
-- [Wang et al. (2023c)](/sources/wang-2023-c.md) — arXiv v3: §V (stabilization of a priori networks, recalled).
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — arXiv v3: §V (stabilization of a priori networks, from the literature).
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1, §3.1–3.2 (training input, pipeline, clipping); §6.1, Fig. 22; §7, Figs. 28–29 (Reynolds-number transfer, CNN grid dependence, pointwise inputs); App. C.
 - [Li et al. (2024)](/sources/li-2024.md) — arXiv v2: §I, §IV–V (neural operator replacing the LES solver).
 - [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §2.5, §3 (physics-informed neural operator replacing the LES solver).
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1, §2.1, §3–3.3, Eqs. 3.3–3.9, Figs. 1–4, Table 1 (model, filters, data); §5–6, Tables 3–4, Figs. 5–20 (a posteriori results); §7–8.
 - [Li et al. (2021)](/sources/li-2021.md) — §I (earlier network SGS models surveyed); §III C, Figs. 2–8 (network of Xie et al. as comparator); §III F, Fig. 13 (cost).
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3 (no machine-learned SGS model yet in turbomachinery simulations).
-- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: p. 1 (criticisms of deep-learning closures recalled).
-- [Valencia et al. (2026)](/sources/valencia-2026.md) — §I (data-driven extensions of deconvolution, recalled); Table VII (a priori level of non-learned deconvolution).
+- [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: p. 1 (criticisms of deep-learning closures, cited).
+- [Valencia et al. (2026)](/sources/valencia-2026.md) — §I (data-driven extensions of deconvolution, cited); Table VII (a priori level of non-learned deconvolution).

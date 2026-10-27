@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Fluids 34:035110"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physics_of_Fluids_McConkey_Deep_structured_neural_networks_for_turbulence_closure_model.pdf"
 tags: [rans, data-driven, neural-network, eddy-viscosity, separated-flow, a-priori-a-posteriori]
-timestamp: 2026-10-25T20:38:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Summary
@@ -144,7 +144,7 @@ first-order convection for the turbulence equations, $y^+\le1$.
 | $B_1,\dots,B_{47}$ | (minimal integrity basis of four tensors) | not Pope's $T^{(n)}$ |
 | $I_1$, $I_2$ | (first, second invariants) | |
 | $R^2$, $R_i$ | (coefficient of determination; Thompson et al. fit factor) | |
-| $\alpha$ | (hill steepness factor) | **collision** with the DG/FV blending factor $\alpha$ |
+| $\alpha$ | (hill steepness factor; $\alpha_h$, page-local, on [periodic hill](/benchmarks/periodic-hill.md)) | **collision** with the DG/FV blending factor $\alpha$ |
 | $H$, $Re_H$ | $h$, $Re_h$ | hill height; $Re_h=5600$ |
 | $x_r$ | $x_R$ | reattachment point |
 | $\lambda$ | (L2 regularization weight, $10^{-5}$) | **collision** with the Taylor microscale |

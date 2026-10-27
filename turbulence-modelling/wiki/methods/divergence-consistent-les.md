@@ -5,7 +5,7 @@ description: "Agdestein & Sanderse's framework for learned LES closures: discret
 status: established
 aliases: [discretize first filter next, discretize-differentiate-filter-close, DCF formulation, face-averaging filter, discrete commutator error]
 tags: [les, sgs-model, neural-network, data-driven]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T15:48:00Z
 ---
 
 # Divergence-consistent discretize-first LES
@@ -260,8 +260,8 @@ the DNS with filtering $1.5739\times10^4$ s.
   training alone.
 - **Usage of "implicit LES".** The authors call any LES that keeps the DNS
   equations in their original form and adds a closure "implicit LES"
-  (§1). That differs from the usage in which the discretization is the
-  closure; see [implicit LES](/definitions/implicit-les.md).
+  (§1). The [implicit LES](/definitions/implicit-les.md) page uses the
+  term for LES in which the discretization is the closure.
 
 # Citations
 

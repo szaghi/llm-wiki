@@ -5,7 +5,7 @@ description: "Closures whose model terms are explicit algebraic expressions foun
 status: established
 aliases: [symbolic regression, PySR, SBL-SpaRTA, SR-CLS, SR-CND, deep symbolic regression, DSR, gene-expression programming, GEP, sparse regression, SpaRTA, explicit algebraic closure discovery, DSRRANS, relevance vector machine, RVM, NGM4, NGM6, equation discovery]
 tags: [symbolic-regression, rans, les, sgs-model, data-driven, separated-flow]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Symbolic-regression turbulence closures
@@ -30,14 +30,14 @@ scenarios.
 
 ## Search methods
 
-| Method | Search | Recalled or read |
+| Method | Search | Cited or read |
 |---|---|---|
-| gene-expression programming (Weatheritt & Sandberg 2016, 2017) | evolutionary search over expression trees | recalled by Duraisamy et al. (2019, §5.3), Duraisamy (2021, §III.A), Tang et al. (2023, §I), Sandberg & Michelassi (2022, §4.3); read directly for an LES subgrid stress: Li et al. (2021) |
-| CFD-driven gene-expression programming (Zhao et al. 2020) | candidates evaluated in the RANS solver during training | recalled by Tang et al. (2023, §I), Sandberg & Michelassi (2022, §4.3), Ruggeri et al. (2022, §III) |
-| sparse regression, SpaRTA (Schmelzer et al.) | $\ell_1$-penalized linear regression over a library of candidate functions | recalled by Duraisamy (2021, §III.A, §IV.A), Tang et al. (2023, §III B) |
+| gene-expression programming (Weatheritt & Sandberg 2016, 2017) | evolutionary search over expression trees | cited by Duraisamy et al. (2019, §5.3), Duraisamy (2021, §III.A), Tang et al. (2023, §I), Sandberg & Michelassi (2022, §4.3), Sandberg & Zhao (2022, §4); read directly for an LES subgrid stress: Li et al. (2021) |
+| CFD-driven gene-expression programming (Zhao et al. 2020) | candidates evaluated in the RANS solver during training | cited by Tang et al. (2023, §I), Sandberg & Michelassi (2022, §4.3), Sandberg & Zhao (2022, §3.4), Ruggeri et al. (2022, §III) |
+| sparse regression, SpaRTA (Schmelzer et al.) | $\ell_1$-penalized linear regression over a library of candidate functions | cited by Duraisamy (2021, §III.A, §IV.A), Tang et al. (2023, §III B), Sandberg & Zhao (2022, §3.4, Eq. 8), Cherroud et al. (2022, §1, App. B) |
 | deep symbolic regression, DSR (Petersen et al.) | a recurrent network samples expressions; trained by a risk-seeking policy gradient | read directly: Tang et al. (2023) |
 | PySR (Cranmer) | genetic search over several populations with a complexity penalty | read directly: Wu et al. (2025) |
-| sparse Bayesian regression, SBL-SpaRTA (Cherroud et al. 2022) | sparse Bayesian selection over a dictionary of invariant monomials; Gaussian posteriors of the coefficients | used, as recalled, by Oulghelou et al. (2025) |
+| sparse Bayesian regression, SBL-SpaRTA (Cherroud et al. 2022) | sparse Bayesian selection over a dictionary of invariant monomials; Gaussian posteriors of the coefficients | read directly: Cherroud et al. (2022); used by Oulghelou et al. (2025) |
 | relevance vector machine, RVM (Tipping) | sparse Bayesian linear regression; basis functions pruned by the uncertainty of their weights | read directly: Jakhar et al. (2026), for an LES subgrid stress |
 
 Tang et al. (2023, §I, §II C 1) contrast DSR with gene-expression
@@ -53,7 +53,7 @@ non-linear part of the anisotropy of the standard
 [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md) for incompressible
 separated flows. The code is public (DSRRANS, §V).
 
-**Closure (Eqs. 9, 15–16, 19).** With page-local
+**Closure (Eqs. 9, 15–16, 19).** With registry-§11
 $\mathsf S_{ij}=\tfrac{k}{\varepsilon}\langle S_{ij}\rangle$,
 $\mathsf W_{ij}=\tfrac{k}{\varepsilon}\langle\Omega_{ij}\rangle$, the
 two-dimensional basis $T^{(1)}=\mathsf S$,
@@ -167,7 +167,7 @@ the linear part is iterated to reconvergence (§II D; see
 - *Two models, one flow.* Models 1 and 2 give "strikingly close" velocity
   fields despite different forms, which the authors attribute to the mean
   velocity being a first-order statistic and the Reynolds stress a "less
-  converged" second-order one (recalled from Thompson et al.; §III E, Fig.
+  converged" second-order one (citing Thompson et al.; §III E, Fig.
   19). Model 2 has "no distinct advantages" for the anisotropy.
 - *Cost.* Training takes about 100 h on 20 cores (Intel Xeon E5-2650);
   each RANS run converges in hundreds of seconds, at a cost "basically the
@@ -190,7 +190,7 @@ $\operatorname{tr}(\hat{\boldsymbol\Omega}^2\hat{\mathbf S}^2)$ (the third and
 fourth of Pope's five vanish in 2-D), plus the vorticity Reynolds number
 $\lvert\Omega\rvert d^2/\nu$, $P_k/\varepsilon$ from the Boussinesq stress, and
 a feature found in the authors' earlier work. Since $\beta^*\omega=\varepsilon/k$,
-the normalization is that of the page-local $\mathsf S$, $\mathsf W$ above,
+the normalization is that of the registry-§11 $\mathsf S$, $\mathsf W$ above,
 so the first two invariants are $I_1$ and $I_2$ of Tang et al.; write
 $I_5=\operatorname{tr}(\mathsf W^2\mathsf S^2)$ (page-local) for the third
 *(compiler check, not in the sources)*.
@@ -214,8 +214,8 @@ $$\text{SR-CLS:}\quad\beta-1=-\tfrac{3}{500}\,I_5\tanh(-0.092\,I_2),\qquad\text{
 Only the two rotation-carrying invariants survive. Both raise $\beta$ where
 rotation or strain is large; a larger $\beta$ lowers $\omega$, raises the
 eddy viscosity and the momentum diffusion into the recirculation, and
-shrinks the separation, which the authors relate to the underestimated
-eddy viscosity of RANS in separated shear layers, as recalled there
+shrinks the separation, which the authors relate, citing earlier work,
+to the underestimated eddy viscosity of RANS in separated shear layers
 (§3.2, §4.2). Since $I_2^2\ge0$, SR-CND never lowers $\beta$ below 1 and
 saturates at $\beta=1+3.806=4.806$ *(compiler check, not in the
 sources)*. The models add about 15% (SR-CLS) and 10% (SR-CND) to the
@@ -425,6 +425,137 @@ weaknesses of specific mechanisms in multi-expression approaches (Future
 issue 5). Cascade context is on
 [turbine cascades](/benchmarks/turbine-cascade.md).
 
+## Sparse Bayesian learning of SST corrections (Cherroud et al. 2022)
+
+[Cherroud et al. (2022)](/sources/cherroud-2022.md) introduce
+SBL-SpaRTA, a stochastic counterpart of the deterministic SpaRTA of
+Schmelzer et al. (2020a, as cited), in which one regression both selects
+the terms and gives their posterior distributions (§1, §3). The SST
+anisotropy receives an additive correction and the $k$ and $\omega$
+equations a production correction (§2.1, Eqs. 5, 12; registry-§11
+$b^\Delta_{ij}$, $b^R_{ij}$):
+
+$$R_{ij}=2k\Big(\tfrac13\delta_{ij}-\frac{\nu_t}{k}\langle S_{ij}\rangle+b^\Delta_{ij}\Big),\qquad P_k\ \to\ P_k+2k\,b^R_{ij}\,\partial_j\langle u_i\rangle,$$
+
+each a sum over the three 2-D basis tensors $T^{(1)}$–$T^{(3)}$ built from
+the mean strain and rotation divided by $\omega$, with coefficients that
+are functions of the two invariants $I_1$, $I_2$ (page-local: the squared
+norms of the $\omega$-scaled strain and rotation) (Eqs. 7–8, 13). The
+production term is written here in the form the source prints; its sign
+convention is discussed under Qualifications.
+
+- **Targets** come from the $k$-corrective-frozen procedure: the SST
+  transport equations are solved with the high-fidelity mean velocity, $k$
+  and anisotropy frozen, giving $\omega$ and the residual of the $k$
+  equation (Eqs. 9–11; see
+  [model-consistent training](/methods/model-consistent-training.md)). The
+  regressed anisotropy target is $2k\,b^\Delta_{ij}$, because
+  $b^\Delta_{ij}$ is $0/0$ at the wall (§2.2).
+- **Dictionary.** Monomials of $I_1$ and $I_2$ up to degree nine and mixed
+  products of total degree two to four, 25 per coefficient function, 75
+  per target and 150 in all (Eq. 14).
+- **Regression.** Tipping's sparse Bayesian learning: Gaussian likelihood,
+  a zero-mean Gaussian prior on each weight with its own precision
+  (automatic relevance determination), and, in place of Tipping's Gamma
+  hyperprior, the "demi-Bayesian LASSO" hyperprior
+  $p(\alpha_i)\propto\exp(-\lambda/(2\alpha_i))$ (page-local $\alpha_i$
+  precisions, $\lambda$ one sparsity parameter for all) of Balakrishnan &
+  Madigan, as cited, for "improved sparsity" (Eqs. 16–20). Type-II maximum
+  likelihood gives fixed-point updates of the precisions and the noise;
+  weights whose precision reaches a limit are pruned; the weight posterior
+  is Gaussian (Eqs. 24–27).
+- **Selection.** $\lambda\in\{10^2,10^3,10^4,10^5,2\times10^5\}$ is chosen
+  a posteriori: the MAP models run in OpenFOAM, and a score sums the
+  relative mean-square-error reductions over baseline SST of velocity,
+  $k$, Reynolds shear stress and $C_f$, with the left-out test flow
+  weighted twice (Eqs. 29–32).
+- **Data.** Three 2-D separated flows in leave-one-out scenarios:
+  [periodic hill](/benchmarks/periodic-hill.md) at $Re=10\,595$,
+  converging–diverging channel at $Re=12\,600$ and curved
+  [backward-facing step](/benchmarks/backward-facing-step.md) at
+  $Re=13\,700$, with full-field LES or DNS (§4.1, Table 1).
+
+**Learned models (App. A).** As $\lambda$ grows the anisotropy correction
+thins out, while the production correction reduces to one $T^{(1)}$ term
+at every $\lambda$, its coefficient decreasing (0.989, 0.982, 0.959, 0.887,
+0.8433 in the first scenario); above $2\times10^5$ both vanish and SST is
+recovered (§4.2). At $\lambda=10^2$ the anisotropy correction has
+invariant-dependent coefficients, e.g.
+$[(-0.496\pm0.0133)+(21.6\pm0.366)I_1+(17.4\pm0.374)I_2]\,T^{(1)}+\dots$
+(Eq. A.1). The three selected models, all at $\lambda=2\times10^5$, have
+no anisotropy correction and one stochastic production coefficient,
+$0.8433\pm0.0142$, $0.382\pm0.0184$ and $0.197\pm0.0156$ (Eqs.
+A.13–A.15); the deterministic SpaRTA models of Schmelzer et al. for the
+same scenarios have production coefficients 0.39, 1.39 and 0.93 (App. B).
+
+**Results (§4.2–4.3, Figs. 1–8).**
+
+- Every learned model has a much lower velocity error than SST; richer
+  models are slightly better on the training flows, sparser ones
+  generalize better (Fig. 1).
+- Scored on velocity, $k$, shear stress and $C_f$ together, the best
+  models are the production-only ones, with average improvements $m^G$
+  of 6.0%, 28% and 31% for the three scenarios (Table 2); scored on
+  velocity alone, models with an anisotropy correction win in two
+  scenarios, a limit the authors attribute to stresses that depend on the
+  mean velocity gradient only.
+- The production correction raises the eddy viscosity in the separated
+  region and reattaches the boundary layer earlier; on the
+  converging–diverging channel no model locates the small LES bubble, and
+  on the curved step attached-flow $C_f$ is slightly worse than SST; all
+  models over-predict $k$ in separated regions (Figs. 6–7).
+- The selected models beat the physics-based BSL-EARSM of Menter et al.
+  (2012) on the three flows (App. C; see
+  [explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)).
+
+The authors conclude that correcting the production is "generally
+sufficient" for these 2-D separated flows, consistent with Schmelzer et
+al. (2020a), but not for 3-D flows, where Huijing et al. (2021, as cited)
+needed non-linear terms (§5). Uncertainty propagation and Sobol indices
+are on [model-form uncertainty](/definitions/model-form-uncertainty.md).
+
+## Gene-expression programming for stresses and heat fluxes (Sandberg & Zhao 2022)
+
+The review of [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md)
+extends the turbomachinery account of Sandberg & Michelassi (2022, above)
+to heat flux and transition, citing the original works (§3–4):
+
+- *Basis.* The target is the coefficient set of Pope's ten tensors and
+  five invariants of the time-scale-normalized strain and rotation (Eqs.
+  2–4); for statistically 2-D flows only $T^{(1)}$–$T^{(4)}$ and two
+  invariants are used (§4.1). The time scale comes from a frozen solve of
+  the $\omega$ or $\varepsilon$ equation with reference velocity and
+  stresses (Parneix et al. 1998, as cited, §3.2).
+- *Stresses.* Trained on a backward-facing step, GEP gave "excellent" a
+  posteriori periodic-hill predictions with the first four tensors and two
+  invariants, but some individuals had very large coefficients,
+  non-realizable stresses and unstable runs, removable thanks to the
+  explicit form though "not robustly" automatically; on jets in crossflow
+  GEP and a tensor-basis network both improved greatly on the linear
+  baseline and both failed where the streamwise vorticity is strongest
+  (§4.1).
+- *Heat flux.* GEP was used for a spatially varying turbulent Prandtl
+  number, with mean values 0.42–0.6 on trailing-edge slots (Haghiri &
+  Sandberg 2020), "well below typically used values of 0.85–0.9", and for a three-term
+  tensor-diffusivity closure selected by recursive feature elimination
+  (Weatheritt et al. 2020), whose leading terms are the generalized and
+  higher-order generalized gradient-diffusion forms (§4.2; formulas on
+  [explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)).
+- *Unsteady flows.* Phase-wise GEP closures where the
+  [spectral gap](/definitions/spectral-gap.md) exists, and closures of the
+  stochastic part of a triple decomposition where it does not (§4.4).
+- *Multi-expression training.* Coupled stress and heat-flux expressions
+  trained together with Pareto-based multi-objective selection (Waschkowski
+  et al. 2022) improved both velocity and temperature of vertical natural
+  convection (§4.5; see
+  [model-consistent training](/methods/model-consistent-training.md)).
+
+The authors weigh symbolic regression as interpretable and easy to
+implement but less expressive than deep networks (§3.1). He et al.
+(2022, §1) list GEP and sparse regression among the explainable
+alternatives to black-box corrections, without using them
+([He et al. (2022)](/sources/he-2022-b.md)).
+
 ## Sparse Bayesian experts for model blending (Oulghelou et al. 2025)
 
 [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (arXiv v2, §2–3,
@@ -459,7 +590,7 @@ search, but their reformulated
 is shaped by earlier gene-expression-programming results and built as a
 base for later ones (§1, §3.2):
 
-- *Motivation.* As recalled there, Fang et al. (2024) trained the
+- *Motivation.* The authors cite Fang et al. (2024), who trained the
   production and transfer terms of the authors' earlier model with a
   multi-objective, multi-case machine-learning algorithm and found
   opposite correction trends for separated-flow and bypass transition; the
@@ -487,11 +618,14 @@ not report a learned expression.
   only with the $k$-$\varepsilon$ baseline; no other data-driven or
   non-linear model is run. Realizability is supported by barycentric
   plots, with outliers for model 1, not by a proof.
-- **Generalization of explicit models.** As recalled by Duraisamy et al.
-  (2019, §5.3), gene-expression-programming models trained on
-  low-Reynolds-number DNS of a backward-facing step show "a high level of
-  uncertainty" on the periodic hill; Tang et al. (2023) train on a hill
-  and test on a step, the reverse direction, with one training case.
+- **Generalization of explicit models.** Duraisamy et al. (2019, §5.3)
+  cite gene-expression-programming models trained on
+  low-Reynolds-number DNS of a backward-facing step that show "a high level
+  of uncertainty" on the periodic hill; Sandberg & Zhao (2022, §4.1)
+  describe GEP trained on a backward-facing step as giving "excellent"
+  a posteriori periodic-hill predictions (above). Both are second-hand
+  accounts of cited work. Tang et al. (2023) train on a hill and test on a
+  step, the reverse direction, with one training case.
 - **Determinism.** Tang et al. call DSR "deterministic" (§I), and §II C 1
   says "the token with the highest probability is then sampled", while
   their Algorithm 1 samples expressions from the generator's distribution.
@@ -500,9 +634,12 @@ not report a learned expression.
   the description of sparse regression by Duraisamy (2021, §III.A); the
   open entry is under Contradictions on
   [tensor-basis neural network](/methods/tensor-basis-neural-network.md).
-  The SBL-SpaRTA experts printed by Oulghelou et al. (2025, Table 1) have
-  constant coefficients although their dictionary contains invariant
-  monomials (§2.1); the open entry on that page records this.
+  The SBL-SpaRTA experts printed by Oulghelou et al. (2025, Table 1) and
+  the selected models of Cherroud et al. (2022, Eqs. A.13–A.15) have
+  constant coefficients although their dictionaries contain invariant
+  monomials; Cherroud et al. (Eq. A.1) also print invariant-dependent
+  coefficients at small sparsity. The open entry on that page records
+  both.
 - **Scalar against tensor targets.** Wu et al. (2025) regress one scalar
   multiplier of a transport-equation term, so their models keep the
   Boussinesq form; Tang et al. (2023) and the experts of Oulghelou et al.
@@ -559,19 +696,40 @@ not report a learned expression.
   positive-trace stress, so Eq. 2 is consistent only with the opposite
   sign convention *(compiler check, not in the sources)*. The equation
   above is written in the registry's positive convention.
+- **Cherroud et al. (2022): sign of the production and printed
+  slips.** With the Reynolds stress entering the momentum equation as
+  $-\partial_jR_{ij}$ (their Eq. 2), the production is
+  $-R_{ij}\partial_j\langle u_i\rangle=2k\big(\tfrac{\nu_t}{k}\langle S_{ij}\rangle-b^\Delta_{ij}\big)\partial_j\langle u_i\rangle$,
+  whereas their Eq. 11 prints the opposite overall sign, which would make
+  the Boussinesq production negative *(compiler check, not in the
+  sources)*; Eq. 12, $2k\,b^R_{ij}\partial_j\langle u_i\rangle$, follows the
+  printed convention, so the sign of the learned $b^R$ coefficients
+  relative to $\nu_t$ depends on it. The text says the production
+  correction raises the eddy viscosity in separated regions (§4.2). The
+  dictionary set of Eq. 14 does not state $p,q\ge1$ for the mixed
+  products, which the count of 25 requires *(compiler check, not in the
+  sources)*; the noise standard deviation of Eq. A.9 (0.358) is ten times
+  that of the same production model at every other $\lambda$
+  (0.0358–0.0364); the text cites the SpaRTA models as Schmelzer et al.
+  (2020b), the captions and App. B as (2020a).
+- **Sandberg & Zhao (2022)** present no new closure; the GEP results
+  above are those of the cited works, mostly the authors' group.
 - **Symbol clashes in the source.** $\varepsilon$ is both the dissipation
   and the risk factor, $\alpha$ both the learning rate and the hill
   steepness, $\sigma$ both a standard deviation and the sigmoid.
 
 # Citations
 
-- [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I (GEP, CFD-driven GEP recalled), §II C 1, Algorithm 1, Apps. A–B, Eq. B1 (DSR), §II C 2, Eqs. 4–19 (closure, constants, split, squashing, rewards), §II D–E (coupling, workflow), §III A–E, Table I–II, Eqs. 20–22, Figs. 7–19, §IV, §V.
+- [Tang et al. (2023)](/sources/tang-2023.md) — arXiv v1: §I (GEP, CFD-driven GEP cited), §II C 1, Algorithm 1, Apps. A–B, Eq. B1 (DSR), §II C 2, Eqs. 4–19 (closure, constants, split, squashing, rewards), §II D–E (coupling, workflow), §III A–E, Table I–II, Eqs. 20–22, Figs. 7–19, §IV, §V.
 - [Duraisamy (2021)](/sources/duraisamy-2021.md) — §III.A, §IV.A (symbolic and sparse regression, $\ell_1$ loss), §VII (interpretability does not imply generalization).
-- [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3 (gene-expression programming recalled; uncertainty on the periodic hill when trained on a backward-facing step).
+- [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3 (gene-expression programming cited; uncertainty on the periodic hill when trained on a backward-facing step).
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §2.2, Eqs. 16–17, 19–20, Tables 2–4 (PySR set-up, features, rebalancing, learned models); §3.2 (interpretation, cost); §4.2.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §2–2.1, Eqs. 7–10, Table 1 (SBL-SpaRTA experts); §3; §4.2.1, Table 3.
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: pp. 1–5, Eqs. 3–4, Figs. 1–4 (library, RVM, criterion, NGM closures, a priori table, a posteriori results, cases); App. B, Eq. 5; App. C (solver); App. D (eddy-viscosity baselines).
 - [Li et al. (2021)](/sources/li-2021.md) — §I (earlier GEP-LES work), §II A–B, Eqs. 9–16, 22, Table I (representation, algorithm, fitness, hyperparameters, GEP(4)); §III A (data); Tables II–IV; §III C–F, Figs. 2–13; §IV.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §3.2.3 (triple decomposition, Lav et al.), §4.3, Eq. 2, Fig. 7, margin p. 267 (GEP definition, phase-locked EARSM, CFD-driven training); p. 259 (stress definition); Future issue 5.
 - [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §III (CFD-driven GEP of Zhao et al. cited, in passing).
-- [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §1, §3.2 (GEP corrections of the earlier model recalled), §4.1, Eq. 10 (length scale from trained expressions), §4.5, Eqs. 23–27 (separation switch as a training candidate).
+- [Pacciani et al. (2025)](/sources/pacciani-2025.md) — §1, §3.2 (GEP corrections of the earlier model, cited), §4.1, Eq. 10 (length scale from trained expressions), §4.5, Eqs. 23–27 (separation switch as a training candidate).
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1, §2.1–2.2, Eqs. 2, 5–15 (corrections, frozen targets, dictionary); §3, Eqs. 16–32 (sparse Bayesian learning, cross-validation); §4.1–4.3, Table 2, Figs. 1–8; §5; Apps. A–C, Eqs. A.1, A.9, A.13–A.15.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.1–3.4, Eqs. 2–4, 8 (basis, frozen time scale, SpaRTA, CFD-driven training); §4.1–4.5 (GEP stress, heat-flux, unsteady and multi-expression closures of cited works).
+- [He et al. (2022)](/sources/he-2022-b.md) — §1 (GEP and sparse regression as explainable alternatives, in passing).

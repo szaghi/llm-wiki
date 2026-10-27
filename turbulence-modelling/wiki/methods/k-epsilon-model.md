@@ -5,7 +5,7 @@ description: "Two-equation RANS eddy-viscosity models transporting the turbulent
 status: established
 aliases: [k-epsilon, standard k-ε, Launder–Sharma k-ε, realizable k-ε, RKE, Shih k-ε, enhanced wall treatment, EWT, two-layer k-ε]
 tags: [rans, eddy-viscosity, separated-flow, boundary-layer]
-timestamp: 2026-10-27T10:56:00Z
+timestamp: 2026-10-27T15:34:00Z
 ---
 
 # k-ε models
@@ -120,7 +120,11 @@ the low-Reynolds models of Jones & Launder (1973) among transition
 predictors whose wall damping has "no obvious relation to the transition
 physics" ([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md),
 §2.2.2.1, §2.2.3, §3.3.1; see
-[local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)).
+[local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)). Sandberg & Zhao (2022) list the same
+eddy viscosity, and note that the gradient-diffusion heat flux written
+with the $k$-$\omega$ constant, $\beta^*k^2/\varepsilon$, equals $\nu_t$
+([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md), §3.2, §4.2.1,
+Eq. 9; see the [explicit algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md)).
 
 **A resolution-dependent destruction coefficient.** In
 [continuous eddy simulation](/methods/continuous-eddy-simulation.md) the
@@ -151,6 +155,39 @@ $m+nC_{\varepsilon1}$ and $m+nC_{\varepsilon2}$, and derive from them the
 detached-eddy constant of each branch
 ([Wang et al. (2021)](/sources/wang-2021-l.md), §2.3, Eqs. 11–12; see
 [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+
+**Frozen baseline of a data-assimilated eddy viscosity.** Brenner et al.
+(2022) print the same standard form (constants not printed) and use the
+OpenFOAM `kEpsilon` model with a low-Reynolds wall function that sets
+$\nu_t=0$ at the wall, solved once: its converged $\nu_t$ is frozen and
+multiplied by a spatial field $\beta(\boldsymbol x)$ inferred by a discrete
+adjoint from averaged LES velocity data
+([Brenner et al. (2022)](/sources/brenner-2022.md), §2.1.1, §2.2, Eqs.
+18–20, §3.1). On the periodic hill at $Re=10\,595$ ($180\times130$ cells,
+first-cell $y^+\approx5$) the baseline departs from the LES most near the
+walls and in the recirculation; with full-field velocity data the
+corrected model matches the LES profiles except the velocity peaks near
+the hill crest, but interior data alone do not improve the wall shear
+stress, and adding wall data trades interior against wall agreement
+(§3.4–3.6, Figs. 9, 16; see [field inversion](/methods/field-inversion-machine-learning.md)
+and [periodic hill](/benchmarks/periodic-hill.md)).
+
+**Host of a combustion model.** Mardani & Nazari (2022) run
+two-dimensional axisymmetric Favre-averaged RANS of jet-in-hot-coflow
+flames in MILD combustion with the standard model, its $C_{\varepsilon1}$
+"modified … from 1.4 to 1.6" for the round jet (the standard value on this
+page is 1.44) ([Mardani & Nazari (2022)](/sources/mardani-2022.md), §5). Their eddy-dissipation-concept closure is tied to the
+turbulence model through its cascade constant: equating the cascade
+eddy viscosity $\tfrac23C_{D1}k^2/\varepsilon$ to $C_\mu k^2/\varepsilon$ gives
+$C_{D1}=1.5\,C_\mu=0.135$ (page-local $C_{D1}$), so the fine-structure
+quantities depend on $C_\mu$ (§2, Eqs. 4–6), and the validity of the
+default closure is stated in terms of the turbulence Reynolds number
+$k^2/(\nu\varepsilon)$, above 20.8 and 64.31 for the fine-structure length and
+time fractions (§4, Eqs. 18–20). Combustion lowers that Reynolds number
+relative to the non-reacting jet, more strongly downstream, which the
+authors describe as turbulence "relaminared" by combustion (§6.3, Fig.
+7). Details on [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md),
+where the bundle's combustion closures are compared.
 
 ## The realizable model and a two-layer wall treatment
 
@@ -286,6 +323,13 @@ Boltzmann hybrid on the Spalart–Allmaras-based zonal DES instead
   "There is no valid reason that RANS predicts a more accurate $C_d$ than
   DDES" (§6), and do not take the agreement as evidence for the model; see
   [model-form uncertainty](/definitions/model-form-uncertainty.md).
+- Mardani & Nazari (2022) define the turbulence Reynolds number as
+  $k^2/(\nu\varepsilon)$ (Eqs. 11, 18, 34) and, before Eq. 27, as $\nu_t/\nu$;
+  with $\nu_t=C_\mu k^2/\varepsilon$ the two differ by the factor $C_\mu=0.09$
+  *(compiler check, not in the sources)*. The derivation of their local
+  constants (Eqs. 27–33) uses the second, the evaluation (Eq. 34) the
+  first.
+- Brenner et al. (2022) do not print the model constants.
 
 # Citations
 
@@ -303,3 +347,6 @@ Boltzmann hybrid on the Spalart–Allmaras-based zonal DES instead
 - [Husson et al. (2024)](/sources/husson-2024.md) — §1.
 - [Heinz (2020)](/sources/heinz-2020.md) — §2.2–§2.3 Eqs. 2–12, §4.2–§4.3 Eqs. 38–46.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1, §2.2.3, §3.3.1.
+- [Brenner et al. (2022)](/sources/brenner-2022.md) — §2.1.1, §2.2 Eqs. 18–20, §3.1, §3.4–3.6 Figs. 9, 16.
+- [Mardani & Nazari (2022)](/sources/mardani-2022.md) — §2 Eqs. 4–6, §4 Eqs. 18–20, 27–34, §5, §6.3 Fig. 7.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.2, §4.2.1 Eq. 9.

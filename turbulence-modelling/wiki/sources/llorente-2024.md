@@ -9,7 +9,7 @@ year: 2024
 venue: "Phys. Fluids 36:071702"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Physics_of_Fluids_Llorente_Theoretical_considerations_of_the_volume_penalization_immers.pdf"
 tags: [immersed-boundary, rans, eddy-viscosity, incompressible-flow]
-timestamp: 2026-10-26T15:48:00Z
+timestamp: 2026-10-27T15:53:00Z
 ---
 
 # Summary
@@ -68,7 +68,7 @@ $\mathcal T_d=\mathcal L^2/\nu$ are the convective and diffusive times.
 $\langle\cdot\rangle$ is the Reynolds (ensemble) average, the source's
 overbar.
 
-1. The standard penalized incompressible Navier–Stokes equations add $s_i=\chi\eta_p^{-1}(u_i-u_{b,i})$ to the momentum equation. The penalized solution differs from the unpenalized one (Eqs. 2a–2b, p. 2). **Stated**
+1. The penalized incompressible Navier–Stokes equations add $s_i=\chi\eta_p^{-1}(u_i-u_{b,i})$ to the momentum equation. The penalized solution differs from the unpenalized one (Eqs. 2a–2b, p. 2). **Stated**
 2. Angot, Bruneau & Fabrie (1999), and later Carbou & Fabrie (2003), proved that the penalized velocity converges to the no-slip velocity as $\eta_p\to0$, with error $\propto\eta_p^{\alpha}$, "$\alpha=1/2$ for Dirichlet boundary conditions". Inside the body the flow is a Darcy flow at order $\eta_p$. Basarić et al. (2022) proved convergence for the Navier–Stokes–Fourier system (p. 2). **Stated**
 3. Typical values are "$\eta\in\{10^{-7},10^{-10}\}$" (citing Ménez et al. 2023). The lower limit comes from stability, because small $\eta_p$ makes the source very stiff and restricts the time step (citing Kou et al. 2022) (p. 2). **Stated**
 4. Published penalized treatments of turbulent flow, e.g. Yu & Yu (2022), "just simply take the turbulent equations and penalized the turbulent velocity field", adding $\chi\eta_p^{-1}(\langle u_i\rangle-\langle u_{b,i}\rangle)$ to URANS (p. 3, Eqs. 3–4). **Stated**
@@ -92,7 +92,7 @@ overbar.
 
 - **Closure (p. 4):** "$R_{ij}:=-\overline{u'_iu'_j}=\nu_t\,\partial\overline u_i/\partial x_j$". The left side is symmetric and the right side is not, and there is no isotropic part. The same form is carried into the total tensor $\overline\Pi_{ij}$ *(compiler check, not in the sources)*.
 - **Energy identity (p. 9):** the last line prints $\|\overline u(\cdot,T)\|_2^2=\|\overline u_b(\cdot,T)\|_2^2-2\int_\Omega(\nu+\nu_t)\partial_j\overline u_i\partial_j\overline u_i\,\mathrm d^3x$, and Eqs. (14b)–(14c) likewise lack the time integral that Eq. (13) carries. *(compiler check, not in the sources)* Integrating (13) over $[0,T]$ makes the dissipation term $-2\int_0^T\!\int_\Omega(\nu+\nu_t)\,\partial_j\langle u_i\rangle\partial_j\langle u_i\rangle\,\mathrm d^3x\,\mathrm dt$.
-- **"the above integral is negative semi-definite" (p. 9):** for $\nu+\nu_t\ge0$ the integral is non-negative, and only the term with the factor $-2$ is non-positive. The conclusion is unaffected.
+- **"the above integral is negative semi-definite" (p. 9):** for $\nu+\nu_t\ge0$ the integral is non-negative, and only the term with the factor $-2$ is non-positive.
 - **Theorem 1 against Eq. (7c):** *(compiler check, not in the sources)* the proof's term (III) uses $\langle u_i\rangle=\langle u_{b,i}\rangle$ inside the body, which is also the assumption that closes Eq. (11). The paper's own Eq. (7c) gives a non-zero remainder for finite $\eta_p$ when the body accelerates. The theorem therefore holds under exact penalization. On p. 6 the correlation is also said to be one that "cannot … be closed", and it is then closed by this kinematic requirement.
 - **Heat equation (p. 9):** printed $\partial T/\partial t+\partial(u_jT+\kappa\,\partial T/\partial x_j)/\partial x_j+\mathscr R_{\eta_T}h=0$. *(compiler check, not in the sources)* With the advective flux $u_jT$ on the left, as in the momentum form (1b) with $-\nu\,\partial u_i/\partial x_j$, diffusion requires $-\kappa\,\partial T/\partial x_j$. The printed sign is anti-diffusive.
 - **"$\eta\in\{10^{-7},10^{-10}\}$" (p. 2):** set notation for a range, with the endpoints in reverse order.

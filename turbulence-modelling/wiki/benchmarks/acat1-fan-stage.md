@@ -5,7 +5,7 @@ description: "The ACAT1 fan and outlet-guide-vane stage of the TurboNoiseBB proj
 status: established
 aliases: [ACAT1, ACAT1 fan-OGV stage, TurboNoiseBB fan stage, AneCom UFFA fan rig]
 tags: [benchmark, turbomachinery, aeroacoustics, wmles, des, hybrid-rans-les]
-timestamp: 2026-10-26T07:40:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # ACAT1 fan stage
@@ -53,13 +53,13 @@ both rely on an earlier RANS study showing little effect of the rescaling
 ([François et al. (2022)](/sources/francois-2022.md), §3.2.2;
 [Lewis et al. (2023)](/sources/lewis-2023.md), §3.1).
 
-The measurements, from the rig campaign of Meyer et al. as both sources
-recall, are hot-wire velocity at HW1 (360° phase-averaged maps split into
+The measurements, from the rig campaign of Meyer et al. that both sources
+cite, are hot-wire velocity at HW1 (360° phase-averaged maps split into
 the 20 fan channels), global mass flows and pressure ratio, and acoustic
 arrays in the inlet, interstage and bypass and on a far-field arc. The hot
 wires cut off at about 8.5 kHz (François et al., §5.2) or about 8 kHz
 (Lewis et al., §4.3.2). François et al. multiply the measured rms by 1.5 to
-correct for it; Lewis et al. recall Polacsek et al.'s estimate that the
+correct for it; Lewis et al. (§4.3.2) cite Polacsek et al.'s estimate that the
 measured rms is underestimated by a factor of about 1.5, warn that the
 factor was estimated at only two radial positions, and plot the corrected
 data separately (Fig. 25).
@@ -155,11 +155,12 @@ the work is outside this bundle and is recorded on the Source page.
   source comments on the other's values or states the definitions behind
   its own.
 - [François et al. (2022)](/sources/francois-2022.md) were read in an ASME
-  accepted manuscript; their $M_{tip}=0.57$ is not defined. The blade-speed
-  Mach number from their rotational speed and radius is
-  $2\pi\cdot0.42\cdot3828.4/60\approx168$ m/s over 343 m/s, about 0.49
-  *(compiler check, not in the sources)*; Lewis et al. name the same 0.57 a
-  "tip relative Mach number".
+  accepted manuscript; their $M_{tip}=0.57$ is not defined. The blade tip
+  speed from their rotational speed and radius is
+  $2\pi\cdot0.42\cdot3828.4/60\approx168$ m/s, and divided by the
+  normalization velocity $V_{adim}=343.0$ m/s they print for Fig. 8 it gives
+  about 0.49 *(compiler check, not in the sources)*; Lewis et al. name the
+  same 0.57 a "tip relative Mach number".
 - [Lewis et al. (2023)](/sources/lewis-2023.md) were read in a HAL accepted
   manuscript. The mean wall spacings they print (mean $y^+$ 25 and 17,
   mean wall-parallel spacing 80 and 64 for LES1 and LES2, Table 6) lie below

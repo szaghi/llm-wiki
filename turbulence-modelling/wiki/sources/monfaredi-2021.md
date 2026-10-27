@@ -9,7 +9,7 @@ year: 2021
 venue: "Comput. Fluids 230:105136"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Computers_amp_Fluids_Monfaredi_Unsteady_continuous_adjoint_to_URANS_coupled_with_FW-H_analo.pdf"
 tags: [aeroacoustics, rans, spalart-allmaras, compressible]
-timestamp: 2026-10-27T10:37:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Summary
@@ -38,7 +38,7 @@ earlier inviscid FW-H adjoint to viscous, turbulent flow.
 The FW-H implementation reproduces the analytical field of a monopole in
 uniform flow. The adjoint sensitivities agree with central finite
 differences for a laminar vortex-shedding [cylinder](/benchmarks/circular-cylinder-wake.md)
-($Re_D=1000$, $M=0.2$) and for the turbulent rod–airfoil configuration (a
+($Re=1000$, reference length not stated, $M=0.2$) and for the turbulent rod–airfoil configuration (a
 rod one chord upstream of a [NACA 0012](/benchmarks/naca-0012-airfoil.md),
 $Re_c=4.8\times10^5$). Earlier rod–airfoil studies mostly used 3D
 [LES](/definitions/large-eddy-simulation.md) or DES with FW-H; the

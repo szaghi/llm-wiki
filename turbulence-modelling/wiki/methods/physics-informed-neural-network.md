@@ -5,7 +5,7 @@ description: "A neural network maps the coordinates to the mean velocity, pressu
 status: established
 aliases: [PINN, PINNs, physics-informed neural network, physics-informed RANS solver]
 tags: [data-driven, neural-network, rans, boundary-layer]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:48:00Z
 ---
 
 # Physics-informed neural networks for RANS
@@ -81,12 +81,12 @@ for each variable $\phi$ (Eq. 2, Table 1).
 |---|---|---|
 | Laminar Falkner–Skan boundary layer, $Re=100$, exponent $m=-0.08$ ($\beta_{\mathrm{FS}}=2m/(m+1)=-0.1739$; separation at $-0.1988$) | analytical solution | $\langle u\rangle$ 0.07, $\langle v\rangle$ 0.12, $\langle p\rangle$ 0.001 |
 | Zero-pressure-gradient [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md), $1000<Re_\theta<7000$ | DNS of Eitel-Amor et al. (2014) | $\langle u\rangle$ 1.02, $\langle v\rangle$ 4.25, $R_{12}$ 6.46 |
-| Adverse-pressure-gradient boundary layer at Clauser parameter $\beta_C\simeq1$, $910<Re_\theta<3360$ | Bobke et al. (2017) | $\langle u\rangle$ 0.28, $\langle v\rangle$ 1.57, $\langle p\rangle$ 4.60, $R_{12}$ 7.96 |
+| Adverse-pressure-gradient boundary layer at Clauser parameter $\beta_{RC}\simeq1$, $910<Re_\theta<3360$ | Bobke et al. (2017) | $\langle u\rangle$ 0.28, $\langle v\rangle$ 1.57, $\langle p\rangle$ 4.60, $R_{12}$ 7.96 |
 | NACA4412 suction-side boundary layer, $Re_c=200{,}000$, $0.5<x/c<1$ | well-resolved spectral-element LES of Vinuesa et al. (2018) | $\langle u\rangle$ 1.56, $\langle v\rangle$ 2.17, $\langle p\rangle$ 7.30, $R_{11}$ 9.43, $R_{12}$ 11.36, $R_{22}$ 4.69 |
 | [Periodic hill](/benchmarks/periodic-hill.md), $Re_h=2800$, $1<x/h<5$ | spectral-element DNS (not cited) | $\langle u\rangle$ 2.77, $\langle v\rangle$ 19.70, $\langle p\rangle$ 8.61, $R_{11}$ 28.18, $R_{12}$ 16.70, $R_{22}$ 20.24 |
 
 Here $\beta_{\mathrm{FS}}$ is the Falkner–Skan pressure-gradient parameter
-and $\beta_C=(\delta^*/\tau_w)\,\mathrm d p_\infty/\mathrm dx$ the Clauser
+and $\beta_{RC}=(\delta^*/\tau_w)\,\mathrm d p_\infty/\mathrm dx$ the Clauser
 parameter, with $p_\infty$ the free-stream pressure (page-local; the paper
 writes both with $\beta$, which the registry keeps for the field-inversion
 correction). The airfoil inputs are wall-tangent and wall-normal
@@ -130,8 +130,8 @@ Two other routes of this bundle differ in what is inferred:
 Eivazi et al. (2022) make neither comparison and do not discuss
 generalization, uniqueness of the reconstruction or sensitivity to the
 boundary data (§1–4). Their stated precedent is the direct simulation of
-turbulence with PINNs by Jin et al. (2021), recalled as agreeing well with
-DNS (§1). [Domingo & Vervisch (2023)](/sources/domingo-2023.md) (§7) name
+turbulence with PINNs by Jin et al. (2021), which they cite as agreeing
+well with DNS (§1). [Domingo & Vervisch (2023)](/sources/domingo-2023.md) (§7) name
 physics-informed techniques that couple PDE solution and network training
 as a coming perspective for combustion DNS, without a method.
 [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) (§1) mention
@@ -148,6 +148,15 @@ state errors below 3% (above). [Sandberg & Michelassi (2022)](/sources/sandberg-
 (§4.3) call "initial work on LES wall modeling using physics-informed
 neural networks" (Yang et al. 2019, as cited) "a promising path" for
 reducing the cost of LES, without details (see [machine-learning wall models](/methods/machine-learning-wall-model.md)).
+[Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) (§3.2) describe
+PINNs as an approach "that does not seek to find explicit closure terms",
+whose outputs are weighted against partial data such as boundary
+conditions, and state that PINNs "do not yield closures that can be
+utilized in predictive RANS-based CFD of new configurations"; their review
+of learned stress and heat-flux closures covers tensor-basis,
+symbolic-regression and model-consistent approaches (see
+[model-consistent training](/methods/model-consistent-training.md)). The
+review states the verdict without a test.
 
 ## A label-free physics-informed loss outside turbulence (Ruggeri et al. 2022)
 
@@ -181,11 +190,11 @@ laminar.
 generic PINN loss for $\partial_tu=\mathcal N(u)$ (page-local
 $\mathcal N$, the PDE operator): the squared residual over the domain and
 time, plus weighted boundary and initial-condition misfits, with
-derivatives by automatic differentiation. As recalled there, PINNs
-struggle on multiscale problems, and the physics-informed neural operator
-(PINO) of Li et al. combines a data loss with the PDE loss on a Fourier
-neural operator; on 2-D turbulence it reaches 6% relative error at
-$T=0.125$ but about 74% at $T=0.5$ (§2.4, recalled). The authors name three
+derivatives by automatic differentiation. They state that PINNs
+struggle on multiscale problems and cite the physics-informed neural
+operator (PINO) of Li et al., which combines a data loss with the PDE loss
+on a Fourier neural operator and, as they cite it, reaches 6% relative
+error on 2-D turbulence at $T=0.125$ but about 74% at $T=0.5$ (§2.4). The authors name three
 drawbacks of that PINO: long-time error, competing losses (initial,
 equation, data), and overlapping training and prediction windows.
 
@@ -236,7 +245,8 @@ rollout diverges (App. A). Details and results are on
 
 - [Eivazi et al. (2022)](/sources/eivazi-2022.md) — arXiv v1: Abstract; §1 (underdetermined RANS, precedent); §2, Fig. 1, Eqs. 1–2 (network, residuals, loss, error metric); §3, Figs. 2–6, Table 1 (five cases); §4 (conclusions).
 - [Domingo & Vervisch (2023)](/sources/domingo-2023.md) — §7 (physics-informed techniques as a perspective for combustion DNS).
-- [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §2.2, Eq. 8 (PINN loss); §2.4 (PINO and its drawbacks, recalled); §2.5, Eq. 17 (LESnets); §3.1; App. A.
+- [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §2.2, Eq. 8 (PINN loss); §2.4 (PINO and its drawbacks, cited); §2.5, Eq. 17 (LESnets); §3.1; App. A.
 - [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §I (Wang's PINN cited), §III (Eivazi et al. cited), App. C, Fig. 10, Tables VIII, XI (label-free Riemann-problem network); Conclusions.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3 (PINN-based LES wall modelling cited).
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §1 (PINNs mentioned among machine-learning work on Burgers' equation; ref. [29] as printed); §3 (energy-conserving architecture).
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.2 (PINNs yield no predictive closures for new configurations).

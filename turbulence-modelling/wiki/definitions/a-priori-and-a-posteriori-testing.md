@@ -5,7 +5,7 @@ description: "A priori testing evaluates or trains a closure on filtered or aver
 status: established
 aliases: [a priori test, a posteriori test, offline and online evaluation, a-priori training, a-posteriori training]
 tags: [data-driven, a-priori-a-posteriori, sgs-model, les, rans]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # A priori and a posteriori testing
@@ -61,8 +61,8 @@ DNS onto the LES basis (Fig. 3) and "a posteriori" for the LES runs (§4).
 [Kim et al. (2024)](/sources/kim-2024.md) (offline evaluation on box-filtered
 DNS of a cylinder wake against actual LES, §4.1–4.2),
 [Wang et al. (2023c)](/sources/wang-2023-c.md) (§V, filtered-DNS tests
-against LES) and [Domaradzki (2024)](/sources/domaradzki-2024.md) (§1,
-recalling the similarity models) use the pair in the same sense;
+against LES) and [Domaradzki (2024)](/sources/domaradzki-2024.md) (§1, on
+the similarity models) use the pair in the same sense;
 [Pacciani et al. (2025)](/sources/pacciani-2025.md) call the validation of
 their RANS transition model in the solver "a posteriori".
 [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) do not use the
@@ -139,7 +139,30 @@ solver (see
 cited work (§III), not for their own tests: their neural Riemann solvers are first scored on held-out exact
 solutions and then run as the interface flux of a finite-volume code
 (§V–VI).
-The words carry seven further meanings that must be kept apart:
+Five further sources use the pair in the same sense.
+[Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) (§3.1, Fig. 9)
+place it in a three-step machine-learning workflow (pre-processing,
+training, testing): a priori the trained model approximates training or
+test data; a posteriori it is implemented in the solver, which they also
+call "forward-propagation". Their review's thesis is that a priori
+improvements are common while a posteriori gains require model
+consistency (§5; see
+[model-consistent training](/methods/model-consistent-training.md)).
+[He et al. (2022)](/sources/he-2022-b.md) (§2.2) call the two phases
+"offline" (training and testing on frozen high-fidelity mean fields) and
+"online" (the model called at every CFD iteration), and report the offline
+phase only.
+[Qi et al. (2022)](/sources/qi-2022-b.md) (§3–5) run both: correlations
+of modelled and exact terms on box-filtered DNS, then LES.
+[Tonicello et al. (2022)](/sources/tonicello-2022.md) (§4–5) evaluate
+"a priori" the resolved kinetic-energy budget of their DNS, once with
+Favre time–span averaging (the RANS sense) and once with a differential
+filter of width $\Delta=2h$, $4h$, $8h$ (the LES sense); there is no LES.
+[Cherroud et al. (2022)](/sources/cherroud-2022.md) (§3–4) fit their
+sparse Bayesian closures to frozen-RANS targets out of the solver and
+select the sparsity hyperparameter a posteriori, by running the MAP models
+in OpenFOAM (below).
+The words carry eight further meanings that must be kept apart:
 
 - **Training rather than testing.** Duraisamy (2021, §IV) and Agdestein &
   Sanderse (2025, §4.3) speak of *a priori training* (the loss compares the
@@ -205,6 +228,10 @@ The words carry seven further meanings that must be kept apart:
   progress variable and mixture fraction, not by progress variable alone.
   They state that the measure sees only the correlation of fluctuations
   and is blind to a shift of the mean (§3.4.3).
+- **Filtering before or after solving.** [Svärd (2022)](/sources/svard-2022.md)
+  (§1, §6) uses "a priori" for a filter applied to the equations and "a
+  posteriori filtering" for local averages of a computed weak entropy
+  solution; neither sense is a model test.
 
 For wall models, a priori means that the matching data at $h_{\mathrm{wm}}$
 are taken from DNS and the model is run offline; a posteriori means the
@@ -355,6 +382,29 @@ Rezaeiravesh et al., as they cite it).
   mid-plane fields (Figs. 5–23). Their reference is the *total* unresolved
   stress of explicitly filtered LES (next section), not only the part a
   model can recover.
+- **Correlations of every unclosed term of the compressible equations.**
+  Qi et al. (2022, §4, Figs. 2–4) score their quasi-dynamic subgrid
+  kinetic-energy model on DNS of a compressible channel at Mach 1.5
+  ($900\times201\times300$ points), box-filtered in $x$ and $z$ at
+  $6\Delta_z$ ($\Delta_z$ page-local, the DNS spanwise spacing), by the
+  wall-normal profile of the correlation coefficient of the subgrid
+  kinetic-energy flux and of the wall-normal subgrid heat flux ("almost
+  higher than 0.95", against "much lower" for dynamic Smagorinsky and a
+  dynamic $k_{\mathrm{sgs}}$-equation model), and also of the pressure
+  and dissipation terms of the energy equation. A second a priori check
+  compares the model coefficient inferred from each expanded term with the
+  one the model actually uses (Figs. 4, 15); see
+  [dynamic procedure](/methods/dynamic-procedure.md).
+- **Correlation of the subgrid energy transfer with dilatation.**
+  Tonicello et al. (2022, §4.2, §5, Tables 4–6) correlate the
+  resolved-dilatation term of the kinetic-energy budget with the subgrid
+  (or Reynolds-stress) dissipation, over the whole field and per quadrant
+  of compression or expansion and forward or inverse transfer: 0.2775 for
+  the Favre average, 0.1936 and 0.2682 for the filter widths $4h$ and $8h$
+  (Table 4). Removing the spherical part of the stress drops the
+  correlation to 0.1081, 0.0370 and 0.0889 (Table 6); see
+  [energy backscatter](/definitions/energy-backscatter.md) and
+  [pressure dilatation](/definitions/pressure-dilatation.md).
 
 **A posteriori metric.** Wu & Lele (2026, §5, Eq. 5.1) sum the absolute
 difference of the logarithms of the filtered-DNS and LES energy spectra
@@ -422,15 +472,15 @@ can disagree).
   [dynamic tensor-coefficient Smagorinsky model](/methods/dynamic-tensor-coefficient-smagorinsky-model.md),
   yet is under-dissipative a posteriori and needs added Smagorinsky
   dissipation.
-- As recalled by Vadrot et al. (2023b, §I), Zhou et al. (2021) reported
+- Vadrot et al. (2023b, §I) cite Zhou et al. (2021), who reported
   good a priori but poor a posteriori results for a neural-network wall
   model on periodic hills. In their own tests the re-trained version
   (ZYZY22) is accurate a priori at every $Re_\tau$ except 180 (§IV B,
   Fig. 12), yet a posteriori it gives a log law with $\kappa=0.32$ (§III A,
   Eq. 9); the authors trace the error to the LES side (§V) while also
   writing that "it is not clear to the authors why" (§IV B).
-- As recalled by Duraisamy (2021, §IV.B, Fig. 2, from Sirignano, MacArt &
-  Freund), an a priori-trained SGS closure overpredicts the resolved
+- Duraisamy (2021, §IV.B, Fig. 2) shows, from Sirignano, MacArt &
+  Freund, that an a priori-trained SGS closure overpredicts the resolved
   kinetic energy in decaying
   [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md),
   while the same closure trained a posteriori follows filtered DNS.
@@ -442,8 +492,8 @@ can disagree).
   with the reference $\nu_{\mathrm{eq}}$ in the shear layer behind a
   [backward-facing step](/benchmarks/backward-facing-step.md), and states
   that a pure scale-similarity model nevertheless "often causes numerical
-  instability" a posteriori; as recalled there from the author's earlier
-  work, the similarity estimate of $k_{\mathrm{sgs}}$ did not always work a
+  instability" a posteriori; citing the author's earlier work, the paper
+  states that the similarity estimate of $k_{\mathrm{sgs}}$ did not always work a
   posteriori on coarse grids.
 - Pereira et al. (2021, §III, §IV.2) set the
   [PANS](/methods/partially-averaged-navier-stokes.md) resolution
@@ -506,7 +556,7 @@ can disagree).
   1.56 (G-VG), 1.59 (T-SR-FU) and 1.56 (T-VG-FU) against 1.56 in DNS
   (Table 3; $L_r$ page-local, the mean recirculation length from the base
   point).
-- As recalled by Domaradzki (2024, §1) from Bardina et al. and Liu et al.,
+- Domaradzki (2024, §1), citing Bardina et al. and Liu et al., states that
   similarity models correlate highly with filtered-DNS stresses a priori
   and are insufficiently dissipative a posteriori; eddy-viscosity models do
   the reverse.
@@ -558,6 +608,15 @@ can disagree).
   turbulence its LES is unstable "for any case and any LES resolution".
   As they state, the model produces no inter-scale energy transfer in 2-D
   (ratio of mean transfers 0, Fig. 2 table).
+- Sandberg & Zhao (2022, §4.1) cite the junction-flow closure of
+  Weatheritt & Sandberg (2019), whose cost included the divergence of
+  the Reynolds stress, strongly reduced the a priori error yet improved
+  the a posteriori velocity only marginally; gene-expression and
+  tensor-basis models of a jet in crossflow, trained on an inline jet and
+  tested a priori on a skewed one, both failed where the streamwise
+  vorticity is strongest. The review adds that training on DNS Reynolds
+  stresses cannot guarantee an accurate RANS mean flow (§3.1, citing Wu et
+  al. 2019 and Brener et al. 2021).
 
 **An a priori criterion chosen for its a posteriori consequence.** Jakhar
 et al. (2026, pp. 2–4, Figs. 1–3) select a closure from a 930-term
@@ -574,6 +633,20 @@ in both a priori and a posteriori tests" (p. 4); see
 [symbolic-regression closures](/methods/symbolic-regression-closure.md).
 The two verdicts agree here once the a priori score contains the energy
 transfer; the stress correlation alone did not discriminate.
+
+**An a priori fit selected a posteriori.** Cherroud et al. (2022, §3–4,
+Eqs. 29–32, Table 2) regress the coefficients of
+[sparse Bayesian closures](/methods/symbolic-regression-closure.md) out of
+the solver, on frozen-RANS targets, for five values of the sparsity
+parameter, and choose among them by running the maximum-a-posteriori
+models in OpenFOAM and scoring the mean-square errors of velocity, $k$,
+Reynolds shear stress and $C_f$ against the baseline. The a posteriori
+score decides the model and depends on the quantities it contains: scored
+on velocity alone, models with a non-zero anisotropy correction win for
+two of the three training scenarios; scored on all four quantities, the
+production-only model at the largest sparsity wins for all three (Table
+2). Yan et al. (2022) chose their network by its a posteriori lift error
+for a related reason (above).
 
 **Deconvolution filters: one verdict agrees, one does not.** Caban et al.
 (2026) test the approximate deconvolution model both ways. A priori
@@ -649,10 +722,8 @@ meshes against $0.0047$ and $0.0050$ for standard clipping and $0.0058$ in
 DNS (§III.B.3, Table 4), with better mean velocity and Reynolds shear
 stress. The authors "hypothesize" that structural accuracy, not
 dissipation, explains the gain in the anisotropic wall-bounded flow (§IV),
-following the argument they recall from Baggett et al. that HIT needs only
-the right dissipation (§I–II). This is the converse of Vela-Martín's
-reading above: for Prakash et al. a priori stress correlation is
-predictive where dissipation is held equal.
+following the argument they cite from Baggett et al. that HIT needs only
+the right dissipation (§I–II).
 
 **Low correlation, good a posteriori results.** Kim et al. (2022, §III E,
 Table IV) evaluate models on one resolved channel-flow field at
@@ -665,8 +736,8 @@ filtered-DNS mean velocity and Reynolds shear stress, which the dynamic
 model overpredicts (§III C). The authors attribute the gain to the
 non-alignment of $\tau^d_{ij}$ with $\bar S_{ij}$, "rather than the level
 of eddy viscosity" (§III E). Like Prakash et al. (2022), they credit stress
-structure, not dissipation. By contrast, as Kim et al. recall, supervised
-networks fed with local velocity gradients (Park & Choi 2021) reach a
+structure, not dissipation. By contrast, Kim et al. cite supervised
+networks fed with local velocity gradients (Park & Choi 2021) that reach a
 correlation of only about 0.5 with the filtered-DNS stress, and the one
 with the same inputs as the RL model did not predict the two target
 profiles well (§III C, §III E).
@@ -679,16 +750,23 @@ to have accurate mean fields, as long as the Reynolds force vector is
 correctly represented", the Reynolds-force vector being the divergence of
 the stress (see
 [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
-The argument has the structure of Vela-Martín's gauge argument above: a
-stress error with zero divergence leaves the mean equations unchanged; the
-parallel is not drawn by either source, which do not cite each other
-*(compiler check, not in the sources)*. Agrawal & Koutsourelakis (2024,
+Agrawal & Koutsourelakis (2024,
 §3.4, Fig. 7) report the same outcome for a tensor-basis closure trained
 only on sparse mean velocity and pressure through an adjoint RANS solver
 on a [backward-facing step](/benchmarks/backward-facing-step.md): the
 learned Reynolds stress shows discrepancies against LES, largest at
 $5<x/h<10$, while the predicted mean fields agree well. They read this as
 non-uniqueness of the inverse problem, "also reported by other works".
+Brenner et al. (2022, §3.5, Fig. 13) find the same with an adjoint
+inversion of a multiplicative eddy-viscosity field on the
+[periodic hill](/benchmarks/periodic-hill.md): the assimilated mean
+velocities improve "definitely", while the stress–strain alignment of the
+Reynolds stress is "neither considerably nor consistently improved"
+against the baseline $k$-$\varepsilon$ solution. Cherroud et al. (2022,
+§4.2, Fig. 7) learn production corrections of the
+[$k$-$\omega$ SST model](/methods/k-omega-sst-model.md) that improve
+velocity and skin friction on three separated flows while every model
+over-predicts $k$ in the separated regions.
 
 **A priori failure that predicts a posteriori failure.** Kim et al. (2024)
 feed grid- and test-filtered strain rates (or velocity gradients) into one
@@ -753,6 +831,20 @@ SGS model in isotropic turbulence:
   overprediction of the tails of the dynamic Smagorinsky dissipation PDF
   with that model's need for averaging in a posteriori runs (§III.2).
 
+Qi et al. (2022) report agreement for their quasi-dynamic subgrid
+kinetic-energy model of compressible flow. A priori its kinetic-energy flux
+and wall-normal heat flux correlate with filtered DNS at about 0.95, far
+above dynamic Smagorinsky and the dynamic $k_{\mathrm{sgs}}$-equation model
+(§4, Figs. 2–3). A posteriori, in LES of the Mach 1.5 channel on three
+grids, it reproduces the DNS $Re_\tau=220$ (220, 221 and 218 against
+213–201 for dynamic Smagorinsky and 215–208 for the $k_{\mathrm{sgs}}$
+model, Tables 2–4), and it is closest to DNS in a Mach 2.25 transitional
+boundary layer and a converging Richtmyer–Meshkov flow (§5–6). The
+ranking holds in both tests; the shared filter-width coefficient that the
+model assumes for all expanded terms is supported a priori only at the
+two box-filter widths tested ($6\Delta_z$ channel, $3\Delta_z$ flat
+plate), while the LES use the grid filter.
+
 **Both tests on the same filter widths.** Inagaki & Kobayashi (2023)
 report an a priori and an a posteriori result for channel flow at
 $Re_\tau=400$. A priori, with a "medium" filter ($\Delta x^+=52.4$,
@@ -768,9 +860,9 @@ velocity profile for the medium filter case, whereas it fails for the
 coarse filter case" (§V). The paper does not test its anisotropic models
 a posteriori.
 
-**An a priori advantage that shows only in one flow region.** As recalled
-by Helm & Martín (2022, Sec. II, Sec. IV F), the a priori study of Martín
-et al. (2000) in compressible isotropic turbulence found better stress and
+**An a priori advantage that shows only in one flow region.** Helm &
+Martín (2022, Sec. II, Sec. IV F) cite the a priori study of Martín et al.
+(2000) in compressible isotropic turbulence, which found better stress and
 heat-flux correlations for the dynamic mixed model than for the dynamic
 eddy-viscosity model. In a posteriori LES of compression-ramp
 [shock–boundary-layer interactions](/benchmarks/shock-turbulent-boundary-layer-interaction.md),
@@ -819,6 +911,13 @@ interpolation in the steepness factor.
    Oulghelou et al. (2025, §3), following Cherroud et al. as they cite
    them, evaluate the features of their weight regressor on the baseline RANS
    solution, the same input the model receives in prediction.
+   Sandberg & Zhao (2022, §3.2) name the RANS case for the time scale:
+   the $k/\varepsilon$ or $1/\omega$ of the RANS model can differ
+   substantially from that of the reference data, and the frozen approach
+   of Parneix et al., as they cite it, solves the $\varepsilon$ or
+   $\omega$ equation with the reference mean velocity and Reynolds
+   stresses frozen, so that the training features carry the time scale
+   the trained model will meet in the solver.
 2. **Error accumulation.** In the solver the model sees inputs that carry
    its own past errors. Duraisamy (2021, §IV.A, Fig. 1) illustrates this
    with a neural super-resolution map: it reconstructs fine scales well
@@ -831,16 +930,16 @@ interpolation in the steepness factor.
    wall models: supervised closures trained on single-step targets are not
    trained to compensate systematic DNS–LES discrepancies or compounding
    errors, and, since "wall models are more sensitive than SGS models"
-   (recalled from their ref. 22), compounding errors are expected to hurt
+   (citing their ref. 22), compounding errors are expected to hurt
    more in wall-modelled LES. They recall a posteriori studies that exposed
    ill-conditioning of data-driven SGS models. Kim et al. (2022, §III C)
    make the same point for SGS models: their training succeeds "through the
    online learning process in which the temporal reaction of the SGS model
    in the actual LES is considered".
 3. **Balance between model terms.** Exact inputs do not repair a model
-   whose other terms were tuned to its own variables. As recalled by
-   Duraisamy (2021, §IV.A), using exact DNS or LES $k$ and $\varepsilon$ in
-   the eddy viscosity of one- and two-equation models did not improve
+   whose other terms were tuned to its own variables. Duraisamy (2021,
+   §IV.A) cites results in which using exact DNS or LES $k$ and
+   $\varepsilon$ in the eddy viscosity of one- and two-equation models did not improve
    predictions (Raiesi et al.), and substituting DNS Reynolds stresses did
    not give satisfactory velocity fields (Thompson et al.). Duraisamy et
    al. (2019, §6) recall the same Thompson et al. result, with Poroseva et
@@ -881,7 +980,7 @@ interpolation in the steepness factor.
    supervised learning there is, "from our perspective, ill-posed".
    Surrogate targets from an approximating explicit filter produce
    "severe inconsistencies between the training and actual simulations"
-   (§1, recalled from their ref. [8]). Lozano-Durán & Bae (2023, §2.5)
+   (§1, citing their ref. [8]). Lozano-Durán & Bae (2023, §2.5)
    give the same reason for not training a wall model on filtered DNS:
    the subgrid tensor of an implicitly filtered LES does not coincide with
    the stress obtained by filtering the Navier–Stokes equations.
@@ -909,7 +1008,7 @@ interpolation in the steepness factor.
 7. **Distribution shift between training and use.** Kang et al. (2023,
    §3.2) name the failure of a network on an untrained Reynolds number or
    grid a "prior probability shift", the output distribution differing
-   between training and test (recalled from the machine-learning
+   between training and test (citing the machine-learning
    literature). Their remedy is to normalize inputs and outputs so that the
    normalized distributions do not change with $Re$ and resolution (see
    [neural-network SGS models](/methods/neural-network-sgs-model.md)).
@@ -939,10 +1038,7 @@ interpolation in the steepness factor.
    scales. Jakhar et al. (2026, pp. 1–3) find this for the second-order
    gradient model in 2-D turbulence and repair the selection score by
    adding the correlations of the energy transfer and of its forward and
-   backscatter parts (above). Prakash et al. (2022) separate structure
-   and dissipation with two metrics (C.C. and R.E.F., above); Jakhar et
-   al. combine the two kinds of score into one selection criterion
-   *(compiler check, not in the sources)*.
+   backscatter parts (above).
 
 ## Testbeds that allow both tests
 
@@ -1015,11 +1111,22 @@ and, in their words, removes the a priori/a posteriori input
 inconsistency. Wang et al. (2023c, §II.B) calibrate an SGS coefficient
 against the filtered-DNS energy spectrum only, not against fields.
 
-**Discretization-aware a priori data.** As recalled by Basile et al.
-(2023, §3.2, §4.2.3), Chapelier and co-workers set an under-resolution
+**Averaging and filtering on the same DNS.** Tonicello et al. (2022,
+§4.2, Fig. 19) evaluate the same unclosed term of a compression–expansion
+ramp DNS at Mach 2.91 in both senses: the Favre time–span average
+(RANS) and filtered snapshots (LES, 30 snapshots, $\Delta=2h$, $4h$,
+$8h$). The PDF of the subgrid or Reynolds-stress dissipation is
+dominated by forward transfer for the average and has much wider positive
+and negative tails for the filtered fields, with a similar mean. The
+authors read this as consistent with eddy-viscosity models reproducing the
+mean transfer but not the local one (see
+[energy backscatter](/definitions/energy-backscatter.md)).
+
+**Discretization-aware a priori data.** Basile et al. (2023, §3.2,
+§4.2.3) cite Chapelier and co-workers, who set an under-resolution
 threshold of a DG smoothness indicator a priori from DNS of the
 Taylor–Green vortex at $Re=5000$, finding values close to the $-5/3$
-inertial slope, and Beck et al. projected filtered DNS onto a DG grid a
+inertial slope, and Beck et al., who projected filtered DNS onto a DG grid a
 priori, obtaining fields that are discontinuous at element interfaces; see
 [mesh adaptation](/methods/mesh-adaptation.md) and
 [discretization-consistent closure](/definitions/discretization-consistent-closure.md).
@@ -1064,7 +1171,7 @@ priori, obtaining fields that are discontinuous at element interfaces; see
   $\nabla_s\langle\boldsymbol u\rangle=2S_{ij}$ and sign convention are
   translated *(compiler check, not in the sources)*.
 - Kim et al. (2022) train a posteriori by construction. Their comparison
-  with a supervised model is recalled from another study (Park & Choi
+  with a supervised model is cited from another study (Park & Choi
   2021), not rerun with the same solver.
 - Seyedi & Zayernouri (2022) quote no correlation values; they are shown
   only in Figs. 4 and 7. Their a posteriori LES start from filtered DNS,
@@ -1102,6 +1209,12 @@ priori, obtaining fields that are discontinuous at element interfaces; see
   Zangeneh (2021) reports no a priori evaluation of its random forest
   (§III); Berger et al. (2022) assess manifold inputs on DNS without a
   coupled simulation.
+  He et al. (2022, §2.2, §4.3) evaluate their random-forest correction of
+  the Spalart–Allmaras model offline only: the statement that the
+  corrected viscosity ratio "matches well" the target profiles (Fig. 12)
+  is made on frozen mean fields, not on a converged coupled RANS solution.
+  Tonicello et al. (2022) are a priori only; their proposed bulk-viscosity
+  model of the subgrid trace is not run (§5–6).
   Rickard & Kasbaoui (2026) run only the a priori analysis of their
   wall-slip models and present no forward simulation (§2, §7); Ranjbar
   et al. (2026) run only a posteriori tests. Valencia et al. (2026) are
@@ -1129,7 +1242,7 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 
 # Citations
 
-- [Duraisamy (2021)](/sources/duraisamy-2021.md) — §IV.A (three mechanisms, "neither necessary nor sufficient", Fig. 1), §IV.B (Fig. 2, recalled from Sirignano et al.).
+- [Duraisamy (2021)](/sources/duraisamy-2021.md) — §IV.A (three mechanisms, "neither necessary nor sufficient", Fig. 1), §IV.B (Fig. 2, from Sirignano et al.).
 - [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3 (terminology), §5.4 and §6 (training and prediction environments, operational latent variables).
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §V, Eq. 14 (correlation metric), Bardina model a priori against a posteriori.
 - [Vela-Martín (2022)](/sources/velamartin-2022.md) — §3 (gauge invariance), §6.3 (correlation of equivalent stresses), §8 (interpretation).
@@ -1144,12 +1257,12 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 - [Abe (2021)](/sources/abe-2021.md) — §IV B–D, Eq. 17, Figs. 5, 9–11, Tables II–III; §V; App. C.
 - [Pereira et al. (2021)](/sources/pereira-2021.md) — arXiv v2, §II, §III (strategies S1–S3), §IV.2, §IV.3.2, §V, App. B.
 - [Yan et al. (2022)](/sources/yan-2022.md) — accepted manuscript, §3.1.2, Table 1; §3.2.2 (offline and online prediction).
-- [Basile et al. (2023)](/sources/basile-2023.md) — HAL accepted manuscript, §3.1 (a posteriori error estimator), §3.2, §4.2.3 (a priori DG studies recalled).
+- [Basile et al. (2023)](/sources/basile-2023.md) — HAL accepted manuscript, §3.1 (a posteriori error estimator), §3.2, §4.2.3 (a priori DG studies cited).
 - [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §6.2 (a priori goal-oriented error estimate).
-- [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: §III C (training in the LES, a posteriori results, supervised model recalled), §III E, Eqs. 27–28, Table IV (alignment and correlation metrics).
+- [Kim et al. (2022)](/sources/kim-2022.md) — arXiv v2: §III C (training in the LES, a posteriori results, supervised model cited), §III E, Eqs. 27–28, Table IV (alignment and correlation metrics).
 - [McConkey et al. (2022)](/sources/mcconkey-2022.md) — arXiv v1: §II A–C, Eq. 6, Figs. 4–6 (conditioning test); §IV A, Figs. 11–14 (a priori errors); §IV B, Figs. 20–21; §V.
 - [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) — arXiv v3: §III.1–III.2, Figs. 4–7 (a priori); §IV, Figs. 8–10 (a posteriori).
-- [Helm & Martín (2022)](/sources/helm-2022.md) — Sec. II, Sec. IV F, Figs. 30–33, Sec. V; abstract (a priori study recalled, a posteriori ablation).
+- [Helm & Martín (2022)](/sources/helm-2022.md) — Sec. II, Sec. IV F, Figs. 30–33, Sec. V; abstract (a priori study cited, a posteriori ablation).
 - [Cato et al. (2023)](/sources/cato-2023.md) — HAL author manuscript: §V C, Figs. 16–19 (mean flow without the right stresses), Eq. 18.
 - [Kang et al. (2023)](/sources/kang-2023.md) — Eq. 3.1, §3.1, Tables 3–4 (correlations, alignment); §3.2 (prior probability shift); §3.3, Table 6, Figs. 19–22 (a priori ranking against a posteriori accuracy, averaging and clipping).
 - [Sirignano & MacArt (2023)](/sources/sirignano-2023.md) — §1 (DNS inputs against LES inputs, RL not a priori), §4.2, §5, Figs. 11–12 (a priori against adjoint-trained network), §7.
@@ -1159,8 +1272,8 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.5 (training on solver-consistent WMLES instead of filtered DNS).
 - [Kim et al. (2024)](/sources/kim-2024.md) — §4.1, Figs. 6–7, Eq. 4.1 (a priori profiles, noise robustness); §4.2, Table 3, Fig. 9 (a posteriori); p. A6-21, Eqs. 4.2–4.3, Table 4 (discretization error).
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — arXiv v3: §II.B (spectrum target); §III, Figs. 3–4 (stress PDFs against a posteriori statistics); §V.
-- [Domaradzki (2024)](/sources/domaradzki-2024.md) — §1 (similarity models recalled); §3.1, Fig. 6 (transfer correlations).
-- [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §1 (recalled cases); §3.4, Eqs. 51–52 (derivative and trajectory fitting); §4.2.
+- [Domaradzki (2024)](/sources/domaradzki-2024.md) — §1 (similarity models cited); §3.1, Fig. 6 (transfer correlations).
+- [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §1 (cited cases); §3.4, Eqs. 51–52 (derivative and trajectory fitting); §4.2.
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — arXiv v2: §1, §2.2, Eqs. 11–12 (model and trajectory regression); §3.4, Fig. 7 (stress discrepancy, accurate mean fields).
 - [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — arXiv v3: §II.B.3, Eqs. 4–5 (reward on the known mean wall stress); §V.
 - [Chen et al. (2024)](/sources/chen-2024.md) — §3 ("a priori" DNS diagnostics), §4 ("a posteriori" boundary-layer solutions).
@@ -1186,3 +1299,10 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 - [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §V, Tables III–V (stand-alone errors); §VI, Figs. 6–7 (network flux beats the exact flux in the CFD solution; fourth order).
 - [Berger et al. (2022)](/sources/berger-2022.md) — §3.4.1–3.4.3, Eqs. 22–24, Figs. 16, 22 (optimal-estimator assessment of manifold inputs; blind to mean shifts).
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §III, §III.B, Figs. 8–10 (a posteriori tests against coarse unmodelled runs).
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.1, Fig. 9 (workflow, definitions, cost on mean quantities); §3.2 (frozen time scale); §4.1 (junction flow and jet in crossflow, cited); §5.
+- [He et al. (2022)](/sources/he-2022-b.md) — §2.2 (offline and online phases), §4.3, Fig. 12 (offline only).
+- [Qi et al. (2022)](/sources/qi-2022-b.md) — §4, Figs. 2–4, 15 (a priori correlations and coefficient check); §5–6, Tables 2–4 (a posteriori LES).
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §4.2, Fig. 19, Tables 4–6 (averaged and filtered a priori budgets); §5–6.
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §3–4, Eqs. 29–32, Table 2 (a posteriori cross-validation); §4.2, Fig. 7.
+- [Brenner et al. (2022)](/sources/brenner-2022.md) — §3.5, Fig. 13 (mean velocity improved, stress–strain alignment not).
+- [Svärd (2022)](/sources/svard-2022.md) — §1, §6 (filtering "a priori" against "a posteriori", in passing).

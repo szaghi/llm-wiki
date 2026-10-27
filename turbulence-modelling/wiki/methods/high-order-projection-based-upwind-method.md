@@ -5,7 +5,7 @@ description: "HOPU restricts the upwind penalty of a high-order discontinuous co
 status: established
 aliases: [HOPU, high-order projection-based upwinding, adaptive HOPU, projection-based upwind stabilization]
 tags: [implicit-les, numerical-dissipation, dg, boundary-layer, transition]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # High-order projection-based upwind (HOPU) method
@@ -30,9 +30,9 @@ no matching height, unlike the methods of
 [Lederer et al. (2026)](/sources/lederer-2026.md) carry the method over
 to transitional flow on the [Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md)
 with a new, projection-type time integration of the host scheme, and
-recall its lineage: a projection-based upwind method "was first introduced
+cite its lineage: a projection-based upwind method "was first introduced
 as a DG stabilization method for hyperbolic systems" and later established
-for diffusion equations in mixed form (§1, as recalled from earlier work).
+for diffusion equations in mixed form (§1, citing earlier work).
 They place HOPU beside the
 [jump-penalty stabilization](/methods/jump-penalty-stabilization.md) of
 under-resolved DG turbulence, which "ha[s] sparked interest" (§1).
@@ -51,8 +51,8 @@ Kolmogorov length).
 ## Baseline discretization
 
 The host scheme is the **mass-conserving mixed-stress (MCS)** method of
-Gopalakrishnan, Lederer and Schöberl for incompressible flow, as recalled by
-Lederer et al. (2023, §2.2): an $H(\mathrm{div})$-conforming
+Gopalakrishnan, Lederer and Schöberl for incompressible flow, as
+Lederer et al. (2023, §2.2) describe it: an $H(\mathrm{div})$-conforming
 Raviart–Thomas velocity of degree $N$ with piecewise-polynomial pressure of
 degree $N$, so that the discrete velocity is exactly divergence free
 ($\nabla\cdot V_h=Q_h$, Eq. 5); a trace-free stress of degree $N+1$ whose

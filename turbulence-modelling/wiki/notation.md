@@ -266,7 +266,7 @@ that uses one still says what it means.
 | $\alpha_{\mathrm{KT}}$, $\beta_{\mathrm{KT}}$, $a_s$, $b_s$, $E_D$, $\ell^\pm$ | von Kármán–Taylor constants and shear-source strengths of nearly incompressible MHD transport models; residual energy; Elsasser correlation lengths (not the registry's $\lambda$) | compressible MHD turbulence, critical balance |
 | $C_I$ | Yoshizawa coefficient of the isotropic subgrid stress | Smagorinsky model, explicit modal filtering, Boussinesq hypothesis |
 | $\tau_{\mathrm{col}}$, $\tau_{\mathrm{col},t}$ | collision time of a gas-kinetic (BGK) scheme and its turbulent increment, $\tau_{\mathrm{col}}+\tau_{\mathrm{col},t}=(\mu+\mu_t)/p$ (never $\tau_t$, the $k$-$\tau$ time scale) | high-order gas-kinetic scheme, large-eddy simulation, lattice Boltzmann method |
-| $C_{\mathrm{Th}}$, $M_{\mathrm{tip}}$, $\psi$ | rotor thrust coefficient (not the TENO cut-off $C_T$), tip Mach number and wake age | Caradonna–Tung rotor |
+| $C_{\mathrm{Th}}$, $M_{\mathrm{tip}}$, $\psi_{\mathrm w}$, $R_{\mathrm r}$ | rotor thrust coefficient (not the TENO cut-off $C_T$), tip Mach number, wake age (not the $k$-$\sqrt kL$ surrogate $\psi$), rotor radius | Caradonna–Tung rotor, FW-H acoustic analogy |
 | $C_h$ | Stanton number (the registry's $St$ is the Strouhal number) | Morkovin hypothesis, wall-modelled LES, non-equilibrium wall models |
 | $h_p$ | plunge amplitude of an oscillating body (not the cell size $h$) | circular-cylinder wake |
 | $F$, $D_{\mathrm m}$, $a_{\mathrm{cf}}$, $F_{\mathrm{num}}$, $F_{\mathrm{sgs}}$ | thickening factor, molecular diffusivity, counterflow strain rate; numerical and subgrid parts of the thickening | thickened flame model, flamelet-based tabulated chemistry |
@@ -276,3 +276,17 @@ that uses one still says what it means.
 | $P_{\mathrm{TV}}$ | threshold of the relative total-variation limiter of bandwidth-optimized WENO | WENO schemes |
 | $\eta_Z$, $\zeta_Z$ | thickness and position coordinates of a counterflow mixing layer in mixture fraction | thickened flame model |
 | $C_{\mathrm{DM}}$ | constant of the Duan–Martín temperature–velocity relation (not the TENO cut-off $C_T$) | Morkovin hypothesis, compressible velocity transformations, Baldwin–Lomax model, inverse-velocity-transformation wall model |
+| $\lambda_{\mathrm{AD}}$ | adjustable-dissipation parameter of Deng et al.'s BVD reconstruction (not the Taylor microscale $\lambda$) | low-dissipation low-dispersion schemes, implicit LES, numerical dissipation, direct numerical simulation, isotropic turbulence |
+| $\Pi^{\mathrm t}_{\mathrm{pd}}$, $\Pi^{\mathrm{sgs}}_{\mathrm{pd}}$, $\Pi_{\mathrm{sph}}$ | turbulent and subgrid pressure-dilatation terms; spherical (trace) part of the subgrid energy transfer (never the bare SGS flux $\Pi$) | pressure dilatation, energy backscatter, bulk viscosity |
+| $\mu_{b,\mathrm{AV}}$, $Pr_{\mathrm{AV}}$ | artificial bulk viscosity and its Prandtl number (the physical or subgrid bulk viscosity is $\mu_b$, §11 above) | bulk viscosity, artificial-viscosity shock capturing, numerical dissipation |
+| $M_{\mathrm{sgs}}$ | subgrid Mach number | energy backscatter, shock-generated turbulence, Taylor–Green vortex |
+| $\mathsf S^\omega_{ij}$, $\mathsf W^\omega_{ij}$, $t_{\mathrm{turb}}$ | mean strain and rotation scaled by $1/\omega$ (the $k/\varepsilon$-scaled forms are $\mathsf S_{ij}$, $\mathsf W_{ij}$); generic turbulent time scale of an EARSM | explicit algebraic Reynolds-stress model, Boussinesq hypothesis |
+| $\{\cdot\}_e$, $[\![\cdot]\!]$ | element average; interface jump (never $\langle\cdot\rangle$, the Reynolds average) | shock sensors, artificial-viscosity shock capturing, entropy conservation, explicit modal filtering |
+| $\vartheta^{\mathrm t}_m$, $\vartheta^{\mathrm t}_c$, $\vartheta^{\mathrm t}_{\max}$ | unnormalized total degree of an orthonormal mode, its cut-off and maximum (the normalized index is $\vartheta_m$) | explicit modal filtering, Taylor–Green vortex |
+| $\nu^\omega_{\mathrm{eff}}$ | effective viscosity defined by $-\mathrm dE_k/\mathrm dt=\nu^\omega_{\mathrm{eff}}\langle\omega_i\omega_i\rangle$ (not the projected $\nu_{\mathrm{eff}}$) | numerical dissipation, spectral element method |
+| $\tau_{\mathrm M}$, $\tau_{\mathrm C}$, $\boldsymbol r_{\mathrm M}$, $r_{\mathrm C}$ | momentum and continuity stabilization parameters and residuals of residual-based VMS | variational multiscale method, immersed boundary method |
+| $\Theta$, $\tilde\Theta$ | temporal filter width and its dimensionless form (temporal LES) | large-eddy simulation, lattice Boltzmann method, Taylor–Green vortex |
+| $L_{\mathrm{int}}$ | interaction length of a shock/boundary-layer interaction (not the scale-separation length $L_{\mathrm{sc}}$) | shock–turbulent boundary layer interaction, wall-modelled LES, equilibrium and non-equilibrium wall models |
+| $\mu^w_{\mathrm{sgs}}$, $\lambda^w_{\mathrm{sgs}}$ | wall-model eddy viscosity and eddy conductivity | equilibrium wall model, wall-modelled LES |
+| $\varpi_{\mathrm p}$ | angular frequency of a pitching airfoil | dynamic stall, NACA 0012 airfoil |
+| $\alpha_h$ | hill-width factor of the parametrized periodic hill | periodic hill |

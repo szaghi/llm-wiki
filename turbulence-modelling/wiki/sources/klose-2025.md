@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Turbomach. 147:091002"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Turbomachinery_Klose_The_Unsteady_ShockBoundary_Layer_Interaction_in_a_Compressor.pdf"
 tags: [implicit-les, dg, shock-capturing, turbomachinery, transition, rans]
-timestamp: 2026-10-26T20:47:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -87,7 +87,7 @@ section, equation, table and figure.
 18. The measured amplitude 0.13 "agrees very well with the LES20 case", although a high-resolution LES20 "would presumably show larger deviations as well"; a possible cause of the simulation–experiment differences is the wind-tunnel span of $1.68c$, which allows spanwise modulation of the shock (§6). **Stated**
 19. One buffet period is about $6.3\,t_c$. The cycle: most-forward shock; adverse pressure gradient separates and reattaches the boundary layer; upstream-travelling disturbances in the subsonic boundary layer thicken it and produce an intermittent oblique compression wave; the shock moves downstream, the separation fails to reattach; shocklets transition the pressure side; the separated region grows and the flow above turns locally supersonic; the separation point creeps upstream, the compression wave lowers the downstream Mach number; the shock is pushed upstream and the recirculating fluid is shed as a large vortex (§7.1, Figs. 8–9). **Shown** (qualitative)
 20. "The underlying SBLI mechanics are identical for the two LES" (LES10-HR, LES20); LES10-HR has a larger separated region, and the waves and shocklets of LES20 "appear more diffused, given the increased numerical dissipation in this case" (§7.1). **Shown**
-21. Space–time pressure diagrams: in the subsonic region ($x_c/c>0.6$) pressure waves travel both ways, the thin negative-slope streaks being shocklets; in the supersonic region ($0.1<x_c/c<0.5$) only downstream propagation, except thin lines that are the oblique compression waves, which appear driven by the shocklets (§7.2, Fig. 10). **Shown**
+21. Space–time pressure diagrams: in the subsonic region ($x_c/c>0.6$) pressure waves travel both ways, the thin negative-slope streaks being shocklets; in the supersonic region ($0.1<x_c/c<0.5$) only downstream propagation, except thin lines that are the oblique compression waves, which "appear to be driven by the shocklets" (§7.2, Fig. 10). **Shown**
 22. Near the wall ($0.003c$) the sonic line is dominated by a high-frequency oscillation driven by the boundary layer and oblique shocks, with secondary spectral peaks at $ft_c=0.32$ and $0.48$ (§7.2, Figs. 11–12). **Shown**
 23. SPOD (velocity fluctuations, kinetic-energy norm with uniform weights, 1008 snapshots over 75 $t_c$, 7 blocks of 250 with 50% overlap, Hamming window) gives a distinct dominant mode at $ft_c=0.16$, well separated from the second mode, and further peaks at the harmonics 0.32, 0.48, 0.64 (§7.3, Eqs. 2–5, Fig. 13). **Shown**
 24. The 0.16 mode is the streamwise back-and-forth motion of the shock in $u'$, with a sign reversal under the shock attributed to strong oblique waves; the 0.48 and 0.64 modes are the oblique compression wave as a vertical displacement in $v'$ (§7.3, Fig. 14). **Shown**

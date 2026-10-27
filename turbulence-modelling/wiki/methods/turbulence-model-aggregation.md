@@ -5,7 +5,7 @@ description: "Several RANS models, each trained for one flow class, are combined
 status: established
 aliases: [model aggregation, space-dependent model aggregation, XMA, mixture of experts, model blending, internal model blending, M_blend, expert models]
 tags: [rans, data-driven, symbolic-regression, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T15:47:00Z
 ---
 
 # Aggregation and blending of data-driven turbulence models
@@ -15,10 +15,10 @@ carry over to others. **Model aggregation** keeps several "expert" models,
 each trained for its own class, and combines them with weights
 $w_M(\boldsymbol x)\ge0$, $\sum_Mw_M=1$ (page-local: $M$ an expert of the
 set $\mathcal M$), that vary in space and are predicted from local flow
-features $\boldsymbol\zeta$ by a regressor. As recalled by
-[Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (§1, Fig. 1), the
-earlier **external** form (space-dependent model aggregation, XMA, after
-Zordo-Banliat et al. 2024 and Cherroud et al. 2025) runs every expert to
+features $\boldsymbol\zeta$ by a regressor.
+[Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (§1, Fig. 1)
+describe, citing Zordo-Banliat et al. (2024) and Cherroud et al. (2025),
+the earlier **external** form (space-dependent model aggregation, XMA): it runs every expert to
 convergence and mixes their *solutions*; it is inspired by Bayesian model
 averaging, reads the weights as local model probabilities, and estimates
 [model-form uncertainty](/definitions/model-form-uncertainty.md) from the
@@ -37,7 +37,7 @@ Oulghelou et al. (2025, §1, §3) state the trade-off:
 | Governing equations | the aggregated fields "are in general not a solution" of them | the blended solution satisfies the RANS equations |
 | Uncertainty | variance across expert solutions estimates model-form uncertainty | "no longer an uncertainty quantification method" |
 
-As recalled there (§1), other internal approaches choose models by
+Oulghelou et al. (§1) cite other internal approaches that choose models by
 classifiers trained alongside data-driven models (Matai & Durbin;
 [Lozano-Durán & Bae 2023](/sources/lozanoduran-2023.md), whose
 [building-block-flow wall model](/methods/building-block-flow-wall-model.md)
@@ -48,6 +48,20 @@ itself a heuristic blend of $k$-$\varepsilon$ and $k$-$\omega$ (§1). They
 argue against two alternatives without testing them: training one model
 on many flows "may lead to a soft compromise solution", and progressive
 augmentation may still need thresholding functions (§1).
+
+[Cherroud et al. (2022)](/sources/cherroud-2022.md) (§1) recall the
+Bayesian model-scenario averaging of Edeling et al. (2014a) and state its
+limit: an average over a set of models cannot be more accurate than the
+best model in the set. They learn new corrections instead, by sparse
+Bayesian regression on three separated flows (see
+[symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+Oulghelou et al. take the SBL-SpaRTA regression from Cherroud et al.
+(2022) and their experts from Cherroud et al. (2025). Their
+separated-flow expert, $(5.21\pm0.0173)\,T^{(2)}$ in the anisotropy and
+$(0.681\pm0.02)\,T^{(1)}$ in the production, is trained on all three
+flows together (Table 1), whereas each selected model of Cherroud et al.
+(2022) is trained on two of them and has no anisotropy correction
+(production coefficients 0.8433, 0.382 and 0.197, Eqs. A.13–A.15).
 
 ## The experts and what is blended (Oulghelou et al. 2025)
 
@@ -159,7 +173,7 @@ error negligible (§4.1).
   $M_{\mathrm{ANSJ}}$ 1.08, blend 0.52. The blend has the lowest velocity
   (0.04) and $C_f$ ($3.86\times10^{-4}$) errors, SST the lowest $C_p$ error
   (0.03 against 0.04). In the core flow all weights tend to $\tfrac13$,
-  read as insensitivity of that region to the model (Fig. 12d).
+  which the authors read as insensitivity of that region to the model (Fig. 12d).
 - *[NACA 0012](/benchmarks/naca-0012-airfoil.md), $Re=6\times10^6$,
   $0^\circ$–$18^\circ$ (§5.1.3, Figs. 15–16).* The blend reproduces the
   lift slope, drag and surface pressure close to SST; $M_{\mathrm{SEP}}$ is
@@ -217,6 +231,7 @@ Neither paper compares the two routes.
 
 # Citations
 
-- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §1, Fig. 1 (external aggregation recalled, internal blending, related approaches); §2, Eqs. 1–10 (augmented SST, tensor basis, frozen-RANS targets); §2.1, §3, Table 1 (SBL-SpaRTA experts); §3, Eqs. 11–13, Algorithms 1–2 (blending, Gaussian weights, random forest); §3.1, Fig. 3, Table 2; §4.1–4.2, Tables 3–7, Figs. 4–9 (training flows); §5, Tables 9–11, Figs. 10–16 (unseen flows, latent-space coverage); §6; App. A, Table 12 (features); App. B (SST constants).
-- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — classifier of flow similarity in the building-block-flow wall model, as recalled by Oulghelou et al. (2025, §1).
+- [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §1, Fig. 1 (external aggregation, internal blending, related approaches); §2, Eqs. 1–10 (augmented SST, tensor basis, frozen-RANS targets); §2.1, §3, Table 1 (SBL-SpaRTA experts); §3, Eqs. 11–13, Algorithms 1–2 (blending, Gaussian weights, random forest); §3.1, Fig. 3, Table 2; §4.1–4.2, Tables 3–7, Figs. 4–9 (training flows); §5, Tables 9–11, Figs. 10–16 (unseen flows, latent-space coverage); §6; App. A, Table 12 (features); App. B (SST constants).
+- [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — classifier of flow similarity in the building-block-flow wall model, as cited by Oulghelou et al. (2025, §1).
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §2.1, Eqs. 5–6 (shielding-function mask on the field-inversion correction).
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1 (Bayesian model-scenario averaging and its limit); App. A, Eqs. A.13–A.15 (single-scenario SBL-SpaRTA models).

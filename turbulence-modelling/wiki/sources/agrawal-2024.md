@@ -100,7 +100,6 @@ where $\boldsymbol R$ and $\boldsymbol\delta_R$ collect the nodal stress compone
 - **§2.2.3:** $\dim\hat z^{(m)}=N_{obs}$, but $\Sigma=\mathrm{diag}(\sigma_1^2,\dots,\sigma^2_{3N_{obs}})$.
 - **Footnote 2 (p. 13):** $E^{(m)}_\tau=\mu^{(m)}_E+\mathrm{diag}(\sigma_E^{2,(m)})\phi$ multiplies by the variance; Algorithm 1 uses $\mu^{(m)}_E+\sigma^{(m)}_E\odot\phi$.
 - **Eq. 29:** quantified "$\forall i\in\{1,\dots,M\}$" with index $m$; Algorithm 1 and §3.2 write $\{\hat z^{(i)}\}_{m=1}^M$.
-- **§2.2.2:** "a light-tailed, Student's t-distribution" (a Student-t has polynomially decaying, i.e. heavy, tails *(compiler check, not in the sources)*).
 - **Appendix A:** "As the Reynolds number is increased, the convection term dominates, leading to stability", where the context requires instability.
 - **Fig. 10 caption** (pressure contours): rows labelled "(⟨u⟩)" and "(σ(u))".
 - **§3.2:** a 10% draw per node "yield[s] approximately 8% of the grid points"; the paper does not reconcile the two numbers.

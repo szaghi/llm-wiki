@@ -5,7 +5,7 @@ description: "Derivative-free calibration of closure parameters from data with a
 status: established
 aliases: [EnKF, ensemble Kalman filter, ensemble Kalman inversion, ensemble data assimilation, EnKF-MM, EnKF mixed model, EnKF-FM]
 tags: [data-driven, field-inversion, sgs-model, les, uncertainty-quantification]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T15:46:00Z
 ---
 
 # Ensemble Kalman filter calibration of turbulence closures
@@ -24,10 +24,10 @@ posteriori calibration of an LES subgrid model inside the running LES (see
 
 ## Place among inversion methods
 
-- [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) (§5.1) list
-  "derivative-free iterative ensemble Kalman methods" (recalled from
-  Iglesias et al. 2013) beside adjoint-based optimization as solvers of
-  the field-inversion problem.
+- [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) (§5.1), citing
+  Iglesias et al. (2013), list "derivative-free iterative ensemble Kalman
+  methods" beside adjoint-based optimization as solvers of the
+  field-inversion problem.
 - [Yan et al. (2022)](/sources/yan-2022.md) (§1) name Markov-chain Monte
   Carlo and the EnKF as methods for the full Bayesian posterior of the
   correction field, and the MAP estimate, which they compute by adjoints,
@@ -53,6 +53,21 @@ posteriori calibration of an LES subgrid model inside the running LES (see
   [physics-informed neural-operator surrogate](/methods/neural-operator-les-surrogate.md),
   but calibrate it by gradient descent on the residual of the filtered
   equations evaluated on one trajectory, not by an ensemble.
+- [Brenner et al. (2022)](/sources/brenner-2022.md) (§1, §1.1) class
+  ensemble-Kalman calibration of RANS coefficients (with polynomial
+  chaos and approximate Bayesian computation) as parametric calibration
+  with limited gains, and state, citing a thesis of Singh, that ensemble
+  Kalman methods "suffer from the curse of dimensionality" when the
+  unknown is a field with one value per cell; nudging, the other
+  alternative they discuss, corrects the state but not parameters. They
+  choose a discrete adjoint, whose gradient costs about one forward solve
+  whatever the number of parameters (see
+  [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
+  Wang et al. (2023c, §V), after noting that finite differences would
+  also do for their one-parameter problem, call the filter more promising
+  for high-dimensional optimization; Brenner et al. (§1.1) set it against
+  an adjoint whose cost does not grow with the number of parameters.
+  Neither paper measures the cost of the ensemble in high dimension.
 
 **A gradient-based counterpart.** The two LES calibrations differ in
 target and filter, so their values are not comparable. Wang et al. (2023c)
@@ -206,3 +221,4 @@ pure gradient model, all compared with filtered DNS:
 - [Yan et al. (2022)](/sources/yan-2022.md) — accepted manuscript, §1 (MCMC and EnKF for the full posterior; MAP as field inversion).
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §1 (ensemble Kalman methods named as alternative to variational assimilation).
 - [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §4, Eqs. 25–26, Table 4 (gradient-based learning of the Smagorinsky coefficient, ensemble assimilation cited as motivation).
+- [Brenner et al. (2022)](/sources/brenner-2022.md) — §1, §1.1 (parametric calibration, ensemble Kalman methods and the curse of dimensionality, nudging).

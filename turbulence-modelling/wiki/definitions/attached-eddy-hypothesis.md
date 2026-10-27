@@ -5,7 +5,7 @@ description: "The attached-eddy hypothesis models the logarithmic region of wall
 status: established
 aliases: [attached eddy model, attached-eddy model, Townsend's attached eddies, wall-attached eddies, inactive motions, uniform momentum zones]
 tags: [boundary-layer, dns, compressible, hypersonic]
-timestamp: 2026-10-27T10:57:00Z
+timestamp: 2026-10-27T15:47:00Z
 ---
 
 # Attached-eddy hypothesis
@@ -79,8 +79,9 @@ the histogram of the sampled values, with histogram minima marking sharp
 gradients between zones (Cogo et al. 2022, §3.2, after De Silva et al.
 2016). Their existence is attributed to the hierarchical distribution of
 coherent structures and is "closely related to the fundamental hypothesis of
-the attached eddy model", which has been used to reproduce statistics and to
-generate synthetic instantaneous fields (as recalled there). Cogo et al.
+the attached eddy model", which, Cogo et al. note citing Perry & Marušić
+(1995) and De Silva et al. (2016), has been shown to reproduce flow
+statistics and to generate synthetic instantaneous velocity fields. Cogo et al.
 confirm uniform zones of streamwise velocity at $Re_\tau\approx2000$ at
 Mach 2 and 5.86 and report uniform **temperature** zones for the first time:
 mean counts 3.6 and 2.5 for velocity, 5.9 and 4.9 for temperature, fewer at
@@ -91,9 +92,9 @@ temperature as an "attached variable"; whether the zone count grows
 logarithmically with $Re_\tau$ needs data over more than a decade of
 $Re_\tau$. No clear zones are found for the total temperature.
 
-**Eddy-size scale.** From an eddy-viscosity ansatz, Pirozzoli (2012), adapted
-to compressible flow by Modesti & Pirozzoli (2016), as recalled by Cogo et
-al. (2022, §5.4, Eq. 5.9), define an eddy-size scale
+**Eddy-size scale.** Cogo et al. (2022, §5.4, Eq. 5.9) cite an eddy-size
+scale that Pirozzoli (2012) derives from an eddy-viscosity ansatz and
+Modesti & Pirozzoli (2016) adapt to compressible flow,
 $l_{12}^*\sim(u_\tau\delta)\,(\partial_y\langle u\rangle_{VD})^{-1/2}$ from
 the van Driest-transformed mean shear; Cogo et al. propose replacing it by
 the shear of the total-stress-based transformation of Griffin et al. (2021)

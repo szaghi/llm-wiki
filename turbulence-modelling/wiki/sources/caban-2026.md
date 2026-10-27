@@ -9,7 +9,7 @@ year: 2026
 venue: "Comput. Fluids 312:107015"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Computers_amp_Fluids_Caban_Analysis_of_the_impact_of_numerically_induced_high-order_fil.pdf"
 tags: [les, sgs-model, filtering, implicit-les, numerical-dissipation, discretization-consistent-closure]
-timestamp: 2026-10-27T06:13:00Z
+timestamp: 2026-10-27T15:59:00Z
 ---
 
 # Summary
@@ -121,7 +121,7 @@ published article.
 | $\mathcal G_I^{(r)}$, $\mathcal G_{I'}$, $\mathcal G_{N'}$ | $\mathcal F_h$ (its derivative, interpolation and combined parts) | page-local subscripts |
 | $\mathcal G_{QG}=Q_{N_{\rm ADM}}\mathcal G_E$ | (regularization filter) | from the 8th-order compact filter with $N_{\mathrm{AD}}=2$ |
 | $\mathcal G_{EF}$, $\mathcal H$ | (filter assumed in deconvolution, true filter) | |
-| $N_{\mathrm{ADM}}$, $u^*_i$ | $N_{\mathrm{AD}}$ (number of van Cittert terms, page-local), $u^*_i$ (deconvolved velocity) | |
+| $N_{\mathrm{ADM}}$, $u^*_i$ | $N_{\mathrm{AD}}$ (number of van Cittert terms, registry §11), $u^*_i$ (deconvolved velocity, page-local) | |
 | $\hat{\mathcal E}$ | (deconvolution error, Eq. 36) | negative = amplification |
 | $a_n$, $\nu_n$ | (numerical phase speed and numerical viscosity of mode $n$) | $a_n=a\hat G^{(1)}_{I,n}$, $\nu_n=\nu\hat G^{(2)}_{I,n}$ |
 | $M$, $N$ | (stencil sizes of compact formulas) | **collision:** $N$ is the polynomial degree in the registry |

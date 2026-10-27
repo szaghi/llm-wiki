@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Spectral difference method"
-description: "The spectral difference method is a nodal high-order element scheme that interpolates the solution on N+1 points and the flux on N+2 points per direction, made continuous by Riemann fluxes and differentiated at the solution points; this page covers its formulation, its place in the flux-reconstruction family, and its DNS and shock-capturing uses."
+description: "The spectral difference method is a nodal high-order element scheme that interpolates the solution on N+1 points and the flux on N+2 points per direction, made continuous by Riemann fluxes and differentiated at the solution points; this page covers its formulation, its place in the flux-reconstruction family, and its DNS uses with immersed boundaries, shock/boundary-layer interaction and shock capturing."
 status: established
 aliases: [SD, SD method, spectral difference, staggered-grid Chebyshev multidomain method]
 tags: [flux-reconstruction, dns, compressible, immersed-boundary, implicit-les, numerical-dissipation]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Spectral difference method
@@ -19,17 +19,19 @@ direction, two of which lie on the cell faces. The face values of the
 flux are replaced by a common value from an approximate Riemann solver,
 which makes the flux continuous across cells, and the derivative of the flux
 polynomial at the solution points advances the solution
-([D'Ayer et al. 2026](/sources/dayer-2026.md), §2.2, Eqs. 6–10, recalling
+([D'Ayer et al. 2026](/sources/dayer-2026.md), §2.2, Eqs. 6–10, citing
 Kopriva & Kolias, Kopriva, Liu, Vinokur & Wang, and Wang et al.). Within the
 energy-stable [flux-reconstruction](/methods/flux-reconstruction.md) family
 a particular value of the correction parameter, $c_{\mathrm{SD}}$, "recover[s]
 the stable spectral difference (SD) scheme"
-([Brillon & Nadarajah 2026](/sources/brillon-2026.md), §1, §3.1.5, as
-recalled from Allaneau & Jameson). Two scale-resolving uses appear in the
+([Brillon & Nadarajah 2026](/sources/brillon-2026.md), §1, §3.1.5, citing
+Allaneau & Jameson). Three scale-resolving uses appear in the
 sources: the compressible DNS solver JAGUAR with an immersed boundary
-(D'Ayer et al. 2026) and the shock-capturing code SD3DvisP in a
+(D'Ayer et al. 2026), the shock-capturing code SD3DvisP in a
 supersonic Taylor–Green comparison
-([Chapelier et al. 2024](/sources/chapelier-2024.md)).
+([Chapelier et al. 2024](/sources/chapelier-2024.md)), and a DNS of a
+supersonic compression/expansion ramp with bulk artificial viscosity
+([Tonicello et al. 2022](/sources/tonicello-2022.md)).
 
 Page-local symbols: $\xi_i^{\mathrm{sp}}$ and $\xi_k^{\mathrm{fp}}$ the
 solution and flux points of the reference cell; $\ell_i$ the Lagrange
@@ -73,7 +75,7 @@ which JAGUAR computes with the first Bassi–Rebay scheme (BR1, §2.2). The
 same solver handles triangles and tetrahedra through Raviart–Thomas flux
 spaces, not used in that paper (§2.2).
 
-**Cost against FR.** As recalled by D'Ayer et al. (2026, §1), earlier work
+**Cost against FR.** D'Ayer et al. (2026, §1) cite earlier work that
 found the computing time of SD "equivalent" to that of flux reconstruction
 under favourable conditions and slightly higher in some circumstances.
 
@@ -112,6 +114,49 @@ discretization:
 The authors conclude that SD with volume penalization is "suitable to
 elaborate accurate DNS database of turbulent flows over rough surfaces"
 and name automatic $hp$-refinement near the interface as future work (§4).
+
+## Spectral difference as a DNS solver for a shock/boundary-layer interaction
+
+[Tonicello et al. (2022)](/sources/tonicello-2022.md) run a DNS of a
+Mach 2.91 turbulent boundary layer ($Re_\theta=2900$, $\delta^+=340$) over a
+$24^\circ$ compression ramp followed by an expansion corner, at the
+conditions of the DNS of Priebe & Martín, with an SD solver that
+originates in Jameson's Stanford group; they state that it is, to their
+knowledge, the first spectral-element simulation of this interaction (§2,
+acknowledgements). Their formulation (App. A, Eqs. A1–A14) is the one
+above, written with the source's $N$ as the order: in registry notation
+the polynomial degree is $N=5$, with 6 solution points at Gauss–Legendre
+nodes and 7 flux points (the Gauss–Legendre nodes plus the two end
+points, "to ensure linear stability", citing Jameson). Curved elements
+are mapped by $Q=\det(J)\,U$ and contravariant fluxes (Eq. A8). The
+discretization and its resolution (§2, Table 2):
+
+- $(120+120+120)\times28\times27$ elements, first solution point at
+  $y^+\approx0.3$, $\Delta x^+=4.75$–15, $\Delta y^+=0.3$–9,
+  $\Delta z^+=4.2$ (spacings are the element length over the number of
+  solution points), and an effective spacing at most about six
+  a-posteriori Kolmogorov lengths downstream of the shock;
+- shocks regularized by a bulk
+  [artificial viscosity](/methods/artificial-viscosity-shock-capturing.md)
+  driven by a characteristic-based modal sensor and multiplied by a
+  Ducros-type factor that is non-zero only in compression and switches the
+  viscosity off at walls and in vortical regions (Eq. 2.10; see
+  [shock sensor](/definitions/shock-sensor.md)); "direct numerical
+  simulation" refers to the turbulent scales, the shocks staying
+  under-resolved (§2.2);
+- a Zhang–Shu positivity-preserving limiter adapted to SD, applied at
+  solution and flux points at every Runge–Kutta stage, whose averaged
+  activation flag peaks at about $10^{-4}$ (App. C, Fig. 13);
+- the explicit differential filters of the a priori analysis are solved
+  with the same SD scheme (§4.2).
+
+The kinetic-energy budget closes to nearly zero at $y^+\approx30$, which
+the authors read as negligible numerical dissipation, and the
+artificial-viscosity term is small against the others (§4.1, Figs. 17–18);
+the spectra show no pile-up at the grid Nyquist wavenumber (§3.2). The
+validation and the energy-transfer analysis are on
+[shock/turbulent boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+and [energy backscatter](/definitions/energy-backscatter.md).
 
 ## Spectral difference with artificial viscosity in shock–turbulence flow
 
@@ -159,16 +204,16 @@ result. The solver lives in [COOLFluiD](/software/coolfluid.md), whose
 list of discretizations includes a "spectral finite difference" module
 beside flux reconstruction (§3.1).
 
-**TENO limiting for SD.** As recalled by
-[Huang et al. (2025)](/sources/huang-2025.md), §1 (their ref. 58, Chen &
-Fu 2024), a TENO-type limiter with a troubled-cell indicator has been
+**TENO limiting for SD.**
+[Huang et al. (2025)](/sources/huang-2025.md), §1, cite (their ref. 58,
+Chen & Fu 2024) a TENO-type limiter with a troubled-cell indicator
 applied to the nodal spectral difference method; Huang et al. build the
 analogous [shock sensor](/definitions/shock-sensor.md) and limiter for
 modal Runge–Kutta DG, not for SD.
 
 ## Uses cited by other sources
 
-Three further sources mention SD only through the works they cite:
+Four further sources mention SD only through the works they cite:
 
 - **Wall-modelled LES.** In their review of
   [wall-modelled LES](/methods/wall-modelled-les.md),
@@ -185,6 +230,12 @@ Three further sources mention SD only through the works they cite:
   of their moving-grid flux-reconstruction solver with a GCL
   error-compensation approach whose references include a high-order SD
   method for unstructured dynamic grids by Yu, Wang & Hu (2011).
+- **Modal filtering.** [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md),
+  §2, §6, recall SD (Kopriva; Liu, Vinokur & Wang) among the schemes that
+  flux reconstruction recovers and list the optimization of their
+  [modal filters](/methods/explicit-modal-filtering.md) for other schemes
+  as future work; their filters are optimized only for the DG-recovering
+  correction function.
 - **The First High-Order CFD Workshop.** [Wang et al. (2013)](/sources/wang-2013.md),
   §1, cite the SD method of Liu, Vinokur & Wang among the high-order
   methods developed for unstructured meshes. None of the workshop
@@ -193,10 +244,19 @@ Three further sources mention SD only through the works they cite:
 
 ## Qualifications
 
-- Evidence for SD in turbulence is two sources: D'Ayer et al. validate an
+- Evidence for SD in turbulence is three sources: D'Ayer et al. validate an
   immersed boundary (laminar cylinder, one rough channel at one Reynolds
-  number) rather than the SD scheme itself, and Chapelier et al. compare
-  complete codes, so scheme and shock-capturing effects are not separated.
+  number) rather than the SD scheme itself, Chapelier et al. compare
+  complete codes, so scheme and shock-capturing effects are not separated,
+  and Tonicello et al. (2022) validate one supersonic ramp DNS.
+- **Order convention and node sets.** Tonicello et al. (2022) count $N$ as
+  the order (solution degree $N-1$ on $N$ points, flux on $N+1$), D'Ayer
+  et al. as the degree; this page writes the degree. Tonicello et al. place
+  the solution points at Gauss–Legendre nodes, D'Ayer et al. at
+  first-kind Chebyshev nodes, with Gauss–Legendre interior flux points in
+  both. Tonicello et al. print 54 million degrees of freedom (Table 2),
+  while 360·28·27 elements with $6^3$ solution points each make about
+  58.8 million *(compiler check, not in the sources)*.
 - **Printed slip (D'Ayer et al. 2026).** §2.2 defines $N+2$ flux points as
   "the two nodes of the considered cell added to the $(p-1)$
   Legendre-Gauss points"; two end points plus $N-1$ interior points make
@@ -211,15 +271,17 @@ Three further sources mention SD only through the works they cite:
   (hal-05075852v1, May 2025), which prints four authors where the Crossref
   record lists three; the version of Chapelier et al. read is the HAL
   accepted manuscript. The equivalence of $c_{\mathrm{SD}}$ FR with SD is
-  recalled by Brillon & Nadarajah from the cited literature, not derived.
+  cited by Brillon & Nadarajah from the literature, not derived.
 
 # Citations
 
 - [D'Ayer et al. (2026)](/sources/dayer-2026.md) — HAL hal-05075852v1: §1 (SD stability, cost against FR, purpose); §2.1–2.2, Eqs. (1)–(10), Fig. 1 (equations, SD formulation, nodes, Roe flux, BR1, JAGUAR); §2.4 (time integration); §3.1, Tables 1–2, Figs. 3–5 (cylinder); §3.2, Table 3, Figs. 7–10 (rough minimal channel); §4.
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2, Table 2 (DNS set-up and resolution); §2.2, Eqs. (2.6)–(2.10) (bulk artificial viscosity, Ducros factor); §3.2, Figs. 7–8, 13; §4.1–4.2, Figs. 17–18; App. A, Eqs. (A1)–(A14) (SD formulation); App. B–C (modal sensor, positivity limiter).
+- [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §2 (SD recovered by FR, cited); §6 (filters for other schemes as future work).
 - [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §1, §3.1.5 (ESFR recovers SD; $c_{\mathrm{SD}}$ dissipation ordering).
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL hal-04582857v1: §III.B.e, h, Tables I–II (SD3DvisP); §IV.A–B, Figs. 5–8; §V.
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §2 (VCJH, $c_{\mathrm{SD}}$ default); §3.1 (COOLFluiD modules); §4.2, Fig. 14 (T3A skin friction for three VCJH parameters).
-- [Huang et al. (2025)](/sources/huang-2025.md) — §1 (TENO limiter for spectral difference, recalled).
+- [Huang et al. (2025)](/sources/huang-2025.md) — §1 (TENO limiter for spectral difference, cited).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §3 (wall-model implementation with SD, cited; cost of wall modelling).
 - [Liu et al. (2022b)](/sources/liu-2022-g.md) — §2.1 (GCL error compensation, SD on dynamic grids cited).
 - [Wang et al. (2013)](/sources/wang-2013.md) — §1 (SD cited among unstructured high-order methods); Tables II–VII (participants).

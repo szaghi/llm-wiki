@@ -5,7 +5,7 @@ description: "The one-equation eddy-viscosity RANS model transporting the workin
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-27T10:57:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -15,7 +15,7 @@ a working variable $\tilde\nu$ from which the eddy viscosity of the
 [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md) is computed,
 $\nu_t=\tilde\nu f_{v1}$, and it carries no turbulent kinetic energy. With
 SST variants it makes up most of the high-lift workshop RANS submissions
-recalled by Goc et al. (2021); it is the host model of the field-inversion corrections of
+reported by Goc et al. (2021); it is the host model of the field-inversion corrections of
 Duraisamy et al. (2019), and the starting point of a family of corrections
 for rotation, curvature, helicity and stress anisotropy. On this page the
 strain and rotation tensors and their magnitudes $\lvert S\rvert$,
@@ -125,7 +125,7 @@ region through $f_{v1}=\chi^3/(\chi^3+F^{20}c_{v1}^3)$ (Eqs. 6–9; see
 Four further printed forms:
 
 - **Compressible, with $f_{t2}$ and a density-gradient term.** Huang et al.
-  (2022b) transport $\rho\tilde\nu$ with the standard functions,
+  (2022b) transport $\rho\tilde\nu$ with the SA functions above,
   $f_{t2}=c_{t3}\exp(-c_{t4}\chi^2)$ retained with $c_{t3}=1.2$, $c_{t4}=0.5$,
   the constants of Alauzet et al., $c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma$
   and $r=\min(\cdot,10)$; their diffusion flux has the coefficient
@@ -169,7 +169,7 @@ Four further printed forms:
   $c_{b1}=0.1355$, $\sigma=2/3$, $c_{b2}=0.622$, $\kappa=0.41$, $c_{v1}=7.1$
   and $c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma$; $c_{w2}$ and $c_{w3}$ are
   not printed. They state that $f_{v1}$ "ensures a linear behavior
-  $\chi=\kappa y^+$ from the log-layer to the wall", as Basile et al. recall
+  $\chi=\kappa y^+$ from the log-layer to the wall", as Basile et al. state
   for $\tilde\nu$ ([Husson et al. (2024)](/sources/husson-2024.md), §2.2,
   Eqs. 18–23). The equation is solved by finite differences on the lattice
   of a lattice Boltzmann solver, its eddy viscosity resetting the
@@ -228,8 +228,8 @@ colouring once SA is included (§3.5, §3.7; see
 
 Elzaabalawy et al. (2023) note that high-order DG RANS work has focused on
 SA because it is simpler than two-equation models and has no blending
-functions that reduce the smoothness of the solution, and recall the
-devices used, as cited: an algebraic modification against negative eddy
+functions that reduce the smoothness of the solution, and cite the
+devices used: an algebraic modification against negative eddy
 viscosity (Nguyen, Persson & Peraire), artificial dissipation against
 oscillations (Oliver & Darmofal, and similarly Crivellini et al.), wall
 modelling by function enrichment for an explicit SA with operator
@@ -348,7 +348,7 @@ constitutive relations replacing the Boussinesq stress.
 
 ### Scope and robustness fixes
 
-- **SA-noft2** sets $f_{t2}\equiv0$ (Aupoix & Spalart 2003, as recalled by
+- **SA-noft2** sets $f_{t2}\equiv0$ (Aupoix & Spalart 2003, cited by
   Li & Liu, Eq. 7). In the compressor cascade every model differs from its
   noft2 version by less than 0.1%: $f_{t2}$ is negligible with a turbulent
   inlet above a Reynolds number of $2\times10^5$ (§3.1).
@@ -388,8 +388,8 @@ Duraisamy et al. (2019) report the field inversion of Singh & Duraisamy
 (2016): a spatial multiplier on the SA production, inferred from LES
 skin friction on the convex wall of a curved channel alone, reproduces the
 LES velocity and Reynolds stresses much better than SA and SARC, and its
-trend agrees with the reduction of turbulence by convex curvature; the
-comparison suggests that SARC needs improvement in the log layer
+trend agrees with the reduction of turbulence by convex curvature, which
+the authors take as showing that SARC needs improvement in the log layer
 ([Duraisamy et al. (2019)](/sources/duraisamy-2019.md), §5.1, Figs. 4–5;
 see [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
 
@@ -421,7 +421,7 @@ O_{ik}=\frac{2\Omega_{ik}}{\sqrt{\partial_nu_m\,\partial_nu_m}},\qquad C_{cr1}=0
 $$R^{\mathrm{QCR2013}}_{ij}=R^{\mathrm{QCR2000}}_{ij}+C_{cr2}\,\nu_t\lvert S^d\rvert\,\delta_{ij},\qquad C_{cr2}=2.5,$$
 
 with $R_{ij}$ the Boussinesq stress
-(Spalart 2000 and Mani et al. 2013, as recalled by Li & Liu, Eqs. 23–27).
+(Spalart 2000 and Mani et al. 2013, cited by Li & Liu, Eqs. 23–27).
 The QCR2000 correction adds no trace, since $O$ is antisymmetric and $R$
 symmetric *(compiler check, not in the sources: the added trace is
 $-2C_{cr1}O_{ik}R_{ik}=0$)*, so SA-QCR2000 is traceless like SA; the QCR2013
@@ -459,8 +459,8 @@ with a neural network embedded in the solver ([Yan et al. (2022)](/sources/yan-2
 In all cases the regularized correction both lowers the production at the
 start of the separating shear layer and raises it downstream, in the region
 where production greatly exceeds dissipation (§3.2.1, §3.3.1). This
-continues the curved-channel field inversion recalled by Duraisamy et al.
-(2019) below. In turbomachinery, Sandberg & Michelassi (2022) cite
+continues the curved-channel field inversion reported by Duraisamy et al.
+(2019) above. In turbomachinery, Sandberg & Michelassi (2022) cite
 field inversion with a neural network modifying SA in a low-Reynolds-number
 low-pressure-turbine cascade (Ferrero et al. 2020) as giving a posteriori
 accuracy similar to a much costlier two-equation model combined with the
@@ -511,6 +511,50 @@ see [field inversion](/methods/field-inversion-machine-learning.md) and
 gradient of the eddy-viscosity multiplier is checked against finite
 differences (App. A).
 
+**A single-use corrected model for error estimation.** Fidkowski (2022)
+multiplies the production of a conservative, density-weighted negative-SA
+form by a spatial field, $\beta P$ with prior one, and infers $\beta$ so
+that steady RANS reproduces the *time average* of an unsteady
+(laminar-separation, transitional or DES) simulation; a
+single-hidden-layer network (30 sigmoid neurons) on the dimensional
+state, its gradient and the wall distance then represents $\beta$ inside
+the solver and its linearization ([Fidkowski (2022)](/sources/fidkowski-2022.md),
+§2.1 Eq. 2, §3.1–3.2). The model is explicitly single-use, retrained at
+every mesh-adaptation iteration, and its steady adjoint serves as a
+surrogate for the unstable unsteady adjoint of the time-averaged lift. A
+new inversion objective weights the state mismatch by the output adjoint
+times the element residual Jacobian (Eq. 13). On the
+[NACA 0012](/benchmarks/naca-0012-airfoil.md) at $M=0.2$, $\alpha=7^\circ$,
+$Re=10^4$ and $2\times10^4$ and on a high-lift airfoil at $Re=10^6$
+($\alpha=17^\circ$), uncorrected SA under-predicts the mean lift, misses the
+laminar separation bubble of the $2\times10^4$ case and converges under
+adaptation to a wrong lift with "imperceptibly small" error estimates:
+modelling error dominates, in cases the author notes lie outside the
+usual applicability of RANS (§6.1–6.3, §7; see
+[mesh adaptation](/methods/mesh-adaptation.md) and
+[field inversion](/methods/field-inversion-machine-learning.md)).
+
+**An explained random-forest correction of SA-QCR.** He et al. (2022)
+correct the eddy viscosity of SA with the quadratic constitutive
+relation, $\nu_t+\Delta\nu_t$, by a random forest on nine bounded local
+features, trained a priori with the mean flow frozen at the high-fidelity
+field, on the axisymmetric transonic bump of Bachalo & Johnson
+($Re_c=2.763\times10^6$, $M_\infty=0.6$–$0.925$). One feature is the SA wall
+function $f_w$ itself, which they read as a region classifier: below 0.4
+free shear flow or viscous sublayer, 0.4–0.8 outer boundary layer,
+0.8–1 near-wall layer in a favourable gradient, 1 the log layer, above 1
+a near-wall layer in an adverse gradient (Table 3). Shapley-value
+explanations rank the viscosity ratio $\nu_t/\nu$ first, which they relate
+to the SA source terms scaling with $\nu_t$ or $\nu_t^2$, then a
+normalized Q-criterion (shear raises, rotation lowers the correction),
+then $f_w$ ([He et al. (2022)](/sources/he-2022-b.md), §2.2, §2.6, §5.1–5.3,
+Fig. 13). They state that the SA equation "was not supported by any
+physical conservation law" and was designed for equilibrium attached
+boundary layers, and read the increased correction in the log layer and
+its decrease elsewhere as a failure of the equilibrium assumption in this
+flow (§2.1, §5.1). Only the offline (a priori) phase is reported; see
+[model-form uncertainty](/definitions/model-form-uncertainty.md).
+
 ### SA as the host of detached-eddy simulation
 
 SA is the RANS closure of the zonal
@@ -544,6 +588,15 @@ which makes it "suitable for unsteady flow simulations using Cartesian
 grids" (the function is not printed), for a hovering rotor on moving
 Cartesian grids ([Sugaya & Imamura (2021)](/sources/sugaya-2021.md), §2.1,
 §4). These formulations are on the [DES page](/methods/detached-eddy-simulation.md).
+Fidkowski (2022) uses a "simplified DES" for adaptation studies: the wall
+distance is attenuated by the mesh-independent
+$d_{\max}\tanh(d/d_{\max})$, $d_{\max}=0.02c$, instead of a grid length, so
+that the model does not change as the mesh is adapted (§2.1, Eq. 3).
+Ghidoni et al. (2022) recall that SA can be run with zero eddy viscosity
+upstream of separation to represent laminar separation, as in the
+laminar-separation DES of the cylinder at $Re=1.4\times10^5$ they quote,
+which the $k$-$\omega$ model cannot ([Ghidoni et al. (2022)](/sources/ghidoni-2022.md),
+§6.2, Table 12; see the [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md)).
 
 ### SA with wall functions on immersed-boundary Cartesian grids
 
@@ -639,6 +692,21 @@ for compressor corner flows, and take the opposite route of a
 [Reynolds-stress model](/methods/reynolds-stress-model.md)
 ([Liu et al. (2024)](/sources/liu-2024.md), Introduction).
 
+### Transonic bump with QCR
+
+On the axisymmetric transonic bump He et al. (2022) find that SU2 SA and
+SST wall pressures "almost overlap" with CFL3D at $M_\infty=0.875$, and that
+SA-QCR predicts a delayed shock front and delayed shock-induced
+separation for $M_\infty\ge0.85$, deviating most from the wall-resolved LES
+of Uzun & Malik, while SST-QCR predicts the wall pressure well at all six
+Mach numbers (§2.4–2.5, Figs. 4–5). Against the LES eddy viscosity (a least-squares fit of the LES
+stress, see the [Boussinesq page](/definitions/boussinesq-hypothesis.md))
+SA-QCR overpredicts $\nu_t$ in the separation bubble and underpredicts it
+in the pre-shock boundary layer, the shear layer, the reattached layer
+and at the shock front; the authors attribute the last to shock buffet,
+"conceptually impossible to be modeled by steady RANS" (§2.7, Fig. 7; see
+[shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+
 ### Mesh-converged RANS of a transonic rotor
 
 Alauzet et al. (2022) run SA-noft2-QCR2000 on NASA Rotor 37 (36 blades,
@@ -684,7 +752,7 @@ meshes as future work (§9).
   §2.2.3; see [FLEXI](/software/flexi.md)).
 - The RSC-SGS hybrid RANS/LES method reduces the mean-strain stress of SA (or
   of a van Driest mixing length) by the averaged resolved stress, as
-  recalled by Haering et al. (2022), who class it as effectively zonal
+  Haering et al. (2022) describe it, classing it as effectively zonal
   ([Haering et al. (2022)](/sources/haering-2022.md), §I; see
   [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
 - SA-based local-correlation transition models (Medida & Baeder; Piotrowski
@@ -883,6 +951,11 @@ computed at high order:
 - Huang et al. (2022b) cite LU-SGS as their ref. [49], which is Reichardt's
   1951 wall-law paper (§2.2).
 
+- He et al. (2022) print the SA equation (Eq. 4) without constant values;
+  their wall-region map of $f_w$ (Table 3) and the one in their §5.2
+  (log layer $0.3<f_w<0.7$, outer layer $0.7<f_w<2.0$) disagree within the
+  paper.
+
 # Citations
 
 - [Li & Liu (2022)](/sources/li-2022.md) — §1, §2.3 Eqs. 1–27, 33–34, §3.1–3.2, §4.1–4.2, §5, Table 3.
@@ -922,3 +995,6 @@ computed at high order:
 - [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §2.1, §2.2 Eqs. 10–15 Table 1, §3.1 Table 3 Figs. 4–8, §3.2 Figs. 10–13, §4.5 Table 7.
 - [Han et al. (2022)](/sources/han-2022-c.md) — §4, Tables 6–7.
 - [Monfaredi et al. (2021)](/sources/monfaredi-2021.md) — §1, §2.1, §3, §4.2 Figs. 7, 10.
+- [Fidkowski (2022)](/sources/fidkowski-2022.md) — §2.1 Eqs. 2–3, §3.1–3.2 Eq. 13, §6.1–6.3, §7.
+- [He et al. (2022)](/sources/he-2022-b.md) — §2.1 Eq. 4, §2.2, §2.4–2.7 Figs. 4–7 Table 3, §5.1–5.3 Fig. 13.
+- [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §6.2, Table 12.

@@ -5,7 +5,7 @@ description: "Jump-penalty stabilization adds to a high-order element method fac
 status: established
 aliases: [jump penalty, solution jump penalty, gradient jump penalty, gradient-jump penalisation, GJP, continuous interior penalty, edge stabilization, interior penalty stabilization]
 tags: [dg, implicit-les, numerical-dissipation, spectral-element, flux-reconstruction]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Jump-penalty stabilization of high-order methods
@@ -148,7 +148,7 @@ benchmark numbers are on [periodic hill](/benchmarks/periodic-hill.md).
 Kou et al. (2023, §3, App. A, App. C) perform a temporal eigensolution (von
 Neumann) analysis of linear advection with the penalties, Gauss–Legendre
 quadrature, $N=2,3,4$, and central or upwind flux, plotting dispersion and
-dissipation against $kh/(N+1)$. Their design criterion, recalled from Moura
+dissipation against $kh/(N+1)$. Their design criterion, taken from Moura
 et al., is better dispersion at medium–high wavenumbers and more
 dissipation at high wavenumbers. Findings:
 
@@ -161,8 +161,8 @@ dissipation at high wavenumbers. Findings:
   "should be as large as possible" (Figs. 2, 4); below $\tau_s=-0.5$
   anti-diffusion appears;
 - as $\tau_s$ grows the DG eigenvalues split into a set converging to the
-  continuous Galerkin ones and a strongly dissipative set, as recalled from
-  earlier work, and the DG–CG difference in an advection test decays as
+  continuous Galerkin ones and a strongly dissipative set, as they state
+  citing earlier work, and the DG–CG difference in an advection test decays as
   $\tau_s^{-0.5}$ (§3, App. B);
 - with a central flux, $\tau_s=0.5$ reproduces the dispersion and
   dissipation of the upwind flux, a known equivalence that the analysis

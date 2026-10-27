@@ -9,7 +9,7 @@ year: 2023
 venue: "Phys. Fluids 35:055122"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Physics_of_Fluids_Vadrot_Log-law_recovery_through_reinforcement-learning_wall_model_f.pdf"
 tags: [wmles, wall-model, reinforcement-learning, log-layer-mismatch, data-driven]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Summary
@@ -116,7 +116,7 @@ and the anisotropic minimum-dissipation model (§II.A).
 | $\delta$ | $\delta$ | half-channel height; agrees |
 | $u^+$, $u_\tau$, $\tau_w$, $Re_\tau$ | $u^+$, $u_\tau$, $\tau_w$, $Re_\tau$ | agree; $Re_\tau$ not defined explicitly |
 | $\kappa$, $B$ | $\kappa$, $B$ | $\kappa\approx0.4$, $B\approx5$ |
-| $z_0=\nu\exp(-\kappa B)/u_\tau$ | roughness-length form of the log law | called "viscous scale" in the source |
+| $z_0=\nu\exp(-\kappa B)/u_\tau$ | $y_0$ (page-local on the [equilibrium wall model](/methods/equilibrium-wall-model.md) page) | roughness-length form of the log law; called "viscous scale" in the source |
 | $h_{wm}$, $h^+_{wm}$ | $h_{\mathrm{wm}}$, $h^+_{\mathrm{wm}}$ | $\Delta y/2$ for the equilibrium model, $\Delta y$ for the RL models |
 | $U_{LES}$, $u_{LES}$ | $U_{\mathrm{LES}}$ | LES velocity at $h_{\mathrm{wm}}$ |
 | $\tilde U_{LES}$ | filtered wall-model input | **tilde is a "possible filtration operation"** of the wall-model input, not a Favre filter |

@@ -9,7 +9,7 @@ year: 2020
 venue: "Prog. Aerosp. Sci. 114:100597"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2020_Crossref_Progress_in_Aerospace_Sciences_Heinz_A_review_of_hybrid_RANS-LES_methods_for_turbulent_flows_Conc.pdf"
 tags: [hybrid-rans-les, des, pans, rans, separated-flow, review]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Summary
@@ -121,11 +121,11 @@ subscript $+$ marks a modelled-to-total ratio, never wall units.
 | $k_+$, $\varepsilon_+$, $L_+$ | $k_+$, $\varepsilon_+$, $L_+$ (registry §11); $f_k$, $f_\varepsilon$ in PANS | **collision:** "+" is not wall units |
 | $\Delta_+=\Delta/L_{tot}$, $\Delta_{C+}$, $C_+$, $C_K$ | same (page-local) | no cell-based definition of $\Delta$ printed |
 | $\alpha=C_{\varepsilon2}/C_{\varepsilon1}$, $\alpha^*$ | $\alpha_\varepsilon$, $\alpha^*_\varepsilon$ (as on [continuous eddy simulation](/methods/continuous-eddy-simulation.md)) | **collision** with the DG blending factor $\alpha$ and the Wilcox constant $\alpha^*$ |
-| $\beta=C_{\omega2}/(C_\mu C_{\omega1})$, $\beta^*$ | $\alpha_\omega$, $\alpha^*_\omega$ (page-local) | **collision** with the registry $\beta^*$ and $\beta_\omega$; $\alpha_\omega\approx1.63$ |
+| $\beta=C_{\omega2}/(C_\mu C_{\omega1})$, $\beta^*$ | $\alpha_\omega$, $\alpha^*_\omega$ (registry §11) | **collision** with the registry $\beta^*$ and $\beta_\omega$; $\alpha_\omega\approx1.63$ |
 | $C_{\omega1}$, $C_{\omega2}$, $C_\omega$, $\sigma_\omega$ | same (Bredberg et al. constants, page-local) | $C_{\omega1}$ plays the role of Wilcox's $\alpha$ |
 | $\alpha_{PANS}$, $\beta_{PANS}$ | $\alpha_{\mathrm{PANS}}$, $\beta_{\mathrm{PANS}}$ (page-local) | |
 | $D_k$, $D_\varepsilon$, $D_\omega$, $D_{k,tot}$ | same (turbulent transport, page-local) | |
-| $\psi_{DES}$, $\psi_\alpha$, $\psi_\beta$, $C_{DES}$ | same (page-local) | $C_{DES}=0.65$ |
+| $\psi_{DES}$, $\psi_\alpha$, $\psi_\beta$, $C_{DES}$ | same (page-local; $\psi_\beta$ also registry §11) | $C_{DES}=0.65$ |
 | $N_k$, $N_{k\varepsilon}$, $N_\varepsilon$, $N_\omega$, $Q$ | same (page-local) | not the polynomial degree $N$ |
 | $\tau_u$, $\tau_L$, $c_0$ | same (page-local) | UNI-LES time scale; Lagrangian relaxation time; PDF diffusion parameter |
 | $\zeta_1$, $\zeta_2$, $\zeta_3$, $\sigma_\Phi$, $R_{SAS}$, $S'$ | same (page-local) | |

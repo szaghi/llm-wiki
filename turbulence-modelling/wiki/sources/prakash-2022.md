@@ -9,7 +9,7 @@ year: 2022
 venue: "AIAA J. 60:6897-6909"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_AIAA_Journal_Prakash_Optimal_Clipping_of_Structural_Subgrid_Stress_Closures_for_L.pdf"
 tags: [les, sgs-model, eddy-viscosity, a-priori-a-posteriori, energy-cascade]
-timestamp: 2026-10-25T19:46:00Z
+timestamp: 2026-10-27T16:00:00Z
 ---
 
 # Summary
@@ -116,8 +116,8 @@ equation, figure and table numbers on this page are those of the arXiv v2.
 | $\tau^M_{ij}$, $\tau^{M,d}_{ij}$ | $\tau^M_{ij}$ (page-local), its deviatoric part | modelled stress |
 | $\tau^{M-mixed}_{ij}$, $\tau^{M-SC}_{ij}$, $\tau^{M-OC}_{ij}$ | (mixed, standard-clipped, optimally clipped stress) | written $\tau^{\mathrm{SC}}$, $\tau^{\mathrm{OC}}$ on this page |
 | $\tilde\tau_{ij}$ | (trial tensor) | **collision:** not a Favre filter |
-| $\mathcal S$ | (backscatter-free set) | printed both $\mathcal S$ and $S$; **collision** with the strain magnitude |
-| $\lambda$ | (Lagrange multiplier, $\nu_t=\lambda/2$) | **collision:** not the Taylor microscale |
+| $\mathcal S$ | $\mathcal A$ (backscatter-free set, page-local, as on the [gradient model](/methods/gradient-model.md) page) | printed both $\mathcal S$ and $S$; **collision** with the strain magnitude |
+| $\lambda$ | $\lambda_{\mathrm{oc}}$ (Lagrange multiplier, $\nu_t=\lambda_{\mathrm{oc}}/2$, page-local, as on the gradient-model page) | **collision:** not the Taylor microscale |
 | $\Pi$, $\Pi^M$ | $\Pi=-\tau_{ij}\bar S_{ij}$, model flux | positive = forward transfer, as in the registry |
 | $C_s$, $C_G$ | $C_s$, $C_G$ (page-local) | $C_G$ the mixed-model coefficient, $(C_G\Delta)^2$ computed dynamically |
 | $\Delta$, $\Delta_i$ | $\Delta$, (directional widths) | $\Delta=(\Delta_1\Delta_2\Delta_3)^{1/3}$; a posteriori the grid size |

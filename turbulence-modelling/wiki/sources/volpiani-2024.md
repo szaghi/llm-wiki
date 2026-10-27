@@ -9,7 +9,7 @@ year: 2024
 venue: "Flow Turbul. Combust. 113:891–922"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Flow_Turbulence_and_Combustion_Volpiani_A_Comprehensive_Study_About_ImplicitExplicit_Large-Eddy_Simu.pdf"
 tags: [implicit-les, filtering, kinetic-energy-preserving, numerical-dissipation, sgs-model, compressible]
-timestamp: 2026-10-27T06:09:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -141,9 +141,10 @@ $N_p$ half-stencil, $c_j$ and $d_j$ derivative and filter coefficients
 65 printed references in Springer author–year style, alphabetical; merged
 complete into the [bibliography](/bibliography.md) with `citedby` this slug.
 The cited Cao et al. (2022, Phys. Fluids, implicit LES analysis) is the
-planned source `cao-2022-c`, not `cao-2022`; Bernades et al. (2023), Wang
-(2013) and Kiris et al. (2023) are the same works as the planned sources of
-those keys. Items printed without volume or pages: Asada et al. (2023), Cao
+planned source `cao-2022-c`, not `cao-2022`; Bernades et al. (2023) and
+Wang (2013) are the ingested sources [Bernades et al. (2023)](/sources/bernades-2023.md)
+and [Wang et al. (2013)](/sources/wang-2013.md), and Kiris et al. (2023) is
+the same work as the planned source of that key. Items printed without volume or pages: Asada et al. (2023), Cao
 et al. (2022), Cook (2007), Kiris et al. (2023). Boris (1990) is a book
 chapter; Feiereisen et al. (1981), Kraft (1988) and Larsson et al. (2007) are
 reports. Text labels that differ from the list are recorded under Printed
@@ -151,7 +152,7 @@ slips. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 8 (2026-10-27). This source is cited on:
+Chunk 8 (2026-10-27), cited further in chunk 10. This source is cited on:
 
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
@@ -159,10 +160,12 @@ Chunk 8 (2026-10-27). This source is cited on:
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
+- [Pressure dilatation](/definitions/pressure-dilatation.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Explicit modal filtering as an LES closure](/methods/explicit-modal-filtering.md)
 - [Low-dissipation low-dispersion schemes with shock sensor](/methods/low-dissipation-low-dispersion-scheme.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
+- [Variational multiscale method](/methods/variational-multiscale-method.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)

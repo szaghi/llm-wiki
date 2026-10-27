@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Circular-cylinder wake"
-description: "Flow past circular cylinders, chiefly at Re_D=3900, with separation, shear-layer roll-up and a turbulent wake: it tests neural-network SGS models, high-order PANS and immersed-boundary numerics; tandem cylinders at Re_D=1.6e5 test a Reynolds-stress-based IDDES, and laminar cylinders at Re 40 to 1000 validate immersed boundaries, data assimilation, fluid–structure coupling and aeroacoustic adjoints."
+description: "Flow past circular cylinders, chiefly at Re_D=3900, with separation, shear-layer roll-up and a turbulent wake: it tests neural-network SGS models, PANS, implicit LES with compact schemes, VMS LES with immersed boundaries and 2D URANS time integration; tandem cylinders test hybrid RANS/LES, and laminar cylinders validate solver numerics."
 status: established
 aliases: [cylinder wake, flow over a circular cylinder, flow past a circular cylinder, cylinder at Re_D=3900, tandem cylinders, tandem cylinder benchmark]
-tags: [benchmark, separated-flow, les, neural-network, pans, immersed-boundary, field-inversion, des, aeroacoustics]
-timestamp: 2026-10-27T11:02:00Z
+tags: [benchmark, separated-flow, les, implicit-les, neural-network, pans, immersed-boundary, field-inversion, des, aeroacoustics]
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Circular-cylinder wake
@@ -49,10 +49,10 @@ so their DNS cannot be compared from what they print. At $Re_D=5000$ Kim et
 al. run a new DNS ($2049\times1001\times128$, checked on
 $2049\times1001\times192$ and $3073\times1281\times128$) giving $L_r=1.39$,
 1.41, 1.37 and $C_D=1.01$, 1.00, 1.01 on the three grids, against the
-experimental $L_r=1.40$ and $C_D=1.02$ of Norberg as they recall it
+experimental $L_r=1.40$ and $C_D=1.02$ of Norberg that they cite
 (Table 1). At $Re_D=10{,}000$ the reference is the experiment of Dong et al.
-as recalled by Kim et al.: $L_r=0.82$, $C_{pb}=-1.13$, $U_{\min}=-0.25$,
-$C_D=1.14$ (§4.2.3). As recalled by Kim et al., citing Williamson, in this
+as cited by Kim et al.: $L_r=0.82$, $C_{pb}=-1.13$, $U_{\min}=-0.25$,
+$C_D=1.14$ (§4.2.3). Kim et al. (§4.2.3) cite Williamson for the trend that in this
 shear-layer transition regime ($1000<Re_D<200{,}000$) the Strouhal number,
 $-C_{pb}$ and $L_r$ decrease and the Reynolds stresses increase with
 $Re_D$ (§4.2.3).
@@ -278,12 +278,97 @@ not a turbulence model.
   of an earlier URANS. Adjoint sensitivities of the mean lift, the mean
   drag and a far-field noise objective agree with central finite
   differences (Fig. 5). The same paper's turbulent case is the rod–airfoil
-  configuration, whose rod is a cylinder of diameter $C/10$ one chord
-  upstream of a NACA 0012 at $Re_C=4.8\times10^5$. There the 2D
+  configuration, whose rod is a cylinder of diameter $c/10$ one chord
+  upstream of a NACA 0012 at $Re_c=4.8\times10^5$ ($c$ the chord). There the 2D
   Spalart–Allmaras URANS gives $St=0.24$, as an earlier 2D URANS does,
   against an experimental value of about 0.19. The authors take this
   overprediction of the shedding frequency as a known shortcoming of URANS
   (§1, §4.2).
+
+**Implicit LES with a weighted compact nonlinear scheme.**
+[Ma et al. (2022)](/sources/ma-2022.md), §3.2, run the cylinder at
+$Re_D=3900$ as [implicit LES](/definitions/implicit-les.md) (no SGS
+model) with two variants of a weighted compact nonlinear finite-difference
+scheme, the original one with an explicit fifth-order nonlinear
+interpolation (WCNS-E) and their seventh-order nonlinear tri-diagonal
+compact interpolation (WCNS-T; see
+[WENO schemes](/methods/weno-scheme.md)). The O-type grid has
+$180\times180\times45$ points (streamwise, wall-normal, spanwise) over a
+span of $\pi D$ with first wall-normal spacing $0.001D$; the Mach number and
+the averaging time are not printed. References are the experiments of Ong
+& Wallace, Lourenco & Shih and Parnaudeau et al., the DNS of Ma et al. and
+the LES of Kravchenko & Moin and of Lysenko et al.
+
+- The WCNS-T mean streamwise velocity is U-shaped close to the cylinder;
+  the authors relate the U/V shape to the position of shear-layer
+  transition and state that their runs "confirm" Lysenko et al.'s
+  statement that larger inherent numerical dissipation moves the
+  shear-layer transition upstream (Fig. 7); see
+  [numerical dissipation](/properties/numerical-dissipation.md).
+- WCNS-T wake-centreline velocity and surface $C_p$ agree with the
+  references; the transverse-velocity spectra at $x/D=3$ and 5 match them
+  "much better" than WCNS-E, with a clear inertial subrange, which the
+  authors read as WCNS-T not being over-dissipative (Figs. 8–9).
+- The comparisons are graphical; no recirculation length, $C_D$ or $St$ is
+  printed, so the run cannot be placed in the $L_r$ table above.
+
+**Variational multiscale LES with an immersed cylinder.**
+[Kang & Masud (2022)](/sources/kang-2022.md), §5.1, validate their
+variational multiscale immersed boundary (VMIB) method, a finite-element
+[immersed boundary method](/methods/immersed-boundary-method.md) with
+weakly imposed no-slip, combined with the residual-based
+[variational multiscale](/methods/variational-multiscale-method.md) LES
+model, on the cylinder at $Re_D=3900$ ($\rho=1$, $\mu=2.5641\times10^{-4}$,
+$D=1$, $U_\infty=1$). The domain is $-10\le x\le20$, $-20\le y\le20$,
+$0\le z\le3.14$, with slip lateral walls and a traction-free outflow; a 2D
+quadrilateral mesh extruded over 48 spanwise layers gives 1,514,976 linear
+hexahedra whose nodes do not lie on the cylinder; $\Delta t=0.0025$. No
+wall resolution in wall units and no averaging time are printed.
+
+- Mean centreline velocity, mean velocity profiles, fluctuations and
+  Reynolds shear stress at $x/D=6$, 7, 10 show "good correlation" with the
+  LES of Kravchenko & Moin, the experiments (Norberg; Ong & Wallace;
+  Lourenco & Shih as reported by Kravchenko & Moin) and the authors'
+  earlier body-fitted VMS LES (Figs. 7–12); wake spectra at $x/D=5$, 7, 10
+  show a $-5/3$ range (Fig. 13).
+- The element-wise error of the weakly imposed no-slip condition, the
+  norm of the interfacial fine-scale velocity, stays within 3% of the
+  inflow velocity (Fig. 16); Newton iterations converge quadratically, at
+  most three per step (Table 3).
+- As for Ma et al., the comparison is graphical, without integral values.
+
+**Two-dimensional URANS with high-order DG and adaptive time steps.**
+[Ghidoni et al. (2022)](/sources/ghidoni-2022.md), §6.1–6.3, use the
+cylinder to assess adaptive time-step control of linearly implicit
+(Rosenbrock and peer) time integrators for a high-order modal
+[discontinuous Galerkin](/methods/discontinuous-galerkin-spectral-element-method.md)
+discretization of 2D URANS with a log-$\omega$
+[$k$-$\omega$ model](/methods/k-omega-model.md), at polynomial degree
+$N=5$. The cases are:
+
+- $Re_D=3900$, compressible at $M=0.1$ and incompressible, 4037 hybrid
+  quadratic elements (84,777 degrees of freedom per equation), first
+  element height $y_1^+<4$;
+- $Re_D=1.4\times10^5$, compressible at $M=0.1$, 4343 elements;
+- tandem cylinders at $Re_D=1.66\times10^5$ with spacing $3.7D$, 5558
+  elements, compared with the wall $C_p$ of Khorrami et al.
+
+Values printed for $Re_D=3900$ (Table 9): compressible $C_D=1.62$, RMS lift
+coefficient 1.13, $St=0.23$, $-C_{pb}=1.84$, $U_{\min}=-0.43$, separation
+angle $87^\circ$; incompressible 1.52, 1.13, 0.23, 1.90, $-0.43$,
+$86^\circ$. The authors state that these differ from LES, DNS and
+experiment but agree with other 2D URANS (Rajani et al., $C_D=1.65$,
+$St=0.244$), and attribute the gap to the missing 3D effects; their aim is
+time-integration efficiency, not prediction. At $Re_D=1.4\times10^5$ the
+fully turbulent $k$-$\omega$ model (which, unlike Spalart–Allmaras, has no
+way to keep the boundary layer laminar up to separation) gives
+$St=0.27$, $C_D=0.75$, separation at $91^\circ$, $-C_{pb}=0.86$,
+$L_r=0.72$ and RMS lift 0.44, close to the 2D RANS of Moussaed et al.
+(Table 12). The time-integration findings (adaptivity helps only near and
+beyond the step at which the linearization of a linearly implicit scheme
+fails; observed temporal orders on the turbulent cylinder from 1.8 for
+the fifth-order peer scheme to 5.4 for ROD5_1) belong to the numerics and
+are summarized on the Source page.
 
 **What the sources share.** In both scale-resolving studies at
 $Re_D=3900$ the recirculation length is the measure most sensitive to the
@@ -299,9 +384,8 @@ both lean on Parnaudeau et al. for reference data.
   al. an experiment (Fig. 2); [Dzanic et al. (2022)](/sources/dzanic-2022.md)
   call them an LES. Both cite the same work, whose printed title
   ("Experimental and numerical studies of the flow over a circular cylinder
-  at Reynolds number 3900") covers both kinds of data, so the two labels
-  can name different parts of it; this is recorded as a qualification, not
-  a contradiction.
+  at Reynolds number 3900") names both kinds of study; this is recorded as
+  a qualification, not a contradiction.
 - In [Dzanic et al. (2022)](/sources/dzanic-2022.md) the reference data
   disagree among themselves: low-order PANS at $f_k=0.1$ agrees with the
   LES of Parnaudeau et al. and at $f_k=0.3$ with the DNS (§3.2), so the
@@ -342,8 +426,26 @@ both lean on Parnaudeau et al. for reference data.
   2D and laminar. Liu et al. print the implicit-time-stepping drag of
   their 3360-element case as "$C_d$ is 0.159" and call it in agreement
   with the explicit runs, whose Table 2 values are 1.58–1.66 (§3.1.2).
-- The tandem cylinders at $Re_D=1.6\times10^5$ lie far above the single
-  cylinders of the other sources ($Re_D\le10^4$), and the downstream
+- The 2D URANS values of [Ghidoni et al. (2022)](/sources/ghidoni-2022.md)
+  at $Re_D=3900$ ($C_D=1.52$–1.62) are far from the 3D scale-resolving
+  values above ($C_D=1.00$ for the DNS of Kim et al.); the authors present
+  them as a test of time integration, not of the closure. Their §6.1 text
+  prints, for the compressible run, an RMS lift of 1.19 and $St=0.225$,
+  while Table 9 gives 1.13 and 0.23. Their single-cylinder
+  $Re_D=1.4\times10^5$ and tandem $Re_D=1.66\times10^5$ cases sit in the
+  same range as the tandem configuration of Wang et al. (2021). For the
+  same tandem spacing $3.7D$ the Reynolds number is printed
+  $1.66\times10^5$ by Ghidoni et al. (§6.3) and $1.6\times10^5$ by
+  [Wang et al. (2021)](/sources/wang-2021-l.md) (§3.2); neither comments on
+  the other's value, and the two are recorded side by side.
+- [Ma et al. (2022)](/sources/ma-2022.md) and
+  [Kang & Masud (2022)](/sources/kang-2022.md) both print the cylinder
+  results only as figures; neither gives a wall resolution in wall units,
+  and Ma et al. give neither the Mach number nor the averaging time.
+- The tandem cylinders at $Re_D=1.6\times10^5$ lie far above the
+  three-dimensional single cylinders of the other sources ($Re_D\le10^4$;
+  only the 2D URANS cylinder of Ghidoni et al. (2022) reaches
+  $1.4\times10^5$), and the downstream
   cylinder sits in the wake of the upstream one, so its pressure loads are
   set by vortex impingement rather than by its own separation.
 
@@ -358,3 +460,6 @@ both lean on Parnaudeau et al. for reference data.
 - [D'Ayer et al. (2026)](/sources/dayer-2026.md) — submitted manuscript: §3.1, Eq. 26, Tables 1–2, Figs. 3–5.
 - [Liu et al. (2022b)](/sources/liu-2022-g.md) — §2.3, Eq. (23) (zero-mass coupling); §3.1.2, Table 2 (vortex-induced vibration at $Re_D=100$); §3.2, Table 3 (energy sink at $Re_D=106$).
 - [Monfaredi et al. (2021)](/sources/monfaredi-2021.md) — §1; §4.1, Figs. 4–5 (laminar cylinder, adjoint verification); §4.2 (rod wake Strouhal number).
+- [Ma et al. (2022)](/sources/ma-2022.md) — §3.2, Figs. 7–9 (implicit LES at $Re_D=3900$ with WCNS-E and WCNS-T).
+- [Kang & Masud (2022)](/sources/kang-2022.md) — §5.1, Table 3, Figs. 7–16 (VMIB with residual-based VMS LES at $Re_D=3900$).
+- [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §6.1, Table 9 ($Re_D=3900$); §6.2, Table 12 ($Re_D=1.4\times10^5$); §6.3 (tandem cylinders, $Re_D=1.66\times10^5$).

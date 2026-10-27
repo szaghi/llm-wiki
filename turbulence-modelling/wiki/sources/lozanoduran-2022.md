@@ -9,7 +9,7 @@ year: 2022
 venue: "AIAA J. 60:747-766"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_AIAA_Journal_Lozano-Durán_Performance_of_Wall-Modeled_LES_with_Boundary-Layer-Conformi.pdf"
 tags: [wmles, wall-model, les, boundary-layer, grid-requirements, separated-flow]
-timestamp: 2026-10-26T20:47:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Summary
@@ -71,9 +71,9 @@ figure and page numbers on this page are those of the preprint.
 2. The $C_p$ accuracy follows from its inviscid nature: under the thin-boundary-layer approximation the wall-normal integral of the mean momentum equation gives $p_{\mathrm{wall}}=p_I$, the inviscid pressure, so $e_p=b_p(\Delta/\delta)^{a_p}Re^0$ with $b_p\ll1$ and $a_p\approx0$ (§IV.B, Eq. 10). **Derived**
 3. A free-slip inviscid run on the C-D2 grid gives a $C_p$ "strikingly similar" to the wall-modelled run (§V.E, Fig. 20e). **Shown**
 4. $C_p$ discrepancies concentrate at the wing leading edge (curvature radius not much larger than $\delta$; tripping differs from the experiment) and at the wing tip (tip-vortex roll-up); at the tip the error scales linearly, $e_p\sim\Delta/\delta_c$, and case C-N10-R2e3 is best (§V.E, Fig. 21b). **Shown**
-5. For a flat-plate zero-pressure-gradient boundary layer with $\delta/x=K\,Re_x^{-1/7}$, $K=0.16$, the point count of a conforming grid is given exactly by Eq. (13) and scales as $N_{\mathrm{points}}\sim N_{bl}^{13/6}Re\,(Re_\Delta^{\min})^{-5/6}$ for $Re\gg Re_\Delta^{\min}$ (Eq. 6; App. A). **Derived**
-6. Under a convective limit $\Delta t\sim\Delta_{\min}/U_\infty$, $N_{\mathrm{steps}}\sim\tilde T\,Re\,(Re_\Delta^{\min})^{-1}$ with $\tilde T=TU_\infty/L$ (Eq. 7). **Derived**
-7. At $Re=5\times10^6$, $N_{bl}\approx5$ and $Re_\Delta^{\min}\approx10^4$ need $O(10)$ million points, while $N_{bl}\approx20$ and $Re_\Delta^{\min}\approx10^3$ need $O(1000)$ million points, "which renders WMLES unfeasible as a routine tool in industry"; flight $Re\approx5\times10^7$ multiplies $N_{\mathrm{points}}$ by about ten (§III.B, Fig. 6). **Derived** (numerical integration of Eq. 5 on the Juncture Flow geometry)
+5. For a flat-plate zero-pressure-gradient boundary layer with $\delta/x=K\,Re_x^{-1/7}$, $K=0.16$, the point count of a conforming grid is given exactly by Eq. (13) and scales as $N_{\mathrm{points}}\sim n_\delta^{13/6}Re\,(Re_\Delta^{\min})^{-5/6}$ for $Re\gg Re_\Delta^{\min}$ (Eq. 6; App. A). **Derived**
+6. Under a convective limit $\Delta t\sim\Delta_{\min}/U_\infty$, $N_{\mathrm{steps}}\sim t_{\mathrm{run}}\,Re\,(Re_\Delta^{\min})^{-1}$ with $t_{\mathrm{run}}=TU_\infty/L$ (Eq. 7). **Derived**
+7. At $Re=5\times10^6$, $n_\delta\approx5$ and $Re_\Delta^{\min}\approx10^4$ need $O(10)$ million points, while $n_\delta\approx20$ and $Re_\Delta^{\min}\approx10^3$ need $O(1000)$ million points, "which renders WMLES unfeasible as a routine tool in industry"; flight $Re\approx5\times10^7$ multiplies $N_{\mathrm{points}}$ by about ten (§III.B, Fig. 6). **Derived** (numerical integration of Eq. 5 on the Juncture Flow geometry)
 8. The subgrid-boundary-layer region for $Re_\Delta^{\min}<10^4$ is confined to less than 10% of the chord at the wing leading edge (§III.B, Fig. 6b). **Shown**
 9. The expected mean-velocity error is $e_u=b_u(\Delta/\delta)^{a_u}Re^0$, with $a_u=0$ when $\Delta/\delta$ lies in the shear-dominated range and $a_u=1$ in the inertial range (Eq. 11, after Lozano-Durán & Bae [61]). **Derived** (scaling argument)
 10. In WMLES of channel flow at $Re_\tau=4200$ with CharLES (dynamic Smagorinsky, equilibrium wall model, isotropic grids $\Delta/\delta=1/3,1/5,1/10$), $e_u\approx0.08\,\Delta/\delta$; a staggered finite-difference solver gives the same linear trend (§IV.B, Fig. 7b). **Shown**
@@ -88,8 +88,8 @@ figure and page numbers on this page are those of the preprint.
 19. Conforming grids are more accurate at all three stations; at the juncture and the separation the gain is a reduction of $b_u$ with $a_u$ unchanged; on the fuselage the error saturates near 2%, consistent with an internal error from a 3% deviation in $\kappa$ (§V.C, Fig. 17a). **Shown**
 20. Errors from the under-resolved leading edge propagate downstream over a recovery length $\Delta x_e\approx\Gamma U_\infty\delta_0/u_\tau$; with $\Delta x_e\approx300\delta_0$ [69] and $\delta_0\approx1$ mm this is about 300 mm, half the crank chord (§V.C). **Derived**
 21. Plotting errors against an upstream Gaussian-averaged resolution $\Delta/\bar\delta$ collapses the constant-size fuselage errors onto the channel reference, "confirming that the diminished performance of constant-size grids is merely a matter of downstream error propagation" (§V.C, Fig. 17b). **Shown**
-22. Halving $Re_\Delta^{\min}$ improves the velocity profiles; convergence goes as $(Re_\Delta^{\min})^{\alpha}$ with $\alpha\approx1$–2, steeper than in $N_{bl}$, so leading-edge resolution is less demanding than that of the downstream boundary layers (§V.D, Fig. 19d). **Shown**
-23. The leading-edge propagation model $e_u\sim N_{bl}^{-1}\left[1+\Gamma Re_\Delta^{\min}N_{bl}/\left(Re_x-(Re_\Delta^{\min}N_{bl}/K)^{7/6}\right)\right]$, $\Gamma=300$, $K=0.16$, reproduces the trends of Fig. 19(d) (§V.D). **Derived** and **Shown**
+22. Halving $Re_\Delta^{\min}$ improves the velocity profiles; convergence goes as $(Re_\Delta^{\min})^{\alpha}$ with $\alpha\approx1$–2, steeper than in $n_\delta$, so leading-edge resolution is less demanding than that of the downstream boundary layers (§V.D, Fig. 19d). **Shown**
+23. The leading-edge propagation model $e_u\sim n_\delta^{-1}\left[1+\Gamma Re_\Delta^{\min}n_\delta/\left(Re_x-(Re_\Delta^{\min}n_\delta/K)^{7/6}\right)\right]$, $\Gamma=300$, $K=0.16$, reproduces the trends of Fig. 19(d) (§V.D). **Derived** and **Shown**
 24. WMLES (C-D0.5) predicts a separation bubble about 100 mm long and 60 mm wide, about 15% smaller than the oil-film measurement (120 × 80 mm), consistent with previous WMLES [26–28]; the two measures are not one-to-one comparable (§V.F, Fig. 22). **Shown**
 25. Resolved tangential Reynolds stresses follow the experimental trends but are under-predicted at the juncture and trailing edge, as expected from $R_{ij}^{\exp}\approx\langle\bar u_i'\bar u_j'\rangle+\langle\tau_{ij}\rangle$; turbulence-intensity errors scale as $(\Delta/\delta)^{2/3}$ with values of 10–30% [61] (§V.B). **Shown** / **Stated**
 26. Channel WMLES converges non-monotonically: both CharLES and the finite-difference solver depart from $e_u\sim\Delta$ for $\Delta/\delta\approx0.03$–$0.05$ and recover the linear trend below 0.03 (App. B, Fig. 23b). **Shown**
@@ -137,7 +137,8 @@ figure and page numbers on this page are those of the preprint.
 | $E_k\sim\Delta^{-a}$ | $E(k)$ | energy at scale $\Delta$; $a$ the spectral slope |
 | $S$, $L_s\approx u_\tau/S$ | $\mathrm d\langle u\rangle/\mathrm dy$ | **collision**: $S$ is the mean shear, not $\lvert S\rvert$ |
 | $d$, $d_{\min}$ | $d$ | distance to the wall; to the closest of two walls |
-| $N_{bl}$, $Re_\Delta^{\min}=\Delta_{\min}U_\infty/\nu$ | — | points per $\delta$; minimum grid Reynolds number |
+| $N_{bl}$, $Re_\Delta^{\min}=\Delta_{\min}U_\infty/\nu$ | $n_\delta$, $Re_\Delta^{\min}$ (page-local, as on the [boundary-layer-conforming grid](/methods/boundary-layer-conforming-grid.md) page) | points per $\delta$; minimum grid Reynolds number |
+| $\tilde T=TU_\infty/L$ | $t_{\mathrm{run}}$ (registry §11) | run length in flow-through times; **collision:** the tilde is not a Favre filter |
 
 # Reference list
 

@@ -5,7 +5,7 @@ description: "Wall-stress models for wall-modelled LES learned by supervised reg
 status: established
 aliases: [MLWM, ML wall model, neural-network wall model, data-driven wall model, reinforcement-learning wall model, RLWM, SciMARL wall model, BFWM]
 tags: [wall-model, wmles, data-driven, neural-network, reinforcement-learning]
-timestamp: 2026-10-27T10:59:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Machine-learning wall models
@@ -25,8 +25,8 @@ which implements three published models in [LESGO](/software/lesgo.md), uses
 them as trained by their authors (no re-training), and compares them with the
 algebraic [equilibrium wall model](/methods/equilibrium-wall-model.md) in
 half-channel flow at eleven $Re_\tau$ from 180 to $10^{10}$, on grids of
-$24^3$, $48^3$, $72^3$ (and $32^3$). Their motivation is the demand, recalled
-from Rumsey et al., that a learned model must not degrade the baseline.
+$24^3$, $48^3$, $72^3$ (and $32^3$). Their motivation is the demand, which they
+cite from Rumsey et al., that a learned model must not degrade the baseline.
 The reinforcement-learning model they label BK22 is formulated, trained and
 first tested by [Bae & Koumoutsakos (2022)](/sources/bae-2022.md), read here
 in its Research Square preprint (v1, June 2021).
@@ -145,12 +145,13 @@ Fig. 3). The author stresses that "this is a corrective approach and not
 **Inputs** (§II.E, Eqs. 8–11, Fig. 2). Following Lozano-Durán & Bae (2020,
 as cited, who first used the stencil),
 features are taken on a seven-point stencil centred at the second off-wall
-point, $h=2\Delta$, with neighbours at $\pm\Delta$ in each direction: the
+point, $h_s=2\Delta$ ($\Delta$ the stencil spacing, page-local), with
+neighbours at $\pm\Delta$ in each direction: the
 velocity relative to the wall velocity (Galilean invariant), the symmetric
 and antisymmetric velocity-difference tensors built from central differences
 over $2\Delta$ on the stencil (not the LES gradient), the grid size, wall
 distance, density, viscosity and free-stream velocity, and two velocity and
-length scales — $\sqrt{\tau_w/\rho}$ and $h$ for the attached plate (after
+length scales — $\sqrt{\tau_w/\rho}$ and $h_s$ for the attached plate (after
 Townsend, as cited), and a scale built from the streamwise gradients of
 mean pressure and temperature, with the length $\nu$ over that velocity, for
 separated flow (after Stratford, as cited) — all made dimensionless by these
@@ -203,7 +204,7 @@ configurations" (§I) — the wording that Lozano-Durán & Bae (2023, §1) later
 apply to a list of models that includes Zangeneh (2021) itself (above; see
 Qualifications).
 
-Vadrot et al. (2023b, §I) also recall earlier models they do not test: the
+Vadrot et al. (2023b, §I) also cite earlier models they do not test: the
 first network wall model of Yang et al. (2019), trained at $Re_\tau=1000$;
 the classifier-plus-predictor of Lozano-Durán & Bae (their ref. [85], the
 2020 arXiv preprint of the preliminary version of the building-block-flow
@@ -259,7 +260,7 @@ Bae and colleagues among the first applications of RL to closure modelling.
   $h_{\mathrm{wm}}$ at the third grid point (see
   [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)). Its
   wall stress correlates with the off-wall velocity at about 0.3, the DNS
-  value they recall, where the equilibrium model's correlation is one
+  value they cite, where the equilibrium model's correlation is one
   (Figs. 6–7); the authors read this as the policy replicating "the natural
   mechanisms of wall-shear stress control".
 
@@ -340,8 +341,8 @@ test no wall model.
 
 The ZHY21 history is an instance of the gap described on the
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
-page: good a priori, poor a posteriori on periodic hills (as recalled by Vadrot
-et al. 2023b, §I), and poor a posteriori in channel flow here. Conversely, fed
+page: good a priori, poor a posteriori on periodic hills (as Vadrot et al. 2023b,
+§I, cite it), and poor a posteriori in channel flow here. Conversely, fed
 an exact law of the wall a priori (pressure terms zero, inputs at
 $0.03\delta$, $0.06\delta$, $0.09\delta$), ZYZY22 is accurate at all $Re_\tau$
 except 180 and ZHY21 still over-predicts $\tau_w$, with an error growing with
@@ -473,11 +474,10 @@ variable the policy's behaviour depends on: Vadrot et al.'s own analysis
 ties the mismatch to $h^+_{\mathrm{wm}}$ relative to training (Eq. 12,
 §IV.C), they print Bae & Koumoutsakos's profiles beside their own (Fig. 5d),
 and they attribute the difference "mainly" to grid resolution without
-disputing those results (§III.A). What Vadrot et al. add is a limit on the
-generalization claims of Bae & Koumoutsakos: the "regardless of $(h_m)^+$"
-and the robustness to the discretization claimed for in-situ training were
-shown in one solver on one family of grids, and with matching heights tied
-to finer LESGO grids the same policy leaves mismatches between $+2.2$ and
+disputing those results (§III.A). Bae & Koumoutsakos's "regardless of
+$(h_m)^+$" and the robustness to the discretization claimed for in-situ
+training are shown in one solver on one family of grids; with matching
+heights tied to finer LESGO grids the same policy leaves mismatches between $+2.2$ and
 $-3.2$ over $Re_\tau=180$–$10^{10}$ and a weak grid dependence (Table III,
 Fig. 10). The version of record of Bae &
 Koumoutsakos, cited by Vadrot et al., was not read. Vadrot et al. (2023a,
@@ -492,8 +492,8 @@ mismatch as the published policy in LESGO.
   Lozano-Durán & Bae (2023) is tested in separated and three-dimensional
   flows, by its own authors and in one solver. Zangeneh's (2021) correction
   is tested in a separated supersonic flow, also by its author and in one
-  solver, and trained on the same geometry at lower Reynolds number. Its authors find the total
-  error dominated by the SGS-model error at the matching point, not by the
+  solver, and trained on the same geometry at lower Reynolds number.
+  Lozano-Durán & Bae find the total error dominated by the SGS-model error at the matching point, not by the
   wall model (§4.7, §6).
 - **Inputs of Zangeneh (2021) against the criticism of Lozano-Durán & Bae
   (2023).** The printed input set (Eq. 11) contains no boundary-layer

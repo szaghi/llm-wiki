@@ -5,7 +5,7 @@ description: "HORSES3D is an open-source Fortran DGSEM framework for compressibl
 status: established
 aliases: [HORSES3D, High-Order Spectral Element Solver 3D, horses2plt]
 tags: [software, dg, les, implicit-les, entropy-stable, mesh-adaptation]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # HORSES3D
@@ -144,7 +144,7 @@ necessitates BR2" (§II.A, §III). Test cases, all a posteriori on coarse
 unmodelled meshes ("coarse DNS"): decaying
 [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md) at
 $Re=450$ on $6^3$ elements with $N=7$ (DNS $12^3$, $N=8$, validated against
-the DSEM code of Ranjbar et al. (2024c, as recalled)); the Taylor–Green vortex at
+the DSEM code of Ranjbar et al. (2024c), which they cite); the Taylor–Green vortex at
 $Re=200$ on $11^3$ elements, $N=4$, and at $Re=800$ on $7^3$, $N=10$; and the
 compressible channel at $Re_\tau=395$, $M=0.3$, on
 $14\times12\times16$ elements with $N=6$. The filter, with constant 0.65,

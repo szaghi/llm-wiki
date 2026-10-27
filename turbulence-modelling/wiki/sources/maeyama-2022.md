@@ -9,7 +9,7 @@ year: 2022
 venue: "Nat. Commun. 13:3166"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Nature_Communications_Maeyama_Multi-scale_turbulence_simulation_suggesting_improvement_of.pdf"
 tags: [plasma, dns, energy-cascade]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -45,9 +45,9 @@ low-$k_y$ TEMs and ion-scale eddies damping ETG modes, without strong
 zonal flows. A $T_e/T_i$ scan from 1 to 4 shows the reduction in an
 intermediate range and an upshift of the critical temperature ratio for
 TEM-dominated flux from about 2 (ion-scale run) to about 3 (multi-scale
-run), which the authors liken to the Dimits shift. The paper is peripheral
-to closure modelling: its only modelling message is that scale-separated
-transport models lack cross-scale interactions.
+run), which the authors liken to the Dimits shift. Their message for transport
+modelling is that scale-separated models lack cross-scale interactions
+(Abstract).
 
 # Version read
 

@@ -5,7 +5,7 @@ description: "A discretization is entropy conservative when its convective terms
 status: established
 aliases: [EC, entropy-conservative scheme, entropy-conserving flux, entropy-stable discretization, entropy stability, Ismail–Roe flux, Chandrashekar flux, EC-TP scheme, nonlinear stability, entropy-stable RANS]
 tags: [entropy-stable, kinetic-energy-preserving, compressible, dg, dns, numerical-dissipation]
-timestamp: 2026-10-27T10:57:00Z
+timestamp: 2026-10-27T15:48:00Z
 ---
 
 # Entropy conservation and entropy stability
@@ -45,8 +45,8 @@ kinetic energy and $\int_\Omega\mathcal C_{\rho s}\,dV=0$ for the entropy
 (Eqs. 4–5; page-local $\mathcal C_{\rho\phi}$ the convective term) define,
 when a scheme reproduces them, a **globally KEP** and a **globally EC**
 scheme. A scheme is *locally* conservative when the induced convective term
-is a difference of face fluxes; local implies global by telescoping, and,
-as recalled by the authors from Coppola & Veldman, the converse holds for a
+is a difference of face fluxes; local implies global by telescoping, and
+the authors cite Coppola & Veldman for the converse, which holds for a
 wide class of finite-difference discretizations (§3.1). Higher-order
 versions are linear combinations of two-point fluxes on wider stencils
 (§3.1).
@@ -160,7 +160,7 @@ $$\mathcal F_\rho=\hat\rho\,\{\!\{u\}\!\},\qquad \mathcal F_{\rho u}=\mathcal F_
 ($\hat\rho$ a consistent face density, page-local) the scheme is KEP for
 any internal-energy flux $\mathcal F_{\rho e}$, because KEP needs only
 $\mathcal F_{\rho u}=\mathcal F_\rho\{\!\{u\}\!\}$ in the convective
-momentum flux (recalled from Jameson and Veldman). The face density and
+momentum flux (the authors cite Jameson and Veldman). The face density and
 $\mathcal F_{\rho e}$ remain free, and EC is imposed through them. Two
 consequences follow, both stated by the authors:
 
@@ -173,7 +173,7 @@ consequences follow, both stated by the authors:
 - **EC for an arbitrary equation of state** follows from discrete
   consistency with the volumetric Gibbs relation
   $\partial_t(\rho e)=T\,\partial_t(\rho s)+g\,\partial_t\rho$, $g=e-Ts+p/\rho$
-  the Gibbs free energy (recalled from Aiello et al. 2025); the resulting
+  the Gibbs free energy (the authors cite Aiello et al. 2025); the resulting
   flux is singular at uniform temperature and is regularized by the
   Ismail–Roe procedure or by an asymptotic expansion (§3.2).
 
@@ -207,10 +207,10 @@ perfect gas):
 
 Gouasmi et al.'s scheme has EC-TP's internal-energy flux and reduces to
 Chandrashekar's for a calorically perfect gas; its pressure term is stated
-to spoil the kinetic-energy balance in isotropic turbulence (recalled from
-Aiello et al.'s companion paper and from Gassner et al.) (§4). KEEP has
-later been made entropy preserving to machine precision by Taylor
-expansions (recalled, Tamaki et al.; Kawai & Kawai) (§3.2).
+to spoil the kinetic-energy balance in isotropic turbulence (the authors
+cite their companion paper and Gassner et al.; §4). KEEP has later been
+made entropy preserving to machine precision by Taylor expansions (the
+authors cite Tamaki et al. and Kawai & Kawai; §3.2).
 
 ## Extension to RANS: the Spalart–Allmaras equation
 
@@ -333,6 +333,77 @@ Two-point fluxes evaluated on uncollocated (Gauss) flux nodes need
 entropy-projected variables, which the authors call "key in enabling
 entropy stability" there (§2.7).
 
+**Entropy stability as a requirement of LES by weak solutions.**
+[Svärd (2022)](/sources/svard-2022.md) proposes to replace explicit
+subgrid models by numerical approximations of weak entropy solutions of the
+compressible Navier–Stokes equations, whose local averages over a fixed
+test-function support converge on coarser grids than point values and are
+read a posteriori as filtered quantities (§2.3; see
+[implicit LES](/definitions/implicit-les.md)). From the a priori estimates
+that a theory of weak solutions needs, the author lists five conditions
+conjectured necessary, not sufficient (§3): **A** conservation form;
+**B** entropy stability, which with a temperature-dependent conductivity
+$\kappa_0(1+T^{p_\kappa})\le\kappa_h\le\kappa_1(1+T^{p_\kappa})$
+($\kappa_h$ the heat conductivity, $p_\kappa$ an integer, e.g. 2,
+$\kappa_0$, $\kappa_1$ constants; page-local, not the von Kármán
+constant) bounds $\nabla T$ in $L^2$,
+whereas a constant conductivity bounds only $\nabla\ln T$ (Eq. 11);
+**C** at least the diffusion of a kinetic-energy-preserving flux, so that
+the discrete kinetic- and internal-energy balances hold without velocity
+remainders; **D** positive density; **E** a linearly stable (non
+anti-diffusive) continuity equation, because physical diffusion controls
+velocity and temperature gradients but not density gradients. Citing
+earlier work, the author states that entropy-conservative fluxes such as
+Ismail–Roe and Chandrashekar violate E and can amplify numerical errors
+that "trip unphysical turbulence", and that a scheme that is nonlinearly
+but not linearly stable does not blow up, so boundedness alone does not
+show that a solution approximates the true one (§3).
+
+The proposed one-dimensional flux (§4, Eqs. 20–23) modifies Chandrashekar's
+EC and KEP flux only in the mass flux. With $[\![\phi]\!]=\phi_{i+1}-\phi_i$
+the jump, $\beta_{\mathrm C}=1/(2RT)$ the inverse-temperature variable
+and $a^\rho$ the mass-flux diffusion coefficient (all page-local),
+$$\begin{aligned}
+f^\rho&=\{\!\{\rho\}\!\}\{\!\{u\}\!\}-a^\rho[\![\rho]\!],\qquad a^\rho=\tfrac12|\{\!\{u\}\!\}|+\tfrac14|[\![u]\!]|,\\
+f^m&=\frac{\{\!\{\rho\}\!\}}{2\{\!\{\beta_{\mathrm C}\}\!\}}+\{\!\{u\}\!\}f^\rho,\qquad
+f^E=\Big(\frac{1}{2(\gamma-1)\beta_{\mathrm C}^{\ln}}-\tfrac12\{\!\{u^2\}\!\}\Big)f^\rho+\{\!\{u\}\!\}f^m,
+\end{aligned}$$
+with first-order viscous and heat fluxes. Because the momentum and energy
+fluxes differ from Chandrashekar's (mass flux $\rho^{\ln}\{\!\{u\}\!\}$)
+only through $f^\rho$, Tadmor's shuffle condition reduces to
+$(f^\rho-\rho^{\ln}\{\!\{u\}\!\})[\![\rho]\!]/\rho^{\ln}\le0$, which holds
+since $|\{\!\{\rho\}\!\}-\rho^{\ln}|\le\tfrac12|[\![\rho]\!]|$; the viscous
+terms contribute
+$\tfrac{8\mu}{3h}\{\!\{\beta_{\mathrm C}\}\!\}[\![u]\!]^2+\tfrac{\kappa_h}{Rh}\tfrac{[\![T]\!]^2}{T_iT_{i+1}}\ge0$
+(§4, Eqs. 26–33). Proposition 4.1 states that the scheme satisfies
+Conditions A–E; the mass flux is $\{\!\{\rho u\}\!\}-(a^\rho+\tfrac14[\![u]\!])[\![\rho]\!]$
+with a non-negative coefficient, a standard artificial diffusion (Eq. 25).
+
+On a two-dimensional Kelvin–Helmholtz instability ($\mu=\kappa_h=10^{-4}$,
+$N^2$ grids, box means of the conserved variables over
+$[0.2,0.4]\times[0.5,0.7]$) the box means of the proposed scheme differ by
+less than 10% between $N=128$ and 512 (density 2.036, 1.985, 2.000 for
+$N=128$, 256, 512), and Chandrashekar's flux with the same viscosity gives
+more small-scale roll-ups and a coarse-to-fine density difference of 4.1%
+against 1.8% (2.075, 1.975, 1.993), which the author reads as support that
+"local stability improves results on coarse meshes" (§5.2, Figs. 3–4,
+Tables 1, 3). The Euler version ($\mu=\kappa_h=0$) of the proposed scheme
+gives spurious roll-ups, highly grid dependent and "essentially
+non-predictive" box means (Table 2). On the Taylor–Green vortex at
+$Re=1600$ Chandrashekar's flux gives very similar results, its unstable
+continuity equation showing only as a more oscillatory dissipation curve on
+$32^3$ (§5.3, Fig. 7).
+
+**Passing mentions.** The centred component of the
+blended flux of [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.3,
+is the fourth-order kinetic-energy- and entropy-preserving scheme of Kuya et
+al. and Totani et al. (see [WENO](/methods/weno-scheme.md));
+[Hamedi & Vermeire (2022)](/sources/hamedi-2022.md), §1, list
+entropy-stable schemes among the remedies for the nonlinear instability of
+under-resolved high-order simulation, "generally challenging and
+computationally expensive", and use modal filtering instead
+([explicit modal filtering](/methods/explicit-modal-filtering.md)).
+
 **Entropy behaviour of a non-EC scheme.** In the real-gas mixing layer of
 [Bernades et al. (2023)](/sources/bernades-2023.md), §4.2, the
 pressure-equilibrium-preserving KGP-Pt scheme shows "good conservation" of
@@ -391,6 +462,34 @@ global entropy although it is not entropy preserving.
   Brillon & Nadarajah (2026, §1) the first use of a provably
   entropy-conserving and stable high-order flux reconstruction for viscous
   turbulent flow; both are priority statements of the authors.
+- **Local linear stability against entropy conservation.** Svärd (2022)
+  holds entropy-conservative fluxes unsuited as stand-alone turbulence
+  schemes because their continuity equation is not locally linearly
+  stable, and shows it on a two-dimensional Kelvin–Helmholtz box mean;
+  Aiello et al. (2026) find entropy-conservative convection decisive for
+  robustness in channel DNS, and Brillon & Nadarajah (2026) find EC and
+  KEP fluxes equivalent on the Taylor–Green vortex. Svärd adds a mass-flux
+  diffusion to an EC flux rather than rejecting it, and on the
+  Taylor–Green vortex finds Chandrashekar's flux "very similar"; the
+  statements concern different flows, gases and measures, so no
+  contradiction is recorded.
+- **Printed slips (Svärd 2022).** §4 calls the total flux of Eq. (20) "the
+  sum of the inviscid and viscous" fluxes, with $f^{V2}=+\tfrac43\mu[\![u]\!]/h$,
+  which with the update $(u_i)_t+(f_{i+1/2}-f_{i-1/2})/h=0$ would make the
+  viscous term anti-diffusive, whereas Eq. (12) puts the viscous flux on the
+  right-hand side and the kinetic-energy derivation uses the difference
+  *(compiler check, not in the sources)*; one term of that derivation lacks
+  the factor $\mu$. The positivity proof uses
+  $a^\rho>\tfrac12|\{\!\{u\}\!\}|$, which becomes an equality when
+  $[\![u]\!]=0$, so only the non-strict inequality holds, which still
+  suffices for $(\rho_i)_t\ge0$ *(compiler check, not in the sources)*. In
+  §5.2, the finest-mesh differences of Chandrashekar's flux to Table 1 are
+  "less than 1%", but for the $x$-momentum they are 1.4% (0.215 against
+  0.212), and the Euler momentum errors "33% and 42%" are 33.5% and 29.6%
+  relative to the Table 1 values (42% only if normalized by the Euler value)
+  *(compiler check, not in the sources)*. The abstract announces a
+  turbulent Rayleigh–Taylor test that the paper does not run (the third
+  test is a Taylor–Green vortex).
 - Printed slips in Aiello et al. (2026): the sample spacing of the
   statistics is printed "$\Delta t_s=1.5U_b/h$" (§3.3), which has the
   dimension of an inverse time *(compiler check, not in the sources)*; the
@@ -408,4 +507,7 @@ global entropy although it is not entropy preserving.
 - [Bernades et al. (2023)](/sources/bernades-2023.md) — §3.1.2 (KEP depends on continuity and momentum only); §4.2 (global entropy of KGP-Pt); §5 (analogy with entropy conservation, non-linear averages).
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv 2512.03315v1: §II.A (split form with Chandrashekar averaging in HORSES3D).
 - [Kuya et al. (2018)](/sources/kuya-2018.md) — version of record with appended corrigendum: §1.2, Eqs. (6)–(7) (entropy from the Gibbs relation); §4.1–4.5, Eqs. (55)–(71) (spurious entropy from inconsistent kinetic-energy, internal-energy, pressure-diffusion and enthalpy fluxes); §5.2–5.3, Figs. 1–11; App. C, Figs. 12–17 (time step and integrator).
+- [Svärd (2022)](/sources/svard-2022.md) — §2.3 (weak solutions, a posteriori averages); §3, Eqs. (10)–(15) (a priori estimates, Conditions A–E, linear instability of EC fluxes); §4, Eqs. (16)–(34), Proposition 4.1 (entropy-stable, KEP-diffusive, positive mass-flux-diffused scheme); §5.2–5.3, Tables 1–3, Figs. 2–4, 7; slips in §4, §5.2 and the abstract.
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.3 (KE/EP central component of the blended flux).
+- [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §1 (entropy-stable schemes as a costly alternative to filtering).
 - [Lodares et al. (2022)](/sources/lodares-2022.md) — §1; §2, Eqs. (13)–(17) (compressible SA, negative variant, clipped diffusion); §3.1–3.2, Eqs. (29)–(50) (SA entropy, split analysis); §4.3–4.5, Eqs. (68)–(77) (two-point flux, interface flux, walls); §5, Eqs. (83)–(118) (semi-discrete entropy laws); §7.1–7.2, Figs. 3–6.

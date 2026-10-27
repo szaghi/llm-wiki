@@ -5,7 +5,7 @@ description: "LESGO is an open-source incompressible LES code, pseudo-spectral i
 status: established
 aliases: [lesgo]
 tags: [software, les, wmles, wall-model, data-driven, reinforcement-learning]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # LESGO
@@ -130,8 +130,8 @@ cost excluded).
 
 - Vadrot et al. (2023b, Table I) list the inputs of one learned model with
   wall-normal derivatives and velocity components in a $y$-wall-normal
-  convention, while the paper itself uses $z$ wall-normal; the table follows
-  the original model's convention without saying so.
+  convention, while the paper itself uses $z$ wall-normal, without
+  stating the change of convention.
 - The three sources describe the code only in the passages summarized above;
   details of time advancement, de-aliasing and parallelization are not given,
   and Vadrot et al. (2023a) give no training or run cost.

@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Rev. E 105:065206"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physical_Review_E_Davidovits_Turbulence_generation_by_shock_interaction_with_a_highly_non.pdf"
 tags: [compressible, implicit-les, anisotropy, astrophysics]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -117,7 +117,7 @@ and, at $\gamma=5/3$ (Eqs. 10–11), $\langle\rho\rangle_1/\langle\rho\rangle_{1
 | $\alpha=\tau_{xx}/\tau_{yy}$ | $\Theta$ (page-local anisotropy ratio) | **collision** with the DG blending factor $\alpha$ |
 | $d$ | $n_d$ (page-local dimension, 2 or 3) | **collision** with the wall distance $d$ |
 | $R$ (void radius, microns) | $r_v$ (page-local) | **collision** with $R_{ij}$ and with the source's own gas constant |
-| $\overline A$ | $A_\sigma$ (page-local pre-shock average Atwood number) | not the two-fluid Atwood number $(\rho_2-\rho_1)/(\rho_2+\rho_1)$ |
+| $\overline A$ | $A_\sigma$ (registry §11, pre-shock average Atwood number) | not the two-fluid Atwood number $(\rho_2-\rho_1)/(\rho_2+\rho_1)$ |
 | $\overline U_s$ | $U_s$ (page-local mean shock speed) | |
 | $M_s$, $\overline M_s$ | $M_s$ (page-local pre-shock shock Mach number) | |
 | $\mathcal M_s$, $\overline{\mathcal M}_s$ | $\mathcal M_s$ (page-local shock speed over post-shock sound speed) | |

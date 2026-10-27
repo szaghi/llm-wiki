@@ -5,7 +5,7 @@ description: "Clark's gradient model truncates the Taylor expansion of the filte
 status: established
 aliases: [Clark model, gradient model, nonlinear gradient model, tensor-diffusivity model, optimal clipping, standard clipping, GM-OC, GM-SC, NGM2, NGM4, NGM6, higher-order gradient model]
 tags: [les, sgs-model, filtering, eddy-viscosity]
-timestamp: 2026-10-27T11:01:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Gradient (Clark) model and the clipping of structural SGS models
@@ -98,9 +98,8 @@ necessary.
 
 ## Three ways to stabilize a structural model
 
-**Mixed model.** Clark et al. are recalled as having first stabilized the
-gradient model by adding an eddy viscosity (Prakash et al. 2022, §II,
-Eq. 7):
+**Mixed model.** Prakash et al. (2022, §II, Eq. 7) cite Clark et al. as
+having first stabilized the gradient model by adding an eddy viscosity:
 
 $$\tau^{\mathrm{mix}}_{ij}=\tau^{\mathrm G}_{ij}-2\nu_t\bar S_{ij},\qquad \nu_t=(C_G\Delta)^2\lvert\bar S\rvert ,$$
 
@@ -163,9 +162,8 @@ give $\tau^{\mathrm{OC}}_{ij}\bar S_{ij}=0$, the zero flux that standard
 clipping also gives there, and elsewhere both return $\tau^{\mathrm M}$:
 pointwise
 $\Pi^{\mathrm{OC}}=\Pi^{\mathrm{SC}}$ *(compiler check, not in the
-sources)*. This explains the a priori result below that the two procedures
-have the same mean dissipation, and it places all their difference in the
-stress structure.
+sources)*. A priori the paper reports the same SGS dissipation for the two
+procedures (§III.A, below).
 
 ## A priori results
 
@@ -250,7 +248,7 @@ with one constant coefficient (the **EnKF-MM**):
 
 $$\tau_{ij}=\frac{\Delta^2}{12}\,\partial_k\bar u_i\,\partial_k\bar u_j-C_{\mathrm f}\,\Delta^2\lvert\bar S\rvert\,\bar S_{ij},$$
 
-for the full stress, with $C_{\mathrm f}$ page-local (the paper's $C_D$, a
+for the full stress, with $C_{\mathrm f}$ (registry §11; the paper's $C_D$, a
 symbol the registry keeps for the drag coefficient; the same symbol as on
 the [ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md)
 page); the authors state that $C_{\mathrm f}$ corresponds to $2C_s^2$ (§III), so this is the mixed model of Prakash et al.'s Eq. (7)
@@ -343,7 +341,7 @@ the clipped stress is
 $$\tau^{\mathrm{clip}}_{ij}=\begin{cases}\tau_{ij}, & \nu_{\mathrm{eff}}>\nu_{\mathrm{clip}},\\ \tau_{ij}+2(\nu_{\mathrm{eff}}-\nu_{\mathrm{clip}})\bar S^d_{ij}, & \text{otherwise},\end{cases}$$
 
 where $\nu_{\mathrm{eff}}$ and the floor $\nu_{\mathrm{clip}}\le0$ are
-page-local. In the clipped branch the effective viscosity is exactly
+the registry §11 symbols. In the clipped branch the effective viscosity is exactly
 $\nu_{\mathrm{clip}}$: the source states this intent, and the identity
 follows from the two formulas *(compiler check, not in the sources)*.
 
@@ -399,12 +397,12 @@ not cite each other.
 [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) (§IV B, Eq. 20)
 use the gradient term, with directional widths $\Delta_\alpha$ (page-local),
 $\tau^{\mathrm a}_{ij}=\sum_\alpha\Delta_\alpha^2\partial_\alpha\bar u_i\partial_\alpha\bar u_j$
-(page-local), as the shape of the anisotropic remainder of the subgrid
+(registry §11), as the shape of the anisotropic remainder of the subgrid
 stress, the part that carries no energy transfer (see
 [energy backscatter](/definitions/energy-backscatter.md)). Following Abe's
 strategy (cited), they remove its eddy-viscosity projection with
 $\nu^{\mathrm a}=-\tau^{\mathrm a}_{ij}\bar S_{ij}/(2\bar S_{kl}\bar S_{kl})$
-(page-local) and scale it by the exact subgrid energy:
+(registry §11) and scale it by the exact subgrid energy:
 
 $$\tau^{\mathrm{ani}}_{ij}=\tau_{\ell\ell}\,\frac{\tau^{\mathrm a\,d}_{ij}+2\nu^{\mathrm a}\bar S_{ij}}{\tau^{\mathrm a}_{mm}},$$
 
@@ -500,7 +498,7 @@ $T^{(1)}=\mathsf s$, $T^{(2)}=\mathsf s\mathsf w-\mathsf w\mathsf s$,
 $T^{(3)}=\mathsf s^2-\tfrac13\mathrm{tr}(\mathsf s^2)I$,
 $T^{(4)}=\mathsf w^2-\tfrac13\mathrm{tr}(\mathsf w^2)I$ of
 $\mathsf s_{ij}=\sqrt2\,\bar S_{ij}/\lvert\bar S\rvert$ and
-$\mathsf w_{ij}=\sqrt2\,\bar\Omega_{ij}/\lvert\bar S\rvert$ (page-local).
+$\mathsf w_{ij}=\sqrt2\,\bar\Omega_{ij}/\lvert\bar S\rvert$ (registry §11).
 With $\partial_j\bar u_i=\bar S_{ij}+\bar\Omega_{ij}$ the Clark stress is
 $\tfrac{\Delta^2}{12}(\bar S+\bar\Omega)(\bar S-\bar\Omega)$, whose
 deviatoric part in the same basis is
@@ -526,7 +524,8 @@ $$\begin{aligned}
 and call the truncations after the first, second and third term NGM2
 (the gradient model above), NGM4 and NGM6 (names of the source). The
 coefficients are fixed by $\Delta$ alone, with no fitted constant. For a
-Gaussian filter with transfer function $\exp(-k^2\Delta^2/24)$, a pair of
+Gaussian filter with transfer function $\exp(-k^2\Delta^2/24)$ (the form
+whose Taylor expansion Valencia et al. (2026, Eq. 37) print above), a pair of
 Fourier modes of wavevectors $\boldsymbol p$, $\boldsymbol q$ gives
 $\hat G(\boldsymbol p+\boldsymbol q)-\hat G(\boldsymbol p)\hat G(\boldsymbol q)=\hat G(\boldsymbol p)\hat G(\boldsymbol q)\,[\exp(-\Delta^2\boldsymbol p\cdot\boldsymbol q/12)-1]$,
 and expanding the exponential reproduces the general term
@@ -588,7 +587,45 @@ cannot come from local backscatter *(compiler check, not in the
 sources)*. Jakhar et al. stabilize it by adding
 higher-order structural terms rather than an eddy viscosity or clipping.
 
+## Gradient term as a coefficient estimator in a one-equation model
+
+[Qi et al. (2022)](/sources/qi-2022-b.md) (§3.2, Eqs. 3.8–3.12) reach the
+gradient model from the series expansion of a filtered product (citing
+Bedford & Yeo and Pomraning & Rutland),
+$\overline{fg}-\bar f\bar g=\alpha_{\mathrm s}\partial_k\bar f\partial_k\bar g+\tfrac1{2!}\alpha_{\mathrm s}^2\partial_k\partial_l\bar f\,\partial_k\partial_l\bar g+\dots$,
+$\alpha_{\mathrm s}=C_0\Delta_k^2$ (page-local), truncated to the first
+term, which for the compressible stress gives
+$\tau_{ij}\approx C_0\Delta_k^2\bar\rho\,\partial_k\tilde u_i\partial_k\tilde u_j$,
+the anisotropic-filter form above, with $C_0=1/12$. They dismiss the
+higher terms as "small enough compared with the first term" (citing
+Vreman et al. 1996). Rather than fixing $C_0$, they compute it locally
+from the transported subgrid kinetic energy by matching traces,
+$C_0=2k_{\mathrm{sgs}}/(\Delta_l^2\,\partial_l\tilde u_k\partial_l\tilde u_k)$
+(Eq. 3.15), and use the resulting "modified gradient model" mainly to
+*estimate* the subgrid flux, the subgrid heat flux and the sinks of the
+$k_{\mathrm{sgs}}$ equation, and to fix the coefficient of a
+[Smagorinsky](/methods/smagorinsky-model.md) eddy viscosity by matching the
+anisotropic part of the estimated flux, with the isotropic part
+$2\bar\rho k_{\mathrm{sgs}}$ (§3.2; see the
+[dynamic procedure](/methods/dynamic-procedure.md)). The abstract and §5
+describe the model as a one-equation eddy-viscosity model; the paper does
+not state explicitly which of the two stresses enters the momentum
+equation. The authors (§1) cite the instability of the gradient model
+alone (linear stability analysis of Vreman et al.). A priori, in a compressible
+channel at $M=1.5$, the modified gradient model keeps a high correlation
+with $\tau_{12}$ and $\tau_{22}$ (Fig. 2c); a posteriori $C_0$ peaks near
+0.08 (Fig. 10), close to the fixed $1/12\approx0.083$.
+
 ## Qualifications
+
+- Qi et al. (2022, Eq. 3.9) define the expansion parameter as
+  $\alpha_{\mathrm s}=\int2x^2G\,dx$. For the box filter of width $\Delta$
+  ($G=1/\Delta$ on $\lvert x\rvert<\Delta/2$) this gives $\Delta^2/6$, i.e.
+  $C_0=1/6$ with their Eq. (3.10), $\alpha_{\mathrm s}=C_0\Delta_k^2$,
+  whereas the paper states that $C_0=1/12$ recovers the gradient
+  model; the second moment $\int x^2G\,dx=\Delta^2/12$ does give $1/12$
+  *(compiler check, not in the sources)*. Since $C_0$ is computed from
+  Eq. (3.15), the model is unaffected.
 
 - Prakash et al. (2022) define C.C. (Eq. 19) as a plain double sum of
   per-component correlation coefficients, yet state that a perfect model has
@@ -628,3 +665,4 @@ higher-order structural terms rather than an eddy viscosity or clipping.
 - [Pan & Zhang (2023)](/sources/pan-2023.md) — §I.
 - [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III.D, Eqs. (19)–(23); §V, Tables III, V–VII.
 - [Li et al. (2021)](/sources/li-2021.md) — §I; §II B, Eqs. (9)–(13); Eq. (22), Table IV.
+- [Qi et al. (2022)](/sources/qi-2022-b.md) — §1; §3.2, Eqs. (3.8)–(3.15); §4.1, Figs. 2, 10; §5.

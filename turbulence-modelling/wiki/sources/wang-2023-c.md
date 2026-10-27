@@ -9,7 +9,7 @@ year: 2023
 venue: "Phys. Fluids 35:085107"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Physics_of_Fluids_Wang_Ensemble_data_assimilation-based_mixed_subgrid-scale_model_f.pdf"
 tags: [les, sgs-model, data-driven, a-priori-a-posteriori, energy-cascade]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-27T16:02:00Z
 ---
 
 # Summary
@@ -27,9 +27,9 @@ filtered-DNS field. The state of each member is its energy spectra at several
 observation instants plus its coefficient, and the observation is the
 filtered-DNS spectrum. The Kalman analysis updates the coefficients, and the
 loop restarts from the same field. The energy spectrum is the target because
-point-to-point matching of a chaotic flow is meaningless. The approach is an
-instance of [model-consistent training](/methods/model-consistent-training.md)
-by data assimilation, as opposed to a priori fitting.
+point-to-point matching of a chaotic flow is meaningless. The calibration
+runs through the LES itself, a posteriori (see
+[model-consistent training](/methods/model-consistent-training.md)).
 
 In forced [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)
 at $Re_\lambda\approx160$ ($64^3$ LES, Gaussian filter, filter-to-grid ratio
@@ -108,7 +108,7 @@ are those of arXiv v3. In the bundle this paper is Wang et al. (2023c).
 | $\overline S_{ij}$, $\lvert\overline S\rvert=\sqrt{2\overline S_{ij}\overline S_{ij}}$ | $\bar S_{ij}$, $\lvert\bar S\rvert$ | factor two; agrees |
 | $\overline\Omega_{ij}$, $\lvert\overline\Omega\rvert$ | $\bar\Omega_{ij}$, $\lvert\bar\Omega\rvert$ | agrees |
 | $C_{Smag}$ | $C_s$ | classical 0.16 |
-| $C_D$ | $C_{\mathrm f}$ (page-local, as on [EnKF calibration](/methods/ensemble-kalman-closure-calibration.md)) | **collision:** registry $C_D$ is the drag coefficient; no factor 2 in Eq. 14, so $C_{\mathrm f}=2C_s^2$ |
+| $C_D$ | $C_{\mathrm f}$ (registry §11, as on [EnKF calibration](/methods/ensemble-kalman-closure-calibration.md)) | **collision:** registry $C_D$ is the drag coefficient; no factor 2 in Eq. 14, so $C_{\mathrm f}=2C_s^2$ |
 | $C_{Dmax}$ | upper bound of the initial $C_{\mathrm f}$ | 0.05 |
 | $L_{ij}$, $M_{ij}$, $\alpha_{ij}$, $\beta_{ij}$ | $L_{ij}$ (Germano identity), Lilly's $M_{ij}$ | $L_{ij}$ written with the test filter as hat in the registry |
 | $C_1$, $C_2$, $h^A_{1,ij}$, $h_{2,ij}$ | (dynamic mixed model coefficients and basis tensors) | |
@@ -117,14 +117,14 @@ are those of arXiv v3. In the bundle this paper is Wang et al. (2023c).
 | $u^{rms}=\sqrt{\langle u_iu_i\rangle}$ | (three-component rms) | **not** a per-component rms; $Re_\lambda=u^{rms}\lambda/(\sqrt3\nu)$ |
 | $\lambda$, $\eta$, $\varepsilon$, $Re_\lambda$ | $\lambda$, $\eta$, $\varepsilon$, $Re_\lambda$ | agree |
 | $L_I$ | $L$ | integral length scale |
-| $\tau=L_I/u^{rms}$ | (large-eddy turnover time) | **collision** with $\tau_{ij}$; written in words on this page |
+| $\tau=L_I/u^{rms}$ | $T_E$ (large-eddy turnover time, registry §11) | **collision** with $\tau_{ij}$; written in words on this page |
 | $E(k)$, $E^{true}(k)$, $k_{max}$ | $E(k)$, filtered-DNS spectrum, $k_c$ | |
 | $h_{DNS}$, $h_{LES}$ | $h_{\mathrm{DNS}}$, $h_{\mathrm{LES}}$ | grid spacings; filter-to-grid ratio $\Delta/h_{\mathrm{LES}}=2$ |
 | $e_i$, $P$, $K$, $H$, $R$, $q$, $w_i$ | $\boldsymbol e_i$, $\mathsf P$, $\mathsf K$, $\mathsf H$, $\mathsf R$, $\boldsymbol q$, $\boldsymbol w_i$ (page-local on [EnKF calibration](/methods/ensemble-kalman-closure-calibration.md): state, ensemble covariance, Kalman gain, observation matrix, noise covariance, observation, noise) | **collisions:** $K$ (spectral TKE), $w_i$ (quadrature weights), avoided by the sans-serif and bold forms |
 | $N$, $N_{iter}$, $n$, $\Delta t_{Obs}$ | $N_e$ (ensemble size, page-local), iterations, observation instants, observation interval | **collision:** $N$ is not the polynomial degree |
 | $F$, $\sigma_C$ | (inflation factor, ensemble spread of the coefficient) | |
 | $x_1$, $x_2$, $x_3$ (mixing layer) | $z$, $y$, $x$ | spanwise, normal, streamwise in the source |
-| $\Delta U$, $\theta$, $\theta_0$, $\tau_\theta=\theta_0/\Delta U$ | (velocity difference, momentum thickness, its initial value, time unit) | $\theta$ agrees with the registry's momentum thickness |
+| $\Delta U$, $\theta$, $\theta_0$, $\tau_\theta=\theta_0/\Delta U$ | (velocity difference, momentum thickness, its initial value), $\tau_\theta$ (time unit, registry §11) | $\theta$ agrees with the registry's momentum thickness |
 | $S^L_n$ | (longitudinal structure function of order $n$, normalized by $u^{rms}$) | |
 
 # Reference list

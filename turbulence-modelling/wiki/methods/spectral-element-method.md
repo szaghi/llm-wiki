@@ -3,9 +3,9 @@ type: Method
 title: "Continuous-Galerkin spectral-element method"
 description: "The continuous-Galerkin spectral-element method expands the solution in tensor-product Lagrange polynomials on LGL nodes, continuous across elements by direct stiffness summation; this page covers its formulation, the derivative jumps and weak wall-stress imposition that shape LES on it, nodal subgrid coefficients and filter widths, and implicit RANS source terms."
 status: established
-aliases: [SEM, CG-SEM, continuous Galerkin spectral element method, spectral/hp continuous Galerkin, direct stiffness summation]
+aliases: [SEM, CG-SEM, continuous Galerkin spectral element method, spectral/hp continuous Galerkin, direct stiffness summation, SEM TLES]
 tags: [spectral-element, les, wmles, sgs-model, numerical-dissipation]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Continuous-Galerkin spectral-element method
@@ -134,10 +134,10 @@ implied by the driving pressure gradient of 38.05%, 25.73% and 15.65%
 **Subgrid models as stabilizers.** In Mukha et al.'s WMLES (§III.C, Fig. 8)
 the explicit [Vreman](/methods/vreman-model.md) and Sigma models stabilize
 the solution better than Nek5000's high-pass relaxation filter used as an
-implicit model (a forcing $\chi_{\mathrm{hp}}(\boldsymbol u-\boldsymbol u^{\mathrm{lp}})$
-added to the momentum equation, page-local $\chi_{\mathrm{hp}}$ its strength
+implicit model (a forcing $\chi_f(\boldsymbol u-\boldsymbol u^{\mathrm{lp}})$
+added to the momentum equation, $\chi_f$ its strength (registry §11; the source's $\chi$)
 and $\boldsymbol u^{\mathrm{lp}}$ the modally low-pass-filtered velocity, as
-printed in §II.A, Eq. 4): two filtered modes with $\chi_{\mathrm{hp}}=100$
+printed in §II.A, Eq. 4): two filtered modes with $\chi_f=100$
 increase near-wall oscillations and over-predict
 $\langle u'u'\rangle$, and filtering alone "does not introduce enough damping
 to avoid the contamination of the solution with numerical artifacts"; with
@@ -174,8 +174,8 @@ width").
 Reddy et al. (2026, §1) call a spectral-element discretization "ideal" for
 comparing subgrid models "due to the lack of inherent numerical dissipation
 present", and define in the Taylor–Green vortex an effective viscosity
-$\varepsilon=\nu_{\mathrm{eff}}\langle\omega_i\omega_i\rangle$ (page-local
-$\nu_{\mathrm{eff}}$) that lumps subgrid and numerical dissipation (§7.1).
+$\varepsilon=\nu^\omega_{\mathrm{eff}}\langle\omega_i\omega_i\rangle$ (page-local
+$\nu^\omega_{\mathrm{eff}}$, the paper's $\nu_{\mathrm{eff}}$, as on [numerical dissipation](/properties/numerical-dissipation.md); not the registry's $\nu_{\mathrm{eff}}$) that lumps subgrid and numerical dissipation (§7.1).
 [Saini et al. (2023)](/sources/saini-2023.md), §2.1, §6, run the continuous
 spectral/hp solver of Nektar++ at order 4 (velocity) and 3 (pressure) with
 [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
@@ -183,6 +183,30 @@ and measure its numerical plus model dissipation at about a quarter of that
 of a second-order finite-volume LES at similar cost. Mukha et al. (2025)
 need the subgrid model for stability (above). See
 [numerical dissipation](/properties/numerical-dissipation.md).
+
+**Energy pile-up against a lattice Boltzmann scheme.**
+[Simonis et al. (2022)](/sources/simonis-2022.md), §3.3, compare
+under-resolved CG-SEM runs of [Nek5000](/software/nek5000.md) (polynomial
+degree $N=7$, 9 or 18 elements per direction, i.e. $N_x=64$ or 127
+points; third-order BDF, $\Delta t=0.005$) with a
+[lattice Boltzmann](/methods/lattice-boltzmann-method.md) scheme at
+matched point counts on the
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $Re=3000$.
+Without a model the spectral elements show an energy pile-up at high
+wavenumbers, the lattice Boltzmann scheme an early onset of the
+dissipation range, and the latter underpredicts the peak of the total
+dissipation rate more at $N_x=64$ (Fig. 7). The spectral-element runs were
+also closed with the temporal direct deconvolution model of Oberle, Pruett
+& Jenny (cited), a temporal LES: its original regularization, which
+relaxes the unfiltered towards the filtered velocity, introduces a phase
+lag that the authors call negligible in statistically stationary flows but
+severe for the transient Taylor–Green vortex, and they replace it by the
+regularization of Pruett's temporal approximate deconvolution (the
+equations are not printed). The resulting spectral-element TLES improves
+the dissipation peak over the unmodelled run but shows a "distorted
+crown" in the peak region (§3.3.2, Fig. 8). Reference DNS used the same
+code at $N=7$ with 18 ($Re=800$) and 50 ($Re=3000$) elements per direction
+and $\Delta t=0.001$ (§3.1).
 
 ## Near-wall resolution and $N$-convergence in RANS
 
@@ -219,9 +243,8 @@ codes (§1); see [$k$-$\omega$ model](/methods/k-omega-model.md).
   *(compiler check, not in the sources)*; the first counts element-local
   nodes with duplicates, the second approximately unique nodes.
 - **High-pass filter strength.** Mukha et al. filter two modes with
-  $\chi_{\mathrm{hp}}=100$, whereas Gillyns et al. (2022) used
-  $\chi_{\mathrm{hp}}=10$ on the highest mode, as recalled by Mukha et al.
-  (§II.D). Mukha et al. also did not see the divergence without time
+  $\chi_f=100$, whereas Gillyns et al. (2022) used
+  $\chi_f=10$ on the highest mode, as Mukha et al. (§II.D) cite. Mukha et al. also did not see the divergence without time
   averaging of the wall-model input that Gillyns et al. report (§II.C.1);
   the two concern different set-ups (wall law, matching height, subgrid
   treatment), as recorded on the
@@ -244,4 +267,5 @@ codes (§1); see [$k$-$\omega$ model](/methods/k-omega-model.md).
 - [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §2, §6 ($C^0$ continuity, Gibbs spikes at element faces).
 - [Saini et al. (2023)](/sources/saini-2023.md) — §2.1, §6 (Nektar++ continuous Galerkin with SVV, dissipation against finite volumes).
 - [Wang et al. (2013)](/sources/wang-2013.md) — §1 (Patera's method cited); Tables I–VII (acronyms and participants).
+- [Simonis et al. (2022)](/sources/simonis-2022.md) — §3.1 (spectral-element DNS of the Taylor–Green vortex); §3.3, Figs. 7–8 (under-resolved and temporal-LES runs against lattice Boltzmann; regularization phase lag).
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §1 (oscillations of high-order $k$-$\omega$); §2.2, Eqs. (32)–(38) (implicit source terms in the Helmholtz operator); §3.1, Figs. 1–2; §3.4–3.5 ($N$-convergence, CFL on the T-junction).

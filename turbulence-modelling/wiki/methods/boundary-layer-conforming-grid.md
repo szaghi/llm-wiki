@@ -5,7 +5,7 @@ description: "Grids whose local isotropic cell size follows the local boundary-l
 status: established
 aliases: [BL-conforming grid, boundary-layer-conforming mesh, delta-conforming grid]
 tags: [wmles, mesh-adaptation, boundary-layer, wall-model]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Boundary-layer-conforming grids for wall-modelled LES
@@ -131,7 +131,7 @@ On the Juncture Flow at $Re=2.4\times10^6$ (crank chord), Lozano-Durán et al.
 The WMLES review of [Bose & Park (2018)](/sources/bose-2018.md) (§3, Fig. 5)
 names the difficulty of grids that follow a varying thickness. Comparing published
 airfoil WMLES with Chapman-type estimates, they find that most calculations
-seem to need an outer-layer resolution of $n_xn_yn_z\gtrsim20^3$ points per
+need an outer-layer resolution of $n_xn_yn_z\gtrsim20^3$ points per
 $\delta^3$ ($n_i$ the points per $\delta$ in direction $i$, page-local), and
 that the scatter at equal Reynolds number "may be partially explained by
 the difficulty in generating optimal grids", i.e. grids with
@@ -165,7 +165,7 @@ Grid design relative to $\delta$ has the opposite sign in
 [detached-eddy simulation](/methods/detached-eddy-simulation.md), where the
 boundary layer must stay in RANS mode. [Delassaux et al. (2023)](/sources/delassaux-2023.md)
 (§4.1.3, §4.4) state the criterion as keeping the largest wall-parallel
-spacing $\Delta_{\max}$ above $\delta$, and recall that Menter, with
+spacing $\Delta_{\max}$ above $\delta$, and cite Menter, who, with
 $r=\Delta_{\max}/\delta$ (page-local), finds the effect of refinement delayed
 to $r<0.2$ in DDES against $r<1$ in DES; violating it lets LES enter a
 boundary layer it cannot resolve and produces grid-induced separation
@@ -286,7 +286,7 @@ RANS needs, the opposite of the isotropic $\delta$-sized cells of this page.
 - Lozano-Durán et al. contrast their low leading-edge sensitivity at small
   angle of attack with NACA 0012 cases in which the whole-chord solution
   depended strongly on leading-edge grid details (Goc, personal communication,
-  as they recall it, §V.D).
+  as they cite it, §V.D).
 - Printed slips in the version read (arXiv v1): §V.D gives
   $Re_\Delta^{\min}=2.6\times10^3$ and $5.8\times10^3$ for C-N5-R2e3 and
   C-N5-R5e3, while §V.A, the Fig. 18 caption and the case names give

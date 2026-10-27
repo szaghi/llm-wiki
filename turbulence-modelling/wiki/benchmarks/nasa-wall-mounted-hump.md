@@ -5,7 +5,7 @@ description: "The NASA wall-mounted hump at chord Reynolds number 936,000 and Ma
 status: established
 aliases: [wall-mounted hump, NASA hump, WMH]
 tags: [benchmark, separated-flow, rans, field-inversion, data-driven, hybrid-rans-les, wmles]
-timestamp: 2026-10-27T11:01:00Z
+timestamp: 2026-10-27T15:47:00Z
 ---
 
 # NASA wall-mounted hump
@@ -75,18 +75,19 @@ so that it vanishes in the attached boundary layer (Eqs. 5–6).
   closed forms $\beta-1=-\tfrac{3}{500}\lambda_5\tanh(-0.092\lambda_2)$
   (SR-CLS) and $\beta-1=\min(0.00435\lambda_2^2,3.806)$ (SR-CND), with
   $\lambda_2$, $\lambda_5$ (page-local) the invariants
-  $\mathrm{tr}(\hat\Omega^2)$ and $\mathrm{tr}(\hat\Omega^2\hat S^2)$ of the
-  mean rotation and strain scaled by $1/(\beta^*\omega)$ (Table 4).
+  $\mathrm{tr}(\mathsf W^2)$ and $\mathrm{tr}(\mathsf W^2\mathsf S^2)$ of the
+  mean rotation and strain scaled by $1/(\beta^*\omega)=k/\varepsilon$
+  (registry §11 $\mathsf W_{ij}$, $\mathsf S_{ij}$) (Table 4).
 - Run in the solver, both models cut the mean square error of $C_f$
   against the measurements in the separated region to about 6.7% of that
   of SST; at the hump top SR-CND matches SST, while SR-CLS, whose $\beta$
   rises there, has 160% of the SST error (§3.3.2, Figs. 21–22).
 
-Both models raise $\beta$ where the scaled rotation or strain is large;
-larger $\beta$ lowers $\omega$, raises the eddy viscosity and the momentum
-transfer into the recirculation, and shortens the bubble, consistent with
-the finding of earlier work the authors cite that RANS models
-underestimate eddy viscosity in separated shear layers (§3.2).
+The authors explain both models (§3.2): they raise $\beta$ where the scaled
+rotation or strain is large; larger $\beta$ lowers $\omega$, raises the eddy
+viscosity and the momentum transfer into the recirculation, and shrinks the
+separation, consistent with the finding of earlier work they cite that RANS
+models underestimate eddy viscosity in separated shear layers.
 
 **An unseen test of blended expert corrections.**
 [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (read in arXiv v2)
@@ -145,13 +146,13 @@ separation bubble and the recovery region. Both reviews compile results;
 neither runs the hump. See also
 [detached-eddy simulation](/methods/detached-eddy-simulation.md).
 
-**What the sources share.** Both find baseline SST too late in
-reattachment and both shorten the bubble by raising the eddy viscosity in
-the separated shear layer, by a learned $\omega$-destruction multiplier
-(Wu et al.) or by a separated-flow expert that itself shortens it too much
-(Oulghelou et al.). Both report that a correction active in the attached
-layer degrades the attached parts of the flow: at the hump top in Wu et
-al. (SR-CLS), and on the flat plate and airfoil in Oulghelou et al. (the
+**What the sources share.** Both shorten the SST separation by a
+correction aimed at the separated shear layer: Wu et al. by a learned
+$\omega$-destruction multiplier, Oulghelou et al. by a separated-flow expert,
+which on the hump reattaches at 1.03 against 1.24 for SST and 1.15 measured
+(Table 11). In both, a correction active in the attached layer degrades the
+attached parts of the flow: at the hump top in Wu et al. (SR-CLS, 160% of
+the SST error), and on the flat plate and airfoil in Oulghelou et al. (the
 non-baseline experts; see
 [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md) and
 [NACA 0012](/benchmarks/naca-0012-airfoil.md)).

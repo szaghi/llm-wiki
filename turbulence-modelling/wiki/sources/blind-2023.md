@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 254:105796"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Computers_amp_Fluids_Blind_Residual_estimation_for_grid_modification_in_wall-modeled_la.pdf"
 tags: [les, wmles, mesh-adaptation, dg, grid-requirements]
-timestamp: 2026-10-26T05:09:00Z
+timestamp: 2026-10-27T15:59:00Z
 ---
 
 # Summary
@@ -62,7 +62,7 @@ numbers on this page are those of arXiv v1.
 
 # Key claims
 
-Page-local symbols, as on the [mesh adaptation](/methods/mesh-adaptation.md) page: $\mathcal E_{\hat\Delta}$ is the estimated modelling residual (the source's $\mathcal F_{\hat\Delta}$), $\mathcal G=\varrho_r h^{a}$ the averaged residual norm, its density and exponent (the source's $G=g\Delta^\alpha$), $N_f$ the highest mode kept by the test filter (the source's $M$), $\Lambda$ the equidistribution constant.
+Page-local symbols, as on the [mesh adaptation](/methods/mesh-adaptation.md) page: $\mathcal E_{\hat\Delta}$ is the estimated modelling residual (the source's $\mathcal F_{\hat\Delta}$), $\mathcal G=\varrho_r h^{a}$ the averaged residual norm, its density and exponent (the source's $G=g\Delta^\alpha$), $\Lambda$ the equidistribution constant; $N_f$ (registry §11) is the highest mode kept by the test filter (the source's $M$).
 
 1. The Toosi–Larsson residual-based adaptation transfers to DGSEM, and to any DG or related scheme "with minimal changes, as long as an element-local filter operation can be specified" (§2.1). **Stated**
 2. Classical residual estimation (leading Taylor terms, or interpolation onto a finer mesh) fails for LES: a finer grid resolves smaller scales, and LES is far from the asymptotic range (§2.2). **Stated**
@@ -110,7 +110,7 @@ Page-local symbols, as on the [mesh adaptation](/methods/mesh-adaptation.md) pag
 | $\widehat{(\cdot)}$, $\hat\Delta$ | $\hat\phi$, $\hat\Delta$ | agree: test filter; applied to conserved variables, so the filtered velocity is Favre-weighted |
 | $\Delta=\mathcal V^{1/3}/(P+1)$ | $\Delta$ | agrees (element size over $N+1$); also used for the grid spacing |
 | $P$ | $N$ | polynomial degree, $P=5$ |
-| $M$ | $N_f$ (page-local) | **collision:** the registry's $M$ is the Mach number |
+| $M$ | $N_f$ (registry §11) | **collision:** the registry's $M$ is the Mach number |
 | $\tau^{\mathrm{mod}}_{ij}(\rho,u_i,\Delta)$ | $\tau_{ij}$ (modelled) | enters the momentum flux with $+$ beside $p\delta_{ij}$: positive-trace convention, agrees |
 | $\sigma_{ij}$ | $\sigma_{ij}$ | agrees |
 | $G(\vec x,\vec n)$, $g$, $\alpha$ | $\mathcal G$, $\varrho_r$, $a$ (page-local) | **collision:** $G$ is the filter kernel, $\alpha$ the DG/FV blending factor in the registry |

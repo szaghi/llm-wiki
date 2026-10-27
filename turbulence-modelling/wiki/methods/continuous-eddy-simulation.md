@@ -5,7 +5,7 @@ description: "Heinz's hybrid RANS/LES whose length-scale-equation destruction co
 status: established
 aliases: [CES, CES-KES, CES-KEK, CES-KOS, CES-KOK, continuous eddy simulation mode control, CES-SST]
 tags: [hybrid-rans-les, rans, les, eddy-viscosity, lattice-boltzmann]
-timestamp: 2026-10-27T10:57:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Continuous eddy simulation
@@ -28,8 +28,8 @@ construction "theory-based"
 ([Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §2.3, Eqs. 33–34;
 HAL accepted manuscript).
 
-**Page-local symbols.** The subscript $+$ on this page marks a ratio of a
-modelled to a total quantity, never wall units: $k_+$, $\varepsilon_+$,
+**Symbols.** The subscript $+$ on this page marks a ratio of a
+modelled to a total quantity, never wall units (registry §11): $k_+$, $\varepsilon_+$,
 $L_+$ and $\tau_+$ are the ratios of kinetic energy, dissipation, length
 scale $k^{3/2}/\varepsilon$ and time scale $k/\varepsilon$ (Heinz's
 "resolution ratios"). $\alpha^*_\varepsilon$ is the variable destruction
@@ -61,8 +61,8 @@ coefficient thus multiplies the destruction term $C_{\varepsilon1}\alpha^*_\vare
 
 Eliminating $P_k$ with the $k$ equation and taking the variation $\delta$ of the
 $\varepsilon$ equation gives an exact relation for $\delta\alpha^*_\varepsilon$
-(Eqs. 3–4). Following Friess et al. and the earlier CES papers, as recalled by
-Heinz (2022), the relative variations $\delta k/k$ and
+(Eqs. 3–4). Following Friess et al. and the earlier CES papers, which
+Heinz (2022) cites, the relative variations $\delta k/k$ and
 $\delta\varepsilon/\varepsilon$ are assumed uniform in space and in time; Heinz
 states that Chaouat & Schiestel (2021, App. E) make the same assumption
 "although different language is used" (§2). The relation then reduces to
@@ -79,7 +79,7 @@ $\nu_t^\star$):
 | O2 | $\nu_t$ | $\alpha^*_\varepsilon=1+\tau_+(\alpha_\varepsilon-1)$ | $D_k$, $D_\varepsilon$ do not affect $\alpha^*_\varepsilon$ ($D_*$ dropped) |
 | O3 | total viscosity | $\alpha^*_\varepsilon=1+\tau_+(\alpha_\varepsilon-1)$ | none further |
 
-O1 is the CES mode control (Heinz 2019, as recalled); its integration constant
+O1 is the CES mode control (Heinz 2019, cited there); its integration constant
 is fixed by $\alpha^*_\varepsilon=\alpha_\varepsilon$ at $L_+=1$, the RANS
 limit (§2). In CES the ratios are built from time averages: the modelled length
 $\langle k\rangle^{3/2}/\langle\varepsilon\rangle$ against the total
@@ -171,7 +171,7 @@ $L_+\approx\alpha_\varepsilon C_{DES}\Delta/L_{\mathrm{tot}}$ on fine grids;
 Eq. (55) is the $k$-$\omega$ analogue with $\alpha_\omega$. Matching this
 limit to $L_+=C_+\Delta/L_{\mathrm{tot}}$ with $C_+=1$ gives
 $C_{DES}=1/\alpha_\varepsilon=0.75$ and $1/\alpha_\omega=0.61$, which the
-author calls close to the standard 0.65 (Fig. 5). From this the review
+author calls close to 0.65 (Fig. 5). From this the review
 concludes that CES "generalizes DES" and that "the technical solution to
 adjust $\Delta_+$ to $L_+$ is absurd", DES being unstable under grid
 variation (§4.4, citing the author's earlier work); the review shows no
@@ -194,7 +194,7 @@ NASA hump, Bachalo–Johnson bump, NACA 4412) is on
 
 Heinz (2022) uses the options to criticize the energy-partition control of the
 partially integrated transport model (PITM) of Schiestel, Dejoan and Chaouat,
-as recalled from Chaouat & Schiestel (2021):
+which Heinz describes after Chaouat & Schiestel (2021):
 
 - O2 with ordinary turbulent transport ($\nu_t^\star=\nu_t$) is consistent
   only for homogeneous flow. For non-homogeneous flow it adds a spurious
@@ -288,7 +288,7 @@ itself.
 - The claim that CES with O1 overcomes "similar problems" in PANS is made
   without a PANS computation in Heinz (2022, §4).
 - The two sources leave the free constants of the SST form unspecified
-  (Mozaffari et al.) or recall them from earlier papers (Heinz), so the
+  (Mozaffari et al.) or take them from earlier papers (Heinz), so the
   method cannot be reproduced from these pages alone.
 - [Heinz (2020)](/sources/heinz-2020.md) prints $C_+=(0.876,1.0,1.074)$ for
   $C_K=(1.3,1.43,1.5)$ (§2.3 and App. C); the printed formula gives 0.867,

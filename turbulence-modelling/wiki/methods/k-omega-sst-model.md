@@ -5,7 +5,7 @@ description: "Menter's two-equation shear-stress-transport eddy-viscosity model,
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-27T10:56:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # k-ω SST model
@@ -376,6 +376,23 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
   $Pr_t$ are obtained from the corrected fluxes is not printed (§II.F–G,
   §III; details on the
   [machine-learning wall-model page](/methods/machine-learning-wall-model.md)).
+- **Production correction from a frozen solve.** Cherroud et al. (2022)
+  correct SST by an extra anisotropy $b^\Delta_{ij}$ in the stress and a
+  residual $R$ added to the production of both the $k$- and the
+  $\omega$-equation, the latter as $(\gamma_\omega/\nu_t)(P_k+R)$, with the
+  production limited to $10\beta^*\omega k$; the targets come from solving
+  the two equations with the high-fidelity mean velocity, $k$ and
+  anisotropy frozen, so that $\omega$ and $R$ are consistent with the SST
+  transport equations ([Cherroud et al. (2022)](/sources/cherroud-2022.md),
+  §2.1, Eqs. 9–13; constants "found in Menter 1992", not printed; no
+  cross-diffusion or blending term is printed in their Eq. 10). Their
+  selected sparse-Bayesian models keep $b^\Delta=0$ and a single production
+  term on $T^{(1)}$, which raises the eddy viscosity in the separated
+  region; details and coefficients on the
+  [explicit algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md)
+  page. Sandberg & Zhao (2022) review the same SpaRTA-type correction as
+  tractable for 3-D flows ([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md),
+  §3.4, Eq. 8, §4.1).
 
 ### Implementation in a lattice Boltzmann solver
 
@@ -526,7 +543,7 @@ operational role and need not match their DNS counterparts
   ([Huang et al. (2022)](/sources/huang-2022.md), §1).
 - Alauzet et al. (2022) name a comparison of SA and SST on mesh-converged
   adapted meshes as future work ([Alauzet et al. (2022)](/sources/alauzet-2022.md), §9).
-- **Ahmed body.** As recalled by Cai et al. (2022), Menter & Kuntz ran
+- **Ahmed body.** Cai et al. (2022) cite Menter & Kuntz, who ran
   $k$-$\varepsilon$ and SST with wall models and obtained fully separated
   flow on the 35° slant but a 25° case "much more sensitive to the
   numerical schemes and the turbulence models", improved with DES; in
@@ -614,6 +631,38 @@ operational role and need not match their DNS counterparts
   [zero-pressure-gradient boundary layer](/benchmarks/turbulent-boundary-layer.md)
   SST beats all their corrected models (mean absolute $C_f$ error
   $8.4\times10^{-5}$; Table 9).
+- **Three 2-D separated flows with uncertainty bands.** Cherroud et al.
+  (2022) take SST in OpenFOAM as the baseline of their learned corrections
+  on the [periodic hill](/benchmarks/periodic-hill.md) ($Re=10\,595$), a
+  converging–diverging channel ($Re=12\,600$) and the curved
+  [backward-facing step](/benchmarks/backward-facing-step.md)
+  ($Re=13\,700$): SST overpredicts the separation size on all three, and
+  the corrected models improve velocity and $C_f$, with $\pm3\sigma$ bands that
+  widen where they depart from the high-fidelity data; they overpredict $k$
+  in the separated regions, miss the small bubble of the channel, and on
+  the curved step their $C_f$ in attached regions is slightly worse than
+  SST's (§4.2, Figs. 5–7).
+- **Jet in crossflow and cooling slots.** Sandberg & Zhao (2022) show
+  steady SST RANS with an eddy-diffusivity heat flux ($Pr_t=0.9$) against
+  DNS of a jet in crossflow (jet Reynolds number 12 500, blowing ratio
+  0.5): reduced spanwise spread of wall temperature, an underpredicted
+  horseshoe vortex, a spanwise velocity of the wrong sign off the axis and
+  a much too small heat flux near the wall; SST URANS (Menter et al. 2003)
+  with $Pr_t=0.9$ is the baseline of their trailing-edge-slot closures
+  (§2.3 Fig. 5, §4.4.2 Fig. 11; see the
+  [Boussinesq page](/definitions/boussinesq-hypothesis.md) and
+  [spectral gap](/definitions/spectral-gap.md)).
+- **Transonic bump with QCR.** On the axisymmetric transonic bump of
+  Bachalo & Johnson ($Re_c=2.763\times10^6$, $M_\infty=0.6$–$0.925$) He et al.
+  (2022) find SST with the quadratic constitutive relation predicting the
+  wall pressure well at all six Mach numbers, especially the shock
+  position and post-shock plateau for $M_\infty\ge0.85$, where SA-QCR
+  delays the shock and the shock-induced separation; both underpredict
+  the Reynolds shear stress downstream of the shock at $M_\infty=0.875$,
+  SST-QCR slightly less, and the authors use SST-QCR fields as surrogate
+  high-fidelity data to tune their learned correction of SA-QCR
+  ([He et al. (2022)](/sources/he-2022-b.md), §2.5, Figs. 5–6, §4; see
+  [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
 - **Transonic compressor buffet.** On the TCTA transonic cascade (inlet
   $M=1.21$, $Re=1.35\times10^6$), URANS with SST, Kato–Launder production and
   $\gamma$-$Re_\theta$ captures the shock-buffet Strouhal number of the
@@ -713,7 +762,7 @@ version read (arXiv v1):
   the boundary layer stays laminar and trailing-edge vortex shedding raises
   the mean lift by 22.8% (SD7003, $Re=23{,}000$, $\alpha=2^\circ$; §5,
   Table 11). The two statements concern different regimes (turbulent vortex
-  flow, laminar periodic shedding) and are not incompatible.
+  flow, laminar periodic shedding).
 - Zhao et al. (2023b) print the diffusion coefficient of Eq. 2-2 as
   $\mu_L+\sigma_k\mu_T$ and that of the compressibility-corrected Eq. 2-5 as
   $\mu+\sigma_k\mu_t$, while §2 defines $\mu=\mu_L+\mu_T$; read literally, Eq.
@@ -760,6 +809,13 @@ version read (arXiv v1):
   ([Monfaredi et al. (2021)](/sources/monfaredi-2021.md), §4.2, Fig. 7; see
   the [SA page](/methods/spalart-allmaras-model.md)).
 
+- Cherroud et al. (2022) print the SST $\omega$-destruction with $\beta^*$,
+  the coefficient of the $k$-equation sink, and the diffusion coefficient
+  as $\sigma_w$ (Eq. 10); the page records it as printed. The sign of
+  their limited production (Eq. 11) is discussed on the
+  [explicit algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md)
+  page.
+
 ## Contradictions
 
 - **Exponent of the Langtry–Menter $F_3$.** *Open.* Menter et al. (2022)
@@ -770,8 +826,8 @@ version read (arXiv v1):
   $R_y=\rho d\sqrt k/\mu$. The functions agree near the wall and differ in
   how sharply they switch off around $R_y=120$ *(compiler check, not in
   the sources)*. Langtry & Menter's 2009
-  paper, not ingested, or a statement that one form is a deliberate
-  implementation variant, would decide it.
+  paper is not ingested, and neither source calls its form an
+  implementation variant.
 
 # Citations
 
@@ -812,3 +868,6 @@ version read (arXiv v1):
 - [Batther & Lee (2022)](/sources/batther-2022.md) — §3.1, §4.3.1, Fig. 17.
 - [Zangeneh (2021)](/sources/zangeneh-2021.md) — §II.A–B Eqs. 1, 5–7, §II.F–G, §III.
 - [Monfaredi et al. (2021)](/sources/monfaredi-2021.md) — §4.2, Fig. 7.
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §2.1 Eqs. 9–13, §4.2 Figs. 5–7.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.3 Fig. 5, §3.4 Eq. 8, §4.1, §4.4.2 Fig. 11.
+- [He et al. (2022)](/sources/he-2022-b.md) — §2.5 Figs. 5–6, §4.

@@ -9,7 +9,7 @@ year: 2025
 venue: "Phys. Fluids 37:105158"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Physics_of_Fluids_Mukha_Wall-modeled_large-eddy_simulation_based_on_spectral-element.pdf"
 tags: [wmles, wall-model, spectral-element, sgs-model, log-layer-mismatch, channel-flow]
-timestamp: 2026-10-26T20:44:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Summary
@@ -56,7 +56,7 @@ within 2% of wall-resolved LES on the finest mesh. The Reynolds stresses are
 on par with published WMLES, including
 [building-block-flow](/methods/building-block-flow-wall-model.md) results. The
 closure is a [Boussinesq](/definitions/boussinesq-hypothesis.md) eddy
-viscosity; the introduction recalls WMLES with
+viscosity; the introduction cites WMLES with
 [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md) and
 the [WALE model](/methods/wale-model.md), and DG wall models
 ([DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)).
@@ -105,8 +105,8 @@ The code is released as `nekwmles` (GitHub, printed in the preprint).
 30. A structured mesh cannot keep the spanwise element size adapted to $\delta_{99}$, which grows about eightfold over the domain; 4 elements per $\delta_{99}$ at the inlet is already wall-resolved-like (about $10\delta_\nu$), so WMLES needs coarsening in $x$ and $y$ (§IV.A, Fig. 12). **Shown** / **Stated**
 
 The momentum equation (Eqs. 1–4), translated, with the overbar of the implicit grid filter omitted ($u_i$, $p$, $S_{ij}$ stand for $\bar u_i$, $\bar p$, $\bar S_{ij}$; the source prints none):
-$$\frac{\partial u_i}{\partial t}+u_j\frac{\partial u_i}{\partial x_j}=-\frac1\rho\frac{\partial p}{\partial x_i}+\frac{\partial}{\partial x_j}\Big[2(\nu+\nu_t)S_{ij}\Big]+f_{\mathrm{hp},i},\qquad f_{\mathrm{hp},i}=\chi_{\mathrm{hp}}\,(u_i-u^{\mathrm{lp}}_i),$$
-with $u^{\mathrm{lp}}_i$ the velocity passed through the modal low-pass filter of Nek5000 and $\chi_{\mathrm{hp}}$ its strength (sign as printed), the symbols of the [spectral-element](/methods/spectral-element-method.md) page. The viscosity-based condition (Eqs. 13–14), with $\tau_w$ kinematic:
+$$\frac{\partial u_i}{\partial t}+u_j\frac{\partial u_i}{\partial x_j}=-\frac1\rho\frac{\partial p}{\partial x_i}+\frac{\partial}{\partial x_j}\Big[2(\nu+\nu_t)S_{ij}\Big]+f_{\mathrm{hp},i},\qquad f_{\mathrm{hp},i}=\chi_f\,(u_i-u^{\mathrm{lp}}_i),$$
+with $u^{\mathrm{lp}}_i$ the velocity passed through the modal low-pass filter of Nek5000 and $\chi_f$ its strength (registry §11; sign as printed), the symbols of the [spectral-element](/methods/spectral-element-method.md) page. The viscosity-based condition (Eqs. 13–14), with $\tau_w$ kinematic:
 $$\nu_t\big|_{\mathrm{wall}}=\frac{\lvert\tau_w^{\mathrm{wm}}\rvert}{2\sqrt{S_{xy}^2+S_{zy}^2}}-\nu .$$
 Input averaging (Eqs. 5–6): $u^{\mathrm{wm}}_n\leftarrow\epsilon_{\mathrm{avg}}u^{\mathrm{wm}}_n+(1-\epsilon_{\mathrm{avg}})u^{\mathrm{wm}}_{n-1}$, $\epsilon_{\mathrm{avg}}=\Delta t/(\Delta t+\Delta t_{\mathrm{avg}})$. Model constants: Vreman constant $2.5C_s^2$ with $C_s=0.16$; Sigma constant 1.35; the subgrid length scale is the largest GLL spacing of the element (§II.D).
 
@@ -130,7 +130,7 @@ Input averaging (Eqs. 5–6): $u^{\mathrm{wm}}_n\leftarrow\epsilon_{\mathrm{avg}
 | $\tau_{ij}=(\nu+\nu_{sgs})S_{ij}$ | $2(\nu+\nu_t)S_{ij}=\sigma_{ij}/\rho-\tau^d_{ij}$ | **collision:** viscous plus subgrid, opposite sign to the registry's $\tau_{ij}$ |
 | $\nu_{sgs}$ | $\nu_t$ | not forced to zero at the wall |
 | $\tilde u$ | $u^{\mathrm{lp}}$ (modally low-pass-filtered velocity, page-local) | **collision:** not a Favre filter |
-| $f_{hp}$, $\chi$ | $f_{\mathrm{hp},i}$, $\chi_{\mathrm{hp}}$ (relaxation term and strength, page-local) | **collision:** $\chi$ is the SA ratio |
+| $f_{hp}$, $\chi$ | $f_{\mathrm{hp},i}$ (relaxation term, page-local), $\chi_f$ (strength, registry §11) | **collision:** $\chi$ is the SA ratio |
 | $N$ | $N$ | $N=7$ |
 | $h$ | $h_{\mathrm{wm}}$ | **collision:** not an element size; $0.2\delta$ or $0.2\delta_{99}(x)$ |
 | $\tau_w^{wm}$, $\tau_w^{wall}$, $\tau_w^{\nabla p}$, $\tau_w^{apri}$ | $\tau_w$ with page-local superscripts | modelled; from the mean wall gradient; from the driving pressure gradient; a priori |
@@ -144,7 +144,7 @@ Input averaging (Eqs. 5–6): $u^{\mathrm{wm}}_n\leftarrow\epsilon_{\mathrm{avg}
 | $c_f$ | $C_f$ | |
 | $\delta$, $\delta_{99}$, $\delta^*$, $\theta$, $H$ | $\delta$, $\delta_{99}$, $\delta^*$, $\theta$, (shape factor) | |
 | $U_b$, $U_0$ | (bulk velocity), $U_\infty$ (local maximum of the mean velocity) | |
-| $C_s$, $C_\sigma$ | $C_s$, (Sigma constant) | |
+| $C_s$, $C_\sigma$ | $C_s$, $C_\sigma$ (registry §11) | Vreman $2.5C_s^2$, $C_s=0.16$; $C_\sigma=1.35$ |
 | $N_x$, $N_y$, $N_z$, $N_{gll}$ | element counts, total GLL nodes | **collision:** $N_x$ counts elements here, not grid points |
 
 # Reference list
@@ -160,7 +160,7 @@ duplicates.
 
 # Pages created or updated
 
-Chunk 6 (2026-10-26), cited further in chunk 7. This source is cited on:
+Chunk 6 (2026-10-26), cited further in chunks 7, 10. This source is cited on:
 
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
@@ -175,6 +175,7 @@ Chunk 6 (2026-10-26), cited further in chunk 7. This source is cited on:
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
 - [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)
 - [Sigma model](/methods/sigma-model.md)
+- [Slip-wall models](/methods/slip-wall-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Continuous-Galerkin spectral-element method](/methods/spectral-element-method.md)
 - [Spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)

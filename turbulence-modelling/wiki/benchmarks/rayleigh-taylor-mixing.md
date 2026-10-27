@@ -5,7 +5,7 @@ description: "Buoyancy-driven mixing of a heavy fluid placed above a light one: 
 status: established
 aliases: [Rayleigh-Taylor instability, RT mixing layer, Rayleigh–Taylor flow, variable-density mixing layer]
 tags: [benchmark, pans, hybrid-rans-les, rans]
-timestamp: 2026-10-27T10:36:00Z
+timestamp: 2026-10-27T15:37:00Z
 ---
 
 # Rayleigh–Taylor mixing
@@ -166,6 +166,12 @@ layer of this page.
 - The reference run is under-resolved at the initial interface
   ($\theta_m\approx0.26$ at $t=0$, §IV.2), although the authors call it a
   simulation resolving all flow scales.
+- **An announced test that is not in the paper.** The abstract of
+  [Svärd (2022)](/sources/svard-2022.md) lists "a turbulent
+  Rayleigh-Taylor problem" among the tests of its entropy-stable implicit
+  LES scheme, but the paper runs a Kelvin–Helmholtz instability and the
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) instead (§1,
+  §5); it contains no Rayleigh–Taylor result.
 
 # Citations
 
@@ -176,3 +182,4 @@ layer of this page.
 - [Liang & Fu (2024)](/sources/liang-2024.md) — §4.7, Eq. (60), Fig. 14 (same).
 - [Huang et al. (2025)](/sources/huang-2025.md) — §5.7, Fig. 8 (same).
 - [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §3.1.7, Figs. 19–22 (same, bandwidth-optimized WENO against WENO-JS, WENO-BS, TENO6 and TENO8).
+- [Svärd (2022)](/sources/svard-2022.md) — Abstract; §1, §5 (Rayleigh–Taylor test announced in the abstract, not run).

@@ -9,7 +9,7 @@ year: 2026
 venue: "Phys. Fluids 38:055101"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Physics_of_Fluids_Valencia_iA_priorii_assessment_of_deconvolution-b.pdf"
 tags: [les, sgs-model, scale-similarity, filtering, a-priori-a-posteriori, compressible]
-timestamp: 2026-10-27T06:13:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -145,9 +145,9 @@ arXiv 2024), ref. 44 (Córdova et al., arXiv 2023) and ref. 47 (Motheau &
 Wakefield, arXiv, dated 2020), the last being the preprint of ref. 51 (same
 title), kept distinct. Ref. 37 prints "T. Poinsot, Denis Veynante:
 Theoretical and Numerical Combustion"; ref. 17 is a technical report.
-Ref. 32 is [Volpiani (2024)](/sources/volpiani-2024.md); refs. 6, 14 and
-31 are the bundle-planned works keyed zhang-2022-f, qi-2022-b and
-zhang-2022-h.
+Ref. 32 is [Volpiani (2024)](/sources/volpiani-2024.md) and ref. 14
+[Qi et al. (2022)](/sources/qi-2022-b.md); refs. 6 and 31 are the
+bundle-planned works keyed zhang-2022-f and zhang-2022-h.
 
 # Pages created or updated
 

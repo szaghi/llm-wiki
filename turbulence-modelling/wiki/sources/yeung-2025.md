@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Fluid Mech. 1019:R2"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Fluid_Mechanics_Yeung_Small-scale_properties_from_exascale_computations_of_turbule.pdf"
 tags: [dns, isotropic-turbulence, intermittency, gpu, energy-cascade]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T15:53:00Z
 ---
 
 # Summary
@@ -58,7 +58,7 @@ equations, figures and tables.
 
 Page-local symbols: $u'$ r.m.s. velocity (one component); $L$ longitudinal
 integral scale (the source's $L_1$) and $Re_L=u'L/\nu$; $C_\varepsilon=\langle\varepsilon\rangle L/u'^3$;
-$T_E$ large-eddy turnover time; $C_{\mathrm{CFL}}$ Courant number;
+$T_E$ large-eddy turnover time (registry §11); $C_{\mathrm{CFL}}$ Courant number;
 $\omega^2=\omega_i\omega_i$ enstrophy density (the source's $\Omega$);
 $f_\varepsilon$, $f_{\omega^2}$ PDFs of $\varepsilon/\langle\varepsilon\rangle$ and
 $\omega^2/\langle\omega^2\rangle$; $N_1$, $N_2$ grid points per direction before
@@ -122,7 +122,7 @@ constant, $k_F=2.5$, after Donzis & Yeung 2010):
 | $\Omega\equiv\omega^2$ | $\omega^2=\omega_i\omega_i$ | **collision** with the rotation-rate tensor $\Omega_{ij}$; no factor 1/2 |
 | $C_\epsilon$ | $C_\varepsilon$ | page-local |
 | $\eta$, $\tau_\eta$, $\lambda$, $\nu$ | same | |
-| $T_E$ | $T_E$ | page-local large-eddy turnover time |
+| $T_E$ | $T_E$ | large-eddy turnover time (registry §11) |
 | $N$, $N^3$, $N_1$, $N_2$ | $N_x$, $N_x^3$ | **collision:** the source's $N$ is not the polynomial degree |
 | $k_{max}\eta=(\sqrt2N/3)\eta$ | $k_{\max}\eta$ | spectral resolution parameter |
 | $C=[\lvert u\rvert+\lvert v\rvert+\lvert w\rvert]_{max}\Delta t/\Delta x$ | $C_{\mathrm{CFL}}$ | **collision** with model constants |

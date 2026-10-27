@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 493:112492"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Computational_Physics_Lederer_High-order_projection-based_upwind_method_for_implicit_large.pdf"
 tags: [implicit-les, numerical-dissipation, les, sgs-model, incompressible-flow]
-timestamp: 2026-10-26T07:42:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -133,7 +133,7 @@ the [HOPU page](/methods/high-order-projection-based-upwind-method.md).
 | $\bar{(\cdot)}$ ("mean operator") | $\langle\cdot\rangle$ | time and homogeneous-direction average; **collision:** not the LES filter |
 | $\overline{u_i'u_j'}^+$ | $R_{ij}^+$ | $(\overline{u_iu_j}-\bar u_i\bar u_j)/u_t^2$, positive convention |
 | $h$ (hill), $Re=U_bh/\nu$ | $h_h$ (hill height, page-local), $Re_h$ | **collision:** $h$ is the element size |
-| $\Delta y_W^+$ | (size of the wall element over $N+1$, wall units) | *(compiler check, not in the sources: the stretching map $\Phi$ evaluated at the first element edge, times $392.24$, over $N+1$, gives 11.72, 4.31, 3.00, 13.64, 6.70, 4.31, matching Table 1)* |
+| $\Delta y_W^+$ | (size of the wall element over $N+1$, wall units) | *(compiler check, not in the sources: the stretching map $\Phi$ evaluated at the first element edge, times $392.24$, over $N+1$, gives 11.72, 4.31, 3.00, 13.64, 6.70, 4.31, against the printed 11.8, 4.3, 3.0, 13.6, 6.7, 4.3 of Table 1: all agree to rounding except the first)* |
 | $E^+$, $\kappa$ | $E(k)$, $k$ | normalized spectrum, wavenumber; **collision:** $\kappa$ is not the von Kármán constant |
 | gDOF | — | DOFs left after static condensation of $\sigma_h$, $\gamma_h$ |
 
@@ -149,7 +149,7 @@ take suffixes in printed order. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26). This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunk 10. This source is cited on:
 
 - [Periodic hill](/benchmarks/periodic-hill.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
@@ -160,6 +160,7 @@ Chunk 4 (2026-10-26). This source is cited on:
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [High-order projection-based upwind (HOPU) method](/methods/high-order-projection-based-upwind-method.md)
 - [Jump-penalty stabilization of high-order methods](/methods/jump-penalty-stabilization.md)
+- [Variational multiscale method](/methods/variational-multiscale-method.md)
 - [WALE model](/methods/wale-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)

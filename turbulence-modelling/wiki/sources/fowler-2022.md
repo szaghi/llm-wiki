@@ -139,7 +139,7 @@ b; Sundstrom 2018a, b, c). No printed duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunk 2. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 10. This source is cited on:
 
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)
@@ -147,5 +147,6 @@ Chunk 1 (2026-10-25), cited further in chunk 2. This source is cited on:
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
 - [Lagrangian relaxation towards equilibrium (LaRTE) wall model](/methods/lagrangian-relaxation-towards-equilibrium-wall-model.md)
+- [Slip-wall models](/methods/slip-wall-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)
 - [LESGO](/software/lesgo.md)

@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 492:112418"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Computational_Physics_Cheylan_Analysis_of_the_immersed_boundary_method_for_turbulent_fluid.pdf"
 tags: [immersed-boundary, lattice-boltzmann, fluid-structure-interaction, les]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -101,8 +101,8 @@ Shear-improved Smagorinsky coupling (§2.7, Eqs. 37–38): the eddy viscosity is
 - **Eqs. (25)–(26):** the remainder is written $o(|X_k-X_l|^2)$ after a first-order term.
 - **Table 12:** solid density "$10^4$ kg/m³" with fluid density $10^3$ kg/m³, while the table and text give a density ratio of 1; time step "$1.15\times10^4$ s".
 - **Instability threshold:** the text says the computation crashes for "$\Delta s/\Delta x<0.785$", while Table 8 lists a crash at $\Delta s/\Delta x=0.785$ itself.
-- **Recommended spacing against the best cases** *(compiler check, not in the source)*: the best cylinder cases (Table 9) have $\Delta s/\Delta x=0.00628/0.005=0.01256/0.01=1.256$, outside the recommended $0.8<\Delta s/\Delta x<1.2$.
-- **Table entries:** case 4 has $\Delta s=0.01245$ in Table 6 and $0.01256$ in Tables 3 and 7; case 5 drag error 0.24 (Tables 4, 6) and 0.23 (Table 5) for the same $\overline{C_d}=1.68$; case 14 drag error 0.06 (Table 4) and 0.066 (Table 7) for the same $\overline{C_d}=1.45$; Table 8 prints $\Delta s/\Delta x=0.62$ for case 19 ($0.02512/0.04=0.628$, *compiler check, not in the source*). Case 20 prints $St=0.165$ with error 0.055, while $|0.165-0.162|/0.162\approx0.019$ *(compiler check, not in the source)* and Table 6 assigns 0.018 to $St=0.165$ in cases 6 and 12.
+- **Recommended spacing against the best cases** *(compiler check, not in the sources)*: the best cylinder cases (Table 9) have $\Delta s/\Delta x=0.00628/0.005=0.01256/0.01=1.256$, outside the recommended $0.8<\Delta s/\Delta x<1.2$.
+- **Table entries:** case 4 has $\Delta s=0.01245$ in Table 6 and $0.01256$ in Tables 3 and 7; case 5 drag error 0.24 (Tables 4, 6) and 0.23 (Table 5) for the same $\overline{C_d}=1.68$; case 14 drag error 0.06 (Table 4) and 0.066 (Table 7) for the same $\overline{C_d}=1.45$; Table 8 prints $\Delta s/\Delta x=0.62$ for case 19 ($0.02512/0.04=0.628$, *compiler check, not in the sources*). Case 20 prints $St=0.165$ with error 0.055, while $|0.165-0.162|/0.162\approx0.019$ *(compiler check, not in the sources)* and Table 6 assigns 0.018 to $St=0.165$ in cases 6 and 12.
 - **§3.4:** "fluid-to-density ratio of 1".
 - **Citations in the text:** "Qiuxiang et al. [20]" (a given name); "Silva et al. [50]" for a reference whose first author is Lima; "Peng and Luo [5]" and "Luo et al. [5]"; "in 2009, Wu and Shu [9]" against the 2010 reference; "in 2022, Wang et al [24]" against the 2023 reference; Piperno and Farhat [41,42] said to treat aeroacoustics, while the titles concern aeroelasticity and [41] is by Farhat & Lesoinne; "Piperno and Farhat [57,41]" where [57] is Piperno alone. Ref. [42] prints "aroelastic".
 
@@ -112,7 +112,7 @@ Shear-improved Smagorinsky coupling (§2.7, Eqs. 37–38): the eddy viscosity is
 |---|---|---|
 | $f_i$, $f_i^{eq}$, $f_i^{neq}$ | $f_q$, $f^{\mathrm{eq}}_q$, (non-equilibrium part) (page-local, as on [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md)) | **collision:** not the body force $f_i$ |
 | $c_i$, $\omega_i$, $c_s$ | $\boldsymbol c_q$, $w_q$, $c_s$ (lattice velocities, weights, sound speed; page-local) | **collision:** $\omega_i$ is not the vorticity |
-| $\tau$ | $\tau_{\mathrm{LB}}$ (page-local relaxation time, as on the lattice Boltzmann page) | **collision:** not the subgrid stress |
+| $\tau$ | $\tau_{\mathrm{LB}}$ (relaxation time, registry §11) | **collision:** not the subgrid stress |
 | $\Pi_{\alpha\beta}$ | (second moment of $f_i$) | **collision:** not the SGS energy flux |
 | $h_i$, $g$ | (lattice forcing term), (immersed-boundary force density) | |
 | $\delta$ | $\delta_h$ (page-local kernel) | **collision:** not the boundary-layer thickness |

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock–turbulent boundary layer interaction"
-description: "A turbulent boundary layer meeting a shock from a compression ramp, an expansion–compression corner, an impinging oblique shock, a shock train, a transonic bump, airfoil or blade: separation length, interaction scaling, unsteadiness and wall heating test subgrid and wall models, implicit LES, DNS cost from Mach 1.5 to 9.1, data-driven corrections and buffet."
+description: "A turbulent boundary layer meeting a shock from a compression ramp, an expansion–compression corner, an impinging oblique shock, a shock train, a transonic bump, airfoil or blade: separation and interaction length, unsteadiness, energy transfer and wall heating test subgrid and wall models, immersed boundaries, implicit LES, DNS from Mach 1.5 to 9.1, data-driven corrections and buffet."
 status: established
-aliases: [STBLI, SWBLI, SWTBLI, SBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet, shock train, pseudo-shock, expansion–compression corner, Bachalo–Johnson bump]
+aliases: [STBLI, SWBLI, SWTBLI, SBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet, shock train, pseudo-shock, expansion–compression corner, compression/expansion ramp, IUSTI interaction, Bachalo–Johnson bump]
 tags: [benchmark, compressible, hypersonic, boundary-layer, separated-flow, les, pans, field-inversion, turbomachinery, implicit-les, dg, wmles, data-driven]
-timestamp: 2026-10-27T11:00:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Shock–turbulent boundary layer interaction
@@ -43,6 +43,11 @@ expensive because the low-frequency cycle needs long records.
 | [Gao et al. (2022)](/sources/gao-2022.md), §5.1, Tables 1–2 | impinging oblique shock, adiabatic wall | 2.0 | flow deflection 8°, shock angle 37.2°, $p_3/p_1=2.30$ | $Re_{\theta_0}=1628$ at the inlet, $Re_{\theta}=2188$ at the reference station $3\delta_r$ upstream of impingement ($\delta_r$ page-local: boundary-layer thickness there) | implicit LES, split-form DGSEM in FLEXI ($N=6$) with subcell finite-volume shock capturing; synthetic-eddy inflow with anisotropic linear forcing | $129\times81\times26$ elements, about $93\times10^6$ degrees of freedom; $\Delta x^+=30$, $\Delta y^+_{\min}=1.6$, $\Delta z^+=16$; span $3\delta_r$, periodic |
 | [Zhao et al. (2023b)](/sources/zhao-2023-b.md), §5.4 | Settles cavity–ramp | 2.92 | backward-facing step and cavity (depth 2.54 cm) closed by a 20° ramp, on which the cavity shear layer reattaches | not printed | steady RANS, $k$-$\omega$ SST with and without a compressibility correction, interior-penalty DG | 64.2 thousand cells |
 | [Zangeneh (2021)](/sources/zangeneh-2021.md), §III.B, Table I | tandem expansion–compression corner | 2.9 | an expansion corner $4\delta_r$ downstream of the reference plane, then a backward-facing 25° ramp closing on a parallel plate $3\delta_r$ higher; heated wall downstream | $Re_\delta=19{,}983.8$ (training), $40{,}934.2$ (prediction) | SST-IDDES used as wall-modelled LES with a random-forest correction of wall stress and heat flux | $y^+\approx1.1$–1.3, $z^+=5.6$–8.6, $x^+=5.1$–12.7 |
+| [De Vanna et al. (2022)](/sources/devanna-2022.md), §4.1, Table 1 | impinging oblique shock (the IUSTI experiment of Dupont et al.), recovery-temperature wall | 2.28 | shock generator 8°, impingement at $54\delta_0$ | $Re_\tau=700$ at the inflow, $Re_\theta\approx5000$ | wall-modelled LES that keeps the no-slip condition, [WALE](/methods/wale-model.md) ($C_w=0.325$), against a wall-resolved LES | domain $90\delta_0\times10\delta_0\times6\delta_0$; WMLES $480\times96\times80$ to $960\times128\times160$ ($\Delta x^+=140$–82, first point $\Delta y^+=39$–34); WRLES $2800\times200\times440$ ($\Delta x^+=28$, $\Delta y^+=0.5$, $\Delta z^+=12$) |
+| [Yu et al. (2022)](/sources/yu-2022-e.md), §2, Table 1 | impinging oblique shock, isothermal wall at the recovery temperature | 2.28 | wedge 8°, shock angle 33.2°, impingement at $30\delta_{\mathrm{in}}$ | $Re_\tau=201$, $Re_\theta=982$ at the reference plane | DNS with [STREAmS](/software/streams.md) | $2000\times320\times240$ on $60\times12\times6.5\,\delta_{\mathrm{in}}$; $\Delta x^+\approx5.4$, $\Delta z^+\approx4.9$, $\Delta y^+_w\approx0.7$ |
+| [Tonicello et al. (2022)](/sources/tonicello-2022.md), §2.1, Tables 1–2 | ramp followed by an expansion corner, isothermal wall $T_w=307$ K | 2.91 | ramp 24° | $Re_\theta=2900$, $\delta^+=340$ (conditions of Priebe & Martín) | DNS (turbulence resolved, shocks regularized) with the [spectral difference method](/methods/spectral-difference-method.md) at degree $N=5$ and a bulk artificial viscosity | $(120+120+120)\times28\times27$ elements, "54M" degrees of freedom as printed; $\Delta x^+=4.75$–15, $\Delta y^+=0.3$–9, $\Delta z^+=4.2$; span about $2\delta$ |
+| [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §3.3–3.4, Tables 9–15 | transitional impinging shock (aligned and rotated 0°–12°); attached compression ramp | 6.0; 7.2 | turn angle 4° (shock angle about 12.4°); ramp 8° | unit Reynolds number $6\times10^6$ (shock), $1.89\times10^7$ (ramp) | wall-modelled LES on a Cartesian [immersed boundary](/methods/immersed-boundary-method.md), WALE ($C_w=0.55$), equilibrium wall model | shock: 2.1M to 16M cells; ramp: 11M, 50M, 89M cells ($\Delta^+=160\times80\times190$ to $116\times32\times171$) |
+| [He et al. (2022)](/sources/he-2022-b.md), §2.4–2.5, Table 1 | axisymmetric transonic bump of Bachalo & Johnson, adiabatic wall | 0.6 to 0.925 | the bump | $Re_c=2.763\times10^6$ on the bump chord | steady RANS (Spalart–Allmaras with QCR) and a random-forest eddy-viscosity correction, tested a priori; LES of Uzun & Malik as reference at 0.875 | RANS $181\times81$ nodes |
 | [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md), §3.2.3 | shock train in a constant-area isolator (plane channel, no sidewalls) | 1.5 at the inflow centreline | outlet pressure about twice the inlet pressure | inflow $Re_\tau=247$ from a concurrent periodic channel DNS | DNS, bandwidth-optimized WENO3P-LIM-5 | $4\pi h\times2h\times\tfrac43\pi h$, $192\times128\times151$ ($h$ the channel half-height) |
 
 Both sources run a Mach 2.9, 24° ramp: Dang et al. validate against the DNS
@@ -53,6 +58,18 @@ Martín, Table II; free-stream 108.1 K in Dang et al., Table 8), but neither
 paper states that the two set-ups are identical. Helm & Martín's attached
 Mach 7 case reproduces, through the DNS of Priebe & Martín, the conditions
 of the Bookey et al. experiment (§I).
+
+Three further sources share configurations with these. The Mach 2.91, 24°
+ramp of [Tonicello et al. (2022)](/sources/tonicello-2022.md) takes the
+conditions of Priebe & Martín (2012) as cited (§2.1) and adds an expansion
+corner downstream "to study the effect of strong expansions on the
+turbulence". The Mach 7.2, 8° ramp of
+[van Noordt et al. (2022)](/sources/vannoordt-2022.md) is compared with the
+DNS of Priebe & Martín (§3.4), the reference of Helm & Martín's R8-M7. The
+Mach 2.28, 8° impinging shock is the case of
+[De Vanna et al. (2022)](/sources/devanna-2022.md) (the IUSTI experiment,
+$Re_\tau=700$) and of [Yu et al. (2022)](/sources/yu-2022-e.md) (a DNS at
+$Re_\tau=201$), at different Reynolds numbers.
 
 ## Methods the sources use
 
@@ -270,6 +287,144 @@ Sansica et al. as cited; at equal degrees of freedom DG is closer to the
 converged solution, and its run took 7680 CPU-minutes against 10,368
 (Figs. 9, 13).
 
+**Wall-modelled LES that keeps the no-slip condition.**
+[De Vanna et al. (2022)](/sources/devanna-2022.md) assess the authors'
+unified wall-resolved/wall-modelled LES (see
+[wall-modelled LES](/methods/wall-modelled-les.md)): a compressible
+[equilibrium wall model](/methods/equilibrium-wall-model.md) (mixing length
+with van Driest damping in semi-local units, $\kappa=0.41$, $A^+=17$,
+$Pr_t=0.9$) returns wall stress and heat flux, which are imposed by adding
+a wall subgrid viscosity and conductivity to the molecular ones while the
+no-slip and thermal conditions stay active; the model switches off where
+the resolved wall spacings satisfy $\Delta x^+<40$, $\Delta y^+<3$ and
+$\Delta z^+<15$, and the exchange point moves with the local resolution
+(§2.2, §3.2). Convection is a sixth-order energy-preserving split scheme
+hybridized with WENO-Z by a modified Ducros sensor (§3.1; see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+Interaction length from the nominal impingement to the reflected-shock
+foot (§4.6):
+
+| Run | interaction length$/\delta_0$ |
+|---|---|
+| WMLES coarse / medium / fine | 7.0 / 5.2 / 5.0 |
+| wall-resolved LES | 3.3 |
+| experiment (Dupont et al.) | 4.18 |
+
+- Because no-slip is kept, the wall-modelled runs return negative skin
+  friction in the separated region, which the authors say classical
+  equilibrium wall modelling "mainly" rules out (§4.4, Fig. 5a); the
+  bubble is longer but shallower than in the wall-resolved run, with
+  "gentle reverse flow" (§4.4–4.5).
+- The averaged activation sensor exceeds 0.95 in the incoming and
+  recovering layers and falls to about 0.65 in the bubble, which is more
+  often treated as wall-resolved; the ratio of modelled to resolved wall
+  stress peaks in the bubble (§4.4, Fig. 6).
+- The authors attribute the oversized bubble to the wall model and to the
+  subgrid and shock-capturing dissipation that "laminarize" it at low
+  resolution (§4.5); scaled by each run's own interaction length, the
+  bubble shape and the second-order statistics agree "impressively" with
+  the PIV (§4.6, Figs. 9–13).
+- Incoming layer at $Re_\tau=840$: the wall-modelled $C_f$ matches the
+  wall-resolved one nearly regardless of resolution; for some statistics
+  the medium grid fits the references best (§4.3).
+
+They contrast their over-predicted bubble with the strong under-prediction
+of separation that Gross et al., as cited, found with a standard
+equilibrium wall model (§1).
+
+**Immersed-boundary WMLES at hypersonic Mach numbers.**
+[van Noordt et al. (2022)](/sources/vannoordt-2022.md) present what they
+call the first hypersonic turbulent simulations with wall-modelled LES on
+an [immersed boundary](/methods/immersed-boundary-method.md) (§1): a
+Cartesian finite-difference solver (CHAMPS) blending a fourth-order
+kinetic-energy- and entropy-preserving central flux with a third-order
+WENO flux, the wall stress and heat flux of an equilibrium wall model
+applied as viscous fluxes at the immersed wall (§2.3–2.6).
+
+- *Mach 6 transitional impinging shock* (§3.3.1, Fig. 19): on the fine mesh
+  the wall heat transfer matches the DNS of Sandham et al. as cited, with a
+  marginal over-prediction near the end of the bubble; the coarse mesh is
+  less favourable. Rotating the configuration by 0°–12° against the grid
+  changes the peak transitional heat transfer by about 5% and grows the
+  bubble slightly, which the authors attribute to the streamwise
+  appearance of irregular cells (§3.3.2, Figs. 21–24); coarse–fine
+  mesh-refinement interfaces reflect acoustic waves back into the layer,
+  visible in $\langle v'v'\rangle$ (Fig. 24).
+- *Mach 7.2, 8° ramp* (§3.4, Figs. 26–27): the mean flow is attached with
+  significant instantaneous separation; the fine grid captures the wall
+  pressure, the coarse grid raises the pressure early and over-predicts
+  instantaneous separation, the minimum $C_f$ is "notably higher" than the
+  DNS, and the post-shock adjustment takes about $4\delta_r$ on the coarse
+  mesh; the authors suspect the imbalance of pressure gradient and
+  convection that the equilibrium model neglects. The 11M-cell grid costs
+  under 5% of the DNS in spatial requirement (§3.4). The attached ramp of
+  [Helm & Martín (2022)](/sources/helm-2022.md) (R8-M7), the same
+  configuration and reference DNS, reaches 31% peak reverse-flow
+  probability at the corner (§III D).
+- The heat transfer is "very sensitive" to the artificial dissipation added
+  at the immersed boundary (§4).
+
+**Energy transfer in a compression/expansion ramp.**
+[Tonicello et al. (2022)](/sources/tonicello-2022.md) validate their DNS
+against Priebe & Martín, Zhu et al., Wu & Martín and the experiment of
+Ringuette et al. as cited: the separation point is closer to the
+experiment than in Priebe & Martín, the wall pressure follows Zhu et al.,
+and downstream of the interaction the mean velocity agrees better with
+the experiment than the DNS of Wu & Martín (§3.1, Figs. 3–4; incoming layer
+in Table 3). The resolved kinetic-energy budget closes to nearly zero at
+$y^+\approx30$, so numerical dissipation is negligible, and the artificial
+viscosity contributes only of order $10^{-5}\rho_\infty u_\infty^3/\delta$
+(§4.1, Figs. 17–18). Used a priori, with Favre time–span averaging and with
+a differential filter of width $2h$, $4h$ and $8h$:
+
+- the energy flux between resolved and unresolved motion is mostly
+  forward, but even the Favre mean shows a large backscatter region near
+  the expansion corner; compression goes with forward transfer and
+  expansion with backscatter (§4.1, Fig. 14);
+- the correlation of the transfer with the
+  [pressure dilatation](/definitions/pressure-dilatation.md) is 0.2775 in
+  the mean, 0.1936 and 0.2682 for the $4h$ and $8h$ filters (Table 4), and
+  the maximum subgrid Mach number is about 0.32 in the mean and 0.42
+  filtered (§4.2);
+- split into deviatoric and spherical parts, the deviatoric flux is forward
+  everywhere in the mean: the mean backscatter and most of the
+  dilatation correlation come from the spherical part,
+  $-\tfrac23\bar\rho k_{\mathrm{sgs}}\partial_k\tilde u_k$, which is
+  negative in expansions (§5, Figs. 28–29, Table 6).
+
+The authors propose, untested, a bulk-viscosity model for the trace of the
+subgrid stress (§5); see [energy backscatter](/definitions/energy-backscatter.md)
+and [bulk viscosity](/definitions/bulk-viscosity.md).
+
+**Scale-by-scale turbulence amplification.**
+[Yu et al. (2022)](/sources/yu-2022-e.md) derive a transport equation for
+the spanwise two-point correlation of compressible flow (density-weighted
+after Arun et al., as cited) and its spanwise spectrum (§3), and apply it
+to their DNS, whose mild separation runs from $x^*\approx-2.60$ to $-0.73$
+in incoming-layer thicknesses from the impingement, with separation length
+1.87 and interaction length 3.27, consistent with Volpiani et al. as cited
+(§2.2, Fig. 3a).
+
+- In the integrated budget the production by mean-flow deceleration rises
+  first and shear production later, as Humble et al. and Fang et al.
+  found (§4, Fig. 6); the pressure-dilatation and mass-diffusion terms
+  matter only near the shocks.
+- Scale by scale, the large scales ($\lambda_z\approx\delta_0$) are produced
+  by deceleration alone and the small ones ($\lambda_z^+\approx100$) by
+  deceleration and shear together, so the "deceleration first" sequence
+  is "an integral effect", which the authors attribute to the low Reynolds
+  number (§6.1, Fig. 10).
+- The most energetic motions move from near-wall streaks at
+  $\lambda_z^+\approx100$ to large scales $\lambda_z\approx0.9\delta_0$ at
+  $y\approx0.4\delta_0$; the streamwise spectrum is amplified first, by up
+  to 3.5 at $x^*\approx-1.0$, the cross-stream ones later, through pressure
+  strain (§5, Fig. 8; §6.2).
+- Inter-scale transfer is forward overall; inverse transfer to large scales
+  exists upstream but is small next to production; the spanwise-uniform
+  motions inside the layer are fed mainly by inter-scale transfer
+  (§6.4, §7, Figs. 13–14). The authors warn that the shock-capturing
+  dissipation makes the spectral budget near the shocks unreliable (§7).
+
 **Beyond RANS.** Two sources agree that RANS is not adequate for separated
 interactions: [Helm & Martín (2022)](/sources/helm-2022.md), §I, call RANS
 "notoriously unreliable" for separated STBLIs, with large errors in
@@ -302,7 +457,7 @@ boundary layer and, past a critical incidence, the shock-foot and
 trailing-edge separations couple into a self-sustained shock oscillation
 (buffet). [Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md) compute
 the ONERA OAT15A airfoil of the experiment of Jacquin et al. (chord 0.23 m,
-$M_\infty=0.73$, $Re_c=3\times10^6$; as recalled, unsteadiness from
+$M_\infty=0.73$, $Re_c=3\times10^6$; as Petrocchi & Barakos cite it, unsteadiness from
 $\alpha=3.1^\circ$ and established buffet at $3.5^\circ$ with a single
 frequency of 69 Hz, $St=0.06$) in half of the S3Ch wind tunnel, with slip
 upper and lower walls shaped from a preliminary RANS, a viscous side wall
@@ -505,6 +660,28 @@ of the exchange location (first or third point). The author uses the case to
 argue "inconsistent improvements" of hybrid methods; see
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md).
 
+[He et al. (2022)](/sources/he-2022-b.md) run steady RANS of the same bump
+at six Mach numbers, $M_\infty=0.6$ to 0.925, in SU2 (verified against
+CFL3D, grid-independent from $181\times81$ nodes), with the LES of Uzun &
+Malik as reference at 0.875 (§2.4–2.5). The Spalart–Allmaras model with the
+quadratic constitutive relation (QCR) delays the shock and the
+shock-induced separation for $M_\infty\ge0.85$, whereas SST with QCR
+predicts the wall pressure well; both under-predict the eddy viscosity
+downstream of the shock (Figs. 5–6). Against the LES, the SA-QCR eddy
+viscosity is too high in the bubble and too low in the incoming layer, the
+shear layer, the reattached layer and at the shock front, the last
+attributed to shock oscillation, "conceptually impossible to be modeled by
+steady RANS" (§2.7, Fig. 7). A random forest trained on nine bounded local
+features predicts the eddy-viscosity discrepancy with an $L_2$ error of
+11.0–12.4% when interpolating ($M_\infty=0.9$) and 14.7–16.3% when
+extrapolating (0.925), against SST-QCR data, all a priori on frozen mean
+fields (§4.3, Table 4); Shapley-value explanations of the model trained on
+the LES rank the eddy-viscosity ratio first, then the normalized
+Q-criterion, a wall-proximity measure and a pressure-gradient ratio
+(§5.1, Fig. 13); see
+[field inversion and machine learning](/methods/field-inversion-machine-learning.md)
+and [model-form uncertainty](/definitions/model-form-uncertainty.md).
+
 **Interactions in turbomachinery.** In the review of
 [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §3.3.4, the
 interaction on curved transonic blades bifurcates into a λ-shock, its
@@ -638,6 +815,42 @@ dominant frequencies down.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) and
   [Bose & Park (2018)](/sources/bose-2018.md) are reviews; their
   statements on this page are cited from the works they review.
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) call the wall-resolved
+  LES in agreement with the PIV while its interaction length (3.3) lies
+  below the measured 4.18; the PIV comparisons are drawn in coordinates
+  scaled by each run's own interaction length, which absorbs the
+  difference (§4.6). They describe the equilibrium assumption as a
+  "balance" between convection and pressure gradient, while their wall
+  model (Eqs. 6a–b) drops both terms (§1, §2.2). Their Eq. (1b) prints
+  the pressure term with a spurious index, and §4.2 points to Fig. 2(c) for
+  the wall-resolved grid shown in Fig. 2(d).
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) announce two grids
+  for the Mach 6 interaction in §3.3 and list three in Table 10, so the
+  "fine mesh" of Fig. 19 is ambiguous; their "separation bubble thickness
+  of approximately $50\delta_0$" exceeds the $26\delta_0$ domain height
+  and must be a length. They print the blending sensor (Eq. 9) as
+  $\big((\nabla\cdot\boldsymbol u)^2+|\nabla\times\boldsymbol u|^2\big)/\big((\nabla\cdot\boldsymbol u)^2+(u_\infty/\delta_0)^2\big)$;
+  where $\nabla\cdot\boldsymbol u\approx0$ this reduces to
+  $|\nabla\times\boldsymbol u|^2/(u_\infty/\delta_0)^2$, which exceeds 1
+  wherever $|\nabla\times\boldsymbol u|>u_\infty/\delta_0$, so the printed
+  form is not bounded by 1 *(compiler check, not in the sources)*; the results quote constant blending factors (0.02 in the
+  hypersonic cases), and how they combine with the sensor is not stated.
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) count the order of
+  their spectral-difference scheme as $N=6$ (degree 5 here) and print 54M
+  degrees of freedom, while $360\times28\times27$ elements with $6^3$
+  solution points each give 58.8M *(compiler check, not in the sources)*.
+  Their subgrid-stress tensor has the opposite sign to this bundle's; the
+  statements above are translated. They print Table 6 quadrant-I values of
+  0.3829 for both filter widths.
+- [Yu et al. (2022)](/sources/yu-2022-e.md) define the spectrum (3.16) as
+  a sum of two cross-spectra without the factor $\tfrac12$ of the
+  correlation (3.2), so (3.16) is twice the spanwise Fourier transform of
+  (3.2) *(compiler check, not in the sources)*; the spectral productions
+  (6.2)–(6.4) carry a factor $-\tfrac12$, and the paper does not state
+  which normalization they assume. They announce seven stations in §4 for the six of Fig. 6.
+- [He et al. (2022)](/sources/he-2022-b.md) test their correction offline
+  only; no coupled RANS with the learned eddy viscosity is run, so the
+  page records a priori accuracy, not an improved prediction of the bump.
 
 # Citations
 
@@ -655,3 +868,8 @@ dominant frequencies down.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §2.1; §4.4, Fig. 6b (cited results).
 - [Heinz (2020)](/sources/heinz-2020.md) — §5.3, Tables 4–5, Figs. 12–14 (compiled results).
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §3.2.2; §3.3.4 (review).
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §1; §2.2, Eqs. (6)–(7); §3.1–3.2, Eqs. (8)–(9); §4.1–4.7, Table 1, Figs. 2–15; §5.
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §2.3–2.6, Eq. (9); §3.3–3.4, Tables 9–15, Figs. 18–27; §4.
+- [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.1–2.2, Tables 1–3; §3.1, Figs. 3–5; §4.1–4.2, Table 4, Figs. 14–26; §5, Eqs. (5.1)–(5.5), Tables 5–6, Figs. 27–29.
+- [Yu et al. (2022)](/sources/yu-2022-e.md) — §2, Table 1, Figs. 2–3; §3, Eqs. (3.2)–(3.27); §4–§7, Figs. 5–14; §8.
+- [He et al. (2022)](/sources/he-2022-b.md) — §2.4–2.7, Table 1, Figs. 3–7; §4.3, Table 4; §5.1, Fig. 13.

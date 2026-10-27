@@ -5,7 +5,7 @@ description: "The shift, in wall units, between the mean velocity of a wall-mode
 status: established
 aliases: [LLM, log-layer shift, super-buffer layer error]
 tags: [wmles, wall-model, hybrid-rans-les, boundary-layer]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Log-layer mismatch
@@ -17,7 +17,7 @@ by a [wall-modelled LES](/methods/wall-modelled-les.md) (or a
 in wall units: the computed $u^+$ runs parallel to $\kappa^{-1}\ln y^++B$ but
 shifted. Because the wall stress is inferred from (or balances) that velocity,
 a mismatch is an error in $\tau_w$: [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md)
-(§I) recall, citing Spalart, that LLM produces a 15 % error in the wall-shear
+(§I) cite Spalart for the statement that LLM produces a 15 % error in the wall-shear
 stress.
 
 ## Measurement
@@ -48,17 +48,17 @@ RANS/LES (Nikitin et al. 2000) and in wall-stress WMLES (Cabot & Moin 2000;
 Nicoud et al. 2001; Lee et al. 2013), with the largest errors in the first
 cell.
 
-## Mechanisms recalled by the sources
+## Mechanisms stated by the sources
 
 The sources attribute LLM to the coupling between the wall model and the
 under-resolved first cells of the LES, not to the log law itself.
 
 - **Numerical and subgrid errors at the first off-wall points.**
-  [Fowler et al. (2022)](/sources/fowler-2022.md) (§1) recall the argument of
+  [Fowler et al. (2022)](/sources/fowler-2022.md) (§1) cite the argument of
   Kawai & Larsson (2012) that the near-wall region of WMLES is inherently
   under-resolved, so the wall-model height should be placed further from the
   wall to reduce LLM. [Griffin et al. (2023)](/sources/griffin-2023.md) (§4.1)
-  recall from the same work that LES numerical errors contaminate the matching
+  cite the same work for the statement that LES numerical errors contaminate the matching
   data when the matching distance is of the order of the wall-normal grid
   spacing; in their own WMLES the grid point nearest the wall carries an error
   that persists under refinement, which they call consistent with Kawai &
@@ -78,7 +78,7 @@ under-resolved first cells of the LES, not to the log law itself.
   converged for $\Delta y/h_{\mathrm{wm}}\lesssim0.3$ — the "third grid point" —
   but advocate a matching height that is a fraction of $\delta$.
 - **Instantaneous local use of a mean law.** [Fowler et al. (2022)](/sources/fowler-2022.md)
-  (§1) recall the argument of Bou-Zeid et al. (2005): by the Schwarz
+  (§1) cite the argument of Bou-Zeid et al. (2005): by the Schwarz
   inequality, applying the law of the wall locally and instantaneously
   over-predicts the mean wall stress. Bose & Park (2018, §2.1) state the same
   argument, citing Bou-Zeid et al. with the year 2004 (Fowler et al. print 2005): an algebraic model
@@ -109,7 +109,28 @@ under-resolved first cells of the LES, not to the log law itself.
   scheme to its [numerical dissipation](/properties/numerical-dissipation.md)
   (§4.3). Details on
   the [low-dissipation low-dispersion scheme](/methods/low-dissipation-low-dispersion-scheme.md)
-  page.
+  page. [Van Noordt et al. (2022)](/sources/vannoordt-2022.md) (§3.1,
+  Figs. 12, 14) see the same sensitivity in an immersed-boundary WMLES of
+  channel flow at $Re_\tau=5200$ whose convective flux blends a
+  kinetic-energy- and entropy-preserving central flux with a third-order
+  WENO flux through a dissipation factor $\alpha$ (the registry's blending
+  factor; $\alpha_{\mathrm{irreg}}$, page-local, the values imposed in the
+  first three cells at the immersed wall): raising either accelerates the
+  centreline flow and retards the near-wall flow, below $\alpha=0.0125$
+  the solution becomes noisy, and the interior value matters much more than
+  the near-wall one. With $\alpha=0.0125$ and $\alpha_{\mathrm{irreg}}=(0.05,0.025,0.0125)$
+  the log-region deviation from the DNS of Lee & Moser (as cited) seen on
+  the coarse grid ($\Delta x^+\times\Delta y^+\times\Delta z^+=270\times68\times270$,
+  as printed; see Qualifications) "has almost completely vanished" on the
+  fine one
+  ($173.3\times40.6\times156$), while the near-wall Reynolds stresses,
+  especially $\langle u'u'\rangle$, stay poor against DNS and agree with a
+  body-fitted reference WMLES. Moving the wall-model exchange point between
+  3 and 4 minimum grid spacings (about $0.05\delta$) has no significant
+  effect on the mean velocity (Fig. 13; see
+  [slip-wall models](/methods/slip-wall-model.md) and
+  [immersed boundary methods](/methods/immersed-boundary-method.md) for the
+  wall treatment).
 - **Spurious correlation between resolved and modelled quantities.**
   [Kim et al. (2022)](/sources/kim-2022.md) (§III E) mention in passing,
   citing Yang, Park & Moin (2017), that in LES wall modelling "artificial
@@ -165,7 +186,7 @@ under-resolved first cells of the LES, not to the log law itself.
   mismatch.
 - **SGS-dominated stress at the first off-wall points (disputed).**
   [Mukha et al. (2025)](/sources/mukha-2025.md) (§II.D, §III.B.2, §III.C)
-  recall the framework of Brasseur & Wei, in which an SGS model introduces a
+  cite the framework of Brasseur & Wei, in which an SGS model introduces a
   spurious length scale (an "LES buffer layer") and the mismatch is avoided
   only if, among other criteria, the resolved shear stress dominates the
   modelled one at the first off-wall node. In their continuous
@@ -182,22 +203,23 @@ under-resolved first cells of the LES, not to the log law itself.
   only one of its three criteria was examined. Brasseur & Wei is not
   ingested here.
 
-## Remedies used or recalled
+## Remedies used or cited
 
 | Remedy | Where |
 |---|---|
-| Match the wall model away from the wall, $h_{\mathrm{wm}}\ge3\Delta$ (Kawai & Larsson 2012) | recalled by Griffin et al. (2023, §4.1), who use $h_{\mathrm{wm}}=0.3\delta$ with 12 points per half-height; Agrawal et al. (2022, §VII.D) match at the second off-wall point of a staggered mesh |
-| Filter the wall-model input in space (the "2Δ spatial filter" of Bou-Zeid et al. 2005) or in time and/or wall-parallel space (Yang, Park & Moin 2017) | recalled by Fowler et al. (2022, §1), who apply a "2Δ spatial filter, like that used in Bou-Zeid et al. (2005)" to $U_{\mathrm{LES}}$ (§5.1; their $\Delta$ is the matching height, the first grid point at half the wall-normal spacing); Vadrot et al. (2023b, §II.B.1, Table II) filter the input of their equilibrium model with a sharp filter of twice the grid spacing |
-| Random forcing near the wall | recalled by Vadrot et al. (2023b, §I) |
-| Third-point matching, $\Delta y/h_{\mathrm{wm}}\lesssim0.3$ (Kawai & Larsson 2012); adjusting the SGS eddy-viscosity coefficient from the turbulent-kinetic-energy budget (Wu & Meyers 2013); filtering the input (Bou-Zeid et al.) | recalled by Bose & Park (2018, §2.1), who note that in concave junctions a matching point a few cells off the wall is hard to combine with a fixed $h_{\mathrm{wm}}/\delta$ (Park & Moin 2016c, as cited) |
+| Match the wall model away from the wall, $h_{\mathrm{wm}}\ge3\Delta$ (Kawai & Larsson 2012) | cited by Griffin et al. (2023, §4.1), who use $h_{\mathrm{wm}}=0.3\delta$ with 12 points per half-height; Agrawal et al. (2022, §VII.D) match at the second off-wall point of a staggered mesh |
+| Filter the wall-model input in space (the "2Δ spatial filter" of Bou-Zeid et al. 2005) or in time and/or wall-parallel space (Yang, Park & Moin 2017) | cited by Fowler et al. (2022, §1), who apply a "2Δ spatial filter, like that used in Bou-Zeid et al. (2005)" to $U_{\mathrm{LES}}$ (§5.1; their $\Delta$ is the matching height, the first grid point at half the wall-normal spacing); Vadrot et al. (2023b, §II.B.1, Table II) filter the input of their equilibrium model with a sharp filter of twice the grid spacing |
+| Random forcing near the wall | cited by Vadrot et al. (2023b, §I) |
+| Third-point matching, $\Delta y/h_{\mathrm{wm}}\lesssim0.3$ (Kawai & Larsson 2012); adjusting the SGS eddy-viscosity coefficient from the turbulent-kinetic-energy budget (Wu & Meyers 2013); filtering the input (Bou-Zeid et al.) | cited by Bose & Park (2018, §2.1), who note that in concave junctions a matching point a few cells off the wall is hard to combine with a fixed $h_{\mathrm{wm}}/\delta$ (Park & Moin 2016c, as cited) |
 | Random-forest correction of the modelled wall stress and heat flux, fed back through corrected $\mu_t$ and $Pr_t$ | [Zangeneh (2021)](/sources/zangeneh-2021.md) (§II.F–G, §III.A, Fig. 6): removes the mismatch of an SST-IDDES WMLES of a Mach 1.69 flat plate at $Re_\theta=50\,000$ (below) |
-| Stochastic forcing at the RANS/LES interface (Piomelli et al.) | recalled by Haering et al. (2022, §II): removes LLM but is problem-dependent; the SAS-F forcing of Menter et al. still showed LLM in channel flow |
+| Stochastic forcing at the RANS/LES interface (Piomelli et al.) | cited by Haering et al. (2022, §II): removes LLM but is problem-dependent; the SAS-F forcing of Menter et al. still showed LLM in channel flow |
 | Several cells below the matching height: $h_{\mathrm{wm}}=0.1\delta_0$ with four uniform cells below it ($\Delta y=0.25h_{\mathrm{wm}}$), "to reduce numerical errors from the LES transferred to the wall model (Kawai & Larsson, 2012) and avoid the log-layer mismatch" | [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) (§3), Mach 3 shock/boundary-layer interaction |
 | Impose the wall stress through a wall eddy viscosity, $\nu_t\rvert_w=\tau^{\mathrm m}_w/\big(\rho\,(\partial u/\partial y)_w\big)-\nu$ with no slip kept ("viscosity augmentation"), instead of a Neumann condition | [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) (Methods, Eq. 10), stated, citing earlier work, to be "better at resolving the so-called log-layer mismatch"; $\tau^{\mathrm m}_w$ the modelled wall stress (page-local). In a continuous spectral-element code the same condition fails: Mukha et al. (2025, §III.D, Table IV, Figs. 9–10) find the mean velocity strongly under-predicted for $y^+\lesssim2500$ and over-predicted in the core, which they attribute to the lack of global momentum conservation of the discretization, not to a mismatch mechanism (see [wall-modelled LES](/methods/wall-modelled-les.md)) |
-| Short exponential moving average of the wall-model input in time | [Gillyns et al. (2022)](/sources/gillyns-2022.md) (§3, §5, Eq. 4), who recall Yang et al. (2017) and Fowler et al. (2022) for time filtering; without it ($C_t=0$) their wall model diverged, which they attribute "most likely" to Gibbs oscillations at the element boundary, not to the mismatch. Mukha et al. (2025, §III.B.3, Table III, Figs. 4–5), in the same code, see no mismatch without averaging and no systematic gain a posteriori from averaging lengths of 5 to 500 time steps, although a priori the averaging reduces the wall-stress error; they call this "at odds with" Yang et al. (see [equilibrium wall model](/methods/equilibrium-wall-model.md)) |
-| Elevating function $f_e$ of IDDES, which raises the RANS length scale near the RANS–LES interface, and the wall-distance-based subgrid length of IDDES, meant to "give a correct log-layer behavior in WMLES without the need to alter the value of the modeling constant" | recalled from Shur et al. (2008) by Carlsson et al. (2023, §2, Eqs. 18–19), who use IDDES; a small mismatch remains at the interface with their low-dissipation schemes (§4.3); recalled also by [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) (Eqs. 30–32; formulas of $f_e$ not printed) for their SST-IDDES in a lattice Boltzmann solver; [Wang et al. (2021)](/sources/wang-2021-l.md) (§1, §2.4, Eq. 20) choose the IDDES length $\tilde f_d(1+f_e)l_{\mathrm{RANS}}+(1-\tilde f_d)l_{\mathrm{LES}}$ for their Reynolds-stress-model hybrid because it avoids grid-induced separation and the mismatch "to a certain extent" (length scales and blending functions page-local, the functions not printed; no channel-flow test) |
+| Short exponential moving average of the wall-model input in time | [Gillyns et al. (2022)](/sources/gillyns-2022.md) (§3, §5, Eq. 4), who cite Yang et al. (2017) and Fowler et al. (2022) for time filtering; without it ($C_t=0$) their wall model diverged, which they attribute "most likely" to Gibbs oscillations at the element boundary, not to the mismatch. Mukha et al. (2025, §III.B.3, Table III, Figs. 4–5), in the same code, see no mismatch without averaging and no systematic gain a posteriori from averaging lengths of 5 to 500 time steps, although a priori the averaging reduces the wall-stress error; they call this "at odds with" Yang et al. (see [equilibrium wall model](/methods/equilibrium-wall-model.md)) |
+| Elevating function $f_e$ of IDDES, which raises the RANS length scale near the RANS–LES interface, and the wall-distance-based subgrid length of IDDES, meant to "give a correct log-layer behavior in WMLES without the need to alter the value of the modeling constant" | cited from Shur et al. (2008) by Carlsson et al. (2023, §2, Eqs. 18–19), who use IDDES; a small mismatch remains at the interface with their low-dissipation schemes (§4.3); cited also by [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) (Eqs. 30–32; formulas of $f_e$ not printed) for their SST-IDDES in a lattice Boltzmann solver; [Wang et al. (2021)](/sources/wang-2021-l.md) (§1, §2.4, Eq. 20) choose the IDDES length $\tilde f_d(1+f_e)l_{\mathrm{RANS}}+(1-\tilde f_d)l_{\mathrm{LES}}$ for their Reynolds-stress-model hybrid because it avoids grid-induced separation and the mismatch "to a certain extent" (length scales and blending functions page-local, the functions not printed; no channel-flow test) |
 | Redefine the states of a reinforcement-learning wall model so that the neutral line does not move with $Re_\tau$ | Vadrot et al. (2023a, §II.B.3, Eq. 10): removes the large-$Re_\tau$ mismatch of BK22 (below) |
-| Low-dissipation convective scheme in the LES region | Carlsson et al. (2023, §4.3, Figs. 4–5): reduces a significant mismatch to a small one at the RANS–LES interface (above) |
+| Low-dissipation convective scheme in the LES region | Carlsson et al. (2023, §4.3, Figs. 4–5): reduces a significant mismatch to a small one at the RANS–LES interface (above); van Noordt et al. (2022, §3.1) tune the centred/upwind blending factor and refine the grid until the log-region deviation vanishes (above) |
+| Modified damping in the wall model | van Noordt et al. (2022, §1) cite Chen et al., who removed the mismatch of a compressible equilibrium wall model with a modified damping function |
 | Near-wall eddy viscosity that enforces the total (modelled plus resolved) stress of a mixing-length RANS model, "several grid points from wall" (constrained LES) | Cai et al. (2022, §II.C.1, Eq. 27) at an immersed boundary; the mean velocity in the log layer is not shown, so its effect on mismatch is not reported (see [wall-modelled LES](/methods/wall-modelled-les.md)) |
 | Active forcing of resolved fluctuations at the rate the modelled stress is reduced | [active model split](/methods/active-model-split.md): Haering et al. (2022, §V.A.1) report no LLM in channel flow at $Re_\tau\approx5200$ on four grids with $\Delta x^+\approx700$–$1550$ |
 
@@ -320,6 +342,11 @@ geometry at lower Reynolds number.
 - Carlsson et al. (2023, §4.3) cite "Fig. 4(b)" for both the $Re_\tau=2400$
   and the $Re_\tau=18\,000$ interface mismatch; the $Re_\tau=18\,000$ case is
   their Fig. 4(c).
+- Van Noordt et al. (2022, Table 5) print the coarse channel grid as
+  $\Delta x=\delta/20$, $\Delta y=\delta/80$ with $\Delta x^+=270$,
+  $\Delta y^+=68$; at $Re_\tau=5200$ these spacings are 260 and 65, while
+  the fine-grid row ($\delta/30\to173.3$, $\delta/128\to40.6$) is
+  consistent with 5200 *(compiler check, not in the sources)*.
 
 # Citations
 
@@ -342,3 +369,4 @@ geometry at lower Reynolds number.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §2.1, Eq. (13), Fig. 4; §2.4.
 - [Zangeneh (2021)](/sources/zangeneh-2021.md) — §I; §II.C; §II.F–G; §III, §III.A.1, Fig. 6.
 - [Heinz (2020)](/sources/heinz-2020.md) — §1.
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §3.1, Table 5, Figs. 12–14.

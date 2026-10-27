@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Discontinuous Galerkin spectral element method"
-description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra; this page states its forms, SBP property, de-aliasing, modal filtering, cost and GPU implementation, how dissipation and penalties shape LES on it, and its modal, hybridized, mixed and continuous relatives in shock–turbulence, RANS and error-estimation work."
+description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on tensor-product hexahedra; this page states its forms, SBP property, de-aliasing, modal filtering, cost and GPU implementation, how dissipation and penalties shape LES on it, and its modal, hybridized, mixed and continuous relatives in shock–turbulence, RANS, time-integration and error-estimation work."
 status: established
 aliases: [DGSEM, DG-SEM, modal DG, nodal discontinuous Galerkin, collocation DG, DG spectral element method, hybridizable discontinuous Galerkin, HDG]
 tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns, flux-reconstruction]
-timestamp: 2026-10-27T10:59:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -79,8 +79,8 @@ variables as the lifted unknowns.
 ## Viscous terms
 
 The gradients are introduced as auxiliary unknowns (lifting) and discretized
-with the same DGSEM. In the BR1 scheme of Bassi & Rebay (as recalled by Krais
-et al. 2021, Eqs. 34–42) both the lifted solution and the viscous flux at an
+with the same DGSEM. In the BR1 scheme of Bassi & Rebay, as Krais et al.
+(2021, Eqs. 34–42) cite and use it, both the lifted solution and the viscous flux at an
 interface are arithmetic means, $U^*=\{\!\{U\}\!\}$ and
 $F^{v*}=\tfrac12\big(F^v(U^L,\nabla U^L)+F^v(U^R,\nabla U^R)\big)$; FLEXI lifts
 the primitive variables. BR2 adds an interface penalty on the solution jump,
@@ -102,9 +102,9 @@ produces aliasing. Two remedies appear in the sources:
 - **Polynomial de-aliasing (over-integration).** The fluxes are evaluated on
   $Q+1$ points with $Q=\lfloor\tfrac32(N+1)-1\rfloor$ ($Q=11$ for $N=7$, i.e.
   $12^3$ quadrature points per element) and projected back by a modal cut-off
-  (Flad & Gassner 2017, §2.1, Eq. 11). As recalled there, the rational flux of
-  the compressible equations cannot be projected exactly, so the rule assumes
-  weak compressibility. Without it, the $N=7$ DG implicit LES of decaying
+  (Flad & Gassner 2017, §2.1, Eq. 11). Flad & Gassner state that the rational
+  flux of the compressible equations cannot be projected exactly, so the rule
+  assumes weak compressibility. Without it, the $N=7$ DG implicit LES of decaying
   isotropic turbulence was unstable (§1, stated without figure).
 - **Split form (flux differencing)** on LGL nodes, which builds the
   de-aliasing into the volume term. Flad & Gassner (2017, §6.1) state that it
@@ -140,8 +140,8 @@ integrate the cubic non-linearity of the viscous flux exactly (§2.10,
 
 The factor of three of Flad & Gassner and the factor of two of Brillon &
 Nadarajah come from different codes and different over-integration rules
-($\lfloor\tfrac32(N+1)\rfloor$ against $2(N+1)$ points); they are not in
-conflict.
+($\lfloor\tfrac32(N+1)\rfloor$ against $2(N+1)$ points); they are recorded
+side by side, not as a contradiction.
 
 ## Modal filtering and filtered artificial viscosity
 
@@ -224,6 +224,30 @@ vortex the switched filter leaves the solution unchanged at a 5.5% cost,
 and the entropy filter costs about 15% more per iteration than the switched
 filter on the LS89 vane (§4.1, §4.4.3). Formulas, thresholds and results are
 on [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md).
+
+**A filter whose strength does not depend on the time step.**
+[Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) apply the nodal filter
+$\mathcal V\Lambda\mathcal V^{-1}$ in a flux-reconstruction scheme whose
+Radau correction functions recover collocation-based nodal DG (Gauss
+solution points, Rusanov interface flux, BR2), the scheme run throughout
+(§2.1). Because a fixed filter applied after every step has a cumulative
+strength over a fixed time that grows as the step shrinks, they apply after
+every step the root $\Lambda^{1/n}$, $n=T_{\mathrm{char}}/\Delta t$
+($T_{\mathrm{char}}$ a characteristic time, page-local), which by
+construction has after $n$ steps the effect of one application of
+$\Lambda$ per $T_{\mathrm{char}}$ (§3.2, Eqs. 28–30), valid, they state,
+with a high-order time integrator away from its stability limit. The
+exponential filter function acts on the total degree of each orthonormal
+mode and has cut-off, damping and order parameters optimized for
+$N=3$–5 on more than 14,000 inviscid Taylor–Green runs at $16^3$ degrees
+of freedom; the filter stabilizes a channel at $Re_\tau=395$ that is
+unstable unfiltered at $N=5$, with mean velocity and Reynolds stresses in
+agreement with DNS, and leaves the forces and pressure of a stalled
+NACA 0020 nearly unchanged (§3.3–5.2). The
+parameters and results are on
+[explicit modal filtering](/methods/explicit-modal-filtering.md); the
+authors state that the filters are tied to the DG-recovering correction
+function and the Rusanov flux (§2.1, §3.4).
 
 ## Cost per degree of freedom
 
@@ -520,7 +544,7 @@ pressure space, the symmetric velocity gradient as auxiliary unknown) are
 eliminated by static condensation, leaving a global system in the facet
 traces of velocity and pressure (Eqs. 72–75); the velocity is exactly
 divergence free and $H(\mathrm{div})$-conforming, and the method energy
-stable, as recalled from the authors' earlier work. The convective trace
+stable, as the authors state citing their earlier work. The convective trace
 is upwinded, and the diffusive trace carries the stabilization
 $\tau_{\mathrm{HDG}}=Re/\ell$ (page-local; the source's $\tau$) with a problem-dependent length $\ell$; manufactured
 solutions give the smallest error near $\ell\approx10^2$ at $Re=10^5$,
@@ -600,6 +624,115 @@ estimate (§4–5); see
 [mesh adaptation](/methods/mesh-adaptation.md) and
 [method of manufactured solutions](/methods/method-of-manufactured-solutions.md).
 Wang & Roy write the order of accuracy as $p$, so their degree is $N=p-1$.
+
+**Output-based adaptation of DG for time-averaged turbulent outputs.**
+[Fidkowski (2022)](/sources/fidkowski-2022.md) adapts a DG discretization
+(Roe convective flux, BR2 viscous flux, curved cubic triangles, element
+degrees up to 5, default $N=2$, third-order modified extended BDF in time;
+§2.2) of unsteady two-dimensional airfoil flows (NACA 0012 at $Re=10^4$ and
+$2\times10^4$, $M=0.2$, $7^\circ$; a high-lift airfoil at $Re=10^6$ with a
+simplified DES) for the error of the time-averaged lift, without an
+unsteady adjoint, which is unstable in all three cases (Figs. 4, 11, 17).
+A steady Spalart–Allmaras RANS model with a production multiplier trained by
+[field inversion and machine learning](/methods/field-inversion-machine-learning.md)
+to reproduce the time-averaged state supplies a steady adjoint; restricted
+to the Navier–Stokes components it serves as a surrogate of the
+time-averaged unsteady adjoint, and weights the residual of the
+time-averaged solution in the enriched space of degree $N+1$ (estimate E1)
+or the residual of the augmented steady system (E2) (§2.2, §4, Eqs. 7,
+19–23). Element indicators $|\delta\Psi_e^{\mathsf T}\delta R_e|$ (adjoint and
+residual perturbations of element $e$, page-local) drive fixed-fraction
+degree refinement or anisotropic metric optimization (MOESS) with 2 to 4
+unsteady runs per adapted mesh and no state storage (§5). The estimates
+are within about a factor of 2 in later adaptive iterations, and
+adaptation with uncorrected RANS converges to a wrong lift (Tables 1–3,
+§6); the adaptation results are on
+[mesh adaptation](/methods/mesh-adaptation.md).
+
+## Linearly implicit time integration of DG URANS
+
+[Ghidoni et al. (2022)](/sources/ghidoni-2022.md) assess adaptive time-step
+control for linearly implicit high-order time integration of unsteady RANS
+with the Wilcox $k$-$\omega$ model in log form ($\tilde\omega_\ell=\ln\omega$,
+registry §11; $k$ limited at zero, $\tilde\omega_\ell$ subject to
+realizability conditions; constants not printed), discretized by the
+authors' modal DG: orthonormal hierarchical basis built by modified
+Gram–Schmidt in a physical-space frame aligned with the element's principal
+axes of inertia, BR2 viscous flux, Godunov flux with an exact Riemann
+solver, and for incompressible flow an exact Riemann solver of a locally
+artificial-compressibility-perturbed Euler system used only in the flux
+(§2–3). The semi-discrete system is an ODE for compressible flow and a DAE
+for incompressible flow (zero rows for the pressure). They state that the
+turbulence model adds the stiffness that motivates the study (§1).
+
+**Schemes.** One-step Rosenbrock (linearly implicit Runge–Kutta) schemes
+solve one linear system per stage with the Jacobian assembled once per
+step: ROS3PL (order 3, 4 stages, embedded order 2), RODASP (order 4, 6
+stages, embedded 3), ROD5\_1 (order 5, 8 stages, embedded 4). Two-step
+linearly implicit peer schemes peer3, peer4, peer5 (orders 3–5, $s$ = 3–5
+stages, embedded $s-2$) carry $s$ stages of equal order, give continuous
+output, tolerate an approximate or frozen Jacobian and are not
+self-starting; the authors start them with their earlier procedure, which
+chooses the starter's step from the asymptotic local and global error
+orders (Eqs. 41–50). All schemes are A- and L-stable (Table 1, §4.1–4.2).
+Freezing the peer Jacobian saves cost up to a refresh interval of 10
+(peer3) or 5 (peer4, peer5) steps, at most about 24% for peer5 (§4.2,
+Fig. 3). The design orders are verified on laminar travelling waves
+(incompressible) and an isentropic vortex (compressible) at $N=6$ (Tables
+2–3, 5–6).
+
+**Near-stability zone and step control.** Although linearly A- and
+L-stable, a linearly implicit scheme applied to the nonlinear system has a
+step-size limit set by the accuracy of its per-step linearization, which the
+authors call the **near-stability zone** (§4). The local error estimate
+must include every variable, $k$ and $\tilde\omega_\ell$ among them, in an
+$L^2$ norm, $r=\big(\sum_jr_j^2\big)^{1/2}$ with $r_j$ the norm of the
+difference between the solution and its embedded companion for variable $j$
+(Eq. 67; page-local $r$, $r_j$): the turbulence variables, irregular and
+the main cause of instability, would be under-weighted by a domain average,
+and using them alone would give too small steps (§5). Controllers (the
+tolerance $\mathrm{TOL}$ and estimator order $q_r$ page-local): standard
+$\Delta t^{n+1}=\Delta t^n(\mathrm{TOL}/r^{n+1})^{1/q_r}$ (Eq. 63); PI 4.2;
+and Söderlind's digital filters H211b,
+$$\Delta t^{n+1}=\Delta t^n\Big(\frac{\Delta t^n}{\Delta t^{n-1}}\Big)^{-1/4}\Big(\frac{\mathrm{TOL}}{r^{n+1}}\Big)^{1/(4q_r)}\Big(\frac{\mathrm{TOL}}{r^n}\Big)^{1/(4q_r)},$$
+and H312b (Eqs. 64–66), optionally with a smooth arctan limiter
+$\Delta t^{n+1}=\Delta t^n[1+\kappa_{\mathrm s}\arctan((\Delta t^{n+1}-\Delta t^n)/(\kappa_{\mathrm s}\Delta t^n))]$
+($\kappa_{\mathrm s}$ page-local, 0.4 found the best compromise) and a cap
+$\Delta t_{\mathrm{limit}}$ (Eqs. 68–70).
+
+**Findings** (two-dimensional URANS at $N=5$: cylinder at $Re_D=3900$
+compressible at $M=0.1$ and incompressible, cylinder at $Re_D=1.4\times10^5$,
+tandem cylinders at $Re=1.66\times10^5$; a three-blade vertical-axis
+wind turbine at $Re=1.6\times10^5$, tip-speed ratio 1.5, at $N=2$ on an
+extruded mesh):
+
+- for small steps adaptivity brings nothing (no rejected steps); it pays
+  near the near-stability zone, which it extends by up to an order of
+  magnitude, sometimes at reduced cost; H211b with the smooth limiter and
+  H312b are the most robust on the stiffer cases (§6.1–6.3, §7, Tables
+  10–14);
+- capping the maximum step substantially improves robustness and
+  efficiency, while bounding the step-change factor does not (§6.3,
+  Figs. 26–28);
+- ROS3PL is most efficient at loose accuracy, ROD5\_1 (compressible) or
+  RODASP and peer5 (incompressible) at tight accuracy; observed orders on
+  the turbulent cylinder are 2.8 (ROS3PL), 4.3 (RODASP), 5.4 (ROD5\_1), 3.3,
+  3.1 and 1.8 (peer3, peer4, peer5) (§6.1, Fig. 15);
+- on the turbine, ROS3PL with smoothed H211b runs at a mean step
+  $0.023c/u_\infty$ ($c$ the chord), 1.64 times the largest stable fixed
+  step and about 6 times the mean step of the authors' earlier adaptive
+  implementation, with about 9.5% rejected steps and power coefficient
+  0.173 against 0.171 of a reference two-dimensional RANS (§6.4,
+  Table 17).
+
+The two-dimensional URANS values of the $Re_D=3900$ cylinder ($C_D=1.52$
+incompressible, 1.62 compressible; $St=0.23$) differ from LES, DNS and
+experiment but agree with other two-dimensional URANS; the authors state
+that the aim is efficiency and robustness, not prediction (§6.1, Table 9;
+see [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)).
+They also state that the compressible solver is more efficient than the
+incompressible one on complex cases because the DAE linear systems are
+worse conditioned (§6, §6.4).
 
 ## High-order DG for RANS: entropy stability and robust turbulence variables
 
@@ -870,7 +1003,7 @@ written with the code routines that compute each term:
   "low-load-bound" (kernel launches, tail effects, then communication),
   whereas CPU FLEXI has a narrow optimum of 3000 to 10,000 degrees of
   freedom per core and loses performance at high loads (cache and memory
-  bandwidth, as recalled).
+  bandwidth, as stated there).
 - **Verification** (§5.1, Fig. 9): manufactured solutions converge at design
   order for $N=2$ to 9, both for standard DG on Legendre–Gauss nodes and
   for split-form DG on LGL nodes.
@@ -963,8 +1096,7 @@ shocks with $p$-refinement in smooth regions. The count assumes a
 total-degree basis, $(N+1)^3$ volume quadrature points and $N+1$
 Runge–Kutta stages per step; the collocated tensor-product DGSEM above has
 $O(N^4)$ volume work per element, $O(N)$ per degree of freedom (Krais et
-al. 2021; Kurz et al. 2025, Table 1), so the scaling does not transfer to it
-*(compiler check, not in the sources)*; Cernetic et al. give no timing.
+al. 2021; Kurz et al. 2025, Table 1); Cernetic et al. give no timing.
 
 **Modal Runge–Kutta DG with TENO limiters.** At the other end of the
 family, [Huang & Fu (2024)](/sources/huang-2024.md) and
@@ -1019,8 +1151,8 @@ fine one (§3). See
 
 - **Memory per degree of freedom.** Krais et al. (2021, Table 4) report for
   CPU FLEXI 1.47 KiB at $N=1$ and 0.567 KiB at $N=12$; Kurz et al. (2025,
-  Table 2) report for GALÆXI 1.457 and 0.787 KiB. The codes differ, so the
-  numbers are not in conflict.
+  Table 2) report for GALÆXI 1.457 and 0.787 KiB. The codes differ; the
+  values are recorded side by side, not as a contradiction.
 - **Printed slips (Cernetic et al. 2024, arXiv v2).** Eq. (35) prints the
   total cost as $\tfrac56N_x^4(1+N)^4(10N^4+100N^3+315N^2+523N+372)$; the
   paper's own ingredients, which reproduce its Eq. (33), give $351N^2$ in
@@ -1104,9 +1236,38 @@ fine one (§3). See
   *(compiler check, not in the sources)*.
 - Jiang et al. (2025) name their schemes by order in the text and by
   degree in the figures (DG(P1)–DG(P3) for second to fourth order).
+- **Printed slips (Ghidoni et al. 2022).** §1 and §7 call ROS3PL
+  "third order/three stages" while Table 1 gives four stages. In Table 2,
+  the ROD5\_1 pressure order printed 5.00 for the step $T/160$ follows from
+  the printed errors $3.96\times10^{-10}$ and $4.79\times10^{-11}$ as
+  $\log_2 8.27=3.05$ (the velocity columns give 4.99), consistent with the
+  authors' remark that errors below $10^{-11}$ are polluted by the spatial
+  error *(compiler check, not in the sources)*. The text gives the
+  compressible $Re_D=3900$ cylinder $c'_L=1.19$ and $St=0.225$ where Table 9
+  gives 1.13 and 0.23. The printed H211b, PI 4.2 and H312b formulas follow
+  from the step-prediction relation (Eq. 62) only if its $\Delta t$ carries
+  the exponent $q_r$, which is not printed *(compiler check, not in the
+  sources)*; several percentages of Tables 13–14 are not reproduced by the
+  error limits printed in their captions, which repeat those of Table 13
+  in Table 14, and Table 14 and Table 18 give different clock-time changes
+  for the same tandem runs *(compiler check, not in the sources)*.
+- Ghidoni et al. (2022, Fig. 15) observe order 1.8 for peer5 (design
+  order 5) on the turbulent cylinder, while §4.2 introduces peer schemes as
+  "proposed to overcome the order reduction" of traditional Rosenbrock
+  schemes at high stiffness; the paper does not discuss the observed
+  order.
+- Fidkowski (2022, §4, Eq. 18) assumes that the correlation between
+  adjoint and residual fluctuations is negligible for chaotic flows; no
+  regularized unsteady adjoint is computed to check it. The "DES" of the
+  high-lift case uses a fixed, mesh-independent attenuation of the wall
+  distance, $d_{\max}\tanh(d/d_{\max})$ with $d_{\max}=0.02c$ (Eq. 3),
+  chosen to keep the model constant during adaptation.
 
 # Citations
 
+- [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §2.1 (FR recovering nodal DG, Rusanov, BR2); §3.2, Eqs. (28)–(30) (time-step-independent filter); §3.3–3.4, Tables 4–6 (optimized exponential filter); §5.1–5.2.
+- [Fidkowski (2022)](/sources/fidkowski-2022.md) — §2.2, Eqs. (4)–(7) (DG with Roe and BR2, augmented system); §4, Eqs. (17)–(23) (E1, E2); §5, Eq. (24) (indicators, $p$-adaptation and MOESS); §6, Tables 1–3, Figs. 4, 11, 17 (unstable unsteady adjoints, adaptation results).
+- [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §1–3, Eqs. (1)–(18) (modal DG URANS with $k$-$\log\omega$); §4.1–4.2, Eqs. (19)–(50), Tables 1–7, Fig. 3 (Rosenbrock and peer schemes, starting procedure, near-stability zone); §5, Eqs. (51)–(70), Table 8 (error estimator, controllers, limiters); §6.1–6.4, Tables 9–17, Figs. 5–31 (cylinders, tandem cylinders, VAWT); §7, Tables 18–19; printed slips in §1, §6.1, §7, Eq. (62), Tables 2, 13–14.
 - [Krais et al. (2021)](/sources/krais-2021.md) — §3.1, Eqs. (1)–(42) (geometry, weak and strong forms, BR1); §3.2 (mortars); §3.3 (split form); §4.4, Eqs. (65)–(67) (time step); §5.6, Tables 3–4 (operation counts, memory).
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — §1 (DG implicit LES, applicability plateau); §2.1, Eqs. (4)–(12) (LGL DGSEM, SBP, de-aliasing, split form); §3.1, §4, §6.1; App. A, App. E (BR2 at walls).
 - [Beck & Kurz (2023)](/sources/beck-2023.md) — §III A, Eqs. (7)–(8) (DGSEM in FLEXI); Eq. (11) (filter width); §IV A (resolution limit); §V A–B (no-model LES against $N$, face-localized dissipation).

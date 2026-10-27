@@ -5,7 +5,7 @@ description: "Turbulent flow past a square cylinder with separation fixed at the
 status: established
 aliases: [square cylinder, square-cylinder wake, flow over a square cylinder, SQCYL]
 tags: [benchmark, separated-flow, rans, field-inversion, data-driven, dg]
-timestamp: 2026-10-27T06:03:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Flow past a square cylinder
@@ -101,7 +101,7 @@ eddy viscosity than SA in the separated wake and "slightly chaotically
 vortex flows" behind the cylinder, which the authors call SAS-like
 characteristics (Figs. 8–9). Time-averaged velocities agree well with the
 DNS at the stations above the cylinder and follow the general trend at the
-wake stations $x/h=2$–5 (Figs. 10–11). The authors call the 2D
+wake stations $x/L_{\mathrm{sq}}=2$–5 (the source's $x/h$; Figs. 10–11). The authors call the 2D
 computation a verification, not a validation, since the flow is
 three-dimensional, and the SA comparison "may not be a fair comparison"
 because SA is meant for steady high-Reynolds-number flow; a fair one would
@@ -135,7 +135,7 @@ deflated-restart variant in 8000; plain GMRES would need a Krylov space of
   [Jiang et al. (2025)](/sources/jiang-2025.md) use different references
   (a three-dimensional DNS against a two-dimensional one) and are not
   compared with each other. Jiang et al. print the upper-side stations of
-  Fig. 10 in the non-monotone order $x/h=0.48$, 0.12, 0.1, 0.49.
+  Fig. 10 in the non-monotone order $x/L_{\mathrm{sq}}=0.48$, 0.12, 0.1, 0.49.
 
 # Citations
 

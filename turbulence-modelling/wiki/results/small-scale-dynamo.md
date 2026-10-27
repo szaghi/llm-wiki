@@ -5,7 +5,7 @@ description: "The small-scale (fluctuation) dynamo amplifies magnetic fields by 
 status: hypothesis
 aliases: [fluctuation dynamo, turbulent dynamo, saturated dynamo, tearing-limited dynamo, reconnection-limited dynamo]
 tags: [dynamo, mhd, astrophysics, reconnection, dns, compressible]
-timestamp: 2026-10-26T15:53:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Small-scale turbulent dynamo
@@ -15,7 +15,7 @@ a weak magnetic field by a turbulent flow without a mean field, at scales
 smaller than the outer scale of the flow, followed by a nonlinear stage and a
 saturated state of statistically steady MHD turbulence. [Schekochihin
 (2022)](/sources/schekochihin-2022.md) (§13) reviews the classical picture
-(as recalled from Batchelor 1950, Biermann & Schlüter 1951, Kazantsev 1968,
+(citing Batchelor 1950, Biermann & Schlüter 1951, Kazantsev 1968,
 and the author's own earlier work, Schekochihin et al. 2002, 2004) and
 proposes a **tearing-limited** theory of the saturated state: the folded
 fields are disrupted by tearing, which sets their reversal scale and seeds a
@@ -64,7 +64,7 @@ $\Gamma_E=2\gamma_B$ in the kinematic stage.
 
 In the kinematic regime the field is organized in folds — long in the
 direction of the field, reversing across a resistive width
-$\lambda\sim\ell\,Rm_\ell^{-1/2}$ (Eq. 13.2, as recalled). Treating a fold
+$\lambda\sim\ell\,Rm_\ell^{-1/2}$ (Eq. 13.2, from the earlier work the review cites). Treating a fold
 as a current sheet, the review (§13.3.1) applies the tearing growth rate of a
 reversing field,
 
@@ -78,16 +78,16 @@ statement that "a nonlinear dynamo is also a reconnecting dynamo".
 
 ## Self-similar nonlinear stage
 
-Recalled from Schekochihin et al. (2002), Cho et al. (2009) and Beresnyak
-(2012) (§13.3.2): once the field is strong enough to suppress the stretching
+The review (§13.3.2) cites Schekochihin et al. (2002), Cho et al. (2009)
+and Beresnyak (2012) for this stage: once the field is strong enough to suppress the stretching
 motions at scale $\ell$, the dynamo proceeds at the scale where
 $\delta u_{\ell(t)}\sim b_\lambda(t)$ (Eq. 13.5), so
 
 $$b_\lambda\sim(\varepsilon t)^{1/2},\qquad \ell(t)\sim\varepsilon^{1/2}t^{3/2}$$
 
 (Eq. 13.6): magnetic energy grows linearly in time. The fraction of the
-energy flux going into the field is quoted as 0.04–0.07 (Cho et al. 2009;
-Beresnyak 2012), with $3/38$ from Xu & Lazarian (2016), all as recalled.
+energy flux going into the field is quoted as 0.04–0.07 (the review cites
+Cho et al. 2009 and Beresnyak 2012), with $3/38$ from Xu & Lazarian (2016).
 
 ## Saturation: tearing-limited folds
 
@@ -137,9 +137,9 @@ al. 2020 for the latter).
   smoothly folded at the resistive scale (§13.2, footnote 74).
 - **Spectra.** In saturated-dynamo simulations the kinetic-energy spectrum
   steepens at large scales (an empirical $k^{-7/3}$) and becomes shallower,
-  $\approx k^{-4/3}$, at small scales (Grete et al. 2021, as recalled), with
-  magnetic-to-kinetic transfer via tension at small scales — consistent with
-  reconnection in folds driving flows (§13.2, Fig. 33).
+  $\approx k^{-4/3}$, at small scales (the review cites Grete et al. 2021),
+  with magnetic-to-kinetic transfer via tension at small scales, which the
+  review reads as reconnection in folds driving flows (§13.2, Fig. 33).
 - **Tests of the tearing-limited theory.** Galishnikova et al. (2022, up to
   $2240^3$), designed to test the fold-tearing scenario, "appear to offer some
   tentative evidence" for the disruption of folds by tearing, for the scaling
@@ -183,7 +183,7 @@ The decay of the saturated state, once forcing stops, is the subject of
 ## Measuring growth and saturation in simulations
 
 The simulation sources define the stages operationally and measure
-different quantities; their rates are not directly comparable.
+different quantities:
 
 - **Seta & Federrath (2022, §4.1)**: kinematic stage = exponential growth of
   the ratio $E_{\mathrm{mag}}/E_{\mathrm{kin}}$, with $\Gamma_E$ in units of
@@ -207,8 +207,8 @@ different quantities; their rates are not directly comparable.
 
 ## Reynolds number, resolution and numerical dissipation
 
-- **A critical Reynolds number.** As recalled by Liu et al. (2022, §1, from
-  Brandenburg & Subramanian 2005), the dynamo needs a dissipation scale at
+- **A critical Reynolds number.** Liu et al. (2022, §1), citing
+  Brandenburg & Subramanian (2005), state that the dynamo needs a dissipation scale at
   least about 30 times below the injection scale, a critical Reynolds number
   of about 30–60. When dissipation is numerical this is a resolution
   requirement: about 30 pc for a 1 kpc galactic disc, about 3 pc for a
@@ -234,7 +234,7 @@ different quantities; their rates are not directly comparable.
   1 dex more magnetic energy per unit mass than the quasi-Lagrangian one, and
   more than the quasi-Lagrangian runs at 10 pc (§3.2, §4, Fig. 6).
   Extrapolated to the 0.7 pc of turbulent-box simulations of the
-  interstellar medium (Balsara et al. 2004, as recalled), the accretion-phase
+  interstellar medium (the authors cite Balsara et al. 2004), the accretion-phase
   rates reach about 60 Gyr$^{-1}$ (quasi-Eulerian) against about
   10 Gyr$^{-1}$ (quasi-Lagrangian); the authors extrapolate that with
   realistic diffusivities the dynamo would saturate at $z\gg6$ (§3.2). In
@@ -244,13 +244,12 @@ different quantities; their rates are not directly comparable.
   §2.4) run $Re=Rm=2000$ ($Pm=1$; $Re=u_{\mathrm{rms}}L_{\mathrm{box}}/(2\nu)$
   at the driving scale $L_{\mathrm{box}}/2$, page-local $L_{\mathrm{box}}$ the
   box size) on $512^3$ cells, below the numerical Reynolds number
-  $\approx2N_x^{4/3}\approx8000$ that they recall from McKee et al. (2020),
+  $\approx2N_x^{4/3}\approx8000$ that they cite from McKee et al. (2020),
   so that explicit diffusion dominates and acts at larger scales than the
-  numerical one (a [DNS](/definitions/direct-numerical-simulation.md)-type
-  criterion for a finite-volume code). The two galaxy studies instead run
-  ideal MHD and rely on [numerical
-  dissipation](/properties/numerical-dissipation.md), in the manner of
-  [implicit LES](/definitions/implicit-les.md).
+  numerical one (see [DNS](/definitions/direct-numerical-simulation.md)).
+  The two galaxy studies instead run ideal MHD and rely on [numerical
+  dissipation](/properties/numerical-dissipation.md) (see
+  [implicit LES](/definitions/implicit-les.md)).
 
 ## Compressibility, driving and multiphase gas
 
@@ -273,8 +272,8 @@ and a $k^{3/2}$ spectrum. Results (§4.1, Table 1):
 
 - **Equal growth in both phases.** The growth rate is the same in the
   supersonic cold and the transsonic warm phase, which the authors state
-  "clearly does not agree with the isothermal models" (Federrath et al. 2011,
-  as recalled), where $\Gamma_E$ decreases with $M_t$ for $M_t\gtrsim1$.
+  "clearly does not agree with the isothermal models" they cite (Federrath
+  et al. 2011), where $\Gamma_E$ decreases with $M_t$ for $M_t\gtrsim1$.
   Solenoidal forcing grows the field about twice as fast as compressive.
 - **Lower saturation in the cold phase**, the same trend with $M_t$ as in
   isothermal runs; attributed to a stronger rms Lorentz force there, which
@@ -285,7 +284,7 @@ and a $k^{3/2}$ spectrum. Results (§4.1, Table 1):
   0.43–1.50 in $R_{\mathrm{sat}}$), which the authors attribute, "probably",
   to continuous energy exchange between the phases (§4.1, §5).
 - **Vorticity budget.** Projecting the compressible, magnetized vorticity
-  equation (Eq. 9; as recalled from Shukurov & Subramanian 2021)
+  equation (Eq. 9, which they cite from Shukurov & Subramanian 2021)
 
   $$\frac{\partial\boldsymbol\omega}{\partial t}=\nabla\times(\boldsymbol u\times\boldsymbol\omega)+\nu\nabla^2\boldsymbol\omega+\nabla\times\frac{(\nabla\times\boldsymbol B)\times\boldsymbol B}{4\pi\rho}+\frac{\nabla\rho\times\nabla p}{\rho^2}+2\nu\nabla\times\big(\boldsymbol S^d\nabla\ln\rho\big)+\nabla\times\boldsymbol f$$
 
@@ -309,7 +308,7 @@ Martin-Alvarez et al. (2022, §3.3.4) find in their galaxy that the warm
 phase carries more small-scale turbulent energy with quasi-Eulerian
 refinement and state that "the majority of the turbulent amplification in
 galaxy simulations takes place in the warm phase of the ISM"; their kinetic
-spectra are Kolmogorov-like ($k^{-5/3}$) for the strongly fed runs and
+spectra are Kolmogorov-like ($k^{-5/3}$) for the boosted-feedback runs and
 between Kolmogorov and Burgers ($k^{-2}$) for the weak-feedback run
 (§3.3.5).
 
@@ -466,12 +465,12 @@ large-scale shape and can mask the peak migration (App. B).
   $\gamma_{\mathrm t}\lambda/b_\lambda\sim S_{L,\lambda}^{-3/7}(1+Pm)^{-2/7}$,
   gives $\lambda_R\sim L\,Rm_L^{-3/10}(1+Pm)^{-1/5}$: the magnitudes of the
   footnote's exponents with negative signs, as in Eq. 13.9.)*
-- The review records the competing view (Haugen et al. 2003, 2004; Beresnyak
-  2012; Xu & Lazarian 2016, as recalled) that the saturated state is
+- The review records the competing view it cites (Haugen et al. 2003, 2004;
+  Beresnyak 2012; Xu & Lazarian 2016) that the saturated state is
   non-asymptotic and would become Kolmogorov-like with scale-by-scale
-  equipartition at higher resolution (§13.2); Grete et al. (2021) and Bian &
-  Aluie (2019) disagree on magnetic control of the small-scale cascade, as
-  recalled. These are disagreements among un-ingested works reported by the
+  equipartition at higher resolution (§13.2); the review cites Grete et al. (2021)
+  and Bian & Aluie (2019) as disagreeing on magnetic control of the
+  small-scale cascade. These are disagreements among un-ingested works reported by the
   review, not a bundle contradiction.
 - The theory revises the author's earlier result (Schekochihin et al. 2002,
   2004) that the reversal scale is resistive, $L\,Rm^{-1/2}$.
@@ -481,8 +480,7 @@ large-scale shape and can mask the peak migration (App. B).
   (Martin-Alvarez et al. 2022); the galaxy runs stay kinematic or saturate
   through a tuned subgrid model (Liu et al. 2022); Beattie et al. (2025) run
   isothermal MHD at $Re=Rm=1000$, $Pm=1$, $M_t\approx1$. None addresses fold
-  tearing or the $Rm$ scaling of the saturated reversal scale, so they
-  neither support nor contradict the tearing-limited theory above.
+  tearing or the $Rm$ scaling of the saturated reversal scale.
 - **Printed slips, Beattie et al. (2025).** §5.2 reads a growth rate
   $\Gamma_E t_0\approx1.4$ as an e-folding "every $1.4t_0$"; the magnetic
   energy then e-folds every $t_0/1.4\approx0.71t_0$ *(compiler check, not in

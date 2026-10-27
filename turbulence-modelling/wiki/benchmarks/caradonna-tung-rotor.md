@@ -23,10 +23,10 @@ both ingested sources, which use the case to compare inviscid-flux
 schemes by the wake they preserve, and Han et al. (2022) attribute the
 longer-lived tip vortex to the lowest
 [numerical dissipation](/properties/numerical-dissipation.md) (§4.2).
-Page-local symbols: $R_{\mathrm r}$
-rotor radius, $r$ radial position, $\psi$ wake age (azimuth since the
+Symbols (registry §11): $R_{\mathrm r}$
+rotor radius, $\psi_{\mathrm w}$ wake age (azimuth since the
 vortex left the blade), $M_{\mathrm{tip}}$ tip Mach number, $C_{\mathrm{Th}}$ thrust
-coefficient, $T_{\mathrm r}$ thrust, $a_\infty$ free-stream sound speed.
+coefficient; page-local: $r$ radial position, $T_{\mathrm r}$ thrust, $a_\infty$ free-stream sound speed.
 
 ## Configuration
 
@@ -77,15 +77,15 @@ subsonic case, while the wake differs strongly.
 
 **How long the tip vortex survives.** [Han et al. (2022)](/sources/han-2022-c.md)
 measure it by the wake age up to which a Q-criterion iso-surface tracks
-the vortex: subsonic $\psi=900^\circ$ (WENO-K), $630^\circ$ (WENO-JS),
+the vortex: subsonic $\psi_{\mathrm w}=900^\circ$ (WENO-K), $630^\circ$ (WENO-JS),
 $150^\circ$ (MUSCL); transonic $1000^\circ$, $720^\circ$, $250^\circ$
 (§4.1–4.2, Figs. 13, 17). Subsonic "vortex pairing" appears at
-$\psi=930^\circ$ with WENO-K and $700^\circ$ with WENO-JS, against
+$\psi_{\mathrm w}=930^\circ$ with WENO-K and $700^\circ$ with WENO-JS, against
 $950^\circ$ in a 100-million-cell simulation they cite (Fig. 15); in the
 transonic case no pairing occurs within the visible revolution, which they
 explain by the faster descent of the stronger vortices (§4.2, Fig. 19).
 WENO-K reproduces the measured trajectory best, "along circumferential
-direction" (as printed) after $\psi=200^\circ$ and axially after
+direction" (as printed) after $\psi_{\mathrm w}=200^\circ$ and axially after
 $180^\circ$, which Han et al. ascribe to vortex preservation "due to lowest
 numerical dissipation" (transonic, §4.2, Fig. 24).
 [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) track the vortex core as

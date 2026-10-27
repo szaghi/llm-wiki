@@ -9,7 +9,7 @@ year: 2023
 venue: "Proc. Combust. Inst. 39:1567-1576"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Proceedings_of_the_Combustion_Institute_Böttler_Flamelet_modeling_of_thermo-diffusively_unstable_hydrogen-ai.pdf"
 tags: [combustion, tabulated-chemistry, a-priori-a-posteriori]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -90,7 +90,7 @@ described only as the text describes them.
 
 # Notation map
 
-The registry has no combustion symbols; the page-local symbols below follow [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md), which keeps the model label FPV-$\kappa_c$ as FPV-$\kappa$.
+The registry holds only the thickened-flame symbols of combustion (§11); the page-local symbols below follow [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md), which keeps the model label FPV-$\kappa_c$ as FPV-$\kappa$.
 
 | Böttler et al. (2023) | Registry ([notation](/notation.md)) | Note |
 |---|---|---|
@@ -115,8 +115,9 @@ The registry has no combustion symbols; the page-local symbols below follow [fla
 The list is merged complete into the [bibliography](/bibliography.md) with
 `citedby` bottler-2023. Wen et al. part I [23] and part II [28] take
 suffixes in printed order; [19], [23] and [28] print an article number and
-no volume; [30] is the ULF software with a figshare DOI. No cited work is an
-ingested source. No printed duplicates or unparseable items.
+no volume; [30] is the ULF software with a figshare DOI. Ref. [19] is the
+ingested [Böttler et al. (2022)](/sources/bottler-2022.md); no other cited
+work is an ingested source. No printed duplicates or unparseable items.
 
 # Pages created or updated
 

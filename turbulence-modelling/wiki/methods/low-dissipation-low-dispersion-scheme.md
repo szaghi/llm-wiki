@@ -5,7 +5,7 @@ description: "The LD2 scheme pairs an energy-preserving central flux with much-r
 status: established
 aliases: [LD2, LD2C, LD2-Compressible, low-dissipation low-dispersion scheme, Kok flux with JST dissipation, OPT6, optimized upwind scheme, approximate dispersion relation, dispersion-relation-preserving scheme, optimized selective filter, FDo11p, RFo11p]
 tags: [numerical-dissipation, hybrid-rans-les, des, compressible, kinetic-energy-preserving]
-timestamp: 2026-10-27T11:00:00Z
+timestamp: 2026-10-27T15:53:00Z
 ---
 
 # Low-dissipation low-dispersion schemes with shock sensor
@@ -17,7 +17,7 @@ energy-preserving face flux is evaluated with face values extrapolated from
 the nodes with a weighted gradient term, which lowers the dispersion error,
 and (ii) the artificial (Jameson–Schmidt–Turkel, JST) matrix dissipation that
 the central flux needs for stability is reduced far below its RANS level.
-The scheme is due to Löwe et al. (2016), as recalled by
+The scheme is due to Löwe et al. (2016), as cited by
 [Carlsson et al. (2023)](/sources/carlsson-2023.md), who implement it in the
 node-based unstructured solver M-Edge and extend it to compressible flow with
 shocks as **LD2C** (LD2-Compressible). The page records their formulation,
@@ -196,7 +196,7 @@ differences (§3.2, Table 2; §4):
 [Wang et al. (2024)](/sources/wang-2024.md) take the opposite route to LD2:
 instead of a central flux with minimal added dissipation, a
 dispersion-optimized upwind reconstruction whose dissipation is kept. Their
-OPT6 is the linear part of the OMP6 scheme of Li et al. (as recalled), a
+OPT6 is the linear part of the OMP6 scheme of Li et al. (as cited there), a
 cell-centred eight-point reconstruction of the left interface state with
 two free parameters, $a_{\mathrm o}$ and $b_{\mathrm o}$ (page-local), set
 to 0 and 0.001 as Li et al. recommend, the two interface states combined by
@@ -225,7 +225,7 @@ $\Delta z^+\approx4.5$) both give the same mean velocity, while OPT6 is
 closer to DNS at the Reynolds-shear-stress peak and in the budget of the
 turbulent kinetic energy, "especially for the dissipation term" (§3.2,
 Figs. 3–4). On the [periodic hill](/benchmarks/periodic-hill.md) at
-$Re_b=10\,595$, $M=0.2$, first-order statistics are grid-insensitive and
+$Re_h=10\,595$, $M=0.2$, first-order statistics are grid-insensitive and
 second-order ones and budget terms are not; OPT6 agrees with the reference
 even on $48^3$, whereas KGP2 shows a grid-convergence trend (separation at
 $x/H=0.26$, 0.24, 0.20, 0.20 on $48^3$ to $196\times128\times186$, against
@@ -243,7 +243,7 @@ scheme is tested (§2.3–2.4).
 [Luo & Wu (2021)](/sources/luo-2021-b.md), §6, contrast one route to
 high resolution, optimizing the coefficients of a linear scheme (Tam & Webb's
 dispersion-relation-preserving schemes, optimized WENO of Wang & Chen, as
-recalled), with designing the nonlinear weights of a WENO scheme so that the
+cited there), with designing the nonlinear weights of a WENO scheme so that the
 least smooth substencil is weighted above its ideal value, which offsets
 part of the dissipation of the underlying linear scheme. They assess it with
 the same approximate dispersion relation of Pirozzoli, computed numerically
@@ -253,6 +253,50 @@ WENO-Z+M is reported better than the linear fifth-order upwind scheme over
 "a much broader wavenumber range" (§4, Fig. 4); its formulation and the
 shock tests, none of them turbulent, are on
 [WENO and hybrid schemes](/methods/weno-scheme.md).
+
+**One parameter between upwind and central.**
+[Deng et al. (2022)](/sources/deng-2022.md) make the dissipation of an
+upwind-biased finite-volume reconstruction adjustable rather than optimized.
+In their $P_nT_m$-BVD-AD schemes, wherever both sides of a face keep the
+degree-$n$ polynomial reconstruction, the two face values are replaced by
+convex combinations of each other with a parameter $\lambda_{\mathrm{AD}}\in[0.5,1]$
+(page-local; §3.2, Eq. 21): $\lambda_{\mathrm{AD}}=1$ is the $(n+1)$-order upwind-biased
+scheme, $\lambda_{\mathrm{AD}}=0.5$ makes the two face values equal, so the upwind term of
+the Riemann flux vanishes and the scheme becomes the non-dissipative
+$(n+2)$-order central interpolation (Remarks 1–2). The new face jump is
+$(2\lambda_{\mathrm{AD}}-1)$ times the old one, so $\lambda_{\mathrm{AD}}$ scales the upwind dissipation
+term linearly *(compiler check, not in the sources)*. Their approximate
+dispersion relation analysis (after Pirozzoli; §4.1, Figs. 1–2) shows that
+the ninth-order linear upwind scheme keeps an inherent dissipation despite
+its order, that ninth-order mapped WENO (WENO-M) is more dissipative than the
+same-order linear scheme at high wavenumbers because the nonlinear
+adaptation treats high-wavenumber waves as discontinuities, that the
+eighth- and tenth-order $P_6T_3$ and $P_8T_3$ versions at $\lambda_{\mathrm{AD}}=0.5$
+retrieve the non-dissipative central schemes (the sixth-order $P_4T_2$
+keeps "very small" dissipation at high wavenumbers), and that their
+dispersion is almost that of the corresponding central schemes. On sine-wave
+advection the three schemes reach $L_1$ orders 5.99, 7.99 and 10.00 at 160
+cells, i.e. $n+2$ (Table 1). The authors cite the MDCD schemes (below) as
+another way to adjust dissipation without touching optimized dispersion,
+and state that $\lambda_{\mathrm{AD}}=0.5$ suits DNS or explicit LES while larger values
+supply the dissipation of implicit LES (Remark 2; the $\lambda_{\mathrm{AD}}$ study is on
+[implicit LES](/definitions/implicit-les.md), the BVD selection on
+[WENO](/methods/weno-scheme.md)).
+
+**Compact nonlinear interpolation for resolution.**
+[Ma et al. (2022)](/sources/ma-2022.md) raise the resolution of the weighted
+compact nonlinear scheme (WCNS) by replacing its explicit fifth-order
+nonlinear interpolation with a seventh-order nonlinear tri-diagonal compact
+interpolation on the same five-point stencil (WCNS-T; formulation on
+[WENO](/methods/weno-scheme.md)). By Fourier and approximate-dispersion
+analysis the resolving ratio (fraction of resolvable wavenumbers) rises from
+30.2% to 49.3% (Fourier) and from 28.6% to 39.7% (approximate dispersion
+relation), about 1.6 and 1.4 times the resolvable wavenumbers of the
+explicit version (§2.3, Table 1, Fig. 1; the error threshold that defines
+"resolvable" is not stated); in the shock–entropy-wave interaction
+WCNS-T on 200 points matches WCNS-E on 300 (§2.3.1, Fig. 2). They judge
+the compact reconstructed WENO (CRWENO) of Ghosh & Baeder good in
+dispersion but too dissipative ("the excessive upwind", §1).
 
 **Dispersion against formal order in the first High-Order CFD Workshop.**
 In the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) case at
@@ -304,7 +348,7 @@ higher resolvable wavenumbers (§IV).
 
 Three sources build the coefficients of their schemes by
 minimizing a wavenumber-space error under order constraints, the
-dispersion-relation-preserving idea of Tam & Webb recalled by Luo & Wu
+dispersion-relation-preserving idea of Tam & Webb cited by Luo & Wu
 above. Page-local notation: $k\Delta x$ the reduced wavenumber ($k$ a
 wavenumber here, not the turbulent kinetic energy), $k^*\Delta x$ the
 modified wavenumber of a scheme (real part dispersion, imaginary part
@@ -426,7 +470,7 @@ artificial dissipation *(compiler check, not in the sources)*.
   general combination of five convective forms with "$\xi=1/2$,
   $\alpha=\beta=\delta=1/4$, and $\varepsilon=0$"; $\xi$ is not defined and
   the weight of the $C^u$ form is not given. In the one-parameter family
-  recalled by Bernades et al. (2023) the KGP form is the parameter value
+  cited by Bernades et al. (2023) the KGP form is the parameter value
   $\tfrac12$ and carries weight $\tfrac14$ on that form too
   *(compiler check, not in the sources)*; see
   [kinetic-energy preservation](/properties/kinetic-energy-preservation.md).
@@ -450,6 +494,18 @@ artificial dissipation *(compiler check, not in the sources)*.
   with the letter of their nonlinear weights; their reading of third and
   fourth order rests on the agreement of error curves with the linear
   optimized schemes, without tabulated rates (§3.1.1).
+- Deng et al. (2022) run their scheme at $\lambda_{\mathrm{AD}}=0.5$, exactly central in
+  smooth regions, in a compressible Navier–Stokes solver without a split or
+  kinetic-energy-preserving form and without a filter; they report no
+  instability, but the purely central setting is run in turbulence only on
+  the $128^3$ isotropic-turbulence grid, while the under-resolved $64^3$
+  runs use $\lambda_{\mathrm{AD}}\ge0.65$ (§4.15), and they themselves cite that "a small
+  amount of dissipation is needed" against instabilities of under-resolved
+  scales (§1). Their ADR claims are read from figures.
+- Ma et al.'s (2022) resolving ratios are linear analyses of the
+  interpolations; their WCNS-T costs 5–7 times WCNS-E per grid point on the
+  same grid ($1.26\times10^4$ against $1.83\times10^3$ CPU time units at
+  2802 points, Table 2) and is cheaper only at equal error (Fig. 3).
 - Printed slips: §5 attributes LD2 to "Löwe et al. [28]", while ref. [28] is
   Probst et al. and LD2 is Löwe et al. [10] elsewhere; §4.3 cites Fig. 4(b) for
   both $Re_\tau=2400$ and 18 000 (the latter is Fig. 4(c)); the text refers to
@@ -468,3 +524,5 @@ artificial dissipation *(compiler check, not in the sources)*.
 - [Wang et al. (2013)](/sources/wang-2013.md) — §5.6, Figs. 25–27 (central and DRP finite differences on the Taylor–Green vortex).
 - [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §1; §2.2.1, §2.2.6, Eqs. (20), (47) (optimized linear weights); §3.1.1, Fig. 3; §3.1.3, Table 1 (grind times).
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §IV, Table I (MDCD, MDCD-WENO, WENO-SYMBO, cited orders and errors; WENO-JS spectral dissipation, cited).
+- [Deng et al. (2022)](/sources/deng-2022.md) — §1 (MDCD cited; dissipation for under-resolved scales); §3.2, Eq. (21), Remarks 1–2 (dissipation-adjusting parameter); §4.1, Figs. 1–2 (approximate dispersion relation against linear upwind and WENO-M); §4.2, Table 1.
+- [Ma et al. (2022)](/sources/ma-2022.md) — §1 (CRWENO); §2.3, Table 1, Fig. 1 (Fourier and ADR resolving ratios of WCNS-E and WCNS-T); §2.3.1–2.3.2, Fig. 2, Table 2 (shock–entropy wave; cost and order).

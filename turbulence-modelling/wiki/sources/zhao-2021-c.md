@@ -9,7 +9,7 @@ year: 2021
 venue: "Phys. Fluids 33:125102"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Physics_of_Fluids_Zhao_High-order_gas-kinetic_scheme_for_large_eddy_simulation_of_t.pdf"
 tags: [gas-kinetic, implicit-les, sgs-model, numerical-dissipation, les]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T16:02:00Z
 ---
 
 # Summary
@@ -97,10 +97,10 @@ Eqs. (7) and (8).
 
 # Printed slips
 
-- **Viscosity at $Re_\tau=180$:** printed $\mu=2.83\times10^{-4}$ (p. 9). *(Compiler check, not in the sources: Eqs. (25)–(26) give $U_c^+=2.5\ln180+5.5=18.48$, $u_\tau=1/18.48=0.0541$, $\mu=u_\tau/Re_\tau=3.006\times10^{-4}$; Table V gives $u_\tau/Re_\tau=0.0535/177.89=3.008\times10^{-4}$ and $0.0526/174.99=3.006\times10^{-4}$. The same procedure at $Re_\tau=395$ gives $1.238\times10^{-4}$, matching the printed $1.24\times10^{-4}$.)*
-- **Table VIII, $\Delta z^+$:** printed 8.33 for $N_z=64$ (G2, G3). *(Compiler check, not in the sources: $\pi\cdot180/64=8.84$, while $\Delta x^+=2\pi\cdot180/64=17.67$ matches the printed 17.66.)*
-- **Internal degrees of freedom (§II):** printed "$N=(5-3\gamma)(\gamma-1)$". *(Compiler check, not in the sources: for $\gamma=1.4$ the product gives 0.32, the quotient $(5-3\gamma)/(\gamma-1)$ gives 2.)*
-- **Eq. (16):** printed $C=[\langle M_{ij}L_{ij}\rangle/\langle M_{kl}M_{kl}\rangle]_+$ with $L_{ij}$ and $M_{ij}=\hat\Delta^2|\hat{\bar S}|\hat{\bar S}_{ij}-\Delta^2\widehat{|\bar S|\bar S_{ij}}$ as printed. *(Compiler check, not in the sources: with Eq. (15), the modelled deviatoric stress $-2C\Delta^2|\bar S|\bar S_{ij}$ turns the Germano identity into $L^d_{ij}=-2CM_{ij}$, whose least-squares solution is $C=-\tfrac12\langle L_{ij}M_{ij}\rangle/\langle M_{kl}M_{kl}\rangle$.)*
+- **Viscosity at $Re_\tau=180$:** printed $\mu=2.83\times10^{-4}$ (p. 9). Eqs. (25)–(26) give $U_c^+=2.5\ln180+5.5=18.48$, $u_\tau=1/18.48=0.0541$, $\mu=u_\tau/Re_\tau=3.006\times10^{-4}$; Table V gives $u_\tau/Re_\tau=0.0535/177.89=3.008\times10^{-4}$ and $0.0526/174.99=3.006\times10^{-4}$. The same procedure at $Re_\tau=395$ gives $1.238\times10^{-4}$, matching the printed $1.24\times10^{-4}$ *(compiler check, not in the sources)*.
+- **Table VIII, $\Delta z^+$:** printed 8.33 for $N_z=64$ (G2, G3). $\pi\cdot180/64=8.84$, while $\Delta x^+=2\pi\cdot180/64=17.67$ matches the printed 17.66 *(compiler check, not in the sources)*.
+- **Internal degrees of freedom (§II):** printed "$N=(5-3\gamma)(\gamma-1)$". For $\gamma=1.4$ the product gives 0.32, the quotient $(5-3\gamma)/(\gamma-1)$ gives 2 *(compiler check, not in the sources)*.
+- **Eq. (16):** printed $C=[\langle M_{ij}L_{ij}\rangle/\langle M_{kl}M_{kl}\rangle]_+$ with $L_{ij}$ and $M_{ij}=\hat\Delta^2|\hat{\bar S}|\hat{\bar S}_{ij}-\Delta^2\widehat{|\bar S|\bar S_{ij}}$ as printed. With Eq. (15), the modelled deviatoric stress $-2C\Delta^2|\bar S|\bar S_{ij}$ turns the Germano identity into $L^d_{ij}=-2CM_{ij}$, whose least-squares solution is $C=-\tfrac12\langle L_{ij}M_{ij}\rangle/\langle M_{kl}M_{kl}\rangle$ *(compiler check, not in the sources)*.
 - **Eqs. (21)–(23) against Eq. (13):** the conversion yields a kinematic $\nu_t$, while the coupling needs $\mu_t$; $\mu_t=\bar\rho\nu_t$ is not stated.
 - **p. 12:** "DNS ... by Moser et al.$^1$", but ref. [1] is Kim, Moin & Moser (1987).
 - **Fig. 20 caption:** dashed levels "0.2, −0.4, −0.6, −0.8, and −1".
@@ -112,8 +112,8 @@ Eqs. (7) and (8).
 
 | Source | Registry ([notation](/notation.md)) | Note |
 |---|---|---|
-| $\tau$ | $\tau_{\mathrm{col}}$ (page-local) | BGK collision time; **collision:** not a stress |
-| $\tau_t$ | $\tau_{\mathrm{col},t}$ (page-local) | **collision:** the registry's $\tau_t$ is the $k$-$\tau$ time scale |
+| $\tau$ | $\tau_{\mathrm{col}}$ (registry §11) | BGK collision time; **collision:** not a stress |
+| $\tau_t$ | $\tau_{\mathrm{col},t}$ (registry §11) | **collision:** the registry's $\tau_t$ is the $k$-$\tau$ time scale |
 | $u_i$ in the BGK equation, $\xi$, $N$ | particle velocity, internal variables, their number | **collision:** $\xi$ is not the reference coordinate, $N$ not the polynomial degree |
 | $\bar{(\cdot)}$ ($\bar U_i$) | $\bar\phi$ ($\bar u_i$) | resolved (cell-averaged) quantity; agrees; overbars on the coefficients $\bar a$, $\bar A$ of Eqs. (4)–(8) are equilibrium coefficients, not filters |
 | $\tilde{(\cdot)}$, $\tilde{\bar\Delta}$ | $\hat\phi$, $\hat\Delta=2\Delta$ | **collision:** the source's tilde is the test filter, not a Favre filter |

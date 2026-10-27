@@ -8,7 +8,7 @@ authors: [Yang Y., Ma H.]
 year: 2022
 venue: "Aerosp. Sci. Technol. 128:107758"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Aerospace_Science_and_Technology_Yang_Hybrid_RANSLES_study_of_tip_leakage_vortex_instability_and_t.pdf"
-tags: [des, k-omega-sst, turbomachinery, tip-leakage-vortex, anisotropy]
+tags: [des, k-omega, turbomachinery, tip-leakage-vortex, anisotropy]
 timestamp: 2026-10-26T16:21:00Z
 ---
 

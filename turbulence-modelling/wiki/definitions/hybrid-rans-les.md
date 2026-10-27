@@ -5,7 +5,7 @@ description: "Scale-resolving approaches that model all turbulence with RANS in 
 status: established
 aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-27T10:54:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Hybrid RANS/LES
@@ -39,8 +39,7 @@ turbulence modelling and filtering"
 
 ## Hybrid RANS/LES and wall-modelled LES
 
-Following the taxonomy of Larsson et al., as recalled by Haering et al.
-(2022, §I):
+Haering et al. (2022, §I) cite the taxonomy of Larsson et al.:
 
 - in [wall-modelled LES](/methods/wall-modelled-les.md), LES is active in
   the whole domain, the grid does not resolve the near-wall layer, and a wall
@@ -73,7 +72,7 @@ wall-function LES, which resolves the boundary layer with a number of cells
 independent of the Reynolds number and a first node at $y^+>30$; zonal and
 embedded LES with RANS and LES regions fixed a priori; and hybrid RANS/LES
 proper ([Delassaux et al. (2023)](/sources/delassaux-2023.md), §4.1; HAL
-author manuscript). They report, as recalled, a GPU wall-function LES of the
+author manuscript). They cite a GPU wall-function LES of the
 notchback DrivAer car whose drag error falls from 24 counts with
 stress-blended eddy simulation to 10 and 2 counts with LES on 250 and 500
 million cells (Menter et al., cited; §1).
@@ -118,7 +117,7 @@ had been simulated with a dynamic hybrid RANS/LES by Zope et al.
 
 Elzaabalawy et al. (2023) argue from the same cost picture that RANS cannot
 be dropped: thin attached boundary layers at Reynolds numbers up to $10^9$
-(ships, submarines) and Spalart's estimate, as recalled, that wall-modelled
+(ships, submarines) and Spalart's estimate, which they cite, that wall-modelled
 LES of a full wing will not be possible before 2045 make RANS and hybrid
 RANS/LES indispensable, with RANS kept in attached layers and a seamless
 RANS/LES hybridization for separation; "it is unrealistic to discard RANS
@@ -181,23 +180,22 @@ $f_{hb}\to1$, pure LES, as the grid is refined; on the backward-facing-step
 grids of Abe (2021) it runs essentially as LES
 ([Abe (2021)](/sources/abe-2021.md), §III, App. A, Eqs. A1–A4; see
 [scale-similarity and mixed models](/methods/scale-similarity-model.md)).
-In Haering et al.'s terms, zonal DES is interfaced where the user prescribes
-the zones (modes 1 and 3, as Basile et al. recall) and unified where a
-shielding function detects them (mode 2) *(compiler check, not in the
-sources)*; Basile et al. (2023) force RANS inside a jet nozzle
-and François et al. (2022) in the core flow of a fan stage
+Zonal DES lets the user prescribe the RANS and DES zones or, in its mode 2,
+detects them with a shielding function (see the
+[DES page](/methods/detached-eddy-simulation.md)); Basile et al. (2023), with
+mode 0+1, force RANS inside a jet nozzle and François et al. (2022) in the
+core flow of a fan stage
 ([Basile et al. (2023)](/sources/basile-2023.md), §2.2).
 
 **Wall-distance blending of one transported viscosity.** Tang et al. (2022)
-use an interfaced two-model hybrid of the second kind in a single transport
-equation: the [Spalart–Allmaras](/methods/spalart-allmaras-model.md) equation
+blend two models in a single transport equation: the [Spalart–Allmaras](/methods/spalart-allmaras-model.md) equation
 near the wall and the one-equation Yoshizawa subgrid-energy model, rewritten
 as a transport equation for the eddy viscosity by substituting
 $k_{\mathrm{sgs}}=\nu_t^2/(C_\mu^2\Delta^2)$, are blended term by term into
 one equation for $\tilde\nu$ with a function $F$ of the wall distance alone
 ($F=1$ below $y_{\mathrm{RANS}}$, $F=0$ above $y_{\mathrm{LES}}$, a
 hyperbolic-tangent ramp between, constants $C_{f1}=2.0$, $C_{f2}=0.2$),
-after Wang et al. and Sánchez-Rocha & Menon as recalled
+after Wang et al. and Sánchez-Rocha & Menon, whom they cite
 ([Tang et al. (2022)](/sources/tang-2022.md), §2.1, Eqs. 1–9; page-local
 $F$, $y_{\mathrm{RANS}}$, $y_{\mathrm{LES}}$). The RANS layer is "quite
 thin", $y_{\mathrm{RANS}}$ about 10–20% of the boundary-layer thickness; the
@@ -210,8 +208,7 @@ page-local $\mu_t^{\mathrm{bl}}$, $\mu_t^{\mathrm{RANS}}$, $\mu_t^{\mathrm{LES}}
 wall-distance blend, not the constrained-LES $\nu_t^{\mathrm{hyb}}$ of registry
 §11 below). The Yoshizawa part also carries terms from a spatially varying
 filter width (Eq. 4). The interface height is prescribed by the wall
-distance, so in Haering et al.'s terms the switch is interfaced, not
-unified *(compiler check, not in the sources)*.
+distance.
 
 **Bridging in the dissipation term.** Wang et al. (2021) give a general
 construction of DES-type hybrids for any RANS model with a length-scale
@@ -343,8 +340,8 @@ L_+=\frac{\Delta_{C+}}{(1+\Delta_{C+}^3)^{1/3}},\quad \Delta_{C+}=C_+\frac{\Delt
 
 with $L_+$ the ratio of the modelled to the total length scale,
 $L_{\mathrm{tot}}=\sqrt k/(C_\mu\omega)$ the RANS length of SST, and
-page-local symbols $\psi_\beta$, $R$, $L_+$, $\Delta_{C+}$, $C_+$, $L_{\mathrm{tot}}$,
-$\beta_{\mathrm{CES}}$. The source writes $\beta_{\mathrm{CES}}$ as $\beta$, the symbol of the SST
+$\psi_\beta$, $L_+$, $\beta_{\mathrm{CES}}$ as in registry §11, $R$,
+$\Delta_{C+}$, $C_+$, $L_{\mathrm{tot}}$ page-local. The source writes $\beta_{\mathrm{CES}}$ as $\beta$, the symbol of the SST
 destruction coefficient, without defining it, and gives no value of $C_+$
 nor the definition of $\Delta$. For $\Delta_{C+}\to\infty$, $L_+\to1$ and
 $\psi_\beta\to1$ (the RANS dissipation); for $\Delta_{C+}\to0$,
@@ -386,10 +383,10 @@ one Crow wavelength long (§2.1).
 
 ### Mean-and-fluctuation splitting
 
-A family of methods builds on the decomposition of Schumann (1975), as
-recalled by Haering et al. (2022, §I), in which different eddy-viscosity
+A family of methods builds on the decomposition of Schumann (1975), which
+Haering et al. (2022, §I) cite, in which different eddy-viscosity
 models act on the mean and on the fluctuating strain; the authors say it
-"may actually be considered the first hybrid method". They recall:
+"may actually be considered the first hybrid method". They cite:
 
 - **two-velocity HRL** (Uribe et al.): RANS viscosity on the mean strain,
   Smagorinsky on the resolved fluctuating strain, with a hyperbolic-tangent
@@ -403,6 +400,21 @@ models act on the mean and on the fluctuating strain; the authors say it
   everywhere;
 - **dual-mesh HRL**: separate RANS and LES simulations on two grids coupled
   by forcing terms that enforce consistency in expectation.
+
+Brenner et al. (2022, §1) open their data-assimilation paper with hybrid
+LES/RANS methods, among them the same dual-mesh framework of Xiao & Jenny,
+as one answer to the near-wall cost of scale resolution; they cite Xiao &
+Jenny for that cost, which scales "with $Re^3$ and $Re^{1.8}$ for DNS and
+LES, respectively" in wall-bounded flows; their own route is the opposite, a RANS model corrected by data
+([Brenner et al. (2022)](/sources/brenner-2022.md), §1; see
+[grid-point requirements](/results/les-grid-point-requirements.md) and
+[field inversion](/methods/field-inversion-machine-learning.md)). Ghidoni et
+al. (2022) quote a RANS–implicit-LES hybrid (Islam & Thornber) and the
+SA-DES of Travin et al. among the reference results for their
+two-dimensional URANS of the cylinder at $Re=1.4\times10^5$, and name
+hybrid RANS/LES among the targets of adaptive time integration for stiff
+turbulence-model equations ([Ghidoni et al. (2022)](/sources/ghidoni-2022.md),
+§1, §6.2, Table 12, §7; see [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)).
 
 **Constrained LES near an immersed boundary.** Cai et al. (2022) use a
 Reynolds-stress-constrained ("constrained LES", CLES) eddy viscosity near
@@ -450,10 +462,10 @@ formulations.
    consistent with the reduction of the modelled stress, to be "the only way
    to prevent regions of MSD", and view body forcing formally as a model of
    the commutator between the implicit filter and the substantial
-   derivative (§II A). As they recall it, stochastic forcing at the RANS/LES
-   interface removed log-layer mismatch in channel flow but is problem
-   dependent (Piomelli et al.), and the forced scale-adaptive simulation
-   SAS-F still showed log-layer mismatch (Menter et al.).
+   derivative (§II A). They cite Piomelli et al. for stochastic forcing at
+   the RANS/LES interface, which removed log-layer mismatch in channel flow
+   but is problem dependent, and Menter et al. for the forced scale-adaptive
+   simulation SAS-F, which still showed log-layer mismatch.
 2. **One scalar eddy viscosity for two jobs.** A hybrid model must carry a
    non-negligible share of the mean stress and the energy transfer to the
    unresolved scales; a scalar eddy viscosity cannot do both (§II B; see
@@ -671,7 +683,7 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
   one ($1.36\times10^7$) it stays attached. Drag coefficients (near-field):
   wall law 0.2347 (fine) and 0.2742 (coarse), no-slip on slant and base
   0.2553 and 0.2548, against 0.279 measured by Meile et al. at the same
-  $Re_H$ and the body-fitted results of Guilmineau et al. recalled in their
+  $Re_H$ and the body-fitted results of Guilmineau et al. listed in their
   Table III (SST 0.2999, EARSM 0.2603, DES 0.3156, IDDES 0.3452) (§IV,
   Table III; DES details on the
   [DES page](/methods/detached-eddy-simulation.md)).
@@ -803,9 +815,9 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
   cost ratio of 18 is a wall-clock ratio: in core-hours (384 cores for
   2 hours against 1152 cores for 36 hours) it is 54 *(compiler check, not
   in the sources)*.
-- The periodic hill has been simulated successfully at about one million
-  cells with second-order delayed DES, PANS and PITM, as recalled by Haering
-  et al. (2022, §V B); see [periodic hill](/benchmarks/periodic-hill.md).
+- Haering et al. (2022, §V B) cite successful simulations of the periodic
+  hill at about one million cells with second-order delayed DES, PANS and
+  PITM; see [periodic hill](/benchmarks/periodic-hill.md).
   Prieto Saavedra et al. (2024) list, for the hill at $Re_b=37\,000$, PITM
   hybrid results of Chaouat & Schiestel with reattachment at 4.30, 4.26,
   3.54 and 3.68 hill heights and a DLUM result of Mokhtarpoor et al. at
@@ -854,7 +866,7 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
   relative variations of both (§4.2). Heinz's claim that PANS and PITM need
   a "much finer grid" than CES for the same resolution (§4.4) compares PANS
   with CES; Petrocchi & Barakos's statement that PANS works on RANS-like
-  grids compares it with DES in LES mode, so the two do not conflict.
+  grids compares it with DES in LES mode.
 - Heinz prints the Kolmogorov-constant mapping
   $C_+=(3C_K/2)^{3/2}/\pi$ ($C_K$ the Kolmogorov constant) with $C_K=(1.3,1.43,1.5)$ giving
   $C_+=(0.876,1.0,1.074)$ (§2.3, App. C); the formula gives 0.867 for
@@ -900,3 +912,5 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
 - [Bose & Park (2018)](/sources/bose-2018.md) — §1, §2.1.
 - [Zangeneh (2021)](/sources/zangeneh-2021.md) — §I, §II.A–B, §III.
 - [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §2.1, §4.5 Table 7, Fig. 19.
+- [Brenner et al. (2022)](/sources/brenner-2022.md) — §1.
+- [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §1, §6.2, Table 12, §7.

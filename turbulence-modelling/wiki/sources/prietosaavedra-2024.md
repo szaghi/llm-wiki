@@ -143,7 +143,7 @@ duplicates.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-26). This source is cited on:
+Chunk 5 (2026-10-26), cited further in chunk 10. This source is cited on:
 
 - [Periodic hill](/benchmarks/periodic-hill.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
@@ -153,6 +153,7 @@ Chunk 5 (2026-10-26). This source is cited on:
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Jump-penalty stabilization of high-order methods](/methods/jump-penalty-stabilization.md)
+- [Variational multiscale method](/methods/variational-multiscale-method.md)
 - [WALE model](/methods/wale-model.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)

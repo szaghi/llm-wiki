@@ -5,7 +5,7 @@ description: "Wilcox's two-equation k-ω eddy-viscosity model and its unblended 
 status: established
 aliases: [k-omega model, Wilcox k-ω, Wilcox 1998, Wilcox 2006, Wilcox 07, k-ω 2006, TNT, turbulent/non-turbulent k-ω, k-log-ω, k-ln ω]
 tags: [rans, eddy-viscosity, dg, boundary-layer]
-timestamp: 2026-10-27T10:56:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Wilcox k-ω model
@@ -41,7 +41,7 @@ $\alpha$ is the source's $\zeta$ and the cross-diffusion coefficient
 $\sigma_d$ (page-local name) its $F_\omega$. The production is limited for all
 variants as $\min(\nu_t\lvert S\rvert^2,15\beta^*\omega k)$; the authors take 15
 rather than Menter's 10 "because the lower value activates the limiter in
-boundary-layer regions", recalling that Menter used 20 and later 10 (§3.1.1,
+boundary-layer regions", noting that Menter used 20 and later 10 (§3.1.1,
 Eq. 55). Boundary conditions: $k=0$ at the wall, $\omega\propto y^{-2}\to\infty$
 there, inlet values of $k$ and $\omega$, zero normal fluxes elsewhere
 (Eqs. 40–43).
@@ -95,7 +95,7 @@ model whose frequency is $1/\tau=\varepsilon/k$, without the $\beta^*$ of the
 registry's $\omega$, so that $\nu_t=C_\mu k/(\varepsilon/k)$; in that variable
 the $\omega$ equation is a production–destruction balance with coefficient
 $C_{\omega1}$ and destruction ratio $\alpha_\omega=C_{\omega2}/(C_\mu C_{\omega1})$
-(page-local; the source's $\beta$, $\approx1.63$), plus an
+(registry §11; the source's $\beta$, $\approx1.63$), plus an
 optional cross diffusion
 $C_\omega k^{-1}(\nu+\nu_t)\partial_jk\,\partial_j(\varepsilon/k)$ that "acts
 like a damping function" ([Heinz (2020)](/sources/heinz-2020.md), §2.3,
@@ -128,7 +128,8 @@ As $y\to0$, $\omega\to6\nu/(\beta y^2)$, valid for $y^+<3$, and $1/\omega$
 is therefore quadratic in the wall distance (Elzaabalawy et al. 2023,
 §3.1.1–3.1.2, Eq. 57). The matching viscous-sublayer law for $k$ is
 $k^+=C_k(y^+)^{p_k}$ with $p_k=\tfrac12+\sqrt{\tfrac14+6\beta^*/\beta}$ and $C_k$
-between 0.0025 and 0.0032 depending on the variant, as recalled (Eq. 58;
+between 0.0025 and 0.0032 depending on the variant, as the authors cite
+it (Eq. 58;
 page-local $C_k$, $p_k$). With $\beta=0.075$ this exponent is 3.23, the
 value in the SST wall functions that Mozaffari et al. (2024) print on the
 [SST page](/methods/k-omega-sst-model.md), and 3.28 with the Wilcox (1998)
@@ -239,8 +240,8 @@ pseudo-transient continuation with GMRES (§3.1–§3.2).
 [Zhao et al. (2023b)](/sources/zhao-2023-b.md) avoid the issue by solving SST at first order (see the
 [SST page](/methods/k-omega-sst-model.md)).
 The log-$\omega$ route goes back to Bassi et al. (2005), who solved the
-Wilcox model with $\ln\omega$ in DG, as recalled by Lodares et al. (2022)
-and Vandenhoeck et al. (2022); Vandenhoeck et al. extend it to SST in flux
+Wilcox model with $\ln\omega$ in DG, which Lodares et al. (2022) and
+Vandenhoeck et al. (2022) cite; Vandenhoeck et al. extend it to SST in flux
 reconstruction and compare their Wieghardt flat-plate profiles with the
 DG $\mathbb P^2$ Wilcox $k$-$\ln\omega$ solution of Bassi et al. on 8800
 elements, and recall that earlier flux-reconstruction RANS solvers were
@@ -258,6 +259,29 @@ Tomboulides et al. (2025) solve the regularized model in the spectral-element
 codes [Nek5000](/software/nek5000.md) and NekRS with BDF/extrapolation time
 stepping (§2.2; see
 [spectral element method](/methods/spectral-element-method.md)).
+
+**Unsteady RANS: the turbulence variables set the time step.** Ghidoni et
+al. (2022) run the log-$\omega$ model
+as unsteady RANS with linearly implicit Rosenbrock and peer time
+integrators on their modal DG discretization (BR2, exact-Riemann fluxes,
+$N=5$ in the URANS cases). The model is printed with $\bar k=\max(0,k)$,
+the log variable $\tilde\omega_\ell$ under "realizability" conditions that
+keep the normal stresses positive and the shear stresses within the
+Schwarz inequality, and $\mu_t=\alpha^*\rho\bar k\,e^{-\tilde\omega_\ell}$, the
+constants named but not printed; $k$ can be limited exactly to zero
+because no term is divided by $\bar k$ after substitution
+([Ghidoni et al. (2022)](/sources/ghidoni-2022.md), §2, Eqs. 1–8). For
+adaptive time stepping they require the embedded error estimator to be
+the $L^2$ norm over all variables, $k$ and $\tilde\omega_\ell$ included,
+because these "are irregular and the main cause of instability"; a
+domain average is not enough (§5, Eq. 67). Linearly implicit schemes,
+although A- and L-stable, become unstable beyond a step they call the
+"near-stability zone", where the per-step linearization of the stiff
+turbulence equations fails; step-size control extends that limit by up
+to an order of magnitude on the cylinder at $Re=3900$, with little or no
+extra cost for some schemes (§4, §6.1, Tables 10–11; see the
+[DG spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
+page for the integrators).
 
 ## Evidence
 
@@ -314,8 +338,8 @@ stepping (§2.2; see
   from DNS (§3.2, Table 2). On the Driver–Seegmiller step it reattaches at
   $6.49$ step heights against $6.26$ measured (§3.3); on the NACA 0012 at
   $\alpha=0^\circ$ it gives $C_D=0.00835$ against 0.0081 measured (§3.4,
-  Table 3). In the same tables the NASA codes give, with standard
-  $k$-$\omega$, $C_D=0.00854$ (CFL3D) and 0.00837 (FUN3D) at $0^\circ$,
+  Table 3). In the same tables the NASA codes give, with their
+  $k$-$\omega$ model, $C_D=0.00854$ (CFL3D) and 0.00837 (FUN3D) at $0^\circ$,
   and $C_D=0.01259$, $C_L=1.0958$ (CFL3D) and 0.01297, 1.1012 (FUN3D) at
   $10^\circ$ against 0.012 and 1.075 measured (Tables 3–4). On an OECD/NEA
   T-junction the regularized model ran at a CFL number of about 0.1, against
@@ -334,6 +358,23 @@ stepping (§2.2; see
   Sandberg & Michelassi (2022) list the model's eddy viscosity
   $\mu_t=\langle\rho\rangle k/\omega$ among the turbomachinery closures
   ([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §2.2.2.1).
+- **Cylinder wakes in two-dimensional URANS.** Ghidoni et al. (2022)
+  compute the circular cylinder with the model at DG $N=5$: at $Re=3900$
+  the drag coefficient is 1.52 (incompressible) and 1.62 (compressible,
+  $M=0.1$) with $St=0.23$, different from LES, DNS and experiment but in
+  line with other two-dimensional URANS (Rajani et al.: 1.65, 0.244),
+  which the authors attribute to the missing three-dimensional effects; at
+  $Re=1.4\times10^5$, where the model has no means of keeping the boundary
+  layer laminar up to separation (unlike Spalart–Allmaras, which can be
+  run with zero eddy viscosity there, as in the laminar-separation DES of
+  Travin et al. they quote), it gives $St=0.271$, $C_D=0.751$, separation at
+  $91^\circ$, base pressure $-C_{pb}=0.86$ and $L_r/D=0.72$, close to the
+  two-dimensional RANS of Moussaed et al. (§6.1–6.2, Tables 9, 12; see
+  [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)). On a
+  three-blade vertical-axis wind turbine at $Re=1.6\times10^5$ and tip-speed
+  ratio 1.5 (rotating frame, $N=2$, extruded mesh) the mean power
+  coefficient is 0.173, against 0.171 for a cited two-dimensional RANS and
+  0.152 for Noventa et al. (§6.4, Table 17).
 - **Outlook.** Elzaabalawy et al. propose the $k$-$kl$ model, with $kl=0$
   at the wall and second velocity derivatives available element-wise in DG,
   and a "negative $k$-$kl$" analogue of negative
@@ -358,6 +399,12 @@ stepping (§2.2; see
 - Sandberg & Michelassi cite the model as "Wilcox et al. (1998)" in the
   text (§2.2.2.1), while their reference list prints the single-author
   Wilcox (1998) book.
+- Ghidoni et al. (2022) print the cross-diffusion term $\sigma_d$ in the
+  compressible equations (Eq. 1) but not in the incompressible and
+  rotating-frame ones (Eqs. 8–9); their pressure contains no $k$ while the
+  $k$-sink appears as a source of the mean-flow energy equation (Eqs. 1–2).
+  Their text gives the compressible $Re=3900$ lift fluctuation and
+  Strouhal number as 1.19 and 0.225, their Table 9 as 1.13 and 0.23.
 - By the rewriting above, Heinz's $C_{\omega1}$ plays the role of Wilcox's
   $\alpha$, and Heinz's destruction ratio $\alpha_\omega$ (printed $\beta$) is
   not Wilcox's $\beta$; the names in the table above are Wilcox's.
@@ -374,3 +421,4 @@ stepping (§2.2; see
 - [Heinz (2020)](/sources/heinz-2020.md) — §2.3 Eq. 11, §4.3 Eqs. 47–51.
 - [Wang et al. (2013)](/sources/wang-2013.md) — §5.4 Table V Fig. 23.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1.
+- [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §2 Eqs. 1–8, §4, §5 Eq. 67, §6.1–6.2 Tables 9–12, §6.4 Table 17.

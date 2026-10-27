@@ -8,8 +8,8 @@ authors: [Constant B., Péron S., Beaugendre H., Benoit C.]
 year: 2024
 venue: "J. Comput. Phys. 519:113441"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Journal_of_Computational_Physics_Constant_An_improved_immersed_boundary_method_for_turbulent_flow_simu.pdf"
-tags: [immersed-boundary, wall-model, rans, cartesian-grid, high-lift]
-timestamp: 2026-10-26T10:26:00Z
+tags: [immersed-boundary, wall-model, rans, moving-grids, high-lift]
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Summary
@@ -126,7 +126,7 @@ The adaptation criterion estimates the $y^+$ one layer below as $y^+_{n-1}\appro
 | $\tilde\nu$, $\chi$, $f_{v1}$, $c_{v1}=7.1$ | $\tilde\nu$, $\chi$, $f_{v1}$, $c_{v1}$ | Eq. 8 prints $C_{v1}$ |
 | $\nu$, $\nu_t$ | $\nu$, $\nu_t$ | |
 | $\kappa=0.41$, $u_\tau$, $y^+$ | $\kappa$, $u_\tau$, $y^+$ | |
-| $D=1-\exp(-y^+_A/19)$ | van Driest damping with $A^+=19$ | |
+| $D=1-\exp(-y^+_A/19)$ | van Driest damping with $A^+=19$ | to the first power, not squared as in the mixing length of the [equilibrium wall model](/methods/equilibrium-wall-model.md) |
 | $M(y^+)$ | $f(y^+)$ | Musker's law (registry §11); its form is not printed |
 | $H_{mod}$ | $h_{\mathrm{wm}}$ | modelling height: wall distance below which points are target (modelled) points |
 | $y^+_{target}$ | (target $y^+$ of the first computed cells, page-local) | 50–500 (§3.1) |

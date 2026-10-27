@@ -141,7 +141,7 @@ software) no URL, [92] a CTR report.
 
 # Pages created or updated
 
-Chunk 7 (2026-10-26). This source is cited on:
+Chunk 7 (2026-10-26), cited further in chunk 10. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
@@ -149,6 +149,7 @@ Chunk 7 (2026-10-26). This source is cited on:
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
+- [Pressure dilatation](/definitions/pressure-dilatation.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Flux reconstruction](/methods/flux-reconstruction.md)

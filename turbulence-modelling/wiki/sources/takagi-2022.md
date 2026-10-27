@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 452:110899"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Takagi_A_novel_high-order_low-dissipation_TENO-THINC_scheme_for_hyp.pdf"
 tags: [shock-capturing, numerical-dissipation, compressible, implicit-les]
-timestamp: 2026-10-27T05:45:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # Summary
@@ -109,7 +109,7 @@ $$\hat f_{i+1/2}=f_++f_-\frac{A+T}{1+AT},\qquad T=\tanh(0.5\beta_{\mathrm{TH}}),
 | $f(u)$, $f_i$, $h(x)$ | (flux, its point values, primitive function, page-local) | **collision:** $h(x)$ against the cell size $h$; Table 2's $h$ is the grid spacing |
 | $\hat f_{i+1/2}$, $\hat f_{k,i+1/2}$ | (interface flux, candidate-stencil flux, page-local) | **collision:** hat is not a test filter here |
 | $\beta_{k,r}$ | $\mathrm{IS}_k$ | Jiang–Shu smoothness indicator; **collision** with $\beta(\boldsymbol x)$ |
-| $\tau_K$, $\tau_5=\lvert\beta_{1,3}-\beta_{2,3}\rvert$ | $\tau_{\mathrm T}$ (page-local) | **collision** with $\tau_{ij}$ |
+| $\tau_K$, $\tau_5=\lvert\beta_{1,3}-\beta_{2,3}\rvert$ | $\mathrm{IS}_{\mathrm G}$ (global reference indicator, page-local, as on the [WENO](/methods/weno-scheme.md) page) | **collision** with $\tau_{ij}$ |
 | $\gamma_k$, $\chi_k$ | $\gamma^{\mathrm T}_k$, $\chi^{\mathrm T}_k$ (page-local) | scale-separated measure and its normalization; **collision** with $\gamma$ and the SA $\chi$ |
 | $\delta_k$, $\delta_{k,i}$ | $\delta^{\mathrm T}_k$ (page-local) | binary stencil flag; **collision** with $\delta$ and $\delta_{ij}$ |
 | $d_k$, $w_k$ | $d_k$, $\mathsf w_k$ | optimal linear and nonlinear weights ($d_k=6/10$, $3/10$, $1/10$) |
@@ -128,7 +128,7 @@ $$\hat f_{i+1/2}=f_++f_-\frac{A+T}{1+AT},\qquad T=\tanh(0.5\beta_{\mathrm{TH}}),
 author). The list is merged complete into the
 [bibliography](/bibliography.md) with `citedby` this slug. Ref. [64] (von
 Neumann & Richtmyer 1950, printed "N.J. Von") is mapped to `vonneumann-1950`; ref. [42] (Li, Fu & Adams 2021, J.
-Comput. Phys. 428:109960) is keyed `li-2021-h`, distinct from the planned Source `li-2021`, a different work. Same-author same-year works are keyed in
+Comput. Phys. 428:109960) is keyed `li-2021-h`, distinct from the Source `li-2021`, a different work. Same-author same-year works are keyed in
 printed order (Deng 2018, Fu 2019, Haimovich 2017, Lusher 2020). Ref. [55]
 (Rusanov 1961) prints no volume. All items parsed.
 

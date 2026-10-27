@@ -5,7 +5,7 @@ description: "Low-Reynolds-number airfoil with a laminar separation bubble on th
 status: established
 aliases: [E387, Eppler 387, Eppler-387 airfoil, NASA TM 4062 airfoil]
 tags: [benchmark, transition, implicit-les, separated-flow, boundary-layer]
-timestamp: 2026-10-26T20:47:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Eppler 387 airfoil
@@ -33,7 +33,7 @@ the turbulent layer after reattachment.
 | $Re_c$ | $10^5$, $2\times10^5$, $3\times10^5$ | 60,000 | $10^5$ at $\alpha_a=10^\circ$; $3\times10^5$ at $\alpha_a=4^\circ$ |
 | Approach | RANS with transition models (algebraic γ, γ-$Re_\theta$-SST, one-equation γ-SST), Ansys Fluent | 2D RANS/URANS with γ-$Re_\theta$ in STAR-CCM+ | wall-resolved [implicit LES](/definitions/implicit-les.md) with an upwind mass-conserving mixed stress method, $N=3$ |
 | Inflow | $Tu$ about 0.06% at the leading edge (inlet 0.0631 to 0.0711%, $\mu_t/\mu$ about 0.1) | $Tu=0.03\%$, $\mu_t/\mu=1$ (their setting for all airfoils) | no free-stream turbulence, no inlet-angle correction |
-| Other references | — | 2D and 3D simulations of Sahin et al., as recalled | — |
+| Other references | — | 2D and 3D simulations of Sahin et al., as cited | — |
 
 ## What the case tests
 
@@ -130,8 +130,8 @@ results cannot be compared number by number.
   averaging as "5 characteristic time lengths ($U_\infty/c$)"; by dimension
   the time unit is $c/U_\infty$ *(compiler check, not in the sources)*. Their Table 2 labels the meshes M1–M3, the text m1–m3.
 - The configurations differ in modelling level (2D and 3D RANS against
-  wall-resolved implicit LES) and in inflow turbulence (about 0.06%
-  against none), so agreement or disagreement with the experiment is not
+  wall-resolved implicit LES) and in inflow turbulence (0.03% to about
+  0.06% against none), so agreement or disagreement with the experiment is not
   comparable across them.
 
 # Citations

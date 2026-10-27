@@ -9,7 +9,7 @@ year: 2023
 venue: "Astrophys. J. 953:44"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_The_Astrophysical_Journal_Adhikari_Theory_and_Transport_of_Nearly_Incompressible_Magnetohydrody.pdf"
 tags: [mhd, plasma, astrophysics, compressible]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Summary
@@ -23,9 +23,9 @@ are incompressible but fully three-dimensional: two-dimensional structures
 (flux ropes, magnetic islands) and slab Alfvén waves enter at the same
 order, and the Alfvén speed appears. At low and order-one beta, by
 contrast, the leading order is two-dimensional, without the Alfvén speed,
-and the slab part is a higher-order correction. The authors contrast this
-with the anisotropic two-dimensional picture of
-[reduced MHD](/definitions/reduced-mhd.md). The leading-order velocity is
+and the slab part is a higher-order correction (the homogeneous,
+strong-guide-field limit is on [reduced MHD](/definitions/reduced-mhd.md)).
+The leading-order velocity is
 not solenoidal, so the Elsasser equation (Eq. 7) differs from its
 incompressible versions.
 
@@ -36,8 +36,8 @@ the residual energy and their three correlation lengths (Eqs. 8–11). They
 reduce them to a steady, spherically symmetric form with a stream-shear and
 a pickup-ion source (Eqs. 12–15), add a density-variance equation, and
 couple everything to a three-fluid (proton, electron, pickup ion) solar
-wind heated by the turbulent dissipation. This is a turbulence-transport
-model of energy and length scale, not a CFD closure.
+wind heated by the turbulent dissipation. The model transports Elsasser
+energies and correlation lengths; it carries no Reynolds or subgrid stress.
 
 From 1 to 75 au the model agrees, "with some scatter", with 27 years of
 Voyager 2 data, Ulysses electron temperatures and New Horizons pickup-ion

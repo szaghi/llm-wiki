@@ -5,7 +5,7 @@ description: "FLEXI is an open-source high-order DGSEM framework for compressibl
 status: established
 aliases: [FLEXI framework, HOPR, POSTI]
 tags: [software, dg, les, kinetic-energy-preserving, reinforcement-learning]
-timestamp: 2026-10-27T05:50:00Z
+timestamp: 2026-10-27T15:52:00Z
 ---
 
 # FLEXI
@@ -262,7 +262,7 @@ Flad & Gassner (2017) ran their study of kinetic-energy-preserving DG LES in an
 - Krais et al. (2021) print "perfect strong scaling performance" for more than
   one billion degrees of freedom on 100,000 cores (§2.2.2), while their measured
   study ran to 49,152 cores with an efficiency that "does not drop below 70%"
-  (§5.8). The measured values are the quantitative ones.
+  (§5.8).
 - The version read is the arXiv v1 preprint (October 2019); section and equation
   numbers are those of the preprint.
 - Krais et al. (2021, Eq. 46) swap the superscripts of the two mortar

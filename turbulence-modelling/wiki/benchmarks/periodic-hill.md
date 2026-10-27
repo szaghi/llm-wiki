@@ -5,7 +5,7 @@ description: "The streamwise-periodic channel with a hill constriction, a smooth
 status: established
 aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow, parametrized periodic hills]
 tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion, implicit-les, gas-kinetic, wmles, wall-model]
-timestamp: 2026-10-27T11:00:00Z
+timestamp: 2026-10-27T15:48:00Z
 ---
 
 # Periodic hill
@@ -133,9 +133,9 @@ The authors read the comparison as evidence that the lower
 [numerical dissipation](/properties/numerical-dissipation.md) of high-order
 schemes benefits a hybrid model more than a no-model simulation.
 
-**Data-driven RANS corrections.** As recalled by
-[Duraisamy et al. (2019)](/sources/duraisamy-2019.md), §5.3, Figs. 6–7, the
-random-forest Reynolds-stress discrepancy models of Wang et al. (2017) and
+**Data-driven RANS corrections.**
+[Duraisamy et al. (2019)](/sources/duraisamy-2019.md), §5.3, Figs. 6–7, cite
+results in which the random-forest Reynolds-stress discrepancy models of Wang et al. (2017) and
 Wu et al. (2018b), trained on separated flows in other geometries (or on a
 periodic hill of slightly different shape), improve the predicted
 anisotropy and mean velocity on the periodic hill. The gene-expression
@@ -144,6 +144,18 @@ step, show "a high level of uncertainty" on it. The review gives no
 Reynolds number for these cases. See
 [field inversion and machine learning](/methods/field-inversion-machine-learning.md)
 and [model-form uncertainty](/definitions/model-form-uncertainty.md).
+[Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md), §4.1, cite the
+same step-to-hill transfer from the authors' group and describe it differently: the
+gene-expression-programming models trained on the step gave "excellent" a
+posteriori hill predictions with only the first four basis tensors and two
+invariants, while some individuals had very large coefficients,
+non-realizable stresses and unstable runs (see Qualifications). The same
+review cites the result that an eddy viscosity learned in the loop of a RANS solver
+on channel data and tested on the hill improved less than non-linear
+approaches (Liu et al., §3.4), that SpaRTA was demonstrated on hills at
+different Reynolds numbers (§3.4), and shows the hill, after the LES of
+Fröhlich et al., as the example of the separation challenge (§2.1,
+Fig. 1).
 
 **Field inversion on the parametrized hill family.** A different
 configuration from the one of the table above:
@@ -171,14 +183,83 @@ hill top and the reattachment (Figs. 16–17). A network with hidden layers
 (32, 16, 8), trained on two geometries, reproduces the inversions and,
 embedded in the solver, brings velocity profiles closer to DNS than baseline
 SA at an interpolated width ($\alpha_h=1.0$) and at two extrapolated widths
-(0.5, 1.5) "in most regions" (§3.2.2, Figs. 19–22). Yan et al. also recall
+(0.5, 1.5) "in most regions" (§3.2.2, Figs. 19–22). Yan et al. (§1) also cite
 Rumsey's finding that enhanced mixing in the separated shear layer improves
 the periodic hill but worsens backward-facing-step flows (§1; see
 [backward-facing step](/benchmarks/backward-facing-step.md)).
 
+**Adjoint assimilation of a frozen eddy viscosity at $Re_h=10{,}595$.**
+[Brenner et al. (2022)](/sources/brenner-2022.md) run the 2D hill at
+$Re_h=10{,}595$ (hill height and bulk velocity at the crest; constant bulk
+velocity by a mean pressure gradient) in foam-extend 4.0 on a
+$180\times130$ mesh with first-cell $y^+\approx5$, against the averaged LES
+of Gloerfelt & Cinnella interpolated to the RANS mesh (§3.1, Fig. 2). The
+eddy viscosity of a converged [$k$-$\varepsilon$](/methods/k-epsilon-model.md)
+solution (OpenFOAM `kEpsilon`, low-Reynolds wall function) is frozen and
+multiplied by a cell-wise field $\beta(\boldsymbol x)$, so that the momentum
+equation carries $\nu+\beta\nu_t$; $\beta$ is fitted to velocity data by a
+discrete adjoint of the coupled pressure–velocity solver, with the
+pressure-residual part of the gradient dropped (§2.1–2.3, §2.9; see
+[field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
+
+- *Synthetic truth* (§3.2): with a prescribed smooth multiplier, the
+  velocity is recovered "very well" but the multiplier is not (recovered
+  range 0.21 to 1.95): the inverse problem is not unique.
+- *Gradient check* (§3.3): against finite differences at 156 cells the
+  adjoint gradient shows "significant difference … in some cells"; 84% of
+  the full gradient field has the correct sign.
+- *Full-field LES velocity* (§3.4, Fig. 9): the profiles coincide well
+  except for the velocity peaks near the crest; the wall shear stress does
+  not improve from interior data alone.
+- *Sparse data* (§3.5, Figs. 10–15): reference lattices of 1408, 234 and 48
+  points with staggered test points. Without regularization the multiplier
+  peaks unphysically at the data points (range 0.01 to 11.9 in the dense
+  case); a neighbour-difference penalty of weight $10^{-12}$ smooths it and,
+  in the sparse case only, lowers the test-point error; a Helmholtz filter
+  removes checkerboard artefacts of strong regularization.
+- *Wall data* (§3.6, Fig. 16): converting the LES skin friction into
+  near-wall reference velocities recovers $C_f$, and with interior data
+  improves the profiles too, though they deviate near the lower wall; the
+  authors see "a Pareto front" between wall and interior agreement and
+  cannot say whether the eddy-viscosity form or the method causes it.
+
+The stress–strain alignment indicator $c_{RS}$ (registry §11; threshold
+0.86 after Schmitt) is "neither considerably nor consistently improved" by
+the assimilation, while the mean velocity definitely is (§3.5, Fig. 13).
+The authors conclude that a linear eddy-viscosity model with a correctly
+computed eddy viscosity reproduces the mean velocity well, and that the
+results "considerably depend" on the data locations and hyperparameters
+(§4).
+
+**Sparse Bayesian EARSM corrections at $Re_h=10{,}595$.**
+[Cherroud et al. (2022)](/sources/cherroud-2022.md), §4.1–4.2, use the hill
+($Re_h=10{,}595$ on the bulk velocity in the restricted section and the
+hill height; RANS grid $120\times130$, cyclic inlet and outlet with a
+forcing at constant flow rate; LES of Breuer et al. as reference) with a
+curved [backward-facing step](/benchmarks/backward-facing-step.md) and a
+converging–diverging channel in a leave-one-out training of sparse
+Bayesian corrections of [$k$-$\omega$ SST](/methods/k-omega-sst-model.md):
+an additive anisotropy $b^\Delta_{ij}$ and a production correction
+$b^R_{ij}$ on the two-dimensional integrity basis (see
+[explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)
+and [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+The hill is a training flow of scenarios 1 and 2 and the test flow of
+scenario 3, trained on step and channel (Table 1). The models chosen by a
+posteriori cross-validation over velocity, $k$, shear stress and $C_f$
+keep $b^\Delta_{ij}=0$ and one production term along $T^{(1)}_{ij}$; their
+average improvements over SST, test flow weighted twice, are 6.0%, 28%
+and 31% for scenarios 1–3 (Table 2). The scenario-1 model gives the most
+accurate velocity on the hill, and all three clearly beat SST in the hill
+recirculation (Figs. 1, 5); the correction raises the eddy viscosity in
+the separated region and reattaches the boundary layer; $k$ is
+over-predicted in the separated region, with wide uncertainty bands
+(Fig. 7). The authors read their sensitivity analysis as showing that
+"LEVM are overall sufficient for such 2D separated flows, provided that
+the eddy viscosity coefficient is properly tuned" (§4.3).
+
 **Machine-learning wall models.**
-[Vadrot et al. (2023b)](/sources/vadrot-2023-b.md), §I and §IV B, recall
-that the wall model of Zhou et al. was trained on channel and periodic-hill
+[Vadrot et al. (2023b)](/sources/vadrot-2023-b.md), §I and §IV B, cite
+the result that the wall model of Zhou et al. was trained on channel and periodic-hill
 data at $Re_h=5600$ to $10{,}595$ and was reported to perform well a priori
 but poorly a posteriori on periodic hills. In their own a priori
 law-of-the-wall tests the same network over-predicts the wall stress,
@@ -245,8 +326,8 @@ the bulk velocity at the crest. Relative $\ell_2$ errors are 2.77% for the
 streamwise velocity, 19.70% for the wall-normal velocity, 8.61% for the
 pressure, and 28.18%, 16.70% and 20.24% for $\langle u'u'\rangle$,
 $\langle u'v'\rangle$ and $\langle v'v'\rangle$. The authors call the
-separated region and the reattachment point "accurately predicted", judged
-from figures; no reattachment length is printed.
+separated region and the reattachment point "accurately predicted" on the
+evidence of their figures; no reattachment length is printed.
 
 **Symbolic-regression closure on the parametrized family.**
 [Tang et al. (2023)](/sources/tang-2023.md) (read in arXiv v1) train a
@@ -505,7 +586,7 @@ test their wall-model-integrated LES, in which the wall-adjacent cell is
 reconstructed in a basis containing the log law and the LES solver itself
 computes the wall stress (see [wall-modelled LES](/methods/wall-modelled-les.md)),
 on the domain $9H\times3.036H\times4.5H$ ($H$ the hill height) at
-$Re_b=10{,}595$ on $H$ and the bulk velocity at the hill top, with a
+$Re_h=10{,}595$ on $H$ and the bulk velocity at the hill top, with a
 third-order (P3) DG treatment of the wall cells, the
 [Vreman model](/methods/vreman-model.md) and a constant body force:
 
@@ -529,8 +610,8 @@ the hill crest (Fig. 17).
 
 ## What the case shows
 
-Two sources agree that the case discriminates between models chiefly
-through the separated region: the reattachment point and the Reynolds
+In the coarse-grid scale-resolving runs the differences between models
+lie in the separated region: the reattachment point and the Reynolds
 stresses in the recirculation bubble. The hybrid results of
 [Haering et al. (2022)](/sources/haering-2022.md) and the high-order PANS
 results of [Dzanic et al. (2022)](/sources/dzanic-2022.md) both reach
@@ -554,6 +635,15 @@ errors of 16.7% to 28.2%. [Tang et al. (2023)](/sources/tang-2023.md),
 §III E, report the same insensitivity between two learned closures of very
 different form, and explain it by the mean velocity being a first-order
 statistic and the Reynolds stress a "less converged" second-order one.
+Two further sources add to this at $Re_h=10{,}595$: the assimilated
+eddy-viscosity multiplier of [Brenner et al. (2022)](/sources/brenner-2022.md)
+matches the LES velocity while leaving the stress–strain alignment no
+better than baseline (§3.5), and the sparse Bayesian corrections of
+[Cherroud et al. (2022)](/sources/cherroud-2022.md) improve the mean flow
+with a production correction alone, the non-linear anisotropy term being
+dropped by the model selection (§4.2–4.3). [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md),
+§3.1, state the converse caution: training on DNS Reynolds stresses does
+not guarantee accurate RANS mean flows.
 
 On the scale-resolving side, two sources report no-model high-order runs
 whose Reynolds stresses miss the reference while the mean velocity is
@@ -647,11 +737,10 @@ or, with the budget terms, depend on the grid and the scheme
   crest-to-crest distance of the configuration of Fröhlich et al. as
   $9h$, with the same height and span. Haering et al. state the length
   nowhere else in the text. The ingested sources do not decide whether
-  $9.5h$ is a printed slip or a different domain: the papers that define
-  the case (Fröhlich et al. 2005; Breuer et al. 2009, not ingested) would.
-  The entry was recorded as an open contradiction at drafting and moved
-  here at the chunk-1 deep lint, because neither paper makes a claim about
-  the other's domain.
+  $9.5h$ is a printed slip or a different domain (the papers that define
+  the case, Fröhlich et al. 2005 and Breuer et al. 2009, are not
+  ingested); neither paper makes a claim about the other's domain, so this
+  is a qualification, not a contradiction.
 - The parametrized hills of [Yan et al. (2022)](/sources/yan-2022.md)
   ($Re=5600$ on crest height and crest bulk velocity, variable hill width)
   are a family distinct from the $Re_h\approx10{,}600$ configuration of
@@ -687,6 +776,35 @@ or, with the budget terms, depend on the grid and the scheme
   equation numbers of their two models in the captions of Figs. 17–18. Their
   anisotropy is $R_{ij}/k-\tfrac23\delta_{ij}=2b_{ij}$ in this bundle's
   notation (Eq. 10).
+- The step-to-hill transfer of gene-expression-programming models is
+  described as "a high level of uncertainty"
+  ([Duraisamy et al. (2019)](/sources/duraisamy-2019.md), §5.3) and as
+  "excellent" a posteriori predictions with some unstable, non-realizable
+  individuals ([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md),
+  §4.1). Both are second-hand accounts of cited work of the same group,
+  so the two are recorded side by side, not as a contradiction between the
+  sources.
+- [Brenner et al. (2022)](/sources/brenner-2022.md) conclude that the
+  method "is able to produce accurate cost function gradients" (§4) while
+  their own check gives 84% correct signs and significant deviations in
+  some cells (§3.3), and the effect of the dropped pressure term "was not
+  further investigated" (§2.3). They state that keeping the Boussinesq form
+  satisfies momentum conservation (§2.1.1); their Eq. (6) keeps only
+  $\partial_j(\nu_{\mathrm{tot}}\partial_ju_i)$ (page-local:
+  $\nu_{\mathrm{tot}}=\nu+\beta\nu_t$), whereas the divergence of the
+  Boussinesq stress of their Eq. (3) also contains
+  $\partial_j(\beta\nu_t)\,\partial_iu_j$ under continuity, non-zero where
+  $\beta\nu_t$ varies in space *(compiler check, not in the sources)*; the
+  paper does not say whether the code keeps that term. Their Fig. 13
+  caption calls values "smaller than 0.86" good alignment, the reverse of
+  their §2.11 definition. They use Schmitt's threshold 0.86, where
+  [Cato et al. (2023)](/sources/cato-2023.md) use 0.8.
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) and
+  [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) both run the
+  Fröhlich configuration at $Re_h=10{,}595$ on a $120\times130$ grid, but
+  name different LES references (Breuer et al.; Breuer et al. and
+  Temmerman et al.). Brenner et al. use the LES of Gloerfelt & Cinnella at
+  the same Reynolds number.
 - [Heinz (2022)](/sources/heinz-2022.md) prints "$Re=37$K" without
   naming the reference velocity and length, so it is quoted above as $Re$,
   not $Re_h$. In that paper a subscript "+" marks modelled-to-total
@@ -714,8 +832,8 @@ or, with the budget terms, depend on the grid and the scheme
 
 - [Haering et al. (2022)](/sources/haering-2022.md) — §V B, Table II, Figs. 9–12; §V C, Figs. 14–15.
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §3.1, Table 1, Figs. 2–6.
-- [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3, Figs. 6–7 (recalled results).
-- [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §I, §IV B (recalled training data and results).
+- [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3, Figs. 6–7 (cited results).
+- [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §I, §IV B (cited training data and results).
 - [Yan et al. (2022)](/sources/yan-2022.md) — §1; §3.2, Eq. (17), Table 2, Figs. 11–22.
 - [McConkey et al. (2022)](/sources/mcconkey-2022.md) — §II A–F, Figs. 1–6; §III D; §IV B, Figs. 15–21.
 - [Cato et al. (2023)](/sources/cato-2023.md) — §IV A–B, Table II, Figs. 8–10.
@@ -731,3 +849,6 @@ or, with the budget terms, depend on the grid and the scheme
 - [Heinz (2020)](/sources/heinz-2020.md) — §5.1, Table 1, Figs. 1, 6–8 (compiled results).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §4.3 (cited results).
 - [Lv et al. (2021)](/sources/lv-2021.md) — §III; §IV A, §IV B 2, Table II, Figs. 4, 15–17.
+- [Brenner et al. (2022)](/sources/brenner-2022.md) — §2.1–2.11, Eqs. (3), (6)–(7), (42); §3.1–3.6, Figs. 2, 6–16; §4.
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §4.1–4.3, Tables 1–2, Figs. 1–8; App. A.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.1, Fig. 1; §3.1; §3.4; §4.1 (cited results).

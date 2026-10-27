@@ -5,7 +5,7 @@ description: "The fractional subgrid-scale model closes the divergence of the su
 status: established
 aliases: [FSGS, D-FSGS, dynamic fractional SGS model, dynamic nonlocal subgrid-scale model, nonlocal SGS model, fractional Laplacian SGS model]
 tags: [les, sgs-model, data-driven, filtering]
-timestamp: 2026-10-26T05:09:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Fractional subgrid-scale model
@@ -23,14 +23,15 @@ $$\partial_j\tau_{ij}=\nu_s\,(-\nabla^2)^s\,\bar u_i,\qquad \nu_s=C_{\mathrm{fr}
 with $C_{\mathrm{fr}}$ a model coefficient and $F(s)$ a known function of the order
 (both page-local). [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md)
 (§II.1, Eqs. 11–15) recall the model from the earlier work of their group
-(Samiee, Akhavan-Safaei & Zayernouri 2020, as recalled) and make it
+(Samiee, Akhavan-Safaei & Zayernouri 2020) and make it
 dynamic (§II.2, Eqs. 16–22): the **dynamic fractional SGS model (D-FSGS)**.
 They describe it as the first SGS model that is both nonlocal and dynamic
-(§I). The page records the version read, arXiv:2111.10936v3.
+(§I). The Source page records the version read, arXiv:2111.10936v3.
 
 ## Kinetic origin
 
-The model is derived at the kinetic level (§II.1, Eqs. 5–10, as recalled).
+The model is derived at the kinetic level; Seyedi & Zayernouri recall the
+derivation of Samiee et al. (§II.1, Eqs. 5–10).
 The single-particle distribution obeys the BGK equation, a relaxation
 towards a Maxwellian equilibrium with a relaxation time. Filtering the BGK
 equation leaves a closure problem, because the filtered Maxwellian is not
@@ -61,8 +62,7 @@ $C_{\mathrm{fr}}\to\infty$; in the dynamic form below only the product
 $\nu_s=C_{\mathrm{fr}}F(s)$ is determined, because $Q_i$ carries the factor
 $F(s)$ *(compiler check, not in the sources)*. For $s<1$ the
 resolved-energy drain at wavenumber $k$ scales as $k^{2s}$ rather than
-$k^2$, so the model is less scale-selective than a Laplacian
-*(compiler check, not in the sources)*. Unlike the
+$k^2$ *(compiler check, not in the sources)*. Unlike the
 [Smagorinsky model](/methods/smagorinsky-model.md), the closure does not
 pass through a stress aligned with the strain: it is posed on the force,
 and the dynamic coefficient can be negative.
@@ -86,7 +86,7 @@ $$C_{\mathrm{fr}}=\frac{\langle Q_i\,\partial_jL_{ij}\rangle}{\langle Q_iQ_i\ran
 
 The authors assume $C_{\mathrm{fr}}$ spatially uniform, though "in general a
 space-time dependent tensor", and average over directions of statistical
-homogeneity (Germano et al., as recalled) to avoid instability from a
+homogeneity (citing Germano et al.) to avoid instability from a
 negative coefficient held over long periods (§II.2, p. 10). For isotropic
 turbulence this is a volume average *(compiler check, not in the
 sources)*.

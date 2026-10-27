@@ -5,7 +5,7 @@ description: "How the grid-point and time-step counts of DNS, wall-resolved and 
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-27T11:00:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -16,7 +16,7 @@ what must be resolved: the Kolmogorov scale for
 [direct numerical simulation](/definitions/direct-numerical-simulation.md), the
 near-wall streaks for wall-resolved LES (WRLES), only the eddies of the
 boundary-layer thickness for [wall-modelled LES](/methods/wall-modelled-les.md).
-The sources of this bundle recall the classical estimates, derive an explicit
+The sources of this bundle cite the classical estimates, derive an explicit
 WMLES cost model, and report what resolution sufficed in practice.
 
 ## Reynolds-number scaling
@@ -27,7 +27,7 @@ WMLES cost model, and report what resolution sufficed in practice.
 | WRLES, flat plate | $Re_{L_x}^{1.86}$ | $Re^{2.7}$ | points: [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md), §I; cost: [Griffin et al. (2023)](/sources/griffin-2023.md), §1 — both after Yang & Griffin (2021) |
 | WMLES, flat plate | $Re_{L_x}^{1.0}$ | $Re^{1.1}$ | same |
 | WMLES | $\propto Re_c$ | $\propto Re_c^{4/3}$, "which accounts for the reduction in time step" | [Goc et al. (2021)](/sources/goc-2021.md), §2.2, §4, after Choi & Moin (2012) |
-| WMLES on a [BL-conforming grid](/methods/boundary-layer-conforming-grid.md) | $n_\delta^{13/6}\,Re\,(Re_\Delta^{\min})^{-5/6}$ | steps $\simt_{\mathrm{run}}\,Re\,(Re_\Delta^{\min})^{-1}$ | [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md), §III.B, Eqs. (5)–(7) |
+| WMLES on a [BL-conforming grid](/methods/boundary-layer-conforming-grid.md) | $n_\delta^{13/6}\,Re\,(Re_\Delta^{\min})^{-5/6}$ | steps $\sim t_{\mathrm{run}}\,Re\,(Re_\Delta^{\min})^{-1}$ | [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md), §III.B, Eqs. (5)–(7) |
 
 Page-local symbols: $L_d$ the domain size, $L$ the integral length,
 $Re_T=k^{1/2}L/\nu$ the turbulent Reynolds number, $Re_{L_x}=L_xU_\infty/\nu$ the
@@ -47,21 +47,29 @@ Their exponents for the total WMLES cost differ, because they rest on different 
 [Morsbach et al. (2024)](/sources/morsbach-2024.md) (§1) quote, after Choi &
 Moin (2012), a cost of roughly $Re^{3.5}$ for DNS and $Re^{2.5}$ for
 wall-resolved LES. [Delassaux et al. (2023)](/sources/delassaux-2023.md)
-(§4.1) recall Spalart's forecast that wall-resolved LES and DNS of a
+(§4.1) cite Spalart's forecast that wall-resolved LES and DNS of a
 full-scale high-Reynolds-number geometry would become available in 2050 and
 2080 respectively. [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md)
-(§1, Fig. 1) recall, from Spalart as cited, that accurate "pure"
+(§1, Fig. 1) cite Spalart's view that accurate "pure"
 WMLES of a full-size airliner wing will not be possible before 2045, because
 $\delta$ grows from about 1 mm at the leading edge to tens of centimetres at
 the trailing edge and LES needs near-isotropic cells where RANS accepts high
 aspect ratios (their Fig. 1 maps $1/\delta^2$ over the wing); they add that
 wall-resolved LES requirements are "almost identical to those of DNS".
-[Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) (§1) recall from
+[Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) (§1) cite from
 Choi & Moin (2012) grid counts growing as $Re^{37/14}$ for DNS,
 $Re^{13/7}$ for wall-resolved and $Re$ for wall-modelled LES
 ($37/14\approx2.64$ *(compiler check, not in the sources)*), and from
 Piomelli (2014) that above $Re=O(10^5)$ more than 90 % of the points of a
 wall-resolved LES resolve less than 10 % of the domain.
+[De Vanna et al. (2022)](/sources/devanna-2022.md) (§1) quote the same
+$Re_L^{13/7}$ for wall-resolved LES after Choi & Moin (2012), calling the
+growth "mostly quadratic", and [van Noordt et al. (2022)](/sources/vannoordt-2022.md)
+(§1) cite the Choi–Moin scaling as the motivation of WMLES.
+[Brenner et al. (2022)](/sources/brenner-2022.md) (§1) cite Xiao & Jenny
+for a near-wall resolution cost growing as $Re^3$ for DNS and $Re^{1.8}$
+for LES of wall-bounded flows; the source states neither the Reynolds
+number nor whether time steps are counted (see Qualifications).
 
 The differential forms behind these exponents are written out by
 [Bose & Park (2018)](/sources/bose-2018.md) (§1, Eqs. 1–2), after Chapman
@@ -86,7 +94,7 @@ as DNS)", the motivation of hybrid methods.
 ## DNS
 
 Domingo & Vervisch (2023, §2) take $h=2\eta$ as sufficient for the dissipative
-range (after Moin & Mahesh, as they recall it) and derive the point count of
+range (after Moin & Mahesh, as they cite it) and derive the point count of
 the table. For reacting flows they add the Damköhler and Karlovitz numbers
 (page-local $Da$, $Ka$), with $Da\,Ka\approx Re_T^{1/2}$ (Eq. 5), so
 
@@ -154,7 +162,7 @@ Fixing $Re_{L_0}=U_\infty L_0/\nu$ instead gives $n_\delta^3Re\,Re_{L_0}^{-5/7}$
 Eq. (13) reproduces the prefactors of Eq. (14) *(compiler check, not in the
 sources)*. The authors present Eq. (6) as "the generalization of the WMLES cost
 scaling from previous works", that is of Chapman, Spalart et al., Choi & Moin
-and Yang & Griffin, as they recall them. With time steps limited by
+and Yang & Griffin, as they cite them. With time steps limited by
 $\Delta_{\min}/U_\infty$ (Eq. 7) the total cost is the product times a
 machine- and code-dependent constant.
 
@@ -182,7 +190,7 @@ differ qualitatively — a large stator separation on the 95 M-cell mesh
 vanishes on the 210 M-cell mesh — so they call the requirements "quite
 broad" (§4.2.2; see [wall-modelled LES](/methods/wall-modelled-les.md) and the
 qualification there on their mean values). For wall-resolved LES,
-[Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) (§II D) recall typical
+[Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) (§II D) cite typical
 eddy-viscosity resolutions $\Delta x^+<130$, $\Delta z^+<30$ and the stricter
 $\Delta x^+<100$, $\Delta z^+<20$ that Cimarelli & De Angelis require for an
 eddy-viscosity model to resolve the interscale transfer including the spanwise
@@ -198,7 +206,7 @@ the part of the SGS stress that transfers no energy carries a mean shear
 stress comparable to the eddy-viscosity part (§III C, Fig. 3); see
 [energy backscatter](/definitions/energy-backscatter.md).
 
-Other sources recall stricter wall-resolved targets:
+Other sources cite stricter wall-resolved targets:
 [Baldan & Guardone (2025)](/sources/baldan-2025.md) (§1.1, §2.1, Fig. 7),
 after Piomelli & Balaras (2002) and Georgiadis et al. (2010) as they cite
 them, require $\Delta x^+<40$, $\Delta y^+<5$, $\Delta z^+<20$ (the source's
@@ -302,7 +310,7 @@ Choi & Moin resolution, $\delta/\Delta x_i\sim10$.
   (1997), Choi & Moin (2012) and Slotnick et al. (2014) were too pessimistic for
   integrated forces because they were not tied to particular quantities of
   interest, while Reynolds stresses and wall-pressure fluctuations need more
-  resolution (§1, recalling Park & Moin 2016). Part of the requirement is
+  resolution (§1, citing Park & Moin 2016). Part of the requirement is
   inviscid: the leading-edge acceleration at high angle of attack (§1, §3.2).
 - **Wall pressure at fewer.** Lozano-Durán et al. (2022, §V.E) find $C_p$
   errors below 5 % with 0–1 points per $\delta$.
@@ -312,7 +320,7 @@ Choi & Moin resolution, $\delta/\Delta x_i\sim10$.
   separation appears only on the finest of three grids, with the first cell at
   $y^+\sim30$ ([Agrawal et al. 2022](/sources/agrawal-2022.md), §VIII.B).
 - **Hybrid methods.** [Haering et al. (2022)](/sources/haering-2022.md)
-  (§V.A.1) recall that typical LES needs an unresolved fraction of turbulent
+  (§V.A.1) cite the statement that typical LES needs an unresolved fraction of turbulent
   kinetic energy of at most about 0.1 (after Jiménez & Moser); their
   [active model split](/methods/active-model-split.md) runs channel flow at
   $Re_\tau\approx5200$ with fractions up to 0.4 at the centre and the
@@ -322,11 +330,11 @@ Choi & Moin resolution, $\delta/\Delta x_i\sim10$.
   (p. 4) find that LES of forced two-dimensional turbulence with their
   fourth- and sixth-order [gradient models](/methods/gradient-model.md)
   stays stable over long times only when the grid captures more than 80 %
-  of the DNS enstrophy, and compare it with the requirement, recalled from
+  of the DNS enstrophy, and compare it with the requirement, cited from
   Pope, that three-dimensional LES resolve at least 80 % of the kinetic
   energy; the stability runs are in the Supplemental Material, not in the
-  file read. Haering et al.'s recalled bound above, an unresolved fraction of
-  at most about 0.1, is the stricter of the two recalled criteria
+  file read. Haering et al.'s cited bound above, an unresolved fraction of
+  at most about 0.1, is the stricter of the two cited criteria
   *(compiler check, not in the sources)*.
 
 - **Wall-modelled grids in wall units and per $\delta$.** Gillyns et al.
@@ -345,7 +353,8 @@ Choi & Moin resolution, $\delta/\Delta x_i\sim10$.
   layer at $Re_\theta=6500$ $\Delta x^+=128$, $\Delta z^+=105$, uniform
   $\Delta y^+=64$, about ten wall-normal points per $\delta$ at the inlet.
   [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) (§3) use
-  $\Delta x\approx0.08\delta_0$, $\Delta z=0.05\delta_0$ and four cells below
+  $\Delta x\approx0.08\delta_0$, $\Delta z=0.05\delta_0$ ($\delta_0=4$ mm their
+  reference boundary-layer thickness, page-local) and four cells below
   $h_{\mathrm{wm}}=0.1\delta_0$ for a Mach 3 shock/boundary-layer interaction,
   about 20 M cells for a span of $5\delta_0$ and 200 M for $50\delta_0$.
 - **Wall-resolved LES at coarse resolution.** [Prakash et al. (2022)](/sources/prakash-2022.md)
@@ -389,7 +398,7 @@ Choi & Moin resolution, $\delta/\Delta x_i\sim10$.
   ($y^+\approx1$, 20 layers) and wall-parallel spacings kept coarse on
   purpose against the boundary-layer thickness ($\Delta x^+\approx600$ on the
   roof) to avoid grid-induced separation; from their Ahmed-body calibration
-  they recall that $y^+<1$ and "at least 15 or 20 prism layers" are needed.
+  they state that $y^+<1$ and "at least 15 or 20 prism layers" are needed.
   The constraint is the reverse of WMLES sizing (see
   [boundary-layer-conforming grid](/methods/boundary-layer-conforming-grid.md)).
 - **Implicit LES with stabilized $Q_1$ finite elements.** Prieto Saavedra
@@ -472,7 +481,7 @@ Choi & Moin resolution, $\delta/\Delta x_i\sim10$.
   this to 10 % and gives mean velocity and total shear stress in good
   agreement with DNS, also at the untrained $Re_\tau\approx2000$ on the same
   wall-unit grid. They motivate coarse grids by the cost of resolved LES,
-  recalling an airfoil LES at $Re_c=10^7$ on Fugaku that needed about
+  citing an airfoil LES at $Re_c=10^7$ on Fugaku that needed about
   $38\times10^9$ points (Tamaki & Kawai 2023, as cited; §1).
 - **Spectral-element WMLES: elements per thickness.** Mukha et al. (2025,
   §III.A–III.B, §IV.A, Tables I, V, Fig. 12) run channel flow at
@@ -521,6 +530,37 @@ Choi & Moin resolution, $\delta/\Delta x_i\sim10$.
   $\delta/380$ on DNS data so that the model converges to no slip; their NASA
   CRM-HL WMLES uses 30 M points with 0–20 points per boundary-layer
   thickness (§4.7).
+- **Wall-modelled against wall-resolved LES of a shock interaction.**
+  De Vanna et al. (2022, §4.1, Table 1) run the Mach 2.28 oblique
+  [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+  ($Re_\tau=700$ at the inflow, domain $90\delta_r\times10\delta_r\times6\delta_r$, $\delta_r$ the inflow 99 % thickness)
+  on uniform WMLES grids of $480\times96\times80$, $720\times128\times120$ and
+  $960\times128\times160$ points ($\Delta x^+=140$, 104, 82; first point at
+  $\Delta y^+_w=39$, 32, 34; $\Delta z^+=56$, 42, 33 at $x/\delta_r=40$) and a
+  wall-resolved LES of $2800\times200\times440$ points ($\Delta x^+=28$,
+  $\Delta y^+_w=0.5$, $\Delta z^+=12$). The WMLES grids hold 3.7 M, 11.1 M and
+  19.7 M points against 246 M, so the finest WMLES uses about 8 % of the
+  wall-resolved count *(compiler check, not in the sources)*. Both kinds
+  reproduce the incoming boundary layer, but no WMLES grid reaches the
+  wall-resolved interaction length (5.0–7.0 against 3.3 $\delta_r$; see
+  [wall-modelled LES](/methods/wall-modelled-les.md)). Their wall-model
+  switch is itself a resolution criterion: the model is turned off where
+  $\Delta x^+_w<40$, $\Delta y^+_w<3$ and $\Delta z^+_w<15$ hold with the
+  resolved wall stress (§3.2, Eq. 9), within the wall-resolved ranges of
+  the table above.
+- **Hypersonic WMLES on an immersed boundary.** Van Noordt et al. (2022,
+  §3) run channel flow at $Re_\tau=5200$ on 1.9 M and 8.9 M cells
+  ($\Delta x^+\times\Delta y^+\times\Delta z^+=270\times68\times270$ and
+  $173.3\times40.6\times156$, as printed, Table 5; see
+  [log-layer mismatch](/definitions/log-layer-mismatch.md)), a Mach 6
+  transitional interaction on 2.1 M, 4.6 M and 16 M cells
+  ($295\times65\times171$ to $43\times35\times90$, Table 10), and a Mach 7.2
+  compression ramp on 11 M, 50 M and 89 M cells
+  ($160\times80\times190$ to $116\times32\times171$, Table 15). The coarsest
+  ramp grid needs less than 5 % of the cells of the reference DNS (96 M in
+  the ramp domain plus 138 M upstream) "considering only the spatial
+  requirement" (§3.4); $11/234=4.7$ % *(compiler check, not in the
+  sources)*.
 
 ## Resolution found by solution-adaptive grids
 
@@ -635,8 +675,6 @@ it, without breakdown).
   leading-edge resolution is scaled with Reynolds number. The exponents also
   refer to different configurations (a high-lift aircraft at chord Reynolds
   number; a flat-plate boundary layer at plate-length Reynolds number).
-  Ingesting Yang & Griffin (2021) would show which time-step constraint yields
-  $Re^{1.1}$.
 - Goc et al. (2021, §4) state that, at the solver's strong-scaling limit
   (about 2000 cells per core), the 157 M-cell case would run on about
   $80\times10^3$ cores and 160 GPUs, with a wall-clock time under 4 h. From
@@ -664,12 +702,16 @@ it, without breakdown).
   degree 5 "throughout this work" and the channel tables give $6^3=216$
   *(compiler check, not in the sources)*. Locators refer to the arXiv v1
   preprint read.
-- **Recalled exponents.** The WRLES cost exponents in this page are
-  recalled, not derived, by the sources: $Re^{2.7}$ by Griffin et al. (2023)
+- **Cited exponents.** The WRLES cost exponents in this page are
+  cited, not derived, by the sources: $Re^{2.7}$ by Griffin et al. (2023)
   after Yang & Griffin (2021), $Re^{2.5}$ by Morsbach et al. (2024) after Choi
   & Moin (2012). The two rest on different underlying works whose
   assumptions the citing sources do not state; no source of this bundle
-  derives either.
+  derives either. The near-wall resolution costs $Re^3$ (DNS) and
+  $Re^{1.8}$ (LES) quoted by Brenner et al. (2022, §1) after Xiao & Jenny
+  are a third cited pair; whether they count grid points or points
+  times steps is not stated, so they are not compared with the exponents
+  above.
 - Zhao et al. (2023a, Table 6) print $\Delta z^+=8.33$ at $Re_\tau=180$ with
   $L_z=\pi$ and 64 cells, where $\pi\cdot180/64\approx8.84$; their printed
   $\Delta x^+=17.66$ and the $Re_\tau=395$ values are reproduced by the same
@@ -747,3 +789,6 @@ it, without breakdown).
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.1.
 - [Heinz (2020)](/sources/heinz-2020.md) — §1; §3.1.
 - [Lv et al. (2021)](/sources/lv-2021.md) — §IV A–B 1, Table I; §II B 4.
+- [Brenner et al. (2022)](/sources/brenner-2022.md) — §1.
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §1; §3.2, Eq. (9); §4.1, Table 1.
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §3.1, Table 5; §3.3, Table 10; §3.4, Table 15.

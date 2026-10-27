@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 456:110992"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Dzanic_Partially-averaged_NavierStokes_simulations_of_turbulence_wi.pdf"
 tags: [pans, hybrid-rans-les, flux-reconstruction, implicit-les, numerical-dissipation]
-timestamp: 2026-10-26T20:45:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # Summary
@@ -104,7 +104,7 @@ figure numbers on this page are those of the arXiv v1.
 | $k$, $\omega$ | $k$, $\omega$ | total kinetic energy and specific dissipation |
 | $k_u$, $\omega_u$ | $k_u=f_kk$, $\omega_u=f_\omega\omega$ | unresolved (modelled) parts; registry §11 shared symbols |
 | $f_k$, $f_\omega$, $f_\epsilon$ | $f_k$, $f_\omega$, $f_\varepsilon$ | $f_\varepsilon=1$, $f_\omega=1/f_k$ |
-| $\tilde\omega_u=\log\omega_u$ | $\ln(f_\omega\omega)$ | **collision:** this tilde is neither a Favre filter nor the SA variable |
+| $\tilde\omega_u=\log\omega_u$ | $\ln(f_\omega\omega)$, the registry §11 logarithmic variable $\tilde\omega_\ell$ applied to $\omega_u$ | **collision:** this tilde is neither a Favre filter nor the SA variable |
 | $P_k$ | (production of $f_kk$) | printed with the molecular stress, see Printed slips; registry $P_k=-R_{ij}\partial_j\langle u_i\rangle$ |
 | $W_{ij}$, $\Omega=\sqrt{2W_{ij}W_{ij}}$ | $\Omega_{ij}$, $\lvert\Omega\rvert$ | factor two agrees |
 | $S_{ij}$ | $S_{ij}$ | agrees |

@@ -5,7 +5,7 @@ description: "Below a disruption scale proportional to Rm^-4/7, aligned sheets o
 status: hypothesis
 aliases: [tearing disruption, disruption scale, reconnection-mediated turbulence, sub-inertial range, tearing instability, plasmoid instability]
 tags: [mhd, plasma, astrophysics, reconnection, dns]
-timestamp: 2026-10-25T13:29:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Tearing-mediated MHD turbulence
@@ -16,9 +16,9 @@ $\xi/\lambda\sim1/\sin\theta_\lambda$ grows towards small scales. Such sheets
 are unstable to the **tearing instability**, and below a **disruption scale**
 $\lambda_D$ (page-local symbol) the fastest tearing mode grows faster than the
 structure is cascaded. [Schekochihin (2022)](/sources/schekochihin-2022.md)
-(§7) presents, in the form of Mallet et al. (2017) and with Loureiro &
-Boldyrev (2017) as the parallel derivation (an earlier formal version is
-credited to Carbone et al. 1990, all as recalled), the result that the
+(§7) presents, in the form it cites from Mallet et al. (2017) and with
+Loureiro & Boldyrev (2017) as the parallel derivation (crediting an earlier
+formal version to Carbone et al. 1990), the result that the
 cascade below $\lambda_D$ is a recursive sequence of tearing disruptions with
 a $k_\perp^{-11/5}$ spectral envelope, ending at a Kolmogorov-scaled
 dissipation cutoff. The page carries `status: hypothesis`: the review ranks
@@ -28,7 +28,7 @@ the tearing-mediated range among the "hotly debated" parts of the theory
 ## The tearing instability (background)
 
 Schekochihin (2022, App. D.1–D.3) gives a "quick and dirty" derivation in the
-Strauss form of [reduced MHD](/definitions/reduced-mhd.md), recalling
+Strauss form of [reduced MHD](/definitions/reduced-mhd.md), citing
 Furth, Killeen & Rosenbluth (1963), Coppi et al. (1976) and Porcelli (1987).
 For a sheet of width $\lambda$ with reversing field of Alfvén speed $v_{Ay}$
 (page-local), define the width-based Lundquist number
@@ -66,8 +66,8 @@ based on $\lambda_{CB}$ (Eq. 6.23). $\lambda_D$ lies above the Boldyrev
 dissipation cutoff, and so matters, when
 $[Rm/(1+Pm)^{10}]^{2/21}\gg1$ (Eq. 7.3). A disrupted sheet breaks into
 $N\sim Rm^{1/14}(1+Pm)^{2/7}$ islands (Eq. 7.6; page-local $N$, not the
-polynomial degree). Two views of what disruption does are recalled and said
-to agree on the spectrum (§7.1, Eqs. 7.7–7.8, 7.23–7.24): islands grow until
+polynomial degree). The review cites two views of what disruption does and
+says they agree on the spectrum (§7.1, Eqs. 7.7–7.8, 7.23–7.24): islands grow until
 the sheet collapses into flux ropes of aspect ratio
 $\sim Rm^{-1/14}(1+Pm)^{3/14}$ (X-point collapse, after Uzdensky & Loureiro
 2016; Mallet et al. 2017), or alignment is not lost abruptly because the
@@ -135,12 +135,12 @@ Schekochihin (2022, §7.3, Fig. 15) cites Dong et al. (2018), whose 2D
 simulation at $Rm=10^6$ on a $64{,}000^2$ grid shows a $k_\perp^{-11/5}$
 spectrum below a break at the disruption scale, and Dong et al. (2021, an APS
 DPP abstract) for a 3D "sub-inertial range" with slope $-11/5$ and break
-scaling as $Rm^{-4/7}$ at $Rm>10^5$. Huang et al. (2017, as recalled) find
+scaling as $Rm^{-4/7}$ at $Rm>10^5$. It cites Huang et al. (2017), who find
 disruption at a ratio of growth rate to shear rate of "a few" rather than
 $\approx1$, depending on noise (footnote 103). Simulations of
 reconnection-driven turbulence report various slopes: steeper than $-2$
 (Bárta et al. 2011; Huang & Bhattacharjee 2016), $-11/5$ (Tenerani & Velli
-2020), $-12/5$ (Loureiro & Boldyrev 2020), all as recalled (§7.4.3,
+2020), $-12/5$ (Loureiro & Boldyrev 2020), all cited by the review (§7.4.3,
 App. D.6.3).
 
 ## Reconnection primer: Sweet–Parker, plasmoids, fast reconnection
@@ -148,32 +148,32 @@ App. D.6.3).
 The review's App. D (as background, with the author's modifications)
 supplies the reconnection results the turbulence theory uses:
 
-- **Sweet–Parker** (Sweet 1958; Parker 1957; large-$Pm$ form after Park et
-  al. 1984, as recalled): sheet aspect ratio
+- **Sweet–Parker** (the review cites Sweet 1958, Parker 1957, and Park et
+  al. 1984 for the large-$Pm$ form): sheet aspect ratio
   $\delta_{\mathrm{SP}}/\ell\sim(1+Pm)^{1/4}S_{L,\ell}^{-1/2}$ for a sheet of
   length $\ell$ ($\delta_{\mathrm{SP}}$, $\ell$ page-local), outflow speed
   $v_{Ay}/\sqrt{1+Pm}$ (Eqs. D47–D51).
-- **Plasmoid instability** (Loureiro et al. 2007, as recalled): a
+- **Plasmoid instability** (the review cites Loureiro et al. 2007): a
   Sweet–Parker sheet is tearing-unstable with a growth rate increasing with
   its Lundquist number (Eq. D52); the critical outflow-based Lundquist number
   is $S_{L,c}\sim10^4$ (Eq. D53, page-local).
-- **Ideal tearing** (Pucci & Velli 2014, as recalled): the critical aspect
+- **Ideal tearing** (the review cites Pucci & Velli 2014): the critical aspect
   ratio at which tearing becomes "ideal" is
   $\xi/\lambda\sim S_{L,\lambda}^{1/2}(1+Pm)^{1/4}$, equivalently
   $S_{L,\xi}^{1/3}(1+Pm)^{1/6}$ with the length-based Lundquist number, so
   Sweet–Parker sheets (aspect ratio $S_{L,\xi}^{1/2}$) never form above
-  $S_{L,\xi}\sim10^5$–$10^6$ (Eqs. D57–D59; Huang et al. 2017, as recalled).
+  $S_{L,\xi}\sim10^5$–$10^6$ (Eqs. D57–D59, citing Huang et al. 2017).
 - **Recursive tearing.** The author's "embedding" modification of the
   Shibata & Tanuma (2001) scheme gives a $k_\perp^{-4}$ island spectrum,
   energetically negligible next to $k_\perp^{-11/5}$ (Eqs. D68–D74).
-- **Fast plasmoid reconnection** (Uzdensky et al. 2010, as recalled):
+- **Fast plasmoid reconnection** (the review cites Uzdensky et al. 2010):
   dimensionless reconnection rate $\sim S_{L,c}^{-1/2}\sim10^{-2}(1+Pm)^{-1/2}$,
   independent of the global Lundquist number (Eq. D81); plasmoid
   flux and width distributions both fall off as the inverse square of the
   flux and of the width (Eq. D86, after Loureiro et al. 2012); a
   plasmoid chain has a $k^{-2}$ spectrum (Eqs. D89–D94).
-- **Stochastic reconnection** (Lazarian & Vishniac 1999; Eyink et al. 2011,
-  as recalled) via Richardson diffusion of field lines (Eqs. D97–D113); the
+- **Stochastic reconnection** (the review cites Lazarian & Vishniac 1999
+  and Eyink et al. 2011) via Richardson diffusion of field lines (Eqs. D97–D113); the
   review argues that it is compatible with alignment (see [dynamic
   alignment](/properties/dynamic-alignment.md)).
 
@@ -196,9 +196,9 @@ supplies the reconnection results the turbulence theory uses:
 - Mallet et al. (2017) and Boldyrev & Loureiro (2017) differ on the physical
   nature of disruption but, as the review reports, agree on the $-11/5$
   envelope (§7.1).
-- Kowal et al. (2020, as recalled) attribute reconnection-layer turbulence to
+- The review (footnote 105) cites Kowal et al. (2020), who attribute reconnection-layer turbulence to
   Kelvin–Helmholtz rather than tearing, but with a reconnecting field ten
-  times the guide field, outside the RMHD regime (footnote 105).
+  times the guide field, outside the RMHD regime.
 - The same disruption mechanism reappears in the subviscous range at large
   $Pm$ (§11; see [critical balance](/properties/critical-balance.md)) and in
   the folds of the [small-scale dynamo](/results/small-scale-dynamo.md)

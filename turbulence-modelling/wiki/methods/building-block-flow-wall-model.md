@@ -5,7 +5,7 @@ description: "Supervised wall-stress model for wall-modelled LES that classifies
 status: established
 aliases: [BFWM, building-block flow wall model, machine-learning building-block-flow wall model]
 tags: [wall-model, wmles, data-driven, neural-network]
-timestamp: 2026-10-27T05:47:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Building-block-flow wall model
@@ -192,7 +192,7 @@ All tests run the model inside CharLES (§4):
 | Case | Conditions | Finding |
 |---|---|---|
 | Laminar (Blasius) boundary layer | $U_\infty L_0/\nu=10^4$–$10^6$, two points per thickness at the inlet, twenty at the outlet | classified laminar with confidence near 100 % except near the inlet (free stream, lower confidence); internal BFWM error below 1 % after the inflow transient, EQWM above 20 %; mean velocity within 5 % for all four DSM/Vreman × EQWM/BFWM combinations, the EQWM cases helped by cancellation of internal and external errors, the BFWM limited by external errors (§4.2, Fig. 8) |
-| [Turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md), zero pressure gradient | $Re_\theta=800$–2000, DNS of the same set-up | classified ZPG with almost 100 % confidence over most of the domain, unsteady/APG near the inlet with confidence falling from 40 % to 20 %; mean internal wall-stress error below 0.5 % (BFWM) against about 2 % (EQWM); total errors 5–15 % for both (§4.3, Fig. 9) |
+| [Turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md), zero pressure gradient | $Re_\theta=800$–2000, DNS of the same set-up | classified ZPG with almost 100 % confidence over most of the domain, unsteady/APG near the inlet with confidence falling from 40 % to 20 %; mean profiles about 10–30 % from DNS; mean internal wall-stress error below 0.5 % (BFWM) against about 2 % (EQWM); total errors 5–15 % for both (§4.3, Fig. 9) |
 | Pipe flow | $Re_\tau\approx40\,000$ against experiment; grids $\Delta/R=1/5$–$1/40$ ($R$ the radius) | classified ZPG on all grids, confidence above 95 % for $R/\Delta>5$, below 60 % at $R/\Delta\approx5$ (attributed to the low near-wall shear given by DSM); internal errors below 5 % for both models even on the coarsest grid; total errors 4–12 %, mildly better with BFWM; non-monotonic grid convergence (§4.4, Fig. 10) |
 | Poiseuille–Couette, APG and separation | $Re_U=14\,000$, $Re_P\times10^{-3}=-1.40$ to $-0.76$, $\delta/\Delta=10$ | classification confidence above 90 %; BFWM better in internal error; in total error EQWM is more accurate "for the wrong reasons": it under-predicts $\tau_w$ while the near-wall mean velocity is over-predicted (§4.5, Fig. 11) |
 | Poiseuille–Couette, FPG | $Re_U=14\,000$, $Re_P\times10^{-3}=1.02$–$1.49$, $\delta/\Delta=10$ | total error rises from 5 % to 20 % with the favourable gradient for both models, BFWM better (§4.5, Fig. 12) |
@@ -202,7 +202,7 @@ All tests run the model inside CharLES (§4):
 
 The present model is said to be more accurate on the Juncture Flow than the
 preliminary version trained on filtered DNS; no side-by-side data are shown
-(§4.8). [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) (§I) recall the
+(§4.8). [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) (§I) describe the
 classifier-plus-predictor model of Lozano-Durán & Bae as poor in the
 separation zones of the Juncture Flow, citing the 2020 arXiv preprint of the
 preliminary version (their ref. [85]), not the version of record read here.

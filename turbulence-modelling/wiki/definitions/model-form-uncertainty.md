@@ -5,7 +5,7 @@ description: "The uncertainty that comes from the structure of a turbulence clos
 status: established
 aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, aleatoric model uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation, stochastic discrepancy closure]
 tags: [uncertainty-quantification, rans, data-driven, field-inversion]
-timestamp: 2026-10-27T10:34:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Model-form uncertainty in turbulence closures
@@ -61,10 +61,29 @@ irrecoverable; single-point and Markovian closure structures add errors no
 learned correction inside that structure can remove
 ([Duraisamy (2021)](/sources/duraisamy-2021.md), §II Eq. 2, §VII).
 
+Three further sources restate the layers. [He et al. (2022)](/sources/he-2022-b.md)
+(§1–2.1) adopt L1–L4 after Duraisamy et al. (2019) and map the
+data-driven literature onto them: tensor-basis, random-forest and
+symbolic anisotropy corrections are L2, field inversion of a transport
+equation is L3, Bayesian calibration of coefficients is L4. They correct
+the eddy viscosity of the Spalart–Allmaras model with the quadratic
+constitutive relation (L3), stating that an L3 modification is "better
+conditioned and more robust" than an L2 one, citing Wu et al.
+(2019). [Brenner et al. (2022)](/sources/brenner-2022.md) (§1) name three
+levels of model-form error, averaging, the functional representation of
+the Reynolds stress and the choice of functions within the model, and
+state that for a linear eddy-viscosity model the first two are
+inevitable and only the third, how $\nu_t$ is computed, can be improved;
+they add that parametric calibration (ensemble Kalman, polynomial chaos,
+approximate Bayesian computation) gives limited gains because no
+universal optimal coefficients may exist. [Cherroud et al. (2022)](/sources/cherroud-2022.md)
+(§1) list three sources of RANS uncertainty: the applicability of the
+RANS equations, the model form, and the parameters.
+
 ## Bounding from physical constraints
 
 **Formal bounds.** The background-flow method (Howard; Busse;
-Doering–Constantin; Seis, as recalled by Duraisamy et al. 2019, §4.1) bounds
+Doering–Constantin; Seis, cited by Duraisamy et al. 2019, §4.1) bounds
 quantities such as the dissipation for channel, shear and convective flows;
 the authors find it "difficult to envision" such bounds for engineering
 flows.
@@ -89,8 +108,8 @@ prediction interval $[\boldsymbol q^-;\boldsymbol q^+]$, which for a turbulent j
 "appear[s] to provide a satisfactory representation" of the model
 uncertainty (Fig. 2, from Mishra & Iaccarino 2017). Tracey et al. learned
 the eigenvalue perturbation from DNS by kernel regression in feature space,
-the start of the machine-learning strand, as recalled by Duraisamy (2021,
-§I, §III.A).
+which Duraisamy (2021, §I, §III.A) cites as the start of the
+machine-learning strand.
 
 **Random matrices.** Xiao et al. (2017) treat the true stress as a random
 symmetric positive semi-definite matrix whose mean is the RANS stress,
@@ -118,7 +137,7 @@ calibrated model:
   model *output*; the review calls it "black-box and thus physics-agnostic"
   and prefers discrepancies embedded inside the model (§3.4).
 
-Applications recalled in §5.1 address L4 only: posterior distributions of
+Applications cited in §5.1 address L4 only: posterior distributions of
 coefficients from channel DNS (Oliver & Moser 2011; Cheung et al. 2011,
 called "the first" to do so), Bayesian model-scenario averaging (Edeling et
 al.), calibration of $k$-$\varepsilon$ for a jet in crossflow (Ray et al.).
@@ -223,7 +242,7 @@ The channel is a converging–diverging channel. On a square cylinder at
 $Re=22\,000$ the momentum corrections and $g_{\tilde\nu}$ reproduce the DNS, $\beta$
 and $f_{\tilde\nu}$ improve it partially, and $\varphi$ "was not able to correct
 the field" (§V B, Table III). The $\varphi$ problem can be
-ill-conditioned, in agreement with Dow & Wang as the authors recall: its
+ill-conditioned, in agreement, the authors state, with Dow & Wang: its
 gradient stays on a plateau while the others fall by three to four orders
 of magnitude (§III B; App. B, Fig. 21).
 
@@ -296,6 +315,29 @@ findings bear on the data side of the problem:
 
 They propose the inferred correction fields as detectors of where a RANS
 model fails (§5).
+
+**A multiplier of a frozen eddy viscosity.** Brenner et al. (2022, §2.1,
+Eq. 7) correct only the third level of their classification: the
+effective viscosity of the momentum equation becomes $\nu+\beta\nu_t$,
+with $\nu_t$ frozen from a converged
+[$k$-$\varepsilon$](/methods/k-epsilon-model.md) solution and $\beta$
+(the registry's field-inversion multiplier, the source's $\alpha$; one
+value per cell) inferred by a discrete adjoint from
+sparse LES velocity on the [periodic hill](/benchmarks/periodic-hill.md)
+at $Re_h=10\,595$ (details on the
+[field-inversion page](/methods/field-inversion-machine-learning.md)).
+Their evidence of non-uniqueness: with a prescribed smooth $\beta$
+generating synthetic data, the inversion recovers the velocity "very
+well" but not the field, the recovered $\beta$ spanning
+$[0.21,1.95]$ (§3.2, Figs. 6–7), so quantitative comparison of inferred
+fields across data sets "is not meaningful" (§3.5). Interior velocity
+data alone do not improve the wall shear stress; wall data alone improve
+$C_f$ but worsen the interior; combining both shows a trade-off that the
+authors call a possible Pareto front, and they cannot say whether the
+residual errors come from the eddy-viscosity assumption or from the
+assimilation and its regularization (§3.6, Fig. 16). Results
+"considerably depend on the locations of the reference values and the
+values of the hyperparameters" (§4).
 
 **A discrepancy at the wall of a wall-modelled LES.**
 [Zangeneh (2021)](/sources/zangeneh-2021.md) places the learned
@@ -374,6 +416,103 @@ the corrections *inside* one RANS solve fixes both but "does not deliver
 estimates of the predictive uncertainty as naturally", so it is "no
 longer an uncertainty quantification method" (§1, §3). See
 [turbulence-model aggregation](/methods/turbulence-model-aggregation.md).
+Sandberg & Zhao (2022, §5) reach the same outlook from their review of
+learned stress and heat-flux closures: universal models are unlikely, and
+classes of models for flow topologies, blended by machine-learning
+classifiers, are the more plausible future
+([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md)).
+
+## Posterior coefficient distributions from sparse Bayesian regression
+
+Cherroud et al. (2022) attach the uncertainty to the coefficients of a
+learned [explicit algebraic correction](/methods/explicit-algebraic-reynolds-stress-model.md)
+of [$k$-$\omega$ SST](/methods/k-omega-sst-model.md): sparse Bayesian
+learning with an automatic-relevance-determination Gaussian prior on each
+weight and a Laplace-type hyperprior on its precision (one sparsity
+parameter for all) gives a Gaussian posterior for the surviving
+coefficients (§3, Eqs. 16–27; method on
+[symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+The selected models have a single stochastic coefficient, e.g.
+$0.8433\pm0.0142$ for the production correction of their first scenario
+(App. A, Eq. A.13), and are propagated by non-intrusive probabilistic
+collocation with second-order Hermite polynomial chaos, three CFD runs per
+model (§4.2). Findings:
+
+- the $\pm3\sigma$ bands widen where the prediction departs from the LES
+  or DNS, which the authors read as a warning about reliability (Figs.
+  5–7, §5);
+- the bands of one model are too narrow to cover the reference everywhere
+  (§4.2, Fig. 5);
+- the solution posterior is "likely asymmetric" although the parameter
+  posterior is symmetric, because of the non-linearity of the
+  Navier–Stokes equations, yet the bands are drawn symmetric (§4.2);
+- Sobol indices from the same expansion, for a richer four-parameter
+  model, show the near-wall stress sensitive mainly to the production
+  correction and the recirculation region to the anisotropy correction,
+  dominated by its linear term, with interactions beyond second order
+  negligible (§4.3, Fig. 8). The authors conclude that linear
+  eddy-viscosity models are "overall sufficient" for these 2-D separated
+  flows "provided that the eddy viscosity coefficient is properly tuned"
+  (§4.3).
+
+Propagating only the maximum-a-posteriori coefficients costs one run (§5).
+
+## Explaining a learned correction
+
+He et al. (2022) ask what a learned correction has captured. Their random
+forest maps nine bounded local features (pressure gradient, strain against
+rotation, flow misalignment, the SA wall function $f_w$ as a wall-region
+classifier, the viscosity ratio $\nu_t/\nu$) to the eddy-viscosity
+discrepancy $\Delta\nu_t$ of SA-QCR on the transonic Bachalo–Johnson bump,
+trained on the wall-resolved LES of Uzun & Malik at $M_\infty=0.875$
+(§2.2–2.7, Table 2; see
+[shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+Two kinds of explanation are applied:
+
+- **Intrinsic** (reduce complexity): a grid search over the number of
+  trees $T$ and the feature fraction gives a Pareto front of five-fold
+  cross-validated $R^2$ against complexity; $T=20$ with 5 of 9 features
+  per split reaches $R^2=0.90682$ against $0.91011$ for the best set
+  ($T=130$, 6 of 9) at about one-eighth of the complexity (§4.1, Fig. 9).
+  Feature selection drops redundant pressure-gradient and strain–rotation
+  features, keeping six (§4.2).
+- **Post hoc** (Shapley additive explanations, SHAP): the prediction is
+  decomposed additively into one contribution per feature, and
+  pairwise interaction values separate pure effects from interactions
+  (§3.2, Eqs. 13–18). The global ranking is viscosity ratio ≫ normalized
+  Q-criterion > wall function > ratio of pressure normal stress to
+  "normal shear stress" > streamwise pressure gradient > misalignment
+  (§5.1, Fig. 13).
+
+The authors read the monotone SHAP trends as the forest re-discovering
+known physics, the scaling of the SA source terms with $\nu_t$ and the
+shear-enhances/rotation-reduces effect, and as suggesting a new one, more
+eddy viscosity where the pressure normal stress dominates, which "needs
+verification" (abstract, §5.3). From the trend of the wall-function
+feature they infer that the equilibrium assumption of SA "fails" on the
+bump (§5.1). They state the limits of the method themselves: SHAP is
+data-dependent, describes how and not why the model responds, and cannot
+find physics outside the chosen features (§5.3). They attribute the
+discrepancy at the shock foot to shock buffet, "conceptually impossible
+to be modeled by steady RANS" (§2.7); the paper argues this attribution
+but does not test it. All results are offline, on frozen mean fields: the
+corrected model is not run in the solver (§2.2; see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+
+## Modelling error against discretization error
+
+[Fidkowski (2022)](/sources/fidkowski-2022.md) shows the two errors
+separating under mesh adaptation. On a NACA 0012 at $Re=2\times10^4$
+(transitional, with a separation bubble) and on a high-lift airfoil at
+$Re=10^6$, output-based adaptation of the uncorrected SA RANS converges to
+a wrong mean lift with "imperceptibly small" discretization-error
+estimates: the residual error is modelling error, invisible to a
+discretization-error estimator (§6.2–6.3, Figs. 12, 18). The author notes
+that the cases lie outside the usual applicability of RANS, so the result
+is not representative of attached high-Reynolds-number flows (§7). Adapting
+instead with a field-inversion-corrected RANS used as a single-use
+surrogate of the time-averaged unsteady solution recovers the right lift
+(see [mesh adaptation](/methods/mesh-adaptation.md)).
 
 ## A stochastic discrepancy inside the closure, trained on indirect data
 
@@ -388,7 +527,7 @@ $$R=R_{\boldsymbol\theta}(\langle\boldsymbol u\rangle)+\boldsymbol\delta_R,\qqua
 with the parametric part the
 [tensor-basis neural network](/methods/tensor-basis-neural-network.md) of
 Ling et al. (eight hidden layers of 30 nodes, 6970 parameters, $k$ and
-$\varepsilon$ from the standard [$k$-$\varepsilon$](/methods/k-epsilon-model.md)
+$\varepsilon$ from the [$k$-$\varepsilon$](/methods/k-epsilon-model.md)
 equations) and $\boldsymbol\delta_R$ (page-local) a latent random field of
 stress discrepancies (§2.2, Eqs. 13–17, Table 3). The field is reduced to
 $\boldsymbol\delta_R=W\boldsymbol E$, piecewise constant on $N_d$ subdomains
@@ -591,7 +730,7 @@ however, not been achieved" and calls for community benchmarks (§VII).
   Fig. 6). The two statements concern different flows (smooth-surface
   separation onset on an airfoil against the curved step and hump on which
   Wu et al. train), and Yan et al. show that their inversions are not unique
-  (above), so they are not incompatible; Wu et al. list smooth-surface
+  (above); Wu et al. list smooth-surface
   separation among their L3 examples (Table 1) but train on the hump and the
   curved step only.
 - Fanizza et al. (2025) print slips around their regularization study:
@@ -605,6 +744,24 @@ however, not been achieved" and calls for community benchmarks (§VII).
   Boussinesq-type corrections are "reduced by less than one order of
   magnitude", while Table 1 gives the production multiplier a $C_f$ error
   of 1.145, above the baseline.
+- He et al. (2022) print the strain in their Boussinesq relation as
+  "$S^*_{ij}=S_{ij}-\mathrm{tr}(S_{ij})$ the traceless strain rate tensor"
+  (§2.1, Eq. 2); their own least-squares eddy viscosity (Eq. 6), with
+  $\tfrac13$ factors on the trace terms, follows from the traceless
+  $S_{ij}-\tfrac13S_{kk}\delta_{ij}$ *(compiler check, not in the
+  sources)*. In §5.2 they write that $q_3$ "increases the eddy viscosity
+  ($\phi_{3,3}<0$)", where their §5.1 trend gives a positive contribution
+  for large $q_3$; the page follows §5.1. Their conclusion prints "87.5%" lower
+  complexity; §4.1 calls the ratio "about 1/8" and prints $11.11$ against
+  $86.67$, 87.2% lower *(compiler check, not in the sources)*.
+- Cherroud et al. (2022) print the evidence of their sparse Bayesian
+  regression (Eq. 26) without the inverse of the covariance matrix in the
+  quadratic term and with the prior sum from $i=0$; the Gaussian marginal
+  likelihood built from their Eqs. 17 and 19 needs
+  $\mathbf t^\top(\sigma^2\mathbf I+\mathbf C\mathbf A^{-1}\mathbf C^\top)^{-1}\mathbf t$
+  (page-local symbols of the source) *(compiler check, not in the
+  sources)*. The symbol $\gamma_i$ in their update (Eq. 27) is not defined
+  in the paper.
 
 # Citations
 
@@ -622,3 +779,8 @@ however, not been achieved" and calls for community benchmarks (§VII).
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — §1 Fig. 1, §3, §4.2.1 Table 3 (arXiv v2).
 - [Zangeneh (2021)](/sources/zangeneh-2021.md) — §I (discrepancy modelling cited), §II.F, §III, Fig. 3 (wall-stress and heat-flux discrepancy, feedback), §III.C, §IV (generalization).
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — Introduction, §2.2 Fig. 9, §3 (arXiv v2).
+- [He et al. (2022)](/sources/he-2022-b.md) — §1–2.1 (L1–L4 mapping, L3 against L2), §2.2–2.7 Table 2 (framework, features, offline only), §3.2 Eqs. 13–18 (SHAP), §4.1–4.2 Fig. 9 (Pareto front, feature selection), §5.1–5.3 Fig. 13.
+- [Brenner et al. (2022)](/sources/brenner-2022.md) — §1 (three levels, parametric calibration), §2.1 Eq. 7, §3.2 Figs. 6–7 (synthetic non-uniqueness), §3.5, §3.6 Fig. 16, §4.
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1, §3 Eqs. 16–27, §4.2 Figs. 5–7, §4.3 Fig. 8, §5, App. A Eq. A.13.
+- [Fidkowski (2022)](/sources/fidkowski-2022.md) — §6.2–6.3 Figs. 12, 18 (RANS adaptation converges to a wrong lift), §7.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §5 (classes of models blended by classifiers).

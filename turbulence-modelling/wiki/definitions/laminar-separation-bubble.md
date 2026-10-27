@@ -5,7 +5,7 @@ description: "A closed region of reversed flow formed when a laminar boundary la
 status: established
 aliases: [LSB, separation-induced transition, laminar separation, transitional separation bubble]
 tags: [transition, separated-flow, boundary-layer, rans, implicit-les, turbomachinery]
-timestamp: 2026-10-27T10:54:00Z
+timestamp: 2026-10-27T15:55:00Z
 ---
 
 # Laminar separation bubble
@@ -22,8 +22,8 @@ are built to cover ([Menter et al. (2022)](/sources/menter-2022.md), §1).
 Slaughter et al. (2023) describe the sequence in a scale-resolving
 simulation as laminar separation under the adverse pressure gradient,
 Kelvin–Helmholtz roll-up of the separated shear layer, bursting, and
-ejection of low-momentum fluid into the free stream; following Serdar et
-al., as they recall, "LSBs are amplifiers of other instabilities"
+ejection of low-momentum fluid into the free stream, and, citing Serdar et
+al., state that "LSBs are amplifiers of other instabilities"
 ([Slaughter et al. (2023)](/sources/slaughter-2023.md), §4.1, §4.3;
 Research Square preprint v1).
 
@@ -220,7 +220,7 @@ airfoils.
   which they also ascribe to the missing separation-induced terms (§V).
 - **Hybrid RANS/LES of a compressor cascade.** On the suction side of the
   V103 compressor cascade ($Re=138\,500$ on the axial chord $c_{ax}$,
-  page-local, $Tu=3.25\%$,
+  registry §11, $Tu=3.25\%$,
   separation-induced transition; pressure side bypass transition), Möller
   et al. (2024) find that fully turbulent SST-DDES misses the bubble,
   producing modelled $k$ ahead of separation and ending in an open
@@ -245,6 +245,22 @@ airfoils.
   which the layer ahead of the shock is driven by intermittent turbulence
   ([Klose et al. (2025)](/sources/klose-2025.md), §6, Fig. 7; ASME accepted
   manuscript; below).
+- **Without a transition model, a learned correction.** Fidkowski (2022)
+  computes the [NACA 0012](/benchmarks/naca-0012-airfoil.md) at $M=0.2$,
+  $\alpha=7^\circ$ and $Re=2\times10^4$ by unsteady Navier–Stokes with no
+  turbulence model: the flow breaks down at about 40% chord into a
+  separation bubble that reattaches at about 60% chord. Fully turbulent
+  Spalart–Allmaras RANS gives no bubble and a persistent, mesh-independent
+  lift error whose discretization-error estimates are "imperceptibly
+  small"; a production multiplier obtained by field inversion of the
+  time-averaged unsteady state, and learned by a small network, recovers
+  the bubble well enough for output-based adaptation to converge the mean
+  lift (0.6569 at 20 250 degrees of freedom, actual error 0.0011)
+  ([Fidkowski (2022)](/sources/fidkowski-2022.md), §6.2, Table 2, Figs.
+  10, 12; see [field inversion](/methods/field-inversion-machine-learning.md)
+  and [mesh adaptation](/methods/mesh-adaptation.md)). At $Re=10^4$ the
+  upper-surface layer instead breaks into unsteady vortices about
+  mid-chord and leaves a large time-averaged separation (§6.1).
 
 ## Bubbles in unsteady and shock-loaded flows
 
@@ -283,15 +299,15 @@ see [dynamic stall](/definitions/dynamic-stall.md)):
 - the stall is of the "pressure-gradient bubble-bursting" leading-edge
   type, since the reversed flow near the trailing edge does not propagate
   upstream, unlike the mixed-type stall at $Re=10^6$ of Benton & Visbal
-  that the authors recall (§4.2.2, Fig. 7);
+  that the authors cite (§4.2.2, Fig. 7);
 - against the LES, the DDES bubble at $15.2^\circ$ is larger with weaker
   reverse flow, oscillates more even after spanwise averaging, and
   collapses earlier; fully turbulent Spalart–Allmaras forms an abrupt
   turbulent separation bubble at $14.1^\circ$–$14.5^\circ$ instead (§4.2.5,
   §4.4, Figs. 14, 22);
 - strong high-frequency surface-pressure oscillations at $x/c=0.05$
-  precede the vortex formation, as in the experiment of Lorber & Carta, as
-  the authors recall (§4.2.5, Fig. 16).
+  precede the vortex formation, as in the experiment of Lorber & Carta,
+  which the authors cite (§4.2.5, Fig. 16).
 
 The two pitching studies agree that the bubble's bursting triggers the
 dynamic-stall vortex, at different motions and Reynolds numbers
@@ -308,8 +324,8 @@ time-averaged implicit LES of Klose et al. (2025) shows a slender
 separation bubble beneath the oscillating mid-chord shock, followed by a
 large recirculation reaching the trailing edge, "indicating an open
 separation bubble" (§4, Fig. 4). The bubble shrinks as the spanwise domain
-grows from 5% to 20% of the chord, in partial agreement with Touber &
-Sandham, as the authors recall, while the shock-oscillation frequency
+grows from 5% to 20% of the chord, in partial agreement, the authors
+state, with Touber & Sandham, while the shock-oscillation frequency
 barely changes ($ft_c=0.165$, 0.164, 0.163); the simulated separation
 lengths, $0.12\le L_{\mathrm{sep}}/c\le0.22$ ($L_{\mathrm{sep}}$ page-local),
 match the $0.18c$ given by Touber & Sandham's $St_{\mathrm{sep}}\approx0.03$
@@ -418,3 +434,4 @@ instabilities leading to transition (§4.1, §5, Table 2; see
 - [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §II, §IV A, §V Fig. 29, Appendix.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §3.3.2, §3.3.3, §3.3.3.3–§3.3.3.4, Fig. 6.
 - [Wang et al. (2013)](/sources/wang-2013.md) — §4.13 (case C3.3).
+- [Fidkowski (2022)](/sources/fidkowski-2022.md) — §6.1–6.2, Table 2, Figs. 10, 12.

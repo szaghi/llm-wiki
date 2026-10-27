@@ -5,7 +5,7 @@ description: "Wall-stress models of wall-modelled LES that keep unsteadiness, co
 status: established
 aliases: [NEQWM, non-equilibrium wall model, nonequilibrium wall model, TBLE wall model, thin-boundary-layer-equation wall model, two-layer zonal wall model, integral wall model, wall-model integrated LES, integrated wall model]
 tags: [wall-model, wmles, boundary-layer, separated-flow]
-timestamp: 2026-10-27T10:56:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Non-equilibrium wall models
@@ -150,7 +150,7 @@ captures the pressure gradient" — and the matching height for which the
 equilibrium model is valid may depend on the pressure-gradient parameter,
 unlike fixed-fraction recommendations such as $h_{\mathrm{wm}}\approx0.1$–$0.2\delta$
 (Larsson et al. 2016, as cited). The argument fails near separation, where
-$\tau_w\to0$. [Goc et al. (2021)](/sources/goc-2021.md) (§2.2) recall this
+$\tau_w\to0$. [Goc et al. (2021)](/sources/goc-2021.md) (§2.2) cite this
 bound to justify their equilibrium model (see
 [equilibrium wall model](/methods/equilibrium-wall-model.md)).
 
@@ -255,7 +255,7 @@ flux is set from the stress above.
   $\mathcal N_x=\boldsymbol u\cdot\nabla u+\rho^{-1}\partial p/\partial x$ at
   the first off-wall point (page-local $\mathcal N_x$) on all three grids
   (Figs. 7–10).
-- [Periodic hill](/benchmarks/periodic-hill.md) at $Re_b=10\,595$ (§IV B 2,
+- [Periodic hill](/benchmarks/periodic-hill.md) at $Re_h=10\,595$ (§IV B 2,
   Table II): the integrated model on $64\times32\times32$ (Hill-C) and $64^3$
   (Hill-R) cells against the equilibrium model of Kawai & Larsson (2012), as
   cited, on $64^3$ (Hill-Equil). Grid resolution "has a more notable impact
@@ -278,11 +278,13 @@ outer-LES numerics than to the wall models.
 |---|---|---|
 | [NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md), inflow $Re_\tau\approx2000$ | full non-equilibrium TBLE outperforms equilibrium models in the bubble and the recovery (Avdis et al. 2009; Park 2017, as cited) | Bose & Park (2018, §4.3) |
 | [Periodic hill](/benchmarks/periodic-hill.md), $Re_h=10\,595$ | non-equilibrium slightly better near separation; differences possibly from outer numerics | Bose & Park (2018, §4.3) |
-| Periodic hill, $Re_b=10\,595$ | integrated model better $C_f$ on the leeside and near the crest than the equilibrium model; grid matters more | Lv et al. (2021, §IV B 2) |
+| Periodic hill, $Re_h=10\,595$ | integrated model better $C_f$ on the leeside and near the crest than the equilibrium model; grid matters more | Lv et al. (2021, §IV B 2) |
 | Mach 1.7 oblique [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md) | the non-equilibrium model with linear $\kappa(y)$ of Kawai & Larsson (2013), as cited: skin friction and mean velocity "agree well" with the experiment of Souverein et al. (2010) and the reverse-flow probability is "well captured"; Fig. 6b also shows a non-equilibrium model with constant $\kappa=0.4$ (Balaras et al. 1996) | Bose & Park (2018, §4.4, Fig. 6b) |
 | H-type transitional boundary layer | the non-equilibrium model of Park & Moin (2014), with the wall model switched off by a transition sensor upstream, predicts the transition location well (Fig. 6a) | Bose & Park (2018, §4.1) |
 | Aérospatiale-A airfoil, $Re_c=2.1\times10^6$ | algebraic, equilibrium and Kawai–Larsson non-equilibrium models disagree on the trailing-edge separation, "highlighting" the sensitivity of mild adverse-gradient separation to wall-model details | Bose & Park (2018, §4.3) |
 | Bachalo–Johnson transonic bump | WM-LES with equilibrium and non-equilibrium models (Iyer et al., as compiled) cannot match both the shock and the reattachment $C_f$ maxima by choosing the exchange location (first or third point) | Heinz (2020, §5.3, Table 5, Fig. 14) |
+| Mach 2.28 oblique shock/boundary-layer interaction, $8^\circ$ deflection | equilibrium ODE model coupled with no slip kept: negative $C_f$ in the bubble, but interaction length $L_{\mathrm{int}}/\delta_r=7.0$–5.0 (coarse to fine; nominal impingement to reflected-shock foot over the inflow 99 % thickness, page-local) against 3.3 wall-resolved and 4.18 experimental; oversizing attributed to the wall model and to SGS plus shock-capturing dissipation; non-equilibrium improvements named as future work | [De Vanna et al. (2022)](/sources/devanna-2022.md) (§4.6, §5) |
+| Mach 7.2, $8^\circ$ compression ramp | equilibrium ODE model: early pressure rise on the coarse grid, minimum $C_f$ above DNS; the imbalance between tangential pressure gradient and convection, which the equilibrium model omits, named as a possible cause (not tested) | [van Noordt et al. (2022)](/sources/vannoordt-2022.md) (§3.4) |
 
 Heinz (2020, §5.2, Table 3, Figs. 10–11) compiles WM-LES reattachment
 lengths on the hump of 1.035–1.105 against the experimental 1.10, and finds
@@ -290,6 +292,21 @@ the double-peak skin-friction structure missed by WM-LES and DES. The
 evidence is compiled from published work in both reviews; Lv et al. (2021)
 is the only source here that runs a non-equilibrium-capable model against
 an equilibrium one in its own solver.
+
+**Why some sources stay with equilibrium.** De Vanna et al. (2022, §1)
+call non-equilibrium wall modelling in LES "still an open problem": the
+models they survey (Cabot & Moin, Wang & Moin, Kawai & Asada, Park & Moin,
+Suga et al., Zebiri et al., Mettu & Subbareddy, as cited) require
+"significant technical complexity and a non-trivial computing cost", are
+"frequently invasive at the implementation level" and carry numerous
+fitted parameters. They keep an equilibrium ODE model and move the
+non-equilibrium burden to the coupling: no slip is retained and the
+modelled stress enters through an augmented wall viscosity, which lets the
+LES reverse the wall shear in a separation bubble (see the
+[equilibrium wall model](/methods/equilibrium-wall-model.md) and
+[wall-modelled LES](/methods/wall-modelled-les.md) pages). Van Noordt et al. (2022,
+§2.5) use the HyWall library, which supports non-equilibrium models through
+data at the surface-triangle centroids, but run only its equilibrium model.
 
 ## Cost
 
@@ -353,3 +370,5 @@ solver"; no timing of the integrated model is shown. On the equilibrium page,
 - [Goc et al. (2021)](/sources/goc-2021.md) — §2.2.
 - [Knopp (2022)](/sources/knopp-2022.md) — §2.4 (pressure-gradient velocity scale); §5.2.
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §IV.D.
+- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §1; §4.6; §5.
+- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.5; §3.4.

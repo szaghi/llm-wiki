@@ -5,7 +5,7 @@ description: "The Sigma model of Nicoud et al. builds a static subgrid eddy visc
 status: established
 aliases: [σ model, σ-model, sigma subgrid-scale model, Nicoud model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-27T10:34:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Sigma model
@@ -151,8 +151,8 @@ $\nu_t$ to zero at the wall (§II.D).
   in $\mu_t=\bar\rho\nu_t$ is added here to make it a dynamic viscosity
   *(compiler check, not in the sources)*.
 - Mukha et al. (2025), Wu & Lele (2026) and Agostinelli et al. (2021) print no formula; the form above
-  is that of Moratilla-Vega et al., and the constants of the table are
-  assumed to multiply the same expression. Wu & Lele's 1.3 and Mukha et
+  is that of Moratilla-Vega et al., and whether the constants of the table
+  multiply the same expression is not stated. Wu & Lele's 1.3 and Mukha et
   al.'s 1.35 come from different flows, codes and filter widths; none of
   the sources calibrates the constant.
 

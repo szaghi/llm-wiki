@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Fluids 34:075117"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physics_of_Fluids_Eivazi_Physics-informed_neural_networks_for_solving_Reynolds-averag.pdf"
 tags: [rans, data-driven, neural-network, boundary-layer]
-timestamp: 2026-10-25T20:39:00Z
+timestamp: 2026-10-27T15:53:00Z
 ---
 
 # Summary
@@ -66,7 +66,7 @@ hardware.
 7. Laminar Falkner–Skan layer in an adverse pressure gradient ($Re=100$, $m=-0.08$, $\beta_{FS}=2m/(m+1)=-0.1739$, separation at $-0.1988$): errors 0.07% ($\langle u\rangle$), 0.12% ($\langle v\rangle$), 0.001% ($\langle p\rangle$), with only boundary velocity supervised; the pressure is predicted accurately without pressure data (§3, Fig. 2, Table 1). **Shown**
 8. Zero-pressure-gradient layer ($1000<Re_\theta<7000$, DNS of Eitel-Amor et al. 2014), continuity and streamwise momentum only, outputs $\langle u\rangle$, $\langle v\rangle$, $R_{12}$: errors 1.02%, 4.25%, 6.46% (§3, Table 1, Fig. 3). **Shown**
 9. Zero-pressure-gradient case: shape factor and $C_f$ along $Re_\theta$, and inner-scaled $\langle u\rangle$ and $R_{12}$ profiles at $Re_\theta=2500$, 4000, 5500, agree with the reference (§3, Fig. 3). **Shown**
-10. Adverse-pressure-gradient layer ($910<Re_\theta<3360$, constant Clauser parameter $\beta_C=(\delta^*/\tau_w)\,dP_\infty/dx\simeq1$, Bobke et al. 2017), continuity and both momentum equations: errors 0.28% ($\langle u\rangle$), 1.57% ($\langle v\rangle$), 4.60% ($\langle p\rangle$), 7.96% ($R_{12}$) (§3, Table 1, Fig. 4). **Shown**
+10. Adverse-pressure-gradient layer ($910<Re_\theta<3360$, constant Clauser parameter $\beta_{RC}=(\delta^*/\tau_w)\,dP_\infty/dx\simeq1$, Bobke et al. 2017), continuity and both momentum equations: errors 0.28% ($\langle u\rangle$), 1.57% ($\langle v\rangle$), 4.60% ($\langle p\rangle$), 7.96% ($R_{12}$) (§3, Table 1, Fig. 4). **Shown**
 11. Adverse-pressure-gradient case: the $R_{12}$ predictions "coincide with the reference data" without a turbulence model; shape factor, $C_f$ and profiles at $Re_\theta=1623$, 2138, 2588 agree (§3, Fig. 4). **Shown**
 12. NACA4412 suction-side layer at $Re_c=2\times10^5$ (well-resolved spectral-element LES of Vinuesa et al. 2018), $0.5<x/c<1$, inputs in wall-tangent and wall-normal coordinates, all six outputs: errors 1.56% ($\langle u\rangle$), 2.17% ($\langle v\rangle$), 7.30% ($\langle p\rangle$), 9.43% ($R_{11}$), 11.36% ($R_{12}$), 4.69% ($R_{22}$) (§3, Table 1, Fig. 5). **Shown**
 13. NACA4412: inner-scaled profiles of $\langle u\rangle$, $R_{12}$, $R_{11}$, $R_{22}$ at $x/c\simeq0.625$, 0.75, 0.875 show "excellent agreement" (§3, Fig. 5). **Shown**
@@ -99,7 +99,7 @@ hardware.
 | $\boldsymbol w$, $\boldsymbol b$ | $\boldsymbol\theta$ | network weights and biases |
 | $E_i$ | (relative $\ell_2$ error in %, written in words) | **collision:** not the total energy $E$ |
 | $m$, $\beta_{FS}$ | (Falkner–Skan exponent and pressure-gradient parameter) | |
-| $\beta=\delta^*/\tau_w\,dP_\infty/dx$ | $\beta_C$ (Clauser parameter, page-local) | **collision:** the registry $\beta(\boldsymbol x)$ is the field-inversion correction |
+| $\beta=\delta^*/\tau_w\,dP_\infty/dx$ | $\beta_{RC}$ (Clauser parameter, registry §11) | **collision:** the registry $\beta(\boldsymbol x)$ is the field-inversion correction |
 | $Re_\theta$, $Re_c$, $Re_b$ | $Re_\theta$, $Re_c$, $Re_h$ | the source's $Re_b$ is based on the crest height and the bulk velocity at the crest |
 | $H$ (hill crest height), $H_{12}=\delta^*/\theta$ | $h$ (page-local hill height), (shape factor) | $h$ is not the element size here |
 | $c_f=2(u_\tau/U_\infty)^2$ | $C_f$ | |

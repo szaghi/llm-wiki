@@ -5,14 +5,14 @@ description: "The NASA Rotor 37 transonic axial-compressor rotor: a mesh-converg
 status: established
 aliases: [Rotor 37, NASA Rotor37, R37, Stage 37 rotor]
 tags: [benchmark, turbomachinery, rans, mesh-adaptation, gpu, dg]
-timestamp: 2026-10-26T15:57:00Z
+timestamp: 2026-10-27T15:46:00Z
 ---
 
 # NASA Rotor 37
 
 NASA Rotor 37 is the rotor of the transonic axial-compressor Stage 37, run
-in isolation in the NASA rotor-alone experiment. As recalled by
-[Alauzet et al. (2022)](/sources/alauzet-2022.md), §8.2, it has 36 blades
+in isolation in the NASA rotor-alone experiment.
+[Alauzet et al. (2022)](/sources/alauzet-2022.md), §8.2, describe it: 36 blades
 and runs at 17,188.7 rpm, with relative Mach numbers of 1.48 at the tip
 and 1.13 at the hub, so leading-edge shocks stand in every passage, and the
 measured data are performance characteristics (total-pressure and
@@ -84,8 +84,8 @@ geometry, and the efficiency gap to elsA to "lack of resolution of the
 non-adapted meshes", testing neither (§8.2.4). Near stall (93% of choke
 mass flow) the hub-corner separation barely changes while the tip
 separation and leakage grow, from which they infer that stall starts near
-the tip (Fig. 41). Transition is not modelled because, as they recall
-from LES, it occurs almost at the leading edge, triggered by the shocks
+the tip (Fig. 41). Transition is not modelled because, they state,
+citing LES, it occurs almost at the leading edge, triggered by the shocks
 (§8.2). The authors propose comparing SA with
 [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) on such meshes once
 discretization error is removed (§9). See also
@@ -122,8 +122,8 @@ in wall units is not printed.
 - The two configurations share only the blade: a full rotor in steady RANS
   at near-design speed against a two-dimensional extruded mid-span section
   at ground idle in LES. No source compares them.
-- The design tip Mach number is printed as 1.48 (relative, as recalled by
-  [Alauzet et al. (2022)](/sources/alauzet-2022.md)) and 1.4939
+- The design tip Mach number is printed as 1.48 (relative,
+  [Alauzet et al. (2022)](/sources/alauzet-2022.md), §8.2) and 1.4939
   ([Kurz et al. (2025)](/sources/kurz-2025.md)); neither defines the value
   further, so this is recorded as a difference in printing.
 - The two sources cite different NASA reports for the stage: Alauzet et
@@ -136,8 +136,10 @@ in wall units is not printed.
   pressure ratio of 1.305 above the largest 1.300 of their lists, and say
   that complexities 40,000 and 80,000 diverge although their Rotor 37 list
   starts at 160,000; dividing their printed elsA mass flows by the elsA
-  choke mass flow does not give the printed normalized values *(compiler
-  check, not in the sources)*.
+  choke mass flow 20.71 does not give the printed normalized values
+  (20.46/20.71 = 0.988 against 0.980 printed, 19.20/20.71 = 0.927 against
+  0.935, 18.86/20.71 = 0.911 against 0.925), while the two adapted rows agree
+  within 0.002 *(compiler check, not in the sources)*.
 
 # Citations
 

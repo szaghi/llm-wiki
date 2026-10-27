@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "elsA"
-description: "ONERA's compressible cell-centred finite-volume solver for structured multi-block grids, as used in the sources: host of the zonal detached-eddy simulation of a turbofan fan stage, structured Spalart–Allmaras RANS reference for NASA Rotor 37, and a recalled URANS and wall-resolved reference for buffet and airfoil studies."
+description: "ONERA's compressible cell-centred finite-volume solver for structured multi-block grids, as used in the sources: host of the zonal detached-eddy simulation of a turbofan fan stage, structured Spalart–Allmaras RANS reference for NASA Rotor 37, and a cited URANS and wall-resolved reference for buffet and airfoil studies."
 status: established
 aliases: [elsA solver, ONERA elsA]
 tags: [software, rans, des, turbomachinery, hybrid-rans-les]
-timestamp: 2026-10-26T10:25:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # elsA
@@ -17,7 +17,7 @@ RANS closure in their runs
 ([François et al. (2022)](/sources/francois-2022.md), §3.5;
 [Alauzet et al. (2022)](/sources/alauzet-2022.md), §8.2.2). It hosts the
 [zonal detached-eddy simulation](/methods/detached-eddy-simulation.md) of
-Deck, "implemented in elsA" as recalled by François et al. (§3.1). The
+Deck, which François et al. (§3.1) cite as "implemented in elsA". The
 sources use it in two roles: a scale-resolving production code for a fan
 stage, and a structured-grid RANS baseline in turbomachinery.
 
@@ -75,9 +75,9 @@ solution near the endwalls (§8.2.4, Fig. 31). The authors attribute the
 efficiency gap to the "lack of resolution of the non-adapted meshes"; their
 total-pressure and total-temperature characteristics lie above the experimental data, against the
 literature they cite, which they attribute mainly to computing the cold
-instead of the hot blade geometry (§8.2.4). Neither attribution is tested.
+instead of the hot blade geometry (§8.2.4). The paper tests neither attribution.
 
-**URANS of transonic buffet, as recalled** (Petrocchi & Barakos 2024). In
+**URANS of transonic buffet, as cited** (Petrocchi & Barakos 2024). In
 the compilation of earlier URANS of the OAT15A buffet at $M_\infty=0.73$,
 $Re_c=3\times10^6$, $\alpha=3.5^\circ$, the elsA computations of Thiery &
 Coustols and of Sartor et al. are among the entries, Thiery & Coustols
@@ -100,15 +100,13 @@ accepted manuscript; see [ProLB](/software/prolb.md)).
 
 ## Qualifications
 
-- The two recalled uses above are third-party results; neither source
+- The two cited uses above are third-party results; neither source
   states elsA's numerical settings for them.
 - *Compiler check, not in the sources:* in Alauzet et al.'s Table 2 the
   normalized mass flow MFR/MFR* of the elsA rows does not follow from the
   printed MFR divided by the printed choke value 20.71 (20.46/20.71 = 0.988
   against the printed 0.980; 18.86/20.71 = 0.911 against 0.925), whereas the
-  rows of the adapted runs agree within 0.002; either the elsA reference
-  mass flow differs from the printed choke value or the column is
-  inconsistent.
+  rows of the adapted runs agree within 0.002.
 - Alauzet et al. print the mesh generator as "Autrogrid" (§8.2.2).
 
 # Citations

@@ -5,7 +5,7 @@ description: "The ERCOFTAC T3 series of flat-plate boundary layers under free-st
 status: established
 aliases: [T3 flat plates, ERCOFTAC T3A, T3A, T3B, T3A-, T3C, T3C1–T3C5, Rolls-Royce T3 plates, Savill T3 test cases]
 tags: [benchmark, transition, rans, boundary-layer, flux-reconstruction, dg]
-timestamp: 2026-10-27T06:13:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # ERCOFTAC T3 flat-plate transition cases
@@ -189,7 +189,7 @@ Schubauer–Skramstad plates 3.00%–6.01% (Table IV).
 **Low free-stream turbulence.** On T3A- and the Schubauer–Klebanoff plate
 the transition path is "definitely too steep" with both the
 laminar-kinetic-energy model and γ-$Re_\theta$, a model without a natural
-transition term, "in line with" Menter et al. (2015) as the authors recall
+transition term, "in line with" Menter et al. (2015), whom the authors cite
 ([Pacciani et al. (2025)](/sources/pacciani-2025.md), §5.1.1, Figs. 7–8).
 The Schubauer–Klebanoff plate serves [Menter et al. (2022)](/sources/menter-2022.md)
 as the hysteresis test of the algebraic model (§2.3, Figs. 2–3).
@@ -206,7 +206,7 @@ that adverse-gradient onset is the hard part of the series:
   ([Pacciani et al. (2025)](/sources/pacciani-2025.md), §5.1.3, Figs. 11–13).
 - SSG/LRR-ω-γ agrees well on the favourable cases T3C1 and T3C5 and delays
   onset on T3C2–T3C4, "similar to the problem existing in the SST–γ model"
-  as the authors recall from Menter et al. (2015); T3C4 behaves as
+  as the authors write, citing Menter et al. (2015); T3C4 behaves as
   separation-induced transition ([Liu et al. (2024)](/sources/liu-2024.md),
   Fig. 6d–h).
 - γ-alg-SST agrees "satisfactorily" on T3C, with earlier bypass transition
@@ -260,12 +260,11 @@ transition over RANS-$\gamma$ without resolved inflow turbulence (§III.B,
   tuning them to the measured free-stream decay (Menter et al., §3;
   Pacciani et al., §5.1: "to match the experimental turbulence decay";
   Liu et al., Figs. 3–4); they are not a common specification, and the
-  T3A- and T3B eddy-viscosity ratios differ by up to a factor 1.5
+  T3A- and T3B eddy-viscosity ratios differ by factors of about 1.5
   *(compiler check, not in the sources)*. The Schubauer–Klebanoff inlet
   intensity is printed as 0.03% by
   [Menter et al. (2022)](/sources/menter-2022.md), Table 2, and 0.3% by
-  [Pacciani et al. (2025)](/sources/pacciani-2025.md), Table 1 (both
-  checked in the PDFs), with viscosity ratios 1.0 and 1.2; neither source
+  [Pacciani et al. (2025)](/sources/pacciani-2025.md), Table 1, with viscosity ratios 1.0 and 1.2; neither source
   discusses the difference or prints the measured intensity at the plate.
   Because both values are inlet settings of different computational
   domains, not statements about the experiment, this is recorded as a

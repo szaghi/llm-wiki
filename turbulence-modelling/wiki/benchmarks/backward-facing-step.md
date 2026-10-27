@@ -5,7 +5,7 @@ description: "Turbulent flow over a sudden expansion with fixed separation at th
 status: established
 aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step, Driver–Seegmiller step, A3C step, curved backward-facing step, CBFS]
 tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification, field-inversion, rans, dg, lattice-boltzmann, spectral-element]
-timestamp: 2026-10-27T06:07:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Backward-facing step
@@ -223,9 +223,9 @@ sparse mean velocity and pressure only.
 | Model | $x_R/H$ |
 |---|---|
 | LES (reference) | 9.10 |
-| Biswas et al. (as recalled; expansion ratio 1.9423) | 8.9 |
+| Biswas et al. (as cited; expansion ratio 1.9423) | 8.9 |
 | $k$-$\varepsilon$ baseline | 5.61 |
-| TBNN of Geneva & Zabaras (as recalled) | 5.52 |
+| TBNN of Geneva & Zabaras (as cited) | 5.52 |
 | probabilistic closure, mean ± 3 std | $10.06\pm1.21$ |
 
   Only the probabilistic prediction envelops the LES value; the authors
@@ -239,7 +239,7 @@ learned closure is trained and tested in the same geometry at different
 Reynolds numbers, because its discrepancy field is tied to the grid and
 geometry (§2.2.3, §2.2.5).
 
-**The curved backward-facing step as training data.** Two sources use
+**The curved backward-facing step as training data.** Three sources use
 the curved variant (CBFS), a step of height $H$ with a curved surface, at
 $Re_H=13{,}700$ (on the step height and the inlet centre-channel velocity,
 [Oulghelou et al. (2025)](/sources/oulghelou-2025.md)), with the wall-resolved LES of Bentaleb et al. as reference, to
@@ -280,9 +280,41 @@ in OpenFOAM:
   lowest $C_f$ error ($4.83\times10^{-4}$ against $5.05\times10^{-4}$ for
   the blend, Table 7); the separated-flow expert, trained partly on this
   flow, gives a bubble $1.04H$ shorter than the LES.
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md), §4.1–4.2, use the
+  CBFS ($Re=13{,}700$ on the inlet velocity and the step height, upstream
+  channel height $8.52H$, mesh $140\times150$, slip upper boundary, inlet
+  from a fully developed boundary-layer simulation, steady RANS) as one of
+  three flows, with the [periodic hill](/benchmarks/periodic-hill.md) and
+  a converging–diverging channel, of a leave-one-out training of
+  SBL-SpaRTA: sparse Bayesian regression of an additive anisotropy
+  correction $b^\Delta_{ij}$ and a production correction $b^R_{ij}$ of SST
+  on the two-dimensional integrity basis $T^{(1)}$–$T^{(3)}$ (see
+  [explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)
+  and [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+  The CBFS is a training flow in scenarios 1 (with the hill) and 3 (with
+  the channel) and the test flow of scenario 2 (Table 1). The three models
+  selected by a posteriori cross-validation (sparsity parameter
+  $2\times10^5$) keep $b^\Delta_{ij}=0$ and a single production term
+  proportional to $T^{(1)}_{ij}$, with posterior coefficients
+  $0.8433\pm0.0142$, $0.382\pm0.0184$ and $0.197\pm0.0156$ in scenarios 1,
+  2 and 3 (Eqs. A.13–A.15); the correction raises the eddy viscosity in
+  the separated region and reattaches the boundary layer (§4.2). With
+  $\pm3\sigma$ bands from second-order polynomial chaos (three RANS runs
+  per model): velocity profiles are clearly better than SST, especially in
+  the CBFS recirculation, where the bands of the model trained on CBFS and
+  channel are too narrow to cover the LES (Fig. 5); the separation and
+  reattachment points improve and the bands encompass the LES ones
+  (Fig. 6); the skin friction in the attached regions is slightly worse
+  than baseline, most visibly for the model with the largest coefficient,
+  with the LES values still inside the bands; $k$ is over-predicted in the
+  separated regions (Fig. 7). Cross-validated on velocity alone, the best
+  CBFS model is a richer one with non-zero $b^\Delta_{ij}$ (sparsity
+  parameter $10^4$, Table 2). The learned models also beat the BSL-EARSM of
+  Menter et al. (as cited) on the three flows (App. C). No separation or
+  reattachment values are printed in the text.
 
-**RANS corrections.** As recalled by
-[Yan et al. (2022)](/sources/yan-2022.md), §1, Rumsey found that enhancing
+**RANS corrections.**
+[Yan et al. (2022)](/sources/yan-2022.md), §1, cite Rumsey's finding that enhancing
 the mixing in the separated shear layer of the $k$-$\omega$ SST model
 improves the [periodic hill](/benchmarks/periodic-hill.md) but worsens
 backward-facing-step flows, an example of a separation fix that does not
@@ -291,9 +323,18 @@ the transonic flow behind the boat tail of the NASA Model 11 hammerhead
 launch vehicle, on which they test a Reynolds-stress-based IDDES (see
 [detached-eddy simulation](/methods/detached-eddy-simulation.md)), as one
 that "can be regarded as an axisymmetric back-step flow", citing earlier
-work. As recalled by [Duraisamy et al. (2019)](/sources/duraisamy-2019.md),
-§5.3, gene-expression-programming RANS models trained on a backward-facing
-step showed a high level of uncertainty when applied to the periodic hill.
+work. [Duraisamy et al. (2019)](/sources/duraisamy-2019.md), §5.3, cite
+gene-expression-programming RANS models trained on a backward-facing
+step that showed a high level of uncertainty when applied to the periodic hill.
+[Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md), §4.1, cite the
+same transfer from their group's work: gene-expression-programming
+anisotropy models trained on a backward-facing step gave "excellent" a
+posteriori periodic-hill predictions with only the first four basis
+tensors and two invariants, while some individuals had very large
+coefficients, non-realizable stresses and unstable runs, which symbolic
+transparency let the authors remove, though not robustly automatically.
+The same review lists the curved step among the three two-dimensional
+flows on which SpaRTA was demonstrated (§3.4).
 
 ## Qualifications
 
@@ -306,7 +347,7 @@ step showed a high level of uncertainty when applied to the periodic hill.
   the second, $2.00\times10^{-3}$, corresponds to the test case $Re_H=500$
   *(compiler check, not in the sources)*.
 
-- On the CBFS the two sources print different baseline SST reattachment
+- On the CBFS Wu et al. and Oulghelou et al. print different baseline SST reattachment
   points: $x=6.0$ ([Wu et al. (2025)](/sources/wu-2025.md), Fig. 15, with
   $H=1$ m) against $x/H=4.65$
   ([Oulghelou et al. (2025)](/sources/oulghelou-2025.md), Table 6), at the
@@ -336,10 +377,32 @@ step showed a high level of uncertainty when applied to the periodic hill.
 - Two sources now report how learned or corrected RANS models trained on
   one separated geometry carry over to the other: the gene-expression
   models trained on the step showed "a high level of uncertainty" on the
-  hill (as recalled by Duraisamy et al.), while the closure of Tang et al.,
+  hill (as cited by Duraisamy et al., §5.3), while the closure of Tang et al.,
   trained on the hill, improved the step profiles. The two concern different
   model families and opposite directions of transfer, so they do not
   contradict each other.
+- The step-to-hill transfer of gene-expression-programming models is
+  described in two ways: "a high level of uncertainty"
+  ([Duraisamy et al. (2019)](/sources/duraisamy-2019.md), §5.3) and
+  "excellent" a posteriori predictions, with some unstable, non-realizable
+  individuals ([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md),
+  §4.1). Both are accounts of cited work, not the sources' own
+  computations, so the two are recorded side by side, not as a
+  contradiction.
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) and
+  [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) run the CBFS on the
+  same $140\times150$ grid against the same LES. Cherroud et al. print the
+  limited production of their frozen $k$-equation (Eq. 11) as
+  $2k(-\tfrac{\nu_t}{k}\langle S_{ij}\rangle+b^\Delta_{ij})\partial_j\langle u_i\rangle$;
+  with their own Eq. 2 (the stress enters the momentum equation as
+  $-\partial_jR_{ij}$) and Boussinesq anisotropy $-\nu_t\langle S_{ij}\rangle/k$
+  (Eq. 4), the production $-R_{ij}\partial_j\langle u_i\rangle$ is
+  $2k(\tfrac{\nu_t}{k}\langle S_{ij}\rangle-b^\Delta_{ij})\partial_j\langle u_i\rangle$,
+  the opposite sign *(compiler check, not in the sources)*. Their
+  production correction $R=2k\,b^R_{ij}\partial_j\langle u_i\rangle$
+  (Eq. 12) follows the printed convention of Eq. 11, so the sign of the
+  printed $b^R_{ij}$ coefficients relative to $\nu_t$ depends on it; the
+  statement that the correction raises the eddy viscosity is theirs (§4.2).
 
 - The Driver–Seegmiller step is given $Re_H=36{,}000$ (free-stream
   velocity at $x/H=-4$) by [Ghidoni et al. (2026)](/sources/ghidoni-2026.md)
@@ -359,8 +422,8 @@ step showed a high level of uncertainty when applied to the periodic hill.
 
 - [Abe (2021)](/sources/abe-2021.md) — §III, Table I; §IV A–D, Tables II–III, Figs. 4–11; App. B, Table IV.
 - [Mozaffari et al. (2022)](/sources/mozaffari-2022.md) — §4.1–4.5, Tables 1–2, Figs. 6–15; §6.
-- [Yan et al. (2022)](/sources/yan-2022.md) — §1 (recalled result of Rumsey).
-- [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3 (recalled result).
+- [Yan et al. (2022)](/sources/yan-2022.md) — §1 (cited result of Rumsey).
+- [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) — §5.3 (cited result).
 - [Tang et al. (2023)](/sources/tang-2023.md) — §III A, §III D, Table I, Fig. 16.
 - [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) — §2.2.3, §2.2.5; §3.1–3.4, Tables 2–5, Figs. 4–12.
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §3.1.1, Eq. 18, Figs. 3–7; §3.3.1, Figs. 15–18.
@@ -369,3 +432,5 @@ step showed a high level of uncertainty when applied to the periodic hill.
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §3.3 (hammerhead flow likened to an axisymmetric step).
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.3, Figs. 7–12.
 - [Husson et al. (2024)](/sources/husson-2024.md) — §4.2.1–4.2.2, Table 1, Figs. 6–11.
+- [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §2.1–2.2, Eqs. 2, 4, 11, 12; §4.1–4.2, Tables 1–2, Figs. 5–7; App. A, Eqs. A.13–A.15; App. C.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.4; §4.1 (cited step-to-hill transfer of GEP models).

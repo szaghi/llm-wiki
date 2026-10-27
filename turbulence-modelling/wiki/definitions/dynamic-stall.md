@@ -5,7 +5,7 @@ description: "Unsteady stall of an airfoil pitched beyond its static stall angle
 status: established
 aliases: [deep dynamic stall, dynamic stall onset, dynamic-stall vortex, DSV, pitching-airfoil stall]
 tags: [separated-flow, transition, hybrid-rans-les, des, les, boundary-layer, dynamic-stall]
-timestamp: 2026-10-27T10:39:00Z
+timestamp: 2026-10-27T15:50:00Z
 ---
 
 # Dynamic stall
@@ -173,7 +173,7 @@ compare with an LES, Baldan & Guardone with an experiment.
   $\Delta z^+$ of 7.2 to 9.4 (Table 2).
 - Batther & Lee state the DDES time step both as "one order of magnitude
   larger than that used in LES" (§2.1) and as "roughly 8% of that used in
-  LES" (§4.5); the two cannot both hold. They give the cost as "roughly
+  LES" (§4.5), the first larger and the second smaller than the LES step. They give the cost as "roughly
   20 s per time step using 192 cores", "about 1500 total CPU hours"
   (§4.2.1); 20 s for each of the 35,000 upstroke steps on 192 cores is
   about $3.7\times10^4$ core-hours *(compiler check, not in the sources)*.

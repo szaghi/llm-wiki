@@ -5,7 +5,7 @@ description: "Dynamic alignment is the scale-dependent alignment of Elsasser inc
 status: hypothesis
 aliases: [Boldyrev alignment, scale-dependent alignment, aligned MHD turbulence, refined critical balance, three-dimensional anisotropy]
 tags: [mhd, astrophysics, plasma, intermittency, anisotropy]
-timestamp: 2026-10-25T13:29:00Z
+timestamp: 2026-10-27T15:48:00Z
 ---
 
 # Dynamic alignment and intermittency in MHD turbulence
@@ -17,8 +17,8 @@ angle $\theta_\lambda$ that shrinks as the perpendicular scale $\lambda$
 decreases. Aligned fluctuations are sheet-like, with three scales
 $l_\parallel\gg\xi\gg\lambda$ (along the local field, along the fluctuation,
 and across both), and their nonlinear interaction is weakened by
-$\sin\theta_\lambda$. As recalled by [Schekochihin
-(2022)](/sources/schekochihin-2022.md) (§6), the idea is Boldyrev's (2006);
+$\sin\theta_\lambda$. [Schekochihin
+(2022)](/sources/schekochihin-2022.md) (§6) credits the idea to Boldyrev (2006);
 the review accepts Beresnyak's objection to its original form and replaces it
 with an intermittency-based version (§6.4, after Mallet & Schekochihin 2017).
 The page carries `status: hypothesis`: the review itself ranks alignment as
@@ -42,13 +42,13 @@ $$\tau^\pm_{\mathrm{nl}}\sim\frac{\xi}{\delta Z^\mp_\lambda}\sim\frac{\lambda}{\
 between $\delta\boldsymbol u$ and $\delta\boldsymbol b$ (App. B; see the
 alignment diagnostics on [reduced MHD](/definitions/reduced-mhd.md)), and
 attributes the mechanism to mutual shearing of the two Elsasser fields
-(Chandran et al. 2015, as recalled). It also notes (footnote 17, recalling
+(citing Chandran et al. 2015). It also notes (footnote 17, citing
 Bowen et al. 2021) that alignment does not by itself imply $\lambda/\xi$
 small.
 
 ## Boldyrev's theory and the symmetry objection
 
-Boldyrev's conjecture (as recalled, Eq. 6.5) is an "uncertainty principle"
+Boldyrev's conjecture, as the review states it (Eq. 6.5), is an "uncertainty principle"
 $\sin\theta_\lambda\sim\delta b_\lambda/v_A$. With constant flux and
 [critical balance](/properties/critical-balance.md) it gives
 
@@ -95,7 +95,7 @@ $\lambda$-scalings are recovered with $q=1/8$ (Eq. 6.19), so (Eqs. 6.20–6.22)
 $$\delta Z_\lambda\sim\left(\frac{\varepsilon L_\parallel}{v_A}\right)^{1/2}\left(\frac{\lambda}{\lambda_{CB}}\right)^{1/4},\qquad\frac{l_\parallel}{L_\parallel}\sim\left(\frac{\lambda}{\lambda_{CB}}\right)^{1/2},\qquad\sin\theta_\lambda\sim\left(\frac{\lambda}{\lambda_{CB}}\right)^{1/4},$$
 
 equivalently $E(k_\perp)\sim\varepsilon^{2/3}\lambda_{CB}^{1/6}k_\perp^{-3/2}$
-(Eq. 6.25), the form used by Perez et al. (2012, 2014) as recalled. The
+(Eq. 6.25), the form the review cites as used by Perez et al. (2012, 2014). The
 dissipation cutoff becomes
 $\lambda_{\mathrm d}^{\mathrm B}/\lambda_{CB}\sim Re_{\mathrm{eff}}^{-2/3}$
 (Eq. 6.24) with the effective Reynolds number (page-local)
@@ -132,20 +132,20 @@ the review from Mallet & Schekochihin (2017) (§6.4.2). The ingredients
 3. **The most intense structures have scale-independent amplitude**, which
    with refined critical balance gives $\xi\propto l_\parallel$ and a filling
    fraction $\propto l_\parallel^2$ (Eq. 6.29); this is consistent with the
-   most intense dissipative structures found by Zhdankin et al. (2016), as
-   recalled.
+   most intense dissipative structures that the review cites from Zhdankin
+   et al. (2016).
 
 Equating the two expressions of the filling fraction gives
 $l_\parallel\propto\lambda^{1/2}$, hence the exponent $1/4$ of $L_\parallel$
 in $l_\parallel$ and $q=1/8$ (Eq. 6.30). The full Mallet–Schekochihin theory
-predicts structure functions of all orders from log-Poisson statistics (as
-recalled from She & Leveque 1994 and Dubrulle 1994; footnote 26). The review
+predicts structure functions of all orders from log-Poisson statistics (footnote 26
+cites She & Leveque 1994 and Dubrulle 1994). The review
 quotes Chandran et al. (2015) for $q\approx0.108$, i.e.
 $\delta Z_\lambda\propto\lambda^{0.26}$, and notes that the magnetic field is
 more intermittent than the Elsasser fields and those more than the velocity,
 which it leaves unexplained (§6.4.2, Fig. 13).
 
-The point of the construction: the aligned scalings are no longer a property
+In the review's account (§6.4.2), the aligned scalings are no longer a property
 of every fluctuation (which the symmetry forbids) but a statistical property
 of an intermittent ensemble in which $L_\parallel$ appears through the
 filling fraction of the most intense structures.
@@ -165,22 +165,22 @@ balance](/properties/critical-balance.md)). Stochastic reconnection does not
 destroy alignment in the review's analysis: shear inside an aligned layer
 limits internal eddies to $\xi'/\lambda\sim(\lambda/\lambda_{CB})^{1/8}$
 ($\xi'$ page-local) and the reconnecting layer width comes out $\sim\lambda$
-(§8.3.3, App. D.7.4, Eqs. D115–D116), against the view of Lazarian et al.
-(2020), as recalled, that turbulent resistivity prevents alignment.
+(§8.3.3, App. D.7.4, Eqs. D115–D116), against the view it cites from Lazarian
+et al. (2020) that turbulent resistivity prevents alignment.
 
 ## Qualifications
 
 - **Disputed asymptotics.** The review records a long dispute it does not
-  settle by fiat: Beresnyak (2011–2019, as recalled) argues from simulations
+  settle by fiat: Beresnyak (2011–2019, as the review cites) argues from simulations
   rescaled to the Kolmogorov dissipation scale (best convergence
   $k_\perp^{-1.7}$, Beresnyak 2014, Fig. 10b) for an asymptotic $-5/3$, while
   Perez et al. (2012, 2014) report $-3/2$ (Fig. 10a). The review's synthesis
   is that "both are right, in a sense": an aligned $-3/2$ inertial range and a
   Kolmogorov cutoff produced by tearing (§1, §7.2.2). Both sides are
-  un-ingested works recalled by the review, so no bundle contradiction is
+  un-ingested works cited by the review, so no bundle contradiction is
   opened here.
-- Solar-wind conditional structure functions (Wicks et al. 2013, as recalled)
-  give a Goldreich–Sridhar-like $-5/3$ for a balanced sub-population and
+- Solar-wind conditional structure functions that the review cites from
+  Wicks et al. (2013) give a Goldreich–Sridhar-like $-5/3$ for a balanced sub-population and
   $-3/2$ for imbalanced or aligned intervals (Fig. 16).
 - The cited simulations use Laplacian viscosity or hyperviscosity; the
   $1024^3$ runs of Mallet et al. (2015, 2016) use hyperviscosity.

@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity law of adverse-pressure-gradient tur
 status: established
 aliases: [APG wall law, log-law/half-power-law wall law, extended wall law, half-power law, pressure-gradient wall law]
 tags: [boundary-layer, rans, wall-model, separated-flow]
-timestamp: 2026-10-27T10:56:00Z
+timestamp: 2026-10-27T15:54:00Z
 ---
 
 # Wall law in adverse pressure gradient
@@ -32,7 +32,7 @@ implements no model.
 
 Knopp (2022, §2.3, Eqs. 12–14) fixes $\kappa=0.41$ in the log law and writes
 the upper law as the extended wall law of Szablewski, Townsend and Afzal, as
-the author recalls them, asymptotic to the log law for small and to a
+the author cites them, asymptotic to the log law for small and to a
 square-root law for large pressure gradient:
 
 $$u^+=\frac1K\left[2\left(\sqrt{1+\alpha^+y^+}-1\right)+\ln y^++2\ln\frac{2}{\sqrt{1+\alpha^+y^+}+1}\right]+B_o ,$$
@@ -75,7 +75,7 @@ $\Delta p_s^+$; a scaling argument with Nickels' velocity scale gives $-1/6$
 
 $$y^+_{\log,\max}=1.78\,Re_\tau^{1/2}(\Delta p_s^+)^{-1/5}\quad\text{(Eq. 35)},\qquad y^+_{\mathrm{sqrt},\min}=4.05\,Re_\tau^{1/2}(\Delta p_s^+)^{-0.13}\quad\text{(Eq. 36)},$$
 
-and $K=0.45\pm0.15$, in agreement with the literature values Knopp recalls
+and $K=0.45\pm0.15$, in agreement with the literature values Knopp cites
 (0.41–0.51 from Townsend, Perry and Szablewski; 0.447 and 0.57 from Kader &
 Yaglom and Afzal for large pressure gradient), which depend on the form of the
 law and the fit region (§6.4). Low-Reynolds
@@ -122,7 +122,7 @@ leading order by $\Delta p_s^+$ and $Re_\tau$ (the moving equilibrium of Kader
 
 ## Use in models
 
-Knopp (2022, §1) recalls a preliminary RANS modification (Knopp 2016): an
+Knopp (2022, §1) cites a preliminary RANS modification (Knopp 2016): an
 augmentation term in the $\omega$ equation of $k$-$\omega$-type models,
 designed to reproduce the half-power solution and activated only in that
 region by a blending function built from these correlations; no equations are

@@ -5,7 +5,7 @@ description: "ProLB is a lattice Boltzmann solver on octree Cartesian grids with
 status: established
 aliases: [ProLB solver]
 tags: [software, lattice-boltzmann, les, hybrid-rans-les, immersed-boundary, wall-model]
-timestamp: 2026-10-27T05:50:00Z
+timestamp: 2026-10-27T15:51:00Z
 ---
 
 # ProLB
@@ -28,7 +28,7 @@ of the code. The fourth,
 branch of "the commercial solver ProLB" (§2.1) for Spalart–Allmaras RANS
 and [zonal detached-eddy simulation](/methods/detached-eddy-simulation.md)
 mode 2 (2020), which they call ZDES-LBM. None is a code description: ProLB is named and its components
-are recalled, with validation referred to the group's earlier papers (Cai
+are summarized, with validation referred to the group's earlier papers (Cai
 et al. 2022, §II.A, citing their Refs. 17–19, 23, 24). Mozaffari et al.
 (2024) use a research version of what they call a commercial solver.
 
@@ -46,7 +46,7 @@ et al. 2022, §II.A, citing their Refs. 17–19, 23, 24). Mozaffari et al.
 
 In all four, the eddy viscosity (subgrid or RANS) enters through the relaxation time,
 $\nu+\nu_t=c_s^2(\tau_{\mathrm{LB}}-\Delta t/2)$ ($\tau_{\mathrm{LB}}$ the
-relaxation time, $c_s$ the lattice sound speed; page-local), and the
+relaxation time, registry §11; $c_s$ the lattice sound speed, page-local), and the
 weakly compressible flow is valid for Mach numbers below about 0.3. The time
 step is tied to the finest grid spacing, $\Delta t=(c_s/c_0)\Delta x_{\min}$
 ($c_0$ the physical sound speed), so Cai et al. (2022, §III) raise the Mach

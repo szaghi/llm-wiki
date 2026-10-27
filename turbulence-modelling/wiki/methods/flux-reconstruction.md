@@ -5,7 +5,7 @@ description: "Flux reconstruction (FR/CPR) corrects a degree-N discontinuous flu
 status: established
 aliases: [FR, flux reconstruction method, correction procedure via reconstruction, CPR, FR/CPR, lifting collocation penalty, Huynh flux reconstruction, ESFR, energy-stable flux reconstruction, VCJH schemes, NSFR, nonlinearly stable flux reconstruction]
 tags: [flux-reconstruction, dg, implicit-les, numerical-dissipation, entropy-stable, wmles]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Flux reconstruction
@@ -104,7 +104,7 @@ hexahedra, which raises the order by restarts $N=0\to1\to2\to3$ (§3, §4.2).
 
 ## The FR family, the correction parameter and nonlinear stability
 
-**Lineage**, as recalled by Brillon & Nadarajah (2026, §1): after Huynh's
+**Lineage**, as Brillon & Nadarajah (2026, §1) cite it: after Huynh's
 FR, Wang and Gao's lifting collocation penalty applied a "correction field"
 to the surface integral; Haga et al. merged the two into CPR, and Jameson
 et al. proved the FR surface reconstruction identical to the CPR
@@ -118,7 +118,7 @@ accuracy"; with suitable correction functions ESFR recovers DG and the
 [spectral difference](/methods/spectral-difference-method.md) method.
 Allaneau and Jameson read ESFR in one dimension as a filtered DG scheme,
 and Zwanenburg and Nadarajah extended the equivalence to three-dimensional
-elements and to weak and strong modal DG (all as recalled, §1).
+elements and to weak and strong modal DG (all as cited there, §1).
 
 **Correction parameter as a filter** (Brillon & Nadarajah 2026, §3.1.5,
 citing those works). The FR mass matrix $\mathsf M+\mathsf K$ "effectively
@@ -132,7 +132,7 @@ $c_{\mathrm{HU}}$ Huynh's $g_2$ scheme. No numerical values of the
 parameter are printed.
 
 **Nonlinearly stable FR (NSFR).** Brillon & Nadarajah (2026, §2.7,
-Eqs. 62–72) use the NSFR scheme of Cicchino et al. (as recalled; proofs in
+Eqs. 62–72) use the NSFR scheme of Cicchino et al. (cited; proofs in
 the cited works), implemented in the open-source PHiLiP code on deal.II.
 On tensor-product hexahedra with a modal basis of degree $N$ and
 Gauss–Lobatto–Legendre (GLL) solution nodes, the convective volume term is
@@ -349,6 +349,13 @@ amounts to extra dissipative flux terms. Evidence in the sources:
   page). Their new $N=3$ DNS of the cylinder at $Re_D=3900$ uses about
   55.6 million degrees of freedom (§3.2; see
   [direct numerical simulation](/definitions/direct-numerical-simulation.md)).
+- **The interface flux as the model.** Hamedi & Vermeire (2022, §1,
+  §2.1) state, citing earlier FR studies, that the numerical dissipation
+  of FR with suitable high-order time stepping acts as a built-in
+  subgrid model, the Riemann-solver dissipation "reducing or eliminating
+  a pile-up of kinetic energy in high-frequency modes"; they call their
+  unfiltered runs ILES and their filtered runs "LES", the filter being the
+  only model.
 - **Cost against finite volumes**, as relayed by
   [Saini et al. (2023)](/sources/saini-2023.md), §1, from earlier studies:
   fifth-order PyFR was more accurate than a commercial finite-volume code but
@@ -446,6 +453,48 @@ ILES relies on, and that solution filtering may cause time inconsistency
   results are nearly identical, and the predicted heat-transfer coefficient
   depends more on the filter threshold than on the Riemann solver.
 
+[Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) stabilize
+under-resolved FR by a **modal filter applied after every time step**,
+which they prefer to de-aliasing and limiting (relatively costly) and to
+artificial viscosity (which needs a sensor), while citing Park et al. as
+finding filtering harmful to accuracy (§1). Their
+FR variant is the DG-recovering one (Radau correction functions, Gauss
+solution and flux points, Rusanov interface flux, BR2 viscous flux), and
+they state that the resulting filters "may not be optimal" for other
+Riemann solvers and "would not be generally suitable" for other
+correction functions (§2.1, §3.4). The filter acts on the orthonormal
+modal coefficients through the Vandermonde matrix and is normalized by
+the number of steps per characteristic time, so that its cumulative
+strength does not depend on $\Delta t$; its exponential parameters are
+optimized on more than 14,000 inviscid Taylor–Green runs at $16^3$
+degrees of freedom for $N=3$–$5$ (details, tables and caveats on
+[explicit modal filtering](/methods/explicit-modal-filtering.md)). With the
+strongest filter:
+
+- a turbulent [channel](/benchmarks/turbulent-channel-flow.md) at
+  $Re_\tau=395$ with about 3/8 of the DNS degrees of freedom
+  (Table 2 spacings $\Delta x^+\approx25$, $\Delta y^+\approx0.9$,
+  $\Delta z^+\approx17$) is stable unfiltered at $N=3$ and 4 but needs the filter
+  at $N=5$; filtered and unfiltered mean velocity and Reynolds stresses
+  agree with each other and with DNS, and at $N=3$ the filtered near-wall
+  rms fluctuations are closer to DNS for $10<y^+<40$ (§5.1, Table 2, Figs.
+  23–25);
+- on the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at
+  $Re=1600$ ($64^3$ degrees of freedom, linear and sinusoidally curved
+  meshes) the filters "slightly increase the amount of numerical
+  dissipation" without significant loss of accuracy (§4.2–4.3);
+- on a stalled NACA 0020 at $20^\circ$, $Re=20\,000$, $M=0.2$, the mean
+  $C_L$/$C_D$ are 0.651/0.357 filtered and 0.639/0.353 unfiltered against
+  0.64/0.35 in the DNS of Rosti et al. (§5.2, Table 3);
+- on the isentropic vortex the observed orders are nearly unchanged
+  (e.g. 7.626557 unfiltered against 7.626587 filtered at $N=3$), both
+  above $N+1$ (§4.1, Table 1).
+
+They name two sources of aliasing in FR: the non-linearity of the fluxes
+and, on curved elements, a non-constant mapping Jacobian, a
+"geometrical-aliasing source" (§2.2; see
+[geometric conservation law](/properties/geometric-conservation-law.md)).
+
 **Wall units on high-order grids.** Wang (2024, §4.2, Eq. 26, after Jia et
 al.) divides the first-cell $y^+$ computed from the cell height by $N+1$;
 the [PANS](/methods/partially-averaged-navier-stokes.md) wall value of
@@ -539,7 +588,7 @@ compressible FR code is named by [Kurz et al. (2025)](/sources/kurz-2025.md),
 §1, among the GPU high-order solvers.
 
 **Spectral difference against FR.** [D'Ayer et al. (2026)](/sources/dayer-2026.md),
-§1, recall from earlier studies that the computing time of the spectral
+§1, cite earlier studies for the statement that the computing time of the spectral
 difference method is equivalent to that of FR "under favourable
 conditions" or slightly higher in some circumstances, and validate their
 spectral-difference volume-penalization
@@ -587,8 +636,15 @@ laminar circular cylinder, with errors they call similar (§3.1).
   their own criterion (stable and non-increasing kinetic energy), and the
   timing comparison is for one code (PHiLiP) on one machine. The
   equivalences of ESFR with DG and spectral difference, and the filter
-  interpretation of the correction parameter, are recalled from the
-  cited works, not derived there.
+  interpretation of the correction parameter, are cited from earlier
+  works, not derived there.
+- Hamedi & Vermeire (2022) print the dissipative term of their Rusanov
+  flux as $+\tfrac{s}{2}(u_L+u_R)$ (Eq. 44, $s$ the wave-speed estimate);
+  with $u_L=u_R$ this does not reduce to the physical flux, so the
+  consistent Rusanov form carries the jump of the states *(compiler check,
+  not in the sources)*. The paper does not name the solver that ran the
+  simulations, and its filters are tied to the DG-recovering correction
+  function and the Rusanov flux (§3.4).
 
 # Citations
 
@@ -599,8 +655,9 @@ laminar circular cylinder, with errors they call similar (§3.1).
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL hal-04582857v1: §III.B.e, g, Tables I–II (H3AMR flux reconstruction, Block Spectral Stresses, SD3DvisP spectral difference); §IV.A, Figs. 5, 7; §V; App. A.
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv 2404.12703v2: §1 (PyFR among GPU high-order codes).
 - [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §1 (FR lineage, ESFR, equivalences, iLES/ILES); §2.6–2.10, Eqs. (46)–(90) (SGS models, NSFR split form, Ismail–Roe flux, SSP-RK3, added Riemann dissipation, strong DG with over-integration); §3.1.1–3.1.8, Tables 1–5, Figs. 2–20 (Taylor–Green DNS and implicit LES: stability, cost, flux nodes, correction parameter, CFL, two-point fluxes, upwinding, SGS models); §3.2, Table 6 (Comte-Bellot–Corrsin).
-- [D'Ayer et al. (2026)](/sources/dayer-2026.md) — HAL hal-05075852v1: §1 (spectral difference against FR cost, as recalled); §3.1 (comparison with the FR penalization of Kou et al.).
+- [D'Ayer et al. (2026)](/sources/dayer-2026.md) — HAL hal-05075852v1: §1 (spectral difference against FR cost, cited); §3.1 (comparison with the FR penalization of Kou et al.).
 - [Liu et al. (2022b)](/sources/liu-2022-g.md) — §2.1–2.2, Eqs. 1–11, Fig. 1 (ALE FR/CPR on triangles, GCL compensation, physical-space correction field); §3.1.1, Table 1 (order on deforming grids); §4 (turbulence as future work).
 - [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §VI, Fig. 7 (fourth-order FR shock tubes with learned fluxes).
 - [Wang et al. (2013)](/sources/wang-2013.md) — §1 (Huynh cited); §5, Tables II–IV, VII (CPR–DG submissions to the first High-Order CFD Workshop).
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — Abstract, §1–1.1 (first FR-RANS with transition, $\ln\omega$ SST); §2, Eqs. (47)–(61) (FR, VCJH, BR2, AUSM$^+$-up); §3.2, Eqs. (62)–(87), Figs. 5–7 (implicit solver, semi-analytical and source Jacobians); §3.3.1, Eq. (88); §4.1–4.3, Figs. 9–17 (Wieghardt plate, T3 cases, VCJH parameters, $O(N^2)$ cost).
+- [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §1, §2.1–2.2 (DG-recovering FR, LCP, geometric aliasing, dissipation as SGS model); §3.2–3.4 (time-step-independent modal filter, optimization, scope); §4.1–4.3, Table 1; §5.1–5.2, Tables 2–3, Figs. 23–25; Eq. 44.

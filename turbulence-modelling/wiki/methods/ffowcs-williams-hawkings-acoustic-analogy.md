@@ -5,19 +5,19 @@ description: "The Ffowcs Williams–Hawkings analogy turns a flow solution into 
 status: established
 aliases: [FW-H, FWH, Ffowcs Williams-Hawkings equation, acoustic analogy, hybrid aeroacoustic prediction]
 tags: [aeroacoustics, les, hybrid-rans-les, rans, turbomachinery]
-timestamp: 2026-10-27T10:56:00Z
+timestamp: 2026-10-27T15:49:00Z
 ---
 
 # Ffowcs Williams–Hawkings acoustic analogy
 
 The **Ffowcs Williams–Hawkings (FW-H) analogy** computes the sound radiated
 by a flow from a fluid-dynamic solution, without resolving the acoustic
-field in the flow solver. As recalled by
-[Rismondo et al. (2025)](/sources/rismondo-2025.md), §1.2, Lighthill (1952)
-rearranged the compressible Navier–Stokes equations into an inhomogeneous
-wave equation for the acoustic field. Ffowcs Williams & Hawkings (1969)
-extended it to bodies in relative motion and solved it with the free-space
-Green function. The radiated pressure then splits into a **linear**
+field in the flow solver.
+[Rismondo et al. (2025)](/sources/rismondo-2025.md), §1.2, cite Lighthill
+(1952), who rearranged the compressible Navier–Stokes equations into an
+inhomogeneous wave equation for the acoustic field, and Ffowcs Williams &
+Hawkings (1969), who extended it to bodies in relative motion and solved it
+with the free-space Green function. The radiated pressure then splits into a **linear**
 surface part and a **nonlinear** volume part. The surface part holds the
 *thickness* term (fluid displaced by the body) and the *loading* term
 (pressure and viscous stress on it). The volume part is the *quadrupole*
@@ -219,8 +219,8 @@ adjoints as the next step (§5).
   about 11 cells per wavelength. They name averaging over multiple closed
   end discs (Mendez et al.) and quadrupole corrections as improvements
   they did not use. HORSES3D supports both
-  solid and permeable surfaces (Ferrer et al. 2023, §4.6). As recalled by
-  Rismondo et al. (§1.2), marine-propeller studies use the porous
+  solid and permeable surfaces (Ferrer et al. 2023, §4.6). Rismondo et al.
+  (§1.2) cite marine-propeller studies that use the porous
   formulation of Di Francescantonio (1997) and its modifications.
 
 ## Quadrupole terms: neglect or integrate
@@ -256,8 +256,7 @@ Mach number 0.57), and Rismondo et al. find them significant at a tip Mach
 number of about 0.11. The two
 claims concern different quantities and distances: Lewis et al. predict
 in-duct and far-field fan broadband noise, and Rismondo et al. find the
-quadrupole important in the near field and at low frequency. This is no
-contradiction.
+quadrupole important in the near field and at low frequency.
 
 ## Retarded time and source compactness
 
@@ -274,9 +273,10 @@ The source prints the differences $\boldsymbol s(t_e)-\boldsymbol x(t)$
 without the modulus and writes the definition as "$\mathrm{MFP}=\dots=1$".
 Delays may be ignored below $f_{\max}$, where $\mathrm{MFP}>1$. At the
 nearest microphone they find $f_{\max}=30f_T$ for the surface terms and
-$3.85f_T$ for the volume terms (Tables 3–4). The volume terms thus become
-uncertain above about $4f_T$, the range where the authors note a rise of
-the nonlinear spectrum above $20f_T$ and which they flag themselves.
+$3.85f_T$ for the volume terms (Tables 3–4). By that criterion the delays
+of the volume terms are not negligible above $3.85f_T$ at that microphone,
+a range that contains the rise of the nonlinear spectrum above $20f_T$
+that they report.
 
 ## Accuracy reported
 
@@ -322,15 +322,15 @@ Two lessons recur:
   hybrid method solves a propagation PDE on a grid instead of evaluating an
   FW-H integral. It lets a plate scatter and reflect the sound, and carries
   high-frequency waves that the LES itself dissipates (§4.3–4.4). The
-  authors recall that the LES/FW-H study of Wang et al. (2020) at $M=0.6$
-  underpredicts isolated-jet noise. A different result of Ffowcs Williams,
+  authors cite the LES/FW-H study of Wang et al. (2020) at $M=0.6$ as
+  underpredicting isolated-jet noise. A different result of Ffowcs Williams,
   the $\sin^2(\theta/2)$ edge-scattering directivity of Ffowcs Williams &
   Hall (1970), is the law their installed-jet noise increments follow on
   the unshielded side up to $110^\circ$ (§4.3).
 - **Direct noise computation**, in which the compressible solver resolves
   the acoustic field itself, is shown with HORSES3D (Ferrer et al. 2023,
   §4.6, dilatation field of the NACA 0012).
-- As recalled by Rismondo et al. (§1.2), Nelson et al. (2012) combined
+- Rismondo et al. (§1.2) cite Nelson et al. (2012), who combined
   delayed DES with Farassat's linear formulation for a full wind turbine.
 
 ## Qualifications
@@ -376,10 +376,10 @@ Two lessons recur:
 
 # Citations
 
-- [Rismondo et al. (2025)](/sources/rismondo-2025.md) — §1.2 (history, quadrupole omission, porous formulation, recalled studies); §2.2, Eqs. (2.3)–(2.7) (advective FW-H); §4.1–4.3, Eqs. (4.3)–(4.6), Tables 3–4, Figs. 18–27 (spectra, MFP criterion, source regions, directivity, decay); §5.
+- [Rismondo et al. (2025)](/sources/rismondo-2025.md) — §1.2 (history, quadrupole omission, porous formulation, cited studies); §2.2, Eqs. (2.3)–(2.7) (advective FW-H); §4.1–4.3, Eqs. (4.3)–(4.6), Tables 3–4, Figs. 18–27 (spectra, MFP criterion, source regions, directivity, decay); §5.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — arXiv v1: §4.6, Eqs. (23)–(26), Figs. 12–13 (convective FW-H in HORSES3D, monopole test, NACA 0012).
 - [Basile et al. (2023)](/sources/basile-2023.md) — HAL accepted manuscript: §4.3 (permeable surfaces, Rahier terms); §4.4, Figs. 14–15 (jet PSD and OASPL).
 - [Lewis et al. (2023)](/sources/lewis-2023.md) — HAL accepted manuscript: §5.3 (SherFWH, SherGoldstein, neglected sources); §5.3.1, Figs. 36–42 (FW-H and Goldstein predictions, shielding correction); §6.
 - [Ahn et al. (2023)](/sources/ahn-2023.md) — §III (EDGE implicit LES, tripping step); §IV A–B (effect of tripping); §IV D, Table II, Figs. 22–25 (permeable FW-H surface, sampling, OASPL, spectra, screech frequency).
 - [Monfaredi et al. (2021)](/sources/monfaredi-2021.md) — §1; §2.1–2.2, Eqs. (1)–(8) (URANS, 2D frequency-domain FW-H); §2.2.1, Fig. 2 (monopole); §3, Eqs. (9)–(36) (objective, continuous adjoint, FW-H source terms); §4.1–4.2, Figs. 4–17 (verification, truncated adjoint, rod–airfoil optimization); §5.
-- [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md) — §2.2–2.3 (LES/APE alternative); §4.3–4.4 (Ffowcs Williams & Hall directivity, recalled LES/FW-H of Wang et al.).
+- [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md) — §2.2–2.3 (LES/APE alternative); §4.3–4.4 (Ffowcs Williams & Hall directivity, cited LES/FW-H of Wang et al.).
