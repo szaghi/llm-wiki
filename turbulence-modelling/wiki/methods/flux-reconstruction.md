@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Flux reconstruction"
-description: "Flux reconstruction (FR/CPR) corrects a degree-N discontinuous flux polynomial per element with Riemann-solver interface corrections; its correction functions recover nodal DG or spectral difference. This page covers its formulation, the correction parameter as a filter, nonlinearly stable split-form FR, its use as implicit LES, explicit SGS models and filter width, and its stabilization."
+description: "Flux reconstruction (FR/CPR) corrects a degree-N discontinuous flux polynomial per element with Riemann-solver interface corrections; its correction functions recover nodal DG or spectral difference. This page covers its formulation, the correction parameter as a filter, nonlinearly stable split-form FR, implicit FR for transitional RANS, its use as implicit LES, explicit SGS models and filter width, and its stabilization."
 status: established
 aliases: [FR, flux reconstruction method, correction procedure via reconstruction, CPR, FR/CPR, lifting collocation penalty, Huynh flux reconstruction, ESFR, energy-stable flux reconstruction, VCJH schemes, NSFR, nonlinearly stable flux reconstruction]
 tags: [flux-reconstruction, dg, implicit-les, numerical-dissipation, entropy-stable, wmles]
-timestamp: 2026-10-26T16:22:00Z
+timestamp: 2026-10-27T05:50:00Z
 ---
 
 # Flux reconstruction
@@ -29,7 +29,10 @@ or under-resolved DNS ([Dzanic et al. 2022](/sources/dzanic-2022.md);
 [wall-modelled LES](/methods/wall-modelled-les.md)
 ([Duan & Wang 2024](/sources/duan-2024.md)), and with
 [PANS](/methods/partially-averaged-navier-stokes.md) as the hybrid closure
-(Dzanic et al. 2022). A provably entropy-stable split-form variant,
+(Dzanic et al. 2022). As a steady RANS solver with laminar–turbulent
+transition it runs fully implicitly in [COOLFluiD](/software/coolfluid.md)
+([Vandenhoeck et al. 2022](/sources/vandenhoeck-2022.md)). A provably
+entropy-stable split-form variant,
 nonlinearly stable FR, is assessed as DNS and implicit LES of free-shear
 turbulence without any added dissipation by
 [Brillon & Nadarajah (2026)](/sources/brillon-2026.md); another choice of
@@ -88,6 +91,7 @@ not disagreements.
 | Dzanic et al. (2022), §2.3 | PyFR | Rusanov-type | BR2 | explicit fourth-order Runge–Kutta | $N=1$, $3$ |
 | Duan & Wang (2024), §3 | hpMusic | Roe | common solution and gradients, face gradients by BR2 | explicit SSP-RK3, or optimized BDF2 with (block) LU-SGS | $N=2$–$5$ |
 | Wang (2024), §2.2, §3 | ATHOS | Rusanov at no-slip walls, Roe or HLLC inside | LDG, penalty $0$, directional parameter $\pm0.5$ | explicit low-storage five-stage fourth-order Runge–Kutta, CFL $0.85/(2N+1)$ | up to $N=3$ |
+| Vandenhoeck et al. (2022), §2–3 | COOLFluiD | AUSM$^+$-up (Roe named as an option) | BR2 | implicit backward Euler, Newton linearization, GMRES (PETSc); CFL ramped up to 1250 | $N=0$–$6$ |
 
 Wang (2024, §2.2) reads the Rusanov flux as a central flux with scalar
 dissipation (the largest local wave speed) and the Roe flux as a central flux
@@ -246,6 +250,69 @@ direction ("OI").
 The authors state it is, to their knowledge, "the first study on the use of
 a provably entropy conserving and stable high-order flux reconstruction
 method for the simulation of viscous turbulent flows" (§1).
+
+## Implicit FR for RANS with transition
+
+[Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) present what
+they call, to their knowledge, the first FR solver for RANS with
+laminar–turbulent transition; earlier FR-RANS work used the
+[Spalart–Allmaras](/methods/spalart-allmaras-model.md) and Wilcox
+[$k$-$\omega$](/methods/k-omega-model.md) models (Abstract, §1). The
+closures are the [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) model
+of 2003 rewritten to transport $\ln\omega$ (an idea they take from Bassi et
+al.'s DG $k$-$\omega$, which removes the steep near-wall growth of $\omega$
+that made high-order SST unstable and guarantees $\omega>0$) and the
+Langtry–Menter [local-correlation transition model](/methods/local-correlation-based-transition-model.md)
+(§1). The FR scheme is Huynh's on tensor elements with Gauss–Legendre
+solution points, VCJH correction functions ($c_{\mathrm{SD}}$ by default),
+BR2 for diffusion and AUSM$^+$-up at interfaces (§2, Eqs. 47–61).
+
+**Semi-analytical Jacobian** (§3.2.2, Eqs. 66–87). A purely numerical
+Jacobian, which repeats the whole FR procedure for every perturbed
+solution-point value, is costly and does not scale with order (§3.2.1).
+The authors differentiate the FR operator analytically and split the
+Jacobian into six contributions, from the element-interior flux and the
+face correction, each through the state and through the corrected
+gradient, the face terms for the interface and for the extrapolated
+discontinuous flux; on tensor elements the corrected gradient at a solution
+point depends on $3d(N+1)$ states of the element and its $2d$ neighbours
+($d$ the space dimension, page-local). Only the derivatives of the
+physical flux are taken by finite differences, whence "semi-analytical".
+Per element the Jacobian has $O(N^{d+1})$ entries, and the corrected
+gradient adds a factor $O(N)$ to each with diffusion, so the time per degree
+of freedom scales at best as $O(N^2)$ in any dimension; single-thread
+timings on an Intel Core i7-9700K follow that scaling, with or without the
+two transition equations (§4.3, Fig. 17).
+
+**Source-term Jacobian.** Of a full analytical, a negative-part-only
+(after Merci et al.), a decoupled (no derivatives with respect to the
+mean-flow variables, turbulence and transition blocks separate) and a
+diagonal treatment, all reach the target CFL of 1250 at $N=2$ on the
+ERCOFTAC T3A case, whereas without a source Jacobian the CFL limit had to
+be lowered to 500; the fully numerical Jacobian stagnates, and the
+decoupled treatment, slightly the fastest, is kept (§3.2.3, Figs. 6–7).
+At a no-slip wall the ghost value of $\ln\omega$ uses the distance of the
+first solution point instead of the theoretical zero (§3.3.1, Eq. 88).
+
+**Accuracy on coarse grids.** On the Wieghardt
+[flat plate](/benchmarks/turbulent-boundary-layer.md)
+($Re_L=1.03\times10^7$), on 784 elements with first-element height
+$y_1^+\simeq10$, the higher-order velocity profiles coincide and agree with
+experiment, Spalding's law and a degree-2 DG reference (Wilcox $k$-$\omega$) on 8800
+elements, and the $N=4$ skin friction lies considerably closer to
+experiment than lower orders and that reference; on 392 elements with
+$y_1^+\simeq25$ discontinuities visible at $N=5$ disappear at $N=6$, so
+accurate results are obtained at $y_1^+\simeq25$ without
+[wall functions](/methods/rans-wall-function.md), which the authors state
+is beyond second-order finite volumes without such functions (§4.1, Figs.
+9–10). On the [ERCOFTAC T3 plates](/benchmarks/ercoftac-t3-flat-plate.md)
+on 143 elements the two highest orders coincide and approach experiment;
+$N=0$ shows no transition; T3A and T3A$-$ results are very close to a
+finite-volume reference on about 39 000 elements, and for T3B the FR
+solution is "remarkably closer" to experiment (§4.2, Figs. 12–13). The
+T3A skin friction at $N=5$ is nearly identical for the correction
+parameters $c_{\mathrm{SD}}$, $c_{\mathrm{DG}}$ and $c_{g2}$ (Fig. 14; see
+[spectral difference method](/methods/spectral-difference-method.md)).
 
 ## FR as implicit LES
 
@@ -443,6 +510,15 @@ laminar circular cylinder, with errors they call similar (§3.1).
 
 ## Qualifications
 
+- Vandenhoeck et al. (2022) report the instability of high-order SST
+  without the logarithmic variable from experience, with no figure (§1.1).
+  Between Eqs. (82) and (83) they print the same face-solution symbol
+  twice where the second should be the element's own value, and in §3.2.2
+  write derivatives of $F^D$ where the interface flux $F^I$ is meant; the
+  free-stream turbulence intensity of the Wieghardt plate, printed
+  "$10^{-2}$" (§4.1), is ambiguous against the percent units that §3.3.2
+  defines.
+
 - Chapelier et al. (2024) print H3AMR's order as the number of points per
   direction ("$N$ = spatial order of accuracy", §III.B.g), here translated
   to the registry's degree $N$ (order $N+1$).
@@ -485,3 +561,4 @@ laminar circular cylinder, with errors they call similar (§3.1).
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv 2404.12703v2: §1 (PyFR among GPU high-order codes).
 - [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §1 (FR lineage, ESFR, equivalences, iLES/ILES); §2.6–2.10, Eqs. (46)–(90) (SGS models, NSFR split form, Ismail–Roe flux, SSP-RK3, added Riemann dissipation, strong DG with over-integration); §3.1.1–3.1.8, Tables 1–5, Figs. 2–20 (Taylor–Green DNS and implicit LES: stability, cost, flux nodes, correction parameter, CFL, two-point fluxes, upwinding, SGS models); §3.2, Table 6 (Comte-Bellot–Corrsin).
 - [D'Ayer et al. (2026)](/sources/dayer-2026.md) — HAL hal-05075852v1: §1 (spectral difference against FR cost, as recalled); §3.1 (comparison with the FR penalization of Kou et al.).
+- [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — Abstract, §1–1.1 (first FR-RANS with transition, $\ln\omega$ SST); §2, Eqs. (47)–(61) (FR, VCJH, BR2, AUSM$^+$-up); §3.2, Eqs. (62)–(87), Figs. 5–7 (implicit solver, semi-analytical and source Jacobians); §3.3.1, Eq. (88); §4.1–4.3, Figs. 9–17 (Wieghardt plate, T3 cases, VCJH parameters, $O(N^2)$ cost).

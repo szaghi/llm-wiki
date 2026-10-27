@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Turbulent channel flow"
-description: "Pressure-driven flow between two parallel walls, periodic in the wall-parallel directions: DNS at Re_τ 100 to 800 (including rough walls and thermally perfect gases), wall-resolved, implicit and very coarse LES at 180 to 2000, wall-modelled and immersed-boundary LES at Re_τ 544 to 10¹⁰, hybrid RANS/LES to 20,000, high-order RANS, and compressible channels."
+description: "Pressure-driven flow between two parallel walls, periodic in the wall-parallel directions: DNS at Re_τ 100 to 800 (including rough walls and thermally perfect gases), wall-resolved, implicit and very coarse LES at 180 to 2000, wall-modelled and immersed-boundary LES and a priori wall-model tests at Re_τ 544 to 10¹⁰, hybrid RANS/LES to 20,000, high-order RANS, and compressible channels."
 status: established
 aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow, minimal channel, rough-wall channel]
-tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns, data-driven, compressible, immersed-boundary]
-timestamp: 2026-10-26T20:48:00Z
+tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns, data-driven, compressible, immersed-boundary, rans, spectral-element]
+timestamp: 2026-10-27T06:07:00Z
 ---
 
 # Turbulent channel flow
@@ -528,6 +528,30 @@ pipe at $Re_\tau\approx40{,}000$, beyond the training range, gives total
 errors of 4–12% for both models with non-monotonic grid convergence (§4.4,
 Fig. 10).
 
+**An a priori test of explicit wall models.**
+[Nuca et al. (2025)](/sources/nuca-2025.md), §VI, feed the velocity
+signal of a wall-resolved OpenFOAM LES at $Re_\tau\approx1000$ (the
+dataset of Mukha, Rezaeiravesh & Liefvendahl as cited), averaged over a
+cube of side $\delta/30$ centred at $h_{\mathrm{wm}}=0.05\delta$, to the
+iterative Spalding, Reichardt and equilibrium-ODE
+[wall models](/methods/equilibrium-wall-model.md) and to their explicit
+closed-form approximations, with $\kappa=0.387$, $B=4.21$. The explicit
+models reproduce the iterated wall stress within 0.07% (fixed-parameter
+fits) and 0.7% (global fits). Used as initial guesses at relative
+tolerance $10^{-4}$, they cut the mean/maximum iteration counts (Table VII):
+
+| Model | previous-step guess | fixed-parameter explicit guess | global explicit guess |
+|---|---|---|---|
+| Reichardt (Newton) | 1.95 / 3 | 1.79 / 2 | 1.91 / 2 |
+| Spalding (Newton) | 1.95 / 3 | 1.52 / 2 | 1.95 / 2 |
+| equilibrium ODE (fixed point) | 3.27 / 6 | 1.03 / 2 | 3.9 / 4 |
+
+The authors note that robustness is not an issue in the channel or the
+zero-pressure-gradient layer, where the equilibrium models match the
+physics, so tests limited to such flows probe accuracy but not robustness
+(§II); their robustness test is a near-stall airfoil (see
+[wall-modelled LES](/methods/wall-modelled-les.md)).
+
 **Grid convergence of the classical compressible wall model.**
 [Griffin et al. (2023)](/sources/griffin-2023.md), §4, run nine compressible
 channels at bulk Mach 0.7 to 4 and dimensionless wall heat flux $-B_q$ from
@@ -667,6 +691,35 @@ at the optimal rate $N+1$ (Table 2, Figs. 13–16). The wall shear computed
 from the HDG auxiliary strain variable converges one order faster than
 from the velocity gradient: errors fall from 1.0% to 0.025% against 6.4% to
 0.13% (§5.2.1, Fig. 15).
+
+**The $k$-$\tau$ model in spectral elements.**
+[Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §3.1, run the
+half channel at $Re_b=125{,}000$ (bulk velocity, half-height),
+$Re_\tau\approx5200$, with seven wall-normal spectral elements of growth
+ratio $1/0.35$ in [Nek5000](/software/nek5000.md), at $p=3$, 5, 7 and 9
+(first-point $y^+=1.7$, 0.73, 0.39, 0.25). With the wall condition
+$\tau_t=0$ of their [$k$-$\tau$ model](/methods/k-tau-model.md)
+($\tau_t=1/\omega$, page-local: the turbulent time scale), velocity,
+$k^+$ and $\tau_t^+$ are insensitive to the near-wall resolution and
+indistinguishable under $p$-refinement except at $p=3$ (Figs. 1–2), and the
+profiles match the authors' regularized $k$-$\omega$, "expected since the
+$\tau$ and $\omega$ transport equations are equivalent" (Fig. 3).
+Friction velocity against the DNS of Lee & Moser (Table 1):
+
+| Model | $u_\tau$ |
+|---|---|
+| $k$-$\tau$ | 0.0412 |
+| regularized $k$-$\omega$ | 0.0413 |
+| low-Reynolds $k$-$\tau$ | 0.0414 |
+| low-Reynolds regularized $k$-$\omega$ | 0.0415 |
+| $k$-$\omega$ SST, OpenFOAM (104 cells across) | 0.0409 |
+| DNS | 0.0415 |
+
+The same models run a pipe at $Re_b=44{,}000$, $Re_\tau=1142$ ($p=7$,
+average $y^+\approx0.8$): $u_\tau=0.0523$ ($k$-$\tau$) and 0.0528
+(low-Reynolds variant) against 0.0519 in the DNS of Wu & Moin, errors below
+1% and 2%; the low-Reynolds variant captures the near-wall peak of $k$,
+slightly offset from the DNS (§3.2, Table 2, Figs. 5–6).
 
 **Discretization of a thermally perfect gas.**
 [Aiello et al. (2026)](/sources/aiello-2026.md) run DNS of a supersonic and
@@ -912,6 +965,18 @@ tests are left to future work. See
   $\delta/\Delta x$ values are about 3% below $N_x/L_x$ *(compiler check,
   not in the sources)*.
 
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) head their
+  pipe section "$Re_\tau=1000$" while the text gives 1142, the value the
+  printed $Re_b=44{,}000$ (on $D=1$, $U_b=1$) and DNS $u_\tau=0.0519$
+  reproduce, $Re_\tau=u_\tau(D/2)/\nu=0.0519\times22{,}000=1141.8$
+  *(compiler check, not in the sources)*.
+- [Nuca et al. (2025)](/sources/nuca-2025.md) use a relative tolerance of
+  $10^{-4}$ in the channel test and mention $10^{-3}$ for the airfoil; the
+  global Reichardt fit, run here with the high-Reynolds constants, is an
+  extrapolation in its parameter $C$: their Eq. 6, $C=B-\ln\kappa/\kappa$,
+  gives $C\approx6.66$ for $\kappa=0.387$, $B=4.21$, against the fitted
+  range 6.8–7.7 of Table II *(compiler check, not in the sources)*.
+
 # Citations
 
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §V, Figs. 1–2; §VII.D, Figs. 7–10.
@@ -956,3 +1021,5 @@ tests are left to future work. See
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §III.C, Figs. 15–16; §III.D.2–3.
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §3.2.1; §6.2.1, Figs. 15–20.
 - [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §1; §2.3; §3.2–3.3, Figs. 5–10; §4.1–4.2, Eqs. 4.2–4.27, Figs. 11–13; §5, Tables 1–2.
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.1, Table 1, Figs. 1–3; §3.2, Table 2, Figs. 4–6.
+- [Nuca et al. (2025)](/sources/nuca-2025.md) — §II; §VI, Table VII.

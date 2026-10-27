@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Equilibrium wall model
@@ -31,7 +31,9 @@ every wall-modelled source of this bundle:
 [Blind et al. (2023)](/sources/blind-2023.md),
 [Duan & Wang (2024)](/sources/duan-2024.md) and
 [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) (with hybrid RANS/LES
-rather than LES), [Mukha et al. (2025)](/sources/mukha-2025.md), and the wall law of the
+rather than LES), [Mukha et al. (2025)](/sources/mukha-2025.md),
+[Nuca et al. (2025)](/sources/nuca-2025.md), who reformulate the
+Spalding, Reichardt and ODE forms as explicit laws, and the wall law of the
 fan-stage WMLES of [Lewis et al. (2023)](/sources/lewis-2023.md); it is the comparison
 baseline of the learned models of [Bae & Koumoutsakos (2022)](/sources/bae-2022.md)
 and of the [building-block-flow wall model](/methods/building-block-flow-wall-model.md)
@@ -46,6 +48,11 @@ on an [immersed boundary](/methods/immersed-boundary-method.md), and
 model in a high-order DG solver, borrowing the WMLES practice of sampling
 away from the wall and the constant-stress hypothesis (see
 [RANS wall function](/methods/rans-wall-function.md)).
+[Husson et al. (2024)](/sources/husson-2024.md) (§3.1–3.2) impose the
+Spalart–Allmaras analytical wall law, linearized below the interpolation
+point, through a lattice Boltzmann immersed boundary in RANS and in the RANS
+zone of [zonal DES](/methods/detached-eddy-simulation.md), on the stated
+equilibrium hypothesis (formulas on the RANS wall function page).
 [Wu & Lele (2026)](/sources/wu-2026.md) (§2.2, §6.2) run their wall-modelled
 channel LES with "a classic wall model" identical to that of Bou-Zeid et al.
 (2005), as cited, without printing its form, so that it is an equilibrium
@@ -168,7 +175,53 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
   velocity and the turbulence quantities of the first off-wall node. They
   ignore pressure-gradient effects knowingly, citing Cai et al. (2022) for
   the claim that in fully separated flows the model operates at low $y^+$,
-  comparable to a linear reconstruction (§2.2).
+  comparable to a linear reconstruction (§2.2). Nuca et al. (2025, Eq. 5)
+  use an explicit law attributed to the same reference, written forward as
+  $u^+(Re_y)$ with exponential blending, and re-optimize its two blend
+  constants for each model and constant set (next item).
+- **Explicit approximations of the Spalding, Reichardt and ODE models**
+  (Nuca et al. 2025, §III–V, Eqs. 9–24, Tables I–VI). The three models are
+  written as functions of the local Reynolds number
+  $Re_y=U_{\mathrm{LES}}h_{\mathrm{wm}}/\nu$, computable from the sampled
+  data, so that $\tau_w=\rho(U_{\mathrm{LES}}/u^+)^2$ follows with no
+  iteration. The approximant is the explicit law above plus a buffer-layer
+  correction,
+
+  $$u^+(Re_y)\simeq u^+_{\mathrm{CS}}(Re_y)+\sum_{i=1}^{N_b}a_i\,e^{-b_i(\log_{10}Re_y-c_i)^2},\qquad N_b\in\{1,2,3\},$$
+
+  with amplitudes $a_i$, widths $b_i>0$ and centres $c_i$ (page-local; the
+  minus sign is the corrected reading of the printed Eq. 10, see
+  Qualifications). The $3N_b+2$ coefficients, including the blend
+  constants of $u^+_{\mathrm{CS}}$, minimize the 2-norm of the pointwise
+  relative error on a log-uniform grid of the model's native variable,
+  mapped to $Re_y$, by simplicial-homology global optimization (Eqs. 17–21).
+  Two families result:
+  - *Global* models ($N_b=1$): on a $20\times20$ grid of
+    $(\kappa,B)$ for Spalding, $(\kappa,C)$ for Reichardt (with its damping
+    lengths 11 and 3 fixed) and $(\kappa,A^+)$ for the ODE model (ranges on
+    the [law of the wall](/definitions/law-of-the-wall.md) page), the optimal
+    coefficients are regressed linearly on the two parameters (Eqs. 22–23,
+    Table IV), giving one closed form for each model valid over the whole
+    range, with error below 1 % for $Re_y$ from $10^{-4}$ to $10^6$
+    (0.8 % in the conclusions), the Reichardt map including an extrapolation
+    to $\kappa>0.4$ (§V.A, Figs. 4–6).
+  - *Fixed-parameter* models ($N_b=3$, eleven coefficients each, Tables
+    V–VI) for a high-Re set, $\kappa=0.387$, $B=4.21$, and a classical set
+    ($\kappa=0.4$, $B=5.5$, $C=7.8$; $\kappa=0.41$, $A^+=17$ for the ODE),
+    with printed errors below 0.05 % (§V.B, Fig. 7); see Qualifications
+    for a check of the printed coefficients.
+
+  The target of 1 % is argued from the models themselves, which are "not
+  accurate" in the buffer layer, and from the about 1 % maximum error of
+  the explicit approximation of an ODE model by Meneveau (2020), as they
+  cite it, whose work treats roughness and pressure gradient and is called
+  complementary (§I, §IV). The Lambert function is evaluated explicitly by
+  one refinement of the initial guess of Iacono & Boyd (as cited), with at
+  most 0.02 % error (App. A, Eqs. A1–A3). The explicit law can replace the
+  model or seed its iteration; results are under "Robustness of the
+  iterative inversion" below. The approach is stated to extend to any model
+  coupling the linear and logarithmic laws in one dimension and to thermal
+  wall layers, not shown.
 - **Musker's law with RANS variables** (Constant et al. 2024, §3.2,
   Eqs. 6–11): at each immersed-boundary target point $A$ below the
   modelling height, $u_\tau$ from Newton–Raphson on Musker's law at the
@@ -225,6 +278,7 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | Duan & Wang (2024, §4, Fig. 4) | hpMusic, flux reconstruction of degree $N=2$–5 | interface between the first and second elements, $h_{\mathrm{wm}}$ equal to the first element height; data from the second element | element-wise constant SGS viscosity (no wall-model filtering stated) |
 | Mozaffari et al. (2024, §2.2) | ProLB lattice Boltzmann, octree Cartesian grid, immersed boundary | reference point one local grid size along the normal from each boundary node | none stated |
 | Mukha et al. (2025, §II.C.1, §III–IV) | Nek5000, continuous spectral elements of degree 7 | channel: $0.2\delta$, inside the first element on meshes of 2 and 4 elements per $\delta$ and in the second on 8, for elements of equal height *(compiler check, not in the sources)*; boundary layer: $0.2\delta_{99}(x)$, $\delta_{99}$ from a power-law estimate | none by default; exponential moving average of 5–500 time steps tested (channel), 10 time steps (boundary layer) |
+| Nuca et al. (2025, §II, §VI, App. B) | OpenFOAM with the libWallModelledLES library, structured C-grid of 18.7 M cells, 10–12 cells across the boundary layer | airfoil: not printed; a priori channel test: $0.05\delta$, "the center of the second off-wall cell" of a notional WMLES grid | channel: LES velocity averaged over a cube of side $\delta/30$ around the sampling point; airfoil: none stated |
 | Ghidoni et al. (2026, §3.3, Fig. 1, Alg. 1), RANS | modal DG, $N\le6$, body-fitted | internal quadrature point of the wall element farthest from the wall (nearest the opposite face), first-element heights $y_1^+=1$–320 | steady RANS, no filtering |
 | Constant et al. (2024, §3.1, §4.2), RANS | FastS finite volume, octree Cartesian grid, immersed boundary | modelling height $H_{\mathrm{mod}}$ from a flat-plate estimate of a target $y^+$ (50–500), then lowered locally after a first converged run (see below) | steady RANS, no filtering |
 
@@ -287,6 +341,54 @@ exceeds the target, a static single-pass update with a warm restart that
 lowers the maximum suction-side image-point $y^+$ from 435 to 243 for a
 target of 100 (§4.2, §6.1, Fig. 18). Details on the
 [immersed boundary method](/methods/immersed-boundary-method.md) page.
+
+## Robustness of the iterative inversion
+
+Implicit laws need an iterative solve at every wall point and time step,
+and the solve can fail. Nuca et al. (2025, §I–II) report from their own
+work and from users of the libWallModelledLES library that the Newton
+solver for Spalding's law "would often sporadically diverge" in WMLES of
+complex geometries, particularly when the sampling height exceeds the first
+off-wall node; they name large fluctuations of the sampled velocity, which
+make the previous-step initial guess poor, and application of the model
+where it is not physically valid, such as transition regions. On the
+Aérospatiale A-airfoil near stall (configuration of Tamaki & Kawai, as
+cited; wall model on the whole suction side) the Newton count of an
+instantaneous snapshot rises to 5 in the transition region (Fig. 2).
+Robustness "is not an issue" in channel flow or zero-pressure-gradient
+plates, where equilibrium models are consistent with the physics, so the
+canonical tests of most of the wall-model literature probe accuracy, not
+robustness (§II). The remedies they list (sampling the near-wall cell
+during initial transients, averaging the input, derivative-free solvers)
+complicate the set-up and guarantee nothing (§II). The ODE model does not
+diverge in this way but needs a one-dimensional mesh or adaptive quadrature
+per wall node and a fixed-point iteration (§I).
+
+Their explicit approximations (above) remove the iteration when used
+directly, which they call "unconditionally stable" (by construction: there
+is nothing to converge), or seed it in place of the previous-step stress.
+Mean/maximum iteration counts (Tables VII–VIII):
+
+| Model | Channel, previous step | Channel, high-Re explicit guess | Airfoil, previous step | Airfoil, high-Re explicit guess |
+|---|---|---|---|---|
+| Reichardt (Newton) | 1.95 / 3 | 1.79 / 2 | 2.88 / 11 | 2.93 / 3 |
+| Spalding (Newton) | 1.95 / 3 | 1.52 / 2 | 2.95 / 10 | 2.95 / 3 |
+| ODE (fixed point) | 3.27 / 6 | 1.03 / 2 | 1.37 / 100 | 1.00 / 6 |
+
+The channel test is a priori: a stored wall-resolved LES signal at
+$Re_\tau\approx1000$ (OpenFOAM, as cited), relative tolerance $10^{-4}$,
+in which the explicit laws reproduce the iterated $\tau_w$ within 0.07 %
+(high-Re constants) and 0.7 % (global); the global $N_b=1$ guess gives
+1.91/2, 1.95/2 and 3.9/4. The airfoil test is a posteriori, averaged over
+one convective time $c/U_\infty$ after about $13c/U_\infty$ of
+initialization; 100 is the iteration cap of the ODE model, which therefore
+failed to converge to its tolerance ($10^{-3}$) at some steps, and the
+explicit Spalding stress differs from the iterated one by at most 0.06 %
+over a wider $Re_y$ range than in the channel (§VI, Figs. 8–9). For the
+algebraic laws the guess barely changes the mean count, because Newton
+converges quadratically; in the laminar region $x/c<0.08$ the
+previous-step guess is better, the flow there being steady (§VI). Accuracy
+against experiment is not assessed; the reference is the original model.
 
 ## Pressure across the modelled layer
 
@@ -401,7 +503,14 @@ the algebraic equilibrium model. In RANS, Ghidoni et al. (2026, §4.1,
 Table 2) measure the gain of an explicit over an implicit law: with the
 first element at $y_1^+=320$ the computing time falls on average by 68.96 %
 with the explicit power law and by 63.73 % with the Newton-iterated
-Spalding law, against the wall-resolved run, over degrees $N=1$–6.
+Spalding law, against the wall-resolved run, over degrees $N=1$–6. In
+WMLES, Nuca et al. (2025, §VI) measure the wall-modelling share of the run
+time of their airfoil case at about 2 % with the Newton-iterated algebraic
+laws, 1.8 % with the explicit Spalding law (the difference called not
+statistically significant), 1.9 % with the explicit ODE approximation and
+11.9 % with the integrated ODE model; all explicit laws perform the same
+operations with different coefficients and cost the same (Shaheen III, no
+further hardware detail).
 
 ## Limits shown by the sources
 
@@ -499,6 +608,19 @@ Spalding law, against the wall-resolved run, over degrees $N=1$–6.
   $y_1^+>10$ in the recirculation of a backward-facing step, where the law
   of the wall gives wrong $u_\tau$ (details on the
   [RANS wall function](/methods/rans-wall-function.md) page).
+- **Recirculation behind a step and in a slat cove (RANS and zonal DES on
+  an immersed boundary).** Husson et al. (2024, §3.1) state that their
+  immersed-boundary treatment and the linearized Spalart–Allmaras law both
+  rest on the equilibrium hypothesis, so "significant discrepancies are to
+  be expected" near separation and in recirculation; they recall that
+  non-equilibrium analytical laws and ODE models on embedded grids extend
+  the validity, the latter at higher cost and with possible instability on
+  non-body-fitted grids (as cited). In their results the near-wall
+  differences at the first station of a [backward-facing step](/benchmarks/backward-facing-step.md)
+  are attributed to the wall law imposing a zero-pressure-gradient profile
+  in the recirculation, and the slightly too large slat recirculation of a
+  three-element airfoil partly to the wall model (§4.2.2, §4.3.2; see
+  [RANS wall function](/methods/rans-wall-function.md)).
 - **Equilibrium as a limit.** Fowler et al. (2022, §2.2) derive the classical
   model as the limit $T_s\to0$ of their relaxation equation (page-local $T_s$,
   the relaxation time of the fluid layer below $h_{\mathrm{wm}}$); applying the
@@ -574,6 +696,38 @@ profile lies above the DNS).
   (wall law, sampling height, Reynolds number, SGS treatment), so the two
   are not in conflict; the observations that would test one set-up against
   the other are not in the sources.
+- **Sign of the bump exponent of Nuca et al. (2025).** Eq. (10) (checked
+  on the page image) prints the correction as
+  $\xi_i\,e^{\sigma_i(\log_{10}Re_y-\mu_i)^2}$ with no minus sign (the
+  source's $\xi_i$, $\sigma_i$, $\mu_i$ are $a_i$, $b_i$, $c_i$ above),
+  while every printed $\sigma_i$ is positive and the text requires bumps
+  that decay away from their centre. Evaluated as printed, the global
+  Spalding model of Table IV diverges; with the minus sign its maximum
+  relative error over the fitted $Re_y$ range is 0.82 % at $\kappa=0.4$,
+  $B=5.5$ and 0.63 % at $\kappa=0.387$, $B=4.21$, consistent with the
+  printed bound of 1 % *(compiler check, not in the sources)*. The form
+  above uses the minus sign.
+- **Fixed-parameter coefficients of Nuca et al. (2025) not reproduced.**
+  With the minus sign, $\log_{10}$ in the bumps and the four-decimal
+  coefficients of Tables V–VI, the maximum relative error against
+  Spalding's law (cubic form) and Reichardt's law (damping lengths 11 and 3,
+  $C=B-\kappa^{-1}\ln\kappa$) is about 1.5 % and 0.5 % for the high-Re set
+  and 1.8 % and 1.0 % for the classical set, and against the ODE model of
+  the classical set ($\kappa=0.41$, $A^+=17$, $B$ from Eq. 1 at
+  $y^+=10^5$) about 0.5 %, against the printed bound of
+  0.05 %; rounding to four decimals cannot account for errors of order 1 %.
+  Tables V–VI are therefore not reproduced by a computation from the
+  printed tables *(compiler check, not in the sources)*; whether Eq. (10)
+  or the tables differ further from what was run cannot be told from the
+  paper.
+- **Other printed items of Nuca et al. (2025).** The Fig. 7 caption puts
+  the high-Re models on top and the classical ones below, while the panel
+  labels say the reverse; §V calls the global model's regression "10
+  coefficients" where Table IV prints 15 numbers per model (10 slopes and
+  5 intercepts); the channel test uses a relative tolerance of $10^{-4}$
+  and the airfoil test $10^{-3}$, without comment; Fig. 2 shows at most 5
+  Newton iterations in one snapshot, Table VIII a maximum of 10 over the
+  run, which are compatible.
 
 # Citations
 
@@ -600,3 +754,5 @@ profile lies above the DNS).
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — §II.C.1, Eqs. (5)–(6); §III.A; §III.B.3, Tables II–III, Figs. 4–5; §III.C; §IV.A; App. A, Fig. 19 (arXiv v1).
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §3.3, Eqs. (12)–(17), Fig. 1, Alg. 1; §4.1, Table 2; §4.2–4.3, Figs. 8, 10.
 - [Wu & Lele (2026)](/sources/wu-2026.md) — §2.2; §6.2 (arXiv v2).
+- [Nuca et al. (2025)](/sources/nuca-2025.md) — §I–II, Fig. 2; §III–IV, Eqs. (1)–(24), Table I, Fig. 3; §V.A–V.B, Tables II–VI, Figs. 4–7; §VI, Tables VII–VIII, Figs. 8–9; §VII; App. A, Eqs. (A1)–(A3); App. B.
+- [Husson et al. (2024)](/sources/husson-2024.md) — §3.1–3.2; §4.2.2; §4.3.2.

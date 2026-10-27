@@ -5,7 +5,7 @@ description: "LES closures in which a neural network maps resolved-field feature
 status: established
 aliases: [ANN-SGS model, GAN SGS model, fusion network, T-SR-FU, energy-conserving neural closure, structure-preserving closure, ANN-SGS mixed model, deep-learning LES closure, DL-LES, neural-network LES closure, data-driven SGS model, S-106H, SL-106H, SL-180C, DL-AR1, DL-AR2, multi-filter training, TBNN-GNN]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T05:50:00Z
 ---
 
 # Neural-network subgrid-scale models
@@ -47,6 +47,21 @@ Agdestein & Sanderse (2025) train a CNN on the discrete commutator error
 of a staggered grid (see
 [divergence-consistent LES](/methods/divergence-consistent-les.md) and
 [discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
+
+**Networks as deconvolution.** As recalled by
+[Valencia et al. (2026)](/sources/valencia-2026.md), §I, the approximate
+deconvolution framework of the
+[scale-similarity model](/methods/scale-similarity-model.md) "has been
+extended later on with data-driven methods": neural-network blind
+deconvolution (Maulik & San; Maulik et al., two-dimensional turbulence)
+and deep-learning or GAN super-resolution of turbulent velocity fields
+(Liu et al.; Deng et al.), the line to which the
+[super-resolution SGS models](/methods/super-resolution-sgs-model.md)
+belong. Valencia et al. themselves test only non-learned deconvolution,
+a priori; in compressible isotropic turbulence those models reach
+correlations above 0.99 with the total unresolved stress at a
+filter-to-grid ratio of 4 (Table VII; see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
 
 ## Supervised mixed network (Kang et al. 2023)
 
@@ -550,3 +565,4 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 - [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §2.5, §3 (physics-informed neural operator replacing the LES solver).
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1, §2.1, §3–3.3, Eqs. 3.3–3.9, Figs. 1–4, Table 1 (model, filters, data); §5–6, Tables 3–4, Figs. 5–20 (a posteriori results); §7–8.
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: p. 1 (criticisms of deep-learning closures recalled).
+- [Valencia et al. (2026)](/sources/valencia-2026.md) — §I (data-driven extensions of deconvolution, recalled); Table VII (a priori level of non-learned deconvolution).

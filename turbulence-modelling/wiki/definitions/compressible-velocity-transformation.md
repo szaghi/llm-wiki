@@ -5,7 +5,7 @@ description: "Maps that turn the mean velocity of a variable-property compressib
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Compressible velocity transformations
@@ -247,7 +247,7 @@ thickness as a possible reason for its success (§3.2).
 
 ## Transformations as a validation yardstick
 
-Six further sources use a transformation not to rank transformations but to
+Seven further sources use a transformation not to rank transformations but to
 judge a simulation.
 
 - **Hybrid RANS/LES of supersonic channels.** [Carlsson et al. (2023)](/sources/carlsson-2023.md)
@@ -278,6 +278,27 @@ judge a simulation.
   upstream boundary layer of their Mach 7.2, 33° ramp the van Driest profiles
   with and without the scale-similar part of the SGS model are identical
   (Sec. IV F, Fig. 31).
+- **High-order DG implicit LES of a supersonic boundary layer.**
+  [Gao et al. (2022)](/sources/gao-2022.md) (§5.2, Figs. 16–17) validate the
+  undisturbed Mach 2 boundary layer upstream of their oblique
+  [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+  ($Re_{\theta_0}=1628$, adiabatic wall, [FLEXI](/software/flexi.md) at
+  $N=6$, no SGS model; see [implicit LES](/definitions/implicit-les.md))
+  against the DNS of Wenzel et al. (as cited) one $\delta_r$ downstream of
+  their forcing zone ($\delta_r$ the reference boundary-layer thickness,
+  page-local): the van Driest-transformed mean velocity is "in good
+  agreement", and so are the density-scaled Reynolds stresses (see
+  [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md); the scaling
+  formula is not printed). For the skin friction they apply the van Driest
+  II transformation and compare the transformed $C_f$ against the transformed
+  momentum-thickness Reynolds number with the incompressible correlation
+  $C_{f,i}=0.024\,Re_{\theta,i}^{-0.25}$ (subscript $i$ the transformed
+  value, page-local), "as Wenzel et al. and Pirozzoli and Bernardini did";
+  the LES approaches both the DNS and the correlation quickly after the
+  forcing zone. Gao et al. do not discuss the choice of van Driest over the
+  alternatives above; their wall is adiabatic, the case for which Iyer &
+  Malik, as recalled by Griffin et al. (§1; above), found the classical
+  scaling the more accurate.
 - **DNS code validation.** [Dang et al. (2022)](/sources/dang-2022.md) (§5.1,
   Fig. 17) validate the GPU code [OpenCFD-SCU](/software/opencfd-scu.md) on
   the Mach 2.9, 24° compression ramp with van Driest-transformed mean
@@ -415,3 +436,4 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 - [Cao et al. (2024)](/sources/cao-2024.md) — §3.3, Tables 4–5, Figs. 7–8 (arXiv v1).
 - [Chen et al. (2024)](/sources/chen-2024.md) — §1; §3.1, Eqs. (3.1)–(3.7), Fig. 3; §3.2, Eqs. (3.11)–(3.14), Figs. 4–5; §3.3, Eqs. (3.15)–(3.17), Fig. 6; App. B, Eq. (B1), Fig. 16.
 - [Aiello et al. (2026)](/sources/aiello-2026.md) — §2.2; §4.1, Fig. 1; §4.2, Table 3.
+- [Gao et al. (2022)](/sources/gao-2022.md) — §5.2, Figs. 16–17.

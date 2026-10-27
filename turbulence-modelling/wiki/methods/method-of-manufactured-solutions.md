@@ -5,7 +5,7 @@ description: "The method of manufactured solutions verifies a flow solver by cho
 status: established
 aliases: [MMS, manufactured solution, manufactured solutions, code verification by manufactured solutions]
 tags: [verification, dg, rans, software]
-timestamp: 2026-10-26T20:44:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Method of manufactured solutions
@@ -78,6 +78,41 @@ the periodic cube $[-1,1]^3$, with source terms from Gassner et al.
 (cited by the source), run to $t=1$ with a time step small enough not to affect
 the error.
 
+**Travelling wave with a Spalart–Allmaras variable.**
+[Lodares et al. (2022)](/sources/lodares-2022.md), §7.1, Eq. (124), extend
+the same kind of travelling wave to the compressible RANS equations with the
+[Spalart–Allmaras](/methods/spalart-allmaras-model.md) variable as a sixth
+component, on the periodic cube $[-1,1]^3$:
+$$\rho=2+0.1\sin\big(\pi(x+y+z-2t)\big),\quad u=\rho-1,\quad v=2\rho-4,\quad w=-3\rho+5,\quad E=\rho^2,\quad \tilde\nu=\cos\big(\pi(x+y+z-2t)\big),$$
+($E$ the total energy per unit volume, the source's $\rho e$), with unit
+viscosity and heat conductivity and an
+artificial wall distance $d=2-\sqrt{x^2+y^2+z^2}$, so that the
+wall-distance terms of the SA source are exercised in a periodic box. The
+source terms are "omitted here for brevity"; a low-storage third-order
+Runge–Kutta scheme with $\Delta t=10^{-7}$ runs to $t=0.1$ with central
+fluxes. The manufactured $\tilde\nu$ takes negative values, so the test
+also exercises the negative branch of their SA formulation (see
+[entropy conservation](/properties/entropy-conservation.md)) *(compiler
+check, not in the sources)*.
+
+**Manufactured boundary-layer profile for a reconstruction.**
+[Huang et al. (2022b)](/sources/huang-2022-d.md), §2.4.3, Eq. (52), use a
+"manufactured" turbulent-boundary-layer velocity profile in a narrower
+sense: no source term and no solver run, only a static test of a cubic
+variational reconstruction on anisotropic near-wall grids. The profile is
+a composite law of the wall,
+$$u^+=\frac1\kappa\ln(1+\kappa y^+)+c_1\Big(1-e^{-y^+/11}-\frac{y^+}{11}e^{-0.33y^+}\Big),$$
+(the paper prints neither $\kappa$ nor $c_1$), with $u_\tau$ from a fitted
+skin friction $C_f=0.0027\,x^{-0.1409}$; cell averages of the profile are
+reconstructed and the $L_2$ error of $\partial u/\partial y$ is measured on
+a uniform mesh of aspect ratio $5\times10^2$ and a curved non-uniform mesh
+of aspect ratio about $10^3$ (wall-normal growth 1.3). The authors'
+optimized reconstruction weights give $1.39\times10^{-3}$ and
+$7.33\times10^{-4}$, against $3.49\times10^{-3}$ and $6.84\times10^{-2}$
+for the weights of Pan et al., and the optimal derivative weights combined
+with Pan et al.'s geometric weight diverge on the first mesh (Table 3). See
+[boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md).
+
 ## What the tests show
 
 | Solver and test | Grids and degrees | Observed result | Source |
@@ -85,6 +120,7 @@ the error.
 | Modal DG, steady Euler, sinusoidal MMS | primal orders 2, 3, 4 (degrees $N=1$–3); grids from $32\times32$ | primal solutions at design order; error estimates at their expected orders (below) | Wang & Roy (2023), §4.1.1, Figs. 2–6 |
 | HDG, RANS MMS at $Re=10^7$, $N=3$ triangles | 10, 13, 21, 28 cells per direction, first-cell $y^+$ 0.77 to 0.18 | velocity error $1.69\times10^{-4}$ to $2.70\times10^{-6}$, rates 4.62, 3.79, 3.82 ($\approx N+1$); pressure rates 2.84, 2.94, 2.97 ($\approx N$); $k$ and $\omega$ equations also optimal | Elzaabalawy et al. (2023), §5.1, Table 1 |
 | GALÆXI, DGSEM, travelling wave | $N=2$ to 9, 1 to $64^3$ elements | design order of the density $L_2$ error for standard DG on Gauss nodes and split-form DG on Gauss–Lobatto nodes | Kurz et al. (2025), §5.1, Fig. 9 |
+| Gauss–Lobatto DGSEM, RANS–SA travelling wave; standard, Pirozzoli (kinetic-energy-preserving) and Chandrashekar (entropy-conserving) volume fluxes | $4^3$ to $10^3$ elements, $N=2$–9 | spectral $p$-convergence for all three; $h$-rates of the total error (standard / Pirozzoli / Chandrashekar) 0.72 / 0.77 / 1.42 at $N=2$, 3.06 / 3.16 / 4.33 at $N=4$, 4.95 / 4.59 / 5.83 at $N=6$, 7.09 / 6.49 / 7.34 at $N=8$, 7.77 / 8.14 / 8.60 at $N=9$; for $\rho\tilde\nu$ at $N=9$ 5.83 / 5.21 / 7.74; the Chandrashekar form has a higher $L_2$ error and an even–odd behaviour in density | Lodares et al. (2022), §7.1, Table 1, Figs. 3–4 |
 
 Elzaabalawy et al. (2023, §5.1, Figs. 4–6) also use the manufactured
 solution to **calibrate** a free parameter: with
@@ -141,6 +177,17 @@ the estimated truncation error is the bottleneck (§4.2, §5).
   Table 2); an algebraic mixing-length model, without that singularity,
   recovers order $N+1$ (Eqs. 93–94, Fig. 16). The MMS order does not carry
   over to the singular problem.
+- The rates of Lodares et al. (2022, Table 1) are near $N+1$ in most
+  variables but not uniformly: at $N=2$ the standard and Pirozzoli forms
+  reach rates below one, and the $\rho\tilde\nu$ rate at $N=9$ lies
+  between 5.2 and 7.7; the authors read the test as showing spectral
+  convergence (§7.1).
+- Not every source verifies its solver here. [Vandenhoeck et al.
+  (2022)](/sources/vandenhoeck-2022.md), §1, refer the order verification
+  of flux-reconstruction RANS with the Spalart–Allmaras model to earlier
+  manufactured-solution studies of other groups and run no MMS for their own
+  $k$-$\omega$ SST and transition solver (see
+  [flux reconstruction](/methods/flux-reconstruction.md)).
 - Kurz et al. show only the density error, and Wang & Roy state no hardware
   for the costs of their error equations (Table 1).
 - Wang & Roy print "discretion error" for discretization error (§3.1) and
@@ -151,3 +198,6 @@ the estimated truncation error is the bottleneck (§4.2, §5).
 - [Wang & Roy (2023)](/sources/wang-2023.md) — Journal Pre-proof: §3.1, Eqs. (11)–(16) (error transport equations, expected orders); §4.1.1, Eqs. (18)–(21), Table 2, Figs. 2–6 (sinusoidal Euler MMS, round-off and order results); §4.1.2 (Ringleb flow); §4.2, §5 (non-smooth problems, Kármán–Trefftz airfoil with energy source term).
 - [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §5.1, Table 1, Figs. 4–6 (Eça–Hoekstra–Vaz RANS manufactured solution, observed orders, stabilization calibration); §5.2.1, Table 2, Eqs. (93)–(94), Fig. 16 (rates degraded by the $\omega$ wall singularity).
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — §5.1, Eq. (24), Fig. 9 (travelling-wave manufactured solution, design order for $N=2$–9).
+- [Lodares et al. (2022)](/sources/lodares-2022.md) — §7.1, Eq. (124), Table 1, Figs. 3–4 (RANS–SA travelling wave, $h$- and $p$-convergence of three split forms).
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.4.3, Eq. (52), Table 3 (manufactured boundary-layer profile for a static reconstruction test).
+- [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §1 (order of FR-SA verified by MMS in earlier work).

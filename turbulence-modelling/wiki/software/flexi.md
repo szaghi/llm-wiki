@@ -5,7 +5,7 @@ description: "FLEXI is an open-source high-order DGSEM framework for compressibl
 status: established
 aliases: [FLEXI framework, HOPR, POSTI]
 tags: [software, dg, les, kinetic-energy-preserving, reinforcement-learning]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T05:50:00Z
 ---
 
 # FLEXI
@@ -207,6 +207,40 @@ and super-samples high-order data to linear output (Krais et al. 2021, §2.3,
   sharpest shocks of all codes, matching the reference Mach profile at
   $256^3$ and oscillating below (§IV.A–B, Figs. 6–8; see
   [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)).
+- **Oblique shock / turbulent boundary-layer interaction** with
+  wall-resolved [implicit LES](/definitions/implicit-les.md)
+  ([Gao et al. 2022](/sources/gao-2022.md); University of Stuttgart): split-form DGSEM on LGL nodes
+  with two-point volume fluxes such as Pirozzoli's, an approximate Riemann solver with the
+  Harten–Hyman entropy fix, BR1 lifting and the five-stage fourth-order
+  low-storage Runge–Kutta scheme of Carpenter & Kennedy, no subgrid model,
+  "we solely rely on the dissipation of interface Riemann solvers" (§1,
+  §3.1). Shocks are captured by the Sonntag–Munz
+  [subcell finite-volume](/methods/subcell-finite-volume-shock-capturing.md)
+  scheme, with the Zhang–Shu positivity-preserving limiter added to keep
+  the frequent DG/FV switching stable (§3.2). The Jameson pressure
+  indicator flags much of the under-resolved boundary layer when evaluated
+  on the instantaneous field, so the authors evaluate it on the
+  spanwise-averaged pressure (see [shock sensors](/definitions/shock-sensor.md)).
+  The Mach 2, $8^\circ$ case at $Re_{\theta_0}=1628$ runs at $N=6$ on
+  $129\times81\times26$ elements (about 93 million degrees of freedom) on
+  16,384 cores of HAWK, with the reformulated synthetic eddy method and
+  anisotropic linear forcing at the inflow
+  ([inflow turbulence generation](/methods/inflow-turbulence-generation.md))
+  (§5.1–5.2, Tables 1–2). Measured PID: 1.55 µs for the shock-free boundary
+  layer at about 5687 degrees of freedom per core, "about 94.0% larger" than
+  the baseline of Krais et al., which they attribute to load imbalance of
+  the synthetic eddy method, the forcing (5–10%) and statistics collection;
+  1.84 µs with the hybrid scheme and filtered indicator, 18.7% more, within
+  the 15–20% hybrid overhead of Krais et al. above (§5.2, §5.3.1, Eq. 19).
+  The runs cost about 46,173 CPU-hours (boundary layer) and 196,608
+  CPU-hours (interaction). Separation and reattachment at $16.7\delta_r$ and
+  $19.5\delta_r$ compare with $17.6\delta_r$ and $19.3\delta_r$ in the
+  reference LES of Morgan et al. (§5.3.1; see
+  [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+  On a two-dimensional laminar interaction (Katzer's case), DG at $N=4$
+  reaches the grid-converged separation length with 182,000 degrees of
+  freedom (512 cores, 15 min) where second-order finite volume needs
+  409,500 (1152 cores, 9 min) (§4.2).
 - **NASA Rotor 37 cascade, CPU reference** for GALÆXI (Kurz et al. 2025,
   §6.3, Table 3): $2.6\times10^8$ degrees of freedom at $N=5$ on 32 768
   cores (about 7900 per core), PID $1.02\times10^{-6}$ s, 7538 s of wall
@@ -252,6 +286,10 @@ Flad & Gassner (2017) ran their study of kinetic-energy-preserving DG LES in an
 - Chapelier et al. (2024, App. A, Fig. 9) show a FLEXI run at $384^3$
   degrees of freedom in the subsonic verification case, which their text
   does not list among the resolutions used.
+- Gao et al. (2022, §4.2) call the DG cost of 7680 CPU-minutes "around
+  35% less" than the 10,368 CPU-minutes of finite volume; the printed
+  values give 25.9% less, 35% being the excess of the finite-volume cost
+  over the DG one *(compiler check, not in the sources)*.
 
 # Citations
 
@@ -262,4 +300,5 @@ Flad & Gassner (2017) ran their study of kinetic-energy-preserving DG LES in an
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §2, Table 1 (Flexi/Fluxo capabilities as judged by the HORSES3D authors).
 - [Kurz et al. (2023)](/sources/kurz-2023.md) — arXiv v2: §3.2 (linear forcing); §3.5, Table 2 (FLEXI set-up, Relexi); §4.1–4.2 (training cost, policy cost); App. A (element-wise dynamic Smagorinsky in FLEXI).
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL accepted manuscript: §III.B.f, Tables I–II (FLEXI configuration, scaling claim); §IV.A–B, Figs. 5–8 (supersonic Taylor–Green results); App. A, Fig. 9.
+- [Gao et al. (2022)](/sources/gao-2022.md) — §1, §3.1 (FLEXI DGSEM, implicit LES); §3.2 (subcell scheme, positivity limiter, filtered indicator); §4.2 (laminar interaction cost); §5.1–5.3, Eq. (19), Tables 1–2 (set-up, PID, cost, separation).
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §1, §3.1 (GALÆXI as a FLEXI port, MPI strategy); §4.4 (CPU optimum per core); §5.2 (identical Taylor–Green results); §6.3, Table 3 (Rotor 37 CPU reference, energy).

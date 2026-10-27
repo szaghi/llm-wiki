@@ -5,7 +5,7 @@ description: "Critical balance equates the linear Alfvén time and the nonlinear
 status: established
 aliases: [CB, Goldreich–Sridhar theory, GS95, strong MHD turbulence, weak MHD turbulence, imbalanced MHD turbulence, residual energy]
 tags: [mhd, astrophysics, plasma, anisotropy, energy-cascade]
-timestamp: 2026-10-26T10:20:00Z
+timestamp: 2026-10-27T05:46:00Z
 ---
 
 # Critical balance and the anisotropic MHD cascade
@@ -251,6 +251,28 @@ $-1/4$ in the general form (Eq. 10.3), so the review classes it as an
 intermittency effect. In weak turbulence the condensate carries a negative
 residual energy comparable to its energy (App. A.5, after Wang et al. 2011).
 
+**Heliospheric radial evolution.** [Adhikari et al.
+(2023)](/sources/adhikari-2023.md) give imbalance and residual energy as
+functions of heliocentric distance from Voyager 2 data (1977–2004) and
+from a moment-transport model of solar-wind turbulence (§6, Fig. 1; the
+model is on [compressible MHD
+turbulence](/results/compressible-mhd-turbulence.md)). With $\boldsymbol Z^+$
+directed outward, the observed normalized cross-helicity is
+$\sigma_c\approx-0.38$ at 1 au and increases slowly with distance, and
+the model agrees from 1 to 75 au. The observed normalized residual energy
+is $\sigma_r\approx-0.28$ at 1 au, decreases slowly to about 20 au, then
+increases, and stays negative to about 40–50 au; the model's stays
+negative over 1–75 au, magnetic energy dominating, consistent in sign
+with the negative solar-wind residual energy recalled above. The model's
+boundary values at 1 au are $\langle|\boldsymbol Z^+|^2\rangle=740$ and
+$\langle|\boldsymbol Z^-|^2\rangle=1650$ km$^2$ s$^{-2}$ and
+$\langle\boldsymbol Z^+\cdot\boldsymbol Z^-\rangle=-200$ km$^2$ s$^{-2}$,
+chosen within one standard deviation of the observed 372, 941 and $-195$
+(Table 1). The paper defines neither $\sigma_c$ nor its residual-energy
+counterpart by formula. The model carries no scale-by-scale cascade: it
+transports one energy and one correlation length per Elsasser field, so it
+neither uses nor tests critical balance.
+
 ## Below the viscous scale at large $Pm$
 
 For $Pm=\nu/\eta_m\gg1$, Schekochihin (2022, §11; updating Cho et al. 2002,
@@ -309,6 +331,9 @@ debated" (§8.2).
 - The review discusses no turbulence closure (RANS, LES or subgrid model);
   its content bears on closure modelling only through cascade phenomenology
   and numerical-resolution arguments.
+- [Adhikari et al. (2023)](/sources/adhikari-2023.md) print two turnover
+  distances for the computed residual energy, "∼15 au" (§6) and "∼20 au"
+  (§8); the observed turnover near 20 au is printed in §6.
 
 # Citations
 
@@ -316,3 +341,4 @@ debated" (§8.2).
 - [Gan et al. (2022)](/sources/gan-2022.md) — §3, p. 3; §3, Figs. 4–5, p. 6 (anisotropy exponents of mode components).
 - [Kochurin et al. (2022)](/sources/kochurin-2022.md) — Eq. (3); pp. 2, 4–5; Conclusion (weak shear-Alfvén spectrum constant; magneto-capillary analogue; critical balance as an open question).
 - [Ruan et al. (2023)](/sources/ruan-2023.md) — §3.3; §3.5, Eqs. (7)–(8); §4 (field-perpendicular anisotropy assumed and observed in a flare simulation; Kelvin–Helmholtz criterion for parallel and perpendicular shear).
+- [Adhikari et al. (2023)](/sources/adhikari-2023.md) — §6, Table 1, Fig. 1; §8 (radial evolution of normalized cross-helicity and residual energy from Voyager 2 and a turbulence transport model).

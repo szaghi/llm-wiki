@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-26T20:50:00Z
+timestamp: 2026-10-27T05:46:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -81,6 +81,9 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Brillon & Nadarajah (2026)](/sources/brillon-2026.md), §2.6.4, Eqs. (53)–(58); §3.1.8 | DSM in nonlinearly stable flux reconstruction, with the low-Reynolds-number correction of Meyers & Sagaut; coefficient written $C_D$ in $\nu_t=C_D\Delta^2\lvert\bar S\rvert$, i.e. $C_D=C_s^2$ | modal test filter to degree 3 at $N=5$, width $V^{1/3}/4$ against $\Delta=V^{1/3}/6$ ($V$ the element volume), so $\hat\Delta/\Delta=1.5$ *(compiler check, not in the sources)*; element averages of numerator and denominator; clipped (see Qualifications) |
 | [Jakhar et al. (2026)](/sources/jakhar-2026.md), App. D | DSM (Germano et al., cited) and a dynamic Leith model, baselines in forced two-dimensional turbulence | not printed; "positive clipping" enforces $\nu_t\ge0$ |
 | [Li et al. (2024)](/sources/li-2024.md), §II B, Eqs. (7)–(11) | DSM (Lilly's least squares) and a two-coefficient dynamic mixed model, baselines of a neural-operator surrogate in forced isotropic turbulence and a temporal mixing layer, pseudo-spectral | test filter $\hat\Delta=2\Delta$, and a second filter of width $4\Delta$ for the mixed model's structural term; average over the whole domain, so the coefficients are spatially uniform at each time |
+| [Pan & Zhang (2023)](/sources/pan-2023.md), §II.D, Eqs. (16)–(19) | dynamic Smagorinsky–Lilly model of ANSYS-Fluent (Lilly's "minimum error method"), reference LES of a centrifugal impeller; printed as $L^d_{ij}=C_s^2M^{\mathrm P}_{ij}$ with $M^{\mathrm P}_{ij}=2\Delta^2\widehat{\lvert\bar S\rvert\bar S_{ij}}-2\hat\Delta^2\lvert\hat{\bar S}\rvert\hat{\bar S}_{ij}$ ($M^{\mathrm P}$ page-local) $=2\Delta^2M_{ij}$, and $C_s^2=\langle L_{ij}M^{\mathrm P}_{ij}\rangle/\langle M^{\mathrm P}_{ij}M^{\mathrm P}_{ij}\rangle$, the formula above *(compiler check, not in the sources)* | default Fluent test filter; averaging not specified |
+| [Volpiani (2024)](/sources/volpiani-2024.md), App. 2, Eqs. (33)–(40) | compressible Germano–Lilly model (Germano et al.; Lilly; Spyropoulos & Blaisdell, as recalled) with Favre-filtered strain and density-weighted $L_{ij}$ and $M_{ij}$, coefficient $C_d=C_s^2$, and a dynamic Yoshizawa coefficient $C_I=\langle L_{kk}\rangle/\langle2\hat\Delta^2\hat{\bar\rho}\lvert\hat{\tilde S}\rvert^2-2\Delta^2\widehat{\bar\rho\lvert\tilde S\rvert^2}\rangle$ for the isotropic part ($C_I$ page-local) | $\hat\Delta=2\Delta$; kernel and averaging not printed |
+| [Valencia et al. (2026)](/sources/valencia-2026.md), §I, §V C | DSM and dynamic mixed model as a priori baselines in explicitly filtered compressible isotropic turbulence | not printed |
 
 Fowler et al. (2022, §4.2) borrow the Lagrangian averaging of the dynamic
 model for the time integration of their wall model (semi-Lagrangian upstream
@@ -402,6 +405,26 @@ filter-width question.
   against $-3.22\pm1.18$. The dynamic forms give ratios of smaller magnitude but keep the
   sign of a purely diffusive closure (see
   [energy backscatter](/definitions/energy-backscatter.md)).
+- **Taylor–Green vortex on split forms.** Volpiani (2024, §5, Fig. 15d)
+  finds that the dynamic model on a kinetic-energy-preserving split-form
+  central scheme does not improve on the multiscale Smagorinsky models at
+  $Re=1600$, and that all the explicit models are beaten by a
+  relaxation-filtered implicit LES without model (see
+  [Smagorinsky model](/methods/smagorinsky-model.md) and
+  [explicit modal filtering](/methods/explicit-modal-filtering.md)).
+- **A priori against the total subfilter stress.** In explicitly filtered
+  compressible isotropic turbulence, Valencia et al. (2026, Tables VI–VII)
+  find the DSM correlating with the total unresolved stress at only
+  0.12–0.27 with relative errors of 1.02–1.96, and the dynamic mixed model
+  at 0.91 with relative errors of 0.44–0.49, both nearly insensitive to the
+  filter-to-grid ratio, against 0.97–0.999 for deconvolution models (see
+  [scale-similarity model](/methods/scale-similarity-model.md)).
+- **Reference LES of an impeller in rotating stall.** Pan & Zhang (2023,
+  §III) use the dynamic model as the benchmark against which
+  [DES and DDES](/methods/detached-eddy-simulation.md) are ranked, on the
+  same 12.33-million-cell grid (maximum $y^+\approx1.2$). Its validation
+  against PIV shows "remarkable discrepancy", which they attribute to the
+  experimental rig; the impeller head is 3.75% above the measured value.
 - **Clipping as a reason to prefer another baseline.** [Wu & Lele (2026)](/sources/wu-2026.md)
   (§5.1) choose the [Sigma model](/methods/sigma-model.md) rather than DSM
   as the reference of their learned closures, because the Sigma coefficient
@@ -494,6 +517,16 @@ squares from a 6×4 system; see the
   operation, and their test-filter width is larger than $\Delta$; the table
   above follows the low-pass reading.
 
+- Volpiani (2024, Eq. 38) prints the numerator of $C_d$ as
+  $\langle(L_{ij}-\tfrac13L_{ij}\delta_{ij})M_{ij}\rangle$, where the
+  deviatoric part needs the trace $L_{kk}$.
+- Pan & Zhang (2023) write the subgrid stress with the opposite sign of
+  the registry ($\tau_{ij}-\tfrac13\tau_{kk}\delta_{ij}=+2\nu_t\bar S_{ij}$,
+  Eq. 14) and denote the test filter by a tilde; their Eq. (17) agrees with
+  the registry's $L_{ij}$ (see the table). They also describe the same LES
+  as "the implicit filtered LES approach" of the code (§III.A), see
+  [implicit LES](/definitions/implicit-les.md).
+
 # Citations
 
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §II.B, Eqs. (6)–(8); §III; §VII.A–D, Figs. 3–10; §VIII.
@@ -528,3 +561,6 @@ squares from a 6×4 system; see the
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: Fig. 2; App. D.
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §5.1.
 - [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §6, Eqs. (6.1)–(6.9).
+- [Pan & Zhang (2023)](/sources/pan-2023.md) — §II.D, Eqs. (14)–(19); §III.A–C, Table II, Fig. 8.
+- [Volpiani (2024)](/sources/volpiani-2024.md) — §5, Fig. 15; App. 2, Eqs. (33)–(40).
+- [Valencia et al. (2026)](/sources/valencia-2026.md) — §I; §V C, Tables VI–VII.

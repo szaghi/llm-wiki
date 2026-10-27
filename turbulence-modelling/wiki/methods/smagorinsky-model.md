@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-26T20:50:00Z
+timestamp: 2026-10-27T06:13:00Z
 ---
 
 # Smagorinsky model
@@ -58,6 +58,7 @@ are variants of the same eddy-viscosity idea.
 | 0.14 (0.21 for a Burgers test); range "usually" $0.12<C_s<0.21$ | continuous spectral-element LES of atmospheric-type flows, $\Delta=\min(h_x,h_y,h_z)/(N+1)$ | [Reddy et al. (2026)](/sources/reddy-2026.md), §3.1 |
 | 0.15 | wall-resolved LES of a flexible aquatic canopy; the value of earlier canopy LES (0.17 in another group) | [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md), §2.1 |
 | 0.1 | decaying isotropic turbulence, sharp spectral filter at $k_c=10$; constraint of a physics-informed neural operator | [Zhao et al. (2025)](/sources/zhao-2025.md), §3.1 |
+| "usually taken between 0.1 and 0.18"; value used not printed, 0.1 tried without improvement | compressible finite-difference LES of the Taylor–Green vortex, $\Delta$ the cube root of the cell volume | [Volpiani (2024)](/sources/volpiani-2024.md), App. 2, Eq. (27); §5 |
 | $\sqrt{0.001}\approx0.032$ | temporal mixing layer, same use | Zhao et al. (2025), §3.2 |
 | 0.098–0.112 / 0.186–0.189 | learned from one trajectory of Smagorinsky-LES data / of filtered-DNS data, for weights $w_C\ge5$ of the coefficient loss ($w_C$ page-local, the source's $\gamma'$) | Zhao et al. (2025), §4, Table 4 |
 | 0.16, inside the Vreman constant $2.5C_s^2$ | spectral-element wall-modelled LES | [Mukha et al. (2025)](/sources/mukha-2025.md), §II.D |
@@ -364,6 +365,32 @@ limiting behavior".
   
   The HPF shear-improved variant reduces the peak enstrophy least of the
   variants (§3.1.8).
+- **Yoshizawa isotropic part and multiscale variants.** [Volpiani (2024)](/sources/volpiani-2024.md)
+  (App. 2, Eqs. 26–32) close the deviatoric Favre stress with
+  $\tau^d_{ij}=-2\bar\rho\nu_t\tilde S^d_{ij}$, $\nu_t=(C_s\Delta)^2\lvert\tilde S\rvert$,
+  $\Delta=(\Delta x\Delta y\Delta z)^{1/3}$, add the isotropic part of
+  Yoshizawa (cited there), $\tau_{kk}=2C_I\bar\rho\Delta^2\lvert\tilde S\rvert^2$
+  with $C_I=0.0066$ (registry §11), and a subgrid heat flux with $Pr_t=0.6$
+  (after Vreman et al., cited there). Two multiscale Smagorinsky models
+  after the variational multiscale method of Hughes et al. (as recalled)
+  split the resolved field into large and small resolved scales and apply
+  the eddy viscosity to the small-scale strain only: "large–small"
+  (MSSM-LS) with $\nu_t$ from the full resolved strain, "small–small"
+  (MSSM-SS) with $\nu_t$ from the small-scale strain. The scale-separation
+  operator and its cutoff are not printed. MSSM-LS is described as using
+  the large scales although its Eq. (31) contains the full resolved
+  strain.
+- **Smagorinsky limit of the Spalart–Allmaras length.** [Husson et al. (2024)](/sources/husson-2024.md)
+  (§2.2) note that when production and destruction of the
+  [Spalart–Allmaras](/methods/spalart-allmaras-model.md) variable balance,
+  $\nu_t\approx\lvert\Omega\rvert\ell^2$ ($\lvert\Omega\rvert$ the vorticity
+  magnitude of the SA source term, $\ell$ the model length, page-local),
+  so a length $\ell\approx\Delta$ gives
+  a Smagorinsky-like eddy viscosity, the basis of hybridization through
+  $\ell$ in [detached-eddy simulation](/methods/detached-eddy-simulation.md);
+  they note (§1) that subgrid modelling in
+  [lattice Boltzmann](/methods/lattice-boltzmann-method.md) LES relies in
+  its "vast majority" on Smagorinsky-like or Vreman eddy viscosities.
 - **Mixed explicit–implicit.** Smagorinsky added to implicit SVV
   (Vicente Cruz & Lamballais 2023, §6.5); see
   [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md).
@@ -601,6 +628,37 @@ spacing).
   higher-order [gradient models](/methods/gradient-model.md) of the paper
   do better.
 
+**Taylor–Green vortex with split forms.** Volpiani (2024, §5, Figs.
+15–17) adds Smagorinsky, the two multiscale variants and the dynamic model
+to a [kinetic-energy-preserving](/properties/kinetic-energy-preservation.md)
+split-form central scheme at $Re=1600$ on $64^3$ and $128^3$. With
+Smagorinsky the result does not depend on the split form; the model is
+too dissipative, describes the transition poorly and under-predicts the
+dissipation peak, and lowering $C_s$ to 0.1 does not fix it (not shown).
+The multiscale models improve the dissipation history, most on $128^3$,
+and the [dynamic model](/methods/dynamic-procedure.md) does not improve on
+them. Adding a relaxation filter to the split-form runs with a subgrid
+model improves them, from which the author concludes that aliasing errors
+spoil the solution even with an eddy viscosity; the best run of the paper
+is the filtered implicit LES with no model (see
+[explicit modal filtering](/methods/explicit-modal-filtering.md)).
+
+**A priori against the total subfilter stress.** In the a priori study of
+deconvolution models by [Valencia et al. (2026)](/sources/valencia-2026.md)
+(§V C, Tables VI–VII), the dynamic Smagorinsky model correlates with the
+total unresolved stress of explicitly filtered compressible isotropic
+turbulence at 0.26–0.27 ($\tau_{xx}$) and 0.12–0.14 ($\tau_{xy}$), with
+relative errors above one, at filter-to-grid ratios 2 and 4, against
+correlations above 0.97 for the deconvolution models (see
+[scale-similarity model](/methods/scale-similarity-model.md)).
+Whether an isotropic part was added to the model is not stated.
+
+**Dynamic against constant coefficient in a pump.** [Pan & Zhang (2023)](/sources/pan-2023.md)
+(§I) recall Zhou et al. (2017) finding the dynamic Smagorinsky model
+superior to the constant-coefficient model for rotating stall in a
+centrifugal pump, and use the dynamic model for their own reference LES
+(see [dynamic procedure](/methods/dynamic-procedure.md)).
+
 **Learned closures in high-order spectral solvers.** [Wu & Lele (2026)](/sources/wu-2026.md)
 (§5.1, §6.2.1, Table 3, Figs. 5, 15–16) use static Smagorinsky ($C=0.18$)
 and the [Sigma model](/methods/sigma-model.md) as references for
@@ -709,3 +767,7 @@ Fourier-spectral solver with two-thirds dealiasing.
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §II.B, Eq. (42); Eq. (45); §III.A, Fig. 3; §III.B, Figs. 13–14; §III.C.
 - [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — abstract; §7.
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §5.1, Table 3, Fig. 5; §6.2.1, Figs. 15–16.
+- [Volpiani (2024)](/sources/volpiani-2024.md) — §5, Figs. 15–17; App. 2, Eqs. (26)–(32).
+- [Husson et al. (2024)](/sources/husson-2024.md) — §1; §2.2.
+- [Valencia et al. (2026)](/sources/valencia-2026.md) — §V C, Tables VI–VII.
+- [Pan & Zhang (2023)](/sources/pan-2023.md) — §I.

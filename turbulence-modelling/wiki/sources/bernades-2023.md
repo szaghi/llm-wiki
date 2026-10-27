@@ -156,10 +156,11 @@ report; [45] and [46] are arXiv preprints; [60] carries the printed volume
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26), cited further in chunk 7. This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunks 7–8. This source is cited on:
 
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
+- [Shock sensors and troubled-cell indicators](/definitions/shock-sensor.md)
 - [Low-dissipation low-dispersion schemes with shock sensor](/methods/low-dissipation-low-dispersion-scheme.md)
 - [WENO and hybrid shock-capturing schemes in scale-resolving simulation](/methods/weno-scheme.md)
 - [Entropy conservation and entropy stability](/properties/entropy-conservation.md)

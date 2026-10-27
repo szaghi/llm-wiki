@@ -151,12 +151,13 @@ no page or article number, recorded as printed. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-26), cited further in chunk 7. This source is cited on:
+Chunk 5 (2026-10-26), cited further in chunks 7–8. This source is cited on:
 
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Turbine cascades (T106, T161, VKI LS89)](/benchmarks/turbine-cascade.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Laminar separation bubble](/definitions/laminar-separation-bubble.md)
+- [Shock sensors and troubled-cell indicators](/definitions/shock-sensor.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Explicit modal filtering as an LES closure](/methods/explicit-modal-filtering.md)
 - [Flux reconstruction](/methods/flux-reconstruction.md)

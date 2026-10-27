@@ -5,7 +5,7 @@ description: "The bulk (volume) viscosity multiplies the velocity divergence in 
 status: established
 aliases: [volume viscosity, dilatational viscosity, second viscosity, bulk viscous Reynolds number, viscous Prandtl number, Stokes hypothesis]
 tags: [compressible, dns, implicit-les, numerical-dissipation, mhd]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T05:46:00Z
 ---
 
 # Bulk viscosity
@@ -115,6 +115,22 @@ second *(compiler check, not in the sources)*. The sources use both pieces:
   collocated scheme reduces and Riemann-solver (upwind) dissipation removes
   the oscillations (§3.1.1, §3.1.7, Figs. 3–4, 17–18); see
   [numerical dissipation](/properties/numerical-dissipation.md).
+- [Volpiani (2024)](/sources/volpiani-2024.md), §3.2, Eq. (25), writes the
+  "theoretical" dissipation rate of the compressible
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) as the sum of
+  three volume averages: the deviatoric-strain term
+  $\frac{2\mu}{\rho_0|\Omega|}\int S^d_{ij}S^d_{ij}\,dV$, the bulk term
+  $\frac{\mu_b}{\rho_0|\Omega|}\int(\nabla\cdot\boldsymbol u)^2dV$ and the
+  pressure-dilatation term $-\frac{1}{\rho_0|\Omega|}\int p\,\nabla\cdot\boldsymbol u\,dV$,
+  with $\mu_b$ "the bulk viscosity; the viscosities are related via the
+  Stokes' hypothesis". The solver's viscous stress is the Stokes form
+  $2\mu S_{ij}-\tfrac23\mu S_{kk}\delta_{ij}$ (§2.1, Eq. 2), so in the
+  computations the bulk term is zero *(compiler check, not in the
+  sources)*; the case is run at $M=0.085$, where the author also uses the
+  incompressible enstrophy relation (Eq. 24) as a second estimate. Its
+  bulk term has the form of the $\varepsilon_2$ of Cao et al. (2022) and
+  Zhao et al. (2023a) above, with the physical rather than a
+  scheme-inherent $\mu_b$.
 
 **Damping of compressive modes.** With constant coefficients the viscous force
 is $\partial_j\sigma_{ij}/\rho=\nu\nabla^2u_i+(\tfrac13\nu+\nu_b)\partial_i(\nabla\cdot\boldsymbol u)$,
@@ -287,3 +303,4 @@ physical $\nu_b$ of Beattie et al., which is constant in space and time.
 - [Cernetic et al. (2024)](/sources/cernetic-2024.md) — §3.1, Eq. (15) (bulk-viscosity contribution to the von Neumann–Richtmyer viscous pressure).
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §4 (artificial bulk viscosity in CharLES).
 - [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §2.1, Eq. (3) (Stokes hypothesis); §2.5.1, Eq. (37); §3.1.1, Eq. (105), Figs. 3–4; §3.1.7, Figs. 17–18 (pressure dilatation in the kinetic-energy budget).
+- [Volpiani (2024)](/sources/volpiani-2024.md) — §2.1, Eq. (2); §3.2, Eqs. (24)–(25) (bulk term in the compressible dissipation budget of the Taylor–Green vortex, Stokes hypothesis).

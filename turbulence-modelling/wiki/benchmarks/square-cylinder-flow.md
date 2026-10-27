@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Flow past a square cylinder"
-description: "Turbulent flow past a square cylinder at Re 22,000 with separation fixed at the front corners and a shedding wake: a test of variational data assimilation into Spalart–Allmaras RANS, where momentum sources fit the DNS mean flow, eddy-viscosity multipliers fail, and good mean flows coexist with wrong Reynolds stresses."
+description: "Turbulent flow past a square cylinder with separation fixed at the front corners and a shedding wake: at Re 22,000 a test of variational data assimilation into Spalart–Allmaras RANS, where momentum sources fit the DNS mean flow and eddy-viscosity multipliers fail; at Re 10,000 a 2D URANS test of the k-√k-L model."
 status: established
 aliases: [square cylinder, square-cylinder wake, flow over a square cylinder, SQCYL]
-tags: [benchmark, separated-flow, rans, field-inversion, data-driven]
-timestamp: 2026-10-26T15:57:00Z
+tags: [benchmark, separated-flow, rans, field-inversion, data-driven, dg]
+timestamp: 2026-10-27T06:03:00Z
 ---
 
 # Flow past a square cylinder
@@ -23,6 +23,9 @@ bundle the case tests which correction term of a RANS model can absorb the
 model error of a bluff-body wake (see
 [field inversion and machine learning](/methods/field-inversion-machine-learning.md)),
 next to the [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md).
+At $Re=10^4$ and in two dimensions the case also tests whether a
+length-scale-adaptive RANS model lets an unsteady wake develop
+([Jiang et al. (2025)](/sources/jiang-2025.md), §4.3).
 
 ## Configurations in the sources
 
@@ -83,6 +86,27 @@ on their supersonic interaction that only the momentum source escapes the
 Boussinesq constraint (see
 [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
 
+**Unsteady RANS with a length-scale-adaptive model.**
+[Jiang et al. (2025)](/sources/jiang-2025.md), §4.3, run the
+$k$-$\sqrt kL$ model behind
+[scale-adaptive simulation](/methods/scale-adaptive-simulation.md) in a
+fourth-order modal discontinuous Galerkin solver at $Re=10^4$ on the side,
+$M_\infty=0.05$, with an outer boundary at about 30 sides, 6188
+quadrilaterals and 9896 triangles, first-cell $y^+\approx0.5$ and ESDIRK
+time stepping, averaged over about 20 shedding cycles; the reference is a
+two-dimensional DNS of Wissink at the same conditions, and the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md) is run for
+comparison. Through the von Kármán length scale the model gives a smaller
+eddy viscosity than SA in the separated wake and "slightly chaotically
+vortex flows" behind the cylinder, which the authors call SAS-like
+characteristics (Figs. 8–9). Time-averaged velocities agree well with the
+DNS at the stations above the cylinder and follow the general trend at the
+wake stations $x/h=2$–5 (Figs. 10–11). The authors call the 2D
+computation a verification, not a validation, since the flow is
+three-dimensional, and the SA comparison "may not be a fair comparison"
+because SA is meant for steady high-Reynolds-number flow; a fair one would
+be three-dimensional DES or SAS (§4.3).
+
 **Adjoint solvers.** [Fanizza et al. (2025)](/sources/fanizza-2025.md),
 §3.4.1, Fig. 2, use the first adjoint system of this optimization to
 compare linear solvers at a 180-vector memory budget: GMRES(180) with
@@ -107,8 +131,14 @@ deflated-restart variant in 8000; plain GMRES would need a Krylov space of
   that they cite.
 - Both studies assimilate dense full-field data; neither tests sparse data
   on this case.
+- The $Re=22{,}000$ assimilation studies and the $Re=10^4$ URANS of
+  [Jiang et al. (2025)](/sources/jiang-2025.md) use different references
+  (a three-dimensional DNS against a two-dimensional one) and are not
+  compared with each other. Jiang et al. print the upper-side stations of
+  Fig. 10 in the non-monotone order $x/h=0.48$, 0.12, 0.1, 0.49.
 
 # Citations
 
 - [Cato et al. (2023)](/sources/cato-2023.md) — §II B; §V A–C, Figs. 11–19.
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §3.3, Eqs. 26–31; §3.4.1, Fig. 2; §4.2, Figs. 7–8.
+- [Jiang et al. (2025)](/sources/jiang-2025.md) — §4.3, Figs. 8–11.

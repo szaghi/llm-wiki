@@ -5,7 +5,7 @@ description: "A discretization is kinetic-energy preserving when its convective 
 status: established
 aliases: [KEP, KEEP, kinetic-energy and entropy preserving scheme, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-26T20:44:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -107,6 +107,13 @@ isotropic turbulence.
 fluxes "to obtain a dissipation-free and kinetic-energy preserving
 semi-discrete system", a Roe interface flux and a Vreman subgrid model, for
 wall-resolved and wall-modelled LES on adapted grids.
+[Gao et al. (2022)](/sources/gao-2022.md), §3.1, run the same split-form
+FLEXI with Pirozzoli's two-point volume flux "for stability of
+under-resolved turbulence", with no subgrid model, a Harten–Hyman-fixed
+approximate Riemann solver and BR1, for an implicit LES of an oblique
+shock/turbulent-boundary-layer interaction, with finite-volume subcells at
+the shocks (see
+[subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)).
 
 **Energy-preserving central flux in an unstructured finite-volume code.**
 In the node-based solver M-Edge the convective face flux is Kok's
@@ -238,6 +245,58 @@ very accurately up to $t\approx12$ and slightly too high afterwards, which
 the authors explain by a small-scale pile-up near the cut-off without
 subgrid closure (§IV.A, Fig. 5), the thermalization discussed below.
 
+**Three split forms against relaxation filtering on central differences.**
+[Volpiani (2024)](/sources/volpiani-2024.md), §2.2.3, Eqs. (9)–(17),
+compares in the Python code BASIC three split forms of the convective term
+$C=\partial(\rho u_j\phi)/\partial x_j$, $\phi\in\{1,u_i,e\}$, written with
+the five forms of Coppola et al. ($C^D$, $C^\phi$, $C^u$, $C^\rho$ as above):
+SF1 (Feiereisen et al.) $\tfrac12C^D+\tfrac12C^\phi$ for momentum and
+energy only; SF2 (Ducros et al.) $\tfrac12C^D+\tfrac12C^u$ for all
+equations; SF3 (Kennedy–Gruber) $\tfrac14(C^D+C^u+C^\phi+C^\rho)$ for all
+equations, which is the Kennedy–Gruber family at $\alpha=\beta=1/4$
+(page-local parameters) and, as Volpiani recalls from Coppola et al., conserves the
+generalized energy $\rho\phi^2/2$. The energy equation is split on the
+total specific enthalpy $e+p/\rho$, after Pirozzoli (2010), not on $\rho e$
+and pressure separately; the Blaisdell et al. form applied to momentum and
+energy "was not robust enough and made computations diverge" (§4). The
+alternative stabilization is the relaxation filtering of the divergence
+form (see [explicit modal filtering](/methods/explicit-modal-filtering.md)).
+On the inviscid compressible [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+at $64^3$ ($M=0.085$) the normalized kinetic energy at $t=5$ is 0.999 for
+SF1 and SF2 and 0.998 for SF3 at every stencil width, against 0.983 to
+0.986 for the eleven-point filtered schemes and 0.176 for the three-point
+one (Table 1); SF1 and SF3 conserve kinetic energy, "in agreement with
+Pirozzoli (2010)", and SF2, "not formally conservative", loses a few
+percent by $t=10$; all split forms keep a monotonic enstrophy history
+(§4, Fig. 4). The price is cost: per 100 iterations per processor the
+eleven-point runs take 78.9 s filtered, 115.9 s (SF1), 156.2 s (SF2) and
+298.9 s (SF3), from $(1+2N_p)$ operations per derivative and filter
+against $(8+6N_p)$ for SF1 and SF2 and $(20+14N_p)$ for SF3 ($2N_p+1$ the
+stencil width, page-local) (Table 1, §4).
+
+**Arbitrary-order skew-symmetric fluxes in a shock-capturing hybrid.**
+[Liang & Fu (2024)](/sources/liang-2024.md), §2.3, Eqs. (21)–(30), write
+the quadratic (Feiereisen) and cubic (Kennedy–Gruber) split forms of
+$\partial(\rho\phi u)/\partial x$ and recall, from Pirozzoli, that the
+interface flux $\{\!\{\rho\}\!\}\{\!\{\phi\}\!\}\{\!\{u\}\!\}$ recovers the
+second-order cubic form in conservative form, and that it extends to order
+$2L$ as
+$$\hat f_{i+1/2}=2\sum_{\ell=1}^{L}c_\ell\sum_{m=0}^{\ell-1}\mathcal A_{i-m,\ell}(\rho,\phi,u),\qquad
+\mathcal A_{i,\ell}(f,g,h)=\tfrac18(f_i+f_{i+\ell})(g_i+g_{i+\ell})(h_i+h_{i+\ell}),$$
+with $c_\ell$ the coefficients of a centred first derivative ($c_\ell$,
+$\mathcal A$ page-local). They take $L=4$ and dispersion-optimized
+sixth-order $c_\ell$ (see
+[low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md)),
+and split the energy flux into total-energy convection and a pressure-work
+term $\partial(up)/\partial x$, each in the same two-point form. They state,
+citing others, that the cubic form is more robust than the quadratic one.
+In TENO-S this flux is used, in physical variables and without
+characteristic projection, in every cell that their discontinuity indicator
+judges smooth (see [WENO](/methods/weno-scheme.md) and
+[shock sensors](/definitions/shock-sensor.md)). On the inviscid
+Taylor–Green vortex at $64^3$ TENO-S keeps the total kinetic energy to
+$t=100$ while WENO-CU6 and TENO schemes dissipate it (§4.10, Fig. 17).
+
 ## Kinetic energy as an entropy
 
 [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md), §2, treat kinetic
@@ -271,6 +330,40 @@ supersonic flow (§5.1), and state that entropy-conserving split forms are
 not by themselves stable at shocks, because entropy stability rests on
 positive density, which oscillations near shocks can violate; shock
 capturing must add density regularization (§1).
+
+**Kinetic-energy preservation for RANS with the Spalart–Allmaras model.**
+[Lodares et al. (2022)](/sources/lodares-2022.md) extend the same framework
+to the compressible RANS equations with the
+[Spalart–Allmaras](/methods/spalart-allmaras-model.md) model on the LGL
+DGSEM. They add to the Navier–Stokes entropy (kinetic energy or
+thermodynamic entropy) the energy $\tfrac12\rho\tilde\nu^2$ of the SA
+variable, whose entropy variables $(-\tilde\nu^2/2,0,0,0,0,\tilde\nu)$ are
+zero where the Navier–Stokes ones are not, so that the analysis splits
+into the known Navier–Stokes part and an independent SA part (§3.2,
+Eqs. 38–43). Any two-point flux of the general form whose momentum
+component is $\widehat{\rho U}\{\!\{u\}\!\}$ extends to the SA equation by
+the component $\widehat{\rho U}\{\!\{\tilde\nu\}\!\}$, which satisfies
+Tadmor's jump condition for the SA energy for **any** momentum average
+$\widehat{\rho U}$, by $2[\![\tilde\nu]\!]\{\!\{\tilde\nu\}\!\}=[\![\tilde\nu^2]\!]$
+(Eqs. 68, 87–89; page-local $\widehat{\rho U}$ the two-point mass flux,
+$\{\!\{\rho\}\!\}\{\!\{u\}\!\}$ for Pirozzoli's flux and
+$\rho^{\ln}\{\!\{u\}\!\}$ for Chandrashekar's, $[\![\cdot]\!]$ the jump).
+Their **kinetic-energy-preserving configuration** pairs the Pirozzoli split
+form with Lax–Friedrichs interface dissipation and, with an upwinded SA
+interface flux, gives a semi-discrete kinetic-energy law equal to the
+continuous one up to the pressure work, with SA-energy growth only where
+SA production exceeds destruction (§4.6, §5.3, Eq. 116). They repeat that
+kinetic energy is not a strict mathematical entropy (pressure work, zero
+fifth entropy variable, so it cannot bound $\rho e$) but call
+kinetic-energy-preserving schemes robust and cheaper for subsonic flow,
+thermodynamic-entropy schemes preferable for supersonic flow (§3.1). In a random-initial-condition test at
+$\mu=10^{-8}$ ($10^3$ elements, $N=10$, central fluxes) the standard DG
+diverges while the Pirozzoli form keeps a zero kinetic-energy remainder,
+and they run all their RANS validation (flat plate, NACA 0012) with the
+Pirozzoli form (§7.2–7.4, Figs. 5–6). The entropy-conserving configuration
+is on [entropy conservation](/properties/entropy-conservation.md), the
+discretization on the
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) page.
 
 ## Consequences in under-resolved turbulence
 
@@ -310,6 +403,29 @@ filtered towards the high modes with a
 [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
 kernel avoids high-wavenumber pile-up and gives a spectrum close to
 $k^{-5/3}$.
+
+**Aliasing that an eddy viscosity does not remove.** Volpiani (2024, §5,
+Figs. 11–18) runs the viscous compressible Taylor–Green vortex at
+$Re=1600$ on $64^3$ to $512^3$. Split-form LES without a subgrid model
+are noisy on the coarse grids: for every split form, aliased energy builds
+up at high wavenumbers, consistent with the onset of aliasing at two
+thirds of the largest wavenumber that Volpiani cites from Johnsen et al., and the
+error contaminates the low wavenumbers too; the vorticity fields on $64^3$
+and $128^3$ are "extremely noisy", and a Laplacian form of the viscous
+terms (Sandham et al.) improves robustness without curing it. Adding a
+[Smagorinsky](/methods/smagorinsky-model.md), multi-scale Smagorinsky or
+[dynamic Smagorinsky](/methods/dynamic-procedure.md) model to the split
+forms helps (the Smagorinsky result does not depend on the split form)
+but stays noisy; adding the relaxation filter to the split form with the
+model improves the results, from which the author concludes that aliasing
+errors, if not removed, affect the solution even with an eddy-viscosity
+model (Figs. 15–17). The split form does help the filter: with SF1 the
+filter strength can drop from 0.1 to 0.01, a value with which the
+divergence form is unstable, and the $64^3$ spectrum then follows the
+reference without pile-up (Fig. 18). The author's verdict is that the
+minimally dissipative split forms are "unsuited to perform implicit
+large-eddy simulations" on coarse grids (Abstract, §6); see
+[implicit LES](/definitions/implicit-les.md).
 
 **Separating stability from modelling.** Flad & Gassner (2017, §1, §4) argue
 that adding an explicit model to standard DG [implicit LES](/definitions/implicit-les.md)
@@ -482,6 +598,27 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
   Carlsson et al. vary the added dissipation of one central scheme; no
   source compares the two at fixed order on the same flow, so the entry is
   recorded as a qualification.
+- **Explicit models on a split-form baseline.** Flad & Gassner (2017) find
+  a Smagorinsky model on the dissipation-free split-form DGSEM better than
+  DG implicit LES at $48^3$; Volpiani (2024) finds Smagorinsky,
+  multi-scale and dynamic models on split-form central finite differences
+  noisy on the Taylor–Green vortex at $64^3$ and $128^3$, and filter-based
+  implicit LES best. The discretizations differ (DG with Riemann interface
+  fluxes against eleven-point central differences with no dissipation at
+  all), as do the flows (decaying isotropic turbulence against the
+  Taylor–Green vortex), so the two findings are recorded side by side, not
+  as a contradiction.
+- **Naming of the split forms.** Volpiani (2024, Eq. 15) and Liang & Fu
+  (2024, Eq. 22) call $\tfrac12(C^D+C^\phi)$ the Feiereisen form; in the
+  family recalled by Bernades et al. (2023) that combination is
+  $a_{\mathrm K}=1$, the "C" form, while $a_{\mathrm K}=0$,
+  $\tfrac12(C^u+C^\rho)$, is called Feiereisen. The forms printed are
+  unambiguous; only the attribution differs *(compiler check, not in the
+  sources)*.
+- **"Without numerical dissipation".** Liang & Fu (2024) support the
+  long-time stability of TENO-S on the inviscid Taylor–Green vortex by
+  kinetic-energy and enstrophy histories only; the spectra in which a
+  dissipation-free scheme thermalizes (above) are not shown.
 - The "first" claims of Flad & Gassner (2017, §3, §4) are priority statements
   of the authors.
 - That Goc et al. (2021) and Lozano-Durán et al. (2022) describe the charLES
@@ -522,3 +659,7 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
 - [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §2.7 (split-form NSFR); §3.1.3, Figs. 11–12 (stability and cost against over-integration); §3.1.4, Fig. 13c; §3.1.5; §3.1.6, Fig. 16 (two-point flux choice); §3.1.7, Figs. 17–18 (upwinding and pressure dilatation); §3.1.8.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §3.2.2 (half-staggered code without discrete kinetic-energy conservation); §5.3.1, Fig. 18; §6.
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv 2512.03315v1: §II.A (split form with Chandrashekar averaging, BR1/BR2).
+- [Volpiani (2024)](/sources/volpiani-2024.md) — §2.2.3, Eqs. (9)–(17) (SF1, SF2, SF3, enthalpy splitting); §4, Table 1, Figs. 4–5 (inviscid Taylor–Green vortex, energy, cost); §5, Figs. 11–18 (aliasing pile-up, SGS models, SF with relaxation filtering); §6.
+- [Liang & Fu (2024)](/sources/liang-2024.md) — §2.3, Eqs. (21)–(30) (quadratic and cubic split forms, arbitrary-order skew-symmetric flux); §3.2; §4.10, Fig. 17 (inviscid Taylor–Green vortex to $t=100$).
+- [Lodares et al. (2022)](/sources/lodares-2022.md) — §3.1–3.2, Eqs. (30)–(50) (kinetic energy and SA energy as entropies); §4.3, Eq. (68); §4.6; §5.1.2, Eqs. (87)–(89); §5.3, Eq. (116); §7.2–7.4, Figs. 5–6.
+- [Gao et al. (2022)](/sources/gao-2022.md) — §3.1 (split-form FLEXI with Pirozzoli flux for an implicit LES with shocks).

@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity profile of wall-bounded turbulence �
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Law of the wall
@@ -67,6 +67,14 @@ and the choice is part of the model.
 | [Lederer et al. (2026)](/sources/lederer-2026.md), §4.2 | 0.41 | 5.2 | log layer quoted as $40<y^+<200$; constants "experimentally fitted for mild adverse pressure gradients" | reference for implicit DG LES of the transitional [Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md) |
 | [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md), §4.1, Eq. (4.1) | 0.41 | — | van Driest profile, $A^+=26$ | volume-filtered to model the wall slip of immersed-boundary WMLES (below) |
 | [Aiello et al. (2026)](/sources/aiello-2026.md), §4.1, Fig. 1 | 0.41 | 6.0 (fitted) | in $y^*$, log region from $y^*\ge40$ | Trettel–Larsson-transformed DNS of a thermally perfect CO$_2$ channel at $Re_\tau^*=160$–190 |
+| [Nuca et al. (2025)](/sources/nuca-2025.md), §V.B, Table V | 0.387 | 4.21 | "high-Re" set after Yamamoto & Tsuji, as cited; the corresponding $C$ and $A^+$ are not printed | fixed-parameter explicit approximations of the Spalding, Reichardt and ODE wall models (below) |
+| Nuca et al. (2025), §V.B, Table VI | 0.4 (Spalding, Reichardt); 0.41 (ODE) | 5.5 | $C=7.8$ (Reichardt); $A^+=17$ (ODE), "essentially a standard choice" | "classical" set of the same approximations |
+| Nuca et al. (2025), §V.A, Table II | 0.38–0.42 | 4.2–5.5 | $C\in[6.8,7.7]$, $A^+\in[15,19]$ | parameter ranges over which the global explicit approximations are fitted |
+| [Husson et al. (2024)](/sources/husson-2024.md), §3.1, Eq. (37) | not printed ($1/0.41$ from the coefficients, see below) | 5.0334 | Allmaras–Johnson composite law, nine printed constants | wall law of RANS and zonal DES on a lattice Boltzmann immersed boundary |
+| [Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §3.2 | 0.41 | 5.5 | log layer quoted as $30<y^+<200$ | reference for $k$-$\tau$ RANS of pipe flow at $Re_\tau=1142$ |
+| [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md), §IV.A, Figs. 12–13 | 0.41 | 5 | | reference profile for laminar-kinetic-energy transition RANS of the ERCOFTAC plates |
+| [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md), §4.1, Fig. 9 | not printed | not printed | Spalding's law, as cited | reference for high-order flux-reconstruction RANS of the Wieghardt plate |
+| [Huang et al. (2022b)](/sources/huang-2022-d.md), §2.4.3, Eq. (52) | not printed | not printed | Reichardt-type profile with damping lengths 11 and $1/0.33$ | manufactured boundary-layer profile for testing a high-order reconstruction |
 
 Zhao et al. (2023a) attribute $\kappa=0.40$, $B=5.5$ to the channel DNS of
 Kim et al. (1987), as they cite it; Wang et al. (2023b) give the same values
@@ -98,6 +106,19 @@ Cai et al. (2022) do, but with $E\approx7.9$ against 11.27 (see
 Contradictions); with $\kappa=0.41$ for both (Cai et al. print no value of
 $\kappa$) these correspond to $B\approx5.0$ and $B\approx5.9$
 *(compiler check, not in the sources)*.
+
+[Nuca et al. (2025)](/sources/nuca-2025.md) (§III) state that $\kappa$ and
+$B$ are subject to low-Reynolds-number effects and that their high-Reynolds-number
+values are "not settled upon" (as they cite it), so an approximation of a
+wall model must keep them as inputs rather than freeze them; their two fixed
+sets and their fitting ranges are in the table. Their high-Re intercept,
+4.21, and the 4.2 of Mukha et al. (2025) are both taken from Yamamoto &
+Tsuji as cited, and differ only in the printed rounding. Husson et al.
+(2024, §3.1) print no $\kappa$ with their composite law; its two
+logarithmic terms give the slope $2(c_1-c_2)=2.439=1/0.410$ and, with the
+argument order discussed under Qualifications, the intercept $5.0334$
+equals the printed additive constant ($c_1$, $c_2$ the law's constants,
+page-local) *(compiler check, not in the sources)*.
 
 Aiello et al. (2026, §4.1) attribute their large fitted intercept,
 $B=6.0$, to the low transformed friction Reynolds number of their DNS
@@ -150,6 +171,14 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   wall model (the source writes $C$ for $B$). Fowler et al. (2022) reject this
   profile for its error near $y^+\sim10$ (above); Gillyns et al. sample it at
   $y^+\ge63$, where the choice is not tested against an alternative.
+  Nuca et al. (2025, §III, Eqs. 3, 6) print the same law with an additive
+  constant $C$ and damping lengths $B_1=11$, $B_2=3$ (page-local), and derive
+  $C=B-\kappa^{-1}\ln\kappa$ from the limit $y^+\to\infty$, which is the
+  coefficient Gillyns et al. write; dropping the damping terms leaves
+  $\kappa^{-1}\ln(1+\kappa y^+)$, the profile of the undamped equilibrium ODE
+  (below). With $\kappa=0.4$, $B=5.5$ the relation gives $C=7.79$, the
+  printed classical 7.8, and with the high-Re set $\kappa=0.387$, $B=4.21$ it
+  gives $C=6.66$ *(compiler check, not in the sources)*.
 - **Blended profile with an explicit inverse** (Cai et al. 2022, §II.C.1,
   Eqs. 24–26, after the authors' earlier work as they cite it). The forward
   profile blends the two asymptotes with hyperbolic tangents,
@@ -184,6 +213,30 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   as in the form of Cai et al. (2022) above (manuscript p. 5, Eq. 15, checked
   visually). No pressure-gradient term. See Contradictions for the
   comparison with Cai et al. (2022).
+- **An explicit forward law $u^+(Re_y)$, re-fitted, with buffer-layer
+  corrections** (Nuca et al. 2025, §III–IV, Eqs. 5, 9–10, 24). Nuca et al.
+  write "model 2" of Cai & Sagaut (2021), as they cite it, directly for
+  $u^+$,
+
+  $$u^+_{\mathrm{CS}}=\left(e^{-Re_y/s}\right)^p\sqrt{Re_y}+\frac{\left(1-e^{-Re_y/s}\right)^p}{\kappa}\,W\!\left(\kappa e^{\kappa B}Re_y\right),$$
+
+  with exponential, not hyperbolic-tangent, blending functions, and treat
+  $p$ and $s$ as free coefficients to be optimized rather than as Cai &
+  Sagaut's values (for $\kappa=0.41$, $B=5.525$, Fig. 3 uses $p=1.2411$,
+  $s=117.3629$; the optimization bounds of Table III span $p=1.22$–1.29,
+  $s=76$–378). The log branch is the same as in the inverses above: from
+  $Re_y=u^+y^+$ and $u^+=\kappa^{-1}\ln y^++B$, $\kappa u^+=W(\kappa e^{\kappa B}Re_y)$,
+  and with $E=e^{\kappa B}$ this is $\ln(Ey^+)=W(\kappa ERe_y)$ of Cai et
+  al. (2022) *(compiler check, not in the sources)*. Their premise is that
+  Spalding's law, Reichardt's law, the van Driest equilibrium ODE and this
+  explicit law coincide in the linear and logarithmic regions once their
+  constants match, so only a buffer-layer perturbation $\Delta u^+$, a sum of
+  one to three Gaussian bumps in $\log_{10}Re_y$, has to be fitted to turn
+  the explicit law into an approximation of any of the three (§IV, Fig. 3).
+  The fits, their printed accuracy (below 1 % for coefficients linear in
+  $\kappa$ and in $B$, $C$ or $A^+$; below 0.05 % for fixed constants) and
+  the checks of the printed coefficients are on the
+  [equilibrium wall model](/methods/equilibrium-wall-model.md) page.
 - **Musker's law** (Constant et al. 2024, §3.2, Eq. 6, after Musker as
   cited): an equilibrium profile fitting viscous, buffer and log layers,
   $u_A=u_\tau f(y_A^+)$ at an immersed-boundary target point $A$, with
@@ -219,7 +272,33 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   up to the quadratic term, as
   $y^+=u^++e^{-\kappa B}\big(e^{\kappa u^+}-1-\kappa u^+-(\kappa u^+)^2/2!\big)$
   with $\kappa\sim0.41$, $B=5$, and use it as the implicit reference against
-  which their explicit power law (next item) is timed.
+  which their explicit power law (next item) is timed. Nuca et al. (2025,
+  §III, Eq. 2) print it with the cubic term as well,
+
+  $$y^+=u^++e^{-\kappa B}\left(e^{\kappa u^+}-1-\kappa u^+-\tfrac12(\kappa u^+)^2-\tfrac16(\kappa u^+)^3\right),$$
+
+  explicit in $y^+$, so that obtaining $\tau_w$ requires Newton iteration;
+  they report that this iteration "would often sporadically diverge" in
+  complex-flow WMLES (see [equilibrium wall model](/methods/equilibrium-wall-model.md)).
+- **The Spalart–Allmaras analytical law** (Husson et al. 2024, §3.1, Eq. 37,
+  after Allmaras & Johnson as cited), a composite of two logarithms and two
+  arctangents,
+
+  $$u^+=B+c_1\ln\!\big[(y^++a_1)^2+b_1^2\big]-c_2\ln\!\big[(y^++a_2)^2+b_2^2\big]-c_3\,\theta_1-c_4\,\theta_2,$$
+
+  with $\theta_k$ an arctangent of $(y^++a_k)/b_k$ (see Qualifications for
+  the printed argument order) and nine constants printed to sixteen digits
+  ($B=5.0333908790505579$, $a_1=8.148221580024245$,
+  $a_2=-6.9287093849022945$, $b_1=7.4600876082527945$,
+  $b_2=7.468145790401841$, $c_1=2.5496773539754747$,
+  $c_2=1.3301651588535228$, $c_3=3.599459109332379$,
+  $c_4=3.6397531868684494$; $a_k$, $b_k$, $c_k$, $\theta_k$ page-local).
+  The authors choose it because its buffer layer is consistent with the
+  [Spalart–Allmaras model](/methods/spalart-allmaras-model.md); below a
+  cut-off height they replace it by its tangent line (Tamaki et al., as
+  cited), so that the wall-normal gradient is constant and resolvable on a
+  coarse mesh. Formulas of the linearization and of its eddy viscosity are
+  on the [RANS wall function](/methods/rans-wall-function.md) page.
 - **Power law with a closed-form inverse** (Ghidoni et al. 2026, §3.3,
   Eqs. 13–15, after Wilhelm et al. as cited): $u^+=y^+$ for
   $y^+\le y_c^+=11.81$ and $u^+=8.3\,(y^+)^{1/7}$ above, which is continuous
@@ -246,7 +325,14 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   inside the squared length; it is not the profile of Griffin et al.'s
   eddy viscosity, which is linear in $u_\tau$ and gives
   $du^+/dy^+=1/\big(1+\kappa y^+(1-e^{-y^+/A^+})^2\big)$ *(compiler check,
-  not in the sources)*. Elzaabalawy et al. (2023,
+  not in the sources)*. Nuca et al. (2025, §III, Eq. 4) integrate exactly
+  that equilibrium ODE, $u^+=\int_0^{y^+}d\eta'/\big(1+\kappa\eta'(1-e^{-\eta'/A^+})^2\big)$,
+  with $\kappa=0.41$, $A^+=17$ after Kawai & Larsson (as cited; Cabot used
+  $A^+=19$, as they recall), and note that without damping it integrates to
+  $\kappa^{-1}\ln(1+\kappa y^+)$, while with damping no closed form links the
+  intercept $B$ to $A^+$, so $B$ is evaluated pointwise as
+  $u^+(\hat y^+)-\kappa^{-1}\ln\hat y^+$ at some $\hat y^+\gg30$ (Eqs. 1, 8;
+  $\hat y^+$ page-local). Elzaabalawy et al. (2023,
   §5.2.1, Eqs. 93–94) use the mixing length $l=0.39\,y\,(1-e^{-y^+/26})$ with
   $\nu_t=l^2\lvert\partial u/\partial y\rvert$ ($l$ page-local) as an
   algebraic RANS model for verifying a high-order solver: without the
@@ -380,6 +466,29 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   DG solver with the [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md)
   on a turbulent flat plate ($M=0.2$, $Re_L=1.12\times10^7$, first-cell
   $y^+=1$) agrees with a reference profile they cite in the log layer.
+  [Lodares et al. (2022)](/sources/lodares-2022.md) (§7.3, Fig. 8a) compare
+  the $u^+(y^+)$ profile of their entropy-stable DG Spalart–Allmaras RANS on
+  the coarsest flat-plate mesh of the NASA Turbulence Modeling Resource
+  ($M=0.2$, $Re=5\times10^6$, profile at $x=0.97008$, $N=4$, 7, 10) with the
+  viscous sublayer, the log law and a fine-grid FUN3D solution, "in good
+  agreement". [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md)
+  (§4.1, Figs. 9–10) find the velocity profiles of their flux-reconstruction
+  $k$-$\omega$ SST solution of the Wieghardt plate in agreement with
+  experiment and Spalding's law, coinciding across orders, on meshes whose
+  first element reaches $y_1^+\simeq25$ without wall function (see
+  [RANS wall function](/methods/rans-wall-function.md)).
+- **Pipe flow and transitional plates in RANS.** [Tomboulides et al. (2025)](/sources/tomboulides-2025.md)
+  (§3.2, Fig. 5) find their [$k$-$\tau$](/methods/k-tau-model.md) and
+  regularized $k$-$\omega$ pipe-flow profiles at $Re_\tau=1142$ in excellent
+  agreement with DNS in the viscous sublayer ($y^+<5$) and with the log law
+  ($\kappa=0.41$, $B=5.5$) for $30<y^+<200$, with minor RANS–DNS
+  differences there and "expected deviations" in the outer layer.
+  [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) (§IV.A,
+  Figs. 12–13) use $u^+=y^+$ and the log law with $\kappa=0.41$, $B=5$ as
+  reference for the turbulent part of the transitional ERCOFTAC plate
+  boundary layers computed with their
+  [laminar-kinetic-energy transition model](/methods/laminar-kinetic-energy-transition-model.md),
+  with which all their velocity profiles agree.
 - **Compressible channel.** Wang et al. (2023b, §4.2, Eqs. 10–11, Fig. 11)
   compare the van Driest-transformed mean velocity of their gas-kinetic DNS of
   a channel at bulk $M_b=0.8$ and bulk Reynolds number 3000 (isothermal walls)
@@ -483,6 +592,36 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
   App. A prints "$\kappa=0.41$ and $B=5.5$" for the accuracy analysis of the
   same law on the same flow; which value the simulations used cannot be
   told from the arXiv v1 read.
+- **Argument order of the arctangents of Husson et al. (2024).** They define
+  $\mathrm{atan2}(y,x)$ as the principal argument of $x+iy$ and print the
+  terms as $\mathrm{atan2}(y^++a_k,b_k)$, the argument of $b_k+i(y^++a_k)$.
+  Evaluated so, the law gives $u^+(0)\approx10.84$ and a log-law intercept
+  near $-6.3$; with the arguments exchanged, the argument of
+  $(y^++a_k)+ib_k$, it gives $u^+(0)=0$ to machine precision, $u^+\approx1.00$
+  at $y^+=1$, the slope $1/0.41$ and the intercept 5.033 at $y^+=10^5$
+  *(compiler check, not in the sources)*. The printed order is therefore
+  inconsistent with the printed definition; the exchanged order is the one
+  that yields a wall law.
+- **Printed truncations of Spalding's law.** Ghidoni et al. (2026, Eq. 12)
+  print the series up to the quadratic term, Nuca et al. (2025, Eq. 2) up to
+  the cubic term; both call it Spalding's law. The difference is recorded
+  without a test of which form either code uses beyond the printed one.
+- **Printed slips of Nuca et al. (2025).** The text gives $\kappa$ "from 0.38
+  to 0.41" for the global fits, Table II up to 0.42 (0.40 for Reichardt);
+  the relation for $B$ appears twice, as Eqs. (1) and (8), written with
+  $\log$ and $\ln$. The high-Re constants give $C=6.66$, outside the range
+  $C\in[6.8,7.7]$ over which the global Reichardt approximation is fitted,
+  so its use with the high-Re set in the channel test is an extrapolation
+  that the paper does not mention *(compiler check, not in the sources)*.
+- **Printed slips of Huang et al. (2022b)** (§2.4.3). The friction velocity
+  of their manufactured profile is printed as
+  $\sqrt{\rho_0u_0^2C_f/\rho}=\sqrt{a\rho_0u_0^2x^b/(2\rho)}$ with the fit
+  $C_f=ax^b$, the two forms differing by the factor 1/2 under the root; with
+  $\tau_w=\tfrac12\rho_0u_0^2C_f$ the second is the consistent one *(compiler
+  check, not in the sources)*. The fit is said to be of the data "shown in
+  Fig. 8", which is Fig. 9; the profile's $\kappa$ and additive constant are
+  not printed, and the cited Reichardt (1951) is attached in the text to the
+  LU-SGS solver instead.
 - Oulghelou et al. (2025) and Wu et al. (2025) write the steady
   incompressible RANS equations and solve them in OpenFOAM (Wu et al. also run CFL3D for a
   compressible airfoil case); their log-law statements concern RANS
@@ -502,7 +641,14 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
   neither paper says that its constants recalibrate the cited model, so the
   two sources disagree on the constants of the same attributed law (the
   blend scales differ by a factor of about two and the log branches through
-  $E$). Cai & Sagaut (2021) is not ingested. *Open.*
+  $E$). Cai & Sagaut (2021) is not ingested. [Nuca et al. (2025)](/sources/nuca-2025.md)
+  (§III, Eq. 5) print a third form attributed to "model 2" of Cai & Sagaut
+  (2021), a forward law $u^+(Re_y)$ blended with powers of
+  $e^{-Re_y/s}$ instead of $\tanh$, and say that they re-optimize $p$ and
+  $s$; their constants therefore do not bear on the disagreement, but the
+  functional form they attribute differs from that of the other two, so the
+  ingested sources do not fix the form either. What would decide it: the
+  printed equations and constants of Cai & Sagaut (2021). *Open.*
 
 # Citations
 
@@ -542,3 +688,10 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 - [Lederer et al. (2026)](/sources/lederer-2026.md) — §4.2, Fig. 7 (arXiv v1).
 - [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §3.2, Fig. 6; §4.1, Eqs. (4.1)–(4.5), Fig. 11.
 - [Aiello et al. (2026)](/sources/aiello-2026.md) — §4.1, Fig. 1.
+- [Nuca et al. (2025)](/sources/nuca-2025.md) — §I; §III, Eqs. (1)–(8); §IV, Eqs. (9)–(10), (24), Fig. 3; §V.A–V.B, Tables II–VI.
+- [Husson et al. (2024)](/sources/husson-2024.md) — §3.1, Eqs. (36)–(38).
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.2, Fig. 5.
+- [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §IV.A, Figs. 12–13.
+- [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §4.1, Figs. 9–10.
+- [Lodares et al. (2022)](/sources/lodares-2022.md) — §7.3, Fig. 8.
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.4.3, Eq. (52), Fig. 9.

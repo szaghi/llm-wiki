@@ -5,7 +5,7 @@ description: "The wall-adapting local eddy-viscosity (WALE) model builds a stati
 status: established
 aliases: [WALE, wall-adapting local eddy-viscosity model, Nicoud–Ducros model]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-27T05:46:00Z
 ---
 
 # WALE model
@@ -191,6 +191,12 @@ instead (below).
   (§V D) list it with Smagorinsky and [Vreman](/methods/vreman-model.md)
   among fluctuating-viscosity models whose correlation with the strain
   adds to the mean stress (see [active model split](/methods/active-model-split.md)).
+- **Classed as a functional model.** [Valencia et al. (2026)](/sources/valencia-2026.md)
+  (§I) list WALE with the Vreman and [Sigma](/methods/sigma-model.md)
+  models among the functional (eddy-viscosity) closures that their a
+  priori study of deconvolution models sets against structural ones (see
+  [scale-similarity model](/methods/scale-similarity-model.md)); WALE is
+  not among the models they test.
 
 ## Qualifications
 
@@ -218,3 +224,4 @@ instead (below).
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §II.D; §III.C.
 - [Rismondo et al. (2025)](/sources/rismondo-2025.md) — §2.1; §3, Fig. 8(c).
 - [Möller et al. (2024)](/sources/moller-2024.md) — accepted manuscript: §III.A, Table 3.
+- [Valencia et al. (2026)](/sources/valencia-2026.md) — §I.

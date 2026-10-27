@@ -142,7 +142,7 @@ is unparseable.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4, 8. This source is cited on:
 
 - [Periodic hill](/benchmarks/periodic-hill.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
@@ -157,6 +157,7 @@ Chunk 1 (2026-10-25), cited further in chunks 2, 4. This source is cited on:
 - [k-ε models](/methods/k-epsilon-model.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
+- [Scale-adaptive simulation](/methods/scale-adaptive-simulation.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)
 - [Vreman model](/methods/vreman-model.md)

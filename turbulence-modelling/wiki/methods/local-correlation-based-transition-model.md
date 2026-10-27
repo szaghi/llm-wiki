@@ -5,7 +5,7 @@ description: "RANS laminar–turbulent transition models that evaluate an empiri
 status: established
 aliases: [LCTM, γ-Reθ-SST, separation-induced transition correction, Suluksna–Juntasaro calibration, Langtry–Menter calibration, local correlation-based transition modelling, γ-Reθ model, gamma-Re-theta, γ-SST, one-equation γ model, γ-alg-SST, algebraic LCTM model, algebraic intermittency model]
 tags: [rans, transition, eddy-viscosity, boundary-layer, separated-flow]
-timestamp: 2026-10-26T17:20:00Z
+timestamp: 2026-10-27T06:07:00Z
 ---
 
 # Local-correlation-based transition models
@@ -189,6 +189,72 @@ profile. Like the bubble term of γ-alg-SST, the correction works by an
 intermittency above one: with the older form $\gamma_{\mathrm{eff}}$ exceeds 3
 in separated regions (§3.5, Fig. 7).
 
+## The Langtry–Menter calibration in full, at high order
+
+Vandenhoeck et al. (2022) print the whole SST-2003-LM2009 model, including
+the Langtry–Menter polynomials that Carreño Ruiz & D'Ambrosio leave out,
+rewritten for the log-$\omega$ SST of their flux-reconstruction solver
+([Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md), §1.2, Eqs.
+21–46, Table 2; log-$\omega$ SST on the [SST page](/methods/k-omega-sst-model.md)).
+With the page-local names of the previous section, $Re_V=\lvert S\rvert d^2/\nu$
+(built on the strain magnitude), $Re_\omega=\omega d^2/\nu$ and
+$R_T=k/(\nu\omega)$:
+
+- the transport equations are those above, with $F_{\mathrm{length}}=F_{l1}(1-F_{sl})+40F_{sl}$,
+  $F_{sl}=\exp[-(Re_\omega/200)^2]$ (Carreño Ruiz & D'Ambrosio's
+  $F_{\mathrm{sublayer}}$), $F_{\mathrm{turb}}=\exp[-(R_T/4)^4]$,
+  $F_{\mathrm{onset}}=\max(F_{os2}-F_{os3},0)$ with
+  $F_{os2}=\min(\max(F_{os1},F_{os1}^4),2)$, $F_{os1}=Re_V/(2.193Re_{\theta c})$,
+  $F_{os3}=\max(1-(R_T/2.5)^3,0)$, and the time scale $t=500\nu/U^2$
+  ($U$ the velocity magnitude, page-local) (Eqs. 21–30);
+- $F_{l1}$ is a piecewise polynomial of $\mathcal R_{\theta t}$ with breaks at
+  400, 596 and 1200, constant 0.3188 above 1200, and
+  $Re_{\theta c}=-3.96035+1.0120656\,\mathcal R_{\theta t}-8.6823\times10^{-4}\mathcal R_{\theta t}^2+6.96506\times10^{-7}\mathcal R_{\theta t}^3-1.74105\times10^{-10}\mathcal R_{\theta t}^4$
+  for $\mathcal R_{\theta t}\le1870$ and
+  $\mathcal R_{\theta t}-\big(593.11+0.482(\mathcal R_{\theta t}-1870)\big)$
+  above (Eqs. 24, 29);
+- the onset correlation is that printed above with the constant 1173.51
+  and the same $F(\lambda_\theta)$, with
+  $Tu=100\sqrt{2k/3}/U$ and $\lambda_\theta=(\theta_t^2/\nu)\,dU/ds$, solved for
+  $\theta_t$ by Newton–Raphson (at most ten iterations, relative tolerance
+  $10^{-6}$, usually reached first) and limited by
+  $-0.1\le\lambda_\theta\le0.1$, $\gamma\in[0,1]$, $\mathcal R_{\theta t}\ge20$,
+  $Tu\ge0.027$ (Eqs. 33–46);
+- the separation correction is the *updated* form above, $(a,b,c)=(3.235,20,2)$
+  with $s_1=2$; the $k$-equation takes $\gamma_{\mathrm{eff}}$ in production
+  and $\min(\max(\gamma_{\mathrm{eff}},0.1),1)$ in destruction, as in
+  STAR-CCM+; and the SST blending becomes $F_1=\max(F_{1,\mathrm{SST}},F_3)$
+  with $F_3=\exp[-(R_y/120)^8]$ (Eqs. 36–38; the exponent differs from
+  Menter et al.'s, see the Contradictions of the SST page);
+- constants: $c_{a1}=2$, $c_{e1}=1$, $c_{a2}=0.06$, $c_{e2}=50$,
+  $c_{\theta t}=0.03$, $\sigma_\gamma=1$, $\sigma_{\theta t}=2$ (Table 2);
+- boundary conditions: zero normal gradients of $\gamma$ and
+  $\mathcal R_{\theta t}$ at walls; $\gamma=1$ and $\mathcal R_{\theta t}$ from
+  the correlation at the inlet, with inlet values adjusted for the decay of
+  turbulence before the leading edge (§3.3).
+
+The printed piecewise functions are continuous at their breaks to within
+0.01 for $F_{l1}$ and about 1.2 for $Re_{\theta c}$ at
+$\mathcal R_{\theta t}=1870$ *(compiler check, not in the sources)*.
+
+**High-order evidence.** On the ERCOFTAC T3A, T3B and T3A– plates with only
+143 quadrilaterals (10 along the plate, $y_1^+\simeq3$–10 on the first
+element) and polynomial degrees $\mathbb P^0$–$\mathbb P^6$, low orders are
+inadequate ($\mathbb P^0$ shows no transition), the two highest orders
+coincide, T3A and T3A– lie very close to the finite-volume solutions of
+Langtry & Menter on about 39,000 elements, and T3B is "remarkably closer"
+to the experiment than that reference, which the authors attribute "most
+likely" to the accuracy of flux reconstruction (§4.2, Figs. 12–13); T3A–
+transition is predicted significantly earlier than measured, by both. The
+$\mathbb P^5$ profiles agree with Suluksna & Juntasaro's for $u^+$, $k^+$ and
+the Reynolds shear stress, and both underpredict the measured near-wall
+$k^+$ and miss its transitional maximum, which the authors attribute to the
+model itself (Figs. 15–16). A decoupled analytical source Jacobian runs the
+implicit solver at CFL 1250 at $\mathbb P^2$; adding the two transition
+equations raises the wall time but not its $O(N^2)$ scaling per degree of
+freedom (§3.2.3, §4.3; see [flux reconstruction](/methods/flux-reconstruction.md)
+and [ERCOFTAC T3 plates](/benchmarks/ercoftac-t3-flat-plate.md)).
+
 ## Very-low-Reynolds airfoils and laminar separation bubbles
 
 Carreño Ruiz & D'Ambrosio (2022) run 2D compressible RANS and URANS
@@ -358,6 +424,23 @@ into deep dynamic stall within 0.1 in $C_L$ while the flow is attached, and
 gives the same peak-lift angle, $22^\circ$ against $24^\circ$ in the
 experiment ([Baldan & Guardone (2025)](/sources/baldan-2025.md), §1.2,
 §2.2, Fig. 9; arXiv v2; see [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+Batther & Lee (2022) run four closures inside delayed DES of a NACA 0012
+pitching up at $Re=2\times10^5$ against a wall-resolved LES: the SST-based
+Langtry–Menter $\gamma$-$Re_\theta$ model (described "with modifications to
+account for crossflow induced transition"), the SA-based reformulation of
+Medida & Baeder, Coder's amplification-factor-transport model on SA, and
+fully turbulent SA; no model equations are printed. All transition models
+reproduce the LES sequence of transition moving upstream, bubble formation
+and bursting, but stall slightly early; Langtry–Menter gives the earliest
+loss of suction and stall, the two SA-based models similar stall onset,
+Medida–Baeder oscillates at low incidence, and the
+amplification-factor-transport model is closest to the LES. After suction
+collapse, $C_p$ is similar for all transition models, "a common ground for
+the flow physics post suction collapse, regardless of the transition
+model" ([Batther & Lee (2022)](/sources/batther-2022.md), §3.1, §4.3.1,
+Figs. 17–20; see [dynamic stall](/definitions/dynamic-stall.md)). The
+authors list the effect of the numerics on transition-model predictions as
+an open question (§5).
 
 ## Laminar-kinetic-energy models as a sibling family
 
@@ -374,6 +457,23 @@ On all ERCOFTAC T3 cases $\gamma$-$Re_\theta$ (Menter et al. 2006) is their
 comparison model; on the low-$Tu$ T3A– and Schubauer–Klebanoff plates both
 models give a transition path "definitely too steep", in line with Menter et
 al. (2015) (§5.1.1, Figs. 7–8).
+
+Ghidoni & Noventa (2026) go further and take the onset correlation itself:
+their laminar-kinetic-energy model triggers its two transfer terms where a
+local estimate of $Re_\theta$ exceeds the Langtry–Menter $Re_{\theta c}$,
+natural branch for one term and bypass branch for the other, with the
+pressure-gradient function $F(\lambda_\theta)$ above and a compressibility
+factor $(1+M_e^2)$ ([Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md),
+§II–§III; equations on the
+[laminar-kinetic-energy page](/methods/laminar-kinetic-energy-transition-model.md)).
+They evaluate it with the local turbulence intensity, as the
+local-correlation models do, and argue that a correlation must be used
+with the intensity, local or free-stream, of its calibration: substituting
+the free-stream intensity for the local one, as a $\gamma$-SST variant of
+Huang & Tan (2025, cited by Ghidoni & Noventa as "Huang et al." and not
+ingested; not the Huang et al. (2025) of the bundle) does, "changes the
+meaning" of $Re_{\theta c}$ (§III). Their comparison model in the figures
+is labelled $\gamma$-SST and cited to Menter et al. (2022) (§IV).
 
 ## Benchmarks proposed for calibration
 
@@ -448,6 +548,10 @@ one-equation local-correlation model as the candidate for their
 hybridizable discontinuous Galerkin $k$-$\omega$ solver; they do not test it
 ([Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §7, ref. [45];
 see the [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md)).
+Vandenhoeck et al. (2022) obtain the ERCOFTAC T3 results above with the
+Langtry–Menter transport model on 143 elements, ten along the plate, at
+polynomial degree five or six, against about 39,000 cells for the
+finite-volume reference (§4.2).
 
 ## Qualifications
 
@@ -486,6 +590,14 @@ see the [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md)).
   grid study is not stated. The text refers to the $\mathcal R_{\theta t}$
   transport equation as Eq. 11, which is its production term (the equation
   is Eq. 10).
+- The leading constant of the natural-transition branch of the onset
+  correlation is printed 1173 by Carreño Ruiz & D'Ambrosio (2022, Eq. 18)
+  and 1173.51 by Vandenhoeck et al. (2022, Eq. 33) and Ghidoni & Noventa
+  (2026, Eq. 27); the latter print the branch without the operator between
+  its first two terms, which Vandenhoeck et al. print as a minus.
+- Vandenhoeck et al. (2022) give $Tu_\infty=10^{-2}$ for their flat-plate
+  verification while defining $Tu$ in percent (§3.3.2, §4.1), so the unit of
+  that value is ambiguous.
 
 # Citations
 
@@ -499,3 +611,6 @@ see the [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md)).
 - [Klose et al. (2025)](/sources/klose-2025.md) — §2, §6, Fig. 7, Table 2 (ASME accepted manuscript).
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — §1.2, §2.2, Fig. 9 (arXiv v2).
 - [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §7.
+- [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §1.2 Eqs. 21–46 Table 2, §3.2.3, §3.3, §4.1–4.3, Figs. 12–16.
+- [Batther & Lee (2022)](/sources/batther-2022.md) — §3.1, §4.3.1, Figs. 17–20, §5.
+- [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §II–§IV.

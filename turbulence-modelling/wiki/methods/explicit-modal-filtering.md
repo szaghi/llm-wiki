@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Explicit modal filtering as an LES closure"
-description: "Explicit filtering of the solution itself, in the modal space of a high-order element or by compact physical-space filters, damps the highest resolved modes in place of a subgrid stress. The sources gate it by a resolution or smoothness sensor, tie its cutoff to local flow characteristics, and compare it with Smagorinsky, entropy filtering and implicit LES."
+description: "Explicit filtering of the solution itself, in the modal space of a high-order element or by compact physical-space filters, damps the highest resolved modes in place of a subgrid stress. The sources gate it by a resolution or smoothness sensor, tie its cutoff to local flow characteristics, and compare it with Smagorinsky, entropy filtering, split forms and implicit LES."
 status: established
 aliases: [explicit modal filter, modal filtering, solution filtering, dynamic explicit modal filter, DEMF, self-tuning dynamic explicit modal filter, STDEMF, local modal filter, LMF, explicit filtering regularization, relaxation filtering]
 tags: [les, filtering, implicit-les, dg, numerical-dissipation, sgs-model]
-timestamp: 2026-10-26T20:50:00Z
+timestamp: 2026-10-27T06:03:00Z
 ---
 
 # Explicit modal filtering as an LES closure
@@ -28,7 +28,8 @@ cutoff ([Ranjbar et al. 2026](/sources/ranjbar-2026.md)), an exponential
 modal filter switched on by a smoothness sensor
 ([Wang 2024](/sources/wang-2024-b.md)), and compact physical-space filters
 used as a regularization of finite-difference LES
-([Caban et al. 2026](/sources/caban-2026.md)).
+([Caban et al. 2026](/sources/caban-2026.md)), including the relaxation
+(selective) filter of central schemes ([Volpiani 2024](/sources/volpiani-2024.md)).
 
 ## Modal transform and kernel
 
@@ -147,10 +148,10 @@ finite-difference filter), of order $2N_s$, with $\hat G_E(0)=1$ and
 $\hat G_E(\pi)=0$, and the free parameter $a_1$ widening the pass band. Their
 regularization filter (N-DI-R) is the approximate-deconvolution form
 
-$$\hat G_{QG}=1-(1-\hat G_E)^{N_{\mathrm{ADM}}+1}$$
+$$\hat G_{QG}=1-(1-\hat G_E)^{N_{\mathrm{AD}}+1}$$
 
-($\hat G_{QG}$, $N_{\mathrm{ADM}}$ page-local), built from the eighth-order
-compact filter with $N_{\mathrm{ADM}}=2$ and applied in three dimensions to
+($\hat G_{QG}$, $N_{\mathrm{AD}}$ page-local), built from the eighth-order
+compact filter with $N_{\mathrm{AD}}=2$ and applied in three dimensions to
 the velocity at the end of each time step. It is close to one over a much
 wider range than $\hat G_E$ and acts only on small scales; explicit
 filtering with it is "equivalent to" the dissipative relaxation term of
@@ -166,7 +167,70 @@ Taylor–Green test the filter lowers the effective Reynolds number from the
 energy decay, as dissipative interpolation does (§5.1, Figs. 10–11; see
 [numerical dissipation](/properties/numerical-dissipation.md)).
 
+**Relaxation (selective) filtering.** [Volpiani (2024)](/sources/volpiani-2024.md)
+(§2.2.2, Eqs. 7–8, Table 3) stabilizes the central finite differences of
+the Python solver BASIC by a relaxation filter applied to the conservative
+variables in all three directions at every time step,
+
+$$u^{\mathrm f}_j=u_j-\chi_f\sum_{l=-N_p}^{N_p}d_l\,u_{j+l},\qquad D_k(kh)=d_0+2\sum_{l=1}^{N_p}d_l\cos(l\,kh),$$
+
+with $d_{-l}=d_l$ (no dispersion), $0\le\chi_f\le1$ the strength, $2N_p+1$
+the stencil and $D_k$ the damping function ($u^{\mathrm f}$, $\chi_f$,
+$d_l$, $N_p$, $D_k$ page-local; the source writes $\Delta x$ for $h$).
+The constraints $d_0+2\sum d_l=0$ and $d_0+2\sum(-1)^ld_l=1$ give
+$D_k(0)=0$ and $D_k(\pi)=1$, so the mean is left untouched and the
+grid-to-grid mode is the most damped *(compiler check, not in the
+sources)*; two further moment constraints give formal sixth order. The new 11-point filter
+RFo11p minimizes $\int D_k^2\,d(kh)$ over $0.2\le kh\le1.3$ under
+$D_k>0$ (purely dissipative), with a penalty on the slope of $D_k$
+($d_0=0.22107796514583924$, $d_1=-0.19150151148699646$,
+$d_2=0.12311347506118175$, $d_3=-0.05624682921948344$,
+$d_4=0.0163475525925704$, $d_5=-0.002251669520191884$). By Fourier
+analysis it is more accurate than the optimized filter of Bogey & Bailly
+(2004, as recalled) at low wavenumbers and than that of Bogey et al.
+(2009, as recalled) at high wavenumbers; the 2004 filter, of lower formal
+order, is "more dissipative for long waves", which shows as early
+kinetic-energy loss (App. 1, Fig. 20; §4). The strength is fixed at
+$\chi_f=0.1$; the author notes that the damping depends on the filtering
+frequency, hence on the time step (citing Edoh et al.; Lamballais et al.),
+and recalls from Aubard et al. (2013) that the solution becomes
+independent of the finite-difference stencil beyond seven points while
+the filter shape strongly affects the LES (§2.2.2, §5).
+
 ## Results
+
+**Relaxation filtering against split forms and subgrid models.** Volpiani
+(2024, §4–5) runs the compressible
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) ($M=0.085$):
+
+- **Inviscid, $64^3$, $t=5$** (Table 1). The normalized kinetic energy
+  retained grows with the filter order: 0.176, 0.903, 0.963, 0.978, 0.983
+  for $N_p=1,\dots,5$; 0.978, 0.985 and 0.986 for the 2004, 2009 and new
+  optimized 11-point schemes; 0.998–0.999 for the
+  [kinetic-energy-preserving split forms](/properties/kinetic-energy-preservation.md)
+  without filter. Relaxation filtering is the cheapest per iteration
+  (78.9 s per 100 iterations per processor for RF-5, against 115.9–298.9 s
+  for the split forms).
+- **Viscous, $Re=1600$, $64^3$–$512^3$.** Filtering with no subgrid model
+  (an [implicit LES](/definitions/implicit-les.md) in the author's
+  vocabulary) predicts the kinetic-energy dissipation rate $-d\mathcal K/dt$ ($\mathcal K$ the volume-averaged kinetic energy, page-local) well
+  on all grids while under-predicting the enstrophy-based rate on coarse
+  grids, which the author reads as under-resolved structures whose energy
+  drain is carried by the filter (§5, Figs. 6–8); the new filter is the
+  least dissipative and best predicts the dissipation peak on $64^3$
+  (Fig. 9), and on $128^3$ it agrees with DNS of Dairay et al. (as
+  recalled) at $Re=2500$, 5000 and 10000 (Fig. 10).
+- **Against explicit LES.** Split forms with the
+  [Smagorinsky](/methods/smagorinsky-model.md), multiscale Smagorinsky or
+  [dynamic](/methods/dynamic-procedure.md) models stay noisy; adding the
+  filter to them improves the results, and "regardless of the model, the
+  best result is achieved for the implicit LES with RF with the optimized
+  filter and no SGS model" (§5, Figs. 15–17).
+- **Split form plus filter.** Combining a split form with the filter lets
+  $\chi_f$ drop from 0.1 to 0.01 (the divergence form is unstable at 0.01)
+  and removes the energy pile-up on $64^3$ for wavenumbers below about
+  two thirds of the maximum; the best $\chi_f$ "might be case dependent"
+  (§5, Fig. 18).
 
 **Self-tuning modal filter in DGSEM.** Ranjbar et al. (2026, §III) run
 [HORSES3D](/software/horses3d.md) on under-resolved meshes and compare the
@@ -256,6 +320,15 @@ page. In each source the filter is tuned against DNS of the same flow
   precision, $\approx36$ in double precision; $-\ln(2.2\times10^{-16})\approx36.0$,
   whereas $-\log_{10}(2.2\times10^{-16})\approx15.7$, so the value 36 is the
   natural logarithm *(compiler check, not in the sources)*.
+- Volpiani (2024) labels the relaxation-filtered runs both implicit LES
+  (no subgrid model) and LES "explicitly filtered with a well-defined
+  filter function" (§1, §5): the filter is a grid stencil applied to the
+  solution every step, whereas the explicitly filtered LES of Valencia et
+  al. (2026) on [large-eddy simulation](/definitions/large-eddy-simulation.md)
+  sets a filter width $\Delta$ by the filter-to-grid ratio. The value of
+  $C_s$ in Volpiani's Smagorinsky runs and the balancing constants of the
+  time-integrator optimization are not printed; the Fig. 18 caption
+  writes "RT" for RF.
 - Caban et al. (2026) print the middle rows of the filter-coefficient
   system (Eq. 16) with an index $j$ where the summation index is $l$.
 
@@ -264,3 +337,4 @@ page. In each source the filter is tuned against DNS of the same flow
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §I; §II.B, Eqs. (17)–(44), Figs. 1–2; §III.A, Figs. 3, 5–6; §III.B, Figs. 8–10, 12–14; §III.C, Figs. 15–16; §III.D.1–4, Eq. (51), Figs. 17–18.
 - [Wang (2024)](/sources/wang-2024-b.md) — §2.3, Eqs. (17)–(19), Algorithm 1, Table 2; §4.1–4.4, Figs. 2–3, 15–21; §5.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §3.1, Eqs. (13)–(17), Table 1, Fig. 2; §5.1, Figs. 10–11; §5.3.1, Table 4, Fig. 19; §5.
+- [Volpiani (2024)](/sources/volpiani-2024.md) — §1; §2.2.2, Eqs. (7)–(8), Table 3; §4, Table 1; §5, Figs. 6–10, 15–18; §6; App. 1, Fig. 20.

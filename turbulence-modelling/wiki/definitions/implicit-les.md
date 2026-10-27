@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-26T20:50:00Z
+timestamp: 2026-10-27T06:03:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -145,6 +145,41 @@ can carry.
      (§III) run "coarse DNS", the unmodelled DGSEM of
      [HORSES3D](/software/horses3d.md) on the coarse meshes, as the
      baseline of their filter.
+   - **Shock/boundary-layer interaction in DGSEM.** [Gao et al. (2022)](/sources/gao-2022.md)
+     (§1, §3.1) run a wall-resolved LES of an oblique shock reflection at
+     Mach 2 in [FLEXI](/software/flexi.md) with no subgrid model,
+     relying "solely" on the dissipation of the interface Riemann solver
+     (split-form DGSEM, $N=6$), an approach they call "widely tested and
+     accepted within the DG community". Shocks are captured by
+     [finite-volume subcells](/methods/subcell-finite-volume-shock-capturing.md)
+     switched by a [shock sensor](/definitions/shock-sensor.md) evaluated
+     on a spanwise-averaged field, so that the extra dissipation stays out
+     of the turbulent boundary layer.
+   - **Supersonic twin jets, MILES.** [Ahn et al. (2023)](/sources/ahn-2023.md)
+     (§III) run "an implicit LES approach (or monotonically integrated
+     large-eddy simulation, MILES)" of over-expanded twin square jets in
+     the unstructured finite-volume code EDGE: "no explicit sub-grid-scale
+     (SGS) model is implemented … the physical dissipation originated by
+     small-scale eddies is implicitly considered by taking the advantage
+     of truncation errors". The scheme is second-order central with a
+     modified Jameson second/fourth-difference
+     [artificial dissipation](/methods/artificial-viscosity-shock-capturing.md)
+     switched by a Ducros-type dilatation sensor, applied once per time
+     step at the end of the first Runge–Kutta stage.
+   - **Shock-capturing schemes run without a model.**
+     [Liang & Fu (2024)](/sources/liang-2024.md) (§1, §4.10–4.12) motivate
+     their hybrid TENO scheme by "under-resolved large eddy simulations
+     (LES) deployed on coarse meshes" and run the Taylor–Green vortex and
+     decaying compressible isotropic turbulence with no subgrid model (see
+     [WENO schemes](/methods/weno-scheme.md)); [Takagi et al. (2022)](/sources/takagi-2022.md)
+     (§1, §5) give the same motivation for a TENO–THINC hybrid but test
+     turbulence only with the inviscid Taylor–Green vortex, deferring
+     turbulent flows to a later paper.
+   - **Lattice Boltzmann.** [Husson et al. (2024)](/sources/husson-2024.md)
+     (§1) list, beside eddy-viscosity models, implicit LES "where the
+     collision operator acts as a subgrid scale model" as an option of
+     [lattice-Boltzmann](/methods/lattice-boltzmann-method.md) LES (citing
+     Nishimura et al.).
 2. **Designed numerical regularization.** The numerical dissipation is
    built to act as a model. Vicente Cruz & Lamballais (2023, §5.1) use the
    [implicit spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
@@ -217,7 +252,7 @@ can carry.
    interpolation transfer function, and spectral (error-free)
    interpolation plus an explicit regularization filter applied to the
    velocity after every time step. That filter is an eighth-order compact
-   filter composed with its van Cittert approximate inverse truncated at $N_{\mathrm{ADM}}=2$,
+   filter composed with its van Cittert approximate inverse truncated at $N_{\mathrm{AD}}=2$,
    which acts mainly on the smallest scales and is equivalent to the
    relaxation term of the approximate deconvolution model (§3.1, Eq. 17;
    see [scale-similarity models](/methods/scale-similarity-model.md)).
@@ -231,6 +266,16 @@ can carry.
    or complement to subgrid-scale modeling" that "mimics the effects of"
    spectral vanishing viscosity without its extra flux. The method and its
    results are on [explicit modal filtering](/methods/explicit-modal-filtering.md).
+
+   **Relaxation filtering of central differences.** [Volpiani (2024)](/sources/volpiani-2024.md)
+   (§1, §2.2.2, §5) stabilizes sixth-order central finite differences by a
+   selective (relaxation) filter applied to the conservative variables at
+   every step, with no subgrid model, and calls the result implicit LES;
+   the filter, optimized for low dissipation at long waves, is the
+   designed numerical regularization, and the alternative stabilization
+   by kinetic-energy-preserving split forms, which adds no dissipation,
+   fails as an implicit LES on coarse grids (below; the filter and its
+   coefficients are on [explicit modal filtering](/methods/explicit-modal-filtering.md)).
 
    **HOPU, second version.** Lederer et al. (2026, §2.3, §3.2) reuse the
    [HOPU method](/methods/high-order-projection-based-upwind-method.md)
@@ -305,6 +350,25 @@ can carry.
 
 Usages 1 and 2 concern the closure (none, or numerical); usage 3 concerns
 the filter. A page or claim about "ILES" should say which.
+
+Volpiani (2024, §1, §5) crosses the two axes explicitly: filtering is
+implicit (embedded in the scheme, with unknown size and shape) or explicit
+(a filter applied to the discrete solution, with known shape and width),
+and LES is implicit (no subgrid model) or explicit (a model). The
+relaxation-filtered runs are thus implicit LES that are "explicitly
+filtered with a well-defined filter function", while the split-form runs
+without filter are implicitly filtered. [Valencia et al. (2026)](/sources/valencia-2026.md)
+(§I, §V A) emulate the implicit filter of a centred finite-volume scheme
+by a top-hat filter of the grid width in their a priori protocol, and find
+that explicitly filtered spectra at a filter-to-grid ratio of one
+"essentially overlap" the implicit-LES spectrum: explicit filtering does
+not move the grid cutoff, it only damps energy below it (Fig. 3).
+[Pan & Zhang (2023)](/sources/pan-2023.md) (§II.D, §III.A) describe the
+same LES of a centrifugal impeller as using the
+[dynamic Smagorinsky–Lilly model](/methods/dynamic-procedure.md) and as
+"the implicit filtered LES approach" of ANSYS-Fluent, citing a work on
+implicit LES (Hahn & Drikakis); the paper does not say in which sense
+the phrase is meant.
 
 ## What the closure terms are
 
@@ -542,7 +606,62 @@ interpretation they flag as needing further work).
   against experiment, which the authors credit to the low dissipation of
   the method (§5).
 
+- **Relaxation-filtered central differences, Taylor–Green vortex.**
+  Volpiani (2024, §5, Figs. 6–10, 15–18) finds the filtered implicit LES
+  the best of all the paper's runs at $Re=1600$: it predicts the kinetic-energy
+  dissipation rate $-d\mathcal K/dt$ ($\mathcal K$ the volume-averaged kinetic energy, page-local) well on $64^3$ to $512^3$ while
+  under-predicting the enstrophy-based rate on coarse grids, which the author reads
+  as under-resolved structures whose energy drain the filter carries; with
+  the new optimized filter on $128^3$ it agrees with DNS of Dairay et al.
+  (as recalled) at $Re=2500$, 5000 and 10000. "Regardless of the model, the
+  best result is achieved for the implicit LES with RF with the optimized
+  filter and no SGS model": Smagorinsky, multiscale Smagorinsky and
+  dynamic models on split forms do worse, and the author concludes that
+  implicit and explicit LES are both viable "as long as dissipation is
+  carefully tuned and guided by the physics", implicit LES being faster
+  (§6).
+- **Shock-capturing hybrids, Taylor–Green vortex and isotropic
+  turbulence.** Liang & Fu (2024, §4.11–4.12, Figs. 19–21) report that
+  their TENO-S scheme without a model agrees with DNS in the dissipation
+  rate of the viscous Taylor–Green vortex at $Re=100$–3000 on $64^3$ and
+  $Re=5000$, 10000 on $128^3$, and in decaying compressible isotropic
+  turbulence ($M_t=0.6$, $Re_\lambda=100$, $64^3$ against filtered
+  $256^3$ DNS), "significantly better" than WENO-CU6, TENO6 and TENO8,
+  whose dissipation it reduces by switching to a non-dissipative split
+  form in smooth cells.
+- **Shock/boundary-layer interaction in DGSEM.** Gao et al. (2022,
+  §5.3.1) place separation at $16.7\delta_r$ and reattachment at
+  $19.5\delta_r$ against $17.6\delta_r$ and $19.3\delta_r$ in a reference
+  LES, and see the skin-friction plateau that, per that reference, appears
+  only at sufficient resolution, on a much coarser grid ($N=6$, about
+  93 million degrees of freedom); see
+  [shock–turbulent boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+- **Supersonic jets.** The MILES of Ahn et al. (2023, §IV D, Fig. 22,
+  Table II) reproduces the far-field overall sound pressure level and the
+  screech frequency (7928 Hz against 8172 Hz measured) through a
+  [Ffowcs Williams–Hawkings](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)
+  surface, and its velocity spectra follow the $-5/3$ slope "for about one
+  order of magnitude", which the authors take as sufficient resolution
+  (§IV C 1, Fig. 12).
+
 ## Evidence: when it fails
+
+- **Split forms without dissipation.** Volpiani (2024, §5, Figs. 11–13)
+  finds that kinetic-energy-preserving split forms without a model are
+  "extremely noisy" on $64^3$ and $128^3$ in the Taylor–Green vortex at
+  $Re=1600$: aliased energy builds up at high wavenumber for every split
+  form and contaminates even low wavenumbers, so the split forms are
+  "unsuited to perform implicit large-eddy simulations" (Abstract); a
+  weak relaxation filter ($\chi_f=0.01$, page-local strength of
+  [explicit modal filtering](/methods/explicit-modal-filtering.md)) removes
+  the pile-up (Fig. 18).
+- **Near-nozzle shear layers.** In the jet MILES of Ahn et al. (2023,
+  §IV B, Figs. 6–10) both runs give much higher turbulent kinetic energy
+  than PIV at one and two nozzle heights downstream and slightly over-predict the
+  shock-cell strength; boundary-layer tripping inside the nozzle reduces
+  but does not remove the excess (see
+  [inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
+  The nozzle wall is not resolved ($y^+$ 10–20, no wall model).
 
 - **Applicability plateau.** At $48^3$ degrees of freedom ($6^3$ elements,
   $N=7$), where only about 0.9% of the dissipation is resolved, DG ILES
@@ -967,3 +1086,11 @@ dissipation is imparted by the SGS model". Details on
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §I, pp. 3–4; §III.A–C, Figs. 3, 13–15.
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1; §3.3.
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: p. 6.
+- [Gao et al. (2022)](/sources/gao-2022.md) — §1; §3.1–3.2; §5.3.1.
+- [Ahn et al. (2023)](/sources/ahn-2023.md) — §III, Eqs. (1)–(6); §IV B, Figs. 6–10; §IV C 1, Fig. 12; §IV D, Fig. 22, Table II.
+- [Liang & Fu (2024)](/sources/liang-2024.md) — §1; §4.10–4.12, Figs. 17–21.
+- [Takagi et al. (2022)](/sources/takagi-2022.md) — §1; §4.10; §5.
+- [Husson et al. (2024)](/sources/husson-2024.md) — §1.
+- [Volpiani (2024)](/sources/volpiani-2024.md) — Abstract; §1; §2.2.2; §5, Figs. 6–18; §6.
+- [Valencia et al. (2026)](/sources/valencia-2026.md) — §I; §V A, Fig. 3.
+- [Pan & Zhang (2023)](/sources/pan-2023.md) — §II.D; §III.A.

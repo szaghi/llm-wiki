@@ -5,7 +5,7 @@ description: "A priori testing evaluates or trains a closure on filtered or aver
 status: established
 aliases: [a priori test, a posteriori test, offline and online evaluation, a-priori training, a-posteriori training]
 tags: [data-driven, sgs-model, les, rans]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # A priori and a posteriori testing
@@ -110,6 +110,15 @@ their [explicit modal filter](/methods/explicit-modal-filtering.md) only
 a posteriori, against an unmodelled run on the same coarse mesh ("coarse
 DNS"); their joint PDFs of filter inputs and modal energy levels are
 computed on those coarse runs (§III.B, Figs. 8–10), not on filtered DNS.
+Two further sources use the pair in the same sense.
+[Valencia et al. (2026)](/sources/valencia-2026.md) run an a priori study
+only: deconvolution, dynamic Smagorinsky and dynamic mixed models are
+evaluated on filtered and downsampled DNS of compressible isotropic
+turbulence, and the a posteriori evaluation is deferred (§I, §VI).
+[Nuca et al. (2025)](/sources/nuca-2025.md) (§VI) test explicit
+[equilibrium wall models](/methods/equilibrium-wall-model.md) a priori
+on a stored LES velocity signal of a channel and then in the running
+WMLES of an airfoil, without naming the second test "a posteriori".
 The words carry seven further meanings that must be kept apart:
 
 - **Training rather than testing.** Duraisamy (2021, §IV) and Agdestein &
@@ -172,7 +181,11 @@ The words carry seven further meanings that must be kept apart:
 For wall models, a priori means that the matching data at $h_{\mathrm{wm}}$
 are taken from DNS and the model is run offline; a posteriori means the
 model is coupled to the WMLES (Griffin et al. 2023, §§3–4; Vadrot et al.
-2023b, §IV B).
+2023b, §IV B). Nuca et al. (2025, §VI) take the a priori input not from
+DNS but from a wall-resolved LES of a channel at $Re_\tau\approx1000$,
+the velocity averaged over a cube of side $\delta/30$ centred at
+$h_{\mathrm{wm}}=0.05\delta$ (a dataset designed for such tests by
+Rezaeiravesh et al., as they cite it).
 
 ## Typical a priori metrics
 
@@ -303,6 +316,18 @@ model is coupled to the WMLES (Griffin et al. 2023, §§3–4; Vadrot et al.
   [discretization-consistent closure](/definitions/discretization-consistent-closure.md)
   for the filters.
 
+- **Correlation, relative error and regression slope against the total
+  unresolved stress.** Valencia et al. (2026, §V A, Eqs. 53–54) score
+  the components $\tau_{xx}$ and $\tau_{xy}$ by the domain-averaged
+  correlation coefficient $C$ and the relative error
+  $$E_{\mathrm{rel}}=\frac{\langle(\tau^{\mathrm{ref}}-\tau^{\mathrm{mod}})^2\rangle^{1/2}}{\langle(\tau^{\mathrm{ref}})^2\rangle^{1/2}}$$
+  (page-local superscripts for the reference and model stresses; the
+  brackets are domain averages here), plus the slope of the scatter-plot
+  regression, PDFs and power spectra of the normalized stresses and
+  mid-plane fields (Figs. 5–23). Their reference is the *total* unresolved
+  stress of explicitly filtered LES (next section), not only the part a
+  model can recover.
+
 **A posteriori metric.** Wu & Lele (2026, §5, Eq. 5.1) sum the absolute
 difference of the logarithms of the filtered-DNS and LES energy spectra
 over the resolved wavenumbers (their "sum spectral error", SSE,
@@ -310,6 +335,54 @@ page-local). They call it "artificially sensitive to deviations in the
 higher-wavenumber, dissipative range": it can rate a dissipative spectrum
 worse than a spectrum with high-wavenumber pile-up, so visual inspection
 of the spectra stays necessary (§5).
+
+## A priori tests on the DNS grid or on the LES grid
+
+Valencia et al. (2026, §I) state that classical a priori tests, run on the
+DNS grid, "tend to overestimate model accuracy because the filtered and
+resolved fields share the same grid resolution". Their "stringent"
+protocol (§V A) mimics an LES grid in three steps: a top-hat filter of
+width $h$ applied to $512^3$ DNS of decaying compressible isotropic
+turbulence (initial turbulent Mach number 0.6), meant to emulate the
+implicit filter of a centred finite-volume scheme; downsampling to a
+coarse grid of spacing $h$; and an explicit Gaussian filter of width
+$\Delta=\mathrm{FGR}\cdot h$ with filter-to-grid ratio
+$\mathrm{FGR}=\Delta/h=1,2,4$ ($h$ the LES grid spacing, FGR page-local). The
+reference stress is then the total unresolved stress of explicitly
+filtered LES, $\tau^{\mathrm{tot}}_{ij}=\tau^{\mathrm{gr}}_{ij}+\tau^{\mathrm{sf}}_{ij}$
+(page-local), the sum of a grid-truncation part (lost by the
+projection on the coarse grid, which no deconvolution can recover) and a
+sub-filter part (removed by the explicit filter); see
+[large-eddy simulation](/definitions/large-eddy-simulation.md) and the
+[scale-similarity model](/methods/scale-similarity-model.md) for the
+decomposition and the deconvolution models (§II C, Eqs. 23–29). With the
+explicit filter width fixed at 16 DNS spacings, the three retained cases
+($128^3$ with FGR 4, $64^3$ with FGR 2, $32^3$ with FGR 1) leave 15–20% of
+the kinetic energy unresolved, of which about 92%, 72% and 3.5% is
+sub-filter (§V B, Table IV): the FGR decides how much of the target a
+deconvolution model can reach.
+
+Results (Tables VI–VII, values $C_{xx}$, $C_{xy}$ / $E_{\mathrm{rel},xx}$,
+$E_{\mathrm{rel},xy}$):
+
+| Model | FGR 2 | FGR 4 |
+|---|---|---|
+| approximate deconvolution, order 5 | 0.9795, 0.9839 / 0.2469, 0.1946 | 0.9968, 0.9976 / 0.0909, 0.0755 |
+| discrete direct deconvolution, order 4 | 0.9792, 0.9838 / 0.2445, 0.1931 | 0.9972, 0.9980 / 0.0897, 0.0712 |
+| dynamic iterative approximate deconvolution | 0.9735, 0.9800 / 0.2649, 0.2153 | 0.9946, 0.9964 / 0.1023, 0.0892 |
+| spectral direct deconvolution (upper bound) | 0.9809, 0.9849 / 0.2402, 0.1881 | 0.9989, 0.9992 / 0.0626, 0.0457 |
+| [dynamic Smagorinsky](/methods/dynamic-procedure.md) | 0.2726, 0.1369 / 1.2955, 1.0203 | 0.2562, 0.1156 / 1.9644, 1.0459 |
+| dynamic mixed | 0.9057, 0.9144 / 0.4923, 0.4543 | 0.9126, 0.9089 / 0.4386, 0.4483 |
+
+At FGR 1 approximate deconvolution is unusable ($C<0.15$,
+$E_{\mathrm{rel}}>0.98$; §V B 1). The authors read the weak FGR
+sensitivity of the dynamic Smagorinsky and mixed models as a structural
+limit of eddy-viscosity formulations and conclude that compensating the
+filter is "a requirement fulfilled exclusively by deconvolution-based
+approaches" (§V C, §VI). Whether the low a priori correlation of the
+dynamic Smagorinsky model predicts its behaviour in an LES is not tested:
+Valencia et al. run no LES (see the evidence below that the two verdicts
+can disagree).
 
 ## Evidence that the two verdicts disagree
 
@@ -840,6 +913,28 @@ maximum a priori error on the trained filter sizes and 16% on an untrained
 one (Fig. 9). See
 [direct numerical simulation](/definitions/direct-numerical-simulation.md).
 
+**An approximation tested against its own original.** Nuca et al.
+(2025, §VI) test explicit closed-form approximations of the Spalding,
+Reichardt and equilibrium-ODE wall laws, whose reference is the iterated
+original model, not DNS. A priori on the channel signal the explicit
+wall stress differs from the iterated one by less than 0.07% for the
+fixed-constant ($N=3$-bump) approximations and 0.7% for the global
+($N=1$) ones; a posteriori, in WMLES of the Aérospatiale A-airfoil near
+stall (OpenFOAM, $18.7\times10^6$ cells, wall model on the suction side),
+the explicit Spalding stress deviates by at most 0.06% over a much wider
+range of the local Reynolds number $Re_y$ (Fig. 8), so the verdicts
+agree. The robustness question, however, appears only in the running
+complex flow: Newton iterations of the original laws "would often
+sporadically diverge" near transition and with sampling heights above
+the first off-wall node, and the authors state that channel and
+flat-plate tests, on which much of the wall-model literature rests, probe
+accuracy but not robustness (§I–II). As initial guesses the explicit
+laws cut the maximum iteration count from 11 and 10 to 3 (Reichardt,
+Spalding) and the fixed-point maximum of the ODE model from the cap of
+100 (non-convergence) to 6 on the airfoil, against 3 to 2 and 6 to 2 on
+the channel (Tables VII–VIII); see
+[equilibrium wall model](/methods/equilibrium-wall-model.md).
+
 For wall models, Griffin et al. (2023) test their
 [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md)
 a priori on 48 DNS cases with matching data at $h_{\mathrm{wm}}=0.3\delta$
@@ -964,7 +1059,18 @@ priori, obtaining fields that are discontinuous at element interfaces; see
   the disagreement stated in the lead cannot arise in them.
   Rickard & Kasbaoui (2026) run only the a priori analysis of their
   wall-slip models and present no forward simulation (§2, §7); Ranjbar
-  et al. (2026) run only a posteriori tests.
+  et al. (2026) run only a posteriori tests. Valencia et al. (2026) are
+  a priori only: their conclusion that only deconvolution compensates the
+  filter, and their cost statements (taken from cited a posteriori works,
+  §V C), are not tested in an LES there; the a priori snapshot time is not
+  stated. Their text says that from FGR 2 to 4 the relative errors of the
+  deconvolution models fall "by nearly half" and that the classical models
+  improve marginally, whereas Tables VI–VII show reductions by factors of
+  about 2.4 to 4.1 and a dynamic-Smagorinsky $E_{\mathrm{rel},xx}$ that
+  grows from 1.2955 to 1.9644 *(compiler check, not in the sources)*.
+- **Nuca et al. (2025)** have no DNS or experimental reference in either
+  test; accuracy against data is explicitly not their goal (§VI), and the
+  airfoil statistics cover one chord-based flow time.
 - **What Jakhar et al. (2026) show in the version read.** The a priori
   tables of the main text and the stated stability threshold (80% of the
   DNS enstrophy) are printed; the stability runs, Table S1 and the
@@ -1027,4 +1133,6 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: pp. 1–4, Figs. 1–3 (criterion, a priori table, a posteriori stability and threshold); App. B, Eq. 5 (CC).
 - [Caban et al. (2026)](/sources/caban-2026.md) — §4.1–4.2, Eqs. 36–39, Figs. 6, 8 (a priori deconvolution error); §5.4, Tables 5, 9 (a posteriori Taylor–Green vortex).
 - [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §2, §3, §7 (a priori analysis only, a posteriori deferred).
+- [Valencia et al. (2026)](/sources/valencia-2026.md) — §I (a priori on the DNS grid overestimates accuracy); §II C, Eqs. 23–29 (total, grid-truncation and sub-filter stresses); §V A, Eqs. 53–54 (protocol, metrics); §V B–C, Tables III–VII, Figs. 5–23; §VI.
+- [Nuca et al. (2025)](/sources/nuca-2025.md) — §I–II, Fig. 2 (robustness only in complex flows); §VI, Tables VII–VIII, Fig. 8 (a priori channel signal, in-situ airfoil WMLES).
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §III, §III.B, Figs. 8–10 (a posteriori tests against coarse unmodelled runs).

@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "OpenFOAM"
-description: "OpenFOAM is the open-source unstructured finite-volume toolbox that many bundle sources use as baseline RANS solver for data-driven closures, as second-order LES solver and as host of in-house solvers; this page records the solvers, schemes and versions they report and what the comparisons with high-order codes say about its dissipation."
+description: "OpenFOAM is the open-source unstructured finite-volume toolbox that many bundle sources use as baseline RANS solver for data-driven closures, as second-order LES solver, as host of in-house solvers and a wall-model library, and as reference for high-order codes; this page records the solvers, schemes and versions they report and what the comparisons with high-order codes say about its dissipation."
 status: established
-aliases: [OpenFOAM, simpleFoam, pimpleFoam, DAFoam]
+aliases: [OpenFOAM, simpleFoam, pimpleFoam, DAFoam, libWallModelledLES]
 tags: [software, rans, les, data-driven, numerical-dissipation]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # OpenFOAM
@@ -31,6 +31,8 @@ these is a default of the code.
 | [McConkey et al. (2022)](/sources/mcconkey-2022.md) | RANS, $k$-$\varepsilon$-$\varphi$-$f$ elliptic relaxation | not printed | v2006 |
 | [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md), §3.2 | standard $k$-$\varepsilon$ RANS (`simpleFoam`); WALE LES reference | not printed | not printed |
 | [Liu et al. (2024)](/sources/liu-2024.md) | SSG/LRR-$\omega$ [Reynolds-stress model](/methods/reynolds-stress-model.md) coupled to Menter's $\gamma$ model | time-averaged URANS for the 3D cascades, first-order upwind for the turbulence variables and $\gamma$ | not printed |
+| [Nuca et al. (2025)](/sources/nuca-2025.md), §VI, App. B | incompressible wall-modelled LES, [$\sigma$ model](/methods/sigma-model.md), libWallModelledLES | `pimpleFoam`, PIMPLE with 1 outer and 4 inner correctors; conjugate gradient for pressure, BiCGStab for velocity; second-order linear convection and diffusion in the turbulent region, blended with second-order upwind convection in laminar and free-stream regions | v2306 |
+| [Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §3.1, §3.3 | steady RANS, [SST](/methods/k-omega-sst-model.md), wall value of $\omega$ by `omegaWallFunction` | `simpleFoam` | 12 |
 
 ## Roles in the bundle
 
@@ -85,6 +87,33 @@ time" and give no grid-convergence study. Their maximum Courant number is
 about 10 in a few cells near the blade tips, with an average of about 0.017
 (§2.1, §2.3).
 
+**Wall-modelled LES with libWallModelledLES.** [Nuca et al. (2025)](/sources/nuca-2025.md)
+implement their explicit (non-iterative) forms of the Spalding, Reichardt
+and equilibrium-ODE wall models in libWallModelledLES, the OpenFOAM
+wall-modelling library of Mukha et al. (2019, as recalled), and run
+wall-modelled LES of the Aérospatiale A-airfoil near stall in the
+configuration of Tamaki & Kawai (2023, as recalled): a structured C-grid of
+$18.7\times10^6$ cells, 40 across the span, 10–12 cells across the local
+boundary-layer thickness, the wall model on the whole suction side,
+statistics over one convective time $c/U_\infty$, which the authors call
+insufficient for converged statistics (§VI, App. B). They report, from
+their own and the library's users' experience, that the Newton inversion
+of Spalding's law "would often sporadically diverge" in complex flows,
+particularly when the sampling height exceeds the first off-wall cell
+(§I). On the airfoil the iterated count rises near transition; used as
+initial guesses, the explicit forms cut the maximum Newton count from 11
+to 3 (Reichardt) and 10 to 3 (Spalding), and the equilibrium-ODE
+fixed-point maximum from 100 (the iteration cap, i.e. non-convergence) to
+6 (Table VIII). Wall modelling takes about 2% of the run time with the
+algebraic models, 1.8–1.9% with the explicit ones (a difference the
+authors do not call statistically significant over the short averaging)
+and 11.9% with the integrated equilibrium ODE (§VI; Shaheen III, no
+further hardware detail).
+Their a priori channel test uses an OpenFOAM wall-resolved LES at
+$Re_\tau\approx1000$ from the same group. See
+[equilibrium wall model](/methods/equilibrium-wall-model.md) and
+[wall-modelled LES](/methods/wall-modelled-les.md).
+
 **Wall-modelled LES, as recalled.** [Mukha et al. (2025)](/sources/mukha-2025.md),
 §II.C.4, §IV.B, recall that the viscosity-based wall-stress condition
 (no-slip plus a wall eddy viscosity that reproduces the modelled stress)
@@ -93,6 +122,24 @@ a flat-plate boundary layer, at about 2 cells per boundary-layer thickness,
 as less accurate than their spectral-element results. In
 [Nek5000](/software/nek5000.md) the same condition fails (see that page and
 [wall-modelled LES](/methods/wall-modelled-les.md)).
+
+**Finite-volume reference for a high-order RANS code.**
+Tomboulides et al. (2025) run OpenFOAM SST beside their spectral element
+$k$-$\tau$ and regularized $k$-$\omega$ models in [Nek5000](/software/nek5000.md)
+([$k$-$\tau$ model](/methods/k-tau-model.md)). In a channel at
+$Re_\tau\approx5200$ (104 cells across) OpenFOAM gives $u_\tau=0.0409$
+against 0.0412–0.0415 for the Nek5000 models and 0.0415 from DNS (§3.1,
+Table 1). On the Driver–Seegmiller
+[backward-facing step](/benchmarks/backward-facing-step.md) (meshes of
+10,468, 41,872 and 165,072 cells, the first two matched in degrees of
+freedom to Nek5000 at $N=2$ and 4) the fine-mesh reattachment length is
+$6.44H$ against $6.48H$ ($k$-$\tau$) and $6.26H$ measured; OpenFOAM SST
+under-predicts $C_f$, "a known behavior of the SST model", and the authors
+find the Nek5000 $C_f$ profiles more consistent at comparable resolution
+(§3.3, Figs. 9–12). The inlet $\omega$ of the OpenFOAM step is the Nek5000
+regularized remainder plus the analytical wall part
+$6\nu/(\beta_\omega d^2)$ ($\beta_\omega$ the destruction coefficient of
+the $\omega$ equation, $d$ the wall distance).
 
 **Other uses.** Steinhausen et al. (2023, §2.1) run DNS of side-wall
 flame quenching with an in-house finite-rate chemistry solver, OpenFOAM-based
@@ -133,3 +180,5 @@ medium-grid WMLES ([Spalart–Allmaras model](/methods/spalart-allmaras-model.md
 - [Steinhausen et al. (2023)](/sources/steinhausen-2023.md) — §2.1 (OpenFOAM-based DNS solver).
 - [Domingo & Vervisch (2023)](/sources/domingo-2023.md) — §1 (OpenFOAM among DNS codes).
 - [Goc et al. (2021)](/sources/goc-2021.md) — §1, §4 (OpenFOAM SA RANS cost reference).
+- [Nuca et al. (2025)](/sources/nuca-2025.md) — §I (Newton divergence in libWallModelledLES practice); §VI, Table VIII, App. B (A-airfoil set-up, iteration counts, cost); §VI (OpenFOAM channel LES data).
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.1, Table 1 (channel, OpenFOAM v12 SST); §3.3, Figs. 9–12 (backward-facing step meshes and results).

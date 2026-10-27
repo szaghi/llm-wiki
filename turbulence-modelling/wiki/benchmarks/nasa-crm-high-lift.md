@@ -5,7 +5,7 @@ description: "The NASA High-Lift Common Research Model (CRM-HL), a half-span tra
 status: established
 aliases: [CRM-HL, HL-CRM, NASA High-Lift Common Research Model, NASA CRM-HL, HLPW-4 CRM-HL, CRM-HL wing-body, HLPW-5 CRM-HL]
 tags: [benchmark, wmles, wall-model, rans, immersed-boundary, data-driven, mesh-adaptation, dg]
-timestamp: 2026-10-26T20:47:00Z
+timestamp: 2026-10-27T06:07:00Z
 ---
 
 # NASA CRM high-lift configuration
@@ -123,6 +123,33 @@ The authors present the case as the first published high-order DG
 metric-based adaptation for "a full high-lift aircraft configuration"
 (§1); the configuration run is the wing-body.
 
+**Two-dimensional multi-element airfoils.** The three-element airfoils
+that the sources run are separate configurations, not sections of the
+CRM-HL. [Huang et al. (2022b)](/sources/huang-2022-d.md), §3.3, run the
+30P-30N at $\alpha=16^\circ$, $Re=9\times10^6$, $M=0.2$ with steady
+[Spalart–Allmaras](/methods/spalart-allmaras-model.md) RANS on a hybrid
+mesh of 53,870 cells (non-dimensional first-layer height $10^{-6}$,
+growth 1.25): their
+optimized fourth-order variational-reconstruction finite-volume scheme
+predicts lift and drag closer to the DLR reference than the fourth-order
+scheme with the earlier weights of Pan et al. that they cite, both beat the
+second-order scheme (lower lift, higher drag), and its skin friction is
+closer to a degree-4 DG solution of 1,119,530 degrees of freedom (the FV
+grid has 4.8% of that), though all schemes miss some peaks (Figs. 33–34).
+The fourth-order scheme carries the slat-wake eddy viscosity to the
+outlet, where the second-order one dissipates it, which the authors link
+to the better skin friction (Fig. 35); a WBAP limiter with a shock detector
+stabilizes only the start-up iterations. The LEISA2 three-element airfoil
+run in ZDES on a lattice Boltzmann solver is recorded on
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) and
+[lattice Boltzmann method](/methods/lattice-boltzmann-method.md).
+
+**Wall-model robustness.** [Nuca et al. (2025)](/sources/nuca-2025.md), §I,
+cite CRM-HL wall-modelled LES among the complex applications that motivate
+their explicit, iteration-free forms of the algebraic and ODE
+[equilibrium wall models](/methods/equilibrium-wall-model.md), but do not
+run the configuration.
+
 **What the two HLPW-4 studies share.** Both locate the weak point at the leading
 edges of the high-lift elements, where the boundary layers are thinnest
 relative to the grid: the low confidence of the learned wall model there in
@@ -156,3 +183,5 @@ addresses in [Constant et al. (2024)](/sources/constant-2024.md).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.3; §4.7, Figs. 14–16; §5(4); §6.
 - [Constant et al. (2024)](/sources/constant-2024.md) — §6.3, Tables 7–9, Figs. 35–39; §7.
 - [Schotte et al. (2026)](/sources/schotte-2026.md) — §1; §3.2; §4.4, Table 5, Figs. 18–22.
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) — §3.3, Figs. 33–35 (30P-30N, a separate configuration).
+- [Nuca et al. (2025)](/sources/nuca-2025.md) — §I (cited application only).

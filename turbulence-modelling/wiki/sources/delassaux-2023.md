@@ -152,7 +152,7 @@ page. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26). This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunk 8. This source is cited on:
 
 - [Ahmed body](/benchmarks/ahmed-body.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
@@ -164,6 +164,7 @@ Chunk 4 (2026-10-26). This source is cited on:
 - [k-ε models](/methods/k-epsilon-model.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)
+- [Scale-adaptive simulation](/methods/scale-adaptive-simulation.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)

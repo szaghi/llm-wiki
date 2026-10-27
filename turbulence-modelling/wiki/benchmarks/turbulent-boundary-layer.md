@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Turbulent boundary layers: zero and adverse pressure gradient, compressible"
-description: "Spatially developing turbulent boundary layers on flat walls: zero- and adverse-pressure-gradient layers test wall models, RANS wall functions, high-order RANS discretizations, the log law, physics-informed networks and data-driven corrections; supersonic and hypersonic layers on cooled walls are DNS databases for compressibility transformations, LES validation and algebraic RANS, and feed shock interactions."
+description: "Spatially developing turbulent boundary layers on flat walls: zero- and adverse-pressure-gradient layers test wall models, RANS wall functions, high-order RANS discretizations, hybrid RANS/LES shielding, the log law, physics-informed networks and data-driven corrections; supersonic and hypersonic layers are DNS databases for compressibility transformations, LES validation and algebraic RANS, and feed shock interactions."
 status: established
 aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, Wieghardt flat plate, Samuel–Joubert boundary layer, DLR/UniBw APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
-tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven, rans, dg]
-timestamp: 2026-10-26T20:48:00Z
+tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven, rans, dg, flux-reconstruction, des, lattice-boltzmann]
+timestamp: 2026-10-27T06:07:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -155,6 +155,81 @@ function fall in the buffer layer where the wall law blends its viscous
 and power-law branches. The computing time falls with $y_1^+$, on average
 over the degrees by 29.8%, 34.1%, 45.9%, 59.5% and 69.0% at $y_1^+=20$, 40,
 80, 160 and 320; at 320 the implicit Spalding law saves 63.7% (Table 2).
+
+**Spalart–Allmaras on the NASA TMR plate at high order.** Two sources
+run the TMR plate at $Re=5\times10^6$ (reference length not printed) and
+$M=0.2$ with the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
+and compare with the finite-volume TMR solutions on the $545\times385$
+grid:
+
+- [Huang et al. (2022b)](/sources/huang-2022-d.md), §3.1, Figs. 20–23, on
+  $137\times97$ quadrilaterals with first cell $5\times10^{-6}$
+  ($y^+\approx0.5$–1): the fourth-order variational-reconstruction finite
+  volumes match the CFL3D skin friction "very well", the second-order
+  scheme differs slightly and under-predicts the log-region velocity, and
+  the fourth-order scheme gives a higher peak eddy viscosity; both reach
+  density increments of about $10^{-10}$.
+- [Lodares et al. (2022)](/sources/lodares-2022.md), §7.3, Figs. 7–8, on
+  the coarsest TMR mesh (816 elements) with the entropy-stable split-form
+  [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) at
+  $N=4$, 7 and 10 (residual histories to $N=10$): $C_f$, the eddy-viscosity
+  profile and the [law of the wall](/definitions/law-of-the-wall.md) at
+  $x=0.97008$ agree with FUN3D.
+
+Huang et al. also reconstruct a manufactured composite wall-law profile
+on meshes of aspect ratio $5\times10^2$ and about $10^3$ to choose the
+weights of their reconstruction (§2.4.3, Table 3); see
+[boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md).
+
+**$k$-$\omega$ SST and $k$-$\sqrt kL$ in high-order discretizations.**
+[Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md), §4.1, verify
+their [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) model with
+$\ln\omega$ as transported variable in
+[flux reconstruction](/methods/flux-reconstruction.md) on the Wieghardt
+plate, $Re_L=1.03\times10^7$, free-stream Mach raised to 0.2 for
+convergence: mesh A has 784 quadrilaterals and first-element
+$y_1^+\simeq10$ (degrees 0–4), mesh B 392 and $y_1^+\simeq25$ (degrees
+5–6). The higher-degree velocity profiles at $Re_x=1.02\times10^7$
+coincide and agree with experiment, Spalding's law and a degree-2 DG
+reference on 8800 elements; the degree-4 $C_f$ lies considerably closer to
+the experiment than lower degrees and the DG reference. On mesh B
+discontinuities at degree 5 disappear at degree 6, and the degree-4
+(mesh A), 5 and 6 (mesh B) solutions coincide, so the authors claim
+accurate results at $y_1^+\simeq25$ without wall functions, a first-element
+height larger than state-of-the-art second-order finite-volume solvers
+tolerate without them (stated, not shown; Figs. 9–10).
+[Ghidoni et al. (2026)](/sources/ghidoni-2026.md), above, reach coarser
+first elements with a wall function instead.
+[Jiang et al. (2025)](/sources/jiang-2025.md), §4.1, run the
+$k$-$\sqrt kL$ model of [scale-adaptive simulation](/methods/scale-adaptive-simulation.md)
+in a modal DG solver on an adiabatic plate at $M=0.3$, $Re=3\times10^6$
+(on the 1 m plate length), on $45\times35$, $45\times75$ and $90\times120$
+quadrilaterals (first-cell $y^+\approx1$, 0.6, 0.4) at degrees 1–3: the
+velocity profiles agree in the viscous sublayer and log layer on the two
+finer meshes and are almost identical across degrees; $C_f$ improves with
+mesh and degree. For $x<0.1$ the finest mesh and the highest degree give a
+later apparent transition, which the authors, following Rumsey as cited,
+call numerical and not physical (Figs. 3–4). Their positivity treatment
+of the length-scale variable and limiting of $k$ make the implicit solver
+converge by 5–6 orders where it otherwise diverges (Fig. 1).
+
+**Shielding of a hybrid RANS/LES on a fine Cartesian grid.**
+[Husson et al. (2024)](/sources/husson-2024.md), §4.1, run the TMR plate
+($Re_L=5\times10^6$, $M=0.2$, $T=300$ K, plate half-length $L=1$ m) on the isotropic octree
+grid of a [lattice Boltzmann](/methods/lattice-boltzmann-method.md) solver
+with a linearized Spalart–Allmaras wall law at an
+[immersed boundary](/methods/immersed-boundary-method.md): six refinement
+levels down to $1.6\times10^{-4}$ m, so that $\Delta y^+\approx30$ at
+$x/L=1$ and the streamwise spacing is about $0.01\delta$ at mid-plate, far
+below the $0.3\delta$ at and under which, as they cite, typical DES-type
+methods give insufficient protection (§4.1.2). ZDES mode 2 (2020) reproduces RANS exactly ($C_f$, velocity
+and eddy-viscosity profiles at $x/L=1$), also with $C_{DES}=0$ and on a
+plate inclined to the grid, while DDES (2006) on the same grid suffers
+severe modelled-stress depletion: the layer tends to laminarize while the
+wall law still imposes a turbulent profile, and $C_f$ oscillates
+"unexploitably" (Figs. 4–5). See
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) and
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md).
 
 **Non-regression of data-driven corrections.** Two sources use the
 incompressible ZPG plate to check that a RANS correction trained on
@@ -318,6 +393,36 @@ and validate the van Driest-transformed mean velocity against the DNS of
 Martín et al. (Fig. 17); at the reference station 35 mm upstream of the
 corner their wide-span DNS has $\Delta x^+=1.2$, $\Delta y^+=0.41$,
 $\Delta z^+=1.2$.
+
+**A Mach 2 layer for high-order implicit LES.**
+[Gao et al. (2022)](/sources/gao-2022.md), §5.2, run the undisturbed
+Mach 2 layer upstream of their impinging-shock interaction
+($Re_{\theta_0}=1628$ at the inlet) as split-form DGSEM
+[implicit LES](/definitions/implicit-les.md) at $N=6$ in
+[FLEXI](/software/flexi.md), on the interaction mesh ($\Delta x^+=30$,
+$\Delta y^+_{\min}=1.6$, $\Delta z^+=16$), with a reformulated
+synthetic-eddy inflow and anisotropic linear forcing over
+$5\delta_r$–$10\delta_r$ ([inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
+At $11\delta_r$, one $\delta_r$ after the forcing zone, the van
+Driest-transformed mean velocity and the density-scaled Reynolds stresses
+agree with the DNS of Wenzel et al.
+([compressible velocity transformations](/definitions/compressible-velocity-transformation.md),
+[Morkovin's hypothesis](/definitions/morkovin-hypothesis.md)), and the
+transformed skin friction approaches the DNS and the correlation
+$C_{f,i}=0.024Re_{\theta,i}^{-0.25}$ quickly after the forcing zone
+(Figs. 16–17). The run took about 46,173 CPU hours on 16,384 cores, at a
+performance index 94% above the code's baseline, which the authors
+attribute to load imbalance of the synthetic-eddy method, the forcing
+(5–10%) and statistics collection.
+
+**Transition on a supersonic plate.**
+[Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md), §IV C, use the
+spatially developing Mach 2.25 DNS of Pirozzoli et al. ($Tu_\infty=0.04\%$)
+as transitional $C_f$ reference for their compressibility-corrected
+[laminar kinetic energy model](/methods/laminar-kinetic-energy-transition-model.md):
+$C_f$ error 10.91% and onset error 6.96%, against 39.70% and 32.40% without
+the compressibility correction of the onset correlation and 64.42% and
+46.78% without both corrections (Fig. 23).
 
 **Inflow and domain length.** Both use recycling–rescaling inflow, at
 $80\delta_{\mathrm{in}}$ from the inlet in Cogo et al. Huang et al. measure
@@ -570,6 +675,25 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
   Fig. 48 "at $Re_x=1.5\times10^6$" while the text says $x=0.3$; the plate
   length is not printed, so the two cannot be checked against each other.
 
+- The Wieghardt plate is run at $Re_L=1.03\times10^7$ (Mach raised from
+  0.096 to 0.2) by [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md)
+  and at $Re_L=11.1\times10^6$, $M_\infty=0.096$ by
+  [Ghidoni et al. (2026)](/sources/ghidoni-2026.md); neither comments on
+  the other value, and the two are recorded side by side.
+  Vandenhoeck et al. print the free-stream intensity as "$10^{-2}$" while
+  defining $Tu$ in percent, so the unit of the value is ambiguous (§3.3.2,
+  §4.1).
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) write the friction
+  velocity of their manufactured profile in one equation as
+  $\sqrt{\rho_0u_0^2C_f/\rho}=\sqrt{a\rho_0u_0^2x^b/2\rho}$, with the fit
+  $C_f=ax^b$ (p. 19): the two printed forms differ by a factor $\tfrac12$
+  under the root.
+- [Husson et al. (2024)](/sources/husson-2024.md) show no profiles for the
+  DDES run on the plate, only eddy-viscosity fields (Fig. 5).
+- [Jiang et al. (2025)](/sources/jiang-2025.md) compare their plate with
+  laws and correlations ("Turbulent theory", Blasius), not with a
+  reference solution.
+
 # Citations
 
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Results pp. 6–8, Fig. 5; Methods p. 14 (preprint v1).
@@ -590,3 +714,10 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 - [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §5.3, Table 4, Figs. 18–27; §6, Figs. 37–45.
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §4.1, Eq. 20, Tables 1–2, Figs. 2–5; §4.2, Figs. 6–8.
 - [Lederer et al. (2026)](/sources/lederer-2026.md) — arXiv v1: §4.2, Figs. 7–10.
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.4.3, Table 3; §3.1, Figs. 20–23.
+- [Lodares et al. (2022)](/sources/lodares-2022.md) — §7.3, Figs. 7–8.
+- [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §3.3.2; §4.1, Figs. 8–10.
+- [Jiang et al. (2025)](/sources/jiang-2025.md) — §4.1, Figs. 1–4.
+- [Husson et al. (2024)](/sources/husson-2024.md) — §2.2; §4.1.1–4.1.2, Figs. 3–5.
+- [Gao et al. (2022)](/sources/gao-2022.md) — §5.2, Eq. 19, Figs. 16–17.
+- [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §IV C, Table VIII, Fig. 23.

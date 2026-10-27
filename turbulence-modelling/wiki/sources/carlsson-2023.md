@@ -149,7 +149,7 @@ different work.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-26), cited further in chunk 4. This source is cited on:
+Chunk 3 (2026-10-26), cited further in chunks 4, 8. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
@@ -158,6 +158,7 @@ Chunk 3 (2026-10-26), cited further in chunk 4. This source is cited on:
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)
 - [Log-layer mismatch](/definitions/log-layer-mismatch.md)
+- [Shock sensors and troubled-cell indicators](/definitions/shock-sensor.md)
 - [Detached-eddy simulation and its delayed and zonal forms](/methods/detached-eddy-simulation.md)
 - [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)
 - [k-ε models](/methods/k-epsilon-model.md)

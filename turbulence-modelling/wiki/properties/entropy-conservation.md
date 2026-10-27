@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Entropy conservation and entropy stability"
-description: "A discretization is entropy conservative when its convective terms reproduce the vanishing global entropy production of smooth inviscid flow, and entropy stable when entropy can only be dissipated; this page gives the two-point fluxes that achieve it, its dependence on the equation of state, and its measured effect in turbulence simulations."
+description: "A discretization is entropy conservative when its convective terms reproduce the vanishing global entropy production of smooth inviscid flow, and entropy stable when entropy can only be dissipated; this page gives the two-point fluxes that achieve it, its dependence on the equation of state, its extension to the Spalart–Allmaras RANS equation, and its measured effect in turbulence simulations."
 status: established
-aliases: [EC, entropy-conservative scheme, entropy-conserving flux, entropy-stable discretization, entropy stability, Ismail–Roe flux, Chandrashekar flux, EC-TP scheme, nonlinear stability]
+aliases: [EC, entropy-conservative scheme, entropy-conserving flux, entropy-stable discretization, entropy stability, Ismail–Roe flux, Chandrashekar flux, EC-TP scheme, nonlinear stability, entropy-stable RANS]
 tags: [entropy-stable, kinetic-energy-preserving, compressible, dg, dns, numerical-dissipation]
-timestamp: 2026-10-26T16:22:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Entropy conservation and entropy stability
@@ -170,6 +170,83 @@ Aiello et al.'s companion paper and from Gassner et al.) (§4). KEEP has
 later been made entropy preserving to machine precision by Taylor
 expansions (recalled, Tamaki et al.; Kawai & Kawai) (§3.2).
 
+## Extension to RANS: the Spalart–Allmaras equation
+
+[Lodares et al. (2022)](/sources/lodares-2022.md) extend the entropy
+analysis from the Navier–Stokes equations to the compressible RANS
+equations closed by the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md), whose
+working variable $\rho\tilde\nu$ is a sixth conserved component; to the
+authors' knowledge no earlier work had derived entropy-stable DGSEM schemes
+for RANS systems (§1). Page-local: $[\![\phi]\!]=\phi_R-\phi_L$ the jump
+across a face; $P_{\tilde\nu}$, $D_{\tilde\nu}$ the production and
+destruction of the SA equation; $\nu_{\mathrm{SA}}$ its diffusion
+coefficient ($\nu+\tilde\nu$ for $\tilde\nu\ge0$; the source's
+$\hat\sigma$); $\boldsymbol Q$ the conserved state; $\sigma$, $c_{b2}$ the
+SA constants (2/3 and 0.622).
+
+**The SA entropy.** The mathematical entropy of the Navier–Stokes part
+(either the kinetic energy or the thermodynamic entropy
+$-\rho s/(\gamma-1)$) is augmented by an SA "energy" (§3.2, Eqs. 38–39)
+$$\mathcal E_{\mathrm{SA}}=\tfrac12\rho\tilde\nu^2,\qquad \boldsymbol W_{\mathrm{SA}}=\frac{\partial\mathcal E_{\mathrm{SA}}}{\partial\boldsymbol Q}=\big(-\tfrac12\tilde\nu^2,0,0,0,0,\tilde\nu\big).$$
+Because $\boldsymbol W_{\mathrm{SA}}$ vanishes in the momentum and energy entries and the
+Navier–Stokes entropy variables vanish in the sixth, the contraction of
+state, inviscid and viscous fluxes splits into the known Navier–Stokes part
+and an independent SA part, and "no modification of the NSE part will be
+required" (§3.2, Eqs. 39–43). The continuous SA dissipation is (Eq. 49)
+$$\mathcal D_{\mathrm{SA}}=\int\rho\tilde\nu(D_{\tilde\nu}-P_{\tilde\nu})\,d\boldsymbol x+\int\frac{\rho}{\sigma}\big(\nu_{\mathrm{SA}}-c_{b2}\tilde\nu\big)\lvert\nabla\tilde\nu\rvert^2\,d\boldsymbol x\ \ge\ \int\rho\tilde\nu(D_{\tilde\nu}-P_{\tilde\nu})\,d\boldsymbol x,$$
+(integrals over the domain) provided $c_{b2}\le1$ and
+$\nu_{\mathrm{SA}}\ge0$. The total
+entropy can therefore grow only where production exceeds destruction; "if
+the destruction of turbulent viscosity leads over the production, the
+system will be fully–stable" (§3.2, Eq. 50). For $\tilde\nu<0$ the
+authors use a variant of the negative SA model with
+$P_{\tilde\nu}-D_{\tilde\nu}=c_{b1}(1-c_{t3})\lvert\Omega\rvert\tilde\nu+c_{w1}(\tilde\nu/d)^2\ge0$,
+which makes $\tilde\nu(D_{\tilde\nu}-P_{\tilde\nu})\ge0$, and they clip the
+diffusion coefficient to $\nu_{\mathrm{SA}}=\max(\nu+f_n\tilde\nu,0)$ ($f_n$ the
+diffusion function of the negative model) to keep
+it non-negative (§2, Eqs. 16–17). The proof also needs non-negative
+viscosity and heat conductivity after the turbulent increments (§3.1).
+
+**Discrete construction.** On Gauss–Lobatto DGSEM with the
+summation-by-parts property and discrete metric identities (curvilinear
+hexahedra), any Navier–Stokes two-point flux of the form
+$(\widehat{\rho U},\widehat{\rho U}\{\!\{U\}\!\}+\hat P,\dots,\widehat{\rho UH})$
+extends to SA by the sixth component $\widehat{\rho U}\{\!\{\tilde\nu\}\!\}$,
+which satisfies Tadmor's jump condition for $\mathcal E_{\mathrm{SA}}$ for **any**
+momentum average $\widehat{\rho U}$, through
+$2[\![\tilde\nu]\!]\{\!\{\tilde\nu\}\!\}=[\![\tilde\nu^2]\!]$ (§4.3, Eq. 68;
+§5.1.2, Eqs. 87–89). With $\widehat{\rho U}=\{\!\{\rho\}\!\}\{\!\{U\}\!\}$
+(Pirozzoli) the scheme is kinetic-energy preserving, with
+$\rho^{\ln}\{\!\{U\}\!\}$ (Chandrashekar) entropy conserving. The SA
+interface flux
+$F^{*}_{6}=F^{*}_{1}\{\!\{\tilde\nu\}\!\}-\tfrac12\lambda_\nu\lvert F^{*}_{1}\rvert[\![\tilde\nu]\!]$
+($F^*_1$ the mass flux; $\lambda_\nu=0$ central, $\lambda_\nu=1$ upwind,
+the default) produces the interface entropy
+$\tfrac12\lambda_\nu\lvert(\rho U_n)^*\rvert[\![\tilde\nu]\!]^2\ge0$ (§4.4,
+Eq. 74; §5.2.1, Eq. 107); BR1 viscous fluxes leave no interior boundary
+term (Eq. 108); and adiabatic free- and no-slip walls built from a mirrored
+ghost state with $-\rho\tilde\nu$ are entropy stable (§4.5.1, §5.2.2,
+Eqs. 75–77, 110–115). Inflow and outflow boundaries "can increase and/or
+decrease the entropy" and are not covered (§4.5). Two configurations
+result: Pirozzoli split form with Lax–Friedrichs (kinetic energy, with the
+pressure-work term of the KEP page) and Chandrashekar split form with
+matrix dissipation (thermodynamic entropy), whose semi-discrete entropy
+laws mirror the continuous one (§5.3, Eqs. 116–118).
+
+**Evidence.** On a periodic random initial condition (viscosity and heat conductivity $10^{-8}$,
+$N=10$, $10^3$ elements, central fluxes, $\tilde\nu$ random in
+$[-0.5,0.5]$) the standard DGSEM diverges while the Chandrashekar and
+Pirozzoli forms stay stable with zero entropy remainder (§7.2, Figs. 5–6).
+A [manufactured solution](/methods/method-of-manufactured-solutions.md)
+gives spectral convergence for all three forms (§7.1), and the NASA
+flat plate and [NACA 0012](/benchmarks/naca-0012-airfoil.md) RANS cases run
+with the Pirozzoli form on the coarsest TMR grids (§7.3–7.4; numbers on
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) and the
+benchmark page). The authors suggest that the approach can serve other
+RANS models and a [detached-eddy simulation](/methods/detached-eddy-simulation.md)
+coupling entropy-stable RANS near walls with entropy-stable LES (§1, §8).
+
 ## Effect in turbulence simulations
 
 **High-enthalpy channel flow.** Aiello et al. (2026, §4) run
@@ -243,6 +320,16 @@ global entropy although it is not entropy preserving.
 
 ## Qualifications
 
+- **"Entropy stable" with a source term.** In Lodares et al. (2022) the
+  bound admits entropy growth wherever SA production exceeds destruction
+  (Eq. 50), so the property is stability relative to the source, not
+  unconditional decay; the proof covers adiabatic walls and periodic
+  boundaries only (§4.5). The paper names its second configuration
+  "thermodynamic entropy stable" (§4.6), "entropy conserving schemes with
+  the matrix dissipation numerical flux" (§5.3) and "thermodynamic entropy
+  conserving" (abstract); with matrix dissipation it is entropy stable.
+  Eq. (93) carries the superscript NS on the SA viscous term.
+
 - **Regime of the evidence.** The two turbulence studies point in
   different directions without contradicting each other: Aiello et al.
   (2026) find EC decisive for long-time robustness and thermodynamic
@@ -275,3 +362,4 @@ global entropy although it is not entropy preserving.
 - [Klose et al. (2025)](/sources/klose-2025.md) — ASME accepted manuscript: §2 (Chandrashekar entropy-conserving split form with subcell blending in TRACE).
 - [Bernades et al. (2023)](/sources/bernades-2023.md) — §3.1.2 (KEP depends on continuity and momentum only); §4.2 (global entropy of KGP-Pt); §5 (analogy with entropy conservation, non-linear averages).
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv 2512.03315v1: §II.A (split form with Chandrashekar averaging in HORSES3D).
+- [Lodares et al. (2022)](/sources/lodares-2022.md) — §1; §2, Eqs. (13)–(17) (compressible SA, negative variant, clipped diffusion); §3.1–3.2, Eqs. (29)–(50) (SA entropy, split analysis); §4.3–4.5, Eqs. (68)–(77) (two-point flux, interface flux, walls); §5, Eqs. (83)–(118) (semi-discrete entropy laws); §7.1–7.2, Figs. 3–6.

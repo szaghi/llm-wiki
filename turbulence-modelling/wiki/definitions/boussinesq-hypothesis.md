@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T06:07:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -236,6 +236,48 @@ and treatments of the trace; translated to the registry they agree.
   stress $-\rho\langle u_i'u_j'\rangle$ of a DES, the modelled part of the
   DES being left out ([Yang & Ma (2022)](/sources/yang-2022-b.md), §3.2,
   Eqs. 8–9).
+- **RANS, compressible, two-equation, with the isotropic part kept.**
+  Vandenhoeck et al. (2022) and Jiang et al. (2025) both write the modelled
+  stress as $\mu_t\big(2S_{ij}-\tfrac23\partial_ku_k\delta_{ij}\big)-\tfrac23\rho k\delta_{ij}$,
+  the $-\rho\langle u_i''u_j''\rangle$ convention, for the log-$\omega$
+  [SST model](/methods/k-omega-sst-model.md) and for the
+  $k$-$\sqrt kL$ model behind
+  [scale-adaptive simulation](/methods/scale-adaptive-simulation.md)
+  ([Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md), §1.1, Eqs.
+  9–10; [Jiang et al. (2025)](/sources/jiang-2025.md), App. A, Eq. A2).
+  Vandenhoeck et al. add it to the viscous stress and carry the energy
+  exchange $-\rho P_k+\beta^*\rho k\omega$ in the energy equation, with a
+  pressure computed from a total energy that excludes $k$ (Eqs. 3, 7);
+  Jiang et al. put only $(\mu+\mu_t)$ times the deviatoric strain into the
+  momentum flux (Eq. 6) and use the full stress, with $\tfrac23\rho k$, in
+  the production (Eq. A2).
+- **RANS, incompressible, without the isotropic part.** Tomboulides et al.
+  (2025) write the momentum equation with
+  $(\mu+\mu_t)\big(2S_{ij}-\tfrac23\partial_ku_k\delta_{ij}\big)$ and call
+  $2\mu_tS_{ij}$ the turbulent stress, for their
+  [$k$-$\tau$ model](/methods/k-tau-model.md); the
+  $-\tfrac23\rho k\delta_{ij}$ part is absent from the printed equation, and
+  the paper does not say whether it is absorbed into the pressure
+  ([Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §2, Eqs. 1–4).
+- **RANS, compressible Spalart–Allmaras, with an eddy conductivity.**
+  Lodares et al. (2022) write the total stress as
+  $(\mu+\mu_t)\big(2S_{ij}-\tfrac23\partial_ku_k\delta_{ij}\big)$ and the heat
+  flux with $\kappa+\kappa_t$ at constant $Pr_t$, "normally set to 0.9" (page-local
+  conductivities $\kappa$, $\kappa_t$, not the von Kármán constant), the
+  viscosity-sum form of Alauzet et al. above; their entropy analysis needs
+  non-negative viscosity and conductivity, which the clipped eddy
+  viscosity $\mu_t=\max(\rho\tilde\nu,0)f_{v1}$ guarantees
+  ([Lodares et al. (2022)](/sources/lodares-2022.md), §2, Eqs. 9–13, §3.1;
+  see [entropy conservation](/properties/entropy-conservation.md)).
+- **LES, compressible, with a modelled trace.** Volpiani (2024) closes the
+  deviatoric subgrid stress as
+  $-2\bar\rho\nu_t\big(\tilde S_{ij}-\tfrac13\tilde S_{kk}\delta_{ij}\big)$,
+  the registry's positive-trace convention in Favre form, and models the
+  trace separately after Yoshizawa, $\tau_{kk}=2C_I\bar\rho\Delta^2\lvert\tilde S\rvert^2$
+  with $C_I=0.0066$ (page-local $C_I$), stating that the Smagorinsky form
+  "follows Boussinesq's hypothesis"
+  ([Volpiani (2024)](/sources/volpiani-2024.md), App. 2, Eqs. 26–28; see
+  [Smagorinsky model](/methods/smagorinsky-model.md)).
 
 ### A traceless Reynolds stress
 
@@ -786,3 +828,8 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §1, §2.3 Eqs. 6–10.
 - [Yang & Ma (2022)](/sources/yang-2022-b.md) — §1, §3.2 Eqs. 8–9 Fig. 8, §4.6 Fig. 19.
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — p. 5 (arXiv v3).
+- [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §1.1, Eqs. 3, 7, 9–10.
+- [Jiang et al. (2025)](/sources/jiang-2025.md) — §2 Eq. 6, App. A Eq. A2.
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §2, Eqs. 1–4.
+- [Lodares et al. (2022)](/sources/lodares-2022.md) — §2 Eqs. 9–13, §3.1.
+- [Volpiani (2024)](/sources/volpiani-2024.md) — App. 2, Eqs. 26–28.

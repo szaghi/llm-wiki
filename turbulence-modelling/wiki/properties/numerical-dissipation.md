@@ -5,7 +5,7 @@ description: "Numerical dissipation is the kinetic-energy loss a discretization 
 status: established
 aliases: [artificial dissipation, scheme dissipation, upwind dissipation, Riemann-solver dissipation, numerical viscosity]
 tags: [numerical-dissipation, implicit-les, les, dg, kinetic-energy-preserving]
-timestamp: 2026-10-26T20:50:00Z
+timestamp: 2026-10-27T06:03:00Z
 ---
 
 # Numerical dissipation in scale-resolving simulation
@@ -367,6 +367,13 @@ LES region and near one in the RANS region:
   the vortex is resolved in LES mode, and attribute the longer persistence
   of the resolved wake vortices, against URANS, to lower numerical
   dissipation. See [turbine cascade](/benchmarks/turbine-cascade.md).
+- **Default scalar dissipation and transition models.** [Batther & Lee (2022)](/sources/batther-2022.md)
+  (§3.1.2, §5) run delayed DES of a pitching airfoil with transition
+  models in OVERFLOW with a fifth-order central scheme and scalar
+  dissipation at the code's default smoothing parameters, and name the
+  influence of the numerics on the transition-model predictions as an
+  open question; they do not measure it (see
+  [dynamic stall](/definitions/dynamic-stall.md)).
 
 ## Where it acts in the element
 
@@ -490,6 +497,21 @@ dissipation (Fig. 11).
   number, but leave it out of their plots because it is not computed.
 
 ## Scheme design against excess dissipation
+
+**Selective filters of central schemes.** Volpiani (2024, §2.2.2, §4,
+Table 1) measures the dissipation of relaxation filters of central finite
+differences by the kinetic energy kept in the inviscid Taylor–Green
+vortex ($64^3$, $t=5$): 0.176, 0.903, 0.963, 0.978, 0.983 for filters of
+3 to 11 points, and 0.978, 0.985, 0.986 for three optimized 11-point
+filters, the newest of which minimizes the squared damping over
+$0.2\le kh\le1.3$ at formal sixth order; the 2004 optimized filter, of
+lower formal order, is "more dissipative for long waves" (§4). The same
+filter as the only dissipation of a viscous run predicts the
+kinetic-energy dissipation rate well on all grids while the
+enstrophy-based rate is under-predicted on coarse ones, which the author
+reads as the numerics carrying the energy drain (§5). Per 100 iterations per processor the
+filtered divergence form costs 78.9 s, the split forms 115.9–298.9 s
+(Table 1).
 
 Several sources state how their scheme limits dissipation, without
 measuring it:
@@ -884,6 +906,73 @@ cascade.
   shock oscillations". In the coarse LES the shocklets appear more diffused
   "given the increased numerical dissipation" (§7.1).
 
+Further sources keep the shock-capturing dissipation away from the
+turbulent scales by design:
+
+- **Shock capturing kept out of an under-resolved boundary layer.**
+  [Gao et al. (2022)](/sources/gao-2022.md) (§1, §3.2) argue that
+  shock-capturing dissipation spoils the turbulence: the finite-volume
+  subcells of their DGSEM are more dissipative than DG in smooth regions,
+  and a pressure-jump indicator on the instantaneous field flags large
+  parts of the under-resolved turbulent boundary layer. Evaluating it on a
+  spanwise-averaged field confines the subcells to the shocks (see
+  [shock sensor](/definitions/shock-sensor.md) and
+  [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)).
+  At equal degrees of freedom their DG ($N=4$) is closer to the converged
+  laminar interaction than second-order finite volume, and reaches the
+  converged separation length with 182,000 degrees of freedom against
+  409,500, at 7680 against 10,368 CPU-minutes (§4.1–4.2).
+- **Sensor-switched artificial dissipation as the closure.** In the
+  supersonic-jet [implicit LES](/definitions/implicit-les.md) of
+  [Ahn et al. (2023)](/sources/ahn-2023.md) (§III, Eqs. 1–6) a modified
+  Jameson second/fourth-difference dissipation, scaled by a Ducros-type
+  dilatation sensor and applied once per time step at the end of the first
+  Runge–Kutta stage, is both the shock capturing and the only subgrid
+  dissipation; the authors read the rapid drop of their shear-layer
+  spectra at high Strouhal number as the "maximum resolving performance"
+  of grid and scheme (§IV C 1, Fig. 12).
+- **Upwind background dissipation and quadratic invariants.**
+  [Liang & Fu (2024)](/sources/liang-2024.md) (§1, §3.2) state that the
+  dissipation of the background upwind linear scheme prevents classical
+  WENO/TENO schemes from conserving quadratic invariants such as kinetic
+  energy. Their TENO-S scheme uses a non-dissipative,
+  [kinetic-energy-preserving](/properties/kinetic-energy-preservation.md)
+  split-form flux in smooth cells and TENO only in troubled cells, flagged
+  by an eight-point indicator. The TENO background scheme is optimized for
+  dispersion with a small dissipation coefficient (0.01, so that the
+  approximate dispersion relation holds), and its cutoff is adapted
+  between $10^{-10}$ and $10^{-7}$ by a discontinuity-strength measure
+  (§3.3, Eqs. 43–49). In the inviscid Taylor–Green vortex ($64^3$, to
+  $t=100$) TENO-S conserves the kinetic energy while WENO-CU6, TENO6 and
+  TENO8 dissipate it and smear the small vortices after $t\approx5$
+  (§4.10, Figs. 17–18). [Li & Fu (2024)](/sources/li-2024-c.md) (§3.2.1,
+  Eq. 47) adapt the same cutoff between $10^{-10}$ (high-wavenumber
+  fluctuations) and $10^{-5}$ (discontinuities) in multiphase TENO schemes.
+- **Dissipation at discontinuities.** [Takagi et al. (2022)](/sources/takagi-2022.md)
+  (§1–2) note that TENO keeps the spectral properties of its linear scheme
+  up to intermediate wavenumbers but that its stencil selection is
+  dissipative at genuine discontinuities, and replace it there by the THINC
+  jump reconstruction, which with steepness $\beta_{\mathrm{TH}}=1.6$
+  (page-local) is anti-diffusive (positive
+  imaginary part of the modified wavenumber in some ranges) and therefore
+  unsuited to smooth scales; their hybrid preserves the kinetic energy of
+  the inviscid Taylor–Green vortex ($64^3$) better than WENO5-Z and TENO5
+  (§4.10, Fig. 21). Li & Fu (2024, §1, §4) use THINC against interface
+  smearing in two-phase flow, with a first-order a posteriori fallback that
+  stays below 0.04% of the cells in their hardest case (§4.8).
+- **Limiters for discontinuous Galerkin.** [Huang & Fu (2024)](/sources/huang-2024.md)
+  (§1, §6) and [Huang et al. (2025)](/sources/huang-2025.md) (§1, §3.2.1,
+  §5) replace WENO-type limiters of third-order modal Runge–Kutta DG, which
+  "may substantially smear the small-scale flow structures", by TENO and
+  TENO–THINC limiters. In Huang et al. (2025) the limiter's cutoff
+  ($10^{-5}$) directly sets the added dissipation, chosen "as a balance of
+  the good numerical robustness and the low dissipation property", at
+  172.08 s against 163.07 s for the WENO limiter on Lax's problem
+  (Table 4). Both papers test inviscid problems only, and attribute the
+  symmetry breaking of their
+  two-dimensional Riemann and Rayleigh–Taylor solutions to dissipation too
+  low to damp round-off (Huang & Fu 2024, §6.6; Huang et al. 2025, §5.7).
+
 ## Dissipation of compressible modes
 
 When the only physical viscosity is shear viscosity, the compressible
@@ -953,6 +1042,16 @@ differently:
   schemes. They add that coupling the other schemes to WENO-type
   hybridization may mitigate the problem "at the price" of dissipation
   (§4.2). See [entropy conservation](/properties/entropy-conservation.md);
+- with kinetic-energy-preserving split forms and no filter or model,
+  [Volpiani (2024)](/sources/volpiani-2024.md) (§4–5, Figs. 5, 11–13)
+  finds the inviscid Taylor–Green vortex conserving kinetic energy
+  (normalized energy 0.998–0.999 at $t=5$ on $64^3$) but the viscous one
+  at $Re=1600$ "extremely noisy" on $64^3$ and $128^3$: aliased energy
+  builds up at high wavenumber for every split form, consistent with
+  aliasing beyond two thirds of the maximum wavenumber (as recalled from
+  Johnsen et al.), and contaminates the low wavenumbers. An eddy viscosity
+  does not remove it; a weak relaxation filter does (see
+  [explicit modal filtering](/methods/explicit-modal-filtering.md));
 - in a primitive-variable scheme for transcritical real-gas flow,
   [Xu et al. (2026)](/sources/xu-2026.md) (§3.5, §4.3, §5.1.4, Fig. 5) add
   an upwind dissipation scaled by the fifth-order interface jump, formally
@@ -970,6 +1069,25 @@ singularity and the lower numerical dissipation of the finer leading-edge
 mesh. They also expect the low
 dissipation to make local-correlation transition modelling feasible on
 coarser meshes. See [$k$-$\omega$ models](/methods/k-omega-model.md).
+[Huang et al. (2022b)](/sources/huang-2022-d.md) (§2.4.1, Fig. 4) quantify
+the trade in a fourth-order finite-volume RANS solver with variational
+reconstruction: its leading dissipation is of order $(kh)^8$ ($O(h^7)$
+in the modified wavenumber), and an unconstrained optimization of the
+reconstruction weights, with a leading coefficient
+$3.23\times10^{-3}$ against $2.24\times10^{-2}$ for the constrained one
+(about seven times smaller, *compiler check, not in the sources*), gives schemes "not robust" in practice.
+On the 30P-30N high-lift configuration the fourth-order scheme carries
+the slat wake of high turbulent viscosity to the outlet, which the
+second-order scheme dissipates quickly; on the NACA 0012 at $15^\circ$ the
+second-order scheme predicts a trailing-edge separation absent at fourth
+order (§3.2–3.3, Fig. 35; see
+[NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)).
+[Lodares et al. (2022)](/sources/lodares-2022.md) (§4.4, §5.3) add all
+dissipation of their entropy-stable Spalart–Allmaras DGSEM through the
+interface fluxes: Lax–Friedrichs or matrix dissipation for the
+Navier–Stokes part and an upwinding toggle for the Spalart–Allmaras
+variable, all switched off for the entropy-conserving central variants
+(see [entropy conservation](/properties/entropy-conservation.md)).
 
 Polynomial de-aliasing (over-integration) and split forms are the two DG
 remedies for aliasing. Flad & Gassner (2017, §3.1) find that with classic
@@ -1145,3 +1263,14 @@ two-point flux, with entropy-dissipative surface terms added.
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §2.3; §3.1, Fig. 1; App. A, Eqs. (A.1)–(A.2); App. B.
 - [Yang & Ma (2022)](/sources/yang-2022-b.md) — §2.3, Eq. (6); §3.1, Fig. 4; §3.2, Fig. 7.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §3.1, Fig. 1; §4, Figs. 4–7; §5.2.3, Fig. 11.
+- [Gao et al. (2022)](/sources/gao-2022.md) — §1; §3.2; §4.1–4.2.
+- [Ahn et al. (2023)](/sources/ahn-2023.md) — §III, Eqs. (1)–(6); §IV C 1, Fig. 12.
+- [Liang & Fu (2024)](/sources/liang-2024.md) — §1; §3.2–3.3, Eqs. (43)–(49); §4.10, Figs. 17–18.
+- [Li & Fu (2024)](/sources/li-2024-c.md) — §1; §3.2.1, Eq. (47); §4; §4.8.
+- [Takagi et al. (2022)](/sources/takagi-2022.md) — §1–2; §4.10, Fig. 21.
+- [Huang & Fu (2024)](/sources/huang-2024.md) — §1; §6; §6.6.
+- [Huang et al. (2025)](/sources/huang-2025.md) — §1; §3.2.1; §5; §5.7; Table 4.
+- [Volpiani (2024)](/sources/volpiani-2024.md) — §2.2.2; §4, Table 1, Fig. 5; §5, Figs. 11–13.
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.4.1, Fig. 4; §3.2–3.3, Fig. 35.
+- [Lodares et al. (2022)](/sources/lodares-2022.md) — §4.4; §5.3.
+- [Batther & Lee (2022)](/sources/batther-2022.md) — §3.1.2; §5.

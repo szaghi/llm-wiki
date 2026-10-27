@@ -5,7 +5,7 @@ description: "LES that resolves the outer-layer eddies and replaces the near-wal
 status: established
 aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions, IBMLES, immersed boundary-modelled LES]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T06:13:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -39,7 +39,16 @@ plus the coefficient-free dynamic slip model. The modelled region is the inner
 layer up to about 10 % of $\delta$ ([Hoy & Bermejo-Moreno 2022](/sources/hoy-2022.md),
 §1, as they cite it) or $y/\delta\lesssim0.15$ ([Gillyns et al. 2022](/sources/gillyns-2022.md),
 §1), the outer region being driven by the pressure gradient and by the stress
-propagated from the wall.
+propagated from the wall. [Husson et al. (2024)](/sources/husson-2024.md)
+(§1) give the same figure for lattice Boltzmann solvers, where WMLES models
+"roughly the first ten percent of the boundary layer" with the law of the
+wall alone or with a RANS eddy viscosity blended into the LES, and where it
+is "preponderant" but "still raises open questions" about generating inflow
+fluctuations, which the unresolved near-wall events can no longer produce
+(see [inflow turbulence generation](/methods/inflow-turbulence-generation.md)),
+and about the RANS–LES interface; in hybrid RANS/LES, they note, the outer
+layer of attached boundary layers is RANS as well, so no fluctuations need
+to be generated.
 
 ## Wall models
 
@@ -250,6 +259,30 @@ expected to close the SGS stress (§7). The authors note, after Verzicco (as
 cited), that immersed boundaries on non-uniform grids produce spurious
 stress oscillations that corrupt the near-wall eddy viscosity (§1).
 
+## The wall-model solve: robustness and cost
+
+At every wall node and time step the wall model samples the LES at
+$h_{\mathrm{wm}}$, computes $\tau_w$ and returns it as a boundary
+condition, the three steps that [Nuca et al. (2025)](/sources/nuca-2025.md)
+(§I) take from Larsson et al. and Bose & Park (as cited). For the
+algebraic and ODE wall laws they treat, the second step is an iterative
+inversion (Newton or fixed point), and Nuca et al. (§I–II)
+report that it fails "sporadically" in complex geometries: the Newton
+solver of Spalding's law diverges when the sampled velocity fluctuates
+strongly or when the law is applied where it does not hold, as in
+transition regions, and particularly when $h_{\mathrm{wm}}$ lies above the
+first off-wall node. Channel flow and zero-pressure-gradient plates, on
+which much of the wall-model literature rests, "are suitable for testing the model's accuracy but not
+its robustness" (§II). Their remedy is an explicit approximation of the
+law, used directly or as initial guess; on WMLES of the Aérospatiale
+A-airfoil near stall (OpenFOAM, [sigma model](/methods/sigma-model.md),
+18.7 M cells, 10–12 cells across the boundary layer, "at the lower limit"
+of acceptable WMLES resolution) it caps the Newton count at 3 instead of
+10–11 and the ODE fixed-point count at 6 instead of the 100-iteration cap,
+and the wall model takes about 2 % of the run time with algebraic laws and
+11.9 % with the integrated ODE model (§VI, App. B; details on the
+[equilibrium wall model](/methods/equilibrium-wall-model.md) page).
+
 ## Error scaling: WMLES as a convergence study
 
 Lozano-Durán et al. (2022, §IV.A) argue that WMLES is intrinsically
@@ -420,6 +453,17 @@ same under-resolved first cells.
   $\Delta x^+=9$ but under-predicts it by more than 12 % at $\Delta x^+=18$, and the authors
   conclude it "cannot be used alone in the context of WMLES"
   ([Vicente Cruz & Lamballais 2023](/sources/vicentecruz-2023.md), §7.4).
+- **No wall model inside a jet nozzle.** [Ahn et al. (2023)](/sources/ahn-2023.md)
+  (§III) run [implicit LES](/definitions/implicit-les.md) of twin square
+  supersonic jets with the nozzle interior meshed at a first cell of
+  $h_n/320$ ($h_n$ the nozzle exit height, page-local), $y^+=10$–20, and no wall
+  model, accepting that "the grid resolution is insufficient to resolve the
+  viscous sub-layer but allows us to convect forced velocity fluctuations";
+  the fluctuations come from a geometric trip in the convergent section
+  (see [inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
+  They cite wall models, with and without surface roughness, as the
+  alternative. Even with tripping the turbulent kinetic energy near the lip
+  stays above the PIV values, though less than without it (§IV.B).
 - **"Wall model" for DG implicit LES.** [Lederer et al. (2023)](/sources/lederer-2023.md)
   (§6) write that their adaptive
   [high-order projection-based upwind method](/methods/high-order-projection-based-upwind-method.md),
@@ -602,6 +646,14 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
   about 60 % ($L_{sep}/\delta_0\approx7.8\to12.6$; §4.3). The authors rest the
   validity of the equilibrium model in this strongly separated flow on earlier
   work (Bermejo-Moreno et al. 2014, as they cite it), not on a test here.
+  For comparison, [Gao et al. (2022)](/sources/gao-2022.md) (§5, Tables
+  1–2) resolve the wall in a Mach 2 oblique interaction ($Re_{\theta_0}=1628$)
+  with high-order DG implicit LES at $N=6$: $\Delta y^+_{\min}=1.6$,
+  $\Delta x^+=30$, $\Delta z^+=16$ at the reference station, about 93 M
+  degrees of freedom on 16 384 cores and about 196 600 CPU hours for the
+  interaction run; they name WMLES as where "the main emphasis of the
+  efficiency improvement" of such simulations should go (§6), without
+  running one. See [shock–turbulent boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 - **Bluff body with massive separation on an immersed boundary** (Cai et al.
   2022, §III–IV): Ahmed body with 35° slant, $Re_H=7.68\times10^5$, lattice
   Boltzmann solver ProLB with the Vreman model, explicit equilibrium wall
@@ -697,6 +749,22 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
   source's own §4.3 (see [building-block-flow wall model](/methods/building-block-flow-wall-model.md)).
   Mesh details are on the [grid-point requirements](/results/les-grid-point-requirements.md)
   page.
+- **WMLES as the reference of a hybrid in a lattice Boltzmann solver**
+  (Husson et al. 2024, §4.3.2, §5). On the LEISA2 three-element airfoil
+  ($Re_c\approx1.23\times10^6$, 77 M nodes) their zonal-DES lattice
+  Boltzmann computation shows a small delay in the formation of the slat
+  shear-layer instabilities; they state that it is not due to the hybrid
+  model, because "the exact same phenomenon" was observed in a lattice
+  Boltzmann WMLES of the same airfoil without RANS eddy viscosity by Soni et
+  al. (as cited), and that capturing it would require a finer mesh (§4.3.2).
+  They present the hybrid as a
+  "fair alternative" to WMLES in lattice Boltzmann solvers, especially for
+  aeroacoustics (see [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+- **Airfoil near stall as a robustness test** (Nuca et al. 2025, §II, §VI,
+  App. B): Aérospatiale A-airfoil, OpenFOAM with the libWallModelledLES
+  library, sigma SGS model, wall model on the whole suction side; accuracy
+  against experiment is deliberately not a goal, and statistics cover one
+  convective time. See the robustness section above.
 - **Learned wall models** (Bae & Koumoutsakos 2022): channel flow from
   $Re_\tau=5200$ to $10^6$ at $\Delta x=\Delta z=0.05\delta$, and a zero-pressure-gradient
   flat-plate boundary layer at $Re_\theta=1000$–7000; see
@@ -797,3 +865,7 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
 - [Wu & Lele (2026)](/sources/wu-2026.md) — §2.2; §6.2, Figs. 15–20 (arXiv v2).
 - [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §1, Fig. 1.
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §3.3.
+- [Nuca et al. (2025)](/sources/nuca-2025.md) — §I–II, Fig. 2; §VI, Tables VII–VIII; App. B.
+- [Husson et al. (2024)](/sources/husson-2024.md) — §1; §4.3.2; §5.
+- [Ahn et al. (2023)](/sources/ahn-2023.md) — §III; §IV.B.
+- [Gao et al. (2022)](/sources/gao-2022.md) — §5, Tables 1–2; §6.

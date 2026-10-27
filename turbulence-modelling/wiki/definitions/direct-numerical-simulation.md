@@ -5,7 +5,7 @@ description: "DNS solves the Navier–Stokes equations with no turbulence model 
 status: established
 aliases: [DNS, quasi-DNS, flame-resolved DNS, under-resolved DNS, DNS embedded in LES, downsized DNS, DNS-like simulation, fully resolved simulation with detailed chemistry]
 tags: [dns, les, combustion, boundary-layer, compressible, gpu]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Direct numerical simulation
@@ -148,6 +148,9 @@ better small-scale resolution than is often practised (§1).
 | Forced two-dimensional turbulence, $Re=20\,000$ and $100\,000$ | pseudo-spectral (py2d), $1024^2$ and $2048^2$ | [Jakhar et al. (2026)](/sources/jakhar-2026.md), Fig. 4 |
 | Decaying isotropic turbulence, $Re=450$ (idc96 initial field); Taylor–Green vortex, $Re=200$ and 800 | DGSEM ([HORSES3D](/software/horses3d.md)): $12^3$ elements at $N=8$ (1,259,712 points); $18^3$ at $N=7$ (2,985,984); $20^3$ at $N=12$ (17,576,000); validated against an earlier DSEM code and the dissipation rates of Fehn et al. | [Ranjbar et al. (2026)](/sources/ranjbar-2026.md), §III.A–B |
 | Channel, $Re_\tau=5200$ (the Lee & Moser DNS, filtered a priori) | $\Delta x^+\sim12$, $\Delta z^+\simeq6$, $\Delta y^+$ from about 0.5 to 10, as quoted | [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md), §3.1 |
+| Decaying compressible [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md), $M_{t0}=0.6$, initial Taylor-scale Reynolds number 100, spectrum peak $k_0=4$ | finite-volume PeleC (second-order Godunov with PPM and seventh-order WENO-Z interpolation, CFL 0.5), $512^3$ on $(2\pi)^3$, run to four initial time scales $\psi_0/u_{\mathrm{rms},0}$ (page-local, $\psi_0=2/k_0$ the initial Taylor microscale); verified against the Motheau–Wakefield dataset in energy, enstrophy, temperature and dilatation variances and spectra, with slight under-prediction of the enstrophy and dilatation peaks | [Valencia et al. (2026)](/sources/valencia-2026.md), §IV, Figs. 1–2 |
+| [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), $Re=1600$, $M=0.085$ | relaxation-filtered eleven-point central differences on $64^3$ to $512^3$ (no subgrid model): the directly computed dissipation rate approaches the DNS of Dairay et al. on refinement, and the $256^3$ and $512^3$ vorticity fields are "practically indistinguishable"; DNS references at $Re=2500$, 5000, 10 000 on $768^3$, $1280^3$, $2048^3$ (Dairay et al., as cited) | [Volpiani (2024)](/sources/volpiani-2024.md), §5, Figs. 6–8, 10 |
+| Taylor–Green vortex up to $Re=10\,000$; decaying compressible isotropic turbulence, $M_{t0}=0.6$ | references of no-model TENO runs: DNS of Brachet et al. on $256^3$ ($Re\le3000$) and of Dairay et al. on $1280^3$ and $2048^3$ ($Re=5000$, 10 000), filtered $256^3$ DNS for isotropic turbulence (as cited) | [Liang & Fu (2024)](/sources/liang-2024.md), §4.11–4.12 |
 
 From their pipe DNS, Vicente Cruz & Lamballais (2023, §7.1) suggest that the
 recommendation of about one wall unit for the first wall-normal spacing
@@ -535,6 +538,23 @@ the filtered Navier–Stokes equations, they run wall-modelled LES in the
 target solver with a mean-flow correction that forces the DNS mean profile
 (§2.5; see [discretization-consistent closure](/definitions/discretization-consistent-closure.md)).
 
+**DNS reduced to an LES grid before the a priori test.**
+[Valencia et al. (2026)](/sources/valencia-2026.md), §I, §V A, state that
+classical a priori tests on the DNS grid "tend to overestimate model
+accuracy because the filtered and resolved fields share the same grid
+resolution", and make their $512^3$ compressible isotropic DNS into
+LES-like data in three steps: a top-hat filter of the width of the coarse
+grid spacing (meant to emulate the implicit filter of a centred
+finite-volume scheme), downsampling to that grid, and an explicit Gaussian
+filter of one, two or four grid spacings. The downsampled fields keep
+99.7%, 98.7%, 95%, 83.6% and 59.1% of the kinetic energy at spacings of 2,
+4, 8, 16 and 32 DNS spacings ($256^3$ to $16^3$; Table III), and the
+reference stress of their tests is the total unresolved stress, including
+the grid-truncation part that no deconvolution can recover. The models and
+results are on [scale-similarity models](/methods/scale-similarity-model.md)
+and [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md);
+the snapshot time used is not stated.
+
 Other sources use published DNS as the reference for model calibration and
 validation: the channel DNS of Lee & Moser at $Re_\tau=1000$ and 5200 for
 wall-modelled LES (Gillyns et al. 2022, §5–§9), the SD7003 airfoil DNS of
@@ -825,3 +845,6 @@ layers (§7).
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv 2509.20365v3: p. 2 (filtered-DNS training and test snapshots); p. 4 (80% of DNS enstrophy); Fig. 4 (two-dimensional DNS cases).
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv 2512.03315v1: §III.A–C, Figs. 3, 15 (DGSEM DNS of isotropic turbulence and Taylor–Green vortex, "coarse DNS" baseline, channel against Moser et al.).
 - [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §1 (recalled grid-point scalings and channel-DNS frontier); §3–3.1 (volume-filtered $Re_\tau=5200$ channel DNS as a priori data).
+- [Valencia et al. (2026)](/sources/valencia-2026.md) — §I (a priori tests on the DNS grid); §IV, Figs. 1–2 (PeleC DNS of compressible isotropic turbulence); §V A, Table III (filtering and downsampling to LES grids).
+- [Volpiani (2024)](/sources/volpiani-2024.md) — §5, Figs. 6–8, 10 (Taylor–Green vortex refined to $512^3$; DNS of Dairay et al. as reference).
+- [Liang & Fu (2024)](/sources/liang-2024.md) — §4.11–4.12 (DNS references of Brachet et al., Dairay et al., filtered DNS of isotropic turbulence).

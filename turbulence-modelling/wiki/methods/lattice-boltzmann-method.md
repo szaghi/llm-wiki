@@ -3,9 +3,9 @@ type: Method
 title: "Lattice Boltzmann methods for turbulent flow"
 description: "Lattice Boltzmann methods advance particle populations on a discrete velocity lattice by local collision and streaming, recovering weakly compressible Navier–Stokes; this page gives the scheme, regularized and central-moment collisions, LES and RANS/hybrid eddy viscosities in the relaxation time, immersed boundaries, a Hall-MHD extension, and cost and accuracy."
 status: established
-aliases: [LBM, lattice Boltzmann, LB, lattice Boltzmann equation, LBE, HRR collision, central-moment collision, lattice Boltzmann MHD, FLAME]
+aliases: [LBM, lattice Boltzmann, LB, lattice Boltzmann equation, LBE, HRR collision, central-moment collision, lattice Boltzmann MHD, FLAME, ZDES-LBM]
 tags: [lattice-boltzmann, les, dns, hybrid-rans-les, gpu, mhd, immersed-boundary]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Lattice Boltzmann methods for turbulent flow
@@ -24,7 +24,9 @@ collision and streaming that is a memory shift. In the bundle it carries
 wall-modelled LES of a car body, LES of turbulent fluid–structure
 interaction, and $k$-$\omega$ SST RANS and SST-based hybrid RANS/LES
 ([Mozaffari et al. 2024](/sources/mozaffari-2024.md)) in the
-[ProLB](/software/prolb.md) solver, and model-free
+[ProLB](/software/prolb.md) solver, Spalart–Allmaras RANS and zonal
+detached-eddy simulation in a development branch of the same solver
+([Husson et al. 2024](/sources/husson-2024.md)), and model-free
 Hall-MHD turbulence on GPUs in the FLAME code of
 [Foldes et al. (2023)](/sources/foldes-2023.md).
 
@@ -93,7 +95,15 @@ sources use two remedies.
   and state, citing Astoul et al., that because $\boldsymbol S^{\mathrm{FD}}$
   comes from second-order centred differences the blend introduces a
   bi-Laplacian hyper-viscosity that damps non-physical modes while limiting
-  the dissipation of physical ones.
+  the dissipation of physical ones. Husson et al. (2024, §2.1, Eqs. 7–14)
+  also use $\sigma_{\mathrm{HRR}}=0.98$, citing an earlier ProLB study,
+  and print the full D3Q19 form: the off-equilibrium second-order Hermite
+  coefficient blends the population moments with the finite-difference
+  strain rate, the third-order one is rebuilt recursively from it and the
+  velocity (the "recursive regularized" part), and only the three pairs of
+  third-order Hermite combinations that D3Q19 supports are kept, in the
+  non-equilibrium part and in an "improved" equilibrium that adds the
+  same third-order terms with $\rho u_\alpha u_\beta u_\gamma$.
 - **Central-moment multi-relaxation-time collision** (De Rosis et al., as
   used by Foldes et al. 2023, §3.1.2, Eqs. 3.14–3.17, App. A): the
   populations are transformed into central moments in the frame moving with
@@ -146,6 +156,67 @@ pressure and stress do not lie on the surface (§3.1, after Wilhelm et
 al.); at $45^\circ$ incidence on a NACA 0012 this needed 234 flow-through
 times (§3.2).
 
+**Spalart–Allmaras RANS and zonal detached-eddy simulation.**
+Husson et al. (2024, §2.1–2.2, Eqs. 15, 18–35) couple the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md), transported
+in its incompressible form for $\chi=\tilde\nu/\nu$, and its hybrid
+extension ZDES mode 2 (2020) ([detached-eddy simulation](/methods/detached-eddy-simulation.md))
+through the relaxation time, written with the physical sound speed $c_0$
+as $\tau_{\mathrm{LB}}=(\nu+\nu_t)/c_0^2+\Delta t/2$ (Eq. 15, the
+Chapman–Enskog result for the weakly compressible equations). The $\chi$
+equation is solved apart from the populations by finite differences:
+second-order centred differences on its right-hand side and a hybrid
+upwind–centred scheme for advection (§2.2). The authors state that the
+gradient-based shielding sensors of ZDES were designed and calibrated for
+Navier–Stokes finite-volume solvers and that there is "a priori no
+evidence" that they keep their efficiency here, for three reasons: the
+eddy viscosity acts only through the relaxation time; a slower
+destruction of eddy viscosity could delay the formation of instabilities
+in shear layers; and the factor-two level transitions of the isotropic
+octree lattice cause weak numerical instabilities that could trigger the
+wake-layer sensor in shear layers or the inhibition sensor inside
+boundary layers (§2.2).
+
+The isotropy of the lattice is the core of the problem they address. At
+high Reynolds number it makes the streamwise and spanwise spacing very
+small relative to the boundary-layer thickness ($\Delta x\approx0.01\delta$
+at mid-plate on their flat plate), a regime in which, they state, the
+shielding of DES-type models fails "almost systematically", with
+modelled-stress depletion and possibly grid-induced separation, which makes
+those models "prohibitive" for attached layers in lattice Boltzmann
+solvers (§1, §4.1.2; definitions on
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md)). Their results
+(§4):
+
+- **Flat plate** ($Re_L=5\times10^6$, $M=0.2$, $\Delta y^+\approx30$):
+  ZDES reproduces the lattice Boltzmann RANS skin friction, velocity and
+  eddy-viscosity profiles, also with $C_{DES}=0$ and on a plate inclined
+  to the lattice; DDES (2006) on the same grid suffers severe
+  modelled-stress depletion and an "unexploitable" oscillating $C_f$
+  (Fig. 4–5).
+- **Backward-facing step** (A3C, $Re_h=40{,}000$;
+  [backward-facing step](/benchmarks/backward-facing-step.md)): with
+  $44.7\times10^6$ lattice nodes and a wall law, against
+  $3.9\times10^6$ points for the wall-resolved body-fitted Navier–Stokes
+  ZDES of Deck & Renard (2020, as recalled), the shielding field, the
+  eddy-viscosity destruction, the vorticity-thickness growth and the mean
+  profiles agree, and the authors conclude that the lattice adds "no
+  further delay in the formation of instabilities" (Figs. 7–11, Table 1).
+  Isotropy makes the lattice locally much finer than the body-fitted grid
+  ($\Delta z$ about ten times finer near the step; 61,000 against 5000
+  points in the plane $x=0$, §4.2).
+- **LEISA2 three-element high-lift airfoil** ($Re_c\approx1.23\times10^6$,
+  $77\times10^6$ nodes against $2.6\times10^9$ for the wall-resolved LES of
+  Terracol & Manoha, as recalled): attached layers stay in RANS, there is
+  no grid-induced separation and the mean $C_p$ agrees with experiment; a
+  small delay of the slat shear-layer instability, which the authors
+  attribute to grid and wall model because wall-modelled LES in the same
+  solver (Soni et al., as recalled) shows the same (§4.3).
+
+They present the combination as a "fair alternative" to Navier–Stokes
+hybrids and to wall-modelled LES in lattice Boltzmann solvers, especially
+for aeroacoustics (§5).
+
 **Results** (Mozaffari et al. 2024, §3): on the two-dimensional NACA 23012
 at $Re_c=1.88\times10^6$, $M=0.18$, SST and the Spalart–Allmaras model
 already validated in ProLB give close lift and drag (e.g. $C_L$ 1.12 and
@@ -180,7 +251,14 @@ $\Delta x^+\approx0.3$ everywhere to resolve the viscous layer. Cai et al.
 hierarchical lattice "not feasible", which motivates their wall model;
 Mozaffari et al. (2024, §2.2) state likewise that, with the isotropic
 mesh of ProLB, refining enough to resolve the boundary layer at high
-Reynolds number is "too expensive".
+Reynolds number is "too expensive". Husson et al. (2024, §3) use a
+sharp-interface direct-forcing method with forcing nodes on the fluid
+side, where all populations are overwritten by equilibrium plus
+regularized non-equilibrium parts, and a Spalart–Allmaras analytical wall
+law, linearized below the interpolation-point distance $2.5\Delta y$,
+inverted at the interpolation point (details on
+[immersed boundary methods](/methods/immersed-boundary-method.md) and
+[RANS wall functions](/methods/rans-wall-function.md)).
 
 **An explicit wall law from lattice Boltzmann RANS reused elsewhere.**
 [Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §1 and §3.3, adopt in a
@@ -284,6 +362,13 @@ lattice Boltzmann sources here are all weakly compressible.
   $\tau_{ij}\,\partial u_j/\partial x_j$, which leaves a free index $i$ in a
   scalar equation *(compiler check, not in the sources)*. No SST
   coefficient value except $a_1=0.31$ is printed.
+- **Index range (Husson et al.).** Their Eq. (10) sums the D3Q19
+  populations over $i=1,\dots,19$, while Eqs. (2)–(3) number them
+  $0,\dots,18$; Eq. (13) carries the lattice index on the velocity,
+  $\rho u_{i,\alpha}$, where Eq. (4) has $\rho\boldsymbol u$. The
+  wall-resolved LES of the LEISA2 airfoil is printed with
+  "$2.6\cdot10^9$ nodes" (p. 15) and "$2700\cdot10^6$ nodes" (p. 18). The
+  version read is the version of record.
 
 # Citations
 
@@ -292,4 +377,5 @@ lattice Boltzmann sources here are all weakly compressible.
 - [Foldes et al. (2023)](/sources/foldes-2023.md) — arXiv v2: §1; §3.1, Eqs. (3.4)–(3.17), App. A (BGK, sixth-order equilibrium, Lorentz force, central-moment collision); §3.2–3.4, Eqs. (3.18)–(3.44), App. B (vector BGK induction, Hall term, current solve, whistler CFL); §4.2–4.4, Figs. 3–12 (accuracy, Orszag–Tang against GHOST); §5 (cost, turnaround); §7.
 - [Cao et al. (2022)](/sources/cao-2022.md) — §1, §3.3–3.4 (lattice Boltzmann grids in channel flow; shocks).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — HAL accepted manuscript hal-04921212v1: §1; §2.1, Eqs. (1)–(8) (trapezoidal D3Q19, HRR with $\sigma=0.98$, eddy viscosity in the relaxation time); §2.2 (immersed boundary, wall model); §2.3, Eqs. (16)–(34) (SST by finite differences, wall functions, IDDES, CES); §3.1–3.3, Tables 1–3 (NACA 23012, NACA 0012, Ahmed body).
+- [Husson et al. (2024)](/sources/husson-2024.md) — §1 (isotropic lattices and DES-type shielding); §2.1, Eqs. (1)–(17) (D3Q19 HRR with $\sigma=0.98$, improved equilibrium, relaxation time); §2.2, Eqs. (18)–(35) (SA and ZDES mode 2 (2020) by finite differences, lattice-specific concerns); §3 (immersed boundary, wall law); §4.1–4.3, Table 1, Figs. 4–19 (flat plate, step, LEISA2); §5.
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §1; §3.3, Eqs. (12)–(14); reference [11] (the explicit power-law wall model of Wilhelm et al., devised for lattice Boltzmann RANS, reused in a DG solver).

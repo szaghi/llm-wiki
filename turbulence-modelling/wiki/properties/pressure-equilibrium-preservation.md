@@ -5,7 +5,7 @@ description: "A scheme is pressure-equilibrium preserving when uniform pressure 
 status: established
 aliases: [PEP, pressure equilibrium preserving scheme, KGP-Pt, KGP-PT scheme, pressure-equilibrium-preserving split form, CDHD, central differential flux with high-order dissipation, primitive-variable hybrid scheme]
 tags: [pressure-equilibrium, kinetic-energy-preserving, compressible, real-gas, numerical-dissipation, dns]
-timestamp: 2026-10-26T20:44:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Pressure-equilibrium preservation
@@ -240,6 +240,19 @@ streamwise Reynolds stress (max-norm relative difference) at Mach 5 (§4.2, Tabl
 thermodynamic coupling in the pressure treatment" is, with entropy
 consistency, "essential" (§5).
 
+**Named but not used in an LES comparison.** [Volpiani (2024)](/sources/volpiani-2024.md),
+§2.2.3, lists pressure-equilibrium-preserving and entropy-preserving split
+forms (Shima et al., De Michele & Coppola, Bernades et al.) among the
+alternatives to the three kinetic-energy split forms the paper compares, and does
+not treat them. The energy equation is split on the total specific
+enthalpy after Pirozzoli, and the Kennedy–Gruber variant (SF3) applies the
+quarter weights to mass, momentum and energy, which is the KGP-Et row of
+the table above, not pressure-equilibrium preserving even in the
+ideal-gas density-wave test of Bernades et al. *(compiler check, not in
+the sources)*; the paper's only test, the Taylor–Green vortex at $M=0.085$ with
+uniform initial density, does not probe the property (see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+
 ## Qualifications
 
 - The analysis is for second-order centred differences in one dimension;
@@ -278,4 +291,5 @@ consistency, "essential" (§5).
 - [Xu et al. (2026)](/sources/xu-2026.md) — arXiv 2508.21599v1: §1 (conservative against primitive formulations, prior PEP schemes); §3, §3.4–3.5, Eqs. (18)–(23) (hybrid, PVRS sensor, CDHD); §4, Eqs. (24)–(41) (truncation analysis); §5.1–5.3, Table 1, Figs. 2–7.
 - [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §3.1.6, Fig. 16 (Chandrashekar–Ranocha PEP flux on the Taylor–Green vortex).
 - [Aiello et al. (2026)](/sources/aiello-2026.md) — §3.2, Table 1 (Ranocha PEP; Gouasmi pressure term); §4.2, Table 3; §5.
+- [Volpiani (2024)](/sources/volpiani-2024.md) — §2.2.3, Eqs. (14)–(17) (split forms with enthalpy splitting; PEP schemes named, not treated); §3.2 (Taylor–Green setup).
 - [Bernades et al. (2023)](/sources/bernades-2023.md) — §1 (definition, requirements); §2.1, Eqs. (2)–(4) (pressure equation); §3.1, Eqs. (8)–(13) (semi-discrete framework, split forms, KEP family); §3.1.2, Eqs. (14)–(28) (induced pressure and energy equations, chain rule, CR class, KGP-Pt); §3.1.3, Table 1; §3.2, Table 2 (comparison schemes); §4.1, Figs. 1–3; §4.2, Figs. 4–7; §4.3, Figs. 8–10; §5.

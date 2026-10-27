@@ -5,7 +5,7 @@ description: "A closed region of reversed flow formed when a laminar boundary la
 status: established
 aliases: [LSB, separation-induced transition, laminar separation, transitional separation bubble]
 tags: [transition, separated-flow, boundary-layer, rans, implicit-les, turbomachinery]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T06:07:00Z
 ---
 
 # Laminar separation bubble
@@ -173,6 +173,24 @@ model built for that purpose, with transition lengths that remain too
 short (§7); they do not compute the T161 cascade or the very-low-Reynolds
 airfoils.
 
+- **A plate bubble with a laminar-kinetic-energy model.** Ghidoni &
+  Noventa (2026) compute the ERCOFTAC T3C4 plate, the only separated case
+  of their flat-plate set, with a reformulated
+  [laminar-kinetic-energy model](/methods/laminar-kinetic-energy-transition-model.md)
+  in a high-order DG solver, run pseudo-unsteady with time-step adaptation:
+  the model captures separation, transition onset and reattachment but
+  underestimates the peak shape factor, i.e. the bubble height
+  ([Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md), §IV A, Appendix;
+  see [ERCOFTAC T3 flat plates](/benchmarks/ercoftac-t3-flat-plate.md)).
+  They omit, "for the sake of brevity", the separation-induced production
+  and transfer terms of Dellacasagrande et al., which they say would reduce
+  this error; the shear-layer limiter of Dellacasagrande et al. that they
+  do keep, which approximates $Re_\theta$ by $d^2\lvert S\rvert/\nu$ to locate
+  shear layers and avoids an overproduction of laminar fluctuation energy
+  that would lengthen the bubble, and the Kubacki–Dick correction of the
+  shear sheltering, both matter only on T3C4 (§II). On airfoils at high
+  incidence, numerical separation during convergence makes runs fail,
+  which they also ascribe to the missing separation-induced terms (§V).
 - **Hybrid RANS/LES of a compressor cascade.** On the suction side of the
   V103 compressor cascade ($Re=138\,500$ on the axial chord $c_{ax}$,
   page-local, $Tu=3.25\%$,
@@ -216,7 +234,48 @@ near $\alpha=2^\circ$ and progresses towards the bubble, reached at $10^\circ$;
 the vortex develops beyond $15^\circ$ (Fig. 6). See
 [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md).
 
-**Shock-induced separation of a laminar layer.** In the transonic TCTA
+Batther & Lee (2022) follow the bubble through the onset of dynamic stall on
+a NACA 0012 pitching up at a constant rate ($Re=2\times10^5$, $M=0.1$), with
+delayed DES and transition models against the wall-resolved LES of Visbal
+& Garmann ([Batther & Lee (2022)](/sources/batther-2022.md), §4.2, Table 3;
+see [dynamic stall](/definitions/dynamic-stall.md)):
+
+- transition, identified by a non-zero eddy viscosity at the first grid
+  point, moves rapidly upstream after $\alpha=8^\circ$, and a bubble first
+  forms near the leading edge around $10^\circ$ (§4.2.3, Fig. 8);
+- at $15.2^\circ$ the boundary layer behind the bubble reattaches along two
+  distinct branches, which explain two kinks in the pressure recovery of
+  $C_p$ (§4.2.2, §4.2.5, Figs. 6, 15);
+- at about $16.9^\circ$ the bubble collapses under the adverse pressure
+  gradient ("suction collapse"), the separated shear layer rolls up into the
+  dynamic-stall vortex near $18.6^\circ$, and the vortex is shed after
+  $23.2^\circ$; the bursting is the initial trigger of the dynamic-stall
+  process, and the bubble's earlier history "seemingly does not have a
+  significant impact" on the vortex formation, in agreement with the LES
+  (§4.2.3, §4.2.5);
+- the stall is of the "pressure-gradient bubble-bursting" leading-edge
+  type, since the reversed flow near the trailing edge does not propagate
+  upstream, unlike the mixed-type stall at $Re=10^6$ of Benton & Visbal
+  that the authors recall (§4.2.2, Fig. 7);
+- against the LES, the DDES bubble at $15.2^\circ$ is larger with weaker
+  reverse flow, oscillates more even after spanwise averaging, and
+  collapses earlier; fully turbulent Spalart–Allmaras forms an abrupt
+  turbulent separation bubble at $14.1^\circ$–$14.5^\circ$ instead (§4.2.5,
+  §4.4, Figs. 14, 22);
+- strong high-frequency surface-pressure oscillations at $x/c=0.05$
+  precede the vortex formation, as in the experiment of Lorber & Carta, as
+  the authors recall (§4.2.5, Fig. 16).
+
+The two pitching studies agree that the bubble's bursting triggers the
+dynamic-stall vortex, at different motions and Reynolds numbers
+($22^\circ$ in Baldan & Guardone's sinusoidal cycle at $1.35\times10^5$,
+about $17^\circ$ in Batther & Lee's ramp at $2\times10^5$).
+
+**Shock-induced separation of a laminar layer.** On the transonic NLR-7301
+airfoil ($Re=2.2\times10^6$, $Tu=0.03\%$), where the shock dominates
+transition near $M_\infty=0.724$–$0.748$, the laminar-kinetic-energy model
+of Ghidoni & Noventa (2026) misplaces the transition location by up to 81%
+of its reference value (§V, Fig. 29). In the transonic TCTA
 compressor cascade (inlet $M=1.21$, $Re=1.35\times10^6$ on the chord), the
 time-averaged implicit LES of Klose et al. (2025) shows a slender
 separation bubble beneath the oscillating mid-chord shock, followed by a
@@ -317,3 +376,5 @@ instabilities leading to transition (§4.1, §5, Table 2; see
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — Introduction, §2.1, Figs. 3–6 (arXiv v2).
 - [Klose et al. (2025)](/sources/klose-2025.md) — §4 Fig. 4, §5 Table 2 Fig. 6, §6 Fig. 7, §7, §8 (ASME accepted manuscript).
 - [Lederer et al. (2026)](/sources/lederer-2026.md) — §4, §4.1–§4.2 Tables 1–2 Fig. 10, §5 (arXiv v1).
+- [Batther & Lee (2022)](/sources/batther-2022.md) — §4.2.2–4.2.5, §4.4, Table 3, Figs. 6–8, 14–16, 22.
+- [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §II, §IV A, §V Fig. 29, Appendix.

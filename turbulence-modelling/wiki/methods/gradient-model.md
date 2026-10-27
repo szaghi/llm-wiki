@@ -5,7 +5,7 @@ description: "Clark's gradient model truncates the Taylor expansion of the filte
 status: established
 aliases: [Clark model, gradient model, nonlinear gradient model, tensor-diffusivity model, optimal clipping, standard clipping, GM-OC, GM-SC, NGM2, NGM4, NGM6, higher-order gradient model]
 tags: [les, sgs-model, filtering, eddy-viscosity]
-timestamp: 2026-10-26T16:24:00Z
+timestamp: 2026-10-27T06:03:00Z
 ---
 
 # Gradient (Clark) model and the clipping of structural SGS models
@@ -59,6 +59,25 @@ and correlate poorly with the exact stress. [Agrawal et al. (2022)](/sources/agr
 (§I, §VII.A) list the Clark model with Bardina's and Stolz–Adams
 deconvolution among the non-Boussinesq models that need an added
 Smagorinsky term.
+
+[Valencia et al. (2026)](/sources/valencia-2026.md) (§I) cite Clark's
+model as a structural closure beside the deconvolution family whose a
+priori accuracy they measure (see
+[scale-similarity model](/methods/scale-similarity-model.md)). Their
+discrete direct deconvolution model starts from the Taylor expansion of
+the Gaussian filter,
+$\bar\phi=\phi+\tfrac{\Delta^2}{24}\partial_x^2\phi+\tfrac{\Delta^4}{1152}\partial_x^4\phi+\dots$
+(§III B, Eq. 37), but inverts it on a stencil instead of inserting it into
+$\overline{u_iu_j}-\bar u_i\bar u_j$; at second order the inverse is
+$\phi^*=\bar\phi-\tfrac{\Delta^2}{24}\partial_x^2\bar\phi$ (Eq. 40).
+Inserting the second-order expansion into the stress of one direction
+gives $\tau=\tfrac{\Delta^2}{12}\partial_x\bar u_i\,\partial_x\bar u_j+O(\Delta^4)$,
+the one-direction form of the gradient model above *(compiler check, not
+in the sources)*.
+[Pan & Zhang (2023)](/sources/pan-2023.md) (§I) cite a modulated
+gradient model, with the [AMD model](/methods/anisotropic-minimum-dissipation-model.md),
+among "novel sub-grid-scale stress models based on pressure gradient" in
+their survey of pump LES, and do not use it.
 
 ## Stability and backscatter
 
@@ -549,3 +568,5 @@ higher-order structural terms rather than an eddy viscosity or clipping.
 - [Kim et al. (2024)](/sources/kim-2024.md) — App. C.
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §3.2, Eq. (3.2); §4.1, Table 1; App. C, Fig. 37.
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — pp. 1–5, Eqs. (3)–(4), Figs. 1–4.
+- [Valencia et al. (2026)](/sources/valencia-2026.md) — §I; §III B, Eqs. (37), (40).
+- [Pan & Zhang (2023)](/sources/pan-2023.md) — §I.

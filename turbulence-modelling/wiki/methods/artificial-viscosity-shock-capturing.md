@@ -5,7 +5,7 @@ description: "Artificial-viscosity shock capturing adds a dissipative term, swit
 status: established
 aliases: [artificial viscosity, localized artificial diffusivity, LAD, von Neumann–Richtmyer artificial viscosity, viscous pressure, Persson–Peraire artificial viscosity, entropy-stable artificial viscosity]
 tags: [shock-capturing, numerical-dissipation, dg, compressible, implicit-les, entropy-stable]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Artificial-viscosity shock capturing
@@ -115,6 +115,58 @@ $hp$-adaptation, keeping $N=1$ around shocks and raising $N$ in smooth
 regions of high error, as a perspective (§4.5, §5). No AV formula or
 coefficient is printed, and the AV's own effect is not assessed.
 
+**Ducros-weighted JST dissipation as the implicit closure of a jet LES.**
+[Ahn et al. (2023)](/sources/ahn-2023.md), §III, Eqs. (1)–(6), run implicit
+LES (MILES, no subgrid model) of over-expanded supersonic twin square jets
+with the unstructured node-based finite-volume solver EDGE: second-order
+central convective fluxes, fourth-order central viscous fluxes, four-stage
+Runge–Kutta, and a modified Jameson–Schmidt–Turkel dissipation applied at
+the end of the first stage of each step. Between nodes 0 and 1 (registry
+§11 symbols $\kappa^{(2)}$, $\kappa^{(4)}$, $\Phi$; page-local $L$ the
+undivided Laplacian, $r_{01}$ the face spectral radius times the face area,
+$g_{01}$ a grid-stretching factor, $s_{\mathrm n}=3(N_0+N_1)/(N_0N_1)$ from
+the neighbour counts $N_0$, $N_1$):
+$$\mathcal D_{01}=\big[\kappa^{(2)}_{01}(U_1-U_0)-\kappa^{(4)}_{01}(LU_1-LU_0)\big]g_{01}r_{01},\qquad g_{01}=\frac{4g_0g_1}{g_0+g_1},\quad g_0=\Big(\frac{r_0}{4r_{01}}\Big)^{0.3},$$
+$$\kappa^{(2)}_{01}=\max(\kappa^{(2)}_0,\kappa^{(2)}_1),\qquad
+\kappa^{(4)}_{01}=\Big(\tfrac12+\tfrac12\min\big(\max(\Phi_0,\Phi_1),\max(\Theta_0,\Theta_1)\big)\Big)\max\big(0,\,0.04-\kappa^{(2)}_{01}\big)\frac{s_{\mathrm n}^2}{4},$$
+with $\kappa^{(2)}_0=1.5\,\Phi_0\,s_{\mathrm n}$ times a pressure-jump ratio
+over the node's neighbours, $\Phi$ the Ducros factor (printed without a
+regularizer) and $\Theta=1-\Phi$ its vortical complement ($\mathcal D_{01}$, $U$
+page-local; printed forms discussed on [shock sensors](/definitions/shock-sensor.md)).
+The second-difference term is thus active only where dilatation dominates
+and the pressure jumps, and the background fourth-difference term is
+halved where vorticity dominates. The authors state that "the physical
+dissipation originated by small-scale eddies is implicitly considered by
+taking the advantage of truncation errors" and that the scheme set is
+proven for supersonic jet aeroacoustics (refs. 28, 29, 32, 51–53). The
+same JST structure with a Ducros-weighted sensor, and much smaller
+fourth-difference coefficients, is the LD2C scheme on
+[low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md);
+Ahn et al.'s cap $0.04\,s_{\mathrm n}^2/4$ is not compared with it. Their
+implicit LES, the nozzle tripping and the far-field noise are on
+[implicit LES](/definitions/implicit-les.md),
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md)
+and [Ffowcs Williams–Hawkings](/methods/ffowcs-williams-hawkings-acoustic-analogy.md).
+
+**Residual-based directional AV in modal DG RANS.** In the modal DG RANS
+solver used by [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) for
+a laminar-kinetic-energy transition model up to the transonic NLR-7301
+airfoil (Appendix), shock capturing acts in the whole domain as an
+artificial diffusion along the direction of the pressure gradient. With
+the primitive working variable $\ln p$, the element size
+$h_K=(\Delta x^{-2}+\Delta y^{-2}+\Delta z^{-2})^{-1/2}$ and degree $N$:
+$$\nu_{\mathrm{av}}=C\,h_K^2\,\frac{|s_p|+|d_p|}{p}\,f_p,\qquad f_p=\frac{|\nabla_h\ln p|\,h_K}{N},\qquad \boldsymbol b_p=\frac{\nabla_h\ln p}{|\nabla_h\ln p|+\epsilon},\qquad C=0.2,$$
+where $d_p$ is built from the flux divergence (the element residual) and
+$s_p$ from the interface flux jumps ($\nu_{\mathrm{av}}$ here the
+coefficient, $\boldsymbol b_p$ the diffusion direction, $s_p$, $d_p$,
+$f_p$ page-local; the source writes $\varepsilon_p$, $\boldsymbol\beta$,
+$\ell$ and $e^{\tilde p}$ with $\tilde p=\log p$). It is of the residual
+family of Zhao et al. above, made anisotropic; the shock-dominated
+transition of the NLR-7301 near $M_\infty=0.724$–$0.748$ is where the
+transition model's onset error is largest (81.16%, §V, where the authors
+state that the shock dominates transition), see
+[laminar kinetic energy transition models](/methods/laminar-kinetic-energy-transition-model.md).
+
 **Artificial bulk viscosity in finite volumes and ALE codes.** The
 [charLES](/software/charles.md) solver adds an artificial bulk viscosity at
 discontinuities ([Griffin et al. 2023](/sources/griffin-2023.md), §4), and
@@ -125,6 +177,18 @@ authors to call their runs implicit LES rather than DNS (see
 [shock-generated turbulence](/results/shock-generated-turbulence.md)). A
 physical bulk viscosity is a different matter, treated on
 [bulk viscosity](/definitions/bulk-viscosity.md).
+
+**Where the sources choose something else.** The sources on reconstruction
+schemes list artificial viscosity among the established shock-capturing
+families and take another route: hybrid TENO schemes switched by a
+discontinuity indicator ([Liang & Fu 2024](/sources/liang-2024.md), §1;
+[Takagi et al. 2022](/sources/takagi-2022.md), §1; see
+[WENO](/methods/weno-scheme.md)). In high-order DG RANS,
+[Jiang et al. (2025)](/sources/jiang-2025.md), §3.1, §4.2, use the
+element-resolution indicator (citing Persson & Peraire) to trigger a
+Hermite-WENO limiting of the turbulent kinetic energy, and the same HWENO
+limiter on the mean flow at the shock of the RAE2822 airfoil. The
+sensors themselves are compared on [shock sensors](/definitions/shock-sensor.md).
 
 ## Shock-capturing tests
 
@@ -193,6 +257,16 @@ Fig. 6). Findings:
 - Schotte et al. (2026, §4.3) print "the artificial viscosity method
   described in is employed", with the cross-reference missing; their
   artificial viscosity is described in §2.2.
+- **Printed forms (Ahn et al. 2023).** Eq. (2) prints the local spectral
+  radius as $|u_{01}n_{01}+c_{01}|S_{01}$, with the averaged sound speed
+  inside the absolute value; Eq. (6) prints the pressure ratio with
+  $\sum_kp_k-p_0$, which for more than one neighbour is not a sum of
+  pressure differences (see [shock sensors](/definitions/shock-sensor.md))
+  *(compiler check, not in the sources)*. The scheme is credited to Gojon et al. and Ducros et al.
+  and its benchmark performance is referred to them, not shown.
+- Ghidoni & Noventa (2026) give the AV only in the Appendix, with no
+  sensitivity to $C$ and no separate assessment of its effect on the
+  transition predictions.
 
 # Citations
 
@@ -205,3 +279,8 @@ Fig. 6). Findings:
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §4 (artificial bulk viscosity in charLES).
 - [Davidovits et al. (2022)](/sources/davidovits-2022.md) — §II A (artificial viscosity, no physical viscosity).
 - [Schotte et al. (2026)](/sources/schotte-2026.md) — HAL hal-05567956v2 (version of record): §2.2 (Laplacian AV with Persson–Peraire sensor and Glaubitz calibration, positivity-preserving limiter in CODA); §4.3, §4.5, §5 (transonic RANS cases, $N=1$ for the shocked M6 wing, $hp$ perspective).
+- [Ahn et al. (2023)](/sources/ahn-2023.md) — §III, Eqs. (1)–(6) (modified JST dissipation with Ducros sensor in EDGE, MILES).
+- [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — Appendix (residual-based directional AV in modal DG RANS); §V (NLR-7301 onset errors).
+- [Jiang et al. (2025)](/sources/jiang-2025.md) — §3.1, §4.2 (Persson–Peraire indicator driving HWENO limiting instead of AV).
+- [Liang & Fu (2024)](/sources/liang-2024.md) — §1 (artificial viscosity among shock-capturing families).
+- [Takagi et al. (2022)](/sources/takagi-2022.md) — §1 (same).

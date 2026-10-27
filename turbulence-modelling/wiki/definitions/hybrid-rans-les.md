@@ -5,7 +5,7 @@ description: "Scale-resolving approaches that model all turbulence with RANS in 
 status: established
 aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T06:07:00Z
 ---
 
 # Hybrid RANS/LES
@@ -111,6 +111,22 @@ applications" ([Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md),
 turbomachinery passage: RANS in attached boundary layers, LES away from them,
 and grid savings at high Reynolds number
 ([Yang & Ma (2022)](/sources/yang-2022-b.md), §1).
+Husson et al. (2024) put the same distinction from the lattice Boltzmann
+side: in a hybrid RANS/LES the outer part of the attached boundary layer is
+also RANS, so no resolved fluctuations have to be generated there, whereas
+wall-modelled LES models only about the first 10% of the layer and needs
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md);
+they present their lattice-Boltzmann zonal DES as a "fair alternative" to
+both Navier–Stokes hybrids and lattice-Boltzmann wall-modelled LES,
+especially for aeroacoustics ([Husson et al. (2024)](/sources/husson-2024.md),
+§1, §5). Batther & Lee (2022) take up the question that Visbal & Garmann
+left open after their wall-resolved LES of dynamic-stall onset, whether
+"Reynolds-averaged or hybrid LES/Reynolds-averaged Navier–Stokes
+approaches can be calibrated to reproduce the abrupt nature" of
+laminar-separation-bubble bursting, and answer it positively for delayed
+DES with transition models at about 22% of the LES grid points
+([Batther & Lee (2022)](/sources/batther-2022.md), §1, §4.5; see
+[dynamic stall](/definitions/dynamic-stall.md)).
 
 ## How hybrids operate
 
@@ -388,6 +404,31 @@ they find the onset of resolved turbulence in a separated shear layer
 "mainly governed by the amount of numerical dissipation introduced by the
 numerical scheme and the resolution of the grid" (§4.4).
 
+**Two issues and their names.** Husson et al. (2024, §2.2, Fig. 1, after
+Deck & Renard) define the vocabulary the DES-type literature uses:
+
+- the *grey area* is the RANS-to-LES transition zone, where the modelling
+  is "neither one nor the other";
+- *modelled-stress depletion* ("Issue I") is a grey area inside an
+  attached boundary layer, where the RANS eddy viscosity is lost before
+  resolved content is sufficient, weakening the Reynolds stresses and
+  giving a wrong skin friction or even *grid-induced separation*;
+- the *delay in the formation of instabilities* ("Issue II") is the late
+  appearance of resolved turbulence in a free shear layer, caused partly by
+  RANS eddy viscosity advected from upstream into the mixing layer; "the
+  smaller the grey area for mixing layer the better".
+
+Both issues are typical of fine meshes on which the cell size falls below
+$\delta$; isotropic lattice Boltzmann grids, very fine along the wall, make
+DES-type models trigger them "almost systematically" (§1). The ideal
+shielding keeps the whole attached layer in RANS and switches quickly to
+LES in separation; its realization in zonal DES mode 2 (2020) is on the
+[DES page](/methods/detached-eddy-simulation.md). Pan & Zhang (2023)
+motivate DDES by the same grid-induced separation, a "nonphysical separation
+phenomenon induced by Reynolds stress loss" when DES switches to LES on
+grids that do not meet LES requirements
+([Pan & Zhang (2023)](/sources/pan-2023.md), §II.C).
+
 **Numerical dissipation as a source of log-layer mismatch.** In SST-IDDES
 of channel flow at $M_b=0.15$, the same model with a second-order central
 scheme carrying RANS-level fourth-difference dissipation shows a
@@ -558,6 +599,27 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
   DLR strut scramjet and a cavity-stabilized combustor at Mach 2.52 (Tang et
   al. 2022, §3; see
   [flamelet tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)).
+- **Lattice Boltzmann zonal DES.** ZDES mode 2 (2020) in a lattice
+  Boltzmann solver shields a flat-plate boundary layer exactly like RANS
+  on a grid with $\Delta x\approx0.01\delta$, where DDES suffers severe
+  modelled-stress depletion, and reproduces a finite-volume zonal DES of a
+  backward-facing step and the attached layers of a three-element high-lift
+  airfoil (Husson et al. 2024, §4; details on the
+  [DES page](/methods/detached-eddy-simulation.md)).
+- **Centrifugal pump.** SA-based DES and DDES of a stalled centrifugal
+  impeller, compared with a same-grid LES, show no universal winner: DDES
+  closer in vortex patterns, DES in RMS fluctuations and leading-edge
+  pressure (Pan & Zhang 2023, §IV–§V; details on the DES page).
+- **Dynamic-stall onset.** Delayed DES with four RANS and transition
+  closures reproduces the stages of dynamic-stall onset seen in a
+  wall-resolved LES of a pitching NACA 0012 at $Re=2\times10^5$, with
+  slightly earlier stall and lower peak lift (Batther & Lee 2022, §4; see
+  [dynamic stall](/definitions/dynamic-stall.md)). Batther & Lee use a span
+  of $0.1c$, citing Visbal & Garmann's finding that spans of 10% to 120% of
+  the chord do not change the overall features of this ramp-up case
+  (§2.1), whereas Baldan & Guardone find a span above one chord necessary
+  in the stalled downstroke of a sinusoidal cycle (above); Batther & Lee's
+  case is a constant-rate ramp-up to stall onset.
 - **Transitional compressor cascade.** Transitional DDES of the V103
   cascade at $Re=138\,500$ (Möller et al. 2024, §III; see
   [compressor cascades](/benchmarks/compressor-cascade.md) and the
@@ -593,6 +655,12 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
   wrong representation of the flow structures in the wake" (line 526). That
   $25^\circ$ IDDES drag (0.2970) is close to the 0.2990 measured by Meile et
   al. (Table 3).
+- Husson et al. (2024) call zonal DES mode 2 (2020) "the only
+  fully-detailed «automatic» formulation in the open literature" that
+  shields the whole attached boundary layer, on the ground that the
+  shielding of ANSYS's SBES/SDES and the switch of the PowerFLOW
+  lattice-Boltzmann VLES are undisclosed (§1); the claim concerns open
+  documentation, not a comparison of performance.
 - Bouhafid et al. (2024) state in the abstract that atmospheric turbulence
   and stratification "both accelerate the vortex decay", and in §4.3.1 that
   atmospheric turbulence intensity "does not seem to significantly impact
@@ -629,3 +697,6 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §1, §2.3 Eqs. 11–16, §3.2–§3.3 Table 1.
 - [Yang & Ma (2022)](/sources/yang-2022-b.md) — §1, §3.1 Figs. 4–5, §3–§4.
 - [Tang et al. (2022)](/sources/tang-2022.md) — §2.1 Eqs. 1–9, 14, §3.
+- [Husson et al. (2024)](/sources/husson-2024.md) — §1, §2.2 Fig. 1, §4, §5.
+- [Batther & Lee (2022)](/sources/batther-2022.md) — §1, §2.1, §4, §4.5.
+- [Pan & Zhang (2023)](/sources/pan-2023.md) — §II.C, §IV–§V.

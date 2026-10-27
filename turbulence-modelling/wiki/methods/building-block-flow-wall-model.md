@@ -5,7 +5,7 @@ description: "Supervised wall-stress model for wall-modelled LES that classifies
 status: established
 aliases: [BFWM, building-block flow wall model, machine-learning building-block-flow wall model]
 tags: [wall-model, wmles, data-driven, neural-network]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-27T05:47:00Z
 ---
 
 # Building-block-flow wall model
@@ -241,7 +241,14 @@ optimal" (§5(5), §6).
 
 Each network took about 12 h to train on four A100 GPUs (40 GB); WMLES with
 the BFWM costs 1.1–1.3 times the same solver with the algebraic equilibrium
-model, without optimization of the implementation (§2.6).
+model, without optimization of the implementation (§2.6). For scale,
+[Nuca et al. (2025)](/sources/nuca-2025.md) (§VI), who cite the model
+(their ref. 8) among recent machine-learning wall models, measure the
+wall-model share of an OpenFOAM WMLES of an airfoil near stall at about 2 %
+of the run time with Newton-iterated algebraic laws and 11.9 % with an
+integrated equilibrium ODE (see
+[equilibrium wall model](/methods/equilibrium-wall-model.md)); the solvers
+and cases differ, so no ratio to the figure above is formed here.
 
 ## Qualifications
 
@@ -275,3 +282,4 @@ model, without optimization of the implementation (§2.6).
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §I.
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — §IV.B (arXiv v1).
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — §1 (arXiv v2).
+- [Nuca et al. (2025)](/sources/nuca-2025.md) — §I; §VI.

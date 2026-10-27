@@ -5,7 +5,7 @@ description: "Large-eddy simulation resolves the filtered velocity and models th
 status: established
 aliases: [LES, filtered Navier–Stokes equations, subgrid-scale stress, SGS stress, subfilter stress, coarse-grained equations]
 tags: [les, filtering, sgs-model, compressible]
-timestamp: 2026-10-26T20:50:00Z
+timestamp: 2026-10-27T06:13:00Z
 ---
 
 # Large-eddy simulation: filtering and the subgrid-scale stress
@@ -128,8 +128,8 @@ width $\Delta_f$ (page-local, the paper's $\delta_f$). The kernel is truncated b
 fluid indicator and **not rescaled**: the filtered indicator, a fluid
 volume fraction $\varphi_f$ (page-local, the paper's $\alpha_f$; $\tfrac12$ at a planar wall for any
 symmetric kernel), carries the deficit, and filtered quantities extend
-$\Delta_f/2$ into the solid. Exact commutation identities, recalled from
-Dave, Herrmann & Kasbaoui (2023, as cited), turn the wall terms into
+$\Delta_f/2$ into the solid. Exact commutation identities, which they cite from
+Dave, Herrmann & Kasbaoui (2023), turn the wall terms into
 surface integrals. The filtered momentum equation then contains two
 unclosed terms, the subfilter stress (the registry's $\tau_{ij}$, full
 tensor, positive convention, Eq. 2.20) and an immersed-boundary body force,
@@ -184,6 +184,17 @@ volume integral of $\Pi$ when the stress enters the momentum equation as
 $-\partial_j\tau_{ij}$, as in their Eq. 1 *(compiler check, not in the
 sources)*) and a subgrid flux through the subdomain surface. The residual
 of its discrete form measures the [numerical dissipation](/properties/numerical-dissipation.md).
+
+In compressible LES the filtered total energy contains the subgrid kinetic
+energy: Volpiani (2024, §2.1, Eq. 4), citing Kosović et al.,
+writes $\bar\rho\tilde e=\bar p/(\gamma-1)+\tfrac12\bar\rho\tilde u_i\tilde u_i+\tfrac12\tau_{kk}$
+($\tilde e$ the Favre-filtered total specific energy, page-local), and
+notes that the last term "is usually neglected", which leaves the equation
+of state unchanged. Valencia et al. (2026, §II B, Eq. 14) likewise take the
+filtered equation of state as $p(\bar\phi)=\bar\rho R\tilde T$ ($R$ the
+gas constant, page-local) and set the filtered pressure, viscous and
+heat-conduction terms equal to their values at the filtered state, an error
+they call "negligible" (citing their refs. 33 and 38).
 
 ### Sign conventions in the sources
 
@@ -255,6 +266,16 @@ Further sources split the same way.
     $+\partial_j\tau_{ij}$ on the right-hand side and do not define
     $\tau_{ij}$, so its sign convention is opposite to the registry's or
     unstated.
+  - [Pan & Zhang (2023)](/sources/pan-2023.md) (§II.D, Eqs. 12–14) also
+    add $+\partial_j\tau_{ij}$ without defining $\tau_{ij}$, and close it
+    as $\tau_{ij}-\tfrac13\tau_{kk}\delta_{ij}=+2\nu_t\bar S_{ij}$: minus
+    the registry's stress.
+- **Compressible, positive.** [Valencia et al. (2026)](/sources/valencia-2026.md)
+  (§II B, Eqs. 15–16) use the full density-weighted tensor
+  $\overline{\rho u_iu_j}-\bar\rho\tilde u_i\tilde u_j$, the registry's
+  Favre form, entering as $-\partial_j\tau_{ij}$. [Volpiani (2024)](/sources/volpiani-2024.md)
+  (§2.1) subtracts the subgrid stress from the resolved viscous stress in
+  the viscous flux, the registry's sign, without printing its definition.
 
 ## Filters and filter widths
 
@@ -430,10 +451,68 @@ LES is approximated by the super-Gaussian above.
 | [Jakhar et al. (2026)](/sources/jakhar-2026.md), p. 3 | twice the LES grid spacing (Gaussian filter) |
 | [Wu & Lele (2026)](/sources/wu-2026.md), §3.2.1 | 16 or 32 DNS spacings ($\Delta/\eta\approx35$ and 70), equal to the LES spacing a posteriori |
 | [Tang et al. (2022)](/sources/tang-2022.md), §2.1 | "box-filter width", definition not stated |
+| [Volpiani (2024)](/sources/volpiani-2024.md), App. 2 | $(\Delta x\Delta y\Delta z)^{1/3}$, test filter twice that |
+| [Valencia et al. (2026)](/sources/valencia-2026.md), §V A | explicit Gaussian filter of width $\Delta=1$, 2 or 4 grid spacings $h$ (filter-to-grid ratio), on a grid itself top-hat filtered at $h$ |
+| [Pan & Zhang (2023)](/sources/pan-2023.md), §II.B–D | "grid filter scale", not defined beyond the DES grid length $\max(\Delta x,\Delta y,\Delta z)$ of the same paper |
 
 In implicitly filtered LES the filter width and the grid spacing $h$
 coincide approximately, $h\approx\Delta$, whereas in explicitly filtered LES
 they are chosen independently (Beck & Kurz 2023, §I).
+
+### Explicitly filtered LES and the filter-to-grid ratio
+
+Volpiani (2024, §1) lists the trade-off as reported in the works cited there:
+implicit filtering, embedded in the scheme, uses the full grid
+resolution and costs nothing, but its size and shape are hard to
+determine; an explicit filter applied to the discrete solution has a known
+shape and width, separates the numerical errors near the mesh cutoff from
+the physics, and converges when its width is held fixed as the mesh is
+refined (Radhakrishnan & Bellan), but needs a finer grid (Lund) and lowers
+the effective resolution, hence optimized filters. Volpiani's own explicitly
+filtered runs apply a relaxation filter to the solution (see
+[explicit modal filtering](/methods/explicit-modal-filtering.md) and
+[implicit LES](/definitions/implicit-les.md) for the two axes of the
+terminology).
+
+Valencia et al. (2026, §II C, Eqs. 17–29) write the explicitly filtered
+LES equations of Radhakrishnan & Bellan (as cited there) in compressible
+form. The nonlinear advective terms are explicitly filtered, so the
+momentum equation carries $\partial_j\overline{\bar\rho\tilde u_i\tilde u_j}$
+in place of $\partial_j(\bar\rho\tilde u_i\tilde u_j)$, and the unclosed
+stress becomes $\tau^{\mathrm{ef}}_{ij}=\overline{\rho u_iu_j}-\overline{\bar\rho\tilde u_i\tilde u_j}$
+(page-local), with the analogous heat flux; substituting it recovers the
+classical filtered equations. With the grid projection written as a
+second, implicit filter and assumed to commute with the explicit one, the
+total unresolved stress is the sum of a grid-truncation part, which
+deconvolution cannot recover, and a subfilter part between grid and
+explicit filter, which it can,
+$\tau^{\mathrm{tot}}_{ij}=\tau^{\mathrm{gr}}_{ij}+\tau^{\mathrm{sf}}_{ij}$
+(page-local; see
+[scale-similarity model](/methods/scale-similarity-model.md)). The
+grid-truncation part "can be neglected only when its magnitude is
+significantly smaller" than the subfilter part.
+
+Their a priori data (decaying compressible isotropic turbulence, $512^3$
+DNS) quantify the split:
+
+- **Grid filter alone** (Table III). Top-hat filtering and downsampling
+  keep 99.7%, 98.7%, 95%, 83.6% and 59.1% of the kinetic energy at
+  $h/h_{\mathrm{DNS}}=2$, 4, 8, 16, 32 ($256^3$ to $16^3$; $h_{\mathrm{DNS}}$
+  page-local).
+- **Explicit filter on top** (Table IV). On a given grid the
+  grid-truncation energy hardly depends on the filter-to-grid ratio
+  $\Delta/h$, while the subfilter energy grows with it; at $\Delta/h=1$ the
+  subfilter energy is below the grid-truncation energy, from $\Delta/h=2$
+  on it exceeds it. At equal explicit width $\Delta=16h_{\mathrm{DNS}}$,
+  15–20% of the energy is unresolved: at $\Delta/h=4$ ($128^3$) 92% of it
+  is subfilter, at $\Delta/h=2$ ($64^3$) 72%, at $\Delta/h=1$ ($32^3$)
+  about 3.5% (§V B).
+- **Spectra** (Fig. 3). Explicit filtering does not move the grid cutoff
+  $k_c\approx\pi/h$; it damps energy below it, and at $\Delta/h=1$ the
+  spectrum essentially overlaps the implicit-LES one.
+
+They conclude that the filter-to-grid ratio is the decisive parameter of a
+closure's accuracy in explicitly filtered LES (§VI).
 
 ### High-aspect-ratio cells
 
@@ -628,8 +707,21 @@ and place their implicit-LES meshes between these and DNS.
 In forced two-dimensional turbulence Jakhar et al. (2026, p. 4) find
 their gradient-type closures long-term stable only when the LES resolves
 more than 80% of the DNS enstrophy, and compare this with the 3-D rule,
-recalled from Pope, that LES should resolve at least 80% of the kinetic
+which they cite from Pope, that LES should resolve at least 80% of the kinetic
 energy (see [gradient model](/methods/gradient-model.md)).
+[Pan & Zhang (2023)](/sources/pan-2023.md) (§III.B, Eq. 23, Fig. 6)
+evaluate the modelled fraction $k_{\mathrm{sgs}}/(k_{\mathrm{res}}+k_{\mathrm{sgs}})$
+of their impeller LES: largest in the separated shear layers at the blade
+leading edges and "rather small" in the through-flow. They justify it by
+a statement they attribute to Pope (2000): "the modeled turbulent kinetic
+energy could reach as high as 80% of the overall fluctuating kinetic
+energy". The two attributions to Pope are recorded as printed by each
+source; Pan & Zhang do not define $k_{\mathrm{sgs}}$.
+[Ahn et al. (2023)](/sources/ahn-2023.md) (§IV C 1, Fig. 12) take a
+velocity spectrum following the $-5/3$ slope "for about one order of
+magnitude" in the jet shear layer as a sign that their implicit LES grid
+resolves a large part of the inertial range, with a rapid drop at high
+Strouhal number marking the grid and scheme limit.
 The grid counts needed for wall-resolved and
 wall-modelled LES are on [LES grid-point requirements](/results/les-grid-point-requirements.md),
 and the near-wall alternative on [wall-modelled LES](/methods/wall-modelled-les.md).
@@ -681,6 +773,13 @@ chord size occur. Results obtained with the spans of 0.1 to 0.2 chord
 reported in the literature "can be accepted only in the attached flow
 region" (§3; the introduction quotes 5% to 20% of the chord). See
 [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md).
+
+In element methods the same targets are quoted per element and degree:
+[Gao et al. (2022)](/sources/gao-2022.md) (§5.1, Table 2) run their
+wall-resolved DGSEM LES of a Mach 2 boundary layer with $N=6$ and
+$\Delta x^+=30$, $\Delta y^+_{\min}=1.6$, $\Delta z^+=16$ at the reference
+station, "in combination with $N=6$", without saying whether the
+spacings are per element or per degree of freedom.
 
 **Very coarse LES.** [Maejima & Kawai (2025)](/sources/maejima-2025.md)
 (§1, §4.1, §5.3) define very-coarse-grid LES as LES in which even the
@@ -864,6 +963,18 @@ than the LES one; see
 The wall-resolved DG implicit LES of the T161 turbine cascade by
 [Morsbach et al. (2024)](/sources/morsbach-2024.md) plays the same role for
 SST and Reynolds-stress closures with a transition model.
+[Batther & Lee (2022)](/sources/batther-2022.md) (§2.1, §4.2.1, §4.5)
+take the wall-resolved LES of Visbal & Garmann (74 million points,
+"several million CPU hours" for such LES, as they state) of a NACA 0012
+pitching up at $Re_c=2\times10^5$ as the reference for
+[delayed detached-eddy simulation](/methods/detached-eddy-simulation.md)
+with transition models, on a grid of about 22% of its points (see
+[dynamic stall](/definitions/dynamic-stall.md)); their time-step statements
+disagree, "one order of magnitude larger" than the LES step (§2.1)
+against "roughly 8%" of it (§4.5). [Pan & Zhang (2023)](/sources/pan-2023.md)
+(§III–IV) rank DES against DDES by their closeness to a dynamic-Smagorinsky
+LES run on the same grid, whose own comparison with PIV shows "remarkable
+discrepancy" (§III.C).
 
 Learned closures sharpen the a priori question. An a priori-trained
 network of Sirignano & MacArt (2023, §5, Figs. 11–12) fits the subgrid
@@ -1028,3 +1139,9 @@ flow problems", citing their 2023 study and Fernandez et al.; see
 - [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §2.1–2.3, Eqs. (2.3)–(2.27); §3.1, Eqs. (3.1)–(3.2); §3.3, Fig. 10; §4.2; §5, Eqs. (5.1)–(5.3); §7.
 - [Tang et al. (2022)](/sources/tang-2022.md) — §2.1, Eqs. (1)–(9); §2.2, Eqs. (15)–(17); §4.
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1; §2.1, Eqs. (2.1)–(2.2); §3, Eqs. (3.1)–(3.4), Fig. 1; §3.2.1; §3.2.2, Fig. 4; §3.3.
+- [Valencia et al. (2026)](/sources/valencia-2026.md) — §II B–C, Eqs. (14)–(29); §V A–B, Tables III–IV, Fig. 3; §VI.
+- [Volpiani (2024)](/sources/volpiani-2024.md) — §1; §2.1, Eq. (4); App. 2.
+- [Pan & Zhang (2023)](/sources/pan-2023.md) — §II.B–D, Eqs. (12)–(14); §III.B–C, Eq. (23), Figs. 6, 8; §IV.
+- [Ahn et al. (2023)](/sources/ahn-2023.md) — §IV C 1, Fig. 12.
+- [Batther & Lee (2022)](/sources/batther-2022.md) — §2.1; §4.2.1; §4.5.
+- [Gao et al. (2022)](/sources/gao-2022.md) — §5.1, Table 2.

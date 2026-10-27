@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "NACA 0012 airfoil"
-description: "The symmetric NACA 0012 airfoil, static at chord Reynolds numbers of 1 to 6 million from attached incidence to 45° and transonic at Mach 0.804, and pitching in deep dynamic stall at 135,000: a validation case of RANS discretizations and near-wall treatments, of data-driven RANS corrections, and of the span of wall-resolved LES."
+description: "The symmetric NACA 0012 airfoil, static at chord Reynolds numbers of 1 to 6 million from attached incidence to 45° and transonic at Mach 0.804, and pitching into dynamic stall at 135,000 and 200,000: a validation case of high-order RANS discretizations, near-wall treatments and data-driven corrections, and of LES and DDES of dynamic stall."
 status: established
 aliases: [NACA0012, NACA 0012, NACA-0012]
-tags: [benchmark, rans, hybrid-rans-les, les, data-driven, immersed-boundary, dg, separated-flow]
-timestamp: 2026-10-26T20:47:00Z
+tags: [benchmark, rans, hybrid-rans-les, les, data-driven, immersed-boundary, dg, separated-flow, des, transition]
+timestamp: 2026-10-27T06:07:00Z
 ---
 
 # NACA 0012 airfoil
@@ -23,8 +23,9 @@ the compilation of McCroskey. In this bundle the static airfoil validates
 discretizations and near-wall treatments of RANS and hybrid RANS/LES, and
 is a non-regression test of data-driven RANS corrections: an attached flow
 that a correction trained on separated flows must not spoil. The pitching
-airfoil in deep dynamic stall tests wall-resolved LES and its spanwise
-domain size.
+airfoil tests wall-resolved LES and its spanwise domain size in deep
+[dynamic stall](/definitions/dynamic-stall.md), and DDES with transition
+closures in the onset of dynamic stall under a constant-rate pitch-up.
 
 ## Configurations in the sources
 
@@ -58,6 +59,29 @@ High-order RANS discretizations of the $k$-$\omega$ family
 | Discretization | hybridizable DG, degree $N=3$ triangles | modal DG, $N=1$ to 6 |
 | Grid | first element at $y^+=2$, clustered at leading and trailing edges, $x^+<3$ at the trailing edge | hybrid meshes (hexahedra in the boundary layer, prisms outside), far field at $50c$; wall-resolved reference of 6535 elements with 200 on the airfoil; meshes with first-element height $y_1^+$ up to 320 |
 | Reference | Ladson ($C_p$); NASA TMR SST ($C_f$) | the wall-resolved $N=6$ solution; FUN3D $k$-$\omega$ (NASA TMR); Ladson, Gregory & O'Reilly, Abbott & von Doenhoff |
+
+High-order Spalart–Allmaras and $k$-$\tau$ discretizations
+([Huang et al. (2022b)](/sources/huang-2022-d.md), §2.5, §3.2;
+[Lodares et al. (2022)](/sources/lodares-2022.md), §7.4;
+[Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §3.4):
+
+| Item | Huang et al. (2022b) | Lodares et al. (2022) | Tomboulides et al. (2025) |
+|---|---|---|---|
+| Flow | $Re_c=2.88\times10^6$, $M=0.15$, $\alpha=15^\circ$, steady | $Re_c=6\times10^6$, $M=0.15$, $\alpha=0^\circ$, $10^\circ$, $15^\circ$, steady | $Re_c=6\times10^6$, $M=0.15$ (Ladson), $\alpha=0^\circ$, $10^\circ$ |
+| Model | standard [Spalart–Allmaras](/methods/spalart-allmaras-model.md) with the exponential-decay positivity treatment of $\tilde\nu$ | Spalart–Allmaras with a negative-$\tilde\nu$ variant and clipped diffusion coefficient | [$k$-$\tau$ model](/methods/k-tau-model.md) and the authors' regularized $k$-$\omega$ |
+| Discretization | cell-centred finite volumes with compact variational reconstruction, second order (O2) and fourth order (O4), implicit LU-SGS | entropy-stable split-form [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) (Pirozzoli flux), $N=2$–6, implicit pseudo-transient solver | [spectral elements](/methods/spectral-element-method.md) in [Nek5000](/software/nek5000.md), $p=5$ and 7 |
+| Grid | C-meshes of 11,880, 20,816 and 33,150 cells, first layer $5\times10^{-6}c$ (O2 also on 143,700 cells) | coarsest NASA TMR family-II grid ($113\times33$, 65 points on the airfoil) with quadratic edges | 5974 elements, average $y^+<1$ |
+| Reference | Gregory & O'Reilly, $C_L=1.526$ | finite-volume solution of the NASA TMR on the $897\times257$ grid | Ladson (forces), Gregory & O'Reilly and Ladson ($C_p$), CFL3D and FUN3D with SA, SST and $k$-$\omega$ |
+
+Dynamic stall under a constant-rate pitch-up
+([Batther & Lee (2022)](/sources/batther-2022.md), §2, §4): $Re_c=2\times10^5$,
+$M=0.10$, blunt trailing edge, span $0.1c$, periodic; DDES with four RANS
+and transition closures in OVERFLOW 2.3 on an $811\times200\times100$ O-grid
+(16 million points), upper-surface $y^+\approx0.4$; the reference is the
+wall-resolved LES of Visbal and Garmann (74 million points) as cited, with
+no experimental dynamic data. A static 2D RANS at $Re_c=10^6$, $M=0.10$
+on the same point count validates the grid against the measurements of
+Hristov and Ansell that they cite (§4.1, Fig. 3).
 
 ## What the case tests
 
@@ -141,6 +165,81 @@ incipient separation from $x/c=0.72$ that reattaches only at the trailing
 edge; the wall function avoids the $C_f$ under-estimation it shows in the
 recirculation of the [backward-facing step](/benchmarks/backward-facing-step.md),
 which the authors attribute to the smaller recirculation.
+
+**High-order Spalart–Allmaras at $15^\circ$.** [Huang et al. (2022b)](/sources/huang-2022-d.md),
+§3.2, run the airfoil at $15^\circ$ to compare their fourth-order
+finite-volume scheme with the second-order one on three C-meshes. The
+second-order scheme predicts a trailing-edge separation bubble on all
+meshes, only slightly smaller on finer grids, and does not converge in lift
+and drag on mesh 3; the fourth-order scheme gives a small bubble on mesh 1
+and none on meshes 2–3, and its $C_p$ curves overlap across grids
+(Figs. 25–29). Lift against the Gregory & O'Reilly value 1.526 (Table 6):
+
+| Scheme, mesh (cells) | $C_L$ | error | relative CPU time |
+|---|---|---|---|
+| O2, 1 (11,880) | 1.183 | 22.48% | 1 |
+| O2, 2 (20,816) | 1.277 | 16.32% | 1.82 |
+| O2, 3 (33,150) | 1.299 | 14.88% | 3.01 |
+| O2, 4 (143,700) | 1.437 | 5.74% | 22.02 |
+| O4, 1 | 1.393 | 8.72% | 1.43 |
+| O4, 2 | 1.499 | 1.77% | 2.75 |
+| O4, 3 | 1.523 | 0.19% | 4.50 |
+
+With the efficiency measure $1/(\text{error}\times\text{CPU time})$ the
+fourth-order scheme gains on refinement (8.0 to 117.0) while the
+second-order one loses (4.4 to 0.79); the finest second-order mesh costs
+eight times the CPU time of fourth-order mesh 2 for a larger error
+(§3.2, Fig. 30). The same case, at CFL 20, shows where their exponential-decay
+procedure acts: cells where the predicted $\tilde\nu$ would turn negative
+lie near the outer edge of the boundary layer and move downstream as the
+solution converges, and none remain near convergence (§2.5, Figs. 15–18);
+see [Spalart–Allmaras model](/methods/spalart-allmaras-model.md).
+
+**Entropy-stable DG with Spalart–Allmaras.** [Lodares et al. (2022)](/sources/lodares-2022.md),
+§7.4, Table 2, run the TMR case on the coarsest grid with polynomial
+degrees $N=2$ to 6 and find lift and drag converging toward the reference
+as $N$ rises; at $N=6$:
+
+| $\alpha$ | $C_L$ DGSEM / reference | $C_D$ DGSEM / reference |
+|---|---|---|
+| $0^\circ$ | — | 0.00813 / 0.00819 (for all $N$) |
+| $10^\circ$ | 1.0894 / 1.0909 | 0.01250 / 0.01231 |
+| $15^\circ$ | 1.5502 / 1.5461 | 0.02144 / 0.02124 |
+
+The implicit solver reaches CFL numbers near $10^{12}$ by switched
+evolution relaxation (§6, Fig. 1); see
+[entropy conservation](/properties/entropy-conservation.md).
+
+**The $k$-$\tau$ model in spectral elements.** [Tomboulides et al. (2025)](/sources/tomboulides-2025.md),
+§3.4, Tables 3–4, set $k=\tau_t=0$ at the inlet ($\tau_t=1/\omega$, page-local: the turbulent time scale) and use the free-stream
+limiter of their [$k$-$\tau$ model](/methods/k-tau-model.md), which they call
+"imperative" for external flows; $p=5$ and $p=7$ differ by less than 0.1%
+in every reported value.
+
+| Solution | $C_D$, $0^\circ$ | $C_D$, $10^\circ$ | $C_L$, $10^\circ$ |
+|---|---|---|---|
+| $k$-$\tau$ (Nek5000) | 0.00831 | 0.01381 | 1.0618 |
+| regularized $k$-$\omega$ (Nek5000) | 0.00835 | — | — |
+| CFL3D SA / SST / $k$-$\omega$ | 0.008190 / 0.008090 / 0.00854 | 0.01231 / 0.01236 / 0.01259 | 1.0909 / 1.0778 / 1.0958 |
+| FUN3D SA / SST / $k$-$\omega$ | 0.008120 / 0.008160 / 0.00837 | 0.01242 / 0.01253 / 0.01297 | 1.0983 / 1.0840 / 1.1012 |
+| experiment | 0.0081 | 0.012 | 1.075 |
+
+At $10^\circ$ the $k$-$\tau$ model over-predicts drag and under-predicts lift,
+whereas the NASA codes over-predict both; its lift error is smaller than
+that of the standard $k$-$\omega$ in either NASA code. $C_p$ agrees with
+Gregory & O'Reilly and Ladson at both angles (Fig. 16).
+
+**Dynamic-stall onset in DDES.** In the constant-rate pitch-up of
+[Batther & Lee (2022)](/sources/batther-2022.md), DDES with
+SST Langtry–Menter, SA Medida–Baeder, SA amplification-factor-transport
+and fully turbulent SA closures reproduces the LES sequence of
+leading-edge laminar separation bubble, its bursting near $16.9^\circ$ and
+the formation of the dynamic-stall vortex, but stalls slightly earlier
+with a slightly lower peak lift; the amplification-factor-transport model
+is closest to the LES (§4.2–§4.5, Figs. 14–22). Grids 2 and 3 give similar
+loads and stall inception, grid 1 stalls early, and all three underpredict
+the LES peak lift (§4.2.1, Fig. 4). The stages and the stall type are on
+[dynamic stall](/definitions/dynamic-stall.md).
 
 **Massive separation at $45^\circ$.** [Mozaffari et al. (2024)](/sources/mozaffari-2024.md),
 §3.2, Table 2, after 234 flow-through times with 110 averaged:
@@ -255,11 +354,26 @@ leading edge as well (the $C_f$ peak at $y_1^+=320$ in
 [Ghidoni et al. (2026)](/sources/ghidoni-2026.md)) and, for the
 discretization itself, in the wake (the $\omega$ oscillations of
 [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md)).
+Of the three Spalart–Allmaras and $k$-$\tau$ studies, only
+[Huang et al. (2022b)](/sources/huang-2022-d.md) compare a high-order with
+a second-order scheme on this airfoil: a fourth-order lift error of 0.19%
+on 33,150 cells against 5.74% for the second-order scheme on 143,700
+(Table 6). [Lodares et al. (2022)](/sources/lodares-2022.md) report forces
+converging toward the reference on the coarsest TMR grid as $N$ rises
+(Table 2), and [Tomboulides et al. (2025)](/sources/tomboulides-2025.md)
+forces that change by less than 0.1% between $p=5$ and 7 (§3.4). Each
+treats the sign of its turbulence variable: Huang et al. by their
+exponential-decay procedure for negative $\tilde\nu$, which they observe
+at the outer edge of the boundary layer (§2.5), Lodares et al. by a
+negative-$\tilde\nu$ model variant (§2), and Tomboulides et al. by
+transporting $\tau_t=1/\omega$ to avoid the near-wall singularity of
+$\omega$ (§1–§2).
 
 ## Qualifications
 
-- The configurations differ in Reynolds number ($1.35\times10^5$, $10^6$,
-  $3\times10^6$, $4.09\times10^6$, $6\times10^6$) and reference ($C_p$ and forces of experiments, a
+- The configurations differ in Reynolds number ($1.35\times10^5$,
+  $2\times10^5$, $10^6$, $2.88\times10^6$, $3\times10^6$,
+  $4.09\times10^6$, $6\times10^6$) and reference ($C_p$ and forces of experiments, a
   body-fitted computation); no source compares its errors with another's.
 - [Constant et al. (2024)](/sources/constant-2024.md) print a lift error
   of 5.6% for the non-adapted solution in Table 3, while the table's own
@@ -295,6 +409,28 @@ discretization itself, in the wake (the $\omega$ oscillations of
   [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) ("accurate
   predictions of lift, drag", §6) rest on plots without error metrics.
 
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) print an O2 mesh-4
+  lift error of 5.74% (Table 6), while their $C_L=1.437$ and 1.526 give
+  5.83%; the printed efficiency 0.791 follows from 5.74% *(compiler check,
+  not in the sources)*. They call mesh 4 "an even smaller mesh", though it
+  has the most cells.
+- [Lodares et al. (2022)](/sources/lodares-2022.md) label their reference
+  "FUN3D, 897×257" in Table 2 and "CFL3D, 897 x 257 grid" in the Fig. 10
+  legends. Their $\alpha=0^\circ$ and $10^\circ$ reference values
+  (0.00819; 1.0909, 0.01231) coincide with the CFL3D Spalart–Allmaras values
+  that [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) list
+  (Tables 3–4), not with their FUN3D ones *(compiler check, not in the
+  sources)*.
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) call their
+  $10^\circ$ drag a slight over-prediction; 0.01381 against the
+  measured 0.012 is 15.1% high, against at most 8.1% for the NASA-code
+  values (FUN3D $k$-$\omega$, 0.01297) *(compiler check, not in the
+  sources)*. They cite Freeman and Roy (2014)
+  for the CFL3D and FUN3D values in Table 3 and Jespersen et al. (2016) in
+  Table 4.
+- [Batther & Lee (2022)](/sources/batther-2022.md) do not name the
+  turbulence model of their static validation run (§4.1).
+
 # Citations
 
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §5.2, Table 5-1, Figs. 5-4–5-6; §5.3, Figs. 5-9–5-11.
@@ -306,3 +442,7 @@ discretization itself, in the wake (the $\omega$ oscillations of
 - [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §5.4, Figs. 28–36.
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §4.4, Figs. 13–14.
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — arXiv v2: Introduction; §1.1–1.2, Eq. 1, Tables 1–2; §2.1, Figs. 3–8; §2.2, Fig. 9; §3.
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.5, Table 4, Figs. 15–18; §3.2, Tables 5–6, Figs. 25–30.
+- [Lodares et al. (2022)](/sources/lodares-2022.md) — §6, Fig. 1; §7.4, Table 2, Figs. 9–10.
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.4, Tables 3–4, Figs. 13–16.
+- [Batther & Lee (2022)](/sources/batther-2022.md) — §2.1–2.2, Tables 1–2; §4.1, Fig. 3; §4.2–§4.5, Figs. 4–22.

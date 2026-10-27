@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "k-ω SST model"
-description: "Menter's two-equation shear-stress-transport eddy-viscosity model, blending a k-ω inner formulation with an outer one through F1 and limiting the eddy viscosity through F2; its equations, constants and printed variants, its transition, PANS, DES and compressibility-corrected forms, high-order discretization, data-driven corrections, and evidence on airfoils, cascades, cars, separated flows and its transported k."
+description: "Menter's two-equation shear-stress-transport eddy-viscosity model, blending a k-ω inner formulation with an outer one through F1 and limiting the eddy viscosity through F2; its printed variants, log-ω, transition, PANS, DES and compressibility-corrected forms, high-order discretization, data-driven corrections, and evidence on airfoils, cascades, cars and separated flows."
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T06:13:00Z
 ---
 
 # k-ω SST model
@@ -141,6 +141,45 @@ production is limited by $15\beta^*\omega k$ for all their models
 ([Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §3.1.1 Eq. 55,
 §3.2, Eq. 71; see Qualifications for $\beta_1$ and $a_1$). Their blending
 functions evaluate $\omega$ through the interpolant of $1/\omega$ (§3.2).
+
+**A log-$\omega$ form for flux reconstruction.** Vandenhoeck et al. (2022)
+rewrite the SST-2003 model with $\tilde\omega_\ell=\ln\omega$ as unknown
+(page-local symbol, as on the [Wilcox page](/methods/k-omega-model.md); the
+source writes $\tilde\omega$, which is not a Favre filter), extending to SST
+the log-$\omega$ transport that Bassi et al. (2005) introduced for the
+Wilcox model in DG ([Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md),
+§1.1, Eqs. 1–20, Table 1). In their compressible form the $\omega$ equation
+divided by $\omega$ reads
+
+$$\partial_t(\rho\tilde\omega_\ell)+\partial_j(\rho u_j\tilde\omega_\ell)=\frac{\rho\alpha}{\mu_t}e^{-\tilde\omega_\ell}\rho P_k-\beta\rho e^{\tilde\omega_\ell}+(\mu+\sigma_\omega\mu_t)\lvert\nabla\tilde\omega_\ell\rvert^2+\partial_j\big[(\mu+\sigma_\omega\mu_t)\partial_j\tilde\omega_\ell\big]+2(1-F_1)\rho\sigma_{\omega2}e^{-\tilde\omega_\ell}\partial_jk\,\partial_j\tilde\omega_\ell,$$
+
+with, against the Wilcox log form of Bassi et al., two new terms: the
+transformed SST cross diffusion (their Eq. 17) and the gradient-squared
+term from transforming the diffusion (Eq. 18). The rest is the SST of the
+Equations section in $e^{\tilde\omega_\ell}$: $F_1$, $F_2$ and
+$CD_{k\omega}$ with $\beta^*$ (floor $10^{-10}$), the limiter
+$\mu_t=\rho a_1k/\max(a_1e^{\tilde\omega_\ell},\lvert S\rvert F_2)$ on the
+strain magnitude, the production limited by $10\beta^*\rho k e^{\tilde\omega_\ell}$,
+$k$ replaced by $\max(k,0)$ in the sources (needed only in the initial
+transient), and the constants $\alpha=(5/9,0.44)$, $\sigma_k=(0.85,1.0)$,
+$\sigma_\omega=(0.5,0.856)$, $\beta=(0.075,0.0828)$, $\beta^*=0.09$,
+$a_1=0.31$, those of Oulghelou et al. above. The authors state that with
+the original variable the steep near-wall growth of $\omega$ resolved by
+high-order polynomials made the solver unstable and lost the positivity of
+$\omega$, while $\ln\omega$ is much smoother near the wall and guarantees
+$\omega>0$; the equation is conservative in $\tilde\omega_\ell$ but not in
+$\omega$, which Bassi et al. found to cause no significant discrepancy
+(§1.1). The wall condition is
+$\tilde\omega_\ell=\ln\big(60\mu/(\rho\beta_1d_1^2)\big)$ with $d_1$ the
+wall distance of the first solution point, which should be zero in theory
+(§3.3.1, Eq. 88): the Dzanic et al. value in logarithmic form, with the
+first-point distance in place of the element height over $N+1$
+*(compiler check, not in the sources)*. Coupled to the Langtry–Menter
+transition model, $F_1=\max(F_{1,\mathrm{SST}},F_3)$ with
+$F_3=\exp\big[-(R_y/120)^8\big]$ (Eq. 38; see Contradictions; this Langtry–Menter $F_3$, which both sources write with that name, is a different function from the optional SST $F_3$ above). Their
+implicit Jacobian, its source-term treatments and the COOLFluiD
+implementation are on the [flux-reconstruction](/methods/flux-reconstruction.md)
+and [COOLFluiD](/software/coolfluid.md) pages.
 
 ### Compressibility correction
 
@@ -288,6 +327,10 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
   ([D'Ayer et al. (2026)](/sources/dayer-2026.md), §1, refs. [6]–[8]; HAL
   submitted manuscript).
 
+- **A $k$-$\tau$ successor.** Tomboulides et al. (2025) list an SST
+  version of their [$k$-$\tau$ model](/methods/k-tau-model.md) as the
+  intended basis of a DDES, after Gritskevich et al.
+  ([Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §4).
 - **Transitional DDES.** Möller et al. (2024) couple SST-DDES to the
   one-equation $\gamma$ model by multiplying the production of $k$ by
   $\gamma$ and the DDES destruction by $\max(0.1,\gamma)$
@@ -589,6 +632,36 @@ operational role and need not match their DNS counterparts
   resolves; both agree with the measured midspan isentropic Mach number
   except near the suction-side shock (Yang & Ma 2022, §3.1–§3.2, Figs. 6, 8;
   see [turbine cascades](/benchmarks/turbine-cascade.md)).
+- **Canonical flows against $k$-$\tau$.** Tomboulides et al. (2025) use
+  OpenFOAM's SST (version 12, simpleFoam, wall $\omega$ from
+  $6\nu/(\beta d^2)$ at $y^+\sim1$) as the finite-volume comparison of
+  their spectral-element [$k$-$\tau$ model](/methods/k-tau-model.md): in a
+  channel at $Re_\tau\approx5200$ it gives $u_\tau=0.0409$ against 0.0415
+  from DNS, the Nek5000 models being closer (§3.1, Table 1); on the
+  Driver–Seegmiller [backward-facing step](/benchmarks/backward-facing-step.md)
+  it reattaches at $6.44$ step heights on the fine grid against $6.26$
+  measured, underpredicts the skin friction, "a known behavior of the SST
+  model"; the authors recall that Menter (1994) reported $6.5$ for SST and $6.4$
+  for $k$-$\omega$ (§3.3). In the NACA 0012 tables they reproduce, SST in
+  CFL3D and FUN3D gives $C_D=0.00809$ and 0.00816 at $0^\circ$, and
+  $C_D=0.01236$, $C_L=1.0778$ and 0.01253, 1.0840 at $10^\circ$, against
+  0.0081, 0.012 and 1.075 measured (§3.4, Tables 3–4).
+- **Transitional dynamic stall.** As the base of the Langtry–Menter
+  transition model inside delayed DES, SST-2003 gives the earliest
+  suction collapse and stall of four RANS closures on a NACA 0012 pitching
+  up at $Re=2\times10^5$, against a wall-resolved LES
+  ([Batther & Lee (2022)](/sources/batther-2022.md), §3.1, §4.3.1, Fig. 17;
+  see [dynamic stall](/definitions/dynamic-stall.md) and the
+  [transition-model page](/methods/local-correlation-based-transition-model.md)).
+- **High-order flux reconstruction.** With the log-$\omega$ SST above,
+  Vandenhoeck et al. (2022) compute Wieghardt's flat plate
+  ($Re_L=1.03\times10^7$) up to $\mathbb P^6$: profiles of all high orders
+  coincide with the measurements, Spalding's law and a DG $\mathbb P^2$
+  Wilcox reference, the $\mathbb P^4$ skin friction lies closer to the
+  experiment than lower orders, and with first-element $y_1^+\simeq25$ the
+  $\mathbb P^5$ and $\mathbb P^6$ solutions match the finer-mesh $\mathbb P^4$
+  one without wall functions (§4.1, Figs. 9–10; see
+  [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)).
 - **Aircraft wake precursor.** Bouhafid et al. (2024) use an SST RANS on an
   adapted mesh as the precursor of a temporal LES of a NACA 0012 wing with a
   jet ([Bouhafid et al. (2024)](/sources/bouhafid-2024.md), §2.2, §3; see
@@ -655,6 +728,19 @@ version read (arXiv v1):
   Barakos print 0.31; the
   paper gives no reason for the value.
 
+## Contradictions
+
+- **Exponent of the Langtry–Menter $F_3$.** *Open.* Menter et al. (2022)
+  print the Langtry–Menter (2009) modification of the SST blending retained
+  in Ansys Fluent as $F_3=\exp[-(R_y/120)^2]$ (§2.1, Eq. 7); Vandenhoeck et
+  al. (2022) print the same named modification of SST-2003-LM2009 as
+  $F_3=\exp[-(R_y/120)^8]$ (§1.2, Eq. 38). Both define
+  $R_y=\rho d\sqrt k/\mu$. The functions agree near the wall and differ in
+  how sharply they switch off around $R_y=120$ *(compiler check, not in
+  the sources)*. Langtry & Menter's 2009
+  paper, not ingested, or a statement that one form is a deliberate
+  implementation variant, would decide it.
+
 # Citations
 
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §2.1 Eqs. 10–17, §3 Eq. 26, App. A.
@@ -689,3 +775,6 @@ version read (arXiv v1):
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §2.3 Eqs. 17–18, §3.2–§3.3 Table 1, Figs. 5, 11.
 - [Yang & Ma (2022)](/sources/yang-2022-b.md) — §2.1 Eqs. 1–5, §3.1–§3.2 Figs. 6, 8.
 - [D'Ayer et al. (2026)](/sources/dayer-2026.md) — §1, refs. [6]–[8] (HAL submitted manuscript).
+- [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §1.1 Eqs. 1–20 Table 1, §1.2 Eq. 38, §3.3.1 Eq. 88, §4.1 Figs. 9–10.
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.1 Table 1, §3.3, §3.4 Tables 3–4, §4.
+- [Batther & Lee (2022)](/sources/batther-2022.md) — §3.1, §4.3.1, Fig. 17.

@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry of the bundle: averaging and filtering, stresses and closures, RANS, wall, element-discretization, data-driven, spectral, MHD and shared page-local symbols, with the sign and normalization conventions fixed here; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-26T20:52:00Z
+timestamp: 2026-10-27T06:13:00Z
 ---
 
 # Notation registry
@@ -249,3 +249,19 @@ that uses one still says what it means.
 | $\varsigma_i$, $C_\sigma$, $\mathcal D_\sigma$ | singular values of the velocity gradient, constant and differential operator of the $\sigma$ model | sigma model, neural-network SGS models |
 | $P_A$, $Q_A$, $R_A$ | invariants of the resolved velocity-gradient tensor | neural-network SGS models, tensor-basis neural network |
 | $t_{\mathrm{run}}$ | run length in flow-through times | grid-point requirements, boundary-layer-conforming grids |
+| $\gamma^{\mathrm T}_k$, $\chi^{\mathrm T}_k$, $\delta^{\mathrm T}_k$, $C_T$, $d_k$ | scale-separated smoothness measure of TENO stencil $k$, its normalized form, the 0/1 cut-off flag, the cut-off threshold and the optimal linear weights (with $\mathrm{IS}_k$, $\mathsf w_k$ above) | WENO/TENO schemes, shock sensors |
+| $\beta_{\mathrm{TH}}$, $\alpha_{\mathrm{TH}}$ | steepness and flux auxiliary of the THINC jump reconstruction | WENO/TENO schemes (TENO-THINC), numerical dissipation |
+| $\chi_f$ | strength of a relaxation or explicit filter (never bare $\chi$, the SA ratio) | explicit modal filtering, large-eddy simulation, implicit LES, low-dissipation schemes |
+| $\tau^{\mathrm{gr}}_{ij}$, $\tau^{\mathrm{sf}}_{ij}$, $\tau^{\mathrm{ef}}_{ij}$, $N_{\mathrm{AD}}$, $\varepsilon_{\mathrm{DD}}$, $N_{\mathrm{st}}$ | grid-truncation and sub-filter parts of the total stress $\tau^{\mathrm{tot}}_{ij}$ of explicitly filtered LES, the explicitly-filtered stress; number of van Cittert terms of approximate deconvolution, limiter of dynamic deconvolution, stencil size of iterative deconvolution (filter-to-grid ratio written $\Delta/h$) | scale-similarity model, large-eddy simulation, a priori and a posteriori testing, energy backscatter, Taylor–Green vortex |
+| $\tau_t$, $\Gamma_k$, $\Gamma_\omega$ | turbulent time scale $1/\omega$ of the $k$-$\tau$ model; diffusivities of the $k$ and $\omega$ ($\tau$) equations | $k$-$\tau$ model, Nek5000, spectral element method |
+| $\Phi_L$, $\chi_\Phi$, $\psi$, $L_{vK}$ | length-scale variable $\sqrt k\,L$ of the $k$-$\sqrt k L$ model, its normalized form and positive surrogate; von Kármán length | scale-adaptive simulation, hybrid RANS/LES |
+| $f_P$, $f_{P2}$, $f_R$, $\mathcal G_{\tilde\nu}$, $\mathcal G_\Omega$ | shielding functions and sensors of ZDES mode 2 (2020) | detached-eddy simulation, lattice Boltzmann method, ProLB |
+| $k_L$, $R_{\mathrm{TRG}}$, $c_\theta$, $\gamma_A$, $\gamma_B$ | laminar kinetic energy; natural-transition transfer term; local $Re_\theta$ calibration constant; intermittency-like onset measures | laminar kinetic energy transition model, ERCOFTAC T3 |
+| $\mathcal E_{\mathrm{SA}}$, $\boldsymbol W_{\mathrm{SA}}$ | entropy function and entropy variables of the entropy-stable SA system | entropy conservation, Spalart–Allmaras model |
+| $L_{\mathrm{sc}}$, $Se_{\mathrm{sc}}$, $k_{Se}$ | scaled interaction length and separation criterion of shock/boundary-layer interactions, and the factor of the latter (the registry's $(\cdot)^*$ is semi-local scaling) | shock/turbulent boundary-layer interaction, FLEXI |
+| $h_n$ | nozzle exit height of a jet (the registry's $h$ is the cell size) | inflow turbulence generation, FW-H analogy, wall-modelled LES |
+| $\tilde\omega_\ell=\ln\omega$ | logarithmic $\omega$ variable of log-$\omega$ formulations | $k$-$\omega$ model, $k$-$\omega$ SST, laminar kinetic energy transition model |
+| $\delta_r$ | boundary-layer thickness at a reference station (shock interaction, synthetic inflow) | Morkovin hypothesis, inflow turbulence generation, shock/turbulent boundary-layer interaction |
+| $d_{\mathrm{IP}}$ | distance of the image (interpolation) point from an immersed wall | immersed boundary methods, RANS wall functions |
+| $\alpha_{\mathrm{KT}}$, $\beta_{\mathrm{KT}}$, $a_s$, $b_s$, $E_D$, $\ell^\pm$ | von Kármán–Taylor constants and shear-source strengths of nearly incompressible MHD transport models; residual energy; Elsasser correlation lengths (not the registry's $\lambda$) | compressible MHD turbulence, critical balance |
+| $C_I$ | Yoshizawa coefficient of the isotropic subgrid stress | Smagorinsky model, explicit modal filtering, Boussinesq hypothesis |

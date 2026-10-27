@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Immersed boundary methods"
-description: "Immersed boundary methods impose walls on non-conforming grids by reconstruction, ghost points, volume penalization or direct forcing; this page covers DNS, LES and RANS variants, stiff penalization by Strang splitting, the Lagrangian weight, wall functions with a modelling height, volume filtering with wall-slip models for LES, Reynolds averaging of penalized flows, and the near-wall errors reported."
+description: "Immersed boundary methods impose walls on non-conforming grids by reconstruction, ghost points, volume penalization or direct forcing; this page covers DNS, LES and RANS variants, stiff penalization by Strang splitting, the Lagrangian weight, wall functions with a modelling height or linearization, volume filtering with wall-slip models for LES, Reynolds averaging of penalized flows, and the near-wall errors reported."
 status: established
 aliases: [IBM, volume penalization immersed boundary method, VP-IBM, fluid resistance, immersed boundary, ghost-point forcing, volume penalization, Brinkman penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing, volume-filtering immersed boundary method, IBMLES, immersed boundary-modelled LES, wall-slip model, slip-length model]
 tags: [immersed-boundary, wall-model, lattice-boltzmann, les, dns, rans]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Immersed boundary methods
@@ -23,7 +23,8 @@ body in a lattice Boltzmann code, rotating blades in a DG code, an
 elastic beam in turbulent cross-flow in a lattice Boltzmann code, DNS and
 neural-network LES of a cylinder wake on a staggered finite-volume mesh
 ([Kim et al. 2024](/sources/kim-2024.md)), hybrid RANS/LES in a lattice
-Boltzmann code ([Mozaffari et al. 2024](/sources/mozaffari-2024.md)) and
+Boltzmann code ([Mozaffari et al. 2024](/sources/mozaffari-2024.md);
+[Husson et al. 2024](/sources/husson-2024.md)) and
 steady wall-function RANS of high-lift aircraft on octree Cartesian grids
 ([Constant et al. 2024](/sources/constant-2024.md)), DNS of a heated
 rough-wall channel in a spectral difference code
@@ -74,6 +75,34 @@ velocity and turbulence quantities of the first off-wall node follow from
 the wall law. They state that, with the isotropic mesh of ProLB, refining
 the grid enough to resolve the boundary layer at high Reynolds number is
 "too expensive", hence the wall model.
+
+**Sharp-interface direct forcing at fluid-side nodes (lattice
+Boltzmann, RANS and hybrid RANS/LES).** Husson et al. (2024, §3.2, Fig. 2,
+Eqs. 40–43) use, in a development branch of ProLB, the method of their
+earlier work (as recalled), which they classify after Kang & Hassan as
+direct forcing with a sharp interface. The forcing nodes are the fluid
+nodes next to the wall, and all their populations are overwritten by the
+equilibrium plus the regularized non-equilibrium part built from the
+reconstructed density, velocity and strain rate (Eq. 40). Through each
+forcing node an interpolation point is placed along the wall normal at the
+fixed distance $d_{\mathrm{IP}}=2.5\Delta y$ (page-local), "to limit local
+scheme staggering, avoiding low-noise streamwise pressure oscillations";
+density and velocity there come from weighted least squares over the eight
+surrounding nodes. Each step (1) interpolates at the interpolation point,
+(2) inverts the wall law there by Newton–Raphson for $u_\tau$, (3) sets the
+forcing-node tangential velocity from the linearized law below (with
+$y_c=d_{\mathrm{IP}}$), its density equal to the interpolated one, its
+normal velocity by linear extrapolation and the Spalart–Allmaras variable
+to $\chi=\kappa y^+$, (4) computes velocity gradients (second-order centred
+where possible, first-order one-sided otherwise, after Degrigny et al.) and
+overwrites the wall-normal gradient of the tangential velocity, in the
+wall frame, by its analytical value, and (5) rebuilds the populations.
+Step 4 is the gradient correction that Cai et al. (2022) also apply (see
+the section on wall models on immersed boundaries below).
+On a flat plate inclined to the lattice the forcing nodes form a
+staircase and the wall normal is not lattice-aligned, which the authors
+note makes wall-normal-gradient sensors harder to evaluate; the hybrid
+RANS/LES shielding still holds there (§4.1.2, Fig. 5).
 
 **Mass source and momentum forcing (staggered finite volume).**
 Kim et al. (2024, §2.1, Eqs. 2.1–2.2) use the immersed boundary method of
@@ -451,6 +480,29 @@ layers and to the LES viscosity in separated ones; see
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md) and
 [wall-modelled LES](/methods/wall-modelled-les.md).
 
+**Linearized wall law below the interpolation point.** Husson et al.
+(2024, §3.1, Eqs. 37–39) impose the analytical Spalart–Allmaras wall law
+of Allmaras & Johnson (as recalled), which they call consistent with the
+buffer layer of the Spalart–Allmaras model (its nine constants printed to
+16 digits; see [law of the wall](/definitions/law-of-the-wall.md)), and
+linearize it below a cut-off $y_c$ after Tamaki et al. (as recalled),
+$u^+(y^+)=u^+(y_c^+)-(y_c^+-y^+)\,\mathrm du^+/\mathrm dy^+(y_c^+)$. The
+motivation is that on coarse grids the steep near-wall gradients of the
+law cannot be captured and cause oscillations and wrong $C_f$; removing the
+nodes nearest the wall by a distance threshold, as others do, leaves too
+few nodes in thin layers. The momentum deficit of the linear profile is
+offset by a constant eddy viscosity below $y_c$, obtained by replacing, for
+$d<y_c$, the damping function by
+$f'_{v1}=r_{\mathrm{lin}}(\chi r_{\mathrm{lin}})^3/\big(c_{v1}^3+(\chi r_{\mathrm{lin}})^3\big)$,
+$r_{\mathrm{lin}}=y_c/d$ (page-local). The authors state that both the
+immersed treatment and the linearization rest on the equilibrium
+boundary-layer hypothesis, so discrepancies are expected near separation
+and in recirculation; they report such near-wall differences in the
+recirculation of a backward-facing step and in the slat cove of a
+three-element airfoil (§4.2.2, §4.3.2). They mention ODE wall models on
+embedded grids as costlier and possibly unstable on non-body-fitted grids
+(§3.1).
+
 ## Volume filtering and wall-slip models for LES
 
 [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) derive the IB force
@@ -809,6 +861,16 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
   an acceleration to the divergence of $\boldsymbol T^R+\boldsymbol T^{\mathrm{res}}$,
   a force per unit volume, so a factor $1/\rho$ is missing there *(compiler
   check, not in the sources)*.
+- **Wall-normal gradient (Husson et al.).** Their Eq. (43) sets the
+  wall-normal gradient of the tangential velocity at the forcing node to
+  $\big[c_{v1}^3+(\kappa y^+_{\mathrm{IP}})^3\big]/\big[c_{v1}^3+(\kappa y^+_{\mathrm{IP}})^3(1+\kappa y^+_{\mathrm{IP}})\big]\,u_\tau$.
+  The fraction is $\mathrm du^+/\mathrm dy^+=1/(1+\chi f_{v1})$ of the
+  Spalart–Allmaras equilibrium layer with $\chi=\kappa y^+$ (from the
+  paper's Eqs. 18–19 and a total stress $(\nu+\nu_t)\,\partial u/\partial y=u_\tau^2$); the dimensional gradient is that
+  fraction times $u_\tau^2/\nu$, not $u_\tau$, and it is evaluated at the
+  interpolation point while the left-hand side is at the forcing node
+  *(compiler check, not in the sources)*. Eq. (41) uses a wall distance $y$
+  that the paper does not define.
 - **No-slip forcing or modelled wall law.** Rickard & Kasbaoui (2026) state
   that the no-slip forcing of most IB methods is not valid at wall-modelled
   filter sizes and model the filtered slip; Cai et al. (2022), Constant et
@@ -828,6 +890,7 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
 - [Kim et al. (2024)](/sources/kim-2024.md) — §2.1, Eqs. (2.1)–(2.2) (mass source and momentum forcing, discretization); §4.2.1, Fig. 9 (QUICK near the cylinder front).
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — HAL accepted manuscript hal-04921212v1: §2.2, Fig. 1 (reference-point reconstruction with a wall model); §3.3, Figs. 16–24, Table 3 (Ahmed body, wall model against no-slip).
 - [Llorente (2024)](/sources/llorente-2024.md) — author accepted manuscript: pp. 2–4, Eqs. (1)–(6) (penalized and conventionally penalized URANS equations, time-scale condition); p. 5, Eq. (7) (artificial velocity); pp. 6–8, Eqs. (8)–(12) (fluid resistance, averaged source, closure, closed system); pp. 8–10, Theorem 1, thermal and compressible extensions.
+- [Husson et al. (2024)](/sources/husson-2024.md) — §3.1, Eqs. (36)–(39) (SA analytical wall law, linearization, modified $f_{v1}$); §3.2, Fig. 2, Eqs. (40)–(43) (fluid-side direct forcing, interpolation point, five-step algorithm); §4.1.2, Fig. 5 (inclined plate); §4.2.2, §4.3.2 (near-wall discrepancies in recirculation).
 - [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md) — §2.3 (direct-forcing IBM for flexible ribbons, Roma kernel, marker condition); §3.2–3.3; §5.1, §5.3 (canopy force equals the averaged IBM force); App. C.
 - [Rismondo et al. (2025)](/sources/rismondo-2025.md) — introduction (IBM-based LES of rotor wakes by Posa et al. recalled; body-fitted meshes used).
 - [D'Ayer et al. (2026)](/sources/dayer-2026.md) — HAL submitted manuscript hal-05075852v1: §1; §2.2 (spectral difference in JAGUAR); §2.3, Eqs. (11)–(15) (Brinkman penalization, error decomposition); §2.4, Eqs. (16)–(23) (stiffness limits, Strang splitting, exact penalization sub-steps); §3.1, Eqs. (24)–(26), Tables 1–2, Figs. 3–5 (cylinder at $Re_D=40$); §3.2, Eqs. (27)–(28), Table 3, Figs. 7–10 (rough minimal channel at $Re_\tau=400$); §4.

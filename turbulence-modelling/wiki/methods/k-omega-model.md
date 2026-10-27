@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Wilcox k-ω model"
-description: "Wilcox's two-equation k-ω eddy-viscosity model and its unblended variants (1998, 2006, Kok's TNT), with constants, near-wall behaviour of ω, the log-ω form, and the obstacles and remedies of solving it with high-order discontinuous Galerkin and hybridizable DG discretizations."
+description: "Wilcox's two-equation k-ω eddy-viscosity model and its unblended variants (1998, 2006, Kok's TNT, low-Reynolds damping), with constants, the near-wall singularity of ω and its regularized and k-τ remedies, the log-ω form, and the obstacles of solving it with high-order element discretizations."
 status: established
 aliases: [k-omega model, Wilcox k-ω, Wilcox 1998, Wilcox 2006, Wilcox 07, k-ω 2006, TNT, turbulent/non-turbulent k-ω, k-log-ω, k-ln ω]
 tags: [rans, eddy-viscosity, dg, boundary-layer]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T06:07:00Z
 ---
 
 # Wilcox k-ω model
@@ -67,8 +67,19 @@ and the gradient-squared term *(compiler check, not in the sources)*.
 | Wilcox (1998) | 0.5 | 0.5 | 0.09 | 0.072 | 13/25 | 0 | Elzaabalawy et al. (2023), §3.1 |
 | Kok TNT | 2/3 | 0.5 | 0.09 | 0.075 | $\beta/\beta^*-\sigma_\omega\kappa^2/\sqrt{\beta^*}$, $\kappa=0.41$ | 0 if $\nabla k\cdot\nabla\omega<0$, 0.5 if $>0$ | Elzaabalawy et al. (2023), §3.1 |
 | Wilcox (2006) | 3/5 | 1/2 | 9/100 | 0.0708 | 13/25 | 1/8 (with $\max(\cdot,0)$) | Ghidoni et al. (2026), §2 |
+| Wilcox (2006) | 0.6 | 0.5 | 0.09 | 0.0708 | 0.52 | 1/8 (with $\max(\cdot,0)$) | Tomboulides et al. (2025), §2 |
 
 Ghidoni et al. also print $\alpha^*=1$, so $\mu_t=\rho\bar k/\omega$ (§2).
+Tomboulides et al. (2025) print the same Wilcox (2006) set in the divisor
+convention, diffusivities $\mu+\mu_t/\sigma_k$ and $\mu+\mu_t/\sigma_\omega$
+with $\sigma_k=1/0.6$ and $\sigma_\omega=2.0$, which are the multipliers
+0.6 and 0.5 of the table; their cross diffusion
+$\rho(\sigma_d/\omega)\max(\nabla k\cdot\nabla\omega,0)$ with $\sigma_d=1/8$
+is the Ghidoni et al. term written in $\omega$, and they recall that it
+removes the free-stream dependence of $\omega$ first recognized by Menter
+([Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §2, Eqs. 5–11).
+The two sources agree on every constant once the convention is translated
+*(compiler check, not in the sources)*.
 BSL and SST, the blended members of the family, are on the
 [SST page](/methods/k-omega-sst-model.md); in Elzaabalawy et al.'s notation
 their cross diffusion is $\sigma_d=2\sigma_{\omega2}(1-F_1)$ (§3.2).
@@ -106,6 +117,44 @@ that page; on the zero-pressure-gradient plate the error of $C_f$ at
 $x/L=0.923$ against their $y_1^+=1$, $\mathbb P^6$ solution without wall
 function stays below 2.3% from $\mathbb P^2$ to $\mathbb P^6$ at $y_1^+=320$
 (Table 1).
+
+### The wall singularity and its remedies
+
+Tomboulides et al. (2025, §1) state the singularity as the reason the
+$k$-$\omega$ model is awkward in high-order codes: near the wall
+$\omega\sim y^{-2}$, so $\omega$ and its gradient are singular there;
+prescribing an arbitrarily large wall value is satisfactory for
+finite-volume codes but leaves the solution sensitive to the near-wall grid
+spacing and, in high-order codes with negligible numerical diffusion,
+produces persistent oscillations. They use, as finite-volume comparison,
+OpenFOAM's wall value $\omega_w=6\nu/(\beta d^2)$ at the first cell for
+$y^+\sim1$ (§3.1). Three remedies appear in the sources:
+
+- **Regularization.** The authors' earlier regularized $k$-$\omega$ model
+  (Tomboulides et al. 2018, as the 2025 paper describes it) writes $\omega=\omega_w+\omega'$,
+  subtracts the analytical singular part $\omega_w$ and solves for the
+  bounded remainder $\omega'$ with $\omega'=0$ at the wall. It is
+  consistent under $p$- and $h$-refinement and equivalent to the standard
+  model, but its extra source terms depend on the wall distance and its
+  derivatives, it assumes a negligible Laplacian of the wall distance, and
+  those sources cannot be treated implicitly (§1–§2).
+- **Change of variable to $\tau_t=1/\omega$.** The
+  [$k$-$\tau$ model](/methods/k-tau-model.md) has the wall condition
+  $\tau_t=0$ and bounded sources; Tomboulides et al. present it as the
+  successor of their regularized model (§1, §4).
+- **Change of variable to $\ln\omega$.** The log-$\omega$ unknown of
+  Ghidoni et al. above, and of the SST form on the
+  [SST page](/methods/k-omega-sst-model.md).
+
+**Low-Reynolds damping.** Tomboulides et al. transfer Wilcox's (1992)
+low-Reynolds damping to their $k$-$\tau$ model (§2.1); in $k$-$\omega$
+variables the turbulence Reynolds number is $Re_T=\rho k/(\mu\omega)$ and
+the damping functions multiply the eddy viscosity ($\alpha^*$), the $k$
+destruction ($\beta^*$) and the $\omega$ production ($\alpha$); the
+printed functions and constants are on the
+[$k$-$\tau$ page](/methods/k-tau-model.md). The low-Reynolds variant of the
+regularized $k$-$\omega$ model captures the near-wall peak of $k$ in a pipe
+(§3.2).
 
 ## High-order discretization
 
@@ -157,6 +206,26 @@ Riemann fluxes up to $N=6$, and an implicit linearized backward-Euler
 pseudo-transient continuation with GMRES (§3.1–§3.2).
 [Zhao et al. (2023b)](/sources/zhao-2023-b.md) avoid the issue by solving SST at first order (see the
 [SST page](/methods/k-omega-sst-model.md)).
+The log-$\omega$ route goes back to Bassi et al. (2005), who solved the
+Wilcox model with $\ln\omega$ in DG, as recalled by Lodares et al. (2022)
+and Vandenhoeck et al. (2022); Vandenhoeck et al. extend it to SST in flux
+reconstruction and compare their Wieghardt flat-plate profiles with the
+DG $\mathbb P^2$ Wilcox $k$-$\ln\omega$ solution of Bassi et al. on 8800
+elements, and recall that earlier flux-reconstruction RANS solvers were
+limited to Spalart–Allmaras and Wilcox $k$-$\omega$
+([Lodares et al. (2022)](/sources/lodares-2022.md), §1, §8;
+[Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md), §0, §1.1, §4.1).
+Ghidoni & Noventa (2026) build their laminar-kinetic-energy transition
+model on the same log-$\omega$ variable and find a plain $k$-$\ln\omega$
+model less sensitive than the transition model to zero values of $k$
+clipped in under-resolved far-field elements; they run it for the Blair
+plates whose transition sits at the leading edge
+([Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md), §II, §IV B, §V;
+see [laminar kinetic energy transition models](/methods/laminar-kinetic-energy-transition-model.md)).
+Tomboulides et al. (2025) solve the regularized model in the spectral-element
+codes [Nek5000](/software/nek5000.md) and NekRS with BDF/extrapolation time
+stepping (§2.2; see
+[spectral element method](/methods/spectral-element-method.md)).
 
 ## Evidence
 
@@ -205,6 +274,22 @@ pseudo-transient continuation with GMRES (§3.1–§3.2).
   and the NACA 0012 at $Re=6\times10^6$ with the Wilcox (2006) model up to
   $\mathbb P^6$, comparing with FUN3D $k$-$\omega$ results of the NASA
   Turbulence Modeling Resource (§4).
+- **Regularized model against $k$-$\tau$ and SST.** In a channel at
+  $Re_\tau\approx5200$ the regularized model gives $u_\tau=0.0413$ and
+  its low-Reynolds variant 0.0415, against 0.0415 from DNS, 0.0412 from
+  $k$-$\tau$ and 0.0409 from OpenFOAM SST (Tomboulides et al. 2025, §3.1,
+  Table 1); in a pipe at $Re_\tau=1142$, 0.0524 and 0.0529 against 0.0519
+  from DNS (§3.2, Table 2). On the Driver–Seegmiller step it reattaches at
+  $6.49$ step heights against $6.26$ measured (§3.3); on the NACA 0012 at
+  $\alpha=0^\circ$ it gives $C_D=0.00835$ against 0.0081 measured (§3.4,
+  Table 3). In the same tables the NASA codes give, with standard
+  $k$-$\omega$, $C_D=0.00854$ (CFL3D) and 0.00837 (FUN3D) at $0^\circ$,
+  and $C_D=0.01259$, $C_L=1.0958$ (CFL3D) and 0.01297, 1.1012 (FUN3D) at
+  $10^\circ$ against 0.012 and 1.075 measured (Tables 3–4). On an OECD/NEA
+  T-junction the regularized model ran at a CFL number of about 0.1, against
+  about 2 for $k$-$\tau$, because its additional non-linear sources cannot
+  be treated implicitly; its slight departure from $k$-$\tau$ in the core
+  is attributed to wall-distance errors near the sharp corner (§3.5, §4).
 - **Outlook.** Elzaabalawy et al. propose the $k$-$kl$ model, with $kl=0$
   at the wall and second velocity derivatives available element-wise in DG,
   and a "negative $k$-$kl$" analogue of negative
@@ -232,3 +317,7 @@ pseudo-transient continuation with GMRES (§3.1–§3.2).
 - [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §1, §3.1 Eqs. 38–44, 55, 57–58, 69–70, §3.2–3.2.1, §4.1–4.2 Eqs. 76–92, §5.1 Table 1, §5.2.1 Tables 2–3 Figs. 13–16, §5.3 Table 4 Figs. 21–27, §5.4, §6 Figs. 37–45, §7.
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §1, §2 Eqs. 1, 4, §3.1–3.2, §4 Table 1.
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §1, §3.2.
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §1, §2 Eqs. 5–11, §2.1, §2.2, §3.1–3.5 Tables 1–4, §4.
+- [Lodares et al. (2022)](/sources/lodares-2022.md) — §1, §8.
+- [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §0, §1.1, §4.1.
+- [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §II, §IV B, §V.

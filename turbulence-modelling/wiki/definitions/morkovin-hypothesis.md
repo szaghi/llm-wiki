@@ -5,7 +5,7 @@ description: "Morkovin's hypothesis holds that, while density fluctuations stay 
 status: established
 aliases: [Morkovin hypothesis, Morkovin scaling, Morkovin's scaling, strong Reynolds analogy, SRA, HSRA, Reynolds analogy factor, turbulent Prandtl number]
 tags: [compressible, boundary-layer, dns, hypersonic, rans]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T05:46:00Z
 ---
 
 # Morkovin's hypothesis and Reynolds analogies
@@ -369,6 +369,27 @@ boundary-layer DNS of Cogo et al. (2022) and Huang et al. (2022) above. See [ent
 [kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
 and [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
 
+## As working tools in a supersonic LES
+
+[Gao et al. (2022)](/sources/gao-2022.md) use both relations as tools, not
+as objects of study, in a high-order DG [implicit LES](/definitions/implicit-les.md)
+of a Mach 2 [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+at inlet $Re_\theta=1628$. Their inflow
+[synthetic eddy method](/methods/inflow-turbulence-generation.md), the
+reformulation of Roidl et al. that they cite, "takes account of the
+compressibility effects of high-speed flows by enforcing the strong
+Reynolds analogy" (§5.2); the paper prints no formula for it. The undisturbed adiabatic
+[turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md) is
+then validated at $x=11\delta_r$, one reference thickness downstream of
+the forcing zone ($\delta_r$ the boundary-layer thickness at the
+reference station, page-local), against the DNS of
+Wenzel et al. that the authors cite, with the van Driest transformed
+velocity and "Morkovin's density scaled Reynolds stress profiles", which
+"match each other well" despite the much coarser LES grid (§5.2, Fig. 16).
+The scaling formula is not printed; Morkovin scaling serves here only to
+compare the LES with a reference DNS of the same layer, not to test the
+hypothesis across Mach numbers.
+
 ## Qualifications
 
 - Helm & Martín (2022) print the friction velocity with the edge density,
@@ -397,3 +418,4 @@ and [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
 - [Chen et al. (2024)](/sources/chen-2024.md) — §1, §3.1, Eqs. (3.1)–(3.2) (Morkovin-scaled stress in the Baldwin–Lomax mixing length; HLPP and Morkovin's hypothesis); §3.3, Eqs. (3.15)–(3.17), Fig. 6 (DNS $Pr_t$, singularity, two-layer temperature); §4, Figs. 7, 11, 13 (a posteriori $Pr_t$ and errors); §5.1; Table 1; App. A, Fig. 15; App. B, Fig. 16.
 - [Aiello et al. (2026)](/sources/aiello-2026.md) — §1 (restated hypothesis, intrinsic compressibility, Chu–Kovásznay modes); §2.1–2.2 (thermally perfect gas, scalings); §3.3, Table 2 (set-up); §4.1, Fig. 1 (transformed velocity, $\kappa$, $B$); §4.2, Table 3, Figs. 2–3 (scheme dependence of stresses, wall pressure and fluctuations).
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §II (Morkovin-scaled DNS initialization); §IV E, Figs. 28–29 (Reynolds analogy factor, QP85 law, $Pr_t$, SRA and modified SRA in separated hypersonic interactions); §V.
+- [Gao et al. (2022)](/sources/gao-2022.md) — §5.2, Figs. 16–17 (strong Reynolds analogy in the synthetic-eddy inflow; Morkovin density-scaled Reynolds stresses as a validation of a Mach 2 DG implicit LES).

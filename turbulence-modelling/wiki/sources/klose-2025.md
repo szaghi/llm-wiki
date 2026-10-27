@@ -144,12 +144,13 @@ and takes the key `morsbach-2024-b`; [42] (Fernandez et al. 2018) and [51] print
 
 # Pages created or updated
 
-Chunk 6 (2026-10-26), cited further in chunk 7. This source is cited on:
+Chunk 6 (2026-10-26), cited further in chunks 7–8. This source is cited on:
 
 - [Compressor cascades](/benchmarks/compressor-cascade.md)
 - [Shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Laminar separation bubble](/definitions/laminar-separation-bubble.md)
+- [Shock sensors and troubled-cell indicators](/definitions/shock-sensor.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)

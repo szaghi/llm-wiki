@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Sigma model"
-description: "The Sigma model of Nicoud et al. builds a static subgrid eddy viscosity from the singular values of the resolved velocity gradient; the sources use it with constants 1.3–1.35 in jet-noise, spectral-element wall-modelled and learned-closure LES, where it is over-dissipative in coarse isotropic turbulence but accurate in channel spectra."
+description: "The Sigma model of Nicoud et al. builds a static subgrid eddy viscosity from the singular values of the resolved velocity gradient; the sources use it with constants 1.3–1.35 in jet-noise, spectral-element and finite-volume wall-modelled and learned-closure LES, where it is over-dissipative in coarse isotropic turbulence but accurate in channel spectra."
 status: established
 aliases: [σ model, σ-model, sigma subgrid-scale model, Nicoud model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-26T16:28:00Z
+timestamp: 2026-10-27T05:46:00Z
 ---
 
 # Sigma model
@@ -59,6 +59,7 @@ asymptote.
 | 1.35, the recommendation of Nicoud et al. (cited) | wall-modelled LES in the continuous spectral-element code Nek5000 ($N=7$) | Mukha et al. (2025), §II.D |
 | 1.3, "the smallest coefficient in the recommended range" | reference model for learned closures in Fourier-spectral LES | [Wu & Lele (2026)](/sources/wu-2026.md), §5.1, §5.1.1 |
 | not printed | second-order finite-volume LES of a jet | Moratilla-Vega et al. (2024), §2.1 |
+| not printed | second-order finite-volume wall-modelled LES of an airfoil (OpenFOAM) | [Nuca et al. (2025)](/sources/nuca-2025.md), §II, §VI |
 
 Wu & Lele (2026, §5.1) choose it as their baseline because its "coefficient
 range works for many different flows and does not require clipping for
@@ -100,6 +101,16 @@ $\nu_t$ to zero at the wall (§II.D).
   in other studies; they conclude that accuracy is "a strong function of
   the combination of the boundary conditions, SGS model and numerical
   method" (see [WALE](/methods/wale-model.md)).
+- **Finite-volume airfoil WMLES.** Nuca et al. (2025, §II, §VI, App. B)
+  close the wall-modelled LES of the Aérospatiale A-airfoil near stall
+  with the Sigma model, in OpenFOAM (`pimpleFoam`, second-order linear
+  convection in the turbulent region blended with second-order upwind in
+  laminar and free-stream regions) with the libWallModelledLES library, on
+  $18.7\times10^6$ cells with 10–12 cells across the local boundary-layer
+  thickness. The subgrid model is not their subject: the run tests
+  explicit approximations of algebraic and ODE
+  [equilibrium wall models](/methods/equilibrium-wall-model.md), and no
+  result is attributed to the Sigma model.
 - **Reference for learned closures.** Wu & Lele (2026) run Sigma
   ($C_\sigma=1.3$) and static Smagorinsky as references for
   [neural-network SGS models](/methods/neural-network-sgs-model.md) in the
@@ -139,3 +150,4 @@ $\nu_t$ to zero at the wall (§II.D).
 - [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md) — §2.1, Eqs. (4)–(6).
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §II.D; §III.C, Figs. 6–8.
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §5.1, §5.1.1, Table 3, Fig. 5; §6.1, Fig. 13; §6.2.1, Figs. 15–16.
+- [Nuca et al. (2025)](/sources/nuca-2025.md) — §II; §VI; App. B.

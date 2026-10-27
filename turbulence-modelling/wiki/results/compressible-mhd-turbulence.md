@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Compressible MHD turbulence"
-description: "Compressible MHD turbulence carries Alfvénic, slow, fast and non-wave fluctuations; a spatio-temporal decomposition puts most power off the dispersion branches, subsonic Hall-MHD cascades depend little on Mach number, trans-sonic compressive modes pile up at high wavenumber unless a bulk viscosity dissipates them, and a 3D flare simulation finds Kelvin–Helmholtz-generated Alfvénic turbulence."
+description: "Compressible MHD turbulence carries Alfvénic, slow, fast and non-wave fluctuations: most power lies off the dispersion branches, subsonic Hall-MHD cascades depend little on Mach number, trans-sonic compressive modes need bulk viscosity, a flare simulation shows Kelvin–Helmholtz-driven Alfvénic turbulence, and a nearly incompressible expansion yields a moment-transport closure for solar-wind turbulence."
 status: established
-aliases: [compressible MHD turbulence, MHD wave-mode decomposition, fast modes, slow modes, non-wave fluctuations, compressible Hall MHD turbulence, weakly compressible MHD, solar-flare turbulence, flare plasma turbulence, compressive-mode bottleneck, Helmholtz-decomposed spectra]
+aliases: [compressible MHD turbulence, MHD wave-mode decomposition, fast modes, slow modes, non-wave fluctuations, compressible Hall MHD turbulence, weakly compressible MHD, solar-flare turbulence, flare plasma turbulence, compressive-mode bottleneck, Helmholtz-decomposed spectra, nearly incompressible MHD, NI MHD, solar-wind turbulence transport model, turbulence transport model]
 tags: [mhd, compressible, plasma, astrophysics, dns]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Compressible MHD turbulence
@@ -22,8 +22,12 @@ by [Ferrand et al. (2022)](/sources/ferrand-2022.md) on decaying runs through
 [exact laws](/results/turbulence-exact-laws.md). A third, what dissipates the
 compressive velocity modes, is studied by
 [Beattie et al. (2025)](/sources/beattie-2025.md) with an explicit
-[bulk viscosity](/definitions/bulk-viscosity.md). All are diagnostics of
-simulated turbulence; none proposes a closure.
+[bulk viscosity](/definitions/bulk-viscosity.md). These are diagnostics of
+simulated turbulence and propose no closure. A fourth strand is a
+closure: the nearly incompressible MHD expansion in the turbulent Mach
+number and the moment-transport model that [Adhikari et al.
+(2023)](/sources/adhikari-2023.md) derive from it for the high-beta outer
+heliosphere and test against spacecraft data.
 
 Page-local notation: $f_c$ is the compressibility parameter of Gan et al.'s
 velocity forcing; $A$, $F$, $S$ denote the Alfvén, fast and slow fractions of
@@ -330,6 +334,105 @@ The authors add that a Braginskii (anisotropic) viscosity contains a
 bulk-viscous-type term built on the field direction that would preferentially
 damp fast and slow magnetosonic waves (§9.3, stated without simulation).
 
+## Nearly incompressible MHD and a turbulence transport model
+
+**The expansion.** Nearly incompressible (NI) MHD, as recalled by
+[Adhikari et al. (2023)](/sources/adhikari-2023.md) (§1–§2, after Zank &
+Matthaeus and Hunana & Zank), expands the fluctuations about a
+slowly varying, inhomogeneous background (here the solar wind, with
+velocity $\boldsymbol U$, field $\boldsymbol B_{\mathrm{sw}}$, density
+$\rho_{\mathrm{sw}}$ and Alfvén velocity $\boldsymbol V_A$, all page-local)
+in the turbulent Mach number $M_t\ll1$:
+
+$$\boldsymbol u'=\boldsymbol u^{(0)}+M_t\,\boldsymbol u^{(1)},\quad p'=M_t^2\big(p^{(0)}+p^{(1)}\big),\quad \rho'=M_t\,\rho^{(0)}+M_t^2\rho^{(1)},\quad \boldsymbol B'=\boldsymbol B^{(0)}+M_t\,\boldsymbol B^{(1)}$$
+
+(Eq. 3; superscripts $(0)$ and $(1)$, page-local, mark the leading and
+higher orders). Which fluctuations sit at leading order depends on the
+plasma beta $\beta_p$. For $\beta_p\ll1$ and $\beta_p\sim1$, as recalled
+from Zank et al. (2017), the leading order is two-dimensional
+(structures such as flux ropes and magnetic islands, without the Alfvén
+velocity) and the slab (Alfvénic) and compressible magnetosonic parts are
+higher-order corrections. For $\beta_p\gg1$ Adhikari et al. derive (§2,
+Eqs. 4–6) a leading order that is fully incompressible MHD carrying both
+the 2D and the slab component at the same order, so the two "cannot be
+distinguished", with the Alfvén velocity present. The leading-order
+velocity is not solenoidal in the inhomogeneous background,
+
+$$\nabla\cdot\boldsymbol u^{(0)}=-\frac{1}{\rho_{\mathrm{sw}}}\,\boldsymbol u^{(0)}\cdot\nabla\rho_{\mathrm{sw}},\qquad \nabla\cdot\boldsymbol B^{(0)}=0$$
+
+(Eq. 6), which is why their Elsasser equation (Eq. 7, with
+$\boldsymbol Z^\pm=\boldsymbol u\pm\boldsymbol B/\sqrt{\mu_0\rho_{\mathrm{sw}}}$,
+$\boldsymbol Z^+$ outward) carries density-gradient terms absent from the
+incompressible Elsasser equations of Marsch & Tu and Zhou & Matthaeus they
+cite; see [reduced MHD](/definitions/reduced-mhd.md) for the homogeneous,
+strong-guide-field limit.
+
+**The moment closure.** Taking moments of the Elsasser equation with the
+closures of Zank et al. (2012a) they cite, Adhikari et al. (§2, Eqs. 8–11)
+write six transport equations for the Elsasser energies
+$\langle|\boldsymbol Z^\pm|^2\rangle$ (no factor $\tfrac12$), the residual
+energy $E_D=\langle\boldsymbol Z^+\cdot\boldsymbol Z^-\rangle$ and the
+energy-weighted correlation lengths $\ell^\pm$, $\ell_D$ (page-local
+symbols; $\langle\cdot\rangle$ an ensemble average). The Elsasser-energy
+equation reads
+
+$$\begin{aligned}
+&\partial_t\langle|\boldsymbol Z^\pm|^2\rangle+(\boldsymbol U\mp\boldsymbol V_A)\cdot\nabla\langle|\boldsymbol Z^\pm|^2\rangle+\Big(\tfrac12\nabla\cdot\boldsymbol U\pm\nabla\cdot\boldsymbol V_A\Big)\langle|\boldsymbol Z^\pm|^2\rangle\\
+&\quad+\Big(2a_s-\tfrac12\Big)(\nabla\cdot\boldsymbol U)E_D\pm(2b_s-1)(\nabla\cdot\boldsymbol V_A)E_D\mp\frac{b_s}{\rho_{\mathrm{sw}}}(\boldsymbol V_A\cdot\nabla\rho_{\mathrm{sw}})\langle|\boldsymbol Z^\pm|^2\rangle\\
+&\quad=-2\alpha_{\mathrm{KT}}\frac{\langle|\boldsymbol Z^\pm|^2\rangle\langle|\boldsymbol Z^\mp|^2\rangle^{1/2}}{\ell^\pm}+2S^\pm,
+\end{aligned}$$
+
+and the correlation lengths obey
+
+$$\partial_t\ell^\pm+(\boldsymbol U\mp\boldsymbol V_A)\cdot\nabla\ell^\pm+(\ell_D-2\ell^\pm)\Big[\Big(a_s-\tfrac14\Big)\nabla\cdot\boldsymbol U\pm\Big(b_s-\tfrac12\Big)\nabla\cdot\boldsymbol V_A\Big]\frac{E_D}{\langle|\boldsymbol Z^\pm|^2\rangle}=2\beta_{\mathrm{KT}}\langle|\boldsymbol Z^\mp|^2\rangle^{1/2}-2S^\pm\frac{\beta_{\mathrm{KT}}}{\alpha_{\mathrm{KT}}}\frac{\ell^\pm}{\langle|\boldsymbol Z^\pm|^2\rangle}$$
+
+(Eqs. 8 and 10). Here $\alpha_{\mathrm{KT}}$ is the von Kármán–Taylor
+constant of the nonlinear (cascade) term, closed as
+$\boldsymbol Z^\mp\cdot\nabla\boldsymbol Z^\pm\simeq\alpha_{\mathrm{KT}}Z^\pm\langle|\boldsymbol Z^\mp|^2\rangle^{1/2}/\ell^\pm$,
+$\beta_{\mathrm{KT}}=\alpha_{\mathrm{KT}}/2$ its length-scale counterpart
+(after Breech et al. 2008), $a_s=b_s=\tfrac12$ the structural similarity
+parameters that give the two-dimensional form of the mixing tensors, and
+$S^\pm$ the sources (all page-local). The correlation
+$\langle\boldsymbol Z^\pm\cdot\nabla\rho_{\mathrm{sw}}\rangle$ is set to
+zero by assuming isotropic turbulence, which the authors mark as a
+departure from Zank et al. (2017). The equations differ from those of
+Zank et al. (2012a) because they are derived for
+$\nabla\cdot\boldsymbol u\ne0$ (§2, §8). The cascade rate is taken equal to the
+dissipation rate, and the turbulent heating
+$\alpha_{\mathrm{KT}}m_pn\big[\langle|\boldsymbol Z^+|^2\rangle\langle|\boldsymbol Z^-|^2\rangle^{1/2}/\ell^++\langle|\boldsymbol Z^-|^2\rangle\langle|\boldsymbol Z^+|^2\rangle^{1/2}/\ell^-\big]$
+($m_p$ the proton mass, $n$ the wind proton density) heats protons and
+electrons in the ratio 60:40 of a three-fluid (proton, electron,
+pickup-ion) steady wind (§5, Eqs. 20–34). A density-variance equation
+with a nonlinear decay term and shear and pseudosound sources is added
+(§4, Eqs. 16–19); the pseudosound source, sound waves excited by
+Alfvén waves, is found negligible.
+
+**Calibration and evidence.** In the steady, spherically symmetric
+reduction (Eqs. 12–15) the sources are a stream-shear term decaying as
+$r^{-2}$ ($r$ the heliocentric distance, page-local), following Zank et
+al. (2017) rather than the $r^{-1}$, energy-proportional form of earlier
+models they cite, and a pickup-ion source that drives only Alfvénic
+fluctuations. The constants are calibrated: $\alpha_{\mathrm{KT}}=0.03$,
+chosen so that the turbulent heating is not excessive and the computed
+temperatures resemble the observed ones, against 1, 0.8 and 0.128 used in
+the earlier works they list; shear strengths 0.3 and 0.7 against about
+13 and 1–2 in earlier works; pickup-ion fraction 0.06 (§3, Table 2).
+Solved from 1 to 75 au and compared with 27 years of Voyager 2 data, two
+of Ulysses and 13 of New Horizons, the model reproduces the Elsasser,
+kinetic and magnetic fluctuation energies, the normalized cross-helicity
+and residual energy, the Elsasser correlation lengths, the density
+variance ($r^{-4.48}$ computed against $r^{-4.71}$ observed) and the
+wind and pickup-ion profiles "with some scatter" (§6–§7, Figs. 1–7). The
+pickup-ion source flattens the Elsasser energies beyond about 25 au. The
+correlation lengths of the residual energy and of the velocity
+disagree (computed ones vary, observed ones stay roughly constant), which
+the authors attribute to a shear source derived for low-beta models
+(§6, Fig. 4). The computed pickup-ion beta exceeds 1 beyond 10 au and
+reaches 11.4 at 75 au, while the proton and electron betas stay below 1
+(§7, Fig. 6). The comparison concerns one-dimensional steady radial
+profiles; the source has no numerical turbulence simulation. Imbalance and
+residual energy are on [critical balance](/properties/critical-balance.md).
+
 ## Qualifications
 
 - **Different regimes.** Gan et al. drive at $M_t\le0.18$ with a strong
@@ -374,6 +477,16 @@ damp fast and slow magnetosonic waves (§9.3, stated without simulation).
   counter-flows, not only a cascade.)* For the unresolved mass motions of
   observed flares, the authors note that whether energy cascades occur is
   "impossible to know" from remote observations (§1).
+- **Nearly incompressible MHD transport** ([Adhikari et al.
+  2023](/sources/adhikari-2023.md)). Table 2 prints the length-scale
+  constant as "$\beta$ 0.015", the symbol of the plasma beta; the value is
+  $\beta_{\mathrm{KT}}=\alpha_{\mathrm{KT}}/2$ of the text. The
+  shear-source strength of the density-variance equation is
+  $1.8\times10^{-4}$ in §4 and $1.8\times10^{-5}$ in Table 2. The model
+  constants are calibrated to heliospheric profiles: the authors list
+  $\alpha_{\mathrm{KT}}=1$, 0.8 and 0.128 and shear strengths of about 13
+  and 1–2 in earlier transport models against their 0.03, 0.3 and 0.7
+  (§3).
 - **Numerics unreported.** Gan et al. give no Riemann solver,
   reconstruction or dissipation details; the fractions come from $512^3$
   runs analysed over about $10\tau_A$, and the authors note that resolving its low-frequency part
@@ -387,3 +500,4 @@ damp fast and slow magnetosonic waves (§9.3, stated without simulation).
 - [Foldes et al. (2023)](/sources/foldes-2023.md) — §2.2, Eqs. (2.10)–(2.14); §4.2, Fig. 5; §5; §7 (weakly compressible lattice Boltzmann formulation of Hall MHD, density fluctuations, acoustic time step, compressible extension).
 - [Ruan et al. (2023)](/sources/ruan-2023.md) — §1; §2, Eqs. (1)–(5); §3.1–§3.5, Eqs. (6)–(8), Figs. 2–5; §4 (Kelvin–Helmholtz-generated, Alfvénic turbulence in a 3D resistive MHD flare simulation; nonthermal velocity and turbulent energy diagnostics).
 - [Beattie et al. (2025)](/sources/beattie-2025.md) — §4.5, Eq. (49); §5.1, Eq. (54), Fig. 6; §6.1–6.2, Eqs. (56)–(57), Fig. 9; §8, Fig. 13; §9.1, §9.3; App. D; App. E (Helmholtz-decomposed spectra, compressive-mode bottleneck and bulk viscosity in trans-sonic MHD turbulence).
+- [Adhikari et al. (2023)](/sources/adhikari-2023.md) — §1; §2, Eqs. (3)–(11); §3, Eqs. (12)–(15), Table 2; §4, Eqs. (16)–(19); §5, Eqs. (20)–(34); §6–§8, Figs. 1–7 (nearly incompressible MHD at high plasma beta and its turbulence transport model).

@@ -3,9 +3,9 @@ type: Method
 title: "Scale-similarity and mixed subgrid-scale models"
 description: "Scale-similarity and deconvolution models build the subgrid stress, or a subgrid scalar variance, from the resolved field rather than from an eddy viscosity; the sources agree that they reproduce the stress structure but are under-dissipative or unstable alone, and mix them with an eddy viscosity, add numerical dissipation, or derive an eddy viscosity from their flux."
 status: established
-aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, approximate deconvolution model, ADM, Layton–Lewandowski model, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model]
+aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, approximate deconvolution model, ADM, D3M, DIAD, DDM, direct deconvolution model, Layton–Lewandowski model, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model]
 tags: [les, sgs-model, filtering, combustion]
-timestamp: 2026-10-26T20:50:00Z
+timestamp: 2026-10-27T06:13:00Z
 ---
 
 # Scale-similarity and mixed subgrid-scale models
@@ -409,11 +409,11 @@ Stolz–Adams model for incompressible LES as
 $\tau_{ij}=\overline{u^*_iu^*_j}-\bar u_i\bar u_j$, with the deconvolved
 velocity $u^*_i=Q\,\bar u_i$ from the truncated van Cittert series
 
-$$Q=\sum_{n=0}^{N_{\mathrm{ADM}}}(I-G_{\mathrm{EF}})^n,\qquad \hat Q=\frac{1-(1-\hat G_{\mathrm{EF}})^{N_{\mathrm{ADM}}+1}}{\hat G_{\mathrm{EF}}},$$
+$$Q=\sum_{n=0}^{N_{\mathrm{AD}}}(I-G_{\mathrm{EF}})^n,\qquad \hat Q=\frac{1-(1-\hat G_{\mathrm{EF}})^{N_{\mathrm{AD}}+1}}{\hat G_{\mathrm{EF}}},$$
 
 so that the momentum equation carries $\partial_j\overline{u^*_iu^*_j}$ and
-no explicit dissipation. Here $N_{\mathrm{ADM}}$ (page-local) is the number
-of series terms, $N_{\mathrm{ADM}}=5$ in their LES, and $G_{\mathrm{EF}}$
+no explicit dissipation. Here $N_{\mathrm{AD}}$ (page-local) is the number
+of series terms, $N_{\mathrm{AD}}=5$ in their LES, and $G_{\mathrm{EF}}$
 (page-local) is the "effective filter" assumed in the inversion, which
 need not be the LES filter $G$ that forms $\overline{u^*_iu^*_j}$ (§4). The
 authors model the filter that the discretization itself imposes,
@@ -424,19 +424,19 @@ and try $G_{\mathrm{EF}}=\mathcal F_hG$, $G$, $\mathcal F_h$, or explicit
 compact and finite-difference filters of orders 2–10. If the true filter
 acting on the solution is $H$ (page-local), the deconvolution error is
 $\hat{\mathcal E}=1-\hat Q\hat H$ (page-local), which tends to
-$1-\hat H/\hat G_{\mathrm{EF}}$ as $N_{\mathrm{ADM}}\to\infty$ and so does
+$1-\hat H/\hat G_{\mathrm{EF}}$ as $N_{\mathrm{AD}}\to\infty$ and so does
 not vanish (§4.1, Eqs. 36–37): deconvolving with a filter of higher order
 than $H$ attenuates $u^*$, one of lower order amplifies it near the filter
 cutoff. A priori on isotropic-turbulence DNS at $Re_\lambda=100$
 ($384^3$, LES grid $64^3$, Gaussian $G$ with $\Delta=2h$), the stress error
 is largest at high wavenumbers for every $G_{\mathrm{EF}}$, including the
 exact numerical one; with a second-order finite-difference
-$G_{\mathrm{EF}}$ it grows with $N_{\mathrm{ADM}}$, with second- and
-fourth-order compact filters it falls up to $N_{\mathrm{ADM}}=4$–6 and
-then stays constant, and the authors advise a small $N_{\mathrm{ADM}}$
+$G_{\mathrm{EF}}$ it grows with $N_{\mathrm{AD}}$, with second- and
+fourth-order compact filters it falls up to $N_{\mathrm{AD}}=4$–6 and
+then stays constant, and the authors advise a small $N_{\mathrm{AD}}$
 (§4.2, Fig. 8).
 
-The **Layton–Lewandowski model** is the case $N_{\mathrm{ADM}}=0$,
+The **Layton–Lewandowski model** is the case $N_{\mathrm{AD}}=0$,
 $u^*_i=\bar u_i$ (Caban et al. 2026, Eq. 12):
 $\tau_{ij}=\overline{\bar u_i\bar u_j}-\bar u_i\bar u_j$, so that the
 resolved momentum equation is the unclosed one with its advective term
@@ -458,7 +458,7 @@ $t=20$ (Caban et al. 2026, §5.4, Tables 4–9; see
   $2.03\times10^{-2}$ with a sixth-order compact filter and explicit
   regularization, is about 10% below the best implicit LES (§5.4.1,
   Table 5);
-- ADM with $N_{\mathrm{ADM}}=5$ is unstable with non-dissipative
+- ADM with $N_{\mathrm{AD}}=5$ is unstable with non-dissipative
   interpolation for most filter combinations, which the authors attribute
   to deconvolution amplifying the subfilter energy and the aliasing of
   $u^*_iu^*_j$; it is stable with dissipative interpolation or explicit
@@ -482,6 +482,106 @@ finite-order gradient closures as truncations of the nonlocal
 deconvolution operator, their fourth-order one being "the minimal local
 truncation" that captures the leading nonlocal effects (see
 [gradient model](/methods/gradient-model.md)).
+
+## Deconvolution models under explicit filtering: an a priori ranking
+
+[Valencia et al. (2026)](/sources/valencia-2026.md) compare four
+deconvolution closures with the [dynamic](/methods/dynamic-procedure.md)
+Smagorinsky (DSM) and dynamic mixed (DMM) models, a priori, in
+compressible decaying [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)
+(DNS on $512^3$, initial turbulent Mach number 0.6 and Taylor Reynolds
+number 100). All are cast in explicitly filtered LES (see
+[large-eddy simulation](/definitions/large-eddy-simulation.md)), where an
+explicit Gaussian filter of width $\Delta$ acts on a grid of spacing $h$
+and the filter-to-grid ratio $\Delta/h$ (FGR) is the free parameter. A
+generic deconvolution operator $D$ gives $\phi^*=D\bar\phi$ for density
+and the Favre-weighted momentum and energy, and the model stress is the
+explicitly filtered difference
+
+$$\tau^{\mathrm{ef}}_{ij}=\overline{\rho^*u^*_iu^*_j}-\overline{\bar\rho^*\tilde u^*_i\tilde u^*_j}$$
+
+(§III, Eqs. 31–33; $\phi^*$, $D$, $\tau^{\mathrm{ef}}_{ij}$ page-local),
+with the Gaussian kernel of transfer function
+$\hat G(k)=\exp(-k^2\Delta^2/24)$ (Eqs. 30, 48). The four operators are:
+
+- **ADM**, the truncated van Cittert series $\sum_{n=0}^{N_{\mathrm{AD}}}(I-G)^n$
+  written above, whose $N_{\mathrm{AD}}=0$ "reduces to the
+  scale-similarity model" (§III A, Eqs. 34–36, Table I); order 5 is
+  selected;
+- **D3M**, the discrete direct deconvolution model: the Taylor series of
+  the Gaussian filter inverted term by term and truncated on a
+  three-, five- or seven-point stencil, the second-order one being
+  $\phi^*_j=-\tfrac{1}{24}(\Delta/h)^2(\bar\phi_{j+1}+\bar\phi_{j-1})+\tfrac1{12}\big(12+(\Delta/h)^2\big)\bar\phi_j$,
+  the stencil form of their second-order inverse
+  $\phi^*=\bar\phi-\tfrac{\Delta^2}{24}\partial_x^2\bar\phi$ (Eq. 40), which
+  is the one-dimensional form of the operator of Domingo & Vervisch above
+  (§III B, Eqs. 37–42, Table II); order 4 is selected;
+- **DIAD**, the dynamic iterative approximate deconvolution: weights on an
+  $N_{\mathrm{st}}^3$ stencil ($N_{\mathrm{st}}$ page-local) fitted by constrained least squares
+  from resolved data only, with the weights summing to one, iterated
+  (§III C, Eqs. 43–46); $N_{\mathrm{st}}=5$, filter-to-stencil ratio 2 and two
+  iterations are selected;
+- **DDM**, the spectral direct deconvolution: exact inversion of
+  $\hat G$, bounded in magnitude by $1/\varepsilon_{\mathrm{DD}}$ with
+  $\varepsilon_{\mathrm{DD}}=0.01$ (page-local), which needs FFTs, hence a
+  periodic uniform grid (§III D, Eqs. 47–50).
+
+**Protocol.** The DNS is top-hat filtered, to emulate the implicit filter
+of a centred finite-volume scheme, downsampled to an LES grid, then
+explicitly Gaussian filtered at FGR 1, 2 or 4 (§V A). The reference is the
+*total* unresolved stress, the sum of a grid-truncation part, which no
+deconvolution recovers, and the subfilter part,
+$\tau^{\mathrm{tot}}_{ij}=\tau^{\mathrm{gr}}_{ij}+\tau^{\mathrm{sf}}_{ij}$,
+under the assumption that the explicit filter and the grid projection
+commute (§II C, Eqs. 23–29). For a given grid the grid-truncation energy
+hardly depends on FGR (1.3% of the kinetic energy on $128^3$, 5.0–5.3% on
+$64^3$, 16.4–17.0% on $32^3$), while the subfilter energy grows with it
+and exceeds the grid-truncation energy from FGR 2 on (Table IV). The three
+retained cases share $\Delta=16h_{\mathrm{DNS}}$ ($h_{\mathrm{DNS}}$ the
+DNS spacing, page-local): $128^3$ at FGR 4, $64^3$ at FGR 2, $32^3$ at
+FGR 1. Accuracy is measured by the correlation coefficient and the
+relative rms error of $\tau_{xx}$ and $\tau_{xy}$ (Eqs. 53–54).
+
+**Results** (Tables V–VII; $C_{xx}$, $C_{xy}$, relative errors
+$E_{xx}$, $E_{xy}$):
+
+| model | FGR 2: $C_{xx}$ / $C_{xy}$ | FGR 2: $E_{xx}$ / $E_{xy}$ | FGR 4: $C_{xx}$ / $C_{xy}$ | FGR 4: $E_{xx}$ / $E_{xy}$ |
+|---|---|---|---|---|
+| ADM | 0.9795 / 0.9839 | 0.2469 / 0.1946 | 0.9968 / 0.9976 | 0.0909 / 0.0755 |
+| D3M | 0.9792 / 0.9838 | 0.2445 / 0.1931 | 0.9972 / 0.9980 | 0.0897 / 0.0712 |
+| DIAD | 0.9735 / 0.9800 | 0.2649 / 0.2153 | 0.9946 / 0.9964 | 0.1023 / 0.0892 |
+| DDM | 0.9809 / 0.9849 | 0.2402 / 0.1881 | 0.9989 / 0.9992 | 0.0626 / 0.0457 |
+| DSM | 0.2726 / 0.1369 | 1.2955 / 1.0203 | 0.2562 / 0.1156 | 1.9644 / 1.0459 |
+| DMM | 0.9057 / 0.9144 | 0.4923 / 0.4543 | 0.9126 / 0.9089 | 0.4386 / 0.4483 |
+
+- FGR 1 is excluded for its "extremely poor" ADM performance (correlation
+  below 0.15, relative error above 0.98 at order 5); the authors attribute
+  the gain at FGR 4 to the larger share of the subfilter stress in the
+  total stress, and the residual error at lower FGR to grid truncation
+  (§V B 1).
+- DDM is the most accurate and serves as a practical upper bound for
+  periodic flows; DIAD is the least accurate deconvolution model; D3M
+  improves monotonically with its order and is "more sensitive to FGR"
+  than ADM (§V B 2–4).
+- The deconvolution models improve strongly from FGR 2 to FGR 4, the
+  eddy-viscosity-based DSM and DMM hardly change, which the authors read
+  as a structural limitation of eddy-viscosity formulations (§V C).
+- DSM gives narrow $\tau_{xy}$ and shifted $\tau_{xx}$ distributions and
+  wrong stress spectra at all scales; DMM is better but under-predicts the
+  tails and the spectral content (§V C, Figs. 20–23).
+- Costs are taken from cited a posteriori work (refs. 5, 30), not measured: D3M and DDM at
+  about 20% of the ADM cost, ADM about half the DMM cost, DIAD "generally
+  the most computationally demanding" deconvolution model (§V C).
+
+The authors conclude that the filter-to-grid ratio is the decisive
+parameter and that compensating for the explicit filter is "a requirement
+fulfilled exclusively by deconvolution-based approaches" (§VI). This rests
+on a priori correlation in isotropic turbulence; they defer a posteriori
+stability, wall-bounded and shock-laden flows and non-uniform grids to
+future work (§V C, §VI). The a posteriori record above (Caban et al. 2026:
+ADM needs numerical dissipation and does not beat implicit LES) is the
+other half of the question; see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
 
 ## Similarity model for a subgrid scalar variance
 
@@ -528,6 +628,19 @@ does not improve.
 
 ## Qualifications
 
+- Valencia et al. (2026) print the sixth-order D3M centre coefficient
+  with $-2352(\Delta/h)^2$ (Table II); the stencil weights then do not
+  sum to one, while $+2352(\Delta/h)^2$ makes them sum to one and matches
+  $-\tfrac{1}{24}(\Delta/h)^2$ times the sixth-order central second
+  difference *(compiler check, not in the sources)*. The selected order is
+  4, so their results are unaffected. Their text says the relative error
+  falls "by nearly half" from FGR 2 to FGR 4, whereas Tables VI–VII give
+  reductions by factors of 2.4–4.1 for the four deconvolution models
+  (ADM $E_{xx}$ 0.2469 to 0.0909) *(compiler check, not in the sources)*; and DSM's
+  $E_{xx}$ worsens, 1.2955 to 1.9644, where the text speaks of "marginal
+  improvement" of the classical models. The DSM and DMM formulas,
+  constants and test filter are not printed.
+
 - Abe's (2021) a priori reference is a fine LES with an SGS model, not DNS;
   the author justifies it by the small SGS share of its statistics (§IV B,
   Fig. 5). The a priori comparison projects the stresses on $\bar S_{ij}$
@@ -556,3 +669,4 @@ does not improve.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §2, Eqs. (8)–(12); §4.1–4.2, Eqs. (36)–(39), Figs. 6–8; §5.4.1–5.4.2, Tables 4–9; §6.
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — p. 5.
 - [Tang et al. (2022)](/sources/tang-2022.md) — §2.2, Eqs. (15)–(17); §3.1, Figs. 5–7; §3.2, Figs. 12–16; §4.
+- [Valencia et al. (2026)](/sources/valencia-2026.md) — §I; §II C, Eqs. (23)–(29); §III A–D, Eqs. (30)–(50), Tables I–II; §V A–C, Tables III–VII, Figs. 20–23; §VI.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Spalart–Allmaras model and its corrections"
-description: "The one-equation eddy-viscosity RANS model transporting the working variable ν̃: its equations and constants, the negative, rotation–curvature, helicity and quadratic-constitutive-relation variants, field-inversion and data-assimilation corrections, its role as host of detached-eddy simulation, and evidence from compressors, rotors, airfoils and high-lift flows."
+description: "The one-equation eddy-viscosity RANS model transporting the working variable ν̃: its printed forms and constants, negative, rotation–curvature, helicity and quadratic-constitutive-relation variants, positivity and entropy stability at high order, data-driven corrections, its role as host of detached-eddy simulation, and evidence from turbomachinery and airfoils."
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-26T17:35:00Z
+timestamp: 2026-10-27T06:07:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -122,6 +122,66 @@ through a wall-distance function $F$, and switch the damping off in the LES
 region through $f_{v1}=\chi^3/(\chi^3+F^{20}c_{v1}^3)$ (Eqs. 6–9; see
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
 
+Four further printed forms:
+
+- **Compressible, with $f_{t2}$ and a density-gradient term.** Huang et al.
+  (2022b) transport $\rho\tilde\nu$ with the standard functions,
+  $f_{t2}=c_{t3}\exp(-c_{t4}\chi^2)$ retained with $c_{t3}=1.2$, $c_{t4}=0.5$,
+  the constants of Alauzet et al., $c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma$
+  and $r=\min(\cdot,10)$; their diffusion flux has the coefficient
+  $(\mu+\mu_t)/\sigma$ with $\mu_t=\rho\tilde\nu f_{v1}$, and their diffusion
+  source carries, besides the $c_{b2}$ term, a density-gradient term
+  $-\sigma^{-1}(\mu+\mu_t)\rho^{-1}\nabla\rho\cdot\nabla\tilde\nu$. The wall
+  distance comes from a time-dependent eikonal solve and the far-field value
+  is $\rho\tilde\nu_\infty=(3$–$5)\mu_\infty$
+  ([Huang et al. (2022b)](/sources/huang-2022-d.md), §2.1, Eqs. 3–6; the
+  source writes $\hat\upsilon$ for $\tilde\nu$).
+- **Compressible, without the density-gradient term.** Lodares et al.
+  (2022) transport $\rho\tilde\nu$ with the diffusion
+  $\sigma^{-1}\nabla\cdot\big(\rho(\nu+\tilde\nu)\nabla\tilde\nu\big)$, set
+  $f_{t2}=0$ "as in many implementations", and neglect the additional
+  compressible diffusive term $-\sigma^{-1}(\nu+\tilde\nu)\nabla\rho\cdot\nabla\tilde\nu$,
+  as Ansys Fluent does; their modified vorticity is
+  $\lvert\Omega\rvert+\bar S_{\mathrm{SA}}$ with
+  $\bar S_{\mathrm{SA}}=\tilde\nu f_{v2}/(\kappa^2d^2)$ (page-local) when
+  $\bar S_{\mathrm{SA}}\ge-c_2\lvert\Omega\rvert$, and the limited form
+  $\lvert\Omega\rvert+\lvert\Omega\rvert(c_2^2\lvert\Omega\rvert+c_3\bar S_{\mathrm{SA}})/[(c_3-2c_2)\lvert\Omega\rvert-\bar S_{\mathrm{SA}}]$
+  otherwise; $\mu_t=\max(\rho\tilde\nu,0)f_{v1}$, the source is set to zero
+  where $d=0$ (wall nodes of Gauss–Lobatto elements), and "a usual value"
+  of $\tilde\nu_\infty$ is $3\nu_\infty$. Only $\sigma=2/3$ and $c_{b2}=0.622$
+  are printed, because they enter the stability proof below
+  ([Lodares et al. (2022)](/sources/lodares-2022.md), §2, Eqs. 13–17, §4.5).
+- **Incompressible, as the RANS branch of DES.** Pan & Zhang (2023) print
+  the "default values" $c_{b1}=0.1355$, $\sigma=0.6667$, $c_{b2}=0.622$,
+  $\kappa=0.41$, $c_{w1}=2.5093$, $c_{w2}=0.3$, $c_{w3}=2.0$, $c_{v1}=7.1$ of
+  ANSYS Fluent, with no relation for $c_{w1}$, no $f_{t2}$ and no trip; their
+  modified vorticity is built, like Yan et al.'s and Tang et al.'s, on the
+  strain magnitude $\lvert\bar S\rvert=\sqrt{2\bar S_{ij}\bar S_{ij}}$, while
+  the text calls it "the magnitude of modified vorticity"
+  ([Pan & Zhang (2023)](/sources/pan-2023.md), §II.B, Eqs. 3–6; see
+  Qualifications).
+- **Incompressible, in the normalized variable $\chi$.** Husson et al.
+  (2024) transport $\chi=\tilde\nu/\nu$ directly,
+  $$\partial_t\chi+\boldsymbol u\cdot\nabla\chi=c_{b1}S_{\mathrm{SA}}\chi-c_{w1}f_w\nu\Big(\frac{\chi}{\ell}\Big)^2+\frac\nu\sigma\Big[(1+\chi)\nabla^2\chi+(1+c_{b2})\lvert\nabla\chi\rvert^2\Big],$$
+  with $\ell$ the length scale of the destruction ($\ell=d$ in RANS; the
+  hybrid choice is on the [DES page](/methods/detached-eddy-simulation.md)),
+  $S_{\mathrm{SA}}$ built on the vorticity magnitude, $r=\min(\cdot,10)$,
+  $c_{b1}=0.1355$, $\sigma=2/3$, $c_{b2}=0.622$, $\kappa=0.41$, $c_{v1}=7.1$
+  and $c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma$; $c_{w2}$ and $c_{w3}$ are
+  not printed. They state that $f_{v1}$ "ensures a linear behavior
+  $\chi=\kappa y^+$ from the log-layer to the wall", as Basile et al. recall
+  for $\tilde\nu$ ([Husson et al. (2024)](/sources/husson-2024.md), §2.2,
+  Eqs. 18–23). The equation is solved by finite differences on the lattice
+  of a lattice Boltzmann solver, its eddy viscosity resetting the
+  relaxation time (see [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md)
+  and [ProLB](/software/prolb.md)). At the forcing nodes of their immersed
+  boundary they impose $\chi=\kappa y^+$ and, below a cut-off distance $y_c$
+  where the SA wall law is linearized, replace $f_{v1}$ by
+  $r_{\mathrm{lin}}(\chi r_{\mathrm{lin}})^3/[c_{v1}^3+(\chi r_{\mathrm{lin}})^3]$
+  with $r_{\mathrm{lin}}=y_c/d$ (page-local), which keeps the momentum balance
+  with a constant eddy viscosity there (§3.2, Eqs. 38–39, 42; see
+  [RANS wall functions](/methods/rans-wall-function.md)).
+
 **Negative SA.** Basile et al. (2023) use the negative-$\tilde\nu$ model with
 $\mu_t=\rho\tilde\nu f_{v1}$ for $\tilde\nu\ge0$ and $\mu_t=0$ for $\tilde\nu<0$
 (§2.2, Eq. 5), the same treatment of the mean-flow equations that Li & Liu
@@ -134,6 +194,13 @@ with $\nu_t=0$ in the momentum equation (§II A, Eqs. 3–4; $g_n$ page-local).
 Ferrer et al. (2023) use a negative SA model in the RANS solver of
 [HORSES3D](/software/horses3d.md), citing Oliver's thesis and Joshi et al.,
 without printing it ([Ferrer et al. (2023)](/sources/ferrer-2023.md), §4.1).
+Lodares et al. (2022) use "a variation of the standard negative model":
+for $\tilde\nu<0$ the source is $c_{b1}(1-c_{t3})\lvert\Omega\rvert\tilde\nu+c_{w1}(\tilde\nu/d)^2$
+and the diffusion coefficient is clipped,
+$\max(\nu+f_n\tilde\nu,0)$, "to strictly ensure positivity of the diffusion
+coefficient", the clipping being the departure from SA-neg (§2, Eqs.
+16–17; $c_{n1}$, $c_{t3}$ "usual values"). Huang et al. (2022b) reach a
+non-negative $\tilde\nu$ without any negative branch (below).
 
 ### Discretization in an unstructured solver
 
@@ -189,6 +256,76 @@ On NACA 0012 at $10^\circ$ their SST pressure coefficient differs from the SA
 results of Anderson et al. (SUPG finite elements) near the upper-surface
 leading edge, a difference they say "might be interpreted by the
 turbulence model" without testing it (§5.2).
+
+### Positivity and stability at high order
+
+Three sources add devices for the SA variable in high-order
+discretizations, each a different answer to the oscillations that a
+high-order polynomial of $\tilde\nu$ develops at the under-resolved edge of
+the boundary layer.
+
+**An entropy for the SA equation.** Lodares et al. (2022) build an
+entropy-stable discontinuous Galerkin spectral element discretization of
+the compressible RANS–SA system. They add to the Navier–Stokes entropy the
+SA "energy" $\mathcal E_{\mathrm{SA}}=\tfrac12\rho\tilde\nu^2$, whose entropy variables
+$\boldsymbol W_{\mathrm{SA}}=(-\tfrac12\tilde\nu^2,0,0,0,0,\tilde\nu)$ (page-local
+names, as on the entropy-conservation page) vanish where the Navier–Stokes
+ones do not, so the analysis splits into the known Navier–Stokes part and an
+independent SA part. Its dissipation is
+
+$$\mathcal D_{\mathrm{SA}}=\big\langle\rho\tilde\nu(D-P)\big\rangle+\Big\langle\frac\rho\sigma(\hat\sigma-c_{b2}\tilde\nu)\lvert\nabla\tilde\nu\rvert^2\Big\rangle\ \ge\ \big\langle\rho\tilde\nu(D-P)\big\rangle,$$
+
+with $\langle\cdot\rangle$ here the domain integral, $P$, $D$ the SA
+production and destruction and $\hat\sigma$ the diffusion coefficient
+($\nu+\tilde\nu$, or the clipped negative-branch value), valid if
+$c_{b2}\le1$ and $\hat\sigma\ge0$; entropy may grow only where production
+exceeds destruction, and for $\tilde\nu<0$ the negative-branch source makes
+$\tilde\nu(D-P)\ge0$ (§3.2, Eqs. 38–50). Discretely, any Navier–Stokes
+two-point flux extends to SA by the component
+$\widehat{\rho U}\{\!\{\tilde\nu\}\!\}$, which satisfies Tadmor's condition for
+the SA entropy whatever the momentum average, and the interface flux
+$F_{\rho\tilde\nu}^*=F_\rho^*\{\!\{\tilde\nu\}\!\}-\tfrac12\lambda_\nu\lvert F_\rho^*\rvert[\![\tilde\nu]\!]$
+is entropy conserving for $\lambda_\nu=0$ and stable for $\lambda_\nu=1$
+($\widehat{\rho U}$ the two-point mass flux, $F^*_\rho$ the mass component of
+the interface flux, $\lambda_\nu$ and $[\![\cdot]\!]$ the toggle and jump,
+page-local; §4.3–4.4, Eqs. 68, 74, §5.1.2, Eqs. 87–89). On random initial data
+at $\mu=10^{-8}$, $N=10$, the standard DG scheme diverges while the split
+forms stay stable with zero entropy remainder (§7.2). Details are on the
+[entropy-conservation page](/properties/entropy-conservation.md).
+
+**Exponential decay of $\rho\tilde\nu$.** Huang et al. (2022b) attribute the
+negative eddy viscosity of their fourth-order finite-volume SA solutions to
+Gibbs oscillations where the grid is too coarse, typically the outer edge
+of the boundary layer (§2.5). Near the minimum of $\tilde\nu$, with diffusion
+and $O(h)$ terms neglected and the coefficient frozen, the equation reduces
+to $\partial_t\ln(\rho\tilde\nu)\approx R_0$, with a rate $R_0$ that is negative
+"usually" when negative values appear, so $\rho\tilde\nu$ decays
+exponentially and stays positive (Eqs. 53–57). Their exponential decay
+procedure acts on the residual $R$ of the implicit LU-SGS solver: in cells
+where the predicted update would fall below $\delta=10^{-6}$ the residual is
+replaced by
+
+$$R^*=\frac{(\rho\tilde\nu)^n}{\Delta t}\Big(e^{R\,\Delta t/(\rho\tilde\nu)^n}-1\Big),$$
+
+and any still-negative updated value is replaced by the exponential update
+itself (Eqs. 60–69; $R$, $R^*$, $R_0$ page-local). $R^*\to0$ when $R\to0$ or
+when $(\rho\tilde\nu)^n\to0$ with $R<0$, so convergence is not prevented. The
+authors state that with it the standard model suffices and no negative SA
+model and no reconstruction limiter is needed, and that, since it modifies
+only the residual, it applies to any spatial discretization (§2.1, §2.5).
+Their spatial scheme is a compact fourth-order variational reconstruction
+whose interface-jump weights they optimize for near-wall cells of aspect
+ratio $10^2$–$10^3$ (§2.3–2.4; see
+[boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md)).
+
+**A positive surrogate variable.** Jiang et al. (2025) carry Moro et al.'s
+always-positive auxiliary variable for SA over to the $k$-$\sqrt kL$
+model: the transported variable is kept, and only the sources and the eddy
+viscosity use a smooth positive surrogate
+([Jiang et al. (2025)](/sources/jiang-2025.md), §3.1, Eqs. 10–13; see
+[scale-adaptive simulation](/methods/scale-adaptive-simulation.md)). They also
+take from their own DG SA work the Hermite-WENO limiting of the turbulence
+variable in troubled cells (§3.1).
 
 ## Variants
 
@@ -370,6 +507,17 @@ low-dissipation scheme, and in SA-DDES of a supersonic base flow with the
 shear-layer-adapted length; in channel flow SA-IDDES gives results "very
 similar" to SST-IDDES (not shown)
 ([Carlsson et al. (2023)](/sources/carlsson-2023.md), §3, §4.2–4.4).
+Pan & Zhang (2023) compare SA-based DES ($C_{\mathrm{DES}}=0.65$, $\Delta$ the
+largest cell edge) and DDES with ANSYS Fluent defaults in a stalled
+centrifugal impeller, against a same-grid LES (§II.B–C, §IV). Husson et al.
+(2024) use the SA-based zonal DES mode 2 (2020) in a lattice Boltzmann
+solver, with the LES-zone functions $f_{v1}=1$, $f_{v2}=0$, $f_w=1$ taken from
+mode 1 and an enhanced destruction $f_w=100$ in grey areas; they note that
+where production and destruction balance $\nu_t\approx\lvert\Omega\rvert\ell^2$,
+a Smagorinsky-like viscosity when $\ell\approx\Delta$, which is what
+motivates hybridization through $\ell$ (§2.2, Eqs. 29–35). Batther & Lee
+(2022) run fully turbulent SA and two SA-based transition models
+inside delayed DES of a pitching airfoil (§3.1; Evidence below). These formulations are on the [DES page](/methods/detached-eddy-simulation.md).
 
 ### SA with wall functions on immersed-boundary Cartesian grids
 
@@ -526,6 +674,66 @@ meshes as future work (§9).
   scheme, without printing the model
   ([Wang et al. (2024)](/sources/wang-2024.md), §4; see
   [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+- **Fully turbulent DDES of dynamic stall.** On a NACA 0012 pitching up at
+  $Re=2\times10^5$, $M=0.1$, fully turbulent SA inside delayed DES
+  underpredicts lift at low incidence, matches the trends of a wall-resolved
+  LES at larger angles, and forms an abrupt turbulent separation bubble
+  between $\alpha=14.1^\circ$ and $14.5^\circ$ instead of a laminar
+  separation bubble, a behaviour the authors say "has not yet been
+  documented in literature"; it also shows more trailing-edge separation,
+  which does not propagate upstream. Of the two SA-based transition models,
+  Coder's amplification-factor transport model is the closest to the LES
+  and Medida & Baeder's $\gamma$-$Re_\theta$ form oscillates at low
+  incidence ([Batther & Lee (2022)](/sources/batther-2022.md), §4.3.1,
+  §4.4, Figs. 17, 21–22; see [dynamic stall](/definitions/dynamic-stall.md)
+  and the [transition-model page](/methods/local-correlation-based-transition-model.md)).
+- **Square cylinder.** Jiang et al. (2025) compare SA URANS with the
+  $k$-$\sqrt kL$ model on a two-dimensional square cylinder at $Re=10^4$,
+  calling the comparison possibly unfair because SA was designed for steady
+  high-Reynolds flows (§4.3; see
+  [square-cylinder flow](/benchmarks/square-cylinder-flow.md)).
+
+### High-order RANS of the NASA verification cases
+
+The NASA Turbulence Modeling Resource cases appear in three sources
+computed at high order:
+
+- **NACA 0012, $M=0.15$, $Re=6\times10^6$.** Lodares et al. (2022) run
+  their entropy-stable DGSEM with the kinetic-energy-preserving split form
+  on the coarsest TMR grid (113×33, quadratic edges), $N=2$–6: at $N=6$,
+  $C_L=1.0894$, $C_D=0.01250$ at $10^\circ$ against the reference 1.0909,
+  0.01231, and $C_L=1.5502$, $C_D=0.02144$ at $15^\circ$ against 1.5461,
+  0.02124; at $0^\circ$, $C_D=0.00813$ for every $N$ against 0.00819 (§7.4,
+  Table 2). Tomboulides et al. (2025) list the CFL3D SA values as
+  $C_D=0.008190$ at $0^\circ$ and $C_D=0.01231$, $C_L=1.0909$ at $10^\circ$,
+  and FUN3D SA as 0.008120 and 0.01242, 1.0983, against 0.0081, 0.012 and
+  1.075 measured ([Tomboulides et al. (2025)](/sources/tomboulides-2025.md),
+  §3.4, Tables 3–4; see [$k$-$\tau$ model](/methods/k-tau-model.md)).
+  Lodares et al.'s reference values coincide with the CFL3D entries of
+  Tomboulides et al. *(compiler check, not in the sources)*; see
+  Qualifications for the label.
+- **NACA 0012 at $15^\circ$, $M=0.15$, $Re=2.88\times10^6$.** With the
+  exponential decay procedure, Huang et al.'s fourth-order scheme reaches
+  $C_L=1.393$, 1.499 and 1.523 on three C-meshes of 11,880 to 33,150 cells,
+  against 1.526 from Gregory & O'Reilly, while the second-order scheme gives
+  1.183, 1.277, 1.299, and 1.437 on a fourth mesh of 143,700 cells; it also
+  predicts a spurious trailing-edge separation bubble on all meshes, which
+  the fourth-order scheme shows only on the coarsest. Measured by the
+  inverse of error times CPU time, fourth order becomes more efficient with
+  refinement and second order less (§3.2, Table 6, Fig. 29).
+- **Zero-pressure-gradient flat plate, $M=0.2$, $Re=5\times10^6$.** Huang et
+  al.'s fourth-order scheme on 137×97 cells matches the CFL3D skin friction
+  on the 545×385 grid, while second order underpredicts the log-region
+  velocity (§3.1); Lodares et al. on the coarsest TMR mesh with $N$ up to
+  10 agree with the FUN3D 545×385 skin friction, eddy-viscosity profile
+  and law of the wall at $x=0.97$ (§7.3; see
+  [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)).
+- **30P-30N three-element airfoil** at $16^\circ$, $Re=9\times10^6$: Huang
+  et al.'s optimized fourth-order scheme on 53,870 cells predicts lift and
+  drag closer to the DLR reference than the fourth-order scheme of Pan et
+  al. and the second-order scheme, and its skin friction is closer to a
+  $p=4$ DG solution of which the finite-volume grid has 4.8% of the degrees
+  of freedom (§3.3).
 
 ## Qualifications
 
@@ -557,7 +765,28 @@ meshes as future work (§9).
   which in Li & Liu's taxonomy is the SA-S variant that Li & Liu say is "not
   mentioned in the existing references". Yan et al. call it the SA model and
   give no reason for the strain; whether this is a notational choice cannot
-  be settled from the paper.
+  be settled from the paper. Pan & Zhang (2023) and Tang et al. (2022) build
+  the same strain-based measure while calling it the modified vorticity
+  (Pan & Zhang, §II.B, Eqs. 4–5), and Huang et al. (2022b) define their
+  "vorticity" magnitude as $\sqrt{2\omega_{ij}\omega_{ij}}$ with $\omega_{ij}$
+  printed as $\tfrac12(\partial_ju_i+\partial_iu_j)$, a plus sign that makes it
+  the strain magnitude (§2.1); whether these are slips or the SA-S variant
+  is not stated by either source.
+- Pan & Zhang (2023) print $f_{v1}=\chi^3/(\chi^3+c_{v1}^6)$, with exponent 6
+  on $c_{v1}$ against 3 on $\chi$, unlike every other source on this page
+  (§II.B, Eq. 4).
+- The printed diffusion coefficients of the compressible forms differ:
+  $(\mu+\rho\tilde\nu)/\sigma$ in Fanizza et al. (2025),
+  $\rho(\nu+\tilde\nu)/\sigma$ in Lodares et al. (2022), the same thing, and
+  $(\mu+\mu_t)/\sigma$ with $\mu_t=\rho\tilde\nu f_{v1}$ in Huang et al.
+  (2022b), which departs from $\tilde\nu$ inside the buffer and viscous
+  layers where $f_{v1}<1$ *(compiler check, not in the sources)*; Huang et
+  al. keep, and Lodares et al. explicitly neglect, the density-gradient
+  diffusion term. Neither discusses the alternative.
+- Lodares et al. (2022) label the NACA 0012 reference "FUN3D, 897×257" in
+  Table 2 and "CFL3D, 897×257" in the legends of Fig. 10 (§7.4).
+- Huang et al. (2022b) cite LU-SGS as their ref. [49], which is Reichardt's
+  1951 wall-law paper (§2.2).
 
 # Citations
 
@@ -586,3 +815,10 @@ meshes as future work (§9).
 - [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §1, §7.
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §1.
 - [Schotte et al. (2026)](/sources/schotte-2026.md) — §2.1, §4 (HAL deposit of the version of record).
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.1 Eqs. 3–6, §2.2, §2.3–2.5 Eqs. 53–69, §3.1–3.3, Table 6, Fig. 29.
+- [Lodares et al. (2022)](/sources/lodares-2022.md) — §2 Eqs. 13–17, §3.2 Eqs. 38–50, §4.3–4.5 Eqs. 68, 74, §5.1.2 Eqs. 87–89, §7.2–7.4 Table 2, Fig. 10.
+- [Pan & Zhang (2023)](/sources/pan-2023.md) — §II.B–C Eqs. 3–6, §IV.
+- [Husson et al. (2024)](/sources/husson-2024.md) — §2.2 Eqs. 18–23, 29–35, §3.2 Eqs. 38–39, 42.
+- [Jiang et al. (2025)](/sources/jiang-2025.md) — §3.1 Eqs. 10–13, §4.3.
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.4, Tables 3–4.
+- [Batther & Lee (2022)](/sources/batther-2022.md) — §3.1, §4.3.1, §4.4, Figs. 17, 21–22.

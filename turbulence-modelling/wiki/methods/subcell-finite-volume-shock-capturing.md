@@ -5,7 +5,7 @@ description: "Troubled DG elements are recomputed as (N+1)^3 finite-volume subce
 status: established
 aliases: [hybrid DG/FV, DG/FV subcell scheme, finite-volume subcell limiting, DG/FV blending, RL-Blend, local modal filter, LMF, entropy filter]
 tags: [shock-capturing, dg, numerical-dissipation, implicit-les, reinforcement-learning, compressible, flux-reconstruction]
-timestamp: 2026-10-26T15:48:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Subcell finite-volume shock capturing for DG
@@ -220,6 +220,47 @@ authors' classification, local switching to lower-order schemes gives
 [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
 for the comparison).
 
+**Switching FV subcells in a shock/turbulent-boundary-layer interaction.**
+[Gao et al. (2022)](/sources/gao-2022.md) run the FLEXI switching scheme
+of Sonntag & Munz (troubled element of degree $N$ replaced by $(N+1)^3$
+equidistant second-order TVD subcells) as an implicit LES of an oblique
+shock reflecting on a Mach 2 turbulent boundary layer ($N=6$, about 93
+million degrees of freedom on 16,384 cores, $Re_{\theta_0}=1628$). Three
+ingredients are specific to the turbulent interaction:
+
+- **Indicator on a filtered field.** The Jameson pressure indicator,
+  evaluated on the instantaneous field, flags much of the under-resolved
+  turbulent boundary layer and fills it with dissipative subcells, and
+  Ducros-type indicators miss shocks inside the boundary layer or flag too
+  many cells; evaluating the Jameson indicator on the spanwise-averaged
+  pressure confines the subcells to the shocks, including inside the
+  boundary layer (§3.2, Figs. 2, 7). The construction and its limits
+  (quasi-two-dimensional configurations) are on
+  [shock sensors](/definitions/shock-sensor.md).
+- **Positivity.** The positivity-preserving limiter of Zhang & Shu is added
+  "to stabilise the switching between DG and FV subcells" caused by
+  unsteady shocks inside the boundary layer; the authors state, without a
+  test, that it keeps DG stable "without losing high-order accuracy"
+  (§3.2; no formula printed).
+- **Cost.** The hybrid run has a performance index (wall time times cores
+  per degree of freedom, time step and Runge–Kutta stage) of about
+  1.84 µs against 1.55 µs for the shock-free boundary layer, 18.7% more,
+  within the 15–20% hybrid overhead that Krais et al. report above,
+  filtering included (§5.3.1, Eq. 19).
+
+In the laminar shock/boundary-layer interaction of Katzer (Mach 2,
+$Re_{x}=3\times10^5$ at the impingement point, pressure ratio 1.4), DG with
+$N=4$ on 182,000 degrees of freedom reaches the converged separation length
+that a second-order finite-volume scheme needs 409,500 degrees of freedom
+for, both 5.87% longer than Katzer's original, under-resolved prediction;
+at about 355 degrees of freedom per core the DG/FV run takes 7680
+CPU-minutes against 10,368 for the finite-volume one (§4.1–4.2,
+Figs. 9, 13). The turbulent interaction (separation at $16.7\delta_r$
+against $17.6\delta_r$ in the reference LES of Morgan et al., reattachment
+$19.5\delta_r$ against $19.3\delta_r$, $\delta_r$ the boundary-layer
+thickness at a reference station) is on
+[shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+
 **Convex blending on GPUs.** The GPU code [GALÆXI](/software/galaexi.md)
 keeps the Hennemann blending with an a priori indicator,
 $\partial_tU=(1-\alpha)R_{DG}+\alpha R_{FV}$, blending only the element
@@ -253,6 +294,21 @@ frequency (see
 modal DG up to high order with a von Neumann–Richtmyer viscous pressure at
 the internal quadrature points instead of subcells; see
 [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md).
+
+**Polynomial limiting instead of subcells (modal RKDG).**
+[Huang et al. (2025)](/sources/huang-2025.md), §1, recall the hybrid DG/FV
+subcell route (Balsara et al. 2007, Sonntag & Munz 2014, and Jiang et al.
+2021 with a boundary-variation-diminishing THINC reconstruction on the
+subcells, as cited) and stay instead with the classical indicator–limiter
+route of Runge–Kutta DG, as do [Huang & Fu (2024)](/sources/huang-2024.md):
+a troubled-cell indicator flags cells, and a limiter rebuilds the
+higher modal coefficients of the flagged cells from compact neighbour
+stencils, keeping the cell average. Both use
+third-order modal DG ($N=2$) on uniform Cartesian grids and inviscid
+tests only; the TENO-based indicator is on
+[shock sensors](/definitions/shock-sensor.md), the TENO and TENO-THINC
+limiters on [WENO](/methods/weno-scheme.md). No source of this bundle
+compares the two routes on the same flow.
 
 ## Convention difference
 
@@ -294,6 +350,13 @@ on the right.
   Pirozzoli kinetic-energy-preserving split flux, which Ferrer et al. (2023, §3.3)
   list as a split form distinct from the entropy-conserving ones, and the
   paper does not state that the proof covers this configuration.
+- **Printed saving (Gao et al. 2022, §4.2).** The DG/FV run is said to
+  take "around 35% less" CPU time than the finite-volume one; from the
+  printed 7680 and 10,368 CPU-minutes it takes 25.9% less, and 35% is how
+  much more the finite-volume run takes *(compiler check, not in the
+  sources)*. The laminar comparison uses the classic Jameson indicator on
+  a two-dimensional case and says nothing about the subcells' share of the
+  cost.
 - Chapelier et al. (2024) attribute the oscillations of FLEXI's dilatational
   dissipation to DG/FV switching without a run that isolates it; Klose et
   al. (2025) do not show the distribution of $\alpha$.
@@ -309,3 +372,6 @@ on the right.
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv 2404.12703v2: §1; §2.3, Eq. (21) (Hennemann blending in GALÆXI); §5.2, Fig. 11 (supersonic Taylor–Green vortex); §6.3, Fig. 13 (Rotor 37 cascade, $\alpha$ near the shock).
 - [Klose et al. (2025)](/sources/klose-2025.md) — ASME accepted manuscript: §2, Eq. (1) (blending with first-order FV, dilatation–vorticity sensor); §3.
 - [Cernetic et al. (2024)](/sources/cernetic-2024.md) — arXiv 2401.06841v2: §3.1 (artificial viscosity instead of subcells).
+- [Gao et al. (2022)](/sources/gao-2022.md) — §3.2, Figs. 1–2, 5–7 (Sonntag–Munz subcells, filtered indicator, positivity-preserving limiter); §4.1–4.2, Figs. 9, 13 (laminar interaction, DG against FV cost); §5.3.1, Eq. (19) (performance index of the hybrid).
+- [Huang et al. (2025)](/sources/huang-2025.md) — §1 (subcell approaches recalled; polynomial limiting chosen).
+- [Huang & Fu (2024)](/sources/huang-2024.md) — §1, §4 (indicator–limiter route of RKDG).

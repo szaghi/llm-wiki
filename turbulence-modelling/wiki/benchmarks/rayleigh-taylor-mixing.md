@@ -5,7 +5,7 @@ description: "Buoyancy-driven mixing of a heavy fluid placed above a light one: 
 status: established
 aliases: [Rayleigh-Taylor instability, RT mixing layer, Rayleigh–Taylor flow, variable-density mixing layer]
 tags: [benchmark, pans, hybrid-rans-les, rans]
-timestamp: 2026-10-26T10:26:00Z
+timestamp: 2026-10-27T06:07:00Z
 ---
 
 # Rayleigh–Taylor mixing
@@ -106,6 +106,18 @@ $At$ of this page; the scaling and the turbulent jump relations are on
 [shock-generated turbulence](/results/shock-generated-turbulence.md). No
 ingested source compares the two configurations.
 
+## Single-mode inviscid instability as a shock-capturing test
+
+[Takagi et al. (2022)](/sources/takagi-2022.md), §4.7,
+[Liang & Fu (2024)](/sources/liang-2024.md), §4.7, and
+[Huang et al. (2025)](/sources/huang-2025.md), §5.7, run the inviscid
+two-dimensional single-mode instability (densities 2 and 1, $\gamma=5/3$,
+$At=1/3$ *(compiler check, not in the sources)*, grids $64\times256$ to
+$300\times1200$, $t=1.95$) only as a small-scale resolution test of
+[WENO and TENO schemes](/methods/weno-scheme.md), where its results are;
+it has no viscosity, mixing statistics or turbulence and is not the
+mixing-layer flow of this page.
+
 ## Rayleigh–Taylor fingers in a solar-flare simulation
 
 [Ruan et al. (2023)](/sources/ruan-2023.md) run a three-dimensional
@@ -129,8 +141,8 @@ layer of this page.
 
 ## Qualifications
 
-- Only one ingested source runs the case; the page records its set-up and
-  findings, not a cross-source consensus.
+- Only one ingested source runs the turbulent mixing case; the page
+  records its set-up and findings, not a cross-source consensus.
 - [Pereira et al. (2021)](/sources/pereira-2021.md) (read in arXiv v2) call
   $\alpha_b$ the growth rate of the mixing-layer half-width (and, in §I,
   "of the lower interface") while computing it from the full height $h$:
@@ -152,3 +164,6 @@ layer of this page.
 - [Pereira et al. (2021)](/sources/pereira-2021.md) — §I, Fig. 1; §II, Eqs. (1)–(3), Table I; §III; §IV.1–IV.3, Table II, Figs. 8–17; App. A–B, Fig. 18.
 - [Davidovits et al. (2022)](/sources/davidovits-2022.md) — §III, §IV (Richtmyer–Meshkov scaling with a pre-shock Atwood number).
 - [Ruan et al. (2023)](/sources/ruan-2023.md) — §1, §2, §3.1, §3.3, Fig. 3 (Rayleigh–Taylor fingers against Kelvin–Helmholtz turbulence in a flare).
+- [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.7, Eq. (32) (single-mode inviscid instability, numerics test).
+- [Liang & Fu (2024)](/sources/liang-2024.md) — §4.7, Eq. (60), Fig. 14 (same).
+- [Huang et al. (2025)](/sources/huang-2025.md) — §5.7, Fig. 8 (same).

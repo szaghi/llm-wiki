@@ -5,7 +5,7 @@ description: "The near-wall closure of RANS that imposes a law of the wall at th
 status: established
 aliases: [wall function, WF, adaptive wall function, two-velocity-scale wall function, explicit wall function, RANS wall law]
 tags: [rans, wall-model, boundary-layer, dg]
-timestamp: 2026-10-26T16:24:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Wall functions for RANS
@@ -52,7 +52,12 @@ $\beta$, $\beta_1$).
   [immersed boundary method](/methods/immersed-boundary-method.md) (§3), and
   [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) set $k$ and $\omega$
   by wall functions at the boundary nodes of a lattice Boltzmann solver
-  (§2.2). [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) (App. A,
+  (§2.2). [Husson et al. (2024)](/sources/husson-2024.md) (§1, §3.1) state
+  that the isotropic Cartesian grids of lattice Boltzmann solvers make wall
+  resolution prohibitive at high Reynolds number, so that an immersed
+  boundary with a wall model "has become a standard choice"; theirs carries
+  a Spalart–Allmaras law into RANS and the RANS zone of zonal DES (below).
+  [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) (App. A,
   Fig. 32) run the RANS part of their aircraft-wake study, with a
   differential [Reynolds-stress model](/methods/reynolds-stress-model.md), on
   an anisotropically adapted mesh of about 110 M cells whose ten prism layers
@@ -113,6 +118,47 @@ by $-\tau_w\boldsymbol t$, $\boldsymbol t$ the unit vector of the tangential
 velocity (Eq. 19). The authors call it an "adaptive" wall function: nothing
 requires the first element to lie in the log layer.
 
+**A linearized law on an immersed boundary.** Husson et al. (2024,
+§3.1–3.2, Eqs. 37–43) use the analytical law of the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md) (Allmaras &
+Johnson, as cited; formula and constants on the
+[law of the wall](/definitions/law-of-the-wall.md) page), chosen because its
+buffer layer is consistent with the model, in a lattice Boltzmann solver
+([ProLB](/software/prolb.md)) with a sharp-interface direct-forcing
+[immersed boundary](/methods/immersed-boundary-method.md) whose forcing nodes
+lie on the fluid side. On coarse grids the near-wall gradients of the law are
+"too steep to be well captured by the mesh", which causes oscillations and
+a wrong skin friction; removing nodes below a threshold, as others do
+(as cited), leaves too few nodes in thin inner layers. They therefore
+linearize the law below a cut-off height $y_c$ (after Tamaki et al., as
+cited),
+
+$$u^+(y^+)=u^+(y_c^+)-(y_c^+-y^+)\,\frac{du^+}{dy^+}\Big|_{y_c^+},$$
+
+so that the wall-normal gradient is constant and resolvable by finite
+differences, and offset the momentum imbalance by a constant eddy viscosity
+below $y_c$, replacing the damping function of the Spalart–Allmaras
+eddy viscosity there by $f'_{v1}=r_{\mathrm{lin}}(\chi r_{\mathrm{lin}})^3/\big(c_{v1}^3+(\chi r_{\mathrm{lin}})^3\big)$,
+$r_{\mathrm{lin}}=y_c/d$ ($\chi=\tilde\nu/\nu$; $y_c$, $r_{\mathrm{lin}}$
+page-local). With the linear wall value $\chi=\kappa y^+$ this gives
+$\nu_t/\nu=\chi f'_{v1}=\kappa y_c^+f_{v1}(\kappa y_c^+)$ at every $d<y_c$,
+the value at the cut-off *(compiler check, not in the sources)*. The cut-off
+is the interpolation-point distance, $y_c=d_{\mathrm{IP}}=2.5\Delta y$, fixed
+"to limit local scheme staggering". At each forcing node: interpolate
+density and velocity at the interpolation point by weighted least squares
+from eight nodes; invert the law there by Newton–Raphson for $u_\tau$; set
+the tangential velocity from the linearized law, the density equal to the
+interpolated one, $\chi_F=\kappa y_F^+$ and the normal velocity by linear
+extrapolation; overwrite the wall-normal velocity gradient, in the wall
+frame, by an analytical value; and rebuild all distributions from the
+equilibrium and first-order non-equilibrium parts (§3.2, steps 1–5). The
+grids are coarse in wall units: $\Delta y^+\approx30$ on a flat plate,
+15 at a backward-facing step and about 40 on the main element of a
+three-element airfoil (§4). The authors cite earlier successes of the
+linearization and state its limit: it rests, like the immersed-boundary
+treatment, on the equilibrium hypothesis, so discrepancies are expected
+near separation and in recirculation (§3.1).
+
 ## Turbulence variables next to the wall
 
 The sources set $k$ and $\omega$ from the asymptotic solutions of the
@@ -144,7 +190,10 @@ Spalart–Allmaras $\tilde\nu$: Constant et al. (2024, §3.2, Eq. 8) set it at
 the target points from the mixing-length viscosity
 $\nu_t=\kappa u_\tau y\,[1-e^{-y^+/19}]$ (see
 [equilibrium wall model](/methods/equilibrium-wall-model.md) and
-[Spalart–Allmaras model](/methods/spalart-allmaras-model.md)).
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md)); Husson et al.
+(2024, Eq. 42) set it at the forcing nodes as $\chi_F=\kappa y_F^+$, the
+linear log-layer value that the Spalart–Allmaras damping function is built
+to reproduce down to the wall (§2.2).
 
 ## Accuracy and cost in a high-order DG solver
 
@@ -229,9 +278,27 @@ hybrid Ahmed-body results (lines 553–557); Ghidoni et al. (2026, §5) list
 strong adverse pressure gradients, transonic and supersonic flow, unsteady
 flow and hybrid RANS/LES as future work.
 
+## The linearized law in separated flow
+
+Husson et al. (2024, §4) assess the linearized law only inside their
+hybrid computations (see [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+On the zero-pressure-gradient flat plate of the NASA Turbulence Modeling
+Resource ($Re_L=5\times10^6$, $M=0.2$, $\Delta y^+\approx30$) the RANS and
+zonal-DES skin frictions are "identical" (§4.1.2). Behind the A3C
+[backward-facing step](/benchmarks/backward-facing-step.md)
+($Re_h=40\,000$, $\Delta y^+=15$ at the step, 44.7 M nodes) the mean
+profiles agree with a wall-resolved body-fitted Navier–Stokes zonal DES on
+3.9 M points, except near the wall at the first station, which the authors
+attribute to the wall law imposing a zero-pressure-gradient profile in the
+recirculation (§4.2.2, Fig. 11). On the LEISA2 three-element airfoil the
+slat recirculation is slightly larger than in a wall-resolved LES and the
+experiment, "partly" because of the wall model (§4.3.2, Fig. 18). The same
+limit appears in the DG results of Ghidoni et al. (2026) above: the law of
+the wall returns a wrong $u_\tau$ in recirculation.
+
 ## Wall-resolved alternatives in high-order RANS
 
-Two DG sources resolve the wall instead, and say what it takes:
+Five high-order sources resolve the wall instead, and say what it takes:
 
 - Ghidoni et al. (2026, §3, Eq. 4) impose, without wall function,
   $k_w=0$ and $\omega_w=6\nu_w/\big(\beta_\omega(a_Ny_1)^2\big)$ with
@@ -242,6 +309,34 @@ Two DG sources resolve the wall instead, and say what it takes:
   solution $\omega=6\nu/(\beta_\omega y^2)$, valid for $y^+<3$, on the new
   boundary, because a large wall value of $\omega$ "is not stable for
   high-order approximations"; robustness needs $y^+<3$ at the wall (§7).
+- [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) transport
+  $\ln\omega$ in a flux-reconstruction $k$-$\omega$ SST solver (see
+  [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md)) and impose at a
+  no-slip wall the ghost value $\ln\big(60\mu/(\rho\beta_\omega d_1^2)\big)$,
+  with $d_1$ the wall distance of the first solution point, because the
+  theoretical distance zero would give an infinite value (§3.3.1, Eq. 88);
+  the wall value thus depends on order and mesh. On the Wieghardt plate
+  their high-order solutions are accurate with a first element at
+  $y_1^+\simeq25$ "without wall functions", which they state is larger than
+  what second-order finite-volume solvers without wall-extended functions
+  allow (Abstract, §4.1, Fig. 10); no finite-volume comparison is shown.
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) replace $\omega$
+  by its inverse, the time scale of the [$k$-$\tau$ model](/methods/k-tau-model.md),
+  whose wall condition is simply zero and whose source terms stay bounded,
+  against the $\omega\sim y^{-2}$ singularity that an arbitrarily large
+  wall value of $\omega$ handles in finite-volume codes but that leaves
+  persistent oscillations and grid sensitivity in high-order codes (§1–2).
+  In their spectral-element channel at $Re_\tau\approx5200$ the solution is
+  insensitive to the first-point height, $y^+=1.7$ to 0.25 for polynomial
+  degrees 3 to 9 (§3.1). Their finite-volume comparison runs set
+  $\omega_w=6\nu/(\beta_\omega y^2)$ through OpenFOAM's `omegaWallFunction`
+  at $y^+\sim1$ (§3.1); $k$-$\tau$ wall functions are reported in earlier
+  work, as they cite it, and left to future application (§4).
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) resolve the wall in a
+  fourth-order finite-volume Spalart–Allmaras solver with $\rho\tilde\nu=0$
+  at the wall and first cells at $y^+\approx0.5$–1 (§2.1, §3.1), and treat
+  the cost of the resulting stretched cells in the reconstruction instead
+  (see [boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md)).
 
 ## Qualifications
 
@@ -267,6 +362,20 @@ Two DG sources resolve the wall instead, and say what it takes:
   adverse-pressure-gradient page.
 - Mozaffari et al. (2024) reuse the symbol $\omega_{\log}$ on the left side
   of their blend (Eq. 24) for the blended value.
+- **Analytical wall gradient of Husson et al. (2024).** Eq. (43) sets the
+  wall-normal gradient of the tangential velocity at the forcing node to
+  $u_{\tau,F}\,\big(c_{v1}^3+(\kappa y^+_{\mathrm{IP}})^3\big)/\big(c_{v1}^3+(\kappa y^+_{\mathrm{IP}})^3(1+\kappa y^+_{\mathrm{IP}})\big)$,
+  "consistent with Equation (37)". The fraction is exactly $du^+/dy^+$ of
+  the constant-stress layer with the Spalart–Allmaras eddy viscosity and
+  $\chi=\kappa y^+$, since $(1+\chi f_{v1})\,du^+/dy^+=1$ gives
+  $(c_{v1}^3+\chi^3)/(c_{v1}^3+\chi^3+\chi^4)$; the dimensional gradient is
+  then $(u_\tau^2/\nu)\,du^+/dy^+$, so the printed prefactor $u_{\tau,F}$
+  lacks a factor $u_\tau/\nu$, and the fraction is evaluated at the
+  interpolation point while the left side is at the forcing node
+  *(compiler check, not in the sources)*. In Eq. (41), the Newton update for
+  $y^+$, the wall distance $y$ in $u_{t,\mathrm{IP}}y/\nu$ is not defined
+  (the inversion is performed at the interpolation point, at distance
+  $d_{\mathrm{IP}}$).
 
 # Citations
 
@@ -276,3 +385,7 @@ Two DG sources resolve the wall instead, and say what it takes:
 - [Constant et al. (2024)](/sources/constant-2024.md) — §3.2, Eqs. (6)–(8); §6.1 (HAL author manuscript).
 - [Knopp (2022)](/sources/knopp-2022.md) — §1.
 - [Bouhafid et al. (2024)](/sources/bouhafid-2024.md) — App. A, Fig. 32.
+- [Husson et al. (2024)](/sources/husson-2024.md) — §1; §2.2; §3.1, Eqs. (36)–(39); §3.2, Eqs. (40)–(43); §4.1.2; §4.2.2, Fig. 11; §4.3.2, Fig. 18.
+- [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — Abstract; §3.3.1, Eq. (88); §4.1, Figs. 9–10.
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §1–2; §3.1, Table 1; §4.
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.1; §3.1.

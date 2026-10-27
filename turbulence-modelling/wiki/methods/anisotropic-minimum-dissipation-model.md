@@ -5,7 +5,7 @@ description: "The anisotropic minimum-dissipation (AMD) model is an eddy-viscosi
 status: established
 aliases: [AMD model, AMD, minimum-dissipation model, Rozema model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-26T07:41:00Z
+timestamp: 2026-10-27T05:46:00Z
 ---
 
 # Anisotropic minimum-dissipation model
@@ -116,6 +116,13 @@ DNS points; second-order staggered finite differences, no wall model):
   "had similar error for the RMS velocity components", while §4.2 states
   that the learned closures match filtered DNS more closely "for all cases
   and all statistics": an internal difference in the strength of the claim.
+- [Pan & Zhang (2023)](/sources/pan-2023.md) (§I) cite AMD papers, with a
+  modulated [gradient model](/methods/gradient-model.md), among "novel
+  sub-grid-scale stress models based on pressure gradient", in a
+  literature survey of pump LES; they do not use AMD. The formula above,
+  as printed by Sirignano & MacArt (2023), contains velocity gradients and
+  grid spacings only, no pressure gradient *(compiler check, not in the
+  sources)*.
 
 # Citations
 
@@ -124,3 +131,4 @@ DNS points; second-order staggered finite differences, no wall model):
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §II A; App. B, Fig. 18.
 - [Vela-Martín (2022)](/sources/velamartin-2022.md) — §8.
 - [Prakash et al. (2022)](/sources/prakash-2022.md) — §II.
+- [Pan & Zhang (2023)](/sources/pan-2023.md) — §I.

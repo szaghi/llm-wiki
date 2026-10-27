@@ -141,10 +141,11 @@ prints its DOI as a URL. No printed duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2, 4, 6, 7. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4, 6, 7, 8. This source is cited on:
 
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
+- [Shock sensors and troubled-cell indicators](/definitions/shock-sensor.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Equilibrium wall model](/methods/equilibrium-wall-model.md)
 - [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Backward-facing step"
-description: "Turbulent flow over a sudden channel expansion with fixed separation at the step edge and downstream reattachment: it measures LES filter widths at Re_H about 5700, adaptive IDDES meshes at 28,000, learned RANS closures at 300 to 5000 and high-order RANS wall functions at 36,000; the curved-step variant at 13,700 trains corrected SST models."
+description: "Turbulent flow over a sudden expansion with fixed separation at the step edge and downstream reattachment: it measures LES filter widths, adaptive IDDES meshes, learned RANS closures, high-order RANS wall functions and the k-τ model, and ZDES shielding on a lattice Boltzmann solver, at step Reynolds numbers 300 to 40,000; the curved variant trains corrected SST models."
 status: established
-aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step, Driver–Seegmiller step, curved backward-facing step, CBFS]
-tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification, field-inversion, rans, dg]
-timestamp: 2026-10-26T20:47:00Z
+aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step, Driver–Seegmiller step, A3C step, curved backward-facing step, CBFS]
+tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification, field-inversion, rans, dg, lattice-boltzmann, spectral-element]
+timestamp: 2026-10-27T06:07:00Z
 ---
 
 # Backward-facing step
@@ -23,7 +23,9 @@ or a grid does to the free shear layer: its growth rate sets $x_R$. In this
 bundle it tests the definition of the LES filter width on cells of high
 aspect ratio, mesh adaptation for hybrid RANS/LES, the transfer of a
 learned RANS closure to a geometry it was not trained on, and the limit of
-a RANS wall function in the recirculation.
+a RANS wall function in the recirculation, a RANS model without wall
+distance in spectral elements, and the shielding of a zonal detached-eddy
+simulation on the isotropic grids of a lattice Boltzmann solver.
 
 ## Configurations in the sources
 
@@ -114,6 +116,71 @@ the velocity and turbulence-intensity profiles still agree (§4.3, Figs.
 10–11). No reattachment length is printed. On the zero-pressure-gradient
 plate the same function stays accurate up to $y_1^+=320$ (see
 [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)).
+
+**The $k$-$\tau$ model on the Driver–Seegmiller step.**
+[Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §3.3, run the
+same experiment at $Re=37{,}425$ (on the step height and the incoming
+free-stream velocity), inlet at $x/H=-4$, outlet at $40H$, channel heights
+$8H$ upstream and $9H$ downstream, inlet profiles from 2D RANS channel runs
+fitted to the measured inlet profile. The [$k$-$\tau$ model](/methods/k-tau-model.md)
+and the authors' regularized $k$-$\omega$ run in [Nek5000](/software/nek5000.md)
+at $p=7$ (2553 elements, 125,840 unique points, mean first-point
+$y^+=0.21$; $p=2$ to 9 checked), the [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md)
+in [OpenFOAM](/software/openfoam.md) on meshes up to 165,072 cells (mean
+$y^+=0.49$):
+
+| Model | $x_R/H$ |
+|---|---|
+| $k$-$\tau$ (Nek5000) | 6.48 |
+| regularized $k$-$\omega$ (Nek5000) | 6.49 |
+| SST (OpenFOAM, fine) | 6.44 |
+| experiment | 6.26 |
+| Menter (1994), as cited: $k$-$\omega$ / SST | 6.4 / 6.5 |
+
+All models under-predict the downstream velocity; OpenFOAM SST
+under-predicts $C_f$, "a known behavior of the SST model"; at comparable
+resolution the Nek5000 $C_f$ profiles are more consistent than OpenFOAM's,
+and $p=4$ and $p=7$ give indistinguishable $C_f$ (Figs. 9–12). The
+turbulent kinetic energy downstream departs from SST, which the authors
+explain by the absence of blending functions in their $k$-$\tau$ model and
+by different model parameters (§3.3). On the same step
+[Ghidoni et al. (2026)](/sources/ghidoni-2026.md) (above) report pressure,
+skin-friction and profile agreement with their wall function at all
+degrees $N=1$–6 for $y_1^+\le80$, and print no reattachment length.
+
+**Zonal detached-eddy simulation on a lattice Boltzmann solver.**
+[Husson et al. (2024)](/sources/husson-2024.md), §4.2, use the step of the
+A3C combustion chamber (experiment of Moreau et al. as cited): $H=0.035$ m,
+$u_0=50$ m/s, $T=520$ K, $Re_H=40{,}000$, boundary-layer thickness $0.37H$
+at separation, span $2H$, periodic. They compare ZDES mode 2 (2020) on
+the D3Q19 [lattice Boltzmann method](/methods/lattice-boltzmann-method.md)
+of [ProLB](/software/prolb.md), with an
+[immersed boundary](/methods/immersed-boundary-method.md) and a
+linearized Spalart–Allmaras wall law, against the body-fitted
+wall-resolved ZDES of Deck & Renard on a Navier–Stokes finite-volume
+solver (Table 1):
+
+| Run | $\Delta y^+$ at the step | nodes | wall model |
+|---|---|---|---|
+| ZDES and RANS, lattice Boltzmann | 15 | $44.7\times10^6$ | yes |
+| ZDES and RANS, Navier–Stokes (Deck & Renard) | 1 | $3.9\times10^6$ | no |
+
+Isotropy makes the lattice grid locally much finer than the Navier–Stokes
+one ($\Delta z_{NS}\approx10\Delta z_{LBM}$ for $0\le x/H\le1$). The
+shielding function computed a priori from the RANS lattice solution agrees
+with that of the Navier–Stokes ZDES despite the different numerics and
+grids; the vorticity-thickness growth of the shear layer agrees; early
+two-dimensional Kelvin–Helmholtz rollers are more pronounced in the
+Navier–Stokes run; the eddy viscosity is destroyed quickly and the
+instabilities develop alike in both, so the authors conclude that the lattice solver adds no further delay in the
+formation of instabilities (§4.2.2, Figs. 7–10). Mean velocity profiles at
+four stations agree very well with the Navier–Stokes ZDES, and the
+streamwise RMS shows a "fair common tendency" with it and with the
+experiment; the near-wall differences at the first station are attributed
+to the wall model, which imposes a zero-pressure-gradient profile inside
+the recirculation (Fig. 11). No reattachment length is printed. See
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) and
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md).
 
 **Out-of-geometry test of a learned RANS closure.**
 [Tang et al. (2023)](/sources/tang-2023.md) (read in arXiv v1), §III A
@@ -274,6 +341,20 @@ step showed a high level of uncertainty when applied to the periodic hill.
   model families and opposite directions of transfer, so they do not
   contradict each other.
 
+- The Driver–Seegmiller step is given $Re_H=36{,}000$ (free-stream
+  velocity at $x/H=-4$) by [Ghidoni et al. (2026)](/sources/ghidoni-2026.md)
+  and $Re=37{,}425$ (incoming free-stream velocity) by
+  [Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §3.3; neither
+  comments on the other value, and the two are recorded side by side.
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) call their
+  OpenFOAM meshes coarse, medium and fine but write that "the coarse and
+  fine meshes … show good agreement, however the coarsest mesh profile
+  differs significantly" (§3.3).
+- [Husson et al. (2024)](/sources/husson-2024.md) write, for
+  $x/H\ge1.5$, that "the LBM grid resolution is finer than the LBM one"
+  (§4.2.2), where one of the two is the Navier–Stokes grid; no averaging
+  time is printed for the step.
+
 # Citations
 
 - [Abe (2021)](/sources/abe-2021.md) — §III, Table I; §IV A–D, Tables II–III, Figs. 4–11; App. B, Table IV.
@@ -286,3 +367,5 @@ step showed a high level of uncertainty when applied to the periodic hill.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §4.1; §4.2.3, Tables 5–7, Figs. 7–9.
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §4.3, Figs. 9–11 (Driver–Seegmiller step, wall function).
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §3.3 (hammerhead flow likened to an axisymmetric step).
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.3, Figs. 7–12.
+- [Husson et al. (2024)](/sources/husson-2024.md) — §4.2.1–4.2.2, Table 1, Figs. 6–11.

@@ -5,7 +5,7 @@ description: "Turbulence in a triply periodic box, decaying or forced: a priori 
 status: established
 aliases: [HIT, DHIT, HID, DIT, Comte-Bellot–Corrsin experiment, CBC experiment, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation, supersonic isothermal turbulence, driven supersonic turbulence, exascale DNS of isotropic turbulence]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T06:03:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -57,6 +57,8 @@ notation registry.)
 | [Ranjbar et al. (2026)](/sources/ranjbar-2026.md), §III.A, Table I | decaying (case idc96 of Blaisdell et al.) | not given; $Re_c=450$ | DGSEM, $N=8$, $12^3$ elements (1,259,712 points), checked against the authors' earlier DSEM code | DGSEM, $N=7$, $6^3$ elements (110,592 points): no model, Smagorinsky, modal filters | top-hat spectrum on $8\le k\le16$ for velocity and temperature; $\gamma=1.4$, $Pr=0.72$ |
 | [Caban et al. (2026)](/sources/caban-2026.md), §4.2 | not stated | 100 | $384^3$ ("closely corresponding" to an earlier database) | a priori only: Gaussian filter $\Delta=2h$ on a 64-node grid, $k_c=16$ | not stated |
 | [Wu & Lele (2026)](/sources/wu-2026.md), §3.2.1, §5, §6.1 | forced | 433 | Johns Hopkins database, $1024^3$, 5 snapshots | $64^3$ ($\Delta=16$ DNS spacings) in a Fourier code with 2/3 de-aliasing (PadeOps) and a sixth-order compact code without it (PadeLibs); $32^3$ ($\Delta=32$ spacings) in PadeOps | run to statistical stationarity; forcing not described in the version read |
+| [Liang & Fu (2024)](/sources/liang-2024.md), §4.12 | decaying, compressible | 100 (initial) | filtered DNS on $256^3$ | no model: hybrid TENO / skew-symmetric-split finite differences (TENO-S), WENO-CU6, TENO6, TENO8, $64^3$ | solenoidal field, $E(k)\propto k^4\exp[-2(k/k_0)^2]$ ($k_0$ not printed), $M_t=0.6$ (with $\sqrt3\,u_{\mathrm{rms}}$ over the mean sound speed), other parameters as in the case of Johnsen et al. that the authors cite |
+| [Valencia et al. (2026)](/sources/valencia-2026.md), §IV, §V A | decaying, compressible | 100 (initial, with the Taylor microscale set to $2/k_0$) | finite-volume DNS in PeleC (Godunov, PPM with seventh-order WENO-Z), $512^3$, CFL 0.5, run to four initial eddy-turnover times $2/(k_0u_{\mathrm{rms},0})$; verified against the Motheau–Wakefield data | a priori only: top-hat filter and downsampling to $128^3$, $64^3$, $32^3$, then a Gaussian filter of width $\Delta=4h$, $2h$, $h$ (all $\Delta=16$ DNS spacings) | $E(k)\propto k^4\exp[-2(k/k_0)^2]$, $k_0=4$, $M_t=0.6$ (with $\sqrt{\langle u_iu_i\rangle}$), $T_0=1200$ K, $p_0=101.3$ kPa, $Pr=0.71$, constant viscosity and conductivity |
 
 The beck-2023 DNS used 16,384 cores of the HAWK system for almost two hours
 (about 30,000 CPU hours). [Agdestein & Sanderse (2025)](/sources/agdestein-2025.md)
@@ -635,6 +637,63 @@ keeping the number of terms small. Their a posteriori tests are on the
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md); see
 [scale-similarity models](/methods/scale-similarity-model.md).
 
+**Explicitly filtered LES and deconvolution closures, a priori on compressible decay.**
+[Valencia et al. (2026)](/sources/valencia-2026.md) compare four
+deconvolution closures — the approximate deconvolution model (van Cittert
+series of order 5), a discrete direct deconvolution on a Taylor-truncated
+inverse Gaussian stencil (order 4), a dynamic iterative deconvolution with
+least-squares stencil weights, and an exact spectral inversion of the
+Gaussian transfer function $\hat G(k)=\exp(-k^2\Delta^2/24)$ capped at
+$1/0.01$ — with the dynamic Smagorinsky and dynamic mixed models, all
+cast in explicitly filtered LES (details on
+[scale-similarity models](/methods/scale-similarity-model.md) and, for
+explicit filtering and the filter-to-grid ratio $\Delta/h$, on
+[large-eddy simulation](/definitions/large-eddy-simulation.md)). Their
+protocol is "stringent": the $512^3$ DNS is first top-hat filtered at the
+coarse spacing $h$ (to emulate the implicit filter of a centred
+finite-volume scheme) and downsampled, then explicitly filtered, and the
+target is the **total** unresolved stress, grid-truncation part included,
+which no deconvolution can recover (§II C, §V A). Top-hat filtering and
+downsampling keep 99.7%, 98.7%, 95%, 83.6% and 59.1% of the kinetic energy
+at $h=2$, 4, 8, 16 and 32 DNS spacings (Table III). At a common
+$\Delta=16$ DNS spacings the three retained cases miss 15–20% of the
+energy; the sub-filter share of it is about 92% at $\Delta/h=4$, 72% at
+$\Delta/h=2$ and 3.5% at $\Delta/h=1$ (Table IV). For $\tau_{xx}$ and
+$\tau_{xy}$ the deconvolution models reach correlation 0.974–0.985 and
+relative error 0.19–0.26 at $\Delta/h=2$, and correlation above 0.994 and
+error 0.05–0.10 at $\Delta/h=4$; the spectral inversion is best (0.9989,
+0.9992; 0.063, 0.046 at $\Delta/h=4$) and the iterative one least accurate.
+The dynamic Smagorinsky model gives correlation 0.12–0.27 and relative
+error 1.02–1.96, the dynamic mixed model 0.91 and 0.44–0.49 (Tables
+VI–VII). The approximate deconvolution model fails at $\Delta/h=1$
+(correlation below 0.15, error above 0.98, §V B 1), and explicit filtering
+does not move the grid cutoff $k_c\approx\pi/h$: at $\Delta/h=1$ the
+spectrum "essentially overlaps" the [implicit-LES](/definitions/implicit-les.md)
+one (Fig. 3). The authors state that classical a priori tests on the DNS
+grid "tend to overestimate model accuracy" (§I), and that their study is a
+priori and HIT-only, with a posteriori stability left to future work (§VI);
+see [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
+
+**A shock-capturing scheme on compressible decay without a model.**
+[Liang & Fu (2024)](/sources/liang-2024.md), §4.12, run the same family of
+decaying compressible case ($M_t=0.6$, initial $Re_\lambda=100$) on $64^3$
+with no SGS model described and compare, against a $256^3$ filtered DNS, the mean
+square velocity, density and temperature fluctuations, dilatation and
+enstrophy. Their hybrid scheme, which takes a non-dissipative
+skew-symmetric split flux wherever an eight-point
+[shock sensor](/definitions/shock-sensor.md) flags smooth cells and an
+eight-point TENO reconstruction elsewhere, predicts these "significantly
+better" than WENO-CU6, TENO6 and TENO8 (Fig. 21; the scheme is on
+[WENO schemes](/methods/weno-scheme.md) and
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+The final time and $k_0$ are not printed; the authors delegate them to the
+cited case of Johnsen et al. The authors call the test one of "modeling
+accuracy for broadband turbulence motions" with no model term, the setting
+of [implicit LES](/definitions/implicit-les.md); their other turbulence
+tests are the
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $64^3$ and
+$128^3$.
+
 **Pressure terms of entropy-conservative fluxes.** As recalled by
 [Aiello et al. (2026)](/sources/aiello-2026.md), §4 and §4.2, the
 pressure discretization of the entropy-conservative flux of Gouasmi et al.
@@ -847,3 +906,5 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §4.2, Eqs. (38)–(39), Figs. 7–8 (a priori deconvolution error on HIT data).
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv 2511.17475v2: §3.2.1; §4, Table 2; §5, Eq. (5.1), Tables 3–4, Figs. 5–12; §6.1, Figs. 13–14.
 - [Aiello et al. (2026)](/sources/aiello-2026.md) — §4, §4.2 (recalled kinetic-energy imbalance of the Gouasmi et al. pressure term in inviscid HIT).
+- [Liang & Fu (2024)](/sources/liang-2024.md) — §4.12, Fig. 21 (no-model TENO-S and WENO/TENO schemes on decaying compressible isotropic turbulence, $64^3$, against filtered DNS).
+- [Valencia et al. (2026)](/sources/valencia-2026.md) — §I; §II C, Eqs. (23)–(29); §IV, Eqs. (51)–(52), Figs. 1–2; §V A–C, Tables III–VII, Fig. 3 (a priori deconvolution closures under explicit filtering on compressible decaying HIT).

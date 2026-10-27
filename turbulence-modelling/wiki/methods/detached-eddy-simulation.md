@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Detached-eddy simulation and its delayed and zonal forms"
-description: "The single-model hybrid RANS/LES in which a RANS model's length scale is capped by a grid length so that the model acts as a subgrid model away from walls; the DES switch and ambiguous grids, the DDES shielding function, IDDES, ZDES modes, grid lengths and the shear-layer-adapted length, calibration with the numerical scheme, transitional DDES, and applications."
+description: "The single-model hybrid RANS/LES in which a RANS model's length scale is capped by a grid length so that the model acts as a subgrid model away from walls; the DES switch and ambiguous grids, DDES shielding, IDDES, ZDES modes including mode 2 (2020), grid lengths, calibration with the numerical scheme, transitional DDES, and applications."
 status: established
 aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T06:07:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -146,6 +146,26 @@ François et al. instead print $\sqrt{\partial_ju_i\,\partial_iu_j}$ under the
 root and $\tilde\nu$ in place of $\nu_t$ (above); the two differ by the index
 order under the root and by the eddy-viscosity variable, conventions none
 of the sources discusses.
+
+Pan & Zhang (2023) print the two original SA-based forms as implemented in
+ANSYS Fluent: DES with $d_{\mathrm{DES}}=\min(d,C_{\mathrm{DES}}\Delta_{\max})$,
+$C_{\mathrm{DES}}=0.65$, and DDES with
+$d_{\mathrm{DDES}}=d-f_d\max(0,d-C_{\mathrm{DES}}\Delta_{\max})$,
+$f_d=1-\tanh\big[(8r_d)^3\big]$ and
+$$r_d=\frac{\tilde\nu}{\sqrt{\partial_ju_i\,\partial_ju_i}\;\kappa^2d^2},$$
+the working variable alone in the numerator, where François et al. write
+$\nu+\tilde\nu$ and Möller et al. $\nu_t+\nu$
+([Pan & Zhang (2023)](/sources/pan-2023.md), §II.B–C, Eqs. 7–11). They
+state the motivation of DDES as the "nonphysical separation phenomenon
+induced by Reynolds stress loss" of DES on grids that do not meet LES
+requirements, i.e. grid-induced separation (§II.C). Husson et al. (2024)
+print the zonal-DES form of the same function, with $\nu(1+\chi)=\nu+\tilde\nu$
+in the numerator and $\kappa=0.41$ (§2.2, Eq. 26; below). Lodares et al.
+(2022) and Tomboulides et al. (2025) name a DES built on their RANS models
+(an entropy-stable RANS near walls coupled to entropy-stable LES; an SST
+form of the [$k$-$\tau$ model](/methods/k-tau-model.md)) as future work
+([Lodares et al. (2022)](/sources/lodares-2022.md), §8;
+[Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §4).
 
 Haering et al. (2022) count the delaying function of DDES among the ad hoc
 unified switches "tuned per flow", which make such methods possibly not
@@ -363,6 +383,80 @@ vorticity magnitude (the source's $\rho\tilde\nu\sim\tilde\omega\tilde d^2$), so
 the square of the element size, and their adaptation lowers $\mu_t$ in the
 jet shear layer from one mesh to the next (§2.2; §4.2.2, Fig. 7).
 
+### ZDES mode 2 (2020)
+
+Husson et al. (2024) print in full the 2020 version of mode 2 of Deck &
+Renard, the "automatic" mode, on the SA model in its normalized form
+$\chi=\tilde\nu/\nu$, and transpose it to a lattice Boltzmann solver
+([Husson et al. (2024)](/sources/husson-2024.md), §2.2, Eqs. 24–35). The
+hybrid length is the DDES one with a new shielding function $f_P$
+(page-local),
+
+$$\ell=d-f_P\max\big(0,\,d-C_{\mathrm{DES}}\Delta\big),\qquad f_P=f_d\big[1-(1-f_{P2})f_R\big],\qquad C_{\mathrm{DES}}=0.65,$$
+
+$f_P=0$ giving RANS ($\ell=d$) and $f_P=1$ the LES length. Three functions
+(page-local names $f_{P2}$, $f_R$, $\mathcal G_{\tilde\nu}$, $\mathcal G_\Omega$,
+$\alpha_R$; $\lvert u_{i,j}\rvert=\sqrt{\partial_ju_i\,\partial_ju_i}$, $n$ the wall-normal
+direction, $\lvert\boldsymbol\omega\rvert$ the vorticity magnitude):
+
+1. $f_d$, the DDES function with $r_d=\nu(1+\chi)/(\lvert u_{i,j}\rvert\kappa^2d^2)$,
+   protects from the viscous sublayer to the log layer (Eq. 26).
+2. A second shielding function extends the protection to the wake layer,
+   $$f_{P2}=\frac{f_d(2.5\,r_d)}{f_d(r_d)}\,f_d(\mathcal G_{\tilde\nu}),\qquad \mathcal G_{\tilde\nu}=\frac{25}{\lvert u_{i,j}\rvert\,\kappa d}\max\Big(0,-\nu\frac{\partial\chi}{\partial n}\Big)$$
+   (Eq. 27); with $f_d$, it gives in the authors' words "a proper RANS
+   treatment of attached boundary layers without any restriction on the
+   grid spacing".
+3. An inhibition function switches the extra shielding off in separated
+   regions, where the wake-layer sensor could mistake an early free shear
+   layer for a wake layer and delay instabilities:
+   $f_R=1$ for $\mathcal G_\Omega\le0.03$, $f_R=0$ for $\mathcal G_\Omega\ge0.04$
+   and $f_R=\big[1+\exp\big(6\alpha_R/(\alpha_R^2-1)\big)\big]^{-1}$ in between,
+   with $\alpha_R=7-200\,\mathcal G_\Omega$ and the detached-flow sensor
+   $\mathcal G_\Omega=\partial_n\lvert\boldsymbol\omega\rvert\,\sqrt{\nu\chi/\lvert u_{i,j}\rvert^3}$
+   (Eq. 28). Because vorticity gradients are noisy, $f_R=1$ wherever
+   $\lvert\boldsymbol\omega\rvert<0.8\lvert u_{i,j}\rvert$. As $\alpha_R$ runs
+   from 1 to $-1$ across the ramp, $f_R$ goes continuously from 1 to 0
+   *(compiler check, not in the sources)*.
+
+In LES zones the SA functions take the mode-1 values $f_{v1}=1$, $f_{v2}=0$,
+$f_w=1$ (Eqs. 29–30), and two Boolean switches control the transition
+(Eqs. 31–35): $\mathrm{test}_\Delta=0$ if $f_d\le0.8$ or
+$1-(1-f_{P2})f_R\le0.8$ (else 1), $\mathrm{test}_w=0$ if either is $\le0.2$
+(else 1), and
+
+$$\begin{aligned}
+f_{v1}&=(1-\mathrm{test}_\Delta)f_{v1}^{\mathrm{RANS}}+\mathrm{test}_\Delta f_{v1}^{\mathrm{mode\,1}},\qquad f_{v2}\ \text{likewise},\\
+f_w&=(1-\mathrm{test}_w)f_w^{\mathrm{RANS}}+\mathrm{test}_w\big[100(1-\mathrm{test}_\Delta)+\mathrm{test}_\Delta f_w^{\mathrm{mode\,1}}\big],
+\end{aligned}$$
+
+the factor 100 being an enhanced destruction of the RANS eddy viscosity in
+grey areas ($\mathrm{test}_w=1$, $\mathrm{test}_\Delta=0$). The authors call
+mode 2 (2020) "the only fully-detailed «automatic» formulation in the open
+literature" shielding the whole attached boundary layer, the shielding of
+ANSYS's SBES/SDES and the switch of the PowerFLOW lattice-Boltzmann VLES
+being undisclosed (§1). They state, citing earlier studies, that the DDES
+function alone protects only the layer below the log region and fails on
+fine meshes or in adverse pressure gradient, typical DES-type methods
+protecting insufficiently once $\Delta x\le0.3\delta$ (§2.2, §4.1.2).
+
+**Why lattice Boltzmann grids are a hard test.** Isotropic Cartesian lattice
+grids at high Reynolds number are very fine in the wall-parallel directions
+relative to $\delta$ ($\Delta<0.01\delta$ is common), so DES-type models
+"almost systematically" trigger modelled-stress depletion and a delay in
+the formation of instabilities there (§1, §5). The authors list three
+reasons why the gradient-based sensors, calibrated in finite-volume
+Navier–Stokes solvers, need not carry over: the eddy viscosity enters only
+through the relaxation time, a slower destruction of eddy viscosity could
+delay instabilities, and the weak numerical noise at the factor-two grid
+transitions of octree grids could spuriously activate $f_{P2}$ in shear
+layers or $f_R$ inside boundary layers (§2.2 end). The SA equation is
+solved by finite differences on the lattice, with the SA analytical wall
+law linearized below the interpolation distance as wall model (§2.2, §3.2;
+see [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md),
+[ProLB](/software/prolb.md) and
+[RANS wall functions](/methods/rans-wall-function.md)). Their evidence is
+under Applications.
+
 ### Grid lengths
 
 The variants differ in the length $\Delta$ that caps the RANS length:
@@ -379,6 +473,8 @@ The variants differ in the length $\Delta$ that caps the RANS length:
 | SST-DDES and transitional DDES in a cell-centred finite-volume code | $\Delta_{\mathrm{SLA}}$, $C_{\mathrm{DES}}=0.65$ | Möller et al. (2024), §II.B.1, Eq. 21 |
 | ZDES of the supersonic base flow (Simon et al.) | $\Delta_{\mathrm{vol}}$, $C_{\mathrm{DES}}=0.55$ | as recalled by Carlsson et al. (2023), §4.4 |
 | SST-DES with $F_2$ shielding (ANSYS CFX) | $\Delta_{\max}$, $C_{\mathrm{DES}}=0.61$ | Yang & Ma (2022), §2.1, Eqs. 3–5 |
+| SA-DES and SA-DDES in ANSYS Fluent | $\Delta_{\max}$, $C_{\mathrm{DES}}=0.65$ | Pan & Zhang (2023), §II.B–C, Eqs. 7–9 |
+| ZDES mode 2 (2020) on isotropic lattice Boltzmann grids | $\Delta_{\max}$, $\Delta_{\mathrm{vol}}$ or $\Delta_\omega$, "not significant" since $\Delta x=\Delta y=\Delta z$; $C_{\mathrm{DES}}=0.65$ | Husson et al. (2024), §2.2, Eq. 24 |
 | RSM-IDDES (SSG/LRR-$\omega$) in a cell-centred finite-volume code | IDDES $\Delta=\min[\max(C_wd,C_w\Delta_{\max},\Delta_{wn}),\Delta_{\max}]$, $C_w=0.15$; $C_{\mathrm{DES}}=0.5F_1+0.3(1-F_1)$ calibrated | Wang et al. (2021), §2.4, §3.1 |
 
 Basile et al. divide by $N+1$, the number of one-dimensional degrees of
@@ -654,6 +750,67 @@ RANS-adapted mesh (§3.3).
   disagreed with experiment in the backshell area, which the cited work
   attributed to the model's prediction of transition after shoulder
   separation ([Placco et al. (2023)](/sources/placco-2023.md), §1).
+- **ZDES mode 2 (2020) in a lattice Boltzmann solver** (Husson et al.
+  2024, §4). *Flat plate* (NASA TMR, $Re_L=5\times10^6$, $M=0.2$,
+  $\Delta y^+\approx30$ at $x/L=1$, $\Delta x\approx0.01\delta$ at
+  mid-plate): skin friction, velocity and eddy-viscosity profiles are
+  identical to lattice-Boltzmann RANS, also with $C_{\mathrm{DES}}=0$ and on an
+  inclined, staircased plate, while DDES (2006) on the same grid suffers
+  severe modelled-stress depletion, the layer tending to laminar while the
+  wall law imposes a turbulent profile, with an "unexploitable" oscillating
+  $C_f$ (§4.1.2, Figs. 4–5). *Backward-facing step* of the A3C combustor
+  ($Re_h=40{,}000$ on the step height $h$, $\delta=0.37h$ at separation): with
+  44.7 million wall-modelled lattice nodes against 3.9 million wall-resolved
+  cells of Deck & Renard's finite-volume ZDES, the a priori shielding field,
+  the vorticity thickness, the destruction of eddy viscosity and the mean
+  profiles agree, and the authors conclude that the lattice Boltzmann
+  transposition adds no further delay in the formation of instabilities;
+  the near-wall differences at the first station are attributed to the
+  equilibrium wall model in the recirculation (§4.2, Table 1, Figs. 7–11;
+  see [backward-facing step](/benchmarks/backward-facing-step.md)).
+  *LEISA2 three-element high-lift airfoil* ($Re_c\approx1.23\times10^6$,
+  $M=0.178$, $\alpha=6.15^\circ$, 77 million nodes against $2.6\times10^9$ for
+  a wall-resolved LES): attached layers on slat and flap stay in RANS
+  without grid-induced separation, the mean $C_p$ agrees with experiment,
+  and a slight delay of instabilities in the slat shear layer is
+  attributed to grid and wall model rather than to the model, because a
+  lattice-Boltzmann wall-modelled LES shows "the exact same phenomenon"
+  (§4.3, Figs. 13–19).
+- **Centrifugal impeller in rotating stall** (Pan & Zhang 2023). SA-based
+  DES and DDES with Fluent defaults on a six-blade low-specific-speed
+  impeller at 25% of design flow (12.33 million cells, maximum $y^+\approx1.2$,
+  one degree of rotation per step, three revolutions averaged), against a
+  dynamic-Smagorinsky LES on the same grid. Both capture the alternate
+  stall of neighbouring passages. DDES vortex patterns (streamlines) are
+  closer to the LES, while the DES $Q$ field agrees better and DDES
+  overpredicts it and lacks small scales; DES better reproduces the
+  leading-edge low-pressure region; in the mean radial velocity DES tends to
+  overpredict and DDES to underpredict the reversed flow, with peak-to-valley
+  differences about 10% off the LES; DES is closer for the RMS fluctuations,
+  which DDES underpredicts. The authors conclude that no universal ranking
+  exists (§IV, §V, Figs. 9–15). The reference LES itself shows "remarkable
+  discrepancy" with the PIV data, attributed to a different rig (§III.C;
+  see Qualifications and [large-eddy simulation](/definitions/large-eddy-simulation.md)).
+- **Dynamic-stall onset with transition models** (Batther & Lee 2022).
+  DDES in NASA's OVERFLOW 2.3 (fifth-order central differences with scalar
+  dissipation, 30 sub-iterations, $\Delta t^*=2.56\times10^{-4}$ on the
+  convective time) of a NACA 0012 pitching up at a constant rate,
+  $Re=2\times10^5$, $M=0.1$, span $0.1c$, compared with the wall-resolved LES
+  of Visbal & Garmann on its setup; the DDES formulation is not printed.
+  On a 16.2-million-point grid (about 22% of the LES points, upper-surface
+  averages $\Delta x^+=17.6$, $\Delta y^+=0.375$, $\Delta z^+=7.22$), with the
+  SST Langtry–Menter, SA Medida–Baeder, SA amplification-factor-transport
+  and fully turbulent SA closures, DDES reproduces the sequence of the LES
+  (upstream motion of transition, leading-edge laminar separation bubble,
+  its bursting, roll-up and shedding of the dynamic-stall vortex) but
+  stalls slightly earlier with a slightly lower peak lift, with a larger
+  bubble of weaker reverse flow, earlier suction collapse and faster vortex
+  convection. The authors report about 1500 CPU hours against "several
+  million" for the LES ([Batther & Lee (2022)](/sources/batther-2022.md),
+  §2–§4, Tables 1–3, Figs. 4, 14, 17; see
+  [dynamic stall](/definitions/dynamic-stall.md),
+  [laminar separation bubble](/definitions/laminar-separation-bubble.md) and
+  [transition models](/methods/local-correlation-based-transition-model.md)).
 
 ## Qualifications
 
@@ -720,6 +877,22 @@ RANS-adapted mesh (§3.3).
   13 million" cells; the product is $1.06\times10^7$ *(compiler check, not
   in the sources)*; the 69-layer tip-gap block is not counted separately in
   the text.
+- Pan & Zhang (2023) state in the abstract that DDES is "superior in
+  resolving ... the fluctuation quantities", while their §IV.C and
+  conclusion find DES closer to the LES for the RMS fluctuations and DDES
+  underpredicting them; the page follows the body. Their ranking measures
+  closeness to an LES on the same grid with the same rotor treatment and
+  statistics from three revolutions (one for RMS), and their conclusion
+  calls DES and DDES "well validated against available experimental data"
+  although only the LES is compared with experiment (§III.C, §V).
+- Batther & Lee (2022) state in §2.1 that their time step is "one order of
+  magnitude larger" than the LES one and in §4.5 that it is "roughly 8%" of
+  it; they also give "roughly 20 s per time step using 192 cores" for
+  35,000 steps and "about 1500 total CPU hours", although the first two
+  figures multiply to about 37,000 core-hours on the 192 cores
+  *(compiler check, not in the sources)*.
+- Husson et al. (2024) give the wall-resolved LES of the LEISA2 airfoil as
+  $2.6\times10^9$ nodes (p. 15) and "$2700\cdot10^6$" (p. 18).
 
 # Citations
 
@@ -745,3 +918,8 @@ RANS-adapted mesh (§3.3).
 - [Rismondo et al. (2025)](/sources/rismondo-2025.md) — §1.
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §2.3 Eqs. 11–18, §2.4 Eqs. 19–20, §3.1 Fig. 1, §3.2 Table 1 Figs. 4–6, §3.3 Figs. 9–14, App. A–B Fig. B1.
 - [Yang & Ma (2022)](/sources/yang-2022-b.md) — §2.1 Eqs. 1–5, §3.1 Figs. 4–6, §4.1 Figs. 10–11.
+- [Husson et al. (2024)](/sources/husson-2024.md) — §1, §2.2 Eqs. 24–35, §3.2, §4.1–4.3 Table 1 Figs. 4–19, §5.
+- [Pan & Zhang (2023)](/sources/pan-2023.md) — §II.B–C Eqs. 7–11, §III.C, §IV Figs. 9–15, §V.
+- [Batther & Lee (2022)](/sources/batther-2022.md) — §2–§4, Tables 1–3, Figs. 4, 14, 17.
+- [Lodares et al. (2022)](/sources/lodares-2022.md) — §8.
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §4.

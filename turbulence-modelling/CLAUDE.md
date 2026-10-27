@@ -50,7 +50,10 @@ bundle's notation.
   2026-10-25) or ingested in further chunks after them, found with `tools/worklist.sh turbulence-modelling`.
   On 2026-10-26 the archive held 160 files: the 26 added since founding
   (all distinct works, identified by page 1 and Crossref) fill chunk 7 to
-  20 and make chunk 8.
+  20 and make chunk 8. On 2026-10-27 it held 307 files: the 147 added
+  (all distinct works, none a second version of a planned one, identified
+  by the page-1 DOI and Crossref) make chunks 9–15 of 20 and chunk 16 of 7,
+  in archive order.
 - The page-1 and checksum check of 2026-10-25 found 131 distinct works and
   no byte copies. The year in the filename is the online year (the slug
   uses the year of the published issue), and more than half of the files
@@ -109,12 +112,18 @@ bundle's notation.
 
 ## Status
 
-**Chunk 7 staged 2026-10-26:** 20 papers of 2021–2026; 140 of 160
+**Chunk 8 staged 2026-10-27:** 20 papers of 2022–2026; 160 of 307
+ingested, 148 concept pages plus the registry, 7232 bibliography entries,
+deep lint done, five contradictions open (the fifth: the exponent of the
+Langtry–Menter $F_3$). Chunks 9–16 (the 147 papers added on 2026-10-27)
+follow; the whole-bundle deep lint is due with chunk 10 (190 ingestions),
+the closing bibliography sweeps with the chunk that completes the archive.
+
+**Chunk 7 committed 2026-10-26 (bed1245):** 20 papers of 2021–2026; 140 of 160
 ingested, 143 concept pages plus the registry, 6521 bibliography entries,
 first whole-bundle deep lint done (D26; due again by 190 ingestions or
 with the chunk that completes the archive), four contradictions open.
-Chunk 8 (20 papers added in October 2026) follows, with the closing
-bibliography sweeps (`--dupes`, fuzzy titles).
+Chunk 8 (20 papers added in October 2026) followed.
 
 **Chunk 6 committed 2026-10-26 (58aad80):** 20 papers of 2024–2026; 120 of 134
 ingested, 134 concept pages plus the registry, 5882 bibliography entries,

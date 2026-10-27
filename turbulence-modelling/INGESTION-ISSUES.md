@@ -6,6 +6,163 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 8 — 2022–2026 papers: high-order RANS and transition solvers, k-τ in Nek5000, ZDES in a lattice-Boltzmann solver, scale-adaptive simulation, dynamic stall, explicit wall-model fits, deconvolution SGS models, relaxation filtering, TENO shock capturing (2026-10-27)
+
+Sources (20): vandenhoeck-2022, batther-2022, gao-2022, huang-2022-d,
+lodares-2022, takagi-2022, ahn-2023, pan-2023, adhikari-2023, jiang-2025,
+huang-2024, liang-2024, volpiani-2024, husson-2024, li-2024-c,
+tomboulides-2025, huang-2025, nuca-2025, ghidoni-2026-b, valencia-2026.
+160 of 307 ingested, 148 concept pages plus the registry, 7232
+bibliography entries. Deep lint A1–A8 over the chunk-8 content done.
+
+### Decisions for the human
+
+1. **The archive grew to 307 files.** The 147 files added since
+   2026-10-26 were identified from the page-1 DOI and Crossref, with the
+   page-1 title checked: all distinct works, no byte copies, none a second
+   version of one of the 160 planned works. 26 of them are already cited
+   in the bibliography and keep their keys (Bose 2018, Kuya 2018, Heinz
+   2020, Mani 2023, …); two title matches were rejected as different works
+   (`kiris-2023` is the J. Aircraft paper, not the AIAA conference paper
+   `kiris-2022-b`; `wang-2022-j` is Phys. Fluids 34:095108, not
+   `wang-2021-g`). They are planned as chunks 9–15 (20 each) and 16 (7),
+   in archive order. Consequences: the whole-bundle deep lint falls due
+   by 190 ingestions (chunk 10); the closing bibliography sweeps
+   (`--dupes`, fuzzy titles) move to the chunk that completes the archive.
+2. **Slug renamed: `mihaescu-2023` → `ahn-2023`.** Page 1 prints four
+   authors (Ahn, Mihaescu, Karnam, Gutmark); Crossref omits the first.
+   The key follows page 1.
+3. **Bibliography calls left by the resolver:**
+   - `wilcox-2004` ("Turbulent Modeling for CFD", Birmingham Press,
+     printed by huang-2022-d) is kept apart from `wilcox-1998` and
+     `wilcox-2006` only by its year; probably a reprint. Fold?
+   - `schubauer-1955` (NACA TN 3489) kept apart from `schubauer-1956`
+     (NACA report form). Same work?
+   - `berger-2017` and `tamaki-2022-b` absorb the journal versions of
+     conference papers, as in earlier chunks, though they carry
+     conference DOIs.
+   - `rusanov-1961` (Russian original) folded into `rusanov-1962` (English
+     translation), following the earlier translation fold.
+4. **Candidate pages that now qualify** (two or more sources):
+   three-element high-lift airfoil (30P-30N in huang-2022-d, LEISA2 in
+   husson-2024); explicit wall-model approximations (Cai & Sagaut,
+   Mozaffari, nuca-2025); log-ω formulation (vandenhoeck-2022,
+   elzaabalawy-2023, ghidoni-2026, ghidoni-2026-b); THINC / boundary
+   variation diminishing reconstruction (takagi-2022, huang-2025,
+   li-2024-c; kept inline on the WENO page by bundle fit); deconvolution
+   SGS models (about 100 lines on the scale-similarity page, four models
+   from valencia-2026 plus caban-2026 and cao-2024). The chunk-6 "Ducros
+   sensor" candidate is now covered by the new shock-sensor page.
+5. **Tags:** near-duplicates reported again by the auditors and left as
+   they are: `k-omega`/`k-omega-sst`, `wall-function`/`wall-model`,
+   `isotropic-turbulence`/`decaying-turbulence`, `supersonic-flow`/
+   `compressible`, `airfoil`/`high-lift`, `cylinder-wake`/`bluff-body`,
+   and single-use tags.
+6. **Process failure, repaired:** drafters wrote timestamps later than the
+   real clock on 12 pages (up to 07:35Z at about 06:10Z); the auditors
+   reset them, and a bundle-wide scan finds no future timestamp. Gendered
+   pronouns written by drafters on four pages were removed.
+7. **Still open from earlier chunks:** `xiao-2015` and `ming-2019` key
+   renames; the `fusion-mhd-simulation` tab in `tearing-mode.md` line
+   247; `ge-2015`; `jameson-1988`; `suder-1996` thesis vs report;
+   cao-2024 and reddy-2026 read from old preprints; the four chunk-7
+   preprint versions.
+
+### Contradictions
+
+Opened (1): exponent of the Langtry–Menter $F_3$
+([k-ω SST model](wiki/methods/k-omega-sst-model.md)): menter-2022 Eq. 7
+prints $\exp[-(R_y/120)^2]$, vandenhoeck-2022 Eq. 38 prints
+$\exp[-(R_y/120)^8]$; both checked on the page images. Langtry & Menter
+(2009), which would decide it, is not ingested.
+
+Extended: the Cai & Sagaut constants of the
+[law of the wall](wiki/definitions/law-of-the-wall.md) gain nuca-2025's
+third functional form with re-fitted constants. Five open in all.
+
+Kept as attributed qualifications: the Driver–Seegmiller step Reynolds
+number (36,000 in ghidoni-2026, 37,425 in tomboulides-2025); the
+Wieghardt plate $Re_L$ (1.03e7 in vandenhoeck-2022, 11.1e6 in
+ghidoni-2026, no shared $L$); the span effect on SWBLI size (Helm &
+Martín against Gao et al.'s hedged reading); Pan & Zhang's attribution to
+Pope of a modelled-energy fraction up to 80% beside Jakhar et al.'s
+resolved-energy rule; the "Feiereisen" naming of split forms; two printed
+forms of the TENO troubled-cell indicator (huang-2024 Eq. 32,
+huang-2025 Eq. 11).
+
+### Not reproduced (compiler checks on the pages)
+
+- nuca-2025 Tables V–VI: the fixed-parameter wall-model fits give
+  0.47–1.9% error from the printed coefficients, against the printed
+  ≤0.05%; with the minus sign restored in Eq. 10 the global models of
+  Table IV do reproduce (0.63–0.82%). Cause unresolved.
+- adhikari-2023: observed cross-helicity at 1 au printed −0.38, equal to
+  the model boundary value, while the observed Table 1 means give about
+  −0.43; the paper defines neither quantity, so no check is made.
+
+### Printed slips (recorded on the Source pages)
+
+- vandenhoeck-2022: Eqs. 82–83 superscript, $F^D$ for $F^I$, $Tu$ units,
+  references. batther-2022: DDES time step "one order larger" against
+  "8%", cost 1500 CPU hours against about 37,000 core-hours, stage label.
+- gao-2022: "35% less" (25.9%), Table 3 $Re_\theta$ and $L_{\mathrm{sc}}$,
+  $k_{Se}$, Strouhal resolution. huang-2022-d: ordering constraint
+  reversed, LU-SGS cited to Reichardt, lift error 5.74% (5.83%), mesh 4
+  "smaller", $u_\tau$ forms.
+- lodares-2022: FUN3D in Table 2 for the CFL3D values, Eq. 93 superscript,
+  "entropy stable"/"entropy conserving". takagi-2022: DMR end time 0.2
+  against 2.0, Shu–Osher domain, Eq. 15.
+- ahn-2023: "Tam's model⁵⁷" (ref. 16), Eq. 7 incomplete, Eqs. 2 and 6,
+  reflection location sign. pan-2023: abstract against body on DES/DDES,
+  validation claim, spanwise cell count, Pedersen/Pederson.
+- adhikari-2023: $\eta_1$ 1.8e-4 against 1.8e-5, β symbol, turnover
+  distances. jiang-2025: $C_u$ for $C_\mu$, $P$ for $P_k$, $C_{d1}$ value
+  missing.
+- huang-2024: Eq. 38 sign, Table 2 exponent, Eq. 56 basis range.
+  liang-2024: reference duplicated, "K=0", cost percentages truncated.
+- volpiani-2024: grid "1288", Eq. 38 trace, Eq. 24/25 pointer, caption,
+  citation labels. husson-2024: Eqs. 10, 13, 17, 43, 37 (arctangent
+  argument order), node count 2.6e9 against 2700e6.
+- li-2024-c: Eq. 42 range, time step "smaller", Courant number.
+  tomboulides-2025: $Re_\tau$ 1000 against 1142, Eq. 29, $p=9$ against
+  $p=7$, drag "slight overprediction".
+- huang-2025: "conversion laws", references. nuca-2025: Eq. 10 sign,
+  caption, κ range, coefficient count.
+- ghidoni-2026-b: Eq. 27 operator, Table I constants, T3A $Tu$ 3.3%
+  against 2.3%, Table VII rows, Blair B7/B13, Schubauer–Klebanoff and B1
+  onset errors, reference 57. valencia-2026: Table II sign, Eqs. 8, 39,
+  50, text against Tables VI–VII.
+
+### Bibliography
+
+7232 entries (+711 from 1315 printed references); 95 verified silences,
+1 printed duplicate folded (von Neumann & Richtmyer, liang-2024 [8]/[10]),
+`FLAGS: 0`. Cited planned sources take their planned slugs; keys printed
+with a Source or planned slug for a different work re-keyed (`wang-2013-e`,
+`wang-2013-f`, `li-2021-h`, `li-2022-c`, `li-2024-g`, `chen-2024-d`,
+`gao-2023-b`, `liang-2024-b`, `maeyama-2022-c`, `huang-2025-b`,
+`liu-2022-h`, `wang-2022-k`); preprints kept distinct (`mateogabin-2021`,
+`motheau-2020-b`).
+
+### Bundle fit (D17 candidates, no copy made)
+
+- takagi-2022 (TENO-THINC), huang-2024 and huang-2025 (TENO limiters for
+  RKDG), li-2024-c (multiphase TENO-THINC): shock-capturing numerics with
+  inviscid tests only; liang-2024 (TENO-S) adds Taylor–Green and isotropic
+  decay. `weno-teno` and `high-order-capturing-schemes` share their
+  subjects.
+- adhikari-2023: heliospheric turbulence transport (`fusion-mhd-simulation`
+  and `astrophysical-simulation-codes` neighbours); ahn-2023: jet
+  aeroacoustics.
+
+### Candidate pages (kept inline until a second source)
+
+Amplification-factor transport model; OVERFLOW; exponential decay
+procedure and variational reconstruction; turbulent pipe flow;
+T-junction mixing; Schubauer–Skramstad plate; Aérospatiale A airfoil;
+nearly incompressible MHD; spectral proper orthogonal decomposition;
+explicitly filtered LES; aliasing error; BASIC; libWallModelledLES.
+
 ## Chunk 7 — 2021–2026 papers: k-ω and wall functions in high-order RANS, CES and PITM, modal filtering and induced filters, multi-filter neural closures, volume-filtered immersed boundaries, entropy-conservative schemes; first whole-bundle deep lint (2026-10-26)
 
 Sources (20): brillon-2026, caban-2026, dayer-2026, schotte-2026,

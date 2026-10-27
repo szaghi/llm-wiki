@@ -5,7 +5,7 @@ description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on t
 status: established
 aliases: [DGSEM, DG-SEM, modal DG, nodal discontinuous Galerkin, collocation DG, DG spectral element method, hybridizable discontinuous Galerkin, HDG]
 tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns, flux-reconstruction]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -540,6 +540,115 @@ estimate (§4–5); see
 [method of manufactured solutions](/methods/method-of-manufactured-solutions.md).
 Wang & Roy write the order of accuracy as $p$, so their degree is $N=p-1$.
 
+## High-order DG for RANS: entropy stability and robust turbulence variables
+
+**An entropy-stable DGSEM for RANS–Spalart–Allmaras.**
+[Lodares et al. (2022)](/sources/lodares-2022.md) build, to their
+knowledge the first, provably entropy-stable DGSEM for the compressible
+RANS equations closed by the [Spalart–Allmaras](/methods/spalart-allmaras-model.md)
+model: LGL collocation with the SBP property, curvilinear hexahedra with
+Kopriva's conservative metric terms, BR1 lifting of the entropy-variable
+gradients, and split-form volume terms (§4.1–4.4). The Navier–Stokes
+entropy is augmented by $\tfrac12\rho\tilde\nu^2$; the SA part of the
+analysis decouples, and the SA equation is entropy stable provided
+$c_{b2}\le1$ and its diffusion coefficient stays non-negative, entropy
+growing only where SA production exceeds destruction (§3.2, Eqs. 38–50).
+For $\tilde\nu<0$ they use a variant of the negative SA model with the
+diffusion coefficient clipped at zero; the variant and its constants are on
+the SA page. Discretely, any Navier–Stokes two-point flux extends to the
+SA equation by multiplying the mass-flux representation by
+$\{\!\{\tilde\nu\}\!\}$; the SA interface flux is the mass flux times
+$\{\!\{\tilde\nu\}\!\}$ minus $\tfrac12\lambda_\nu|\text{mass flux}|[\![\tilde\nu]\!]$
+(page-local toggle $\lambda_\nu$: 0 entropy conserving, 1 entropy stable);
+adiabatic free- and no-slip walls from a mirrored ghost state with
+$-\rho\tilde\nu$ give dissipative boundary terms, whereas inflow and outflow
+boundaries "can increase and/or decrease the entropy" (§4.4–4.5, §5.2).
+The two configurations are kinetic-energy preserving (Pirozzoli flux,
+Lax–Friedrichs) and thermodynamic-entropy stable (Chandrashekar flux,
+matrix dissipation); see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
+and [entropy conservation](/properties/entropy-conservation.md). Results:
+
+- a three-dimensional manufactured solution converges spectrally in $N$,
+  with $h$-convergence exponents of the total error near $N+1$ in most
+  variables (e.g. 7.09, 6.49, 7.34 for the standard, Pirozzoli and
+  Chandrashekar forms at $N=8$; Table 1; see
+  [method of manufactured solutions](/methods/method-of-manufactured-solutions.md));
+- with random initial data at $\mu=10^{-8}$, $N=10$ and central fluxes the
+  standard DG diverges and both split forms stay stable (§7.2, Figs. 5–6);
+- on the coarsest NASA turbulence-modelling-resource grids, a flat plate at
+  $Re=5\times10^6$ (816 elements, $N$ up to 10) and the
+  [NACA 0012](/benchmarks/naca-0012-airfoil.md) at $Re=6\times10^6$
+  ($113\times33$ grid with quadratic edges, $N=2$ to 6), the Pirozzoli form
+  converges towards the fine-grid finite-volume references: at $N=6$,
+  $C_L=1.0894$, $C_D=0.01250$ at $10^\circ$ against 1.0909 and 0.01231, and
+  $C_L=1.5502$, $C_D=0.02144$ at $15^\circ$ against 1.5461 and 0.02124
+  (§7.3–7.4, Table 2; see [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)).
+
+Steady states come from a linearized implicit Euler solver with a
+finite-difference Jacobian (graph colouring, a quasi-compact BR1 stencil on
+Gauss–Lobatto nodes), PETSc GMRES with additive Schwarz and a CFL number
+grown by switched evolution relaxation to about $10^{12}$ (§6, Fig. 1).
+The authors suggest the same route for other RANS models and as the RANS
+part of an entropy-stable [DES](/methods/detached-eddy-simulation.md)
+(§8).
+
+**Limiting and positivity of turbulence variables in modal DG.**
+[Jiang et al. (2025)](/sources/jiang-2025.md) implement the $k$-$\sqrt kL$
+model behind [scale-adaptive simulation](/methods/scale-adaptive-simulation.md)
+in a modal DG with the Taylor basis of Luo et al., local Lax–Friedrichs
+fluxes and BR2, steady GMRES and unsteady ESDIRK (§2). They state that
+high-order DG solutions of turbulence variables oscillate where nonlinear
+functions are approximated at high order, and use three devices (§3):
+Hermite-WENO limiting of $k$ in cells flagged by an element-resolution
+indicator (see [WENO](/methods/weno-scheme.md)); a smooth positive
+surrogate of the length-scale variable in the source terms and eddy
+viscosity, after Moro et al.'s SA treatment; and a compact second
+derivative for the von Kármán length scale, the gradient of the DG
+polynomial of first derivatives corrected by the BR2 global lift
+operator, so that only face neighbours enter and the order matches the
+first derivatives (§3.2, Eqs. 14–20). Without the stabilization the
+implicit solver diverges on a flat plate ($M=0.3$, $Re=3\times10^6$),
+with it the residual drops 5 to 6 orders at third and fourth order
+(Fig. 1b); the lift operator removes an anomaly of the length scale near
+$y^+\approx3000$ that the cell-local derivative produces (Fig. 2). On the
+RAE2822 airfoil ($M=0.734$, $Re=6.5\times10^6$, $\alpha=2.79^\circ$) third
+and fourth order give $C_L=0.779$ and 0.782, $C_D=0.0177$ and 0.0176,
+against 0.803 and 0.0168 measured (§4.2). They note that the laminar
+stretch near the plate's leading edge, where $C_f$ departs from theory,
+lengthens with grid density and order, a numerical, not physical,
+transition (§4.1).
+
+**A high-order DG transition model.** [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md),
+Appendix and §V, run a laminar-kinetic-energy transition model in the
+modal DG RANS solver of [Ghidoni et al. (2026)](/sources/ghidoni-2026.md)
+above (hierarchical orthogonal basis, exact Riemann solver, BR2,
+logarithmic primitive variables for pressure, temperature and $\omega$,
+residual-based [artificial viscosity](/methods/artificial-viscosity-shock-capturing.md),
+pseudo-transient implicit solver), at $N=4$ on plates of 4000 elements with
+$y_1^+=1$ and on airfoils. They report that high degrees do not converge
+from a free-stream start, so each degree is initialized from the converged
+lower one, and that large far-field elements make $k_L$ and $k_T$ negative,
+whose clipping to zero then removes the free-stream turbulence at the
+leading edge; a plain $k$-$\tilde\omega$ model is less sensitive (§V).
+The model is on
+[laminar kinetic energy transition models](/methods/laminar-kinetic-energy-transition-model.md).
+
+**Finite-volume and flux-reconstruction relatives.** The same obstacles
+(near-wall cells of aspect ratio $10^2$ to $10^3$, negative SA working
+variable at the under-resolved boundary-layer edge) are addressed in a
+fourth-order finite-volume RANS solver by
+[Huang et al. (2022b)](/sources/huang-2022-d.md), whose 30P-30N run on
+53,870 cells is compared with a DG solution at $N=4$ with 1,119,530 degrees
+of freedom, their grid being 4.8% of that (§3.3, Figs. 33–34; see
+[low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md)
+for their reconstruction). In the implicit flux-reconstruction code
+[COOLFluiD](/software/coolfluid.md), [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md)
+transport $\ln\omega$ in the SST model, the idea Bassi et al. introduced
+for DG with the Wilcox $k$-$\omega$ model (see
+[$k$-$\omega$ SST](/methods/k-omega-sst-model.md) and
+[flux reconstruction](/methods/flux-reconstruction.md)).
+
 ## DGSEM in a turbomachinery code
 
 [Morsbach et al. (2024)](/sources/morsbach-2024.md), §2, run implicit LES of
@@ -734,6 +843,31 @@ DGSEM "capture small scales well on coarse grids", better than finite
 differences with local scheme switching or TENO, and that high order beats
 second order in this compressible setting (§V).
 
+**Oblique shock/turbulent-boundary-layer interaction.**
+[Gao et al. (2022)](/sources/gao-2022.md) run FLEXI's split-form DGSEM
+(Pirozzoli two-point flux, approximate Riemann solver with the
+Harten–Hyman entropy fix, BR1, five-stage fourth-order low-storage
+Runge–Kutta) as an implicit LES, relying "solely" on the interface
+Riemann-solver dissipation, of an oblique shock reflecting on a Mach 2
+turbulent boundary layer ($8^\circ$ deflection, $Re_{\theta_0}=1628$),
+which they state is the first high-order DGSEM implicit LES of this
+interaction (§1, §3.1). At $N=6$ on $129\times81\times26$ elements (about
+93 million degrees of freedom; $\Delta y^+_{\min}=1.6$, $\Delta x^+=30$,
+$\Delta z^+=16$ at the reference station "in combination with $N=6$"), with
+a synthetic-eddy inflow and anisotropic linear forcing, the undisturbed
+boundary layer matches the DNS of Wenzel et al., and the separation and
+reattachment points are $16.7\delta_r$ and $19.5\delta_r$ against
+$17.6\delta_r$ and $19.3\delta_r$ in the much finer LES of Morgan et al.
+(§5.2–5.3, Table 2, Figs. 16–22). On 16,384 cores the shock-free boundary
+layer runs at about 1.55 µs per degree of freedom, stage and core, which
+the authors put 94.0% above the FLEXI baseline of Krais et al. (load
+imbalance of the synthetic eddies, forcing, statistics), and the
+interaction at 1.84 µs with the
+[finite-volume subcells](/methods/subcell-finite-volume-shock-capturing.md)
+switched by a filtered [shock sensor](/definitions/shock-sensor.md); the
+two runs cost about 46,173 and 196,608 CPU hours (§5.2–5.3, Eq. 19). See
+[shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+
 **Supersonic isothermal turbulence with modal DG.**
 [Cernetic et al. (2024)](/sources/cernetic-2024.md) use their GPU modal DG
 code (Legendre basis on Cartesian cells, truncated to total degree $N$, so
@@ -770,6 +904,20 @@ Runge–Kutta stages per step; the collocated tensor-product DGSEM above has
 $O(N^4)$ volume work per element, $O(N)$ per degree of freedom (Krais et
 al. 2021; Kurz et al. 2025, Table 1), so the scaling does not transfer to it
 *(compiler check, not in the sources)*; Cernetic et al. give no timing.
+
+**Modal Runge–Kutta DG with TENO limiters.** At the other end of the
+family, [Huang & Fu (2024)](/sources/huang-2024.md) and
+[Huang et al. (2025)](/sources/huang-2025.md) use the Cockburn–Shu modal
+Runge–Kutta DG with a scaled Legendre basis on uniform Cartesian grids
+($N=2$, SSP-RK3 at CFL 0.15, Rusanov or local Lax–Friedrichs flux), in
+which a troubled-cell indicator flags cells and a limiter rebuilds their
+higher modes; their TENO-based indicator and limiters are on
+[shock sensors](/definitions/shock-sensor.md) and
+[WENO](/methods/weno-scheme.md). Huang et al. (2025, §1) state that the
+TENO limiter makes "no essential difference" between modal and nodal
+bases, citing a nodal spectral-difference version (see
+[spectral difference](/methods/spectral-difference-method.md)). Neither
+paper runs a turbulent flow.
 
 **Modal DG for adjoint RANS.** [Fanizza et al. (2025)](/sources/fanizza-2025.md),
 §2.3, discretize steady compressible RANS with the Spalart–Allmaras model in
@@ -875,6 +1023,22 @@ fine one (§3). See
   Morsbach et al. and Wang (2024) above.
 - Ranjbar et al. (2026) is the arXiv v1 preprint; their Smagorinsky
   channel runs are reported without data.
+- **Printed slips (Lodares et al. 2022).** Eq. (93) labels the SA viscous
+  volume term with the superscript NS; Table 2 names the NACA 0012
+  reference "FUN3D, 897×257" and the legends of Fig. 10 "CFL3D, 897 x 257";
+  the thermodynamic configuration is called entropy stable (§4.6) and
+  entropy conserving (§5.3, abstract). The entropy proof covers adiabatic walls only and permits
+  entropy growth wherever SA production exceeds destruction.
+- **Wall resolution on DG grids, again.** Gao et al. (2022, Table 2) give
+  their wall-unit spacings "in combination with $N=6$" without saying
+  whether they are per element or per degree of freedom, a fourth
+  convention beside those listed above.
+- Gao et al. (2022, §4.2) print the DG/FV saving in the laminar
+  interaction as "around 35% less" CPU time; the printed times give 25.9%
+  less (see [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md))
+  *(compiler check, not in the sources)*.
+- Jiang et al. (2025) name their schemes by order in the text and by
+  degree in the figures (DG(P1)–DG(P3) for second to fourth order).
 
 # Citations
 
@@ -913,3 +1077,11 @@ fine one (§3). See
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §1 (DG wall resolution); §2, Eqs. (2)–(11) (modal DG RANS, BR2, wall $\omega$, implicit solver); §3.3, Fig. 1 (wall-function feeding point).
 - [Schotte et al. (2026)](/sources/schotte-2026.md) — §1 (compact stencil); §2.2, Eqs. (5)–(7) (modal DG in CODA); §3, Eqs. (15)–(25) (sweet spot, DG Hessian, spectral estimators); §4.1 (degree staging, solver).
 - [Wang & Roy (2023)](/sources/wang-2023.md) — Journal Pre-proof: §2.1, Eqs. (1)–(10) (modal DG); §3.1, Eqs. (11)–(16) (error transport equations, orders); §4–5.
+- [Lodares et al. (2022)](/sources/lodares-2022.md) — §1; §3.2, Eqs. (38)–(50) (SA entropy, stability conditions); §4.1–4.6, Eqs. (51)–(79) (LGL DGSEM for RANS–SA, two-point and interface fluxes, walls); §5, Eqs. (80)–(118); §6, Eqs. (119)–(123) (implicit solver); §7, Tables 1–2, Figs. 1–10; §8.
+- [Jiang et al. (2025)](/sources/jiang-2025.md) — §2, Eqs. (8)–(9) (modal Taylor-basis DG); §3.1–3.2, Eqs. (10)–(20) (HWENO limiting of $k$, positive surrogate, lift-operator derivatives); §4.1–4.2, Figs. 1–4 (flat plate, RAE2822).
+- [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — Appendix, Eqs. (A1)–(A9) (modal DG RANS solver, AV, implicit solver); §V (order-by-order initialization, negative $k_L$, $k_T$).
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) — §3.3, Figs. 33–34 (finite-volume 30P-30N against a DG $N=4$ reference).
+- [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §1.1 ($\ln\omega$ transport after Bassi et al.'s DG; flux reconstruction in COOLFluiD).
+- [Gao et al. (2022)](/sources/gao-2022.md) — §1; §3.1, Eqs. (8)–(11) (split-form FLEXI DGSEM, implicit LES); §5.1–5.3, Table 2, Eq. (19), Figs. 16–22 (SWBLI resolution, performance, results).
+- [Huang & Fu (2024)](/sources/huang-2024.md) — §3, Eqs. (16)–(25) (modal RKDG).
+- [Huang et al. (2025)](/sources/huang-2025.md) — §1; §2, Eqs. (1)–(10) (modal RKDG).

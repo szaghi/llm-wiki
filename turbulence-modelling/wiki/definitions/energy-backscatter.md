@@ -5,7 +5,7 @@ description: "Energy backscatter is a negative local subgrid energy flux, energy
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-26T16:22:00Z
+timestamp: 2026-10-27T06:13:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -500,10 +500,10 @@ have no explicit dissipative character and, depending on the local flow,
 phenomenon that "occurs in real flows and may lead to solution instability
 in practical LES applications", with the nonlinear (Clark) model as their
 cited example. In their own LES of the Taylor–Green vortex at $Re=1600$ on
-$64^3$ the Layton–Lewandowski model ($N_{\mathrm{ADM}}=0$, with
-$N_{\mathrm{ADM}}$ the number of deconvolution terms, page-local) is stable with
+$64^3$ the Layton–Lewandowski model ($N_{\mathrm{AD}}=0$, with
+$N_{\mathrm{AD}}$ the number of deconvolution terms, page-local) is stable with
 every explicit filter tested and non-dissipative interpolation, while the
-deconvolution model with $N_{\mathrm{ADM}}=5$ needs added numerical
+deconvolution model with $N_{\mathrm{AD}}=5$ needs added numerical
 dissipation; they attribute its instability to the amplification of
 subfilter energy and of the aliasing of the deconvolved product, not to
 backscatter (§5.4.1–5.4.2). Vela-Martín (2022, §8) instead names

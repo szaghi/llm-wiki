@@ -5,7 +5,7 @@ description: "The spectral difference method is a nodal high-order element schem
 status: established
 aliases: [SD, SD method, spectral difference, staggered-grid Chebyshev multidomain method]
 tags: [flux-reconstruction, dns, compressible, immersed-boundary, implicit-les, numerical-dissipation]
-timestamp: 2026-10-26T20:44:00Z
+timestamp: 2026-10-27T05:50:00Z
 ---
 
 # Spectral difference method
@@ -143,6 +143,29 @@ trilinear interpolation, plus positivity preservation. Findings (§IV, §V):
 - with the DG and DGSEM codes it belongs to the element methods that
   "capture small scales well on coarse grids" (§V).
 
+## The SD correction parameter in RANS, and SD shock limiting
+
+**$c_{\mathrm{SD}}$ as the default of an implicit FR-RANS solver.**
+[Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) run their
+implicit [flux-reconstruction](/methods/flux-reconstruction.md) solver for
+$k$-$\omega$ SST RANS with Langtry–Menter
+[transition](/methods/local-correlation-based-transition-model.md) with the
+VCJH parameter $c_{\mathrm{SD}}$ by default (§2). On the ERCOFTAC T3A
+[flat plate](/benchmarks/ercoftac-t3-flat-plate.md) at $N=5$ the skin
+friction is nearly identical with $c_{\mathrm{SD}}$, $c_{\mathrm{DG}}$ and
+$c_{g2}$ (§4.2, Fig. 14), so in this steady RANS case the choice between
+the SD-recovering and the DG-recovering corrections does not affect the
+result. The solver lives in [COOLFluiD](/software/coolfluid.md), whose
+list of discretizations includes a "spectral finite difference" module
+beside flux reconstruction (§3.1).
+
+**TENO limiting for SD.** As recalled by
+[Huang et al. (2025)](/sources/huang-2025.md), §1 (their ref. 58, Chen &
+Fu 2024), a TENO-type limiter with a troubled-cell indicator has been
+applied to the nodal spectral difference method; Huang et al. build the
+analogous [shock sensor](/definitions/shock-sensor.md) and limiter for
+modal Runge–Kutta DG, not for SD.
+
 ## Qualifications
 
 - Evidence for SD in turbulence is two sources: D'Ayer et al. validate an
@@ -170,3 +193,5 @@ trilinear interpolation, plus positivity preservation. Findings (§IV, §V):
 - [D'Ayer et al. (2026)](/sources/dayer-2026.md) — HAL hal-05075852v1: §1 (SD stability, cost against FR, purpose); §2.1–2.2, Eqs. (1)–(10), Fig. 1 (equations, SD formulation, nodes, Roe flux, BR1, JAGUAR); §2.4 (time integration); §3.1, Tables 1–2, Figs. 3–5 (cylinder); §3.2, Table 3, Figs. 7–10 (rough minimal channel); §4.
 - [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §1, §3.1.5 (ESFR recovers SD; $c_{\mathrm{SD}}$ dissipation ordering).
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL hal-04582857v1: §III.B.e, h, Tables I–II (SD3DvisP); §IV.A–B, Figs. 5–8; §V.
+- [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — §2 (VCJH, $c_{\mathrm{SD}}$ default); §3.1 (COOLFluiD modules); §4.2, Fig. 14 (T3A skin friction for three VCJH parameters).
+- [Huang et al. (2025)](/sources/huang-2025.md) — §1 (TENO limiter for spectral difference, recalled).

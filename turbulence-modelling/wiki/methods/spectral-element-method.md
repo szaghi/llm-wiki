@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Continuous-Galerkin spectral-element method"
-description: "The continuous-Galerkin spectral-element method expands the solution in tensor-product Lagrange polynomials on LGL nodes, continuous across elements by direct stiffness summation; this page covers its formulation, the derivative jumps and weak wall-stress imposition that shape LES on it, and nodal subgrid coefficients and filter widths."
+description: "The continuous-Galerkin spectral-element method expands the solution in tensor-product Lagrange polynomials on LGL nodes, continuous across elements by direct stiffness summation; this page covers its formulation, the derivative jumps and weak wall-stress imposition that shape LES on it, nodal subgrid coefficients and filter widths, and implicit RANS source terms."
 status: established
 aliases: [SEM, CG-SEM, continuous Galerkin spectral element method, spectral/hp continuous Galerkin, direct stiffness summation]
 tags: [spectral-element, les, wmles, sgs-model, numerical-dissipation]
-timestamp: 2026-10-26T15:48:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Continuous-Galerkin spectral-element method
@@ -23,7 +23,9 @@ quadrature gives a diagonal mass matrix. In this bundle the method is the
 discretization of [Nek5000 and NekRS](/software/nek5000.md) (incompressible;
 [Fischer et al. 2022](/sources/fischer-2022.md);
 [Gillyns et al. 2022](/sources/gillyns-2022.md);
-[Mukha et al. 2025](/sources/mukha-2025.md)), of the continuous option of
+[Mukha et al. 2025](/sources/mukha-2025.md);
+[Tomboulides et al. 2025](/sources/tomboulides-2025.md), for RANS), of the
+continuous option of
 [Nektar++](/software/nektar-plus-plus.md)
 ([Saini et al. 2023](/sources/saini-2023.md)), and of the atmospheric model
 NUMA ([Reddy et al. 2026](/sources/reddy-2026.md), compressible at low Mach
@@ -59,6 +61,33 @@ gather–scatter has a unit-depth stencil for every $N$. NUMA advances
 explicitly with a five-stage third-order strong-stability-preserving
 Runge–Kutta scheme, or with a second-order IMEX additive Runge–Kutta scheme
 that treats acoustic and gravity waves implicitly (Reddy et al. 2026, §5–8).
+
+**Implicit RANS source terms.** Tomboulides et al. (2025, §2.2, Eqs.
+32–38) fold the non-linear source terms of two-equation RANS models into
+the Helmholtz operator of the BDF$k$/EXT$k$ scheme. Each transported scalar
+$\phi\in\{k,\tau_t\}$ ($\tau_t=1/\omega$ the turbulent time scale of the
+[$k$-$\tau$ model](/methods/k-tau-model.md), page-local, not a stress) obeys
+$\rho(\partial_t\phi+\boldsymbol u\cdot\nabla\phi)=\nabla\cdot(\Gamma\nabla\phi)+s_{nl}\phi+s_l$,
+with $s_l$ the part of the source independent of $\phi$ and $s_{nl}$ a
+coefficient multiplying $\phi$ ($\Gamma$ the diffusivity, $\Gamma_k$ or
+$\Gamma_\omega$ of the $k$-$\tau$ page; page-local $s_l$, $s_{nl}$). The
+Galerkin semi-discretization with the nodal LGL basis reads
+$$\mathsf M\frac{d\boldsymbol\phi}{dt}=-\mathsf C\boldsymbol\phi-\mathsf K\boldsymbol\phi+\mathsf M\boldsymbol f+\mathsf M\mathsf S_{nl}\boldsymbol\phi,$$
+with $\mathsf M$ the diagonal mass matrix, $\mathsf C$ convection,
+$\mathsf K$ the symmetric positive-definite stiffness and $\mathsf S_{nl}$
+the diagonal matrix of nodal $s_{nl}$ values (page-local matrices). Writing
+$\hat{\mathsf K}=\mathsf K-\mathsf M\mathsf S_{nl}$, the implicit step
+solves the Helmholtz system $\big((b_0/\Delta t)\mathsf M+\hat{\mathsf K}\big)\Delta\boldsymbol\phi=\dots$
+with BDF coefficients $b_j$ and extrapolated convection, which costs nothing
+beyond the Helmholtz solve already needed, and leaves only the convective
+CFL limit, about 0.5 for BDF2 (higher with the operator-integration-factor
+characteristics scheme) (§2.2). Every printed term of $s_{nl}$ is
+non-positive for non-negative coefficients, $k$ and $\tau_t$, so $\hat{\mathsf K}$ stays
+symmetric positive definite *(compiler check, not in the sources)*. On an
+OECD/NEA T-junction the $k$-$\tau$ model so treated ran at CFL $\sim2$,
+whereas the authors' regularized $k$-$\omega$ model, whose extra
+wall-distance source terms cannot be treated implicitly, was restricted to
+CFL $\sim0.1$ (§3.5, §4).
 
 ## Consequences of continuity for LES
 
@@ -155,6 +184,22 @@ of a second-order finite-volume LES at similar cost. Mukha et al. (2025)
 need the subgrid model for stability (above). See
 [numerical dissipation](/properties/numerical-dissipation.md).
 
+## Near-wall resolution and $N$-convergence in RANS
+
+Tomboulides et al. (2025, §3) show that the CG-SEM of
+[Nek5000](/software/nek5000.md) gives RANS solutions insensitive to
+$N$ and to the near-wall resolution once the wall singularity of $\omega$ is
+removed by the [$k$-$\tau$ model](/methods/k-tau-model.md): in a
+[channel](/benchmarks/turbulent-channel-flow.md) at $Re_\tau\approx5200$
+with 7 elements across the half channel, $N=3,5,7,9$ put the first LGL
+point at $y^+=1.7$, 0.73, 0.39, 0.25, and velocity, $k^+$ and the scaled
+time scale are indistinguishable except at $N=3$ (§3.1, Figs. 1–2); airfoil
+results at $N=5$ and 7 differ by less than 0.1% (§3.4), and T-junction
+profiles at $N=5$, 7, 9 by "very minor" amounts (§3.5). They attribute the
+persistent oscillations of the standard $k$-$\omega$ model with a large
+prescribed wall $\omega$ to the negligible numerical diffusion of high-order
+codes (§1); see [$k$-$\omega$ model](/methods/k-omega-model.md).
+
 ## Qualifications
 
 - **Absence of numerical dissipation.** Reddy et al.'s statement is not
@@ -189,3 +234,4 @@ need the subgrid model for stability (above). See
 - [Fischer et al. (2022)](/sources/fischer-2022.md) — §2.1–2.3 (spectral elements, gather–scatter, time stepping).
 - [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §2, §6 ($C^0$ continuity, Gibbs spikes at element faces).
 - [Saini et al. (2023)](/sources/saini-2023.md) — §2.1, §6 (Nektar++ continuous Galerkin with SVV, dissipation against finite volumes).
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §1 (oscillations of high-order $k$-$\omega$); §2.2, Eqs. (32)–(38) (implicit source terms in the Helmholtz operator); §3.1, Figs. 1–2; §3.4–3.5 ($N$-convergence, CFL on the T-junction).

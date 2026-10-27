@@ -9,7 +9,7 @@ year: 2026
 venue: "Comput. Fluids 312:107015"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Computers_amp_Fluids_Caban_Analysis_of_the_impact_of_numerically_induced_high-order_fil.pdf"
 tags: [les, sgs-model, filtering, implicit-les, numerical-dissipation, discretization-consistent-closure]
-timestamp: 2026-10-26T20:50:00Z
+timestamp: 2026-10-27T06:13:00Z
 ---
 
 # Summary
@@ -43,7 +43,7 @@ interpolation or regularization stabilize them and act as
 [implicit LES](/definitions/implicit-les.md), which beats the eddy-viscosity
 models by about a factor two. The approximate deconvolution model (ADM) needs
 added [numerical dissipation](/properties/numerical-dissipation.md) to stay
-stable and ranks below ILES and below its $N_{\mathrm{ADM}}=0$ case, the
+stable and ranks below ILES and below its $N_{\mathrm{AD}}=0$ case, the
 Layton–Lewandowski [scale-similarity model](/methods/scale-similarity-model.md),
 whose best run is 10% more accurate than the best ILES. Building the
 numerically induced filter into the deconvolution helps only when the LES
@@ -64,9 +64,9 @@ published article.
 3. The physical-space coefficients of the derivative-induced filters are nonzero over the whole stencil for the second-order, sixth- and tenth-order schemes alike, so every discretization-induced filter couples all nodes; the central coefficient dominates and the others decay with oscillating sign (Fig. 3c,d, 32 nodes). **Shown**
 4. Two successive second-order interpolations (to the half nodes and back) equal the explicit trapezoidal filter, $\hat G_E=\tfrac12+\tfrac12\cos(kh)=\cos^2(kh/2)=\hat G_{I'}^2$; the authors state that this holds for higher-order finite and compact interpolations, so the interpolation-induced filter is $G_{I'}^2$ (§3.2.2, Eqs. 34–35). **Derived** (second order); **Stated** (higher order)
 5. With 10th-order compact interpolation combined with the derivative filter, the combined transfer function at the point where $\hat G_I=0.5$ falls to 0.49, 0.22 and 0.13 for the second-order, sixth- and tenth-order derivative schemes: interpolation matters most when its order is close to that of the derivative scheme (§4.1, Fig. 5a). **Shown**
-6. Deconvolution with a filter of higher order than the true filter $\mathcal H$ suppresses the deconvolved variable; with a lower-order filter it amplifies it, near $k_c$ rather than near the grid cutoff; the error does not vanish as $N_{\mathrm{ADM}}\to\infty$ (§4.1, Eqs. 36–37, Fig. 6, $N_{\mathrm{ADM}}=5$). **Derived**/**Shown**
+6. Deconvolution with a filter of higher order than the true filter $\mathcal H$ suppresses the deconvolved variable; with a lower-order filter it amplifies it, near $k_c$ rather than near the grid cutoff; the error does not vanish as $N_{\mathrm{AD}}\to\infty$ (§4.1, Eqs. 36–37, Fig. 6, $N_{\mathrm{AD}}=5$). **Derived**/**Shown**
 7. A priori on isotropic DNS ($Re_\lambda=100$, $384^3$, LES grid 64, Gaussian filter $\Delta=2h$): the SGS-stress error is largest at high wavenumbers and of the order of the filtered product $\overline{uv}$ for every assumed filter, including the exact numerical filter; at low $k$ the largest error comes from the second-order finite-difference filter; with second- and fourth-order compact filters the low-$k$ errors are about two orders of magnitude below those of Layton–Lewandowski or the second-order finite-difference filter (§4.2, Fig. 8a). **Shown**
-8. With the second-order finite-difference filter, raising $N_{\mathrm{ADM}}$ raises the total SGS error; with second- and fourth-order compact filters the error falls up to $N_{\mathrm{ADM}}=4$–6 and then stays constant; the authors advise keeping $N_{\mathrm{ADM}}$ small (§4.2, Fig. 8b). **Shown**
+8. With the second-order finite-difference filter, raising $N_{\mathrm{AD}}$ raises the total SGS error; with second- and fourth-order compact filters the error falls up to $N_{\mathrm{AD}}=4$–6 and then stays constant; the authors advise keeping $N_{\mathrm{AD}}$ small (§4.2, Fig. 8b). **Shown**
 9. Laminar vortex ($T_v=7$, $Re=1600$, $\Delta t=10^{-3}$, $t=3.772$, $16^3$–$128^3$): with spectral interpolation the sixth- and tenth-order errors approach the theoretical order; with compact interpolation the errors are much larger and nearly independent of the derivative scheme, 4th-order interpolation giving a large error constant on every grid; regularization by the 8th-order compact filter is less accurate than 8th-order interpolation, while the deconvolution-based regularization filter matters only on coarse grids (§5.1, Fig. 9). **Shown**
 10. On $64^3$ with the sixth-order scheme, $Re_{\mathrm{eff}}/Re\approx1$ with spectral interpolation, while regularization and compact interpolation lower $Re_{\mathrm{eff}}$ markedly, 4th-order interpolation "several times"; $Re_{\mathrm{eff}}$ of Eq. 42 is nearly independent of time (§5.1, Figs. 10–11). **Shown**
 11. Derivative-induced filtering has a negligible effect on $Re_{\mathrm{eff}}$ because the first-derivative filter is "only dissipative … (not diffusive)" and is compensated by the reduced viscous dissipation of the second-derivative filter (§5.1). **Stated**
@@ -119,9 +119,9 @@ published article.
 | $k_c$, $k_g$ | $k_c$, (grid cutoff $\pi/h_g$) | |
 | $\omega$, $\omega_n=2\pi n/K$ | $kh$ (scaled wavenumber) | **collision:** $\omega$ is the specific dissipation rate in the registry |
 | $\mathcal G_I^{(r)}$, $\mathcal G_{I'}$, $\mathcal G_{N'}$ | $\mathcal F_h$ (its derivative, interpolation and combined parts) | page-local subscripts |
-| $\mathcal G_{QG}=Q_{N_{\rm ADM}}\mathcal G_E$ | (regularization filter) | from the 8th-order compact filter with $N_{\mathrm{ADM}}=2$ |
+| $\mathcal G_{QG}=Q_{N_{\rm ADM}}\mathcal G_E$ | (regularization filter) | from the 8th-order compact filter with $N_{\mathrm{AD}}=2$ |
 | $\mathcal G_{EF}$, $\mathcal H$ | (filter assumed in deconvolution, true filter) | |
-| $N_{\mathrm{ADM}}$, $u^*_i$ | (van Cittert terms, deconvolved velocity) | |
+| $N_{\mathrm{ADM}}$, $u^*_i$ | $N_{\mathrm{AD}}$ (number of van Cittert terms, page-local), $u^*_i$ (deconvolved velocity) | |
 | $\hat{\mathcal E}$ | (deconvolution error, Eq. 36) | negative = amplification |
 | $a_n$, $\nu_n$ | (numerical phase speed and numerical viscosity of mode $n$) | $a_n=a\hat G^{(1)}_{I,n}$, $\nu_n=\nu\hat G^{(2)}_{I,n}$ |
 | $M$, $N$ | (stencil sizes of compact formulas) | **collision:** $N$ is the polynomial degree in the registry |

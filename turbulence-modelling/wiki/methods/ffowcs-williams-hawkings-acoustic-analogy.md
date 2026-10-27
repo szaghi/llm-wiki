@@ -5,7 +5,7 @@ description: "The Ffowcs Williams–Hawkings analogy turns a scale-resolving flo
 status: established
 aliases: [FW-H, FWH, Ffowcs Williams-Hawkings equation, acoustic analogy, hybrid aeroacoustic prediction]
 tags: [aeroacoustics, les, hybrid-rans-les, turbomachinery]
-timestamp: 2026-10-26T15:52:00Z
+timestamp: 2026-10-27T06:13:00Z
 ---
 
 # Ffowcs Williams–Hawkings acoustic analogy
@@ -30,8 +30,8 @@ observers. Rismondo et al. call this "particularly advantageous" in
 low-speed flows ($M<0.3$), where the flow can be computed as incompressible.
 
 In this bundle the analogy is the downstream user of turbulence
-simulations. The sources use it on a jet, a fan stage, a wind turbine and
-code verification. Its accuracy depends on the scale-resolving simulation
+simulations. The sources use it on a round jet, twin square jets, a fan
+stage, a wind turbine and code verification. Its accuracy depends on the scale-resolving simulation
 that feeds it.
 
 ## Convective form
@@ -98,14 +98,22 @@ Casalino and Najafi-Yazdi et al.) and the solver of Rismondo et al.
   by downstream discs at $x/D=20$, 25, 30. They add the extra flux terms of
   Rahier et al. that stabilize the low-frequency result of a closed
   downstream surface, and report results "globally independent" of the
-  surface choice, showing one combination only. HORSES3D supports both
+  surface choice, showing one combination only.
+  [Ahn et al. (2023)](/sources/ahn-2023.md), §IV D, use a permeable
+  open-disk (classical, not closed downstream) surface around
+  over-expanded twin square jets, sized after an earlier
+  single-rectangular-jet LES. Its finest spacing of about $0.024h_n$ ($h_n$
+  the nozzle exit height, page-local) resolves up to $St\approx3.5$ at
+  about 11 cells per wavelength. They name averaging over multiple closed
+  end discs (Mendez et al.) and quadrupole corrections as improvements
+  they did not use. HORSES3D supports both
   solid and permeable surfaces (Ferrer et al. 2023, §4.6). As recalled by
   Rismondo et al. (§1.2), marine-propeller studies use the porous
   formulation of Di Francescantonio (1997) and its modifications.
 
 ## Quadrupole terms: neglect or integrate
 
-Two of the four sources that evaluate FW-H integrals drop the volume
+Two of the five sources that evaluate FW-H integrals drop the volume
 integral. Ferrer et al. (2023, §4.6) neglect
 quadrupoles in HORSES3D. Lewis et al. (2023, §5.3) neglect quadrupole and
 monopole sources because the fan's relative tip Mach number is 0.57.
@@ -162,6 +170,7 @@ the nonlinear spectrum above $20f_T$ and which they flag themselves.
 |---|---|---|---|---|
 | Ferrer et al. (2023), §4.6 | HORSES3D DGSEM | stationary monopole in a $M_0=0.5$ stream, observer at 500 source lengths; NACA 0012 at $Re=10^5$, $M=0.4$ | solid or permeable, no quadrupoles | frequency "good", amplitude error "around 7%"; dipole directivity at $r=2c$ (qualitative) |
 | Basile et al. (2023), §4.4 | hp-adaptive modal DG, ZDES mode 0+1 ([detached-eddy simulation](/methods/detached-eddy-simulation.md)) | PPRIME jet, $M_j=0.9$, $Re_D\simeq10^6$ | permeable closed surfaces, Rahier terms | finest mesh OASPL ($0.05<St<3$) about 1 dB (polar) and 2 dB (cylindrical array) high at high angles, 1–2 dB low below $40^\circ$; coarser meshes overpredict at all angles |
+| Ahn et al. (2023), §IV D | unstructured finite-volume [implicit LES](/definitions/implicit-les.md) (EDGE; second-order central fluxes with Jameson-type [artificial dissipation](/methods/artificial-viscosity-shock-capturing.md)), nozzle boundary layer tripped by a wall step | twin square jets, NPR 3.0, $M_j=1.36$, $Re=8.85\times10^5$ (equivalent diameter) | permeable open disk; samples every $5\times10^{-6}$ s, 8000 samples | far-field OASPL at $67.2h_n$ agrees with the microphones, maximum near $140^\circ$ and a hump near $90^\circ$ in both; screech 7928 Hz against 8172 Hz measured |
 | Lewis et al. (2023), §5.3.1 | AVBP [wall-modelled LES](/methods/wall-modelled-les.md), WALE | [ACAT1 fan stage](/benchmarks/acat1-fan-stage.md) at approach | solid blades and vanes, loading only | free-field FW-H overpredicts stator noise by 5–7 dB upstream (1–5 kHz) and about 4 dB (upstream), 2 dB (downstream) above 5 kHz |
 | Rismondo et al. (2025), §4 | OpenFOAM wall-resolved LES, WALE ([OpenFOAM](/software/openfoam.md)) | model wind turbine, $Re_D=9.6\times10^4$ | solid turbine surface plus wake volume | tonal noise at $3f_T$ plus trailing-edge broadband (linear); low-frequency wake broadband (nonlinear); near-field asymmetric, far-field symmetric dipole directivity (no acoustic measurement compared) |
 
@@ -174,7 +183,13 @@ Two lessons recur:
   (§5.3.1, §6). Basile et al.
   find that refining the jet mesh lowers the predicted noise, most at low
   frequency, and attribute the remaining excess at high angles to the
-  untripped nozzle (§4.4).
+  untripped nozzle (§4.4). Ahn et al. (2023, §III, §IV A–B) trip the
+  nozzle boundary layer of their jets with a step of height $0.02h_n$ in
+  the convergent section, which brings the near-nozzle shear-layer
+  turbulent kinetic energy and the length of the supersonic region closer
+  to PIV than the untripped run; their FW-H prediction is made on the
+  tripped run only (see
+  [inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
 - **Free-field propagation is a model error in ducts.** For the ducted
   fan, Goldstein's in-duct analogy, which accounts for duct cut-off,
   predicts at least 2 dB less than FW-H, about 5 dB less between 3 and
@@ -219,6 +234,13 @@ Two lessons recur:
 - Ferrer et al. (2023, §4.6) call $Q_i$, $\ell_{ij}$, $T^{\mathrm L}_{ij}$ the
   "loading, thickness, and quadrupole" terms, swapping the first two
   relative to their own Eqs. (25)–(26).
+- Ahn et al. (2023, §IV D) compute their spectra from "sub-set data of
+  250 000 time steps" while using 8000 FW-H samples saved every 100 solver
+  steps; the paper does not say whether the subset counts solver steps
+  (250 000 solver steps are 2500 saved samples) or saved samples. With
+  their time step $0.0012h_n/u_j$ ($u_j=399$ m/s, $h_n=16.61$ mm), 100
+  steps are $5.0\times10^{-6}$ s, matching the printed sampling interval
+  *(compiler check, not in the sources)*.
 - Basile et al. assert the surface independence without showing the other
   surfaces. Rismondo et al. assert independence from the volume radius
   ($0.7D$–$0.9D$) without showing it, and compare no acoustic measurement.
@@ -229,4 +251,5 @@ Two lessons recur:
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — arXiv v1: §4.6, Eqs. (23)–(26), Figs. 12–13 (convective FW-H in HORSES3D, monopole test, NACA 0012).
 - [Basile et al. (2023)](/sources/basile-2023.md) — HAL accepted manuscript: §4.3 (permeable surfaces, Rahier terms); §4.4, Figs. 14–15 (jet PSD and OASPL).
 - [Lewis et al. (2023)](/sources/lewis-2023.md) — HAL accepted manuscript: §5.3 (SherFWH, SherGoldstein, neglected sources); §5.3.1, Figs. 36–42 (FW-H and Goldstein predictions, shielding correction); §6.
+- [Ahn et al. (2023)](/sources/ahn-2023.md) — §III (EDGE implicit LES, tripping step); §IV A–B (effect of tripping); §IV D, Table II, Figs. 22–25 (permeable FW-H surface, sampling, OASPL, spectra, screech frequency).
 - [Moratilla-Vega et al. (2024)](/sources/moratillavega-2024.md) — §2.2–2.3 (LES/APE alternative); §4.3–4.4 (Ffowcs Williams & Hall directivity, recalled LES/FW-H of Wang et al.).

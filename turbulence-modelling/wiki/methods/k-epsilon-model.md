@@ -5,7 +5,7 @@ description: "Two-equation RANS eddy-viscosity models transporting the turbulent
 status: established
 aliases: [k-epsilon, standard k-ε, Launder–Sharma k-ε, realizable k-ε, RKE, Shih k-ε, enhanced wall treatment, EWT, two-layer k-ε]
 tags: [rans, eddy-viscosity, separated-flow, boundary-layer]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T05:46:00Z
 ---
 
 # k-ε models
@@ -65,7 +65,15 @@ the $k$-$\omega$ model integrates to the wall without damping functions but
 with $\omega\to\infty$ there
 ([Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §1; see the
 [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md) and
-[RANS wall functions](/methods/rans-wall-function.md)).
+[RANS wall functions](/methods/rans-wall-function.md)). Tomboulides et al.
+(2025) make the same comparison from the side of a high-order
+spectral-element code: they recall that the $k$-$\varepsilon$ model needs
+wall damping functions that depend on the wall distance (citing Lam &
+Bremhorst) and lacks a natural wall boundary condition for $\varepsilon$
+(citing Patel et al.), and they motivate the
+[$k$-$\tau$ model](/methods/k-tau-model.md), whose wall value is simply
+zero, by these defects and by the wall singularity of $\omega$
+([Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §1).
 
 **A resolution-dependent destruction coefficient.** In
 [continuous eddy simulation](/methods/continuous-eddy-simulation.md) the
@@ -206,6 +214,13 @@ a $k$-$\varepsilon$-based hybrid RANS/LES of Sajjadi et al., as the
 precedent of their SST implementation in a standard lattice Boltzmann
 code ([Mozaffari et al. (2024)](/sources/mozaffari-2024.md), §1; HAL accepted
 manuscript; see [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md)).
+Husson et al. (2024) name the very-large-eddy-simulation model of the
+commercial lattice Boltzmann code PowerFLOW, which is based on the RNG
+$k$-$\varepsilon$ model, as a hybrid whose RANS/LES switching criterion is
+not disclosed in the open literature; they build their own lattice
+Boltzmann hybrid on the Spalart–Allmaras-based zonal DES instead
+([Husson et al. (2024)](/sources/husson-2024.md), §1; see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)).
 
 ## Qualifications
 
@@ -231,3 +246,5 @@ manuscript; see [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md
 - [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md) — §1.
 - [Heinz (2022)](/sources/heinz-2022.md) — §2 Eqs. 1–2, Table 2, §3.
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §2.3 Eqs. 11–12.
+- [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §1.
+- [Husson et al. (2024)](/sources/husson-2024.md) — §1.

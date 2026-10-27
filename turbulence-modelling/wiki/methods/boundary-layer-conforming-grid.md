@@ -5,7 +5,7 @@ description: "Grids whose local isotropic cell size follows the local boundary-l
 status: established
 aliases: [BL-conforming grid, boundary-layer-conforming mesh, delta-conforming grid]
 tags: [wmles, mesh-adaptation, boundary-layer, wall-model]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-27T06:08:00Z
 ---
 
 # Boundary-layer-conforming grids for wall-modelled LES
@@ -184,6 +184,66 @@ BL-conforming grid of Lozano-Durán et al. is isotropic and sized by $\delta$
 for WMLES. No source of this bundle applies either approach to the other's
 problem.
 
+## Contrast: high-aspect-ratio grids of wall-resolved high-order RANS
+
+Wall-resolved RANS keeps hand-built anisotropic near-wall cells, and the
+cost of that choice falls on the discretization. [Huang et al. (2022b)](/sources/huang-2022-d.md)
+build a fourth-order cell-centred finite-volume solver for
+[Spalart–Allmaras](/methods/spalart-allmaras-model.md) RANS on mixed
+triangle–quadrilateral grids whose near-wall quadrilaterals have aspect
+ratios of $10^2$–$10^3$ (first cell $5\times10^{-6}$ chord, growth 1.2–1.4;
+$y^+\approx0.5$–1 on their flat plate), and state that such cells degrade the accuracy of
+high-order reconstruction (§1, §2.4). Their reconstruction is the compact
+*variational reconstruction* (after Wang, Ren, Pan et al., as cited): the
+degree-$k$ polynomial of each cell minimizes, over all faces, an
+interface-jump integral of the polynomial and its derivatives,
+
+$$I_f=\mathcal W^G_f\int_f\sum_{p+q\le k}\mathcal W^D_f(p,q)\left(\frac{\partial^{p+q}\phi_i}{\partial x^p\partial y^q}-\frac{\partial^{p+q}\phi_j}{\partial x^p\partial y^q}\right)^2dS,$$
+
+which leads to a symmetric positive-definite global system with a unique
+solution, solved by block Gauss–Seidel with one sweep per implicit
+iteration, and uses face neighbours only (§2.3, Eqs. 19–25; $\mathcal W^G_f$,
+$\mathcal W^D_f$ the geometric and derivative weights, $\phi_i$, $\phi_j$ the
+reconstructed polynomials of the cells $i$, $j$ sharing face $f$, $k$ the
+reconstruction degree, all page-local).
+
+**Weights for stretched cells** (§2.4, Eqs. 26–51). The authors restrict the
+derivative weights to $\mathcal W^D_f(p,q)=\varpi_{p+q}d_{ij}^{\,p+q}$ with
+$\varpi_0=1$ and non-increasing $\varpi_n$, and the geometric weight to
+$\mathcal W^G_f=(\lvert f\rvert/d_{ij})^{a_g}$ ($d_{ij}$ the distance between cell
+centroids, $\lvert f\rvert$ the face length (the source's $S_{i,j}$), $\varpi_n$, $a_g$ page-local). The
+$\varpi_n$ come from a modified-wavenumber analysis of one-dimensional
+advection with a monotonicity constraint (cubic: $\varpi_1=0.5295$,
+$\varpi_2=\varpi_3=0.2117$; quadratic: 0.4643, 0.1559; Table 1); the
+unconstrained optima have better dispersion and dissipation curves but much
+less dissipation and give schemes the authors found "not robust". The
+exponent comes from a two-dimensional analysis on rectangles of aspect
+ratio up to 1000: for linear reconstruction the objective is minimised for
+$a_g\ge1/2$ at all aspect ratios and advection angles tested, and $a_g=1/2$
+is "near-optimal" for quadratic
+(optimum 3/2 for inclined advection at aspect ratio 1000), and is taken for
+all degrees (Figs. 7–8, Eq. 51). The three-step procedure is called "of
+course not rigorous"; the 3D weights are proposed but not tested.
+
+**Evidence.** On a manufactured turbulent-boundary-layer profile (a
+Reichardt-type law, see [law of the wall](/definitions/law-of-the-wall.md))
+the $L_2$ error of $\partial u/\partial y$ of the cubic reconstruction is
+$1.39\times10^{-3}$ and $7.33\times10^{-4}$ on a uniform mesh of aspect
+ratio $5\times10^2$ and a curved mesh of about $10^3$, against
+$3.49\times10^{-3}$ and $6.84\times10^{-2}$ with the weights of Pan et al.
+and $5.22\times10^{-3}$ and $1.38\times10^{-3}$ with those of Cheng et al.
+(as cited); optimal derivative weights combined with Pan et al.'s geometric
+weight diverge on the first mesh, so the geometric weight must be optimized
+too (§2.4.3, Table 3). On the [NACA 0012](/benchmarks/naca-0012-airfoil.md)
+at $15^\circ$ ($Re_c=2.88\times10^6$, $M_\infty=0.15$, 11 880 to 33 150 cells) the
+fourth-order scheme reaches a lift error of 0.19 % on the third mesh, where
+the second-order one is at 14.88 % and still predicts a spurious
+trailing-edge separation; by their efficiency measure, inverse error times
+CPU time, the fourth-order scheme improves under refinement while the
+second-order one degrades (§3.2, Tables 5–6). The study is two-dimensional,
+steady and wall-resolved; it addresses the stretched cells that wall-resolved
+RANS needs, the opposite of the isotropic $\delta$-sized cells of this page.
+
 ## Qualifications
 
 - The method's evidence comes from one group, on one geometry and one
@@ -199,6 +259,14 @@ problem.
   C-N5-R5e3, while §V.A, the Fig. 18 caption and the case names give
   $2.8\times10^3$ and $5.6\times10^3$; §V.A says "the first six cases" use
   constant-size grids where five are listed.
+- **Printed slips of Huang et al. (2022b).** On p. 13 the constraint drawn
+  "according to Eq. (27)" is printed $\varpi_1\le\varpi_2\le\varpi_3$, the
+  reverse of Eq. (27), which their Table 1 values satisfy
+  ($0.5295\ge0.2117\ge0.2117$). Table 6 prints a lift error of 5.74 % for
+  the second-order scheme on the 143 700-cell mesh with $C_L=1.437$ against
+  the reference 1.526, which gives 5.83 %; the printed efficiency 0.791 is
+  consistent with 5.74 % *(compiler check, not in the sources)*. That mesh is
+  called "even smaller" although it has the most cells.
 
 # Citations
 
@@ -207,3 +275,4 @@ problem.
 - [Alauzet et al. (2022)](/sources/alauzet-2022.md) — §1; §8.2.5–8.2.6, Fig. 40, Table 3; §9.
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §3.1; §4.8, Table 1, Fig. 18.
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §4.1.3; §4.4, Table 1, Fig. 8; §6, Table 3; §7.3, Fig. 21 (HAL author manuscript).
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) — §1; §2.3, Eqs. (19)–(25); §2.4, Eqs. (26)–(51), Tables 1–3, Figs. 7–8; §3.2, Tables 4–6.

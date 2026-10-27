@@ -5,7 +5,7 @@ description: "Reduced MHD is the strong-guide-field, anisotropic limit of MHD wr
 status: established
 aliases: [RMHD, reduced magnetohydrodynamics, Strauss equations, Elsasser fields, Elsasser variables]
 tags: [mhd, plasma, astrophysics, dns]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-27T05:46:00Z
 ---
 
 # Reduced MHD and Elsasser variables
@@ -144,7 +144,7 @@ Eq. B10). The scale-dependent version is $\theta_\lambda$ of the registry.
 
 ## Outside the reduced limit
 
-Three sources work with systems that RMHD does not describe.
+Four sources work with systems that RMHD does not describe.
 
 - **Compressive modes in full MHD.** [Gan et al.
   (2022)](/sources/gan-2022.md) drive isothermal compressible MHD with a
@@ -157,6 +157,23 @@ Three sources work with systems that RMHD does not describe.
   turbulence](/results/compressible-mhd-turbulence.md). They solve the
   full compressible equations, so the decoupling of property 1 above is not
   assumed there.
+- **Elsasser fields in an inhomogeneous, high-beta wind.** [Adhikari et
+  al. (2023)](/sources/adhikari-2023.md) (§2, Eqs. 4–7) use Elsasser
+  variables $\boldsymbol Z^\pm=\boldsymbol u\pm\boldsymbol B/\sqrt{\mu_0\rho(\boldsymbol x)}$
+  (SI units, a position-dependent background density, $\boldsymbol Z^+$
+  directed outward from the Sun) at the leading order of nearly
+  incompressible MHD for plasma beta $\beta_p\gg1$. That leading order is
+  fully three-dimensional incompressible MHD holding both two-dimensional
+  structures and slab Alfvén waves at the same order, with the Alfvén
+  velocity present, and its velocity is not solenoidal in the stratified
+  background, so the Elsasser equation gains density-gradient and
+  background-shear terms. As the authors recall, for $\beta_p\ll1$ or
+  $\beta_p\sim1$ the leading order is instead two-dimensional and the slab
+  part a higher-order correction. Their Elsasser energies carry no factor
+  $\tfrac12$, and the residual energy is
+  $\langle\boldsymbol Z^+\cdot\boldsymbol Z^-\rangle$. The resulting
+  turbulence transport model is on [compressible MHD
+  turbulence](/results/compressible-mhd-turbulence.md).
 - **A different reduced plasma model.** [Coelho et al.
   (2022)](/sources/coelho-2022.md) simulate stellarator edge turbulence with
   the drift-reduced Braginskii two-fluid equations (electrostatic, with
@@ -192,3 +209,4 @@ counterparts, tested on DNS by [Ferrand et al.
 - [Coelho et al. (2022)](/sources/coelho-2022.md) — p. 3, Eqs. (1)–(7) (drift-reduced Braginskii model, plasma Boussinesq approximation).
 - [Kochurin et al. (2022)](/sources/kochurin-2022.md) — Eqs. (1), (3), (6).
 - [Ferrand et al. (2022)](/sources/ferrand-2022.md) — §2 (compressible Hall-MHD exact laws).
+- [Adhikari et al. (2023)](/sources/adhikari-2023.md) — §1; §2, Eqs. (4)–(9) (Elsasser fields at the leading order of high-beta nearly incompressible MHD; contrast with the reduced limit).

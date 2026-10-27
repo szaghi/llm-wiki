@@ -138,9 +138,10 @@ No printed duplicates.
 
 # Pages created or updated
 
-Chunk 6 (2026-10-26). This source is cited on:
+Chunk 6 (2026-10-26), cited further in chunk 8. This source is cited on:
 
 - [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)
+- [Dynamic stall](/definitions/dynamic-stall.md)
 - [Hybrid RANS/LES](/definitions/hybrid-rans-les.md)
 - [Laminar separation bubble](/definitions/laminar-separation-bubble.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)

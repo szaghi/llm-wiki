@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock–turbulent boundary layer interaction"
-description: "A turbulent boundary layer meeting a shock from a compression ramp, an impinging oblique shock, a transonic airfoil or a compressor blade: separation length, unsteadiness and wall heating test subgrid models, span and DNS cost from Mach 2.3 to 9.1, RANS data assimilation at Mach 2.28, and transonic buffet of an airfoil and a compressor cascade."
+description: "A turbulent boundary layer meeting a shock from a compression ramp, an impinging oblique shock, a transonic airfoil or a compressor blade: separation length, interaction-length scaling, unsteadiness and wall heating test subgrid models, high-order implicit LES, span and DNS cost from Mach 2 to 9.1, RANS data assimilation, and transonic buffet."
 status: established
-aliases: [STBLI, SWBLI, SBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet]
-tags: [benchmark, compressible, hypersonic, boundary-layer, separated-flow, les, pans, field-inversion, turbomachinery]
-timestamp: 2026-10-26T15:57:00Z
+aliases: [STBLI, SWBLI, SWTBLI, SBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet]
+tags: [benchmark, compressible, hypersonic, boundary-layer, separated-flow, les, pans, field-inversion, turbomachinery, implicit-les, dg]
+timestamp: 2026-10-27T06:13:00Z
 ---
 
 # Shock–turbulent boundary layer interaction
@@ -40,6 +40,7 @@ expensive because the low-frequency cycle needs long records.
 | [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md), §2–3 | impinging shock over a rigid and a flexible panel | 3 | wedge rotating to 17.5° | $\delta_0=4$ mm, unit Reynolds number $49.4\times10^6$ m$^{-1}$ | wall-modelled LES | $2\times10^7$ (periodic $5\delta_0$ span) to $2\times10^8$ cells (full span) |
 | [Fanizza et al. (2025)](/sources/fanizza-2025.md), §4.3 | impinging oblique shock, adiabatic walls | 2.28 | flow deflection 9.5° | inlet thickness $\delta_0$; Reynolds number not printed (DNS of Volpiani et al.) | steady RANS (Spalart–Allmaras) with adjoint data assimilation, modal DG | $350\times250$ and $175\times125$ elements, $\Delta y^+<1$, $N=1$–3 |
 | [Klose et al. (2025)](/sources/klose-2025.md), §3, Table 1 | transonic compressor cascade TCTA at its design point, suction-side bow shock oscillating at mid-chord | inlet 1.21 | the blade passage | laminar or transitional layer; $Re=1.35\times10^6$ on chord | implicit LES with DGSEM ($N=3$) and subcell finite-volume shock capturing; URANS for comparison | 47,319 or 108,564 elements per plane; 54.6 M to 375.2 M degrees of freedom |
+| [Gao et al. (2022)](/sources/gao-2022.md), §5.1, Tables 1–2 | impinging oblique shock, adiabatic wall | 2.0 | flow deflection 8°, shock angle 37.2°, $p_3/p_1=2.30$ | $Re_{\theta_0}=1628$ at the inlet, $Re_{\theta}=2188$ at the reference station $3\delta_r$ upstream of impingement ($\delta_r$ page-local: boundary-layer thickness there) | implicit LES, split-form DGSEM in FLEXI ($N=6$) with subcell finite-volume shock capturing; synthetic-eddy inflow with anisotropic linear forcing | $129\times81\times26$ elements, about $93\times10^6$ degrees of freedom; $\Delta x^+=30$, $\Delta y^+_{\min}=1.6$, $\Delta z^+=16$; span $3\delta_r$, periodic |
 | [Zhao et al. (2023b)](/sources/zhao-2023-b.md), §5.4 | Settles cavity–ramp | 2.92 | backward-facing step and cavity (depth 2.54 cm) closed by a 20° ramp, on which the cavity shear layer reattaches | not printed | steady RANS, $k$-$\omega$ SST with and without a compressibility correction, interior-penalty DG | 64.2 thousand cells |
 
 Both sources run a Mach 2.9, 24° ramp: Dang et al. validate against the DNS
@@ -89,6 +90,26 @@ use the [Vreman model](/methods/vreman-model.md), the
 Larsson matched at $0.1\delta_0$ with four cells below it, and digital-filter
 inflow; the run details are on
 [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md).
+
+**High-order implicit LES with a filtered shock indicator.**
+[Gao et al. (2022)](/sources/gao-2022.md) run the split-form
+[discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
+of [FLEXI](/software/flexi.md) as [implicit LES](/definitions/implicit-les.md),
+with no subgrid model and the dissipation of the interface Riemann solver,
+and capture shocks with the
+[subcell finite-volume scheme](/methods/subcell-finite-volume-shock-capturing.md):
+a troubled element of degree $N$ becomes $(N+1)^3$ second-order
+finite-volume subcells. On the instantaneous field the Jameson pressure
+indicator flags large parts of the under-resolved boundary layer, and
+Ducros-type indicators either miss the shocks inside it or flag too much,
+expansion fans included; evaluated on the spanwise-averaged pressure, the
+Jameson indicator confines the subcells to the shocks, inside the layer as
+well, a remedy the authors restrict to quasi-two-dimensional configurations
+(§3.2, Figs. 2, 7); see [shock sensor](/definitions/shock-sensor.md). A
+positivity-preserving limiter stabilizes the frequent switching. Inflow
+turbulence comes from a reformulated synthetic-eddy method with
+anisotropic linear forcing over $5\delta_r$–$10\delta_r$ to shorten the
+recovery (§5.2; see [inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
 
 **RANS with a compressibility correction.**
 [Zhao et al. (2023b)](/sources/zhao-2023-b.md) discretize the mean-flow
@@ -187,6 +208,65 @@ heat transfer at separation and in the recovering layer; $Pr_t$ is within
 from the wall, but about 1.4 downstream at Mach 9.1; the strong Reynolds analogies fail on these cold walls and the
 modified analogy of Huang et al. holds only in parts of the layers. See
 [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md).
+
+**Separation, plateau and unsteadiness of an impinging shock.**
+[Gao et al. (2022)](/sources/gao-2022.md), §5.3, compare their implicit
+LES with the LES of Morgan et al. that they cite (whose case is at
+$M=2.05$ with a larger pressure ratio): separation at $16.7\delta_r$
+against $17.6\delta_r$, reattachment at $19.5\delta_r$ against
+$19.3\delta_r$, from an impingement point at $20\delta_r$ (Fig. 22). They
+infer from Morgan et al.'s grid study and theirs that the separation point
+is highly sensitive to resolution and conditions while reattachment is
+not. A skin-friction plateau appears in the separated region, which,
+following Morgan et al., appears only at sufficient resolution; the
+authors take it as evidence of the DG accuracy on a grid much coarser than
+the reference LES. The mean interaction length, from the mean
+reflected-shock foot to the inviscid impingement point, is
+$L_{\mathrm{int}}=3.8\delta_r$ (Fig. 23). Wall-pressure spectra show no
+spurious low frequency from the synthetic inflow and a low-frequency peak
+at $St=fL_{\mathrm{int}}/U_\infty\approx0.03$ near the reflected-shock
+foot, consistent with the experiment of Threadgill & Bruce (§5.3.2,
+Fig. 24); the separation spectra of
+[Helm & Martín (2022)](/sources/helm-2022.md) on the Mach 3 ramp peak at
+$St\approx0.01$–0.03 in a Strouhal number built on $L_{\mathrm{sep}}$, not
+$L_{\mathrm{int}}$. The undisturbed boundary layer agrees with the DNS of
+Wenzel et al. (see [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)).
+The cost was about 196,608 CPU hours on up to 16,384 cores; the
+performance index rises 18.7% over the shock-free layer, within the
+15–20% degradation of the hybrid scheme that they cite from Krais et al.
+(§5.3.1–5.3.2).
+
+**Scaling of the interaction length.** Souverein et al.'s experimental law,
+as assessed by [Gao et al. (2022)](/sources/gao-2022.md), §5.3.3, reads
+$L_{\mathrm{sc}}=1.3(Se_{\mathrm{sc}})^{3.0}$, with the scaled interaction length
+$L_{\mathrm{sc}}=L_{\mathrm{int}}\sin\beta_s\sin\varphi_s/(\delta_0^*\sin(\beta_s-\varphi_s))$
+and the separation criterion $Se_{\mathrm{sc}}=k_{Se}\Delta p_s/q_0$ (page-local: shock
+angle $\beta_s$, flow deflection $\varphi_s$, incoming displacement
+thickness $\delta_0^*$, pressure rise $\Delta p_s$ across the reflection
+system, dynamic pressure $q_0$, and a factor $k_{Se}$ printed as 3 for
+$Re_{\theta_0}>10^4$ and 2.5 below). Their LES gives $L_{\mathrm{sc}}=2.92$ at
+$Se_{\mathrm{sc}}=1.39$, 16.4% below the law; the experiment of Threadgill & Bruce
+lies 7.8% below. Collecting 23 spanwise-periodic DNS and LES (Table 3),
+they find the simulations below the law, especially for
+$1.3<Se_{\mathrm{sc}}<1.8$, attribute the deficit to the sidewalls that periodic
+simulations lack, consistent with Bermejo-Moreno et al. and Wang et al. as
+they cite them, state that "modeling sidewall effects is compulsory" to
+match experimental interaction sizes and Strouhal numbers, and fit
+$L_{\mathrm{sc}}=0.95(Se_{\mathrm{sc}})^{3.15}$ for spanwise-periodic computations, recommending an
+inflow 10–20$\delta_r$ upstream of the interaction for $\delta_0^*$
+(Fig. 26). In their Table 3 a smaller span "might" give a larger $L_{\mathrm{sc}}$ and
+a higher Reynolds number a larger $L_{\mathrm{sc}}$, both too small to matter for the
+scaling.
+
+**A laminar interaction as a resolution test.** On Katzer's laminar
+interaction ($M=2$, $Re_{x}=3\times10^5$ at impingement, $p_3/p_1=1.4$)
+[Gao et al. (2022)](/sources/gao-2022.md), §4, find Katzer's grid not
+converged: the converged separation length, reached by DG at $N=4$ with
+182,000 degrees of freedom and by second-order finite volumes with
+409,500, is 5.87% larger than Katzer's, against 8.8% for the DNS of
+Sansica et al. as cited; at equal degrees of freedom DG is closer to the
+converged solution, and its run took 7680 CPU-minutes against 10,368
+(Figs. 9, 13).
 
 **Beyond RANS.** Two sources agree that RANS is not adequate for separated
 interactions: [Helm & Martín (2022)](/sources/helm-2022.md), §I, call RANS
@@ -421,6 +501,28 @@ dominant frequencies down.
   polynomial degree on the coarse grid, which §6 calls under-resolved. No
   inflow turbulence is prescribed (measured level below 1%).
 
+- [Gao et al. (2022)](/sources/gao-2022.md) call 7680 CPU-minutes
+  "around 35% less" than 10,368; it is 26% less, and 35% is the excess of
+  the finite-volume run *(compiler check, not in the sources)*. Their
+  Table 3 lists $Re_{\theta}=1864$ and $L_{\mathrm{sc}}=2.33$ for the present LES,
+  against 2188 and 2.92 in the text; their Eq. 20 with the printed
+  $L_{\mathrm{int}}=3.8\delta_r$, $\delta_r=0.507$ mm, $\delta_0^*=0.1139$ mm,
+  $\beta_s=37.2^\circ$, $\varphi_s=8^\circ$ gives $L_{\mathrm{sc}}=2.917$
+  *(compiler check, not in the sources)*. Their $Se_{\mathrm{sc}}$
+  values, this one ($p_3/p_1=2.30$, $\gamma=1.4$, $M=2$: 1.39) and those of
+  the Table 3 entries at $Re_\theta<10^4$, correspond to $k_{Se}=3$, not to
+  the 2.5 they print for that range *(compiler check, not in the
+  sources)*. They use $x_r$ for both the
+  reference station and the reattachment point.
+- The span trends differ: in [Helm & Martín (2022)](/sources/helm-2022.md)
+  doubling the LES span from $2\delta_o$ to $4\delta_o$ lengthens the
+  Mach 3 ramp separation from $3.05\delta$ to $3.71\delta$ (§III C,
+  Table III), while [Gao et al. (2022)](/sources/gao-2022.md)
+  read in their compilation of impinging-shock simulations (Table 3) that a
+  smaller span "might" give a larger interaction length (§5.3.3). The two
+  statements concern different configurations (compression ramp, impinging
+  shock) and are recorded side by side.
+
 # Citations
 
 - [Helm & Martín (2022)](/sources/helm-2022.md) — §I; §II, Eqs. (1)–(12), Fig. 1; §III B–D, Tables I–III, Figs. 2–14; §IV A–F, Table IV, Figs. 15–33; §V.
@@ -431,3 +533,4 @@ dominant frequencies down.
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §1; §4.3.1–4.3.4, Eqs. 42–44, Tables 1–4, Figs. 9–15; §5.
 - [Klose et al. (2025)](/sources/klose-2025.md) — accepted manuscript: §1–3, Table 1, Fig. 2; §5–7, Table 2, Figs. 5–14; §8.
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — §I (supersonic Taylor–Green vortex as shock–turbulence interaction).
+- [Gao et al. (2022)](/sources/gao-2022.md) — §1; §3.2, Figs. 2–7; §4.1–4.2, Figs. 9–13; §5.1–5.3, Tables 1–3, Figs. 16–26.

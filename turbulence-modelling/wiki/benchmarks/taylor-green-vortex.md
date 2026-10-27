@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "The triply periodic vortex flow that transitions from a single-mode analytic field to decaying turbulence: at Re 40,000 to separate Smagorinsky and implicit LES errors; at Re 200 to 5000 to split numerical dissipation, test subgrid models, deconvolution and modal filters; supersonic at Mach 1.25 for shock capturing; inviscid for energy conservation; laminar and 2D for filter and commutator analysis."
+description: "The triply periodic vortex flow that transitions from a single-mode analytic field to decaying turbulence: at Re 40,000 to separate Smagorinsky and implicit LES errors; at Re 100 to 10,000 to split numerical dissipation and test subgrid models, filters and split forms; supersonic for shock capturing; inviscid for energy conservation; laminar and 2D for filter and commutator analysis."
 status: established
 aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex, laminar Taylor–Green vortex, Brachet Taylor–Green vortex]
-tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible, filtering]
-timestamp: 2026-10-26T20:48:00Z
+tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible, filtering, kinetic-energy-preserving]
+timestamp: 2026-10-27T06:13:00Z
 ---
 
 # Taylor–Green vortex
@@ -110,6 +110,9 @@ to the fully turbulent state.
 | [Wang et al. (2024)](/sources/wang-2024.md) | finite differences, second-order kinetic-energy-preserving split form KGP2 against sixth-order optimized upwind OPT6, MUSCL3 and WENO5; inviscid with flow reversal | $30^3$ cells | the initial field (time reversal) |
 | [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) | nonlinearly stable (entropy-stable split-form) [flux reconstruction](/methods/flux-reconstruction.md), Ismail–Roe two-point flux, no upwinding, no over-integration; Mach 0.1; implicit LES and five eddy-viscosity models | DNS: $N=7$ on $32^3$ and $N=3$ on $64^3$ elements ($256^3$ degrees of freedom); LES: $96^3$ ($N=5$), $64^3$ ($N=7$), $48^3$, $24^3$ ($N=5$) | Dairay et al. ($512^3$ compact FD), DeBonis, Chapelier et al., Carton de Wiart et al., van Rees et al. |
 | [Caban et al. (2026)](/sources/caban-2026.md) | incompressible half-staggered compact differences (SAILOR) of order 2, 6 and 10, with spectral or compact interpolation and optional explicit regularization filter; implicit LES, Smagorinsky, Vreman, Layton–Lewandowski, approximate deconvolution; also $Re=400$ | DNS $256^3$ and $384^3$; LES $64^3$ | Brachet et al., van Rees et al., $512^3$ pseudo-spectral DNS of the first high-order CFD workshop; LES of Hickel et al. |
+| [Volpiani (2024)](/sources/volpiani-2024.md) | finite differences in the Python solver BASIC, $M=0.085$, $p_0=100$: divergence form with relaxation filtering (standard and optimized 11-point schemes and filters) against three [kinetic-energy-preserving](/properties/kinetic-energy-preservation.md) split forms (Feiereisen, Ducros, Kennedy–Gruber) without filter; Smagorinsky, two multi-scale Smagorinsky variants and dynamic Smagorinsky; also inviscid and $Re=2500$–10,000 | inviscid $64^3$; $Re=1600$: $64^3$ to $512^3$; $Re\ge2500$: $128^3$ | inviscid: Brachet et al. and the codes compared by Johnsen et al.; viscous: DNS of Dairay et al. |
+| [Liang & Fu (2024)](/sources/liang-2024.md) | hybrid finite differences TENO-S (non-dissipative split central flux, eight-point TENO at flagged cells); WENO-CU6, TENO6, TENO8 for comparison; inviscid to $t=100$ and viscous $Re=100$ to 10,000 | inviscid $64^3$; viscous $64^3$ ($Re\le3000$) and $128^3$ ($Re=5000$, 10,000) | DNS of Brachet et al. ($256^3$) and Dairay et al. ($1280^3$, $2048^3$) |
+| [Takagi et al. (2022)](/sources/takagi-2022.md) | finite differences TENO-THINC against WENO5-Z and TENO5; inviscid, $p_0=100$, to $t=10$ | $64^3$ | none named in the text |
 
 **Numerical dissipation of a no-model DNS scheme.**
 [Cao et al. (2022)](/sources/cao-2022.md), §3.1, Figs. 2–5, measure the
@@ -347,7 +350,7 @@ pressure nodes can be switched. They distinguish three variants: spectral
 (non-dissipative) interpolation, dissipative compact interpolation, and
 spectral interpolation plus an explicit regularization filter (an
 eighth-order compact filter combined with its approximate inverse truncated
-at $N_{\mathrm{ADM}}=2$) applied every step. They measure accuracy by the time-integrated
+at $N_{\mathrm{AD}}=2$) applied every step. They measure accuracy by the time-integrated
 relative error of the resolved kinetic energy against DNS up to $t=20$
 (Eq. 45). On $64^3$:
 
@@ -384,6 +387,68 @@ becomes unstable near $t=10$ (§5.2, Figs. 16–17). Their interpolation
 results hold for staggered and half-staggered algorithms only; collocated
 kinetic-energy-conserving schemes lack that dissipation (§6).
 
+**Relaxation filtering against split forms.** [Volpiani (2024)](/sources/volpiani-2024.md)
+compares two ways of stabilizing central differences on the compressible
+TGV at $M=0.085$: relaxation filtering, an explicit high-order low-pass
+filter of the conservative variables at every step (see
+[explicit modal filtering](/methods/explicit-modal-filtering.md) for the
+related modal filters), and split forms of the convective terms.
+
+- *Inviscid, $64^3$* (§4, Table 1, Figs. 4–5). Normalized kinetic energy
+  at $t=5$ is 0.999 for the Feiereisen and Ducros forms and 0.998 for
+  Kennedy–Gruber at every stencil size, against 0.983 to 0.176 for
+  relaxation filtering from 11- down to 3-point stencils; the author's
+  optimized 11-point scheme and filter retain 0.986, the most of any
+  filtered scheme. Normalized enstrophy at $t=3.5$ reaches 3.34 with the
+  largest split-form stencils and 3.26 with the optimized filtered scheme,
+  against 3.46 in the semi-analytical result of Brachet et al. and 3.13–3.34
+  in the codes compared by Johnsen et al. Split forms keep the enstrophy
+  monotonic; filtering makes it fall after some time. Spectra at $t=5$
+  agree with a $256^3$ run up to wavenumber 17; beyond it the split forms
+  pile energy at the highest wavenumbers, which the author ties to aliasing
+  from two thirds of the maximum wavenumber on. Per 100 iterations the
+  11-point filtered scheme costs 78.9 s and the Kennedy–Gruber form 298.9 s.
+- *$Re=1600$, $64^3$ to $512^3$* (§5, Figs. 6–18). Filtered implicit LES
+  predicts the dissipation computed from the kinetic-energy decay well on
+  all grids while under-predicting the enstrophy-based rate on coarse ones,
+  which the author reads as the filter carrying the unresolved
+  dissipation; the optimized filter best predicts the dissipation peak.
+  Split forms without a model are noisy on $64^3$ and $128^3$ and pile
+  aliased energy at high wavenumbers that contaminates even low ones;
+  Smagorinsky on a split form is too dissipative, misses transition and
+  under-predicts the dissipation peak, independently of the split form;
+  the multi-scale variants improve it, the dynamic model does not improve
+  on them, and adding the relaxation filter to the split form with a model
+  improves the results: aliasing errors, if not removed, affect the
+  solution even with an eddy viscosity (Figs. 15–17).
+  "Regardless of the model, the best result is achieved for the implicit
+  LES with RF with the optimized filter and no SGS model." Combining a split
+  form with the filter lets its strength drop from 0.1 to 0.01 (unstable in
+  divergence form) and removes the pile-up on $64^3$.
+- *$Re=2500$, 5000 and 10,000 on $128^3$* (§5, Fig. 10). The optimized
+  filtered implicit LES agrees well with the DNS of Dairay et al. on
+  $768^3$, $1280^3$ and $2048^3$, including the dissipation peak, with the
+  largest discrepancy at the highest Reynolds number.
+
+**Hybrid TENO schemes and inviscid energy conservation.** On the inviscid
+TGV at $64^3$, [Liang & Fu (2024)](/sources/liang-2024.md), §4.10,
+Figs. 17–18, run their TENO-S scheme, which uses a non-dissipative split
+central flux wherever an eight-point indicator finds the flow smooth, to
+$t=100$: it preserves the total kinetic energy and captures the enstrophy
+growth, while WENO-CU6, TENO6 and TENO8 dissipate the energy and smear the
+small vortices after $t\approx5$. [Takagi et al. (2022)](/sources/takagi-2022.md),
+§4.10, Fig. 21, find their TENO-THINC scheme better than WENO5-Z and TENO5
+at preserving kinetic energy and capturing enstrophy growth up to $t=10$
+(see [shock sensor](/definitions/shock-sensor.md) and
+[WENO schemes](/methods/weno-scheme.md)).
+On the viscous TGV Liang & Fu report that TENO-S at $64^3$
+($Re=100$–3000) and $128^3$ ($Re=5000$, 10,000) agrees well with the DNS
+of Brachet et al. and Dairay et al. in the energy dissipation rate and
+"performs significantly better" than the other schemes (§4.11,
+Figs. 19–20). [Volpiani (2024)](/sources/volpiani-2024.md) (above) also
+compares a no-model $128^3$ run with the Dairay et al. DNS up to
+$Re=10{,}000$.
+
 **Eddy-viscosity models in high-order TGV runs.** Several sources agree
 that adding an eddy-viscosity model to a high-order or low-dissipation
 TGV run at $Re=1600$ degrades it: Smagorinsky, WALE and Vreman on $N=4$
@@ -393,7 +458,9 @@ against jump penalties on DG ([Kou et al. (2023)](/sources/kou-2023.md));
 five Smagorinsky variants on entropy-stable flux reconstruction
 ([Brillon & Nadarajah (2026)](/sources/brillon-2026.md)); Smagorinsky and
 Vreman against implicit LES on compact differences
-([Caban et al. (2026)](/sources/caban-2026.md)). In the last two the
+([Caban et al. (2026)](/sources/caban-2026.md)); Smagorinsky, multi-scale
+and dynamic Smagorinsky against filtered implicit LES on central
+differences ([Volpiani (2024)](/sources/volpiani-2024.md)). In the last two the
 eddy-viscosity runs are also compared with alternatives that win: the
 no-model scheme in Brillon & Nadarajah, implicit LES and the
 Layton–Lewandowski model in Caban et al.
@@ -701,6 +768,19 @@ sources)*.
   defining a viscosity for their runs, and they describe the most
   dissipative variants inconsistently within §7.2.
 
+- [Volpiani (2024)](/sources/volpiani-2024.md) prints "$1288$" for the
+  $128^3$ grid (p. 910) and refers to Eq. (25), the compressible
+  dissipation, for the enstrophy-based rate given by Eq. (24) (p. 906), so
+  which of the two Fig. 6 plots is ambiguous. The Smagorinsky constant of
+  the runs and the dynamic model's test filter are not printed. The
+  filtered runs are no-model implicit LES that the author also describes
+  as "explicitly filtered with a well-defined filter function" (§5,
+  p. 908); see [implicit LES](/definitions/implicit-les.md).
+- [Liang & Fu (2024)](/sources/liang-2024.md) do not print the Mach
+  number or the Reynolds-number definition of their viscous runs, and
+  [Takagi et al. (2022)](/sources/takagi-2022.md) name no reference curve
+  for their inviscid run.
+
 # Citations
 
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §3; §5.3; §6.1–6.5, Eqs. (43)–(46), Figs. 4–22.
@@ -724,3 +804,6 @@ sources)*.
 - [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv v1: §2.5, §2.9; §3.1.1–3.1.8, Eqs. (91)–(107), Tables 2–5, Figs. 2–19.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §5.1, Eq. (42), Figs. 9–11; §5.2, Figs. 14–17; §5.3.1, Eq. (45), Table 4, Figs. 18–23; §5.4, Tables 5–9; §6.
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §III.B, Eq. (46), Figs. 7–14; §III.D.3.
+- [Volpiani (2024)](/sources/volpiani-2024.md) — §1; §4, Table 1, Figs. 4–5; §5, Figs. 6–18; §6.
+- [Liang & Fu (2024)](/sources/liang-2024.md) — §4.10, Figs. 17–18; §4.11, Figs. 19–20.
+- [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.10, Fig. 21.
