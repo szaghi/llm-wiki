@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "WENO and hybrid shock-capturing schemes in scale-resolving simulation"
-description: "WENO, TENO and weighted compact nonlinear schemes capture shocks by nonlinear weighting or selection of candidate stencils; in compressible turbulence their dissipation is reduced by optimized weights, adaptive cut-offs, linear weights in smooth flow, adjustable boundary-variation selection or hybrids with central and jump reconstructions, they serve as DG limiters, and in implicit LES as the subgrid dissipation."
+description: "WENO, TENO, weighted compact nonlinear and bounded normalized-variable schemes capture shocks by nonlinear weighting, selection or limiting of candidate reconstructions; in compressible turbulence their dissipation is reduced by optimized or linear weights, adaptive cut-offs, boundary-variation selection or hybrids with central and jump reconstructions, they serve as DG limiters, and in implicit LES as the subgrid dissipation."
 status: established
-aliases: [WENO, TENO, targeted ENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-Z+, WENO-Z+M, WENO-ZQ, WENO-SYMBO, HWENO, Hermite WENO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme, TENO-THINC, TENO-S, TENOA, THINC, TENO limiter, boundary variation diminishing, BVD-AD, WCNS, weighted compact nonlinear scheme, WCNS-T]
+aliases: [WENO, TENO, targeted ENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-Z+, WENO-Z+M, WENO-ZQ, WENO-SYMBO, HWENO, Hermite WENO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme, TENO-THINC, TENO-S, TENOA, THINC, TENO limiter, boundary variation diminishing, BVD-AD, WCNS, weighted compact nonlinear scheme, WCNS-T, ROUND, OMP6 hybrid]
 tags: [shock-capturing, numerical-dissipation, dns, compressible, implicit-les, gpu]
-timestamp: 2026-10-27T15:48:00Z
+timestamp: 2026-10-27T21:10:00Z
 ---
 
 # WENO and hybrid shock-capturing schemes in scale-resolving simulation
@@ -65,6 +65,11 @@ in turbulence (see [numerical dissipation](/properties/numerical-dissipation.md)
 | Third-order WENO flux-vector-splitting flux blended with a fourth-order kinetic-energy- and entropy-preserving central flux, single-ghost-cell boundary closure at an immersed boundary (CHAMPS) | immersed-boundary wall-modelled LES of channel flow and hypersonic boundary layers | [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.3, §2.8 |
 | Sixth-order kinetic-energy-preserving convection switched to fifth-order WENO by the Ducros criterion (STREAmS) | DNS of an oblique shock/boundary-layer interaction at $M_\infty=2.28$ | [Yu et al. (2022)](/sources/yu-2022-e.md), §2.1 |
 | Eighth-order energy-preserving fluxes with seventh-order WENO and Lax–Friedrichs flux-vector splitting at $M_\infty=8$ only (STREAmS) | DNS of cooled and adiabatic boundary layers, $M_\infty=0.5$–8 | [Zhang et al. (2022)](/sources/zhang-2022-b.md), §2 |
+| Sixth-order monotonicity-preserving optimized scheme (OMP6) in smooth regions, seventh-order WENO (Jiang–Shu) where the pressure gradient is high, characteristic Steger–Warming splitting (OpenCFD-SCU) | DNS of a Mach 6 swept compression ramp, $2.06\times10^9$ and $5.51\times10^9$ points | [Zhang et al. (2022c)](/sources/zhang-2022-g.md), §II A |
+| Eighth-order compact finite differences in smooth regions, seventh-order WENO in shock regions | $1024^3$ DNS of forced and decaying compressible isotropic turbulence ($M_t=0.40$, 0.79), reference of an a priori and a posteriori LES study | [Zhang et al. (2022b)](/sources/zhang-2022-f.md), §III |
+| The same hybrid (Lele's compact scheme, Balsara–Shu seventh-order WENO), second-order TVD Runge–Kutta | $512^3$ DNS of decaying isotropic turbulence of a dense gas, reference of an LES study | [Zhang et al. (2022d)](/sources/zhang-2022-h.md), §III A |
+| Fourth-order weighted compact nonlinear scheme with Z-type weights, regularizer 100 (near-linear, WCNS-L) or $10^{-6}$ (WCNS-Z), Roe flux; second-order blended central/upwind interpolation as comparison | SATES hybrid RANS/LES, Smagorinsky LES and IDDES of the 30P30N high-lift airfoil (PHengLEI) | [Wu et al. (2023)](/sources/wu-2023-b.md), §2.2, §3.3 |
+| ROUND: bounded (TVD) normalized-variable reconstruction cast as a flux limiter, AUSM+-up flux, unstructured finite volumes (OpenFOAM); van Leer and MUSCL limiters as comparisons, fifth-order WENO as a reference | implicit LES of shock–vortex and shock–turbulence problems, a Mach 0.8 deep cavity | [Cheng et al. (2023)](/sources/cheng-2023-b.md), §2–3 |
 
 The upwind schemes act on split fluxes or on characteristic variables.
 [OpenCFD-SCU](/software/opencfd-scu.md) splits the flux with Steger–Warming
@@ -164,6 +169,31 @@ each Gauss point for their supersonic cases.
   matters much more"); in Mach 6 transitional boundary layers the surface
   heat transfer is "very sensitive" to the dissipation added at the
   immersed boundary (§3.2, §4).
+- **Nonlinear weights in shock-free flow.** On the
+  [30P30N airfoil](/benchmarks/30p30n-high-lift-airfoil.md) at
+  $M=0.17$, [Wu et al. (2023)](/sources/wu-2023-b.md), §3.3, Table 2,
+  find the lift coefficient $-6.7\%$ off the measured mean with Z-type
+  nonlinear weights in a fourth-order
+  [weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
+  and $-0.4\%$ with the weights kept near linear. They attribute the
+  difference to the Z-type weights losing accuracy near high-order
+  critical points, which adds dissipation in the slat-cove shear layer and
+  delays its instability, and recommend linear interpolation for
+  shock-free low-Mach flow; Ma et al. (2022) found the same direction in
+  the T106A cascade (below).
+- **TVD limiters as implicit subgrid dissipation.** In the Mach 0.8 deep
+  cavity ($Re=8.6\times10^5$, 10.36 million cells, implicit LES),
+  [Cheng et al. (2023)](/sources/cheng-2023-b.md), §3.6, Figs. 11–14,
+  state that the classical van Leer and MUSCL limiters "underestimate the
+  Reynolds stresses due to numerical dissipation", that the fifth-order
+  implicit LES of Thornber & Drikakis (cited) "tends to slightly
+  overestimate them", and that their less dissipative ROUND
+  reconstruction (below) outperforms the two classical limiters and
+  "almost accurately" captures the near-upstream-wall peak of the
+  fluctuating kinetic energy that the fifth-order reference
+  "significantly overestimated". The comparison is at different grids, as
+  the authors note for the mean velocity ("may benefit from the finer
+  grid size").
 - **Shock-capturing dissipation in DNS budgets.** [Yu et al. (2022)](/sources/yu-2022-e.md),
   §7, caution that their spectral budget is unreliable near the shocks
   because the numerical dissipation added for shock stability lowers
@@ -384,7 +414,17 @@ upwind scheme, that switching artefacts are slight because all three schemes
 are above fifth order, and that with characteristic reconstruction the
 simulation "can be guaranteed not to diverge, provided the time step is
 appropriate" (no proof or test given). The upwind coefficients sum to one
-*(compiler check, not in the sources)*.
+*(compiler check, not in the sources)*. In the Mach 6 swept-ramp DNS of
+[Zhang et al. (2022c)](/sources/zhang-2022-g.md), §II A, the same code runs
+a two-member hybrid: OMP6, which "has lower dissipation", where the
+pressure gradient is low and seventh-order WENO, of "better robustness",
+where it is high, with characteristic Steger–Warming splitting,
+eighth-order central viscous terms and third-order TVD Runge–Kutta; the
+recognizer's formula and threshold are not printed (see
+[shock sensors](/definitions/shock-sensor.md)). On their two grids wall
+pressure is converged while peak skin friction and heat flux are 7–10%
+lower on the coarser one (§II C). The interaction is on
+[shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
 **Energy-preserving central/WENO (STREAmS).** Cogo et al. (2022, §2) apply
 "consolidated, high-order, energy-preserving schemes" in shock-free regions,
@@ -703,6 +743,70 @@ for ILES", are on [implicit LES](/definitions/implicit-les.md); in the
 T106A cascade the *linear* WCNS-E (weights at their optimal values) captures
 the leading-edge separation that the nonlinear WCNS-E misses (§3.3,
 Fig. 12).
+
+**A fourth-order WCNS in a production code.** [Wu et al. (2023)](/sources/wu-2023-b.md),
+§2.2.1, run the WCNS in the structured code PHengLEI with a fourth-order
+flux difference, $E'_j=\frac{\alpha_{\mathrm W}}{h}(E^*_{j+1/2}-E^*_{j-1/2})+\frac{b_{\mathrm W}}{h}(E^*_{j+3/2}-E^*_{j-3/2})$
+with $\alpha_{\mathrm W}=9/8$, $b_{\mathrm W}=-1/24$ (page-local; $E^*$
+the numerical flux, the source's $\hat E$), cell-edge fluxes only, a Roe flux,
+and a fifth-order weighted interpolation from three third-order
+candidates, as in WCNS-E above, with Z-type weights
+$a_k=d_k\big(1+|\mathrm{IS}_0-\mathrm{IS}_2|/(\mathrm{IS}_k+\epsilon)\big)$
+(Eqs. 12–14; the optimal weights and indicators are not printed).
+Setting $\epsilon=100$ (WCNS-L) "neglect[s] the nonlinear weight", setting
+$\epsilon=10^{-6}$ (WCNS-Z) keeps it; the shock-free airfoil results,
+which favour WCNS-L, are under "Dissipation in turbulence" above. The
+WCNS family, its two sources and the open questions are collected on
+[weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md).
+
+## Bounded normalized-variable reconstruction on unstructured meshes
+
+[Cheng et al. (2023)](/sources/cheng-2023-b.md) build an implicit-LES
+solver for shock–vortex and shock–turbulence interaction in OpenFOAM on a
+second-order alternative to WENO, the **ROUND** reconstruction (of Deng,
+which they cite), chosen for its compact stencil on arbitrary unstructured
+meshes, where they judge $k$-exact least-squares and unstructured WENO too
+complex in stencil selection, boundary closure and parallel communication
+for codes "of practical interests" (§1). Page-local notation:
+$\phi_{\mathrm n}$ the normalized variable of the normalized-variable
+diagram, the cell value relative to the upwind and downwind values
+(Eqs. 2.9–2.10; the source writes a hat, which here is the test filter);
+$\mathsf b_0$, $\mathsf b_1$ the blending weights (the source's
+$\omega_0$, $\omega_1$); $g_0$, $g_1$, $\lambda_{\mathrm R}$ the
+dissipation parameters (the source's $\gamma_0$, $\gamma_1$, $\lambda_1$).
+The face value of the normalized variable is (Eq. 2.11)
+
+$$\phi_{\mathrm n,f}=\begin{cases}\min\big[(\tfrac13+\tfrac56\phi_{\mathrm n})\mathsf b_0+2\phi_{\mathrm n}(1-\mathsf b_0),\ 2\phi_{\mathrm n}\big], & 0<\phi_{\mathrm n}\le\tfrac12,\\ \min\big[(\tfrac13+\tfrac56\phi_{\mathrm n})\mathsf b_1+(\lambda_{\mathrm R}\phi_{\mathrm n}-\lambda_{\mathrm R}+1)(1-\mathsf b_1),\ \lambda_{\mathrm R}\phi_{\mathrm n}-\lambda_{\mathrm R}+1\big], & \tfrac12<\phi_{\mathrm n}\le1,\\ \phi_{\mathrm n} & \text{otherwise},\end{cases}$$
+
+with $\mathsf b_{0,1}=\big[1+g_{0,1}(\phi_{\mathrm n}-1)^4\big]^{-2}$ as
+printed: the third-order upwind-biased line $\tfrac13+\tfrac56\phi_{\mathrm n}$
+is blended into the bounding lines $2\phi_{\mathrm n}$ and
+$\lambda_{\mathrm R}\phi_{\mathrm n}-\lambda_{\mathrm R}+1$, and outside
+$(0,1]$ the reconstruction is first-order upwind. Two parameter sets come
+from "rigorously tuning" in numerical tests: ROUND_A ($g_0=500$,
+$g_1=1000$, $\lambda_{\mathrm R}=0.25$) and the less dissipative ROUND_A+
+($g_0=1100$, $g_1=800$, $\lambda_{\mathrm R}=0.15$); both are stated to
+satisfy the TVD condition and to be "structure-preserving", without proof
+(§2.2). For OpenFOAM the operator is rewritten as a flux limiter
+$\psi(r_f)$ of the gradient ratio $r_f=2(\nabla\phi)_C\cdot\boldsymbol d_{CD}/(\phi_D-\phi_C)-1$
+of Darwish & Moukalled (cited), which needs no virtual upwind cell
+(Eqs. 2.12–2.14); primitive variables are reconstructed, the flux is
+AUSM+-up, the viscous flux central, and no time integrator is named.
+
+Against the van Leer and MUSCL limiters the ROUND variants give second-order
+convergence on the isentropic vortex (where the classical limiters do not
+reach it), the closest high-frequency amplitudes on the Shu–Osher problem
+($h=1/600$, against a fifth-order WENO reference at $h=1/2000$), more
+small structures and lower dissipation in the inviscid
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $128^3$, and
+better Reynolds stresses in the deep cavity (§3.1–3.6; above); in a 3D
+under-expanded planar jet the van Leer limiter "almost fails to produce 3D
+flow structures" and only ROUND_A+ captures the early roll-up of the
+mixing layer (§3.7). The evidence is figures; no table, timing or CFL is
+reported. The implicit-LES framing (explicit subgrid models cannot
+represent the inter-mode energy transfer and the kinetic-to-internal
+conversion at shocks, citing Garnier et al.) is on
+[implicit LES](/definitions/implicit-les.md).
 
 ## TENO as a limiter for Runge–Kutta DG
 
@@ -1029,6 +1133,17 @@ profiled; Tables 2–3).
   analysis". No quantitative error norms are given for the
   implicit-LES cases, and the Taylor–Green Reynolds number and grid are not
   printed.
+- **Printed ROUND operator (Cheng et al. 2023).** Mapping the operator of
+  Eq. (2.11) to the limiter of Eq. (2.13) through
+  $\phi_{\mathrm n}=r_f/(1+r_f)$: the second branch of (2.13) contains a
+  symbol $\beta_2$ that the paper does not define, and reproduces (2.11)
+  only with $\beta_2=g_1$; and the auxiliary polynomials of (2.13)
+  correspond to blending weights in $(\phi_{\mathrm n}-\tfrac12)^4$, not
+  the printed $(\phi_{\mathrm n}-1)^4$ of (2.11), with which both branches
+  agree identically *(compiler check, from the printed Eqs. 2.11–2.14)*.
+  The paper does not state which weight its code uses. The paper also prints the second Stokes term without the identity
+  tensor (Eq. 2.5) and the post-shock region of the shock–entropy test as
+  "$0\le x\le-4$" (Eq. 3.3).
 - **Printed weights (van Noordt et al. 2022, Eq. 17).** The weights are
   printed as $\mathsf w_k=d_k/(\epsilon+\beta_k)^2$ with
   $\beta_k$ the indicators normalized by their sum; as printed the
@@ -1076,3 +1191,8 @@ profiled; Tables 2–3).
 - [Yu et al. (2022)](/sources/yu-2022-e.md) — §2.1 (STREAmS KEP/WENO5); §7 (shock-capturing dissipation and spectral budgets).
 - [Zhang et al. (2022)](/sources/zhang-2022-b.md) — §2 (STREAmS EP8/WENO7 at $M_\infty=8$).
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §1, §3.1 (WENO in compression-ramp DNS, cited).
+- [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II A (OMP6/WENO7 hybrid with a pressure-gradient recognizer in OpenCFD-SCU); §II C, Fig. 4 (grid sensitivity).
+- [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §III (compact/WENO hybrid of the reference DNS).
+- [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §III A (compact/WENO hybrid of the dense-gas reference DNS).
+- [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.2.1, Eqs. (10)–(14) (fourth-order WCNS, Z-type weights, WCNS-L and WCNS-Z); §3.3, Table 2, Fig. 11; §4 (linear interpolation recommended for shock-free flow).
+- [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §1 (unstructured high-order reconstruction, explicit subgrid models at shocks); §2.1–2.2, Eqs. (2.5)–(2.14) (AUSM+-up, ROUND operator and limiter form, parameter sets); §3.1–3.7, Figs. 2–17 (tests; deep-cavity Reynolds stresses); Eq. (3.3).

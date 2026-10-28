@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Flow past a square cylinder"
-description: "Turbulent flow past a square cylinder with separation fixed at the front corners and a shedding wake: at Re 22,000 a test of variational data assimilation into Spalart–Allmaras RANS, where momentum sources fit the DNS mean flow and eddy-viscosity multipliers fail; at Re 10,000 a 2D URANS test of the k-√k-L model."
+description: "Turbulent flow past a square cylinder with separation fixed at the front corners and a shedding wake: at Re 22,000 a test of variational data assimilation into Spalart–Allmaras RANS, where momentum sources fit the DNS mean flow and eddy-viscosity multipliers fail, and of a DNS-database subgrid closure; at Re 10,000 a 2D URANS test of the k-√k-L model."
 status: established
 aliases: [square cylinder, square-cylinder wake, flow over a square cylinder, SQCYL]
 tags: [benchmark, separated-flow, rans, field-inversion, data-driven, dg]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-27T20:45:00Z
 ---
 
 # Flow past a square cylinder
@@ -25,7 +25,9 @@ model error of a bluff-body wake (see
 next to the [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md).
 At $Re=10^4$ and in two dimensions the case also tests whether a
 length-scale-adaptive RANS model lets an unsteady wake develop
-([Jiang et al. (2025)](/sources/jiang-2025.md), §4.3).
+([Jiang et al. (2025)](/sources/jiang-2025.md), §4.3). At $Re=22{,}000$
+the same DNS is also the reference of a scale-resolving closure test
+([Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.6).
 
 ## Configurations in the sources
 
@@ -107,6 +109,42 @@ three-dimensional, and the SA comparison "may not be a fair comparison"
 because SA is meant for steady high-Reynolds-number flow; a fair one would
 be three-dimensional DES or SAS (§4.3).
 
+**A DNS-database subgrid closure against LES.**
+[Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.6, Figs.
+17–18, Table 2, run
+[pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md),
+whose subgrid stress comes from a database of DNS on representative volume
+elements, and an LES with the dynamic $k$-equation subgrid model of Kim
+& Menon (§2.10, see
+[subgrid kinetic-energy equation models](/methods/subgrid-kinetic-energy-equation-model.md))
+on the same mesh of about 2 million hexahedra (domain
+$27\times13\times\pi$ sides in the streamwise, cross-stream and spanwise
+directions, cell size $0.04L_{\mathrm{sq}}$ at the surface, symmetry top and
+bottom, periodic span; second-order schemes at Courant number at most 1;
+300 time units, the last 200 averaged), against the 300-million-cell DNS of
+Trias et al. With $L_r$ the length of the mean recirculation behind the
+cylinder in units of $L_{\mathrm{sq}}$:
+
+| Quantity | DNS (Trias et al.) | P-DNS | LES |
+|---|---|---|---|
+| cells | 300 M | 2 M | 2 M |
+| $St$ | 0.132 | 0.127 | 0.115 |
+| mean $C_D$ | 2.18 | 2.551 | 2.701 |
+| rms of $C_D$ | 0.205 | 0.233 | 0.293 |
+| mean $C_L$ | 0.002 | 0.044 | 0.049 |
+| rms of $C_L$ | 1.71 | 1.574 | 1.771 |
+| $L_r$ | 1.04 | 1.108 | 1.404 |
+
+The two large recirculations above and below the cylinder are predicted,
+the secondary corner recirculations are not, which the authors attribute
+to the lack of grid refinement; the main vortex near the cylinder is
+placed more accurately by P-DNS than by the LES, while the large mean-flow
+curvatures upstream are "only partially predicted by both approaches", and
+the Reynolds-stress profiles agree better with the DNS for P-DNS (Fig. 18).
+P-DNS is closer to the DNS than the LES in every row of the table except
+the rms lift, where the LES is closer *(compiler check, not in the
+sources)*.
+
 **Adjoint solvers.** [Fanizza et al. (2025)](/sources/fanizza-2025.md),
 §3.4.1, Fig. 2, use the first adjoint system of this optimization to
 compare linear solvers at a 180-vector memory budget: GMRES(180) with
@@ -136,9 +174,14 @@ deflated-restart variant in 8000; plain GMRES would need a Krylov space of
   (a three-dimensional DNS against a two-dimensional one) and are not
   compared with each other. Jiang et al. print the upper-side stations of
   Fig. 10 in the non-monotone order $x/L_{\mathrm{sq}}=0.48$, 0.12, 0.1, 0.49.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.6, write
+  that P-DNS "results in lR = 1.04", the DNS value, while their Table 2
+  prints 1.108 for P-DNS and 1.04 for the DNS. They place the Reynolds
+  stresses in Fig. 18b, c in one sentence and in Fig. 18d, e in another.
 
 # Citations
 
 - [Cato et al. (2023)](/sources/cato-2023.md) — §II B; §V A–C, Figs. 11–19.
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §3.3, Eqs. 26–31; §3.4.1, Fig. 2; §4.2, Figs. 7–8.
 - [Jiang et al. (2025)](/sources/jiang-2025.md) — §4.3, Figs. 8–11.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.10.6, Figs. 17–18, Table 2.

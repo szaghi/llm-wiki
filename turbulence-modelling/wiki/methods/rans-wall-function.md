@@ -5,7 +5,7 @@ description: "The near-wall closure of RANS that imposes a law of the wall at th
 status: established
 aliases: [wall function, WF, adaptive wall function, two-velocity-scale wall function, explicit wall function, RANS wall law]
 tags: [rans, wall-model, boundary-layer, dg]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-27T21:09:00Z
 ---
 
 # Wall functions for RANS
@@ -347,6 +347,61 @@ experiment, "partly" because of the wall model (§4.3.2, Fig. 18). The same
 limit appears in the DG results of Ghidoni et al. (2026) above: the law of
 the wall returns a wrong $u_\tau$ in recirculation.
 
+## What the wall law assumes: roughness, history, three-dimensionality
+
+The boundary-layer review of [Devenport & Lowe (2022)](/sources/devenport-2022.md)
+discusses three points of boundary-layer physics that bear on the wall
+law used as a boundary condition; it implements no wall function.
+
+- **Rough walls.** The rough-wall log law is used in CFD as a constitutive
+  boundary condition (Wilcox, as cited; §4.3). The review writes it as
+  $u^+=\kappa^{-1}\ln(y/k_s)+B+3.5=\kappa^{-1}\ln y^++B-\Delta U^+$ with the
+  roughness function $\Delta U^+=\kappa^{-1}\ln k_s^+-3.5$ (§2.1,
+  Eqs. 2.27–2.29; page-local $k_s$ the equivalent sand-grain roughness,
+  $k_g$ the geometric roughness height, $\Delta U^+$; the source's $A$ is
+  the registry's $B$, with $\kappa=0.41$, $B=5.0$ typical). The fully rough
+  regime is commonly $k_s^+\gtrsim50$, and $k_s/k_g$ is about 1 for sand, 1–2
+  for random roughness, 1–3 for hemispheres and cylinders and about 10 for
+  two-dimensional bars (§2.1, §4.3). A calculation that does not resolve
+  the roughness — "almost all RANS and LES" — must assume Townsend's wall
+  similarity and a $k_s/k_g$ independent of pressure gradient and history;
+  the review finds the evidence for both in pressure-gradient flows sparse
+  and contradictory (reported $k_s/k_g$ changes of about 30 % in zero
+  pressure gradient for Pailhas et al. and of a factor 4 in a diffuser for
+  Tay et al., as cited) and calls for fully rough, high-$Re$ experiments
+  with direct skin-friction measurement (§4.3, §6).
+- **History.** The mean flow responds to a change of wall condition over
+  $2\theta/C_f\approx50\delta$ and the turbulence structure over more than
+  $30\delta$ (§4.1); after a smooth-to-rough step $C_f$ jumps from 0.00255
+  to over 0.01 and settles at about 0.0068 only after about $40\delta$
+  (Efros & Krogstad, as cited; §4.4, Fig. 25).
+- **Three-dimensionality.** In three-dimensional boundary layers the
+  direction of the shear stress lags that of the mean velocity gradient,
+  which isotropic eddy-viscosity models, assuming the two directions equal,
+  cannot represent (§5.1, §5.4; see the
+  [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md) and
+  [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)); the
+  review names this lag a challenge "both in RANS and wall-modeled LES".
+
+## A data-based wall treatment on very coarse meshes
+
+The pseudo-direct numerical simulation of [Idelsohn et al. (2024)](/sources/idelsohn-2024.md)
+(see [P-DNS](/methods/pseudo-direct-numerical-simulation.md)) replaces the
+law of the wall in its first layer of coarse cells by a DNS database: an
+equilibrium wall element, a DNS of zero-pressure-gradient Couette-like flow
+between plates indexed by one dimensionless shear parameter and read with
+the local wall-normal gradient (§2.8, Fig. 4), and a time-developing
+boundary-layer element indexed by that parameter and a shape index, which
+carries an enrichment stress and an enrichment wall shear into the coarse
+wall cells (§2.11; it leaves pressure-gradient effects aside). The paper
+does not call these a wall model. With them a turbulent flat-plate layer
+that reaches only the second row of cells gives a $C_f$ in "remarkable
+agreement" with Schlichting's solution (§2.12.2, Figs. 24–25), and a 1-D
+Poiseuille flow at $Re=1.65\times10^5$ on 4 cells matches DNS (§2.10.1,
+Table 1). In the particle-laden part of the same paper a URANS
+[$k$-$\varepsilon$ model](/methods/k-epsilon-model.md) with standard wall
+functions is run as a comparator in a channel at $Re=57\,000$ (§3.2.2).
+
 ## Wall-resolved alternatives in high-order RANS
 
 Five high-order sources resolve the wall instead, and say what it takes:
@@ -441,3 +496,5 @@ Five high-order sources resolve the wall instead, and say what it takes:
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §1–2; §3.1, Table 1; §4.
 - [Huang et al. (2022b)](/sources/huang-2022-d.md) — §2.1; §3.1.
 - [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §1; §2.2, Eqs. (10)–(15), Table 1; §3.1–3.2, Figs. 4–13; §4.
+- [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §2.1, Eqs. (2.27)–(2.29); §4.1; §4.3; §4.4, Fig. 25; §5.1; §5.4; §6.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.8, Fig. 4; §2.10.1, Table 1; §2.11; §2.12.2, Figs. 24–25; §3.2.2.

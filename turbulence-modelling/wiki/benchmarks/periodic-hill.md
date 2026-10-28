@@ -5,7 +5,7 @@ description: "The streamwise-periodic channel with a hill constriction, a smooth
 status: established
 aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow, parametrized periodic hills]
 tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion, implicit-les, gas-kinetic, wmles, wall-model]
-timestamp: 2026-10-27T15:48:00Z
+timestamp: 2026-10-27T20:36:00Z
 ---
 
 # Periodic hill
@@ -608,6 +608,50 @@ model captures $C_f$ between $x/H\approx0$ and 2, but Hill-R gives
 "considerable more accurate" $C_f$ than Hill-Equil on the leeside and near
 the hill crest (Fig. 17).
 
+**Dynamic Reynolds-stress IDDES at $Re_h=10{,}595$.**
+[Li et al. (2022)](/sources/li-2022-k.md), §III B, Table I, Figs. 4–12,
+run the RSM-DynIDDES, an IDDES built on the SSG/LRR-$\omega$
+[Reynolds-stress model](/methods/reynolds-stress-model.md) whose DES
+constant is set through $C_{\mathrm{DES}}=C_kC_s$ by the
+[dynamic procedure](/methods/dynamic-procedure.md) (see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)), against
+its constant-coefficient parent RSM-IDDES of
+[Wang et al. (2021)](/sources/wang-2021-l.md). The configuration is the
+Fröhlich geometry ($h=28$ mm, $9h\times3.035h\times4.5h$) at $Re=10{,}595$
+on $h$ and the crest velocity, with $M=0.1$ in the compressible
+finite-volume solver HUNS3D (second-order Roe flux, dual time stepping,
+$\Delta t=0.005$ in units of $h$ and the bulk velocity, 200 inner
+iterations). The grid is $160\times115\times60$, about 1.1 million cells,
+with $\Delta y^+<1$ at the first cell, wall-normal growth 1.1, and $\Delta
+x^+$, $\Delta z^+$ "almost below 35" except on the windward side of the
+downstream hill; the averaging time is not stated. The references are the
+experiment as cited from Breuer et al. (2009) and the DNS
+($800\times500\times500$, seventh-order WENO), wall-resolved LES
+($197\times197\times144$, dynamic Smagorinsky) and wall-modelled LES
+($128\times128\times72$, Park–Moin
+[nonequilibrium wall model](/methods/nonequilibrium-wall-model.md),
+dynamic Smagorinsky) of Balakumar et al. (2014). The authors print their
+cell count as 1/200 of the DNS and 1/5 of the WRLES; the printed grid
+sizes give about 1/181 and 1/5.1 *(compiler check, not in the sources)*.
+Results:
+
+- the mean streamwise velocity of both IDDES versions agrees with
+  experiment, DNS and WRLES at $x=1$, 2, 4 and 8, except near the lower
+  wall at $x=4$, where both follow the WMLES (Fig. 7); the mean vertical
+  velocity is good at $x=4$ and 8, while at $x=1$ and 2 all five numerical
+  results scatter about the experiment (Fig. 8);
+- above $y=h$ the resolved Reynolds stresses of both versions agree with
+  the references, the dynamic one better; near the lower wall all
+  components of RSM-DynIDDES lie in the band of the references and nearly
+  match the WMLES, which also uses the dynamic Smagorinsky model away from
+  the wall, while RSM-IDDES under-predicts $\langle u'u'\rangle$ at $x=8$
+  (Figs. 9–11); the dynamic version also shows more small-scale structures
+  in the $Q$-criterion (Fig. 12);
+- the shielding function keeps a thin RANS layer containing the boundary
+  layer upstream of separation, so the authors exclude
+  [modelled-stress depletion](/methods/detached-eddy-simulation.md) and
+  grid-induced separation on this grid (App. 1, Fig. 23).
+
 ## What the case shows
 
 In the coarse-grid scale-resolving runs the differences between models
@@ -852,3 +896,4 @@ or, with the budget terms, depend on the grid and the scheme
 - [Brenner et al. (2022)](/sources/brenner-2022.md) — §2.1–2.11, Eqs. (3), (6)–(7), (42); §3.1–3.6, Figs. 2, 6–16; §4.
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §4.1–4.3, Tables 1–2, Figs. 1–8; App. A.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.1, Fig. 1; §3.1; §3.4; §4.1 (cited results).
+- [Li et al. (2022)](/sources/li-2022-k.md) — §III B, Table I, Figs. 4–12; App. 1, Fig. 23.

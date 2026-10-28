@@ -5,7 +5,7 @@ description: "Closures set or learned online by a policy trained with reinforcem
 status: established
 aliases: [RL closure, VYBA23, RLWM, PPO closure, reinforcement-learning SGS model, deep reinforcement learning SGS model, DRL SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM, DRL180]
 tags: [reinforcement-learning, sgs-model, data-driven, implicit-les, wall-model, neural-network]
-timestamp: 2026-10-27T15:51:00Z
+timestamp: 2026-10-27T21:12:00Z
 ---
 
 # Reinforcement-learning turbulence closures
@@ -740,6 +740,13 @@ See [machine-learning wall models](/methods/machine-learning-wall-model.md).
   The transferability claim is not tested there; Kurz et al. (2023, §4.4)
   report RL policies that stay stable and accurate across two DG
   resolutions, within one code.
+- [Ihme et al. (2022)](/sources/ihme-2022.md) review RL for combustion
+  control, not for turbulence closures (§3.4, §4.2; their tutorial is
+  Q-learning control of a well-stirred reactor, §3.4.3). They name three
+  generic obstacles to the technical adoption of deep RL: data
+  inefficiency (upward of $\mathcal O(10^5)$ training samples, "more than
+  $10^5$ training steps" in §5), unpredictable behaviour outside the
+  training conditions, and lack of interpretability (§3.4.2, §5).
 
 ## Qualifications
 
@@ -871,3 +878,4 @@ See [machine-learning wall models](/methods/machine-learning-wall-model.md).
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §1 (RL as a gradient-free route to stability).
 - [Kim et al. (2024)](/sources/kim-2024.md) — §1, §5 (targets unknown for complex geometries).
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1 (RL closures as solver-specific, transferability and cost).
+- [Ihme et al. (2022)](/sources/ihme-2022.md) — §3.4.2, §5 (three obstacles to deep RL); §3.4.3 (Q-learning reactor-control tutorial, combustion control, not a closure).

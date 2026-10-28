@@ -5,7 +5,7 @@ description: "LES closures in which a neural network maps resolved-field feature
 status: established
 aliases: [ANN-SGS model, GAN SGS model, fusion network, T-SR-FU, energy-conserving neural closure, structure-preserving closure, ANN-SGS mixed model, deep-learning LES closure, DL-LES, neural-network LES closure, data-driven SGS model, S-106H, SL-106H, SL-180C, DL-AR1, DL-AR2, multi-filter training, TBNN-GNN]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-27T15:51:00Z
+timestamp: 2026-10-27T21:12:00Z
 ---
 
 # Neural-network subgrid-scale models
@@ -82,6 +82,81 @@ Zhou et al. 2019, Beck et al. 2019, Xie et al. 2019–2020, Park & Choi
 2021, as cited). As for applications, Sandberg & Michelassi (2022, §4.3)
 state that, to their knowledge, machine-learned subgrid models "have yet
 to be employed" in blade- or stage-level turbomachinery simulations.
+
+**A network explained, then replaced by constants (Wang et al. 2022).**
+[Wang et al. (2022)](/sources/wang-2022-j.md) start from their group's
+earlier network-based spatial gradient model, summarized in §II.C: the
+subgrid stress is a quadratic form in the first-order filtered velocity
+gradients at the seven points of a stencil (the local point and its six
+axis neighbours), with 49 dimensionless coefficients supplied by a network
+trained on forced isotropic-turbulence DNS. Only 19 of them mattered, and
+they were nearly constant and patterned: about $+0.18$ for the
+local–local product, about $-0.016$ for local–neighbour products and about
+$+0.016$ for each neighbour with itself (§II.C, Table I). The authors show
+that this pattern is a discretization of the second-order truncation of
+the higher-order [gradient model](/methods/gradient-model.md): a Taylor
+expansion of the neighbour gradients, or upwind and downwind differences
+of the second-order gradients, both give the constants $1/8$, $-1/144$,
+$+1/144$ for a filter-to-grid ratio of two, the SGM-7-19 model (§III,
+App. A, Eqs. 15–20; derivation on the gradient-model page). They read the
+network as having found "the most accurate way to approximate" the
+higher-order gradient model with first-order gradients, and the constant
+model as "not a case-by-case result inspired by a particular outcome of
+ANN" (§III). The price of dropping the network is a small loss of a
+priori accuracy at $\Delta$ of 16 DNS spacings (correlation coefficients
+for $\tau_{11}$, $\tau_{12}$: 0.985, 0.981 for the 19-term network,
+0.973, 0.973 for SGM-7-19, 0.945, 0.946 for the classical gradient model;
+Table II), which the authors attribute to higher-order gradients the
+network captures implicitly. A posteriori, in forced isotropic turbulence
+and a temporal mixing layer, SGM-7-19 is closest to filtered DNS among
+the dynamic Smagorinsky, dynamic mixed and implicit LES runs, at 1.5 and
+1.7 times the subgrid-model cost of dynamic Smagorinsky (dynamic mixed:
+2.1 and 2.3; Table V). Backscatter is clipped for stability (§IV). The
+two tables print the network coefficients differently: Table I gives
+$\mp1.6\times10^{-2}$ for the neighbour coefficients, consistent with the
+text's "one order" below the local one, and Table II gives $\mp0.0016$.
+
+## Learned closures in reacting-flow LES (as reviewed by Ihme et al. 2022)
+
+[Ihme et al. (2022)](/sources/ihme-2022.md) (§4.1.4) review learned
+closures of the filtered reacting-flow equations, whose unclosed terms
+they group into the filtered chemical source (turbulence–chemistry
+interaction), the subgrid convective flux (stresses and scalar transport)
+and the subgrid molecular diffusion (Eq. 72). As cited there:
+
+- a deep network for the joint filtered density function of mixture
+  fraction and progress variable outperforms algebraic models at large
+  filter widths, a priori, on MILD-combustion DNS;
+- a U-Net CNN that takes only the filtered progress variable
+  outperforms physics-based closures of the subgrid flame-surface density,
+  a priori, on DNS with impulsively changed inlet conditions;
+- a feedforward network for the filtered scalar dissipation rate of the
+  progress variable reproduces small-scale features at small filter
+  ratios, with discrepancies growing as the filter widens (Fig. 31);
+- CNN and feedforward networks model unresolved stresses, filtered
+  sources and subgrid progress-variable transport in premixed jet and
+  V-flames.
+
+Their summary: supervised learning "often outperform[s] physics-based
+closure models in a priori studies; however, caution is warranted for
+extrapolating these findings to a posteriori applications", since models
+trained on filtered DNS "can be unstable due to the accumulation of small
+errors over a large number of timesteps when evaluated a posteriori"
+(§4.1.4; see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+Their example of a remedy is a knowledge-guided loss (see
+[super-resolution SGS models](/methods/super-resolution-sgs-model.md)),
+and they state that most combustion applications to date are a priori
+tests on idealized problems (§6).
+
+Two non-learned closures of compressible LES position themselves against
+learned ones: [Zhang et al. (2022d)](/sources/zhang-2022-h.md) (§I) state
+that many data-driven models, built on the ideal-gas assumption, omit the
+thermodynamic subgrid terms of real gases, and call their deconvolution
+model "independent of DNS data" (see
+[scale-similarity model](/methods/scale-similarity-model.md));
+[Zhang et al. (2022b)](/sources/zhang-2022-f.md) (§I) survey
+neural-network subgrid models only in their introduction.
 
 ## Supervised mixed network (Kang et al. 2023)
 
@@ -591,3 +666,7 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3 (no machine-learned SGS model yet in turbomachinery simulations).
 - [Jakhar et al. (2026)](/sources/jakhar-2026.md) — arXiv v3: p. 1 (criticisms of deep-learning closures, cited).
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §I (data-driven extensions of deconvolution, cited); Table VII (a priori level of non-learned deconvolution).
+- [Wang et al. (2022)](/sources/wang-2022-j.md) — §II.C, Table I (coefficients of the earlier network reproduced); §III, App. A, Eqs. 15–23, Table II (SGM-7-19 from the network pattern, a priori correlations); §IV–V, Table V (a posteriori, cost, backscatter clipping).
+- [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.4, Eq. 72, Fig. 31 (learned reacting-flow closures reviewed; a priori against a posteriori caution); §6.
+- [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §I (data-driven models and real-gas subgrid terms).
+- [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §I (neural-network models surveyed, in passing).

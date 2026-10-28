@@ -5,7 +5,7 @@ description: "The one-equation eddy-viscosity RANS model transporting the workin
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-27T21:07:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -121,6 +121,16 @@ $\tilde\nu$ blends the SA terms with those of a one-equation subgrid model
 through a wall-distance function $F$, and switch the damping off in the LES
 region through $f_{v1}=\chi^3/(\chi^3+F^{20}c_{v1}^3)$ (Eqs. 6–9; see
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+
+Shan et al. (2023) print the incompressible model with $f_{t2}$ retained,
+$S_{\mathrm{SA}}$ built on the vorticity magnitude
+$\lvert\Omega\rvert=\sqrt{2\Omega_{ij}\Omega_{ij}}$, the $f_{v2}$, $f_w$, $g$ and $r$ of
+Li & Liu (without the cap on $r$), and the constants $\sigma=2/3$,
+$c_{b1}=0.1355$, $c_{b2}=0.622$, $\kappa=0.41$, $c_{w2}=0.3$, $c_{w3}=2$,
+$c_{v1}=7.1$, $c_{t3}=1.2$, $c_{t4}=0.5$ and
+$c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma$
+([Shan et al. (2023)](/sources/shan-2023.md), App. A, Eqs. A1–A7). Their
+calibration of the nine free constants is below.
 
 Four further printed forms:
 
@@ -555,6 +565,57 @@ its decrease elsewhere as a failure of the equilibrium assumption in this
 flow (§2.1, §5.1). Only the offline (a priori) phase is reported; see
 [model-form uncertainty](/definitions/model-form-uncertainty.md).
 
+### Calibration of the coefficients and a learned replacement
+
+Shan et al. (2023) treat the nine constants
+$\boldsymbol\theta=(c_{t3},c_{t4},c_{b1},c_{b2},\sigma,c_{v1},\kappa,c_{w2},c_{w3})$
+as free per flow case and calibrate them against measured surface pressure
+on NREL wind-turbine airfoils near and beyond stall, minimizing
+$\frac1n\sum_{i=1}^n\big(C_p^{i,\mathrm m}(\boldsymbol\theta)-C_p^{i,\mathrm{exp}}\big)^2$
+over the $n$ pressure taps with teaching–learning-based optimization, a
+population metaheuristic (20 members, each parameter within $\pm50\%$ of
+its original value); $c_{w1}$ follows from the others through its formula
+([Shan et al. (2023)](/sources/shan-2023.md), §II.B, §II.D, §III.B, Eq. 3,
+Fig. 4; $(\cdot)_{\mathrm m}$ registry §11). They call the result a
+data-assimilation ("DA") model and class the approach as parameter
+calibration, as opposed to the high-dimensional inversion of
+[field inversion](/methods/field-inversion-machine-learning.md) (§II.B).
+At the calibration conditions the lift error falls from 28.3%, 19.1%,
+16.2% and 24.8% (standard SA) to 6.3%, 0.7%, 7.2% and 0.2% (cases DA1–DA4:
+S809 at $12.2^\circ$ and $14.2^\circ$, $Re=2\times10^6$; S805 at $12.2^\circ$
+and $15.2^\circ$, $Re=10^6$; Table 3), with larger eddy viscosity in the
+wake and the separation vortex (Figs. 9–10). The calibrated sets differ
+strongly between cases, $c_{v1}$ from 3.550 to 7.295 and $\kappa$ from 0.396
+to 0.615 (Table B1), and a set calibrated at one condition does not carry
+over a lift curve: on S809 at $Re=2\times10^6$ the mean relative lift error
+is 0.0835 with DA1 against 0.1341 with SA, but attached-flow accuracy is
+lost, and at $Re=10^6$ DA1 is no better (0.1225 against 0.1200) (§III.C,
+Fig. 11). Many calibrated values sit on the $\pm50\%$ bound: $c_{b2}=0.311$
+and $c_{v1}=3.550$ are half the A7 values, $\kappa=0.615$ is 1.5 times
+0.41, and $c_{w2}=0.150$, $c_{w3}=3.000$, $c_{t3}=0.600$, $c_{t4}=0.250$ in DA4
+are at a bound too *(compiler check, not in the sources)*.
+
+The learned model then replaces the SA equation. A fully connected network
+maps six invariant mean-flow features (a mixing velocity, the rotation and
+strain norms, two wall-distance-weighted forms of them and the
+pressure-gradient magnitude) to the working variable $\tilde\nu$, from
+which $\nu_t=\tilde\nu f_{v1}$ is computed, and runs inside the solver at
+every iteration ("iterative" coupling) (§II.A, §II.C, Table 1, Eq. 10).
+$\tilde\nu$ is chosen as the output because near the wall
+$\tilde\nu\sim\nu_t^{1/4}$, compressing the range the network must fit; for
+a given $\nu_t$ it is the unique positive root of a quartic (§II.C.2);
+for small $\chi$, $f_{v1}\approx\chi^3/c_{v1}^3$ gives
+$\nu_t\approx\tilde\nu^4/(\nu^3c_{v1}^3)$ *(compiler check, not in the
+sources)*. Trained on standard-SA fields in attached flow and DA fields in
+separated flow, it keeps SA's accuracy below stall and DA's above: on S809
+at $Re=2\times10^6$ its lift errors are 1.2–7.4% from $10.2^\circ$ to
+$15.2^\circ$ against 16.6–28.4% for SA, and the mean relative lift error
+above stall falls by "over 60%" for S809, S805 and the unseen S814
+(§III.E–F, Table 5, Fig. 24). The authors grant that only the coefficient
+uncertainty of SA is addressed (§IV; see
+[model-form uncertainty](/definitions/model-form-uncertainty.md) and
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)).
+
 ### SA as the host of detached-eddy simulation
 
 SA is the RANS closure of the zonal
@@ -588,6 +649,9 @@ which makes it "suitable for unsteady flow simulations using Cartesian
 grids" (the function is not printed), for a hovering rotor on moving
 Cartesian grids ([Sugaya & Imamura (2021)](/sources/sugaya-2021.md), §2.1,
 §4). These formulations are on the [DES page](/methods/detached-eddy-simulation.md).
+Mani & Dorgan (2023) state that the original DES is SA-based and that
+DES and then delayed DES carried unsteady simulation at Boeing
+([Mani & Dorgan (2023)](/sources/mani-2023.md), §4.5.2).
 Fidkowski (2022) uses a "simplified DES" for adaptation studies: the wall
 distance is attenuated by the mesh-independent
 $d_{\max}\tanh(d/d_{\max})$, $d_{\max}=0.02c$, instead of a grid length, so
@@ -727,6 +791,18 @@ meshes as future work (§9).
 
 ### Aircraft and other uses
 
+- Mani & Dorgan (2023) name SA with its rotation–curvature (SA-RC) and
+  quadratic-constitutive (SA-QCR) variants, with Menter's SST, as Boeing's
+  workhorse RANS models for design, analysis and risk mitigation; all
+  work for attached flow and small separation but can be inadequate where
+  large separation dominates, and "many other modifications have been
+  studied, but rarely have they provided general improvements"
+  ([Mani & Dorgan (2023)](/sources/mani-2023.md), §4.5.1). As verification
+  evidence they reproduce from the NASA Turbulence Modeling Resource the
+  zero-pressure-gradient flat plate ($M=0.2$, $Re_L=5\times10^6$, grids
+  $35\times25$ to $545\times385$): CFL3D and FUN3D converge to the same skin
+  friction at $x=0.97$ for SA and SA-QCR2000, which lets a code verify its
+  implementation without sharing source code (§4.1.1, Fig. 5).
 - In the AIAA Third High-Lift Prediction Workshop most of the 79 submitted
   data sets were steady RANS with SA or SST variants; they cluster in the
   linear lift range and scatter near maximum lift. An OpenFOAM SA reference
@@ -956,6 +1032,25 @@ computed at high order:
   (log layer $0.3<f_w<0.7$, outer layer $0.7<f_w<2.0$) disagree within the
   paper.
 
+- Shan et al. (2023) print the numerator of the $S_{\mathrm{SA}}$ correction in
+  Eq. A3 as an overbarred upsilon, while Eq. A6 writes $\tilde\nu$ in $r$; the
+  form above uses $\tilde\nu$. Their Table B1 lists the standard $c_{b1}$ as
+  0.136 and $\sigma$ as 0.667, roundings of the A7 values. The experimental
+  lift of S809 at $12.2^\circ$ is 0.996 in their Table 3 and 0.995 in Table 5,
+  with SA errors of 28.3% and 28.4%. The reduction of the post-stall lift
+  error is "over 57%" in the abstract and "over 60%" in §III.F. Their
+  conclusions mention a non-negativity constraint on the eddy viscosity in
+  the loss function, while the loss of Eq. 12 has only a mean-square and a
+  weight-norm term and positivity comes from the ReLU output layer (Eq. 6).
+  The member error of Eq. 13 is the square root of the objective of Eq. 3,
+  both said to use "the same" variables. Their mixing length (Eq. 8) is
+  printed as $\min\{\kappa y(1-e^{y^+/A^+}),\kappa\delta\}$; for $y^+>0$ the
+  first argument is negative, so the printed form always returns a negative
+  length *(compiler check, not in the sources)*. The text says min–max
+  scaling maps the data to $[-1,1]$; the printed formula
+  $(x-x_{\min})/(x_{\max}-x_{\min})$ maps it to $[0,1]$ *(compiler check, not
+  in the sources)*.
+
 # Citations
 
 - [Li & Liu (2022)](/sources/li-2022.md) — §1, §2.3 Eqs. 1–27, 33–34, §3.1–3.2, §4.1–4.2, §5, Table 3.
@@ -998,3 +1093,5 @@ computed at high order:
 - [Fidkowski (2022)](/sources/fidkowski-2022.md) — §2.1 Eqs. 2–3, §3.1–3.2 Eq. 13, §6.1–6.3, §7.
 - [He et al. (2022)](/sources/he-2022-b.md) — §2.1 Eq. 4, §2.2, §2.4–2.7 Figs. 4–7 Table 3, §5.1–5.3 Fig. 13.
 - [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §6.2, Table 12.
+- [Shan et al. (2023)](/sources/shan-2023.md) — §II.A–D Eqs. 3, 6, 8, 10–13, §III.A–F Tables 3, 5, B1 Figs. 4, 9–11, 24, §IV, App. A Eqs. A1–A7.
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.1.1 Fig. 5, §4.5.1–4.5.2.

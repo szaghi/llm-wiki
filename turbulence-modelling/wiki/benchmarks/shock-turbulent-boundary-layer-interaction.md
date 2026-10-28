@@ -5,7 +5,7 @@ description: "A turbulent boundary layer meeting a shock from a compression ramp
 status: established
 aliases: [STBLI, SWBLI, SWTBLI, SBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet, shock train, pseudo-shock, expansion–compression corner, compression/expansion ramp, IUSTI interaction, Bachalo–Johnson bump]
 tags: [benchmark, compressible, hypersonic, boundary-layer, separated-flow, les, pans, field-inversion, turbomachinery, implicit-les, dg, wmles, data-driven]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-27T20:46:00Z
 ---
 
 # Shock–turbulent boundary layer interaction
@@ -49,6 +49,7 @@ expensive because the low-frequency cycle needs long records.
 | [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §3.3–3.4, Tables 9–15 | transitional impinging shock (aligned and rotated 0°–12°); attached compression ramp | 6.0; 7.2 | turn angle 4° (shock angle about 12.4°); ramp 8° | unit Reynolds number $6\times10^6$ (shock), $1.89\times10^7$ (ramp) | wall-modelled LES on a Cartesian [immersed boundary](/methods/immersed-boundary-method.md), WALE ($C_w=0.55$), equilibrium wall model | shock: 2.1M to 16M cells; ramp: 11M, 50M, 89M cells ($\Delta^+=160\times80\times190$ to $116\times32\times171$) |
 | [He et al. (2022)](/sources/he-2022-b.md), §2.4–2.5, Table 1 | axisymmetric transonic bump of Bachalo & Johnson, adiabatic wall | 0.6 to 0.925 | the bump | $Re_c=2.763\times10^6$ on the bump chord | steady RANS (Spalart–Allmaras with QCR) and a random-forest eddy-viscosity correction, tested a priori; LES of Uzun & Malik as reference at 0.875 | RANS $181\times81$ nodes |
 | [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md), §3.2.3 | shock train in a constant-area isolator (plane channel, no sidewalls) | 1.5 at the inflow centreline | outlet pressure about twice the inlet pressure | inflow $Re_\tau=247$ from a concurrent periodic channel DNS | DNS, bandwidth-optimized WENO3P-LIM-5 | $4\pi h\times2h\times\tfrac43\pi h$, $192\times128\times151$ ($h$ the channel half-height) |
+| [Zhang et al. (2022c)](/sources/zhang-2022-g.md), §II, Tables I–II | symmetric swept compression ramp, isothermal cold wall ($T_w=294$ K, $T_\infty=79$ K) | 6 | ramp of compression angle 34°, sweep angle 45° | unit Reynolds number $10^4$ per mm; $\delta=8.61$ mm, $\delta^*=3.33$ mm, $\theta=0.36$ mm upstream | DNS, no model, on GPUs | $2.06\times10^9$ and $5.51\times10^9$ points |
 
 Both sources run a Mach 2.9, 24° ramp: Dang et al. validate against the DNS
 of Martín et al. and the experiment of Bookey et al. (§5.1), and Helm &
@@ -102,6 +103,21 @@ the upstream flat plate rather than by recycling (§5.1, §6.1). The wide-span
 grid has $\Delta x^+=1.2$, $\Delta y^+=0.41$, $\Delta z^+=1.2$ at the
 reference station 35 mm upstream of the corner, "more than 6000 times the
 number [of points] used by Martín et al." (§6.1).
+
+[Zhang et al. (2022c)](/sources/zhang-2022-g.md), §II, run the
+Mach 6 swept ramp with the same GPU solver: Steger–Warming splitting with a
+hybrid of the OMP6 scheme in smooth regions and WENO7 where the pressure
+gradient flags a shock, eighth-order central viscous terms, third-order TVD
+Runge–Kutta, and an upstream boundary layer tripped from a laminar profile
+by a multi-frequency disturbance. In the corner region the coarser grid has
+$\Delta x^+=2.92$, $\Delta y^+=0.44$ at the wall and 5.28 at the
+boundary-layer edge, $\Delta z^+=2.19$, the finer one 1.94, 0.35, 3.53 and
+1.46 (Table I). Wall pressure is "virtually identical" on both grids;
+peak skin friction and heat flux are 7–10% lower on the coarser one at the
+same positions (Fig. 4). Upstream, the van Driest-transformed velocity
+follows the linear and log laws with an intercept of 5.7, which the
+authors attribute to the wall temperature, and the density-scaled
+fluctuations agree with the cited simulations and experiments (Fig. 6).
 
 **Wall-modelled LES.** [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md)
 use the [Vreman model](/methods/vreman-model.md), the
@@ -254,6 +270,53 @@ The cost was about 196,608 CPU hours on up to 16,384 cores; the
 performance index rises 18.7% over the shock-free layer, within the
 15–20% degradation of the hybrid scheme that they cite from Krais et al.
 (§5.3.1–5.3.2).
+
+**A swept ramp: three-dimensional separation without low-frequency
+unsteadiness.** [Zhang et al. (2022c)](/sources/zhang-2022-g.md), §III,
+analyse the Mach 6 swept ramp from the DNS fields alone (no experiment or
+DNS exists at these conditions):
+
+- *Separation.* There is no region of $C_f<0$ in the analysis plane, so the
+  authors call the two-dimensional definition of separation by negative
+  skin friction "unsuitable for 3D interactions" and locate separation and
+  reattachment by critical-point theory, as converging and diverging wall
+  streamlines (Figs. 4, 7).
+- *Quasi-conical symmetry.* The extensions of the separation, reattachment
+  and corner lines, and of the lines of peak pressure, friction and heat
+  flux, meet near a virtual conical origin; separation and reattachment lie
+  at azimuths of 32.4° and 51.2° about it, bow-shaped near the origin and
+  straight farther away (Figs. 7, 13).
+- *Crossflow.* The separated region coincides with a crossflow region in
+  which the spanwise velocity exceeds the streamwise one (azimuth 32.4° to
+  49°); the separated fluid moves toward the spanwise boundary as a helical
+  vortex, not a closed bubble, and the crossflow is supersonic and keeps
+  accelerating along the span, which the authors liken to a supersonic
+  nozzle (Figs. 8–10).
+- *Heating.* Peak skin friction and heat flux behind reattachment come from
+  high-energy fluid that passes through the bow-shaped head of the main
+  shock and impinges on the ramp, and they grow along the span as the
+  main-shock angle grows; the authors call this analysis "qualitative
+  rather than quantitative" because the peaks are not grid-converged
+  (Figs. 11–17).
+- *Unsteadiness.* Over about $1500\,\delta/U_\infty$ of wall pressure, the
+  interaction is dominated by a mid-frequency band about one order of
+  magnitude below the upstream boundary-layer frequency, about
+  $3U_\infty/\delta$, while low-frequency energy at the separation line is
+  very low and "can be negligible" against an unswept Mach 5 ramp
+  experiment of Erengil & Dolling, in agreement with their later swept
+  experiments (Figs. 18–20). The authors give two reasons: the separation
+  shock is much weaker than the reattachment and main shocks, and the
+  supersonic crossflow carries perturbations to the spanwise boundary, so
+  the instability of the separated flow cannot act persistently on the
+  separation shock. They add, without a test, that periodic spanwise
+  boundaries in two-dimensional simulations let perturbations accumulate
+  in the separated region (§III C).
+
+Against the two-dimensional ramps and impinging shocks above, whose
+separation spectra peak at $St_L\approx0.01$–0.1, this swept interaction
+lacks the low-frequency separation-shock motion; the authors attribute the
+difference to the three-dimensional crossflow and the weak separation
+shock.
 
 **Scaling of the interaction length.** Souverein et al.'s experimental law,
 as assessed by [Gao et al. (2022)](/sources/gao-2022.md), §5.3.3, reads
@@ -625,6 +688,20 @@ compressions, falls in expansions, grows up to $x/L_x=0.78$ in the mixing
 region and stays above its inlet value at the outlet. There is no
 reference data for this case; the comparison is qualitative.
 
+A shock train also sits in the isolator of the cavity-flameholder
+scramjet combustor that [Fureby & Nilsson (2023)](/sources/fureby-2023.md)
+run in reacting LES (isolator-entrance Mach number 2.2, subgrid closure the
+[localized dynamic $k$-equation model](/methods/subgrid-kinetic-energy-equation-model.md),
+which they state "performs better than many other subgrid models with
+respect to turbulent boundary layers, mixing and shock-boundary layer
+interactions", citing their earlier studies, §3.2). At the intermediate
+stagnation temperature the flame switches between a jet-wake and a
+cavity-stabilized mode at about 60 Hz, and the shock train moves with it,
+retreating almost to the start of the isolator during the high-intensity
+phase (§6.4, Figs. 7, 9–10); mean and rms wall pressures agree well with the
+experiment of Micka & Driscoll, the rms being highest in the isolator
+(§6.7, Fig. 13). The combustion content is on the Source page.
+
 **Wall models in supersonic interactions.**
 [Bose & Park (2018)](/sources/bose-2018.md), §2.1, §4.4, Fig. 6b, cite a
 nonequilibrium wall model with a wall-normal variation of the von Kármán
@@ -714,6 +791,15 @@ $7.8\delta_0$ to $12.6\delta_0$, lowers the peak wall pressure and shifts the
 dominant frequencies down.
 
 ## Qualifications
+
+- [Zhang et al. (2022c)](/sources/zhang-2022-g.md) print in the abstract
+  that the grid "exceeds $5\times10^6$" points, while §II prints
+  $2.06\times10^9$ and $5.51\times10^9$. They define the azimuth from "the
+  projection line of the line VCO-P in the x–y plane and the positive z
+  axis" (§III A, Fig. 7 caption), and label the horizontal axis of
+  Fig. 17(b) $\theta$ where the text speaks of the azimuth. The upstream
+  forcing is called a "multi-frequency sine wave disturbance" in §II B and
+  "blowing and suction" in §III C.
 
 - Coordinates: [Helm & Martín (2022)](/sources/helm-2022.md) write $z$
   wall-normal and $y$ spanwise, hat for the Favre filter and a second hat for
@@ -873,3 +959,5 @@ dominant frequencies down.
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.1–2.2, Tables 1–3; §3.1, Figs. 3–5; §4.1–4.2, Table 4, Figs. 14–26; §5, Eqs. (5.1)–(5.5), Tables 5–6, Figs. 27–29.
 - [Yu et al. (2022)](/sources/yu-2022-e.md) — §2, Table 1, Figs. 2–3; §3, Eqs. (3.2)–(3.27); §4–§7, Figs. 5–14; §8.
 - [He et al. (2022)](/sources/he-2022-b.md) — §2.4–2.7, Table 1, Figs. 3–7; §4.3, Table 4; §5.1, Fig. 13.
+- [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II A–C, Tables I–II, Figs. 4, 6; §III A–C, Figs. 7–20; §IV.
+- [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.2; §6.4, Figs. 7, 9–10; §6.7, Fig. 13 (isolator shock train in a reacting scramjet LES).

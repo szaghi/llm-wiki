@@ -5,7 +5,7 @@ description: "Menter's scale-adaptive simulation: an unsteady RANS approach whos
 status: established
 aliases: [SAS, k-√kL model, KSKL, k-sqrt(k)L, Menter–Egorov SAS, SAS-F, forced SAS]
 tags: [rans, hybrid-rans-les, eddy-viscosity, dg]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-27T20:42:00Z
 ---
 
 # Scale-adaptive simulation
@@ -192,6 +192,14 @@ methods (with source-term methods and unified RANS-LES) that "apparently
 reduce the RANS error significantly", while PANS, PITM, DES and
 wall-modelled LES show large variability through their design parameters
 (Heinz (2020), §5.1, Fig. 6; compiled from the literature, no new runs).
+Mani & Dorgan (2023) count SST-based hybrids among Boeing's unsteady
+tools, citing among them Winkler et al. (2011), a paper on scale-adaptive
+simulations on unstructured grids, beside DES-type variants; the review
+gives no SAS formulation or result ([Mani & Dorgan (2023)](/sources/mani-2023.md),
+§4.5.2). Idelsohn et al. (2024) name SAS, with DES and PANS, as a global
+hybrid model in which the large eddies are resolved away from walls and the
+boundary layers are covered by a RANS model
+([Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §1.2).
 
 ## Qualifications
 
@@ -221,3 +229,5 @@ wall-modelled LES show large variability through their design parameters
 - [Liu et al. (2024)](/sources/liu-2024.md) — Introduction.
 - [Heinz (2020)](/sources/heinz-2020.md) — §3.4 Eqs. 31–37, §5.1 Fig. 6.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.2.
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.5.2.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.2.

@@ -6,6 +6,129 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 11 — 2022–2024 papers: one-equation SGS models, subgrid velocity enrichment, pseudo-DNS, compressible and real-gas SGS tests, RSM-IDDES buffet, SATES on 30P30N, actuator lines, TBL and ML-combustion reviews (2026-10-27)
+
+Sources (20): stanly-2022, cao-2022-c, chambers-2022, hausmann-2022,
+huang-2022-c, li-2022-k, wang-2022-j, zhang-2022-f, zhang-2022-g,
+zhang-2022-h, zhang-2022-i, devenport-2022, ihme-2022, cheng-2023-b,
+fureby-2023, wu-2023-b, shan-2023, mani-2023, idelsohn-2024, coulon-2023.
+220 of 307 ingested, 165 concept pages plus the registry, 10358
+bibliography entries. Deep lint A1–A8 over the chunk-11 content done.
+Compiled overnight under the temporary night protocol (no review between
+chunks; staged and committed by the human afterwards).
+
+### Decisions for the human
+
+1. **Bibliography calls left by the resolver:**
+   - The master key `wang-2022-c` was renamed `wang-2022-j` by hand: it is
+     the same work as the ingested Source (Phys. Fluids 34:095108).
+   - zhang-2022-f/-h's "G. Page 2009" print folded into `grinstein-2007`,
+     while the master keeps a separate `grinstein-2010`.
+   - huang-2022-c's "CTR ARB 2017" print folded into `yang-2016-c` on
+     authors and title (Crossref cannot check CTR briefs).
+   - zhang-2022-g's "M. D. Renzo" refs: ref. 23 folded into `direnzo-2020`,
+     ref. 20 kept as printed (`renzo-2021`); the bundle key rule would make
+     it `direnzo-2021-*` (same question as chunk 10's Crossref-surname keys).
+   - zhang-2022-f's "S. Gs" refs (Sidharth) kept as printed `gs-*`; the
+     "B. Halpern" editor (zhang-2022-f, -h) recorded as printed.
+   - The master key `patano-2003` (absorbing ihme-2022's Pantano 2003) is a
+     misspelt key; rename?
+2. **Candidate pages that now qualify** (two or more sources):
+   modelled-stress depletion / grid-induced separation (mani-2023,
+   wu-2023-b, the DES page); a partially-stirred-reactor page would need a
+   second source; Devenport & Lowe's equilibrium boundary layers,
+   roughness, internal and 3-D boundary layers (single source); plus the
+   chunk-10 list (converging–diverging channel, discrete adjoint,
+   k-corrective-frozen, BVD reconstruction, SUPG/PSPG, heat-flux models,
+   Rosenbrock time integration).
+3. **Yoshizawa's $C_I$:** Hausmann et al. call 0.0826 the "originally
+   proposed value" of $k_{\mathrm{sgs}}=C_I\Delta^2|S|^2$ (Yoshizawa 1986);
+   Volpiani prints 0.0066 for the same form without calling it original.
+   Recorded side by side on the one-equation page; promote to a
+   contradiction?
+4. **Notation changes in committed content:** the roughness length on
+   lesgo, smagorinsky-model and zhang-2022-i is $y_{0,\mathrm r}$ (was
+   $y_0$); the Mason–Thomson constant is $C_{\mathrm{MT}}$ (was $C_0$); the
+   ROUND symbols on numerical-dissipation follow the WENO page.
+5. **Still open from earlier chunks:** the chunk-10 calls
+   (`ghaffarimotlagh-2013`/`teneikelder-2018` keys, `garnier-2013`,
+   duplicated slip-wall subsection, SST constant names) and the chunk-9
+   and earlier lists.
+
+### Contradictions
+
+Two opened, verified in both PDFs, *Open.*:
+- **Hammerhead Model 11 Reynolds number:** $4.2\times10^6$ (wang-2021-l
+  §3.3) against $4.0\times10^6$ (li-2022-k §III C), same diameter and
+  Mach number (hammerhead page; the DES page points to it).
+- **30P30N span:** $C/9$ "as recommended by the BANC-III workshop"
+  (wu-2023-b) against a minimum of $0.74C$ citing the BANC-III summary
+  (wang-2024).
+cao-2022-c added to the open gas-kinetic dissipation entry ("dissipation
+adequate" side). Seven open in all. Side by side, not conflicts: DIAD
+ranking (valencia-2026 vs zhang-2022-f/-h); Ihme §4.1.4 vs §5.4 on ref.
+[570]; fureby-2023 vs tang-2022 flame index; huang-2022-c vs
+vicentecruz-2023 on SVV implicit LES; zhang-2022-g ">90%" vs dang-2022
+"up to 90%"; the 30P30N lift results (wu-2023-b vs wang-2024).
+
+### Printed slips (recorded on the Source pages)
+
+- chambers-2022: $S_T$ 386 ± 11 (text) vs 385 (Table I); ±11 not from
+  ±3, ±4.9; PIV uncertainty implies $S_{\mathrm{CJ}}\approx192$ against
+  292.4 m/s; CJ-speed formula printed three ways.
+- cao-2022-c: "approximately 20 times" (ratios 22–68), "two times", "except
+  at $t=15$".
+- hausmann-2022: Eq. 11 sign gives $\nu'_t\le0$; Eq. 40 units; Eq. 39 and
+  Eq. 54 factors; Table I length scales against the text.
+- huang-2022-c: Reichardt intercept 7.63 against $B=5.2$; Table I
+  $Re_\delta$ against Eq. 19; spacings match element size over $N_p-1$.
+- li-2022-k: Eq. 3 ω-production sign; $M_{ij}$ used twice.
+- wang-2022-j: ANNSGM-7-19 coefficients ∓1.6×10⁻² (Table I) vs ∓0.0016
+  (Table II).
+- zhang-2022-f: "two orders of magnitude" (ratio 18); $M_t$ 0.79/0.80.
+- zhang-2022-g: abstract grid "5×10⁶" vs 5.51×10⁹; φ defined in the
+  x–y plane; forcing described two ways.
+- zhang-2022-h: Eq. 10 dimensions; $\Pi$ sign against Eq. 33.
+- zhang-2022-i: Fig. 8 legend vs text turbine positions.
+- devenport-2022: Eqs. 2.33, 3.30 factors; §5.3 angles 1.7°/0.17° vs
+  3.4°/0.34°; four printed duplicate references.
+- ihme-2022: Eq. 36 argmax; §3.4.3 $T^*_{\min}$ vs Table 1b; §4.1.4 vs §5.4.
+- cheng-2023-b: undefined β₂; weights of Eqs. 2.11 and 2.13 differ; Eq.
+  3.3 empty interval; refs [7] = [25].
+- fureby-2023: Table 1 rows C/D repeat A/B; "harmonic mean" for a
+  geometric mean; swapped figure and case labels.
+- wu-2023-b: Eq. 2 destruction $\beta\rho\omega^3$; Eq. 15 right state at
+  $j-\tfrac12$; group labels.
+- shan-2023: Eq. 8 negative mixing length; scaling range; 0.996/0.995;
+  "over 57%" vs "over 60%".
+- mani-2023: reference-list slips ("Balaras UPE", AIAA numbers).
+- idelsohn-2024: $l_R$ text vs Table 2; $\tau_p$ units; "0.04 cm … ≈ 500
+  μm"; $k^c$ without ½.
+- coulon-2023: $Le_f$, $Re$ printed without division; Δt in μm; $Re_t$
+  "the same" vs 355/313/271.
+- stanly-2022: 15 M vs 13,002,444 points; refinement ratio; TSR 5.35 vs
+  5.41; mean chord.
+
+### Bibliography
+
+8894 → 10358 entries, `FLAGS: 0`, 388 aliases, 73 verified silences;
+printed duplicates folded (krogstad-1992, rotta-1979, degraaff-2000,
+bradshaw-1965, godunov-1959, kleusberg-2017). Same key, different work,
+re-keyed: `heinz-2020-b`, `li-2021-k`, `li-2021-l`, `li-2022-l`,
+`gao-2022-b`, `wang-2013-j`, `wang-2013-k`, `wang-2023-i`, `liu-2022-k`,
+`prakash-2022-c`. Preprints kept apart: `dang-2022-c` (of dang-2022),
+`cao-2022-d`, `prakash-2021`.
+
+### Bundle fit (D17 candidates, no copy made)
+
+chambers-2022 (experimental DDT), coulon-2023 (premixed-flame DNS),
+fureby-2023 (scramjet combustion) and ihme-2022 (ML in combustion) are
+combustion papers with marginal turbulence-modelling content;
+cheng-2023-b and the WCNS material of wu-2023-b fit
+`high-order-capturing-schemes` or `weno-teno` as well; stanly-2022 and
+zhang-2022-i are wind-energy LES. Here they sit only on the pages they
+bear on.
+
 ## Chunk 10 — 2022 papers: variational multiscale LES, learned EARSMs and CFD-driven training, discrete-adjoint field inversion, output-based adaptation, Rosenbrock DG, temporal LES, BVD and compact schemes, hypersonic WMLES, pressure dilatation; second whole-bundle deep lint (2026-10-27)
 
 Sources (20): mardani-2022, chen-2022-g, fidkowski-2022, hamedi-2022,

@@ -147,8 +147,9 @@ No printed duplicates.
 
 # Pages created or updated
 
-Chunk 8 (2026-10-27). This source is cited on:
+Chunk 8 (2026-10-27), cited further in chunk 11. This source is cited on:
 
+- [30P30N three-element high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md)
 - [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)
 - [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)

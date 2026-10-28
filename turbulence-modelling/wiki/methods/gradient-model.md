@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Gradient (Clark) model and the clipping of structural SGS models"
-description: "Clark's gradient model truncates the Taylor expansion of the filter; it correlates well with the exact stress but under-dissipates and backscatters, so it is clipped (optimal clipping is a parameter-free mixed model) or mixed with a calibrated eddy viscosity. Its fourth- and sixth-order truncations run stably in two-dimensional LES."
+description: "Clark's gradient model truncates the Taylor expansion of the filter; it correlates well with the exact stress but under-dissipates and backscatters, so it is clipped (optimal clipping is a parameter-free mixed model) or mixed with an eddy viscosity. Higher-order, multi-point constant-coefficient and density-unweighted compressible forms extend it."
 status: established
-aliases: [Clark model, gradient model, nonlinear gradient model, tensor-diffusivity model, optimal clipping, standard clipping, GM-OC, GM-SC, NGM2, NGM4, NGM6, higher-order gradient model]
+aliases: [Clark model, gradient model, nonlinear gradient model, tensor-diffusivity model, optimal clipping, standard clipping, GM-OC, GM-SC, NGM2, NGM4, NGM6, higher-order gradient model, velocity gradient model, VGM, spatial gradient model, SGM-7-19, ANNSGM, density-unweighted gradient model]
 tags: [les, sgs-model, filtering, eddy-viscosity]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-27T21:09:00Z
 ---
 
 # Gradient (Clark) model and the clipping of structural SGS models
@@ -587,6 +587,146 @@ cannot come from local backscatter *(compiler check, not in the
 sources)*. Jakhar et al. stabilize it by adding
 higher-order structural terms rather than an eddy viscosity or clipping.
 
+## Multi-point first-order form: the spatial gradient model
+
+[Wang et al. (2022)](/sources/wang-2022-j.md) start from the same series.
+For the Gaussian filter they print (Eq. 15)
+$\tau_{ij}=\sum_{n\ge1}\frac{(2\alpha_{\mathrm G})^n}{n!}\,\partial^n\bar u_i\cdot\partial^n\bar u_j$
+with $\alpha_{\mathrm G}=\Delta^2/24$ (page-local; $\partial^n\bar u_i\cdot\partial^n\bar u_j$
+the $n$-fold contracted product of derivatives), whose first two terms are
+$\tfrac{\Delta^2}{12}\partial_k\bar u_i\partial_k\bar u_j+\tfrac{\Delta^4}{288}\partial_k\partial_l\bar u_i\,\partial_k\partial_l\bar u_j$
+(Eq. A1): the NGM2 and NGM4 coefficients of Jakhar et al. above, since
+$(\Delta^2/12)^2/2!=\Delta^4/288$ *(compiler check, not in the sources)*.
+Instead of storing second derivatives, they approximate the second term
+with **first** derivatives at the points of a seven-point stencil, the
+local point $L=0$ and its six neighbours $L=1,\dots,6$ along the axes
+(Eq. 14):
+
+$$\tau_{ij}=\Delta^2\sum_{k=1}^3\sum_{L_1,L_2=0}^{6}g^{L_1L_2}\,\big(\partial_k\bar u_i\big)_{L_1}\big(\partial_k\bar u_j\big)_{L_2},$$
+
+with $(\cdot)_L$ the value at stencil point $L$ and $g^{L_1L_2}$
+(page-local) 49 dimensionless coefficients. Using only first-order
+gradients "automatically guarantees the Galilean invariance" (§II C). The
+authors' earlier artificial-neural-network version (cited; ANNSGM) supplied
+the coefficients by regression on filtered DNS of forced isotropic
+turbulence and found 19 of them dominant and almost constant: the
+local–local coefficient, the local–neighbour ones and the
+neighbour–same-neighbour ones (Table I).
+
+**Constant coefficients from the Taylor expansion** (§III, App. A). With
+the LES grid spacing $\Delta/2$ (filter-to-grid ratio 2), expanding the
+neighbour gradients about the local point and matching Eq. (A1) to second
+order fixes the neighbour–neighbour coefficient at $1/144$ and the sum
+local $+\,6\times$(the three off-local classes) at $1/12$; symmetry and the
+ANN pattern $g^{\mathrm{NP}}=-g^{\mathrm{NN}}$ (neighbour–local and
+same-neighbour values of $g^{L_1L_2}$) then give the **SGM-7-19**
+model (Eq. 20):
+
+$$\tau_{ij}=\frac{\Delta^2}{8}\sum_k(\partial_k\bar u_i)_0(\partial_k\bar u_j)_0+\frac{\Delta^2}{144}\sum_k\sum_{L=1}^6\Big[(\partial_k\bar u_i)_L(\partial_k\bar u_j)_L-(\partial_k\bar u_i)_0(\partial_k\bar u_j)_L-(\partial_k\bar u_i)_L(\partial_k\bar u_j)_0\Big],$$
+
+19 non-zero terms, the sparsity of the learned model. The same
+coefficients follow if each product of second derivatives in Eq. (A1) is
+split into halves discretized by upwind and downwind differences; central
+differences give instead $+1/12$ local, no local–neighbour products and
+$\pm1/288$ for same and opposite neighbours (Eqs. 21–23, Table II). The
+authors therefore call SGM-7-19 "not a case-by-case result inspired by a
+particular outcome of ANN, but a result with solid theoretical basis":
+the network found "the most accurate way to approximate Eq. (15) using the
+form of Eq. (14)" (§III). The coefficient algebra checks: $1/12+1/24=1/8$
+and $\tfrac{\Delta^4}{288}\cdot\tfrac12\cdot\tfrac{4}{\Delta^2}=\tfrac{\Delta^2}{144}$
+*(compiler check, not in the sources)*.
+
+**Results** (forced incompressible [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md),
+$1024^3$ DNS at $Re_\lambda\approx250$, Gaussian filter $\Delta=16$ DNS
+spacings, LES $128^3$; weakly compressible [temporal mixing layer](/benchmarks/temporal-mixing-layer.md),
+$M=0.2$, LES $64\times128\times128$; filter-to-grid ratio 2 throughout):
+
+| model | $C(\tau_{11})$, $C(\tau_{12})$ | relative error $\tau_{11}$, $\tau_{12}$ |
+|---|---|---|
+| gradient model (VGM) | 0.945, 0.946 | 0.368, 0.333 |
+| ANNSGM-7-19 | 0.985, 0.981 | 0.135, 0.197 |
+| SGM-7-19 (upwind + downwind) | 0.973, 0.973 | 0.241, 0.237 |
+| central-difference coefficients | 0.968, 0.969 | 0.288, 0.264 |
+
+(a priori, Table II; correlation coefficient and relative error as defined
+on [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+The authors attribute the upwind–downwind gain over central differences
+to its use of all seven points, and the residual gap to the network to
+higher-order gradients the network captures implicitly. A posteriori,
+with the backscatter of subgrid energy "turned off" for stability
+(clipping formula not printed, stated for the isotropic runs), SGM-7-19 is
+closest to filtered DNS in energy spectra, strain-rate and
+velocity-increment PDFs and small-scale vortical structure, where the
+[dynamic Smagorinsky](/methods/dynamic-procedure.md) and dynamic mixed
+models are over-dissipative and implicit LES needs a tuned hyperviscosity
+(§IV, Figs. 2–6); in the mixing layer it gives the best momentum
+thickness, kinetic energy, spectra and Reynolds shear stress (§V, Figs.
+9–16; App. B with linear-stability-mode forcing, Figs. 17–20). Its
+subgrid-modelling cost is 1.5 (isotropic) and 1.7 (mixing layer) times
+that of the dynamic Smagorinsky model, against 2.1 and 2.3 for the dynamic
+mixed model (Table V). The coefficients assume a uniform grid with
+spacing $\Delta/2$; for wall-bounded flows on non-uniform grids the
+authors say they must be re-derived and the commutation error between
+filtering and differentiation considered (Conclusions).
+
+## Density-unweighted compressible form
+
+With a plain (density-unweighted) filter the compressible equations have
+more unclosed terms than with Favre filtering (see
+[large-eddy simulation](/definitions/large-eddy-simulation.md)).
+[Zhang et al. (2022b)](/sources/zhang-2022-f.md) (§III B, Eqs. 22–26)
+derive gradient-model closures for all of them; with page-local symbols
+for the density-unweighted subgrid stress
+$\tau^{\mathrm{du}}_{ij}=\overline{\rho u_iu_j}-\bar\rho\bar u_i\bar u_j$,
+mass flux $\mathcal M_j=\overline{\rho u_j}-\bar\rho\bar u_j$, density–temperature
+correlation $\mathcal H=\overline{\rho T}-\bar\rho\bar T$ and heat flux
+$\mathcal Q_j=\overline{\rho Tu_j}-\bar\rho\bar T\bar u_j$, they print
+
+$$\begin{aligned}
+\mathcal M_j&=\tfrac{\Delta^2}{12}\,\partial_k\bar\rho\,\partial_k\bar u_j,\qquad
+\mathcal H=\tfrac{\Delta^2}{12}\,\partial_k\bar\rho\,\partial_k\bar T,\\
+\tau^{\mathrm{du}}_{ij}&=\tfrac{\Delta^2}{12}\big(\bar\rho\,\partial_k\bar u_i\partial_k\bar u_j+\bar u_i\,\partial_k\bar\rho\,\partial_k\bar u_j+\bar u_j\,\partial_k\bar\rho\,\partial_k\bar u_i\big),\\
+\mathcal Q_j&=\tfrac{\Delta^2}{12}\big(\bar\rho\,\partial_k\bar T\partial_k\bar u_j+\bar T\,\partial_k\bar\rho\,\partial_k\bar u_j+\bar u_j\,\partial_k\bar\rho\,\partial_k\bar T\big),
+\end{aligned}$$
+
+and an analogous closure of the subgrid turbulent diffusion of kinetic
+energy (Eq. 26). Each is the leading term of the Gaussian-filter expansion
+of a double or triple product,
+$\overline{abc}-\bar a\bar b\bar c\approx\tfrac{\Delta^2}{12}(\bar a\,\partial_k\bar b\,\partial_k\bar c+\bar b\,\partial_k\bar a\,\partial_k\bar c+\bar c\,\partial_k\bar a\,\partial_k\bar b)$,
+obtained by applying the leading term
+$\overline{fg}-\bar f\bar g\approx\tfrac{\Delta^2}{12}\partial_k\bar f\,\partial_k\bar g$
+of Wang et al.'s Eq. (15) twice *(compiler check, not in the sources)*;
+the paper prints only the results.
+On decaying compressible isotropic turbulence at $M_t=0.4$ and 0.8
+($Re_\lambda\approx260$, $1024^3$ DNS, $\Delta=16$ DNS spacings, LES
+$128^3$), the gradient model correlates a priori above 0.9 with
+$\tau^{\mathrm{du}}_{11}$, $\tau^{\mathrm{du}}_{12}$ and $\mathcal Q_1$, the heat
+flux better than the stresses (§IV A, Fig. 1). A posteriori it is close
+to the best model of the paper, the dynamic iterative approximate
+deconvolution (see [scale-similarity models](/methods/scale-similarity-model.md)),
+better at the larger $M_t$, but over-predicts the negative tail of the
+$\mathcal H$ PDF at $M_t=0.4$, gives longer tails than filtered DNS for the
+mass flux, and over-estimates the subgrid flux late in the decay (§IV B,
+Figs. 5–10). It is the cheapest model tested, 0.32 CPU s per step against
+0.85 for dynamic Smagorinsky and 1.41 for the dynamic mixed model (Table
+III). No clipping is mentioned.
+
+## Rediscovered by data-driven searches
+
+[Ihme et al. (2022)](/sources/ihme-2022.md) (§4.1.4, Fig. 30) review two
+data-driven searches for subgrid stresses in reacting flows that return
+the gradient model: gene expression programming over tensor-basis forms,
+on filtered DNS of a premixed flame, "rediscovered" the tensor-diffusivity
+form with performance comparable to Clark's model (Fig. 30 compares its
+correlations with those of Clark's and Yoshizawa's models at three filter
+widths); sparse
+symbolic regression with random-forest feature preselection, on filtered
+DNS of transcritical non-premixed flames, gave a model "similar to
+Clark's formulation" (both cited; see
+[symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+The sparse regression of Jakhar et al. above and the network of Wang et
+al. (2022) make the same point in incompressible flow.
+
 ## Gradient term as a coefficient estimator in a one-equation model
 
 [Qi et al. (2022)](/sources/qi-2022-b.md) (§3.2, Eqs. 3.8–3.12) reach the
@@ -618,6 +758,19 @@ with $\tau_{12}$ and $\tau_{22}$ (Fig. 2c); a posteriori $C_0$ peaks near
 
 ## Qualifications
 
+- **Two printed magnitudes of the learned coefficients.** Wang et al.
+  (2022) print the off-local coefficients of ANNSGM-7-19 as
+  $\mp1.6\times10^{-2}$ in Table I and as $\mp0.0016$ in Table II; the text
+  statement that the local coefficient (0.18) is "one order larger" than
+  the others agrees with Table I.
+- **Scope of the spatial gradient model.** Wang et al. (2022) derive the
+  coefficients for a uniform grid with spacing $\Delta/2$, keeping "the
+  velocity gradients only up to second order" in the expansion (App. A),
+  and test two periodic flows; whether backscatter was also turned off in
+  the mixing-layer runs is not stated.
+- **Zhang et al. (2022b)** state that the gradient forms are derived but
+  print no derivation; their test is decaying isotropic turbulence at one
+  filter width.
 - Qi et al. (2022, Eq. 3.9) define the expansion parameter as
   $\alpha_{\mathrm s}=\int2x^2G\,dx$. For the box filter of width $\Delta$
   ($G=1/\Delta$ on $\lvert x\rvert<\Delta/2$) this gives $\Delta^2/6$, i.e.
@@ -666,3 +819,6 @@ with $\tau_{12}$ and $\tau_{22}$ (Fig. 2c); a posteriori $C_0$ peaks near
 - [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III.D, Eqs. (19)–(23); §V, Tables III, V–VII.
 - [Li et al. (2021)](/sources/li-2021.md) — §I; §II B, Eqs. (9)–(13); Eq. (22), Table IV.
 - [Qi et al. (2022)](/sources/qi-2022-b.md) — §1; §3.2, Eqs. (3.8)–(3.15); §4.1, Figs. 2, 10; §5.
+- [Wang et al. (2022)](/sources/wang-2022-j.md) — §II C, Eqs. (11)–(14), Table I; §III, Eqs. (15)–(23), Table II; App. A, Eqs. (A1)–(A6); §IV, Figs. 2–6; §V, Figs. 9–16, Table V; App. B, Figs. 17–20; Conclusions.
+- [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §III B, Eqs. (22)–(26); §IV A, Fig. 1; §IV B, Figs. 5–10, Table III.
+- [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.4, Eq. (74), Fig. 30.

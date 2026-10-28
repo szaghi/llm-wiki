@@ -5,7 +5,7 @@ description: "The NASA Juncture Flow wing–fuselage model, with smooth-body cor
 status: established
 aliases: [Juncture Flow experiment, NASA JF, wing-body juncture flow]
 tags: [benchmark, wmles, separated-flow, boundary-layer, data-driven]
-timestamp: 2026-10-27T15:46:00Z
+timestamp: 2026-10-27T20:48:00Z
 ---
 
 # NASA Juncture Flow
@@ -141,6 +141,27 @@ is "even more ill-suited" (see
 does not mention the NASA model; the data-driven junction-flow work it cites
 (§4.1) is on [symbolic-regression closures](/methods/symbolic-regression-closure.md).
 
+[Devenport & Lowe (2022)](/sources/devenport-2022.md), §5.1, name the
+Juncture Flow test (citing Rumsey) together with an earlier wing–body
+junction study as examples of **pressure-driven three-dimensional
+turbulent boundary layers**: the fuselage boundary layer approaching the
+wing is turned by a lateral pressure gradient, and streamwise vorticity is
+generated at the wall by that gradient acting with viscosity. Their
+review of such layers (§5.4; see
+[turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)) rests
+on the attached endwall layer of a wing–body junction of Ölçmen & Simpson,
+a different geometry: there the direction of the turbulent shear stress
+lags the direction of the mean velocity gradient, and Townsend's
+structure parameter $A_1$ (page-local: the shear-stress magnitude over
+twice the turbulent kinetic energy) falls below its two-dimensional value,
+both of which the authors trace to a suppressed pressure–strain source of
+$\langle v'v'\rangle$ (Lowe & Simpson's pressure–strain measurements at
+$Re_\theta=7500$). An isotropic eddy viscosity forces the two directions
+to coincide, which the authors present as a challenge "both in RANS and
+wall-modeled LES" (§5.1, §5.4; see
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)). The
+review shows no Juncture Flow data.
+
 ## Qualifications
 
 - [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) use an aircraft
@@ -158,6 +179,9 @@ does not mention the NASA model; the data-driven junction-flow work it cites
   as Lozano-Durán et al. (2022), and use the same aircraft frame for their
   station coordinates; their runs are a single grid, not a convergence
   study.
+- [Devenport & Lowe (2022)](/sources/devenport-2022.md) cite the Juncture
+  Flow test only as an example; the wing–body junction data they discuss
+  are those of Ölçmen & Simpson and Lowe & Simpson, not of this model.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) do not mention
   the NASA Juncture Flow model; their junction-flow statements concern the
   class of flows and other geometries (a junction body, a wall-mounted
@@ -169,3 +193,4 @@ does not mention the NASA model; the data-driven junction-flow work it cites
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §I (cited result).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.3; §4.8, Table 1, Fig. 18.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.1 (junction flows as a class; passing mention, the NASA model is not discussed); §4.1.
+- [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §5.1, §5.4, Figs. 39, 41 (pressure-driven 3D boundary layers; Juncture Flow cited as an example).

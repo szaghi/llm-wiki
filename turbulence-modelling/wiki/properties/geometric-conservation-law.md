@@ -5,7 +5,7 @@ description: "On curvilinear grids a discretization preserves a uniform flow onl
 status: established
 aliases: [GCL, geometric conservation law, free-stream preservation, freestream preservation, metric identities, discrete metric identities]
 tags: [dg, gas-kinetic, flux-reconstruction, high-order, compressible, implicit-les]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-27T20:41:00Z
 ---
 
 # Geometric conservation law and free-stream preservation
@@ -101,7 +101,13 @@ implicit LES of a cylinder, the T106A
 [turbine cascade](/benchmarks/turbine-cascade.md) and an open cavity run
 on curvilinear block-structured grids (§3). The same Deng et al. (2011)
 is one of the two works Cao et al. (2024) cite for their symmetric
-conservative form above.
+conservative form above. [Wu et al. (2023)](/sources/wu-2023-b.md), §1,
+§2.2.1, state that the fourth-order WCNS of the multi-block structured
+code PHengLEI satisfies the geometric conservation law (citing two GCL
+works) and run it on the curvilinear grids, up to 27 million cells, of
+the [30P30N high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md);
+they print neither the metric form nor a free-stream test. The scheme is
+on [weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md).
 
 ## Curved elements as a source of aliasing
 
@@ -205,3 +211,4 @@ Figs. 5–8).
 - [Ma et al. (2022)](/sources/ma-2022.md) — §2, Eqs. (1)–(2) (curvilinear transformation; metrics computed with the flux scheme for the GCL).
 - [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §2.2, Eqs. (19)–(21) (curved-element Jacobian as a geometric aliasing source); §4.3, Eqs. (50)–(52), Figs. 15–18 (Taylor–Green vortex on a sinusoidally perturbed mesh).
 - [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §1 (rigid against deformable moving grids); §2.1, Eqs. (1)–(9) (moving-grid flux); §3.1, Table 3, Figs. 5–8 (stationary against moving grid).
+- [Wu et al. (2023)](/sources/wu-2023-b.md) — §1, §2.2.1 (GCL of the fourth-order WCNS in PHengLEI, cited); §2.3 (multi-block grids of the 30P30N airfoil).

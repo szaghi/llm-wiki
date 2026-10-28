@@ -5,7 +5,7 @@ description: "Numerical dissipation is the kinetic-energy loss a discretization 
 status: established
 aliases: [artificial dissipation, scheme dissipation, upwind dissipation, Riemann-solver dissipation, numerical viscosity]
 tags: [numerical-dissipation, implicit-les, les, dg, kinetic-energy-preserving]
-timestamp: 2026-10-27T15:58:00Z
+timestamp: 2026-10-27T21:12:00Z
 ---
 
 # Numerical dissipation in scale-resolving simulation
@@ -358,6 +358,60 @@ the old one on 300 in the shock–entropy-wave problem (Table 1, Fig. 2).
 Both papers then use the reduced dissipation in implicit LES (see
 [implicit LES](/definitions/implicit-les.md)).
 
+**Nonlinear weights as a dissipation source at low Mach number.**
+[Wu et al. (2023)](/sources/wu-2023-b.md) (§2.2, §3.3, Table 2, Figs.
+11–16) isolate the scheme in hybrid RANS/LES of the
+[30P30N high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md)
+($Re=1.71\times10^6$, $M=0.17$, $\alpha=5.5^\circ$, 27 million cells,
+same turbulence model). Three convective schemes share a Roe flux: a
+second-order blend of central and upwind interpolation with 2% upwinding,
+and the fourth-order
+[weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
+with WENO-Z-type weights at $\varepsilon=10^{-6}$ (nonlinear, "WCNS-Z")
+or $\varepsilon=100$, which makes the weights nearly linear ("WCNS-L";
+page-local $\varepsilon$, the weight regularization, not the dissipation
+rate). The lift errors against the measured 2.83 are $-11.0\%$, $-6.7\%$
+and $-0.4\%$. The lower dissipation of the compact scheme makes the slat
+shear layer go unstable sooner than with the blended scheme, which gives
+a "smoother" shear layer; the authors attribute the remaining deficit of
+WCNS-Z to the accuracy loss of Z-type weights near high-order critical
+points, which adds dissipation in the shear layer, and recommend purely
+linear interpolation for shock-free low-Mach flow, leaving the
+dissipation of the nonlinear weights in supersonic turbulence to future
+work (§3.3, §4). The same paper finds the turbulence model mattering more
+than the scheme or the grid for the pressure distribution (§3.4; see
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+
+**A tunable TVD reconstruction for unstructured implicit LES.**
+[Cheng et al. (2023)](/sources/cheng-2023-b.md) (§2.2, Eqs. 2.9–2.14)
+implement in [OpenFOAM](/software/openfoam.md) a compact-stencil
+reconstruction in the normalized-variable diagram (ROUND, from Deng, as
+cited) whose dissipation is set by three parameters. With
+$\phi_{\mathrm n}$ (page-local) the normalized upwind cell value, the
+normalized face value is
+
+$$\mathcal R(\phi_{\mathrm n})=\begin{cases}\min\!\big((\tfrac13+\tfrac56\phi_{\mathrm n})\mathsf b_0+2\phi_{\mathrm n}(1-\mathsf b_0),\ 2\phi_{\mathrm n}\big), & 0<\phi_{\mathrm n}\le\tfrac12,\\ \min\!\big((\tfrac13+\tfrac56\phi_{\mathrm n})\mathsf b_1+(\lambda_{\mathrm R}\phi_{\mathrm n}-\lambda_{\mathrm R}+1)(1-\mathsf b_1),\ \lambda_{\mathrm R}\phi_{\mathrm n}-\lambda_{\mathrm R}+1\big), & \tfrac12<\phi_{\mathrm n}\le1,\\ \phi_{\mathrm n}, & \text{otherwise},\end{cases}$$
+
+with $\mathsf b_k=[1+g_k(\phi_{\mathrm n}-1)^4]^{-2}$ as printed
+(page-local $g_0$, $g_1$, $\lambda_{\mathrm R}$, $\mathsf b_k$; the
+source's $\gamma_0$, $\gamma_1$, $\lambda_1$, $\omega_k$). The weights blend
+the third-order upwind-biased line into the TVD bounds. Two sets are
+chosen by "rigorously tuning" in tests: ($g_0$, $g_1$,
+$\lambda_{\mathrm R}$) = (500, 1000, 0.25), and (1100, 800, 0.15) with less
+dissipation; both are stated to satisfy the TVD condition, without proof
+(§2.2). Rewritten as a flux limiter of a gradient ratio from the cell
+gradient, the scheme keeps a compact stencil on unstructured meshes
+(Eqs. 2.12–2.14). Against the van Leer and MUSCL limiters, which they
+describe as too dissipative for the resolved scales, the tuned schemes
+give smaller errors on an isentropic vortex (second-order convergence,
+which the classical limiters do not reach), larger high-frequency wave
+amplitudes in the Shu–Osher problem, more small structures and less
+kinetic-energy and enstrophy loss in the inviscid
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $128^3$,
+and better Reynolds stresses in a transonic cavity (§3, Figs. 2–14; see
+[implicit LES](/definitions/implicit-les.md)). All comparisons are
+figures; no table, time integrator or cost is given.
+
 ## Dissipation of RANS-type schemes in hybrid RANS/LES
 
 [Carlsson et al. (2023)](/sources/carlsson-2023.md) quantify the
@@ -498,20 +552,38 @@ dissipation (Fig. 11).
   scheme in the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
   ($Re=1600$, $M_0=0.1$) as the residual of the volume-averaged
   kinetic-energy budget, with $E_k$ the volume-averaged kinetic energy per
-  unit reference density and $\varepsilon_1$, $\varepsilon_2$,
-  $\varepsilon_3$, $\varepsilon_{\mathrm{num}}$ page-local:
-  $$\varepsilon_{\mathrm{num}}=-\frac{dE_k}{dt}-(\varepsilon_1+\varepsilon_2+\varepsilon_3),$$
-  where $\varepsilon_1=\tfrac{2\mu}{\rho_0\lvert\Omega\rvert}\int_\Omega S^d_{ij}S^d_{ij}\,dV$
-  is the solenoidal (deviatoric) part, $\varepsilon_2=\tfrac{\mu_b}{\rho_0\lvert\Omega\rvert}\int_\Omega(\nabla\cdot\boldsymbol u)^2dV$
+  unit reference density ($V$ the box volume), $\varepsilon_s$, $\varepsilon_d$ the registry's
+  solenoidal and dilatational dissipation (the source's $\varepsilon_1$,
+  $\varepsilon_2$), and $\varepsilon_3$, $\varepsilon_{\mathrm{num}}$ page-local:
+  $$\varepsilon_{\mathrm{num}}=-\frac{dE_k}{dt}-(\varepsilon_s+\varepsilon_d+\varepsilon_3),$$
+  where $\varepsilon_s=\tfrac{2\mu}{\rho_0V}\int_V S^d_{ij}S^d_{ij}\,dV$
+  is the solenoidal (deviatoric) part, $\varepsilon_d=\tfrac{\mu_b}{\rho_0V}\int_V(\nabla\cdot\boldsymbol u)^2dV$
   the bulk-viscosity part with the scheme's inherent bulk viscosity
   $\mu_b=\tfrac{2n}{3(n+3)}\mu$ ($n=2$ internal degrees of freedom for a
-  diatomic gas, page-local), and $\varepsilon_3=-\tfrac1{\rho_0\lvert\Omega\rvert}\int_\Omega p\,\nabla\cdot\boldsymbol u\,dV$
+  diatomic gas, page-local), and $\varepsilon_3=-\tfrac1{\rho_0V}\int_V p\,\nabla\cdot\boldsymbol u\,dV$
   the pressure–dilatation. The resolved part is computed with sixth-order
   central differences. $\varepsilon_{\mathrm{num}}$ decreases with grid
   refinement from $128^3$ to $1024^3$ and is significant on the coarse
-  grids, where $\varepsilon_1+\varepsilon_2+\varepsilon_3$ is well below the
+  grids, where $\varepsilon_s+\varepsilon_d+\varepsilon_3$ is well below the
   decay rate. The authors read the agreement of the decay rate with the
   reference as support for [implicit LES](/definitions/implicit-les.md).
+- **A numerical subgrid stress, with or without a model.**
+  [Cao et al. (2022b)](/sources/cao-2022-c.md) (§IV C, Eqs. 19–22) extend
+  the same budget to explicit LES. Following Moser et al. (cited), the
+  discrete momentum equation carries, beside the modelled stress
+  $\tau^{\mathrm{mod}}_{ij}$, a numerical subgrid stress
+  $\tau^{\mathrm{num}}_{ij}$ (page-local) that groups phenomenologically
+  every discretization error (reconstruction, time integration, flux
+  design, averaging), which they call grid-, scheme- and flow-dependent
+  and very hard to quantify term by term in a finite-volume code. The
+  pointwise total subgrid dissipation is
+  $$-\tau^{\mathrm{mod}}_{ij}\tilde S_{ij}-\tau^{\mathrm{num}}_{ij}\tilde S_{ij},$$
+  with the first term zero in implicit LES, and its volume average is the
+  budget residual $-\mathrm dE_k/\mathrm dt-(\varepsilon_s+\varepsilon_d+\varepsilon_3)$
+  above, the two parts not being separable. The scheme's inherent bulk
+  viscosity is printed as $\mu_b=4\mu/15$, the value of the formula above
+  with $n=2$ *(compiler check, not in the sources)*. Results are under
+  "Interaction with the subgrid model" below.
 - **Subdomain energy budget with the model terms.** [Saini et al. (2023)](/sources/saini-2023.md)
   (§2.2–2.3, Eqs. 2–12) extend the budget-residual method of Schranner et
   al. (cited) to LES with an explicit model. The resolved-energy
@@ -905,6 +977,47 @@ measuring it:
   character of the scheme keeps dissipation small (§IV, App. A), and
   "when the grids are refined, the numerical dissipation decreases"
   (App. B). See [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md).
+- **Explicit against implicit LES, with the dissipation estimated.** Cao
+  et al. (2022b, §IV C, Table II, Fig. 8) estimate, in
+  the compressible Taylor–Green vortex ($Re=1600$, Mach 0.1, $256^3$,
+  fourth-order gas-kinetic scheme): the total subgrid dissipation of
+  static Smagorinsky and Vreman LES is about twice that of implicit LES at
+  $t=2.5$, 5, 10 (Smagorinsky $2.8\times10^{-5}$, $3.5\times10^{-4}$,
+  $1.4\times10^{-3}$ against $1.5\times10^{-5}$, $1.4\times10^{-4}$,
+  $6.7\times10^{-4}$; Table II), and the dynamic model lies
+  between because its domain-averaged coefficient stays positive. A
+  priori, the box-filtered DNS gives a mean subgrid production far below
+  the solenoidal dissipation (Table I). The authors conclude that the
+  numerical dissipation is a built-in subgrid dissipation sufficient on
+  these under-resolved grids, that the added eddy viscosity blurs the
+  resolved vorticity, and that future LES must weigh the competition
+  between numerical and modelled subgrid dissipation (§IV C, §V; see
+  [implicit LES](/definitions/implicit-les.md) and
+  [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+- **Model calibration tied to the scheme.** [Li et al. (2022)](/sources/li-2022-k.md)
+  (§I) make the coefficient of the subgrid branch of a Reynolds-stress-based
+  IDDES dynamic partly because the calibrated constant depends on grid
+  resolution and on the dissipation of the scheme (citing Mockett); with
+  second-order Roe fluxes they credit the finer resolved structures of the
+  dynamic version to "more appropriate" subgrid dissipation without
+  separating it from the numerical one (Fig. 16; see
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+- **Dissipation named, not measured.** [Huang et al. (2022c)](/sources/huang-2022-c.md)
+  (§II B, §III B) state that spectral vanishing viscosity "introduces
+  proper dissipation" in their spectral/hp implicit LES and attribute the
+  near-wall error of their wall-modelled runs to added dissipation at the
+  wall; [Stanly et al. (2022)](/sources/stanly-2022.md) (§2.1) take an
+  eighth-order artificial-dissipation operator as the only closure of
+  their implicit LES. Neither paper quantifies the dissipation (see
+  [implicit LES](/definitions/implicit-les.md)).
+- **Reduced-dissipation fluxes in industry.**
+  [Mani & Dorgan (2023)](/sources/mani-2023.md) (§4.4) state that
+  scale-resolving simulations benefit from inviscid fluxes altered to
+  reduce numerical dissipation (Winkler et al.; Nishikawa & Liu, as
+  cited), and cite the kinetic-energy- and entropy-preserving scheme of
+  [charLES](/software/charles.md) used to predict the maximum lift of the
+  High-Lift Prediction Workshop configuration (Goc et al.); see
+  [kinetic-energy preservation](/properties/kinetic-energy-preservation.md).
 - **Scheme dissipation inside a learned-model test.** In the pseudospectral
   LES of [Li et al. (2021)](/sources/li-2021.md) (§II A, §III C) a
   "high-order dissipative numerical method" taken from Xie et al. (2020,
@@ -1494,6 +1607,24 @@ evidence is one-dimensional and laminar.
   three-point scheme unstable at threshold 7 in double Mach reflection.
   They print the WENO-BS linear weights as 1/35, 12/35, 8/35, 4/35
   (Eq. 50), which sum to 25/35 *(compiler check, not in the sources)*.
+- **Cheng et al. (2023): the printed reconstruction.** The flux-limiter
+  form (Eq. 2.13) contains a coefficient $\beta_2$ that the paper does not
+  define. Substituting the normalized variable of the gradient ratio
+  $r$, $\phi_{\mathrm n}=r/(1+r)$, the auxiliary polynomials of Eq. 2.13
+  correspond to weights $[1+g_k(\phi_{\mathrm n}-\tfrac12)^4]^{-2}$,
+  not to the printed $[1+g_k(\phi_{\mathrm n}-1)^4]^{-2}$ of
+  Eq. 2.11, and with them the two equations agree when $\beta_2$ equals
+  the second weight parameter *(compiler check, not in the sources;
+  derived with the face-value relation of Eq. 2.14)*.
+- **Wu et al. (2023): the blended scheme.** The right face state of
+  their second-order blend (Eq. 15) is expanded about $u_j$, so at zero
+  upwinding it gives $\tfrac12(u_j+u_{j-1})$, the value at $j-\tfrac12$,
+  while the left state gives the central $\tfrac12(u_j+u_{j+1})$ at
+  $j+\tfrac12$ *(compiler check, not in the sources)*. Their $C_L$ errors
+  are relative to the experimental mean 2.83 (Table 2).
+- **Cao et al. (2022b)** report the factor of two between explicit and
+  implicit LES for $t\le10$; at $t=15$ Table II gives a factor of about
+  14 for Smagorinsky *(compiler check, not in the sources)*.
 
 # Citations
 
@@ -1601,3 +1732,10 @@ evidence is one-dimensional and laminar.
 - [De Vanna et al. (2022)](/sources/devanna-2022.md) — §3.1.2, Eq. (8); §4.3, Fig. 4; §4.5–4.6.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.3, Eqs. (8)–(9); §3.1, Fig. 12; §3.2; §4.
 - [Yu et al. (2022)](/sources/yu-2022-e.md) — §2.1; §7.
+- [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.2, Eqs. 12–15 (fourth-order WCNS with linear and Z-type weights, blended scheme); §3.3, Table 2, Figs. 11–16 (scheme comparison on 30P30N); §4.
+- [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §1; §2.2, Eqs. 2.9–2.14 (tunable normalized-variable reconstruction, flux-limiter form); §3.1–3.6, Figs. 2–14.
+- [Cao et al. (2022b)](/sources/cao-2022-c.md) — §IV A (inherent bulk viscosity); §IV B, Table I; §IV C, Eqs. 19–22, Table II, Fig. 8 (numerical subgrid stress, total subgrid dissipation of implicit and explicit LES); §V.
+- [Li et al. (2022)](/sources/li-2022-k.md) — §I (constant calibration depends on scheme dissipation, citing Mockett); Fig. 16.
+- [Huang et al. (2022c)](/sources/huang-2022-c.md) — §II B, §III B (SVV dissipation named, not measured).
+- [Stanly et al. (2022)](/sources/stanly-2022.md) — §2.1, Eq. 1 (artificial-dissipation operator as implicit closure).
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.4 (reduced-dissipation fluxes, KEEP scheme in charLES, cited).

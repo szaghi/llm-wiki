@@ -5,7 +5,7 @@ description: "Two-equation RANS eddy-viscosity models transporting the turbulent
 status: established
 aliases: [k-epsilon, standard k-ε, Launder–Sharma k-ε, realizable k-ε, RKE, Shih k-ε, enhanced wall treatment, EWT, two-layer k-ε]
 tags: [rans, eddy-viscosity, separated-flow, boundary-layer]
-timestamp: 2026-10-27T15:34:00Z
+timestamp: 2026-10-27T21:07:00Z
 ---
 
 # k-ε models
@@ -312,6 +312,21 @@ Boltzmann hybrid on the Spalart–Allmaras-based zonal DES instead
 ([Husson et al. (2024)](/sources/husson-2024.md), §1; see
 [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
 
+**Particle-laden channel.** Idelsohn et al. (2024) include an unsteady
+RANS with the standard model and standard wall functions, "but no
+additional term for turbulence modulation", among the solutions of a
+particle-laden duct flow at $Re=57\,000$ (200 μm particles, volume fraction
+$5\times10^{-4}$, no gravity), beside DNS, a static-Smagorinsky LES and
+their pseudo-direct numerical simulation on $36\times12\times12$ cells
+([Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §3.2.2, Fig. 28). The
+DNS shows the mean kinetic energy of the carrier phase rising with the
+particle load and the mean profile changing; the URANS shows "negligible
+differences between the laden and unladen results", which the authors read
+as "ensemble averaged solutions cannot predict turbulence modulation". In
+§3.1 the authors state, citing earlier work, that energy-based modulation
+sources depending only on the Stokes number predict non-realistic rates (see
+[pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md)).
+
 ## Qualifications
 
 - Delassaux et al. print neither the realizable model nor the Wolfshtein
@@ -350,3 +365,4 @@ Boltzmann hybrid on the Spalart–Allmaras-based zonal DES instead
 - [Brenner et al. (2022)](/sources/brenner-2022.md) — §2.1.1, §2.2 Eqs. 18–20, §3.1, §3.4–3.6 Figs. 9, 16.
 - [Mardani & Nazari (2022)](/sources/mardani-2022.md) — §2 Eqs. 4–6, §4 Eqs. 18–20, 27–34, §5, §6.3 Fig. 7.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.2, §4.2.1 Eq. 9.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §3.1, §3.2.2, Fig. 28.

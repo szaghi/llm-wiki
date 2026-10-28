@@ -5,7 +5,7 @@ description: "A priori testing evaluates or trains a closure on filtered or aver
 status: established
 aliases: [a priori test, a posteriori test, offline and online evaluation, a-priori training, a-posteriori training]
 tags: [data-driven, a-priori-a-posteriori, sgs-model, les, rans]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-27T21:12:00Z
 ---
 
 # A priori and a posteriori testing
@@ -37,6 +37,16 @@ and [Pereira et al. (2021)](/sources/pereira-2021.md) ("a priori
 exercises" on filtered DNS) use the same pair. [Yan et al. (2022)](/sources/yan-2022.md)
 call the out-of-solver evaluation of their network "offline prediction"
 and its use embedded in the RANS solver the online test.
+[Shan et al. (2023)](/sources/shan-2023.md) train their eddy-viscosity
+network a priori on RANS fields, use the a priori $R^2$ and mean squared
+error only to select hyperparameters, and choose the mix of training
+data by the a posteriori lift-curve error of the coupled model (§III.D–E,
+Figs. 12–13; see
+[field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
+[Hausmann et al. (2022)](/sources/hausmann-2022.md) assess their
+[subgrid velocity enrichment](/methods/subgrid-velocity-enrichment.md)
+only inside running LES, by the statistics of the generated field against
+DNS.
 [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md) (filtered-DNS
 comparison against LES runs), [Helm & Martín (2022)](/sources/helm-2022.md),
 [Kim et al. (2022)](/sources/kim-2022.md) and
@@ -382,6 +392,25 @@ Rezaeiravesh et al., as they cite it).
   mid-plane fields (Figs. 5–23). Their reference is the *total* unresolved
   stress of explicitly filtered LES (next section), not only the part a
   model can recover.
+- **The same pair, on every unclosed term.** Three papers of one group
+  use the same correlation coefficient $C$ and relative error
+  $E_{\mathrm{rel}}$ against filtered DNS, Gaussian filter of 16 DNS
+  spacings, LES spacing $\Delta/2$:
+  [Wang et al. (2022)](/sources/wang-2022-j.md) (Eqs. 9–10, Table II) on
+  $\tau_{11}$, $\tau_{12}$ in forced isotropic turbulence at
+  $Re_\lambda\approx250$; [Zhang et al. (2022b)](/sources/zhang-2022-f.md)
+  (Eqs. 35–36, Figs. 1–3) on $\tau_{11}$, $\tau_{12}$ and the subgrid heat
+  flux of density-unweighted LES of compressible isotropic turbulence
+  ($M_t=0.40$, 0.79); [Zhang et al. (2022d)](/sources/zhang-2022-h.md)
+  (Eqs. 37–38, Figs. 1–2) on the stress, the subgrid pressure, pressure
+  work and internal-energy flux of a dense gas. The two compressible
+  papers add the rms of the divergence of each unclosed term, which ranks
+  the terms before any model is chosen: in the density-unweighted
+  equations the stress, mass-flux, heat-flux and turbulent-diffusion terms
+  dominate and the density–temperature term is smallest (Zhang et al.
+  2022b, Table II); in the dense gas the subgrid pressure and
+  internal-energy flux are an order of magnitude below the other terms of
+  their equations (Zhang et al. 2022d, Tables IV–V).
 - **Correlations of every unclosed term of the compressible equations.**
   Qi et al. (2022, §4, Figs. 2–4) score their quasi-dynamic subgrid
   kinetic-energy model on DNS of a compressible channel at Mach 1.5
@@ -517,6 +546,18 @@ can disagree).
   error of the correction field. They call this "a kind of overfitting"
   and choose the network by its a posteriori lift error (see
   [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
+- [Ihme et al. (2022)](/sources/ihme-2022.md) (§4.1.4) summarize the
+  learned closures of reacting-flow LES: supervised models "often
+  outperform physics-based closure models in a priori studies; however,
+  caution is warranted for extrapolating these findings to a posteriori
+  applications", because models trained on filtered DNS "can be unstable
+  due to the accumulation of small errors over a large number of
+  timesteps when evaluated a posteriori". They add that most applications
+  to date are a priori tests on idealized problems (§6), and give a
+  physics-informed loss as one remedy (see
+  [neural-network SGS models](/methods/neural-network-sgs-model.md) and
+  [super-resolution SGS models](/methods/super-resolution-sgs-model.md)).
+  The review cites the evidence; it runs no test.
 - Sirignano & MacArt (2023, §5, Figs. 11–12) train the same gated network,
   with the same hyperparameters, two ways for LES of a square prism in
   confined cross-flow ($Re=1000$ on the prism height). Fitted by supervised
@@ -845,6 +886,47 @@ model assumes for all expanded terms is supported a priori only at the
 two box-filter widths tested ($6\Delta_z$ channel, $3\Delta_z$ flat
 plate), while the LES use the grid filter.
 
+Three papers of one group report the same ranking in both tests, all with
+a Gaussian filter of 16 DNS spacings and a filter-to-grid ratio of two:
+
+- *Constant-coefficient spatial gradient model.* Wang et al. (2022)
+  rank, a priori, the 19-term network model (correlations 0.985, 0.981 for
+  $\tau_{11}$, $\tau_{12}$) above their derived constant-coefficient model
+  SGM-7-19 (0.973, 0.973) and the classical
+  [gradient model](/methods/gradient-model.md) (0.945, 0.946) (Table II).
+  A posteriori they run SGM-7-19, not the network, against the dynamic
+  Smagorinsky and dynamic mixed models and implicit LES: SGM-7-19 is
+  closest to filtered DNS in spectra, strain-rate and velocity-increment
+  PDFs in isotropic turbulence, and in momentum thickness, spectra,
+  kinetic energy and Reynolds shear stress in a
+  [temporal mixing layer](/benchmarks/temporal-mixing-layer.md)
+  (§IV–V, Figs. 2–16), with backscatter clipped for stability (§IV).
+- *Density-unweighted compressible LES.* Zhang et al. (2022b) find the
+  dynamic iterative approximate deconvolution (DIAD) model best a priori
+  ($C>0.98$, $E_{\mathrm{rel}}$ about 0.1, after two iterations) ahead of
+  approximate deconvolution (also $C>0.98$) and the gradient model
+  ($C>0.9$), and best a
+  posteriori in decaying compressible isotropic turbulence, where the
+  dynamic Smagorinsky and dynamic mixed models are over-dissipative and
+  approximate deconvolution under-dissipative (Abstract, §IV, Figs. 1–23;
+  see [scale-similarity model](/methods/scale-similarity-model.md)).
+- *Dense gas.* Zhang et al. (2022d) find DIAD's correlations above 0.98
+  and relative errors below 0.2 for the stress, the subgrid pressure and
+  the pressure work, the exception being the internal-energy flux at
+  $M_t=0.4$ (above 0.96, below 0.3); a posteriori DIAD reproduces the PDFs
+  of those terms and beats dynamic Smagorinsky in kinetic-energy decay,
+  spectra and the PDFs of the subgrid energy flux, strain and vorticity
+  (§IV, Figs. 1–18). Dropping the thermodynamic subgrid terms changes the
+  a posteriori statistics little, consistent with their small a priori rms
+  (§IV B, §V).
+
+These rankings and that of Valencia et al. (2026, table above) stand
+side by side: Valencia et al. place DIAD slightly below
+approximate and discrete direct deconvolution a priori, against the
+*total* unresolved stress on the LES grid at filter-to-grid ratios 2 and
+4, while Zhang et al. (2022b) rank it first against the filtered-DNS
+subgrid stress and in LES, and Zhang et al. (2022d, §I) cite that result.
+
 **Both tests on the same filter widths.** Inagaki & Kobayashi (2023)
 report an a priori and an a posteriori result for channel flow at
 $Re_\tau=400$. A priori, with a "medium" filter ($\Delta x^+=52.4$,
@@ -884,6 +966,27 @@ point moves from $x_R/h=5.42$ (base model) to 4.10, against 4.50 in DNS
 conditions, the RANS equations can suppress rather than amplify errors in
 the closure prediction" (§V). This is one geometry family, tested by
 interpolation in the steepness factor.
+
+**A priori subgrid production against a posteriori total dissipation.**
+[Cao et al. (2022b)](/sources/cao-2022-c.md) compare a volume average
+computed a priori with one inferred a posteriori, in the compressible
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at Mach 0.1,
+$Re=1600$. A priori, box-filtered $1024^3$ DNS (two cells coarsened into
+one per direction) gives the mean subgrid production
+$\langle\Pi\rangle$, with forward and backward transfer coexisting
+pointwise, and a mean far below the solenoidal viscous dissipation
+(§IV B, Table I, Figs. 5–6). A posteriori, $256^3$ LES with a
+fourth-order gas-kinetic scheme give the total subgrid dissipation as the
+residual $-\mathrm dE_k/\mathrm dt$ minus the physical dissipation, the
+modelled and numerical parts together (§IV C, Eq. 22, Table II; see
+[implicit LES](/definitions/implicit-les.md)). The authors state that
+the a posteriori value exceeds the a priori one except in the late decay
+($t=15$), and read the comparison as numerical dissipation already
+sufficient for this flow, so that an explicit eddy viscosity adds
+dissipation that is not needed (§IV B–C, §V). The a priori number is a
+filtered-DNS transfer at the a priori filter width (Eq. 18), the a
+posteriori one a residual of the LES energy budget (Eq. 22). See
+Qualifications for how the printed statements fit the tables.
 
 ## Mechanisms named by the sources
 
@@ -1239,6 +1342,28 @@ priori, obtaining fields that are discontinuous at element interfaces; see
   network (§4), whatever filters the network was trained on; Table 2
   lists ten of the eighteen networks of Table 1, while the text speaks of
   "all" networks.
+- **Cao et al. (2022b): text against tables.** The abstract and §IV B
+  call the solenoidal dissipation "approximately 20 times larger" than the
+  a priori subgrid production; Table I gives ratios of about 68, 32, 22
+  and 35 at $t=2.5$, 5, 10, 15 *(compiler check, not in the sources)*.
+  §IV C states that the a posteriori total subgrid dissipation exceeds the
+  a priori production "except for the late decaying stage at $t=15$";
+  at $t=15$ Table II gives $2.5\times10^{-4}$ (static Smagorinsky) and
+  $1.8\times10^{-4}$ (Vreman), both above the a priori
+  $1.3\times10^{-4}$, so the exception holds for implicit LES
+  ($1.8\times10^{-5}$) and the dynamic model ($9.4\times10^{-5}$) only
+  *(compiler check, not in the sources)*. The abstract calls the a priori
+  quantity the "ensemble filtered SGS dissipation rate", §IV B the
+  "filtered SGS production term".
+- **Zhang et al. (2022b), Table II against text.** §IV A calls the
+  density–temperature term at $M_t=0.8$ "two orders of magnitude higher"
+  than at $M_t=0.4$; Table II prints 0.11 and 0.0060, a factor of about
+  18 *(compiler check, not in the sources)*. The case-2 turbulent Mach
+  number is 0.79 in Tables I–II and 0.80 in Table III.
+- **Wang et al. (2022), two tables.** The neighbour coefficients of the
+  19-term network are printed as $\mp1.6\times10^{-2}$ in Table I and as
+  $\mp0.0016$ in Table II; the text's statement that the local
+  coefficient (0.18) is "one order larger" matches Table I.
 
 # Citations
 
@@ -1306,3 +1431,10 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §3–4, Eqs. 29–32, Table 2 (a posteriori cross-validation); §4.2, Fig. 7.
 - [Brenner et al. (2022)](/sources/brenner-2022.md) — §3.5, Fig. 13 (mean velocity improved, stress–strain alignment not).
 - [Svärd (2022)](/sources/svard-2022.md) — §1, §6 (filtering "a priori" against "a posteriori", in passing).
+- [Shan et al. (2023)](/sources/shan-2023.md) — §III.D–E, Figs. 12–13 (a priori scores for hyperparameters only; data mix chosen a posteriori).
+- [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §IV (enrichment assessed only in running LES, in passing).
+- [Wang et al. (2022)](/sources/wang-2022-j.md) — Eqs. 9–10, Tables I–II (a priori metrics and correlations); §IV–V, Figs. 2–16, Table V (a posteriori in isotropic turbulence and a temporal mixing layer).
+- [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — Eqs. 35–36, Tables I–II, Figs. 1–3 (a priori); §IV B, Figs. 5–23 (a posteriori).
+- [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §I; Eqs. 37–38, Tables IV–V, Figs. 1–2 (a priori); §IV B, Figs. 3–18; §V.
+- [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.4 (a priori success, a posteriori instability of learned reacting-flow closures); §6.
+- [Cao et al. (2022b)](/sources/cao-2022-c.md) — §IV B, Eqs. 17–18, Table I, Figs. 5–6 (a priori production); §IV C, Eqs. 20–22, Table II (a posteriori total subgrid dissipation); §V.

@@ -5,7 +5,7 @@ description: "The JAXA Standard Model, a half-span civil transport in landing co
 status: established
 aliases: [JSM, JAXA high-lift model, HLPW3 JSM]
 tags: [benchmark, wmles, separated-flow, gpu, software]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-27T20:38:00Z
 ---
 
 # JAXA Standard Model high-lift configuration
@@ -116,6 +116,31 @@ $Re_c^{4/3}$, and conclude that WMLES of
 high-lift aircraft is "on the threshold of readiness for industrial use"
 (§4–5). See [grid-point requirements](/results/les-grid-point-requirements.md).
 
+## Industrial assessment
+
+[Mani & Dorgan (2023)](/sources/mani-2023.md), an industrial review of
+aerospace CFD, use the JSM as their example of where RANS stops and
+wall-modelled LES starts (§4.5.2, Fig. 12). They reproduce the HLPW3 RANS
+lift curves of the JSM with nacelle and pylon (Fig. 12a, from Slotnick
+et al. 2017) and read the workshop results as indicating that RANS "may
+not be adequate" near and after stall, some models and codes missing stall
+dramatically. Against these they reproduce the WMLES of Goc et al. (2020)
+on 36 million cells without and 42 million cells with the nacelle, compared
+with the JAXA data and the experimental repeatability band (Fig. 12b): the
+WMLES predicts the abrupt lift break but over-predicts the lift at lower
+angles of attack. A second figure (Fig. 6, from Lehmkuhl et al. 2019 and
+Goc et al. 2021) shows HLPW3 RANS lift curves and WMLES of Alya (10 and 65
+million degrees of freedom) and CharLES (12 and 35 million) for "a
+high-lift configuration" of the workshop that the caption does not name;
+the authors credit Alya with an accurate pre- and post-stall lift there. Their conclusion for
+industrial use is that WMLES still needs demonstrated mesh-independent
+quantities of interest within wind-tunnel uncertainty and an automated
+choice of the wall-model exchange location (the matching height
+$h_{\mathrm{wm}}$ of [wall-modelled LES](/methods/wall-modelled-les.md)),
+and that establishing the validity and limitations of a new code "takes
+multiple years and multiple engineers", which slows its replacement of an
+established one (§4.1.2, §4.5.2).
+
 ## Qualifications
 
 - The caption of Table 2 places the Alya grid sequence, including the
@@ -137,3 +162,4 @@ high-lift aircraft is "on the threshold of readiness for industrial use"
 # Citations
 
 - [Goc et al. (2021)](/sources/goc-2021.md) — §1–5, Eqs. (2.1)–(2.6), Tables 1–2, Figs. 1–15.
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.1.2, Fig. 6; §4.5.2, Fig. 12 (reproduced results of HLPW3 and of Goc et al. 2020).

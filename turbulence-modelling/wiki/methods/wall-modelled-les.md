@@ -5,7 +5,7 @@ description: "LES that resolves the outer-layer eddies and replaces the near-wal
 status: established
 aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions, IBMLES, immersed boundary-modelled LES]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-27T21:09:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -205,6 +205,31 @@ resolution and significant at WMLES resolution (§II.B). The peaks at
 element boundaries that the jumps leave in their Reynolds-stress profiles
 are "similar to the results in Gillyns et al." (§III.C), who report the same
 spikes in the same code (below).
+
+**Choosing the condition for an implicit LES.** [Huang et al. (2022c)](/sources/huang-2022-c.md)
+(§I, Eq. 6) classify wall-model conditions as Dirichlet (a modelled slip
+velocity), Neumann (the modelled stress $\rho u_\tau^2$) and Robin (the
+[slip wall](/methods/slip-wall-model.md)), and choose the Neumann type for a
+[spectral-vanishing-viscosity](/methods/spectral-vanishing-viscosity.md)
+[implicit LES](/definitions/implicit-les.md) in the spectral/hp code
+[Nektar++](/software/nektar-plus-plus.md): with the velocity-correction
+splitting scheme the Helmholtz solves keep a constant viscosity, and no
+mixing-length eddy viscosity has to enter the equations at the interface.
+Eddy-viscosity-type corrections of the wall layer (the dynamic eddy
+viscosity of Cabot & Moin, the constrained Smagorinsky coefficient of Wu &
+Meyers, as cited) are "not applicable to the iLES", which has no model
+coefficient to modify. The matching height is free: the velocity is
+evaluated anywhere inside an element from its high-order expansion (§II C,
+Eqs. 15–16); they use the top of the first element. The near-wall rms
+fluctuations and shear stress show a "parabolic" error around the matching
+interface, which they attribute to the steep wall gradient that the
+Neumann condition creates, and they cite Bae & Lozano-Durán for the view
+that a Dirichlet condition with eddy-viscosity augmentation "may perform
+better" near the wall (§III B), the comparison Mukha et al. also cite;
+it is not tested. They claim the first wall model for SVV implicit LES in a
+spectral/hp element method, and state that the Nek5000 framework of Pal et
+al., as cited, suits only conventional implicit LES (§I); results under
+Demonstrations.
 
 On non-body-fitted Cartesian grids the stress reaches the LES through an
 [immersed boundary](/methods/immersed-boundary-method.md): Cai et al. (2022,
@@ -622,6 +647,11 @@ same under-resolved first cells.
   $\Delta x^+=9$ but under-predicts it by more than 12 % at $\Delta x^+=18$, and the authors
   conclude it "cannot be used alone in the context of WMLES"
   ([Vicente Cruz & Lamballais 2023](/sources/vicentecruz-2023.md), §7.4).
+  With a wall model, Huang et al. (2022c, §III B) couple a log-law wall
+  stress to SVV implicit LES and report channel mean velocities within
+  5.4 % of DNS up to $Re_\tau=2000$ on $\Delta x^+=175$ (Demonstrations);
+  the set-ups differ (pipe without wall model against channel with a
+  Neumann wall-stress coupling).
 - **No wall model inside a jet nozzle.** [Ahn et al. (2023)](/sources/ahn-2023.md)
   (§III) run [implicit LES](/definitions/implicit-les.md) of twin square
   supersonic jets with the nozzle interior meshed at a first cell of
@@ -782,6 +812,43 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
   2000 CPU cores, 48 min on 96 V100 GPUs), comparable to a steady RANS run of
   the workshop; the authors judge WMLES of high-lift aircraft "on the threshold
   of readiness for industrial use" (§4–5).
+- **High-lift configurations in an industrial review** ([Mani & Dorgan 2023](/sources/mani-2023.md),
+  §4.1.2, §4.5.2, Figs. 6, 12; reproduced results). On the HiLiftPW-3
+  configuration the Alya finite-element WMLES at 10 M and 65 M degrees of
+  freedom and the CharLES finite-volume WMLES at 12 M and 35 M predict pre-
+  and post-stall lift (Lehmkuhl et al. 2019, as cited), where RANS
+  submissions "may not be adequate" near and after stall; on the
+  [JAXA Standard Model](/benchmarks/jaxa-standard-model.md) the WMLES of Goc
+  et al. on 36 M (nacelle off) and 42 M (nacelle on) cells captures the
+  abrupt lift break but over-predicts $C_L$ at lower angles of attack. The
+  review calls WMLES "a hybrid approach in its own right", the LES
+  counterpart of RANS wall functions pushed into the boundary layer, and
+  sees it as the promising route to stall prediction (see
+  [hybrid RANS/LES](/definitions/hybrid-rans-les.md)). It adds that a new
+  code needs multiple years and engineers of validation before industry
+  adopts it, an effort that Alya would still need despite its result
+  (§4.1.2).
+- **Wall-modelled implicit LES of channel flow** (Huang et al. 2022c,
+  §III, Table I): Neumann log-law wall model in SVV implicit LES on one
+  $12\times6\times10$-element mesh at "polynomial order $N_p=7$" as printed,
+  matching at $0.224\delta$, $Re_\tau=550$, 950 and 2000 against DNS: mean
+  velocity "almost not distinguishable" at 550 and over-predicted by at most
+  2 % and 5.4 % at the higher two; Reichardt's law instead of the log law
+  and a time-averaged instead of an instantaneous matching velocity change
+  little; at similar resolution fewer, higher-order elements beat more,
+  lower-order ones; the run is "as high as seven times" cheaper than
+  wall-resolved SVV implicit LES at 550 (no timing data). Details on
+  [turbulent channel flow](/benchmarks/turbulent-channel-flow.md) and the
+  [equilibrium wall model](/methods/equilibrium-wall-model.md).
+- **Scramjet combustor** ([Fureby & Nilsson 2023](/sources/fureby-2023.md),
+  §5): the finite-rate-chemistry LES of the Michigan dual-mode ramjet uses
+  "a no-slip subgrid wall-model" at the top and bottom walls, citing earlier
+  work, with no details, wall units or matching height printed.
+- **Periodic hill reference** ([Li et al. 2022](/sources/li-2022-k.md),
+  §III B): the WMLES of Balakumar et al., as cited ($128\times128\times72$,
+  Park–Moin non-equilibrium model, dynamic Smagorinsky), serves as one of
+  the references of a hybrid RANS/LES; see
+  [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md).
 - **Wing–body juncture** (Lozano-Durán et al. 2022): the juncture flow at
   $Re=2.4\times10^6$ on the crank chord, eight grids from 6 M to 174 M cells,
   13–398 thousand core-hours.
@@ -1044,6 +1111,15 @@ transfer, particle deposition); and confidence without validation data, for
 which they call for "fully dynamic wall models" and quantified wall-model
 errors.
 
+The industrial review of Mani & Dorgan (2023, §4.5.2) names two needs before
+WMLES enters routine use: a demonstration of mesh-independent quantities of
+interest within wind-tunnel uncertainty, and automation or elimination of
+the choice of the LES/wall-model exchange location, the matching-height
+problem of Bose & Park above. Huang et al. (2022c, §IV) leave
+non-equilibrium flows (adverse pressure gradient, separation),
+compressible thermal effects and the near-interface stresses open for their
+implicit-LES coupling.
+
 ## Qualifications
 
 - Heinz (2020, §3.1) states, citing the literature, that adequate
@@ -1155,3 +1231,7 @@ errors.
 - [Liu et al. (2022b)](/sources/liu-2022-g.md) — §4.
 - [De Vanna et al. (2022)](/sources/devanna-2022.md) — §1; §2.2, Eqs. (6)–(7); §3.1–3.2, Eqs. (8)–(9); §4.1–4.7, Table 1, Figs. 3–15; §5.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §2.2–2.6; §3.1–3.4, Tables 5–15, Figs. 12–27; §4.
+- [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I, Eq. (6); §II C, Eqs. (14)–(16), (20); §III A–E, Table I, Figs. 3–9; §IV.
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.1.2, Fig. 6; §4.5.2, Fig. 12 (review; reproduced results).
+- [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §5 (wall treatment).
+- [Li et al. (2022)](/sources/li-2022-k.md) — §III B (periodic-hill WMLES reference).

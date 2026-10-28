@@ -5,7 +5,7 @@ description: "A neural network maps the coordinates to the mean velocity, pressu
 status: established
 aliases: [PINN, PINNs, physics-informed neural network, physics-informed RANS solver]
 tags: [data-driven, neural-network, rans, boundary-layer]
-timestamp: 2026-10-27T15:48:00Z
+timestamp: 2026-10-27T20:36:00Z
 ---
 
 # Physics-informed neural networks for RANS
@@ -158,6 +158,30 @@ symbolic-regression and model-consistent approaches (see
 [model-consistent training](/methods/model-consistent-training.md)). The
 review states the verdict without a test.
 
+**PINNs as one form of knowledge-guided learning (Ihme et al. 2022).**
+[Ihme et al. (2022)](/sources/ihme-2022.md) (§3.5, §3.5.1, Fig. 25,
+Eqs. 64–66) classify the ways prior knowledge enters a supervised model by
+where it is inserted: the loss function, the data (feature selection and
+transformation), the architecture (the
+[tensor-basis neural network](/methods/tensor-basis-neural-network.md),
+neural ODEs, divergence-free generative networks), or the output (the
+trained model embedded in a conventional solver). A constraint
+$\mathcal C(\boldsymbol\zeta,\boldsymbol\theta)=0$ (page-local) is in
+principle imposed by constrained minimization of the loss, and in
+practice relaxed into a penalty,
+
+$$\min_{\boldsymbol\theta}\ \mathcal L(\boldsymbol\theta)\quad\text{s.t.}\quad\mathcal C=0\qquad\longrightarrow\qquad\min_{\boldsymbol\theta}\ \mathcal L(\boldsymbol\theta)+\lambda_{\mathcal C}\,\mathcal C(\boldsymbol\zeta,\boldsymbol\theta),$$
+
+with $\lambda_{\mathcal C}$ (page-local) a weight, so that the constraint
+holds only weakly. PINNs are their flow-physics example of the loss route.
+The authors prefer the name "knowledge-guided" to "physics-informed" for
+combustion, which draws on disciplines other than physics (§1.3), and
+hold that purely data-driven models "are not expected to be truly
+predictive" (§1.3). Their turbulence example of a physics-informed loss is
+the continuity term of a super-resolution GAN for subgrid stresses (see
+[super-resolution SGS models](/methods/super-resolution-sgs-model.md)).
+The review states the classification; it runs no PINN.
+
 ## A label-free physics-informed loss outside turbulence (Ruggeri et al. 2022)
 
 Ruggeri et al. (2022, App. C, Fig. 10, Table XI) train a network without
@@ -250,3 +274,4 @@ rollout diverges (App. A). Details and results are on
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3 (PINN-based LES wall modelling cited).
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §1 (PINNs mentioned among machine-learning work on Burgers' equation; ref. [29] as printed); §3 (energy-conserving architecture).
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.2 (PINNs yield no predictive closures for new configurations).
+- [Ihme et al. (2022)](/sources/ihme-2022.md) — §1.3 (knowledge-guided against purely data-driven); §3.5, §3.5.1, Fig. 25, Eqs. 64–66 (four insertion points of prior knowledge; constraint relaxed to a penalty; PINNs as the example).

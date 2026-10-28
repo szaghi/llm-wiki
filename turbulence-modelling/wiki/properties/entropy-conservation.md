@@ -5,7 +5,7 @@ description: "A discretization is entropy conservative when its convective terms
 status: established
 aliases: [EC, entropy-conservative scheme, entropy-conserving flux, entropy-stable discretization, entropy stability, Ismail–Roe flux, Chandrashekar flux, EC-TP scheme, nonlinear stability, entropy-stable RANS]
 tags: [entropy-stable, kinetic-energy-preserving, compressible, dg, dns, numerical-dissipation]
-timestamp: 2026-10-27T15:48:00Z
+timestamp: 2026-10-27T21:10:00Z
 ---
 
 # Entropy conservation and entropy stability
@@ -403,6 +403,15 @@ entropy-stable schemes among the remedies for the nonlinear instability of
 under-resolved high-order simulation, "generally challenging and
 computationally expensive", and use modal filtering instead
 ([explicit modal filtering](/methods/explicit-modal-filtering.md)).
+[Mani & Dorgan (2023)](/sources/mani-2023.md), §4.4, an industrial review
+of aerospace CFD, list kinetic-energy-preserving fluxes (Honein & Moin,
+Jameson) and a "kinetic energy- and entropy-preserving (KEEP) algorithm",
+citing Chandrashekar (2013) and Kuya & Kawai (2020) for it, among the
+reduced-dissipation discretizations that scale-resolving simulation
+needs, and cite the [CharLES](/software/charles.md) wall-modelled LES of
+Goc et al. (2021) with a KEEP scheme, which predicted the maximum lift of
+the High-Lift Prediction Workshop configuration (see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
 
 **Entropy behaviour of a non-EC scheme.** In the real-gas mixing layer of
 [Bernades et al. (2023)](/sources/bernades-2023.md), §4.2, the
@@ -490,6 +499,10 @@ global entropy although it is not entropy preserving.
   *(compiler check, not in the sources)*. The abstract announces a
   turbulent Rayleigh–Taylor test that the paper does not run (the third
   test is a Taylor–Green vortex).
+- **"KEEP" in Mani & Dorgan (2023).** The review groups under the KEEP
+  label Chandrashekar (2013), whose cited title is "Kinetic energy
+  preserving and entropy stable finite volume schemes", with Kuya & Kawai
+  (2020). The review states no property of its own.
 - Printed slips in Aiello et al. (2026): the sample spacing of the
   statistics is printed "$\Delta t_s=1.5U_b/h$" (§3.3), which has the
   dimension of an inverse time *(compiler check, not in the sources)*; the
@@ -511,3 +524,4 @@ global entropy although it is not entropy preserving.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.3 (KE/EP central component of the blended flux).
 - [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §1 (entropy-stable schemes as a costly alternative to filtering).
 - [Lodares et al. (2022)](/sources/lodares-2022.md) — §1; §2, Eqs. (13)–(17) (compressible SA, negative variant, clipped diffusion); §3.1–3.2, Eqs. (29)–(50) (SA entropy, split analysis); §4.3–4.5, Eqs. (68)–(77) (two-point flux, interface flux, walls); §5, Eqs. (83)–(118) (semi-discrete entropy laws); §7.1–7.2, Figs. 3–6.
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.4 (KEP and KEEP fluxes for scale-resolving simulation, cited; CharLES KEEP at high lift, cited).

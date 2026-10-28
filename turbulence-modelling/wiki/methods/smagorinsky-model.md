@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-27T15:47:00Z
+timestamp: 2026-10-27T21:09:00Z
 ---
 
 # Smagorinsky model
@@ -76,6 +76,11 @@ are variants of the same eddy-viscosity idea.
 | 0.1 | finite-difference reference LES of a channel at $Re_\tau=180$ on a coarse $32\times64\times32$ mesh, no wall damping mentioned | [Chen et al. (2022)](/sources/chen-2022-g.md), §4.1, Eq. (26) |
 | 0.1, printed as the coefficient $C_{\mathrm{sm}}$ that multiplies $\Delta^2$ in $\mu_t=\bar\rho C_{\mathrm{sm}}\Delta^2\lvert\tilde S\rvert$ (so $C_s^2$ in the registry form); with $Pr_t=0.9$ and a subgrid Schmidt number 0.35 | constant-coefficient comparison in a converging Richtmyer–Meshkov mixing layer | [Qi et al. (2022)](/sources/qi-2022-b.md), §2, Eq. (2.13); §4.3 |
 | not printed; written $\nu_t\mathbb S=(c_s\Delta^2)\lvert\bar{\mathbb S}\rvert\bar{\mathbb S}$ | cited for a filtered Burgers prototype | [Svärd (2022)](/sources/svard-2022.md), §2.2, Eq. (8) |
+| 0.1, $\Delta$ the cube root of the cell volume, $\mu_t=\bar\rho(C_s\Delta)^2\lvert\bar S\rvert$ entering the BGK collision time | gas-kinetic LES of the compressible Taylor–Green vortex, against implicit LES | [Cao et al. (2022b)](/sources/cao-2022-c.md), §III A, Eq. (9) |
+| 0.1, $\Delta$ the cell size | finite-volume LES of forced isotropic turbulence carrying a subgrid-velocity enrichment | [Hausmann et al. (2022)](/sources/hausmann-2022.md), §III B, Eqs. (40)–(41) |
+| 0.1 "in the present wall-bounded turbulent flows", $\Delta$ the cube root of the cell volume, no wall damping mentioned | LES of the 30P30N three-element airfoil | [Wu et al. (2023)](/sources/wu-2023-b.md), §2.1, Eq. (8) |
+| 0.16 far from the wall ($C_{\mathrm{MT}}$ in the damping below) | LES of a neutral atmospheric boundary layer over a hill, with Mason–Thomson wall damping | [Zhang et al. (2022e)](/sources/zhang-2022-i.md), §II A–B, Eqs. (4)–(6) |
+| 0.18, calibration value giving $C_{\mathrm{DES}}=0.3$ and 0.5 | LES branch of a Reynolds-stress-model IDDES, before making it dynamic | [Li et al. (2022)](/sources/li-2022-k.md), §III A |
 
 Wang et al. (2021, §3.1), citing earlier work, relate the coefficient to
 the Kolmogorov constant by $C_s\approx C_\Delta^{-1}(1.5C_K)^{-3/4}$
@@ -151,6 +156,13 @@ The filtered-DNS value is fitted to the LES residual of one filtered
 trajectory. It lies within 0.01 of the 0.18 that Vicente Cruz & Lamballais
 (2023) derive from Lilly's value (see the table above) *(compiler check,
 not in the sources)*.
+
+**Attribution.** Most sources cite Smagorinsky (1963), but
+[Cao et al. (2022b)](/sources/cao-2022-c.md) (§III A) cite
+Manabe, Smagorinsky & Strickler (1965) for the model, and
+[Fureby & Nilsson (2023)](/sources/fureby-2023.md) (§3.2) cite Erlebacher
+et al. (1992), a compressible extension, for "SMG" in their list of
+candidate models; the formula is the same.
 
 ## Filter width in element methods
 
@@ -321,6 +333,16 @@ $\nu_t=(C_sf_S\Delta)^2\lvert\bar S\rvert$ with
 $f_S=1-\exp(-y^+/A^+)$, $A^+=25$; in §IV E (Eq. 20) the author switches to
 $f_S=\sqrt{1-\exp[-(y^+/A^+)^3]}$, "considering the correct near-wall
 limiting behavior".
+- **Mason–Thomson wall damping.** In the rough-wall atmospheric LES of
+  [Zhang et al. (2022e)](/sources/zhang-2022-i.md) (§II A, Eqs. 4–6) the
+  length $C_s\Delta$ is blended with the mixing length of the wall,
+  $(C_s\Delta)^{-n}=(C_{\mathrm{MT}}\Delta)^{-n}+[\kappa(y+y_{0,\mathrm r})]^{-n}$, with
+  $C_{\mathrm{MT}}=0.16$ (the source's $C_0$), $n=2$ and $y_{0,\mathrm r}$ the roughness
+  length ($C_{\mathrm{MT}}$, $n$, $y_{0,\mathrm r}$ page-local; after Mason & Thomson,
+  cited); the filter width is not printed. With a log-law
+  [equilibrium wall model](/methods/equilibrium-wall-model.md) it under-predicts
+  the turbulence intensity in the recirculating wake of a steep hill, which
+  the authors attribute to the wall model (§III A).
 - **Coupling through a kinetic relaxation time.** In the gas-kinetic LES
   of Zhao et al. (2021, §III, Eqs. 12–14) the Smagorinsky viscosity
   $\mu_t=\bar\rho(C_s\Delta)^2\lvert\bar S\rvert$, $\lvert\bar S\rvert$ with
@@ -749,8 +771,52 @@ fixed-width LES (see [implicit LES](/definitions/implicit-les.md)).
 Smagorinsky model as the first LES model used with lattice Boltzmann
 methods (Hou et al., cited).
 
+**Static Smagorinsky against implicit LES and hybrid models.**
+
+- In the gas-kinetic Taylor–Green vortex ($M=0.1$, $Re=1600$, $256^3$),
+  static Smagorinsky is the explicit model farthest from the $1024^3$ DNS
+  in enstrophy dissipation; its total subgrid dissipation, measured a
+  posteriori as $-\mathrm dE_k/\mathrm dt$ minus the resolved physical
+  dissipation, is "approximately two times larger" than that of implicit
+  LES, because the eddy viscosity always adds positive dissipation to that
+  of the scheme; the ratios of the Table II values are 1.9, 2.5 and 2.1 at
+  $t=2.5$, 5 and 10 and about 14 at $t=15$ *(compiler check, not in the
+  sources)*; on $384^3$ it only matches
+  implicit LES on $256^3$ (Cao et al. 2022b, §IV A, §IV C, App. B; see
+  [implicit LES](/definitions/implicit-les.md)).
+- On the 30P30N airfoil at $Re=1.71\times10^6$ (27 million cells, fourth-order
+  weighted compact scheme) Smagorinsky LES under-predicts the lift by 6.7%,
+  against −0.4% for the self-adaptive hybrid model and −19.8% for SST-IDDES;
+  its slat shear layer becomes unstable earlier than with IDDES and its
+  main-element separation bubble is larger than with the hybrid model
+  (Wu et al. 2023, §3.4, Table 2, Figs. 17, 23; see
+  [30P30N airfoil](/benchmarks/30p30n-high-lift-airfoil.md) and
+  [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+- Hausmann et al. (2022, §III A) set Smagorinsky aside for their
+  shear-flow test as inaccurate in shear-dominated flows (citing Lévêque et
+  al.) and use the [Vreman model](/methods/vreman-model.md) there.
+- Li et al. (2022, §I), citing Germano et al., state that a Smagorinsky
+  dissipation calibrated on decaying isotropic turbulence is over-estimated
+  in mean shear and damps large-scale fluctuations; it motivates their
+  [dynamic](/methods/dynamic-procedure.md) hybrid constant.
+- As the comparator of a particle-laden channel at $Re=57\,000$ on
+  $36\times12\times12$ cells, static Smagorinsky LES is inaccurate, which
+  [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) (§3.2.2, Fig. 28)
+  attribute to the unresolved boundary layer; see
+  [pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md).
+- The dynamic version is the baseline of three compressible and
+  incompressible a posteriori comparisons with structural models, all of
+  which find it over-dissipative ([Wang et al. 2022](/sources/wang-2022-j.md);
+  [Zhang et al. 2022b](/sources/zhang-2022-f.md);
+  [Zhang et al. 2022d](/sources/zhang-2022-h.md); see the
+  [dynamic procedure](/methods/dynamic-procedure.md)).
+
 ## Qualifications
 
+- Hausmann et al. (2022, Eq. 40) print $\nu_t=(C_s\Delta)^2\lvert\bar S\rvert^2$
+  (their $\lvert\tilde S_{ij}\rvert^2$), which has the dimension of a
+  squared velocity, not of a viscosity *(compiler check, not in the
+  sources)*.
 - Cheylan et al. (2023, Eq. 37) print the viscosity as
   $\nu_t=(C_S^2\Delta x)^2(\lvert S\rvert-\mathcal S)$, with $C_S$ called "the
   Smagorinsky constant" and $\mathcal S$ the time-filtered strain norm;
@@ -856,3 +922,13 @@ methods (Hou et al., cited).
 - [Qi et al. (2022)](/sources/qi-2022-b.md) — §2, Eqs. (2.11)–(2.15); §3.2, Eq. (3.21); §4.3, Fig. 23.
 - [Svärd (2022)](/sources/svard-2022.md) — §2.2, Eq. (8); §3.1.
 - [Simonis et al. (2022)](/sources/simonis-2022.md) — §1.
+- [Cao et al. (2022b)](/sources/cao-2022-c.md) — §III A, Eq. (9); §IV A, Figs. 2–3; §IV C, Fig. 8, Table II; App. B.
+- [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §III A–B, Eqs. (40)–(41).
+- [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.1, Eq. (8); §3.4, Table 2.
+- [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A–B, Eqs. (4)–(6); §III A.
+- [Li et al. (2022)](/sources/li-2022-k.md) — §I; §III A.
+- [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.2.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §3.2.2, Fig. 28.
+- [Wang et al. (2022)](/sources/wang-2022-j.md) — §II B; §IV–V.
+- [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — App.; §IV B.
+- [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — Eqs. (33)–(36); §IV B.

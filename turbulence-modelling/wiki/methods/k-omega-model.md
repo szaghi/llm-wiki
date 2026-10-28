@@ -5,7 +5,7 @@ description: "Wilcox's two-equation k-ω eddy-viscosity model and its unblended 
 status: established
 aliases: [k-omega model, Wilcox k-ω, Wilcox 1998, Wilcox 2006, Wilcox 07, k-ω 2006, TNT, turbulent/non-turbulent k-ω, k-log-ω, k-ln ω]
 tags: [rans, eddy-viscosity, dg, boundary-layer]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-27T21:07:00Z
 ---
 
 # Wilcox k-ω model
@@ -68,6 +68,7 @@ and the gradient-squared term *(compiler check, not in the sources)*.
 | Kok TNT | 2/3 | 0.5 | 0.09 | 0.075 | $\beta/\beta^*-\sigma_\omega\kappa^2/\sqrt{\beta^*}$, $\kappa=0.41$ | 0 if $\nabla k\cdot\nabla\omega<0$, 0.5 if $>0$ | Elzaabalawy et al. (2023), §3.1 |
 | Wilcox (2006) | 3/5 | 1/2 | 9/100 | 0.0708 | 13/25 | 1/8 (with $\max(\cdot,0)$) | Ghidoni et al. (2026), §2 |
 | Wilcox (2006) | 0.6 | 0.5 | 0.09 | 0.0708 | 0.52 | 1/8 (with $\max(\cdot,0)$) | Tomboulides et al. (2025), §2 |
+| inner (Wilcox) set of BSL | 0.5 | 0.5 | 0.09 | 0.075 | 0.553 | blended cross diffusion, $2(1-F_1)\sigma_{\omega2}$ | Wu et al. (2023), §2.1.1, Table 1 |
 
 Ghidoni et al. also print $\alpha^*=1$, so $\mu_t=\rho\bar k/\omega$ (§2).
 Tomboulides et al. (2025) print the same Wilcox (2006) set in the divisor
@@ -83,6 +84,15 @@ The two sources agree on every constant once the convention is translated
 BSL and SST, the blended members of the family, are on the
 [SST page](/methods/k-omega-sst-model.md); in Elzaabalawy et al.'s notation
 their cross diffusion is $\sigma_d=2\sigma_{\omega2}(1-F_1)$ (§3.2).
+Wu et al. (2023) state that set 1 of the BSL blend is the Wilcox
+$k$-$\omega$ model and set 2 the $k$-$\varepsilon$ model, and tabulate the
+inner set as in the last row; the TNT expression of the table
+(Elzaabalawy et al.) gives $\alpha=0.5532$ for $\beta=0.075$,
+$\beta^*=0.09$, $\sigma_\omega=0.5$, $\kappa=0.41$, against the 0.553 Wu et
+al. print, and their $\sigma_k=0.5$ equals the Wilcox (1998) value of the
+table *(compiler check, not in the sources)* ([Wu et al. (2023)](/sources/wu-2023-b.md), §2.1.1,
+Eq. 3, Table 1; they use BSL as the host of a hybrid, see the
+[SST page](/methods/k-omega-sst-model.md)).
 
 The TNT expression for $\alpha$ is the log-layer condition. It gives
 $\alpha=0.5532$ for TNT; with the Wilcox (1998) constants and $\kappa=0.41$
@@ -422,3 +432,4 @@ page for the integrators).
 - [Wang et al. (2013)](/sources/wang-2013.md) — §5.4 Table V Fig. 23.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1.
 - [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §2 Eqs. 1–8, §4, §5 Eq. 67, §6.1–6.2 Tables 9–12, §6.4 Table 17.
+- [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.1.1, Eq. 3, Table 1.

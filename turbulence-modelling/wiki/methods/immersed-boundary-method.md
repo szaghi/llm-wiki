@@ -5,7 +5,7 @@ description: "Immersed boundary methods impose walls on non-conforming grids by 
 status: established
 aliases: [IBM, moving Cartesian grid, volume penalization immersed boundary method, VP-IBM, fluid resistance, immersed boundary, ghost-point forcing, volume penalization, Brinkman penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing, volume-filtering immersed boundary method, VMIB, variational multiscale immersed boundary, weak Dirichlet immersed boundary, single ghost cell, IBMLES, immersed boundary-modelled LES, wall-slip model, slip-length model]
 tags: [immersed-boundary, wall-model, lattice-boltzmann, les, dns, rans]
-timestamp: 2026-10-27T15:53:00Z
+timestamp: 2026-10-27T20:40:00Z
 ---
 
 # Immersed boundary methods
@@ -36,7 +36,9 @@ the modelled quantity ([Rickard & Kasbaoui 2026](/sources/rickard-2026.md)),
 variational multiscale LES with weakly imposed no-slip on finite elements
 ([Kang & Masud 2022](/sources/kang-2022.md)), and wall-modelled LES of
 hypersonic boundary layers and shock interactions on a Cartesian
-finite-difference solver ([van Noordt et al. 2022](/sources/vannoordt-2022.md)). Three
+finite-difference solver ([van Noordt et al. 2022](/sources/vannoordt-2022.md)), and
+wall-modelled LES of wind-turbine wakes over two-dimensional hills on a
+pseudo-spectral grid ([Zhang et al. 2022e](/sources/zhang-2022-i.md)). Three
 sources report a less accurate near-wall field: the wall distance of the
 near-wall nodes varies along the surface and the method does not conserve
 fluxes across the immersed surface (Cai et al. 2022), a softly imposed
@@ -115,6 +117,28 @@ On a flat plate inclined to the lattice the forcing nodes form a
 staircase and the wall normal is not lattice-aligned, which the authors
 note makes wall-normal-gradient sensors harder to evaluate; the hybrid
 RANS/LES shielding still holds there (§4.1.2, Fig. 5).
+
+**Terrain in a pseudo-spectral LES (cited, not detailed).** Zhang et al.
+(2022e, §II A) represent two-dimensional $\cos^2$ hills (height 40 and
+20 mm, slopes 0.4 and 0.2) in the [LESGO](/software/lesgo.md) solver,
+pseudo-spectral in the horizontal directions, by the immersed boundary
+method of Chester, Meneveau & Parlange, which they cite, so that the
+Cartesian grid is left unchanged; the forcing and the wall treatment on
+the immersed terrain are not described. The flat bottom carries a
+rough-wall log-law stress computed from the velocity at the first grid
+point averaged by a filter twice the grid filter. On the steep hill the
+LES agrees overall with the wind-tunnel mean velocity of Cao & Tamura,
+including the reverse flow, but underpredicts the streamwise turbulence
+intensity in the lower hill wake at the downwind foot, which the authors
+attribute, citing Yang et al., to the classical (equilibrium) wall model
+in recirculating flow (§III A, Fig. 4); the grid study of App. A
+($192\times64\times97$ chosen) settles the bare-hill turbulence intensity
+from the second of four grids on. The rotor is an
+[actuator disk](/methods/actuator-line-model.md).
+[Stanly et al. (2022)](/sources/stanly-2022.md), whose solver MIRACLES
+carries an immersed boundary method in its name, model the turbine tower
+as an actuator line instead and name an immersed-boundary tower as future
+work (§2.1, §2.3, §6).
 
 **Mass source and momentum forcing (staggered finite volume).**
 Kim et al. (2024, §2.1, Eqs. 2.1–2.2) use the immersed boundary method of
@@ -1162,6 +1186,8 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
 - [Rismondo et al. (2025)](/sources/rismondo-2025.md) — introduction (IBM-based LES of rotor wakes by Posa et al. cited; body-fitted meshes used).
 - [D'Ayer et al. (2026)](/sources/dayer-2026.md) — HAL submitted manuscript hal-05075852v1: §1; §2.2 (spectral difference in JAGUAR); §2.3, Eqs. (11)–(15) (Brinkman penalization, error decomposition); §2.4, Eqs. (16)–(23) (stiffness limits, Strang splitting, exact penalization sub-steps); §3.1, Eqs. (24)–(26), Tables 1–2, Figs. 3–5 (cylinder at $Re_D=40$); §3.2, Eqs. (27)–(28), Table 3, Figs. 7–10 (rough minimal channel at $Re_\tau=400$); §4.
 - [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §1 (fixed against moving grids, fresh cells); §2.1, Eqs. (1)–(9) (moving-grid flux, Galilean transformation); §2.2, Eqs. (10)–(15), Table 1 (face-centre wall condition with wall velocity); §2.3, Eqs. (16)–(26) (high-order flux and its moving-grid correction); §3.1–3.2, Tables 2–3, Figs. 4–13 (NACA 0012, AGARD Case 3); §4, Tables 6–7, Figs. 17–19 (Caradonna–Tung rotor).
+- [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A (immersed-boundary terrain in LESGO, log-law wall stress); §III A, Fig. 4 (steep-hill validation, wall-model attribution); App. A, Table I, Fig. 22 (grid study).
+- [Stanly et al. (2022)](/sources/stanly-2022.md) — §2.1 (MIRACLES); §2.3 (tower as an actuator line instead of a body); §6 (immersed-boundary tower as future work).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §2.1, §3 (integral wall model and wall-modelled sharp immersed boundary, cited).
 - [Kang & Masud (2022)](/sources/kang-2022.md) — §2.2, Eqs. (5)–(9) (mixed form); §3.1–3.3, Eqs. (10)–(48), Table 1 (VMIB derivation, stabilization tensors, multiplier, interface terms, lemmas, ghost penalty); §3.4–3.5 (residual-based VMS LES); §4, Boxes 1–2 (algorithm, classification, quadrature); §5.1–5.3, Tables 3–5, Figs. 7–35 (cylinder, sphere, train).
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §2.3, Eqs. (8)–(24) (hybrid flux, single-ghost-cell WENO closure); §2.4, Eqs. (25)–(31) (irregular viscous stencils); §2.5, Eqs. (32)–(37) (wall model as flux); §2.6, Algorithm 1, Eqs. (38)–(42) (ray-based ghost filling); §2.7–2.8, Tables 1–2, Figs. 8–10 (MMS, pseudospectra); §3.1–3.4, Figs. 12–27; §4.

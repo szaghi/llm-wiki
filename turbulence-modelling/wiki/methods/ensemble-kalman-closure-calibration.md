@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Ensemble Kalman filter calibration of turbulence closures"
-description: "Derivative-free calibration of closure parameters from data with an ensemble of solver runs updated by a Kalman analysis; listed for RANS field inversion and used in LES to calibrate the dissipative coefficient of a gradient-plus-Smagorinsky mixed model against filtered-DNS energy spectra, with shifting and inflation for convergence."
+description: "Derivative-free calibration of closure parameters with an ensemble of solver runs updated by a Kalman analysis: a RANS field-inversion solver, an LES calibration of a mixed model's dissipative coefficient against filtered-DNS spectra, and set beside a metaheuristic calibration of Spalart–Allmaras coefficients against measured pressure."
 status: established
 aliases: [EnKF, ensemble Kalman filter, ensemble Kalman inversion, ensemble data assimilation, EnKF-MM, EnKF mixed model, EnKF-FM]
 tags: [data-driven, field-inversion, sgs-model, les, uncertainty-quantification]
-timestamp: 2026-10-27T15:46:00Z
+timestamp: 2026-10-27T21:12:00Z
 ---
 
 # Ensemble Kalman filter calibration of turbulence closures
@@ -68,6 +68,44 @@ posteriori calibration of an LES subgrid model inside the running LES (see
   for high-dimensional optimization; Brenner et al. (§1.1) set it against
   an adjoint whose cost does not grow with the number of parameters.
   Neither paper measures the cost of the ensemble in high dimension.
+- [Shan et al. (2023)](/sources/shan-2023.md) (§II.B) split data
+  assimilation for RANS into the solution of "high-order inverse
+  problems" (adjoint and ensemble Kalman methods) and the calibration of
+  turbulence-model parameters, and take the second route with a
+  population-based metaheuristic instead of a Kalman update (next
+  section).
+
+**A metaheuristic counterpart (Shan et al. 2023).** Shan et al. (§II.B,
+§II.D, Eq. 3, Fig. 4) calibrate all nine free coefficients of the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
+($c_{t3}$, $c_{t4}$, $c_{b1}$, $c_{b2}$, $\sigma$, $c_{v1}$, $\kappa$,
+$c_{w2}$, $c_{w3}$; $c_{w1}$ follows from the others) against measured
+surface pressure on wind-turbine airfoils, by minimizing the mean-square
+$C_p$ misfit over the $n$ measurement points,
+
+$$\min_{\boldsymbol\theta}\ \frac1n\sum_{i=1}^n\Big(C^{i}_{p,\mathrm m}(\boldsymbol\theta)-C^{i}_{p,\mathrm{exp}}\Big)^2,$$
+
+with teaching–learning-based optimization (TLBO), a population-based
+metaheuristic: a population of 20 parameter sets per generation, one
+RANS solve per member, each coefficient bounded at $\pm50\%$ of its
+standard value (§III.B). The calibrated model ("DA model") reduces the lift error at its own
+condition from 28.3%, 19.1%, 16.2% and 24.8% (standard SA) to 6.3%, 0.7%,
+7.2% and 0.2% for the four cases DA1–DA4 (S809 at $Re=2\times10^6$,
+$\alpha=12.2^\circ$ and $14.2^\circ$; S805 at $Re=10^6$, $12.2^\circ$ and
+$15.2^\circ$; Table 3), and for DA2 the $C_p$ error of the 10th generation is
+90% below the initial one, converging at the 15th (Fig. 7). The
+calibrated sets differ strongly between cases ($c_{v1}$ from 3.550 to
+7.295, $\kappa$ from 0.396 to 0.615; Table B1), and a set calibrated at
+one incidence loses accuracy over the lift curve: for S809 at
+$Re=2\times10^6$ the lift-curve error $e_R$ is 0.0835 with DA1 against
+0.1341 with SA, but attached-flow accuracy is lost, and at $Re=10^6$ DA1
+gives 0.1225 against 0.1200 (Fig. 11, §III.C). Shan et al. use these
+calibrated fields as training data for a neural-network closure (see
+[field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
+Several calibrated values equal a bound of the $\pm50\%$ box: $c_{b2}=0.311$
+(half of 0.622) in DA1, DA3 and DA4, $c_{v1}=3.550$ (half of 7.1) in DA1
+and DA4, $\kappa=0.615$ (1.5 times 0.41) in DA4 *(compiler check, not in
+the sources; the paper does not comment on it)*.
 
 **A gradient-based counterpart.** The two LES calibrations differ in
 target and filter, so their values are not comparable. Wang et al. (2023c)
@@ -222,3 +260,4 @@ pure gradient model, all compared with filtered DNS:
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §1 (ensemble Kalman methods named as alternative to variational assimilation).
 - [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §4, Eqs. 25–26, Table 4 (gradient-based learning of the Smagorinsky coefficient, ensemble assimilation cited as motivation).
 - [Brenner et al. (2022)](/sources/brenner-2022.md) — §1, §1.1 (parametric calibration, ensemble Kalman methods and the curse of dimensionality, nudging).
+- [Shan et al. (2023)](/sources/shan-2023.md) — §II.B, Eq. 3, §II.D, Fig. 4 (two data-assimilation routes; TLBO calibration of nine SA coefficients); §III.B–C, Tables 3, B1, Figs. 7, 11 (calibrated lift errors, case dependence of the coefficients).

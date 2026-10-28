@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Variational multiscale method"
-description: "The variational multiscale method splits the finite-element solution into resolved and fine scales and models the fine scales from the residual of the resolved ones; the sources read it as an implicit LES, budget the dissipation of each fine-scale term, flip the sign of an anti-dissipative one, and carry it to immersed boundaries."
+description: "The variational multiscale method splits the finite-element solution into resolved and fine scales and models the fine scales from the residual of the resolved ones; the sources read it as an implicit LES, budget each fine-scale term, flip an anti-dissipative one, carry it to immersed boundaries, and replace the residual model by off-line fine-scale DNS."
 status: established
-aliases: [VMS, residual-based VMS, residual-based variational multiscale method, RB-VMS, VMS-LES, residual-based LES, modified VMS, multiscale Smagorinsky model]
+aliases: [VMS, residual-based VMS, residual-based variational multiscale method, RB-VMS, VMS-LES, residual-based LES, modified VMS, multiscale Smagorinsky model, CG-VMSD]
 tags: [les, implicit-les, sgs-model, numerical-dissipation, immersed-boundary]
-timestamp: 2026-10-27T16:03:00Z
+timestamp: 2026-10-27T20:36:00Z
 ---
 
 # Variational multiscale method
@@ -207,6 +207,39 @@ scales from residuals:
   [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), most on $128^3$
   (§5, Figs. 15c–d).
 
+## Fine scales solved numerically, and other readings (inline)
+
+- **Fine scales from off-line DNS.** [Idelsohn et al. (2024)](/sources/idelsohn-2024.md)
+  (§1.4) frame their [pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md)
+  as "a variation of VMS" in which the fine-scale solution is computed
+  numerically instead of being approximated through Green functions or
+  residuals: the split $u_i=u^{>}_i+u^{<}_i$ takes the coarse part as the
+  piecewise-linear finite-element (or finite-volume) field, the fine part
+  is the DNS of a periodic representative volume element run off-line, and
+  the only fine-to-coarse term kept in the coarse equation is the averaged
+  fine-scale product $\rho\,u^{<}_iu^{<}_j$, the analogue of term III above
+  (§2.4–2.6). They also present the method as an off-line evolution of
+  FE² and as a reduced-order model (§1.4).
+- **Cost of explicit fine-scale fields.** [Hausmann et al. (2022)](/sources/hausmann-2022.md)
+  (§I) group VMS with multilevel methods that solve linearized equations
+  for the residual (subgrid) velocity, and set them aside as reconstructions
+  of the subgrid velocity because of their large overhead at high
+  resolution; their own [subgrid velocity enrichment](/methods/subgrid-velocity-enrichment.md)
+  solves a linearized subgrid equation in Fourier modes instead.
+- **High-order continuous Galerkin.** [Mani & Dorgan (2023)](/sources/mani-2023.md)
+  (§4.4, Fig. 4) report from Ursachi et al. (2020) that adaptive
+  continuous-Galerkin VMS with discontinuous subscales (CG-VMSD) at third
+  and fourth order needs an order of magnitude less computation time than
+  industry-standard second-order methods for the same accuracy (grids
+  adapted to a lift-coefficient error below $10^{-4}$ on a three-element
+  airfoil), provided curved high-order meshes are available; robust
+  adaptation, memory and shock capturing remain open (§4.4).
+- **Rotor wakes.** [Stanly et al. (2022)](/sources/stanly-2022.md)
+  (§5.3.1, Fig. 15) compare their actuator-line wake with a reference that
+  runs an [actuator line](/methods/actuator-line-model.md) inside a VMS
+  framework (Ravensbergen et al. 2020); the VMS formulation is cited, not
+  used.
+
 ## Qualifications
 
 - **One mesh per case.** The comparisons of Chen et al. (2022) use a single
@@ -239,3 +272,7 @@ scales from residuals:
 - [Lederer et al. (2023)](/sources/lederer-2023.md) — §3.1, Eqs. (10)–(14); §4.1, Table 2.
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — §1, Fig. 3; App. B, Eq. (B.1).
 - [Volpiani (2024)](/sources/volpiani-2024.md) — App. 2, Eqs. (26)–(32); §5, Figs. 15c–d.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.4; §2.4–2.6, Eqs. (19)–(27).
+- [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §I.
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.4, Fig. 4.
+- [Stanly et al. (2022)](/sources/stanly-2022.md) — §5.3.1, Fig. 15.

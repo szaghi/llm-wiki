@@ -165,6 +165,7 @@ Chunk 8 (2026-10-27), cited further in chunk 10. This source is cited on:
 - [Explicit modal filtering as an LES closure](/methods/explicit-modal-filtering.md)
 - [Low-dissipation low-dispersion schemes with shock sensor](/methods/low-dissipation-low-dispersion-scheme.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
+- [One-equation subgrid kinetic-energy models](/methods/subgrid-kinetic-energy-equation-model.md)
 - [Variational multiscale method](/methods/variational-multiscale-method.md)
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Thickened flame model"
-description: "The thickened flame model of LES combustion widens the flame front over the grid by scaling diffusion and reaction while keeping the flame speed; this page gives the premixed and dynamically thickened forms, the counterflow analysis showing that diffusion flames need only diffusivity scaling, the grid-correction factor and the proposed LES model."
+description: "The thickened flame model of LES combustion widens the flame front over the grid by scaling diffusion and reaction while keeping the flame speed; this page gives the premixed and dynamically thickened forms, the counterflow analysis showing that diffusion flames need only diffusivity scaling, the grid-correction factor, the proposed LES model, and the partially stirred reactor as a finite-rate contrast."
 status: established
 aliases: [TF model, TFLES, thickened-flame LES, dynamically thickened flame, DTF, DTFLES, artificially thickened flame, thickening factor, non-premixed thickened flame]
 tags: [combustion, les, numerical-dissipation, thickened-flame]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-27T21:11:00Z
 ---
 
 # Thickened flame model
@@ -158,6 +158,45 @@ whose LES with and without a subgrid combustion model gave similar
 results. The proposal is untested: there is no turbulent flame in the
 paper, and the authors restrict the analysis to high Damköhler number.
 
+## Finite-rate alternatives and the flame resolution of LES
+
+Thickening is one of several finite-rate closures of the filtered reaction
+rate. [Fureby & Nilsson (2023)](/sources/fureby-2023.md), §3.3, list the
+thickened flame model with the eddy dissipation concept, the partially
+stirred reactor (PaSR), the fractal model, Eulerian stochastic fields and
+the linear-eddy model, all as cited there, and choose the LES PaSR of
+Sabelnikov & Fureby for an LES of a cavity-stabilized hydrogen ramjet
+combustor (Eq. 4): each reaction rate is evaluated at the filtered state
+and multiplied by a reacting volume fraction
+$$\gamma^*_{\mathrm{PaSR}}=\frac{\tau_{\mathrm{ch}}}{\tau_{\mathrm{mix}}+\tau_{\mathrm{ch}}},\qquad \tau_{\mathrm{ch}}\approx\frac{\delta_u}{s_u},\qquad \tau_{\mathrm{mix}}\approx\sqrt{\tau_\eta\,\tau_\Delta},\qquad \tau_\Delta=\frac{\Delta}{u'_\Delta},$$
+with $\delta_u$, $s_u$ the laminar flame thickness and speed, $\tau_\eta$ the
+Kolmogorov time, $u'_\Delta$ a subgrid velocity scale and
+$\delta_u$, $s_u$, $\gamma^*_{\mathrm{PaSR}}$, $\tau_{\mathrm{ch}}$, $\tau_{\mathrm{mix}}$,
+$\tau_\Delta$, $u'_\Delta$ page-local (the source's $\gamma^*$, $\tau_c$,
+$\tau_m$, $\tau_\Delta$, $v'$; $s_u$ is not the registry's Lundquist
+number $S_L$). The flow closure is a one-equation
+[subgrid kinetic energy model](/methods/subgrid-kinetic-energy-equation-model.md)
+with gradient-diffusion scalar fluxes ($Pr_t\approx0.7$, turbulent Schmidt
+number about 0.85). They prefer a finite-rate model to
+[flamelet tabulation](/methods/flamelet-tabulated-chemistry.md) because the
+flame is highly fragmented and the flow and chemical time scales are
+similar (§3.3), and call the combination of the one-equation model and PaSR
+"a reliable combination, capable of matching the more advanced and
+expensive models", citing their own earlier work (§6). The thickened flame
+model is not run in the paper.
+
+A DNS study that uses no thickening states the LES flame resolution it
+assumes. [Coulon et al. (2023)](/sources/coulon-2023.md), §1, motivate
+their DNS of premixed methane, ammonia–hydrogen and hydrogen flames in AVBP
+by the diffusive phenomena at flame-thickness scales being "still out of
+reach with current mesh sizes for most Large Eddy Simulations (LES)
+calculations, especially at high pressures". To define a reference flame
+surface for their local stretch statistics, they filter the DNS until the
+thermal thickness spans five points of a grid six times coarser than the
+DNS grid, five being "a typical number of points in the thermal thickness
+of a LES calculation" (§3.3, footnote 9). Their stretch results are on
+[flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md).
+
 ## Qualifications
 
 - **Printed slips in Cuenot et al. (2022).** After Eq. (15) the text says
@@ -192,12 +231,19 @@ paper, and the authors restrict the analysis to high Damköhler number.
   consumption. The consumption-speed analysis assumes a single
   diffusivity; the extension to unequal diffusivities is referred to
   earlier work.
-- The two sources do not overlap in configuration: Agostinelli et al.
-  apply the premixed dynamic form to a technically premixed swirl flame
+- **Printed wording in Fureby & Nilsson (2023).** §3.3 calls the mixing
+  time "the harmonic mean" of the Kolmogorov and shear times, while the
+  printed formula $\sqrt{\tau_\eta\tau_\Delta}$ is their geometric mean;
+  the coefficients of the one-equation model are said to be "dynamically
+  evaluated from scale similarity" with no further detail.
+- Agostinelli et al. and Cuenot et al. do not overlap in configuration:
+  Agostinelli et al. apply the premixed dynamic form to a technically premixed swirl flame
   without studying it, and Cuenot et al. analyse non-premixed flames
   without an LES.
 
 # Citations
 
 - [Cuenot et al. (2022)](/sources/cuenot-2022.md) — §1 (premixed TF, efficiency function, DTF, earlier non-premixed uses); §2, Eqs. (1)–(4) (counterflow diffusion flame, mixture-fraction space); §2.1–2.2, Eqs. (5)–(11) (consumption speed, thickness, thickening rule); §3–4, Eqs. (12)–(14), Tables 1–2, Figs. 2–7 (two-step grid tests, correction factor); §5, Table 3, Figs. 9–11 (reduced chemistry at 54 bar, inner structure); §6, Eq. (15) (proposed LES model); §7.
+- [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.2 (one-equation subgrid model, gradient-diffusion fluxes); §3.3, Eqs. (2)–(4) (finite-rate LES models listed, LES PaSR, choice against flamelets); §6 (model combination).
+- [Coulon et al. (2023)](/sources/coulon-2023.md) — §1 (flame-thickness scales out of reach of LES meshes); §3.3, footnote 9 (five points per thermal thickness of an LES).
 - [Agostinelli et al. (2021)](/sources/agostinelli-2021.md) — §2 (DTFLES with Charlette efficiency function, $\beta_{\mathrm{Ch}}=0.5$, ARC chemistry, mesh); §3.1–3.3 (thermoacoustic outcome under two thermal wall treatments).

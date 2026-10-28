@@ -5,7 +5,7 @@ description: "Turbulence in a triply periodic box, decaying or forced: a priori 
 status: established
 aliases: [HIT, DHIT, HID, DIT, Comte-Bellot–Corrsin experiment, CBC experiment, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation, supersonic isothermal turbulence, driven supersonic turbulence, exascale DNS of isotropic turbulence]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-27T15:47:00Z
+timestamp: 2026-10-27T21:09:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -58,6 +58,12 @@ notation registry.)
 | [Caban et al. (2026)](/sources/caban-2026.md), §4.2 | not stated | 100 | $384^3$ ("closely corresponding" to an earlier database) | a priori only: Gaussian filter $\Delta=2h$ on a 64-node grid, $k_c=16$ | not stated |
 | [Wu & Lele (2026)](/sources/wu-2026.md), §3.2.1, §5, §6.1 | forced | 433 | Johns Hopkins database, $1024^3$, 5 snapshots | $64^3$ ($\Delta=16$ DNS spacings) in a Fourier code with 2/3 de-aliasing (PadeOps) and a sixth-order compact code without it (PadeLibs); $32^3$ ($\Delta=32$ spacings) in PadeOps | run to statistical stationarity; forcing not described in the version read |
 | [Liang & Fu (2024)](/sources/liang-2024.md), §4.12 | decaying, compressible | 100 (initial) | filtered DNS on $256^3$ | no model: hybrid TENO / skew-symmetric-split finite differences (TENO-S), WENO-CU6, TENO6, TENO8, $64^3$ | solenoidal field, $E(k)\propto k^4\exp[-2(k/k_0)^2]$ ($k_0$ not printed), $M_t=0.6$ (with $\sqrt3\,u_{\mathrm{rms}}$ over the mean sound speed), other parameters as in the case of Johnsen et al. that the authors cite |
+| [Wang et al. (2022)](/sources/wang-2022-j.md), §II, §IV, Table III | forced | 259 | pseudo-spectral, $1024^3$, 2/3 de-aliasing, $\nu=0.001$, $\eta/h_{\mathrm{DNS}}=1.01$ | $128^3$, Gaussian filter $\Delta=16$ DNS spacings, filter-to-grid ratio 2 | large-scale forcing at the two lowest wavenumbers; LES started from filtered DNS |
+| [Zhang et al. (2022b)](/sources/zhang-2022-f.md), §IV, Table I | decaying, compressible, density-unweighted filtering | 259 and 261 (initial) | $1024^3$, hybrid eighth-order compact / seventh-order WENO | $128^3$, Gaussian filter $\Delta=16$ DNS spacings, ratio 2 | forced statistically steady fields at $M_t=0.40$ and 0.79 released to decay |
+| [Zhang et al. (2022d)](/sources/zhang-2022-h.md), §II–IV, Tables II–III | decaying, compressible dense gas (PP11, Martin–Hou equation of state) | 162.6 and 151.8 (initial) | $512^3$, hybrid compact / WENO | $64^3$, Gaussian filter $\Delta=16$ DNS spacings, ratio 2 | forced steady states at $M_t=0.40$ and 0.80; near-critical reference state |
+| [Hausmann et al. (2022)](/sources/hausmann-2022.md), §III B 1, Table I | forced | 75 | second-order finite volumes, $256^3$, $k_{\max}\eta=1.37$ | $32^3$, Smagorinsky $C_s=0.1$, with and without SGS velocity enrichment | forcing of Mallouppas et al. in the band $kL/2\pi=3$ to 6 |
+| [Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.3 | decaying | not given; Reynolds number on the rms fluctuation about 60 and 500 | $256^3$ | P-DNS and a dynamic $k$-equation LES on $32^3$, $16^3$, $8^3$, $4^3$ | von Kármán–Pao spectrum |
+| [Li et al. (2022)](/sources/li-2022-k.md), §III A | decaying (grid turbulence of Comte-Bellot & Corrsin) | not given; $U_0M_g/\nu=34{,}000$ | experiment, spectra at $tU_0/M_g=42$, 98, 171 | LES branch of a dynamic Reynolds-stress-model IDDES, second-order Roe finite volumes, $64^3$ cells | Rogallo's method matched to the measured spectrum at 42; turbulence variables initialized on the frozen velocity field; three-stage Runge–Kutta |
 | [Deng et al. (2022)](/sources/deng-2022.md), §4.15 | decaying, compressible, "with eddy shocklets" | 100 (initial) | $256^3$ DNS of Johnsen et al. | no model: finite-volume $P_nT_m$-BVD-AD schemes (polynomial and THINC candidates selected by boundary-variation diminishing, with adjustable dissipation), 6th to 10th order, and ninth-order WENO-M, $64^3$ and $128^3$ | $E(k)\propto u_{\mathrm{rms},0}^2k^4k_0^{-5}\exp(-2k^2/k_0^2)$, $k_0=4$, $M_t=0.6$, uniform initial density and pressure, power-law viscosity; spectra at $t/\tau=4$ ($\tau$ the initial eddy time of the case) |
 | [Valencia et al. (2026)](/sources/valencia-2026.md), §IV, §V A | decaying, compressible | 100 (initial, with the Taylor microscale set to $2/k_0$) | finite-volume DNS in PeleC (Godunov, PPM with seventh-order WENO-Z), $512^3$, CFL 0.5, run to four initial eddy-turnover times $2/(k_0u_{\mathrm{rms},0})$; verified against the Motheau–Wakefield data | a priori only: top-hat filter and downsampling to $128^3$, $64^3$, $32^3$, then a Gaussian filter of width $\Delta=4h$, $2h$, $h$ (all $\Delta=16$ DNS spacings) | $E(k)\propto k^4\exp[-2(k/k_0)^2]$, $k_0=4$, $M_t=0.6$ (with $\sqrt{\langle u_iu_i\rangle}$), $T_0=1200$ K, $p_0=101.3$ kPa, $Pr=0.71$, constant viscosity and conductivity |
 | [Kuya et al. (2018)](/sources/kuya-2018.md), §5.1, §5.3, App. C | decaying, compressible, inviscid (Euler) | infinite (no viscosity) | none; the de-aliased spectral run of Honein & Moin is the comparison at $M_{t0}=0.07$ | no model: second-order central split-form fluxes, $32^3$, classical fourth-order Runge–Kutta at CFL about 0.1, run to $t/T_E=180$ | $E(k)=A(k/k_0)^4e^{-2(k/k_0)^2}$, $k_0=6$, $A$ set by the initial turbulent Mach number $M_{t0}=0.07$ or 0.3; uniform initial $T$ and $\rho$; set-up of Honein & Moin except the CFL |
@@ -431,7 +437,7 @@ The author states that the de-aliased spectral code makes numerical
 dissipation negligible, so the observed effects are those of the model
 (§3.3).
 
-**Decaying grid turbulence of Comte-Bellot and Corrsin.** Five sources use
+**Decaying grid turbulence of Comte-Bellot and Corrsin.** Six sources use
 this experiment. Three start a simulation from the measured spectrum at
 $tU_0/M_g=42$ ($M_g$ the grid mesh size, 5.08 cm, and $U_0=10$ m/s in
 Domaradzki, Duan & Wang and Brillon & Nadarajah; $U_0M_g/\nu=34{,}000$ in
@@ -492,6 +498,8 @@ use the case to set the dissipation of hybrid RANS/LES:
   case measures the scheme dissipation of hybrid RANS/LES.
 - [Wang et al. (2021)](/sources/wang-2021-l.md), §3.1 (below): the case
   calibrates $C_{DES}$ of Reynolds-stress-model IDDES.
+- [Li et al. (2022)](/sources/li-2022-k.md), §III A (below): the case
+  checks the dynamic version of that IDDES.
 
 In Domaradzki, Duan & Wang and Carlsson et al. the departures that separate the models lie at
 high wavenumbers: the constant-0.8 variant (Domaradzki, Fig. 9) and
@@ -539,6 +547,22 @@ Wang et al. and Carlsson et al. agree that scheme dissipation decides the
 constant that matches this experiment; their hosts (Reynolds-stress model
 against Spalart–Allmaras and SST) and schemes differ, and neither runs the
 other's combination, so their different constants are not in conflict.
+
+[Li et al. (2022)](/sources/li-2022-k.md), §III A, Figs. 2–3, remove the
+calibration: in their RSM-DynIDDES the constant is $C_{DES}=C_kC_s$ with
+$C_s$ from the compressible [dynamic procedure](/methods/dynamic-procedure.md)
+(test filter as a volume-weighted average over the direct neighbours of each cell, Lilly's least squares,
+negative $C_s^2$ clipped to zero) and $C_k$ a fixed factor of the
+length-scale equation. On the same $64^3$ decay, started at $tU_0/M_g=42$
+from a Rogallo field that matches the measured spectrum, with the
+turbulence variables initialized by solving their equations on the frozen
+velocity field, the spectra at 171 agree with the experiment up to the
+high wavenumbers for both the SSG and LRR branches. They descend
+"slightly" at high wavenumbers as $C_k$ grows, a difference the authors
+call "small enough to be ignored", so the method is not sensitive to
+$C_k$; the chosen $C_k=1.67$ (SSG) and 2.78 (LRR) return the calibrated
+0.3 and 0.5 of Wang et al. (2021) at $C_s=0.18$ (§III A). The tested $C_k$
+range appears only in Fig. 3.
 
 **Driven compressible MHD turbulence with a guide field.**
 [Gan et al. (2022)](/sources/gan-2022.md) drive isothermal compressible MHD
@@ -794,6 +818,119 @@ the model's validation to isotropic turbulence (§IV). The cost per
 iteration of GEP is slightly above dynamic Smagorinsky and far below the
 network (16 cores, Fig. 13; no timings printed).
 
+**A constant-coefficient spatial gradient model.**
+[Wang et al. (2022)](/sources/wang-2022-j.md), §III–IV, Tables II–III,
+Figs. 2–6, test their SGM-7-19, a multi-point gradient model with
+Taylor-derived constant coefficients (see
+[gradient model](/methods/gradient-model.md)), on forced HIT at
+$Re_\lambda=259$ ($1024^3$ DNS, Gaussian filter $\Delta=16$ DNS
+spacings). A priori the correlation coefficients for $(\tau_{11},\tau_{12})$
+are 0.973 and 0.973 against 0.945 and 0.946 for the plain gradient model
+and 0.985 and 0.981 for the neural-network version it derives from, with
+relative errors 0.241 and 0.237 (Table II). A posteriori on $128^3$ with
+backscatter clipped, the dynamic Smagorinsky and dynamic mixed models
+over-predict the spectrum at low wavenumbers and under-predict it at high
+wavenumbers, which the authors ascribe to the strong dissipation of their
+Smagorinsky parts, while SGM-7-19 is closest to filtered DNS (Fig. 2);
+implicit LES with a hyperviscosity needs that hyperviscosity "artificially
+adjusted", "Otherwise, the ILES always diverges" (§IV). SGM-7-19 also
+matches the PDFs of strain rate and of velocity increments at
+$r/\Delta=1$; at large separations all models coincide, which the authors
+tie to the large-scale forcing (Figs. 3–5). The SGS modelling cost per
+step on 64 cores is 0.272 s (dynamic Smagorinsky), 0.567 s (dynamic mixed)
+and 0.399 s (SGM-7-19) (Table V).
+
+**Density-unweighted and dense-gas compressible LES.** Two papers of one
+group test closures on decaying compressible HIT at $M_t\approx0.4$ and
+0.8 with a Gaussian filter of 16 DNS spacings and an LES grid at half the
+filter width, against filtered DNS:
+
+- [Zhang et al. (2022b)](/sources/zhang-2022-f.md), §IV, filter the
+  equations **without density weighting**, which brings in an SGS mass
+  flux, an SGS density–temperature correlation and SGS turbulent and
+  viscous diffusion besides the SGS stress and heat flux, and close all of
+  them with the gradient model, approximate deconvolution (van Cittert,
+  four terms), dynamic Smagorinsky, dynamic mixed and the dynamic iterative
+  approximate deconvolution (DIAD) model (see
+  [large-eddy simulation](/definitions/large-eddy-simulation.md) and
+  [scale-similarity models](/methods/scale-similarity-model.md)). A priori,
+  the gradient model correlates above 0.9 and the two deconvolution models
+  above 0.98 for $\tau_{11}$, $\tau_{12}$ and the heat flux, DIAD best with
+  relative errors below 0.2 after two iterations (Figs. 1–3). Of the rms
+  divergence terms at $\Delta=16$ spacings, the heat-flux, turbulent
+  diffusion and stress terms dominate (51.29, 24.60, 10.32 at
+  $M_t=0.40$), and the density–temperature term is small but grows with
+  $M_t$ (0.0060 to 0.11; Table II). A posteriori, to $t/\tau=2.08$, DIAD is
+  closest in kinetic-energy decay, spectra and the PDFs of the SGS terms,
+  strain and vorticity; dynamic Smagorinsky and dynamic mixed are
+  over-dissipative, approximate deconvolution under-dissipative, the
+  gradient model close to DIAD (Figs. 5–23). The left (backscatter) tail of
+  the PDF of $\Pi$ lengthens as $M_t$ rises, which the authors read as
+  compressibility enhancing transfer from small to large scales (Fig. 9;
+  see [energy backscatter](/definitions/energy-backscatter.md)).
+- [Zhang et al. (2022d)](/sources/zhang-2022-h.md) run the same comparison
+  for the **dense gas** PP11 near its critical point, whose Favre-filtered
+  equations carry extra SGS terms from the nonlinear equation of state (SGS
+  pressure, pressure work, internal-energy flux, density–temperature
+  correlation). DIAD reconstructs them a priori with correlation above
+  0.98 and relative error below 0.2, except the internal-energy flux at
+  $M_t=0.4$ (above 0.96, below 0.3); a posteriori, on $64^3$, DIAD and a
+  variant that closes only the stress and turbulent diffusion both beat the
+  over-dissipative dynamic Smagorinsky model, and the thermodynamic SGS
+  terms have little effect on the velocity and thermodynamic spectra in
+  these cases (§IV). The cost per step on 32 cores is 0.241–0.245 s
+  (dynamic Smagorinsky), 0.274–0.282 s (reduced DIAD) and 0.334–0.339 s
+  (full DIAD).
+
+Both papers rank DIAD first; [Valencia et al. (2026)](/sources/valencia-2026.md)
+above rank their dynamic iterative deconvolution least accurate of four
+deconvolution closures a priori. The comparisons differ in the set of
+models (no exact spectral inversion or discrete direct deconvolution in
+Zhang et al.) and in the protocol (filtered DNS on the DNS grid against
+Valencia et al.'s top-hat-filtered and downsampled data with the
+grid-truncation stress in the target), so the rankings stand side by
+side.
+
+**Generating the subgrid velocity.**
+[Hausmann et al. (2022)](/sources/hausmann-2022.md), §III B 1, §IV A,
+Figs. 2–3, 8–11, add a stochastic SGS velocity, built from a truncated
+Fourier series on sub-domains coarser than the LES grid and driven toward
+a Yoshizawa estimate of $k_{\mathrm{sgs}}$ (see
+[subgrid velocity enrichment](/methods/subgrid-velocity-enrichment.md)), to
+a $32^3$ Smagorinsky LES of forced HIT at $Re_\lambda=75$. The enriched
+field recovers the DNS energy spectrum beyond the LES cutoff and widens the
+PDFs of velocity gradients and of $Q$ toward the DNS, while their skewness
+is under-predicted and the elongated structures of the DNS are missing.
+The results are insensitive to the number of sub-domains ($8^3$ to
+$32^3$), of modes ($N_m\ge100$, page-local) and to the coefficient of the
+wavenumber-dependent turbulent viscosity of the model varied by a factor
+16, while the target energy level sets the width of the
+tails. The cost per reference time is $32\times10^3$ s (LES),
+$69\times10^3$ s (LES with enrichment) and $340\times10^6$ s (DNS)
+(Table III).
+
+**A DNS-database closure on very coarse meshes.**
+[Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.3, Figs. 11–12,
+compare [pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md),
+whose subgrid stress comes from a database of DNS on representative volume
+elements, with a dynamic $k$-equation LES (Kim & Menon) on decaying HIT
+with a von Kármán–Pao spectrum at Reynolds numbers on the rms fluctuation
+of about 60 and 500, against a $256^3$ DNS, on $32^3$ down to $4^3$ cells.
+P-DNS gives a reasonable kinetic-energy decay down to $4^3$, while the LES
+is accurate at $32^3$ and departs as the mesh coarsens. The constants
+$C_1=6.8$ and $C_2=4.0$ of the method's memory model are calibrated on this
+case in an earlier paper (§2.9).
+
+**Not this case: isotropic turbulence ahead of a flame.**
+[Chambers et al. (2022)](/sources/chambers-2022.md) generate nominally
+isotropic turbulence in a shock tube by passing a leading shock through a
+perforated plate, ahead of an accelerating flame, and
+[Coulon et al. (2023)](/sources/coulon-2023.md) inject synthetic
+isotropic turbulence ($u'=2.5$ m/s, integral scale 2.1 mm) at the inlet
+of a slot-burner flame DNS; neither runs a periodic box, and both are
+recorded on their Source pages (see also
+[shock-generated turbulence](/results/shock-generated-turbulence.md)).
+
 **Closure constants.**
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) cite the decay rates of grid
 turbulence (Comte-Bellot & Corrsin 1966) as a constraint on the coefficients of RANS
@@ -1026,3 +1163,11 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Deng et al. (2022)](/sources/deng-2022.md) — Remarks 1–2, p. 6 (adjustable dissipation); §4.15, Eq. (40), Figs. 23–25 (no-model BVD-AD schemes on decaying compressible isotropic turbulence, $64^3$ and $128^3$).
 - [Simonis et al. (2022)](/sources/simonis-2022.md) — §1, §3 (Taylor–Green vortex framed as decaying isotropic turbulence).
 - [Li et al. (2021)](/sources/li-2021.md) — §II A, Eq. (17); §III A (training data); §III C, Figs. 2–8 (a posteriori against filtered DNS); §III E, Figs. 11–12; §III F, Fig. 13; §IV.
+- [Wang et al. (2022)](/sources/wang-2022-j.md) — §II, Eqs. 3–4; §III, Table II; §IV, Table III, Figs. 2–6; §VI, Table V.
+- [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §II–III; §IV A–B, Tables I–III, Figs. 1–23.
+- [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §II–III; §IV, Tables II–III, Figs. 1–20.
+- [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §III B 1, Table I; §IV A, Table III, Figs. 2–3, 8–11.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.9; §2.10.3, Figs. 11–12.
+- [Li et al. (2022)](/sources/li-2022-k.md) — §II C; §III A, Figs. 2–3.
+- [Chambers et al. (2022)](/sources/chambers-2022.md) — §II (shock-tube turbulence; not a periodic box).
+- [Coulon et al. (2023)](/sources/coulon-2023.md) — §2.2 (synthetic inlet turbulence; not a periodic box).

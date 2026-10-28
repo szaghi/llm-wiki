@@ -5,7 +5,7 @@ description: "The continuous-Galerkin spectral-element method expands the soluti
 status: established
 aliases: [SEM, CG-SEM, continuous Galerkin spectral element method, spectral/hp continuous Galerkin, direct stiffness summation, SEM TLES]
 tags: [spectral-element, les, wmles, sgs-model, numerical-dissipation]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-27T21:10:00Z
 ---
 
 # Continuous-Galerkin spectral-element method
@@ -27,7 +27,10 @@ discretization of [Nek5000 and NekRS](/software/nek5000.md) (incompressible;
 [Tomboulides et al. 2025](/sources/tomboulides-2025.md), for RANS), of the
 continuous option of
 [Nektar++](/software/nektar-plus-plus.md)
-([Saini et al. 2023](/sources/saini-2023.md)), and of the atmospheric model
+([Saini et al. 2023](/sources/saini-2023.md);
+[Huang et al. 2022c](/sources/huang-2022-c.md), incompressible, with
+[spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
+and a wall model), and of the atmospheric model
 NUMA ([Reddy et al. 2026](/sources/reddy-2026.md), compressible at low Mach
 number).
 
@@ -61,6 +64,13 @@ gather–scatter has a unit-depth stencil for every $N$. NUMA advances
 explicitly with a five-stage third-order strong-stability-preserving
 Runge–Kutta scheme, or with a second-order IMEX additive Runge–Kutta scheme
 that treats acoustic and gravity waves implicitly (Reddy et al. 2026, §5–8).
+In Nektar++, Huang et al. (2022c, §II A, Eqs. 15–16) use tensor products
+of Lagrange polynomials on GLL points in hexahedra for velocity and
+pressure, with the second-order velocity-correction (stiffly stable)
+splitting scheme of Karniadakis, Israeli & Orszag that they cite:
+explicit non-linear terms, an implicit pressure-Poisson solve, then
+Helmholtz solves for the viscous terms and the velocity boundary
+conditions.
 
 **Implicit RANS source terms.** Tomboulides et al. (2025, §2.2, Eqs.
 32–38) fold the non-linear source terms of two-equation RANS models into
@@ -131,6 +141,21 @@ implied by the driving pressure gradient of 38.05%, 25.73% and 15.65%
 [wall-modelled LES](/methods/wall-modelled-les.md) and the
 [equilibrium wall model](/methods/equilibrium-wall-model.md).
 
+**Neumann wall stress with the high-order expansion as interpolant.**
+Huang et al. (2022c, §I, §II C, Eq. 20) also impose the wall-model stress
+as a Neumann condition on the wall-parallel velocity (non-penetration and
+zero spanwise velocity strongly), in a spectral-vanishing-viscosity
+implicit LES of channel flow in Nektar++. They give the splitting scheme
+as the reason: the Helmholtz problems keep a constant viscosity, and no
+wall-model eddy viscosity has to enter the equations at the interface.
+The log-law input velocity is read at a freely chosen height $h_{\mathrm{wm}}$
+by evaluating the elemental polynomial expansion at that point, here the
+top of the first wall element ($0.224\delta$). Statistics are compared
+only above that interface, and the r.m.s. fluctuations and Reynolds shear
+stress show a "parabolic" error near it, which the authors attribute to
+the Neumann condition (§III B). Details are on
+[wall-modelled LES](/methods/wall-modelled-les.md).
+
 **Subgrid models as stabilizers.** In Mukha et al.'s WMLES (§III.C, Fig. 8)
 the explicit [Vreman](/methods/vreman-model.md) and Sigma models stabilize
 the solution better than Nek5000's high-pass relaxation filter used as an
@@ -183,6 +208,19 @@ and measure its numerical plus model dissipation at about a quarter of that
 of a second-order finite-volume LES at similar cost. Mukha et al. (2025)
 need the subgrid model for stability (above). See
 [numerical dissipation](/properties/numerical-dissipation.md).
+
+**Higher degree against more elements.** At $Re_\tau=550$ in a
+wall-modelled channel, Huang et al. (2022c, §III E, Table I, Figs. 3, 9)
+compare two meshes of similar resolution in wall units
+($\Delta x^+\times\Delta y_1^+\times\Delta z^+\approx48\text{–}49\times20\times29$):
+$12\times6\times10$ elements at "polynomial order $N_p=7$" and
+$14\times8\times12$ elements at $N_p=6$, as printed. Mean velocities agree
+with DNS on both, while the r.m.s. fluctuations and the Reynolds shear
+stress are better with fewer, higher-degree elements; the authors call
+this a preference for "p-type refinement", in line with the cited Wang et
+al. (2021) on higher order resolving finer scales. With the same mesh the
+wall-modelled run is reported "as high as seven times" cheaper than the
+wall-resolved one at $Re_\tau=550$ (§III A; no timings printed).
 
 **Energy pile-up against a lattice Boltzmann scheme.**
 [Simonis et al. (2022)](/sources/simonis-2022.md), §3.3, compare
@@ -249,6 +287,18 @@ codes (§1); see [$k$-$\omega$ model](/methods/k-omega-model.md).
   the two concern different set-ups (wall law, matching height, subgrid
   treatment), as recorded on the
   [equilibrium wall model](/methods/equilibrium-wall-model.md) page.
+- **Degree convention (Huang et al. 2022c).** The paper prints
+  "polynomial order $N_p=7$" (§II A) and writes the elemental expansion
+  with $P+1$ GLL points per direction (Eq. 16) without relating $P$ to
+  $N_p$. The printed spacings of Table I, $\Delta x\simeq0.087\delta$ and
+  $\Delta z\simeq0.052\delta$ on elements of $2\pi\delta/12$ and
+  $\pi\delta/10$, and $\Delta y_1\simeq0.037\delta$ on a first element of
+  $0.224\delta$, equal the element size divided by $N_p-1=6$, as for
+  degree $N=N_p-1$ in the registry's convention *(compiler check, not in
+  the sources)*; the paper does not relate $N_p$ to the spacings. The
+  same paper calls the mesh comparison "h-type refinement" (§I, §III E
+  title) and "p-type refinement" (abstract, §IV). The speed-up has no
+  hardware or wall-clock figure.
 - **Not among the methods of the First High-Order CFD Workshop.** The summary of the First
   High-Order CFD Workshop by [Wang et al. (2013)](/sources/wang-2013.md)
   cites Patera's spectral element method among the
@@ -269,3 +319,4 @@ codes (§1); see [$k$-$\omega$ model](/methods/k-omega-model.md).
 - [Wang et al. (2013)](/sources/wang-2013.md) — §1 (Patera's method cited); Tables I–VII (acronyms and participants).
 - [Simonis et al. (2022)](/sources/simonis-2022.md) — §3.1 (spectral-element DNS of the Taylor–Green vortex); §3.3, Figs. 7–8 (under-resolved and temporal-LES runs against lattice Boltzmann; regularization phase lag).
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §1 (oscillations of high-order $k$-$\omega$); §2.2, Eqs. (32)–(38) (implicit source terms in the Helmholtz operator); §3.1, Figs. 1–2; §3.4–3.5 ($N$-convergence, CFL on the T-junction).
+- [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I; §II A, Eqs. (15)–(16) (spectral/hp elements in Nektar++, velocity-correction splitting); §II C, Eq. (20) (Neumann wall-stress condition, interpolation by the elemental expansion); §III A–B, Table I, Figs. 3–6 (cost, near-interface error); §III E, Figs. 3, 9 (fewer high-degree against more low-degree elements); §IV.

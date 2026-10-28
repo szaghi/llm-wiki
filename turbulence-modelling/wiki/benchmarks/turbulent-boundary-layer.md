@@ -5,7 +5,7 @@ description: "Spatially developing turbulent boundary layers on flat walls: zero
 status: established
 aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, Wieghardt flat plate, Samuel–Joubert boundary layer, DLR/UniBw APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
 tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven, rans, dg, flux-reconstruction, des, lattice-boltzmann]
-timestamp: 2026-10-27T15:51:00Z
+timestamp: 2026-10-27T20:42:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -143,6 +143,21 @@ $C_f$ against $Re_\theta$ up to about 3500, while the slip-wall model
 obtains laminar behaviour from its dynamic procedure (§4.1, Fig. 6a). All
 these results are cited from the works the review covers.
 
+**A data-based closure on a two-row mesh.** The pseudo-DNS of
+[Idelsohn et al. (2024)](/sources/idelsohn-2024.md) (§2.11–2.12,
+Figs. 21–25; see [P-DNS](/methods/pseudo-direct-numerical-simulation.md))
+takes its near-wall closure from the DNS of a time-developing boundary
+layer over an infinite flat plate, solved once in dimensionless form and
+indexed by a shear parameter and a shape index (the ratio of the
+wall-projected coarse velocities in the first and second cell layers); the
+turbulent wall element needed 264 cells across the layer to resolve the
+sublayer and the Kolmogorov scale, and it leaves pressure-gradient effects
+aside. On the coarse mesh a laminar layer contained in the first row of
+cells gives $\delta$ and $C_f$ in "excellent agreement" with Blasius, and a
+turbulent layer reaching the second row a $C_f$ in "remarkable agreement"
+with Schlichting's solution; transition is a threshold switch from the
+laminar to the turbulent database.
+
 ## Turbulent flat plate in RANS
 
 [Zhao et al. (2023b)](/sources/zhao-2023-b.md), §5.1, Fig. 5-2, run a ZPG
@@ -215,6 +230,20 @@ grid:
   $N=4$, 7 and 10 (residual histories to $N=10$): $C_f$, the eddy-viscosity
   profile and the [law of the wall](/definitions/law-of-the-wall.md) at
   $x=0.97008$ agree with FUN3D.
+
+The same plate is the industrial verification tool. [Mani & Dorgan (2023)](/sources/mani-2023.md)
+(§4.1.1, Fig. 5, reproduced from Rumsey 2021 as cited) present the NASA
+Turbulence Modeling Resource as a way to verify a turbulence-model
+implementation without sharing source code: on the zero-pressure-gradient
+plate at $M=0.2$, $Re_L=5\times10^6$, the codes CFL3D and FUN3D converge to
+the same $C_f$ at $x=0.97$ for SA and SA-QCR2000 on grids from $35\times25$
+to $545\times385$. [Li et al. (2022)](/sources/li-2022-k.md) (App. 2,
+Fig. 24) use the finest of these grids to check their Reynolds-stress-model
+dynamic IDDES in attached flow: $C_f$ against $Re_\theta$ follows the
+Kármán–Schoenherr correlation and the profile at $Re_\theta=10\,000$ matches
+Coles' profile in all sublayers, which they read as absence of
+[log-layer mismatch](/definitions/log-layer-mismatch.md) (see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)).
 
 Huang et al. also reconstruct a manufactured composite wall-law profile
 on meshes of aspect ratio $5\times10^2$ and about $10^3$ to choose the
@@ -371,6 +400,101 @@ $y_1^+=160$ and 320 near the end of the APG region, $0.8<x/L<0.85$; the
 authors attribute this to a wall law that holds only for ZPG layers,
 consistent with the shrinking log layer above (see
 [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)).
+
+## Equilibrium, non-equilibrium, rough and three-dimensional layers: a physics review
+
+The review of [Devenport & Lowe (2022)](/sources/devenport-2022.md)
+organizes incompressible high-Reynolds-number boundary layers by
+**equilibrium**, used as a synonym for self-preservation: all normalized
+properties are self-similar on one set of scales, so the normalized flow no
+longer depends on $x$ (§1, §3). "Local" equilibrium (the zero-pressure-gradient
+inner region) and "approximate" equilibrium (change over many $\delta$) are
+distinguished. It excludes compressibility, separation, curvature,
+transition, free-stream turbulence and heat transfer, and proposes no
+model.
+
+**Conditions for self-preservation.** With a defect profile
+$(U_e-\langle u\rangle)/U_o=g(y/L_o)$ (page-local $U_e$ the edge
+velocity, $U_o$, $L_o$ the outer scales), the thin-layer momentum equation
+requires $U_o\propto U_e$ and a constant Castillo–George parameter, i.e.
+$U_e\propto L_o^{-\Lambda}$ ($\Lambda$ page-local). The authors add that a
+wall-normal-uniform streamwise drift of the shear-stress correlation
+coefficient is "physically implausible", which forces $dL_o/dx$ constant,
+$L_o\propto x-x_o$ and a power-law edge velocity $U_e\propto|x-x_o|^m$ with
+$m=-\Lambda$; on this ground they reject Castillo & George's claim that
+$U_e\propto L_o^{-\Lambda}$ alone suffices (§3.1, Eqs. 3.2–3.17; a
+disagreement the review states with a work not ingested here). Complete
+self-preservation, viscous term included, holds only for the sink flow
+$U_e\propto(x_o-x)^{-1}$, whose turbulence cannot be sustained for an
+acceleration parameter above about $3\times10^{-6}$ (Spalart 1986, as
+cited); constant-thickness layers need an exponential edge velocity and
+exist only in favourable gradient. With the scales $u_\tau$, $\delta$,
+matching to the log law forces constant $Re_\tau$ on smooth walls (sink
+flow only) but only constant $k_s/\delta$ on fully rough walls ($k_s$ the
+equivalent sand-grain roughness, page-local), so exactly self-preserving
+rough-wall layers exist for any constant-$m$ gradient with suitably scaled
+roughness (§3.2, Eqs. 3.18–3.25). The equilibrium adverse-gradient layers it
+compiles (Clauser; Bradshaw; Skåre & Krogstad at $\beta_{RC}=20$; Kitsios
+et al.; Bobke et al.; Lee; Sanmiguel Vila et al.; Table 1) and what they
+show about the inner layer are on the
+[wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)
+page.
+
+**Zero-pressure-gradient structure.** $R_{12}/u_\tau^2$ and
+$R_{22}/u_\tau^2$ scale on $u_\tau$ throughout, while the inner peak of
+$R_{11}/u_\tau^2$ at $y^+\approx15$ grows with $\log Re$ through the
+footprint of inactive outer motions (§2.2, Figs. 4–6; see the
+[attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md)); the
+turbulent-kinetic-energy budget of the DNS of Schlatter et al. at
+$Re_\theta=4060$, as cited, has production about equal to dissipation across
+the layer (Fig. 7).
+
+**Response to a change.** The mean flow adjusts to a change in wall
+condition over $2\theta/C_f\approx50\delta$, the turbulence structure over
+more than $30\delta$ once dissipation is counted (§4.1, Eqs. 4.1–4.7). After
+a smooth-to-rough step an internal boundary layer grows as
+$\delta_i\sim x^{0.73}$ (Efros & Krogstad; 0.8 for Elliott; much lower
+exponents, 0.33 and 0.221, in Cheng & Castro and Lee, which the review
+attributes to large internal-layer thickness at laboratory scale), and a new
+self-preserving layer forms after 20–50 initial thicknesses; after a
+rough-to-smooth step the linear sublayer forms at once but buffer and log
+regions take several $\delta$, and a roughness strip leaves a "stress bore"
+still visible $55\delta$ downstream (§4.4, Tables 2–4, Figs. 25–29). In
+pressure gradient, evidence for wall similarity over rough walls is
+contradictory and mostly fails the conditions needed to test it
+($k_s^+<50$, $\delta/k_g<50$, skin friction inferred from profiles) (§4.3;
+see the [RANS wall function](/methods/rans-wall-function.md) page).
+
+**Three-dimensional layers.** Nearly all three-dimensional boundary
+layers are non-equilibrium; the known equilibrium ones (Ekman layer,
+rotating disk) are constant-thickness and homogeneous along the wall (§5,
+§5.2). Two observations are "near-universal": the direction of the shear
+stress lags the direction of the mean velocity gradient (in Bradshaw &
+Pontikos's swept wing, as cited, the shear-stress direction rotates only a
+third as much as the flow), and Townsend's structure parameter $A_1$, the
+ratio of shear-stress magnitude to twice the kinetic energy, about 0.15 in
+two-dimensional layers, is depressed. Both are attributed to the pressure–strain
+redistribution: suppression of its source of $R_{22}$, which multiplies
+the production of both shear-stress components (Moin et al.;
+Lozano-Durán et al., as cited), and, after Rotta, the anisotropy of the rapid
+pressure–strain term (§5.4, Figs. 37–42; see the suddenly skewed channel on
+[turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
+Isotropic eddy-viscosity models assume the two directions equal, which the
+data contradict (§5.1; see the
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)). From the
+viscous-sublayer solution the authors estimate the near-wall flow angle as
+$\gamma_{\mathrm{FA}}\approx4\beta_{RC}y^+/Re_\tau$ for a lateral pressure
+gradient ($\gamma_{\mathrm{FA}}$ page-local; Eq. 5.9, using
+$\delta/\delta^*\approx8$): sublayer skewing is non-zero but scales as
+$Re_\tau^{-1}$. They propose the inner-scaled lateral pressure gradient as
+the non-equilibrium parameter of boundary layers, in place of the ratio of
+lateral to streamwise gradients of Lozano-Durán et al., and estimate that a
+sublayer skewing of about $3^\circ$ at $y^+=3$ reduces the shear stress by
+5 % or more (§5.4, footnote 6). Their §6 calls for wall-similarity
+experiments with direct skin-friction measurement and high-$Re$
+three-dimensional experiments; three-dimensional hills and junctions
+(BEVERLI, FAITH, the [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md))
+are cited as pressure-driven examples.
 
 ## Supersonic and hypersonic layers on cooled walls (DNS)
 
@@ -786,6 +910,21 @@ Reynolds-stress model fed with the same profile.
 The interaction has its own page,
 [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md),
 which also covers the compression ramps of Helm & Martín and Dang et al.
+The incoming layer of the Mach 6 swept-ramp DNS of
+[Zhang et al. (2022c)](/sources/zhang-2022-g.md) (§II B–C, Tables I–II,
+Fig. 6) is a cold-wall example: unit Reynolds number $10^4$ per mm,
+$T_\infty=79$ K, isothermal wall at 294 K against a recovery temperature of
+585 K; a laminar inflow about 3.9 mm thick is tripped to bypass transition
+by a multi-frequency disturbance, and at the reference station
+$\delta=8.61$ mm, $\delta^*=3.33$ mm, $\theta=0.36$ mm, shape factor 9.30
+($Re_\tau$ and $Re_\theta$ not printed). The van Driest-transformed velocity
+follows the linear and log laws with an intercept of 5.7 and the
+density-scaled fluctuations agree with other data (see
+[compressible velocity transformations](/definitions/compressible-velocity-transformation.md)
+and [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md)); the
+corner-region resolution is $\Delta x^+=2.92$, $\Delta y^+_w=0.44$,
+$\Delta z^+=2.19$ on $2.06\times10^9$ points, with a $5.51\times10^9$-point
+check.
 [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) simulate a Mach 3
 boundary layer ($\delta_0=4$ mm at the reference station, unit Reynolds
 number $49.4\times10^6$ m$^{-1}$) hit by the oblique shock of a wedge that
@@ -809,6 +948,17 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 (§1).
 
 ## Qualifications
+
+- **Printed items of Devenport & Lowe (2022).** From their Eq. (5.9) with
+  $\beta_{RC}=5$ and $y^+=3$ the printed approximation
+  $4\beta_{RC}y^+/Re_\tau$ gives $0.06$ rad, about $3.4^\circ$, at
+  $Re_\tau=1000$ and $0.34^\circ$ at $10\,000$, where §5.3 prints about
+  $1.7^\circ$ and $0.17^\circ$ *(compiler check, not in the sources)*. §4.1
+  defines the dissipation as $\nu$ times the mean square of
+  $\partial u_j/\partial x_j$, a repeated index, while their Eqs. (2.43)–(2.45)
+  write the square of $\partial u_i/\partial x_j$. The review cites an
+  Ekman-layer DNS (its ref. [213]) for its Fig. 32 together with the printed
+  retraction notice of that work (ref. [215]).
 
 - Coordinate translation: [Huang et al. (2022)](/sources/huang-2022.md)
   write $y$ spanwise and $z$ wall-normal; this page uses $y$ wall-normal.
@@ -961,3 +1111,8 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 - [De Vanna et al. (2022)](/sources/devanna-2022.md) — §4.3, Figs. 3–4.
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.1, Table 3, Fig. 5.
 - [Yu et al. (2022)](/sources/yu-2022-e.md) — §2, Table 1, Fig. 2.
+- [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §1; §2.2, Figs. 4–7; §3.1–3.2, Eqs. (3.2)–(3.25), Table 1; §4.1, Eqs. (4.1)–(4.7); §4.3; §4.4, Tables 2–4, Figs. 25–29; §5.1–5.4, Eq. (5.9), footnote 6, Figs. 37–42; §6.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.11, Eqs. (45)–(61); §2.12, Figs. 21–25.
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.1.1, Fig. 5 (reproduced TMR verification).
+- [Li et al. (2022)](/sources/li-2022-k.md) — App. 2, Fig. 24.
+- [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II B–C, Tables I–II, Eqs. (2)–(3), Fig. 6.

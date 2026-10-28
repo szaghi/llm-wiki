@@ -5,7 +5,7 @@ description: "Maps that turn the mean velocity of a variable-property compressib
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-27T21:08:00Z
 ---
 
 # Compressible velocity transformations
@@ -417,6 +417,20 @@ judge, initialize or close a simulation.
   Pirozzoli & Bernardini (as cited) at $Re_\tau\approx200$. Both walls are
   at or near the recovery temperature (see
   [shock/turbulent boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+  A cold-wall counterpart is the Mach 6 swept-ramp DNS of
+  [Zhang et al. (2022c)](/sources/zhang-2022-g.md) (§II C, Eq. 2,
+  Fig. 6a; [OpenCFD-SCU](/software/opencfd-scu.md)), whose wall is at
+  294 K against a printed recovery temperature of 585 K
+  ($T_w/T_r\approx0.50$ *(compiler check, not in the sources)*). The van
+  Driest velocity $\int_0^{u^+}\sqrt{\langle\rho\rangle/\rho_w}\,du^+$ of the
+  incoming layer ($\delta=8.61$ mm, shape factor 9.30 at the reference
+  station) follows the linear and logarithmic laws with a log-law intercept
+  of 5.7, which the authors call higher than the incompressible value and
+  attribute to the wall temperature. They do not test another
+  transformation. On cooled walls Cogo et al. (above) report a log-law
+  intercept mismatch of van Driest, Zhang et al. (2022, above) report that
+  van Driest fails for their cooled cases, and Carlsson et al. call van
+  Driest inaccurate for non-adiabatic walls.
 - **Inside equilibrium wall models.** [De Vanna et al. (2022)](/sources/devanna-2022.md)
   (§2.2, Eq. 6) and [van Noordt et al. (2022)](/sources/vannoordt-2022.md)
   (§2.5, Eq. 35) write the van Driest damping of the mixing-length eddy
@@ -518,7 +532,6 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 - [Qi et al. (2022)](/sources/qi-2022-b.md) — §4, Figs. 5, 12, 16–17.
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — Fig. 5a.
 - [Yu et al. (2022)](/sources/yu-2022-e.md) — §2, Eq. (2.4a), Fig. 2.
-- [De Vanna et al. (2022)](/sources/devanna-2022.md) — §2.2, Eq. (6); §4.1.
-- [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §2.5, Eq. (35).
+- [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II B, Table II; §II C, Eq. (2), Fig. 6a.
 - [De Vanna et al. (2022)](/sources/devanna-2022.md) — §2.2, Eq. (6); §4.1.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §2.5, Eq. (35).

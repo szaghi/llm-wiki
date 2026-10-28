@@ -5,7 +5,7 @@ description: "A shock sensor or troubled-cell indicator is the switch that decid
 status: established
 aliases: [shock sensor, shock indicator, troubled-cell indicator, troubled-cell detector, discontinuity indicator, Ducros sensor, Jameson pressure sensor, Persson–Peraire indicator, KXRCF indicator, TVB minmod indicator, TENO troubled-cell indicator, filtered shock indicator]
 tags: [shock-capturing, numerical-dissipation, compressible, dg, implicit-les, boundary-layer]
-timestamp: 2026-10-27T15:47:00Z
+timestamp: 2026-10-27T21:10:00Z
 ---
 
 # Shock sensors and troubled-cell indicators
@@ -54,7 +54,12 @@ $|{-p_{i-1}}+2p_i-p_{i+1}|/(p_{i-1}+2p_i+p_{i+1})$, over the three grid
 directions and selects by two thresholds (0.02 and 0.1) a linear
 seventh-order upwind, a seventh-order WENO or a fifth-order WENO flux
 ([Dang et al. 2022](/sources/dang-2022.md), §2.2.3, Eqs. 41–43; see
-[WENO](/methods/weno-scheme.md)).
+[WENO](/methods/weno-scheme.md)). In the Mach 6 swept-ramp DNS of
+[Zhang et al. (2022c)](/sources/zhang-2022-g.md), §II A, the same code
+runs a two-member hybrid instead, a sixth-order monotonicity-preserving
+optimized scheme (OMP6) where the pressure gradient is low and a
+seventh-order WENO where it is high: "the pressure gradient is used as the
+shock recognizer"; neither the sensor formula nor its threshold is printed.
 
 **The same sensor in a DG element.** [Gao et al. (2022)](/sources/gao-2022.md),
 §3.2, Eqs. (12)–(13), adapt it to the DGSEM: at each node, with
@@ -402,6 +407,13 @@ tri-diagonal interpolation system splits into two independent systems on
 the two sides of a discontinuity, which the authors call the
 shock-capturing mechanism, so no switch between compact and explicit
 interpolation families is needed (the paper does not call this a sensor).
+The scheme is on
+[weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md).
+
+By contrast, the OpenFOAM implicit-LES solver of
+[Cheng et al. (2023)](/sources/cheng-2023-b.md), §2.2, uses no sensor: one
+bounded (TVD) reconstruction, ROUND, acts at shocks and in turbulence
+(scheme on [WENO](/methods/weno-scheme.md)).
 
 ## Filtering the field before sensing
 
@@ -526,3 +538,5 @@ the hybrid scheme (§3.2, §5.3.1). The resulting interaction is on
 - [Zhang et al. (2022)](/sources/zhang-2022-b.md) — §2 (modified Ducros sensor, threshold 0.15, at $M_\infty=8$ only).
 - [Deng et al. (2022)](/sources/deng-2022.md) — §1 (dependence of hybrid schemes on the indicator); §3.2, Eqs. (17)–(25) (BVD selection instead of a sensor).
 - [Ma et al. (2022)](/sources/ma-2022.md) — §2.2, Eqs. (21)–(29) (nonlinear weights and decoupling of the compact system at a discontinuity).
+- [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II A (pressure-gradient recognizer of the OMP6/WENO7 hybrid in OpenCFD-SCU).
+- [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §2.2 (ROUND reconstruction, no sensor; passing).

@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-27T21:09:00Z
 ---
 
 # Equilibrium wall model
@@ -328,6 +328,31 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
   $|\psi_p|<2\times10^7$; for adverse gradients below a threshold
   $Re_{\mathrm{wm}}$ the fit returns zero friction (separation). Without
   pressure gradient this is the baseline EQWM of Fowler et al. (§5.1).
+- **Log law and Reichardt's law in a spectral/hp implicit LES**
+  ([Huang et al. 2022c](/sources/huang-2022-c.md), §II C, Eqs. 14, 17,
+  20): the wall-parallel velocity at the matching height, evaluated with
+  the element's high-order expansion, is inserted in the log law with
+  $\kappa=0.41$, $B=5.2$ (after Grötzbach 1987, as cited), $u_\tau$ is found
+  by Newton–Raphson and $\tau_w=\rho u_\tau^2$ is imposed as a Neumann
+  condition on the wall-parallel velocity, with no penetration and zero
+  spanwise velocity at the wall; no eddy viscosity enters at the interface.
+  Reichardt's composite law with $D=9.8$, $E=1/11$, $F=1/3$ (page-local
+  constants; formula on the [law of the wall](/definitions/law-of-the-wall.md)
+  page) is the alternative; at $Re_\tau=550$ the two give "only slightly"
+  different statistics (§III C, Fig. 7). The paper also recalls the ODE
+  form with the mixing-length viscosity $\kappa u_\tau y[1-e^{-y^+/A^+}]^2$
+  ($A^+$ not printed; Eqs. 1–5) but does not use it.
+- **Rough-wall log law in atmospheric LES**
+  ([Zhang et al. 2022e](/sources/zhang-2022-i.md), §II A, Eq. 3; the
+  source writes $z$ wall-normal, translated here): the wall stress
+  $\tau_{i2}\rvert_w=-\big(\kappa/\ln(y/y_{0,\mathrm r})\big)^2\sqrt{\hat{\bar u}_1^2+\hat{\bar u}_3^2}\;\hat{\bar u}_i$,
+  $i=1,3$, with $y_{0,\mathrm r}$ the aerodynamic roughness length
+  (page-local, distinct from the viscous length $y_0$ above) and the hat a
+  local average at twice the filter width, applied at the first grid point
+  of [LESGO](/software/lesgo.md) and on the immersed terrain of a
+  two-dimensional hill ($\kappa$ not printed). It is the classical
+  equilibrium condition of atmospheric LES; the paper uses it as a fixed
+  ingredient.
 
 ## Matching height and input treatment
 
@@ -354,6 +379,8 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | Ghidoni et al. (2026, §3.3, Fig. 1, Alg. 1), RANS | modal DG, $N\le6$, body-fitted | internal quadrature point of the wall element farthest from the wall (nearest the opposite face), first-element heights $y_1^+=1$–320 | steady RANS, no filtering |
 | De Vanna et al. (2022, §2.2, §3.2) | URANOS, uniform finite-difference grids | chosen dynamically from the local wall resolution, "sufficiently far from the wall and in an adequately resolved flow zone" (details deferred to their earlier work, as cited); model active only where $\Delta x^+_w<40$, $\Delta y^+_w<3$, $\Delta z^+_w<15$ (resolved $\tau_w$) is violated | none stated |
 | van Noordt et al. (2022, §2.6, §3.1, §3.4) | CHAMPS, Cartesian octree, immersed boundary | far point of a ray from each surface-triangle centroid at a fixed outer-unit distance: about $0.05\delta$, varied over 3–4 minimum grid spacings (channel); $0.11\delta_r$ (ramp) | none stated; insensitive to the exchange distance (channel) |
+| Huang et al. (2022c, §II C, §III A, §III D) | [Nektar++](/software/nektar-plus-plus.md), spectral/hp elements, "polynomial order $N_p=7$" as printed, $12\times6\times10$ elements | top of the first wall-adjacent element, $0.224\delta$ (about $y^+=123$, 213 and 448 at $Re_\tau=550$, 950, 2000 *(compiler check, not in the sources)*); "first layer grid" where $y^+>30$ | instantaneous by default; exponential moving average $\bar u^n=a u^n+(1-a)\bar u^{n-1}$, $a=0.01$, tested |
+| Zhang et al. (2022e, §II A) | LESGO, uniform $192\times64\times97$, immersed terrain | first grid point | local average at $2\Delta$ (test filter) |
 | Constant et al. (2024, §3.1, §4.2), RANS | FastS finite volume, octree Cartesian grid, immersed boundary | modelling height $H_{\mathrm{mod}}$ from a flat-plate estimate of a target $y^+$ (50–500), then lowered locally after a first converged run (see below) | steady RANS, no filtering |
 
 Gillyns et al. (2022, §5) find that without the moving average ($C_t=0$) the
@@ -396,6 +423,15 @@ sources)*. Their study separates a priori from a posteriori effects
   with" Yang et al., as they cite them; for non-equilibrium RANS-based wall
   models averaging may matter more. Running without averaging, they did not
   see the divergence reported by Gillyns et al. (see Qualifications).
+
+A third high-order code reports the same insensitivity as Mukha et al.
+Huang et al. (2022c, §III D, Eqs. 21–22, Fig. 8) compare, in an implicit LES
+of channel flow at $Re_\tau=550$, the instantaneous matching velocity with
+an exponential moving average of weight $a=0.01$ (page-local; a time
+constant of 99 time steps by the identity $a=\alpha_e$ above *(compiler
+check, not in the sources)*): the results differ only marginally and both
+agree with DNS, so they recommend the instantaneous velocity, which "speeds
+up computation", in agreement with Frère et al.'s DG LES as they cite it.
 
 The choice is tied to [log-layer mismatch](/definitions/log-layer-mismatch.md):
 matching away from the wall or filtering the input are the remedies the
@@ -769,6 +805,24 @@ further hardware detail).
   in the recirculation, and the slightly too large slat recirculation of a
   three-element airfoil partly to the wall model (§4.2.2, §4.3.2; see
   [RANS wall function](/methods/rans-wall-function.md)).
+- **Recirculating hill wake (atmospheric LES).** Zhang et al. (2022e,
+  §III A, Fig. 4b) under-predict the streamwise turbulence intensity in the
+  lower wake at the downwind foot of a steep two-dimensional hill (slope
+  0.4, separated flow) against the wind-tunnel data of Cao & Tamura, and
+  attribute it to the classical log-law wall model in recirculating flow,
+  as Yang et al. (2015) reported, as cited; the attribution is not tested
+  against another wall model.
+- **Near-interface stresses with a Neumann coupling.** In the channel
+  runs of Huang et al. (2022c, §III B, Figs. 4–6) the mean velocity agrees
+  with DNS (at most 2 % and 5.4 % over-prediction at $Re_\tau=950$ and 2000),
+  but the rms fluctuations and the Reynolds shear stress show a
+  "parabolic" error around the matching interface, which they attribute to
+  the high wall-normal velocity gradient that the Neumann condition
+  creates at the wall and call common to wall-modelled approaches; they
+  cite Bae & Lozano-Durán for the view that a Dirichlet condition with
+  eddy-viscosity augmentation may do better near the wall, not tested (see
+  [wall-modelled LES](/methods/wall-modelled-les.md)). They state that the
+  algebraic model suits equilibrium layers only (§I, §IV).
 - **Equilibrium as a limit.** Fowler et al. (2022, §2.2) derive the classical
   model as the limit $T_s\to0$ of their relaxation equation (page-local $T_s$,
   the relaxation time of the fluid layer below $h_{\mathrm{wm}}$); applying the
@@ -883,6 +937,12 @@ profile lies above the DNS).
   printed tables *(compiler check, not in the sources)*; whether Eq. (10)
   or the tables differ further from what was run cannot be told from the
   paper.
+- Huang et al. (2022c) print the wall condition, Eq. (20) (and Eq. 22),
+  as $\partial u/\partial y\rvert_w=\tau_w/(\rho v)$ and $v_t\rvert_w=0$,
+  with the italic $v$ of the wall-normal velocity in the same line; a
+  velocity gradient requires the kinematic viscosity there
+  *(compiler check, not in the sources)*. They write the wall stress
+  $\tau_u$ in the text and $\tau_w$ in Eq. (20).
 - **Other printed items of Nuca et al. (2025).** The Fig. 7 caption puts
   the high-Re models on top and the classical ones below, while the panel
   labels say the reverse; §V calls the global model's regression "10
@@ -923,4 +983,6 @@ profile lies above the DNS).
 - [Heinz (2020)](/sources/heinz-2020.md) — §3.1, Eq. (21).
 - [Lv et al. (2021)](/sources/lv-2021.md) — §I; §II B 4; §IV B 2, Fig. 17.
 - [De Vanna et al. (2022)](/sources/devanna-2022.md) — §1; §2.2, Eqs. (6)–(7); §3.2, Eq. (9); §4.4–4.6, Figs. 5–7.
+- [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I, Eqs. (1)–(5); §II C, Eqs. (14), (17), (20); §III A, Table I; §III B, Figs. 4–6; §III C, Fig. 7; §III D, Eqs. (21)–(22), Fig. 8; §IV.
+- [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A, Eq. (3); §III A, Fig. 4b.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.4–2.6, Eqs. (33)–(37); §3.1, Fig. 13; §3.2, Eq. (58); §3.4, Figs. 26–27; §4.

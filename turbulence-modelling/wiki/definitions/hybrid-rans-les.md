@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Hybrid RANS/LES"
-description: "Scale-resolving approaches that model all turbulence with RANS in some regions or limits and resolve part of it as in LES elsewhere; the distinction from wall-modelled LES, operating modes, continuous eddy simulation and sequential RANS-to-LES coupling, the deficiencies the sources identify, and applications."
+description: "Scale-resolving approaches that model all turbulence with RANS in some regions or limits and resolve part of it as in LES elsewhere; the distinction from wall-modelled LES, operating modes, continuous eddy simulation, self-adaptive turbulence eddy simulation and sequential RANS-to-LES coupling, the deficiencies the sources identify, and applications."
 status: established
-aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES]
+aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES, self-adaptive turbulence eddy simulation, SATES, very-large eddy simulation, VLES]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-27T21:07:00Z
 ---
 
 # Hybrid RANS/LES
@@ -99,7 +99,17 @@ embedded in the coarse LES mesh and feeding the LES with wall shear stress
 and heat flux ([Zangeneh (2021)](/sources/zangeneh-2021.md), §I, §II.A–B;
 see [wall-modelled LES](/methods/wall-modelled-les.md)). Heinz (2020) goes
 furthest and counts wall-modelled LES as the first of four groups of
-hybrids (below).
+hybrids (below). Mani & Dorgan (2023) take the same inclusive view from
+industry: wall-modelled LES "is a hybrid approach in its own right (LES is
+coupled with a wall model, similar to the well-known wall-function
+treatment used in some RANS codes) and pushes the LES region into the
+boundary layer" ([Mani & Dorgan (2023)](/sources/mani-2023.md), §4.5.2).
+Huang et al. (2022c) cite Larsson et al.'s review for two sub-categories of
+wall models, wall-stress-modelled LES and hybrid LES/RANS, and Zhu et al.'s
+hybrid RANS–implicit-LES on a high-order flux-reconstruction method as a
+precedent for wall modelling of implicit LES; their own wall model belongs
+to the first category ([Huang et al. (2022c)](/sources/huang-2022-c.md), §I;
+see [implicit LES](/definitions/implicit-les.md)).
 
 Where the whole boundary layer stays in RANS, the grid need only resolve
 the free shear regions. François et al. (2022) use this argument for a
@@ -143,6 +153,26 @@ laminar-separation-bubble bursting, and answer it positively for delayed
 DES with transition models at about 22% of the LES grid points
 ([Batther & Lee (2022)](/sources/batther-2022.md), §1, §4.5; see
 [dynamic stall](/definitions/dynamic-stall.md)).
+
+Mani & Dorgan (2023, §4.5.2) report that hybrid RANS/LES is "still a
+workhorse for most unsteady simulations in industry", where DES and then
+delayed DES have carried unsteady simulation at Boeing, but that it is too
+expensive for the many flight conditions of a database, "despite efforts to
+reduce dissipation levels and thus minimize grid requirements", and "has
+also struggled at times" to predict separation and reattachment in
+smooth-body separation, the regime for which they see wall-modelled LES as
+promising. Idelsohn et al. (2024) call the hybridization of RANS and LES "a
+promising way" for separated flows, listing DES, scale-adaptive simulation
+and PANS as global hybrids and DDES, shear-layer-adapted DDES and IDDES as
+advanced versions, yet hold universally applicable hybrids "unaffordable"
+to develop because the two approaches are incompatible where they
+interact: LES models handle only subgrid fluctuations while RANS provides
+a statistical average of all scales, "a challenge that is still
+unresolved" ([Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §1.2).
+Their own route, a two-scale method whose sub-mesh stress comes from a
+database of small direct simulations, is on the
+[pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md)
+page.
 
 ## How hybrids operate
 
@@ -220,7 +250,57 @@ region under local equilibrium; the construction yields a theoretical value
 of $C_{DES}$ from the coefficients of the length-scale equation
 ([Wang et al. (2021)](/sources/wang-2021-l.md), §2.3, Eqs. 11–16; details on
 the [DES page](/methods/detached-eddy-simulation.md)). They list PANS, PITM,
-DES and zonal DES as the main hybrid strategies (§1).
+DES and zonal DES as the main hybrid strategies (§1). Li et al. (2022) make
+the LES branch of the same construction dynamic: with
+$C_{DES}=C_kC_s$ ($C_k$ a page-local factor of the length-scale-equation coefficients) and $C_s$ from the dynamic procedure, the hybrid needs no
+calibration of $C_{DES}$ on decaying turbulence, and on the same
+Reynolds-stress host it improves resolved stresses and pressure
+fluctuations while leaving mean quantities nearly unchanged
+([Li et al. (2022)](/sources/li-2022-k.md), §II C, §IV; details on the
+DES page).
+
+### Self-adaptive turbulence eddy simulation
+
+Wu et al. (2023) assess the unified RANS–LES–DNS approach of Han and
+coworkers, earlier called very-large eddy simulation (VLES), which they
+rename *self-adaptive turbulence eddy simulation* (SATES)
+([Wu et al. (2023)](/sources/wu-2023-b.md), §1, §2.1.1). The transport
+equations of Menter's BSL $k$-$\omega$ model are kept unchanged (see the
+[SST page](/methods/k-omega-sst-model.md)) and only the eddy viscosity is
+multiplied by a resolution control function $F_r$ (page-local symbols
+throughout this subsection):
+
+$$\mu_t=F_r\frac{\rho k}{\omega},\qquad
+F_r=\min\Big\{1,\Big[\frac{1-\exp(-\beta_FL_c/L_k)}{1-\exp(-\beta_FL_i/L_k)}\Big]^{n_F}\Big\},$$
+
+$$L_i=\frac{k^{3/2}}{\beta^*k\omega},\qquad L_c=C_x(\Delta x\Delta y\Delta z)^{1/3},\qquad L_k=\frac{\nu^{3/4}}{(\beta^*k\omega)^{1/4}},\qquad C_x=\frac{\sqrt{0.3}\,C_s}{\beta^*}$$
+
+(Eqs. 4–7), with the integral, cut-off and Kolmogorov lengths built from
+$\varepsilon=\beta^*k\omega$, $\beta^*=0.09$ (the source's $\beta_1^*$),
+$\beta_F=0.002$ and $n_F=2$ (the source's $\beta^*$ and $n$), and $C_s=0.1$,
+the Smagorinsky constant of their LES comparator, giving $C_x=0.61$
+(Table 1; $\sqrt{0.3}\times0.1/0.09=0.609$ *(compiler check, not in the
+sources)*). $L_i$ equals $\sqrt k/(\beta^*\omega)$, the RANS length
+$\sqrt k/(C_\mu\omega)$ of IDDES printed by Li et al. (2022, Eq. 5) when
+$C_\mu=\beta^*=0.09$ *(compiler check, not in the sources)*. The authors
+read $F_r$, defined as the ratio of the spectral integral of $E$ between
+$L_k$ and $L_c$ to that between $L_k$ and $L_i$, as the fraction of
+modelled kinetic energy, and the model as operating in three modes:
+$L_c\gtrsim L_i$ gives $F_r=1$ (URANS), $L_k<L_c<L_i$ gives $0<F_r<1$
+(LES) and $L_c\to0$ gives $F_r\to0$ (DNS) (Fig. 1). Wu et al. list
+[PANS](/methods/partially-averaged-navier-stokes.md) beside DES and VLES
+among the bridging methods (§1). The
+renaming rests on Pope's definition, which Wu et al. quote: very-large eddy
+simulation is LES whose filter and grid "are too coarse to resolve 80% of
+the energy", whereas the method, they state, resolves "larger than 90%" of
+the kinetic energy even on coarse grids and so performs like Pope's
+traditional LES (§2.1.1). They contrast it with DES-type methods, "which
+typically treat the entire attached boundary layer with a RANS approach"
+(§1). In their 30P30N comparison the resolved share is shown as scatter
+plots of resolved against modelled kinetic energy in the mid-span plane,
+dominant even on the coarse grid, with modelled energy significant near
+walls where $F_r\approx1$ (§3.2, Eq. 16, Figs. 9–10); no integrated fraction
+is reported.
 
 **Zonal and unified, in turbomachinery usage.** Sandberg & Michelassi
 (2022) divide hybrids into *zonal* approaches with predetermined RANS and
@@ -557,7 +637,17 @@ LES in separation; its realization in zonal DES mode 2 (2020) is on the
 motivate DDES by the same grid-induced separation, a "nonphysical separation
 phenomenon induced by Reynolds stress loss" when DES switches to LES on
 grids that do not meet LES requirements
-([Pan & Zhang (2023)](/sources/pan-2023.md), §II.C).
+([Pan & Zhang (2023)](/sources/pan-2023.md), §II.C). Wu et al. (2023, §1),
+citing Menter, list grid-induced separation and "a slow 'transition' from
+RANS to LES" as the limitations of DES, DDES and IDDES that motivate
+SATES. Mani & Dorgan (2023, §4.5.2) describe modelled-stress depletion as
+too little modelled stress where the RANS-to-LES switch falls very near the
+wall on a grid that cannot resolve the eddies there, manifest as
+grid-induced premature separation, still triggered under DDES by certain
+grid topologies and nearly isotropic surface meshes, and expected to worsen
+with unsteady mesh adaptation; Menter's robust shielding for two-equation
+hybrids is proprietary, and they ask for a public-domain one (details on the
+[DES page](/methods/detached-eddy-simulation.md)).
 
 **Numerical dissipation as a source of log-layer mismatch.** In SST-IDDES
 of channel flow at $M_b=0.15$, the same model with a second-order central
@@ -801,6 +891,34 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
   cascade at $Re=138\,500$ (Möller et al. 2024, §III; see
   [compressor cascades](/benchmarks/compressor-cascade.md) and the
   [DES page](/methods/detached-eddy-simulation.md)).
+- **Three-element high-lift airfoil, three approaches.** Wu et al. (2023)
+  compare Smagorinsky LES ($C_s=0.1$), SST-IDDES and SATES on the
+  [30P30N airfoil](/benchmarks/30p30n-high-lift-airfoil.md)
+  ($Re=1.71\times10^6$, $M=0.17$, $\alpha=5.5^\circ$) in the structured
+  finite-difference code PHengLEI with a fourth-order
+  [weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
+  (§2–§3). On the 27-million-cell grid with linear weights the lift is 2.82
+  (SATES), 2.64 (LES) and 2.27 (IDDES) against the experimental mean 2.83,
+  errors of $-0.4\%$, $-6.7\%$ and $-19.8\%$ (Table 2). SATES and LES
+  develop the slat shear-layer instability faster than IDDES, SATES places
+  the reattachment inside the slat cove closest to the PIV, IDDES separates
+  early on the flap and carries large eddy viscosity in the attached layers
+  and the slat cove, and the resolved energy is highest for LES, then
+  SATES, then IDDES; the authors conclude that SATES makes "a faster
+  'transition' from RANS to LES than IDDES" and gives "more accurate
+  wall-modeled behaviors" than LES (§3.4, §4, Figs. 17–25). With SATES the
+  lift stays within 3% of 2.83 on 7.2, 19 and 27 million cells (0.7%,
+  $-2.8\%$, $-0.4\%$), and replacing the linear weights by WENO-Z-type
+  nonlinear weights or the scheme by a second-order blended scheme lowers
+  it by 6.7% and 11.0% (§3.1–§3.3, Table 2; see
+  [numerical dissipation](/properties/numerical-dissipation.md)).
+- **Dynamic Reynolds-stress IDDES.** On the periodic hill and the
+  [hammerhead launch-vehicle buffet](/benchmarks/hammerhead-launch-vehicle-buffet.md),
+  the dynamic RSM-IDDES of Li et al. (2022) keeps the mean results of
+  RSM-IDDES and improves resolved stresses and the high-frequency pressure
+  fluctuations, its $C_p$-RMS at the experimental maximum being 0.0554
+  against 0.0719 (RSM-IDDES), 0.0897 (SST-IDDES) and 0.0454 measured (§III
+  B–C, Fig. 18; details on the [DES page](/methods/detached-eddy-simulation.md)).
 
 ## Qualifications
 
@@ -873,6 +991,22 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
   $C_K=1.3$ *(compiler check, not in the sources)*. Its Table 5 error of
   5.3% for a reattachment at 1.157 against 1.10 evaluates to 5.2%
   *(compiler check, not in the sources)*.
+- Wu et al. (2023) write that "$\beta$ and $n$ are the model constants" of
+  $F_r$ while Eq. 5 and Table 1 use $\beta^*$ (here $\beta_F$); their Fig. 1
+  writes the integrals of $F_r$ as $\int E(L)\,dL$ and Eq. 5 as
+  $\int E(k)\,dk$ with length-scale limits. In §3.4 they assign grid
+  resolution to group B and schemes to group C, where Table 2 labels them A
+  and B, and call SATES the best "in both turbulence models" for three
+  approaches. Their errors in Table 2 reproduce from the printed lifts
+  against 2.83 *(compiler check, not in the sources)*; the statement that
+  cases A1–A3 differ "by less than 3%" holds for each against 2.83, while
+  A1 and A2 differ by 3.6% from each other *(compiler check, not in the
+  sources)*. The SATES "LES mode" is the eddy viscosity $F_r\rho k/\omega$,
+  linked to the Smagorinsky model only through $C_x$.
+- Idelsohn et al.'s statements on RANS ("unsuitable in general for modeling
+  turbulent flows") and on hybrids stand in their introduction (§1.2); the
+  paper's only RANS computation is a URANS $k$-$\varepsilon$ run of a
+  particle-laden channel (§3.2.2), and it runs no hybrid.
 
 # Citations
 
@@ -914,3 +1048,8 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
 - [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §2.1, §4.5 Table 7, Fig. 19.
 - [Brenner et al. (2022)](/sources/brenner-2022.md) — §1.
 - [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §1, §6.2, Table 12, §7.
+- [Wu et al. (2023)](/sources/wu-2023-b.md) — §1, §2.1.1 Eqs. 4–7 Table 1 Fig. 1, §3.1–§3.4 Eq. 16 Table 2 Figs. 9–10, 17–25, §4.
+- [Li et al. (2022)](/sources/li-2022-k.md) — §II B Eq. 5, §II C, §III B–C Fig. 18, §IV.
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.5.2.
+- [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.2.

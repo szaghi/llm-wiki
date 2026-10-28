@@ -5,7 +5,7 @@ description: "A neural network that predicts the scalar coefficients of Pope's t
 status: established
 aliases: [TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features, LES tensor basis]
 tags: [neural-network, data-driven, rans, symbolic-regression]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-27T20:36:00Z
 ---
 
 # Tensor-basis neural network and the integrity basis
@@ -436,6 +436,25 @@ a priori and a posteriori results are on
   inhomogeneity", and model the resulting error with a stochastic
   discrepancy that remains "random even in the limit of infinite data"
   (§1, §2.2).
+- **Invariance by architecture (combustion review).**
+  [Ihme et al. (2022)](/sources/ihme-2022.md) (§3.5.1) cite the TBNN of
+  Ling et al. as "one of the first architectures tailored for fluid
+  modeling" and classify it as knowledge entering through the
+  architecture, as opposed to the loss (see
+  [physics-informed neural networks](/methods/physics-informed-neural-network.md));
+  they describe its invariance as Galilean invariance obtained by merging
+  the outputs of two networks, whereas the reviews above describe the
+  rotational invariance supplied by the basis.
+- **Keeping the linear closure instead.**
+  [Shan et al. (2023)](/sources/shan-2023.md) (§I) review the TBNN, a
+  later variant and an ensemble-Kalman-trained TBNN as nonlinear
+  eddy-viscosity alternatives, and themselves learn only a scalar: a
+  network maps six invariant mean-flow features to the Spalart–Allmaras
+  variable $\tilde\nu$, which sets $\nu_t$ in the
+  [Boussinesq closure](/definitions/boussinesq-hypothesis.md) (§II.C; see
+  [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
+  They list the linear stress representation among the uncertainties
+  their model leaves untouched (§IV).
 - **Locality (reviews).** Existing feature sets use only local quantities.
   Non-local, non-equilibrium features, such as streamline integration
   (Hamlington & Dahm), could extend predictive capability (Duraisamy et al.
@@ -580,3 +599,5 @@ eigen-decomposition, or the integrity basis itself. See
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.2, Eqs. 2–4 (basis, time scale, linear and non-linear terms); §3.3, Eqs. 6–7 (heat-flux basis, invariants, linearity principle); §4.1–4.2.1 (TBNN and GEP results of cited works).
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1 (black-box against open-box); §2.1, Eqs. 5–8 (2-D basis normalized by $\omega$); App. A, Eqs. A.1, A.13–A.15; App. B (constant and invariant-dependent coefficients).
 - [He et al. (2022)](/sources/he-2022-b.md) — §1 (TBNN as an L2 correction, in passing).
+- [Ihme et al. (2022)](/sources/ihme-2022.md) — §3.5.1 (TBNN as an architecture-level knowledge-guided model).
+- [Shan et al. (2023)](/sources/shan-2023.md) — §I (TBNN variants reviewed); §II.C (scalar eddy-viscosity network instead); §IV (linear representation left as an uncertainty).

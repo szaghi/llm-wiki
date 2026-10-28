@@ -5,7 +5,7 @@ description: "Energy backscatter is a negative local subgrid energy flux, energy
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-27T21:09:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -82,6 +82,22 @@ Fig. 14a) filter DNS with a cut-off filter in the homogeneous directions
 and describe the backscatter of the filtered DNS as "a non-negligible
 quantity" with "considerably large negative dissipation" in the PDF of
 the subgrid dissipation at $y^+\approx15$ and 50 (§III C).
+
+In a transitional flow, [Cao et al. (2022b)](/sources/cao-2022-c.md)
+(§IV B, Eqs. 17–18, Figs. 5–6, Table I) box-filter their DNS (case TG3
+of their earlier paper, cited) of the compressible [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+($M=0.1$, $Re=1600$) by merging $2^3$ cells, a positive kernel that keeps
+$k_{\mathrm{sgs}}>0$, and find forward and backward Favre-filtered
+transfer $\Pi=-\tau_{ij}\tilde S_{ij}$ coexisting in space at
+$t=2.5$–15. Its volume average is small: $1.3\times10^{-5}$,
+$1.3\times10^{-4}$, $5.1\times10^{-4}$ and $1.3\times10^{-4}$ at $t=2.5$,
+5, 10, 15, against a solenoidal physical dissipation of $8.8\times10^{-4}$,
+$4.1\times10^{-3}$, $1.1\times10^{-2}$ and $4.5\times10^{-3}$, and the
+volume-averaged kinetic energy is $10^2$–$10^4$ times the mean subgrid
+energy. They conclude that on such grids the numerical dissipation of the
+scheme can exceed the filtered subgrid production, so that explicit
+modelled dissipation is "not required" (see
+[implicit LES](/definitions/implicit-les.md)).
 
 The filter dependence extends to filters that mimic a solver.
 [Wu & Lele (2026)](/sources/wu-2026.md) (§3.2.2, Fig. 4) compare the
@@ -258,6 +274,18 @@ to it a symmetric divergence-free tensor $T_{ij}$ (page-local) leaves the
 resolved dynamics unchanged but shifts the local flux by
 $-T_{ij}\bar S_{ij}$, which is not zero in general, so the constraint is
 not gauge-invariant *(compiler check, not in the sources)*.
+
+Clipping of this kind recurs as a stability device in the sources. Cao
+et al. (2022b, §IV B) note that backscatter "cannot be modelled" by
+implicit LES nor by explicit eddy-viscosity LES with positive static
+coefficients, and that the dynamic coefficient, "usually clipped" to
+non-negative values for stability, then misses it too.
+[Li et al. (2022)](/sources/li-2022-k.md) (§II C, Eq. 15) read a negative
+dynamic $C_s^2$ in their Reynolds-stress-model IDDES as backscatter and set
+it to zero. [Wang et al. (2022)](/sources/wang-2022-j.md) (§IV) turn off
+the backscatter of subgrid energy for their structural spatial
+[gradient model](/methods/gradient-model.md) "to avoid numerical
+instabilities", without printing the clipping formula.
 
 ## Backscatter of nonlocal and learned models
 
@@ -570,6 +598,23 @@ clipping. A posteriori, on a supersonic flat-plate boundary layer at
 $y^+=15$, the model's flux field resembles the DNS flux "in distribution,
 intensity, structure and even the energy backscatters" (§4.2, Fig. 19).
 
+**Backscatter grows with the turbulent Mach number.** In decaying
+compressible isotropic turbulence two papers of one group find a longer
+negative (backscatter) tail of the probability density of the subgrid flux
+as $M_t$ rises from 0.4 to 0.8, in filtered DNS with a Gaussian filter of
+width 16 DNS spacings:
+[Zhang et al. (2022b)](/sources/zhang-2022-f.md) (§IV B, Fig. 9), with a
+density-unweighted filter and the full (not deviatoric) density-weighted
+stress in $\Pi$, conclude that "compressibility enhances the energy
+transfer from small to large scales"; [Zhang et al. (2022d)](/sources/zhang-2022-h.md)
+(§IV B, Fig. 8), for a dense gas with Favre filtering, read it as more
+local inverse transfer under strong compressibility. In both, iterative
+approximate deconvolution reproduces the filtered-DNS densities including
+the tail, while dynamic Smagorinsky gives densities that are too narrow
+(see [scale-similarity models](/methods/scale-similarity-model.md)); the
+dynamic coefficients there are domain averages (Zhang et al. 2022b, App.;
+2022d, Eqs. 33–36).
+
 ## Backscatter-like transfers outside the subgrid flux (inline)
 
 - **A numerical closure term.** In residual-based
@@ -658,6 +703,19 @@ contradiction is recorded.
 
 ## Qualifications
 
+- **Sign of the flux in Zhang et al. (2022d).** They print the subgrid flux
+  as $\tau_{ij}\tilde S_{ij}$, without the minus sign, and call positive
+  values forward transfer. With their own stress (positive trace, Eq. 19)
+  and their dynamic Smagorinsky closure (Eq. 33), the flux
+  $\tau_{ij}\tilde S_{ij}$ of a purely dissipative model is negative, so the
+  printed sign statement holds only for $-\tau_{ij}\tilde S_{ij}$, the
+  registry's $\Pi$ *(compiler check, not in the sources)*. Their figures
+  read the long negative tail as backscatter (§IV B, Fig. 8).
+- **"About 20 times".** Cao et al. (2022b) state that the solenoidal
+  dissipation is "approximately 20 times larger" than the mean filtered
+  subgrid production; their Table I gives ratios of about 68, 32, 22 and 35
+  at $t=2.5$, 5, 10 and 15, so 20 is the smallest of the four
+  *(compiler check, not in the sources)*.
 - Vela-Martín (2022) prints several slips that do not affect the results:
   Eq. (3.5) uses the unfiltered velocity and swapped indices, and its sign
   disagrees with Eqs. (2.5) and $\langle D\rangle=0$, which give
@@ -706,3 +764,8 @@ contradiction is recorded.
 - [Qi et al. (2022)](/sources/qi-2022-b.md) — §3.2, Eqs. (3.13)–(3.21); §4.2, Fig. 19.
 - [Chen et al. (2022)](/sources/chen-2022-g.md) — §5, Figs. 4–5; §6, Eq. (38).
 - [Yu et al. (2022)](/sources/yu-2022-e.md) — §6.4, Fig. 13; §8.
+- [Cao et al. (2022b)](/sources/cao-2022-c.md) — §IV B, Eqs. (17)–(18), Figs. 5–6, Table I.
+- [Li et al. (2022)](/sources/li-2022-k.md) — §II C, Eq. (15).
+- [Wang et al. (2022)](/sources/wang-2022-j.md) — §IV.
+- [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §IV B, Fig. 9.
+- [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — Eqs. (19), (33); §IV B, Fig. 8.

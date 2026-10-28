@@ -147,15 +147,18 @@ Flows* with pages 558–561.
 
 # Pages created or updated
 
-Chunk 7 (2026-10-26). This source is cited on:
+Chunk 7 (2026-10-26), cited further in chunk 11. This source is cited on:
 
 - [Backward-facing step](/benchmarks/backward-facing-step.md)
 - [Circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)
+- [Hammerhead launch-vehicle buffet](/benchmarks/hammerhead-launch-vehicle-buffet.md)
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
+- [Periodic hill](/benchmarks/periodic-hill.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Hybrid RANS/LES](/definitions/hybrid-rans-les.md)
 - [Log-layer mismatch](/definitions/log-layer-mismatch.md)
 - [Detached-eddy simulation and its delayed and zonal forms](/methods/detached-eddy-simulation.md)
+- [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [k-ε models](/methods/k-epsilon-model.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Partially-averaged Navier–Stokes](/methods/partially-averaged-navier-stokes.md)

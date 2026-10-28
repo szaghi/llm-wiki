@@ -3,9 +3,9 @@ type: Method
 title: "Differential Reynolds-stress models"
 description: "Second-moment RANS closures that transport the six Reynolds stresses instead of postulating an eddy viscosity: the SSG/LRR-ω model with its F1 blending and constants, its coupling to an intermittency transition model, the ATAAC model, and evidence on turbine and compressor cascades, delta wings, wake vortices and buffet."
 status: established
-aliases: [Reynolds-stress model, RSM, DRSM, differential Reynolds-stress model, second-moment closure, Reynolds stress transport model, RSTM, SSG/LRR-ω, SSG/LRR-ω-γ, ATAAC DRSM]
+aliases: [Reynolds-stress model, RSM, DRSM, differential Reynolds-stress model, second-moment closure, Reynolds stress transport model, RSTM, SSG/LRR-ω, SSG/LRR-ω-γ, ATAAC DRSM, RSM-IDDES, RSM-DynIDDES]
 tags: [rans, reynolds-stress-model, transition, turbomachinery, separated-flow]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-27T20:38:00Z
 ---
 
 # Differential Reynolds-stress models
@@ -79,6 +79,37 @@ increased by shear and reduced by rotation, as a re-discovery of an
 effect "explicitly written in the Reynolds stress transport equations"
 ([He et al. (2022)](/sources/he-2022-b.md), abstract, §5.3, §6; see
 [field inversion](/methods/field-inversion-machine-learning.md)).
+Idelsohn et al. (2024) call Reynolds-stress models "the more advanced and
+powerful RANS methods", transporting the full stress tensor instead of
+relying on an eddy viscosity and the Boussinesq approximation, and count
+the algebraic and explicit algebraic stress models among the most advanced
+of them, before judging RANS as a whole unsuitable for transient features
+such as transition ([Idelsohn et al. (2024)](/sources/idelsohn-2024.md),
+§1.2).
+
+**Three-dimensional boundary layers.** Devenport & Lowe (2022) give a
+physical reason for the stress-transport level in skewed boundary layers.
+In nearly all measured and simulated three-dimensional turbulent boundary
+layers the direction of the turbulent shear stress lags behind the
+direction of the mean velocity gradient, and Townsend's structure
+parameter, the shear-stress magnitude over twice the kinetic energy, falls
+below its two-dimensional value of about 0.15 (in Bradshaw & Pontikos's
+swept wing the shear-stress direction rotated one third as much as the
+flow; in the suddenly skewed channel of Lozano-Durán et al. the lag is about
+$60$ viscous time units) ([Devenport & Lowe (2022)](/sources/devenport-2022.md),
+§4.1, §5.4, Figs. 37–39). They attribute both effects to the pressure–strain
+term of the exact Reynolds-stress equations: suppression of the
+pressure–strain source of $R_{22}$ reduces $R_{22}$, which multiplies the
+production of both shear-stress components, and, following Rotta, the rapid
+pressure–strain acts anisotropically on the skewing of the flow, misaligning
+stress and strain (§5.4, Figs. 40–42). An isotropic eddy-viscosity model
+forces the two directions to coincide, which these data contradict (§5.1;
+see [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md) and
+[turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)).
+They print the exact Reynolds-stress transport equation and its
+boundary-layer approximation, which drops the streamwise-derivative terms
+(§2.2, Eqs. 2.38–2.42), and cite Rotta's 1979 three-dimensional
+boundary-layer model among the earlier treatments.
 
 ## The SSG/LRR-$\omega$ model
 
@@ -201,6 +232,25 @@ structures, better $C_p$ RMS peaks and a shedding frequency of 176 Hz
 against 172 Hz for SST-IDDES and 179–180 Hz measured (§3.2–§3.3, Table 1);
 the authors credit the anisotropy captured "because the exact production
 terms" (§4). Details on the DES page.
+
+Li et al. (2022) make the same RSM-IDDES dynamic: the Smagorinsky
+coefficient hidden in $C_{\mathrm{DES}}=C_kC_s$ is computed by the dynamic
+procedure, so the stress-transport LES branch is no longer calibrated on
+decaying turbulence, with branch factors (page-local) $C_k=1.67$ (SSG) and 2.78 (LRR)
+chosen to reproduce the calibrated 0.3 and 0.5 at $C_s=0.18$
+([Li et al. (2022)](/sources/li-2022-k.md), §II B–C, §III A). They print the
+Favre-averaged stress equation with production, pressure–strain,
+dissipation, diffusion and a fluctuating mass-flux term, the BSL-type
+$\omega$-equation with cross-diffusion $2(1-F_1)\sigma_{\omega2}\omega^{-1}\partial_kk\,\partial_k\omega$,
+and the isotropic dissipation $\tfrac23k^{3/2}/l_{\mathrm{DES}}\,\delta_{ij}$;
+the constants of the model and its pressure–strain are not printed (refs.
+to Cecora et al.; Eqs. 2–5). On the periodic hill the resolved stresses of
+the dynamic version are closer to the references than those of RSM-IDDES,
+and on the hammerhead buffet its $C_p$-RMS at the experimental maximum is
+0.0554 against 0.0719 (RSM-IDDES), 0.0897 (SST-IDDES) and 0.0454 measured,
+with the mean $C_p$ unchanged (§III B–C, Fig. 18; details on the
+[DES page](/methods/detached-eddy-simulation.md) and the
+[hammerhead benchmark](/benchmarks/hammerhead-launch-vehicle-buffet.md)).
 
 Heinz (2022) records that both the partially integrated transport model and
 [continuous eddy simulation](/methods/continuous-eddy-simulation.md) exist
@@ -349,6 +399,18 @@ assessing their $k$-$\omega$ [wall function](/methods/rans-wall-function.md)
   models (Bouhafid et al. 2024). The first two are computations of
   different flows with different solvers and grids; the third is cited,
   not shown.
+- Li et al. (2022, Eq. 3) print the production of the $\omega$-equation as
+  $+(\gamma/\nu_t)R_{ij}\partial_j\langle u_i\rangle$ with a Reynolds-averaged
+  stress and no density factor, while every other term carries $\bar\rho$.
+  With their own production tensor $\mathcal P_{ij}=-R_{ik}\partial_k\langle u_j\rangle-R_{jk}\partial_k\langle u_i\rangle$
+  (density dropped), $\tfrac12\mathcal P_{kk}=-R_{ij}\partial_j\langle u_i\rangle$,
+  so the printed term has the opposite sign of a production proportional to
+  $\tfrac12\mathcal P_{kk}$ as in Liu et al.'s form above *(compiler check,
+  not in the sources)*.
+- Devenport & Lowe (2022) review boundary-layer physics and test no
+  Reynolds-stress model; their argument for the pressure–strain origin of
+  the lag rests on the cited simulations of Moin et al. and Lozano-Durán et
+  al. and on Rotta's analysis (§5.4).
 
 # Citations
 
@@ -367,3 +429,6 @@ assessing their $k$-$\omega$ [wall function](/methods/rans-wall-function.md)
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.2.
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — App. C.
 - [He et al. (2022)](/sources/he-2022-b.md) — abstract, §5.3, §6.
+- [Li et al. (2022)](/sources/li-2022-k.md) — §II B–C Eqs. 2–5, 9, §III A–C Fig. 18.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.2.
+- [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §2.2 Eqs. 2.38–2.42, §4.1, §5.1, §5.4 Figs. 37–42.

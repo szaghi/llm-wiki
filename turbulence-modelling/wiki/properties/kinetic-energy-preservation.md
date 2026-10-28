@@ -5,7 +5,7 @@ description: "A discretization is kinetic-energy preserving when its convective 
 status: established
 aliases: [KEP, KEEP, kinetic-energy and entropy preserving scheme, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-27T20:41:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -504,7 +504,14 @@ and $\mathcal E$ the enstrophy, page-local), which needs no reference
 solution; as "a potential drawback" they note that it "should be zero for
 any truly kinetic energy preserving method, such as the skew-symmetric
 central FDM", which in practice adds dissipation through de-aliasing
-filters.
+filters. [Cheng et al. (2023)](/sources/cheng-2023-b.md), §3.5, Figs. 6–7,
+use the same reading on the inviscid Taylor–Green vortex ($128^3$,
+$p_\infty=100$): since schemes with a non-dissipative central flux
+"can preserve the total kinetic energy exactly" (citing two works), the
+kinetic-energy loss and the enstrophy history of their dissipative TVD
+reconstructions measure numerical dissipation, which is lower for their
+ROUND schemes than for the van Leer and MUSCL limiters (scheme on
+[WENO](/methods/weno-scheme.md)).
 
 **Thermalization.** Without dissipation, energy reaching the cut-off has nowhere
 to go. Flad & Gassner (2017, §3) observe an approximate $E(k)\propto k^2$
@@ -563,7 +570,17 @@ which motivates low-dissipation (entropy- and KEP) schemes for
 charLES scheme, "kinetic-energy-conserving" and approximately entropy
 preserving in the inviscid limit, carries the machine-learning wall model of
 [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md), §3.1. The
-opposite case is a scheme that is not dissipation free:
+industrial review of [Mani & Dorgan (2023)](/sources/mani-2023.md), §4.4,
+makes the same point for aerospace practice: scale-resolving simulation
+benefits from reduced inviscid-flux dissipation, obtained either by
+modifying the usual upwind flux (Winkler et al.; Nishikawa & Liu, cited)
+or by KEP fluxes (Honein & Moin; Jameson, cited) and the kinetic-energy-
+and entropy-preserving (KEEP) algorithm, citing the KEEP scheme with which
+Goc et al. (2021) predicted the maximum lift of a High-Lift Prediction
+Workshop configuration (see
+[entropy conservation](/properties/entropy-conservation.md) for the
+review's grouping of the KEEP label). The opposite case is a scheme that
+is not dissipation free:
 [Saini et al. (2023)](/sources/saini-2023.md), §2.1, needed a 60%–40% blend
 of second-order central and upwind convection for stability in their
 second-order finite-volume combustor LES, and measured that numerical
@@ -811,3 +828,5 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
 - [De Vanna et al. (2022)](/sources/devanna-2022.md) — §3.1.1–3.1.3 (sixth-order fully split energy-preserving convection, WENO-Z hybrid, semi-conservative viscous terms).
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.3, §2.8 (fourth-order KE/EP central flux in a WENO blend); §3.1, Fig. 12.
 - [Svärd (2022)](/sources/svard-2022.md) — §3, Condition C; §4, Eq. (34) (KEP-diffusive requirement, internal-energy balance).
+- [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §3.5, Figs. 6–7 (exact kinetic-energy preservation of central fluxes, cited; kinetic energy and enstrophy as dissipation measures).
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.4 (reduced-dissipation, KEP and KEEP fluxes for scale-resolving simulation, cited).

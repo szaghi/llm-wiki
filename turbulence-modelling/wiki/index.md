@@ -20,7 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–10 ingested (200 of the 307 sources planned in 16
+**Corpus:** chunks 1–11 ingested (220 of the 307 sources planned in 16
 chunks; the archive is still growing). Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
@@ -118,7 +118,18 @@ with lattice Boltzmann, entropy-stable weak solutions, BVD and compact
 nonlinear schemes, wall-modelled LES of hypersonic and shock-dominated
 flows, pressure dilatation and bulk viscosity in compressible DNS, wall
 cooling and pressure fluctuations in hypersonic boundary layers, and the
-eddy dissipation concept for MILD combustion.
+eddy dissipation concept for MILD combustion. Chunk 11 (2022–2024 papers):
+one-equation subgrid kinetic-energy models, subgrid velocity enrichment,
+pseudo-DNS from fine-scale databases, the spatial gradient model, a priori
+and a posteriori tests of compressible and real-gas SGS models, the
+filtered actuator line in implicit LES and wind-farm LES over hills, a
+dynamic RSM-based IDDES of transonic buffet, self-adaptive turbulence eddy
+simulation with weighted compact nonlinear schemes on the 30P30N airfoil,
+wall-modelled LES with spectral vanishing viscosity, a review of turbulent
+boundary layers, machine learning in combustion and industrial CFD,
+neural-network RANS closures, numerical subgrid stress in implicit LES,
+ROUND schemes in OpenFOAM, hypersonic swept-ramp DNS, scramjet combustion
+LES, premixed-flame DNS and turbulent deflagration-to-detonation transition.
 
 ## Reading guide
 
@@ -158,7 +169,10 @@ eddy dissipation concept for MILD combustion.
 [explicit modal filtering](/methods/explicit-modal-filtering.md),
 [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md),
 [anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md),
-[variational multiscale method](/methods/variational-multiscale-method.md);
+[variational multiscale method](/methods/variational-multiscale-method.md),
+[one-equation subgrid kinetic-energy models](/methods/subgrid-kinetic-energy-equation-model.md),
+[subgrid velocity enrichment](/methods/subgrid-velocity-enrichment.md),
+[pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md);
 [energy backscatter](/definitions/energy-backscatter.md),
 [bottleneck effect](/definitions/bottleneck-effect.md);
 [gradient model and clipping](/methods/gradient-model.md);
@@ -222,12 +236,14 @@ eddy dissipation concept for MILD combustion.
 [multi-resolution independent simulations](/methods/multi-resolution-independent-simulations.md),
 [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md),
 [WENO and hybrid shock-capturing schemes](/methods/weno-scheme.md),
+[weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md),
 [low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md),
 [immersed boundary methods](/methods/immersed-boundary-method.md),
 [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md),
 [flux reconstruction](/methods/flux-reconstruction.md),
 [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md),
 [thickened flame model](/methods/thickened-flame-model.md),
+[actuator line and actuator disk models](/methods/actuator-line-model.md),
 [jump-penalty stabilization](/methods/jump-penalty-stabilization.md),
 [high-order projection-based upwind method](/methods/high-order-projection-based-upwind-method.md),
 [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md);
@@ -267,6 +283,8 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md),
 [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md),
 [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md),
+[30P30N three-element high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md),
+[hammerhead launch-vehicle buffet](/benchmarks/hammerhead-launch-vehicle-buffet.md),
 [turbine cascades](/benchmarks/turbine-cascade.md),
 [compressor cascades](/benchmarks/compressor-cascade.md),
 [NASA Rotor 37](/benchmarks/nasa-rotor-37.md),

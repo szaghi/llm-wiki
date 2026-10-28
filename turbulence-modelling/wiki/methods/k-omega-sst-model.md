@@ -3,9 +3,9 @@ type: Method
 title: "k-ω SST model"
 description: "Menter's two-equation shear-stress-transport eddy-viscosity model, blending a k-ω inner formulation with an outer one through F1 and limiting the eddy viscosity through F2; its printed variants, log-ω, transition, PANS, DES and compressibility-corrected forms, high-order discretization, data-driven corrections, and evidence on airfoils, cascades, cars and separated flows."
 status: established
-aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES]
+aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES, BSL k-ω, baseline k-ω model]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-27T21:07:00Z
 ---
 
 # k-ω SST model
@@ -141,6 +141,33 @@ production is limited by $15\beta^*\omega k$ for all their models
 ([Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md), §3.1.1 Eq. 55,
 §3.2, Eq. 71; see Qualifications for $\beta_1$ and $a_1$). Their blending
 functions evaluate $\omega$ through the interpolant of $1/\omega$ (§3.2).
+
+**BSL as the host of a hybrid.** Wu et al. (2023) print Menter's BSL
+$k$-$\omega$ model, the blend $\phi=F_1\phi_1+(1-F_1)\phi_2$ of a Wilcox
+$k$-$\omega$ set and a $k$-$\varepsilon$ set (Eq. 3), as the unchanged
+transport equations of their self-adaptive turbulence eddy simulation
+([Wu et al. (2023)](/sources/wu-2023-b.md), §2.1.1, Eqs. 1–3, Table 1). With
+$\mathcal T_{ij}$ (page-local) the source's $\tau_{ij}$, "the Reynolds
+stress tensor terms", whose sign and density weighting are not stated,
+the printed equations read
+
+$$\frac{D\rho k}{Dt}=\mathcal T_{ij}\partial_ju_i-\beta^*\rho\omega k+\partial_j\big[(\mu+\sigma_k\mu_t)\partial_jk\big],\qquad
+\frac{D\rho\omega}{Dt}=\omega\Big(\frac{\gamma_\omega}{k}\mathcal T_{ij}\partial_ju_i-\beta_\omega\rho\omega^2\Big)+\partial_j\big[(\mu+\sigma_\omega\mu_t)\partial_j\omega\big]+\mathrm{CD},$$
+
+with $\gamma_\omega$, $\beta_\omega$ the registry-§11 production and
+destruction coefficients (the source's $\gamma$, $\beta$) and CD the
+cross-diffusion term, both as printed (see Qualifications for the bracket and the cross-diffusion). $F_1$ is
+1 near the wall and 0 away from it, and is not printed. Table 1 as printed:
+$\beta^*=0.09$ (the source's $\beta_1^*$), $\sigma_k=(0.5,1.0)$,
+$\sigma_\omega=(0.5,0.856)$, $\beta_\omega=(0.075,0.0828)$,
+$\gamma_\omega=(0.553,0.44)$. Against the SST table above, the
+$\sigma_\omega$, $\beta_\omega$ and outer $\sigma_k$ values are the same,
+$\gamma_\omega$ is printed to three and two digits (0.553 and 0.44 against
+0.5532 and 0.4403), and the inner $\sigma_k$ is 0.5 against 0.85; the source
+names the model BSL, not SST. The hybrid
+multiplies only the eddy viscosity, $\mu_t=F_r\rho k/\omega$, by a
+resolution function (on the
+[hybrid RANS/LES page](/definitions/hybrid-rans-les.md)).
 
 **A log-$\omega$ form for flux reconstruction.** Vandenhoeck et al. (2022)
 rewrite the SST-2003 model with $\tilde\omega_\ell=\ln\omega$ as unknown
@@ -346,6 +373,19 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
   one-equation $\gamma$ model by multiplying the production of $k$ by
   $\gamma$ and the DDES destruction by $\max(0.1,\gamma)$
   (§II.B.3; see [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+- **SST-IDDES as a comparator.** Li et al. (2022) and Wu et al. (2023) use
+  SST-IDDES (Gritskevich et al.) as the reference hybrid. On the transonic
+  hammerhead buffet it breaks up the separated shear layer later than the
+  Reynolds-stress IDDES forms and gives a $C_p$-RMS of 0.0897 at the
+  location of the experimental maximum (0.0454), which Li et al. attribute,
+  after Spalart, to its larger modelled stress in the shear-layer extension
+  ([Li et al. (2022)](/sources/li-2022-k.md), §III C, Figs. 15–18); on the
+  30P30N airfoil it underpredicts lift by 19.8%, with early flap separation
+  and large eddy viscosity in the slat cove (Wu et al. 2023, §3.4, Table 2;
+  both on the [DES page](/methods/detached-eddy-simulation.md)). Mani &
+  Dorgan (2023) list SST-based variants of DES (Bush & Mani; Strelets;
+  Winkler et al.) beside the SA-based original at Boeing
+  ([Mani & Dorgan (2023)](/sources/mani-2023.md), §4.5.2).
 
 ### Data-driven corrections of SST
 
@@ -464,7 +504,14 @@ operational role and need not match their DNS counterparts
   cluster in the linear lift range and scatter widely near maximum lift,
   which motivates the wall-modelled LES of Goc et al.
   ([Goc et al. (2021)](/sources/goc-2021.md), §1, Fig. 1;
-  [JAXA Standard Model](/benchmarks/jaxa-standard-model.md)).
+  [JAXA Standard Model](/benchmarks/jaxa-standard-model.md)). Mani &
+  Dorgan (2023) name Menter's SST, with SA and its rotation–curvature and
+  quadratic-constitutive variants, as Boeing's workhorse RANS models for
+  design, analysis and risk mitigation (Lockheed Martin's Falcon code uses
+  Smith's $k$-$l$ model); all "work well for attached flows, and flows with
+  small amounts of separation", but can be inadequate where large
+  separation dominates, as at high angle of attack, recalling the
+  workshop RANS lift curves they reproduce (§4.5.1, Figs. 6, 12).
 - **Transition.** With the algebraic intermittency of Menter et al. (2022),
   SST reproduces the ERCOFTAC T3 plates, a separated flat plate, four
   airfoils and a turbine cascade with accuracy similar to the transport
@@ -815,6 +862,22 @@ version read (arXiv v1):
   their limited production (Eq. 11) is discussed on the
   [explicit algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md)
   page.
+- Wu et al. (2023, Eq. 2) print the BSL cross-diffusion as
+  $2\rho(1-F_1)\sigma_{\omega2}\omega^{-1}\partial_jk\,\partial_j\omega\;\beta\rho\omega^2$,
+  with a trailing factor $\beta\rho\omega^2$ that repeats the destruction
+  term of the bracket. Without the trailing factor the term has the
+  dimensions of $D\rho\omega/Dt$, like the other terms of their equation;
+  with it, it does not *(compiler check, not in the sources)*.
+  Their text calls "$\beta$ and $n$" the constants of the resolution
+  function, which Eq. 5 and Table 1 write $\beta^*$ (0.002), distinct from
+  the $\beta_1^*=0.09$ of the $k$-equation. Their Eq. 2 also places the
+  destruction inside the bracket multiplied by $\omega$,
+  $\omega(\ldots-\beta\rho\omega^2)$, which gives a destruction
+  $\beta\rho\omega^3$, one power of $\omega$ more than the dimensions of the
+  left side $D\rho\omega/Dt$, while the production
+  $\omega\gamma\mathcal T_{ij}\partial_ju_i/k$ has them, $\mathcal T_{ij}\partial_ju_i$
+  having the dimensions of $D\rho k/Dt$ by their Eq. 1 *(compiler check,
+  not in the sources)*.
 
 ## Contradictions
 
@@ -871,3 +934,6 @@ version read (arXiv v1):
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §2.1 Eqs. 9–13, §4.2 Figs. 5–7.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.3 Fig. 5, §3.4 Eq. 8, §4.1, §4.4.2 Fig. 11.
 - [He et al. (2022)](/sources/he-2022-b.md) — §2.5 Figs. 5–6, §4.
+- [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.1.1 Eqs. 1–4 Table 1, §3.4 Table 2.
+- [Li et al. (2022)](/sources/li-2022-k.md) — §III C, Figs. 15–18.
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.5.1–4.5.2, Figs. 6, 12.

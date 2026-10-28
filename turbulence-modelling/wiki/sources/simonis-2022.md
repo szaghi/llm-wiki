@@ -8,7 +8,7 @@ authors: [Simonis S., Oberle D., Gaedtke M., Jenny P., Krause M.J.]
 year: 2022
 venue: "J. Comput. Phys. 454:110991"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Simonis_Temporal_large_eddy_simulation_with_lattice_Boltzmann_method.pdf"
-tags: [lattice-boltzmann, temporal-les, deconvolution, taylor-green-vortex, sgs-model]
+tags: [lattice-boltzmann, temporal-les, approximate-deconvolution, taylor-green-vortex, sgs-model]
 timestamp: 2026-10-27T15:46:00Z
 ---
 

@@ -290,3 +290,18 @@ that uses one still says what it means.
 | $\mu^w_{\mathrm{sgs}}$, $\lambda^w_{\mathrm{sgs}}$ | wall-model eddy viscosity and eddy conductivity | equilibrium wall model, wall-modelled LES |
 | $\varpi_{\mathrm p}$ | angular frequency of a pitching airfoil | dynamic stall, NACA 0012 airfoil |
 | $\alpha_h$ | hill-width factor of the parametrized periodic hill | periodic hill |
+| $C_{\mathrm{MT}}$, $y_{0,\mathrm r}$ | Mason–Thomson wall-damping constant of the Smagorinsky length (the sources' $C_0$, not the gradient-model $C_0$); aerodynamic roughness length | Smagorinsky model, LESGO, equilibrium wall model, law of the wall, actuator models |
+| $\epsilon_{\mathrm G}$, $a_{\mathrm i}$, $C'_{\mathrm{Th}}$ | Gaussian kernel width of actuator forces; axial induction factor; local (disk-velocity) thrust coefficient | actuator line and disk models, LESGO |
+| $\gamma^*_{\mathrm{PaSR}}$, $\tau_{\mathrm{ch}}$, $\tau_{\mathrm{mix}}$, $u'_\Delta$ | reacting fraction of a partially stirred reactor cell; chemical and mixing time scales; subgrid velocity scale | thickened flame model, flamelet-based tabulated chemistry |
+| $s_{\mathrm L}$ | laminar flame speed (the registry's $S_L$ is the Lundquist number) | flamelet-based tabulated chemistry, thickened flame model |
+| $F_r$, $L_i$, $L_c$, $L_k$, $C_x$, $\beta_F$, $n_F$ | resolution control function of self-adaptive turbulence eddy simulation (SATES), its integral, cut-off and Kolmogorov lengths and constants (not the SST $\beta^*$) | hybrid RANS/LES, 30P30N high-lift airfoil |
+| $c_k$, $c_\varepsilon$ | constants of one-equation subgrid kinetic-energy models (not the DES length factor $C_k$) | one-equation subgrid kinetic-energy models |
+| $C_k$, $\mathcal A(\cdot)$ | DES length-scale factor $C_{\mathrm{DES}}=C_kC_s$ of the dynamic RSM-IDDES; volume-weighted average over a cell's direct neighbours | detached-eddy simulation, dynamic procedure, Reynolds-stress model |
+| $\nu^{\mathrm{RNG}}_t$, $C_\nu$ | RNG spectral eddy viscosity of the subgrid equation and its constant | spectral eddy viscosity, subgrid velocity enrichment |
+| $\mathcal T_{ij}$, $\mathcal T^{\mathrm{eq}}_{ij}$, $t_r$ | subgrid inertial stress of pseudo-DNS, its database equilibrium value, relaxation time | pseudo-direct numerical simulation |
+| $\tau^{\mathrm{num}}_{ij}$, $\tau^{\mathrm{mod}}_{ij}$ | numerical and modelled parts of the subgrid stress | implicit LES, numerical dissipation |
+| $\alpha_{\mathrm W}$, $b_{\mathrm W}$, $\epsilon_{\mathrm Z}$ | nonlinear and linear weights of weighted compact nonlinear schemes; WENO-Z-type regularization parameter | weighted compact nonlinear schemes, WENO schemes, 30P30N high-lift airfoil |
+| $\phi_{\mathrm n}$, $\mathsf b_k$, $g_k$, $\lambda_{\mathrm R}$ | normalized variable, blending weights and dissipation parameters of the ROUND reconstruction | WENO schemes, numerical dissipation |
+| $k_s$, $k_g$, $\Delta U^+$ | equivalent sand-grain and geometric roughness heights; roughness function | law of the wall, RANS wall functions, turbulent boundary layer |
+| $\alpha_{\mathrm G}$, $g^{L_1L_2}$ | gradient-model filter-moment coefficient and the coefficients of the spatial gradient model (not the basis-tensor $g^{(n)}$) | gradient model |
+| $\eta_{\mathrm{DA}}$ | fraction of data-assimilation samples in training | field inversion and machine learning |

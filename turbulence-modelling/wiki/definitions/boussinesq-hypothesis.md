@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-27T21:07:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -363,6 +363,14 @@ and treatments of the trace; translated to the registry they agree.
   for both a filter and a Favre time average
   ([Tonicello et al. (2022)](/sources/tonicello-2022.md), §4, Eqs. 4.4,
   4.7); their a priori test of it is below.
+- **RANS, incompressible, negative convention.** Shan et al. (2023) call
+  $-\langle u_i'u_j'\rangle$ the Reynolds stress and close it as
+  $\nu_t(\partial_j\langle u_i\rangle+\partial_i\langle u_j\rangle)-\tfrac23k\delta_{ij}$,
+  the registry form with the sign reversed; the eddy viscosity comes from
+  a Spalart–Allmaras model or, in their data-driven closure, directly from a
+  neural network, and $k$ appears only in this isotropic term
+  ([Shan et al. (2023)](/sources/shan-2023.md), §II.A, Eqs. 1–2; see
+  Qualifications for the printed derivative).
 
 ### A traceless Reynolds stress
 
@@ -405,6 +413,15 @@ and Duraisamy (2021, §III.A, Eq. 4) cite. The Boussinesq hypothesis keeps
 only the first term, $T^{(1)}\propto S_{ij}$; the
 [tensor-basis neural network](/methods/tensor-basis-neural-network.md) and
 the quadratic constitutive relation of the SA page add higher terms.
+Shan et al. (2023) use the same four-layer taxonomy, citing Duraisamy et
+al. (2019), to place their own data-driven closure: calibrating the nine
+Spalart–Allmaras coefficients and training a network on the calibrated
+fields reduces only the coefficient layer, while the uncertainties of
+ensemble averaging, of the linear eddy-viscosity representation and of the
+functional forms remain ([Shan et al. (2023)](/sources/shan-2023.md), §IV;
+see [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
+Their network replaces the SA equation and outputs a scalar eddy
+viscosity, which enters the linear relation of their Eq. 2 (§II.A, §II.C).
 
 Haering et al. (2022) derive the scalar eddy viscosity from a
 gradient-diffusion argument: a flux $\langle u_i'\phi'\rangle$ is modelled
@@ -463,6 +480,34 @@ terms: most DES methods "invoke the eddy-viscosity assumption", and a
 isotropic eddy-viscosity hypothesis", is preferred for "problem" flows
 where eddy-viscosity models "may fail to predict separation accurately"
 (§1).
+
+**Three-dimensional boundary layers.** Devenport & Lowe (2022) state that
+isotropic eddy-viscosity RANS models assume the shear-stress angle equal to
+the flow-gradient angle, i.e. the direction of the wall-parallel turbulent
+shear stress $(-R_{12},-R_{23})$ aligned with that of the mean velocity
+gradient $(\partial_y\langle u\rangle,\partial_y\langle w\rangle)$, whereas in
+nearly all measured three-dimensional turbulent boundary layers the stress
+direction lags behind the gradient direction and the ratio of shear-stress
+magnitude to twice the kinetic energy falls below its two-dimensional value
+([Devenport & Lowe (2022)](/sources/devenport-2022.md), §5.1, §5.4,
+Figs. 37–39). They attribute the lag to the pressure–strain term (see
+[Reynolds-stress models](/methods/reynolds-stress-model.md)) and call the
+misalignment a challenge "both in RANS and wall-modeled LES"; they add that
+van den Berg's three-dimensional law of the wall, which they call perhaps
+the leading theoretical development, also relies on stress–strain
+alignment (§5.3). The angle definitions are in the source's
+$x_1,x_2,x_3$ axes, translated here to $x,y,z$ *(compiler check, not in the
+sources)*.
+
+**Closures outside the hypothesis.** Mani & Dorgan (2023) present the
+macroscopic forcing method of Mani & Park as a RANS direction "not based on
+the Boussinesq (1877) approximation, isotropy, or the separation of scales
+between turbulence and mean fields": it determines the closure operators
+governing the mean-field mixing of a given flow, avoids tuning constants
+and unifies laminar and turbulent macroscopic modelling, but is "not ready
+for complex industrial applications" ([Mani & Dorgan (2023)](/sources/mani-2023.md),
+§4.5.1). The review states these properties from the cited work and shows
+none of them.
 
 **Higher-order gradient closures.** Jakhar et al. (2026) note that the
 fourth- and sixth-order truncations of the Taylor expansion of the subgrid
@@ -978,6 +1023,12 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 
 ## Qualifications
 
+- Shan et al. (2023, Eq. 2) print the first strain term as
+  $\partial\bar u_i/\partial x_i$; the form above writes
+  $\partial_j\langle u_i\rangle$. *(Compiler check, not in the sources: as
+  printed, the term is the divergence, zero by their continuity equation
+  (Eq. 1), and the right side is not symmetric in $i,j$ while the left side
+  is.)*
 - Haering et al. (2022) and Vela-Martín (2022) read low stress–strain
   correlations differently. Haering et al. take the correlation of the
   filtered stress with the strain as a property the model's energy transfer
@@ -1135,3 +1186,6 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [He et al. (2022)](/sources/he-2022-b.md) — §2.1 Eqs. 2–3, 5, §2.7 Eqs. 6–8, Appendix Fig. 19.
 - [Qi et al. (2022)](/sources/qi-2022-b.md) — §2 Eqs. 2.11–2.15, §3.2 Eq. 3.21.
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §4 Eqs. 4.4, 4.7, §5 Eqs. 5.1–5.5 Figs. 27–28.
+- [Shan et al. (2023)](/sources/shan-2023.md) — §II.A Eqs. 1–2, §II.C, §IV.
+- [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §5.1, §5.3, §5.4, Figs. 37–39.
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.5.1.

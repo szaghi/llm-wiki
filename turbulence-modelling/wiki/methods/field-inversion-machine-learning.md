@@ -5,7 +5,7 @@ description: "Field inversion infers a spatial correction field of a RANS model 
 status: established
 aliases: [FIML, field inversion, field-inversion and machine-learning, inference before learning, variational data assimilation, non-parametric correction, Reynolds-force vector]
 tags: [field-inversion, data-driven, rans, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-27T21:12:00Z
 ---
 
 # Field inversion and machine learning
@@ -791,6 +791,111 @@ contribution is the explanation of the forest by Shapley additive
 explanations and complexity reduction, described on
 [model-form uncertainty](/definitions/model-form-uncertainty.md).
 
+## Coefficient calibration, then a network that replaces the model (Shan et al. 2023)
+
+[Shan et al. (2023)](/sources/shan-2023.md) keep the two-step pattern
+of FIML, inference from data and then learning, but change both steps
+for separated flow over wind-turbine airfoils near and beyond stall,
+where no DNS or LES exists and the data are experimental (Abstract, §I,
+§II.A, Fig. 1):
+
+1. **Data assimilation by coefficient calibration.** Instead of a
+   spatial field $\beta(\boldsymbol x)$, the nine coefficients of the
+   [Spalart–Allmaras model](/methods/spalart-allmaras-model.md) are
+   calibrated, one set per flow case, against measured surface pressure
+   with a population-based metaheuristic, teaching–learning-based
+   optimization (§II.B, §II.D; details and
+   results on
+   [ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md)).
+   The calibrated model enlarges the eddy viscosity in the wake and in the
+   separation vortex relative to SA, which the authors give as the reason
+   for its lower lift (§III.B, Figs. 9–10). Each calibrated set is
+   case-specific and loses attached-flow accuracy when applied to a whole
+   lift curve (§III.C, Fig. 11).
+2. **A network that replaces the model.** A fully connected network maps
+   six features to the SA working variable $\tilde\nu$, and
+   $\nu_t=\tilde\nu f_{v1}(\chi)$, $\chi=\tilde\nu/\nu$, gives the eddy
+   viscosity of the Boussinesq closure (§II.C, Eq. 10). The network
+   replaces the SA transport equation entirely during the RANS solve; it
+   does not correct a term of it. The authors call this "different from
+   many existing studies", FIML among them, that keep a traditional model
+   and learn a correction factor (Abstract, §I, §V).
+
+**Network (§II.C, Eqs. 4–12, Table 1).**
+
+- *Features.* With page-local $\lVert\cdot\rVert$ the Frobenius norm
+  (so $\lVert S\rVert=\lvert S\rvert/\sqrt2$ in registry terms) and $d$
+  the wall distance, the input features $\boldsymbol\zeta$ are a mixing
+  velocity $\zeta_1=l_{\mathrm{mix}}\lVert\Omega\rVert$;
+  $\zeta_2=\lVert\Omega\rVert$; $\zeta_3=\lVert S\rVert$;
+  $\zeta_4=d^2\lVert\Omega\rVert(1-\tanh d)$; $\zeta_5=d^2\lVert S\rVert(1-\tanh d)$,
+  the wall function taken from earlier work of the group "to approximate
+  the distribution trend of eddy viscosity"; and the pressure-gradient
+  magnitude $\zeta_6=\lvert\nabla\langle p\rangle\rvert$, for the
+  adverse-pressure-gradient effect on separation (the source's
+  $q_1,\dots,q_6$). The mixing length is
+  $l_{\mathrm{mix}}=\min\{\kappa y(1-e^{y^+/A^+}),\ \kappa\delta\}$ as printed
+  (Eq. 8), with $\kappa=0.41$, $A^+=26$ and $\delta$ from the
+  flat-plate correlation $0.37x/Re_x^{1/5}$ along the chord, frozen at
+  its trailing-edge value downstream (Eq. 9). The features are called
+  Galilean- and rotation-invariant.
+- *Output.* $\tilde\nu$ rather than $\nu_t$: for a given $\nu_t$ it is
+  the unique positive root of a quartic, and near the wall
+  $\tilde\nu\sim\nu_t^{1/4}$, which compresses the range the network must
+  fit (§II.C.2). An output ReLU enforces positivity; hidden layers use
+  LeakyReLU.
+- *Training.* Min–max normalization (Eq. 11); loss = mean squared error
+  plus an $L_2$ weight penalty (Eq. 12); AdamW, batch 64; hyperparameters
+  by Bayesian optimization, which selected eight hidden layers (widths
+  265, six of 362, 469), learning rate 0.00013 and no $L_2$ penalty
+  (§III.D, Fig. 12). A physics-assisted recursive sample selection keeps
+  5–30% of each field (§II.C).
+- *Data mix.* Baseline-SA fields at attached incidences
+  ($\alpha<8^\circ$) and calibrated fields at separated ones. The ratio
+  $\eta_{\mathrm{DA}}$ (page-local) of calibrated to baseline samples
+  sets the result: the lift-curve error is smallest at
+  $\eta_{\mathrm{DA}}=1.62$, tends to the SA error (0.1341) as
+  $\eta_{\mathrm{DA}}\to0$ and to the calibrated-model error (0.0835) for
+  $\eta_{\mathrm{DA}}>2.74$ (§III.E, Fig. 13).
+- *Coupling.* "Iterative" mode: the network is evaluated at every solver
+  iteration, as an algebraic eddy-viscosity model, against a "frozen"
+  mode that substitutes the prediction once; the authors choose the
+  iterative mode, citing their group's earlier result that it converges
+  better in separated high-Reynolds-number flow (§II.A), and add an online
+  dimension-reduction accelerator to keep the coupled solve converging
+  (§III.A).
+
+**Results (§III.F, Tables 3, 5, Figs. 14–25).** Second-order
+finite-volume RANS against fixed-transition experiments
+(Somers) on the NREL S8xx airfoils; S809 grid of 34,205 cells with
+$y^+\approx1$ (§III.A).
+
+- *Case 1* (trained on S809 at four incidences, $Re=2\times10^6$): lift
+  errors 2.9%, 1.2%, 5.5%, 7.4%, 6.3%, 6.3% at
+  $\alpha=8.2^\circ$–$15.2^\circ$, against 4.3%, 18.2%, 28.4%, 23.4%,
+  19.1%, 16.6% for SA (Table 5). The network reproduces SA pressure at the
+  attached training incidence and calibrated-model pressure at the
+  separated ones, and improves incidences outside the training set
+  (Figs. 16–17). It separates earlier, with a larger separation bubble,
+  than SA (Figs. 18–20).
+- *Case 2* (trained on S809 at $Re=2\times10^6$ and S805 at $10^6$):
+  improved lift curves for $Re=0.5$–$3\times10^6$ and for the thicker S814,
+  not seen in training; for S814 at higher $Re$ the stall point is
+  predicted but not the steep post-stall drop (Figs. 21–23). Above stall
+  ($\alpha>8^\circ$) the mean relative lift error falls by "over 60%" for
+  all three airfoils (§III.F, Fig. 24).
+- *Scope.* The authors state that only the coefficient uncertainty of the
+  SA model has been reduced; the uncertainties of averaging, of the linear
+  stress representation and of the model's functional forms remain, in
+  the four-layer taxonomy of Duraisamy et al. (2019) (§IV; see
+  [model-form uncertainty](/definitions/model-form-uncertainty.md)). The
+  training targets are SA solutions, baseline or calibrated (§II.D).
+
+The S809 airfoil is also the case of Yan et al. (2022), who select among
+FIML networks by their a posteriori lift error (above); Shan et al.
+compare their drag with the FIML result of Singh et al. (Fig. 15b),
+noting slightly different training data.
+
 ## Generalization across flow classes
 
 [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (§1) state that
@@ -1032,6 +1137,22 @@ is used:
 - **He et al. (2022)** report no online test: the "matches well"
   statement for the corrected viscosity ratio (§4.3, Fig. 12) is a priori
   (see [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+- **Shan et al. (2023): reference data and printed slips.** The
+  experiments are at fixed transition (§III.A); the paper does not state
+  a transition treatment for the RANS runs. Printed slips: the
+  mixing length of Eq. 8 has $1-e^{+y^+/A^+}$, which is negative for every
+  $y^+>0$, so the minimum always selects a negative length *(compiler
+  check, not in the sources)*. The min–max normalization of Eq. 11 maps the data to
+  $[0,1]$, while the text says $[-1,1]$. The Conclusions mention a
+  non-negativity term "add[ed] to the loss function", which the loss of
+  Eq. 12 (mean squared error plus $L_2$) does not contain; positivity
+  comes from the ReLU output (Eq. 6). The above-stall error reduction is
+  "over 57%" in the Abstract and "over 60%" in §III.F. The measured S809
+  lift at $\alpha=12.2^\circ$, $Re=2\times10^6$ is 0.996 in Table 3 and
+  0.995 in Table 5, with SA errors 28.3% and 28.4%. Eq. 2 prints
+  $\partial\bar u_i/\partial x_i$ for $\partial\bar u_i/\partial x_j$ in
+  the Boussinesq strain, and Eq. A3 prints an overbarred $\upsilon$ for
+  $\tilde\nu$ in the modified vorticity.
 
 # Citations
 
@@ -1055,3 +1176,4 @@ is used:
 - [He et al. (2022)](/sources/he-2022-b.md) — §2.2, §2.7, Eqs. 6–8, Table 2, App. Fig. 19 (framework, target, features); §4.3, Table 4, Fig. 12.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.4, §4.3, §4.5 (FIML among model-consistent frameworks, cost, transition, coupled closures).
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1 (field inversion cited; the corrected model stays linear).
+- [Shan et al. (2023)](/sources/shan-2023.md) — Abstract; §I; §II.A, Fig. 1 (framework, iterative and frozen coupling); §II.B–D, Eqs. 2–12, Table 1 (calibration, features, output, network, loss); §III.A–F, Tables 3, 5, Figs. 9–25 (solver, hyperparameters, sample ratio, two generalization cases); §IV (residual uncertainties); §V.

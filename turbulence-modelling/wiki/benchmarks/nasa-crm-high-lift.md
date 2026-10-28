@@ -5,7 +5,7 @@ description: "The NASA High-Lift Common Research Model (CRM-HL), a half-span tra
 status: established
 aliases: [CRM-HL, HL-CRM, NASA High-Lift Common Research Model, NASA CRM-HL, HLPW-4 CRM-HL, CRM-HL wing-body, HLPW-5 CRM-HL]
 tags: [benchmark, wmles, wall-model, rans, immersed-boundary, data-driven, mesh-adaptation, dg]
-timestamp: 2026-10-27T11:00:00Z
+timestamp: 2026-10-27T20:38:00Z
 ---
 
 # NASA CRM high-lift configuration
@@ -125,7 +125,9 @@ metric-based adaptation for "a full high-lift aircraft configuration"
 
 **Two-dimensional multi-element airfoils.** The three-element airfoils
 that the sources run are separate configurations, not sections of the
-CRM-HL. [Huang et al. (2022b)](/sources/huang-2022-d.md), §3.3, run the
+CRM-HL; the 30P30N now has its own page,
+[30P30N three-element high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md),
+which collects the results below with those of later sources. [Huang et al. (2022b)](/sources/huang-2022-d.md), §3.3, run the
 30P-30N at $\alpha=16^\circ$, $Re=9\times10^6$, $M=0.2$ with steady
 [Spalart–Allmaras](/methods/spalart-allmaras-model.md) RANS on a hybrid
 mesh of 53,870 cells (non-dimensional first-layer height $10^{-6}$,
@@ -161,6 +163,25 @@ The same review also cites a wall-modelled LES of the NASA Common
 Research Model at $M=0.85$, $\alpha=4^\circ$, $Re_c=5\times10^6$ (Lehmkuhl
 et al. 2016, algebraic Werner–Wengle wall-stress closure), which is not
 the high-lift configuration of this page and is not a high-lift result.
+
+**Mesh adaptation on a section of the CRM-HL wing.**
+[Mani & Dorgan (2023)](/sources/mani-2023.md), §4.3, Figs. 8 and 10,
+reproduce the study of Michal et al. (2021) on a two-dimensional cross
+section of the CRM-HL wing over a range of angles of attack, with four
+flow solvers, four mesh-mechanics methods and four error estimates
+(GGNS, SANS with MOESS, SFE and Wolf, with Hessian-based, multiscale and
+lift-output-based metrics). Carried to sufficient mesh convergence, all
+adaptive methods give nearly the same lift coefficient at $8^\circ$,
+"regardless of flow solver, mesh mechanics method, or error estimate",
+but their convergence trajectories differ, and the output-error-based
+methods reach a prescribed error on coarser meshes. The review reads this
+as the case for adjoint-based adaptation in industry (see
+[mesh adaptation](/methods/mesh-adaptation.md)). In §4.5.2 the same
+review cites Goc et al. (2020, 2021, 2022), the last titled in its
+reference list as a large-eddy simulation of the CRM-HL, together for a
+wall-modelled LES that "predicted the abrupt lift break near the stall",
+and shows only the JSM result (see
+[JAXA Standard Model](/benchmarks/jaxa-standard-model.md)).
 
 **Wall-model robustness.** [Nuca et al. (2025)](/sources/nuca-2025.md), §I,
 cite CRM-HL wall-modelled LES among the complex applications that motivate
@@ -208,3 +229,4 @@ addresses in [Constant et al. (2024)](/sources/constant-2024.md).
 - [Nuca et al. (2025)](/sources/nuca-2025.md) — §I (cited application only).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §4.3, Fig. 7b (cited results: 30P/30N; the $M=0.85$ Common Research Model, not CRM-HL).
 - [Wang et al. (2013)](/sources/wang-2013.md) — §4.11 (case C3.1; specification only).
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.3, Figs. 8, 10 (reproduced adaptation study of Michal et al. 2021 on a CRM-HL wing section); §4.5.2 (cited WMLES).

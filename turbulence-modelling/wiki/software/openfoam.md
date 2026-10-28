@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "OpenFOAM"
-description: "OpenFOAM is the open-source unstructured finite-volume toolbox that many bundle sources use as baseline RANS solver for data-driven closures, as second-order LES solver, as host of in-house solvers and a wall-model library, and as reference for high-order codes; this page records the solvers, schemes and versions they report and what the comparisons with high-order codes say about its dissipation."
+description: "OpenFOAM is the open-source unstructured finite-volume toolbox that bundle sources use as baseline RANS solver for data-driven closures, as second-order LES solver, as host of in-house compressible, reacting and two-scale solvers and of a wall-model library, and as reference for high-order codes; this page records the solvers, schemes and versions they report."
 status: established
 aliases: [OpenFOAM, simpleFoam, pimpleFoam, DAFoam, libWallModelledLES, foam-extend, pUCoupledFoam]
 tags: [software, rans, les, data-driven, numerical-dissipation]
-timestamp: 2026-10-27T15:51:00Z
+timestamp: 2026-10-27T21:07:00Z
 ---
 
 # OpenFOAM
@@ -36,6 +36,9 @@ these is a default of the code.
 | [Brenner et al. (2022)](/sources/brenner-2022.md), §2.8–2.9, §3.1 | steady incompressible RANS, [$k$-$\varepsilon$](/methods/k-epsilon-model.md) (`kEpsilon`, `nutLowReWallFunction`) with a frozen eddy viscosity scaled by an assimilated field; hand-built discrete adjoint | foam-extend 4.0, block-coupled pressure–velocity solver `pUCoupledFoam` extended with the adjoint; second-order schemes; BiCGStab with Cholesky preconditioning; under-relaxation | foam-extend 4.0 |
 | [Cherroud et al. (2022)](/sources/cherroud-2022.md), §3 | steady RANS, SST with learned anisotropy and production corrections (general explicit algebraic stress implementation); BSL-EARSM for comparison | SIMPLE, linear upwind convection, second-order central viscous terms, Gauss–Seidel smoother; grids and settings of Schmelzer et al. (2020a) | not printed |
 | [Böttler et al. (2022)](/sources/bottler-2022.md), §2.3 | laminar low-Mach reacting flow with a [flamelet/progress-variable](/methods/flamelet-tabulated-chemistry.md) table (transported H$_2$, O$_2$, H$_2$O and enthalpy); detailed-chemistry reference coupled with Cantera | second order in time and space | not printed |
+| [Cheng et al. (2023)](/sources/cheng-2023-b.md), §2 | compressible [implicit LES](/definitions/implicit-les.md) of shock–vortex and shock–turbulence problems (no explicit subgrid model) | AUSM+-up flux; ROUND reconstruction of primitive variables cast as a flux limiter on a compact stencil, against the van Leer and MUSCL limiters; central viscous terms; time integrator not stated | not printed |
+| [Fureby & Nilsson (2023)](/sources/fureby-2023.md), §3 | compressible reacting LES, LDKM subgrid model, PaSR finite-rate chemistry | density-based; second-order Kurganov central(-upwind) convective flux, linear diffusive fluxes; operator split, inviscid step explicit, viscous step iterative (Gauss–Seidel); second-order multi-step time integration; Rosenbrock chemistry | not printed |
+| [Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §3.4 | P-DNS with a continuous particle method; DPMFoam as Lagrangian reference | PIMPLE; first order in time, second-order FV in space | not printed |
 
 ## Roles in the bundle
 
@@ -121,6 +124,40 @@ time" and give no grid-convergence study. Their maximum Courant number is
 about 10 in a few cells near the blade tips, with an average of about 0.017
 (§2.1, §2.3).
 
+**Compressible in-house solvers.** Two chunk-11 sources build compressible
+scale-resolving solvers inside OpenFOAM.
+
+- [Cheng et al. (2023)](/sources/cheng-2023-b.md) state that OpenFOAM's
+  performance on shock–vortex and shock–turbulence problems "is limited by
+  the available solvers which are using conventional second-order schemes"
+  (§1), and implement the ROUND reconstruction "with rigorously adjusted
+  dissipation" (parameter sets ROUND_A and ROUND_A+) with the AUSM+-up
+  flux in an implicit-LES solver. To fit OpenFOAM's face-based
+  unstructured framework they rewrite the reconstruction as a flux-limiter
+  function of a gradient ratio, which avoids the virtual cell values of the
+  original form (§2.2, Eqs. 2.12–2.14). Against the van Leer and MUSCL
+  limiters, "widely used TVD schemes" in OpenFOAM, ROUND keeps more
+  small-scale structure on inviscid shock and vortex tests and, on a
+  transonic deep cavity ($M=0.8$, $Re=8.6\times10^5$ on the cavity length,
+  10.36 million cells, smallest cell $1/120$ of that length, 60 shedding
+  cycles), gives Reynolds stresses closer to experiment; the classical TVD
+  limiters under-predict them, while the fifth-order MUSCL implicit LES of
+  Thornber & Drikakis, on a different grid, "tends to slightly overestimate
+  them" (§3.6, Figs. 11–14). No time integrator, CFL number or timing is
+  given. See [implicit LES](/definitions/implicit-les.md) and
+  [numerical dissipation](/properties/numerical-dissipation.md).
+- [Fureby & Nilsson (2023)](/sources/fureby-2023.md) run their
+  compressible reacting-flow LES of a cavity-stabilized dual-mode ramjet
+  with "the density-based FVM, implemented in openFOAM" (§3.4): the
+  localized dynamic $k_{\mathrm{sgs}}$-equation model (see
+  [one-equation subgrid kinetic-energy models](/methods/subgrid-kinetic-energy-equation-model.md)),
+  gradient-diffusion subgrid fluxes, the partially stirred reactor model
+  for the filtered reaction rates and a no-slip subgrid wall model, on
+  hexahedral grids of 7.3, 24.6 and 57.8 million cells that resolve 90%,
+  94% and 96% of the turbulent kinetic energy (§6.2). They name artificial
+  diffusivity and hybrid schemes as alternatives for discontinuities and
+  use neither (§3.4).
+
 **Wall-modelled LES with libWallModelledLES.** [Nuca et al. (2025)](/sources/nuca-2025.md)
 implement their explicit (non-iterative) forms of the Spalding, Reichardt
 and equilibrium-ODE wall models in libWallModelledLES, the OpenFOAM
@@ -192,6 +229,13 @@ Spalart–Allmaras RANS of the Third High-Lift Prediction Workshop on 109
 million cells at about $60\times10^3$ core-hours, about the cost of their
 medium-grid WMLES ([Spalart–Allmaras model](/methods/spalart-allmaras-model.md),
 [CharLES](/software/charles.md)).
+[Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §3.4, write that "the
+P-DNS implementation here presented uses OpenFOAM as the core library"
+for their continuous particle method of particle-laden flow, and take the
+reference solutions from OpenFOAM's Lagrangian DPMFoam solver so that both
+run "in the same platform"; both use PIMPLE pressure–velocity coupling,
+first-order time integration and second-order finite volumes in space (see
+[pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md)).
 
 ## Qualifications
 
@@ -207,6 +251,13 @@ medium-grid WMLES ([Spalart–Allmaras model](/methods/spalart-allmaras-model.md
   keywords; their adjoint relies on the block-coupled `pUCoupledFoam`
   solver of foam-extend. Their Fig. 8 caption swaps the subscripts of the
   adjoint and finite-difference gradients relative to the axis labels.
+- Cheng et al. (2023, §3.6) compare their deep-cavity statistics on
+  10.36 million cells (finer mesh following their ref. 47) with the
+  fifth-order MUSCL implicit LES of Thornber & Drikakis on that study's
+  own grid, and write that some of their mean-velocity results "may
+  benefit from the finer grid size"; Fureby & Nilsson (2023) cite the
+  Kurganov central scheme to a paper on the semidiscrete central-upwind
+  scheme.
 - Cost and accuracy statements on this page are those of each study's
   set-up (mesh, schemes, model). None isolates OpenFOAM from its
   configuration.
@@ -230,3 +281,6 @@ medium-grid WMLES ([Spalart–Allmaras model](/methods/spalart-allmaras-model.md
 - [Brenner et al. (2022)](/sources/brenner-2022.md) — §2.1.3–2.1.4, §2.3, §2.8–2.9 (discrete adjoint in foam-extend 4.0, LDU transposition, built-in operators for the parameter Jacobian, dropped pressure term); §3.1, §3.3–3.4, Fig. 8 (periodic hill set-up, gradient check, warm start); §4.
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §2 (a posteriori cross-validation in OpenFOAM); §3 (modified OpenFOAM, schemes, grids); App. C (BSL-EARSM comparison); Conclusions (cost of propagating the MAP model).
 - [Böttler et al. (2022)](/sources/bottler-2022.md) — §2.3 (OpenFOAM flamelet/progress-variable solver, OpenFOAM–Cantera reference); §3 (stated cost reduction).
+- [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §1 (limits of OpenFOAM's shipped solvers); §2.1–2.2, Eqs. (2.7)–(2.14) (AUSM+-up, ROUND as flux limiter, primitive-variable reconstruction); §3.6, Figs. 9–14 (deep cavity).
+- [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.2–3.4, Eqs. (5)–(8) (density-based FVM in OpenFOAM, LDKM, PaSR, Kurganov flux, operator split, Rosenbrock); §6.2 (grids, resolved kinetic energy).
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §3.4 (OpenFOAM as P-DNS core library, DPMFoam reference, PIMPLE, discretization orders).

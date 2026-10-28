@@ -5,7 +5,7 @@ description: "How the grid-point and time-step counts of DNS, wall-resolved and 
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-27T21:10:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -336,6 +336,45 @@ Choi & Moin resolution, $\delta/\Delta x_i\sim10$.
   file read. Haering et al.'s cited bound above, an unresolved fraction of
   at most about 0.1, is the stricter of the two cited criteria
   *(compiler check, not in the sources)*.
+- **Resolved fraction as a grid check in reacting LES.** [Fureby & Nilsson (2023)](/sources/fureby-2023.md)
+  (§6.2) judge three grids of a scramjet combustor, 7.3 M, 24.6 M and 57.8 M
+  hexahedra, by the resolved fraction of turbulent kinetic energy, 90 %,
+  94 % and 96 %, "rendering all grids appropriate for LES according to"
+  Pope "as well as with the more stringent requirements of" Matheou & Chung,
+  as cited, without printing either threshold; mean and rms velocity,
+  temperature and pressure are similar on the three grids (statistics not
+  shown). All three fractions exceed the 80 % attributed to Pope above, and
+  the coarsest sits at the 0.1 unresolved fraction cited by Haering et al.
+  *(compiler check, not in the sources)*.
+- **Hybrid and "very large" eddy simulation of a high-lift airfoil.**
+  [Wu et al. (2023)](/sources/wu-2023-b.md) (§1) motivate their hybrid by
+  the cost of wall-resolved LES of a three-element airfoil at
+  $Re_c=1.23\times10^6$, "2.6 billion grid cells and 6 million CPU hours"
+  (Terracol et al., as cited), and by the Choi & Moin estimates. On the
+  [30P30N airfoil](/benchmarks/30p30n-high-lift-airfoil.md) at
+  $Re=1.71\times10^6$ (basis not stated) their self-adaptive turbulence eddy simulation with
+  a linear weighted compact scheme gives $C_L$ within 3 % of the
+  experimental mean on 7.2 M, 19 M and 27 M cells (60 or 80 spanwise cells;
+  wall units not reported), with mean $C_p$ insensitive to the grid and
+  rms values moderately sensitive (§3.2, Table 2). They rename the method
+  from "very-large eddy simulation" because it resolves more than 90 % of
+  the turbulent kinetic energy, while Pope defines VLES as too coarse to
+  resolve 80 % (§2.1.1); the 90 % is asserted from earlier papers and shown
+  here only as resolved-against-modelled scatter plots (see
+  [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+- **High order against more elements in wall-modelled implicit LES.**
+  [Huang et al. (2022c)](/sources/huang-2022-c.md) (§III A, §III E,
+  Table I, Fig. 9) take the spacings $\Delta x\simeq0.087\delta$,
+  $\Delta y_1\simeq0.037\delta$, $\Delta z\simeq0.052\delta$ from the WMLES
+  review of Larsson et al. (2016), as cited, which on one $12\times6\times10$
+  spectral/hp mesh is $\Delta x^+\times\Delta y_1^+\times\Delta z^+=48\times20\times29$
+  at $Re_\tau=550$ and $175\times75\times105$ at 2000; the mean velocity
+  stays within 5.4 % of DNS. At similar resolution the mesh with fewer
+  elements at higher order ("polynomial order" 7 against 6, as printed)
+  resolves the fluctuations and shear stress better, and the wall-modelled
+  run is "as high as seven times" cheaper than the wall-resolved one at 550
+  (§III A; no timings). They cite Choi & Moin for the cost growth of
+  wall-resolved LES as motivation (§I).
 
 - **Wall-modelled grids in wall units and per $\delta$.** Gillyns et al.
   (2022, §6–9) run spectral-element WMLES of channel flow at $Re_\tau=1000$
@@ -651,9 +690,8 @@ it, without breakdown).
 
 ## Qualifications
 
-- **WMLES cost exponent: $Re_c^{4/3}$ or $Re^{1.1}$.** The two exponents are
-  not incompatible statements about one quantity under one set of
-  assumptions. Goc et al. (2021, §4) extrapolate their own JAXA runs to
+- **WMLES cost exponent: $Re_c^{4/3}$ or $Re^{1.1}$.** The two exponents
+  rest on different assumptions, stated by each source. Goc et al. (2021, §4) extrapolate their own JAXA runs to
   flight Reynolds numbers: assuming, after Choi & Moin (2012), a grid-point
   count $\propto Re_c$, "the overall cost would then scale by $Re_c^{4/3}$,
   which accounts for the reduction in time step". Their grids are isotropic
@@ -792,3 +830,6 @@ it, without breakdown).
 - [Brenner et al. (2022)](/sources/brenner-2022.md) — §1.
 - [De Vanna et al. (2022)](/sources/devanna-2022.md) — §1; §3.2, Eq. (9); §4.1, Table 1.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §3.1, Table 5; §3.3, Table 10; §3.4, Table 15.
+- [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §6.2 (resolved-energy grid check).
+- [Wu et al. (2023)](/sources/wu-2023-b.md) — §1; §2.1.1; §3.2, Table 2.
+- [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I; §III A, Table I; §III E, Fig. 9.

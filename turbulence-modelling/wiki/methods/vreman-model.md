@@ -5,7 +5,7 @@ description: "Vreman's static eddy-viscosity model builds the subgrid viscosity 
 status: established
 aliases: [Vreman eddy-viscosity model, Vreman (2004) model, static-coefficient Vreman model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-27T15:47:00Z
+timestamp: 2026-10-27T21:09:00Z
 ---
 
 # Vreman model
@@ -70,6 +70,19 @@ not print the value of $C_v$ used in their runs.
 | about 0.1, "the Smagorinsky constant" | lattice Boltzmann LES of the Ahmed body | Cai et al. (2022), §II.A |
 | 0.1 | compact-difference LES of the transitional Taylor–Green vortex | [Caban et al. (2026)](/sources/caban-2026.md), §2, Eq. (7) |
 | $\approx0.063$ ($c=2.5C_s^2=0.01$) and $\approx0.167$ ($c=0.07$) | gas-kinetic channel LES at $Re_\tau=180$ (best of $c=0.01$–0.1) and 395 (after Vreman 2004) | [Zhao et al. (2021)](/sources/zhao-2021-c.md), §III.B, §IV |
+| 0.1 ($c=2.5C_s^2=0.025$) | gas-kinetic implicit-versus-explicit LES of the compressible Taylor–Green vortex | [Cao et al. (2022b)](/sources/cao-2022-c.md), §III, Eqs. (10)–(11) |
+| 0.1 (prefactor $C_V=0.025$ printed) | finite-volume LES of a sinusoidally forced periodic shear flow on $16^3$ | [Hausmann et al. (2022)](/sources/hausmann-2022.md), §III B, Eqs. (42)–(45) |
+
+Cao et al. (2022b, Eqs. 10–11) print the dynamic viscosity
+$\mu_t=\bar\rho\,c\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$ in the index
+order of Kim et al. ($\alpha_{ij}=\partial_i\bar u_j$,
+$\beta_{ij}=\Delta_m^2\alpha_{mi}\alpha_{mj}$) with $c=2.5C_s^2=0.025$.
+Hausmann et al. (2022, Eqs. 42–45) print a third index pattern,
+$\beta_{ij}=\Delta^2\alpha_{ik}\alpha_{jk}$ with $\alpha_{ij}=\partial_j\bar u_i$,
+and the prefactor $C_V=0.025$ (page-local); this $\beta$ is the same
+matrix $\Delta^2GG^T$ as the single-$\Delta$ form of Kim et al., so it gives
+the same viscosity as the other orders, and the $C_s$ of the table is
+$\sqrt{0.025/2.5}=0.1$ *(compiler check, not in the sources)*.
 
 [Zhao et al. (2021)](/sources/zhao-2021-c.md) (§III.B, Eq. 17) print the
 dynamic viscosity $\mu_t=\bar\rho\,c\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$
@@ -229,6 +242,32 @@ $N$ (the paper's $P$), with $N=5$.
   stress $\mu_t\tilde S$ (factor two, trace). The subgrid model is not
   varied; the subject is the wall treatment (see
   [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
+- **Implicit against explicit LES with a gas-kinetic scheme.** Cao et
+  al. (2022b, §IV A, §IV C, Figs. 2–3, 8, Table II) compare the Vreman,
+  static [Smagorinsky](/methods/smagorinsky-model.md) and
+  [dynamic](/methods/dynamic-procedure.md) models with no-model
+  [implicit LES](/definitions/implicit-les.md) on the compressible
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) ($M=0.1$,
+  $Re=1600$, $256^3$) with the fourth-order
+  [gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md), the
+  eddy viscosity entering through the collision time. Vreman behaves like
+  static Smagorinsky: both are farther from the $1024^3$ DNS than implicit
+  LES in the enstrophy dissipation, and their total subgrid dissipation,
+  measured a posteriori as $-\mathrm dE_k/\mathrm dt$ minus the resolved
+  physical dissipation, is about twice that of implicit LES at $t=2.5$–10
+  (Vreman $2.6\times10^{-5}$, $3.2\times10^{-4}$, $1.3\times10^{-3}$
+  against $1.5\times10^{-5}$, $1.4\times10^{-4}$, $6.7\times10^{-4}$, Table
+  II). The same ordering holds on $128^3$ and $384^3$ (App. B).
+- **Transitional shear flow.** Hausmann et al. (2022, §III A–B) choose
+  Vreman over Smagorinsky for a sinusoidally forced periodic shear flow
+  ($Re_{\mathrm{shear}}=3115$, LES on $16^3$ against a $128^3$ DNS),
+  citing Smagorinsky's inaccuracy in shear-dominated flows and calling
+  Vreman "known to produce more physical results in transitional shear
+  flows". At that resolution the Vreman LES over-predicts the amplitude of
+  the mean velocity, hence the mean kinetic energy, and its velocity
+  correlations deviate from the DNS, most in the normal components
+  (§IV B, Figs. 6, 12a). The LES is the carrier of their
+  [subgrid velocity enrichment](/methods/subgrid-velocity-enrichment.md).
 - **Listed only.** [Qi et al. (2022)](/sources/qi-2022-b.md) (§1) list the
   Vreman model as "a low dissipation eddy-viscosity model … for turbulent
   shear flows" that "can also predict transitional flow well", among
@@ -376,3 +415,5 @@ computed and subtracted from the mean-stress model.
 - [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §III.B, Eq. (17); §IV; §V, Tables III, V–VII.
 - [Lv et al. (2021)](/sources/lv-2021.md) — §III A, Eqs. (13)–(15).
 - [Qi et al. (2022)](/sources/qi-2022-b.md) — §1.
+- [Cao et al. (2022b)](/sources/cao-2022-c.md) — §III, Eqs. (10)–(11); §IV A, §IV C, Figs. 2–3, 8, Table II; App. B.
+- [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §III A–B, Eqs. (42)–(45); §IV B, Figs. 6, 12a.

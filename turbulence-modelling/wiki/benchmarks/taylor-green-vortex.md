@@ -5,7 +5,7 @@ description: "The triply periodic vortex flow that transitions from a single-mod
 status: established
 aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex, laminar Taylor–Green vortex, Brachet Taylor–Green vortex, High-Order CFD Workshop case C3.5]
 tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible, filtering, kinetic-energy-preserving]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-27T21:09:00Z
 ---
 
 # Taylor–Green vortex
@@ -117,6 +117,9 @@ to the fully turbulent state.
 | [Kuya et al. (2018)](/sources/kuya-2018.md) | second-order central split-form fluxes (twelve combinations, no dissipation), classical fourth-order Runge–Kutta at CFL about 0.1; inviscid, $M_0=0.05$ and 0.4 | $64^3$ | none: conservation of kinetic energy and entropy is the criterion |
 | [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) | [flux reconstruction](/methods/flux-reconstruction.md) recovering nodal DG, $N=3$, 4, 5, Gauss points, Rusanov and BR2; time-step-independent optimized exponential modal filters of five strengths against no filter; Mach 0.1, also on a sinusoidally perturbed curved mesh; inviscid runs (Mach 0.1–0.5) for the filter optimization | $Re=1600$: nominally $64^3$ DOF; inviscid: $16^3$ DOF | DNS of van Rees et al., extended in time with the workshop data |
 | [Svärd (2022)](/sources/svard-2022.md) | finite volumes, Chandrashekar's entropy-conservative flux with artificial diffusion on the mass flux only (entropy stable, positivity preserving), first-order viscous terms, forward Euler; Mach 0.1, zero bulk viscosity | $32^3$, $64^3$, $128^3$ | second-order energy-stable finite differences of van der Weide et al. ($65^3$, $129^3$), as quoted; reference enstrophy peak about 10.3 |
+| [Cao et al. (2022b)](/sources/cao-2022-c.md) | fourth-order two-stage [high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md), no model against Smagorinsky ($C_s=0.1$), Vreman and dynamic Smagorinsky imposed through the collision time; Mach 0.1, $Pr=1$ | $256^3$ cells; $128^3$ and $384^3$ (App. B) | the $1024^3$ DNS of [Cao et al. (2022)](/sources/cao-2022.md) |
+| [Cheng et al. (2023)](/sources/cheng-2023-b.md) | OpenFOAM finite volumes, AUSM+-up flux, ROUND reconstructions (two parameter sets) against the van Leer and MUSCL limiters, no model; inviscid, $p_\infty=100$, to $t=10$ | $128^3$ | a solution taken from a cited work |
+| [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) | [pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md) (subgrid stress from a database of DNS on representative volume elements) against a dynamic $k$-equation LES; domain of side $2\pi$, to $\hat t=20$ | $64^3$, $32^3$, $16^3$ | $512^3$ DNS, cited from [Wang et al. (2013)](/sources/wang-2013.md) |
 
 **The workshop case definition.** The $Re=1600$ case as most of these
 sources run it is case C3.5 of the first International Workshop on
@@ -248,6 +251,53 @@ over-dissipative". The seventh-order runs use 4 Gauss points per face,
 with which their own accuracy test drops to about fourth order under
 refinement (16 points restore seventh order at about twice the cost, §4,
 Tables 3–4).
+
+**Built-in numerical against explicit subgrid dissipation.**
+[Cao et al. (2022b)](/sources/cao-2022-c.md), §III–IV, Figs. 1–8, Tables
+I–II, ask why their no-model runs of the
+[high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md)
+beat explicit eddy-viscosity LES on the same coarse grids. They impose
+the Smagorinsky, Vreman ($C_v=2.5C_s^2=0.025$, page-local) and dynamic
+Smagorinsky models (top-hat test filter of twice the grid width,
+volume-averaged coefficient) in the BGK framework by enlarging the
+collision time, $\tau_{\mathrm{col}}+\tau_{\mathrm{col},t}=(\mu+\mu_t)/p$,
+and run the compressible TGV at $Re=1600$, Mach 0.1 on $256^3$ cells
+against the $1024^3$ DNS of [Cao et al. (2022)](/sources/cao-2022.md):
+
+- the kinetic energy and $-dK/dt$ are insensitive to the model and to the
+  grid, but the enstrophy-based dissipation and its solenoidal part, which
+  dominates at Mach 0.1, are closest to DNS without a model; among the
+  explicit models the dynamic one is best (Figs. 1–3, 7);
+- a box filter that merges $2^3$ DNS cells shows forward and backward SGS
+  transfer coexisting, and an ensemble SGS production far below the
+  solenoidal dissipation, "approximately 20 times" in the authors' words
+  (Table I, Figs. 5–6);
+- writing the discrete equations with a numerical SGS stress next to the
+  modelled one, they estimate the total SGS dissipation a posteriori as
+  $-dK/dt$ minus the physical dissipation: the static models give about
+  twice the no-model value, the dynamic one lies between (Fig. 8,
+  Table II);
+- on $128^3$ and $384^3$ the no-model run still wins, and static
+  Smagorinsky on $384^3$ is only comparable with the no-model run on
+  $256^3$ (App. B, Figs. 9–12).
+
+They read the numerical dissipation as a built-in SGS dissipation
+sufficient for this low-Reynolds-number flow, and the added eddy viscosity
+as "polluting" the resolved vorticity; they restrict the conclusion to
+low-Reynolds-number turbulence with a fourth-order finite-volume scheme and
+leave higher Mach numbers, where shocklets make the numerical dissipation
+depend on the shock-capturing scheme, to future work (§V). See
+[implicit LES](/definitions/implicit-les.md) and
+[numerical dissipation](/properties/numerical-dissipation.md).
+
+**A database closure on coarse meshes.**
+[Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.4, Fig. 13,
+run [pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md)
+and a dynamic $k$-equation LES on the TGV against a $512^3$ DNS: at
+$64^3$ all solutions are close to the DNS; at $32^3$ the LES
+under-predicts the energy decay, while P-DNS over-predicts it between
+$\hat t=5$ and 8 and agrees over most of the final phase; $16^3$ is also
+run. §2.10.4 does not state the Reynolds number.
 
 **GPU timing and compressibility.** [Wang et al. (2023b)](/sources/wang-2023-b.md)
 (read in arXiv v1), §4.1, use the TGV at $Re=1600$, Mach 0.1, $Pr=1$ over
@@ -516,6 +566,15 @@ small vortices after $t\approx5$. [Takagi et al. (2022)](/sources/takagi-2022.md
 at preserving kinetic energy and capturing enstrophy growth up to $t=10$
 (see [shock sensor](/definitions/shock-sensor.md) and
 [WENO schemes](/methods/weno-scheme.md)).
+[Cheng et al. (2023)](/sources/cheng-2023-b.md), §3.5, Figs. 6–7, run the
+inviscid TGV ($p_\infty=100$, $128^3$) in OpenFOAM with no model: their
+two ROUND reconstructions, which satisfy the TVD condition with adjusted
+dissipation, show more small structures than the van Leer and MUSCL
+limiters in $Q=0.15$ iso-surfaces at $t=10$, and enstrophy and
+kinetic-energy histories with "overall lower dissipation and better
+accuracy than classical TVD schemes"; the authors state, citing earlier work, that schemes with
+a non-dissipative central flux can preserve the total kinetic energy
+exactly (see [kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
 On the viscous TGV Liang & Fu report that TENO-S at $64^3$
 ($Re=100$–3000) and $128^3$ ($Re=5000$, 10,000) agrees well with the DNS
 of Brachet et al. and Dairay et al. in the energy dissipation rate and
@@ -577,7 +636,9 @@ five Smagorinsky variants on entropy-stable flux reconstruction
 Vreman against implicit LES on compact differences
 ([Caban et al. (2026)](/sources/caban-2026.md)); Smagorinsky, multi-scale
 and dynamic Smagorinsky against filtered implicit LES on central
-differences ([Volpiani (2024)](/sources/volpiani-2024.md)). In two of them the
+differences ([Volpiani (2024)](/sources/volpiani-2024.md)); static and
+dynamic Smagorinsky and Vreman against the no-model fourth-order
+gas-kinetic scheme ([Cao et al. (2022b)](/sources/cao-2022-c.md)). In two of them the
 eddy-viscosity runs are also compared with alternatives that win: the
 no-model scheme in Brillon & Nadarajah, implicit LES and the
 Layton–Lewandowski model in Caban et al.
@@ -856,6 +917,17 @@ sources)*.
 
 ## Qualifications
 
+- [Cao et al. (2022b)](/sources/cao-2022-c.md) state that the solenoidal
+  dissipation is "approximately 20 times larger" than the a priori SGS
+  production; their Table I gives ratios of about 68, 32, 22 and 35 at
+  $t=2.5$, 5, 10 and 15. They state that the a posteriori total SGS
+  dissipation of Table II exceeds the a priori production except at
+  $t=15$, which by the tables holds at $t=15$ for the no-model and dynamic
+  runs only, not for static Smagorinsky and Vreman; and the "two times"
+  of static over no-model SGS dissipation holds for $t\le10$ (ratios 1.7
+  to 2.5), about 14 (Smagorinsky) and 10 (Vreman) at $t=15$ *(compiler
+  check, not in the sources)*.
+
 - The sources measure two kinds of dissipation: the decay rate $-dK/dt$ of
   the volume-averaged kinetic energy, which includes model and numerical
   dissipation ([Cao et al. (2022)](/sources/cao-2022.md);
@@ -1056,3 +1128,6 @@ sources)*.
 - [Svärd (2022)](/sources/svard-2022.md) — Abstract; §5.3, Eqs. (44)–(46), Table 5, Figs. 6–7 (entropy-stable finite volumes, $32^3$ to $128^3$).
 - [Ma et al. (2022)](/sources/ma-2022.md) — §1; §3.1, Eq. (33), Figs. 4–6 (WCNS-T against WCNS-E in implicit LES).
 - [Simonis et al. (2022)](/sources/simonis-2022.md) — §2.1–2.4; §3.2–3.4, Tables 1–2, Figs. 2–9; App. B, Table 3, Fig. 10 (temporal LES with lattice Boltzmann at $Re=800$ and 3000).
+- [Cao et al. (2022b)](/sources/cao-2022-c.md) — §I; §III, Eqs. 7–8, 12–13; §IV A–C, Eqs. 20–21, Tables I–II, Figs. 1–8; §V; App. B, Figs. 9–12.
+- [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §3.5, Figs. 6–7.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.10.4, Fig. 13.

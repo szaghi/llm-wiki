@@ -5,7 +5,7 @@ description: "Wall-stress models of wall-modelled LES that keep unsteadiness, co
 status: established
 aliases: [NEQWM, non-equilibrium wall model, nonequilibrium wall model, TBLE wall model, thin-boundary-layer-equation wall model, two-layer zonal wall model, integral wall model, wall-model integrated LES, integrated wall model]
 tags: [wall-model, wmles, boundary-layer, separated-flow]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-27T21:09:00Z
 ---
 
 # Non-equilibrium wall models
@@ -272,6 +272,20 @@ non-equilibrium models agree favourably with DNS, the last slightly better
 near separation, and that "the differences may be due more to" the
 outer-LES numerics than to the wall models.
 
+The hill also serves as a reference outside wall modelling.
+[Li et al. (2022)](/sources/li-2022-k.md) (§III B, Figs. 7–11) compare a
+Reynolds-stress-model-based dynamic IDDES on $160\times115\times60$ cells
+(first cell at $\Delta y^+<1$) with the experiment of Breuer et al. and with
+the DNS, wall-resolved LES and WMLES of Balakumar, Park & Pierce, as cited;
+that WMLES ($128\times128\times72$, second-order central differences,
+dynamic Smagorinsky) uses the non-equilibrium wall model of Park & Moin.
+Near the lower wall at $x/h=4$ both hybrid variants agree with the WMLES
+rather than with the DNS, wall-resolved LES and experiment, and the
+near-wall resolved stresses of the dynamic variant fall in the band of the
+references and close to the WMLES (see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)). The
+comparison involves no wall model of their own.
+
 ## Evidence against equilibrium models
 
 | Flow | Finding | Source |
@@ -304,7 +318,16 @@ non-equilibrium burden to the coupling: no slip is retained and the
 modelled stress enters through an augmented wall viscosity, which lets the
 LES reverse the wall shear in a separation bubble (see the
 [equilibrium wall model](/methods/equilibrium-wall-model.md) and
-[wall-modelled LES](/methods/wall-modelled-les.md) pages). Van Noordt et al. (2022,
+[wall-modelled LES](/methods/wall-modelled-les.md) pages). [Huang et al. (2022c)](/sources/huang-2022-c.md)
+(§I, §II C, §IV) give the same trade-off for a spectral/hp implicit LES:
+non-equilibrium (PDE, two-layer) models such as that of Balaras et al.
+(1996), as cited, capture adverse pressure gradient and separation but
+need a separate near-wall grid, while the algebraic equilibrium model is
+"considerably cheaper" though it "cannot completely and correctly solve the
+problem of the transfer mechanism of the wall attached vortex in the inner
+layer"; they choose the algebraic model, restrict their study to
+equilibrium channel flow and leave non-equilibrium flows to future work
+(see [wall-modelled LES](/methods/wall-modelled-les.md)). Van Noordt et al. (2022,
 §2.5) use the HyWall library, which supports non-equilibrium models through
 data at the surface-triangle centroids, but run only its equilibrium model.
 
@@ -372,3 +395,5 @@ solver"; no timing of the integrated model is shown. On the equilibrium page,
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §IV.D.
 - [De Vanna et al. (2022)](/sources/devanna-2022.md) — §1; §4.6; §5.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.5; §3.4.
+- [Li et al. (2022)](/sources/li-2022-k.md) — §III B, Table I, Figs. 7–11 (periodic-hill WMLES reference with the Park–Moin model).
+- [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I; §II C; §IV.

@@ -5,7 +5,7 @@ description: "How a scale-resolving simulation is fed with turbulence at its inf
 status: established
 aliases: [turbulent inflow generation, synthetic inflow turbulence, synthetic turbulence generator, STG, recycling–rescaling inflow, recycling inflow, digital filter inflow, precursor inflow, MDSRFG, random flow generation]
 tags: [les, dns, boundary-layer, wmles, compressible]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-27T21:11:00Z
 ---
 
 # Inflow turbulence generation
@@ -79,6 +79,18 @@ the target thickness at the inlet and fed back.
   meshes must be coarsened downstream (§IV.A–B, Figs. 12–13; see
   [wall-modelled LES](/methods/wall-modelled-les.md)).
 
+- **A concurrent precursor for an atmospheric boundary layer**:
+  [Zhang et al. (2022e)](/sources/zhang-2022-i.md), §II A–B, feed their
+  wall-modelled LES of wind-turbine wakes over hills from a precursor run
+  concurrently (the method of Stevens, Graham & Meneveau, which they cite),
+  a neutral boundary layer driven by a constant pressure gradient
+  $u_\tau^2/L_y$ ($L_y$ the domain height, page-local) without viscous
+  term. They take the linear profile of the total (resolved plus subgrid)
+  shear stress, $1-y/L_y$ in units of $u_\tau^2$, as the evidence of
+  statistical stationarity, and match the mean velocity, the three
+  velocity variances and the shear stress of the wind-tunnel inflow
+  (Eq. 13, Fig. 3); see [actuator line and disk models](/methods/actuator-line-model.md).
+
 ## Synthetic turbulence
 
 A stochastic field with prescribed one-point statistics and length scales is
@@ -90,6 +102,13 @@ superimposed on the mean inflow.
   wall-modelled shock interaction; [Huang et al. (2022)](/sources/huang-2022.md)
   use a digital filter (Dhamankar et al.; Huang & Duan) as the alternative
   to recycling in their recovery study below.
+  [Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.5, impose a
+  flat-plate boundary-layer profile with digital-filter fluctuations (Klein
+  et al., as cited) ten step heights upstream of a
+  [backward-facing step](/benchmarks/backward-facing-step.md) at
+  $Re_h=5000$ on a 142,000-cell mesh, for their
+  [pseudo-DNS](/methods/pseudo-direct-numerical-simulation.md) and a
+  one-equation LES.
 - **Digital filters for shock interactions.** Three sources feed
   supersonic shock/boundary-layer interactions with the filter of Klein,
   Sadiki & Janicka, each with its own mean state:
@@ -135,6 +154,35 @@ superimposed on the mean inflow.
   page-local inlet length scale), with $l_t=0.055$ axial chords against
   $0.003$ in the runs without the generator, chosen to give "a comparable
   inlet turbulent dissipation rate".
+- **Fourier modes with a model spectrum, into a jet flame.**
+  [Coulon et al. (2023)](/sources/coulon-2023.md), §2.2, Eqs. (2)–(3),
+  inject synthetic isotropic turbulence into the central jet of a premixed
+  slot burner through a characteristic (NSCBC) inlet: a sum of $N=200$
+  random Fourier modes in the manner of Kraichnan, with random amplitudes,
+  wavevectors and frequencies sampled to reproduce the Passot–Pouquet
+  spectrum
+  $$E(k)=16\frac{u'^2}{k_e}\sqrt{\frac2\pi}\Big(\frac{k}{k_e}\Big)^4\exp\Big[-2\Big(\frac{k}{k_e}\Big)^2\Big],$$
+  with $u'$ the fluctuation intensity and $k_e$ the most energetic
+  wavenumber (page-local; the integral length is $\sqrt{2\pi}/k_e$). The
+  intensity is a tenth of the bulk velocity (2.5 m/s against 25 m/s) and
+  the integral length a quarter of the jet width (2.1 mm), identical for
+  the three fuels of the comparison, which places all three flames at
+  one point of the combustion regime diagram. They state that the shear
+  turbulence of the jet has no time to develop because the flame adds
+  viscous dissipation, so the flames are controlled by the injected
+  turbulence; the supporting spectral analysis is in supplementary
+  material not in the file read. See
+  [direct numerical simulation](/definitions/direct-numerical-simulation.md).
+- **Digital-filter perturbations as an initial field.**
+  [Wang et al. (2022)](/sources/wang-2022-j.md), §V, perturb the initial
+  tanh profile of a weakly compressible
+  [temporal mixing layer](/benchmarks/temporal-mixing-layer.md) ($M=0.2$,
+  $Re=2000$) with a digital-filter field of width $\Delta_d$ (page-local)
+  of 8 to 64 DNS spacings, and find that every LES (filter width eight DNS
+  spacings) agrees better with the filtered DNS when $\Delta_d$ is 16 rather
+  than 8 spacings: the initial perturbation scales must exceed the LES
+  filter width, so that filtering the initial condition does not remove
+  them (Figs. 8–13, Conclusions).
 - **Fourier modes from a RANS solution, as an initial field.**
   [Bouhafid et al. (2024)](/sources/bouhafid-2024.md), §2.1, initialize a
   temporal LES of an aircraft wake (a periodic box built by extruding a
@@ -302,6 +350,16 @@ boundary layer upstream of a compression ramp by blowing and suction on the
 wall between 350 and 200 mm upstream of the corner, instead of the
 recycling of the reference DNS of Martín et al., and validate the van
 Driest-transformed mean velocity against it.
+[Zhang et al. (2022c)](/sources/zhang-2022-g.md), §II B, trip the Mach 6
+boundary layer of a DNS of a swept compression ramp in the same code
+family ([OpenCFD-SCU](/software/opencfd-scu.md)) from a laminar inlet
+profile about 3.9 mm thick by a wall disturbance between 370 and 350 mm
+upstream of the corner, stimulating bypass transition; they check the
+incoming layer against the van Driest law (log-law intercept 5.7, higher than
+incompressible, which they attribute to the wall temperature) and against compressibility-scaled
+fluctuations of published boundary layers (§II C, Fig. 6). The forcing
+leaves narrow-band peaks in the wall-pressure spectra of the interaction,
+which they state do not affect their low-frequency analysis (§III C).
 
 **Geometric tripping inside a nozzle.** [Ahn et al. (2023)](/sources/ahn-2023.md),
 §III and §IV A–B, Figs. 3–10, impose a laminar inflow (total pressure and
@@ -430,6 +488,13 @@ compiles (§5.2).
   the vortex decay", while §4.3.1 finds that atmospheric turbulence
   intensity "does not seem to significantly impact the vortex pair
   lifespan".
+- Zhang et al. (2022c) describe their trip as a "multi-frequency sine wave
+  disturbance" (§II B) and later as an "upstream blowing and suction
+  disturbance" (§III C); its amplitude and frequencies are not printed.
+- Coulon et al. (2023) state that $u'$, the integral length and the
+  turbulent Reynolds number are "the same" for the three flames (§3),
+  while their Table 1 prints turbulent Reynolds numbers of 355, 313 and
+  271.
 - Inflow generation is a boundary condition, not a closure, but it sets
   the state that the closure is tested on; the benchmarks where it matters
   are [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)
@@ -463,3 +528,8 @@ compiles (§5.2).
 - [Husson et al. (2024)](/sources/husson-2024.md) — §1 (inflow turbulence as a burden of wall-modelled LES that hybrid RANS/LES avoids).
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §3.2.1, Fig. 4a (cited inflow-turbulence sensitivity of turbine heat transfer; coupled combustor–turbine LES); §3.3.3.2, Fig. 5 (inflow intensity and length scale in vane transition).
 - [Heinz (2020)](/sources/heinz-2020.md) — §1 (fluctuations added at RANS–LES interfaces); §5.2 (zonal DES with synthetic-turbulence generators on the hump, cited).
+- [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A–B, Eq. (13), Fig. 3 (concurrent precursor for a pressure-gradient-driven neutral boundary layer).
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.10.5 (digital-filter inflow of a backward-facing step).
+- [Coulon et al. (2023)](/sources/coulon-2023.md) — §2.2, Eqs. (2)–(3), Table 1 (Kraichnan-type Fourier modes with a Passot–Pouquet spectrum through an NSCBC inlet); §3.
+- [Wang et al. (2022)](/sources/wang-2022-j.md) — §V, Figs. 8–13 (digital-filter initial perturbations of a temporal mixing layer, perturbation scale against LES filter width); Conclusions.
+- [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II B–C, Fig. 6 (laminar inlet and wall disturbance at Mach 6, incoming-layer check); §III C (spectral peaks of the trip).

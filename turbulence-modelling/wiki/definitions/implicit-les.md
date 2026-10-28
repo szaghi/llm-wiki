@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-27T15:56:00Z
+timestamp: 2026-10-27T21:12:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -206,6 +206,27 @@ can carry.
      collision operator acts as a subgrid scale model" as an option of
      [lattice-Boltzmann](/methods/lattice-boltzmann-method.md) LES (citing
      Nishimura et al.).
+   - **Shock–turbulence interaction in OpenFOAM.**
+     [Cheng et al. (2023)](/sources/cheng-2023-b.md) (§1, §2.2) run a
+     second-order finite-volume solver (AUSM+-up flux, compact TVD
+     reconstruction of primitive variables) as implicit LES: the subgrid
+     stress "can be modeled implicitly by the inherent numerical
+     dissipation from the shock-capturing schemes". They argue, citing
+     Garnier et al., that explicit subgrid models are "not suited to
+     shock-vortex and shock-turbulence problems", because they cannot
+     account for the intermodal energy transfer among acoustic, entropy
+     and vorticity modes and usually miss the conversion of kinetic to
+     internal energy across shocks, and they set three requirements on the
+     scheme: oscillation-free capture of shocks and shear layers, low
+     dissipation for the resolved scales, and stabilization of the
+     subgrid scales by the scheme's dissipation (§1). Their reconstruction
+     and its dissipation parameters are on
+     [numerical dissipation](/properties/numerical-dissipation.md); results
+     below.
+   - **Dense gas.** [Zhang et al. (2022d)](/sources/zhang-2022-h.md) (§I)
+     cite implicit LES of dense-gas flows (Hoarau et al.) as one LES
+     family, against which they set an explicit deconvolution closure of
+     the real-gas subgrid terms.
 2. **Designed numerical regularization.** The numerical dissipation is
    built to act as a model. Vicente Cruz & Lamballais (2023, §5.1) use the
    [implicit spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
@@ -269,6 +290,39 @@ can carry.
    Hennemann-type DG/finite-volume blending of
    [GALÆXI](/software/galaexi.md) "has also been demonstrated to yield a
    sensible turbulence model if tuned correctly", the RL-Blend idea above.
+
+   **Artificial-dissipation operator on summation-by-parts differences.**
+   [Stanly et al. (2022)](/sources/stanly-2022.md) (§2.1, Eq. 1) run the
+   compressible code MIRACLES as implicit LES: fourth-order
+   summation-by-parts finite differences, fourth-order Runge–Kutta and,
+   as the only closure, an eighth-order artificial-dissipation operator
+   (Mattsson et al., as cited) with a fourth-order boundary closure, on
+   analytically stretched grids. Their application is the
+   [actuator-line model](/methods/actuator-line-model.md) of a wind
+   turbine; they attribute small differences from an explicit-LES
+   reference partly to running their implicit LES on a grid built with
+   the explicit-LES criterion (§4.2), and judge their filtered actuator
+   line, which allows coarse grids, "more suitable" for LES with explicit
+   subgrid models than for implicit LES (§6).
+
+   **Spectral vanishing viscosity under a wall model.**
+   [Huang et al. (2022c)](/sources/huang-2022-c.md) (§II B, Eq. 13) run
+   SVV implicit LES of the incompressible equations in
+   [Nektar++](/software/nektar-plus-plus.md): spectral/hp elements with
+   the SVV term $\nu_{\mathrm{svv}}\sum_i\partial_i[\mathcal Q\otimes\partial_i\boldsymbol u]$
+   (page-local $\nu_{\mathrm{svv}}$ the dissipation strength, $\mathcal Q$
+   the kernel acting on the high modes) as the only regularization; they
+   cite the "DG kernel" of Moura et al., calibrated so that continuous
+   Galerkin plus SVV mimics upwind DG, but do not state the kernel,
+   $\nu_{\mathrm{svv}}$ or cut-off of their own runs (see
+   [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)).
+   Since an implicit LES has no model coefficient to adjust, they state
+   that eddy-viscosity wall-model corrections (dynamic eddy viscosity of
+   Cabot & Moin; the Smagorinsky-coefficient constraint of Wu & Meyers)
+   are "not applicable", and they couple an algebraic equilibrium wall
+   model through a Neumann wall-stress condition that brings no eddy
+   viscosity into the equations (§I, §II C; results below and on
+   [wall-modelled LES](/methods/wall-modelled-les.md)).
 
    **Dissipative interpolation and regularization filters.**
    [Caban et al. (2026)](/sources/caban-2026.md) (§3.2, §5) classify as
@@ -741,6 +795,68 @@ interpretation they flag as needing further work).
   compressibility effects of the weakly compressible scheme included
   (§3.4, where the compressibility defect is named the main cause of an
   error plateau).
+- **Implicit against explicit LES on the same grid, with the dissipation
+  budget.** [Cao et al. (2022b)](/sources/cao-2022-c.md) ask why their
+  implicit LES with a fourth-order finite-volume
+  [gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md) had beaten
+  explicit eddy-viscosity LES in earlier compressible periodic-hill runs
+  (§I). On the compressible
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at Mach 0.1,
+  $Re=1600$, $256^3$ cells, against $1024^3$ DNS, the explicit models enter
+  the kinetic solver through an enlarged collision time
+  $\tau_{\mathrm{col}}+\tau_{\mathrm{col},t}=(\mu+\mu_t)/p$, with the cell as
+  implicit filter: static [Smagorinsky](/methods/smagorinsky-model.md)
+  ($C_s=0.1$), [Vreman](/methods/vreman-model.md) ($C_v=2.5C_s^2=0.025$,
+  page-local $C_v$) and the [dynamic procedure](/methods/dynamic-procedure.md)
+  with a top-hat test filter of twice the width and a domain-averaged
+  coefficient (§III, Eqs. 7–13). Kinetic energy and its total decay rate
+  are insensitive to the choice; the enstrophy-based and solenoidal
+  dissipations are closest to DNS with implicit LES, and the dynamic model
+  is the best explicit one (§IV A, Figs. 1–3). Writing the discrete
+  equation with a numerical subgrid stress $\tau^{\mathrm{num}}_{ij}$ beside the
+  modelled one, after Moser et al. (Eq. 20), they estimate the total
+  subgrid dissipation as $-\mathrm dE_k/\mathrm dt$ minus the physical
+  dissipation (Eq. 22): modelled and numerical parts together for explicit
+  LES, numerical only for implicit LES. The static models give about twice
+  the implicit value at $t=2.5$–10 and the dynamic model lies between,
+  its domain-averaged coefficient being always positive in this flow
+  (§IV C, Table II). The authors conclude that the scheme's dissipation is
+  a built-in subgrid dissipation sufficient for this low-Reynolds-number
+  flow, that the added eddy viscosity "pollutes" the resolved vorticity,
+  and that explicit LES should not be "a holy grail" on under-resolved
+  grids without considering the numerics (§IV C, §V). On $128^3$ and
+  $384^3$ the ranking holds; static explicit LES on $384^3$ only matches
+  implicit LES on $256^3$ (App. B, Figs. 9–12). The decomposition is on
+  [numerical dissipation](/properties/numerical-dissipation.md), the a
+  priori comparison on
+  [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
+- **Low-order TVD-type reconstruction, transonic cavity.** Cheng et al.
+  (2023, §3.6, Figs. 9–14) run their compact-stencil implicit LES on the
+  Mach 0.8 deep cavity of Forestier et al. ($Re=8.6\times10^5$ on the
+  cavity length $L$, 10.36 million cells, smallest $L/120$, 60 shedding
+  cycles). The mean velocities of all their schemes agree with the
+  experiment and are mostly comparable to a fifth-order implicit LES of
+  Thornber & Drikakis on its own grid; the classical TVD limiters (van
+  Leer, MUSCL) underestimate the Reynolds stresses "due to numerical
+  dissipation", the fifth-order reference "tends to slightly
+  overestimate" them and overestimates the fluctuating energy near the
+  upstream wall, and the lower-dissipation reconstructions come closest
+  to the measured peak there. The grids differ between the two
+  computations, which the authors note ("may benefit from the finer grid
+  size"); no cost is reported.
+- **Wall-modelled SVV implicit LES of channel flow.** Huang et al.
+  (2022c, §III, Table I, Figs. 3–9) run turbulent channel flow at
+  $Re_\tau=550$, 950 and 2000 on one mesh of $12\times6\times10$ hexahedra
+  with "polynomial order $N_p=7$" as printed, matching height at the top of
+  the first element, $0.224\delta$. The mean velocity is "almost not
+  distinguishable" from DNS at $Re_\tau=550$ and over-predicted by at most
+  2% and 5.4% at 950 and 2000; the r.m.s. fluctuations and the Reynolds
+  shear stress agree away from the wall but show a "parabolic" error near
+  the matching interface. At $Re_\tau=550$ the computation is reported up
+  to seven times cheaper than wall-resolved SVV implicit LES with the same
+  outer mesh (no timing data). At similar resolution a mesh with fewer,
+  higher-order elements gives better fluctuations than one with more,
+  lower-order elements (§III E).
 
 ## Evidence: when it fails
 
@@ -978,6 +1094,20 @@ interpretation they flag as needing further work).
   like turbulent features in under-resolved simulations may be unphysical
   numerical errors amplified by the scheme"; the most detailed solutions
   are the least accurate (§5.2.1).
+- **Hyperviscosity-stabilized pseudospectral runs.** In the
+  subgrid-model comparison of [Wang et al. (2022)](/sources/wang-2022-j.md),
+  the implicit-LES baseline of forced isotropic turbulence ($128^3$,
+  pseudospectral, filtered-DNS reference at $Re_\lambda\approx250$) needs
+  an artificially adjusted hyperviscosity to keep its spectrum near DNS:
+  "Otherwise, the ILES always diverges in the simulation" (§IV, no
+  divergence shown); its strain-rate PDFs are wider than filtered DNS and
+  peak at the wrong place (Figs. 3–4). In a weakly compressible temporal
+  mixing layer (eighth-order finite differences, $64\times128\times128$)
+  the implicit LES matches the momentum thickness but cannot recover the
+  filtered energy spectrum and over-predicts the kinetic energy, where
+  the explicit models do better (§V, Figs. 9–12; see
+  [temporal mixing layer](/benchmarks/temporal-mixing-layer.md)). The
+  dissipation mechanism of the mixing-layer run is not described.
 
 ## A DNS that is an implicit LES for some modes
 
@@ -1249,6 +1379,25 @@ dissipation is imparted by the SGS model". Details on
   Taylor–Green vortex and apply them unchanged to the other cases (§3.4,
   §4–5); Deng et al. (2022) vary $\lambda_{\mathrm{AD}}$ in their isotropic
   ILES and compare each value with the DNS spectrum (§4.15).
+- **Cao et al. (2022b): "two times" and one flow.** The static explicit
+  models give "approximately two times" the implicit total subgrid
+  dissipation; Table II gives ratios of 1.9, 2.5 and 2.1 (Smagorinsky) at
+  $t=2.5$, 5 and 10 but about 14 at $t=15$ (Vreman: 1.7, 2.3, 1.9, 10)
+  *(compiler check, not in the sources)*. The conclusion that explicit
+  modelled dissipation is not required is drawn from one flow (Mach 0.1,
+  $Re=1600$) and one fourth-order scheme; the authors defer higher Mach
+  numbers, where shocklets make the numerical dissipation depend on the
+  shock-capturing scheme (§V).
+- **Huang et al. (2022c): what "$N_p=7$" means.** The printed spacings
+  ($\Delta x\simeq0.087\delta$, $\Delta z\simeq0.052\delta$,
+  $\Delta y_1\simeq0.037\delta$) equal the element sizes divided by
+  $N_p-1=6$, not by 7 *(compiler check, not in the sources)*. The paper attributes the near-interface error to the wall
+  gradient increasing "the eddy viscosity" (§III B), although its SVV
+  equations (Eq. 13) contain no eddy viscosity.
+- **Cheng et al. (2023)** state that their reconstructions satisfy the
+  TVD condition without proof (§2.2), and report no time integrator,
+  time step or cost; the deep-cavity comparison with fifth-order implicit
+  LES is at different resolutions.
 
 # Citations
 
@@ -1326,3 +1475,9 @@ dissipation is imparted by the SGS model". Details on
 - [Simonis et al. (2022)](/sources/simonis-2022.md) — Eqs. (23)–(26); §3.3.2, Fig. 7; §3.4, Fig. 9.
 - [Svärd (2022)](/sources/svard-2022.md) — Abstract; §2.2–2.3, Eq. (9); §3–3.1; §4, Eqs. (20)–(23), Prop. 4.1; §5.2–5.2.1, Tables 1–3; §5.3, Table 5.
 - [Chen et al. (2022)](/sources/chen-2022-g.md) — §1; §5–6; §7.
+- [Cao et al. (2022b)](/sources/cao-2022-c.md) — §I; §III, Eqs. 7–13 (explicit models in the kinetic solver); §IV A, Figs. 1–3; §IV C, Eqs. 19–22, Table II, Fig. 8 (numerical and modelled subgrid dissipation); §V; App. B, Figs. 9–12.
+- [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §1 (explicit models unsuited to shock–turbulence, citing Garnier et al.); §2.2; §3.6, Figs. 9–14 (deep cavity); §4.
+- [Stanly et al. (2022)](/sources/stanly-2022.md) — §2.1, Eq. 1 (SBP differences plus artificial dissipation as implicit LES); §4.2; §6.
+- [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I (eddy-viscosity wall-model corrections inapplicable to implicit LES); §II B–C, Eqs. 8–13, 20 (SVV implicit LES, Neumann wall-stress coupling); §III A–E, Table I, Figs. 3–9.
+- [Wang et al. (2022)](/sources/wang-2022-j.md) — §IV, Figs. 2–4 (hyperviscosity-stabilized implicit LES of isotropic turbulence); §V, Figs. 9–12 (mixing layer).
+- [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §I (dense-gas implicit LES cited, in passing).

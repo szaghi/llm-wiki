@@ -5,7 +5,7 @@ description: "Spectral vanishing viscosity concentrates an added viscosity on th
 status: established
 aliases: [SVV, implicit SVV, ISVV, implicit spectral vanishing viscosity, spectral viscosity, SVV-LES, entropy-stable SVV, modal SVV filter]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg, entropy-stable]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-27T21:10:00Z
 ---
 
 # Spectral vanishing viscosity
@@ -287,6 +287,34 @@ The authors conclude that the accuracy-per-cost advantage of the high-order
 solver comes mainly from its lower numerical dissipation, with the closure
 (SVV or WALE) secondary (§6).
 
+**SVV implicit LES with a wall model.** [Huang et al. (2022c)](/sources/huang-2022-c.md)
+(§II B, Eqs. 8–13) restate the same lineage for Nektar++: Tadmor's Burgers
+form with dissipation strength $\epsilon_N\approx N^{-1}$ in a Fourier
+setting with $N$ modes, the kernel of Maday et al. acting on modes above
+the cut-off $M\approx5\sqrt N$ with the same exponential form as above, and the Navier–Stokes form of Kirby & Sherwin,
+an added term $\epsilon_{\mathrm{svv}}\partial_j\big(Q\star\partial_ju_i\big)$
+on the incompressible momentum equation with no explicit subgrid model
+(their "SVV-iLES"). They describe the "DG kernel" of Moura et al., a
+kernel redesigned mode by mode so that continuous Galerkin with SVV
+mimics the dissipation of upwind DG, calibrated by spatial eigenanalysis,
+and cite Wang et al.'s (2021) finding that an optimized SVV implicit LES
+does "at least as well as" a subgrid model in wall-resolved separated
+flow. Their contribution is to replace the inner layer by an equilibrium
+wall-stress model imposed as a Neumann condition, which they call the
+first wall model for SVV implicit LES in a spectral/hp element method;
+they argue that eddy-viscosity corrections of the wall model (Cabot &
+Moin; Wu & Meyers, cited) do not apply to implicit LES and that the
+Nek5000 framework of Pal et al. could not be coupled with SVV (§I,
+stated, not demonstrated). On channel flow at $Re_\tau=550$, 950 and 2000
+on one $12\times6\times10$-element mesh the mean velocity is within 2% at
+950 and 5.4% at 2000 of DNS (§III B; wall-model results on
+[wall-modelled LES](/methods/wall-modelled-les.md) and the
+[spectral-element method](/methods/spectral-element-method.md)). Time
+averaging of the wall-model input changes the results marginally
+(§III D), the finding that Mukha et al. (below) cite as agreeing with
+theirs. The kernel, the amplitude and the cut-off of their own runs are
+not printed.
+
 **SVV in one direction, gradient-jump penalty in the others.**
 Slaughter et al. (2023) (§3.1, §3.6, Fig. 5) run a Fourier spectral/hp
 implicit LES of a multi-element wing with polynomial degree 6, using SVV
@@ -422,6 +450,11 @@ simulation of turbulent and supersonic flows", citing the group's work.
   $\epsilon_{\mathrm{SVV}}$ for the same quantity.
 - The SVV values for the two Taylor–Green resolutions are given in §5.3 and
   not restated in §6.
+- Huang et al. (2022c, Eq. 11) print the Maday cut-off $M\approx5\sqrt N$
+  of the Fourier setting; for $N<25$ it exceeds $N$, so that formula
+  damps no mode below 25 modes *(compiler check, not in the sources)*.
+  The paper does not state the kernel or cut-off used in its elemental
+  runs, so this concerns the printed formula only.
 - Mateo-Gabín et al. (2022) print the parameter of Tadmor's step kernel as
   "$\varepsilon M=0.25$" (Eq. 66), which is not explained; they print the
   forward-facing-step switching rule with the sensor $s_1$ although the
@@ -440,6 +473,7 @@ simulation of turbulent and supersonic flows", citing the group's work.
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.1; §4.4, Eqs. (15)–(19), Fig. 9.
 - [Saini et al. (2023)](/sources/saini-2023.md) — §2.2, Eqs. (6)–(8), (10); §2.3, Eqs. (13)–(15); §5.1–5.2, Figs. 7–15; §6.
 - [Slaughter et al. (2023)](/sources/slaughter-2023.md) — §3.1; §3.6, Fig. 5.
+- [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I (SVV implicit LES limited to moderate Reynolds numbers; wall-model coupling); §II B, Eqs. (8)–(13) (Tadmor, Maday kernel, Kirby–Sherwin form, DG kernel of Moura et al.); §III B, §III D (channel results, time-averaged input).
 - [Kou et al. (2023)](/sources/kou-2023.md) — §1.
 - [Wang (2024)](/sources/wang-2024-b.md) — §2.3, Eqs. (17)–(19); §5.
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §I; §II.A, Eq. (4); §III.B.3; §III.C, Fig. 8.

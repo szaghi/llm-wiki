@@ -5,7 +5,7 @@ description: "Morkovin's hypothesis holds that, while density fluctuations stay 
 status: established
 aliases: [Morkovin hypothesis, Morkovin scaling, Morkovin's scaling, strong Reynolds analogy, SRA, HSRA, Reynolds analogy factor, turbulent Prandtl number]
 tags: [compressible, boundary-layer, dns, hypersonic, rans]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-27T20:37:00Z
 ---
 
 # Morkovin's hypothesis and Reynolds analogies
@@ -498,6 +498,23 @@ The scaling formula is not printed; Morkovin scaling serves here only to
 compare the LES with a reference DNS of the same layer, not to test the
 hypothesis across Mach numbers.
 
+The same use appears in a hypersonic DNS.
+[Zhang et al. (2022c)](/sources/zhang-2022-g.md) validate the incoming
+flat-plate layer of their Mach 6 swept-ramp interaction (cold isothermal
+wall, $T_w=294$ K against the recovery temperature $T_r=585$ K printed with
+$r=0.89$, so $T_w/T_r\approx0.50$ *(compiler check, not in the sources)*)
+with density-scaled fluctuations written with the **Reynolds** average and
+fluctuation (§II C, Eq. 3, after Pirozzoli & Bernardini 2011 as cited),
+$$u_i^{\mathrm{sc}}=\frac{\sqrt{\langle\rho\rangle/\rho_w}}{u_\tau}\sqrt{\langle u_i'^2\rangle},\qquad (u_iu_j)^{\mathrm{sc}}=\frac{\langle\rho\rangle/\rho_w}{u_\tau^2}\langle u_i'u_j'\rangle$$
+(page-local superscript $\mathrm{sc}$; the source writes a star, which the
+registry reserves for semi-local scaling). These are the Morkovin factors
+of the first section applied to Reynolds rather than Favre statistics; the
+paper does not name Morkovin. The scaled fluctuations at the reference
+station are "basically consistent" with other simulations and experiments
+(refs. 34–38 of the paper) and show the near-wall anisotropy (Fig. 6b);
+the van Driest-transformed mean velocity of the same station is on
+[compressible velocity transformations](/definitions/compressible-velocity-transformation.md).
+
 ## Qualifications
 
 - Helm & Martín (2022) print the friction velocity with the edge density,
@@ -539,4 +556,5 @@ hypothesis across Mach numbers.
 - [Zhang et al. (2022)](/sources/zhang-2022-b.md) — §2, Table 1; §3, Eqs. (3.1)–(3.3), Table 3, Figs. 4–5, 8 (Morkovin density scaling, Walz and generalized Reynolds analogy, Reynolds analogy factor, turbulent Mach number under wall cooling, Mach 0.5–8); §4, Figs. 10–12; §5, Fig. 13 (wall-pressure fluctuations); §7.
 - [Yu et al. (2022)](/sources/yu-2022-e.md) — §1.2 (Morkovin-based spectral formulation rejected near shocks); §2.1 (generalized Reynolds analogy at the inflow).
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.1 (strong Reynolds analogy for inflow thermodynamic fluctuations).
+- [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II B (free-stream and wall temperatures, recovery factor); §II C, Eq. (3), Fig. 6b (density-scaled Reynolds-averaged fluctuations at the inflow station of a Mach 6 DNS).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §2.5, Eq. (17) (equilibrium thermal wall model, strong Reynolds analogy $C_h=C_f/2$, its range and failure near separation); §4.4 (Morkovin-type scaling of closures for $M_t\lesssim0.2$).

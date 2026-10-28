@@ -5,7 +5,7 @@ description: "Girimaji's bridging hybrid model that solves RANS-form transport e
 status: established
 aliases: [PANS, partially averaged Navier-Stokes, PANS k-ω SST, bridging model, PANS BHR-LEVM, variable-density PANS, BHR model]
 tags: [pans, hybrid-rans-les, flux-reconstruction, numerical-dissipation, separated-flow]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-27T21:07:00Z
 ---
 
 # Partially-averaged Navier–Stokes
@@ -325,6 +325,17 @@ not give better integrated loads than RANS on realistic cars; their own
 comparison uses delayed DES, not PANS
 ([Delassaux et al. (2023)](/sources/delassaux-2023.md), §6; HAL author
 manuscript; see [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+Wu et al. (2023) and Idelsohn et al. (2024) list PANS with DES and
+very-large eddy simulation, or with DES and scale-adaptive simulation, as
+hybrid families ([Wu et al. (2023)](/sources/wu-2023-b.md), §1;
+[Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §1.2). The method Wu
+et al. assess, self-adaptive turbulence eddy simulation, bridges URANS, LES
+and DNS through a resolution control function $F_r$ (page-local), which
+they read as the fraction of modelled kinetic energy; it is computed from
+integral, grid and Kolmogorov lengths and multiplies the eddy viscosity of
+an unchanged BSL $k$-$\omega$ model, $\mu_t=F_r\rho k/\omega$ (§2.1.1,
+Eqs. 4–6; on the [hybrid RANS/LES page](/definitions/hybrid-rans-les.md)).
+In PANS, $f_k$ and $f_\varepsilon$ enter the transport equations (above).
 
 ## Criticism: RANS equations with fluctuating inputs
 
@@ -458,3 +469,5 @@ and build theirs on DES instead
 - [Heinz (2022)](/sources/heinz-2022.md) — §4.
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §1.
 - [Heinz (2020)](/sources/heinz-2020.md) — §3.4, Eqs. (24)–(30) (PANS and PITM coefficients, neglected transport, zero- and maximum-transport forms); §4.4, Eq. (52) (consistency test against CES, resolution comparison); §5.1, Figs. 6–8 (cited periodic-hill $f_k$ recommendations and PITM grid study).
+- [Wu et al. (2023)](/sources/wu-2023-b.md) — §1, §2.1.1 Eqs. 4–6.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.2.

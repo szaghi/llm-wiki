@@ -5,7 +5,7 @@ description: "Closures whose model terms are explicit algebraic expressions foun
 status: established
 aliases: [symbolic regression, PySR, SBL-SpaRTA, SR-CLS, SR-CND, deep symbolic regression, DSR, gene-expression programming, GEP, sparse regression, SpaRTA, explicit algebraic closure discovery, DSRRANS, relevance vector machine, RVM, NGM4, NGM6, equation discovery]
 tags: [symbolic-regression, rans, les, sgs-model, data-driven, separated-flow]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-27T21:12:00Z
 ---
 
 # Symbolic-regression turbulence closures
@@ -32,7 +32,7 @@ scenarios.
 
 | Method | Search | Cited or read |
 |---|---|---|
-| gene-expression programming (Weatheritt & Sandberg 2016, 2017) | evolutionary search over expression trees | cited by Duraisamy et al. (2019, §5.3), Duraisamy (2021, §III.A), Tang et al. (2023, §I), Sandberg & Michelassi (2022, §4.3), Sandberg & Zhao (2022, §4); read directly for an LES subgrid stress: Li et al. (2021) |
+| gene-expression programming (Weatheritt & Sandberg 2016, 2017) | evolutionary search over expression trees | cited by Duraisamy et al. (2019, §5.3), Duraisamy (2021, §III.A), Tang et al. (2023, §I), Sandberg & Michelassi (2022, §4.3), Sandberg & Zhao (2022, §4), Shan et al. (2023, §I); for reacting-flow subgrid stresses by Ihme et al. (2022, §4.1.4); read directly for an LES subgrid stress: Li et al. (2021) |
 | CFD-driven gene-expression programming (Zhao et al. 2020) | candidates evaluated in the RANS solver during training | cited by Tang et al. (2023, §I), Sandberg & Michelassi (2022, §4.3), Sandberg & Zhao (2022, §3.4), Ruggeri et al. (2022, §III) |
 | sparse regression, SpaRTA (Schmelzer et al.) | $\ell_1$-penalized linear regression over a library of candidate functions | cited by Duraisamy (2021, §III.A, §IV.A), Tang et al. (2023, §III B), Sandberg & Zhao (2022, §3.4, Eq. 8), Cherroud et al. (2022, §1, App. B) |
 | deep symbolic regression, DSR (Petersen et al.) | a recurrent network samples expressions; trained by a risk-seeking policy gradient | read directly: Tang et al. (2023) |
@@ -582,6 +582,41 @@ spoils the channel log layer (mean absolute error of $u^+$ 2.41 against
 (§4.2.1, Table 3). The paper combines them with learned spatial weights;
 see [model aggregation](/methods/turbulence-model-aggregation.md).
 
+## Symbolic regression for reacting-flow subgrid stresses (as reviewed by Ihme et al. 2022)
+
+[Ihme et al. (2022)](/sources/ihme-2022.md) (§4.1.4, Eq. 74, Fig. 30)
+review two symbolic searches for the subgrid stress of compressible,
+reacting LES, both trained a priori on filtered DNS of flames:
+
+- *Gene-expression programming (Schoepplein et al., as cited).* The
+  Favre-filtered stress $\tau_{ij}=\bar\rho(\widetilde{u_iu_j}-\tilde u_i\tilde u_j)$
+  and its trace are sought in the forms
+  $$\tau_{ij}=\bar\rho\sum_m G^m(I_1,I_2,\dots)\,T^{(m)}_{ij},\qquad \tau_{kk}=\bar\rho\sum_m C_mI_m,$$
+  with $T^{(m)}_{ij}$ basis tensors, $I_m$ invariants, $G^m$ the
+  coefficient functions (registry §11) and $C_m$ the coefficients the
+  search determines ($C_m$, $I_m$ page-local; the source's $T^\alpha_{ij}$,
+  $G_\alpha$, $C_\alpha$, $I_\alpha$; the review prints the trace as $k^{SGS}$,
+  without the factor $\tfrac12$, so $\tau_{kk}=2\bar\rho k_{\mathrm{sgs}}$
+  in registry terms). Physical constraints and invariances are built into
+  the search. On DNS of a planar premixed flame in the thin-reaction-zones
+  regime the search "rediscovered" the functional form of
+  tensor-diffusivity models, with a performance comparable to Clark's
+  model (the [gradient model](/methods/gradient-model.md)); Fig. 30
+  compares Pearson correlations of the GEP models with the Yoshizawa and
+  Clark models at three filter widths.
+- *Sparse symbolic regression (Chung et al., as cited).* On filtered DNS
+  of transcritical non-premixed LOX/methane flames, random-forest feature
+  importance preselects candidates among velocity and velocity-derivative
+  features, and sparse regression over them gives a model "similar to
+  Clark's formulation".
+
+Both searches thus land on the gradient model, as the relevance-vector
+search of Jakhar et al. (2026) does for incompressible turbulence
+(section above). The review states these results without numbers of its
+own. [Shan et al. (2023)](/sources/shan-2023.md) (§I) cite
+gene-expression programming in passing, among the nonlinear alternatives
+to the eddy-viscosity closure they keep.
+
 ## Symbolic regression in transition modelling (Pacciani et al. 2025)
 
 [Pacciani et al. (2025)](/sources/pacciani-2025.md) do not run a symbolic
@@ -733,3 +768,5 @@ not report a learned expression.
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1, §2.1–2.2, Eqs. 2, 5–15 (corrections, frozen targets, dictionary); §3, Eqs. 16–32 (sparse Bayesian learning, cross-validation); §4.1–4.3, Table 2, Figs. 1–8; §5; Apps. A–C, Eqs. A.1, A.9, A.13–A.15.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.1–3.4, Eqs. 2–4, 8 (basis, frozen time scale, SpaRTA, CFD-driven training); §4.1–4.5 (GEP stress, heat-flux, unsteady and multi-expression closures of cited works).
 - [He et al. (2022)](/sources/he-2022-b.md) — §1 (GEP and sparse regression as explainable alternatives, in passing).
+- [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.4, Eq. 74, Fig. 30 (GEP and sparse symbolic regression of reacting-flow subgrid stresses, both reviewed; Clark-like results).
+- [Shan et al. (2023)](/sources/shan-2023.md) — §I (gene-expression programming cited, in passing).

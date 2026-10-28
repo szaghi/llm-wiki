@@ -3,9 +3,9 @@ type: Method
 title: "Detached-eddy simulation and its delayed and zonal forms"
 description: "The single-model hybrid RANS/LES in which a RANS model's length scale is capped by a grid length so that the model acts as a subgrid model away from walls; the DES switch and ambiguous grids, DDES shielding, IDDES, ZDES modes including mode 2 (2020), grid lengths, calibration with the numerical scheme, transitional DDES, and applications."
 status: established
-aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES]
+aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES, RSM-IDDES, RSM-DynIDDES, dynamic IDDES, modelled-stress depletion, grid-induced separation]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-27T21:07:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -63,6 +63,45 @@ grid-refinement impact is delayed to $r<0.2$ in DDES against $r<1$ in DES
 surface mesh to 10 mm ($\Delta x^+\approx600$ on the roof) for this reason,
 and show GIS on a rounded separation line: a 3 mm surface mesh there is
 "too fine and leads to GIS", and 6 mm is advised (§4.4, §7.3, Figs. 8, 21).
+
+**The industrial view.** Mani & Dorgan (2023) describe modelled-stress
+depletion as the RANS-to-LES transition happening "very near the wall" on a
+grid not refined enough for the small-scale features there, so that the
+simulation "contains too little viscous stress", which "generally
+manifests as grid-induced premature flow separation"; the original DES was
+particularly sensitive to it, DDES "significantly improved" it, and DDES is
+therefore used "in almost all circumstances" for unsteady simulation at
+Boeing ([Mani & Dorgan (2023)](/sources/mani-2023.md), §4.5.2). They report
+that certain grid topologies still trigger depletion under DDES,
+particularly on unstructured meshes with little control of point
+placement, and expect the problem to grow as unsteady mesh adaptation
+matures unless the adaptation "is somehow aware of the requirements for
+DDES". In a Boeing serpentine-inlet study with smooth-body separation
+(Lakebrink & Mani 2018, reproduced in their Fig. 11), the eddy viscosity of
+DDES had substantially decayed inside the attached boundary layer upstream
+of separation compared with RANS on the same grid; raising the constant
+multiplying $r_d$ in $f_d$ from 8 to 16 restored the boundary layer but
+"dampened all detached eddies and substantially delayed the separation"
+(a value of 4 was also tested). Citing Mani & Winkler and Ashton, they state
+that DDES selects the LES branch in the boundary layer when the surface mesh
+is nearly isotropic, and that the same holds for IDDES. Menter's robust
+shielding function for two-equation hybrids (stress-blended eddy
+simulation) has proprietary blending details, and they call for "a
+completely robust shielding function within the public domain" (§4.5.2).
+
+Wu et al. (2023), citing Menter, list grid-induced separation and "a slow
+'transition' from RANS to LES" among the limitations of DES, DDES and IDDES
+([Wu et al. (2023)](/sources/wu-2023-b.md), §1), and attribute the early flap
+separation of their SST-IDDES of the 30P30N airfoil to grid-induced
+separation, "although the turbulent boundary layer was partially protected
+to avoid modeled stress depletion" (§3.4; Applications below). Li et al.
+(2022, App. 1–2, Figs. 23–24) check their dynamic RSM-IDDES for both
+defects: on the periodic hill the $f_d$ field keeps an intact thin RANS
+layer containing the boundary layer upstream of separation, so no
+depletion occurs, and on the NASA flat plate (finest grid $545\times385$)
+the skin friction follows Kármán–Schoenherr and the profile at
+$Re_\theta=10\,000$ follows Coles's in all sublayers, without
+[log-layer mismatch](/definitions/log-layer-mismatch.md).
 
 ## Delayed DES: the shielding function
 
@@ -304,6 +343,39 @@ acts as the subgrid stress (§3.3, Fig. 10). The authors implement it as
 RSM-IDDES in the unstructured finite-volume solver HUNS3D and calibrate it
 with the scheme (below).
 
+**Dynamic RSM-IDDES.** Li et al. (2022) take the same construction one step
+further: since $C_{\mathrm{DES}}=C_kC_s$ with
+$C_k=\big(C_{\phi1}/(C_{\ell\varepsilon}C_{\phi2})\big)^{3/4}$ (page-local $C_k$;
+$C_{\ell\varepsilon}=0.09$), a dynamic Smagorinsky coefficient makes the DES
+constant dynamic, and the LES branch of RSM-IDDES becomes a dynamic
+Smagorinsky model; they call the result RSM-DynIDDES
+([Li et al. (2022)](/sources/li-2022-k.md), Abstract, §II C, Eqs. 6–9). The
+coefficient comes from the compressible
+[dynamic procedure](/methods/dynamic-procedure.md) of Moin et al. with
+Lilly's least squares, $C_s^2=\mathcal A(L^\rho_{ij}M_{ij})/\mathcal A(M_{ij}M_{ij})$,
+where $L^\rho_{ij}$ is the density-weighted resolved stress of their Eq. 11
+(ordering opposite to the registry's $L_{ij}$, see Qualifications),
+$M_{ij}$ the model tensor of the procedure and $\mathcal A$ the
+volume-weighted average over the direct face neighbours of a cell
+(page-local symbols); the test filter is the same neighbour average, of
+width $\hat\Delta=2\Delta$ "in general", which works on hybrid unstructured
+meshes, and negative $C_s^2$ (backscatter) is clipped to zero for stability
+(§II C, Eqs. 10–15, Fig. 1; see
+[energy backscatter](/definitions/energy-backscatter.md)). The grid filter is
+the implicit finite-volume cell average, and $\Delta$ is the IDDES length
+$\min[\max(C_wd,C_w\Delta_{\max},\Delta_{wn}),\Delta_{\max}]$ with $C_w=0.15$
+(§II B–C, Eq. 5; $\Delta$ here is that grid length, not a filter width). The authors give two reasons for leaving the constant
+coefficient: the decaying-turbulence calibration of $C_{\mathrm{DES}}$ depends on
+grid resolution and scheme dissipation (citing Mockett), and a constant
+Smagorinsky dissipation calibrated on isotropic turbulence is too large in
+mean shear and damps the large-scale fluctuations, while an underestimated
+constant can make the computation diverge (§I, citing Germano et al.). They
+cite earlier dynamic hybrids built on eddy-viscosity hosts (Bhushan &
+Walters on SA; He, Liu et al. on SST-DDES; Yin, Reddy et al. on a
+$k$-$\omega$ DDES) and call theirs the first on a Reynolds-stress host (§I).
+In their equilibrium argument the LES branch is "Smagorinsky-like", an exact
+Smagorinsky model only in equilibrium turbulence (§II C).
+
 ## Transitional DDES
 
 Möller et al. (2024) couple SST-DDES to the one-equation intermittency
@@ -504,6 +576,7 @@ The variants differ in the length $\Delta$ that caps the RANS length:
 | SA-DES and SA-DDES in ANSYS Fluent | $\Delta_{\max}$, $C_{\mathrm{DES}}=0.65$ | Pan & Zhang (2023), §II.B–C, Eqs. 7–9 |
 | ZDES mode 2 (2020) on isotropic lattice Boltzmann grids | $\Delta_{\max}$, $\Delta_{\mathrm{vol}}$ or $\Delta_\omega$, "not significant" since $\Delta x=\Delta y=\Delta z$; $C_{\mathrm{DES}}=0.65$ | Husson et al. (2024), §2.2, Eq. 24 |
 | RSM-IDDES (SSG/LRR-$\omega$) in a cell-centred finite-volume code | IDDES $\Delta=\min[\max(C_wd,C_w\Delta_{\max},\Delta_{wn}),\Delta_{\max}]$, $C_w=0.15$; $C_{\mathrm{DES}}=0.5F_1+0.3(1-F_1)$ calibrated | Wang et al. (2021), §2.4, §3.1 |
+| Dynamic RSM-IDDES (RSM-DynIDDES) in the same code | the same IDDES $\Delta$; $C_{\mathrm{DES}}=C_kC_s$ with dynamic $C_s$, $C_k=2.78$ (LRR) and 1.67 (SSG) | Li et al. (2022), §II B–C, §III A |
 
 Basile et al. divide by $N+1$, the number of one-dimensional degrees of
 freedom, following Lorteau et al., and take $C_{\mathrm{DES}}=0.65$ ("usually
@@ -575,6 +648,24 @@ cite; page-local $C_\Delta$, $C_K$ the Kolmogorov constant): reduce
 $C_{\mathrm{DES}}$ when the inertial-range level is below experiment (§3.1).
 This agrees with Carlsson et al. that the constant is calibrated together
 with the scheme, though with lower values.
+
+Li et al. (2022, §III A, Figs. 2–3) repeat the Comte-Bellot–Corrsin test
+($64^3$, $Re_M=34\,000$ on the mesh size of the grid, spectra from
+$t^*=42$ to the reference $t^*=171$) with the dynamic RSM-IDDES above: the
+spectra agree with the experiment up to the high-wavenumber range for both
+the SSG and the LRR branch, and descend only "slightly" as $C_k$ grows, so
+that the dynamic model is insensitive to $C_k$. They choose
+$C_{k,\mathrm{SSG}}=1.67$ and $C_{k,\mathrm{LRR}}=2.78$, which give back the
+calibrated $C_{\mathrm{DES}}=0.3$ and 0.5 at $C_s=0.18$
+($1.67\times0.18=0.3006$, $2.78\times0.18=0.5004$ *(compiler check, not in
+the sources)*). Li et al. do not print $C_{\phi1}$ and $C_{\phi2}$; with the
+coefficients printed by Wang et al. (2021, §2.3: $C_{\phi1}=0.44$,
+$C_{\phi2}=0.92$ for the $\varepsilon$ branch, $0.55$ and $0.83$ for the
+$\omega$ branch, $C_{\ell\varepsilon}=0.09$) the $C_k$ formula of Eq. 9 gives
+$3.50$ (SSG) and $4.47$ (LRR), equal to Wang et al.'s theoretical
+$C_{\mathrm{DES}}=0.630$ and 0.805 divided by $C_s=0.18$ *(compiler check,
+not in the sources)*. The insensitivity is shown on decaying turbulence
+only; the hill and buffet cases run with the chosen values.
 
 **An estimate from continuous eddy simulation.** Heinz (2020) writes DES in
 $k$-equation form, $Dk/Dt=P_k-\psi_{\mathrm{DES}}\varepsilon+D_k$ with
@@ -816,6 +907,55 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
   estimated from experiment, against 0.62 for SST-IDDES; both overpredict
   its magnitude, RSM-IDDES less. Both resolve more than 80% of the kinetic
   energy along the extraction line (Figs. 9–14).
+- **Periodic hill and launch-vehicle buffet with a dynamic constant** (Li
+  et al. 2022, §III B–C). On the [periodic hill](/benchmarks/periodic-hill.md)
+  ($Re=10\,595$ on the hill height and crest velocity, $M=0.1$,
+  $160\times115\times60$ cells, about 1.1 million, first-cell $\Delta y^+<1$,
+  $\Delta x^+$ and $\Delta z^+$ mostly below 35), RSM-IDDES and the dynamic
+  RSM-IDDES both match the mean streamwise velocity of the Breuer et al.
+  experiment and of the DNS and wall-resolved LES of Balakumar et al.,
+  except near the lower wall at $x=4$, where both follow the wall-modelled
+  LES instead; the resolved Reynolds stresses of the dynamic model are closer
+  to the references, near the lower wall within their spread and close to
+  the wall-modelled LES, while RSM-IDDES underpredicts the streamwise normal
+  stress at $x=8$; $Q$-criterion fields show more small-scale structures
+  (Table I, Figs. 7–12). On the
+  [hammerhead launch vehicle](/benchmarks/hammerhead-launch-vehicle-buffet.md)
+  ($M=0.81$, $Re=4.0\times10^6$ on the 12-in first-stage diameter, against
+  $4.2\times10^6$ printed by Wang et al., see the contradiction on that
+  page; the grid of Wang et al.), the dynamic model keeps the shear-layer break point and
+  the reattachment line of RSM-IDDES, both upstream of SST-IDDES, has smaller
+  modelled subgrid stress in the vortex region, more high-frequency PSD
+  along the shear layer and the largest high-wavenumber share of the
+  energy spectrum; the mean $C_p$ is "essentially" that of RSM-IDDES, and at
+  the location of the experimental $C_p$-RMS maximum the RMS is 0.0554
+  against 0.0719 (RSM-IDDES), 0.0897 (SST-IDDES) and 0.0454 measured (Coe &
+  Nute) (Figs. 15–22). The authors attribute the later break-up of
+  SST-IDDES to its larger modelled stress in the shear-layer extension,
+  after Spalart's viewpoint, and conclude that the dynamic model "only
+  improves the prediction of the high-frequency part" (§III C, §IV).
+- **30P30N high-lift airfoil, IDDES against LES and SATES** (Wu et al. 2023,
+  §3.4). On the [30P30N airfoil](/benchmarks/30p30n-high-lift-airfoil.md)
+  ($Re=1.71\times10^6$, $M=0.17$, $\alpha=5.5^\circ$, 27 million cells,
+  fourth-order linear-weight [WCNS](/methods/weighted-compact-nonlinear-scheme.md)),
+  SST-IDDES (Gritskevich et al.'s length, Eq. 9) gives $C_L=2.27$, 19.8%
+  below the experimental mean 2.83, against $-6.7\%$ for Smagorinsky LES and
+  $-0.4\%$ for the self-adaptive turbulence eddy simulation (Table 2). It
+  separates early on the flap suction side (attributed to grid-induced
+  separation), misses the small separation bubble on the main element,
+  carries larger $\mu_t/\mu$ in the attached boundary layers and
+  considerable eddy viscosity in the slat cove, which delays the transition
+  of the slat shear layer, and resolves the least kinetic energy of the
+  three; the authors conclude that a hybrid RANS/LES "could be worse than the
+  LES" on this case (Figs. 17–25; see
+  [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+- **Industrial practice** (Mani & Dorgan 2023, §4.5.2). DES and then DDES
+  have carried unsteady simulation at Boeing, on SA and SST hosts; hybrid
+  RANS/LES remains "a workhorse for most unsteady simulations in industry"
+  but is too expensive for the many flight conditions of a database, and
+  "has also struggled at times" to predict separation and reattachment in
+  smooth-body separation, where the authors see
+  [wall-modelled LES](/methods/wall-modelled-les.md) as the promising route.
 - **Turbine tip-leakage vortex** (Yang & Ma 2022). SST-DES of one passage
   of a transonic high-pressure turbine rotor cascade (exit isentropic Mach
   0.95, tip gap $0.07c$, $y^+\approx1$, $\Delta t=10^{-6}$ s) resolves the
@@ -1019,6 +1159,35 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
   with a capped wall distance, and conclusions on mesh adaptation drawn
   with it do not transfer directly to grid-dependent DES, as the author
   states (§2.1, §7).
+- Li et al. (2022) print the hammerhead Reynolds number as $4.0\times10^6$
+  on the 12-in diameter (§III C), Wang et al. (2021, §3.3) $4.2\times10^6$
+  for the same configuration and grid; the conflict is recorded, open, under
+  Contradictions on the
+  [hammerhead launch-vehicle buffet](/benchmarks/hammerhead-launch-vehicle-buffet.md)
+  page. Li et al. use $M_{ij}$ both for the
+  fluctuating mass-flux term of the Reynolds-stress equation (Eq. 2) and for
+  the model tensor of the dynamic procedure (Eqs. 10, 12), and write after
+  Eq. 9 that $C_{\mathrm{DES}}$ affects "the quantity of coefficient $C_k$ of
+  the Smagorinsky model", where their Eq. 9 makes $C_s$ the Smagorinsky
+  coefficient. Their resolved stress (Eq. 11) is printed with the test
+  filter of the product subtracted, the opposite ordering of the registry's
+  $L_{ij}$, with the model tensor of Eq. 12 signed to match. The authors
+  credit the improvement of the fluctuations to the dynamic subgrid
+  dissipation; the runs use a second-order Roe scheme (§II A, §IV).
+- Mani & Dorgan (2023) call the modified quantity "the $f_d$ coefficient"
+  (§4.5.2) while their Fig. 11 labels the variants $(4r_d)^3$, $(8r_d)^3$ and
+  $(16r_d)^3$: the constant changed is the factor multiplying $r_d$ inside
+  $f_d$. Their review prints no equations, and the serpentine-inlet flow
+  conditions are not given.
+- On the 30P30N airfoil at $M=0.17$, $Re\approx1.7\times10^6$,
+  $\alpha=5.5^\circ$, Wang et al. (2024) report their SA-DDES with a
+  sixth-order upwind scheme in agreement with the measured $C_p$ and
+  slat-cove profiles, and Wu et al. (2023) report their SST-IDDES with a
+  fourth-order linear-weight WCNS on a span of $C/9$ and 27 million cells
+  19.8% low in lift with early flap separation (Table 2). Wu et al. cite a
+  successful IDDES of the airfoil by Ashton et al. without discussing the
+  difference (see the [30P30N](/benchmarks/30p30n-high-lift-airfoil.md)
+  page for the two set-ups).
 
 # Citations
 
@@ -1055,3 +1224,6 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
 - [Fidkowski (2022)](/sources/fidkowski-2022.md) — §2.1 Eq. 3, §6.3 Table 3 Fig. 18, §7.
 - [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §6.2 Table 12.
 - [He et al. (2022)](/sources/he-2022-b.md) — §2.6.
+- [Li et al. (2022)](/sources/li-2022-k.md) — Abstract, §I, §II B–C Eqs. 5–15 Fig. 1, §III A Figs. 2–3, §III B Table I Figs. 7–12, §III C Figs. 15–22, §IV, App. 1–2 Figs. 23–24.
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.5.2, Fig. 11.
+- [Wu et al. (2023)](/sources/wu-2023-b.md) — §1, §2.1.3 Eq. 9, §3.4 Table 2 Figs. 17–25.

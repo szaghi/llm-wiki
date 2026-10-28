@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity profile of wall-bounded turbulence �
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-27T21:08:00Z
 ---
 
 # Law of the wall
@@ -83,6 +83,10 @@ and the choice is part of the model.
 | [Zhang et al. (2022)](/sources/zhang-2022-b.md), §3, Fig. 3 caption | 0.41 | 5.2 | | reference for transformed mean velocities of cooled-wall boundary-layer DNS at $M_\infty=0.5$–8 (below) |
 | [Tonicello et al. (2022)](/sources/tonicello-2022.md), Fig. 5 | 0.41 | 5.25 | | reference for the van Driest velocity of the Mach 2.91 incoming boundary layer of a ramp DNS |
 | [De Vanna et al. (2022)](/sources/devanna-2022.md), §2.2, Eq. (6); [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.5, Eq. (35) | 0.41 | — | $A^+=17$ in semi-local $y^*$ | mixing length of a compressible ODE [equilibrium wall model](/methods/equilibrium-wall-model.md) |
+| [Devenport & Lowe (2022)](/sources/devenport-2022.md), §2.1, Eq. (2.25) | "often" 0.41; 0.38–0.39 reported for zero-pressure-gradient boundary layers; 0.384 (Monkewitz et al., as cited) | 5.0; 4.17 with $\kappa=0.384$ | roughness function, Coles wake $\Pi\approx0.51$ (below) | review of incompressible boundary-layer physics |
+| [Huang et al. (2022c)](/sources/huang-2022-c.md), §II C, Eqs. (14), (17) | 0.41 | 5.2 | Reichardt's law with $D=9.8$, $E=1/11$, $F=1/3$ (below) | algebraic wall model of a spectral/hp implicit LES in [Nektar++](/software/nektar-plus-plus.md) |
+| [Zhang et al. (2022e)](/sources/zhang-2022-i.md), §II A, Eq. (3) | not printed | — | rough-wall form $\kappa^{-1}\ln(y/y_{0,\mathrm r})$, roughness length $y_{0,\mathrm r}$ (page-local; $0.004$ mm in the matched wind tunnel) | wall stress of atmospheric LES over hills in [LESGO](/software/lesgo.md) |
+| [Zhang et al. (2022c)](/sources/zhang-2022-g.md), §II C, Fig. 6a | not printed | 5.7 (measured) | van Driest-transformed DNS profile on a cold wall | log-law intercept of the inflow layer of a Mach 6 ramp DNS, "higher than" incompressible, attributed to the wall temperature |
 
 Zhao et al. (2023a) attribute $\kappa=0.40$, $B=5.5$ to the channel DNS of
 Kim et al. (1987), as they cite it; Wang et al. (2023b) give the same values
@@ -128,6 +132,23 @@ logarithmic terms give the slope $2(c_1-c_2)=2.439=1/0.410$ and, with the
 argument order discussed under Qualifications, the intercept $5.0334$
 equals the printed additive constant ($c_1$, $c_2$ the law's constants,
 page-local) *(compiler check, not in the sources)*.
+
+**Universality in a boundary-layer review.** [Devenport & Lowe (2022)](/sources/devenport-2022.md)
+(§2.1, Eqs. 2.22–2.26) call Rotta's derivation of the log law, independence
+of viscosity in the overlap of inner and outer regions, "the most general",
+since it assumes nothing about the outer flow, and state that the
+universality of $\kappa$ is open: values of 0.38–0.39 are reported for
+zero-pressure-gradient boundary layers, and the review classes pipes and
+channels as favourable-pressure-gradient flows. The practical consequence is
+small at moderate $y^+$: with Monkewitz et al.'s $\kappa=0.384$, $B=4.17$,
+as cited, $u^+$ differs from that with $\kappa=0.41$, $B=5.0$ by only 0.4 %
+and 1.4 % at $y^+=100$ and 1000 (16.16 against 16.23 and 22.16 against 21.85
+*(compiler check, not in the sources)*). The review writes the log law
+equivalently as $u^+=\kappa^{-1}\ln(y/k_o)$ with the hydrodynamic roughness
+length $k_o=\nu e^{-\kappa B}/u_\tau$, $k_o^+\approx0.129$ for $\kappa=0.41$,
+$B=5.0$ (page-local $k_o$; $e^{-0.41\times5}=0.129$ *(compiler check, not in
+the sources)*), and places the inner region in the bottom 10–20 % of the
+layer.
 
 Aiello et al. (2026, §4.1) attribute their large fitted intercept,
 $B=6.0$, to the low transformed friction Reynolds number of their DNS
@@ -188,6 +209,15 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   (below). With $\kappa=0.4$, $B=5.5$ the relation gives $C=7.79$, the
   printed classical 7.8, and with the high-Re set $\kappa=0.387$, $B=4.21$ it
   gives $C=6.66$ *(compiler check, not in the sources)*.
+  Huang et al. (2022c, §II C, Eq. 17) print the law with the damping
+  rates as inverse lengths, $u^+=\kappa^{-1}\ln(1+\kappa y^+)+D\big(1-e^{-Ey^+}-Ey^+e^{-Fy^+}\big)$,
+  with $D=9.8$, $E=1/11$, $F=1/3$, $\kappa=0.41$ (page-local $D$, $E$,
+  $F$; $D$ is the $C$ above), as a profile that connects the linear, buffer
+  and log regions, and use it as an alternative to their log law with
+  $B=5.2$ in a wall model sampled at $0.224\delta$ at $Re_\tau=550$; they find only slight
+  differences and explain them by the matching point lying in the log
+  region "where both of the two laws coincide" (§III C, Fig. 7). With the
+  printed constants the two laws do not coincide there (see Qualifications).
 - **Blended profile with an explicit inverse** (Cai et al. 2022, §II.C.1,
   Eqs. 24–26, after the authors' earlier work as they cite it). The forward
   profile blends the two asymptotes with hyperbolic tangents,
@@ -363,6 +393,42 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   [equilibrium wall model](/methods/equilibrium-wall-model.md)), and cite
   rough-wall forms with a downward shift $\Delta U^+=f(k^+)$ of the log law
   ($k^+$ the roughness height in wall units, page-local; §4.1).
+- **Rough walls.** Devenport & Lowe (2022, §2.1, Eqs. 2.27–2.29) write
+  the rough-wall law as $u^+=\kappa^{-1}\ln(y/k_s)+B+3.5=\kappa^{-1}\ln y^++B-\Delta U^+$
+  with $\Delta U^+=\kappa^{-1}\ln k_s^+-3.5$ ($k_s$ the equivalent
+  sand-grain roughness, page-local; this is the downward shift that Bose &
+  Park cite above) and $k_o\approx0.031k_s$ in the fully rough regime,
+  commonly $k_s^+\gtrsim50$; for dense roughness the origin of $y$ is
+  Jackson's level at which the mean drag acts. Outside a roughness layer of
+  about five roughness heights, rough-wall turbulence agrees with smooth-wall
+  turbulence scaled on $u_\tau$ (Townsend's wall similarity), seen for
+  $y/\delta\gtrsim0.15$ when $\delta/k_g\gtrsim50$ ($k_g$ the geometric
+  height), though Mehdi et al., as cited, argue it is unlikely below the
+  height of maximum shear stress, of order $\sqrt{Re_\tau}$ in wall units
+  (§2.2). Atmospheric LES uses the fully rough form with a roughness length
+  in the wall stress: [Zhang et al. (2022e)](/sources/zhang-2022-i.md)
+  (§II A, Eq. 3) impose
+  $\tau_w=\rho\big(\kappa/\ln(y/y_{0,\mathrm r})\big)^2U^2$ with a test-filtered
+  velocity magnitude $U$ at the first grid point (details on the
+  [equilibrium wall model](/methods/equilibrium-wall-model.md) page).
+- **Outer layer: wake and defect laws in a review.** Devenport & Lowe
+  (2022, §2.1, Eqs. 2.30–2.34) give the von Kármán defect law
+  $(U_e-\langle u\rangle)/u_\tau=g(y/\delta)$, Coles' composite
+  $u^+=\kappa^{-1}\ln(y/k_o)+(\Pi/\kappa)W(y/\delta)$ with
+  $W=2\sin^2(\pi y/2\delta)$ and a wake factor $\Pi$ typically 0.51, believed
+  to reach an asymptote at high Reynolds number, and the Zagarola–Smits
+  outer velocity scale $U_e\delta^*/\delta$, accurate in high-$Re$ pipes and
+  collapsing smooth- and rough-wall and mildly pressure-gradient layers
+  (page-local $U_e$, $g$, $W$, $\Pi$, the last not the SGS flux). An adverse
+  gradient lowers the log region and a favourable one raises it (see the
+  [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)).
+- **Three-dimensional boundary layers.** The review's §5.3 (Eq. 5.11)
+  presents van den Berg's three-dimensional law of the wall, with
+  pressure-gradient and wall-stress-rotation terms added to both velocity
+  components, as "perhaps the leading theoretical development", while noting
+  that it relies on alignment of stress and strain, which three-dimensional
+  boundary layers violate (see
+  [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)).
 - **The log law as a basis function.** [Lv et al. (2021)](/sources/lv-2021.md)
   (§II A, Eqs. 3–6) put the law of the wall into the discretization: in the
   wall-adjacent cell of a high-order LES one monomial of the reconstruction
@@ -685,6 +751,19 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
   Fig. 8", which is Fig. 9; the profile's $\kappa$ and additive constant are
   not printed, and the cited Reichardt (1951) is attached in the text to the
   LU-SGS solver instead.
+- **Reichardt's law of Huang et al. (2022c) against their log law.** For
+  large $y^+$ their Eq. (17) tends to $\kappa^{-1}\ln y^++D+\kappa^{-1}\ln\kappa$,
+  an intercept of $9.8+\ln(0.41)/0.41\approx7.63$ against $B=5.2$ of their
+  Eq. (14); at $y^+=0.224\times550\approx123$, their matching point at $Re_\tau=550$, Eq. (17)
+  gives $u^+\approx19.4$ and Eq. (14) $u^+\approx16.9$, a gap of about 2.4
+  *(compiler check, not in the sources)*. The printed constants thus do not
+  support the statement that the two laws coincide in the log region.
+- **Clauser–Rotta thickness of Devenport & Lowe (2022).** Eq. (2.33)
+  prints $\int_0^\delta(U_e-\langle u\rangle)/u_\tau\,dy=\delta^*\sqrt{C_f/2}$.
+  Since $\int_0^\delta(U_e-\langle u\rangle)dy=U_e\delta^*$ and
+  $U_e/u_\tau=\sqrt{2/C_f}$, the integral equals $\delta^*\sqrt{2/C_f}$
+  *(compiler check, not in the sources)*, the $u_e^+\delta^*$ of Chen et al.
+  (2024) above.
 - Oulghelou et al. (2025) and Wu et al. (2025) write the steady
   incompressible RANS equations and solve them in OpenFOAM (Wu et al. also run CFL3D for a
   compressible airfoil case); their log-law statements concern RANS
@@ -715,6 +794,10 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 # Citations
 
 - [Fowler et al. (2022)](/sources/fowler-2022.md) — App. C, Eqs. (C1)–(C2), Fig. 17; Algorithm 1; Fig. 4.
+- [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §2.1, Eqs. (2.22)–(2.34); §2.2; §5.3, Eq. (5.11).
+- [Huang et al. (2022c)](/sources/huang-2022-c.md) — §II C, Eqs. (14), (17); §III C, Fig. 7.
+- [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A, Eq. (3).
+- [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II C, Eq. (2), Fig. 6a.
 - [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md) — §II.B, Eq. (1); §IV.C, Eq. (12); §V.C.
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §1, Eq. (1.2); §3, Fig. 6.
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §II.B, Eqs. (1)–(6); §IV.B; §V.

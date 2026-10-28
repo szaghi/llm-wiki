@@ -5,7 +5,7 @@ description: "A strong shock crossing a medium with order-one density fluctuatio
 status: established
 aliases: [shock–inhomogeneity interaction, shock through a non-uniform medium, turbulent Rankine–Hugoniot relations, turbulent jump conditions, shock-driven turbulence, shocklets, shock networks, shock–turbulence interaction, supersonic isothermal turbulence, sonic scale]
 tags: [compressible, implicit-les, plasma, astrophysics, dg, numerical-dissipation]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-27T21:09:00Z
 ---
 
 # Shock-generated turbulence and turbulent shock jump relations
@@ -332,7 +332,32 @@ compressibility; larger $M_{\mathrm{sgs}}$ goes with stronger forward
 transfer in the mean and with both directions in the filtered fields
 (§4.2, Figs. 20–22, 25–26).
 
-Unlike the shock-tube runs above, none of the turbulence-generated
+**Implicit LES for shock–turbulence problems.**
+[Cheng et al. (2023)](/sources/cheng-2023-b.md), §1, argue, citing Garnier
+et al., that explicit subgrid models are "not suited to shock-vortex and
+shock-turbulence problems", because they cannot represent the energy
+exchange among the acoustic, entropy and vorticity modes and usually fail
+to capture the conversion of kinetic into internal energy across shocks,
+and they leave the subgrid scales to the numerical dissipation of a
+shock-capturing scheme (see [implicit LES](/definitions/implicit-les.md)).
+Their tests of the shock–vortex coupling are inviscid: a vortex
+($M_v=0.9$, page-local vortex Mach number) crossing a standing Mach 1.5
+shock splits into two parts, which their low-dissipation ROUND
+reconstructions resolve better than the van Leer and MUSCL limiters, and a
+shock crossing an oblique entropy wave, whose high-frequency post-shock
+waves the limiters damp (§3.3–3.4, Figs. 4–5); their one turbulent
+validation is a transonic deep cavity without a shock–turbulence
+interaction (§3.6). See [numerical dissipation](/properties/numerical-dissipation.md).
+
+**Not this mechanism: turbulence behind a perforated plate.** In the
+shock tube of [Chambers et al. (2022)](/sources/chambers-2022.md) a leading
+shock of Mach 2 to 3 passes through a perforated plate, and the choked jets
+it forms generate nominally isotropic turbulence ahead of an accelerating
+hydrogen–air flame (§II A–B); the turbulence comes from the post-shock
+jets, not from the shock–inhomogeneity interaction of the first sections.
+The flow measurements and the combustion results are on the Source page.
+
+Unlike the shock-tube runs of the first sections, none of the turbulence-generated
 flows has a single mean shock, so the Favre-averaged jump relations do not apply to them; their
 shocks are the dissipative structures of the turbulence, and the sources
 judge discretizations by how they resolve or smear them.
@@ -396,3 +421,5 @@ judge discretizations by how they resolve or smear them.
 - [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §3.1 (Shu–Osher problem labelled shock–turbulence interaction); §3.2.2, Table 4; §3.2.3, Figs. 30–36 (shock-train DNS in an isolator channel, Reynolds-stress amplification).
 - [Deng et al. (2022)](/sources/deng-2022.md) — §4.15, Eq. (40), Figs. 23–25 (decaying compressible isotropic turbulence with eddy shocklets as an implicit-LES test).
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.2; §3.2, Figs. 7–8, 11 (spectra and Mach-conditioned PDFs downstream of a compression/expansion ramp); §4.1–4.2, Eq. (4.14), Figs. 14, 20–26 (compression, expansion and subgrid Mach number in the energy transfer).
+- [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §1; §3.3–3.4, Figs. 4–5 (implicit LES framing; inviscid shock–vortex and shock–entropy-wave tests).
+- [Chambers et al. (2022)](/sources/chambers-2022.md) — §II A–B (perforated-plate turbulence behind a shock; a different mechanism, passing mention).

@@ -5,7 +5,7 @@ description: "Lattice Boltzmann methods advance particle populations on a discre
 status: established
 aliases: [LBM, lattice Boltzmann, LB, lattice Boltzmann equation, LBE, HRR collision, central-moment collision, MRT collision, lattice Boltzmann MHD, FLAME, ZDES-LBM, temporal LES with lattice Boltzmann, TLES-LBM, OpenLB]
 tags: [lattice-boltzmann, les, dns, hybrid-rans-les, gpu, mhd, immersed-boundary]
-timestamp: 2026-10-27T15:53:00Z
+timestamp: 2026-10-27T21:11:00Z
 ---
 
 # Lattice Boltzmann methods for turbulent flow
@@ -392,6 +392,15 @@ Boltzmann wall model for LES of Malaspinas & Sagaut (2014); the review
 lists it among implementation
 studies it does not discuss.
 
+## Rotors as body forces
+
+Rotating blades can enter a lattice Boltzmann LES as body forces rather than
+as walls. [Stanly et al. (2022)](/sources/stanly-2022.md), §1, list
+actuator-line implementations in lattice Boltzmann solvers (Deiterding et
+al.; Rullaud et al., as cited there) among the variants of the
+[actuator line model](/methods/actuator-line-model.md); their own
+implementation is in a finite-difference compressible implicit-LES code.
+
 ## Lattice Boltzmann MHD with the Hall term
 
 Foldes et al. (2023) solve the weakly compressible Hall-MHD equations with
@@ -538,4 +547,5 @@ multiphase models still at an early stage.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §3 (lattice Boltzmann wall model, cited).
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III E, Eqs. (80)–(92) (BGK, low-Mach limits, multiphase and compressible variants, hybrid LB–FV); §V (conclusions).
 - [Simonis et al. (2022)](/sources/simonis-2022.md) — §1; §2.1–2.4, Eqs. (1)–(19), (28) (time filter, direct deconvolution, filtered BGK, MRT with residual-stress forcing); §3.2–3.4, Table 1, Figs. 2–9 (Taylor–Green calibration, comparison with spectral elements, subgrid activity, error plateau); §4; App. A–B, Tables 2–3, Fig. 10.
+- [Stanly et al. (2022)](/sources/stanly-2022.md) — §1 (actuator lines in lattice Boltzmann solvers, cited).
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §1; §3.3, Eqs. (12)–(14); reference [11] (the explicit power-law wall model of Wilhelm et al., devised for lattice Boltzmann RANS, reused in a DG solver).

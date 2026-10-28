@@ -5,7 +5,7 @@ description: "The uncertainty that comes from the structure of a turbulence clos
 status: established
 aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, aleatoric model uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation, stochastic discrepancy closure]
 tags: [uncertainty-quantification, rans, data-driven, field-inversion]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-27T21:12:00Z
 ---
 
 # Model-form uncertainty in turbulence closures
@@ -79,6 +79,19 @@ approximate Bayesian computation) gives limited gains because no
 universal optimal coefficients may exist. [Cherroud et al. (2022)](/sources/cherroud-2022.md)
 (§1) list three sources of RANS uncertainty: the applicability of the
 RANS equations, the model form, and the parameters.
+[Shan et al. (2023)](/sources/shan-2023.md) (§IV) adopt the four layers
+of Duraisamy et al. (2019) and state that their data-driven
+Spalart–Allmaras replacement reduces only the L4 (coefficient) layer,
+leaving averaging, the linear stress representation and the functional
+forms untouched. Their calibrations show the case dependence of L4
+directly: the nine SA coefficients fitted to measured pressure at four
+airfoil conditions spread from 3.550 to 7.295 in $c_{v1}$ and from 0.396
+to 0.615 in $\kappa$, and a set fitted at one incidence degrades the rest
+of the lift curve (Table B1, §III.C; see
+[ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md)).
+Duraisamy et al. (§4.2) state that optimal coefficients are
+flow-specific, and Brenner et al. doubt that universal optimal
+coefficients exist.
 
 ## Bounding from physical constraints
 
@@ -669,6 +682,65 @@ that physical and mathematical constraints be enforced (§6, Eq. 13).
 Duraisamy (2021) adds that the goal of more generalizable models "has,
 however, not been achieved" and calls for community benchmarks (§VII).
 
+## Uncertainty of learned models: a statistical taxonomy (Ihme et al. 2022)
+
+[Ihme et al. (2022)](/sources/ihme-2022.md), reviewing machine learning
+in combustion, give the uncertainty vocabulary of statistical learning
+(§2.5–2.7, §5.3–5.4, Fig. 9):
+
+- **Epistemic and aleatoric.** Epistemic uncertainty, from lack of
+  knowledge, is subdivided into *parameter* and *structural* uncertainty
+  and identified with systematic uncertainty; aleatoric uncertainty,
+  irreducible, is *homoscedastic* or *heteroscedastic* and identified with
+  statistical uncertainty (§2.6).
+- **Bias and variance.** The expected generalization error splits into
+  noise, bias and variance (Eq. 34), illustrated by polynomial fits of
+  laminar flame speeds that underfit at first order and overfit at fifth
+  (§2.5, Fig. 7).
+- **Dataset shift.** A model meets out-of-distribution inputs through
+  covariate shift, label (prior-probability) shift, concept drift or
+  open-set recognition; the authors stress the common case of a model
+  trained on simulation data and deployed on real systems (§2.7). They
+  name the Wasserstein metric and the Mahalanobis distance as gauges of
+  whether a trained model applies to new samples (§5.4); see the
+  training-set distance of Lozano-Durán & Bae (2023) above.
+- **Quantification tools.** Gaussian-process regression, Bayesian neural
+  networks and quantile-regression networks (§5.3). Gaussian-process
+  inference cost grows cubically with the number of observations;
+  Bayesian-network uncertainty estimates depend strongly on the inference
+  algorithm and their training can take orders of magnitude longer than
+  that of deterministic networks. In the authors' assessment Gaussian
+  processes currently give accurate means, reliable uncertainty estimates
+  and robustness to out-of-distribution instances (§5.3).
+- **Uncertainty classifiers as model selectors.** A random-forest
+  assignment of combustion submodels of different fidelity in LES, which
+  the authors cite as inspired by the RANS-uncertainty classifier of Ling
+  and Templeton, cut cost by 20%, with errors "limited by the predictive
+  capability of the lowest-performing submodel" (§4.1.4, Fig. 34).
+
+The review states these as background; its only computed examples are
+its tutorials.
+
+## The industrial view of model-form error (Mani & Dorgan 2023)
+
+[Mani & Dorgan (2023)](/sources/mani-2023.md), an industrial
+perspective, place the uncertainty of turbulence closures inside
+verification and validation. Numerically, the credibility of a
+prediction is assessed by varying the turbulence model, the mesh, the
+algorithm, "or even the uncertainty in closure coefficients" (they cite
+Schaefer et al. 2017 for the SA coefficients), and today the uncertainty
+of the wind-tunnel data is weighed as well (§4.1). They state that the
+industrial RANS workhorses (SA with its rotation-curvature and
+quadratic-constitutive-relation variants, SST, Smith's $k$-$l$) "can be
+inadequate" for large separation, that many other modifications have
+been studied but "rarely have they provided general improvements", and name the
+macroscopic forcing method of Mani & Park as a direction that "avoids
+model-form inaccuracies" by not resting on the Boussinesq approximation,
+isotropy or scale separation and by avoiding tuning constants; it is not
+ready for industrial use (§4.5.1). Standard uncertainty-quantification
+practice is one of their requirements for certification by analysis
+(§5). The review gives no equations or new data.
+
 ## Qualifications
 
 - Duraisamy et al. (2019) print the production as $P=\tau_{ij}\partial U_i/\partial x_j$
@@ -784,3 +856,6 @@ however, not been achieved" and calls for community benchmarks (§VII).
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1, §3 Eqs. 16–27, §4.2 Figs. 5–7, §4.3 Fig. 8, §5, App. A Eq. A.13.
 - [Fidkowski (2022)](/sources/fidkowski-2022.md) — §6.2–6.3 Figs. 12, 18 (RANS adaptation converges to a wrong lift), §7.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §5 (classes of models blended by classifiers).
+- [Shan et al. (2023)](/sources/shan-2023.md) — §IV (four layers; only coefficients reduced); §III.C, Table B1 (case-dependent calibrated SA coefficients).
+- [Ihme et al. (2022)](/sources/ihme-2022.md) — §2.5–2.7, Eq. 34, Figs. 7, 9 (bias–variance, epistemic and aleatoric uncertainty, dataset shift); §4.1.4, Fig. 34 (classifier-based submodel assignment); §5.3–5.4 (Gaussian processes, Bayesian networks, out-of-distribution gauges).
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.1 (uncertainty in V&V, closure-coefficient UQ cited); §4.5.1 (RANS workhorses, macroscopic forcing method); §5 (UQ for certification by analysis).

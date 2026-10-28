@@ -5,7 +5,7 @@ description: "The attached-eddy hypothesis models the logarithmic region of wall
 status: established
 aliases: [attached eddy model, attached-eddy model, Townsend's attached eddies, wall-attached eddies, inactive motions, uniform momentum zones]
 tags: [boundary-layer, dns, compressible, hypersonic]
-timestamp: 2026-10-27T15:47:00Z
+timestamp: 2026-10-27T21:10:00Z
 ---
 
 # Attached-eddy hypothesis
@@ -103,6 +103,33 @@ Normalizing $\lambda_z$ by $l_{12}^*$ collapses the velocity and temperature
 spectra at $y/\delta=0.2$–$0.8$ better than $\delta$, and the new scale
 slightly better still, especially at Mach 5.86 (Figs. 15–16).
 
+## The incompressible picture in a boundary-layer review
+
+The review of [Devenport & Lowe (2022)](/sources/devenport-2022.md), §2.2,
+places the hypothesis (Townsend; Perry & Chong, as cited) in the
+incompressible zero-pressure-gradient boundary layer and lists what it
+predicts: the log law, the spectral slope, a logarithmic decrease of the
+wall-parallel normal stresses with wall distance and a constant wall-normal
+stress, predictions the review calls confirmed. It ties the hypothesis to
+the **inactive motion** of Townsend and Bradshaw (1967): low-frequency
+large-scale motion that contributes to $R_{11}$ and $R_{33}$ but not to
+$R_{22}$ or $R_{12}$. The review attributes the growth with $\log Re$ of
+the inner peak of $R_{11}/u_\tau^2$ near $y^+\approx15$ to the near-wall
+footprint of these inactive outer motions, and notes amplitude modulation
+of the near-wall cycle by the outer motion (Mathis et al., as cited), with
+the outer peak of $R_{11}$ at streamwise wavelengths of 2–4 $\delta$ (§2.2,
+Figs. 4–6, from cited experiments). It lists four families of coherent
+structure after Smits et al.: near-wall streaks and quasi-streamwise
+vortices (spanwise spacing about 100 wall units, length about 1000),
+hairpins inclined at about $45^\circ$, large-scale motions of 2–3 $\delta$,
+and very-large-scale motions or superstructures about ten times longer.
+The review also cites Marusic & Perry's eddy types A and B (and C) as the
+attached-eddy account of pressure-gradient history effects in adverse
+pressure gradient (see the [wall law in adverse pressure
+gradient](/definitions/adverse-pressure-gradient-wall-law.md)). The review
+covers only incompressible layers; the supersonic test of the inactive-motion
+growth is that of Cogo et al. (2022, §5.1) above.
+
 ## Eddy size as the argument for wall modelling
 
 In passing, the WMLES review of [Bose & Park (2018)](/sources/bose-2018.md)
@@ -151,3 +178,4 @@ are in the cooled Mach 2 and 5.86 cases of Cogo et al. (2022, §3.1).
 - [Cogo et al. (2022)](/sources/cogo-2022.md) — §3.1 (superstructures); §3.2, Figs. 6–7 (uniform momentum and temperature zones, attached-eddy model); §5.1, Fig. 10 (inactive motions, equilibrium layer); §5.2; §5.4, Eqs. (5.9)–(5.10), Figs. 15–16 (eddy-size scale).
 - [Huang et al. (2022)](/sources/huang-2022.md) — §4.1, Fig. 11; §4.2, Eq. (4.8), Figs. 13–14 (logarithmic stresses, plateaus, inactive modes); §5, Figs. 21–26 (spectra, scale separation under cooling).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §1, Fig. 1 (eddy size and WMLES resolution; passing mention).
+- [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §2.2, Figs. 4–6 (predictions of the hypothesis, inactive motion, inner-peak growth, coherent-structure families); Marusic & Perry eddy types for APG history.

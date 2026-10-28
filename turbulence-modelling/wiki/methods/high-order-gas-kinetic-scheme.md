@@ -5,7 +5,7 @@ description: "A high-order gas-kinetic scheme is a finite-volume Navier–Stokes
 status: established
 aliases: [HGKS, HGKS-cur, high-order GKS, gas-kinetic scheme, GKS, BGK finite-volume scheme]
 tags: [gas-kinetic, dns, implicit-les, compressible, numerical-dissipation, gpu]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-27T21:10:00Z
 ---
 
 # High-order gas-kinetic schemes for turbulence simulation
@@ -412,6 +412,50 @@ state that "when the grids are refined, the numerical dissipation
 decreases" (App. B, Table VIII). They conclude that implicit LES is "more suitable than traditional
 LES models" in this finite-volume approach (§VI).
 
+**Taylor–Green vortex: implicit against explicit LES, with a budget.**
+[Cao et al. (2022b)](/sources/cao-2022-c.md) repeat the comparison on the
+compressible [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+($M=0.1$, $Re=1600$, $\gamma=1.4$, $Pr=1$) with the fourth-order two-stage
+scheme on $256^3$ cells (and $128^3$, $384^3$ in App. B), against the
+$1024^3$ DNS of Cao et al. (2022). The eddy viscosity enters through the
+same enlarged collision time, $\tau_{\mathrm{col}}+\tau_{\mathrm{col},t}=(\mu+\mu_t)/p$
+(§III, Eqs. 7–8, citing Zhao et al. 2021), with the cell as the implicit
+filter and no explicit filter. The models are the static
+[Smagorinsky model](/methods/smagorinsky-model.md) with $C_s=0.1$, the
+[Vreman model](/methods/vreman-model.md) with constant $2.5C_s^2=0.025$
+and the [dynamic Smagorinsky model](/methods/dynamic-procedure.md) with a
+domain-averaged coefficient and a 27-point discrete top-hat test filter of
+twice the grid width (§III, Eqs. 9–13, App. A). Findings (§IV, Figs. 1–3,
+7–12):
+
+- the kinetic energy and its decay rate $-\mathrm dE_k/\mathrm dt$ are
+  insensitive to the model and the grid, while the enstrophy-based
+  dissipation and the deviatoric-strain dissipation $\varepsilon_1$ are
+  closest to the DNS for the implicit LES; among the explicit models the
+  dynamic one is best;
+- the total subgrid dissipation, estimated a posteriori as the budget
+  residual $\varepsilon_{\mathrm{sgs}}=-\mathrm dE_k/\mathrm dt-\varepsilon_{\mathrm{phy}}$
+  (Eq. 22; [bulk-viscous](/definitions/bulk-viscosity.md) and
+  [pressure-dilatation](/definitions/pressure-dilatation.md) parts
+  included in $\varepsilon_{\mathrm{phy}}$), is smallest for the implicit
+  LES on every grid: $1.5\times10^{-5}$, $1.4\times10^{-4}$,
+  $6.7\times10^{-4}$, $1.8\times10^{-5}$ at $t=2.5$, 5, 10, 15, against
+  $2.8\times10^{-5}$, $3.5\times10^{-4}$, $1.4\times10^{-3}$,
+  $2.5\times10^{-4}$ for the static Smagorinsky model, with the dynamic
+  model in between (Table II);
+- the static explicit LES on $384^3$ is only comparable with the implicit
+  LES on $256^3$.
+
+The authors read the scheme's numerical dissipation as a built-in subgrid
+dissipation that suffices for this low-Reynolds-number flow, the explicit
+eddy viscosity as adding to it and smearing the resolved vorticity; §I
+cites the same ranking from their compressible periodic-hill LES (the
+arXiv preprint of [Cao et al. 2024](/sources/cao-2024.md)), where explicit
+LES over-predicts the Reynolds stresses (§I, §IV C, §V). The modelled and numerical parts of
+the explicit-LES residual are not separated. The decomposition is on
+[implicit LES](/definitions/implicit-les.md) and
+[numerical dissipation](/properties/numerical-dissipation.md).
+
 ## Cost
 
 Cao et al. (2022, §3.2) note that the finite-volume scheme "is considered
@@ -578,6 +622,22 @@ differences between precisions (Figs. 10–13).
   Table VIII; 2023a, Table 6), and both print $\mu=2.83\times10^{-4}$ for
   $Re_\tau=180$.
 
+- **Printed ratios (Cao et al. 2022b).** The abstract and §IV B state that
+  $\varepsilon_1$ is "approximately 20 times larger" than the a priori
+  subgrid production; the Table I values give ratios of about 68, 32, 22
+  and 35 at $t=2.5$, 5, 10 and 15 *(compiler check, not in the sources)*.
+  §IV C states that static explicit LES has an
+  $\varepsilon_{\mathrm{sgs}}$ "approximately two times larger" than
+  implicit LES; the Table II values give 1.9, 2.5, 2.1 and about 14
+  (Smagorinsky) and 1.7, 2.3, 1.9 and 10 (Vreman) *(compiler check, not in
+  the sources)*. The a posteriori $\varepsilon_{\mathrm{sgs}}$ is said to
+  exceed the a priori production "except" at $t=15$; at $t=15$ Table II
+  prints $2.5\times10^{-4}$ (Smagorinsky) and $1.8\times10^{-4}$ (Vreman)
+  against the a priori $1.3\times10^{-4}$ of Table I, and
+  $1.8\times10^{-5}$ (implicit) and $9.4\times10^{-5}$ (dynamic) below
+  it. The evidence is a single low-Reynolds-number flow
+  with one scheme, to which the authors restrict their conclusion.
+
 ## Contradictions
 
 - **Is the numerical dissipation of the fifth-order scheme right for
@@ -605,6 +665,14 @@ differences between precisions (Figs. 10–13).
   Zhao et al. (2023a, Table 8) report 171.33 for N5T5 on
   $64\times96\times64$ cells, and Zhao et al. (2021, App. B, Table VIII)
   find their own $64\times96\times64$ results worse than the $96^3$ ones.
+  [Cao et al. (2022b)](/sources/cao-2022-c.md) (§IV C, §V, Table II) add a
+  budget measurement to the first reading on the Taylor–Green vortex at
+  $256^3$, with the scheme of Cao et al. (2022), which they call
+  fourth-order (reconstruction not printed): the implicit LES has the
+  smallest total subgrid dissipation and the best enstrophy-based
+  dissipation, the explicit models only add dissipation, and the
+  numerical dissipation serves as the subgrid dissipation, explicit
+  modelled dissipation not being required at this low Reynolds number (§V).
 
 # Citations
 
@@ -612,5 +680,6 @@ differences between precisions (Figs. 10–13).
 - [Zhao et al. (2023a)](/sources/zhao-2023.md) — arXiv v1: §1 (implicit LES, compact stencils); §2, Eqs. (1)–(10) (BGK flux, Gauss quadrature); §3.1–3.3, Eqs. (11)–(15), Figs. 1–2 (seventh-order non-compact and fifth-order compact reconstruction); §4, Tables 2–5 (accuracy, Gauss-point rule, cost of 16 points); §5.1, Eqs. (19)–(23), Figs. 3–7 (Taylor–Green vortex, numerical dissipation); §5.2, Eqs. (24)–(28), Tables 6–9, Figs. 8–17 (channel flow); Table 7 (cost).
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — arXiv v1: §2, Eqs. (1)–(8) (BGK flux, S2O4); §3.1–3.2, Algs. 1–2, Figs. 2–4 (single- and multi-GPU implementation); §4.1, Tables 2–5, Figs. 5–8 (speedups, scaling, compressible Taylor–Green vortex); §4.2, Tables 6–8, Figs. 10–14 (channel flow, single against double precision); §5.
 - [Cao et al. (2024)](/sources/cao-2024.md) — arXiv 2107.08609v1: §1 (implicit LES, cited $M_t$ limits); §2.1, Eqs. (3)–(9) (transformed BGK equation, curvilinear flux); §2.3, Eqs. (10)–(11) (metrics, WENO in computational space); §2.4, Eqs. (12)–(13); §3.1–3.2, Tables 1–3, Fig. 3 (accuracy, free-stream preservation, cavity); §3.3, Tables 4–5, Figs. 5–9 (compressible channel); §3.4, Table 6, Figs. 11–16 (compressible periodic hill).
+- [Cao et al. (2022b)](/sources/cao-2022-c.md) — §I (periodic-hill ranking, cited); §II, Eqs. (1)–(6) (fourth-order scheme); §III, Eqs. (7)–(13), App. A (eddy viscosity through the collision time, three models, top-hat test filter); §IV A–C, Eqs. (14)–(22), Tables I–II, Figs. 1–8; App. B, Figs. 9–12 (implicit against explicit LES of the Taylor–Green vortex, subgrid-dissipation budget); §V.
 - [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §II, Eqs. (1)–(11) (BGK flux, flux 1 and flux 2, reconstruction); §III, Eqs. (12)–(23) (eddy viscosity through the collision time; Vreman, dynamic Smagorinsky, WALE, dynamic Clark); §IV, Table I (setup); §V, Tables III–VII, Figs. 2–21 (results, cost); §VI; App. A–B, Table VIII.
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III E, §IV C–E (kinetic and lattice-Boltzmann fluxes in multi-material solvers, cited).

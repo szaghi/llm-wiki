@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Flamelet-based tabulated chemistry"
-description: "Flamelet-based tabulated chemistry stores the thermochemical state of one-dimensional flames in a table indexed by mixture fraction, progress variables and enthalpy; this page gives manifold construction and coupling by major species, extensions for curvature, ignition, wall quenching and exhaust-gas recirculation, subgrid mixture-fraction variance in supersonic LES, assessments against references, and the non-tabulated RANS eddy dissipation concept as contrast."
+description: "Flamelet-based tabulated chemistry stores the thermochemical state of one-dimensional flames in a table indexed by mixture fraction, progress variables and enthalpy; this page gives manifold construction and coupling, extensions for curvature, stretch, ignition, wall quenching and exhaust-gas recirculation, subgrid variance in supersonic LES, neural-network tabulation, assessments, and non-tabulated finite-rate closures as contrast."
 status: established
-aliases: [eddy dissipation concept, EDC, tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, FPV-h, composition space model, ignition source-term patch, optimal estimator, premixed flamelet tabulation, subgrid mixture-fraction variance, scalar variance model]
+aliases: [eddy dissipation concept, EDC, tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, FPV-h, composition space model, ignition source-term patch, optimal estimator, premixed flamelet tabulation, subgrid mixture-fraction variance, scalar variance model, neural-network tabulation, stretch factor, extended Takeno flame index]
 tags: [combustion, dns, tabulated-chemistry, flame-wall-interaction, hybrid-rans-les]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-27T21:11:00Z
 ---
 
 # Flamelet-based tabulated chemistry
@@ -382,7 +382,85 @@ which the authors take as support for a non-premixed flamelet model there
 resources allow (§4). The evidence is visual comparison of contours,
 scatter plots and profiles; no error norm is given.
 
-## Contrast: the eddy dissipation concept in RANS
+## Stretch beyond the unstretched flamelet
+
+[Coulon et al. (2023)](/sources/coulon-2023.md) test the assumption that
+the turbulent burning rate of a premixed flame is set by its area alone.
+With the turbulent consumption speed $S_T$, the unstretched laminar flame
+speed $s_{\mathrm L}$ (page-local, not the registry's Lundquist number
+$S_L$), the turbulent flame surface $A_T=\int_\Omega\lvert\nabla c\rvert\,dV$
+and a reference surface $A_0$, they write (Eqs. 7–9)
+$$\frac{S_T}{s_{\mathrm L}}=I_0\,\frac{A_T}{A_0},$$
+where the **stretch factor** $I_0$ (page-local, as are $S_T$, $A_T$, $A_0$)
+accounts for strain and curvature; it is "generally assumed of order unity
+in many flamelet models", which they call generally true for fuels with
+Lewis number near one (§3.1). Their three-dimensional DNS of slot-burner
+flames in the thin-reaction-zones regime (Karlovitz number about 7.8; see
+[direct numerical simulation](/definitions/direct-numerical-simulation.md))
+share $s_{\mathrm L}\approx0.38$ m/s and a thermal thickness of about 450 µm, so that
+the fuel Lewis number is the main difference (§2.2, Table 1):
+
+- methane–air at $\phi_{\mathrm{eq}}=1$ and ammonia–hydrogen–air (46% hydrogen
+  by volume) at $\phi_{\mathrm{eq}}=1$ give $I_0\to1$ once stationary, so
+  the burning-rate increase is wrinkling-driven (Damköhler's first
+  hypothesis) (§3.1, Fig. 5);
+- lean hydrogen–air at $\phi_{\mathrm{eq}}=0.45$ gives $I_0>1$, growing from
+  about 1 at the flame foot to about 2.5 at the tip, with thin intensely
+  burning segments at positive curvature and near-extinction at negative
+  curvature (§3.3, Figs. 13, 16).
+
+They state that the stretch effect at $\phi_{\mathrm{eq}}=0.45$ was not
+observed in computations at $\phi_{\mathrm{eq}}=0.7$ by others, and that
+Berger et al. report even higher $I_0$ in leaner conditions (§3.1, §3.3,
+as cited there). Laminar premixed **counterflow flamelets** computed over
+$0.3<\phi_{\mathrm{eq}}<0.7$ and strain rates up to twice the DNS mean
+tangential strain on the isosurface (2436 s⁻¹) give one-dimensional stretch
+factors between 1 and 3, and DNS points placed in strain–equivalence-ratio
+space fall in the same range: near-flat elements map to about 2, rich
+positively curved ones to 2–3 irrespective of strain (§3.4, Fig. 20).
+The authors propose a manifold of such flamelets in strain and local
+equivalence ratio to model the stretch effect on lean hydrogen propagation,
+on top of a flame-surface-density treatment of the wrinkling; the model is
+not implemented in an LES. Berger et al. (2022), above, find that
+counterflow flamelets at the mean tangential strain
+reproduce the shift of the lean hydrogen flame to richer mixture.
+
+## Tabulation by neural networks
+
+The review of [Ihme et al. (2022)](/sources/ihme-2022.md), §4.1.3, frames
+tabulated chemistry as a reduced state of $N_{\mathrm c}$ control variables
+(page-local) on a low-dimensional manifold (Eqs. 69–70) and states that a
+structured look-up table needs memory growing as $\mathcal O(10^{N_{\mathrm c}})$,
+which limits it to $N_{\mathrm c}\lesssim4$; regressing the manifold with a
+neural network is the alternative. The works they review, all as cited
+there:
+
+- the first neural-network chemistry of Christo et al., in transported-PDF
+  simulations, with two hidden layers, mixture fraction and progress
+  variable as inputs and the progress-variable production rate as output;
+- networks of optimal architecture found by pattern search, in which deep
+  networks with connections beyond neighbouring layers are more accurate
+  and the "knowledge density" (accuracy over memory) is "significantly
+  higher" than for conventional tabulation, used in LES of a bluff-body
+  swirl flame (Fig. 29);
+- LES of a jet flame with networks trained on filtered steady flamelets
+  (Flemming et al.; Kempf et al.), grouped multi-target networks for
+  unsteady-flamelet/presumed-PDF engine LES (Owoyele et al.), and
+  networks trained on linear-eddy-model simulations (Sen & Menon);
+- principal-component manifolds, local, kernel and autoencoder variants,
+  with Sutherland & Parente the first to transport principal components
+  directly;
+- a random-forest assignment of combustion submodels of different cost
+  (finite-rate chemistry, a two-scalar flamelet/progress-variable model)
+  in a rocket-combustor LES, which cut cost by 20% "with good agreement"
+  with finite-rate-chemistry LES; its error is "limited by the predictive
+  capability of the lowest-performing submodel" (§4.1.4, Fig. 34).
+
+The review's general caution, that learned closures are mostly tested
+a priori, is on
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
+
+## Contrast: closures that do not tabulate
 
 Not every turbulence–chemistry closure tabulates. In the **eddy
 dissipation concept** (EDC) of Magnussen, as restated by
@@ -406,8 +484,8 @@ $\tau_{\mathrm{fs}}$ its residence time, $C_{\mathrm{vf}}$ and $C_{\tau}$
 their constants (the source's $C_\gamma$, $C_\tau$), $C_{D1}$, $C_{D2}$
 the cascade constants (names as in the model), $Re_T=k^2/(\nu\varepsilon)$
 the turbulence Reynolds number, $Da$ the Damköhler number of the
-Kolmogorov time to a chemical time, $S_L$, $S_T$ the laminar and
-turbulent flame speeds, $\chi_{\mathrm{fs}}$ the reacting fraction of the
+Kolmogorov time to a chemical time, $s_{\mathrm L}$, $S_T$ the laminar and
+turbulent flame speeds ($s_{\mathrm L}$ not the registry's Lundquist number $S_L$), $\chi_{\mathrm{fs}}$ the reacting fraction of the
 fine structure, $Y_k^*$ the fine-structure mass fractions.
 
 **The cascade and the defaults** (§2, Eqs. 1–17). Matching the cascade
@@ -442,7 +520,7 @@ fine-structure to Kolmogorov scale ratios behave alike: "finding an optimum
 
 **A localized EDC** (§4.2, Eqs. 26–35; contribution). Following Parente
 et al., the fine-structure velocity is identified with the turbulent flame
-speed, $S_T\approx S_L\sqrt{Re_T+1}$, which gives
+speed, $S_T\approx s_{\mathrm L}\sqrt{Re_T+1}$, which gives
 $C_{D2}\approx3/[4(Re_T+1)Da^2]$ and, cell by cell,
 
 $$C_\tau=\frac{C_{D3}}{2Da\sqrt{Re_T+1}},\qquad C_{\mathrm{vf}}=C_{D4}\Big(\frac{9}{16C_{D1}^2(Re_T+1)Da^2}\Big)^{1/4},\qquad C_{D3}=1.0,\ C_{D4}=0.65,$$
@@ -467,6 +545,27 @@ two definitions of $Da$ give similar results at "relatively the same" cost
 per iteration for the single-reaction one (no timings). Results for the
 Sandia flame D and the Sydney bluff-body burner are only in supplementary
 material, which is not in the file read.
+
+**Finite-rate chemistry with a partially stirred reactor in LES.**
+[Fureby & Nilsson (2023)](/sources/fureby-2023.md), §3.3, choose finite-rate
+chemistry over flamelet models for LES of a cavity-stabilized hydrogen
+ramjet combustor (Mach 2.2 at the isolator entrance, air stagnation
+temperatures 1080–1370 K) because the flame is highly fragmented and the
+flow and chemical time scales are similar; the filtered rates are closed
+with the LES partially stirred reactor (details on the
+[thickened flame model](/methods/thickened-flame-model.md) page, where the
+finite-rate alternatives are listed). Their own hydrogen mechanism (Z22) is
+the only one of three tested that reproduces both observed stabilization
+modes (§6.1, Fig. 4). An extended Takeno index,
+$$\zeta_M=\tfrac12\,\frac{Z-Z_{\mathrm{st}}}{\lvert Z-Z_{\mathrm{st}}\rvert}\Big(1+\frac{\nabla Y_{\mathrm{H_2}}\cdot\nabla Y_{\mathrm{O_2}}}{\lvert\nabla Y_{\mathrm{H_2}}\cdot\nabla Y_{\mathrm{O_2}}\rvert}\Big)$$
+($Z_{\mathrm{st}}$ the stoichiometric mixture fraction; $\zeta_M=0$
+non-premixed, $+1$ rich premixed, $-1$ lean premixed; page-local), after
+Lock et al., shows lean premixed burning dominating the cavity-stabilized
+case and non-premixed burning the jet-wake-stabilized case (§6.6, Fig. 12).
+Tang et al. (2022), above, find diffusion burning over almost the whole
+reacting zone of their two scramjet combustors and take it as support for
+a non-premixed flamelet table; the combustors, injection and operating
+points differ, so the two findings are recorded side by side.
 
 ## Qualifications
 
@@ -551,4 +650,7 @@ material, which is not in the file read.
 - [Steinhausen et al. (2023)](/sources/steinhausen-2023.md) — arXiv 2212.03762v1: §1 (manifold family, QFM); §2.1, Table 1 (reacting channel); §3, Eqs. (1)–(2), Figs. 2–5 (flame–vortex interaction); §4, Eqs. (3)–(5), Fig. 6 (QFM-EGR); §5, Eqs. (6)–(9), Figs. 7–9 (a priori assessment); §6.
 - [Tang et al. (2022)](/sources/tang-2022.md) — §2.1, Eq. (14) (hybrid RANS/LES, blended eddy viscosity); §2.2, Eqs. (10)–(18) (FPV, presumed PDFs, scale-similarity and transport closures of the subgrid variance, flame index); §3.1, Figs. 5–8; §3.2, Figs. 12–16; §4.
 - [Mardani & Nazari (2022)](/sources/mardani-2022.md) — §1; §2, Eqs. (1)–(17) (Magnussen cascade, EDC); §4, Eqs. (18)–(20), Fig. 2 (validity limits); §4.1, Eqs. (21)–(25), Table 3; §4.2, Eqs. (26)–(35) (localized EDC); §5; §6.1–6.3, Figs. 4–12; §7.
+- [Coulon et al. (2023)](/sources/coulon-2023.md) — §2.2, Table 1 (three flames of equal laminar speed and thickness); Eqs. (7)–(9) (stretch factor); §3.1, Fig. 5 ($I_0\approx1$ assumption tested); §3.3, Figs. 13, 16 (lean hydrogen $I_0$ up to 2.5); §3.4, Eq. (13), Fig. 20 (counterflow flamelets in strain–equivalence-ratio space).
+- [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.3, Eqs. (69)–(70), Fig. 29 (manifold memory scaling, neural-network and PCA tabulation, cited works); §4.1.4, Fig. 34 (random-forest submodel assignment).
+- [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.3 (finite-rate chemistry preferred to flamelets); §6.1, Fig. 4 (mechanism dependence of the stabilization mode); §6.6, Fig. 12 (extended Takeno index).
 - [Domingo & Vervisch (2023)](/sources/domingo-2023.md) — HAL author manuscript: §3.1, Figs. 5–6 (LES-embedded DNS with premixed flamelet tabulation, flamelet deconvolution); §3.2 (flame-resolved bluff-body burner, flamelet-hypothesis test proposed).

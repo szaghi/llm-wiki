@@ -5,7 +5,7 @@ description: "Turbulent flow over a sudden expansion with fixed separation at th
 status: established
 aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step, Driver–Seegmiller step, A3C step, curved backward-facing step, CBFS]
 tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification, field-inversion, rans, dg, lattice-boltzmann, spectral-element]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-27T20:45:00Z
 ---
 
 # Backward-facing step
@@ -197,6 +197,31 @@ the near-step region shown (Fig. 16). The comparison is restricted to that
 region because full-field reference data were not available to the authors,
 and no reattachment length is printed.
 
+**A DNS-database subgrid closure on the same step.**
+[Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.5, Figs.
+14–16, run the step at $Re_H=5000$ with
+[pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md),
+whose subgrid stress comes from a database of DNS on representative volume
+elements, and with the dynamic $k$-equation LES of Kim & Menon (see
+[subgrid kinetic-energy equation models](/methods/subgrid-kinetic-energy-equation-model.md)),
+on 142,000 cells with 20 cells per step height. The domain is $30H$ long,
+including a $10H$ inlet section, $6H$ high and $4H$ wide (periodic span,
+symmetry top, fixed total pressure at the outlet); the inflow is a
+flat-plate turbulent boundary-layer profile with digital-filter
+fluctuations, and the run lasts 800 time units with $\Delta t=0.02$, the
+last 600 averaged. From the zero crossing of $C_f$:
+
+| Solution | $x_R/H$ |
+|---|---|
+| experiment (Jovic & Driver), confirmed by oil-flow visualization | $6\pm0.15$ |
+| DNS (6 million cells, Le, Moin & Kim) | 6.1 |
+| P-DNS | 6.05 |
+| LES (dynamic $k$-equation) | 5.1 |
+
+On the same coarse mesh the database closure thus lands within the
+experimental band and the LES 15% short of it *(compiler check, not in
+the sources)*.
+
 **Probabilistic learned closure at low Reynolds number.**
 [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) (read in arXiv
 v2), §3, use a step of expansion ratio 2 (downstream channel height $2H$),
@@ -321,7 +346,8 @@ backward-facing-step flows, an example of a separation fix that does not
 generalize. [Wang et al. (2021)](/sources/wang-2021-l.md), §3.3, describe
 the transonic flow behind the boat tail of the NASA Model 11 hammerhead
 launch vehicle, on which they test a Reynolds-stress-based IDDES (see
-[detached-eddy simulation](/methods/detached-eddy-simulation.md)), as one
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) and
+[hammerhead launch-vehicle buffet](/benchmarks/hammerhead-launch-vehicle-buffet.md)), as one
 that "can be regarded as an axisymmetric back-step flow", citing earlier
 work. [Duraisamy et al. (2019)](/sources/duraisamy-2019.md), §5.3, cite
 gene-expression-programming RANS models trained on a backward-facing
@@ -429,7 +455,8 @@ flows on which SpaRTA was demonstrated (§3.4).
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §3.1.1, Eq. 18, Figs. 3–7; §3.3.1, Figs. 15–18.
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §4.1; §4.2.3, Tables 5–7, Figs. 7–9.
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §4.3, Figs. 9–11 (Driver–Seegmiller step, wall function).
-- [Wang et al. (2021)](/sources/wang-2021-l.md) — §3.3 (hammerhead flow likened to an axisymmetric step).
+- [Wang et al. (2021)](/sources/wang-2021-l.md) — §3.3 (hammerhead flow likened to an axisymmetric step; see [hammerhead launch-vehicle buffet](/benchmarks/hammerhead-launch-vehicle-buffet.md)).
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.10.5, Figs. 14–16.
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §3.3, Figs. 7–12.
 - [Husson et al. (2024)](/sources/husson-2024.md) — §4.2.1–4.2.2, Table 1, Figs. 6–11.
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §2.1–2.2, Eqs. 2, 4, 11, 12; §4.1–4.2, Tables 1–2, Figs. 5–7; App. A, Eqs. A.13–A.15; App. C.

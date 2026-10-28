@@ -1,0 +1,205 @@
+---
+type: Benchmark
+title: "30P30N three-element high-lift airfoil"
+description: "The 30P30N slat–main–flap airfoil in two forms: the modified BANC-III geometry at Mach 0.17, chord Reynolds number 1.7 million and 5.5° incidence, where hybrid, unified and LES approaches and scheme dissipation are compared on lift and slat-cove flow; and the workshop RANS case at Mach 0.2, 9 million and 16°."
+status: established
+aliases: [30P30N, 30P-30N, 30P/30N, MD 30P30N, modified 30P30N, BANC-III 30P30N, three-element high-lift airfoil]
+tags: [benchmark, hybrid-rans-les, des, separated-flow, numerical-dissipation, aeroacoustics]
+timestamp: 2026-10-27T21:09:00Z
+---
+
+# 30P30N three-element high-lift airfoil
+
+The 30P30N is a two-dimensional three-element high-lift airfoil (slat, main
+element, flap) whose slat and flap are deflected by $30^\circ$. The flow
+combines a separated shear layer in the slat cove that rolls up, impinges
+on the slat wall and radiates slat noise, the thin boundary layers of three
+elements, the merging of the slat wake with the main-element boundary layer,
+and possible separation on the flap. In this bundle it is run in two
+distinct forms that should not be mixed:
+
+- the **modified 30P30N of the BANC-III workshop** (Benchmark Problems for
+  Airframe Noise Computations) at $M=0.17$, $Re=1.7\times10^6$ on the stowed
+  chord and incidence $5.5^\circ$, a scale-resolving test of the slat-cove
+  shear layer;
+- the **workshop RANS case** at $M=0.2$, $Re=9\times10^6$ and $16^\circ$
+  (case C3.1 of the first High-Order CFD Workshop), a steady
+  [Spalart–Allmaras](/methods/spalart-allmaras-model.md) test of high-order
+  discretizations.
+
+On this page $\alpha$ denotes the angle of attack (page-local; the
+registry's $\alpha$ is the DG/finite-volume blending factor) and $C$ the
+stowed chord. The three-dimensional high-lift aircraft configurations are
+on [NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md) and
+[JAXA Standard Model](/benchmarks/jaxa-standard-model.md).
+
+## Configuration: modified 30P30N (BANC-III)
+
+| Item | [Wu et al. (2023)](/sources/wu-2023-b.md), §2.3 | [Wang et al. (2024)](/sources/wang-2024.md), §4 |
+|---|---|---|
+| Chord | stowed chord $C=18$ in | $C=0.457$ m |
+| Elements | slat $0.15C$, flap $0.3C$, both deflected $30^\circ$ (Fig. 2) | slat $0.15C$, flap $0.3C$, both deflected $30^\circ$ to the main-element chord |
+| Conditions | $M=0.17$, $Re=1.71\times10^6$, $\alpha=5.5^\circ$ | $M_\infty=0.17$, $Re=1.7\times10^6$ on the stowed chord, $\alpha=5.5^\circ$ on the main-element chord |
+| Domain | $30C$ in the $x$-$y$ plane; span $C/9$, "as recommended by the BANC-III workshop"; periodic in span | radial extent about $90C$; span "a minimum of $0.74C$, determined by the correlation of two-point pressure fluctuations" (citing the BANC-III summary) |
+| Grid | multi-block structured, refined in the slat cove: 7.2 M (60 span cells), 19 M and 27 M cells (80 span cells) | about 27 million cells |
+| Time step | $\Delta t\,U_\infty/C=10^{-4}$ (coarse), $5\times10^{-5}$ (medium, fine) | $\Delta t\,U_\infty/C=2\times10^{-5}$ |
+| Statistics | 10 time units $C/U_\infty$ after 10, from a converged RANS field | time and spanwise averages |
+| Reference data | JAXA wind tunnel ($C_L=2.82$, $C_p$); FSU (slat-cove PIV, rms $C_p$ on the slat; $C_L=2.84$); wall-modelled LES of Zhang et al. ($C_L=2.848$, $C_D=0.067$) | Pascioni et al. (FSU) for $C_p$ and slat-cove profiles; FSU and JAXA for the slat-trailing-edge pressure spectrum |
+
+Wu et al. print the chord in inches, Wang et al. in metres. Both use the measurement lines of the BANC guidelines across the
+slat-cove shear layer (L1–L7).
+
+## Results on the modified 30P30N
+
+**Model, scheme and grid at fixed conditions.**
+[Wu et al. (2023)](/sources/wu-2023-b.md) run, in the structured
+finite-difference solver PHengLEI, three groups of cases (Table 2): the
+self-adaptive turbulence eddy simulation (SATES, the unified RANS–LES–DNS
+model of Han and coworkers formerly called VLES, recorded on
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md)) on three grids; SATES
+with three convective schemes on the fine grid; and
+[Smagorinsky](/methods/smagorinsky-model.md) LES ($C_s=0.1$), SST-IDDES
+([detached-eddy simulation](/methods/detached-eddy-simulation.md)) and
+SATES with the same scheme on the fine grid. The schemes are the
+fourth-order [weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
+with Z-type weights at regularization parameter $\epsilon_{\mathrm Z}=100$,
+which makes the weights effectively linear (WCNS-L), or $10^{-6}$ (WCNS-Z)
+(page-local symbol), and a second-order blend of central and upwind
+interpolation with upwind fraction $\sigma_b=0.02$ (BCD). Their error is
+taken against the experimental mean $C_L=2.83$:
+
+| Case | Grid | Model | Scheme | $C_L$ | $C_D$ | $C_L$ error |
+|---|---|---|---|---|---|---|
+| A1 | 7.2 M | SATES | WCNS-L | 2.85 | 0.054 | 0.7% |
+| A2 | 19 M | SATES | WCNS-L | 2.75 | 0.064 | −2.8% |
+| A3 | 27 M | SATES | WCNS-L | 2.82 | 0.070 | −0.4% |
+| B1 | 27 M | SATES | BCD | 2.52 | 0.072 | −11.0% |
+| B2 | 27 M | SATES | WCNS-Z | 2.64 | 0.074 | −6.7% |
+| C1 | 27 M | Smagorinsky LES | WCNS-L | 2.64 | 0.070 | −6.7% |
+| C2 | 27 M | SST-IDDES | WCNS-L | 2.27 | 0.076 | −19.8% |
+
+The printed errors follow from the table's coefficients and 2.83
+*(compiler check, not in the sources)*. Their reading (§3.2–3.4):
+
+- *Grid.* The mean $C_p$ is insensitive to the grid and agrees with the
+  JAXA and FSU data even on 7.2 M cells; the peak rms $C_p$ on the slat
+  falls with refinement, and on the coarse grid the slat-cove turbulent
+  kinetic energy is too low at L1 and too high at L7, which the authors
+  read as a delayed shear-layer instability that refinement moves
+  upstream (Figs. 6–8). Resolved kinetic energy exceeds the modelled one
+  at most points of the mid-span plane even on the coarse grid (Figs.
+  9–10).
+- *Scheme.* The lower dissipation of WCNS makes the slat shear layer
+  unstable sooner than BCD; the Z-type weights lose accuracy near
+  high-order critical points and add dissipation in the shear layer, so
+  the authors recommend linear interpolation for shock-free low-Mach
+  flow (Figs. 11–15; see [numerical dissipation](/properties/numerical-dissipation.md)).
+  Outside the cove shear layer no scheme matches the PIV turbulent
+  kinetic energy, which the authors attribute, citing the WMLES study, to
+  poor PIV resolution from a shortage of particles (Fig. 16).
+- *Model.* SST-IDDES delays the shear-layer transition, carries larger
+  $\mu_t/\mu$ in the attached boundary layers and a considerable eddy
+  viscosity in the slat cove, and separates early on the flap suction side,
+  "which may have been caused by the GIS" (grid-induced separation),
+  "although the turbulent boundary layer was partially protected to avoid
+  modeled stress depletion"; SATES predicts the slat-cove reattachment
+  best and resolves more turbulent kinetic energy than IDDES; LES resolves
+  the most and predicts a larger main-element separation bubble than
+  SATES (Figs. 17–25).
+
+**Scheme for budget analysis.** [Wang et al. (2024)](/sources/wang-2024.md),
+§4, run a Spalart–Allmaras-based DDES with a sixth-order optimized upwind
+scheme (OPT6) chosen on the [periodic hill](/benchmarks/periodic-hill.md)
+for the turbulent-kinetic-energy budget (see
+[low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md)).
+The mean $C_p$ agrees with Pascioni et al.; the spanwise vorticity,
+velocity magnitude and turbulent kinetic energy along lines through the
+slat shear layer agree with the same data, their maxima decreasing away
+from the slat trailing edge; the slat-trailing-edge pressure spectrum
+agrees with the FSU and JAXA data, broadband with a tone near 21 kHz
+(Figs. 8–10). In the slat cove the turbulent kinetic energy has three
+maxima: the trailing-edge shedding region, the shear layer behind the
+slat leading edge, and the unsteady impingement on the wall. The budget
+terms take recurring spatial patterns (production and dissipation
+"monopole", diffusion "outward", advection "inward"); along the slat
+shear layer production dominates and decays to about 10% of its initial
+value, with diffusion, mainly turbulent transport, the main balance, and
+the budget does not close, which the authors attribute to insufficient
+grid resolution by analogy with the hill, without a grid study on the
+airfoil (Figs. 11–12).
+
+## Workshop RANS case ($M=0.2$, $Re=9\times10^6$, $\alpha=16^\circ$)
+
+[Wang et al. (2013)](/sources/wang-2013.md), §4.11, specify case C3.1 of
+the first High-Order CFD Workshop: two-dimensional RANS with the
+Spalart–Allmaras or $k$-$\omega$ model, $M=0.2$, $\alpha=16^\circ$,
+$Re=9\times10^6$, fully turbulent, reference chord 0.5588 m; no workshop
+results are shown. [Huang et al. (2022b)](/sources/huang-2022-d.md), §3.3,
+run these conditions with steady Spalart–Allmaras RANS on a hybrid mesh of
+53,870 cells: their optimized fourth-order variational-reconstruction
+finite-volume scheme gives lift and drag closer to the DLR reference than
+the fourth-order scheme with earlier weights and the second-order scheme,
+and its skin friction is closer to a degree-4 DG solution of 1,119,530
+degrees of freedom; the fourth-order scheme carries the slat-wake eddy
+viscosity to the outlet, where the second-order one dissipates it (Figs.
+33–35). The details are on
+[NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md), where they were
+first recorded. [Bose & Park (2018)](/sources/bose-2018.md), §4.3, cite a
+wall-modelled LES of the 30P/30N at $Re_c=9\times10^6$ with an
+equilibrium wall model (Bodart et al. 2013) that captures the maximal lift
+but stalls at about $23^\circ$ against about $21^\circ$ in the experiment
+(see [wall-modelled LES](/methods/wall-modelled-les.md)).
+
+## What the case shows
+
+- On the modified 30P30N the lift depends more on the convective scheme and
+  the hybrid model than on the grid: at 27 M cells the scheme moves $C_L$
+  from −11.0% to −0.4% and the model from −19.8% to −0.4%, while the three
+  grids stay within 3% ([Wu et al. (2023)](/sources/wu-2023-b.md), Table 2).
+  The slat-cove shear layer is the sensitive region: excess dissipation,
+  numerical or modelled, delays its instability.
+- Two hybrids at the same nominal conditions reach opposite outcomes: the
+  SA-DDES of [Wang et al. (2024)](/sources/wang-2024.md) agrees with the
+  measured $C_p$ and slat-cove profiles, the SST-IDDES of
+  [Wu et al. (2023)](/sources/wu-2023-b.md) is 19.8% low in lift with early
+  flap separation. The set-ups differ: SA-based DDES with the sixth-order
+  OPT6 scheme, span $0.74C$, about 27 million cells (Wang et al.), against
+  SST-based IDDES with fourth-order WCNS-L, span $C/9$, 27 million cells
+  (Wu et al.). Wu et al. cite a successful IDDES of the airfoil by
+  Ashton et al. without discussing the difference.
+
+## Qualifications
+
+- Wu et al. print no wall-unit resolution, and Wang et al. print no grid
+  study on the airfoil; neither prints an integrated resolved fraction of
+  the turbulent kinetic energy (Wu et al. show scatter plots, Figs. 10, 25).
+- Wu et al. call $Re=1.71\times10^6$ "moderate" (§2.3) while the title and
+  abstract speak of high Reynolds number. Their §3.1 says the $C_L$ of
+  cases A1–A3 "differed by less than 3%", which holds for each error
+  against 2.83, while A1 and A2 differ by 3.6% of A2, and the sequence
+  2.85, 2.75, 2.82 is not monotone in the grid *(compiler check, not in
+  the sources)*. Their §3.4
+  refers to grid resolution "in section B" and schemes "in section C",
+  while Table 2 labels the grid group A and the scheme group B.
+- The workshop RANS case and the BANC-III case differ in Mach number,
+  Reynolds number, incidence and chord (0.5588 m against 0.457 m); results
+  of one do not validate the other.
+
+## Contradictions
+
+**Spanwise extent of the modified 30P30N.** *Open.*
+[Wu et al. (2023)](/sources/wu-2023-b.md), §2.3, run a span of $C/9$, "as
+recommended by the BANC-III workshop"; [Wang et al. (2024)](/sources/wang-2024.md),
+§4, set the span to "a minimum of $0.74C$, determined by the correlation of
+two-point pressure fluctuations", citing the BANC-III summary (Choudhari
+& Lockard 2015). Both attribute their span to the workshop; the two
+printed spans differ by a factor of about 6.7 *(compiler check, not in
+the sources)*.
+
+# Citations
+
+- [Wu et al. (2023)](/sources/wu-2023-b.md) — §1; §2.1–2.3, Table 1, Fig. 2; §3.1–3.4, Table 2, Figs. 4–25; §4.
+- [Wang et al. (2024)](/sources/wang-2024.md) — §3.3 (scheme choice); §4, Figs. 8–12; §5.
+- [Wang et al. (2013)](/sources/wang-2013.md) — §4.11 (case C3.1; specification only).
+- [Huang et al. (2022b)](/sources/huang-2022-d.md) — §3.3, Figs. 33–35.
+- [Bose & Park (2018)](/sources/bose-2018.md) — §4.3 (cited WMLES of Bodart et al.).

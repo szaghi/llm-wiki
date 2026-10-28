@@ -5,7 +5,7 @@ description: "Wall-modelled LES boundary conditions that let the filtered veloci
 status: established
 aliases: [slip wall, dynamic slip wall, dynamic slip-wall model, Robin slip condition, wall-slip model, slip-length model, Van Driest slip model]
 tags: [wall-model, wmles, filtering, immersed-boundary]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-27T20:37:00Z
 ---
 
 # Slip-wall models
@@ -201,6 +201,16 @@ linearly from two interior sampling points. [De Vanna et al. (2022)](/sources/de
 (§2.2) keep no slip and impose the modelled stress through an augmented
 wall viscosity (see [wall-modelled LES](/methods/wall-modelled-les.md)).
 
+[Huang et al. (2022c)](/sources/huang-2022-c.md) (§I, Eq. 6) classify
+wall-model boundary conditions into three types: Dirichlet (a modelled slip
+velocity), Neumann (the modelled wall shear stress $\rho u_\tau^2$) and
+Robin, the slip-wall form $\bar u-\ell_{\mathrm s}\,\partial\bar u/\partial y=0$
+at the wall with $\ell_{\mathrm s}$ a length scale (page-local; the source's
+$l_p$, renamed because $l_p$ is the filter coefficient above; citing Bae et
+al., Bose & Moin and Yang et al.). They choose the Neumann type for their spectral/hp
+implicit LES (see [wall-modelled LES](/methods/wall-modelled-les.md)), so
+the slip wall is only named there.
+
 ## Qualifications
 
 - The formulation of the dynamic slip wall here is the review's
@@ -230,3 +240,4 @@ wall viscosity (see [wall-modelled LES](/methods/wall-modelled-les.md)).
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Introduction.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.6, Eqs. (41)–(42).
 - [De Vanna et al. (2022)](/sources/devanna-2022.md) — §2.2, Eqs. (7a)–(7b).
+- [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I, Eq. (6) (Robin condition among the wall-model boundary-condition types; passing).

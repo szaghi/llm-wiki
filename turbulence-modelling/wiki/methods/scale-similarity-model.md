@@ -3,9 +3,9 @@ type: Method
 title: "Scale-similarity and mixed subgrid-scale models"
 description: "Scale-similarity and deconvolution models build the subgrid stress, or a subgrid scalar variance, from the resolved field rather than from an eddy viscosity; the sources agree that they reproduce the stress structure but are under-dissipative or unstable alone, and mix them with an eddy viscosity, add numerical dissipation, or derive an eddy viscosity from their flux."
 status: established
-aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, approximate deconvolution model, ADM, D3M, DIAD, DDM, direct deconvolution model, Layton–Lewandowski model, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model]
+aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, approximate deconvolution model, ADM, D3M, DIAD, DDM, direct deconvolution model, Layton–Lewandowski model, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model, dynamic iterative approximate deconvolution, DIAD_W]
 tags: [les, sgs-model, filtering, combustion]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-27T20:43:00Z
 ---
 
 # Scale-similarity and mixed subgrid-scale models
@@ -608,6 +608,100 @@ ADM needs numerical dissipation and does not beat implicit LES) is the
 other half of the question; see
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
 
+## Iterative deconvolution in compressible LES, a posteriori
+
+Two papers of one group run the dynamic iterative approximate
+deconvolution (DIAD, after Yuan et al. 2021, cited) in actual compressible
+LES of decaying isotropic turbulence, with a Gaussian filter of width 16
+DNS spacings, an LES grid of spacing $\Delta/2$ and filtered DNS as the
+reference. The algorithm is the one listed above: starting from
+$\phi^0=\bar\phi$, each iterate is a weighted sum of filtered values on an
+$N_{\mathrm{st}}^3$ stencil, the weights solve a constrained least-squares
+system built from domain averages of the filtered iterate with the weights
+summing to one, and the iteration stops after a set number of steps or
+when the refiltered iterate matches $\bar\phi$ within a tolerance
+(Algorithm 1 of both). Both use $N_{\mathrm{st}}=3$, stencil spacing
+$\Delta/2$ and two iterations, and both evaluate the closure in the
+scale-similarity form, e.g. $\overline{\rho^*u^*_iu^*_j}-\overline{\rho^*}\,\overline{u^*_i}\,\overline{u^*_j}$,
+rather than the direct form $\overline{\rho^*u^*_iu^*_j}-\bar\rho\bar u_i\bar u_j$,
+because Yuan et al. (cited) showed it to satisfy symmetry and
+realizability conditions.
+
+- **Density-unweighted filtering.** [Zhang et al. (2022b)](/sources/zhang-2022-f.md)
+  close all subgrid terms of the plain-filtered compressible equations
+  (stress, mass flux, density–temperature correlation, heat flux,
+  turbulent diffusion; see [large-eddy simulation](/definitions/large-eddy-simulation.md))
+  with ADM (van Cittert, $N_{\mathrm{AD}}=4$, recommended 3–5 for
+  stability), DIAD, the [gradient model](/methods/gradient-model.md), and
+  density-unweighted versions of the dynamic Smagorinsky (DSM) and dynamic
+  mixed (DMM) models with two least-squares coefficients per term (§III B,
+  App. Eqs. A1–A24), at $M_t=0.4$ and 0.8 ($1024^3$ DNS, LES $128^3$). A
+  priori, ADM and DIAD correlate above 0.98 with the exact stress and heat
+  flux, with relative errors below 0.2, DIAD best; DIAD improves
+  significantly from one to two iterations and hardly beyond (§IV A,
+  Figs. 1–3). A posteriori, DIAD best reproduces the kinetic-energy decay,
+  spectra, PDFs of the subgrid flux, deviatoric stress, strain, vorticity
+  and heat flux; ADM is under-dissipative, over-estimating the
+  high-wavenumber energy and under-estimating the mean subgrid flux; DSM
+  and DMM are over-dissipative with narrow PDFs (§IV B, Figs. 5–23). The
+  left (backscatter) tail of the subgrid-flux PDF lengthens with $M_t$
+  (see [energy backscatter](/definitions/energy-backscatter.md)). Cost per
+  step on 32 cores: gradient model 0.32 s, ADM 0.68 s, DSM 0.85 s, DIAD
+  0.87–0.88 s, DMM 1.41 s (Table III).
+- **Dense gas.** [Zhang et al. (2022d)](/sources/zhang-2022-h.md) apply
+  DIAD to a dense gas (the perfluorocarbon PP11 near its critical point,
+  Martin–Hou equation of state), whose Favre-filtered equations carry
+  thermodynamic subgrid terms because pressure and internal energy are
+  nonlinear in density and temperature: a subgrid pressure, a subgrid
+  pressure work, an internal-energy correlation and an internal-energy
+  flux (§II, Eqs. 18–23, after Giauque et al., cited; see
+  [large-eddy simulation](/definitions/large-eddy-simulation.md)). DIAD
+  evaluates every term in scale-similar form with the equation of state
+  applied to the deconvolved fields, e.g. the subgrid pressure as
+  $\overline{p(\rho^*,T^*)}-p(\bar\rho^*,\tilde T^*)$ (Eqs. 26–32). A
+  priori ($512^3$ DNS, LES $64^3$, $M_t=0.4$ and 0.8) the correlations
+  exceed 0.98 with relative errors below 0.2, except the internal-energy
+  flux at $M_t=0.4$ (above 0.96, error below 0.3) (§IV A, Figs. 1–2). A
+  posteriori, DIAD and DIAD without the thermodynamic terms (DIAD_W) both
+  beat a DSM with dynamic isotropic part, which is over-dissipative; DIAD
+  reproduces the PDFs of the pressure work and internal-energy flux and,
+  at $M_t=0.4$, of the subgrid pressure, whose negative tail it
+  under-estimates at 0.8; dropping the thermodynamic terms changes the
+  velocity and thermodynamic spectra little "in the present study"
+  (§IV B, Figs. 3–18; §V). Cost per step: DSM 0.24 s, DIAD_W 0.27–0.28 s,
+  DIAD 0.33–0.34 s (Table VI).
+
+**Relative accuracy of DIAD, side by side.** Valencia et al. (2026) rank
+DIAD the least accurate of their four deconvolution models a priori and
+the most costly (table above), while Zhang et al. (2022b) find it more
+accurate than ADM, the gradient model and the dynamic models, a priori and
+a posteriori, and Zhang et al. (2022d, §I) cite that result. The set-ups
+differ: Valencia et al. use explicitly filtered LES, a reference that
+includes the grid-truncation stress, Favre deconvolution with
+$N_{\mathrm{st}}=5$ and ADM of order 5; Zhang et al. use the filtered-DNS
+subfilter stress, density-unweighted fields, $N_{\mathrm{st}}=3$ and ADM
+of order 4. At filter-to-grid ratio 2 the gaps in Valencia et al.'s
+correlations are small (DIAD 0.9735 against ADM 0.9795 for $\tau_{xx}$).
+
+**Dynamic mixed model in incompressible LES.** [Wang et al. (2022)](/sources/wang-2022-j.md)
+(§II B, §IV–V) use the two-coefficient DMM (Smagorinsky term plus the
+resolved stress at test-filter level, least-squares coefficients) as a
+baseline: in forced isotropic turbulence and a temporal mixing layer it
+over-estimates low-wavenumber and under-estimates high-wavenumber energy,
+produces larger vortical structures than filtered DNS, is worse than DSM
+in momentum thickness, and induces strip-shaped noise in a mixing layer
+seeded with linear-stability modes (Figs. 2, 9, 16, 18–20); its multiple
+filtering operations make it 2.1–2.3 times as costly as DSM (Table V).
+Their constant-coefficient spatial gradient model is on the
+[gradient-model](/methods/gradient-model.md) page.
+
+**Deconvolution and subgrid-velocity reconstruction.**
+[Hausmann et al. (2022)](/sources/hausmann-2022.md) (§I) note that
+deconvolution recovers no length scales below the LES cutoff (citing the
+dynamic deconvolution of Park et al.), which motivates their
+[subgrid velocity enrichment](/methods/subgrid-velocity-enrichment.md)
+when the small-scale velocity itself is needed.
+
 ## Similarity model for a subgrid scalar variance
 
 The similarity idea also closes scalar second moments. In LES of
@@ -697,3 +791,7 @@ does not improve.
 - [Valencia et al. (2026)](/sources/valencia-2026.md) — §I; §II C, Eqs. (23)–(29); §III A–D, Eqs. (30)–(50), Tables I–II; §V A–C, Tables III–VII, Figs. 20–23; §VI.
 - [Li et al. (2021)](/sources/li-2021.md) — §III C, Figs. 2–8; §III F, Fig. 13.
 - [Qi et al. (2022)](/sources/qi-2022-b.md) — §1; §3.2.
+- [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §III B, Eqs. (27)–(31), Algorithm 1; App., Eqs. (A1)–(A24); §IV A, Figs. 1–3; §IV B, Figs. 5–23, Table III.
+- [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §I; §II, Eqs. (18)–(23); §III B, Eqs. (25)–(32), Algorithm 1; §IV A, Figs. 1–2; §IV B, Figs. 3–18, Table VI; §V.
+- [Wang et al. (2022)](/sources/wang-2022-j.md) — §II B; §IV, Fig. 2; §V, Figs. 9, 16, Table V; App. B, Figs. 18–20.
+- [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §I.

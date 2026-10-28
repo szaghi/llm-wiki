@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-27T15:46:00Z
+timestamp: 2026-10-27T21:09:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -88,6 +88,11 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Valencia et al. (2026)](/sources/valencia-2026.md), §I, §V C | DSM and dynamic mixed model as a priori baselines in explicitly filtered compressible isotropic turbulence | not printed |
 | [Chen et al. (2022)](/sources/chen-2022-g.md), §4.1, Eqs. (26)–(29) | Germano–Lilly least squares, printed $C_s^2=\langle L^{\mathrm C}_{ij}M^{\mathrm C}_{ij}\rangle/\langle M^{\mathrm C}_{ij}M^{\mathrm C}_{ij}\rangle$ with $L^{\mathrm C}_{ij}=-L^d_{ij}$ and $M^{\mathrm C}_{ij}=-2\Delta^2M_{ij}$ ($L^{\mathrm C}$, $M^{\mathrm C}$ page-local), which is the formula above *(compiler check, not in the sources)*; finite-difference reference LES of a channel beside residual-based VMS | widths not printed; average over homogeneous directions |
 | [Qi et al. (2022)](/sources/qi-2022-b.md), §4.1 | compressible DSM (Germano et al.; Lilly) and the dynamic $k_{\mathrm{sgs}}$-equation model of Chai & Mahesh (cited), baselines of a test-filter-free model (below) | box test filter, $\hat\Delta=2\Delta$, $\Delta=(\Delta x\Delta y\Delta z)^{1/3}$ |
+| [Wang et al. (2022)](/sources/wang-2022-j.md), §II B | DSM (Lilly's least squares) and a two-coefficient dynamic mixed model, baselines of a constant-coefficient spatial gradient model in forced isotropic turbulence and a temporal mixing layer | Gaussian, $\hat\Delta=2\Delta$; average over homogeneous directions |
+| [Cao et al. (2022b)](/sources/cao-2022-c.md), §III, Eqs. (12)–(13), App. A | DSM inside a gas-kinetic finite-volume scheme (eddy viscosity through the collision time), coefficient $C_d$ multiplying $\bar\Delta^2$, i.e. $C_s^2$ | discrete 27-point top-hat test filter, the tensor product of the weights $(\tfrac14,\tfrac12,\tfrac14)$, width $2\bar\Delta$; average over the whole domain, so one value per time step |
+| [Zhang et al. (2022b)](/sources/zhang-2022-f.md), App., Eqs. (A1)–(A24) | density-unweighted DSM with dynamic coefficients for the deviatoric stress, the Yoshizawa trace, the subgrid mass flux, heat flux and density–temperature correlation; density-unweighted two-coefficient dynamic mixed model for the same terms | $\hat\Delta=2\Delta$ (a filter of width $4\Delta$ for the mixed model's test-level structural terms); averages over the domain |
+| [Zhang et al. (2022d)](/sources/zhang-2022-h.md), Eqs. (33)–(36) | Favre DSM with a dynamic Yoshizawa coefficient $C_I$ for the isotropic part, thermodynamic subgrid terms of a dense gas neglected; baseline of iterative deconvolution | $\hat\Delta=2\Delta$; averages over the domain |
+| [Li et al. (2022)](/sources/li-2022-k.md), §II C, Eqs. (10)–(15) | compressible DSM of Moin et al. (cited) with Lilly's least squares, used to make the constant of a Reynolds-stress-model-based IDDES dynamic (below) | volume-weighted average over the direct face neighbours of a cell on hybrid unstructured meshes, $\hat\Delta=a\Delta$ with $a=2$ "in general"; the same neighbour average for numerator and denominator; negative $C_s^2$ clipped to zero |
 
 Fowler et al. (2022, §4.2) borrow the Lagrangian averaging of the dynamic
 model for the time integration of their wall model (semi-Lagrangian upstream
@@ -488,6 +493,71 @@ filter-width question.
   spectral-element dynamic model of Chapelier & Lodato (2016, cited); the
   paper shows no data of it.
 
+- **Gas-kinetic implicit against explicit LES.** On the compressible
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $M=0.1$,
+  $Re=1600$ ($256^3$), the domain-averaged dynamic coefficient of Cao et
+  al. (2022b) "is always positive"; DSM is the best of their explicit
+  models but its total subgrid dissipation, estimated a posteriori as
+  $-\mathrm dE_k/\mathrm dt$ minus the resolved physical dissipation, stays
+  between that of implicit LES and of static Smagorinsky and Vreman
+  ($2.1\times10^{-5}$, $2.0\times10^{-4}$, $8.6\times10^{-4}$,
+  $9.4\times10^{-5}$ at $t=2.5$, 5, 10, 15, against $1.5\times10^{-5}$,
+  $1.4\times10^{-4}$, $6.7\times10^{-4}$, $1.8\times10^{-5}$ for implicit
+  LES; §IV C, Fig. 8, Table II). They note that the coefficient is usually
+  clipped to non-negative values for stability and then cannot represent
+  backscatter (§IV B; see [implicit LES](/definitions/implicit-les.md) and
+  [energy backscatter](/definitions/energy-backscatter.md)).
+- **Over-dissipation against structural models.** In forced isotropic
+  turbulence ($128^3$ LES of a $1024^3$ DNS at $Re_\lambda\approx250$) DSM
+  over-estimates the spectrum at low and under-estimates it at high
+  wavenumbers and over-predicts the peak of the strain-rate PDF; in a
+  temporal mixing layer it captures the transitional growth of the
+  momentum thickness but deviates in the linear-growth region and
+  over-estimates the Reynolds shear stress (Wang et al. 2022, §IV–V, Figs.
+  2–4, 9, 15). In decaying compressible isotropic turbulence the
+  density-unweighted DSM (Zhang et al. 2022b, §IV B, Figs. 5–17) and the
+  Favre DSM of a dense gas (Zhang et al. 2022d, §IV B, Figs. 6–15) are
+  over-dissipative: kinetic energy too high in the decay, high-wavenumber
+  spectrum too low, PDFs of subgrid flux, deviatoric stress, strain and
+  vorticity too narrow, against iterative deconvolution (see
+  [scale-similarity models](/methods/scale-similarity-model.md)).
+
+## Dynamic coefficient of a hybrid RANS/LES length scale
+
+[Li et al. (2022)](/sources/li-2022-k.md) apply the procedure to a
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) built on
+the SSG/LRR-$\omega$ [Reynolds-stress model](/methods/reynolds-stress-model.md).
+In the authors' earlier RSM-based IDDES (cited, ingested as
+[Wang et al. 2021](/sources/wang-2021-l.md)) the dissipation of the
+modelled stresses is isotropic, $\varepsilon=k^{3/2}/l_{\mathrm{DES}}$, and
+in the LES region $l_{\mathrm{LES}}=C_{\mathrm{DES}}\Delta$; under
+equilibrium the branch is "Smagorinsky-like" with
+
+$$C_{\mathrm{DES}}=C_kC_s,\qquad C_k=\Big[\frac{C_{\phi1}}{C_{\ell\varepsilon}C_{\phi2}}\Big]^{3/4},$$
+
+$C_{\phi1}$, $C_{\phi2}$ the production and destruction coefficients of the
+length-scale equation and $C_{\ell\varepsilon}=0.09$ (Eqs. 6–9; $C_k$,
+$C_{\phi1}$, $C_{\phi2}$, $C_{\ell\varepsilon}$ page-local). Making $C_s$
+dynamic makes $C_{\mathrm{DES}}$ dynamic, so the calibration of
+$C_{\mathrm{DES}}$ on decaying isotropic turbulence, which the authors
+call grid- and scheme-dependent (citing Mockett) and over-dissipative in
+mean shear, is no longer needed (§I, §II C). With $C_k=1.67$ (SSG branch)
+and 2.78 (LRR branch), $C_{\mathrm{DES}}=0.3$ and 0.5 at $C_s=0.18$, the
+recommended values of their solver (§III A; $1.67\times0.18=0.3006$,
+$2.78\times0.18=0.5004$ *(compiler check, not in the sources)*). Decaying isotropic turbulence of Comte-Bellot &
+Corrsin on $64^3$ is matched with both branches and is insensitive to
+$C_k$ (Fig. 3). On the [periodic hill](/benchmarks/periodic-hill.md) at
+$Re=10\,595$ (about 1.1 million cells) the resolved Reynolds stresses move
+closer to the reference data than with the constant coefficient (§III B,
+Figs. 9–11). On the [hammerhead launch vehicle](/benchmarks/hammerhead-launch-vehicle-buffet.md)
+($M=0.81$) the dynamic coefficient lowers the modelled stress in the
+vortex-development region and the peak $C_{p,\mathrm{rms}}$ at the
+experimental maximum, 0.0554 against 0.0719 with the constant coefficient,
+0.0897 with SST-IDDES and 0.0454 in the experiment, with the mean $C_p$
+unchanged (§III C, Figs. 16, 18). The authors credit "more appropriate
+assessment of the turbulent dissipation" (Fig. 12); the convective fluxes
+are second-order Roe fluxes.
+
 ## A test-filter-free coefficient: the quasi-dynamic procedure
 
 [Qi et al. (2022)](/sources/qi-2022-b.md) (§3.2, Eqs. 3.8–3.26) fix the
@@ -594,6 +664,12 @@ squares from a 6×4 system; see the
 
 ## Qualifications
 
+- Zhang et al. (2022d) print the dynamic Smagorinsky stress and its
+  isotropic part (Eqs. 33–34) without $\bar\rho$, while their subgrid stress
+  (Eq. 19) and the Germano terms of Eq. (36) carry it; with Eq. (36) as
+  printed the model terms are $C_s^2$ and $C_I$ times density-weighted
+  tensors *(compiler check, not in the sources)*. They do not define
+  $\lvert\tilde S\rvert$.
 - Qi et al. (2022) state no clipping or averaging of $C_0$ or of the
   Smagorinsky coefficient of Eq. (3.21), whose denominator can vanish, and
   in Eqs. (3.23) and (4.8) take $\bar\rho$ and the subgrid Prandtl and
@@ -710,3 +786,8 @@ squares from a 6×4 system; see the
 - [Chen et al. (2022)](/sources/chen-2022-g.md) — §4.1, Eqs. (26)–(29); §4.2, Figs. 1–2; §5, Fig. 3.
 - [Qi et al. (2022)](/sources/qi-2022-b.md) — §3.2, Eqs. (3.8)–(3.26); §4.1, Tables 2–5, Figs. 2–5, 10; §4.2, Figs. 16–17; §4.3, Eqs. (4.6)–(4.8), Figs. 22–23.
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §5.
+- [Wang et al. (2022)](/sources/wang-2022-j.md) — §II B; §IV, Figs. 2–4; §V, Figs. 9, 15, Table V.
+- [Cao et al. (2022b)](/sources/cao-2022-c.md) — §III, Eqs. (12)–(13); App. A, Eq. (A1); §IV B; §IV C, Fig. 8, Table II.
+- [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — App., Eqs. (A1)–(A24); §IV B, Figs. 5–17.
+- [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — Eqs. (33)–(36); §IV B, Figs. 6–15.
+- [Li et al. (2022)](/sources/li-2022-k.md) — §I; §II C, Eqs. (6)–(15); §III A, Fig. 3; §III B, Figs. 9–11; §III C, Figs. 16, 18.

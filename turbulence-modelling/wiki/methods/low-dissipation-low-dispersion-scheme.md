@@ -5,7 +5,7 @@ description: "The LD2 scheme pairs an energy-preserving central flux with much-r
 status: established
 aliases: [LD2, LD2C, LD2-Compressible, low-dissipation low-dispersion scheme, Kok flux with JST dissipation, OPT6, optimized upwind scheme, approximate dispersion relation, dispersion-relation-preserving scheme, optimized selective filter, FDo11p, RFo11p]
 tags: [numerical-dissipation, hybrid-rans-les, des, compressible, kinetic-energy-preserving]
-timestamp: 2026-10-27T15:53:00Z
+timestamp: 2026-10-27T21:10:00Z
 ---
 
 # Low-dissipation low-dispersion schemes with shock sensor
@@ -296,7 +296,33 @@ explicit version (§2.3, Table 1, Fig. 1; the error threshold that defines
 "resolvable" is not stated); in the shock–entropy-wave interaction
 WCNS-T on 200 points matches WCNS-E on 300 (§2.3.1, Fig. 2). They judge
 the compact reconstructed WENO (CRWENO) of Ghosh & Baeder good in
-dispersion but too dissipative ("the excessive upwind", §1).
+dispersion but too dissipative ("the excessive upwind", §1). The scheme
+family is on
+[weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md).
+
+**Linear weights and a 2% upwind blend on a high-lift airfoil.**
+[Wu et al. (2023)](/sources/wu-2023-b.md) measure the effect of
+convective-scheme dissipation in hybrid RANS/LES (SATES) of the
+[30P30N high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md)
+($Re=1.71\times10^6$, $M=0.17$, angle of attack $5.5^\circ$, 27 million
+cells) in the structured finite-difference code PHengLEI. Three Roe-flux
+schemes share the solver (§2.2, Eqs. 12–15): a second-order blended
+central/upwind interpolation (BCD) of the interface states with upwind
+fraction $\sigma_b=0.02$ ($\sigma_b=1$ fully second-order upwind,
+$\sigma_b=0$ central), chosen "to reduce the numerical dissipation and
+maintain the numerical stability", and the fourth-order
+[weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
+with Z-type weights, either with the regularizer set to 100 so that the
+weights stay near their linear values (WCNS-L) or to $10^{-6}$ (WCNS-Z).
+The lift coefficient against the experimental mean 2.83 is $-11.0\%$
+(BCD), $-6.7\%$ (WCNS-Z) and $-0.4\%$ (WCNS-L) (Table 2); the less
+dissipative schemes make the slat-cove shear layer go unstable sooner
+(§3.3, Fig. 11). The authors attribute the WCNS-Z deficit to the Z-type
+weights losing accuracy near high-order critical points and recommend the
+linear interpolation for shock-free low-Mach flow (§3.3, §4). Wang et
+al. (2024) above run the same airfoil with the sixth-order upwind OPT6 in
+SA-based DDES; the two studies use different hybrid models and solvers and
+do not test each other's schemes.
 
 **Dispersion against formal order in the first High-Order CFD Workshop.**
 In the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) case at
@@ -506,6 +532,16 @@ artificial dissipation *(compiler check, not in the sources)*.
   interpolations; their WCNS-T costs 5–7 times WCNS-E per grid point on the
   same grid ($1.26\times10^4$ against $1.83\times10^3$ CPU time units at
   2802 points, Table 2) and is cheaper only at equal error (Fig. 3).
+- **Printed form of the BCD interpolation (Wu et al. 2023, Eq. 15).** The
+  left state is $u_j+\tfrac12\sigma_b(u_j-u_{j-1})+\tfrac12(1-\sigma_b)(u_{j+1}-u_j)$,
+  which at $\sigma_b=0$ is the central value $\tfrac12(u_j+u_{j+1})$ at
+  $j+\tfrac12$; the right state is printed
+  $u_j-\tfrac12(1-\sigma_b)(u_j-u_{j-1})-\tfrac12\sigma_b(u_{j+1}-u_j)$,
+  which at $\sigma_b=0$ gives $\tfrac12(u_j+u_{j-1})$, the central value at
+  $j-\tfrac12$ *(compiler check, not in the sources)*. The text
+  calls the scheme a "second-order central flux difference" in an
+  unfinished sentence (§2.2.2). The single-airfoil evidence uses one grid
+  for the scheme comparison (the fine, 27 million cells).
 - Printed slips: §5 attributes LD2 to "Löwe et al. [28]", while ref. [28] is
   Probst et al. and LD2 is Löwe et al. [10] elsewhere; §4.3 cites Fig. 4(b) for
   both $Re_\tau=2400$ and 18 000 (the latter is Fig. 4(c)); the text refers to
@@ -526,3 +562,4 @@ artificial dissipation *(compiler check, not in the sources)*.
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §IV, Table I (MDCD, MDCD-WENO, WENO-SYMBO, cited orders and errors; WENO-JS spectral dissipation, cited).
 - [Deng et al. (2022)](/sources/deng-2022.md) — §1 (MDCD cited; dissipation for under-resolved scales); §3.2, Eq. (21), Remarks 1–2 (dissipation-adjusting parameter); §4.1, Figs. 1–2 (approximate dispersion relation against linear upwind and WENO-M); §4.2, Table 1.
 - [Ma et al. (2022)](/sources/ma-2022.md) — §1 (CRWENO); §2.3, Table 1, Fig. 1 (Fourier and ADR resolving ratios of WCNS-E and WCNS-T); §2.3.1–2.3.2, Fig. 2, Table 2 (shock–entropy wave; cost and order).
+- [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.2.1–2.2.2, Eqs. (12)–(15) (fourth-order WCNS with near-linear and Z-type weights, blended central/upwind interpolation with $\sigma_b=0.02$); §3.3, Table 2, Fig. 11 (scheme dissipation and lift of the 30P30N airfoil); §4.

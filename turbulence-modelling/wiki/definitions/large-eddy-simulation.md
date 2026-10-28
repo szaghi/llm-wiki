@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Large-eddy simulation: filtering and the subgrid-scale stress"
-description: "Large-eddy simulation resolves the filtered velocity and models the subgrid-scale stress; this page fixes the filtered equations, the filters and filter widths used by the sources (including high-aspect-ratio cells and element methods), the commutation and discretization terms, and the gauge freedom of the subgrid stress."
+description: "Large-eddy simulation resolves the filtered velocity and models the subgrid-scale stress; this page fixes the filtered equations (Favre, density-unweighted, real-gas and reacting forms), the filters and filter widths used by the sources, the commutation and discretization terms, and the gauge freedom of the subgrid stress."
 status: established
 aliases: [LES, filtered Navier–Stokes equations, subgrid-scale stress, SGS stress, subfilter stress, coarse-grained equations]
 tags: [les, filtering, sgs-model, compressible]
-timestamp: 2026-10-27T15:57:00Z
+timestamp: 2026-10-27T20:47:00Z
 ---
 
 # Large-eddy simulation: filtering and the subgrid-scale stress
@@ -239,6 +239,92 @@ the closure is set "not entirely by the physics of the problem" but by the
 filter width (§4.2, Table 4; see
 [energy backscatter](/definitions/energy-backscatter.md)).
 
+**Density-unweighted filtering.** Favre filtering is a choice, not a
+requirement. [Zhang et al. (2022b)](/sources/zhang-2022-f.md) (§II,
+Eqs. 8–20) filter the compressible equations with the plain filter
+$\bar\phi=G*\phi$ only. The continuity equation then carries a subgrid
+mass flux, $\partial_t\bar\rho+\partial_j(\bar\rho\bar u_j)=-\partial_j\mathcal M_j$
+with $\mathcal M_j=\overline{\rho u_j}-\bar\rho\bar u_j$; the momentum
+equation the stress $\tau^{\mathrm{du}}_{ij}=\overline{\rho u_iu_j}-\bar\rho\bar u_i\bar u_j$,
+the gradient of a density–temperature correlation
+$\mathcal H=\overline{\rho T}-\bar\rho\bar T$ in the pressure term and an
+unsteady term $-\partial_t\mathcal M_i$; the energy equation a heat flux,
+a turbulent diffusion, a viscous diffusion and the unsteady terms
+$\partial_t(\tfrac12\tau^{\mathrm{du}}_{kk})$ and $\partial_t\mathcal H$
+(page-local symbols, as on the [gradient model](/methods/gradient-model.md)
+page). The authors say the unsteady terms "can lead to numerical
+instability", and argue that Favre filtering has "intrinsic drawbacks" in
+flows with rapid density variation because its filtered equations are
+"simplified without considering some critical physical information"
+(§I). They cite Sun & Lu for a priori tests only, Dupuy et al. for finding
+the two filterings similar at low Mach number, and Sidharth et al. for a
+density-unweighted scheme without the unsteady terms; how they integrate
+the unsteady terms themselves is not stated. In decaying isotropic
+turbulence ($\Delta=16$ DNS spacings) the rms divergences of the stress,
+mass-flux, heat-flux and turbulent-diffusion terms are of order 4–51,
+while the $\mathcal H$ term is 0.0060 at $M_t=0.4$ and 0.11 at $M_t=0.8$
+(Table II); the authors keep it because it "might have special
+significance" in flows with rapidly changing density (§IV A, §V). The
+viscous-diffusion nonlinearity is neglected. Closures and results are on
+the [gradient-model](/methods/gradient-model.md) and
+[scale-similarity](/methods/scale-similarity-model.md) pages.
+
+**Real-gas subgrid terms.** With a nonlinear equation of state the
+Favre-filtered pressure and internal energy are not the functions of the
+filtered state. For a dense gas (Martin–Hou equation of state, Chung
+transport model), [Zhang et al. (2022d)](/sources/zhang-2022-h.md)
+(§II, Eqs. 12–23), following Giauque et al. (cited), write four
+thermodynamic subgrid terms beside the stress and the turbulent diffusion:
+a subgrid pressure $\bar p-p(\bar\rho,\tilde T)$, a density–internal-energy
+correlation $\overline{\rho e}-\bar\rho\,e(\bar\rho,\tilde T)$, a subgrid
+pressure work $\overline{pu_j}-p(\bar\rho,\tilde T)\tilde u_j$ and a subgrid
+internal-energy flux ($e$ the internal energy per unit mass, page-local);
+the nonlinearities of the viscous, heat-flux and viscous-work terms are
+dropped (after Giauque et al.). In decaying isotropic turbulence of the
+fluid PP11 near its critical point, the divergences of the pressure work,
+turbulent diffusion and stress dominate; the subgrid-pressure and
+internal-energy-flux terms are an order of magnitude smaller in their
+equations and grow with $M_t$ (rms of the subgrid-pressure gradient 0.101
+and 0.386 at $M_t=0.4$ and 0.8, against 1.657 and 1.434 for the stress
+divergence; Tables IV–V). Dropping the thermodynamic terms changes the
+LES little "in the present study" (§IV B, §V), which the authors set
+beside Giauque et al.'s statement, as they summarize it, that such terms
+"should be modeled" (§I).
+
+**Reacting flows.** [Fureby & Nilsson (2023)](/sources/fureby-2023.md)
+(§3.1, Eq. 1) write the Favre-filtered equations of a reacting mixture with
+the full density-weighted stress (positive trace) entering as its negative
+divergence, species subgrid fluxes, a subgrid energy flux made of the
+subgrid flux of total sensible energy, a pressure-work and a viscous-work
+part, and filtered
+reaction rates closed by a partially-stirred-reactor model; the subgrid
+stress is closed by the localized dynamic
+[one-equation model](/methods/subgrid-kinetic-energy-equation-model.md).
+They add that extending subgrid models from incompressible to compressible
+reacting flow by dimensional arguments "can be disputed but in the absence
+of better alternatives this constitutes today's standards" (§3.2).
+[Ihme et al. (2022)](/sources/ihme-2022.md) (§4.1.4, Eqs. 71–72) write the
+filtered reacting-flow system as one vector equation whose right-hand side
+groups the filtered source (turbulence–chemistry interaction), the
+subgrid convective flux and the subgrid molecular-diffusion flux, the
+framing of their review of data-driven closures (see
+[neural-network SGS models](/methods/neural-network-sgs-model.md)).
+
+**Subgrid kinetic-energy budget.** [Cao et al. (2022b)](/sources/cao-2022-c.md)
+(§IV B, Eq. 17) write the Favre transport equation of
+$\bar\rho k_{\mathrm{sgs}}=\tfrac12\tau_{kk}$ with production
+$-\tau_{ij}\tilde S_{ij}$ (the registry's $\Pi$, read as inter-scale
+transfer), dissipation, a subgrid pressure dilatation and diffusion terms,
+and evaluate the production a priori (see
+[energy backscatter](/definitions/energy-backscatter.md)); its transported
+form is the basis of [one-equation models](/methods/subgrid-kinetic-energy-equation-model.md).
+
+**When the subgrid velocity itself is needed.** For dispersed multiphase
+flows, interface methods, wind-turbine loads and flame-front location the
+closure of $\tau_{ij}$ is not enough; [Hausmann et al. (2022)](/sources/hausmann-2022.md)
+(§I) generate an approximate subgrid velocity alongside the LES (see
+[subgrid velocity enrichment](/methods/subgrid-velocity-enrichment.md)).
+
 ### Sign conventions in the sources
 
 The registry uses the positive-trace convention above. The following
@@ -330,6 +416,16 @@ Further sources split the same way.
   [Qi et al. (2022)](/sources/qi-2022-b.md) (§2, Eq. 2.8) and
   [De Vanna et al. (2022)](/sources/devanna-2022.md) (§2.1, Eqs. 1b, 2) use
   the same full density-weighted tensor entering as $-\partial_j\tau_{ij}$.
+- **Further positive, full tensor.** [Hausmann et al. (2022)](/sources/hausmann-2022.md)
+  (Eq. 6) and [Wang et al. (2022)](/sources/wang-2022-j.md) (Eq. 7; Favre
+  form for their mixing layer, Eq. 31) keep the trace; [Cao et al. (2022b)](/sources/cao-2022-c.md)
+  (Eq. 19), [Zhang et al. (2022d)](/sources/zhang-2022-h.md) (Eq. 19) and
+  Fureby & Nilsson (2023, Eq. 1) use the Favre form with $\bar\rho$;
+  [Zhang et al. (2022b)](/sources/zhang-2022-f.md) (Eq. 17) the
+  density-unweighted $\overline{\rho u_iu_j}-\bar\rho\bar u_i\bar u_j$.
+  [Ihme et al. (2022)](/sources/ihme-2022.md) (Eq. 74) print the Favre form
+  and write the subgrid kinetic energy as $\tau_{kk}$, without the factor
+  $\tfrac12$.
 - **Compressible, negative.** [Tonicello et al. (2022)](/sources/tonicello-2022.md)
   (§4, Eq. 4.4) define $\bar\rho\tilde u_i\tilde u_j-\overline{\rho u_iu_j}$,
   minus the registry's, entering with $+\partial_j$, so its trace is
@@ -795,6 +891,20 @@ The grid counts needed for wall-resolved and
 wall-modelled LES are on [LES grid-point requirements](/results/les-grid-point-requirements.md),
 and the near-wall alternative on [wall-modelled LES](/methods/wall-modelled-les.md).
 
+**LES or very-large-eddy simulation.** [Wu et al. (2023)](/sources/wu-2023-b.md)
+(§2.1.1) cite Pope's definition of very-large-eddy simulation, a filter and
+grid "too coarse to resolve 80% of the energy", to rename Han et al.'s
+"VLES" as self-adaptive turbulence eddy simulation, since its runs resolve
+"larger than 90%" of the turbulent kinetic energy even on coarse grids (see
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md)). Their motivation is
+cost: they cite a wall-resolved LES of a three-element airfoil at
+$Re_c=1.23\times10^6$ that used 2.6 billion cells and 6 million CPU hours
+(§1). [Fureby & Nilsson (2023)](/sources/fureby-2023.md) (§6.2) use the
+resolved fraction of the turbulent kinetic energy as their grid criterion:
+90%, 94% and 96% on 7.3, 24.6 and 57.8 million cells, "rendering all grids
+appropriate for LES" by the criteria they cite from Pope and from Matheou
+& Chung, whose thresholds they do not print.
+
 **Activity parameter.** [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md)
 (App. C, Eqs. C1–C3, Figs. 28–29) rate their canopy LES with the subgrid
 activity parameter of Geurts & Fröhlich, which they cite,
@@ -944,6 +1054,32 @@ field to a filtered-DNS-like field without paired data; see
   whose grid-converged solution solves the filtered equations, from
   "vanishing LES" with $\Delta\propto h$ and from ILES, which both aim at a
   DNS; see [implicit LES](/definitions/implicit-les.md).
+
+- **Rotor models in LES.** [Stanly et al. (2022)](/sources/stanly-2022.md)
+  run an [actuator line](/methods/actuator-line-model.md) in a high-order
+  implicit LES whose only closure is an eighth-order artificial-dissipation
+  operator, and suggest that the coarse grids their filtered actuator line
+  allows would suit explicit subgrid models better than implicit LES (§6).
+  [Zhang et al. (2022e)](/sources/zhang-2022-i.md) (§II A) run wall-modelled
+  LES of a neutral atmospheric boundary layer over a hill in
+  [LESGO](/software/lesgo.md), with Smagorinsky and wall damping, a log-law
+  wall stress, an [immersed boundary](/methods/immersed-boundary-method.md)
+  terrain and an actuator disk.
+- **A two-scale alternative.** [Idelsohn et al. (2024)](/sources/idelsohn-2024.md)
+  (§1.4, §4) replace the subgrid model by fine-scale stresses from off-line
+  DNS of representative volume elements and claim, from single coarse-mesh
+  comparisons, better agreement than LES on coarse and medium meshes and
+  that LES methods "do not comply with the self-similarity property or the
+  averaged symmetry over the time of the flow"; see
+  [pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md).
+- **Functional and structural models.** [Wang et al. (2022)](/sources/wang-2022-j.md)
+  (§I) divide SGS models into functional (eddy-viscosity: Smagorinsky,
+  dynamic Smagorinsky, Vreman) and structural (similarity, gradient,
+  deconvolution) ones, the latter more highly correlated with the true
+  stress but needing extra treatment for stability; they filter with a
+  Gaussian kernel and use a filter-to-grid ratio of 2 to limit numerical
+  errors (§II, Eq. 8; see
+  [gradient model](/methods/gradient-model.md)).
 
 ## Explicit models offered by codes
 
@@ -1167,6 +1303,10 @@ subgrid modelling in compressible and especially wall-bounded flow.
 
 ## Qualifications
 
+- Zhang et al. (2022b, §IV A) call the $\mathcal H$ term at $M_t=0.8$ "two
+  orders of magnitude higher" than at $M_t=0.4$; their Table II gives 0.11
+  against 0.0060, a ratio of about 18 *(compiler check, not in the
+  sources)*. They print $M_t=0.79$ in Tables I–II and 0.80 in Table III.
 - Flad & Gassner (2017, App. A) print the filter width as "the local cell
   volume divided by $(N+1)^3$", which is a volume, not a length; the length
   form of the same idea is the cube root used by Beck & Kurz (2023, Eq. 11).
@@ -1315,3 +1455,14 @@ subgrid modelling in compressible and especially wall-bounded flow.
 - [Svärd (2022)](/sources/svard-2022.md) — §1; §2.2–2.3; §6.
 - [Deng et al. (2022)](/sources/deng-2022.md) — §1; §3.2, Remark 2.
 - [Ma et al. (2022)](/sources/ma-2022.md) — §1.
+- [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §I; §II, Eqs. (8)–(20); §IV A, Table II; §V.
+- [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §I; §II, Eqs. (12)–(23); §IV A, Tables IV–V; §IV B; §V.
+- [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.1, Eq. (1); §3.2; §6.2.
+- [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.4, Eqs. (71)–(72), (74).
+- [Cao et al. (2022b)](/sources/cao-2022-c.md) — §IV B, Eqs. (17)–(19).
+- [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §I; Eq. (6).
+- [Wang et al. (2022)](/sources/wang-2022-j.md) — §I; §II, Eqs. (7)–(8); §V, Eq. (31).
+- [Wu et al. (2023)](/sources/wu-2023-b.md) — §1; §2.1.1.
+- [Stanly et al. (2022)](/sources/stanly-2022.md) — §6.
+- [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.4; §4.

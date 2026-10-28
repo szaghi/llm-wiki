@@ -5,7 +5,7 @@ description: "The wall-adapting local eddy-viscosity (WALE) model builds a stati
 status: established
 aliases: [WALE, wall-adapting local eddy-viscosity model, Nicoud–Ducros model]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-27T15:48:00Z
+timestamp: 2026-10-27T20:36:00Z
 ---
 
 # WALE model
@@ -234,6 +234,13 @@ instead (below).
   priori study of deconvolution models sets against structural ones (see
   [scale-similarity model](/methods/scale-similarity-model.md)); WALE is
   not among the models they test.
+- **Candidate rejected for scramjet LES.** [Fureby & Nilsson (2023)](/sources/fureby-2023.md)
+  (§3.2) list WALE with Smagorinsky, hyperviscosity and the localized
+  dynamic $k$-equation model as candidate subgrid closures of their
+  reacting compressible LES, and choose the last, citing their own earlier
+  high-speed comparison (see
+  [one-equation subgrid kinetic-energy models](/methods/subgrid-kinetic-energy-equation-model.md));
+  WALE is not run.
 
 ## Qualifications
 
@@ -272,3 +279,4 @@ instead (below).
 - [De Vanna et al. (2022)](/sources/devanna-2022.md) — §2.1, Eqs. (2)–(5); §4.5–4.6.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.2, Eq. (7); §3.1–3.2.
 - [Simonis et al. (2022)](/sources/simonis-2022.md) — §1.
+- [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.2.

@@ -5,7 +5,7 @@ description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an e
 status: established
 aliases: [adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation, Hessian scaling, error transport equations, ETE]
 tags: [mesh-adaptation, hybrid-rans-les, rans, dg, numerical-dissipation, wmles]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-27T21:12:00Z
 ---
 
 # Mesh adaptation for turbulent-flow simulation
@@ -736,6 +736,55 @@ upper-surface laminar flow breaks into vortices, whereas RANS-adapted
 meshes are highly anisotropic along the surface (Fig. 9). The method is
 stated to extend directly to 3-D, not attempted for cost (§7).
 
+## Output-based adaptation in industrial practice (Mani & Dorgan 2023)
+
+[Mani & Dorgan (2023)](/sources/mani-2023.md), an industrial review
+(MIT and Boeing) with no new data, describe the adaptation loop used with
+Boeing's finite-volume and finite-element RANS solvers, which share the
+EPIC (Edge Primitive Insertion and Collapse) mesh-mechanics tool (§1,
+§4.3, Fig. 9): initial grid, flow solution, optional adjoint, error
+estimation, an anisotropic metric field, and, while the errors exceed the
+user's limits, mesh mechanics that make the mesh conform to the metric,
+with the previous solution interpolated as the initial guess, until an
+accuracy or run-time criterion stops the loop. Surface and volume meshes
+are both adapted, and the adapted surface mesh must be projected onto the
+CAD geometry, not onto the initial surface mesh (§4.2–4.3). Cell-centred
+finite volume needs mixed-element meshes with prismatic or hexahedral
+layers, which are harder to adapt than the pure tetrahedra of
+node-centred finite volume or finite elements (§4.3).
+
+- **Output-based against feature-based.** A Hessian (feature-based)
+  criterion refines features that do not affect the output; an
+  adjoint (output-based) criterion resolves only those that do. Their
+  reproduced example (Venditti & Darmofal, as cited) is a transonic RAE
+  airfoil at $M=0.725$, $\alpha=2.466^\circ$: 22,150 nodes when adapted for
+  lift, 18,698 for drag, 37,681 with a pure Hessian criterion (Fig. 7).
+- **Methods converge to one answer by different paths.** Citing Michal
+  et al. (2021): four flow solvers, four mesh-mechanics methods and four
+  error estimates on the two-dimensional airfoil section of
+  the high-lift CRM (a cut of the
+  [three-dimensional configuration](/benchmarks/nasa-crm-high-lift.md)) give nearly
+  identical lift once adapted to sufficient mesh convergence, with
+  different convergence trajectories, output-error methods reaching a
+  prescribed error on coarser meshes (Fig. 8, $\alpha=8^\circ$).
+- **Higher order.** Adaptive continuous-Galerkin variational multiscale
+  with discontinuous subscales at third and fourth order is cited as
+  needing an order of magnitude less time than second-order methods for
+  the same lift error, below $10^{-4}$ (Ursachi et al., Fig. 4); curved
+  meshes are required (§4.4).
+- **Unsteady and chaotic flows.** Unsteady output-based adaptation must
+  store the forward states for the backward adjoint sweep: 50 million
+  points with five variables are 250 million values, 2 GB per time step
+  in double precision (§4.3); temporal windows that reuse a mesh over many
+  steps and checkpointing are the cited answers. For chaotic turbulent
+  flows the adjoint sensitivities "blow up as the backward sweep
+  approaches the initial conditions", and general techniques are needed
+  before unsteady output-based adaptation is useful (§4.3). Fidkowski
+  (2022, above) meets the same instability in all three of its cases and
+  sidesteps it with a steady surrogate adjoint.
+- **Certification.** Robust, efficient adaptation is one of the
+  requirements the authors list for certification by analysis (§5).
+
 ## Qualifications
 
 - **Scope of each criterion.** Mozaffari et al. test their Hessian
@@ -877,3 +926,4 @@ stated to extend directly to 3-D, not attempted for cost (§7).
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §II.B (invariants from mesh-adaptation work, normalization instead of thresholds).
 - [Fidkowski (2022)](/sources/fidkowski-2022.md) — §2.1–2.3, Eqs. 2–9 (DG, simplified DES, augmented system, adjoint); §4, Eqs. 14–23 (time-averaged adjoint-weighted residual, E1 and E2); §5.1–5.3, Eq. 24, Fig. 2 (indicators, $p$-adaptation, MOESS, loop); §6, Tables 1–3, Figs. 4–19; §7.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §3.3.2, Fig. 24 (octree coarse–fine interfaces reflect acoustic waves).
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §1 (EPIC shared by BCFD and GGNS); §4.2 (CAD projection); §4.3, Figs. 7–9 (output-based against Hessian adaptation, method comparison of Michal et al., loop, unsteady memory, chaotic adjoints); §4.4, Fig. 4 (adaptive higher-order finite elements); §5.

@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "LESGO"
-description: "LESGO is an open-source incompressible LES code, pseudo-spectral in the wall-parallel directions and second-order finite-difference on a staggered wall-normal grid, used as the host of wall-model studies: the LaRTE model, an a posteriori comparison of machine-learning wall models, and the training of a reinforcement-learning wall model coupled to the Smarties library."
+description: "LESGO is an open-source incompressible LES code, pseudo-spectral in the wall-parallel directions and second-order finite-difference on a staggered wall-normal grid; this page records its numerics and closures, the wall-model studies hosted in it (LaRTE, machine-learning and reinforcement-learning wall models) and its wind-turbine-wake LES over hills."
 status: established
 aliases: [lesgo]
 tags: [software, les, wmles, wall-model, data-driven, reinforcement-learning]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-27T21:07:00Z
 ---
 
 # LESGO
@@ -21,7 +21,9 @@ of [Fowler et al. (2022)](/sources/fowler-2022.md) and the
 assessed by [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md), and the
 multi-agent [reinforcement-learning](/methods/reinforcement-learning-closure.md)
 wall model of [Vadrot et al. (2023a)](/sources/vadrot-2023.md), trained
-inside the code.
+inside the code. A modified version also carries the wind-turbine-wake LES
+over hills of Zhang et al. (2022e), with an immersed boundary for the
+terrain and an actuator disk for the rotor.
 
 ## Discretization
 
@@ -38,7 +40,15 @@ written $y$ here (the source uses $z$, the atmospheric convention of the code):
 
 Fowler et al. (2022, §5) describe it as a "mixed pseudo-spectral and centred
 finite-difference" code. Neither source states the time-integration scheme or
-the de-aliasing rule.
+the de-aliasing rule. [Zhang et al. (2022e)](/sources/zhang-2022-i.md), who run
+"a modified version" of the code (§II A), do: explicit second-order
+Adams–Bashforth time stepping, the 3/2 rule for de-aliasing and a projection
+method for the divergence-free velocity, with the same pseudo-spectral
+wall-parallel and second-order central wall-normal discretization. Their
+formulation omits the viscous term (high-Reynolds-number atmospheric flow)
+and drives the flow with a constant pressure gradient $u_\tau^2/L_y$
+($L_y$ the domain height, page-local), and puts the turbine and terrain
+forces in a body-force term.
 
 ## Closures available
 
@@ -52,8 +62,8 @@ the de-aliasing rule.
   $Re_\tau=5200$, for the equilibrium and the learned wall models alike (App. B,
   Fig. 18).
 - **Wall models**: the [equilibrium wall model](/methods/equilibrium-wall-model.md)
-  in algebraic log-law form, $\tau_w=\rho\big[\kappa U_{\mathrm{LES}}/\ln(h_{\mathrm{wm}}/y_0)\big]^2$
-  with $y_0=\nu\exp(-\kappa B)/u_\tau$ (page-local), $\kappa\approx0.4$,
+  in algebraic log-law form, $\tau_w=\rho\big[\kappa U_{\mathrm{LES}}/\ln(h_{\mathrm{wm}}/y_{0,\mathrm r})\big]^2$
+  with $y_{0,\mathrm r}=\nu\exp(-\kappa B)/u_\tau$ (page-local), $\kappa\approx0.4$,
   $B\approx5$, solved iteratively (Vadrot et al. 2023b, Eqs. 1–2); integral,
   slip and POD-inspired models; and, added by Vadrot et al., three published
   learned models (two supervised networks and one multi-agent
@@ -116,6 +126,42 @@ the de-aliasing rule.
   Convergence is checked by the linearity of the total (resolved plus
   modelled) stress, which "almost perfectly" overlaps the ideal line at
   $Re_\tau=10^8$ (Fig. 8).
+- **Wind-turbine wakes over two-dimensional hills** (Zhang et al. 2022e):
+  a neutral, pressure-driven atmospheric boundary layer at wind-tunnel
+  scale over a spanwise-uniform $\cos^2$ hill (steep, slope 0.4, separating;
+  gentle, slope 0.2), with the turbine diameter equal to the hub height and
+  to the steep-hill height (40 mm). This set-up takes the code beyond the
+  wall-model studies above and adds three modules:
+  - the [Smagorinsky model](/methods/smagorinsky-model.md),
+    $\nu_t=(C_s\Delta)^2\lvert\bar S\rvert$, with the Mason–Thomson wall
+    damping $\ell^{-2}=(C_{\mathrm{MT}}\Delta)^{-2}+[\kappa(y+y_{0,\mathrm r})]^{-2}$, $\ell=C_s\Delta$,
+    $C_{\mathrm{MT}}=0.16$ (page-local $\ell$, $C_{\mathrm{MT}}$, printed $C_0$; $y_{0,\mathrm r}$ the roughness length;
+    §II A–B, Eqs. 4–6);
+  - a log-law [equilibrium wall model](/methods/equilibrium-wall-model.md)
+    on the bottom boundary, $\tau_{w,i}=-\big[\kappa/\ln(y/y_{0,\mathrm r})\big]^2
+    \sqrt{\hat{\bar u}_1^2+\hat{\bar u}_3^2}\,\hat{\bar u}_i$ ($i=1,3$, kinematic),
+    evaluated with the velocity at the first grid point test-filtered at
+    $2\Delta$ (Eq. 3; the value of $\kappa$ is not printed);
+  - the [immersed boundary method](/methods/immersed-boundary-method.md) of
+    Chester, Meneveau & Parlange for the terrain on the Cartesian grid, and
+    the filtered actuator disk for the rotor with modified thrust
+    coefficient $C'_{\mathrm{Th}}=4/3$ (axial induction $a_{\mathrm i}=1/4$; see
+    [actuator line and actuator disk models](/methods/actuator-line-model.md)),
+    with a concurrent-precursor inflow (§II A, Eqs. 7–11).
+
+  Domain $30D\times6D\times6D$ (streamwise, vertical, spanwise; $D$ the
+  rotor diameter, page-local) on a uniform $192\times97\times64$ grid (6.4,
+  16.2 and 10.7 points per $D$), CFL 0.08, statistics over about 25 time
+  units $D/u_\tau$; the grid was chosen from four grids, the coarsest
+  ($160\times65\times48$) under-predicting the turbulence intensity in the
+  hill wake (§II B, App. A, Table I). The bare steep hill matches the
+  wind-tunnel mean velocity of Cao & Tamura, but the streamwise turbulence
+  intensity is under-predicted in the lower hill wake at the downwind foot,
+  which the authors attribute to the classical wall model in recirculating
+  flow (§III A, Fig. 4); the paper states the attribution without a test
+  of it. The flow results (wake
+  trajectories, power, mean-kinetic-energy budget) are on their Source
+  page.
 
 ## Cost data
 
@@ -134,7 +180,13 @@ cost excluded).
   stating the change of convention.
 - The three sources describe the code only in the passages summarized above;
   details of time advancement, de-aliasing and parallelization are not given,
-  and Vadrot et al. (2023a) give no training or run cost.
+  and Vadrot et al. (2023a) give no training or run cost. Zhang et al.
+  (2022e) state the time stepping and de-aliasing of their modified version;
+  none of the four sources describes the parallelization, and Zhang et al.
+  give no cost.
+- Zhang et al. (2022e) write the vertical coordinate as $z$ (atmospheric
+  convention); it is $y$ here. Their Fig. 8 legend labels the turbine
+  positions 3.5, 8.5 and 9.75 where the text gives $x_t/D=-5$, 0 and 1.25.
 - Vadrot et al. (2023a) call the spanwise agent spacing "vertical" (their
   $y$ is spanwise, $z$ wall-normal), and
   rewrite the equilibrium model in §III.B (Eq. 12) without the square of
@@ -145,3 +197,4 @@ cost excluded).
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §II A–B, Eqs. (1)–(2), Tables I–II (code, models, matching); §III; §IV D (cost); App. B, Figs. 17–18.
 - [Fowler et al. (2022)](/sources/fowler-2022.md) — §5, §5.1–5.2 (code, SGS model, grids, filtering, SSPG set-up).
 - [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — arXiv 2302.14391v3: §II.A (code, SGS and wall models available); §II.B.1–3, Eqs. (1)–(10), Table I (equilibrium model, Smarties coupling, matching heights, training set-up); §III.A–B, Eq. (12), Figs. 6, 8 (half channel, convergence).
+- [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A–B, Eqs. (1)–(11) (modified LESGO: time stepping, de-aliasing, Smagorinsky with wall damping, log-law wall stress, immersed boundary, actuator disk); §III A, Fig. 4 (hill validation); App. A, Table I, Fig. 22 (grid study).

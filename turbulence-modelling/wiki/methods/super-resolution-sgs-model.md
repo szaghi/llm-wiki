@@ -5,7 +5,7 @@ description: "An LES closure that reconstructs a fine-grid velocity field from t
 status: established
 aliases: [super-resolution SGS model, super-resolution-based subgrid scale model, unsupervised-supervised pipeline, CycleGAN SGS model, GAN super-resolution closure, vLES]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-27T15:47:00Z
+timestamp: 2026-10-27T21:12:00Z
 ---
 
 # Super-resolution subgrid-scale models
@@ -35,6 +35,32 @@ physics-informed losses for the subgrid of reactive LES that "gives good
 results in a priori and a posteriori tests", without details. See
 [neural-network SGS models](/methods/neural-network-sgs-model.md) for
 closures that output the stress itself.
+
+## The physics-informed super-resolution GAN in reacting LES (as reviewed by Ihme et al. 2022)
+
+[Ihme et al. (2022)](/sources/ihme-2022.md) (§4.1.4, Fig. 32) review the
+same line of work, the physics-informed enhanced super-resolution GAN
+(PIESRGAN) of Bode et al., as their example of a knowledge-guided remedy
+for the a posteriori instability of learned subgrid closures. As they
+describe it, the generator reconstructs the subfilter field from which the
+subgrid stresses follow; its loss combines an adversarial term, an
+accuracy term and a physics-informed term that penalizes violation of
+continuity; the generator uses the residual-in-residual dense blocks of
+the enhanced super-resolution GAN (ESRGAN); and the model was used both a
+priori and a posteriori in LES of an $n$-dodecane spray flame. They also
+cite a Wasserstein GAN that outperformed a CNN in capturing small-scale
+structures of scalar transport, set against a fully connected network that
+beat a variational autoencoder for joint scalar PDFs, and read the two as
+"mixed findings" that call for a common benchmark dataset (§4.1.4). In
+§5.4 they state that studies in turbulence modelling, citing the
+PIESRGAN work and the joint-PDF comparison ([279, 570]), "indicate
+improvements in generalizability, when using generative learning methods
+instead of supervised learning"; their own §4.1.4 account of the
+joint-PDF comparison reports that the variational autoencoder did *not*
+beat the fully connected network. The review gives no numbers of its own for these
+models (see
+[physics-informed neural networks](/methods/physics-informed-neural-network.md)
+for their classification of knowledge-guided losses).
 
 ## Why very coarse LES needs an unsupervised step
 
@@ -231,6 +257,8 @@ no net local backscatter, beats the conventional model.
   is a wavelength, $\lambda_z^+\approx60$, as §6.2.2 shows. App. B.1 refers
   to §2.2.2 for results that are in §5.3. The reference list prints the
   same arXiv number for Kingma & Ba (2014) and Gulrajani et al. (2017).
+  Ihme et al. (2022, §4.1.4) print "ERSGAN" for the network their
+  ref. [580] titles "ESRGAN".
 - **Notation.** The paper's $S_{ij}$ carries no factor $\tfrac12$ (twice the
   deviatoric strain), its overbar is the LES filter in §2 and a Reynolds
   average in §6, and its hat is the box filter in §3 and a Fourier
@@ -240,4 +268,5 @@ no net local backscatter, beats the conventional model.
 # Citations
 
 - [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §III (physics-informed GAN of Bode et al. cited, in passing).
+- [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.4, Fig. 32 (PIESRGAN reviewed: adversarial, accuracy and continuity losses, RRDB blocks, a priori and a posteriori spray-flame LES; generative against supervised findings); §5.4 (generalizability of generative methods).
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1 (fDNS against vLES, supervised super-resolution, Bode et al. cited); §2.1–2.2, Eqs. 2.1–2.22 (equations, cGAN, CycleGAN); §3, Eqs. 3.1–3.2, Figs. 3–4 (pipeline, stress extraction, clipping); §4, Tables 1–4, Eq. 4.1 (channel set-up, networks, data); §5, Figs. 6–21 (a priori); §6, Eqs. 6.1–6.15, Figs. 22–27 (a posteriori, budgets, mechanism); §7, Figs. 28–29 ($Re_\tau\approx2000$, CNN limits, pointwise inputs); §8; App. A–C, Figs. 30–37.

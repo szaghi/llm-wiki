@@ -5,7 +5,7 @@ description: "Pressure-driven flow between two parallel walls, periodic in the w
 status: established
 aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow, minimal channel, rough-wall channel]
 tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns, data-driven, compressible, immersed-boundary, rans, spectral-element]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-27T21:07:00Z
 ---
 
 # Turbulent channel flow
@@ -71,6 +71,8 @@ closures.
 | [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md), §5.1, Table 2 | flux reconstruction with and without an optimized modal filter, Mach 0.3 | 395 (bulk $Re=6800$) | $2\pi\delta\times2\delta\times\pi\delta$ | $24\times18\times18$ elements at $N=3$, $20\times15\times15$ at $N=4$, $16\times12\times12$ at $N=5$ (about 0.5 million DOF, 3/8 of the DNS resolution); $\Delta x^+\approx25$, $\Delta y^+\approx0.9$, $\Delta z^+\approx17$ |
 | [Qi et al. (2022)](/sources/qi-2022-b.md), §4.1, Tables 1, 6 | a priori and a posteriori test of a quasi-dynamic $k_{\mathrm{sgs}}$-equation model; compressible, isothermal walls | 220 (bulk $Re=3000$, Mach 1.5); about 450 (bulk $Re=4880$, Mach 3.0) | $4\pi\delta\times2\delta\times\tfrac43\pi\delta$ | DNS $900\times201\times300$; LES $64\times87\times64$, $48\times65\times48$, $48\times49\times48$ ($\Delta x^+=42.2$–57.5) at Mach 1.5; $86\times97\times86$ at Mach 3.0 |
 | [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §3.1, Tables 4–5 | immersed-boundary WMLES, Mach 0.2 | 5200 (bulk $Re=125{,}000$) | $12.8\delta\times2\delta\times4.8\delta$ | Cartesian with two refinement levels; finest 1.9M cells ($\Delta^+=270\times68\times270$) and 8.9M ($173\times41\times156$) |
+| [Huang et al. (2022c)](/sources/huang-2022-c.md), §III A, Table I | wall-modelled spectral-vanishing-viscosity implicit LES (Nektar++), incompressible, body-force driven | 550, 950, 2000 | $2\pi\delta\times2\delta\times\pi\delta$ | $12\times6\times10$ elements, "polynomial order $N_p=7$" as printed ($\Delta x^+\times\Delta y_1^+\times\Delta z^+=48\times20\times29$ at 550, $175\times75\times105$ at 2000); $14\times8\times12$ elements at $N_p=6$ (550) |
+| [Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.1, §3.2.2 | pseudo-DNS with RVE databases on very coarse meshes | bulk $Re=1.65\times10^5$ (1-D Poiseuille), $4\times10^4$ (Couette), $1.5\times10^5$ (2-D Poiseuille); particle-laden duct at $Re=57{,}000$ | 1-D and 2-D; duct $1.5\times0.5\times0.5$ m | 4 cells (Poiseuille), 3 cells (Couette); $36\times12\times12$ cells against a $300\times150\times50$ DNS (duct) |
 
 Reference DNS named by the sources: Kim, Moin & Moser at $Re_\tau=180$
 (Cao et al.); Moser, Kim & Mansour at $Re_\tau=590$ (Flad & Gassner;
@@ -527,6 +529,63 @@ to plotting accuracy in first- and second-order statistics, and the authors
 state that in the channel physical viscosity mitigates the pressure
 oscillations. See [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)
 and [kinetic-energy preservation](/properties/kinetic-energy-preservation.md).
+
+**Wall-modelled implicit LES on one spectral/hp mesh.**
+[Huang et al. (2022c)](/sources/huang-2022-c.md) (§III, Figs. 3–9) couple an
+algebraic log-law wall model, imposed as a Neumann condition, to a
+[spectral-vanishing-viscosity](/methods/spectral-vanishing-viscosity.md)
+[implicit LES](/definitions/implicit-les.md) in [Nektar++](/software/nektar-plus-plus.md)
+and run $Re_\tau=550$, 950 and 2000 on the same $12\times6\times10$-element
+mesh, with the matching height at the top of the first element ($0.224\delta$)
+and the grid spacings $\Delta x\simeq0.087\delta$, $\Delta y_1\simeq0.037\delta$,
+$\Delta z\simeq0.052\delta$ taken from the WMLES review of Larsson et al.
+(2016), as cited. The flow is driven by a constant body force from the
+balance $f_1\delta/U^2=(Re_\tau/Re_\delta)^2$ with the correlation
+$Re_\delta/Re_\tau=2.5\ln Re_\tau+5$ (Eqs. 18–19; $Re_\delta$ on the
+centreline velocity and $U$ the velocity scale of Eq. 18, page-local; $f_1$ the streamwise body force), run for at least
+250 flow-through times before averaging over more than 45. Against the DNS
+of del Álamo & Jiménez and Hoyas & Jiménez, as cited, the mean velocity is
+"almost not distinguishable" at 550 and over-predicted by at most 2 % at 950
+and 5.4 % at 2000; rms fluctuations and the Reynolds shear stress agree
+away from the interface but show a "parabolic" error near it (Figs. 4–6).
+At similar resolution the mesh with fewer, higher-order elements
+($12\times6\times10$ at $N_p=7$) gives better fluctuations and shear stress
+than $14\times8\times12$ at $N_p=6$ (§III E, Fig. 9), and the wall-modelled
+run is "as high as seven times" cheaper than wall-resolved SVV implicit LES
+at 550, with no timing data (§III A). Details on
+[wall-modelled LES](/methods/wall-modelled-les.md).
+
+**Channels resolved by a few cells: pseudo-DNS.**
+[Idelsohn et al. (2024)](/sources/idelsohn-2024.md) (§2.10.1, Table 1,
+Figs. 6–7) solve 1-D Poiseuille flow at $Re=1.65\times10^5$ on 4 cells and
+Couette flow at $Re=4\times10^4$ on 3 cells with internal and wall DNS
+databases as the only closure; the mean velocity "closely matches the DNS
+solution". In 2-D Poiseuille flow at $Re=1.5\times10^5$ the predicted
+friction factor is 0.014 against 0.016 from the Moody diagram. In the
+particle-laden part of the paper a duct at $Re=57\,000$ on $36\times12\times12$
+cells reproduces the DNS change of mean velocity and kinetic energy between
+laden and unladen flow, which a static-Smagorinsky LES on the same mesh
+misses (§3.2.2, Fig. 28). See
+[pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md).
+
+**The suddenly skewed channel as a three-dimensional test.** The
+boundary-layer review of [Devenport & Lowe (2022)](/sources/devenport-2022.md)
+(§5.4, Figs. 37–42) uses DNS of channels to which a spanwise pressure
+gradient is suddenly applied as the canonical non-equilibrium
+three-dimensional case: Moin et al. at $Re_\tau\approx200$ with a spanwise
+to streamwise pressure-gradient ratio of 100, and Lozano-Durán et al. (2020)
+at $Re_\tau\approx500$ with ratio 60, run to $t^+=432$, as cited. The
+spanwise flow first grows as a laminar Stokes layer; the direction of the
+shear stress then lags the direction of the mean velocity gradient by
+about $60t^+$, and the shear stress magnitude drops through a deficit of
+the pressure–strain source of $R_{22}$, peaking near the wall at
+$t^+\approx125$ and in the outer layer at $tu_\tau/\delta\approx0.6$. In the
+channel $\partial P^+/\partial x^+=1/Re_\tau$ (footnote 6; $P^+=\langle p\rangle/(\rho u_\tau^2)$ page-local), and Lozano-Durán
+et al. found a shear-stress reduction of at least 5 % once the ratio
+exceeds $0.03Re_\tau$, as the review cites them; the review proposes the
+inner-scaled spanwise gradient instead as the parameter for boundary layers
+(see [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)).
+The same kind of forcing is the test of Lozano-Durán & Bae (2023) below.
 
 **Wall models beyond the canonical channel.**
 [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) build their
@@ -1264,6 +1323,17 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
   model they recover needs $\Delta^2/12$, the second moment without the
   factor 2 *(compiler check, not in the sources)*; the coefficient is fixed
   dynamically, so the model is not affected.
+- **Printed forcing and resolution of Huang et al. (2022c).** Table I gives
+  $Re_\delta=11\,180$, 20 580 and 48 500 at $Re_\tau=550$, 950 and 2000,
+  whereas their Eq. (19), which the text says is used to estimate the body
+  force, gives 11 426, 21 034 and 48 005; the tabulated $f_1$ follow from
+  Eq. (18) with the tabulated $Re_\delta$ ($(550/11\,180)^2=2.42\times10^{-3}$)
+  *(compiler check, not in the sources)*. They write "polynomial order
+  $N_p=7$"; the printed spacings equal the element sizes divided by
+  $N_p-1$ ($2\pi\delta/12/6=0.087\delta$, $\pi\delta/10/6=0.052\delta$,
+  $0.224\delta/6=0.037\delta$) *(compiler check, not in the sources)*, which
+  the paper does not comment on. The conclusions call the comparison of the
+  two meshes "p-type refinement" and §III E calls it h-type refinement.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) print the coarse
   grid as $\delta/20\times\delta/80$ with $\Delta x^+=270$, $\Delta y^+=68$,
   while at $Re_\tau=5200$ these spacings give 260 and 65; the fine row
@@ -1326,3 +1396,6 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §3.1, Tables 4–5, Figs. 12–14.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.1; §3.4; §4.2.2 (review; cited results).
 - [Zhang et al. (2022)](/sources/zhang-2022-b.md) — §6.2, Fig. 18a (channel reference of a pressure decomposition).
+- [Huang et al. (2022c)](/sources/huang-2022-c.md) — §II C; §III A, Eqs. (18)–(19), Table I; §III B–E, Figs. 3–9; §IV.
+- [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.10.1, Table 1, Figs. 6–7; §3.2.2, Fig. 28.
+- [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §5.4, footnote 6, Figs. 37–42 (review; cited channel DNS).

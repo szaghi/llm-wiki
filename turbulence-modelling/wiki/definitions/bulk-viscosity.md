@@ -5,7 +5,7 @@ description: "The bulk (volume) viscosity multiplies the velocity divergence in 
 status: established
 aliases: [volume viscosity, dilatational viscosity, second viscosity, bulk viscous Reynolds number, viscous Prandtl number, Stokes hypothesis]
 tags: [compressible, dns, implicit-les, numerical-dissipation, mhd]
-timestamp: 2026-10-27T15:48:00Z
+timestamp: 2026-10-27T20:36:00Z
 ---
 
 # Bulk viscosity
@@ -72,6 +72,10 @@ diatomic gas), as stated, with a citation, by
 [Cao et al. (2022)](/sources/cao-2022.md), §3.1, and by
 [Zhao et al. (2023a)](/sources/zhao-2023.md), §5.1; for a
 diatomic gas $\mu_b=\tfrac4{15}\mu$ *(compiler check, not in the sources)*.
+[Cao et al. (2022b)](/sources/cao-2022-c.md), §IV A, print that value
+directly, "$\mu_b=4\mu/15$", with a citation, for the fourth-order
+gas-kinetic scheme of their implicit and explicit LES of the
+compressible Taylor–Green vortex.
 The weakly compressible
 [lattice Boltzmann](/methods/lattice-boltzmann-method.md) MHD scheme of
 [Foldes et al. (2023)](/sources/foldes-2023.md) likewise carries a bulk
@@ -94,6 +98,18 @@ second *(compiler check, not in the sources)*. The sources use both pieces:
   incompressible [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
   it is negligible (Cao et al. 2022, Fig. 5). See
   [numerical dissipation](/properties/numerical-dissipation.md).
+  [Cao et al. (2022b)](/sources/cao-2022-c.md), §IV A, Eqs. (15)–(16),
+  use the same three-part physical dissipation
+  $\varepsilon_{\mathrm{phy}}=\varepsilon_1+\varepsilon_2+\varepsilon_3$
+  (deviatoric-strain, bulk and pressure-dilatation terms) on $256^3$ LES of
+  the Taylor–Green vortex at $M=0.1$, $Re=1600$, with derivatives by
+  sixth-order central differences in post-processing. The bulk term
+  $\varepsilon_2$ is negligible against $\varepsilon_1$ and implicit and
+  explicit (Smagorinsky, Vreman, dynamic Smagorinsky) LES predict it alike
+  (Fig. 3); the residual $\varepsilon(E_k)-\varepsilon_{\mathrm{phy}}$, with
+  $\varepsilon(E_k)=-\mathrm dE_k/\mathrm dt$, is their a posteriori
+  estimate of the total subgrid dissipation (Eq. 22; see
+  [implicit LES](/definitions/implicit-les.md)).
 - The dilatational dissipation $\varepsilon_d$ with the factor $\tfrac43\mu$
   used for compressible [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)
   (Cao et al. 2022, §3.4) and for the supersonic Taylor–Green vortex by
@@ -366,6 +382,7 @@ similar configuration with a spectral-element dynamic model gave
 
 - [Beattie et al. (2025)](/sources/beattie-2025.md) — §1; §2.1, Eqs. (11)–(15), footnote 2; §2.2, Eqs. (16)–(30), footnotes 3, 5; §3.1, Eqs. (31)–(32), Fig. 1; §4, Table 1; §5, Eq. (54), Fig. 6; §6.1–6.2, Eqs. (56)–(57), Fig. 9; §7; §9.1; App. B, Eqs. (B1)–(B2); App. D, Figs. D1–D4; App. E; App. F, Eqs. (F1)–(F15), Figs. E1–E2, F1.
 - [Cao et al. (2022)](/sources/cao-2022.md) — §3.1, Fig. 5 (inherent bulk viscosity of the BGK scheme, bulk term of the energy budget); §3.4 (dilatational dissipation).
+- [Cao et al. (2022b)](/sources/cao-2022-c.md) — §IV A, Eqs. (14)–(16), Fig. 3 (inherent $\mu_b=4\mu/15$; bulk term $\varepsilon_2$ negligible in the $M=0.1$ Taylor–Green vortex); §IV C, Eq. (22) (budget residual as subgrid dissipation).
 - [Zhao et al. (2023a)](/sources/zhao-2023.md) — §5.1, Eqs. (22)–(23) (bulk term of the energy budget).
 - [Foldes et al. (2023)](/sources/foldes-2023.md) — §2.2, Eq. (2.12) (bulk viscosity in the lattice Boltzmann MHD stress).
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — §II.C, Eq. (11); §III.B.e, §III.B.h (artificial bulk viscosity of SD3DvisP).

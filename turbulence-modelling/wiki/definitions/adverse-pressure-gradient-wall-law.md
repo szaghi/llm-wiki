@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity law of adverse-pressure-gradient tur
 status: established
 aliases: [APG wall law, log-law/half-power-law wall law, extended wall law, half-power law, pressure-gradient wall law]
 tags: [boundary-layer, rans, wall-model, separated-flow]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-27T21:10:00Z
 ---
 
 # Wall law in adverse pressure gradient
@@ -103,6 +103,64 @@ Eqs. 17–20; page-local). Because Eq. (35) depends on $Re_\tau$ as well as on
 the pressure gradient, inner-layer self-similarity cannot be expected at
 equal $\beta_{RC}$ alone, in agreement with Bobke et al. and Vila et al. as
 Knopp cites them (§8).
+
+## The inner layer of equilibrium and non-equilibrium APG layers
+
+The review of [Devenport & Lowe (2022)](/sources/devenport-2022.md) gives
+the physics context of the law, with the Clauser parameter in the same form
+as above, $\beta_{RC}=(\delta^*/\tau_w)\,dP_e/dx$ with $P_e$ the edge
+pressure (§3, Eq. 3.1; footnote 3: Clauser used $\theta$, the
+$\delta^*$ form came later).
+
+- **Pressure-gradient parameters related.** The review prints the
+  sublayer pressure-gradient parameter of Nickels' sublayer-thickness model
+  as $-K_a(C_f/2)^{-3/2}=\beta_{RC}\delta/(Re_\tau\delta^*)$ with the
+  acceleration parameter $K_a=(\nu/U_e^2)\,dU_e/dx$ (§3.3, Fig. 17; Eq. 3.29;
+  page-local $K_a$, the source's $K$, renamed here because $K$ is Knopp's
+  slope coefficient above; $U_e$ the edge velocity). With
+  $dP_e/dx=-\rho U_e\,dU_e/dx$ and $C_f=2u_\tau^2/U_e^2$ both expressions
+  equal Knopp's $\Delta p_s^+$ *(compiler check, not in the sources)*.
+- **Mean profile.** An adverse gradient lowers the mean profile in the log
+  region (sublayer thinning), confirmed in DNS and LES but not in some
+  higher-Reynolds-number equilibrium experiments, a difference the review
+  attributes to measurement uncertainty; the wake strengthens with an
+  approximately half-power form; Monty et al. (as cited) show that the
+  Clauser-plot method for $u_\tau$ cannot be used for $\beta_{RC}>2$; Dixit
+  & Ramesh (as cited) propose a generalized Clauser chart with variable
+  offset and slope (§3.3). A favourable gradient does the opposite: it
+  thickens the sublayer, raises the log region and attenuates or removes
+  the wake.
+- **Outer-layer stresses.** The inner peak of $R_{11}$ stays near
+  $y^+=15$ while an outer peak grows near the inflection point of the mean
+  profile; the peak shear stress is about $2.6\tau_w$ at $\beta_{RC}=2$
+  (Bobke et al.) and $\rho R_{12}$ reaches about $16\tau_w$ in magnitude at
+  $\beta_{RC}=20$ (Skåre & Krogstad), both as cited (§3.3, Fig. 15).
+- **Equilibrium is rare and not unique.** Self-preserving APG layers need
+  a power-law edge velocity $U_e\propto|x-x_o|^m$ with constant
+  $\beta_{RC}$, and the relation $m=-\beta_{RC}/(H(1+\beta_{RC})+2\beta_{RC})$
+  (Rotta; Skote et al., as cited; $H$ the shape factor) makes the
+  $m$–$\beta_{RC}$ pairing depend on Reynolds number; compiled equilibrium
+  data scatter around Clauser's curve, $|m|$ levelling near $0.25$ (§3.1–3.2,
+  Table 1, Fig. 10; Eq. 3.28). Equilibrium APG layers depend on their
+  initial conditions (Bobke et al. LES at $m=-0.13$, $-0.16$, in which
+  $\beta_{RC}$ drifts downstream). Knopp (above, §8) states that inner-layer
+  self-similarity cannot be expected at equal $\beta_{RC}$ alone.
+- **Response of the inner layer.** In non-equilibrium APG layers the outer
+  region lags the local $\beta_{RC}$ — its stress increase is about half the
+  equilibrium value at $\beta_{RC}\approx2$ — while the inner region,
+  $y^+\lesssim25$, adapts almost immediately (Bobke et al. 2017,
+  $Re_\tau=340$–762, as cited; §4.2). The review's order-of-magnitude
+  response lengths are $2\theta/C_f\approx50\delta$ for the mean flow after
+  a change in wall condition, $2\theta/(C_f\beta_{RC})$ after a change in
+  pressure gradient, and more than $30\delta$ for the turbulence structure
+  once dissipation is allowed for (§4.1, Eqs. 4.1–4.7). Knopp's
+  eddy-turnover estimate below gives relaxation distances of about $\delta$
+  at $y/\delta=0.1$ and $2\delta$ at $0.2$ (§7.1).
+- **Near separation.** The outer region of strongly decelerated layers
+  scales as an embedded shear layer on the inflection-point velocity defect
+  and the vorticity thickness (Schatzman & Thomas; Balantrapu et al., as
+  cited), which the review reads as decoupling of the outer flow from the
+  wall (§4.2, Fig. 20).
 
 ## Equilibrium and history
 
@@ -250,6 +308,12 @@ it appears.
   flow, App. B).
 - The database is wind-tunnel mean-velocity profiles; few reach
   $\Delta p_s^+>0.02$ or $Re_\theta>30\,000$.
+- Devenport & Lowe (2022) print the rough-wall pressure-gradient parameter
+  of Coleman et al. as $K_r=(k_g/U_e)\,dU_e/dx\equiv-(C_f/4)(k_g/\delta^*)\beta_{RC}$
+  (Eq. 3.30; $k_g$ the geometric roughness height, page-local). From the
+  review's own definitions of $\beta_{RC}$ and $C_f$ the factor is $C_f/2$
+  *(compiler check, not in the sources)*; the review's Eq. (3.29) for $K_a$
+  checks the same way without discrepancy.
 
 # Citations
 
@@ -261,3 +325,4 @@ it appears.
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §3.3; conclusions (HAL accepted manuscript, lines 459–470, 516–519, 553–557).
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §3.3, Eq. (13); §4.2, Figs. 6–8.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §2.1, Eqs. (7)–(8), (11); §2.5.
+- [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §3.1–3.3, Eqs. (3.1), (3.28)–(3.30), Table 1, Figs. 10, 15, 17; §4.1, Eqs. (4.1)–(4.7); §4.2, Fig. 20.

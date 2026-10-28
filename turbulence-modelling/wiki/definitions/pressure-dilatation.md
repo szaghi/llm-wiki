@@ -5,7 +5,7 @@ description: "The pressure dilatation, the product of pressure and velocity dive
 status: established
 aliases: [pressure-dilatation, pressure–dilatation correlation, pressure dilatation work, pressure-dilatation work, pressure-dilatation term, SGS pressure dilatation, subgrid pressure dilatation, pressure dilatation dissipation rate]
 tags: [compressible, dns, les, rans, numerical-dissipation]
-timestamp: 2026-10-27T15:47:00Z
+timestamp: 2026-10-27T21:10:00Z
 ---
 
 # Pressure dilatation
@@ -62,6 +62,12 @@ exchange between kinetic and internal energy.
   dissipation (Cao et al. 2022, §3.1, Fig. 5); Volpiani (2024), at Mach
   0.085, uses it only as part of a "theoretical" dissipation rate checked
   against the incompressible enstrophy relation.
+  [Cao et al. (2022b)](/sources/cao-2022-c.md), §IV A, Eq. (16), Fig. 3,
+  find the same in implicit and explicit LES of the Taylor–Green vortex at
+  $M=0.1$, $Re=1600$ ($256^3$, fourth-order gas-kinetic scheme): the
+  pressure-dilatation part $\varepsilon_3=-\frac{1}{\rho_0|\Omega|}\int p\,\nabla\cdot\boldsymbol u\,dV$
+  of the physical dissipation is negligible, and all models predict it
+  alike.
 - **Compressible decay.** In decaying isotropic turbulence at turbulent Mach
   numbers 0.8 to 1.6, Cao et al. (2022), §3.4, Fig. 14, find that the
   pressure dilatation changes sign during the evolution and then stays
@@ -138,7 +144,34 @@ $$\Pi^{\mathrm{sgs}}_{\mathrm{pd}}=\overline{p\,\partial_ju_j}-\bar p\,\partial_
 
 as written by [Qi et al. (2022)](/sources/qi-2022-b.md), Eq. (3.6), after
 the exact compressible $k_{\mathrm{sgs}}$ equation of Chai & Mahesh that
-they cite.
+they cite. [Cao et al. (2022b)](/sources/cao-2022-c.md), §IV B, Eq. (17),
+list a subgrid pressure-dilatation term next to production, dissipation
+and diffusion in the transport equation of the a priori (box-filtered DNS)
+subgrid kinetic energy, referring to an earlier paper of theirs for its
+form; their analysis then uses only the production term (see
+[energy backscatter](/definitions/energy-backscatter.md)).
+
+**Normalization by the total dissipation.** In decaying compressible
+isotropic turbulence of a dense gas (initial $M_t=0.4$ and $0.8$),
+[Zhang et al. (2022d)](/sources/zhang-2022-h.md), §IV B, normalize the
+subgrid energy flux by the DNS dissipation of kinetic energy written as
+$\langle-p\,\nabla\cdot\boldsymbol u\rangle$ plus the viscous dissipation,
+i.e. with the pressure dilatation counted as part of it. Their filtered
+dense-gas equations (§II, Eqs. 15–23) also carry two pressure-related
+subgrid terms an ideal gas lacks in that form: a subgrid pressure, the
+filtered pressure minus the pressure of the filtered state (the
+Martin–Hou equation of state is nonlinear in density and temperature),
+and a subgrid pressure work, $\overline{pu_j}$ minus that pressure times
+$\tilde u_j$. A priori (Tables IV–V), the root-mean-square divergence of
+the subgrid pressure work is 2.357 at $M_t=0.4$ and 4.112 at $M_t=0.8$,
+that of the subgrid turbulent diffusion 7.582 and 5.563, the
+subgrid-pressure gradient 0.101 and 0.386 and the subgrid-stress
+divergence 1.657 and 1.434; the authors count the pressure work among
+the dominant terms and call the subgrid pressure an order of magnitude
+smaller than the other unclosed terms (§IV A, §V). Dropping all
+thermodynamic subgrid terms changes the a posteriori results little in
+these cases (§IV B, §V). See
+[large-eddy simulation](/definitions/large-eddy-simulation.md).
 
 **Correlation with the subgrid energy transfer.** Tonicello et al. (2022)
 use a DNS of a Mach 2.91 compression/expansion ramp (spectral difference,
@@ -197,7 +230,7 @@ protocol on
 - **Evidence.** All findings above are from single configurations: one
   shock-interaction DNS each (Yu et al.; Tonicello et al.), two LES of
   ramp interactions (Helm & Martín), one family of decaying runs (Cao et
-  al.). Tonicello et al.'s correlations are a priori, with no LES run.
+  al.), one dense gas in one decaying configuration (Zhang et al. 2022d). Tonicello et al.'s correlations are a priori, with no LES run.
 - **What a "small" term means.** Yu et al. and Helm & Martín judge the
   term against the other terms of the turbulent budget; Cao et al. against
   the total dissipation of the box. Neither comparison is made by the
@@ -209,6 +242,8 @@ protocol on
 - [Yu et al. (2022)](/sources/yu-2022-e.md) — §4, Eq. (4.1), Fig. 6 (turbulent pressure dilatation in an oblique shock interaction); §6.2, Fig. 11a (spectral pressure dilatation); §7.
 - [Qi et al. (2022)](/sources/qi-2022-b.md) — §3.1, Eqs. (3.1), (3.6); §3.2, Eq. (3.24), Fig. 3 (subgrid pressure dilatation and its model).
 - [Cao et al. (2022)](/sources/cao-2022.md) — §3.1, Fig. 5; §3.4, Fig. 14 (volume-averaged pressure dilatation in the Taylor–Green vortex and in compressible decay).
+- [Cao et al. (2022b)](/sources/cao-2022-c.md) — §IV A, Eq. (16), Fig. 3 (negligible $\varepsilon_3$ at $M=0.1$); §IV B, Eq. (17) (subgrid pressure dilatation in the a priori $k_{\mathrm{sgs}}$ equation).
+- [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §II, Eqs. (15)–(23) (subgrid pressure and pressure work of dense gas); §IV A, Tables IV–V; §IV B (normalization by $\langle-p\nabla\cdot\boldsymbol u\rangle$ plus viscous dissipation); §V.
 - [Zhao et al. (2023a)](/sources/zhao-2023.md) — §5.1, Eqs. (22)–(23) (pressure-dilatation term of the energy budget).
 - [Volpiani (2024)](/sources/volpiani-2024.md) — §3.2, Eq. (25) (pressure-dilatation term of the compressible dissipation budget).
 - [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §3.1.1, Eq. (105); §3.1.7, Figs. 17–18 (observed and node-wise pressure dilatation).

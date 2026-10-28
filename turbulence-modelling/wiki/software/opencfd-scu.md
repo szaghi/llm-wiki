@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "OpenCFD-SCU"
-description: "OpenCFD-SCU is an open-source CUDA-C/HIP finite-difference code for DNS of compressible wall-bounded turbulence, ported from the CPU code OpenCFD-SC; this page records its numerics, parallel and GPU design, reported performance and its 31-billion-point compression-ramp DNS."
+description: "OpenCFD-SCU is an open-source CUDA-C/HIP finite-difference code for DNS of compressible wall-bounded turbulence, ported from the CPU code OpenCFD-SC; this page records its numerics, parallel and GPU design, reported performance, its 31-billion-point compression-ramp DNS and a 5.5-billion-point Mach 6 swept-ramp DNS."
 status: established
 aliases: [OpenCFD-SC, OpenCFD SCU]
 tags: [software, dns, gpu, compressible, boundary-layer]
-timestamp: 2026-10-26T05:06:00Z
+timestamp: 2026-10-27T21:07:00Z
 ---
 
 # OpenCFD-SCU
@@ -19,7 +19,9 @@ HIP with AMD's HIPIFY so that the same source runs on NVIDIA and AMD GPUs;
 CUDA Fortran was abandoned because HIPIFY does not handle it, and API calls
 without an exact HIP counterpart are avoided (§4.1). It computes in double
 precision, the GPU doing essentially all floating-point work and the CPU
-only control and communication (§3). The version read is an author
+only control and communication (§3). [Zhang et al. (2022c)](/sources/zhang-2022-g.md),
+whose authors include Dang, Guo and Li of Dang et al., run it for a 5.5-billion-point DNS of a hypersonic
+swept compression ramp. The version read is an author
 manuscript titled "Part 1"; the companion "Part 2" it cites is not in its
 reference list.
 
@@ -100,6 +102,56 @@ $\Delta x^+=1.2$, $\Delta y^+=0.41$, $\Delta z^+=1.2$ at the reference
 station 35 mm upstream of the corner, shows Taylor–Görtler vortices behind
 the separation shock (§6.1, Figs. 22–25; qualitative).
 
+## Hypersonic swept-ramp DNS
+
+Zhang et al. (2022c) compute the
+[shock/turbulent-boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+of a symmetric swept compression ramp at $M_\infty=6$ (compression angle
+$34^\circ$, sweep $45^\circ$, unit Reynolds number $10^4$/mm, isothermal
+cold wall at 294 K against a free-stream 79 K) with the code. They cite it
+to the arXiv preprint 2209.15333 of Dang et al. and describe it as the
+heterogeneous-parallel version of OpenCFD-SC (§II A). Their numerics, as
+stated (§II A):
+
+- characteristic-based Steger–Warming flux splitting with a hybrid scheme
+  of the sixth-order optimized monotonicity-preserving OMP6 in smooth
+  regions and seventh-order WENO where the pressure gradient flags a shock
+  ("the pressure gradient is used as the shock recognizer", no threshold
+  printed), OMP6 for its "lower dissipation", WENO7 for its "better
+  robustness" (see [WENO and hybrid schemes](/methods/weno-scheme.md) and
+  [shock sensors](/definitions/shock-sensor.md));
+- eighth-order central viscous terms and third-order TVD Runge–Kutta, with
+  non-dimensional time steps 0.008 and 0.006 on the two meshes.
+
+OMP6 and seventh-order WENO are in the scheme library of Dang et al.
+(2022, §2), whose own hybrid combines OMP6, WENO-SYMBO and seventh-order
+linear upwind under a modified Jameson pressure sensor (above).
+
+| Quantity | Mesh 1 | Mesh 2 | Locator |
+|---|---|---|---|
+| Points (streamwise × wall-normal × spanwise) | $3800\times320\times1690$ ($2.06\times10^9$) | $4740\times480\times2420$ ($5.51\times10^9$) | §II B, Table I |
+| Corner-region $\Delta x^+$, $\Delta y^+_w$, $\Delta z^+$ | 2.92, 0.44, 2.19 | 1.94, 0.35, 1.46 | Table I |
+| First-cell height | 0.01 mm | 0.008 mm | Table I |
+
+Wall pressure is grid-converged; peak skin friction and heat flux are
+7%–10% lower on Mesh 1 at the same positions, so the authors call their
+peak-heating analysis "qualitative rather than quantitative" (§II C,
+§III B). The inflow is a laminar boundary layer tripped by a
+"multi-frequency sine wave disturbance" upstream (§II B), checked against
+the van Driest-transformed log law (intercept 5.7) and compressible-scaled
+fluctuations (§II C; see
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
+Wall-pressure samples cover about $1500\,\delta/U_\infty$. The
+low-frequency content at the separation line is compared with the unswept
+Mach 5 ramp of Erengil & Dolling (1991) and called consistent with their
+swept-ramp study of 1992 (§III C).
+
+Of the code's performance Zhang et al. state, without data and without
+naming the hardware, that one GPU runs "hundreds of times" faster than one
+CPU core of OpenCFD-SC, that weak scaling "can reach about 98.7% on 24 576
+GPUs", and that "considering the comprehensive energy efficiency" it
+"reduces the computing cost by more than 90%" (§II A).
+
 ## Qualifications
 
 Printed inconsistencies in the version read (author manuscript):
@@ -116,6 +168,14 @@ Printed inconsistencies in the version read (author manuscript):
 - Table 5 has no process count common to the CPU and GPU codes, so the
   "same number of MPI processes" speed-up cannot be read from it; Fig. 19
   uses the smallest CPU run as base.
+- Zhang et al. (2022c, §II A) write that the code "reduces the computing
+  cost by more than 90%"; Dang et al. (2022, §7) that it "saves up to 90%".
+  Neither gives the computation, so the two wordings are recorded side by
+  side.
+- Zhang et al. (2022c) print "exceeds 5 × 10^6" grid points in the
+  abstract against $5.51\times10^9$ in §II B–C, and call the trip a
+  "multi-frequency sine wave disturbance" in §II and an "upstream blowing
+  and suction disturbance" in §III C.
 - The MI60 is printed "M160" in several places; Eq. (12) prints
   $\partial T/\partial x$ in all three heat-flux terms; Eq. (13) prints the
   off-diagonal stress with $\partial u_j/\partial x_j$ in place of
@@ -125,3 +185,4 @@ Printed inconsistencies in the version read (author manuscript):
 # Citations
 
 - [Dang et al. (2022)](/sources/dang-2022.md) — §1; §2, Eqs. (1)–(45) (equations and numerics); §3–§4, Figs. 3–15 (parallel and GPU design); §5, Tables 5–7, Figs. 16–21 (validation, performance); §6.1, Figs. 22–25 (wide-span ramp); §7.
+- [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II A (code, numerics, performance claims); §II B–C, Tables I–II, Fig. 6 (grids, inflow); §III B–C (grid sensitivity of peaks, comparison data).

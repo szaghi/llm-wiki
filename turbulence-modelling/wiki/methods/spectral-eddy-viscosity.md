@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Spectral eddy viscosity"
-description: "Kraichnan's spectral eddy viscosity expresses the energy transfer across a cutoff as a wavenumber-dependent viscosity with a low-wavenumber plateau and a cusp near the cutoff; the sources use it to diagnose explicit and implicit LES, to build a modal plateau–cusp model for DG, and to compute it from the LES field itself."
+description: "Kraichnan's spectral eddy viscosity expresses the energy transfer across a cutoff as a wavenumber-dependent viscosity with a low-wavenumber plateau and a cusp near the cutoff; the sources use it to diagnose explicit and implicit LES, to build a modal plateau–cusp model for DG, to compute it from the LES field, and to close a subgrid-velocity model."
 status: established
-aliases: [Kraichnan spectral eddy viscosity, Chollet–Lesieur model, plateau–cusp eddy viscosity, EDQNM eddy viscosity]
+aliases: [Kraichnan spectral eddy viscosity, Chollet–Lesieur model, plateau–cusp eddy viscosity, EDQNM eddy viscosity, RNG spectral viscosity]
 tags: [les, sgs-model, eddy-viscosity, implicit-les, dg]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-27T20:36:00Z
 ---
 
 # Spectral eddy viscosity
@@ -140,8 +140,45 @@ gives the best fit to the DNS spectrum of the three strategies tested, but
 leaves the pressure–dilatation oscillations unchanged (§5, §5.1, Figs. 8,
 10).
 
+## RNG spectral viscosity inside a subgrid-velocity model
+
+[Hausmann et al. (2022)](/sources/hausmann-2022.md) (§II A–B) use a
+wavenumber-dependent viscosity for a different purpose: not to close the
+resolved equations but to replace the non-linear self-interaction
+("non-linear relaxation") of the *subgrid* velocity in their
+[subgrid velocity enrichment](/methods/subgrid-velocity-enrichment.md)
+model, which keeps only the linear sweeping and straining by the LES field.
+They cite Laval et al. for the observation that dropping the non-linear
+relaxation overestimates the energy spectrum and the intermittency of the
+subgrid field, and that a turbulent viscosity "compensates these two
+effects essentially". The viscosity is the renormalization-group (RNG)
+form they cite from Canuto & Dubovikov, printed as (Eq. 11)
+
+$$\nu^{\mathrm{RNG}}_t(k)=\Big(\nu^2-C_\nu\int_k^\infty q^{-2}E(q)\,dq\Big)^{1/2}-\nu,$$
+
+with $\nu^{\mathrm{RNG}}_t$ and $C_\nu$ page-local, $C_\nu=2/5$ the
+analytical value (0.4 in their standard set-up) and $q$ a dummy
+wavenumber. It is spatially uniform and acts on each Fourier mode of the
+subgrid velocity like the molecular viscosity, through a damping
+$-(\nu+\nu^{\mathrm{RNG}}_t)\lvert\boldsymbol k_m\rvert^2$ on the mode
+coefficients (Eqs. 15–16). The authors describe it as larger at small
+wavenumbers and tending to zero at large ones, mimicking the removal of
+energy towards smaller scales. In forced isotropic turbulence the
+velocity-gradient statistics of the enriched field change very little when
+$C_\nu$ is varied from 0.1 to 1.6 (§IV A, Fig. 10d). Hausmann et al. (§II A,
+§IV A) also note that a viscosity cannot reproduce the contribution of the
+non-linear term to the strain–rotation relation (the skewness of the PDF of
+the second invariant), which their enriched field under-predicts.
+
 ## Qualifications
 
+- **Sign of the RNG viscosity as printed.** With the minus sign inside the
+  root of Hausmann et al.'s Eq. (11), the root is at most $\nu$, so
+  $\nu^{\mathrm{RNG}}_t\le0$, and imaginary once the integral exceeds
+  $\nu^2/C_\nu$ *(compiler check, not in the sources)*; this disagrees with
+  their own text, which calls the viscosity positive, largest at small
+  wavenumbers and energy-removing (§II A–B). The printed sign is recorded
+  as printed.
 - $9.21=0.267\times34.5$ *(compiler check, not in the sources)*: Eq. (C.3)
   of Flad & Gassner keeps only the cusp part of Eq. (C.2) and drops the
   plateau term although the model is named "plateau–cusp"; Eqs. (C.2)–(C.3)
@@ -158,3 +195,4 @@ leaves the pressure–dilatation oscillations unchanged (§5, §5.1, Figs. 8,
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §2.2, Eqs. (16)–(23), (27)–(29); §6.3, Fig. 11; §6.4, Eq. (55), Figs. 16–19.
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — §3.1; §5, Fig. 8; §5.1, Fig. 10; App. C, Eqs. (C.1)–(C.5).
 - [Domaradzki (2024)](/sources/domaradzki-2024.md) — §1; §2.2, Eqs. (2.24)–(2.27); §3.3, Fig. 10.
+- [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §II A–C, Eqs. (11), (15)–(16); §IV A, Fig. 10d.

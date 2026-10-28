@@ -5,7 +5,7 @@ description: "CharLES is Cascade Technologies' compressible, low-dissipation, se
 status: established
 aliases: [charLES, Cascade charLES]
 tags: [software, les, wmles, kinetic-energy-preserving, gpu]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-27T21:07:00Z
 ---
 
 # CharLES
@@ -138,6 +138,39 @@ code (implementation not optimized, no hardware stated).
   [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md) with a
   boundary-layer-conforming grid of 5 points per boundary-layer thickness.
 
+## In an industrial review
+
+[Mani & Dorgan (2023)](/sources/mani-2023.md), an MIT–Boeing perspective
+on aerospace CFD, do not run the code but cite it at three places:
+
+- **GPUs.** A RANS solution of a full aircraft at low angle of attack is
+  typically obtained within eight hours, and GPUs could cut this time by an
+  order of magnitude, as FUN3D and "Cascade Technologies's charLES code"
+  show (§3, citing the vendor and Goc et al. 2021).
+- **Flux.** Among the low-dissipation fluxes for scale-resolving simulation
+  they name the kinetic-energy- and entropy-preserving (KEEP) algorithm and
+  write that Goc et al. (2021) "used charLES with a KEEP scheme and
+  demonstrated accurate prediction of the maximum lift coefficient" of the
+  High-Lift Prediction Workshop configuration (§4.4); compare the flux
+  description under Discretization above.
+- **WMLES of high-lift aircraft.** Their Fig. 6 (§4.1.2, adapted from
+  Lehmkuhl et al. 2019; caption credits Lehmkuhl et al. 2019 and Goc et al.
+  2021) sets $C_L(\alpha)$ of the Third High-Lift Prediction Workshop
+  from RANS submissions against wall-modelled LES with two codes, Alya
+  (finite elements, 10 and 65 million degrees of freedom) and CharLES
+  (finite volumes, 12 and 35 million); the §4.1.2 text calls the Alya
+  prediction of pre- and post-stall lift accurate and says nothing of the
+  CharLES curves. Their Fig. 12b (§4.5.2, adapted from Goc et
+  al. 2020) shows WMLES of the [JAXA Standard Model](/benchmarks/jaxa-standard-model.md)
+  on 36 million cells (nacelle off) and 42 million (nacelle on). The authors
+  write that the WMLES of Goc et al. (2020, 2021, 2022) "predicted the abrupt
+  lift break near the stall", but that "the overprediction of lift at lower
+  angles of attack show that further investment and research are needed";
+  for routine industrial use they ask for mesh-independent quantities of
+  interest within wind-tunnel uncertainty and for automating, or
+  eliminating, the choice of the exchange location between LES and wall
+  model (§4.5.2). See [wall-modelled LES](/methods/wall-modelled-les.md).
+
 ## Qualifications
 
 - Goc et al. (2021, §4) estimate the 157-million-cell case at the scaling limit
@@ -149,7 +182,12 @@ code (implementation not optimized, no hardware stated).
   Agrawal et al. 2022, Griffin et al. 2023) include Moin among the authors,
   three of them Bose (Cascade Technologies, the code's developer); Lozano-Durán & Bae
   (2023) do not, but Lozano-Durán co-authored Lozano-Durán et al. (2022). No
-  source outside this author group uses the code so far.
+  source outside this author group uses the code so far; Mani & Dorgan
+  (2023) only relay results of Goc et al. and Lehmkuhl et al. in a review.
+- Mani & Dorgan (2023, §4.5.2) report lift over-prediction at lower angles
+  of attack in the JSM WMLES of Goc et al. (2020, Fig. 12b); Goc et al.
+  (2021) report maximum lift within five lift counts of experiment (see
+  Results above). The two statements are recorded side by side.
 - The equilibrium model of Lozano-Durán et al. (2022) reads the first
   off-wall cell centre; the one of Lozano-Durán & Bae (2023, Eq. 3.1) the
   second off-wall point.
@@ -161,3 +199,4 @@ code (implementation not optimized, no hardware stated).
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §IV (solvers and meshes); §VIII (wall model); §IX, Tables IV–V (GPU cost).
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §4 (WMLES set-up, artificial bulk viscosity, cost).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.4–2.6 (stencil, solver-consistent training, cost); §3.1–3.2, Eq. (3.1) (scheme, Voronoi grids, closures); §4 (results); §5.
+- [Mani & Dorgan (2023)](/sources/mani-2023.md) — §3 (GPU potential); §4.4 (KEEP scheme in charLES); §4.1.2, Fig. 6; §4.5.2, Fig. 12 (WMLES of HiLiftPW-3 and JSM, industrial needs).

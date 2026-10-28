@@ -5,7 +5,7 @@ description: "Artificial-viscosity shock capturing adds a dissipative term, swit
 status: established
 aliases: [artificial viscosity, localized artificial diffusivity, LAD, von Neumann–Richtmyer artificial viscosity, viscous pressure, Persson–Peraire artificial viscosity, entropy-stable artificial viscosity]
 tags: [shock-capturing, numerical-dissipation, dg, compressible, implicit-les, entropy-stable]
-timestamp: 2026-10-27T15:28:00Z
+timestamp: 2026-10-27T21:10:00Z
 ---
 
 # Artificial-viscosity shock capturing
@@ -279,6 +279,11 @@ use a nonlinear compact interpolation; and
 dissipation competitive with filtering in cost but in need of a sensor, and
 stabilize under-resolved flux reconstruction with an optimized modal filter
 ([explicit modal filtering](/methods/explicit-modal-filtering.md)).
+Two chunk-11 sources add no artificial viscosity:
+[Cheng et al. (2023)](/sources/cheng-2023-b.md), §2.2, capture shocks
+with a bounded (TVD) reconstruction alone (see [WENO](/methods/weno-scheme.md)),
+and [Fureby & Nilsson (2023)](/sources/fureby-2023.md), §3.4, name
+localized artificial diffusivity only as an alternative they do not use.
 
 ## Shock-capturing tests
 
@@ -389,3 +394,5 @@ Fig. 6). Findings:
 - [Deng et al. (2022)](/sources/deng-2022.md) — §1 (artificial viscosity among hybrid shock-capturing options).
 - [Ma et al. (2022)](/sources/ma-2022.md) — §1 (artificial diffusivity among nonlinear compact approaches).
 - [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §1 (artificial dissipation against filtering: cost and sensor).
+- [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §2.2 (shock capturing by a TVD reconstruction, no artificial viscosity; passing).
+- [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.4 (localized artificial diffusivity named, not used; passing).

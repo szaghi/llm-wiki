@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Temporally developing mixing layer"
-description: "A periodic shear layer between two counter-flowing streams that transitions and then grows linearly in momentum thickness: the inhomogeneous a posteriori test of subgrid models calibrated by ensemble Kalman filtering and of neural-operator surrogates of LES, against filtered DNS on grids of 64×64×32 to 64×128×128."
+description: "A periodic shear layer between two counter-flowing streams that transitions and then grows linearly in momentum thickness: the inhomogeneous a posteriori test of gradient-type and ensemble-Kalman-calibrated subgrid models and of neural-operator surrogates of LES, against filtered DNS on grids of 64×64×32 to 128×128×64."
 status: established
 aliases: [temporal mixing layer, temporally evolving mixing layer, TML, free-shear mixing layer, temporally evolving free-shear layer]
 tags: [benchmark, les, sgs-model, data-driven, neural-network, dns]
-timestamp: 2026-10-26T15:57:00Z
+timestamp: 2026-10-27T20:40:00Z
 ---
 
 # Temporally developing mixing layer
@@ -24,7 +24,7 @@ $$\theta=\int\Big[\tfrac14-\Big(\frac{\langle u\rangle}{\Delta U}\Big)^2\Big]dy$
 (registry $\theta$, applied to the shear layer; averages over $x$ and $z$)
 growing linearly in time. Time is scaled by $\tau_\theta=\theta_0/\Delta U$
 (page-local), $\theta_0$ the initial momentum thickness. The flow is
-inhomogeneous in $y$ and unforced; all three sources use it as their
+inhomogeneous in $y$ and unforced; all four sources use it as their
 second a posteriori test after
 [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md),
 and Wang et al. (2023c) attribute the gradient model's poorer spectrum
@@ -36,7 +36,7 @@ always against filtered DNS (fDNS).
 
 ## Configurations in the sources
 
-All three sources use $\Delta U=2$ and $\theta_0=0.08$, so
+The three incompressible sources use $\Delta U=2$ and $\theta_0=0.08$, so
 $\tau_\theta=0.04$, and an initial streamwise velocity
 $$u=\frac{\Delta U}{2}\Big[\tanh\frac{y}{2\theta_0}-\tanh\frac{y+L_y/2}{2\theta_0}-\tanh\frac{y-L_y/2}{2\theta_0}\Big]+\lambda_1$$
 with Gaussian noise $\lambda_i\sim\mathcal N(0,0.01)$ (page-local, not the Taylor microscale) on each component
@@ -59,10 +59,33 @@ perturb with a digital filter
 | Time window | $t/\tau_\theta=50$ to 800 | to $t/\tau_\theta\approx650$ | 250 network steps, about $t/\tau_\theta=50$–250 |
 | Data | — | 200 DNS runs × 90 snapshots every $10\tau_\theta$; 10 new runs for testing | 200 DNS runs (2000 training cases of 11 fields); 5 new runs for testing |
 
-All three solve the incompressible equations pseudo-spectrally with
+These three solve the incompressible equations pseudo-spectrally with
 second-order Adams–Bashforth time stepping. The initial
 $Re_\theta=\Delta U\theta_0/\nu$ of Wang et al. is 320 *(compiler check,
 not in the sources)*.
+
+A fourth source runs a **weakly compressible** variant from the same
+group. [Wang et al. (2022)](/sources/wang-2022-j.md), §V, Table IV, solve
+the Favre-filtered compressible equations at $M=0.2$, $Re=2000$, $Pr=0.7$,
+$\gamma=1.4$ with eighth-order finite differences, the reference velocity
+being $\Delta U/2$. The domain is $8\pi\times8\pi\times4\pi$ (streamwise,
+cross-stream, spanwise), periodic with numerical-diffusion buffer zones near
+the cross-stream boundaries; the initial tanh profile is that of Wang et
+al. (2023c) with $\theta_0=0.08$ and width constant $C_\theta\approx1.05$
+(page-local); the DNS grid is $512\times512\times256$ with $\Delta
+t=0.0005$. The initial perturbations come from a digital filter
+([inflow turbulence generation](/methods/inflow-turbulence-generation.md))
+of width $\Delta_d$ (page-local) equal to 8, 16, 32 or $64h_{\mathrm{DNS}}$;
+the linear-growth region of $\theta$ is "clearly longer and more concrete"
+for $\Delta_d=8$ and $16h_{\mathrm{DNS}}$, which become the benchmarks
+(Fig. 8). The LES uses a Gaussian filter of width $\Delta=8h_{\mathrm{DNS}}$,
+a filter-to-grid ratio of 2 and $128\times128\times64$ points, and starts
+from the filtered and coarse-grained DNS field. A second configuration
+(App. B) is a cube of side 59, about four wavelengths of the most unstable
+mode, seeded with digital-filter noise ($\Delta_d=16h_{\mathrm{DNS}}$)
+plus two- and three-dimensional linear-stability modes of wavelengths
+$L/4$, $L/2$ and $L$ ($L$ the box side, page-local), at a vorticity-thickness
+Reynolds number of 50, DNS $256^3$ and LES $64^3$.
 
 ## What the case tests
 
@@ -91,6 +114,54 @@ $C_{\mathrm f}\approx0.01$ (Fig. 11, Table IV). Against fDNS:
 
 See [gradient model](/methods/gradient-model.md) and
 [scale-similarity and mixed models](/methods/scale-similarity-model.md).
+
+**A constant-coefficient spatial gradient model.**
+[Wang et al. (2022)](/sources/wang-2022-j.md), §V, Figs. 9–16, run their
+SGM-7-19, a structural model built from products of first-order filtered
+velocity gradients on a seven-point stencil with Taylor-derived constant
+coefficients (recorded on the [gradient model](/methods/gradient-model.md)
+page), against the dynamic Smagorinsky (DSM) and dynamic mixed (DMM)
+models and [implicit LES](/definitions/implicit-les.md), with filtered DNS
+as reference:
+
+- *Momentum thickness.* DSM captures the transitional region but deviates
+  in the linear-growth region, DMM is worse than DSM, SGM-7-19 is best,
+  and ILES also follows the filtered DNS (Fig. 9).
+- *Initial perturbation scale.* All LES agree better with filtered DNS
+  when $\Delta_d=16h_{\mathrm{DNS}}$ than when $\Delta_d=8h_{\mathrm{DNS}}$,
+  i.e. when the initial perturbation scale exceeds the LES filter width,
+  so that filtering the initial field does not remove the perturbations
+  (Figs. 9–13, Conclusions).
+- *Spectra and energy.* ILES does not recover the filtered spectrum (the
+  two-dimensional mid-plane spectrum and the streamwise spectrum at
+  $t=30$) despite its good $\theta$ and over-predicts the mid-plane
+  kinetic energy; the explicit models do better on the spectrum, SGM-7-19
+  closest; SGM-7-19 and DMM predict the mid-plane kinetic energy best and
+  SGM-7-19 the streamwise kinetic energy of the whole domain (Figs.
+  10–13).
+- *Increments, stress and structures.* SGM-7-19 matches the PDFs of
+  spanwise velocity increments at $r/\Delta=1$ to 8, including the large
+  separations, where in forced isotropic turbulence all models coincide;
+  DSM and DMM over-predict the Reynolds shear stress $\langle u'v'\rangle$
+  across the layer and give larger vortex structures at $Q=0.6$ (Figs.
+  14–16).
+- *Linear-stability seeding (App. B).* SGM-7-19 again gives the best
+  $\theta$, DSM under-predicts and DMM over-predicts the growth; DSM
+  over-dissipates the vorticity rollers and DMM produces strip-shaped
+  noise (Figs. 17–20).
+- *Cost.* The SGS modelling time per step on 32 cores is 0.245 s (DSM),
+  0.575 s (DMM) and 0.425 s (SGM-7-19), printed as 1, 2.3 and 1.7 relative
+  to DSM (Table V).
+
+Across the two gradient-type studies on this case, the plain
+[gradient model](/methods/gradient-model.md) of Wang et al. (2023c)
+over- then under-predicts $\theta$, while the higher-order spatial
+gradient model of Wang et al. (2022) gives the best $\theta$ of its
+comparison; the two use different grids, filters and models, so the
+results are side by side, not a ranking. In both studies the dynamic
+Smagorinsky model departs from the filtered DNS in $\theta$: it delays the
+transition in Wang et al. (2023c) and deviates in the linear-growth region
+in Wang et al. (2022).
 
 **Neural-operator surrogates of LES.** Two sources replace the LES solver
 by an autoregressive [neural operator](/methods/neural-operator-les-surrogate.md)
@@ -152,9 +223,21 @@ errors are not comparable.
 - The three configurations share $\Delta U$, $\theta_0$ and the domain
   size but differ in viscosity, DNS resolution, filter and LES grid, and
   each compares its own models only.
+- [Wang et al. (2022)](/sources/wang-2022-j.md) define the momentum
+  thickness in Favre form with the same prefactor $\tfrac14$ (Eq. 29),
+  with velocities normalized by $\Delta U/2$; at constant density and with
+  $U=\langle u\rangle/(\Delta U/2)$ the integrand $\tfrac14(1-U)(1+U)$
+  equals $\tfrac14-(\langle u\rangle/\Delta U)^2$, the form defined above,
+  so the prefactor belongs to that normalization *(compiler check, not in
+  the sources)*. The paper does not state the
+  reference length of $Re=2000$, and states the backscatter clipping of
+  SGM-7-19 for the isotropic-turbulence runs only. Their ILES of the
+  mixing layer runs on the eighth-order central scheme, and its
+  dissipation mechanism is not described.
 
 # Citations
 
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — arXiv v3: §IV, Eqs. 23–27, Tables III–IV, Figs. 11–17.
 - [Li et al. (2024)](/sources/li-2024.md) — arXiv v2: §II, Eqs. 7–11; §V B, Eqs. 33–35, Table II, Figs. 14–21.
 - [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §3.2, Table 3, Eqs. 18, 23, Figs. 11–14; §5.1, Table 6.
+- [Wang et al. (2022)](/sources/wang-2022-j.md) — §V, Eqs. 28–33, Table IV, Figs. 8–16; §VI, Table V; App. B, Figs. 17–20.
