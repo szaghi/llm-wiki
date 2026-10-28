@@ -152,7 +152,7 @@ as printed; no item is unparseable.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-26), cited further in chunks 5–6. This source is cited on:
+Chunk 4 (2026-10-26), cited further in chunks 5, 6, 14. This source is cited on:
 
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
@@ -167,3 +167,4 @@ Chunk 4 (2026-10-26), cited further in chunks 5–6. This source is cited on:
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Nektar++](/software/nektar-plus-plus.md)
 - [OpenFOAM](/software/openfoam.md)
+- [PyFR](/software/pyfr.md)

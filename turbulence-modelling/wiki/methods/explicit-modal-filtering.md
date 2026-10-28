@@ -5,7 +5,7 @@ description: "Explicit filtering, in the modal space of a high-order element or 
 status: established
 aliases: [explicit modal filter, modal filtering, solution filtering, dynamic explicit modal filter, DEMF, self-tuning dynamic explicit modal filter, STDEMF, local modal filter, LMF, explicit filtering regularization, relaxation filtering, explicit differential filter, Najafi-Yazdi filter, entropy-adaptive filter, improved adaptive filter]
 tags: [les, filtering, implicit-les, dg, numerical-dissipation, sgs-model]
-timestamp: 2026-10-28T06:48:00Z
+timestamp: 2026-10-28T17:00:00Z
 ---
 
 # Explicit modal filtering as an LES closure
@@ -402,6 +402,34 @@ filter by Wang (2024) in the results below, and the subcell alternative
 on the [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)
 page.
 
+**The filter options of a flux-reconstruction code.** The software paper
+of [PyFR](/software/pyfr.md), [Witherden et al. (2025)](/sources/witherden-2025.md),
+§3.2, lists four stabilizations for the under-resolved runs that the
+authors identify with implicit LES ("uDNS, also referred to as ILES"),
+where flux reconstruction suffers aliasing-driven instabilities (as
+cited): periodic modal filtering, described as conservative and
+inexpensive but indiscriminate, with free parameters (strength,
+frequency, cut-off modes); anti-aliasing by a quadrature-based
+least-squares projection of the flux, stated (citing an earlier
+comparison) to give results "markedly superior" to modal filtering at
+about twice the run time in three dimensions with a projection degree one
+above the solution; Persson–Peraire-type
+[artificial viscosity](/methods/artificial-viscosity-shock-capturing.md);
+and the positivity-preserving entropy filter of Dzanic & Witherden. In
+PyFR the entropy filter is applied only to elements that violate positive
+density, positive pressure or a minimum-entropy bound, the bound being the
+minimum discrete entropy of the element and its Voronoi neighbours at the
+previous step; it "does not explicitly require any problem-dependent
+parameterisation", apart from a fixed small tolerance that is not varied
+between problems. On the supersonic Taylor–Green vortex (Mach 1.25,
+$Re=1600$, $16^3$–$128^3$ hexahedra, $N=3$) its enstrophy is "in
+excellent agreement" with the $2048^3$ TENO reference, and its
+dilatational dissipation is closer to that reference than the
+artificial-viscosity and subcell solvers at equal resolution (§5.1,
+Figs. 11–12; see
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
+and the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)).
+
 ## Results
 
 **Relaxation filtering against split forms and subgrid models.** Volpiani
@@ -616,3 +644,4 @@ page.
 - [Gao et al. (2023)](/sources/gao-2023.md) — §3.1.3, Eqs. (40)–(48); §4.1–4.2, Figs. 14, 16; §5.
 - [Kang & Lee (2024)](/sources/kang-2024.md) — §II.B, Eq. (9).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2; §6.2.
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §3.2 (modal filtering, anti-aliasing, artificial viscosity and entropy filtering in PyFR); §5.1, Figs. 11–12 (entropy filter on the supersonic Taylor–Green vortex).

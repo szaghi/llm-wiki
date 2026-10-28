@@ -4,8 +4,8 @@ title: "Temporally developing mixing layer"
 description: "A periodic shear layer between two counter-flowing streams that transitions and then grows linearly in momentum thickness: the inhomogeneous a posteriori test of gradient-type and ensemble-Kalman-calibrated subgrid models and of neural-operator surrogates of LES, against filtered DNS on grids of 64×64×32 to 128×128×64."
 status: established
 aliases: [temporal mixing layer, temporally evolving mixing layer, TML, free-shear mixing layer, temporally evolving free-shear layer]
-tags: [benchmark, les, sgs-model, data-driven, neural-network, dns]
-timestamp: 2026-10-28T07:02:00Z
+tags: [benchmark, les, sgs-model, data-driven, neural-network, dns, combustion]
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Temporally developing mixing layer
@@ -240,6 +240,23 @@ attributes to the incompressible solver and a simple kinematic model
 Ashurst–Kerstein eddy energy and is reported on a compressible planar and
 a supersonic scalar mixing layer (Table 2, Eq. 16; §2.3).
 
+**Reacting mixing layers as a priori databases.** The review of
+[conditional source-term estimation](/methods/conditional-source-term-estimation.md)
+by [Salehi et al. (2024)](/sources/salehi-2024.md), §3.1.1, Fig. 21,
+cites DNS of temporal mixing layers of heptane at 60 and 80 atm (Bellan
+and coworkers; turbulent Reynolds numbers 1000 and 2000, grids from
+$480\times530\times288$ to $768\times804\times460$, one-step chemistry, a
+Peng–Robinson equation of state) on which the closure was tested a priori
+with 1, 8 and 22 ensembles: with the DNS probability density the
+estimation performs very well, with a presumed β-PDF it errs
+significantly, and in the doubly conditional variant the joint-PDF model
+is by far the largest error source. The same review describes the first a
+priori test of the method, on a DNS of Vervisch ($128\times64\times64$,
+one-step chemistry, top-hat filter $16\times8\times8$, four ensembles),
+as a shear-free temporal mixing layer (Figs. 19–20); the mixing layers
+of this page are sheared; see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
+
 **Mixing-layer statistics as a reference elsewhere.** Statistics of free
 shear layers also serve as a reference outside this configuration.
 [Yu et al. (2023)](/sources/yu-2023.md) identify a mixing layer embedded
@@ -304,3 +321,4 @@ enters their comparison.
 - [Yu et al. (2023)](/sources/yu-2023.md) — §5.1, Eq. 5.1, Fig. 14; App. A, Fig. 19 (free-mixing-layer data as reference for a mixing layer embedded in a boundary layer).
 - [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §3.1; §4.2 (historical).
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — Table 1, Eq. 6, Fig. 8; §2.3, Table 2, Eq. 16; §2.3.4, §3.1.
+- [Salehi et al. (2024)](/sources/salehi-2024.md) — §3.1.1, Figs. 19–21 (cited reacting DNS, review).

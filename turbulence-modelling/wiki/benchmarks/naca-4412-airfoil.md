@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "NACA 4412 airfoil"
-description: "The cambered NACA 4412 airfoil near maximum lift, chord Reynolds number about 1.6 million at 12°–14° with trailing-edge separation: a test of wall models in WMLES and of RANS, DES and RSM-based hybrids whose lift and drag errors stay large, with a debated experimental basis; at 200,000 a PINN boundary-layer case."
+description: "The cambered NACA 4412 airfoil near maximum lift, chord Reynolds number about 1.6 million at 12°–14° with trailing-edge separation: a test of wall models in WMLES and of RANS, DES and RSM-based hybrids whose lift and drag errors stay large, with a debated experimental basis; at 200,000 a PINN boundary-layer case, at 400,000 and 5° a surveyed DNS."
 status: established
 aliases: [NACA4412, NACA 4412, NACA-4412, Wadcock airfoil]
 tags: [benchmark, wmles, wall-model, hybrid-rans-les, separated-flow, boundary-layer]
-timestamp: 2026-10-27T11:00:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # NACA 4412 airfoil
@@ -99,6 +99,24 @@ gradient, is also on
 tests the network's reconstruction from boundary data, not a turbulence
 model's prediction.
 
+**A DNS at moderate incidence and an EARSM comparison, as surveyed.**
+[Luckring & Rizzi (2024)](/sources/luckring-2024.md), §2.4.1.1, Fig. 43,
+cite the DNS of Hosseini et al. at $M=0.04$, $Re_c=4\times10^5$ and
+$\alpha=5^\circ$, run in [Nek5000](/software/nek5000.md) on about 3.2
+billion grid points, with tripping at 10% chord and about ten chord
+lengths of advection, for about 35 million core-hours over about six
+months; they report that the mean velocity of an explicit algebraic
+Reynolds-stress RANS in the EDGE code correlates with it (see
+[explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)
+and [direct numerical simulation](/definitions/direct-numerical-simulation.md)).
+Its incidence, $5^\circ$, is below the $12^\circ$–$14^\circ$ of the
+near-maximum-lift cases above.
+
+**Flow control.** The review of [Fang et al. (2026)](/sources/fang-2026.md),
+§3.4, cites a Bayesian optimization of wall-normal blowing and suction on
+a NACA 4412 wing profile among data-driven control studies, without
+conditions or results.
+
 **What the two reviews report.** Bose & Park report that wall models
 capture the trailing-edge $C_p$ plateau; Heinz reports that the force
 predictions of RANS-based and hybrid methods remain far from the data.
@@ -107,7 +125,7 @@ integrated forces) and different method classes.
 
 ## Qualifications
 
-- Both reviews compile published results; no source on this page runs a
+- The reviews compile published results; no source on this page runs a
   new simulation of the airfoil near stall, and neither prints the force
   coefficients of the WMLES studies it cites.
 - [Heinz (2020)](/sources/heinz-2020.md) gives the RANS evaluation's grid
@@ -123,3 +141,5 @@ integrated forces) and different method classes.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §3, Fig. 5; §4.3, Fig. 7a; §5.
 - [Heinz (2020)](/sources/heinz-2020.md) — §5.4, Fig. 15 (compiled results).
 - [Eivazi et al. (2022)](/sources/eivazi-2022.md) — §3, Table 1, Fig. 5 (arXiv v1).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1.1, Fig. 43 (survey, cited DNS).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §3.4 (cited control study, review).

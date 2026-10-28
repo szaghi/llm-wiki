@@ -112,18 +112,23 @@ bundle's notation.
 
 ## Status
 
-**Chunk 13 completed 2026-10-28 (commit pending, night protocol):** 20
+**Chunk 14 completed 2026-10-28 (staged, awaiting commit):** 20 papers of
+2024–2026; 280 of 307 ingested, 183 concept pages plus the registry, 13050
+bibliography entries, deep lint done, no contradiction opened (ten open).
+Chunk 15 follows.
+
+**Chunk 13 committed 2026-10-28 (4f3f17b):** 20
 papers of 2023–2024; 260 of 307 ingested, 177 concept pages plus the
 registry, 11784 bibliography entries, the third whole-bundle deep lint
 done, ten contradictions open. Chunk 14 follows.
 
-**Chunk 12 completed 2026-10-28 (commit pending, night protocol):** 20
+**Chunk 12 committed 2026-10-28 (570e06b):** 20
 papers of 2023–2024; 240 of 307 ingested, 170 concept pages plus the
 registry, 10882 bibliography entries, deep lint done, nine contradictions
 open. Chunk 13 follows (the whole-bundle deep lint is due with it, at 260
 ingestions).
 
-**Chunk 11 completed 2026-10-27 (commit pending, night protocol):** 20
+**Chunk 11 committed 2026-10-28 (21ae14c):** 20
 papers of 2022–2024; 220 of 307 ingested, 165 concept pages plus the
 registry, 10358 bibliography entries, deep lint done, seven contradictions
 open. Chunk 12 follows.

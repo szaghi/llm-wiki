@@ -5,7 +5,7 @@ description: "The small-scale (fluctuation) dynamo amplifies magnetic fields by 
 status: hypothesis
 aliases: [fluctuation dynamo, turbulent dynamo, saturated dynamo, tearing-limited dynamo, reconnection-limited dynamo]
 tags: [dynamo, mhd, astrophysics, reconnection, dns, compressible]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Small-scale turbulent dynamo
@@ -481,6 +481,11 @@ large-scale shape and can mask the peak migration (App. B).
   through a tuned subgrid model (Liu et al. 2022); Beattie et al. (2025) run
   isothermal MHD at $Re=Rm=1000$, $Pm=1$, $M_t\approx1$. None addresses fold
   tearing or the $Rm$ scaling of the saturated reversal scale.
+- **Named as a future application only.** [Fang et al. (2025)](/sources/fang-2025.md),
+  §5, name dynamo problems among the future applications of their
+  [Xcompact3d](/software/xcompact3d.md) MHD solver; their MHD Taylor–Green
+  vortex runs with an imposed uniform field (§4.1; see
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)).
 - **Printed slips, Beattie et al. (2025).** §5.2 reads a growth rate
   $\Gamma_E t_0\approx1.4$ as an e-folding "every $1.4t_0$"; the magnetic
   energy then e-folds every $t_0/1.4\approx0.71t_0$ *(compiler check, not in
@@ -529,3 +534,4 @@ large-scale shape and can mask the peak migration (App. B).
 - [Martin-Alvarez et al. (2022)](/sources/martinalvarez-2022.md) — §1; §2; §3.1–§3.2, Figs. 6–7; §3.3.1, Eq. (5), Fig. 8; §3.3.4; §3.3.5, Figs. 12–14; §4; App. B.
 - [Liu et al. (2022)](/sources/liu-2022.md) — §1; §5.1.1; (subgrid model: §2.2, Eq. 14).
 - [Beattie et al. (2025)](/sources/beattie-2025.md) — §1, Eqs. (1)–(3), footnotes 3–4, 6; §3.2, Eqs. (33)–(42); §4, Table 1; §5.1–5.2, Figs. 5–8; §7, Eq. (58), Figs. 10–12; §8, Fig. 13; §9.2; App. C, Eqs. (C1)–(C16); App. D.
+- [Fang et al. (2025)](/sources/fang-2025.md) — §4.1 (MHD Taylor–Green vortex with an imposed field); §5 (dynamo problems named as a future application).

@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, coarse-grained simulation, CGS, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-28T07:07:00Z
+timestamp: 2026-10-28T17:03:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -334,6 +334,45 @@ can carry.
      representatives of under-resolved, ILES-like flow, in which the
      scheme's dissipation is the only one (see
      [eigensolution analysis](/methods/eigensolution-analysis.md)).
+   - **Under-resolved DNS "also referred to as ILES".** The software
+     paper of [PyFR](/software/pyfr.md),
+     [Witherden et al. (2025)](/sources/witherden-2025.md), §3.2,
+     identifies the two names and attributes the need for stabilization to
+     the aliasing-driven instabilities of flux reconstruction under
+     under-resolution (as cited); the code offers modal filtering,
+     quadrature-based anti-aliasing, artificial viscosity and entropy
+     filtering (see [explicit modal filtering](/methods/explicit-modal-filtering.md)).
+   - **Second-order Godunov finite volumes on an adaptive grid.**
+     [Kimmel et al. (2025)](/sources/kimmel-2025.md), §II.A, §III.A, call
+     their PeleC runs of a Mach 4, $24^\circ$ compression ramp ILES
+     because the grid, isotropic by the block-structured
+     [mesh-adaptation](/methods/mesh-adaptation.md) constraint
+     ($\Delta x^+=\Delta y^+=\Delta z^+=11$, first point at $y^+=5.5$),
+     is coarser than DNS, which they state needs $y^+\le1$ at the first
+     point, and no subgrid or wall model is used: the second-order
+     Godunov-type finite-volume scheme with slope reconstruction supplies
+     the dissipation. The accuracy of this ILES is not assessed in the
+     paper but referred to the authors' conference paper (see
+     [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+   - **"Wall-resolved LES" and "ILES" for one code.** The survey of
+     concentrated-vortex aerodynamics of
+     [Luckring & Rizzi (2024)](/sources/luckring-2024.md), §3.1.1.2,
+     §3.1.2.1, calls the high-order runs of the AFRL code FDL3DI
+     "wall-resolved LES" in figure captions and "high-order implicit
+     Large Eddy Simulation (ILES)" in the text, for laminar separation
+     bubbles, transition, tip vortices and shear-layer substructures of
+     delta wings (see [delta-wing vortex flows](/benchmarks/delta-wing-vortex-flow.md)).
+   - **A laminar simulation on a fine grid.**
+     [De Cosmo et al. (2025)](/sources/decosmo-2025.md), §1, define iLES
+     as dropping the sub-filter stress, so that it "reduces to a laminar
+     simulation on a sufficiently fine grid, adopting a timestep small
+     enough", and state that this refinement is "the only characteristic
+     that distinguishes the iLES from a Very Large-Eddy Simulation (VLES)
+     or from a laminar simulation". They recall its origin in Boris's
+     monotone (flux-corrected transport) algorithms and, after Grinstein et
+     al., PPM and TVD schemes, whose artificial viscosity "mimics the
+     physical production of entropy across a shock-wave" (as cited);
+     their own scheme is under usage 2.
 2. **Designed numerical regularization.** The numerical dissipation is
    built to act as a model. Vicente Cruz & Lamballais (2023, §5.1) use the
    [implicit spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
@@ -480,6 +519,40 @@ can carry.
    deconvolution supply all the stabilization and the subgrid effect. The
    method is on [scale-similarity model](/methods/scale-similarity-model.md)
    and [explicit modal filtering](/methods/explicit-modal-filtering.md).
+
+   **Implicit SVV with a wall-modelled immersed boundary.**
+   [Yan et al. (2024)](/sources/yan-2024.md) (§II A, App. B1) use the same
+   implicit SVV in [Xcompact3d](/software/xcompact3d.md), its single
+   parameter $\nu_0/\nu$ set between 15 and 300 by case, and couple it with
+   a wall-modelled diffused-interface immersed boundary for bluff bodies;
+   the scheme, its closed-form coefficients and the cost comparison with
+   second-order Smagorinsky LES are on
+   [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md).
+
+   **A calibrated low-dissipation Roe flux.** De Cosmo et al. (2025, §1,
+   §2.2, Eqs. 5–8) port a second-order cell-centred unstructured
+   finite-volume URANS code (Zephyrus; Roe flux, U-MUSCL reconstruction
+   with a Van Leer limiter) to wall-resolved iLES, arguing that most
+   second-order compressible finite-volume schemes are too dissipative for
+   it and that their dissipation "does not scale correctly" as the Mach
+   number goes to zero (as cited). They rescale the eigenvalues of the
+   Roe matrix when the dissipation matrix is assembled: with
+   $\lambda^{\mathrm R}_{1,5}=u_n\mp c$ the acoustic eigenvalues and
+   $\lambda^{\mathrm R}_{2,3,4}=u_n$ those of the entropy and vorticity
+   waves (page-local; $u_n$ the face-normal velocity, $c$ the sound speed),
+   $$\tilde\lambda^{\mathrm R}_{1,5}=c_{\mathrm{diss}}\,\lambda^{\mathrm R}_{1,5},\qquad \tilde\lambda^{\mathrm R}_{2,3,4}=0,$$
+   ($c_{\mathrm{diss}}$ page-local), a hybrid in their words of the
+   jump-vector low-Mach fixes (Thornber et al., Rieper) and the
+   whole-matrix scaling (Amirante & Hills, Camarri et al., Bui), all as
+   cited. The linear-wave dissipation is dropped on the stated ground that
+   those waves "do not introduce significant numerical dissipation" in
+   shock-free flow; the acoustic dissipation is kept as "essential for the
+   stability". Against Bui and Amirante & Hills, who set the scaling to the
+   smallest stable value, they calibrate $c_{\mathrm{diss}}$ on decaying
+   isotropic turbulence and fix $c_{\mathrm{diss}}=0.001$ for all later
+   cases (§2.2, §3.2). No stability or modified-equation analysis is
+   given. Results are under the evidence below and on
+   [numerical dissipation](/properties/numerical-dissipation.md).
 3. **Implicitly filtered LES.** The filter is the one induced by grid and
    discrete operator, whatever closure is added. Beck & Kurz (2023, §I)
    use the term in this sense: the filter width and shape are
@@ -767,6 +840,27 @@ interpretation they flag as needing further work).
   capture a significant part of the small-scale dynamics", and the
   discontinuous finite-element schemes (modal DG, spectral difference,
   DGSEM) "seem to be efficient in that respect".
+- **Calibrated low-dissipation Roe flux, second order.** De Cosmo et al.
+  (2025, §3) calibrate on the Comte-Bellot–Corrsin decay
+  ($32^3$–$128^3$): with $c_{\mathrm{diss}}=0.001$ the spectra follow the
+  $-5/3$ slope at $t^*=98$ and depart from it only near the grid Nyquist
+  wavenumber, less on finer grids, close to an OpenFOAM
+  [WALE](/methods/wale-model.md) LES that is "slightly less dissipative"
+  (Fig. 4). Wall-resolved channel flow at $Re_\tau=200$ ($Re_b=3173$,
+  $Ma=0.143$, $\Delta x^+=15$, $\Delta y^+=7.5$ at the centreline,
+  $\Delta z^+=10$, first cell at $y^+=0.5$, about $1.2\times10^6$ cells)
+  overestimates $u^+$ by 2% at $y^+=100$ against DNS at $Re_\tau=180$,
+  which the authors read as marginal over-dissipation (§3.3, Figs. 8–10;
+  see [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
+  On a channel with a two-Gaussian bump on the lower wall (Banchetti et
+  al., as cited; not the Boeing [Gaussian bump](/benchmarks/gaussian-bump.md))
+  the suction peak of $C_p$ is 6% and the peak $C_f$ 4% above the DNS,
+  with $\langle v'v'\rangle$ and $\langle w'w'\rangle$ slightly low, which
+  they attribute to the dissipation added by mesh non-orthogonality and
+  non-uniformity (§3.4, Figs. 14–16). They conclude that a second-order
+  finite-volume scheme with this fix suffices for iLES of these cases and
+  that higher-order or lower-dissipation schemes (SLAU, k-exact) are "not
+  proved essential" (§4).
 - **High-order DG against finite volume in supersonic turbulence.**
   Cernetic et al. (2024, §5–6, Figs. 5, 8, 10–11) compare modal DG with a
   second-order finite-volume scheme at equal cell count.
@@ -1286,6 +1380,15 @@ interpretation they flag as needing further work).
   trace it to the explicit interpolation step. On the T106A cascade even
   its *linear* version captures the leading-edge separation that the
   nonlinear version misses (§3.3, Fig. 12).
+- **The smallest stable dissipation is too small.** De Cosmo et al.
+  (2025, §2.2, §3.2, Fig. 5) find on $64^3$ at $t^*=98$, over
+  $c_{\mathrm{diss}}\in\{10^{-4},5\times10^{-4},10^{-3},2\times10^{-3},10^{-2}\}$,
+  that values above $10^{-3}$ steepen the inertial range and lower the
+  energy, while values below flatten the spectrum and pile up energy near
+  the Nyquist wavenumber: "the non-linear wave amplitudes in the Roe
+  scheme cannot be simply set to the smallest value that guarantees
+  stability, as this would spoil the energy decay in the inertial range".
+  The channel and bump are run only with the calibrated value.
 - **Linearly unstable continuity equation.** [Svärd (2022)](/sources/svard-2022.md)
   (§3, §5.2) recalls that entropy-conservative and kinetic-energy-preserving
   split fluxes are not locally linearly stable, and shows on a 2-D
@@ -1460,8 +1563,50 @@ assumption in LES practice that all or most of the required subgrid
 dissipation is imparted by the SGS model". Details on
 [numerical dissipation](/properties/numerical-dissipation.md).
 
+[Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) (Abstract,
+§3.3.2) report the same drift in a compressible LES with a dynamic
+Smagorinsky model and a central/third-order WENO hybrid: on fine grids
+"the importance of explicit LES modeling decreases as most scales are
+resolved and the WENO scheme provides the dissipation implicitly"; on the
+Mach 3 cylinder at $Re=750\,000$ the dynamic, constant and no subgrid
+model give the same reattachment length, while the wall treatment changes
+it (see [WENO](/methods/weno-scheme.md) and
+[wall-modelled LES](/methods/wall-modelled-les.md)). On coarse grids the
+authors attribute the loss of channel-flow accuracy to the implicit
+dissipation of the WENO part (§3.2). In high-order modal DG,
+[Alberti et al. (2025)](/sources/alberti-2025-b.md) (§3.1.1, §3.1.3, §4)
+find that SA-based DDES and IDDES without the low-Reynolds-number
+correction settle in LES mode at an equivalent Smagorinsky constant of
+about 0.2 on coarse grids but about 0.01 on fine ones, "ILES-like"; at
+roughly equal degrees of freedom in channel flow at $Re_\tau=400$ the
+mean profiles of three polynomial degrees are "spaced far apart", the
+numerics outweighing the model, and they conclude that on fine grids
+high-order DG behaves "more like a wall-modeled ILES rather than a simple
+WMLES" (model details on
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+
 ## Qualifications
 
+- **Printed forms (De Cosmo et al. 2025).** Eq. (5) prints the Roe flux
+  as $\tfrac12(F_L+F_R)-\tfrac12|A_{\mathrm{Roe}}|(\Phi_L-\Phi_R)$ and,
+  in the same line, as $\tfrac12F_{\mathrm{cen}}-\tfrac12|A_{\mathrm{Roe}}|\Delta\Phi$,
+  which agree only if $F_{\mathrm{cen}}$ denotes $F_L+F_R$, left
+  undefined; Eq. (6) writes the dissipation term with $A_{\mathrm{Roe}}$
+  instead of $|A_{\mathrm{Roe}}|$ in the middle member and without the
+  factor $\tfrac12$ in the right member. Whether the low-dissipation fix
+  was active in their isentropic-vortex order test (slope 1.904) is not
+  stated (§3.1).
+- **Test scope of the calibrated flux (De Cosmo et al. 2025).** The paper
+  calibrates $c_{\mathrm{diss}}$ on one HIT decay at one Reynolds number,
+  runs the two wall-bounded cases at $Re_\tau=200$ with the same value and
+  reports no sensitivity of them to it; the channel reference is DNS at
+  $Re_\tau=180$.
+- **What Kimmel et al. (2025) call ILES.** The isotropic cells of
+  $\Delta x^+=11$ put the first point at $y^+=5.5$, against the
+  $y^+\le1$ that the authors state for DNS (§III.A, Eq. 7); for the
+  accuracy of PeleC on such boundary layers and for mesh convergence the
+  paper refers to the group's AIAA paper 2024-2735 (ref. 23; §II.A,
+  §III.A).
 - **What Vermeire (2024) compares with.** §5 says the SD7003 lift, drag
   and pressure distributions "converged to reference DNS data", while
   §4.3 describes the references as compressible high-order simulations
@@ -1728,3 +1873,10 @@ dissipation is imparted by the SGS model". Details on
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (stabilization dissipation in LES with discontinuous schemes; cited DG, HDG and FR ILES).
 - [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §3 (cited ILES of a swept oblique shock reflection).
 - [Hu et al. (2024)](/sources/hu-2024.md) — §1 (numerical and modelling errors inseparable in implicitly filtered LES).
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §3.2 (under-resolved DNS identified with ILES; four stabilizations of PyFR).
+- [Kimmel et al. (2025)](/sources/kimmel-2025.md) — §II.A, §III.A, Eq. (7) (PeleC ILES of a Mach 4 ramp: resolution, no subgrid or wall model).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §3.1.1.2, §3.1.2.1 (FDL3DI runs called both wall-resolved LES and high-order ILES).
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §1 (definition, history, low-dissipation schemes for iLES); §2.2, Eqs. (5)–(8) (Roe eigenvalue rescaling); §3.1–3.4, Figs. 2, 4–5, 8–10, 14–16 (vortex, HIT calibration and sensitivity, channel, bump); §4.
+- [Yan et al. (2024)](/sources/yan-2024.md) — §II A, App. B1 (implicit SVV in Xcompact3d with a wall-modelled immersed boundary).
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — Abstract; §3.2; §3.3.2, Fig. 12 (explicit SGS model loses importance on fine grids; WENO dissipation).
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §3.1.1, Fig. 5; §3.1.3, Table 4, Fig. 14; §4 (DES in high-order DG drifting to ILES-like eddy viscosity).

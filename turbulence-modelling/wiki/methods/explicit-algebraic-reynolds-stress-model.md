@@ -5,7 +5,7 @@ description: "RANS closures that give the Reynolds-stress anisotropy as an expli
 status: established
 aliases: [EARSM, EASM, explicit algebraic stress model, explicit algebraic Reynolds stress model, BSL-EARSM, non-linear eddy-viscosity model, generalized eddy-viscosity hypothesis, stochastic EARSM, SBL-SpaRTA EARSM]
 tags: [rans, reynolds-stress-model, eddy-viscosity, data-driven, symbolic-regression, turbomachinery]
-timestamp: 2026-10-28T06:41:00Z
+timestamp: 2026-10-28T16:59:00Z
 ---
 
 # Explicit algebraic Reynolds-stress models
@@ -91,7 +91,21 @@ backward-facing step $Re=13\,700$), and their learned single-term models,
 C, Figs. C.9–C.11). Other uses of EARSMs in the bundle are reference
 runs: the drag of the [Ahmed body](/benchmarks/ahmed-body.md) and the DG
 RANS of the [RAE 2822 airfoil](/benchmarks/rae-2822-airfoil.md) (see those
-pages).
+pages). On the 35° Ahmed body, the RANS-EARSM of Guilmineau et al. quoted by
+[Wang et al. (2024d)](/sources/wang-2024-k.md) gives a total drag
+coefficient of 0.437 against 0.279 measured, the largest of the listed
+simulations (IDDES 0.346, DES 0.316, RANS 0.300; Table I, as cited).
+
+**Naming and classification.** [Luckring & Rizzi (2024)](/sources/luckring-2024.md)
+class the algebraic Reynolds-stress model with the second-moment closures,
+not with the eddy-viscosity ("first-order") models, and state that ARSM,
+EARSM and EASM "all refer to the same thing", existing in "various versions
+… in two-equation form" (§2.4.1, footnote 5); the differential form is on
+the [Reynolds-stress model](/methods/reynolds-stress-model.md) page. As an
+example of RANS against DNS they cite an EARSM computation of the
+[NACA 4412](/benchmarks/naca-4412-airfoil.md) in the EDGE code whose mean
+velocity correlates with the DNS of Hosseini et al. at $Re_c=4\times10^5$,
+$\alpha=5^\circ$ (§2.4.1.1, Fig. 43, as cited).
 
 **The quadratic commutator term in a shock interaction (a priori).**
 [Yu et al. (2023b)](/sources/yu-2023-b.md) (§IV, Eqs. 17–19, Fig. 17)
@@ -329,3 +343,5 @@ et al. 2022; §4.5, Eq. 17).
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1, §2.1 Eqs. 2–13, §2.2 Eq. 14, §3 Eqs. 16–32, §4.2 Table 2 Figs. 1–7, §5, Apps. A–C.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3, Eq. 2, Fig. 7.
 - [Yu et al. (2023b)](/sources/yu-2023-b.md) — §IV, Eqs. 17–19, Fig. 17 (a priori quadratic commutator term in a Mach 5 shock interaction); Eqs. 22–26, Fig. 20 (nonlinear heat-flux terms); §V (linear SST kept in RANS).
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — Table I (Ahmed-body drag of a cited RANS-EARSM).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1 and footnote 5 (ARSM = EARSM = EASM, classification with second-moment closures); §2.4.1.1, Fig. 43 (EDGE EARSM against NACA 4412 DNS, as cited).

@@ -5,7 +5,7 @@ description: "Decaying MHD turbulence is a selective decay whose power laws foll
 status: established
 aliases: [selective decay, Orszag–Tang vortex, Orszag-Tang decay, decaying Hall MHD, Saffman invariant, Hosking invariant, Saffman helicity invariant, Loitsyansky invariant, reconnection-controlled decay, inverse transfer]
 tags: [mhd, astrophysics, plasma, isotropic-turbulence, reconnection]
-timestamp: 2026-10-28T07:08:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Decaying MHD turbulence and its invariants
@@ -271,6 +271,56 @@ et al. the Hall and MHD components of the cascade rate (§4, Figs. 3, 7), in
 different set-ups (Orszag–Tang decay without mean field against random-phase
 initial modes at initial sonic Mach numbers 0.25–0.5).
 
+**Orszag–Tang decay as a finite-difference code test.**
+[Fang et al. (2025)](/sources/fang-2025.md) validate the MHD module of
+[Xcompact3d](/software/xcompact3d.md) (sixth-order compact differences,
+induction equation in skew-symmetric form; the magnetic field is
+corrected by solving $\nabla^2\psi_B=\nabla\cdot\boldsymbol B^*$, with
+$\boldsymbol B^*$ the field after the time step and $\psi_B$ a page-local
+potential, and setting $\boldsymbol B=\boldsymbol B^*-\nabla\psi_B$,
+Eqs. 12–13, which the paper attributes to the divergence cleaning of
+Dedner et al.) on two- and three-dimensional
+Orszag–Tang decays in periodic boxes of side $2\pi$, in a non-dimensional
+form whose Lorentz force carries the Stuart number $N_{\mathrm{St}}$
+(page-local; the source's $N$, not the polynomial degree), and with
+$Re=Rm=N_{\mathrm{St}}$ (§2.1, §3.1–3.2, Eqs. 17, 20; $Pm=1$):
+
+- **2D**, $\boldsymbol u=2(-\sin y,\ \sin x,\ 0)$,
+  $\boldsymbol B=2(-\sin y,\ \sin2x,\ 0)$, $Re=50$, $N_x=32$ to 512. The
+  kinetic energy is minimal at $t=1.2$ and the magnetic energy maximal at
+  $t=1.0$, the total decays monotonically, and the energies agree with
+  Orszag & Tang (1979) even at $N_x=32$; the magnetic enstrophy
+  ($\tfrac12\langle\boldsymbol J\cdot\boldsymbol J\rangle$) is mesh
+  independent above $N_x=128$. Peak kinetic/magnetic enstrophies at
+  $t=1.0$ are 101.06/46.70 at $N_x=512$ and 100.93/46.44 at 128, against
+  100.82/46.59 at 512 of the reference the paper labels Dellar (2002) and
+  100.39/46.49 at 1024 of the lattice Boltzmann solver of De Rosis et al.
+  (2021); the authors conclude that Xcompact3d converges at lower
+  resolution than the references (Table 3, Fig. 5). After the correction
+  step the magnetic divergence at $t=0.6$ is noise of order
+  $10^{-13}$ (Fig. 4).
+- **3D**, $\boldsymbol u=2(-\sin y,\ \sin x,\ 0)$,
+  $\boldsymbol B=0.8(-2\sin y+\sin z,\ 2\sin2x+\sin z,\ \sin x+\sin y)$,
+  $Re=17.54$, $N_x=32$ to 256. Kinetic-energy errors against $N_x=256$
+  are below 4% on the coarsest grid and about $10^{-4}$ at 128, enstrophy
+  errors an order of magnitude larger; the peak current density
+  $\max|\boldsymbol J|$ is 19.9230, 22.4334, 22.7469 and 22.7571 for
+  $N_x=32$, 64, 128, 256, against 22.7439 from a pseudo-spectral solver at
+  128, and the authors judge their $N_x=64$ value "still superior" to the
+  lattice Boltzmann data at 128 (Figs. 6–8).
+
+The three-dimensional initial fields of Fang et al. and of Foldes et al.,
+both called Orszag–Tang, share the velocity and the field amplitude 0.8
+but differ in the field: Fang et al. print $-2\sin y+\sin z$ and
+$2\sin2x+\sin z$ for the first two components, Foldes et al.
+$-2\sin2y+\sin z$ and $2\sin x+\sin z$. The sources do not comment on
+the difference.
+Fang et al. also propose a decaying case with an imposed uniform field,
+the MHD Taylor–Green vortex, in which kinetic and magnetic energy exchange
+almost completely at an observed frequency $1/\pi$ at $Re=Rm=N_{\mathrm{St}}=100$
+and the enstrophy peak is delayed to $t\approx32$ at 7200; it is recorded
+on [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) (§4).
+
 ## Qualifications
 
 - **Printed inconsistency, §12.5.2, p. 96 of arXiv v3.** The text states that
@@ -296,6 +346,13 @@ initial modes at initial sonic Mach numbers 0.25–0.5).
   and 26.5 for $\epsilon_H=0.0025$, 0.01 and 0.025, are not monotone in
   $\epsilon_H$, and the runs also differ in $M$ and $Re$; the paper supports
   the "faster development" statement with Fig. 13 (§5).
+- **Printed labels in Fang et al. (2025).** The Orszag–Tang reference
+  data are attributed in §3.1 to "Orszag and Tang [5]", while ref. [5] is
+  Orszag (1969) and Orszag & Tang (1979) is ref. [22]; "Dellar [16]" of
+  §3.1 and Table 3 is, in the printed list, Dedner et al. (2002), and no
+  Dellar paper is listed. §3.1 speaks of meshes from $32^2$ to $256^2$
+  while Table 3 includes $512^2$, and §3.2 quotes the coarsest 3D error
+  for a "$32^2$" mesh.
 - Disagreements the review cites and does not resolve: Brandenburg et
   al. (2019) and Banerjee & Jedamzik (2004) prefer the ideal helical law
   (12.7) (§12.2.1); Christensson et al. (2005) argue for $L\propto t^{1/2}$ along
@@ -307,3 +364,4 @@ initial modes at initial sonic Mach numbers 0.25–0.5).
 - [Ferrand et al. (2022)](/sources/ferrand-2022.md) — §3.1, Figs. 1–2; §4; §5–§6 (decay in compressible Hall-MHD DNS, non-stationary exact laws; Hall cascade component below the ion scale).
 - [Dahlin et al. (2022)](/sources/dahlin-2022.md) — §1–§2 (helicity condensation as inverse helicity transfer, cited).
 - [Foldes et al. (2023)](/sources/foldes-2023.md) — §2.1, Eq. (2.9); §3.3, Eqs. (3.32), (3.37)–(3.38); §4.4, Eqs. (4.10)–(4.12), Figs. 10–12; §5, Table 2, Figs. 13–16; §6; §7 (Orszag–Tang decay in MHD and Hall MHD).
+- [Fang et al. (2025)](/sources/fang-2025.md) — §2.1–2.2, Eqs. (1)–(13) (Xcompact3d MHD module); §3.1, Eq. (17), Table 3, Figs. 4–5 (2D Orszag–Tang decay); §3.2, Eq. (20), Figs. 6–8 (3D Orszag–Tang decay, peak current density); §4 (MHD Taylor–Green vortex).

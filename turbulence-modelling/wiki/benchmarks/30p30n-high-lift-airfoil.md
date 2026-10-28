@@ -5,7 +5,7 @@ description: "The 30P30N slat–main–flap airfoil in three forms: the modified
 status: established
 aliases: [30P30N, 30P-30N, 30P/30N, MD 30P30N, modified 30P30N, BANC-III 30P30N, three-element high-lift airfoil]
 tags: [benchmark, hybrid-rans-les, des, separated-flow, numerical-dissipation, aeroacoustics]
-timestamp: 2026-10-28T02:37:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # 30P30N three-element high-lift airfoil
@@ -132,6 +132,43 @@ the budget does not close, which the authors attribute to insufficient
 grid resolution by analogy with the hill, without a grid study on the
 airfoil (Figs. 11–12).
 
+**Nonlinear weights of the compact scheme.** [Wu et al. (2024b)](/sources/wu-2024-b.md),
+§IV.C.1, rerun SATES in PHengLEI on the 27-million-cell grid of
+[Wu et al. (2023)](/sources/wu-2023-b.md) (domain $30C$, span $C/9$,
+$M=0.17$, $Re=1.71\times10^6$, $\alpha=5.5^\circ$), now with the
+fifth-order [weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
+and a Roe flux, and vary only the nonlinear interpolation weights:
+Jiang–Shu (WCNS-JS), Z-type (WCNS-Z), the sharp TENO cut-off (WCNS-T), the
+authors' smooth $\tanh$ cut-off (WCNS-ST) and its adaptive-threshold form
+(WCNS-STA), with the linear fifth-order scheme as the numerical reference.
+Their reading (Figs. 7–10):
+
+- WCNS-JS is over-dissipative: it suppresses the Kelvin–Helmholtz
+  instability of the slat-cove shear layer and its time-averaged $C_p$
+  deviates significantly, mostly on the flap, which the authors attribute
+  to suppressed suction-side turbulence and a stronger separation under
+  the adverse pressure gradient; WCNS-Z is better but still dissipative
+  near high-order critical points;
+- WCNS-T, WCNS-ST and WCNS-STA resolve more small structures, promote the
+  initial shear-layer instability and agree in $C_p$ with the experiment
+  and with the linear scheme;
+- in the dual-time sub-iterations (second-order backward differentiation
+  with LU-SGS) WCNS-T converges worse than WCNS-ST and WCNS-STA, and along
+  two lines through the slat cove the time-averaged spanwise vorticity of
+  WCNS-ST agrees better with the stereo-PIV data of Pascioni et al. than
+  that of WCNS-T, which the authors attribute to the better sub-iteration
+  convergence.
+
+Normalized by WCNS-JS, the CPU cost on this case is 0.97 (linear), 1.03
+(Z), 1.51 (T), 1.52 (ST) and 1.68 (STA) (Table I). The weights are defined
+on [weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
+and the closure on
+[self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md).
+Wu et al. (2024b), §I, cite their group's earlier work (their ref. 14,
+[Wu et al. (2023)](/sources/wu-2023-b.md)) for the statement that Z-type
+weights are over-dissipative on this airfoil; the Z-weight results of
+Wu et al. (2023) are given above.
+
 ## Workshop RANS case ($M=0.2$, $Re=9\times10^6$, $\alpha=16^\circ$)
 
 [Wang et al. (2013)](/sources/wang-2013.md), §4.11, specify case C3.1 of
@@ -216,6 +253,12 @@ Their results (Figs. 18–26):
   (Wu et al.). Wu et al. cite a successful IDDES of the airfoil by
   Ashton et al. without discussing the difference.
 
+- At fixed model and grid, the choice of nonlinear weights alone decides
+  whether the slat-cove shear layer becomes unstable and whether the flap
+  $C_p$ agrees with the experiment ([Wu et al. (2024b)](/sources/wu-2024-b.md),
+  Figs. 7–8); Wu et al. (2023) also vary the scheme at fixed model and
+  grid (Table 2, above).
+
 - The stall sweep of [Wu et al. (2024)](/sources/wu-2024.md) is the only
   form here that varies the incidence through $C_{L,\max}$; at the
   conditions of the workshop RANS case its evidence for stall prediction is
@@ -241,6 +284,10 @@ Their results (Figs. 18–26):
   diameter symbol of their cylinder cases. They do not print the chord
   length, so the identity of their "MD-30P30N" with the 0.5588 m workshop
   chord of Wang et al. (2013) is not established by the page.
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) do not state the averaging
+  time on the airfoil and give the sub-iteration convergence only as
+  residual histories (Fig. 9); they cite "Fig. 6" for the slat-cove small
+  scales, which their Fig. 7 shows (Fig. 6 is the geometry).
 - The workshop RANS case and the BANC-III case differ in Mach number,
   Reynolds number, incidence and chord (0.5588 m against 0.457 m); results
   of one do not validate the other.
@@ -264,3 +311,4 @@ the sources)*.
 - [Huang et al. (2022b)](/sources/huang-2022-d.md) — §3.3, Figs. 33–35.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §4.3 (cited WMLES of Bodart et al.).
 - [Wu et al. (2024)](/sources/wu-2024.md) — §1; §3.3, Figs. 18–26; §4.
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) — §I; §IV.C.1, Figs. 6–10; Table I.

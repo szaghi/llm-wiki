@@ -5,7 +5,7 @@ description: "The thickened flame model of LES combustion widens the flame front
 status: established
 aliases: [TF model, TFLES, thickened-flame LES, dynamically thickened flame, DTF, DTFLES, artificially thickened flame, thickening factor, non-premixed thickened flame, flame sensor, minor-species correction, wrinkling factor]
 tags: [combustion, les, numerical-dissipation, thickened-flame]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Thickened flame model
@@ -280,6 +280,26 @@ DNS grid, five being "a typical number of points in the thermal thickness
 of a LES calculation" (§3.3, footnote 9). Their stretch results are on
 [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md).
 
+**Where conditional closures place the model.** The review of
+[conditional source-term estimation](/methods/conditional-source-term-estimation.md)
+by [Salehi et al. (2024)](/sources/salehi-2024.md), §1, lists the
+"artificially thickened flamelet model" it cites among the
+topology-based approaches of the laminar-flamelet family, with the
+flame-surface-density and G-equation models (the same family holds the
+steady and unsteady flamelet models coupled through a presumed PDF),
+beside algebraic (eddy break-up), reactor-type (eddy dissipation
+concept, partially stirred reactor), conditional-moment and
+transported-PDF closures. It names the thickened flamelet model as an
+exception among closures first developed in RANS: it was "originally
+proposed for LES", as CSE was. Its motivation for a closure of the
+filtered rate is a resolution argument: in premixed combustion
+"it is common for the thickness of the flame to be thinner than the
+Kolmogorov length", and it is "very unlikely for the flame ever to be so
+thick as to be well-resolved on an LES mesh"; even a non-premixed flame
+resolved by a very fine LES mesh would, at an extinction and reignition
+event, produce a premixed front that the mesh "would likely not" resolve
+(§1). The review does not discuss thickening further.
+
 **Thickening with a high-order discontinuous Galerkin solver.** In their
 review of high-order discontinuous schemes,
 [Lv & Ekaterinaris (2023)](/sources/lv-2023.md), §6.3, Fig. 14, show a
@@ -347,6 +367,7 @@ in the paper. See the [discontinuous Galerkin spectral element method](/methods/
   fields. The over-consumption attributed to the turbulent flame speed is
   not tested separately; the authors mention a dynamic wrinkling exponent,
   which they cite, as an alternative to the fixed $\beta_{\mathrm{Ch}}=0.5$.
+- **Printed count in Salehi et al. (2024).** §1 announces that the closures "can be classified into the following four categories" and then numbers five (algebraic, reactor-type, laminar flamelet, conditional moment closure, transported PDF); the five are recorded above as printed.
 - Agostinelli et al. and Cuenot et al. do not overlap in configuration:
   Agostinelli et al. apply the premixed dynamic form to a technically premixed swirl flame
   without studying it, and Cuenot et al. analyse non-premixed flames
@@ -360,3 +381,4 @@ in the paper. See the [discontinuous Galerkin spectral element method](/methods/
 - [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2–3.4, Table 1 (MRB26b, LES-FGM in OpenFOAM, cases); §3.3, Eqs. (9)–(16), Fig. 5, App. A (thickened equations, thickening and wrinkling factors, piecewise flame sensor); §4.1.1, Fig. 6 (outer-zone over-consumption); §4.2.1, Figs. 12–15 (minor-species over-prediction, wrinkling loss); §4.2.2, Eqs. (17)–(19), Figs. 16–17 (minor-species correction, Gruhlke et al. with $a=1$, $b=0$).
 - [Agostinelli et al. (2021)](/sources/agostinelli-2021.md) — §2 (DTFLES with Charlette efficiency function, $\beta_{\mathrm{Ch}}=0.5$, ARC chemistry, mesh); §3.1–3.3 (thermoacoustic outcome under two thermal wall treatments).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §6.3, Fig. 14 (DG LES with $N=3$ of the Volvo bluff-body flame with the thickened flame model; one or two elements across the reaction zone).
+- [Salehi et al. (2024)](/sources/salehi-2024.md) — §1 (closure families, thickened flamelet model among topology-based approaches originally proposed for LES; flame resolution on LES meshes).

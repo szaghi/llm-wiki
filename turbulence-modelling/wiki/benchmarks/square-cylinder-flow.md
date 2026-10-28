@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Flow past a square cylinder"
-description: "Turbulent flow past a square cylinder with separation fixed at the front corners and a shedding wake: at Re 22,000 a test of variational data assimilation into Spalart–Allmaras RANS, where momentum sources fit the DNS mean flow and eddy-viscosity multipliers fail, and of a DNS-database subgrid closure; at Re 10,000 a 2D URANS test of the k-√k-L model."
+description: "Turbulent flow past a square cylinder with separation fixed at the front corners: at Re 21,400–22,000 a test of data assimilation into Spalart–Allmaras RANS (momentum sources fit the DNS mean flow, eddy-viscosity multipliers fail), of a DNS-database subgrid closure, SST-DDES variants and a wall-modelled immersed boundary; at Re 10,000 a 2D URANS test of the k-√k-L model."
 status: established
 aliases: [square cylinder, square-cylinder wake, flow over a square cylinder, SQCYL]
-tags: [benchmark, separated-flow, rans, field-inversion, data-driven, dg]
-timestamp: 2026-10-28T02:40:00Z
+tags: [benchmark, separated-flow, rans, field-inversion, data-driven, dg, des, immersed-boundary]
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Flow past a square cylinder
@@ -164,6 +164,70 @@ normal stresses at $x/L_{\mathrm{sq}}=0$, 1, 2, 3 agree well with the DNS
 and with the LDV data of Lyn et al. on both grids. No integral quantities
 ($St$, $C_D$, $L_r$) are printed for this case.
 
+**SST-DDES with adaptive eddy-viscosity filtering and grid scale.**
+[Guo & Wang (2025)](/sources/guo-2025.md), §2.2.1, §3.1, run the cylinder
+at $Re=U_\infty L_{\mathrm{sq}}/\nu=21{,}400$ ($L_{\mathrm{sq}}=0.04$ m,
+$U_\infty=0.535$ m/s) in [OpenFOAM](/software/openfoam.md)-v2306 with four
+variants of the [$k$-$\omega$ SST](/methods/k-omega-sst-model.md)-based
+DDES (see [detached-eddy simulation](/methods/detached-eddy-simulation.md)):
+MAX- and ADD- denote the maximum cell size and the authors' adaptive
+switch to the least-squares length of Trias et al. as subgrid length,
+-FDDES the damping of the SST eddy viscosity where the RANS length
+exceeds a resolvable filter width. The domain reaches $5L_{\mathrm{sq}}$
+upstream and $15.5L_{\mathrm{sq}}$ downstream, height $14L_{\mathrm{sq}}$,
+span $9.8L_{\mathrm{sq}}$ periodic, about 4.08 million cells with a
+refined wake box and [RANS wall functions](/methods/rans-wall-function.md)
+on the cylinder ($y^+$ not printed); the grid was shown converged in an
+earlier paper of the authors; forces are averaged over 3.5–10 s, on 64
+cores in about 288 core-hours. Their Table 4, with $L_r$ the
+recirculation length measured from the cylinder centre:
+
+| Run | $St$ | mean $C_D$ | rms $C_L$ | rms $C_D$ | $L_r$ |
+|---|---|---|---|---|---|
+| MAX-SSTDDES | 0.127 | 2.43 | 1.26 | 0.28 | 1.46 |
+| ADD-SSTDDES | 0.120 | 2.74 | 1.43 | 0.17 | 1.27 |
+| MAX-SSTFDDES | 0.135 | 2.48 | 1.43 | 0.26 | 1.39 |
+| ADD-SSTFDDES | 0.127 | 2.71 | 1.60 | 0.20 | 1.42 |
+| DNS, Trias et al. ($Re=22{,}000$, as quoted) | 0.132 | 2.18 | 1.71 | 0.205 | 1.04 |
+| experiment, Lyn et al. (as quoted) | 0.13 | 2.1 | — | — | 1.4 |
+| range compiled by Rodi (as quoted) | 0.09–0.15 | 2.17–2.77 | 1.15–1.79 | 0.14–0.27 | 0.94–1.68 |
+
+The DNS values they quote equal those of the
+[Idelsohn et al. (2024)](/sources/idelsohn-2024.md) table above *(compiler
+check, not in the sources)*. The
+authors call all mean drags "slightly higher than the experimental …
+data" but within Rodi's range, the adaptive variants giving the higher
+drag; they find the ADD-SSTFDDES rms lift (1.60) close to the DNS (1.71)
+and its rms drag (0.20) closest to the DNS 0.205. Qualitatively, the
+baseline separates late, with a narrow initial wake, a short
+recirculation and slow recovery, while ADD-SSTFDDES separates earlier and
+keeps more small vortices in the mid and far wake; the authors judge the
+variants also by how close the probability density of the streamwise
+fluctuations at wake probes is to a Gaussian, ADD-SSTFDDES being the
+closest (§3.1, Figs. 10–20).
+
+**A wall-modelled immersed boundary in a compact high-order code.**
+[Yan et al. (2024)](/sources/yan-2024.md), §III B, run the cylinder at
+$Re_D=2.2\times10^4$ in [Xcompact3d](/software/xcompact3d.md) (sixth-order
+compact differences, implicit
+[spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
+with $\nu_0/\nu=80$), the walls represented by a diffused-interface
+[immersed boundary](/methods/immersed-boundary-method.md) carrying an
+explicit wall function with a pressure-gradient correction (see
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)):
+domain $-5\le x/L_{\mathrm{sq}}\le15$, $-10\le y/L_{\mathrm{sq}}\le10$,
+span $4L_{\mathrm{sq}}$, grid $601\times291\times30$ with about 30 points
+per side, $U_0\Delta t/L_{\mathrm{sq}}=2.5\times10^{-3}$. They obtain mean
+$C_D=2.46$, rms $C_L=1.06$, $L_r/L_{\mathrm{sq}}=0.81$ (printed $l_r/D$)
+and $St=0.144$, against the DNS values of Trias et al. 2.18, 1.71, 1.04
+and 0.132 (Table IV), calling the rms lift and recirculation length
+"slightly lower" than the references. The wall model misses the two small
+leading- and trailing-edge recirculation bubbles of wall-resolving LES,
+which the authors attribute to the assumed constant pressure gradient
+between probe and wall and to the coarse mesh (Figs. 12–13). The cost is
+13.2 CPU hours per shedding cycle, against about 1058 and 676 hours they
+infer for two wall-resolving LES (Table V).
+
 **Adjoint solvers.** [Fanizza et al. (2025)](/sources/fanizza-2025.md),
 §3.4.1, Fig. 2, use the first adjoint system of this optimization to
 compare linear solvers at a 180-vector memory budget: GMRES(180) with
@@ -202,6 +266,24 @@ deflated-restart variant in 8000; plain GMRES would need a Krylov space of
   prints 1.108 for P-DNS and 1.04 for the DNS. They place the Reynolds
   stresses in Fig. 18b, c in one sentence and in Fig. 18d, e in another.
 
+- [Guo & Wang (2025)](/sources/guo-2025.md) measure $L_r$ from the
+  cylinder centre to the end of the mean recirculation, where the
+  centreline pressure first returns to its upstream value, and quote the
+  same 1.04 for the DNS that [Idelsohn et al. (2024)](/sources/idelsohn-2024.md)
+  print for the recirculation behind the cylinder. Guo & Wang call the ADD-SSTDDES rms drag
+  0.17 "slightly lower than the experimental and DNS ranges", while their
+  Table 4 lists a DNS range of 0.117–0.181 that contains it, and give a
+  "LES/DES reference range of 0.18–0.22" that does not match the LES/DES
+  entries of the same table; they print the projected area as
+  "$0.04*0.392=0.1568$ m²", which evaluates to 0.01568 m² *(compiler
+  check, not in the sources)*. Their closeness-to-Gaussian criterion for
+  the wake fluctuations is not compared with DNS or experimental
+  distributions in the paper. They print no time step.
+- [Yan et al. (2024)](/sources/yan-2024.md) print the cost of the two
+  wall-resolving LES as inferred from those works; they define their
+  $l_r$ only as the "length of the recirculation bubble" (nomenclature) and
+  write $D$ for the side.
+
 # Citations
 
 - [Cato et al. (2023)](/sources/cato-2023.md) — §II B; §V A–C, Figs. 11–19.
@@ -209,3 +291,5 @@ deflated-restart variant in 8000; plain GMRES would need a Krylov space of
 - [Jiang et al. (2025)](/sources/jiang-2025.md) — §4.3, Figs. 8–11.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.10.6, Figs. 17–18, Table 2.
 - [Wu et al. (2024)](/sources/wu-2024.md) — §3.1b, Figs. 5–6.
+- [Guo & Wang (2025)](/sources/guo-2025.md) — §2.1; §2.2.1; §3.1, Table 4, Figs. 10–20.
+- [Yan et al. (2024)](/sources/yan-2024.md) — §III B, Tables IV–V, Figs. 10–13.

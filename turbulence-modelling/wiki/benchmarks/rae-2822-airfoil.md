@@ -5,7 +5,7 @@ description: "The supercritical RAE 2822 airfoil in transonic flow, case 9 of Co
 status: established
 aliases: [RAE2822, RAE 2822, RAE-2822, RAE 2822 case 9, ADIGMA MTC5]
 tags: [benchmark, rans, compressible, dg, mesh-adaptation, boundary-layer]
-timestamp: 2026-10-27T11:00:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # RAE 2822 airfoil
@@ -105,6 +105,20 @@ degrees of freedom; the finite-volume results are not mesh-converged on
 the finest grid. The details of the metric are on
 [mesh adaptation](/methods/mesh-adaptation.md).
 
+**Coefficient uncertainty and learned surrogates, as cited.** The review
+of [Le et al. (2024)](/sources/le-2024.md), §3.1.1 and §3.1.3, cites the
+airfoil twice in its account of machine learning for RANS: Schaefer et al.
+quantify the uncertainty of turbulence-model closure coefficients on it
+(see [model-form uncertainty](/definitions/model-form-uncertainty.md) and
+[Bayesian calibration of turbulence-model coefficients](/methods/bayesian-closure-calibration.md)),
+and Zhu et al. show on it, and on the NACA 0014, predictions of a
+radial-basis-function network, assessed on three subsonic
+[NACA 0012](/benchmarks/naca-0012-airfoil.md) cases, that replaces the
+eddy viscosity of the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md) in the solver
+(Fig. 13, at conditions the review does not specify). The review prints no
+force or pressure values for either work.
+
 **What the sources report together.** The workshop found adaptive mesh
 optimisation "markedly superior" to uniform refinement on this case
 ([Wang et al. (2013)](/sources/wang-2013.md), §5.4);
@@ -142,3 +156,4 @@ sources)*.
 - [Wang et al. (2013)](/sources/wang-2013.md) — §3.2; §4.8 (case C2.2); §5.4, Table V, Fig. 23; §6.
 - [Jiang et al. (2025)](/sources/jiang-2025.md) — §3.1; §4.2, Figs. 6–7.
 - [Schotte et al. (2026)](/sources/schotte-2026.md) — §4.3, Table 4, Figs. 15–16.
+- [Le et al. (2024)](/sources/le-2024.md) — §3.1.1; §3.1.3, Fig. 13 (cited works, review).

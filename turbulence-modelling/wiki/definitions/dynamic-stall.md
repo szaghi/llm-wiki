@@ -5,7 +5,7 @@ description: "Unsteady stall of an airfoil pitched beyond its static stall angle
 status: established
 aliases: [deep dynamic stall, dynamic stall onset, dynamic-stall vortex, DSV, pitching-airfoil stall]
 tags: [separated-flow, transition, hybrid-rans-les, des, les, boundary-layer, dynamic-stall]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Dynamic stall
@@ -163,6 +163,47 @@ all three models at $22^\circ$ against $24^\circ$ in
 timing error is measured against different references: Batther & Lee
 compare with an LES, Baldan & Guardone with an experiment.
 
+## Finite wings, compressibility and pitching delta wings
+
+The survey of concentrated-vortex aerodynamics by
+[Luckring & Rizzi (2024)](/sources/luckring-2024.md) extends the picture
+beyond the two-dimensional airfoil, reporting cited high-order
+wall-resolved LES of the AFRL FDL3DI code (§3.1.1.2, Figs. 65–66):
+
+- **Finite swept wings.** For aspect-ratio-4 constant-chord NACA 0012
+  wings with sweep $0^\circ$, $15^\circ$ and $30^\circ$ (leading-edge
+  radius 1.58% of the chord, $M=0.1$, $Re_c=0.2\times10^6$), run with
+  sinusoidal pitching and at fixed incidence, Visbal and Garmann's
+  simulations as the survey reports them show over most of the span a
+  laminar separation bubble with turbulent reattachment, a laminar region
+  near the centreline that grows with sweep, bubble bursting followed by
+  dynamic wing stall, and a side-edge vortex; at $\alpha=21.3^\circ$ the
+  separation has become vortical. The survey states that these
+  simulations "appear to be capturing a progression" from laminar bubbles
+  at low incidence to leading-edge vortical separation at higher
+  incidence, consistent with Polhamus' interpretations (§3.1.1.2).
+- **Compressibility.** Benton and Visbal's dynamic-stall-onset study of
+  the NACA 0012 at $Re_c=10^6$ (267 million nodes), at $M=0.4$ and a fixed
+  $\alpha=13.1^\circ$, has a sonic surface near the leading edge inside
+  which a succession of shocks and expansions ends in a terminal shock and
+  shock-induced boundary-layer separation; the survey states that such
+  physics is "not modeled, or have not been reported" in current RANS and
+  hybrid RANS/LES and asks how far cheaper methods can capture it.
+  [Batther & Lee (2022)](/sources/batther-2022.md) cite a Benton and
+  Visbal case at $Re_c=10^6$ as the mixed-type stall above.
+- **Pitching delta wings.** On slender wings with leading-edge vortices,
+  unsteady motion produces vortex hysteresis: vortex strength, position and
+  breakdown lag the static case, more so at higher rates, with "dynamic
+  lift" on the upstroke as the favourable effect (§2.3.2.2, Fig. 40); a
+  cited laminar simulation of a $75^\circ$ delta wing in a $25^\circ$ to
+  $50^\circ$ pitch ramp ($M=0.2$, root-chord Reynolds number
+  $9.2\times10^3$) captured the breakdown lag (§3.1.2.1). The survey
+  "found no demonstrated capability for CFD to simulate hysteresis effects"
+  of slender or nonslender wings in dynamic motion and proposes dynamic
+  experiments on a sharp-edged delta wing, with and without breakdown,
+  among its physics-based studies (§4.1.2, §5.2.2.7); see
+  [delta-wing vortex flow](/benchmarks/delta-wing-vortex-flow.md).
+
 ## Qualifications
 
 - [Batther & Lee (2022)](/sources/batther-2022.md) use no experimental
@@ -199,3 +240,4 @@ compare with an LES, Baldan & Guardone with an experiment.
 - [Batther & Lee (2022)](/sources/batther-2022.md) — §1; §2.1, Eq. (1); §2.2, Tables 1–2; §3; §4.1, Fig. 3; §4.2.1–4.2.5, Table 3, Figs. 4–16; §4.3.1, Figs. 17–20; §4.4, Figs. 21–22; §4.5; §5.
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — arXiv v2: Introduction, Fig. 1; §2.1, Figs. 3–8; §2.2, Fig. 9; §3.
 - [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §3.2, Figs. 10–13 (a pitching case outside the definition).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.3.2.2, Fig. 40; §3.1.1.2, Figs. 65–66; §3.1.2.1; §4.1.2; §5.2.2.7 (finite wings, compressibility, delta-wing hysteresis, as a survey of cited work).

@@ -5,7 +5,7 @@ description: "Wall-stress models for wall-modelled LES learned by supervised reg
 status: established
 aliases: [MLWM, ML wall model, neural-network wall model, data-driven wall model, reinforcement-learning wall model, RLWM, SciMARL wall model, BFWM]
 tags: [wall-model, wmles, data-driven, neural-network, reinforcement-learning]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-28T12:26:00Z
 ---
 
 # Machine-learning wall models
@@ -418,6 +418,17 @@ wall-shear stress)". [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md)
 modelling with physics-informed neural networks (Yang et al. 2019, as cited)
 "a promising path"; they test none.
 
+The review of artificial intelligence in turbulence research by
+[Fang et al. (2026)](/sources/fang-2026.md) presents the multi-agent wall
+models of Bae & Koumoutsakos (2022) as wall models that "respect known
+physical invariants" and as "a conceptual shift toward embedding learning
+agents within the numerical simulation loop" (§3.2; the review attributes
+the work to "Koumoutsakos et al.", while its reference list gives Bae as
+first author), and cites a graph neural network embedded in an
+industrial-scale LES solver for online wall-shear-stress prediction
+(Serhani et al., as cited; §5.2). It adds no result of its own; neither
+cited model is assessed there.
+
 ## Position: preserve the law of the wall
 
 Vadrot et al. (2023b, §V) conclude that a learned wall model must preserve the
@@ -558,3 +569,4 @@ mismatch as the published policy in LESGO.
 - [Zangeneh (2021)](/sources/zangeneh-2021.md) — §I; §II.A–II.G, Eqs. (8)–(12), Figs. 1–3; §III.A–III.C, Table I, Figs. 6–19; §IV.
 - [Lv et al. (2021)](/sources/lv-2021.md) — §V.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3.
+- [Fang et al. (2026)](/sources/fang-2026.md) — §3.2 (multi-agent wall models); §5.2 (GNN wall-stress prediction coupled to LES; passing).

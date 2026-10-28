@@ -5,7 +5,7 @@ description: "Scale-resolving approaches that model all turbulence with RANS in 
 status: established
 aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES, self-adaptive turbulence eddy simulation, SATES, very-large eddy simulation, VLES, scale-resolving hybrid model, SRH, hybrid temporal LES, HTLES]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-28T17:00:00Z
 ---
 
 # Hybrid RANS/LES
@@ -76,6 +76,20 @@ author manuscript). They cite a GPU wall-function LES of the
 notchback DrivAer car whose drag error falls from 24 counts with
 stress-blended eddy simulation to 10 and 2 counts with LES on 250 and 500
 million cells (Menter et al., cited; §1).
+
+Luckring & Rizzi (2024), surveying vortex aerodynamics, draw the line by
+what each method resolves: wall-stress WMLES resolves the energetic motions
+of the outer boundary layer and the detached shear layers, with "approximately
+80% of the boundary layer" in LES, while hybrid RANS/LES of the DES97 kind
+resolves only the detached shear layers, so "WMLES has the potential to be
+significantly more accurate than hybrid RANS/LES in non-equilibrium flows"
+([Luckring & Rizzi (2024)](/sources/luckring-2024.md), §2.4.1.5). Alberti et
+al. (2025) find that, on fine grids, SA-based DDES and IDDES in a
+high-order DG solver behave "more like a wall-modeled ILES rather than a
+simple WMLES", the model's eddy viscosity adapting to the resolution
+([Alberti et al. (2025)](/sources/alberti-2025-b.md), §4; details on the
+[DES page](/methods/detached-eddy-simulation.md) and
+[implicit LES](/definitions/implicit-les.md)).
 
 Bae & Koumoutsakos (2022) draw the line differently: they list hybrid
 LES/RANS, with RANS near the wall, LES outside and the interface set
@@ -236,6 +250,19 @@ mode 0+1, force RANS inside a jet nozzle and François et al. (2022) in the
 core flow of a fan stage
 ([Basile et al. (2023)](/sources/basile-2023.md), §2.2).
 
+Alberti et al. (2025) leave zonal approaches aside because they
+need a priori knowledge of the flow, name the gray area, modelled-stress
+depletion and log-layer mismatch as the main DES deficiencies, and list
+X-LES, scale-adaptive simulation and stress-blended eddy simulation as
+other non-zonal hybrids (§1). Guo & Wang (2025) frame DES, zonal LES and
+embedded LES as the hybrid families, with modelled-stress depletion and the
+grey area as the problems of the RANS-to-LES transition, and sort the DES
+improvements into three groups: the LES length scale, the delay
+(shielding) function and a reformulated eddy viscosity; their own model
+changes the first and the third
+([Guo & Wang (2025)](/sources/guo-2025.md), §1, §2.1; see the
+[DES page](/methods/detached-eddy-simulation.md)).
+
 **Wall-distance blending of one transported viscosity.** Tang et al. (2022)
 blend two models in a single transport equation: the [Spalart–Allmaras](/methods/spalart-allmaras-model.md) equation
 near the wall and the one-equation Yoshizawa subgrid-energy model, rewritten
@@ -330,6 +357,12 @@ transition without a transition model ([Wu et al. (2024)](/sources/wu-2024.md),
 §2.2, Eqs. 8–11). Both variants, their numerics and their results (channel,
 square and supercritical cylinders, a stall sweep of the MD-30P30N) are on
 the [SATES page](/methods/self-adaptive-turbulence-eddy-simulation.md).
+Wu et al. (2024b) frame SATES again as a unified URANS–LES–DNS model
+against the modelled-stress depletion, grid-induced separation and
+log-layer mismatch of DES-type methods, derive its Smagorinsky limit, argue
+that its fine-grid limit is LES where Speziale's VLES tends to RANS at high
+Reynolds number, and couple it to a fifth-order WCNS
+([Wu et al. (2024b)](/sources/wu-2024-b.md), §I, §III; on the SATES page).
 
 **Zonal and unified, in turbomachinery usage.** Sandberg & Michelassi
 (2022) divide hybrids into *zonal* approaches with predetermined RANS and
@@ -792,6 +825,28 @@ high-Reynolds channel flow (§3.2.2; see
 argue that "it is likely that there is no ideal universal shielding
 function" (§3.2.2).
 
+**Where the interface should sit.** Wang et al. (2024c) require a
+RANS/LES interface that is grid independent and able to distinguish
+stable from unstable flow states (§III.F, as cited), and evaluate the
+interfaces of SA-based DES, DDES and scale-adaptive lengths on
+three wall-resolved LES fields of a Mach 2 flat-plate boundary layer: all
+move toward the wall as the grid is refined ([Wang et al. (2024c)](/sources/wang-2024-j.md),
+§III.F, Fig. 15). From the joint distributions of the velocity-gradient
+invariants, which change little with the grid in the viscous sublayer but
+markedly in the log and wake layers, they infer that the change of flow
+topology happens in the buffer layer and that the "feasible region of
+switching interface" from RANS to LES-like modelling lies at
+$7<y^+<15$ (§III.D, Figs. 10–11). From the TKE peak (near $y^+\approx15$ on
+the finest grid) and the onset of the rapid fall of the resolved
+dissipation above $y^+\approx14$ on every grid, with a $k$-$\varepsilon$
+eddy-viscosity argument, they propose $y^+\approx14$ as the interface of
+a scale-adaptive hybrid in supersonic boundary layers (§III.E, Figs.
+12–14); evaluated on the three LES fields, their shielded length places
+it there on all three grids (Fig. 16; see
+[scale-adaptive simulation](/methods/scale-adaptive-simulation.md)). The
+flow is one Mach 2 boundary layer, and their run of the modified model is
+on the coarse grid ($209\times161\times81$) only (§II, §III.B).
+
 **Time step and dissipation in a workshop.** Kiris et al. (2023, §VI 1c)
 cite a hybrid RANS/LES time-step study of the Fourth High-Lift Prediction
 Workshop that attributes large inaccuracies in the wing-root separation of
@@ -1096,6 +1151,24 @@ large time steps that A-stable BDF2 allows; see
   coupled aerothermoelastic analysis of a deployable fin at Mach 3–6, with no
   assessment of the hybrid behaviour (Thawait et al. 2023, §II B, §VI;
   details on the [DES page](/methods/detached-eddy-simulation.md)).
+- **Concentrated vortex flows, surveyed.** Luckring & Rizzi (2024) report
+  from the studies they review that on the F-15E at $65^\circ$ angle of
+  attack ($M=0.3$, $Re_c=13.6\times10^6$) URANS shows no significant
+  unsteadiness and virtually no vorticity over the wing while hybrid
+  RANS/LES resolves it, so that "the hybrid RANS/LES formulation appears to
+  be necessary for simulating flows with significant unsteady separated
+  flow" (Forsythe et al., §2.4.1.4); that the most promising vortex-breakdown
+  predictions of the AVT-080 70° delta wing came from hybrid RANS/LES, such
+  as Morton's SA-based DES with adaptive refinement (§3.1.2.1, §4.1.2);
+  that on blunt-leading-edge delta and diamond wings hybrids "appear to have
+  done better than RANS methods" (§3.1.1.2); that on the AVT-316 triple
+  delta wing hybrid RANS/LES was more reliable than URANS (§3.2.3.5); and
+  that in CAWAPI-3 the one-standard-deviation pressure bands of the hybrid
+  solutions bracket the F-16XL flight data (§3.2.3.3). They ask that the
+  RANS/LES switch of hybrids be assessed against the scale of the secondary
+  vortex (§2.4.2). Details on
+  [delta-wing vortex flow](/benchmarks/delta-wing-vortex-flow.md) and
+  [mesh adaptation](/methods/mesh-adaptation.md).
 
 ## Qualifications
 
@@ -1253,3 +1326,8 @@ large time steps that A-stable BDF2 allows; see
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — §4.1 (critique of hybrid RANS/LES).
 - [Zhang et al. (2024)](/sources/zhang-2024.md) — §1, §2.3 (DDES chosen over RANS for tip-leakage flow).
 - [Wang & Xu (2024)](/sources/wang-2024-h.md) — §1 (LES and hybrid literature of the Burrows–Kurkov combustor; passing).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1.4–§2.4.1.5 (WMLES against hybrid RANS/LES; F-15E, as cited); §2.4.2 (switch to be assessed against the secondary-vortex scale); §3.1.1.2, §3.1.2.1, §3.2.3.3, §3.2.3.5, §4.1.2 (vortex-flow evidence, as cited).
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §1 (non-zonal hybrids, DES deficiencies); §4 ("wall-modeled ILES" behaviour on fine DG grids).
+- [Guo & Wang (2025)](/sources/guo-2025.md) — §1, §2.1 (hybrid families, transition problems, three groups of DES improvements).
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) — §I, §III (SATES as a unified model, against Speziale's VLES).
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) — §III.D–F, Figs. 10–16 (grid dependence of hybrid interfaces, feasible switching region $7<y^+<15$, interface at $y^+\approx14$).

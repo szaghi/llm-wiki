@@ -5,7 +5,7 @@ description: "Flux reconstruction (FR/CPR) corrects a degree-N discontinuous flu
 status: established
 aliases: [FR, flux reconstruction method, correction procedure via reconstruction, CPR, FR/CPR, lifting collocation penalty, Huynh flux reconstruction, ESFR, energy-stable flux reconstruction, VCJH schemes, NSFR, nonlinearly stable flux reconstruction]
 tags: [flux-reconstruction, dg, implicit-les, numerical-dissipation, entropy-stable, wmles]
-timestamp: 2026-10-28T07:03:00Z
+timestamp: 2026-10-28T16:59:00Z
 ---
 
 # Flux reconstruction
@@ -133,8 +133,15 @@ their printed symmetry relation).
 points ("usually", Duan & Wang 2024, §3), Legendre–Gauss–Lobatto points for
 both solution and flux points so that nodal DG is recovered (Wang 2024, §2.2,
 §3, Fig. 1), Williams–Shunn points on triangles with Gauss–Legendre flux
-points (Dzanic et al. 2022, Fig. 1). These are choices within the family,
-not disagreements.
+points (Dzanic et al. 2022, Fig. 1), $\alpha$-optimized points on tetrahedra
+and Gauss–Legendre–Lobatto points on hexahedra in PyFR
+([Witherden et al. 2025](/sources/witherden-2025.md), Fig. 1, §5.1).
+Witherden et al. (2025,
+§2, Eqs. 1–7) recap the same four steps (interpolation to the flux points,
+common interface flux, discontinuous flux, correction by the divergence of
+the correction functions) on mixed elements and call FR "a form of
+discontinuous spectral element method"; the code is described on
+[PyFR](/software/pyfr.md).
 
 **Interface fluxes and time stepping in the sources.**
 
@@ -147,6 +154,7 @@ not disagreements.
 | Ims & Wang (2023), §2 | hpMusic | common flux from a local Riemann problem | BR2 | explicit SSP-RK3 or implicit BDF2OPT | $N=1$, 2, reference at 4 |
 | Shi & Yan (2023), §II.A, §IV.A | NFR (in-house) | Roe | BR2 | explicit SSP-RK3 | $N=2$ (ramp), 3 (Taylor–Green) |
 | Liu & Yuan (2023), §2, §5 | 1-D research code | local Lax–Friedrichs | none (Euler) | SSP-RK3, CFL $1/(2N+1)$ | $N=2$–$5$ |
+| Witherden et al. (2025), §2, §3.5–§3.6, §5 | PyFR v2.0.3 | "an appropriate Riemann solver" (not specified further) | not stated | explicit, with adaptive steps from embedded low-storage Runge–Kutta pairs; dual time stepping with $p$-multigrid for the artificial-compressibility solver | $N=3$ (supersonic Taylor–Green), "seventh-order solution polynomials" (scaling) |
 | Vermeire (2024), §3 | not named | Rusanov with Davis wave speed | BR2 | classical RK4 (Taylor–Green), optimal explicit Runge–Kutta (channel), paired explicit Runge–Kutta (airfoil) | $N=1$–$6$ |
 
 Wang (2024, §2.2) reads the Rusanov flux as a central flux with scalar
@@ -641,6 +649,28 @@ and, on curved elements, a non-constant mapping Jacobian, a
 "geometrical-aliasing source" (§2.2; see
 [geometric conservation law](/properties/geometric-conservation-law.md)).
 
+**Four options in one code.** Witherden et al. (2025, §3.2) state that
+PyFR is often run as under-resolved DNS, "also referred to as ILES", where
+FR is subject to aliasing-driven instabilities, and offer four remedies:
+[modal filtering](/methods/explicit-modal-filtering.md) (conservative and
+cheap, but indiscriminate, with strength, frequency and cut-off modes as
+free parameters); anti-aliasing by a quadrature-based least-squares
+projection of the flux, "markedly superior" to modal filtering as they
+cite it and "typically" doubling the run time in 3D at anti-aliasing degree
+$N+1$; Persson–Peraire-type
+[artificial viscosity](/methods/artificial-viscosity-shock-capturing.md),
+which needs parameterization and can lower the stable explicit time step;
+and the entropy filter of Dzanic & Witherden, applied only where density
+or pressure positivity or a minimum-entropy bound (over the element and its
+Voronoi neighbours at the previous step) is violated, which "does not
+explicitly require any problem-dependent parameterisation" apart from a
+small fixed tolerance. They also replace the cross-product metric, which
+loses free-stream preservation on curved grids, by a conservative curl-form
+metric (§3.4; see [geometric conservation law](/properties/geometric-conservation-law.md)).
+Wang (2024, §4.4.3) writes that the entropy filter is "not completely
+parameter-free", its tolerance controlling how strictly the minimum
+entropy principle is enforced.
+
 **Shock capturing by sensor and limiter.** For shock-dominated flows the
 sources add a troubled-cell sensor and a limiter to FR. Shi & Yan (2023,
 §II.B, Eqs. 6–18) use the KXRCF sensor of Krivodonova et al. rewritten
@@ -754,6 +784,12 @@ first-point distance.
   ones to the WENO DNS references; the maximum amplification of the
   turbulent kinetic energy is 3.34 (§IV.B–C, Table IV; see
   [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+- **GPU throughput** (Witherden et al. 2025, §5.2, Tables 2–3): a
+  subsonic Taylor–Green vortex on 13 891 500 tetrahedra in double precision
+  scales from 16 to 2048 ranks with efficiency 0.46 on Frontier (MI250X
+  GCDs) and 0.47 on Alps (GH200), at 1537.68 and 5753.96 GDoF/s; per GPU,
+  throughput rose 49.2-fold over a decade of code and hardware (details on
+  [PyFR](/software/pyfr.md)).
 - **A comparison target for explicit-filter LES** (Najafiyazdi et al.
   2023, §6.2, Fig. 10): the $N=1$ FR-DG, FR-OFR and FR-SD implicit LES of
   Bull & Jameson, printed as "128 degrees of freedom, i.e. p 1 Legendre polynomials on a 64³ grid",
@@ -792,6 +828,20 @@ strong shock capturing "probably" hinders them on the finer ones (§III.B.e,
 better than second order in this compressible setting (§V). The PyFR
 compressible FR code is named by [Kurz et al. (2025)](/sources/kurz-2025.md),
 §1, among the GPU high-order solvers.
+
+**Entropy-filtered FR on the same case.** Witherden et al. (2025, §5.1,
+Figs. 11–12, Table 1) run PyFR on the supersonic Taylor–Green vortex at
+$N=3$ on $16^3$ to $128^3$ hexahedra with Gauss–Legendre–Lobatto points and
+entropy filtering, and compare with the Chapelier et al. data (supplied by
+its authors): the solenoidal dissipation agrees "excellent[ly]" with the
+$2048^3$ TENO reference at $128^3$ elements, and at equal resolution and
+order the dilatational dissipation is closer to the reference than that of
+CODA (modal DG, artificial viscosity), [FLEXI](/software/flexi.md) (DGSEM,
+subcell finite volumes) and SD3D (spectral difference, artificial
+viscosity), "indicating that the entropy filtering shock capturing approach
+does not introduce excessive numerical dissipation" (see
+[numerical dissipation](/properties/numerical-dissipation.md)). H3AMR is
+not among the solvers of their Table 1.
 
 **Spectral difference against FR.** [D'Ayer et al. (2026)](/sources/dayer-2026.md),
 §1, cite earlier studies for the statement that the computing time of the spectral
@@ -879,6 +929,11 @@ laminar circular cylinder, with errors they call similar (§3.1).
 - Ims & Wang (2023) report no error norms, cell counts, time steps or
   timings; their ranking of indicators rests on visual comparison of
   fields and spectra.
+- Witherden et al. (2025, §2) print the correction term of Eq. (7) as
+  $\mathfrak F_\alpha f^{(f_\perp)}-f^{(f_\perp)}$, without the tildes and
+  the "C" superscript of the common flux of Eq. (5) and with a stray "$*$";
+  the description above follows their text. They identify under-resolved
+  DNS with ILES (§3.2), as Dzanic et al. (2022) do.
 
 # Citations
 
@@ -903,3 +958,4 @@ laminar circular cylinder, with errors they call similar (§3.1).
 - [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §6.2, Fig. 10.
 - [Vermeire (2024)](/sources/vermeire-2024.md) — §1–§2, Eqs. (1)–(5) (EDAC); §3, Eqs. (6)–(13) (FRDG in lifting-collocation-penalty form, metrics, Rusanov/BR2, time integrators); §4.1–§4.3, Figs. 3–21, Tables 1–3 (Taylor–Green, channel, SD7003); §5; Eq. (17).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §3.3, Eqs. (23)–(27) (one-dimensional FR, correction functions, energy-stable FR, PyFR); §4.2 (limiter-assisted FR LES of the CRM, as cited).
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §2, Eqs. (1)–(7), Fig. 1 (FR recap, point sets, FR as a discontinuous spectral element method); §3.2 (four stabilization strategies); §3.4 (conservative metric); §3.5–§3.6; §5.1, Figs. 11–12, Table 1 (supersonic Taylor–Green comparison); §5.2, Tables 2–3 (scaling).

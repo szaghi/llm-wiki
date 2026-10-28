@@ -3,9 +3,9 @@ type: Definition
 title: "Shock sensors and troubled-cell indicators"
 description: "A shock sensor or troubled-cell indicator is the switch that decides where a scheme adds shock-capturing dissipation or changes its discretization; this page defines the pressure, dilatation–vorticity, modal-decay, density-gradient and TENO-type indicators of the sources, and what each flags wrongly in turbulence."
 status: established
-aliases: [shock sensor, shock indicator, troubled-cell indicator, troubled-cell detector, discontinuity indicator, Ducros sensor, Jameson pressure sensor, Persson–Peraire indicator, KXRCF indicator, TVB minmod indicator, TENO troubled-cell indicator, filtered shock indicator]
+aliases: [shock sensor, shock indicator, troubled-cell indicator, troubled-cell detector, discontinuity indicator, Ducros sensor, Jameson pressure sensor, Persson–Peraire indicator, KXRCF indicator, TVB minmod indicator, TENO troubled-cell indicator, filtered shock indicator, extremum-property sensor, EP sensor, Ren discontinuity indicator]
 tags: [shock-capturing, numerical-dissipation, compressible, dg, implicit-les, boundary-layer]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T17:02:00Z
 ---
 
 # Shock sensors and troubled-cell indicators
@@ -105,6 +105,27 @@ set by a sensitivity study "for minimum activation with stability"
 $[0,1]$ or the temperature falls below 260 K. Away from both the
 reconstruction is fourth order on uniform and third order on non-uniform
 meshes.
+
+**Smooth pressure-ratio switch of a central/WENO hybrid.** In the
+compressible LES code with curvilinear immersed boundaries of
+[Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md), §2.2,
+Eqs. (13)–(16), the interface flux blends a fourth-order skew-symmetric
+central flux and a third-order WENO flux,
+$\hat F_{i+1/2}=(1-\sigma_b)F^{\mathrm{cen}}_{i+1/2}+\sigma_bF^{\mathrm{WENO}}_{i+1/2}$
+($\sigma_b$ the upwind fraction, registry §11; the source writes the
+central fraction $1-\sigma_b$), with the smooth tanh switch of Xiaoshuai &
+Yuxin as cited,
+$$\sigma_b=\frac12-\frac12\,\frac{\tanh\!\big(3(r_{i+1/2}-r_{\mathrm{th}})/\max(r_{\mathrm{th}},|r_{i+1/2}-r_{\mathrm{th}}|)\big)}{\tanh 3},\qquad r_i=\frac{|2\Delta p_{i+1/2}\Delta p_{i-1/2}|+\epsilon}{(\Delta p_{i+1/2})^2+(\Delta p_{i-1/2})^2+\epsilon},$$
+$r_{i+1/2}=\min(r_i,r_{i+1})$, $\Delta p_{i+1/2}=p_{i+1}-p_i$,
+$\epsilon<10^{-10}$ (page-local $r_i$ and threshold $r_{\mathrm{th}}$, the
+source's $r_d$). Where adjacent pressure differences are equal $r_i=1$,
+and the flux is central if $r_{\mathrm{th}}\le\tfrac12$; where one of them
+vanishes $r_i\to0$ and $\sigma_b=1$, the WENO flux, for any threshold; the
+ratio never exceeds one, since $2|ab|\le a^2+b^2$ *(compiler check, not in
+the sources)*. The threshold
+$r_{\mathrm{th}}$ is neither defined nor given a value in the paper. The
+same ratio, applied to undivided differences of the solution, is the
+discontinuity measure of Ren et al. below.
 
 **Pressure ratio of a Riemann solver.** In a real-gas hybrid,
 [Xu et al. (2026)](/sources/xu-2026.md), Eq. (18), flag a compressive jump
@@ -282,6 +303,24 @@ under-resolved edge of a boundary layer with an element-resolution
 indicator (Persson–Peraire cited) and replace their polynomial by a
 Hermite-WENO reconstruction: the indicator here targets a turbulence
 variable, not a shock.
+[An et al. (2025)](/sources/an-2025.md), App. A, Eq. (A.1), do the same
+for the Spalart–Allmaras variable in their third-order modal DG RANS
+solver: the troubled-cell detector is the modal-decay ratio of the
+conserved $\rho\tilde\nu$,
+$$S_e=\log_{10}\frac{\langle\rho\tilde\nu^{N}_e,\rho\tilde\nu^{N-1}_e\rangle}{\langle\rho\tilde\nu^{N}_e,\rho\tilde\nu^{N}_e\rangle}$$
+($S_e$ page-local; the source's $S_k$, with $\rho\tilde\nu^{N}_e$ the
+modal expansion over all $M(N)$ modes of element $e$ and
+$\rho\tilde\nu^{N-1}_e$ the expansion over the first $M(N-1)$ modes, $N$
+the source's $p$, which it calls the discrete order;
+$\langle\cdot,\cdot\rangle$ the element inner product), and a
+cell is troubled above a case-dependent threshold; troubled cells take a
+Hermite-WENO reconstruction extended to the SA equation, with linear
+weights modified for anisotropic meshes, plus a positivity-preserving
+limiter on $\tilde\nu$. The authors' reason: the weak solution of
+$\tilde\nu$ has discontinuous first derivatives at the turbulent/laminar
+edge, oscillating high-order solutions give negative $\tilde\nu$, and the
+solver diverges (§2, App. A; background of their solver, cited). The
+threshold values are not printed.
 
 **Confining an adaptive filter.** [Gao et al. (2023)](/sources/gao-2023.md),
 §3.1.3, apply the positivity-preserving, minimum-entropy adaptive modal
@@ -495,6 +534,35 @@ values give Gibbs oscillations at shocks; the authors take 5 for their DNS
 (§3.1, §3.2.1). Their conclusion that thresholds of 7 to 10 "may also show
 better performance" than WENO-CU6 is stated, not shown (§4).
 
+**Extremum-property sensor of a hybrid interpolation WENO.**
+[Wang et al. (2024b)](/sources/wang-2024-i.md), §II.D, Eqs. (21)–(23),
+decide per point whether the fifth-order interpolation-based WENO of
+their HAUS-WENO scheme may use its linear weights. Write the quartic
+interpolant of the five-point stencil as
+$q_1(x)=\sum_{\ell=0}^4c_\ell\,\varphi_\ell(x)$,
+$\varphi_\ell=((x-x_i)/h)^\ell$ (page-local $q_1$, $c_\ell$,
+$\varphi_\ell$), whose derivative has the sign of
+$4c_4\varphi_3+3c_3\varphi_2+2c_2\varphi_1+c_1$. On each half-interval,
+$[x_{i-3/2},x_i]$ and $[x_i,x_{i+3/2}]$, the authors bound this derivative
+term by term, taking for each term the larger (or smaller) of its values
+at the two ends and summing; call the sums $B^{\max}_{\mathrm L}$,
+$B^{\min}_{\mathrm L}$, $B^{\max}_{\mathrm R}$, $B^{\min}_{\mathrm R}$
+(page-local; the source's MAX1, MIN1, MAX2, MIN2). The point is smooth if
+$(B^{\max}_{\mathrm L}\pm h)(B^{\min}_{\mathrm L}\pm h)>0$ and
+$(B^{\max}_{\mathrm R}\pm h)(B^{\min}_{\mathrm R}\pm h)>0$, the test that
+the paper names after the extremum property of the interpolant
+(§II.D); then the linear interpolation $q_1(x_{i+1/2})$ replaces
+the nonlinear weights and the characteristic projection. The shift
+"$\pm h$" is printed without further explanation. The idea of testing for
+roots of $q_1'$, earlier needing the roots explicitly, and the sign test
+on reconstruction-based unequal-sized WENO are attributed to earlier work
+of the group (as cited). For the supersonic Taylor–Green vortex the
+sensed variable is the density, and the authors state that the sensor
+"does not contain empirical parameters" (Abstract, §I). It makes HAUS-WENO
+the cheapest of the four schemes compared, 0.74 of the WENO-JS run time
+as printed in their Table III (0.723 from the printed run times, see the
+Source page) (scheme results on [WENO](/methods/weno-scheme.md)).
+
 **Comfort-zone indicator of WENO-K.** In the Gauss–Kriging WENO of
 [Han et al. (2022)](/sources/han-2022-c.md), §3.2.2, Table 4, every cell
 starts as troubled ($\theta_{\mathrm K}=0$, plain WENO-JS) and becomes smooth when the
@@ -535,6 +603,19 @@ built from neighbouring undivided differences (after Ren et al.) is near 1
 at a discontinuity and near 0 for high-wavenumber fluctuations, and maps
 the TENO cut-off between about $10^{-7}$ (Liang & Fu; $10^{-5}$ for Li &
 Fu) and $10^{-10}$; formulas on [WENO](/methods/weno-scheme.md).
+[Wu et al. (2024b)](/sources/wu-2024-b.md), §II.D, Eqs. (20)–(22),
+print the measure in full for their weighted compact nonlinear scheme:
+$m_{\mathrm R}=1-\min(1,\eta_{i+1/2}/C_{\mathrm r})$ with
+$$\eta_i=\frac{|2\Delta f_{i+1/2}\Delta f_{i-1/2}|+\epsilon}{(\Delta f_{i+1/2})^2+(\Delta f_{i-1/2})^2+\epsilon},\qquad \epsilon=\frac{0.9C_{\mathrm r}}{1-0.9C_{\mathrm r}}\,\xi^2,$$
+$\eta_{i+1/2}=\min(\eta_{i-1},\eta_i,\eta_{i+1})$, $\xi=10^{-3}$ and
+$C_{\mathrm r}=0.24$ for five-point interpolation (page-local
+$m_{\mathrm R}$, $\eta_i$, $C_{\mathrm r}$, $\xi$; $\Delta f$ undivided
+differences of the interpolated variable). It sets the TENO cut-off
+$C_T=10^{-\lfloor\beta_{\mathrm A}\rfloor}$,
+$\beta_{\mathrm A}=10-5(1-g)$, $g=(1-m_{\mathrm R})^4(1+4m_{\mathrm R})$,
+between $10^{-5}$ at discontinuities and $10^{-10}$ in smooth regions, on
+a smooth (tanh) rather than step cut-off (scheme and results on
+[weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md)).
 
 **Pattern of TENO flags.** [Takagi et al. (2022)](/sources/takagi-2022.md),
 §3.1–3.2, Eqs. (19)–(20), read the 0/1 flags that fifth-order TENO already
@@ -740,3 +821,7 @@ the hybrid scheme (§3.2, §5.3.1). The resulting interaction is on
 - [Kang & Lee (2024)](/sources/kang-2024.md) — §II.B (modified Ducros sensor switching the compact filter from eighth to second order).
 - [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.5 (pressure/density-gradient sensor and scalar-bound sensor, first-order reconstruction).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (indicators for DG artificial viscosity, cautions for LES, troubled-cell detection in subcell correction; review).
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §2.2, Eqs. (13)–(16) (pressure-ratio indicator and tanh switch of a central/WENO hybrid; threshold not given).
+- [An et al. (2025)](/sources/an-2025.md) — §2; App. A, Eqs. (A.1)–(A.2) (modal-decay detector on $\rho\tilde\nu$ driving HWENO and positivity limiting).
+- [Wang et al. (2024b)](/sources/wang-2024-i.md) — Abstract, §I; §II.D, Eqs. (21)–(23) (extremum-property sensor); §III.E, Table III (cost).
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) — §II.D, Eqs. (20)–(22) (Ren-type discontinuity measure setting an adaptive TENO cut-off).

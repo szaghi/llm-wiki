@@ -5,7 +5,7 @@ description: "Wall-stress models of wall-modelled LES that keep unsteadiness, co
 status: established
 aliases: [NEQWM, non-equilibrium wall model, nonequilibrium wall model, TBLE wall model, thin-boundary-layer-equation wall model, two-layer zonal wall model, integral wall model, wall-model integrated LES, integrated wall model]
 tags: [wall-model, wmles, boundary-layer, separated-flow]
-timestamp: 2026-10-28T07:07:00Z
+timestamp: 2026-10-28T17:02:00Z
 ---
 
 # Non-equilibrium wall models
@@ -150,6 +150,36 @@ $\rho(\nu+\nu_{t,w})\partial u/\partial y=\tau_w+y\,\partial p/\partial x$
 from the wall to $h_{\mathrm{wm}}$ gives
 $\rho(\nu+\nu_{t,w})u_{\mathrm c}/h_{\mathrm{wm}}=\tau_w+\tfrac12h_{\mathrm{wm}}\partial p/\partial x$,
 consistent with the printed forms.)*
+
+**An explicit pressure-gradient wall function on immersed boundaries.**
+[Yan et al. (2024)](/sources/yan-2024.md) (§I, §II C, Eqs. 22–31) call their
+model an explicit non-equilibrium model (NEM) although it keeps, of the
+thin-boundary-layer source $\partial_tU+\rho^{-1}\partial_xp+\partial_y(UV)$
+(their Eq. 22b, in the wall-tangential and wall-normal directions of a
+curved body), only the pressure gradient; their introduction defines the
+equilibrium model (EM) by the diffusion term alone and the NEM by the
+added pressure gradient and convection (§I). Integrating
+$\partial_y[(\nu+\nu_t)\partial_yU]=\rho^{-1}\partial_xp$ from the wall to
+the probe height $h_{\mathrm{wm}}$, about three grid spacings off a
+diffused-interface [immersed boundary](/methods/immersed-boundary-method.md),
+gives the velocity gradient there,
+$$\left.\frac{\partial U}{\partial y}\right|_{h_{\mathrm{wm}}}=\frac{\tau_w+h_{\mathrm{wm}}\,\partial p/\partial x}{\rho(\nu+\nu_t)},\qquad \frac{\nu_t}{\nu}=\kappa y^+\left(1-e^{-y^+/19}\right)^2,\ \kappa=0.41$$
+(Eqs. 23–24; $x$ here the local tangential direction), and the wall stress
+comes explicitly from a power law, Werner–Wengle in zero or favourable
+gradient and the adverse-pressure-gradient power law of Wilhelm et al. (as
+cited) with a separation indicator in adverse gradient (formulas on the
+[wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)
+page). The gradient serves only to extrapolate the probe velocity to a slip
+target at the wall (see [slip-wall models](/methods/slip-wall-model.md)).
+Their Table I classifies seven earlier wall-modelled diffused-interface
+methods, two of which solve the boundary-layer equation by finite
+differences, and they present theirs as the first use of explicit
+non-equilibrium wall functions on a diffused interface, these having been
+applied only to sharp interfaces before (§I). Side by side: Bose & Park
+(2018, §2.1; above) cite Hickel et al. (2012) arguing that keeping the
+pressure gradient without the convective and unsteady terms is inconsistent
+with the outer momentum equation; Yan et al. keep only the pressure
+gradient and do not discuss that argument.
 
 ## When is equilibrium enough? An integral bound
 
@@ -326,6 +356,7 @@ comparison involves no wall model of their own.
 | Mach 2.28 oblique shock/boundary-layer interaction, $8^\circ$ deflection | equilibrium ODE model coupled with no slip kept: negative $C_f$ in the bubble, but interaction length $L_{\mathrm{int}}/\delta_r=7.0$–5.0 (coarse to fine; nominal impingement to reflected-shock foot over the inflow 99 % thickness, page-local) against 3.3 wall-resolved and 4.18 experimental; oversizing attributed to the wall model and to SGS plus shock-capturing dissipation; non-equilibrium improvements named as future work | [De Vanna et al. (2022)](/sources/devanna-2022.md) (§4.6, §5) |
 | Mach 7.2, $8^\circ$ compression ramp | equilibrium ODE model: early pressure rise on the coarse grid, minimum $C_f$ above DNS; the imbalance between tangential pressure gradient and convection, which the equilibrium model omits, named as a possible cause (not tested) | [van Noordt et al. (2022)](/sources/vannoordt-2022.md) (§3.4) |
 | [Gaussian bump](/benchmarks/gaussian-bump.md), $Re_L=2\times10^6$, idealized conditions fed by the DNS mean wall stress | the pressure-gradient condition "notably improves" the bubble measured from $C_f$ for the eddy-viscosity SGS models, but changes the bubble measured from the first-cell velocity little; the SGS model and the mesh still largely set the separation length, and the wall condition has "a negligible impact on the convergence behavior"; Iyer & Malik (as cited) found a non-equilibrium model only marginally better than an equilibrium one on the same bump | [Zhou & Bae (2024)](/sources/zhou-2024-b.md) (§1, §3.2, Figs. 13–16) |
+| [Circular cylinder](/benchmarks/circular-cylinder-wake.md), $Re_D=3.9\times10^3$ and $1.4\times10^5$; [square cylinder](/benchmarks/square-cylinder-flow.md), $Re_D=2.2\times10^4$; sixth-order compact finite differences with implicit spectral vanishing viscosity, diffused-interface immersed boundary | the pressure-gradient wall function captures separation, shear-layer transition, shedding and the multiscale wake at $Re_D=3.9\times10^3$, the variant without pressure gradient (Werner–Wengle only) does not (Fig. 7); bulk values at $3.9\times10^3$ $C_D=1.02$, $C_{L,\mathrm{rms}}=0.113$, $L_r/D=1.42$, $St=0.229$; at $1.4\times10^5$ $L_r/D=0.98$ against LES 0.42–0.62 and experiment 0.44, attributed to flow sensitivity, eddy-viscosity models and the simplified boundary-layer equation; favourable-gradient wall stress under-predicted (Werner–Wengle); on the square cylinder the leading- and trailing-edge bubbles of wall-resolved LES are missed | [Yan et al. (2024)](/sources/yan-2024.md) (§III A–B, Tables II–IV, Figs. 7, 9) |
 | Three-dimensional boundary layers (bent square duct; rotating free stream; sudden spanwise pressure gradient) | integral and PDE non-equilibrium models "considerably less sensitive" to the matching location than the ODE equilibrium model (Hu et al. 2023, as cited); in their own LES the algebraic equilibrium model converges to a wall stress that depends on $h_{\mathrm{wm}}$ and is more accurate for small $h_{\mathrm{wm}}$, which they attribute to its unidirectional-flow assumption; on the hump, Park (2017, as cited) found the non-equilibrium model mostly converged on the medium grid, the equilibrium model more slowly and less monotonically | [Hu et al. (2024)](/sources/hu-2024.md) (§1, §6.1, §7) |
 
 Heinz (2020, §5.2, Table 3, Figs. 10–11) compiles WM-LES reattachment
@@ -395,6 +426,14 @@ for the integral and algebraic models, and claim "exactly 0 cost" for the
 integrated model, whose scalability is "solely determined by the LES
 solver"; no timing of the integrated model is shown. On the equilibrium page,
 [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) cite 10–30 % for the ODE model.
+Yan et al. (2024, §III A–B, Table V), whose explicit model needs no
+inner grid, report 15.04 h of wall clock per $10^5$ steps on 96 cores for
+the cylinder at $Re_D=3.9\times10^3$ with the sixth-order scheme and
+implicit SVV, against 18.16 h for a second-order scheme with the
+[Smagorinsky model](/methods/smagorinsky-model.md) on the same mesh, and
+13.2 core-hours per shedding cycle on the square cylinder against about
+1058 and 676 h inferred for two wall-resolved LES (as they cite them); the
+wall model's own share of the cost is not separated.
 
 ## Qualifications
 
@@ -432,6 +471,12 @@ solver"; no timing of the integrated model is shown. On the equilibrium page,
 - The equivalence of the $\{1,y,\phi_w\}$ basis with the integral wall model
   and the zero cost are asserted by Lv et al., not demonstrated against the
   integral model or by timings.
+- **Printed items of Yan et al. (2024).** The paragraph after their
+  Eq. (32) cites "Eq. (32)" for the velocity gradient, which is Eq. (23),
+  and says that the target velocity influences the forcing "in Eq. (3)",
+  which appears in Eq. (4); the Fig. 2 caption and §II C call the velocity
+  gradient $\partial U/\partial y$ a "pressure gradient". The van Driest
+  constant 19 is printed without comment.
 - Lv et al.'s own reference [24], the DG wall-model method of Lv, Yang,
   Park & Ihme (2021), is a different work from the Physics of Fluids paper
   read here.
@@ -452,3 +497,4 @@ solver"; no timing of the integrated model is shown. On the equilibrium page,
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.5, Table 2 (equilibrium models in HLPW-4; the pressure-aware model of W-032).
 - [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §1; §2.2.2, Eqs. (3)–(9); §3.2, Figs. 13–16; §4.
 - [Hu et al. (2024)](/sources/hu-2024.md) — §1 (taxonomy; matching-location sensitivity, Hu et al. 2023 and Park 2017 as cited); §6.1; §7.
+- [Yan et al. (2024)](/sources/yan-2024.md) — §I, Table I; §II C, Eqs. (22)–(32), Fig. 2; §III A–B, Tables II–V, Figs. 7, 9.

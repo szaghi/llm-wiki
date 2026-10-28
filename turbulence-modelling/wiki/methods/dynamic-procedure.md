@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-28T06:48:00Z
+timestamp: 2026-10-28T16:59:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -105,6 +105,9 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Li et al. (2022)](/sources/li-2022-k.md), §II C, Eqs. (10)–(15) | compressible DSM of Moin et al. (cited) with Lilly's least squares, used to make the constant of a Reynolds-stress-model-based IDDES dynamic (below) | volume-weighted average over the direct face neighbours of a cell on hybrid unstructured meshes, $\hat\Delta=a\Delta$ with $a=2$ "in general"; the same neighbour average for numerator and denominator; negative $C_s^2$ clipped to zero |
 | [Xu et al. (2023)](/sources/xu-2023.md), §2.2, §3.1 | compressible DSM (Moin et al.; Lilly; Germano et al., cited) with dynamic $C_s^2$, Yoshizawa coefficient $C_I$ of $\tau_{kk}=2C_I\Delta^2\lvert\tilde S\rvert^2$ and subgrid heat-flux ratio $\nu_t/Pr_t$; the same identity also solves the nine stress and four heat-flux coefficients of a Lund–Novikov nonlinear algebraic model (after Yuan et al., cited), the paper's dynamic baselines of a learned model | $\Delta=(\Delta_x\Delta_y\Delta_z)^{1/3}$; test filter and averaging not printed |
 | [Zhang et al. (2023)](/sources/zhang-2023-c.md), §2, §3.3 | dynamic Smagorinsky model (cited to Martín, Piomelli & Candler) in an OpenFOAM flamelet LES of a stratified burner; its $k_{\mathrm{sgs}}$ enters the resolved-fraction check of the mesh | not printed |
+| [Xiao et al. (2025)](/sources/xiao-2025.md), §2.2, Eqs. (5)–(9) | Germano–Lilly DSM in the GPU finite-difference solver [CaLES](/software/cales.md) (staggered grid, strain stored at cell centres), coefficient multiplying $\Delta^2$ directly, i.e. $C_s^2$; wall-resolved and wall-modelled channels and a square duct | box test filter assuming uniform spacing, $\hat\Delta/\Delta=2$; in the first off-wall layer the wall-parallel velocity is extrapolated linearly to ghost points and $\hat\Delta/\Delta=4^{1/3}$ (a two-dimensional box filter), more accurate in their wall-modelled channel tests than $8^{1/3}$ (data not shown); average over homogeneous directions; negative averaged coefficient clipped to zero |
+| [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md), §2.1, Eqs. (7)–(10) | compressible DSM of Moin et al. (cited), coefficient entering linearly in place of $C_s^2$, with a fixed Yoshizawa coefficient $C_I=0.06$ (after Vreman et al.) for the isotropic part; curvilinear immersed-boundary LES of high-speed flows | test filter a cube of $3\times3\times3$ cells; average over homogeneous directions or, if none, over the test-filter cube |
+| [Wang et al. (2024c)](/sources/wang-2024-j.md), §II.B, Eqs. (12)–(13) | compressible dynamic Smagorinsky–Yoshizawa model: dynamic Smagorinsky coefficient, Yoshizawa coefficient and turbulent Prandtl number; $\Delta=V_c^{1/3}$ ($V_c$ the cell volume); wall-resolved LES of a supersonic boundary layer | not printed |
 
 Fowler et al. (2022, §4.2) borrow the Lagrangian averaging of the dynamic
 model for the time integration of their wall model (semi-Lagrangian upstream
@@ -585,8 +588,48 @@ filter-width question.
   [super-resolution SGS models](/methods/super-resolution-sgs-model.md)).
   The authors concede that the model "might be not optimal for such
   analysis": the eddy-viscosity stress is compared with the full stress.
+- **Wall-resolved and wall-modelled channels on a GPU solver.**
+  [Xiao et al. (2025)](/sources/xiao-2025.md) (§4.2, Table 3) find DSM
+  skin-friction errors of $-2.25\%$, $-0.69\%$, $-1.49\%$ and $-3.22\%$ on
+  four wall-resolved channel grids at $Re_\tau\approx544$, which the text
+  summarizes as "less than approximately 3%", against 9.38% to 0.50% for
+  the static model with van Driest damping; the resolved shear stress is
+  under-predicted with DSM, as the friction is. In wall-modelled channels
+  at $Re_\tau\approx5200$ on 13 grids per cell aspect ratio, DSM converges
+  non-monotonically, as the static model does: at aspect ratio 1 its
+  skin-friction errors start at $+1.69\%$, range between $-1.36\%$ and
+  $+2.22\%$ and end at $+0.44\%$ on the finest grid (§4.3, Table 4; see
+  [wall-modelled LES](/methods/wall-modelled-les.md)). The authors judge
+  DSM "somewhat superior" in grid convergence (§5). It adds 216 B per
+  grid point, "about 150%" of the DNS memory, against 32 B for the static
+  model (§3.2, Table 2). In decaying isotropic turbulence it agrees with
+  the Comte-Bellot–Corrsin spectra, nearly perfectly with the box-filtered
+  initial field, which the authors relate to its box test filter (§4.1,
+  Fig. 5).
+- **No effect on a supersonic cylinder wake.** In two-dimensional LES of
+  Mach-3 flow past a cylinder, [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md)
+  (§3.3.2, Fig. 12) obtain the same reattachment length with the dynamic
+  coefficient, a constant coefficient and no subgrid model; the wall
+  treatment decides it (see the
+  [Smagorinsky model](/methods/smagorinsky-model.md)).
 
 ## Dynamic closures of scalar fluxes and of one-equation models
+
+- **An analogue in reacting-flow closure.** [Salehi et al. (2024)](/sources/salehi-2024.md)
+  (§2.2) present
+  [conditional source-term estimation](/methods/conditional-source-term-estimation.md)
+  as analogous to the dynamic Smagorinsky procedure. They print the
+  Germano identity with the Smagorinsky model at both filter levels and
+  the coefficient homogeneous at the test-filter level, solved by least
+  squares over the nine equations; in the estimation, an integral identity
+  between filtered and conditional means plays the role of the Germano
+  identity, and the homogeneity of the conditional means over an ensemble
+  of cells (their "test filter") the role of the homogeneous coefficient.
+  They state that the test-to-grid filter ratio is often 2 to 3 in dynamic
+  subgrid models but much larger in conditional closures, for example a
+  $4\times4\times64$ conditional grid within a $96\times96\times320$ LES grid
+  (§2.2, citing their ref. [29]). Their printed coefficient enters
+  linearly, in the role of $C_s^2$.
 
 - **Sooting flames.** [Nmira et al. (2023)](/sources/nmira-2023.md)
   (§2.1) close the LES of buoyant ethylene flames with DSM for the
@@ -888,3 +931,7 @@ squares from a 6×4 system; see the
 - [Nmira et al. (2023)](/sources/nmira-2023.md) — §2.1.
 - [Wei et al. (2023)](/sources/wei-2023.md) — §II B.
 - [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.3, Table 1.
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §2.2, Eqs. (5)–(9) (implementation, first-layer test filter); §3.2, Table 2 (memory); §4.1, Fig. 5; §4.2, Table 3; §4.3, Table 4; §5.
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §2.1, Eqs. (7)–(10) (compressible DSM, $3\times3\times3$ test filter); §3.3.2, Fig. 12.
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) — §II.B, Eqs. (12)–(13) (dynamic Smagorinsky–Yoshizawa model, dynamic $Pr_t$).
+- [Salehi et al. (2024)](/sources/salehi-2024.md) — §2.2 (Germano identity as analogue of conditional source-term estimation; filter ratios).

@@ -5,7 +5,7 @@ description: "Flamelet-based tabulated chemistry stores the thermochemical state
 status: established
 aliases: [eddy dissipation concept, EDC, tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, FPV-h, composition space model, ignition source-term patch, optimal estimator, premixed flamelet tabulation, subgrid mixture-fraction variance, scalar variance model, neural-network tabulation, stretch factor, extended Takeno flame index, principal-component transport, PC transport, counterflow flamelet database, partially premixed flamelet tabulation]
 tags: [combustion, dns, tabulated-chemistry, flame-wall-interaction, hybrid-rans-les]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Flamelet-based tabulated chemistry
@@ -769,6 +769,75 @@ models are needed (§IV C). The subgrid closure is the
 the turbulent transport of heat and species is on
 [turbulent Prandtl number](/definitions/turbulent-prandtl-number.md).
 
+## Tables inside conditional closures
+
+Tabulated chemistry also supplies the reaction rates of conditional
+closures, which take the table as given and close the
+turbulence–chemistry interaction separately. The review of
+[conditional source-term estimation](/methods/conditional-source-term-estimation.md)
+(CSE) by [Salehi et al. (2024)](/sources/salehi-2024.md), §2.8, lists
+three ways the chemistry enters, all as cited there:
+
+- **Trajectory-generated low-dimensional manifolds** (TGLDM, after Pope
+  and Maas): the homogeneous reactor equations $\partial_tY_k=\dot\omega_k$
+  (page-local: $\dot\omega_k$ the reaction rate of species $k$) are
+  integrated from points of the realizable boundary given by the element
+  balance, and the state is tabulated along the trajectories against a few
+  progress variables (for example $Y_{\mathrm{CO_2}}$ and
+  $Y_{\mathrm{H_2O}}$), with Delaunay interpolation (§2.8.1, Eqs. 32–33).
+  The authors report success for methane–air non-premixed flames and
+  failure for longer-chain fuels, whose trajectories cross (n-heptane
+  trajectories cross themselves), and for premixed flames unless many
+  progress variables are used, because diffusion drives the
+  low-temperature part of a premixed front (Fig. 12). FPI/FGM tables
+  built from one-dimensional premixed flames (Eq. 34) and REDIM bring the
+  diffusion effects into the manifold; the premixed CSE of Salehi et al.
+  (ref. [88], as cited) generated its "TGLDM" trajectories from Eq. (34)
+  (§2.8.1).
+- **Laminar flamelet decomposition** (LFD, Bushe and Steiner): the
+  conditional means are expanded in a library of $N_{\mathrm f}$ laminar
+  flamelet profiles with unknown non-negative weights, the discrete PDF of
+  upstream strain rate, solved by non-negative least squares (§2.8.2,
+  Eqs. 35–38). Its accuracy is bounded by the library: in Sandia flame D a
+  steady-flamelet library under-predicts NO, an unsteady one over-predicts
+  it, and mixed libraries can "tune" the result without clear
+  justification (§3.1.2, Fig. 25).
+- **Detailed chemistry**, tested only a priori with a 16-species,
+  35-reaction skeletal mechanism, at accuracy comparable to coarse-grid
+  conditional moment closure; elemental mass conservation is not
+  guaranteed because the conditional species come from an inverse problem
+  (§2.8.3).
+
+The table look-up is a cost item of its own: hash tables for the TGLDM
+look-up and pre-tabulated PDF integrals brought the CSE share of the total
+cost from 85% to 10% (first-order Tikhonov) and below 3% (Bernstein
+polynomials of degree 10) in RANS of Sandia flames D and F (§3.1.2), and
+in the latest CSE calculations, the review states, "search, retrieval
+and interpolation of data from the tabulated chemistry have become the
+most computationally expensive tasks in the CSE routine" (§4.1). CSE has
+relied on static FGM or TGLDM tables, which "worked well for simple fuels
+like methane, methanol, ethanol and acetone"; the authors propose
+neural-network tabulation and direct chemistry integration as future
+work, and state that "typically two chemical progress variables and if
+needed, one for temperature or enthalpy, seem to be sufficient in most
+cases" (§4.1–4.3).
+
+The review of artificial intelligence for supersonic combustion by
+[Le et al. (2024)](/sources/le-2024.md) (a corroborating survey) lists
+flamelet-generated manifolds and in-situ adaptive tabulation among the
+classical accelerations of chemistry, which it states takes "over 85 % of
+the total computational cost" of engine-combustion simulations (§3, §3.2);
+it writes the filtered flamelet/progress-variable source as
+$\tilde{\dot\omega}=\int\dot\omega(Z,c)\tilde P(Z,c)\,\mathrm dZ\,\mathrm dc$
+with $\tilde P$ the filtered joint density (Eq. 19; $\dot\omega$
+page-local, the progress-variable source) and reports, as cited, flamelet
+closures of supersonic combustors (two-dimensional RANS, LES of the DLR
+strut combustor with a partially premixed progress-variable flamelet, a
+multi-mode flamelet), a deep network whose predicted joint filtered
+density of $Z$ and $c$ in MILD combustion "deviates significantly" from
+presumed shapes, and flamelet tables regressed by several multilayer
+perceptrons (§3.3, Table 5).
+
 ## Qualifications
 
 - **Printed forms in Mardani & Nazari (2022)** *(compiler checks, not in
@@ -885,3 +954,5 @@ the turbulent transport of heat and species is on
 - [Nmira et al. (2023)](/sources/nmira-2023.md) — §1; §2.1 (non-adiabatic counterflow flamelets, presumed FDF); §2.2, Eqs. (1)–(7), Fig. 1 (factorized soot source, bimodal conditional FDF S1/S2, $Z_{\mathrm s}$); §2.3, Eqs. (8)–(10) (filtered radiative transfer, subgrid emission closure); §3.1–3.4, Tables 1–2, Figs. 2–6 (FM Global flames, model variants M1–M5); §4.
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §6.3, Figs. 15–16 (DG LES with FPV of the Sandia dimethyl-ether jet flame; heat-transfer effect missing from the flamelet model).
 - [Wei et al. (2023)](/sources/wei-2023.md) — §II B (quasi-laminar closure chosen over flamelet, PDF and linear-eddy closures); §IV C, Conclusions (finite-rate burning).
+- [Salehi et al. (2024)](/sources/salehi-2024.md) — §2.8.1–2.8.3, Eqs. (32)–(38), Fig. 12 (TGLDM, FPI/FGM, laminar flamelet decomposition, detailed chemistry in CSE); §3.1.2, Fig. 25 (flamelet-library dependence, cost reduction); §4.1–4.2 (tabulation cost, recommendations).
+- [Le et al. (2024)](/sources/le-2024.md) — §3, §3.2 (FGM and ISAT tabulation, chemistry cost); §3.3, Eq. (19), Table 5 (flamelet closures for supersonic combustion, learned joint density and tables; review, cited works).

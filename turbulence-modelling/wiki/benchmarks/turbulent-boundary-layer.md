@@ -5,7 +5,7 @@ description: "Spatially developing turbulent boundary layers on flat walls: zero
 status: established
 aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, Wieghardt flat plate, Samuel–Joubert boundary layer, DLR/UniBw APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
 tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven, rans, dg, flux-reconstruction, des, lattice-boltzmann]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-28T12:32:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -170,6 +170,18 @@ Malik, as cited) and $\delta/L=0.0061$, and the mean velocity follows
 $0.41^{-1}\ln y^++5.2$; an inflow generated with the anisotropic
 minimum-dissipation model instead ($Re_\tau\approx630$, $Re_\theta\approx1126$)
 leaves the bump-flow profiles practically unchanged.
+The steady RANS study of the same bump by
+[An et al. (2025)](/sources/an-2025.md), §3.2, feeds its discontinuous
+Galerkin runs from a precursor flat plate grown to $Re_\theta\approx530$,
+and sets the first-cell $y^+$ of every grid iteratively from flat-plate
+estimates of $u_\tau$ (§3.1). The review of
+[Fang et al. (2026)](/sources/fang-2026.md), §3.4, cites a
+transformer-based inflow generator trained on spatially developing
+boundary-layer DNS over $Re_\theta=661.5$–1502.0 with "less than 5% error"
+in turbulence intensity and energy spectrum, and a three-dimensional
+generative network that reconstructs near-wall velocity from wall
+pressure and shear stress (see
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
 
 **Integral scales as a convergence argument.** [Hu et al. (2024)](/sources/hu-2024.md)
 (§2) use the zero-pressure-gradient DNS of Sillero et al. (2014, up to
@@ -697,6 +709,47 @@ stress stays under-predicted. See
 and, for the separated corner of the same paper,
 [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
+**A Mach 2 layer for wall-resolved LES and hybrid length scales.**
+[Wang et al. (2024c)](/sources/wang-2024-j.md), §II–§III, run a spatially
+developing adiabatic flat-plate layer at $M_\infty=2.0$, $Re_{\delta_0}\approx13{,}500$
+on the inflow thickness $\delta_0$, matching the DNS of Pirozzoli et al.
+(2008): domain $30\delta_0\times6\delta_0\times3.7\delta_0$,
+Sandham-type inlet disturbances (extended to supersonic flow by Li &
+Coleman, as cited) that trigger transition before $x/\delta_0=10$,
+seventh-order WENO convection, sixth-order central viscous terms,
+$\Delta t=0.001\delta_0/U_\infty$, 1000 samples at $0.1\delta_0/U_\infty$,
+statistics at $x/\delta_0=25$. The LES uses the dynamic
+Smagorinsky–Yoshizawa model (see [dynamic procedure](/methods/dynamic-procedure.md))
+on three grids, $209\times161\times81$ (LES1), $321\times201\times161$
+(LES2) and $649\times201\times161$ (LES3), all with first-cell
+$\Delta y^+_w=0.8$:
+
+- LES3 agrees with the DNS in van Driest-transformed mean velocity and
+  density-scaled Reynolds stresses and is used as a "high-fidelity
+  database"; LES1 and LES2 over-predict the streamwise stress and slightly
+  under-predict the shear stress; below $y^+=7$ all runs follow the wall
+  law (Figs. 1–2; see [compressible velocity transformations](/definitions/compressible-velocity-transformation.md));
+- on the coarse grid, Spalart–Allmaras-based DES and DDES show
+  [log-layer mismatch](/definitions/log-layer-mismatch.md) and too little
+  Reynolds stress, the authors' Spalart–Allmaras-based scale-adaptive
+  simulation is better but too low below $y^+=14$, and their modification
+  (a wall distance capped by the von Kármán length under the DDES
+  shielding function) raises the inner-layer stresses and widens the
+  $St^{-5/3}$ range of the outer-layer wall-pressure spectrum (Figs. 1–3;
+  see [scale-adaptive simulation](/methods/scale-adaptive-simulation.md)
+  and [detached-eddy simulation](/methods/detached-eddy-simulation.md));
+- with refinement the turbulent-kinetic-energy peak moves from $y^+\approx20$
+  to about 15 and the production peak rises, while the resolved
+  dissipation starts to decay rapidly near $y^+=14$ on every grid
+  (Figs. 12–14), from which, with a $k$-$\varepsilon$ eddy-viscosity
+  argument, the authors place the RANS/LES interface of such hybrids near
+  $y^+\approx14$, inside a band $7<y^+<15$ where the velocity-gradient
+  topology changes most with resolution (§III.D–E; see
+  [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+
+No friction Reynolds number or wall-parallel spacing in wall units is
+printed.
+
 **Transition on a supersonic plate.**
 [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md), §IV C, use the
 spatially developing Mach 2.25 DNS of Pirozzoli et al. ($Tu_\infty=0.04\%$)
@@ -828,6 +881,17 @@ supersonic layer that feeds their
   [skin-friction decomposition](/definitions/skin-friction-decomposition.md).
   Upstream of the interaction viscous dissipation and turbulence production
   each give about half of $C_f$.
+- [Kimmel et al. (2025)](/sources/kimmel-2025.md), §III.A: the Mach 4
+  layer ahead of their $24^\circ$ compression ramp grows from a 1 mm
+  parabolic inflow profile with random velocity perturbations of $\pm2\%$
+  of $U_\infty$, left to transition (no recycling or synthetic turbulence),
+  to $\delta=8$ mm at the corner; it is computed as
+  [implicit LES](/definitions/implicit-les.md) (second-order Godunov
+  finite volumes, no subgrid or wall model) on adaptive cells of
+  $x^+=y^+=z^+=11$, first point at $y^+=5.5$; its statistical accuracy is
+  delegated to the authors' conference paper, and the wall-pressure
+  fluctuation intensity on the ramp panel is 1.04% of the mean pressure
+  (§IV.C).
 - [Shi & Yan (2023)](/sources/shi-2023.md), §IV.B, Table III, Figs. 8–10: at
   $x^*=-5.4$ upstream of a Mach 2.9, 24° ramp ($T_w=307$ K isothermal,
   $Re_\infty=5.966\times10^6$/m, digital-filter inlet), their
@@ -1358,6 +1422,18 @@ Bruce et al., as cited).
   $L_x=6$ in their units, where $0.8L_x=4.8$; the offset between the two
   coordinates is not stated *(compiler check, not in the sources)*.
 
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) call $y^+<7$ the
+  "inner-layer region (i.e., buffer region)" in §III.B, while their §III.D
+  places the buffer layer at $7<y^+<15$, and put the turbulent-kinetic-energy
+  peak at $y^+\approx15$–20 at "the outer edge of the logarithmic-law
+  region" (§III.E). Their kinetic energy is the sum of the three
+  density-weighted normal stresses without the factor $\tfrac12$ (Eq. 26).
+  They do not state explicitly that the coarse a posteriori run uses their
+  modified length (Eq. 40).
+- [Kimmel et al. (2025)](/sources/kimmel-2025.md) use $z$ wall-normal
+  (translated to $y$ above); their wall resolution is coarser than the
+  first-point $y^+\le1$ they quote for DNS.
+
 # Citations
 
 - [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) — Results pp. 6–8, Fig. 5; Methods p. 14 (preprint v1).
@@ -1415,3 +1491,7 @@ Bruce et al., as cited).
 - [Wang & Xu (2024)](/sources/wang-2024-h.md) — §1.1; §2.3, Tables 1–3; §3; §4.1–4.3, Figs. 6–13; App. B.
 - [Wei et al. (2023)](/sources/wei-2023.md) — §III B, Figs. 5–11; §IV D–F, Figs. 24–37.
 - [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §2, Eq. (1); §2.1; §4.1 (review).
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) — §II.A–C; §III.B–F, Table I, Figs. 1–16; §IV.
+- [Kimmel et al. (2025)](/sources/kimmel-2025.md) — §II.A; §III.A, Table 1, Fig. 3; §IV.C.
+- [An et al. (2025)](/sources/an-2025.md) — §3.1; §3.2 (precursor plate).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §3.4 (cited works, review).

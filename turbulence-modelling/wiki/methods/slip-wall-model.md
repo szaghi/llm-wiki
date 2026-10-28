@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Slip-wall models"
-description: "Wall-modelled LES boundary conditions that let the filtered velocity slip at the wall instead of imposing a wall stress: the dynamic Robin slip condition of Bose & Moin as reviewed by Bose & Park, and the volume-filtered wall slip of Rickard & Kasbaoui with its van Driest and slip-length closures."
+description: "Wall-modelled LES boundary conditions that let the filtered velocity slip at the wall instead of imposing a wall stress: the dynamic Robin slip condition of Bose & Moin as reviewed by Bose & Park, the volume-filtered wall slip of Rickard & Kasbaoui with its van Driest and slip-length closures, and the slip target velocities of diffused-interface immersed boundaries."
 status: established
 aliases: [slip wall, dynamic slip wall, dynamic slip-wall model, Robin slip condition, wall-slip model, slip-length model, Van Driest slip model]
 tags: [wall-model, wmles, filtering, immersed-boundary]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T17:02:00Z
 ---
 
 # Slip-wall models
@@ -234,6 +234,59 @@ Kawai & Larsson (2012). The momentum equations keep no slip and take
 $\tau_w$ from an [equilibrium wall model](/methods/equilibrium-wall-model.md)
 (§2.2).
 
+## Slip target velocities in diffused-interface immersed boundaries
+
+A third route reaches a slip velocity from a wall-stress model: in a
+diffused-interface (continuous-forcing)
+[immersed boundary method](/methods/immersed-boundary-method.md) the no-slip
+*target* velocity that the forcing imposes at the Lagrangian markers is
+replaced by a modelled slip velocity, so the wall model acts through the
+target rather than through a stress flux or a Robin coefficient.
+[Yan et al. (2024)](/sources/yan-2024.md) (§I, Table I) classify seven
+earlier wall-modelled diffused-interface methods by the quantity they
+modify: the SGS viscosity of cells in or near the immersed-boundary region,
+a tangential source term, or the tangential target velocity; the last group
+includes the immersed-boundary lattice Boltzmann solver of
+[Wang et al. (2024d)](/sources/wang-2024-k.md), listed there with
+numerical integration of the boundary-layer equation.
+
+Page-local notation for this section: $s$ and $n$ the wall-tangential and
+wall-normal directions; $u^P_s$ the tangential velocity relative to the wall
+at a probe point at wall distance $h_{\mathrm{wm}}$ (the sources' probing or
+matching point); $u^{\mathrm{BR}}_s$ the slip target that replaces the wall
+velocity at the marker.
+
+- **Linear extrapolation with a modelled gradient (Yan et al. 2024).** A
+  second layer of probing markers sits about three Eulerian spacings along
+  the wall normal, outside the region the interface forcing influences
+  (§II C). The target is the probe velocity extrapolated linearly to the
+  wall (Eq. 21),
+  $$u^{\mathrm{BR}}_s=u^P_s-\left.\frac{\partial u_s}{\partial n}\right|_{h_{\mathrm{wm}}}h_{\mathrm{wm}},\qquad
+  \left.\frac{\partial u_s}{\partial n}\right|_{h_{\mathrm{wm}}}=\frac{\tau_w+h_{\mathrm{wm}}\,\partial p/\partial s}{\rho(\nu+\nu_t)}\quad(\text{Eq. 23}),$$
+  the gradient coming from the thin-boundary-layer equation kept with its
+  pressure-gradient term only and a van Driest mixing-length $\nu_t$, and
+  $\tau_w$ from an explicit power-law wall function (Werner–Wengle, or the
+  adverse-pressure-gradient law of the [wall law in adverse pressure
+  gradient](/definitions/adverse-pressure-gradient-wall-law.md); details on
+  the [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)
+  page). The wall-normal (non-penetration) component of the target is
+  unchanged (Eq. 32). Two limiters bound the target between the no-slip and
+  the uniform profile: when a strong favourable pressure gradient makes the
+  gradient of Eq. (23) negative, $u^{\mathrm{BR}}_s$ is reset to $u^P_s$; under
+  an adverse gradient its lower limit is the wall velocity, for numerical
+  stability (§II C). Where the separation test of the wall function fires,
+  no slip is kept at that marker (Eq. 31). The authors state that the power
+  law alone cannot supply the gradient, because its derivative is
+  discontinuous at the junction of the linear and power-law branches, which
+  is why the boundary-layer equation is added (§II C).
+- **Slip at a forcing point inside the first cell (Wang et al. 2024d).** In
+  the diffusive-interface variant of their lattice Boltzmann WMLES, the
+  velocity at a forcing point a distance $(0.1$–$0.25)\Delta x$ off the wall
+  (after Shi et al. 2019, as cited) is reconstructed from the integrated
+  [equilibrium wall model](/methods/equilibrium-wall-model.md) and imposed
+  by the immersed-boundary force, "mimicking the slip boundary condition"
+  (§II D, §III A, Fig. 1).
+
 ## Zero-shear slip walls are not slip-wall models
 
 An inviscid slip wall, with only no penetration and zero wall shear stress,
@@ -284,3 +337,5 @@ the stalled state at 19.9° was largely invariant to it (§V, Figs. 35–36).
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §II (W-030 inviscid slip walls); §V, Figs. 35–36 (slip tunnel walls).
 - [Hu et al. (2024)](/sources/hu-2024.md) — §1 (dynamic slip and virtual-wall slip in the wall-model taxonomy; passing).
 - [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §1 (slip conditions among prior bump WMLES; passing).
+- [Yan et al. (2024)](/sources/yan-2024.md) — §I, Table I (wall-modelled diffused-interface IBMs by modified quantity); §II C, Eqs. (21)–(23), (31)–(32) (slip target velocity and its limiters).
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — §II D, Fig. 1; §III A (slip velocity at the forcing point of the diffusive-interface IBM).

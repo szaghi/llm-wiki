@@ -6,6 +6,121 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 14 — 2024–2026 papers: interpolation-based WENO, smooth-cutoff WCNS/SATES, SA-based SAS, wall-modelled immersed boundaries, hybrid RANS/LES in OpenFOAM and DG, Bayesian SA calibration, low-dissipation Roe ILES, PyFR/CaLES/Xcompact3d/GESTS, panel FSI under SBLI, vortex-flow CFD survey, CSE review, AI reviews (2026-10-28)
+
+Sources (20): wang-2024-i, wang-2024-j, wang-2024-k, wu-2024-b, yan-2024,
+ye-2024, le-2024, luckring-2024, salehi-2024, guo-2025, kimmel-2025,
+fang-2026, fang-2025, witherden-2025, xiao-2025, yeung-2025-b,
+akbarzadeh-2025, alberti-2025-b, an-2025, decosmo-2025. 280 of 307
+ingested, 183 concept pages plus the registry, 13050 bibliography entries.
+Deep lint A1–A8 over the chunk-14 content done.
+
+### Decisions for the human
+
+1. **$c_{r3}$ reclassified:** a drafter opened a contradiction on the
+   Spalart–Shur rotation–curvature constant (1.0 in li-2022, Eqs. 8–15;
+   0.6 in an-2025, Eq. 10; both citing Spalart & Shur 1997). The compiler
+   moved it to Qualifications because an-2025 prints the value but uses
+   the correction in no computation. Reopen?
+2. **Bibliography calls left by the resolver:**
+   - decosmo-2025's Taylor "Statistical theory of turbulence" (Proc. R.
+     Soc. A 151:421) is `taylor-1935-b`; master `taylor-1935` (a
+     reddy-2026 print) carries the same volume:page with the Taylor &
+     Green title and authors. Merge or correct?
+   - Master `achenbach-2006` is a 1968 paper (J. Fluid Mech. 34:625);
+     the key year is wrong.
+   - an-2025's and le-2024's Spalart–Allmaras printed "Recherche
+     Aérospatiale, 1992" folded into the journal entry `spalart-1994`
+     (no precedent for this mixed print). Confirm.
+3. **Candidate pages** (not created, inline):
+   - entropy filtering (witherden-2025, wang-2024-b; Dzanic & Witherden
+     as cited) — two sources;
+   - swept/sharp-fin shock interaction (ye-2024, zhang-2022-g) — two;
+   - a grid-length page ($\Delta_{\mathrm{lsq}}$, $\Delta_{\mathrm{llm}}$,
+     $\Delta_\omega$, $\Delta_{dw}$, $s_\Delta$; guo-2025, alberti-2025-b,
+     earlier DES sources);
+   - neural-network surrogate RANS (le-2024, shan-2023);
+   - the Germano-type identity shared by the dynamic procedure and CSE;
+   - single-source, kept inline: turbulent square duct (xiao-2025),
+     supersonic base flow (wu-2024-b), low-dissipation Roe scheme and the
+     Banchetti curved-wall channel (decosmo-2025), GESTS and
+     pseudo-spectral algorithms (yeung-2025-b), CurvIB (akbarzadeh-2025),
+     PeleC (kimmel-2025), DARPA SUBOFF (wang-2024-k), HiFi-TURB rounded
+     step and CFL3D (an-2025), vortex breakdown (luckring-2024).
+   - The TKE-budget page from the chunk-13 list is still pending.
+4. **Symbol families written two ways on concept pages:** Yan et al.'s
+   slip target on immersed-boundary-method ($u^t_{\mathrm{target}}$, the
+   IBM page's points $a$, $b$, $c$) against the wall pages ($u^{\mathrm
+   P}_s$, $u^{\mathrm{BR}}_s$); both defined where used.
+5. **Bundle fit:** ye-2024 and kimmel-2025 (panel FSI), yeung-2025-b
+   (HPC), le-2024 and fang-2026 (AI reviews, corroborating only) have
+   marginal turbulence-modelling content.
+6. **Still open from earlier chunks:** the chunk-13 to chunk-10 and
+   earlier lists.
+
+### Contradictions
+
+None opened (item 1); ten open in all. Side by side, not conflicts:
+the $C_{\mathrm{DDES}}$ blends of guo-2025 ($0.78F_1+0.61F_2$) and
+delassaux-2023 ($0.78F_1+0.61(1-F_1)$); Ahmed reference drags and their
+attributions (wang-2024-k against Cai and Mozaffari); square-cylinder
+$L_R$ measured from the centre (guo-2025) against the DNS 1.04 behind the
+cylinder; the backward-facing-step references (Adams 1984 in
+alberti-2025-b, Vogel & Eaton in mozaffari-2024); NACA 0012 at 45° (Shur
+against Lee & Han); yan-2024's $C_s\Delta^2$ "as in Ref. 60" against
+wang-2024-k's $(C_s\Delta)^2$; the Orszag–Tang fields of fang-2025 and
+foldes-2023; an-2025's calibration gains against Brenner et al.'s
+expectation; Witherden and Vermeire on cross-product metrics.
+
+### Printed slips (recorded on the Source pages)
+
+- wang-2024-i: Eq. 18 slope; Eq. 28 derivatives; Table III 0.74 (0.723);
+  Table I 4.99 (4.95).
+- wang-2024-j: Eq. 18 tr(A); Eq. 25; Eq. 13 indices; layer names; refs 6/8.
+- wang-2024-k: abstract "underestimates" against §III A; Ahmed 0.296
+  "slightly smaller" than 0.279; "Cui"/"IDES"; MRT signs; Eq. 24 units.
+- wu-2024-b: $C_T$ "increases"; Eq. 36 units; $L_c/L_i$ definitions.
+- yan-2024: Eq. 35 density factor; Eq. A1 factor ½; equation references.
+- ye-2024: Eq. 12; captions $r/\delta=80$; two "dominant" frequencies.
+- le-2024: k-ε/k-ω references swapped; FIML caption cites an
+  optimisation paper; printed editor's comment (§5.2.3); Eq. 7 "RMSE".
+- luckring-2024: wrong reference numbers in captions; "CFD Vision 2020";
+  WRLES limited to $10^4$ against its own $10^6$ runs.
+- salehi-2024: "four categories" of five; burned/unburned swapped;
+  equation references; [247]/[249] printed twice.
+- guo-2025: projected area 0.1568 (0.01568 m²); Eq. 3/5 constant 0.09 vs
+  0.99; figure references.
+- kimmel-2025: 4000 samples at 425 kHz (9.4 ms, not 0.047 s); presented as
+  AIAA 2024-2735 and citing it.
+- fang-2026: names not matching references ([58], [201], [60]).
+- fang-2025: Eq. 21 Hartmann number; $B^A$ divergence; mis-cited Orszag &
+  Tang, Dellar, K41.
+- witherden-2025: Eq. 7 notation; seminar DOIs.
+- xiao-2025: "<~3%" vs −3.22%; uniform refinement vs Table 4.
+- yeung-2025-b: 98.9% (102.4%); "33x" (83×); "2.4x" (2.60); 8 nodes (64).
+- akbarzadeh-2025: Eq. 14 units; 960 cores on "10 nodes" (20); Eq. 27 log
+  slope κ against the claimed log law.
+- alberti-2025-b: 985 elements (935); Eq. 24 base; Table 1 rounding.
+- an-2025: bounds rows swapped; χ inverted in the appendix; "54%" (79%).
+- decosmo-2025: $L/V_0$ 1e-5 s (5e-4 s); Dean 1.156 (1.166 at its own
+  $Re_b$); units of $a$, $a'$, $R_v$.
+- kang-2024 (chunk 13, found now): Eq. 8 $b/(6h)$.
+
+### Bibliography
+
+11784 → 13050 entries, `FLAGS: 0`, 483 aliases, 96 verified silences;
+salehi-2024 [247]/[249] folded (`maes-2016`); [264] folded into
+`oldenhof-2011` by vol:page. Self-keys re-keyed: `ye-2024-b`,
+`yan-2024-b`, `guo-2025-b`, `an-2025-b`. Crossref-verified: `orsino-2001`,
+`lee-1962`, `hoffman-1985`.
+
+### Bundle fit (D17 candidates, no copy made)
+
+ye-2024, kimmel-2025 (aeroelasticity), yeung-2025-b (HPC), le-2024 and
+fang-2026 (AI reviews); wang-2024-i, wu-2024-b and decosmo-2025 fit
+`high-order-capturing-schemes` as well. Here they sit only on the pages
+they bear on.
+
 ## Chunk 13 — 2023–2024 papers: DNS/LES history, one-dimensional turbulence, 3-D SBLI review, STBLI DNS (TKE budget, wall temperature, ramp heat transport), reacting film cooling, pressure-dependent SST, WMLES grid convergence and the Gaussian bump, SATES, EDAC flux reconstruction, multiphase DG review, super-resolution SGS, sooting and detonation LES, actuator-line GPU LES, tip-leakage and high-lift DDES; third whole-bundle deep lint (2026-10-28)
 
 Sources (20): wei-2023, yu-2023-b, nista-2023, nmira-2023, lv-2023,

@@ -8,7 +8,7 @@ authors: [Mardani A., Nazari A.]
 year: 2022
 venue: "Combust. Flame 241:111873"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Combustion_and_Flame_Mardani_Dynamic_adjustment_of_the_Eddy_Dissipation_Concept_model_for.pdf"
-tags: [combustion, rans, eddy-viscosity, turbulence-chemistry-interaction]
+tags: [combustion, rans, eddy-viscosity]
 timestamp: 2026-10-28T07:09:00Z
 ---
 

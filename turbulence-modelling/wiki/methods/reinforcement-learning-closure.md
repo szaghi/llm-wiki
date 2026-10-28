@@ -5,7 +5,7 @@ description: "Closures set or learned online by a policy trained with reinforcem
 status: established
 aliases: [RL closure, VYBA23, RLWM, PPO closure, reinforcement-learning SGS model, deep reinforcement learning SGS model, DRL SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM, DRL180]
 tags: [reinforcement-learning, sgs-model, data-driven, implicit-les, wall-model, neural-network]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T17:00:00Z
 ---
 
 # Reinforcement-learning turbulence closures
@@ -747,9 +747,32 @@ See [machine-learning wall models](/methods/machine-learning-wall-model.md).
   inefficiency (upward of $\mathcal O(10^5)$ training samples, "more than
   $10^5$ training steps" in §5), unpredictable behaviour outside the
   training conditions, and lack of interpretability (§3.4.2, §5).
+- [Fang et al. (2026)](/sources/fang-2026.md), reviewing AI in
+  turbulence research, write the policy-gradient estimator
+  $\nabla_{\boldsymbol\theta}J=\mathbb E_{\pi_{\boldsymbol\theta}}\big[\nabla_{\boldsymbol\theta}\log\pi_{\boldsymbol\theta}(a_t\mid s_t)\,Q^{\pi}(s_t,a_t)\big]$
+  (§2.4, Eq. 25; $J$ the expected return and $Q^\pi$ the state–action
+  value, page-local). Their one closure example is the multi-agent wall
+  model of Bae & Koumoutsakos (2022), said to "respect known physical
+  invariants" and called "a conceptual shift toward embedding learning
+  agents within the numerical simulation loop" (§3.2); Kurz et al. (2023)
+  are cited only among tools for experiment design (§5.3). The rest of their
+  RL material is flow control: DRL wall blowing and suction with "more than
+  35% drag reduction even at Re = 1000" in channel flow, a 25.3% smaller
+  turbulent separation bubble against 15.7% with periodic control, and
+  multi-agent control of a cylinder with ten pairs of synthetic jets for a
+  9% drag reduction (§3.4, Table 4, as cited). They state that all RL
+  methods share an interpretability problem that "requires the
+  incorporation of explainable AI (XAI) tools" (§3.4).
 
 ## Qualifications
 
+- **Attributions in Fang et al. (2026).** The multi-agent wall model is
+  introduced as "A landmark study by Koumoutsakos et al." (§3.2); the
+  reference's first author is Bae. Physics-induced RL, described as
+  turbulence control with stability and dissipation in the reward that
+  "reduces the 3D turbulence control error by approximately 35%" (§3.4,
+  Table 4), cites a reference titled "Physics-guided actor-critic
+  reinforcement learning for swimming in turbulence".
 - **Reward sign in Beck & Kurz (2023, Eq. 18).** The reward is printed as
   $$r=2\exp\!\left(\frac{\beta}{k_{\max}}\sum_{k=1}^{k_{\max}}\left(\frac{\overline E_{DNS}(k)-E_{LES}(k)}{\overline E_{DNS}(k)}\right)^2\right)-1,$$
   with $\beta=0.4$ (page-local, the paper's reward scaling, not the
@@ -878,3 +901,4 @@ See [machine-learning wall models](/methods/machine-learning-wall-model.md).
 - [Kim et al. (2024)](/sources/kim-2024.md) — §1, §5 (targets unknown for complex geometries).
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1 (RL closures as solver-specific, transferability and cost).
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §3.4.2, §5 (three obstacles to deep RL); §3.4.3 (Q-learning reactor-control tutorial, combustion control, not a closure).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §2.4, Eq. 25 (policy gradient); §3.2 (multi-agent wall models cited); §3.4, Tables 3–4 (RL flow control, interpretability); §5.3 (Kurz et al. cited).

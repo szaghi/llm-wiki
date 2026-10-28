@@ -152,7 +152,7 @@ ProLB web page (author printed "CS") is keyed `cs-2017`, the ERCOFTAC page `erco
 
 # Pages created or updated
 
-Chunk 5 (2026-10-26), cited further in chunk 7. This source is cited on:
+Chunk 5 (2026-10-26), cited further in chunks 7, 14. This source is cited on:
 
 - [Ahmed body](/benchmarks/ahmed-body.md)
 - [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)
@@ -167,6 +167,7 @@ Chunk 5 (2026-10-26), cited further in chunk 7. This source is cited on:
 - [k-ε models](/methods/k-epsilon-model.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Lattice Boltzmann methods for turbulent flow](/methods/lattice-boltzmann-method.md)
+- [Mesh adaptation for turbulent-flow simulation](/methods/mesh-adaptation.md)
 - [Wall functions for RANS](/methods/rans-wall-function.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)
 - [Wall-modelled large-eddy simulation](/methods/wall-modelled-les.md)

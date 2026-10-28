@@ -5,7 +5,7 @@ description: "The streamwise-periodic channel with a hill constriction, a smooth
 status: established
 aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow, parametrized periodic hills]
 tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion, implicit-les, gas-kinetic, wmles, wall-model]
-timestamp: 2026-10-28T07:07:00Z
+timestamp: 2026-10-28T12:26:00Z
 ---
 
 # Periodic hill
@@ -652,6 +652,43 @@ Results:
   [modelled-stress depletion](/methods/detached-eddy-simulation.md) and
   grid-induced separation on this grid (App. 1, Fig. 23).
 
+**SST-DDES with adaptive eddy-viscosity filtering and grid scale, on wall
+functions.** [Guo & Wang (2025)](/sources/guo-2025.md), §2.2.2, §3.2, run
+four variants of the [$k$-$\omega$ SST](/methods/k-omega-sst-model.md)-based
+DDES of Gritskevich et al. (see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)) in
+[OpenFOAM](/software/openfoam.md)-v2306 on the Fröhlich geometry
+($h=0.028$ m, $9h\times3.035h\times4.5h$) at $Re_h=U_bh/\nu=10{,}565$:
+the baseline with the maximum cell size as subgrid length (MAX-SSTDDES),
+the same with the authors' adaptive switch between the maximum cell size
+and the least-squares length of Trias et al. (ADD-SSTDDES), a version
+whose SST eddy viscosity is damped where the RANS length exceeds a
+resolvable filter width (MAX-SSTFDDES), and both together
+(ADD-SSTFDDES). The grid has $200\times160\times160$ points refined to
+$y^+<10$ at the walls, with [RANS wall functions](/methods/rans-wall-function.md)
+on both walls, justified by their citation of Gritskevich et al. that wall
+functions at $y^+<50$ give "almost identical results" to wall-resolved
+$y^+<1$ grids; the bulk velocity is held at 1 m/s by a body force,
+averages are taken over $6\le t\le10$ s, and the run takes about 75 h on
+48 cores. Against the DNS of Krank et al. ($Re_h=10{,}595$), the LES of
+Temmerman et al. and of Zhou et al. and the experiment of Breuer et al.
+(Figs. 22–25):
+
+- all four variants capture the main features of the wall $C_p$;
+- ADD-SSTFDDES best captures the near-wall reverse-flow plateau at
+  $x/h=2$ and the mean streamwise velocity at $x/h=6$, with slight
+  deviations of the mean vertical velocity near reattachment, which the
+  authors attribute to the sensitivity of the filtering to anisotropic
+  flow and to limited wall-normal resolution near the centreline;
+- ADD-SSTFDDES captures the amplitude and location of the
+  $\langle u'u'\rangle$ peak near $y/h\approx1$ at $x/h=0.5$, while
+  MAX-SSTDDES "significantly overpredicts" the $\langle v'v'\rangle$ peak
+  at $x/h=6$.
+
+No reattachment length is printed. The same variants are compared on the
+[square cylinder](/benchmarks/square-cylinder-flow.md), where integral
+values are given.
+
 ## What the case shows
 
 In the coarse-grid scale-resolving runs the differences between models
@@ -872,6 +909,17 @@ or, with the budget terms, depend on the grid and the scheme
   Hill-R and Hill-Equil" and "does not do very well in capturing the mean
   flow"; both statements are printed.
 
+- [Guo & Wang (2025)](/sources/guo-2025.md) give no time step and no grid
+  study for the hill (they refer to an earlier paper for the grid study of
+  the cylinder only); their use of wall functions in this separated flow
+  rests on the cited result of Gritskevich et al., not on a comparison in
+  the paper. They print the bulk-velocity integral as
+  $\tfrac{1}{2.0355h}\int_h^{3.035h}u_x\,dy$, whose span is $2.035h$
+  (Eq. 23), and $Re_h=1\times0.028/2.65\times10^{-6}=10{,}565$, which
+  evaluates to 10,566 *(compiler check, not in the sources)*; they call
+  the case "period hills" and "COFTAC/IAHR", and refer to Fig. 24 for
+  second-order statistics shown in Fig. 25.
+
 # Citations
 
 - [Haering et al. (2022)](/sources/haering-2022.md) — §V B, Table II, Figs. 9–12; §V C, Figs. 14–15.
@@ -897,3 +945,4 @@ or, with the budget terms, depend on the grid and the scheme
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §4.1–4.3, Tables 1–2, Figs. 1–8; App. A.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.1, Fig. 1; §3.1; §3.4; §4.1 (cited results).
 - [Li et al. (2022)](/sources/li-2022-k.md) — §III B, Table I, Figs. 4–12; App. 1, Fig. 23.
+- [Guo & Wang (2025)](/sources/guo-2025.md) — §2.1; §2.2.2, Eqs. 21–24; §3.2, Figs. 21–25.

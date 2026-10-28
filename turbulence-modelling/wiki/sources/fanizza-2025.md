@@ -155,7 +155,7 @@ book and [74] ETMM14 proceedings. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 6 (2026-10-26). This source is cited on:
+Chunk 6 (2026-10-26), cited further in chunk 14. This source is cited on:
 
 - [Circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)
 - [Shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
@@ -165,6 +165,7 @@ Chunk 6 (2026-10-26). This source is cited on:
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Discretization-consistent closure](/definitions/discretization-consistent-closure.md)
 - [Model-form uncertainty in turbulence closures](/definitions/model-form-uncertainty.md)
+- [Bayesian calibration of turbulence-model coefficients](/methods/bayesian-closure-calibration.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Ensemble Kalman filter calibration of turbulence closures](/methods/ensemble-kalman-closure-calibration.md)
 - [Field inversion and machine learning](/methods/field-inversion-machine-learning.md)

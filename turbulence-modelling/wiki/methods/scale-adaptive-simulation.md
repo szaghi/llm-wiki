@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Scale-adaptive simulation"
-description: "Menter's scale-adaptive simulation: an unsteady RANS approach whose length-scale equation carries the von Kármán length, so that the eddy viscosity falls in resolved unsteady regions; the k-√kL model as printed, its eddy-viscosity form and log-law calibration, its first high-order discontinuous Galerkin implementation, and comparisons with DES-type hybrids reported by other sources."
+description: "Menter's scale-adaptive simulation, whose length-scale equation carries the von Kármán length so that the eddy viscosity falls in resolved regions: the k-√kL model, its log-law calibration and DG implementation; and, kept distinct, a Spalart–Allmaras variant capping the wall distance by the von Kármán length, with a shielded form."
 status: established
-aliases: [SAS, k-√kL model, KSKL, k-sqrt(k)L, Menter–Egorov SAS, SAS-F, forced SAS]
-tags: [rans, hybrid-rans-les, eddy-viscosity, dg]
-timestamp: 2026-10-27T20:42:00Z
+aliases: [SAS, k-√kL model, KSKL, k-sqrt(k)L, Menter–Egorov SAS, SAS-F, forced SAS, SA-based SAS, dissipation-adaptive SAS, DSAS]
+tags: [rans, hybrid-rans-les, eddy-viscosity, dg, compressible]
+timestamp: 2026-10-28T17:00:00Z
 ---
 
 # Scale-adaptive simulation
@@ -201,6 +201,68 @@ hybrid model in which the large eddies are resolved away from walls and the
 boundary layers are covered by a RANS model
 ([Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §1.2).
 
+## A Spalart–Allmaras-based variant (Xu et al.), distinct from Menter's SAS
+
+[Wang et al. (2024c)](/sources/wang-2024-j.md) use under the same name a
+different, one-equation model of their own group (Xu et al. 2019, as they
+cite it): the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
+in which the wall distance $d$ of the destruction term is replaced by a
+hybrid length capped by a von Kármán length (§III.F, Eqs. 30–36). This
+page keeps the two formulations apart. Wang et al. describe
+their SAS as having "a pure RANS nature, yet … capable of achieving
+LES-like computations", with an interface that "is not explicitly defined
+and is instead adaptively determined" by the von Kármán length (§III.F).
+
+**Lengths.** From the one-dimensional
+$L_{\mathrm{vK}}=\kappa\lvert\partial_y\langle u\rangle/\partial_y^2\langle u\rangle\rvert$
+(Eq. 30), three three-dimensional forms are used (Eqs. 31–33;
+$L_{\mathrm{vK},n}$, $d_{\mathrm{SAS},n}$ page-local; $\lvert\Omega\rvert$ the
+vorticity magnitude),
+
+$$L_{\mathrm{vK},1}=\frac{\kappa\lvert S\rvert}{\lvert\nabla^2\boldsymbol u\rvert},\qquad L_{\mathrm{vK},2}=\frac{\kappa\lvert\Omega\rvert}{\lvert\nabla\lvert\Omega\rvert\rvert},\qquad L_{\mathrm{vK},3}=\frac{\kappa\lvert\Omega\rvert}{\lvert\nabla^2\boldsymbol u\rvert},$$
+
+with $\kappa=0.41$, and the hybrid lengths $d_{\mathrm{SAS},n}=\min(d,\,L_{\mathrm{vK},n}/\kappa)$
+(Eqs. 34–36), which replace $d$ in the SA equation. $L_{\mathrm{vK},1}$ is the
+registry's $L_{\mathrm{vK}}$. The authors state that the three forms reduce to
+Eq. 30 by the analysis of their earlier paper, and prefer $L_{\mathrm{vK},3}$
+as taking "into account both compressible and vortex stretching effect"
+(§III.F).
+
+**Grid dependence of the interface, and a shielded length.** The RANS/LES
+interface is defined as the point where the second length scale crosses
+$d$. Evaluated on three wall-resolved LES fields of a Mach 2
+[turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)
+($Re_{\delta_0}\approx13\,500$, grids $209\times161\times81$ to
+$649\times201\times161$), all three $d_{\mathrm{SAS},n}$ interfaces, like
+those of DES and DDES, move toward the wall as the grid is refined;
+$L_{\mathrm{vK},2}$ is "evidently larger" than the other two, which are close
+(§III.F, Fig. 15). The authors therefore shield the von Kármán length with
+the DDES function $f_d$ (registry §11; the SA-DDES form with $(8r_d)^3$,
+Eq. 39), giving the *dissipation-adaptive* length ($d_{\mathrm{DSAS}}$
+page-local)
+
+$$d_{\mathrm{DSAS}}=d-f_d\max\big(0,\,d-L_{\mathrm{vK},3}/\kappa\big)\qquad\text{(Eq. 40)}.$$
+
+The motivation is that the height where the resolved dissipation starts to
+fall ($y^+\approx14$) is nearly grid independent (Fig. 14), and that $r_d$
+"is equivalent to" the inverse of the mesh Reynolds number
+$\rho\lvert S\rvert\Delta^2/\mu$ (§III.F, as cited). Evaluated on the
+three LES fields, the $d_{\mathrm{DSAS}}$ interfaces of the three grids cluster around $y^+\approx14$ (Fig. 16), which the authors
+propose as the RANS/LES interface for SAS in supersonic boundary layers;
+the argument for where an interface should sit is on
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md).
+
+**A posteriori.** On the coarse $209\times161\times81$ grid, SA-DES and SA-DDES
+show [log-layer mismatch](/definitions/log-layer-mismatch.md) and
+"obviously insufficient" Reynolds stresses, the SA-based SAS gives
+"satisfactory predictions with less computational grids" but under-predicts
+the stresses below $y^+\approx14$, and the run labelled as the authors'
+modification raises the inner-layer stresses, widens the $St^{-5/3}$ range of
+the wall-pressure spectrum and resolves more small structures (§III.B–C,
+Figs. 1–4). The paper does not state explicitly that this run uses Eq. 40.
+The introduction adds that Menter's SAS has insufficient resolved Reynolds
+stress near the wall (§I, as cited).
+
 ## Qualifications
 
 - **Two dimensions.** Jiang et al.'s "SAS-like" behaviour comes from 2D
@@ -220,6 +282,14 @@ boundary layers are covered by a RANS model
   $C_u$; Eqs. 11–12 use the unlimited production $P_k$ where A1 uses the
   limited one; $C_{d1}$ has no value; $\kappa$ denotes both the thermal
   conductivity and the von Kármán constant.
+- **Scope of the SA-based evidence.** Wang et al. (2024c) show the grid
+  independence of $d_{\mathrm{DSAS}}$ on the LES fields (Fig. 16); their
+  run of the modified model uses the coarse grid only. The case is a
+  single Mach 2 flat plate, and the paper prints no $Re_\tau$. Their
+  introduction cites "scale-adaptive simulation (SAS)" to their ref. 6,
+  which is the 1997 DES paper in their list, and cites ref. 8, Menter et
+  al.'s SAS paper, for the zonal and delayed forms of DES (§I); which
+  $\Delta$ enters their SA-DDES (Eq. 38) is not stated.
 
 # Citations
 
@@ -231,3 +301,4 @@ boundary layers are covered by a RANS model
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.2.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.5.2.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.2.
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) — §I; §III.B–C, Figs. 1–4 (SA-DES, SA-DDES, SA-based SAS and the modification on the coarse grid); §III.E–F, Eqs. 29–40, Figs. 14–16 (von Kármán lengths, hybrid lengths, grid dependence of the interface, dissipation-adaptive length).

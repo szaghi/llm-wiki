@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry of the bundle: averaging and filtering, stresses and closures, RANS, wall, element-discretization, data-driven, spectral, MHD and shared page-local symbols, with the sign and normalization conventions fixed here; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-28T11:50:00Z
+timestamp: 2026-10-28T17:07:00Z
 ---
 
 # Notation registry
@@ -315,6 +315,14 @@ that uses one still says what it means.
 | $\tau^{\mathrm{sh}}$ | total shear stress in the Renard–Deck skin-friction decomposition | skin-friction decomposition |
 | $\psi_H$, $\varphi_{\mathrm L}$, $\alpha_{\mathrm{EB}}$ | dissipation factor of the scale-resolving hybrid (hybrid temporal LES); reduced-stress function and elliptic-blending variable of the Lag EB $k$-$\varepsilon$ model | hybrid RANS/LES, detached-eddy simulation, $k$-$\varepsilon$ models, circular-cylinder wake |
 | $\Xi_\Delta$, $\Omega_{\mathrm{fs}}$ | subgrid flame-wrinkling factor; flame sensor of the dynamically thickened flame | thickened flame model, flamelet-based tabulated chemistry |
+| $N_{\mathrm{St}}$, $Ha$ | Stuart number (interaction parameter) and Hartmann number of MHD flows (not the polynomial degree $N$) | Xcompact3d, decaying MHD turbulence, Taylor–Green vortex, turbulent channel flow |
+| $s_\Delta$, $N_{\mathrm{dof}}$ | normalization of hybrid grid lengths by the polynomial degree; degrees of freedom per element | discontinuous Galerkin spectral elements, detached-eddy simulation, turbulent channel flow |
+| $\Delta_{\mathrm F}$ | filter width of the ADD-SST-FDDES hybrid (not the immersed-boundary kernel width $\Delta_f$) | detached-eddy simulation, $k$-$\omega$ SST model |
+| $c_{\mathrm{diss}}$ | dissipation-control coefficient of the low-dissipation Roe flux | implicit LES, numerical dissipation, homogeneous isotropic turbulence |
+| $r_{\mathrm{th}}$ | switch threshold of a shock sensor (not the DDES $r_d$) | shock sensors, immersed boundary methods |
+| $\alpha_{\mathrm c}$, $a_{\mathrm c}$, $b_{\mathrm c}$, $\alpha_{\mathrm{cf}}$ | coefficients of compact finite differences and of compact filters (not the WCNS $\alpha_{\mathrm W}$, $b_{\mathrm W}$) | compact finite-difference schemes, spectral vanishing viscosity, low-dissipation low-dispersion schemes, Xcompact3d |
+| $\tau_{\mathrm U}$ | global smoothness indicator of interpolation-based (unequal-sized) WENO | WENO schemes |
+| $a_{\mathrm P}$, $b_{\mathrm P}$, $c_{\mathrm P}$, $u^{\mathrm P}_s$ | constants of an adverse-pressure-gradient wall function and probe velocity of a slip-type immersed boundary | wall law in adverse pressure gradient, slip-wall models, non-equilibrium wall models |
 | $s_a$, $\varepsilon_\nu$ | subgrid activity parameter; molecular (resolved viscous) dissipation entering it | large-eddy simulation, dynamic procedure, wall-modelled LES, Gaussian bump |
 | $M_{\mathrm{AC}}$ | incompressibility factor of entropically damped artificial compressibility (not the Mach number $M$) | flux reconstruction, implicit LES, Taylor–Green vortex, turbulent channel flow, SD7003 airfoil |
 | $\mathcal Z$ | volume-averaged enstrophy | Taylor–Green vortex, kinetic-energy preservation, numerical dissipation |

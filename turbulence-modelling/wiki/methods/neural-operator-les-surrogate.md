@@ -5,7 +5,7 @@ description: "A neural operator (Fourier, implicit Fourier or transformer-based)
 status: established
 aliases: [neural operator, Fourier neural operator, FNO, IFNO, implicit Fourier neural operator, transformer-based neural operator, TNO, LESnets, LESnets-I, physics-informed neural operator, PINO, data-driven LES surrogate]
 tags: [neural-network, data-driven, les, sgs-model]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T16:59:00Z
 ---
 
 # Neural-operator surrogates of large-eddy simulation
@@ -228,6 +228,23 @@ spectra are too high; 3000 fields are needed.
   grids; Zhao et al. (2025, §6) that non-uniform grids and complex
   boundaries need other discretizations of the loss.
 
+[Fang et al. (2026)](/sources/fang-2026.md), a review that runs no test,
+list further neural operators for LES, all quoted without
+verification: the transformer-based operator of
+[Li et al. (2024)](/sources/li-2024.md), said to be "outperforming
+traditional LES closures" (§3.3.2, Table 1, their ref. [82]); an earlier
+FNO approach to LES of three-dimensional turbulence (ref. [206]; §2.1, §5.3); an
+implicit U-Net enhanced FNO said to beat the standard FNO, a U-Net FNO and
+"physics-based dynamic Smagorinsky models" in spectra, vorticity and
+spatial statistics at lower cost, and to generalize to higher Taylor
+Reynolds numbers (§4.2.2, ref. [149]); and a linear-attention FNO said to
+cut the prediction error by 40% in isotropic and free-shear turbulence
+"without increasing the computational cost" (§5.2, ref. [197]). They
+relay a 2025 preprint (ref. [167]) that ties the long-term rollout
+stability of FNOs for three-dimensional turbulence to "the spectral
+distribution of the learned dynamics and temporal autocorrelation
+properties" (§4.2.4).
+
 ## Qualifications
 
 - **Different FNO verdicts, different setups.** In Li et al. (2024) the
@@ -276,3 +293,4 @@ spectra are too high; 3000 fields are needed.
 
 - [Li et al. (2024)](/sources/li-2024.md) — arXiv v2: §I (downsampling in transformer surrogates); §II, Eqs. 7–11 (dynamic baselines); §III, Eqs. 12–15, Fig. 1 (modified FNO); §IV, Eqs. 16–31, Figs. 2–3 (TNO, linear attention, rotary embedding, loss, rollout); §V A, Tables I, Figs. 5–13 (isotropic turbulence, cost, extrapolation); §V B, Table II, Figs. 15–21 (mixing layer); §VI.
 - [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §2.1, Eqs. 3–5; §2.3, Eqs. 9–15 (FNO, IFNO); §2.4, Eq. 16; §2.5, Eq. 17, Algorithm 1 (LESnets); §3.1–3.2, Tables 1–3, Figs. 5–14; §4, Eqs. 25–26, Algorithm 2, Table 4 (learned coefficient); §5.1, Tables 5–6 (cost); §5.2–5.4, Table 7, Figs. 24–27; §6; App. A, Fig. A1.
+- [Fang et al. (2026)](/sources/fang-2026.md) — §2.1, §3.3.2, Table 1; §4.2.2; §4.2.4; §5.2–5.3 (FNO, IU-FNO, TNO, LAFNO and rollout stability, cited). Review, citation only.

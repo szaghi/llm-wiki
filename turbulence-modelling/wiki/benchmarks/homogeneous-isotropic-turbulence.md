@@ -5,7 +5,7 @@ description: "Turbulence in a triply periodic box, decaying or forced: a priori 
 status: established
 aliases: [HIT, DHIT, HID, DIT, Comte-Bellot–Corrsin experiment, CBC experiment, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation, supersonic isothermal turbulence, driven supersonic turbulence, exascale DNS of isotropic turbulence]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -224,6 +224,21 @@ earlier work. The authors state that compact finite differences are limited
 to $M_t\le0.8$ and that spectral and lattice Boltzmann methods fail to capture
 shocklets (§1, §3.4).
 
+[Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md), §3.1,
+Fig. 2, use compressible decay as the first validation of their
+curvilinear immersed-boundary LES code: initial spectrum
+$E(k)=A k^4\exp(-2k^2/k_0^2)$ with $k_0=6$ and unit initial kinetic
+energy, $M_t=u'/c=0.4$ with their fluctuation velocity $u'$ and sound
+speed $c$, $Re_\lambda=153$,
+$16^3$, $32^3$ and $64^3$ cells, the compressible
+[dynamic Smagorinsky](/methods/dynamic-procedure.md) model and a hybrid of
+skew-symmetric central and third-order WENO fluxes. On $64^3$ the spectrum
+at five initial eddy turnover times follows the $-5/3$ law over an
+inertial range, and the kinetic-energy history agrees with the DNS of
+Samtaney et al. after two turnover times; the earlier discrepancy, also
+present in the LES of Li et al. at similar resolution, is attributed to
+the coarser resolution than the DNS.
+
 **Small-scale statistics at record Reynolds number.**
 [Yeung et al. (2025)](/sources/yeung-2025.md) reach $Re_\lambda\approx2500$
 on a $32\,768^3$ grid with a GPU Fourier pseudo-spectral code on the Frontier
@@ -268,6 +283,24 @@ $Re_\lambda\propto N_x^{2/3}$ (§2.2, Table 1). Findings (§3–§4, Figs. 2–6
 
 See [direct numerical simulation](/definitions/direct-numerical-simulation.md).
 
+**The code behind the exascale runs.** [Yeung et al. (2025b)](/sources/yeung-2025-b.md)
+describe GESTS, the GPU Fourier pseudo-spectral code of these runs, on the
+same flow (incompressible, forced, $2\pi$-periodic, single precision): the
+Rogallo algorithm with an exact integrating factor, second-order
+Runge–Kutta, phase shifting and truncation at $k_{\max}=\sqrt2N_x/3$, the
+whole problem resident in GPU memory with OpenMP offloading, rocFFT and
+GPU-aware all-to-all transposes in slab or pencil decompositions (§2–§3).
+The benchmark runs report performance only, with no Reynolds number or
+flow statistics: $32\,768^3$ on 4096 Frontier nodes takes 12.07 s per step
+in the slab code, 6.6 times the figure of merit of the earlier $18\,432^3$
+record on Summit, with communication dominating the cost (§4, Table 2).
+The algorithm and its scaling are on
+[direct numerical simulation](/definitions/direct-numerical-simulation.md).
+For the same grid, [Yeung et al. (2025)](/sources/yeung-2025.md) quote
+13 s per step on 44% of Frontier (above), and Yeung et al. (2025b),
+Table 2, print 13.07 s (April 2023) and 12.07 s (April 2024) on 4096 of
+its 9408 nodes.
+
 **Supersonic isothermal turbulence.**
 [Cernetic et al. (2024)](/sources/cernetic-2024.md) drive isothermal
 turbulence from Mach 0.1 to 12.8 with no explicit viscosity, comparing a
@@ -311,6 +344,14 @@ against filtered DNS (see [neural-operator LES surrogates](/methods/neural-opera
   (Table 5). Learning the coefficient from one trajectory recovers
   $C_s\approx0.1$ from Smagorinsky-LES data and gives about 0.19 from
   filtered DNS, with comparable a posteriori results (§4).
+
+The review of [Fang et al. (2026)](/sources/fang-2026.md), §5.2, lists
+further cited operators on isotropic targets: a linear-attention Fourier
+neural operator that "reduces the turbulence prediction error by 40%" on
+three-dimensional isotropic and free-shear turbulence without added cost,
+and an implicit U-Net-enhanced Fourier neural operator that beats the
+Fourier, U-Net Fourier and dynamic Smagorinsky references and generalizes
+to higher Taylor-scale Reynolds numbers.
 
 **Driven MHD turbulence and the small-scale dynamo.**
 [Seta & Federrath (2022)](/sources/seta-2022.md) drive turbulence in a
@@ -439,8 +480,11 @@ The author states that the de-aliased spectral code makes numerical
 dissipation negligible, so the observed effects are those of the model
 (§3.3).
 
-**Decaying grid turbulence of Comte-Bellot and Corrsin.** Seven sources use
-this experiment. Three start a simulation from the measured spectrum at
+**Decaying grid turbulence of Comte-Bellot and Corrsin.** Nine sources use
+this experiment. The last two of the list below, De Cosmo et al. and Xiao
+et al., start from fields matching the spectrum at $tU_0/M_g=42$ and
+compare at 98 and 171 (Xiao et al. also at 42). Of the other seven, three
+start a simulation from the measured spectrum at
 $tU_0/M_g=42$ ($M_g$ the grid mesh size, 5.08 cm, and $U_0=10$ m/s in
 Domaradzki, Duan & Wang and Brillon & Nadarajah; $U_0M_g/\nu=34{,}000$ in
 Duan & Wang and Brillon & Nadarajah) and compare later spectra, at 98 and
@@ -516,6 +560,38 @@ use the case to set the dissipation of hybrid RANS/LES:
   calibrates $C_{DES}$ of Reynolds-stress-model IDDES.
 - [Li et al. (2022)](/sources/li-2022-k.md), §III A (below): the case
   checks the dynamic version of that IDDES.
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md), §3.2, Figs. 4–5,
+  use the decay to calibrate the dissipation of their low-dissipation Roe
+  scheme for [implicit LES](/definitions/implicit-les.md) in a second-order
+  unstructured finite-volume code (the scheme sets the entropy and
+  vorticity eigenvalues of the Roe dissipation to zero and scales the
+  acoustic ones by a coefficient $c_{\mathrm{diss}}$, page-local): box
+  side $0.09\cdot2\pi$ m, $Re=34{,}000$ on $V_0=10$ m/s and $M_g=0.0508$ m,
+  initial field of 5000 random modes matching the spectrum at $tU_0/M_g=42$,
+  comparison at 98 and 171 on $32^3$, $64^3$ and $128^3$ cells, against the
+  experiment and an OpenFOAM LES with the [WALE model](/methods/wale-model.md).
+  With $c_{\mathrm{diss}}=0.001$ both codes catch the $-5/3$ slope and
+  depart from it only near the Nyquist wavenumber, less on finer grids, the
+  OpenFOAM run being "slightly less dissipative"; on $64^3$ at 98, larger
+  values steepen the inertial range and lower the energy, smaller ones
+  flatten the spectrum and pile energy up near Nyquist. The authors find
+  that the coefficient cannot be set to the smallest stable value, as
+  earlier works they cite did, "as this would spoil the energy decay in the
+  inertial range" (see [numerical dissipation](/properties/numerical-dissipation.md)).
+- [Xiao et al. (2025)](/sources/xiao-2025.md), §4.1, Fig. 5, validate the
+  subgrid models of the GPU LES solver [CaLES](/software/cales.md)
+  (second-order staggered finite differences): box edge $9\times2\pi$ cm
+  ($\approx11M_g$), $32^3$ and $64^3$ cells ($\Delta/\eta=60$ and 30 at
+  $tU_0/M_g=42$), $Re_\lambda=71.6$ at 42 and 60.6 at 171, initial fields
+  generated on the LES grid with a spectral cut-off or on $256^3$ and
+  box-filtered, comparison at 42, 98 and 171. The
+  [Smagorinsky model](/methods/smagorinsky-model.md) with $C_s=0.18$
+  predicts the spectra on both grids for either filter, except on the
+  coarse grid with the box filter, where 0.22 is needed (not shown); the
+  [dynamic procedure](/methods/dynamic-procedure.md) agrees reasonably,
+  nearly perfectly with the box filter, which the authors call
+  consistent with its box test filter; deviations near the Nyquist limit are attributed to the
+  finite-difference errors.
 
 In Domaradzki, Duan & Wang and Carlsson et al. the departures that separate the models lie at
 high wavenumbers: the constant-0.8 variant (Domaradzki, Fig. 9) and
@@ -958,6 +1034,11 @@ isotropic turbulence ($u'=2.5$ m/s, integral scale 2.1 mm) at the inlet
 of a slot-burner flame DNS; neither runs a periodic box, and both are
 recorded on their Source pages (see also
 [shock-generated turbulence](/results/shock-generated-turbulence.md)).
+The review of [Salehi et al. (2024)](/sources/salehi-2024.md), §3.2, Fig. 33,
+cites the DNS of Grout of a freely propagating premixed flame in a box of
+isotropic turbulence, with a two-step mechanism, as the database of an a
+priori test of [conditional source-term estimation](/methods/conditional-source-term-estimation.md)
+in a RANS context; the review prints no turbulence statistics of the box.
 
 **The first simulations of turbulence.**
 [Kim & Leonard (2024)](/sources/kim-2024-b.md) date numerical turbulence
@@ -1198,6 +1279,17 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
   wavenumbers (§II A) in all runs, and the paper does not separate its
   dissipation from that of the models.
 
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) print the
+  fluctuation velocity as "$\langle u_i^2/3\rangle$" (printed with angle brackets), which has the dimension of a
+  velocity squared, and the Taylor microscale with
+  $\langle(\partial u_i/\partial x_i)^2\rangle$ under their summation
+  convention, the mean square divergence (§3.1, Eq. 30); "the theoretical
+  5/3 power law" omits the sign.
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md) take the calibrated
+  $c_{\mathrm{diss}}=0.001$ unchanged to their channel and bump runs (see
+  [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)); its
+  sensitivity there is not shown.
+
 # Citations
 
 - [Flad & Gassner (2017)](/sources/flad-2017.md) — §1, §3–5, Figs. 1–10, App. C.
@@ -1255,3 +1347,9 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Iwata et al. (2023)](/sources/iwata-2023.md) — §II C, Eq. 1, Table I (decaying compressible precursor as detonation inflow).
 - [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.2, Fig. 2a; §2.5; §3.1; §3.3; §4.3; §5 (historical).
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — §2.2.2, Table 1, Eqs. 4, 8; §2.4.1 (ODT and LES-ODT on isotropic turbulence, cited).
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §3.1, Eqs. 30–32, Fig. 2.
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §2.2; §3.2, Eqs. 15–20, Figs. 3–5.
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §4.1, Fig. 5.
+- [Yeung et al. (2025b)](/sources/yeung-2025-b.md) — §2–§3; §4.1–4.2, Table 2.
+- [Salehi et al. (2024)](/sources/salehi-2024.md) — §3.2, Fig. 33 (cited flame DNS, review).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §5.2 (cited neural operators, review).

@@ -5,7 +5,7 @@ description: "RANS laminar–turbulent transition models that evaluate an empiri
 status: established
 aliases: [LCTM, γ-Reθ-SST, separation-induced transition correction, Suluksna–Juntasaro calibration, Langtry–Menter calibration, local correlation-based transition modelling, γ-Reθ model, gamma-Re-theta, γ-SST, one-equation γ model, γ-alg-SST, algebraic LCTM model, algebraic intermittency model]
 tags: [rans, transition, eddy-viscosity, boundary-layer, separated-flow]
-timestamp: 2026-10-28T07:04:00Z
+timestamp: 2026-10-28T12:26:00Z
 ---
 
 # Local-correlation-based transition models
@@ -590,6 +590,17 @@ compared with γ-Reθ-SST, γ-SST and experiment (§3):
 Accuracy is overall of the same quality as the transport models; the
 algebraic model predicts earlier natural transition and smaller bubbles.
 
+**Blunt-leading-edge vortex separation, as surveyed.** Luckring & Rizzi
+(2024) report a DLR TAU computation with SST-γ-Reθ on the 53° AVT-183
+diamond wing (Buzica & Breitsamter, as cited): with free transition the
+whole set of blunt-edge structures (incipient separation, vortex onset,
+inner vortex) moves upstream and a
+[laminar separation bubble](/definitions/laminar-separation-bubble.md)
+appears upstream of the incipient-separation region, which the authors take
+as showing the importance of tripping at subscale wind-tunnel Reynolds
+numbers ([Luckring & Rizzi (2024)](/sources/luckring-2024.md), §3.1.1.2,
+Figs. 63–64; see [delta-wing vortex flow](/benchmarks/delta-wing-vortex-flow.md)).
+
 ## Mesh requirements
 
 The algebraic model is "clearly less forgiving" of streamwise resolution:
@@ -673,3 +684,4 @@ finite-volume reference (§4.2).
 - [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) — §II–§IV.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.3, §3.3.3, §3.3.3.3–§3.3.3.4.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.1 Fig. 3, §4.3.
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §3.1.1.2, Figs. 63–64 (SST-γ-Reθ free transition on the AVT-183 diamond wing, as cited).

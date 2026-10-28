@@ -5,7 +5,7 @@ description: "An LES closure that reconstructs a fine-grid field from the coarse
 status: established
 aliases: [super-resolution SGS model, super-resolution-based subgrid scale model, unsupervised-supervised pipeline, CycleGAN SGS model, GAN super-resolution closure, vLES]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-28T12:26:00Z
 ---
 
 # Super-resolution subgrid-scale models
@@ -61,6 +61,15 @@ beat the fully connected network. The review gives no numbers of its own for the
 models (see
 [physics-informed neural networks](/methods/physics-informed-neural-network.md)
 for their classification of knowledge-guided losses).
+
+[Fang et al. (2026)](/sources/fang-2026.md) (§2.4), a later review,
+list GAN super-resolution subgrid models of LES that recover the filtered
+small scales, citing a parallel implementation and performance study by
+Nista et al. (2025, their ref. [83]) and the premixed-flame
+generalization study of [Nista et al. (2023)](/sources/nista-2023.md)
+(their ref. [108]; below); the review's Fig. 5 (§2.2) sketches a convolutional
+network that outputs both an enhanced-resolution field and a predicted
+subgrid stress. The review prints no result of these models.
 
 ## Generalization of a super-resolution GAN in premixed flames (Nista et al. 2023)
 
@@ -365,3 +374,4 @@ no net local backscatter, beats the conventional model.
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.4, Fig. 32 (PIESRGAN reviewed: adversarial, accuracy and continuity losses, RRDB blocks, a priori and a posteriori spray-flame LES; generative against supervised findings); §5.4 (generalizability of generative methods).
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1 (fDNS against vLES, supervised super-resolution, Bode et al. cited); §2.1–2.2, Eqs. 2.1–2.22 (equations, cGAN, CycleGAN); §3, Eqs. 3.1–3.2, Figs. 3–4 (pipeline, stress extraction, clipping); §4, Tables 1–4, Eq. 4.1 (channel set-up, networks, data); §5, Figs. 6–21 (a priori); §6, Eqs. 6.1–6.15, Figs. 22–27 (a posteriori, budgets, mechanism); §7, Figs. 28–29 ($Re_\tau\approx2000$, CNN limits, pointwise inputs); §8; App. A–C, Figs. 30–37.
 - [Nista et al. (2023)](/sources/nista-2023.md) — §1, Eqs. 1–3, 5 (subfilter stress and temperature flux from the reconstruction); §3.1–3.2, Eq. 4, Fig. 1 (generator, loss, training); §4–4.3, Table 1, Figs. 2–8 (a priori generalization across Reynolds and Karlovitz numbers, fuel, OH); §4.4, §5 ($\Delta/\eta$ criterion, a posteriori deferred).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §2.2, Fig. 5; §2.4 (GAN super-resolution SGS models cited). Review, citation only.

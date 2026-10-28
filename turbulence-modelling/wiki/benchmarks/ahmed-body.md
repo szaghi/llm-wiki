@@ -5,7 +5,7 @@ description: "The Ahmed body, a bluff car-like body with a slanted rear whose an
 status: established
 aliases: [Ahmed car body, Ahmed reference model, 25° Ahmed body, 35° Ahmed body]
 tags: [benchmark, separated-flow, hybrid-rans-les, des, wmles, immersed-boundary, lattice-boltzmann, field-inversion]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Ahmed body
@@ -155,6 +155,48 @@ although its slant flow does not reattach (Figs. 22–24). The authors state tha
 recover" the 35° WMLES solution of [Cai et al. (2022)](/sources/cai-2022.md)
 at lower cost, without giving cost figures (lines 510–515).
 
+**Diffused against sharp immersed interface at 35°.**
+[Wang et al. (2024d)](/sources/wang-2024-k.md), §III C, run the 35° body
+at $Re=U_0h/\nu=7.85\times10^5$ on the body height $h$ in their GPU
+immersed-boundary–[lattice Boltzmann](/methods/lattice-boltzmann-method.md)
+solver (D3Q19; of the paper's two collision operators, the
+multiple-relaxation-time one "encounters stability issues" at this
+Reynolds number, no result shown, and §III C does not name the operator of
+the runs shown), with the
+[Smagorinsky model](/methods/smagorinsky-model.md) and an
+[equilibrium wall model](/methods/equilibrium-wall-model.md)
+(van Driest-damped mixing length, $\kappa=0.41$, damping constant 19.0)
+imposed through either a diffused-interface (DIB, penalty forcing with a
+slip velocity a fraction of a cell off the wall) or a sharp-interface
+(SIB, reconstruction of the first off-wall node)
+[immersed boundary method](/methods/immersed-boundary-method.md). The
+grid has five zones refined by factors of 2, the finest at $h/160$, the
+wake zone at $h/80$ to $2h$ behind the body. Over the slant both
+interfaces give velocity profiles that agree with the uRANS, IDDES and
+experimental curves they plot; in the near wake the DIB agrees better and
+the SIB predicts slightly larger velocities near the bottom wall
+(Fig. 11). The DIB drives separation more easily: a stronger bubble near
+the slant with DIB, a larger bubble attached to the base with SIB
+(Fig. 12). Drag decomposed into head, slant and base pressure drag
+(Table I):
+
+| Run | $C_{D}$ total | head | slant | base |
+|---|---|---|---|---|
+| DIB-WMLES | 0.321 | 0.052 | 0.091 | 0.097 |
+| SIB-WMLES | 0.296 | 0.073 | 0.054 | 0.102 |
+| experiment, as printed "Ahmed et al." | 0.279 | 0.015 | 0.097 | 0.089 |
+| Guilmineau et al.: RANS-EARSM / "IDES" / DES / RANS | 0.437 / 0.346 / 0.316 / 0.300 | | | |
+| WMLES printed "Cui et al." | 0.235 | | | |
+
+Their reference 30, printed "Cui et al." in the table, is Cai et al. (the
+text of their §I has it right), and the 0.235 matches the fine wall-law
+near-field drag 0.2347 of [Cai et al. (2022)](/sources/cai-2022.md) above
+*(compiler check, not in the sources)*. The authors' conclusion for the
+whole paper is that the DIB wall model suits external bluff-body flows
+and the SIB internal ones (§IV); the channel evidence is on
+[turbulent channel flow](/benchmarks/turbulent-channel-flow.md) and the
+cylinder evidence on [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md).
+
 **Choice of hybrid model at 25°.**
 [Delassaux et al. (2023)](/sources/delassaux-2023.md), §5, recapitulate
 their earlier calibration on the four 25° bodies: the realizable
@@ -254,6 +296,25 @@ in fully separated flows (lines 149–152).
   "zero-Dirichlet". Lines 535–536 call the "lift and drag coefficients"
   close to the references, but Table 3 gives only drag.
 
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) call the SIB drag 0.296
+  "slightly smaller than the experimental data" 0.279 of their Table I,
+  which is larger; they say the DIB "predicts a larger pressure-induced
+  drag at the head, although all other numerical simulations underpredict
+  this drag", while their SIB head drag (0.073) is larger still than the
+  DIB one (0.052), both above the experimental 0.015; they write "IDES" in
+  the table and "IDDES" in the text (§III C, Table I).
+- The literature values quoted for the 35° body differ between sources:
+  [Wang et al. (2024d)](/sources/wang-2024-k.md), Table I, attribute the
+  experimental 0.279 to Ahmed et al., which
+  [Cai et al. (2022)](/sources/cai-2022.md) and
+  [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) attribute to Meile
+  et al. (giving 0.26 or 0.2580 for Ahmed et al.), and quote a
+  Guilmineau et al. RANS-EARSM drag of 0.437 where Cai et al. quote 0.2603
+  for EARSM; Wang et al. (2024d) print 0.346 ("IDES"), 0.316 (DES) and
+  0.300 (RANS), Cai et al. 0.3452 (IDDES), 0.3156 (DES) and 0.2999
+  ($k$-$\omega$ SST) (Table I of each). The cited works are not ingested.
+- Wang et al. (2024d) run at $Re=7.85\times10^5$, Cai et al. and Mozaffari
+  et al. at $7.68\times10^5$; they print no averaging time for the body.
 - The two sources print different widths, 0.389 m
   ([Cai et al. (2022)](/sources/cai-2022.md)) and 380 mm
   ([Delassaux et al. (2023)](/sources/delassaux-2023.md)), with equal length
@@ -296,3 +357,4 @@ in fully separated flows (lines 149–152).
 - [Delassaux et al. (2023)](/sources/delassaux-2023.md) — §1; §4.4; §5, Table 2, Figs. 11–12; §7.3.
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §2.2; §3.3, Table 3, Figs. 16–24; §4.
 - [Wu et al. (2025)](/sources/wu-2025.md) — author manuscript: §1, Table 1 (L1–L4 levels); §4.4, Figs. 41–45, Table 7.
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — §I; §II D; §III C, Table I, Figs. 11–12; §IV.

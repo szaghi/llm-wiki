@@ -169,7 +169,7 @@ unparseable.
 
 # Pages created or updated
 
-Chunk 11 (2026-10-27). This source is cited on:
+Chunk 11 (2026-10-27), cited further in chunk 14. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
@@ -178,6 +178,7 @@ Chunk 11 (2026-10-27). This source is cited on:
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Pressure dilatation](/definitions/pressure-dilatation.md)
+- [Compact finite-difference schemes](/methods/compact-finite-difference-scheme.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Neural-network subgrid-scale models](/methods/neural-network-sgs-model.md)
 - [Scale-similarity and mixed subgrid-scale models](/methods/scale-similarity-model.md)

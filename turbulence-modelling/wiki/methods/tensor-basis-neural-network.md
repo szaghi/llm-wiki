@@ -5,7 +5,7 @@ description: "A neural network that predicts the scalar coefficients of Pope's t
 status: established
 aliases: [Lund–Novikov basis, nonlinear algebraic SGS model, MANA, TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features, LES tensor basis]
 tags: [neural-network, data-driven, rans, symbolic-regression]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T17:01:00Z
 ---
 
 # Tensor-basis neural network and the integrity basis
@@ -506,6 +506,14 @@ a priori and a posteriori results are on
   [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
   They list the linear stress representation among the uncertainties
   their model leaves untouched (§IV).
+- **Pointers in two later reviews.** [Fang et al. (2026)](/sources/fang-2026.md)
+  (§1) cite Ling, Kurzawski & Templeton's embedded-invariance network
+  only among the precedents of AI in turbulence modelling.
+  [Le et al. (2024)](/sources/le-2024.md) (§3.1.3, p. 15) mention a
+  "tensor-based neural network model for Reynolds stress anisotropy"
+  applied to secondary flows and wavy-wall separation, under ref. [177],
+  printed as Kutz (2017), "Deep learning in fluid dynamics" (see
+  Qualifications). Neither review adds results.
 - **Locality (reviews).** Existing feature sets use only local quantities.
   Non-local, non-equilibrium features, such as streamline integration
   (Hamlington & Dahm), could extend predictive capability (Duraisamy et al.
@@ -603,6 +611,12 @@ eigen-decomposition, or the integrity basis itself. See
   Table 2 labels the coefficients of the modified models without the star
   that the text uses. The paper writes the basis $T^A_m$, $T^I_m$; this
   page writes $\mathsf A^{(m)}$ to keep $T^{(n)}$ for Pope's basis.
+- **Attribution in Le et al. (2024).** The tensor-based anisotropy
+  network is credited to "Kutzj [177]"; the printed reference [177] is
+  Kutz, "Deep learning in fluid dynamics", J. Fluid Mech. 814 (2017) 1–4.
+  The page does not cite the review as an
+  origin of the TBNN, which is Ling, Kurzawski & Templeton (2016) as the
+  sources above cite it.
 - Tang et al. (2023) write the coefficients $G^m$ and the basis
   $\boldsymbol T^m$ (labelled $\lambda_i$, $T^i$ in their Fig. 11); this page
   writes $G^m$, $T^{(m)}$. Their $\boldsymbol R$ is the normalized rotation
@@ -659,4 +673,6 @@ eigen-decomposition, or the integrity basis itself. See
 - [He et al. (2022)](/sources/he-2022-b.md) — §1 (TBNN as an L2 correction, in passing).
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §3.5.1 (TBNN as an architecture-level knowledge-guided model).
 - [Shan et al. (2023)](/sources/shan-2023.md) — §I (TBNN variants reviewed); §II.C (scalar eddy-viscosity network instead); §IV (linear representation left as an uncertainty).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §1 (Ling et al. cited, in passing).
+- [Le et al. (2024)](/sources/le-2024.md) — §3.1.3, p. 15 (tensor-based anisotropy network mentioned; ref. [177] as printed).
 - [Xu et al. (2023)](/sources/xu-2023.md) — §3.1, Eqs. 3.1–3.18, Table 1 (Lund–Novikov basis, trace terms, heat-flux basis, invariants); §3.2, Eqs. 3.27–3.43, Table 2 (grid-width normalization); §3.3; §4.1 (MDNA unstable).

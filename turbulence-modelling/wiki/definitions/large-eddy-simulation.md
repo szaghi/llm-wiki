@@ -5,7 +5,7 @@ description: "Large-eddy simulation resolves the filtered velocity and models th
 status: established
 aliases: [LES, filtered Navier–Stokes equations, subgrid-scale stress, SGS stress, subfilter stress, coarse-grained equations]
 tags: [les, filtering, sgs-model, compressible]
-timestamp: 2026-10-28T07:08:00Z
+timestamp: 2026-10-28T16:59:00Z
 ---
 
 # Large-eddy simulation: filtering and the subgrid-scale stress
@@ -450,6 +450,11 @@ Further sources split the same way.
   equation. They define their model stress as the negative of the filtered
   product of sub-cell fluctuations. Their strain $S_{ij}$ is twice the
   registry's deviatoric strain.
+  [De Cosmo et al. (2025)](/sources/decosmo-2025.md) (§2.1, Eqs. 1–4)
+  define the Favre-filtered sub-filter stress with the minus sign and the
+  density, $-\bar\rho(\widetilde{u_iu_j}-\tilde u_i\tilde u_j)$, add it to
+  the filtered viscous stress, and drop it in their
+  [implicit LES](/definitions/implicit-les.md).
 - **Combined or unstated.**
   - [Zhao et al. (2021)](/sources/zhao-2021-c.md) (§III.D, Eq. 21) write
     the modelled stress as $-2\nu_t\bar S_{ij}$, the registry's sign,
@@ -934,6 +939,16 @@ collocated kinetic-energy-conserving schemes lack this dissipation (§6).
 See [discretization-consistent closure](/definitions/discretization-consistent-closure.md)
 and [implicit LES](/definitions/implicit-les.md).
 
+[Luckring & Rizzi (2024)](/sources/luckring-2024.md) (§2.4.1.2), in a
+survey of vortex aerodynamics, state the practical consequence after
+Ghosal (cited): for low-order discretizations "the truncation error can be
+the same order as the subfilter scale contributions, unless the cell size
+is considerably smaller than filter width Δ". [Xiao et al. (2025)](/sources/xiao-2025.md)
+(§1) state that the subgrid stress of implicitly filtered LES differs from
+the filtered-Navier–Stokes stress, above all when the grid is much coarser
+than the Kolmogorov scale, "as the numerical and modeling errors can then
+be comparable" (see [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+
 ## Gauge freedom of the subgrid stress
 
 The resolved equations depend on $\tau_{ij}$ only through its divergence.
@@ -1187,6 +1202,39 @@ $\delta^{*,\mathrm{sgs}}_\nu=(\nu+\nu_t)/u_\tau^*$ (registry §11), so that "the
 viscosity dominantly determines" it; the collapse holds for other grids,
 another scheme and the [Smagorinsky](/methods/smagorinsky-model.md)
 model. See [wall-modelled LES](/methods/wall-modelled-les.md).
+
+**Grid convergence of a supersonic boundary layer.** [Wang et al. (2024c)](/sources/wang-2024-j.md)
+(§III.A–B, Table I, Figs. 1–2) run wall-resolved LES of a spatially
+developing boundary layer at $M_\infty=2.0$, $Re_\delta\approx13\,500$
+(on the inflow thickness) with a dynamic Smagorinsky–Yoshizawa model and
+seventh-order WENO on three grids, $209\times161\times81$,
+$321\times201\times161$ and $649\times201\times161$ over
+$30\delta_0\times6\delta_0\times3.7\delta_0$ ($\delta_0$ the inflow
+thickness, page-local), all with first-cell height $\Delta y^+_w=0.8$.
+Only the finest grid matches the DNS of Pirozzoli et al. (cited) in van
+Driest-transformed mean velocity and density-scaled Reynolds stresses;
+the two coarser grids over-predict the streamwise normal stress and
+slightly under-predict the shear stress, while below $y^+=7$ all runs
+follow the wall law. No streamwise or spanwise spacing in wall units and
+no friction Reynolds number are printed. The coarsest grid is the one on
+which they compare hybrid models (see
+[log-layer mismatch](/definitions/log-layer-mismatch.md) and
+[scale-adaptive simulation](/methods/scale-adaptive-simulation.md)).
+
+**Grid estimates for aircraft and the Reynolds-number reach of wall-resolved LES.**
+Luckring & Rizzi (2024) quote the grid estimate of Larsson et al. (cited)
+for LES of the upper surface of a NACA 0012 at $M=0.1$, $\alpha=2.5^\circ$:
+$1.6\times10^7$, $1.9\times10^9$ and $2.0\times10^{11}$ points in the inner
+layer ($y/\delta<0.2$) and $3.3\times10^7$, $7.2\times10^7$ and
+$2.5\times10^8$ in the outer layer at $Re_c=10^6$, $10^7$ and $10^8$
+(§2.4.1.4, Table 1), about 33 billion points at $Re_c=4\times10^7$. They
+state that wall-resolved LES is "currently restricted to low Reynolds
+numbers (on the order of $10^4$)" (§3.1.1.2, §4.1.1), and that WMLES lacks
+"well-established guidelines" for grid resolution, cell topology, schemes
+and subgrid modelling (§2.4.1.4; see
+[wall-modelled LES](/methods/wall-modelled-les.md)). Their survey uses LES
+for wall-resolved LES throughout (see
+[delta-wing vortex flows](/benchmarks/delta-wing-vortex-flow.md)).
 
 ## History and scope (inline)
 
@@ -1543,6 +1591,29 @@ their own adjoint shape optimization is 2D URANS, and LES and DES adjoints
 are named as future work (see
 [Ffowcs Williams–Hawkings analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)).
 
+**Cost, fidelity and the modelling burden.** Four sources place LES
+differently. [Le et al. (2024)](/sources/le-2024.md)
+(§3, p. 9), reviewing supersonic combustion, class DNS and LES as "not
+suitable to use in engineering applications" because of their cost, with
+DES and RANS the engineering focus. [Xiao et al. (2025)](/sources/xiao-2025.md)
+(§1) list high-lift aircraft, iced-wing separation and flows inside
+aircraft engines as applications that "establish LES as a critical
+component in the industry push toward Certification by Analysis".
+[De Cosmo et al. (2025)](/sources/decosmo-2025.md) (§1) describe LES as
+a "high-fidelity turbulence resolving approach" that resolves "usually
+more than 70%" of the spectrum (citing Reynolds), and yet, "from a turbulence modelling perspective", as
+"less-sophisticated than Unsteady-RANS", since it solves at most one,
+usually algebraic, subgrid equation. For reacting flows,
+[Salehi et al. (2024)](/sources/salehi-2024.md) (§1) state that a
+turbulence–chemistry interaction model is almost always required even in
+LES, because extinction events correlate with the smallest scales, which
+the LES filter removes (see
+[conditional source-term estimation](/methods/conditional-source-term-estimation.md)).
+[Fang et al. (2026)](/sources/fang-2026.md) (§1, Eqs. 2–3; §4.1), a review
+of machine learning, print the filtered momentum equation with a
+subgrid stress left undefined and no filter specified, and note that DNS
+and LES data reach terabyte to petabyte scale.
+
 **Explicit against implicit LES as references.** [Cao et al. (2024)](/sources/cao-2024.md)
 (§3.4, Figs. 14–16) compare their high-order gas-kinetic
 [implicit LES](/definitions/implicit-les.md) of a compressible
@@ -1634,6 +1705,12 @@ grid ratio (§4). See
   the density used inconsistently between its acceleration and stress
   terms *(compiler check, not in the sources)*; the slip models of §4 do
   not use that relation.
+- **Luckring & Rizzi (2024), reach of wall-resolved LES.** The survey
+  states that wall-resolved LES is restricted to Reynolds numbers "on the
+  order of $10^4$" (§3.1.1.2, §4.1.1), while the same sections report
+  wall-resolved LES of a NACA 0012 at $Re_c=1\times10^6$ on
+  $267\times10^6$ nodes and of a C-130 afterbody at $Re_D=0.2\times10^6$
+  on $210\times10^6$ nodes.
 
 # Citations
 
@@ -1758,3 +1835,10 @@ grid ratio (§4). See
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — §4.1.
 - [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §3–§5.
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.1.
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §1 (resolved fraction, modelling burden against URANS); §2.1, Eqs. 1–4 (sign of the sub-filter stress).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1.2 (truncation error against subfilter terms, Ghosal cited); §2.4.1.4, Table 1 (grid estimates, WMLES guidelines); §3.1.1.2, §4.1.1 (Reynolds-number reach of wall-resolved LES).
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) — §III.A–B, Table I, Figs. 1–2 (grid convergence of LES of a supersonic boundary layer).
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §1 (industrial applications, implicit-filter mismatch on coarse grids).
+- [Le et al. (2024)](/sources/le-2024.md) — §3, p. 9 (LES classed as too costly for engineering). Review, citation only.
+- [Salehi et al. (2024)](/sources/salehi-2024.md) — §1 (filter removes extinction-relevant scales).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §1, Eqs. 2–3; §4.1 (filtered equations, data volumes). Review, citation only.

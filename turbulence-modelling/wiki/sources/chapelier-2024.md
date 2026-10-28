@@ -158,7 +158,7 @@ arXiv preprint without identifier. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 6 (2026-10-26), cited further in chunks 7–8. This source is cited on:
+Chunk 6 (2026-10-26), cited further in chunks 7, 8, 14. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
@@ -168,6 +168,7 @@ Chunk 6 (2026-10-26), cited further in chunks 7–8. This source is cited on:
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Shock sensors and troubled-cell indicators](/definitions/shock-sensor.md)
 - [Artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
+- [Compact finite-difference schemes](/methods/compact-finite-difference-scheme.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
 - [Flux reconstruction](/methods/flux-reconstruction.md)
 - [Spectral difference method](/methods/spectral-difference-method.md)
@@ -178,3 +179,4 @@ Chunk 6 (2026-10-26), cited further in chunks 7–8. This source is cited on:
 - [Shock-generated turbulence and turbulent shock jump relations](/results/shock-generated-turbulence.md)
 - [FLEXI](/software/flexi.md)
 - [GALÆXI](/software/galaexi.md)
+- [PyFR](/software/pyfr.md)

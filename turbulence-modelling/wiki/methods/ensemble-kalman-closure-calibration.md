@@ -5,7 +5,7 @@ description: "Derivative-free calibration of closure parameters with an ensemble
 status: established
 aliases: [EnKF, ensemble Kalman filter, ensemble Kalman inversion, ensemble data assimilation, EnKF-MM, EnKF mixed model, EnKF-FM]
 tags: [data-driven, field-inversion, sgs-model, les, uncertainty-quantification]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T12:26:00Z
 ---
 
 # Ensemble Kalman filter calibration of turbulence closures
@@ -74,6 +74,28 @@ posteriori calibration of an LES subgrid model inside the running LES (see
   turbulence-model parameters, and take the second route with a
   population-based metaheuristic instead of a Kalman update (next
   section).
+- [Le et al. (2024)](/sources/le-2024.md) (§3.1.2, p. 13, Fig. 12), in
+  a review of machine learning for supersonic flows, cite two ensemble
+  methods for RANS: an ensemble transform Kalman filter for wing flows
+  (Kato et al., as cited) and Ströfer's DAFI framework of ensemble-based
+  data assimilation and field inversion, with which Tang et al. (as cited)
+  invert Reynolds-stress discrepancies of SST for shock/boundary-layer
+  interaction, "overcoming some limitations of the eddy viscosity
+  assumption" (see
+  [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+  The review prints no ensemble size or update.
+- [Fang et al. (2026)](/sources/fang-2026.md) (§4.2.4) list the EnKF and
+  four-dimensional variational assimilation, alone or combined with neural
+  operators, among the data-assimilation tools merged with machine
+  learning, and cite a unified data-assimilation and turbulence-modelling
+  framework for separated high-Reynolds-number flows (Wang & Zhang, as
+  cited) and uncertainty-guided active learning of assimilated closures
+  with graph networks (Quattromini et al., as cited), without numbers.
+- Bayesian calibration with a polynomial-chaos surrogate and Markov-chain
+  sampling, the full-posterior route that Yan et al. (2022) name beside
+  the EnKF, is described on
+  [Bayesian calibration](/methods/bayesian-closure-calibration.md), with
+  An et al.'s (2025) recalibration of seven Spalart–Allmaras constants.
 
 **A metaheuristic counterpart (Shan et al. 2023).** Shan et al. (§II.B,
 §II.D, Eq. 3, Fig. 4) calibrate all nine free coefficients of the
@@ -261,3 +283,6 @@ pure gradient model, all compared with filtered DNS:
 - [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §4, Eqs. 25–26, Table 4 (gradient-based learning of the Smagorinsky coefficient, ensemble assimilation cited as motivation).
 - [Brenner et al. (2022)](/sources/brenner-2022.md) — §1, §1.1 (parametric calibration, ensemble Kalman methods and the curse of dimensionality, nudging).
 - [Shan et al. (2023)](/sources/shan-2023.md) — §II.B, Eq. 3, §II.D, Fig. 4 (two data-assimilation routes; TLBO calibration of nine SA coefficients); §III.B–C, Tables 3, B1, Figs. 7, 11 (calibrated lift errors, case dependence of the coefficients).
+- [Le et al. (2024)](/sources/le-2024.md) — §3.1.2, p. 13, Fig. 12 (ensemble transform Kalman filter and DAFI cited for RANS).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §4.2.4 (EnKF and 4D-Var with machine learning, cited).
+- [An et al. (2025)](/sources/an-2025.md) — §2.3 (Bayesian MCMC calibration as the full-posterior alternative; details on the Bayesian-calibration page).

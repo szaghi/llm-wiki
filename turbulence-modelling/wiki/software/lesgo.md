@@ -5,7 +5,7 @@ description: "LESGO is an open-source incompressible LES code, pseudo-spectral i
 status: established
 aliases: [lesgo]
 tags: [software, les, wmles, wall-model, data-driven, reinforcement-learning]
-timestamp: 2026-10-28T06:45:00Z
+timestamp: 2026-10-28T17:00:00Z
 ---
 
 # LESGO
@@ -190,6 +190,18 @@ and measure the ODE-based equilibrium model at about four times the cost of the
 reinforcement-learning model on their cluster (no hardware detail, training
 cost excluded).
 
+## Place among open-source solvers
+
+[Xiao et al. (2025)](/sources/xiao-2025.md), §1, Table 1, list LESGO among
+open-source solvers for wall-bounded turbulence (with STREAmS-2, URANOS,
+AFiD, CaNS and their GPU code [CaLES](/software/cales.md)) as an
+incompressible DNS/LES code that supports LES but has no GPU support; with
+URANOS it is the only listed code that already supports LES. They state
+that incompressible solvers such as LESGO are "typically more efficient"
+than compressible ones for low-Mach flows, mainly because explicit time
+integration then allows much larger time steps. Table 1 lists
+capabilities; the paper runs no LESGO case.
+
 ## Qualifications
 
 - Vadrot et al. (2023b, Table I) list the inputs of one learned model with
@@ -218,3 +230,4 @@ cost excluded).
 - [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — arXiv 2302.14391v3: §II.A (code, SGS and wall models available); §II.B.1–3, Eqs. (1)–(10), Table I (equilibrium model, Smarties coupling, matching heights, training set-up); §III.A–B, Eq. (12), Figs. 6, 8 (half channel, convergence).
 - [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A–B, Eqs. (1)–(11) (modified LESGO: time stepping, de-aliasing, Smagorinsky with wall damping, log-law wall stress, immersed boundary, actuator disk); §III A, Fig. 4 (hill validation); App. A, Table I, Fig. 22 (grid study).
 - [Taschner et al. (2024)](/sources/taschner-2024.md) — §3.1, Table 1 (cross-verification set-up); §4.1, Figs. 2–6 (LESGO among the reference codes, wake transition, pseudo-spectral against finite differences, cited).
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §1, Table 1 (LESGO among open-source wall-bounded solvers: LES, no GPU support).

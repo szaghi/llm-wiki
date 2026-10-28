@@ -5,7 +5,7 @@ description: "LES closures in which a neural network maps resolved-field feature
 status: established
 aliases: [ANN-SGS model, GAN SGS model, fusion network, T-SR-FU, energy-conserving neural closure, structure-preserving closure, ANN-SGS mixed model, deep-learning LES closure, DL-LES, neural-network LES closure, data-driven SGS model, S-106H, SL-106H, SL-180C, DL-AR1, DL-AR2, multi-filter training, TBNN-GNN]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T12:26:00Z
 ---
 
 # Neural-network subgrid-scale models
@@ -169,6 +169,19 @@ components in a DNS of a turbulent premixed flame with small networks
 trained on a two-dimensional species DNS; the method is described on
 [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)
 and on its Source page.
+
+Two later reviews list further reacting-flow closures without testing
+them. [Le et al. (2024)](/sources/le-2024.md) (§3.3, p. 20), on supersonic
+combustion, cite a network that closes the six components of the unclosed
+LES stress in a turbulent premixed V-flame from normalized density and
+velocity gradients (Nikolaou et al., their ref. [226]) and is said to show
+"superior adaptability to traditional subgrid-scale models, such as the
+Smagorinsky model", together with networks for the progress-variable
+dissipation rate from filtered strain rate, Lewis number and filtered
+variables (ref. [224]) and for the conditional scalar dissipation of spray
+flames (ref. [225]). [Fang et al. (2026)](/sources/fang-2026.md) (§2.2)
+cite an extrapolation study of convolutional combustion closures across
+Reynolds number, filter kernel and filter size (their ref. [56]).
 
 Two non-learned closures of compressible LES position themselves against
 learned ones: [Zhang et al. (2022d)](/sources/zhang-2022-h.md) (§I) state
@@ -628,6 +641,19 @@ compare with dynamic or static Smagorinsky LES on the same grid. See
 
 ## Stabilization that a priori networks need
 
+[Fang et al. (2026)](/sources/fang-2026.md) (§4.2.4), a review, state
+that convolutional SGS closures that succeed a priori can show
+"instability and energy divergence during a posteriori rollout", most
+over long horizons or under extrapolation to higher Reynolds number, and
+cite Guan et al. (their ref. [55], 2-D turbulence) for transfer learning
+and explicit backscatter modelling as remedies (see
+[energy backscatter](/definitions/energy-backscatter.md)). Elsewhere
+(§2.2, §5.1) the same review relays, without qualification of the test,
+that convolutional closures (Beck et al., ref. [67]) outperform classical
+closures and that a deep network trained on DNS of the atmospheric
+boundary layer predicts subgrid stresses "with higher relevance than the
+traditional Smagorinsky model" across grid resolutions (ref. [184]).
+
 Wang et al. (2023c, §V), citing the literature, state that
 machine-learning SGS models with excellent a priori accuracy often
 under-perform or go unstable a posteriori, and need hyper-viscosity,
@@ -800,3 +826,5 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 - [Xu et al. (2023)](/sources/xu-2023.md) — §1 (cited costs, black-box networks); §2.1–2.2, Figs. 1–3 (equations, baselines); §3.1–3.3, Tables 1–2, Eqs. 3.19–3.43, Figs. 4–12 (variants, network, training, a priori); §4, Tables 3–8, Figs. 13–31 (a posteriori, backscatter, cost); §5; App., Figs. 32–33.
 - [Kumar et al. (2023)](/sources/kumar-2023.md) — §3.4, Fig. 5 (passing: networks for principal-component thermochemistry terms, not a subgrid closure).
 - [Nista et al. (2023)](/sources/nista-2023.md) — §1 (network closures of reacting LES, a priori successes cited); §4.1–4.2, §4.4 ($\Delta/\eta$ generalization criterion, a priori only).
+- [Le et al. (2024)](/sources/le-2024.md) — §3.3, p. 20 (premixed V-flame stress network, scalar-dissipation networks, cited). Review, citation only.
+- [Fang et al. (2026)](/sources/fang-2026.md) — §2.2 (CNN closures and combustion extrapolation, cited); §4.2.4 (a posteriori instability, Guan et al. cited); §5.1 (atmospheric-boundary-layer network, cited). Review, citation only.

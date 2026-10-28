@@ -5,7 +5,7 @@ description: "A priori testing evaluates or trains a closure on filtered or aver
 status: established
 aliases: [a priori test, a posteriori test, offline and online evaluation, a-priori training, a-posteriori training]
 tags: [data-driven, a-priori-a-posteriori, sgs-model, les, rans]
-timestamp: 2026-10-28T07:07:00Z
+timestamp: 2026-10-28T17:00:00Z
 ---
 
 # A priori and a posteriori testing
@@ -207,6 +207,32 @@ gradient-diffusion numbers $Pr_t$ and $Sc_t$ (see
 [turbulent Prandtl number](/definitions/turbulent-prandtl-number.md)), the
 strong Reynolds analogy and the laminar-chemistry closure of the mean heat
 release, without running any model.
+Five further sources use the pair in the same sense.
+[Fang et al. (2026)](/sources/fang-2026.md) (§4.2.4) print it for learned
+closures: "a priori model validation—where a learned closure is tested on a
+dataset—and a posteriori validation—where it is deployed in full LES
+simulations" (below).
+[Le et al. (2024)](/sources/le-2024.md) (§3.3) list, in a review of
+machine learning for scramjet combustion, closures of the filtered joint
+scalar PDF by principal-component analysis and kernel density estimation
+tested a priori (their refs. [219], [221]) and a posteriori (ref. [220]).
+[Salehi et al. (2024)](/sources/salehi-2024.md) (§2.1, §3) review
+[conditional source-term estimation](/methods/conditional-source-term-estimation.md),
+whose assessments are mostly a priori on DNS of flames: the filtered DNS
+reaction rate in an LES cell is compared with the rate the closure
+returns from the DNS scalars, the DNS PDF or a modelled PDF (below).
+[Xiao et al. (2025)](/sources/xiao-2025.md) (§1) define a posteriori
+assessment as performance "evaluated in actual LES simulations" and test
+their [CaLES](/software/cales.md) solver only in that sense (below).
+[Wang et al. (2024c)](/sources/wang-2024-j.md) use only half of the pair
+in this sense: their "a posteriori test" is the coarse-grid run of their
+modified [scale-adaptive simulation](/methods/scale-adaptive-simulation.md)
+(abstract, §III, Table I), while "a priori study" names their ref. 18, an
+earlier study of the same supersonic boundary layer from which the domain
+and the invariant analysis are taken (§III.A, §III.D). They evaluate the
+hybrid length scales on the stored fields of their three wall-resolved
+LES (§III.F, Figs. 15–16), an out-of-solver evaluation on reference fields,
+without calling it a priori (below).
 The words carry nine further meanings that must be kept apart:
 
 - **Training rather than testing.** Duraisamy (2021, §IV) and Agdestein &
@@ -648,6 +674,17 @@ can disagree).
   [neural-network SGS models](/methods/neural-network-sgs-model.md) and
   [super-resolution SGS models](/methods/super-resolution-sgs-model.md)).
   The review cites the evidence; it runs no test.
+- Fang et al. (2026, §4.2.4), also a review that runs no test, state the
+  same for convolutional SGS closures: those that succeed a priori can
+  show "instability and energy divergence during a posteriori rollout",
+  especially over long horizons or under extrapolation to higher Reynolds
+  number. As remedy they cite Guan et al. (their ref. [55]): transfer
+  learning and "explicit modeling of backscatter dynamics" (see
+  [energy backscatter](/definitions/energy-backscatter.md) and
+  [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+  Xiao et al. (2025, §1) give the same verdict for SGS models trained on
+  filtered DNS, which "may perform well in a priori tests but fail in a
+  posteriori assessments", with the reason given under mechanism 4 below.
 - Sirignano & MacArt (2023, §5, Figs. 11–12) train the same gated network,
   with the same hyperparameters, two ways for LES of a square prism in
   confined cross-flow ($Re=1000$ on the prism height). Fitted by supervised
@@ -1132,6 +1169,56 @@ filtered-DNS transfer at the a priori filter width (Eq. 18), the a
 posteriori one a residual of the LES energy budget (Eq. 22). See
 Qualifications for how the printed statements fit the tables.
 
+**An a priori error budget of a combustion closure.** For
+[conditional source-term estimation](/methods/conditional-source-term-estimation.md)
+the a priori test on DNS of flames is the main instrument, because it
+separates error sources that a running LES mixes. Salehi et al. (2024)
+reproduce the evidence of the works they review. In one LES cell of a DNS
+of a freely propagating premixed methane–air flame, the directly filtered
+CO$_2$ production rate is $26.2\ \mathrm{s^{-1}}$, the rate evaluated at
+the filtered scalars ("first-moment closure") $37.0\ \mathrm{s^{-1}}$ and
+the first-moment conditional-moment-closure hypothesis with the exact DNS
+PDF $28.1\ \mathrm{s^{-1}}$, errors of 41% and 7% (§2.1, Fig. 1, Table 2).
+On DNS of statistically planar premixed flames at Karlovitz numbers 6 to
+4100, filtered by a top-hat filter of width 0.7 thermal thicknesses into
+1024 LES cells, the conditional-moment hypothesis error is insignificant
+at low and high Karlovitz number, the homogeneity error of a single
+1024-cell ensemble is significant, and the inversion error is not
+significant relative to a coarse-grid conditional moment closure (§3.2.1,
+Fig. 34, from their ref. [61]). On high-pressure heptane DNS, the closure
+fed with the DNS PDF performs very well and a $\beta$-PDF degrades it
+significantly; for double conditioning the modelled joint PDF is by far
+the largest error source, ahead of ensemble selection and inversion
+(§3.1.1, Fig. 21). The review's summary is that the PDF closure is "the
+largest source of error in a priori DNS calculations" (§4.1). Two of its
+statements mark what such tests cannot settle: the Bernstein-polynomial
+("localized") variant works a priori with ensembles of as few as 16 LES
+cells, while in an actual LES at least 27 cells per ensemble are needed
+(§2.9.5, Fig. 18); and the loss of elemental mass conservation with
+detailed chemistry was not visible on a single DNS snapshot, while the
+authors state that the errors would likely accumulate in a RANS or LES
+and cause failure (§2.8.3; mechanism 2 below).
+
+**A length-scale property shown on stored fields of three grids, run in the solver on one.**
+Wang et al. (2024c, §III.F, Figs. 15–16) evaluate the hybrid length scales
+of SA-based DES, DDES and three variants of their
+[scale-adaptive simulation](/methods/scale-adaptive-simulation.md) on the
+stored fields of three wall-resolved LES of a supersonic boundary layer at
+$M_\infty=2.0$ (grids $209\times161\times81$ to $649\times201\times161$):
+the RANS/LES interface of every existing formulation moves toward the wall
+as the grid is refined, while that of their dissipation-adaptive length
+scale, which applies the DDES shielding function $f_d$ to the von Kármán
+length, stays near $y^+\approx14$ on all three grids. Their "a posteriori
+test" is a single run on the coarsest grid, which gives larger inner-layer
+Reynolds stresses and a wider $St^{-5/3}$ range of the wall-pressure
+spectrum than DES, DDES and the unmodified variant (§III.B, Figs. 2–3).
+The grid independence of the interface is therefore shown on frozen LES
+fields only; no a posteriori grid study is reported, and the paper does
+not state which equation defines the length scale of the coarse run (it
+calls the run "our modification"). No error norms are printed (see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) and
+[log-layer mismatch](/definitions/log-layer-mismatch.md)).
+
 ## Mechanisms named by the sources
 
 1. **Feature mismatch.** Features computed from reference data differ from
@@ -1183,6 +1270,10 @@ Qualifications for how the printed statements fit the tables.
    make the same point for SGS models: their training succeeds "through the
    online learning process in which the temporal reaction of the SGS model
    in the actual LES is considered".
+   Fang et al. (2026, §4.2.4) name long horizons as the regime in which
+   a priori-successful convolutional closures diverge a posteriori, and
+   Salehi et al. (2024, §2.8.3) expect a conservation error invisible on
+   one DNS snapshot to accumulate in a running simulation (above).
 3. **Balance between model terms.** Exact inputs do not repair a model
    whose other terms were tuned to its own variables. Duraisamy (2021,
    §IV.A) cites results in which using exact DNS or LES $k$ and
@@ -1231,6 +1322,15 @@ Qualifications for how the printed statements fit the tables.
    give the same reason for not training a wall model on filtered DNS:
    the subgrid tensor of an implicitly filtered LES does not coincide with
    the stress obtained by filtering the Navier–Stokes equations.
+   Xiao et al. (2025, §1), citing a 2022 arXiv study of Bae and
+   Lozano-Durán, state the same mismatch and add when it matters most:
+   when the grid is much coarser than the Kolmogorov scale, "as the
+   numerical and modeling errors can then be comparable". They note the
+   resulting shift to training data generated in LES and to
+   model-consistent and reinforcement-learning training, which needs
+   hundreds or thousands of LES runs, and present their GPU solver
+   [CaLES](/software/cales.md) as a platform for it (see
+   [model-consistent training](/methods/model-consistent-training.md)).
    Kim et al. (2024, p. A6-21, Eqs. 4.2–4.3, Table 4) estimate the size of
    this error for their second-order finite-difference cylinder LES,
    following Sirignano et al.: the mean relative difference between
@@ -1613,3 +1713,8 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 - [Nista et al. (2023)](/sources/nista-2023.md) — §1 (filtered DNS as LES-like input), §4, Figs. 2–7 (joint PDFs, RMSE, gradient PDFs), §4.1–4.2, §4.4 ($\Delta/\eta$ criterion, a posteriori deferred).
 - [Yu et al. (2023b)](/sources/yu-2023-b.md) — §IV, Eqs. 17–26, Figs. 17–20 (a priori eddy viscosity, $C_\mu(x)$, heat flux); §V, Figs. 21–24 (a posteriori refined SST).
 - [Wang & Xu (2024)](/sources/wang-2024-h.md) — §5.2–5.4 (a priori $Pr_t$, $Sc_t$, Reynolds analogies); §6.3, Eqs. 6.4–6.6, Figs. 27–28 (drop-one-fluctuation chemistry test).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §4.2.4 (definition; CNN closures unstable a posteriori, Guan et al. cited). Review, citation only.
+- [Le et al. (2024)](/sources/le-2024.md) — §3.3 (PCA and kernel-density closures of the joint scalar PDF tested a priori and a posteriori, cited). Review, citation only.
+- [Salehi et al. (2024)](/sources/salehi-2024.md) — §2.1, Fig. 1, Table 2 (first-moment closure 41% against CMC hypothesis 7%); §2.8.3 (conservation error not visible on one snapshot); §2.9.5, Fig. 18 (16 cells a priori, 27 in LES); §3.1.1, Fig. 21; §3.2.1, Fig. 34; §4.1 (PDF closure the largest a priori error).
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §1 (implicit-filter mismatch on coarse grids, a posteriori assessment, model-consistent training needs many LES runs).
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) — abstract, §III.A, §III.D ("a priori study" = their ref. 18); §III.B, Table I, Figs. 2–3 (coarse "a posteriori test"); §III.F, Figs. 15–16 (length scales evaluated on three LES fields).

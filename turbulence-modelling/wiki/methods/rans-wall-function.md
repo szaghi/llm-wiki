@@ -5,7 +5,7 @@ description: "The near-wall closure of RANS that imposes a law of the wall at th
 status: established
 aliases: [wall function, WF, adaptive wall function, two-velocity-scale wall function, explicit wall function, RANS wall law]
 tags: [rans, wall-model, boundary-layer, dg]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T17:02:00Z
 ---
 
 # Wall functions for RANS
@@ -62,6 +62,24 @@ $\beta$, $\beta_1$).
   an anisotropically adapted mesh of about 110 M cells whose ten prism layers
   use wall functions with $y^+\approx80$ on the wing (see
   [mesh adaptation](/methods/mesh-adaptation.md)).
+  The same inversion serves wall-modelled LES on immersed boundaries:
+  [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) (§2.4,
+  Eqs. 19–24) invert the log law ($\kappa=0.42$, $B=5.2$) at a fluid point on
+  the wall normal and set the tangential velocity of the boundary node from
+  a linear/log switch at $y^+=11.0$, in a sharp-interface curvilinear
+  immersed boundary for compressible LES (see
+  [wall-modelled LES](/methods/wall-modelled-les.md) and the
+  [law of the wall](/definitions/law-of-the-wall.md)).
+- **Hybrid RANS/LES on coarse wall grids.** [Guo & Wang (2025)](/sources/guo-2025.md)
+  run their SST-based delayed and filtered DES variants (see
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md)) in
+  OpenFOAM with wall functions on the square cylinder at $Re_D=21\,400$ and
+  the [periodic hill](/benchmarks/periodic-hill.md) at $Re_h=10\,565$, the
+  hill grid refined to $y^+<10$ (§2.2.2). They justify wall functions on the
+  separated hill flow by a statement they attribute to Gritskevich et al.
+  (as cited), that wall functions with $y^+<50$ give "almost identical
+  results" to wall-resolved $y^+<1$ grids (§2.2.2); the paper tests no
+  wall-resolved run.
 
 ## Wall stress from an inverted law
 
@@ -216,9 +234,14 @@ $k$-$\omega$ equations in the sublayer and in the log layer:
 | Source | Sublayer | Log layer | Combination |
 |---|---|---|---|
 | Ghidoni et al. (2026, Eq. 18), DG, wall boundary condition | $\omega_{\mathrm{vis}}=6\nu_w/(\beta_\omega y^2)$ | $\omega_{\log}=\max(u^*,u_\tau)/(\sqrt{\beta_\omega}\,\kappa y)$ | $\omega=\sqrt{\omega_{\mathrm{vis}}^2+\omega_{\log}^2}$; $\boldsymbol n\cdot\nabla k=0$ |
+| Guo & Wang (2025, Eqs. 17, 19–20), OpenFOAM `kqRWallFunction`, `nutUSpaldingWallFunction`, `omegaWallFunction` | $\omega_w=6\nu/(\beta_\omega y^2)$, $\beta_\omega=0.075$ | $k=u_{\tau*}^2/\sqrt{C_\mu}$ | $\nu_t=\max\big(0,\,u_{\tau*}^2/(\lvert\nabla\boldsymbol u\rvert+\zeta)-\nu_\omega\big)$ with $u_{\tau*}$ from Spalding's law (Eq. 18); $C_\mu$, $\zeta$ and the Spalding constants not printed |
 | Mozaffari et al. (2024, Eqs. 22–25), lattice Boltzmann, boundary nodes | $k=C_ku_\tau^2(y^+)^{3.23}$, $\omega_{\mathrm{vis}}=6\nu/(\beta_\omega y^2)$ | $k=u_\tau^2/\sqrt{C_\mu}$, $\omega_{\log}=u_\tau/(\sqrt{C_\mu}\,\kappa y)$ | switch at $y^+=11.06$ (Kalitzin et al., as cited); optional blend $\phi\,\omega_{b2}+(1-\phi)\omega_{b1}$, $\phi=\tanh\big((y^+/10)^4\big)$, $\omega_{b1}=\omega_{\mathrm{vis}}+\omega_{\log}$, $\omega_{b2}=(\omega_{\mathrm{vis}}^{1.2}+\omega_{\log}^{1.2})^{1/1.2}$ (Knopp et al., as cited) |
 
-Mozaffari et al. print the $\omega$ values in wall units,
+Guo & Wang (2025) print no definition of $u_{\tau*}$, $\zeta$ (a regularizer
+of the eddy-viscosity quotient, page-local) or the viscosity $\nu_\omega$ of
+Eq. (19) (printed symbol, undefined), and list the three boundary conditions without saying which
+blending of the sublayer and log-layer values of $\omega$ the solver
+applies. Mozaffari et al. print the $\omega$ values in wall units,
 $6u_\tau^2/(\nu\beta_\omega y^{+2})$ and $u_\tau^2/(\nu\sqrt{C_\mu}\kappa y^+)$,
 which equal the forms above; the values of $C_k$, $C_\mu$ and
 $\beta_\omega$ are not printed, and whether the blend is used in their runs
@@ -509,4 +532,6 @@ Five high-order sources resolve the wall instead, and say what it takes:
 - [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §1; §2.2, Eqs. (10)–(15), Table 1; §3.1–3.2, Figs. 4–13; §4.
 - [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §2.1, Eqs. (2.27)–(2.29); §4.1; §4.3; §4.4, Fig. 25; §5.1; §5.4; §6.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.8, Fig. 4; §2.10.1, Table 1; §2.11; §2.12.2, Figs. 24–25; §3.2.2.
+- [Guo & Wang (2025)](/sources/guo-2025.md) — Eqs. (17)–(20) (OpenFOAM wall functions); §2.2.2 (wall functions on the periodic hill, Gritskevich et al. as cited).
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §2.4, Eqs. (19)–(24) (log-law inversion in an immersed-boundary LES; passing).
 - [Mays et al. (2023)](/sources/mays-2023.md) — §2.1 (all-$y^+$ wall treatment of STAR-CCM+ at $y^+<1$; passing).

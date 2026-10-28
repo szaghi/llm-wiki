@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T17:00:00Z
 ---
 
 # Smagorinsky model
@@ -89,6 +89,11 @@ are variants of the same eddy-viscosity idea.
 | 0.1, used only to fix the [Vreman](/methods/vreman-model.md) and [WALE](/methods/wale-model.md) constants ($2.5C_s^2$, $10.6C_s^2$); the Smagorinsky baseline itself is dynamic | compressible channel and boundary-layer LES, baselines of a learned model | [Xu et al. (2023)](/sources/xu-2023.md), §2.2 |
 | dynamic (charLES submission) | wall-modelled LES of the CRM high-lift aircraft in the fourth High-Lift Prediction Workshop | [Kiris et al. (2023)](/sources/kiris-2023.md), §II.4, Table 2 |
 | dynamic (cited to Martín, Piomelli & Candler) | OpenFOAM flamelet LES of a stratified burner | [Zhang et al. (2023)](/sources/zhang-2023-c.md), §2, §3.3 |
+| 0.18 with van Driest damping $1-\exp(-y^+/25)$ ($y^+$ in the simulation's wall units); 0.22 needed on the coarse grid with a box-filtered initial field; Lilly's 0.17 and Deardorff's 0.1 cited; $\Delta$ not defined | decaying isotropic turbulence (Comte-Bellot–Corrsin) and wall-resolved channel LES in the GPU solver [CaLES](/software/cales.md); the channel value is not printed | [Xiao et al. (2025)](/sources/xiao-2025.md), §2.1, Eq. (4); §4.1 |
+| 0.12 "unless otherwise specified", 0.16 in the channel, $\Delta$ the lattice spacing | wall-modelled LES in an immersed-boundary lattice Boltzmann solver, the eddy viscosity entering the relaxation time | [Wang et al. (2024d)](/sources/wang-2024-k.md), §II A, Eq. (3); §III A |
+| printed $\nu_t=C_s\Delta^2\lvert\bar S\rvert$ with $C_s=0.12$ "as in Ref. 60", the coefficient to the first power (so 0.12 plays the role of the registry's $C_s^2$), $\Delta$ the cube root of the cell volume | second-order central comparison run beside a sixth-order compact scheme with implicit spectral vanishing viscosity, bluff-body wall-modelled LES in Xcompact3d | [Yan et al. (2024)](/sources/yan-2024.md), App. B2, Eqs. (B9)–(B11); their Ref. 60 is Wang et al. (2024d) (row above), which prints $(C_s\Delta)^2$ with $C_s=0.12$ |
+| dynamic, with a Yoshizawa isotropic part of constant $C_I=0.06$ (after Vreman et al., cited) | compressible LES with a curvilinear immersed boundary, hybrid central/WENO fluxes | [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md), §2.1, Eqs. (7)–(10) |
+| dynamic $C_s^2$, Yoshizawa coefficient and turbulent Prandtl number, $\Delta=V_c^{1/3}$ ($V_c$ the cell volume) | wall-resolved LES of a supersonic boundary layer at $M_\infty=2.0$, seventh-order WENO | [Wang et al. (2024c)](/sources/wang-2024-j.md), §II.B, Eqs. (12)–(13) |
 
 Wang et al. (2021, §3.1), citing earlier work, relate the coefficient to
 the Kolmogorov constant by $C_s\approx C_\Delta^{-1}(1.5C_K)^{-3/4}$
@@ -865,6 +870,57 @@ methods (Hou et al., cited).
   instability modes" of the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md),
   which motivates their deconvolution closure without eddy viscosity (see
   [scale-similarity models](/methods/scale-similarity-model.md)).
+- **Grid convergence in a wall-resolved channel.** In the GPU solver
+  [CaLES](/software/cales.md), [Xiao et al. (2025)](/sources/xiao-2025.md)
+  (§4.2, Table 3, Figs. 7–8) run channel LES at $Re_b=20\,000$
+  ($Re_\tau\approx544$) on four grids from $\Delta x^+\approx36$ to 12. The
+  static model with van Driest damping over-predicts the skin friction by
+  9.38%, 8.95%, 4.95% and 0.50% from the coarsest to the finest grid;
+  the dynamic model gives $-2.25\%$, $-0.69\%$, $-1.49\%$ and $-3.22\%$.
+  The resolved shear stress is over-predicted with the static and
+  under-predicted with the dynamic model, as the friction is; the peak of
+  the streamwise normal stress is over-estimated with both. The static
+  model adds 32 B per grid point (about 20% of the DNS memory) and about
+  0.3 ns per step and point on one A100 (§3.2, Table 2, Fig. 2). In
+  wall-modelled channel LES at $Re_\tau\approx5200$ both models converge
+  non-monotonically with the grid (§4.3; see
+  [wall-modelled LES](/methods/wall-modelled-les.md)).
+- **Against a high-order implicit closure on the same mesh.**
+  [Yan et al. (2024)](/sources/yan-2024.md) (§III A, Table II) compare, on
+  the circular cylinder at $Re_D=3900$, their sixth-order compact scheme
+  with implicit spectral vanishing viscosity against second-order central
+  differences with the Smagorinsky model on the same mesh: mean drag 1.02
+  against 1.17, recirculation length $1.42D$ against $2.42D$, base
+  pressure coefficient $-0.93$ against $-0.59$, Strouhal number 0.229
+  against 0.223; the second-order run is also the more expensive (18.16
+  against 15.04 h per $10^5$ steps on 96 cores), because the implicit
+  closure computes no subgrid terms (see
+  [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
+  and [Xcompact3d](/software/xcompact3d.md)).
+- **Insensitive where the wall model dominates.** In two-dimensional LES
+  of Mach-3 flow past a cylinder at $Re=750\,000$,
+  [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) (§3.3.2,
+  Fig. 12) find the same wake reattachment length with the dynamic model,
+  a constant coefficient and no subgrid model, while the wall treatment
+  changes it: 1.1 with a free-slip wall, 2.8 with the log-law
+  wall-stress model and a similar, much longer separation with the Cabot
+  model, against 1.04 in the experiment (distances from the
+  cylinder centre, nondimensional as printed); they conclude that these flows "are more
+  sensitive to the wall model than the LES subgrid model" (§5).
+- **Separated from the numerical dissipation.** [De Cosmo et al. (2025)](/sources/decosmo-2025.md)
+  (§1) cite Camarri et al. for combining a dynamic Smagorinsky model with
+  an upwind parameter, so that numerical dissipation and subgrid effects
+  stay as separate as possible, and Amirante & Hills for a low-dissipation
+  Roe implicit LES that gives results comparable to the Smagorinsky model
+  on a channel and a stator–rotor cavity (see
+  [implicit LES](/definitions/implicit-les.md)).
+- **Baseline beaten by learned models (cited).** [Fang et al. (2026)](/sources/fang-2026.md),
+  a review, relay that a deep network trained on DNS of the atmospheric
+  boundary layer predicts subgrid stresses better than the Smagorinsky
+  model across grid resolutions (§5.1) and that an implicit U-Net enhanced
+  Fourier neural operator beats "physics-based dynamic Smagorinsky models"
+  (§4.2.2); see [neural-network SGS models](/methods/neural-network-sgs-model.md)
+  and [neural-operator surrogates](/methods/neural-operator-les-surrogate.md).
 
 ## As a component of other closures and couplings
 
@@ -879,7 +935,27 @@ methods (Hou et al., cited).
   coefficient built from the [Sigma model](/methods/sigma-model.md) (see
   [self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md)).
   With the printed constants $\sqrt{0.3}\times0.1/0.09=0.609$ *(compiler
-  check, not in the sources)*.
+  check, not in the sources)*. [Wu et al. (2024b)](/sources/wu-2024-b.md)
+  (§II, Eqs. 28–38) derive the same calibration for the SATES variant
+  they pair with a smooth-cut-off compact scheme: with the equilibrium of
+  production and dissipation and a shear-flow relation between the shear
+  stress, $k$ and $\lvert S\rvert$, the filtered limit of the eddy viscosity
+  equals the Smagorinsky form, giving $C_x=\sqrt{0.3}\,C_s/C_\mu$ with
+  $C_s=0.1$ (chosen from a quoted range 0.08–0.22) and $C_x=0.61$; they
+  print the shear-flow relation as "$\langle uv\rangle\approx0.3k\lvert S\rvert=\varepsilon$" (Eq. 36).
+- **Equilibrium constant of a DES branch.** [Alberti et al. (2025)](/sources/alberti-2025-b.md)
+  (§3.1.1–3.1.2, Eq. 25, Figs. 5, 10) diagnose the LES branch of
+  Spalart–Allmaras-based DES variants in high-order discontinuous Galerkin
+  by an equivalent Smagorinsky constant, the square root of the eddy
+  viscosity over the squared volume-based length times the vorticity
+  magnitude. The low-Reynolds-number correction enforces 0.2, "in
+  alignment with" Lilly's 0.18 as they cite it; without the correction the
+  constant still settles by itself, near 0.2 in the channel core on the
+  coarse $Re_\tau=5200$ grid and near 0.01 on the fine $Re_\tau=400$
+  grids, where the eddy viscosity is comparable to the null field of an
+  implicit LES; the authors read the branch as establishing a "'dynamic'
+  balance", a self-adjusting Smagorinsky model (see
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
 - **Eddy-viscosity part of a mixed model.** [Zhou & Bae (2024)](/sources/zhou-2024-b.md)
   (§2.1, Eq. 1) add a scale-similarity term with a Gaussian secondary filter
   to the Smagorinsky stress with $C_s=0.13$ (see
@@ -1045,3 +1121,12 @@ methods (Hou et al., cited).
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — §2.4.1.
 - [Nmira et al. (2023)](/sources/nmira-2023.md) — §2.1.
 - [Nista et al. (2023)](/sources/nista-2023.md) — §4, Fig. 2b; ref. [25].
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §2.1, Eq. (4) (static model with van Driest damping, constants); §3.2, Table 2, Fig. 2 (memory, cost); §4.1, Fig. 5; §4.2, Table 3, Figs. 7–8 (wall-resolved channel errors); §4.3.
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — §II A, Eq. (3); §III A (constants in lattice Boltzmann WMLES).
+- [Yan et al. (2024)](/sources/yan-2024.md) — App. B2, Eqs. (B9)–(B11) (printed form, constant); §III A, Table II (comparison with iSVV, cost).
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §2.1, Eqs. (7)–(10) (compressible dynamic form, $C_I=0.06$); §3.3.2, Fig. 12; §5 (insensitivity of reattachment to the subgrid model).
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) — §II.B, Eqs. (12)–(13) (compressible dynamic Smagorinsky–Yoshizawa model).
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §1 (Camarri et al. and Amirante & Hills cited).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §4.2.2, §5.1 (learned models beating Smagorinsky baselines, cited). Review, citation only.
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) — §II, Eqs. (28)–(38) (Smagorinsky limit of SATES, $C_s=0.1$, $C_x=0.61$).
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §3.1.1–3.1.2, Eq. (25), Figs. 5, 10 (equivalent Smagorinsky constant of DES branches in DG).

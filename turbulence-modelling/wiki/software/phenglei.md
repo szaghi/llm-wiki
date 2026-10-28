@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "PHengLEI"
-description: "PHengLEI is the compressible multi-block structured-grid solver of the China Aerodynamics Research and Development Center; this page records the finite-difference numerics, time integration and turbulence treatments (SATES, SATES-σ, SST-IDDES, Smagorinsky LES) with which two bundle sources run high-lift airfoils and cylinders in it."
+description: "PHengLEI is the compressible multi-block structured-grid solver of the China Aerodynamics Research and Development Center; this page records the finite-difference numerics, nonlinear weights, time integration and turbulence treatments (SATES, SATES-σ, SST-IDDES, Smagorinsky LES) with which three bundle sources run high-lift airfoils, cylinders and a supersonic base flow in it."
 status: established
 aliases: [PHengLEI solver, CARDC PHengLEI]
 tags: [software, hybrid-rans-les, numerical-dissipation, compressible, separated-flow]
-timestamp: 2026-10-28T07:03:00Z
+timestamp: 2026-10-28T17:00:00Z
 ---
 
 # PHengLEI
@@ -15,13 +15,15 @@ Research and Development Center (CARDC), described by both bundle sources
 that use it as "a cell-central finite differencing formulation based on
 multi-block structured grids" ([Wu et al. 2023](/sources/wu-2023-b.md),
 §2.2; [Wu et al. 2024](/sources/wu-2024.md), §2.4, both citing the code's
-own reference). In the bundle it is the host of
+own reference), and in the same words by the group's third paper,
+[Wu et al. (2024b)](/sources/wu-2024-b.md), §IV.C. In the bundle it is the host of
 [self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md)
 (SATES) and of its σ-model variant, run with the fourth-order
 [weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
 (WCNS) on the [30P30N high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md)
-and on canonical validation flows. Neither source gives the code's
-parallelization, licence or performance figures.
+and on canonical validation flows, and of the smooth TENO-type weights of
+Wu et al. (2024b) for the same closure. None of the sources gives the
+code's parallelization, licence or absolute performance figures.
 
 ## Numerics as the sources configure them
 
@@ -49,6 +51,29 @@ weights sum to one.)* Both papers state that the WCNS satisfies the
 [geometric conservation law](/properties/geometric-conservation-law.md) on
 curvilinear grids, citing two GCL works, without printing a free-stream
 test. Viscous terms are fourth-order central differences in both.
+
+**A sixth-order flux difference with TENO-type weights.** Wu et al.
+(2024b, §II.B, Eq. 10) run the fifth-order WCNS with an explicit
+sixth-order midpoint flux difference, coefficients $75/64$, $-25/384$ and
+$3/640$ on the interface-flux differences at distances $1/2$, $3/2$ and
+$5/2$ (for $E=x$ the printed coefficients give
+$75/64-75/384+15/640=1$, *compiler check, not in the sources*), a Roe
+flux, and
+nonlinear interpolation on characteristic variables with Jiang–Shu,
+Z-type, TENO-type (sharp cut-off $C_T=10^{-5}$), smooth-cutoff and
+adaptive smooth-cutoff weights (Eqs. 11–23); the weights are on
+[weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md)
+and [WENO and hybrid schemes](/methods/weno-scheme.md). Their motivation is
+specific to PHengLEI's implicit time integration: the sharp TENO cut-off
+makes the weights discontinuous for marginally resolved turbulence, which
+the authors hold responsible for poor convergence of the Newton-like
+sub-iterations. In the supersonic base-flow runs the sub-iteration
+residual falls by about one order with the sharp cut-off, three with the
+smooth one and two with the adaptive one (§IV.C.2, Fig. 13); on the 30P30N
+the sharp cut-off also converges worse (Fig. 9). Cost in CPU hours
+normalized by the Jiang–Shu weights (Table I): linear 0.97, Z 1.03,
+TENO-type 1.51, smooth 1.52, adaptive smooth 1.68 on the 30P30N; Z 1.02,
+TENO-type 1.58, smooth 1.55, adaptive smooth 1.54 on the base flow.
 
 **Lower-order alternatives** used to show the effect of
 [numerical dissipation](/properties/numerical-dissipation.md):
@@ -89,6 +114,8 @@ RANS solution (Wu et al. 2023, §2.2; Wu et al. 2024, §2.4).
 | Wu et al. (2024), §3.1b | [square cylinder](/benchmarks/square-cylinder-flow.md), $Re_D=2.2\times10^4$ | 0.66M, 1.73M cells | mean and resolved normal stresses agree with DNS and LDV |
 | Wu et al. (2024), §3.2 | [circular cylinder](/benchmarks/circular-cylinder-wake.md), $Re_D=3\times10^6$ | about 6.7M cells | SATES-σ with WCNS gives $C_D=0.55$, $St=0.24$; with MUSCL $C_D=1.26$ (Table 3) |
 | Wu et al. (2024), §3.3 | MD-30P30N, $Re_C=9\times10^6$, $M=0.2$, $\alpha=8$–$24^\circ$ | 12.8M, 26.4M cells | total lift error of SATES-σ "always less than 6.5%, even at post-stall conditions" |
+| Wu et al. (2024b), §IV.C.1 | modified 30P30N, $Re_c=1.71\times10^6$, $M=0.17$, $\alpha=5.5^\circ$, SATES | about 27M cells | Jiang–Shu weights deviate in flap $C_p$ and suppress the slat-cove shear-layer instability; TENO-type and smooth weights agree with experiment and with the linear WCNS (Figs. 7–10) |
+| Wu et al. (2024b), §IV.C.2 | supersonic axisymmetric base flow of Herrin & Dutton, $M_\infty=2.46$, SATES | about 7M and 42M cells | on the coarse grid the adaptive smooth weights give the best resolved-TKE peaks, against Jiang–Shu weights on the fine grid as numerical reference (Fig. 14) |
 
 Both groups of results lead the authors to the same conclusion on the
 scheme: the low-dissipation (linear-weight) WCNS is needed, and the more
@@ -98,9 +125,14 @@ separation of the supercritical regime (Wu et al. 2024, §3.2, Figs. 13–17).
 
 ## Qualifications
 
-- The descriptions of the code come from two papers of the same group, both
-  users of the same SATES and WCNS configuration; the code's own reference
-  is cited but not ingested.
+- The descriptions of the code come from three papers of the same group,
+  all users of SATES with WCNS; the code's own reference is cited but not
+  ingested.
+- Wu et al. (2024b, Table I) give the adaptive smooth weights a lower
+  base-flow cost (1.54) than the smooth ones (1.55), while their Appendix
+  says the adaptive variant costs "a slightly further increase" over the
+  smooth one, which holds for the 30P30N (1.68 against 1.52). The
+  sub-iteration counts per step are not stated in the text.
 - Wu et al. (2024) print the MUSCL interpolation as "third-order" (§2.4)
   and the scheme as "second-order MUSCL" (§3.2, §4), with a second-order
   flux difference (Eq. 16); §3.2 also writes "The third-order MUSCL and
@@ -113,3 +145,4 @@ separation of the supercritical regime (Wu et al. 2024, §3.2, Figs. 13–17).
 
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.2 (solver, WCNS, BCD, time integration), Eqs. 4–8, 12–15, §3, Table 2.
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.3–§2.4 (WCNS-E-4, MUSCL, solver), Eqs. 8–17, §3, Table 3, §4.
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) — §II.B–§II.D, Eqs. (10)–(23) (sixth-order flux difference, nonlinear weights); §IV.C.1–§IV.C.2, Figs. 7–14 (30P30N and base flow in PHengLEI, sub-iteration convergence); Table I, Appendix (cost).

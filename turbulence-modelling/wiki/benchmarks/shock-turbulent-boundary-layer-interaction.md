@@ -5,7 +5,7 @@ description: "A turbulent boundary layer meeting a shock from a compression or s
 status: established
 aliases: [STBLI, SWBLI, SWTBLI, SBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet, shock train, pseudo-shock, expansion–compression corner, compression/expansion ramp, IUSTI interaction, Bachalo–Johnson bump]
 tags: [benchmark, compressible, hypersonic, boundary-layer, shock-boundary-layer-interaction, separated-flow, les, pans, field-inversion, turbomachinery, implicit-les, dg, wmles, data-driven, flux-reconstruction]
-timestamp: 2026-10-28T07:07:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Shock–turbulent boundary layer interaction
@@ -58,6 +58,8 @@ expensive because the low-frequency cycle needs long records.
 | [Tang et al. (2024)](/sources/tang-2024.md), §2, Tables 1–2 | compression ramp, cold isothermal wall $T_w/T_r=0.5$, incipient separation | 5 | ramp 30° | $Re_\theta=4652$, $Re_\tau=700$, $\delta=10.6$ mm at $x=-60$ mm | DNS with OpenCFD-SC (hybrid seventh-order upwind, WENO7, WENO5 switched by a Jameson-type sensor) | $2660\times204\times300=1.63\times10^8$ (grid M3 of five); $\Delta x^+=6.6$ in the interaction, $\Delta z^+=6.6$, $\Delta y^+_w=0.33$–0.59 |
 | [Zhang et al. (2024b)](/sources/zhang-2024-b.md), §2, Tables 2–3, 5 | compression ramp at three isothermal wall temperatures $T_w/T_r=0.50$, 0.75, 1.0 ($T_r=585$ K); plus a Mach 2.9, 24° ramp at $T_w/T_r=1.14$, 1.4, 2.0 | 6 (and 2.9) | ramp 34° (24° at Mach 2.9) | unit Reynolds number $2\times10^4$ per mm; $Re_\tau=675$, 411, 293 at $x=-70$ mm with matched $\delta\approx8.3$–8.7 mm | DNS with [OpenCFD-SCU](/software/opencfd-scu.md), hybrid UDL7/WENO7/WENO5 | up to $4700\times400\times300$; $\Delta x^+\approx3.5$–4.9, $\Delta y^+_w\approx0.35$–0.48, $\Delta z^+\approx3.5$–4.8 |
 | [Kang & Lee (2024)](/sources/kang-2024.md), §II, Tables I–III | compression ramp of the Bookey et al. experiment, isothermal wall, Blasius inflow tripped by a counter-flow body force | 2.9 | ramp 24° | $Re_\theta=2400$, $\delta_0=6.7$ mm at $x/\delta_0\approx-5.4$ | DNS, sixth-order compact differences, eighth-order compact filter switched to second order at shocks, localized artificial diffusivity | $2865\times298\times420$; $\Delta x^+=4.6$, $\Delta y^+_w=0.42$, $\Delta z^+=4.2$; statistics over $400\delta_0/u_\infty$ |
+| [Kimmel et al. (2025)](/sources/kimmel-2025.md), §III.A, Table 1 | compression ramp with a $10\times10$ cm panel on the ramp face 10 cm downstream of the corner (rigid flat, rigid deformed, elastic) | 4 | ramp 24° | $\delta=8$ mm ahead of the corner; unit Reynolds number $8.661\times10^6$ m$^{-1}$, $T_\infty=107.1$ K, $U_\infty=829.8$ m/s | implicit LES (second-order finite volume, Godunov-type Riemann solver, no subgrid or wall model) in PeleC, one-way coupled to a plate model | base $512\times64\times256$ with three AMR levels, 130M cells; finest $\Delta x^+=\Delta y^+=\Delta z^+=11$, first point $y^+=5.5$ |
+| [Ye et al. (2024)](/sources/ye-2024.md), §III A, §IV, Table I | sharp-fin swept interaction (Schülein–Zheltovodov experiment) with a flexible panel in the floor, 25%, 50% or 75% of its area under the separation | 5 | fin angle 12° | unit Reynolds number $3.7\times10^7$ m$^{-1}$, $T_0=410$ K, $T_w=300$ K, $\delta=3$ mm | URANS with [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) (AUSM+, third-order MUSCL), loosely coupled to a finite-element plate | 1.3M cells (convergence 0.6M–2.0M), first cell $5\times10^{-4}$ mm with $y^+\le1$ stated |
 
 Both sources run a Mach 2.9, 24° ramp: Dang et al. validate against the DNS
 of Martín et al. and the experiment of Bookey et al. (§5.1), and Helm &
@@ -417,6 +419,22 @@ separation spectra peak at $St_L\approx0.01$–0.1, this swept interaction
 lacks the low-frequency separation-shock motion; the authors attribute the
 difference to the three-dimensional crossflow and the weak separation
 shock.
+
+**A sharp-fin swept interaction under URANS.** [Ye et al. (2024)](/sources/ye-2024.md),
+§III A, §IV C, Figs. 3, 9–10, validate an SST URANS of the Mach 5,
+$12^\circ$ sharp-fin interaction of Schülein & Zheltovodov through the
+wall pressure at two stations ($X=138$ and 168 mm), "in good agreement"
+with the experiment, and recover the quasi-conical structure described by
+Gaitonde & Adler as they cite it: the lines of surface-flow coalescence
+(separation) and divergence (attachment) become straight and meet at a
+virtual conical origin, located at (50.63, 0, 17.92) mm, and a cross-section
+at 80 boundary-layer thicknesses from it shows a $\lambda$ shock (inviscid,
+attachment and separation shocks with a triple point) under which the
+separated shear layer forms a jet, accelerated by expansion waves, that
+impinges near the attachment line. Zhang et al. (2022c), above, locate
+a virtual conical origin for a swept ramp by critical-point lines in
+DNS. Ye et al. report no low-frequency analysis of the rigid
+interaction.
 
 **Scaling of the interaction length.** Souverein et al.'s experimental law,
 as assessed by [Gao et al. (2022)](/sources/gao-2022.md), §5.3.3, reads
@@ -885,6 +903,26 @@ ONERA data but ends it slightly downstream, which the authors attribute to
 an over-estimated shock–boundary-layer interaction (§5.3, Figs. 5-9–5-11);
 see [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md).
 
+**Recalibrating RANS constants for interactions.** The review of
+[Le et al. (2024)](/sources/le-2024.md), §3.1.1, Figs. 8–9 (a
+corroborating survey of AI for supersonic combustion), reports the
+[Bayesian calibration](/methods/bayesian-closure-calibration.md) of SST
+coefficients for compression corners by Tang et al. (cases at Mach
+2.84–2.9, incoming thickness 23–26 mm, ramps of $8^\circ$ to $24^\circ$ and
+a $13^\circ$ impinging-shock generator): the calibration raises the
+turbulent viscosity near the wall and improves adverse-pressure-gradient
+predictions, but SST "cannot simulate the inherent shock instability" by
+modifying parameters, and the separation-region wall pressure "remains too
+high". Parameters calibrated on a $24^\circ$ corner reproduce wall
+pressure, skin friction and velocity profiles on the smaller angles,
+"confirming the turbulence model parameters' applicability within a
+narrow range of Mach numbers". It also cites a Bayesian recalibration of
+three $k$-$\omega$ models for hypersonic interactions and a
+Reynolds-stress discrepancy inversion for an interaction with the DAFI
+framework, and lists among its prospects "an adaptive unified turbulence
+model" for interactions, transverse jets and fuel mixing in internal
+high-Mach flows (§3.1.2, §6).
+
 **Transonic buffet on a supercritical airfoil.** At transonic speed the
 shock on the suction side of an airfoil interacts with the turbulent
 boundary layer and, past a critical incidence, the shock-foot and
@@ -1199,6 +1237,56 @@ amplitude, gives a comparable response, the authors conclude that the
 deformation rate matters "just as" much as the amplitude (§V). The paper
 compares with no experiment.
 
+**A panel downstream of a ramp interaction.** [Kimmel et al. (2025)](/sources/kimmel-2025.md)
+place a $10\times10$ cm Inconel panel on the face of a Mach 4, $24^\circ$
+ramp, 10 cm downstream of the corner, instead of under the interaction as
+in the studies above, and load it one way with the wall pressure of an
+implicit LES ($x/\delta=0$ at the corner, $\delta=8$ mm). The spanwise-averaged
+wall-pressure spectra, each normalized by its maximum (§IV.A, Figs. 5–7):
+
+- upstream of $x/\delta=-2.5$ only high frequencies, 7–25 kHz, so the
+  interaction starts at $x/\delta=-2.5$; 1.5–2 kHz at the separation-shock
+  foot; 5–10 kHz in the recirculation bubble; 0.5–2 kHz from reattachment
+  at the corner to $x/\delta=1.5$; downstream a dominant 4 kHz with
+  weaker bands at 1.5–2, 2.7 and 6 kHz;
+- 0.5–1 kHz content at reattachment that is absent from the separation
+  region; because Dupont et al. (cited) found nearly identical spectra at
+  separation and reattachment for impinging shocks, the authors attribute
+  it to the ramp, where large eddies of the incoming layer collide with
+  the ramp surface (two reattachment peaks, at $x/\delta=0$ and 1.25);
+- cross-correlation with a reference point at $x/\delta=-2$ shows the
+  1.5–2 kHz band of the shock motion again for $x/\delta>8$: the low
+  interaction frequencies propagate into the downstream boundary layer.
+
+The dominant 4 kHz would excite the (5,1) mode of a 1 mm panel, so the
+authors conclude that upstream interactions "must be considered" in
+control-surface aeroelastic analysis. A static 1 mm mode-(2,1) deformation
+of a rigid panel changes the streamwise distribution of the pressure
+frequencies strongly, but the deformed-surface pressure history, rescaled
+to the flat-panel fluctuation magnitude, changes the response of a 1 mm
+elastic panel by about $10^{-4}$ of its thickness: deformation alters the
+turbulence, the altered turbulence barely alters the structure (one-way
+coupling; §IV.B, Figs. 8–10). With the pressure fluctuation intensity
+$I_P=\overline{|p'|}/\bar p$ (page-local, mean absolute fluctuation; 1.04%
+in the run) scaled from 1% to 10%, moderate deflection needs very high
+dynamic pressure at 1% (external flows), and the threshold falls by more
+than an order of magnitude at 10%, the level that, the authors state,
+scramjet inlets "routinely" exceed (§IV.C, Fig. 12).
+
+**A flexible panel under a swept interaction.** In the sharp-fin case of
+[Ye et al. (2024)](/sources/ye-2024.md), §IV D, a simply supported panel
+placed with 25%, 50% or 75% of its area under the separation moves from
+limit-cycle oscillation to multi-frequency irregular oscillation as that
+fraction grows; the dominant displacement frequency rises (729.66,
+753.59 and 1116.96 Hz) and the dominant structural modes rise from the
+first two to the fourth and fifth (least-squares projection on 50 plate
+modes); the peak RMS pressure fluctuation grows, the quasi-conical
+symmetry is increasingly destroyed, the separation shock is "depressed"
+over the deforming panel while the attachment and inviscid shocks hardly
+move, and panel-induced expansion waves strengthen and move away from the
+fin (Figs. 20, 27, 31, 35–40). Each case is one SST URANS run of about
+0.1 s.
+
 ## Qualifications
 
 - [Zhang et al. (2022c)](/sources/zhang-2022-g.md) print in the abstract
@@ -1449,6 +1537,31 @@ compares with no experiment.
   experiments (§4.4, Fig. 26 caption) while §5 credits the corner–centre
   coupling to "both high-fidelity computations and in experiment".
 
+- **Printed forms in Kimmel et al. (2025).** §IV.A places the bubble
+  "within $1\le x/\delta\le0$" and the shock-oscillation region at
+  "$-2.5\le x/\delta\le1$", while the same section earlier gives the
+  shock-foot region as $-2.5\le x/\delta\le-1$; both are recorded as
+  printed. §III.C gives 4000 samples over a 0.047 s run, while 2500
+  samples at 425 kHz are used elsewhere; at 425 kHz 4000 samples span
+  about 9.4 ms *(compiler check, not in the sources)*, and the sampling of
+  the 0.047 s record is not stated. The article is footnoted as presented
+  as AIAA Paper 2024-2735, and its ref. [23], cited as the evidence for the
+  solver's accuracy and mesh convergence, is AIAA Paper 2024-2735 under a
+  different title.
+  §IV.B.2 gives the response differences as "on the order of 0.0001$t_p$"
+  and, two paragraphs later, a 0.05% change of the response
+  ($t_p$ the panel thickness, page-local).
+- **Attribution in Le et al. (2024).** The transfer of SST parameters
+  calibrated on the $24^\circ$ corner to smaller angles is attributed to
+  "Gaitonde and Adler [151]", whose printed reference is a review of
+  three-dimensional interactions (§3.1.1, Fig. 9); the finding is recorded
+  above without an author.
+- **Printed forms in Ye et al. (2024).** The captions of Figs. 39–40 give
+  the section $r/\delta=80$ where the text gives 86 and 96; at point P7 both
+  974 Hz and 1117 Hz are called dominant for the 75% case; the code is
+  called "high-order", while the printed convection scheme is third-order
+  MUSCL with second-order viscous and time discretizations.
+
 ## Contradictions
 
 - **Separation length of the Mach 2.28 impinging-shock DNS.** *Open.*
@@ -1538,3 +1651,6 @@ compares with no experiment.
 - [Tang et al. (2024)](/sources/tang-2024.md) — §2.4, Figs. 14–15; §3.1, Eqs. 3.1–3.8, Figs. 16–20; §3.2, Eq. 3.12; §4.1–4.2, Figs. 21–28.
 - [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II, Table I; §III B, Eqs. 11–12, Figs. 3–5; §IV, Eqs. 17–26, Figs. 17–20; §V, Figs. 21–24.
 - [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §2; §3, §3.1; §4.1–4.5, Figs. 18–26; §5 (review).
+- [Kimmel et al. (2025)](/sources/kimmel-2025.md) — §II.A (PeleC, embedded boundaries); §III.A, Table 1, Figs. 2–3 (Mach 4 ramp, AMR, implicit LES resolution, inflow); §III.B–C, Eqs. (8)–(13) (cross-correlation, rescaled deformed-panel loads, SPOD extension); §IV.A, Figs. 5–7 (wall-pressure spectra and downstream propagation); §IV.B, Figs. 8–10 (one-way coupling); §IV.C, Eq. (12), Figs. 11–12 (intensity–dynamic-pressure threshold map); §V.
+- [Ye et al. (2024)](/sources/ye-2024.md) — §II A–D (SST URANS, AUSM+, MUSCL, FEM plate, loose coupling); §III A, Table I, Fig. 3 (sharp-fin validation); §IV C, Figs. 9–10 (quasi-conical structure, $\lambda$ shock); §IV D, Figs. 12–40 (panel response, modes, pressure fluctuations, separation-shock depression).
+- [Le et al. (2024)](/sources/le-2024.md) — §3.1.1, Figs. 8–9 (Bayesian calibration of SST for compression corners, cited); §3.1.2 (Reynolds-stress discrepancy inversion, cited); §6 (prospects).

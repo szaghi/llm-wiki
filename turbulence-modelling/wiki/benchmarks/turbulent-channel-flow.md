@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Turbulent channel flow"
-description: "Pressure-driven flow between two parallel walls, periodic in the wall-parallel directions: DNS at Re_τ 100 to 800 (including rough walls and thermally perfect gases), wall-resolved, implicit and very coarse LES at 180 to 2000, wall-modelled and immersed-boundary LES and a priori wall-model tests at Re_τ 544 to 10¹⁰, hybrid RANS/LES to 20,000, high-order RANS, and compressible channels."
+description: "Pressure-driven flow between two parallel walls, periodic in the wall-parallel directions: DNS at Re_τ 100 to 800 (including rough walls, thermally perfect gases and MHD), wall-resolved, implicit and very coarse LES at 180 to 2000, wall-modelled and immersed-boundary LES and a priori wall-model tests at Re_τ 544 to 10¹⁰, hybrid RANS/LES to 20,000, high-order RANS, and compressible channels."
 status: established
-aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow, minimal channel, rough-wall channel]
-tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns, data-driven, compressible, immersed-boundary, rans, spectral-element]
-timestamp: 2026-10-28T07:09:00Z
+aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow, minimal channel, rough-wall channel, MHD channel, Hartmann flow, curved-wall channel bump]
+tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns, data-driven, compressible, immersed-boundary, rans, spectral-element, mhd, lattice-boltzmann, gpu]
+timestamp: 2026-10-28T17:07:00Z
 ---
 
 # Turbulent channel flow
@@ -78,6 +78,12 @@ closures.
 | [Hu et al. (2024)](/sources/hu-2024.md), §5, Table 1 | grid convergence of WMLES with an algebraic equilibrium wall model (CharLES, Vreman SGS) | 1000 (constant mass flow); 934 with a sudden spanwise pressure gradient | $2\pi\delta\times2\delta\times\pi\delta$ | isotropic, six grids per matching height: $\Delta^+=400$ to 23.5 ($h_{\mathrm{wm}}=0.2\delta$) and 200 to 11.8 ($0.1\delta$), $h_{\mathrm{wm}}$ at cell centres |
 | [Vermeire (2024)](/sources/vermeire-2024.md), §4.2, Table 2 | implicit LES by flux reconstruction with entropically damped artificial compressibility (incompressible) | 395 | $2\pi\delta\times2\delta\times\pi\delta$ | one quarter and one half of the DNS degrees of freedom per direction: $32\times24\times24$ to $13\times10\times10$ elements ($N=1$–4, low) and $64\times48\times48$ to $26\times20\times20$ (medium), first solution point at $y^+=1$ |
 | [Wu et al. (2024)](/sources/wu-2024.md), §3.1a, Table 2 | validation of the SATES-$\sigma$ hybrid in PHengLEI, Mach 0.15, constant mass flow | 395 ($Re_b=6153$) | $2\pi\delta\times2\delta\times\pi\delta$ | $64\times96\times64$ (first $y^+=0.6$) and $128\times120\times64$ (first $y^+=0.3$) |
+| [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md), §3.2, Table 1 | compressible LES with immersed-boundary walls, dynamic Smagorinsky, hybrid central/WENO fluxes | not printed; bulk $Re=10{,}000$ on $\delta$, Mach 0.5 and 1.5 | $2\pi\delta\times2\delta\times\pi\delta$ | $48^3$ ($\Delta x^+=73.3$, $\Delta y^+_{\min}=2.8$, $\Delta z^+=36.5$) and $240\times112\times120$ (14.6, 1.96, 14.6), wall-resolved; $24^3$ (146.4, 46.6, 73.2) with a wall model |
+| [Alberti et al. (2025)](/sources/alberti-2025-b.md), §3.1, Tables 2–5 | Spalart–Allmaras DDES and IDDES in incompressible modal DG, fixed pressure gradient | 400, 5200 | $2\pi\delta\times2\delta\times\pi\delta$ | $8\times8\times8$ elements, $N=6$ ($\Delta x^+=44.9$, $\Delta z^+=22.4$, first $\Delta y^+=4.1$, scaled by $N+1$) at 400; $8\times12\times4$, $N=6$ (583.4, 583.4, 6.3) at 5200; equal-DOF meshes at $N=2$ to 6 |
+| [De Cosmo et al. (2025)](/sources/decosmo-2025.md), §3.3, Tables 3–4 | implicit LES with a low-dissipation Roe scheme, unstructured second-order finite volume, isothermal walls, body force | 200 ($Re_b=3173$ on $\delta$, Mach 0.143) | $12\delta\times2\delta\times4\delta$ | about $1.2\times10^6$ cells; centreline $\Delta x^+=15$, $\Delta y^+=7.5$, $\Delta z^+=10$, first cell $y^+=0.5$ |
+| [Fang et al. (2025)](/sources/fang-2025.md), §3.4, Table 6 | DNS of an MHD channel with a wall-normal field (Xcompact3d, quasi-static solver) | 150 ($Re_b=2305$); Hartmann numbers 0, 4, 6, 8 | $4\pi\delta\times2\delta\times2\pi\delta$ | $256\times129\times192$, stretched in $y$; $\Delta x^+=7.4$, first $\Delta y^+=0.83$, centre $\Delta y^+=6.6$, $\Delta z^+=4.9$ |
+| [Wang et al. (2024d)](/sources/wang-2024-k.md), §III A, App. C | sharp-interface immersed-boundary WMLES in a lattice Boltzmann solver, Smagorinsky $C_s=0.16$ | 1000, 2000, 5200 | $2\pi\delta\times2\delta\times2\pi\delta$ | uniform $\Delta x=\delta/20$ ($y^+\approx50$ at 1000); $\delta/40$ and $\delta/80$ at 2000 |
+| [Xiao et al. (2025)](/sources/xiao-2025.md), §4.2–4.3, Tables 3–4 | GPU LES (CaLES): wall-resolved, and WMLES grid convergence | about 544 ($Re_b=2u_b\delta/\nu=20{,}000$); about 5200 ($Re_b=250{,}000$) | $12.8\delta\times2\delta\times4.8\delta$ | WRLES $192\times128\times128$ ($\Delta x^+=36.2$, $\Delta z^+=20.4$, first $\Delta y^+=0.59$) to $576\times384\times384$ (12.1, 6.8, 0.19); WMLES 13 grids per aspect ratio $\Delta x/\Delta z=1$ and 2, from $128\times32\times48$ to $6144\times1536\times2304$ |
 
 Reference DNS named by the sources: Kim, Moin & Moser at $Re_\tau=180$
 (Cao et al.); Moser, Kim & Mansour at $Re_\tau=590$ (Flad & Gassner;
@@ -1212,6 +1218,184 @@ mode) near the wall and decreases away from it; the ordering
 $R_{11}>R_{33}>R_{22}$ is captured, with a considerable resolved shear
 stress.
 
+**Immersed-boundary walls in a compressible LES.**
+[Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md), §3.2,
+Figs. 3–5, represent both walls by their sharp-interface curvilinear
+[immersed boundary](/methods/immersed-boundary-method.md) and run the
+channel at bulk Mach 0.5 and 1.5 against the DNS of Lee & Moser (for 0.5,
+which they call "quasi-incompressible" below Mach 0.6) and of Modesti &
+Pirozzoli (for 1.5), without stating which DNS Reynolds number is matched.
+On the two wall-resolved grids the mean velocity agrees with the DNS; the
+wall-modelled $24^3$ run "cannot follow the log-law profile" because of the
+low resolution; the Reynolds stresses improve with refinement. The eddy
+viscosity rises sharply from the viscous sublayer to a peak near
+$y=0.05\delta$ on the fine grids, the peak moving towards $0.25\delta$ on
+coarser ones; the authors attribute the coarse-grid loss of agreement to
+the implicit dissipation of the third-order WENO part of their scheme (see
+[numerical dissipation](/properties/numerical-dissipation.md)).
+
+**DDES and IDDES in high-order DG.** [Alberti et al. (2025)](/sources/alberti-2025-b.md),
+§3.1, Figs. 2–14, run Spalart–Allmaras-based DDES and IDDES with several
+subgrid lengths in an incompressible modal discontinuous Galerkin solver,
+all lengths divided by a factor $s_\Delta$ (page-local) of $N+1$, $N$ or the
+cube root of the degrees of freedom per element (see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)):
+
+- at $Re_\tau=400$ ($N=6$, first cell to $y^+=28.7$) the hybrids change
+  the mean velocity noticeably against an implicit LES at equal
+  resolution; IDDES is best, "even surpassing an ILES carried out on a much
+  finer grid", which the authors attribute to its grid-based shield; the
+  DDES shield is weak there because the fine grid gives little eddy
+  viscosity, and sporadic unshielded patches give slight modelled-stress
+  depletion; the low-Reynolds-number correction of DDES forces an
+  equivalent Smagorinsky constant of 0.2, while without it the LES branch
+  runs close to implicit LES (about 0.01), and the authors recommend
+  dropping the correction in this framework;
+- at $Re_\tau=5200$ ($8\times12\times4$ elements, $N=6$) every variant
+  agrees well with the DNS of Lee & Moser except standard IDDES, which
+  shows [log-layer mismatch](/definitions/log-layer-mismatch.md), traced to
+  its small wall-normal-based subgrid length in the RANS–LES transition,
+  whose "staircase" variation follows the faster wall-normal growth of DG
+  meshes; the authors note that their discretization is "almost five times
+  coarser" in true degrees of freedom than the least refined mesh of the
+  UMD wall-modelled-LES resource;
+- raising $N$ on a fixed mesh lowers the eddy viscosity, moves the RANS–LES
+  interface towards the wall and improves the centreline velocity; at
+  equal degrees of freedom the highest $N$ is best, and $s_\Delta=N+1$ is
+  the most suitable normalization across degrees.
+
+**Implicit LES with a low-dissipation Roe scheme, and a curved-wall bump.**
+[De Cosmo et al. (2025)](/sources/decosmo-2025.md), §3.3–3.4, run the
+channel as wall-resolved [implicit LES](/definitions/implicit-les.md) with
+their low-dissipation Roe scheme, calibrated on
+[isotropic decay](/benchmarks/homogeneous-isotropic-turbulence.md), in an
+unstructured second-order finite-volume code, at $Re_\tau=200$ with the
+mesh and domain of Banchetti, Luchini & Quadrio, against a DNS labelled
+$Re_\tau=180$:
+
+- two-point correlations at $y^+=20$ and 200 show the $12\delta\times2\delta\times4\delta$
+  domain adequate (Fig. 7);
+- the centreline-to-bulk velocity ratio is 1.186, against 1.168 for the
+  DNS and $1.28Re_b^{-0.0116}=1.156$ printed for Dean's correlation, "3%
+  higher than the reference value"; the mean velocity agrees with the DNS,
+  with $u^+$ over-estimated by 2% at $y^+=100$, which the authors read,
+  like a slightly high $\langle u'u'\rangle$, as a sign of slightly too
+  much numerical dissipation and an under-estimated wall stress;
+  Reynolds stresses and the turbulent-kinetic-energy budget agree well,
+  production peaking at $y^+\approx12$, the differences ascribed to the
+  $Re_\tau$ mismatch and the isothermal walls (Figs. 8–10);
+- a channel whose lower wall carries an asymmetric bump of two Gaussians
+  (the geometry of Banchetti et al., height $0.0837\delta$ at
+  $x=4.14\delta$), fed by the periodic channel, gives the wall $C_p$ and
+  $C_f$ of the DNS with a 6% over-estimate of the suction peak and a 4%
+  over-estimate of the skin-friction peak, which is about three times the
+  flat-wall value; the flow does not separate; the Reynolds stresses at
+  $x/\delta=0$, 3 and 10, compared with an OpenFOAM LES with a one-equation
+  [subgrid kinetic-energy model](/methods/subgrid-kinetic-energy-equation-model.md),
+  are slightly low in $\langle v'v'\rangle$ and $\langle w'w'\rangle$,
+  which the authors attribute to dissipation from mesh non-orthogonality and
+  streamwise non-uniformity (Figs. 13–16).
+
+This bump is a different flow from the Boeing
+[Gaussian bump](/benchmarks/gaussian-bump.md): it sits in a fully
+developed channel at low Reynolds number and does not separate.
+
+**A magnetohydrodynamic channel: Hartmann flow and relaminarization.**
+[Fang et al. (2025)](/sources/fang-2025.md), §3.3–3.4, validate the MHD
+module of [Xcompact3d](/software/xcompact3d.md) on channels under a
+wall-normal magnetic field, with the quasi-static (electric-potential)
+solver. The laminar two-dimensional Hartmann flow at $Re_b=2800$ and
+Hartmann numbers $Ha=1$, 5 and 10 ($Ha$ page-local: the Hartmann number,
+printed as $\sqrt{Re\,N_{\mathrm{St}}}$ with the Stuart number
+$N_{\mathrm{St}}=\sigma B_0^2L/(\rho_0U)$, page-local) agrees "perfectly" with the analytical profile, the
+centreline velocity falling and the skin friction rising with the field at
+fixed bulk velocity (Figs. 10–11). In the turbulent channel at
+$Re_\tau=150$:
+
+- without field, the mean velocity agrees with the law of the wall,
+  Eckelmann's experiment and the DNS of Moser et al. (printed at
+  $Re_\tau=178$), the Reynolds-stress differences from the latter vanishing
+  in inner/outer scaling;
+- with the field the log layer lifts, as in drag-reducing flows, and
+  shrinks as $Ha$ rises, slightly higher than the THTLab data in wall units
+  but in agreement in bulk scaling; the Reynolds stresses fall with $Ha$,
+  agreeing with the THTLab data at $Ha=4$ and 6;
+- at $Ha=8$ all Reynolds stresses vanish and the mean profile collapses on
+  the laminar one: the flow relaminarizes, its streaks and hairpins
+  suppressed (Figs. 12–15).
+
+The statistics are taken between $90{,}000$ and $120{,}000\,\delta/u_b$
+after a non-MHD start. See also
+[direct numerical simulation](/definitions/direct-numerical-simulation.md).
+
+**Diffused against sharp immersed interfaces in lattice Boltzmann WMLES.**
+[Wang et al. (2024d)](/sources/wang-2024-k.md), §III A, Figs. 2–6,
+App. C, impose an [equilibrium wall model](/methods/equilibrium-wall-model.md)
+through an [immersed boundary](/methods/immersed-boundary-method.md) in a
+GPU [lattice Boltzmann](/methods/lattice-boltzmann-method.md) solver
+(D3Q19, Smagorinsky viscosity in the relaxation time). With the
+sharp-interface version on the uniform $\delta/20$ grid the mean velocity
+agrees "very well" with the DNS of Lee & Moser at $Re_\tau=1000$, 2000 and
+5200, while the fluctuations are under-estimated, more at lower Reynolds
+number, which the authors attribute to the lattice Boltzmann dissipation
+rather than to the wall model; at $Re_\tau=2000$ the energy spectra at two
+probes show a $-5/3$ range, the mean velocity is already right on the
+coarsest of $\delta/20$, $\delta/40$ and $\delta/80$, and the fluctuations
+converge with refinement, especially near the wall. The diffused-interface
+version over-estimates the friction velocity and under-estimates the
+near-wall velocity, which they attribute to the extra viscosity of the
+diffused interface; the multiple-relaxation-time collision gives slightly
+higher velocities above $y^+=1000$, more small structures and spurious
+oscillations than the recursive regularized one. Their conclusion is that
+the sharp interface suits internal flows (the external cases are on
+[Ahmed body](/benchmarks/ahmed-body.md) and
+[circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)).
+
+**A GPU LES solver: wall-resolved runs and non-monotonic WMLES
+convergence.** [Xiao et al. (2025)](/sources/xiao-2025.md) validate
+[CaLES](/software/cales.md), an incompressible second-order
+staggered finite-difference solver with the static
+[Smagorinsky model](/methods/smagorinsky-model.md) (van Driest damping),
+the [dynamic procedure](/methods/dynamic-procedure.md) and an algebraic
+log-law [equilibrium wall model](/methods/equilibrium-wall-model.md)
+($\kappa=0.41$, $B=5.2$, $h_{\mathrm{wm}}=0.1\delta$, instantaneous input):
+
+- *wall-resolved*, $Re_b=20{,}000$, against Lee & Moser at
+  $Re_\tau=543.5$, $C_f=0.00591$ (§4.2, Table 3, Figs. 6–8):
+
+  | Grid | $Re_\tau$ SM / DSM | $C_f$ error SM / DSM |
+  |---|---|---|
+  | $192\times128\times128$ | 568.4 / 537.3 | 9.38% / −2.25% |
+  | grid 2 | 567.3 / 541.6 | 8.95% / −0.69% |
+  | grid 3 | 556.8 / 539.4 | 4.95% / −1.49% |
+  | $576\times384\times384$ | 544.8 / 534.7 | 0.50% / −3.22% |
+
+  The velocity profiles depend on the grid in their own wall units, mostly
+  with the static model, but little in DNS wall units; the resolved shear
+  stress is over-predicted with the static and under-predicted with the
+  dynamic model, matching the signs of the $C_f$ errors, and the
+  streamwise normal-stress peak is over-estimated;
+- *wall-modelled*, $Re_b=250{,}000$, against Lee & Moser at
+  $Re_\tau=5185.9$, $C_f=0.00344$ (§4.3, Table 4, Fig. 12): the skin
+  friction, $\langle u'u'\rangle$ and $\langle u'v'\rangle$ converge
+  non-monotonically for both subgrid models and both aspect ratios, most
+  markedly $\langle u'u'\rangle$, which the authors call consistent with
+  Meyers & Sagaut's findings for wall-resolved LES; aspect ratio 1 converges better
+  than 2; on the finest grids (reaching $\Delta z^+\approx10$) the $C_f$
+  errors are 2.43% and 0.44% (static, dynamic) at aspect ratio 1 and
+  0.26% and 1.30% at 2, always positive, which the authors relate to the
+  bias of mean wall stress toward larger values with instantaneous
+  wall-model input. The details are on
+  [wall-modelled LES](/methods/wall-modelled-les.md).
+
+**Cited data-driven uses.** The review of [Fang et al. (2026)](/sources/fang-2026.md),
+§3.4, cites an LSTM trained on channel DNS at "Re = 180" that predicts the
+central shear Reynolds stress within 5% against about 12% for the
+$k$-$\varepsilon$ model, and reinforcement-learning blowing and suction
+giving up to 35.6% friction-drag reduction at "Re = 1000", without
+defining either Reynolds number. [Witherden et al. (2025)](/sources/witherden-2025.md),
+§4, list channel flow among the applications of [PyFR](/software/pyfr.md).
+
 **One-dimensional turbulence in the channel.** The review of
 [Chen et al. (2024b)](/sources/chen-2024-c.md) (§3.1–3.3, Figs. 11, 13–16)
 collects channel results of [one-dimensional turbulence](/methods/one-dimensional-turbulence.md):
@@ -1500,6 +1684,47 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
   as 22.8% in §2.2 and as 23.4% in Table 3 and the abstract; the value above
   is the table's.
 
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md) define $Re_b=3173$
+  on the half-height; with it the printed Dean correlation gives 1.166 against the printed 1.156; their
+  "3%" fits the Dean value ($1.186/1.156=1.026$), while against the DNS
+  value named in the same sentence the excess is 1.5% *(compiler check,
+  not in the sources)*. They select $Re_b$ and $Re_\tau=200$ "from the
+  reference DNS in Banchetti et al." but plot DNS labelled $Re_\tau=180$,
+  so which DNS gives which curve is not explicit. Their Table 5 lists the
+  bump amplitudes $a$, $a'$ as dimensionless, whereas their own Eq. 32 and
+  the printed height $0.0837\delta$ require lengths in metres *(compiler
+  check, not in the sources)*.
+- [Fang et al. (2025)](/sources/fang-2025.md) print
+  $Ha=B_0L\sqrt{\sigma\rho_0/\nu}=\sqrt{Re\,N_{\mathrm{St}}}$, whereas their
+  own definitions of $Re$ and $N_{\mathrm{St}}$ give
+  $B_0L\sqrt{\sigma/(\rho_0\nu)}$; their friction velocity carries both
+  $\nu$ and $1/Re$, and their bulk velocity is integrated in $dx$ over
+  $0\le y\le2$ *(compiler check, not in the sources)*. They say their
+  parameters ease comparison with Nishimura & Kasagi, whose printed title
+  (their ref. 29) is a mixed-convection channel study; the MHD data they
+  compare with are the THTLab data of Noguchi & Kasagi.
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) state in the abstract
+  that the diffused interface fails in internal flows by under-estimating
+  the wall shear stress, and in §III A that it over-estimates the friction
+  velocity, i.e. the wall stress. Their channel figures label as "turbulent
+  energy" a quantity whose axis reads $\langle v'w'\rangle/u_\tau^2$. Their
+  driving term $g=u_\tau^2/\delta-(\overline u-\langle u_z\rangle)\delta t$
+  (Eq. 24) adds an acceleration to a length *(compiler check, not in the
+  sources)*. No averaging time is printed.
+- [Xiao et al. (2025)](/sources/xiao-2025.md) call their thirteen WMLES
+  grids uniform refinements in all three directions, but their row
+  $1536\times256\times576$ keeps the $N_y=256$ of the preceding
+  $1024\times256\times384$ *(compiler check, not in the sources)*; they
+  summarize the dynamic-model WRLES errors as "less than approximately 3%"
+  next to the $-3.22\%$ of their Table 3.
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) print $N_{tot}=985$
+  elements for the $11\times17\times5$ mesh at $Re_\tau=5200$; the product
+  is 935, which their own degree-of-freedom count 32,725 ($935\times35$)
+  confirms *(compiler check, not in the sources)*.
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) use $z$
+  streamwise and $x$ spanwise (translated in the table) and do not state
+  the wall model of their $24^3$ run or the averaging time.
+
 # Citations
 
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §V, Figs. 1–2; §VII.D, Figs. 7–10.
@@ -1566,3 +1791,11 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
 - [Wu et al. (2024)](/sources/wu-2024.md) — §3.1a, Table 2, Figs. 2–4.
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — §3.1–3.3, Figs. 11, 13–16 (review; reproduced figures).
 - [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.5; §3.1; §3.4; §4.5; §4.7–4.8 (history).
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §3.2, Table 1, Figs. 3–5.
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §2.1–2.3, Table 1; §3.1.1–3.1.3, Tables 2–5, Figs. 2–14; §4.
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §3.3, Eqs. 21–31, Tables 3–4, Figs. 6–10; §3.4, Eqs. 32–35, Table 5, Figs. 11–16.
+- [Fang et al. (2025)](/sources/fang-2025.md) — §3.3, Eqs. 21–22, Table 5, Figs. 9–11; §3.4, Table 6, Figs. 12–15.
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — §II D; §III A, Eqs. 23–24, Figs. 2–6; App. C, Fig. 16.
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §2.1–2.2; §4.2, Table 3, Figs. 6–8; §4.3, Table 4, Figs. 9–12.
+- [Fang et al. (2026)](/sources/fang-2026.md) — §3.4, Table 4 (cited works, review).
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §4 (application list).

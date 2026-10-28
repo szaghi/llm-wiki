@@ -5,7 +5,7 @@ description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an e
 status: established
 aliases: [unsteady residual indicator, smoothness indicator, adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation, Hessian scaling, error transport equations, ETE]
 tags: [mesh-adaptation, hybrid-rans-les, rans, dg, numerical-dissipation, wmles]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Mesh adaptation for turbulent-flow simulation
@@ -560,6 +560,53 @@ authors read the comparison as markedly favouring the new refinement
 (§3.2). The extra cost is "minor" below 80 pc and about a factor
 two at 20 pc (§2.2). See [small-scale dynamo](/results/small-scale-dynamo.md).
 
+**Block-structured AMR for an implicit LES of a hypersonic ramp
+(Kimmel et al. 2025).** [Kimmel et al. (2025)](/sources/kimmel-2025.md),
+§III.A, Fig. 3, run the compressible AMReX-based solver PeleC with three
+levels of block-structured refinement, each halving the cell size, over a
+base mesh of $512\times64\times256$ cells for a Mach 4, $24^\circ$
+compression ramp: 130 million cells in all, about 40 million level-2 cells
+over 7.5% of the domain and 75 million level-3 cells over 1.75%. The
+boundary layer, the interaction region and the shock path are refined by
+design, elsewhere cut cells and cells with $|\nabla\rho|\ge10^{-6}$ are
+tagged; refinement is removed far from the ramp and near the outlet "to
+reduce computational cost and dissipate reflected characteristics", and
+the time step is subcycled per level (CFL 0.3). Because the refined cells
+stay isotropic, $\Delta x^+=\Delta y^+=\Delta z^+$, the DNS requirement of
+a first wall-normal cell below one wall unit is called "computationally
+prohibitive": the finest cells are 11 wall units, the first point at 5.5,
+with no subgrid or wall model, which the authors call implicit LES (see
+[implicit LES](/definitions/implicit-les.md)). Mesh convergence (three
+against four levels giving similar structural responses) is delegated to
+the authors' conference paper. For the isotropic mesh of the lattice
+Boltzmann solver ProLB, [Mozaffari et al. (2024)](/sources/mozaffari-2024.md),
+§2.2, state that refining enough to resolve the boundary layer at high
+Reynolds number is "too expensive" (see
+[lattice Boltzmann methods](/methods/lattice-boltzmann-method.md)).
+
+**Adaptation as a requirement for concentrated vortices (Luckring & Rizzi
+2024).** The survey of vortex-dominated aircraft aerodynamics by
+[Luckring & Rizzi (2024)](/sources/luckring-2024.md) concludes that its
+findings "imply that AMR may effectively be a requirement for resolving
+concentrated vortex flows" (§5.3.2.1): vortex trajectories and core
+details are part of the solution, so "adaptive meshes, both in space and
+time, are necessary to capture them" (§2.4.2, Fig. 53), and because the
+vortex-core location and properties are unknown a priori,
+"physics-based AMR appears to be a requirement for vortex breakdown
+simulations" and must be time accurate (§4.1.2). The examples cited are
+Morton's detached-eddy simulation with AMR of a $70^\circ$ delta wing
+($M=0.07$, chord Reynolds number $1.56\times10^6$, $\alpha=27^\circ$) in
+Cobalt, traced back to 2003 and carried into the CREATE-AV codes Kestrel
+and Helios; and the AVT-316 programme, in which FUN3D and Niceflow
+adapted grids for an interacting-vortex missile case and ISIS-CFD
+time-accurate anisotropic adaptation driven by the Hessians of velocity
+fluxes and pressure for a triple delta wing, where hybrid RANS/LES was
+more reliable than URANS (§3.2.3.5, Figs. 97–98). The authors add that
+work is needed to show that an adaptation process is "germane" to the
+relevant vortex physics and propose comparisons among AMR methods on
+targeted vortex topics (§4.1.1, §5.3.2.1). The cases are on
+[delta-wing vortex flow](/benchmarks/delta-wing-vortex-flow.md).
+
 ## Adaptation for steady RANS (Alauzet et al. 2022)
 
 **Loop (§3, Algorithms 1–2).** At fixed complexity the solver, adjoint,
@@ -1059,3 +1106,6 @@ node-centred finite volume or finite elements (§4.3).
 - [Sun et al. (2023)](/sources/sun-2023.md) — §2.2.2, Table 1, Fig. 2 (2-D density-gradient AMR in OpenFOAM); §3.9, Figs. 15–16 (cell and CPU savings).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.6, Fig. 8 (isotropic h-AMR with hanging nodes in DG, $\lvert\nabla\rho\rvert$ criterion); §6.2, Figs. 12–13 (h at the shock, p near the wall).
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — §3.1 (adaptive-mesh one-dimensional turbulence, cited).
+- [Kimmel et al. (2025)](/sources/kimmel-2025.md) — §II.A, §III.A, Fig. 3 (block-structured AMR in PeleC: levels, cell counts, tagging, isotropic wall resolution, subcycling).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.2, Fig. 53; §3.2.3.5, Figs. 97–98; §4.1.1–4.1.2; §5.3.2.1 (AMR as a requirement for concentrated vortex flows, cited examples).
+- [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §2.2 (isotropic lattice Boltzmann mesh too expensive to resolve boundary layers; cross-reference only).

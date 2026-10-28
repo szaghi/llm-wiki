@@ -5,7 +5,7 @@ description: "The spectral difference method is a nodal high-order element schem
 status: established
 aliases: [SD, SD method, spectral difference, staggered-grid Chebyshev multidomain method]
 tags: [flux-reconstruction, dns, compressible, immersed-boundary, implicit-les, numerical-dissipation]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T16:59:00Z
 ---
 
 # Spectral difference method
@@ -208,6 +208,14 @@ trilinear interpolation, plus positivity preservation. Findings (§IV, §V):
 - with the DG and DGSEM codes it belongs to the element methods that
   "capture small scales well on coarse grids" (§V).
 
+[Witherden et al. (2025)](/sources/witherden-2025.md), §5.1, Fig. 12,
+Table 1, list the SD3D data of the same comparison (spectral difference,
+order 4, artificial viscosity) among the comparators of
+[PyFR](/software/pyfr.md) with entropy filtering at equal resolution and
+order; the PyFR dilatational dissipation is closer to the $2048^3$ TENO
+reference, and they write that PyFR "generally show[s] less shock
+dissipation"; see [flux reconstruction](/methods/flux-reconstruction.md).
+
 ## Fully-discrete dispersion and dissipation of SD
 
 [Tonicello et al. (2023)](/sources/tonicello-2023.md) extend the spatial
@@ -400,3 +408,4 @@ Five further sources mention SD only through the works they cite:
 - [Shi & Yan (2023)](/sources/shi-2023.md) — §I (FR/CPR unifies DG and SD; DG, SD and FR/CPR for implicit LES, as cited).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — review: §1, §3.2, Eqs. 21–22 (one-dimensional SD form).
 - [Vermeire (2024)](/sources/vermeire-2024.md) — §3, Eqs. 10–13 (lifting coefficients recover SD, cited; FRDG used).
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §5.1, Fig. 12, Table 1 (SD3D among the comparators of entropy-filtered PyFR on the supersonic Taylor–Green vortex).

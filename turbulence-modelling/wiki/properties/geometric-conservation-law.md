@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Geometric conservation law and free-stream preservation"
-description: "On curvilinear grids a discretization preserves a uniform flow only if its discrete metric terms satisfy the metric identities, and on moving grids a temporal identity too; the sources meet this geometric conservation law with curl-form DGSEM metrics, conservative finite-difference and gas-kinetic metrics, moving-grid flux reconstruction and moving-mesh DGSEM, and note curved elements as an aliasing source."
+description: "On curvilinear grids a discretization preserves a uniform flow only if its discrete metric terms satisfy the metric identities, and on moving grids a temporal identity too; the sources meet this geometric conservation law with curl-form DGSEM and flux-reconstruction metrics, conservative finite-difference and gas-kinetic metrics, moving-grid flux reconstruction and moving-mesh DGSEM, and note curved elements as an aliasing source."
 status: established
 aliases: [GCL, geometric conservation law, free-stream preservation, freestream preservation, metric identities, discrete metric identities]
 tags: [dg, gas-kinetic, flux-reconstruction, high-order, compressible, implicit-les]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T17:00:00Z
 ---
 
 # Geometric conservation law and free-stream preservation
@@ -48,6 +48,25 @@ conservative Kopriva form for the same reason, and
 [Morsbach et al. (2024)](/sources/morsbach-2024.md), §2, obtain free-stream
 preservation in DLR's TRACE DGSEM by mapping the equations to the reference
 element following Kopriva and Gassner (2016).
+
+## Flux reconstruction: cross-product against curl-form metrics
+
+[Witherden et al. (2025)](/sources/witherden-2025.md), §3.4, Fig. 7,
+explain why [PyFR](/software/pyfr.md) v2.0.3 abandoned the cross-product
+metric of its first release: on curved grids the cross-product metric has
+a polynomial order twice that of the shape function, so truncation and
+aliasing errors can leave the divergence of the approximated metric
+non-zero and free-stream preservation is lost. The conservative metric
+(Kopriva; Abe et al., as cited) builds the metric terms "as the curl of the
+function", divergence-free irrespective of the approximation error. Their Fig. 7 shows a free
+stream on cubically curved tetrahedra at $N=2$ with both metrics, as a
+visual comparison without error norms. For straight-sided (linear)
+elements the code computes the metrics on the fly from the $3\times8=24$
+vertex terms, instead of storing $3^2\times125=1125$ terms for a hexahedron
+at $N=4$, to save memory bandwidth (§3.4). The condition under which
+Vermeire (2024) keeps cross-product metrics free-stream preserving
+(mapping degree not above the solution degree, Gauss points, DG-recovering
+correction) is below.
 
 ## Finite volumes from discrete grid points: the curvilinear gas-kinetic scheme
 
@@ -112,7 +131,13 @@ The same statement, with the same two citations, returns in the group's
 SATES-σ paper, [Wu et al. (2024)](/sources/wu-2024.md), §2.3, whose
 PHengLEI runs use the linear fourth-order WCNS on multi-block grids of a
 supercritical cylinder and of the 30P30N airfoil (12.8 and 26.4 million
-cells); again no metric form or free-stream test is printed.
+cells); again no metric form or free-stream test is printed. The group's
+smooth-TENO paper, [Wu et al. (2024b)](/sources/wu-2024-b.md), §I, lists
+"good freestream and vortex preservation on curvilinear grids" among the
+advantages of WCNS over finite-difference WENO and its applicability to
+complex grids "when satisfying the GCL" (citing its refs. 26, 27 and 40); its
+PHengLEI runs (30P30N airfoil, supersonic base flow) again print neither
+the metric form nor a free-stream test.
 
 ## Curved elements as a source of aliasing
 
@@ -252,6 +277,12 @@ solver for an aerothermoelastic fin without discussing a GCL.
 - Gao et al. (2023) show the order and free-stream behaviour of their
   ALE DGSEM by citation of the group's earlier work (Krais et al.;
   Schnücke et al.), not by a test in the paper.
+- On cross-product metrics in flux reconstruction, Witherden et al. (2025,
+  §3.4) print that on curved grids their discrete divergence "may be
+  non-zero", which led PyFR to the curl form; Vermeire (2024, §3,
+  Eqs. 8–9) prints that they are free-stream preserving with Gauss points
+  and a DG-recovering correction when the mapping degree does not exceed
+  the solution degree. Neither prints a quantitative free-stream test.
 - Liu et al. (2022b) do not print the error-compensation terms, and give
   no free-stream test on the deforming grid; the deforming-grid result
   they show is the order of accuracy of Table 1.
@@ -273,3 +304,5 @@ solver for an aerothermoelastic fin without discussing a GCL.
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.3 (GCL of the WCNS in PHengLEI, cited; passing).
 - [Vermeire (2024)](/sources/vermeire-2024.md) — §3, Eqs. (8)–(9) (cross-product metrics free-stream preserving with Gauss points and FRDG when the mapping degree does not exceed the solution degree, cited).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.5, Fig. 7 (GCL for Lagrangian and ALE DG, space–time DG, fixed-mesh front tracking; review).
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §3.4, Fig. 7 (cross-product against conservative curl-form metric in PyFR; on-the-fly metrics for linear elements).
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) — §I (free-stream preservation of WCNS on curvilinear grids and the GCL, cited; passing).

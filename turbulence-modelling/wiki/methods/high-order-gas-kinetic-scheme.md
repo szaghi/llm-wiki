@@ -5,7 +5,7 @@ description: "A high-order gas-kinetic scheme is a finite-volume Navier–Stokes
 status: established
 aliases: [HGKS, HGKS-cur, high-order GKS, gas-kinetic scheme, GKS, BGK finite-volume scheme]
 tags: [gas-kinetic, dns, implicit-les, compressible, numerical-dissipation, gpu]
-timestamp: 2026-10-28T07:07:00Z
+timestamp: 2026-10-28T12:25:00Z
 ---
 
 # High-order gas-kinetic schemes for turbulence simulation
@@ -145,6 +145,12 @@ variants are labelled by the normal and tangential orders:
 The authors argue that the compact stencil "has the consistent physical and
 numerical domains of dependence" (abstract, §1, §6); this is a design
 argument, not a test in the paper.
+In their assessment of interpolation-based WENO on the compressible
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md),
+[Wang et al. (2024b)](/sources/wang-2024-i.md), §I, list a compact
+gas-kinetic scheme (Wang Y.B. et al., as cited) among the high-order
+methods earlier tested on that case; the paper itself uses no gas-kinetic
+scheme.
 
 **Gauss points decide the order.** Zhao et al. (2023a, §4) cite Ji's
 thesis: "to achieve a 2Mth- or (2M-1)th-order spatial accuracy, at
@@ -683,3 +689,4 @@ differences between precisions (Figs. 10–13).
 - [Cao et al. (2022b)](/sources/cao-2022-c.md) — §I (periodic-hill ranking, cited); §II, Eqs. (1)–(6) (fourth-order scheme); §III, Eqs. (7)–(13), App. A (eddy viscosity through the collision time, three models, top-hat test filter); §IV A–C, Eqs. (14)–(22), Tables I–II, Figs. 1–8; App. B, Figs. 9–12 (implicit against explicit LES of the Taylor–Green vortex, subgrid-dissipation budget); §V.
 - [Zhao et al. (2021)](/sources/zhao-2021-c.md) — §II, Eqs. (1)–(11) (BGK flux, flux 1 and flux 2, reconstruction); §III, Eqs. (12)–(23) (eddy viscosity through the collision time; Vreman, dynamic Smagorinsky, WALE, dynamic Clark); §IV, Table I (setup); §V, Tables III–VII, Figs. 2–21 (results, cost); §VI; App. A–B, Table VIII.
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III E, §IV C–E (kinetic and lattice-Boltzmann fluxes in multi-material solvers, cited).
+- [Wang et al. (2024b)](/sources/wang-2024-i.md) — §I (a compact gas-kinetic scheme among earlier Taylor–Green schemes, cited; passing).

@@ -5,7 +5,7 @@ description: "Two-equation RANS eddy-viscosity models transporting the turbulent
 status: established
 aliases: [k-epsilon, standard k-ε, Launder–Sharma k-ε, realizable k-ε, RKE, Shih k-ε, enhanced wall treatment, EWT, two-layer k-ε]
 tags: [rans, eddy-viscosity, separated-flow, boundary-layer]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T16:59:00Z
 ---
 
 # k-ε models
@@ -426,6 +426,49 @@ $\beta^*$, which they call equivalent to $C_\mu$ (§V); the a posteriori
 results are on that page and on
 [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
+**A heuristic for the RANS/LES interface.** Wang et al. (2024c) cite the
+model's eddy viscosity $\mu_t=C_\mu\langle\rho\rangle k^2/\varepsilon$
+($C_\mu=0.09$) in a wall-resolved LES of a Mach 2 flat-plate boundary
+layer: the resolved dissipation falls rapidly above $y^+\approx14$ on all
+three grids while the kinetic energy peaks near there, so $y^+\approx14$
+"corresponds to the critical location of modeled Reynolds stresses" and
+"may be the appropriate RANS/LES interface" of a scale-adaptive hybrid
+([Wang et al. (2024c)](/sources/wang-2024-j.md), §III.E, Figs. 12–14; the
+paper runs no RANS computation; see
+[scale-adaptive simulation](/methods/scale-adaptive-simulation.md) and
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+
+**Vortex flows.** In the CAWAPI campaign on the F-16XL, as surveyed by
+Luckring & Rizzi (2024), the second phase improved the prediction of the
+secondary vortex by switching from Spalart–Allmaras to a $k$-$\varepsilon$
+model together with grid refinement (Elmiligui et al., as cited); the
+authors argue that SA "fails to predict secondary separation because it
+does not transport the right quantities"
+([Luckring & Rizzi (2024)](/sources/luckring-2024.md), §3.2.3.3; see
+[delta-wing vortex flow](/benchmarks/delta-wing-vortex-flow.md) and the
+[Spalart–Allmaras page](/methods/spalart-allmaras-model.md)).
+
+**Baseline of learned and physics-informed models.** Fang et al. (2026), a
+review, quote an LSTM trained on channel DNS at "Re = 180" whose
+centre-region shear-stress error is "less than 5%" against "about 12%" for
+the "traditional" $k$-$\varepsilon$ model (Pasinato et al., as cited), and a
+physics-informed network with the standard model embedded that reconstructs
+a backward-facing step at a Reynolds number of 5100 from sparse data (Pioch
+et al., as cited) ([Fang et al. (2026)](/sources/fang-2026.md), §3.4, Table
+3, §4.2.2; the review reports no out-of-sample test of the LSTM; see
+[physics-informed neural networks](/methods/physics-informed-neural-network.md)).
+Le et al. (2024) list Bayesian calibrations of $k$-$\varepsilon$ coefficients
+among the parametric uncertainty studies they review, without coefficient
+values ([Le et al. (2024)](/sources/le-2024.md), §3.1.1; see
+[Bayesian closure calibration](/methods/bayesian-closure-calibration.md)).
+
+**Combustion closures.** In the RANS form of conditional source-term
+estimation the scalar-dissipation relaxation time is the model's $k/\varepsilon$
+(Favre-averaged), and RANS $k$-$\varepsilon$ hosts the sooting-flame and
+CSE–CMC comparison studies that Salehi et al. (2024) review
+([Salehi et al. (2024)](/sources/salehi-2024.md), Eq. 21 and text, §3.1;
+see [conditional source-term estimation](/methods/conditional-source-term-estimation.md)).
+
 ## Qualifications
 
 - Yu et al. (2023b) justify $\langle p_w\rangle$ as the variable of their
@@ -483,3 +526,8 @@ results are on that page and on
 - [Mays et al. (2023)](/sources/mays-2023.md) — §2.1.1 Eqs. 1–8, App. Eqs. 16–21, §3.2.1–§3.2.2 Tables 4–6, Fig. 6.
 - [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §2.2 Eqs. 5–8, Fig. 1, §5 Table 3, §6.
 - [Yu et al. (2023b)](/sources/yu-2023-b.md) — §IV, Eqs. (20)–(21), Figs. 18–19 (two-equation eddy viscosity against DNS in shock interactions, wall-pressure-dependent $C_\mu$); §V.
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) — §III.E, Figs. 12–14 ($k$-$\varepsilon$ eddy viscosity in the interface argument).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §3.2.3.3 (CAWAPI-2 secondary vortex with $k$-$\varepsilon$, as cited).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §3.4, Table 3 (LSTM against $k$-$\varepsilon$, as cited); §4.2.2 ($k$-$\varepsilon$ inside a PINN, as cited).
+- [Le et al. (2024)](/sources/le-2024.md) — §3.1.1 (Bayesian calibrations cited).
+- [Salehi et al. (2024)](/sources/salehi-2024.md) — Eq. (21) and text (RANS time scale $k/\varepsilon$); §3.1 (RANS-CSE studies).

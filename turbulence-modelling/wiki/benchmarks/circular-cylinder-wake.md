@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Circular-cylinder wake"
-description: "Flow past circular cylinders, chiefly at Re_D=3900, with separation, shear-layer roll-up and a turbulent wake: it tests neural-network SGS models, PANS, implicit LES, VMS LES and 2D URANS; the drag crisis, the supercritical regime and tandem cylinders test hybrid RANS/LES, and laminar cylinders validate solver numerics."
+description: "Flow past circular cylinders, chiefly at Re_D=3900, with separation, shear-layer roll-up and a turbulent wake: it tests neural-network SGS models, PANS, implicit LES, VMS LES and 2D URANS; the drag crisis, the supercritical regime and tandem cylinders test hybrid RANS/LES and immersed-boundary wall models, a Mach-3 cylinder tests wall models, and laminar cylinders validate solver numerics."
 status: established
 aliases: [cylinder wake, flow over a circular cylinder, flow past a circular cylinder, cylinder at Re_D=3900, tandem cylinders, tandem cylinder benchmark, drag crisis, critical cylinder flow, supercritical cylinder]
 tags: [benchmark, separated-flow, les, implicit-les, neural-network, pans, immersed-boundary, field-inversion, des, hybrid-rans-les, aeroacoustics]
-timestamp: 2026-10-28T07:03:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Circular-cylinder wake
@@ -505,6 +505,104 @@ The authors' reading:
   convergence"; the criterion they adopt is the correct tendency of the
   flow topology (§3.2).
 
+**Wall-modelled immersed boundaries from $Re_D=3900$ through the drag
+crisis.** Two sources impose a wall model through an
+[immersed boundary method](/methods/immersed-boundary-method.md) on a
+Cartesian grid and run the cylinder from the subcritical regime upward:
+
+- [Wang et al. (2024d)](/sources/wang-2024-k.md), §III D, in a GPU
+  immersed-boundary–[lattice Boltzmann](/methods/lattice-boltzmann-method.md)
+  solver with the [Smagorinsky model](/methods/smagorinsky-model.md)
+  (constant 0.12, the paper's default "unless otherwise specified", filter
+  width the lattice spacing), compare a
+  diffused-interface (DIB) and a sharp-interface (SIB) immersed boundary.
+  Five grid blocks refined by factors of 2 give $D/160$ at the wall and
+  $D/80$ in a wake zone to $2D$; span $4D$ periodic, streamwise domain
+  $16D$. At $Re_D=3900$, without wall model, they obtain (Table II):
+
+  | Run | $C_D$ | $St$ | separation angle |
+  |---|---|---|---|
+  | DIB | 1.02 | 0.215 | $88^\circ$ |
+  | SIB | 0.98 | 0.217 | $88^\circ$ |
+  | references (Fröhlich et al., Kravchenko & Moin, Meyer et al.) | 1.04–1.08 | 0.210–0.216 | $88^\circ$ |
+
+  With the [equilibrium wall model](/methods/equilibrium-wall-model.md)
+  at $Re_D=10^5$ to $10^6$, the DIB run captures the drag crisis through
+  the backward shift of separation, its drag falling "from 0.99 to 0.28 and
+  0.22" at $Re_D=10^5$, $5\times10^5$ and $10^6$; the SIB run misses the
+  separation at high $Re_D$ and gives a lower drag (Figs. 14–15). The
+  authors' conclusion is that the diffused interface, which drives
+  separation more easily, suits external flows (§IV); the same pairing is
+  on [Ahmed body](/benchmarks/ahmed-body.md).
+- [Yan et al. (2024)](/sources/yan-2024.md), §III A, couple a
+  diffused-interface immersed boundary with explicit wall functions (see
+  [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md) and
+  [slip-wall models](/methods/slip-wall-model.md)) in the sixth-order
+  compact code [Xcompact3d](/software/xcompact3d.md), whose subgrid
+  dissipation is the implicit
+  [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
+  with viscosity ratio at the cut-off $\nu_0/\nu=15$ at $Re_D=3900$ and 300
+  at $Re_D=1.4\times10^5$. Domain $-5D\le x\le15D$, $-10D\le y\le10D$,
+  span $\pi D$, grid $801\times387\times40$ with about 40 points across the
+  diameter, $U_0\Delta t/D=2.5\times10^{-3}$. Their bulk values (Tables
+  II–III; recirculation length $L_r$, printed $l_r$):
+
+  | Run | $\overline{C}_D$ | $C_{L,\mathrm{RMS}}$ | $L_r/D$ | $-\overline{C}_{pb}$ | $St$ |
+  |---|---|---|---|---|---|
+  | $Re_D=3900$, sixth order + iSVV | 1.02 | 0.113 | 1.42 | 0.93 | 0.229 |
+  | $Re_D=3900$, second-order central + Smagorinsky, same mesh | 1.17 | 0.017 | 2.42 | 0.59 | 0.223 |
+  | $Re_D=1.4\times10^5$, sixth order + iSVV | 1.01 | 0.24 | 0.98 | 1.04 | 0.22 |
+
+  At $Re_D=1.4\times10^5$ the cited LES give $L_r/D=0.42$–0.62 and the
+  experiment 0.44, which the authors attribute to flow sensitivity, the
+  eddy-viscosity model and the simplified thin-boundary-layer equation of
+  the wall model; they also find the favourable-pressure-gradient wall
+  stress ahead of separation under-predicted, because the Werner–Wengle
+  law ignores favourable gradients (Fig. 9b). A variant without the
+  pressure-gradient term (their "EM") fails to reproduce the wake, which
+  the full model captures by lowering the slip velocity near separation
+  (Fig. 7). The sixth-order/iSVV run costs 15.04 h per $10^5$ steps on 96
+  cores against 18.16 h for the second-order/Smagorinsky run, because the
+  subgrid terms are not computed explicitly (§III A).
+
+**A Mach-3 cylinder with immersed-boundary wall models.**
+[Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md), §3.3, run
+supersonic flow past a cylinder with their sharp-interface curvilinear
+immersed boundary method, a hybrid of fourth-order skew-symmetric central
+and third-order WENO fluxes, and the dynamic
+[Smagorinsky model](/methods/smagorinsky-model.md) (see
+[WENO schemes](/methods/weno-scheme.md)):
+
+- *Small channel* ($8\times4$, after Guermond et al., inviscid reference,
+  impulsive start): on the fine grid ($h=0.0025$, page-local: uniform grid
+  size) the hybrid scheme and the LES capture the Kelvin–Helmholtz
+  instability of the two contact lines leaving the triple points of the
+  bow shock, which pure third-order WENO and the hybrid on the coarse grid
+  ($h=0.01$) damp; the drag coefficient peaks near 2.25 at impingement and
+  settles near 1.1 in the periodic state for all schemes (Figs. 6–9).
+- *Wide channel* (experiment of Awasthi et al., $Re=750{,}000$): the bow
+  shock stands off about $0.35D$, against 0.324 from Billig's correlation,
+  which the authors state under-predicts measurements at Mach 2.7 to 4;
+  the reattachment distance of the wake from the cylinder centre is 1.04
+  in the experiment, 2.8 with a log-law wall model and similar with the
+  integrated stress-balance ("Cabot") model, and 1.1 with a free-slip
+  cylinder wall; the subgrid model (dynamic, constant, none) does not
+  change it, and three-dimensional runs give reattachment lengths like the
+  two-dimensional ones (Figs. 10–13).
+
+The authors conclude that this flow is "more sensitive to the wall model
+than the LES subgrid model" (§5); see
+[wall-modelled LES](/methods/wall-modelled-les.md) and
+[equilibrium wall model](/methods/equilibrium-wall-model.md). Their slip
+condition is a zero-shear wall, not the Robin-type condition of
+[slip-wall models](/methods/slip-wall-model.md).
+
+**Flow control.** The review of [Fang et al. (2026)](/sources/fang-2026.md),
+§3.4, Table 4, lists multi-agent reinforcement learning with ten pairs of
+synthetic jets on a three-dimensional cylinder (at $Re_D=3900$ by the cited
+title) giving 9% drag reduction, as a cited work; see
+[reinforcement-learning closures](/methods/reinforcement-learning-closure.md).
+
 **What the sources share.** In both scale-resolving studies at
 $Re_D=3900$ the recirculation length is the measure most sensitive to the
 model and the resolution: the SGS model and grid in
@@ -605,6 +703,22 @@ both lean on Parnaudeau et al. for reference data.
   and the flow reattaches (§1); their $L_r$ (0.559–0.727 in the reference
   LES, Table 5) is recorded beside the $Re_D=3900$ values above, not
   compared with them.
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) first list wall-modelled
+  runs at $10^5$, $5\times10^5$ and $10^6$, then "five Reynolds numbers"
+  adding $6\times10^5$ and $8\times10^5$ (§III D); they print no averaging
+  time. [Yan et al. (2024)](/sources/yan-2024.md) define $St=f_sD/U$ in
+  Table II and call the transverse velocity "spanwise" in the captions of
+  Figs. 5–6; they do not print the averaging time, and they define $l_r$
+  only as the "length of the recirculation bubble" (nomenclature), without
+  the point from which it is measured.
+- The Mach-3 cylinder of [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md)
+  is mostly two-dimensional (three nodes in span with symmetry) and
+  partly inviscid; the wall-model conclusion is drawn from the
+  reattachment length, with 3D runs for the log-law and free-slip walls
+  (§3.3.2, Fig. 13). The authors do not print the near-wall resolution
+  in wall units on the cylinder. They cite the stress-balance
+  model to Wang & Moin and Kang et al. in §2.4 and call it the "Cabot wall
+  model" in §3.3, stating that it reduces to the log law in equilibrium.
 - The supercritical cylinder of [Wu et al. (2024)](/sources/wu-2024.md)
   at $Re_D=3\times10^6$ lies above the drag-crisis cylinders of Mays et al.;
   the statement of the previous item holds for the other sources. Its Table 3,
@@ -633,3 +747,7 @@ both lean on Parnaudeau et al. for reference data.
 - [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §6.1, Table 9 ($Re_D=3900$); §6.2, Table 12 ($Re_D=1.4\times10^5$); §6.3 (tandem cylinders, $Re_D=1.66\times10^5$).
 - [Mays et al. (2023)](/sources/mays-2023.md) — §1 (drag-crisis regimes, as cited); §2.1–2.2, Eqs. (1)–(15) (SRH model, lag elliptic-blending base, convection scheme); §3.1, Tables 1–3, Fig. 4 (grids, cost, resolved fraction); §3.2.1–3.2.2, Tables 4–6, Figs. 6–10 (forces, recirculation, Strouhal number, energy ratio); §4.
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.2–§2.4 (SATES-σ, WCNS-E-4, MUSCL); §3.2, Table 3, Figs. 7–17 (supercritical cylinder at $Re_D=3\times10^6$); §4.
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — §III D, Table II, Figs. 13–15; §IV.
+- [Yan et al. (2024)](/sources/yan-2024.md) — §III A, Tables II–III, Figs. 3–9.
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §2.4; §3.3.1–3.3.2, Figs. 6–13; §5.
+- [Fang et al. (2026)](/sources/fang-2026.md) — §3.4, Table 4 (cited control work, review).

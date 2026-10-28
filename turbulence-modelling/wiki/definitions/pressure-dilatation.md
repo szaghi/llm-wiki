@@ -5,7 +5,7 @@ description: "The pressure dilatation, the product of pressure and velocity dive
 status: established
 aliases: [pressure-dilatation, pressure–dilatation correlation, pressure dilatation work, pressure-dilatation work, pressure-dilatation term, SGS pressure dilatation, subgrid pressure dilatation, pressure dilatation dissipation rate]
 tags: [compressible, dns, les, rans, numerical-dissipation]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T12:22:00Z
 ---
 
 # Pressure dilatation
@@ -75,6 +75,18 @@ exchange between kinetic and internal energy.
   they cite, and that early in supersonic decay it can be of the order of
   the total dissipation (see
   [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)).
+- **Kinetic-energy rise in the supersonic Taylor–Green vortex.** In
+  viscous Taylor–Green runs at $Re=1600$ and reference Mach numbers 0.1 to
+  1.25 ($128^3$, four fifth-order WENO schemes),
+  [Wang et al. (2024b)](/sources/wang-2024-i.md), §III.C, Fig. 6, find the
+  volume-averaged kinetic energy decaying monotonically up to Mach 0.5 and
+  rising over an early interval at higher Mach numbers, most strongly at
+  1.25, as in the earlier studies they cite. They attribute the rise to the
+  average pressure work exceeding the viscous dissipation early on, which
+  converts internal into kinetic energy; the attribution is stated, not
+  computed from a pressure-dilatation history (they plot only the
+  solenoidal and dilatational viscous dissipation, Figs. 8–9). The
+  scheme comparison is on [WENO](/methods/weno-scheme.md).
 - **As a residual.** [Brillon & Nadarajah (2026)](/sources/brillon-2026.md)
   (read in arXiv v1), §3.1.1, Eq. (105), obtain an "observed" pressure
   dilatation of the compressible Taylor–Green vortex as the measured decay
@@ -285,6 +297,7 @@ protocol on
 - [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §II, Eqs. (15)–(23) (subgrid pressure and pressure work of dense gas); §IV A, Tables IV–V; §IV B (normalization by $\langle-p\nabla\cdot\boldsymbol u\rangle$ plus viscous dissipation); §V.
 - [Zhao et al. (2023a)](/sources/zhao-2023.md) — §5.1, Eqs. (22)–(23) (pressure-dilatation term of the energy budget).
 - [Volpiani (2024)](/sources/volpiani-2024.md) — §3.2, Eq. (25) (pressure-dilatation term of the compressible dissipation budget).
+- [Wang et al. (2024b)](/sources/wang-2024-i.md) — §III.C, Figs. 6, 8–9 (early kinetic-energy rise of the Taylor–Green vortex above Mach 0.5, attributed to pressure work).
 - [Brillon & Nadarajah (2026)](/sources/brillon-2026.md) — arXiv 2411.12108v1: §3.1.1, Eq. (105); §3.1.7, Figs. 17–18 (observed and node-wise pressure dilatation).
 - [Kuya et al. (2018)](/sources/kuya-2018.md) — §2.4.2, Eqs. (47)–(50); §4.4, Eq. (66); §5.2, Figs. 4–5, Eq. (74) (discrete pressure dilatation).
 - [Helm & Martín (2022)](/sources/helm-2022.md) — Sec. IV D, Fig. 27 (small pressure dilatation in separated hypersonic interactions).

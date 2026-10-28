@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity profile of wall-bounded turbulence �
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-28T07:04:00Z
+timestamp: 2026-10-28T17:02:00Z
 ---
 
 # Law of the wall
@@ -99,6 +99,13 @@ and the choice is part of the model.
 | [Zhang et al. (2024b)](/sources/zhang-2024-b.md), §3.1, Eq. (3.2), Fig. 5a | $1/2.44$ | 5.6–6.0 (measured), against 5.1 incompressible | intercept more sensitive than slope to the wall temperature | van Driest-transformed DNS of Mach 6 boundary layers at $T_w/T_r=0.50$, 0.75, 1.0 (below) |
 | [Wang & Xu (2024)](/sources/wang-2024-h.md), §4.2, Fig. 8 | 0.41 | 5.2 | | target of the Griffin–Fu–Moin transformed profile of a reacting Mach 2.33 boundary layer |
 | [Wei et al. (2023)](/sources/wei-2023.md), §III B, Fig. 10 legend | $1/2.5$ | 5.4 | | target of the van Driest-transformed velocity of a wall-resolved LES of a Mach 2.44 boundary layer |
+| [Yan et al. (2024)](/sources/yan-2024.md), §II C, Eqs. (24)–(28) | 0.41 | — | Werner–Wengle power law $u^+=8.3\,(y^+)^{1/7}$ above $y^+=11.81$; van Driest damping $(1-e^{-y^+/19})^2$ in the mixing length; pressure-gradient correction in adverse gradient | explicit wall function of a wall-modelled diffused-interface immersed boundary (below) |
+| [Wang et al. (2024d)](/sources/wang-2024-k.md), §II D, Eq. (22) | 0.41 | — | van Driest damping $(1-e^{-y^+/A^+})^2$ with $A^+=19.0$; Musker's profile as plotted reference (not in the reference list) | integrated equilibrium wall model of immersed-boundary lattice Boltzmann WMLES |
+| [Xiao et al. (2025)](/sources/xiao-2025.md), §2.1, Eq. (10) | 0.41 | 5.2 | log law only, solved by Newton–Raphson | algebraic wall-stress model of [CaLES](/software/cales.md) at $h_{\mathrm{wm}}=0.1\delta$ |
+| [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md), §2.4, Eqs. (19)–(23) | 0.42 | 5.2 | linear law below $y^+=11.0$, logarithmic above | wall function in the reconstruction of a sharp-interface curvilinear immersed boundary (below) |
+| [De Cosmo et al. (2025)](/sources/decosmo-2025.md), §3.3, Eq. (27), Fig. 9 | not printed | 5.2 (Fig. 9 legend) | defect-law constant 0.2 for $y^+>30$ | reference for an implicit LES of channel flow at $Re_\tau=200$ (below) |
+| [Guo & Wang (2025)](/sources/guo-2025.md), Eq. (18) | not printed | not printed | Spalding's law to the cubic term | OpenFOAM wall function of SST-based DDES (below) |
+| [Wang et al. (2024c)](/sources/wang-2024-j.md), Fig. 1 legend | $1/2.44$ | 5.2 | printed "5.2 + 2.44 log($y^+$)", base not printed | reference for the van Driest velocity of LES and hybrid RANS/LES of a Mach 2 boundary layer |
 
 Zhao et al. (2023a) attribute $\kappa=0.40$, $B=5.5$ to the channel DNS of
 Kim et al. (1987), as they cite it; Wang et al. (2023b) give the same values
@@ -345,6 +352,10 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   explicit in $y^+$, so that obtaining $\tau_w$ requires Newton iteration;
   they report that this iteration "would often sporadically diverge" in
   complex-flow WMLES (see [equilibrium wall model](/methods/equilibrium-wall-model.md)).
+  [Guo & Wang (2025)](/sources/guo-2025.md) (Eq. 18) print the same
+  cubic-term form as the law behind the OpenFOAM wall function
+  `nutUSpaldingWallFunction` of their SST-based DDES, with $\kappa$ and $B$
+  not printed (see [RANS wall function](/methods/rans-wall-function.md)).
 - **The Spalart–Allmaras analytical law** (Husson et al. 2024, §3.1, Eq. 37,
   after Allmaras & Johnson as cited), a composite of two logarithms and two
   arctangents,
@@ -374,6 +385,25 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   cited), so no Newton iteration is needed; the law assumes zero pressure
   gradient. Formulas, cost and accuracy are on the
   [RANS wall function](/methods/rans-wall-function.md) page.
+  The same Werner–Wengle constants ($8.3$, $1/7$, $y_c^+=11.81$) appear in
+  the LES wall model of [Yan et al. (2024)](/sources/yan-2024.md) (§II C,
+  Eqs. 26–27), inverted explicitly for $u_\tau$ branch by branch without
+  blending, and extended by an adverse-pressure-gradient correction (see
+  the [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)).
+  Yan et al. state that the power law cannot supply the velocity gradient
+  at the probe, because its derivative is discontinuous at $y_c^+$, and take
+  the gradient from a boundary-layer equation instead (see
+  [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
+- **Linear/log switch inside an immersed-boundary reconstruction**
+  ([Akbarzadeh & Borazjani 2025](/sources/akbarzadeh-2025.md), §2.4,
+  Eqs. 19–24). The friction velocity is found iteratively from the log law
+  ($\kappa=0.42$, $B=5.2$) at a fluid point $c$ on the wall normal, and the
+  tangential velocity at the boundary node $b$ between wall and $c$ follows
+  from $u^+_b=y^+_b$ for $y^+_b<11.0$ and the log law above. The second
+  branch of Eq. (23) is printed with $y^+_c$ in place of $y^+_b$ (see
+  Qualifications). The authors state that the law "works properly when the
+  flow is attached and the boundary layer is turbulent", not in separated
+  or transitional flow (§2.4).
 - **Mixing length with van Driest damping**, the differential form behind
   the fit of Fowler et al.: the eddy viscosity is $\nu_t=\kappa y\,u_\tau(1-e^{-y^+/A^+})^2$,
   and integrating the constant-stress equation gives $f$ (Griffin et al.
@@ -469,6 +499,25 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   wake and an inflection near $y/\delta\approx0.3$, and it returns to 5.0
   at $13.3\delta_r$ downstream of impingement (§3, Fig. 5). The defect is
   used in the [skin-friction decomposition](/definitions/skin-friction-decomposition.md).
+- **Defect law as an LES check.** [De Cosmo et al. (2025)](/sources/decosmo-2025.md)
+  (§3.3, Eq. 27, Figs. 8–9) validate an implicit LES of channel flow at
+  $Re_\tau=200$ with the velocity-defect law
+  $(u(h)-\langle u\rangle)/u_\tau=-\kappa^{-1}\log(y/h)+B_1$, $B_1=0.2$,
+  "expected to follow a log-law for $y^+>30$" ($h$ the channel
+  half-height, $u(h)$ the centreline velocity, $B_1$ page-local; $\kappa$
+  not printed): the computed defect agrees with the DNS and departs from
+  the law at low $y/h$, and the inner profile, compared with the log law
+  with $B=5.2$, is over-predicted by 2 % at $y^+=100$, which the authors
+  relate to excess dissipation and an under-predicted wall stress (see
+  [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
+- **Magnetohydrodynamic channels.** [Fang et al. (2025)](/sources/fang-2025.md)
+  (§3.4, Figs. 12–13) find the mean velocity of their channel DNS at
+  $Re_\tau=150$ in agreement with the law of the wall without a magnetic
+  field, and report that a wall-normal magnetic field lifts the log layer,
+  "as in drag-reducing flows", increasingly with the Hartmann number, until
+  the flow relaminarizes at Hartmann number 8; their log layer lies slightly
+  above the reference DNS data in wall units and agrees in bulk scaling
+  (see [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
 - **Three-dimensional boundary layers.** The review's §5.3 (Eq. 5.11)
   presents van den Berg's three-dimensional law of the wall, with
   pressure-gradient and wall-stress-rotation terms added to both velocity
@@ -811,6 +860,11 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
   $U_e/u_\tau=\sqrt{2/C_f}$, the integral equals $\delta^*\sqrt{2/C_f}$
   *(compiler check, not in the sources)*, the $u_e^+\delta^*$ of Chen et al.
   (2024) above.
+- **Printed branch of Akbarzadeh & Borazjani (2025).** Their Eq. (23)
+  prints the logarithmic branch at the boundary node as
+  $\kappa^{-1}\ln(y^+_c)+B$, the value at the fluid point $c$, while the
+  linear branch and the switch are written in $y^+_b$; Eq. (24) then uses
+  this $u^+_b$ for the boundary node.
 - Oulghelou et al. (2025) and Wu et al. (2025) write the steady
   incompressible RANS equations and solve them in OpenFOAM (Wu et al. also run CFL3D for a
   compressible airfoil case); their log-law statements concern RANS
@@ -908,3 +962,11 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §3.1, Eqs. (3.1)–(3.2), Fig. 5a.
 - [Wang & Xu (2024)](/sources/wang-2024-h.md) — §4.2, Fig. 8.
 - [Wei et al. (2023)](/sources/wei-2023.md) — §III B, Fig. 10.
+- [Yan et al. (2024)](/sources/yan-2024.md) — §II C, Eqs. (24)–(28).
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — §II D, Eq. (22); Figs. 2, 5.
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §2.1, Eq. (10).
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §2.4, Eqs. (19)–(24).
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §3.3, Eq. (27), Figs. 8–9.
+- [Guo & Wang (2025)](/sources/guo-2025.md) — Eq. (18) (Spalding's law in the OpenFOAM wall function).
+- [Fang et al. (2025)](/sources/fang-2025.md) — §3.4, Figs. 12–13 (log layer lifted by a wall-normal magnetic field).
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) — Fig. 1 (reference log law; passing).

@@ -160,13 +160,14 @@ recorded as a technical report; only one DOI is printed (Beetham et al.
 
 # Pages created or updated
 
-Chunk 10 (2026-10-27). This source is cited on:
+Chunk 10 (2026-10-27), cited further in chunk 14. This source is cited on:
 
 - [Backward-facing step](/benchmarks/backward-facing-step.md)
 - [Periodic hill](/benchmarks/periodic-hill.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Model-form uncertainty in turbulence closures](/definitions/model-form-uncertainty.md)
+- [Bayesian calibration of turbulence-model coefficients](/methods/bayesian-closure-calibration.md)
 - [Explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)
 - [Field inversion and machine learning](/methods/field-inversion-machine-learning.md)
 - [k-ω SST model](/methods/k-omega-sst-model.md)

@@ -5,7 +5,7 @@ description: "LES that resolves the outer-layer eddies and replaces the near-wal
 status: established
 aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions, IBMLES, immersed boundary-modelled LES]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-28T07:11:00Z
+timestamp: 2026-10-28T17:02:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -85,6 +85,28 @@ wall-modeled LES" serves as a design tool for high-lift aircraft (Goc et
 al. 2021, as cited). [Wu et al. (2024)](/sources/wu-2024.md) (§1) cite
 airfoil WMLES among the scale-resolving options for high-lift stall before
 choosing a hybrid method instead.
+
+The survey of concentrated vortex aerodynamics by
+[Luckring & Rizzi (2024)](/sources/luckring-2024.md) (§2.4.1.4–2.4.1.5)
+gives the same wall-stress definition, with $h_{\mathrm{wm}}$ "chosen within
+the log layer" and the wall model fed the instantaneous LES velocity and
+temperature there and returning wall stress and heat flux, and sets it
+against [detached-eddy simulation](/methods/detached-eddy-simulation.md):
+WMLES resolves the energetic outer-layer motions as well as the detached
+shear layers, so "approximately 80% of the boundary layer" is LES, and it
+"has the potential to be significantly more accurate than hybrid RANS/LES in
+non-equilibrium flows". They add that despite decades of research "no
+well-established guidelines have been developed" for grid resolution, cell
+topology, numerical schemes or SGS modelling, and that they know of no WMLES
+of concentrated vortex flows, the HLPW-4 high-lift results being "promising"
+(§2.4.1.4, §5; see [delta-wing vortex flows](/benchmarks/delta-wing-vortex-flow.md)).
+Within hybrid methods, [Alberti et al. (2025)](/sources/alberti-2025-b.md)
+(§2.1.1, §4) run IDDES, whose WMLES branch is active when the inflow is
+unsteady or the grid fine enough, in a high-order DG solver, and conclude
+that on fine grids the solver behaves "more like a wall-modeled ILES rather
+than a simple WMLES", the eddy viscosity adapting to the resolution (see
+[log-layer mismatch](/definitions/log-layer-mismatch.md) and
+[implicit LES](/definitions/implicit-les.md)).
 
 ## Wall models
 
@@ -279,6 +301,32 @@ dissipation factor is tuned (see [log-layer mismatch](/definitions/log-layer-mis
 the Reynolds stresses near the wall stay poor against DNS as for
 body-fitted WMLES (§3.1, §4), and surface heat transfer is "very sensitive"
 to the artificial dissipation added at the immersed boundary (§4).
+
+Three further immersed-boundary couplings differ in where the wall model
+acts (see [immersed boundary methods](/methods/immersed-boundary-method.md)).
+[Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) (§1, §2.3–2.4)
+reconstruct the velocity at the boundary nodes of a sharp-interface
+curvilinear immersed boundary along the wall normal, without ghost cells,
+and put the log law or an integrated stress balance into that
+interpolation when the sublayer is unresolved; they contrast this with the
+ghost-cell couplings of van Noordt et al. and De Vanna et al., which make
+wall models "challenging" to implement. [Wang et al. (2024d)](/sources/wang-2024-k.md)
+(§II C–D) implement the same integrated equilibrium model in a GPU lattice
+Boltzmann solver with either a diffusive interface (penalty forcing with a
+four-point delta kernel; a slip velocity imposed at a forcing point inside
+the first cell, after Shi et al. as cited) or a sharp interface (the first
+off-wall node reconstructed from the wall model, after Tessicini et al. and
+Yang & Balaras as cited), and find the choice decisive: the diffusive
+interface over-dissipates near the wall in channel flow but drives
+separation more easily on bluff bodies, the sharp one predicts the channel
+but misses the separation of the cylinder drag crisis, so they recommend
+the diffusive interface for external and the sharp one for internal flows
+(§III–IV). [Yan et al. (2024)](/sources/yan-2024.md) (§II C) impose a slip
+*target velocity* through a diffused-interface forcing in the sixth-order
+compact code [Xcompact3d](/software/xcompact3d.md), extrapolated from a probe
+three grid spacings off the wall with a pressure-gradient-aware gradient
+(see [slip-wall models](/methods/slip-wall-model.md) and
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
 
 **Near-wall stress constraint (constrained LES).** Because the immersed
 boundary is not conservative, the total near-wall Reynolds stress is not
@@ -624,6 +672,38 @@ imposed on the slant, because the flow topology changes between the grids.
   result to their solver and set-up and name clipping, filtering, mesh
   topology and numerics as possible causes (§3.1).
 
+- **Channel and duct on thirteen grids up to wall resolution.**
+  [Xiao et al. (2025)](/sources/xiao-2025.md) (§4.3–4.4, Tables 4–5,
+  Figs. 12–16) run channel WMLES at $Re_\tau\approx5200$ in the GPU solver
+  [CaLES](/software/cales.md) (log-law equilibrium model at
+  $h_{\mathrm{wm}}=0.1\delta$, instantaneous input; static Smagorinsky with
+  van Driest damping or dynamic Smagorinsky) on 13 grids for each of two
+  aspect ratios $AR=\Delta x/\Delta z=1$ and 2 (page-local), from
+  $\Delta/\delta=0.1$ to $0.002$ (about $\Delta z^+=10$, wall-resolved
+  resolution). Convergence is non-monotonic for both SGS models and both
+  aspect ratios, most markedly in $\langle u'u'\rangle$ but also in $C_f$ and
+  $\langle u'v'\rangle$, which the authors call consistent with Meyers &
+  Sagaut's finding for wall-resolved LES (as cited). The $C_f$ error of the
+  static model at $AR=1$ runs $-0.81$, $-1.17$, $-0.27$, $-1.48$, $-2.69$,
+  $-3.22$, $-3.40$, $-2.91$, $-2.46$, $-0.16$, $+2.42$, $+2.46$, $+2.43$ % from
+  coarse to fine, and at $AR=2$ the two models reach about $+6$–7 % on
+  coarse grids and $-4.9$ and $-4.6$ % at intermediate ones; $AR=1$ converges
+  better. On the finest grids the error is always positive, which they tie
+  to the instantaneous wall-model input (see the
+  [equilibrium wall model](/methods/equilibrium-wall-model.md)). The
+  velocity below $h_{\mathrm{wm}}$ "should not be taken seriously", so profile
+  errors are integrated over $0.1\le y/\delta\le1$ only (Eq. 24). In a
+  square duct at $Re_b=40\,000$ ($Re_\tau\approx1055$, DNS of Pirozzoli
+  et al. as cited) on six grids up to $2048\times320\times320$, wall models on
+  all four walls, the perimeter-averaged $C_f$ stays within about 3 %, while
+  the kinetic energy of the secondary flow, integrated over a quadrant
+  ($K_{\mathrm{sec}}$, page-local; $3.26\times10^{-5}$ in the DNS), is off by
+  about 22 % (static) and 25 % (dynamic) on the finest grid; both converge
+  non-monotonically, while the peak of $\langle u'u'\rangle$ along the wall
+  bisector, unlike in the channel, rises towards the DNS with refinement.
+  Their stated purpose is the solver, not a physical assessment of the SGS
+  or wall models.
+
 ## Grid convergence set by the matching height
 
 [Hu et al. (2024)](/sources/hu-2024.md) ask what grid convergence means for
@@ -831,6 +911,26 @@ $C_m$, $\alpha$, $q_c^2$). Their findings:
 
 The wall model and the SGS model ([large-eddy simulation](/definitions/large-eddy-simulation.md)) act on the
 same under-resolved first cells.
+
+- **The wall model dominates in a supersonic wake.** On a Mach 3 cylinder
+  at $Re=7.5\times10^5$, [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md)
+  (§3.3.2, §5, Figs. 12–13) find the reattachment distance unchanged among
+  dynamic Smagorinsky, constant-coefficient and no SGS model, on fine grids
+  where the WENO part of their hybrid flux supplies dissipation implicitly,
+  while the wall condition changes it from 2.8 (log law or integrated
+  stress balance) to 1.1 (free slip), against 1.04 measured; the flow is
+  "more sensitive to the wall model than the LES subgrid model". The
+  free-slip wall is not a [slip-wall model](/methods/slip-wall-model.md);
+  three-dimensional runs give reattachment lengths similar to the
+  two-dimensional ones (Fig. 13).
+- **Dynamic against static Smagorinsky in channels.** In the WMLES of Xiao
+  et al. (2025, §4.3, §5) the dynamic model gives a higher eddy viscosity,
+  hence more modelled and less resolved shear stress, and "somewhat
+  superior performance in grid convergence"; the static one is run with van
+  Driest damping, and in the dynamic one the test filter in the first
+  off-wall layer is two-dimensional (width ratio $4^{1/3}$ instead of 2),
+  found more accurate in WMLES channel tests (§2.2; see the
+  [dynamic procedure](/methods/dynamic-procedure.md)).
 
 - [Zhou & Bae (2024)](/sources/zhou-2024-b.md) isolate the SGS model on the
   separated [Gaussian bump](/benchmarks/gaussian-bump.md) by feeding the
@@ -1365,6 +1465,42 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
   §IV): uniform channel grids of $32^3$–$128^3$ at $Re_\tau=180$–50 000 and the
   periodic hill at $Re_h=10\,595$; see
   [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md).
+- **GPU channel and duct solver** (Xiao et al. 2025): CaLES, built on the
+  DNS solver CaNS (second-order staggered finite differences, FFT Poisson
+  solver, third-order Runge–Kutta, OpenACC with cuDecomp), with the
+  log-law equilibrium model and static or dynamic Smagorinsky; channel and
+  duct results in the non-monotonic-convergence section above; one A100 is
+  12–19 times as fast as a 32-core CPU node and the wall model adds a
+  negligible cost (§3.2; see [CaLES](/software/cales.md) and
+  [grid-point requirements](/results/les-grid-point-requirements.md)).
+- **Lattice Boltzmann WMLES on immersed boundaries** (Wang et al. 2024d,
+  §III): channel at $Re_\tau=1000$–5200 on uniform $\delta/20$ cubes (sharp
+  interface; mean velocity good, fluctuations under-estimated, as in the
+  WMLES they cite); the DARPA SUBOFF bare hull at $Re_L=1.2\times10^6$
+  (diffusive interface; $C_p$ and $C_f$ within the range of experiment and
+  earlier LES, the recursive regularized collision operator reproducing the
+  streamwise fall of friction that the multiple-relaxation-time one misses);
+  the [Ahmed body](/benchmarks/ahmed-body.md) with $35^\circ$ slant at
+  $Re=7.85\times10^5$ (drag 0.321 diffusive and 0.296 sharp against 0.279
+  measured); and the [circular cylinder](/benchmarks/circular-cylinder-wake.md)
+  through the drag crisis, $Re_D=10^5$ to $10^6$ (Smagorinsky with
+  $C_s=0.12$, 0.16 in the channel; see the
+  [lattice Boltzmann method](/methods/lattice-boltzmann-method.md)).
+- **Supersonic cylinder and shock diffraction on a curvilinear immersed
+  boundary** (Akbarzadeh & Borazjani 2025, §3): compressible channels at
+  $M=0.5$ and 1.5 with walls as immersed boundaries (the wall-modelled
+  $24^3$ grid "cannot follow the log-law profile"), the Mach 3 cylinder of
+  the section above and the diffraction of a Mach 2.81 shock; strong scaling
+  above 90 % from 1536 to 4800 cores on 313 M nodes (§4).
+- **Bluff bodies and a vibrating roof on a diffused interface** (Yan et al.
+  2024, §III): circular cylinder at $Re_D=3.9\times10^3$ and
+  $1.4\times10^5$, [square cylinder](/benchmarks/square-cylinder-flow.md) at
+  $Re_D=2.2\times10^4$ and a flat roof in forced vibration, with implicit
+  [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md) as
+  SGS treatment; the square-cylinder run costs 13.2 core-hours per shedding
+  cycle against about 1058 and 676 inferred for two wall-resolved LES (as
+  they cite them; Table V). Results are on the
+  [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md) page.
 - **Where WMLES is not used.** In turbomachinery, [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md)
   (§2.2.1) present WMLES, after Bose & Park, as the answer to the cost of LES
   for wall-driven flows, but add that LES "might still require quasi-DNS
@@ -1481,6 +1617,19 @@ implicit-LES coupling.
   of their Table 5 ($\Delta y^+=30$–150, $\Delta x^+=100$–600,
   $\Delta z^+=100$–300); the maxima (66, 64; 300, 195) lie inside. The paper does not
   say whether the ranges are meant as upper limits only.
+- **Printed items of Xiao et al. (2025).** §4.3 says the 13 grids are
+  generated "through uniform refinement in all three directions", while
+  Table 4 keeps $N_y=256$ from the $1024\times256\times384$ to the
+  $1536\times256\times576$ grid; the Fig. 11 caption states both DNS and
+  per-simulation wall-unit normalization; §4.2 summarizes the dynamic
+  model's wall-resolved $C_f$ errors as "less than approximately 3%" against
+  a largest $-3.22$ % in Table 3.
+- **Printed items of Wang et al. (2024d).** The abstract has the
+  diffusive interface "underestimating the wall shear stress" in internal
+  flow, §III A an over-estimated friction velocity; §III C calls the
+  sharp-interface Ahmed drag 0.296 "slightly smaller than the experimental
+  data", 0.279 in their Table I; the table labels the WMLES of Cai et al.
+  "Cui et al." and a DES variant "IDES" where the text has IDDES.
 - Locators of Mukha et al. (2025) refer to the arXiv v1 preprint read
   (two authors; the Physics of Fluids version lists three). Their Fig. 10
   legend labels the meshes M0–M2 where text and Table IV use M1–M3.
@@ -1551,3 +1700,9 @@ implicit-LES coupling.
 - [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.5; §3.1; §5 (history).
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — §3.3, Figs. 13–16 (ODT as a near-wall LES closure).
 - [Wu et al. (2024)](/sources/wu-2024.md) — §1 (passing).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1.4–2.4.1.5; §5 (definition, comparison with hybrid RANS/LES, missing guidelines; survey).
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §2.1.1; §4 (IDDES WMLES branch; "wall-modeled ILES" in high-order DG).
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §2.1–2.2; §3.2, Fig. 2; §4.2–4.4, Tables 3–5, Figs. 6–16; §5.
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — §I; §II C–D, Fig. 1; §III A–D, Table I, Figs. 2–15; §IV; App. B–C.
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §1; §2.3–2.4; §3.2–3.4, Figs. 5, 12–13; §4; §5.
+- [Yan et al. (2024)](/sources/yan-2024.md) — §II C; §III A–C, Table V.

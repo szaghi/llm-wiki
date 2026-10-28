@@ -5,7 +5,7 @@ description: "Actuator line and actuator disk models replace rotor blades in an 
 status: established
 aliases: [actuator line model, ALM, actuator line method, filtered actuator line model, F-ALM, actuator disk model, actuator disc model, ADM, filtered actuator disk model, actuator-line tower model, actuator surface method]
 tags: [les, implicit-les, wmles, numerical-dissipation, software]
-timestamp: 2026-10-28T06:44:00Z
+timestamp: 2026-10-28T12:23:00Z
 ---
 
 # Actuator line and actuator disk models
@@ -312,6 +312,14 @@ Zhang et al. attribute the underpredicted streamwise turbulence intensity in
 the recirculating wake of the bare steep hill to the equilibrium log-law
 wall model (§III A, Fig. 4b).
 
+**Actuator lines in a high-order code.** The PyFR v2.0.3 release paper
+lists flow over wind turbines among the code's applications and cites an
+actuator-line model for wind-turbine wake prediction implemented in
+[PyFR](/software/pyfr.md) and a related wake study (refs. [51], [52] of
+[Witherden et al. (2025)](/sources/witherden-2025.md), §4); the paper
+itself prints no actuator formulation or result, so the high-order
+flux-reconstruction host is recorded here only as a reported use.
+
 ## Qualifications
 
 - **One operating point, laminar inflow.** Stanly et al.'s 1% power error
@@ -365,3 +373,4 @@ wall model (§III A, Fig. 4b).
 - [Stanly et al. (2022)](/sources/stanly-2022.md) — §1 (variants, actuator disc and surface, tip corrections); §2.1 (MIRACLES implicit LES); §2.2, Algorithm 1, Eqs. (10)–(16) (actuator line); §2.3, Eqs. (17)–(18) (actuator-line tower); §3–3.2, Algorithm 2, Eqs. (19)–(21), Figs. 2–3 (kernel width, F-ALM); §4.2, Table 1, Fig. 6 (translating wing); §4.3, Algorithm 3, Figs. 7–8 (parallel F-ALM); §5–5.3, Tables 2–7, Figs. 12–17 (NREL Phase VI: grid study, flow fields, loads, power, cost); §6.
 - [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A–B, Eqs. (1)–(11) (LESGO, Smagorinsky with wall damping, log-law wall stress, immersed-boundary terrain, filtered actuator disk, grid); §III A, Fig. 4 (hill validation, wall-model attribution); §III B–C, Eq. (19), Figs. 7–11 (wakes, power estimate without a turbine); App. A, Table I (grid study).
 - [Taschner et al. (2024)](/sources/taschner-2024.md) — §1; §2.1, Eqs. (1)–(4) (GRASP, Smagorinsky); §2.3, Eqs. (5)–(20), Fig. 1 (actuator line, Gaussian projection, filtered line with force and velocity points, under-relaxation); §3.1–3.3, Tables 1–3; §4.1, Figs. 2–6 (cross-verification against four LES codes, wake transition, fringe); §4.2, Figs. 8–9 (translating wing); §4.3, Table 4, Figs. 11–13 (NREL 5-MW, power and thrust, wake transition); App. A, Algorithm 1; App. B, Fig. B1 (GPU performance); App. C, Fig. C2 (actuator-point convergence).
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §4, refs. [51]–[52] (actuator-line wind-turbine wakes run with PyFR, cited only).

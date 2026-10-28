@@ -5,7 +5,7 @@ description: "Closures whose model terms are explicit algebraic expressions foun
 status: established
 aliases: [symbolic regression, PySR, SBL-SpaRTA, SR-CLS, SR-CND, deep symbolic regression, DSR, gene-expression programming, GEP, sparse regression, SpaRTA, explicit algebraic closure discovery, DSRRANS, relevance vector machine, RVM, NGM4, NGM6, equation discovery]
 tags: [symbolic-regression, rans, les, sgs-model, data-driven, separated-flow]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T17:01:00Z
 ---
 
 # Symbolic-regression turbulence closures
@@ -615,7 +615,10 @@ reacting LES, both trained a priori on filtered DNS of flames:
 Both searches thus land on the gradient model, as the relevance-vector
 search of Jakhar et al. (2026) does for incompressible turbulence
 (section above). The review states these results without numbers of its
-own. [Shan et al. (2023)](/sources/shan-2023.md) (§I) cite
+own. [Le et al. (2024)](/sources/le-2024.md) (§3.3(4), p. 20) cite
+Schoepplein et al. for gene-expression programming that optimizes the
+scalar coefficients of basis functions for subgrid stresses in
+premixed-flame LES, without results. [Shan et al. (2023)](/sources/shan-2023.md) (§I) cite
 gene-expression programming in passing, among the nonlinear alternatives
 to the eddy-viscosity closure they keep.
 
@@ -648,6 +651,27 @@ base for later ones (§1, §3.2):
 The paper itself calibrates its constants by hand on the
 [ERCOFTAC T3 flat plates](/benchmarks/ercoftac-t3-flat-plate.md) and does
 not report a learned expression.
+
+## Pointers in Fang et al. (2026) and Wang et al. (2024b)
+
+- **A symbolic SST enhancement and parsimony (Fang et al. 2026).**
+  [Fang et al. (2026)](/sources/fang-2026.md) (§5.2) cite Wu & Zhang's
+  symbolic-regression enhancement of the
+  [SST model](/methods/k-omega-sst-model.md) (Phys. Rev. Fluids, 2023, a
+  work distinct from the Wu et al. (2025) inversion above) as physically
+  constrained symbolic regression whose closures "preserve invariance
+  properties, remain analytically tractable, and generalize well across
+  flow configurations", and argue from Rudin and from Kutz & Brunton (as
+  cited) that interpretable models "are often sparse, structured, and
+  constrained by domain knowledge". The generalization claim is the
+  cited authors'; the review reports no test. Duraisamy (2021, §VII)
+  states above that interpretability does not by itself bring
+  generalization.
+- **Gene-expression programming for the Taylor–Green vortex.**
+  [Wang et al. (2024b)](/sources/wang-2024-i.md) (§I, ref. 27) list among
+  earlier Taylor–Green-vortex studies the a posteriori LES modelling of
+  that flow by gene-expression programming (Reissmann et al., as cited);
+  see [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md).
 
 ## Qualifications
 
@@ -749,6 +773,10 @@ not report a learned expression.
   that of the same production model at every other $\lambda$
   (0.0358–0.0364); the text cites the SpaRTA models as Schmelzer et al.
   (2020b), the captions and App. B as (2020a).
+- **Attribution in Fang et al. (2026).** The parsimony argument is
+  credited in the text to "Zhang and Ma [201]"; the printed reference
+  [201] is Kutz & Brunton (2022), "Parsimony as the ultimate regularizer
+  for physics-informed machine learning".
 - **Sandberg & Zhao (2022)** present no new closure; the GEP results
   above are those of the cited works, mostly the authors' group.
 - **Symbol clashes in the source.** $\varepsilon$ is both the dissipation
@@ -772,3 +800,6 @@ not report a learned expression.
 - [He et al. (2022)](/sources/he-2022-b.md) — §1 (GEP and sparse regression as explainable alternatives, in passing).
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.4, Eq. 74, Fig. 30 (GEP and sparse symbolic regression of reacting-flow subgrid stresses, both reviewed; Clark-like results).
 - [Shan et al. (2023)](/sources/shan-2023.md) — §I (gene-expression programming cited, in passing).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §5.2 (symbolic-regression SST enhancement of Wu & Zhang, parsimony; refs. [136], [201], [202]).
+- [Le et al. (2024)](/sources/le-2024.md) — §3.3(4), p. 20 (GEP for premixed-flame subgrid stresses, cited).
+- [Wang et al. (2024b)](/sources/wang-2024-i.md) — §I, ref. 27 (GEP a posteriori LES of the Taylor–Green vortex, cited).

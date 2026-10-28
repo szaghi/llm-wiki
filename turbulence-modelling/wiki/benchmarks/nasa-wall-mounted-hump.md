@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "NASA wall-mounted hump"
-description: "The NASA wall-mounted hump at chord Reynolds number 936,000 and Mach 0.1, a separation behind a two-dimensional bump whose measured reattachment the sources print at 1.10 or 1.15 chords: a training case of field inversion and symbolic regression, an unseen test of blended RANS corrections, and a test of hybrid RANS/LES and nonequilibrium wall models."
+description: "The NASA wall-mounted hump at chord Reynolds number 936,000 and Mach 0.1, a separation behind a two-dimensional bump whose measured reattachment the sources print at 1.10 or 1.15 chords: a training case of field inversion and symbolic regression, an unseen test of blended RANS corrections and of recalibrated Spalart–Allmaras constants, and a test of hybrid RANS/LES and nonequilibrium wall models."
 status: established
 aliases: [wall-mounted hump, NASA hump, WMH]
 tags: [benchmark, separated-flow, rans, field-inversion, data-driven, hybrid-rans-les, wmles]
-timestamp: 2026-10-28T06:48:00Z
+timestamp: 2026-10-28T12:25:00Z
 ---
 
 # NASA wall-mounted hump
@@ -121,6 +121,26 @@ tend to 1/3, which the authors read as insensitivity of that region to the
 turbulence model (Fig. 12d). In latent projections of the features the hump
 lies mostly inside the training region (§5.1, Fig. 10).
 
+**Spalart–Allmaras in finite volume and high-order DG, with recalibrated
+constants.** [An et al. (2025)](/sources/an-2025.md), §4.3, Table 7,
+Figs. 25–27, run the hump at $M=0.1$, $Re_c=9.36\times10^5$, as a
+validation flow of the constant set they obtained by
+[Bayesian calibration](/methods/bayesian-closure-calibration.md) on the
+[backward-facing step](/benchmarks/backward-facing-step.md) and the
+[Gaussian bump](/benchmarks/gaussian-bump.md): two-dimensional steady RANS
+with the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md) in
+second-order finite volume (CFL3D, $409\times109$, $y^+\approx1$, the grid
+size Oulghelou et al. print) and in the authors' third-order
+discontinuous Galerkin solver ($211\times61$, $y^+\approx5$), against the
+experiment of Greenblatt et al. (part 2, as cited). With the standard
+constants the DG skin friction is already better than the finite-volume
+one and captures the bubble size and reattachment "aligning closely with
+experimental measurements" despite discrepancies at the peaks, while its
+$C_p$ errors are "marginally larger"; the recalibrated constants give
+"limited improvements" overall, the DG run improving $C_p$ at the crest
+transitions and in the separation. No separation or reattachment value is
+printed, so the run cannot be placed in the tables of this page.
+
 **Hybrid RANS/LES and wall-modelled LES compared.**
 [Heinz (2020)](/sources/heinz-2020.md), §5.2, Table 3, Figs. 10–11,
 compiles reattachment predictions against the experimental value
@@ -232,3 +252,4 @@ non-baseline experts; see
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §I; §VI 1f (cited as a resolution reference and recommended case; not run).
 - [Hu et al. (2024)](/sources/hu-2024.md) — §1; §2 (cited grid-convergence study of Park; not run).
 - [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §1 (cited; not run).
+- [An et al. (2025)](/sources/an-2025.md) — §4.3, Table 7, Figs. 25–27.

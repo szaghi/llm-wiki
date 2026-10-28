@@ -5,7 +5,7 @@ description: "FLEXI is an open-source high-order DGSEM framework for compressibl
 status: established
 aliases: [FLEXI framework, HOPR, POSTI]
 tags: [software, dg, les, kinetic-energy-preserving, reinforcement-learning]
-timestamp: 2026-10-28T02:13:00Z
+timestamp: 2026-10-28T12:27:00Z
 ---
 
 # FLEXI
@@ -207,6 +207,11 @@ and super-samples high-order data to linear output (Krais et al. 2021, §2.3,
   sharpest shocks of all codes, matching the reference Mach profile at
   $256^3$ and oscillating below (§IV.A–B, Figs. 6–8; see
   [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)).
+  [Witherden et al. (2025)](/sources/witherden-2025.md), §5.1, Fig. 12,
+  Table 1, list the same FLEXI runs (nodal DG, order 4, subcell finite
+  volumes) among the comparators of [PyFR](/software/pyfr.md) with entropy
+  filtering, and find PyFR's dilatational dissipation closer to the
+  $2048^3$ reference at equal resolution and order.
 - **Oblique shock / turbulent boundary-layer interaction** with
   wall-resolved [implicit LES](/definitions/implicit-les.md)
   ([Gao et al. 2022](/sources/gao-2022.md); University of Stuttgart): split-form DGSEM on LGL nodes
@@ -353,3 +358,4 @@ Flad & Gassner (2017) ran their study of kinetic-energy-preserving DG LES in an
 - [Gao et al. (2022)](/sources/gao-2022.md) — §1, §3.1 (FLEXI DGSEM, implicit LES); §3.2 (subcell scheme, positivity limiter, filtered indicator); §4.2 (laminar interaction cost); §5.1–5.3, Eq. (19), Tables 1–2 (set-up, PID, cost, separation).
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §1, §3.1 (GALÆXI as a FLEXI port, MPI strategy); §4.4 (CPU optimum per core); §5.2 (identical Taylor–Green results); §6.3, Table 3 (Rotor 37 CPU reference, energy).
 - [Gao et al. (2023)](/sources/gao-2023.md) — §1, §3.1–3.3 (split-form ALE DGSEM in FLEXI, confined adaptive filter, beam solver, coupling, mesh motion); §5.1–5.4, Table 4, Eq. (68) (set-up, PID, cost, separation and spectra).
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §5.1, Fig. 12, Table 1 (FLEXI among the comparators of entropy-filtered PyFR on the supersonic Taylor–Green vortex).

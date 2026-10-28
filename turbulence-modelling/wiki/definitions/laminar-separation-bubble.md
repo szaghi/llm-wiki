@@ -5,7 +5,7 @@ description: "A closed region of reversed flow formed when a laminar boundary la
 status: established
 aliases: [LSB, separation-induced transition, laminar separation, transitional separation bubble]
 tags: [transition, separated-flow, boundary-layer, rans, implicit-les, turbomachinery]
-timestamp: 2026-10-28T06:46:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Laminar separation bubble
@@ -354,6 +354,37 @@ larger than at the other Reynolds numbers, and the return to symmetry in
 the super-critical regime (§3.2.2, Figs. 6, 8). See
 [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md).
 
+**Bubbles and leading-edge vortex separation on swept wings.**
+[Luckring & Rizzi (2024)](/sources/luckring-2024.md) place the bubble at
+the origin of vortex separation from blunt (rounded) leading edges
+(§2.3.1.2, Figs. 28–29). Their summary of Polhamus' separation classes:
+a laminar bubble that contracts with incidence, and a turbulent
+reseparation that forms an expanding long bubble and ends in abrupt stall;
+on a swept wing the spanwise pressure gradient adds swirl to the separated
+region, which can then form a leading-edge vortex. Of Poll's three
+formation mechanisms they report, two start from a short bubble: a
+part-span vortex where the shear layer reattaches inboard as a short
+bubble but not outboard, and a part-span vortex where the flow downstream
+of a short bubble leaves the surface along a line of turbulent
+reseparation. On Poll's $56^\circ$ swept wing (aspect ratio 2.68,
+leading-edge radius 1.2% of the chord, $M=0.1$), raising the Reynolds
+number from $1.4\times10^6$ to $2.7\times10^6$ replaced the full-span
+vortex by attached flow with a short bubble near midspan, and $1^\circ$
+more incidence then produced part-span swirling flow. The "incipient
+separation region" ahead of vortex onset on blunt-edged delta and diamond
+wings resembles Polhamus' long bubble (§3.1.1.2). With free transition
+(SST $\gamma$-$Re_\theta$ in the DLR TAU code) Buzica and Breitsamter, as
+the survey reports them, found a laminar separation bubble upstream of the
+incipient separation on the $53^\circ$ AVT-183 diamond wing ($M=0.15$,
+mean-aerodynamic-chord Reynolds number $2.7\times10^6$, $\alpha=12^\circ$),
+with the whole blunt-edge structure shifted upstream; the survey states
+that these results "demonstrate the importance of tripping the
+leading-edge flow to approximate fully turbulent separation at subscale
+Reynolds number conditions" (§3.1.1.2, Figs. 63–64). The high-order wall-resolved LES of finite swept
+wings cited there capture the bubble, its bursting and the subsequent
+dynamic wing stall (Fig. 65; see [dynamic stall](/definitions/dynamic-stall.md)
+and [delta-wing vortex flow](/benchmarks/delta-wing-vortex-flow.md)).
+
 ## Resolution in scale-resolving simulation
 
 Wall-resolved LES resolves the bubble directly but is sensitive to
@@ -520,3 +551,4 @@ surfaces (§5.1, Figs. 9–12); details on
 - [Ims & Wang (2023)](/sources/ims-2023.md) — §5.1 Figs. 9–12, §5.2.
 - [Vermeire (2024)](/sources/vermeire-2024.md) — §4.3, Figs. 20–21, Table 3 (SD7003 bubble against polynomial degree in EDAC flux-reconstruction implicit LES); §5; Eqs. (23)–(24).
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.2, §3.3, Fig. 23, §4 (bubble on the MD-30P30N at $8^\circ$ in SATES-σ).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.3.1.2, Figs. 28–29; §3.1.1.2, Figs. 63–65 (bubbles at the origin of blunt-leading-edge vortex separation, as a survey of cited work).

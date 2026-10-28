@@ -167,3 +167,4 @@ Chunk 5 (2026-10-26), cited further in chunks 7, 8, 12. This source is cited on:
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)
 - [hpMusic](/software/hpmusic.md)
+- [PyFR](/software/pyfr.md)

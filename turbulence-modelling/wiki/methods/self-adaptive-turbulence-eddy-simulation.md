@@ -5,7 +5,7 @@ description: "SATES, the unified URANS–LES–DNS model of Han and coworkers fo
 status: established
 aliases: [SATES, very-large eddy simulation, VLES (Han et al.), SATES-SM, SATES-σ, SATES-sigma, self-adaptive turbulence eddy simulation]
 tags: [hybrid-rans-les, rans, eddy-viscosity, separated-flow, numerical-dissipation]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T17:01:00Z
 ---
 
 # Self-adaptive turbulence eddy simulation (SATES)
@@ -58,7 +58,14 @@ resembles" that ratio (§2.1, Eq. 5). Three operating modes follow (Wu et al.
 | $L_c\to0$ | $\to0$ | DNS |
 
 Wu et al. (2024) note that Han et al.'s formulation has three length scales,
-against two in Speziale's VLES (§2.1).
+against two in Speziale's VLES (§2.1). Wu et al. (2024b) print Speziale's
+form, $\tau^{\mathrm{VLES}}_{ij}=[1-\exp(-\beta_F\Delta/L_k)]^{n_F}\tau^{\mathrm{RANS}}_{ij}$
+(Eq. 40, their notation for the modelled stress), and state that it
+"would over-damp the Reynolds stress", can hardly return to URANS unless the
+mesh is "unreasonably coarse", and tends to RANS behaviour as $Re\to\infty$
+($L_k\to0$); SATES instead "tends to the adaptive equilibrium state",
+because damping the modelled stress lowers $L_i$, which raises $F_r$ and
+counteracts the damping (§III.B).
 
 ### SATES-SM: constant cut-off coefficient
 
@@ -71,6 +78,25 @@ calibrated so that the model is "identical to the Smagorinsky-type LES model
 when $L_c=L_i$" (Wu et al. 2024, §2.2, Eq. 7; Wu et al. 2023, Eq. 7, Table 1;
 $\sqrt{0.3}\times0.1/0.09=0.609$ *(compiler check, not in the sources)*). Wu
 et al. (2024) call this version SATES-SM.
+
+[Wu et al. (2024b)](/sources/wu-2024-b.md) print the derivation behind this
+calibration (§III.A, Eqs. 28–38). With a Kolmogorov spectrum above the cut-off
+$k_c=\pi/\Delta$ they write a filtered eddy viscosity
+$\mu_{t,\Delta}$ (page-local) as the product of the subfilter velocity and
+length, and define the filtered ratio
+
+$$F_{r,\Delta}=\frac{L_c}{L_i}=\frac{C_x\Delta\,\varepsilon}{k^{3/2}},\qquad \mu_{t,\Delta}=F_{r,\Delta}\,\mu_{\mathrm{RANS}}=\rho C_\mu C_x\Delta\sqrt k$$
+
+(Eqs. 33–34; $\mu_{\mathrm{RANS}}=\rho k/\omega$ the BSL eddy viscosity). Under
+production–dissipation equilibrium, $\mu_{t,\Delta}\lvert S\rvert^2=\rho\varepsilon$,
+and a shear-flow relation between $k$, $\lvert S\rvert$ and $\varepsilon$
+with the constant 0.3, the model equals the Smagorinsky form
+$\mu_{t,\Delta}=\rho(C_s\Delta)^2\lvert S\rvert$ with
+$C_x=\sqrt{0.3}\,C_s/C_\mu$ (Eqs. 35–38); the relation above prints
+$\beta^*$ in the place of $C_\mu$; $C_s=0.1$ is chosen from the typical range 0.08–0.22
+(as cited). Expanding the exponentials of $F_r$ for fine grids gives
+$F_r\to(L_c/L_i)^{n_F}$ (Eq. 43), from which the authors conclude that "the
+SATES guarantees correct LES mode whereas the VLES fails" (§III.B).
 
 ### SATES-σ: sigma-model weighting of the cut-off
 
@@ -144,6 +170,31 @@ result sensitive to the scheme's [numerical dissipation](/properties/numerical-d
 Time integration is second-order backward differentiation with implicit
 LU-SGS sub-iterations, and the runs start from steady RANS fields (Wu et al.
 2024, §2.4).
+
+Wu et al. (2024b) move SATES to the fifth-order WCNS (sixth-order explicit
+flux difference, three third-order interpolation candidates) and study the
+nonlinear weights of its interpolation in the same PHengLEI dual-time setting
+(§II, §IV.C). The TENO-type sharp cut-off of the weights, they argue, makes
+the weights discontinuous for marginally resolved turbulence, which "would
+lead to numerical instability or bad convergence in the SATES simulation"
+(§I); they replace it by a smooth $\tanh$ cut-off (details on the
+[WCNS page](/methods/weighted-compact-nonlinear-scheme.md)). In SATES runs of
+the modified BANC-III 30P30N (about 27 M cells) and of the Herrin–Dutton
+supersonic axisymmetric base flow ($M_\infty=2.46$, about 7 M and 42 M cells):
+
+- Jiang–Shu weights are over-dissipative: they suppress the Kelvin–Helmholtz
+  instability of the slat-cove and base shear layers and give the largest
+  $C_p$ deviation, mostly on the flap (§IV.C, Figs. 7–8, 12);
+- the sub-iteration residual of the base flow falls by about one order with
+  the sharp TENO cut-off, three with the smooth one and two with its
+  adaptive form (Fig. 13); the smooth form predicts the slat-cove vorticity
+  and the base-flow TKE peaks better than the sharp one, which the authors
+  attribute "largely" to the better sub-iteration convergence (Figs. 10, 14);
+- on the coarse base-flow grid the adaptive smooth form gives the best TKE
+  profiles against experiment, the fine-grid reference being Jiang–Shu
+  weights on 42 M cells (Fig. 14);
+- the TENO-type weights cost 1.51 to 1.68 times the CPU hours of Jiang–Shu
+  weights, Z-type weights 1.02 to 1.03 times (Table I).
 
 ## Results
 
@@ -227,8 +278,21 @@ attribute to free-air simulation against wind-tunnel blockage (§3.3).
   Fig. 1 writes the integrals as $\int E(L)\,dL$ and Eq. 5 as
   $\int E(k)\,dk$ with length-scale limits (details on the
   [hybrid RANS/LES](/definitions/hybrid-rans-les.md) page).
+- Wu et al. (2024b) state that the fine-grid limit $(L_c/L_i)^{n_F}$ with
+  $n_F=2$ "approaches the form in the filtered URANS computation as shown in
+  Eq. (33)", where $F_{r,\Delta}=L_c/L_i$ carries the first power; and they
+  define $L_c=\tfrac14\gamma_{\mathrm a}\Delta$ and
+  $L_i=\mu_{\mathrm{RANS}}/(\rho\sqrt{2k/3})$ in Eq. 32 (with an anisotropy
+  factor, here $\gamma_{\mathrm a}$, page-local) but $L_c=C_x\Delta$,
+  $L_i=k^{3/2}/\varepsilon$ in Eq. 42, the constants being absorbed in $C_x$.
+  Their printed shear-flow relation "$\langle uv\rangle\approx0.3k|S|=\varepsilon$"
+  (Eq. 36) equates quantities of different dimensions (velocity squared,
+  velocity squared per time) *(compiler check, not in the sources)*. Their
+  heat flux multiplies the effective viscosity by a single $Pr$, with no
+  turbulent Prandtl number stated (Eq. 4).
 
 # Citations
 
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §1 (DES deficiencies, bridging methods); §2.1.1, Eqs. (1)–(7), Table 1, Fig. 1 (SATES formulation, renaming from VLES); §2.2 (WCNS, blended scheme); §3.2–§3.4, Table 2, Figs. 6–25 (30P30N grid, scheme and model comparisons); §4.
 - [Wu et al. (2024)](/sources/wu-2024.md) — §1 (SGS viscosity in boundary layers, DDES after stall); §2.1, Eqs. (1)–(6), Fig. 1 (SATES, three modes, Pope's VLES); §2.2, Eqs. (7)–(11), Table 1 (SATES-SM and SATES-σ); §2.3–§2.4, Eqs. (12)–(17) (WCNS-E-4, MUSCL, time integration, PHengLEI); §3.1 (channel, square cylinder); §3.2, Table 3, Figs. 7–17 (supercritical cylinder); §3.3, Figs. 18–26 (MD-30P30N stall sweep); §4.
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) — §I (sharp TENO cut-off and SATES convergence); §III.A–B, Eqs. (24)–(45) (BSL host model, filtered eddy viscosity, Smagorinsky calibration of $C_x$, Speziale VLES against SATES, fine-grid limit, self-adaptivity); §IV.C, Figs. 7–14, Table I (30P30N and supersonic base flow with fifth-order WCNS weights, sub-iteration convergence, cost).

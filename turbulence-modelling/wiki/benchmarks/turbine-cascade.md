@@ -5,7 +5,7 @@ description: "Linear turbine cascades as transition, loss, vortex and mesh-adapt
 status: established
 aliases: [turbine cascade, linear turbine cascade, LPT cascade, T106A, T106C, T106c, T108, T161, MTU T161, VKI LS89, LS89 vane, Pak-B cascade, Pack B, L2F, tip-leakage turbine cascade, Arts transonic turbine cascade]
 tags: [benchmark, turbomachinery, transition, implicit-les, rans, boundary-layer, des, mesh-adaptation]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-28T12:28:00Z
 ---
 
 # Turbine cascades (T106, T161, VKI LS89)
@@ -107,7 +107,11 @@ and overpredict the peak secondary loss by 34% and 48%; a reduced inflow
 length scale, "common practice", brings the SST midspan loss within 2.7%
 through "a lucky cancellation of errors" with an open separation (§4.1–4.2,
 Figs. 8–10). The authors suggest tuned transition or laminar-kinetic-energy
-models for the midspan transition (§5).
+models for the midspan transition (§5). The release paper of
+[PyFR](/software/pyfr.md), [Witherden et al. (2025)](/sources/witherden-2025.md),
+§4, Fig. 8, shows a DNS of the MTU-T161 blade among the applications of the
+code, as an illustration without data, and names low-pressure-turbine
+cascades among its user community's applications.
 
 **Bypass transition and heat transfer on the transonic vane.** On LS89,
 [Pacciani et al. (2025)](/sources/pacciani-2025.md), §6.1, Figs. 15–16,
@@ -408,3 +412,4 @@ and [grid-point requirements](/results/les-grid-point-requirements.md).
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — review: §2.5, Fig. 8; §4.1; §4.3; §4.4.1–4.4.2, Fig. 10.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — review: §3.1.2, Fig. 1 (spectral gap); §3.2.1–3.2.3, Fig. 4 (inflow turbulence, wakes, shedding, Boussinesq misalignment); §3.3.1, Eq. 1; §3.3.3, Figs. 5–6 (bypass and wake-induced transition); §4.2 (entropy loss on LS89); §4.3, Eq. 2, Fig. 7 (data-driven closures).
 - [Ims & Wang (2023)](/sources/ims-2023.md) — §3–§4 (indicators, marking, constraints); §5.1, Figs. 5–16 (T106c); §5.2, Figs. 18–30 (T106a); §5.2.1, Figs. 31–34 (random refinement); §5.3, §6.
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §4, Fig. 8 (T161 DNS shown as an application; no data).

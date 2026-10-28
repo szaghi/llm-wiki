@@ -5,7 +5,7 @@ description: "The NASA High-Lift Common Research Model (CRM-HL), a half-span tra
 status: established
 aliases: [CRM-HL, HL-CRM, NASA High-Lift Common Research Model, NASA CRM-HL, HLPW-4 CRM-HL, CRM-HL wing-body, HLPW-5 CRM-HL, HLPW-4 case 2]
 tags: [benchmark, wmles, wall-model, rans, des, immersed-boundary, data-driven, mesh-adaptation, dg]
-timestamp: 2026-10-28T07:04:00Z
+timestamp: 2026-10-28T12:28:00Z
 ---
 
 # NASA CRM high-lift configuration
@@ -369,6 +369,20 @@ rolls up the flap flow (§III.D.3), and conclude that IDDES "basically
 satisfies the engineering simulation requirements of aerodynamic load and
 complex vortex system" for this case (§IV).
 
+**The nacelle-strake vortex, as surveyed.** In their survey of
+concentrated-vortex aerodynamics, [Luckring & Rizzi (2024)](/sources/luckring-2024.md)
+cite the HLPW-4 wall-modelled LES of $C_{L,\max}$ as one that "appears to
+be promising" (§2.4.1.4, citing Kiris et al. and Rumsey et al.), and a
+[lattice Boltzmann](/methods/lattice-boltzmann-method.md) simulation of
+the nacelle strake on the CRM-HL by Koklu et al. at $\alpha=16^\circ$,
+$M=0.2$, $Re_{\mathrm{mac}}=3.27\times10^6$ ($Re_{\mathrm{mac}}$
+page-local: on the mean aerodynamic chord), which reports strake-on and
+strake-off effects only (§3.2.2.2, Figs. 78–80). They found no study that
+compares the strength, trajectory or persistence of the strake vortex with
+measurements, and recommend such measurements on this configuration
+(§5); the vortex-flow context is on
+[delta-wing and concentrated vortex flows](/benchmarks/delta-wing-vortex-flow.md).
+
 **Wall-model robustness.** [Nuca et al. (2025)](/sources/nuca-2025.md), §I,
 cite CRM-HL wall-modelled LES among the complex applications that motivate
 their explicit, iteration-free forms of the algebraic and ODE
@@ -459,3 +473,4 @@ two runs.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.3, Figs. 8, 10 (reproduced adaptation study of Michal et al. 2021 on a CRM-HL wing section); §4.5.2 (cited WMLES).
 - [Li et al. (2024b)](/sources/li-2024-f.md) — §I; §II.A–B, Eqs. 1–4; §III.A–D, Table I, Figs. 4–14; §IV.
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (cited flux-reconstruction LES of a CRM; passing mention).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1.4; §3.2.2.2, Figs. 78–80; §5 (survey, cited works).

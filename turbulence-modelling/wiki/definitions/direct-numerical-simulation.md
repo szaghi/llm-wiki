@@ -4,8 +4,8 @@ title: "Direct numerical simulation"
 description: "DNS solves the Navier–Stokes equations with no turbulence model and a grid fine enough for the dissipative range; this page gives its early history, resolution criteria, measured resolutions and cost, the discretizations, GPU codes and floating-point precision used for it, spatially developing boundary layers, weaker variants, looser uses of the term, and its role as reference data."
 status: established
 aliases: [DNS, quasi-DNS, flame-resolved DNS, under-resolved DNS, DNS embedded in LES, downsized DNS, DNS-like simulation, fully resolved simulation with detailed chemistry, surrogate PC DNS, principal-component DNS]
-tags: [dns, les, combustion, boundary-layer, compressible, gpu]
-timestamp: 2026-10-28T07:07:00Z
+tags: [dns, les, combustion, boundary-layer, compressible, gpu, mhd]
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Direct numerical simulation
@@ -190,6 +190,16 @@ $Re_{L_x}^{37/14}$ by
 [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §2.1, for the
 evolving boundary layers of bladed turbomachinery components, where the
 domain must also hold the blade passages and the gaps between rows.
+The capability survey of [Luckring & Rizzi (2024)](/sources/luckring-2024.md),
+§2.4.1.1, writes the DNS grid as $N_x\times N_y\times N_z\propto Re_L^{9/4}$,
+from a ratio of the largest to the Kolmogorov scale growing as
+$Re_L^{3/4}$ per direction, and the cost with the time steps as
+"approximately with the cube of Reynolds number", "virtually impossible
+for flight conditions"; its example is the DNS of a NACA 4412 at $M=0.04$,
+$Re_c=4\times10^5$, $\alpha=5^\circ$ by Hosseini et al. in
+[Nek5000](/software/nek5000.md): about 3.2 billion points, about 35
+million core-hours over about six months for about ten chord lengths of
+advection (Fig. 43; see [NACA 4412](/benchmarks/naca-4412-airfoil.md)).
 
 **Exascale isotropic turbulence.** [Yeung et al. (2025)](/sources/yeung-2025.md)
 reach $Re_\lambda\approx2500$ on a $32\,768^3$ grid with a GPU Fourier
@@ -210,6 +220,41 @@ independent snapshots, and restrict it to dissipation-range statistics. They
 add, citing Yakhot & Sreenivasan, that scales finer than the Kolmogorov
 scale appear more copiously as the Reynolds number grows, which calls for
 better small-scale resolution than is often practised (§1).
+
+**The pseudo-spectral algorithm on an exascale GPU machine.**
+[Yeung et al. (2025b)](/sources/yeung-2025-b.md) describe GESTS, the
+Fortran pseudo-spectral code behind these runs, for incompressible forced
+turbulence in a $2\pi$-periodic cube (§2–§3):
+
+- *algorithm* (Rogallo 1981, as cited): a modified pressure reduces the
+  stored nonlinear terms from six to five; an exact integrating factor
+  treats the viscous term and second-order Runge–Kutta (predictor–corrector)
+  the nonlinear one; aliasing is controlled by phase shifting plus
+  truncation beyond $k_{\max}=\sqrt2N_x/3$; the time step follows a
+  prescribed Courant number below 1 (§3.1, Eqs. 6–8);
+- *memory*: the whole problem stays in GPU memory, inside one OpenMP
+  offload data region; about $(8+2Q_{\mathrm v}+0.5)(N_x^3/2N_{\mathrm{MPI}})\times8/1024^3$ GiB per
+  compute die ($Q_{\mathrm v}$ the variables per all-to-all, $N_{\mathrm{MPI}}$ the ranks; page-local),
+  42 GiB for $2048^3$ on one 8-die node, so that $32\,768^3$ needs at least
+  4096 Frontier nodes (§3.2, Eq. 9); checkpoints hold two velocity
+  components in Fourier space, the third following from continuity
+  (Eq. 12);
+- *parallel layout*: slab (one transpose per 3D transform) or pencil
+  decompositions with GPU-aware MPI all-to-all transposes and 1D rocFFT
+  calls; strided transforms are cheaper overall from $8192^3$ upward once
+  packing is counted (§2.1, Table 1);
+- *performance*: $32\,768^3$ slabs on 4096 nodes take 12.07 s per step, a
+  figure of merit $N_x^3/T=2.91\times10^{12}$ points per second, 6.6 times
+  the $18\,432^3$ Summit record; weak scaling (workload
+  $\propto N_x^3\log_2N_x$) is near 90% or better, strong scaling near 100%
+  at $8192^3$ and $16\,384^3$ but 70–80% at $32\,768^3$ from 4096 to 8192
+  nodes; MPI communication takes about 75% of the time at $8192^3$; the GPU
+  code is about 10 times faster than a CPU pencil code with FFTW (20 times
+  on one node) (§4, Tables 2–7).
+
+The authors state that in GPU codes communication can become "even more
+dominant than for CPU codes", since the flop rate rises by a large factor
+and communication modestly (§4.4, §6).
 
 **Measured resolutions in the sources.**
 
@@ -348,6 +393,30 @@ Steinhausen et al. (2023, §2.1) use an in-house OpenFOAM-based finite-rate
 chemistry solver of fourth order in space with a second-order implicit
 backward time scheme, which they cite as previously validated for
 "DNS-like" simulations against DNS reference cases.
+[Fang et al. (2025)](/sources/fang-2025.md), §2, describe the
+magnetohydrodynamic module of [Xcompact3d](/software/xcompact3d.md), a
+Fortran framework for incompressible DNS: sixth-order
+[compact finite differences](/methods/compact-finite-difference-scheme.md)
+on a Cartesian mesh stretchable in one direction, a direct FFT Poisson
+solver on a half-staggered pressure mesh that keeps the velocity
+divergence-free to machine accuracy, third-order Runge–Kutta, and a 2D
+pencil decomposition. The induction solver advances the magnetic field and
+projects it onto a divergence-free field with a second Poisson equation for
+a "magnetic pressure" (the authors cite Dedner et al.'s divergence
+cleaning; divergence of order $10^{-13}$ after correction); the potential
+solver, for small magnetic Reynolds number, solves one Poisson equation
+for the electric potential. Per step they cost about 1.5 (potential) and
+2.6 (induction) times the hydrodynamic solver on ARCHER2 and do not alter
+its strong scaling to 32,768 cores (§3.5, Table 7). They motivate DNS for
+MHD by the immaturity of MHD turbulence models (§1); the validations are on
+[decaying MHD turbulence](/results/decaying-mhd-turbulence.md),
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) and
+[turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
+[Xiao et al. (2025)](/sources/xiao-2025.md), §1, §3.2, build their LES
+solver [CaLES](/software/cales.md) on the DNS solver CaNS (second-order
+staggered finite differences, FFT-based direct Poisson solver); on one A100
+its DNS of a channel runs 13 times faster than on a 32-core CPU node
+(Fig. 2), and they call DNS prohibitive at high Reynolds number.
 
 **Shock capturing and low-Mach reacting codes.** For the supersonic
 channel and shock-train DNS of Kumar & Ghosh (2022, §2.2, §3.2.1) the
@@ -865,6 +934,20 @@ use or avoid the word in other senses:
   global two-fluid simulations of stellarator edge turbulence with small
   numerical diffusion terms added for stability (p. 4); neither paper calls its
   runs DNS (see [cross-scale interaction](/results/cross-scale-interaction.md)).
+- **Under-resolved DNS as implicit LES.** The release paper of
+  [PyFR](/software/pyfr.md), [Witherden et al. (2025)](/sources/witherden-2025.md),
+  §3.2, writes that the code is often used for under-resolved DNS, "also
+  referred to as ILES", whose aliasing-driven instabilities its four
+  stabilization options address; the same paper shows DNS of a
+  low-pressure-turbine blade and of a Martian-rotorcraft aerofoil as
+  applications (§4, Figs. 8, 10). See
+  [implicit LES](/definitions/implicit-les.md) for sources that separate
+  the two notions.
+- **Too coarse to be DNS.** [Kimmel et al. (2025)](/sources/kimmel-2025.md),
+  §III.A, state the DNS requirement as a first wall-normal point at
+  $y^+\le1$, which isotropic adaptive refinement makes "computationally
+  prohibitive" for their Mach 4 compression ramp; with cells of 11 wall
+  units and no subgrid or wall model they call their runs implicit LES.
 
 ## DNS as reference and test bed
 
@@ -933,6 +1016,29 @@ scheme near the stability limit, whereas in LES temporal errors are "more
 likely overshadowed by spatial errors" (abstract, §4.2–4.3, §5); the
 authors expect their predictions to hold "even if partially" in DNS of
 turbulence without testing one.
+
+**Reacting and canonical DNS in recent reviews and validations.** The
+review of [Salehi et al. (2024)](/sources/salehi-2024.md), §2.1, §3.1–3.2,
+rests the a priori tests of
+[conditional source-term estimation](/methods/conditional-source-term-estimation.md)
+on DNS databases: freely propagating premixed methane flames filtered to
+1024 LES cells at Karlovitz numbers 6 to 4100, high-pressure heptane
+mixing layers and a mixing-layer DNS of Vervisch (see
+[temporal mixing layer](/benchmarks/temporal-mixing-layer.md)); it names the
+presumed joint probability density as "the largest source of error in a
+priori DNS calculations" (§4.1). The review of
+[Le et al. (2024)](/sources/le-2024.md), §3, classes DNS and LES as "not
+suitable to use in engineering applications" because of their cost, and
+cites DNS as training data of learned flame closures (§3.3). [De Cosmo et al. (2025)](/sources/decosmo-2025.md),
+§3.3, validate their implicit LES against the incompressible
+channel DNS of Banchetti et al.
+([turbulent channel flow](/benchmarks/turbulent-channel-flow.md)), and
+[Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md), §3.1–3.2,
+their LES against the isotropic DNS of Samtaney et al. and the channel DNS
+of Lee & Moser and of Modesti & Pirozzoli. [Luckring & Rizzi (2024)](/sources/luckring-2024.md),
+§3.1.2.1, propose vortex breakdown in tubes, with the DNS of shock-induced
+breakdown by Zhang, Zhang & Shu, as a validation forum for wing vortices
+([delta-wing and concentrated vortex flows](/benchmarks/delta-wing-vortex-flow.md)).
 
 **Hypersonic interaction and reacting databases for RANS and LES
 closures.** [Zhang et al. (2024b)](/sources/zhang-2024-b.md), §1, motivate
@@ -1352,6 +1458,25 @@ layers (§7).
   domain as $[40.0,6.0,10.0]\delta_0$ in $(x,y,z)$, while Fig. 2 labels
   $10\delta_0$ wall-normal and $6\delta_0$ spanwise.
 
+- [Yeung et al. (2025b)](/sources/yeung-2025-b.md) print a weak-scaling
+  value WS2 of 98.9% for the 2024 $32\,768^3$ slab run, while their own
+  definition and Table 2 give $11.53\times(15/14)/12.07=102.4\%$; a GPU
+  speed-up of "roughly 33x" for packing and unpacking at $8192^3$, where
+  the two tables give $33.3/0.40=83$; a CPU-to-GPU MPI cost ratio "2.4x" at
+  4096 nodes, where Table 10 gives $2.006/0.771=2.60$; and 8 nodes for the
+  CPU case of $64\times64=4096$ ranks at 64 cores per node, which needs 64
+  nodes (Table 4, Case 6) *(compiler check, not in the sources)*. They report best-of-ten-steps timings under load, which they
+  justify as the attainable performance, and expand GESTS in two ways.
+- [Fang et al. (2025)](/sources/fang-2025.md) attribute their magnetic
+  correction, printed as $\nabla^2\psi=\nabla\cdot\boldsymbol B^*$ and
+  $\boldsymbol B=\boldsymbol B^*-\nabla\psi$ (Eqs. 12–13; $\psi$ their
+  "magnetic pressure", $\boldsymbol B^*$ the field after the time advance,
+  page-local), to "the
+  divergence cleaning technique proposed by Dedner et al.", whose reference
+  title is "Hyperbolic divergence cleaning for the MHD equations".
+  They cite "the classical Kolmogorov K41 scaling [1]" with ref. 1 the
+  1962 refinement paper.
+
 # Citations
 
 - [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.1–2.3 (Corrsin's estimate, Orszag–Patterson, pseudo-spectral method and de-aliasing); §3.3–3.5 (Rogallo, curved and plane channels, Spalart's boundary layer); §4.3, §4.5–4.7 (forcing, compressible DNS, complex flows, numerical lessons); §5 (growth of computing, Frontier).
@@ -1468,3 +1593,13 @@ layers (§7).
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §1.1, Fig. 1 (survey of reacting-flow DNS, data volume).
 - [Chambers et al. (2022)](/sources/chambers-2022.md) — §III C–D (DNS-derived runaway criterion and cited DNS values against experiment).
 - [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §2.2, Fig. 7 (DNS energy budget); §4.4 (smooth-to-rough DNS); §5.1, §5.4 (three-dimensional channel DNS); references [213], [215] (retracted Ekman-layer DNS).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1.1, Fig. 43; §3.1.2.1 (survey, cited works).
+- [Yeung et al. (2025b)](/sources/yeung-2025-b.md) — §1; §2.1–2.4, Table 1; §3.1–3.2, Eqs. 4–12; §4.1–4.4, Tables 2–7; §5; §6.
+- [Fang et al. (2025)](/sources/fang-2025.md) — §1; §2.1–2.3, Eqs. 1–16; §3.5, Table 7, Figs. 16–17.
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §1; §3.2, Fig. 2.
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §3.2; §4, Figs. 8, 10.
+- [Kimmel et al. (2025)](/sources/kimmel-2025.md) — §III.A, Eq. 7.
+- [Salehi et al. (2024)](/sources/salehi-2024.md) — §2.1; §3.1–3.2; §4.1 (review).
+- [Le et al. (2024)](/sources/le-2024.md) — §3; §3.3 (review).
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §3.3.
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §3.1–3.2.

@@ -5,7 +5,7 @@ description: "Artificial-viscosity shock capturing adds a dissipative term, swit
 status: established
 aliases: [artificial viscosity, localized artificial diffusivity, LAD, von Neumann–Richtmyer artificial viscosity, viscous pressure, Persson–Peraire artificial viscosity, entropy-stable artificial viscosity]
 tags: [shock-capturing, numerical-dissipation, dg, compressible, implicit-les, entropy-stable]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T12:24:00Z
 ---
 
 # Artificial-viscosity shock capturing
@@ -411,6 +411,21 @@ Fig. 6). Findings:
   shock capturing has overall "a low impact" on the turbulent scales
   (§IV.B, §V).
 
+**The same comparison against an entropy filter.** In the software paper
+of [PyFR](/software/pyfr.md), [Witherden et al. (2025)](/sources/witherden-2025.md),
+§5.1, Figs. 11–12, Table 1, rerun this case ($16^3$ to $128^3$ hexahedra,
+$N=3$, Gauss–Lobatto points) with positivity-preserving entropy filtering
+instead of artificial viscosity and plot their $\varepsilon_d$ beside the
+data of Chapelier and co-workers: the PyFR profiles are closer to the
+$2048^3$ TENO reference than those of CODA and SD3D (both AV) and FLEXI
+(subcell finite volumes) at equal resolution and order, which the authors
+read as "less shock dissipation" and as evidence that entropy filtering
+"does not introduce excessive numerical dissipation" (the filter is on
+[explicit modal filtering](/methods/explicit-modal-filtering.md)). PyFR
+itself also offers Persson–Peraire-type AV (§3.2), which the authors
+describe as requiring parameterisation and as able to reduce the maximum
+stable explicit time step; they give no results with it.
+
 ## Qualifications
 
 - **Printed slips (Cernetic et al. 2024, arXiv v2).** Eq. (13) prints the
@@ -497,4 +512,5 @@ Fig. 6). Findings:
 - [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.4 (localized artificial diffusivity named, not used; passing).
 - [Kang & Lee (2024)](/sources/kang-2024.md) — §II.B, Eqs. (10)–(14) (Kawai–Lele localized artificial diffusivity in curvilinear compact finite differences, $C_\mu=0.002$, $C_\kappa=0.01$ as printed, truncated Gaussian filter).
 - [Wei et al. (2023)](/sources/wei-2023.md) — §II C, Eqs. (16)–(19) (Ducros-switched AUSM-type diffusion on a split energy-preserving flux).
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §3.2 (Persson–Peraire-type AV in PyFR: parameterised, time-step penalty); §5.1, Figs. 11–12, Table 1 (entropy filtering against the AV and subcell solvers of the supersonic Taylor–Green comparison).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (survey of DG artificial viscosity: Johnson, Persson–Peraire, three axes of extension, preference over limiting in LES, tuning); §7 (parameter dependence).

@@ -5,7 +5,7 @@ description: "The shift, in wall units, between the mean velocity of a wall-mode
 status: established
 aliases: [LLM, log-layer shift, super-buffer layer error]
 tags: [wmles, wall-model, hybrid-rans-les, boundary-layer]
-timestamp: 2026-10-28T07:02:00Z
+timestamp: 2026-10-28T17:02:00Z
 ---
 
 # Log-layer mismatch
@@ -207,6 +207,53 @@ under-resolved first cells of the LES, not to the log law itself.
   maintained near the wall, the skin friction deviates and, in LES, turbulence
   development is "strongly delayed"; they do not use the term log-layer
   mismatch.
+- **The abrupt RANS-to-LES switch of DES.**
+  [Wang et al. (2024c)](/sources/wang-2024-j.md) (§I, §III.B, Fig. 1b) run
+  Spalart–Allmaras-based DES and DDES on the coarsest of three grids
+  ($209\times161\times81$, wall spacing $\Delta y^+_w=0.8$) of a spatially
+  developing Mach 2 boundary layer at $Re_{\delta_0}\approx13\,500$, against a
+  wall-resolved LES on the finest grid that matches the DNS of Pirozzoli
+  et al. (as cited) in van Driest-transformed velocity. Both hybrids show the
+  mismatch and "obviously insufficient" Reynolds stresses, which the authors
+  call "the inherent defect of original DES method and its variants",
+  closely related, like the gray area, to "the abrupt switch between RANS and
+  LES-like computations", and attributed (after the literature they cite)
+  to an unphysical super-buffer layer. Below $y^+=7$ all their LES and hybrid
+  profiles agree with the wall law. Their own SA-based
+  [scale-adaptive simulation](/methods/scale-adaptive-simulation.md), which caps the wall
+  distance by the von Kármán length, gives satisfactory mean velocity on the
+  same grid but under-predicts the stresses below $y^+\approx14$ (Figs. 1b,
+  2b). From the topology of the velocity-gradient invariants and the
+  wall-normal decay of the resolved dissipation they locate a feasible
+  RANS/LES interface in the buffer layer, $7<y^+<15$, recommending
+  $y^+\approx14$ (§III.D–III.E), and propose a dissipation-adaptive length
+  whose interface, evaluated on the three LES fields, concentrates there on
+  all three grids (§III.F,
+  Eq. 40, Fig. 16; see
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+- **A subgrid length that falls too fast in the gray area (DG meshes).**
+  [Alberti et al. (2025)](/sources/alberti-2025-b.md) (§3.1.2, Figs. 9, 12)
+  run Spalart–Allmaras DDES and IDDES in a high-order modal discontinuous
+  Galerkin solver on channel flow at $Re_\tau=5200$ ($8\times12\times4$
+  elements, polynomial degree $N=6$, wall-parallel spacings 583.4 in wall
+  units; all lengths divided by $N+1$). Every variant agrees with the DNS of
+  Lee & Moser (as cited) except standard IDDES, which shows visible
+  mismatch. Its wall-distance-based subgrid length,
+  $\min[\max(C_wd,C_w\Delta_{\max},d_{wn}),\Delta_{\max}]$ (Eq. 13; page-local
+  symbols as in the table below, $C_w$ not printed), is very small in the
+  RANS–LES transition and weakens the solution-dependent shielding, which the
+  grid-based IDDES blending does not compensate on this mesh. The authors
+  attribute the failure to the finite-volume design of that length: DG
+  meshes need faster wall-normal growth to offset the uniform spacing of the
+  degrees of freedom inside each element, which gives the length a
+  "staircase progression" (§3.1.2). On the same mesh the length of Reddy
+  et al. (as cited), $\Delta_{\mathrm{llm}}=f_d\Delta_{\mathrm{vol}}+(1-f_d)\Delta_{\max}$
+  with $\Delta_{\mathrm{vol}}$ the cube root of the cell volume (Eq. 17;
+  page-local), shows no mismatch, and at $Re_\tau=400$ it also closes the
+  gap with DNS that $\Delta_{\max}$ leaves in DDES, where too much eddy
+  viscosity in the gray area lifts $u^+$ (§3.1.1, Figs. 2, 4, 6). They
+  report that on fine grids the high-order solver behaves "more like a
+  wall-modeled ILES rather than a simple WMLES" (§4).
 - **SGS-dominated stress at the first off-wall points (disputed).**
   [Mukha et al. (2025)](/sources/mukha-2025.md) (§II.D, §III.B.2, §III.C)
   cite the framework of Brasseur & Wei, in which an SGS model introduces a
@@ -246,6 +293,8 @@ under-resolved first cells of the LES, not to the log law itself.
 | Modified damping in the wall model | van Noordt et al. (2022, §1) cite Chen et al., who removed the mismatch of a compressible equilibrium wall model with a modified damping function |
 | Near-wall eddy viscosity that enforces the total (modelled plus resolved) stress of a mixing-length RANS model, "several grid points from wall" (constrained LES) | Cai et al. (2022, §II.C.1, Eq. 27) at an immersed boundary; the mean velocity in the log layer is not shown, so its effect on mismatch is not reported (see [wall-modelled LES](/methods/wall-modelled-les.md)) |
 | Active forcing of resolved fluctuations at the rate the modelled stress is reduced | [active model split](/methods/active-model-split.md): Haering et al. (2022, §V.A.1) report no LLM in channel flow at $Re_\tau\approx5200$ on four grids with $\Delta x^+\approx700$–$1550$ |
+| Subgrid length that blends the cube root of the cell volume outside the shielded layer with the largest cell dimension inside it ($\Delta_{\mathrm{llm}}$ of Reddy et al.) in place of the IDDES length, with lengths divided by $N+1$ in a DG solver | [Alberti et al. (2025)](/sources/alberti-2025-b.md) (§2.1.2, §2.3, §3.1, Eq. 17, Figs. 6, 9): no mismatch in SA-DDES/IDDES channel flow at $Re_\tau=5200$, where standard IDDES shows one (above); the normalization $N+1$ is preferred to $N$ and to the cube root of the number of modes (Table 1) |
+| RANS/LES interface placed in the buffer layer, $y^+\approx14$, by a von Kármán length constrained with the DDES shielding function | [Wang et al. (2024c)](/sources/wang-2024-j.md) (§III.D–III.F, Eq. 40): proposed from wall-resolved LES of a Mach 2 boundary layer; the a posteriori coarse-grid run raises the inner-layer stresses (Fig. 2b), and the paper does not state explicitly that this run uses Eq. (40) |
 | Grid spacing below about $0.4\,h_{\mathrm{wm}}$, the same bound that marks the onset of grid convergence of the wall stress | [Hu et al. (2024)](/sources/hu-2024.md) (§3, §6.1) cite Kawai & Larsson's remedy as avoiding wall-adjacent information, with "$C$ less than one" for $C=\Delta/h_{\mathrm{wm}}$, a couple of LES cells below $h_{\mathrm{wm}}$, $h_{\mathrm{wm}}$ typically about 10% of $\delta$, and $C=0.2\sim0.3$ ("about three LES grid cells in the wall-modeled region") in many reported WMLES; in three attached flows with an algebraic equilibrium model they find wall-stress convergence requires $\Delta/h_{\mathrm{wm}}<0.4$, "comparable to the condition to avoid the log-layer mismatch problem" (see [wall-modelled LES](/methods/wall-modelled-les.md)) |
 
 ## First-point matching without mismatch
@@ -320,9 +369,9 @@ in their own solver with $h_{\mathrm{wm}}=2\Delta y$, a matching height several
 times larger in wall units at each common $Re_\tau$ ($dz=\delta/(N_z-1)$
 on LESGO grids of $24^3$–$72^3$, about $0.014\delta$–$0.043\delta$, against
 $0.1\delta$) *(compiler check, not in the sources)*; Vadrot et al. attribute
-the difference mainly to grid resolution. The comparison is a qualification
+the difference mainly to grid resolution. The comparison is also recorded
 on the [machine-learning wall models](/methods/machine-learning-wall-model.md)
-page, not a contradiction.
+page.
 
 [Vadrot et al. (2023a)](/sources/vadrot-2023.md) retrain BK22 themselves in
 LESGO at $Re_\tau=10^4$ ($48^3$ half-channel grid, $h_{\mathrm{wm}}=\Delta y$):
@@ -421,3 +470,5 @@ geometry at lower Reynolds number.
 - [Mays et al. (2023)](/sources/mays-2023.md) — §3.1.1; §3.2.2; §4 (SRH shielding and mismatch in channel flow, Manceau 2018 as cited).
 - [Hu et al. (2024)](/sources/hu-2024.md) — §1; §3; §6.1 (convergence bound $\Delta/h_{\mathrm{wm}}<0.4$ compared with the mismatch condition).
 - [Li et al. (2024b)](/sources/li-2024-f.md) — §II.B.2, Eq. (4) (IDDES chosen to avoid GIS and LLM; passing).
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) — §I; §III.B, Figs. 1–2 (DES/DDES mismatch in a Mach 2 boundary layer); §III.D–III.F, Eq. (40), Fig. 16 (buffer-layer interface).
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §2.1.2, Eqs. (13), (17); §2.3, Table 1; §3.1.1–3.1.2, Figs. 2, 4, 6, 9, 12; §4 (IDDES mismatch in DG at $Re_\tau=5200$).

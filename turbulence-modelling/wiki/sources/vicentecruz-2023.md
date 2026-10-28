@@ -127,7 +127,7 @@ under Printed slips; none is unparseable and no printed duplicate was found.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2, 3, 6. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 3, 6, 14. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
@@ -139,6 +139,7 @@ Chunk 1 (2026-10-25), cited further in chunks 2, 3, 6. This source is cited on:
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)
+- [Compact finite-difference schemes](/methods/compact-finite-difference-scheme.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Immersed boundary methods](/methods/immersed-boundary-method.md)
 - [Scale-similarity and mixed subgrid-scale models](/methods/scale-similarity-model.md)
@@ -149,3 +150,4 @@ Chunk 1 (2026-10-25), cited further in chunks 2, 3, 6. This source is cited on:
 - [Kinetic-energy preservation and split forms](/properties/kinetic-energy-preservation.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)
+- [Xcompact3d](/software/xcompact3d.md)

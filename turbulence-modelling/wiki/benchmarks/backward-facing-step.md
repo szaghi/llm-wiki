@@ -5,7 +5,7 @@ description: "Turbulent flow over a sudden expansion with fixed separation at th
 status: established
 aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step, Driver–Seegmiller step, A3C step, curved backward-facing step, CBFS]
 tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification, field-inversion, rans, dg, lattice-boltzmann, spectral-element]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Backward-facing step
@@ -160,6 +160,50 @@ by different model parameters (§3.3). On the same step
 skin-friction and profile agreement with their wall function at all
 degrees $N=1$–6 for $y_1^+\le80$, and print no reattachment length.
 
+**Bayesian calibration of Spalart–Allmaras constants on the
+Driver–Seegmiller step.** [An et al. (2025)](/sources/an-2025.md), §3.1,
+use the Driver–Seegmiller experiment, as
+[Ghidoni et al. (2026)](/sources/ghidoni-2026.md) do above, at
+$Re_H=36{,}000$ and $M=0.128$ (free stream 44.2 m/s, $H=1.27$ cm, upstream plate $L_1/H\approx110$, recovery length
+$L_2/H\approx50$, channel height $8H$, profile checked at $x/H=-4$), as a
+calibration flow for seven constants of the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md) in steady 2D
+RANS (see [Bayesian calibration of turbulence-model coefficients](/methods/bayesian-closure-calibration.md)).
+They compare second-order finite volume in CFL3D (baseline grid
+$436\times225$, $y^+\approx1$; also $220\times113$ and $868\times449$)
+with the authors' third-order discontinuous Galerkin solver (baseline
+$249\times81$, $y^+\approx4$; also $164\times41$ and $416\times121$), each
+grid-independent (Fig. 4):
+
+- with the original constants, DG on a grid "only 0.21 times the size of
+  the FVM grid" gives results "comparable to or even better than FVM":
+  finite volume is better for $C_p$ ahead of the step and in the
+  separation, DG better after reattachment, especially in $C_f$; both
+  predict a separation size in good agreement with experiment, both
+  over-estimate $C_f$ before the step and in the separation (DG slightly
+  more) and both over-extend a low-pressure region (Fig. 6). The authors
+  offer, as a hypothesis, that the lower dissipation of the high-order
+  scheme exposes the model error of SA in the separated shear layer;
+- the DG solution has a discontinuity near the step corner, which they
+  compare with NASA Turbulence Modeling Resource data in which CFL3D is
+  continuous and FUN3D also shows discontinuities (§3.1);
+- the von Kármán constant $\kappa$, $C_{b1}$ and $C_{v1}$ carry most of
+  the variance of wall $C_p$ and $C_f$ on this flow in both schemes;
+  under DG the share of $C_{v1}$ is "approximately 120% higher" than in
+  finite volume, mainly at reattachment and in the recovery (Fig. 9);
+- the polynomial-chaos surrogate is within 20% relative error and 0.03
+  absolute error for $C_p$, while for $C_f$ the error approaches or exceeds
+  20% at $x/H\approx0$ and 7, reaching 80% at $x/H\approx0$, which the
+  authors attribute to $C_f\approx0$ there (Fig. 10); calibrated against
+  $C_f$, the DG posterior covers the data with wider intervals, while
+  finite volume predicts too high a $C_f$ at the end of the recovery
+  (Fig. 11).
+
+The MAP constants of this step and of the
+[Gaussian bump](/benchmarks/gaussian-bump.md) enter one final set, tested
+on the [NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md).
+No reattachment length is printed.
+
 **Zonal detached-eddy simulation on a lattice Boltzmann solver.**
 [Husson et al. (2024)](/sources/husson-2024.md), §4.2, use the step of the
 A3C combustion chamber (experiment of Moreau et al. as cited): $H=0.035$ m,
@@ -193,6 +237,44 @@ to the wall model, which imposes a zero-pressure-gradient profile inside
 the recirculation (Fig. 11). No reattachment length is printed. See
 [detached-eddy simulation](/methods/detached-eddy-simulation.md) and
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md).
+
+**Subgrid length scales of DDES and IDDES in high-order DG.**
+[Alberti et al. (2025)](/sources/alberti-2025-b.md), §3.2, run a step at
+$Re_H=28{,}000$ with expansion ratio 5/4, $4H$ upstream and $20H$
+downstream, span $4H$, an inflow from a precursor RANS channel with
+boundary-layer thickness $1.07H$ and no turbulent content, against the
+experiment of Adams (1984), in an incompressible modal discontinuous
+Galerkin solver at polynomial degree $N=3$ (and 4): 25,340 hexahedra, 10
+uniform cells spanwise, 12 inflated wall layers with first-cell
+$\Delta y^+=1.9$ at the inflow, statistics over at least $100H/U_b$.
+All hybrids are built on the Spalart–Allmaras model (see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)):
+
+- with the non-turbulent inflow, every hybrid stays in RANS mode except
+  downstream of the step on the lower wall;
+- the maximum cell size as subgrid length (standard DDES, and IDDES away
+  from walls) delays or suppresses the Kelvin–Helmholtz instability,
+  while the lengths of Reddy et al. and of Mockett et al. "unlock the
+  complete development" of the rolls into three-dimensional streaks
+  (Figs. 16–18);
+- in skin friction every hybrid except standard DDES and IDDES clearly
+  improves on RANS, which misses the detachment right after the step,
+  shows a corner bubble up to $x/H\approx0.9$, anticipates and magnifies
+  the negative $C_f$ peak and under-predicts $C_f$ after reattachment;
+  standard DDES "massively" delays reattachment although its negative
+  $C_f$ peak "seems to match" the experiment; the Reddy et al. variants
+  place the most negative wall stress and the reattachment section right,
+  with a slightly over-estimated negative peak (Fig. 19);
+- going from $N=3$ to 4 moves skin friction, velocity and $u_{\mathrm{rms}}$
+  closer to experiment, the profile discrepancies "almost entirely"
+  disappearing (Figs. 20–22).
+
+Alberti et al. (2025), §3.2, print $Re_H=28{,}000$, expansion ratio 5/4,
+an inflow boundary-layer thickness of $1.07H$ and a domain from $4H$
+upstream to $20H$ downstream, and name the experiment of Adams (1984);
+[Mozaffari et al. (2022)](/sources/mozaffari-2022.md), §4, print the same
+four values (table above) and name the experiment of Vogel & Eaton. No
+reattachment length is printed.
 
 **Out-of-geometry test of a learned RANS closure.**
 [Tang et al. (2023)](/sources/tang-2023.md) (read in arXiv v1), §III A
@@ -372,7 +454,13 @@ tensors and two invariants, while some individuals had very large
 coefficients, non-realizable stresses and unstable runs, which symbolic
 transparency let the authors remove, though not robustly automatically.
 The same review lists the curved step among the three two-dimensional
-flows on which SpaRTA was demonstrated (§3.4).
+flows on which SpaRTA was demonstrated (§3.4). The review of
+[Fang et al. (2026)](/sources/fang-2026.md), §4.2.2, lists the step among
+the targets of [physics-informed neural networks](/methods/physics-informed-neural-network.md):
+networks with embedded RANS models (standard $k$-$\varepsilon$ and a
+mixing-length-type model) reconstructing a step at Reynolds number 5100
+from sparse data, and parametric networks predicting three-dimensional
+steps at a cost "up to 1/16" of conventional CFD, both as cited works.
 
 ## Qualifications
 
@@ -451,6 +539,16 @@ flows on which SpaRTA was demonstrated (§3.4).
   OpenFOAM meshes coarse, medium and fine but write that "the coarse and
   fine meshes … show good agreement, however the coarsest mesh profile
   differs significantly" (§3.3).
+- [An et al. (2025)](/sources/an-2025.md) give the DG scheme as third
+  order without printing the polynomial degree; they mention an upper-wall
+  inclination of the experiment without stating the one they use. Their
+  "±25 times the original value" for the prior bounds of $C_{b1}$ and
+  $C_{b2}$ is $\pm25\%$ in their own Table 1, whose upper and lower bound
+  rows are swapped (§3.1, Table 1).
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) write $Re_h$ in the
+  abstract and $Re_H$ in §3.2; their cross-plotted Reynolds stress is the
+  resolved part only, because the modelled SA stress lacks the
+  kinetic-energy contribution (§3.2).
 - [Husson et al. (2024)](/sources/husson-2024.md) write, for
   $x/H\ge1.5$, that "the LBM grid resolution is finer than the LBM one"
   (§4.2.2), where one of the two is the Navier–Stokes grid; no averaging
@@ -474,3 +572,6 @@ flows on which SpaRTA was demonstrated (§3.4).
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §2.1–2.2, Eqs. 2, 4, 11, 12; §4.1–4.2, Tables 1–2, Figs. 5–7; App. A, Eqs. A.13–A.15; App. C.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.4; §4.1 (cited step-to-hill transfer of GEP models).
 - [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §4.6 (historical; cites Le & Moin 1994, Le et al. 1997).
+- [An et al. (2025)](/sources/an-2025.md) — §3.1, Table 1, Figs. 3–14; §3.3.
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §3.2, Figs. 15–22.
+- [Fang et al. (2026)](/sources/fang-2026.md) — §4.2.2 (cited PINN works, review).

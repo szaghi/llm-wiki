@@ -5,7 +5,7 @@ description: "Maps that turn the mean velocity of a variable-property compressib
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-28T07:07:00Z
+timestamp: 2026-10-28T17:02:00Z
 ---
 
 # Compressible velocity transformations
@@ -165,7 +165,7 @@ translated from their $z$.
   Bai, Griffin & Fu (2022) under moderate pressure gradients (as Griffin et
   al., §2.1, cite them).
 
-  **Convention difference.** Cogo et al. (2022, Eq. 4.2) write the same
+  **Total-stress form.** Cogo et al. (2022, Eq. 4.2) write the same
   transformation as a total-stress balance,
   $\tau/\tau_w=S_t^+\left(\tau_v^+/S_{TL}^++\tau_R^+/S_{eq}^+\right)$, with
   $\tau_v^+$, $\tau_R^+$ the viscous and Reynolds shear stresses scaled by
@@ -547,6 +547,15 @@ judge, initialize or close a simulation.
   WALE models give a larger transformed velocity and the no-model LES a
   slightly lower one, which they read as too much and too little SGS
   dissipation (see [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
+- **Hybrid RANS/LES against wall-resolved LES.** [Wang et al. (2024c)](/sources/wang-2024-j.md)
+  (§III.B, Fig. 1) judge their wall-resolved LES of an adiabatic Mach 2
+  flat-plate layer ($Re_{\delta_0}\approx13\,500$) on three grids, and the
+  Spalart–Allmaras-based DES, DDES and scale-adaptive runs on the coarsest,
+  by the van Driest-transformed mean velocity against the DNS of Pirozzoli
+  et al. (as cited) and a log law printed in the figure legend as
+  "5.2 + 2.44 log($y^+$)"; the finest LES agrees with the DNS, and the DES
+  and DDES profiles show a [log-layer mismatch](/definitions/log-layer-mismatch.md).
+  Reynolds stresses are density-scaled with $\langle\rho\rangle/\rho_w$.
 - **Inside equilibrium wall models.** [De Vanna et al. (2022)](/sources/devanna-2022.md)
   (§2.2, Eq. 6) and [van Noordt et al. (2022)](/sources/vannoordt-2022.md)
   (§2.5, Eq. 35) write the van Driest damping of the mixing-length eddy
@@ -716,3 +725,4 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 - [Kang & Lee (2024)](/sources/kang-2024.md) — §III, Eq. (16), Figs. 4–5.
 - [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II, Eq. (8), Fig. 1.
 - [Wei et al. (2023)](/sources/wei-2023.md) — §III B, Eqs. (35)–(36), Figs. 10–11.
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) — §III.B, Figs. 1–2 (van Driest velocity as the yardstick of LES and hybrid runs; passing).

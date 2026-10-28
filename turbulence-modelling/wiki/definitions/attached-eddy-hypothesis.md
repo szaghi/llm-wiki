@@ -5,7 +5,7 @@ description: "The attached-eddy hypothesis models the logarithmic region of wall
 status: established
 aliases: [attached eddy model, attached-eddy model, Townsend's attached eddies, wall-attached eddies, inactive motions, uniform momentum zones]
 tags: [boundary-layer, dns, compressible, hypersonic]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-28T12:22:00Z
 ---
 
 # Attached-eddy hypothesis
@@ -243,6 +243,17 @@ has no wide constant region (§4.1, Fig. 11). Superstructures longer than
 $10\delta$ are nevertheless present at all three Mach numbers (§5), as they
 are in the cooled Mach 2 and 5.86 cases of Cogo et al. (2022, §3.1).
 
+## Unsupervised structure identification
+
+In passing, the review of artificial intelligence in turbulence research by
+[Fang et al. (2026)](/sources/fang-2026.md) (§3.5) reports that latent
+Dirichlet allocation clustering of $Q^-$ (ejection) events in channel
+turbulence by Frihat et al. (as the review cites them) finds the scale of
+the identified coherent structures to "increase linearly with the wall
+distance", which the review calls "further confirming Townsend's
+wall-attached vortex hypothesis". The review quotes the result without
+numbers; the clustering study itself is not in the bundle.
+
 ## Qualifications
 
 - Neither Cogo et al. (2022) nor Huang et al. (2022) test the hypothesis
@@ -269,3 +280,4 @@ are in the cooled Mach 2 and 5.86 cases of Cogo et al. (2022, §3.1).
 - [Yu et al. (2023)](/sources/yu-2023.md) — §3, Fig. 6 (attached and detached variables after a shock interaction); §5.1, Fig. 12 (superposition footprints in the $u$, $w$ spectra, none in $v$).
 - [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §6.1–6.2, Figs. 19–22; App. C (outer peak missed by WMLES; inner–outer interaction speculation; Mizuno & Jiménez 2013 as cited).
 - [Hu et al. (2024)](/sources/hu-2024.md) — §3, Fig. 2 (matching-height proposition); §6.2, Eq. (13), Figs. 13–14 (attached, small-scale and detached eddy energies; $\Delta^+\approx50$ estimate); §7.
+- [Fang et al. (2026)](/sources/fang-2026.md) — §3.5 (clustering result quoted from a cited study; passing mention).

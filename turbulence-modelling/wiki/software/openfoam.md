@@ -5,7 +5,7 @@ description: "OpenFOAM is the open-source unstructured finite-volume toolbox tha
 status: established
 aliases: [OpenFOAM, simpleFoam, pimpleFoam, DAFoam, libWallModelledLES, foam-extend, pUCoupledFoam, rhoCentralFoam, detonationFoam]
 tags: [software, rans, les, data-driven, numerical-dissipation, combustion]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-28T17:00:00Z
 ---
 
 # OpenFOAM
@@ -43,6 +43,9 @@ these is a default of the code.
 | [Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §3.4 | P-DNS with a continuous particle method; DPMFoam as Lagrangian reference | PIMPLE; first order in time, second-order FV in space | not printed |
 | [Wei et al. (2023)](/sources/wei-2023.md), §II | scramjetFoam: compressible reacting wall-resolved LES, dynamic one-equation [subgrid kinetic-energy model](/methods/subgrid-kinetic-energy-equation-model.md), laminar chemistry closure; `reactingFoam` and `rhoCentralFoam` as comparators | energy-preserving split convective flux with AUSM-type diffusion switched on by a Ducros sensor (threshold 0.05); Jameson-style four-stage Runge–Kutta | 7 |
 | [Zhang et al. (2024)](/sources/zhang-2024.md), §2.3 | Spalart–Allmaras-based DDES of a compressor tandem cascade | second-order central convection with least-squares weighting of the flux, second-order backward time, $\Delta t=10^{-6}$ s, mean Courant number 0.65 | not printed |
+| [Guo & Wang (2025)](/sources/guo-2025.md), §2.1, §3.1 | SST-based [DDES](/methods/detached-eddy-simulation.md) and the authors' adaptive variants (new classes `kOmegaSSTFDDES`, `adaptiveDelta`), square cylinder, wall functions | first-order implicit Euler; cellLimited Gauss linear gradients (limiter 0.5 on the pressure gradient); linearUpwind convection (limited for $k$, $\omega$); PIMPLE with five outer and two momentum correctors; GAMG for pressure, PBiCGStab for $U$, $k$ | v2306 |
+| Guo & Wang (2025), §3.2 | same models, periodic hill, wall functions | second-order backward time; linear upwind convection, limited linear for $k$, $\omega$; Gauss linear corrected diffusion; PIMPLE with one outer and three momentum correctors; GAMG with DIC–Gauss–Seidel smoother | v2306 |
+| [De Cosmo et al. (2025)](/sources/decosmo-2025.md), §3.2, §3.4 | incompressible LES references for a compressible implicit-LES code: `pimpleFoam` with [WALE](/methods/wale-model.md) (decaying isotropic turbulence) and with the $k$-equation [subgrid model](/methods/subgrid-kinetic-energy-equation-model.md) (curved-wall channel bump) | Gauss linear gradient, divergence and Laplacian schemes, non-orthogonal correction of the Laplacian; second-order backward time | not printed |
 
 ## Roles in the bundle
 
@@ -275,6 +278,39 @@ as less accurate than their spectral-element results. In
 [Nek5000](/software/nek5000.md) the same condition fails (see that page and
 [wall-modelled LES](/methods/wall-modelled-les.md)).
 
+**A hybrid RANS/LES model implemented as OpenFOAM classes.**
+[Guo & Wang (2025)](/sources/guo-2025.md), §2.1, Fig. 1, implement their
+adaptive SST-based DDES variants in OpenFOAM-v2306 as a turbulence-model
+class `kOmegaSSTFDDES`, derived from `kOmegaSSTDDES` by modifying
+`correctNut()` (eddy-viscosity filtering), and a new `LESdelta` class
+`adaptiveDelta` that switches between the largest cell dimension and the
+least-squares subgrid length of Trias et al., compiled with `wmake`; they
+call the implementation "lightweight and compatible with other hybrid
+RANS/LES models in the same framework" (code on request). Their wall
+treatment uses OpenFOAM's `kqRWallFunction`, `nutUSpaldingWallFunction`
+(Spalding's law) and `omegaWallFunction` (§2.2.2, Eqs. 17–20; see
+[wall functions for RANS](/methods/rans-wall-function.md)). Runs: a
+[square cylinder](/benchmarks/square-cylinder-flow.md) at $Re=21\,400$ on
+about 4.08 million cells (about 288 core-hours on 64 cores) and the
+[periodic hill](/benchmarks/periodic-hill.md) at $Re_h=10\,565$ on
+$200\times160\times160$ points (about 75 h on 48 cores); the time step is not
+given (§3.1–§3.2). The model is on
+[detached-eddy simulation](/methods/detached-eddy-simulation.md).
+
+**Incompressible LES as reference for a compressible implicit LES.**
+De Cosmo et al. (2025) compare their low-dissipation Roe finite-volume code
+Zephyrus, run as [implicit LES](/definitions/implicit-les.md), with
+OpenFOAM LES on the same domains: on Comte-Bellot–Corrsin decaying
+[isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)
+($32^3$ to $128^3$ cells) both reproduce the $-5/3$ range and depart from
+it only near the Nyquist limit, with differences "qualitatively negligible"
+and OpenFOAM "slightly less dissipative" (§3.2, Fig. 4); on the
+curved-wall bump in a [channel](/benchmarks/turbulent-channel-flow.md) of
+Banchetti et al. the OpenFOAM pressure coefficient is "practically
+coincident" with the DNS, and, with no DNS fluctuations available, the
+OpenFOAM Reynolds stresses serve as the guideline for the implicit LES
+(§3.4, Figs. 14, 16).
+
 **Finite-volume reference for a high-order RANS code.**
 Tomboulides et al. (2025) run OpenFOAM SST beside their spectral element
 $k$-$\tau$ and regularized $k$-$\omega$ models in [Nek5000](/software/nek5000.md)
@@ -317,6 +353,15 @@ reference solutions from OpenFOAM's Lagrangian DPMFoam solver so that both
 run "in the same platform"; both use PIMPLE pressure–velocity coupling,
 first-order time integration and second-order finite volumes in space (see
 [pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md)).
+The review of conditional source-term estimation by
+[Salehi et al. (2024)](/sources/salehi-2024.md) cites a premixed CSE
+implementation in OpenFOAM, CSE routines with hash tables, and LES of a
+buoyant methane line flame with the fireFoam solver (see
+[conditional source-term estimation](/methods/conditional-source-term-estimation.md)).
+The AI-in-turbulence review of [Fang et al. (2026)](/sources/fang-2026.md)
+cites a mixed-precision study of OpenFOAM among HPC developments and the
+curated RANS and DNS/LES dataset of McConkey et al., which ships OpenFOAM
+set-ups (as cited there).
 
 ## Qualifications
 
@@ -339,6 +384,10 @@ first-order time integration and second-order finite volumes in space (see
   benefit from the finer grid size"; Fureby & Nilsson (2023) cite the
   Kurganov central scheme to a paper on the semidiscrete central-upwind
   scheme.
+- Guo & Wang (2025) give no time step, no grid-convergence study (they
+  refer to their earlier paper for the cylinder grid) and no cost
+  comparison among their four model variants; their wall-function
+  constants $E$, $\kappa$ and $C_\mu$ are not printed.
 - Cost and accuracy statements on this page are those of each study's
   set-up (mesh, schemes, model). None isolates OpenFOAM from its
   configuration.
@@ -379,3 +428,7 @@ first-order time integration and second-order finite volumes in space (see
 - [Sun et al. (2023)](/sources/sun-2023.md) — §1 (rhoCentralFoam-based solvers, OpenFOAM AMR); §2.2, Table 1 (detonationFoam numerics, 2D AMR, load balancing); §3.3, Fig. 5 (HLLC-P against KNP and HLLC); §3.9, Figs. 15–16 (AMR and load-balancing efficiency); §4.
 - [Wei et al. (2023)](/sources/wei-2023.md) — §II A–C, Eqs. (12)–(19) (scramjetFoam: subgrid model, split flux, Ducros-switched AUSM diffusion); §II E (grid); §III A, Fig. 4 (inviscid Taylor–Green against reactingFoam and rhoCentralFoam); §III B, Fig. 6 (resolved-energy fraction).
 - [Zhang et al. (2024)](/sources/zhang-2024.md) — §2.2–2.3 (OpenFOAM DDES set-up, schemes, time step).
+- [Guo & Wang (2025)](/sources/guo-2025.md) — §2.1, Fig. 1 (OpenFOAM-v2306 classes `kOmegaSSTFDDES`, `adaptiveDelta`); §2.2.2, Eqs. (17)–(20) (OpenFOAM wall functions); §3.1–§3.2 (schemes, solvers, meshes, cost).
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §3.2, Fig. 4 (pimpleFoam WALE reference in decaying isotropic turbulence); §3.4, Figs. 14, 16 (pimpleFoam $k$-equation LES reference on the curved-wall bump).
+- [Salehi et al. (2024)](/sources/salehi-2024.md) — review: OpenFOAM implementations of CSE and fireFoam LES, as cited (passing).
+- [Fang et al. (2026)](/sources/fang-2026.md) — review: mixed-precision OpenFOAM and the McConkey et al. dataset with OpenFOAM set-ups, as cited (passing).

@@ -5,7 +5,7 @@ description: "Menter's two-equation shear-stress-transport eddy-viscosity model,
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES, BSL k-ω, baseline k-ω model]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T16:59:00Z
 ---
 
 # k-ω SST model
@@ -176,6 +176,11 @@ throughout *(compiler check, not in the sources)*; of the constants they
 print only $\beta^*=0.09$ (their $\beta_1^*$)
 ([Wu et al. (2024)](/sources/wu-2024.md); the model is on the
 [SATES page](/methods/self-adaptive-turbulence-eddy-simulation.md)).
+Wu et al. (2024b) print the BSL host a third time in the same form, the
+cross-diffusion again $2\rho(1-F_1)\sigma_{\omega2}\omega^{-1}\partial_jk\,\partial_j\omega$,
+with $\mu_{\mathrm{RANS}}=\rho k/\omega$ and only $\beta^*=0.09$ given among
+the constants ([Wu et al. (2024b)](/sources/wu-2024-b.md), §III.A,
+Eqs. 24–27).
 
 **A log-$\omega$ form for flux reconstruction.** Vandenhoeck et al. (2022)
 rewrite the SST-2003 model with $\tilde\omega_\ell=\ln\omega$ as unknown
@@ -430,6 +435,26 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
   Dorgan (2023) list SST-based variants of DES (Bush & Mani; Strelets;
   Winkler et al.) beside the SA-based original at Boeing
   ([Mani & Dorgan (2023)](/sources/mani-2023.md), §4.5.2).
+- **SST-DES and SST-DDES in OpenFOAM, with a filtered eddy viscosity.**
+  Guo & Wang (2025) print Strelets' SST-DES in the zonal form
+  $l_{\mathrm{DES}}=\min\big[l_{\mathrm{RANS}},\,C_{\mathrm{DES}}\Delta/(1-F_{\mathrm{SST}})\big]$,
+  $l_{\mathrm{RANS}}=\sqrt k/(\beta^*\omega)$, with $F_{\mathrm{SST}}$ "either
+  $F_1$ or $F_2$", the $k$ destruction $\rho k^{3/2}/l_{\mathrm{DES}}$ and a
+  vorticity-based production $\mu_t\lvert\Omega\rvert^2$; the eddy viscosity
+  $\nu_t=a_1k/\max(a_1\omega,\lvert\Omega\rvert F_2)$ with $a_1=0.31$ and
+  $\sigma_{\omega2}=0.856$ (Eqs. 1–5). Their SST-DDES follows Gritskevich et
+  al. with $f_d=1-\tanh[(20r_d)^3]$ and the LES coefficient printed as
+  $C_{\mathrm{DDES}}=0.78F_1+0.61F_2$ (Eqs. 6–9), where Delassaux et al.
+  write $0.78F_1+0.61(1-F_1)$ (above). On this base they multiply the
+  eddy viscosity by $\big(\min(L_t,\Delta_{\mathrm F})/L_t\big)^{4/3}$, with
+  $L_t=\sqrt k/(\beta^*\omega)$ and a resolvable filter width $\Delta_{\mathrm F}$
+  built from the time step and the grid (page-local $L_t$, $\Delta_{\mathrm F}$), and
+  switch the grid scale between the largest cell edge and a least-squares
+  length by flow region, the ADD-SSTFDDES model of the
+  [DES page](/methods/detached-eddy-simulation.md)
+  ([Guo & Wang (2025)](/sources/guo-2025.md), §2.1, Eqs. 10–15). Their
+  OpenFOAM $\omega$ wall function sets $\omega_w=6\nu/(\beta_1y^2)$ with
+  $\beta_1=0.075$ (Eq. 20; see [RANS wall functions](/methods/rans-wall-function.md)).
 
 ### Data-driven corrections of SST
 
@@ -874,6 +899,46 @@ operational role and need not match their DNS counterparts
   adapted mesh as the precursor of a temporal LES of a NACA 0012 wing with a
   jet ([Bouhafid et al. (2024)](/sources/bouhafid-2024.md), §2.2, §3; see
   [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+- **Hypersonic panel flutter under a swept interaction.** Ye et al. (2024)
+  use SST URANS (Menter 1994, no correction or constant printed; AUSM+
+  fluxes, third-order MUSCL, dual time stepping) loosely coupled to a
+  finite-element plate, for a flexible panel under the Mach 5 sharp-fin
+  swept shock/boundary-layer interaction of Schülein & Zheltovodov
+  ($12^\circ$ fin); the flow solution is validated by wall pressure at two
+  stations, and turbulence modelling is not studied
+  ([Ye et al. (2024)](/sources/ye-2024.md), §II A, Eqs. 6–7, §III A, Fig. 3; see
+  [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+- **Bayesian recalibration for shock interactions and cavities, as
+  reviewed.** Le et al. (2024) report, from the works they review, that
+  Bayesian calibration of SST coefficients on compression-corner
+  interactions enhances near-wall turbulence through a larger eddy
+  viscosity and improves adverse-pressure-gradient predictions, but that
+  SST "cannot simulate the inherent shock instability" by changing
+  parameters and its wall pressure in the separation region "remains too
+  high" (Tang et al., as cited); that a polynomial-chaos, Bayesian and
+  particle-swarm recalibration for supersonic cavities lowers the maximum
+  wall-pressure error from 29.71% to 9.00% and the mean from 9.86% to 3.67%
+  (Yang et al., as cited); that coefficients calibrated on a 24° corner
+  transfer to 20°, 16° and 8° corners only "within a narrow range of Mach
+  numbers"; and that ensemble inversion of the Reynolds-stress discrepancy
+  of SST for such interactions overcomes "some limitations of the eddy
+  viscosity assumption" ([Le et al. (2024)](/sources/le-2024.md), §3.1.1,
+  Figs. 8–9, §3.1.2, Fig. 12; review, citing only; see
+  [Bayesian closure calibration](/methods/bayesian-closure-calibration.md)).
+  Fang et al. (2026) cite a physically constrained symbolic-regression
+  enhancement of SST (Wu & Zhang, as cited) as an interpretable closure
+  that generalizes across configurations
+  ([Fang et al. (2026)](/sources/fang-2026.md), §5.2; see
+  [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
+- **Vortex flows, as surveyed.** Luckring & Rizzi (2024) cite steady SST
+  RANS of a wing with vortex generators (Förster & White, ANSYS CFX,
+  $M=0.2$, $Re_{\mathrm{mac}}=10^6$) with excellent lift and drag correlation
+  at low angle of attack, reasonable at moderate and almost none at deep
+  stall (§3.2.1), and, on the SACCON configuration under forced pitch
+  oscillation, neither SST nor Spalart–Allmaras correlating well with the
+  measurements, SA being closer (§3.2.3.2)
+  ([Luckring & Rizzi (2024)](/sources/luckring-2024.md); see
+  [delta-wing vortex flow](/benchmarks/delta-wing-vortex-flow.md)).
 
 ## Qualifications
 
@@ -889,6 +954,11 @@ operational role and need not match their DNS counterparts
   while Eq. 31 prints $\partial_ik\,\partial_i\omega$; the text calls the
   blending function "$F_l$".
 - Wei et al. (2023) print no SST coefficients.
+- Guo & Wang (2025) print the same quantity of the blending functions as
+  $\sqrt k/(0.09\,\omega y)$ in $F_1$ (Eq. 3) and as $2\sqrt k/(0.99\,\omega y)$
+  in $F_2$ (Eq. 5), and print the cross-diffusion with the indices
+  $\partial_ik\,\partial_j\omega$ (Eq. 3); $\beta^*$, $\sigma_k$ and $\kappa$ have
+  no printed values there.
 
 Dzanic et al. (2022) print several slips in the SST equations of the
 version read (arXiv v1):
@@ -1046,3 +1116,9 @@ version read (arXiv v1):
 - [Yu et al. (2023b)](/sources/yu-2023-b.md) — §IV, Eq. (21) (wall-pressure-dependent coefficient); §V, Eqs. (27)–(33), Figs. 21–24 (printed SST, refined $\beta^*$ and $Pr_t$, Schülein and Holden cases).
 - [Wei et al. (2023)](/sources/wei-2023.md) — §IV F, Figs. 36–37 (SST RAS against LES of a combusting hydrogen film).
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.1, Eqs. (1)–(3) (BSL host of SATES-σ); §3.2–§3.3, Table 3 (SST-IDDES comparator).
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) — §III.A, Eqs. (24)–(27) (BSL host of SATES).
+- [Guo & Wang (2025)](/sources/guo-2025.md) — §2.1, Eqs. (1)–(15) (SST-DES, SST-DDES, filtered eddy viscosity, adaptive grid scale); Eq. (20) ($\omega$ wall function).
+- [Ye et al. (2024)](/sources/ye-2024.md) — §II A, Eqs. (6)–(7); §III (SST URANS of a Mach 5 swept interaction with a flexible panel).
+- [Le et al. (2024)](/sources/le-2024.md) — §3.1.1, Figs. 8–9; §3.1.2, Fig. 12 (Bayesian SST calibration and discrepancy inversion, as reviewed).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §5.2 (symbolic-regression SST enhancement, as cited).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §3.2.1 (vortex-generator RANS with SST, as cited); §3.2.3.2 (SACCON forced oscillation, as cited).

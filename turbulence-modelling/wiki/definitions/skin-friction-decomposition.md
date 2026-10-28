@@ -5,7 +5,7 @@ description: "Integral identities that split the mean skin friction of a wall-bo
 status: established
 aliases: [Renard–Deck decomposition, RD decomposition, mean-kinetic-energy decomposition of skin friction, skin-friction budget]
 tags: [boundary-layer, compressible, dns, separated-flow]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-28T17:02:00Z
 ---
 
 # Skin-friction decomposition
@@ -170,6 +170,20 @@ growth term (18%) and a negative non-canonical turbulent part; the two flows
 differ (shock recovery against wall-jet transition and combustion), and
 neither paper compares the other's case.
 
+## Use as an argument in model calibration
+
+[An et al. (2025)](/sources/an-2025.md) (§3.1, Fig. 9) do not evaluate the
+decomposition but cite it, with Atzori et al. on adverse-pressure-gradient
+skin friction, to interpret a sensitivity result of their Bayesian
+recalibration of the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
+(see [Bayesian closure calibration](/methods/bayesian-closure-calibration.md)):
+from reattachment onwards the constant $c_{v1}$ becomes the second most
+influential parameter for $C_f$ in their finite-volume runs, which they
+explain by two hypotheses, that $C_f$ depends on velocity gradients
+whereas $C_p$ depends on the velocity itself, and that $C_f$ depends on the
+Reynolds shear stress, to which $c_{v1}$ is tied. An et al. compute no
+decomposition term.
+
 ## Qualifications
 
 - The canonical profile behind the split is fitted, not derived: the wake
@@ -200,3 +214,4 @@ neither paper compares the other's case.
 - [Yu et al. (2023)](/sources/yu-2023.md) — §4.1, Eq. (4.1); §4.2, Eqs. (4.2)–(4.10), Figs. 8, 10, 11; §7.
 - [Yu et al. (2022)](/sources/yu-2022-e.md) — §2 (the DNS database analysed by Yu et al. 2023).
 - [Wang & Xu (2024)](/sources/wang-2024-h.md) — §4.2, Eq. (4.2); §4.3, Eqs. (4.3)–(4.5), Figs. 12–14; App. A.
+- [An et al. (2025)](/sources/an-2025.md) — §3.1, Fig. 9 (the decomposition cited to interpret the $C_f$ sensitivity to $c_{v1}$).

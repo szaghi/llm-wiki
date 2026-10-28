@@ -5,7 +5,7 @@ description: "A neural network maps the coordinates to the mean velocity, pressu
 status: established
 aliases: [PINN, PINNs, physics-informed neural network, physics-informed RANS solver]
 tags: [data-driven, neural-network, rans, boundary-layer]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T17:02:00Z
 ---
 
 # Physics-informed neural networks for RANS
@@ -234,6 +234,56 @@ to unseen ones (§3.1). With the original initial-condition loss the
 rollout diverges (App. A). Details and results are on
 [neural-operator surrogates of LES](/methods/neural-operator-les-surrogate.md).
 
+## PINNs in two later reviews (Le et al. 2024; Fang et al. 2026)
+
+Two reviews of machine learning in turbulence and supersonic flow survey
+PINNs without running one.
+
+- **Loss.** [Fang et al. (2026)](/sources/fang-2026.md) (§2.1, Eq. 9,
+  Fig. 4c) write the loss as a data term plus a weighted PDE-residual
+  term, $\mathcal L=\mathcal L_{\mathrm{data}}+w_{\mathrm{PDE}}\mathcal L_{\mathrm{PDE}}$
+  (page-local $w_{\mathrm{PDE}}$, the source's $\lambda$), the weight
+  balancing data fidelity against physical consistency, and call the PDE
+  penalty a "soft constraint" (§4.2.2).
+  [Le et al. (2024)](/sources/le-2024.md) (§2.2.3, Fig. 6) describe the
+  same structure: mismatch of data, initial and boundary values plus the
+  residual at collocation points, optimized together.
+- **Turbulence-model-augmented PINNs.** Fang et al. (§4.2.2, Table 4)
+  cite PINNs that carry a RANS closure in the residual (the PINN of
+  Eivazi et al. (2022) learns no closure model, above): a Spalart–Allmaras-augmented
+  PINN that reconstructs mean flows from sparse velocity data, with the
+  mean-velocity reconstruction error "from 11.7% to 3.1%, a reduction of
+  about 73%" and an improvement on variational data assimilation in
+  high-gradient regions (Patel et al., as cited); and PINNs with the
+  standard [$k$-$\varepsilon$](/methods/k-epsilon-model.md) model or a
+  mixing-length-type "hybrid length model" that predict a
+  [backward-facing step](/benchmarks/backward-facing-step.md) at Reynolds
+  number 5100 from sparse data (Pioch et al., as cited). They also cite
+  the RANS PINN of Eivazi et al. (2022) and a parametric variant (PT-PINN,
+  Jiang et al., as cited) that takes physical parameters such as the
+  Reynolds number as inputs, "train once, generalize across parameters",
+  for a three-dimensional backward-facing step at a cost "up to 1/16 of
+  traditional CFD methods" (§4.2.2, Fig. 9).
+- **Variants and applications (Le et al.).** cPINN, hp-VPINN, XPINN with
+  space–time domain decomposition, SA-PINN with trainable pointwise
+  adaptive weights, which beats other PINNs in $L_2$ error with fewer
+  training cycles, and the separable PINN, motivated by computational and
+  memory costs "increasing exponentially with grid resolution" (§2.2.3,
+  p. 7). Applications cited: high-speed flows,
+  hypersonic cones, hidden fluid mechanics, Euler-constrained
+  convolutional networks for supersonic inlet fields, a Mach-10 inviscid
+  inlet, POD reduced-order models of a rotating detonation combustor and
+  pressure recovery from 1% sparse data (§2.2.3, §4.3, Table 8), and a
+  three-dimensional reconstruction of turbulent premixed flames from
+  synthetic sparse data with separate sub-networks for momentum, species
+  and temperature, whose effectiveness depends on dataset size, noise and
+  turbulence–flame interaction (Liu et al., as cited; §3.3, Fig. 17).
+- **Evaluative statements.** Fang et al. (§4.2.2) state that PINNs "offer
+  improved interpretability" over purely data-driven models and that in
+  the SA-augmented PINN "the error caused by discretization in the
+  variational method is avoided"; Le et al. state the exponential cost
+  growth.
+
 ## Qualifications
 
 - **Data requirement.** The reconstruction of each turbulent case uses
@@ -260,6 +310,15 @@ rollout diverges (App. A). Details and results are on
   identically as ref. [32]; the title printed for it names a
   differentiable-physics closure, not a PINN, and the PINN work meant is
   not identified.
+- **Attributions in Le et al. (2024).** The physics-informed
+  convolutional network with channel interaction (PICNNCI) is attributed
+  to "Deng et al. [248]", whose printed reference is a Kong et al.
+  schlieren-to-velocity paper; the review's Fig. 23 cites the Deng et al.
+  work as [268] (§4.3, p. 26). "Wang et al. [232]" (a PINN premixed
+  combustion model) and "Xiong et al. [233]" (a PINN reconstruction) cite
+  references whose printed titles are a waverider boundary-layer study and
+  a shock-train experiment (§3.3, p. 21). The page names those works by
+  the description in the text only.
 - The convention of the Reynolds stresses in the version read (positive
   correlations $\overline{uv}$ on the left-hand side of momentum, kinematic)
   matches the registry $R_{ij}$; the paper writes the means as $U$, $V$,
@@ -275,3 +334,5 @@ rollout diverges (App. A). Details and results are on
 - [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) — arXiv v5: §1 (PINNs mentioned among machine-learning work on Burgers' equation; ref. [29] as printed); §3 (energy-conserving architecture).
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.2 (PINNs yield no predictive closures for new configurations).
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §1.3 (knowledge-guided against purely data-driven); §3.5, §3.5.1, Fig. 25, Eqs. 64–66 (four insertion points of prior knowledge; constraint relaxed to a penalty; PINNs as the example).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §2.1, Eq. 9, Fig. 4c (PINN loss); §4.2.2, Fig. 9, Table 4 (soft constraint, SA-augmented and $k$-$\varepsilon$ PINNs, PT-PINNs, Eivazi et al. cited, interpretability claim).
+- [Le et al. (2024)](/sources/le-2024.md) — §2.2.3, p. 7, Fig. 6 (loss, variants, cost claim); §3.3, Fig. 17 (flame reconstruction); §4.3, p. 26, Table 8 (physics-informed reconstruction of inlet fields).

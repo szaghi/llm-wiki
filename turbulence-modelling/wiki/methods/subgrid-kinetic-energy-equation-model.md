@@ -5,7 +5,7 @@ description: "Eddy-viscosity LES closures that transport the subgrid kinetic ene
 status: established
 aliases: [k-equation model, one-equation SGS model, subgrid kinetic energy equation model, LDKM, localized dynamic k-equation model, dynamic k-equation model, DKSGS, dk-equation model, Yoshizawa one-equation model, quasi-dynamic SGS kinetic energy equation model, QKM]
 tags: [les, sgs-model, eddy-viscosity, compressible, combustion]
-timestamp: 2026-10-28T07:04:00Z
+timestamp: 2026-10-28T12:25:00Z
 ---
 
 # One-equation subgrid kinetic-energy models
@@ -209,6 +209,19 @@ CPUs, Table 5).
   [ANSYS Fluent](/software/ansys-fluent.md)) among the subgrid treatments
   of earlier LES of the same rotating detonation rocket engine; their own
   LES uses the [Vreman model](/methods/vreman-model.md).
+- **Reference LES for an implicit-LES solver.** [De Cosmo et al. (2025)](/sources/decosmo-2025.md)
+  (§3.4, Fig. 16) take the Reynolds stresses at $x/h=0$, 3 and 10 of a
+  channel with a two-Gaussian bump on the lower wall (the Banchetti et al.
+  geometry, as they cite it; see
+  [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)) from an
+  [OpenFOAM](/software/openfoam.md) LES "with the k-equation SGS model",
+  since the DNS provides no fluctuation data; the model's constants are not
+  printed. They note that the reference is an incompressible solver with a
+  "substantially more sophisticated SGS model" than their
+  [implicit LES](/definitions/implicit-les.md), which has none; its
+  $\langle v'v'\rangle$ and $\langle w'w'\rangle$ come out slightly lower,
+  which they attribute to numerical dissipation from mesh
+  non-orthogonality and streamwise non-uniformity.
 
 ## Qualifications
 
@@ -248,3 +261,4 @@ CPUs, Table 5).
 - [Li et al. (2022)](/sources/li-2022-k.md) — §II C, Eqs. (4)–(9).
 - [Liu et al. (2022)](/sources/liu-2022.md) — §2.3.
 - [Volpiani (2024)](/sources/volpiani-2024.md) — App. 2, Eq. (28).
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §3.4, Figs. 14–16 (OpenFOAM k-equation LES as Reynolds-stress reference of the bump channel).

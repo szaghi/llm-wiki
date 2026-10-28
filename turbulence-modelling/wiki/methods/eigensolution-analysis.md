@@ -3,9 +3,9 @@ type: Method
 title: "Eigensolution (dispersion–dissipation) analysis"
 description: "Eigensolution analysis inserts Bloch waves into a linear discretization of advection to obtain numerical dispersion and dissipation; the page gives its temporal and spatial, semi- and fully-discrete forms for DG, flux reconstruction and spectral difference, mode counting, the time-step effects it predicts, and where under-resolved turbulence stops following it."
 status: established
-aliases: [eigenanalysis, von Neumann analysis, dispersion–dissipation analysis, dispersion–diffusion analysis, spatial eigenanalysis, temporal eigenanalysis, fully-discrete eigenanalysis, semi-discrete eigenanalysis, wave propagation analysis]
+aliases: [eigenanalysis, von Neumann analysis, dispersion–dissipation analysis, dispersion–diffusion analysis, spatial eigenanalysis, temporal eigenanalysis, fully-discrete eigenanalysis, semi-discrete eigenanalysis, wave propagation analysis, approximate dispersion relation, ADR]
 tags: [numerical-dissipation, dg, flux-reconstruction, implicit-les, dns]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T16:59:00Z
 ---
 
 # Eigensolution (dispersion–dissipation) analysis
@@ -212,6 +212,22 @@ are not the ones they use in turbulence: their Taylor–Green penalties are
 larger than those of the Burgers test, which they attribute to the $1/Re$
 scaling of the penalty (§4.2).
 
+## A nonlinear relative: the approximate dispersion relation
+
+Eigensolution analysis needs a linear scheme. For the nonlinear weighted
+interpolations of shock-capturing finite differences, [Wu et al. (2024b)](/sources/wu-2024-b.md),
+§IV.A, Fig. 4, use the approximate dispersion relation (ADR) of Pirozzoli
+(2006, as they cite it), which plots the real part (dispersion) and the
+imaginary part (dissipation) of the modified wavenumber of the nonlinear
+scheme. They compare the fifth-order [weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
+with linear, Jiang–Shu, Z-type, TENO-type, smooth-cutoff TENO-type and
+adaptive smooth-cutoff weights: the TENO-type weights keep the properties
+of the linear scheme over a wide wavenumber range, the smooth cutoff has
+"slight influences" on them, and the adaptive variant approaches the
+linear scheme. No values are tabulated; the scheme's behaviour in scale-resolving runs is on
+[numerical dissipation](/properties/numerical-dissipation.md) and
+[self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md).
+
 ## Qualifications
 
 - **Conventions differ.** Kou et al. (2023) and the temporal analyses
@@ -260,3 +276,4 @@ scaling of the penalty (§4.2).
 - [Tonicello et al. (2023)](/sources/tonicello-2023.md) — abstract; §1; §2.1–2.2, Eqs. (4)–(25) (FR Bloch analysis, semi- and fully-discrete temporal and spatial eigenproblems, mode counting, error measures); §3, Figs. 1–9, App. Figs. 29–32 (periodicity, effective Nyquist frequency, time-step effects, FR-DG against FR-SD, dissipative bubbles); §4.1, Figs. 10–21; §4.2.1, Figs. 23–24; §4.3, Eq. (28), Figs. 25, 28; §5.
 - [Kou et al. (2023)](/sources/kou-2023.md) — §3, App. A, App. C.1, Table 1, Table C.2, Figs. 1–4, C.17–C.18 (temporal eigensolution analysis of jump-penalized DG, spurious mode with central flux, CG limit); §4.2, §5 (penalties in the Taylor–Green vortex).
 - [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md) — §5.2, Figs. 2–3 (von Neumann analysis of filtered artificial viscosity against Riemann-solver dissipation).
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) — §IV.A, Fig. 4 (approximate dispersion relation of fifth-order WCNS with linear, JS, Z, TENO-type and smooth-cutoff weights).

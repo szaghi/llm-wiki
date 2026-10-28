@@ -5,7 +5,7 @@ description: "Field inversion infers a spatial correction field of a RANS model 
 status: established
 aliases: [FIML, field inversion, field-inversion and machine-learning, inference before learning, variational data assimilation, non-parametric correction, Reynolds-force vector]
 tags: [field-inversion, data-driven, rans, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-28T07:08:00Z
+timestamp: 2026-10-28T17:01:00Z
 ---
 
 # Field inversion and machine learning
@@ -1088,7 +1088,68 @@ is used:
   the production instead, from frozen-RANS targets (see
   [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
 
+## FIML in later reviews and supersonic applications
+
+Le et al. (2024), Fang et al. (2026), An et al. (2025) and Luckring &
+Rizzi (2024) mention field inversion; none runs it.
+
+- **Two routes and supersonic cases (Le et al. 2024).**
+  [Le et al. (2024)](/sources/le-2024.md) (§3.1.2, pp. 12–13) separate two
+  routes to a data-improved RANS model: alter the model equations by a
+  multiplier or source inferred from data and learned from flow features,
+  or keep the equations and learn a bias added to the RANS Reynolds
+  stress. For the first they write the Spalart–Allmaras transport
+  generically as production minus destruction plus transport, with the
+  production multiplied by $\beta(\boldsymbol x)$ (Eqs. 17–18), inverted
+  from experimental data by the adjoint method and then learned from flow
+  variables (Singh et al., as cited), which in their words "enhances the
+  model's transferability and ensures the convergence of the original
+  model". Their supersonic examples, as cited: an FIML-corrected SA lowers
+  the eddy viscosity in the separation region of a supersonic
+  axisymmetric base flow, improving the expansion and the size of the
+  vortex region (Heo et al.; Fig. 11), FIML for hypersonic transition
+  prediction (Zhang et al.), and the inversion of SST Reynolds-stress
+  discrepancies for shock/boundary-layer interaction with the ensemble
+  DAFI framework (Tang et al.; Fig. 12; see
+  [ensemble Kalman calibration](/methods/ensemble-kalman-closure-calibration.md)).
+  For the second route they report that physics-informed learning of
+  Reynolds-stress discrepancies helps when training and prediction flows
+  align, but "even for similar flow phenomena, such as separated flows,
+  correcting the model in regions with geometric changes can degrade the
+  computational results of the original RANS model" (§3.1.2, p. 12).
+- **Replacing the model (Le et al. 2024).** The review's third use,
+  replacing the RANS model by a network of flow features (§3.1.3,
+  pp. 14–15, Fig. 13): Zhu et al. (as cited) couple a radial-basis-function network, a black-box algebraic
+  eddy-viscosity model, to the solver with accuracy "comparable to that of
+  the SA model but exhibited higher computational efficiency" on three
+  subsonic NACA 0012 cases, and a network trained on SA data replaces SA
+  across incidence, Mach and Reynolds numbers (Sun et al., as cited). The
+  stated difficulties are the accuracy, smoothness and stability that a
+  surrogate inside the solver needs, outliers in "edge regions" of
+  high-Reynolds-number boundary layers, and coupling instability with
+  residual oscillations (§3.1.3, p. 15). Table 3 charges model
+  improvement with needing "extensive high-quality data for validation"
+  and lacking universality (p. 15).
+- **Pointers only.** [Fang et al. (2026)](/sources/fang-2026.md) (§1) cite
+  the physics-informed machine-learning framework of Wu, Xiao & Paterson
+  without discussion. [An et al. (2025)](/sources/an-2025.md) (§3.2, ref.
+  [16]) cite their group's correction of SST for streamline curvature by
+  field inversion and symbolic regression for the way curvature changes
+  the computed gradient and flux quantities; their own work calibrates
+  coefficients instead (see
+  [Bayesian calibration](/methods/bayesian-closure-calibration.md)).
+  [Luckring & Rizzi (2024)](/sources/luckring-2024.md) (§5) note that the
+  machine-learning turbulence modelling of Singh et al. and Duraisamy et
+  al. (as cited) "does not include concentrated vortex flow assessments"
+  (see [delta-wing vortex flows](/benchmarks/delta-wing-vortex-flow.md)).
+
 ## Qualifications
+
+- **Le et al. (2024), a caption reference.** The caption of Fig. 11, "the
+  FIML process for turbulence modeling [115]", cites a reference whose
+  printed title is "African vultures optimization algorithm"; the text
+  cites Heo et al. [155] for the figure. The review is used here only as a
+  corroborating account of the cited works.
 
 - **Diez Sanhueza et al. (2023), printed values.** §2.2 gives the
   baseline maximum error of the hardest case as 22.8%, while Table 3, the
@@ -1284,4 +1345,8 @@ is used:
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.4, §4.3, §4.5 (FIML among model-consistent frameworks, cost, transition, coupled closures).
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1 (field inversion cited; the corrected model stays linear).
 - [Shan et al. (2023)](/sources/shan-2023.md) — Abstract; §I; §II.A, Fig. 1 (framework, iterative and frozen coupling); §II.B–D, Eqs. 2–12, Table 1 (calibration, features, output, network, loss); §III.A–F, Tables 3, 5, Figs. 9–25 (solver, hyperparameters, sample ratio, two generalization cases); §IV (residual uncertainties); §V.
+- [Le et al. (2024)](/sources/le-2024.md) — §3.1.2, pp. 12–13, Eqs. 17–18, Figs. 11–12 (two routes, SA production multiplier, supersonic FIML and DAFI applications, degradation in regions of geometric change); §3.1.3, pp. 14–15, Fig. 13, Table 3 (networks replacing the RANS model, difficulties).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §1 (physics-informed ML framework cited, in passing).
+- [An et al. (2025)](/sources/an-2025.md) — §3.2, ref. [16] (field-inversion and symbolic-regression SST correction cited, in passing).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §5 (ML turbulence modelling not yet assessed for concentrated vortex flows).
 - [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §2.2, Eqs. 2–8, Table 1 (baseline, data); §3.1–3.1.2, Eqs. 9–18, Algorithm 1 (inversion, optimizer, adjoint); §3.2–3.3, Eqs. 19–30, Figs. 2–4 (network, weighted relaxation, feedback loop); §4, Figs. 5–7; §5–6, Table 3, Figs. 9–10.

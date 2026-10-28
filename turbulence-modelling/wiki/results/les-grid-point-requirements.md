@@ -5,7 +5,7 @@ description: "How the grid-point and time-step counts of DNS, wall-resolved and 
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T17:02:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -81,6 +81,14 @@ growth "mostly quadratic", and [van Noordt et al. (2022)](/sources/vannoordt-202
 for a near-wall resolution cost growing as $Re^3$ for DNS and $Re^{1.8}$
 for LES of wall-bounded flows; the source states neither the Reynolds
 number nor whether time steps are counted (see Qualifications).
+[Luckring & Rizzi (2024)](/sources/luckring-2024.md) (§2.4.1, §2.4.1.1), in
+a survey of CFD for concentrated vortex flows, give the DNS point count as
+$N_x\times N_y\times N_z\propto Re_L^{9/4}$, from a ratio of largest to
+Kolmogorov scale growing as $Re_L^{3/4}$ per direction, and the cost of
+mesh and time steps together as "approximately" the cube of the Reynolds
+number, "virtually impossible for flight conditions". [Wang et al. (2024d)](/sources/wang-2024-k.md)
+(§I) cite Choi & Moin (2012) as the cost motivation of their wall-modelled
+LES in a lattice Boltzmann solver.
 
 The differential forms behind these exponents are written out by
 [Bose & Park (2018)](/sources/bose-2018.md) (§1, Eqs. 1–2), after Chapman
@@ -176,6 +184,29 @@ $\Delta x_{\min}/H=9.0\times10^{-3}$ (13.6 M cells) and $4.5\times10^{-3}$
 265 and 132 viscous lengths, and about 8 and 15 cells span the rear boundary
 layer *(compiler check, not in the sources)*; the authors do not report the
 near-wall resolution in wall units.
+
+**Point counts of airfoil and aircraft LES in a survey.** Luckring & Rizzi
+(2024, §2.4.1.4, Table 1) reprint the estimate of Larsson et al. (as cited)
+for LES of the upper surface of a NACA 0012 at $M=0.1$, $\alpha=2.5^\circ$:
+
+| $Re_c$ | inner layer, $y/\delta<0.2$ | outer layer | trailing-edge $Re_\tau$ |
+|---|---|---|---|
+| $10^6$ | $1.6\times10^7$ | $3.3\times10^7$ | $1\times10^3$ |
+| $10^7$ | $1.9\times10^9$ | $7.2\times10^7$ | $1\times10^4$ |
+| $10^8$ | $2.0\times10^{11}$ | $2.5\times10^8$ | $7\times10^4$ |
+
+The inner-layer points rise by about two orders of magnitude per decade of
+$Re_c$ (ratios 119 and 105 *(compiler check, not in the sources)*), the
+outer-layer ones far less. At
+$Re_c=40\times10^6$ an LES of this attached flow needs about 33 billion
+points. They quote the DNS of a NACA 4412 at $Re_c=0.4\times10^6$ by
+Hosseini et al. (as cited) at about 3.2 billion points and 35 million
+core-hours over six months, and scale a 210-million-node wall-resolved LES
+of a C-130 afterbody at $Re_D=0.2\times10^6$ (Garmann & Visbal, as cited)
+to the full-scale $Re_D=7.4\times10^6$ with Larsson et al.'s table, about
+143 billion nodes (§3.1.1.2; the scaling procedure is not detailed). See
+[NACA 0012](/benchmarks/naca-0012-airfoil.md) and
+[delta-wing vortex flows](/benchmarks/delta-wing-vortex-flow.md).
 
 ## Explicit WMLES cost model
 
@@ -718,6 +749,30 @@ Choi & Moin resolution, $\delta/\Delta x_i\sim10$.
   $\Delta x^+_w<40$, $\Delta y^+_w<3$ and $\Delta z^+_w<15$ hold with the
   resolved wall stress (§3.2, Eq. 9), within the wall-resolved ranges of
   the table above.
+- **Thirteen WMLES grids up to wall resolution.** [Xiao et al. (2025)](/sources/xiao-2025.md)
+  (§4.2–4.4, Tables 3–5) run channel flow in [CaLES](/software/cales.md) on
+  GPUs: wall-resolved LES at $Re_\tau\approx544$ on four grids from
+  $192\times128\times128$ ($\Delta x^+=36.2$, $\Delta z^+=20.4$, first cell
+  $\Delta y^+_w=0.59$) to $576\times384\times384$ (12.1, 6.8, 0.19), with
+  static-Smagorinsky skin-friction errors from 9.38 % to 0.50 % and dynamic
+  ones within about 3 % (largest $-3.22$ %); and WMLES at $Re_\tau\approx5200$
+  with $h_{\mathrm{wm}}=0.1\delta$ on 13 grids for each of two aspect ratios,
+  from $\Delta/\delta=0.1$ ($128\times32\times48$) to $0.002$
+  ($6144\times1536\times2304$, about 21.7 billion points, about
+  $\Delta z^+=10$, wall-resolved resolution), where convergence is
+  non-monotonic (see [wall-modelled LES](/methods/wall-modelled-les.md)).
+  A square duct at $Re_\tau\approx1055$ is run on six grids up to
+  $2048\times320\times320$ (finest $\Delta z^+=6.3$).
+- **Lattice Boltzmann WMLES on uniform blocks.** [Wang et al. (2024d)](/sources/wang-2024-k.md)
+  (§III, App. C) run channel flow at $Re_\tau=1000$–5200 on uniform cubes
+  of $\delta/20$ ($y^+\approx50$ at the first node at $Re_\tau=1000$) and,
+  at $Re_\tau=2000$, $\delta/40$ and $\delta/80$: the mean velocity is well
+  predicted already on the coarsest grid, and the turbulence statistics
+  converge with refinement. Mesh studies for the other cases (DARPA SUBOFF
+  hull at $Re_L=1.2\times10^6$ with finest spacing $D/80$, 23 M fluid nodes;
+  Ahmed body with $h_{\mathrm A}/160$, $h_{\mathrm A}$ the body height,
+  page-local; cylinder with $D/160$) are called
+  "computational prohibitive" at hundreds of millions of nodes.
 - **Hypersonic WMLES on an immersed boundary.** Van Noordt et al. (2022,
   §3) run channel flow at $Re_\tau=5200$ on 1.9 M and 8.9 M cells
   ($\Delta x^+\times\Delta y^+\times\Delta z^+=270\times68\times270$ and
@@ -815,6 +870,19 @@ report 25 852 CPU-hours per convective time unit for their fine turbine LES
 (5120 MPI ranks) and 5861 for the coarse one (hardware not stated).
 Lozano-Durán & Bae (2023, §2.6) report that their learned wall model makes
 WMLES 1.1–1.3 times as expensive as the algebraic equilibrium model.
+
+On GPUs, Xiao et al. (2025, §3.2, Figs. 2–4, Table 2) measure CaLES on
+Leonardo (one 32-core Xeon 8358 and four A100 64 GB per node) for a channel
+of $512\times384\times1440$ points: per step and point, 19.7, 34.5 and
+34.7 ns on a CPU node against 1.5, 1.8 and 1.8 ns on one A100 for DNS,
+wall-resolved and wall-modelled LES with explicit viscous terms (28.9,
+46.4, 46.5 against 2.4, 2.7, 2.7 with implicit wall-normal viscous terms),
+speed-ups of 12–19 per GPU against a full node; memory per point is 136 B
+for DNS, 168 B with the Smagorinsky model and 352 B with its dynamic version;
+weak-scaling time grows by about 80 % from 2 to 64 nodes. Wang et al.
+(2024d, App. B, Table III) report their GPU lattice Boltzmann solver on one
+V100 at 6–10 times a 24-core Xeon Platinum 8274 (10 for a 0.8 M-node channel,
+7 for the 23 M-node hull with four mesh zones).
 
 Prieto Saavedra et al. (2024, App. C, Table C.9; Intel Skylake, 40 cores per
 node) report the core-hours for 1000 s of periodic-hill flow at $Re_h=5600$
@@ -939,6 +1007,12 @@ it, without breakdown).
   cells, $152/33=4.61$, and $9\times4.6\approx41$ *(compiler check, not in
   the sources)*. Their Table III lists the medium 2 mesh with the full
   152 mm span and the coarse, medium 1 and fine meshes with 33 mm.
+- **WRLES limit stated by Luckring & Rizzi (2024).** §4.1.1 calls
+  wall-resolved LES "currently restricted to low Reynolds numbers (on the
+  order of $10^4$)", while the same survey reports wall-resolved
+  computations at $Re_D=0.2\times10^6$ (C-130 afterbody) and
+  $Re_c=10^6$ (a 267-million-node NACA 0012 at $M=0.4$; §3.1.1.2); the
+  statement is printed as it stands.
 - **Time steps of Kiris et al. (2023).** §VI.1c states that the implicit
   codes used time steps "only about 10× larger" than the explicit ones. In
   Table 2 the explicit steps are $2.9\times10^{-5}$–$5.7\times10^{-5}$ and
@@ -1009,3 +1083,6 @@ it, without breakdown).
 - [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.2.3, Table 1; §3.1.
 - [Wei et al. (2023)](/sources/wei-2023.md) — §II E; §III B, Eq. (34), Figs. 5–6.
 - [Wu et al. (2024)](/sources/wu-2024.md) — §1 (Choi & Moin cited; passing).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1, §2.4.1.1, Fig. 43; §2.4.1.4, Table 1; §3.1.1.2; §4.1.1.
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — §I; §III A–D; App. B, Table III; App. C, Fig. 16.
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §3.2, Figs. 2–4, Table 2; §4.2–4.4, Tables 3–5.

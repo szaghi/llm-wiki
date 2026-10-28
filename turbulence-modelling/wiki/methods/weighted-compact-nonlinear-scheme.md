@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Weighted compact nonlinear schemes"
-description: "The weighted compact nonlinear scheme (WCNS) differences numerical fluxes at cell edges, computed by a Riemann flux from nonlinearly interpolated interface states; the page gives the explicit and the tri-diagonal compact interpolations, the fourth- and eighth-order flux differences, and how the nonlinear weights set its dissipation in implicit LES and hybrid RANS/LES."
+description: "The weighted compact nonlinear scheme (WCNS) differences numerical fluxes at cell edges, computed by a Riemann flux from nonlinearly interpolated interface states; the page gives the explicit and the tri-diagonal compact interpolations, the fourth-, sixth- and eighth-order flux differences, and how the nonlinear weights (Z-type, TENO and smooth TENO) set its dissipation in implicit LES and hybrid RANS/LES."
 status: established
-aliases: [WCNS, weighted compact nonlinear scheme, WCNS-E, WCNS-T, WCNS-L, WCNS-Z, nonlinear compact interpolation]
+aliases: [WCNS, weighted compact nonlinear scheme, WCNS-E, WCNS-T, WCNS-L, WCNS-Z, WCNS-JS, WCNS-ST, WCNS-STA, smooth TENO, S-TENO, nonlinear compact interpolation]
 tags: [numerical-dissipation, implicit-les, compressible, hybrid-rans-les]
-timestamp: 2026-10-28T07:03:00Z
+timestamp: 2026-10-28T17:01:00Z
 ---
 
 # Weighted compact nonlinear schemes
@@ -203,6 +203,101 @@ capture shocks and to satisfy the
 [geometric conservation law](/properties/geometric-conservation-law.md),
 by citation (§2.3).
 
+## TENO-type and smooth scale-separating weights
+
+[Wu et al. (2024b)](/sources/wu-2024-b.md) keep the fifth-order explicit
+interpolation and the Roe flux but replace the Z-type weights by
+TENO-type weights, for SATES hybrid RANS/LES in PHengLEI (§II.B–D,
+Eqs. 8–23). Their flux difference is the explicit sixth-order one on
+edge fluxes only,
+
+$$E'_j=\frac{75}{64h}\big(E^*_{j+\frac12}-E^*_{j-\frac12}\big)-\frac{25}{384h}\big(E^*_{j+\frac32}-E^*_{j-\frac32}\big)+\frac{3}{640h}\big(E^*_{j+\frac52}-E^*_{j-\frac52}\big)$$
+
+(Eq. 10), exact for a linear flux *(compiler check, not in the sources:
+$\tfrac{75}{64}-3\cdot\tfrac{25}{384}+5\cdot\tfrac{3}{640}=1$)*; the
+three third-order candidates and the optimal weights
+$d_k=(\tfrac1{16},\tfrac{10}{16},\tfrac5{16})$ are those above, applied to
+characteristic variables. Citing Nonomura & Fujii, they state that the
+flux difference does not affect the resolution and that the nonlinear
+interpolation dominates it (§I). Four weightings are compared, with
+$\tau_{\mathrm Z}=|\mathrm{IS}_0-\mathrm{IS}_2|$ (page-local) and
+$\epsilon_{\mathrm Z}=10^{-40}$ in all of them:
+
+- **WCNS-JS:** $a_k=d_k/(\mathrm{IS}_k+\epsilon_{\mathrm Z})^2$ (Eq. 14).
+- **WCNS-Z:** $a_k=d_k\big(1+\tau_{\mathrm Z}/(\mathrm{IS}_k+\epsilon_{\mathrm Z})\big)$,
+  first power, chosen "to reduce the numerical dissipation" (Eq. 15).
+- **WCNS-T** (TENO weighting in a WCNS, after Fu et al. and Hiejima, as
+  cited): the scale-separated measure
+  $\gamma^{\mathrm T}_k=\big(1+\tau_{\mathrm Z}/(\mathrm{IS}_k+\epsilon_{\mathrm Z})\big)^6$,
+  its normalized form $\chi^{\mathrm T}_k=\gamma^{\mathrm T}_k/\sum_l\gamma^{\mathrm T}_l$,
+  the sharp cut-off $\delta^{\mathrm T}_k=0$ for $\chi^{\mathrm T}_k<C_T$ and
+  1 otherwise, $C_T=10^{-5}$, and the weights
+  $\mathsf w_k=d_k\delta^{\mathrm T}_k/\sum_ld_l\delta^{\mathrm T}_l$
+  (Eqs. 16–17, 23). (This WCNS-T is not the tri-diagonal compact WCNS-T of
+  Ma et al. above; the two papers use the same label for different
+  schemes.)
+- **WCNS-ST** (smooth TENO, the contribution): the step is replaced by
+  $\delta^{\mathrm T}_k=\tanh\big((\chi^{\mathrm T}_k/C_T)^{2}\big)$ for
+  $\chi^{\mathrm T}_k<10C_T$ and $\delta^{\mathrm T}_k=1$ above, to save the
+  hyperbolic tangent (Eqs. 18–19; Fig. 2 compares the exponents 1, 2, 3,
+  5, 7 and 20 with the step). The weights become continuous functions of
+  the data. **WCNS-STA** adds an adaptive threshold
+  $C_T=10^{-\lfloor\beta_{\mathrm A}\rfloor}$,
+  $\beta_{\mathrm A}=10-5\,(1-g)$, $g=(1-m_{\mathrm R})^4(1+4m_{\mathrm R})$,
+  driven by the discontinuity indicator $m_{\mathrm R}$ of Ren et al. as
+  cited (page-local $\beta_{\mathrm A}$, $m_{\mathrm R}$; formula on
+  [shock sensors](/definitions/shock-sensor.md)), so that $C_T=10^{-5}$
+  near discontinuities ($m_{\mathrm R}\approx1$) and $10^{-10}$ in smooth
+  regions ($m_{\mathrm R}\approx0$) (Eqs. 20–22).
+
+**The argument against the sharp cut-off.** Wu et al. (2024b) hold that
+marginally resolved high-wavenumber turbulence has no true
+discontinuity, and that the discontinuous switch of the sharp cut-off
+between "resolved" and "non-resolved" scales makes the weights
+discontinuous, which "would lead to numerical instability or bad
+convergence" of the Newton-like sub-iterations of their implicit
+dual-time integration (second-order backward differences with LU-SGS)
+(§I, §II.D). They also state that the stencil-selecting TCNS of Zhang et
+al. "struggles to maintain the continuity of the interpolation variable
+near discontinuities" (§II.D). The evidence:
+
+- **Spectral properties.** By Pirozzoli's approximate dispersion relation,
+  WCNS-T keeps the linear-scheme properties over a wide wavenumber range,
+  WCNS-ST stays close to WCNS-T and WCNS-STA approaches the linear scheme
+  (§IV.A, Fig. 4; qualitative only).
+- **Two-dimensional Riemann problem** (configuration 3 of Lax & Liu,
+  $401\times401$, $t=0.8$): the TENO-type weightings resolve
+  "significantly more small-scale structures" than JS and Z, with sharp
+  and stable shocks; WCNS-ST matches WCNS-T and WCNS-STA resolves more
+  (§IV.B, Fig. 5).
+- **30P30N airfoil** (SATES, $Re=1.71\times10^6$, $M=0.17$, $5.5^\circ$,
+  about 27 million cells): WCNS-JS suppresses the slat-cove shear-layer
+  instability and its mean $C_p$ deviates mostly on the flap; WCNS-Z does
+  better; WCNS-T, -ST and -STA agree with the experiment and with the
+  linear fifth-order WCNS; sub-iteration residuals converge worse with
+  WCNS-T than with WCNS-ST or -STA, and WCNS-ST matches the measured
+  slat-cove vorticity better than WCNS-T, which the authors relate to the
+  convergence (§IV.C.1, Figs. 7–10; see
+  [30P30N high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md)).
+- **Supersonic base flow** (Herrin & Dutton, $M_\infty=2.46$, 7 and 42
+  million cells): within a time step the residual falls by about one
+  order with WCNS-T, three with WCNS-ST and two with WCNS-STA; on the
+  coarse grid the resolved turbulent kinetic energy peak is predicted
+  best by WCNS-STA, then WCNS-ST, then WCNS-T, with JS and Z poor (the
+  fine-grid reference is WCNS-JS) (§IV.C.2, Figs. 13–14).
+- **Cost** (Table I, CPU hours over WCNS-JS): 30P30N — linear 0.97, Z
+  1.03, T 1.51, ST 1.52, STA 1.68; base flow — Z 1.02, T 1.58, ST 1.55,
+  STA 1.54.
+
+They recommend smooth scale separation "in TENO-based schemes,
+especially in simulating multiscale flows" (§V). The TENO family itself
+is on [WENO and hybrid schemes](/methods/weno-scheme.md); the effect of
+the weights on shear-layer dissipation on
+[numerical dissipation](/properties/numerical-dissipation.md). In the
+compressible Taylor–Green comparison of
+[Wang et al. (2024b)](/sources/wang-2024-i.md), §I, a WCNS is listed
+among the schemes earlier tested on that case, in passing.
+
 ## Qualifications
 
 - **Evidence.** Ma et al. give no error norms for the implicit-LES cases,
@@ -238,6 +333,21 @@ by citation (§2.3).
   second-order flux difference; the cylinder comparison is one grid and
   one closure, against references at other Reynolds numbers for part of
   the data.
+- **Printed slips (Wu et al. 2024b).** §II.B names the candidate
+  stencils $K_1$, $K_2$, $K_3$ where Eq. (12) and Fig. 1 label them $K_0$,
+  $K_1$, $K_2$. After Eq. (22) the text says that for $m_{\mathrm R}\approx0$
+  "$C_T$ increases to $10^{-\alpha_1}$"; with the printed
+  $\alpha_1=10$, $\alpha_2=5$ the threshold goes from $10^{-5}$ to
+  $10^{-10}$, i.e. it decreases *(compiler check, not in the sources)*.
+  The Appendix states that WCNS-STA costs "a slightly further increase"
+  over WCNS-ST, which Table I shows for the 30P30N (1.68 against 1.52) but
+  not for the base flow (1.54 against 1.55). §IV.C.1 cites Fig. 6 (the
+  airfoil geometry) for the slat-cove structures shown in Fig. 7.
+- **Test scope (Wu et al. 2024b).** The paper tests the convergence
+  argument against the sharp cut-off with one implicit dual-time
+  integration (second-order backward differences with LU-SGS
+  sub-iterations); the base-flow ranking uses one coarse grid, with a
+  WCNS-JS fine-grid reference.
 - **Cost of WCNS-T.** Ma et al. state that the nonlinear compact
   interpolation needs "no extra computation" (§2.2, §4) and that one
   solution-dependent tri-diagonal system is solved per variable, grid
@@ -248,4 +358,6 @@ by citation (§2.3).
 
 - [Ma et al. (2022)](/sources/ma-2022.md) — §1 (WCNS over-dissipative for implicit LES, cited); §2, Eqs. (1)–(2) (curvilinear form, metrics with the flux scheme); §2.1, Eqs. (7)–(15) (three components, eighth-order flux difference, WCNS-E, Z-type weights, indicators); §2.2, Eqs. (16)–(29) (compact interpolation, WCNS-T, decoupling at discontinuities, boundary rows); §2.3, Tables 1–2, Figs. 1–3 (resolution, order, cost); §3.1–3.4, Figs. 4–16 (implicit LES; linear against nonlinear WCNS-E in T106A); §4.
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §1 (GCL and shock capturing of WCNS, cited); §2.2.1, Eqs. (10)–(14) (fourth-order flux difference, Roe flux, Z-type weights, WCNS-L and WCNS-Z); §2.2.2, Eq. (15) (blended comparison scheme); §3.3, Table 2, Figs. 11–16 (scheme dissipation on the 30P30N airfoil); §3.4; §4.
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) — §I (interpolation dominates resolution, cited); §II.B–D, Eqs. (8)–(23) (sixth-order flux difference, JS, Z, TENO, smooth TENO and adaptive weights); §IV.A–C, Figs. 4–14, Table I (spectral analysis, Riemann problem, 30P30N, supersonic base flow, sub-iteration convergence, cost); §V.
+- [Wang et al. (2024b)](/sources/wang-2024-i.md) — §I (WCNS among earlier Taylor–Green schemes; passing).
 - [Wu et al. (2024)](/sources/wu-2024.md) — §2.3, Eqs. (12)–(15) (linear WCNS-E-4 in PHengLEI, Roe flux, GCL by citation); §2.4, Eqs. (16)–(17) (MUSCL comparison scheme); §3.2, Table 3, Figs. 13–17 (WCNS against MUSCL on the supercritical cylinder); §4.

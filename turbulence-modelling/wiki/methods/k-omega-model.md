@@ -5,7 +5,7 @@ description: "Wilcox's two-equation k-ω eddy-viscosity model and its unblended 
 status: established
 aliases: [k-omega model, Wilcox k-ω, Wilcox 1998, Wilcox 2006, Wilcox 07, k-ω 2006, TNT, turbulent/non-turbulent k-ω, k-log-ω, k-ln ω]
 tags: [rans, eddy-viscosity, dg, boundary-layer]
-timestamp: 2026-10-28T07:07:00Z
+timestamp: 2026-10-28T16:59:00Z
 ---
 
 # Wilcox k-ω model
@@ -385,6 +385,26 @@ page for the integrators).
   ratio 1.5 (rotating frame, $N=2$, extruded mesh) the mean power
   coefficient is 0.173, against 0.171 for a cited two-dimensional RANS and
   0.152 for Noventa et al. (§6.4, Table 17).
+- **Vortex flows, as surveyed.** Luckring & Rizzi (2024) cite Schiavetta et
+  al.'s RANS of a 65° delta wing ($M=0.4$, $Re_{\mathrm{mac}}=6\times10^6$) in
+  which several $k$-$\omega$ models predict the coherent primary vortex and
+  the turbulent secondary vortex (§3.1.1.1), and, on the X-31 at
+  $\alpha=16^\circ$, NLR's ENSOLV with the TNT $k$-$\omega$ model (about
+  31 million cells) against DLR TAU with Spalart–Allmaras (about 50 million
+  cells): the two "produce significantly different wing vortex flows"
+  (§3.2.3.4) ([Luckring & Rizzi (2024)](/sources/luckring-2024.md); see
+  [delta-wing vortex flow](/benchmarks/delta-wing-vortex-flow.md)).
+- **Calibration and combustion hosts, as cited.** Le et al. (2024) cite a
+  Bayesian recalibration of three $k$-$\omega$ models for hypersonic
+  shock/boundary-layer interactions, two of which, "with corrected
+  compression ratios", agree with each other and improve on the originals
+  ([Le et al. (2024)](/sources/le-2024.md), §3.1.1; see
+  [Bayesian closure calibration](/methods/bayesian-closure-calibration.md)).
+  Salehi et al. (2024) list a "tuned" $k$-$\omega$ model as the RANS host of
+  a conditional source-term-estimation computation of a bluff-body premixed
+  flame ([Salehi et al. (2024)](/sources/salehi-2024.md), §3.2.2,
+  as cited; see
+  [conditional source-term estimation](/methods/conditional-source-term-estimation.md)).
 - **Outlook.** Elzaabalawy et al. propose the $k$-$kl$ model, with $kl=0$
   at the wall and second velocity derivatives available element-wise in DG,
   and a "negative $k$-$kl$" analogue of negative
@@ -433,3 +453,6 @@ page for the integrators).
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1.
 - [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §2 Eqs. 1–8, §4, §5 Eq. 67, §6.1–6.2 Tables 9–12, §6.4 Table 17.
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.1.1, Eq. 3, Table 1.
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §3.1.1.1 ($k$-$\omega$ RANS of a 65° delta wing, as cited); §3.2.3.4 (X-31, TNT $k$-$\omega$ against SA, as cited).
+- [Le et al. (2024)](/sources/le-2024.md) — §3.1.1 (Bayesian recalibration of $k$-$\omega$ models, as cited).
+- [Salehi et al. (2024)](/sources/salehi-2024.md) — §3.2.2 (RANS-CSE of a bluff-body premixed flame with a tuned $k$-$\omega$ model, as cited).

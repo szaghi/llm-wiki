@@ -5,7 +5,7 @@ description: "The one-equation eddy-viscosity RANS model transporting the workin
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T17:04:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -220,6 +220,32 @@ baseline:
   records it as printed; in their DDES the molecular viscosity appears in
   the shielding argument $r_d$, "the DDES method adds the molecular
   viscosity" (§2.3, Eqs. 3–4; on the [DES page](/methods/detached-eddy-simulation.md)).
+- **Compressible CFL3D scaling, with SARC.** An et al. (2025) print the
+  model as used in both their finite-volume (CFL3D) and third-order DG
+  solvers, after Spalart & Allmaras, with production on the vorticity
+  magnitude,
+  $$\frac{D\tilde\nu}{Dt}=c_{b1}(1-f_{t2})\lvert\Omega\rvert\tilde\nu-\Big\{c_{w1}f_w-\frac{c_{b1}}{\kappa^2}\big[(1-f_{t2})f_{v2}+f_{v2}\big]\Big\}\Big(\frac{\tilde\nu}{d}\Big)^2+\frac1\sigma\Big\{\partial_j\big[(\nu+\tilde\nu)\partial_j\tilde\nu\big]+c_{b2}\partial_i\tilde\nu\,\partial_i\tilde\nu\Big\}$$
+  as printed (Eq. 8; see Qualifications for the bracket), with
+  $f_{t2}=c_{t3}\exp(-c_{t4}\chi^2)$, $c_{t3}=0$, $c_{t4}=0.5$, so $f_{t2}=0$,
+  the other constants those of Alauzet et al. above, and the modified
+  vorticity $S_{\mathrm{SA}}$ entering only $r$, both carrying the factor
+  $Re/M$ of the solver's nondimensionalization (Eq. 9). Boundary values
+  are $\tilde\nu_\infty=1.341946$, $\rho\nu_{t,\infty}=0.009$ and $\tilde\nu=0$ at
+  the wall ([An et al. (2025)](/sources/an-2025.md), §2.1, Eqs. 8–9); with
+  $\chi=1.341946$, $f_{v1}=0.00671$ and $\chi f_{v1}=0.0090$, so the two
+  free-stream values agree in units of the free-stream molecular viscosity
+  *(compiler check, not in the sources)*. They also print the SARC
+  rotation–curvature correction of Spalart & Shur, in the form of SA-RC
+  below, with $c_{r1}=1$, $c_{r2}=12$, $c_{r3}=0.6$ (Eq. 10), but label all
+  their results "SA" and do not state that SARC is used (see
+  Contradictions).
+- **Incompressible, in a modal DG solver.** Alberti et al. (2025) print the
+  trip-less model with the source split into production, destruction and
+  the $c_{b2}$ term, $S_{\mathrm{SA}}=\lvert\Omega\rvert+\tilde\nu f_{v2}/(\kappa^2d^2)$,
+  $c_{w1}=c_{b1}/\kappa^2+(1+c_{b2})/\sigma$ and the constants of Alauzet et
+  al. (Eqs. 2–5); it is "fully turbulent" (no trip terms), and two
+  robustness devices of their DG code are in the next section
+  ([Alberti et al. (2025)](/sources/alberti-2025-b.md), §2.1, Eqs. 1–6).
 
 **Negative SA.** Basile et al. (2023) use the negative-$\tilde\nu$ model with
 $\mu_t=\rho\tilde\nu f_{v1}$ for $\tilde\nu\ge0$ and $\mu_t=0$ for $\tilde\nu<0$
@@ -377,6 +403,35 @@ viscosity use a smooth positive surrogate
 [scale-adaptive simulation](/methods/scale-adaptive-simulation.md)). They also
 take from their own DG SA work the Hermite-WENO limiting of the turbulence
 variable in troubled cells (§3.1).
+
+**Limiting $\tilde\nu$ in a third-order DG solver.** An et al. (2025), of
+the same group, describe that limiting for SA itself (App., Eqs. A.1–A.2).
+They state the motivation: at the turbulent–laminar edge the weak solution
+of the $\tilde\nu$ equation has discontinuous first derivatives, which molecular
+viscosity turns into abrupt jumps, so a high-order solution oscillates,
+$\tilde\nu$ goes negative and the solver diverges. A troubled cell is detected
+by the decay of the modal content of $\rho\tilde\nu$,
+$S_k=\log_{10}\big(\langle\rho\tilde\nu^p_k,\rho\tilde\nu^{p-1}_k\rangle/\langle\rho\tilde\nu^p_k,\rho\tilde\nu^p_k\rangle\big)$
+($S_k$, $p$ page-local; $\rho\tilde\nu^p_k$ the solution in cell $k$ at the
+source's "discrete order" $p$, $\rho\tilde\nu^{p-1}_k$ its expansion
+truncated to the modes of order $p-1$, $\langle\cdot,\cdot\rangle$ here an inner
+product, not a Reynolds average), against a case-dependent threshold, and
+reconstructed by Hermite WENO; a Zhang–Shu-type positivity limiter then
+rescales the polynomial about its cell mean,
+$\hat\nu=\theta_{\mathrm p}(\tilde\nu-\bar\nu_k)+\bar\nu_k$ with
+$\theta_{\mathrm p}=\min\big((\bar\nu_k-\epsilon)/(\bar\nu_k-\tilde\nu_{\min}),1\big)$
+over the quadrature points ($\theta_{\mathrm p}$, $\bar\nu_k$, $\epsilon$
+page-local), to keep $\tilde\nu$ non-negative on coarse grids where the edge
+of the eddy-viscosity layer is under-resolved and to reduce the reliance on
+the detector threshold ([An et al. (2025)](/sources/an-2025.md), App.; see
+[shock sensors](/definitions/shock-sensor.md) and
+[WENO schemes](/methods/weno-scheme.md)).
+
+**Clipping in an incompressible modal DG solver.** Alberti et al. (2025)
+evaluate the SA source with the positive part of $\tilde\nu$ only, setting
+$\tilde\nu=0$ in it otherwise, and limit $r$ to $r_{\max}=10$ for stability,
+following Crivellini et al. (§2.1, Eq. 6); details of their solver are on
+the [DES page](/methods/detached-eddy-simulation.md).
 
 ## Variants
 
@@ -645,6 +700,63 @@ uncertainty of SA is addressed (§IV; see
 [model-form uncertainty](/definitions/model-form-uncertainty.md) and
 [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)).
 
+**Bayesian recalibration, and its dependence on the discretization.** An et
+al. (2025) calibrate seven constants,
+$(c_{b1},c_{b2},\sigma,c_{w2},c_{w3},c_{v1},\kappa)$, by Bayesian inference and
+ask how the result depends on the scheme: second-order finite volume
+(CFL3D) against their third-order DG solver. The workflow (uniform priors,
+$\pm25\%$ for $c_{b1}$, $c_{b2}$, $\sigma\in[0.6,1]$, $\pm50\%$ for the others;
+72 Latin-hypercube training runs; a second-order polynomial-chaos surrogate
+of wall $C_p$ or $C_f$; Sobol indices; $10^5$ MCMC samples with an embedded
+model-error term; maximum a posteriori (MAP) sets) is on
+[Bayesian closure calibration](/methods/bayesian-closure-calibration.md)
+(§2.3, §3.1, Table 1). Their findings for the model (§3.1–§3.3, Figs. 9,
+17, Tables 3–4; 2D steady RANS):
+
+- on the Driver–Seegmiller [backward-facing step](/benchmarks/backward-facing-step.md)
+  ($Re_H=36\,000$), $\kappa$, $c_{b1}$ and $c_{v1}$ carry most of the output
+  variance whatever the scheme; $\kappa$ "remains the dominant contributor"
+  under DG, $c_{b1}$ loses sensitivity under DG and the Sobol index of
+  $c_{v1}$ is "approximately 120% higher" than under finite volume, mainly
+  at reattachment and in the recovery;
+- on the [Gaussian bump](/benchmarks/gaussian-bump.md) ($Re_L=10^6$),
+  $c_{b2}$, $\sigma$ and $c_{w3}$, insensitive on the step, become sensitive,
+  more so under DG; the authors attribute this to first-derivative terms
+  that change under streamline curvature and high-order discretization,
+  and the role of $c_{v1}$ to the Reynolds shear stress, both as
+  hypotheses;
+- the eight MAP sets (two flows, two schemes, $C_p$ or $C_f$) scatter
+  widely: $\kappa$ from 0.218 to 0.615, $c_{v1}$ from 3.59 to 10.38,
+  $c_{w2}$ from 0.165 to 0.446 (Table 3);
+- the final set, obtained by weighting the MAP offsets by baseline error
+  and scheme sensitivity (weights not given), is $c_{b2}=0.592$,
+  $\sigma=0.806$, $c_{w3}=2.641$, $c_{v1}=10.3$, $\kappa=0.39$, $c_{w2}=0.3$
+  unchanged, and $c_{b1}=0.1186$ in separation but $0.1382$ in boundary
+  layers (Table 4), called "a modified SA model tailored for DG schemes"
+  (§5); how the two $c_{b1}$ values are switched in a computation is not
+  stated.
+
+Validated on the bump at $Re_L=2\times10^6$, the set gives a 26.44% error
+reduction in the crest transition region but little gain in the large
+separation, which the baseline "nearly eliminate[s]"; on the HiFi-TURB DLR
+rounded step about 25% overall $C_f$ error reduction; on the
+[NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md) limited
+$C_f$ gains and a better DG $C_p$ at the crest and in the separation (§4,
+Figs. 20–27). Throughout, DG on coarser grids matches or beats finite
+volume, except near the step corner and
+in separation, where the authors hypothesize that the lower dissipation of
+DG exposes model error (§3.1–§3.2). From the printed grid sizes, the DG
+grids hold 0.21–0.29 times the finite-volume points in the five cases
+*(compiler check, not in the sources)*. The calibrated $\kappa$ ranges
+over 0.396–0.615 across the cases of Shan et al. (above, Table B1) and
+over 0.218–0.615 across the eight MAP sets of An et al. (Table 3), who
+also state that $c_{v1}$, $c_{w2}$, $c_{w3}$ and $\kappa$ are determined
+from the zero-pressure-gradient flat-plate boundary layer (§3.1). Reviews list further
+Bayesian uncertainty studies of SA, for incompressible boundary layers
+(Cheung et al.) and supersonic jet interaction (Li et al.), and neural
+networks trained on SA fields that replace the model in the solver (Sun et
+al.) ([Le et al. (2024)](/sources/le-2024.md), §3.1.1, §3.1.3, as cited).
+
 ### SA as the host of detached-eddy simulation
 
 SA is the RANS closure of the zonal
@@ -700,6 +812,24 @@ upstream of separation to represent laminar separation, as in the
 laminar-separation DES of the cylinder at $Re=1.4\times10^5$ they quote,
 which the $k$-$\omega$ model cannot ([Ghidoni et al. (2022)](/sources/ghidoni-2022.md),
 §6.2, Table 12; see the [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md)).
+Luckring & Rizzi (2024), citing Spalart et al., give the argument behind
+the DES limiter in its SA form: the destruction scales as $(\nu_t/d)^2$, its balance with
+production gives $\nu_t\propto\lvert S\rvert d^2$, and a Smagorinsky viscosity
+scales as $\lvert S\rvert\Delta^2$, so replacing $d$ by
+$\min(d,C_{\mathrm{DES}}\Delta)$, $C_{\mathrm{DES}}=0.65$, turns the model into a
+subgrid model away from walls ([Luckring & Rizzi (2024)](/sources/luckring-2024.md),
+§2.4.1.4), the same point Husson et al. make above. Alberti et al. (2025)
+run SA-DDES and SA-IDDES in a high-order modal DG solver; they find the
+low-Reynolds-number correction $\Psi$ of the LES length detrimental there,
+the LES branch settling by itself at an equivalent Smagorinsky constant of
+about 0.2 on coarse grids and about 0.01 on fine ones, and recommend letting
+$\tilde\nu$ evolve "without any a posteriori correction" (§3.1.1–§3.1.2,
+Figs. 5, 10). Wang et al. (2024c) run SA-DES ($C_{\mathrm{DES}}=0.65$ on the
+largest cell edge), SA-DDES and an SA-based scale-adaptive variant, in which
+$d$ is capped by a von Kármán length, on a Mach 2 boundary layer
+([Wang et al. (2024c)](/sources/wang-2024-j.md), §III.F, Eqs. 29–40; see
+[scale-adaptive simulation](/methods/scale-adaptive-simulation.md)). All
+three are on the [DES page](/methods/detached-eddy-simulation.md).
 
 ### SA with wall functions on immersed-boundary Cartesian grids
 
@@ -982,6 +1112,27 @@ meshes as future work (§9).
   calling the comparison possibly unfair because SA was designed for steady
   high-Reynolds flows (§4.3; see
   [square-cylinder flow](/benchmarks/square-cylinder-flow.md)).
+- **Concentrated vortex flows, as surveyed.** Luckring & Rizzi (2024)
+  report from the studies they review that in the CAWAPI F-16XL campaign a
+  $k$-$\varepsilon$ model with grid refinement improved the secondary vortex
+  over SA, which they say "fails to predict secondary separation because it
+  does not transport the right quantities" (§3.2.3.3); that SA was closer
+  than SST, though neither correlated well, for the SACCON under forced
+  pitch oscillation (§3.2.3.2); that DLR TAU with SA and NLR ENSOLV with
+  the TNT $k$-$\omega$ model gave "significantly different wing vortex
+  flows" on the X-31 (§3.2.3.4); and that on the AVT-316 missile FUN3D with
+  SA-RC-QCR and Niceflow with SA-RC on adapted grids differ (§3.2.3.5)
+  ([Luckring & Rizzi (2024)](/sources/luckring-2024.md); see
+  [delta-wing vortex flow](/benchmarks/delta-wing-vortex-flow.md)).
+- **Inside learned models.** Le et al. (2024), citing Singh et al., write
+  the field-inversion correction generically as a multiplier
+  $\beta(\boldsymbol x)$ of the SA production (§3.1.2, Eqs. 17–18; see
+  [field inversion](/methods/field-inversion-machine-learning.md)), and
+  Fang et al. (2026) cite an SA-augmented physics-informed network that
+  reconstructs mean flows from sparse velocity data with the error falling
+  from 11.7% to 3.1% (Patel et al., as cited)
+  ([Fang et al. (2026)](/sources/fang-2026.md), §3.4, §4.2.2, Table 4; see
+  [physics-informed neural networks](/methods/physics-informed-neural-network.md)).
 
 ### High-order RANS of the NASA verification cases
 
@@ -1104,6 +1255,36 @@ computed at high order:
   $(x-x_{\min})/(x_{\max}-x_{\min})$ maps it to $[0,1]$ *(compiler check, not
   in the sources)*.
 
+- An et al. (2025) print the destruction bracket as
+  $\big[(1-f_{t2})f_{v2}+f_{v2}\big]$ (Eq. 8, checked on the page image);
+  with their $c_{t3}=0$ it evaluates to $2f_{v2}$ *(compiler check, not in
+  the sources)*, while Li & Liu (2022, Eq. 1, baseline above) print
+  $f_{t2}$ in that place. Their
+  production is printed on $\lvert\Omega\rvert$ although $S_{\mathrm{SA}}$ is
+  defined right after and used only in $r$. Their Table 1 labels the
+  smaller bound of every coefficient "Upper boundary" and the larger "Lower
+  boundary"; the text calls the $\pm25\%$ bounds "$\pm25$ times" and names
+  $c_{w2}$ "$C_2$"; the appendix writes $\chi=\nu/\tilde\nu$ against
+  $\tilde\nu/\nu$ in §2.1. They state that the high-order MAP values of
+  $\kappa$ are "consistently deviating below normative values" (§3.3),
+  while their Table 3 prints 0.41882 for the bump calibrated on $C_f$ with
+  DG, against their original 0.41 (Table 4). They give the
+  validation grid reduction on the bump at $Re_L=2\times10^6$ as "54%",
+  while $181\times93$ against $401\times201$ points is a 79% reduction, the
+  per-direction reductions being 55% and 54% *(compiler check, not in the
+  sources)*.
+- Alberti et al. (2025) write the cases of the $r$ limiter on $r$ rather
+  than on the unlimited $r^*$ (Eq. 6).
+- **The constant $c_{r3}$ of the Spalart–Shur rotation–curvature
+  correction, side by side.** Li & Liu (2022) print SA-RC after Spalart & Shur
+  (1997) with $c_{r1}=1.0$, $c_{r2}=12.0$, $c_{r3}=1.0$ (Eqs. 8–15); An et al.
+  (2025) print the same function, SARC after Spalart & Shur (their ref. 6,
+  the 1997 paper), with $c_{r1}=1$, $c_{r2}=12$, $c_{r3}=0.6$ (Eq. 10, checked
+  in the text layer). Li & Liu run SA-RC in their computations; An et al.
+  label all their results "SA" and do not state that SARC is used. Neither
+  source calls its value a revision or an implementation variant. The
+  cited 1997 paper is not ingested.
+
 # Citations
 
 - [Li & Liu (2022)](/sources/li-2022.md) — §1, §2.3 Eqs. 1–27, 33–34, §3.1–3.2, §4.1–4.2, §5, Table 3.
@@ -1152,3 +1333,9 @@ computed at high order:
 - [Mo et al. (2023)](/sources/mo-2023.md) — §II, §III C, §IV B.
 - [Li et al. (2024b)](/sources/li-2024-f.md) — §II.B.1, Eqs. (3a)–(3b) (printed SA with $f_{t2}$); §II.B.2 (SA-IDDES); §III.D, Figs. 5–9 (CRM-HL drag and separation, SA-RANS against SA-IDDES).
 - [Zhang et al. (2024)](/sources/zhang-2024.md) — §2.3, Eqs. (1)–(4) (printed SA and its DDES shielding argument, constants).
+- [An et al. (2025)](/sources/an-2025.md) — §2.1, Eqs. (8)–(10) (printed SA in CFL3D scaling, boundary values, SARC constants); §2.3, §3.1–§3.3, Figs. 9, 17, Tables 1, 3–4 (Bayesian recalibration under finite volume and DG, sensitivities, MAP and final sets); §4, Figs. 20–27 (validation); App., Eqs. (A.1)–(A.2) (troubled-cell detector, HWENO and positivity limiting of $\tilde\nu$).
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §2.1, Eqs. (1)–(6) (incompressible trip-less SA, positivity clipping, $r_{\max}=10$); §3.1.1–§3.1.2, Figs. 5, 10 (low-Reynolds correction detrimental, equivalent Smagorinsky constant).
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) — §III.F, Eqs. (29)–(40) (SA-DES, SA-DDES and SA-based SAS lengths).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1.4 (DES argument from the SA destruction); §3.2.3.2–§3.2.3.5 (SACCON, CAWAPI, X-31, AVT-316, as cited).
+- [Le et al. (2024)](/sources/le-2024.md) — §3.1.1 (Bayesian UQ of SA, as cited); §3.1.2, Eqs. (17)–(18) (production multiplier); §3.1.3 (SA-trained surrogate, as cited).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §3.4, §4.2.2, Table 4 (SA-augmented PINN, as cited).

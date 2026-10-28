@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "The triply periodic vortex flow that transitions from a single-mode analytic field to decaying turbulence: at Re 40,000 to separate Smagorinsky and implicit LES errors; at Re 100 to 10,000 to split numerical dissipation and test subgrid models, filters and split forms; supersonic for shock capturing; inviscid for energy conservation; laminar and 2D for filter and commutator analysis."
+description: "Triply periodic vortex flow that transitions from a single-mode analytic field to decaying turbulence: at Re 40,000 it separates Smagorinsky and implicit LES errors; at Re 100–10,000 it splits numerical dissipation and tests subgrid models, filters and split forms; compressible to Mach 2.5 for shock capturing; with an imposed field for MHD; inviscid for energy conservation; laminar and 2D for commutators."
 status: established
-aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex, laminar Taylor–Green vortex, Brachet Taylor–Green vortex, High-Order CFD Workshop case C3.5]
-tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible, filtering, kinetic-energy-preserving]
-timestamp: 2026-10-28T11:50:00Z
+aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex, compressible Taylor–Green vortex, MHD Taylor–Green vortex, TGV-MHD, laminar Taylor–Green vortex, Brachet Taylor–Green vortex, High-Order CFD Workshop case C3.5]
+tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible, filtering, kinetic-energy-preserving, mhd]
+timestamp: 2026-10-28T17:07:00Z
 ---
 
 # Taylor–Green vortex
@@ -979,6 +979,117 @@ Chapelier et al. reference and is "almost identical" at $512^3$ (Fig. 11).
 For shock–boundary-layer configurations see
 [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
+**Entropy filtering in flux reconstruction.** [Witherden et al. (2025)](/sources/witherden-2025.md),
+§5.1, Figs. 11–12, Table 1, run the case in [PyFR](/software/pyfr.md)
+(initial pressure and $\rho=p/p_0$, Sutherland's law with reference
+temperature 273 K) on $16^3$ to $128^3$ hexahedra at polynomial degree
+$N=3$ with Gauss–Legendre–Lobatto points, that is $64^3$ to $512^3$
+degrees of freedom, stabilized by positivity-preserving entropy filtering
+(a modal filter applied only in elements that violate positivity of
+density or pressure or a minimum-entropy bound). On $128^3$ elements the
+enstrophy is "in excellent agreement" with the $2048^3$ TENO reference of
+Chapelier et al.; at equal resolution and order the dilatational
+dissipation of PyFR is closer to that reference than that of CODA, FLEXI
+and SD3D, which the authors read as entropy filtering not introducing
+"excessive numerical dissipation" at shocks (see
+[flux reconstruction](/methods/flux-reconstruction.md) and
+[numerical dissipation](/properties/numerical-dissipation.md)). The
+comparison data were supplied by Chapelier and collaborators
+(acknowledgements).
+
+**Interpolation-based WENO from Mach 0.1 to 2.5.**
+[Wang et al. (2024b)](/sources/wang-2024-i.md) compare four fifth-order
+finite-difference WENO schemes on the compressible TGV: the classical
+Jiang–Shu WENO (WENO-JS), the reconstruction-based unequal-sized WENO
+(US-WENO), its interpolation-based form with an HLL Riemann solver
+(AUS-WENO), and their hybrid HAUS-WENO, which switches to the linear
+fifth-order interpolation where a sensor on the density finds the point
+smooth (see [WENO schemes](/methods/weno-scheme.md) and
+[shock sensors](/definitions/shock-sensor.md)); third-order TVD
+Runge–Kutta, CFL 0.6, no subgrid model. Their initial condition
+(Eq. 25) is the velocity above with a perturbed density
+$\rho=1+\tfrac{C}{16}(\cos2x+\cos2y)(\cos2z+2)$, $T=1$,
+$p=\rho T/(\gamma M_0^2)$, where $C=\gamma M_0^2$ for the inviscid case and
+for $Re=1600$, and $C=1$ for $Re=400$ ($C$ page-local). The cases (§III):
+
+- *inviscid, $M_0=0.1$, $128^3$*: against the exact kinetic energy 0.125,
+  WENO-JS dissipates fastest, US-WENO less, the interpolation-based
+  schemes less still, HAUS-WENO least; the enstrophy agrees with Brachet et
+  al. before $t\approx4$; at $t=10$ WENO-JS loses the small structures
+  (Figs. 3–4);
+- *viscous, $Re=1600$, $M_0=0.1$ to 1.25, $128^3$*, against the
+  sixth-order TENO $512^3$ runs of Lusher & Sandham: the kinetic energy
+  decays monotonically up to $M_0=0.5$ and has an interval of growth at
+  higher Mach number, strongest at 1.25, which the authors attribute to the
+  mean pressure work exceeding the viscous dissipation early on (see
+  [pressure dilatation](/definitions/pressure-dilatation.md)); the total
+  dissipation separates the schemes more than the kinetic energy, with
+  HAUS-WENO best; the dissipation peak is delayed and lowered as $M_0$
+  rises, with a double peak at $M_0=0.75$, 1.0 and 1.25 as in the
+  reference; the dilatational part is much smaller than the solenoidal one
+  and peaks twice early at $M_0=1.0$ and 1.25; the additional shocklet peak
+  for $2<t<4$ at $M_0=1.25$ is captured by no scheme at $128^3$
+  (Figs. 5–12);
+- *viscous, $Re=400$, $M_0=2.0$ and 2.5, $128^3$*, against a fourth-order
+  subcell finite-volume run at $192^3$: the kinetic energies differ less
+  between schemes, which the authors read as the physical viscosity being
+  comparable with the numerical one at this Reynolds number, while the
+  dissipation components still favour the interpolation-based schemes
+  (Figs. 13–19).
+
+On one core at $M_0=1.25$, $Re=1600$, $128^3$, the total runtimes relative
+to WENO-JS are 1.03 (US-WENO), 1.13 (AUS-WENO) and 0.74 (HAUS-WENO)
+(Table III). The interpolation-based schemes, the authors conclude, capture
+more small-scale structures than the reconstruction-based one, the
+difference growing with Reynolds number (§IV).
+
+## TGV with an imposed magnetic field
+
+[Fang et al. (2025)](/sources/fang-2025.md), §4, propose a
+magnetohydrodynamic TGV as a new benchmark for incompressible MHD solvers,
+run with the MHD module of [Xcompact3d](/software/xcompact3d.md) (sixth-order
+[compact finite differences](/methods/compact-finite-difference-scheme.md),
+third-order Runge–Kutta, skew-symmetric convective terms). On this section
+$\boldsymbol B$ is the non-dimensional magnetic field of the source, not the
+Alfvénic units of the registry. The velocity is the TGV field above on
+$(2\pi L)^3$ with $U_0=L=1$; the field is split into a fixed imposed part
+$\boldsymbol B_0=(0,0,1)$, normal to the initial velocity, and an induced
+part $\boldsymbol b$ with $\boldsymbol b(t=0)=0$, whose induction equation
+is advanced (Eqs. 23–25). The cases set $Re=Rm=N_{\mathrm{St}}$ ($Pm=1$;
+$N_{\mathrm{St}}$ page-local: the Stuart number, the interaction parameter
+$\sigma B_0^2L/(\rho_0U)$ of the source) to 100 on $64^3$ and 7200 on
+$512^3$ (Table 8). The authors chose the zero initial induced field to keep
+initial magnetic structures from interfering, with the physical picture of
+a conducting fluid under an external field. Diagnostics use the kinetic
+and magnetic energies and enstrophies built from $\boldsymbol u$ and
+$\boldsymbol b$:
+
+- at 100, kinetic and magnetic energy exchange almost completely, half a
+  period out of phase, at an observed frequency $1/\pi$; the total energy
+  decays monotonically but much more slowly than in the hydrodynamic TGV,
+  and the hydrodynamic dissipation peak near $t=5$ is absent from the MHD
+  totals; the authors explain the exchange by field-line stretching, which
+  turns kinetic into magnetic energy, and the Lorentz force, which turns
+  it back, the imposed field acting "like a converter" (Fig. 18);
+- at 7200 the exchange persists with decreasing amplitude, especially
+  after $t=30$, when the total decay rate rises suddenly; the kinetic and
+  magnetic enstrophies peak near $t=32$, much later than the hydrodynamic
+  TGV at $Re=1600$ (run on $256^3$), and decay more slowly after the peak
+  (Fig. 22). At $t=50$ the fields are anisotropic and elongated in $z$;
+  vortical structures ($Q$-criterion) are $z$-aligned tubes and magnetic
+  structures feather-like sheets, where the hydrodynamic TGV shows randomly
+  oriented worms (Figs. 23–25). The authors take the preserved symmetry of
+  the $\omega_z$ and $J_z$ patterns ($J_z$ page-local: the current density
+  along $z$) as evidence that numerical errors are not amplified.
+
+The paper (§4) cites earlier MHD versions of the TGV with initial fields
+of Breyiannis & Valougeorgis, Vahala et al. and Pouquet et al. (insulating,
+alternate-insulating and conducting), for which Pouquet et al. reported
+different dynamics despite equal energy and zero magnetic helicity (§4).
+Decaying MHD flows from an Orszag–Tang initial field, which the same paper
+also runs, are on
+[decaying MHD turbulence](/results/decaying-mhd-turbulence.md).
+
 ## TGV as a parallel-performance test
 
 [Ferrer et al. (2023)](/sources/ferrer-2023.md), §3.8, Fig. 5, use the TGV
@@ -999,6 +1110,18 @@ and strong scaling are almost perfect while each GPU holds more than about
 $10^6$ degrees of freedom, below which kernel-launch overhead and then
 communication dominate; prioritized CUDA streams give up to 92% more
 speed-up at low load (Figs. 6–8).
+
+[Witherden et al. (2025)](/sources/witherden-2025.md), §5.2, Tables 2–3,
+Fig. 13, use a subsonic TGV ($M_0=0.08$, constant viscosity) on
+$12\times105^3=13{,}891{,}500$ tetrahedra with seventh-order solution
+polynomials and $\alpha$-optimised points, in double precision, as the
+strong-scaling test of [PyFR](/software/pyfr.md) v2.0.3; its enstrophy on
+1024 MI250X compute dies agrees with van Rees et al. From 16 to 2048 ranks
+the throughput rises from 26.21 to 1537.68 GDoF/s on Frontier (MI250X, no
+HIP-aware MPI; efficiency 0.46 at 2048) and from 96.07 to 5753.96 GDoF/s
+on Alps (GH200, CUDA-aware MPI; efficiency 0.47, superlinear between 32
+and 256 ranks), GDoF/s being degrees of freedom over the time of one
+right-hand-side evaluation.
 
 ## Two-dimensional analytic TGV as a commutator test
 
@@ -1230,6 +1353,25 @@ sources)*.
   two procedures "analogous" and add the high-order-integrator condition
   (§3.2).
 
+- [Wang et al. (2024b)](/sources/wang-2024-i.md) print the solenoidal and
+  dilatational dissipation with derivatives $\partial u_k/\partial u_j$ and
+  $\partial u_j/\partial u_j$ where $\partial/\partial x_j$ is meant, and
+  without the volume $|V|$ that their kinetic energy and enstrophy carry
+  (Eq. 28). Their Table III prints the HAUS-WENO total-runtime ratio as
+  0.74 and the text "only 74%", while the printed runtimes give
+  $30{,}046.8/41{,}542.4=0.723$ *(compiler check, not in the sources)*.
+  They do not call their no-model runs implicit LES.
+- [Fang et al. (2025)](/sources/fang-2025.md) write "entropy" for
+  enstrophy in §4.1. Among the earlier MHD initial fields they print, the
+  alternate-insulating one has identical first and second components and
+  is not solenoidal as printed, its divergence being
+  $-2\sin2x\sin2y\sin2z+2\cos2x\cos2y\sin2z$, while the insulating and
+  conducting ones are *(compiler check, not in the sources)*. They
+  introduce the field of Vahala et al. as "the usual initial magnetic
+  field from the OTV flow", while its printed $B_x=-2\sin(2y/L)\sin(z/L)$,
+  $B_y=2\sin(x/L)+\sin(z/L)$ differ from the $B_x$, $B_y$ of their own 3D
+  Orszag–Tang field (Eq. 20).
+
 # Citations
 
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §3; §5.3; §6.1–6.5, Eqs. (43)–(46), Figs. 4–22.
@@ -1270,3 +1412,6 @@ sources)*.
 - [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §4.3.1, Eqs. 27–28, Fig. 25; §5.
 - [Vermeire (2024)](/sources/vermeire-2024.md) — §2, Eqs. 1–5; §3; §4.1, Eqs. 14–20, Table 1, Figs. 1–8; §5.
 - [Wei et al. (2023)](/sources/wei-2023.md) — §III A, Eqs. 25–33, Fig. 4 (inviscid TGV as solver validation).
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §3.2 (entropy filtering); §5.1, Figs. 11–12, Table 1; §5.2, Tables 2–3, Fig. 13.
+- [Wang et al. (2024b)](/sources/wang-2024-i.md) — §II.B–D; §III.B–E, Eqs. 25–29, Tables I–III, Figs. 3–19; §IV.
+- [Fang et al. (2025)](/sources/fang-2025.md) — §2.1–2.3; §4, Eqs. 23–26, Table 8, Figs. 18–25.

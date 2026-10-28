@@ -5,7 +5,7 @@ description: "STREAmS is an open-source multi-GPU finite-difference solver for c
 status: established
 aliases: [STREAmS-2.0, STREAmS 2.1, STREAMS]
 tags: [software, gpu, dns, compressible, implicit-les, immersed-boundary, boundary-layer]
-timestamp: 2026-10-28T07:05:00Z
+timestamp: 2026-10-28T17:00:00Z
 ---
 
 # STREAmS
@@ -216,6 +216,15 @@ given.
   the RANS of that refinement uses fifth-order WENO convection and
   fourth-order central viscous terms (§V).
 
+## Place among open-source solvers
+
+[Xiao et al. (2025)](/sources/xiao-2025.md), §1, Table 1, list STREAmS-2 as
+a compressible, GPU-accelerated DNS solver among the open-source codes for
+wall-bounded turbulence they compare by capability (with URANOS, AFiD,
+LESGO, CaNS and their incompressible GPU LES code [CaLES](/software/cales.md));
+their table does not list it among the codes that support LES. Placco et
+al. (above) run STREAmS as implicit LES.
+
 ## Qualifications
 
 - [Kurz et al. (2025)](/sources/kurz-2025.md), §1, describe STREAmS (citing
@@ -247,3 +256,4 @@ given.
 - [Aiello et al. (2026)](/sources/aiello-2026.md) — §3.3 (STREAmS 2.1, sixth-order central schemes, Wray Runge–Kutta, WENO transient, KEEP baseline, ghost-node removal, conservative viscous terms); §2, §4, Tables 2–3, Figs. 1–3 (thermally perfect CO$_2$ channel DNS); acknowledgements (CINECA).
 - [Yu et al. (2023)](/sources/yu-2023.md) — §2 (reuse of the STREAmS database of Yu et al. 2022, numerics, boundary conditions, statistics).
 - [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II, Eq. (6), Table I, Fig. 1 (STREAmS numerics and sensor, hypersonic oblique-shock DNS set-up and validation); §III B, Figs. 3–4; §V (RANS numerics).
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §1, Table 1 (STREAmS-2 as a compressible GPU DNS solver among open-source codes).

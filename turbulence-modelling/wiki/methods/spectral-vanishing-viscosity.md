@@ -5,7 +5,7 @@ description: "Spectral vanishing viscosity concentrates an added viscosity on th
 status: established
 aliases: [SVV, implicit SVV, ISVV, implicit spectral vanishing viscosity, spectral viscosity, SVV-LES, entropy-stable SVV, modal SVV filter]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg, entropy-stable]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T12:24:00Z
 ---
 
 # Spectral vanishing viscosity
@@ -122,6 +122,55 @@ property.
 At $\Delta x^+=18$ ($\nu_0/\nu=756$) $u_\tau$ is underpredicted by more
 than 12%, so SVV "cannot be used alone in the context of WMLES"
 (§7.2–7.4).
+
+### Closed-form coefficients, and use with an immersed-boundary wall model
+
+[Yan et al. (2024)](/sources/yan-2024.md), App. B1, Eqs. (B1)–(B8), print
+the scheme that produces the implicit SVV, the
+[compact](/methods/compact-finite-difference-scheme.md) second derivative
+on a stencil of three to nine nodes,
+
+$$\alpha_{\mathrm c}\phi''_{i-1}+\phi''_i+\alpha_{\mathrm c}\phi''_{i+1}=a_{\mathrm c}\frac{\phi_{i+1}-2\phi_i+\phi_{i-1}}{h^2}+b_{\mathrm c}\frac{\phi_{i+2}-2\phi_i+\phi_{i-2}}{4h^2}+c_{\mathrm c}\frac{\phi_{i+3}-2\phi_i+\phi_{i-3}}{9h^2}+d_{\mathrm c}\frac{\phi_{i+4}-2\phi_i+\phi_{i-4}}{16h^2}$$
+
+(page-local coefficients $\alpha_{\mathrm c},\dots,d_{\mathrm c}$; the
+source's $\alpha_f$, which is not the registry's modal-filter strength),
+with modified square wavenumber
+
+$$k''(k)\,h^2=\frac{2a_{\mathrm c}[1-\cos(kh)]+\tfrac{b_{\mathrm c}}2[1-\cos(2kh)]+\tfrac{2c_{\mathrm c}}9[1-\cos(3kh)]+\tfrac{d_{\mathrm c}}8[1-\cos(4kh)]}{1+2\alpha_{\mathrm c}\cos(kh)} .$$
+
+Five Taylor conditions give a unique tenth-order scheme, three give the
+sixth-order family (Eq. A3 is one member), and the two remaining degrees
+of freedom fix $k''$ at $k_c=\pi/h$ and at $k_m=\tfrac23k_c$ so that
+$k''=(1+\nu_{\mathrm{SVV}}/\nu)k^2$ there, with the kernel
+
+$$\nu_{\mathrm{SVV}}(k)=\begin{cases}0,&k<0.3k_c,\\ \nu_0\exp\Big[-\Big(\dfrac{k_c-k}{0.3k_c-k}\Big)^2\Big],&0.3k_c\le k<k_c\end{cases}$$
+
+(Eqs. B3–B7). The coefficients are then explicit rational functions of
+$k''(k_c)h^2$ and $k''(k_m)h^2$ (Eq. B8). With the printed B8 the
+modified wavenumber equals $k^2$ up to terms of order $h^6$ and takes the
+two imposed values exactly *(compiler check, not in the sources)*. The
+scheme applied to the viscous term "constitutes the iSVV model", with the
+single parameter $\nu_0/\nu$, whose preliminary values come from the
+Pao-like procedure of Dairay et al. described above (as cited).
+
+Yan et al. run it in [Xcompact3d](/software/xcompact3d.md) with a
+wall-modelled diffused-interface
+[immersed boundary](/methods/immersed-boundary-method.md) and
+$\nu_0/\nu=15$ (circular cylinder, $Re_D=3.9\times10^3$), 300 (circular
+cylinder, $Re_D=1.4\times10^5$), 80 (square cylinder, $Re_D=2.2\times10^4$)
+and 120 (flat roof, $Re_H\approx2\times10^4$) (§III). At $Re_D=3.9\times10^3$
+on one $801\times387\times40$ mesh, the sixth-order scheme with iSVV gives
+$C_D=1.02$, rms lift 0.113, recirculation length $1.42D$, base suction
+0.93 and $St=0.229$, against 1.17, 0.017, $2.42D$, 0.59 and 0.223 for a
+second-order central scheme with the [Smagorinsky model](/methods/smagorinsky-model.md)
+on the same mesh (Table II), and costs 15.04 against 18.16 wall-clock
+hours per $10^5$ steps on 96 cores, because no subgrid term is computed
+explicitly (§III A). The iSVV is stated to be inapplicable to the
+second-order scheme (App. B2). Wake spectra follow the $-5/3$ slope
+(Fig. 5), which the authors relate to earlier iSVV validations on the
+Taylor–Green vortex and wind-turbine wakes (as cited). The wall-model
+results are on [wall-modelled LES](/methods/wall-modelled-les.md) and the
+[circular-cylinder wake](/benchmarks/circular-cylinder-wake.md).
 
 ## Explicit modal SVV in DG, made entropy stable
 
@@ -489,5 +538,6 @@ simulation of turbulent and supersonic flows", citing the group's work.
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §I; §II.A, Eq. (4); §III.B.3; §III.C, Fig. 8.
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §I; §II.B.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §1.
+- [Yan et al. (2024)](/sources/yan-2024.md) — App. A1, B1, Eqs. (A3), (B1)–(B8) (compact second derivative, SVV kernel, closed-form coefficients); App. B2; §III A, Table II, Fig. 5 (iSVV against second-order Smagorinsky, cost, spectra); §III (values of $\nu_0/\nu$).
 - [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §1 (semi-discrete spatial eigenanalyses of Moura et al. and Mengaldo et al., extended to fully discrete; passing).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (entropy-stable SVV of Mateo-Gabín et al. cited as a filtered form of artificial viscosity for LES; passing).

@@ -5,7 +5,7 @@ description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on t
 status: established
 aliases: [DGSEM, DG-SEM, modal DG, nodal discontinuous Galerkin, collocation DG, DG spectral element method, hybridizable discontinuous Galerkin, HDG]
 tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns, flux-reconstruction]
-timestamp: 2026-10-28T06:44:00Z
+timestamp: 2026-10-28T16:59:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -352,7 +352,20 @@ $\Delta=|K|^{1/3}/(N+1)$ as the subgrid length of their DG
 tetrahedra, with $|K|$ the element volume, instead of the largest cell
 dimension of classical DES. [Lederer et al. (2023)](/sources/lederer-2023.md),
 §3.1, use $\Delta=(\Delta x\Delta y\Delta z)^{1/3}/(N+1)$ for the WALE
-viscosity of their hybrid mixed method. Flad & Gassner (2017, App. A) print the filter
+viscosity of their hybrid mixed method.
+[Alberti et al. (2025)](/sources/alberti-2025-b.md), §2.3, divide every
+subgrid length scale of their DG [detached-eddy simulation](/methods/detached-eddy-simulation.md)
+by a normalization $s_\Delta$ (page-local), testing $N+1$, $N$ and
+$N_{\mathrm{dof}}^{1/3}$, where $N_{\mathrm{dof}}=(N+1)(N+2)(N+3)/6$ is the
+number of modes of their complete (Pascal) basis in three dimensions; the
+two degree-based options per $N_{\mathrm{dof}}^{1/3}$ tend to 1.82 as
+$N\to\infty$ (Table 1). They find $s_\Delta=N+1$ best across all degrees
+tested in channels at $Re_\tau=400$ and 5200, while $N_{\mathrm{dof}}^{1/3}$,
+and $N$ at low to moderate degree, move the solution too fast towards RANS
+(§3.1.3, §4). For non-Cartesian hexahedra they take the grid lengths from
+an "equivalent hexahedron" with the element's principal moments of
+inertia, rescaled to the element volume, exact on Cartesian cells (§2.3,
+Eq. 23). Flad & Gassner (2017, App. A) print the filter
 width as the cell volume divided by $(N+1)^3$ (see Qualifications).
 [Duan & Wang (2024)](/sources/duan-2024.md), §3, Eqs. (28)–(30), test the
 same width ("d3") against $V_e^{1/3}$ and an intermediate
@@ -555,6 +568,30 @@ than low order at equal degrees of freedom (§4.2.1). Their coarse meshes
 show spurious peaks of the r.m.s. velocity on the jet axis, which they
 attribute to the inter-element discontinuities of DG on coarse elements and
 to poor sampling, and which decrease with adaptation (§4.2.3, Fig. 10).
+
+**Modal DG for incompressible hybrid RANS/LES.** Alberti et al. (2025, §2.2,
+Eqs. 19–22) run Spalart–Allmaras-based DDES and IDDES in an incompressible
+modal DG with an orthonormal hierarchical basis of complete polynomials
+defined in physical space, a Godunov-type exact Riemann flux with
+artificial compressibility, BR2 viscous fluxes, order $N+1$ for velocity
+and $\tilde\nu$ and $N$ for pressure, and the three-stage linearly implicit
+Rosenbrock scheme ROS3Pw with flexible GMRES and an additive-Schwarz
+preconditioner. The SA source uses only the positive part of $\tilde\nu$
+and limits $r$ to 10 (§2.1, Eq. 6). On fine grids they find that the
+eddy viscosity of the LES branch falls to an equivalent Smagorinsky
+constant of about 0.01, "ILES-like", and that high-order DG then behaves
+"more like a wall-modeled ILES rather than a simple WMLES" (§3.1.3, §4).
+At roughly equal degrees of freedom in the $Re_\tau=400$ channel, $N=6$ on
+$8^3$ elements beats $N=2$ on $16^3$ elements, which approaches it only at
+$N=4$ "despite having more than three times as many DOFs" (§3.1.3, Table 4,
+Fig. 14); in the $Re_\tau=5200$ channel, raising $N$ on a fixed mesh moves
+the RANS/LES interface towards the wall and improves the centreline
+velocity (Fig. 13). They attribute the failure of the IDDES length
+$\Delta_{dw}$ (the source's $\Delta_{hwn}$; see the DES page) in DG to the higher wall-normal growth rates that DG
+meshes need, which make it progress in a "staircase" (§3.1.2, Fig. 12).
+Results by model variant are on
+[detached-eddy simulation](/methods/detached-eddy-simulation.md) and
+[log-layer mismatch](/definitions/log-layer-mismatch.md).
 
 **Interior-penalty DG for RANS.** [Zhao et al. (2023b)](/sources/zhao-2023-b.md)
 discretize the compressible RANS mean-flow equations with an interior
@@ -866,6 +903,40 @@ stretch near the plate's leading edge, where $C_f$ departs from theory,
 lengthens with grid density and order, a numerical, not physical,
 transition (§4.1).
 
+**Third-order DG against finite volumes under coefficient uncertainty.**
+[An et al. (2025)](/sources/an-2025.md), whose solver follows the cited
+DG work of Jiang et al., solve
+steady two-dimensional RANS with the [Spalart–Allmaras model](/methods/spalart-allmaras-model.md)
+in their in-house third-order DG solver (Roe flux, mean-flow and SA
+equations fully coupled, $p$-multigrid-preconditioned GMRES smoothed by
+line-implicit Gauss–Seidel; §2.2.2, Eq. 14) and in the second-order
+finite-volume code CFL3D (MUSCL and Roe, approximate factorization;
+§2.2.1). Their appendix motivates the limiting: at the edge of the
+eddy-viscosity layer the weak solution of $\tilde\nu$ has discontinuous
+first derivatives, high-order solutions oscillate, $\tilde\nu$ turns
+negative and the solver diverges, so a Hermite-WENO limiter, triggered by a
+modal detector on $\rho\tilde\nu$ (the logarithm of a ratio of inner
+products of its degree-$N$ and degree-$(N-1)$ expansions, against a
+case-dependent threshold), is
+followed by a Zhang–Shu-type positivity limiter on $\tilde\nu$ (Eqs.
+A.1–A.2). On the [backward-facing step](/benchmarks/backward-facing-step.md)
+the DG grid is 0.21 times the finite-volume one ($249\times81$ against
+$436\times225$) with results "comparable to or even better than FVM" (the
+finite volumes better before the step and in the separation, DG after
+reattachment, §3.1, Fig. 6), and on the [Gaussian bump](/benchmarks/gaussian-bump.md)
+DG on about $201\times81$ points beats finite volumes on $401\times161$ at
+the crest and in the separation (§3.2, Fig. 16). DG is more sensitive to
+the model coefficients, and the authors hypothesize that its lower
+numerical dissipation "may amplify" the errors of the SA model in separated
+shear layers (§3.1); their Bayesian recalibration of seven SA constants
+"tailored for DG schemes" is on
+[Bayesian closure calibration](/methods/bayesian-closure-calibration.md).
+A discontinuity of the DG solution near the step corner, also seen with
+FUN3D in the NASA turbulence-modelling resource and attributed to the
+geometric corner, prompts their call for more robust limiters (§3.1). The
+polynomial degree is not printed; the paper states the order only, as
+"third-order".
+
 **A high-order DG transition model.** [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md),
 Appendix and §V, run a laminar-kinetic-energy transition model in the
 modal DG RANS solver of [Ghidoni et al. (2026)](/sources/ghidoni-2026.md)
@@ -1089,6 +1160,13 @@ the Riemann flux, while FLEXI stays closer to the central-difference codes
 DGSEM "capture small scales well on coarse grids", better than finite
 differences with local scheme switching or TENO, and that high order beats
 second order in this compressible setting (§V).
+[Witherden et al. (2025)](/sources/witherden-2025.md), §5.1, Fig. 12,
+Table 1, set the same CODA and FLEXI data (order 4, artificial viscosity
+and subcell finite volumes) against [PyFR](/software/pyfr.md) with entropy
+filtering at equal resolution and order: the flux-reconstruction runs show
+dilatational dissipation closer to the $2048^3$ TENO reference, which they
+read as less shock dissipation (see
+[flux reconstruction](/methods/flux-reconstruction.md)).
 
 **Oblique shock/turbulent-boundary-layer interaction.**
 [Gao et al. (2022)](/sources/gao-2022.md) run FLEXI's split-form DGSEM
@@ -1430,3 +1508,6 @@ fine one (§3). See
 - [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §3, Fig. 7, App. Figs. 29–30 (FR-DG against FR-SD eigencurves, CFL limits).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §3.1, Eq. (20) (DG weak form, nodal and modal bases, mass-matrix conditioning, viscous discretizations); §3.4, Eq. (28) (HDG/EDG face unknowns); §6.3, Figs. 14–16 (DG combustion LES, reviewed); §7.
 - [Vermeire (2024)](/sources/vermeire-2024.md) — §3, Eqs. (6)–(13) (FRDG recovering DG for linear equations); §4.3 (DG reference at $N=7$ for SD7003, cited).
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §2.1, Eq. (6) (positive-part SA source, $r$ limit); §2.2, Eqs. (19)–(22) (incompressible modal DG, artificial-compressibility Godunov flux, BR2, ROS3Pw); §2.3, Eq. (23), Table 1 (length-scale normalization, equivalent hexahedron); §3.1.2–§3.1.3, Tables 4–5, Figs. 12–14; §4.
+- [An et al. (2025)](/sources/an-2025.md) — §2.2.1–§2.2.2, Eq. (14) (CFL3D and third-order DG RANS–SA); §3.1–§3.2, Figs. 6, 16 (step and bump, DG against finite volumes); Appendix, Eqs. (A.1)–(A.2) (HWENO and positivity limiting of $\tilde\nu$).
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §5.1, Fig. 12, Table 1 (CODA and FLEXI against entropy-filtered PyFR on the supersonic Taylor–Green vortex).

@@ -5,7 +5,7 @@ description: "MRIS obtains dissipation-range DNS statistics at resolutions too c
 status: established
 aliases: [MRIS, multi-resolution independent simulation protocol]
 tags: [dns, gpu, intermittency, grid-requirements]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T16:59:00Z
 ---
 
 # Multi-resolution independent simulations
@@ -110,7 +110,15 @@ the cost and code on [DNS](/definitions/direct-numerical-simulation.md).
 13 s per step on 44% of Frontier; at $Re_\lambda\approx2500$ one $\tau_\eta$
 takes about 1000 steps and $T_E/\tau_\eta\approx300$, so a run over
 $10T_E$ would take "two years or more of virtually non-stop computing"
-(Yeung et al. 2025, §1).
+(Yeung et al. 2025, §1). [Yeung et al. (2025b)](/sources/yeung-2025-b.md)
+describe a GPU Fourier pseudo-spectral DNS code for Frontier and state that
+its pencil version has been used for production runs on intermittency at
+$Re_\lambda$ close to 2500 at up to $32\,768^3$, to be reported
+separately (§6); the paper does not describe MRIS. Its slab version takes
+13.07 s per step at $32\,768^3$ on 4096 nodes (April 2023; 12.07 s in
+April 2024), of which 8.621 s are MPI communication (§4.2, Table 2), and
+$32\,768^3$ needs at least 4096 nodes because of the memory per GPU
+(§3.2, Eq. 9).
 
 **Sensitivity check.** According to the authors, a single segment at
 $Re_\lambda=1000$ on $8192^3$ spanning $27\tau_\eta$ shows no dependence of
@@ -149,4 +157,5 @@ scales and short-time Lagrangian statistics are planned.
 
 # Citations
 
+- [Yeung et al. (2025b)](/sources/yeung-2025-b.md) — §3.2, Eq. 9 (memory, at least 4096 nodes); §4.2, Table 2 (time per step at $32\,768^3$); §6 (production runs at $Re_\lambda\approx2500$ announced). The code paper; MRIS not described.
 - [Yeung et al. (2025)](/sources/yeung-2025.md) — §1 (cost of a long $32\,768^3$ run); §2.2, Table 1, Fig. 1 (MRIS phases, resolution pairs, viscosity-reduction extension, transitions, sensitivity check, precision); §5 (scope).

@@ -5,7 +5,7 @@ description: "Training a learned closure with the solver in the loop, so the los
 status: established
 aliases: [a posteriori training, a-posteriori training, solver-in-the-loop training, integrated inference and learning, embedded learning, differentiable-physics training, online learning, CFD-driven machine learning, closed-loop training]
 tags: [data-driven, neural-network, sgs-model, rans, les]
-timestamp: 2026-10-27T15:51:00Z
+timestamp: 2026-10-28T12:25:00Z
 ---
 
 # Model-consistent (a posteriori) training of learned closures
@@ -463,6 +463,14 @@ and they call for a quantitative comparison of the two (§IV). See
 | Agrawal & Koutsourelakis (2024, §3.4, Table 4) | variational inference through an adjoint FE RANS solver (for prediction cost) | one prediction run 1.3 times a baseline $k$-$\varepsilon$ run; the reference LES 7679 times; no training time given |
 | Tang et al. (2023, §III B) | a priori symbolic regression with an RL-trained expression generator (for contrast) | about 100 h on 20 cores (Intel Xeon E5-2650) |
 
+[Xiao et al. (2025)](/sources/xiao-2025.md) (§1) give the cost argument
+from the solver side: model-consistent and reinforcement-learning training
+of SGS and wall models (they cite Duraisamy for the term) needs "hundreds
+or even thousands" of LES runs, which is their motivation for the GPU
+solver [CaLES](/software/cales.md); one A100 is 12 to 19 times faster than
+a full 32-core CPU node in their channel benchmark (§3.2, Fig. 2). They train no model (see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+
 Duraisamy (2021, §IV.B) names the obstacles to adjoint-based integrated
 training. Adjoints are intrusive. In LES the chaotic dynamics can make
 adjoint solutions unstable, which requires shadowing-type treatments. Both
@@ -610,3 +618,4 @@ the convergence of these training methods and the choice of loss function
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §1 (transferability and cost of end-to-end and RL training), §5.2.1, §7 (multi-filter supervised alternative).
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.4 (taxonomy of model-consistent frameworks, CFD-driven training, advantages and cost); §4.1, §4.2.1 Eq. 11, §4.4.2 Fig. 11, §4.5 Eq. 17 Figs. 12–13 (results of cited works).
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §2.1, Eqs. 10–12 ($k$-corrective-frozen targets, consistency argument); §4.2, Table 2, Fig. 5, App. C (a posteriori selection, results against SST and BSL-EARSM).
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §1 (shift to LES-generated data and model-consistent or RL training; many LES runs needed); §3.2, Fig. 2 (GPU speed-up). No training performed.

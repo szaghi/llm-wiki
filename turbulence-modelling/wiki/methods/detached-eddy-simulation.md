@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Detached-eddy simulation and its delayed and zonal forms"
-description: "The single-model hybrid RANS/LES in which a RANS model's length scale is capped by a grid length so that the model acts as a subgrid model away from walls; the DES switch and ambiguous grids, DDES shielding, IDDES, ZDES modes including mode 2 (2020), grid lengths, calibration with the numerical scheme, transitional DDES, and applications."
+description: "The single-model hybrid RANS/LES in which a RANS model's length scale is capped by a grid length so that the model acts as a subgrid model away from walls; the DES switch and ambiguous grids, DDES shielding, IDDES, ZDES modes including mode 2 (2020), grid lengths, calibration with the numerical scheme, transitional DDES, high-order DG use, and applications."
 status: established
 aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES, RSM-IDDES, RSM-DynIDDES, dynamic IDDES, modelled-stress depletion, grid-induced separation]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-28T07:07:00Z
+timestamp: 2026-10-28T17:03:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -371,6 +371,86 @@ stream-wise grid size is small, meaning the model is suitable for unsteady
 flow simulations using Cartesian grids"; the function is not printed
 ([Sugaya & Imamura (2021)](/sources/sugaya-2021.md), §2.1).
 
+### SST-DDES with a filtered eddy viscosity and an adaptive grid scale
+
+Guo & Wang (2025) sort DES improvements into three groups, the LES length
+scale, the delay function and a reformulated eddy viscosity, and cite the
+recalibrations of the delay constant: Probst et al. raised $C_{d1}$ from 8
+to 16, Jain et al. validated 14 and found 16 over-shielding in
+quasi-two-dimensional flat-plate flow, and Gritskevich et al. took 20 for
+SST-DDES ([Guo & Wang (2025)](/sources/guo-2025.md), §1, as cited). Their
+base is the SST-DDES of Gritskevich et al. in OpenFOAM-v2306 with
+$f_d=1-\tanh[(20r_d)^3]$, the kinematic $r_d$ of Möller et al. above, and
+the LES coefficient printed as $C_{\mathrm{DDES}}=0.78F_1+0.61F_2$ (Eqs. 6–9;
+see the [SST page](/methods/k-omega-sst-model.md)), with the SST blending
+function $F_2$ in the second term, where Delassaux et al. (above, Eq. 9)
+print $0.78F_1+0.61(1-F_1)$. On it they combine two
+changes into ADD-SSTFDDES (§2.1):
+
+- **Filtered eddy viscosity** (SSTFDDES, from the authors' earlier SSTFDES):
+  with $L_t=\sqrt k/(\beta^*\omega)$ and a resolvable filter width
+  $\Delta_{\mathrm F}=3\max\{\lvert\boldsymbol u\rvert\delta t,\Delta^{1/3}\}$
+  ($\delta t$ the time step; $L_t$, $\Delta_{\mathrm F}$ page-local),
+  $$\nu_t=\Big(\frac{\min(L_t,\Delta_{\mathrm F})}{L_t}\Big)^{4/3}\frac{a_1k}{\max(a_1\omega,\lvert\Omega\rvert F_2)}$$
+  (Eqs. 10–13): the SST viscosity is unchanged where $L_t\le\Delta_{\mathrm F}$
+  and reduced otherwise, "to suppress excessive eddy viscosity and
+  promot[e] the development of small-scale turbulent fluctuations". The
+  viscosity replaces the DDES one in OpenFOAM's `correctNut()`; whether the
+  $l_{\mathrm{DDES}}$ destruction is also kept is not stated.
+- **Adaptive grid scale** $\Delta_{\mathrm{add}}$ (page-local) in
+  $l_{\mathrm{LES}}=C_{\mathrm{DES}}\Delta_{\mathrm{add}}$:
+  $\Delta_{\mathrm{add}}=\Delta_{\max}$ where $f_d<0.99$ (boundary layer) or
+  $\mu_t/\mu<0.2$ ("a laminar-like flow"), and the least-squares length
+  $\Delta_{\mathrm{lsq}}$ of Trias et al. elsewhere, that is in separated
+  regions (Eq. 15). $\Delta_{\mathrm{lsq}}$ is built from the velocity
+  gradient and a diagonal matrix of grid-related weights (Eq. 14, not
+  further explained), and is chosen for its robustness to grid anisotropy;
+  $\Delta_{\max}$ is called "overly conservative in the initial shear layer"
+  (§2.1).
+
+The four combinations (base or filtered viscosity, $\Delta_{\max}$ or
+$\Delta_{\mathrm{add}}$) run with wall functions on a
+[square cylinder](/benchmarks/square-cylinder-flow.md) at $Re_D=21\,400$
+(4.08 million cells, 64 cores, about 288 core-hours) and on the
+[periodic hill](/benchmarks/periodic-hill.md) at $Re_h=10\,565$
+($200\times160\times160$) (§2.2, §3). Integral values of the cylinder
+(Table 4):
+
+| Model | $St$ | $\langle C_D\rangle$ | $C_L^{\mathrm{rms}}$ | $C_D^{\mathrm{rms}}$ | $L_R/D$ |
+|---|---|---|---|---|---|
+| SST-DDES, $\Delta_{\max}$ | 0.127 | 2.43 | 1.26 | 0.28 | 1.46 |
+| SST-DDES, $\Delta_{\mathrm{add}}$ | 0.120 | 2.74 | 1.43 | 0.17 | 1.27 |
+| filtered, $\Delta_{\max}$ | 0.135 | 2.48 | 1.43 | 0.26 | 1.39 |
+| filtered, $\Delta_{\mathrm{add}}$ (ADD-SSTFDDES) | 0.127 | 2.71 | 1.60 | 0.20 | 1.42 |
+| DNS, Trias et al. ($Re=22\,000$), as listed | 0.132 | 2.18 | 1.71 | 0.205 | 1.04 |
+| experiment, Lyn et al., as listed | 0.13 | 2.1 | — | — | 1.4 |
+
+($L_R$ the recirculation length from the cylinder centre, page-local.)
+All four mean drags exceed the listed DNS and experiment; the authors place
+them inside the range of the LES compilation of Rodi (2.17–2.77) and judge
+ADD-SSTFDDES best overall by its fluctuating forces, wake structures and
+reattachment, the baseline showing delayed separation and a narrow initial
+wake (§3.1, Figs. 10–15). On the hill, the combined model best captures the
+near-wall reverse-flow plateau at $x/H=2$ and the $\langle u'u'\rangle$ peak
+at $x/H=0.5$, while the baseline overpredicts the $\langle v'v'\rangle$ peak
+at $x/H=6$ (§3.2, Figs. 22–25; $H$ the hill height). Most comparisons are
+statements about figures; there is no grid study in the paper (it refers to
+the earlier one) and no cost comparison among the four models.
+
+**A shielded von Kármán length.** Wang et al. (2024c) apply the SA-DDES
+shielding function to the von Kármán length of an SA-based scale-adaptive
+model, $d-f_d\max(0,d-L_{\mathrm{vK},3}/\kappa)$, and state that $r_d$ "is
+equivalent to" the inverse of the mesh Reynolds number
+$\rho\lvert S\rvert\Delta^2/\mu$ ([Wang et al. (2024c)](/sources/wang-2024-j.md),
+§III.F, Eqs. 38–40; details on
+[scale-adaptive simulation](/methods/scale-adaptive-simulation.md)). On a
+Mach 2 boundary layer their SA-DES ($C_{\mathrm{DES}}=0.65$,
+$\Delta_{\max}$) and SA-DDES show log-layer mismatch on a coarse grid, which
+they call "the inherent defect of original DES method and its variants",
+and the DES and DDES interfaces, evaluated on their LES fields, move
+toward the wall with grid refinement (§III.B, §III.F, Figs. 1, 15; see
+[log-layer mismatch](/definitions/log-layer-mismatch.md)).
+
 ### A general construction through the dissipation term
 
 Wang et al. (2021) derive DES-type models for any RANS model with a
@@ -649,6 +729,10 @@ The variants differ in the length $\Delta$ that caps the RANS length:
 | ZDES mode 2 (2020) on isotropic lattice Boltzmann grids | $\Delta_{\max}$, $\Delta_{\mathrm{vol}}$ or $\Delta_\omega$, "not significant" since $\Delta x=\Delta y=\Delta z$; $C_{\mathrm{DES}}=0.65$ | Husson et al. (2024), §2.2, Eq. 24 |
 | RSM-IDDES (SSG/LRR-$\omega$) in a cell-centred finite-volume code | IDDES $\Delta=\min[\max(C_wd,C_w\Delta_{\max},\Delta_{wn}),\Delta_{\max}]$, $C_w=0.15$; $C_{\mathrm{DES}}=0.5F_1+0.3(1-F_1)$ calibrated | Wang et al. (2021), §2.4, §3.1 |
 | Dynamic RSM-IDDES (RSM-DynIDDES) in the same code | the same IDDES $\Delta$; $C_{\mathrm{DES}}=C_kC_s$ with dynamic $C_s$, $C_k=2.78$ (LRR) and 1.67 (SSG) | Li et al. (2022), §II B–C, §III A |
+| SST-DDES in OpenFOAM (ADD-SSTFDDES) | $\Delta_{\max}$ in boundary layers and where $\mu_t/\mu<0.2$, least-squares $\Delta_{\mathrm{lsq}}$ of Trias et al. elsewhere; $C_{\mathrm{DDES}}=0.78F_1+0.61F_2$ as printed | Guo & Wang (2025), §2.1, Eqs. 7, 14–15 |
+| SA-DES and SA-DDES in a finite-difference LES code | $\Delta_{\max}$, $C_{\mathrm{DES}}=0.65$ (the $\Delta$ of DDES not stated) | Wang et al. (2024c), §III.F, Eqs. 29, 37–38 |
+| SA-DDES and SA-IDDES in a high-order modal DG code | $\Delta_{\max}$, IDDES $\Delta$, $\Delta_{\mathrm{llm}}$ or $\Delta_\omega$, each divided by $s_\Delta$ (default $N+1$); cell sides from an equivalent hexahedron; $C_{\mathrm{DES}}=0.65$ | Alberti et al. (2025), §2.1–§2.3 (below) |
+| DES in general, as surveyed | "the diameter of the cell" (elsewhere the wall-parallel spacing), $C_{\mathrm{DES}}=0.65$ | Luckring & Rizzi (2024), §2.4.1.4 |
 
 Basile et al. divide by $N+1$, the number of one-dimensional degrees of
 freedom, following Lorteau et al., and take $C_{\mathrm{DES}}=0.65$ ("usually
@@ -764,6 +848,119 @@ $1/1.33=0.752$ and $1/1.63=0.613$ *(compiler check, not in the sources)*).
 Heinz draws two
 conclusions: the CES forms "generalize DES", and adjusting $\Delta_+$ to
 $L_+$ is "absurd", so that DES is unstable under grid variation (§4.4).
+
+## DDES and IDDES in a high-order discontinuous Galerkin solver
+
+Alberti et al. (2025) compare non-zonal SA-based DDES and IDDES variants in
+an incompressible modal DG solver (orthonormal hierarchical basis of
+complete polynomials of degree $N$, artificial-compressibility Godunov
+flux, BR2 viscous flux, linearly implicit Rosenbrock time stepping), since
+DES-type models were built for low-order finite volumes and earlier DG work
+compared no variants ([Alberti et al. (2025)](/sources/alberti-2025-b.md),
+§1–§2). They keep $C_{\mathrm{DES}}=0.65$, calibrated on decaying isotropic
+turbulence with a high-order finite-difference scheme and, they state,
+confirmed for modal DG on the Taylor–Green vortex by Basile et al.
+(§2.1, as cited).
+Page-local symbols: $s_\Delta$ the normalization of the grid lengths,
+$N_{\mathrm{dof}}=(N+1)(N+2)(N+3)/6$ the degrees of freedom per element,
+$\Delta_{\mathrm{llm}}$ Reddy et al.'s length, $\Delta_{dw}$ the IDDES
+length (above; the source's $\Delta_{hwn}$, $C_w$ not printed), $\alpha_{\mathrm{ID}}=0.25-d/\Delta_{\max}$
+and $f_B=\min\{2\exp(-9\alpha_{\mathrm{ID}}^2),1\}$ the IDDES grid variable and
+function, $C_{S,\mathrm{eq}}=\sqrt{\nu_t/(\Delta_{\mathrm{vol}}^2\lvert\Omega\rvert)}$
+the equivalent Smagorinsky constant (Eq. 25).
+
+**Grid lengths for high order.** All lengths are divided by $s_\Delta$, taken
+as $N+1$, $N$ or $N_{\mathrm{dof}}^{1/3}$, the last suited to a complete
+(non-tensor) basis; the ratios $(N+1)/N_{\mathrm{dof}}^{1/3}$ run from 1.26 at
+$N=1$ to 1.60 at $N=6$ and both ratios tend to 1.82 as $N\to\infty$ (§2.3,
+Table 1). The cell sides of a distorted or curved element come from an
+*equivalent hexahedron* with the element's principal moments of inertia
+$I_{x'}$, $I_{y'}$, $I_{z'}$ (page-local), rescaled to the element volume $V$,
+$$\Delta_x=\Big(V\frac{I_{x'}}{\sqrt{I_{y'}I_{z'}}}\Big)^{1/3},$$
+and cyclically, exact for Cartesian cells; tetrahedra and prisms are left
+to future work (Eq. 23, Fig. 1). The candidate lengths are
+$\Delta_{\max}$, $\Delta_{dw}$, Reddy et al.'s
+$\Delta_{\mathrm{llm}}=f_d\Delta_{\mathrm{vol}}+(1-f_d)\Delta_{\max}$ ($\Delta_{\max}$ in
+shielded RANS regions, $\Delta_{\mathrm{vol}}$ outside; with $1-\hat f_d$ for $f_d$
+in IDDES) and the vorticity-oriented $\Delta_\omega$ of the
+shear-layer-adapted length above; $\Delta_{\mathrm{vol}}$ alone is rejected
+for switching prematurely to LES in stretched wall cells, and
+$\Delta_{\mathrm{SLA}}$ because its averaging over neighbouring cells "loses
+meaning" in DG (Eqs. 13, 17–18).
+
+**Findings** (channels at $Re_\tau=400$ and 5200, $N=6$; the
+[backward-facing step](/benchmarks/backward-facing-step.md) of Adams's
+experiment at $Re_H=28\,000$, $N=3$–4, non-turbulent inflow; [NACA 0012](/benchmarks/naca-0012-airfoil.md)
+at $45^\circ$, $Re_c=10^5$; §3):
+
+- **The low-Reynolds-number correction is detrimental.** With $\Psi$ the
+  LES branch is forced to $C_{S,\mathrm{eq}}=0.2$, near Lilly's 0.18; without
+  it the model still settles at a constant $C_{S,\mathrm{eq}}$, about 0.2 on
+  coarse grids and about 0.01 (implicit-LES-like) on fine ones, which the
+  authors ascribe to $f_{v1}$, $f_{v2}$; at $Re_\tau=5200$ $\Psi\approx1$ anyway
+  for $\tilde\nu/\nu>20$. They recommend letting $\tilde\nu$ evolve freely
+  (§3.1.1–§3.1.2, Figs. 5, 10).
+- **Lengths.** $\Delta_{\max}$ gives too much eddy viscosity in the grey area,
+  shifting $u^+$ upward in the channel and delaying or suppressing the
+  Kelvin–Helmholtz instability behind the step; $\Delta_{\mathrm{llm}}$ and
+  $\Delta_\omega$ "unlock the complete development" of the rolls and perform
+  best; $\Delta_{dw}$ drops the eddy viscosity too sharply in the
+  transition and gives visible log-layer mismatch at $Re_\tau=5200$, which the
+  authors attribute to the faster wall-normal growth of DG meshes, a
+  "staircase progression" of $\Delta_{dw}$ (§3.1–§3.2, Figs. 2, 4, 6,
+  9, 12, 16–18).
+- **Shielding.** On the fine $Re_\tau=400$ grid $f_d$ shields weakly, because
+  the eddy viscosity is small, so DDES shows sporadic unshielded patches and
+  slight modelled-stress depletion, while IDDES, through the grid-only
+  $f_B$, keeps a shield of constant thickness and gives the best $u^+$, "even
+  surpassing an ILES carried out on a much finer grid"; at $Re_\tau=5200$
+  $f_d$ dominates and DDES and IDDES nearly coincide for the same length:
+  "the shielding function and the SLS are the two key aspects determining
+  the final solution" (§3.1.1–§3.1.2, Figs. 2–4, 11).
+- **The elevating function.** Enlarging the IDDES protection
+  ($\alpha_\xi=0.25-d/(\xi\Delta_{\max})$, $\xi=2$) helps while the interface
+  stays in the buffer or lower log layer; Han et al.'s
+  $\alpha_{\mathrm{mod}}=1.35-d/\Delta_{\max}$ activates $f_e$ inside the
+  shielded zone and corrupts the RANS branch, and on the NACA 0012 $f_e$ is
+  active inside the shield and can double the effective wall distance, so
+  the authors suggest recalibrating or removing it (§3.1.1, §3.3, Figs. 8,
+  25–26).
+- **Normalization and order.** The smaller $s_\Delta$, the thicker the shield,
+  because $s_\Delta$ also enters $f_B$; $s_\Delta=N+1$ performs best across
+  degrees, while $N_{\mathrm{dof}}^{1/3}$, and $N$ at low and moderate degree,
+  move too fast toward RANS (on the $Re_\tau=5200$ grid with $N=2$ and
+  $s_\Delta=N$ the shielded interface reaches the centreline). Raising $N$ on
+  a fixed mesh lowers the eddy viscosity and moves the interface wallward;
+  at roughly equal degrees of freedom the highest $N$ is the most accurate
+  (§3.1.3, Tables 3–5, Figs. 13–14).
+
+| $Re_\tau=5200$, DDES($\Delta_{\mathrm{llm}}$): mesh, $N$ | DOFs | interface $y^+$, $s_\Delta=N+1$ | $s_\Delta=N$ | $s_\Delta=N_{\mathrm{dof}}^{1/3}$ |
+|---|---|---|---|---|
+| C, 6 | 32 256 | 1399.8 | 1718.4 | 2672.2 |
+| M, 4 | 32 725 | 1446.4 | 2030.8 | 2485.6 |
+| F, 2 | 30 720 | 1853.6 | 5200.0 (fully RANS) | — |
+| VF, 2 | 60 000 | 1231.9 | — | — |
+
+(Table 5; interface at $f_d=0.1$.) On the step, all variants but standard
+DDES and IDDES improve markedly on RANS in $C_f$, standard DDES delaying
+reattachment massively; the $\Delta_{\mathrm{llm}}$ variants place the
+reattachment and the peak negative wall stress, and $N=4$ removes most of the
+remaining profile discrepancies (§3.2, Figs. 19–22). On the NACA 0012 the
+hybrids give $C_L/C_D$ of 1.144/1.169 (DDES($\Delta_{\mathrm{llm}}$), $N=3$),
+1.168/1.196 ($N=4$) and 1.209/1.235 (IDDES($\Delta_{\mathrm{llm}}$)), against
+1.576/1.635 for 2D SA RANS and 0.98/1.06 measured (digitized), and a $C_p$
+agreeing with the DES of Shur et al. (§3.3, Table 6, Fig. 24). Mean-flow
+perturbations of about 10% in the channels decay back to RANS "almost
+instantly", without a figure (§3.1.2). The authors conclude that on fine
+grids the high-order DG hybrids behave "more like a wall-modeled ILES rather
+than a simple WMLES", and that high order reaches accurate solutions "at a
+fraction of the DOFs employed at low order", a statement not quantified
+against a low-order code in the paper (§4; see
+[implicit LES](/definitions/implicit-les.md) and
+[discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)).
+They call the self-adjusting LES branch "a dynamic Smagorinsky model";
+the paper uses no test filter or Germano identity
+(§3.1.2; see the [dynamic procedure](/methods/dynamic-procedure.md)).
 
 ## Grid dependence and mesh adaptation
 
@@ -1213,6 +1410,37 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
   or implicitly, and restrict "wall-modelled LES" to wall-stress models
   ([Maeyama & Kawai (2023)](/sources/maeyama-2023.md), §1; see
   [wall-modelled LES](/methods/wall-modelled-les.md)).
+- **Concentrated vortex flows**, as surveyed by Luckring & Rizzi (2024).
+  The survey prints the SA form $d_1=\min(d,C_{\mathrm{DES}}\Delta)$ with
+  "only one additional model constant ($C_{\mathrm{DES}}=0.65$)", RANS mode
+  in stretched boundary-layer cells where $d<\Delta$ and Smagorinsky-like LES
+  mode where $d>\Delta$, isotropic LES cells giving the smallest $\Delta$ for a
+  given volume, and describes DDES shielding and the IDDES length "depressed
+  near the wall" (§2.4.1.4). From the studies it reviews: on the F-15E at
+  $65^\circ$ hybrid RANS/LES resolved the unsteady separated flow that URANS
+  missed (Forsythe et al.); Morton's SA-based DES with adaptive refinement
+  gave the most promising vortex-breakdown predictions of the AVT-080 70°
+  delta wing; ZDES was run on the AVT-183 diamond wing, and DDES on the
+  CAWAPI F-16XL, whose hybrid pressure bands bracket the flight data, and on
+  a chined fighter (§3.1.1.2, §3.1.2.1, §3.2.3.3, §4.1.2; see
+  [delta-wing vortex flow](/benchmarks/delta-wing-vortex-flow.md) and
+  [mesh adaptation](/methods/mesh-adaptation.md))
+  ([Luckring & Rizzi (2024)](/sources/luckring-2024.md)).
+- **Ahmed body, as listed by Wang et al. (2024d).** In their drag table the
+  DES and IDDES of Guilmineau et al. give total drag coefficients of 0.316
+  and 0.346 against 0.279 measured (Table I, as cited; the row is printed
+  "IDES", the text says IDDES), beside the authors' wall-modelled LES on
+  immersed boundaries ([Wang et al. (2024d)](/sources/wang-2024-k.md); see
+  [Ahmed body](/benchmarks/ahmed-body.md) and
+  [immersed boundary methods](/methods/immersed-boundary-method.md)).
+- **Cited deficiencies and engineering use.** Wu et al. (2024b) cite
+  modelled-stress depletion, grid-induced separation and log-layer mismatch
+  as the DES limitations that SATES is meant to avoid
+  ([Wu et al. (2024b)](/sources/wu-2024-b.md), §I; see
+  [SATES](/methods/self-adaptive-turbulence-eddy-simulation.md)); Le et al.
+  (2024) call DES and RANS the engineering research hotspot, DNS and LES
+  being too costly for engineering use, as they state
+  ([Le et al. (2024)](/sources/le-2024.md), §3).
 
 ## Qualifications
 
@@ -1360,6 +1588,34 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
 - Mays et al. (2023) attribute the SRH model to Manceau (2018) in the
   abstract and to Duffal et al. (2019) in the introduction and §2.1.2.
 
+- Guo & Wang (2025) print the resolvable filter width as
+  $3\max\{\lvert\boldsymbol u\rvert\delta t,\Delta^{1/3}\}$ (Eq. 11): $\lvert\boldsymbol u\rvert\delta t$
+  is a length, and $\Delta^{1/3}$ is one only if $\Delta$ is a cell volume,
+  while $\Delta$ is a grid length elsewhere in the paper *(compiler check,
+  not in the sources)*. Their Fig. 1 writes the switch as
+  "$\mu_t/\mu_\infty=0.2$" where Eq. 15 has "$<0.2$", and labels the filtered
+  branch with the class name of the unfiltered one. They call the
+  $C_D^{\mathrm{rms}}=0.17$ of one variant "slightly lower than the
+  experimental and DNS ranges", while their Table 4 lists a DNS range of
+  0.117–0.181 that contains it, and they cite an LES/DES range of 0.18–0.22
+  where Table 4 lists Rodi's LES range as 0.14–0.27. They judge the
+  models partly by how close single-point velocity PDFs in the wake come to
+  a Gaussian, and show no reference PDF (§3.1, Figs. 17–20).
+- Alberti et al. (2025) print 985 cells for the $11\times17\times5$ mesh
+  (Table 3), while $11\times17\times5=935$ and their Table 5 DOF count, 32 725,
+  equals $935\times35$ *(compiler check, not in the sources)*; their Table 1
+  prints $(N+1)/N_{\mathrm{dof}}^{1/3}$ as 1.40 and 1.48 at $N=2$ and 3, where
+  $3/10^{1/3}=1.392$ and $4/20^{1/3}=1.474$ *(compiler check, not in the
+  sources)*. Their channel stretching law (Eq. 24) with the base printed as
+  $(b+1)(b-1)$ maps $h=0$ to $y=0.927$ for their $a=0.5$, $b=1.05$, not to
+  the wall *(compiler check, not in the sources)*. They write "cubic
+  square" for the cube root of the cell volume and "$f_D$" for $f_d$, and
+  do not print the IDDES constant $C_w$.
+- Wang et al. (2024c) do not state explicitly that their a posteriori run
+  uses the shielded length (Eq. 40), nor which $\Delta$ their SA-DDES uses.
+- Luckring & Rizzi (2024) report the vortex-flow statements above from
+  the studies they cite.
+
 # Citations
 
 - [François et al. (2022)](/sources/francois-2022.md) — §1, §3.1 (pp. 5–6, footnote 2), §3.2.1, §3.4–3.5, §4.1–4.2 Fig. 9, §5.3–5.4 Figs. 12–15.
@@ -1406,3 +1662,10 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
 - [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §3.2–§3.3 (DES of double and blunt fins, as cited); §4.4 (stimulated DES cited as LES).
 - [Wu et al. (2024)](/sources/wu-2024.md) — §1, §3.2–§3.3, Table 3, Fig. 22, §4 (SST-IDDES against SATES-σ; DDES after stall, as cited).
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — §3.3, Fig. 13; §4.1 (DES family cited).
+- [Guo & Wang (2025)](/sources/guo-2025.md) — §1 (groups of DES improvements, $C_{d1}$ recalibrations, as cited); §2.1, Eqs. (6)–(15), Fig. 1 (SST-DDES, filtered eddy viscosity, adaptive grid scale, OpenFOAM classes); §2.2, §3.1–§3.2, Table 4, Figs. 10–25 (square cylinder and periodic hill).
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §1–§2, Eqs. (1)–(25), Fig. 1, Table 1 (SA-DDES and SA-IDDES in modal DG, lengths, normalization, equivalent hexahedron); §3.1–§3.3, Tables 3–6, Figs. 2–26 (channels, backward-facing step, NACA 0012); §4.
+- [Wang et al. (2024c)](/sources/wang-2024-j.md) — §III.B, Fig. 1 (log-layer mismatch of SA-DES and SA-DDES); §III.F, Eqs. (29), (37)–(40), Figs. 15–16 (interfaces, shielded von Kármán length).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1.4 (DES, DDES, IDDES described; F-15E, as cited); §3.1.1.2, §3.1.2.1, §3.2.3.3, §4.1.2 (vortex-flow applications, as cited).
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — Table I (Ahmed-body drag of cited DES and IDDES).
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) — §I (DES deficiencies cited).
+- [Le et al. (2024)](/sources/le-2024.md) — §3 (DES and RANS in engineering use).

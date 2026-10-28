@@ -5,7 +5,7 @@ description: "Energy backscatter is a negative local subgrid energy flux, energy
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-28T07:03:00Z
+timestamp: 2026-10-28T12:24:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -542,6 +542,14 @@ beside the "dissipative drain" of the eddy viscosity (see
 [scale-similarity models](/methods/scale-similarity-model.md)); the paper
 does not use the word backscatter.
 
+[Fang et al. (2026)](/sources/fang-2026.md) (§4.2.4), a review that runs no
+test, list "explicit modeling of backscatter dynamics", together with
+transfer learning, among the remedies that Guan et al. (their ref. [55])
+applied to convolutional SGS closures that are accurate a priori but show
+"instability and energy divergence during a posteriori rollout" (see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+The review gives no form of that backscatter model.
+
 Kim et al. (2022) and Maejima & Kawai (2025) both work in channel flow
 and reach different emphases. Kim et al. find backscatter unnecessary for
 the mean velocity at $Re_\tau=180$ on
@@ -816,3 +824,4 @@ contradiction is recorded.
 - [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — Eqs. (19), (33); §IV B, Fig. 8.
 - [Xu et al. (2023)](/sources/xu-2023.md) — §1; §3.2, Fig. 12; §4.1, Figs. 17–20.
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — §2.4.1; §3.3; §4.1.
+- [Fang et al. (2026)](/sources/fang-2026.md) — §4.2.4 (backscatter modelling named among stabilizations of CNN closures, Guan et al. cited). Review, citation only.

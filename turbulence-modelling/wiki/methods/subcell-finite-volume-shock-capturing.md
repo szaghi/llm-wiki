@@ -5,7 +5,7 @@ description: "Troubled DG elements are recomputed as (N+1)^3 finite-volume subce
 status: established
 aliases: [hybrid DG/FV, DG/FV subcell scheme, finite-volume subcell limiting, DG/FV blending, RL-Blend, local modal filter, LMF, entropy filter]
 tags: [shock-capturing, dg, numerical-dissipation, implicit-les, reinforcement-learning, compressible, flux-reconstruction]
-timestamp: 2026-10-28T07:04:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Subcell finite-volume shock capturing for DG
@@ -282,6 +282,16 @@ authors' classification, local switching to lower-order schemes gives
 "sharp but oscillating shocks" on coarse grids (§V; see
 [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
 for the comparison).
+The same case was rerun with the entropy filter of
+[PyFR](/software/pyfr.md) by [Witherden et al. (2025)](/sources/witherden-2025.md),
+§5.1, Fig. 12, Table 1, who plot their dilatational dissipation beside
+FLEXI's (fourth order, subcell finite volumes), CODA's and SD3D's
+(artificial viscosity): PyFR's is the closest to the TENO reference at
+equal resolution and order, which they read as less shock dissipation of
+the entropy filter (the filter is on
+[explicit modal filtering](/methods/explicit-modal-filtering.md)). The
+comparison is made by the PyFR team against data supplied by the
+comparison's authors.
 
 **Switching FV subcells in a shock/turbulent-boundary-layer interaction.**
 [Gao et al. (2022)](/sources/gao-2022.md) run the FLEXI switching scheme
@@ -457,12 +467,11 @@ are preferred (see
 [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
 No error norm or cost is printed for any of these.
 
-## Convention difference
+## Subcell placement and FV order in the variants
 
 The two variants place the subcells differently: equispaced subcells of width
 $2/(N+1)$ in reference space (Krais et al. 2021, Eq. 59) against subcells sized
-by the LGL weights (Beck & Kurz 2023, Fig. 4). The difference is part of the
-schemes, not a disagreement. The FV operator is second order in the
+by the LGL weights (Beck & Kurz 2023, Fig. 4). The FV operator is second order in the
 switching scheme of FLEXI (Krais et al. 2021; Chapelier et al. 2024) and
 first order in the blend of Klose et al. (2025); Klose et al. put the
 operators on the left-hand side, Beck & Kurz (2023) and Kurz et al. (2025)
@@ -542,3 +551,4 @@ on the right.
 - [Shi & Yan (2023)](/sources/shi-2023.md) — §I; §II.B, Eqs. (6)–(18) (indicator, WENO and positivity limiters in flux reconstruction).
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III C, §IV C, §V (a posteriori subcell limiting and reconstructed DG in multi-material DG, cited).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (a posteriori MOOD-type subcell correction of DG, subcell resolution as a dissipative filter, limiting called too intrusive for LES); §4.4, §5.1 (hybrid DG/FV subcell interface method); §6.2 (review).
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §5.1, Fig. 12, Table 1 (PyFR entropy filtering against FLEXI subcell finite volumes on the supersonic Taylor–Green vortex).

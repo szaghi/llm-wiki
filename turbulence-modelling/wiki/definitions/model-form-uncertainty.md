@@ -5,7 +5,7 @@ description: "The uncertainty that comes from the structure of a turbulence clos
 status: established
 aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, aleatoric model uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation, stochastic discrepancy closure]
 tags: [uncertainty-quantification, rans, data-driven, field-inversion]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-28T12:43:00Z
 ---
 
 # Model-form uncertainty in turbulence closures
@@ -775,6 +775,91 @@ ready for industrial use (§4.5.1). Uncertainty-quantification
 practice is one of their requirements for certification by analysis
 (§5). The review gives no equations or new data.
 
+## Model error inside a coefficient calibration (An et al. 2025)
+
+[An et al. (2025)](/sources/an-2025.md) calibrate seven
+[Spalart–Allmaras](/methods/spalart-allmaras-model.md) constants by
+Bayesian inference with the embedded model-error formulation of Sargsyan
+et al. (as cited): the discrepancy enters as random perturbations of the
+coefficients rather than as an additive output term (§2.3.2, Eqs. 23–26;
+method on [Bayesian calibration](/methods/bayesian-closure-calibration.md)).
+The posterior predictive variance then splits into a model-error part (the
+mean of the posterior variances), a posterior-uncertainty part (the
+variance of the posterior means) and a surrogate-error part (Eqs. 29–30).
+On the backward-facing step the model error is "considerable across all
+positions, especially in the separation region", the posterior uncertainty
+concentrates near separation, and the surrogate error is the smallest of
+the three (§3.1, Fig. 12). The calibration changes the coefficients only
+(layer L4 above). The validation gains of the final set (26.44% on the
+bump crest transition region, about 25% in $C_f$ on the rounded step)
+are in attached pressure-gradient regions, with "limited improvement" in
+the bump separation and "limited improvements" on the hump (§4).
+
+**Discretization in the calibrated coefficients.** The same calibration
+run with a second-order finite-volume solver and a third-order
+discontinuous Galerkin solver gives different MAP coefficients and
+different sensitivities: on the step the MAP von Kármán constant is 0.61
+under finite volume and 0.24 under DG, and the Sobol index of $c_{v1}$ is
+"approximately 120% higher" under DG (§3.1, §3.3, Table 3, Fig. 9). The
+authors hypothesize that the lower dissipation of the high-order scheme
+exposes the model error in the separated shear layer (§3.1). For
+inferred correction fields, Fanizza et al. (2025, §1) argue that fields
+inferred on diffusive second-order discretizations contain a
+discretization component (above); they run no finite-volume–DG
+comparison, while An et al. compare the two discretizations on the
+coefficients.
+
+## Model-form uncertainty in three further reviews
+
+- **Nominal coefficients (Le et al. 2024).** [Le et al. (2024)](/sources/le-2024.md)
+  (§3.1, §3.1.1, pp. 10–11) sort machine-learning uses in RANS into
+  uncertainty analysis, model improvement and model replacement, and state
+  that "There is currently no evidence suggesting that nominal values
+  perform well across all types of flows". They report that a Bayesian
+  recalibration of
+  [SST](/methods/k-omega-sst-model.md) in compression-corner
+  [shock/boundary-layer interactions](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+  improves the adverse-gradient prediction but "cannot simulate the
+  inherent shock instability", and the separation-region wall pressure
+  "remains too high" (Tang et al., as cited; Fig. 8). They also cite Ling
+  & Templeton's classification of regions of high RANS uncertainty
+  (§3.1.2), the classifier that Ihme et al. (2022) cite above, and report
+  that physics-informed corrections of Reynolds-stress discrepancies can
+  "degrade the computational results of the original RANS model" in
+  regions with geometric changes, even for similar separated flows
+  (§3.1.2, p. 12).
+- **Uncertainty of learned models (Fang et al. 2026).**
+  [Fang et al. (2026)](/sources/fang-2026.md) (§4.2.4) separate aleatoric
+  uncertainty, from noise or variability in the data, from epistemic
+  uncertainty, from the model structure or insufficient data (the
+  definitions of Duraisamy et al. (2019) and Agrawal & Koutsourelakis
+  (2024) are under Qualifications). Among the methods they cite, deep ensembles, Monte
+  Carlo dropout, Bayesian neural networks and stochastic variational
+  inference, deep ensembles had the highest predictive accuracy but were
+  "prone to overconfidence in out-of-distribution regimes", while
+  stochastic variational inference was "more conservative" (Grogan et al.,
+  as cited); Bayesian neural networks capture aleatoric and epistemic
+  uncertainty of reacting-flow closures a priori, and Mondrian forests are a non-parametric
+  alternative (§4.2.4). The review quotes these results without numbers of
+  its own.
+- **Disagreement of established models (Luckring & Rizzi 2024).**
+  [Luckring & Rizzi (2024)](/sources/luckring-2024.md) reproduce the
+  formulation hierarchy of Xiao & Cinnella and cite Wilcox for the statement
+  that no model gives accurate results in all flows without ad hoc
+  adjustment of its constants (§2.4.1). Their survey of concentrated
+  vortex flows records disagreement between
+  "well-established codes using well-established turbulence models": on
+  the SACCON configuration RANS solutions give significantly different
+  vortex fields where the pitch stability changes rapidly, and on the X-31
+  two codes with SA and with a $k$-$\omega$ model give significantly
+  different wing vortex flows (§3.2.3.2, §3.2.3.4, Figs. 84–88, 93–94; see
+  [delta-wing vortex flows](/benchmarks/delta-wing-vortex-flow.md)). They
+  define calibration, after the ASME guide, as adjusting physical
+  modelling parameters "to improve agreement with experimental data", and
+  call a formulation *anchored* when it has "some degree of pedigree
+  (historical applications, calibration history, validation history)" for
+  a new prediction (§2.1).
+
 ## Qualifications
 
 - Duraisamy et al. (2019) print the production as $P=\tau_{ij}\partial U_i/\partial x_j$
@@ -813,6 +898,19 @@ practice is one of their requirements for certification by analysis
   by data for Agrawal & Koutsourelakis. The difference is one of
   terminology, not of fact, so it is recorded here rather than as a
   contradiction. This page keeps the review's usage in its title and lead.
+  Fang et al. (2026, §4.2.4) define aleatoric uncertainty as arising from
+  noise or variability in the data and epistemic uncertainty as arising
+  from the model structure or insufficient data.
+- **Parametric gains against model form.** Brenner et al. (2022, §1)
+  class coefficient calibration as parametric calibration with limited
+  gains, because no universal optimal coefficients may exist; they give
+  no test of their own. An et al. (2025, §4) report, for their
+  Bayesian-calibrated SA set, a 26.44% error reduction in the crest
+  transition region of the Gaussian bump and about 25% overall $C_f$
+  error reduction on the rounded step (attached pressure-gradient
+  regions), and "limited improvement" in the bump separation and
+  "limited improvements" on the hump; their variance decomposition puts
+  the largest model error in the separation region (§3.1, Fig. 12).
 - Agrawal & Koutsourelakis print the Reynolds stress with a minus sign,
   $-\langle u_i'u_j'\rangle$, and $k=-\tfrac12\mathrm{tr}$ of it (Eqs. 9–10),
   while their Eqs. 10, 14 and 17 write the positive isotropic part
@@ -890,4 +988,8 @@ practice is one of their requirements for certification by analysis
 - [Shan et al. (2023)](/sources/shan-2023.md) — §IV (four layers; only coefficients reduced); §III.C, Table B1 (case-dependent calibrated SA coefficients).
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §2.5–2.7, Eq. 34, Figs. 7, 9 (bias–variance, epistemic and aleatoric uncertainty, dataset shift); §4.1.4, Fig. 34 (classifier-based submodel assignment); §5.3–5.4 (Gaussian processes, Bayesian networks, out-of-distribution gauges).
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.1 (uncertainty in V&V, closure-coefficient UQ cited); §4.5.1 (RANS workhorses, macroscopic forcing method); §5 (UQ for certification by analysis).
+- [An et al. (2025)](/sources/an-2025.md) — §2.3.2, Eqs. 23–30 (embedded model error, variance decomposition); §3.1, §3.3, Table 3, Figs. 9, 12 (model error in separation, discretization-dependent MAP sets and sensitivities); §4 (validation gains).
+- [Le et al. (2024)](/sources/le-2024.md) — §3.1, §3.1.1, Fig. 8 (three ML uses, nominal coefficients, limit of SST calibration in SWBLI); §3.1.2, p. 12 (uncertainty classification, degradation by discrepancy corrections).
+- [Fang et al. (2026)](/sources/fang-2026.md) — §4.2.4 (aleatoric and epistemic uncertainty, deep ensembles, MC dropout, Bayesian networks, SVI, Mondrian forests).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.1 (calibration, anchored formulation), §2.4.1 (formulation hierarchy, Wilcox cited), §3.2.3.2, §3.2.3.4, Figs. 84–88, 93–94 (SACCON and X-31 model disagreement).
 - [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §3.1, Eqs. 9–16 (multipliers on the dissipation terms, additive discrepancy in the cost); §3.3; §4, Fig. 6 (similar shapes); §5, Table 3, Fig. 9 (K-fold spread, extrapolation in $Re_\tau$).

@@ -151,7 +151,7 @@ undated software.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-26), cited further in chunks 4–8. This source is cited on:
+Chunk 3 (2026-10-26), cited further in chunks 4, 5, 6, 7, 8, 14. This source is cited on:
 
 - [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
@@ -178,3 +178,4 @@ Chunk 3 (2026-10-26), cited further in chunks 4–8. This source is cited on:
 - [GALÆXI](/software/galaexi.md)
 - [HORSES3D](/software/horses3d.md)
 - [Nektar++](/software/nektar-plus-plus.md)
+- [PyFR](/software/pyfr.md)

@@ -5,7 +5,7 @@ description: "The wall-adapting local eddy-viscosity (WALE) model builds a stati
 status: established
 aliases: [WALE, wall-adapting local eddy-viscosity model, Nicoud–Ducros model]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-28T07:08:00Z
+timestamp: 2026-10-28T12:25:00Z
 ---
 
 # WALE model
@@ -278,6 +278,17 @@ instead (below).
   high-speed comparison (see
   [one-equation subgrid kinetic-energy models](/methods/subgrid-kinetic-energy-equation-model.md));
   WALE is not run.
+- **Reference LES for an implicit-LES solver.** [De Cosmo et al. (2025)](/sources/decosmo-2025.md)
+  (§3.2, Fig. 4) compare their low-dissipation finite-volume
+  [implicit LES](/definitions/implicit-les.md) of the decaying
+  Comte-Bellot–Corrsin
+  [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)
+  on $32^3$, $64^3$ and $128^3$ grids with a WALE LES in
+  [OpenFOAM](/software/openfoam.md) (pimpleFoam, Gauss linear, second-order
+  backward time stepping, $\Delta t=10^{-3}$ s); constant and filter width
+  are not printed. Both catch the $-5/3$ slope at $t^*=98$ and depart from
+  it only near the Nyquist wavenumber; the authors call the OpenFOAM run
+  "slightly less dissipative".
 
 ## Qualifications
 
@@ -321,3 +332,4 @@ instead (below).
 - [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.2.
 - [Xu et al. (2023)](/sources/xu-2023.md) — §2.2, Eqs. (2.15)–(2.31), Figs. 1–3; §4.1, Figs. 13–20, Table 4.
 - [Mays et al. (2023)](/sources/mays-2023.md) — §3.1, Tables 2–3.
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §3.2, Fig. 4 (OpenFOAM WALE reference LES of decaying isotropic turbulence).

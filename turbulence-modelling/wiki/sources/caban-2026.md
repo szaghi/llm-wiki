@@ -144,7 +144,7 @@ ingested source li-2024 and takes the key `li-2024-d`. Author lists of [40], [41
 
 # Pages created or updated
 
-Chunk 7 (2026-10-26). This source is cited on:
+Chunk 7 (2026-10-26), cited further in chunk 14. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
@@ -154,6 +154,7 @@ Chunk 7 (2026-10-26). This source is cited on:
 - [Energy backscatter and the subgrid energy flux](/definitions/energy-backscatter.md)
 - [Implicit large-eddy simulation](/definitions/implicit-les.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
+- [Compact finite-difference schemes](/methods/compact-finite-difference-scheme.md)
 - [Explicit modal filtering as an LES closure](/methods/explicit-modal-filtering.md)
 - [Scale-similarity and mixed subgrid-scale models](/methods/scale-similarity-model.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)

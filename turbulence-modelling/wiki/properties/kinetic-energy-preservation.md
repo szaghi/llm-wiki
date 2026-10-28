@@ -5,7 +5,7 @@ description: "A discretization is kinetic-energy preserving when its convective 
 status: established
 aliases: [KEP, KEEP, kinetic-energy and entropy preserving scheme, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-28T17:00:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -31,6 +31,14 @@ which makes centred spatial differentiation kinetic-energy conserving up to the
 time-integration error; with a third-order time scheme their truncated-Euler
 runs keep the kinetic energy within 1% of its initial value over
 $0\le t\le20$, the loss scaling about as $\Delta t^3$ (§3, §6.2).
+The MHD module of [Xcompact3d](/software/xcompact3d.md) of
+[Fang et al. (2025)](/sources/fang-2025.md), §2.1, Eqs. (1)–(2), (5),
+writes both the momentum and the induction equation in this skew-symmetric
+form, the latter as
+$\tfrac12[(\boldsymbol B\cdot\nabla)\boldsymbol u+\nabla\cdot(\boldsymbol B\otimes\boldsymbol u)]-\tfrac12[(\boldsymbol u\cdot\nabla)\boldsymbol B+\nabla\cdot(\boldsymbol u\otimes\boldsymbol B)]$,
+"to reduce aliasing errors" (as cited), with sixth-order compact
+differences; no discrete energy statement is made (see
+[compact finite-difference schemes](/methods/compact-finite-difference-scheme.md)).
 
 **Origins in the early simulations.** The history of DNS and LES of
 [Kim & Leonard (2024)](/sources/kim-2024-b.md), §3.1, p. 28, writes the two
@@ -487,6 +495,18 @@ judges smooth (see [WENO](/methods/weno-scheme.md) and
 Taylor–Green vortex at $64^3$ TENO-S keeps the total kinetic energy to
 $t=100$ while WENO-CU6 and TENO schemes dissipate it (§4.10, Fig. 17).
 
+**A fourth-order skew-symmetric flux in a central/WENO hybrid.**
+[Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md), §2.2,
+Eq. (14), use as the central part of their hybrid the fourth-order
+interface flux of Ducros et al. (as cited) for products $vw$
+($v=\rho u$ with the contravariant velocity, or a metric term with the
+pressure), a four-point combination of nodal products $v_jw_j$
+($j=i-1,\dots,i+2$) plus a second bracket built from the two nodes next
+to the interface; they claim and show no conservation property for it, and it is
+blended with a third-order WENO flux by a pressure switch that selects it
+in smooth regions (see [WENO](/methods/weno-scheme.md)). The printed correction
+term mixes the two factors (see the WENO page's qualifications).
+
 **At least as diffusive as KEP: a condition for weak solutions.**
 [Svärd (2022)](/sources/svard-2022.md), §3, Condition C, requires of a
 scheme meant to approximate weak entropy solutions of the Navier–Stokes
@@ -730,6 +750,11 @@ it backscatters (App. C). Near the front of the cylinder the central scheme
 produces spurious oscillations, removed by QUICK upwinding for $x/D<-0.25$
 (§4.2.1). See
 [neural-network SGS models](/methods/neural-network-sgs-model.md).
+The GPU wall-modelled LES solver [CaLES](/software/cales.md) of
+[Xiao et al. (2025)](/sources/xiao-2025.md) inherits from its DNS parent
+CaNS a scheme of the same kind: second-order central differences on a
+staggered grid, which avoid odd–even decoupling and preserve energy
+discretely in the inviscid limit (Verstappen & Veldman, as cited).
 
 **An energy-conserving coarse operator as the stability guarantee of a
 learned closure.** [van Gastelen et al. (2024)](/sources/vangastelen-2024.md),
@@ -935,3 +960,6 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
 - [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II (STREAmS KEP6/WENO5; passing).
 - [Wei et al. (2023)](/sources/wei-2023.md) — §II C, Eqs. (16)–(19) (KGP-type split flux with Ducros-switched AUSM diffusion in scramjetFoam); §III A, Fig. 4 (inviscid Taylor–Green vortex against two OpenFOAM solvers).
 - [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.1 (energy-conserving unstructured finite-volume code); §3.1 (numerics among the causes of the DSM separation discrepancy; passing).
+- [Fang et al. (2025)](/sources/fang-2025.md) — §2.1, Eqs. (1)–(2), (5) (skew-symmetric momentum and induction equations against aliasing).
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — spatial-discretization section (staggered second-order central differences, energy-preserving in the inviscid limit, cited).
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §2.2, Eq. (14) (fourth-order skew-symmetric central flux of a WENO hybrid; no conservation claim).

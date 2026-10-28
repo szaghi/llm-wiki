@@ -20,7 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–13 ingested (260 of the 307 sources planned in 16
+**Corpus:** chunks 1–14 ingested (280 of the 307 sources planned in 16
 chunks; the archive is still growing). Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
@@ -155,6 +155,16 @@ entropically damped artificial compressibility, high-order discontinuous
 schemes for multiphase flows, super-resolution SGS models for flames,
 sooting-flame LES, detonation-engine LES, GPU actuator-line LES of wind
 turbines, and DDES of tip-leakage and high-lift flows.
+Chunk 14 (2024–2026 papers): interpolation-based WENO on the compressible
+Taylor–Green vortex, a smooth-cutoff WCNS for self-adaptive eddy
+simulation, Spalart–Allmaras-based scale-adaptive simulation, wall-modelled
+immersed boundaries (lattice Boltzmann, high-order finite differences,
+curvilinear grids), hybrid RANS/LES in OpenFOAM and in high-order DG,
+Bayesian calibration of Spalart–Allmaras constants, a low-dissipation Roe
+solver for implicit LES, the PyFR, CaLES, Xcompact3d-MHD and GESTS codes,
+panel fluid–structure interaction under shock/boundary-layer interaction,
+a survey of vortex-flow CFD, conditional source-term estimation, and two
+reviews of AI for turbulence and supersonic combustion.
 
 ## Reading guide
 
@@ -178,7 +188,8 @@ turbines, and DDES of tip-leakage and high-lift flows.
 [laminar kinetic energy transition models](/methods/laminar-kinetic-energy-transition-model.md),
 [laminar separation bubble](/definitions/laminar-separation-bubble.md),
 [dynamic stall](/definitions/dynamic-stall.md),
-[model-form uncertainty](/definitions/model-form-uncertainty.md).
+[model-form uncertainty](/definitions/model-form-uncertainty.md),
+[Bayesian calibration of turbulence-model coefficients](/methods/bayesian-closure-calibration.md).
 
 **3. Subgrid-scale models and implicit LES.**
 [Smagorinsky model](/methods/smagorinsky-model.md) →
@@ -268,11 +279,13 @@ turbines, and DDES of tip-leakage and high-lift flows.
 [WENO and hybrid shock-capturing schemes](/methods/weno-scheme.md),
 [weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md),
 [low-dissipation low-dispersion schemes](/methods/low-dissipation-low-dispersion-scheme.md),
+[compact finite-difference schemes](/methods/compact-finite-difference-scheme.md),
 [immersed boundary methods](/methods/immersed-boundary-method.md),
 [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md),
 [flux reconstruction](/methods/flux-reconstruction.md),
 [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md),
 [thickened flame model](/methods/thickened-flame-model.md),
+[conditional source-term estimation](/methods/conditional-source-term-estimation.md),
 [actuator line and actuator disk models](/methods/actuator-line-model.md),
 [jump-penalty stabilization](/methods/jump-penalty-stabilization.md),
 [high-order projection-based upwind method](/methods/high-order-projection-based-upwind-method.md),
@@ -285,7 +298,9 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [ProLB](/software/prolb.md), [GALÆXI](/software/galaexi.md),
 [TRACE](/software/trace.md), [OpenFOAM](/software/openfoam.md),
 [COOLFluiD](/software/coolfluid.md), [hpMusic](/software/hpmusic.md),
-[ANSYS Fluent](/software/ansys-fluent.md), [PHengLEI](/software/phenglei.md);
+[ANSYS Fluent](/software/ansys-fluent.md), [PHengLEI](/software/phenglei.md),
+[PyFR](/software/pyfr.md), [CaLES](/software/cales.md),
+[Xcompact3d](/software/xcompact3d.md);
 [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md). Compressible wall turbulence:
 [Morkovin's hypothesis and Reynolds analogies](/definitions/morkovin-hypothesis.md),
 [attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md),
@@ -317,6 +332,7 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md),
 [30P30N three-element high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md),
 [hammerhead launch-vehicle buffet](/benchmarks/hammerhead-launch-vehicle-buffet.md),
+[delta-wing and concentrated vortex flows](/benchmarks/delta-wing-vortex-flow.md),
 [turbine cascades](/benchmarks/turbine-cascade.md),
 [compressor cascades](/benchmarks/compressor-cascade.md),
 [NASA Rotor 37](/benchmarks/nasa-rotor-37.md),

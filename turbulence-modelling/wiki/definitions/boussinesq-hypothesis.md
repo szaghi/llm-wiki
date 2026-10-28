@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T17:00:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -428,6 +428,14 @@ and treatments of the trace; translated to the registry they agree.
   $\bar\rho\tilde R_{ij}=2\bar\rho\nu_t\tilde S^*_{ij}$ with $\tilde S^*_{ij}$ the
   traceless strain ([Li et al. (2024b)](/sources/li-2024-f.md), §II.A–B,
   Eqs. 1–2); see Qualifications.
+- **RANS, compressible, viscosity substitution without the trace term.**
+  Ye et al. (2024) write the total stress of their SST URANS as
+  $(\mu+\mu_t)\big(2S_{ij}-\tfrac23\partial_ku_k\delta_{ij}\big)$, with no
+  $-\tfrac23\rho k\delta_{ij}$ term printed, and the conductivity as
+  $c_p(\mu/Pr+\mu_t/Pr_t)$ ([Ye et al. (2024)](/sources/ye-2024.md), §II A,
+  Eqs. 6–7). An et al. (2025) put the eddy viscosity into the viscous stress
+  in the same way, $\rho(\nu+\nu_t)\big[\nabla\boldsymbol u+(\nabla\boldsymbol u)^{\mathsf T}-\tfrac23(\nabla\cdot\boldsymbol u)\mathbf I\big]$
+  ([An et al. (2025)](/sources/an-2025.md), §2.1, Eq. 4).
 
 ### A traceless Reynolds stress
 
@@ -751,6 +759,14 @@ Boussinesq-type corrections make $C_f$ worse than the baseline over the
 whole wall (§4.3.3, Table 2; see
 [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
 and [field inversion](/methods/field-inversion-machine-learning.md)).
+
+Le et al. (2024), reviewing data-driven RANS for supersonic flows, note
+that "most" RANS models assume an eddy viscosity and report, as cited, an
+ensemble inversion of the Reynolds-stress discrepancy of the SST model for
+shock/boundary-layer interactions that overcomes "some limitations of the
+eddy viscosity assumption" (Tang et al.)
+([Le et al. (2024)](/sources/le-2024.md), §3.1, §3.1.2, Fig. 12; review,
+citing only).
 
 **Locality.** Seyedi & Zayernouri (2022) state that the hypothesis assumes
 the stress proportional to the *local* mean velocity gradient, and cite
@@ -1347,3 +1363,6 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.2, Eq. (5) (combined molecular and subgrid stress).
 - [Li et al. (2024b)](/sources/li-2024-f.md) — §II.A–B, Eqs. (1)–(2) (total stress and closure; printed signs in Qualifications).
 - [Zhang et al. (2024)](/sources/zhang-2024.md) — §1 (isotropic hypothesis blamed, as cited).
+- [Ye et al. (2024)](/sources/ye-2024.md) — §II A, Eqs. (6)–(7) (stress and conductivity of an SST URANS).
+- [An et al. (2025)](/sources/an-2025.md) — §2.1, Eq. (4) (eddy viscosity in the viscous stress).
+- [Le et al. (2024)](/sources/le-2024.md) — §3.1, §3.1.2, Fig. 12 (eddy-viscosity assumption and discrepancy inversion, as cited).

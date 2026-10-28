@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Gaussian (Boeing) bump"
-description: "The Boeing Gaussian speed bump, a smooth-body separation behind a Gaussian hill at bump-width Reynolds number 2 million (spanwise-periodic) or 3.41 million (3D): wall-modelled LES on it depends more on the subgrid model, the mesh and cell anisotropy than on the wall condition, and its separation converges non-monotonically."
+description: "The Boeing Gaussian speed bump, a smooth-body separation behind a Gaussian hill at bump-width Reynolds number 1 or 2 million (spanwise-periodic) or 3.41 million (3D): wall-modelled LES on it depends more on the subgrid model, the mesh and cell anisotropy than on the wall condition, its separation converges non-monotonically, and it calibrates Spalart–Allmaras constants."
 status: established
 aliases: [Gaussian bump, Boeing bump, Boeing Gaussian bump, Boeing speed bump, Gaussian speed bump, spanwise-periodic Gaussian bump, 2D Gaussian bump, 3D Gaussian bump]
-tags: [benchmark, wmles, sgs-model, separated-flow, boundary-layer]
-timestamp: 2026-10-28T11:49:00Z
+tags: [benchmark, wmles, sgs-model, separated-flow, boundary-layer, uncertainty-quantification]
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Gaussian (Boeing) bump
@@ -180,6 +180,43 @@ DTCSM costs 15 against 13 GPU-node-hours per flow-through for dynamic
 Smagorinsky on the 52 M-cell periodic grid, 112 against 100 on the 452
 M-cell 3D grid (§IX, Tables IV–V).
 
+**Steady RANS: calibrating Spalart–Allmaras constants.**
+[An et al. (2025)](/sources/an-2025.md) run the spanwise-periodic bump as
+two-dimensional steady RANS with the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md), at $M=0.2$,
+in second-order finite volume (CFL3D) and in the authors' third-order
+discontinuous Galerkin solver, against the DNS of Uzun & Malik:
+
+- at $Re_L=10^6$ (§3.2, Table 2, Figs. 15–19) the bump is a calibration
+  flow of the [Bayesian calibration](/methods/bayesian-closure-calibration.md)
+  of seven SA constants; the flow has, in their description, a small
+  adverse, a strong favourable, a strong adverse and a small favourable
+  pressure gradient in turn, and a small separation nearly attached to
+  the wall. Finite volume runs $401\times161$ points ($y^+\approx1$) with
+  inflow from the DNS at $x/L=-0.8$; DG runs about $201\times81$
+  ($y^+\approx5$) with inflow from a precursor flat plate to
+  $Re_\theta\approx530$. DG beats finite volume at the crest and in the
+  separation "despite … some errors in the inlet conditions"; the constants
+  $C_{b2}$, $\sigma$ and $C_{w3}$, insensitive on the
+  [backward-facing step](/benchmarks/backward-facing-step.md), become
+  sensitive here, more so under DG, which the authors tie to the
+  derivatives that change under streamline curvature; the sensitivity of
+  $C_{v1}$ falls in the favourable gradient, which they attribute to
+  relaminarization, and rises sharply in the adverse gradient and the
+  separation. Calibrated, the DG posterior $C_p$ at the crest is "almost
+  completely overlapping with DNS" and its $C_f$ in the separation shows
+  "nearly no discrepancy" (Fig. 18);
+- at $Re_L=2\times10^6$ (§4.1, Table 5, Figs. 20–21), a validation flow
+  (finite volume $401\times201$, DG $181\times93$), the baseline SA "nearly
+  eliminate[s]" the large separation behind the bump; their final
+  constant set improves the separation little but brings the crest
+  transition region ($x/L=0.3$–0.5) into "near-perfect alignment" with the
+  DNS, "yielding 26.44% error reduction" against the baseline.
+
+It is the only RANS study of the bump on this page; its
+$Re_L=2\times10^6$ case is the spanwise-periodic bump of the WMLES studies
+above.
+
 **A reference for aircraft-scale WMLES.**
 [Kiris et al. (2023)](/sources/kiris-2023.md), §I, §VI 1f, list the bump,
 with the [NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md),
@@ -215,6 +252,14 @@ model.
   on the medium and fine grids after a deviating coarse grid; the cited
   work is not ingested, and the two descriptions are recorded side by
   side.
+- [An et al. (2025)](/sources/an-2025.md) cite the $Re_L=10^6$ DNS as
+  "Malik et al." in §3.2, while their reference list names Uzun & Malik;
+  they describe the $Re_L=2\times10^6$ grids as "reducing grid points by
+  54%", while their printed $401\times201$ and $181\times93$ differ by 79%
+  in point count and by 54–55% in each direction *(compiler check, not in
+  the sources)*. They do not state the precise error measure behind the
+  26.44%, and they print the bump coordinate both as $x/L$ and $x/C$
+  (§4.1).
 - Agrawal et al. were read in an accepted manuscript; their §VIII.B says
   the DTCSM $C_f$ trough "moves towards DNS" under refinement, while the 3D
   reference they list is the experiment of Gray et al.
@@ -226,3 +271,4 @@ model.
 - [Goc et al. (2021)](/sources/goc-2021.md) — §3.3 (cited bubble collapse of Iyer & Malik).
 - [Hu et al. (2024)](/sources/hu-2024.md) — §1 (cited grid study of Iyer & Malik).
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §I; §VI 1f (cited as an academic WMLES case; not run).
+- [An et al. (2025)](/sources/an-2025.md) — §3.2, Table 2, Figs. 15–19; §4.1, Table 5, Figs. 20–21.

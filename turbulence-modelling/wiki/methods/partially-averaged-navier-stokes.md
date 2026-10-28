@@ -5,7 +5,7 @@ description: "Girimaji's bridging hybrid model that solves RANS-form transport e
 status: established
 aliases: [PANS, partially averaged Navier-Stokes, PANS k-ω SST, bridging model, PANS BHR-LEVM, variable-density PANS, BHR model]
 tags: [pans, hybrid-rans-les, flux-reconstruction, numerical-dissipation, separated-flow]
-timestamp: 2026-10-28T11:50:00Z
+timestamp: 2026-10-28T12:24:00Z
 ---
 
 # Partially-averaged Navier–Stokes
@@ -340,7 +340,15 @@ Wu et al. (2024), introducing the σ-model-weighted variant SATES-σ, again
 list PANS among the hybrid methods (§1)
 ([Wu et al. (2024)](/sources/wu-2024.md)). In PANS, $f_k$ and
 $f_\varepsilon$ enter the transport equations (above); in SATES only the eddy
-viscosity is scaled.
+viscosity is scaled. The same group's Wu et al. (2024b), on the numerics
+of SATES, list PANS among the bridging methods once more (§I, ref. 7)
+([Wu et al. (2024b)](/sources/wu-2024-b.md)). Wang et al. (2024b), testing
+interpolation-based WENO schemes on the compressible
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), cite a PANS study
+of the transitional Taylor–Green vortex by Pereira et al. (2021, Phys. Rev.
+Fluids; their ref. 24), a different paper from the Rayleigh–Taylor study of
+Pereira et al. (2021) above; they run no PANS
+([Wang et al. (2024b)](/sources/wang-2024-i.md)).
 Mays et al. (2023) cite Girimaji's PANS paper, with Spalart et al.
 (1997), for the hybrid approach; their own model, the scale-resolving
 hybrid model of Duffal et al., computes a theoretical modelled-to-total
@@ -484,3 +492,5 @@ and build theirs on DES instead
 - [Wu et al. (2024)](/sources/wu-2024.md) — §1 (PANS listed among hybrid methods).
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.2.
 - [Mays et al. (2023)](/sources/mays-2023.md) — §1, §2.1.2 Eqs. 9–12.
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) — §I (PANS listed among bridging methods).
+- [Wang et al. (2024b)](/sources/wang-2024-i.md) — ref. 24 (PANS of the transitional Taylor–Green vortex, cited only).

@@ -5,7 +5,7 @@ description: "Vreman's static eddy-viscosity model builds the subgrid viscosity 
 status: established
 aliases: [Vreman eddy-viscosity model, Vreman (2004) model, static-coefficient Vreman model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-28T07:11:00Z
+timestamp: 2026-10-28T12:25:00Z
 ---
 
 # Vreman model
@@ -350,6 +350,13 @@ $N$ (the paper's $P$), with $N=5$.
   dynamic Smagorinsky or no subgrid closure. The authors state that the
   adequacy of subgrid models for highly compressible, turbulent, reacting
   flows is open, and they do not vary the model (§3.3, §3.8).
+- **Named, not run, in a GPU channel solver.** [Xiao et al. (2025)](/sources/xiao-2025.md)
+  do not implement the model in [CaLES](/software/cales.md): they name it
+  as one the solver "can easily incorporate" (§5), and cite Vreman's
+  paper for the over-estimated peak of the streamwise normal stress that
+  their own wall-resolved channel LES with the static and dynamic
+  [Smagorinsky](/methods/smagorinsky-model.md) models also show at
+  $Re_\tau\approx544$ (§4.2, Fig. 8).
 
 ## Spectral-element LES
 
@@ -505,3 +512,4 @@ computed and subtracted from the mean-stress model.
 - [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.1; §3.1, Figs. 4–6, 8, 11; §3.2, Figs. 15–16; §3.3, Figs. 17–20; §4.
 - [Hu et al. (2024)](/sources/hu-2024.md) — §4.
 - [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.3, Table 1; §3.8.
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §4.2, Fig. 8 (streamwise-stress peak over-estimate, Vreman cited); §5 (model named for future inclusion). Not run.

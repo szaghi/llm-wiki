@@ -5,7 +5,7 @@ description: "The turbulent Prandtl and Schmidt numbers close the turbulent heat
 status: established
 aliases: [turbulent Prandtl number, Pr_t, turbulent Schmidt number, Sc_t, gradient-diffusion hypothesis, GDH, generalized gradient-diffusion hypothesis, GGDH, HoGGDH, eddy-diffusivity heat flux, turbulent heat-flux model]
 tags: [rans, eddy-viscosity, compressible, boundary-layer, data-driven, combustion]
-timestamp: 2026-10-28T07:04:00Z
+timestamp: 2026-10-28T12:22:00Z
 ---
 
 # Turbulent Prandtl number and turbulent heat-flux models
@@ -79,6 +79,23 @@ one-equation LES (§II B, Eqs. 14–15) and $Pr_t=Sc_t=0.7$ in the
 Oefelein's LES of the same engine computes $Pr_t$ and $Sc_t$ dynamically
 (Table 1, as cited). Wei et al. point out that
 their SGS values are constant while the resolved ones vary between 0 and 2.
+
+For the mixture fraction $z$ (page-local) of turbulent-combustion closures,
+[Salehi et al. (2024)](/sources/salehi-2024.md) write the filtered flux by
+gradient diffusion, $\widetilde{u_i''z''}=-\mathcal D_t\partial_i\tilde z$
+with $\mathcal D_t=\nu_t/Sc_t$ ($\mathcal D_t$ page-local), and survey the
+values in use: $Sc_t=0.7$ in RANS; in LES either a dynamic $Sc_t$ or a
+constant 0.4 or 0.7, the sensitivity to the choice between 0.4 and 0.7 having
+been found not significant in the study they cite (Eq. 20 and the text
+around it). The same gradient-diffusion form closes the progress-variable
+flux there, where they note that counter-gradient transport has been reported
+(Eqs. 26–27); see
+[conditional source-term estimation](/methods/conditional-source-term-estimation.md).
+In compressible URANS codes the constant enters the conductivity directly:
+[Ye et al. (2024)](/sources/ye-2024.md) close the heat flux of their
+$k$-$\omega$ SST computation of a Mach 5 swept shock/boundary-layer
+interaction with the effective coefficient $c_p(\mu/Pr+\mu_t/Pr_t)$ (Eq. 6),
+without printing the value of $Pr_t$.
 
 ## Misalignment and counter-gradient transport
 
@@ -205,3 +222,5 @@ and turbulence modeling during model development" (§2.4). See
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §3.2.3, §3.3 ($Pr_t$ from 0.4 to 4 and flux–gradient misalignment, as cited).
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.3, Fig. 5 (jet in crossflow, SST with $Pr_t=0.9$); §2.4; §3.3, Eqs. (6), (9), (12), (13) (tensor-diffusivity expansion, GDH, GGDH, HoGGDH); §4.2, §4.4.2, §4.5 (learned heat-flux closures).
 - [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.3, Table 1 (SGS $Pr_t=Sc_t=0.7$ with the Vreman model; dynamic $Pr_t$, $Sc_t$ of a cited LES).
+- [Salehi et al. (2024)](/sources/salehi-2024.md) — Eq. (20) and text ($Sc_t=0.7$ in RANS; dynamic, 0.4 or 0.7 in LES; insensitivity between 0.4 and 0.7, as cited); Eqs. (26)–(27) (gradient-diffusion progress-variable flux, counter-gradient transport noted).
+- [Ye et al. (2024)](/sources/ye-2024.md) — §II A, Eq. (6) (conductivity $c_p(\mu/Pr+\mu_t/Pr_t)$ in SST URANS, value not printed).

@@ -5,7 +5,7 @@ description: "Numerical dissipation is the kinetic-energy loss a discretization 
 status: established
 aliases: [artificial dissipation, scheme dissipation, upwind dissipation, Riemann-solver dissipation, numerical viscosity]
 tags: [numerical-dissipation, implicit-les, les, dg, kinetic-energy-preserving]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T17:03:00Z
 ---
 
 # Numerical dissipation in scale-resolving simulation
@@ -480,6 +480,76 @@ study, the paper states that the large time steps allowed by A-stable
 BDF2 give large inaccuracies in the wing-root separation at $21.47^\circ$
 through their dissipative nature (§VI 1c).
 
+**Interpolation against reconstruction in finite-difference WENO.**
+[Wang et al. (2024b)](/sources/wang-2024-i.md), §III, rank four
+fifth-order WENO schemes on the compressible
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $128^3$ with
+no subgrid model: WENO-JS is the most dissipative at every Mach number
+from 0.1 to 2.5, the reconstruction-based unequal-sized WENO less, and the
+interpolation-based ones (Riemann flux on interpolated states) least,
+with the hybrid that uses the linear interpolation wherever a sensor
+finds the interpolant monotone closest to the reference. The total
+dissipation rate separates the schemes more than the kinetic energy
+does, and the differences are larger at $Re=1600$ than at $Re=400$,
+which the authors read as numerical viscosity dominating physical
+viscosity at the higher Reynolds number and being comparable to it at
+the lower (stated) (§III.C–D, §IV; schemes on
+[WENO](/methods/weno-scheme.md)).
+
+**Nonlinear weights and shear-layer instability in hybrid RANS/LES.**
+[Wu et al. (2024b)](/sources/wu-2024-b.md), §IV.C, compare Jiang–Shu,
+Z, TENO and smooth-TENO weights inside a fifth-order weighted compact
+nonlinear scheme under SATES: on the
+[30P30N airfoil](/benchmarks/30p30n-high-lift-airfoil.md) the Jiang–Shu
+weights suppress the Kelvin–Helmholtz instability of the slat-cove shear
+layer and give a mean $C_p$ that deviates mostly on the flap, which the
+authors attribute to suppressed suction-side turbulence and stronger
+separation under the adverse pressure gradient; in a Mach 2.46 base flow
+the same weights suppress the shear-layer instability and, on the coarse
+grid, miss the resolved turbulent-kinetic-energy peak, which the
+TENO-type weights predict better. Their spectral (approximate dispersion
+relation) analysis places the TENO-type weights near the linear scheme
+(§IV.A, Fig. 4; see
+[weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md)).
+
+**Eigenvalue-scaled Roe dissipation in a second-order unstructured code.**
+[De Cosmo et al. (2025)](/sources/decosmo-2025.md), §2.2, §3.2, keep the
+two acoustic eigenvalues of the Roe dissipation matrix multiplied by a
+factor $c_{\mathrm{diss}}$ (page-local) and set the three convective ones
+to zero, then calibrate $c_{\mathrm{diss}}$ on the decay of isotropic
+turbulence: larger values steepen the inertial range and lower the energy,
+smaller ones flatten it and pile energy up near the grid Nyquist
+wavenumber; $c_{\mathrm{diss}}=0.001$ is kept for all their wall-bounded
+runs (Fig. 5). They also find that mesh non-orthogonality and streamwise
+non-uniformity add dissipation, lowering $\langle v'v'\rangle$ and
+$\langle w'w'\rangle$ over a curved-wall channel bump (§3.4, Fig. 16).
+The scheme and its results are on [implicit LES](/definitions/implicit-les.md).
+
+**Collision operators and immersed walls in lattice Boltzmann LES.** In
+wall-modelled LES with immersed boundaries in a lattice Boltzmann code,
+[Wang et al. (2024d)](/sources/wang-2024-k.md), §III, read their
+multiple-relaxation-time collision operator as less dissipative than the
+recursive regularized one, from higher velocities above $y^+=1000$, an
+overestimated turbulent kinetic energy and more small, partly
+nonphysical, vortical structures in channel flow; the multiple-relaxation-time
+runs are noisy and tend to be unstable at high Reynolds numbers
+(unstable for the Ahmed body). They attribute the underestimated channel
+fluctuations at lower $Re_\tau$ "probably" to the dissipation of the
+method rather than the wall model, and find that a diffusive-interface
+immersed boundary adds near-wall dissipation, while a sharp interface
+does not (§III A; read from the statistics, no dissipation rate is computed;
+see [lattice Boltzmann methods](/methods/lattice-boltzmann-method.md) and
+[immersed boundary methods](/methods/immersed-boundary-method.md)).
+
+**Hyperviscous second derivative instead of a model, at lower cost.**
+[Yan et al. (2024)](/sources/yan-2024.md), §III A, Conclusion, let the
+implicit [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
+of a sixth-order compact second derivative act as the subgrid model and
+as the control of aliasing; on a circular cylinder it is more accurate
+than second-order central differences with a Smagorinsky term on the
+same mesh and cheaper (15.04 against 18.16 wall-clock hours per $10^5$
+steps on 96 cores), because no subgrid term is computed.
+
 ## Dissipation of RANS-type schemes in hybrid RANS/LES
 
 [Carlsson et al. (2023)](/sources/carlsson-2023.md) quantify the
@@ -830,6 +900,14 @@ dissipation (Fig. 11).
   stabilization term of [variational multiscale](/methods/variational-multiscale-method.md)
   LES in the resolved kinetic-energy equation of a channel; see the
   subgrid-model comparison below.
+
+- **Signatures in wall statistics.** De Cosmo et al. (2025, §3.3) use
+  two heuristics in a wall-resolved channel: an overestimated $u^+$ in
+  the log layer "indicates too high numerical dissipation and an
+  underestimation of $\tau_w$", and an overestimated $\langle u'u'\rangle$
+  indicates excessive dissipation; their channel at $Re_\tau=200$ shows
+  both marginally ($u^+$ 2% high at $y^+=100$) and a slight log-layer
+  overestimate in the turbulent-kinetic-energy budget (Figs. 8–10).
 
 ## Scheme design against excess dissipation
 
@@ -1319,6 +1397,39 @@ differences; neither paper prints the filtering interval.
   dynamically chosen wall-model interface and to a nonlinear interaction of
   WENO numerical viscosity with the wall model.
 
+- **Explicit model irrelevant on fine grids.** In compressible LES with a
+  central/third-order WENO hybrid and a dynamic Smagorinsky model,
+  [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) (Abstract,
+  §3.2–3.3) find that on fine grids "the WENO scheme provides the
+  dissipation implicitly", the dynamic, constant and no subgrid model
+  giving the same reattachment length behind a Mach 3 cylinder, while on
+  coarse channel grids the implicit dissipation of the third-order WENO
+  degrades the statistics.
+- **Numerics outweigh a hybrid model in high-order DG.**
+  [Alberti et al. (2025)](/sources/alberti-2025-b.md) (§3.1.3, §4) run
+  SA-IDDES in modal DG at about equal degrees of freedom with three
+  polynomial degrees on channel flow at $Re_\tau=400$: the mean profiles
+  are "spaced far apart", the equivalent Smagorinsky constant in the bulk
+  is about 0.01 (stated, not shown), and the authors conclude that the numerics outweigh the
+  model (see [implicit LES](/definitions/implicit-les.md) and
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+- **Less dissipation, more model error in RANS.** In Bayesian
+  recalibration of the Spalart–Allmaras constants,
+  [An et al. (2025)](/sources/an-2025.md) (§3–4) repeatedly attribute
+  the differences between their third-order DG and a second-order
+  finite-volume solver, a larger model error in separated flow and a
+  higher sensitivity to the coefficients under DG, to the lower numerical
+  dissipation of the high-order scheme, which they state as a hypothesis
+  (the lower dissipation "may amplify" model errors, §3.1) (see [Bayesian calibration](/methods/bayesian-closure-calibration.md)).
+- **A hybrid model said to counter dissipation.**
+  [Guo & Wang (2025)](/sources/guo-2025.md) (§3.1, Figs. 12–15) read the
+  decay of wake vortices in a baseline SST-based DDES as numerical
+  dissipation and state that their adaptive-eddy-viscosity and
+  grid-scale variant "effectively suppresses numerical dissipation and
+  retains small-scale energy", on the evidence of Q-criterion
+  iso-surfaces (see
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+
 ## Shock capturing and dissipation in compressible turbulence
 
 Four sources measure what shock capturing does to the turbulent scales,
@@ -1517,6 +1628,23 @@ turbulent scales by design:
   at walls, stays off walls and vortical regions; its mean is non-zero only
   near the shock (see [shock sensor](/definitions/shock-sensor.md) and
   [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
+
+- **Entropy filtering against artificial viscosity and subcells.** On the
+  supersonic Taylor–Green vortex, [Witherden et al. (2025)](/sources/witherden-2025.md)
+  (§5.1, Fig. 12, Table 1) find the dilatational dissipation of
+  [PyFR](/software/pyfr.md) with entropy filtering closer to the TENO
+  reference than that of artificial-viscosity and subcell finite-volume
+  element solvers at equal resolution and order, and read it as "less
+  shock dissipation" (see
+  [explicit modal filtering](/methods/explicit-modal-filtering.md)).
+- **Instabilities lost to a low-order WENO.** Akbarzadeh & Borazjani
+  (2025, §3.3.1, §3.4) find that pure third-order WENO, or their hybrid on
+  a coarse grid, damps the Kelvin–Helmholtz instability of the contact
+  lines behind a Mach 3 bow shock and prevents the vortex of a
+  shock/boundary-layer interaction in shock diffraction, both captured by
+  the hybrid on fine grids; they add that raising the dissipation
+  physically (lower Reynolds number) prevents the vortex too (Fig. 16;
+  see [WENO](/methods/weno-scheme.md)).
 
 ## Dissipation of compressible modes
 
@@ -1991,3 +2119,13 @@ evidence is one-dimensional and laminar.
 - [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.1 (energy-conserving low-dissipative solver); §3.1, Fig. 10 (SGS dissipation by model).
 - [Taschner et al. (2024)](/sources/taschner-2024.md) — §4.1, Fig. 6 (discretization, staggered grid and wake transition, cited).
 - [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §1, §4.2 (stabilization dissipation of discontinuous schemes in LES).
+- [Wang et al. (2024b)](/sources/wang-2024-i.md) — §III.A–E, §IV (dissipation ranking of four WENO schemes on the compressible Taylor–Green vortex; numerical against physical viscosity).
+- [Wu et al. (2024b)](/sources/wu-2024-b.md) — §IV.A, Fig. 4; §IV.C, Figs. 7–14 (nonlinear weights and shear-layer instability under SATES).
+- [De Cosmo et al. (2025)](/sources/decosmo-2025.md) — §2.2; §3.2, Fig. 5 (calibrated Roe dissipation); §3.3, Figs. 8–10 (signatures in wall statistics); §3.4, Fig. 16 (mesh-induced dissipation).
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — §III A, Figs. 4–6 (MRT against regularized collisions; diffusive-interface near-wall dissipation).
+- [Yan et al. (2024)](/sources/yan-2024.md) — §III A, Table II; Conclusion (implicit SVV as model and aliasing control; cost).
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — Abstract; §3.2–3.4, Figs. 6–8, 12, 14–16 (WENO dissipation against the explicit model; damped instabilities).
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §3.1.3, Table 4, Fig. 14; §4 (numerics outweigh SA-IDDES in high-order DG).
+- [An et al. (2025)](/sources/an-2025.md) — §3–4 (lower DG dissipation as a stated cause of model-error amplification).
+- [Guo & Wang (2025)](/sources/guo-2025.md) — §3.1, Figs. 12–15 (dissipation suppression claimed for a modified DDES; qualitative).
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §5.1, Fig. 12, Table 1 (shock dissipation of entropy filtering).

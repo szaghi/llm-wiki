@@ -5,7 +5,7 @@ description: "The symmetric NACA 0012 airfoil: static RANS at chord Reynolds num
 status: established
 aliases: [NACA0012, NACA 0012, NACA-0012]
 tags: [benchmark, rans, hybrid-rans-les, les, data-driven, immersed-boundary, dg, separated-flow, des, transition, aeroacoustics]
-timestamp: 2026-10-28T07:06:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # NACA 0012 airfoil
@@ -295,6 +295,76 @@ the LES peak lift (§4.2.1, Fig. 4). The stages and the stall type are on
 The RANS lift and drag exceed the reference by factors of about 2.0 and
 1.7 *(compiler check, not in the sources)*; the two hybrids "perform
 almost the same without any superiority" (§3.2).
+
+[Alberti et al. (2025)](/sources/alberti-2025-b.md), §3.3, run the same
+incidence at $Re_c=10^5$ with Spalart–Allmaras-based DDES and IDDES in an
+incompressible modal discontinuous Galerkin solver at polynomial degree
+$N=3$ (and 4): a circular domain of diameter $25c$, span $1c$, 18,600
+elements with 8 spanwise layers and second-order curved edges, ten
+inflated wall layers with $\Delta y^+=1.3$, free-stream
+$\tilde\nu_\infty/\nu=3$, averages over about $200c/U_\infty$. They justify
+the Reynolds-number gap to the reference by the weak dependence after stall
+for $Re_c>10^5$ that Shur et al. report. Forces (Table 6):
+
+| Run | $C_L$ | $C_D$ |
+|---|---|---|
+| 2D Spalart–Allmaras RANS | 1.576 | 1.635 |
+| DDES, subgrid length of Reddy et al., $N=3$ | 1.144 | 1.169 |
+| the same, $N=4$ | 1.168 | 1.196 |
+| IDDES, subgrid length of Reddy et al., $N=3$ | 1.209 | 1.235 |
+| experiment, Lee & Han (digitized) | 0.98 | 1.06 |
+
+The hybrid $C_p$ agrees with the DES of Shur et al., while the 2D RANS
+over-estimates it, mostly aft; raising $N$ has an "imperceptible effect on
+average". The small DDES–IDDES difference is attributed to the
+constant-thickness shield of IDDES and to its elevating function $f_e$
+(page-local: the IDDES function that enlarges the RANS length near the
+wall) becoming active inside the shielded region, which can double the
+modified wall distance and corrupt the background RANS; the authors
+suggest recalibrating or removing $f_e$ (Figs. 24–26; see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)). The
+two massive-separation studies quote different references at
+$45^\circ$: Mozaffari et al. a lift of 1.097 and drag of 1.180 from Shur et
+al., Alberti et al. 0.98 and 1.06 from the experiment of Lee & Han.
+
+**Grid-count estimates and compressible dynamic stall, as surveyed.** The
+survey of concentrated-vortex aerodynamics by
+[Luckring & Rizzi (2024)](/sources/luckring-2024.md) uses the airfoil twice
+(see [delta-wing and concentrated vortex flows](/benchmarks/delta-wing-vortex-flow.md)):
+
+- it reproduces Larsson et al.'s estimate for LES of the upper-surface
+  boundary layer at $M=0.1$, $\alpha=2.5^\circ$ (§2.4.1.4, Table 1):
+
+  | $Re_c$ | inner layer, $y<0.2\delta$ | outer layer | trailing-edge $Re_\tau$ |
+  |---|---|---|---|
+  | $10^6$ | $1.6\times10^7$ | $3.3\times10^7$ | $1\times10^3$ |
+  | $10^7$ | $1.9\times10^9$ | $7.2\times10^7$ | $1\times10^4$ |
+  | $10^8$ | $2.0\times10^{11}$ | $2.5\times10^8$ | $7\times10^4$ |
+
+  so that the inner-layer count rises by about two orders of magnitude per
+  decade of $Re_c$, and an LES of this attached flow at $Re_c=4\times10^7$
+  needs about 33 billion points (see
+  [grid-point requirements of LES](/results/les-grid-point-requirements.md));
+- it cites the high-order wall-resolved LES of Benton & Visbal at $M=0.4$,
+  $Re_c=10^6$, $\alpha=13.1^\circ$ on $267\times10^6$ nodes, which shows a
+  succession of shocks and expansions ending in shock-induced separation,
+  physics the authors say is "not modeled, or have not been reported" in
+  current RANS and hybrid RANS/LES (§3.1.1.2, §4.1.1; see
+  [dynamic stall](/definitions/dynamic-stall.md)).
+
+**Learned surrogates of the RANS model, as cited.** The review of
+[Le et al. (2024)](/sources/le-2024.md), §3.1.3, Fig. 13, cites works of
+Zhu et al. that replace the eddy viscosity of the
+[Spalart–Allmaras model](/methods/spalart-allmaras-model.md) by a learned
+map: a fully connected network trained on six NACA 0012 cases at high
+Reynolds number that generalizes across free-stream conditions and airfoil
+shapes, and a radial-basis-function network whose accuracy on three
+subsonic NACA 0012 cases is "comparable to that of the SA model" at
+higher computational efficiency, with predictions shown for the NACA 0014
+and the
+[RAE 2822](/benchmarks/rae-2822-airfoil.md). The review names smoothness,
+outliers in "edge regions" of high-Reynolds-number boundary layers and
+solver instability as the difficulties of such surrogates (§3.1.3).
 
 **Transonic shock.** At $M=0.804$, [Zhao et al. (2023b)](/sources/zhao-2023-b.md),
 §5.3, place the shock at $x\approx0.47c$ with $C_p$ extrema consistent with
@@ -611,6 +681,15 @@ $\omega$ (§1–§2).
   doubles, $3456=2\times1728$ *(compiler check, not in the sources)*.
   Their URANS is two-dimensional.
 
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) run $45^\circ$ at
+  $Re_c=10^5$ and compare with references at other Reynolds numbers (the
+  DDES and IDDES they also cite run $1.3\times10^6$); their experimental
+  forces are digitized from Lee & Han.
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) reproduce the
+  Larsson et al. table without its derivation, and call wall-resolved LES
+  "currently restricted to low Reynolds numbers (on the order of
+  $10^4$)" (§4.1.1) while surveying the Benton–Visbal run at $Re_c=10^6$.
+
 # Citations
 
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §5.2, Table 5-1, Figs. 5-4–5-6; §5.3, Figs. 5-9–5-11.
@@ -633,3 +712,6 @@ $\omega$ (§1–§2).
 - [Liu et al. (2022b)](/sources/liu-2022-g.md) — §3.3, Table 4 (laminar harvester).
 - [Han et al. (2022)](/sources/han-2022-c.md) — §4 (blade section of the Caradonna–Tung rotor).
 - [Fidkowski (2022)](/sources/fidkowski-2022.md) — §2–§5, Eqs. (2), (13), (22)–(23); §6.1–6.2, Tables 1–2, Figs. 3–12; §7.
+- [Alberti et al. (2025)](/sources/alberti-2025-b.md) — §2.1, Eqs. 10–12; §3.3, Table 6, Figs. 23–26.
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1.4, Table 1; §3.1.1.2; §4.1.1 (survey, cited works).
+- [Le et al. (2024)](/sources/le-2024.md) — §3.1.3, Fig. 13 (cited works, review).

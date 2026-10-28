@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-28T11:51:00Z
+timestamp: 2026-10-28T17:02:00Z
 ---
 
 # Equilibrium wall model
@@ -71,6 +71,16 @@ grid-convergence study of WMLES (below), and [Zhou & Bae (2024)](/sources/zhou-2
 use an equilibrium stress-balance model in the precursor LES that feeds
 their [Gaussian bump](/benchmarks/gaussian-bump.md) and an idealized
 equilibrium wall condition on the bump itself (below).
+Four further implementations: the algebraic log law of the GPU
+solver [CaLES](/software/cales.md) ([Xiao et al. 2025](/sources/xiao-2025.md)),
+the integrated stress balance on diffusive- and sharp-interface immersed
+boundaries of a lattice Boltzmann solver ([Wang et al. 2024d](/sources/wang-2024-k.md)),
+the log law and the same integrated balance in the reconstruction of a
+sharp-interface curvilinear immersed boundary for compressible LES
+([Akbarzadeh & Borazjani 2025](/sources/akbarzadeh-2025.md)), and the
+Werner–Wengle power law as the equilibrium variant against which
+[Yan et al. (2024)](/sources/yan-2024.md) test their pressure-gradient
+wall function on a diffused interface.
 
 **History.** In the account of [Kim & Leonard (2024)](/sources/kim-2024-b.md)
 (§2.5, §3.1), the first channel LES already replaced no slip by a wall
@@ -129,6 +139,33 @@ support for $\Delta^+\gtrsim1800$ (Nakayama et al. 2004, as cited). Data
 support the constant-stress premise only close to the wall:
 $0.95<\tau/\tau_w<1$ for $y/\delta\lesssim0.03$ at high enough Reynolds number
 (§2.1, Fig. 3; see [law of the wall](/definitions/law-of-the-wall.md)).
+
+**The integrated form on immersed boundaries.** Integrating the
+incompressible balance once from the wall gives the wall stress and the
+velocity at any intermediate height in closed integral form. Wang et al.
+(2024d, §II D, Eqs. 19–22) and Akbarzadeh & Borazjani (2025, §2.4,
+Eqs. 25–27) print the same pair: with $u_s$ the tangential velocity, $d_b$
+the wall distance of the node to be reconstructed and $h_{\mathrm{wm}}$ that
+of the LES matching point (page-local $u_s$, $d_b$; the sources' points
+$b$ and $c$),
+
+$$\frac{\tau_w}{\rho}=\frac{u_s(h_{\mathrm{wm}})-u_s(0)}{\int_0^{h_{\mathrm{wm}}}\frac{dl}{\nu+\nu_t}},\qquad
+u_s(d_b)=u_s(0)+\frac{\int_0^{d_b}\frac{dl}{\nu+\nu_t}}{\int_0^{h_{\mathrm{wm}}}\frac{dl}{\nu+\nu_t}}\big(u_s(h_{\mathrm{wm}})-u_s(0)\big),$$
+
+solved iteratively for $u_\tau$ because $\nu_t$ depends on it. Wang et al.
+close it with $\nu_t=\nu\kappa y^+(1-e^{-y^+/19})^2$, $\kappa=0.41$, solve it by
+a Newton-type iteration (printed "Newton–Sampson") and interpolate the
+wall-normal velocity at $d_b$ quadratically,
+$u_n(d_b)=u_n(0)+(d_b/h_{\mathrm{wm}})^2\big(u_n(h_{\mathrm{wm}})-u_n(0)\big)$
+(page-local $u_n$). Akbarzadeh & Borazjani call the model "Cabot" after
+Cabot & Moin (as cited in §3.3; in §2.4 it is cited to Wang & Moin and Kang
+et al.), state that it is more suitable than the log law for separated and
+transitional flows and, in §3.3, that "Cabot will produce log-law under
+equilibrium conditions"; their eddy viscosity is printed as
+$\nu_t/\nu=\kappa^{-1}y^+_b(1-e^{-y^+})$ (see Qualifications). Both sources
+reconstruct, rather than impose a flux: the velocity at $d_b$ becomes the
+boundary value of the immersed-boundary forcing or interpolation (see
+[immersed boundary methods](/methods/immersed-boundary-method.md)).
 
 **Compressible extension.** For compressible flow with heat transfer the
 momentum ODE is coupled with a total-energy ODE,
@@ -379,6 +416,37 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
   different statistics (§III C, Fig. 7). The paper also recalls the ODE
   form with the mixing-length viscosity $\kappa u_\tau y[1-e^{-y^+/A^+}]^2$
   ($A^+$ not printed; Eqs. 1–5) but does not use it.
+- **Log law on a staggered GPU solver** ([Xiao et al. 2025](/sources/xiao-2025.md),
+  §2.1–2.2, Eq. 10, Algorithm 2): $U_{\mathrm{LES}}/u_\tau=\kappa^{-1}\ln(u_\tau h_{\mathrm{wm}}/\nu)+B$
+  with $\kappa=0.41$, $B=5.2$, solved by Newton–Raphson to 0.01 % relative
+  tolerance in typically 3 to 7 iterations; $U_{\mathrm{LES}}$ is the
+  instantaneous wall-parallel velocity magnitude at $h_{\mathrm{wm}}=0.1\delta$,
+  linearly interpolated between the first two off-wall staggered points; the
+  two stress components are the boundary condition of the wall-parallel
+  velocities, with impermeability for the wall-normal one, and are applied
+  last in the boundary-condition sequence. The wall-normal derivatives of
+  the wall-parallel velocity in the first off-wall layer, which enter the
+  strain rate of the SGS viscosity, are first-order one-sided (via linear
+  extrapolation to ghost points), which they call "crucial", following
+  Kawai & Larsson (as cited). When viscous terms are implicit in all three
+  directions the wall model can be applied only on the walls normal to the
+  non-periodic direction (§2.2). They argue, citing Larsson et al. and
+  Bermejo-Moreno et al., that the log law is not restricted to equilibrium
+  flows, since the LES resolves the outer-layer non-equilibrium and the
+  inner layer, with its short time scale, may be in quasi-equilibrium
+  (§2.1).
+- **Log law in an immersed-boundary reconstruction** (Akbarzadeh &
+  Borazjani 2025, §2.4, Eqs. 19–24): $u_\tau$ from the log law
+  ($\kappa=0.42$, $B=5.2$) at a fluid point on the wall normal, iterated;
+  the tangential velocity of the boundary node from a linear/log switch at
+  $y^+=11.0$ (formulas on the [law of the wall](/definitions/law-of-the-wall.md)
+  page); stated to work for attached turbulent layers, not for separated or
+  transitional flow.
+- **Werner–Wengle power law as the equilibrium baseline** (Yan et al. 2024,
+  §II C, §III A, Eqs. 26–27): $u^+=y^+$ below $y^+=11.81$, $8.3(y^+)^{1/7}$
+  above, inverted branch by branch for $u_\tau$; their "EM" variant uses it
+  with the pressure-gradient term of the boundary-layer gradient dropped
+  (the full model is on [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
 - **Rough-wall log law in atmospheric LES**
   ([Zhang et al. 2022e](/sources/zhang-2022-i.md), §II A, Eq. 3; the
   source writes $z$ wall-normal, translated here): the wall stress
@@ -422,6 +490,10 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | HLPW-4 participants, [Kiris et al. (2023)](/sources/kiris-2023.md) (Table 2, §II.5) | nine codes on the CRM high-lift configuration (structured overset, Voronoi, unstructured, Cartesian immersed boundary, $N=2$ flux reconstruction) | from the first off-wall point ($0.5\Delta$ in CharLES, $1\Delta$ in FUN3D) to the fourth off-wall cell ($3.5\Delta$); between the first and second elements in hpMusic | not stated; nodal (W-020, W-034, W-050) against cell-centred (W-021, W-031, W-047) application of the wall stress named as "perhaps a large source of discrepancy", the model variants being "of no consequence" |
 | Constant et al. (2024, §3.1, §4.2), RANS | FastS finite volume, octree Cartesian grid, immersed boundary | modelling height $H_{\mathrm{mod}}$ from a flat-plate estimate of a target $y^+$ (50–500), then lowered locally after a first converged run (see below) | steady RANS, no filtering |
 | Hu et al. (2024, §4–5, Tables 1–2) | CharLES, isotropic grids | fixed in outer units, $h_{\mathrm{wm}}=0.1\delta$, $0.2\delta$ (channels) and $0.05$–$0.15\delta$ (rotating free stream), always at a cell centre, while the grid is refined from $\Delta/h_{\mathrm{wm}}=2$ to about 0.12 | none stated |
+| Xiao et al. (2025, §2.1–2.2, §4.3–4.4) | [CaLES](/software/cales.md), staggered second-order finite differences on GPU | $0.1\delta$ (channel half-height or duct half-side), interpolated between the first two off-wall points | instantaneous |
+| Wang et al. (2024d, §II D, §III, Fig. 1) | GPU lattice Boltzmann, multi-block uniform cubes, diffusive- or sharp-interface immersed boundary | LES point $c$ at $2.5\Delta s$ on the submarine hull ($\Delta s$ the finest spacing); channel with uniform $\Delta x=\delta/20$ ($y^+\approx50$ at $Re_\tau=1000$); forcing point at $(0.1$–$0.25)\Delta x$ (diffusive) or first off-wall node (sharp) | none stated |
+| Akbarzadeh & Borazjani (2025, §2.4, §3.3) | curvilinear finite differences with a sharp-interface immersed boundary, hybrid central/WENO | fluid point $c$ on the normal through each boundary node | none stated |
+| Yan et al. (2024, §II C) | Xcompact3d, sixth-order compact finite differences, diffused-interface immersed boundary | probe markers about three Eulerian spacings along the normal | none stated |
 | Zhou & Bae (2024, §2.2–2.3) | unstructured incompressible finite volume (You, Ham & Moin, as cited), isotropic and $4{:}1{:}2$ cells | idealized wall conditions on the bump: first off-wall cell centre; precursor flat-plate LES: equilibrium stress-balance model | running time average of the first-cell velocity with time scale $0.3L/U_\infty$, then $6L/U_\infty$ ($L$ the bump width), to calibrate the wall eddy viscosity |
 
 Gillyns et al. (2022, §5) find that without the moving average ($C_t=0$) the
@@ -672,7 +744,11 @@ laws, 1.8 % with the explicit Spalding law (the difference called not
 statistically significant), 1.9 % with the explicit ODE approximation and
 11.9 % with the integrated ODE model; all explicit laws perform the same
 operations with different coefficients and cost the same (Shaheen III, no
-further hardware detail).
+further hardware detail). On GPUs, Xiao et al. (2025, §3.2, Fig. 2) find
+the algebraic log-law model of [CaLES](/software/cales.md) adds a
+negligible cost (WMLES 1.8 against wall-resolved LES 1.8 ns per step and
+grid point on one A100, explicit viscous terms) and no memory beyond the
+wall-resolved LES (Table 2).
 
 ## Limits shown by the sources
 
@@ -887,6 +963,51 @@ further hardware detail).
   eddy-viscosity augmentation may do better near the wall, not tested (see
   [wall-modelled LES](/methods/wall-modelled-les.md)). They state that the
   algebraic model suits equilibrium layers only (§I, §IV).
+- **A positive skin-friction bias on fine grids.** In channel WMLES at
+  $Re_\tau\approx5200$ on 13 grids per aspect ratio, Xiao et al. (2025,
+  §4.3, Table 4) find the sign of the $C_f$ error positive on the finest
+  grids for both SGS models and both aspect ratios (finest-grid errors
+  0.26–2.43 %), also in unshown runs at $Re_b=20\,000$, and call this
+  "consistent with the fact that mean wall shear stress obtained with WMLES
+  is biased toward larger values when the instantaneous velocity is used as
+  input for the wall model" (no reference printed; the
+  [log-layer mismatch](/definitions/log-layer-mismatch.md) page records the
+  Schwarz-inequality argument of Bou-Zeid et al. on instantaneous input). In a square
+  duct at $Re_b=40\,000$ ($Re_\tau\approx1055$) the same model keeps the
+  perimeter-averaged $C_f$ error within about 3 % (largest $-3.08$ %), which
+  they take as support for the log law "in flows with moderate geometrical
+  complexity", while the secondary-flow energy is 22–25 % off on the finest
+  grids (§4.4, Table 5; see [wall-modelled LES](/methods/wall-modelled-les.md)).
+- **Interface type on immersed boundaries.** With the same integrated model,
+  Wang et al. (2024d, §III, §IV) find on the diffusive interface an
+  over-estimated friction velocity and an under-estimated near-wall velocity
+  in channel flow at $Re_\tau=2000$, which they attribute to the viscosity
+  the interface adds (Fig. 4), and on the sharp interface a channel mean
+  profile that agrees with the DNS of Lee & Moser (as cited) at
+  $Re_\tau=1000$–5200 with under-estimated fluctuations; on the circular
+  cylinder the diffusive interface captures the drag crisis ($C_D$ from 0.99
+  at $Re_D=10^5$ to 0.28 and 0.22 at $5\times10^5$ and $10^6$) and the sharp
+  one misses the separation and under-predicts the drag (Figs. 14–15). They
+  recommend the diffusive interface for external and the sharp one for
+  internal flows (details on the [immersed boundary methods](/methods/immersed-boundary-method.md)
+  page).
+- **Supersonic cylinder wake.** On a Mach 3 cylinder at $Re=7.5\times10^5$
+  against the experiment of Awasthi et al. (as cited), Akbarzadeh &
+  Borazjani (2025, §3.3.2, Figs. 12–13) obtain a reattachment distance from
+  the cylinder centre of 2.8 with the log law, against 1.04 measured, and a
+  similar, much longer separation with the integrated ("Cabot") model; a
+  free-slip (zero-shear) wall gives 1.1. Dynamic, constant and no SGS model
+  give the same reattachment length, so "simulations of high-speed flow over
+  the cylinder are more sensitive to the wall model than the LES subgrid
+  model" (§5). The free-slip wall is not a slip-wall model in the sense of
+  [slip-wall models](/methods/slip-wall-model.md); the paper names the
+  dynamic slip condition of Bose & Moin as future work.
+- **Bluff-body wake without pressure gradient.** On the circular cylinder at
+  $Re_D=3.9\times10^3$, Yan et al. (2024, §III A, Fig. 7) find that the
+  Werner–Wengle variant without pressure-gradient term fails to reproduce
+  separation, shear-layer transition and the multiscale wake that their
+  pressure-gradient model captures, through a slip target that stays too
+  high near separation.
 - **Equilibrium as a limit.** Fowler et al. (2022, §2.2) derive the classical
   model as the limit $T_s\to0$ of their relaxation equation (page-local $T_s$,
   the relaxation time of the fluid layer below $h_{\mathrm{wm}}$); applying the
@@ -1052,6 +1173,27 @@ profile lies above the DNS).
   velocity gradient requires the kinematic viscosity there
   *(compiler check, not in the sources)*. They write the wall stress
   $\tau_u$ in the text and $\tau_w$ in Eq. (20).
+- **Printed eddy viscosity of Akbarzadeh & Borazjani (2025).** Their
+  Eq. (27) reads $\nu_t/\nu=\kappa^{-1}y^+_b(1.0-e^{-y^+})$, with the
+  prefactor in $y^+_b$, an unsubscripted $y^+$ in the exponent and the
+  damping constant 1 in wall units; Eq. (25) writes the viscosity as
+  $\nu+\nu_t$ in the numerator and $1/Re+\nu_t$ in the denominator.
+  *(Compiler check, not in the sources, from their printed Eqs. (21), (26)
+  and (27) only: Eq. (26), $\tau_t=(u^t_c-u^t_a)/\int_0^{|ac|}dl/(\nu+\nu_t)$,
+  is the integral of a constant stress $(\nu+\nu_t)\,du/dl=\tau_t$; reading
+  $y^+_b$ in Eq. (27) as the local wall distance, $\nu_t/\nu\to y^+/\kappa$
+  for $y^+\gg1$ and $du^+/dy^+=1/(1+\nu_t/\nu)\approx\kappa/y^+$, a log slope
+  $\kappa$ where their log law, Eq. (21), has $1/\kappa$; the printed Eq. (27)
+  therefore does not give the log law that §3.3 states the model produces
+  under equilibrium.)*
+- **Printed items of Wang et al. (2024d).** The abstract says the
+  diffusive interface fails in internal flows by "underestimating the wall
+  shear stress", while §III A says it over-estimates the friction velocity
+  (Fig. 4), i.e. over-estimates $\tau_w=\rho u_\tau^2$; Eq. (20) writes the
+  kinematic $\nu\,\partial u_s/\partial l$ and the dynamic $\rho u_\tau^2$ in
+  the same equation; and the Fig. 1 caption defines the distance of the
+  matching point from the forcing point, while Eqs. (20)–(21) integrate it
+  from the wall.
 - **Other printed items of Nuca et al. (2025).** The Fig. 7 caption puts
   the high-Re models on top and the classical ones below, while the panel
   labels say the reverse; §V calls the global model's regression "10
@@ -1059,7 +1201,7 @@ profile lies above the DNS).
   5 intercepts); the channel test uses a relative tolerance of $10^{-4}$
   and the airfoil test $10^{-3}$, without comment; Fig. 2 shows at most 5
   Newton iterations in one snapshot, Table VIII a maximum of 10 over the
-  run, which are compatible.
+  run.
 
 # Citations
 
@@ -1101,3 +1243,7 @@ profile lies above the DNS).
 - [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.2.2, Eqs. (3)–(7); §2.3; §3.2, Figs. 13–16.
 - [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.5; §3.1; §5 (log-law wall conditions of the first channel LES; historical).
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — §3.3, Fig. 13 (ODT near-wall closure set beside the wall-stress model; passing).
+- [Xiao et al. (2025)](/sources/xiao-2025.md) — §2.1–2.2, Eq. (10), Algorithm 2; §3.2, Fig. 2, Table 2; §4.3, Table 4; §4.4, Table 5.
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — §II D, Eqs. (19)–(22), Fig. 1; §III A–D, Figs. 2, 4, 14–15; §IV.
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §2.4, Eqs. (19)–(27); §3.3.2, Figs. 12–13; §5.
+- [Yan et al. (2024)](/sources/yan-2024.md) — §II C, Eqs. (26)–(27); §III A, Fig. 7.

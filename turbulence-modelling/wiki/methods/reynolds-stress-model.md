@@ -5,7 +5,7 @@ description: "Second-moment RANS closures that transport the six Reynolds stress
 status: established
 aliases: [Reynolds-stress model, RSM, DRSM, differential Reynolds-stress model, second-moment closure, Reynolds stress transport model, RSTM, SSG/LRR-ω, SSG/LRR-ω-γ, ATAAC DRSM, RSM-IDDES, RSM-DynIDDES]
 tags: [rans, reynolds-stress-model, transition, turbomachinery, separated-flow]
-timestamp: 2026-10-28T07:10:00Z
+timestamp: 2026-10-28T17:01:00Z
 ---
 
 # Differential Reynolds-stress models
@@ -85,7 +85,19 @@ relying on an eddy viscosity and the Boussinesq approximation, and count
 the algebraic and explicit algebraic stress models among the most advanced
 of them, before judging RANS as a whole unsuitable for transient features
 such as transition ([Idelsohn et al. (2024)](/sources/idelsohn-2024.md),
-§1.2).
+§1.2). Luckring & Rizzi (2024), surveying CFD for concentrated vortex flows,
+state: eddy-viscosity ("first-order")
+models work "as long as only one component of the Reynolds stress tensor is
+significant", two-equation models "are incapable of capturing the effects
+of anisotropic normal stresses" and of extra strains and body forces, while
+Reynolds-stress models "incorporate these effects exactly" but need models
+of the pressure–strain, turbulent-diffusion and dissipation terms; they
+class the algebraic stress model (ARSM, EARSM, EASM) with the differential
+one as a second-moment closure and add, citing Wilcox, that no model gives
+accurate results in all flows without ad hoc adjustment of its constants
+([Luckring & Rizzi (2024)](/sources/luckring-2024.md), §2.4.1, footnote 5;
+a review; see
+[delta-wing vortex flow](/benchmarks/delta-wing-vortex-flow.md)).
 
 **An eddy-viscosity model built by analogy.** Mays et al. (2023, §3.2.1)
 state that earlier studies, their own and those of the literature, found
@@ -480,3 +492,4 @@ none. See the [turbulent Prandtl number](/definitions/turbulent-prandtl-number.m
 - [Mays et al. (2023)](/sources/mays-2023.md) — §2.1.1, App. Eqs. 16–21, §3.2.1.
 - [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §4 (stress-induced corner vortices, as cited); §5 (RANS of corner-affected interactions).
 - [Wei et al. (2023)](/sources/wei-2023.md) — §IV F, Conclusions (v2f or RSM recommended after the SST failure).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1, footnote 5 (eddy-viscosity against second-moment closures; ARSM with DRSM; no universal constants, citing Wilcox).

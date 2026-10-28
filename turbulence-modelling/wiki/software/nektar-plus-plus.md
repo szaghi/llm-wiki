@@ -5,7 +5,7 @@ description: "Nektar++ is an open-source spectral/hp element framework with cont
 status: established
 aliases: [Nektar, NektarPlusPlus, IncNavierStokesSolver, AcousticSolver, NekMesh, FieldConvert]
 tags: [software, spectral-element, les, implicit-les, wmles, aeroacoustics]
-timestamp: 2026-10-27T21:07:00Z
+timestamp: 2026-10-28T12:28:00Z
 ---
 
 # Nektar++
@@ -180,6 +180,12 @@ study of Krank et al. (§1). Prieto Saavedra et al. themselves use the
 stabilized finite-element code Lethe, not Nektar++; see
 [implicit LES](/definitions/implicit-les.md).
 
+[Witherden et al. (2025)](/sources/witherden-2025.md), §1, name Nektar++
+(citing Cantwell et al. 2015 and Moxey et al. 2020) and
+[hpMusic](/software/hpmusic.md) as high-order spectral element efforts
+"similar to PyFR" among the international efforts to bring scale-resolving
+simulation into industry; see [PyFR](/software/pyfr.md).
+
 Saini et al. (2023, §6) attribute the accuracy-per-cost advantage of the
 Nektar++ runs over second-order OpenFOAM runs primarily to lower numerical
 dissipation, the model playing a secondary role. Slaughter et al. (2023)
@@ -222,3 +228,4 @@ case is shown.
 - [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) — §1, §2.4, Table 2 (Nektar++ implicit LES of the periodic hill by Wang et al., as cited).
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §1 (Nektar++ among high-order solvers).
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I (claim of priority, Neumann choice, Pal et al. as cited); §II A–C, Eqs. (12)–(16), (20) (discretization, SVV, Wang et al. as cited, sampling, wall condition); §III A–E, Table I, Figs. 3–9 (channel set-up, results, cost); §IV.
+- [Witherden et al. (2025)](/sources/witherden-2025.md) — §1 (Nektar++ among industrial scale-resolving efforts; passing).

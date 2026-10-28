@@ -164,12 +164,13 @@ No item is unparseable.
 
 # Pages created or updated
 
-Chunk 11 (2026-10-27). This source is cited on:
+Chunk 11 (2026-10-27), cited further in chunk 14. This source is cited on:
 
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
 - [Energy backscatter and the subgrid energy flux](/definitions/energy-backscatter.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
+- [Compact finite-difference schemes](/methods/compact-finite-difference-scheme.md)
 - [Dynamic procedure and the Germano identity](/methods/dynamic-procedure.md)
 - [Gradient (Clark) model and the clipping of structural SGS models](/methods/gradient-model.md)
 - [Neural-network subgrid-scale models](/methods/neural-network-sgs-model.md)

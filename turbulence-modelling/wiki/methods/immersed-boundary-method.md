@@ -5,7 +5,7 @@ description: "Immersed boundary methods impose walls on non-conforming grids by 
 status: established
 aliases: [IBM, moving Cartesian grid, volume penalization immersed boundary method, VP-IBM, fluid resistance, immersed boundary, ghost-point forcing, volume penalization, Brinkman penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing, volume-filtering immersed boundary method, VMIB, variational multiscale immersed boundary, weak Dirichlet immersed boundary, single ghost cell, IBMLES, immersed boundary-modelled LES, wall-slip model, slip-length model]
 tags: [immersed-boundary, wall-model, lattice-boltzmann, les, dns, rans]
-timestamp: 2026-10-28T07:09:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Immersed boundary methods
@@ -40,7 +40,16 @@ variational multiscale LES with weakly imposed no-slip on finite elements
 hypersonic boundary layers and shock interactions on a Cartesian
 finite-difference solver ([van Noordt et al. 2022](/sources/vannoordt-2022.md)), and
 wall-modelled LES of wind-turbine wakes over two-dimensional hills on a
-pseudo-spectral grid ([Zhang et al. 2022e](/sources/zhang-2022-i.md)). Three
+pseudo-spectral grid ([Zhang et al. 2022e](/sources/zhang-2022-i.md)),
+compressible LES of supersonic cylinder flows and shock diffraction with
+wall functions inside a curvilinear sharp-interface reconstruction
+([Akbarzadeh & Borazjani 2025](/sources/akbarzadeh-2025.md)),
+wall-modelled LES in an immersed-boundary lattice Boltzmann solver with a
+diffusive and a sharp interface ([Wang et al. 2024d](/sources/wang-2024-k.md)),
+wall-modelled LES with a diffused interface in a sixth-order compact
+finite-difference code ([Yan et al. 2024](/sources/yan-2024.md)), and
+implicit LES of a hypersonic compression ramp on cut cells
+([Kimmel et al. 2025](/sources/kimmel-2025.md)). Three
 sources report a less accurate near-wall field: the wall distance of the
 near-wall nodes varies along the surface and the method does not conserve
 fluxes across the immersed surface (Cai et al. 2022), a softly imposed
@@ -256,8 +265,7 @@ Dirichlet conditions can be imposed, and the authors call this form
 "adapted for flow at subsonic Mach numbers" (§2.3). Where the HORSES3D
 source of Ferrer et al. drives the energy towards the kinetic energy of the
 body velocity, this one relaxes the total energy to the internal energy of
-the wall temperature, a convention difference between the two
-implementations.
+the wall temperature.
 
 The source is stiff as $\eta_p\to0$. D'Ayer et al. (§2.4) cite explicit
 stability limits $\Delta t_{\max}=\eta_p$ for a pseudo-spectral scheme with
@@ -715,6 +723,190 @@ near-unity aspect ratios are needed near maximum lift, at the price of a
 larger wall-normal spacing, and point to the off-body vortices that
 isotropic grids suit; they reach no conclusion on isotropic against
 anisotropic grids (§VI; see [wall-modelled LES](/methods/wall-modelled-les.md)).
+
+## Wall functions inside the immersed-boundary reconstruction
+
+Three sources build the wall model into the step that imposes the
+immersed wall, each on a different host and interface type. Common
+page-local notation: $a$ the wall point, $b$ the node whose value is
+imposed (boundary node, forcing point or first off-wall node) and $c$ the
+fluid point on the wall normal through $b$ where the LES velocity is
+sampled, at distances $|ab|$ and $|ac|$ from the wall; $|ac|$ plays the
+role of the matching height $h_{\mathrm{wm}}$; $u^t$ and $u^n$ the
+tangential and normal velocity components.
+
+**Sharp interface, reconstruction along the normal, compressible LES.**
+[Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) extend the
+curvilinear sharp-interface method of the authors' group (CurvIB, C with
+MPI and PETSc) to LES of high-speed flows (§2.3–2.5, Fig. 1). Bodies are
+triangulated surfaces; nodes inside are blanked, and boundary nodes
+outside but adjacent to the surface are reconstructed by interpolation
+along the wall normal, with no ghost cells, which the authors contrast
+with the ghost-cell immersed boundaries of
+[van Noordt et al. (2022)](/sources/vannoordt-2022.md) and De Vanna et
+al. (as cited), whose ghost-cell treatment "makes the implementation of
+wall models challenging" (§1). The normal velocity is always linear,
+$u^n_b=(|ab|u^n_c+|bc|u^n_a)/|ac|$, and so is the tangential one when the
+viscous sublayer is resolved (Eqs. 17–18; $\Delta y^+\approx1.96$ called
+sufficient, §3.2). Otherwise the tangential value comes from a wall law
+(§2.4):
+
+- **log law**: $u_\tau$ is solved iteratively from
+  $u^t_c-u^t_a=u_\tau[\kappa^{-1}\ln(u_\tau|ac|/\nu)+B]$ with
+  $\kappa=0.42$, $B=5.2$, and $u^t_b=u^t_a+u_\tau u^+_b$, the profile
+  linear below $y^+_b=11.0$ and logarithmic above (Eqs. 19–24); the
+  authors state it works for attached turbulent layers but not for
+  separated or transitional flows;
+- **wall-stress balance** ("Cabot" model in §3.3; attributed to Wang &
+  Moin and Kang et al. in §2.4): the integrated constant-stress layer
+  $\tau_w/\rho=(u^t_c-u^t_a)\big/\int_0^{|ac|}\mathrm dl/(\nu+\nu_t)$ with
+  the damped near-wall eddy viscosity printed as
+  $\nu_t/\nu=\kappa^{-1}y^+_b\,(1.0-e^{-y^+})$ (Eq. 27, with $\kappa^{-1}$
+  and $y^+_b$ in the prefactor and an unsubscripted $y^+$ in the exponent),
+  solved by Newton iteration, and $u^t_b$ from the ratio of the two
+  integrals (Eqs. 25–27; see [equilibrium wall model](/methods/equilibrium-wall-model.md)).
+  It is presented as more suitable for separated and transitional flows,
+  and in §3.3.2 as reproducing the log law under equilibrium.
+
+Pressure follows from a zero normal gradient, or
+$(p_b-p_c)/|bc|=\rho\,\mathrm du^n_a/\mathrm dt$ on a moving wall, and an
+adiabatic wall sets $\rho_a=\rho_b=\rho_c$ (Eqs. 28–29). The closure is the
+compressible [dynamic Smagorinsky model](/methods/dynamic-procedure.md)
+with a $3\times3\times3$-cell test filter and the isotropic part
+$C_I=0.06$; convection uses a fourth-order skew-symmetric central flux
+blended with third-order [WENO](/methods/weno-scheme.md) by a tanh switch
+on a pressure smoothness indicator (Eqs. 7–16). Results (§3.3–3.4, §5):
+
+- Mach-3 flow past a [circular cylinder](/benchmarks/circular-cylinder-wake.md),
+  large domain matching the experiment of Awasthi et al. at $Re=750{,}000$:
+  the reattachment distance from the cylinder centre is 1.04 in the
+  experiment and 2.8 with either wall-stress model, while a free-slip
+  cylinder wall gives 1.1; the choice of dynamic, constant or no subgrid
+  model does not change it, and three-dimensional runs confirm the
+  two-dimensional lengths (Figs. 12–13). The authors conclude that these
+  simulations "are more sensitive to the wall model than the LES subgrid
+  model" and name the dynamic slip condition of Bose & Moin as future
+  work; their slip wall is a free-slip condition, not the
+  [slip-wall model](/methods/slip-wall-model.md).
+- A [turbulent channel](/benchmarks/turbulent-channel-flow.md) at $M=0.5$
+  and 1.5, $Re=10{,}000$ on bulk velocity and half height, with both walls
+  immersed: wall-resolved grids agree with DNS, while the wall-modelled
+  $24^3$ grid "cannot follow the log-law profile" (§3.2, Table 1, Fig. 5).
+- Diffraction of a Mach-2.81 moving shock by a cylinder: on $h=0.001$ at
+  $Re=8763$ the hybrid scheme captures the reflected, incident and Mach
+  shocks, both triple points, the contact discontinuity and the vortex
+  of the shock/boundary-layer interaction behind the cylinder, located as
+  in the experiment; third-order WENO on the same grid, $h=0.002$, or the
+  lower Reynolds number do not form it (§3.4, Figs. 14–16).
+- Strong scaling over 90% from 1536 to 4800 cores on 313 million nodes,
+  weak scaling 84% at about 1000 cores; LES costs about twice an inviscid
+  run (§4).
+
+**Diffusive against sharp interface in a lattice Boltzmann solver.**
+[Wang et al. (2024d)](/sources/wang-2024-k.md) implement one equilibrium
+wall model with two interfaces in a GPU
+[lattice Boltzmann](/methods/lattice-boltzmann-method.md) solver (§II C–D,
+Fig. 1). The model integrates the thin-boundary-layer equation with zero
+right-hand side between wall and sampling point,
+$$\frac{\tau_w}{\rho}=\frac{u^t_c-u^t_a}{\int_0^{|ac|}\frac{\mathrm dl}{\nu+\nu_t}},\qquad u^t_b=u^t_a+\frac{\int_0^{|ab|}\frac{\mathrm dl}{\nu+\nu_t}}{\int_0^{|ac|}\frac{\mathrm dl}{\nu+\nu_t}}\,(u^t_c-u^t_a),\qquad \nu_t=\nu\kappa y^+\big(1-e^{-y^+/A^+}\big)^2,$$
+with $\kappa=0.41$, $A^+=19.0$ and the normal component interpolated
+quadratically, $u^n_b=u^n_a+(|ab|/|ac|)^2(u^n_c-u^n_a)$ (Eqs. 19–22, the
+kinematic wall stress written as the source's $\tau_w$; $u_\tau$ by Newton
+iteration). In the **diffusive interface** (Kim & Peskin's penalty
+feedback forcing with Peskin's four-point kernel, Eqs. 15–18, after Shi et
+al. as cited) the reconstructed slip velocity is imposed at a forcing point
+$|ab|=0.1$–$0.25\Delta x$ off the wall; in the **sharp interface** (after
+Tessicini et al. and Yang & Balaras, cited) $b$ is the first off-wall
+fluid node. Results (§III, Tables I–II, Figs. 2–15):
+
+| Case | Diffusive interface | Sharp interface |
+|---|---|---|
+| channel, $Re_\tau=1000$, 2000, 5200, uniform $\Delta x=H/20$ ($y^+\approx50$ at 1000), $C_s=0.16$, against Lee & Moser | friction velocity over-estimated and near-wall velocity under-estimated at $Re_\tau=2000$, "due to the high viscosity induced by the diffusive-interface method" | mean velocity "very well" predicted at all three; fluctuations under-estimated, more so at lower $Re_\tau$; mean profile converged already at $H/20$ in a $H/20$–$H/80$ study (App. C) |
+| [Ahmed body](/benchmarks/ahmed-body.md), $35^\circ$ slant, $Re=7.85\times10^5$, finest cell $h/160$ | $C_D=0.321$, slant and back pressure drag 0.091 and 0.097 against measured 0.097 and 0.089; stronger separation near the slant | $C_D=0.296$; larger bubble attached to the back (measured 0.279) |
+| [circular cylinder](/benchmarks/circular-cylinder-wake.md), $Re_D=3900$ (LES, no wall model) | $C_D=1.02$, $St=0.215$, separation at $88^\circ$ | $C_D=0.98$, $St=0.217$, $88^\circ$ (references 1.04–1.08, 0.210–0.216, $88^\circ$) |
+| cylinder drag crisis, $Re_D=10^5$ to $10^6$ | drag falls from 0.99 to 0.28 and 0.22 at $10^5$, $5\times10^5$, $10^6$ as separation moves aft | "fails to capture the separations" at high Reynolds number, lower drag |
+
+The DARPA SUBOFF bare hull at $Re_L=1.2\times10^6$ (length-based; four
+mesh zones, finest $\Delta s=D/80$ with $D$ the hull diameter, the finest
+zone extended $4D$ into the wake, sampling at $|ac|=2.5\Delta s$ and
+forcing at $|ab|=0.2\Delta s$, 23 million nodes) is run with the diffusive
+interface only: mean $C_p$ and $C_f$ along the hull fall within the range
+of the experiment of Huang et al. and the wall-resolved and wall-modelled
+LES they cite, $C_f$ being more method-sensitive than $C_p$, and only the
+recursive regularized collision reproduces the streamwise decrease of
+friction (§III B, Fig. 7). The authors conclude that the diffusive
+interface drives separation more easily and recommend it for external,
+the sharp interface for internal flows (§IV).
+
+**Diffused interface with a slip target velocity and explicit
+non-equilibrium wall functions.** [Yan et al. (2024)](/sources/yan-2024.md)
+couple a direct-forcing diffused-interface method (Lagrangian markers, the
+three-point smoothed kernel of Roma et al., and an explicit diagonal
+approximation of the marker system that avoids inverting an
+$N_{\mathrm L}\times N_{\mathrm L}$ matrix at an $O(h^2)$ error, $N_{\mathrm L}$
+page-local the number of markers; Eqs. 8–18) with
+[Xcompact3d](/software/xcompact3d.md), whose subgrid dissipation is the
+implicit [spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
+of its sixth-order compact second derivative (§II, App. B). The wall model
+replaces the no-slip target velocity of the markers by a slip target
+(§II C, Eqs. 19–32, Fig. 2): a second layer of probing markers sits at
+$|ac|\approx3$ Eulerian spacings along the normal, outside the region the
+forcing influences, and the probed tangential velocity is extrapolated
+linearly to the wall,
+$$u^t_{\mathrm{target}}=u^t_c-\Big(\frac{\partial u^t}{\partial y}\Big)_c|ac|,\qquad \Big(\frac{\partial u^t}{\partial y}\Big)_c=\frac{\tau_w+(\partial p/\partial x_t)\,|ac|}{\rho(\nu+\nu_t)},$$
+($u^t_{\mathrm{target}}$ and the tangential coordinate $x_t$ page-local;
+$p$ the pressure) obtained by integrating a thin-boundary-layer equation
+that keeps only the pressure-gradient source, with
+$\nu_t/\nu=\kappa y^+(1-e^{-y^+/19})^2$, $\kappa=0.41$. The wall stress is
+explicit: the Werner–Wengle power law ($A_{\mathrm{pl}}=8.3$,
+$m_{\mathrm{pl}}=1/7$, linear below $y^+=11.81$; registry §11, see
+[RANS wall functions](/methods/rans-wall-function.md)) for zero or
+favourable pressure gradient, and the
+[adverse-pressure-gradient power law](/definitions/adverse-pressure-gradient-wall-law.md)
+of Wilhelm et al. (constants 7.5789, $-1.4489$, 191.1799 in the source's
+$\alpha$, $\beta$, $\gamma$) for adverse gradients, with a separation test
+that keeps no-slip at markers where it flags separation (Eqs. 26–31). A
+negative computed gradient (strong favourable pressure gradient) resets
+the target to the probe velocity, and under adverse gradients the target
+is bounded below by no-slip. The authors call the model non-equilibrium
+because of the pressure-gradient term (see
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)), and
+explain that the power law alone cannot supply the gradient because its
+gradient is discontinuous at the matching point. Their Table I classifies
+seven earlier wall-modelled diffused-interface methods by solver (second
+order, lattice Boltzmann), wall-model solution (numerical integration,
+equilibrium laws, finite-difference solution of the thin-layer equations)
+and the modified quantity (tangential source, subgrid viscosity near the
+boundary, tangential target velocity), Wang et al. (2024d) among them as a
+lattice Boltzmann method with numerical integration and a tangential
+target velocity. Results (§III, Tables II–V):
+
+- [circular cylinder](/benchmarks/circular-cylinder-wake.md),
+  $Re_D=3.9\times10^3$: $C_D=1.02$, rms lift 0.113, recirculation length
+  $1.42D$, $St=0.229$ with sixth-order compact differences and the implicit
+  viscosity, against 1.17, 0.017, $2.42D$, 0.223 with second-order
+  differences and Smagorinsky on the same mesh, at 15.04 against 18.16 h
+  per $10^5$ steps on 96 cores; the equilibrium variant (Werner–Wengle
+  only, no pressure-gradient term) fails to reproduce the wake (Fig. 7);
+- $Re_D=1.4\times10^5$: $C_D=1.01$, recirculation length $0.98D$ against
+  0.42–0.62 in the LES and 0.44 in the experiment cited, and upstream wall
+  stress under-predicted where the pressure gradient is favourable, which
+  the authors attribute to Werner–Wengle ignoring it (Table III, Fig. 9);
+- [square cylinder](/benchmarks/square-cylinder-flow.md),
+  $Re_D=2.2\times10^4$: $C_D=2.46$, rms lift 1.06, recirculation length
+  $0.81D$, $St=0.144$ against DNS 2.18, 1.71, 1.04, 0.132; the two small
+  edge bubbles of wall-resolved LES are missed; 13.2 core-hours per
+  shedding cycle against about 1058 and 676 h for two wall-resolved LES
+  (Tables IV–V);
+- a flat roof at $Re_H\approx2\times10^4$, stationary and in forced
+  vibration at 50 Hz, as a moving-boundary test (§III C).
+
+**Cut cells.** The compressible AMR solver PeleC used by
+[Kimmel et al. (2025)](/sources/kimmel-2025.md), §II.A, represents the
+compression-ramp geometry by embedded boundaries: cells carry a fluid
+volume fraction between 0 (inside the body) and 1, the cut cells lying in
+between; no wall model is used in that implicit LES (see
+[mesh adaptation](/methods/mesh-adaptation.md)).
 
 ## Moving bodies on rigidly moving Cartesian grids
 
@@ -1200,6 +1392,31 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
   quantities, the first is tested only a priori, and no source compares
   them.
 
+- **Printed forms in the three wall-function sources.**
+  [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) print the
+  log branch of Eq. (23) with $y^+_c$, while the condition is on $y^+_b$
+  and the text computes $u^+_b$; Eq. (25) writes the viscosity $\nu$ in
+  one integral and $1/Re$ in the other; the threshold of the
+  WENO–central switch (Eq. 15; the source's $r_d$, page-local $r_{\mathrm{th}}$,
+  not the DDES $r_d$ of registry §11) is not given a value; the weak-scaling case
+  of 960 cores is printed on 10 nodes, which at the stated 48 cores per
+  node is 20 *(compiler check, not in the sources)*.
+  [Wang et al. (2024d)](/sources/wang-2024-k.md) state in the abstract that
+  the diffusive interface fails in internal flows by "underestimating the
+  wall shear stress", while §III A finds it over-estimating the friction
+  velocity; Table I lists the WMLES reference "Cui et al." where the
+  reference list and §I give Cai et al. (2022) and lists "IDES" where the
+  text has IDDES; the sharp-interface drag 0.296 is called "slightly
+  smaller" than the measured 0.279; Fig. 1 defines the sampling distance
+  as measured from the forcing point, while Eqs. (20)–(21) integrate it
+  from the wall. [Yan et al. (2024)](/sources/yan-2024.md) call the
+  velocity gradient at the probe a "pressure gradient" (Fig. 2 caption,
+  §II C), refer to "Eq. (32)" for the gradient that is Eq. (23), and print
+  the comparison Smagorinsky viscosity as $C_s\Delta^2\sqrt{2\bar S_{ij}\bar S_{ij}}$
+  with $C_s=0.12$ "as in Ref. 60", Ref. 60 being Wang et al. (2024d),
+  which print $(C_s\Delta)^2|\bar S|$ with $C_s=0.12$; both are recorded
+  as printed.
+
 # Citations
 
 - [Cai et al. (2022)](/sources/cai-2022.md) — §I; §II.A, Eqs. (1)–(15) (lattice Boltzmann, HRR collision, Vreman model); §II.B.1, Eqs. (16)–(20) (boundary-point reconstruction); §II.C.1, Eqs. (24)–(27), Fig. 1 (wall model on the IBM, constrained LES); §III, Tables I–II, Eq. (28); §IV, Table III, Figs. 4–9 (Ahmed body).
@@ -1224,3 +1441,7 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
 - [Kang & Masud (2022)](/sources/kang-2022.md) — §2.2, Eqs. (5)–(9) (mixed form); §3.1–3.3, Eqs. (10)–(48), Table 1 (VMIB derivation, stabilization tensors, multiplier, interface terms, lemmas, ghost penalty); §3.4–3.5 (residual-based VMS LES); §4, Boxes 1–2 (algorithm, classification, quadrature); §5.1–5.3, Tables 3–5, Figs. 7–35 (cylinder, sphere, train).
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §2.3, Eqs. (8)–(24) (hybrid flux, single-ghost-cell WENO closure); §2.4, Eqs. (25)–(31) (irregular viscous stencils); §2.5, Eqs. (32)–(37) (wall model as flux); §2.6, Algorithm 1, Eqs. (38)–(42) (ray-based ghost filling); §2.7–2.8, Tables 1–2, Figs. 8–10 (MMS, pseudospectra); §3.1–3.4, Figs. 12–27; §4.
 - [Rickard & Kasbaoui (2026)](/sources/rickard-2026.md) — §1 (IB in LES, non-uniform grids, no-slip at WMLES filter sizes); §2.1–2.3, Eqs. (2.1)–(2.27), Fig. 1 (volume filter, commutation identities, residual viscous stress, IB force, wall slip); §3, Figs. 5–10 (a priori channel at $Re_\tau=5200$); §4.1, Eqs. (4.1)–(4.5), Fig. 11 (Van Driest slip); §4.2, Eqs. (4.6)–(4.27), Figs. 12–13 (slip length); §5, Tables 1–2 (kernels); §6, Eqs. (6.1)–(6.9) (dynamic slip length); §7.
+- [Akbarzadeh & Borazjani (2025)](/sources/akbarzadeh-2025.md) — §1 (sharp interface without ghost cells, against ghost-cell wall models); §2.1–2.2, Eqs. (7)–(16) (dynamic Smagorinsky, hybrid central–WENO flux); §2.3–2.5, Eqs. (17)–(29), Fig. 1 (CurvIB reconstruction along the normal, log-law and stress-balance wall functions, pressure and density at the wall, parallel implementation); §3.2, Table 1, Fig. 5 (immersed-wall channel); §3.3, Figs. 6–13 (Mach-3 cylinder, wall model against subgrid model, free-slip wall); §3.4, Figs. 14–16 (shock diffraction); §4, Fig. 17 (scaling); §5.
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — §I; §II C–D, Eqs. (15)–(22), Fig. 1 (diffusive and sharp interfaces, equilibrium wall model); §III A–D, Tables I–II, Figs. 2–15 (channel, SUBOFF hull, Ahmed body, cylinder and drag crisis); §IV; App. C, Fig. 16 (channel grid study).
+- [Yan et al. (2024)](/sources/yan-2024.md) — §I, Table I (classification of wall-modelled diffused-interface methods); §II B, Eqs. (8)–(18) (direct forcing, explicit correction); §II C, Eqs. (19)–(32), Fig. 2 (slip target velocity, pressure-gradient thin-layer equation, Werner–Wengle and adverse-pressure-gradient laws, separation test, limiters); §III A–C, Tables II–V, Figs. 4–17 (cylinders, square cylinder, roof, costs).
+- [Kimmel et al. (2025)](/sources/kimmel-2025.md) — §II.A (embedded boundaries with cut cells in PeleC).

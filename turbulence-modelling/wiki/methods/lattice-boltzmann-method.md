@@ -5,7 +5,7 @@ description: "Lattice Boltzmann methods advance particle populations on a discre
 status: established
 aliases: [LBM, lattice Boltzmann, LB, lattice Boltzmann equation, LBE, HRR collision, central-moment collision, MRT collision, lattice Boltzmann MHD, FLAME, ZDES-LBM, PowerFLOW, VLES, temporal LES with lattice Boltzmann, TLES-LBM, OpenLB]
 tags: [lattice-boltzmann, les, dns, hybrid-rans-les, gpu, mhd, immersed-boundary]
-timestamp: 2026-10-28T06:42:00Z
+timestamp: 2026-10-28T17:05:00Z
 ---
 
 # Lattice Boltzmann methods for turbulent flow
@@ -392,6 +392,53 @@ Boltzmann wall model for LES of Malaspinas & Sagaut (2014); the review
 lists it among implementation
 studies it does not discuss.
 
+## Wall-modelled LES with diffusive and sharp immersed interfaces
+
+[Wang et al. (2024d)](/sources/wang-2024-k.md) put an equilibrium wall
+model into a GPU immersed-boundary lattice Boltzmann solver on D3Q19 and
+compare two collision operators and two interface treatments (§II,
+Appendices A–B):
+
+- **Collision and closure.** A multiple-relaxation-time (MRT) collision
+  with Guo forcing and a recursive regularized (RR) collision with
+  third-order Hermite terms in equilibrium and non-equilibrium parts
+  (Eqs. 4–14, the RR form after the works they cite). The
+  [Smagorinsky](/methods/smagorinsky-model.md) eddy viscosity
+  $\nu_t=(C_s\Delta)^2|\bar S|$, with $\Delta$ the lattice spacing and
+  $C_s=0.12$ unless stated (0.16 in the channel), enters through
+  $\nu+\nu_t=(\tau_{\mathrm{LB}}-\tfrac12\Delta t)c_s^2$, and the strain
+  rate is computed locally from the non-equilibrium moments, not by finite
+  differences (Eq. 3; App. A, Eqs. A1–A4).
+- **Interfaces.** A diffusive-interface penalty (feedback) method with
+  Peskin's four-point kernel, which imposes the wall-model slip velocity at
+  a forcing point $0.1$–$0.25\Delta x$ off the wall, and a sharp-interface
+  reconstruction of the first off-wall node; the wall model, the
+  comparison of the two interfaces and their results are on
+  [immersed boundary methods](/methods/immersed-boundary-method.md) and
+  [wall-modelled LES](/methods/wall-modelled-les.md).
+- **MRT against RR.** In the [turbulent channel](/benchmarks/turbulent-channel-flow.md)
+  at $Re_\tau=2000$ both predict the mean velocity, but MRT gives slightly
+  higher velocities above $y^+=1000$, over-estimated fluctuations, more
+  small vortical structures and spurious oscillations, which the authors
+  read as less dissipation with non-physical small structures (§III A,
+  Figs. 5–6). On the DARPA SUBOFF hull ($Re_L=1.2\times10^6$) RR reproduces
+  the streamwise decrease of skin friction and MRT does not, "probably due
+  to the spurious oscillations of the flow near the wall"; on the
+  [Ahmed body](/benchmarks/ahmed-body.md) ($Re=7.85\times10^5$) MRT
+  "encounters stability issues" (§III B–C, Figs. 7–8). They recommend RR
+  over MRT for stability and noise (§IV).
+- **Cost.** All fields reside on the GPU and streaming, macroscopic
+  variables and collision are fused in one kernel; one V100 is 10 times a
+  24-core Xeon Platinum 8274 for the $0.8\times10^6$-node channel and 7
+  times for the $23\times10^6$-node, four-zone hull, the lower ratio being
+  attributed to interpolation between mesh zones and to immersed-boundary
+  interpolation and spreading (App. B, Table III).
+
+The underestimated channel fluctuations at lower $Re_\tau$ are attributed
+"probably" to the lattice Boltzmann dissipation rather than to the wall
+model, since the mean profiles are well predicted (§III A); the paper
+reports no test that separates the two (see [numerical dissipation](/properties/numerical-dissipation.md)).
+
 ## Rotors as body forces
 
 Rotating blades can enter a lattice Boltzmann LES as body forces rather than
@@ -456,6 +503,21 @@ on-the-fly diagnostics (§5). In Hall-MHD, where both methods are limited by
 whistlers, the authors state that the GPU lattice code gives "significantly
 smaller" turnaround times than pseudo-spectral codes; no side-by-side timing
 is given.
+
+**Against a compact finite-difference MHD solver.**
+[Fang et al. (2025)](/sources/fang-2025.md), §3.1–3.2, Table 3, Fig. 8,
+compare the sixth-order compact finite-difference MHD module of
+[Xcompact3d](/software/xcompact3d.md) with the lattice Boltzmann MHD data
+of De Rosis et al. (2021) on the
+[Orszag–Tang decays](/results/decaying-mhd-turbulence.md): in two
+dimensions the peak kinetic enstrophy at $t=1.0$ is 100.93 at $N_x=128$ for
+the finite-difference code against 98.42 at 512 and 100.39 at 1024 for the
+lattice Boltzmann solver (101.06 for the finite-difference code at 256 and 512), and in three
+dimensions the finite-difference peak current density at $N_x=64$
+(22.4334, against 22.7439 of a pseudo-spectral reference) is called
+"still superior" to the lattice Boltzmann result at 128. They also cite
+lattice Boltzmann MHD Taylor–Green studies with other initial fields
+(Breyiannis & Valougeorgis; Vahala et al.) (§4).
 
 ## A lattice Boltzmann submission in a high-lift workshop
 
@@ -527,6 +589,23 @@ lattice Boltzmann step. In their conclusions (§V) the authors find
 hybrid finite-volume/lattice Boltzmann treatments of diffuse-interface
 multiphase models still at an early stage.
 
+**A survey view from vortex aerodynamics.**
+[Luckring & Rizzi (2024)](/sources/luckring-2024.md), §2.4.1.6, describe
+the method as a mesoscopic approach whose collisions act at the grid
+scale, much larger than the mean free path, and whose averaged properties
+obey the Navier–Stokes equations; a subgrid model is still required at
+very high Reynolds number, and the particulate, local dynamics make it
+"particularly amenable to parallelization" and to Cartesian grids. They
+call it newer than continuum methods for aerodynamics and cite, as
+promising, an undercarriage-door simulation and a compressible unsteady
+lattice Boltzmann computation of the vortices of the nacelle–pylon region
+of the [NASA CRM high-lift model](/benchmarks/nasa-crm-high-lift.md) near
+stall ($M=0.2$, mean-aerodynamic-chord Reynolds number $3.27\times10^6$,
+$\alpha=16^\circ$, strake on and off); the latter reports strake effects
+only, with no correlation of strake-vortex strength, trajectory or
+persistence with measurements (§3.2.2.2, Fig. 78). See
+[delta-wing vortex flow](/benchmarks/delta-wing-vortex-flow.md).
+
 **A classification by information transfer.**
 [Chen et al. (2024b)](/sources/chen-2024-c.md), §4.1, citing Kerstein,
 class the lattice Boltzmann model among the "autonomous microstructure
@@ -576,6 +655,17 @@ continuum methods". The review reports no lattice Boltzmann computation.
   "$2.6\cdot10^9$ nodes" (p. 15) and "$2700\cdot10^6$ nodes" (p. 18). The
   version read is the version of record.
 
+- **Printed forms in Wang et al. (2024d).** Eq. (4) writes the update as
+  $g_i-\Omega_i$ and Eq. (7) the MRT operator as
+  $\Omega_i=-(\mathsf M^{-1}\Lambda\mathsf M)_{ij}(g_j-g^{\mathrm{eq}}_j)$;
+  together they relax the populations away from equilibrium for a
+  non-negative $\Lambda$, so one of the two minus signs is a slip
+  *(compiler check, not in the sources; $g_i$, $\mathsf M$, $\Lambda$ the
+  source's populations, moment matrix and relaxation matrix)*. The
+  $\delta_{\alpha\beta}$ of the Hermite tensors is called "the Dirac delta
+  function"; Eq. (12) prints the second-order equilibrium term with
+  $H^{(0)}_{i\alpha\beta}$ and Eq. (A4) the second-order Hermite tensor
+  with three indices.
 - **Kiris et al. (2023)** list W-032 under both stall topologies in §IV
   (topology A: "W-020, W-021, W-032, W-047, and W-050"; topology B: "W-031,
   W-032, and W-049") and later state that it "falls under topology B".
@@ -610,3 +700,6 @@ continuum methods". The review reports no lattice Boltzmann computation.
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §I (HLPW-3 PowerFLOW VLES, lattice Boltzmann as a numerical method); §II.2–5, Tables 1–2 (W-032: non-isothermal LB, Cartesian immersed-boundary lattice, VLES closure, pressure-aware wall model); §IV (suction-peak subset, stall topology); §V (in-tunnel pitch break).
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §1; §3.3, Eqs. (12)–(14); reference [11] (the explicit power-law wall model of Wilhelm et al., devised for lattice Boltzmann RANS, reused in a DG solver).
 - [Chen et al. (2024b)](/sources/chen-2024-c.md) — §4.1 (lattice Boltzmann as an autonomous-microstructure-evolution method, between particle and continuum methods).
+- [Wang et al. (2024d)](/sources/wang-2024-k.md) — §I; §II A–D, Eqs. (1)–(22) (Smagorinsky in the relaxation time, D3Q19 MRT and RR collisions, diffusive and sharp immersed boundaries, wall model); §III A–C, Figs. 2–12 (channel, SUBOFF hull, Ahmed body, MRT against RR); §IV; App. A, Eqs. (A1)–(A4) (strain rate from non-equilibrium moments); App. B, Table III (GPU speed-up).
+- [Fang et al. (2025)](/sources/fang-2025.md) — §3.1–3.2, Table 3, Fig. 8 (lattice Boltzmann MHD data against compact finite differences on Orszag–Tang decays); §4 (lattice Boltzmann MHD Taylor–Green studies, cited).
+- [Luckring & Rizzi (2024)](/sources/luckring-2024.md) — §2.4.1.6, Fig. 52 (mesoscopic description); §3.2.2.2, Fig. 78 (CRM-HL nacelle-strake vortices, cited).

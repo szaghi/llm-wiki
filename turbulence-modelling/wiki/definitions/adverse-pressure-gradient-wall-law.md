@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity law of adverse-pressure-gradient tur
 status: established
 aliases: [APG wall law, log-law/half-power-law wall law, extended wall law, half-power law, pressure-gradient wall law]
 tags: [boundary-layer, rans, wall-model, separated-flow]
-timestamp: 2026-10-28T11:50:00Z
+timestamp: 2026-10-28T17:02:00Z
 ---
 
 # Wall law in adverse pressure gradient
@@ -293,6 +293,69 @@ as cited). The evidence is again the failure of a law without
 pressure-gradient term, now quantified by the first-element height at which
 it appears.
 
+## An adverse-pressure-gradient power law as an explicit wall function
+
+An APG-extended explicit law attributed to Wilhelm et al., the family for
+which Mozaffari et al. (2024) report primary findings without data (above),
+is used by [Yan et al. (2024)](/sources/yan-2024.md) in a wall-modelled
+LES on a diffused-interface
+[immersed boundary](/methods/immersed-boundary-method.md) (§II C, Eqs.
+26–31), after Wilhelm et al. and a later paper by Mozaffari, Jacob & Sagaut,
+as they cite them. It adds a pressure-gradient correction to the
+Werner–Wengle power law, with the pressure gradient in the inner scaling of
+Eq. (2) above (the source's $p^+$, built on the wall-tangential coordinate
+along the local wall), and with page-local constants $A_{\mathrm{pl}}$,
+$m_{\mathrm{pl}}$ of the power law (registry §11) and $a_{\mathrm P}$,
+$b_{\mathrm P}$, $c_{\mathrm P}$ of the correction (the source's $\alpha$,
+$\beta$, $\gamma$):
+
+$$u^+=\begin{cases}y^+, & y^+\le y_c^+,\\
+A_{\mathrm{pl}}(y^+)^{m_{\mathrm{pl}}}+a_{\mathrm P}\sqrt{y^+\Delta p_s^+}+b_{\mathrm P}(\Delta p_s^+)^{1/3}\ln\!\left[c_{\mathrm P}(y^+)^3\Delta p_s^+\right], & y^+>y_c^+,\end{cases}$$
+
+with $A_{\mathrm{pl}}=8.3$, $m_{\mathrm{pl}}=1/7$, $a_{\mathrm P}=7.5789$,
+$b_{\mathrm P}=-1.4489$, $c_{\mathrm P}=191.1799$, and the junction height
+$y_c^+$ "solved based on continuity requirements" (Eq. 28; for the
+uncorrected Werner–Wengle law it is $y_c^+=11.81$, Eq. 26; page-local
+$y_c^+$). In dimensional form the correction gives a separation indicator
+(Eq. 29),
+
+$$u_D=u^P_s-a_{\mathrm P}\sqrt{\frac{h_{\mathrm{wm}}}{\rho}\frac{\partial p}{\partial s}}-b_{\mathrm P}\left(\frac{\nu}{\rho}\frac{\partial p}{\partial s}\right)^{1/3}\ln\!\left(c_{\mathrm P}\frac{h_{\mathrm{wm}}^3}{\rho\nu^2}\frac{\partial p}{\partial s}\right),$$
+
+with $u^P_s$ the tangential velocity relative to the wall at the probe
+height $h_{\mathrm{wm}}$ and $u_D$ page-local. For $u_D>0$ the friction
+velocity follows from the explicit inversion of the power-law branch with
+$u_D$ in place of the probe velocity (Eq. 30); $u_D\le0$ flags separation,
+and the marker keeps no slip (Eq. 31). The law is applied only under an
+adverse gradient; the plain Werner–Wengle law is used in zero or
+favourable gradient. *(Compiler check, not in the sources: multiplying the
+outer branch by $u_\tau$ gives Eq. (29) term by term, and continuity of the
+uncorrected branches gives $y_c^+=8.3^{7/6}=11.81$.)*
+
+Yan et al. test it only inside a combined model (the wall stress feeds a
+slip target velocity through a pressure-gradient-only boundary-layer
+equation; see [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)
+and [slip-wall models](/methods/slip-wall-model.md)), so the evidence
+concerns the combination, not the law alone. On the
+[circular cylinder](/benchmarks/circular-cylinder-wake.md) at
+$Re_D=3.9\times10^3$ the combined model reproduces separation, shear-layer
+transition and shedding, while the variant without pressure-gradient terms
+(Werner–Wengle only) does not (§III A, Fig. 7). At $Re_D=1.4\times10^5$ the
+wall stress in the favourable-gradient region upstream of separation is
+noticeably below the reference, which the authors attribute to the
+Werner–Wengle law not accounting for favourable gradients; solving the
+boundary-layer equation by finite differences in post-processing gives a
+closer $C_f$ (Fig. 9b). On the [square cylinder](/benchmarks/square-cylinder-flow.md)
+the small leading- and trailing-edge bubbles of wall-resolved LES are
+missed, which they attribute to the assumed constant pressure gradient
+between probe and wall and to the coarse mesh (§III B).
+
+In a different role, [An et al. (2025)](/sources/an-2025.md) (§3.1, Table 3)
+use no wall law but list pressure-gradient boundary layers among the
+regions where several calibrated Spalart–Allmaras constants ($c_{b1}$,
+$c_{b2}$, $\sigma$, $c_{w3}$, $c_{v1}$) act, and cite Atzori et al. on the
+skin friction of adverse-pressure-gradient layers (see
+[Bayesian closure calibration](/methods/bayesian-closure-calibration.md)).
+
 ## Shock-imposed adverse gradients
 
 The strongest adverse gradients in the bundle are those of
@@ -342,3 +405,5 @@ and on the interaction page.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §2.1, Eqs. (7)–(8), (11); §2.5.
 - [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §3.1–3.3, Eqs. (3.1), (3.28)–(3.30), Table 1, Figs. 10, 15, 17; §4.1, Eqs. (4.1)–(4.7); §4.2, Fig. 20.
 - [Tang et al. (2024)](/sources/tang-2024.md) — §2.3, Fig. 11a (upstream log law of a Mach 5 ramp interaction); §4.1, Fig. 21 (pointer).
+- [Yan et al. (2024)](/sources/yan-2024.md) — §II C, Eqs. (26)–(31) (APG power law and separation indicator); §III A, Figs. 7, 9b; §III B.
+- [An et al. (2025)](/sources/an-2025.md) — §3.1, Table 3 (pressure-gradient boundary layers in the coefficient sensitivity; passing).
