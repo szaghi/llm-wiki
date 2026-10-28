@@ -5,7 +5,7 @@ description: "Spatially developing turbulent boundary layers on flat walls: zero
 status: established
 aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, Wieghardt flat plate, Samuel–Joubert boundary layer, DLR/UniBw APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
 tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven, rans, dg, flux-reconstruction, des, lattice-boltzmann]
-timestamp: 2026-10-28T02:18:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -157,6 +157,37 @@ cells gives $\delta$ and $C_f$ in "excellent agreement" with Blasius, and a
 turbulent layer reaching the second row a $C_f$ in "remarkable agreement"
 with Schlichting's solution; transition is a threshold switch from the
 laminar to the turbulent database.
+
+**A precursor layer for a separated WMLES.** [Zhou & Bae (2024)](/sources/zhou-2024-b.md)
+(§2.3, App. A, Figs. 3, A.21) generate the inflow of their
+[Gaussian bump](/benchmarks/gaussian-bump.md) with a flat-plate LES using
+the recycling–rescaling method of Lund et al. (as cited), an equilibrium
+stress-balance wall model and dynamic Smagorinsky, on an isotropic grid
+($\Delta/L=2.19\times10^{-4}$, $L$ the bump width), run 100 flow-through times
+for transients and 150 for statistics. At the sampling plane $Re_\tau\approx620$,
+$Re_\theta\approx1074$ (about 1035 in the reference simulation of Uzun &
+Malik, as cited) and $\delta/L=0.0061$, and the mean velocity follows
+$0.41^{-1}\ln y^++5.2$; an inflow generated with the anisotropic
+minimum-dissipation model instead ($Re_\tau\approx630$, $Re_\theta\approx1126$)
+leaves the bump-flow profiles practically unchanged.
+
+**Integral scales as a convergence argument.** [Hu et al. (2024)](/sources/hu-2024.md)
+(§2) use the zero-pressure-gradient DNS of Sillero et al. (2014, up to
+$Re_\tau=2000$, as cited) to argue which WMLES statistics converge first: the
+streamwise integral length of $u'$ is roughly $\delta$ for $y/\delta>0.2$ and
+0.2–$0.4\delta$ in the wall-normal and spanwise directions, those of $v'$ and
+$w'$ two to three times smaller, and those of the pressure at most
+$0.5\delta$, still about $0.1\delta$ at the wall; hence the mean velocity
+converges on typical WMLES grids, the Reynolds stresses more slowly and the
+wall-pressure fluctuations need about $0.02\delta$ (see
+[wall-modelled LES](/methods/wall-modelled-les.md)).
+
+**The first DNS.** In the historical account of [Kim & Leonard (2024)](/sources/kim-2024-b.md)
+(§3.5, §4.5), Spalart (1988) performed the first DNS of a
+zero-pressure-gradient flat-plate layer, up to $Re_\theta=1410$, with
+streamwise-periodic conditions and a multiscale procedure for the
+streamwise growth that is valid only for mildly growing layers, and Rai et
+al. (1995) the first DNS of a supersonic boundary layer (both as cited).
 
 ## Turbulent flat plate in RANS
 
@@ -317,8 +348,8 @@ generalizability scale of [Wu et al. (2025)](/sources/wu-2025.md), Table 1.
   gives a wrong log layer and a thicker layer (Figs. 47–48). The authors
   derive the cause: the log-layer calibration of the $\omega$ equation,
   written, citing Wilcox, as $\beta_\omega-\beta^*\gamma_\omega=\kappa^2\sqrt{\beta^*}\sigma_\omega$
-  (page-local names $\beta_\omega$, $\gamma_\omega$ for the destruction and
-  production coefficients of the $\omega$ equation), holds only if the
+  ($\beta_\omega$, $\gamma_\omega$ the destruction and production
+  coefficients of the $\omega$ equation, registry §11), holds only if the
   multiplier equals 1 in the log layer (§2.1, Eqs. 3–4); see
   [law of the wall](/definitions/law-of-the-wall.md).
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md), §5.1.1, run the
@@ -495,6 +526,22 @@ experiments with direct skin-friction measurement and high-$Re$
 three-dimensional experiments; three-dimensional hills and junctions
 (BEVERLI, FAITH, the [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md))
 are cited as pressure-driven examples.
+
+**A three-dimensional layer as a wall-model test.** [Hu et al. (2024)](/sources/hu-2024.md)
+(§5, Table 2, §6) run WMLES of Spalart's (1989) boundary layer on an
+infinite plate under a free-stream velocity vector of constant magnitude
+whose direction rotates at constant angular rate, $Re_l=767$ (page-local;
+defined from the free-stream speed and the rotation rate), with statistics
+in the frame rotating with the free stream, where the mean profile is
+steady and skewed; reference DNS of Spalart (as cited). With an algebraic
+[equilibrium wall model](/methods/equilibrium-wall-model.md) at
+$h_{\mathrm{wm}}=0.05$–$0.15\delta$, the converged wall-stress magnitude is
+more sensitive to $h_{\mathrm{wm}}$ than in a channel and more accurate for
+small $h_{\mathrm{wm}}$, which they attribute to the model's unidirectional
+assumption; the mean flow direction converges from $\Delta/\delta\approx0.1$
+for $h_{\mathrm{wm}}=0.15\delta$ and below 0.02 for $0.05\delta$, and on the
+coarsest grid with $h_{\mathrm{wm}}=0.15\delta$ the flow stays laminar
+(Figs. 4, 9–10).
 
 ## Supersonic and hypersonic layers on cooled walls (DNS)
 
@@ -807,6 +854,90 @@ supersonic layer that feeds their
   guidance the paper quotes is $\Delta x^+\approx50$–130,
   $\Delta z^+\approx15$–30 (§III B 2; see
   [grid-point requirements](/results/les-grid-point-requirements.md)).
+- [Kang & Lee (2024)](/sources/kang-2024.md), §III, Tables I–III,
+  Figs. 4–7: upstream of a Mach 2.9, $24^\circ$ ramp, a laminar Blasius inflow
+  over an isothermal plate is tripped by a counter-flow body force (after
+  Poggie, as cited) and reaches, at $x/\delta_0\approx-5.4$, $\delta_0=6.7$ mm,
+  $\theta_0=0.43$ mm, $Re_\theta=2400$ and $C_f=2.27\times10^{-3}$ against the
+  experimental $2.25\times10^{-3}$ of Bookey et al. (as cited), on
+  $2865\times298\times420$ points ($\Delta x^+=4.6$, $\Delta y^+_w=0.42$,
+  $\Delta z^+=4.2$); the van Driest velocity follows $5.0+2.44\log y^+$, the
+  Morkovin-scaled intensities agree with incompressible and compressible
+  DNS with the streamwise peak at $y^+\approx12$, spanwise correlations
+  vanish within $0.5\delta_0$ and the spectra at $y^+=50$ show a $-5/3$ range
+  with no spurious trip scales.
+- [Tang et al. (2024)](/sources/tang-2024.md), §2.3, Tables 1, 3,
+  Figs. 10–12: upstream of a Mach 5, $30^\circ$ ramp over a cold wall
+  ($T_w/T_r=0.5$), blowing–suction forcing of a laminar inflow (after
+  Pirozzoli et al. 2004, as cited) gives at $x=-60$ mm $\delta=10.6$ mm,
+  $Re_\tau=700$, $Re_\theta=4652$; $C_f$ peaks near $x=-250$ mm after
+  transition and follows the White–Majdalani turbulent correlation after
+  $x=-150$ mm; the van Driest log law $2.44\ln y^++5.5$ holds for
+  $y^+=30$–200, the Walz and generalized Reynolds-analogy temperature
+  relations agree, and the Morkovin-scaled $u_{\mathrm{rms}}$ collapses on
+  incompressible data for $y/\delta<0.4$. Their Table 3 lists the Mach 4.9–5.84
+  reference DNS of Duan et al., Chu et al., Huang et al. (2022) and Zhang
+  et al. (2018), as cited.
+- [Yu et al. (2023b)](/sources/yu-2023-b.md), §II, Table I, Fig. 1: the
+  Mach 5 layer ($T_w=0.75T_r$, digital-filter inflow with a Musker mean
+  profile and generalized-Reynolds-analogy temperature) feeding their
+  oblique-shock DNS in [STREAmS](/software/streams.md) has, at $30\delta_{\mathrm{in}}$,
+  $Re_{\delta_{99}}\approx48\,800$ and $Re_\theta\approx2087$; the van Driest
+  velocity and the Reynolds normal stresses collapse with the Mach 2,
+  $Re_\tau\approx200$ DNS of Pirozzoli & Bernardini (2011, as cited).
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md), §2.2, §3.1–3.2,
+  Tables 2–3, Figs. 4–9: Mach 6 layers upstream of a $34^\circ$ ramp at
+  $T_w/T_r=0.50$, 0.75 and 1.0 (blowing–suction transition, matched
+  $\delta\approx8.3$–8.7 mm at $x=-70$ mm, $Re_\tau=675$, 411 and 293, shape
+  factors 8.78, 10.68 and 12.40). The van Driest log law keeps the slope
+  2.44 with intercepts 5.6–6.0; the Duan & Martín and generalized
+  temperature relations fit, Walz's less as $T_w$ departs from $T_r$; the
+  semi-locally scaled turbulent-kinetic-energy budgets agree with the Mach 5
+  DNS of Duan et al. (2010, as cited). Counting zero crossings of the
+  spanwise skin-friction fluctuation gives near-wall streak widths of 0.148,
+  0.203 and $0.283\delta$, about 100 wall units in each case: streaks are
+  thinner at the colder wall.
+- [Wei et al. (2023)](/sources/wei-2023.md), §III B, Figs. 5–11: a
+  wall-resolved LES of a Mach 2.44 layer (1150 K, $10^5$ Pa) with
+  synthetic-eddy inflow from a RANS precursor needs about 50 mm to recover
+  physical statistics; $C_f$ reaches the Van Driest II value at
+  $x/\delta=7$, the transformed profile converges by $x/\delta=14$, and the
+  density-scaled stresses agree with experiments. The layer feeds an LES of
+  supersonic hydrogen film cooling (below).
+
+**Combustion in a supersonic boundary layer.** Two sources
+study a hydrogen film under a supersonic vitiated-air stream after the
+Burrows–Kurkov combustor (as cited).
+[Wang & Xu (2024)](/sources/wang-2024-h.md) run a DNS (Mach 2.33, 1700 K
+main stream, sonic cold hydrogen film of height $h_0=4$ mm, page-local,
+adiabatic non-catalytic wall, 9-species 19-step chemistry, OpenCFD-Comb,
+$2206\times585\times356$ points with $\Delta x^+\le7.9$, $\Delta y^+_w\le0.85$,
+$\Delta z^+\le4.2$ and $Re_\tau\approx1044$–1067 at $x/h_0=100$–150) and a
+chemistry-frozen companion. The laminar wall-jet inlet gives a two-stage
+transition: a mixing-layer instability for $0<x/h_0<7.6$ that leaves the
+wall quantities unchanged, then a boundary-layer instability with rising
+$C_f$ (§4.1, Figs. 6–7). Downstream the Reynolds stresses settle below the
+canonical adiabatic profiles at the same $Re_\tau$, which the authors
+attribute to the local friction Reynolds number of non-canonical density
+and viscosity profiles (see [compressible velocity transformations](/definitions/compressible-velocity-transformation.md)),
+and combustion lowers $C_f$ to about 80 % of the non-reacting value at
+$x/h_0=150$ (see [skin-friction decomposition](/definitions/skin-friction-decomposition.md));
+ignition thickens the layer about 1.5 times (§3–4). No grid-convergence
+test was run (App. B). [Wei et al. (2023)](/sources/wei-2023.md) run a
+wall-resolved LES of the Burrows–Kurkov film itself (dynamic one-equation
+SGS model, laminar chemistry, about $7.4\times10^6$ cells) and find, with
+combustion, a further 10 % reduction of the wall shear after $x/s=75$
+($s$ the slot height, page-local) for about 2 % more wall heat load, which
+they attribute to suppressed wall-normal fluctuations (the
+normal-stress shares change from $0.6{:}0.2{:}0.2$ to $0.8{:}0.1{:}0.1$) and the
+low-density flame region; a $k$-$\omega$ SST RANS of the same cases shows
+no friction reduction and a strong heat-flux increase (§IV D–F). Wang & Xu
+(§1.1) record that an earlier LES (Gao et al. 2015, as cited) found
+combustion to increase the skin friction where Wei et al. find it reduced,
+call the difference "already expected" from under-resolved near-wall flow
+and different subgrid models, and note that the Burrows–Kurkov experiment
+has no skin-friction measurement; their own DNS, with an adiabatic wall, a
+laminar inlet and a lowered inflow pressure (§2), finds a reduction.
 
 **Inflow and domain length.** Both use recycling–rescaling inflow, at
 $80\delta_{\mathrm{in}}$ from the inlet in Cogo et al. Huang et al. measure
@@ -1011,7 +1142,7 @@ profiles that drive a synthetic turbulence generator (see
 [inflow turbulence generation](/methods/inflow-turbulence-generation.md)). A
 precursor LES of a finite-length channel with parallel end walls fixes the
 inlet distance at which the layer meets the measured momentum-thickness
-growth (a fit $\propto x^{4/5}$). At $x/C_{ax}=-0.99$ upstream of the blades
+growth (a fit $\propto x^{4/5}$). At $x/c_{ax}=-0.99$ ($c_{ax}$ the axial chord) upstream of the blades
 the shape factor $\delta^*/\theta$ is 1.447 in the cascade LES, 1.405 in the
 precursor, 1.440 with SST and 1.396 with the SSG/LRR-$\omega$
 Reynolds-stress model fed with the same profile.
@@ -1057,6 +1188,23 @@ above 0.5 upstream (Fig. 10). The authors state that RANS cannot predict the
 strong separation and low-frequency dynamics of such interactions and that
 DNS and wall-resolved LES are too costly at the experimental Reynolds number
 (§1).
+
+The review of three-dimensional interactions by [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md)
+(§2, Eq. 1) recalls what the incoming layer contributes. The
+incompressible shape factor $H_i=\delta^*_i/\theta_i$ (incompressible
+displacement and momentum thicknesses, page-local) peaks at an attached
+normal interaction and rises strongly in separation, recovering to an
+equilibrium profile 20–30 incoming thicknesses after reattachment; the onset
+of separation is almost insensitive to the incoming shape factor, because a
+fuller profile resists separation but also has a thinner subsonic channel,
+a shorter interaction and a steeper adverse pressure gradient, so the onset
+is governed by the shock strength, more precisely by the adverse pressure
+gradient the layer experiences (§2, §2.1, as cited from Babinsky & Harvey
+and others). In rectangular ducts the corner boundary layers, of low
+momentum, separate first, and the onset of normal-shock separation
+collapses better against the viscous aspect ratio $\delta^*/W$ ($W$ the duct
+width, page-local) than against the shock Mach number alone (§4.1, after
+Bruce et al., as cited).
 
 ## Qualifications
 
@@ -1257,3 +1405,13 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 - [Yu et al. (2023)](/sources/yu-2023.md) — §2, Table 1; §4.2, Fig. 10.
 - [Shi & Yan (2023)](/sources/shi-2023.md) — §IV.B, Table III, Figs. 8–10.
 - [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — §III, Tables I, III; §IV D, Figs. 10–13.
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.3; App. A, Figs. 3, A.21.
+- [Hu et al. (2024)](/sources/hu-2024.md) — §2; §5, Table 2; §6.1–6.2, Figs. 4, 9–10.
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §3.5; §4.5 (history).
+- [Kang & Lee (2024)](/sources/kang-2024.md) — §II.B; §III, Tables I–III, Figs. 4–7.
+- [Tang et al. (2024)](/sources/tang-2024.md) — §2.1–2.3, Tables 1–3, Figs. 10–12.
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II, Table I, Fig. 1.
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.2, Tables 2–3; §3.1–3.2, Figs. 4–9.
+- [Wang & Xu (2024)](/sources/wang-2024-h.md) — §1.1; §2.3, Tables 1–3; §3; §4.1–4.3, Figs. 6–13; App. B.
+- [Wei et al. (2023)](/sources/wei-2023.md) — §III B, Figs. 5–11; §IV D–F, Figs. 24–37.
+- [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §2, Eq. (1); §2.1; §4.1 (review).

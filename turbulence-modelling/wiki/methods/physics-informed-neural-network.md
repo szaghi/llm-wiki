@@ -5,7 +5,7 @@ description: "A neural network maps the coordinates to the mean velocity, pressu
 status: established
 aliases: [PINN, PINNs, physics-informed neural network, physics-informed RANS solver]
 tags: [data-driven, neural-network, rans, boundary-layer]
-timestamp: 2026-10-27T20:36:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Physics-informed neural networks for RANS
@@ -87,9 +87,9 @@ for each variable $\phi$ (Eq. 2, Table 1).
 
 Here $\beta_{\mathrm{FS}}$ is the Falkner–Skan pressure-gradient parameter
 and $\beta_{RC}=(\delta^*/\tau_w)\,\mathrm d p_\infty/\mathrm dx$ the Clauser
-parameter, with $p_\infty$ the free-stream pressure (page-local; the paper
-writes both with $\beta$, which the registry keeps for the field-inversion
-correction). The airfoil inputs are wall-tangent and wall-normal
+parameter, with $p_\infty$ the free-stream pressure ($\beta_{\mathrm{FS}}$
+page-local, $\beta_{RC}$ registry §11; the paper writes both with $\beta$,
+which the registry keeps for the field-inversion correction). The airfoil inputs are wall-tangent and wall-normal
 coordinates.
 
 **Statements of the authors.**

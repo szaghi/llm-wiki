@@ -9,7 +9,7 @@ year: 2026
 venue: "J. Comput. Phys. 550:114637"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Journal_of_Computational_Physics_Ghidoni_Assessment_of_an_explicit_wall_function_implementation_for_t.pdf"
 tags: [wall-model, k-omega, rans, dg, high-order]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -79,7 +79,7 @@ read, with pp. 2–6 and 13 checked visually. Page 1 agrees with Crossref.
 17. Backward-facing step (Driver–Seegmiller, $Re_H=36\,000$, $M_\infty=0.128$): $C_p$, $C_f$, velocity and $Tu$ profiles agree for all $y_1^+\le80$ and $N$; at $N=6$ the $C_f$ difference grows for $y_1^+>10$ only in the recirculation, where the law of the wall gives a wrong $u_\tau$; the effect is confined to the viscous sublayer, so the profiles still agree (§4.3, Figs. 10–11). **Shown**
 18. NACA 0012 ($Re_c=6\times10^6$, $M=0.15$, $-15^\circ$ to $15^\circ$): $C_p$, $C_f$, $C_D$, $C_L$ agree for all $y_1^+$ and $N$; at $N=6$ the $C_f$ difference grows for $y_1^+>80$ near the leading edge; $y_1^+=320$ under-predicts the $C_f$ peak and recovers from $x/c=0.15$, with negligible effect on $C_D$, $C_L$ (§4.4, Figs. 13–14). **Shown**
 19. At $15^\circ$ incidence, incipient suction-side separation from $x/c=0.72$ reattaches only at the trailing edge; the step-type $C_f$ under-prediction does not appear because the recirculation is smaller (§4.4). **Shown** (qualitative)
-20. Accuracy is preserved up to $y_1^+=320$ "with a drastic computing time reduction" (Abstract, §5). **Shown** on attached and weak-gradient layers; claims 15 and 17 bound it
+20. Accuracy is preserved up to $y_1^+=320$ "with a drastic computing time reduction" (Abstract, §5). **Shown** (see claims 15 and 17)
 21. Future work: strong adverse gradients, transonic and supersonic regimes, unsteady flows, hybrid RANS/LES and wall-modelled LES (§5). **Stated**
 
 The model and the wall treatment, translated. With $\bar k=\max(0,k)$, a

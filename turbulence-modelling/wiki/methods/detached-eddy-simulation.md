@@ -5,7 +5,7 @@ description: "The single-model hybrid RANS/LES in which a RANS model's length sc
 status: established
 aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES, RSM-IDDES, RSM-DynIDDES, dynamic IDDES, modelled-stress depletion, grid-induced separation]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -30,7 +30,7 @@ and LES-like operation
 ([Haering et al. (2022)](/sources/haering-2022.md), §I). Page-local
 symbols: $d_{\mathrm{DES}}$ the hybrid length, $l_{\mathrm{RANS}}$ and $l_{\mathrm{LES}}$ the RANS and LES length scales, $\Delta_{\max}=\max(\Delta x,\Delta y,\Delta z)$
 and $\Delta_{\mathrm{vol}}=(\Delta x\Delta y\Delta z)^{1/3}$ (the cube root of
-the cell volume), $r_d$ and $f_d$ the DDES shielding parameter and function.
+the cell volume); $r_d$ and $f_d$ are the DDES shielding parameter and function (registry §11).
 
 ## The DES switch and its failure on ambiguous grids
 
@@ -197,7 +197,19 @@ $\nu+\tilde\nu$ and Möller et al. $\nu_t+\nu$
 ([Pan & Zhang (2023)](/sources/pan-2023.md), §II.B–C, Eqs. 7–11). They
 state the motivation of DDES as the "nonphysical separation phenomenon
 induced by Reynolds stress loss" of DES on grids that do not meet LES
-requirements, i.e. grid-induced separation (§II.C). Husson et al. (2024)
+requirements, i.e. grid-induced separation (§II.C). Zhang et al. (2024)
+print the same SA-based DDES length,
+$\tilde d=d-f_d\max(0,d-C_{\mathrm{DES}}\Delta)$ with $\Delta=\Delta_{\max}$,
+$C_{\mathrm{DES}}=0.65$ "calibrated by the decay of isotropic turbulence" and
+$f_d=1-\tanh[(8r_d)^3]$, with $\nu+\tilde\nu$ in the numerator of $r_d$ as
+François et al., and write the velocity-gradient norm first as the strain
+norm $S$ of their SA equation (Eq. 3) and then as $\sqrt{\partial_ju_i\,\partial_iu_j}$,
+which they call its "traditional" representation (Eq. 4), the index order
+of François et al. ([Zhang et al. (2024)](/sources/zhang-2024.md), §2.3,
+Eqs. 3–8). The limits $f_d=0\Rightarrow\tilde d=d$ (RANS) and
+$f_d=1\Rightarrow\tilde d=\min(d,C_{\mathrm{DES}}\Delta)$ (DES97) are as they
+state; they credit the delay with removing "nonphysical artifacts" in the
+shear layer during the RANS-to-LES transition. Husson et al. (2024)
 print the zonal-DES form of the same function, with $\nu(1+\chi)=\nu+\tilde\nu$
 in the numerator and $\kappa=0.41$ (§2.2, Eq. 26; below). Lodares et al.
 (2022) and Tomboulides et al. (2025) name a DES built on their RANS models
@@ -238,6 +250,19 @@ $M_b=1.5$ ($Re_\tau=500$ to 5000) on wall-modelled-LES grids
 Reichardt's law once the scheme's dissipation is low enough (§4.3, Table 2,
 Figs. 4–6; see [hybrid RANS/LES](/definitions/hybrid-rans-les.md) and
 [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
+
+Li et al. (2024b) print the same blending on SA: the wall distance in the
+destruction term is replaced by
+$l_{\mathrm{IDDES}}=\hat f_d(1+f_e)\,l_{\mathrm{RANS}}+(1-\hat f_d)\,l_{\mathrm{LES}}$
+with $l_{\mathrm{RANS}}=d$, $l_{\mathrm{LES}}=C_{\mathrm{DES}}\Delta$ and
+$\Delta=\min[\max(C_wd,C_w\Delta_{\max},\Delta_{wn}),\Delta_{\max}]$, $C_w=0.15$
+"recommended" by Shur et al.; $\hat f_d$, $f_e$ and the value of
+$C_{\mathrm{DES}}$ are not printed ([Li et al. (2024b)](/sources/li-2024-f.md),
+§II.B.2, Eq. 4). They adopt IDDES because it "can avoid grid-induced
+separation (GIS) and logarithmic layers mismatched (LLM) issues of the
+original DES method" (see [log-layer mismatch](/definitions/log-layer-mismatch.md)),
+and judge zonal hybrids "intractable to use" for the geometric complexity of
+high-lift transport configurations (§I).
 
 **SST-IDDES as a wall-modelled LES of supersonic flows.** Zangeneh (2021)
 prints the same blending, $l_{\mathrm{IDDES}}=f_B(1+f_e)\,l_{\mathrm{RANS}}+(1-f_B)\,l_{\mathrm{LES}}$
@@ -300,7 +325,7 @@ as a multiplier of the $k$-destruction, $\rho\beta^*k\omega\to\rho\beta^*k\omega
 $$F_{\mathrm{DES}}=\max\Big(\frac{L_t}{C_{\mathrm{DES}}\Delta_{\max}}(1-F_{\mathrm{DDES}}),1\Big),\qquad L_t=\frac{\sqrt k}{\beta^*\omega},\qquad F_{\mathrm{DDES}}=\tanh\big[(C_{d1}r_d)^{C_{d2}}\big],$$
 
 with $C_{\mathrm{DES}}=0.61$, $C_{d1}=20$, $C_{d2}=3$, $\kappa=0.41$ and the $r_d$ of
-Mozaffari et al. (2024) above (page-local $F_{\mathrm{DES}}$, $F_{\mathrm{DDES}}$;
+Mozaffari et al. (2024) above ($F_{\mathrm{DES}}$, $F_{\mathrm{DDES}}$ registry §11;
 [Thawait et al. (2023)](/sources/thawait-2023.md), §II B, Eqs. 9–13). Where
 Yang & Ma's CFX form carries $1-F_2$, this form carries $1-F_{\mathrm{DDES}}$,
 which has the printed form of the $f_d$ of Delassaux et al.; with
@@ -390,7 +415,7 @@ with the scheme (below).
 
 **Dynamic RSM-IDDES.** Li et al. (2022) take the same construction one step
 further: since $C_{\mathrm{DES}}=C_kC_s$ with
-$C_k=\big(C_{\phi1}/(C_{\ell\varepsilon}C_{\phi2})\big)^{3/4}$ (page-local $C_k$;
+$C_k=\big(C_{\phi1}/(C_{\ell\varepsilon}C_{\phi2})\big)^{3/4}$ (registry §11 $C_k$;
 $C_{\ell\varepsilon}=0.09$), a dynamic Smagorinsky coefficient makes the DES
 constant dynamic, and the LES branch of RSM-IDDES becomes a dynamic
 Smagorinsky model; they call the result RSM-DynIDDES
@@ -402,7 +427,7 @@ where $L^\rho_{ij}$ is the density-weighted resolved stress of their Eq. 11
 (ordering opposite to the registry's $L_{ij}$, see Qualifications),
 $M_{ij}$ the model tensor of the procedure and $\mathcal A$ the
 volume-weighted average over the direct face neighbours of a cell
-(page-local symbols); the test filter is the same neighbour average, of
+($\mathcal A$ registry §11, $L^\rho_{ij}$ and $M_{ij}$ page-local); the test filter is the same neighbour average, of
 width $\hat\Delta=2\Delta$ "in general", which works on hybrid unstructured
 meshes, and negative $C_s^2$ (backscatter) is clipped to zero for stability
 (§II C, Eqs. 10–15, Fig. 1; see
@@ -487,7 +512,7 @@ own WALE LES on 10.9 million cells; §III; see
   The authors suggest that with resolved inflow scales the near-wall mesh
   is fine enough that shielding "might not be required" (§III.B.2, p. 21).
 - *Flux blending.* The dynamic blending is fully upwind ($\sigma_b\approx1$,
-  page-local upwind fraction of the Roe flux) in both boundary layers and
+  the upwind fraction of the Roe flux, registry §11) in both boundary layers and
   damps the resolved scales; a constant upwind fraction of 0% oscillates and
   suppresses the bubble, 25% (Yin & Durbin's value) damps the synthetic
   turbulence and overpredicts the bubble, and 5% predicts both transitions
@@ -535,13 +560,13 @@ Renard, the "automatic" mode, on the SA model in its normalized form
 $\chi=\tilde\nu/\nu$, and transpose it to a lattice Boltzmann solver
 ([Husson et al. (2024)](/sources/husson-2024.md), §2.2, Eqs. 24–35). The
 hybrid length is the DDES one with a new shielding function $f_P$
-(page-local),
+(registry §11),
 
 $$\ell=d-f_P\max\big(0,\,d-C_{\mathrm{DES}}\Delta\big),\qquad f_P=f_d\big[1-(1-f_{P2})f_R\big],\qquad C_{\mathrm{DES}}=0.65,$$
 
 $f_P=0$ giving RANS ($\ell=d$) and $f_P=1$ the LES length. Three functions
-(page-local names $f_{P2}$, $f_R$, $\mathcal G_{\tilde\nu}$, $\mathcal G_\Omega$,
-$\alpha_R$; $\lvert u_{i,j}\rvert=\sqrt{\partial_ju_i\,\partial_ju_i}$, $n$ the wall-normal
+(registry §11 names $f_{P2}$, $f_R$, $\mathcal G_{\tilde\nu}$, $\mathcal G_\Omega$;
+page-local $\alpha_R$; $\lvert u_{i,j}\rvert=\sqrt{\partial_ju_i\,\partial_ju_i}$, $n$ the wall-normal
 direction, $\lvert\boldsymbol\omega\rvert$ the vorticity magnitude):
 
 1. $f_d$, the DDES function with $r_d=\nu(1+\chi)/(\lvert u_{i,j}\rvert\kappa^2d^2)$,
@@ -619,6 +644,8 @@ The variants differ in the length $\Delta$ that caps the RANS length:
 | ZDES of the supersonic base flow (Simon et al.) | $\Delta_{\mathrm{vol}}$, $C_{\mathrm{DES}}=0.55$ | cited by Carlsson et al. (2023), §4.4 |
 | SST-DES with $F_2$ shielding (ANSYS CFX) | $\Delta_{\max}$, $C_{\mathrm{DES}}=0.61$ | Yang & Ma (2022), §2.1, Eqs. 3–5 |
 | SA-DES and SA-DDES in ANSYS Fluent | $\Delta_{\max}$, $C_{\mathrm{DES}}=0.65$ | Pan & Zhang (2023), §II.B–C, Eqs. 7–9 |
+| SA-DDES in OpenFOAM | $\Delta_{\max}$, $C_{\mathrm{DES}}=0.65$ | Zhang et al. (2024), §2.3, Eqs. 5–6 |
+| SA-IDDES in an unstructured cell-centred finite-volume code (HUNS3D) | IDDES $\Delta=\min[\max(C_wd,C_w\Delta_{\max},\Delta_{wn}),\Delta_{\max}]$, $C_w=0.15$; $\Delta_{\max}=\max(\Delta x,\Delta y,\Delta z)$, not defined for tetrahedra and prisms; $C_{\mathrm{DES}}$ not printed | Li et al. (2024b), §II.B.2, Eq. 4 |
 | ZDES mode 2 (2020) on isotropic lattice Boltzmann grids | $\Delta_{\max}$, $\Delta_{\mathrm{vol}}$ or $\Delta_\omega$, "not significant" since $\Delta x=\Delta y=\Delta z$; $C_{\mathrm{DES}}=0.65$ | Husson et al. (2024), §2.2, Eq. 24 |
 | RSM-IDDES (SSG/LRR-$\omega$) in a cell-centred finite-volume code | IDDES $\Delta=\min[\max(C_wd,C_w\Delta_{\max},\Delta_{wn}),\Delta_{\max}]$, $C_w=0.15$; $C_{\mathrm{DES}}=0.5F_1+0.3(1-F_1)$ calibrated | Wang et al. (2021), §2.4, §3.1 |
 | Dynamic RSM-IDDES (RSM-DynIDDES) in the same code | the same IDDES $\Delta$; $C_{\mathrm{DES}}=C_kC_s$ with dynamic $C_s$, $C_k=2.78$ (LRR) and 1.67 (SSG) | Li et al. (2022), §II B–C, §III A |
@@ -1122,6 +1149,64 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
   $C_D=0.743$ where WALE LES on the same grid gives 1.247 (reference 0.833),
   at about 39% of the CPU cost of WALE on the finest grid (§3.1, Tables 2–4;
   see [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)).
+- **NASA CRM high-lift configuration and its vortex system** (Li et al.
+  2024b). SA-IDDES and steady SA-RANS of the HLPW-4 landing configuration
+  (inboard and outboard flaps $40^\circ$/$37^\circ$, $M=0.2$, $Re=5.49\times10^6$
+  on the mean aerodynamic chord, $\alpha=7.05^\circ$) on the 276-million-cell
+  level-C workshop mesh (first $y^+\le1$, 6000 MPI partitions), with a
+  second-order low-Mach-preconditioned Roe scheme and dual time stepping
+  (§III.A–C; time step and averaging window not printed). Sectional $C_p$ of
+  both agrees with the corrected wind-tunnel data except at the inboard flap
+  bracket ($\eta=0.33$), where SA-RANS underestimates the flap leading-edge
+  $C_p$ by overpredicting the separation behind the bracket; the drag is
+  0.1843 (IDDES), 0.1867 (RANS) and 0.1868 measured, IDDES having the lower
+  friction drag (0.0151 against 0.0165); a DES drag below the RANS one also
+  appears in the DDES of Probst et al. (as cited, $C_D=0.1793$)
+  (§III.D.1–2, Figs. 5–6). IDDES resolves hairpin-like
+  vortex "forests" over the inboard wing and in slat-bracket wakes, the
+  nacelle-strake vortex over almost the whole upper surface, tip vortices, a
+  horseshoe vortex at the lower wing–fuselage junction and Kelvin–Helmholtz
+  wake vortices, where RANS captures only the strong tip vortices; the
+  authors tie the larger RANS flap separation to the undisturbed flap-bracket
+  tip vortex (§III.D.3, Figs. 8–14). One grid and one incidence, no grid or
+  time-step study. See the [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md).
+- **Compressor tandem cascade tip flow** (Zhang et al. 2024). SA-DDES in
+  [OpenFOAM](/software/openfoam.md) of a NACA 65-K48-based tandem cascade with
+  1% tip clearance ($M=0.67$, $Re=5.6\times10^5$; 6.65 million cells,
+  $\Delta x^+<80$, $\Delta y^+<0.5$, $\Delta z^+<130$ near the tip, $\Delta t=10^{-6}$ s,
+  about 180 steps per characteristic period, mean Courant number 0.65),
+  validated only on the clearance-free K48 cascade against oil flow and loss
+  measurements, where the corner-separation extent is captured and the
+  loss in the corner "slightly" under-predicted (§2.2–§2.4, Figs. 5–7). The
+  DDES is a tool for the tip-leakage vortex system (a second, counter-rotating
+  leakage vortex in the rear-blade passage; a 20.05% lower loss); no RANS or
+  LES comparison is run (§3). See [compressor cascades](/benchmarks/compressor-cascade.md).
+- **Three-dimensional shock interactions**, as cited by Sabnis & Babinsky
+  (2023, §3.2–§3.3): DES of a Mach 4 double fin found significant
+  low-frequency unsteadiness related to closed separation regions (Adler &
+  Gaitonde), and DES of a Mach 3 blunt fin attributed low-frequency
+  separation-shock motion to the separation region and high-frequency
+  motion to the incoming boundary layer (Ngoh & Poggie); their §4.4 calls
+  Garnier's computation of a duct interaction "large-eddy simulations"
+  while the cited title is "Stimulated detached eddy simulation"
+  ([Sabnis & Babinsky (2023)](/sources/sabnis-2023.md); see
+  [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+- **Stall of a high-lift airfoil and a supercritical cylinder, IDDES against
+  SATES-σ** (Wu et al. 2024). SST-IDDES is the comparator of the
+  σ-weighted [SATES](/methods/self-adaptive-turbulence-eddy-simulation.md):
+  on the cylinder at $Re_D=3\times10^6$ it gives $C_D=0.62$, $St=0.29$,
+  $L_r/D=0.63$ (SATES-σ 0.55, 0.24, 0.79), and on the MD-30P30N at $21^\circ$ a
+  $C_p$ farther from experiment than SATES-σ (§3.2–§3.3, Table 3, Fig. 22).
+  The authors cite transitional and turbulent DDES that "did not show an
+  appropriate drop in lift after stall", the thick RANS layer giving too much
+  eddy viscosity (§1, §3.3), and concede that DDES, closer to URANS, is less
+  grid-sensitive for transition than their near-LES model (§4)
+  ([Wu et al. (2024)](/sources/wu-2024.md)).
+- **One-dimensional-turbulence review.** Chen et al. (2024b) cite DES, DDES
+  and IDDES among near-wall approaches and show a DES region in a
+  comparison diagram, without results
+  ([Chen et al. (2024b)](/sources/chen-2024-c.md), §3.3, Fig. 13, §4.1; see
+  [one-dimensional turbulence](/methods/one-dimensional-turbulence.md)).
 - **Near-wall model taxonomy** (Maeyama & Kawai 2023). Maeyama & Kawai
   class DES (Spalart 1997, 2009) among the LES/RANS hybrids that blend RANS
   and subgrid eddy viscosities, with the switching location set explicitly
@@ -1131,6 +1216,16 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
 
 ## Qualifications
 
+- Li et al. (2024b) validate on one grid level and one incidence, with
+  neither time step nor averaging window printed; their conclusion that IDDES
+  "basically satisfies the engineering simulation requirements" (§IV) rests
+  on that case. Their judgement that zonal hybrids are intractable for
+  high-lift configurations (§I) is a statement, not a test. They call the
+  wake vortices "a prominent source of airframe noise in the cruising stage"
+  of a landing configuration (§III.D.3).
+- Zhang et al. (2024) take the accuracy of DDES for tip-leakage flow from a
+  cited rotor study, not from their own validation, which has no clearance
+  (§2.4).
 - François et al. state that relying on RANS in the boundary layer lets
   them use 0.5 mm free-shear cells and that the same density "would require
   a larger number of cells in the whole mesh with a WMLES approach" (§4.1),
@@ -1306,3 +1401,8 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
 - [Thawait et al. (2023)](/sources/thawait-2023.md) — §I, §II B Eqs. 9–14, §V, §VI A–B Table II Fig. 10.
 - [Mays et al. (2023)](/sources/mays-2023.md) — Abstract, §1, §2.1.2 Eqs. 9–13, §3.1–§3.2.2 Tables 2–4 Figs. 5, 10a.
 - [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §1.
+- [Li et al. (2024b)](/sources/li-2024-f.md) — §I (seamless against zonal hybrids); §II.B.2, Eq. (4) (SA-IDDES, $C_w=0.15$); §III.A–D, Figs. 5–14 (CRM-HL loads, drag, vortex system); §IV.
+- [Zhang et al. (2024)](/sources/zhang-2024.md) — §2.2–§2.4, Eqs. (3)–(8), Figs. 5–7 (SA-DDES formulation, grid and time step, K48 validation); §3.
+- [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §3.2–§3.3 (DES of double and blunt fins, as cited); §4.4 (stimulated DES cited as LES).
+- [Wu et al. (2024)](/sources/wu-2024.md) — §1, §3.2–§3.3, Table 3, Fig. 22, §4 (SST-IDDES against SATES-σ; DDES after stall, as cited).
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — §3.3, Fig. 13; §4.1 (DES family cited).

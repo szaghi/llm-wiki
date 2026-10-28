@@ -5,7 +5,7 @@ description: "Wall-stress models for wall-modelled LES learned by supervised reg
 status: established
 aliases: [MLWM, ML wall model, neural-network wall model, data-driven wall model, reinforcement-learning wall model, RLWM, SciMARL wall model, BFWM]
 tags: [wall-model, wmles, data-driven, neural-network, reinforcement-learning]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Machine-learning wall models
@@ -451,9 +451,8 @@ the implementation.
 
 ## BK22 in two solvers: log-layer mismatch
 
-The disagreement between the two sources on the log-layer mismatch of the
-log-law-based RL wall model (BK22/LLWM) is a qualification, not a
-contradiction.
+The two sources report the log-layer behaviour of the log-law-based RL
+wall model (BK22/LLWM) under different conditions.
 [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) (Figs. 3–4, Table 1,
 preprint v1) report for the LLWM an error "in the friction velocity" below
 5 % and mean profiles "well-aligned with the log law regardless of the value

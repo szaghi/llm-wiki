@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Fluids 284:106422"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Computers_amp_Fluids_Wang_On_the_implicit_Large_Eddy_Simulation_of_turbomachinery_flow.pdf"
 tags: [implicit-les, flux-reconstruction, dg, numerical-dissipation, turbomachinery, filtering]
-timestamp: 2026-10-26T10:27:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -92,7 +92,7 @@ acknowledgements say "The authors" for a single-author paper.
 29. Solution filtering can be connected to spectral vanishing viscosity in finite differences (Lamballais et al.); the flux-reconstruction analogue is left to future work (§2.3; §5). **Stated**
 30. Over-integration may not remove all instabilities in under-resolved cases; aliasing-driven instability is more likely on coarse grids (§1; §4.3.2). **Stated**
 
-The filter (Eqs. 17–18), with $\mathcal V$ the Vandermonde matrix and $\vartheta_m=m/(N_p-1)$ the normalized mode index (page-local), and the indicator (Eq. 19):
+The filter (Eqs. 17–18), with $\mathcal V$ the Vandermonde matrix and $\vartheta_m=m/(N_p-1)$ the normalized mode index (registry §11), and the indicator (Eq. 19):
 $$\mathcal F=\mathcal V\Lambda\mathcal V^{-1},\qquad \Lambda_{mm}=\begin{cases}1,&\vartheta_m<\vartheta_c\\ \exp\!\left[-\alpha_f\left(\dfrac{\vartheta_m-\vartheta_c}{1-\vartheta_c}\right)^{s_f}\right],&\vartheta_c<\vartheta_m<1\end{cases},\qquad s_e=\log_{10}\frac{(\rho-\rho_{N-1},\rho-\rho_{N-1})_e}{(\rho,\rho)_e},$$
 with $\alpha_f=36$, $s_f=6$ throughout and $\rho_{N-1}$ the density truncated to degree $N-1$ (the cut-off $\vartheta_c$ of the LMF is not printed). The entropy filter takes $s_f=2$, $\vartheta_c=0$ and chooses $\alpha_f$ per element so that the entropy function $\mathcal S=\rho\ln(p\rho^{-\gamma})$ does not fall below its local minimum minus $\epsilon_{\mathcal S}=10^{-4}$, with $\rho,p\ge10^{-8}$ (Eqs. 20–22). **Stated**
 
@@ -125,9 +125,9 @@ with $\alpha_f=36$, $s_f=6$ throughout and $\rho_{N-1}$ the density truncated to
 | $\hat\cdot$ | (reference-element quantity) | **collision** with the test filter; in Eq. 19 the hat is the truncated expansion, written $\rho_{N-1}$ here |
 | $\xi,\eta,\zeta$ | $\xi$ (reference coordinates) | **collision:** $\eta$ is the Kolmogorov length in the registry |
 | $\tau$, $\beta$ (Eq. 16) | (LDG penalty $=0$ and bias $=\pm0.5$) | **collision** with $\tau_{ij}$ and the field-inversion $\beta$ |
-| $\eta_i=i/(N_p-1)$, $\eta_c$ | $\vartheta_m$, $\vartheta_c$ (normalized mode index and cut-off, page-local) | renamed: $\eta$ is the Kolmogorov length and $\eta_m$ the magnetic diffusivity; as on [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md) |
-| $\alpha$ (Eq. 18) | $\alpha_f$ (filter strength, page-local) | **collision** with the DG/FV blending factor $\alpha$ |
-| $s$ (Eq. 18) | $s_f$ (filter order, page-local) | **collision:** the source's $s=\rho\ln(p\rho^{-\gamma})$ in Eq. 21 is the entropy, written $\mathcal S$ here |
+| $\eta_i=i/(N_p-1)$, $\eta_c$ | $\vartheta_m$ (normalized mode index, registry §11), $\vartheta_c$ (cut-off, page-local) | renamed: $\eta$ is the Kolmogorov length and $\eta_m$ the magnetic diffusivity; as on [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md) |
+| $\alpha$ (Eq. 18) | $\alpha_f$ (filter strength, registry §11) | **collision** with the DG/FV blending factor $\alpha$ |
+| $s$ (Eq. 18) | $s_f$ (filter order, registry §11) | **collision:** the source's $s=\rho\ln(p\rho^{-\gamma})$ in Eq. 21 is the entropy, written $\mathcal S$ here |
 | $s_e$, $s_0$ | $s_e$, $s_0$ (smoothness indicator and threshold, page-local) | $s_0$ is $-C_0\ln N$ in Tables 1 and 2a, the activation threshold in the LMF |
 | $\kappa$, $C_0$ | $\kappa_s$, $C_0$ (ramp width, threshold constant) | **collision** with the von Kármán $\kappa$ |
 | $\varepsilon_s$ | $\epsilon_{\mathcal S}$ (entropy tolerance, page-local) | as on [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md) |

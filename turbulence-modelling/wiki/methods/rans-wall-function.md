@@ -5,7 +5,7 @@ description: "The near-wall closure of RANS that imposes a law of the wall at th
 status: established
 aliases: [wall function, WF, adaptive wall function, two-velocity-scale wall function, explicit wall function, RANS wall law]
 tags: [rans, wall-model, boundary-layer, dg]
-timestamp: 2026-10-28T01:54:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Wall functions for RANS
@@ -40,9 +40,8 @@ $\beta$, $\beta_1$).
   fine meshes".
 - **Near-wall resolution of high-order RANS.** Ghidoni et al. (2026, §1)
   quote the first-cell height of wall-resolved RANS as $y_1^+\sim1$ for
-  finite volumes and $y_1^+\sim10$ for discontinuous Galerkin (DG) methods, a
-  rule of thumb they state rather than demonstrate; wall functions relax
-  it, lower the element aspect ratio and cut the cost. They state that the
+  finite volumes and $y_1^+\sim10$ for discontinuous Galerkin (DG) methods;
+  wall functions relax it, lower the element aspect ratio and cut the cost. They state that the
   only earlier wall-function implementation in a DG solver is that of
   Tiberga et al. for the $k$-$\varepsilon$ model (as cited).
 - **Immersed boundaries and adapted meshes.** On non-body-fitted Cartesian
@@ -95,7 +94,7 @@ The power law is continuous at $y_c^+$, since $8.3\times11.81^{1/7}=11.81$,
 and the log branch is the exact inverse of $U_t/u_\tau=A_{\mathrm{pl}}(yu_\tau/\nu)^{m_{\mathrm{pl}}}$
 *(compiler check, not in the sources)*. Despite assuming a zero pressure
 gradient, the law "remains accurate even with moderate pressure gradients"
-(§1), as the weak-APG test below shows.
+(§1; see the weak-APG test below).
 
 **Defined at separation: a second velocity scale.** Where $U_t\to0$ the
 inverted $u_\tau$ vanishes. Ghidoni et al. (§3.3, Eqs. 16–17) adopt the
@@ -298,8 +297,7 @@ from a $y_1^+=1$ mesh while keeping the outer resolution (§4).
   appears from $x/c=0.72$, reattaching at the trailing edge.
 
 The authors conclude that accuracy is preserved up to $y_1^+=320$ "with a
-drastic computing time reduction" (Abstract, §5); their own strong-APG and
-step results confine the statement to near-equilibrium boundary layers.
+drastic computing time reduction" (Abstract, §5).
 
 ## The same airfoil with an immersed-boundary wall function
 
@@ -314,7 +312,7 @@ pages). The two results concern different couplings: a feeding point inside
 the first element of a body-fitted DG mesh, compared with the $y_1^+=1$
 solution, against an immersed boundary with a modelling height set from a
 target $y^+$ and a reconstructed wall pressure, compared with a body-fitted
-wall-resolved reference. They are not two answers to one question.
+wall-resolved reference.
 
 ## Pressure-gradient-aware laws
 
@@ -357,8 +355,8 @@ law used as a boundary condition; it implements no wall function.
   boundary condition (Wilcox, as cited; §4.3). The review writes it as
   $u^+=\kappa^{-1}\ln(y/k_s)+B+3.5=\kappa^{-1}\ln y^++B-\Delta U^+$ with the
   roughness function $\Delta U^+=\kappa^{-1}\ln k_s^+-3.5$ (§2.1,
-  Eqs. 2.27–2.29; page-local $k_s$ the equivalent sand-grain roughness,
-  $k_g$ the geometric roughness height, $\Delta U^+$; the source's $A$ is
+  Eqs. 2.27–2.29; $k_s$ the equivalent sand-grain roughness,
+  $k_g$ the geometric roughness height, $\Delta U^+$, registry §11; the source's $A$ is
   the registry's $B$, with $\kappa=0.41$, $B=5.0$ typical). The fully rough
   regime is commonly $k_s^+\gtrsim50$, and $k_s/k_g$ is about 1 for sand, 1–2
   for random roughness, 1–3 for hemispheres and cylinders and about 10 for

@@ -9,7 +9,7 @@ year: 2021
 venue: "Comput. Fluids 230:105136"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Computers_amp_Fluids_Monfaredi_Unsteady_continuous_adjoint_to_URANS_coupled_with_FW-H_analo.pdf"
 tags: [aeroacoustics, rans, spalart-allmaras, compressible]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -24,7 +24,7 @@ stress. The far-field sound comes from the permeable
 [Ffowcs Williams–Hawkings analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md),
 solved in the frequency domain with the 2D convective Green function. The
 quadrupole term is dropped, and the time-domain 2D form is avoided because
-of its tail effect. The objective is $J=\int|\hat p'(\boldsymbol x_r,f)|\,df$
+of its tail effect. The objective is $J=\int|\breve p'(\boldsymbol x_r,\omega_a)|\,d\omega_a$
 at a far-field receiver.
 
 The contribution is the unsteady continuous adjoint of this whole chain.
@@ -58,8 +58,11 @@ and p. 10 checked visually. Page 1 matches Crossref; no identity problem.
 
 # Key claims
 
-Registry notation; the source's $\omega$ (frequency) is written $f$ here,
-and its $\mathrm k=\omega/c_\infty$ is written $k_a$ (see the Notation map).
+Registry notation, with the page-local symbols of the
+[FW-H page](/methods/ffowcs-williams-hawkings-acoustic-analogy.md): the
+source's $\omega$ (frequency) is written $\omega_a$, its
+$\mathrm k=\omega/c_\infty$ is $k_a$ and its Fourier transform $\hat{(\cdot)}$
+is $\breve{(\cdot)}$ (see the Notation map).
 
 1. Adjoint methods have a cost independent of the number of design variables (§1). **Stated**
 2. Continuous adjoints are rare in aeroacoustic shape optimization although they need less memory than discrete ones; the cited aeroacoustic discrete adjoints all use automatic differentiation (§1). **Stated**
@@ -88,9 +91,9 @@ and its $\mathrm k=\omega/c_\infty$ is written $k_a$ (see the Notation map).
 25. Comparison with DES or LES and their adjoints is the next step (§5). **Stated**
 
 The objective and its frequency-domain derivative (Eqs. 9, 21), with
-$\hat p'=\hat p'_{\mathrm{Re}}+i\hat p'_{\mathrm{Im}}$:
+$\breve p'=\breve p'_{\mathrm{Re}}+i\breve p'_{\mathrm{Im}}$:
 
-$$J=\int|\hat p'(\boldsymbol x_r,f)|\,df,\qquad \frac{\delta J}{\delta b_i}=\int\frac{1}{|\hat p'|}\Big(\hat p'_{\mathrm{Re}}\frac{\delta\hat p'_{\mathrm{Re}}}{\delta b_i}+\hat p'_{\mathrm{Im}}\frac{\delta\hat p'_{\mathrm{Im}}}{\delta b_i}\Big)df .$$
+$$J=\int|\breve p'(\boldsymbol x_r,\omega_a)|\,d\omega_a,\qquad \frac{\delta J}{\delta b_i}=\int\frac{1}{|\breve p'|}\Big(\breve p'_{\mathrm{Re}}\frac{\delta\breve p'_{\mathrm{Re}}}{\delta b_i}+\breve p'_{\mathrm{Im}}\frac{\delta\breve p'_{\mathrm{Im}}}{\delta b_i}\Big)d\omega_a .$$
 
 # Printed slips
 
@@ -110,13 +113,13 @@ $$J=\int|\hat p'(\boldsymbol x_r,f)|\,df,\qquad \frac{\delta J}{\delta b_i}=\int
 | $\tau_{km}=(\mu+\mu_t)(\partial_mv_k+\partial_kv_m-\tfrac23\delta_{km}\partial_\ell v_\ell)$ | $2(\mu+\mu_t)S^d_{ij}$ | viscous stress $\sigma_{ij}$ plus the Boussinesq stress $-\langle\rho\rangle(R_{ij}-\tfrac23k\delta_{ij})$, no $k$ term |
 | $\mu_t$ | $\mu_t$ | from SA |
 | $p'$, $\rho'$, $v'_k$ | same | perturbations from the free stream, not Reynolds fluctuations |
-| $\omega$ | $f$ (frequency, page-local) | **collision** with the specific dissipation rate $\omega$ and the vorticity $\omega_i$; angular or ordinary (Printed slips) |
+| $\omega$ | $\omega_a$ (frequency, page-local, as on the FW-H page) | **collision** with the specific dissipation rate $\omega$ and the vorticity $\omega_i$; angular or ordinary (Printed slips) |
 | $\mathrm k=\omega/c_\infty$ | $k_a$ (acoustic wavenumber, page-local) | **collision** with $k$ |
-| $\hat{(\cdot)}$ | same (Fourier transform in time, page-local) | **collision:** not a test filter |
-| $\beta=\sqrt{1-M_\infty^2}$ | $\beta_{\mathrm{PG}}$ (page-local) | **collision** with $\beta(\boldsymbol x)$ and $\beta^*$ |
-| $f$, $H(f)$, $\delta(f)$ | $f_{\mathrm s}$ (signed distance from the FW-H surface, page-local) | **collision** with the forcing $f_i$ |
+| $\hat{(\cdot)}$ | $\breve{(\cdot)}$ (Fourier transform in time, page-local, as on the FW-H page) | **collision:** the source's hat is not a test filter |
+| $\beta=\sqrt{1-M_\infty^2}$ | $\beta_M$ (page-local, as on the FW-H page) | **collision** with $\beta(\boldsymbol x)$ and $\beta^*$ |
+| $f$, $H(f)$, $\delta(f)$ | $g$, $H(g)$, $\delta(g)$ (surface function, $g=0$ on the FW-H surface, page-local, as on the FW-H page) | **collision** with the forcing $f_i$ |
 | $Q$, $F_k$, $T_{km}$ | same (FW-H monopole, dipole, quadrupole sources) | $F_k$ includes the stress $\tau_{km}$ above |
-| $\hat G$, $H_0^{(2)}$, $\mathcal H(t)$ | same (page-local) | Green function, Hankel function, window |
+| $\hat G$, $H_0^{(2)}$, $\mathcal H(t)$ | $\breve G$, $H_0^{(2)}$, $\mathcal H(t)$ (page-local) | Green function, Hankel function, window |
 | $J$, $b_i$, $N$ | same (objective, design variables, page-local) | **collision:** $N$ is not the polynomial degree |
 | $\Psi_n$, $\tau^{adj}_{mk}$, $q^{adj}_k$, $S_{\rm FW\text{-}H}$ | same (adjoint variables, stress, heat flux, sources, page-local) | |
 | $\mathcal A_k$, $B$, $T_s$, $T_O$ | same (page-local) | sensitivity kernels; simulation and optimization windows |

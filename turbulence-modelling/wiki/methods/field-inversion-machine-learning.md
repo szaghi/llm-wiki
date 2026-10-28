@@ -5,7 +5,7 @@ description: "Field inversion infers a spatial correction field of a RANS model 
 status: established
 aliases: [FIML, field inversion, field-inversion and machine-learning, inference before learning, variational data assimilation, non-parametric correction, Reynolds-force vector]
 tags: [field-inversion, data-driven, rans, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Field inversion and machine learning
@@ -474,7 +474,7 @@ other works" (§3.4). One run of their solver costs 1.3 baseline RANS runs, the 
 destruction term of the $\omega$ equation of the
 [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md) and ask whether
 the correction spoils the baseline where the baseline was right.
-Page-local: $\beta_\omega$ is the $\omega$-destruction coefficient of SST
+In registry notation (§4, §11): $\beta_\omega$ is the $\omega$-destruction coefficient of SST
 (the blended $\beta_1$, $\beta_2$; the paper's $\theta$), $\gamma_\omega$
 its $\omega$-production coefficient, $\sigma_\omega$ its $\omega$-diffusion
 coefficient.
@@ -852,7 +852,7 @@ where no DNS or LES exists and the data are experimental (Abstract, §I,
   5–30% of each field (§II.C).
 - *Data mix.* Baseline-SA fields at attached incidences
   ($\alpha<8^\circ$) and calibrated fields at separated ones. The ratio
-  $\eta_{\mathrm{DA}}$ (page-local) of calibrated to baseline samples
+  $\eta_{\mathrm{DA}}$ (registry §11) of calibrated to baseline samples
   sets the result: the lift-curve error is smallest at
   $\eta_{\mathrm{DA}}=1.62$, tends to the SA error (0.1341) as
   $\eta_{\mathrm{DA}}\to0$ and to the calibrated-model error (0.0835) for

@@ -5,7 +5,7 @@ description: "Eigensolution analysis inserts Bloch waves into a linear discretiz
 status: established
 aliases: [eigenanalysis, von Neumann analysis, dispersion–dissipation analysis, dispersion–diffusion analysis, spatial eigenanalysis, temporal eigenanalysis, fully-discrete eigenanalysis, semi-discrete eigenanalysis, wave propagation analysis]
 tags: [numerical-dissipation, dg, flux-reconstruction, implicit-les, dns]
-timestamp: 2026-10-28T02:15:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Eigensolution (dispersion–dissipation) analysis
@@ -221,7 +221,7 @@ scaling of the penalty (§4.2).
   al.'s upwinding parameter is 1 for upwind and 0 for central; Tonicello
   et al.'s interface parameter is 0 for upwind and 0.5 for central, which
   is $\lambda_{\mathrm{up}}=1-2\alpha_{\mathrm T}$ with $\alpha_{\mathrm T}$
-  their parameter (page-local) *(compiler check, not in the sources: their
+  their parameter (registry §11) *(compiler check, not in the sources: their
   interface value $(1-\alpha_{\mathrm T})u_{\mathrm L}+\alpha_{\mathrm T}u_{\mathrm R}$
   equals $\tfrac12(1+\lambda_{\mathrm{up}})u_{\mathrm L}+\tfrac12(1-\lambda_{\mathrm{up}})u_{\mathrm R}$)*.
   Tonicello et al. call $N$ "the order of the solution polynomial" but use

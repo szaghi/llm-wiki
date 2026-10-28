@@ -5,7 +5,7 @@ description: "A closed region of reversed flow formed when a laminar boundary la
 status: established
 aliases: [LSB, separation-induced transition, laminar separation, transitional separation bubble]
 tags: [transition, separated-flow, boundary-layer, rans, implicit-les, turbomachinery]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T06:46:00Z
 ---
 
 # Laminar separation bubble
@@ -393,6 +393,32 @@ specifies the case without showing results
 airfoil and Reynolds number of the RANS calibration of Carreño Ruiz &
 D'Ambrosio above, whose reference is an LES.
 
+Vermeire (2024) computes the shorter-bubble case, SD7003 at $\alpha=8^\circ$,
+$Re_c=60{,}000$, by implicit LES with flux reconstruction and entropically
+damped artificial compressibility (incompressibility factor 0.2) on an
+"intentionally coarse" mesh of 57,100 hexahedra (span $0.2c$, 10 elements in
+span), and finds the bubble decided by the polynomial degree at fixed mesh
+([Vermeire (2024)](/sources/vermeire-2024.md), §4.3, Figs. 20–21, Table 3;
+see the [SD7003 airfoil](/benchmarks/sd7003-airfoil.md)). With $N=1$ the flow
+is fully separated, with no distinct suction-side pressure recovery; $N=2$
+shows a laminar separation bubble and attached turbulent flow downstream;
+$N=3$ moves transition upstream; $N=4$ agrees with the high-order
+compressible reference simulations, with $C_L=0.950$, $C_D=0.046$ against
+0.941 and 0.049 of the author's earlier $N=4$ computation, 0.969 and 0.039 of
+Garmann et al. and 0.932 and 0.050 of Beck et al. (Table 3). The $N=1$ case
+gives $C_D=0.110$; $N=2$ gives $C_L=1.002$, the largest lift.
+
+**A bubble in a hybrid model without a transition model.** On the MD-30P30N
+three-element airfoil at $Re_C=9\times10^6$, Wu et al. (2024) read a plunge in
+$C_p$ at $x/c\approx0.15$ at $8^\circ$ as a large recirculation bubble, i.e. as
+laminar–turbulent transition captured, weakening as the incidence rises
+([Wu et al. (2024)](/sources/wu-2024.md), §3.3, Fig. 23). Their
+[SATES-σ](/methods/self-adaptive-turbulence-eddy-simulation.md) hybrid has no
+transition model; it lowers the eddy viscosity in pure-shear (laminar) regions
+through the σ-model operator, and the authors state that transition "may not
+be captured accurately if the computational grid resolution is insufficient"
+(§2.2, §4; see the [30P30N airfoil](/benchmarks/30p30n-high-lift-airfoil.md)).
+
 Lederer et al. (2026) compute the Eppler 387 airfoil by implicit LES with a
 mass-conserving mixed-stress discretization of degree $N=3$, with and
 without the [high-order projection-based upwind](/methods/high-order-projection-based-upwind-method.md)
@@ -450,6 +476,11 @@ surfaces (§5.1, Figs. 9–12); details on
 
 ## Qualifications
 
+- Vermeire (2024) describes the SD7003 references as "high-order compressible
+  simulations" in §4.3 but as "reference DNS data" in §5, and prints the lift
+  and drag coefficients as $L/(2\rho_\infty u_\infty^2)$ and
+  $D/(2\rho_\infty u_\infty^2)$ with $L$, $D$ called "coefficients" (Eqs.
+  23–24); the table values above are as printed.
 - Slaughter et al. print the pressure coefficient as "$C_p=\frac12\rho V^2$"
   (§4.1, manuscript p. 9), the dynamic pressure, without the numerator $p-p_\infty$
   *(compiler check, not in the sources)*. They also locate bubbles on "the suction side of both the first and
@@ -487,3 +518,5 @@ surfaces (§5.1, Figs. 9–12); details on
 - [Fidkowski (2022)](/sources/fidkowski-2022.md) — §6.1–6.2, Table 2, Figs. 10, 12.
 - [Mays et al. (2023)](/sources/mays-2023.md) — §1, §3.2.1, §3.2.2 Table 4 Figs. 6, 8, §4.
 - [Ims & Wang (2023)](/sources/ims-2023.md) — §5.1 Figs. 9–12, §5.2.
+- [Vermeire (2024)](/sources/vermeire-2024.md) — §4.3, Figs. 20–21, Table 3 (SD7003 bubble against polynomial degree in EDAC flux-reconstruction implicit LES); §5; Eqs. (23)–(24).
+- [Wu et al. (2024)](/sources/wu-2024.md) — §2.2, §3.3, Fig. 23, §4 (bubble on the MD-30P30N at $8^\circ$ in SATES-σ).

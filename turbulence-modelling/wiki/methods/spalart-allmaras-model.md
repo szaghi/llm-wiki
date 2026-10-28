@@ -5,7 +5,7 @@ description: "The one-equation eddy-viscosity RANS model transporting the workin
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -191,6 +191,35 @@ Four further printed forms:
   with $r_{\mathrm{lin}}=y_c/d$ (page-local), which keeps the momentum balance
   with a constant eddy viscosity there (§3.2, Eqs. 38–39, 42; see
   [RANS wall functions](/methods/rans-wall-function.md)).
+
+Two printed forms from detached-eddy applications, set beside Li & Liu's
+baseline:
+
+- **Original model with $f_{t2}$, constants by reference.** Li et al.
+  (2024b) print exactly the structure of Li & Liu's baseline above: the
+  $(1-f_{t2})$ production, the $[c_{w1}f_w-c_{b1}f_{t2}/\kappa^2]$ destruction,
+  the diffusion $\sigma^{-1}[\partial_j((\nu+\tilde\nu)\partial_j\tilde\nu)+c_{b2}\partial_i\tilde\nu\partial_i\tilde\nu]$,
+  $S_{\mathrm{SA}}$ built on $\lvert\Omega\rvert=\sqrt{2\Omega_{ij}\Omega_{ij}}$,
+  $f_{v2}=1-\chi/(1+\chi f_{v1})$, $f_{t2}=c_{t3}\exp(-c_{t4}\chi^2)$ and
+  $r=\min(\cdot,10)$, without the trip term; no constant is printed ("can
+  be found in Ref. 36", Spalart & Allmaras 1992) and the working variable
+  is written with a hat ([Li et al. (2024b)](/sources/li-2024-f.md), §II.B.1,
+  Eqs. 3a–3b).
+- **Production on the unmodified strain norm, diffusion without molecular
+  viscosity.** Zhang et al. (2024) print the transport of the working
+  variable, which they write without a tilde and call the "kinematic eddy
+  viscosity", as
+  $$\frac{D\tilde\nu}{Dt}=c_{b1}S\tilde\nu+\frac1\sigma\Big[\nabla\cdot(\tilde\nu\nabla\tilde\nu)+c_{b2}(\nabla\tilde\nu)^2\Big]-c_{w1}f_w\Big(\frac{\tilde\nu}{d}\Big)^2,\qquad r=\frac{\tilde\nu}{S\kappa^2d^2},$$
+  with $S$ "the scalar norm of the deformation tensor" and no modified
+  vorticity, no $f_{t2}$ and no trip, and with the constants
+  $c_{b1}=0.1355$, $c_{b2}=0.622$, $\kappa=0.41$ ($c_{w1}$, $\sigma$ and the form
+  of $f_w$ not printed); the molecular viscosity, present in the diffusion
+  of Li & Liu's and Li et al.'s forms, does not appear, and the source
+  prints the first diffusion term with a dot inside the gradient
+  ([Zhang et al. (2024)](/sources/zhang-2024.md), §2.3, Eqs. 1–2). The page
+  records it as printed; in their DDES the molecular viscosity appears in
+  the shielding argument $r_d$, "the DDES method adds the molecular
+  viscosity" (§2.3, Eqs. 3–4; on the [DES page](/methods/detached-eddy-simulation.md)).
 
 **Negative SA.** Basile et al. (2023) use the negative-$\tilde\nu$ model with
 $\mu_t=\rho\tilde\nu f_{v1}$ for $\tilde\nu\ge0$ and $\mu_t=0$ for $\tilde\nu<0$
@@ -649,6 +678,16 @@ which makes it "suitable for unsteady flow simulations using Cartesian
 grids" (the function is not printed), for a hovering rotor on moving
 Cartesian grids ([Sugaya & Imamura (2021)](/sources/sugaya-2021.md), §2.1,
 §4). These formulations are on the [DES page](/methods/detached-eddy-simulation.md).
+Li et al. (2024b) run SA-IDDES, with the wall distance of the destruction
+term replaced by the IDDES length, on the NASA CRM high-lift configuration
+against steady SA-RANS: drag 0.1843 (pressure 0.1691, friction 0.0151)
+against 0.1867 (0.1701, 0.0165) and 0.1868 measured; SA-RANS overpredicts
+the flap separation behind the inboard bracket and captures only the strong
+tip vortices, which the authors link to the undisturbed bracket tip vortex
+(§III.D, Figs. 5–9; see the [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)).
+Zhang et al. (2024) run SA-DDES with $C_{\mathrm{DES}}=0.65$ for the tip flow of
+a compressor tandem cascade (§2.3; see
+[compressor cascades](/benchmarks/compressor-cascade.md)).
 Mani & Dorgan (2023) state that the original DES is SA-based and that
 DES and then delayed DES carried unsteady simulation at Boeing
 ([Mani & Dorgan (2023)](/sources/mani-2023.md), §4.5.2).
@@ -988,12 +1027,15 @@ computed at high order:
 
 ## Qualifications
 
+- Li et al. (2024b) and Zhang et al. (2024) print no value of $c_{w1}$, so
+  the log-layer relation above cannot be checked against their forms.
 - Li & Liu's ranking rests on one cascade and one rotor, against experiment
   only, with grid adequacy asserted by citation; no LES or DNS reference is
   used (§2.1, §3).
-- The helicity–backscatter link is the authors' group's own result, stated
-  as proved; the mechanism by which more production yields less eddy
-  viscosity is argued, not demonstrated by a dedicated test.
+- Li & Liu present the helicity–backscatter link, a result of their own
+  group, as proved in the cited work; the mechanism by which more
+  production yields less eddy viscosity is argued in the text, with no
+  dedicated test.
 - Li & Liu describe the purpose of QCR2000 once as "more accurate estimation
   of the turbulent stresses" (§1) and once as "of the turbulent viscosity"
   (§4.2); their Eqs. 23–25 change the stress–strain relation and leave
@@ -1015,14 +1057,13 @@ computed at high order:
 - Yan et al.'s baseline production is built on the mean strain-rate norm,
   which in Li & Liu's taxonomy is the SA-S variant that Li & Liu say is "not
   mentioned in the existing references". Yan et al. call it the SA model and
-  give no reason for the strain; whether this is a notational choice cannot
-  be settled from the paper. Pan & Zhang (2023) and Tang et al. (2022) build
+  give no reason for the strain. Pan & Zhang (2023) and Tang et al. (2022) build
   the same strain-based measure while calling it the modified vorticity
   (Pan & Zhang, §II.B, Eqs. 4–5), and Huang et al. (2022b) define their
   "vorticity" magnitude as $\sqrt{2\omega_{ij}\omega_{ij}}$ with $\omega_{ij}$
   printed as $\tfrac12(\partial_ju_i+\partial_iu_j)$, a plus sign that makes it
   the strain magnitude (§2.1); whether these are slips or the SA-S variant
-  is not stated by either source.
+  is not stated by these sources.
 - Pan & Zhang (2023) print $f_{v1}=\chi^3/(\chi^3+c_{v1}^6)$, with exponent 6
   on $c_{v1}$ against 3 on $\chi$, unlike every other source on this page
   (§II.B, Eq. 4).
@@ -1109,3 +1150,5 @@ computed at high order:
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.1.1 Fig. 5, §4.5.1–4.5.2.
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §III.
 - [Mo et al. (2023)](/sources/mo-2023.md) — §II, §III C, §IV B.
+- [Li et al. (2024b)](/sources/li-2024-f.md) — §II.B.1, Eqs. (3a)–(3b) (printed SA with $f_{t2}$); §II.B.2 (SA-IDDES); §III.D, Figs. 5–9 (CRM-HL drag and separation, SA-RANS against SA-IDDES).
+- [Zhang et al. (2024)](/sources/zhang-2024.md) — §2.3, Eqs. (1)–(4) (printed SA and its DDES shielding argument, constants).

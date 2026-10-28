@@ -5,7 +5,7 @@ description: "RANS closures that give the Reynolds-stress anisotropy as an expli
 status: established
 aliases: [EARSM, EASM, explicit algebraic stress model, explicit algebraic Reynolds stress model, BSL-EARSM, non-linear eddy-viscosity model, generalized eddy-viscosity hypothesis, stochastic EARSM, SBL-SpaRTA EARSM]
 tags: [rans, reynolds-stress-model, eddy-viscosity, data-driven, symbolic-regression, turbomachinery]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-28T06:41:00Z
 ---
 
 # Explicit algebraic Reynolds-stress models
@@ -92,6 +92,35 @@ C, Figs. C.9–C.11). Other uses of EARSMs in the bundle are reference
 runs: the drag of the [Ahmed body](/benchmarks/ahmed-body.md) and the DG
 RANS of the [RAE 2822 airfoil](/benchmarks/rae-2822-airfoil.md) (see those
 pages).
+
+**The quadratic commutator term in a shock interaction (a priori).**
+[Yu et al. (2023b)](/sources/yu-2023-b.md) (§IV, Eqs. 17–19, Fig. 17)
+test the Boussinesq relation and one quadratic extension on DNS of Mach 5
+oblique-shock/boundary-layer interactions (wedge angles $14^\circ$,
+$10^\circ$, $6^\circ$). With the Favre-averaged traceless strain
+$S^d_{ij}$ and rotation $\Omega_{ij}$, the density-weighted Reynolds stress
+$R_{ij}=\langle\rho u_i''u_j''\rangle$ and page-local coefficients $\mu_t$,
+$\mu_{t2}$, the extension reads
+
+$$-\big(R_{ij}-\tfrac13R_{kk}\delta_{ij}\big)=2\mu_tS^d_{ij}+\mu_{t2}\big(S^d_{ik}\Omega_{kj}-\Omega_{ik}S^d_{kj}\big),$$
+
+whose second term has the structure of $T^{(2)}$ without the time-scale
+normalization; the authors take the form from Gatski & Speziale, Craft et
+al. and Jongen & Gatski, as they cite them. The best-fit linear eddy
+viscosity (least-squares projection of the DNS stress on $S^d_{ij}$)
+reconstructs $-R_{12}$ well upstream and downstream but "severely"
+over-predicts it in the interaction zone, especially along the rising
+shear layer, where stress and strain are not aligned; with $\mu_{t2}$
+calibrated to the residual of the linear fit, the reconstructed stress
+collapses onto the DNS. The authors justify one extra term by the
+traceless stress having two effective independent components in the
+two-dimensional mean flow. The test is a priori only: their RANS (§V)
+keeps the linear [$k$-$\omega$ SST](/methods/k-omega-sst-model.md), which
+remains inaccurate inside the interaction zone, and they state that a
+nonlinear term would be needed there but not if only wall quantities
+matter (see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+and [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
 
 ## Learned EARSMs
 
@@ -219,6 +248,23 @@ contain the temperature gradient (Eqs. 6–7). Special cases:
 - **higher-order GGDH (Abe & Suga)**, along $R_{ik}R_{kj}\partial_j\langle T\rangle$
   divided by $k$ and a frequency (Eq. 13).
 
+Yu et al. (2023b, §IV, Eqs. 22–26, Fig. 20) test a priori on their Mach 5
+shock-interaction DNS three one-term nonlinear additions to gradient
+diffusion, $\langle u_i'T'\rangle=-\kappa_t\partial_i\langle T\rangle-\kappa_{t2}\,\mathsf M_{ik}\partial_k\langle T\rangle$
+(page-local diffusivities $\kappa_t$, $\kappa_{t2}$; the paper writes
+Reynolds fluctuations and means for the heat flux), with the tensor
+$\mathsf M_{ik}$ (page-local) the mean velocity gradient
+$\partial_k\langle u_i\rangle$ (Eq. 24), the strain $S^d_{ik}$ (Eq. 25) or
+the rotation $\Omega_{ik}$ (Eq. 26). Gradient diffusion alone
+reconstructs the wall-normal flux except in the interaction zone; the
+velocity-gradient term makes it worse, the strain term gives a minor
+gain, and the rotation term "works much better". The authors cite Gatski &
+Speziale, So et al. and Wang et al. for such forms and caution that
+shock-motion-induced fluctuations should not be modelled with the
+turbulent ones. Their RANS keeps gradient diffusion with a
+pressure-gradient-dependent $Pr_t$ (see
+[turbulent Prandtl number](/definitions/turbulent-prandtl-number.md)).
+
 Learned heat-flux closures cited in the review: random forests on the
 invariants plus wall-distance Reynolds number and $\nu_t/\nu$ (Milani et
 al. 2018, 2019, the invariants carrying about 55% of feature importance);
@@ -282,3 +328,4 @@ et al. 2022; §4.5, Eq. 17).
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.2 Eqs. 1–4, §3.3 Eqs. 5–7, §3.4 Eq. 8, §4.1, §4.2 Eqs. 9–15, §4.4, §4.5 Eq. 17.
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1, §2.1 Eqs. 2–13, §2.2 Eq. 14, §3 Eqs. 16–32, §4.2 Table 2 Figs. 1–7, §5, Apps. A–C.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §4.3, Eq. 2, Fig. 7.
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §IV, Eqs. 17–19, Fig. 17 (a priori quadratic commutator term in a Mach 5 shock interaction); Eqs. 22–26, Fig. 20 (nonlinear heat-flux terms); §V (linear SST kept in RANS).

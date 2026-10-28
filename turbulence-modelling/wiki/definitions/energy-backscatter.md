@@ -5,7 +5,7 @@ description: "Energy backscatter is a negative local subgrid energy flux, energy
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-28T02:14:00Z
+timestamp: 2026-10-28T07:03:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -558,18 +558,18 @@ In compressible LES the Favre subgrid stress has a trace,
 $\tau_{kk}=2\bar\rho k_{\mathrm{sgs}}$, and the local flux
 $\Pi=-\tau_{ij}\tilde S_{ij}$ splits into a deviatoric and a spherical part,
 
-$$\Pi=\Pi^{d}+\Pi^{s},\qquad \Pi^{d}=-\tau^d_{ij}\tilde S^d_{ij},\qquad \Pi^{s}=-\tfrac23\,\bar\rho k_{\mathrm{sgs}}\,\nabla\cdot\tilde{\boldsymbol u},$$
+$$\Pi=\Pi^{d}+\Pi_{\mathrm{sph}},\qquad \Pi^{d}=-\tau^d_{ij}\tilde S^d_{ij},\qquad \Pi_{\mathrm{sph}}=-\tfrac23\,\bar\rho k_{\mathrm{sgs}}\,\nabla\cdot\tilde{\boldsymbol u},$$
 
-with $\Pi^{d}$, $\Pi^{s}$ page-local. [Tonicello et al. (2022)](/sources/tonicello-2022.md)
+with $\Pi^{d}$ page-local and $\Pi_{\mathrm{sph}}$ the spherical part of registry §11 (as on the [pressure-dilatation](/definitions/pressure-dilatation.md) page). [Tonicello et al. (2022)](/sources/tonicello-2022.md)
 (§5, Eqs. 5.1–5.3) introduce this split as an a priori diagnostic. Their
 stress carries the opposite sign to the registry, their budget term $K_3$
-equals $-\Pi$, their spherical transfer $\Lambda$ equals $\Pi^{s}$, and their
+equals $-\Pi$, their spherical transfer $\Lambda$ equals $\Pi_{\mathrm{sph}}$, and their
 "deviatoric contribution" $K_3+\Lambda$ equals $-\Pi^{d}$
 *(compiler check, not in the sources)*. With a deviatoric eddy viscosity,
 $\Pi^{d}=\bar\rho\nu_t\lvert\tilde S^d\rvert^2$, which defines an equivalent
 eddy viscosity from filtered DNS (Eq. 5.3). Because
 $k_{\mathrm{sgs}}>0$ for non-spectral filters (citing Vreman et al. 1994),
-$\Pi^{s}$ is forward in compression and backscatter in expansion.
+$\Pi_{\mathrm{sph}}$ is forward in compression and backscatter in expansion.
 
 The authors evaluate the terms in their DNS of a Mach 2.91 boundary layer
 over a $24^\circ$ compression ramp followed by an expansion corner (see
@@ -595,15 +595,15 @@ spacing):
   authors conclude that the weight of compressibility in modelling is set
   "not entirely by the physics of the problem" but strongly by the filter
   width (§4.2). The subgrid Mach number, $M_{\mathrm{sgs}}=\sqrt{2\bar\rho k_{\mathrm{sgs}}/(3\gamma\bar p)}$
-  (page-local, Eq. 4.14), reaches about 0.32 in the mean and about 0.42 for
+  (registry §11, Eq. 4.14), reaches about 0.32 in the mean and about 0.42 for
   the filtered fields, above the value 0.3 at which they expect
   compressibility effects (Figs. 20–22).
 - **The deviatoric part does not backscatter on average.** The averaged
   $\Pi^{d}$ is positive in the whole domain: the mean backscatter near the
-  expansion corner comes entirely from $\Pi^{s}$, so a positive eddy
+  expansion corner comes entirely from $\Pi_{\mathrm{sph}}$, so a positive eddy
   viscosity is "fairly accurate" on average for the deviatoric stress
   (§5, Figs. 27–28). In filtered fields a large share of the equivalent eddy
-  viscosity is negative. Removing $\Pi^{s}$ also removes most of the
+  viscosity is negative. Removing $\Pi_{\mathrm{sph}}$ also removes most of the
   correlation with the pressure dilatation: 0.1081 (averaged), 0.0370
   ($4h$) and 0.0889 ($8h$) (Table 6, Fig. 29).
 
@@ -669,6 +669,18 @@ dynamic coefficients there are domain averages (Zhang et al. 2022b, App.;
   the large scales beside production. This is a transfer between resolved
   scales of a DNS, not a subgrid flux; the authors leave its use for
   subgrid modelling to future work (§8).
+- **"Bottom-up" transfer as a motivation for stochastic subgrid
+  closures.** [Chen et al. (2024b)](/sources/chen-2024-c.md) (§4.1), a
+  review of [one-dimensional turbulence](/methods/one-dimensional-turbulence.md)
+  (ODT), call conventional subgrid closures "parameterization" (after
+  Kerstein, cited) and "top-down": they rely on subgrid isotropy, which
+  fails near walls, and cannot capture "bottom-up" transport of energy and
+  species from small to large scales. ODT, which generates small-scale
+  structure autonomously on embedded one-dimensional lines and feeds it
+  back to the LES, is offered as a remedy: such models give a
+  bidirectional rather than a top-down transfer (§4.1). The review defines
+  and measures no local flux $\Pi$; it also applies "top-down" inconsistently to LES-ODT (abandoned in
+  §2.4.1, adopted in §3.3).
 
 ## Interpretation and scope
 
@@ -803,3 +815,4 @@ contradiction is recorded.
 - [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §IV B, Fig. 9.
 - [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — Eqs. (19), (33); §IV B, Fig. 8.
 - [Xu et al. (2023)](/sources/xu-2023.md) — §1; §3.2, Fig. 12; §4.1, Figs. 17–20.
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — §2.4.1; §3.3; §4.1.

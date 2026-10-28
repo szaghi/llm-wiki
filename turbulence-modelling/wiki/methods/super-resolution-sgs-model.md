@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Super-resolution subgrid-scale models"
-description: "An LES closure that reconstructs a fine-grid velocity field from the coarse LES field with a neural network and computes the subgrid stress by filtering products of the reconstructed sub-cell fluctuations; for very coarse wall-bounded LES an unsupervised CycleGAN first maps the LES field to filtered-DNS quality, with a clipping that keeps moderate backscatter."
+description: "An LES closure that reconstructs a fine-grid field from the coarse LES field with a neural network and computes the subgrid stress and scalar flux from the reconstruction; a priori generalization in premixed flames hinges on the filter-to-Kolmogorov ratio, and for very coarse wall-bounded LES an unsupervised CycleGAN first maps the LES field to filtered-DNS quality."
 status: established
 aliases: [super-resolution SGS model, super-resolution-based subgrid scale model, unsupervised-supervised pipeline, CycleGAN SGS model, GAN super-resolution closure, vLES]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-27T21:12:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Super-resolution subgrid-scale models
@@ -61,6 +61,83 @@ beat the fully connected network. The review gives no numbers of its own for the
 models (see
 [physics-informed neural networks](/methods/physics-informed-neural-network.md)
 for their classification of knowledge-guided losses).
+
+## Generalization of a super-resolution GAN in premixed flames (Nista et al. 2023)
+
+[Nista et al. (2023)](/sources/nista-2023.md) apply the same idea to the
+subfilter terms of the Favre-filtered reacting equations and ask how far
+such a closure generalizes outside its training conditions. All tests are
+a priori; a posteriori LES is named as future work (§4.4).
+
+**Closure (§1, §3.1, Eqs. 1–5).** A generator maps the box-filtered DNS
+fields of $u$, $v$, $w$ and $T$ to a field eight times finer in each
+direction, and the unresolved terms are evaluated from the reconstruction
+"directly at the DNS level": the Favre stress per unit mass
+$\widetilde{u_iu_j}-\tilde u_i\tilde u_j$ (the registry's compressible
+$\tau_{ij}$ divided by $\bar\rho$; full tensor, not deviatoric) and the
+subfilter temperature flux $\widetilde{u_iT}-\tilde u_i\tilde T$, "the same
+argument" holding for any scalar. The generator is a 3-D variant of ESRGAN
+and of the physics-informed PIESRGAN of Bode et al. (as cited): 3-D
+convolutions with leaky ReLU, one residual-in-residual dense block (ESRGAN
+uses 23), three upsampling layers of nearest-neighbour doubling plus a
+convolution, 64 filter maps per layer, about 25 million trainable
+parameters; the discriminator is that of PIESRGAN. The generator loss is
+$\mathcal L=\beta_1\mathcal L_{\mathrm{pixel}}+\beta_2\mathcal L_{\mathrm{grad}}+\beta_3\mathcal L_{\mathrm{RaGAN}}$
+(page-local names and weights): mean squared errors of the field and of
+its gradient plus a relativistic-average adversarial term, with
+$(\beta_1,\beta_2,\beta_3)=(0.89,0.06,0.00006)$ taken from the authors'
+earlier work (Eq. 4). The generator is pre-trained on the pixel loss alone
+to avoid convergence failure of the adversarial training.
+
+**Training (§3.2).** Only one DNS of a lean methane/air slot-jet flame
+(R2K1: jet Reynolds number 5600, Karlovitz number 23), box filter of
+width $\Delta=8h$ ($h$ the DNS spacing), 73,100 random sub-boxes of $64^3$
+(fine) and $8^3$ (filtered) points with flips and rotations, global
+min–max normalization, the last 10% of the snapshots held out. Training
+on four nodes with one NVIDIA V100 each took 28 h instead of about 5 days.
+
+**Results (§4, Figs. 2–8).**
+
+- *In sample.* The joint PDF of modelled against DNS $\tau_{12}$ aligns
+  with the diagonal, where the dynamic Smagorinsky model "exhibits a
+  relatively low correlation"; the temperature flux is narrow along the
+  diagonal but less accurate for negative values (§4, Fig. 2). The
+  authors concede that the eddy-viscosity baseline "might be not optimal"
+  for such a comparison.
+- *Reynolds number.* At half and four times the training jet Reynolds
+  number the stress and flux joint PDFs barely change (slightly worse at
+  the higher one); at the lower one the root-mean-square error of the
+  super-resolved field is "roughly 75% less" than that of the filtered
+  input, though its textures still differ from DNS (§4.1, Figs. 3–5).
+- *Karlovitz number.* At about ten times the training Karlovitz number
+  (240) the stress joint PDF stays on the diagonal (§4.2, Figs. 4c, 5c).
+- *Fuel.* On a hydrogen planar jet flame (jet Reynolds number 5000,
+  Karlovitz number 43.5) with the training filter width,
+  $\Delta/\eta\approx14.88$, the network over-predicts the jet velocity
+  and the large velocity gradients; with a filter of $4h$
+  ($\Delta/\eta\approx6.6$ as printed) the velocity-gradient PDF nearly
+  matches DNS, slightly under-predicting the larger structures (§4.2,
+  Figs. 6–7).
+- *Untrained scalar.* Applied to the OH mass fraction, never seen in
+  training, the network is poor where OH is nearly uniform (non-physical
+  oscillations) and close to DNS at the jet/coflow flame boundary, where
+  the gradients are largest (§4.3, Fig. 8).
+
+**Generalization criterion (§4.1–4.2, §4.4, §5).** Across the
+Reynolds-number series the ratios $\Delta/\eta\approx8$ and
+$\Delta/\delta_{\mathrm L}\approx1.45$ ($\delta_{\mathrm L}$ the thermal
+flame thickness, page-local) are both kept; at the high Karlovitz number
+only $\Delta/\eta$ is kept and the closure still works; on the hydrogen
+flame $\Delta/\eta$ differs and it fails. The authors conclude that
+"the ratio $\Delta/\eta$ needs to be conserved between training and
+application of the network", while $\Delta/\delta_{\mathrm L}$ "does not
+seem" to be fundamental, and that the restriction to one $\Delta/\eta$
+might be relaxed by training on a range of filter widths, since the LES
+to DNS grid ratio is fixed in the architecture. Lower Karlovitz numbers,
+where the flame thickness might matter, and other fuels are not covered
+(§5). The inputs are filtered DNS, not solver
+output, unlike the very coarse channel LES below (see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
 
 ## Why very coarse LES needs an unsupervised step
 
@@ -123,7 +200,7 @@ and wall at eight heights ($y^+\approx5$, 15, 30, 100 and $y/\delta=0.25$
 to 1), patches of $2.304\delta\times1.152\delta$, Adam at $10^{-5}$,
 batch 16.
 
-**Clipping (§3.2, Eq. 3.2; App. C).** With page-local $\nu_{\mathrm{eff}}$,
+**Clipping (§3.2, Eq. 3.2; App. C).** With $\nu_{\mathrm{eff}}$ (registry §11),
 the effective viscosity of the stress projected on the resolved strain,
 and a floor $\nu_{\mathrm{clip}}\le0$, the stress is modified only where
 the local backscatter is extreme:
@@ -259,7 +336,24 @@ no net local backscatter, beats the conventional model.
   same arXiv number for Kingma & Ba (2014) and Gulrajani et al. (2017).
   Ihme et al. (2022, §4.1.4) print "ERSGAN" for the network their
   ref. [580] titles "ESRGAN".
-- **Notation.** The paper's $S_{ij}$ carries no factor $\tfrac12$ (twice the
+- **The filter ratios of Nista et al. (2023).** With the printed DNS
+  spacing of 20 µm and $\Delta=8h$, the Reynolds-number series gives
+  $\Delta/\eta$ from 6.4 to 8.9 (Table 1), which the paper summarizes as
+  "≈8"; for the high-Karlovitz flame the printed $\delta_{\mathrm L}/h\approx15$
+  and $\delta_{\mathrm L}=200$ µm give $\Delta/\delta_{\mathrm L}\approx0.53$,
+  not the printed 0.062, while $\Delta/\eta\approx8.2$ agrees with the
+  text; for the hydrogen flame, $\Delta/\eta\approx14.88$ at $8h$ implies
+  about 7.4 at $4h$, against the printed 6.6 *(compiler check, not in the
+  sources)*. The criterion's statement that $\Delta/\delta_{\mathrm L}$ is
+  not fundamental rests on the high-Karlovitz value. The hydrogen flame's
+  $\delta_{\mathrm L}$ is 435 µm in §2 and 444 µm in Table 1, and the
+  mixture is called hydrogen/air and, in the same paragraph, a jet of
+  hydrogen and oxygen. Eq. 1 prints the momentum equation with mismatched
+  free indices, and §3.1 says "the $L_1$ norm is applied to each
+  component" of a loss defined by mean squared errors. The evidence of
+  the generalization study is joint PDFs, contours and one gradient PDF;
+  no a posteriori test exists.
+- **Notation (Maejima & Kawai 2025).** The paper's $S_{ij}$ carries no factor $\tfrac12$ (twice the
   deviatoric strain), its overbar is the LES filter in §2 and a Reynolds
   average in §6, and its hat is the box filter in §3 and a Fourier
   transform in §6; this page uses $\bar S^d_{ij}$, $\langle\cdot\rangle$ and
@@ -270,3 +364,4 @@ no net local backscatter, beats the conventional model.
 - [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §III (physics-informed GAN of Bode et al. cited, in passing).
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.4, Fig. 32 (PIESRGAN reviewed: adversarial, accuracy and continuity losses, RRDB blocks, a priori and a posteriori spray-flame LES; generative against supervised findings); §5.4 (generalizability of generative methods).
 - [Maejima & Kawai (2025)](/sources/maejima-2025.md) — §1 (fDNS against vLES, supervised super-resolution, Bode et al. cited); §2.1–2.2, Eqs. 2.1–2.22 (equations, cGAN, CycleGAN); §3, Eqs. 3.1–3.2, Figs. 3–4 (pipeline, stress extraction, clipping); §4, Tables 1–4, Eq. 4.1 (channel set-up, networks, data); §5, Figs. 6–21 (a priori); §6, Eqs. 6.1–6.15, Figs. 22–27 (a posteriori, budgets, mechanism); §7, Figs. 28–29 ($Re_\tau\approx2000$, CNN limits, pointwise inputs); §8; App. A–C, Figs. 30–37.
+- [Nista et al. (2023)](/sources/nista-2023.md) — §1, Eqs. 1–3, 5 (subfilter stress and temperature flux from the reconstruction); §3.1–3.2, Eq. 4, Fig. 1 (generator, loss, training); §4–4.3, Table 1, Figs. 2–8 (a priori generalization across Reynolds and Karlovitz numbers, fuel, OH); §4.4, §5 ($\Delta/\eta$ criterion, a posteriori deferred).

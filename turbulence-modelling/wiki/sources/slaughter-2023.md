@@ -9,7 +9,7 @@ year: 2023
 venue: "Flow Turbul. Combust. 110:917-944"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Flow_Turbulence_and_Combustion_Slaughter_Large_Eddy_Simulation_of_an_Inverted_Multi-element_Wing_in_G.pdf"
 tags: [implicit-les, transition, high-order, benchmark, spectral-vanishing-viscosity]
-timestamp: 2026-10-26T20:49:00Z
+timestamp: 2026-10-28T07:11:00Z
 ---
 
 # Summary
@@ -63,8 +63,8 @@ Research Square preprint v1 (doi:10.21203/rs.3.rs-2068909/v1, posted 20
 September 2022, CC BY 4.0, Springer Nature LaTeX template), not the version
 of record: 27 PDF pages (a cover sheet and 26 manuscript pages), all read.
 Title (up to capitalization: "Multi-Element") and authors match the
-published article, which spans 28 journal pages; content, numbers and
-references may differ there. Section, equation and figure numbers and
+published article, which spans 28 journal pages. Claims, numbers and
+references here are those of the preprint. Section, equation and figure numbers and
 manuscript pages on this page are those of the preprint.
 
 # Key claims

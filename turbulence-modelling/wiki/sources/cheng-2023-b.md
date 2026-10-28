@@ -9,7 +9,7 @@ year: 2023
 venue: "Acta Astronaut. 210:1–13"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Acta_Astronautica_Cheng_An_accurate_and_practical_numerical_solver_for_simulations_o.pdf"
 tags: [implicit-les, shock-capturing, numerical-dissipation, finite-volume, compressible]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T11:47:00Z
 ---
 
 # Summary
@@ -120,7 +120,7 @@ printed (Eq. 2.14; see Printed slips).
 | $\Omega$, $\lvert\Omega\rvert$ | (cell and its volume, page-local) | **collision** with $\Omega_{ij}$ |
 | $h$ | $h$ | uniform cell size |
 | $\hat\phi$, $\hat{\mathcal R}$ | $\hat\phi$, $\hat{\mathcal R}$ (page-local) | **collision:** hat is not the test filter here |
-| $\gamma_0$, $\gamma_1$, $\lambda_1$, $\omega_0$, $\omega_1$ | (ROUND parameters and weights, page-local) | not the ratio of specific heats $\gamma$, the Taylor microscale $\lambda$ or the specific dissipation rate $\omega$; the WENO page writes them $g_0$, $g_1$, $\lambda_{\mathrm R}$, $\mathsf b_0$, $\mathsf b_1$ (and $\hat\phi$ as $\phi_{\mathrm n}$) |
+| $\gamma_0$, $\gamma_1$, $\lambda_1$, $\omega_0$, $\omega_1$ | (ROUND parameters and weights, page-local) | not the ratio of specific heats $\gamma$, the Taylor microscale $\lambda$ or the specific dissipation rate $\omega$; the concept pages write them in the registry §11 symbols $g_0$, $g_1$, $\lambda_{\mathrm R}$, $\mathsf b_0$, $\mathsf b_1$ (and $\hat\phi$ as $\phi_{\mathrm n}$); this page keeps the source's symbols in its formulas |
 | $\psi(r_f)$ | $\psi_{\mathrm{lim}}(r)$ (page-local) | **collision** with the $k$-$\sqrt kL$ surrogate $\psi$ |
 | $A$, $B$, $C$, $D$ (Eq. 2.13) | (auxiliary polynomials) | $C$, $D$ are also cell labels |
 | $\overline{u'^2}$, $\overline{u'w'}$, $\overline{w'^2}$ | $\langle u'^2\rangle$, $\langle u'w'\rangle$, $\langle w'^2\rangle$ | **collision:** overbar is the time average; components named as printed |

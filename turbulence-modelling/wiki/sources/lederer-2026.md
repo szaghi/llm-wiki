@@ -9,7 +9,7 @@ year: 2026
 venue: "Int. J. Numer. Methods Fluids, article fld.70103"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_International_Journal_for_Numerical_Methods_in_Fluids_Lederer_HighOrder_ProjectionBased_Upwind_Method_for_Simulation_of_Tr.pdf"
 tags: [implicit-les, numerical-dissipation, transition, separated-flow, incompressible-flow, high-order]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -90,7 +90,7 @@ the chord; meshes m1–m3 coarse to fine.
 12. The finest grid gives "precise prediction of transition phenomena" against experiment, read by the authors as an advantage of the low-dissipation MCS method preserving small-scale instabilities (§5). **Shown** (interpretation **Stated**)
 13. Laminar disturbances leading to transition are "not significantly affected" by the HOPU convection stabilization, and HOPU improves the turbulent part of the boundary layer "regardless of the transition mechanism" (§5). **Stated** (evidence: the two cases)
 14. Grid convergence: the $L^2$ norm of the difference of mean $C_p$ between consecutive meshes falls below 0.01 at m3, which is taken as the grid-independent reference (§4). **Shown**
-15. The projection step yields $[\![\tilde{\boldsymbol u}_h\cdot\boldsymbol n]\!]=0$ pointwise, hence $\tilde{\boldsymbol u}_h$ lies in the $H(\mathrm{div})$ velocity space, and the update is pointwise divergence-free because the discrete divergence maps into the pressure space (§2.3). **Derived**
+15. The projection step yields $[\![\boldsymbol g_h\cdot\boldsymbol n]\!]=0$ pointwise ($\boldsymbol g_h$ the source's $\tilde{\boldsymbol u}_h$), hence $\boldsymbol g_h$ lies in the $H(\mathrm{div})$ velocity space, and the update is pointwise divergence-free because the discrete divergence maps into the pressure space (§2.3). **Derived**
 16. The step-1 Schur complement $S=A-BM^{-1}B^t$ is symmetric positive definite: $-BM^{-1}B^t$ is spectrally equivalent to an HDG-like stiffness matrix and $A$ is the velocity mass matrix; the stress–multiplier block $M$ is invertible by inf-sup stability (cited) (§2.3). **Stated**/**Derived**
 17. For $\nu\Delta t\ll1$ the mass term dominates $S$, the BDDC primal constraints can be skipped, and the preconditioner becomes purely local with "optimal parallel scalability" (§2.3). **Stated** (no scaling data shown)
 18. The condensed step-2 matrix is symmetric positive definite (cited Boffi et al.) and is solved with PETSc GAMG (§2.3). **Stated**
@@ -104,7 +104,7 @@ the chord; meshes m1–m3 coarse to fine.
 # Printed slips
 
 - **Eq. (5):** printed "$-\frac{1}{\nu}(\sigma,\tau)-(\nabla\cdot\tau,u)-(\gamma,\tau)=0$", while Eq. (2a) carries $-\frac{1}{2\nu}\sigma$ and the text calls $a_h$ "the same 1/(2ν)-scaled L2-inner product as the first term in (5)" (§2.2, pp. 4–5).
-- **Eq. (12):** the update is printed "$u^{n+1}_h=u^n_h+\Delta t(u^*_h-\tilde u_h)$". *(Compiler check, not in the sources: in Eq. (10) $u^*_h$ is a velocity, and in Eq. (11) $\tilde u_h$ is the part of $u^*_h$ removed by the divergence-free projection, also a velocity; adding $\Delta t$ times a velocity to $u^n_h$ is dimensionally inconsistent, and the consistent update is $u^{n+1}_h=u^*_h-\tilde u_h$.)*
+- **Eq. (12):** the update is printed "$u^{n+1}_h=u^n_h+\Delta t(u^*_h-\tilde u_h)$". *(Compiler check, not in the sources: in Eq. (10) $u^*_h$ is a velocity, and in Eq. (11) $\tilde u_h$ ($\boldsymbol g_h$ on the HOPU page) is the part of $u^*_h$ removed by the divergence-free projection, also a velocity; adding $\Delta t$ times a velocity to $u^n_h$ is dimensionally inconsistent, and the consistent update is $u^{n+1}_h=u^*_h-\tilde u_h$.)*
 - **§4, p. 11:** "Averaging starts after 5 characteristic time lengths (U∞ /c)"; $U_\infty/c$ is an inverse time (the convective time is $c/U_\infty$).
 - **$C_{uu}$ (p. 7):** printed "$(\nabla\phi_{u,j}\cdot\phi_{u,j})\cdot\phi_{u,i}$", with $\phi_{u,j}$ repeated also in the facet term: a nonlinear term written as a matrix with a repeated index.
 - **Equation numbering (p. 10):** the HOPU form spans the lines labelled (15) and (16); the text refers to "the last integral in (15)", which is on line (16).
@@ -126,7 +126,7 @@ the chord; meshes m1–m3 coarse to fine.
 | $\Pi^l_{\hat V}$ | $\mathcal P^l$ (page-local) | **collision:** $\Pi$ is the SGS energy flux |
 | $\eta$, $\eta_i$, $\eta_{loc}$ | $r_J$, $r_{J,i}$ (page-local) | jump indicator $\int_E\lvert(I-\mathcal P^l)[\![u_h]\!]\rvert ds/\int_E\lvert\{\!\{u_h\}\!\}\rvert ds$; thresholds $\{0.1,0.2,0.3,0.4\}$ with $r_{J,-1}=0$, standard upwinding below $r_{J,0}$; **collision:** not the Kolmogorov length |
 | $\langle\cdot\rangle$, $[\![\cdot]\!]$ | $\{\!\{\cdot\}\!\}$, (jump) | facet average; **collision:** not a Reynolds average |
-| $u^*_h$, $\tilde u_h$ | (page-local) | intermediate velocity; projection-step velocity; **collision:** the tilde is not a Favre filter |
+| $u^*_h$, $\tilde u_h$ | $\boldsymbol u_h^*$, $\boldsymbol g_h$ (page-local, as on the [HOPU page](/methods/high-order-projection-based-upwind-method.md)) | intermediate velocity; projection-step velocity; **collision:** the tilde is not a Favre filter |
 | $\overline{(\cdot)}$ | $\langle\cdot\rangle$ | time and spanwise average; **collision:** not the LES filter |
 | $n$, $n^+$ | $y$, $y^+$ | local wall-normal coordinate |
 | $\lvert u_t\rvert^+$ | $u^+$ | mean tangential velocity in wall units, local $u_\tau$ |

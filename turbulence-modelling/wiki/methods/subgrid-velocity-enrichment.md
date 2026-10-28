@@ -5,7 +5,7 @@ description: "Hausmann et al.'s model reconstructs an approximate subgrid veloci
 status: established
 aliases: [velocity enrichment model, SGS velocity enrichment, subgrid-scale velocity reconstruction, LES-E, enriched LES]
 tags: [les, sgs-model, filtering]
-timestamp: 2026-10-27T20:40:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Subgrid velocity enrichment
@@ -45,7 +45,7 @@ divergence of the subgrid stress by a stochastic forcing $f_i$:
 $$\partial_tu^{<}_i+\bar u_j\partial_ju^{<}_i+u^{<}_j\partial_j\bar u_i=-\partial_ip^{<}+\big(\nu+\nu^{\mathrm{RNG}}_t\big)\partial_j\partial_ju^{<}_i+f_i,\qquad \partial_iu^{<}_i=0 .$$
 
 The viscosity $\nu^{\mathrm{RNG}}_t(k)$ is the renormalization-group form
-cited from Canuto & Dubovikov, with constant $C_\nu=2/5$ (page-local); its
+cited from Canuto & Dubovikov, with constant $C_\nu=2/5$ (registry §11); its
 printed formula and sign are discussed on the
 [spectral eddy viscosity](/methods/spectral-eddy-viscosity.md) page. The
 authors cite Laval et al. for the two effects that the viscosity is meant
@@ -127,8 +127,8 @@ DNS (§III):
 
 - **Forced isotropic turbulence** ([isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md),
   $Re_\lambda=75$; DNS $256^3$; LES $32^3$ with
-  [Smagorinsky](/methods/smagorinsky-model.md) $C_s=0.1$; standard
-  enrichment $8^3$ sub-domains of $4^3$ LES cells, $N_m=100$, $C_\nu=0.4$).
+  [Smagorinsky](/methods/smagorinsky-model.md) $C_s=0.1$; the enrichment's
+  "standard setup" $8^3$ sub-domains of $4^3$ LES cells, $N_m=100$, $C_\nu=0.4$).
   The subgrid spectrum computed from the coefficients coincides well with
   the DNS beyond the LES cutoff, so LES plus enrichment recovers the whole
   DNS range; a discrete Fourier transform of the sampled, discontinuous
@@ -151,8 +151,7 @@ DNS (§III):
   flows), show no trend for $N_m\ge100$ (200 and 400 tested) and change
   little when $C_\nu$ is varied by a factor of 16 (0.1 to 1.6). Multiplying
   the energy target by 1.5 and 2.0 widens the tails without changing the
-  shape, so the conclusion that tuning parameters are insignificant does
-  not extend to the energy level.
+  shape (Fig. 10b).
 - **Cost** (Table III, per reference time, hardware not stated): LES
   $32\times10^3$ s, LES with enrichment $69\times10^3$ s, DNS
   $340\times10^6$ s. The enrichment about doubles the LES cost; the

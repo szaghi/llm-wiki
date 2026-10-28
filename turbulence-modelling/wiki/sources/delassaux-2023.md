@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 262:105935"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Computers_amp_Fluids_Delassaux_Numerical_analysis_of_unsteady_flow_features_around_a_realis.pdf"
 tags: [hybrid-rans-les, des, rans, separated-flow, grid-requirements]
-timestamp: 2026-10-26T20:45:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Summary
@@ -41,12 +41,13 @@ a 3 mm surface mesh is too fine there, and 6 mm is advised, in line with
 Menter's criterion on the ratio of the largest cell size to the boundary-layer
 thickness. The [numerical dissipation](/properties/numerical-dissipation.md)
 of the convection scheme and the CFL number are chosen from the Ahmed-body
-experience. A DDES run costs 18 times the wall-clock time of a RANS run. The
-introduction places the work in a taxonomy of scale-resolving methods
+experience. A DDES run costs 18 times the wall-clock time of a RANS run.
+Section 4.1 places the work in a taxonomy of scale-resolving methods
 ([implicit LES](/definitions/implicit-les.md),
 [wall-modelled LES](/methods/wall-modelled-les.md),
-[DNS](/definitions/direct-numerical-simulation.md)) and recalls Spalart's
-forecast of [grid requirements](/results/les-grid-point-requirements.md).
+[DNS](/definitions/direct-numerical-simulation.md)) and cites Spalart's
+forecast of [grid requirements](/results/les-grid-point-requirements.md)
+(wall-resolved LES and DNS of a full-scale geometry in 2050 and 2080).
 
 # Version read
 

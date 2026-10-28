@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 266:106060"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Computers_amp_Fluids_Tonicello_Fully-discrete_spatial_eigenanalysis_of_discontinuous_spectr.pdf"
 tags: [high-order, numerical-dissipation, spectral-difference, flux-reconstruction, implicit-les, time-integration]
-timestamp: 2026-10-28T02:15:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Summary
@@ -26,7 +26,7 @@ advection with an upwind-parameterized interface flux, in its
 [DG](/methods/discontinuous-galerkin-spectral-element-method.md) and
 [spectral difference](/methods/spectral-difference-method.md)
 recoveries. The fully-discrete dispersion relation
-$\det(\mathbf T(k_h,\Delta t)-e^{-\iota\omega_{\mathrm f,h}\Delta t}\mathbf I)=0$ is a
+$\det(\mathbf T(k_h,\Delta t)-e^{-\iota\omega_{\mathrm f}\Delta t}\mathbf I)=0$ is a
 polynomial in $z=e^{\iota k_h}$ whose degree grows with the number of
 stages.
 
@@ -77,7 +77,7 @@ and the RK amplification matrix $\mathbf T(k_h,\Delta t)=\sum_m\beta_m(\mathbf H
 (Eqs. 11, 13).
 
 1. Earlier spatial eigenanalyses of high-order methods were semi-discrete; the generalization including time discretization "remains, as of yet, unexplored", and this is "the first fully-discrete version of the spatial eigenalaysis for high-order methods" (§1, §5). **Stated**
-2. The fully-discrete spatial dispersion relation is $\det(\mathbf T(k_h,\Delta t)-e^{-\iota\omega_{\mathrm f,h}\Delta t}\mathbf I)=0$ (Eq. 18), which for $\Delta t\to0$ reduces to the semi-discrete $\det(\mathbf H(k_h)+\iota\omega_{\mathrm f,h}\mathbf I)=0$ (Eqs. 17, 21) (§2.2). **Derived**
+2. The fully-discrete spatial dispersion relation is $\det(\mathbf T(k_h,\Delta t)-e^{-\iota\omega_{\mathrm f}\Delta t}\mathbf I)=0$ (Eq. 18), which for $\Delta t\to0$ reduces to the semi-discrete $\det(\mathbf H(k_h)+\iota\omega_{\mathrm f}\mathbf I)=0$ (Eqs. 17, 21) (§2.2). **Derived**
 3. For explicit Euler (RK11) the characteristic polynomial in $z=e^{\iota k_h}$ has the order of the semi-discrete one, giving a single transmitted physical mode under upwinding (Eq. 20, §3, Fig. 1). **Derived**
 4. The 5th-order upwind FR-SD scheme with RK11 shows negative dissipation (convective instability) at low frequency for $\Delta t=0.01,\dots,0.1$, "re-affirm[ing] that RK11 (explicit Euler) is only marginally stable for pure advection"; for moderately large $\Delta t$ waves regain stability beyond some frequency (§3, Fig. 1). **Shown**
 5. With upwinding the number of modes equals the number of RK stages (RK22 two, RK33 three, RK45 five); for non-upwind fluxes the number of roots is twice the number of stages, half of them reflected (§3, Figs. 2, 4, 5, 31, 32). **Derived** / **Shown**
@@ -118,14 +118,14 @@ and the RK amplification matrix $\mathbf T(k_h,\Delta t)=\sum_m\beta_m(\mathbf H
 |---|---|---|
 | $\theta$ | $k$ | wavenumber (spectral-page convention; **collision** with the TKE $k$) |
 | $\omega$ | $\omega_{\mathrm f}$ (page-local) | angular frequency; subscript avoids the specific dissipation rate $\omega$ |
-| $\tilde\theta$, $\tilde\omega$ | $k_h$, $\omega_{\mathrm f,h}$ (page-local) | numerical complex wavenumber and frequency; **collision:** the source's tilde is not a Favre filter |
+| $\tilde\theta$, $\tilde\omega$ | $k_h$, $\omega_{\mathrm f,h}$ (registry §11) | numerical complex wavenumber and frequency; in the spatial relations (Eqs. 17–22) the prescribed real $\tilde\omega$ is written $\omega_{\mathrm f}$, as on [eigensolution analysis](/methods/eigensolution-analysis.md); **collision:** the source's tilde is not a Favre filter |
 | $\iota$ | (imaginary unit) | |
 | $N$ | $N$ | used as the polynomial degree; order $N+1$ |
 | $h$ | $h$ | element width |
 | $\hat x$, $\hat x_i$ | $\xi$, $\xi_i$ | reference coordinate and solution points on $[-1,1]$ |
 | $\mathbf D$ | $D_{ij}$ | differentiation matrix |
 | $\hat f_L^I$, $\hat f_R^I$ | $f^*$ | interface fluxes |
-| $\alpha$ | $\alpha_{\mathrm T}$ (page-local) | upwinding parameter, 0 upwind, 0.5 centred; $\lambda_{\mathrm{up}}=1-2\alpha_{\mathrm T}$ of [eigensolution analysis](/methods/eigensolution-analysis.md); **collision** with the DG/FV blending factor $\alpha$ |
+| $\alpha$ | $\alpha_{\mathrm T}$ (registry §11) | upwinding parameter, 0 upwind, 0.5 centred; $\lambda_{\mathrm{up}}=1-2\alpha_{\mathrm T}$ of [eigensolution analysis](/methods/eigensolution-analysis.md); **collision** with the DG/FV blending factor $\alpha$ |
 | $l_j$, $g_L$, $g_R$, $\mathbf l$, $\mathbf r$, $\mathbf g_L$, $\mathbf g_R$ | (Lagrange basis, correction functions and their vectors) | page-local |
 | $\mathbf C^-$, $\mathbf C^0$, $\mathbf C^+$, $\mathbf H$, $\mathbf T$ | (neighbour coupling matrices, semi-discrete operator, RK amplification matrix) | page-local |
 | $\beta_m$, $\boldsymbol\beta$ | $\beta_m$ (page-local) | Runge–Kutta coefficients; **collision** with the field-inversion $\beta(\boldsymbol x)$ |

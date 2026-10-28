@@ -9,7 +9,7 @@ year: 2022
 venue: "Flow Turbul. Combust. 109:841-869"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Flow_Turbulence_and_Combustion_Menter_An_Algebraic_LCTM_Model_for_LaminarTurbulent_Transition_Pred.pdf"
 tags: [rans, transition, intermittency]
-timestamp: 2026-10-25T13:53:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Summary
@@ -72,7 +72,7 @@ numbers on this page are those of the version of record.
 20. On the zero-pressure-gradient T3 cases the transition location agrees with the transport models and experiment (Fig. 8); on T3C the agreement is satisfactory, with earlier bypass transition than the transport models, while for T3C3 and T3C4 γ-alg-SST and γ-SST predict bubble transition later than γ-$Re_\theta$-SST (Fig. 9). **Shown**.
 21. On the Volino cases the model captures the reduction of bubble size with Reynolds number but tends to underpredict the bubble size (Fig. 10). **Shown**.
 22. On NLF(1)-0416F the upper-surface transition location agrees with experiment for $\alpha=-12^\circ$ to $+2^\circ$, while γ-$Re_\theta$-SST falls outside the experimental range at all angles and γ-SST delays transition at negative $\alpha$; all models capture the laminar drag bucket (Figs. 13–15). **Shown**.
-23. On the Eppler 387 the algebraic model slightly underpredicts and γ-$Re_\theta$-SST slightly overpredicts the bubble size; γ-SST overpredicts it significantly at low $Re_c$ in the mid-$\alpha$ range, which points to a deficiency of that model's bubble terms (Figs. 16–19). **Shown**.
+23. On the Eppler 387 the algebraic model slightly underpredicts and γ-$Re_\theta$-SST slightly overpredicts the bubble size; γ-SST overpredicts it significantly at low $Re_c$ in the mid-$\alpha$ range, which the authors take as pointing to a deficiency of that model's bubble terms (Figs. 16–19). **Shown**.
 24. On S809 natural transition starts at $\alpha=6^\circ$ for the algebraic model and $7^\circ$ for the transport models, against about $5^\circ$ in experiment; the algebraic model gives slightly better lift and drag (Figs. 20–22). **Shown**.
 25. On Pak-B all three LCTM models reproduce the bubble-size trends; γ-alg-SST is on the small-bubble side at $Re=5\cdot10^4$, $Tu=0.08\%$, and γ-SST overpredicts the bubble at $Re=5\cdot10^4$, $Tu=2.85\%$ (Fig. 24). **Shown**.
 26. The transport models give reasonable T3A results even with streamwise spacing $10\delta$; the algebraic model deviates from $2\delta$ and is "clearly less forgiving", especially compared with γ-$Re_\theta$ (§4, Fig. 26). **Shown**.
@@ -89,11 +89,11 @@ numbers on this page are those of the version of record.
 - Introduction: "Slotnick et al. 2030" against the reference list's 2014 report; "Smith and Gamberone (1956)" against "Gamberoni" in the list; "Coder and Maughmer (2014, 2019)" while the 2019 reference is Coder alone; "Drela (1987)" for Drela and Giles (1987); "Ge at al. (2015)".
 - §3.1: "experiments of Hultgren and Volino (2001)"; reference and Fig. 10 caption give Volino and Hultgren (2001).
 - §3.1 gives the Volino cases at "Tu = 0.2% and Tu = 7%"; Table 2 lists $Tu=0.2$ and $2.5$ (%).
-- Table 4: NLF(1)-0416F inlet $Tu=1.5570\%$ and $\mu_t/\mu=1.5515$, against inlet values of about 0.05–0.11% for the other airfoils and 0.10% at the leading edge, with freestream-sustaining terms that "prevent rapid turbulence intensity decay". Inconsistent with the stated setup; the intended value cannot be recovered from the paper.
+- Table 4: NLF(1)-0416F inlet $Tu=1.5570\%$ and $\mu_t/\mu=1.5515$, against inlet values of about 0.05–0.11% for the other airfoils and 0.10% at the leading edge, with freestream-sustaining terms that "prevent rapid turbulence intensity decay". Inconsistent with the stated setup; the paper gives no other value.
 - §4, p. 864: "For higher values of y+, the transition location moves upstream for the γ-SST and stays unaffected for the γ-alg-SST models. For the γ-alg-SST model, the solution is unaffected for y+max < 6 and then moves upstream." The two sentences contradict each other for γ-alg-SST.
 - Typos: "The 'max' function in the denominator us applied" (§2.4); "Alternative correlations where developed" (§1).
 - Reference list: Ge et al. (2015) prints the journal "Flow Turbul. Combust." with DOI 10.31274/etd-180810-4424; Suluksna et al. (2009) prints "Int. J. Heat Mass Transf." with a DOI of Int. J. Heat Fluid Flow and a title ending "- ScienceDirect".
-- Eq. (11) with Table 1: *(compiler check, not in the sources)* with $CFPG=0.6$ or $1.0$ and $CAPG=-0.5$, both branches give $FPG\le1$ (the floor 0.25 is reachable, the cap 4 is not), so the onset correlation is lowered for both signs of $\lambda_{\theta l}$. The paper neither plots nor discusses $FPG$; this is recorded, not asserted as a slip.
+- Eq. (11) with Table 1: *(compiler check, not in the sources)* with $CFPG=0.6$ or $1.0$ and $CAPG=-0.5$, both branches give $FPG\le1$ (the floor 0.25 is reachable, the cap 4 is not), so the onset correlation is lowered for both signs of $\lambda_{\theta l}$. The paper neither plots nor discusses $FPG$.
 
 # Notation map
 

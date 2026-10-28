@@ -9,7 +9,7 @@ year: 2026
 venue: "Comput. Fluids 319:107232"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Computers_amp_Fluids_Brillon_Large_eddy_simulation_using_nonlinearly_stable_flux_reconstr.pdf"
 tags: [flux-reconstruction, implicit-les, entropy-stable, numerical-dissipation, sgs-model, high-order]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -118,9 +118,9 @@ Equation, table, figure and section numbers below are those of arXiv v1.
 | $\langle\cdot\rangle$ | (volume average over the domain) | **collision:** not a Reynolds average |
 | $\varepsilon=-dE_K/dt$, $\varepsilon_v$, $\varepsilon_P$, $\varepsilon_\zeta$ | $\varepsilon$ and its viscous, pressure-dilatation and enstrophy-based parts | page-local subscripts |
 | $\zeta$ | (enstrophy, $\frac12\langle\rho\omega_k\omega_k\rangle/\langle\rho\rangle$) | |
-| $\nu_{\mathrm{effective}}$ | (effective-viscosity ratio $Re\,\varepsilon/(2\zeta)$) | distinct from §11 $\nu_{\mathrm{eff}}$ of a projected stress |
+| $\nu_{\mathrm{effective}}$ | $\nu^\omega_{\mathrm{eff}}/\nu$ (registry §11; the ratio $Re\,\varepsilon/(2\zeta)$) | distinct from §11 $\nu_{\mathrm{eff}}$ of a projected stress |
 | $\kappa$, $\kappa_c$, $\kappa_{grid}$ | $k$, $k_c$, (grid cutoff $N_{\mathrm{el}}/2$) | **collision:** $\kappa$ is also the thermal conductivity (Eqs. 7–8) |
-| $\{\{\cdot\}\}$, $(\cdot)^{\ln}$ | $\{\!\{\phi\}\!\}$, $\phi^{\ln}$ | arithmetic mean agrees; logarithmic mean page-local, written as on [entropy conservation](/properties/entropy-conservation.md) |
+| $\{\{\cdot\}\}$, $(\cdot)^{\ln}$ | $\{\!\{\phi\}\!\}$, $\phi^{\ln}$ | arithmetic mean agrees; logarithmic mean registry §11, written as on [entropy conservation](/properties/entropy-conservation.md) |
 | $F^r_{c,m}$ | $f^{\#}$ (matrix of two-point fluxes) | |
 | $c_{DG}$, $c_{SD}$, $c_{HU}$, $c_+$ | (ESFR correction parameter values) | |
 | GL, GLL | (Gauss–Legendre, Gauss–Lobatto nodes) | |

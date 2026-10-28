@@ -5,7 +5,7 @@ description: "Turbulent flow over a sudden expansion with fixed separation at th
 status: established
 aliases: [BFS, backstep, backward-facing step flow, sudden expansion, Kasagi–Matsunaga step, Vogel–Eaton step, Driver–Seegmiller step, A3C step, curved backward-facing step, CBFS]
 tags: [benchmark, separated-flow, les, hybrid-rans-les, mesh-adaptation, data-driven, uncertainty-quantification, field-inversion, rans, dg, lattice-boltzmann, spectral-element]
-timestamp: 2026-10-27T20:45:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Backward-facing step
@@ -26,6 +26,18 @@ learned RANS closure to a geometry it was not trained on, and the limit of
 a RANS wall function in the recirculation, a RANS model without wall
 distance in spectral elements, and the shielding of a zonal detached-eddy
 simulation on the isotropic grids of a lattice Boltzmann solver.
+
+Historically the step is one of the first "complex" flows of direct
+numerical simulation: [Kim & Leonard (2024)](/sources/kim-2024-b.md),
+§4.6, cite the DNS of Le & Moin (1994) and Le, Moin & Kim (1997) as an
+example, after the riblet DNS of Choi et al., of the move from simple to
+complex flows at the Center for Turbulence Research, here turbulence with
+separation and reattachment. They note that such spatially developing
+flows need inflow and outflow conditions: the outflow is handled by an
+advective condition (Lowery & Reynolds 1986), the turbulent inflow by the
+recycling method of Lund et al. (1998) "or its variation", since then in
+common use (see [inflow turbulence generation](/methods/inflow-turbulence-generation.md)
+and [direct numerical simulation](/definitions/direct-numerical-simulation.md)).
 
 ## Configurations in the sources
 
@@ -219,8 +231,8 @@ last 600 averaged. From the zero crossing of $C_f$:
 | LES (dynamic $k$-equation) | 5.1 |
 
 On the same coarse mesh the database closure thus lands within the
-experimental band and the LES 15% short of it *(compiler check, not in
-the sources)*.
+experimental band and the LES 15% below the experimental value 6
+*(compiler check, not in the sources)*.
 
 **Probabilistic learned closure at low Reynolds number.**
 [Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md) (read in arXiv
@@ -400,7 +412,7 @@ flows on which SpaRTA was demonstrated (§3.4).
   authors attribute the DNS to Jovic & Driver and the experiment to Le, Moin
   & Kim, the reverse of their own §III A and of the printed reference
   titles.
-- Two sources now report how learned or corrected RANS models trained on
+- Two sources report how learned or corrected RANS models trained on
   one separated geometry carry over to the other: the gene-expression
   models trained on the step showed "a high level of uncertainty" on the
   hill (as cited by Duraisamy et al., §5.3), while the closure of Tang et al.,
@@ -461,3 +473,4 @@ flows on which SpaRTA was demonstrated (§3.4).
 - [Husson et al. (2024)](/sources/husson-2024.md) — §4.2.1–4.2.2, Table 1, Figs. 6–11.
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §2.1–2.2, Eqs. 2, 4, 11, 12; §4.1–4.2, Tables 1–2, Figs. 5–7; App. A, Eqs. A.13–A.15; App. C.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.4; §4.1 (cited step-to-hill transfer of GEP models).
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §4.6 (historical; cites Le & Moin 1994, Le et al. 1997).

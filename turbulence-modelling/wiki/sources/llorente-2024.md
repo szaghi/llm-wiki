@@ -9,7 +9,7 @@ year: 2024
 venue: "Phys. Fluids 36:071702"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Physics_of_Fluids_Llorente_Theoretical_considerations_of_the_volume_penalization_immers.pdf"
 tags: [immersed-boundary, rans, eddy-viscosity, incompressible-flow]
-timestamp: 2026-10-27T15:53:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -108,7 +108,7 @@ overbar.
 | $R_{ij}:=-\overline{u'_iu'_j}=\nu_t\,\partial\overline u_i/\partial x_j$ (p. 4) | $R_{ij}=\langle u_i'u_j'\rangle=-\nu_t\,\partial_j\langle u_i\rangle$ (the printed closure, translated) | **sign:** the source's $R_{ij}$ is minus the registry's. The printed closure is the non-symmetric velocity gradient without the factor 2 and without $\tfrac23k\delta_{ij}$, against the registry's $R_{ij}-\tfrac23k\delta_{ij}=-2\nu_t\langle S_{ij}\rangle$ |
 | $\overline\Pi_{ij}=\overline u_i\overline u_j-(\nu+\nu_t)\partial_j\overline u_i+(\overline p/\rho)\delta_{ij}$ | (total momentum flux, page-local) | built on the printed closure |
 | $\nu_t$ | $\nu_t$ | agrees; no RANS model specified |
-| $\eta$ | $\eta_p$ (page-local, as on the immersed-boundary page) | **collision:** not the Kolmogorov length |
+| $\eta$ | $\eta_p$ (permeability, registry §11) | **collision:** not the Kolmogorov length |
 | $\chi$ | $\chi$ (mask, page-local) | **collision:** not the SA ratio $\tilde\nu/\nu$ |
 | $\mathscr R_\eta=\chi/\eta$, $\mathscr R_{\eta_T}=\chi/\eta_T$ | $\mathcal R$, $\chi/\eta_{p,T}$ (page-local, as on the immersed-boundary page) | fluid and thermal resistance |
 | $u_{\eta,i}$, $p_\eta$ | $u_i$, $p$ | penalized solution; the subscript is dropped after Eq. (4) |

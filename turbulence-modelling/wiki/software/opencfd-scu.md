@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "OpenCFD-SCU"
-description: "OpenCFD-SCU is an open-source CUDA-C/HIP finite-difference code for DNS of compressible wall-bounded turbulence, ported from the CPU code OpenCFD-SC; this page records its numerics, parallel and GPU design, reported performance, its 31-billion-point compression-ramp DNS and a 5.5-billion-point Mach 6 swept-ramp DNS."
+description: "OpenCFD-SCU is an open-source CUDA-C/HIP finite-difference code for DNS of compressible wall-bounded turbulence, ported from the CPU code OpenCFD-SC; this page records its numerics, parallel and GPU design, reported performance, its compression-ramp and swept-ramp DNS up to 31 billion points, wall-temperature ramp DNS, and the CPU and reacting relatives OpenCFD-SC and OpenCFD-Comb."
 status: established
 aliases: [OpenCFD-SC, OpenCFD SCU]
 tags: [software, dns, gpu, compressible, boundary-layer]
-timestamp: 2026-10-27T21:07:00Z
+timestamp: 2026-10-28T07:04:00Z
 ---
 
 # OpenCFD-SCU
@@ -152,7 +152,83 @@ CPU core of OpenCFD-SC, that weak scaling "can reach about 98.7% on 24 576
 GPUs", and that "considering the comprehensive energy efficiency" it
 "reduces the computing cost by more than 90%" (§II A).
 
+## Wall-temperature effects on a Mach 6 ramp
+
+[Zhang et al. (2024b)](/sources/zhang-2024-b.md), whose authors include
+Dang and Li, run OpenCFD-SCU (citing Dang et al. 2022a, b) for DNS of the
+[shock/turbulent-boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+on a $34^\circ$ compression ramp at $M_\infty=6$, $Re_\infty=2\times10^4$/mm,
+$T_\infty=79$ K, with isothermal walls at $T_w/T_r=0.50$, 0.75 and 1.0
+($T_r=585$ K; $Re_\tau=675$, 411, 293 at the reference station). Their
+configuration (§2.1–2.2):
+
+- characteristic Steger–Warming splitting with a hybrid of seventh-order
+  upwind linear (UDL7), seventh-order WENO and fifth-order WENO in smooth,
+  non-smooth and extremely non-smooth regions, ranked UDL7 < WENO7 < WENO5
+  in dissipation and selected by a modified Jameson–Schmidt–Turkel
+  pressure-gradient sensor with two thresholds (formula and thresholds not
+  printed; see [WENO and hybrid schemes](/methods/weno-scheme.md) and
+  [shock sensors](/definitions/shock-sensor.md)); they state that UDL7 and
+  WENO7 alone cannot keep the run stable in the reattachment region and that
+  WENO5 is "significantly more dissipative" than WENO7;
+- eighth-order central viscous fluxes and third-order TVD Runge–Kutta;
+  fifth-order WENO with zero-weight outside substencils near boundaries, as
+  in Dang et al. (2022) above;
+- two meshes per wall temperature, the largest $4700\times400\times300$,
+  with $\Delta x^+$, $\Delta y^+$, $\Delta z^+$ from about 4.9, 0.48, 4.8
+  (coarse) to 3.5, 0.35, 3.5 (fine); mean wall pressure and $C_f$ near the
+  corner are almost identical on the two (Table 2, Fig. 3).
+
+Their Table 1 lists the earlier validations of OpenCFD-SC and -SCU that
+they cite (a Mach 6 blunt-cone transition, Mach 2.9 ramps with and without
+riblets, flat-plate boundary layers at Mach 2.25 to 8, the Mach 6 swept
+ramp of Zhang et al. (2022c) above). Replicating a Mach 2.9, $24^\circ$
+ramp of Zhu et al. on $2160\times160\times140$ points, they find a 5%
+deviation of the van Driest-transformed velocity in the wake region, which
+they attribute to the more dissipative fourth-order bandwidth-optimized WENO
+of Zhu et al. against their hybrid, "close to UDL7" in the boundary layer
+(§3.3, Table 5; see [numerical dissipation](/properties/numerical-dissipation.md)).
+
+## The CPU and reacting relatives: OpenCFD-SC and OpenCFD-Comb
+
+Two further DNS studies run the CPU parent and a reacting extension, with
+numerics of the same family:
+
+- **OpenCFD-SC** ([Tang et al. 2024](/sources/tang-2024.md), §2.1): a Mach 5,
+  $30^\circ$ compression ramp at $Re_\theta=4652$ with a cold wall,
+  $T_w/T_r=0.5$, run with the open-source CPU code ("We thank Prof. Li X.-L.
+  for providing the open source code"): Steger–Warming splitting, a hybrid
+  of seventh-order low-dissipation upwind, seventh-order WENO and
+  fifth-order WENO switched by a modified Jameson sensor, sixth-order
+  central viscous terms and third-order Runge–Kutta. Grid convergence is
+  reached on $2660\times204\times300=1.63\times10^8$ points with
+  $y^+=0.33$ at the reference station, $\Delta x^+=6.6$–17.5 and
+  $\Delta z^+=6.6$, out of five grids (§2.2, Table 2); the authors find the
+  wall gradients ($C_f$, Stanton number) more grid-sensitive than the
+  turbulence profiles. The heat-transfer results are on
+  [shock/turbulent-boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+  and [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md).
+- **OpenCFD-Comb** ([Wang & Xu 2024](/sources/wang-2024-h.md), §2.2), the
+  reacting extension of OpenCFD by Li's group: a DNS of a Mach 2.33
+  supersonic [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)
+  with a hydrogen film flame (9 species, 19 steps), with sixth-order OMP6
+  convection, eighth-order central viscous terms, third-order Runge–Kutta
+  and Strang splitting of the chemical source, on
+  $2206\times585\times356$ points with $\Delta x^+\le7.88$,
+  $\Delta y_w^+\le0.85$, $\Delta z^+\le4.21$ in the reacting case (Tables
+  2–3); no grid-convergence test was run "because of computational
+  constraints" (App. B). Nine species give nearly three times the
+  primitive variables of a non-reacting run (App. B).
+
 ## Qualifications
+
+- Wang & Xu (2024, App. B): "The total number of grids employed is 4.6 ×
+  10^9"; the grid of §2.3 gives $2206\times585\times356\approx4.6\times10^8$
+  *(compiler check, not in the sources)*.
+- Zhang et al. (2024b) do not print the sensor formula or thresholds and
+  defer them to Dang et al. (2022a); Tang et al. (2024) do not name the
+  sensor thresholds either, and their seventh-order upwind scheme is
+  described only as "low-dissipation".
 
 Printed inconsistencies in the version read (author manuscript):
 
@@ -186,3 +262,6 @@ Printed inconsistencies in the version read (author manuscript):
 
 - [Dang et al. (2022)](/sources/dang-2022.md) — §1; §2, Eqs. (1)–(45) (equations and numerics); §3–§4, Figs. 3–15 (parallel and GPU design); §5, Tables 5–7, Figs. 16–21 (validation, performance); §6.1, Figs. 22–25 (wide-span ramp); §7.
 - [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II A (code, numerics, performance claims); §II B–C, Tables I–II, Fig. 6 (grids, inflow); §III B–C (grid sensitivity of peaks, comparison data).
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.1–2.2, Tables 1–2, Fig. 3 (OpenCFD-SCU hybrid scheme, set-up, meshes, grid independence); §3.3, Table 5 (Mach 2.9 replication).
+- [Tang et al. (2024)](/sources/tang-2024.md) — §2.1 (OpenCFD-SC numerics); §2.2, Table 2, Figs. 3–9 (grid convergence).
+- [Wang & Xu (2024)](/sources/wang-2024-h.md) — §2.2 (OpenCFD-Comb numerics, grid); §2.3, Tables 2–3; App. B (resolution, cost).

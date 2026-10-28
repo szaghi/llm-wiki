@@ -5,7 +5,7 @@ description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on t
 status: established
 aliases: [DGSEM, DG-SEM, modal DG, nodal discontinuous Galerkin, collocation DG, DG spectral element method, hybridizable discontinuous Galerkin, HDG]
 tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns, flux-reconstruction]
-timestamp: 2026-10-28T02:15:00Z
+timestamp: 2026-10-28T06:44:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -406,6 +406,15 @@ correction-function parameter that recovers collocation nodal DG, with
 Gauss–Legendre solution points (to limit aliasing, citing Witherden &
 Vincent), as the base of their a posteriori subcell limiter for
 one-dimensional detonations.
+[Vermeire (2024)](/sources/vermeire-2024.md), §3, Eqs. (6)–(13), use the
+FRDG variant in lifting-collocation-penalty form on Gauss solution points,
+whose lifting coefficients recover DG for linear equations, for implicit
+LES of incompressible flow with entropically damped artificial
+compressibility (scheme and results on
+[flux reconstruction](/methods/flux-reconstruction.md) and
+[implicit LES](/definitions/implicit-les.md)); one of the references of
+their [SD7003 airfoil](/benchmarks/sd7003-airfoil.md) runs is a DG
+computation at $N=7$ by Beck et al. that they cite (§4.3).
 
 **Fully-discrete spatial eigenanalysis of FR-DG.**
 [Tonicello et al. (2023)](/sources/tonicello-2023.md), §3, Fig. 7,
@@ -477,6 +486,35 @@ reconstructed DG of Dumbser et al. (finite volumes at $N=0$, DG at $M=N$)
 for multi-material flow, without turbulence, and concludes that DG for
 diffuse-interface models is used mostly with reduced five-equation models
 on structured meshes.
+
+**DG, its hybridized forms and DG combustion LES in a multiphase review.**
+[Lv & Ekaterinaris (2023)](/sources/lv-2023.md), §3.1, Eq. (20), write
+the one-dimensional DG weak form on a reference element, with a Riemann
+flux at the element ends, and state that any basis with a well-conditioned
+mass matrix is admissible, nodal or modal; equally spaced nodes with
+Lagrange polynomials become unsuitable at very high order because the
+condition number of the mass matrix deteriorates, which well-chosen nodes
+avoid (citing Karniadakis & Sherwin and Hesthaven & Warburton). They list
+the viscous discretizations (interior penalty, Bassi–Rebay, LDG, compact,
+recovery, reconstructed and direct DG). Hybridized and embedded DG
+(§3.4, Eq. 28) add a face unknown $\hat U$ (page-local) with the
+one-sided flux $\hat F(\hat U,U_f)=F(\hat U)+|\partial F/\partial U(\hat U)|_{\max}(\hat U-U_f)$;
+only the face unknowns are globally coupled, which lowers memory and cost
+for steady problems and implicit time integration, and the embedded form
+also enforces continuity at each face node, reducing the global unknowns
+further. Two DG combustion LES of the first author's group are reviewed
+(§6.3, Figs. 14–16): the Volvo bluff-body premixed flame at $N=3$ on
+10,000 hexahedra (64 degrees of freedom per element) with a
+[thickened flame model](/methods/thickened-flame-model.md), where "the
+reaction zone is captured by only one or two elements" against "more than
+ten cells" for second-order schemes (stated, not run side by side), and a
+piloted dimethyl-ether jet flame at $N=2$ on 12,000 elements with a
+[flamelet/progress-variable model](/methods/flamelet-tabulated-chemistry.md),
+in "excellent agreement" with the measurements except near the nozzle.
+Their conclusion is that stabilization techniques struggle to generalize
+to high degree, unstructured meshes and three dimensions (§7; shock
+capturing on [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
+and [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)).
 
 **Residual-stabilized continuous Galerkin.** At the low-order end of the
 continuous family, [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md)
@@ -1201,6 +1239,13 @@ fine one (§3). See
 
 ## Qualifications
 
+- **Printed forms (Lv & Ekaterinaris 2023).** The review prints the
+  mass matrix as $\int_{-1}^{1}\varphi_j\varphi_i\,d\xi$ while its
+  reference element and Eq. (20) use $[0,1]$, and calls the representation
+  "of order p or degree p+1" while its expansion has $p+1$ basis
+  functions of degree $p$ and its "DGP3" is fourth order; this page writes
+  the degree $N$. The combustion comparisons with second-order schemes are
+  stated from the cited works.
 - **The log basis of Lv et al. (2021).** Eq. (3) writes the basis function
   $\kappa^{-1}\log((y+y_0)/y_0)$, Eq. (8) $\log((y-y_0)/y_0)$. The paper
   does not say how $y_0$ is set in the runs.
@@ -1383,3 +1428,5 @@ fine one (§3). See
 - [Potluri et al. (2023)](/sources/potluri-2023.md) — §3.1–3.2, Eqs. (4)–(14) (strong, subcell and split forms; BR1); §4.3, Table 2, Figs. 6–7; §4.7, Fig. 15, Table 3 (dependence on $N$ at fixed degrees of freedom).
 - [Liu & Yuan (2023)](/sources/liu-2023-b.md) — §2.2 (VCJH flux reconstruction recovering collocation nodal DG on Gauss–Legendre points).
 - [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §3, Fig. 7, App. Figs. 29–30 (FR-DG against FR-SD eigencurves, CFL limits).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §3.1, Eq. (20) (DG weak form, nodal and modal bases, mass-matrix conditioning, viscous discretizations); §3.4, Eq. (28) (HDG/EDG face unknowns); §6.3, Figs. 14–16 (DG combustion LES, reviewed); §7.
+- [Vermeire (2024)](/sources/vermeire-2024.md) — §3, Eqs. (6)–(13) (FRDG recovering DG for linear equations); §4.3 (DG reference at $N=7$ for SD7003, cited).

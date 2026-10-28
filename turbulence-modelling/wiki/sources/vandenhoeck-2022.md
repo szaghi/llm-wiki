@@ -9,7 +9,7 @@ year: 2022
 venue: "Comput. Phys. Commun. 278:108408"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Computer_Physics_Communications_Vandenhoeck_Development_of_an_implicit_high-order_flux_reconstruction_so.pdf"
 tags: [rans, transition, flux-reconstruction, k-omega, high-order, software]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Summary
@@ -77,7 +77,7 @@ that of this version.
 17. Mesh B ($y_1^+\simeq25$): discontinuities visible at $N=5$ disappear at $N=6$; $N=4$ on mesh A and $N=5$, $N=6$ on mesh B coincide, so accurate results are obtained at $y_1^+\simeq25$ without wall functions, larger than state-of-the-art second-order finite-volume solvers allow without wall-extended functions (Abstract, §4.1, Fig. 10). **Shown** (the finite-volume comparison **Stated**)
 18. T3 cases on the 143-element mesh: low orders are inadequate ($N=0$ shows no transition); higher orders approach experiment and the two highest coincide; T3A and T3A− results are very close to the finite-volume reference of Langtry and Menter (about 39,000 elements, rounded leading edge), and for T3A− coincide with it (§4.2, Figs. 12–13). **Shown**
 19. For T3B the FR solution is "remarkably closer" to experiment than the finite-volume reference, attributed "most likely" to FR accuracy (§4.2, Fig. 12b). **Shown** (attribution **Stated**)
-20. The T3A $N=5$ $C_f$ is nearly identical for the VCJH parameters $c_{SD}$, $c_{DG}$, $c_{g2}$ (§4.2, Fig. 14). **Shown**
+20. The T3A $N=5$ $C_f$ is nearly identical for the VCJH parameters $c_{\mathrm{SD}}$, $c_{\mathrm{DG}}$, $c_{\mathrm{HU}}$ (the source's $c_{SD}$, $c_{DG}$, $c_{g2}$) (§4.2, Fig. 14). **Shown**
 21. Transition onset in T3A− is predicted significantly earlier than in the experiment, so its profiles are not compared (§4.2). **Shown**
 22. T3A and T3B profiles at $N=5$: $u^+$ agrees with experiment and with Suluksna–Juntasaro; $k^+$ agrees with Suluksna–Juntasaro but under-predicts the experimental near-wall values (attributed to the Langtry–Menter model itself); $-\langle u'v'\rangle^+$ agrees with Suluksna–Juntasaro but over-predicts the experimental peak; the model does not reproduce the experimental maximum of $k^+$ during transition (§4.2, Figs. 15–16). **Shown**
 23. Per element the implicit FR Jacobian costs $O(N^{N_{\mathrm{dim}}+1})$ and diffusive fluxes add an $O(N)$ factor per term, so the time per degree of freedom can at best scale as $O(N^2)$, irrespective of dimension (§4.3). **Derived**
@@ -119,7 +119,7 @@ that of this version.
 | $y_1^+$ | $y_1^+$ (registry §11) | based on the first-element height, not the first degree of freedom |
 | $-uv^+=\mu_t\,\partial_yu_x/(\rho u_\tau^2)$ | $-\langle u'v'\rangle^+$ | computed from the eddy viscosity, not a resolved stress |
 | $N_{dim}$, $N_s=(P+1)^{N_{dim}}$ | $N_{\mathrm{dim}}$, $(N+1)^{N_{\mathrm{dim}}}$ | |
-| $h_f$, $c_{SD}$, $c_{DG}$, $c_{g2}$ | (VCJH correction functions and parameters) | |
+| $h_f$, $c_{SD}$, $c_{DG}$, $c_{g2}$ | (VCJH correction functions); $c_{\mathrm{SD}}$, $c_{\mathrm{DG}}$, $c_{\mathrm{HU}}$, the named values of the correction parameter $c_{\mathrm{FR}}$ (registry §11) | $c_{g2}$ is Huynh's $g_2$ scheme, written $c_{\mathrm{HU}}$ on the [flux-reconstruction page](/methods/flux-reconstruction.md) |
 | $J_{e,u}$, …, $J^D_{f,q}$ | (Jacobian blocks) | page-local |
 | $\varepsilon$ (Eq. 65) | (finite-difference step, $10^{-7}$) | **collision:** not the dissipation rate |
 

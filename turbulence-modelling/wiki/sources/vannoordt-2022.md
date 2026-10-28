@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 470:111583"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_van_An_immersed_boundary_method_for_wall-modeled_large-eddy_simu.pdf"
 tags: [immersed-boundary, wmles, wall-model, hypersonic, shock-boundary-layer-interaction, numerical-dissipation]
-timestamp: 2026-10-27T15:28:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Summary
@@ -24,7 +24,7 @@ with an IBM. The convective flux blends a fourth-order kinetic-energy- and
 entropy-preserving centred flux ([kinetic-energy preservation](/properties/kinetic-energy-preservation.md),
 [entropy conservation](/properties/entropy-conservation.md)) with a
 third-order [WENO](/methods/weno-scheme.md) flux-vector-splitting flux,
-the blending factor $\alpha$ given by a Ducros-type
+the upwind fraction $\sigma_b$ given by a Ducros-type
 [sensor](/definitions/shock-sensor.md) in the interior and prescribed in
 the first three irregular cells. Only one ghost cell enters the upwind
 reconstruction: new two-candidate boundary stencils, one downwind-biased,
@@ -67,8 +67,8 @@ identity problem. Numbering on this page is that of this version.
 
 # Key claims
 
-The blending factor of the convective flux is written $\alpha$ as the
-registry's blending factor ($\alpha=1$ pure upwind WENO); the WENO
+The blending factor of the convective flux (the source's $\alpha$) is written $\sigma_b$, the
+registry's upwind fraction of a blended flux ($\sigma_b=1$ pure upwind WENO); the WENO
 smoothness indicators, weights and ideal weights are $\mathrm{IS}_k$,
 $\mathsf w_k$, $d_k$; the source's reference boundary-layer thickness
 $\delta_0$ (and $\delta_{ref}$ of the ramp) is $\delta_r$; the cell size
@@ -76,17 +76,17 @@ $\Delta x_{min}$ is $h$; the Stanton number is $C_h$.
 
 1. To the authors' knowledge, this is the first published work containing hypersonic turbulent flow simulations employing WMLES and an IBM (§1). **Stated**
 2. Distinguishing features against other IBM-WMLES studies: third-order flux reconstruction at the boundary through a ghost-cell method that uses a single ghost cell, and a ghost-cell filling algorithm with a second interpolation point in addition to the usual one (§1). **Stated**
-3. The convective flux is the convex blend $\hat{\mathbf f}_{conv}=(1-\alpha)\hat{\mathbf f}_{cent}+\alpha\hat{\mathbf f}_{diss}$ of a fourth-order KE/EP centred flux (Kuya et al.; Totani et al.) and an upwind-biased third-order WENO flux (Eq. 8), with $\alpha$ in the volume from a Ducros-type sensor (Eq. 9) whose $u_\infty/\delta_r$ term "shields the boundary layer"; at the faces $i-1/2$, $i+1/2$, $i+3/2$ next to the immersed boundary $\alpha$ is prescribed (§2.3). **Stated**
+3. The convective flux is the convex blend $\hat{\mathbf f}_{conv}=(1-\sigma_b)\hat{\mathbf f}_{cent}+\sigma_b\hat{\mathbf f}_{diss}$ of a fourth-order KE/EP centred flux (Kuya et al.; Totani et al.) and an upwind-biased third-order WENO flux (Eq. 8), with $\sigma_b$ in the volume from a Ducros-type sensor (Eq. 9) whose $u_\infty/\delta_r$ term "shields the boundary layer"; at the faces $i-1/2$, $i+1/2$, $i+3/2$ next to the immersed boundary $\sigma_b$ is prescribed (§2.3). **Stated**
 4. The second ghost layer is excluded from the upwind reconstruction because it "introduces large numerical errors as it is essentially extrapolated", so $\hat f^+_{m,i-1/2}$ must be biased downwind (§2.3). **Stated**; the two-ghost-cell case T2G "does not yield accurate results" (§3.2, Fig. 16). **Shown**
 5. The boundary candidate stencils (Eqs. 21–22) with smooth-flow weights $\mathsf w_1^+=\mathsf w_2^+=1/2$, $\mathsf w_1^-=2/3$, $\mathsf w_2^-=1/3$ (Eq. 23) give third-order face values, but the flux derivative at the first irregular point is only second order because the truncation errors of the left and right faces do not cancel (§2.3, §2.7). **Derived** and **Shown** (Table 2)
 6. Robustness improves when the ghost value is removed from the stencil of $\hat f^-_{m,j-1/2}$, although a linearly stable scheme can be obtained with it (§2.3). **Stated**
 7. Irregular viscous stencils match the interior order and leading truncation-error coefficients: $k_1=-1/24$, $k_2=0$ for $\partial/\partial x$; $k_1=1/8$, $k_2=0$ for the mid-point average; $k_1=1/8$, $k_2=1/6$ for $\partial/\partial y$ (Eq. 29 and text, §2.4). **Derived**
 8. The wall-adjacent viscous flux derivative uses an overdetermined four-point system (Eq. 31) solved with the pseudo-inverse, which removes the singularity as the wall distance tends to zero (§2.4). **Derived**
 9. Manufactured solution on a unit sphere (Eq. 44): interpolation orders $L_2/L_\infty$ between 2.30 and 3.00 (P 2.658/2.300; U 2.998/2.771; V 2.994/2.831; W 2.997/2.712; T 2.659/2.298); ghost-cell filling $L_2$ 2.84–2.96, $L_\infty$ 1.86–1.99 (Table 1); "boundary conditions are applied with second-order accuracy at a minimum" (§2.7). **Shown**
-10. Operators with boundary (Table 2): convective $L_2/L_\infty$ continuity 2.686/1.967, $x$-momentum 2.727/2.107, $y$-momentum 2.725/2.117, $z$-momentum 2.981/2.023, energy 2.650/2.044 (with $\alpha=1$ everywhere); viscous $x$-momentum 2.014/2.377, $y$-momentum 2.320/2.118, $z$-momentum 2.301/2.082, energy 2.101/2.049; the convective scheme is third order in the volume and second order at the boundary (§2.7). **Shown**
+10. Operators with boundary (Table 2): convective $L_2/L_\infty$ continuity 2.686/1.967, $x$-momentum 2.727/2.107, $y$-momentum 2.725/2.117, $z$-momentum 2.981/2.023, energy 2.650/2.044 (with $\sigma_b=1$ everywhere); viscous $x$-momentum 2.014/2.377, $y$-momentum 2.320/2.118, $z$-momentum 2.301/2.082, energy 2.101/2.049; the convective scheme is third order in the volume and second order at the boundary (§2.7). **Shown**
 11. For the parameter $t$ of the boundary stencil $C^+(t)$ (Eq. 54) the spectral radius of $\mathbf D_1^+$ grows exponentially for $t<0.25$ and saturates near $t\approx0.5$; $t=1/2$ is chosen so the boundary eigenvalue is as large as possible while smaller than at least one other eigenvalue, giving $C^+=\{1/6,7/6,-1/3\}$ (Eq. 55, Fig. 8); for $C^-(t)$ (Eq. 56) the spectrum depends weakly on $t$, and $t=1/3$ is chosen (§2.8). **Shown** (numerical eigenvalues)
 12. Pseudospectra ($N_x=130$, five random perturbations per $\lVert\mathbf M\rVert=\varepsilon_p\in\{10^{-3},\dots,10^{-10}\}$): the three operators for $a>0$ lie inside the unit disk; the three for $a<0$ breach it for some $\varepsilon_p$ but lie inside for approximately $\varepsilon_p<10^{-4}$; the operator is "linearly finite-time stable for a range of configurations" (§2.8, Figs. 9–10). **Shown**
-13. Channel at $Re_\tau=5200$: $\alpha<0.0125$ generates significant noise; larger $\alpha$ and $\alpha_{irreg}$ accelerate the centreline flow and retard the near-wall flow; the best values are $\alpha=0.0125$, $\alpha_{irreg}=(0.05,0.025,0.0125)$; doubling $\alpha_{irreg}$ makes no significant difference, so the interior dissipation matters much more than the irregular-cell dissipation (§3.1, Fig. 12). **Shown**
+13. Channel at $Re_\tau=5200$: $\sigma_b<0.0125$ generates significant noise; larger $\sigma_b$ and $\sigma_{b,irreg}$ accelerate the centreline flow and retard the near-wall flow; the best values are $\sigma_b=0.0125$, $\sigma_{b,irreg}=(0.05,0.025,0.0125)$; doubling $\sigma_{b,irreg}$ makes no significant difference, so the interior dissipation matters much more than the irregular-cell dissipation (§3.1, Fig. 12). **Shown**
 14. Moving the wall-model exchange point $Q_2$ ($3$, $3.5$, $4\,h$) and the near point $Q_1$ ($0.5$–$1.5\,h$) has no significant effect on the mean velocity or the Reynolds stresses; $Q_1$ has a slightly larger effect on the near-wall Reynolds stresses (§3.1, Fig. 13). **Shown**
 15. With grid refinement the log-region deviation of the mean velocity from DNS "has almost completely vanished"; the Reynolds stresses agree with a reference WMLES but poorly with DNS in the inner region, especially $R_{11}$ (§3.1, Fig. 14). **Shown**
 16. Mach-6 transitional flat plate: the wall-model transition sensor is tuned to the reference transition location (not a prediction); the baseline TB agrees reasonably with Mettu & Subbareddy, heat transfer slightly above the DNS; results are not insensitive to near-wall dissipation (TH, with more dissipation, erodes the turbulent structures); laminar surface quantities are not accurately predicted by the wall model (§3.2, Fig. 16). **Shown**
@@ -102,7 +102,7 @@ $\Delta x_{min}$ is $h$; the Stanton number is $C_h$.
 # Printed slips
 
 - **Eq. (17):** printed "$\omega_k^\pm=\frac{c_k}{(\varepsilon+\beta_k)^l}$, and $\beta_k=\frac{\alpha_k}{\alpha_1+\alpha_2}$", while the text states $\omega_1\approx c_1=1/3$, $\omega_2\approx c_2=2/3$ in smooth flow. *(compiler check, not in the sources)* As printed the normalization acts on the smoothness indicators $\alpha_k$ of Eq. (18), not on the weights: $\omega_1+\omega_2\ne1$ in general, and for $\alpha_1\approx\alpha_2$ the weights tend to $c_k/(\varepsilon+1/2)^2$, not to $c_k$.
-- **Eq. (9):** printed $\alpha|_{volume}=\frac{(\nabla\cdot\mathbf u)^2+|\nabla\times\mathbf u|^2}{(\nabla\cdot\mathbf u)^2+(u_\infty/\delta_0)^2}$, described as following Ducros et al. and as shielding the boundary layer. *(compiler check, not in the sources)* As printed, where $\nabla\cdot\mathbf u=0$ the expression is $|\nabla\times\mathbf u|^2/(u_\infty/\delta_0)^2$, which exceeds 1 wherever the vorticity magnitude exceeds $u_\infty/\delta_0$, so the printed formula alone does not keep the blend of Eq. (8) in $[0,1]$. The results report constant interior factors ($\alpha=0.0125$ channel, $\alpha=0.02$ hypersonic cases); how these combine with Eq. (9) is not stated.
+- **Eq. (9):** printed $\alpha|_{volume}=\frac{(\nabla\cdot\mathbf u)^2+|\nabla\times\mathbf u|^2}{(\nabla\cdot\mathbf u)^2+(u_\infty/\delta_0)^2}$, described as following Ducros et al. and as shielding the boundary layer. *(compiler check, not in the sources)* As printed, where $\nabla\cdot\mathbf u=0$ the expression is $|\nabla\times\mathbf u|^2/(u_\infty/\delta_0)^2$, which exceeds 1 wherever the vorticity magnitude exceeds $u_\infty/\delta_0$, so the printed formula alone does not keep the blend of Eq. (8) in $[0,1]$. The results report constant interior factors ($\sigma_b=0.0125$ channel, $\sigma_b=0.02$ hypersonic cases); how these combine with Eq. (9) is not stated.
 - **§2.8:** the text calls $\mathbf A$ "a 4th-order approximation of $\exp(\gamma\mathbf D)$", while Eq. (48) prints "$e^{-\gamma\mathbf D}\approx\mathbf A=\mathbf I-\gamma\mathbf D+\dots$".
 - **Eq. (60), §3.2:** "$C_p=\gamma R/\gamma-1$" without parentheses; Eq. (5) prints $\frac{\gamma R}{\gamma-1}$.
 - **Table 5, coarse channel grid:** $\Delta x=\delta/20$, $\Delta y=\delta/80$ printed with $\Delta x^+=270$, $\Delta y^+=68$. *(compiler check, not in the sources)* At $Re_\tau=5200$ these spacings give $260$ and $65$; the printed values correspond to $Re_\tau\approx5400$. The fine-grid row ($\delta/30\to173.3$, $\delta/128\to40.6$, $3\delta/100\to156$) is consistent with 5200.
@@ -124,7 +124,7 @@ $\Delta x_{min}$ is $h$; the Stanton number is $C_h$.
 | $\tau_{i,j}$ | $\sigma_{ij}$ plus the modelled stress | total viscous-plus-SGS stress with $\mu+\mu_t$; **collision** with the SGS stress $\tau_{ij}$ |
 | $\beta$ (Eq. 6) | $\mu_b$ | bulk viscosity, set to 0; **collision** with $\beta_k$ of Eq. 17 |
 | $\bar S_{ij}$, $\mathcal S^d_{ij}$, $C_w$, $\Delta\approx3h$ | $\bar S_{ij}$, $\mathcal S_{ij}$ of the [WALE page](/methods/wale-model.md), $C_w$, $\Delta$ | $C_w=0.55$ |
-| $\alpha$ (Eq. 8), $\alpha_{irreg}$ | $\alpha$ (blending factor), $\alpha_{irreg}$ (page-local: prescribed values in the first three irregular cells) | $\alpha=1$ pure upwind WENO, as the registry's $\alpha=1$ pure finite volume |
+| $\alpha$ (Eq. 8), $\alpha_{irreg}$ | $\sigma_b$ (upwind fraction, registry §11), $\sigma_{b,irreg}$ (page-local: prescribed values in the first three irregular cells) | $\sigma_b=1$ pure upwind WENO; **collision:** the source's $\alpha$ is not the registry's DG/finite-volume blending factor $\alpha$ |
 | $\alpha_k$ (Eqs. 18, 24) | $\mathrm{IS}_k$ | WENO smoothness indicators; **collision** with $\alpha$ |
 | $\omega_k^\pm$, $c_k$ | $\mathsf w_k$, $d_k$ | WENO weights and ideal weights; $\omega$ is not the specific dissipation rate |
 | $\hat{\mathbf f}^\pm$, $\sigma$ | (split fluxes, spectral radius of the flux Jacobian) | **collision:** the hat is not a test filter; $\sigma$ is not the viscous stress |

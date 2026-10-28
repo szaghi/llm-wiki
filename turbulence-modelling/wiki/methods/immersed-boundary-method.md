@@ -5,7 +5,7 @@ description: "Immersed boundary methods impose walls on non-conforming grids by 
 status: established
 aliases: [IBM, moving Cartesian grid, volume penalization immersed boundary method, VP-IBM, fluid resistance, immersed boundary, ghost-point forcing, volume penalization, Brinkman penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing, volume-filtering immersed boundary method, VMIB, variational multiscale immersed boundary, weak Dirichlet immersed boundary, single ghost cell, IBMLES, immersed boundary-modelled LES, wall-slip model, slip-length model]
 tags: [immersed-boundary, wall-model, lattice-boltzmann, les, dns, rans]
-timestamp: 2026-10-28T01:53:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Immersed boundary methods
@@ -141,6 +141,12 @@ from the second of four grids on. The rotor is an
 carries an immersed boundary method in its name, model the turbine tower
 as an actuator line instead and name an immersed-boundary tower as future
 work (§2.1, §2.3, §6).
+[Taschner et al. (2024)](/sources/taschner-2024.md), §3, likewise model
+only the rotor in their GPU actuator-line LES and state that modelling the
+tower and nacelle with an immersed boundary method, which they cite (or the
+nacelle with an anisotropic Gaussian body force), "would further improve
+the accuracy of especially the near wake predictions"; no immersed body is
+run in the paper.
 
 **Mass source and momentum forcing (staggered finite volume).**
 Kim et al. (2024, §2.1, Eqs. 2.1–2.2) use the immersed boundary method of
@@ -606,10 +612,10 @@ eddy viscosity applied over a few grid points from the wall, which adds to a
 mixing-length RANS viscosity
 $\nu_t^{\mathrm{RANS}}=\nu\kappa y^+(1-e^{-y^+/19})^2$ the resolved stress
 projected on the mean strain,
-$$\nu_t^{\mathrm{hyb}}=\frac{2\nu_t^{\mathrm{RANS}}\langle\tilde S_{ij}\rangle\langle\tilde S_{ij}\rangle+R^{\mathrm{LES}}_{ij}\langle\tilde S_{ij}\rangle}{2\langle\tilde S_{ij}\rangle\langle\tilde S_{ij}\rangle},\qquad R^{\mathrm{LES}}_{ij}=\langle\tilde u_i\tilde u_j\rangle-\langle\tilde u_i\rangle\langle\tilde u_j\rangle$$
-(Eq. 27, positive-trace resolved stress; page-local superscripts). Contracting
+$$\nu_t^{\mathrm{hyb}}=\frac{2\nu_t^{\mathrm{RANS}}\langle\tilde S_{ij}\rangle\langle\tilde S_{ij}\rangle+R^{\mathrm{res}}_{ij}\langle\tilde S_{ij}\rangle}{2\langle\tilde S_{ij}\rangle\langle\tilde S_{ij}\rangle},\qquad R^{\mathrm{res}}_{ij}=\langle\tilde u_i\tilde u_j\rangle-\langle\tilde u_i\rangle\langle\tilde u_j\rangle$$
+(Eq. 27, positive-trace resolved stress, the source's $R^{LES}_{ij}$; symbols of registry §11). Contracting
 the condition that modelled plus resolved stress equal the RANS stress,
-$-2\nu_t^{\mathrm{hyb}}\langle\tilde S_{ij}\rangle+R^{\mathrm{LES}}_{ij}=-2\nu_t^{\mathrm{RANS}}\langle\tilde S_{ij}\rangle$,
+$-2\nu_t^{\mathrm{hyb}}\langle\tilde S_{ij}\rangle+R^{\mathrm{res}}_{ij}=-2\nu_t^{\mathrm{RANS}}\langle\tilde S_{ij}\rangle$,
 with $\langle\tilde S_{ij}\rangle$ gives Eq. 27 *(compiler check, not in the
 sources)*. The authors state that it tends to the RANS viscosity in attached
 layers and to the LES viscosity in separated ones; see
@@ -1213,6 +1219,7 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
 - [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §1 (fixed against moving grids, fresh cells); §2.1, Eqs. (1)–(9) (moving-grid flux, Galilean transformation); §2.2, Eqs. (10)–(15), Table 1 (face-centre wall condition with wall velocity); §2.3, Eqs. (16)–(26) (high-order flux and its moving-grid correction); §3.1–3.2, Tables 2–3, Figs. 4–13 (NACA 0012, AGARD Case 3); §4, Tables 6–7, Figs. 17–19 (Caradonna–Tung rotor).
 - [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A (immersed-boundary terrain in LESGO, log-law wall stress); §III A, Fig. 4 (steep-hill validation, wall-model attribution); App. A, Table I, Fig. 22 (grid study).
 - [Stanly et al. (2022)](/sources/stanly-2022.md) — §2.1 (MIRACLES); §2.3 (tower as an actuator line instead of a body); §6 (immersed-boundary tower as future work).
+- [Taschner et al. (2024)](/sources/taschner-2024.md) — §3 (immersed-boundary tower and nacelle named as an improvement of the near-wake prediction, not run).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §2.1, §3 (integral wall model and wall-modelled sharp immersed boundary, cited).
 - [Kang & Masud (2022)](/sources/kang-2022.md) — §2.2, Eqs. (5)–(9) (mixed form); §3.1–3.3, Eqs. (10)–(48), Table 1 (VMIB derivation, stabilization tensors, multiplier, interface terms, lemmas, ghost penalty); §3.4–3.5 (residual-based VMS LES); §4, Boxes 1–2 (algorithm, classification, quadrature); §5.1–5.3, Tables 3–5, Figs. 7–35 (cylinder, sphere, train).
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §2.3, Eqs. (8)–(24) (hybrid flux, single-ghost-cell WENO closure); §2.4, Eqs. (25)–(31) (irregular viscous stencils); §2.5, Eqs. (32)–(37) (wall model as flux); §2.6, Algorithm 1, Eqs. (38)–(42) (ray-based ghost filling); §2.7–2.8, Tables 1–2, Figs. 8–10 (MMS, pseudospectra); §3.1–3.4, Figs. 12–27; §4.

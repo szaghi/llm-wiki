@@ -5,7 +5,7 @@ description: "Implicit LES drops the explicit subgrid model and lets the discret
 status: established
 aliases: [ILES, iLES, coarse-grained simulation, CGS, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -196,6 +196,49 @@ can carry.
      [laminar separation bubble](/definitions/laminar-separation-bubble.md));
      the paper shows no results for it. Its survey reports high-order
      methods as "routinely chosen for LES and DNS of turbulent flows" (§2).
+     [Vermeire (2024)](/sources/vermeire-2024.md) (§4.3) runs that case at
+     $\alpha=8^\circ$ as ILES (results below and on
+     [SD7003 airfoil](/benchmarks/sd7003-airfoil.md)).
+   - **Incompressible flux reconstruction.** Vermeire (2024, §1, §3)
+     describes FR ILES as relying on the dissipation of the approximate
+     Riemann solver at element interfaces, "akin to a numerical dissipation
+     stabilized under-resolved DNS", which passes "seamlessly" to DNS as
+     the resolution rises. The scheme is FRDG on Gauss points
+     (lifting-collocation-penalty form) with the Rusanov flux and Davis
+     wave speed, BR2 viscous flux and no subgrid model, applied to the
+     incompressible equations in the entropically damped
+     artificial-compressibility (EDAC) form: the pressure obeys
+     $\partial_tp+u_j\partial_jp+M_{\mathrm{AC}}^{-2}\partial_ju_j=Re^{-1}\partial_j\partial_jp$
+     (Eq. 1; the dimensional flux form of Eqs. 2–5 carries $\nu$ in place of
+     $1/Re$; kinematic $p$; $M_{\mathrm{AC}}$ the "incompressibility factor",
+     page-local as on the flux-reconstruction page, not a Mach number), which makes the system fully explicit,
+     with no Poisson solve and no pseudo-time sub-iterations (§2, Eqs.
+     1–5; see [flux reconstruction](/methods/flux-reconstruction.md)).
+   - **Detonation-engine LES without a model.** [Vignat et al. (2024)](/sources/vignat-2024.md)
+     (§3.3, Table 1) list, among the groups that simulated the same
+     rotating detonation rocket engine, one (a PhD thesis by Prakash, as
+     they cite it) that "relied solely on grid-based dissipation introduced
+     by the numerical schemes", others that used one-equation or dynamic
+     Smagorinsky models, and run their own LES with the
+     [Vreman model](/methods/vreman-model.md) ($C=0.07$); they state that
+     the inter-group differences in subgrid treatment are not assessed.
+   - **Cited high-order ILES.** [Lv & Ekaterinaris (2023)](/sources/lv-2023.md)
+     (§3, §4.2) cite hybridized-DG ILES of transitional flows, the
+     limiter-assisted FR ILES of the [NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md)
+     configuration by Wang & Rahmani, in which "only 0.3% of elements have
+     the limiter activated", and DG ILES of tandem spheres and the CRM.
+     They warn that limiters and artificial viscosity can smear smooth
+     extrema and kill small scales, and that under-resolved turbulence can
+     be taken for shocks, so sensors must confine the stabilization; the
+     limiting procedure stays "too intrusive for high-order solutions",
+     which is why artificial-viscosity and filtered forms have become more
+     popular for LES with discontinuous schemes (§4.2; see
+     [artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
+     and [shock sensors](/definitions/shock-sensor.md)).
+     [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) (§3) cite an ILES
+     of a swept oblique shock reflection at Mach 2.05 (Lee & Gross) among
+     the scale-resolving studies of three-dimensional
+     [shock/boundary-layer interactions](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
    - **Future extension.** [Liu et al. (2022b)](/sources/liu-2022-g.md)
      (§4) state that their laminar
      [flux-reconstruction](/methods/flux-reconstruction.md)
@@ -488,12 +531,21 @@ can carry.
    usage-3 premise for supervised learning: the filter of a running LES
    "is implicit and is a product of both the grid and the numerical
    method" (citing Sagaut), and the subgrid-stress statistics depend on
-   that filter, so a network trained on one explicit filter (usually a box)
+   that filter, so a network trained on one explicit filter (a box, for example)
    meets a distribution shift a posteriori. Their remedy is to train on
    several filter shapes rather than to match a solver's filter; see
    [neural-network SGS models](/methods/neural-network-sgs-model.md) and,
-   for the opposing design of matching the discretization,
+   for closures built to match the discretization,
    [discretization-consistent closure](/definitions/discretization-consistent-closure.md).
+   [Hu et al. (2024)](/sources/hu-2024.md) (§1) state the consequence for
+   grid convergence: in implicitly filtered LES numerical and modelling
+   errors are "fundamentally inseparable", because refining the grid
+   reduces both, whereas explicitly filtered LES with a fixed filter width
+   larger than the grid spacing "is known to produce grid-independent LES
+   solution". Their WMLES is implicitly filtered in this sense, with the
+   Vreman model, and they fix the matching height $h_{\mathrm{wm}}$ in
+   place of a filter width to study grid convergence (see
+   [wall-modelled LES](/methods/wall-modelled-les.md)).
    [Jakhar et al. (2026)](/sources/jakhar-2026.md) (p. 6) note that
    weather and climate models often operate in implicit-LES regimes and
    propose their closed-form gradient closure there as a diagnostic target
@@ -768,8 +820,8 @@ interpretation they flag as needing further work).
     $126^3$), lower errors the authors expect to be "partially due" to more
     unique degrees of freedom and to oversampled spectra (§3.2, Table 6).
 - **Transitional airfoil.** On the [Eppler 387](/benchmarks/eppler-387-airfoil.md)
-  airfoil ($Re=10^5$ at $10^\circ$, $3\times10^5$ at $4^\circ$; $k=3$
-  elements, the paper's $k$ being the polynomial degree $N$), ILES and HOPU
+  airfoil ($Re=10^5$ at $10^\circ$, $3\times10^5$ at $4^\circ$; elements
+  of degree $N=3$, the paper's $k$), ILES and HOPU
   give essentially the same pressure distribution, lift, drag and
   separation-bubble positions, e.g. lift 1.274 and 1.271 against 1.200
   measured at $10^\circ$ on the coarsest mesh. In the turbulent boundary
@@ -946,8 +998,40 @@ interpretation they flag as needing further work).
   outer mesh (no timing data). At similar resolution a mesh with fewer,
   higher-order elements gives better fluctuations than one with more,
   lower-order elements (§III E).
+- **Incompressible FR ILES at fixed degrees of freedom.** Vermeire (2024,
+  §4) holds the degrees of freedom per direction fixed (one quarter and one
+  half of the reference DNS) and raises the degree $N$ (the paper's $p_s$).
+  In the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at
+  $Re=1600$ the agreement with the spectral DNS of the kinetic-energy
+  dissipation rate improves up to $N=4$ on the coarse and up to $N=6$ on
+  the finer resolution (§4.1, Figs. 3–4). In wall-resolved
+  [channel flow](/benchmarks/turbulent-channel-flow.md) at $Re_\tau=395$
+  (first solution point at $y^+=1$), $N=3$ and 4 predict the three r.m.s.
+  profiles accurately for every incompressibility factor and the mean
+  velocity closely ($N=4$ slightly under-predicts it), while $N=1$ over-predicts the mean velocity toward the centreline,
+  which the author attributes to damped structures carrying less momentum
+  to the walls (§4.2, Figs. 9–18). On the SD7003 airfoil ($Re_c=60\,000$,
+  $\alpha=8^\circ$, 57,100 hexahedra), $N=1$ gives a fully separated flow,
+  $N\ge2$ a laminar separation bubble with attached turbulent flow
+  downstream, and $N=4$ gives $C_L=0.950$, $C_D=0.046$ against $0.932$–$0.969$
+  and $0.039$–$0.050$ in three high-order reference simulations (§4.3,
+  Table 3). The author concludes that EDAC with FR suits "low and
+  moderately resolved" ILES with $N\le4$ (§5).
 
 ## Evidence: when it fails
+
+- **High polynomial degrees without enough dissipation.** In the same
+  incompressible FR ILES, Vermeire (2024) finds the coarse Taylor–Green
+  runs oscillating after the dissipation peak at $N=5$ and unstable at
+  $N=6$ for the two loosest incompressibility factors (§4.1, Fig. 3), the
+  coarse channel run at $N=4$, $M_{\mathrm{AC}}=1/5$ unstable, and most channel runs at
+  $N=5$ and 6 unstable, which the author attributes to a numerical
+  dissipation that at these degrees "may not be sufficient for ILES" (§4.2). No
+  de-aliasing or filtering is mentioned. At low $N$ the opposite failure
+  appears: at $N=1$ the dissipation rate is over-predicted while the
+  enstrophy is under-predicted, so most of the dissipation is numerical
+  (§4.1, Figs. 5–6; see
+  [numerical dissipation](/properties/numerical-dissipation.md)).
 
 - **Inviscid ILES of a high-lift aircraft.** Kiris et al. (2023, §II)
   judge the $Re\to\infty$ submission unable to predict loads "within
@@ -1378,6 +1462,16 @@ dissipation is imparted by the SGS model". Details on
 
 ## Qualifications
 
+- **What Vermeire (2024) compares with.** §5 says the SD7003 lift, drag
+  and pressure distributions "converged to reference DNS data", while
+  §4.3 describes the references as compressible high-order simulations
+  (FR at $N=4$, sixth-order finite differences, DG at $N=7$), one of them
+  titled a comparison of implicit and subgrid-model LES. The conclusion
+  that the Taylor–Green agreement "generally" improves with decreasing
+  incompressibility factor sits beside §4.1, where reducing that factor
+  increases the numerical dissipation at $N=1$. Equations 23–24 print
+  $C_L=L/(2\rho_\infty u_\infty^2)$ without a reference area, and call $L$,
+  $D$ "coefficients".
 - **Resolution of the coarse-grained runs of Kokkinakis et al. (2023).**
   The production mesh has $\Delta x^+=717$, $\Delta z^+=634$ and
   $y^+=4.8$ at the first point (Table III), and the paper quotes
@@ -1629,3 +1723,8 @@ dissipation is imparted by the SGS model". Details on
 - [Xu et al. (2023)](/sources/xu-2023.md) — §4.1–4.4, Figs. 13–31 (unmodelled central-difference baseline).
 - [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §1–2, §5 (filter and deconvolution as the only dissipation); §6.2, Fig. 10 (against FR LES of Bull & Jameson).
 - [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §4.2–4.3, Figs. 23–28 (time step in well- and under-resolved flows); §5.
+- [Vermeire (2024)](/sources/vermeire-2024.md) — §1–3, Eqs. 1–13 (FR ILES via interface upwinding, EDAC); §4.1–4.3, Figs. 3–21, Table 3 (Taylor–Green vortex, channel, SD7003; instability at $N\ge5$); §5.
+- [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.3, Table 1 (subgrid treatments of the same detonation-engine benchmark, one without a model).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (stabilization dissipation in LES with discontinuous schemes; cited DG, HDG and FR ILES).
+- [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §3 (cited ILES of a swept oblique shock reflection).
+- [Hu et al. (2024)](/sources/hu-2024.md) — §1 (numerical and modelling errors inseparable in implicitly filtered LES).

@@ -5,7 +5,7 @@ description: "Wall-modelled LES boundary conditions that let the filtered veloci
 status: established
 aliases: [slip wall, dynamic slip wall, dynamic slip-wall model, Robin slip condition, wall-slip model, slip-length model, Van Driest slip model]
 tags: [wall-model, wmles, filtering, immersed-boundary]
-timestamp: 2026-10-28T01:52:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Slip-wall models
@@ -120,6 +120,17 @@ it as "coefficient-free"). Fowler et al. (§1) add a doubt: "at
 increasing Reynolds numbers, it is unclear that such modelling can
 accurately capture subtle Reynolds number dependencies of the predicted
 friction drag".
+[Hu et al. (2024)](/sources/hu-2024.md) (§1) list two slip families in
+their taxonomy of wall models: the dynamic slip (Robin) condition derived
+from a differential filter (Bose & Moin 2014; Bae et al. 2019, as they cite
+them) and the virtual-wall slip condition used with the stretched-vortex
+SGS model (Chung & Pullin; Gao et al., as cited); their own grid-convergence
+study is restricted to wall-stress models. In the separated flow over the
+[Gaussian bump](/benchmarks/gaussian-bump.md),
+[Zhou & Bae (2024)](/sources/zhou-2024-b.md) (§1) cite the dynamic slip
+conditions and a bump WMLES by Whitmore et al. with a slip-wall condition
+among the prior work, and replace the wall model by idealized stress-based
+conditions instead.
 
 ## The volume-filtered wall slip (Rickard & Kasbaoui)
 
@@ -189,8 +200,7 @@ from. In Bose & Moin's model, as Bose & Park present it, the slip length
 is a free coefficient made dynamic; in Rickard & Kasbaoui's, the slip length
 is an exact function of the filter and of a gradient ratio, and only
 $\boldsymbol\Lambda$ has to be modelled. Neither source runs a posteriori
-WMLES with the volume-filtered closures, so the two have not been compared
-on a common flow in the bundle.
+WMLES with the volume-filtered closures.
 
 Wall-stress models take the other route. [Van Noordt et al. (2022)](/sources/vannoordt-2022.md)
 (§2.6) contrast their immersed-boundary WMLES with Bose & Moin's dynamic
@@ -215,7 +225,7 @@ the slip wall is only named there.
 study of near-wall structures in wall-stress WMLES to models that supply
 $\tau_w$ as a flux boundary condition, and leave the slip-type model of
 Bose & Moin (2014) out of scope. They write that it "solves the equations of
-the LES down to the wall", but views the problem "purely mathematically and
+the LES down to the wall", but that it views the problem "purely mathematically and
 should be discussed in a different context", and that the near-wall
 structures they find "could change with a different wall model". Their own
 code uses a slip-wall condition with extrapolation from interior nodes only
@@ -272,3 +282,5 @@ the stalled state at 19.9° was largely invariant to it (§V, Figs. 35–36).
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I, Eq. (6) (Robin condition among the wall-model boundary-condition types; passing).
 - [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §1 (slip-type modelling out of scope); §2.2 (slip-wall extrapolation for the SGS model and filter only).
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §II (W-030 inviscid slip walls); §V, Figs. 35–36 (slip tunnel walls).
+- [Hu et al. (2024)](/sources/hu-2024.md) — §1 (dynamic slip and virtual-wall slip in the wall-model taxonomy; passing).
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §1 (slip conditions among prior bump WMLES; passing).

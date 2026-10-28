@@ -5,7 +5,7 @@ description: "Heinz's hybrid RANS/LES whose length-scale-equation destruction co
 status: established
 aliases: [CES, CES-KES, CES-KEK, CES-KOS, CES-KOK, continuous eddy simulation mode control, CES-SST]
 tags: [hybrid-rans-les, rans, les, eddy-viscosity, lattice-boltzmann]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Continuous eddy simulation
@@ -162,15 +162,15 @@ below, with $p=3$.
 
 **Equivalence with DES.** Equating the CES-KEK dissipation with that of
 [detached-eddy simulation](/methods/detached-eddy-simulation.md) in its
-$k$-equation form, $\psi_{\mathrm{DES}}=\max\big(1,L_+/(C_{DES}\Delta/L_{\mathrm{tot}})\big)$,
+$k$-equation form, $\psi_{\mathrm{DES}}=\max\big(1,L_+/(C_{\mathrm{DES}}\Delta/L_{\mathrm{tot}})\big)$,
 gives (§4.4, Eqs. 53–54)
-$$L_+=\min\left\{\frac{\sqrt{1+4\alpha_\varepsilon(\alpha_\varepsilon-1)C_{DES}^2(\Delta/L_{\mathrm{tot}})^2}-1}{2(\alpha_\varepsilon-1)C_{DES}\Delta/L_{\mathrm{tot}}},\;1\right\},$$
-which solves $\alpha_\varepsilon-L_+^2(\alpha_\varepsilon-1)=L_+/(C_{DES}\Delta/L_{\mathrm{tot}})$
+$$L_+=\min\left\{\frac{\sqrt{1+4\alpha_\varepsilon(\alpha_\varepsilon-1)C_{\mathrm{DES}}^2(\Delta/L_{\mathrm{tot}})^2}-1}{2(\alpha_\varepsilon-1)C_{\mathrm{DES}}\Delta/L_{\mathrm{tot}}},\;1\right\},$$
+which solves $\alpha_\varepsilon-L_+^2(\alpha_\varepsilon-1)=L_+/(C_{\mathrm{DES}}\Delta/L_{\mathrm{tot}})$
 *(compiler check, not in the sources)* and tends to
-$L_+\approx\alpha_\varepsilon C_{DES}\Delta/L_{\mathrm{tot}}$ on fine grids;
+$L_+\approx\alpha_\varepsilon C_{\mathrm{DES}}\Delta/L_{\mathrm{tot}}$ on fine grids;
 Eq. (55) is the $k$-$\omega$ analogue with $\alpha_\omega$. Matching this
 limit to $L_+=C_+\Delta/L_{\mathrm{tot}}$ with $C_+=1$ gives
-$C_{DES}=1/\alpha_\varepsilon=0.75$ and $1/\alpha_\omega=0.61$, which the
+$C_{\mathrm{DES}}=1/\alpha_\varepsilon=0.75$ and $1/\alpha_\omega=0.61$, which the
 author calls close to 0.65 (Fig. 5). From this the review
 concludes that CES "generalizes DES" and that "the technical solution to
 adjust $\Delta_+$ to $L_+$ is absurd", DES being unstable under grid
@@ -244,7 +244,7 @@ $k$-destruction of SST in the lattice Boltzmann solver
 $$\beta^*\omega k\;\to\;\beta^*\omega k\,\psi_\beta,\qquad \psi_\beta=\beta_{\mathrm{CES}}+L_+^2(1-\beta_{\mathrm{CES}}),\qquad
 L_+=\frac{\Delta_{C+}}{(1+\Delta_{C+}^3)^{1/3}},\quad \Delta_{C+}=C_+\frac{\Delta}{L_{\mathrm{tot}}},\quad L_{\mathrm{tot}}=\frac{\sqrt k}{C_\mu\omega},$$
 
-with page-local $\psi_\beta$, $\beta_{\mathrm{CES}}$, $\Delta_{C+}$, $C_+$. Here $L_+$ is a
+with $\psi_\beta$, $\beta_{\mathrm{CES}}$ of registry §11 and page-local $\Delta_{C+}$, $C_+$. Here $L_+$ is a
 grid-based estimate of the length ratio, not the time-averaged ratio of
 Heinz (2022). The source writes $\beta_{\mathrm{CES}}$ as $\beta$, the SST destruction
 symbol, and prints neither its value nor $C_+$ nor the definition of
@@ -305,4 +305,4 @@ itself.
 
 - [Heinz (2022)](/sources/heinz-2022.md) — §1, §2 Eqs. 1–7 Table 2, §3 Fig. 1, §4 Table 1.
 - [Mozaffari et al. (2024)](/sources/mozaffari-2024.md) — §2.3 Eqs. 33–34, §3.2 Figs. 10–11 Table 2, §3.3 Figs. 17–20 Table 3 (HAL accepted manuscript).
-- [Heinz (2020)](/sources/heinz-2020.md) — §2.3, Eqs. (8)–(11), App. C, Eq. (58) (length-scale law, $C_+$); §4.1–4.2, Eqs. (38)–(44) (variational derivation); §4.3, Eqs. (45)–(51) (CES-KES, KEK, KOS, KOK); §4.4, Eqs. (52)–(55), Fig. 5 (PANS and DES equivalence, $C_{DES}$); §6.
+- [Heinz (2020)](/sources/heinz-2020.md) — §2.3, Eqs. (8)–(11), App. C, Eq. (58) (length-scale law, $C_+$); §4.1–4.2, Eqs. (38)–(44) (variational derivation); §4.3, Eqs. (45)–(51) (CES-KES, KEK, KOS, KOK); §4.4, Eqs. (52)–(55), Fig. 5 (PANS and DES equivalence, $C_{\mathrm{DES}}$); §6.

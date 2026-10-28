@@ -5,7 +5,7 @@ description: "Explicit filtering, in the modal space of a high-order element or 
 status: established
 aliases: [explicit modal filter, modal filtering, solution filtering, dynamic explicit modal filter, DEMF, self-tuning dynamic explicit modal filter, STDEMF, local modal filter, LMF, explicit filtering regularization, relaxation filtering, explicit differential filter, Najafi-Yazdi filter, entropy-adaptive filter, improved adaptive filter]
 tags: [les, filtering, implicit-les, dg, numerical-dissipation, sgs-model]
-timestamp: 2026-10-28T02:14:00Z
+timestamp: 2026-10-28T06:48:00Z
 ---
 
 # Explicit modal filtering as an LES closure
@@ -257,6 +257,30 @@ and cites Aubard et al. (2013) for the finding that the solution becomes
 independent of the finite-difference stencil beyond seven points while
 the filter shape strongly affects the LES (§2.2.2, §5).
 
+**Compact filter with an adaptive shock reduction in DNS.**
+[Kang & Lee (2024)](/sources/kang-2024.md) (§II.B, Eq. 9) stabilize the
+sixth-order compact-difference DNS of a Mach 2.9, $24^\circ$
+compression-ramp interaction with the Gaitonde–Visbal compact low-pass
+filter (cited), applied to the solution vector at every final Runge–Kutta
+stage. In the notation of the Caban et al. form above it has $M_s=1$,
+$a_1$ the free parameter (the source's $\alpha_f$) and $N_s$ the half
+stencil, with the eighth-order ($N_s=4$) coefficients
+
+$$b_0=\tfrac{93+70a_1}{128},\quad b_1=\tfrac{7+18a_1}{16},\quad b_2=\tfrac{-7+14a_1}{32},\quad b_3=\tfrac{1-2a_1}{16},\quad b_4=\tfrac{-1+2a_1}{128},$$
+
+$-0.5<a_1\le0.5$, with less damping as $a_1\to0.5$; the DNS uses
+$a_1=0.47$. These coefficients give $\sum_lb_l=1+2a_1$ and
+$\sum_l(-1)^lb_l=0$, i.e. $\hat G_E(0)=1$ and $\hat G_E(\pi)=0$
+*(compiler check, not in the sources)*. Where a modified Ducros-type
+sensor detects a shock (formula and threshold not printed; see
+[shock sensors](/definitions/shock-sensor.md)), the filter drops to second
+order ($N_s=1$) with $a_1=0.49$, after Visbal & Gaitonde (cited); a
+localized artificial diffusivity of viscosity and conductivity handles the
+remaining large gradients (see
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
+The filter here is a stabilization of a DNS on $2865\times298\times420$
+points ($\Delta x^+=4.6$), not a subgrid closure.
+
 ## Differential filters on unstructured grids
 
 [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) filter in
@@ -496,6 +520,23 @@ filtering degrades the accuracy of high-order implicit LES of a NACA0021,
 and present their filters as designed to "stabilize the solution, while
 maintaining accuracy" (§1, §6).
 
+## Filters as shock capturing in discontinuous schemes (review)
+
+[Lv & Ekaterinaris (2023)](/sources/lv-2023.md) (§4.2) review
+stabilization of high-order discontinuous schemes for multiphase and
+reacting flows. They state that the subcell-resolution approach of
+Panourgias & Ekaterinaris (cited) is equivalent to a high-order
+dissipative (nonlinear) filter, developed for centred finite differences
+and "superior" for shock capturing, and use such a nonlinear filter instead
+of limiters for the bow shock of a Mach 8 reacting capsule flow in modal
+DG (§6.2, no reference data). Because limiting remains "too intrusive for
+high-order solutions" even with a good sensor, artificial-viscosity
+formulations or filtered forms such as the entropy-stable
+[spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md) of
+Mateo-Gabín et al. (cited) "have therefore become more popular" for LES
+with discontinuous schemes (§4.2). See also
+[subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md).
+
 ## Relation to implicit LES and to SVV
 
 Ranjbar et al. (§I) present solution filtering as simpler than SVV, whose
@@ -573,3 +614,5 @@ page.
 - [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §1; §2.1; §3.1–3.4, Eqs. (27)–(32), Algorithms 1–4, Tables 4–6; §4.1–4.3, Table 1, Figs. 9–18; §5.1–5.2, Tables 2–3, Figs. 19–30; §6.
 - [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §3, Eqs. (7)–(18); §3.2, Eqs. (27)–(29); §4.1–4.8, Eqs. (31)–(48), Table 1; §6.1, Fig. 6; §6.2, Fig. 13; App. A, Eq. (A.8); App. B, Eqs. (B.15)–(B.56).
 - [Gao et al. (2023)](/sources/gao-2023.md) — §3.1.3, Eqs. (40)–(48); §4.1–4.2, Figs. 14, 16; §5.
+- [Kang & Lee (2024)](/sources/kang-2024.md) — §II.B, Eq. (9).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2; §6.2.

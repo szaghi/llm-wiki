@@ -5,7 +5,7 @@ description: "Lattice Boltzmann methods advance particle populations on a discre
 status: established
 aliases: [LBM, lattice Boltzmann, LB, lattice Boltzmann equation, LBE, HRR collision, central-moment collision, MRT collision, lattice Boltzmann MHD, FLAME, ZDES-LBM, PowerFLOW, VLES, temporal LES with lattice Boltzmann, TLES-LBM, OpenLB]
 tags: [lattice-boltzmann, les, dns, hybrid-rans-les, gpu, mhd, immersed-boundary]
-timestamp: 2026-10-28T01:53:00Z
+timestamp: 2026-10-28T06:42:00Z
 ---
 
 # Lattice Boltzmann methods for turbulent flow
@@ -527,6 +527,21 @@ lattice Boltzmann step. In their conclusions (§V) the authors find
 hybrid finite-volume/lattice Boltzmann treatments of diffuse-interface
 multiphase models still at an early stage.
 
+**A classification by information transfer.**
+[Chen et al. (2024b)](/sources/chen-2024-c.md), §4.1, citing Kerstein,
+class the lattice Boltzmann model among the "autonomous microstructure
+evolution" methods, which generate small-scale information themselves and
+so allow bidirectional ("bottom-up" as well as "top-down") exchange between
+scales, as opposed to closures that parametrize the subgrid scales from
+resolved quantities. Within that class they place it between
+particle-based methods (molecular dynamics) and process-based ones (vortex
+dynamics, [one-dimensional turbulence](/methods/one-dimensional-turbulence.md)):
+it evolves probability density functions of particle properties rather
+than particles, the evolution of a PDF standing for that of a group of
+particles governed by interconnected stochastic differential equations,
+and it is in that sense "an intermediate method between particle-based and
+continuum methods". The review reports no lattice Boltzmann computation.
+
 ## Qualifications
 
 - **D3Q27 weights.** Foldes et al. print the edge weight as $1/54$ in
@@ -594,3 +609,4 @@ multiphase models still at an early stage.
 - [Stanly et al. (2022)](/sources/stanly-2022.md) — §1 (actuator lines in lattice Boltzmann solvers, cited).
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §I (HLPW-3 PowerFLOW VLES, lattice Boltzmann as a numerical method); §II.2–5, Tables 1–2 (W-032: non-isothermal LB, Cartesian immersed-boundary lattice, VLES closure, pressure-aware wall model); §IV (suction-peak subset, stall topology); §V (in-tunnel pitch break).
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §1; §3.3, Eqs. (12)–(14); reference [11] (the explicit power-law wall model of Wilhelm et al., devised for lattice Boltzmann RANS, reused in a DG solver).
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — §4.1 (lattice Boltzmann as an autonomous-microstructure-evolution method, between particle and continuum methods).

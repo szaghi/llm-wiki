@@ -9,7 +9,7 @@ year: 2026
 venue: "Phys. Fluids 38:054114"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Physics_of_Fluids_Ghidoni_A_transition_model_based_on_laminar_kinetic_energy_and_empir.pdf"
 tags: [transition, rans, dg, high-order, compressible]
-timestamp: 2026-10-27T15:51:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -156,7 +156,7 @@ merged complete into the [bibliography](/bibliography.md) with `citedby`
 this slug. No printed duplicates. Ref. 27 prints its authors as "Z. L.
 Hexia Huang and H. Tan" and ref. 54 as "S. O. T. H. Han"; ref. 24 prints
 "J. Fluids Eng. 139(2), 1–5 (2016)". Ref. 27 (Huang & Tan, Eng. Appl.
-Comput. Fluid Mech.) and ref. 31 (Liu et al., AIAA J. 60:3909) are works distinct from the bundle sources keyed huang-2025 and liu-2022 and are keyed `huang-2025-b` and `liu-2022-h`; ref. 46 is the bundle-planned menter-2022.
+Comput. Fluid Mech.) and ref. 31 (Liu et al., AIAA J. 60:3909) are works distinct from the bundle sources keyed huang-2025 and liu-2022 and are keyed `huang-2025-b` and `liu-2022-h`; ref. 46 is the ingested [menter-2022](/sources/menter-2022.md).
 
 # Pages created or updated
 

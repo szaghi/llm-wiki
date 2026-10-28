@@ -5,7 +5,7 @@ description: "Critical balance equates the linear Alfvén time and the nonlinear
 status: established
 aliases: [CB, Goldreich–Sridhar theory, GS95, strong MHD turbulence, weak MHD turbulence, imbalanced MHD turbulence, residual energy]
 tags: [mhd, astrophysics, plasma, anisotropy, energy-cascade]
-timestamp: 2026-10-27T15:48:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Critical balance and the anisotropic MHD cascade
@@ -66,7 +66,7 @@ Two justifications are given (§4–§5, citing Boldyrev 2005 and Nazarenko
   $$E(k_\perp)\sim\left(\frac{\varepsilon}{\tau_A}\right)^{1/2}k_\perp^{-2}$$
   (Eq. 4.7; the review cites its numerical confirmation by Perez & Boldyrev
   2008 and Boldyrev & Perez 2009). The nonlinearity grows towards small $\lambda$
-  until CB is reached at the **critical-balance scale** (page-local symbol)
+  until CB is reached at the **critical-balance scale** (registry §11)
   $$\lambda_{CB}\sim\varepsilon^{1/2}\left(\frac{L_\parallel}{v_A}\right)^{3/2}$$
   (Eqs. 4.3, 4.8), with $L_\parallel$ the parallel outer scale — "the only
   dimensionally correct" scale built from $\varepsilon$ and $L_\parallel/v_A$,
@@ -153,7 +153,7 @@ across it in the solar wind, closer to $1/2$ in simulations (§5.3).
 ### Anisotropy of separated wave modes
 
 [Gan et al. (2022)](/sources/gan-2022.md) (§3, Figs. 4–5) fit
-$l_\parallel\propto\lambda^{m_a}$ ($m_a$ page-local) to contours of
+$l_\parallel\propto\lambda^{m_a}$ ($m_a$ registry §11) to contours of
 second-order velocity structure functions of driven compressible MHD with a
 strong guide field, in the plane of the parallel and perpendicular
 separations (the source's $L_\parallel$, $L_\perp$). In run B
@@ -243,7 +243,7 @@ own account (§10.4, heuristic): Elsasser alignment implies non-zero residual
 energy (App. B, Eq. B5); shear layers ($\delta u>\delta b$) are
 Kelvin–Helmholtz unstable while current sheets are stabilized by the field;
 the RMHD nonlinearity drives $\langle\varpi^+\varpi^-\rangle<0$ (Elsasser
-vorticities, page-local); and the most intense structures, current sheets,
+vorticities, registry §11); and the most intense structures, current sheets,
 are step functions with a $k_\perp^{-2}$ spectrum. An RMHD-consistent
 $k_\perp^{-2}$ residual spectrum requires the intermittency exponent of
 [dynamic alignment](/properties/dynamic-alignment.md) to take the value

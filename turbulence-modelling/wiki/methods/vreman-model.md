@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Vreman model"
-description: "Vreman's static eddy-viscosity model builds the subgrid viscosity from an invariant of the resolved velocity-gradient tensor that vanishes in many laminar flows; the sources print it in two index orders with coefficients $C_s$ of 0.06 to 0.17, use it in aircraft, channel, lattice Boltzmann, DG and shock-interaction LES; one recommends it with a recalibrated filter width for high-order wall-modelled LES."
+description: "Vreman's static eddy-viscosity model builds the subgrid viscosity from an invariant of the resolved velocity gradient that vanishes in many laminar flows; the sources print it in two index orders with coefficients from 0.06 to 0.17 and use it from aircraft to detonation LES, with a recalibrated width for high-order WMLES and a small constant best for bump separation."
 status: established
 aliases: [Vreman eddy-viscosity model, Vreman (2004) model, static-coefficient Vreman model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-28T02:14:00Z
+timestamp: 2026-10-28T07:11:00Z
 ---
 
 # Vreman model
@@ -43,7 +43,7 @@ model with the opposite index order, $\alpha_{ij}=\partial_i\bar u_j$, and
 $\beta_{ij}=\alpha_{mi}\alpha_{mj}$ weighted by the grid spacing. Kim et
 al. use a direction-dependent spacing,
 $\beta_{ij}=\Delta_m^2\alpha_{mi}\alpha_{mj}$ (summed over $m$, $\Delta_m$
-the grid size in direction $m$, page-local), and Cai et al. a single
+the grid size in direction $m$, the registry-§11 $\Delta_k$), and Cai et al. a single
 $\Delta$ equal to the grid size; Cai et al. also write
 $B_\beta=\tfrac12[(\mathrm{tr}\,\beta)^2-\mathrm{tr}(\beta^2)]$, the second
 invariant of $\beta$. For a single $\Delta$ the two index orders give the
@@ -73,6 +73,8 @@ not print the value of $C_v$ used in their runs.
 | 0.1 ($c=2.5C_s^2=0.025$) | gas-kinetic implicit-versus-explicit LES of the compressible Taylor–Green vortex | [Cao et al. (2022b)](/sources/cao-2022-c.md), §III, Eqs. (10)–(11) |
 | 0.1 (prefactor $C_V=0.025$ printed) | finite-volume LES of a sinusoidally forced periodic shear flow on $16^3$ | [Hausmann et al. (2022)](/sources/hausmann-2022.md), §III B, Eqs. (42)–(45) |
 | 0.1 (prefactor printed as $2.5C_s^2$, with $C_s=0.1$ after Sayadi & Moin and Yu et al., cited) | sixth-order finite-difference LES of compressible channels and a supersonic boundary layer, baseline against a learned model | [Xu et al. (2023)](/sources/xu-2023.md), §2.2 |
+| constant $c=0.025$ and $c=0.07$ printed, formula not printed | incompressible second-order finite-volume wall-modelled LES of the Gaussian bump | [Zhou & Bae (2024)](/sources/zhou-2024-b.md), §2.1 |
+| constant $C=0.07$ printed, "as specified in the original paper", formula not printed | compressible reacting LES of a rotating detonation rocket engine | [Vignat et al. (2024)](/sources/vignat-2024.md), §3.3 |
 
 Cao et al. (2022b, Eqs. 10–11) print the dynamic viscosity
 $\mu_t=\bar\rho\,c\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$ in the index
@@ -96,9 +98,10 @@ constant $c$, not $C_s$; the $C_s$ values of the table are $\sqrt{c/2.5}$
 Caban et al. (2026, §2, Eq. 7) print the model in the index order of
 Agrawal et al. ($\alpha_{lm}=\partial_m\bar u_l$,
 $\beta_{lm}=\Delta^2\alpha_{kl}\alpha_{km}$) and write the stress as
-$-2C_v\sqrt{B_\beta/(\alpha_{lm}\alpha_{lm})}\,\bar S_{ij}$ with
-$C_v=2.5C_s^2$, i.e. $C_v=0.025$ for their $C_s=0.1$ *(compiler check, not
-in the sources)*.
+$-2c\sqrt{B_\beta/(\alpha_{lm}\alpha_{lm})}\,\bar S_{ij}$ with the
+prefactor $c=2.5C_s^2$ (the source's $C_v$, not the $C_v$ of Duan & Wang
+above), i.e. $c=0.025$ for their $C_s=0.1$ *(compiler check, not in the
+sources)*.
 
 [Xu et al. (2023)](/sources/xu-2023.md) (§2.2) print the form of Kim et
 al., $\alpha_{ij}=\partial_i\tilde u_j$ and
@@ -306,6 +309,48 @@ $N$ (the paper's $P$), with $N=5$.
   eddy-viscosity models that they call purely dissipative and poorly
   correlated with the real subgrid stress; they do not test it.
 
+- **Separated flow on the Gaussian bump.** [Zhou & Bae (2024)](/sources/zhou-2024-b.md)
+  run Vreman with two constants in wall-modelled LES of the
+  spanwise-periodic [Gaussian bump](/benchmarks/gaussian-bump.md),
+  $Re_L=2\times10^6$, with the reference mean wall stress imposed: $c=0.07$,
+  "derived theoretically for homogeneous isotropic turbulence", and
+  $c=0.025$, "recommended for more complicated cases" (§2.1, as printed).
+  - On the baseline isotropic mesh $c=0.025$ separates with a bubble
+    "similar to the DNS" and gives the best $C_p$, while $c=0.07$ stays
+    attached; $c=0.025$ gives the smallest mean eddy viscosity in the
+    boundary layer of the eddy-viscosity models, and its subgrid
+    dissipation is comparable to the viscous one (§3.1, Figs. 4–6, 11).
+  - The separation length converges monotonically to the reference
+    $L_s/L=0.32$ with $c=0.025$ and non-monotonically with $c=0.07$, on
+    four isotropic meshes of 1.94 to 993 million cells (§3.1, Fig. 8).
+  - The two constants respond differently to the wall boundary condition:
+    for $c=0.07$ the three conditions agree, for $c=0.025$ the two
+    eddy-viscosity conditions give a longer bubble; the authors conclude
+    that the model "is sensitive to its constant" (§3.2, Figs. 15–16).
+  - On cells of aspect ratio $4:1:2$ at the same volume, $c=0.025$
+    degrades most: the separated boundary layer at $x/L=0.2$ becomes
+    attached or nearly so. The authors attribute this to the cube-root
+    filter width and call the model "comparatively robust" on isotropic
+    meshes, with caution for anisotropic ones (§3.3, §4, Figs. 17–20; see
+    the [anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md),
+    which is insensitive there).
+- **Grid-convergence study of wall-modelled LES.** [Hu et al. (2024)](/sources/hu-2024.md)
+  (§4) close the subgrid stress and heat flux with the Vreman model in
+  [CharLES](/software/charles.md) (second-order central finite volume,
+  RK3) for their matching-height convergence study in channel and
+  three-dimensional boundary layers; the constant is not printed, and the
+  study varies the grid and the matching height, not the model (see
+  [wall-modelled LES](/methods/wall-modelled-les.md)).
+- **Rotating detonation engine.** [Vignat et al. (2024)](/sources/vignat-2024.md)
+  (§3.3) use Vreman with $C=0.07$ and turbulent Prandtl and Schmidt
+  numbers of 0.7 in the LES of the AFRL rotating detonation rocket engine
+  (54 million cells, 50–100 μm in the detonation region) in a
+  compressible unstructured finite-volume code that their Table 1 calls
+  CharlesX (see [CharLES](/software/charles.md)); earlier LES of the same engine used one-equation,
+  dynamic Smagorinsky or no subgrid closure. The authors state that the
+  adequacy of subgrid models for highly compressible, turbulent, reacting
+  flows is open, and they do not vary the model (§3.3, §3.8).
+
 ## Spectral-element LES
 
 Two sources use the model in continuous-Galerkin
@@ -424,6 +469,12 @@ computed and subtracted from the mean-stress model.
   2301.03199v1).
 - The constants in the table belong to different flows, filter-width
   definitions and codes; none of the sources calibrates the constant.
+- Zhou & Bae (2024) and Vignat et al. (2024) print the constant but not
+  the formula, so whether their $c$ or $C$ is the prefactor $2.5C_s^2$ of
+  the table is not stated; Vignat et al.'s "as specified in the original
+  paper" and Zhou & Bae's "derived theoretically" for 0.07 match the
+  prefactor $c=0.07$ that Zhao et al. (2021) attribute to Vreman (2004)
+  *(compiler check, not in the sources)*.
 
 # Citations
 
@@ -451,3 +502,6 @@ computed and subtracted from the mean-stress model.
 - [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §III A–B, Eqs. (42)–(45); §IV B, Figs. 6, 12a.
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.4, Table 2.
 - [Xu et al. (2023)](/sources/xu-2023.md) — §2.2, Eqs. (2.15)–(2.31), Figs. 1–3; §4.1, Figs. 13–20, Table 4.
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.1; §3.1, Figs. 4–6, 8, 11; §3.2, Figs. 15–16; §3.3, Figs. 17–20; §4.
+- [Hu et al. (2024)](/sources/hu-2024.md) — §4.
+- [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.3, Table 1; §3.8.

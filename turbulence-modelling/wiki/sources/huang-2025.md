@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Comput. Phys. 520:113459"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Computational_Physics_Huang_A_new_high-order_RKDG_method_based_on_the_TENO-THINC_scheme.pdf"
 tags: [shock-capturing, dg, weno, numerical-dissipation, high-order]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -118,11 +118,11 @@ check, not in the sources)*.
 | $p_i(x)$, $u^h$ | (cell polynomial, page-local) | **collision:** $p$ is not the pressure in §3 |
 | $\bar u_i$, $\bar u_\pm$ | (cell average; half-sum and half-difference of neighbour averages) | **collision:** bar is not the LES filter |
 | $\beta_l$ (Eq. 11) | $\mathrm{IS}_k$ | registry §11 smoothness indicator; the source's cell index $l$ is written $k$ (the source's $l$ also numbers the modes) |
-| $\gamma_l$, $\chi_l$ | $\gamma^{\mathrm T}_k$, $\chi^{\mathrm T}_k$ (scale-separated and normalized measures, page-local) | **collision:** $\gamma$ is not the ratio of specific heats here |
+| $\gamma_l$, $\chi_l$ | $\gamma^{\mathrm T}_k$, $\chi^{\mathrm T}_k$ (scale-separated and normalized measures, registry §11) | **collision:** $\gamma$ is not the ratio of specific heats here |
 | $\varepsilon$, $\varepsilon_1$ | $\epsilon_{\mathrm{IS}}$ (page-local) | $10^{-3}$ (indicator), $10^{-10}$ (limiter); **collision:** not the dissipation rate |
-| $q$, $C_T$, $\delta_l$ | $q$, $C_T$, $\delta^{\mathrm T}_k$ (page-local) | |
+| $q$, $C_T$, $\delta_l$ | $q$ (page-local), $C_T$, $\delta^{\mathrm T}_k$ (registry §11) | |
 | $w_l$ | $\mathsf w_k$ | normalized weights, equal over retained stencils |
-| $\beta$ (THINC), $\alpha$, $A$, $B$, $T$ | $\beta_{\mathrm{TH}}$ and auxiliary quantities (page-local) | **collision:** $\alpha$ is not the DG blending factor, $B$ not the log-law intercept |
+| $\beta$ (THINC), $\alpha$, $A$, $B$, $T$ | $\beta_{\mathrm{TH}}$ (registry §11) and auxiliary quantities (page-local) | **collision:** $\alpha$ is not the DG blending factor, $B$ not the log-law intercept |
 | $\hat u_{i\pm1/2}$ | (THINC interface values) | hat is not a test filter |
 | $\mathrm{TBV}$, $\varepsilon^{\mathrm{BVD}}_{1,2}$ | same (page-local) | total boundary variation and thresholds |
 | $R_i$ | (right-eigenvector matrix) | **collision:** not $R_{ij}$ |

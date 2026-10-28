@@ -5,7 +5,7 @@ description: "A neural operator (Fourier, implicit Fourier or transformer-based)
 status: established
 aliases: [neural operator, Fourier neural operator, FNO, IFNO, implicit Fourier neural operator, transformer-based neural operator, TNO, LESnets, LESnets-I, physics-informed neural operator, PINO, data-driven LES surrogate]
 tags: [neural-network, data-driven, les, sgs-model]
-timestamp: 2026-10-27T15:48:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Neural-operator surrogates of large-eddy simulation
@@ -32,7 +32,7 @@ posteriori rollout from initial fields not used in training (see
 ## The operator layer
 
 Both papers build on the Fourier neural operator (FNO), which Li et al.
-(2024, §III, Eqs. 12–14) and Zhao et al. (2025, §2.3, Eqs. 9–14) recall. A
+(2024, §III, Eqs. 12–14) and Zhao et al. (2025, §2.3, Eqs. 9–14) describe. A
 lifting network $P$ maps the input fields to $d_v$ channels (page-local
 $d_v$, the channel width), $n_L$ Fourier layers (page-local $n_L$; the
 registry's $L$ is the integral length) update the latent field
@@ -236,7 +236,7 @@ spectra are too high; 3000 fields are needed.
   in *decaying* isotropic turbulence and does not diverge in the mixing
   layer. The flows (forced against decaying), Reynolds numbers, grids,
   filters, FNO variants and training sets differ, so the two results are
-  not on a common case; no contradiction is recorded.
+  not on a common case.
 - **Dynamic coefficients.** Li et al. (2024, Eqs. 8, 10–11) average the
   Germano least-squares terms over the whole domain, so the dynamic
   coefficients are uniform in space also in the inhomogeneous mixing layer

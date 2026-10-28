@@ -9,7 +9,7 @@ year: 2023
 venue: "Phys. Rev. Fluids 8:104603"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Physical_Review_Fluids_Inagaki_Analysis_of_anisotropic_subgrid-scale_stress_for_coarse_larg.pdf"
 tags: [les, sgs-model, anisotropy, eddy-viscosity, a-priori-a-posteriori, grid-requirements]
-timestamp: 2026-10-26T07:41:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -122,12 +122,12 @@ $\bar S'_{ij}$ is its strain rate.
 | $\overline w_{ij}$ | $\bar\Omega_{ij}$ | |
 | $S_{ij}$ | $\langle S_{ij}\rangle$ | mean strain rate |
 | $\nu^{\mathrm{sgs}}$ | $\nu_t$ | the energy-matching ("ideal") eddy viscosity of Eq. (4), or the dynamic one in AR-DSM |
-| $\tau^{\mathrm{ani}}_{ij}$, $\tau^{\mathrm a}_{ij}$, $\nu^{\mathrm a}$ | (anisotropic SGS stress, model base tensor and its energy-removing viscosity; page-local) | |
-| $R^{\mathrm{GS}}_{ij}=\langle\overline u'_i\overline u'_j\rangle$ | $R^{\mathrm{res}}_{ij}$ | positive trace |
+| $\tau^{\mathrm{ani}}_{ij}$, $\tau^{\mathrm a}_{ij}$, $\nu^{\mathrm a}$ | $\tau^{\mathrm{ani}}_{ij}$, $\tau^{\mathrm a}_{ij}$, $\nu^{\mathrm a}$ (anisotropic SGS stress, model base tensor and its energy-removing viscosity; registry §11) | |
+| $R^{\mathrm{GS}}_{ij}=\langle\overline u'_i\overline u'_j\rangle$ | $R^{\mathrm{res}}_{ij}$ (registry §11) | positive trace |
 | $K^{\mathrm{GS}}$, $K$ | $k_{\mathrm{res}}$, $k_{\mathrm{tot}}$ | $k_{\mathrm{tot}}=k_{\mathrm{res}}+\langle\tau_{ii}\rangle/2$ |
 | $P^{\mathrm{GS}}_{ij}$, $\varepsilon^{\mathrm{GS}}_{ij}$, $\Phi^{\mathrm{GS}}_{ij}$, $D^{\mathrm{p,t,v,GS}}_{ij}$ | (production, dissipation, pressure redistribution, pressure, turbulent and viscous diffusion of $R^{\mathrm{res}}_{ij}$) | **collision:** $\Phi$ is not a filter |
 | $\varepsilon^{\mathrm{SGS}}_{ij}$, $\varepsilon^{\mathrm{EV}}_{ij}$, $D^{\mathrm{SGS}}_{ij}$, $D^{\mathrm{EV}}_{ij}$, $D^{\mathrm{AS}}_{ij}$ | (SGS dissipation and its eddy-viscosity part; SGS, eddy-viscosity and anisotropic-stress diffusion; page-local) | $\varepsilon^{\mathrm{SGS}}>0$ is a sink |
-| $\xi^{\mathrm{AR}}_{ij}$ | $\xi^{\mathrm{AR}}_{ij}$ (anisotropic redistribution, page-local) | **collision:** not a reference coordinate; positive = productive |
+| $\xi^{\mathrm{AR}}_{ij}$ | $\xi^{\mathrm{AR}}_{ij}$ (anisotropic redistribution, registry §11) | **collision:** not a reference coordinate; positive = productive |
 | $\tilde q$, $^*$, $\Re$ | $q_{\boldsymbol k}$, complex conjugate, real part | **collision:** the tilde is a Fourier coefficient, not a Favre filter |
 | $\check A_{ij}$, $E^{\mathrm{GS}}_{ij}(k_x,y,k_z)$, $\check T^{\mathrm{GS}}_{ij}$ | (spectral density of a budget term, resolved Reynolds-stress spectrum, interscale transfer; page-local) | $\sum\check T_{ij}=0$ |
 | $k_x$, $k_z$, $\lambda_\alpha=2\pi/k_\alpha$ | (streamwise and spanwise wavenumbers and wavelengths) | **collision:** $k$ is not the kinetic energy |

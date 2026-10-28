@@ -5,7 +5,7 @@ description: "The fractional subgrid-scale model closes the divergence of the su
 status: established
 aliases: [FSGS, D-FSGS, dynamic fractional SGS model, dynamic nonlocal subgrid-scale model, nonlocal SGS model, fractional Laplacian SGS model]
 tags: [les, sgs-model, data-driven, filtering]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Fractional subgrid-scale model
@@ -22,7 +22,7 @@ $$\partial_j\tau_{ij}=\nu_s\,(-\nabla^2)^s\,\bar u_i,\qquad \nu_s=C_{\mathrm{fr}
 
 with $C_{\mathrm{fr}}$ a model coefficient and $F(s)$ a known function of the order
 (both page-local). [Seyedi & Zayernouri (2022)](/sources/seyedi-2022.md)
-(§II.1, Eqs. 11–15) recall the model from the earlier work of their group
+(§II.1, Eqs. 11–15) take the model from the earlier work of their group
 (Samiee, Akhavan-Safaei & Zayernouri 2020) and make it
 dynamic (§II.2, Eqs. 16–22): the **dynamic fractional SGS model (D-FSGS)**.
 They describe it as the first SGS model that is both nonlocal and dynamic
@@ -30,7 +30,7 @@ They describe it as the first SGS model that is both nonlocal and dynamic
 
 ## Kinetic origin
 
-The model is derived at the kinetic level; Seyedi & Zayernouri recall the
+The model is derived at the kinetic level; Seyedi & Zayernouri summarize the
 derivation of Samiee et al. (§II.1, Eqs. 5–10).
 The single-particle distribution obeys the BGK equation, a relaxation
 towards a Maxwellian equilibrium with a relaxation time. Filtering the BGK
@@ -102,7 +102,7 @@ $\partial_x$, different for the fractional operator (§II.2, Fig. 1).
 The order $s$ is the remaining free parameter. Three routes are given
 (§III.1, Eq. 23, Table I, Fig. 3), all from filtered DNS of forced
 [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)
-with a box filter. Let $\ell_\Delta$ (page-local) denote the filter size
+with a box filter. Let $\ell_\Delta$ (registry §11) denote the filter size
 divided by twice the DNS grid spacing, the source's $\mathcal L_\delta$.
 
 1. **Optimal correlation.** Sweep $s$ from 0 to 1 in steps of 0.01 and

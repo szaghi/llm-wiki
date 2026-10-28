@@ -5,7 +5,7 @@ description: "A discretization is kinetic-energy preserving when its convective 
 status: established
 aliases: [KEP, KEEP, kinetic-energy and entropy preserving scheme, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-28T02:15:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -31,6 +31,23 @@ which makes centred spatial differentiation kinetic-energy conserving up to the
 time-integration error; with a third-order time scheme their truncated-Euler
 runs keep the kinetic energy within 1% of its initial value over
 $0\le t\le20$, the loss scaling about as $\Delta t^3$ (§3, §6.2).
+
+**Origins in the early simulations.** The history of DNS and LES of
+[Kim & Leonard (2024)](/sources/kim-2024-b.md), §3.1, p. 28, writes the two
+energy-conserving forms of the incompressible advective term,
+$$\boldsymbol u\cdot\nabla\boldsymbol u=\tfrac12\,\boldsymbol u\cdot\nabla\boldsymbol u+\tfrac12\,\nabla\cdot(\boldsymbol u\boldsymbol u)\quad\text{(skew-symmetric)},\qquad
+\boldsymbol u\cdot\nabla\boldsymbol u=\boldsymbol\omega\times\boldsymbol u+\tfrac12\nabla|\boldsymbol u|^2\quad\text{(rotational)},$$
+and recounts that Mansour et al. (1979) showed by summation by parts that
+most numerical methods conserve energy when the nonlinear terms are in
+rotational form, that the skew-symmetric form serves the same purpose
+(Arakawa 1966; Zang 1991), and that the staggered mesh of Harlow & Welch
+(1965) conserves momentum and kinetic energy (Lilly 1965); most DNS and
+LES since use one of the two forms, with dealiasing when spectral (all
+cited). They attribute the success of the channel LES of Moin et al.
+(1978) and the mixing-layer LES of Mansour et al. (1978) "in large part"
+to energy-conserving numerics and state the principle that the discretized Navier–Stokes
+equations "in the absence of the viscous terms should conserve energy for
+long-term stable calculations" (§4.7).
 
 **Split-form DG with two-point fluxes.** On Legendre–Gauss–Lobatto nodes the
 [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) has the
@@ -104,6 +121,11 @@ semi-conservative sixth-order viscous terms which, the authors state, give
 "strong preservation and proper telescoping" of variable-viscosity
 diffusion terms; their wall-modelled LES of a shock/boundary-layer
 interaction is on [wall-modelled LES](/methods/wall-modelled-les.md).
+[Yu et al. (2023b)](/sources/yu-2023-b.md), §II, run the same STREAmS
+pairing, Pirozzoli's (2010) sixth-order kinetic-energy-preserving scheme
+with fifth-order WENO where a modified Ducros sensor reaches 0.1, for DNS
+of Mach 5 oblique shock/boundary-layer interactions (sensor on
+[shock sensors](/definitions/shock-sensor.md)).
 
 **Catalogue of split forms in a DG code.** [HORSES3D](/software/horses3d.md)
 offers the Morinishi, Ducros, Kennedy–Gruber, Pirozzoli, entropy-conserving
@@ -164,11 +186,46 @@ authors argue that the dissipation should ideally come only
 from the subgrid model (§2.3), the premise of a dissipation-free baseline
 discussed below.
 
+**The KGP flux in an OpenFOAM-based reacting solver.** The in-house
+finite-volume solver scramjetFoam of [Wei et al. (2023)](/sources/wei-2023.md),
+§II C, Eqs. (16)–(18), built on OpenFOAM, splits the convective flux into
+a convective part and a pressure part, as AUSM schemes do, and evaluates
+the face values from the owner and neighbour cells O and N as
+$$\boldsymbol f_s=\tfrac18(\rho_{\mathrm O}+\rho_{\mathrm N})(\boldsymbol u_{\mathrm O}+\boldsymbol u_{\mathrm N})(\varphi_{\mathrm O}+\varphi_{\mathrm N})+\boldsymbol f^{\mathrm D}_s,\qquad
+p_s=\tfrac12(p_{\mathrm O}+p_{\mathrm N})+p^{\mathrm D}_s,$$
+with $\varphi=(1,u_j,H,Y_k)$ ($H$ the total enthalpy, $Y_k$ the mass
+fractions, $\varphi$, $\boldsymbol f^{\mathrm D}_s$, $p^{\mathrm D}_s$
+page-local), after Pirozzoli (2010) and Modesti & Pirozzoli (2017) as they
+cite. The convective part is the Kennedy–Gruber–Pirozzoli flux
+$\{\!\{\rho\}\!\}\{\!\{u\}\!\}\{\!\{\varphi\}\!\}$ of the family above
+*(compiler check, not in the sources)*, with the energy carried by the total
+enthalpy as in Pirozzoli's form. The AUSM-type numerical diffusion
+$\boldsymbol f^{\mathrm D}_s$, $p^{\mathrm D}_s$ is added only where a
+compression-only Ducros sensor exceeds 0.05, never on the species. On the
+inviscid [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at
+$64^3$, run without a subgrid model, the solver keeps the volume-averaged
+kinetic energy constant "over a long duration", while the second-order
+OpenFOAM solvers reactingFoam and rhoCentralFoam dissipate it "to 65% and
+30% of the initial value", which the authors call possibly "unacceptable
+for LES application" (§III A, Fig. 4; Mach number not printed). The
+solver then carries wall-resolved LES of supersonic film cooling (see
+[turbulent Prandtl number](/definitions/turbulent-prandtl-number.md)).
+
+**Energy-conserving unstructured finite volumes for incompressible
+WMLES.** The Gaussian-bump study of [Zhou & Bae (2024)](/sources/zhou-2024-b.md),
+§2.1, uses the cell-centred unstructured finite-volume code of You, Ham &
+Moin (2008), described as "energy-conserving and low-dissipative",
+second order in space and time, with a fully implicit fractional-step
+method. With that solver the dynamic Smagorinsky model never separates on
+the bump, and the authors list numerics among the possible causes of the
+disagreement with codes in which it does (§3.1; see
+[Gaussian bump](/benchmarks/gaussian-bump.md)).
+
 **The one-parameter family of locally conservative split forms.**
 [Bernades et al. (2023)](/sources/bernades-2023.md), §3.1.1,
 Eqs. (9)–(11), citing Coppola et al., state that the semi-discrete convective term
 $C_{\rho\phi}$ of a quantity $\rho\phi$ ($\phi=1$ for mass, $u$ for
-momentum; page-local symbols, $D_x$ a centred difference matrix with
+momentum; page-local symbols, $D_x$ (registry §11) a centred difference matrix with
 summation by parts) can be written in five forms: divergence
 $C^D=D_x(\rho u\phi)$, $C^\phi=\phi D_x(\rho u)+\rho uD_x\phi$,
 $C^u=uD_x(\rho\phi)+\rho\phi D_xu$, $C^\rho=\rho D_x(u\phi)+\phi uD_x\rho$,
@@ -177,7 +234,7 @@ are the family
 $$C^{\mathrm{KEP}}_{\rho\phi}=a_{\mathrm K}\,\frac{C^D_{\rho\phi}+C^\phi_{\rho\phi}}{2}+(1-a_{\mathrm K})\,\frac{C^u_{\rho\phi}+C^\rho_{\rho\phi}}{2},$$
 with $a_{\mathrm K}=0$ the Feiereisen form, $a_{\mathrm K}=1$ the "C" form
 and $a_{\mathrm K}=\tfrac12$ the **Kennedy–Gruber–Pirozzoli (KGP)** form
-(page-local $a_{\mathrm K}$, the source's $\xi$); $C^L$ is excluded because it
+($a_{\mathrm K}$ registry §11, the source's $\xi$); $C^L$ is excluded because it
 cannot be written as a difference of fluxes. The KGP form has the
 second-order flux
 $F_{i+1/2}=\tfrac18(\rho_i+\rho_{i+1})(u_i+u_{i+1})(\phi_i+\phi_{i+1})$, i.e.
@@ -205,7 +262,7 @@ designed for a calorically perfect gas does not (§3.2). Kinetic energy and
 entropy are, in their words, induced variables of the discretization
 (§3.1).
 
-[Wang et al. (2024)](/sources/wang-2024.md), §2.3, Eqs. (5)–(11), recall
+[Wang et al. (2024)](/sources/wang-2024.md), §2.3, Eqs. (5)–(11), print
 the same five forms and the KGP choice for the
 second-order scheme **KGP2** of a cell-centred compressible finite-difference
 solver; they print the KGP weights as "$\xi=1/2$, $\alpha=\beta=\delta=1/4$,
@@ -538,8 +595,8 @@ forced isotropic turbulence (§4.2).
 High-Order CFD Workshop, [Wang et al. (2013)](/sources/wang-2013.md), §5.6,
 define a third error, the difference between the time derivative of the
 kinetic energy and the numerically evaluated dissipation rate
-$2(\mu/\rho_0)\mathcal E$ (§4.15; $E_k$ the volume-averaged kinetic energy
-and $\mathcal E$ the enstrophy, page-local), which needs no reference
+$2(\mu/\rho_0)\mathcal Z$ (§4.15; $\mathcal Z$ the volume-averaged
+enstrophy, page-local, not the convex entropy $\mathcal E$ of the previous section), which needs no reference
 solution; as "a potential drawback" they note that it "should be zero for
 any truly kinetic energy preserving method, such as the skew-symmetric
 central FDM", which in practice adds dissipation through de-aliasing
@@ -874,3 +931,7 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
 - [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §2; App. D, Figs. 32–33 (second-order KEEP with and without low-pass filter in WMLES).
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.2, Table 1 (kinetic-energy- and entropy-consistent discretizations among the HLPW-4 WMLES participants; dissipation against dispersion errors).
 - [Yu et al. (2023)](/sources/yu-2023.md) — §2 (STREAmS sixth-order KEP scheme, same database as Yu et al. 2022).
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §3.1, p. 28 (skew-symmetric and rotational forms, Mansour et al., Arakawa, Harlow & Welch, recounted); §4.7 (energy conservation for long-term stability).
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II (STREAmS KEP6/WENO5; passing).
+- [Wei et al. (2023)](/sources/wei-2023.md) — §II C, Eqs. (16)–(19) (KGP-type split flux with Ducros-switched AUSM diffusion in scramjetFoam); §III A, Fig. 4 (inviscid Taylor–Green vortex against two OpenFOAM solvers).
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.1 (energy-conserving unstructured finite-volume code); §3.1 (numerics among the causes of the DSM separation discrepancy; passing).

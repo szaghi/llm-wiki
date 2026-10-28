@@ -5,7 +5,7 @@ description: "Wilcox's two-equation k-ω eddy-viscosity model and its unblended 
 status: established
 aliases: [k-omega model, Wilcox k-ω, Wilcox 1998, Wilcox 2006, Wilcox 07, k-ω 2006, TNT, turbulent/non-turbulent k-ω, k-log-ω, k-ln ω]
 tags: [rans, eddy-viscosity, dg, boundary-layer]
-timestamp: 2026-10-27T21:07:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Wilcox k-ω model
@@ -76,7 +76,7 @@ convention, diffusivities $\mu+\mu_t/\sigma_k$ and $\mu+\mu_t/\sigma_\omega$
 with $\sigma_k=1/0.6$ and $\sigma_\omega=2.0$, which are the multipliers
 0.6 and 0.5 of the table; their cross diffusion
 $\rho(\sigma_d/\omega)\max(\nabla k\cdot\nabla\omega,0)$ with $\sigma_d=1/8$
-is the Ghidoni et al. term written in $\omega$, and they recall that it
+is the Ghidoni et al. term written in $\omega$, and they state that it
 removes the free-stream dependence of $\omega$ first recognized by Menter
 ([Tomboulides et al. (2025)](/sources/tomboulides-2025.md), §2, Eqs. 5–11).
 The two sources agree on every constant once the convention is translated
@@ -254,7 +254,7 @@ Wilcox model with $\ln\omega$ in DG, which Lodares et al. (2022) and
 Vandenhoeck et al. (2022) cite; Vandenhoeck et al. extend it to SST in flux
 reconstruction and compare their Wieghardt flat-plate profiles with the
 DG $\mathbb P^2$ Wilcox $k$-$\ln\omega$ solution of Bassi et al. on 8800
-elements, and recall that earlier flux-reconstruction RANS solvers were
+elements, and state that earlier flux-reconstruction RANS solvers were
 limited to Spalart–Allmaras and Wilcox $k$-$\omega$
 ([Lodares et al. (2022)](/sources/lodares-2022.md), §1, §8;
 [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md), §0, §1.1, §4.1).

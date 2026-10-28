@@ -9,7 +9,7 @@ year: 2022
 venue: "Comput. Methods Appl. Mech. Engrg. 388:114280"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Computer_Methods_in_Applied_Mechanics_and_Engineering_Chen_Turbulent_kinetic_dissipation_analysis_for_residual-based_la.pdf"
 tags: [les, implicit-les, numerical-dissipation, stabilized-fem, residual-based]
-timestamp: 2026-10-27T15:48:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Summary
@@ -66,11 +66,11 @@ Symbols: $\boldsymbol u^{>}$, $p^{>}$ the resolved (finite-element)
 scales and $\boldsymbol u^<$, $p^<$ the unresolved small scales of the VMS
 split (registry §2; the source's $\boldsymbol u^h$, $p^h$ and
 $\boldsymbol u'$, $p'$), $\boldsymbol w$ the velocity weighting function
-(the source's $\boldsymbol w^h$). Page-local, as on the
+(the source's $\boldsymbol w^h$). Registry §11, as on the
 [VMS page](/methods/variational-multiscale-method.md):
 $\boldsymbol r_{\mathrm M}$, $r_{\mathrm C}$ the
 momentum and continuity residuals; $\tau_{\mathrm M}$, $\tau_{\mathrm C}$ the
-stabilization parameters (the source's $\tau_m$, $\tau_c$); $\mathcal D_n$
+stabilization parameters (the source's $\tau_m$, $\tau_c$). Page-local: $\mathcal D_n$
 the plane- and time-averaged contribution of Term $n$ to the resolved
 kinetic-energy budget, negative when dissipative (the source's
 $\langle\epsilon_n\rangle$); $\alpha^{\mathrm G}_m$, $\alpha^{\mathrm G}_f$,
@@ -152,8 +152,8 @@ parameters (the source's $\alpha_m$, $\alpha_f$, $\gamma$, $\zeta$).
 | $\nabla^s\boldsymbol u$ | $S_{ij}$ | |
 | $(\cdot)^h$, $(\cdot)'$ | $(\cdot)^{>}$, $(\cdot)^{<}$ | VMS scale split, not a filter; **collision:** the prime is also the statistical fluctuation in $u'_{rms}$, $\langle u'v'\rangle$ (§4.2) |
 | $\boldsymbol w^h$ | $\boldsymbol w$ (page-local) | velocity weighting function |
-| $\boldsymbol r_m$, $r_c$ | $\boldsymbol r_{\mathrm M}$, $r_{\mathrm C}$ (page-local residuals) | |
-| $\tau_m$, $\tau_c$ | $\tau_{\mathrm M}$, $\tau_{\mathrm C}$ (page-local) | **collision** with the SGS stress $\tau_{ij}$ |
+| $\boldsymbol r_m$, $r_c$ | $\boldsymbol r_{\mathrm M}$, $r_{\mathrm C}$ (registry §11) | |
+| $\tau_m$, $\tau_c$ | $\tau_{\mathrm M}$, $\tau_{\mathrm C}$ (registry §11) | **collision** with the SGS stress $\tau_{ij}$ |
 | $\boldsymbol G$, $c_1$, $c_2$, $c_3$ | (element metric tensor; 4, 36, 4) | |
 | $\alpha_m$, $\alpha_f$, $\gamma$, $\zeta$ | $\alpha^{\mathrm G}_m$, $\alpha^{\mathrm G}_f$, $\gamma^{\mathrm G}$, $\rho^{\mathrm G}_\infty$ (page-local) | **collisions** with $\alpha_f$ (filter strength), $\gamma$, $\boldsymbol\zeta$ |
 | $\langle\epsilon_{total}\rangle$, $\langle\epsilon_1\rangle$–$\langle\epsilon_4\rangle$, $\langle\epsilon_x\rangle$, $\langle\epsilon_y\rangle$, $\langle\epsilon_z\rangle$ | $\mathcal D_{\mathrm{tot}}$, $\mathcal D_1$–$\mathcal D_4$, $\mathcal D_x$, $\mathcal D_y$, $\mathcal D_z$ (page-local) | averaged over $x$, $z$, $t$; negative = dissipative, the opposite sign to $\varepsilon$ |

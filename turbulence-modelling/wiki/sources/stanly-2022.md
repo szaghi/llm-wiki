@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Wind Eng. Ind. Aerodyn. 222:104868"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Wind_Engineering_and_Industrial_Aerodynamics_Stanly_Large-Eddy_Simulation_of_a_wind_turbine_using_a_Filtered_Act.pdf"
 tags: [actuator-line, wind-energy, implicit-les, numerical-dissipation, mpi]
-timestamp: 2026-10-27T21:11:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Summary
@@ -75,7 +75,7 @@ $\Omega_{\mathrm{rot}}$.
 8. The small differences from that reference are attributed to running implicit LES on a grid built with the explicit-LES criterion $\epsilon_{\mathrm G}/h=2.8$ (§4.2). **Stated**
 9. Point-to-point messaging is "not feasible" for F-ALM because each point depends on the whole line and the owning rank changes with rotation; one communicator per blade (`MPI_COMM_SPLIT`) with `MPI_GATHER`, a computation on rank 0 and `MPI_BCAST` solves it, and the same approach applies to other non-local actuator lines (Jha & Schmitz 2018; Dağ & Sørensen 2020) (§4.3, Algorithm 3, Figs. 7–8). **Stated** (testing deferred to Stanly 2020)
 10. NREL Phase VI: both models use $\epsilon_{\mathrm G}/c=0.5$ on the same "15-million-point" grid with average $\epsilon_{\mathrm G}/h=3.6$, on 729 CPUs (§5, §5.1, Table 3). **Shown** (set-up)
-11. Grid study (Richardson extrapolation, ASME 2008) on 3,466,008, 6,993,756 and 13,002,444 points gives power 6.675, 6.557 and 6.778 kW and a GCI of 6% on the fine grid (Table 5). **Shown**; *(compiler check, not in the sources)* the fine-grid power equals the ALM power of Table 6, so the study was run with the baseline ALM and the GCI applies to ALM.
+11. Grid study (Richardson extrapolation, ASME 2008) on 3,466,008, 6,993,756 and 13,002,444 points gives power 6.675, 6.557 and 6.778 kW and a GCI of 6% on the fine grid (Table 5). **Shown**; *(compiler check, not in the sources)* the fine-grid power, 6.778 kW, equals the ALM power of Table 6; the paper does not say which model the grid study used.
 12. The coarse grid violates $\epsilon_{\mathrm G}/h>2$ ($\epsilon_{\mathrm G}/h=1.85$) but shows no spurious fluctuations and a smooth source term (§5.2). **Shown** (asserted from the run)
 13. Fifty actuator points per line suffice; results did not change beyond that number (§5.2). **Stated**
 14. The time step $0.001R_{\mathrm r}/U_{\mathrm{ref}}=1.32\times10^{-4}$ s is "about one order of magnitude smaller" than in typical wind-turbine simulations, as the compressible code requires; smaller steps changed no key parameter (§5.1, §5.2). **Stated**

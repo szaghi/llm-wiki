@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Fluid Mech. 970:A36"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Fluid_Mechanics_Griffin_Near-wall_model_for_compressible_turbulent_boundary_layers_b.pdf"
 tags: [wall-model, wmles, compressible, hypersonic, boundary-layer]
-timestamp: 2026-10-25T13:44:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Summary
@@ -75,7 +75,7 @@ $h_{\mathrm{wm}}$, and $(\cdot)^*$ is the semi-local scaling.
 6. The constants $\kappa$ and $B$ of the incompressible law are used with $Re_\tau^*$ in place of $Re_\tau$, because $Re_\tau^*$ is invariant under the transformation (§2.1). **Stated**
 7. The total-stress-based transformation assumes a constant-stress layer in the buffer region. Griffin et al. (2021c) found this does not significantly affect accuracy in equilibrium flows, and Bai, Griffin & Fu (2022) found the same for moderate pressure gradients (§2.1). **Stated**
 8. The constant-$Pr_t$ assumption is less accurate than the generalized Reynolds analogy (§2.2, citing Zhang et al. 2014). **Stated**
-9. The temperature–velocity relation $T=T_w+s\,Pr\,(T_r-T_w)\frac{U}{U_e}\left(1-\frac{U}{U_m}\right)+\left(\frac{U}{U_m}\right)^2(T_m-T_w)$ (Eq. 2.5), with Reynolds analogy factor $s=1.14$, recovery factor $r=Pr^{1/3}$ and $T_r=T_e+rU_e^2/(2c_p)$, enforces the exact matching temperature. As a consequence, $q_w=s\tau_wc_p(T_w-T_r)/U_e$ ties the wall heat flux algebraically to the wall stress (§2.2). **Derived**
+9. The temperature–velocity relation $T=T_w+s_{\mathrm{RA}}Pr\,(T_r-T_w)\frac{U}{U_e}\left(1-\frac{U}{U_m}\right)+\left(\frac{U}{U_m}\right)^2(T_m-T_w)$ (Eq. 2.5), with Reynolds analogy factor $s_{\mathrm{RA}}=1.14$, recovery factor $r=Pr^{1/3}$ and $T_r=T_e+rU_e^2/(2c_p)$, enforces the exact matching temperature. As a consequence, $q_w=s_{\mathrm{RA}}\tau_wc_p(T_w-T_r)/U_e$ ties the wall heat flux algebraically to the wall stress (§2.2). **Derived**
 10. Beyond the inputs of the classical model, the new model needs the velocity and temperature at the boundary-layer edge, found with the method of Griffin, Fu & Moin (2021a) (§2.3). **Stated**
 11. Only one ODE is solved: shooting with an initial guess for $\tau_w$, sub-iterating at each step to satisfy Eq. 2.5 and the resulting density and viscosity (§2.3). **Stated**
 12. A priori, with $h_{\mathrm{wm}}=0.3\delta$, the new model's velocity and temperature profiles agree with DNS "significantly better" than the classical model in all cases shown (4 channels, 2 pipes, 2 boundary layers) (§3, Figs. 1–4). **Shown**
@@ -118,7 +118,7 @@ $h_{\mathrm{wm}}$, and $(\cdot)^*$ is the semi-local scaling.
 | $\Delta$ | (near-wall wall-normal grid spacing) | **collision:** registry $\Delta$ is the filter width |
 | $S_t^+$, $S_{eq}^+$, $S_{TL}^+$ | (transformation strain-rate scalings) | Eq. 2.1 |
 | $C_p$ | $c_p$ | **collision:** registry $C_p$ is the pressure coefficient |
-| $s=1.14$, $r=Pr^{1/3}$, $\tilde T_r$ | (Reynolds analogy factor, recovery factor, recovery temperature) | |
+| $s=1.14$, $r=Pr^{1/3}$, $\tilde T_r$ | $s_{\mathrm{RA}}$ (registry §11), $r$, $T_r$ (page-local) | Reynolds analogy factor, recovery factor, recovery temperature |
 | $b_0$, $b_1$, $b_2$ | (coefficients of the quadratic $T(U)$) | Eq. 2.4 |
 | $B_q=q_w/(C_p\tilde T_w\bar\rho_wu_\tau)$ | (wall heat-flux parameter) | negative for cooled walls |
 | $\epsilon_{\tau_w}$, $\epsilon_{q_w}$ | (relative model errors, %) | **collision:** registry $\varepsilon$ is the dissipation rate |

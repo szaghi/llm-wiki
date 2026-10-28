@@ -5,7 +5,7 @@ description: "The symmetric NACA 0012 airfoil: static RANS at chord Reynolds num
 status: established
 aliases: [NACA0012, NACA 0012, NACA-0012]
 tags: [benchmark, rans, hybrid-rans-les, les, data-driven, immersed-boundary, dg, separated-flow, des, transition, aeroacoustics]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # NACA 0012 airfoil
@@ -252,7 +252,7 @@ evolution relaxation (§6, Fig. 1); see
 [entropy conservation](/properties/entropy-conservation.md).
 
 **The $k$-$\tau$ model in spectral elements.** [Tomboulides et al. (2025)](/sources/tomboulides-2025.md),
-§3.4, Tables 3–4, set $k=\tau_t=0$ at the inlet ($\tau_t=1/\omega$, page-local: the turbulent time scale) and use the free-stream
+§3.4, Tables 3–4, set $k=\tau_t=0$ at the inlet ($\tau_t=1/\omega$, the turbulent time scale of registry §11) and use the free-stream
 limiter of their [$k$-$\tau$ model](/methods/k-tau-model.md), which they call
 "imperative" for external flows; $p=5$ and $p=7$ differ by less than 0.1%
 in every reported value.

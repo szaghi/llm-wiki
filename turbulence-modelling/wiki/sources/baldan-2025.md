@@ -9,7 +9,7 @@ year: 2025
 venue: "Phys. Fluids 37:024112"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Physics_of_Fluids_Baldan_Wall-resolved_large_eddy_simulations_of_a_pitching_airfoil_i.pdf"
 tags: [les, airfoil, dynamic-stall, transition, hybrid-rans-les, sgs-model]
-timestamp: 2026-10-26T15:50:00Z
+timestamp: 2026-10-28T11:47:00Z
 ---
 
 # Summary
@@ -89,11 +89,11 @@ over from another manuscript. The introduction is unnumbered; sections are 1
 22. Cycle-to-cycle variation in the stalled part is not considered because of the LES cost; one cycle is recorded after discarding a quarter cycle (§1.2, §2.2). **Stated**
 23. An O-grid is used to avoid the non-physical patterns that highly anisotropic C-grid cells produce near the trailing edge (§1.1). **Stated**
 
-The motion (Eq. 1): $\alpha_a(t)=10°+15°\sin(\omega_{\mathrm p}t)$, with reduced frequency $k_{\mathrm{red}}=\omega_{\mathrm p}c/(2U_\infty)=0.1$, imposed by rigid rotation of the grid at the rate $\dot\alpha_a=\omega_{\mathrm p}\,15°\cos(\omega_{\mathrm p}t)$.
+The motion (Eq. 1): $\alpha_a(t)=10°+15°\sin(\varpi_{\mathrm p}t)$, with reduced frequency $k_{\mathrm{red}}=\varpi_{\mathrm p}c/(2U_\infty)=0.1$, imposed by rigid rotation of the grid at the rate $\dot\alpha_a=\varpi_{\mathrm p}\,15°\cos(\varpi_{\mathrm p}t)$.
 
 # Printed slips
 
-- Eq. 1 prints "$18.67\,[\mathrm{Hz}]$" for $\omega_{\mathrm p}$. The printed step count and step size give a period of $144\,000\times2.337\times10^{-6}\,\mathrm s=0.3365$ s, a frequency of 2.97 Hz, and $2\pi\times2.97=18.67$: the value is an angular frequency in rad/s *(compiler check, not in the sources)*.
+- Eq. 1 prints "$18.67\,[\mathrm{Hz}]$" for $\varpi_{\mathrm p}$. The printed step count and step size give a period of $144\,000\times2.337\times10^{-6}\,\mathrm s=0.3365$ s, a frequency of 2.97 Hz, and $2\pi\times2.97=18.67$: the value is an angular frequency in rad/s *(compiler check, not in the sources)*.
 - Table 1 prints 311 622 quadrilaterals with $N_\xi=934$, $N_\eta=334$ nodes; $933\times334=311\,622$, while the hexahedra of Table 2 (62.1M for 200 layers, up to 372.8M) correspond to $933\times333=310\,689$ quadrilaterals per layer *(compiler check, not in the sources)*.
 - Spans quoted as "from only 5% to 20% of the chord size" (Introduction, while citing 0.02c, 0.25c and 0.5c cases) and as "from 0.1 up to 0.2" (Conclusions).
 - $C_L$ offset "≈ 0.25" (§2.1) and "equal to 0.2" (§2.2), in different contexts, not reconciled.
@@ -108,8 +108,8 @@ The motion (Eq. 1): $\alpha_a(t)=10°+15°\sin(\omega_{\mathrm p}t)$, with reduc
 | Source | Registry ([notation](/notation.md)) | Note |
 |---|---|---|
 | $\alpha$, $\alpha_0$, $\alpha_s$ | $\alpha_a$ (angle of attack, page-local), mean $10°$, amplitude $15°$ | **collision:** $\alpha$ is the DG/FV blending factor in the registry |
-| $\omega$ | $\omega_{\mathrm p}$ (pitching angular frequency, page-local) | **collision** with the specific dissipation rate $\omega$; printed in "Hz" (Printed slips) |
-| $k$ | $k_{\mathrm{red}}=\omega_{\mathrm p}c/(2U_\infty)$ (page-local) | **collision:** not the turbulent kinetic energy |
+| $\omega$ | $\varpi_{\mathrm p}$ (pitching angular frequency, registry §11) | **collision** with the specific dissipation rate $\omega$; printed in "Hz" (Printed slips) |
+| $k$ | $k_{\mathrm{red}}=\varpi_{\mathrm p}c/(2U_\infty)$ (page-local) | **collision:** not the turbulent kinetic energy |
 | $Re$ | $Re_c$ | chord-based |
 | $V_\infty$, $P_\infty$ | $U_\infty$, (reference pressure) | |
 | $c$, $L_z$ | (chord), (span of the periodic domain) | the chord length is not printed |

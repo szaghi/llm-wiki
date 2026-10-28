@@ -5,7 +5,7 @@ description: "A neural network that predicts the scalar coefficients of Pope's t
 status: established
 aliases: [Lund–Novikov basis, nonlinear algebraic SGS model, MANA, TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features, LES tensor basis]
 tags: [neural-network, data-driven, rans, symbolic-regression]
-timestamp: 2026-10-28T01:53:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Tensor-basis neural network and the integrity basis
@@ -149,7 +149,7 @@ They recall, citing the original works (§4.1–4.2):
 
 [Cherroud et al. (2022)](/sources/cherroud-2022.md) (§2.1, Eqs. 5–8) use
 the 2-D form, $T^{(1)}$–$T^{(3)}$ with the strain and rotation divided by
-$\omega$ and the two invariants $I_1$, $I_2$ (page-local: the squared
+$\omega$ (registry-§11 $\mathsf S^\omega_{ij}$, $\mathsf W^\omega_{ij}$) and the two invariants $I_1$, $I_2$ (page-local: the squared
 norms of these normalized tensors, $I_2$ written without a minus sign),
 for an additive correction $b^\Delta_{ij}$ of the SST anisotropy and a
 production correction $b^R_{ij}$ (registry §11). They place the $T^{(1)}$
@@ -193,7 +193,7 @@ suffice. With the mean strain and
 rotation made dimensionless by $k/\varepsilon$,
 $\mathsf S_{ij}=\tfrac{k}{\varepsilon}\langle S_{ij}\rangle$ and
 $\mathsf W_{ij}=\tfrac{k}{\varepsilon}\langle\Omega_{ij}\rangle$
-(page-local, as on [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md);
+(registry §11, as on [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md);
 the paper's $\boldsymbol S$, $\boldsymbol R$, Eq. 11, whose sign
 convention for $\nabla\boldsymbol u$ is not stated),
 
@@ -208,7 +208,7 @@ $I_2=\mathsf W_{ij}\mathsf W_{ji}$ (page-local; Eqs. 13–14).
 
 $$b_{ij}=-C_\mu\mathsf S_{ij}+b^\perp_{ij},\qquad b^\perp_{ij}=0.35\sum_{m=1}^{3}G^m(I_1,I_2)\,T^{(m)}_{ij},$$
 
-with $b^\perp_{ij}$ the non-linear part (page-local) and $G^m$ the
+with $b^\perp_{ij}$ the non-linear part (registry §11) and $G^m$ the
 paper's coefficients. The paper prints the linear part as
 $-2C_\mu\boldsymbol S$ and the prefactor of the sum as $\beta/10=0.7$
 (Eq. 19; Eq. 16 omits it); $-C_\mu$ and 0.35 are those factors halved with
@@ -586,14 +586,14 @@ eigen-decomposition, or the integrity basis itself. See
   where Fig. 5 shows $\tau_{23}$; §III D and Table V call the normalized
   rotation $\Omega$, which Eq. 12 names $\omega$.
 - Oulghelou et al. (2025, Eqs. 7–10) normalize the strain and rotation of
-  the basis by the specific dissipation rate, $S_{ij}/\omega$ and
-  $\Omega_{ij}/\omega$, instead of by $\varepsilon/k$; with
+  the basis by the specific dissipation rate, $\mathsf S^\omega_{ij}$ and
+  $\mathsf W^\omega_{ij}$ (registry §11), instead of by $\varepsilon/k$; with
   $\omega=\varepsilon/(\beta^*k)$ their $T^{(1)}$ is $\beta^*\mathsf S$ and
   their $T^{(2)}$, $T^{(3)}$ carry $\beta^{*2}$, so their coefficients
   differ from those of the $k/\varepsilon$ normalization by these factors
   *(compiler check, not in the sources)*. Their basis corrects an SST
   model additively, $b_{ij}=-\nu_t\langle S_{ij}\rangle/k+b^\Delta_{ij}$
-  (page-local $b^\Delta_{ij}$), and a second expansion feeds a
+  (registry-§11 $b^\Delta_{ij}$), and a second expansion feeds a
   production-like term of the $k$ equation; the blending of such models
   is on [model aggregation](/methods/turbulence-model-aggregation.md).
 - Xu et al. (2023, Eqs. 3.11, 3.37) print the scalar trace $\tau_{kk}$

@@ -5,27 +5,29 @@ description: "The weighted compact nonlinear scheme (WCNS) differences numerical
 status: established
 aliases: [WCNS, weighted compact nonlinear scheme, WCNS-E, WCNS-T, WCNS-L, WCNS-Z, nonlinear compact interpolation]
 tags: [numerical-dissipation, implicit-les, compressible, hybrid-rans-les]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T07:03:00Z
 ---
 
 # Weighted compact nonlinear schemes
 
-The **weighted compact nonlinear scheme (WCNS)**, of Deng & Zhang as both
+The **weighted compact nonlinear scheme (WCNS)**, of Deng & Zhang as the
 sources cite it, is a high-order finite-difference shock-capturing scheme
 built from three components: (i) a high-order **flux difference** that
 differentiates numerical fluxes defined at cell edges (and, in one form,
 physical fluxes at nodes); (ii) a **numerical flux**, an approximate
-Riemann solver (Roe in both sources) evaluated from left and right
+Riemann solver (Roe in all three sources) evaluated from left and right
 interface states; (iii) a **weighted nonlinear interpolation** that
 produces those interface states from the nodal values, with WENO-type
 weights. Unlike a WENO finite-difference scheme, which reconstructs split
 fluxes, the WCNS interpolates the variables and leaves the upwinding to the
 Riemann flux ([Ma et al. 2022](/sources/ma-2022.md), §2.1;
-[Wu et al. 2023](/sources/wu-2023-b.md), §2.2.1). In this bundle the
+[Wu et al. 2023](/sources/wu-2023-b.md), §2.2.1;
+[Wu et al. 2024](/sources/wu-2024.md), §2.3). In this bundle the
 scheme appears in two roles: as the discretization of
 [implicit LES](/definitions/implicit-les.md), where its dissipation is the
 subgrid dissipation (Ma et al.), and as the low-dissipation convective
-scheme under explicit and hybrid closures (Wu et al.). Its relation to
+scheme under explicit and hybrid closures (Wu et al. 2023, 2024), in the
+CARDC solver [PHengLEI](/software/phenglei.md). Its relation to
 WENO and TENO is on [WENO and hybrid schemes](/methods/weno-scheme.md),
 whose WCNS section this page extends.
 
@@ -39,7 +41,7 @@ $d_k$ the optimal (linear) weights, $a_k$ and $\mathsf w_k$ the
 unnormalized and normalized nonlinear weights, $\mathrm{IS}_k$ the
 smoothness indicators (registry §11); $\alpha_{\mathrm W}$, $b_{\mathrm W}$
 the flux-difference coefficients (not the DG blending factor $\alpha$);
-$\epsilon$ the regularizer of the weights.
+$\epsilon_{\mathrm Z}$ the regularizer of the weights (registry §11).
 
 ## Flux differences
 
@@ -76,7 +78,7 @@ $$u^{\mathrm L}_{j+\frac12}=\sum_{k=0}^{2}\mathsf w_k\,u^{(k)}_{j+\frac12},\qqua
 
 with Z-type weights (Borges et al., cited)
 
-$$\mathsf w_k=\frac{a_k}{\sum_la_l},\qquad a_k=d_k\Big(1+\frac{|\mathrm{IS}_0-\mathrm{IS}_2|}{\mathrm{IS}_k+\epsilon}\Big),\qquad d_k=\big(\tfrac1{16},\tfrac{10}{16},\tfrac5{16}\big),$$
+$$\mathsf w_k=\frac{a_k}{\sum_la_l},\qquad a_k=d_k\Big(1+\frac{|\mathrm{IS}_0-\mathrm{IS}_2|}{\mathrm{IS}_k+\epsilon_{\mathrm Z}}\Big),\qquad d_k=\big(\tfrac1{16},\tfrac{10}{16},\tfrac5{16}\big),$$
 
 and indicators $\mathrm{IS}_k=(hf^{(k)})^2+(h^2s^{(k)})^2$ built from
 one-sided first- and second-derivative estimates on each candidate
@@ -98,7 +100,7 @@ sub-interpolations, each containing interface unknowns (Eq. 18), with
 optimal weights $d_k=(1,18,30,7)/56$, which then become Z-type nonlinear
 weights (Eq. 21):
 
-$$a_k=d_k\Big(1+\frac{|\mathrm{IS}_0+3\mathrm{IS}_1-3\mathrm{IS}_2-\mathrm{IS}_3|}{\mathrm{IS}_k+\epsilon}\Big),\qquad \epsilon=10^{-6},$$
+$$a_k=d_k\Big(1+\frac{|\mathrm{IS}_0+3\mathrm{IS}_1-3\mathrm{IS}_2-\mathrm{IS}_3|}{\mathrm{IS}_k+\epsilon_{\mathrm Z}}\Big),\qquad \epsilon_{\mathrm Z}=10^{-6},$$
 
 with indicators that add a third-derivative term,
 $\mathrm{IS}_k=(hf^{(k)})^2+(h^2s^{(k)})^2+(h^3t^{(k)})^2$, on the
@@ -130,8 +132,8 @@ fourth-order scheme.
 
 ## Dissipation in turbulence: the weights decide
 
-Both sources locate the dissipation that matters in turbulence in the
-interpolation step, and both report a nonlinear weighting that costs
+Ma et al. (2022) and Wu et al. (2023) locate the dissipation that matters
+in turbulence in the interpolation step, and both report a nonlinear weighting that costs
 accuracy in shock-free flow:
 
 - **Implicit LES.** Ma et al. (§1, §2.2) state, citing Ishiko & Shimada and
@@ -149,9 +151,9 @@ accuracy in shock-free flow:
   leading-edge separation that the nonlinear WCNS-E misses (§3.3,
   Fig. 12).
 - **Hybrid RANS/LES and explicit LES.** Wu et al. (§2.2.1, §3.3) run the
-  fourth-order WCNS-E-type interpolation with two regularizers: $\epsilon=100$,
+  fourth-order WCNS-E-type interpolation with two regularizers: $\epsilon_{\mathrm Z}=100$,
   chosen "to neglect the nonlinear weight and approach the linear scheme"
-  (WCNS-L), and $\epsilon=10^{-6}$ (WCNS-Z). In SATES hybrid RANS/LES of
+  (WCNS-L), and $\epsilon_{\mathrm Z}=10^{-6}$ (WCNS-Z). In SATES hybrid RANS/LES of
   the [30P30N high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md)
   ($Re=1.71\times10^6$, $M=0.17$, 27 million cells) the lift coefficient
   deviates from the measured mean 2.83 by $-0.4\%$ (WCNS-L), $-6.7\%$
@@ -171,6 +173,36 @@ Ma et al. lower the dissipation by changing the interpolation family
 while keeping nonlinear weights, Wu et al. by switching the weights off
 in a shock-free flow. No source runs both remedies on one case.
 
+**Linear WCNS-E-4 against MUSCL under SATES-σ.** In the same group's
+later paper, [Wu et al. (2024)](/sources/wu-2024.md), §2.3, Eqs. (12)–(15),
+the convective scheme of PHengLEI is the fourth-order flux difference
+above ($\alpha_{\mathrm W}=9/8$, $b_{\mathrm W}=-1/24$) with the Roe flux
+and the linear fifth-order interpolation
+$u^{\mathrm L}_{j+1/2}=\tfrac1{128}(3u_{j-2}-20u_{j-1}+90u_j+60u_{j+1}-5u_{j+2})$
+and its mirror image for $u^{\mathrm R}_{j+1/2}$, i.e. the linear weights
+are used "to reduce the numerical dissipation in the original WCNS-E-4",
+with fourth-order central viscous terms. The comparison scheme is a MUSCL
+interpolation with a smooth rational limiter (its own parameter $\approx10^{-6}$) and a second-order
+flux difference (§2.4, Eqs. 16–17). On the supercritical
+[circular cylinder](/benchmarks/circular-cylinder-wake.md) at
+$Re_D=3\times10^6$, $M=0.2$ (about 6.7 million cells, $y^+<1$), with the
+[self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md)
+variant SATES-σ, the Strouhal number, base pressure, recirculation length
+and drag are $0.24$, $-0.34$, $0.79D$, $0.55$ with WCNS and $0.19$,
+$-1.32$, $0.61D$, $1.26$ with MUSCL (Table 3; the measured
+$C_D$ of Shih et al. that they cite is $0.24$ at $Re_D=1\times10^6$).
+The authors conclude that WCNS is "more accurate and necessary": with
+MUSCL the separation is not delayed (a subcritical-like pressure
+distribution and higher drag), the Kelvin–Helmholtz instability of the
+shear layer is damped, the recirculation is shorter and the
+moderate-frequency content of the wake spectrum is suppressed (§3.2,
+Figs. 13–17; §4). The same linear WCNS-E-4 carries their
+stall sweep of the [30P30N high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md)
+at $Re_c=9\times10^6$. As in Wu et al. (2023), the scheme is stated to
+capture shocks and to satisfy the
+[geometric conservation law](/properties/geometric-conservation-law.md),
+by citation (§2.3).
+
 ## Qualifications
 
 - **Evidence.** Ma et al. give no error norms for the implicit-LES cases,
@@ -179,13 +211,13 @@ in a shock-free flow. No source runs both remedies on one case.
   grid with one closure (SATES), against integrated lift and measured
   profiles.
 - **Idealized decoupling.** The splitting of the WCNS-T system at a jump
-  assumes weights exactly zero on crossing stencils; with $\epsilon=10^{-6}$
+  assumes weights exactly zero on crossing stencils; with $\epsilon_{\mathrm Z}=10^{-6}$
   they are small but not zero, which the authors acknowledge by calling
   the argument "a theoretical analysis" (§2.2).
-- **What $\epsilon=100$ does.** Wu et al. state that the large regularizer
+- **What $\epsilon_{\mathrm Z}=100$ does.** Wu et al. state that the large regularizer
   makes the weights near linear. With indicators of the form printed by
   Ma et al. (Eqs. 13–15), quadratic in the differences of the
-  interpolated variable, the effect of a fixed $\epsilon$ depends on the
+  interpolated variable, the effect of a fixed $\epsilon_{\mathrm Z}$ depends on the
   scaling of that variable *(compiler check, not in the sources)*; Wu et
   al. state neither their indicators nor the scaling.
 - **Printed slips (Ma et al. 2022).** The boundary rows of the
@@ -200,6 +232,12 @@ in a shock-free flow. No source runs both remedies on one case.
   Eq. (12) is garbled ("and equation) is 4th order in accuracy"); the
   scheme comparison of §3.4 refers to groups "B" and "C" where Table 2
   labels them A and B.
+- **Printed slips (Wu et al. 2024).** The MUSCL interpolation is called
+  "third-order" in §2.4 and once in §3.2, "second-order" elsewhere in
+  §3.2 and in §4, beside a
+  second-order flux difference; the cylinder comparison is one grid and
+  one closure, against references at other Reynolds numbers for part of
+  the data.
 - **Cost of WCNS-T.** Ma et al. state that the nonlinear compact
   interpolation needs "no extra computation" (§2.2, §4) and that one
   solution-dependent tri-diagonal system is solved per variable, grid
@@ -210,3 +248,4 @@ in a shock-free flow. No source runs both remedies on one case.
 
 - [Ma et al. (2022)](/sources/ma-2022.md) — §1 (WCNS over-dissipative for implicit LES, cited); §2, Eqs. (1)–(2) (curvilinear form, metrics with the flux scheme); §2.1, Eqs. (7)–(15) (three components, eighth-order flux difference, WCNS-E, Z-type weights, indicators); §2.2, Eqs. (16)–(29) (compact interpolation, WCNS-T, decoupling at discontinuities, boundary rows); §2.3, Tables 1–2, Figs. 1–3 (resolution, order, cost); §3.1–3.4, Figs. 4–16 (implicit LES; linear against nonlinear WCNS-E in T106A); §4.
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §1 (GCL and shock capturing of WCNS, cited); §2.2.1, Eqs. (10)–(14) (fourth-order flux difference, Roe flux, Z-type weights, WCNS-L and WCNS-Z); §2.2.2, Eq. (15) (blended comparison scheme); §3.3, Table 2, Figs. 11–16 (scheme dissipation on the 30P30N airfoil); §3.4; §4.
+- [Wu et al. (2024)](/sources/wu-2024.md) — §2.3, Eqs. (12)–(15) (linear WCNS-E-4 in PHengLEI, Roe flux, GCL by citation); §2.4, Eqs. (16)–(17) (MUSCL comparison scheme); §3.2, Table 3, Figs. 13–17 (WCNS against MUSCL on the supercritical cylinder); §4.

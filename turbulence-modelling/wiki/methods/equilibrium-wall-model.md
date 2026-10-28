@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-28T02:18:00Z
+timestamp: 2026-10-28T11:51:00Z
 ---
 
 # Equilibrium wall model
@@ -66,6 +66,26 @@ equilibrium hypothesis (formulas on the RANS wall function page).
 channel LES with "a classic wall model" identical to that of Bou-Zeid et al.
 (2005), as cited, without printing its form, so that it is an equilibrium
 model is not stated in the source.
+[Hu et al. (2024)](/sources/hu-2024.md) use the algebraic form in their
+grid-convergence study of WMLES (below), and [Zhou & Bae (2024)](/sources/zhou-2024-b.md)
+use an equilibrium stress-balance model in the precursor LES that feeds
+their [Gaussian bump](/benchmarks/gaussian-bump.md) and an idealized
+equilibrium wall condition on the bump itself (below).
+
+**History.** In the account of [Kim & Leonard (2024)](/sources/kim-2024-b.md)
+(§2.5, §3.1), the first channel LES already replaced no slip by a wall
+condition built on the log law: Deardorff (1970) with 6,720 grid points and
+Schumann (1975) with up to 65 K grid volumes, both "special wall boundary
+conditions" as Kim & Leonard put it, whereas Moin et al. (1978) were the
+first to compute the wall region explicitly. The same review closes (§5)
+with wall-modelled LES as a design tool for high-lift aircraft (Goc et al.
+2021). **A stochastic alternative.** The review of One-Dimensional
+Turbulence by [Chen et al. (2024b)](/sources/chen-2024-c.md) (§3.3,
+Fig. 13) sets the wall-stress model beside ODT used as a near-wall LES
+closure (Schmidt et al. 2003; Freire & Chamecki 2021, as cited): the ODT
+region is an embedded near-wall mesh like that of the wall-stress approach,
+but the transport there comes from stochastic eddy events rather than
+gradient diffusion (see [one-dimensional turbulence](/methods/one-dimensional-turbulence.md)).
 
 ## Assumptions
 
@@ -208,6 +228,12 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
   Eq. 3.1) print the same profile and constants, attributed to Deardorff
   (1970) and Piomelli et al. (1989) as they cite them, with adiabatic walls
   and the LES velocity taken at the second grid point off the wall.
+  [Hu et al. (2024)](/sources/hu-2024.md) (§4, Eq. 5) print it again in
+  CharLES, with $a_1$ "calculated to ensure $C^1$ continuity at $y^+=23$"
+  (value not printed), the model returning only the magnitude of the wall
+  stress, aligned with the LES velocity at $h_{\mathrm{wm}}$ (§6.1); they
+  choose it because it "obviates the need for meshing or discretization for
+  the wall model".
 - **Linear/log switch** (Lewis et al. 2023, §3.2.2): in the compressible
   solver AVBP, a wall law "inducing a no-slip condition at the walls" (after
   Nicoud et al., as cited) that is linear for $y^+<11$ and logarithmic
@@ -377,7 +403,7 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | Vadrot et al. (2023b, §II.B.1) | LESGO | first point, $\Delta y/2$ | sharp filter of twice the grid spacing |
 | Griffin et al. (2023, §4) | CharLES | $0.3\delta$ (12 points per half-height) | none stated |
 | Goc et al. (2021, §2.2) | CharLES, Alya | not quantified (deferred to Lehmkuhl et al. 2018) | — |
-| Gillyns et al. (2022, §3, §5, §7) | Nek5000, spectral elements of degree 7 | top node of the first element, $y/\delta=0.063$–0.15 ($y^+=63$–153) at $Re_\tau=1000$; $y^+=260$, 520 at $Re_\tau=5200$ | exponential moving average in time, $\bar U_n=\bar U_{n-1}+\alpha_e(U_n-\bar U_{n-1})$, $\alpha_e=\Delta t/(C_t+\Delta t)$, $C_t=0.0025\,\delta/u_\tau$ (about five time steps) |
+| Gillyns et al. (2022, §3, §5, §7) | Nek5000, spectral elements of degree 7 | top node of the first element, $y/\delta=0.063$–0.15 ($y^+=63$–153) at $Re_\tau=1000$; $y^+=260$, 520 at $Re_\tau=5200$ | exponential moving average in time, $\bar U_n=\bar U_{n-1}+\alpha_{\mathrm{ema}}(U_n-\bar U_{n-1})$, $\alpha_{\mathrm{ema}}=\Delta t/(C_t+\Delta t)$, $C_t=0.0025\,\delta/u_\tau$ (about five time steps) |
 | Hoy & Bermejo-Moreno (2022, §3) | unstructured finite volume | $0.1\delta_0$, four uniform cells below | none stated |
 | Blind et al. (2023, §3.3, §4) | FLEXI, DG spectral elements of degree 5, residual-adapted grids | channel: $0.1h$ ($h^+_{\mathrm{wm}}=200$ at $Re_\tau=2000$), in the first or, on the finest adapted grid, the second cell; airfoil: $0.0134c$, about 10 % of the mean $\delta_{99}$, chosen by the exchange-location algorithm of Kahraman & Larsson on wall-resolved reference data | none stated |
 | Cai et al. (2022, §II.C.1) | ProLB lattice Boltzmann, octree Cartesian grid, [immersed boundary](/methods/immersed-boundary-method.md) | first fluid points next to the boundary; $u_\tau$ (not the velocity) interpolated to the boundary points, e.g. by inverse distance weighting | none stated |
@@ -395,13 +421,15 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | Maeyama & Kawai (2023, §2.3, Table 1) | in-house sixth-order compact differences, eighth-order filter, stretched in $y$ | 10th grid point, $h^+_{\mathrm{wm}}\approx54$, 101, 191, 357, 677, 1287 at $Re_\tau\approx700$–14 000 (all in the log region) | instantaneous LES velocity and temperature |
 | HLPW-4 participants, [Kiris et al. (2023)](/sources/kiris-2023.md) (Table 2, §II.5) | nine codes on the CRM high-lift configuration (structured overset, Voronoi, unstructured, Cartesian immersed boundary, $N=2$ flux reconstruction) | from the first off-wall point ($0.5\Delta$ in CharLES, $1\Delta$ in FUN3D) to the fourth off-wall cell ($3.5\Delta$); between the first and second elements in hpMusic | not stated; nodal (W-020, W-034, W-050) against cell-centred (W-021, W-031, W-047) application of the wall stress named as "perhaps a large source of discrepancy", the model variants being "of no consequence" |
 | Constant et al. (2024, §3.1, §4.2), RANS | FastS finite volume, octree Cartesian grid, immersed boundary | modelling height $H_{\mathrm{mod}}$ from a flat-plate estimate of a target $y^+$ (50–500), then lowered locally after a first converged run (see below) | steady RANS, no filtering |
+| Hu et al. (2024, §4–5, Tables 1–2) | CharLES, isotropic grids | fixed in outer units, $h_{\mathrm{wm}}=0.1\delta$, $0.2\delta$ (channels) and $0.05$–$0.15\delta$ (rotating free stream), always at a cell centre, while the grid is refined from $\Delta/h_{\mathrm{wm}}=2$ to about 0.12 | none stated |
+| Zhou & Bae (2024, §2.2–2.3) | unstructured incompressible finite volume (You, Ham & Moin, as cited), isotropic and $4{:}1{:}2$ cells | idealized wall conditions on the bump: first off-wall cell centre; precursor flat-plate LES: equilibrium stress-balance model | running time average of the first-cell velocity with time scale $0.3L/U_\infty$, then $6L/U_\infty$ ($L$ the bump width), to calibrate the wall eddy viscosity |
 
 Gillyns et al. (2022, §5) find that without the moving average ($C_t=0$) the
 model diverges, "most likely due to the Gibbs phenomenon at the element
 boundary", that $C_t=0.0025\,\delta/u_\tau$ gives the same statistics as
 $C_t=2\,\delta/u_\tau$ with a much shorter settling time, and that the same
 value is near optimal at $Re_\tau=5200$; spanwise element-wise averaging gave
-no gain (page-local symbols $\bar U_n$, $\alpha_e$, $C_t$). "The law of the
+no gain (page-local symbols $\bar U_n$, $\alpha_{\mathrm{ema}}$, $C_t$). "The law of the
 wall is quite robust to the input quantity, yet it still requires a minimal
 time averaging". The matching height barely matters while it stays below
 $0.15\delta$: errors grow slightly from the lowest to the highest first
@@ -410,7 +438,7 @@ the best choice" (§7, Table 1).
 
 Mukha et al. (2025, §II.C.1, Eqs. 5–6) apply the same exponential filter in
 the same code: their weight $\Delta t/(\Delta t+\Delta t_{\mathrm{avg}})$ is
-$\alpha_e$ with $C_t=\Delta t_{\mathrm{avg}}$ *(compiler check, not in the
+$\alpha_{\mathrm{ema}}$ with $C_t=\Delta t_{\mathrm{avg}}$ *(compiler check, not in the
 sources)*. Their study separates a priori from a posteriori effects
 (§III.B.3, Tables II–III, Figs. 4–5):
 
@@ -441,7 +469,7 @@ A third high-order code reports the same insensitivity as Mukha et al.
 Huang et al. (2022c, §III D, Eqs. 21–22, Fig. 8) compare, in an implicit LES
 of channel flow at $Re_\tau=550$, the instantaneous matching velocity with
 an exponential moving average of weight $a=0.01$ (page-local; a time
-constant of 99 time steps by the identity $a=\alpha_e$ above *(compiler
+constant of 99 time steps by the identity $a=\alpha_{\mathrm{ema}}$ above *(compiler
 check, not in the sources)*): the results differ only marginally and both
 agree with DNS, so they recommend the instantaneous velocity, which "speeds
 up computation", in agreement with Frère et al.'s DG LES as they cite it.
@@ -881,6 +909,43 @@ $\lambda_t$ page-local, $C_h$ the Stanton number as on the Morkovin page). The a
 separation, where the skin friction vanishes but the heat transfer does not
 (see [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md)).
 
+**Grid convergence fixed by the matching height.** On a channel at
+$Re_\tau=1000$, Spalart's boundary layer under a rotating free stream
+($Re_l=767$, page-local) and a channel at $Re_\tau=934$ with a sudden
+spanwise pressure gradient, [Hu et al. (2024)](/sources/hu-2024.md)
+(§6.1–6.2, Figs. 3–12) find that the mean wall stress, the mean velocity
+above $h_{\mathrm{wm}}$ and the mean flow direction computed with the
+algebraic model converge at coarser grids for larger $h_{\mathrm{wm}}$, with
+onset near $\Delta/h_{\mathrm{wm}}\approx0.3$–$0.4$, while the streamwise
+r.m.s. velocity converges much more slowly and without clear
+$h_{\mathrm{wm}}$ dependence (see [wall-modelled LES](/methods/wall-modelled-les.md)).
+In the three-dimensional layers the converged wall-stress magnitude is
+more sensitive to $h_{\mathrm{wm}}$ than in the channel and more accurate for
+smaller $h_{\mathrm{wm}}$, which they attribute to the model's assumption of
+unidirectional flow in the wall-modelled region; "grid-converged WMLES is
+not necessarily accurate" (§3, §6.1, §7).
+
+**An idealized equilibrium condition.** [Zhou & Bae (2024)](/sources/zhou-2024-b.md)
+(§2.2.2, Eqs. 3–7) derive from the thin-boundary-layer equations without
+unsteadiness, convection and pressure gradient the first-cell balance
+$\tau_{w,i}\approx\rho(\nu+\nu_{t,w})u_{{\mathrm c},i}/h_{\mathrm{wm}}$ ($i=1,3$;
+$u_{\mathrm c}$ the first-cell-centre velocity, $\nu_{t,w}$ an effective
+wall eddy viscosity, page-local), calibrate
+$\nu_{t,w}\approx\tau^{\mathrm{DNS}}_w/(\rho\,\breve u_{\mathrm c}/h_{\mathrm{wm}})-\nu$
+against the DNS mean wall stress ($\breve u_{\mathrm c}$ a running time
+average of the first-cell velocity, page-local; the source writes it with
+an overbar), and apply
+$\tau_{w,i}=\rho(\nu+\nu_{t,w})\,\partial u_i/\partial y|_w$
+through a Dirichlet (no-slip) condition, with $\nu_{t,w}\ge0$. On the
+Gaussian bump its first-cell velocities resemble those of a Neumann
+condition imposing the DNS mean stress directly, while for the
+mixed-similarity model and the Vreman model with $c=0.025$ it moves
+reattachment downstream and lengthens the bubble; the SGS model and the
+mesh decide the separation more than the wall condition does (§3.2,
+Figs. 14–16). The
+pressure-gradient variant is on the
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md) page.
+
 In equilibrium flows the model is adequate: Fowler et al. (2022, §5.1) find
 equilibrium-model and LaRTE channel statistics "nearly indistinguishable" for
 $Re_\tau=10^3$ to $5\times10^5$, and Vadrot et al. (2023b, §III.A) find the
@@ -890,6 +955,14 @@ profile lies above the DNS).
 
 ## Qualifications
 
+- **One coefficient for two matching conditions.** With the printed
+  $\kappa=0.41$, $B=5.2$ and junction at $y^+=23$, the piecewise profile
+  $y^++a_1(y^+)^2$ / $\kappa^{-1}\ln y^++B$ cannot be both continuous and
+  $C^1$ by tuning $a_1$ alone: slope matching gives $a_1\approx-0.0194$ and
+  $u^+(23)\approx12.72$ against $12.85$ on the log branch, value matching
+  gives $a_1\approx-0.0192$ with a slope mismatch *(compiler check, not in
+  the sources; applies to the form as printed by Hu et al. 2024, Lozano-Durán
+  et al. 2022 and Lozano-Durán & Bae 2023, none of whom prints $a_1$)*.
 - The printed Eq. (1.2) of Griffin et al. (2023) lacks the minus sign in the
   exponent of the damping function (see the [law of the wall](/definitions/law-of-the-wall.md)
   page); the form above is the one their text describes.
@@ -1024,3 +1097,7 @@ profile lies above the DNS).
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.4–2.6, Eqs. (33)–(37); §3.1, Fig. 13; §3.2, Eq. (58); §3.4, Figs. 26–27; §4.
 - [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §1; §2.3, Eqs. (2.17)–(2.20); §4.1–4.3, Eqs. (1.1), (4.2), Figs. 4–5, 7; §5; §6; Table 1.
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.5, Table 2.
+- [Hu et al. (2024)](/sources/hu-2024.md) — §1; §3; §4, Eq. (5); §5, Tables 1–2; §6.1–6.2, Figs. 3–12; §7.
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.2.2, Eqs. (3)–(7); §2.3; §3.2, Figs. 13–16.
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.5; §3.1; §5 (log-law wall conditions of the first channel LES; historical).
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — §3.3, Fig. 13 (ODT near-wall closure set beside the wall-stress model; passing).

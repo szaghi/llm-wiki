@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Fluid Mech. 1016:A4"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Fluid_Mechanics_Löhrer_Large-eddy_simulation_of_the_fluidstructure_interaction_in_a.pdf"
 tags: [les, immersed-boundary, fluid-structure-interaction, eddy-viscosity, boundary-layer]
-timestamp: 2026-10-26T15:49:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Summary
@@ -57,7 +57,7 @@ Page-local symbols: $H$ flow depth, $U_b$ bulk velocity, $Re_H=U_bH/\nu$;
 $h_c$ mean canopy-hull height (the source's $h$), $h^*$ mean tip height, $y_h$
 the instantaneous hull height (the source's $\bar y$); $y_{vo}$ displacement
 height, $u_{\tau,vo}$ its friction velocity, $\Delta U^+$ the roughness
-function; $\lambda_f$ frontal-area density; $Q_\varepsilon$ the SGS activity
+function; $\lambda_f$ frontal-area density; $s_a$ the SGS activity
 parameter.
 
 1. The canopy raises the drag by $C_f/C_{f0}=12.4$ over a smooth channel at the same bulk Reynolds number, with $C_f\approx0.063$ from the driving force and $C_{f0}\approx0.0051$ from $C_{f0}\approx0.0549\,Re_H^{-0.24}$ (Pope 2000) (§5.3, Eqs. 5.12–5.14). **Shown**
@@ -85,21 +85,21 @@ parameter.
 23. Premultiplied spectra of $u'$ at $y=h_c$ and of the hull height peak at $\lambda_x\approx2.5H$, $\lambda_z\approx1H$; the hull's $\lambda_z\approx1.25H$ (plain spectrum) exceeds the $0.6H$ of Monti et al. (2023) (§7.2, App. J, Figs. 21–22, 44). **Shown**
 24. Conditional averages: troughs (hull $0.06H$ at the centre) are sweeps flanked by counter-rotating streamwise vortices that push blades apart, trough width $1.04H$; ridges ($0.44H$) are ejections with the opposite rotation, width $0.92H$, with a shear-stress maximum near $y\approx2h_c$; streak spacing $\approx0.55H$ in both (§7.3, Figs. 23–25). **Shown**
 25. The trough structure resembles the head-down structure linked to monami by Tschisgale et al. (2021), although no monami occurs here; their combined Kelvin–Helmholtz/head-up structures are not seen (§4.2, §7.3, §8). **Shown** (qualitative)
-26. LES quality: $Q_\varepsilon\approx\nu_t/(\nu_t+\nu)$ has mean 0.11, 95% of values below 0.23 and a local maximum about 0.3; the SGS contribution to the mean drag is smaller than the viscous one everywhere and vanishes above the canopy edge; the authors call the run "a high-resolution LES ... close to a DNS" (App. C, Figs. 28–29). **Shown**
+26. LES quality: $s_a\approx\nu_t/(\nu_t+\nu)$ has mean 0.11, 95% of values below 0.23 and a local maximum about 0.3; the SGS contribution to the mean drag is smaller than the viscous one everywhere and vanishes above the canopy edge; the authors call the run "a high-resolution LES ... close to a DNS" (App. C, Figs. 28–29). **Shown**
 27. Grid study on the half-size domain: medium ($W/\Delta z=24.4$) to fine (48.8) changes the mean velocity by at most $\approx0.05U_b$, the resolved shear stress by about 18% and the kinetic energy by about 9%; the fine run used a doubled CFL number, so its fluctuation profiles are "likely to be underestimated"; halving the horizontal domain changes little (App. B, Table 6, Fig. 27). **Shown**
 28. Inside the canopy the spectra show weak traces of the spectral shortcut; at $y=h_c$ and $0.75H$ they follow $k^{-5/3}$ for $2\pi/H\lesssim k\lesssim10\pi/H$; at $0.75H$ the $v'$ and $w'$ spectra collapse at high $k_x$, which the authors say is not observed in a flat-plate boundary layer (App. I, Figs. 41–43). **Shown**
 29. In Tschisgale et al. (2021) halving and doubling $C_s$ had practically no effect, and the present runs use the same SGS model and constant (§3.3). **Stated** (cited)
 30. DNS of this problem is "not feasible due to excessive computational resources"; the production run cost 1.3 Mcore-h on CPU clusters (§3.2–3.3). **Stated**
 
 The activity parameter (App. C, Eqs. C1–C3) in registry notation:
-$$Q_\varepsilon=\frac{\varepsilon_{\mathrm{sgs}}}{\varepsilon_{\mathrm{res}}+\varepsilon_{\mathrm{sgs}}},\qquad \varepsilon_{\mathrm{res}}=\nu\,\bar S_{ij}\partial_j\bar u_i,\quad \varepsilon_{\mathrm{sgs}}=\nu_t\,\bar S_{ij}\partial_j\bar u_i,\qquad Q_\varepsilon\approx\frac{\nu_t}{\nu_t+\nu},$$
-$Q_\varepsilon=0$ for DNS and 1 for LES at infinite Reynolds number (Geurts &
+$$s_a=\frac{\varepsilon_{\mathrm{sgs}}}{\varepsilon_{\mathrm{res}}+\varepsilon_{\mathrm{sgs}}},\qquad \varepsilon_{\mathrm{res}}=\nu\,\bar S_{ij}\partial_j\bar u_i,\quad \varepsilon_{\mathrm{sgs}}=\nu_t\,\bar S_{ij}\partial_j\bar u_i,\qquad s_a\approx\frac{\nu_t}{\nu_t+\nu},$$
+$s_a=0$ for DNS and 1 for LES at infinite Reynolds number (Geurts &
 Fröhlich 2002; Celik et al. 2005). The source prints neither the formula for
 $\nu_t$ nor the filter width.
 
 # Printed slips
 
-- **§3.1:** "$T_f^{-1}=0.075\,u_\tau^2/(2\pi\nu)=0.2\,H/U$": the right-hand side has the dimension of a time, so the printed value is that of $T_f$, not $T_f^{-1}$ *(compiler check, not in the sources)*.
+- **§3.1:** "$T_f^{-1}=0.075\,u_\tau^2/(2\pi\nu)=0.2\,H/U$": $0.2\,H/U$ has the dimension of a time, while $T_f^{-1}$ is an inverse time; used as $T_f$, it reproduces the printed nominal reduced velocity, $U_r=\alpha^{-1}T_n/T_f=139/(1.787\times0.2)\approx389$ against 395, with the paper's $T_n=139H/U_b$ and $\alpha=2\pi/1.875^2$ *(compiler check, not in the sources)*.
 - **App. A, Eq. (A2) context, p. A4-37:** "$u_\tau^0/U_b^0=\sqrt{c_f^0/2}=15.66$": a ratio $u_\tau/U_b$ is below 1; 15.66 is the inverse ratio, $1/15.66\approx0.064$ *(compiler check, not in the sources)*.
 - **App. B:** "maximum absolute difference ... $0.0034\,U^2\approx(0.0058\,U)^2$"; $\sqrt{0.0034}=0.058$ *(compiler check, not in the sources)*.
 - **§6.1:** "Streamwise and spanwise deflections are overall well correlated, with ... $-\rho_{c_xc_y}\gtrsim0.5$ in figure 11(b)": the coefficient and the Fig. 11(b) caption concern streamwise and **vertical** deflections, and the next sentence says the streamwise–spanwise coefficient vanishes by symmetry.
@@ -132,7 +132,7 @@ $\nu_t$ nor the filter width.
 | $\kappa_x$, $\kappa_z$ | $k_x$, $k_z$ | **collision** with the von Kármán constant |
 | $\alpha$ | page-local | $2\pi/1.875^2$, solid volume fraction and modal coefficient; **collision** with the DG blending factor |
 | $\rho_{u'v'}$ | page-local | correlation coefficient |
-| $Q_\varepsilon$, $\varepsilon_{res}$, $\varepsilon_{sgs}$ | page-local | activity parameter, App. C |
+| $Q_\varepsilon$, $\varepsilon_{res}$, $\varepsilon_{sgs}$ | $s_a$ (page-local, as on the LES page), $\varepsilon_{\mathrm{res}}$, $\varepsilon_{\mathrm{sgs}}$ (page-local) | activity parameter, App. C |
 | $Ca$, $U_r$, $Ga$ | page-local | Cauchy, reduced-velocity and Galilei numbers |
 
 # Reference list

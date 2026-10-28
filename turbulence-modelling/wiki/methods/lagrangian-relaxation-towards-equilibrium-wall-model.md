@@ -5,7 +5,7 @@ description: "A wall-stress model that transports the friction-velocity vector a
 status: established
 aliases: [LaRTE, LaRTE wall model, relaxation-towards-equilibrium wall model, quasi-equilibrium wall model]
 tags: [wall-model, wmles, boundary-layer]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-28T07:03:00Z
 ---
 
 # Lagrangian relaxation towards equilibrium (LaRTE) wall model
@@ -64,8 +64,9 @@ $$T_s=f(h^+_{\mathrm{wm}})\,\frac{h_{\mathrm{wm}}}{u_\tau},\qquad \boldsymbol V_
 wall-parallel gradient). The authors state the derivation "does not require
 additional ad hoc assumptions" beyond the ansatz.
 
-**Reading of $T_s$.** $T_s$ is proportional to the fluid volume per unit wall
-area below $h_{\mathrm{wm}}$, that is, the inertia of the layer: it delays the
+**Meaning of $T_s$.** Fowler et al. (§2.1) state that $T_s$ is proportional
+to the fluid volume per unit wall area below $h_{\mathrm{wm}}$, that is, the
+inertia of the layer: it delays the
 wall stress behind the stress at $h_{\mathrm{wm}}$; a higher matching point
 lengthens the delay and a larger $u_\tau$ shortens it (§2.1). For one stress
 component without pressure gradient the wall stress itself relaxes with time
@@ -201,6 +202,12 @@ interpolation stands in for the neglected horizontal diffusion (§4.2).
   a learned model ([machine-learning wall models](/methods/machine-learning-wall-model.md)),
   which they test only in equilibrium channel flow; neither paper compares
   the two approaches.
+- [Hu et al. (2024)](/sources/hu-2024.md) (§1) list Fowler et al. (2022) as
+  the Lagrangian-relaxation entry of their taxonomy of wall-stress models,
+  between the integral non-equilibrium model of Yang et al. and the dynamic
+  slip conditions; their grid-convergence study uses only an algebraic
+  [equilibrium wall model](/methods/equilibrium-wall-model.md) and does not
+  test LaRTE.
 
 ## Qualifications
 
@@ -215,8 +222,8 @@ interpolation stands in for the neglected horizontal diffusion (§4.2).
   Eq. (2.1); §2.3 gives $h^+_{\mathrm{wm}}\approx34$ and Table 1 gives 33 for
   $Re_\tau=1000$.
 - The sources of this bundle offer no second test of LaRTE; its evidence is
-  that of its authors. Gillyns et al. (2022) and Vadrot et al. (2023a) cite
-  it but do not implement it.
+  that of its authors. Gillyns et al. (2022), Vadrot et al. (2023a) and
+  Hu et al. (2024) cite it but do not implement it.
 
 # Citations
 
@@ -224,3 +231,4 @@ interpolation stands in for the neglected horizontal diffusion (§4.2).
 - [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md) — §I; §II.A.
 - [Gillyns et al. (2022)](/sources/gillyns-2022.md) — §3, Eq. (4); §5.
 - [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — §I (arXiv v3).
+- [Hu et al. (2024)](/sources/hu-2024.md) — §1 (taxonomy of wall-stress models; passing mention).

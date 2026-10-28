@@ -5,7 +5,7 @@ description: "How the grid-point and time-step counts of DNS, wall-resolved and 
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-28T02:18:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -27,6 +27,7 @@ WMLES cost model, and report what resolution sufficed in practice.
 | WRLES, flat plate | $Re_{L_x}^{1.86}$ | $Re^{2.7}$ | points: [Vadrot et al. (2023b)](/sources/vadrot-2023-b.md), §I; cost: [Griffin et al. (2023)](/sources/griffin-2023.md), §1 — both after Yang & Griffin (2021) |
 | WMLES, flat plate | $Re_{L_x}^{1.0}$ | $Re^{1.1}$ | same |
 | WMLES | $\propto Re_c$ | $\propto Re_c^{4/3}$, "which accounts for the reduction in time step" | [Goc et al. (2021)](/sources/goc-2021.md), §2.2, §4, after Choi & Moin (2012) |
+| WMLES, order of magnitude | $\Delta/\delta_\nu\sim O(Re_\tau/10)$ for $\delta/\Delta\sim O(10)$ | — | [Hu et al. (2024)](/sources/hu-2024.md), §2, Eqs. (1)–(4) |
 | WMLES on a [BL-conforming grid](/methods/boundary-layer-conforming-grid.md) | $n_\delta^{13/6}\,Re\,(Re_\Delta^{\min})^{-5/6}$ | steps $\sim t_{\mathrm{run}}\,Re\,(Re_\Delta^{\min})^{-1}$ | [Lozano-Durán et al. (2022)](/sources/lozanoduran-2022.md), §III.B, Eqs. (5)–(7) |
 
 Page-local symbols: $L_d$ the domain size, $L$ the integral length,
@@ -46,7 +47,14 @@ without stating the Reynolds number used; $13/7\approx1.857$ agrees with the
 Their exponents for the total WMLES cost differ, because they rest on different time-step assumptions (see Qualifications).
 [Morsbach et al. (2024)](/sources/morsbach-2024.md) (§1) quote, after Choi &
 Moin (2012), a cost of roughly $Re^{3.5}$ for DNS and $Re^{2.5}$ for
-wall-resolved LES. [Delassaux et al. (2023)](/sources/delassaux-2023.md)
+wall-resolved LES; [Wu et al. (2024)](/sources/wu-2024.md) (§1) cite Choi &
+Moin (2012) for an LES near-wall grid "similar to that of Direct Numerical
+Simulation", after quoting 2.6 billion cells and 6 million CPU hours for
+the LES of a three-element airfoil at $Re_c=1.23\times10^6$ by Terracol &
+Manoha (as cited), as the reason
+high-lift airfoils at flight Reynolds numbers motivate their hybrid
+[self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md).
+[Delassaux et al. (2023)](/sources/delassaux-2023.md)
 (§4.1) cite Spalart's forecast that wall-resolved LES and DNS of a
 full-scale high-Reynolds-number geometry would become available in 2050 and
 2080 respectively. [Elzaabalawy et al. (2023)](/sources/elzaabalawy-2023.md)
@@ -95,6 +103,24 @@ flows "can become computationally extremely expensive (almost as expensive
 as DNS)", the motivation of hybrid methods.
 
 ## DNS
+
+**The historical estimates.** In the account of [Kim & Leonard (2024)](/sources/kim-2024-b.md)
+(§2.1–2.2, §5), von Neumann (1949) judged even an $8^3$ simulation beyond the
+computers of that time, and Corrsin (1961) argued that a simulation would need
+$Re=10^4$ to show universality and, from Kolmogorov scaling, at least
+$10^{12}$ grid points, an estimate later substantiated by Case et al. (1973)
+(all as cited). The first DNS of decaying isotropic turbulence (Orszag &
+Patterson 1971–1972) ran on $16^3$ and $32^3$ meshes at initial $Re_\lambda=35$
+on a 3-megaflop CDC 6600, 30 s per time step at $32^3$. Orszag (1971, as
+cited) estimated that an $N^3$ spectral simulation (here $N$ the points per
+direction, not the polynomial degree) is as accurate as a $(4N)^3$
+finite-difference one at the cost of a $(2N)^3$ one, and the review prints
+the pseudospectral transform count as "$O((N\log N)^3)$" against the $O(N^6)$
+of the convolution sums. Peak speed grew by about $10^{12}$ from the CDC 6600
+to the 2-exaflop Frontier (2022); isotropic DNS reached $4096^3$ (Kaneda et
+al. 2003) and $8192^3$ (Yeung et al. 2015) at $Re_\lambda=1200$–1300, with
+well-constructed codes reaching 20–50 % of peak (Bose, personal
+communication, as cited) (§5).
 
 Domingo & Vervisch (2023, §2) take $h=2\eta$ as sufficient for the dissipative
 range (after Moin & Mahesh, as they cite it) and derive the point count of
@@ -319,6 +345,49 @@ peak of the streamwise fluctuations to be likely unresolved with the
 Choi & Moin resolution, $\delta/\Delta x_i\sim10$.
 
 ## What resolution sufficed in practice
+
+- **Grid convergence of WMLES against the matching height.**
+  [Hu et al. (2024)](/sources/hu-2024.md) (§2, Eqs. 1–4) argue that a
+  quantity with length scale $O(\delta)$, resolved by $O(10)$ cells, can
+  converge on WMLES grids with $\delta/\Delta\sim O(10)$, that is
+  $\Delta/\delta_\nu=(\Delta/\delta)Re_\tau\sim O(Re_\tau/10)$, and that ideally
+  convergence should be shown on grids with $\Delta^+>O(100)$ and
+  $\Delta/\delta=O(0.1)$ at $Re_\tau=O(10^4)$; they cite Choi & Moin for 10
+  to 30 cells per $\delta$, Goc et al. for $O(1)$ cells per $\delta$ in
+  aircraft convergence checks, and aircraft WMLES at cruise at about a
+  billion cells. From integral length scales (Sillero et al. 2014, as cited)
+  they expect the mean velocity to converge first, the Reynolds stresses
+  more slowly and wall-pressure fluctuations to need about $0.02\delta$. On
+  isotropic CharLES grids at $Re_\tau=1000$ and in two three-dimensional
+  boundary layers the mean wall stress, mean velocity and flow direction
+  converge once $\Delta/h_{\mathrm{wm}}\lesssim0.3$–0.4, a criterion set by
+  the matching height rather than by $\delta$ (§6.1–6.2); the streamwise
+  r.m.s. velocity needs about $\Delta^+\approx50$ at $Re_\tau=1000$ (80 % of the
+  small-scale-eddy energy, four cells per scale), where "WMLES starts to
+  approach WRLES" (§6.2, §7; see [wall-modelled LES](/methods/wall-modelled-les.md)).
+- **Near-WRLES resolution in a separated WMLES.** On the
+  [Gaussian bump](/benchmarks/gaussian-bump.md) ($Re_L=2\times10^6$, $L$ the
+  bump width), [Zhou & Bae (2024)](/sources/zhou-2024-b.md) (§2.2.3, §3.1,
+  Table 1) refine isotropic grids from $\Delta_c/L=1.90\times10^{-3}$
+  (1.94 M cells) to $2.38\times10^{-4}$ (993 M cells; $\Delta_c$ the cube root
+  of the cell volume, page-local), with the incoming boundary layer covered
+  by about 5, 9, 18 and 36 cells. The finest grid has 10–30 wall units in
+  the attached regions, "comparable to that of the standard WRLES mesh in
+  the streamwise and spanwise directions" but an order of magnitude coarser
+  wall-normally, and there even WMLES without an SGS model improves
+  markedly, with over 150 cells across the separated boundary layer. The
+  reference simulation they call DNS (Uzun & Malik, as cited) has a
+  characteristic cell size of about $1.10\times10^{-4}L$ at the thickest
+  bubble.
+- **Resolved fraction in a wall-resolved supersonic LES.** [Wei et al. (2023)](/sources/wei-2023.md)
+  (§II E, §III B, Eq. 34, Fig. 6) run a wall-resolved LES of supersonic
+  hydrogen film cooling (Mach 2.44) on about $7.4\times10^6$ cells with
+  $\Delta x^+=120$, $\Delta z^+=40$, $\Delta y^+<60$ and a first cell at
+  $y^+\approx0.6$, and check it by the 80 % resolved-energy criterion of
+  Pope, as cited: 99.5 % of the cells resolve more than 80 % of the
+  turbulent kinetic energy, the rest lying in the viscous sublayer; the
+  velocity spectrum at $y/\delta=0.5$ shows a $-5/3$ range. Mesh
+  independence is not shown.
 
 - **Integrated forces at about ten points per boundary layer.** Goc et al.
   (2021) size the [JAXA Standard Model](/benchmarks/jaxa-standard-model.md)
@@ -935,3 +1004,8 @@ it, without breakdown).
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — Abstract; §I.1; §II.3; Tables 1–2; §III, Fig. 6; §IV, Fig. 12; §VI.1a, §VI.1c, §VI.4.
 - [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §1; §3, Table 1; §4; §6; App. C, Table 2.
 - [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — §III B 2, Table III; §IV A, Fig. 4.
+- [Hu et al. (2024)](/sources/hu-2024.md) — §2, Eqs. (1)–(4), Fig. 1; §6.1–6.2, Fig. 14; §7.
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.1–2.2; §5 (historical estimates and computing growth).
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.2.3, Table 1; §3.1.
+- [Wei et al. (2023)](/sources/wei-2023.md) — §II E; §III B, Eq. (34), Figs. 5–6.
+- [Wu et al. (2024)](/sources/wu-2024.md) — §1 (Choi & Moin cited; passing).

@@ -9,7 +9,7 @@ year: 2022
 venue: "Flow Turbul. Combust. 109:1111-1131"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Flow_Turbulence_and_Combustion_Gillyns_Implementation_and_Validation_of_an_Algebraic_Wall_Model_for.pdf"
 tags: [wall-model, wmles, les, spectral-element]
-timestamp: 2026-10-26T20:48:00Z
+timestamp: 2026-10-28T11:51:00Z
 ---
 
 # Summary
@@ -65,7 +65,7 @@ metadata, and there is no identity problem.
 6. The SGS model is Nek5000's approximate deconvolution model with `filterWeight` = 10, which "provided an excellent match with a DNS, as shown in Schlatter et al. (2004) at $Re_\tau\simeq210$". It uses high-pass filtering and is "not a simple eddy-viscosity SGS model" (§2). **Stated**
 7. Polynomial degree 7 is used because Fischer (2013) indicates that it performs best for a wide range of applications (§2). **Stated**
 8. In the spectral element method the velocity is $C^0$ across elements but its gradient is discontinuous. On coarse meshes this produces a Gibbs phenomenon, spikes in the gradient and in the velocity fluctuations at element boundaries, which vanishes as the mesh approaches DNS resolution. It can serve as a qualitative, reference-free mesh-quality indicator (§2, §6, §8). **Shown** (Figs. 8, 11, 13) / **Stated** (indicator use)
-9. The input filter is the exponential moving average $\bar U_n=\bar U_{n-1}+\alpha_e(U_n-\bar U_{n-1})$ at each wall node, with $\alpha_e=\Delta t/(C_t+\Delta t)$ (Eq. 4; page-local symbols as on the [equilibrium wall model](/methods/equilibrium-wall-model.md) page). It is chosen over simple and weighted moving averages because it is memory-light, reactive and a first-order low-pass filter. Spanwise element-wise spatial averaging was tested and gave no significant improvement (§3). **Stated** (comparison not shown)
+9. The input filter is the exponential moving average $\bar U_n=\bar U_{n-1}+\alpha_{\mathrm{ema}}(U_n-\bar U_{n-1})$ at each wall node, with $\alpha_{\mathrm{ema}}=\Delta t/(C_t+\Delta t)$ (Eq. 4; page-local symbols as on the [equilibrium wall model](/methods/equilibrium-wall-model.md) page). It is chosen over simple and weighted moving averages because it is memory-light, reactive and a first-order low-pass filter. Spanwise element-wise spatial averaging was tested and gave no significant improvement (§3). **Stated** (comparison not shown)
 10. Reichardt's equation is inverted for $u_\tau$ by an iteration based on two initial guesses. It reaches machine precision in seven steps on average per wall node, at a cumulative cost of 0.4% of a time step, so a lookup table (Maheu et al. 2012; Frère et al. 2018) is unnecessary (§4). **Shown** (timing quoted, hardware not given)
 11. Without time averaging ($C_t=0$) the wall model diverges, "most likely due to the Gibbs phenomenon at the element boundary creating high fluctuations in the sampled velocity" (§5). **Shown** (divergence) / **Stated** (cause)
 12. With $C_t$ varied from 0 to $2\,\delta/u_\tau$ at $Re_\tau=1000$, $C_t=0.0025\,\delta/u_\tau$, the smallest nonzero value tested and equal to five time steps, "provides the best compromise". Its final solution is statistically equivalent to that of $C_t=2\,\delta/u_\tau$, which has a long settling time. The same $C_t$ is near optimal at $Re_\tau=5200$ (§5, §9). **Shown** (stated in the text; no figure of the sweep)
@@ -107,7 +107,7 @@ metadata, and there is no identity problem.
 | $u_\parallel$, $u_{\parallel_i}$ | $U_{\mathrm{LES}}$ | wall-parallel LES velocity at the top of the first element, node $i$ |
 | $\overline{u}_{i_n}$ | $\bar U_n$ (page-local; $U_n$ the sampled $U_{\mathrm{LES}}$) | exponential moving average at time step $n$ (node index dropped); **collision:** this overbar is a time filter, not the LES filter |
 | $\overline{u'u'}$, $\overline{v'v'}$, $\overline{w'w'}$ | $R_{11}$, $R_{22}$, $R_{33}$ | here the overbar is a statistical average |
-| $\alpha=\Delta t/(C_t+\Delta t)$ | $\alpha_e$ (filter weight, page-local) | **collision:** not the DG/FV blending factor |
+| $\alpha=\Delta t/(C_t+\Delta t)$ | $\alpha_{\mathrm{ema}}$ (filter weight, page-local) | **collision:** not the DG/FV blending factor |
 | $C_t$ | (filter time constant) | in units of $\delta/u_\tau$; 0.0025 chosen |
 | $\tau_w$, $\tau_{w_i}$, $\tau_{wall}$ | $\tau_w$ | three spellings |
 | $u_\tau$, $u_\parallel^+$, $y^+$ | $u_\tau$, $U^+_{\mathrm{LES}}$, $y^+$ | $\tau_w=\rho u_\tau^2$ |

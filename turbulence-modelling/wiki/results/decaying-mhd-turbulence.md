@@ -5,7 +5,7 @@ description: "Decaying MHD turbulence is a selective decay whose power laws foll
 status: established
 aliases: [selective decay, Orszag–Tang vortex, Orszag-Tang decay, decaying Hall MHD, Saffman invariant, Hosking invariant, Saffman helicity invariant, Loitsyansky invariant, reconnection-controlled decay, inverse transfer]
 tags: [mhd, astrophysics, plasma, isotropic-turbulence, reconnection]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Decaying MHD turbulence and its invariants
@@ -205,7 +205,7 @@ a periodic box of side $2\pi$ is
 
 $$\boldsymbol u(\boldsymbol x,0)=U_0\,[-2\sin y,\;2\sin x,\;0],\qquad \boldsymbol B(\boldsymbol x,0)=B_{\mathrm{OT}}\,[-2\sin2y+\sin z,\;2\sin x+\sin z,\;\sin x+\sin y],$$
 
-with amplitudes $U_0=1$ and $B_{\mathrm{OT}}=0.8$ (§4.4; page-local, the paper's $B_0$; $U_0$ is also the reference velocity and $L_0$ the reference length). There is no mean field; the authors note that
+with amplitudes $U_0=1$ and $B_{\mathrm{OT}}=0.8$ (§4.4; $B_{\mathrm{OT}}$ registry §11, the paper's $B_0$; $U_0$ is also the reference velocity and $L_0$ the reference length). There is no mean field; the authors note that
 the configuration is isotropic and does not contain the anisotropy a
 background field would impose (§7). The runs are model-free
 [DNS](/definitions/direct-numerical-simulation.md) with $Pm=1$.
@@ -231,7 +231,7 @@ $\partial_t\boldsymbol B=\nabla\times[(\boldsymbol u-\alpha_H\boldsymbol J)\time
 dimensionless form $\epsilon_H=L_H/L_0$ the ratio of the Hall length to the
 reference length, equal to the ion inertial length $d_i$ over $L_0$ when
 $U_0$ equals the Alfvén speed (Eqs. 3.32, 3.37–3.38; $\alpha_H$, $\epsilon_H$,
-$L_H$, $d_i$ page-local). The runs (Table 2; $Pm=1$, box $2\pi$; $Re$ at the
+$d_i$ registry §11, $L_H$ page-local). The runs (Table 2; $Pm=1$, box $2\pi$; $Re$ at the
 peak of magnetic dissipation, times in units of $L_0/U_0$):
 
 | Run | $N_x$ | $M$ (initial) | $Re$ | $\epsilon_H$ | $t_{\mathrm{tot}}$ | $t_{\mathrm{peak}}$ |

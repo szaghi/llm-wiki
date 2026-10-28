@@ -9,7 +9,7 @@ year: 2023
 venue: "Astrophys. J. 953:44"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_The_Astrophysical_Journal_Adhikari_Theory_and_Transport_of_Nearly_Incompressible_Magnetohydrody.pdf"
 tags: [mhd, plasma, astrophysics, compressible]
-timestamp: 2026-10-27T15:51:00Z
+timestamp: 2026-10-28T07:11:00Z
 ---
 
 # Summary
@@ -102,17 +102,17 @@ $$\partial_t\langle|\boldsymbol Z^\pm|^2\rangle+(\boldsymbol U\mp\boldsymbol V_A
 |---|---|---|
 | $\boldsymbol z^\pm=\boldsymbol u\pm\boldsymbol B/\sqrt{\mu_0\rho}$ | $\boldsymbol Z^\pm$ | SI form; $+$ outward |
 | $\langle z^{\pm2}\rangle$ | $\langle|\boldsymbol Z^\pm|^2\rangle$ | no factor $\tfrac12$ |
-| $E_D=\langle\boldsymbol z^+\cdot\boldsymbol z^-\rangle$ | $E_D$ (residual energy, page-local) | |
+| $E_D=\langle\boldsymbol z^+\cdot\boldsymbol z^-\rangle$ | $E_D$ (residual energy, registry §11) | |
 | $\sigma_c$, $\sigma_D$ | $\sigma_c$, $\sigma_r$ | normalized cross-helicity and residual energy |
-| $\lambda^\pm$, $\lambda_D$, $\lambda_u$, $\lambda_b$ | $\ell^\pm$, $\ell_D$, $\ell_u$, $\ell_b$ (correlation lengths, page-local) | **collision** with the perpendicular scale $\lambda$ |
+| $\lambda^\pm$, $\lambda_D$, $\lambda_u$, $\lambda_b$ | $\ell^\pm$ (registry §11), $\ell_D$, $\ell_u$, $\ell_b$ (page-local): correlation lengths | **collision** with the perpendicular scale $\lambda$ |
 | $\beta$ | $\beta_p$ | plasma beta |
-| $\beta^0=\alpha/2$ | $\beta_{\mathrm{KT}}$ (page-local, as on [compressible MHD turbulence](/results/compressible-mhd-turbulence.md)) | **collision** with $\beta_p$ in Table 2 |
-| $\alpha$, $\alpha_2$ | $\alpha_{\mathrm{KT}}$, $\alpha_2$ (von Kármán–Taylor constants, page-local, as on [compressible MHD turbulence](/results/compressible-mhd-turbulence.md)) | **collision** with the DG blending factor $\alpha$ |
+| $\beta^0=\alpha/2$ | $\beta_{\mathrm{KT}}$ (registry §11, as on [compressible MHD turbulence](/results/compressible-mhd-turbulence.md)) | **collision** with $\beta_p$ in Table 2 |
+| $\alpha$, $\alpha_2$ | $\alpha_{\mathrm{KT}}$ (registry §11), $\alpha_2$ (page-local): von Kármán–Taylor constants, as on [compressible MHD turbulence](/results/compressible-mhd-turbulence.md)) | **collision** with the DG blending factor $\alpha$ |
 | $\epsilon\equiv M_{s0}$ | $M_t$ | expansion parameter |
 | $\chi=L/R$ | (scale ratio, page-local) | **collision** with the SA $\chi$ |
 | $\boldsymbol U$ ($\boldsymbol U_{sw}$), $\boldsymbol V_A$, $\rho$ ($\rho_{sw}$), $\boldsymbol B_{sw}$ | $\boldsymbol U$, $\boldsymbol V_A$, $\rho_{\mathrm{sw}}$, $\boldsymbol B_{\mathrm{sw}}$ (background wind velocity, Alfvén velocity, density, field; page-local) | $\boldsymbol B_{sw}$ plays the role of $\boldsymbol B_0$ |
 | $^\infty$, $^*$ | (leading and higher order of the NI expansion) | |
-| $a$, $b$ | $a_s$, $b_s$ (structural similarity parameters, page-local) | **collision:** $b$ is not the field fluctuation $\boldsymbol b$ |
+| $a$, $b$ | $a_s$, $b_s$ (structural similarity parameters, registry §11) | **collision:** $b$ is not the field fluctuation $\boldsymbol b$ |
 | $S^\pm$, $S_{E_D}$, $c^\pm$, $c_{E_D}$, $f_D$, $\eta_1$, $\eta_2$ | (sources and their strengths, page-local) | **collision:** $\eta_1$, $\eta_2$ are not the Kolmogorov length |
 | $S_t$, $f_p$ | (turbulent heating rate, proton heating fraction, page-local) | |
 | $\gamma_s$, $\gamma_e$, $\gamma_p$ | $\gamma$ | 5/3 for each species |

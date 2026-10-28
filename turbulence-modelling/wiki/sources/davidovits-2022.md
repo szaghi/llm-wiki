@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Rev. E 105:065206"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physical_Review_E_Davidovits_Turbulence_generation_by_shock_interaction_with_a_highly_non.pdf"
 tags: [compressible, implicit-les, anisotropy, astrophysics]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -58,8 +58,8 @@ pp. 13–15). The preprint prints the title "Turbulence Generation by Shock
 Interaction with a Highly Non-Uniform Medium", the Crossref record of the
 version of record (Phys. Rev. E 105:065206) "Turbulence generation by
 shock interaction with a highly nonuniform medium": the same work, with the
-same six authors in the same order. Locators are those of the preprint;
-the Fig. 6 caption inconsistency below may have been corrected in print.
+same six authors in the same order. Locators are those of the preprint,
+and the printed slips below are those of the preprint.
 
 # Key claims
 

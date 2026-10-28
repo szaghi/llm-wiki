@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 476:111833"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Computational_Physics_Najafiyazdi_Large_eddy_simulation_on_unstructured_grids_using_explicit_d.pdf"
 tags: [filtering, approximate-deconvolution, les, taylor-green-vortex, unstructured-grids]
-timestamp: 2026-10-28T02:14:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -35,7 +35,7 @@ and a sufficient stability condition bounding $a_{\mathrm D,k}/b_{\mathrm D,k}$;
 the remaining freedom sets the filter cut-off. Any differential filter on
 a non-uniform grid loses commutation with differentiation, a point for
 the [LES](/definitions/large-eddy-simulation.md) filtering requirements;
-the filter is an explicit, physical-space counterpart of
+see also
 [explicit modal filtering](/methods/explicit-modal-filtering.md).
 
 On [Comte-Bellot–Corrsin decay](/benchmarks/homogeneous-isotropic-turbulence.md)
@@ -68,7 +68,7 @@ problem. Numbering on this page is that of this version.
 # Key claims
 
 The filter parameters are written $a_{\mathrm D}$, $b_{\mathrm D}$
-(page-local; the source's $\alpha$, $\beta$, nodal $\alpha_k$, $\beta_k$),
+(registry §11; the source's $\alpha$, $\beta$, nodal $\alpha_k$, $\beta_k$),
 the wavenumber normalized by the grid spacing $k$, the filter and grid
 cut-off wavenumbers $k_f$ and $k_c$ (the source's $\kappa_f$, $\kappa_g$),
 the deconvolution order $N_{\mathrm{AD}}$, the relaxation factor $\chi_f$,
@@ -80,7 +80,7 @@ and $\epsilon_\omega=2(\mu/\rho_0)\mathcal Z$.
 1. The differential filter can be built on unstructured 2-D and 3-D grids by element-wise Galerkin discretization of Eq. (10) in each element's reference coordinates, giving $\mathbf M\bar\Phi=\mathbf N\Phi$ (§3.2, Eqs. 27–29). **Derived**
 2. Filter parameters must be chosen after discretization: complete attenuation at $k=\pi$ requires $b_{\mathrm D}=1/4$ for a central finite-difference discretization, $1/\pi^2$ for the continuous filter and $1/12$ for a finite-element formulation (§3.1, Eq. 13). **Derived**
 3. Germano's elliptic filter, transfer function $1/(1+\Delta^2k^2)$, attenuates at all wavenumbers but never removes oscillations completely; its roll-off, cut-off attenuation and cut-off wavenumber are all controlled by one parameter, so lowering the effective resolved wavenumber costs commutation error and anti-aliasing (§3, Eq. 11). **Stated**
-4. The continuous Najafi-Yazdi filter has $\hat G(k)=(1-b_{\mathrm D}k^2)/(1-a_{\mathrm D}k^2)$; $b_{\mathrm D}=1/k_c^2$ gives complete attenuation at $k_c$, and for $a_{\mathrm D}<b_{\mathrm D}$ it is attenuating, $|\hat G|\le1$, for $0\leb_{\mathrm D}k^2<1$ (§3.1, Eq. 12). **Derived**
+4. The continuous Najafi-Yazdi filter has $\hat G(k)=(1-b_{\mathrm D}k^2)/(1-a_{\mathrm D}k^2)$; $b_{\mathrm D}=1/k_c^2$ gives complete attenuation at $k_c$, and for $a_{\mathrm D}<b_{\mathrm D}$ it is attenuating, $|\hat G|\le1$, for $0\le b_{\mathrm D}k^2<1$ (§3.1, Eq. 12). **Derived**
 5. Any differential filter discretized on an unstructured or non-uniform grid, even in 1-D, loses commutation with differentiation because the filter width varies in space (Eq. 18); it commutes only in continuous form on uniform grids (§3.1). **Stated** (argued from Eq. 18)
 6. Conservation of constants is equivalent to $n_{i,i}+\sum_{j\ne i}n_{i,j}=m_{i,i}+\sum_{j\ne i}m_{i,j}$, enforced element-wise (§4.1, Eqs. 32–34). **Derived**
 7. A sufficient condition for filter stability, $|\mathcal H|\le1$, is the element-wise inequality (41), written as a stability index $I_f\ge0$ (Eq. 42); being only sufficient, it can be more dissipative than necessary (§4.5). **Derived**
@@ -126,9 +126,9 @@ and $\epsilon_\omega=2(\mu/\rho_0)\mathcal Z$.
 | $G$, $G_G$, $G_{NY}$ | $G$, $\hat G(k)$ | filter operator and transfer functions (Germano, Najafi-Yazdi) |
 | $u^*$, $\phi^*_N$, $D_N$ | $u^*$, $D_{N_{\mathrm{AD}}}$ | approximately deconvolved field, as on the [scale-similarity page](/methods/scale-similarity-model.md); **collision:** the star is not the semi-local scaling |
 | $N$ (ADM order) | $N_{\mathrm{AD}}$ | **collision** with the polynomial degree $N$; $N$ is also the number of stencil points in App. A |
-| $\delta$ | $\delta_{\mathrm G}$ | filter radius of Germano's differential filter (page-local, as on the concept pages), $k_f=1/\delta_{\mathrm G}$ there |
+| $\delta$ | $\delta_{\mathrm G}$ | filter radius of Germano's differential filter (registry §11), $k_f=1/\delta_{\mathrm G}$ there |
 | $\beta$ (Eq. 4) | (order exponent of the deconvolution error, $\ge2(N_{\mathrm{AD}}+1)$) | unrelated to the filter $\beta$ |
-| $\alpha$, $\beta$, $\alpha_k$, $\beta_k$ | $a_{\mathrm D}$, $b_{\mathrm D}$, $a_{\mathrm D,k}$, $b_{\mathrm D,k}$ | page-local; **collision** with the DG/FV blending $\alpha$, the field-inversion $\beta(\boldsymbol x)$ and the exponential-filter strength $\alpha_f$ |
+| $\alpha$, $\beta$, $\alpha_k$, $\beta_k$ | $a_{\mathrm D}$, $b_{\mathrm D}$, $a_{\mathrm D,k}$, $b_{\mathrm D,k}$ | registry §11; **collision** with the DG/FV blending $\alpha$, the field-inversion $\beta(\boldsymbol x)$ and the exponential-filter strength $\alpha_f$ |
 | $\xi_i$ ($\xi$, $\eta$, $\zeta$) | $\xi_i$ | reference-element coordinates; **collision:** $\eta$ is not the Kolmogorov length |
 | $\mathbf M$, $\mathbf N$, $m_{pq}$, $n_{pq}$ | same | filter matrices; $\mathbf M$ is also the FEM mass matrix of Eq. 68 |
 | $\mathcal H\{z_k\}$, $\hat r_{d,j}$, $I_f$ | same | generalized Z-transform transfer function, normalized offsets, stability index (page-local) |

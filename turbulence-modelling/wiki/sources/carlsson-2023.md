@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 251:105741"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Computers_amp_Fluids_Carlsson_Investigation_of_low-dissipation_low-dispersion_schemes_for.pdf"
 tags: [numerical-dissipation, hybrid-rans-les, des, compressible, log-layer-mismatch]
-timestamp: 2026-10-25T20:38:00Z
+timestamp: 2026-10-28T07:03:00Z
 ---
 
 # Summary
@@ -116,13 +116,13 @@ Page-local symbols: $a$ is the face-extrapolation parameter (the source's $\alph
 |---|---|---|
 | $q_i=(\rho,\rho u,\rho v,\rho w,\rho E)$ | (conservative variables at node $i$) | $E$ per unit mass here; **collision:** the registry's $E$ is per unit volume |
 | $\tilde F_{ij}$; $\overline{(\cdot)}$, $\widetilde{(\cdot)}$ in Eq. (3) | (Kok face flux and face averages) | **collision:** not the LES filter, not the Favre filter |
-| $\alpha$, $\alpha_u,\alpha_p,\alpha_\rho,\alpha_c$ | $a$ (page-local; $\alpha_e$ is the filter weight on the equilibrium wall model) | **collision:** the registry's $\alpha$ is the DG/FV blending factor |
-| $\kappa^{(2)}$, $\kappa^{(4)}$ | (page-local) | **collision:** not the von Kármán constant $\kappa$ |
+| $\alpha$, $\alpha_u,\alpha_p,\alpha_\rho,\alpha_c$ | $a$ (page-local; $\alpha_{\mathrm{ema}}$ is the filter weight on the equilibrium wall model) | **collision:** the registry's $\alpha$ is the DG/FV blending factor |
+| $\kappa^{(2)}$, $\kappa^{(4)}$ | $\kappa^{(2)}$, $\kappa^{(4)}$ (registry §11) | **collision:** not the von Kármán constant $\kappa$ |
 | $\varepsilon^{(2)}_{ij}$, $\varepsilon^{(4)}$ | (dissipation coefficients, page-local) | **collision:** not the dissipation rate $\varepsilon$ |
 | $p$ (exponent 0.3) | (eigenvalue-scaling exponent) | **collision:** not the pressure |
 | $C_L$, $C_R$, $c$ | (speed of sound) | **collision:** $C_L$ is not the lift coefficient |
 | $\beta$, $K$, $M$ | (preconditioning parameter, its coefficient), $M$ (local Mach) | **collision:** $\beta$ is not the field-inversion correction |
-| $\Psi_i$, $\Phi_i$, $\epsilon=10^{-30}$ | (page-local sensors) | **collision:** $\Psi$ also denotes the DDES low-Reynolds correction (Eq. 17) |
+| $\Psi_i$, $\Phi_i$, $\epsilon=10^{-30}$ | $\Psi_i$, $\Phi_i$ (registry §11); $\epsilon$ page-local | **collision:** $\Psi$ also denotes the DDES low-Reynolds correction (Eq. 17) |
 | $\Delta$, $\Delta_{\max}$ | $\Delta$ | $\Delta_{\max}$ = largest edge of the dual control volume in M-Edge |
 | $\Delta_{SLA}=\tilde\Delta_\omega F_{KH}(\langle VTM\rangle)$ | $\Delta_{\mathrm{SLA}}=\Delta_\omega F_{KH}(\langle VTM\rangle)$ (page-local, as on the DES page) | **collision:** the tilde and angle brackets are not Favre filter or Reynolds average |
 | $C_{DES}$, $f_d$, $\tilde f_d$, $f_e$, $C_{dw}$, $d_w$, $\Delta_{wn}$ | ($C_{DES}$, DDES and IDDES functions), $d$ (wall distance) | |

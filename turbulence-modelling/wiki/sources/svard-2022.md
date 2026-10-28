@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 448:110737"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Svärd_Large_Eddy_Simulations_by_approximate_weak_entropy_solutions.pdf"
 tags: [implicit-les, entropy-stable, finite-volume, weak-solutions, compressible, taylor-green-vortex]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -68,7 +68,7 @@ Page-local symbols: $\kappa_h$ the heat conductivity; $\mathcal U=-\rho s/(\gamm
 the entropy function with $s=\log(p/\rho^\gamma)$, $\boldsymbol W$ the
 entropy variables; $\beta_{\mathrm C}=1/(2RT)$; $\{\!\{a\}\!\}$, $a^{\ln}$,
 $[\![a]\!]=a_{i+1}-a_i$ the arithmetic mean, logarithmic mean and jump of a two-point
-state at face $i+\tfrac12$; $a^\rho_{i+1/2}$ the artificial-diffusion
+state at face $i+\tfrac12$ (registry §6 and §11); $a^\rho_{i+1/2}$ the artificial-diffusion
 coefficient of the mass flux; $\mathbb B$ the averaging box of the
 Kelvin–Helmholtz test; $(Re_h)_i$ the turbulent cell Reynolds number;
 $\mathcal Z$ the normalized enstrophy.

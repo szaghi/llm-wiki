@@ -5,7 +5,7 @@ description: "Representation of the Reynolds-stress anisotropy by the eigenvalue
 status: established
 aliases: [barycentric map, barycentric triangle, anisotropy-invariant map, componentality map, Banerjee barycentric map, Emory–Iaccarino colour map, realizability triangle]
 tags: [rans, reynolds-stress-model, eddy-viscosity, anisotropy, uncertainty-quantification]
-timestamp: 2026-10-28T01:58:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Barycentric anisotropy map
@@ -65,7 +65,7 @@ model restricts the anisotropy to the plane-strain line, and a
 tensor-basis closure can explore the other realizable states, as
 barycentric-map studies they cite show
 ([Agrawal & Koutsourelakis (2024)](/sources/agrawal-2024.md), §2.2.1; arXiv
-v2). In a two-dimensional mean flow the mean strain has the eigenvalues
+v2). In a two-dimensional incompressible mean flow the mean strain has the eigenvalues
 $(s,0,-s)$ for some $s\ge0$, so the Boussinesq $b_{ij}$ has a zero middle
 eigenvalue *(compiler check, not in the sources)*. Tang et al. (2023) show
 it on the parametrized periodic hills: the anisotropy of their baseline
@@ -134,7 +134,7 @@ of the incoming turbulence
   bracket the prediction, as reviewed by
   [Duraisamy et al. (2019)](/sources/duraisamy-2019.md), §4.1, Eq. 10; details
   on [model-form uncertainty](/definitions/model-form-uncertainty.md).
-- **Normalization of learned closures.** Sandberg & Zhao (2022) recall
+- **Normalization of learned closures.** Sandberg & Zhao (2022, §4.1) cite
   Weatheritt & Sandberg's finding, from barycentric maps, that normalizing
   the strain and rotation by the turbulence time scale is inappropriate
   near walls ([Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md), §4.1;

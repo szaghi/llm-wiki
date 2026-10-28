@@ -9,7 +9,7 @@ year: 2023
 venue: "Phys. Fluids 35:106109"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Physics_of_Fluids_Kokkinakis_High-speed_shockboundary-layer_interaction_over_deformed_sur.pdf"
 tags: [shock-boundary-layer-interaction, implicit-les, weno, fluid-structure-interaction, anisotropy, compressible]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -111,8 +111,8 @@ viscous scales (ref. 55) as the basis of coarse-grained simulation (§I).
 | $\overline{(\cdot)}$, $\widetilde{(\cdot)}$, $u''_i$ | $\langle\cdot\rangle$, $\langle\cdot\rangle_\rho$, $u''_i$ | **collision:** the source's overbar is a Reynolds average, its tilde a Favre average |
 | $R_{ij}=\widetilde{u''_iu''_j}$ | $R_{ij}=\langle u''_iu''_j\rangle_\rho$ | positive trace, Favre form |
 | $a_{ij}=R_{ij}/(2k)-\delta_{ij}/3$ | $b_{ij}$ | |
-| $\lambda_1\ge\lambda_2\ge\lambda_3$ | $\lambda^b_1\ge\lambda^b_2\ge\lambda^b_3$ (eigenvalues of $b_{ij}$, page-local) | **collision** with the Taylor microscale $\lambda$ |
-| $X_{1c}$, $X_{2c}$, $X_{3c}$, $C_{ic}$, $C_{off}$, $C_{exp}$ | as printed (barycentric limiting states and weights) | |
+| $\lambda_1\ge\lambda_2\ge\lambda_3$ | $\lambda^b_1\ge\lambda^b_2\ge\lambda^b_3$ (eigenvalues of $b_{ij}$, registry §11) | **collision** with the Taylor microscale $\lambda$ |
+| $X_{1c}$, $X_{2c}$, $X_{3c}$, $C_{ic}$, $C_{off}$, $C_{exp}$ | $X_{ic}$, $C_{ic}$ (registry §11), $C_{\mathrm{off}}$, $C_{\mathrm{exp}}$ (page-local) | the source uses $X_{ic}$ both for the limiting states and for the colour weights of Eq. (5) |
 | $\lambda_b$ | $\lambda_{\mathrm v}$ (second viscosity, page-local, as on the bulk-viscosity page) | **collision:** printed as "bulk viscosity", not the registry's $\mu_b$ |
 | $u_\tau$, $\tau_w$, $\rho_w$, $\nu_w$, $y^+$, $\Delta x^+$, $\Delta z^+$ | same | |
 | $\delta_0$, $\delta_{turb}$, $\delta_{lam}$ | $\delta$ at the inlet; turbulent and laminar estimates | |

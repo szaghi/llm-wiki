@@ -5,7 +5,7 @@ description: "A one-ODE wall-stress model for compressible wall-modelled LES wit
 status: established
 aliases: [compressible wall model based on an inverse velocity transformation, Griffin–Fu–Moin wall model, inverse-transformation wall model]
 tags: [wall-model, wmles, compressible, hypersonic, boundary-layer]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Inverse-velocity-transformation wall model
@@ -57,12 +57,13 @@ the inner layer (§2.3).
 3. At each integration step, sub-iterate the velocity increment so that the
    temperature obeys the matching-anchored relation (Eq. 2.5)
 
-   $$T=T_w+s\,Pr\,(T_r-T_w)\frac{U}{U_e}\left(1-\frac{U}{U_m}\right)+\left(\frac{U}{U_m}\right)^2(T_m-T_w),\qquad T_r=T_e+\frac{rU_e^2}{2c_p},$$
+   $$T=T_w+s_{\mathrm{RA}}\,Pr\,(T_r-T_w)\frac{U}{U_e}\left(1-\frac{U}{U_m}\right)+\left(\frac{U}{U_m}\right)^2(T_m-T_w),\qquad T_r=T_e+\frac{rU_e^2}{2c_p},$$
 
-   with $s=1.14$, $r=Pr^{1/3}$, and update density and viscosity.
+   with the Reynolds-analogy factor $s_{\mathrm{RA}}=1.14$ (registry §11), the
+   recovery factor $r=Pr^{1/3}$ (page-local), and update density and viscosity.
 4. Shoot on $\tau_w$ until the integrated velocity matches $U_m$ at
    $h_{\mathrm{wm}}$. The heat flux follows algebraically,
-   $q_w=s\,\tau_wc_p(T_w-T_r)/U_e$.
+   $q_w=s_{\mathrm{RA}}\,\tau_wc_p(T_w-T_r)/U_e$.
 
 Anchoring the quadratic $T(U)$ at the matching point rather than at the edge
 (as Zhang et al. 2014 do, whom Griffin et al. cite) enforces the exact matching temperature.
@@ -136,7 +137,7 @@ wall model and cite it as the origin of both steps (§1, §3.3):
 - **Temperature.** The energy equation with constant $Pr_t=0.9$ is solved
   only above a matching height $y^*_{mT}=100$; below it the temperature is
   overwritten by the same matching-anchored quadratic relation as Eq. (2.5)
-  above, with $C_{\mathrm{DM}}=0.8259$ (written $s\,Pr$ with $s=1.14$ after Zhang et al.
+  above, with $C_{\mathrm{DM}}=0.8259$ (written $s_{\mathrm{RA}}Pr$ with $s_{\mathrm{RA}}=1.14$ after Zhang et al.
   2014, as cited) and the matching values sampled at $y_{mT}$ (Eq. 3.17,
   "following Griffin et al. 2023"). The results change little for
   $y^*_{mT}=50$–150 (App. A, Fig. 15).

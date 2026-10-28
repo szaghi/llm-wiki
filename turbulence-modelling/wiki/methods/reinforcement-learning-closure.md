@@ -5,7 +5,7 @@ description: "Closures set or learned online by a policy trained with reinforcem
 status: established
 aliases: [RL closure, VYBA23, RLWM, PPO closure, reinforcement-learning SGS model, deep reinforcement learning SGS model, DRL SGS model, multi-agent reinforcement learning wall model, MARL wall model, SciMARL, RL-Const, RL-Quad, RL-Blend, VWM, LLWM, DRL180]
 tags: [reinforcement-learning, sgs-model, data-driven, implicit-les, wall-model, neural-network]
-timestamp: 2026-10-27T21:12:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Reinforcement-learning turbulence closures
@@ -450,7 +450,7 @@ policy is a recurrent network that writes algebraic expressions token by
 token, and it is trained offline with a risk-seeking policy gradient to
 maximize the fit of the expressions to DNS anisotropy data. The learned
 object is an explicit RANS closure, and no solver runs during training
-(§II C). The authors recall the RL closures of Novati et al., Kim et al.,
+(§II C). The authors cite the RL closures of Novati et al., Kim et al.,
 Bae & Koumoutsakos and Kurz et al. as precedents (§I). See
 [symbolic-regression closures](/methods/symbolic-regression-closure.md).
 The training loss compares the expressions with DNS data outside the
@@ -769,8 +769,7 @@ See [machine-learning wall models](/methods/machine-learning-wall-model.md).
   $(0,0.5)$, while $C_s\in[0,0.5]$ is printed *(compiler check, not in the
   sources)*. In §4.4 the coefficient distributions are said not to
   change with resolution, and the next sentences give different maxima
-  for the two policies (0.4 and 0.3); the two are consistent only if the
-  first statement means each policy across the two grids.
+  for the two policies (0.4 and 0.3).
 - **No-model LES is not "implicit LES" there.** Beck & Kurz (2023, §V)
   label the baseline-scheme-only LES "no-model LES", to separate it from
   implicit modelling proper such as RL-Blend (see
@@ -818,8 +817,8 @@ See [machine-learning wall models](/methods/machine-learning-wall-model.md).
   sources)*.
 - **What the channel DRL model guarantees.** Kim et al. (2022) state that
   training in the LES "guarantees the accuracy of the LES statistics used as
-  the training target" (§III C). Their own §III D shows this holds in the training
-  environment only: the same model fails on an untrained coarser grid.
+  the training target" (§III C); their §III D reports that the same model
+  fails on an untrained coarser grid.
   The authors also assume that SGS inputs in wall units are universal,
   "although it is not proven that subgrid-scale turbulence is universal in
   general" (§II F).

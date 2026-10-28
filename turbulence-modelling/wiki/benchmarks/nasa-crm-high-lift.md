@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "NASA CRM high-lift configuration"
-description: "The NASA High-Lift Common Research Model (CRM-HL), a half-span transport in landing configuration at Mach 0.2: at mean-chord Reynolds number about 5.5 million nine HLPW-4 codes test wall-modelled LES of maximum lift and stall, a learned wall model and immersed-boundary wall-function RANS are tested, and its wing-body form tests DG mesh adaptation."
+description: "The NASA High-Lift Common Research Model (CRM-HL), a half-span transport in landing configuration at Mach 0.2: at mean-chord Reynolds number about 5.5 million nine HLPW-4 codes test wall-modelled LES of maximum lift and stall, IDDES resolves its vortex system, a learned wall model and immersed-boundary RANS are tested, and its wing-body form tests DG mesh adaptation."
 status: established
 aliases: [CRM-HL, HL-CRM, NASA High-Lift Common Research Model, NASA CRM-HL, HLPW-4 CRM-HL, CRM-HL wing-body, HLPW-5 CRM-HL, HLPW-4 case 2]
-tags: [benchmark, wmles, wall-model, rans, immersed-boundary, data-driven, mesh-adaptation, dg]
-timestamp: 2026-10-28T02:16:00Z
+tags: [benchmark, wmles, wall-model, rans, des, immersed-boundary, data-driven, mesh-adaptation, dg]
+timestamp: 2026-10-28T07:04:00Z
 ---
 
 # NASA CRM high-lift configuration
@@ -205,9 +205,9 @@ nacelle, slats and flaps, where the grid has no points across the boundary
 layer, and in the separated regions at the wing tip and near the root
 (Fig. 16; see [model-form uncertainty](/definitions/model-form-uncertainty.md)).
 The authors find the external error of the SGS model, not the wall model,
-the main limit of accuracy, and recall that Ling et al. (2022), extending
-the building blocks to the SGS model, "greatly improved" $C_L$, $C_D$ and
-$C_M$ on this configuration (§5(4), §6). The grid resolution, with 0 to 20
+the main limit of accuracy, and cite Ling et al. (2022), who extended
+the building blocks to the SGS model, as having "greatly improved" $C_L$,
+$C_D$ and $C_M$ on this configuration (§5(4), §6). The grid resolution, with 0 to 20
 points per boundary-layer thickness, is recorded on
 [grid-point requirements](/results/les-grid-point-requirements.md).
 
@@ -320,6 +320,55 @@ wall-modelled LES that "predicted the abrupt lift break near the stall",
 and shows only the JSM result (see
 [JAXA Standard Model](/benchmarks/jaxa-standard-model.md)).
 
+**IDDES of the vortex system at the landing incidence.**
+[Li et al. (2024b)](/sources/li-2024-f.md) run Spalart–Allmaras-based
+IDDES ([detached-eddy simulation](/methods/detached-eddy-simulation.md),
+$C_w=0.15$) and steady SA-RANS in the HLPW-4 nominal landing configuration
+(inboard flap 40°, outboard 37°) at $M_\infty=0.2$, $Re=5.49\times10^6$ and
+$\alpha=7.05^\circ$, the highest-priority workshop case, with the in-house
+cell-centred finite-volume solver HUNS3D (second-order Roe flux with
+low-Mach preconditioning, dual time stepping) on level C of the
+HLPW-4 "103-ANSA-Unstructured" grids, $276\times10^6$ cells for the half
+model, first-layer $y^+\le1$, on 6000 MPI partitions (§II–III.C); the
+time step and averaging window are not printed, and there is no grid
+or time-step study. Against the QinetiQ data corrected for incidence:
+
+| | $C_D$ | pressure part | friction part |
+|---|---|---|---|
+| experiment | 0.1868 | — | — |
+| SA-RANS | 0.1867 | 0.1701 | 0.0165 |
+| SA-IDDES | 0.1843 | 0.1691 | 0.0151 |
+
+(§III.D.2). The mean $C_p$ of the two models is "basically consistent" with
+the data on the spanwise sections, except that SA-RANS underestimates
+$C_p$ on the flap leading edge at the inboard flap-bracket station
+$\eta=0.33$, where it overpredicts the separation behind the bracket, and
+IDDES deviates slightly more than RANS at $\eta=0.42$ (Fig. 5); the IDDES
+friction patterns agree with the oil flow at the wing root and tip (Fig. 6).
+They cite a smaller DDES than RANS drag also in Probst et al. (0.1793).
+The authors compare three vortex identifications on the IDDES field
+(§III.D.3, Eqs. 5–7, Fig. 7), the vorticity magnitude, the $Q$-criterion
+$Q=\tfrac12(\Omega_{ij}\Omega_{ij}-S_{ij}S_{ij})$ (of Hunt et al., in their
+norm notation) and the Rortex rotation strength of Liu et al., at
+thresholds 0.05 to 10 made dimensionless by the free-stream sound speed
+and the mean aerodynamic chord: vorticity and $Q$ are contaminated by
+shear in the boundary layers, raising the $Q$ threshold removes weak
+vortices with the contamination, and Rortex at 0.5 removes the shear
+contamination while keeping weak vortices, so it is used for the rest.
+With it, IDDES resolves a hairpin-like vortex "forest" on the rear half
+of the inboard upper surface, grown from slat vortices stretched in the
+slat gap, hairpins in slat-bracket wakes, the nacelle-strake vortex
+persisting over almost the whole upper surface at this incidence (breaking
+down at the wing leading edge at 19.57°, as they cite Probst et al.),
+wing-tip and flap-tip vortices, a horseshoe vortex at the lower
+wing–fuselage junction only, and Kelvin–Helmholtz wake vortices behind
+the nacelle and flap trailing edges; SA-RANS captures only the strong tip
+vortices (Figs. 8–14). They attribute the larger RANS flap separation to
+the flap-bracket tip vortex, which in RANS persists without breakdown and
+rolls up the flap flow (§III.D.3), and conclude that IDDES "basically
+satisfies the engineering simulation requirements of aerodynamic load and
+complex vortex system" for this case (§IV).
+
 **Wall-model robustness.** [Nuca et al. (2025)](/sources/nuca-2025.md), §I,
 cite CRM-HL wall-modelled LES among the complex applications that motivate
 their explicit, iteration-free forms of the algebraic and ODE
@@ -379,6 +428,20 @@ two runs.
   degrees of freedom", "grid cells" and "points" are used for the 250 M
   threshold interchangeably, though they differ for $N=2$ flux
   reconstruction and nodal finite elements.
+- [Li et al. (2024b)](/sources/li-2024-f.md) write the turbulent stress
+  as $\bar\rho\tilde R_{ij}=2\bar\rho\nu_t\tilde S^*_{ij}$ (their Eq. 2;
+  $\tilde S^*$ the traceless strain) and subtract it from the laminar
+  stress in the total stress; taken together the two printed signs make
+  the eddy viscosity enter with the sign of a negative viscosity
+  *(compiler check, not in the sources)*. They call the trailing-edge
+  wake vortices a source of airframe noise "in the cruising stage" for a
+  landing configuration, and the thresholds "dimensionalized" where they
+  are made dimensionless. Their conclusion rests on one grid and one
+  incidence below maximum lift. [Lv & Ekaterinaris (2023)](/sources/lv-2023.md),
+  §4.2, cite a limiter-assisted flux-reconstruction implicit LES of a
+  NASA CRM near stall by Wang & Rahmani in which "only 0.3% of elements
+  have the limiter activated"; the review does not say which CRM
+  configuration it is.
 - The focus-group findings rest on the submitted data; the RANS and
   hybrid RANS/LES comparisons come from other focus groups and from the
   LAVA study that Kiris et al. cite (their ref. [5]).
@@ -394,3 +457,5 @@ two runs.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §4.3, Fig. 7b (cited results: 30P/30N; the $M=0.85$ Common Research Model, not CRM-HL).
 - [Wang et al. (2013)](/sources/wang-2013.md) — §4.11 (case C3.1; specification only).
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.3, Figs. 8, 10 (reproduced adaptation study of Michal et al. 2021 on a CRM-HL wing section); §4.5.2 (cited WMLES).
+- [Li et al. (2024b)](/sources/li-2024-f.md) — §I; §II.A–B, Eqs. 1–4; §III.A–D, Table I, Figs. 4–14; §IV.
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (cited flux-reconstruction LES of a CRM; passing mention).

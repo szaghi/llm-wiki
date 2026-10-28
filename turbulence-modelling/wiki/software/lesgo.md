@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "LESGO"
-description: "LESGO is an open-source incompressible LES code, pseudo-spectral in the wall-parallel directions and second-order finite-difference on a staggered wall-normal grid; this page records its numerics and closures, the wall-model studies hosted in it (LaRTE, machine-learning and reinforcement-learning wall models) and its wind-turbine-wake LES over hills."
+description: "LESGO is an open-source incompressible LES code, pseudo-spectral in the wall-parallel directions and second-order finite-difference on a staggered wall-normal grid; this page records its numerics and closures, the wall-model studies hosted in it (LaRTE, machine-learning and reinforcement-learning wall models), its wind-turbine-wake LES over hills and its role as reference in an actuator-line cross-verification."
 status: established
 aliases: [lesgo]
 tags: [software, les, wmles, wall-model, data-driven, reinforcement-learning]
-timestamp: 2026-10-27T21:07:00Z
+timestamp: 2026-10-28T06:45:00Z
 ---
 
 # LESGO
@@ -162,6 +162,24 @@ forces in a body-force term.
   of it. The flow results (wake
   trajectories, power, mean-kinetic-energy budget) are on their Source
   page.
+- **Reference code of an actuator-line cross-verification** (Taschner et
+  al. 2024, as cited): LESGO is one of the four research LES codes (with
+  SOWFA, SP-Wind and EllipSys3D) of the comparison of Martínez-Tossas et
+  al. (2018), which Taschner et al. repeat with the GPU code GRASP coupled
+  to OpenFAST: the NREL 5-MW rotor ($D=126$ m) in uniform laminar inflow at
+  $U_\infty=8$ m/s and 9.155 rpm, with Smagorinsky $C_s=0.16$ "to be
+  consistent with the reference" (§3.1, Table 1). In the reference data
+  the wake becomes turbulent earliest in SP-Wind ($x/D\approx5.5$), then in
+  EllipSys3D and LESGO, and furthest downstream in SOWFA and GRASP
+  ($x/D\approx10$) (§4.1, Fig. 6); citing earlier work, Taschner et al.
+  state that the pseudo-spectral horizontal discretization of LESGO and
+  SP-Wind leads to earlier transition and faster wake recovery than
+  second-order finite differences (§4.1; see
+  [numerical dissipation](/properties/numerical-dissipation.md)). They
+  note that the reference codes use a kernel width of about five grid
+  spacings against 3.39 in GRASP, which they hold most likely responsible
+  for GRASP's smaller axial velocities on the blade (§4.1). See
+  [actuator line and actuator disk models](/methods/actuator-line-model.md).
 
 ## Cost data
 
@@ -183,7 +201,8 @@ cost excluded).
   and Vadrot et al. (2023a) give no training or run cost. Zhang et al.
   (2022e) state the time stepping and de-aliasing of their modified version;
   none of the four sources describes the parallelization, and Zhang et al.
-  give no cost.
+  give no cost. Taschner et al. (2024) do not run LESGO; they compare with
+  its published results.
 - Zhang et al. (2022e) write the vertical coordinate as $z$ (atmospheric
   convention); it is $y$ here. Their Fig. 8 legend labels the turbine
   positions 3.5, 8.5 and 9.75 where the text gives $x_t/D=-5$, 0 and 1.25.
@@ -198,3 +217,4 @@ cost excluded).
 - [Fowler et al. (2022)](/sources/fowler-2022.md) — §5, §5.1–5.2 (code, SGS model, grids, filtering, SSPG set-up).
 - [Vadrot et al. (2023a)](/sources/vadrot-2023.md) — arXiv 2302.14391v3: §II.A (code, SGS and wall models available); §II.B.1–3, Eqs. (1)–(10), Table I (equilibrium model, Smarties coupling, matching heights, training set-up); §III.A–B, Eq. (12), Figs. 6, 8 (half channel, convergence).
 - [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A–B, Eqs. (1)–(11) (modified LESGO: time stepping, de-aliasing, Smagorinsky with wall damping, log-law wall stress, immersed boundary, actuator disk); §III A, Fig. 4 (hill validation); App. A, Table I, Fig. 22 (grid study).
+- [Taschner et al. (2024)](/sources/taschner-2024.md) — §3.1, Table 1 (cross-verification set-up); §4.1, Figs. 2–6 (LESGO among the reference codes, wake transition, pseudo-spectral against finite differences, cited).

@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Fluid Mech. 946:A14"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Fluid_Mechanics_Zhang_Wall-cooling_effects_on_pressure_fluctuations_in_compressibl.pdf"
 tags: [dns, compressible, wall-cooling, pressure-fluctuations, hypersonic]
-timestamp: 2026-10-27T15:53:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -77,7 +77,7 @@ $p_\tau$, $p_c$, $p_h$ are page-local.
 6. Refitting on all numerical quasi-adiabatic data gives $\sigma=0.01$, $\phi=0.75$ ("by linear fitting"), which predicts $(p'_{\mathrm{rms}}/q_\infty)_w$ over the whole Mach range, the main improvement being at lower Mach number; Ritos et al.'s $\sigma=0.008$ underestimates for $M_\infty\leqslant2.0$ (§5, Fig. 14a). **Shown**
 7. For cooled walls the refitted model gives reasonable values for M20T050 and M80T050; for $T_w/T_r=0.25$ it overestimates M05T025 and underestimates the M6Tw025 case of Zhang et al. (2017), because it accounts neither for the APNS nor for the acoustic mode at high Mach number (§5). **Shown** / **Stated**
 8. Free-stream pressure fluctuations grow roughly linearly with Mach number, $(p'_{\mathrm{rms}}/\tau_w)_\infty=0.12M_\infty+0.08$, subsonic cases included, consistent with Laufer (1964); cooling enhances them at $M_\infty=0.5$, suppresses them at $M_\infty=8.0$ and has little influence at $M_\infty=2.0$ (§5, Fig. 14b). **Shown**
-9. Wall cooling decreases the shape factor and increases $C_f$ in all regimes; the Reynolds-analogy factors $2C_h/C_f$ are 1.16, 1.14, 1.11, "all close to 1.1" as predicted by Hopkins & Inouye (1971) (§3, Table 3). **Shown**
+9. Wall cooling decreases the shape factor and increases $C_f$ in all regimes; the Reynolds-analogy factors $s_{\mathrm{RA}}=2C_h/C_f$ (registry §11) are 1.16, 1.14, 1.11, "all close to 1.1" as predicted by Hopkins & Inouye (1971) (§3, Table 3). **Shown**
 10. The van Driest transformation fails for the cooled cases; Trettel–Larsson collapses the viscous sublayer but is less successful in the log region; the quasi-equilibrium transformation of Griffin et al. gives a common slope $1/\kappa$ but different intercepts; the total-stress transformation of Griffin et al. (2021) "agree[s] well with the wall law and the log law" for adiabatic and cooled cases (§3, Fig. 3). **Shown**
 11. The Walz relation (Eq. 3.1) is accurate for the quasi-adiabatic cases but deviates for the cooled ones; the generalized Reynolds analogy of Zhang et al. (2014) (Eq. 3.2) fits both (§3, Fig. 5). **Shown**
 12. Cooling enhances $u''_{\mathrm{rms}}/u_\tau$ and $\langle u''v''\rangle_\rho/u_\tau^2$, mainly because $u_\tau$ decreases, and shifts their peaks outward; Morkovin's density scaling improves the collapse and semi-local scaling collapses the peak positions (§3, Fig. 4). **Shown**
@@ -117,7 +117,7 @@ $p_\tau$, $p_c$, $p_h$ are page-local.
 | $y^*=y/\delta^*_\nu$, $\lambda_z^*$ | $y^*$ (semi-local scaling), (streak spacing in semi-local units) | agree |
 | $Re^*_\tau=(\rho_\infty\tau_w)^{1/2}\delta/\mu_\infty$ | (friction Reynolds number with free-stream properties) | **collision:** this star uses free-stream, not local, properties |
 | $k$, $C$ | $\kappa$, $B$ | log law $\kappa=0.41$, $B=5.2$ (Fig. 3); **collision:** $k$ is not the kinetic energy |
-| $C_h$ | $C_h$ | Stanton number, agree |
+| $C_h$ | $C_h$ | Stanton number (registry §11), agree |
 | $C_f$, $H$, $\delta^*$, $\theta$ | $C_f$, (shape factor), $\delta^*$, $\theta$ | |
 | $B_q$ | (non-dimensional wall heat flux) | $-B_q>0$ for cooled walls |
 | $T_r$, $r$, $T_{rg}$, $r_g$ | (recovery temperature and factor; generalized ones) | page-local |
@@ -128,7 +128,7 @@ $p_\tau$, $p_c$, $p_h$ are page-local.
 | $p_r$, $p_s$, $p_\tau$, $p_c$, $p_h$ | (rapid, slow, viscous, compressible, harmonic pressure) | page-local |
 | $\sigma$, $\phi$ | (Laganelli model constants; page-local $\sigma_L$, $\phi_L$ on [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)) | **collision:** $\sigma$ is not the viscous stress |
 | $q_\infty$, $c_0$ | (free-stream dynamic pressure, free-stream sound speed) | |
-| $\Theta$ | (Ducros threshold, 0.15) | |
+| $\Theta$ | (Ducros threshold, 0.15) | **collision:** not the temporal filter width $\Theta$ of registry §11 |
 | $\lambda_x^+$, $k_xE^+_{pp}$ | (streamwise wavelength in wall units; premultiplied spectrum) | **collision:** $k_x$ is a wavenumber |
 
 # Reference list

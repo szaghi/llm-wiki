@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Circular-cylinder wake"
-description: "Flow past circular cylinders, chiefly at Re_D=3900, with separation, shear-layer roll-up and a turbulent wake: it tests neural-network SGS models, PANS, implicit LES, VMS LES and 2D URANS; the drag crisis and tandem cylinders test hybrid RANS/LES, and laminar cylinders validate solver numerics."
+description: "Flow past circular cylinders, chiefly at Re_D=3900, with separation, shear-layer roll-up and a turbulent wake: it tests neural-network SGS models, PANS, implicit LES, VMS LES and 2D URANS; the drag crisis, the supercritical regime and tandem cylinders test hybrid RANS/LES, and laminar cylinders validate solver numerics."
 status: established
-aliases: [cylinder wake, flow over a circular cylinder, flow past a circular cylinder, cylinder at Re_D=3900, tandem cylinders, tandem cylinder benchmark, drag crisis, critical cylinder flow]
+aliases: [cylinder wake, flow over a circular cylinder, flow past a circular cylinder, cylinder at Re_D=3900, tandem cylinders, tandem cylinder benchmark, drag crisis, critical cylinder flow, supercritical cylinder]
 tags: [benchmark, separated-flow, les, implicit-les, neural-network, pans, immersed-boundary, field-inversion, des, hybrid-rans-les, aeroacoustics]
-timestamp: 2026-10-28T02:13:00Z
+timestamp: 2026-10-28T07:03:00Z
 ---
 
 # Circular-cylinder wake
@@ -446,6 +446,65 @@ The authors' reading:
 - Near-wall resolution must stay high, because under-resolution there is
   fatal to the prediction of transition and separation (§4).
 
+**The supercritical regime with self-adaptive hybrid models.**
+[Wu et al. (2024)](/sources/wu-2024.md), §3.2, run the cylinder at
+$Re_D=3\times10^6$, $M=0.2$, in the structured code
+[PHengLEI](/software/phenglei.md), to test whether a hybrid model captures
+the supercritical topology, in which the boundary layer turns turbulent
+before separating, separation moves aft and alternate shedding is
+suppressed. The models are SST-IDDES, the constant-coefficient
+[self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md)
+(SATES-SM) and its variant SATES-σ, whose cut-off coefficient is scaled
+locally by a [σ-model](/methods/sigma-model.md) factor that vanishes in pure
+shear; the convective scheme is the fourth-order linear-weight
+[weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
+(WCNS-E-4), with a MUSCL scheme as the dissipative alternative.
+
+*Set-up* (§3.2): 20$D$ upstream, 25$D$ downstream, 20$D$ transverse, span
+$1D$ periodic (justified by a spanwise correlation length below $1D$, as the
+authors cite), about 6.7 million cells with $y^+<1$, 150 flow-through times
+of which the last 80 are averaged; the time step is printed
+"$\Delta tD/U_\infty=1\times10^{-3}$".
+
+*Results* (Table 3; $C_{pb}$ and $L_r$ as defined above):
+
+| case | $St$ | $C_{pb}$ | $L_r$ | $C_D$ |
+|---|---|---|---|---|
+| SST-IDDES (WCNS) | 0.29 | $-0.68$ | 0.63 | 0.62 |
+| SATES-SM (WCNS) | 0.20 | $-1.69$ | 0.33 | 1.39 |
+| SATES-σ (WCNS) | 0.24 | $-0.34$ | 0.79 | 0.55 |
+| SATES-σ (MUSCL) | 0.19 | $-1.32$ | 0.61 | 1.26 |
+| DES, Travin et al. (cases DES-TS7 / DES-TS10, as printed) | 0.35 / 0.33 | $-0.53$ / $-0.64$ | 1.0 / 1.0 | 0.41 / 0.51 |
+| LES, Chen et al. (as cited) | 0.311 | $-0.696$ | 0.527 | — |
+| LES, Catalano et al., $Re_D=1\times10^6$ (as cited) | 0.35 | $-0.32$ | 1.04 | 0.31 |
+| experiment, Shih et al., $Re_D=1\times10^6$ (as cited) | 0.22 | $-0.33$ | — | 0.24 |
+
+The authors' reading:
+
+- SATES-SM predicts "the incorrect flow topology of the subcritical
+  regime" ($C_D=1.39$); SATES-σ predicts a turbulent separation that
+  suppresses alternate shedding, the supercritical topology (§3.2,
+  Figs. 8–10).
+- SATES-σ keeps the eddy viscosity low in the initial boundary layer near
+  the front stagnation point: the cut-off coefficient rises from its floor
+  0.15 to values above 1.0 before separation, the resolution control
+  function rises from a low value to 1 near the wall while it stays near 1
+  in SATES-SM (Figs. 8, 11–12). With this, the resolved turbulent kinetic
+  energy and $C_{p,\mathrm{rms}}$ stay low on the front half, peak sharply,
+  then decay, which the authors read as captured laminar–turbulent
+  transition; SATES-σ gives the mean $C_f$ closest to Achenbach's
+  experiment (Figs. 9–10).
+- With MUSCL the same model fails to delay separation, giving a
+  subcritical-like $C_p$ and higher drag, a damped Kelvin–Helmholtz
+  instability, a shorter recirculation and a wake spectrum without its
+  moderate-frequency content (Figs. 13–17), so the authors call the
+  low-dissipation scheme "more accurate and necessary" (§4; see
+  [numerical dissipation](/properties/numerical-dissipation.md)).
+- Results in this regime are sensitive to inflow perturbation, model and
+  scheme, and the experiments and simulations they cite "do not have good
+  convergence"; the criterion they adopt is the correct tendency of the
+  flow topology (§3.2).
+
 **What the sources share.** In both scale-resolving studies at
 $Re_D=3900$ the recirculation length is the measure most sensitive to the
 model and the resolution: the SGS model and grid in
@@ -522,8 +581,8 @@ both lean on Parnaudeau et al. for reference data.
   three-dimensional single cylinders of the other sources ($Re_D\le10^4$;
   only the 2D URANS cylinder of Ghidoni et al. (2022) reaches
   $1.4\times10^5$), and the downstream
-  cylinder sits in the wake of the upstream one, so its pressure loads are
-  set by vortex impingement rather than by its own separation.
+  cylinder sits in the wake of the upstream one: Wang et al. place the
+  peaks of its RMS pressure at the vortex-impingement angles (Fig. 5).
 
 - [Mays et al. (2023)](/sources/mays-2023.md) print the recirculation
   length in "(m)" for a non-dimensional set-up ($D=1$), the fourth Reynolds
@@ -546,6 +605,17 @@ both lean on Parnaudeau et al. for reference data.
   and the flow reattaches (§1); their $L_r$ (0.559–0.727 in the reference
   LES, Table 5) is recorded beside the $Re_D=3900$ values above, not
   compared with them.
+- The supercritical cylinder of [Wu et al. (2024)](/sources/wu-2024.md)
+  at $Re_D=3\times10^6$ lies above the drag-crisis cylinders of Mays et al.;
+  the statement of the previous item holds for the other sources. Its Table 3,
+  titled "at $Re_D=3\times10^6$", lists the LES of Catalano et al. and the
+  experiment of Shih et al. at $Re_D=1\times10^6$, and the authors call
+  SATES-σ's $C_D=0.55$ in good agreement while those two print 0.31 and 0.24.
+  The time step is printed $\Delta tD/U_\infty$ and the flow-through times
+  as $tU_\infty/C$, with the chord $C$ of the airfoil case (§3.1b, §3.2).
+  The authors note that, because SATES-σ runs close to LES mode, transition
+  "may not be captured accurately if the computational grid resolution is
+  insufficient" (§4).
 
 # Citations
 
@@ -562,3 +632,4 @@ both lean on Parnaudeau et al. for reference data.
 - [Kang & Masud (2022)](/sources/kang-2022.md) — §5.1, Table 3, Figs. 7–16 (VMIB with residual-based VMS LES at $Re_D=3900$).
 - [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §6.1, Table 9 ($Re_D=3900$); §6.2, Table 12 ($Re_D=1.4\times10^5$); §6.3 (tandem cylinders, $Re_D=1.66\times10^5$).
 - [Mays et al. (2023)](/sources/mays-2023.md) — §1 (drag-crisis regimes, as cited); §2.1–2.2, Eqs. (1)–(15) (SRH model, lag elliptic-blending base, convection scheme); §3.1, Tables 1–3, Fig. 4 (grids, cost, resolved fraction); §3.2.1–3.2.2, Tables 4–6, Figs. 6–10 (forces, recirculation, Strouhal number, energy ratio); §4.
+- [Wu et al. (2024)](/sources/wu-2024.md) — §2.2–§2.4 (SATES-σ, WCNS-E-4, MUSCL); §3.2, Table 3, Figs. 7–17 (supercritical cylinder at $Re_D=3\times10^6$); §4.

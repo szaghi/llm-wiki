@@ -5,7 +5,7 @@ description: "The pressure dilatation, the product of pressure and velocity dive
 status: established
 aliases: [pressure-dilatation, pressure–dilatation correlation, pressure dilatation work, pressure-dilatation work, pressure-dilatation term, SGS pressure dilatation, subgrid pressure dilatation, pressure dilatation dissipation rate]
 tags: [compressible, dns, les, rans, numerical-dissipation]
-timestamp: 2026-10-28T01:51:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Pressure dilatation
@@ -22,10 +22,10 @@ decaying box turbulence, Favre-averaged in the turbulent-kinetic-energy
 budget, split into resolved and subgrid parts in LES, and modelled in RANS
 compressibility corrections.
 
-Page-local symbols: $\Pi^{\mathrm t}_{\mathrm{pd}}$ the turbulent pressure
+Symbols: $\Pi^{\mathrm t}_{\mathrm{pd}}$ the turbulent pressure
 dilatation of the Favre-averaged budget, $\Pi^{\mathrm{sgs}}_{\mathrm{pd}}$
-the subgrid pressure dilatation of LES (neither is the registry's $\Pi$,
-the subgrid energy flux, which keeps its meaning below); $e$ the specific
+the subgrid pressure dilatation of LES (registry §11; neither is the registry's $\Pi$,
+the subgrid energy flux, which keeps its meaning below); page-local: $e$ the specific
 internal energy; $q_j$ the heat flux.
 
 ## The exchange term
@@ -139,6 +139,25 @@ and shock interactions agree that it is small away from shocks:
   pressure work and pressure dilatation small in the separation shear
   layer, where production is balanced by transport, convection, pressure
   diffusion and (mostly subgrid) dissipation.
+- **Strong compression-ramp interaction, budget listed but not
+  analysed.** In a DNS of the Mach 2.9, 24° compression ramp,
+  [Kang & Lee (2024)](/sources/kang-2024.md), §IV.D, Eq. (22), Table V,
+  write the same seven-term Favre budget, with the pressure dilatation
+  $\langle p'\,\partial u_i''/\partial x_i\rangle$ listed next to pressure
+  diffusion and the mass-flux term, and then analyse only production and
+  turbulent transport, "since these terms are dominant", by citation of
+  earlier ramp studies, not from their own budget. The turbulence
+  amplification they explain with those two terms is on
+  [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+- **Hypersonic cold-wall boundary layers.**
+  [Zhang et al. (2024b)](/sources/zhang-2024-b.md), §3.1, Eqs. (3.7)–(3.14),
+  Fig. 7, compute the full budget of the Mach 6 boundary layers upstream of
+  their 34° ramp interactions ($T_w/T_r=0.50$, $0.75$, $1.0$) in semi-local
+  scaling. They group pressure diffusion and pressure dilatation into one
+  pressure term, $-\partial_i\langle p'u_i''\rangle+\langle p'\,\partial_iu_i''\rangle$,
+  and report that the budgets balance and agree with the Mach 5 cold-wall
+  DNS of Duan et al. (2010) that they cite; no separate value of the
+  pressure-dilatation part is printed.
 
 ## Resolved and subgrid pressure dilatation in LES
 
@@ -197,7 +216,7 @@ filter widths $4h$ and $8h$; per quadrant it is larger in expansion with
 backscatter (0.8781, 0.5252, 0.6062) than in compression with forward
 transfer (0.070, 0.3278, 0.3269) (Table 4). Removing the spherical part of
 the stress, $\Pi_{\mathrm{sph}}=-\tfrac13\tau_{kk}\partial_j\tilde u_j=-\tfrac23\bar\rho k_{\mathrm{sgs}}\partial_j\tilde u_j$
-(their $\Lambda$, page-local), the correlation with the deviatoric
+(their $\Lambda$; registry §11), the correlation with the deviatoric
 transfer drops to 0.1081, 0.0370 and 0.0889 (Table 6): the mean
 dilatation–transfer correlation comes mainly from the trace, while in
 filtered fields a mild correlation persists (§5). From the Table 4 trend
@@ -235,6 +254,16 @@ protocol on
   "pressure dilatation" in §3.1 and "pressure diffusion" in §3.2 and the
   Fig. 3 caption, for the same symbol defined by their Eq. (3.6). Yu et
   al. (2022) write the term $\Pi_K$ in Eq. (4.1) and $\Pi_k$ in the text.
+  Kang & Lee (2024) write it $\Pi$, the symbol the registry reserves for
+  the subgrid energy flux; Zhang et al. (2024b) write $\Pi=\Pi_t+\Pi_d$
+  for the pressure diffusion plus the pressure dilatation.
+- **Sign of the dissipation in the budgets.** Kang & Lee (2024), Table V,
+  and Zhang et al. (2024b), Eq. (3.12), both define the dissipation so that
+  it enters the right-hand side as a negative term, next to a pressure
+  dilatation of either sign; Kang & Lee print the production row of
+  Table V garbled ("$P_k-\bar\rho\langle u_i''u_i''\rangle\frac{\langle u_i\rangle}{\partial x_j}$",
+  with a minus sign for the equals sign, a repeated index and no
+  $\partial$ in the numerator).
 - **Evidence.** All findings above are from single configurations: one
   shock-interaction DNS each (Yu et al., whose 2023 study neglects the
   term in the recovery region by citation; Tonicello et al.), two LES of
@@ -260,3 +289,5 @@ protocol on
 - [Kuya et al. (2018)](/sources/kuya-2018.md) — §2.4.2, Eqs. (47)–(50); §4.4, Eq. (66); §5.2, Figs. 4–5, Eq. (74) (discrete pressure dilatation).
 - [Helm & Martín (2022)](/sources/helm-2022.md) — Sec. IV D, Fig. 27 (small pressure dilatation in separated hypersonic interactions).
 - [Zhao et al. (2023b)](/sources/zhao-2023-b.md) — §2, Eq. (2-5) (Suzen–Hoffmann pressure-dilatation model).
+- [Kang & Lee (2024)](/sources/kang-2024.md) — §IV.D, Eq. (22), Table V (pressure dilatation listed in the Favre budget of a Mach 2.9 ramp DNS, not analysed).
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §3.1, Eqs. (3.7)–(3.14), Fig. 7 (semi-locally scaled budget of Mach 6 cold-wall boundary layers; pressure diffusion and dilatation grouped).

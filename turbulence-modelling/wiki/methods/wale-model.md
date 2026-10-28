@@ -5,7 +5,7 @@ description: "The wall-adapting local eddy-viscosity (WALE) model builds a stati
 status: established
 aliases: [WALE, wall-adapting local eddy-viscosity model, Nicoud–Ducros model]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-28T02:14:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # WALE model
@@ -283,7 +283,9 @@ instead (below).
 
 - Lederer et al. (2023) define $\epsilon^2(u_h)=\epsilon(u_h):\epsilon(u_h)$
   for the strain but leave the rotation square $\omega^2(u_h)$ undefined;
-  it is read here as $\bar\Omega_{kl}\bar\Omega_{kl}$ by analogy. They
+  the formula above writes it as $\bar\Omega_{kl}\bar\Omega_{kl}$, the
+  form with which it equals the invariant printed by Duan & Wang
+  *(compiler check, not in the sources)*. They
   write the products $\epsilon^2\epsilon^2$ and $\omega^2\omega^2$ as
   products of scalars, as transcribed above.
 - Zhao et al. (2021, Eq. 18) print

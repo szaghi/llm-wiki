@@ -152,9 +152,10 @@ unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25), cited further in chunks 4, 7. This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunks 4, 7, 13. This source is cited on:
 
 - [Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md)
+- [SD7003 airfoil](/benchmarks/sd7003-airfoil.md)
 - [Direct numerical simulation](/definitions/direct-numerical-simulation.md)
 - [Laminar separation bubble](/definitions/laminar-separation-bubble.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)

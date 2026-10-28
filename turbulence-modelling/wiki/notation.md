@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry of the bundle: averaging and filtering, stresses and closures, RANS, wall, element-discretization, data-driven, spectral, MHD and shared page-local symbols, with the sign and normalization conventions fixed here; every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-27T11:02:00Z
+timestamp: 2026-10-28T11:50:00Z
 ---
 
 # Notation registry
@@ -233,7 +233,7 @@ that uses one still says what it means.
 | $g_{\tilde\nu}$ | data-assimilated multiplicative source correction of the SA equation | field inversion, model-form uncertainty, Boussinesq hypothesis, square cylinder, shock/boundary-layer interaction |
 | $b^\Delta_{ij}$, $b^R_{ij}$ | additive anisotropy correction; frozen production correction (the $k$-equation residual $R$) of data-driven RANS | Boussinesq hypothesis, symbolic-regression closures, tensor-basis neural network, model aggregation |
 | $\nu_{\mathrm{eff}}$, $\nu_{\mathrm{clip}}$ | effective viscosity of a stress projected on the resolved strain; its clipping floor | gradient model, super-resolution SGS models, numerical dissipation, spectral-element method |
-| $\sigma_b$ | upwind fraction of a blended convective flux (on symbolic-regression closures a normalizing scale) | numerical dissipation, detached-eddy simulation, TRACE |
+| $\sigma_b$ | upwind fraction of a blended convective flux (on symbolic-regression closures a normalizing scale) | numerical dissipation, detached-eddy simulation, TRACE, PHengLEI |
 | $\mathcal J$ | Jacobian determinant of the reference-to-physical element map | geometric conservation law, DGSEM, flux reconstruction, high-order gas-kinetic scheme, kinetic-energy preservation |
 | $T_E$ | large-eddy turnover time | DNS, isotropic-turbulence surrogates, a priori and a posteriori testing, multi-resolution independent simulations |
 | $\tau_\theta$ | time unit of the temporal mixing layer, $\theta_0/\Delta U$ | temporal mixing layer, neural-operator LES surrogates |
@@ -294,18 +294,18 @@ that uses one still says what it means.
 | $\epsilon_{\mathrm G}$, $a_{\mathrm i}$, $C'_{\mathrm{Th}}$ | Gaussian kernel width of actuator forces; axial induction factor; local (disk-velocity) thrust coefficient | actuator line and disk models, LESGO |
 | $\gamma^*_{\mathrm{PaSR}}$, $\tau_{\mathrm{ch}}$, $\tau_{\mathrm{mix}}$, $u'_\Delta$ | reacting fraction of a partially stirred reactor cell; chemical and mixing time scales; subgrid velocity scale | thickened flame model, flamelet-based tabulated chemistry |
 | $s_{\mathrm L}$ | laminar flame speed (the registry's $S_L$ is the Lundquist number) | flamelet-based tabulated chemistry, thickened flame model |
-| $F_r$, $L_i$, $L_c$, $L_k$, $C_x$, $\beta_F$, $n_F$ | resolution control function of self-adaptive turbulence eddy simulation (SATES), its integral, cut-off and Kolmogorov lengths and constants (not the SST $\beta^*$) | hybrid RANS/LES, 30P30N high-lift airfoil |
+| $F_r$, $L_i$, $L_c$, $L_k$, $C_x$, $\beta_F$, $n_F$ | resolution control function of self-adaptive turbulence eddy simulation (SATES), its integral, cut-off and Kolmogorov lengths and constants (not the SST $\beta^*$) | hybrid RANS/LES, 30P30N high-lift airfoil, self-adaptive turbulence eddy simulation, sigma model, PHengLEI |
 | $c_k$, $c_\varepsilon$ | constants of one-equation subgrid kinetic-energy models (not the DES length factor $C_k$) | one-equation subgrid kinetic-energy models |
 | $C_k$, $\mathcal A(\cdot)$ | DES length-scale factor $C_{\mathrm{DES}}=C_kC_s$ of the dynamic RSM-IDDES; volume-weighted average over a cell's direct neighbours | detached-eddy simulation, dynamic procedure, Reynolds-stress model |
 | $\nu^{\mathrm{RNG}}_t$, $C_\nu$ | RNG spectral eddy viscosity of the subgrid equation and its constant | spectral eddy viscosity, subgrid velocity enrichment |
 | $\mathcal T_{ij}$, $\mathcal T^{\mathrm{eq}}_{ij}$, $t_r$ | subgrid inertial stress of pseudo-DNS, its database equilibrium value, relaxation time | pseudo-direct numerical simulation |
 | $\tau^{\mathrm{num}}_{ij}$, $\tau^{\mathrm{mod}}_{ij}$ | numerical and modelled parts of the subgrid stress | implicit LES, numerical dissipation |
-| $\alpha_{\mathrm W}$, $b_{\mathrm W}$, $\epsilon_{\mathrm Z}$ | nonlinear and linear weights of weighted compact nonlinear schemes; WENO-Z-type regularization parameter | weighted compact nonlinear schemes, WENO schemes, 30P30N high-lift airfoil |
+| $\alpha_{\mathrm W}$, $b_{\mathrm W}$, $\epsilon_{\mathrm Z}$ | flux-difference coefficients of weighted compact nonlinear schemes (e.g. $9/8$, $-1/24$; $\alpha_{\mathrm W}=256/175$ for eighth order); WENO-Z-type regularization parameter | weighted compact nonlinear schemes, WENO schemes, 30P30N high-lift airfoil, PHengLEI |
 | $\phi_{\mathrm n}$, $\mathsf b_k$, $g_k$, $\lambda_{\mathrm R}$ | normalized variable, blending weights and dissipation parameters of the ROUND reconstruction | WENO schemes, numerical dissipation |
 | $k_s$, $k_g$, $\Delta U^+$ | equivalent sand-grain and geometric roughness heights; roughness function | law of the wall, RANS wall functions, turbulent boundary layer |
 | $\alpha_{\mathrm G}$, $g^{L_1L_2}$ | gradient-model filter-moment coefficient and the coefficients of the spatial gradient model (not the basis-tensor $g^{(n)}$) | gradient model |
 | $\eta_{\mathrm{DA}}$ | fraction of data-assimilation samples in training | field inversion and machine learning |
-| $\lambda^b_i$, $C_{1c}$, $C_{2c}$, $C_{3c}$, $X_{ic}$ | eigenvalues of the anisotropy tensor $b_{ij}$; barycentric weights of the one-, two- and three-component limiting states; vertex coordinates of the barycentric map | barycentric anisotropy map |
+| $\lambda^b_i$, $C_{1c}$, $C_{2c}$, $C_{3c}$, $X_{ic}$ | eigenvalues of the anisotropy tensor $b_{ij}$; barycentric weights of the one-, two- and three-component limiting states; colour weights $X_{ic}=(C_{ic}+C_{\mathrm{off}})^{C_{\mathrm{exp}}}$ of the barycentric map | barycentric anisotropy map |
 | $\delta_{\mathrm G}$, $a_{\mathrm D}$, $b_{\mathrm D}$ | radius of Germano's differential filter; coefficients of the explicit differential filter of Najafiyazdi et al. | explicit modal filtering, scale-similarity model, large-eddy simulation |
 | $\delta^{*,\mathrm{sgs}}_\nu$ | semi-local viscous length with the SGS viscosity added to the molecular one | compressible velocity transformations, numerical dissipation, large-eddy simulation |
 | $s_{\mathrm{RA}}$, $b_{\mathrm{wk}}$ | Reynolds-analogy factor; wake coefficient of the outer-layer velocity law | Morkovin's hypothesis, compressible velocity transformations, inflow turbulence generation, law of the wall |
@@ -315,3 +315,12 @@ that uses one still says what it means.
 | $\tau^{\mathrm{sh}}$ | total shear stress in the Renard–Deck skin-friction decomposition | skin-friction decomposition |
 | $\psi_H$, $\varphi_{\mathrm L}$, $\alpha_{\mathrm{EB}}$ | dissipation factor of the scale-resolving hybrid (hybrid temporal LES); reduced-stress function and elliptic-blending variable of the Lag EB $k$-$\varepsilon$ model | hybrid RANS/LES, detached-eddy simulation, $k$-$\varepsilon$ models, circular-cylinder wake |
 | $\Xi_\Delta$, $\Omega_{\mathrm{fs}}$ | subgrid flame-wrinkling factor; flame sensor of the dynamically thickened flame | thickened flame model, flamelet-based tabulated chemistry |
+| $s_a$, $\varepsilon_\nu$ | subgrid activity parameter; molecular (resolved viscous) dissipation entering it | large-eddy simulation, dynamic procedure, wall-modelled LES, Gaussian bump |
+| $M_{\mathrm{AC}}$ | incompressibility factor of entropically damped artificial compressibility (not the Mach number $M$) | flux reconstruction, implicit LES, Taylor–Green vortex, turbulent channel flow, SD7003 airfoil |
+| $\mathcal Z$ | volume-averaged enstrophy | Taylor–Green vortex, kinetic-energy preservation, numerical dissipation |
+| $\mathrm{AF}_q$ | amplification factor of a turbulence quantity $q$ across a shock interaction | shock/turbulent-boundary-layer interaction, shock-generated turbulence |
+| $F_\sigma$, $C_{x,\mathrm{base}}$ | SATES resolution-control function and base value of $C_x$ of the σ-model variant | self-adaptive turbulence eddy simulation, σ-model, hybrid RANS/LES |
+| $\nu_{t,w}$, $\breve u_{\mathrm c}$ | wall eddy viscosity of the Zhou–Bae wall condition; running time average of the first-cell-centre velocity | equilibrium and non-equilibrium wall models, Gaussian bump |
+| $C_{\mathrm H}$ | grid-to-matching-height ratio $\Delta/h_{\mathrm{wm}}$ at the onset of WMLES grid convergence (Hu et al.) | wall-modelled LES, attached-eddy hypothesis |
+| $\phi_{ij}$, $\mathcal P_{ij}$, $\mathcal D_{ij}$ | pressure–strain correlation, production and diffusion of the Reynolds-stress transport equation | Reynolds-stress models |
+| $l_e$, $\lambda_e$, $\tau_e$, $C_e$, $\alpha_e$, $Z_e$, $\mathcal M(y)$ | ODT eddy size, eddy rate density, eddy time, rate constant, energy-redistribution and viscous-penalty parameters, triplet map | one-dimensional turbulence |

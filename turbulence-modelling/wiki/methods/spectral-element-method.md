@@ -5,7 +5,7 @@ description: "The continuous-Galerkin spectral-element method expands the soluti
 status: established
 aliases: [SEM, CG-SEM, continuous Galerkin spectral element method, spectral/hp continuous Galerkin, direct stiffness summation, SEM TLES]
 tags: [spectral-element, les, wmles, sgs-model, numerical-dissipation]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Continuous-Galerkin spectral-element method
@@ -121,10 +121,11 @@ in the current WMLES methodology".
 
 **Weakly imposed wall stress.** With a Neumann condition on the wall-parallel
 velocity, the wall-model stress enters the weak form as a natural boundary
-term (Mukha et al. 2025, §II.C.2, Eqs. 7–12): with $\tau^{\mathrm{tot}}_{ij}$
-(page-local) the combined viscous and subgrid stress, test functions $v_i$
+term (Mukha et al. 2025, §II.C.2, Eqs. 7–12): with $\sigma^{\mathrm t}_{ij}$
+(page-local, as on the wall-modelled-LES page; not the registry's
+$\tau^{\mathrm{tot}}_{ij}$ of explicitly filtered LES) the combined viscous and subgrid stress, test functions $v_i$
 and $\tau_{w,i}$ the wall-parallel stress,
-$$\int_\Omega\frac{\partial v_i}{\partial x_j}\tau^{\mathrm{tot}}_{ij}\,d\Omega=\int_{\partial\Omega}\big[v_i\tau_{w,i}+(\tau^{\mathrm{tot}}_{jk}n_kn_j)\,v_in_i\big]\,dS,$$
+$$\int_\Omega\frac{\partial v_i}{\partial x_j}\sigma^{\mathrm t}_{ij}\,d\Omega=\int_{\partial\Omega}\big[v_i\tau_{w,i}+(\sigma^{\mathrm t}_{jk}n_kn_j)\,v_in_i\big]\,dS,$$
 where the second term vanishes by the strongly imposed non-penetration
 $v_in_i=0$ and the first vanishes for no-slip, so only the Neumann condition
 feeds the modelled stress. Because the condition is weak, the stress computed
@@ -308,6 +309,16 @@ codes (§1); see [$k$-$\omega$ model](/methods/k-omega-model.md).
   discontinuous DGSEM on the
   [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) (Table VII),
   whose order study is reported on the DGSEM page.
+- **Origin as told in a history of DNS and LES.** The review of
+  [Kim & Leonard (2024)](/sources/kim-2024-b.md), §2.3, credits Patera
+  (1984) with having "laid the groundwork" of spectral elements for
+  complex boundaries, after the Fourier, Chebyshev, Legendre and Jacobi
+  spectral bases of the early DNS of simple geometries, and counts among
+  the early realizations of the field that the discretized Navier–Stokes
+  equations without the viscous terms "should conserve energy for
+  long-term stable calculations" (§4.7; see
+  [kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+  The review prints no spectral-element formulation.
 
 # Citations
 
@@ -320,3 +331,4 @@ codes (§1); see [$k$-$\omega$ model](/methods/k-omega-model.md).
 - [Simonis et al. (2022)](/sources/simonis-2022.md) — §3.1 (spectral-element DNS of the Taylor–Green vortex); §3.3, Figs. 7–8 (under-resolved and temporal-LES runs against lattice Boltzmann; regularization phase lag).
 - [Tomboulides et al. (2025)](/sources/tomboulides-2025.md) — §1 (oscillations of high-order $k$-$\omega$); §2.2, Eqs. (32)–(38) (implicit source terms in the Helmholtz operator); §3.1, Figs. 1–2; §3.4–3.5 ($N$-convergence, CFL on the T-junction).
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I; §II A, Eqs. (15)–(16) (spectral/hp elements in Nektar++, velocity-correction splitting); §II C, Eq. (20) (Neumann wall-stress condition, interpolation by the elemental expansion); §III A–B, Table I, Figs. 3–6 (cost, near-interface error); §III E, Figs. 3, 9 (fewer high-degree against more low-degree elements); §IV.
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.3 (Patera's spectral elements in the history of DNS discretizations; passing).

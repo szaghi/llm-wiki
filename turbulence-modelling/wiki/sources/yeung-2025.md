@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Fluid Mech. 1019:R2"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Fluid_Mechanics_Yeung_Small-scale_properties_from_exascale_computations_of_turbule.pdf"
 tags: [dns, isotropic-turbulence, intermittency, gpu, energy-cascade]
-timestamp: 2026-10-27T15:53:00Z
+timestamp: 2026-10-28T07:11:00Z
 ---
 
 # Summary
@@ -137,9 +137,10 @@ constant, $k_F=2.5$, after Donzis & Yeung 2010):
 27 printed references in JFM author–year style; merged complete into the
 [bibliography](/bibliography.md) with `citedby` this slug. The cited companion
 paper, Yeung, Ravikumar, Nichols & Uma-Vaideswaran (2025, Comput. Phys. Commun.
-306:109364), is a different work whose rule key equals this slug, and Kim &
-Leonard (2024, Annu. Rev. Fluid Mech. 56:21–44) is a different work from the
-ingested `kim-2024`; they are keyed `yeung-2025-b` and `kim-2024-b`. Same-key pairs in printed
+306:109364), is a different work whose rule key equals this slug and is
+keyed `yeung-2025-b`; Kim & Leonard (2024, Annu. Rev. Fluid Mech. 56:21–44),
+a different work from the ingested `kim-2024`, is keyed `kim-2024-b` and is
+now the ingested [Kim & Leonard (2024)](/sources/kim-2024-b.md). Same-key pairs in printed
 order: Donzis & Sreenivasan (2010) and Donzis & Yeung (2010); Okamoto et al.
 (2025a/b). Karp et al. (2025) and Okamoto et al. (2025b) are printed as under
 review and are preprint entries. Only one DOI is printed (Ravikumar, Appelhans &

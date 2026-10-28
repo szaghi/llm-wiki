@@ -9,7 +9,7 @@ year: 2024
 venue: "Phys. Fluids 36:055146"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Physics_of_Fluids_Chapelier_Comparison_of_high-order_numerical_methodologies_for_the_sim.pdf"
 tags: [compressible, implicit-les, numerical-dissipation, dg, high-order, dns]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -135,10 +135,10 @@ $$E_k=\frac{1}{2\rho_0V_0^2\lvert\mathcal V\rvert}\int_{\mathcal V}\rho\,\boldsy
 | $\Omega$, $\lvert\Omega\rvert$ | $\mathcal V$, $\lvert\mathcal V\rvert$ (domain, page-local) | **collision** with the rotation-rate tensor |
 | $\boldsymbol\omega$ | $\omega_i$ (vorticity) | |
 | $E_k$ | (normalized volume-averaged kinetic energy) | $\rho$-weighted |
-| $\epsilon_s$, $\epsilon_d$ | $\varepsilon_s$, $\varepsilon_d$ (solenoidal and dilatational dissipation, page-local) | |
+| $\epsilon_s$, $\epsilon_d$ | $\varepsilon_s$, $\varepsilon_d$ (solenoidal and dilatational dissipation, registry §11) | |
 | $N$ | $N_x^3$ (total degrees of freedom, §II.C); $N$ (DGSEM degree, FLEXI); $N+1$ (H3AMR points per direction = order) | three meanings in the source |
 | $p$ (CODA) | $N$ (polynomial degree; order 4 = $N=3$) | **collision** with the pressure |
-| $C_T=10^{-6}$ | (TENO cutoff threshold) | |
+| $C_T=10^{-6}$ | $C_T$ (TENO cut-off threshold, registry §11) | |
 | $C_\varepsilon=0.5$ | (SD3D artificial-viscosity amplitude) | |
 | $\alpha=0.4$ | (NS3D compact-filter parameter) | **collision** with the DG/FV blending factor |
 | DoFs | (degrees of freedom: grid points for finite differences, elements × modes or nodes for element methods) | |

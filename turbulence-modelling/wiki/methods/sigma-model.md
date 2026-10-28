@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Sigma model"
-description: "The Sigma model of Nicoud et al. builds a static subgrid eddy viscosity from the singular values of the resolved velocity gradient; the sources use it with constants 1.3–1.35 in jet-noise, spectral-element and finite-volume wall-modelled and learned-closure LES, where it is over-dissipative in coarse isotropic turbulence but accurate in channel spectra."
+description: "The Sigma model of Nicoud et al. builds a static subgrid eddy viscosity from the singular values of the resolved velocity gradient; the sources use it with constants 1.3–1.35 in jet-noise, spectral-element, wall-modelled and learned-closure LES, and as a local multiplier of the cut-off length of a hybrid RANS/LES model."
 status: established
 aliases: [σ model, σ-model, sigma subgrid-scale model, Nicoud model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Sigma model
@@ -61,6 +61,7 @@ asymptote.
 | not printed | second-order finite-volume LES of a jet | Moratilla-Vega et al. (2024), §2.1 |
 | not printed | second-order finite-volume wall-modelled LES of an airfoil (OpenFOAM) | [Nuca et al. (2025)](/sources/nuca-2025.md), §II, §VI |
 | not printed | wall-resolved reacting LES of a swirl combustor (AVBP, TTGC scheme) | [Agostinelli et al. (2021)](/sources/agostinelli-2021.md), §2 |
+| 3.0, entering only through the ratio $(C_\sigma/C_s)^2$ with $C_s=0.1$ | enhancing factor of the SATES-σ hybrid RANS/LES model (WCNS, PHengLEI); not a stand-alone LES | [Wu et al. (2024)](/sources/wu-2024.md), §2.2, Table 1 |
 
 Wu & Lele (2026, §5.1) choose it as their baseline because its "coefficient
 range works for many different flows and does not require clipping for
@@ -97,7 +98,7 @@ $\nu_t$ to zero at the wall (§II.D).
   [spectral-element method](/methods/spectral-element-method.md) and
   [turbulent channel flow](/benchmarks/turbulent-channel-flow.md).
 - **Earlier wall-modelled LES, as cited.** Mukha et al. (2025, §III.C)
-  recall that Blanchard et al. (cited) found WALE and Sigma to over-predict
+  cite Blanchard et al. as finding that WALE and Sigma over-predict
   the wall stress in channel wall-modelled LES, while WALE performed well
   in other studies; they conclude that accuracy is "a strong function of
   the combination of the boundary conditions, SGS model and numerical
@@ -144,8 +145,38 @@ $\nu_t$ to zero at the wall (§II.D).
     accurate profiles even when compared to the Sigma model" for the
     Reynolds stresses.
 
+- **Local coefficient of a hybrid RANS/LES model.** [Wu et al. (2024)](/sources/wu-2024.md)
+  (§2.2, Eqs. 8–11, Table 1) do not use Sigma as the LES closure: in the
+  [self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md)
+  (SATES) of the [PHengLEI](/software/phenglei.md) solver the eddy
+  viscosity of the BSL $k$-$\omega$ model is multiplied by a resolution
+  control function $F_r$ whose cut-off length is $L_c=C_x\Delta$
+  (registry §11). The variant SATES-σ makes $C_x$ local,
+  $$C_x=\max\big(C_{x,\mathrm{base}}F_\sigma,\,0.15\big),\qquad F_\sigma=\Big(\frac{C_\sigma}{C_s}\Big)^2\frac{\mathcal D_\sigma}{\lvert\bar S\rvert},$$
+  with $C_{x,\mathrm{base}}=0.61$ (the constant of the earlier SATES-SM,
+  calibrated on Smagorinsky with $C_s=0.1$), $C_\sigma=3.0$ and
+  $\Delta=(\Delta_x\Delta_y\Delta_z)^{1/3}$, and $C_{x,\mathrm{base}}$,
+  $F_\sigma$ page-local. The authors describe $F_\sigma$ as the ratio of the
+  Sigma to the Smagorinsky subgrid viscosity at equal $\Delta$; with the
+  printed constants $(C_\sigma/C_s)^2=900$ *(compiler check, not in the
+  sources)*. Because $\mathcal D_\sigma$ vanishes for pure shear and solid
+  rotation, $C_x$ falls to the floor 0.15 in the initial (laminar)
+  boundary layer and rises above 1.0 before separation on a circular
+  cylinder at $Re_D=3\times10^6$ (§3.2, Figs. 8, 11), which the authors
+  credit with capturing laminar–turbulent transition and the supercritical
+  topology; the floor guards coarse grids, on which an unresolved
+  turbulent boundary layer "would be identified as pure shear flows with
+  vanished turbulent viscosity" (§2.2). Results are on
+  [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md) and
+  [30P30N high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md).
+
 ## Qualifications
 
+- Wu et al. (2024) print $C_\sigma=3.0$ (Table 1), against 1.3–1.35 in the
+  LES sources above. In SATES-σ the constant scales $C_x$ through
+  $(C_\sigma/C_s)^2$ together with $C_{x,\mathrm{base}}$ and the floor, so
+  it is not calibrated as a stand-alone LES constant and the values are not
+  comparable *(compiler check, not in the sources)*.
 - Moratilla-Vega et al. (2024) print the viscosity as $\mu_{SGS}$ without
   a density factor and print neither $C_\sigma$ nor $\Delta$; the density
   in $\mu_t=\bar\rho\nu_t$ is added here to make it a dynamic viscosity
@@ -163,3 +194,4 @@ $\nu_t$ to zero at the wall (§II.D).
 - [Wu & Lele (2026)](/sources/wu-2026.md) — arXiv v2: §5.1, §5.1.1, Table 3, Fig. 5; §6.1, Fig. 13; §6.2.1, Figs. 15–16.
 - [Nuca et al. (2025)](/sources/nuca-2025.md) — §II; §VI; App. B.
 - [Agostinelli et al. (2021)](/sources/agostinelli-2021.md) — §2.
+- [Wu et al. (2024)](/sources/wu-2024.md) — §2.2, Eqs. (8)–(11), Table 1; §3.2, Figs. 8, 11.

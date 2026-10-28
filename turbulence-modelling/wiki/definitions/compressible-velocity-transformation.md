@@ -5,7 +5,7 @@ description: "Maps that turn the mean velocity of a variable-property compressib
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-28T02:18:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Compressible velocity transformations
@@ -58,6 +58,34 @@ proposed by Trettel and Larsson" (§1.1). In their learned correction
 (see [field inversion and machine learning](/methods/field-inversion-machine-learning.md))
 $y^*$ ranks above $\rho^+$ and $\mu^+$ as an input feature, which they
 read as the property variation being already contained in $y^*$ (§5, §6).
+
+**The local friction Reynolds number as a profile.** [Wang & Xu (2024)](/sources/wang-2024-h.md)
+(§4.2, Eq. 4.2) use the same quantity of Patel, Boersma & Pecnik (2016, as
+cited) as a function of wall distance,
+$Re_\tau^*(y)=\sqrt{\langle\rho\rangle/\rho_w}\,(\mu_w/\langle\mu\rangle)\,Re_\tau$,
+whose prefactor measures how far the local density and viscosity depart from
+their wall values. In the DNS of a Mach 2.33 boundary layer with a sonic
+cold hydrogen film ($Re_\tau\approx1000$, adiabatic wall), with and without
+combustion, the downstream Reynolds stresses settle below the canonical
+adiabatic profiles of Pirozzoli & Bernardini (2011, as cited) at the same
+$Re_\tau$, mainly in the outer region; the authors attribute the deficit to a
+prefactor below that of a canonical profile, because the mean temperature is
+non-monotonic across the cold layer. Upstream, hydrogen depletion raises the
+density and $Re_\tau^*$; downstream, heat release raises the wall temperature
+and lowers $Re_\tau^*$ (§4.2, Figs. 10–11). Their reading is that $Re_\tau$
+and the thermal wall condition label a canonical profile only if the density
+and viscosity distributions are canonical. The canonical comparison profile
+is built from the Pirozzoli & Bernardini density with $T\propto1/\rho$ and
+$\mu\propto T^{2/3}$ (§4.2).
+
+**Semi-local scaling of the turbulent-kinetic-energy budget.** On Mach 6
+boundary layers at $T_w/T_r=0.50$, 0.75 and 1.0 ($Re_\tau=675$, 411, 293),
+[Zhang et al. (2024b)](/sources/zhang-2024-b.md) (§3.1, Eqs. 3.7–3.14,
+Fig. 7) scale the Favre budget terms by $\langle\rho\rangle u_\tau^{*3}$ over
+the semi-local viscous length and plot them against $y^*$; the budgets agree
+with the Mach 5 DNS of Duan et al. (2010, case M5T5, as cited) and sum to
+balance, which they read as confirming semi-local scaling in hypersonic
+boundary layers.
 
 **Semi-local scaling with the subgrid viscosity.** In wall-modelled LES the
 near-wall region carries a large SGS eddy viscosity. [Maeyama & Kawai (2023)](/sources/maeyama-2023.md)
@@ -533,6 +561,36 @@ judge, initialize or close a simulation.
   Trettel–Larsson form good for heat transfer; they keep Trettel–Larsson. De
   Vanna et al. (§4.1) also initialize their LES from a van Driest-transformed
   Musker profile.
+- **Incoming layers of shock interactions and hypersonic DNS.** Five further DNS
+  and LES validate their incoming boundary layer by the van Driest
+  transformation. [Kang & Lee (2024)](/sources/kang-2024.md)
+  (§III, Eq. 16, Fig. 4b): Mach 2.9, $Re_\theta=2400$, linear law in the
+  sublayer and $5.0+2.44\log y^+$ in the log region, with the Morkovin-scaled
+  intensities matching incompressible and compressible DNS.
+  [Tang et al. (2024)](/sources/tang-2024.md) (§2.3, Eq. 2.6, Fig. 11a):
+  Mach 5, $T_w/T_r=0.5$, linear for $y^+<4$, $2.44\ln y^++5.5$ for
+  $y^+=30$–200, deviation from Duan et al. (2010, as cited) up to 3 % in the
+  wake, attributed to Reynolds number and turbulence generation.
+  [Yu et al. (2023b)](/sources/yu-2023-b.md) (§II, Eq. 8, Fig. 1): Mach 5,
+  $T_w=0.75T_r$, linear for $y^+\lesssim5$ and logarithmic for $y^+=30$–60.
+  [Wei et al. (2023)](/sources/wei-2023.md) (§III B, Eqs. 35–36, Figs.
+  10–11): in a wall-resolved LES of a Mach 2.44 layer with synthetic-eddy
+  inflow the transformed profile approaches the log law after
+  $x/\delta=7$ and converges at $x/\delta=14$, and the density-scaled
+  Reynolds stresses $\sqrt{\langle\rho\rangle/\rho_w}\,(R_{ii})^{1/2}/u_\tau$ (no
+  sum) agree with experiments. [Zhang et al. (2024b)](/sources/zhang-2024-b.md)
+  (§3.1, Fig. 5a): Mach 6 at three wall temperatures, slope 2.44 kept but
+  intercepts 5.6–6.0, colder walls leaving the linear law closer to the
+  wall; they conclude that the transformation "is more applicable to the
+  adiabatic wall" (see [law of the wall](/definitions/law-of-the-wall.md)).
+- **A reacting boundary layer.** In [Wang & Xu (2024)](/sources/wang-2024-h.md)
+  (§4.2, Fig. 8) the van Driest profile of the hydrogen-film layer matches
+  the canonical Mach 2, $Re_\tau=1000$ profile up to $y/\delta\approx0.3$ and
+  falls below it in the outer layer, while the Griffin–Fu–Moin
+  (total-stress-based) transformation against $y^*$ matches the linear and
+  log laws ($\kappa=0.41$, $B=5.2$); the untransformed inner profile already
+  matches well because the near-wall density varies slowly (adiabatic wall
+  and a hydrogen-rich near-wall layer).
 
 ## Assessments of the temperature–velocity relation
 
@@ -551,7 +609,20 @@ simpler". Zhang et al. (2022, §3, Eqs. 3.1–3.2, Fig. 5) find the same split
 on their six cases: Walz is accurate for the quasi-adiabatic walls and
 deviates for the cooled ones, while the generalized relation of Zhang et al.
 (2014), written with the generalized recovery factor $r_g$ as by Cogo et al.,
-fits both. The strong Reynolds analogies that relate the fluctuations are on
+fits both. [Zhang et al. (2024b)](/sources/zhang-2024-b.md) (§3.1,
+Eqs. 3.4–3.6, Fig. 6) repeat the comparison at Mach 6 for
+$T_w/T_r=0.50$, 0.75 and 1.0: the Duan & Martin (2011) relation (constant
+$C_{\mathrm{DM}}=0.8259$, with $1-C_{\mathrm{DM}}=0.1741$ on the quadratic
+term) and the generalized relation of Zhang et al. (2014) match the DNS,
+while Walz's relation deviates more as $T_w$ departs from $T_r$, and near the
+edge even at $T_w/T_r=1.0$ because of the total-temperature overshoot (a
+maximum of $1.02$ times the free-stream total temperature). Both
+non-adiabatic relations reduce to Walz's for adiabatic walls.
+[Tang et al. (2024)](/sources/tang-2024.md) (§2.3, Eqs. 2.7–2.8,
+Fig. 11b), at Mach 5 with $T_w/T_r=0.5$, find Walz's relation close with a
+slight mid-layer deviation, which they attribute to the cold wall violating
+its assumption $Pr_t=1$, and the generalized relation, written with $r_g$,
+in good agreement. The strong Reynolds analogies that relate the fluctuations are on
 the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 
 ## Qualifications
@@ -598,6 +669,15 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
   cells gives $Re_\tau=215.7$, and $\Delta z^+=7.06$ gives 215.8) *(compiler
   check, not in the sources)*. Locators refer to the arXiv v1 preprint read (2021, five authors;
   the Journal of Scientific Computing version lists four).
+- Zhang et al. (2024b, Eq. 3.6) define the generalized recovery temperature
+  with the plain recovery factor $r$ and then define $r_g$, which is not used
+  in any printed formula; Yu et al. (2023b, Eq. 8) print the van Driest
+  integral with upper limit $\tilde u^+$ and a prefactor $1/u_\tau$, so that
+  as printed the right-hand side has the dimension of an inverse velocity
+  *(compiler check, not in the sources)*.
+- Wang & Xu (2024, §4.2) place $Re_\tau=1067$ and 1051 at $x/h_0=125$ and
+  150 ($h_0$ the hydrogen-stream height, page-local), where their Table 2
+  gives these values at 100 and 125 (1044 at 150).
 - Helm & Martín (2022, Sec. III B) write "The much shorter rescaling length
   of the DNS (29δ compared to 7δ for the LES)": as printed, the length called
   shorter is the larger number.
@@ -630,3 +710,9 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 - [Gao et al. (2023)](/sources/gao-2023.md) — §5.2, Figs. 18–19.
 - [Yu et al. (2023)](/sources/yu-2023.md) — §3, Eq. (3.1), Fig. 5; §4.1, Eq. (4.1).
 - [Xu et al. (2023)](/sources/xu-2023.md) — §4.1, Eq. (4.1), Fig. 13a.
+- [Wang & Xu (2024)](/sources/wang-2024-h.md) — §2.3; §4.2, Eq. (4.2), Figs. 8, 10–11; Table 2.
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §3.1, Eqs. (3.1)–(3.14), Figs. 5–7.
+- [Tang et al. (2024)](/sources/tang-2024.md) — §2.3, Eqs. (2.6)–(2.8), Fig. 11.
+- [Kang & Lee (2024)](/sources/kang-2024.md) — §III, Eq. (16), Figs. 4–5.
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II, Eq. (8), Fig. 1.
+- [Wei et al. (2023)](/sources/wei-2023.md) — §III B, Eqs. (35)–(36), Figs. 10–11.

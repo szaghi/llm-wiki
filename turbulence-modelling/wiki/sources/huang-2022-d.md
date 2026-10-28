@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 467:111458"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Huang_High-order_compact_finite_volume_schemes_for_solving_the_Rey.pdf"
 tags: [rans, spalart-allmaras, high-order, numerical-dissipation, high-lift]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -45,8 +45,9 @@ model nor a reconstruction limiter is then needed.
 
 Tests include the NASA TMR [flat plate](/benchmarks/turbulent-boundary-layer.md),
 the [NACA 0012](/benchmarks/naca-0012-airfoil.md) at $15^\circ$ on three
-meshes, and the 30P-30N three-element airfoil at $16^\circ$ (a
-configuration distinct from the [NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md)).
+meshes, and the [30P-30N three-element airfoil](/benchmarks/30p30n-high-lift-airfoil.md)
+at $16^\circ$ (a configuration distinct from the
+[NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md)).
 The fourth-order scheme matches the fine-grid reference skin friction on
 the flat plate, reaches a 0.19% lift error on the finest NACA 0012 mesh
 against 14.88% at second order, and removes a spurious trailing-edge
@@ -74,8 +75,8 @@ identity problem. Numbering on this page is that of this version.
 4. The unconstrained weights give better dispersion and dissipation curves but schemes that are "not robust", which the authors attribute to their much smaller dissipation (leading term $-3.23\times10^{-3}\theta_w^8\,at/\Delta x$ against $-2.24\times10^{-2}\theta_w^8\,at/\Delta x$ constrained) (§2.4.1, Fig. 4). **Shown** (robustness asserted, not displayed)
 5. The 1-D scheme with cubic variational reconstruction is fourth order: $\lim\mathrm{Im}(\theta_w')\,at/\Delta x\approx-\tfrac12\varpi_3^2\theta_w^8\,at/\Delta x=O(\Delta x^7)$ and $\lim\mathrm{Re}(\theta_w')/\theta_w\approx1+\theta_w^4/720$; the optimization does not change the order (§2.4.1). **Derived**
 6. The optimal weights of a higher-degree reconstruction are not the extension of the lower-degree ones; each degree is optimized separately (§2.4.1). **Shown**
-7. For the 2-D linear reconstruction the normalized objective is minimized for $\alpha_G\ge1/2$ at every aspect ratio and advection angle tested; $\alpha_G=1/2$ is chosen (§2.4.2, Fig. 7). **Shown**
-8. For the 2-D quadratic reconstruction at aspect ratio 1000, $\alpha_G=1/2$ is optimal for horizontal advection and $\alpha_G=3/2$ for inclined advection; since the objective varies slowly for $\alpha_G\ge0$, $\alpha_G=1/2$ is taken as "near-optimal", "even for the cubic reconstruction" (§2.4.2, Fig. 8). **Shown** (cubic extrapolated, tested in claim 10)
+7. For the 2-D linear reconstruction the normalized objective is minimized for $\alpha_{\mathrm{gw}}\ge1/2$ at every aspect ratio and advection angle tested; $\alpha_{\mathrm{gw}}=1/2$ is chosen (§2.4.2, Fig. 7). **Shown**
+8. For the 2-D quadratic reconstruction at aspect ratio 1000, $\alpha_{\mathrm{gw}}=1/2$ is optimal for horizontal advection and $\alpha_{\mathrm{gw}}=3/2$ for inclined advection; since the objective varies slowly for $\alpha_{\mathrm{gw}}\ge0$, $\alpha_{\mathrm{gw}}=1/2$ is taken as "near-optimal", "even for the cubic reconstruction" (§2.4.2, Fig. 8). **Shown** (cubic extrapolated, tested in claim 10)
 9. Final weights for unstructured 2-D grids: $\omega^G_f=(S_{i,j}/d_{ij})^{1/2}$ (Eq. 51) and $\omega^D_f(p,q)=\varpi_{p+q}d_{ij}^{p+q}$ (Eq. 50) with Table 2 values; two 3-D variants are proposed, not verified (§2.4.3). **Stated**
 10. Static cubic reconstruction of a manufactured boundary-layer profile, $L_2$ error of $\partial u/\partial y$ on mesh 1 (uniform, aspect ratio 500) / mesh 2 (curved, about 1000) (Table 3): Pan et al. $3.49\times10^{-3}$ / $6.84\times10^{-2}$; Cheng et al. $5.22\times10^{-3}$ / $1.38\times10^{-3}$; optimal derivative weights with the geometric weight of Pan et al. divergent / $1.50\times10^{-1}$; with that of Li et al. $1.39\times10^{-3}$ / $8.04\times10^{-4}$; fully optimized $1.39\times10^{-3}$ / $7.33\times10^{-4}$ (§2.4.3). **Shown**
 11. Optimal derivative weights combined with the geometric weight of Pan et al. give very poor results, so the geometric weight must be optimized too (§2.4.3). **Shown**
@@ -124,7 +125,7 @@ identity problem. Numbering on this page is that of this version.
 | $\delta=10^{-6}$ | $\delta_{\mathrm{EDP}}$ (page-local) | positivity threshold; **collision** with the boundary-layer thickness |
 | $k$ (reconstruction degree) | (linear, quadratic, cubic) | **collision** with the TKE |
 | $\omega^G_f$, $\omega^D_f(p,q)$, $\varpi_n$ | (geometric and derivative weights; weight parameters) | page-local |
-| $\alpha$ (§2.4) | $\alpha_G$ (page-local) | exponent of the geometric weight; $\alpha$ also the angle of attack |
+| $\alpha$ (§2.4) | $\alpha_{\mathrm{gw}}$ (page-local) | exponent of the geometric weight; $\alpha$ also the angle of attack |
 | $\lambda$, $\lambda_{ij}=S_{i,j}/d_{ij}$ | (aspect ratio; face-length to centroid-distance ratio) | **collision** with the Taylor microscale |
 | $\kappa$, $\kappa'$ (§2.4) | $\theta_w$, $\theta_w'$ (page-local) | non-dimensional and modified wavenumber; $\kappa$ is also the conductivity (§2.1) and the von Kármán constant (Eq. 52) |
 | $\upsilon$ (Eq. 52), $u^+$, $y^+$, $u_\tau$ | $\nu$, $u^+$, $y^+$, $u_\tau$ | $\upsilon$ also an objective-function parameter |

@@ -5,7 +5,7 @@ description: "RANS laminar–turbulent transition models that evaluate an empiri
 status: established
 aliases: [LCTM, γ-Reθ-SST, separation-induced transition correction, Suluksna–Juntasaro calibration, Langtry–Menter calibration, local correlation-based transition modelling, γ-Reθ model, gamma-Re-theta, γ-SST, one-equation γ model, γ-alg-SST, algebraic LCTM model, algebraic intermittency model]
 tags: [rans, transition, eddy-viscosity, boundary-layer, separated-flow]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-28T07:04:00Z
 ---
 
 # Local-correlation-based transition models
@@ -617,8 +617,7 @@ finite-volume reference (§4.2).
   ($CFPG>0$, $CAPG<0$) both branches of the printed $FPG$ give values at or
   below one, so the upper cap 4 is never reached and both signs of
   $\lambda_{\theta l}$ lower $Re_{\theta c}$. Menter et al. neither plot $FPG$
-  nor discuss its range, so whether the sign mapping or a coefficient sign
-  differs from the printed one cannot be settled from the paper.
+  nor discuss its range.
 - Menter et al. print slips: Eq. 22 carries a stray "1"
   ($CAPG_{\mathrm{High}}(1-F_{RV1}1)$) where Eqs. 20–21 have $(1-F_{RV1})$; the
   §3.3 heading names NLF(1)-0416F twice where the section treats 0416F and

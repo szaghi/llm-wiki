@@ -5,7 +5,7 @@ description: "hpMusic is the University of Kansas high-order flux-reconstruction
 status: established
 aliases: [hpMusic solver, Kansas hpMusic, W-047]
 tags: [software, flux-reconstruction, implicit-les, wmles, mesh-adaptation, turbomachinery]
-timestamp: 2026-10-28T02:13:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # hpMusic
@@ -110,7 +110,8 @@ As summarized by Kiris et al. (2023) for the
 - W-047 is the only flux-reconstruction submission and, with 13M degrees
   of freedom, the smallest after the 3M inviscid one; the best-practice
   grids of the other wall-modelled and lattice-Boltzmann submissions
-  range from 273M to 11.3B (Tables 1–2, Fig. 3); its wall-normal spacing is printed as
+  range from 273M to 11.2B (Tables 1–2; the Fig. 3 legend prints the
+  largest as 11285M); its wall-normal spacing is printed as
   "7.2 mm (21.5/3 mm)" at full scale (7 m mean aerodynamic chord) and its
   cell aspect ratio ranges from 1 to 71 (Table 2);
 - it obtained "reasonably accurate" integrated loads at $C_{L,\max}$ but

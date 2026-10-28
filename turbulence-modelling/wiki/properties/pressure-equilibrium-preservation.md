@@ -5,7 +5,7 @@ description: "A scheme is pressure-equilibrium preserving when uniform pressure 
 status: established
 aliases: [PEP, pressure equilibrium preserving scheme, KGP-Pt, KGP-PT scheme, pressure-equilibrium-preserving split form, CDHD, central differential flux with high-order dissipation, primitive-variable hybrid scheme]
 tags: [pressure-equilibrium, kinetic-energy-preserving, compressible, real-gas, numerical-dissipation, dns]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Pressure-equilibrium preservation
@@ -34,8 +34,8 @@ the speed of sound, $c^2=p_\rho+p\,p_e/\rho^2$; $D_x$ the second-order
 centred difference matrix (the source's $\delta_x$; it satisfies summation by
 parts but not the product rule); $C_{\rho\phi}$ the semi-discrete convective
 term of $\rho\phi$; $W_p$ the pressure-work term of the energy equation (the
-source's $\Pi_{\rho E}$, renamed because $\Pi$ is the SGS flux); $a_{\mathrm K}$,
-$a_e$, $a_p$ the weights the source calls $\xi$, $\chi$, $\eta$ (renamed
+source's $\Pi_{\rho E}$, renamed because $\Pi$ is the SGS flux); $a_{\mathrm K}$
+(with $D_x$, registry §11), $a_e$, $a_p$ the weights the source calls $\xi$, $\chi$, $\eta$ (renamed
 because these letters are the registry's reference coordinate, SA ratio and
 Kolmogorov length); $p^h_\rho$, $p^h_e$ the discrete Jacobians of a discrete
 chain rule (the source's tilded Jacobians, the tilde being the registry's
@@ -272,6 +272,58 @@ terms of Bernades et al. its internal-energy convection is not the
 $\tfrac12(C^D_{\rho e}+C^u_{\rho e})$ of PEP-IG *(compiler check, not in the
 sources)*.
 
+## Remedies in high-order discontinuous schemes (a review)
+
+The review of high-order discontinuous schemes (DG, flux reconstruction,
+spectral difference) for multiphase and multicomponent flows of
+[Lv & Ekaterinaris (2023)](/sources/lv-2023.md), §4.3, Figs. 3–4,
+describes the same failure for material interfaces and contact
+discontinuities with variable thermodynamic properties, and four
+families of remedies, all from the cited literature:
+
+- **Mechanism.** With constant thermal properties the energy equation
+  reduces at an interface to a combination of the mass equations, so
+  mechanical equilibrium survives numerical errors; with variable
+  properties numerically triggered thermal non-equilibrium changes the
+  internal energy and the thermal property, and the pressure oscillates.
+  The oscillation is "spurious" where there is no physical diffusion.
+- **γ-advection** (Abgrall; extended to WENO by Johnsen & Colonius and to
+  DG by de Frahan et al.): an auxiliary advection equation for the ratio
+  of specific heats, from which the pressure is evaluated. It fails for
+  temperature-dependent properties and diffusion-dominated regimes.
+- **Pressure evolution** (Karni; Terashima & Koshi; a DG version for
+  turbulent flows) in place of the conservative energy equation, the
+  route of KGP-Pt above; it may diverge for shock-containing problems.
+- **Double flux**: each element sees an element-wise constant thermal
+  property and the Riemann flux is evaluated twice per face, once with
+  each side's ratio of specific heats. It preserves mechanical
+  equilibrium and applies to general thermodynamic models, but relaxes
+  energy conservation, which the authors call acceptable at low Mach
+  number (deflagrations) and critical at supersonic conditions, where it
+  gives wrong shock speeds; the hybrid of Lv & Ihme reverts to the
+  conservative flux where a pressure-jump sensor flags a shock and
+  recovers correct detonation speeds. The element-wise constant property
+  is, in the authors' words, "a rather intrusive treatment in conflict
+  with the core feature of discontinuous schemes", their multiple
+  internal degrees of freedom. It has been adopted in the DGSEM.
+- **Conservative $L^2$ projection of the equation of state** (Franchina et
+  al.): the pressure computed from the equation of state is
+  $L^2$-projected onto the DG solution space and used only in the
+  convective flux, so the solution energy is unchanged; with artificial
+  viscosity it keeps the pressure oscillation within "0.1%~1% relatively"
+  for component-dependent heat capacities. Johnson & Kercher extended it
+  to thermally perfect multicomponent reacting gases, preserving pressure
+  equilibrium at constant temperature and giving bounded, decaying
+  oscillations across a temperature jump.
+
+The authors favour the last family as the one compatible with the
+element polynomial. Of the limiters, WENO limiters applied blindly
+produce pressure oscillations at such interfaces, and the limiter of
+de Frahan et al. avoids them by limiting density, momentum, pressure and
+the thermal property and rebuilding the energy (§4.2; see
+[WENO](/methods/weno-scheme.md)). No turbulence test is part of the
+review's evidence for any of the four.
+
 ## Qualifications
 
 - The analysis is for second-order centred differences in one dimension;
@@ -283,6 +335,17 @@ sources)*.
   PEP-IG is exact (§3.1.2). The authors restrict their conclusion that TEC
   may be sacrificed to the regimes tested (§5).
 - Time is treated analytically; Runge–Kutta errors are assumed small (§3.1).
+- **Double flux in two sources.** Lv & Ekaterinaris (2023, §4.3) report,
+  from the cited works, that double flux gives oscillation-free
+  solutions; Bernades et al. (2023, §4.1.2) find that double flux keeps
+  pressure equilibrium with an upwind (HLLC) flux but not with the KGP
+  split. The two statements concern different base fluxes and
+  discretizations (DG with Riemann fluxes against centred differences),
+  so no contradiction is recorded. Xu et al. (2026, §1) judge the
+  $L^2$-projection approach (in Ching et al.'s DG form) able to leave
+  "small deviations from pressure equilibrium", consistent with the
+  0.1–1% oscillation level that Lv & Ekaterinaris report for Franchina et
+  al.'s form.
 - **Printed slips.** §4.2 gives the perturbation wavelength as
   $\lambda=1/k=1/3$ m for $k=6$; for $\sin(k\pi x)$ the wavelength is $2/k$,
   which the same section uses in $t_c=2/(k\Delta u)$ *(compiler check, not
@@ -313,3 +376,4 @@ sources)*.
 - [Kuya et al. (2018)](/sources/kuya-2018.md) — §3, Eq. (54) (KEEP fluxes, from which the compiler check above is derived); §5.1 (uniform initial density in the tests).
 - [Volpiani (2024)](/sources/volpiani-2024.md) — §2.2.3, Eqs. (14)–(17) (split forms with enthalpy splitting; PEP schemes named, not treated); §3.2 (Taylor–Green setup).
 - [Bernades et al. (2023)](/sources/bernades-2023.md) — §1 (definition, requirements); §2.1, Eqs. (2)–(4) (pressure equation); §3.1, Eqs. (8)–(13) (semi-discrete framework, split forms, KEP family); §3.1.2, Eqs. (14)–(28) (induced pressure and energy equations, chain rule, CR class, KGP-Pt); §3.1.3, Table 1; §3.2, Table 2 (comparison schemes); §4.1, Figs. 1–3; §4.2, Figs. 4–7; §4.3, Figs. 8–10; §5.
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.3, Figs. 3–4 (mechanism of spurious pressure oscillations with variable thermodynamics; γ-advection, pressure evolution, double flux and its hybrid, $L^2$-projected equation of state); §4.2 (interface-consistent WENO limiting; review).

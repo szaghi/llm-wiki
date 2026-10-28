@@ -9,7 +9,7 @@ year: 2021
 venue: "Comput. Fluids 231:105173"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Computers_amp_Fluids_Sugaya_Unsteady_turbulent_flow_simulations_on_moving_Cartesian_grid.pdf"
 tags: [immersed-boundary, des, spalart-allmaras, wall-model, high-order, compressible]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -113,7 +113,7 @@ $f(y^+)$ and the near-wall SA modification of Tamaki et al.
 | $\overline Q_{c,i}$ | (cell average, page-local) | **collision:** the source's overbar is a cell average, not the LES filter |
 | $V=[V_x,V_y,V_z]^T$, $V_n$, $V_{trans}$ | $\boldsymbol V$, $V_n$, $\boldsymbol V_{\mathrm{trans}}$ (grid velocity, page-local) | |
 | $\omega$ (rigid rotation), $\Omega$ (rotor) | $\boldsymbol\Omega_{\mathrm{rot}}$ | **collision** with $\omega$ and $\Omega_{ij}$ |
-| $\omega$ (pitching) | $\varpi_{\mathrm p}$ (page-local, as on [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)) | **collision** with $\omega$ |
+| $\omega$ (pitching) | $\varpi_{\mathrm p}$ (registry §11) | **collision** with $\omega$ |
 | $\mathcal T_c$, $\mathcal T_p$ | same (Galilean transformations, page-local) | |
 | $\Delta X=\Delta Y$, $\Delta x$ | $h$ | cell size; not the filter width $\Delta$ |
 | $X$, $Y$, $\eta$ | same (face-normal, face-tangential coordinates; tangential offset, page-local) | **collision** with the Kolmogorov length $\eta$ |
@@ -124,7 +124,7 @@ $f(y^+)$ and the near-wall SA modification of Tamaki et al.
 | $u_{n}$, $u_{t}$, $V_{n,wall}$, $V_{t,wall}$ | same (page-local) | normal and tangential fluid and wall velocities |
 | $\alpha$, $\alpha_m$, $\alpha_0$, $k_r$ | same (angle of attack, mean, amplitude, reduced frequency, page-local) | **collision** with the DG blending factor $\alpha$ and with $k$ |
 | $C_l$, $C_m$ | $C_L$, $C_m$ | |
-| $C_T$, $C_Q$, FM, $M_{tip}$, $R$, $\theta_c$ | $C_{\mathrm{Th}}$, $C_Q$, FM, $M_{\mathrm{tip}}$, $R_{\mathrm r}$, $\theta_c$ (rotor thrust and torque coefficients, figure of merit, tip Mach number, radius, collective, page-local) | **collision:** the registry $C_T$ is the TENO cut-off threshold |
+| $C_T$, $C_Q$, FM, $M_{tip}$, $R$, $\theta_c$ | $C_{\mathrm{Th}}$, $C_Q$, FM, $M_{\mathrm{tip}}$, $R_{\mathrm r}$, $\theta_c$ (rotor thrust and torque coefficients, figure of merit, tip Mach number, radius, collective; $C_{\mathrm{Th}}$, $M_{\mathrm{tip}}$, $R_{\mathrm r}$ registry §11, the others page-local) | **collision:** the registry $C_T$ is the TENO cut-off threshold |
 | $Re$ | $Re_c$ | rotor: chord and **sonic speed** ($4.44\times10^6$); airfoils: chord and relative velocity |
 
 # Reference list

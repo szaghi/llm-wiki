@@ -5,7 +5,7 @@ description: "Menter's two-equation shear-stress-transport eddy-viscosity model,
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES, BSL k-ω, baseline k-ω model]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # k-ω SST model
@@ -168,6 +168,14 @@ names the model BSL, not SST. The hybrid
 multiplies only the eddy viscosity, $\mu_t=F_r\rho k/\omega$, by a
 resolution function (on the
 [hybrid RANS/LES page](/definitions/hybrid-rans-les.md)).
+Wu et al. (2024) print the same BSL host for their SATES-σ variant (§2.1,
+Eqs. 1–3), with the destruction written $\omega(\ldots-\beta_\omega\rho\omega)$
+and the cross-diffusion $2\rho(1-F_1)\sigma_{\omega2}\omega^{-1}\partial_jk\,\partial_j\omega$
+without a trailing factor, a form with the dimensions of $D\rho\omega/Dt$
+throughout *(compiler check, not in the sources)*; of the constants they
+print only $\beta^*=0.09$ (their $\beta_1^*$)
+([Wu et al. (2024)](/sources/wu-2024.md); the model is on the
+[SATES page](/methods/self-adaptive-turbulence-eddy-simulation.md)).
 
 **A log-$\omega$ form for flux reconstruction.** Vandenhoeck et al. (2022)
 rewrite the SST-2003 model with $\tilde\omega_\ell=\ln\omega$ as unknown
@@ -214,10 +222,11 @@ Zhao et al. (2023b) add the dilatational-dissipation and
 pressure-dilatation correction of Suzen & Hoffmann, active only through the
 factor $(1-F_1)$, i.e. in the outer branch. In their nondimensional form
 the $k$-destruction becomes $\big[1+\alpha_1M_t^2(1-F_1)\big]\beta^*\rho k\omega$
-plus a pressure-dilatation source $(1-F_1)\,p''d''$ (page-local, the source's
-$\overline{p''d''}$; the double primes are not Favre fluctuations), with
+plus a pressure-dilatation source $(1-F_1)\,\Pi^{\mathrm t}_{\mathrm{pd}}$ (the modelled
+turbulent [pressure dilatation](/definitions/pressure-dilatation.md), registry §11;
+the source's $\overline{p''d''}$, whose double primes are not Favre fluctuations), with
 
-$$p''d''=-\alpha_2\,\tau_{ij}\partial_ju_iM_t^2+\alpha_3\rho\beta^*k\omega M_t^2,\qquad \alpha_1=1.0,\ \alpha_2=0.4,\ \alpha_3=0.2,$$
+$$\Pi^{\mathrm t}_{\mathrm{pd}}=-\alpha_2\,\tau_{ij}\partial_ju_iM_t^2+\alpha_3\rho\beta^*k\omega M_t^2,\qquad \alpha_1=1.0,\ \alpha_2=0.4,\ \alpha_3=0.2,$$
 
 with $\tau_{ij}$ their (unspecified-sign) stress of the production term, $M_t$ the turbulent Mach number, which is
 not defined in the paper, and the $\omega$-equation receiving the matching
@@ -236,10 +245,8 @@ cell-centred finite-volume scheme on the same mesh, with piecewise-constant
 turbulence variables and the DG velocity gradients $L^2$-projected onto the
 finite-volume space, "to pursue numerical stability and positivity" after
 Burgess & Mavriplis (§1, §3.2; see
-[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)). The
-high-order accuracy therefore applies to the mean-flow variables only
-*(compiler check, not in the sources)*. They
-recall the opposite choice of Bassi et al., who solve for $\log\omega$ at high
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md)). They
+cite (§1) the opposite choice of Bassi et al., who solve for $\log\omega$ at high
 order to enhance stability (§1).
 
 Elzaabalawy et al. (2023) solve SST and BSL at high order with a
@@ -303,7 +310,26 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
 
 ### Separation, pressure-gradient and hybrid modifications
 
-- **Separation fix.** Yan et al. (2022) recall Rumsey's fix of SST, a
+- **Wall-pressure-dependent $\beta^*$ and $Pr_t$ for shock interactions.**
+  Yu et al. (2023b) print SST (Menter 1993, 1994, 2003 as cited) in
+  compressible form with $\beta^*=0.09$, $\alpha=(5/9,0.44)$,
+  $\beta_\omega=(3/40,0.0828)$, $\sigma_k=(0.85,1)$, $\sigma_\omega=(0.5,0.856)$
+  and the limiter $\mu_t=a_1k/\max(a_1\omega,SF_2)$ with $a_1$ not given
+  ([Yu et al. (2023b)](/sources/yu-2023-b.md), §V, Eqs. 27–33). From an a
+  priori test on their Mach 5 oblique-shock DNS they take $\beta^*$, which
+  they call equivalent to $C_\mu$, as
+  $\beta^*(x)=0.09/[1+C_{\mu,1}(\langle p_w\rangle(x)/\langle p_w\rangle_r-1)]$
+  ($C_{\mu,1}$ page-local, 1 in the DNS fit; details on
+  [$k$-$\varepsilon$ models](/methods/k-epsilon-model.md)), and set
+  $Pr_t=0.9-0.5\tanh(10\lvert\nabla p\,\delta/U_\infty\rvert)$ (see
+  [turbulent Prandtl number](/definitions/turbulent-prandtl-number.md)) (§IV,
+  Eq. 21; §V). Their rationale: lowering $C_\mu$ lowers the modelled
+  dissipation in the $k$ equation and raises $k$ and the shear stress, while
+  the $\omega$ equation ties the dissipation of mean and turbulent kinetic
+  energy, whereas the separated shear layer raises production without
+  instantly raising the turbulent dissipation (a cascade delay), so that
+  $\omega$ is overpredicted downstream (§V). Evidence is under Evidence below.
+- **Separation fix.** Yan et al. (2022, §1) cite Rumsey's fix of SST, a
   multiplier $F_{sf}$ that increases the $\omega$ destruction in separating
   shear layers where production greatly exceeds dissipation (formula not
   printed), and Rumsey's finding that enhanced mixing there improves the
@@ -528,8 +554,8 @@ operational role and need not match their DNS counterparts
   design, analysis and risk mitigation (Lockheed Martin's Falcon code uses
   Smith's $k$-$l$ model); all "work well for attached flows, and flows with
   small amounts of separation", but can be inadequate where large
-  separation dominates, as at high angle of attack, recalling the
-  workshop RANS lift curves they reproduce (§4.5.1, Figs. 6, 12).
+  separation dominates, as at high angle of attack, and they reproduce the
+  workshop RANS lift curves (§4.5.1, Figs. 6, 12).
 - **Transition.** With the algebraic intermittency of Menter et al. (2022),
   SST reproduces the ERCOFTAC T3 plates, a separated flat plate, four
   airfoils and a turbine cascade with accuracy similar to the transport
@@ -602,10 +628,10 @@ operational role and need not match their DNS counterparts
   the core velocity peaks and the kinetic energy of the first vortex),
   while the SSG/LRR-$\omega$ Reynolds-stress model gives an unsteady, smeared vortex with too much
   kinetic energy (Mozaffari et al. 2022, §5.2, Figs. 26–27).
-- **Hypersonic heat flux.** Huang et al. (2022) recall that SA and SST predict
+- **Hypersonic heat flux.** Huang et al. (2022, §1) state, citing Rumsey (2010) and Gnoffo et al. (2013), that SA and SST predict
   hypersonic zero-pressure-gradient heat flux less accurately than algebraic
-  models with compressibility corrections (Rumsey 2010; Gnoffo et al. 2013)
-  ([Huang et al. (2022)](/sources/huang-2022.md), §1).
+  models with compressibility corrections
+  ([Huang et al. (2022)](/sources/huang-2022.md)).
 - Alauzet et al. (2022) name a comparison of SA and SST on mesh-converged
   adapted meshes as future work ([Alauzet et al. (2022)](/sources/alauzet-2022.md), §9).
 - **Ahmed body.** Cai et al. (2022) cite Menter & Kuntz, who ran
@@ -717,6 +743,41 @@ operational role and need not match their DNS counterparts
   (§2.3 Fig. 5, §4.4.2 Fig. 11; see the
   [Boussinesq page](/definitions/boussinesq-hypothesis.md) and
   [spectral gap](/definitions/spectral-gap.md)).
+- **Hypersonic shock/boundary-layer interactions.** With the refinement
+  above, Yu et al. (2023b) compute the Schülein Mach 5 oblique-shock
+  experiments ($14^\circ$, $10^\circ$ wedges; unit Reynolds number
+  $3.7\times10^7$/m) and the Holden et al. Mach 8 compression ramps
+  ($27^\circ$, $30^\circ$, $33^\circ$; $600\times250$ grid) by steady RANS with
+  fifth-order WENO (§V, Figs. 21–24). On the oblique shocks $C_f$ improves and
+  the error of the Stanton-number maximum falls from about 50% to below 10%.
+  Against their DNS, the original SST underpredicts $k$ and the shear stress
+  globally; the refined model is better downstream but still inaccurate
+  inside the interaction, where a nonlinear stress term would be needed,
+  "not necessary" if only wall quantities matter (Fig. 22). On the ramps the
+  original SST overpredicts separation at $27^\circ$ and $30^\circ$ and
+  underpredicts it at $33^\circ$; the refined one gives the onset and plateau
+  at $33^\circ$ almost exactly and no separation at the smallest angle, as
+  measured (Figs. 23–24). See
+  [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+- **Supersonic film cooling with combustion.** Wei et al. (2023) use SST RAS
+  as the precursor of their wall-resolved LES of the Burrows–Kurkov hydrogen
+  film (Ma 2.44) and compare the two (§IV F, Figs. 36–37): RAS over-predicts
+  the wall fluxes, shows no combustion-induced friction reduction and a
+  strong heat-flux increase with combustion, inconsistent with experiment
+  and with the LES. They attribute this to isotropic eddy-viscosity
+  modelling, estimating that an isotropic redistribution of the
+  $0.6:0.2:0.2$ split (LES, streamwise to wall-normal to spanwise) of the kinetic energy would raise the wall-normal
+  fluctuation substantially, and recommend v2f or Reynolds-stress models
+  ([Wei et al. (2023)](/sources/wei-2023.md); see the
+  [turbulent Prandtl number](/definitions/turbulent-prandtl-number.md) and
+  [Reynolds-stress models](/methods/reynolds-stress-model.md)).
+- **SST-IDDES as comparator of a hybrid.** On a supercritical cylinder at
+  $Re_D=3\times10^6$ SST-IDDES gives $St=0.29$, $C_{pb}=-0.68$, $L_r/D=0.63$,
+  $C_D=0.62$, a drag the authors call satisfactory and a delayed separation
+  point, where SATES-SM predicts the subcritical topology; on the MD-30P30N
+  airfoil its $C_p$ is less accurate than that of SATES-σ (Wu et al. 2024, §3.2–§3.3,
+  Table 3; see the [SATES page](/methods/self-adaptive-turbulence-eddy-simulation.md)
+  and [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)).
 - **Transonic bump with QCR.** On the axisymmetric transonic bump of
   Bachalo & Johnson ($Re_c=2.763\times10^6$, $M_\infty=0.6$–$0.925$) He et al.
   (2022) find SST with the quadratic constitutive relation predicting the
@@ -775,7 +836,7 @@ operational role and need not match their DNS counterparts
   Driver–Seegmiller [backward-facing step](/benchmarks/backward-facing-step.md)
   it reattaches at $6.44$ step heights on the fine grid against $6.26$
   measured, underpredicts the skin friction, "a known behavior of the SST
-  model"; the authors recall that Menter (1994) reported $6.5$ for SST and $6.4$
+  model"; the authors cite Menter (1994), who reported $6.5$ for SST and $6.4$
   for $k$-$\omega$ (§3.3). In the NACA 0012 tables they reproduce, SST in
   CFL3D and FUN3D gives $C_D=0.00809$ and 0.00816 at $0^\circ$, and
   $C_D=0.01236$, $C_L=1.0778$ and 0.01253, 1.0840 at $10^\circ$, against
@@ -815,6 +876,19 @@ operational role and need not match their DNS counterparts
   [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
 
 ## Qualifications
+
+- Yu et al. (2023b) do not say whether the variable $\beta^*$ replaces the
+  constant also in $F_1$ and $F_2$, nor which $C_{\mu,1}$ the RANS runs use;
+  they note that RANS constants can differ from DNS-fitted ones (§V). Their
+  a priori finding (the standard coefficient overestimates the eddy
+  viscosity downstream) and their a posteriori one (the original SST
+  underpredicts $k$ and shear stress) are opposite trends, which they explain
+  by the equilibrium the two transport equations reach, not by $C_\mu$ alone
+  (§IV–§V). Eq. 28 prints the cross-diffusion coefficient as $\sigma_{w2}$ and
+  the product as $\partial_jk\,\partial_i\omega$ with mismatched indices,
+  while Eq. 31 prints $\partial_ik\,\partial_i\omega$; the text calls the
+  blending function "$F_l$".
+- Wei et al. (2023) print no SST coefficients.
 
 Dzanic et al. (2022) print several slips in the SST equations of the
 version read (arXiv v1):
@@ -969,3 +1043,6 @@ version read (arXiv v1):
 - [Li et al. (2022)](/sources/li-2022-k.md) — §III C, Figs. 15–18.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.5.1–4.5.2, Figs. 6, 12.
 - [Thawait et al. (2023)](/sources/thawait-2023.md) — §II B Eqs. 6–14, §V, §VI A–B Table I Fig. 10.
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §IV, Eq. (21) (wall-pressure-dependent coefficient); §V, Eqs. (27)–(33), Figs. 21–24 (printed SST, refined $\beta^*$ and $Pr_t$, Schülein and Holden cases).
+- [Wei et al. (2023)](/sources/wei-2023.md) — §IV F, Figs. 36–37 (SST RAS against LES of a combusting hydrogen film).
+- [Wu et al. (2024)](/sources/wu-2024.md) — §2.1, Eqs. (1)–(3) (BSL host of SATES-σ); §3.2–§3.3, Table 3 (SST-IDDES comparator).

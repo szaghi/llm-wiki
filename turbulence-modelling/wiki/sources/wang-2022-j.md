@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Fluids 34:095108"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physics_of_Fluids_Wang_Constant-coefficient_spatial_gradient_models_for_the_sub-gri.pdf"
 tags: [les, sgs-model, gradient-model, structural-model, a-priori-a-posteriori, mixing-layer]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -109,7 +109,7 @@ summed over $k$, with $|_L$ the value at stencil point $S=L$; it holds on
 uniform grids with $h_{\mathrm{LES}}=\Delta/2$ and a Gaussian filter. It
 targets the second-order truncation of the higher-order gradient model
 (Eq. 15), $\tau_{ij}=\sum_{n\ge1}\frac{(2\alpha_{\mathrm G})^n}{n!}\partial^n\bar u_i\cdot\partial^n\bar u_j$
-with $\alpha_{\mathrm G}=\Delta^2/24$ (the source's $\alpha$, page-local, as on
+with $\alpha_{\mathrm G}=\Delta^2/24$ (the source's $\alpha$; registry §11, as on
 the gradient-model page).
 
 # Printed slips
@@ -131,8 +131,8 @@ the gradient-model page).
 | $\bar S_{ij}$, $\lvert\bar S\rvert$ | $\bar S_{ij}$, $\lvert\bar S\rvert$ | factor two included |
 | $\mathcal L_{ij}$, $\mathcal M_{ij}$, $\alpha_{ij}$, $\beta_{ij}$ | $L_{ij}$, $M_{ij}$ (page-local), … | dynamic procedure, test filter written tilde |
 | $C_1$, $C_2$, $h_{1,ij}$, $h_{2,ij}$ | (dynamic mixed model coefficients and tensors, page-local) | |
-| $\alpha=\Delta^2/24$ (Eq. 15) | $\alpha_{\mathrm G}$ (page-local) | **collision:** $\alpha=PrRe(\gamma-1)M^2$ in §V |
-| $g^{L_1,L_2}$, $g^{P,P}$, … | same (page-local) | **collision** with the registry's $g^{(n)}$ |
+| $\alpha=\Delta^2/24$ (Eq. 15) | $\alpha_{\mathrm G}$ (registry §11) | **collision:** $\alpha=PrRe(\gamma-1)M^2$ in §V |
+| $g^{L_1,L_2}$, $g^{P,P}$, … | $g^{L_1L_2}$ (registry §11), the class values $g^{P,P}$, … page-local | not the integrity-basis $g^{(n)}$ |
 | $u^{rms}=\sqrt{\langle u_iu_i\rangle}$ | (three-component rms, page-local) | $Re_\lambda=u^{rms}\lambda/(\sqrt3\nu)$ |
 | $L_I$, $\tau=L_I/u^{rms}$ | $L$, $T_E$ | **collision:** $\tau$ is a time |
 | $\eta$, $\lambda$, $Re_\lambda$, $\varepsilon$ | $\eta$, $\lambda$, $Re_\lambda$, $\varepsilon$ | |

@@ -5,7 +5,7 @@ description: "The NASA wall-mounted hump at chord Reynolds number 936,000 and Ma
 status: established
 aliases: [wall-mounted hump, NASA hump, WMH]
 tags: [benchmark, separated-flow, rans, field-inversion, data-driven, hybrid-rans-les, wmles]
-timestamp: 2026-10-28T01:52:00Z
+timestamp: 2026-10-28T06:48:00Z
 ---
 
 # NASA wall-mounted hump
@@ -159,6 +159,26 @@ they call for continued WMLES research on the hump and the Gaussian bump
 (§VI 1f; see [NASA CRM-HL](/benchmarks/nasa-crm-high-lift.md)). They run
 no hump case.
 
+**Grid convergence of WMLES on the hump, as cited.** Two wall-modelling
+studies cite Park's WMLES of the hump as the reference grid-convergence
+study of a separated flow. [Hu et al. (2024)](/sources/hu-2024.md), §1,
+cite its three grids of 11.7 M, 12.9 M and 36.3 M cells: the
+[nonequilibrium wall model](/methods/nonequilibrium-wall-model.md) had
+"mostly converged" on the medium grid, the
+[equilibrium wall model](/methods/equilibrium-wall-model.md) converged
+more slowly and less monotonically, and no-slip LES without a wall model
+was only marginally worse on the medium and fine grids, which they read
+as those grids approaching wall-resolved resolution. In §2 they cite its
+convergence trend, up to $Re_\tau\approx5000$, as consistent with their
+estimate that a quantity on the scale of $\delta$ converges on grids of
+$O(10)$ cells per $\delta$ (see
+[wall-modelled LES](/methods/wall-modelled-les.md)).
+[Zhou & Bae (2024)](/sources/zhou-2024-b.md), §1, name it with Iyer &
+Malik's study of the [Gaussian bump](/benchmarks/gaussian-bump.md) as the
+noteworthy contributions on WMLES of separated flow, which they call
+sparse next to the attached-flow sensitivity studies. Neither runs the
+hump.
+
 **What the sources share.** Both shorten the SST separation by a
 correction aimed at the separated shear layer: Wu et al. by a learned
 $\omega$-destruction multiplier, Oulghelou et al. by a separated-flow expert,
@@ -210,3 +230,5 @@ non-baseline experts; see
 - [Heinz (2020)](/sources/heinz-2020.md) — §5.2, Tables 2–3, Figs. 9–11 (compiled results).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §4.3 (cited results).
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §I; §VI 1f (cited as a resolution reference and recommended case; not run).
+- [Hu et al. (2024)](/sources/hu-2024.md) — §1; §2 (cited grid-convergence study of Park; not run).
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §1 (cited; not run).

@@ -5,7 +5,7 @@ description: "Actuator line and actuator disk models replace rotor blades in an 
 status: established
 aliases: [actuator line model, ALM, actuator line method, filtered actuator line model, F-ALM, actuator disk model, actuator disc model, ADM, filtered actuator disk model, actuator-line tower model, actuator surface method]
 tags: [les, implicit-les, wmles, numerical-dissipation, software]
-timestamp: 2026-10-27T21:11:00Z
+timestamp: 2026-10-28T06:44:00Z
 ---
 
 # Actuator line and actuator disk models
@@ -25,8 +25,13 @@ enters the momentum equations as a body force.
 the filtered actuator line of Martínez-Tossas & Meneveau in a compressible
 [implicit LES](/definitions/implicit-les.md) code, and
 [Zhang et al. (2022e)](/sources/zhang-2022-i.md) use a filtered actuator
-disk in a wall-modelled LES of wind-turbine wakes over hills. Both sources
-are wind-energy applications; the rotor model is the shared ingredient.
+disk in a wall-modelled LES of wind-turbine wakes over hills.
+[Taschner et al. (2024)](/sources/taschner-2024.md) couple a GPU-resident
+atmospheric LES code with an aeroelastic turbine tool through the actuator
+line and its filtered form, verify the line against four research LES
+codes and test the filtered correction on a wing and a rotor. All three
+sources are wind-energy applications; the rotor model is the shared
+ingredient.
 
 Page-local notation: $\Omega_{\mathrm{rot}}$ the rotor angular velocity
 (registry clash list), $R_{\mathrm r}$ the rotor radius (registry §11)
@@ -42,7 +47,11 @@ $h$ the grid spacing (registry §6; the sources write $\Delta$, which here
 is never a filter width); $C_L$, $C_D$ the lift and drag coefficients of
 the airfoil tables (registry §5); $C_{\mathrm{Th}}$ the thrust coefficient
 (registry §11), $a_{\mathrm i}$ the axial induction factor, $A_{\mathrm D}$
-the disk area.
+the disk area; $N_{\mathrm{fp}}$, $N_{\mathrm{vp}}$ the numbers of force and
+velocity actuator points of a blade (the source's $N_F$, $N_V$; not the
+registry's modal-filter degree $N_f$), $C_{\mathrm{Pw}}$ the rotor power
+coefficient (the registry's $C_p$ is the pressure coefficient) and
+$f_{\mathrm u}$ an under-relaxation factor.
 
 ## The actuator line
 
@@ -100,6 +109,20 @@ Their own coarse run violates $\epsilon_{\mathrm G}/h>2$
 ($\epsilon_{\mathrm G}/h=1.85$) without spurious fluctuations (§5.2); fifty
 actuator points per line sufficed (§5.2, results not shown).
 
+Taschner et al. (2024, §1, §2.3, §3.3) cite the same rules with a sharper
+statement of the upper end: the optimal width is about 25% of the local
+chord, which makes the grids "infeasible" for wind farms;
+$\epsilon_{\mathrm G}/h>2$ avoids numerical oscillations;
+$\epsilon_{\mathrm G}/h=5$ has been found necessary for fully converged
+results; and a width above the optimum underestimates the induced
+velocity, raising the angle of attack and overpredicting torque and power,
+as in Stanly et al. Their own GPU runs are limited by the memory of one
+A100 (40 GB) to $\epsilon_{\mathrm G}/h\approx3.39$ in the rotor
+cross-verification and about 3 in the filtered-line rotor runs, below the
+$\approx5$ of the reference codes (§3.1, §3.3, §4.1). Only grid points where
+the kernel exceeds 0.1% of its centre value receive the projected force
+(§2.3).
+
 ## The filtered actuator line
 
 The **filtered actuator line model (F-ALM)** of Martínez-Tossas & Meneveau,
@@ -133,6 +156,76 @@ splits the global communicator into one communicator per blade, gathers the
 line data on one rank, computes the non-local correction there, broadcasts
 it, and continues with the local steps. The authors state that the scheme
 carries over to other non-local actuator lines.
+
+**Discrete form with separate force and velocity points** (Taschner et
+al. 2024, §2.3, Eqs. 12–20, App. A, Algorithm 1; the vector-form
+implementation is their contribution, the model that of Martínez-Tossas &
+Meneveau, which they cite). The aeroelastic tool carries $N_{\mathrm{fp}}$
+force points and $N_{\mathrm{vp}}$ velocity points per blade, generally
+different ($N_{\mathrm{vp}}$ fixed by the blade stations of the
+aerodynamic module). The correction is computed at the force points: the
+inflow is estimated as the sampled velocity minus the induced velocity of
+the LES kernel, $\Gamma_U$ at each point is recovered from the previous
+step's force as its component normal to that inflow per unit span and
+density (Eq. 14), and the spanwise derivative becomes a central difference,
+$\Delta\Gamma_{U,k}=\tfrac12(\Gamma_{U,k+1}-\Gamma_{U,k-1})$, with
+$\Delta\Gamma_{U,1}=\Gamma_{U,1}$ at the first point and the value
+$-\Gamma_{U,N_{\mathrm{fp}}}$ at the last (Eqs. 15–17; the printed
+left-hand side of Eq. 17 is under Qualifications). In the spanwise notation of the integral above,
+the induced velocity becomes the sum
+
+$$u_y(z_k;\epsilon_{\mathrm G})\approx-\sum_{l=1}^{N_{\mathrm{fp}}}\frac{\Delta\Gamma_{U,l}}{U_\infty(z_l)}\,\frac{1}{4\pi(z_k-z_l)}\Big(1-e^{-(z_k-z_l)^2/\epsilon_{\mathrm G}^2}\Big)$$
+
+(Eq. 18, printed in vector form per actuator point), evaluated for
+$\epsilon_{\mathrm G}^{\mathrm{opt}}$ and $\epsilon_{\mathrm G}^{\mathrm{LES}}$.
+The correction is under-relaxed in time,
+$\Delta u^n=f_{\mathrm u}[u_y(\epsilon_{\mathrm G}^{\mathrm{opt}})-u_y(\epsilon_{\mathrm G}^{\mathrm{LES}})]^n+(1-f_{\mathrm u})[\,\cdots]^{n-1}$
+with $f_{\mathrm u}=0.1$ as recommended by the model's authors (Eq. 19),
+added to the sampled velocity (Eq. 20) and interpolated to the velocity
+points; the force is still projected with the coarse kernel, so the
+resolved vorticity differs little between the line and its filtered form
+(§4.2).
+
+**Accuracy and convergence of the filtered line.**
+
+- *Translating wing* (Taschner et al. 2024, §3.2, Table 2, §4.2, Figs.
+  8–9): a constant-chord NACA64A17 wing at $\alpha_{\mathrm a}=6^\circ$ and
+  span $12.5c$, with $\epsilon_{\mathrm G}/c=1$, 2, 4 and
+  $\epsilon_{\mathrm G}/h=4$, 8. The correction is converged already at
+  $\epsilon_{\mathrm G}/h=4$, in line with the convergence for
+  $\epsilon_{\mathrm G}/h>2.8$ reported by the model's authors, and the
+  lift distribution is independent of the kernel width "even for widths
+  exceeding the optimum by a factor of 16", matching an actuator line run
+  with $\epsilon_{\mathrm G}=\epsilon_{\mathrm G}^{\mathrm{opt}}=0.25c$.
+  This agrees with Stanly et al.'s illustration, where a kernel of $2c$
+  recovers the optimal induced velocity. The accuracy rests on the
+  numerically differenced lift gradient: $N_{\mathrm{fp}}=300$ points were
+  needed, and the authors suggest clustering the points at the tips.
+- *NREL 5-MW rotor* (§3.3, Table 3, §4.3, Table 4, Figs. 11–13): with
+  $N_{\mathrm{fp}}=N_{\mathrm{vp}}=307$ and $\epsilon_{\mathrm G}/D_{\mathrm r}=0.079$,
+  the filtered line lowers $C_{\mathrm{Pw}}$ from 0.569 to 0.514 and
+  $C_{\mathrm{Th}}$ from 0.838 to 0.805, and widening the kernel to
+  $\epsilon_{\mathrm G}/D_{\mathrm r}=0.11$ raises $C_{\mathrm{Pw}}$ by
+  3.51% with the plain line and 1.56% with the filtered one ($C_{\mathrm{Th}}$
+  by 1.31% and 0.50%). The correction acts for $r/R_{\mathrm r}>0.75$, where
+  the ratio of optimal to resolved induced velocity reaches about 12 near
+  the tip, and the optimal induced velocity changes sign at
+  $r/R_{\mathrm r}\approx0.16$. Unlike the wing, the rotor result is not
+  independent of $\epsilon_{\mathrm G}$ and $h$ at $\epsilon_{\mathrm G}/h\approx3$,
+  which the authors find consistent with Blaylock et al. at
+  $\epsilon_{\mathrm G}/h=2$ (cited) and expect to improve with larger
+  $\epsilon_{\mathrm G}/h$. The reduced normal loading weakens the
+  induction and the shear layer and delays the laminar–turbulent
+  transition of the wake, a conclusion they restrict to laminar inflow.
+- *Actuator-point count* (App. C, Fig. C2): the filtered line needs at
+  least $N_{\mathrm{fp}}=163$ points to capture the magnitude of the tip
+  lift drop and about 300 for a converged lift profile, against 55 for the
+  plain line; between 55 and 307 points $C_{\mathrm{Pw}}$ and
+  $C_{\mathrm{Th}}$ change by about 1.8% and 0.7% with the filtered line
+  and 0.014% and 0.011% with the plain one. The tip blade data (zero-chord
+  interpolation against extrapolation from the two inner points) change
+  the tip lift and are named as a source of inter-code deviation (§3.1,
+  §4.1, §4.3).
 
 ## Actuator disk
 
@@ -170,6 +263,40 @@ and power at wind-farm scale with the disk.
 
 (Stanly et al. 2022, §5, Tables 2–3, 6–7, Figs. 12–17; Zhang et al. 2022e,
 §II B, §III B–C, Figs. 7–11.)
+
+**A GPU-resident host coupled to an aeroelastic tool** (Taschner et al.
+2024, §2.1–2.3, §3.1, §4.1, App. B). The host is GRASP, an anelastic
+atmospheric LES code derived from DALES that runs entirely on the GPU:
+second-order central advection on a staggered (Arakawa C) grid,
+third-order Runge–Kutta time stepping, an FFT pressure solver, and the
+[Smagorinsky model](/methods/smagorinsky-model.md) with $C_s=0.16$ and
+$\Delta=(\Delta_x\Delta_y\Delta_z)^{1/3}$. A new plugin of its interface
+(AspFAST, on the CPU) exchanges sampled velocities (linear interpolation),
+blade positions and forces each step with OpenFAST, whose AeroDyn module
+computes the blade-element loads with its own induction model disabled,
+ElastoDyn the structural dynamics and ServoDyn the controller. In the
+cross-verification of Martínez-Tossas et al. (cited) — NREL 5-MW turbine,
+$D_{\mathrm r}=126$ m, uniform laminar inflow of 8 m/s at 9.155 rpm,
+$N_{\mathrm{fp}}=64$, $N_{\mathrm{vp}}=19$, $\epsilon_{\mathrm G}/D_{\mathrm r}=0.079$ —
+blade loads and the near wake agree with [LESGO](/software/lesgo.md),
+SOWFA, SP-Wind and EllipSys3D; the far-wake Reynolds stresses are lower,
+which the authors attribute to the coarser $\epsilon_{\mathrm G}/h$, and
+the vertical velocity profile at $x/D_{\mathrm r}=15$ is slightly
+asymmetric, attributed as a hypothesis to the lack of a zero-shear bottom
+boundary. Wake transition begins earliest in SP-Wind ($x/D_{\mathrm r}\approx5.5$)
+and furthest downstream in SOWFA and GRASP (about 10); the authors cite
+earlier transition in the pseudo-spectral codes and expected it from the
+staggered grid, a gain the coarse resolution cancels (see
+[numerical dissipation](/properties/numerical-dissipation.md)). The
+outflow fringe forcing affects wake recovery and the transition location,
+and the domain was lengthened from $24D_{\mathrm r}$ to $53.25D_{\mathrm r}$
+to mitigate it. On one A100, two-way coupling is about ten times slower
+than the standalone LES for medium and large grids and one-way coupling
+about twice as fast as two-way; the filtered correction itself costs
+little, but its larger $N_{\mathrm{fp}}$ (163 against 55) lowers the time
+steps per wall-clock second by about 25%. The closure here is explicit,
+the kind of LES for which Stanly et al. judge the filtered line better
+suited than their implicit LES.
 
 **What each source attributes its errors to.** Stanly et al. attribute the
 small differences from the reference translating-wing results to running
@@ -218,9 +345,23 @@ wall model (§III A, Fig. 4b).
   Fig. 8 reads $x_t=3.5$, 8.5 and 9.75; both are recorded as printed.
 - Neither source couples the rotor model with an explicit turbulence
   closure study: the closure is held fixed (implicit LES in one, Smagorinsky
-  in the other).
+  in the other). The same holds for Taschner et al. (2024), whose
+  Smagorinsky constant is fixed at 0.16 "to be consistent with the
+  reference" (§3.1).
+- **Printed slips in Taschner et al. (2024).** The last-point case of the
+  spanwise difference (Eq. 17) prints the left-hand argument as the first
+  point, $x^1_i$, where the pattern of Eqs. (15)–(16) has the last point.
+  Appendix B gives $\epsilon_{\mathrm G}/h=5$ for the run of §3.1, where
+  Table 1 and §4.1 give 3.39 and attribute $\approx5$ to the reference
+  codes. Appendix B quotes Appendix C as requiring at least 150 force
+  points, Appendix C prints 163. The caption of Table 3 repeats that of
+  Table 1 (the cross-verification case) for the filtered-line rotor case.
+- The filtered-line results of Taschner et al. are for uniform laminar
+  inflow; the wing and rotor convergence statements are at
+  $\epsilon_{\mathrm G}/h$ between 3 and 8.
 
 # Citations
 
 - [Stanly et al. (2022)](/sources/stanly-2022.md) — §1 (variants, actuator disc and surface, tip corrections); §2.1 (MIRACLES implicit LES); §2.2, Algorithm 1, Eqs. (10)–(16) (actuator line); §2.3, Eqs. (17)–(18) (actuator-line tower); §3–3.2, Algorithm 2, Eqs. (19)–(21), Figs. 2–3 (kernel width, F-ALM); §4.2, Table 1, Fig. 6 (translating wing); §4.3, Algorithm 3, Figs. 7–8 (parallel F-ALM); §5–5.3, Tables 2–7, Figs. 12–17 (NREL Phase VI: grid study, flow fields, loads, power, cost); §6.
 - [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A–B, Eqs. (1)–(11) (LESGO, Smagorinsky with wall damping, log-law wall stress, immersed-boundary terrain, filtered actuator disk, grid); §III A, Fig. 4 (hill validation, wall-model attribution); §III B–C, Eq. (19), Figs. 7–11 (wakes, power estimate without a turbine); App. A, Table I (grid study).
+- [Taschner et al. (2024)](/sources/taschner-2024.md) — §1; §2.1, Eqs. (1)–(4) (GRASP, Smagorinsky); §2.3, Eqs. (5)–(20), Fig. 1 (actuator line, Gaussian projection, filtered line with force and velocity points, under-relaxation); §3.1–3.3, Tables 1–3; §4.1, Figs. 2–6 (cross-verification against four LES codes, wake transition, fringe); §4.2, Figs. 8–9 (translating wing); §4.3, Table 4, Figs. 11–13 (NREL 5-MW, power and thrust, wake transition); App. A, Algorithm 1; App. B, Fig. B1 (GPU performance); App. C, Fig. C2 (actuator-point convergence).

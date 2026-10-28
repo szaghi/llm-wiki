@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -158,7 +158,7 @@ and treatments of the trace; translated to the registry they agree.
   directly ([Kim et al. (2024)](/sources/kim-2024.md), §1; see
   [neural-network SGS models](/methods/neural-network-sgs-model.md)).
 - **PANS on a dynamic resolution parameter.** Petrocchi & Barakos (2024)
-  recall that PANS inherits the Boussinesq form with an eddy viscosity
+  state that PANS inherits the Boussinesq form with an eddy viscosity
   reduced through $f_k$ ([Petrocchi & Barakos (2024)](/sources/petrocchi-2024.md),
   §2; see [PANS](/methods/partially-averaged-navier-stokes.md)).
 - **Hybrid RANS/LES, Favre form with the modelled energy only.** Möller et
@@ -348,7 +348,7 @@ and treatments of the trace; translated to the registry they agree.
   al. (2022) write the deviatoric Favre subgrid stress as
   $-2\mu_{\mathrm{sgs}}$ times the deviatoric filtered strain, with
   $\mu_{\mathrm{sgs}}=\bar\rho C_{sm}\Delta^2\lvert\tilde S\rvert$ ($C_{sm}$ the
-  registry's $C_s^2$ *(compiler check, not in the sources)*), and recall the
+  registry's $C_s^2$ *(compiler check, not in the sources)*), and cite the
   Yoshizawa trace $\tau_{kk}=2C_I\bar\rho\Delta^2\lvert\tilde S\rvert^2$, the
   registry's positive-trace convention, as Volpiani (2024) below
   ([Qi et al. (2022)](/sources/qi-2022-b.md), §2, Eqs. 2.11–2.15). Their
@@ -400,6 +400,34 @@ and treatments of the trace; translated to the registry they agree.
   $k$ equation as an explicit source; of fourteen input features,
   $\mu_t/\mu_w$ ranks most important (§3, §5, Fig. 10, §6; see [k-ε models](/methods/k-epsilon-model.md) and
   [field inversion](/methods/field-inversion-machine-learning.md)).
+- **RANS, compressible, density-weighted, a priori.** Yu et al. (2023b)
+  write the linear closure on a density-weighted Reynolds stress $R_{ij}$
+  (their symbol; positive, $\langle\rho u_i''u_j''\rangle$ in registry form) as
+  $-R_{ij}=2\mu_t\langle S^d_{ij}\rangle_\rho-\tfrac13R_{kk}\delta_{ij}$, with the
+  traceless Favre-averaged strain, the registry form multiplied by the
+  density ([Yu et al. (2023b)](/sources/yu-2023-b.md), §IV, Eq. 17; their
+  best fit is below).
+- **LES, compressible, deviatoric only.** Wei et al. (2023) close the
+  deviatoric part of the Favre subgrid stress,
+  $\tau_{ij}-\tfrac13\tau_{kk}\delta_{ij}=-2\bar\rho\nu_t\tilde S^d_{ij}$, the
+  registry form with the density, with $\nu_t$ from a transported
+  $k_{\mathrm{sgs}}$ and the subgrid heat and species fluxes by gradient
+  diffusion ([Wei et al. (2023)](/sources/wei-2023.md), §II B, Eqs. 9–15; see
+  [one-equation subgrid kinetic-energy models](/methods/subgrid-kinetic-energy-equation-model.md)
+  and the [turbulent Prandtl number](/definitions/turbulent-prandtl-number.md)).
+  Vignat et al. (2024) combine the molecular and subgrid stresses in one
+  Newtonian form, $(\bar\mu+\mu_t)$ multiplying the strain with the
+  $-\tfrac23$ dilatation term, so that no isotropic subgrid part is modelled
+  separately, and call it the "Reynolds-averaged stress tensor" although the
+  computation is an LES ([Vignat et al. (2024)](/sources/vignat-2024.md),
+  §3.2, Eq. 5).
+- **RANS and LES in one symbol.** Li et al.
+  (2024b) write a total stress $\bar\tau_{ij}=\bar\tau^l_{ij}-\bar\rho\tilde R_{ij}$
+  (laminar minus turbulent, their $\tilde R_{ij}$ the Reynolds stress in RANS
+  or the subgrid stress in LES) and close it as
+  $\bar\rho\tilde R_{ij}=2\bar\rho\nu_t\tilde S^*_{ij}$ with $\tilde S^*_{ij}$ the
+  traceless strain ([Li et al. (2024b)](/sources/li-2024-f.md), §II.A–B,
+  Eqs. 1–2); see Qualifications.
 
 ### A traceless Reynolds stress
 
@@ -526,7 +554,26 @@ terms: most DES methods "invoke the eddy-viscosity assumption", and a
 [Reynolds-stress model](/methods/reynolds-stress-model.md), "abandoning the
 isotropic eddy-viscosity hypothesis", is preferred for "problem" flows
 where eddy-viscosity models "may fail to predict separation accurately"
-(§1).
+(§1). Zhang et al. (2024) give the same reason, citing Tucker, for choosing
+delayed DES over RANS in a compressor tip-leakage flow: RANS has "inherent
+defects in predicting the strong anisotropic and unsteady characteristics"
+because its models are "based on the isotropic hypothesis"
+([Zhang et al. (2024)](/sources/zhang-2024.md), §1; see
+[detached-eddy simulation](/methods/detached-eddy-simulation.md)).
+
+**Isotropy blamed for wall fluxes under combustion.** In wall-resolved LES of
+a supersonic hydrogen film, Wei et al. (2023) find that combustion moves the
+split of the resolved normal stresses from $0.6:0.2:0.2$ to $0.8:0.1:0.1$ near
+the wall and suppresses wall-normal fluctuations, which, with the low-density
+flame region, reduces the skin friction; an SST RAS of the same flow shows no
+friction reduction and overpredicts the heat flux (§IV E–F, Figs. 27–28,
+36–37). They attribute the RAS failure to the isotropic eddy-viscosity and
+gradient-diffusion assumptions: the turbulent heat flux is misaligned with
+the mean temperature gradient by about $60^\circ$ without and $75^\circ$ with
+combustion, the streamwise scalar flux is counter-gradient, and the turbulent
+Prandtl and Schmidt numbers vary between 0 and 2, the misalignment being
+"more vital and intractable" (§IV F; details on the
+[turbulent Prandtl number](/definitions/turbulent-prandtl-number.md) page).
 
 **Three-dimensional boundary layers.** Devenport & Lowe (2022) state that
 isotropic eddy-viscosity RANS models assume the shear-stress angle equal to
@@ -705,10 +752,10 @@ whole wall (§4.3.3, Table 2; see
 [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
 and [field inversion](/methods/field-inversion-machine-learning.md)).
 
-**Locality.** Seyedi & Zayernouri (2022) recall that the hypothesis assumes
-the stress proportional to the *local* mean velocity gradient, that
-Bradshaw (1973) showed it to fail over curved surfaces, and that Hinze et
-al. (1974) found a strongly non-uniform eddy viscosity in the outer layer
+**Locality.** Seyedi & Zayernouri (2022) state that the hypothesis assumes
+the stress proportional to the *local* mean velocity gradient, and cite
+Bradshaw (1973), who showed it to fail over curved surfaces, and Hinze et
+al. (1974), who found a strongly non-uniform eddy viscosity in the outer layer
 downstream of a wall-mounted cap; they take these as motivation for
 nonlocal closures such as the
 [fractional subgrid-scale model](/methods/fractional-sgs-model.md)
@@ -739,7 +786,7 @@ zero their closure reduces to the linear $k$-$\varepsilon$ model
 arXiv v2; see [model-form uncertainty](/definitions/model-form-uncertainty.md)).
 
 **Rotation, non-equilibrium and the second-moment alternative.** Liu et al.
-(2024) recall that linear eddy-viscosity models need added
+(2024) state that linear eddy-viscosity models need added
 rotation–curvature, quadratic-constitutive or non-equilibrium corrections
 to predict the anisotropy and non-equilibrium of compressor corner flows,
 whereas a [differential Reynolds-stress model](/methods/reynolds-stress-model.md)
@@ -751,7 +798,7 @@ Bouhafid et al. (2024) choose a Reynolds-stress model for an aircraft wake
 because, they state citing the literature, the Reynolds stress and the
 mean strain are misaligned in wing-tip vortices owing to rotation
 ([Bouhafid et al. (2024)](/sources/bouhafid-2024.md), §2.2; cited, not
-shown). Pacciani et al. (2025) recall that linear eddy-viscosity models
+shown). Pacciani et al. (2025) state that linear eddy-viscosity models
 need a boosted turbulent production in separated shear layers to avoid
 overpredicted reattachment lengths, the motivation of the separation terms
 of their [transition model](/methods/laminar-kinetic-energy-transition-model.md)
@@ -1032,6 +1079,27 @@ a high one contaminates the shear layer, separation bubble and reattached
 boundary layer, and the value was chosen "by trial-and-error" (§2.7,
 Appendix, Fig. 19; see [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
 
+**Best fit in a hypersonic shock interaction.** Yu et al. (2023b) fit the
+eddy viscosity of their linear form (Eq. 17 above) to DNS of Mach 5
+oblique-shock/boundary-layer interactions by least squares,
+$\mu_t^*=-\langle\rho u_i''u_j''\rangle\langle S^d_{ij}\rangle_\rho/\lvert\langle S^d\rangle_\rho\rvert^2$
+in registry notation (their Eq. 18, with $2S^d_{ij}S^d_{ij}=\lvert S^d\rvert^2$;
+$\mu_t^*$ the density-weighted counterpart of $\nu_t^*$, page-local)
+([Yu et al. (2023b)](/sources/yu-2023-b.md), §IV, Eqs. 17–18, Fig. 17). The
+fit reconstructs the shear stress well upstream and downstream but
+"severely" overpredicts it in the interaction zone, especially along the
+rising shear layer ($-6\lesssim(x-x_{\mathrm{imp}})/\delta_r\lesssim-3$),
+because the stress and the strain are not aligned there (Fig. 17a). Adding
+the strain–rotation commutator,
+$\mu_{t2}\big(\langle S^d_{ik}\rangle\langle\Omega_{kj}\rangle-\langle\Omega_{ik}\rangle\langle S^d_{kj}\rangle\big)$
+($\mu_{t2}$ page-local, fitted to the residual), collapses the reconstruction
+onto the DNS, which they justify by the traceless stress having two
+effective independent components in a two-dimensional mean flow (Eq. 19,
+Fig. 17b; the term is the $T^{(2)}$ direction of the
+[explicit algebraic stress model](/methods/explicit-algebraic-reynolds-stress-model.md)
+basis *(compiler check, not in the sources)*). The two-equation estimate of the eddy viscosity overpredicts the
+fitted one downstream (on [$k$-$\varepsilon$ models](/methods/k-epsilon-model.md)).
+
 **Non-negative optimum.** $\nu_t^*$ is negative where $b_{ij}$ and
 $\langle S_{ij}\rangle$ are poorly aligned, which destabilizes an implicit
 treatment. McConkey et al. (2022) therefore define the non-negative least
@@ -1095,6 +1163,13 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 
 ## Qualifications
 
+- Li et al. (2024b) print the closure as $\bar\rho\tilde R_{ij}=+2\bar\rho\nu_t\tilde S^*_{ij}$
+  (Eq. 2) together with the total stress $\bar\tau^l_{ij}-\bar\rho\tilde R_{ij}$
+  (Eq. 1); substituted, the turbulent contribution to the total stress is
+  $-2\bar\rho\nu_t\tilde S^*_{ij}$, of the opposite sign to the laminar
+  stress for a positive $\nu_t$ *(compiler check, not in the sources)*.
+- Yu et al. (2023b) do not print the definition of their mean rotation
+  tensor, which they call its "asymmetrical portion" (§IV).
 - Shan et al. (2023, Eq. 2) print the first strain term as
   $\partial\bar u_i/\partial x_i$; the form above writes
   $\partial_j\langle u_i\rangle$. *(Compiler check, not in the sources: as
@@ -1267,3 +1342,8 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.5.1.
 - [Xu et al. (2023)](/sources/xu-2023.md) — §2.1–2.2 Eqs. 2.10–2.17 Figs. 1–3, §3.1–3.3 Eqs. 3.1–3.43 Figs. 4, 8, 10, §4.1 Figs. 18–20.
 - [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §2.2 Eqs. 2–4, §3, §5 Fig. 10, §6.
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §IV, Eqs. (17)–(20), Figs. 17–18 (density-weighted linear closure, best-fit eddy viscosity and its failure in the interaction zone, strain–rotation commutator).
+- [Wei et al. (2023)](/sources/wei-2023.md) — §II B, Eqs. (9)–(15) (deviatoric subgrid closure); §IV E–F, Figs. 27–37 (stress anisotropy, flux–gradient misalignment, SST RAS failure).
+- [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.2, Eq. (5) (combined molecular and subgrid stress).
+- [Li et al. (2024b)](/sources/li-2024-f.md) — §II.A–B, Eqs. (1)–(2) (total stress and closure; printed signs in Qualifications).
+- [Zhang et al. (2024)](/sources/zhang-2024.md) — §1 (isotropic hypothesis blamed, as cited).

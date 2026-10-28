@@ -5,7 +5,7 @@ description: "The ACAT1 fan and outlet-guide-vane stage of the TurboNoiseBB proj
 status: established
 aliases: [ACAT1, ACAT1 fan-OGV stage, TurboNoiseBB fan stage, AneCom UFFA fan rig]
 tags: [benchmark, turbomachinery, aeroacoustics, wmles, des, hybrid-rans-les]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # ACAT1 fan stage
@@ -31,7 +31,7 @@ measurements and against $k$-$\omega$ SST RANS.
 | Item | [François et al. (2022)](/sources/francois-2022.md) | [Lewis et al. (2023)](/sources/lewis-2023.md) |
 |---|---|---|
 | Rotational speed | 3828.4 rpm | 3828.2 rpm |
-| Tip Mach number | $M_{tip}=0.57$ (not defined) | tip relative Mach 0.57 |
+| Tip Mach number | $M_{\mathrm{tip}}=0.57$ (not defined) | tip relative Mach 0.57 |
 | Fan radius | outer radius 0.42 m | tip radius 0.435 m; hub radius at rotor leading edge 0.138 m |
 | Chords | – | rotor 0.136 m, stator 0.066 m at mid-span; tip gap 0.78 mm; gap about $1.3$ rotor chords |
 | Bypass ratio | "about six" | 7.6 (total mass flow 55.156 kg/s) |
@@ -155,7 +155,7 @@ the work is outside this bundle and is recorded on the Source page.
   source comments on the other's values or states the definitions behind
   its own.
 - [François et al. (2022)](/sources/francois-2022.md) were read in an ASME
-  accepted manuscript; their $M_{tip}=0.57$ is not defined. The blade tip
+  accepted manuscript; their $M_{\mathrm{tip}}=0.57$ is not defined. The blade tip
   speed from their rotational speed and radius is
   $2\pi\cdot0.42\cdot3828.4/60\approx168$ m/s, and divided by the
   normalization velocity $V_{adim}=343.0$ m/s they print for Fig. 8 it gives

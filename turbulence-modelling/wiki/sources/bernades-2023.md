@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 493:112477"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Computational_Physics_Bernades_Kinetic-energy-_and_pressure-equilibrium-preserving_schemes.pdf"
 tags: [kinetic-energy-preserving, pressure-equilibrium, compressible, dns, real-gas]
-timestamp: 2026-10-26T20:44:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -130,11 +130,11 @@ total-energy conserving.
 | $c$, $c_v$, $c_p$, $s$ | (speed of sound, specific heats, specific entropy) | |
 | $\beta_s$, $\beta_T$, $\beta_v$ | (compressibilities, volume expansivity) | **collision:** not the field-inversion $\beta$ |
 | $\omega$ | (acentric factor) | **collision:** not the specific dissipation rate |
-| $\xi$, $\eta$, $\chi$ | $a_{\mathrm K}$, $a_p$, $a_e$ (page-local) | **collision:** not the reference coordinate, the Kolmogorov length or the SA ratio |
+| $\xi$, $\eta$, $\chi$ | $a_{\mathrm K}$ (registry §11), $a_p$, $a_e$ (page-local) | **collision:** not the reference coordinate, the Kolmogorov length or the SA ratio |
 | $\Pi_{\rho E}$ | $W_p$ (page-local) | **collision:** not the SGS energy flux $\Pi$ |
 | $C_p$ (convective term of the pressure equation) | $C_{\mathrm{pr}}$ (page-local) | **collision:** not the pressure coefficient |
 | $\bar u$, $\bar P$ | $u_0$, $p_0$ | **collision:** the overbar is a uniform value; also the compact-filter output in Eq. (29) and the domain integral in Eq. (31) |
-| $\delta_x$ | $D_x$ (page-local, as on [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)) | discrete derivative matrix |
+| $\delta_x$ | $D_x$ (registry §11, as on [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)) | discrete derivative matrix |
 | $\alpha_f$, $a_n$, $N_f$ | (compact-filter parameters) | **collision:** $N_f$ is a stencil half-width, not the registry's modal test-filter degree |
 | $\lambda$ | (perturbation wavelength) | **collision:** not the Taylor microscale |
 | $\theta$, $\delta$ | $\theta$, $\delta$ | momentum thickness of the mixing layer; channel half-height; agree |

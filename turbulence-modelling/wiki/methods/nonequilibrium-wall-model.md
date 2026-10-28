@@ -5,7 +5,7 @@ description: "Wall-stress models of wall-modelled LES that keep unsteadiness, co
 status: established
 aliases: [NEQWM, non-equilibrium wall model, nonequilibrium wall model, TBLE wall model, thin-boundary-layer-equation wall model, two-layer zonal wall model, integral wall model, wall-model integrated LES, integrated wall model]
 tags: [wall-model, wmles, boundary-layer, separated-flow]
-timestamp: 2026-10-28T02:18:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Non-equilibrium wall models
@@ -124,6 +124,32 @@ al. may still improve the wall stress. The same velocity scale $u_p$ appears in
 the adverse-pressure-gradient analysis of [Knopp (2022)](/sources/knopp-2022.md), on the
 [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)
 page.
+
+**An idealized pressure-gradient wall condition.** [Zhou & Bae (2024)](/sources/zhou-2024-b.md)
+(§2.2.2, Eqs. 3–9) keep exactly this term, and only it, in an idealized
+wall condition built to isolate the SGS model from the wall model on the
+[Gaussian bump](/benchmarks/gaussian-bump.md). From the thin-boundary-layer
+equations without unsteadiness and convection, integrated across the first
+off-wall cell (centre at $y=h_{\mathrm{wm}}$, velocity $u_{\mathrm c}$ there,
+page-local), the no-slip wall carries an effective wall eddy viscosity
+$\nu_{t,w}$ (page-local) calibrated by a running time average (breve,
+page-local, as on the equilibrium-wall-model page; the source writes an
+overbar) so that the mean stress equals the DNS value
+$\tau^{\mathrm{DNS}}_w$:
+$$\breve\nu_{t,w}\approx\frac{\tau^{\mathrm{DNS}}_w+\tfrac12h_{\mathrm{wm}}\,\breve{(\partial_xp)}}{\rho\,\breve u_{\mathrm c}/h_{\mathrm{wm}}}-\nu,\qquad
+\tau_{w,i}=\rho\nu\left(1+\frac{\breve\nu_{t,w}}{\nu}\right)\frac{\partial u_i}{\partial y}\bigg|_w-\frac{h_{\mathrm{wm}}}{2}\frac{\partial p}{\partial x_i},\quad i=1,3,$$
+with $\nu_{t,w}$ clipped at zero to avoid abnormally large stresses at
+separation and reattachment (clipping occurs only for $0<x/L<0.7$, below
+13% of the time on average; $L$ the bump width). Dropping the pressure term
+gives their equilibrium counterpart (see the
+[equilibrium wall model](/methods/equilibrium-wall-model.md)). The two are
+"idealized equilibrium and non-equilibrium wall models tailored to the
+present flow configuration", not predictive models, since they consume the
+DNS mean wall stress. *(Compiler check, not in the sources: integrating
+$\rho(\nu+\nu_{t,w})\partial u/\partial y=\tau_w+y\,\partial p/\partial x$
+from the wall to $h_{\mathrm{wm}}$ gives
+$\rho(\nu+\nu_{t,w})u_{\mathrm c}/h_{\mathrm{wm}}=\tau_w+\tfrac12h_{\mathrm{wm}}\partial p/\partial x$,
+consistent with the printed forms.)*
 
 ## When is equilibrium enough? An integral bound
 
@@ -299,13 +325,19 @@ comparison involves no wall model of their own.
 | Bachalo–Johnson transonic bump | WM-LES with equilibrium and non-equilibrium models (Iyer et al., as compiled) cannot match both the shock and the reattachment $C_f$ maxima by choosing the exchange location (first or third point) | Heinz (2020, §5.3, Table 5, Fig. 14) |
 | Mach 2.28 oblique shock/boundary-layer interaction, $8^\circ$ deflection | equilibrium ODE model coupled with no slip kept: negative $C_f$ in the bubble, but interaction length $L_{\mathrm{int}}/\delta_r=7.0$–5.0 (coarse to fine; nominal impingement to reflected-shock foot over the inflow 99 % thickness, page-local) against 3.3 wall-resolved and 4.18 experimental; oversizing attributed to the wall model and to SGS plus shock-capturing dissipation; non-equilibrium improvements named as future work | [De Vanna et al. (2022)](/sources/devanna-2022.md) (§4.6, §5) |
 | Mach 7.2, $8^\circ$ compression ramp | equilibrium ODE model: early pressure rise on the coarse grid, minimum $C_f$ above DNS; the imbalance between tangential pressure gradient and convection, which the equilibrium model omits, named as a possible cause (not tested) | [van Noordt et al. (2022)](/sources/vannoordt-2022.md) (§3.4) |
+| [Gaussian bump](/benchmarks/gaussian-bump.md), $Re_L=2\times10^6$, idealized conditions fed by the DNS mean wall stress | the pressure-gradient condition "notably improves" the bubble measured from $C_f$ for the eddy-viscosity SGS models, but changes the bubble measured from the first-cell velocity little; the SGS model and the mesh still largely set the separation length, and the wall condition has "a negligible impact on the convergence behavior"; Iyer & Malik (as cited) found a non-equilibrium model only marginally better than an equilibrium one on the same bump | [Zhou & Bae (2024)](/sources/zhou-2024-b.md) (§1, §3.2, Figs. 13–16) |
+| Three-dimensional boundary layers (bent square duct; rotating free stream; sudden spanwise pressure gradient) | integral and PDE non-equilibrium models "considerably less sensitive" to the matching location than the ODE equilibrium model (Hu et al. 2023, as cited); in their own LES the algebraic equilibrium model converges to a wall stress that depends on $h_{\mathrm{wm}}$ and is more accurate for small $h_{\mathrm{wm}}$, which they attribute to its unidirectional-flow assumption; on the hump, Park (2017, as cited) found the non-equilibrium model mostly converged on the medium grid, the equilibrium model more slowly and less monotonically | [Hu et al. (2024)](/sources/hu-2024.md) (§1, §6.1, §7) |
 
 Heinz (2020, §5.2, Table 3, Figs. 10–11) compiles WM-LES reattachment
 lengths on the hump of 1.035–1.105 against the experimental 1.10, and finds
 the double-peak skin-friction structure missed by WM-LES and DES. The
 evidence is compiled from published work in both reviews; Lv et al. (2021)
 is the only source here that runs a non-equilibrium-capable model against
-an equilibrium one in its own solver.
+an equilibrium one in its own solver, and Zhou & Bae (2024) the only one
+that compares the two terms under a wall condition with the wall-stress
+error removed. Hu et al. (2024, §7) recommend wall models with low
+sensitivity to the matching location when $h_{\mathrm{wm}}$ is held fixed
+during grid refinement, the property they cite for non-equilibrium models.
 
 **Why some sources stay with equilibrium.** De Vanna et al. (2022, §1)
 call non-equilibrium wall modelling in LES "still an open problem": the
@@ -418,3 +450,5 @@ solver"; no timing of the integrated model is shown. On the equilibrium page,
 - [Li et al. (2022)](/sources/li-2022-k.md) — §III B, Table I, Figs. 7–11 (periodic-hill WMLES reference with the Park–Moin model).
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I; §II C; §IV.
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.5, Table 2 (equilibrium models in HLPW-4; the pressure-aware model of W-032).
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §1; §2.2.2, Eqs. (3)–(9); §3.2, Figs. 13–16; §4.
+- [Hu et al. (2024)](/sources/hu-2024.md) — §1 (taxonomy; matching-location sensitivity, Hu et al. 2023 and Park 2017 as cited); §6.1; §7.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock–turbulent boundary layer interaction"
-description: "A turbulent boundary layer meeting a shock from a compression ramp, an expansion–compression corner, an impinging oblique shock, a shock train, a transonic bump, airfoil or blade: separation and interaction length, unsteadiness, amplification, recovery, energy transfer, wall heating and panel flexibility test subgrid and wall models, implicit LES, DNS from Mach 1.5 to 9.1, data-driven corrections and buffet."
+description: "A turbulent boundary layer meeting a shock from a compression or swept ramp, an impinging oblique shock, a shock train, a bump, airfoil, blade or duct corner: separation, interaction length, unsteadiness, amplification, recovery, wall heating, wall temperature and panel flexibility test subgrid, wall and RANS models, implicit LES, DNS from Mach 1.5 to 9.1 and buffet."
 status: established
 aliases: [STBLI, SWBLI, SWTBLI, SBLI, shock/boundary-layer interaction, shock-wave/boundary-layer interaction, compression ramp, compression corner, impinging shock interaction, transonic buffet, OAT15A buffet, shock train, pseudo-shock, expansion–compression corner, compression/expansion ramp, IUSTI interaction, Bachalo–Johnson bump]
 tags: [benchmark, compressible, hypersonic, boundary-layer, shock-boundary-layer-interaction, separated-flow, les, pans, field-inversion, turbomachinery, implicit-les, dg, wmles, data-driven, flux-reconstruction]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Shock–turbulent boundary layer interaction
@@ -54,6 +54,10 @@ expensive because the low-frequency cycle needs long records.
 | [Gao et al. (2023)](/sources/gao-2023.md), §5, Table 4 | impinging oblique shock over an elastic panel clamped at both ends, adiabatic wall | 2.0 | flow deflection 8°, shock angle 37.2°, $p_3/p_1=2.30$ | $Re_\theta=2188$ at the reference station (as Gao et al. 2022) | implicit LES, split-form ALE DGSEM in FLEXI ($N=6$), shocks by an entropy-bounded adaptive modal filter in flagged elements, loosely coupled to a spectral-element Timoshenko beam | $223\times89\times26$ elements, about $1.77\times10^8$ degrees of freedom; $\Delta x^+=30$, $\Delta y^+=1.6$ at the wall, $\Delta z^+=16$; span $3\delta_r$ |
 | [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md), §II–III, Tables I–III | oblique shock on a panel of the AFRL RC-19 tunnel, planar and with six static buckling shapes; adiabatic walls | 1.94 | wedge 12° on the opposite wall | not printed; inlet $\delta_0\approx4.7$ mm from correlations | implicit LES (CNS3D finite volume, high-order WENO up to 11th order with HLLC); digital-filter inflow | 1.0 M to 39.7 M cells; production grid 9.4 M cells, $\Delta x^+=717$, $\Delta z^+=634$, first point $y^+=4.8$, full 152 mm span |
 | [Zhang et al. (2022c)](/sources/zhang-2022-g.md), §II, Tables I–II | symmetric swept compression ramp, isothermal cold wall ($T_w=294$ K, $T_\infty=79$ K) | 6 | ramp of compression angle 34°, sweep angle 45° | unit Reynolds number $10^4$ per mm; $\delta=8.61$ mm, $\delta^*=3.33$ mm, $\theta=0.36$ mm upstream | DNS, no model, on GPUs | $2.06\times10^9$ and $5.51\times10^9$ points |
+| [Yu et al. (2023b)](/sources/yu-2023-b.md), §II, Table I | impinging oblique shock, cases S14, S10, S06 (strong, mild, incipient separation); isothermal wall $T_w=0.75T_r$ | 5 | wedges 14°, 10°, 6° (shock angles 23.3°, 19.4°, 15.9°), impingement at $50\delta_{\mathrm{in}}$ | $Re_\theta\approx2087$ at the reference station $30\delta_{\mathrm{in}}$ | DNS with [STREAmS](/software/streams.md); a priori tests of RANS closures; SST RANS of the Schülein ($M=5$) and Holden et al. ($M=8$) experiments | $3600\times360\times256$ on $100\times10\times6.5\,\delta_{\mathrm{in}}$; $\Delta x^+\approx4.16$, $\Delta z^+\approx3.81$, $\Delta y^+_w=0.3$ |
+| [Tang et al. (2024)](/sources/tang-2024.md), §2, Tables 1–2 | compression ramp, cold isothermal wall $T_w/T_r=0.5$, incipient separation | 5 | ramp 30° | $Re_\theta=4652$, $Re_\tau=700$, $\delta=10.6$ mm at $x=-60$ mm | DNS with OpenCFD-SC (hybrid seventh-order upwind, WENO7, WENO5 switched by a Jameson-type sensor) | $2660\times204\times300=1.63\times10^8$ (grid M3 of five); $\Delta x^+=6.6$ in the interaction, $\Delta z^+=6.6$, $\Delta y^+_w=0.33$–0.59 |
+| [Zhang et al. (2024b)](/sources/zhang-2024-b.md), §2, Tables 2–3, 5 | compression ramp at three isothermal wall temperatures $T_w/T_r=0.50$, 0.75, 1.0 ($T_r=585$ K); plus a Mach 2.9, 24° ramp at $T_w/T_r=1.14$, 1.4, 2.0 | 6 (and 2.9) | ramp 34° (24° at Mach 2.9) | unit Reynolds number $2\times10^4$ per mm; $Re_\tau=675$, 411, 293 at $x=-70$ mm with matched $\delta\approx8.3$–8.7 mm | DNS with [OpenCFD-SCU](/software/opencfd-scu.md), hybrid UDL7/WENO7/WENO5 | up to $4700\times400\times300$; $\Delta x^+\approx3.5$–4.9, $\Delta y^+_w\approx0.35$–0.48, $\Delta z^+\approx3.5$–4.8 |
+| [Kang & Lee (2024)](/sources/kang-2024.md), §II, Tables I–III | compression ramp of the Bookey et al. experiment, isothermal wall, Blasius inflow tripped by a counter-flow body force | 2.9 | ramp 24° | $Re_\theta=2400$, $\delta_0=6.7$ mm at $x/\delta_0\approx-5.4$ | DNS, sixth-order compact differences, eighth-order compact filter switched to second order at shocks, localized artificial diffusivity | $2865\times298\times420$; $\Delta x^+=4.6$, $\Delta y^+_w=0.42$, $\Delta z^+=4.2$; statistics over $400\delta_0/u_\infty$ |
 
 Both sources run a Mach 2.9, 24° ramp: Dang et al. validate against the DNS
 of Martín et al. and the experiment of Bookey et al. (§5.1), and Helm &
@@ -89,6 +93,26 @@ et al. (Table 8). [Gao et al. (2023)](/sources/gao-2023.md) rerun the
 Mach 2 impinging shock of Gao et al. (2022) with the rigid wall under the
 interaction replaced by an elastic panel, and take the rigid case as the
 reference (§5).
+
+Four further DNS share or extend these configurations. [Kang & Lee (2024)](/sources/kang-2024.md)
+run the Mach 2.9, 24° Bookey et al. ramp again, with separation at
+$x/\delta_0=-3.13$ and reattachment at 1.50, "in perfect agreement with the
+experimental data" (§III, Fig. 9), and compare their resolution with the
+DNS of Tong et al., Kokkinakis et al. and Guo et al. and the LES of Shi &
+Yan (Table II); their incoming $C_f=2.27\times10^{-3}$ against the
+measured $2.25\times10^{-3}$ (Table I). The Mach 2.9 supplementary ramps
+of [Zhang et al. (2024b)](/sources/zhang-2024-b.md) use the unit Reynolds
+number 5581.4 per mm printed by Dang et al., replicating Zhu et al. (2017)
+(§3.3, Table 5). The Mach 5 impinging shocks of
+[Yu et al. (2023b)](/sources/yu-2023-b.md) reproduce the cold-wall DNS of
+Volpiani et al. (2020) "reasonably well": wall pressure agrees except for a
+shorter shoulder in S14 and $C_f$ is slightly higher, both attributed to the
+lower Reynolds number, with about the same separation lengths (§III B,
+Figs. 3–4). The Mach 5, 30° ramp of [Tang et al. (2024)](/sources/tang-2024.md)
+is in incipient separation, $x_S=-8.66$ mm and $x_R=2.25$ mm ($-0.82\delta$
+and $0.21\delta$), with no pressure plateau, a wall-pressure ratio equal to
+the inviscid oblique-shock value 13 and an interaction length of 14 mm
+against 18 mm from the Souverein correlation (§2.4, Figs. 14–15).
 
 ## Methods the sources use
 
@@ -311,7 +335,7 @@ the paper speaks of conservative energy exchange and does not use the term
 **Engineering assumptions.** [Helm & Martín (2022)](/sources/helm-2022.md),
 §IV E, Figs. 28–29, test the relations RANS and design practice rely on in
 the separated hypersonic flows on cold walls: the Reynolds analogy factor
-$2C_h/C_f$ is not near one in the separated region ($C_f/2C_h$ is 0.85
+$s_{\mathrm{RA}}=2C_h/C_f$ is not near one in the separated region ($C_f/2C_h$ is 0.85
 upstream and about 0.7 downstream); the Back & Cuffel power law
 $q/q_u=(p/p_u)^{0.85}$, derived for attached interactions, over-predicts the
 heat transfer at separation and in the recovering layer; $Pr_t$ is within
@@ -608,6 +632,184 @@ the corner $C_f$ and wall pressure converge on the medium and fine grids
 to the WENO DNS but not on the coarse grid, although the incoming layer is
 converged on all three (§IV.B, Table III, Figs. 11–12).
 
+**Two hotspots of turbulent kinetic energy over the same ramp.**
+[Kang & Lee (2024)](/sources/kang-2024.md) define the amplification
+factor as Shi & Yan do, the wall-normal maximum at a station over that at
+the reference station (Eq. 20), and find two separate hotspots of $k$
+(Favre-averaged, normalized by $u_\tau^2$): 3.39 at $x/\delta_0=-2.38$,
+near the wall behind separation, and 3.24 at $x/\delta_0=1.36$, in the
+free shear layer just before reattachment, the streamwise normal stress
+dominating $k$ (§IV.A, Figs. 13–14, Table IV). In their streamline frame
+(the mean velocity aligned with the first axis everywhere) the factors of
+the streamline-parallel, streamline-normal and spanwise stresses are 2.76,
+5.63, 4.68 at the first hotspot and 2.22, 6.00, 4.64 at the second. Against
+the LES of Shi & Yan (hotspots at $x/\delta_0=-1.75$ and 0.53) theirs lie
+farther upstream and downstream, which they attribute to the different
+separation lengths. Their reading of the mechanism (§IV.B–D, §V):
+
+- amplification starts in the inner layer before the shear layer detaches
+  (the streamwise stress at $y_\perp/\delta_0=0.09$ at $x/\delta_0=-2.79$,
+  $y_\perp$ the wall distance), so it "cannot be solely attributed" to the
+  free shear layer; the spanwise vorticity of the shear layer weakens after
+  detachment, and the shear stress re-amplifies only downstream of
+  reattachment, so the Kelvin–Helmholtz instability "does not appear to be
+  the primary driver" of the second hotspot (Figs. 15–18);
+- behind the main shock, intermittent fast-moving shocklets form λ-shaped
+  branches above boundary-layer bulges, and their mean is a "secondary
+  shock wave" above the shear layer near reattachment whose weaker, broader
+  adverse pressure gradient decelerates the flow; the pressure spectrum at
+  the second hotspot peaks at $St\approx0.35$, between the reattachment
+  peak $St\approx0.55$ and the shocklet probe's 0.24 (Figs. 19–24; see
+  [shock-generated turbulence](/results/shock-generated-turbulence.md));
+- decomposing the production in the streamline frame into a deceleration
+  part along the streamline, a part along its normal (stated to be zero)
+  and a shear part (Eq. 23), the shear part is larger overall: boundary-layer
+  roll-up raises it first, deceleration by the main shock follows near
+  $x/\delta_0=-2.64$, and the shear part peaks again at $-2.36$ as the
+  layer detaches, where the Cartesian production has a single peak;
+  near reattachment deceleration by the secondary shock starts the second
+  amplification and shear production peaks slightly downstream
+  (Figs. 25–26). They conclude that "shear effects dominate TKE production
+  over the flow deceleration effect";
+- turbulent transport carries the produced energy from above the maximum
+  line of $k$ to a local wall-normal pressure minimum created by the
+  bulges, which fixes that maximum line (Figs. 27–29).
+
+The low-frequency wall-pressure peak, $St=f\delta_0/u_\infty\approx0.02$ in
+the intermittent region, lies in the experimental range $0.02\pm0.01$ they
+cite (§III, Fig. 12). The deceleration-first reading of Shi & Yan for the
+same ramp and the shear-first reading of Kang & Lee are recorded under
+Contradictions.
+
+**Wall temperature and free-interaction theory.**
+[Zhang et al. (2024b)](/sources/zhang-2024-b.md) vary the wall temperature
+of the Mach 6, 34° ramp at matched incoming thickness (§3.2–3.5):
+
+| $T_w/T_r$ | $x_0/\delta$ | $x_s/\delta$ | $x_r/\delta$ | plateau $p_w/p_\infty$ | separation $p_w/p_\infty$ |
+|---|---|---|---|---|---|
+| 0.50 | −2.69 | −2.08 | 0.74 | 4.63 | 1.54 |
+| 0.75 | −3.76 | −3.02 | 1.00 | 4.46 | 1.50 |
+| 1.0 | −4.86 | −3.79 | 1.07 | 4.55 | 1.54 |
+
+($x_0$ the interaction origin, where the wall pressure exceeds the reference
+value by 1%; $x_s$, $x_r$ the zero crossings of $C_f$; Table 4.) Cooling
+shrinks the bubble, which the authors explain by the fuller near-wall
+density, velocity and momentum profiles of a colder wall; the separation
+and plateau pressures are insensitive to $T_w$, as free-interaction theory
+predicts. In that theory, as they print it (Eq. 3.15, after Chapman, Kuehn
+& Larson), the pressure rise from the origin scales as
+$$\frac{p_w-p_{w0}}{q_\infty}=F\sqrt{\frac{2C_{f0}}{(M_\infty^2-1)^{1/2}}},$$
+with $q_\infty$ the dynamic pressure, $p_{w0}$ and $C_{f0}$ the values at the
+origin and $F$ a correlation function (page-local symbols), so the
+separation and plateau pressures depend only on $C_{f0}$ and $M_\infty$.
+$F$ against $(x-x_0)/(x_s-x_0)$ collapses below 2.5 across Mach 2.9 and 6,
+Reynolds number, angle and wall temperature (Fig. 18); against their new
+coordinate $(x-x_s)/(x_c-x_s)$, $x_c$ the corner, the collapse also extends
+downstream of the plateau when only $T_w$ differs, and holds for the Mach 5
+impinging shocks of Volpiani et al. with the impingement point as $x_c$
+(Figs. 19–20). With an assumed $L/\delta\propto(T_w/T_r)^n$, $n\sim0.85$
+from Zhu et al.'s $x_r-x_s$ law, which predicts their separation lengths
+within 5% where the Touré–Schülein formula errs by 17.2% and 22.7% at the two
+warmer walls (Table 6), they propose a relation that maps the wall pressure
+upstream of the corner at one wall temperature to another (Eq. 4.1),
+valid for the same free stream and angle, a separation with a plateau, and
+$x<x_c$ (Fig. 21). The separation-shock motion has $St_\delta\approx0.015$–0.03
+($St$ on the interaction length 0.016–0.022); from $T_w/T_r=0.50$ to 1.0
+the peak low-frequency energy fraction rises by about 28% and the region
+where it exceeds 0.3 by about 200% (Figs. 23–24). Time-delayed wall-pressure
+correlations, with and without low-pass filtering of the reference signal,
+lead them to conclude that low-frequency unsteadiness is driven mainly by
+the downstream (bubble) mechanism and that cooling suppresses it by
+shrinking the bubble (§3.5, Figs. 25–26).
+
+**Wall heating: peak heat flux and a heat-transport budget.** Two Mach 5
+DNS relate the wall heat flux to the wall pressure.
+[Yu et al. (2023b)](/sources/yu-2023-b.md), §III B, Fig. 5, find the peak
+heat flux of their three impinging shocks between the power laws
+$(p_{w,\max}/p_\infty)^{0.85}$ and $(\cdot)^{0.75}$ of the upstream value,
+$n=0.8$ predicting it within 15%, and the streamwise distribution
+following $q_w/q_{w,r}=C_m(p_w/p_\infty)^{0.6}$ (page-local $C_m\approx1.0$
+downstream of separation, about 2.0 at the peaks), which they state for
+cold-wall impinging shocks only. [Tang et al. (2024)](/sources/tang-2024.md)
+show that the canonical law $\dot q_{\max}/\dot q_u=(p_{\max}/p_u)^{0.85}$
+overpredicts a compilation of experimental, DNS and LES peaks with maximum
+error 72%, and derive a correlation (Eq. 3.7) from compressible
+boundary-layer heat-transfer theory with the Eckert reference temperature,
+assuming it holds behind an oblique shock that sets the post-shock layer
+thickness; the ratio then depends on the pressure ratio, $M_u$ and
+$T_w/T_0$ and cuts the maximum error to 35% (§3.1, Figs. 16–19). It
+behaves like the 0.85 power for hot walls and the 0.8 power for cold walls
+(Fig. 18), reproduces the distributions of Coleman & Stollery, Delery &
+Coet and Schülein, and the DNS peak within 23% (Figs. 20, 22); the authors
+note it is "not sensitive enough to the wall temperature for some cases".
+Their averaged enthalpy equation (Eq. 3.12) splits the generation of heat
+into mean and turbulent compression and mean and turbulent shear
+dissipation, transported by mean convection, turbulence and conduction;
+the budgets explain (§4.2, Figs. 23–28) the local heat-flux minimum at
+separation (turbulent dissipation peaking near $y^+=25$ with heat carried
+outward), the sharp rise in the recirculation (turbulent dissipation and
+outer compression heat carried wallward by turbulence), and the wide peak
+just downstream of reattachment (near-wall dissipation, convected
+compression heat and oblique impingement compression), with a sixfold
+heat-flux rise overall (Fig. 21a). Their Reynolds-analogy factor
+$S=C_f/(2C_h)=1/s_{\mathrm{RA}}$ ($C_h$ the Stanton number) leaves the
+incoming-layer value 0.86 and settles at 0.5 downstream, which they say
+[Helm & Martín (2022)](/sources/helm-2022.md) also report (§4.1,
+Fig. 21b); Helm & Martín print $C_f/2C_h$ of 0.85 upstream and about 0.7
+downstream on their Mach 7 and 9.1 ramps (§IV E, above), a different flow,
+recorded side by side (see [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md)).
+
+**Pressure-dependent eddy viscosity and turbulent Prandtl number for RANS.**
+A priori on their Mach 5 DNS, [Yu et al. (2023b)](/sources/yu-2023-b.md),
+§IV, find that the best-fit linear eddy viscosity reconstructs the shear
+stress upstream and downstream but overpredicts it along the rising shear
+layer, where strain and stress are not aligned, and that a strain–rotation
+commutator term fixes it (see
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)); the
+estimate $\nu_t=C_\mu k^2/\varepsilon$ with $C_\mu=0.09$ severely
+overestimates the downstream eddy viscosity, as Morgan et al. found
+(Fig. 18a). They propose $C_\mu(x)=0.09/[1+C_{\mu,1}(p_w(x)/p_{w,r}-1)]$, $p_{w,r}$
+the reference wall pressure and $C_{\mu,1}=1$ fitted to the data (page-local), and, for the turbulent heat flux, a nonlinear
+term built with the rotation tensor (Figs. 18–20). In the
+[$k$-$\omega$ SST model](/methods/k-omega-sst-model.md) they replace
+$\beta^*$ by this $C_\mu(x)$ and set
+$Pr_t=0.9-0.5\tanh(10|\nabla p|\,\delta/U_\infty)$ (§V; see
+[turbulent Prandtl number](/definitions/turbulent-prandtl-number.md)); the
+refined model brings the peak Stanton-number error on the Schülein
+experiments from about 50% to under 10% (Fig. 21), and on the Holden et
+al. Mach 8 ramps gives nearly the measured separation onset and plateau at
+33° where the original model underpredicts separation, and no separation
+at the smallest angle, while the original overpredicts it at 27° and 30°
+(Figs. 23–24). The a priori and a posteriori trends differ: the original
+SST underpredicts $k$ and the shear stress against the S14 DNS (Fig. 22),
+which they explain by the coupling of mean and turbulent dissipation
+through the $\omega$ equation, not by $C_\mu$ alone.
+
+**Three-dimensional interactions and duct corners.** The review of
+[Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) covers turbulent,
+mostly steady interactions below Mach 5 in swept corners, sharp, swept and
+blunt fins, crossing shocks, swept reflections and semi-cones. Outside an
+inception region these show cylindrical or conical symmetry and, in the
+plane normal to the shock or hinge line, resemble the corresponding 2D
+interaction, with collapsing pressure profiles and plateau pressures
+(§3); sweep suppresses the low-frequency unsteadiness of unswept
+interactions (§3, §3.1), in agreement with the quasi-conical, low-frequency-free
+swept ramp of [Zhang et al. (2022c)](/sources/zhang-2022-g.md) above.
+They classify unsteadiness by $St_\delta$ on the incoming thickness: low
+below 0.01, mid from 0.01 to 0.1, high above 0.1 (§3). In ducts the
+low-momentum corner flow separates early and the displacement of the
+corner separation sends compression and expansion waves across the span
+that change the adverse pressure gradient at the centre span; this
+explains the scatter of the normal-shock separation onset (shock Mach
+numbers 1.29–1.59) through the viscous aspect ratio $\delta^*/W$ ($W$ the
+duct width, page-local) and three regimes of centre-span separation length
+(§4, Figs. 18–24). Corner and centre separations are usually not
+dynamically coupled, except in compression corners (§4.4). They attribute
+RANS failures in corner-affected interactions not to three-dimensionality
+but to the mispredicted displacement of the corner separation, with
+current RANS work aimed at the stress-induced corner vortices (QCR, §5;
+see [Reynolds-stress models](/methods/reynolds-stress-model.md)).
+
 **Recovery downstream of the interaction.**
 [Yu et al. (2023)](/sources/yu-2023.md) read the separation bubble of the
 Yu et al. (2022) DNS as leaving a mixing layer "hidden" in the downstream
@@ -872,7 +1074,7 @@ experiment of Micka & Driscoll, the rms being highest in the isolator
 (§6.7, Fig. 13). The combustion content is on the Source page.
 
 **Wall models in supersonic interactions.**
-[Bose & Park (2018)](/sources/bose-2018.md), §2.1, §4.4, Fig. 6b, cite a
+[Bose & Park (2018)](/sources/bose-2018.md), §2.1, §4.4, Fig. 6b, cite that a
 nonequilibrium wall model with a wall-normal variation of the von Kármán
 constant (Kawai & Larsson 2013) gives the skin friction of a Mach 1.7
 oblique-shock interaction (a $6^\circ$ shock generator) closer to the
@@ -1194,6 +1396,59 @@ compares with no experiment.
   reference, beside the wall-resolved guidance of
   $\Delta x^+\approx50$–130, $\Delta z^+\approx15$–30 that they quote
   (§III B 2).
+- Amplification factors of the same cited works differ between the
+  citing papers: [Kang & Lee (2024)](/sources/kang-2024.md), §IV.A, print
+  2.7 for Fang et al. and 3.34 for Pirozzoli & Grasso "for the same flow
+  conditions", while [Shi & Yan (2023)](/sources/shi-2023.md) set their
+  own 3.34 beside 2.97 for Fang et al. and 2.7 for Pirozzoli & Grasso. The
+  two attributions are recorded side by side; the cited works are not
+  ingested. Kang & Lee print the impinging-shock angle of those works as
+  33.2 (§I) and 33° (§IV.A).
+- [Kang & Lee (2024)](/sources/kang-2024.md) print $T_\infty=107$ K and
+  $T_w=307$ K in Table I and 108 K and 308 K in Table III; their
+  $T_w/T_\infty=2.87$ follows from Table I *(compiler check, not in the
+  sources)*. They call the reattachment spectral peak $St\approx0.55$
+  "approximately 26 times higher" than the peak measured "by probe 2",
+  while the intermittent-region peak $St\approx0.02$ is at probe 1 and
+  $0.55/0.02=27.5$ *(compiler check, not in the sources)*. The
+  $Q$-criterion threshold is $2u_\infty/\delta_0$ in the text and
+  $2u_\infty^2/\delta_0^2$ in the Fig. 8 caption; their Eq. 3 prints the
+  strain rate where the viscous stress belongs in the energy flux, and they
+  call the exact Favre transport equation of $k$ "a standard two-equation
+  turbulence model". The streamline-normal production is stated to be
+  zero, not derived.
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) print the S10 separation
+  length as "2, 46" in Table I and 2.46 in §III B, and refer to "a 22°
+  ramp angle" among Holden's ramps of 27°, 30° and 33°. The SST refinement
+  is fitted at one wall-temperature ratio, and the $\delta$ of their $Pr_t$
+  law is not defined for the RANS cases. Their separation lengths
+  (6.75, 2.46, 1.47) and interaction lengths (6.74, 3.18, 2.26) are in
+  units of $\delta_r$ (Table I).
+- [Tang et al. (2024)](/sources/tang-2024.md) call the deviation of the
+  Souverein interaction length (18 mm) from the DNS (14 mm) "20%";
+  $(18-14)/18=22\%$ and $(18-14)/14=29\%$ *(compiler check, not in the
+  sources)*. Their Fig. 23 caption names the compression-heat panels
+  "(e–f)" for (d–f), and the Fig. 16 legend dates Helm & Martín 1972. The
+  text keeps the wall-normal stretching "fixed" while Table 2 lists
+  $\alpha=1.0292$ to 1.0295 for M1–M4.
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) swap the panel names of
+  the Fig. 3 caption ($C_f$ and wall pressure), list "(a,d)" in a Fig. 11
+  with three panels, point to Table 4 for $L$, which is in Table 6, and
+  print the generalized Reynolds analogy (Eq. 3.6) with $r$ in $T_{rg}$
+  while defining an unused $r_g$. In their Table 6 the first two printed
+  errors at $T_w/T_r=0.75$ (2.96%, 1.08%) and 1.0 (1.44%, 4.12%) match the
+  printed lengths in the order $L'$, $L'_{sr}$, the reverse of the header
+  *(compiler check, not in the sources)*. Their dominant low frequency
+  $St_\delta\approx0.015$–0.03 falls in the "mid-frequency" band
+  $0.01<St_\delta<0.1$ of [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md);
+  the two papers use the word "low-frequency" on different scales.
+- [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) give Bisek's
+  compression-corner LES as Mach 2.25 (§4.3) and Mach 2.5 (§4.4); they
+  call Garnier's computation LES where the cited title says stimulated
+  detached-eddy simulation; they call Deshpande & Poggie's work
+  experiments (§4.4, Fig. 26 caption) while §5 credits the corner–centre
+  coupling to "both high-fidelity computations and in experiment".
+
 ## Contradictions
 
 - **Separation length of the Mach 2.28 impinging-shock DNS.** *Open.*
@@ -1227,6 +1482,27 @@ compares with no experiment.
   give the same name, axisymmetric expansion, to the side that Helm &
   Martín call characteristic of the logarithmic layer and Yu et al.
   typical of mixing layers, each citing Pope for the mixing-layer state.
+- **What drives the first amplification over the Mach 2.9, 24° ramp.**
+  *Open.* [Shi & Yan (2023)](/sources/shi-2023.md), §IV.C, Figs. 24–32,
+  split the production in Cartesian and ramp-aligned components and
+  conclude that deceleration by the separation shock dominates production
+  near separation, shear dominating in the separated region; they place
+  the near-separation stress peak above the inflection point and the
+  vorticity peak and attribute it to the negative convective acceleration
+  of the adverse pressure gradient. [Kang & Lee (2024)](/sources/kang-2024.md),
+  §IV.D, Figs. 25–26, Abstract, split it in a streamline frame and
+  conclude that boundary-layer roll-up raises shear production first,
+  deceleration following, and that "shear effects dominate TKE production
+  over the flow deceleration effect". They set this conclusion against the
+  reading that "the initial turbulent intensification is primarily driven
+  by the deceleration of the mean flow", which they attribute to Fang et
+  al. and say Shi & Yan support (§I). Both run the Bookey et al. ramp
+  (implicit LES with flux reconstruction against DNS with compact
+  differences; hotspots at $x/\delta=-1.75$ against $-2.38$). The two
+  decompositions use different frames: Kang & Lee state that the total
+  production is comparable in the Cartesian and the streamline frame, and
+  that their streamline shear part has two strong regions near separation
+  where the Cartesian production has a single peak (§IV.D).
 
 # Citations
 
@@ -1257,3 +1533,8 @@ compares with no experiment.
 - [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — Abstract; §I; §II A, Eq. 1, Table II; §III B, Tables I, III; §IV A–D, Figs. 4–13; §V.
 - [Thawait et al. (2023)](/sources/thawait-2023.md) — §I (RANS judged unsuitable for interactions, as motivation of an SST-DDES; passing mention).
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §I (interactions as academic WMLES cases; passing mention).
+- [Kang & Lee (2024)](/sources/kang-2024.md) — §I; §II, Tables I–III; §III, Figs. 4–12; §IV.A–D, Eqs. 20–23, Table IV, Figs. 13–29; §V.
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2, Tables 2–3; §3.2–3.5, Eqs. 3.15–3.31, Tables 4–7, Figs. 12–26; §4.
+- [Tang et al. (2024)](/sources/tang-2024.md) — §2.4, Figs. 14–15; §3.1, Eqs. 3.1–3.8, Figs. 16–20; §3.2, Eq. 3.12; §4.1–4.2, Figs. 21–28.
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II, Table I; §III B, Eqs. 11–12, Figs. 3–5; §IV, Eqs. 17–26, Figs. 17–20; §V, Figs. 21–24.
+- [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §2; §3, §3.1; §4.1–4.5, Figs. 18–26; §5 (review).

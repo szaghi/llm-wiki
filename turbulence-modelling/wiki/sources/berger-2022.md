@@ -9,7 +9,7 @@ year: 2022
 venue: "Combust. Flame 244:112254"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Combustion_and_Flame_Berger_Synergistic_interactions_of_thermodiffusive_instabilities_an.pdf"
 tags: [combustion, dns, tabulated-chemistry]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -28,9 +28,9 @@ three-dimensional initially planar flame (LamUnstable) at the same
 thermochemical state separates the effect of turbulence from that of the
 instability.
 
-The consumption speed is decomposed as $s_c=s_L(A/A_0)I_0$. TurbStable
-reaches $s_c/s_L\approx5$ with $I_0\approx1$, a gain from flame area
-alone; TurbUnstable peaks at $s_c/s_L\approx15$ with $I_0\approx4$, above
+The consumption speed is decomposed as $s_c=s_{\mathrm L}(A/A_0)I_0$. TurbStable
+reaches $s_c/s_{\mathrm L}\approx5$ with $I_0\approx1$, a gain from flame area
+alone; TurbUnstable peaks at $s_c/s_{\mathrm L}\approx15$ with $I_0\approx4$, above
 the laminar unstable flame's 2.6, a synergy of turbulence and instability.
 In the flame-surface-density budget the surface-averaged tangential strain
 scales with the Kolmogorov time in both flames,
@@ -60,8 +60,8 @@ but is not in the file; claims resting on it are marked.
 # Key claims
 
 1. Two DNS of lean ($\phi_{\mathrm{eq}}=0.4$) premixed hydrogen–air slot-burner flames at $Re=11{,}000$ and $Ka\approx15$ with detailed chemistry were run, one with realistic transport (TurbUnstable), one with unity Lewis numbers and no Soret effect (TurbStable) (Abstract, §2.1, Table 1). **Shown**
-2. The flame without thermodiffusive instability burns locally like an unstretched laminar flame ($I_0\approx1$); its flame-speed gain comes from area alone, with maximum $s_c/s_L\approx5$ (§3.2, Fig. 7c). **Shown**
-3. The unstable turbulent flame reaches a peak $s_c/s_L\approx15$ and $I_0\approx4$, while the maximum area ratio $A/A_0\approx4$–5 is similar in both flames (§3.2, Fig. 7). **Shown**
+2. The flame without thermodiffusive instability burns locally like an unstretched laminar flame ($I_0\approx1$); its flame-speed gain comes from area alone, with maximum $s_c/s_{\mathrm L}\approx5$ (§3.2, Fig. 7c). **Shown**
+3. The unstable turbulent flame reaches a peak $s_c/s_{\mathrm L}\approx15$ and $I_0\approx4$, while the maximum area ratio $A/A_0\approx4$–5 is similar in both flames (§3.2, Fig. 7). **Shown**
 4. The stretch factor of the unstable turbulent flame ($I_0\approx4$) exceeds that of the unstable laminar flame ($I_0=2.6$): turbulence enhances the reactivity effect of the instability, a "synergistic effect" (§3.2, §3.5, §4). **Shown**
 5. The surface-averaged tangential strain normalized by the Kolmogorov time is nearly constant along the flame, $\langle K_{\mathrm t}\rangle_S\tau_\eta\approx0.28$ in both flames, consistent with Rutland & Trouvé (0.28) and Luca et al. (0.24) (§3.3.1, Fig. 9). **Shown**
 6. The PDFs of $K_{\mathrm t}$ in TurbUnstable are self-similar only when normalized by $\tau_\eta$, not by the flame time $\tau_{\mathrm F}$: area generation by strain is set by the small turbulent scales, not by flame-intrinsic mechanisms (§3.3.1, Fig. 10). **Shown**
@@ -85,7 +85,7 @@ but is not in the file; claims resting on it are marked.
 24. Coflow entrainment is negligible where the flames sit: the jet scalar $\xi_{\mathrm p}\approx1$ for all $C_{\mathrm{H_2}}<1$ at three heights, apart from minor near-inlet interaction in TurbStable (§3.1, Fig. 6). **Shown**
 25. Theory expects intrinsic instabilities to matter mainly at low Karlovitz numbers, but Aspden et al. found thermodiffusive effects still at $Ka=100$ (§1). **Stated**
 
-DNS set-up (§2.1–2.2, Table 1): TurbUnstable/TurbStable slot width 8/4 mm, bulk velocity 24/48 m/s, $s_L=0.17/0.34$ m/s, $l_{\mathrm F}=714/374$ µm, $\eta=180/90$ µm at half flame height, uniform spacing $h=70/35$ µm, $1792\times1024\times512$ and $3300\times1062\times512$ points; $\eta$ resolved at all times and $l_{\mathrm F}$ by ten points; semi-implicit finite differences, Crank–Nicolson, second-order momentum, fifth-order WENO for species and temperature, Strang splitting with CVODE chemistry, maximum CFL 0.5; statistics over at least one jet flow-through time, averaged in time and span.
+DNS set-up (§2.1–2.2, Table 1): TurbUnstable/TurbStable slot width 8/4 mm, bulk velocity 24/48 m/s, $s_{\mathrm L}=0.17/0.34$ m/s, $l_{\mathrm F}=714/374$ µm, $\eta=180/90$ µm at half flame height, uniform spacing $h=70/35$ µm, $1792\times1024\times512$ and $3300\times1062\times512$ points; $\eta$ resolved at all times and $l_{\mathrm F}$ by ten points; semi-implicit finite differences, Crank–Nicolson, second-order momentum, fifth-order WENO for species and temperature, Strang splitting with CVODE chemistry, maximum CFL 0.5; statistics over at least one jet flow-through time, averaged in time and span.
 
 # Printed slips
 
@@ -99,8 +99,8 @@ DNS set-up (§2.1–2.2, Table 1): TurbUnstable/TurbStable slot width 8/4 mm, bu
 
 # Notation map
 
-The registry holds only the thickened-flame symbols of combustion (§11);
-the page-local symbols follow
+The registry holds few combustion symbols (§11: thickened flame, PaSR,
+$s_{\mathrm L}$); the page-local symbols follow
 [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md).
 
 | Berger et al. (2022) | Registry ([notation](/notation.md)) | Note |
@@ -108,7 +108,7 @@ the page-local symbols follow
 | $\phi$ | $\phi_{\mathrm{eq}}$ (page-local equivalence ratio) | |
 | $Re=UH/\nu_u$ | $Re$ on slot width and bulk velocity | |
 | $Ka=(l_F/\eta)^2=\tau_F/\tau_\eta$ | $Ka$ (page-local) | |
-| $l_F=(T_b-T_u)/\max\lvert\nabla T\rvert$, $\tau_F=l_F/s_L$, $s_L$ | $l_{\mathrm F}$, $\tau_{\mathrm F}$, $s_L$ (page-local) | thermal thickness, flame time, laminar burning velocity |
+| $l_F=(T_b-T_u)/\max\lvert\nabla T\rvert$, $\tau_F=l_F/s_L$, $s_L$ | $l_{\mathrm F}$, $\tau_{\mathrm F}$ (page-local), $s_{\mathrm L}$ (registry §11) | thermal thickness, flame time, laminar burning velocity |
 | $\eta$, $\tau_\eta$ | $\eta$, $\tau_\eta$ | from the Favre-averaged dissipation on the mean flame sheet |
 | $\tilde C_{H_2}$, $\tilde\varepsilon$ | $\langle C_{\mathrm{H_2}}\rangle_\rho$, $\langle\varepsilon\rangle_\rho$ | **collision:** the tilde is a Favre (Reynolds-type) average, not an LES filter |
 | $\langle\cdot\rangle$ | $\langle\cdot\rangle$ | average over time and span |
@@ -116,7 +116,7 @@ the page-local symbols follow
 | $C_{H_2}=1-Y_{H_2}/Y_{H_2,u}$, $C_0=0.8$ | $C_{\mathrm{H_2}}$, $C_0$ (page-local progress variable and iso-value) | |
 | $Z$ (Bilger), $Z_{eq}$, $Z_{st}$ | $Z$, $Z_{\mathrm{eq}}$, $Z_{\mathrm{st}}$ (page-local) | 0.012 and 0.028 |
 | $\xi$ | $\xi_{\mathrm p}$ (page-local passive jet scalar) | **collision:** not the reference coordinate $\xi$ |
-| $s_c$, $A$, $A_0$, $I_0$ | consumption speed, flame areas, stretch factor (page-local) | $s_c=s_L(A/A_0)I_0$ |
+| $s_c$, $A$, $A_0$, $I_0$ | consumption speed, flame areas, stretch factor (page-local) | $s_c=s_{\mathrm L}(A/A_0)I_0$ |
 | $\Sigma$, $\langle\cdot\rangle_S$ | flame surface density, surface average (page-local) | |
 | $K=\kappa s_d+K_S$ | $K_{\mathrm{st}}=\kappa_{\mathrm f}s_d+K_{\mathrm t}$ (page-local stretch) | **collision** with $K$ |
 | $K_S=\nabla\cdot\boldsymbol u-\boldsymbol n\cdot\nabla\boldsymbol u\cdot\boldsymbol n$ | $K_{\mathrm t}$ (page-local tangential strain) | without the curvature term, unlike the $K_{\mathrm f}$ of the flamelet page |

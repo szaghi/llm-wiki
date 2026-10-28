@@ -5,7 +5,7 @@ description: "The streamwise-periodic channel with a hill constriction, a smooth
 status: established
 aliases: [periodic hills, ERCOFTAC UFR 3-30, Fröhlich periodic hill, hill flow, parametrized periodic hills]
 tags: [benchmark, separated-flow, hybrid-rans-les, pans, data-driven, field-inversion, implicit-les, gas-kinetic, wmles, wall-model]
-timestamp: 2026-10-27T20:36:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Periodic hill
@@ -88,8 +88,8 @@ velocity or length named, on grids of 120,000, 250,000 and 500,000 points
 [continuous eddy simulation](/methods/continuous-eddy-simulation.md)
 $k$-$\omega$ model whose own mode control is replaced by a prescription of
 the PITM type for the unresolved energy fraction. Let $k_+$ be the
-modelled (unresolved) over total turbulent kinetic energy (page-local, the
-source's symbol, as on [continuous eddy simulation](/methods/continuous-eddy-simulation.md),
+modelled (unresolved) over total turbulent kinetic energy (registry §11,
+the source's symbol, as on [continuous eddy simulation](/methods/continuous-eddy-simulation.md),
 where its relation to the registry's §11 $\beta_k$ is stated; the "+" is not wall
 units), $L_{\mathrm{tot}}=k_{\mathrm{tot}}^{3/2}/\varepsilon_{\mathrm{tot}}$
 the total length scale and $\Delta=(\Delta x\Delta y\Delta z)^{1/3}$; the
@@ -716,7 +716,7 @@ from Kähler et al. gives $x_R/h=4.81$, 4.16 and 3.79 at $Re_h=5600$,
 [Prieto Saavedra et al. (2024)](/sources/prietosaavedra-2024.md) print
 (4.83, 4.21, 3.76) *(compiler check, not in the sources)*.
 
-Three sources now give the reattachment or separation of the Fröhlich
+Three sources give the reattachment or separation of the Fröhlich
 configuration against the same references: at $Re_h\approx10{,}600$
 Haering et al. quote a reference reattachment of about $x=4$, Prieto
 Saavedra et al. print Rapp 4.21 and Breuer et al. 4.69, and Wang et al.

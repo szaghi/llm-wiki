@@ -9,7 +9,7 @@ year: 2022
 venue: "Shock Waves 32:69-102"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Shock_Waves_Kumar_Application_of_bandwidth-optimized_WENO_schemes_to_DNS_of_sh.pdf"
 tags: [weno, shock-capturing, numerical-dissipation, dns, compressible]
-timestamp: 2026-10-27T10:58:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -65,7 +65,7 @@ version.
 # Key claims
 
 Page-local symbols: BW3-$P$ and BW4-$P$ the source's WENO3P-LIM-'P' and
-WENO4P-LIM-'P'; $P_{\mathrm{TV}}$ the limiter threshold (the source's
+WENO4P-LIM-'P'; $P_{\mathrm{TV}}$ the limiter threshold (registry §11; the source's
 $\alpha^{RL}_{TV}$); $R_{\mathrm{TV}}$ the relative total variation,
 $TV_k$ the total variation of stencil $k$; $q$ the weight exponent; $r$
 the number of points per candidate stencil; $f^\pm$ the split fluxes.
@@ -115,7 +115,7 @@ $\delta^{\mathrm T}_k$, $C_T$.
 | $\beta_k^L$ | $\mathrm{IS}_k$ | smoothness indicator; **collision:** not the field-inversion $\beta$ |
 | $\alpha_n^L$, $\omega_n^L$, $C_n^L$ | $a_k$, $\mathsf w_k$, $d_k$ | **collision:** $\alpha$ is the DG blending factor, $\omega$ the specific dissipation rate in the registry |
 | $\alpha_{kl}$, $d_{kml}$ | (candidate-flux and indicator coefficients, page-local) | |
-| $\alpha^{RL}_{TV}$ ('P'), $R(TV)$, $TV_k$ | $P_{\mathrm{TV}}$, $R_{\mathrm{TV}}$, $TV_k$ (page-local) | |
+| $\alpha^{RL}_{TV}$ ('P'), $R(TV)$, $TV_k$ | $P_{\mathrm{TV}}$ (registry §11), $R_{\mathrm{TV}}$, $TV_k$ (page-local) | |
 | $\delta_n$, $\chi_n$, $\gamma_n$, $C_T$ | $\delta^{\mathrm T}_k$, $\chi^{\mathrm T}_k$, $\gamma^{\mathrm T}_k$, $C_T$ | TENO; **collision:** $\gamma_n$ is not the ratio of specific heats |
 | $\tau_5$, $\tau_6$, $\beta_6^L$, $C$ | (reference indicators, six-point indicator, CU6/TENO constant, page-local) | **collision:** $\tau_5$, $\tau_6$ are not stresses |
 | $\tau_{ij}$ | $\sigma_{ij}$ | viscous stress; **collision:** not the subgrid stress |

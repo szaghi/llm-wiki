@@ -5,7 +5,7 @@ description: "Troubled DG elements are recomputed as (N+1)^3 finite-volume subce
 status: established
 aliases: [hybrid DG/FV, DG/FV subcell scheme, finite-volume subcell limiting, DG/FV blending, RL-Blend, local modal filter, LMF, entropy filter]
 tags: [shock-capturing, dg, numerical-dissipation, implicit-les, reinforcement-learning, compressible, flux-reconstruction]
-timestamp: 2026-10-28T02:15:00Z
+timestamp: 2026-10-28T07:04:00Z
 ---
 
 # Subcell finite-volume shock capturing for DG
@@ -147,9 +147,9 @@ A third family keeps the polynomial and damps it instead.
 turbomachinery with the [flux-reconstruction](/methods/flux-reconstruction.md)
 solver ATHOS, whose correction functions recover nodal DG on LGL points, by
 two solution filters applied after every Runge–Kutta stage (§2.3, App. A,
-Algorithm 1). Page-local symbols: $\vartheta_m\in[0,1]$ the normalized index
-of Legendre mode $m$, $\vartheta_c$ the filter cutoff, $\alpha_f$ the filter
-strength and $s_f$ its order (the source's $\eta$, $\eta_c$, $\alpha$, $s$,
+Algorithm 1). Symbols: $\vartheta_m\in[0,1]$ the normalized index
+of Legendre mode $m$, $\alpha_f$ the filter strength and $s_f$ its order
+(registry §11), $\vartheta_c$ the filter cutoff (the source's $\eta$, $\alpha$, $s$ and $\eta_c$,
 renamed to avoid the Kolmogorov length and the blending factor); $s_e$ the
 Persson–Peraire indicator of an element and $s_0$ its activation threshold;
 $\mathcal S=\rho\ln(p\rho^{-\gamma})$ the entropy function and
@@ -435,6 +435,28 @@ and conclude that DG for diffuse-interface models is still mostly
 restricted to reduced five-equation models on structured meshes (§V).
 None of these is a turbulence application.
 
+The review of high-order discontinuous schemes for multiphase and
+multicomponent flows of [Lv & Ekaterinaris (2023)](/sources/lv-2023.md),
+§4.2, describes the same a posteriori route, MOOD extended to DG (all
+cited): troubled elements are identified after the DG update, projected
+to subcells, updated with finite volumes and gathered back into the DG
+polynomial. They state that it removes the ad hoc choice of how to
+modify a troubled element, but troubled-cell detection remains and "can
+involve problem-dependent parameters". Two related constructions are
+reviewed beside it: the hybrid DG/FV subcell interface method of Fechter
+& Munz, used by Jöns et al. for shock–droplet
+interaction (§4.4, §5.1), and the subcell resolution of Panourgias &
+Ekaterinaris, which the authors call equivalent to a high-order
+dissipative (nonlinear) filter in the finite-element context and use
+instead of limiters for the bow shock of a Mach 8 reacting capsule flow
+(§4.2, §6.2; see
+[explicit modal filtering](/methods/explicit-modal-filtering.md)). For LES
+they add that limiting, even with a good sensor, stays "too intrusive" for
+high-order solutions, so that artificial viscosity or its filtered forms
+are preferred (see
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
+No error norm or cost is printed for any of these.
+
 ## Convention difference
 
 The two variants place the subcells differently: equispaced subcells of width
@@ -519,3 +541,4 @@ on the right.
 - [Liu & Yuan (2023)](/sources/liu-2023-b.md) — §2.2; §3.1–3.5, Eqs. (22)–(33), Algorithm 1 (a posteriori subcell limiter for flux reconstruction); §5.1, Table 1; §5.5–5.8, Table 2, Figs. 6–12.
 - [Shi & Yan (2023)](/sources/shi-2023.md) — §I; §II.B, Eqs. (6)–(18) (indicator, WENO and positivity limiters in flux reconstruction).
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III C, §IV C, §V (a posteriori subcell limiting and reconstructed DG in multi-material DG, cited).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (a posteriori MOOD-type subcell correction of DG, subcell resolution as a dissipative filter, limiting called too intrusive for LES); §4.4, §5.1 (hybrid DG/FV subcell interface method); §6.2 (review).

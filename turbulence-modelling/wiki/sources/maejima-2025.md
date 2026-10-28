@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Fluid Mech. 1013:A28"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Journal_of_Fluid_Mechanics_Maejima_Unsupervised_and_supervised_machine_learning_pipeline_for_su.pdf"
 tags: [les, sgs-model, neural-network, data-driven, backscatter, a-priori-a-posteriori]
-timestamp: 2026-10-27T16:00:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Summary
@@ -27,8 +27,8 @@ conditional GAN, trained on filtered and original DNS pairs, super-resolves it
 eightfold. The SGS stress is the cell average of products of the reconstructed
 sub-cell fluctuations, clipped so that the effective viscosity stays above a
 negative floor; moderate [backscatter](/definitions/energy-backscatter.md) is
-kept. This clipping is a variant of those discussed for structural models on
-the [gradient model](/methods/gradient-model.md) page.
+kept. Other clippings of structural stresses are on the
+[gradient model](/methods/gradient-model.md) page.
 
 Tests use [turbulent channel flow](/benchmarks/turbulent-channel-flow.md) at
 $Re_\tau\approx1000$, $M_b\approx0.1$, with a second-order

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Compressor cascades"
-description: "Linear compressor cascades as turbomachinery benchmarks: the low-speed V103 and PVD cascades for laminar separation, bypass transition and corner separation, the NACA65 K48 at Mach 0.67, and the transonic TCTA with an oscillating bow shock, run by transitional DDES, RANS transition and Reynolds-stress models and implicit DG LES."
+description: "Linear compressor cascades as turbomachinery benchmarks: the low-speed V103 and PVD cascades for laminar separation, bypass transition and corner separation, the NACA65 K48 at Mach 0.67 with and without tip clearance, and the transonic TCTA with an oscillating bow shock, run by transitional DDES, RANS transition and Reynolds-stress models and implicit DG LES."
 status: established
 aliases: [compressor cascade, linear compressor cascade, V103 cascade, PVD cascade, NACA65 K48 cascade, TCTA, Transonic Cascade TEAMAero, compressor corner separation]
 tags: [benchmark, turbomachinery, transition, des, rans, implicit-les]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T07:03:00Z
 ---
 
 # Compressor cascades
@@ -35,20 +35,26 @@ accelerating-flow counterpart.
 
 | Item | V103 | PVD | NACA65 K48 | TCTA |
 |---|---|---|---|---|
-| Sources | [Möller et al. (2024)](/sources/moller-2024.md) | [Li & Liu (2022)](/sources/li-2022.md); [Liu et al. (2024)](/sources/liu-2024.md) | [Liu et al. (2024)](/sources/liu-2024.md) | [Klose et al. (2025)](/sources/klose-2025.md) |
+| Sources | [Möller et al. (2024)](/sources/moller-2024.md) | [Li & Liu (2022)](/sources/li-2022.md); [Liu et al. (2024)](/sources/liu-2024.md) | [Liu et al. (2024)](/sources/liu-2024.md); [Zhang et al. (2024)](/sources/zhang-2024.md) | [Klose et al. (2025)](/sources/klose-2025.md) |
 | Profile, origin | NACA-65-based, DLR; experiment Hilgenfeld & Pfitzner at $M=0.67$, $Re=4.5\times10^5$, here at the scaled DNS point of Zaki et al. | prescribed velocity distribution, Cambridge/Rolls-Royce (Gbadebo et al.) | DLR (Liesner & Meyer; Hergt et al.) | DLR, TEAMAero programme |
 | Inlet Mach number | 0.1 | about 0.07 | 0.67 | 1.21 |
 | Reynolds number | $1.385\times10^5$ on axial chord | $2.3\times10^5$ | $5.6\times10^5$ | $1.35\times10^6$ on chord |
 | Inflow | angle 42°, $Tu=3.25\%$ | incidence $-7^\circ$ and $0^\circ$ (Liu et al.), $0^\circ$ (Li & Liu) | design point | angle 145.7°; no inflow turbulence (measured below 1%) |
 | Span in the computation | $0.1c_{ax}$ ($c_{ax}$ page-local: axial chord), periodic | half span with end wall | mid-span symmetry with end wall | 5%, 10%, 20% chord, periodic |
-| Physics | separation-induced transition (suction side), bypass transition (pressure side) | corner separation; mid-chord laminar bubbles | corner separation; mid-chord bubbles | bow shock oscillating at mid-chord over a laminar or transitional layer with shock-induced separation |
-| Methods | DDES-$\gamma$ in [TRACE](/software/trace.md) (second-order finite volume); own WALE LES; DNS of Zaki et al. | steady RANS, [Spalart–Allmaras](/methods/spalart-allmaras-model.md) variants (CFL3D); time-averaged URANS, [Reynolds-stress model](/methods/reynolds-stress-model.md) with and without $\gamma$ ([OpenFOAM](/software/openfoam.md)) | as PVD (Liu et al.) | implicit LES, DGSEM $N=3$ in TRACE; URANS SST with $\gamma$-$Re_\theta$ |
-| Grids | DDES 0.68, 1.08, 4.32 M cells, 40 spanwise cells, $y^+<1$; LES 10.86 M | about 1.5 M points in half span, $y^+\approx0.7$ (Li & Liu) | — | 47,319 or 108,564 elements per plane; 54.6 M to 375.2 M degrees of freedom |
+| Physics | separation-induced transition (suction side), bypass transition (pressure side) | corner separation; mid-chord laminar bubbles | corner separation; mid-chord bubbles; tip leakage with 1% clearance (Zhang et al.) | bow shock oscillating at mid-chord over a laminar or transitional layer with shock-induced separation |
+| Methods | DDES-$\gamma$ in [TRACE](/software/trace.md) (second-order finite volume); own WALE LES; DNS of Zaki et al. | steady RANS, [Spalart–Allmaras](/methods/spalart-allmaras-model.md) variants (CFL3D); time-averaged URANS, [Reynolds-stress model](/methods/reynolds-stress-model.md) with and without $\gamma$ ([OpenFOAM](/software/openfoam.md)) | as PVD (Liu et al.); SA-based DDES in OpenFOAM (Zhang et al.) | implicit LES, DGSEM $N=3$ in TRACE; URANS SST with $\gamma$-$Re_\theta$ |
+| Grids | DDES 0.68, 1.08, 4.32 M cells, 40 spanwise cells, $y^+<1$; LES 10.86 M | about 1.5 M points in half span, $y^+\approx0.7$ (Li & Liu) | DDES about 5.9 M (single row) and 6.65 M (tandem) cells in half span, $\Delta y^+<0.5$ (Zhang et al.) | 47,319 or 108,564 elements per plane; 54.6 M to 375.2 M degrees of freedom |
 
 The PVD cascade has stagger 14.7°, inlet flow angle 41°, camber 42°, chord
 0.1515 m, solidity 0.926 and aspect ratio 1.32; the K48 stagger 112.5°,
 inlet angle 132°, camber 48°, chord 0.04 m, solidity 1.82 and aspect ratio
-1.0 (Liu et al. 2024, Tables 4–5). The TCTA has pitch 0.065 m, chord 0.1 m
+1.0 (Liu et al. 2024, Tables 4–5). Zhang et al. (2024, §2.1, Tables 1–2)
+print for the K48 a chord of 40 mm, pitch 22 mm, stagger 22.5°, geometric
+inlet angle 42° and outlet angle 0°, and for their tip-clearance variant a
+blade height of 52 mm (aspect ratio 1.3) with a clearance of 0.52 mm (1% of
+span); their validation case keeps aspect ratio 1. The two sources measure
+the angles from different reference directions (the 90° offset between
+112.5° and 22.5°, 132° and 42°); this is a convention difference. The TCTA has pitch 0.065 m, chord 0.1 m
 and stagger 135.8° (Klose et al. 2025, §3).
 
 ## What the case tests
@@ -113,6 +119,47 @@ still overpredicting the separation near the trailing edge (Figs. 8–17).
 The 3D Reynolds-stress runs do not reach a steady state and are
 time-averaged URANS. The two RANS sources agree that linear eddy-viscosity
 models overpredict compressor corner separation.
+
+**Tip leakage of a K48 tandem cascade with DDES.**
+[Zhang et al. (2024)](/sources/zhang-2024.md) use Spalart–Allmaras-based
+[delayed DES](/methods/detached-eddy-simulation.md) ($C_{\mathrm{DES}}=0.65$,
+$\Delta=\max(\Delta x,\Delta y,\Delta z)$, $f_d=1-\tanh[(8r_d)^3]$; §2.3,
+Eqs. 1–8) in [OpenFOAM](/software/openfoam.md), with second-order central
+convection, second-order backward time, $\Delta t=10^{-6}$ s (about 180
+steps per feature period, mean Courant number 0.65) and statistics over
+about 90 feature periods (§2.3, §3). The grids resolve the tip region with
+57 spanwise nodes over 2% of the blade height, 33 of them in the clearance,
+and keep $\Delta y^+<0.5$ normal to the blade, $\Delta z^+<80$ spanwise and
+$\Delta x^+<130$ streamwise near the tip suction surface (§2.2; the paper
+prints $\Delta x^+$ for the spanwise and $\Delta z^+$ for the streamwise
+spacing), with the
+half span closed by a mid-span symmetry plane.
+
+- *Validation* is on the K48 without clearance against the experiments of
+  Hergt et al. (2011, which they cite): the extent and start of the corner
+  separation, reverse flow and end-wall cross flow agree with the oil flow;
+  the computed high-loss area of the corner separation is "slightly smaller"
+  than measured and the end-wall loss "slightly higher", while the spanwise
+  loss and exit angle agree well, including the high-loss boundary near 15%
+  span (§2.4, Figs. 5–7). The accuracy of DDES for tip-leakage flow is taken
+  from a cited rotor study, not checked on the clearance case (§2.4).
+- *Tandem against single row.* A tandem cascade with front and rear blades
+  of equal chord, percent pitch 0.9 and no axial overlap lowers the
+  front-blade tip load and raises the rear-blade one, moves the load peak at
+  98% span from about 20% to about 30% of the axial chord, and reduces the
+  mass-averaged total-pressure loss at 143% axial chord by about 20.05%; a
+  second, counter-rotating tip-leakage vortex forms in the rear-blade passage
+  from about 60% axial chord (§3.1, Figs. 8–12). The dominant reduced
+  frequency of the end-wall pressure spectra is about 1.18 (single row) and
+  1.10 (tandem), and the authors find "no essential change in the
+  frequency-domain features" (§3.2, Fig. 16).
+
+The paper develops and compares no model (no URANS or LES run); for this
+page it adds a scale-resolving computation of the K48 corner separation
+beside the RANS of Liu et al. Both find the corner separation the critical
+feature; Liu et al. report that RANS overpredicts it, Zhang et al. that
+DDES slightly underpredicts the high-loss area. The two computations differ
+in model level and aspect ratio, so this is no contradiction.
 
 **Transonic buffet in the TCTA.**
 [Klose et al. (2025)](/sources/klose-2025.md) (read in the ASME accepted
@@ -207,6 +254,12 @@ one-equation $\gamma$ model, of Menter et al. (2015), to different hosts.
   refinement at fixed span), and they print the frequency as
   $St\approx0.16$ against 0.14 without further explanation than the finite
   span (the tunnel span is $1.68c$).
+- [Zhang et al. (2024)](/sources/zhang-2024.md) print the
+  Spalart–Allmaras diffusion term without the molecular viscosity
+  (Eq. 1) and the DDES velocity-gradient norm as $\sqrt{V_{i,j}V_{j,i}}$
+  (Eq. 4); the forms are recorded side by side on the
+  [Spalart–Allmaras](/methods/spalart-allmaras-model.md) page. Their Table 1
+  uses one symbol for the pitch (22 mm) and the clearance (0.52 mm).
 
 # Citations
 
@@ -215,3 +268,4 @@ one-equation $\gamma$ model, of Menter et al. (2015), to different hosts.
 - [Liu et al. (2024)](/sources/liu-2024.md) — Introduction; Flow solvers; Tables 4–5; Figs. 1, 8–18; Discussion; Conclusions.
 - [Klose et al. (2025)](/sources/klose-2025.md) — accepted manuscript: §2–4, Table 1, Figs. 2–4; §5–7, Table 2, Figs. 5–14; §8.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — review: §3.2.1–3.2.2 (free-stream turbulence and wakes); §3.3.2–3.3.3 (bubbles, $\Lambda$ structures); §3.3.4 (transonic shock oscillation, spectral gap); §4.2 (mechanical work potential).
+- [Zhang et al. (2024)](/sources/zhang-2024.md) — §2.1–2.4, Tables 1–2, Eqs. 1–8, Figs. 3–7 (K48 geometry, DDES set-up and validation); §3.1–3.2, Figs. 8–16 (tandem tip-leakage flow, loss, spectra).

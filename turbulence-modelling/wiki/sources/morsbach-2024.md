@@ -9,7 +9,7 @@ year: 2024
 venue: "Flow Turbul. Combust. 112:165–190"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Flow_Turbulence_and_Combustion_Morsbach_Large_Eddy_Simulation_of_a_Low-Pressure_Turbine_Cascade_with.pdf"
 tags: [implicit-les, dg, rans, transition, turbomachinery, anisotropy]
-timestamp: 2026-10-26T07:23:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -74,17 +74,17 @@ metadata. The archive filename carries the online year 2023; the issue year is
 6. Operating point: inflow angle 41°, upstream total pressure 11 636 Pa and total temperature 303.25 K, exit static pressure 9122.7 Pa, $Re=9\times10^4$, $M=0.6$ (isentropic exit values) (§3.2, Table 1, Eqs. 1–4). **Stated**
 7. Specifying the inflow through total pressure makes end-wall boundary-layer profiles harder to impose than specifying velocity, since the near-wall velocity follows from the total and the simulated static pressure; the chosen centre-line Mach number (0.362) must keep the total pressure above the static pressure to avoid backflow and may need iteration (§3.2–3.3). **Stated**
 8. Matching the measured free-stream decay would need a length scale of the order of the pitch; the length scale is instead reduced and the Reynolds stresses rescaled to match $Tu$ at the leading-edge plane, at the cost of a steeper decay (§3.3, Fig. 4). **Shown**
-9. Boundary-layer shape factors at $x/C_{ax}=-0.99$: 1.447 (fine LES), 1.405 (channel LES), 1.440 (SST), 1.396 (SSG/LRR-$\omega$) (§3.3, Fig. 3). **Shown**
+9. Boundary-layer shape factors at $x/c_{ax}=-0.99$: 1.447 (fine LES), 1.405 (channel LES), 1.440 (SST), 1.396 (SSG/LRR-$\omega$) (§3.3, Fig. 3). **Shown**
 10. Both RANS models reproduce the upstream LES decay of $Tu$; in the passage SST underestimates $Tu$ shortly behind the leading edge while SSG/LRR-$\omega$ follows it nearly to the trailing edge, which required the correct inflow anisotropy (§3.3, Fig. 4). **Shown** (sensitivity to anisotropy **Stated**, not shown)
 11. The injected turbulence is two-component at the inlet and returns toward isotropy in the channel; with the blade, flow acceleration stretches the vortices and drives the anisotropy toward the two-component axisymmetric corner from leading to trailing edge, then back toward isotropy; SSG/LRR-$\omega$ reproduces this qualitatively (§3.3, Fig. 4). **Shown**
-12. The integral length scale, from frozen turbulence (Eqs. 13–14), drops quickly to about half the generator's value, as in the authors' earlier tests on decaying isotropic turbulence; spectra at $x/C_{ax}=-0.99$ show large-scale anisotropy and an inertial range $\propto f^{-5/3}$ (§3.3, Fig. 5). **Shown**
+12. The integral length scale, from frozen turbulence (Eqs. 13–14), drops quickly to about half the generator's value, as in the authors' earlier tests on decaying isotropic turbulence; spectra at $x/c_{ax}=-0.99$ show large-scale anisotropy and an inertial range $\propto f^{-5/3}$ (§3.3, Fig. 5). **Shown**
 13. At the peak wake-loss point the mean velocity reaches 1% relative sampling error after 46 convective times and 0.58% after 100, while $R_{11}$ still carries 3.0% after 100 (68% confidence intervals) (§4.1, Fig. 6). **Shown**
 14. Fine and coarse LES give the same blade loading; skin friction differs downstream of the transition peak of the separation bubble, "indicating that the resolution on the coarse mesh is not entirely sufficient" (§4.1, Fig. 7). **Shown**
-15. LES against experiment: very good on the pressure side; a suction-side pressure offset for $0.1<x/C_{ax}<0.6$, similar to earlier studies; the separation-bubble plateau between 0.7 and 0.9 and the base-pressure recovery captured very well (§4.1, Fig. 7). **Shown**
+15. LES against experiment: very good on the pressure side; a suction-side pressure offset for $0.1<x/c_{ax}<0.6$, similar to earlier studies; the separation-bubble plateau between 0.7 and 0.9 and the base-pressure recovery captured very well (§4.1, Fig. 7). **Shown**
 16. Both RANS models with properly configured inflow turbulence miss the pressure plateau: separation slightly delayed, premature reattachment, a very thin bubble (§4.1, Figs. 7–8). **Shown**
 17. Reducing the RANS inflow length scale ($L_{T,0}/16.7$, SST), "common practice", strongly reduces $Tu$; the flow separates early and does not reattach before the trailing edge, the transition model keeping a larger laminar portion through $\gamma\ll1$ (§4.1, Figs. 4, 7, 8). **Shown**
 18. Midspan mixed-out wake losses are underestimated by 35% (SST) and 29% (SSG/LRR-$\omega$) with the appropriate turbulence decay; the reduced-length-scale SST is off by 2.7% through "a lucky cancellation of errors"; LES and experiment agree within the confidence intervals (§4.1, Fig. 9). **Shown**
-19. The fine LES reproduces the measured secondary-flow loss cores at $x/C_{ax}=1.4$, with the passage-vortex core slightly closer to the end wall than measured; coarse and fine LES agree (§4.2, Fig. 10). **Shown**
+19. The fine LES reproduces the measured secondary-flow loss cores at $x/c_{ax}=1.4$, with the passage-vortex core slightly closer to the end wall than measured; coarse and fine LES agree (§4.2, Fig. 10). **Shown**
 20. The reduced free-stream length scale barely changes the secondary losses (§4.2, Fig. 10). **Shown**
 21. RANS overpredicts the maximum loss in the passage-vortex and trailing-shed-vortex region by 34% (SST) and 48% (SSG/LRR-$\omega$); unlike in Marconcini et al. (2019), the losses are too large "even in a pitch-averaged sense" (§4.2, Fig. 10). **Shown**
 22. In both RANS models the corner vortex persists further downstream and the vortex system is stronger, further from the end wall and offset toward the suction side; the Reynolds-stress model strongly exaggerates the compactness and strength of the vortices, contrary to the expectation that such models are less diffusive for vortices (§4.2, Fig. 11). **Shown**
@@ -132,11 +132,11 @@ with constant static temperature and pressure across the layer, related to the t
 | $Ma_{2,th}$, $Re_{2,th}$, $Ma_{1,c}$ | $M$, $Re$ (isentropic exit values, chord-based), (profile centre-line Mach number) | |
 | $T_1$, $p_1$, $a_1$, $\nu_1$ | (static inflow temperature, pressure, sound speed, viscosity) | |
 | $p_{t1,ref}$, $T_{t1,ref}$, $p_{2,ref}$ | (upstream total pressure and temperature, exit static pressure) | |
-| $C$, $C_{ax}$, $l_{pitch}$, $\beta_s$, $\alpha_1$ | (chord, axial chord, pitch, stagger angle, inflow angle) | **collision:** $\alpha_1$ is not the DG/FV blending factor |
+| $C$, $C_{ax}$, $l_{pitch}$, $\beta_s$, $\alpha_1$ | (chord), $c_{ax}$ (axial chord, registry §11), (pitch, stagger angle, inflow angle) | **collision:** $\alpha_1$ is not the DG/FV blending factor |
 | $H$, $h$ | (upstream channel height, local channel height) | **collision:** $h$ is not an element size |
 | $\overline{c_f}$ | $C_f$ normalized by $p_{t1,ref}-p_{2,ref}$ | not by the dynamic pressure |
 | $t_c$ | (convective time: chord over exit velocity) | |
-| $Q$ | Q-criterion normalized by $C_{ax}^2/\lVert\boldsymbol u_2\rVert^2$ | |
+| $Q$ | Q-criterion normalized by $c_{ax}^2/\lVert\boldsymbol u_2\rVert^2$ | |
 | LEVM, DRSM | linear eddy-viscosity model, differential Reynolds-stress model | |
 | PV, TSV, HSV, LSB | passage vortex, trailing shed vortex, horseshoe vortex, laminar separation bubble | |
 | 1C, 2C, 3C | one-, two-, three-component limiting states of the anisotropy (barycentric map) | expressed through $b_{ij}$ |

@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 452:110899"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Takagi_A_novel_high-order_low-dissipation_TENO-THINC_scheme_for_hyp.pdf"
 tags: [shock-capturing, numerical-dissipation, compressible, implicit-les]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T07:11:00Z
 ---
 
 # Summary
@@ -110,13 +110,13 @@ $$\hat f_{i+1/2}=f_++f_-\frac{A+T}{1+AT},\qquad T=\tanh(0.5\beta_{\mathrm{TH}}),
 | $\hat f_{i+1/2}$, $\hat f_{k,i+1/2}$ | (interface flux, candidate-stencil flux, page-local) | **collision:** hat is not a test filter here |
 | $\beta_{k,r}$ | $\mathrm{IS}_k$ | Jiang–Shu smoothness indicator; **collision** with $\beta(\boldsymbol x)$ |
 | $\tau_K$, $\tau_5=\lvert\beta_{1,3}-\beta_{2,3}\rvert$ | $\mathrm{IS}_{\mathrm G}$ (global reference indicator, page-local, as on the [WENO](/methods/weno-scheme.md) page) | **collision** with $\tau_{ij}$ |
-| $\gamma_k$, $\chi_k$ | $\gamma^{\mathrm T}_k$, $\chi^{\mathrm T}_k$ (page-local) | scale-separated measure and its normalization; **collision** with $\gamma$ and the SA $\chi$ |
-| $\delta_k$, $\delta_{k,i}$ | $\delta^{\mathrm T}_k$ (page-local) | binary stencil flag; **collision** with $\delta$ and $\delta_{ij}$ |
+| $\gamma_k$, $\chi_k$ | $\gamma^{\mathrm T}_k$, $\chi^{\mathrm T}_k$ (registry §11) | scale-separated measure and its normalization; **collision** with $\gamma$ and the SA $\chi$ |
+| $\delta_k$, $\delta_{k,i}$ | $\delta^{\mathrm T}_k$ (registry §11) | binary stencil flag; **collision** with $\delta$ and $\delta_{ij}$ |
 | $d_k$, $w_k$ | $d_k$, $\mathsf w_k$ | optimal linear and nonlinear weights ($d_k=6/10$, $3/10$, $1/10$) |
 | $q$, $C_T$ | $q$, $C_T$ | TENO exponent and cutoff |
 | $\varepsilon$ | $\epsilon_W$ | small number ($10^{-40}$ in TENO, $10^{-15}$ in the THINC fallback); **collision** with $\varepsilon$ |
-| $\beta$ (THINC) | $\beta_{\mathrm{TH}}$ (page-local) | jump steepness, 1.6; **collision** with $\beta(\boldsymbol x)$ |
-| $\alpha$, $A$, $B$, $T$ | $\alpha_{\mathrm{TH}}$, $A$, $B$, $T$ (page-local) | THINC flux auxiliaries; **collision** of $\alpha$ with the DG blending factor, of $T$ with the temperature |
+| $\beta$ (THINC) | $\beta_{\mathrm{TH}}$ (registry §11) | jump steepness, 1.6; **collision** with $\beta(\boldsymbol x)$ |
+| $\alpha$, $A$, $B$, $T$ | $\alpha_{\mathrm{TH}}$ (registry §11), $A$, $B$, $T$ (page-local) | THINC flux auxiliaries; **collision** of $\alpha$ with the DG blending factor, of $T$ with the temperature |
 | $d_i$, $X_i$, $f_\pm$ | (jump centre, normalized cell coordinate, neighbour mean and half-jump, page-local) | $d_i$ collides with the wall distance $d$ |
 | $\zeta_i$ | $\zeta_i$ (page-local) | discontinuity pattern, values $2,1,-1,0$ |
 | $N$ | $N_x$ | number of cells, not a polynomial degree |

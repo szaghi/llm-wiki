@@ -5,7 +5,7 @@ description: "Girimaji's bridging hybrid model that solves RANS-form transport e
 status: established
 aliases: [PANS, partially averaged Navier-Stokes, PANS k-ω SST, bridging model, PANS BHR-LEVM, variable-density PANS, BHR model]
 tags: [pans, hybrid-rans-les, flux-reconstruction, numerical-dissipation, separated-flow]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T11:50:00Z
 ---
 
 # Partially-averaged Navier–Stokes
@@ -151,10 +151,10 @@ diagonal and cube-root cell sizes as options but does not say which it
 uses), they compare (§2.1, Eqs. 6–7)
 
 $$f_k=C_{\mathrm{PANS}}\Big(\frac{h}{L_t}\Big)^{2/3},\qquad
-f_k=\frac{1+\tanh\big(2\pi(\Lambda-0.5)\big)}{2},\quad \Lambda=\frac{1}{1+(L_t/h)^{4/3}},$$
+f_k=\frac{1+\tanh\big(2\pi(\Lambda_{\mathrm P}-0.5)\big)}{2},\quad \Lambda_{\mathrm P}=\frac{1}{1+(L_t/h)^{4/3}},$$
 
 the second attributed to Elmiligui et al. (page-local $C_{\mathrm{PANS}}$,
-$\Lambda$). $C_{\mathrm{PANS}}=0.5$, from the authors' earlier conference
+$\Lambda_{\mathrm P}$). $C_{\mathrm{PANS}}=0.5$, from the authors' earlier conference
 study, is lower than the $1/\sqrt{C_\mu}$ of static estimates because $L_t$
 built from unresolved quantities is smaller and would raise $f_k$ too much;
 higher values gave no centreplane boundary-layer separation and too much
@@ -330,12 +330,17 @@ very-large eddy simulation, or with DES and scale-adaptive simulation, as
 hybrid families ([Wu et al. (2023)](/sources/wu-2023-b.md), §1;
 [Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §1.2). The method Wu
 et al. assess, self-adaptive turbulence eddy simulation, bridges URANS, LES
-and DNS through a resolution control function $F_r$ (page-local), which
+and DNS through a resolution control function $F_r$ (registry §11), which
 they read as the fraction of modelled kinetic energy; it is computed from
 integral, grid and Kolmogorov lengths and multiplies the eddy viscosity of
 an unchanged BSL $k$-$\omega$ model, $\mu_t=F_r\rho k/\omega$ (§2.1.1,
-Eqs. 4–6; on the [hybrid RANS/LES page](/definitions/hybrid-rans-les.md)).
-In PANS, $f_k$ and $f_\varepsilon$ enter the transport equations (above).
+Eqs. 4–6; on the [hybrid RANS/LES page](/definitions/hybrid-rans-les.md)
+and the [SATES page](/methods/self-adaptive-turbulence-eddy-simulation.md)).
+Wu et al. (2024), introducing the σ-model-weighted variant SATES-σ, again
+list PANS among the hybrid methods (§1)
+([Wu et al. (2024)](/sources/wu-2024.md)). In PANS, $f_k$ and
+$f_\varepsilon$ enter the transport equations (above); in SATES only the eddy
+viscosity is scaled.
 Mays et al. (2023) cite Girimaji's PANS paper, with Spalart et al.
 (1997), for the hybrid approach; their own model, the scale-resolving
 hybrid model of Duffal et al., computes a theoretical modelled-to-total
@@ -351,7 +356,7 @@ mean quantities, are fed fluctuating fields. Nonlinear sources such as the
 $\varepsilon$ destruction then acquire spurious correlations, so their mean
 depends on how much turbulence is resolved; the authors say the symptoms are
 usually masked by numerical dissipation, coefficient tuning or averaging
-([Haering et al. (2022)](/sources/haering-2022.md), §II D). They also recall
+([Haering et al. (2022)](/sources/haering-2022.md), §II D). They also cite
 PANS simulations of the periodic hill at about one million cells with
 second-order numerics among the successful hybrid results on that case
 (§V B, citing Razi et al. 2017).
@@ -420,8 +425,8 @@ and build theirs on DES instead
   $\rho\omega^2$, and the printed log-form Eq. 23 keeps the sources of Eq. 11
   instead of dividing them by $\omega_u$ and lacks the term
   $(\nu+\sigma_\omega\nu_tf_\omega/f_k)\,\partial_j\ln\omega_u\,\partial_j\ln\omega_u$ that
-  the change of variable produces from the diffusion; the form implemented
-  in PyFR cannot be inferred from the text.
+  the change of variable produces from the diffusion; the text does not
+  state which form PyFR implements.
 - On constant against variable $f_k$ the sources take different positions
   without testing the same question: Dzanic et al. (2022) keep $f_k$
   constant "to avoid commutation-error terms" (§2.1), Petrocchi & Barakos
@@ -476,5 +481,6 @@ and build theirs on DES instead
 - [Wang et al. (2021)](/sources/wang-2021-l.md) — §1.
 - [Heinz (2020)](/sources/heinz-2020.md) — §3.4, Eqs. (24)–(30) (PANS and PITM coefficients, neglected transport, zero- and maximum-transport forms); §4.4, Eq. (52) (consistency test against CES, resolution comparison); §5.1, Figs. 6–8 (cited periodic-hill $f_k$ recommendations and PITM grid study).
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §1, §2.1.1 Eqs. 4–6.
+- [Wu et al. (2024)](/sources/wu-2024.md) — §1 (PANS listed among hybrid methods).
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.2.
 - [Mays et al. (2023)](/sources/mays-2023.md) — §1, §2.1.2 Eqs. 9–12.

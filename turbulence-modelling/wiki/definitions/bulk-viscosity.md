@@ -5,7 +5,7 @@ description: "The bulk (volume) viscosity multiplies the velocity divergence in 
 status: established
 aliases: [volume viscosity, dilatational viscosity, second viscosity, bulk viscous Reynolds number, viscous Prandtl number, Stokes hypothesis]
 tags: [compressible, dns, implicit-les, numerical-dissipation, mhd]
-timestamp: 2026-10-28T01:51:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Bulk viscosity
@@ -350,12 +350,8 @@ similar configuration with a spectral-element dynamic model gave
   qualitative conclusion, that the viscous operators do not couple the two
   families, is unaffected.
 - **Where the two dissipations balance.** Footnote 5 and §6.1 state that the
-  bulk and shear dissipation times are equal at $P_\nu\approx1/3$; the paper
-  does not derive it. With the paper's own Stokes-limit coefficients
-  (E5), $\nu$ for the solenoidal and $\nu+\nu_b$ for the compressive modes,
-  or with the decay rates above, the compressive and solenoidal rates are
-  never equal for $\nu_b>0$ *(compiler check, not in
-  the sources)*.
+  bulk and shear dissipation times are equal at $P_\nu\approx1/3$ "based on
+  our definition"; the paper does not derive it.
 - **Where the bottleneck disappears.** The abstract says it disappears "for
   $\mathrm P\nu\approx1$", while §6.1 shows it at $P_\nu=1$ and its
   disappearance at $P_\nu\le0.1$, adding that it "ought to be

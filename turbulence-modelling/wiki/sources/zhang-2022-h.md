@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Fluids 34:125103"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physics_of_Fluids_Zhang_Dynamic_iterative_approximate_deconvolution_model_for_large-.pdf"
 tags: [les, compressible, sgs-model, approximate-deconvolution, real-gas, a-priori-a-posteriori]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Summary
@@ -45,8 +45,8 @@ stress, strain rate and vorticity, while the
 [Smagorinsky](/methods/smagorinsky-model.md) baseline is over-dissipative.
 The thermodynamic subgrid terms have little effect on velocity and
 thermodynamic spectra in these cases. The DNS
-[dissipation](/definitions/pressure-dilatation.md) used for normalization
-includes the pressure-dilatation term. [Implicit LES](/definitions/implicit-les.md)
+dissipation used for normalization includes the
+[pressure-dilatation](/definitions/pressure-dilatation.md) term. [Implicit LES](/definitions/implicit-les.md)
 of dense gases is cited in the introduction only.
 
 # Version read

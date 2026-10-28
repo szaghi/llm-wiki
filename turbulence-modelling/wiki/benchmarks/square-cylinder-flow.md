@@ -5,7 +5,7 @@ description: "Turbulent flow past a square cylinder with separation fixed at the
 status: established
 aliases: [square cylinder, square-cylinder wake, flow over a square cylinder, SQCYL]
 tags: [benchmark, separated-flow, rans, field-inversion, data-driven, dg]
-timestamp: 2026-10-27T20:45:00Z
+timestamp: 2026-10-28T02:40:00Z
 ---
 
 # Flow past a square cylinder
@@ -27,7 +27,9 @@ At $Re=10^4$ and in two dimensions the case also tests whether a
 length-scale-adaptive RANS model lets an unsteady wake develop
 ([Jiang et al. (2025)](/sources/jiang-2025.md), §4.3). At $Re=22{,}000$
 the same DNS is also the reference of a scale-resolving closure test
-([Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.6).
+([Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.6) and of a
+hybrid RANS/LES validation ([Wu et al. (2024)](/sources/wu-2024.md),
+§3.1b).
 
 ## Configurations in the sources
 
@@ -145,6 +147,23 @@ P-DNS is closer to the DNS than the LES in every row of the table except
 the rms lift, where the LES is closer *(compiler check, not in the
 sources)*.
 
+**A unified RANS/LES model as validation.**
+[Wu et al. (2024)](/sources/wu-2024.md), §3.1b, Figs. 5–6, use the case to
+validate SATES-σ, their variant of
+[self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md),
+in [PHengLEI](/software/phenglei.md) with the fourth-order
+[weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md),
+at $Re=2.2\times10^4$ on the side and $M=0.2$. The domain follows the DNS
+of Trias et al.: $10L_{\mathrm{sq}}$ upstream, $19.5L_{\mathrm{sq}}$
+downstream, a periodic span of $3.14L_{\mathrm{sq}}$; the grids have 0.66 M
+and 1.73 M cells with $y^+<1$, time steps printed as
+$\Delta t\,D/U_\infty=5\times10^{-3}$ and $2.5\times10^{-3}$ ($D$ the
+source's side), and 300 time
+units of which the last 160 are averaged. Mean velocities and resolved
+normal stresses at $x/L_{\mathrm{sq}}=0$, 1, 2, 3 agree well with the DNS
+and with the LDV data of Lyn et al. on both grids. No integral quantities
+($St$, $C_D$, $L_r$) are printed for this case.
+
 **Adjoint solvers.** [Fanizza et al. (2025)](/sources/fanizza-2025.md),
 §3.4.1, Fig. 2, use the first adjoint system of this optimization to
 compare linear solvers at a 180-vector memory budget: GMRES(180) with
@@ -174,6 +193,10 @@ deflated-restart variant in 8000; plain GMRES would need a Krylov space of
   (a three-dimensional DNS against a two-dimensional one) and are not
   compared with each other. Jiang et al. print the upper-side stations of
   Fig. 10 in the non-monotone order $x/L_{\mathrm{sq}}=0.48$, 0.12, 0.1, 0.49.
+- [Wu et al. (2024)](/sources/wu-2024.md) write the 300 time units as
+  "flow-through times ($tU_\infty/C$)" with the chord symbol $C$ of their
+  airfoil case, and normalize the profiles by $U_0$ while the set-up uses
+  $U_\infty$ (§3.1b).
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.6, write
   that P-DNS "results in lR = 1.04", the DNS value, while their Table 2
   prints 1.108 for P-DNS and 1.04 for the DNS. They place the Reynolds
@@ -185,3 +208,4 @@ deflated-restart variant in 8000; plain GMRES would need a Krylov space of
 - [Fanizza et al. (2025)](/sources/fanizza-2025.md) — §3.3, Eqs. 26–31; §3.4.1, Fig. 2; §4.2, Figs. 7–8.
 - [Jiang et al. (2025)](/sources/jiang-2025.md) — §4.3, Figs. 8–11.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.10.6, Figs. 17–18, Table 2.
+- [Wu et al. (2024)](/sources/wu-2024.md) — §3.1b, Figs. 5–6.

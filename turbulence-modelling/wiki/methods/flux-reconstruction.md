@@ -5,7 +5,7 @@ description: "Flux reconstruction (FR/CPR) corrects a degree-N discontinuous flu
 status: established
 aliases: [FR, flux reconstruction method, correction procedure via reconstruction, CPR, FR/CPR, lifting collocation penalty, Huynh flux reconstruction, ESFR, energy-stable flux reconstruction, VCJH schemes, NSFR, nonlinearly stable flux reconstruction]
 tags: [flux-reconstruction, dg, implicit-les, numerical-dissipation, entropy-stable, wmles]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:03:00Z
 ---
 
 # Flux reconstruction
@@ -84,7 +84,17 @@ $j$ of element $i$ lifted from the face jumps by the shape-dependent
 coefficients and the face areas, divided by the element volume ($\Pi_N$
 page-local; [Ims & Wang (2023)](/sources/ims-2023.md);
 [Shi & Yan (2023)](/sources/shi-2023.md)); Shi & Yan add that FR/CPR
-"unifies" DG and spectral difference.
+"unifies" DG and spectral difference. Vermeire (2024, §3, Eqs. 6–13) prints
+the same lifting-collocation-penalty form for straight-faced elements and
+takes the lifting coefficients of the DG-recovering variant (FRDG) from a
+weighted-residual identity between the correction field and the face jumps,
+which recovers DG for linear equations; other choices of the coefficients
+recover energy-stable spectral difference, spectral volume and DG
+([Vermeire (2024)](/sources/vermeire-2024.md)). The solution points are Gauss
+points, the geometry is mapped with quadratic polynomials (linear for
+$N=1$), and cross-product-form metrics are free-stream preserving with Gauss
+points and FRDG provided the mapping degree does not exceed $N$ (§3, as
+cited; see [geometric conservation law](/properties/geometric-conservation-law.md)).
 
 **One-dimensional correction functions.** Liu & Yuan (2023, §2.1–2.2,
 Eqs. 8–21) print Huynh's one-dimensional scheme on the reference element
@@ -110,7 +120,14 @@ upwind, 0.5 centred; the upwinding parameter of
 $\lambda_{\mathrm{up}}=1-2\alpha_{\mathrm T}$),
 "mimicking" the upwinding of Riemann solvers, and recover DG and spectral
 difference only through the correction-function matrices
-([Tonicello et al. (2023)](/sources/tonicello-2023.md)).
+([Tonicello et al. (2023)](/sources/tonicello-2023.md)). Lv & Ekaterinaris
+(2023, §3.3, Eqs. 23–27) write Huynh's one-dimensional scheme on the
+reference element $[0,1]$: the discontinuous flux polynomial of degree $N$ is
+corrected by $(\hat F(0)-F^D(0))g_L+(\hat F(1)-F^D(1))g_R$ with correction
+functions of degree $N+1$ satisfying $g_L(0)=1$, $g_L(1)=0$, $g_R(0)=0$,
+$g_R(1)=1$, and they cite energy-stable FR and PyFR as its extensions
+([Lv & Ekaterinaris (2023)](/sources/lv-2023.md); see Qualifications for
+their printed symmetry relation).
 
 **Node sets.** The sources place the solution points differently: Gauss
 points ("usually", Duan & Wang 2024, §3), Legendre–Gauss–Lobatto points for
@@ -130,6 +147,7 @@ not disagreements.
 | Ims & Wang (2023), §2 | hpMusic | common flux from a local Riemann problem | BR2 | explicit SSP-RK3 or implicit BDF2OPT | $N=1$, 2, reference at 4 |
 | Shi & Yan (2023), §II.A, §IV.A | NFR (in-house) | Roe | BR2 | explicit SSP-RK3 | $N=2$ (ramp), 3 (Taylor–Green) |
 | Liu & Yuan (2023), §2, §5 | 1-D research code | local Lax–Friedrichs | none (Euler) | SSP-RK3, CFL $1/(2N+1)$ | $N=2$–$5$ |
+| Vermeire (2024), §3 | not named | Rusanov with Davis wave speed | BR2 | classical RK4 (Taylor–Green), optimal explicit Runge–Kutta (channel), paired explicit Runge–Kutta (airfoil) | $N=1$–$6$ |
 
 Wang (2024, §2.2) reads the Rusanov flux as a central flux with scalar
 dissipation (the largest local wave speed) and the Roe flux as a central flux
@@ -349,7 +367,8 @@ $N=0$ shows no transition; T3A and T3A$-$ results are very close to a
 finite-volume reference on about 39 000 elements, and for T3B the FR
 solution is "remarkably closer" to experiment (§4.2, Figs. 12–13). The
 T3A skin friction at $N=5$ is nearly identical for the correction
-parameters $c_{\mathrm{SD}}$, $c_{\mathrm{DG}}$ and $c_{g2}$ (Fig. 14; see
+parameters $c_{\mathrm{SD}}$, $c_{\mathrm{DG}}$ and $c_{\mathrm{HU}}$ (the
+source's $c_{g2}$, Huynh's $g_2$; Fig. 14; see
 [spectral difference method](/methods/spectral-difference-method.md)).
 
 ## Linear eigenanalysis of FR and its time integration
@@ -448,6 +467,41 @@ amounts to extra dissipative flux terms. Evidence in the sources:
   the Taylor–Green vortex at $Re=1600$ with $N=3$ on $32^3$, $64^3$ and
   $96^3$ cells (128–384 degrees of freedom per direction), converging to the
   spectral $512^3$ reference (§III.A, Figs. 1–2).
+- **Incompressible ILES with artificial compressibility.** Vermeire
+  (2024) couples FRDG with the entropically damped artificial
+  compressibility (EDAC) formulation of Clausen, which replaces the
+  pressure Poisson equation by an explicit pressure evolution with a
+  diffusion term that damps pressure waves,
+  $$\partial_tp+u_j\partial_jp+\frac{1}{M_{\mathrm{AC}}^2}\partial_ju_j=\frac{1}{Re}\,\partial_j\partial_jp$$
+  (Eq. 1; $M_{\mathrm{AC}}$, page-local, the "incompressibility factor",
+  smaller meaning stricter). Rewritten in dimensional flux form under
+  $\partial_ju_j=0$ (Eqs. 2–5), the pressure flux is $u_j(p+\zeta)$ with
+  $\zeta=1/M_{\mathrm{AC}}^2$, $p$ kinematic, and the pressure-diffusion
+  coefficient is $\nu$, so that the system is fully explicit, without
+  pseudo-time sub-iterations or global solves (§1–§2). The scheme runs as implicit LES, its
+  interface upwinding "akin to a numerical dissipation stabilized
+  under-resolved DNS" (§1). At fixed degrees of freedom, accuracy rises with
+  $N$ on the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at
+  $Re=1600$ (64 and 128 degrees of freedom per direction, $N=1$–6), on the
+  wall-resolved [channel](/benchmarks/turbulent-channel-flow.md) at
+  $Re_\tau=395$ (one quarter and one half of the DNS degrees of freedom per
+  direction) and on the [SD7003 airfoil](/benchmarks/sd7003-airfoil.md) at
+  $Re_c=60{,}000$, $\alpha=8^\circ$ (§4, Figs. 3–21, Table 3). $N=1$ is
+  over-dissipative: on the vortex the dissipation rate is over-predicted
+  while enstrophy is under-predicted, so most of the dissipation is
+  numerical, and in the channel the mean velocity and drag are over-predicted
+  (§4.1–§4.2). The volume-averaged divergence error falls roughly linearly
+  with $M_{\mathrm{AC}}$ and also with $N$: the medium-resolution $N=6$ run at
+  $M_{\mathrm{AC}}=1/5$ has less divergence error than $N=1$ at $1/40$
+  (Figs. 7–8). Instabilities appear at high degree: oscillations after the
+  dissipation peak at $N=5$ and divergence at $N=6$ with
+  $M_{\mathrm{AC}}=1/5$ and $1/10$ on the coarse vortex mesh, and most channel
+  runs at $N=5$, 6 unstable, which the author attributes to numerical
+  dissipation that "may not be sufficient for ILES" (§4.1–§4.2). The
+  conclusion is that the combination suits low and moderately resolved
+  implicit LES with $N\le4$ (§5); no dealiasing or filtering is mentioned.
+  Details on [implicit LES](/definitions/implicit-les.md) and
+  [numerical dissipation](/properties/numerical-dissipation.md).
 - **Cost against finite volumes**, as relayed by
   [Saini et al. (2023)](/sources/saini-2023.md), §1, from earlier studies:
   fifth-order PyFR was more accurate than a commercial finite-volume code but
@@ -605,8 +659,13 @@ maximum-principle test by a KXRCF-type pre-detection, which stops the shock
 cell of a steady detonation from switching between FR and finite volume
 and lets the solution converge (Table 2); details and both sensors on
 [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)
-and [shock sensors](/definitions/shock-sensor.md). At equal degrees of
-freedom their $N=2$ FR with second-order subcells resolves one-dimensional
+and [shock sensors](/definitions/shock-sensor.md). Lv & Ekaterinaris (2023,
+§4.2) relay that in the limiter-assisted FR LES of the NASA CRM by Wang &
+Rahmani "only 0.3% of elements have the limiter activated", within their
+caution that limiter dissipation can kill small scales in LES and that
+under-resolved turbulence can be mistaken for shocks (see the
+[NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)). At
+equal degrees of freedom Liu & Yuan's $N=2$ FR with second-order subcells resolves one-dimensional
 detonations without the oscillations behind the front that fifth-order
 WENO-JS and WENO-Z show (§5.5, Fig. 9); the flows are inviscid and laminar.
 
@@ -745,6 +804,18 @@ laminar circular cylinder, with errors they call similar (§3.1).
 
 ## Qualifications
 
+- Lv & Ekaterinaris (2023) print the symmetry of the correction functions as
+  $g_L(\xi)=g_R(1/2-\xi)$ (Eq. 25). With their own end conditions (Eq. 24)
+  this would require $g_R(1/2)=1$ and $g_R(-1/2)=0$, which those conditions
+  do not give; the relation consistent with Eq. 24 on $[0,1]$ is
+  $g_L(\xi)=g_R(1-\xi)$ *(compiler check, not in the sources)*.
+- Vermeire (2024) prints the Taylor–Green initial pressure with
+  $\cos(2z+2)$ (Eq. 17), while the pressure that satisfies the Poisson
+  equation of the printed velocity field carries $(\cos2z+2)$
+  *(compiler check, not in the sources)*; the ratio of specific heats in
+  that equation is not defined for the incompressible system. The author
+  calls $M_{\mathrm{AC}}$ the "incompressibility factor" in §2 and §4 and
+  the "compressibility factor" in §4.3.
 - Vandenhoeck et al. (2022) report the instability of high-order SST
   without the logarithmic variable from experience, with no figure (§1.1).
   Between Eqs. (82) and (83) they print the same face-solution symbol
@@ -830,3 +901,5 @@ laminar circular cylinder, with errors they call similar (§3.1).
 - [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §2.1 Eqs. 4–11; §2.2 Eqs. 13–23; §3 Figs. 2, 4–9; §4.2–§4.3; §5; App. Figs. 29–30.
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — Table 1, Table 2, §III, §VI 1a, §VI 1c.
 - [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §6.2, Fig. 10.
+- [Vermeire (2024)](/sources/vermeire-2024.md) — §1–§2, Eqs. (1)–(5) (EDAC); §3, Eqs. (6)–(13) (FRDG in lifting-collocation-penalty form, metrics, Rusanov/BR2, time integrators); §4.1–§4.3, Figs. 3–21, Tables 1–3 (Taylor–Green, channel, SD7003); §5; Eq. (17).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §3.3, Eqs. (23)–(27) (one-dimensional FR, correction functions, energy-stable FR, PyFR); §4.2 (limiter-assisted FR LES of the CRM, as cited).

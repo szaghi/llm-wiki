@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 502:112814"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Journal_of_Computational_Physics_Husson_A_comprehensive_framework_for_robust_hybrid_RANSLES_simulati.pdf"
 tags: [hybrid-rans-les, des, lattice-boltzmann, immersed-boundary, wall-model, spalart-allmaras]
-timestamp: 2026-10-27T15:53:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -92,7 +92,7 @@ inhibition functions; $c_0$ physical sound speed (page-local; Notation map).
 18. Isotropy makes the lattice grid locally much finer than the Navier–Stokes grid: $\Delta z_{\mathrm{NS}}\approx10\Delta z_{\mathrm{LBM}}$ for $0\le x/h\le1$; 61 000 against 5000 points in the plane $x=0$; 44.7 million against 3.9 million nodes in total (§4.2, Table 1). **Shown**
 19. Three-element airfoil: slat and flap boundary layers stay RANS and the eddy viscosity is destroyed quickly near trailing edges; the flap separation is not grid-induced (§4.3.2, Fig. 13). **Shown**
 20. Three-element airfoil: mean $C_p$ of ZDES-LBM and RANS-LBM agrees very well with the experiment (§4.3.2, Fig. 14). **Shown**
-21. The flap suction-side topology differs (mild separation in ZDES-LBM, thin in the wall-resolved LES, massive in PIV) and the pressure taps do not match the PIV, suggesting several topologies in the experiment (§4.3.2, Figs. 14–15). **Stated**
+21. The flap suction-side topology differs (mild separation in ZDES-LBM, thin in the wall-resolved LES, massive in PIV) and the pressure taps do not match the PIV, which the authors take as a sign that several topologies occurred in the experiment, consistent with Arnott et al. on another airfoil, as they cite (§4.3.2, Figs. 14–15). **Stated**
 22. The slat shear layer shows a small delay of instability ($k_{2D}$ overpredicted in the mixing layer, underpredicted near the cusp), attributed not to the model since "the exact same phenomenon" occurs in wall-modelled lattice Boltzmann LES without RANS eddy viscosity [95] (§4.3.2, Figs. 17–18). **Shown** (attribution **Stated**)
 23. Slat spectra agree with the wall-resolved LES below about 10 kHz ($St\approx10$); the drop above at points $S_4$, $S_5$ is due to local grid resolution (§4.3.2, Fig. 19). **Shown**
 24. ZDES mode 2 (2020) with a linearized-wall-law immersed boundary in lattice Boltzmann handles flows with attached and separated regions and is a "fair alternative" to Navier–Stokes methods and to wall-modelled LES in lattice Boltzmann, especially for aeroacoustics (§5). **Stated**

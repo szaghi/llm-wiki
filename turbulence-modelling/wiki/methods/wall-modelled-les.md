@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Wall-modelled large-eddy simulation"
-description: "LES that resolves the outer-layer eddies and replaces the near-wall viscous region by a wall-stress model: its definition and cost advantage, the grid-dependent error scaling of mean quantities, the dominance of SGS-model errors, non-monotonic grid convergence, the insufficiency of wall-mesh criteria, grid adaptation, immersed-boundary coupling and wall-slip models, and demonstrations on aircraft, fan stages and separated flows."
+description: "LES that resolves the outer-layer eddies and replaces the near-wall viscous region by a wall-stress model: its definition and cost advantage, the grid-dependent error scaling of mean quantities, the dominance of SGS-model errors, grid convergence set by the matching height and its non-monotonic cases, the insufficiency of wall-mesh criteria, grid adaptation, immersed-boundary coupling, wall-slip models, and demonstrations."
 status: established
 aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions, IBMLES, immersed boundary-modelled LES]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-28T01:59:00Z
+timestamp: 2026-10-28T07:11:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -72,6 +72,19 @@ layer, and uses the second kind: an SST-IDDES whose RANS inner layer is
 solved on an auxiliary wall grid embedded in the LES mesh and returns the
 wall stress and heat flux as Neumann conditions (see
 [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
+[Hu et al. (2024)](/sources/hu-2024.md) (§1) use the same two-way division,
+"hybrid RANS/LES or wall-stress LES" after the reviews they cite, and
+consider only the wall-stress kind.
+
+In the historical account of [Kim & Leonard (2024)](/sources/kim-2024-b.md)
+(§2.5, §3.1, §5) the first channel LES were wall-modelled in this sense:
+Deardorff (1970) and Schumann (1975) replaced no slip by log-law-based wall
+conditions, and Moin et al. (1978) were the first to compute the wall region
+explicitly; half a century later, "a well-designed LES, especially
+wall-modeled LES" serves as a design tool for high-lift aircraft (Goc et
+al. 2021, as cited). [Wu et al. (2024)](/sources/wu-2024.md) (§1) cite
+airfoil WMLES among the scale-resolving options for high-lift stall before
+choosing a hybrid method instead.
 
 ## Wall models
 
@@ -125,7 +138,7 @@ $\tau_w=(\mu_w+\mu^w_{\mathrm{sgs}})\,\partial u_\parallel/\partial y$ and
 $q_w=(\lambda_w+\lambda^w_{\mathrm{sgs}})\,\partial T/\partial y$, evaluated with the resolved
 wall gradients ($u_\parallel$ the wall-parallel velocity, $\lambda$ the
 conductivity, $\mu^w_{\mathrm{sgs}}$, $\lambda^w_{\mathrm{sgs}}$ the wall
-SGS increments, page-local). A resolution detector, computed from the
+SGS increments, registry §11). A resolution detector, computed from the
 *resolved* wall stress, switches the wall model off wherever all three of
 $\Delta x^+_w<40$, $\Delta y^+_w<3$, $\Delta z^+_w<15$ hold (thresholds from
 Piomelli and from Georgiadis et al., as cited); there
@@ -279,7 +292,7 @@ $$\nu_t^{\mathrm{hyb}}=\frac{2\nu_t^{\mathrm{RANS}}\langle\tilde S_{ij}\rangle\l
 with $R^{\mathrm{res}}_{ij}=\langle\tilde u_i\tilde u_j\rangle-\langle\tilde u_i\rangle\langle\tilde u_j\rangle$
 the resolved Reynolds stress, $\langle\cdot\rangle$ a time average and $\tilde{\ }$
 the Favre filter of their weakly compressible lattice Boltzmann formulation
-(page-local $\nu_t^{\mathrm{hyb}}$, $\nu_t^{\mathrm{RANS}}$, $R^{\mathrm{res}}_{ij}$).
+($\nu_t^{\mathrm{hyb}}$, $\nu_t^{\mathrm{RANS}}$, $R^{\mathrm{res}}_{ij}$ as in registry §11).
 Contracting the condition $R^{\mathrm{res}}_{ij}-2\nu_t^{\mathrm{hyb}}\langle\tilde S_{ij}\rangle=-2\nu_t^{\mathrm{RANS}}\langle\tilde S_{ij}\rangle$
 with $\langle\tilde S_{ij}\rangle$ gives exactly this formula: the total
 (resolved plus modelled) stress, projected on the mean strain, equals the
@@ -300,6 +313,20 @@ dynamic slip wall is formulated in the review of Bose & Park (2018) and the
 volume-filtering slip approach by Rickard & Kasbaoui (2026), the next two
 sections; both are compared on the [slip-wall models](/methods/slip-wall-model.md)
 page.
+
+A stochastic member of the family is reviewed by [Chen et al. (2024b)](/sources/chen-2024-c.md)
+(§3.3, Figs. 13–16): [one-dimensional turbulence](/methods/one-dimensional-turbulence.md)
+(ODT) as a near-wall closure of LES. In the coupling of Schmidt et al.
+(2003, as cited) the ODT momentum flux, filtered in time and space, gives
+the SGS stresses near the wall, while LES pressure and velocity drive the
+ODT lines over an overlap region several LES cells thick; it was validated
+in channel flow at $Re_\tau=395$ to 10 000 against DNS. The ODT wall model of
+Freire & Chamecki (2021, as cited) resolves near-wall fluctuations within
+the first LES cell of smooth and rough channels, at a cost "considerably
+higher" than LES alone. The review states that the ODT region is an
+embedded near-wall mesh "closely resembling the wall-stress model", but
+that transport in it comes from stochastic eddy events at many scales and
+frequencies, not from gradient diffusion (§3.3, Fig. 13).
 
 ## Slip, virtual-wall and control-based conditions
 
@@ -575,6 +602,108 @@ imposed on the slant, because the flow topology changes between the grids.
   grids $\Delta/R=1/5$ to $1/40$ ($R$ the radius), with both the equilibrium
   and the building-block-flow wall model and dynamic Smagorinsky; total
   errors are 4–12 %.
+- **Separated flow with the wall-stress error removed.** [Zhou & Bae (2024)](/sources/zhou-2024-b.md)
+  rerun the [Gaussian bump](/benchmarks/gaussian-bump.md) ($Re_L=2\times10^6$)
+  in an incompressible energy-conserving finite-volume code on four
+  isotropic grids (1.94 M to 993 M cells), with the wall model replaced by a
+  Neumann condition imposing the DNS mean wall stress, so that only the SGS
+  model and the grid act (§2.2, §3.1, Figs. 4, 8). The separation length
+  converges monotonically towards the reference $L_s/L=0.32$ ($L_s$ the
+  bubble length, $L$ the bump width, page-local) only with the
+  [Vreman model](/methods/vreman-model.md) at constant 0.025; with the
+  [anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md)
+  (constant 0.3) and the Vreman model at 0.07 it is non-monotonic, "leading
+  to a spurious diminishment or shrinking of the separation bubble upon mesh
+  refinement", which they say agrees with Whitmore et al. and Agrawal et al.
+  (2022) and ties the non-monotonicity to the SGS model. The
+  mixed-similarity model ($C_s=0.13$, [scale-similarity model](/methods/scale-similarity-model.md))
+  over-predicts the bubble but gives sizes consistent across grids, and the
+  dynamic Smagorinsky model never separates on any grid in their solver,
+  as Iyer & Malik (as cited) also found, whereas Whitmore et al. and
+  Agrawal et al. (2022) report separation with it; the authors restrict the
+  result to their solver and set-up and name clipping, filtering, mesh
+  topology and numerics as possible causes (§3.1).
+
+## Grid convergence set by the matching height
+
+[Hu et al. (2024)](/sources/hu-2024.md) ask what grid convergence means for
+a method run, by construction, on grids that are coarse in viscous units,
+and which wall-model parameter controls it.
+
+**The proposition.** A wall-stress model is an input–output system: LES data
+at $y=h_{\mathrm{wm}}$ in, wall stress out, applied as a Neumann condition.
+Once the flow at $h_{\mathrm{wm}}$ is resolved, refinement changes neither the
+input nor the output and only adds small scales between the wall and
+$h_{\mathrm{wm}}$, not in the outer 90 % of the layer; with the
+[attached-eddy](/definitions/attached-eddy-hypothesis.md) scaling of eddy
+size with wall distance, convergence should start at $\Delta_i=C_{\mathrm H}h_{\mathrm{wm},i}$
+with a ratio $C_{\mathrm H}$ (page-local; the source's $C$) possibly common to
+all matching heights, "particularly true" for algebraic and ODE models whose
+input and output are perfectly correlated (§3, Fig. 2). By analogy with
+explicitly filtered LES, whose solution becomes grid-independent when the
+filter width is held fixed, holding $h_{\mathrm{wm}}$ fixed should give a
+grid-independent WMLES whose remaining error the authors attribute to the
+wall model, so that the converged state can depend on $h_{\mathrm{wm}}$ and
+"grid-converged WMLES is not necessarily accurate" (§3, §7). An
+order-of-magnitude argument (§2, Eqs. 1–4) places the convergence of
+$O(\delta)$ quantities at $\delta/\Delta\sim O(10)$, i.e.
+$\Delta/\delta_\nu\sim O(Re_\tau/10)$ (see
+[grid-point requirements](/results/les-grid-point-requirements.md)).
+
+**The test.** [CharLES](/software/charles.md) (second-order central finite
+volume, third-order Runge–Kutta, [Vreman](/methods/vreman-model.md) SGS stress
+and heat flux) with the algebraic [equilibrium wall model](/methods/equilibrium-wall-model.md),
+on isotropic grids with $h_{\mathrm{wm}}$ at cell centres, in three attached
+flows (§4–5, Tables 1–2): a [channel](/benchmarks/turbulent-channel-flow.md)
+at $Re_\tau=1000$ ($h_{\mathrm{wm}}=0.1\delta$, $0.2\delta$; $\Delta^+$ from 400 to
+11.8); Spalart's boundary layer under a free-stream velocity vector rotating
+at constant rate ($Re_l=767$, page-local, the reference DNS of Spalart 1989;
+$h_{\mathrm{wm}}=0.05$–$0.15\delta$); and a channel at $Re_\tau=934$ suddenly
+subjected to a spanwise pressure gradient ten times the streamwise one
+(DNS of Lozano-Durán et al., as cited). Errors are integrals over
+$h_{\mathrm{wm}}<y<\delta$, normalized by the DNS maximum (Eqs. 7–10, 12,
+after Lozano-Durán & Bae).
+
+- **Mean wall stress.** In the channel the error plateaus from
+  $\Delta/\delta=0.08$ for $h_{\mathrm{wm}}=0.2\delta$; against
+  $\Delta/h_{\mathrm{wm}}$ the curves collapse better, with onset near 0.4
+  (§6.1, Fig. 3). In the rotating-free-stream layer the converged stress is
+  more sensitive to $h_{\mathrm{wm}}$ and more accurate for smaller
+  $h_{\mathrm{wm}}$ (the unidirectional assumption of the wall model), with
+  onset near $\Delta/h_{\mathrm{wm}}\approx0.3$ (Fig. 4); the transient
+  channel behaves likewise (Fig. 5). All three share the requirement
+  $\Delta/h_{\mathrm{wm}}<0.4$, "comparable to the condition to avoid the
+  [log-layer mismatch](/definitions/log-layer-mismatch.md) problem".
+- **Mean velocity and flow direction.** They converge at coarser grids for
+  larger $h_{\mathrm{wm}}$ and collapse better against $\Delta/h_{\mathrm{wm}}$
+  (§6.2, Figs. 7, 9, 11). Below $h_{\mathrm{wm}}$, however, the velocity
+  gradient obtained from the mean momentum balance,
+  $\partial_y\langle u\rangle=\big(\tau_w(1-y/\delta)+\rho\langle u'v'\rangle\big)/(\mu+\mu_t)$
+  (Eq. 11, with the resolved shear stress), keeps growing with every
+  refinement, so convergence "will hardly be achieved below the wall model
+  matching height" (Fig. 6).
+- **Reynolds stress.** The streamwise r.m.s. velocity error is an order of
+  magnitude larger than the mean-velocity error on the same grid, is not
+  converged where the mean flow is, and collapses only marginally better
+  (channel) or worse (transient channel) against $\Delta/h_{\mathrm{wm}}$:
+  "the matching location has no control over convergence of the Reynolds
+  stress" (Figs. 8, 10, 12). A spectral split into attached, small-scale and
+  detached eddies shows the attached-eddy energy grid-converged and the
+  small-scale energy not; capturing about 80 % of the latter needs
+  $\Delta^+\approx50$ at $Re_\tau=1000$, where WMLES "starts to approach WRLES"
+  (Figs. 13–14).
+
+**Strategies.** Shrinking $h_{\mathrm{wm}}$ with the grid converges WMLES
+towards wall-resolved LES and DNS, at prohibitive cost at high $Re$; holding
+it fixed converges at much coarser resolution but keeps an
+$h_{\mathrm{wm}}$-dependent wall-model error, "reminiscent of RANS or
+explicitly filtered LES"; to converge on a target grid the authors propose
+an $h_{\mathrm{wm}}$ "somewhat larger than the target grid spacing" and a wall
+model of low sensitivity to the matching location (§7). Separated layers
+and grid anisotropy are left open. The proposition answers, for attached
+flows and mean quantities, the demonstration of mesh-independent
+quantities of interest that Mani & Dorgan (2023) list as a prerequisite
+(section on open problems below).
 
 ## Wall-mesh criteria are necessary, not sufficient
 
@@ -703,6 +832,30 @@ $C_m$, $\alpha$, $q_c^2$). Their findings:
 The wall model and the SGS model ([large-eddy simulation](/definitions/large-eddy-simulation.md)) act on the
 same under-resolved first cells.
 
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) isolate the SGS model on the
+  separated [Gaussian bump](/benchmarks/gaussian-bump.md) by feeding the
+  DNS mean wall stress through three idealized wall conditions (a Neumann
+  condition and two effective-wall-eddy-viscosity conditions, without and
+  with the pressure gradient; see the
+  [equilibrium](/methods/equilibrium-wall-model.md) and
+  [non-equilibrium](/methods/nonequilibrium-wall-model.md) wall-model pages).
+  The first-cell velocity, the input of any wall model, differs between SGS
+  models over the whole domain, not only on the leeward side, so "the
+  performance of wall models can be sensitive to the choice of the SGS
+  model" (§3.1, Fig. 7). The dynamic Smagorinsky model's SGS activity
+  $s_a=\langle\Pi\rangle/(\langle\Pi\rangle+\langle\varepsilon_\nu\rangle)$
+  ($\Pi$ the registry SGS flux, $\varepsilon_\nu$ the resolved viscous
+  dissipation; $s_a$, $\varepsilon_\nu$ page-local, as on the Source page) drops in the
+  wall-adjacent cells, which amplifies the first-cell velocity (§3.1,
+  Fig. 11). The wall condition changes the result less than the SGS model,
+  its effect being "mainly limited to the skin friction on the wall" (§3.2,
+  §4). On cells of aspect ratio $4{:}1{:}2$ at equal volume the Vreman and
+  mixed-similarity bubbles degrade, while the anisotropic
+  minimum-dissipation model, the only one of the set not built on the cube
+  root of the cell volume, is barely affected (§3.3, Figs. 17–20); the
+  attribution to the filter-width definition is the authors'
+  interpretation.
+
 - Maeyama & Kawai (2023, §5.4, App. D) find that the SGS eddy viscosity,
   not the low-pass filter, sets the width of the near-wall structures that
   form below $h_{\mathrm{wm}}$, for the SMS and the Smagorinsky models alike
@@ -758,8 +911,8 @@ same under-resolved first cells.
   which lowers the excessive near-wall upwind dissipation of under-resolved DG
   implicit LES, "can be interpreted as a wall model approach for standard DG
   ILES". The method models no wall stress and uses no matching height; their
-  channel runs at $Re_\tau=392.24$ tabulate near-wall resolutions of 3.00 to
-  13.64 wall units (§4, Table 1). The term is used
+  channel runs at $Re_\tau=392.24$ tabulate near-wall resolutions of 3.0 to
+  13.6 wall units (§4, Table 1). The term is used
   here in a sense different from the wall-stress models of this page.
 - **A learned closure in place of a wall model.** [Sirignano & MacArt (2023)](/sources/sirignano-2023.md)
   (§4.3) run LES of bluff bodies at $Re_0=1000$–2000 whose mesh does not
@@ -880,7 +1033,7 @@ underresolution in that region is a choice and not an error", so the target
 spacing of every cell between the wall and $h_{\mathrm{wm}}$ is reset, in all
 three directions, to its value at $h_{\mathrm{wm}}$ (a rule credited to Toosi,
 personal communication; §3.3). With the Vreman constant raised to 0.11
-("previous experience" in the code), Spalding's law and $h_{\mathrm{wm}}=0.1h$
+("previous experience" in the code), Spalding's law and $h_{\mathrm{wm}}=0.1\delta$
 in channel flow at $Re_\tau=2000$, the mean velocity agrees with DNS above
 $h_{\mathrm{wm}}$ on the fourth grid ($l=3$) and the Reynolds stresses on the
 fifth, $\langle u'u'\rangle$ not exactly, which they attribute to WMLES rather
@@ -1250,6 +1403,28 @@ implicit-LES coupling.
 
 ## Qualifications
 
+- **Printed onset of Hu et al. (2024).** §6.1 states that for
+  $h_{\mathrm{wm}}=0.1\delta$ wall-stress convergence "started at about
+  $\Delta/\delta=0.02$" and that the onset sits at a common
+  $\Delta/h_{\mathrm{wm}}\approx0.4$; $\Delta/\delta=0.02$ with
+  $h_{\mathrm{wm}}=0.1\delta$ is $\Delta/h_{\mathrm{wm}}=0.2$, while for
+  $h_{\mathrm{wm}}=0.2\delta$ the printed $\Delta/\delta=0.08$ does give 0.4
+  *(compiler check, not in the sources)*. In their Table 2 the
+  $h_{\mathrm{wm}}=0.15\delta$ column is three times the $0.05\delta$ column on
+  rows 2–6 but 2.5 times on row 1 (241.9 against 96.7) *(compiler check, not
+  in the sources)*. They convert a flow-angle error $e(\gamma)=0.01$, about
+  $0.2^\circ$, into "approximately 0.3% error in $U$"; a $0.2^\circ$ rotation
+  changes the velocity component perpendicular to the original direction by
+  $\sin0.2^\circ\approx0.35$ % of the magnitude and the parallel one by about
+  $6\times10^{-6}$ *(compiler check, not in the sources)*.
+- Zhou & Bae (2024) call the hybrid DNS–wall-resolved-LES reference of Uzun
+  & Malik, as cited, "DNS" throughout. The dynamic Smagorinsky results
+  above (separation in Agrawal et al. 2022, none in Zhou & Bae) come from
+  different solvers (compressible CharLES on Voronoi grids against an
+  incompressible finite-volume code) and different wall treatments (Zhou &
+  Bae impose the reference mean wall stress); Zhou & Bae attribute the
+  difference to such factors without testing them, so it is recorded as a
+  set-up difference, not as a contradiction.
 - Heinz (2020, §3.1) states, citing the literature, that adequate
   resolution of the boundary layer makes WM-LES "orders of magnitude more
   expensive than original DES"; no figures are given.
@@ -1371,3 +1546,8 @@ implicit-LES coupling.
 - [Li et al. (2022)](/sources/li-2022-k.md) — §III B (periodic-hill WMLES reference).
 - [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §1; §2.2–2.3, Eqs. (2.8)–(2.20); §3, Table 1; §4.1–4.3, Figs. 4–7; §5.2–5.4, Eq. (5.5), Figs. 10, 14–17; §6.1–6.2, Figs. 18–22; §7; Apps. C–D, Figs. 27–28, 32–33.
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §I.1a; §II, Tables 1–2; §III, Figs. 4, 6; §IV, Figs. 12, 23–25, 33; §V; §VI.1, §VI.3–VI.4.
+- [Hu et al. (2024)](/sources/hu-2024.md) — §1–3, Eqs. (1)–(4), Figs. 1–2; §4–5, Eq. (5), Tables 1–2; §6.1–6.2, Eqs. (7)–(13), Figs. 3–14; §7.
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.1–2.3, Eqs. (1)–(9), Table 1; §3.1–3.3, Figs. 4–20; §4.
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.5; §3.1; §5 (history).
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — §3.3, Figs. 13–16 (ODT as a near-wall LES closure).
+- [Wu et al. (2024)](/sources/wu-2024.md) — §1 (passing).

@@ -5,7 +5,7 @@ description: "Linear turbine cascades as transition, loss, vortex and mesh-adapt
 status: established
 aliases: [turbine cascade, linear turbine cascade, LPT cascade, T106A, T106C, T106c, T108, T161, MTU T161, VKI LS89, LS89 vane, Pak-B cascade, Pack B, L2F, tip-leakage turbine cascade, Arts transonic turbine cascade]
 tags: [benchmark, turbomachinery, transition, implicit-les, rans, boundary-layer, des, mesh-adaptation]
-timestamp: 2026-10-28T02:13:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Turbine cascades (T106, T161, VKI LS89)
@@ -98,8 +98,8 @@ The comparisons are graphical; no loss or separation length is printed.
 turbulent end-wall boundary layers generated synthetically (see
 [inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
 The LES matches the measured blade loading, including the plateau of the
-separation bubble between $x/C_{ax}=0.7$ and 0.9 (page-local: axial chord
-$C_{ax}$), the midspan wake loss within the confidence intervals, and the
+separation bubble between $x/c_{ax}=0.7$ and 0.9 ($c_{ax}$ the axial
+chord, registry §11), the midspan wake loss within the confidence intervals, and the
 secondary loss cores (§4.1–4.2, Figs. 7, 9–10). Both RANS models miss the
 bubble and underestimate the midspan mixed-out loss by 35% (SST) and 29%
 (SSG/LRR-ω, see [Reynolds-stress model](/methods/reynolds-stress-model.md)),
@@ -114,7 +114,7 @@ models for the midspan transition (§5).
 tune the inlet length scale to the leading-edge heat transfer and then
 predict the suction-side onset reasonably to very well at both Reynolds
 numbers, with pressure-side transition at $Tu=6\%$ and high Reynolds number
-as measured; the shock, impinging at $x/C_{ax}=0.83$, fixes transition
+as measured; the shock, impinging at $x/c_{ax}=0.83$, fixes transition
 only at low $Tu$ (Mur247). Transition develops too quickly, "as in most RANS
 results in the literature". [Wang (2024)](/sources/wang-2024-b.md), §4.3,
 Figs. 13–17, finds that $M_{is}$ is insensitive to resolution and, after
@@ -182,7 +182,7 @@ cites them.
   measured by the Zweifel coefficient: 1.15 for Pack B and 1.59 for L2F
   (Fig. 3b, after McQuilling 2007). In strongly favourable gradients a
   boundary layer is "likely to eventually relaminarize" once the acceleration parameter
-  $K=(\nu/U_e^2)\,dU_e/ds$ exceeds $3.5\times10^{-6}$ ($U_e$ the edge
+  $K_{\mathrm{acc}}=(\nu/U_e^2)\,dU_e/ds$ exceeds $3.5\times10^{-6}$ ($U_e$ the edge
   velocity, $s$ the surface coordinate, page-local; §3.3.1, Eq. 1).
 - *Inflow turbulence and heat transfer on HPT vanes.* In LES of an HPT
   vane at the isentropic Reynolds number (page-local, as printed)

@@ -9,7 +9,7 @@ year: 2022
 venue: "Parallel Comput. 114:102982"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Parallel_Computing_Fischer_NekRS_a_GPU-accelerated_spectral_element_NavierStokes_solver.pdf"
 tags: [software, gpu, spectral-element, incompressible-flow]
-timestamp: 2026-10-27T15:53:00Z
+timestamp: 2026-10-28T07:11:00Z
 ---
 
 # Summary
@@ -53,8 +53,8 @@ arXiv preprint arXiv:2104.05829v1 [cs.PF], 12 April 2021 (footer
 "Preprint submitted to arXiv, April 14, 2021"), 15 pages, all read. Title
 and the eleven authors match the Crossref record of the version of record
 (Parallel Comput. 114:102982, 2022) up to capitalization; the preprint
-prints no DOI. The published article may differ in tables and numbers;
-claims and locators here are those of the preprint.
+prints no DOI. Claims, numbers and locators here are those of the
+preprint.
 
 # Key claims
 

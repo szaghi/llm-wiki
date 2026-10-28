@@ -9,7 +9,7 @@ year: 2024
 venue: "Arch. Comput. Methods Eng. 31:973–1021"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Archives_of_Computational_Methods_in_Engineering_Idelsohn_The_P-DNS_Method_for_Turbulent_Fluid_Flows_An_Overview.pdf"
 tags: [les, sgs-model, data-driven, dns, variational-multiscale, review]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -31,9 +31,8 @@ velocities averaged over the RVE: the analogue of the subgrid stress of
 assumption. Internal RVEs under jump-periodic shear are indexed by two
 shear Reynolds numbers obtained by rotating the coarse strain; wall RVEs
 are Couette-like; a time-developing boundary-layer RVE with a velocity
-enrichment targets developing boundary layers on very coarse meshes, a
-data-based counterpart of [wall functions](/methods/rans-wall-function.md)
-(a term the paper does not use).
+enrichment targets developing boundary layers on very coarse meshes (the paper
+does not relate it to [wall functions](/methods/rans-wall-function.md)).
 A memory model relaxes the stress toward the database equilibrium.
 
 The examples (from earlier papers) are 1-D Poiseuille and Couette flows on
@@ -66,7 +65,7 @@ the authors' earlier papers, summarized here.
 Page-local symbols: $u^>_i$, $p^>$ the coarse (piecewise linear) and
 $u^<_i$, $p^<$ the fine velocity and pressure (the source's $u^c_i$,
 $u^f_i$; a discretization split, not a filter); $\mathcal T_{ij}=\rho u^<_iu^<_j$
-the inertial stress tensor and $\hat{\mathcal T}_{ij}$ its average
+the inertial stress tensor (registry §11, as are $\mathcal T^{\mathrm{eq}}_{ij}$ and $t_r$) and $\hat{\mathcal T}_{ij}$ its average
 over a nodal domain or an RVE; $H$ the RVE side; $\mathrm{Id}_{ij}=G_{ij}H^2\rho/\mu$
 the instability index tensor ($G_{ij}$ the coarse velocity gradient) and
 $\mathrm{Id}_1$, $\mathrm{Id}_2$ its two reduced parameters; $t_r$,
@@ -135,7 +134,7 @@ database equilibrium for the present coarse state.
 |---|---|---|
 | $u^c_i$, $p^c$; $u^f_i$, $p^f$ | $u^>_i$, $p^>$; $u^<_i$, $p^<$ | coarse (piecewise linear) and fine parts; a discretization split, no filter kernel |
 | $T_{ij}$, $T^c_{ij}$, $T^f_{ij}$ | $\sigma_{ij}$, $\sigma^>_{ij}$, $\sigma^<_{ij}$ | viscous stress $\mu(\partial_ju_i+\partial_iu_j)$; **collision:** $T$ is not the temperature |
-| $T^\rho_{ij}=\rho u^f_iu^f_j$, $\widehat T^\rho_{ij}$ | $\mathcal T_{ij}$, $\hat{\mathcal T}_{ij}$ (page-local) | positive trace, density included; **collision:** the hat is a spatial average, not the test filter |
+| $T^\rho_{ij}=\rho u^f_iu^f_j$, $\widehat T^\rho_{ij}$ | $\mathcal T_{ij}$ (registry §11), $\hat{\mathcal T}_{ij}$ (page-local) | positive trace, density included; **collision:** the hat is a spatial average, not the test filter |
 | $\widetilde T^\rho_{ij}=T^\rho_{ij}H^2\rho/\mu^2$ | (dimensionless $\mathcal T_{ij}$) | **collision:** tilde is not a Favre filter |
 | $\overline{\widetilde T}{}^\rho_{ij}$ | $\mathcal T^{\mathrm{eq}}_{ij}$ | database equilibrium stress; **collision:** overbar is not the LES filter |
 | $G_{ij}$, $G^s_{ij}$ | $\partial_ju^>_i$, $S^>_{ij}$ | coarse velocity gradient and strain rate |

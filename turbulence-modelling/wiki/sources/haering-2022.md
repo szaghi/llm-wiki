@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Rev. Fluids 7:014603"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physical_Review_Fluids_Haering_Active_model_split_hybrid_RANSLES.pdf"
 tags: [hybrid-rans-les, les, rans, sgs-model, eddy-viscosity, log-layer-mismatch]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -126,7 +126,7 @@ translated (see the Notation map).
 | $\zeta$ | — | anisotropy measure $3\overline{v^2}/(2k)$ (Eq. 33), overloaded in Table V; **collision** with the feature vector $\boldsymbol\zeta$ |
 | $\mathcal M_{ij}$, $r_{\mathcal M}$, $C_r$ | — | resolution tensor, resolution-adequacy parameter and its coefficient |
 | $\rho(\mathbf e)$ | — | directional resolution ratio (Eq. 32), not the density |
-| $\eta$, $F_r$, $D_{lim}$ | — | forcing limiters; $\eta$ **collides** with the Kolmogorov length |
+| $\eta$, $F_r$, $D_{lim}$ | — | forcing limiters; $\eta$ **collides** with the Kolmogorov length, $F_r$ with the SATES resolution control function (registry §11) |
 | $\delta_w$, $\delta^+$ | $d$, $y^+$ | wall distance and its wall-unit form |
 | $Re_h$ | $Re_h$ | hill-height Reynolds number |
 

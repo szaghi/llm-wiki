@@ -5,7 +5,7 @@ description: "The variational multiscale method splits the finite-element soluti
 status: established
 aliases: [VMS, residual-based VMS, residual-based variational multiscale method, RB-VMS, VMS-LES, residual-based LES, modified VMS, multiscale Smagorinsky model, CG-VMSD]
 tags: [les, implicit-les, sgs-model, numerical-dissipation, immersed-boundary]
-timestamp: 2026-10-28T02:14:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Variational multiscale method
@@ -24,8 +24,8 @@ fine scales are algebraic functions of the resolved residuals,
 $$\boldsymbol u^{<}=-\tau_{\mathrm M}\,\boldsymbol r_{\mathrm M}(\boldsymbol u^{>},p^{>}),\qquad p^{<}=-\tau_{\mathrm C}\,r_{\mathrm C}(\boldsymbol u^{>}),\qquad r_{\mathrm C}=\nabla\cdot\boldsymbol u^{>},$$
 
 with $\boldsymbol r_{\mathrm M}$ the strong momentum residual and
-$\tau_{\mathrm M}$, $\tau_{\mathrm C}$ (page-local) the momentum and
-continuity stabilization parameters; $\boldsymbol w$, $q$ (page-local) denote
+$\tau_{\mathrm M}$, $\tau_{\mathrm C}$ the momentum and continuity
+stabilization parameters (registry §11, with the residuals); $\boldsymbol w$, $q$ (page-local) denote
 the velocity and pressure weighting functions. No eddy viscosity and no
 explicit subgrid stress appear: the closure is the set of fine-scale terms
 the split leaves in the resolved equation. [Chen et al. (2022)](/sources/chen-2022-g.md)

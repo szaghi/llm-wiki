@@ -9,7 +9,7 @@ year: 2024
 venue: "Aerosp. Sci. Technol. 149:109134"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Aerospace_Science_and_Technology_Petrocchi_Transonic_buffet_simulation_using_a_partially-averaged_Navie.pdf"
 tags: [pans, hybrid-rans-les, rans, compressible, separated-flow]
-timestamp: 2026-10-26T10:25:00Z
+timestamp: 2026-10-28T11:50:00Z
 ---
 
 # Summary
@@ -70,7 +70,7 @@ the outlet-to-inlet pressure ratio; SIO shock-induced oscillation.
 2. The URANS failure is attributed to excessive corner separation, which deviates the trailing-edge flow spanwise and keeps the shock-foot and trailing-edge separations from merging, and to too high a post-shock eddy viscosity (§4.5.5). **Stated** (interpretation of shown fields)
 3. In two dimensions SST URANS predicts no buffet even at $\alpha=3.9°$ (run U2M39), while PANS with constant $f_k=0.7$ does (P2M35a/b, P2M39) (§4.3, Table 2). **Shown**
 4. At the statistically steady $\alpha=2.5°$ PANS recovers the URANS solution within a tolerance; the shock position depends slightly on the grid because the grid-dependent $f_k$ of Eq. (7) is lower on finer grids, reducing the eddy viscosity and promoting separation (§4.4, Figs. 4–5). **Shown**
-5. The two $f_k$ estimates, Eq. (6) $f_k=C_{\mathrm{PANS}}(h/L_t)^{2/3}$ and Eq. (7) $f_k=\tfrac12[1+\tanh(2\pi(\Lambda-0.5))]$ with $\Lambda=[1+(L_t/h)^{4/3}]^{-1}$, give similar distributions; Eq. (7) is preferred because it needs no calibrated constant, leaves RANS slightly later in the boundary layer, and is bounded in $[0,1]$, whereas Eq. (6) can exceed one in the far field (§2.1, §4.5.1, Fig. 6). **Shown**
+5. The two $f_k$ estimates, Eq. (6) $f_k=C_{\mathrm{PANS}}(h/L_t)^{2/3}$ and Eq. (7) $f_k=\tfrac12[1+\tanh(2\pi(\Lambda_{\mathrm P}-0.5))]$ with $\Lambda_{\mathrm P}=[1+(L_t/h)^{4/3}]^{-1}$, give similar distributions; Eq. (7) is preferred because it needs no calibrated constant, leaves RANS slightly later in the boundary layer, and is bounded in $[0,1]$, whereas Eq. (6) can exceed one in the far field (§2.1, §4.5.1, Fig. 6). **Shown**
 6. An earlier study of the authors [71] found $C_{\mathrm{PANS}}=0.5$ optimal for this configuration and grid size; larger values removed the centreplane boundary-layer separation and overpredicted the corner separation; $C_{\mathrm{PANS}}$ is reduced from the static value $1/\sqrt{C_\mu}$ because $L_t$ is built from unresolved quantities (§2.1, §4.5.1). **Stated**
 7. Constant $f_k$ needs a sensitivity study and is unreasonable with confined high-turbulence regions and anisotropic grids; static $f_k$ suits localized statistically steady turbulence; the dynamic approach "is required" for intrinsically unsteady flows such as buffet (§2.1). **Stated**
 8. Lowering the tunnel back pressure (BP $=0.99$ against 1) increases the shock-oscillation amplitude and the pressure RMS over the whole section; the 1% drop is motivated by Thiery & Coustols [37] (§4.5.2, Fig. 7). **Shown**
@@ -111,7 +111,7 @@ does not state which one the reported runs use.
 - **Nomenclature and §3:** $k_h$ "heat transfer coefficient" with units W m$^{-1}$ K$^{-1}$, those of a thermal conductivity.
 - **§3:** "$E=e+u_iu_j/2$", with a free index $j$ in the kinetic energy per unit mass.
 - **§1:** "e.g. in et al. [48,51]", with the author name missing.
-- **Eq. (8), not established as a slip:** if $\nu_u=k_u/\omega_u$, $\varepsilon_u=C_\mu k_u\omega_u$ and $\omega_u=\omega/f_k$ ($f_\varepsilon=1$), then $(\nu_u/\varepsilon_u)^{1/2}=f_k/(\sqrt{C_\mu}\,\omega)$, not the printed $\sqrt{C_\mu f_k}/\omega$ *(compiler check, not in the sources)*; the paper defines neither $\nu_u$ nor which $\omega$ enters Eq. (8), so the printed form cannot be checked against the paper itself. The text writes the RANS time scale as $1/(c_\mu\omega)$ (§2.2).
+- **Eq. (8):** the paper defines neither $\nu_u$ nor which $\omega$ enters Eq. (8); the text writes the RANS time scale as $1/(c_\mu\omega)$ (§2.2).
 - **Table 3:** from the printed times, the total ratio $2.00/1.95$ is $+2.6\%$ against the printed "+3.1%", and the high-order-gradient ratio $0.00025/0.00024$ is $+4.2\%$ against "+8%"; the printed URANS components sum to 1.935, not 1.95 *(compiler check, not in the sources)*. The text gives the overhead as "about 3%" (§4.6).
 - **Table B.5:** "Lakshimpathyi & Girimaji", "Cylynder"; Srinivasan & Girimaji listed as 2014 while ref. [84] prints 2011. **Table A.4:** "Zimmernann" against "Zimmermann" in ref. [76]; ref. [67] "van Aldaba" against "Van Albada" in §3; §4.5.3 "trailind edge".
 - **References with mismatched DOIs or venues:** [39] (Spalart et al. 2006, Theor. Comput. Fluid Dyn., with an Int. J. Heat Fluid Flow 2008 DOI), [46], [53], [57] (same DOI as [56]), [41] (year 2020, DOI of 2015), [34], [72], [28].
@@ -123,7 +123,7 @@ does not state which one the reported runs use.
 | $f_k$, $f_\epsilon$, $f_\omega$ | $f_k$, $f_\varepsilon$, $f_\omega$ | agree |
 | $k$, $\omega$ (Eqs. 3–5) | $k_u$, $\omega_u$ | unresolved quantities, subscript dropped in the source |
 | $k_u$, $\epsilon_u$, $\omega_u$ | $k_u$, $\varepsilon_u$, $\omega_u$ | |
-| $C_{\rm PANS}$, $L_t$, $\Lambda$ | same (page-local) | |
+| $C_{\rm PANS}$, $L_t$, $\Lambda$ | $C_{\mathrm{PANS}}$, $L_t$, $\Lambda_{\mathrm P}$ (page-local) | $\Lambda$ renamed: not the registry $\boldsymbol\Lambda$ of volume-filtered immersed boundaries |
 | $\Delta$ | $h$ | **collision:** local grid size, not a filter width; definition not stated |
 | $\gamma$, $\beta$, $\beta^*$, $\sigma_k$, $\sigma_\omega$, $\sigma_{\omega2}$, $a_1$ | $\alpha$, $\beta$, $\beta^*$, $\sigma_k$, $\sigma_\omega$, $\sigma_{\omega2}$, $a_1$ (SST constants, as on the SST page) | **collision:** $\gamma$ is the ratio of specific heats or the intermittency, so it is written as the SST $\alpha$ |
 | $\beta'$ | (modified destruction coefficient) | |

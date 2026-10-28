@@ -9,7 +9,7 @@ year: 2026
 venue: "Phys. Fluids 38:055101"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Physics_of_Fluids_Valencia_iA_priorii_assessment_of_deconvolution-b.pdf"
 tags: [les, sgs-model, scale-similarity, filtering, a-priori-a-posteriori, compressible]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -122,14 +122,14 @@ over the domain (Eqs. 53–54).
 | $(\cdot)^L$, $u^S_i$ | (grid projection, sub-grid part; page-local) | |
 | $G$, $\hat G(k)$ | $G$, $\hat G(k)$ | Gaussian kernel and transfer function |
 | $\tau_{ij}=\overline{\rho u_iu_j}-\bar\rho\tilde u_i\tilde u_j$ | $\tau_{ij}$ (compressible form) | positive trace, full tensor |
-| $\tau^{ef}_{ij}$ | $\tau^{\mathrm{ef}}_{ij}$ (page-local) | explicitly filtered sub-filter stress |
-| $\tau^{Total}$, $\tau^{SGS}$, $\tau^{SFS}$ | $\tau^{\mathrm{tot}}$, $\tau^{\mathrm{gr}}$, $\tau^{\mathrm{sf}}$ (page-local) | **collision:** the source's "SGS" is the grid-truncation part only |
+| $\tau^{ef}_{ij}$ | $\tau^{\mathrm{ef}}_{ij}$ (registry §11) | explicitly filtered sub-filter stress |
+| $\tau^{Total}$, $\tau^{SGS}$, $\tau^{SFS}$ | $\tau^{\mathrm{tot}}$, $\tau^{\mathrm{gr}}$, $\tau^{\mathrm{sf}}$ (registry §11) | **collision:** the source's "SGS" is the grid-truncation part only |
 | $\xi_j$, $\xi^{ef}_j$ | (sub-filter heat flux, page-local) | **collision:** not quadrature nodes |
 | $\sigma_{ij}$, $S_{ij}$ | $\sigma_{ij}$, $S_{ij}$ | |
 | $\phi^*$, $D$, $AD^N$, $DD$ | $\phi^*$ and deconvolution operators (page-local) | |
 | $N$ (ADM order; also $\bar\Delta=N\Delta$) | $N_{\mathrm{AD}}$; $\Delta/h$ | **collision:** not the polynomial degree |
-| $N_s$, $R=\bar\Delta/\Delta_s$, $W$, $N_i$, $\lambda$ | ($N_{\mathrm{st}}$, the DIAD stencil size; filter-to-stencil ratio, weights, iteration, multiplier; page-local) | **collision:** $R$ is not $R_{ij}$; $\lambda$ not the Taylor microscale |
-| $\varepsilon$ | $\varepsilon_{\mathrm{DD}}$ (DDM limiter; also the DIAD tolerance) | **collision:** not the dissipation rate |
+| $N_s$, $R=\bar\Delta/\Delta_s$, $W$, $N_i$, $\lambda$ | ($N_{\mathrm{st}}$, the DIAD stencil size, registry §11; filter-to-stencil ratio, weights, iteration, multiplier, page-local) | **collision:** $R$ is not $R_{ij}$; $\lambda$ not the Taylor microscale |
+| $\varepsilon$ | $\varepsilon_{\mathrm{DD}}$ (DDM limiter, registry §11; also the DIAD tolerance) | **collision:** not the dissipation rate |
 | $C$, $E_{rel}$, $\beta$ | (correlation coefficient, relative error, regression slope; page-local) | **collision:** $\beta$ is not the field-inversion multiplier |
 | $M_{t,0}$, $Re_{\psi,0}$, $\psi_0=2/k_0$ | $M_t$, $Re_\lambda$, $\lambda$ | initial values; $\psi_0$ plays the Taylor microscale |
 | $\tau=\psi_0/u_{rms,0}$ | $T_E$ | **collision:** a time, not a stress |
@@ -147,7 +147,8 @@ title), kept distinct. Ref. 37 prints "T. Poinsot, Denis Veynante:
 Theoretical and Numerical Combustion"; ref. 17 is a technical report.
 Ref. 32 is [Volpiani (2024)](/sources/volpiani-2024.md) and ref. 14
 [Qi et al. (2022)](/sources/qi-2022-b.md); refs. 6 and 31 are the
-bundle-planned works keyed zhang-2022-f and zhang-2022-h.
+ingested [zhang-2022-f](/sources/zhang-2022-f.md) and
+[zhang-2022-h](/sources/zhang-2022-h.md).
 
 # Pages created or updated
 

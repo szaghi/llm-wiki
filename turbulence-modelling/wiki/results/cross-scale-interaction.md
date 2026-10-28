@@ -5,7 +5,7 @@ description: "In magnetized fusion plasmas, ion-scale and electron-scale micro-t
 status: established
 aliases: [multi-scale plasma turbulence, cross-scale coupling, TEM/ETG interaction, ion-scale/electron-scale interaction, scale separation assumption]
 tags: [plasma, dns, energy-cascade]
-timestamp: 2026-10-27T15:48:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Cross-scale interaction in plasma turbulence
@@ -169,7 +169,7 @@ direction.
   values give $1.50\times1.42/(0.18\times0.25)=47.3$ for TEM and
   $24.3\times1.42/(0.18\times4.5)=42.6$ for ETG; the printed 42.7 equals the
   precession velocity at $v=1.9v_{te}$ ($v_{te}$ the electron thermal speed) obtained by scaling the printed
-  $47.3$ at $2v_{te}$ by $(1.9/2)^2$. The paper does not say at which
+  $47.3$ at $2v_{te}$ by $(1.9/2)^2$, with the printed $v_{\mathrm{pre}}\propto v^2$ of deeply trapped electrons (Results, p. 2). The paper does not say at which
   wavenumbers the phase velocities were taken.)*
 - **Printed slip** (Methods, p. 7). The electron-scale subspace is printed
   "$\Omega_i=\{\mathbf k\,|$ the others$\}$"; it is $\Omega_e$, as used

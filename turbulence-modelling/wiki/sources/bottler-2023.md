@@ -9,7 +9,7 @@ year: 2023
 venue: "Proc. Combust. Inst. 39:1567-1576"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Proceedings_of_the_Combustion_Institute_Böttler_Flamelet_modeling_of_thermo-diffusively_unstable_hydrogen-ai.pdf"
 tags: [combustion, tabulated-chemistry, a-priori-a-posteriori]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -90,7 +90,7 @@ described only as the text describes them.
 
 # Notation map
 
-The registry holds only the thickened-flame symbols of combustion (§11); the page-local symbols below follow [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md), which keeps the model label FPV-$\kappa_c$ as FPV-$\kappa$.
+The registry's combustion symbols are in §11 (the laminar flame speed $s_{\mathrm L}$ among them); the page-local symbols below follow [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md), which keeps the model label FPV-$\kappa_c$ as FPV-$\kappa$.
 
 | Böttler et al. (2023) | Registry ([notation](/notation.md)) | Note |
 |---|---|---|
@@ -102,7 +102,7 @@ The registry holds only the thickened-flame symbols of combustion (§11); the pa
 | $\psi$ | (tabulated thermochemical state) | |
 | $\kappa_c=-\nabla\cdot\boldsymbol n_c$ | $\kappa_{\mathrm f}=-\nabla\cdot\boldsymbol n_{\mathrm f}$ (page-local) | **collision:** flame curvature, not the von Kármán constant; positive convex towards the unburned mixture |
 | $K_s=\nabla_t\cdot\boldsymbol u_t-(\boldsymbol u\cdot\boldsymbol n_c)\kappa_c$ | $K_{\mathrm f}$ (flame strain rate, page-local) | **collision** with $K$; the source calls it strain although it contains a curvature term |
-| $l_f$, $\tau_f=l_f/s_L$, $s_L$ | $l_{\mathrm F}$ (thermal flame thickness, page-local); flame time, laminar burning velocity | $l_{\mathrm F}=(T_b-T_u)/\max\lvert dT/dx\rvert$ |
+| $l_f$, $\tau_f=l_f/s_L$, $s_L$ | $l_{\mathrm F}$ (thermal flame thickness, page-local); flame time; $s_{\mathrm L}$ (laminar burning velocity, registry §11) | $l_{\mathrm F}=(T_b-T_u)/\max\lvert dT/dx\rvert$ |
 | $\omega$, $k$, $\lambda$ | (growth rate, perturbation wavenumber, wavelength) | **collisions:** not the specific dissipation, turbulent kinetic energy or Taylor microscale |
 | $\lambda_{cell}=2l_{arc}/\pi$ | (cell size) | |
 | $A_0$, $A_{max}$, $R_f$, $s_f$ | (perturbation amplitudes, flame radius, flame speed) | |

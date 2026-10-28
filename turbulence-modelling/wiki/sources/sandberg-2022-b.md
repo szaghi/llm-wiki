@@ -178,7 +178,7 @@ print no pages. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 10 (2026-10-27), cited further in chunk 12. This source is cited on:
+Chunk 10 (2026-10-27), cited further in chunks 12–13. This source is cited on:
 
 - [Backward-facing step](/benchmarks/backward-facing-step.md)
 - [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md)
@@ -190,6 +190,7 @@ Chunk 10 (2026-10-27), cited further in chunk 12. This source is cited on:
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Model-form uncertainty in turbulence closures](/definitions/model-form-uncertainty.md)
 - [Spectral gap](/definitions/spectral-gap.md)
+- [Turbulent Prandtl number and turbulent heat-flux models](/definitions/turbulent-prandtl-number.md)
 - [Explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)
 - [Field inversion and machine learning](/methods/field-inversion-machine-learning.md)
 - [k-ε models](/methods/k-epsilon-model.md)

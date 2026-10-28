@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-28T02:14:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Smagorinsky model
@@ -76,6 +76,10 @@ are variants of the same eddy-viscosity idea.
 | 0.1 | finite-difference reference LES of a channel at $Re_\tau=180$ on a coarse $32\times64\times32$ mesh, no wall damping mentioned | [Chen et al. (2022)](/sources/chen-2022-g.md), §4.1, Eq. (26) |
 | 0.1, printed as the coefficient $C_{\mathrm{sm}}$ that multiplies $\Delta^2$ in $\mu_t=\bar\rho C_{\mathrm{sm}}\Delta^2\lvert\tilde S\rvert$ (so $C_s^2$ in the registry form); with $Pr_t=0.9$ and a subgrid Schmidt number 0.35 | constant-coefficient comparison in a converging Richtmyer–Meshkov mixing layer | [Qi et al. (2022)](/sources/qi-2022-b.md), §2, Eq. (2.13); §4.3 |
 | not printed; written $\nu_t\mathbb S=(c_s\Delta^2)\lvert\bar{\mathbb S}\rvert\bar{\mathbb S}$ | cited for a filtered Burgers prototype | [Svärd (2022)](/sources/svard-2022.md), §2.2, Eq. (8) |
+| about 0.17 (Lilly 1967, from consistency with the Kolmogorov $-5/3$ law), 0.10 (Deardorff 1971, channel, by numerical experiment), 0.206 (Kwak et al. 1975, matching the decay of Comte-Bellot & Corrsin), 0.2 (Lilly, unpublished), all as recounted | early calibrations of the constant | [Kim & Leonard (2024)](/sources/kim-2024-b.md), §2.5, §3.1 |
+| 0.13, "without undergoing any optimization"; "typically selected to lie between 0.1 and 0.2" | Smagorinsky part of a mixed similarity model, wall-modelled LES of the Gaussian bump, $\Delta$ the cube root of the cell volume | [Zhou & Bae (2024)](/sources/zhou-2024-b.md), §2.1, Eq. (1) |
+| 0.16, "to be consistent with the reference" | anelastic GPU LES of wind turbines with actuator lines (GRASP), $\Delta=(\Delta_x\Delta_y\Delta_z)^{1/3}$ | [Taschner et al. (2024)](/sources/taschner-2024.md), §2.1, Eqs. (3)–(4); §3.1 |
+| 0.1 | calibration target of the cut-off coefficient $C_x=0.61$ of the hybrid model SATES-SM | [Wu et al. (2024)](/sources/wu-2024.md), §2.2, Eq. (7), Table 1 |
 | 0.1, $\Delta$ the cube root of the cell volume, $\mu_t=\bar\rho(C_s\Delta)^2\lvert\bar S\rvert$ entering the BGK collision time | gas-kinetic LES of the compressible Taylor–Green vortex, against implicit LES | [Cao et al. (2022b)](/sources/cao-2022-c.md), §III A, Eq. (9) |
 | 0.1, $\Delta$ the cell size | finite-volume LES of forced isotropic turbulence carrying a subgrid-velocity enrichment | [Hausmann et al. (2022)](/sources/hausmann-2022.md), §III B, Eqs. (40)–(41) |
 | 0.1 "in the present wall-bounded turbulent flows", $\Delta$ the cube root of the cell volume, no wall damping mentioned | LES of the 30P30N three-element airfoil | [Wu et al. (2023)](/sources/wu-2023-b.md), §2.1, Eq. (8) |
@@ -126,7 +130,7 @@ smaller" than in Smagorinsky and dynamic Smagorinsky models, so that the
 model is less dissipative. In the normalization of the
 [tensor-basis page](/methods/tensor-basis-neural-network.md) their linear
 term is $-0.01\cdot\tfrac12\Delta^2\lvert\bar S\rvert^2\,\mathsf s_{ij}$ with
-$\mathsf s_{ij}=\sqrt2\,\bar S_{ij}/\lvert\bar S\rvert$ (page-local), i.e.
+$\mathsf s_{ij}=\sqrt2\,\bar S_{ij}/\lvert\bar S\rvert$ (registry §11), i.e.
 $\nu_t=0.005\,\Delta^2\lvert\bar S\rvert/\sqrt2$, an equivalent
 $C_s\approx0.059$ with $\Delta$ the top-hat width (16 DNS spacings)
 *(compiler check, not in the sources)*; the other three terms are
@@ -167,6 +171,22 @@ Manabe, Smagorinsky & Strickler (1965) for the model, and
 [Fureby & Nilsson (2023)](/sources/fureby-2023.md) (§3.2) cite Erlebacher
 et al. (1992), a compressible extension, for "SMG" in their list of
 candidate models; the formula is the same.
+
+**Origin, as recounted in a history of LES.** [Kim & Leonard (2024)](/sources/kim-2024-b.md)
+(§2.5) trace the model to the eddy coefficient of Smagorinsky's general
+circulation model (Smagorinsky 1963; Smagorinsky et al. 1965), introduced
+because aliasing was known to cause nonlinear instability (Phillips 1959),
+with a one-dimensional antecedent for shocks in von Neumann & Richtmyer
+(1950), all cited. They print it as
+$K=(c\Delta)^2[\partial_j\bar u_i(\partial_j\bar u_i+\partial_i\bar u_j)]^{1/2}$
+with $\Delta$ "a representative mesh interval"; the bracket equals
+$2\bar S_{ij}\bar S_{ij}$, so $K=(c\Delta)^2\lvert\bar S\rvert$ in the
+registry form *(compiler check, not in the sources)*. Smagorinsky et al.
+(1965) also chose their value by numerical experiment. In channel LES,
+Moin & Kim (1982, cited) added a Van Driest-like damping function, which
+cured the excessive near-wall dissipation of the earlier LES of Moin et
+al. (1978) (§3.4). The constant later became flow-dependent through the
+[dynamic procedure](/methods/dynamic-procedure.md) (§4.8).
 
 ## Filter width in element methods
 
@@ -846,6 +866,41 @@ methods (Hou et al., cited).
   which motivates their deconvolution closure without eddy viscosity (see
   [scale-similarity models](/methods/scale-similarity-model.md)).
 
+## As a component of other closures and couplings
+
+- **Calibration target of a hybrid model.** In the self-adaptive
+  turbulence eddy simulation SATES-SM the cut-off coefficient
+  $C_x=\sqrt{0.3}\,C_s/\beta^*$ with $C_s=0.1$ and $\beta^*=0.09$ gives
+  $C_x=0.61$, chosen so that the LES mode equals a Smagorinsky model when
+  the cut-off and integral lengths coincide; [Wu et al. (2024)](/sources/wu-2024.md)
+  (§1, §2.2, Eq. 7) call this LES mode "questionable for near-wall
+  treatment because too much sub-grid-scale (SGS) eddy viscosity is
+  introduced into the boundary layer" and replace the constant by a local
+  coefficient built from the [Sigma model](/methods/sigma-model.md) (see
+  [self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md)).
+  With the printed constants $\sqrt{0.3}\times0.1/0.09=0.609$ *(compiler
+  check, not in the sources)*.
+- **Eddy-viscosity part of a mixed model.** [Zhou & Bae (2024)](/sources/zhou-2024-b.md)
+  (§2.1, Eq. 1) add a scale-similarity term with a Gaussian secondary filter
+  to the Smagorinsky stress with $C_s=0.13$ (see
+  [scale-similarity model](/methods/scale-similarity-model.md)).
+- **Wind-turbine LES.** [Taschner et al. (2024)](/sources/taschner-2024.md)
+  (§2.1, Eqs. 1–4) close the anelastic filtered equations of the GPU code
+  GRASP with $\tau_{ij}=-2\rho_b\nu_t\bar S_{ij}$, $\rho_b(y)$ the anelastic
+  reference density (page-local), coupled to actuator lines (see
+  [actuator line model](/methods/actuator-line-model.md)); the paper
+  writes the full stress, with no trace or deviatoric statement.
+- **Momentum closure of LES coupled to one-dimensional turbulence.** In
+  the finite-difference LES-ODT of Echekki and co-workers reviewed by
+  [Chen et al. (2024b)](/sources/chen-2024-c.md) (§2.4.1) the LES solves
+  continuity and momentum with a Smagorinsky subgrid stress, while
+  mixing and heat release are closed by
+  [one-dimensional turbulence](/methods/one-dimensional-turbulence.md).
+- **Reacting-flow baselines.** The dynamic version is the momentum closure
+  of [Nmira et al. (2023)](/sources/nmira-2023.md) (§2.1) and the a priori
+  baseline of [Nista et al. (2023)](/sources/nista-2023.md) (§4, Fig. 2b);
+  both are on the [dynamic procedure](/methods/dynamic-procedure.md).
+
 ## Qualifications
 
 - Hausmann et al. (2022, Eq. 40) print $\nu_t=(C_s\Delta)^2\lvert\bar S\rvert^2$
@@ -896,6 +951,13 @@ methods (Hou et al., cited).
   without the modulus bars of the $\lvert\tilde S\rvert$ of their Eq. (2.8);
   the filter width of their Smagorinsky runs is not restated in App. D.
 
+- Nista et al. (2023) cite the dynamic Smagorinsky model to Smagorinsky
+  (1963) only (their ref. [25]), without the dynamic-procedure papers.
+- Lilly's value appears as about 0.17 in Kim & Leonard (2024, from
+  consistency with the $-5/3$ law) and as 0.18 in Vicente Cruz &
+  Lamballais (2023, from $\pi^{-1}(3C_K/2)^{-3/4}$ with $C_K=1.4$); the
+  analytical value depends on the Kolmogorov constant assumed, which Kim
+  & Leonard do not state *(compiler check, not in the sources)*.
 - Heinz (2020, §2.3 and App. C) prints $C_+=(0.876,1.0,1.074)$ for
   $C_K=(1.3,1.43,1.5)$; the printed formula $C_+=(3C_K/2)^{3/2}/\pi$
   gives 0.867, 1.000 and 1.074 *(compiler check, not in the sources)*.
@@ -976,3 +1038,10 @@ methods (Hou et al., cited).
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.4, Table 2.
 - [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2; §3.3.
 - [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §6.2.
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.5; §3.1; §3.4; §4.8.
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.1, Eq. (1).
+- [Taschner et al. (2024)](/sources/taschner-2024.md) — §2.1, Eqs. (1)–(4); §3.1.
+- [Wu et al. (2024)](/sources/wu-2024.md) — §1; §2.2, Eq. (7), Table 1.
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — §2.4.1.
+- [Nmira et al. (2023)](/sources/nmira-2023.md) — §2.1.
+- [Nista et al. (2023)](/sources/nista-2023.md) — §4, Fig. 2b; ref. [25].

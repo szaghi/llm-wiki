@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Direct numerical simulation"
-description: "DNS solves the Navier–Stokes equations with no turbulence model and a grid fine enough for the dissipative range; this page gives its resolution criteria, measured resolutions and cost, the discretizations, GPU codes and floating-point precision used for it, spatially developing boundary layers, weaker variants, looser uses of the term, and its role as reference data."
+description: "DNS solves the Navier–Stokes equations with no turbulence model and a grid fine enough for the dissipative range; this page gives its early history, resolution criteria, measured resolutions and cost, the discretizations, GPU codes and floating-point precision used for it, spatially developing boundary layers, weaker variants, looser uses of the term, and its role as reference data."
 status: established
 aliases: [DNS, quasi-DNS, flame-resolved DNS, under-resolved DNS, DNS embedded in LES, downsized DNS, DNS-like simulation, fully resolved simulation with detailed chemistry, surrogate PC DNS, principal-component DNS]
 tags: [dns, les, combustion, boundary-layer, compressible, gpu]
-timestamp: 2026-10-28T02:13:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Direct numerical simulation
@@ -21,6 +21,70 @@ predictions, but the resolution requirements at high Reynolds numbers would be
 prohibitive", which is why [large-eddy simulation](/definitions/large-eddy-simulation.md)
 and [wall-modelled LES](/methods/wall-modelled-les.md) exist. In this bundle DNS
 is chiefly the reference against which closures are trained and tested.
+
+## The first two decades
+
+[Kim & Leonard (2024)](/sources/kim-2024-b.md), a historical review by
+two early participants that covers DNS and LES from 1971 to the early
+1990s (RANS excluded), record the milestones as follows.
+
+- **The estimate and the first run.** Corrsin (1961) argued that a
+  simulation would need $Re=10^4$ to show universality and estimated from
+  Kolmogorov scaling at least $10^{12}$ grid points (§2.1). Orszag &
+  Patterson (1971, 1972) simulated decaying isotropic turbulence with a
+  spectral method on $16^3$ and $32^3$ meshes at initial $Re_\lambda=35$
+  on a 3-megaflop CDC 6600, 30 s per step at $32^3$ (§2.2).
+- **The pseudo-spectral method.** Nonlinear terms are computed in real
+  space and advanced in transform space with FFTs, which avoids the
+  $O(N^6)$ convolution sums and needs, as printed, "$O((N\log N)^3)$"
+  operations ($N$ here the points per direction, as printed; not the
+  registry's polynomial degree); Orszag estimated that an $N^3$ spectral
+  simulation is as accurate as a $(4N)^3$ finite-difference one at the
+  cost of a $(2N)^3$ one. Aliasing was removed first by spherical truncation with
+  six shifted transforms (Patterson & Orszag 1971), later more cheaply by
+  2/3-rule truncation with phase shifts (Rogallo 1981); walls and
+  unbounded domains brought Chebyshev, Legendre and Jacobi bases,
+  divergence-free vector expansions, and spectral elements after Patera
+  (1984) (§2.2–2.3, §3.3, §4.7).
+- **Homogeneous strained and sheared turbulence.** Rogallo (1981) added
+  rotation, irrotational strain and homogeneous shear, with periodic
+  remeshing ("windshield wiper transformation"), and reported the first
+  complete Reynolds-stress budgets (§3.3).
+- **Wall-bounded flows.** The curved-channel DNS of Moser & Moin (1984,
+  1987) was "probably the first DNS of a wall-bounded turbulent flow". Kim,
+  Moin & Moser (1987) targeted $Re_\tau=194$ of an oil-channel experiment,
+  obtained $Re_\tau=180$, the reference of later
+  [channel](/benchmarks/turbulent-channel-flow.md) simulations, and traced
+  the near-wall disagreement to an experimental error later confirmed,
+  "probably the first incident in which a numerical simulation prompted a
+  reexamination of the experimental data" (§3.4). Spalart (1988) computed
+  the first zero-pressure-gradient
+  [boundary layer](/benchmarks/turbulent-boundary-layer.md), up to
+  $Re_\theta=1410$, with streamwise periodicity and a multiscale procedure
+  for the growth (§3.5).
+- **Forced, compressible and complex flows.** Forcing isotropic DNS
+  (Siggia) models the large scales and computes the small ones, "the
+  opposite of the LES approach" (§4.3). The first wall-bounded compressible
+  DNS was Buell's (1990) Couette flow, followed by the supersonic channel of
+  Coleman et al. (1995) and the supersonic boundary layer of Rai et al.
+  (1995) (§4.5); the [backward-facing step](/benchmarks/backward-facing-step.md)
+  of Le & Moin and Le et al. was an early separated flow (§4).
+- **Numerical lessons.** The inviscid discretized equations "should
+  conserve energy for long-term stable calculations" (rotational or
+  skew-symmetric forms, the staggered mesh; see
+  [kinetic-energy preservation](/properties/kinetic-energy-preservation.md));
+  low-storage third-order Runge–Kutta largely replaced second-order
+  Adams–Bashforth, although "many investigators still use" the latter after
+  the original channel code (§3.1, §4.7).
+- **Growth.** Peak speed grew about $10^{12}$-fold from the CDC 6600 to the
+  two-exaflop Frontier (2022); isotropic DNS reached $4096^3$ (Kaneda et
+  al. 2003) and $8192^3$ (Yeung et al. 2015) at $Re_\lambda=1200$–1300,
+  and well-built algorithms reach 20–50% of peak (§5). The $32\,768^3$ run
+  at $Re_\lambda\approx2500$ of [Yeung et al. (2025)](/sources/yeung-2025.md)
+  (below) continues the series on Frontier. The authors add that
+  $Re_\tau=180$ remains useful (§5).
+
+The review reports no new computation.
 
 ## Resolution criteria and cost
 
@@ -82,6 +146,31 @@ time-step limits at about 10 ns acoustic and 1.5 ns chemical for species
 DNS (Ren & Goldin's estimate with its constant set to 1, as cited; Eq. 20),
 and at about 20 ns acoustic and 18 ns chemical for the component
 formulation (below).
+
+**Wall-normal criteria for wall heat flux and reacting boundary layers.**
+[Tang et al. (2024)](/sources/tang-2024.md), §2.2, Table 2, Figs. 5–9,
+run a five-grid study of a Mach 5 compression-ramp DNS and find the wall
+gradients ($C_f$ and the Stanton number) more grid-sensitive than the
+turbulence statistics: wall-normal refinement moves the reattachment point
+and raises the downstream $C_f$ and heat flux until their grid M3, with a
+first cell at $y^+=0.33$ at the reference station (0.59 at most on the
+ramp) and a wall-normal grid Reynolds number $\rho_wU_\infty\Delta y_1/\mu_w=7$
+($\Delta y_1$ the first cell height, page-local); they cite a convergence
+threshold of about 10 for blunt-body heating (relaxable to 40 for
+low-dissipation schemes, Ma & Liu) and a recommended $\Delta x^+$ of 10–20
+(Georgiadis et al.). Spanwise refinement to $\Delta z^+=4.4$ raises the
+heat flux only slightly, after the peak. [Wang & Xu (2024)](/sources/wang-2024-h.md),
+§2.3, App. B, meet the criteria of Poggie et al. that they cite,
+$\Delta x^+<10$, $\Delta y^+<1$ at the wall and $\Delta z^+<5$, in a
+reacting supersonic boundary layer, run no grid-convergence test "because
+of computational constraints", and argue adequacy from spanwise spectra
+that decay by at least seven orders of magnitude without pile-up and from
+spanwise autocorrelations that reach zero; their frozen-chemistry
+companion has $\Delta y^+_w=1.2$–1.3, slightly above the criterion. The
+reacting-flow training DNS of [Nista et al. (2023)](/sources/nista-2023.md),
+§2, Table 1 (the lean methane slot flames of Attili et al.), use a uniform
+20 µm grid with $dx/\eta<2$ and about six points per laminar flame
+thickness.
 
 **Cost scaling and forecasts.** [Morsbach et al. (2024)](/sources/morsbach-2024.md),
 §1, cite Choi & Moin for a cost of DNS growing roughly as $Re^{3.5}$ and of
@@ -198,6 +287,11 @@ said; wall units at the reference station):
 | ZPG boundary layers: $M_e=2.25$ (isothermal wall, blowing–suction trip, $Re_\tau\approx770$), $M_e=2.9$ adiabatic, $M_e=7.25$ with $T_w=562$ K | ACANS (seventh-order WENO-Z, fourth-order central viscous fluxes): $\Delta x^+=8.1$, $\Delta y^+_w=0.96$, $\Delta z^+=2.8$; $1009\times127\times150$ with 7, 0.3, 6; $1345\times131\times151$ with 6.0, 0.6, 3.2 | [Mo et al. (2023)](/sources/mo-2023.md), §II B, Tables I, III |
 | Compressible isothermal channels (bulk $Re$, $M$): 3000, 1.5; 4880, 3.0; 7000, 1.0; 3000, 0.2; and a $M=2.25$ adiabatic flat plate | $384\times193\times128$ ($\Delta x^+=\Delta z^+=7.13$, $\Delta y^+_w=0.30$); $400\times210\times320$ (14.5, 0.66, 6.05); $768\times385\times256$ (7.02, 0.21); $384\times193\times128$ (6.23, 0.26); $10\,000\times90\times320$ (5.77, 0.58, 5.26); filtered as training and reference data of a neural-network SGS model | [Xu et al. (2023)](/sources/xu-2023.md), §2–4 |
 | [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), $Re=200$ | finite elements with approximate deconvolution, the explicit filter serving for de-aliasing: $256^3$ structured and an unstructured mesh of about 5 million nodes (29.6 million tetrahedra); "nearly identical" to Brachet et al. | [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md), §6.2, Figs. 7–8 |
+| Mach 2.9, 24° compression ramp (Bookey et al. experiment), $Re_\theta=2400$ | sixth-order compact differences with an eighth-order compact filter every step, a second-order filter at shocks and localized artificial diffusivity; $2865\times298\times420$, $\Delta x^+=4.6$, $\Delta y^+_w=0.42$, $\Delta z^+=4.2$; statistics over $400\delta/u_\infty$; tabulated against four earlier simulations of the case ($2160\times160\times140$ to $4591\times240\times336$, $\Delta x^+$ 3.3–7.2, $\Delta y^+_w$ 0.2–0.5, $\Delta z^+$ 3.0–5.0) | [Kang & Lee (2024)](/sources/kang-2024.md), §II.B, Tables I–II |
+| Mach 5, 30° compression ramp, cold wall $T_w/T_r=0.5$, $Re_\tau=700$, $Re_\theta=4652$ | OpenCFD-SC; five grids, converged grid M3 $2660\times204\times300=1.63\times10^8$: $\Delta x^+$ 6.6 in the interaction (up to 17.5 upstream), $\Delta z^+=6.6$, first cell $y^+$ 0.33–0.59; sampling over $92\delta/U_\infty$ | [Tang et al. (2024)](/sources/tang-2024.md), §2.1–2.2, Tables 1–2 |
+| Mach 5 oblique shock interactions (wedges 6°, 10°, 14°), wall at $0.75T_r$, $Re_\theta\approx2087$ at the reference station | [STREAmS](/software/streams.md) (sixth-order kinetic-energy-preserving central scheme, fifth-order WENO at shocks): $3600\times360\times256$ on $100\times10\times6.5\,\delta_{\mathrm{in}}$; $\Delta x^+\approx4.16$, $\Delta z^+\approx3.81$, $\Delta y^+_w=0.3$ | [Yu et al. (2023b)](/sources/yu-2023-b.md), §II, Table I |
+| Mach 6, 34° compression ramp at $T_w/T_r=0.50$, 0.75, 1.0 ($Re_\tau=675$, 411, 293); Mach 2.9, 24° ramp at $T_w/T_r=1.14$–2.0 | [OpenCFD-SCU](/software/opencfd-scu.md): two meshes per wall temperature, up to $4700\times400\times300$; $\Delta x^+$ 3.5–4.9, $\Delta y^+_w$ 0.35–0.48, $\Delta z^+$ 3.5–4.8, $L_z^+>1000$; wall pressure and $C_f$ near the corner "almost identical" on the two meshes; Mach 2.9 cases on $2160\times160\times140$ | [Zhang et al. (2024b)](/sources/zhang-2024-b.md), §2.2, Tables 2–3, Fig. 3 |
+| Reacting supersonic boundary layer (hydrogen wall jet under vitiated air, $M=2.33$, 9 species, 19 reactions), $Re_\tau\approx1050$ | OpenCFD-Comb (sixth-order monotonicity-preserving convection, eighth-order central viscous terms, Strang splitting for chemistry): $2206\times585\times356$; $\Delta x^+$ 6.5–7.9, $\Delta y^+_w$ 0.69–0.85, $\Delta z^+$ 3.5–4.2 at the statistics stations; no grid-convergence test | [Wang & Xu (2024)](/sources/wang-2024-h.md), §2.2–2.3, Tables 2–3, App. B |
 
 From their pipe DNS, Vicente Cruz & Lamballais (2023, §7.1) suggest that the
 recommendation of about one wall unit for the first wall-normal spacing
@@ -411,9 +505,8 @@ CPU predecessor on 131,712 cores (Dang et al. 2022, §5.2–5.3). NekRS scales
 to all 27,648 V100 GPUs of Summit with up to 60 billion points, with 80%
 parallel efficiency at about 2.5 million points per GPU (Fischer et al. 2022,
 §4.2). Maeyama et al. (2022, Methods) report 3.1 PFLOPS on 12,288 nodes of
-Fugaku for the gyrokinetic code GKV. The printed efficiencies of OpenCFD-SCU
-are not all reproduced by its own timings (see its page) *(compiler check,
-not in the sources)*. Wang et al. (2023b, §4.1) port the
+Fugaku for the gyrokinetic code GKV. The [OpenCFD-SCU](/software/opencfd-scu.md)
+page compares its printed efficiencies with its own timings. Wang et al. (2023b, §4.1) port the
 [gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md) to GPUs:
 one Tesla V100 runs the $256^3$ Taylor–Green vortex about 16 times faster
 than an 8-core desktop and about as fast as some 300 cores of TianHe-II,
@@ -453,6 +546,29 @@ DNS of [Coulon et al. (2023)](/sources/coulon-2023.md), §2.2, run on AVBP,
 a compressible explicit solver with a third-order Taylor–Galerkin
 convection scheme, on regular hexahedral meshes; Domingo & Vervisch
 (below) list AVBP among the DNS codes of fourth or second order.
+
+Four further compression-ramp and boundary-layer DNS use the same
+families. [Tang et al. (2024)](/sources/tang-2024.md), §2.1, run the CPU
+parent code OpenCFD-SC (a seventh-order low-dissipation upwind scheme
+hybridized with seventh- and fifth-order WENO by a modified Jameson
+sensor, sixth-order central viscous terms) and state that "no turbulence
+model is used"; [Zhang et al. (2024b)](/sources/zhang-2024-b.md), §2.1,
+the GPU code OpenCFD-SCU with the same three-level hybrid, eighth-order
+viscous terms and third-order TVD Runge–Kutta, with a table of the code's
+earlier validations (Table 1); [Wang & Xu (2024)](/sources/wang-2024-h.md),
+§2.2, OpenCFD-Comb, the reacting extension of the OpenCFD code; [Yu et al. (2023b)](/sources/yu-2023-b.md),
+§II, STREAmS. [Kang & Lee (2024)](/sources/kang-2024.md), §II.B, Eqs.
+(8)–(14), introduce an in-house solver of another kind: sixth-order
+tridiagonal compact first derivatives on curvilinear grids (after Lele
+and Visbal & Gaitonde), third-order Runge–Kutta, an eighth-order compact
+low-pass filter (parameter 0.47) applied at each final stage, an
+adaptive filter that drops to second order (parameter 0.49) where a
+modified Ducros sensor flags a shock, and the localized artificial
+diffusivity of Kawai & Lele for viscosity and conductivity (constants
+0.002 and 0.01). Its DNS therefore carries explicit numerical
+regularization in the place of a closure; see
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
+and [explicit modal filtering](/methods/explicit-modal-filtering.md).
 
 **Compressible DNS and the bulk viscosity.**
 [Beattie et al. (2025)](/sources/beattie-2025.md) argue that compressible
@@ -538,6 +654,20 @@ then ranges from 96 to 20,696 across the cases (§2, Table 3). These DNS are the
 [attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md) and the
 [compressible velocity transformations](/definitions/compressible-velocity-transformation.md)
 are tested.
+
+Five further compressible DNS of this bundle start from a laminar state
+or a synthetic field. [Kang & Lee (2024)](/sources/kang-2024.md), §II.B,
+trip a laminar Blasius inflow with a counter-flow body force;
+[Tang et al. (2024)](/sources/tang-2024.md), §2.3, and
+[Zhang et al. (2024b)](/sources/zhang-2024-b.md), §2.2, force transition
+by the wall blowing and suction of Pirozzoli et al. (amplitude 0.2 in both,
+between 380 and 360 mm upstream of the corner in the latter for two of
+its three wall temperatures); [Yu et al. (2023b)](/sources/yu-2023-b.md),
+§II, use a digital filter without thermodynamic fluctuations; and
+[Wang & Xu (2024)](/sources/wang-2024-h.md), §2.3, keep a laminar
+wall-jet inlet so that no inflow generator or precursor enters the
+reacting case. Details and the validation of each incoming layer are on
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md).
 
 ## Weaker forms and hybrids
 
@@ -635,6 +765,21 @@ are tested.
   the grid scale goes to zero the function, and the modelled viscosity, go
   to zero, which the authors call the DNS mode (Fig. 1; see
   [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+  [Wu et al. (2024)](/sources/wu-2024.md), §2.1, Fig. 1, keep the three
+  modes (URANS when the cut-off length is coarse against the integral
+  length, DNS when it is small enough, LES between) in their
+  [σ-model variant](/methods/self-adaptive-turbulence-eddy-simulation.md),
+  and validate it against the channel DNS of Moser, Kim & Mansour at
+  $Re_\tau=395$ and the square-cylinder DNS of Trias et al. (§3.1).
+- **Implicit LES that becomes DNS.** [Vermeire (2024)](/sources/vermeire-2024.md),
+  §1, describes flux-reconstruction implicit LES as relying on the
+  interface upwinding of the Riemann solver, "akin to a numerical
+  dissipation stabilized under-resolved DNS", which passes seamlessly from
+  implicit LES to DNS as the resolution grows; the runs are at one quarter
+  and one half of the degrees of freedom per direction of the reference
+  DNS of the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) and
+  the $Re_\tau=395$ channel (§4.1–4.2; see
+  [implicit LES](/definitions/implicit-les.md)).
 - **DNS embedded in LES.** Domingo & Vervisch (2023, §3.1) refine a
   well-resolved LES of a laboratory burner to DNS resolution over a streamwise
   window, with the same low-dissipation discretization in both zones, so that
@@ -788,6 +933,45 @@ scheme near the stability limit, whereas in LES temporal errors are "more
 likely overshadowed by spatial errors" (abstract, §4.2–4.3, §5); the
 authors expect their predictions to hold "even if partially" in DNS of
 turbulence without testing one.
+
+**Hypersonic interaction and reacting databases for RANS and LES
+closures.** [Zhang et al. (2024b)](/sources/zhang-2024-b.md), §1, motivate
+their wall-temperature series of Mach 6 ramp DNS by the failure of many
+turbulence models in hypersonic shock interactions (Roy & Blottner, as
+cited), and [Yu et al. (2023b)](/sources/yu-2023-b.md), §IV, use their
+Mach 5 oblique-interaction DNS for a priori tests: a least-squares
+best-fit eddy viscosity reconstructs the Reynolds shear stress upstream and
+downstream but over-predicts it in the interaction zone, the estimate
+$C_\mu\langle\rho\rangle k^2/\varepsilon$ with $C_\mu=0.09$ severely
+over-estimates the eddy viscosity downstream, and a wall-pressure-dependent
+$C_\mu(x)$ and a pressure-gradient-dependent turbulent Prandtl number are
+fitted and then run in RANS (§V; see
+[$k$-$\omega$ SST](/methods/k-omega-sst-model.md) and
+[turbulent Prandtl number](/definitions/turbulent-prandtl-number.md)).
+[Wang & Xu (2024)](/sources/wang-2024-h.md), §5–6, assess turbulent
+Prandtl and Schmidt numbers, the strong Reynolds analogy and the
+turbulence–chemistry interaction a priori on their reacting DNS.
+[Nista et al. (2023)](/sources/nista-2023.md) train a
+[super-resolution SGS model](/methods/super-resolution-sgs-model.md) on
+filtered DNS of one jet flame and test it a priori on DNS at other Reynolds
+and Karlovitz numbers and another fuel, treating the filtered DNS as
+statistically similar to LES fields and naming a posteriori LES as future
+work (§1, §4). [Hu et al. (2024)](/sources/hu-2024.md), §5, §6.2, judge
+the grid convergence of [wall-modelled LES](/methods/wall-modelled-les.md)
+against DNS of a $Re_\tau=1000$ channel (JHTDB), of Spalart's
+three-dimensional boundary layer and of a channel with a sudden spanwise
+pressure gradient (Lozano-Durán et al.); from the DNS spectra they
+estimate that grid spacings of 80 to 30 viscous units capture 70% to 90% of
+the small-scale energy, so that resolving 80% ($\Delta^+\approx50$ at
+$Re_\tau=1000$) brings wall-modelled LES close to wall-resolved LES, and
+that shrinking the matching height with the grid makes wall-modelled LES
+tend to wall-resolved LES and DNS at extreme cost (§7). In a review of
+three-dimensional shock interactions, [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md),
+§3.4, cite the DNS of Ceci et al. among the studies of low-frequency
+unsteadiness in swept interactions. [Tang et al. (2024)](/sources/tang-2024.md),
+§3.2, call their budget of a heat-transport equation evaluated from DNS
+statistics an "a posteriori analysis based on DNS statistics"; no closure
+is tested in it.
 
 **DNS reduced to an LES grid before the a priori test.**
 [Valencia et al. (2026)](/sources/valencia-2026.md), §I, §V A, state that
@@ -1169,6 +1353,18 @@ layers (§7).
   $10\delta_0$ wall-normal and $6\delta_0$ spanwise.
 
 # Citations
+
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.1–2.3 (Corrsin's estimate, Orszag–Patterson, pseudo-spectral method and de-aliasing); §3.3–3.5 (Rogallo, curved and plane channels, Spalart's boundary layer); §4.3, §4.5–4.7 (forcing, compressible DNS, complex flows, numerical lessons); §5 (growth of computing, Frontier).
+- [Tang et al. (2024)](/sources/tang-2024.md) — §2.1–2.2, Tables 1–2, Figs. 5–9 (OpenCFD-SC DNS, five-grid study, wall-normal criteria); §3.2 ("a posteriori analysis" of DNS statistics).
+- [Wang & Xu (2024)](/sources/wang-2024-h.md) — §2.2–2.3, Tables 2–3, App. B (OpenCFD-Comb, reacting boundary-layer DNS, Poggie criteria, no convergence test); §5–6 (a priori assessments).
+- [Nista et al. (2023)](/sources/nista-2023.md) — §1, §2, Table 1, §4 (flame DNS as training and test data, $dx/\eta<2$, a priori only).
+- [Kang & Lee (2024)](/sources/kang-2024.md) — §II.B, Eqs. (8)–(14), Tables I–II (compact-difference DNS solver with filters and localized artificial diffusivity, resolution against four earlier ramp simulations).
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II, Table I (STREAmS DNS of Mach 5 oblique interactions); §IV–V (a priori tests and RANS refinement).
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §1 (database motivation); §2.1–2.2, Tables 1–3, Fig. 3 (OpenCFD-SCU, meshes, grid independence).
+- [Hu et al. (2024)](/sources/hu-2024.md) — §5, Tables 1–2 (DNS references); §6.2, Fig. 14 (small-scale energy from DNS spectra); §7 (shrinking matching height toward DNS).
+- [Vermeire (2024)](/sources/vermeire-2024.md) — §1 (implicit LES as stabilized under-resolved DNS); §4.1–4.2 (fractions of the reference DNS resolution).
+- [Wu et al. (2024)](/sources/wu-2024.md) — §2.1, Fig. 1 (DNS mode of SATES-σ); §3.1 (DNS references).
+- [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §3.4 (DNS of swept-interaction unsteadiness, cited).
 
 - [Iwata et al. (2023)](/sources/iwata-2023.md) — §II B–C, Eq. (1), Table I (detonation–turbulence DNS: grid, $k_{\max}\eta$, half-reaction resolution, cost).
 - [Kumar et al. (2023)](/sources/kumar-2023.md) — §2.2, Eqs. (12)–(18) (semi-implicit pressure); §3.2–3.3, Eq. (20), Tables 1–3 (grids, resolution by flame structure, time steps, costs); §3.5–3.7, Table 4, Figs. 6–17 (component DNS against species DNS); §4.

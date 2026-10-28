@@ -9,7 +9,7 @@ year: 2022
 venue: "Int. J. Heat Fluid Flow 98:109047"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_International_Journal_of_Heat_and_Fluid_Flow_Cherroud_Sparse_Bayesian_Learning_of_Explicit_Algebraic_Reynolds-Stre.pdf"
 tags: [data-driven, symbolic-regression, earsm, uncertainty-quantification, separated-flow, rans]
-timestamp: 2026-10-27T15:46:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -64,10 +64,10 @@ Equation numbers are those of this version.
 
 # Key claims
 
-Page-local symbols: $\mathsf S^\omega_{ij}=\langle S_{ij}\rangle/\omega$,
+Symbols: $\mathsf S^\omega_{ij}=\langle S_{ij}\rangle/\omega$,
 $\mathsf W^\omega_{ij}=\langle\Omega_{ij}\rangle/\omega$ the mean strain
-and rotation scaled by $1/\omega$ (not the registry's $k/\varepsilon$
-scaling of $\mathsf S_{ij}$); $I_1=\mathsf S^\omega_{mn}\mathsf S^\omega_{mn}$,
+and rotation scaled by $1/\omega$ (registry §11; not the $k/\varepsilon$
+scaling of $\mathsf S_{ij}$); page-local: $I_1=\mathsf S^\omega_{mn}\mathsf S^\omega_{mn}$,
 $I_2=\mathsf W^\omega_{mn}\mathsf W^\omega_{mn}$; $g^{\Delta(n)}$,
 $g^{R(n)}$ the coefficient functions of $b^\Delta_{ij}$ and $b^R_{ij}$;
 $\alpha^{\mathrm{ARD}}_i$ the prior precisions; $\lambda_{\mathrm{SBL}}$
@@ -131,7 +131,7 @@ step.
 | $b^\Delta_{ij}$, $a^\Delta_{ij}=2kb^\Delta_{ij}$ | $b^\Delta_{ij}$, $2kb^\Delta_{ij}$ | |
 | $R^{hf}$, $R$, $b^R_{ij}$ | $R$, $b^R_{ij}$ | production residual and its tensor |
 | $S_{ij}$ | $\langle S_{ij}\rangle$ | |
-| $S^*_{ij}$, $\Omega^*_{ij}$ | $\mathsf S^\omega_{ij}$, $\mathsf W^\omega_{ij}$ (page-local) | scaled by $1/\omega$, not $k/\varepsilon$ |
+| $S^*_{ij}$, $\Omega^*_{ij}$ | $\mathsf S^\omega_{ij}$, $\mathsf W^\omega_{ij}$ (registry §11) | scaled by $1/\omega$, not $k/\varepsilon$ |
 | $T^{(n)}_{ij}$, $I_1$, $I_2$ | $T^{(n)}_{ij}$, $I_1$, $I_2$ (page-local invariants) | $I_2$ without minus sign |
 | $\alpha^\Delta_n$, $\alpha^R_n$ | $g^{\Delta(n)}$, $g^{R(n)}$ | **collision:** the source's $\alpha_i$ are also the SBL precisions |
 | $\alpha_i$, $\mathbf A$ | $\alpha^{\mathrm{ARD}}_i$ (page-local) | |

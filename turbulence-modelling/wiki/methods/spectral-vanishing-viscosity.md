@@ -5,7 +5,7 @@ description: "Spectral vanishing viscosity concentrates an added viscosity on th
 status: established
 aliases: [SVV, implicit SVV, ISVV, implicit spectral vanishing viscosity, spectral viscosity, SVV-LES, entropy-stable SVV, modal SVV filter]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg, entropy-stable]
-timestamp: 2026-10-28T02:15:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Spectral vanishing viscosity
@@ -239,7 +239,13 @@ the help of the LES approach", and that no systematic strategy for choosing
 $P_{\mathrm{SVV}}$ exists: the admissible range is found by trial and error
 (Fig. 8). The shock-capturing family is contrasted with the
 [subcell finite-volume](/methods/subcell-finite-volume-shock-capturing.md)
-approach in the paper's introduction.
+approach in the paper's introduction. The review of high-order
+discontinuous schemes for multiphase flow of
+[Lv & Ekaterinaris (2023)](/sources/lv-2023.md), §4.2, cites this
+entropy-stable SVV as an instance of the "filtered forms" of artificial
+viscosity that, with artificial viscosity proper, have become more
+popular than limiting for LES with discontinuous schemes (see
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
 
 ## Modal SVV in continuous spectral/hp elements
 
@@ -397,8 +403,8 @@ simulation of turbulent and supersonic flows", citing the group's work.
   the high-pass relaxation term of [Nek5000](/software/nek5000.md) as an
   implicit subgrid model in
   [wall-modelled LES](/methods/wall-modelled-les.md). The term is a
-  momentum source $\chi_f(\boldsymbol u-\boldsymbol u_{\mathrm{lp}})$, with
-  $\boldsymbol u_{\mathrm{lp}}$ (page-local; the source writes $\tilde u$)
+  momentum source $\chi_f(\boldsymbol u-\boldsymbol u^{\mathrm{lp}})$, with
+  $\boldsymbol u^{\mathrm{lp}}$ (page-local, as on the spectral-element page; the source writes $\tilde u$)
   the velocity low-pass filtered in each element's Legendre modal expansion
   and $\chi_f$ a constant filter strength (registry §11). Following
   Gillyns et al., they filter the two highest modes with $\chi_f=100$.
@@ -484,3 +490,4 @@ simulation of turbulent and supersonic flows", citing the group's work.
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §I; §II.B.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §1.
 - [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §1 (semi-discrete spatial eigenanalyses of Moura et al. and Mengaldo et al., extended to fully discrete; passing).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (entropy-stable SVV of Mateo-Gabín et al. cited as a filtered form of artificial viscosity for LES; passing).

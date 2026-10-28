@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Phys. Commun. 287:108700"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Computer_Physics_Communications_Ferrer_A_high-order_discontinuous_Galerkin_solver_for_flow_simulat.pdf"
 tags: [software, dg, les, implicit-les, mesh-adaptation, entropy-stable]
-timestamp: 2026-10-27T15:53:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -123,7 +123,7 @@ page are those of arXiv v1.
 | $\boldsymbol\tau=\mu(\nabla\vec v+\nabla\vec v^T)-\frac23\mu\boldsymbol I\nabla\cdot\vec v$ | $\sigma_{ij}$ | **collision:** the registry's $\tau_{ij}$ is the SGS stress |
 | $\kappa$ | (thermal conductivity) | **collision:** not the von Kármán constant |
 | $P$, $P_x,P_y,P_z$, $P_{av}$ | $N$, (degree $N$ per direction, in words), (average degree) | **collision:** the registry's $N_x$ is a grid size, so the directional degrees get no symbol here |
-| $J$, $\nabla_\xi$, $\vec\xi$ | (mapping Jacobian), (reference gradient), $\xi$ | |
+| $J$, $\nabla_\xi$, $\vec\xi$ | $\mathcal J$ (mapping Jacobian, registry §11), (reference gradient), $\xi$ | |
 | $\phi_j$ | (test function) | |
 | $c$, $\phi$ (§3.6.2) | (Cahn–Hilliard phase field, page-local $c$) | |
 | $\mu$ (§4.3), $\eta$ (§4.3) | (chemical potential), (viscosity) | **collision:** $\mu$ is the viscosity elsewhere; $\eta$ is not the Kolmogorov length |
@@ -135,7 +135,7 @@ page are those of arXiv v1.
 | $\beta$ (§4.5) | (particles per parcel) | **collision:** not the field-inversion correction $\beta$ |
 | $St$ (Fig. 11) | (Stokes number) | **collision:** the registry's $St$ is the Strouhal number |
 | $T_{ij}$, $Q_i$, $L_{ij}$ | $T^{\mathrm L}_{ij}$, $Q_i$, $\ell_{ij}$ (Lighthill tensor, thickness and loading terms, page-local as on the [FW-H page](/methods/ffowcs-williams-hawkings-acoustic-analogy.md)) | **collision:** $L_{ij}$ is not the Leonard stress, $T_{ij}$ not a temperature |
-| $\chi$, $\eta$ (§4.7) | (immersed-boundary mask, permeability) | **collision:** $\chi$ is not the SA ratio $\tilde\nu/\nu$ |
+| $\chi$, $\eta$ (§4.7) | (immersed-boundary mask), $\eta_p$ (permeability, registry §11) | **collision:** $\chi$ is not the SA ratio $\tilde\nu/\nu$; $\eta$ is not the Kolmogorov length |
 
 # Reference list
 

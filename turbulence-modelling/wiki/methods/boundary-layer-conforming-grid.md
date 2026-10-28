@@ -5,7 +5,7 @@ description: "Grids whose local isotropic cell size follows the local boundary-l
 status: established
 aliases: [BL-conforming grid, boundary-layer-conforming mesh, delta-conforming grid]
 tags: [wmles, mesh-adaptation, boundary-layer, wall-model]
-timestamp: 2026-10-28T02:18:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Boundary-layer-conforming grids for wall-modelled LES
@@ -70,7 +70,7 @@ $\delta/x=0.16\,Re_x^{-1/7}$ and $Re\gg Re_\Delta^{\min}$ (Eq. 6, App. A),
 
 $$N_{\mathrm{pts}}\sim n_\delta^{13/6}\,Re\,\left(Re_\Delta^{\min}\right)^{-5/6},\qquad N_{\mathrm{steps}}\sim t_{\mathrm{run}}\,Re\left(Re_\Delta^{\min}\right)^{-1},$$
 
-with $t_{\mathrm{run}}$ the run length in flow-through times (page-local, as on the [grid-point requirements](/results/les-grid-point-requirements.md) page). With the
+with $t_{\mathrm{run}}$ the run length in flow-through times (registry §11, as on the [grid-point requirements](/results/les-grid-point-requirements.md) page). With the
 leading-edge extent fixed instead of $Re_\Delta^{\min}$ the exponent of
 $n_\delta$ becomes 3 (Eq. 14). Further consequences are on the
 [grid-point requirements](/results/les-grid-point-requirements.md) page.
@@ -236,7 +236,7 @@ requirement the workshop found:
   summary concludes that "no clear answer can be provided" (§VI.2).
 
 Goc et al. (2021) cluster points at the slat leading edge for the inviscid
-acceleration (below).
+acceleration (above).
 
 ## Contrast: automatic anisotropic adaptation
 

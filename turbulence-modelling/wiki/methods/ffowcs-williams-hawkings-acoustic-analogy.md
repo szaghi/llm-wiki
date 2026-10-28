@@ -5,7 +5,7 @@ description: "The Ffowcs Williams–Hawkings analogy turns a flow solution into 
 status: established
 aliases: [FW-H, FWH, Ffowcs Williams-Hawkings equation, acoustic analogy, hybrid aeroacoustic prediction]
 tags: [aeroacoustics, les, hybrid-rans-les, rans, turbomachinery]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Ffowcs Williams–Hawkings acoustic analogy
@@ -215,7 +215,7 @@ adjoints as the next step (§5).
   open-disk (classical, not closed downstream) surface around
   over-expanded twin square jets, sized after an earlier
   single-rectangular-jet LES. Its finest spacing of about $0.024h_n$ ($h_n$
-  the nozzle exit height, page-local) resolves up to $St\approx3.5$ at
+  the nozzle exit height, registry §11) resolves up to $St\approx3.5$ at
   about 11 cells per wavelength. They name averaging over multiple closed
   end discs (Mendez et al.) and quadrupole corrections as improvements
   they did not use. HORSES3D supports both

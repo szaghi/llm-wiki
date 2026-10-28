@@ -5,7 +5,7 @@ description: "A priori testing evaluates or trains a closure on filtered or aver
 status: established
 aliases: [a priori test, a posteriori test, offline and online evaluation, a-priori training, a-posteriori training]
 tags: [data-driven, a-priori-a-posteriori, sgs-model, les, rans]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # A priori and a posteriori testing
@@ -184,6 +184,29 @@ model and test it only a posteriori: the predicted correction is inserted
 as a source term in the RANS solver and the mean velocity is compared with
 DNS on held-out channels of a K-fold split (see
 [field inversion and machine learning](/methods/field-inversion-machine-learning.md)).
+Four further sources use the pair in the same sense.
+[Kim & Leonard (2024)](/sources/kim-2024-b.md) (§3.1) give the historical
+form of the definition: evaluating SGS models "by analysing a DNS
+database" is an a priori test, "in contrast to an a posteriori test, by
+which the performance of an SGS model is evaluated after an actual LES
+with the model"; they credit Clark et al. (1979), in isotropic homogeneous
+turbulence, with the first such evaluation.
+[Nista et al. (2023)](/sources/nista-2023.md) (§1, §4.4) test a
+[super-resolution SGS model](/methods/super-resolution-sgs-model.md) of
+premixed reacting flows a priori only, treating filtered DNS as
+"statistically similar" to LES fields, and name a posteriori LES as
+required future work.
+[Yu et al. (2023b)](/sources/yu-2023-b.md) (§IV–V) test eddy-viscosity
+and turbulent heat-flux hypotheses a priori on DNS of Mach 5 oblique-shock
+interactions and then run the refined
+[$k$-$\omega$ SST model](/methods/k-omega-sst-model.md) a posteriori in
+RANS of experiments (below).
+[Wang & Xu (2024)](/sources/wang-2024-h.md) (§5.2–5.4, §6.3) evaluate on
+their DNS of a supersonic boundary layer with hydrogen combustion the
+gradient-diffusion numbers $Pr_t$ and $Sc_t$ (see
+[turbulent Prandtl number](/definitions/turbulent-prandtl-number.md)), the
+strong Reynolds analogy and the laminar-chemistry closure of the mean heat
+release, without running any model.
 The words carry nine further meanings that must be kept apart:
 
 - **Training rather than testing.** Duraisamy (2021, §IV) and Agdestein &
@@ -472,6 +495,35 @@ Rezaeiravesh et al., as they cite it).
   correlation to 0.1081, 0.0370 and 0.0889 (Table 6); see
   [energy backscatter](/definitions/energy-backscatter.md) and
   [pressure dilatation](/definitions/pressure-dilatation.md).
+
+- **Joint PDFs and reconstruction error of a super-resolved field.**
+  Nista et al. (2023, §4, Figs. 2–7) score their generative network by the
+  joint PDFs of modelled against DNS $\tau_{12}$ and of the subgrid
+  temperature flux, by the root-mean-square error of the super-resolved
+  fields against DNS ("roughly 75% less" than that of the filtered input
+  at the lower training Reynolds number, §4.1), and by PDFs of the
+  normalized streamwise velocity gradient; the in-sample dynamic
+  Smagorinsky model "exhibits a relatively low correlation" in the same
+  joint PDF (Fig. 2b), and the authors concede it "might be not optimal"
+  as a baseline.
+- **Best-fit eddy viscosity and stress reconstruction (RANS).** Yu et al.
+  (2023b, §IV, Eqs. 17–18) project the Favre-averaged DNS Reynolds stress
+  on the traceless mean strain,
+  $\mu_t=-\big(R_{ij}-\tfrac13R_{kk}\delta_{ij}\big)S^d_{ij}/\big(2S^d_{kl}S^d_{kl}\big)$
+  (density-weighted $R_{ij}=\langle\rho u_i''u_j''\rangle$, Favre-averaged
+  strain), the same projection as Abe's $\nu_{\mathrm{eq}}$ and the
+  optimal eddy viscosity of McConkey et al. (Qualifications), and judge
+  each closure by the shear-stress profile it reconstructs; the turbulent
+  heat flux is treated the same way with a best-fit conductivity (Eqs.
+  22–26).
+- **Drop-one-fluctuation test of a chemistry closure.** Wang & Xu (2024,
+  §6.3, Eqs. 6.4–6.6, Figs. 27–28) compare the true mean heat release with
+  the mean obtained by replacing one variable ($T$ or one species mass
+  fraction) by its mean inside the instantaneous source before averaging;
+  the gap measures how much that fluctuation must be modelled. Laminar
+  chemistry, all fluctuations dropped, differs from the true mean by more
+  than an order of magnitude; dropping the H$_2$ fluctuation causes the
+  largest error, then OH and H.
 
 **A posteriori metric.** Wu & Lele (2026, §5, Eq. 5.1) sum the absolute
 difference of the logarithms of the filtered-DNS and LES energy spectra
@@ -1036,6 +1088,29 @@ conditions, the RANS equations can suppress rather than amplify errors in
 the closure prediction" (§V). This is one geometry family, tested by
 interpolation in the steepness factor.
 
+**An a priori calibration carried into RANS.** Yu et al. (2023b) diagnose a priori, on DNS of Mach 5
+oblique-shock/boundary-layer interactions, that
+$\mu_t=C_\mu\langle\rho\rangle k^2/\varepsilon$ with $C_\mu=0.09$ "severely"
+overestimates the best-fit eddy viscosity downstream of the interaction
+(§IV, Eq. 20, Fig. 18a), and fit
+$C_\mu(x)=0.09/[1+C_{\mu,1}(\langle p_w\rangle(x)/\langle p_w\rangle_r-1)]$ with
+$C_{\mu,1}=1$ ($\langle p_w\rangle$ the mean wall pressure, $\langle p_w\rangle_r$ its value
+at the reference station; Eq. 21, Fig. 19). A posteriori they replace
+$\beta^*$ of the SST model by this $C_\mu(x)$; the original SST
+*underpredicts* the turbulent kinetic energy and the Reynolds shear stress
+against the DNS (§V, Fig. 22), and the refined model improves the skin
+friction, the peak Stanton number (relative error from about 50% to under
+10%, Fig. 21) and the separation of Mach 8 compression ramps (Figs.
+23–24). The authors explain that a lower $C_\mu$ reduces the modelled
+dissipation of the $k$ equation and raises $k$ and the stress, and that
+"model constants such as $C_{\mu,1}$" in RANS can differ from the
+DNS-fitted values (§V); they attribute the a posteriori underestimate to
+the coupling of mean and turbulent dissipation through the $\omega$
+equation (§V). Inside the interaction zone neither the linear form
+nor the refined SST recovers the stress a priori or a posteriori without
+a nonlinear term (§IV, Fig. 17; §V; see
+[explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)).
+
 **A priori subgrid production against a posteriori total dissipation.**
 [Cao et al. (2022b)](/sources/cao-2022-c.md) compare a volume average
 computed a priori with one inferred a posteriori, in the compressible
@@ -1199,6 +1274,15 @@ Qualifications for how the printed statements fit the tables.
    aliasing, especially at the grid cutoff resolution". Their remedies are
    training on several filter shapes and simpler inputs (see
    [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+   Nista et al. (2023, §4.1–4.2, §4.4) name, for a super-resolution
+   network of reacting flows, the dimensionless group that controls this
+   shift: tested a priori across Reynolds and Karlovitz numbers and fuels,
+   the network generalizes while the filter-to-Kolmogorov ratio
+   $\Delta/\eta$ stays near its training value (about 8), even when the
+   ratio of filter width to thermal flame thickness changes strongly, and
+   degrades on a hydrogen flame where $\Delta/\eta\approx14.88$. The
+   evidence is a priori only (see
+   [super-resolution SGS models](/methods/super-resolution-sgs-model.md)).
 8. **The solver changes the input the a priori test froze.** Mukha et al.
    (2025, §III.B.3) find that time-averaging the wall-model input, which
    helps a priori on recorded velocity, alters the velocity at the
@@ -1405,6 +1489,13 @@ priori, obtaining fields that are discontinuous at element interfaces; see
   improve marginally, whereas Tables VI–VII show reductions by factors of
   about 2.4 to 4.1 and a dynamic-Smagorinsky $E_{\mathrm{rel},xx}$ that
   grows from 1.2955 to 1.9644 *(compiler check, not in the sources)*.
+  Nista et al. (2023) are a priori only, and their generalization
+  criterion rests mostly on joint PDFs, contours and one velocity-gradient
+  PDF (§4). Wang & Xu (2024) evaluate $Pr_t$, $Sc_t$, the Reynolds
+  analogies and the chemistry closure on DNS only; their statement that
+  the discontinuities of $Pr_t$ at the zeros of the turbulent heat flux
+  "may not raise specific concerns" for a closure (§5.2) is not tested in
+  a RANS or LES.
 - **Nuca et al. (2025)** have no DNS or experimental reference in either
   test; accuracy against data is explicitly not their goal (§VI), and the
   airfoil statistics cover one chord-based flow time.
@@ -1518,3 +1609,7 @@ priori, obtaining fields that are discontinuous at element interfaces; see
 - [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §3.2–3.3, Fig. 3(b) (correction inserted in the solver); §5, Table 3 (a posteriori K-fold errors).
 - [Kumar et al. (2023)](/sources/kumar-2023.md) — §2.1–2.2, §3.6, §4 (training data generated a priori, a priori validation of the representative species, a posteriori coupled principal-component DNS).
 - [Mays et al. (2023)](/sources/mays-2023.md) — §3.2.2, Fig. 13 ($r_K$ as an a priori resolution measure, realised energy ratio a posteriori).
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §3.1 (definition; Clark et al. 1979 cited as the first a priori test).
+- [Nista et al. (2023)](/sources/nista-2023.md) — §1 (filtered DNS as LES-like input), §4, Figs. 2–7 (joint PDFs, RMSE, gradient PDFs), §4.1–4.2, §4.4 ($\Delta/\eta$ criterion, a posteriori deferred).
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §IV, Eqs. 17–26, Figs. 17–20 (a priori eddy viscosity, $C_\mu(x)$, heat flux); §V, Figs. 21–24 (a posteriori refined SST).
+- [Wang & Xu (2024)](/sources/wang-2024-h.md) — §5.2–5.4 (a priori $Pr_t$, $Sc_t$, Reynolds analogies); §6.3, Eqs. 6.4–6.6, Figs. 27–28 (drop-one-fluctuation chemistry test).

@@ -5,7 +5,7 @@ description: "Derivative-free calibration of closure parameters with an ensemble
 status: established
 aliases: [EnKF, ensemble Kalman filter, ensemble Kalman inversion, ensemble data assimilation, EnKF-MM, EnKF mixed model, EnKF-FM]
 tags: [data-driven, field-inversion, sgs-model, les, uncertainty-quantification]
-timestamp: 2026-10-27T21:12:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Ensemble Kalman filter calibration of turbulence closures
@@ -131,7 +131,7 @@ Taylor-expansion coefficient kept, plus a
 $$\tau_{ij}=\frac{\Delta^2}{12}\frac{\partial\bar u_i}{\partial x_k}\frac{\partial\bar u_j}{\partial x_k}-C_{\mathrm f}\,\Delta^2\lvert\bar S\rvert\bar S_{ij},$$
 
 with $\tau_{ij}$ the full (positive-trace) SGS stress and $C_{\mathrm f}$
-(page-local; the paper's $C_D$) the single calibrated coefficient. The
+(registry §11; the paper's $C_D$) the single calibrated coefficient. The
 functional part carries no factor two, so $C_{\mathrm f}$ corresponds to
 $2C_s^2$; the paper bounds its initial ensemble by
 $2C_s^2\approx0.05$ with $C_s=0.16$ (§III). The structural coefficient is

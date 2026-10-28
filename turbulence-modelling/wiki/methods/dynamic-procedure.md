@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-28T02:14:00Z
+timestamp: 2026-10-28T06:48:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -20,6 +20,16 @@ the procedure to Germano et al. (1991), its least-squares form to Lilly
 Smagorinsky model (DSM)**, the SGS model of the wall-modelled LES of Goc et
 al. (2021, tunnel cases), Lozano-Durán et al. (2022) and Agrawal et al.
 (2022, as baseline).
+
+In their history of LES, [Kim & Leonard (2024)](/sources/kim-2024-b.md)
+(§4.8) date the model to the 1990 Summer Program of the Center for
+Turbulence Research: the Germano identity applied to the resolved field
+gives a Smagorinsky coefficient that "varies in time and space and is
+flow dependent", and "most LES codes now employ a version of the dynamic
+SGS model". No formula is printed there. Their sidebar adds the premise
+behind any such model: a universal subgrid model holds only if all
+energy-containing scales are resolved, which many practical LES do not
+achieve.
 
 ## Germano identity
 
@@ -222,6 +232,26 @@ filter-width question.
   non-monotonic grid convergence of $C_f$ (separation on the coarse grid,
   lost on the medium one, back on the fine one), whereas the tensor-coefficient
   extension converges monotonically (Agrawal et al. 2022, §VIII).
+- **No separation on the Gaussian bump in another solver.**
+  [Zhou & Bae (2024)](/sources/zhou-2024-b.md) run DSM (Germano et al.;
+  Lilly, cited; no clipping or averaging details printed) in wall-modelled
+  LES of the spanwise-periodic [Gaussian bump](/benchmarks/gaussian-bump.md)
+  at $Re_L=2\times10^6$, in an incompressible second-order finite-volume
+  code, with the reference mean wall stress imposed. DSM predicts no
+  separation bubble on any of four isotropic meshes (1.94 to 993 million
+  cells), with all three idealized wall conditions (§3.1–3.2, Figs. 4, 8,
+  14). Its subgrid activity
+  $s_a=\langle\Pi\rangle/(\langle\Pi\rangle+\langle\varepsilon_\nu\rangle)$
+  ($s_a$, $\varepsilon_\nu=2\nu\bar S_{ij}\bar S_{ij}$ page-local) drops in
+  the wall-adjacent cells, which inflates the first-cell mean velocity
+  (§3.1, Fig. 11), although away from strong pressure gradients DSM gives
+  the first-cell velocity closest to the reference (Fig. 7). The authors
+  restrict the no-separation result to their solver and set-up, note that
+  Iyer & Malik (cited) also found none with DSM while Whitmore et al. and
+  Agrawal et al. (cited) did, and name clipping, filtering, mesh topology
+  and numerics as possible causes. Whether the correct near-wall
+  asymptotics of DSM in wall-resolved LES carries over to coarse
+  wall-modelled grids they call "an open question" (§3.1, §4).
 - **Stress magnitude.** Citing Jiménez & Moser, [Haering et al. (2022)](/sources/haering-2022.md)
   (§II B) recall that DSM gives subgrid stresses "nearly five times smaller
   than the true filtered stress" in channel flow, in support of their
@@ -547,6 +577,34 @@ filter-width question.
   needs as one motivation for computing the coefficients with a network
   instead (§1; see [neural-network SGS models](/methods/neural-network-sgs-model.md)).
 
+- **A priori baseline in reacting flow.** Against filtered DNS of lean
+  premixed methane/air slot-jet flames, [Nista et al. (2023)](/sources/nista-2023.md)
+  (§4, Fig. 2b) find that DSM "exhibits a relatively low correlation" with
+  the exact $\tau_{12}$ in joint PDFs, whereas a super-resolution network
+  aligns with the diagonal (see
+  [super-resolution SGS models](/methods/super-resolution-sgs-model.md)).
+  The authors concede that the model "might be not optimal for such
+  analysis": the eddy-viscosity stress is compared with the full stress.
+
+## Dynamic closures of scalar fluxes and of one-equation models
+
+- **Sooting flames.** [Nmira et al. (2023)](/sources/nmira-2023.md)
+  (§2.1) close the LES of buoyant ethylene flames with DSM for the
+  momentum stress, a dynamic eddy-diffusivity model for the subgrid scalar
+  flux, and the filtered scalar dissipation rate of Jiménez et al. (cited)
+  with a dynamically determined constant, inside a flamelet/presumed-PDF
+  combustion model (see [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md));
+  no formulas or constants are printed.
+- **Dynamic $k$-equation coefficients.** [Wei et al. (2023)](/sources/wei-2023.md)
+  (§II B) determine both coefficients of a one-equation subgrid
+  kinetic-energy model dynamically, after Kim & Menon and Germano et al.
+  (cited); see [one-equation subgrid kinetic-energy models](/methods/subgrid-kinetic-energy-equation-model.md).
+- **Detonation-engine LES.** [Vignat et al. (2024)](/sources/vignat-2024.md)
+  (§3.3, Table 1) list DSM among the subgrid closures of earlier LES of the
+  same rotating detonation rocket engine, one of them with dynamically
+  computed turbulent Prandtl and Schmidt numbers; their own LES uses the
+  [Vreman model](/methods/vreman-model.md).
+
 ## Dynamic coefficient of a hybrid RANS/LES length scale
 
 [Li et al. (2022)](/sources/li-2022-k.md) apply the procedure to a
@@ -689,6 +747,12 @@ squares from a 6×4 system; see the
 
 ## Qualifications
 
+- On the spanwise-periodic Gaussian bump DSM separates on the coarse and
+  fine grids of Agrawal et al. (2022, compressible charLES, Voronoi grids)
+  and on none of the grids of Zhou & Bae (2024, incompressible finite
+  volume, hybrid grids, imposed reference wall stress). Zhou & Bae
+  attribute the difference to solver and set-up without isolating a cause,
+  so it is recorded here as a set-up difference, not as a contradiction.
 - Zhang et al. (2022d) print the dynamic Smagorinsky stress and its
   isotropic part (Eqs. 33–34) without $\bar\rho$, while their subgrid stress
   (Eq. 19) and the Germano terms of Eq. (36) carry it; with Eq. (36) as
@@ -818,3 +882,9 @@ squares from a 6×4 system; see the
 - [Li et al. (2022)](/sources/li-2022-k.md) — §I; §II C, Eqs. (6)–(15); §III A, Fig. 3; §III B, Figs. 9–11; §III C, Figs. 16, 18.
 - [Xu et al. (2023)](/sources/xu-2023.md) — §1; §2.2, Figs. 1–3; §3.1–3.2, Figs. 4, 8; §4.1, Figs. 13, 17, Table 4.
 - [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2, Eqs. (1)–(2); §3.3.
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §4.8 and sidebar "Large-Eddy Simulations".
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.1; §3.1, Figs. 4, 7, 8, 11; §3.2, Fig. 14; §4.
+- [Nista et al. (2023)](/sources/nista-2023.md) — §4, Fig. 2b.
+- [Nmira et al. (2023)](/sources/nmira-2023.md) — §2.1.
+- [Wei et al. (2023)](/sources/wei-2023.md) — §II B.
+- [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.3, Table 1.

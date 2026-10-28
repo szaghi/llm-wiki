@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 454:110991"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Simonis_Temporal_large_eddy_simulation_with_lattice_Boltzmann_method.pdf"
 tags: [lattice-boltzmann, temporal-les, approximate-deconvolution, taylor-green-vortex, sgs-model]
-timestamp: 2026-10-27T15:46:00Z
+timestamp: 2026-10-28T11:47:00Z
 ---
 
 # Summary
@@ -67,8 +67,9 @@ trace); $K(t)$ and $\mathcal Z(t)$ the volume-averaged kinetic energy and
 enstrophy (no factor ½ in $\mathcal Z$); $\varepsilon_{\mathrm{tot}}=-dK/dt$,
 $\varepsilon_{\mathrm{res}}$, $\varepsilon_{\mathrm{mod}}=\varepsilon_{\mathrm{tot}}-\varepsilon_{\mathrm{res}}$
 the total, enstrophy-based resolved and model dissipation rates;
-$s(N_x,t)=|\varepsilon_{\mathrm{mod}}|/|\varepsilon_{\mathrm{tot}}|$ the
-subgrid activity; $\mathrm{Ma}$ the lattice Mach number; UDNS
+$s_a(N_x,t)=|\varepsilon_{\mathrm{mod}}|/|\varepsilon_{\mathrm{tot}}|$ the
+subgrid activity of Geurts & Fröhlich (the source's $s$; $s_a$ as on
+[Zhou & Bae (2024)](/sources/zhou-2024-b.md)); $\mathrm{Ma}$ the lattice Mach number; UDNS
 under-resolved DNS; TLESo1, TLESo2 TLES with first- and second-order
 TDDM; AS, DS acoustic and diffusive scaling; EOC experimental order of
 convergence.
@@ -115,7 +116,7 @@ convergence.
 |---|---|---|
 | $\bar g$, $\bar u_\alpha$, $\bar p$ | $\bar\phi$ | **the overbar is a causal time filter here, not a spatial LES filter** |
 | $\Upsilon\in\{\boldsymbol u,p\}$ | $\phi$ | generic unfiltered quantity |
-| $\Theta$, $\tilde\Theta$, $\hbar$ | $\Theta$, $\tilde\Theta$, $\hbar$ (page-local) | temporal filter width, its value in time steps, $\Delta t/\Theta$ |
+| $\Theta$, $\tilde\Theta$, $\hbar$ | $\Theta$, $\tilde\Theta$ (registry §11), $\hbar$ (page-local) | temporal filter width, its value in time steps, $\Delta t/\Theta$ |
 | $T_{\alpha\beta}=\overline{u_\alpha u_\beta}-\bar u_\alpha\bar u_\beta$ | $\tau_{ij}$ | temporal residual stress; same positive-trace sign as the registry; written $T^{\mathrm t}_{ij}$ on the [lattice Boltzmann page](/methods/lattice-boltzmann-method.md), where $\tau$ is the relaxation time |
 | $\eta$ (subgrid temperature) | $\eta_{\mathrm{sgs}}$ | **$\eta$ is the Kolmogorov length in the registry**; set to 0 |
 | $\bar f_i$, $n_i$, $\boldsymbol\xi_i$, $w_i$ | $f_q$, $\boldsymbol c_q$, $w_q$ | filtered and shifted populations, discrete velocities, weights |

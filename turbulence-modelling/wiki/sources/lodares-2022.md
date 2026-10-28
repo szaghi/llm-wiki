@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 455:110998"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Computational_Physics_Lodares_An_entropystable_discontinuous_Galerkin_approximation_of_the.pdf"
 tags: [rans, spalart-allmaras, dg, entropy-stable, kinetic-energy-preserving]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -122,7 +122,7 @@ identity problem. Numbering on this page is that of this version.
 | $P$, $D$ | $P_{\tilde\nu}$, $D_{\tilde\nu}$ (page-local) | SA production and destruction; not $P_k$ |
 | $\hat\sigma$ | $\nu_{\mathrm{SA}}$ (page-local) | $\nu+\tilde\nu$ or $\max(\nu+f_n\tilde\nu,0)$; **collision:** hat is the test filter |
 | $\sigma$, $c_{b1}$, $c_{b2}$, $c_{w1}$, $c_{t3}$, $c_{n1}$, $f_{t2}=0$ | same | only $\sigma=2/3$, $c_{b2}=0.622$ printed |
-| $\mathcal E$, $\mathbf w$, $\mathcal E^{SA}=\tfrac12\rho\tilde\nu^2$, $\mathbf w^{SA}$ | $\mathcal E$, $W$, $\mathcal E_{\mathrm{SA}}$, $\boldsymbol W_{\mathrm{SA}}$ (page-local) | mathematical entropy and entropy variables; SA part in subscript form (see [entropy conservation](/properties/entropy-conservation.md)) |
+| $\mathcal E$, $\mathbf w$, $\mathcal E^{SA}=\tfrac12\rho\tilde\nu^2$, $\mathbf w^{SA}$ | $\mathcal E$, $W$ (page-local), $\mathcal E_{\mathrm{SA}}$, $\boldsymbol W_{\mathrm{SA}}$ (registry §11) | mathematical entropy and entropy variables; SA part in subscript form (see [entropy conservation](/properties/entropy-conservation.md)) |
 | $\mathcal K$, $\mathcal S=-\rho s/(\gamma-1)$ | (kinetic energy, thermodynamic entropy) | page-local |
 | $\Theta$, $\mathcal W_p$ | (0 thermodynamic entropy, 1 kinetic energy; pressure work) | page-local |
 | $\langle\cdot\rangle$, $\langle\cdot,\cdot\rangle$ | $\int(\cdot)\,d\boldsymbol x$, $L^2$ inner product | **collision:** not a Reynolds average |

@@ -5,7 +5,7 @@ description: "The spectral difference method is a nodal high-order element schem
 status: established
 aliases: [SD, SD method, spectral difference, staggered-grid Chebyshev multidomain method]
 tags: [flux-reconstruction, dns, compressible, immersed-boundary, implicit-les, numerical-dissipation]
-timestamp: 2026-10-28T02:13:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Spectral difference method
@@ -56,6 +56,17 @@ $$q(\xi,t)\approx\sum_{i=1}^{N+1}\ell_i(\xi)\,q_i(t),\qquad \ell_i(\xi)=\prod_{j
 3. build the degree-$N+1$ flux polynomial from the corrected face values and
    the interior values;
 4. differentiate it at the solution points.
+
+The review of [Lv & Ekaterinaris (2023)](/sources/lv-2023.md), §3.2,
+Eqs. 21–22, prints the same one-dimensional form on the reference cell
+$[0,1]$: the flux polynomial of degree $N+1$ on $N+2$ flux points that must
+include $\xi=0$ and $\xi=1$, where it takes the Riemann flux, and the update
+of each solution-point value by minus the derivative of that polynomial;
+they cite the multi-dimensional versions of Liu, Vinokur & Wang and
+successors and list SD with DG, flux reconstruction, the discontinuous
+spectral element method and hybridized DG among the "high-order
+discontinuous schemes" whose stabilization for multiphase and reacting
+flows they survey (§1, §3).
 
 **Node choice and stability.** D'Ayer et al. place the solution points at
 the Chebyshev nodes of the first kind and the interior flux points at
@@ -290,7 +301,7 @@ modal Runge–Kutta DG, not for SD.
 
 ## Uses cited by other sources
 
-Four further sources mention SD only through the works they cite:
+Five further sources mention SD only through the works they cite:
 
 - **Wall-modelled LES.** In their review of
   [wall-modelled LES](/methods/wall-modelled-les.md),
@@ -318,17 +329,22 @@ Four further sources mention SD only through the works they cite:
   methods developed for unstructured meshes. None of the workshop
   participants in their Tables II–VII submitted SD results; the entries
   are DG, CPR, finite-difference and finite-volume codes.
+- **EDAC implicit LES.** [Vermeire (2024)](/sources/vermeire-2024.md),
+  §3, writes flux reconstruction in lifting-collocation-penalty form with
+  constant lifting coefficients chosen to recover DG (FRDG) and states that
+  other choices of the coefficients recover energy-stable SD, spectral
+  volume and DG schemes; the implicit LES of the paper (Taylor–Green
+  vortex, channel, [SD7003 airfoil](/benchmarks/sd7003-airfoil.md)) uses
+  only the DG-recovering choice.
 
 ## Qualifications
 
-- Evidence for SD in turbulence is three sources: D'Ayer et al. validate an
-  immersed boundary (laminar cylinder, one rough channel at one Reynolds
-  number) rather than the SD scheme itself, Chapelier et al. compare
-  complete codes, so scheme and shock-capturing effects are not separated,
-  and Tonicello et al. (2022) validate one supersonic ramp DNS.
-  Tonicello et al. (2023) add a linear fully-discrete analysis with
-  inviscid tests (vortex, Taylor–Green, 2D duct), none of them a
-  turbulence-model assessment.
+- D'Ayer et al. validate an immersed boundary on an SD solver (laminar
+  cylinder, one rough channel at one Reynolds number), Chapelier et al.
+  compare complete codes, scheme and shock capturing together, and
+  Tonicello et al. (2022) run one supersonic ramp DNS. Tonicello et al.
+  (2023) add a linear fully-discrete analysis with inviscid tests (vortex,
+  Taylor–Green, 2D duct).
 - **Order convention and node sets.** Tonicello et al. (2022) count $N$ as
   the order (solution degree $N-1$ on $N$ points, flux on $N+1$), D'Ayer
   et al. as the degree; this page writes the degree. Tonicello et al. place
@@ -382,3 +398,5 @@ Four further sources mention SD only through the works they cite:
 - [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §6.2, Table 2, Fig. 10 (comparison with Bull & Jameson's FR-SD LES of the Taylor–Green vortex).
 - [Liu & Yuan (2023)](/sources/liu-2023-b.md) — §1 (FR casts nodal DG and SD in one framework; Jameson's energy-stability proof for SD, as cited).
 - [Shi & Yan (2023)](/sources/shi-2023.md) — §I (FR/CPR unifies DG and SD; DG, SD and FR/CPR for implicit LES, as cited).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — review: §1, §3.2, Eqs. 21–22 (one-dimensional SD form).
+- [Vermeire (2024)](/sources/vermeire-2024.md) — §3, Eqs. 10–13 (lifting coefficients recover SD, cited; FRDG used).

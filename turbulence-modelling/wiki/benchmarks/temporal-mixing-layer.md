@@ -5,7 +5,7 @@ description: "A periodic shear layer between two counter-flowing streams that tr
 status: established
 aliases: [temporal mixing layer, temporally evolving mixing layer, TML, free-shear mixing layer, temporally evolving free-shear layer]
 tags: [benchmark, les, sgs-model, data-driven, neural-network, dns]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:02:00Z
 ---
 
 # Temporally developing mixing layer
@@ -24,8 +24,8 @@ $$\theta=\int\Big[\tfrac14-\Big(\frac{\langle u\rangle}{\Delta U}\Big)^2\Big]dy$
 (registry $\theta$, applied to the shear layer; averages over $x$ and $z$)
 growing linearly in time. Time is scaled by $\tau_\theta=\theta_0/\Delta U$
 (page-local), $\theta_0$ the initial momentum thickness. The flow is
-inhomogeneous in $y$ and unforced; all four sources use it as their
-second a posteriori test after
+inhomogeneous in $y$ and unforced; the four LES sources of the next
+section use it as their second a posteriori test after
 [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md),
 and Wang et al. (2023c) attribute the gradient model's poorer spectrum
 there to "the absence of control by the large-scale forcing" (§IV).
@@ -202,6 +202,44 @@ against sharp spectral at ratio 2, different networks, data and
 viscosity), so the difference is recorded as one of set-up, and their LES
 errors are not comparable.
 
+**Why the temporal version.** [Kim & Leonard (2024)](/sources/kim-2024-b.md),
+§4.2, give the historical reason: a spatially growing free shear layer
+needs inflow and outflow conditions and a long domain, so most early
+simulations computed temporally growing layers, "an approximation to a
+spatially growing free-shear flow in an advected frame of reference". The
+price they list is that the spatial growth, and with it the asymmetric
+entrainment, is absent, and that the statistics must be made insensitive
+to the initial mean and disturbances, usually by waiting for a
+self-similar state. Mansour et al. (1978) and Riley & Metcalfe (1980) were
+"among the first" to simulate turbulent mixing layers; roll-up and
+pairing agreed with experiments once the temporal–spatial relation was
+accounted for, and Riley & Metcalfe showed how suppressing subharmonic
+modes suppresses pairing in a forced layer. Metcalfe et al. (1987), Moser
+& Rogers (1991, 1993) and Rogers & Moser (1992) followed on secondary
+instability, mixing transition and three-dimensional evolution, Moser &
+Rogers (1994) on the temporal wake; Lowery & Reynolds (1986) made the
+first DNS of a spatially growing mixing layer, with an advective outflow
+condition and inlet forcing by inviscid eigenfunctions or random
+perturbations. The authors attribute the success of the Mansour et al.
+mixing-layer LES "in large part" to energy-conserving numerics (§3.1; see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+
+**Mixing layers in one-dimensional turbulence.** The review of
+[Chen et al. (2024b)](/sources/chen-2024-c.md) records the mixing layer as
+a calibration flow of the stochastic
+[one-dimensional turbulence](/methods/one-dimensional-turbulence.md) model:
+the vector formulation of Kerstein et al. (2001) is printed for "mixing
+layer and wake" and its eddy locations are compared with DNS of
+time-developing free shear flows (Table 1, Eq. 6, Fig. 8); the
+variable-density formulation of Ashurst & Kerstein (2005) was run at
+density ratios 1, 2, 4 and 8 and convective Mach numbers 0.3, 0.7 and 1.1,
+with growth rates that agree with DNS at 0.3 and 0.7 and "a large
+discrepancy between ODT and DNS growth rates" at 1.1, which the review
+attributes to the incompressible solver and a simple kinematic model
+(§2.3.4, §3.1). The authors' own conservative compressible ODT reuses the
+Ashurst–Kerstein eddy energy and is reported on a compressible planar and
+a supersonic scalar mixing layer (Table 2, Eq. 16; §2.3).
+
 **Mixing-layer statistics as a reference elsewhere.** Statistics of free
 shear layers also serve as a reference outside this configuration.
 [Yu et al. (2023)](/sources/yu-2023.md) identify a mixing layer embedded
@@ -264,3 +302,5 @@ enters their comparison.
 - [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §3.2, Table 3, Eqs. 18, 23, Figs. 11–14; §5.1, Table 6.
 - [Wang et al. (2022)](/sources/wang-2022-j.md) — §V, Eqs. 28–33, Table IV, Figs. 8–16; §VI, Table V; App. B, Figs. 17–20.
 - [Yu et al. (2023)](/sources/yu-2023.md) — §5.1, Eq. 5.1, Fig. 14; App. A, Fig. 19 (free-mixing-layer data as reference for a mixing layer embedded in a boundary layer).
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §3.1; §4.2 (historical).
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — Table 1, Eq. 6, Fig. 8; §2.3, Table 2, Eq. 16; §2.3.4, §3.1.

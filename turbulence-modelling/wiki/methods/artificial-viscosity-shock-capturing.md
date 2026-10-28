@@ -5,7 +5,7 @@ description: "Artificial-viscosity shock capturing adds a dissipative term, swit
 status: established
 aliases: [artificial viscosity, localized artificial diffusivity, LAD, von Neumann–Richtmyer artificial viscosity, viscous pressure, Persson–Peraire artificial viscosity, entropy-stable artificial viscosity]
 tags: [shock-capturing, numerical-dissipation, dg, compressible, implicit-les, entropy-stable]
-timestamp: 2026-10-28T02:15:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Artificial-viscosity shock capturing
@@ -75,6 +75,42 @@ H3AMR uses the "Block Spectral Stresses" model, which builds sub-filter
 stresses, heat flux and pressure work from the spectra of the velocity
 gradient and is meant to capture shocks and model turbulence at once (no
 formula printed; §III.B.g).
+
+**Localized artificial diffusivity of Kawai–Lele in a compact
+finite-difference DNS.** [Kang & Lee (2024)](/sources/kang-2024.md),
+§II.B, Eqs. (10)–(14), add to the molecular viscosity and conductivity of
+their sixth-order compact finite-difference DNS of a Mach 2.9, 24°
+compression ramp an artificial shear viscosity and conductivity
+($\mu_{\mathrm{LAD}}$, $\kappa_{\mathrm{LAD}}$ page-local, the source's
+$\mu_a$, $\kappa_a$), written in the generalized coordinates $\xi_l$ of
+the curvilinear grid:
+$$\mu_{\mathrm{LAD}}=C_{\mathrm{LAD},\mu}\,\mathcal G_{\mathrm{tg}}\Big[\rho\,\Big|\sum_{l=1}^{3}\Big[\sum_{m=1}^{3}\Big(\frac{\partial\xi_l}{\partial x_m}\Big)^2\Big]^2\frac{\partial^4S}{\partial\xi^4}\,h^6\Big|\Big],\qquad
+\kappa_{\mathrm{LAD}}=C_{\mathrm{LAD},\kappa}\,\mathcal G_{\mathrm{tg}}\Big[\frac{\rho c}{T}\,\Big|\sum_{l=1}^{3}\Big[\sum_{m=1}^{3}\Big(\frac{\partial\xi_l}{\partial x_m}\Big)^2\Big]^2\frac{\partial^4e}{\partial\xi^4}\,h^5\Big|\Big],$$
+with $h$ the cube root of the local cell volume, $e$ the specific internal
+energy, $C_{\mathrm{LAD},\mu}=0.002$ and $C_{\mathrm{LAD},\kappa}=0.01$ (page-local, the source's $C_\mu$, $C_\kappa$) "taken from previous studies",
+and $\mathcal G_{\mathrm{tg}}$ (page-local, the source's double overbar) an
+approximate truncated Gaussian filter applied along each grid line, with
+weights $3565/10368$ at the centre and $3091/12960$, $1997/25920$,
+$149/12960$, $107/103680$ at distances 1 to 4, mirrored at boundaries
+(Eq. 14). The weights sum to one and their alternating sum is zero, so
+the filter keeps constants and removes the grid-scale mode *(compiler
+check, not in the sources)*. The source quantity $S$ of the viscosity is
+not defined in the text (see Qualifications). The diffusivity is meant for
+oscillations from turbulent structures with large gradients; shocks are
+handled in addition by an adaptive compact filter that a modified Ducros
+sensor drops from eighth to second order (see
+[shock sensors](/definitions/shock-sensor.md) and
+[explicit modal filtering](/methods/explicit-modal-filtering.md)).
+
+**Sensor-switched upwind diffusion on a split central flux.** In the
+OpenFOAM-based finite-volume LES of supersonic film cooling of
+[Wei et al. (2023)](/sources/wei-2023.md), §II C, Eqs. (16)–(19), the
+added dissipation is not a viscosity but the numerical-diffusion part of
+an AUSM-type flux, added to an energy-preserving split convective flux
+only where a compression-only Ducros sensor exceeds 0.05, and not to the
+species equations (flux on
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md),
+sensor on [shock sensors](/definitions/shock-sensor.md)).
 
 **Filtered entropy-stable AV.** In the DGSEM,
 [Mateo-Gabín et al. (2022)](/sources/mateogabin-2022.md), §2.2–2.3, §5–6,
@@ -183,13 +219,13 @@ physical bulk viscosity is a different matter, treated on
 (2.6)–(2.10), App. B, regularize the shocks of a DNS of a Mach 2.91
 compression–expansion ramp (spectral difference of degree $N=5$, the
 source's order $N=6$; see [spectral difference](/methods/spectral-difference-method.md))
-with an element-wise constant bulk artificial viscosity $\mu_{\mathrm{av}}$
-(page-local; the source's $\beta_{AV}$) added to the viscous stress, and a
+with an element-wise constant bulk artificial viscosity $\mu_{b,\mathrm{AV}}$
+(registry §11; the source's $\beta_{AV}$) added to the viscous stress, and a
 matching artificial conductivity:
-$$\sigma_{ij}=2\mu S^d_{ij}+\mu_{\mathrm{av}}\,\frac{\partial u_k}{\partial x_k}\,\delta_{ij},\qquad \kappa_{\mathrm{av}}=\frac{\mu_{\mathrm{av}}c_p}{Pr_{\mathrm{av}}},\qquad Pr_{\mathrm{av}}=Pr\,\big\{1+\exp[-4(M(\boldsymbol x)-3)]\big\},$$
-($\kappa_{\mathrm{av}}$, $Pr_{\mathrm{av}}$ page-local), the Mach-dependent
+$$\sigma_{ij}=2\mu S^d_{ij}+\mu_{b,\mathrm{AV}}\,\frac{\partial u_k}{\partial x_k}\,\delta_{ij},\qquad \kappa_{\mathrm{av}}=\frac{\mu_{b,\mathrm{AV}}c_p}{Pr_{\mathrm{AV}}},\qquad Pr_{\mathrm{AV}}=Pr\,\big\{1+\exp[-4(M(\boldsymbol x)-3)]\big\},$$
+($\kappa_{\mathrm{av}}$ page-local, $Pr_{\mathrm{AV}}$ registry §11), the Mach-dependent
 artificial Prandtl number avoiding "unnecessary thermal dissipation" at low
-Mach number. $\mu_{\mathrm{av}}=\rho f(s)$, with $f$ a sinusoidal ramp from 0
+Mach number. $\mu_{b,\mathrm{AV}}=\rho f(s)$, with $f$ a sinusoidal ramp from 0
 to $\varepsilon_0=C_\varepsilon\lambda_{\max}h/(N+1)$ ($\lambda_{\max}$ the
 largest wave speed in the domain; $C_\varepsilon$ not printed) of a modal
 decay sensor $s$, self-calibrated on a manufactured solution and multiplied
@@ -198,11 +234,11 @@ by a Ducros-type factor that is non-zero only in compression (formula on
 positivity-preserving limiter is applied at every Runge–Kutta stage (App. C).
 The authors state that the Ducros factor keeps the viscosity off at walls,
 where "unlike eddy viscosity, artificial viscosity does not vanish", and in
-vortical regions; the mean $\mu_{\mathrm{av}}/\mu$ is non-zero only near the
+vortical regions; the mean $\mu_{b,\mathrm{AV}}/\mu$ is non-zero only near the
 shock (Fig. 12) and the limiter's time–span-averaged activation flag peaks
 at about $10^{-4}$ (Fig. 13). They add the AV contribution to the resolved
 kinetic-energy budget,
-$$K_{\mathrm{av}}=\frac{\partial}{\partial x_j}\Big(\mu_{\mathrm{av}}\frac{\partial\tilde u_k}{\partial x_k}\tilde u_j\Big)-\mu_{\mathrm{av}}\Big(\frac{\partial\tilde u_k}{\partial x_k}\Big)^2$$
+$$K_{\mathrm{av}}=\frac{\partial}{\partial x_j}\Big(\mu_{b,\mathrm{AV}}\frac{\partial\tilde u_k}{\partial x_k}\tilde u_j\Big)-\mu_{b,\mathrm{AV}}\Big(\frac{\partial\tilde u_k}{\partial x_k}\Big)^2$$
 (the source's $K_5$, a flux part and a sink part), and find it of order
 $10^{-5}$ in units of $\rho_\infty u_\infty^3/\delta$, small against the
 other terms and dominated by the flux part (§4.1, Fig. 18); the budget
@@ -244,6 +280,36 @@ the largest remaining at the density contact, where Rusanov oscillates most,
 because "with high order, the interfaces of the mesh have a less important
 role than for order 1" (Fig. 7; the networks are on
 [physics-informed neural networks](/methods/physics-informed-neural-network.md)).
+
+**A survey for discontinuous schemes.** The review of high-order
+discontinuous schemes for multiphase and multicomponent flows of
+[Lv & Ekaterinaris (2023)](/sources/lv-2023.md), §4.2, traces DG
+artificial viscosity from Johnson's form, of magnitude proportional to
+$h^2|R_e|$ ($R_e$ the local element residual, page-local), which they
+criticize because "larger residual magnitude does not always correspond
+to the solution near the discontinuity", to the sensor-switched
+localized viscosity of Persson & Peraire, scaling as $h/N$, which gives
+subcell shock resolution (all cited). They group the later work on three
+axes: the indicator (inter-element jump, entropy residual, intra-element
+pressure jump, pressure gradient, neural network), the smoothness of the
+viscosity field (linear interpolation, filtering, PDE-based fields) and
+its magnitude (CFL arguments, stability eigenvalues, a non-oscillatory
+condition, sequential adaptation for steady problems). For LES with
+discontinuous schemes they report that artificial-viscosity formulations,
+or filtered forms such as the entropy-stable
+[spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
+of Mateo-Gabín et al., have become more popular than limiting, which
+stays "too intrusive for high-order solutions" even with a good sensor;
+the dissipation of either can smear smooth extrema and kill small
+scales. They also use artificial viscosity together with the conservative
+$L^2$-projection of the equation of state for interfaces with variable
+thermodynamics (see
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)).
+On the parameters the review prints two statements: in §4.2 that tuning
+"can be easily done during the course of LES run", since LES needs long
+integration, and in §7 that artificial viscosity "continues to be
+problematic due to the dependence on problem-specific parameters". No
+test of either is shown.
 
 **An open item in 2012.** The first High-Order CFD Workshop lists robust,
 parameter-free, accuracy-preserving shock capturing that also converges for
@@ -387,6 +453,15 @@ Fig. 6). Findings:
   to the turbulent scales: the shocks stay under-resolved and regularized
   by the artificial terms (§2.2). Their constant $C_\varepsilon$ and the
   calibrated sensor thresholds are not printed.
+- **Printed slips (Kang & Lee 2024).** The quantity $S$ in Eq. (12) of
+  the artificial viscosity is not defined in the text; the energy flux of
+  Eq. (3) is printed with the strain rate $S_{ij}u_i$ where the viscous
+  stress of Eq. (2) belongs, and the heat flux as
+  $q_i=-\kappa\,\partial T_i/\partial x_j$. The diffusivity constants are
+  taken from earlier studies with no sensitivity shown.
+- Lv & Ekaterinaris (2023) is a review: the scalings, groupings and the
+  preference for artificial viscosity over limiting in LES are reported
+  from the cited works, with no computation of the review's own.
 - Svärd's (2022) identification of upwind dissipation with a subgrid
   model is a scaling argument (§3.1), not tested against subgrid physics;
   the same paper calls the Rusanov (E-scheme) flux "very diffusive and
@@ -420,3 +495,6 @@ Fig. 6). Findings:
 - [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §1 (artificial dissipation against filtering: cost and sensor).
 - [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §2.2 (shock capturing by a TVD reconstruction, no artificial viscosity; passing).
 - [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.4 (localized artificial diffusivity named, not used; passing).
+- [Kang & Lee (2024)](/sources/kang-2024.md) — §II.B, Eqs. (10)–(14) (Kawai–Lele localized artificial diffusivity in curvilinear compact finite differences, $C_\mu=0.002$, $C_\kappa=0.01$ as printed, truncated Gaussian filter).
+- [Wei et al. (2023)](/sources/wei-2023.md) — §II C, Eqs. (16)–(19) (Ducros-switched AUSM-type diffusion on a split energy-preserving flux).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (survey of DG artificial viscosity: Johnson, Persson–Peraire, three axes of extension, preference over limiting in LES, tuning); §7 (parameter dependence).

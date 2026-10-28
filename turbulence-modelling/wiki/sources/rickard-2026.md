@@ -9,7 +9,7 @@ year: 2026
 venue: "J. Fluid Mech. 1039:A17"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Journal_of_Fluid_Mechanics_Rickard_Modelling_the_wall_slip_in_large_eddy_simulations_with_immer.pdf"
 tags: [les, wall-model, wmles, immersed-boundary, filtering, a-priori-a-posteriori]
-timestamp: 2026-10-27T15:51:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -47,7 +47,7 @@ slip-length procedure from the Germano identity of the
 [dynamic procedure](/methods/dynamic-procedure.md) is proposed but not
 tested, and existing subgrid closures such as dynamic
 [Smagorinsky](/methods/smagorinsky-model.md) are expected to apply to
-$\tau_{ij}$. No a posteriori simulation is run. The introduction recalls
+$\tau_{ij}$. No a posteriori simulation is run. The introduction cites
 the [grid-point requirements](/results/les-grid-point-requirements.md) of
 DNS, wall-resolved and wall-modelled LES.
 
@@ -61,7 +61,7 @@ page are those of the version of record.
 
 # Key claims
 
-Page-local symbols: $G_1$ the one-dimensional kernel factor
+Shared symbols of registry §11: $\Delta_f$, $\varphi_f$, $\boldsymbol\Lambda$, $\boldsymbol\ell$, $\boldsymbol u_{\mathrm{slip}}$. Page-local symbols: $G_1$ the one-dimensional kernel factor
 ($G=G_1(x)G_1(y)G_1(z)$); $\Delta_f$ the kernel support width (the source's
 $\delta_f$); $\varphi_f$ the fluid volume fraction and $\varphi_{f,w}$ its wall
 value (the source's $\alpha_f$, $\alpha_{f,w}$); $\Sigma$ the surface density $\iint_{S_w}G\,dS$; $\boldsymbol F_{\mathrm{IB}}$
@@ -72,7 +72,7 @@ of the mean filtered wall gradient to the mean gradient of the filtered
 velocity (the source's $\boldsymbol\lambda$); $a_0,b_0,n_0$ and $a_1,n_1$
 the fit constants.
 
-1. Volume filtering with a truncated, non-rescaled kernel and a volume fraction $\varphi_f$ removes the commutation errors of wall-resolved and wall-modelled LES with variable filters, and turns boundary conditions into volumetric forcing, which gives an immersed boundary method directly (§2.1). **Stated** (identities derived in Dave et al. 2023, which the paper recalls as Eqs. 2.8–2.13)
+1. Volume filtering with a truncated, non-rescaled kernel and a volume fraction $\varphi_f$ removes the commutation errors of wall-resolved and wall-modelled LES with variable filters, and turns boundary conditions into volumetric forcing, which gives an immersed boundary method directly (§2.1). **Stated** (identities derived in Dave et al. 2023, which the paper restates as Eqs. 2.8–2.13)
 2. The volume-filtered momentum equation (2.22) contains two unclosed terms, $\tau_{ij}$ and $\boldsymbol F_{\mathrm{IB}}$; the residual viscous stress $R^\mu_{ij}$ (2.17)/(2.18) is closed but non-trivial (§2.2). **Derived**
 3. $\boldsymbol F_{\mathrm{IB}}$ is approximated to $O(\Delta_f^2)$ by the surface integral (2.24) and is non-zero only in a band of width $\Delta_f$ around the interface for a compact kernel (§2.2). **Derived**
 4. The wall stress relates to the wall slip through (2.25), so the slip is the only unclosed term and modelling it is equivalent to specifying a wall model (§2.3). **Derived** (following Dave et al. 2023)
@@ -118,16 +118,16 @@ the fit constants.
 | $\boldsymbol u_f$, $p$, $\rho_f$, $\mu_f$, $\nu$ | $\boldsymbol u$, $p$, $\rho$, $\mu$, $\nu$ | incompressible; subscript $f$ = fluid phase |
 | $\overline{\boldsymbol u}_f$, $\alpha_f\overline{\boldsymbol u}_f=\overline{\mathbb I_f\boldsymbol u_f}$ | $\bar{\boldsymbol u}$ | volume (phase-weighted) LES filter |
 | $\mathcal G$, $\mathcal G_1$ | $G$, $G_1$ (page-local) | compact, symmetric, unit-integral kernel |
-| $\delta_f$, $\delta_f^+$ | $\Delta_f$, $\Delta_f^+$ (page-local) | kernel support width, the LES filter width of this framework; **collision:** $\delta$ is the channel half-height |
+| $\delta_f$, $\delta_f^+$ | $\Delta_f$, $\Delta_f^+$ (registry §11) | kernel support width, the LES filter width of this framework; **collision:** $\delta$ is the channel half-height |
 | $\widehat{\cdot}$, $\widehat\delta_f$, $\delta_R$ | $\hat\cdot$, $\hat\Delta_f$, $\hat\Delta_f/\Delta_f$ | test filter |
-| $\alpha_f$, $\alpha_{f,w}$, $\mathbb I_f$ | $\varphi_f$, $\varphi_{f,w}$ (page-local), $\mathbb I_f$ (fluid indicator) | **collision:** $\alpha_f$ is the registry's modal-filter strength (§11), $\alpha$ the DG/FV blending factor |
+| $\alpha_f$, $\alpha_{f,w}$, $\mathbb I_f$ | $\varphi_f$ (registry §11), $\varphi_{f,w}$ (page-local), $\mathbb I_f$ (fluid indicator) | **collision:** $\alpha_f$ is the registry's modal-filter strength (§11), $\alpha$ the DG/FV blending factor |
 | $\Sigma$, $S_w$, $\boldsymbol n$, $\boldsymbol u_w$ | (page-local) | surface density; walls; solid-to-fluid normal; wall velocity |
 | $\boldsymbol\tau_{sfs}$ | $\tau_{ij}$ | kinematic, full (not deviatoric), positive trace; enters as $-\rho\tau_{ij}$ |
 | $\boldsymbol T_{sfs}$ | (test-level stress of the Germano identity) | |
 | $\overline{\boldsymbol\tau}_f^R$, $\boldsymbol R_\mu$ | (resolved stress), $R^\mu_{ij}$ (page-local) | **collision:** $R_{ij}$ is the Reynolds stress |
 | $\boldsymbol F_{IB}$ | $\boldsymbol F_{\mathrm{IB}}$ (page-local) | |
-| $\boldsymbol u_{slip}$, $\boldsymbol\ell$ | $\boldsymbol u_{\mathrm{slip}}$, $\boldsymbol\ell$ (page-local) | wall slip, slip lengths |
-| $\boldsymbol\lambda$ | $\boldsymbol\Lambda$ (page-local) | gradient ratio; **collision:** $\lambda$ is the Taylor microscale |
+| $\boldsymbol u_{slip}$, $\boldsymbol\ell$ | $\boldsymbol u_{\mathrm{slip}}$, $\boldsymbol\ell$ (registry §11) | wall slip, slip lengths |
+| $\boldsymbol\lambda$ | $\boldsymbol\Lambda$ (registry §11) | gradient ratio; **collision:** $\lambda$ is the Taylor microscale |
 | $\langle\cdot\rangle$, $\overline u_f'$ | $\langle\cdot\rangle$, $\bar u'$ | average over snapshots, $x$, $z$ and channel halves; fluctuation of the filtered field |
 | $h$ | $\delta$ | channel half-height; **collision:** $h$ is the cell size |
 | $u_\tau$, $\delta_\nu$, $Re_\tau$, $\tau_w$ | same | $Re_\tau=5200$ |

@@ -5,7 +5,7 @@ description: "ANSYS Fluent is the commercial cell-centred finite-volume code in 
 status: established
 aliases: [Fluent, ANSYS-Fluent, Ansys Fluent, ANSYS FLUENT]
 tags: [software, rans, des, hybrid-rans-les, les, transition]
-timestamp: 2026-10-28T02:13:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # ANSYS Fluent
@@ -43,7 +43,8 @@ fully turbulent start) in Fluent, a cell-centred finite-volume code, but
 not in ANSYS CFX, where the model was developed; Menter et al. (2022, §2.3,
 Fig. 3) attribute this to the different numerical stencils. A harmonic
 average of $k$ over the face-connected cells in the local turbulence
-intensity removes it, and is now standard in Fluent's one-equation model.
+intensity removes it; the authors state that it is now made standard in
+the one-equation model.
 The Fluent and NTS implementations of their new algebraic model agree
 closely; NTS slightly delays the T3 onset and differs a little on the S809
 airfoil (Figs. 7, 12).
@@ -58,8 +59,8 @@ authors call it the numerical reference of their industrial practice.
 **SST-based DDES.** Thawait et al. (2023, §II.B, Eqs. 9–13), citing the
 2022R1 theory guide, print the delayed DES of the SST model as a
 multiplier of the destruction term of the $k$ equation,
-$$\rho\beta^*k\omega\,F_{\mathrm{DES}},\qquad F_{\mathrm{DES}}=\max\!\left(\frac{L_t}{C_{\mathrm{des}}\Delta_{\max}}\left(1-F_{\mathrm{DDES}}\right),\,1\right),\qquad L_t=\frac{\sqrt k}{\beta^*\omega},$$
-with $C_{\mathrm{des}}=0.61$, $F_{\mathrm{DDES}}=\tanh[(C_{d1}r_d)^{C_{d2}}]$,
+$$\rho\beta^*k\omega\,F_{\mathrm{DES}},\qquad F_{\mathrm{DES}}=\max\!\left(\frac{L_t}{C_{\mathrm{DES}}\Delta_{\max}}\left(1-F_{\mathrm{DDES}}\right),\,1\right),\qquad L_t=\frac{\sqrt k}{\beta^*\omega},$$
+with $C_{\mathrm{DES}}=0.61$, $F_{\mathrm{DDES}}=\tanh[(C_{d1}r_d)^{C_{d2}}]$,
 $C_{d1}=20$, $C_{d2}=3$ and
 $r_d=(\nu_t+\nu)/\big(\kappa^2y^2\sqrt{0.5(|S|^2+|\Omega|^2)}\big)$, $\kappa=0.41$.
 Page-local: $L_t$ the RANS length scale, $\Delta_{\max}$ the local grid
@@ -68,7 +69,8 @@ al. state that DDES "preserves RANS in the boundary layer" (§II.B); with
 $F_{\mathrm{DDES}}=1$, Eq. (10) gives $F_{\mathrm{DES}}=1$, the unmodified
 destruction term *(compiler check, not in the sources)*. The
 same section also prints the DDES length scale
-$\tilde d=d-f_d\max(0,d-C_{\mathrm{des}}\Delta_{\max})$, $f_d=1-F_{\mathrm{DDES}}$
+$d_{\mathrm{DDES}}=d-f_d\max(0,d-C_{\mathrm{DES}}\Delta_{\max})$ (the source's
+$\tilde d$), $f_d=1-F_{\mathrm{DDES}}$
 (Eq. 14), without saying where it enters the SST equations. The same model
 family, with the shielding of ANSYS CFX, is used on a turbine cascade by
 Yang & Ma (2022); see [turbine cascades](/benchmarks/turbine-cascade.md)
@@ -116,6 +118,15 @@ and [detached-eddy simulation](/methods/detached-eddy-simulation.md).
   model, and its validations test the structural response (flutter
   velocity within 5%, panel deflections within 3.18% and 0.12%), not the
   closure.
+- **Rotating detonation rocket engine, as cited** (Vignat et al. 2024):
+  in their survey of the groups that computed the same AFRL methane–oxygen
+  rotating detonation engine (Table 1), Vignat et al. list the LES of
+  Strakey & Fergusson (which they cite) as run in Fluent with a
+  one-equation subgrid turbulent-kinetic-energy model; Vignat et al.'s own
+  LES is run in a different, unstructured compressible code (see
+  [CharLES](/software/charles.md)). The study is not ingested, and Table 1
+  gives no further Fluent settings. See
+  [one-equation subgrid kinetic-energy models](/methods/subgrid-kinetic-energy-equation-model.md).
 
 ## Qualifications
 
@@ -132,7 +143,8 @@ and [detached-eddy simulation](/methods/detached-eddy-simulation.md).
   and the HAL author manuscript for Delassaux et al. (2023); see their
   Source pages.
 - Menter et al. (2022) are ANSYS authors validating their own model in the
-  vendor's code; the other four sources are users.
+  vendor's code; the other four sources are users. Vignat et al. (2024)
+  only cite a Fluent study.
 - Cost and accuracy statements on this page are those of each study's
   set-up (mesh, schemes, model); none isolates the code from its
   configuration.
@@ -144,3 +156,4 @@ and [detached-eddy simulation](/methods/detached-eddy-simulation.md).
 - [Pan & Zhang (2023)](/sources/pan-2023.md) — §II.E (Fluent set-up, default parameters); §III.A (LES description).
 - [Baldan & Guardone (2025)](/sources/baldan-2025.md) — arXiv v2: §1.1–1.2, Table 2 (grids, Fluent 2023R2 schemes, WALE, iSST, SBES).
 - [Thawait et al. (2023)](/sources/thawait-2023.md) — §II.B–E, Eqs. (9)–(19) (SST-DDES, AUSM+, mesh smoothing, dual time); §IV (System Coupling); §V–§VI, Tables I–II (validation, grids).
+- [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.3, Table 1 (Fluent LES of the AFRL rotating detonation engine by Strakey & Fergusson, as cited).

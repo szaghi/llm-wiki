@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Plasma Phys. 89:905890413"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Plasma_Physics_Foldes_Efficient_kinetic_Lattice_Boltzmann_simulation_of_three-dime.pdf"
 tags: [mhd, plasma, lattice-boltzmann, gpu, dns, isotropic-turbulence]
-timestamp: 2026-10-27T15:53:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -121,7 +121,7 @@ page are those of this version.
 | $Pr_m$, $Re_m$ | $Pm$, $Rm$ | $Pm=1$ throughout |
 | $Re$ | $Re$ | $U_0L_0/\nu$ in §3; $UL/\nu$ with rms velocity and integral scale at peak dissipation in §§4.4–5 |
 | $V_A$ | $v_A$ | built on $B_0$, unit-rescaled field |
-| $B_0$, $U_0$, $L_0$ | $B_0$ (§3.3 reference field), $B_{\mathrm{OT}}$ (§4.4 Orszag–Tang amplitude, page-local), $U_0$, $L_0$ (reference velocity and length, page-local) | **collision:** no mean field in the Orszag–Tang runs, so the amplitude is not the registry's guide field $\boldsymbol B_0$ |
+| $B_0$, $U_0$, $L_0$ | $B_0$ (§3.3 reference field), $B_{\mathrm{OT}}$ (§4.4 Orszag–Tang amplitude, registry §11), $U_0$, $L_0$ (reference velocity and length, page-local) | **collision:** no mean field in the Orszag–Tang runs, so the amplitude is not the registry's guide field $\boldsymbol B_0$ |
 | $Ma$ | $M$ | $Ma=U_0/c_s$; $\sqrt3U_0^{\mathrm{lbm}}$ in lattice units |
 | $\alpha_H$, $\epsilon_H$, $\epsilon_H^{\mathrm{lbm}}$ | $\alpha_H$, $\epsilon_H$ (Hall parameter $1/(en)$ and its dimensionless form $L_H/L_0$, registry §11), (lattice Hall number, page-local) | Figs. 13, 16 print $\epsilon_H$ as "$H$" |
 | $d_i$, $L_H$, $k_H$ | $d_i$ (ion inertial length, registry §11), (Hall length, Hall wavenumber $2\pi/(\epsilon_HL_0)$) | **collision:** $d_i$ is not the wall distance $d$ |

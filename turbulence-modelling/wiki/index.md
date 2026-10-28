@@ -20,7 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–12 ingested (240 of the 307 sources planned in 16
+**Corpus:** chunks 1–13 ingested (260 of the 307 sources planned in 16
 chunks; the archive is still growing). Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
@@ -97,7 +97,7 @@ stable flux reconstruction, entropy-conservative schemes for thermally
 perfect gases, DG error estimation and anisotropic mesh adaptation, and
 shock-capturing schemes for real gases and kinetic equations. Chunk 8
 (2022–2026 papers): high-order RANS and transition solvers (COOLFluiD flux
-reconstruction, entropy-stable Spalart–Allmaras DGSEM, the $k$-$	au$ model,
+reconstruction, entropy-stable Spalart–Allmaras DGSEM, the $k$-$\tau$ model,
 laminar-kinetic-energy onset correlations), DES of a pump, ZDES in a
 lattice-Boltzmann solver, scale-adaptive simulation, LES of dynamic stall
 and of a shock/boundary-layer interaction with subcell shock capturing,
@@ -143,6 +143,18 @@ generalized Reynolds analogy, scale-resolving hybrid RANS/LES of cylinder
 flow, fluid–structure interaction with shock-induced panel loading,
 dynamically thickened flames, principal-component transport, and
 detonation codes and detonation–turbulence DNS.
+Chunk 13 (2023–2024 papers): a history of early DNS and LES, a review of
+one-dimensional turbulence, a review of three-dimensional shock/boundary-layer
+interactions, DNS of shock/boundary-layer interactions (turbulent kinetic
+energy budget, wall temperature, heat transport on a hypersonic ramp),
+DNS of a reacting supersonic film-cooling layer, pressure-dependent SST
+coefficients and turbulent Prandtl number, wall-modelled LES grid
+convergence and the Gaussian bump, self-adaptive turbulence eddy
+simulation of cylinder and high-lift flows, flux reconstruction with
+entropically damped artificial compressibility, high-order discontinuous
+schemes for multiphase flows, super-resolution SGS models for flames,
+sooting-flame LES, detonation-engine LES, GPU actuator-line LES of wind
+turbines, and DDES of tip-leakage and high-lift flows.
 
 ## Reading guide
 
@@ -180,6 +192,7 @@ detonation codes and detonation–turbulence DNS.
 [WALE model](/methods/wale-model.md),
 [residual-based dynamic SGS model](/methods/residual-based-dynamic-sgs-model.md),
 [sigma model](/methods/sigma-model.md),
+[one-dimensional turbulence](/methods/one-dimensional-turbulence.md),
 [explicit modal filtering](/methods/explicit-modal-filtering.md),
 [autonomous eddy-viscosity model](/methods/autonomous-eddy-viscosity-model.md),
 [anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md),
@@ -216,7 +229,8 @@ detonation codes and detonation–turbulence DNS.
 [active model split](/methods/active-model-split.md),
 [continuous eddy simulation](/methods/continuous-eddy-simulation.md),
 [scale-adaptive simulation](/methods/scale-adaptive-simulation.md),
-[detached-eddy simulation](/methods/detached-eddy-simulation.md);
+[detached-eddy simulation](/methods/detached-eddy-simulation.md),
+[self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md);
 [spectral gap](/definitions/spectral-gap.md).
 
 **6. Data-driven closures.**
@@ -271,11 +285,12 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [ProLB](/software/prolb.md), [GALÆXI](/software/galaexi.md),
 [TRACE](/software/trace.md), [OpenFOAM](/software/openfoam.md),
 [COOLFluiD](/software/coolfluid.md), [hpMusic](/software/hpmusic.md),
-[ANSYS Fluent](/software/ansys-fluent.md);
+[ANSYS Fluent](/software/ansys-fluent.md), [PHengLEI](/software/phenglei.md);
 [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md). Compressible wall turbulence:
 [Morkovin's hypothesis and Reynolds analogies](/definitions/morkovin-hypothesis.md),
 [attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md),
-[pressure dilatation](/definitions/pressure-dilatation.md).
+[pressure dilatation](/definitions/pressure-dilatation.md),
+[turbulent Prandtl number](/definitions/turbulent-prandtl-number.md).
 
 **8. Benchmarks.**
 [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md),
@@ -306,6 +321,8 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [compressor cascades](/benchmarks/compressor-cascade.md),
 [NASA Rotor 37](/benchmarks/nasa-rotor-37.md),
 [NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md),
+[Gaussian bump](/benchmarks/gaussian-bump.md),
+[SD7003 airfoil](/benchmarks/sd7003-airfoil.md),
 [square cylinder](/benchmarks/square-cylinder-flow.md),
 [temporal mixing layer](/benchmarks/temporal-mixing-layer.md);
 [inflow turbulence generation](/methods/inflow-turbulence-generation.md).

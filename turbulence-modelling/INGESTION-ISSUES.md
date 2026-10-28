@@ -6,6 +6,157 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 13 — 2023–2024 papers: DNS/LES history, one-dimensional turbulence, 3-D SBLI review, STBLI DNS (TKE budget, wall temperature, ramp heat transport), reacting film cooling, pressure-dependent SST, WMLES grid convergence and the Gaussian bump, SATES, EDAC flux reconstruction, multiphase DG review, super-resolution SGS, sooting and detonation LES, actuator-line GPU LES, tip-leakage and high-lift DDES; third whole-bundle deep lint (2026-10-28)
+
+Sources (20): wei-2023, yu-2023-b, nista-2023, nmira-2023, lv-2023,
+sabnis-2023, taschner-2024, kim-2024-b, chen-2024-c, zhang-2024,
+vignat-2024, vermeire-2024, wu-2024, hu-2024, zhou-2024-b, tang-2024,
+wang-2024-h, zhang-2024-b, kang-2024, li-2024-f. 260 of 307 ingested,
+177 concept pages plus the registry, 11784 bibliography entries.
+Whole-bundle deep lint A1–A12 (the third, 60 ingestions after the second)
+done over every page. Compiled under the temporary night protocol.
+
+### Decisions for the human
+
+1. **New STBLI contradiction, Open or Qualification?** What drives the
+   first amplification over the Mach 2.9, 24° ramp: deceleration (Shi &
+   Yan 2023, §IV.C) against shear (Kang & Lee 2024, §IV.D). The two split
+   production in different frames, and Kang & Lee print the total
+   production as comparable in both; but Kang & Lee themselves (§I) set
+   their conclusion against the deceleration-first reading of Fang et al.
+   and Shi & Yan. Kept *Open* (two auditors leaned to a frame difference,
+   the page owner and one other to Open).
+2. **Bibliography calls left by the resolver:**
+   - `ming-2019` is probably a mis-keyed master entry: wang-2024-h prints
+     the first author of Phys. Rev. Fluids 4:123402 as Yu (Yu, Xu &
+     Pirozzoli). Folded onto the existing key, not renamed.
+   - `conaire-2004`: the master venue reads "Chem. Eng. Sci. 36:603";
+     wei-2023 prints Int. J. Chem. Kinet. 36:603.
+   - `spalart-1985` (kim-2024-b, symposium paper) kept distinct from
+     `spalart-1987` (chapter in the proceedings volume); possibly one work.
+3. **Gradient model alias:** "tensor-diffusivity model" stays an alias of
+   the gradient (Clark) model page, but no ingested source states the two
+   are the same model (Kim & Leonard 2024 attribute the term to Leonard
+   and print no equation). Keep the alias, or drop it?
+4. **Candidate pages** (not created; inline for now):
+   - turbulent kinetic energy budget (kang-2024, tang-2024, zhang-2024-b,
+     shi-2023) — qualifies on evidence;
+   - vortex identification (li-2024-f, zhang-2024: vorticity, Q, Rortex,
+     Omega) — two sources;
+   - compact finite-difference schemes (kang-2024, with kim-2024-b's
+     history) — named by two drafters;
+   - Reynolds-analogy / pressure–heat-flux correlation (tang-2024,
+     yu-2023-b, helm-2022); three-dimensional turbulent boundary layer
+     (hu-2024, devenport-2022); free-interaction theory (zhang-2024-b);
+   - single-source, kept inline: GRASP (taschner-2024), scramjetFoam
+     (wei-2023), CharlesX (vignat-2024), EDAC (vermeire-2024), DG limiters
+     (lv-2023), LES-ODT/ODTLES and the triplet map (chen-2024-c).
+5. **Page size:** turbulent-channel-flow, shock-turbulent-boundary-layer-
+   interaction, a-priori-and-a-posteriori-testing (each >110 KB),
+   homogeneous-isotropic-turbulence (98 KB), wall-modelled-les (~1550
+   lines), detached-eddy-simulation (~1400 lines), the DGSEM and FIML
+   pages: split candidates; nothing forces it. The 30P30N paragraph on
+   nasa-crm-high-lift duplicates the new 30P30N page.
+6. **Symbols with two page-local meanings** (each defined where used):
+   $\Delta_c$, $L_s$ (Lozano-Durán's critical grid size against Zhou &
+   Bae's cell size and separation length); $C_\Delta$ (PITM coefficient,
+   filter-shape constant); $C_{\mathrm T}$ (skin-friction page against the
+   TENO cut-off); $\alpha_e$ now only ODT (Gillyns's filter weight renamed
+   $\alpha_{\mathrm{ema}}$).
+7. **Kept compiler checks with a stated assumption:** law-of-the-wall's
+   anisotropy-factor check assumes the printed log is natural (stated on
+   the page); the subcell page's $\alpha_f=36=-\ln\epsilon_{\mathrm{mach}}$
+   uses the IEEE double-precision epsilon; liu-2023-b's $A=231.16$ uses a
+   midpoint quadrature. Keep or drop?
+8. **Still open from earlier chunks:** the chunk-12, chunk-11, chunk-10 and
+   earlier lists.
+
+### Contradictions
+
+One opened (above, item 1), on shock-turbulent-boundary-layer-interaction;
+ten open in all, the nine earlier ones re-verified by the audit. Side by
+side, not conflicts: the dynamic-Smagorinsky separation on the Gaussian
+bump (agrawal-2022 against zhou-2024-b; different solvers and wall
+treatments, as Zhou & Bae state; worded the same on four pages); the
+amplification factors kang-2024 and shi-2023 attribute to Fang et al. and
+Pirozzoli & Grasso (2.7/3.34 against 2.97/2.7); Lilly's constant 0.17
+(kim-2024-b) against 0.18; $C_\sigma=3.0$ in SATES-σ (a ratio scaling,
+not comparable with 1.3–1.35); the K48 angle conventions (Liu 2024
+against zhang-2024, 90°) and RANS over- against DDES under-prediction of
+the corner separation; the Reynolds-analogy level 0.5 (tang-2024) against
+about 0.7 (helm-2022, different flows); the double-flux pressure
+equilibrium (lv-2023 citing others against Bernades et al. with the KGP
+split); goc-2021 and hu-2024 on Iyer & Malik's bump study; yu-2023-b's a
+priori $\mu_t$ overestimate against its a posteriori stress
+underestimate.
+
+### Printed slips (recorded on the Source pages)
+
+- wei-2023: Eq. 21 index; Eq. 23 $a_{22}$; Eq. 24 $\rho'/\bar\rho=+T'/\bar T$
+  (the paper's Eq. 8 at $p'=0$, not stated by the authors, gives the
+  minus sign); "third-order four-stage" RK; "65%" (+67% in variance,
+  +29% RMS); Eq. 27 $v$ without its minus sign (field not divergence-free,
+  checked visually).
+- yu-2023-b: Eq. 8 dimensionally inconsistent as printed; Table I "2, 46";
+  "22° ramp".
+- nista-2023: $\Delta/\delta_{\mathrm L}\approx0.062$ against ≈0.53 from
+  Table 1; 6.6 against 7.44 at $4\Delta x$; $\delta_{\mathrm L}$ 435/444 µm.
+- nmira-2023: "six" approaches for M1–M5; ref. [24] pages "200–2013".
+- lv-2023: FR correction-function symmetry fails the paper's own end
+  conditions; Eq. 5 spurious $\rho$; mis-citations shown by the printed
+  list ([206], [108]/[109], [122], [47,50,51], [165]).
+- sabnis-2023: Yang [84] Mach 3/2.95; Bisek [179] Mach 2.25/2.5; Garnier
+  [160] LES vs SDES; Deshpande & Poggie [180] experiment vs computation.
+- taschner-2024: Eq. 17 $x^1$; $\epsilon/\Delta x$ 5 against 3.39;
+  $N_F\ge150$ against 163.
+- kim-2024-b: Choi 1993a/b labels swapped between text and list; Kerr
+  1985 volume "1531".
+- chen-2024-c: "top-down" used two ways (§2.4.1, §3.3); Eq. 8 $Z^2/2$;
+  Eq. 14 lines differ by $l^3/2$; ref. 52 first author.
+- zhang-2024: "molecular visibility"; SA diffusion term without molecular
+  viscosity, recorded as printed.
+- vignat-2024: "two" waves for three; injector subscripts swapped; Table 2
+  +5.6% (6.25%); Table 3 6.6% (2.6–5.4%); phase definition max vs
+  "closest".
+- vermeire-2024: Eq. 17 $\cos(2z+2)$ for $(\cos2z+2)$ (Poisson check);
+  $C_L$, $C_D$ without reference area; $\gamma$ undefined.
+- wu-2024: Eq. 12 $dE/dt$; grid "approximately 24 million" vs 12.8/26.4 M;
+  MUSCL order; Table 3 $Re_D=1\times10^6$ values in a $3\times10^6$ table.
+- hu-2024: onset $\Delta/h_{\mathrm{wm}}$ 0.2 against 0.4; Eq. 5 $C^1$
+  (12.72 vs 12.85).
+- tang-2024: 20% against 22%/29%; Fig. 23 caption; legend years; stretching
+  text vs Table 2.
+- wang-2024-h: "4.6 × 10^9" grid points (≈4.6 × 10^8 from the dimensions);
+  unbalanced global reaction; "non-ideal gas law" vs Dalton's law.
+- zhang-2024-b: Fig. 3, 11 caption slips; Table 6 order; "Table 4" absent.
+- kang-2024: 107/307 vs 108/308 K; "26 times" (27.5); Q threshold units.
+- li-2024-f: Eq. 2 sign (with the paper's stress definition the turbulent
+  term opposes the laminar one); "Roetex".
+- morsbach-2024 (earlier chunk, re-checked): 67.9 M DOF against 67.5 M from
+  Table 2.
+
+### Bibliography
+
+10882 → 11784 entries, `FLAGS: 0`, 326 aliases, 87 verified silences;
+lv-2023's five printed duplicates folded; preprints `barwey-2019`,
+`dang-2022-c` kept distinct; `goc-2019`/`goc-2020`, `uzun-2020`/
+`uzun-2021`, `attili-2021`/`attili-2021-c` kept distinct. Re-keyed:
+`yu-2023-c` (yu-2023-b's own ref. 66), `yu-2023-d`, `ma-2022-b`,
+`zhang-2022-k`, `wang-2023-j`, `zhang-2024-c`, `gao-2023-c`,
+`tang-2022-b`, `prakash-2022-d`, `li-2022-k`/`-m`/`-n`/`-o`,
+`liu-2022-m`/`-o`/`-p`, `xu-2023-c`, `yan-2022-c`, `wang-2024-l`,
+`yang-2019-h`, `dang-2022-d`. kang-2024's `yu-2023` → `yu-2023-b`;
+vermeire-2024's "Vermeire CAPereira BC" refs → `pereira-2020-b`, `-c`.
+kim-2024-b DOI 10.1146/annurev-fluid-120821-025116 (Crossref).
+
+### Bundle fit (D17 candidates, no copy made)
+
+lv-2023 (multiphase discontinuous schemes), vignat-2024 (detonation
+engine), nmira-2023 (soot and radiation) and taschner-2024 (wind-turbine
+coupling) have marginal turbulence-modelling content; lv-2023 and
+vermeire-2024 fit `high-order-capturing-schemes` as well. Here they sit
+only on the pages they bear on.
+
 ## Chunk 12 — 2023–2024 papers: HLPW-4 WMLES summary, semi-local WMLES, ANN algebraic SGS models, differential-filter deconvolution, eigensolution analysis, refinement indicators, shock limiters, STBLI decompositions, FSI panels, thickened flames, detonations (2026-10-28)
 
 Sources (20): kumar-2023, zhang-2023-c, sun-2023, sanhueza-2023,

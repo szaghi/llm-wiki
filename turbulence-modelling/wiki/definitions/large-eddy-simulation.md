@@ -5,7 +5,7 @@ description: "Large-eddy simulation resolves the filtered velocity and models th
 status: established
 aliases: [LES, filtered Navier–Stokes equations, subgrid-scale stress, SGS stress, subfilter stress, coarse-grained equations]
 tags: [les, filtering, sgs-model, compressible]
-timestamp: 2026-10-28T02:14:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Large-eddy simulation: filtering and the subgrid-scale stress
@@ -327,6 +327,48 @@ subgrid convective flux and the subgrid molecular-diffusion flux, the
 framing of their review of data-driven closures (see
 [neural-network SGS models](/methods/neural-network-sgs-model.md)).
 
+**Further reacting, sooting and atmospheric forms.** Further sources
+write the same structure with different closures of the subgrid
+scalar fluxes:
+
+- [Vignat et al. (2024)](/sources/vignat-2024.md) (§3.2, Eqs. 1–7) write
+  the Favre-filtered equations of a reacting mixture (12-species
+  mechanism) with molecular and subgrid fluxes merged: one stress
+  $(\bar\mu+\mu_t)[\nabla\tilde{\boldsymbol u}+(\nabla\tilde{\boldsymbol u})^T]-\tfrac23(\bar\mu+\mu_t)(\nabla\cdot\tilde{\boldsymbol u})\boldsymbol I$,
+  with conductivities and diffusivities increased by subgrid parts from
+  turbulent Prandtl and Schmidt numbers of 0.7, and reaction rates
+  evaluated from filtered variables without a turbulence–chemistry model.
+  They call the unweighted filter "Reynolds filtering" and the merged
+  stress a "Reynolds-averaged stress tensor", in an LES; no isotropic
+  subgrid part is modelled separately.
+- [Nista et al. (2023)](/sources/nista-2023.md) (§1, Eqs. 1–3) write the
+  Favre-filtered momentum equation with the full subgrid stress
+  $\widetilde{u_iu_j}-\tilde u_i\tilde u_j$ (positive trace, per unit
+  mass, entering as $-\partial(\bar\rho\,\cdot)$) and the subgrid
+  temperature flux $\widetilde{u_iT}-\tilde u_i\tilde T$, both closed by a
+  [super-resolution model](/methods/super-resolution-sgs-model.md); their
+  Eq. (1) is printed with inconsistent free indices.
+- [Nmira et al. (2023)](/sources/nmira-2023.md) (§2.1) transport the
+  filtered mixture fraction and its second moment, so that the subgrid
+  variance follows from its definition, $\widetilde{Z^2}-\tilde Z^2$ ($Z$
+  page-local), and close the scalar flux by a dynamic eddy diffusivity.
+- [Wei et al. (2023)](/sources/wei-2023.md) (§II B, Eqs. 9–15) use the
+  density-weighted stress $\overline{\rho u_iu_j}-\bar\rho\tilde u_i\tilde u_j$,
+  constant subgrid turbulent Prandtl and Schmidt numbers (0.85, 0.7) and a
+  laminar ("quasi-laminar") reaction-rate closure, and neglect the subgrid
+  viscous work.
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) (§2, Eqs. 16–18 of the
+  LES block) give the eddy-viscosity LES formulation of their review of
+  discontinuous schemes for multicomponent flows, with subgrid heat and
+  mass fluxes from turbulent Prandtl and Schmidt numbers, and treat "the
+  effect of LES-filter operator" as "an augmented diffusion term from the
+  numerical viewpoint"; no subgrid model or $\Delta$ is named.
+- [Taschner et al. (2024)](/sources/taschner-2024.md) (§2.1, Eqs. 1–4)
+  write the anelastic filtered equations of atmospheric LES, with a height
+  dependent reference density, buoyancy, Coriolis and geostrophic forcing,
+  turbine body forces and a Smagorinsky stress (see
+  [actuator line model](/methods/actuator-line-model.md)).
+
 **Subgrid kinetic-energy budget.** [Cao et al. (2022b)](/sources/cao-2022-c.md)
 (§IV B, Eq. 17) write the Favre transport equation of
 $\bar\rho k_{\mathrm{sgs}}=\tfrac12\tau_{kk}$ with production
@@ -493,7 +535,7 @@ $n_x=8$, $n_z=4$ for training.
 [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) (§3, Eqs. 7–17)
 use elliptic **differential filters** solved on the grid: Germano's
 $\bar\phi-\delta_{\mathrm G}^2\partial_i\partial_i\bar\phi=\phi$, with
-transfer function $1/(1+\delta_{\mathrm G}^2k^2)$ ($\delta_{\mathrm G}$ the filter radius, page-local), which never vanishes,
+transfer function $1/(1+\delta_{\mathrm G}^2k^2)$ ($\delta_{\mathrm G}$ the filter radius, registry §11), which never vanishes,
 and their own filter with a second-derivative term on both sides, whose
 right-hand coefficient gives complete attenuation at the grid cut-off
 (page-local symbols and the design on unstructured elements are on
@@ -718,6 +760,19 @@ DNS) quantify the split:
 They conclude that the filter-to-grid ratio is the decisive parameter of a
 closure's accuracy in explicitly filtered LES (§VI).
 
+[Hu et al. (2024)](/sources/hu-2024.md) (§1, §3) state the same contrast
+from the side of grid convergence: in implicitly filtered LES numerical
+and modelling errors are "fundamentally inseparable", because refining
+the grid reduces both, whereas explicitly filtered LES with a fixed filter
+width larger than the grid spacing "is known to produce grid-independent
+LES solution" (citing Bose et al.; they also recall Lund's finding that
+plain refinement improved statistics faster than explicit filtering).
+They carry the analogy to wall-modelled LES: holding the wall-model
+matching height $h_{\mathrm{wm}}$ fixed during refinement plays the role
+of holding the filter width fixed, so the converged solution may depend on
+$h_{\mathrm{wm}}$ and its error is wall-modelling error (see
+[wall-modelled LES](/methods/wall-modelled-les.md)).
+
 ### High-aspect-ratio cells
 
 Abe (2021) isolates the effect of cell anisotropy from wall damping by
@@ -765,6 +820,18 @@ dynamic version most for $y^+<50$ (Fig. 8), and the learned version
 generalizes to untrained grids, which the authors attribute to the grid
 information "inherently embedded" in its inputs (§4.1, §5; see
 [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+
+[Zhou & Bae (2024)](/sources/zhou-2024-b.md) (§3.3, Figs. 17–20) test
+the cube-root width a posteriori in wall-modelled LES of the
+[Gaussian bump](/benchmarks/gaussian-bump.md): with cells of aspect ratio
+$\Delta_x:\Delta_y:\Delta_z=4:1:2$ at the cell volume of the isotropic
+meshes, the separation prediction degrades for the models that use the
+cube root (the [Vreman model](/methods/vreman-model.md), most for its
+constant 0.025, and the [mixed similarity model](/methods/scale-similarity-model.md)),
+while the [anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md),
+built on directional spacings, is barely affected. The authors explain
+this by the cube-root width, which they call adequate for isotropic but
+error-prone for anisotropic cells (§3.3).
 
 ### Element methods
 
@@ -987,14 +1054,15 @@ interest, so "at least 80%" of the turbulent kinetic energy is resolved.
 (App. C, Eqs. C1–C3, Figs. 28–29) rate their canopy LES with the subgrid
 activity parameter of Geurts & Fröhlich, which they cite,
 
-$$Q_\varepsilon=\frac{\varepsilon_{\mathrm{sgs}}}{\varepsilon_{\mathrm{res}}+\varepsilon_{\mathrm{sgs}}},\qquad
+$$s_a=\frac{\varepsilon_{\mathrm{sgs}}}{\varepsilon_{\mathrm{res}}+\varepsilon_{\mathrm{sgs}}},\qquad
 \varepsilon_{\mathrm{res}}=\nu\,\bar S_{ij}\partial_j\bar u_i,\quad
 \varepsilon_{\mathrm{sgs}}=\nu_t\,\bar S_{ij}\partial_j\bar u_i ,$$
 
-($Q_\varepsilon$, $\varepsilon_{\mathrm{res}}$, $\varepsilon_{\mathrm{sgs}}$
-page-local).
+($s_a$, $\varepsilon_{\mathrm{res}}$, $\varepsilon_{\mathrm{sgs}}$
+page-local; $s_a$ denotes the activity parameter in each of the forms
+below).
 
-- **Range.** $Q_\varepsilon$ is 0 for DNS and 1 for LES at infinite
+- **Range.** $s_a$ is 0 for DNS and 1 for LES at infinite
   Reynolds number. For eddy-viscosity models it reduces to
   $\nu_t/(\nu_t+\nu)$ (Celik et al., cited by Löhrer & Fröhlich).
 - **Values.** In their run the mean is 0.11, the 95th percentile about
@@ -1004,13 +1072,48 @@ page-local).
   one everywhere.
 - **Caveat.** Their $\nu_t$ is damped near the immersed blades with the
   immersed-boundary delta kernel (§2.3). Since
-  $Q_\varepsilon\approx\nu_t/(\nu_t+\nu)$ grows with $\nu_t$, this damping
-  lowers $Q_\varepsilon$ there *(compiler check, not in the sources)*.
+  $s_a\approx\nu_t/(\nu_t+\nu)$ grows with $\nu_t$, this damping
+  lowers $s_a$ there *(compiler check, not in the sources)*.
 
 [Rismondo et al. (2025)](/sources/rismondo-2025.md) (§3, Fig. 8c) use the
 same quantity informally. A ratio $\nu_t/\nu$ mostly between 0 and 10 in a
 wall-resolved wind-turbine LES is, for them, an indication of high
 resolution; they report no grid-convergence study.
+
+[Zhou & Bae (2024)](/sources/zhou-2024-b.md) (§3.1, Fig. 11) use the
+activity parameter in the form
+$s_a=\langle\Pi\rangle/(\langle\Pi\rangle+\langle\varepsilon_\nu\rangle)$
+with $\Pi=-\tau_{ij}\bar S_{ij}$ the full subgrid dissipation and
+$\varepsilon_\nu=2\nu\bar S_{ij}\bar S_{ij}$ ($\varepsilon_\nu$
+page-local), citing Lozano-Durán & Bae and Geurts & Fröhlich, "constrained
+to values between 0 and 1". In wall-modelled LES of a separated bump
+flow subgrid dissipation dominates the boundary layer for the mixed and
+AMD models, is comparable to the viscous one for Vreman with constant
+0.025, and drops in the wall-adjacent cells for dynamic Smagorinsky. For
+an eddy-viscosity model the two forms coincide, since then
+$\Pi=2\nu_t\bar S_{ij}\bar S_{ij}$ and Löhrer & Fröhlich's
+$\bar S_{ij}\partial_j\bar u_i=\bar S_{ij}\bar S_{ij}$ *(compiler check,
+not in the sources)*.
+
+**Resolved fractions in reacting LES.** Three reacting-flow sources
+judge resolution by a resolved fraction rather than by grid convergence:
+
+- [Wei et al. (2023)](/sources/wei-2023.md) (§III B, Eq. 34, Fig. 6)
+  compute $\langle u_i''u_i''\rangle/(\langle u_i''u_i''\rangle+2k_{\mathrm{sgs}})$
+  in a supersonic boundary layer and report that 99.5% of the cells
+  resolve more than 80% of the turbulent kinetic energy, the remainder
+  lying in the viscous sublayer; they attribute the criterion to Pope
+  (cited).
+- [Vignat et al. (2024)](/sources/vignat-2024.md) (§3.1) state that most
+  injector jets of their detonation-engine LES have a subgrid share of the
+  turbulent kinetic energy below 20%, "as recommended by Pope", from
+  single-injector side simulations whose results are not shown.
+- [Nmira et al. (2023)](/sources/nmira-2023.md) (§3.1, §3.4) resolve "on
+  the whole more than 80% of temperature variance" in LES of buoyant
+  sooting flames (figure in supplementary material, not in the file read),
+  and still find that neglecting the subgrid fluctuations in the emission
+  term over-predicts the mean and r.m.s. soot volume fraction by a factor
+  of about 2.
 
 **Wall-resolved criteria and spanwise extent.**
 [Baldan & Guardone (2025)](/sources/baldan-2025.md) (§1.1, §2.1, Figs. 3–8)
@@ -1080,10 +1183,56 @@ matching height, about eight grid points per spanwise wavelength and
 fixed in outer units. Their spanwise length scale collapses at
 $Re_\tau\approx700$–14 000 only when the viscous length of semi-local
 scaling is built with the molecular plus the subgrid eddy viscosity,
-$\delta^{*,\mathrm{sgs}}_\nu=(\nu+\nu_t)/u_\tau^*$ (page-local), so that "the diffusion introduced by the SGS eddy
+$\delta^{*,\mathrm{sgs}}_\nu=(\nu+\nu_t)/u_\tau^*$ (registry §11), so that "the diffusion introduced by the SGS eddy
 viscosity dominantly determines" it; the collapse holds for other grids,
 another scheme and the [Smagorinsky](/methods/smagorinsky-model.md)
 model. See [wall-modelled LES](/methods/wall-modelled-les.md).
+
+## History and scope (inline)
+
+[Kim & Leonard (2024)](/sources/kim-2024-b.md), a history of DNS and LES
+from 1971 to the early 1990s by two participants (RANS excluded), record
+these milestones, all cited there:
+
+- **Name and equations.** The term LES was "first coined by William
+  Reynolds at Stanford" (§2.5); Reynolds, Ferziger and Leonard were, to
+  the authors' knowledge, the first to use it (§3.1). Leonard (1973, 1974)
+  derived the LES equations by filtering the Navier–Stokes equations
+  (§3.1; the deterministic term of that derivation is on the
+  [gradient model](/methods/gradient-model.md) page).
+- **First channel LES.** Deardorff (1970) used 6,720 grid points, a
+  log-law wall condition and Arakawa differencing; Schumann (1975) up to
+  65,000 volumes on anisotropic grids with a subgrid energy equation;
+  Moin et al. (1978) the first LES with the wall region computed
+  (§2.5, §3.1). Moin & Kim (1982) added Van Driest-like damping to the
+  [Smagorinsky model](/methods/smagorinsky-model.md) (§3.4).
+- **Numerics.** The authors call it "an important realization" that the
+  formal accuracy of the discretization should be higher than that of the
+  subgrid model, and that the inviscid discrete equations should conserve
+  energy for long-term stability (§4.7; see
+  [kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+- **Premise.** A universal subgrid model presumes that all
+  energy-containing scales are resolved; many practical LES do not
+  resolve all large-scale motions, so the subgrid model must account for
+  some flow-dependent motions (sidebar "Large-Eddy Simulations").
+- **Present use.** A well-designed LES, "especially wall-modeled LES", can
+  now be used as a design tool for high-lift aircraft, citing Goc et al.
+  (2021) (§5; see [wall-modelled LES](/methods/wall-modelled-les.md)).
+
+Two reviews place LES among other approaches.
+[Chen et al. (2024b)](/sources/chen-2024-c.md) (§4.1) criticize
+conventional subgrid closures, which they call top-down and, after
+Kerstein, "parameterization", for relying on subgrid isotropy, which fails near walls where turbulence is not
+homogeneous, and hybrid RANS/LES for an empirical RANS–LES interface;
+they offer [one-dimensional turbulence](/methods/one-dimensional-turbulence.md),
+coupled to LES as LES-ODT or ODTLES, as an alternative closure.
+In passing, [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) (§3–§5) survey LES of
+three-dimensional shock/boundary-layer interactions (swept corners and
+fins, ducts, fenced ramps) beside RANS and experiments; see
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+In the hybrid model SATES of [Wu et al. (2024)](/sources/wu-2024.md)
+(§2.1) LES is one of three self-selected modes, between URANS and DNS (see
+[self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md)).
 
 ## Other uses of the filter idea
 
@@ -1137,7 +1286,7 @@ model. See [wall-modelled LES](/methods/wall-modelled-les.md).
 - **Filtering in time.** [Simonis et al. (2022)](/sources/simonis-2022.md)
   (§2.1, Eqs. 1–6, citing Oberle, Pruett & Jenny and Pruett)
   filter the incompressible equations in time with a causal exponential
-  kernel of width $\Theta$ (page-local): $\partial_t\bar\phi=(\phi-\bar\phi)/\Theta$.
+  kernel of width $\Theta$ (registry §11): $\partial_t\bar\phi=(\phi-\bar\phi)/\Theta$.
   The filter inverts exactly, $\phi=\bar\phi+\Theta\,\partial_t\bar\phi$
   ("direct deconvolution"), and the temporal residual stress obeys the
   closed relaxation equation
@@ -1150,7 +1299,7 @@ model. See [wall-modelled LES](/methods/wall-modelled-les.md).
   better than under-resolved simulation on $64^3$ and $128^3$ (§3.2–3.3,
   Figs. 2–8). Both updates are local in space, trading storage of earlier
   time levels for non-local filtering (§2.4, §4). They monitor the subgrid
-  activity $s=\lvert\epsilon_{\mathrm{mod}}\rvert/\lvert\epsilon_{\mathrm{tot}}\rvert$
+  activity $s_a=\lvert\epsilon_{\mathrm{mod}}\rvert/\lvert\epsilon_{\mathrm{tot}}\rvert$
   that they cite from Geurts & Fröhlich, the share of the total dissipation not
   accounted for by the resolved enstrophy, which decreases with refinement
   (§3.4, Eq. 29, Fig. 9).
@@ -1597,3 +1746,15 @@ grid ratio (§4). See
 - [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2, Eqs. (1)–(2), Fig. 2b; §3.3.
 - [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — §I; §III B 2, Table III.
 - [Shi & Yan (2023)](/sources/shi-2023.md) — §I; §IV, Table I.
+- [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.1; §3.2, Eqs. (1)–(7); §3.3.
+- [Nista et al. (2023)](/sources/nista-2023.md) — §1, Eqs. (1)–(3).
+- [Nmira et al. (2023)](/sources/nmira-2023.md) — §2.1; §3.1; §3.4.
+- [Wei et al. (2023)](/sources/wei-2023.md) — §II B, Eqs. (9)–(15); §III B, Eq. (34), Fig. 6.
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §2 (LES block, Eqs. 16–18).
+- [Taschner et al. (2024)](/sources/taschner-2024.md) — §2.1, Eqs. (1)–(4).
+- [Hu et al. (2024)](/sources/hu-2024.md) — §1; §3.
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §3.1, Fig. 11; §3.3, Figs. 17–20.
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.5; §3.1; §3.4; §4.7; §5; sidebar "Large-Eddy Simulations".
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — §4.1.
+- [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §3–§5.
+- [Wu et al. (2024)](/sources/wu-2024.md) — §2.1.

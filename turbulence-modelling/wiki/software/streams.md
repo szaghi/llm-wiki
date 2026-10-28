@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "STREAmS"
-description: "STREAmS is an open-source multi-GPU finite-difference solver for compressible wall-bounded flows on Cartesian grids, combining energy-preserving central schemes with WENO shock capturing; this page records its numerics as configured in each study and its use for boundary-layer DNS with wall cooling and shock impingement, implicit LES of a capsule wake, and thermally perfect channel DNS."
+description: "STREAmS is an open-source multi-GPU finite-difference solver for compressible wall-bounded flows on Cartesian grids, combining energy-preserving central schemes with WENO shock capturing; this page records its numerics as configured in each study and its use for boundary-layer DNS with wall cooling and supersonic and hypersonic shock impingement, implicit LES of a capsule wake, and thermally perfect channel DNS."
 status: established
 aliases: [STREAmS-2.0, STREAmS 2.1, STREAMS]
 tags: [software, gpu, dns, compressible, implicit-les, immersed-boundary, boundary-layer]
-timestamp: 2026-10-28T01:57:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # STREAmS
@@ -65,6 +65,18 @@ print different orders for the same hybrid design:
   digital filtering, non-reflecting characteristic outflow and top
   boundaries, and sponge zones over the last 100 streamwise and 30
   wall-normal points.
+
+[Yu et al. (2023b)](/sources/yu-2023-b.md), §II, a third shock study
+citing the original release, print the same configuration as Yu et al. (2022):
+the sixth-order kinetic-energy-preserving scheme of Pirozzoli (2010) in
+smooth regions and fifth-order WENO in shock regions, switched by a modified
+Ducros sensor
+$$s=\frac{-\theta_{\mathrm d}}{\sqrt{\theta_{\mathrm d}^2+\omega_i\omega_i+(U_\infty/\delta_{\mathrm{in}})^2}}\ge0.1$$
+(Eq. 6; $\theta_{\mathrm d}$ page-local for the velocity divergence, the
+source's $\theta$; $\omega_i\omega_i$ the squared vorticity magnitude,
+printed $\omega_i^2$), viscous terms in Laplacian form at sixth order, and
+Wray's low-storage third-order Runge–Kutta; see
+[shock sensors](/definitions/shock-sensor.md).
 
 Together with Cogo et al., Placco et al. and Aiello et al. below, the
 sources print central orders six and eight and WENO orders five and seven,
@@ -181,6 +193,28 @@ given.
   fluctuations are split by Poisson equations into rapid, slow, viscous,
   compressible and harmonic parts (§6; see
   [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)).
+- **DNS of hypersonic oblique-shock interactions for RANS refinement**
+  (Yu et al. 2023b, §II, Table I): $M_\infty=5$,
+  $Re_\infty=3.3\times10^4$ on the inflow boundary-layer thickness, wall at
+  $0.75T_r$, wedges of $14^\circ$, $10^\circ$ and $6^\circ$ (strong, mild and
+  incipient separation) with impingement at $50\delta_{\mathrm{in}}$; box
+  $100\times10\times6.5\,\delta_{\mathrm{in}}$ on $3600\times360\times256$
+  points ($\Delta x^+\approx4.16$, $\Delta z^+\approx3.81$,
+  $\Delta y^+_w=0.3$); digital-filter inflow on a Musker profile with
+  generalized-Reynolds-analogy temperature and the Rankine–Hugoniot jump
+  imposed at the top, as in Yu et al. (2023). At the reference station
+  $Re_\theta\approx2087$; the van Driest-transformed velocity and the
+  Reynolds normal stresses agree with the Mach 2 DNS of Pirozzoli &
+  Bernardini, and the wall pressure with the Mach 5 cold-wall data of
+  Volpiani et al. (2020), with a shorter shoulder in the strongest case that
+  the authors attribute to their lower Reynolds number (§II–§III B,
+  Figs. 1, 3–4). The database serves a priori tests of eddy-viscosity and
+  heat-flux closures and a pressure-dependent refinement of the
+  [$k$-$\omega$ SST model](/methods/k-omega-sst-model.md) (see
+  [turbulent Prandtl number](/definitions/turbulent-prandtl-number.md) and
+  [shock/turbulent boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md));
+  the RANS of that refinement uses fifth-order WENO convection and
+  fourth-order central viscous terms (§V).
 
 ## Qualifications
 
@@ -196,6 +230,8 @@ given.
   "$\partial p/\partial y=0$" holds for the pressure components at the
   streamwise boundaries, whereas their Table 4 uses the $x$-derivative
   there.
+- Yu et al. (2023b) print the separation length of the $10^\circ$ case as
+  "2, 46" in Table I; §III B uses 2.46.
 - Cogo et al. and Placco et al. describe the convective discretization differently
   (energy-preserving central plus Ducros-switched WENO; fifth-order WENO
   only). Placco et al. do not state whether the central part was active in the
@@ -210,3 +246,4 @@ given.
 - [Zhang et al. (2022)](/sources/zhang-2022-b.md) — §2, Tables 1–3 (STREAmS numerics, boundary conditions, six boundary-layer DNS); §6.1, Table 4.
 - [Aiello et al. (2026)](/sources/aiello-2026.md) — §3.3 (STREAmS 2.1, sixth-order central schemes, Wray Runge–Kutta, WENO transient, KEEP baseline, ghost-node removal, conservative viscous terms); §2, §4, Tables 2–3, Figs. 1–3 (thermally perfect CO$_2$ channel DNS); acknowledgements (CINECA).
 - [Yu et al. (2023)](/sources/yu-2023.md) — §2 (reuse of the STREAmS database of Yu et al. 2022, numerics, boundary conditions, statistics).
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II, Eq. (6), Table I, Fig. 1 (STREAmS numerics and sensor, hypersonic oblique-shock DNS set-up and validation); §III B, Figs. 3–4; §V (RANS numerics).

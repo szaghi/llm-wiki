@@ -5,7 +5,7 @@ description: "The dynamic tensor-coefficient Smagorinsky model (DTCSM) replaces 
 status: established
 aliases: [DTCSM, tensor-coefficient Smagorinsky model, non-Boussinesq dynamic SGS model]
 tags: [les, sgs-model, eddy-viscosity, wmles, separated-flow]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-28T06:48:00Z
 ---
 
 # Dynamic tensor-coefficient Smagorinsky model
@@ -128,7 +128,26 @@ wall-modelled LES in [charLES](/software/charles.md) on Voronoi grids
   (Figs. 15–19). The suction peak is mainly inviscid; a free-slip run
   (not shown) also predicts it.
 
-Each of the two geometries is run on three grid levels.
+Each of the two geometries is run on three grid levels. The benchmark,
+with the later sensitivity study of the same spanwise-periodic case, has
+its own page: [Gaussian bump](/benchmarks/gaussian-bump.md).
+
+[Zhou & Bae (2024)](/sources/zhou-2024-b.md) rerun the spanwise-periodic
+case at $Re_L=2\times10^6$ in an incompressible second-order finite-volume
+code with the reference mean wall stress imposed, and do not run DTCSM.
+Their dynamic Smagorinsky model predicts no separation bubble on any of
+four isotropic meshes (1.94 to 993 million cells), whereas Agrawal et al.
+report a separating DSM on their coarse and fine grids. Zhou & Bae (§3.1)
+restrict their result to their solver and set-up, note that Iyer & Malik
+(cited) also found no separation with DSM, and name clipping, filtering,
+mesh topology and numerics as possible causes. In their conclusions (§4)
+they cite DTCSM, with the dynamic nonlinear model of Uzun & Malik and
+unified subgrid/wall models such as the
+[building-block-flow model](/methods/building-block-flow-wall-model.md),
+as a direction towards subgrid models robust for separation, monotonic
+grid convergence and anisotropic meshes. They report the same
+non-monotonic convergence of the separation length for AMD and Vreman
+$c=0.07$ that Agrawal et al. report for DSM and Vreman.
 
 ## Place among anisotropic SGS models
 
@@ -156,8 +175,16 @@ such energy-transfer-free stresses in coarse channel LES is on
   whether $L_{ij}$ is made traceless before the solve.
 - §VIII.B says that the $C_f$ trough moves "towards DNS" on the 3D bump,
   whose reference is the experiment of Gray et al.
+- The DSM results of Agrawal et al. (separation on coarse and fine grids)
+  and of Zhou & Bae (2024) (no separation on any grid) come from different
+  solvers (compressible charLES on Voronoi grids against an incompressible
+  finite-volume code on hybrid grids) and different wall treatments
+  (Zhou & Bae impose the reference mean wall stress); Zhou
+  & Bae attribute the difference to such factors without testing them, so
+  it is recorded as a set-up difference, not as a contradiction.
 
 # Citations
 
 - [Agrawal et al. (2022)](/sources/agrawal-2022.md) — §III.A, Eqs. (11)–(13); §V, Figs. 1–2; §VI; §VII.A–D, Figs. 3–10; §VIII, Eq. (16), Figs. 13–19; §IX, Tables IV–V; Apps. A–C, Eqs. (B2)–(B4), (C3).
 - [Inagaki & Kobayashi (2023)](/sources/inagaki-2023.md) — §I; §II A.
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §1; §3.1, Fig. 8; §4.

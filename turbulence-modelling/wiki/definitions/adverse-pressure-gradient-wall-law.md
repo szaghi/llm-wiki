@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity law of adverse-pressure-gradient tur
 status: established
 aliases: [APG wall law, log-law/half-power-law wall law, extended wall law, half-power law, pressure-gradient wall law]
 tags: [boundary-layer, rans, wall-model, separated-flow]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T11:50:00Z
 ---
 
 # Wall law in adverse pressure gradient
@@ -114,9 +114,9 @@ $\delta^*$ form came later).
 
 - **Pressure-gradient parameters related.** The review prints the
   sublayer pressure-gradient parameter of Nickels' sublayer-thickness model
-  as $-K_a(C_f/2)^{-3/2}=\beta_{RC}\delta/(Re_\tau\delta^*)$ with the
-  acceleration parameter $K_a=(\nu/U_e^2)\,dU_e/dx$ (§3.3, Fig. 17; Eq. 3.29;
-  page-local $K_a$, the source's $K$, renamed here because $K$ is Knopp's
+  as $-K_{\mathrm{acc}}(C_f/2)^{-3/2}=\beta_{RC}\delta/(Re_\tau\delta^*)$ with the
+  acceleration parameter $K_{\mathrm{acc}}=(\nu/U_e^2)\,dU_e/dx$ (§3.3, Fig. 17; Eq. 3.29;
+  page-local $K_{\mathrm{acc}}$, as on [turbine cascade](/benchmarks/turbine-cascade.md), the source's $K$, renamed here because $K$ is Knopp's
   slope coefficient above; $U_e$ the edge velocity). With
   $dP_e/dx=-\rho U_e\,dU_e/dx$ and $C_f=2u_\tau^2/U_e^2$ both expressions
   equal Knopp's $\Delta p_s^+$ *(compiler check, not in the sources)*.
@@ -293,6 +293,21 @@ as cited). The evidence is again the failure of a law without
 pressure-gradient term, now quantified by the first-element height at which
 it appears.
 
+## Shock-imposed adverse gradients
+
+The strongest adverse gradients in the bundle are those of
+[shock–turbulent boundary layer interactions](/benchmarks/shock-turbulent-boundary-layer-interaction.md),
+where no velocity wall law of the kind above is tested. In the DNS of a
+Mach 5, $30^\circ$ compression ramp with a cold wall ($T_w/T_r=0.5$,
+$Re_\tau=700$ upstream) of [Tang et al. (2024)](/sources/tang-2024.md), the
+upstream mean velocity follows the zero-pressure-gradient van Driest log
+law, $2.44\ln y^++5.5$, at $y^+=30$–200 (§2.3, Fig. 11a); no profile inside
+the interaction is compared with a wall law. What the interaction does to
+the Reynolds-analogy factor, $C_f/(2C_h)=1/s_{\mathrm{RA}}$ (the source's
+$S$), and to the wall heat flux (§4.1, Fig. 21) is recorded on
+[Morkovin's hypothesis and Reynolds analogies](/definitions/morkovin-hypothesis.md)
+and on the interaction page.
+
 ## Qualifications
 
 - The constant of Eq. (35) appears twice in the paper: 1.78 (Eq. 35, used in
@@ -312,7 +327,7 @@ it appears.
   of Coleman et al. as $K_r=(k_g/U_e)\,dU_e/dx\equiv-(C_f/4)(k_g/\delta^*)\beta_{RC}$
   (Eq. 3.30; $k_g$ the geometric roughness height, page-local). From the
   review's own definitions of $\beta_{RC}$ and $C_f$ the factor is $C_f/2$
-  *(compiler check, not in the sources)*; the review's Eq. (3.29) for $K_a$
+  *(compiler check, not in the sources)*; the review's Eq. (3.29) for $K_{\mathrm{acc}}$
   checks the same way without discrepancy.
 
 # Citations
@@ -326,3 +341,4 @@ it appears.
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §3.3, Eq. (13); §4.2, Figs. 6–8.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §2.1, Eqs. (7)–(8), (11); §2.5.
 - [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §3.1–3.3, Eqs. (3.1), (3.28)–(3.30), Table 1, Figs. 10, 15, 17; §4.1, Eqs. (4.1)–(4.7); §4.2, Fig. 20.
+- [Tang et al. (2024)](/sources/tang-2024.md) — §2.3, Fig. 11a (upstream log law of a Mach 5 ramp interaction); §4.1, Fig. 21 (pointer).

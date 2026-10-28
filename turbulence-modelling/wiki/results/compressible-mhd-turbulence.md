@@ -5,7 +5,7 @@ description: "Compressible MHD turbulence carries Alfvénic, slow, fast and non-
 status: established
 aliases: [compressible MHD turbulence, MHD wave-mode decomposition, fast modes, slow modes, non-wave fluctuations, compressible Hall MHD turbulence, weakly compressible MHD, solar-flare turbulence, flare plasma turbulence, compressive-mode bottleneck, Helmholtz-decomposed spectra, nearly incompressible MHD, NI MHD, solar-wind turbulence transport model, turbulence transport model]
 tags: [mhd, compressible, plasma, astrophysics, dns]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Compressible MHD turbulence
@@ -38,7 +38,7 @@ $\boldsymbol B_0$ and $k_\perp=(k_y^2+k_z^2)^{1/2}$; $l_\parallel$, $\lambda$
 are the parallel and perpendicular separations of the structure functions
 (the source's $L_\parallel$, $L_\perp$; the reference direction of the
 separations is not stated), and $m_a$ the exponent of
-$l_\parallel\propto\lambda^{m_a}$.
+$l_\parallel\propto\lambda^{m_a}$ (registry §11).
 
 ## Wave-mode content of driven turbulence
 
@@ -289,11 +289,11 @@ FLASH; set-up on [small-scale dynamo](/results/small-scale-dynamo.md)) by a
 Helmholtz decomposition into a compressive (curl-free) part
 $\boldsymbol u_{\mathrm c}$ and a solenoidal (divergence-free) part
 $\boldsymbol u_{\mathrm s}$, with kinetic-energy spectra
-$E_{\mathrm c}(k)$ and $E_{\mathrm s}(k)$ (page-local; the source writes
+$E_{\mathrm c}(k)$ and $E_{\mathrm s}(k)$ (registry §11; the source writes
 $\parallel$ and $\perp$, which on this page would read as directions
 relative to the field), computed by Fourier projection on $\boldsymbol k$
 (§4.5, Eq. 49). They vary the bulk viscosity through the viscous Prandtl
-number $P_\nu=\nu/\nu_b$ (page-local, defined on
+number $P_\nu=\nu/\nu_b$ (registry §11, defined on
 [bulk viscosity](/definitions/bulk-viscosity.md)), from $\infty$ (no bulk
 viscosity) to 0.001. Findings:
 
@@ -373,8 +373,8 @@ closures of Zank et al. (2012a) they cite, Adhikari et al. (§2, Eqs. 8–11)
 write six transport equations for the Elsasser energies
 $\langle|\boldsymbol Z^\pm|^2\rangle$ (no factor $\tfrac12$), the residual
 energy $E_D=\langle\boldsymbol Z^+\cdot\boldsymbol Z^-\rangle$ and the
-energy-weighted correlation lengths $\ell^\pm$, $\ell_D$ (page-local
-symbols; $\langle\cdot\rangle$ an ensemble average). The Elsasser-energy
+energy-weighted correlation lengths $\ell^\pm$, $\ell_D$ ($E_D$, $\ell^\pm$
+registry §11, $\ell_D$ page-local; $\langle\cdot\rangle$ an ensemble average). The Elsasser-energy
 equation reads
 
 $$\begin{aligned}
@@ -393,7 +393,8 @@ $\boldsymbol Z^\mp\cdot\nabla\boldsymbol Z^\pm\simeq\alpha_{\mathrm{KT}}Z^\pm\la
 $\beta_{\mathrm{KT}}=\alpha_{\mathrm{KT}}/2$ its length-scale counterpart
 (after Breech et al. 2008), $a_s=b_s=\tfrac12$ the structural similarity
 parameters that give the two-dimensional form of the mixing tensors, and
-$S^\pm$ the sources (all page-local). The correlation
+$S^\pm$ the sources ($\alpha_{\mathrm{KT}}$, $\beta_{\mathrm{KT}}$, $a_s$, $b_s$
+registry §11, $S^\pm$ page-local). The correlation
 $\langle\boldsymbol Z^\pm\cdot\nabla\rho_{\mathrm{sw}}\rangle$ is set to
 zero by assuming isotropic turbulence, which the authors mark as a
 departure from Zank et al. (2017). The equations differ from those of

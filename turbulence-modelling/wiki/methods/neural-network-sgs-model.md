@@ -5,7 +5,7 @@ description: "LES closures in which a neural network maps resolved-field feature
 status: established
 aliases: [ANN-SGS model, GAN SGS model, fusion network, T-SR-FU, energy-conserving neural closure, structure-preserving closure, ANN-SGS mixed model, deep-learning LES closure, DL-LES, neural-network LES closure, data-driven SGS model, S-106H, SL-106H, SL-180C, DL-AR1, DL-AR2, multi-filter training, TBNN-GNN]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Neural-network subgrid-scale models
@@ -149,6 +149,18 @@ Their example of a remedy is a knowledge-guided loss (see
 [super-resolution SGS models](/methods/super-resolution-sgs-model.md)),
 and they state that most combustion applications to date are a priori
 tests on idealized problems (§6).
+
+[Nista et al. (2023)](/sources/nista-2023.md) (§1) place their
+generative super-resolution closure of premixed flames in this line,
+against the a priori successes of earlier network closures of reacting
+LES (their refs. 6–10) and the a posteriori convergence problems they
+cite; their own study is a priori only. Its finding bears on any
+supervised network: trained on one flame, the closure generalizes across
+Reynolds and Karlovitz numbers while the filter-to-Kolmogorov ratio
+$\Delta/\eta$ stays near its training value and degrades on a hydrogen
+flame where it does not (§4.1–4.2, §4.4); the method and the printed
+ratios are on
+[super-resolution SGS models](/methods/super-resolution-sgs-model.md).
 
 Networks also regress thermochemistry with no subgrid stress involved:
 in passing, [Kumar et al. (2023)](/sources/kumar-2023.md) (§3.4, Fig. 5)
@@ -751,7 +763,7 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
   one-filter/two-filter comparison of the abstract and §4. The version
   read is the post-review arXiv v2, not the journal typesetting.
 - **Deep-learning closures as seen from equation discovery.**
-  [Jakhar et al. (2026)](/sources/jakhar-2026.md) (arXiv v3, p. 1) recall
+  [Jakhar et al. (2026)](/sources/jakhar-2026.md) (arXiv v3, p. 1) cite
   criticisms of deep-learning SGS closures (large training data, lack of
   interpretability, poor out-of-distribution generalization) and obtain
   their closure from 100 filtered-DNS snapshots by sparse regression (see
@@ -787,3 +799,4 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 - [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §I (neural-network models surveyed, in passing).
 - [Xu et al. (2023)](/sources/xu-2023.md) — §1 (cited costs, black-box networks); §2.1–2.2, Figs. 1–3 (equations, baselines); §3.1–3.3, Tables 1–2, Eqs. 3.19–3.43, Figs. 4–12 (variants, network, training, a priori); §4, Tables 3–8, Figs. 13–31 (a posteriori, backscatter, cost); §5; App., Figs. 32–33.
 - [Kumar et al. (2023)](/sources/kumar-2023.md) — §3.4, Fig. 5 (passing: networks for principal-component thermochemistry terms, not a subgrid closure).
+- [Nista et al. (2023)](/sources/nista-2023.md) — §1 (network closures of reacting LES, a priori successes cited); §4.1–4.2, §4.4 ($\Delta/\eta$ generalization criterion, a priori only).

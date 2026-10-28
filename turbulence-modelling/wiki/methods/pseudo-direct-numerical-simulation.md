@@ -5,7 +5,7 @@ description: "Idelsohn et al.'s two-scale method replaces the subgrid model of a
 status: established
 aliases: [P-DNS, pseudo-DNS, RVE-based subgrid closure, representative-volume-element DNS closure]
 tags: [les, sgs-model, data-driven, dns]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Pseudo-direct numerical simulation (P-DNS)
@@ -48,7 +48,7 @@ coarse momentum equation (Eqs. 19–23), the **inertial stress**
 
 $$\mathcal T_{ij}=\rho\,u^{<}_iu^{<}_j ,$$
 
-($\mathcal T_{ij}$ page-local), which enters next to the viscous stress as
+($\mathcal T_{ij}$ registry §11), which enters next to the viscous stress as
 $-\mathcal T_{ij}$: a fine-scale Reynolds-stress product with positive trace
 and density included, the analogue of $\rho\tau_{ij}$ without its trace
 removed. For linear finite elements or finite volumes, replacing
@@ -75,9 +75,8 @@ twice that value, and RVEs of neighbouring cells may overlap (§2.6–2.7).
 - **Equilibrium wall RVEs** (§2.8, Fig. 4). A Couette-like flow between
   plates at distance $2H$, averaged over the lower half, with one index
   from the wall-parallel shear; it supplies the first layer of wall cells,
-  assuming a nearly wall-parallel coarse velocity. It acts as a data-based
-  [wall function](/methods/rans-wall-function.md), though the paper does
-  not use that term.
+  assuming a nearly wall-parallel coarse velocity. The paper does not
+  relate it to [RANS wall functions](/methods/rans-wall-function.md).
 - **Time-developing boundary-layer RVE** (§2.11, Eqs. 45–61). A DNS of a
   boundary layer growing in time over an infinite flat plate at zero
   pressure gradient, solved once in dimensionless form; a triple split
@@ -100,7 +99,7 @@ equilibrium value of the current coarse state (§2.9, Eqs. 35–40):
 
 $$\mathcal T^{n+1}_{ij}=m\,\mathcal T^{n}_{ij}+(1-m)\,\mathcal T^{\mathrm{eq},n+1}_{ij},\qquad m=e^{-\Delta t/t_r},$$
 
-with $t_r$ and $\mathcal T^{\mathrm{eq}}_{ij}$ page-local. Hundreds of RVE
+with $t_r$ and $\mathcal T^{\mathrm{eq}}_{ij}$ as in registry §11. Hundreds of RVE
 runs with sudden shear jumps ($\mathrm{Id}_1$ from 200 to 600, Fig. 5 with
 100 realizations for a jump from 400 to 200) give
 $t_r=2C_\tau/(G_{\mathrm A}+G_{\mathrm B})$ with $C_\tau\simeq1$ and
@@ -110,9 +109,7 @@ consistent with the current stress, by
 $W_\tau=C_1b^3+C_2(1-b^3)$, $b$ the normalized shear jump, with
 $C_1=6.8$, $C_2=4.0$ calibrated on decaying isotropic turbulence, and
 freezes it below a perturbation Reynolds number $Re^*=15$ (Eqs. 38–40;
-$W_\tau$, $b$, $C_1$, $C_2$, $Re^*$ page-local). The model is data-driven
-in the sense that its constants come from RVE runs, not from a learned
-regression.
+$W_\tau$, $b$, $C_1$, $C_2$, $Re^*$ page-local). Its constants come from RVE runs, not from a learned regression.
 
 ## Results reported
 

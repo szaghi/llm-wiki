@@ -5,7 +5,7 @@ description: "How a scale-resolving simulation is fed with turbulence at its inf
 status: established
 aliases: [turbulent inflow generation, synthetic inflow turbulence, synthetic turbulence generator, STG, recycling–rescaling inflow, recycling inflow, digital filter inflow, precursor inflow, MDSRFG, random flow generation, turbulence fluctuation library, TFL, rescaling–reintroduction]
 tags: [les, dns, boundary-layer, wmles, compressible]
-timestamp: 2026-10-28T02:13:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Inflow turbulence generation
@@ -113,12 +113,39 @@ the target thickness at the inlet and fed back.
   wall-modelled LES of wind-turbine wakes over hills from a precursor run
   concurrently (the method of Stevens, Graham & Meneveau, which they cite),
   a neutral boundary layer driven by a constant pressure gradient
-  $u_\tau^2/L_y$ ($L_y$ the domain height, page-local) without viscous
+  $u_\tau^2/H_{\mathrm{dom}}$ ($H_{\mathrm{dom}}$ the domain height, page-local) without viscous
   term. They take the linear profile of the total (resolved plus subgrid)
-  shear stress, $1-y/L_y$ in units of $u_\tau^2$, as the evidence of
+  shear stress, $1-y/H_{\mathrm{dom}}$ in units of $u_\tau^2$, as the evidence of
   statistical stationarity, and match the mean velocity, the three
   velocity variances and the shear stress of the wind-tunnel inflow
   (Eq. 13, Fig. 3); see [actuator line and disk models](/methods/actuator-line-model.md).
+- **A separate flat-plate precursor for a separating flow**:
+  [Zhou & Bae (2024)](/sources/zhou-2024-b.md), §2.3, Fig. 3, feed their
+  wall-modelled LES of the [Gaussian bump](/benchmarks/gaussian-bump.md)
+  from a flat-plate LES with the rescale-and-recycle method of Lund et al.
+  (domain $0.09L\times0.15L\times0.08L$, $L$ the bump length, isotropic
+  cells of $2.19\times10^{-4}L$, equilibrium stress-balance wall model,
+  dynamic Smagorinsky model; 100 flow-through times of transient and 150
+  of collection). The plane extracted $0.025L$ upstream of the precursor
+  exit has $Re_\tau\approx620$, $\delta_{99}/L=0.0061$ and
+  $Re_\theta\approx1074$, against about 1035 in the reference simulation of
+  Uzun & Malik, which used a different inflow method; the mean velocity
+  follows $u^+=\ln(y^+)/0.41+5.2$. Data above $y/L=0.15$ are set to the
+  free stream. A second precursor run with the anisotropic
+  minimum-dissipation model ($Re_\theta\approx1126$, $Re_\tau\approx630$)
+  changes the bump-flow velocity profiles negligibly (App. A, Fig. A.21).
+- **The method in historical perspective**:
+  [Kim & Leonard (2024)](/sources/kim-2024-b.md), §4.6, record that the
+  recycling method of Lund et al. (1998), or a variant of it, "has since
+  been used commonly" as a turbulent inflow condition, with an advective
+  outflow condition (Lowery & Reynolds) "allowing turbulence to leave the
+  computation softly"; in the first spatial mixing-layer simulations the
+  inlet forcing ranged from inviscid shear-layer eigenfunctions to random
+  perturbations, to shorten the development length (§4.2). Before spatial
+  inflows, Spalart's boundary-layer DNS used streamwise-periodic conditions
+  with a multiscale procedure approximating the local effects of
+  streamwise growth, valid only for mildly growing layers (§3.5); see
+  [direct numerical simulation](/definitions/direct-numerical-simulation.md).
 
 ## Turbulence fluctuation libraries for compressible boundary layers
 
@@ -133,8 +160,8 @@ station with $\delta=2.08$ mm and $Re_\tau\approx770$, a span of about 4.4
 $\delta/u_\tau$, storing velocity only, with $u_\tau$ and the mean density
 profile (§III A, Table IV). Mean profiles at the target come from a
 [Spalart–Allmaras](/methods/spalart-allmaras-model.md) RANS. Page-local
-symbols: subscripts $w$, $e$, $r$ for wall, edge and recovery values,
-$s_{\mathrm{RA}}=1.16$ the Reynolds analogy factor.
+symbols: subscripts $w$, $e$, $r$ for wall, edge and recovery values;
+$s_{\mathrm{RA}}=1.16$ is the Reynolds analogy factor (registry §11).
 
 **Velocity** (Eqs. 15–17, generalizing Martin 2007 as cited): the
 density-scaled fluctuation $\sqrt{\langle\rho\rangle/\rho_w}\,u_i'/u_\tau$
@@ -254,7 +281,17 @@ superimposed on the mean inflow.
   DNS of Pirozzoli & Bernardini, and density and temperature fluctuations
   from the strong Reynolds analogy (see
   [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md)), for a DNS
-  of a Mach 2.91 compression/expansion ramp. Recovery is in the next
+  of a Mach 2.91 compression/expansion ramp.
+  [Yu et al. (2023b)](/sources/yu-2023-b.md), §II, use the same
+  combination as Yu et al. (2022) (filter of Klein et al., Musker mean
+  velocity, mean temperature from the generalized Reynolds analogy) for a
+  DNS of Mach 5 oblique shock interactions over a cold wall
+  ($T_w=0.75T_r$, $T_r$ the recovery temperature), but prescribe no
+  temperature or density fluctuations, for numerical stability; the
+  incoming layer is compared at $30\delta_{\mathrm{in}}$ from the inlet
+  ($Re_\theta\approx2087$; $\delta_{\mathrm{in}}$ the inflow thickness)
+  with the Mach 2 DNS of Pirozzoli & Bernardini at $Re_\tau\approx200$.
+  Recovery is in the next
   section; the interactions are on
   [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 - **Fourier modes.** [Morsbach et al. (2024)](/sources/morsbach-2024.md),
@@ -360,6 +397,28 @@ superimposed on the mean inflow.
   $0.1\delta_r$–$1.2\delta_r$ wall-normal, and find the van Driest II
   skin friction and the shape factor close to DNS and to the correlation
   quickly after the forcing zone (Fig. 19).
+- **Synthetic eddies from a RANS precursor, with the strong Reynolds
+  analogy.** [Wei et al. (2023)](/sources/wei-2023.md), §II D, Eqs.
+  (21)–(24), print their implementation of the synthetic eddy method of
+  Jarrin et al. (cited) for a wall-resolved LES of supersonic hydrogen film
+  cooling (Mach 2.44 main stream, inlet boundary layer of 10 mm). $N$ eddies
+  at positions $\boldsymbol x^k$ carry intensities
+  $c^k_i=a_{ij}\xi^k_j$, with $\xi^k_j$ standard normal random numbers and
+  $a_{ij}$ the Cholesky factor of the Reynolds stress $R_{ij}$ of a
+  [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) precursor (after Lund
+  et al.), and
+  $$\boldsymbol u=\langle\boldsymbol u\rangle+\frac{1}{\sqrt N}\sum_{k=1}^N\boldsymbol c^k\,f_\sigma(\boldsymbol x-\boldsymbol x^k),$$
+  with $\langle\boldsymbol u\rangle$ the precursor mean and $f_\sigma$ the
+  eddy shape function of Jarrin's thesis ($N$, $\boldsymbol x^k$,
+  $\boldsymbol c^k$, $\xi^k_j$, $a_{ij}$, $f_\sigma$ page-local; $N$ is not
+  the polynomial degree here). Temperature fluctuations follow the strong
+  Reynolds analogy, $T'/\langle T\rangle=-(\gamma-1)M^2u'/\langle u\rangle$
+  (see [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md)), and
+  density fluctuations are tied to them (printed form under
+  Qualifications). The hydrogen film inlet is laminar, with a 1/7
+  power-law profile. The authors state that the method was devised for
+  transition problems at RANS–LES interfaces and recovers physical
+  structures quickly; its recovery is in the next section.
 - **Forcing.** [Krais et al. (2021)](/sources/krais-2021.md), §7.3,
   generate inflow turbulence by anisotropic linear forcing (de Laage de Meux
   et al.), combined with recycling–rescaling, for a zonal LES with low
@@ -475,7 +534,7 @@ $x/\delta=-18.4$ generates weak compression waves from the mismatch with a
 true turbulent state, and the layer becomes a true turbulent boundary
 layer at around $x/\delta=-8$ (the source's $x^*$), about $10\delta$
 downstream of the inlet
-*(compiler arithmetic, not in the sources)*. Mo et al. (2023) define
+*(compiler check, not in the sources)*. Mo et al. (2023) define
 $L_r$ by the $C_f$ peak and find 10 to 24 inflow thicknesses, governed by
 the Reynolds-number mismatch of the library (section above).
 
@@ -494,6 +553,19 @@ Bernardini at $Re_\tau\approx200$ (§2, Fig. 2), and
 $Re_\tau=840$ against the same DNS (§4.3, Figs. 3–4); neither states a
 recovery length.
 
+[Wei et al. (2023)](/sources/wei-2023.md), §III B, Fig. 9, measure the
+recovery of their synthetic-eddy inflow on a separate 100 mm inlet section
+($1.52\times10^6$ cells, the grid and conditions of the inert film-cooling
+case): physical turbulence statistics need a development region of about
+50 mm, and the skin friction reaches the van Driest II value at
+$x/\delta_{\mathrm t}=7$ ($\delta_{\mathrm t}$ the inlet thickness,
+page-local), with a trend similar to the recycling–rescaling LES of Liu et
+al. that they cite; the van Driest velocity at $x/\delta_{\mathrm t}=7$
+and 14 and the Reynolds stresses at 7 are compared with supersonic
+boundary-layer experiments. They attribute part of a difference between
+two of their combustion cases to the different turbulence states that the
+two RANS precursors supply (§IV D).
+
 ## Triggering transition instead
 
 [Dang et al. (2022)](/sources/dang-2022.md), §5.1, generate the Mach 2.9
@@ -511,6 +583,41 @@ incompressible, which they attribute to the wall temperature) and against compre
 fluctuations of published boundary layers (§II C, Fig. 6). The forcing
 leaves narrow-band peaks in the wall-pressure spectra of the interaction,
 which they state do not affect their low-frequency analysis (§III C).
+[Tang et al. (2024)](/sources/tang-2024.md), §2.2–2.3, Eqs. (2.2)–(2.3),
+print the blowing and suction of Pirozzoli et al. (2004), which they cite,
+for a Mach 5 DNS of a 30° compression ramp over a cold wall in the same
+code family: a wall-normal velocity $A_{\mathrm{bs}}U_\infty$ ($A_{\mathrm{bs}}=0.2$,
+page-local) between $x=-440$ and $-410$ mm (corner at $x=0$), shaped by a
+streamwise sine bump of zero mean mass flux, a sum of three spanwise sine
+modes and five temporal harmonics with weights $0.8^{n-1}$ and random
+phases, at a fundamental frequency $0.32U_\infty/\delta_{\mathrm d}$
+($\delta_{\mathrm d}$ the laminar thickness at the disturbance) or
+$1.24U_\infty/\delta$; the laminar inlet profile and the initial field come
+from a two-dimensional auxiliary laminar run. Transition is complete near
+$x=-250$ mm and the boundary layer fully developed from $x=-150$ mm, ahead
+of the reference station at $x=-60$ mm ($\delta=10.6$ mm, $Re_\theta=4652$,
+$Re_\tau=700$, Table 1).
+
+**Counter-flow body-force tripping.** [Kang & Lee (2024)](/sources/kang-2024.md),
+§II.B, Eq. (15), trip a laminar Blasius inflow of thickness
+$\delta_{\mathrm{in}}=2.5$ mm with the body force of Mullenix et al. and
+Poggie (cited) for a DNS of the Mach 2.9, 24° compression ramp. A force
+$f_i$ (registry §1), with its work added to the energy equation, points
+almost against the flow (at 179° to $x$) and has the magnitude
+$$f=\frac{2D_{\mathrm c}}{\pi l_xl_yl_z}\sin^2\!\Big(\pi\frac{z-z_{\mathrm c}}{l_z}\Big)\exp\Big[-\Big(\frac{x-x_{\mathrm c}}{l_x}\Big)^2-\Big(\frac{y-y_{\mathrm c}}{l_y}\Big)^2\Big],$$
+with $D_{\mathrm c}=0.055$, centre $2.5\delta_{\mathrm{in}}$ downstream of
+the inlet at $y_{\mathrm c}=0.25\delta_{\mathrm{in}}$, widths
+$(l_x,l_y,l_z)=(0.17,0.01,0.5)\delta_{\mathrm{in}}$ (all page-local). It
+sheds hairpin-like vortices that break down into a "forest of hairpin
+vortices" (Fig. 8). At the reference station the layer has $Re_\theta=2400$
+and $C_f=0.00227$ against 2400 and 0.00225 in the experiment of Bookey et
+al. (Table I); the van Driest velocity follows the viscous and
+logarithmic laws (Fig. 4b), the density-scaled intensities agree with
+incompressible and compressible DNS (Fig. 5), spanwise autocorrelations at $y^+=50$ and
+$y/\delta=0.5$ vanish within half a thickness, and the spectra at $y^+=50$
+follow $k^{-5/3}$ with "no spurious length scales" from the trip (§III,
+Figs. 4–8). The interaction is on
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
 **Geometric tripping inside a nozzle.** [Ahn et al. (2023)](/sources/ahn-2023.md),
 §III and §IV A–B, Figs. 3–10, impose a laminar inflow (total pressure and
@@ -571,13 +678,35 @@ built to keep attached layers in RANS; see
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md).
 
 The opposite case: [Morsbach et al. (2024)](/sources/morsbach-2024.md), §1,
-recall that earlier simulations of the same turbine cascade with laminar
+cite earlier simulations of the same turbine cascade with laminar
 end-wall boundary layers and no free-stream turbulence (Rasquin et al.;
-Iyer et al.) reached "no satisfactory agreement" with the experiment, and
+Iyer et al.), which reached "no satisfactory agreement" with the experiment, and
 attribute their own agreement to the turbulent inflow. They also show that
 the RANS practice of shrinking the inflow length scale to fix a laminar
 separation bubble gives the right loss for the wrong reason (§4.1, see
 [local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)).
+
+A laminar inlet chosen for reproducibility.
+[Wang & Xu (2024)](/sources/wang-2024-h.md), §2.3, App. B, run a DNS of a
+reacting supersonic boundary layer (Mach 2.33 vitiated air over a sonic
+hydrogen film, loosely after the Burrows–Kurkov combustor) from a laminar
+wall-jet inlet: a Poiseuille hydrogen stream of height $h_0=4$ mm under a
+compressible Blasius main stream, separated by an "infinitely thin"
+no-slip interface. They state that in the Burrows–Kurkov set-up the inlet
+turbulent state is unknown and that key results such as the flame
+anchoring position "are reported to be highly sensitive to the thickness
+of the inlet turbulent boundary layer" (citing Edwards et al., Liu et al.
+and [Wei et al. 2023](/sources/wei-2023.md), above), so that the various
+inflow generators used can lead to different results; a laminar inlet
+avoids this, "enhance[s] the reproducibility", and needs no precursor.
+They compensate the slower mixing by a thinner main-stream layer and a
+higher main-stream temperature (1700 K). Transition comes in two stages: a
+mixing-layer instability for $0<x/h_0<7.6$, which leaves $C_f$ unchanged,
+then a boundary-layer instability that raises it (§4.1, Figs. 6–7); the
+statistics stations at $x/h_0=100$–150 have $Re_\tau\approx1050$ in the
+reacting case (Table 2) and are
+compared with the canonical adiabatic Mach 2 layer at $Re_\tau=1000$ (see
+[turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)).
 
 ## Inflow turbulence as a physical parameter, and at RANS–LES interfaces
 
@@ -666,6 +795,21 @@ compiles (§5.2).
   inlet position in reference thicknesses, while 52.3 is the value of the
   earlier set-up of Tong et al. they quote next ($335/6.4$) *(compiler
   check, not in the sources)*.
+- **Printed forms in Wei et al. (2023).** The sum of their Eq. (21) runs
+  over $i$ while the summand carries $k$. The $(2,2)$ entry of the
+  Cholesky factor (Eq. 23) is printed $\sqrt{R_{xx}-a_{21}^2}$; with
+  $aa^{\mathsf T}=R$ the entry must satisfy $a_{21}^2+a_{22}^2=R_{yy}$,
+  and the $(3,3)$ entry of the same matrix uses the matching diagonal
+  *(compiler check, not in the sources)*. Eq. (24) prints
+  $\rho'/\langle\rho\rangle=+T'/\langle T\rangle$ (overbars in the
+  source); linearizing their own equation of state (Eq. 8) at fixed
+  composition and $p'=0$ gives $\rho'/\langle\rho\rangle=-T'/\langle T\rangle$
+  *(compiler check, not in the sources; the condition $p'=0$ is not stated
+  by the authors)*.
+- The trip of Kang & Lee (2024), the blowing and suction of Tang et al.
+  (2024) and the laminar wall jet of Wang & Xu (2024) report no recovery
+  length in the sense of Huang et al. (2022); they validate the incoming
+  layer at one or more stations instead.
 - Inflow generation is a boundary condition, not a closure, but it sets
   the state that the closure is tested on; the benchmarks where it matters
   are [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)
@@ -713,3 +857,10 @@ compiles (§5.2).
 - [Kumar et al. (2023)](/sources/kumar-2023.md) — §3.2 (prescribed inlet turbulence of a slot-burner DNS).
 - [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2 (precursor pipe and annular-pipe inflows).
 - [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II B–C, Fig. 6 (laminar inlet and wall disturbance at Mach 6, incoming-layer check); §III C (spectral peaks of the trip).
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.3, Fig. 3 (Lund recycling precursor for the Gaussian bump); App. A, Fig. A.21 (inflow insensitivity).
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §3.5 (multiscale streamwise-periodic boundary layer); §4.2 (inlet forcing of spatial mixing layers, advective outflow); §4.6 (Lund recycling in common use).
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II (digital filter with Musker mean and generalized Reynolds analogy, no thermodynamic fluctuations, Mach 5).
+- [Wei et al. (2023)](/sources/wei-2023.md) — §II D, Eqs. (21)–(24) (synthetic eddy method with RANS Cholesky factor and strong Reynolds analogy); §III B, Fig. 9 (recovery); §IV D (precursor dependence).
+- [Tang et al. (2024)](/sources/tang-2024.md) — §2.2–2.3, Eqs. (2.2)–(2.3), Table 1 (blowing and suction, transition and development stations).
+- [Kang & Lee (2024)](/sources/kang-2024.md) — §II.B, Eq. (15) (counter-flow body-force trip); §III, Figs. 5–8, Table I (incoming-layer validation).
+- [Wang & Xu (2024)](/sources/wang-2024-h.md) — §2.3, App. B (laminar wall-jet inlet and its rationale); §4.1, Figs. 6–7 (two-stage transition).

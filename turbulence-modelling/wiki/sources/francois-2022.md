@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Turbomach. 144:111004"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Turbomachinery_François_Zonal_Detached_Eddy_Simulation_of_the_Fan-Outlet_Guide_Vanes.pdf"
 tags: [hybrid-rans-les, des, turbomachinery, rans, aeroacoustics]
-timestamp: 2026-10-25T19:45:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Summary
@@ -112,7 +112,7 @@ are those of the accepted manuscript.
 | $U_{i,j}$ | $\partial_ju_i$ | comma derivative; $r_d$ prints $\sqrt{U_{i,j}U_{j,i}}$ |
 | $d_w$ | $d$ | wall distance |
 | $\kappa$ | $\kappa$ | value not printed |
-| $r_d$, $f_d$, $f_{d0}$ | $r_d$, $f_d$, $f_{d0}$ (page-local) | DDES shielding parameter and function, switch threshold 0.8 |
+| $r_d$, $f_d$, $f_{d0}$ | $r_d$, $f_d$ (registry §11), $f_{d0}$ (page-local) | DDES shielding parameter and function, switch threshold 0.8 |
 | $\Delta$, $\Delta_{max}$, $\Delta_{vol}$ | $\Delta$, $\Delta_{\max}$, $\Delta_{\mathrm{vol}}$ (grid lengths of the [DES page](/methods/detached-eddy-simulation.md)) | **collision:** the source's $\Delta$ is the DES grid length that caps the RANS length, not an LES filter width |
 | $\Delta x^+$, $\Delta y^+$, $\Delta z^+$, $y^+$ | $\Delta x^+$, $\Delta y^+$, $\Delta z^+$, $y^+$ | agree; also applied to free-shear cells (< 200) |
 | $\lambda_h=U_cf^{-1}$ | (hydrodynamic gust wavelength) | **collision:** not the Taylor microscale |

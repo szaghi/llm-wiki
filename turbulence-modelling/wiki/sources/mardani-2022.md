@@ -9,7 +9,7 @@ year: 2022
 venue: "Combust. Flame 241:111873"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Combustion_and_Flame_Mardani_Dynamic_adjustment_of_the_Eddy_Dissipation_Concept_model_for.pdf"
 tags: [combustion, rans, eddy-viscosity, turbulence-chemistry-interaction]
-timestamp: 2026-10-27T15:51:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -38,7 +38,7 @@ fits both.
 
 The contribution is a localized ("dynamic") EDC: identifying the
 fine-structure velocity with a turbulent flame speed
-$S_L\sqrt{Re_T+1}$ gives $C_{D2}\approx3/[4(Re_T+1)Da^2]$ and cell-wise
+$s_{\mathrm L}\sqrt{Re_T+1}$ gives $C_{D2}\approx3/[4(Re_T+1)Da^2]$ and cell-wise
 $C_\tau$ and $C_\gamma$ computed at every iteration from a Damköhler number
 built on one reaction or the fastest reaction of the DRM-22 mechanism,
 without the pre-calculation step of Parente et al. (2016). The authors note
@@ -71,8 +71,8 @@ $\tau$); $C_{D1}$–$C_{D4}$, $C_\gamma$, $C_\tau$ the EDC constants;
 $Re_T$ the turbulence Reynolds number; $Da$ the Damköhler number;
 $\alpha_{\mathrm c}$ the cascade frequency ratio and
 $\beta_{\mathrm c}=\varepsilon/q^*$ (the source's $\alpha$, $\beta$);
-$u^*$, $L^*$ the fine-structure velocity and length; $S_L$, $S_T$ the
-laminar and turbulent flame speeds.
+$u^*$, $L^*$ the fine-structure velocity and length; $s_{\mathrm L}$ (registry §11)
+and $s_{\mathrm T}$ the laminar and turbulent flame speeds.
 
 1. The EDC is "not a unique model, but a set of variants" (citing Li et al.); its constants need tuning for MILD combustion (§2). **Stated**
 2. In the Magnussen cascade with frequency doubling, $\varepsilon/q^*\to4/3$: "75% of the total dissipation of turbulent kinetic energy would be dissipated in the fine structures" (§2, Eqs. 7–8). **Derived**
@@ -87,7 +87,7 @@ laminar and turbulent flame speeds.
 11. Higher $\alpha_{\mathrm c}$ is better upstream (low $Da$), lower downstream (high $Da$), so "finding an optimum α for all regions seems to be impossible" (§6.1, Fig. 4d). **Shown**
 12. Increasing the fine-structure to Kolmogorov time-scale ratio increases the error at $Z=30$ and 60 mm and decreases it at 120 mm, attributed to wind-tunnel air entrainment raising the oxygen level downstream (§6.2, Fig. 5). **Shown**
 13. If only the MILD region is targeted, a smaller $C_{D2}$ (fine-structure to Kolmogorov scale ratios below 1) is applicable (§6.2). **Stated**
-14. Approximating the fine-structure velocity by $S_T=S_L\sqrt{Re_T+1}$ yields $C_{D2}\approx3/[4(Re_T+1)Da^2]$ (§4.2, Eqs. 26–31). **Derived**
+14. Approximating the fine-structure velocity by $s_{\mathrm T}=s_{\mathrm L}\sqrt{Re_T+1}$ yields $C_{D2}\approx3/[4(Re_T+1)Da^2]$ (§4.2, Eqs. 26–31). **Derived**
 15. The local constants are $C_\tau=C_{D3}/(2Da\sqrt{Re_T+1})$ and $C_\gamma=C_{D4}[9/(16C_{D1}^2(Re_T+1)Da^2)]^{1/4}$ with $C_{D3}=1.0$, $C_{D4}=0.65$; $C_{D4}$ was varied from 0.2 to 1.0 and 0.65 chosen against temperature and species measurements (§4.2, Eqs. 32–33). **Derived** (form) / **Stated** (values; the parametric study is not displayed)
 16. A non-unity $C_{D4}$ limits the reacting part of the fine structure as a reacting fraction below 1 does, consistent with Lewandowski & Ertesvåg (§4.2). **Stated**
 17. In the new correlation $C_\gamma$ decreases with $Da$ and $Re_T$, opposite to Parente et al. ($C_\gamma\propto Da^{1/2}(Re_T+1)^{1/2}$) and Romero-Anton et al. ($C_\gamma\propto Da^{3/4}(Re_T+1)^{1/2}$); the model thus gives a smaller fine structure for fast burning or highly mixed conditions (§4.2). **Derived**
@@ -132,7 +132,7 @@ laminar and turbulent flame speeds.
 - **Eq. (8):** the series is printed
   $1+\frac1{2^2}+\frac1{2^4}+\cdots+\frac1{2^n}$, with the sum $\to4/3$.
 - **Eq. (29):** the first expression prints $\frac43C_{D2}\nu\,u^{*2}/L^*$,
-  the second $(Re_T+1)S_L^2/L^{*2}$.
+  the second $(Re_T+1)s_{\mathrm L}^2/L^{*2}$.
 - **§4.2:** "the Damköhler number is defined as the ratio … (i.e.,
   $a=\tau_\eta/\tau_c$)".
 - **§6.2:** "parametric study was done on the new variables $L^*/\eta_k$ and
@@ -165,7 +165,7 @@ laminar and turbulent flame speeds.
 | $q_n$, $q^*$, $w_n$ | (cascade dissipation at step $n$ and at the fine structure; energy transfer) | |
 | $\tau_\eta$, $\tau_k$; $\eta_k$ | $\tau_\eta$; $\eta$ | Kolmogorov time and length |
 | $Da$, $Da_I$, $Da_{II}$, $\tau_c$, $c_r$ | (page-local) | Damköhler number $\tau_\eta/\tau_c$; chemical time; rate over $\rho$ |
-| $S_L$, $S_T$ | (page-local) | laminar and turbulent flame speeds |
+| $S_L$, $S_T$ | $s_{\mathrm L}$ (registry §11), $s_{\mathrm T}$ (page-local) | laminar and turbulent flame speeds; **collision:** the registry's $S_L$ is the Lundquist number |
 | $\chi$ | $\chi_{\mathrm{fs}}$ (page-local reacting fraction of the fine structure) | **collision** with the SA ratio $\chi$ |
 | $R$, $\tau_{mix}$ | (time-scale fraction, mixing time) | $R$ is not a Reynolds stress |
 | $Y_i^*$, $Y_i^0$, $\overline{Y_i}$, $R_{EDC}$ | $Y_k^*$, (surrounding-state mass fraction), $\langle Y_k\rangle$, $\bar R_k$ (page-local) | the overbar is the RANS cell mean, not an LES filter |

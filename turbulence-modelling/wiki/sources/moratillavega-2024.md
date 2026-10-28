@@ -9,7 +9,7 @@ year: 2024
 venue: "Flow Turbul. Combust. 113:667–693"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Flow_Turbulence_and_Combustion_Moratilla-Vega_Installed_Jet_Noise_Analysis_Using_a_Coupled_LESAPE_High-Ord.pdf"
 tags: [les, aeroacoustics, numerical-dissipation, dg]
-timestamp: 2026-10-26T20:51:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Summary
@@ -108,8 +108,8 @@ the issue year is 2024.
 | $\tilde\tau_{ij}$ | $\sigma_{ij}$ (resolved viscous stress) | **collision:** not the SGS stress |
 | $\mathcal L_j$ | (subgrid energy-flux term, undefined in the source) | |
 | $\mu_{SGS}$ | $\mu_t$ | |
-| $C_m$, $\Delta$ | $C_\sigma$, $\Delta$ | σ-model constant (page-local, as on [sigma model](/methods/sigma-model.md)); not printed |
-| $\sigma_1\ge\sigma_2\ge\sigma_3$, $\mathcal D_m$ | $\varsigma_1\ge\varsigma_2\ge\varsigma_3$, $\mathcal D_\sigma$ | singular values of the velocity gradient, σ-model operator (page-local, as on the sigma-model page); **collision:** not the viscous stress $\sigma_{ij}$ |
+| $C_m$, $\Delta$ | $C_\sigma$, $\Delta$ | σ-model constant (registry §11, as on [sigma model](/methods/sigma-model.md)); not printed |
+| $\sigma_1\ge\sigma_2\ge\sigma_3$, $\mathcal D_m$ | $\varsigma_1\ge\varsigma_2\ge\varsigma_3$, $\mathcal D_\sigma$ | singular values of the velocity gradient, σ-model operator (registry §11, as on the sigma-model page); **collision:** not the viscous stress $\sigma_{ij}$ |
 | $\epsilon$, $L(\cdot)$, $\lvert A_{ij}\rvert$ | (smoothing parameter, pseudo-Laplacian, Roe matrix) | not a dissipation rate |
 | $p'$, $\mathbf u'$ | (acoustic pressure and velocity) | **collision:** the prime is an acoustic perturbation about the time average |
 | $q_c$, $\mathbf q_m$, $L'$, $L'_r$ | (APE sources, Lamb-vector perturbation, its radial part) | |

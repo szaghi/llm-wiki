@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "30P30N three-element high-lift airfoil"
-description: "The 30P30N slat–main–flap airfoil in two forms: the modified BANC-III geometry at Mach 0.17, chord Reynolds number 1.7 million and 5.5° incidence, where hybrid, unified and LES approaches and scheme dissipation are compared on lift and slat-cove flow; and the workshop RANS case at Mach 0.2, 9 million and 16°."
+description: "The 30P30N slat–main–flap airfoil in three forms: the modified BANC-III geometry at Mach 0.17, chord Reynolds number 1.7 million and 5.5°, where hybrid and LES approaches and scheme dissipation are compared; the workshop RANS case at Mach 0.2, 9 million and 16°; and a scale-resolving stall sweep at Mach 0.2, 9 million, 8–24°."
 status: established
 aliases: [30P30N, 30P-30N, 30P/30N, MD 30P30N, modified 30P30N, BANC-III 30P30N, three-element high-lift airfoil]
 tags: [benchmark, hybrid-rans-les, des, separated-flow, numerical-dissipation, aeroacoustics]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T02:37:00Z
 ---
 
 # 30P30N three-element high-lift airfoil
@@ -15,7 +15,7 @@ element, flap) whose slat and flap are deflected by $30^\circ$. The flow
 combines a separated shear layer in the slat cove that rolls up, impinges
 on the slat wall and radiates slat noise, the thin boundary layers of three
 elements, the merging of the slat wake with the main-element boundary layer,
-and possible separation on the flap. In this bundle it is run in two
+and possible separation on the flap. In this bundle it is run in three
 distinct forms that should not be mixed:
 
 - the **modified 30P30N of the BANC-III workshop** (Benchmark Problems for
@@ -25,7 +25,11 @@ distinct forms that should not be mixed:
 - the **workshop RANS case** at $M=0.2$, $Re=9\times10^6$ and $16^\circ$
   (case C3.1 of the first High-Order CFD Workshop), a steady
   [Spalart–Allmaras](/methods/spalart-allmaras-model.md) test of high-order
-  discretizations.
+  discretizations;
+- a **scale-resolving stall sweep** at the workshop's $M=0.2$ and
+  $Re_C=9\times10^6$, six incidences from $8^\circ$ to $24^\circ$, against
+  the experiment of Chin et al., which tests whether a hybrid model
+  predicts the maximum lift and the drop after stall.
 
 On this page $\alpha$ denotes the angle of attack (page-local; the
 registry's $\alpha$ is the DG/finite-volume blending factor) and $C$ the
@@ -150,6 +154,50 @@ equilibrium wall model (Bodart et al. 2013) that captures the maximal lift
 but stalls at about $23^\circ$ against about $21^\circ$ in the experiment
 (see [wall-modelled LES](/methods/wall-modelled-les.md)).
 
+## Scale-resolving stall sweep ($M=0.2$, $Re_C=9\times10^6$, $8^\circ$–$24^\circ$)
+
+[Wu et al. (2024)](/sources/wu-2024.md), §3.3, run the "MD-30P30N" at
+$Re_C=9\times10^6$ on the stowed chord and $M=0.2$, at
+$\alpha=8$, 16, 19, 21, 23 and $24^\circ$, with the same group's solver
+[PHengLEI](/software/phenglei.md) and the fourth-order
+[weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
+with linear weights. Their set-up:
+
+| Item | [Wu et al. (2024)](/sources/wu-2024.md), §3.3 |
+|---|---|
+| Domain | radius 100 chords; span 11% of the chord, periodic |
+| Grids | 12.8 M (coarse) and 26.4 M (fine) cells, $y^+\approx1$ |
+| Models | SST-IDDES, SATES-SM (constant $C_x=0.61$) and SATES-σ (local $C_x$), see [self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md) |
+| Reference | experiment of Chin et al., blockage-corrected |
+| Averaging | time not printed |
+
+Their results (Figs. 18–26):
+
+- *Grid and model at $21^\circ$.* SATES-σ gives the same $C_p$ on the two
+  grids, in good agreement with the experiment and better than SATES-SM
+  and IDDES, especially at the suction peaks near the leading edges of the
+  main element and the flap (Fig. 22).
+- *Other incidences.* SATES-σ agrees with the measured $C_p$ at 8, 16
+  and $23^\circ$; at $8^\circ$ a plunge of $C_p$ at $x/C\approx0.15$ is read as a large
+  recirculation bubble with laminar–turbulent transition, weakening as the
+  incidence grows (Fig. 23; see
+  [laminar separation bubble](/definitions/laminar-separation-bubble.md)).
+  Velocity profiles at $x/C=0.45$, 0.8982, 0.975, 1.0321, 1.0752 and
+  1.1125 agree better with SATES-σ than with SATES-SM near the wall,
+  especially on the flap under the strong adverse pressure gradient, and
+  differ from the data in the outer layer (Fig. 25).
+- *Lift and stall.* The total-lift error of SATES-σ is "always less than
+  6.5%, even at post-stall conditions", and the model captures the maximum
+  lift and the stall; the slat lift agrees, the flap lift is
+  over-predicted, which the authors attribute to the free-air computation
+  against the wind-tunnel blockage (Fig. 26). They cite RANS studies and a
+  transitional and turbulent DDES that show no appropriate drop of lift
+  after stall, and attribute the DDES failure to its thick RANS layer,
+  whose eddy viscosity damps the boundary-layer unsteadiness (§1, §3.3).
+- *Limit.* Because SATES-σ works close to its LES mode, transition "may
+  not be captured accurately if the computational grid resolution is
+  insufficient", unlike DDES, which is closer to URANS (§4).
+
 ## What the case shows
 
 - On the modified 30P30N the lift depends more on the convective scheme and
@@ -168,6 +216,11 @@ but stalls at about $23^\circ$ against about $21^\circ$ in the experiment
   (Wu et al.). Wu et al. cite a successful IDDES of the airfoil by
   Ashton et al. without discussing the difference.
 
+- The stall sweep of [Wu et al. (2024)](/sources/wu-2024.md) is the only
+  form here that varies the incidence through $C_{L,\max}$; at the
+  conditions of the workshop RANS case its evidence for stall prediction is
+  numerical, one model family (SATES) against IDDES on two grids.
+
 ## Qualifications
 
 - Wu et al. print no wall-unit resolution, and Wang et al. print no grid
@@ -181,6 +234,13 @@ but stalls at about $23^\circ$ against about $21^\circ$ in the experiment
   the sources)*. Their §3.4
   refers to grid resolution "in section B" and schemes "in section C",
   while Table 2 labels the grid group A and the scheme group B.
+- [Wu et al. (2024)](/sources/wu-2024.md) print 12.8 M and 26.4 M cells
+  for the two grids (§3.3) and "a relatively coarse grid containing
+  approximately 24 million cells" in the Conclusions (§4). They print the
+  airfoil's time step as $\Delta t\,D/U_\infty=1\times10^{-4}$, with the
+  diameter symbol of their cylinder cases. They do not print the chord
+  length, so the identity of their "MD-30P30N" with the 0.5588 m workshop
+  chord of Wang et al. (2013) is not established by the page.
 - The workshop RANS case and the BANC-III case differ in Mach number,
   Reynolds number, incidence and chord (0.5588 m against 0.457 m); results
   of one do not validate the other.
@@ -203,3 +263,4 @@ the sources)*.
 - [Wang et al. (2013)](/sources/wang-2013.md) — §4.11 (case C3.1; specification only).
 - [Huang et al. (2022b)](/sources/huang-2022-d.md) — §3.3, Figs. 33–35.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §4.3 (cited WMLES of Bodart et al.).
+- [Wu et al. (2024)](/sources/wu-2024.md) — §1; §3.3, Figs. 18–26; §4.

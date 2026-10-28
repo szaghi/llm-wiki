@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity profile of wall-bounded turbulence �
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-28T01:57:00Z
+timestamp: 2026-10-28T07:04:00Z
 ---
 
 # Law of the wall
@@ -85,13 +85,20 @@ and the choice is part of the model.
 | [De Vanna et al. (2022)](/sources/devanna-2022.md), §2.2, Eq. (6); [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.5, Eq. (35) | 0.41 | — | $A^+=17$ in semi-local $y^*$ | mixing length of a compressible ODE [equilibrium wall model](/methods/equilibrium-wall-model.md) |
 | [Devenport & Lowe (2022)](/sources/devenport-2022.md), §2.1, Eq. (2.25) | "often" 0.41; 0.38–0.39 reported for zero-pressure-gradient boundary layers; 0.384 (Monkewitz et al., as cited) | 5.0; 4.17 with $\kappa=0.384$ | roughness function, Coles wake $\Pi\approx0.51$ (below) | review of incompressible boundary-layer physics |
 | [Huang et al. (2022c)](/sources/huang-2022-c.md), §II C, Eqs. (14), (17) | 0.41 | 5.2 | Reichardt's law with $D=9.8$, $E=1/11$, $F=1/3$ (below) | algebraic wall model of a spectral/hp implicit LES in [Nektar++](/software/nektar-plus-plus.md) |
-| [Zhang et al. (2022e)](/sources/zhang-2022-i.md), §II A, Eq. (3) | not printed | — | rough-wall form $\kappa^{-1}\ln(y/y_{0,\mathrm r})$, roughness length $y_{0,\mathrm r}$ (page-local; $0.004$ mm in the matched wind tunnel) | wall stress of atmospheric LES over hills in [LESGO](/software/lesgo.md) |
+| [Zhang et al. (2022e)](/sources/zhang-2022-i.md), §II A, Eq. (3) | not printed | — | rough-wall form $\kappa^{-1}\ln(y/y_{0,\mathrm r})$, roughness length $y_{0,\mathrm r}$ (registry §11; $0.004$ mm in the matched wind tunnel) | wall stress of atmospheric LES over hills in [LESGO](/software/lesgo.md) |
 | [Mo et al. (2023)](/sources/mo-2023.md), §II B, Eqs. (9)–(10) | 0.41 | 5.1 | sublayer $u^+=y^+$ for $y^+<6$ | reference for van Driest-transformed DNS of Mach 2.25, 2.9 and 7.25 flat plates |
 | [Shi & Yan (2023)](/sources/shi-2023.md), Fig. 9 | 0.41 | 5.0 | | reference for the van Driest velocity of the Mach 2.9 incoming layer of a ramp implicit LES |
 | [Gao et al. (2023)](/sources/gao-2023.md), §5.2, Fig. 18 | not printed | not printed | sublayer matched for $y^+\le5$, log law for $30\le y^+\le100$ | reference "derived from incompressible flow" for a Mach 2 DG implicit LES |
 | [Yu et al. (2023)](/sources/yu-2023.md), §4.1, Eq. (4.1) | $1/2.55$ | 5 | reference-station buffer layer below $y^+=30$; cosine wake with a coefficient linear in $Re_\tau$ (below) | composite canonical profile in van Driest form after a shock interaction |
 | [Maeyama & Kawai (2023)](/sources/maeyama-2023.md), §2.3, Eqs. (2.19)–(2.20) | 0.41 | — | $A^+=17$, $Pr_{t}=0.9$ in the wall model | mixing length of the compressible ODE [equilibrium wall model](/methods/equilibrium-wall-model.md) of a Mach 2.28 WMLES |
 | [Zhang et al. (2022c)](/sources/zhang-2022-g.md), §II C, Fig. 6a | not printed | 5.7 (measured) | van Driest-transformed DNS profile on a cold wall | log-law intercept of the inflow layer of a Mach 6 ramp DNS, "higher than" incompressible, attributed to the wall temperature |
+| [Hu et al. (2024)](/sources/hu-2024.md), §2; §4, Eq. (5) | 0.41 | 5.2 | quadratic branch below $y^+=23$; log layer placed "between about $y^+=30$ and $y/\delta=0.3$" | algebraic wall model of a WMLES grid-convergence study in CharLES |
+| [Zhou & Bae (2024)](/sources/zhou-2024-b.md), §2.3, Fig. 3 | 0.41 | 5.2 | | check of the precursor flat-plate LES that feeds the [Gaussian bump](/benchmarks/gaussian-bump.md) inflow ($Re_\tau\approx620$) |
+| [Kang & Lee (2024)](/sources/kang-2024.md), §III, Eq. (16), Fig. 4b | $1/2.44$ | 5.0 | "$\log$" printed without base | van Driest-transformed DNS profile of the Mach 2.9 incoming layer of a $24^\circ$ ramp, $Re_\theta=2400$ |
+| [Tang et al. (2024)](/sources/tang-2024.md), §2.3, Fig. 11a | $1/2.44$ | 5.5 | linear law for $y^+<4$, log law over $y^+=30$–200 | van Driest-transformed DNS profile of the Mach 5 cold-wall ($T_w/T_r=0.5$) incoming layer of a $30^\circ$ ramp |
+| [Zhang et al. (2024b)](/sources/zhang-2024-b.md), §3.1, Eq. (3.2), Fig. 5a | $1/2.44$ | 5.6–6.0 (measured), against 5.1 incompressible | intercept more sensitive than slope to the wall temperature | van Driest-transformed DNS of Mach 6 boundary layers at $T_w/T_r=0.50$, 0.75, 1.0 (below) |
+| [Wang & Xu (2024)](/sources/wang-2024-h.md), §4.2, Fig. 8 | 0.41 | 5.2 | | target of the Griffin–Fu–Moin transformed profile of a reacting Mach 2.33 boundary layer |
+| [Wei et al. (2023)](/sources/wei-2023.md), §III B, Fig. 10 legend | $1/2.5$ | 5.4 | | target of the van Driest-transformed velocity of a wall-resolved LES of a Mach 2.44 boundary layer |
 
 Zhao et al. (2023a) attribute $\kappa=0.40$, $B=5.5$ to the channel DNS of
 Kim et al. (1987), as they cite it; Wang et al. (2023b) give the same values
@@ -154,6 +161,20 @@ length $k_o=\nu e^{-\kappa B}/u_\tau$, $k_o^+\approx0.129$ for $\kappa=0.41$,
 $B=5.0$ (page-local $k_o$; $e^{-0.41\times5}=0.129$ *(compiler check, not in
 the sources)*), and places the inner region in the bottom 10–20 % of the
 layer.
+
+**Intercepts of hypersonic cold-wall layers.** [Zhang et al. (2024b)](/sources/zhang-2024-b.md)
+(§3.1, Fig. 5a) find that the van Driest-transformed DNS profiles of Mach 6
+boundary layers keep the slope $2.44$ but have intercepts 5.6–6.0, above the
+incompressible 5.1; the intercept is more sensitive than the slope to the
+wall temperature, colder walls leave $u^+_{\mathrm{VD}}=y^+$ closer to the
+wall, and they conclude that the transformation "is more applicable to the
+adiabatic wall". They set this beside intercepts of 5.2–6.0 at Mach 5
+(Duan et al. 2010) and 5.9 at Mach 7.2 (Priebe & Martín 2021), as they cite
+them, and attribute the high values to the transformation's validity only
+at moderate Mach number. The Mach 5 cold-wall DNS of [Tang et al. (2024)](/sources/tang-2024.md)
+(§2.3) uses the reference intercept 5.5 and reports a deviation up to 3 %
+from Duan et al. (2010) only in the wake (see
+[compressible velocity transformation](/definitions/compressible-velocity-transformation.md)).
 
 Aiello et al. (2026, §4.1) attribute their large fitted intercept,
 $B=6.0$, to the low transformed friction Reynolds number of their DNS
@@ -230,8 +251,8 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   $$u^+=\left[1-\tanh\frac{y^+}{10.71}\right]^{1.526}y^++\left[\tanh\frac{y^+}{10.71}\right]^{1.526}\frac1\kappa\ln(Ey^+),\qquad E=11.27,$$
 
   and a separately fitted inverse gives $y^+$ directly from the local Reynolds
-  number $Re_y=U y/\nu$ ($U$ the wall-tangential velocity at distance $y$;
-  page-local),
+  number $Re_y=U y/\nu$ (registry §11; $U$ the wall-tangential velocity at
+  distance $y$, page-local),
 
   $$y^+=\left[1-\tanh\frac{Re_y}{180.8}\right]^{0.789}Re_y^{1/2}+\left[\tanh\frac{Re_y}{180.8}\right]^{0.789}\frac{e^{W(\kappa ERe_y)}}{E},$$
 
@@ -401,7 +422,7 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
 - **Rough walls.** Devenport & Lowe (2022, §2.1, Eqs. 2.27–2.29) write
   the rough-wall law as $u^+=\kappa^{-1}\ln(y/k_s)+B+3.5=\kappa^{-1}\ln y^++B-\Delta U^+$
   with $\Delta U^+=\kappa^{-1}\ln k_s^+-3.5$ ($k_s$ the equivalent
-  sand-grain roughness, page-local; this is the downward shift that Bose &
+  sand-grain roughness, registry §11; this is the downward shift that Bose &
   Park cite above) and $k_o\approx0.031k_s$ in the fully rough regime,
   commonly $k_s^+\gtrsim50$; for dense roughness the origin of $y$ is
   Jackson's level at which the mean drag acts. Outside a roughness layer of
@@ -437,7 +458,7 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   $2.55\,b_{\mathrm{wk}}\big(\cos(0.3\pi)-\cos(\pi y/\delta)\big)$ for
   $0.3<y/\delta<1$, and the constant edge value
   $2.55\ln\delta^++5+2.55\,b_{\mathrm{wk}}(\cos(0.3\pi)+1)$ beyond. Here
-  $b_{\mathrm{wk}}$ (page-local, the source's $\beta$) is a wake coefficient
+  $b_{\mathrm{wk}}$ (registry §11, the source's $\beta$) is a wake coefficient
   fitted linearly in $Re_\tau$, $b_{\mathrm{wk}}=0.0005Re_\tau-0.411$, from the
   reference station and the last station, where recovery is postulated.
   The log law is called "standard" after Pirozzoli & Bernardini (2011, as
@@ -507,7 +528,7 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   finds the log law robust in adverse-pressure-gradient boundary layers but
   confined below $y^+_{\log,\max}=1.78\,Re_\tau^{1/2}(\Delta p_s^+)^{-1/5}$, with
   $\Delta p_s^+=\nu\rho^{-1}u_\tau^{-3}dP/ds$ the inner-scaled pressure
-  gradient, and a half-power law above it (Eq. 35; page-local symbols); the
+  gradient, and a half-power law above it (Eq. 35; $\Delta p_s^+$ registry §11); the
   log layer then ends below $0.11\delta$ for $\Delta p_s^+>0.005$ and a
   Rotta–Clauser parameter above 4.5 (§5.2). Details on
   the [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)
@@ -556,13 +577,13 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   $y^+\approx2$. The flow is a fluid–structure-interaction problem resolved by
   LES with an immersed boundary, not a wall-modelled flow.
 - **Volume-filtered law of the wall: the wall slip.** Filtering the flow
-  with a compact kernel of support width $\Delta_f$ (page-local) that is
+  with a compact kernel of support width $\Delta_f$ (registry §11) that is
   truncated at the wall but not rescaled leaves a non-zero filtered velocity
   at the wall, the slip. Rickard & Kasbaoui (2026, §4.1, Eqs. 4.2–4.5) obtain
   a model of the mean slip by filtering the van Driest profile above; for
   $\Delta_f^+\gg1$ it tends to $\varphi_{f,w}^{-1}(2\kappa)^{-1}\ln(\Delta_f^+/2)$,
   with $\varphi_{f,w}$ the fluid volume fraction at the wall (1/2 at a planar
-  wall; page-local), and a fitted correction makes it accurate within 1 %
+  wall; registry §11 $\varphi_f$ evaluated at the wall), and a fitted correction makes it accurate within 1 %
   for $\Delta_f^+\ge100$. The slip grows logarithmically with the filter
   width, $6.93u_\tau$ at $\Delta_f^+=50$ and $13.5u_\tau$ at $\Delta_f^+=300$
   in filtered channel DNS at $Re_\tau=5200$ (§3.2). The law of the wall
@@ -658,7 +679,7 @@ the log-layer calibration of the $\omega$ equation,
 $$\beta_\omega-\beta^*\gamma_\omega=\kappa^2\sqrt{\beta^*}\,\sigma_\omega,\qquad\kappa=0.41,$$
 
 with $\gamma_\omega$, $\beta_\omega$ the production and destruction
-coefficients of the $\omega$ equation (page-local; the source's $\gamma$
+coefficients of the $\omega$ equation (registry §11; the source's $\gamma$
 and $\theta$), a "necessary condition for accurate resolution of the log
 layer". A [field-inversion](/methods/field-inversion-machine-learning.md)
 multiplier $\beta(\boldsymbol x)$ on the destruction term turns the
@@ -880,3 +901,10 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 - [Gao et al. (2023)](/sources/gao-2023.md) — §5.2, Fig. 18.
 - [Yu et al. (2023)](/sources/yu-2023.md) — §3, Fig. 5; §4.1, Eq. (4.1).
 - [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §2.3, Eqs. (2.19)–(2.20).
+- [Hu et al. (2024)](/sources/hu-2024.md) — §2; §4, Eq. (5).
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.3, Fig. 3.
+- [Kang & Lee (2024)](/sources/kang-2024.md) — §III, Eq. (16), Fig. 4b.
+- [Tang et al. (2024)](/sources/tang-2024.md) — §2.3, Eq. (2.6), Fig. 11a.
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §3.1, Eqs. (3.1)–(3.2), Fig. 5a.
+- [Wang & Xu (2024)](/sources/wang-2024-h.md) — §4.2, Fig. 8.
+- [Wei et al. (2023)](/sources/wei-2023.md) — §III B, Fig. 10.

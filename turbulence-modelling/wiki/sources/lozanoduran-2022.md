@@ -9,7 +9,7 @@ year: 2022
 venue: "AIAA J. 60:747-766"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_AIAA_Journal_Lozano-Durán_Performance_of_Wall-Modeled_LES_with_Boundary-Layer-Conformi.pdf"
 tags: [wmles, wall-model, les, boundary-layer, grid-requirements, separated-flow]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-28T07:04:00Z
 ---
 
 # Summary
@@ -29,11 +29,11 @@ near-wall branch) matched at the first off-wall cell centre.
 
 The paper compares constant-size grids with
 [boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md),
-whose local isotropic size is $\Delta\approx\delta/N_{bl}$, floored by a
+whose local isotropic size is $\Delta\approx\delta/n_\delta$, floored by a
 minimum grid Reynolds number $Re_\Delta^{\min}$ and capped by half the
 surface radius of curvature. The local $\delta$ comes from the deviation of
 the wall-modelled mean velocity from an inviscid solution. A cost model
-gives $N_{\mathrm{points}}\sim N_{bl}^{13/6}Re\,(Re_\Delta^{\min})^{-5/6}$
+gives $N_{\mathrm{points}}\sim n_\delta^{13/6}Re\,(Re_\Delta^{\min})^{-5/6}$
 (see [grid-point requirements](/results/les-grid-point-requirements.md)).
 An error model $e_q=b_q(\Delta/\delta)^{a_q}$ is
 calibrated on [channel flow](/benchmarks/turbulent-channel-flow.md) at
@@ -93,7 +93,7 @@ figure and page numbers on this page are those of the preprint.
 24. WMLES (C-D0.5) predicts a separation bubble about 100 mm long and 60 mm wide, about 15% smaller than the oil-film measurement (120 × 80 mm), consistent with previous WMLES [26–28]; the two measures are not one-to-one comparable (§V.F, Fig. 22). **Shown**
 25. Resolved tangential Reynolds stresses follow the experimental trends but are under-predicted at the juncture and trailing edge, as expected from $R_{ij}^{\exp}\approx\langle\bar u_i'\bar u_j'\rangle+\langle\tau_{ij}\rangle$; turbulence-intensity errors scale as $(\Delta/\delta)^{2/3}$ with values of 10–30% [61] (§V.B). **Shown** / **Stated**
 26. Channel WMLES converges non-monotonically: both CharLES and the finite-difference solver depart from $e_u\sim\Delta$ for $\Delta/\delta\approx0.03$–$0.05$ and recover the linear trend below 0.03 (App. B, Fig. 23b). **Shown**
-27. Without an SGS model and with the exact DNS mean wall stress imposed, channel-flow structure changes at $\Delta_c/\delta\approx0.03$–$0.05$: noisy for $\Delta>\Delta_c$, streaks for $\Delta<\Delta_c$ (Fig. 24, $y=0.3\delta$); $\Delta_c$ is about the same for both solvers, which suggests a physical origin (App. B). **Shown** (mechanism **Stated**)
+27. Without an SGS model and with the exact DNS mean wall stress imposed, channel-flow structure changes at $\Delta_c/\delta\approx0.03$–$0.05$: noisy for $\Delta>\Delta_c$, streaks for $\Delta<\Delta_c$ (Fig. 24, $y=0.3\delta$); $\Delta_c$ is about the same for both solvers, which "points to a physical origin" (App. B). **Shown** (mechanism **Stated**)
 28. Costs on Intel Xeon E5-2670 (NASA Pleiades): 31, 40, 75, 116, 398 thousand core-hours for C-D7, C-D4, C-D2, C-D1, C-D0.5 (14, 17, 31, 50, 174 M cells); 27, 90, 13 thousand core-hours for C-N5-R2e3, C-N10-R2e3, C-N5-R5e3 (12, 40, 6 M cells) (§V.A). **Shown**
 29. All WMLES cost estimates in the literature [23, 57–59] presuppose conforming grids, yet "WMLES of an aircraft geometry has never been conducted using a true BL-conforming grids until the present work" (§III.B). **Stated**
 30. RANS models predicted the onset and extent of three-dimensional separation in wing–fuselage junctions poorly in the Drag Prediction Workshops (§I, [11, 12]). **Stated**
@@ -102,7 +102,7 @@ figure and page numbers on this page are those of the preprint.
 
 1. §III.B, p. 10: "$\delta\sim(x-x_e)[(x-x_e)U_\infty/\nu]^{-m}$ … and $m\approx-1/7$". With the printed sign this gives $\delta\sim x\,Re_x^{+1/7}$, against App. A, "$\delta/x=KRe_x^{-1/7}$". The same sentence calls $x_e$ "the streamwise distance to the leading edge" while using it as the leading-edge position.
 2. App. A, p. 35: "the number of grid points for BL-conforming grids scales as $N_{bl}^{13/6}(Re_\Delta^{min})^{5/6}Re$"; Eq. (6) and Eq. (13) give $(Re_\Delta^{\min})^{-5/6}$.
-3. Eq. (10), p. 14 (repeated p. 31): "$\varepsilon_p=\beta_p(\Delta/\delta)^{\alpha_p}Re^0$, with $\beta_p\ll1$, $\alpha_q\approx0$": the subscript should be $p$.
+3. Eq. (10), p. 14 (repeated p. 31): "$\varepsilon_p=\beta_p(\Delta/\delta)^{\alpha_p}Re^0$, with $\beta_p\ll1$, $\alpha_q\approx0$": the last subscript is $q$ where the rest of the equation writes $p$.
 4. §V.A, p. 18: "Eight cases are considered. In the first six cases, we employ grids generated using strategy (i)": five constant-size cases are listed (C-D7, C-D4, C-D2, C-D1, C-D0.5), which with the three conforming cases make eight.
 5. §V.A, p. 19: "Figure 9(a) features the resolution map for case C-D4", while the Fig. 9 caption reads "(a) constant-size grid for case C-D2".
 6. §IV.C, p. 17: channel runs with "Δ/δ = 1/3, 1/5, and 1/10", while the Fig. 8 caption reads "Δ/δ = 1/3, 1/6 and 1/10".
@@ -135,9 +135,10 @@ figure and page numbers on this page are those of the preprint.
 | $\gamma=1.2$, $\beta=1/2$ | — | **collision** with $\gamma$ (ratio of specific heats) and $\beta$; safety factor on $\delta$ and curvature factor in Eq. (2) |
 | $\breve q$, $q=\breve q(1+e_q)$ | — | exact value and its relative error |
 | $E_k\sim\Delta^{-a}$ | $E(k)$ | energy at scale $\Delta$; $a$ the spectral slope |
-| $S$, $L_s\approx u_\tau/S$ | $\mathrm d\langle u\rangle/\mathrm dy$ | **collision**: $S$ is the mean shear, not $\lvert S\rvert$ |
+| $S$, $L_s\approx u_\tau/S$ | $\mathrm d\langle u\rangle/\mathrm dy$, $L_s$ | **collision**: $S$ is the mean shear, not $\lvert S\rvert$; $L_s$ is a shear length here, not the separation length $L_s$ of Zhou & Bae (2024) on the Gaussian-bump pages |
 | $d$, $d_{\min}$ | $d$ | distance to the wall; to the closest of two walls |
 | $N_{bl}$, $Re_\Delta^{\min}=\Delta_{\min}U_\infty/\nu$ | $n_\delta$, $Re_\Delta^{\min}$ (page-local, as on the [boundary-layer-conforming grid](/methods/boundary-layer-conforming-grid.md) page) | points per $\delta$; minimum grid Reynolds number |
+| $\Delta_c$ (App. B) | — | critical grid size of the change in channel-flow structure; **collision:** not the cube root of the cell volume $\Delta_c$ of Zhou & Bae (2024) |
 | $\tilde T=TU_\infty/L$ | $t_{\mathrm{run}}$ (registry §11) | run length in flow-through times; **collision:** the tilde is not a Favre filter |
 
 # Reference list

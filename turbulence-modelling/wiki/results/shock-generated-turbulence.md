@@ -5,7 +5,7 @@ description: "A strong shock crossing a medium with order-one density fluctuatio
 status: established
 aliases: [shock–inhomogeneity interaction, shock through a non-uniform medium, turbulent Rankine–Hugoniot relations, turbulent jump conditions, shock-driven turbulence, shocklets, shock networks, shock–turbulence interaction, supersonic isothermal turbulence, sonic scale, detonation–turbulence interaction]
 tags: [compressible, implicit-les, plasma, astrophysics, dg, numerical-dissipation, combustion]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Shock-generated turbulence and turbulent shock jump relations
@@ -109,7 +109,7 @@ relatively insensitive to $r_v$, and the scatter grows with $r_v$ because
 fewer voids fall in the averaging window (§III). The post-shock velocity
 fluctuation magnitude in a 3D run has a probability distribution close to
 the Maxwell–Boltzmann form $P(v')\propto v'^2\exp(-3v'^2/2\sigma_v^2)$, the
-distribution the authors recall from Federrath for fully developed turbulence
+distribution the authors cite from Federrath for fully developed turbulence
 even at high Mach number, and the transverse velocity spectra peak at the
 mode number of the void diameter (Fig. 3).
 
@@ -176,6 +176,31 @@ dispersion $\sqrt{R_{ii}}$, so that, with a model for $\Theta$, the jump
 relations can be closed from pre-shock quantities alone (§III). Moving the
 window downstream lowers the anisotropy toward isotropy, as in wind-tunnel
 shock–turbulence experiments (not shown).
+
+## Shock-driven mixing in one-dimensional turbulence
+
+The stochastic [one-dimensional turbulence](/methods/one-dimensional-turbulence.md)
+model, as reviewed by [Chen et al. (2024b)](/sources/chen-2024-c.md),
+represents a shock's effect on a mixing zone by an extra potential-energy
+term in the energy that decides whether a candidate eddy of size $l$
+occurs: for shock–turbulence interaction and the Richtmyer–Meshkov
+instability it integrates the kernel-weighted density excess over the
+eddy, multiplied by an acceleration built from the Mach number, the sound
+speed behind the shock and the velocity jump across it over $l$, and by an
+empirical shock-energy factor (Table 2, Eqs. 12–13, 15, 17; the review
+writes that factor $C_s$, not the Smagorinsky constant). Two
+formulations are compared on a Richtmyer–Meshkov case at Mach 1.50
+against LES: the Lagrangian compressible model of Jozefik et al. (2016),
+in non-conservative primitive variables, "deviated significantly" in
+mixing-zone width and kinetic energy (Fig. 9), while the authors' own
+conservative Eulerian formulation, which triplet-maps the conserved
+variables and so admits shock-capturing schemes, predicts both
+"significantly better" (Fig. 12, from Gao et al. 2023); Gao et al., as the
+review cites them, ascribe the Lagrangian failure to its lack of a
+conservative form and of shock capturing (§2.3, §3.2). The reviewers are
+the developers of the conservative model, and the comparison is reproduced
+from their own papers; no ODT-type method had yet simulated
+three-dimensional high-speed compressible turbulence (§4.2, §6).
 
 ## The converse: shocks formed inside compressible turbulence
 
@@ -402,6 +427,24 @@ amplification near separation to deceleration by the separation shock
 rather than to shear (§IV.C, Table IV); detail on
 [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
+The DNS of the same ramp by [Kang & Lee (2024)](/sources/kang-2024.md)
+finds shocklets in the wall-bounded case: behind the main shock,
+intermittent fast-moving secondary shocks form λ-shaped branches above
+large-scale bulges of the boundary-layer edge, moving at about the
+convective velocity of the large structures of the detached shear layer,
+and rounded compression waves issue from the bulges (§IV.C, Figs. 19–20).
+Their mean is a concentrated "secondary shock wave" above the free shear
+layer near reattachment, with a weaker and broader adverse pressure
+gradient than the main shock, which decelerates the mean flow there; the
+authors attribute to it the second hotspot of turbulent kinetic energy
+(amplification 3.24, against 3.39 at the first hotspot behind separation),
+and to the shocklets the mid-frequency wall-pressure peak $St\approx0.35$
+at that hotspot (Figs. 21–24). They read shear, not deceleration, as the
+dominant producer overall, against Shi & Yan's reading for the same
+flow; the two readings are an open contradiction on the
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+page.
+
 **Not this mechanism: turbulence behind a perforated plate.** In the
 shock tube of [Chambers et al. (2022)](/sources/chambers-2022.md) a leading
 shock of Mach 2 to 3 passes through a perforated plate, and the choked jets
@@ -489,3 +532,5 @@ judge discretizations by how they resolve or smear them.
 - [Chambers et al. (2022)](/sources/chambers-2022.md) — §II A–B (perforated-plate turbulence behind a shock; a different mechanism, passing mention).
 - [Iwata et al. (2023)](/sources/iwata-2023.md) — §II A–C, Eq. 1, Table I; §III C–D; §IV A–C, Figs. 9–15; §V (detonation–turbulence interaction DNS).
 - [Shi & Yan (2023)](/sources/shi-2023.md) — §IV.C, Table IV, Figs. 23–32 (turbulence amplification through a ramp interaction).
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — §2.3, Table 2, Eqs. 12–17; §3.2, Figs. 9, 12; §4.2; §6 (shock–turbulence and Richtmyer–Meshkov terms of one-dimensional turbulence; review).
+- [Kang & Lee (2024)](/sources/kang-2024.md) — §IV.A, Table IV; §IV.C, Figs. 19–24; §IV.D (shocklets and a secondary shock over a ramp interaction).

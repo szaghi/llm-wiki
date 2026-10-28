@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Anisotropic minimum-dissipation model"
-description: "The anisotropic minimum-dissipation (AMD) model is an eddy-viscosity subgrid model built from directional grid spacings and switched off where the resolved flow does not transfer energy to the subgrid; the sources give its formula and constant, use it as the solver model of learned wall models, and compare it with dynamic Smagorinsky and learned closures."
+description: "The anisotropic minimum-dissipation (AMD) model is an eddy-viscosity subgrid model built from directional grid spacings and switched off where the resolved flow feeds no energy to the subgrid; the sources give its constant, use it under learned wall models, compare it with dynamic and learned closures, and find it insensitive to cell anisotropy in bump WMLES."
 status: established
 aliases: [AMD model, AMD, minimum-dissipation model, Rozema model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-27T15:48:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Anisotropic minimum-dissipation model
@@ -21,7 +21,7 @@ with summation over $k$, $l$, $m$,
 
 $$\nu_t=C_{\mathrm{AMD}}\,\frac{\max\!\big[-\Delta_k^2\,\partial_k\bar u_i\,\partial_k\bar u_j\,\bar S_{ij},\,0\big]}{\partial_l\bar u_m\,\partial_l\bar u_m},$$
 
-where $\Delta_k$ (page-local) is the mesh spacing in direction $k$ of a
+where $\Delta_k$ (registry §11) is the mesh spacing in direction $k$ of a
 non-uniform mesh, and $C_{\mathrm{AMD}}=0.3$ "for second-order central
 discretizations". The isotropic part of the stress is absorbed into the
 pressure (§3.2, Eq. 3.3).
@@ -103,8 +103,46 @@ DNS points; second-order staggered finite differences, no wall model):
   prism, and, with no-model LES, predicts two recirculation regions behind
   a cylinder where DNS and the learned closures have none.
 
+## Separated flow and anisotropic cells in wall-modelled LES
+
+[Zhou & Bae (2024)](/sources/zhou-2024-b.md) compare AMD (constant 0.3,
+which "is determined solely by the choice of numerical method", §2.1) with
+the [Vreman model](/methods/vreman-model.md) ($c=0.025$ and 0.07),
+[dynamic Smagorinsky](/methods/dynamic-procedure.md), a
+[mixed similarity model](/methods/scale-similarity-model.md) and no model,
+in wall-modelled LES of the spanwise-periodic
+[Gaussian bump](/benchmarks/gaussian-bump.md) at $Re_L=2\times10^6$, with
+the wall stress of the reference simulation imposed so that only the
+subgrid model, the grid and the wall boundary condition vary. The solver
+is an incompressible, energy-conserving second-order unstructured finite
+volume code.
+
+- **Separation and dissipation** (§3.1, Figs. 4–5, 10–11). On the
+  baseline isotropic mesh ($\Delta_c/L=4.76\times10^{-4}$, $\Delta_c$ the
+  cube root of the cell volume, page-local) AMD is one of three models that
+  separate on the leeward side. Of the eddy-viscosity models it gives the
+  largest mean eddy viscosity in the boundary layer, of the order of the
+  molecular one, and the largest subgrid dissipation
+  $-\tau_{ij}\bar S_{ij}$; subgrid dissipation dominates the viscous one
+  throughout the boundary layer.
+- **Grid convergence** (§3.1–3.2, Figs. 8, 14). The separation length
+  converges to the reference $L_s/L=0.32$ non-monotonically with AMD,
+  "leading to a spurious diminishment or shrinking of the separation
+  bubble upon mesh refinement", with all three wall boundary conditions.
+- **Anisotropic cells** (§3.3, Figs. 17–20). With cells of aspect ratio
+  $\Delta_x:\Delta_y:\Delta_z=4:1:2$ at the same cell volume, AMD's $C_p$
+  and first-cell velocity are barely changed, whereas Vreman $c=0.025$ and
+  the mixed model change over the whole domain. The authors explain this
+  by AMD being the only model of the set that does not use the cube root of
+  the cell volume as filter width; the explanation is not isolated by a
+  separate test.
+
 ## Qualifications
 
+- The anisotropic-cell robustness found by Zhou & Bae (2024, §3.3) comes
+  with a separation length that converges non-monotonically on isotropic
+  grids, so robustness to anisotropy and accuracy for separation are
+  distinct properties there.
 - The advantage on anisotropic meshes is cited from other work (Bae &
   Koumoutsakos 2022; Sirignano & MacArt 2023, citing Zahiri & Roohi); in Sirignano &
   MacArt's own tests AMD beats DS on drag but is the least accurate model
@@ -133,3 +171,4 @@ DNS points; second-order staggered finite differences, no wall model):
 - [Prakash et al. (2022)](/sources/prakash-2022.md) — §II.
 - [Pan & Zhang (2023)](/sources/pan-2023.md) — §I.
 - [Qi et al. (2022)](/sources/qi-2022-b.md) — §3.2, Eq. (3.12) (gradient-model form used in a compiler check).
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.1; §3.1, Figs. 4–5, 8, 10–11; §3.2, Fig. 14; §3.3, Figs. 17–20.

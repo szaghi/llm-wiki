@@ -5,7 +5,7 @@ description: "Kraichnan's spectral eddy viscosity expresses the energy transfer 
 status: established
 aliases: [Kraichnan spectral eddy viscosity, Chollet–Lesieur model, plateau–cusp eddy viscosity, EDQNM eddy viscosity, RNG spectral viscosity]
 tags: [les, sgs-model, eddy-viscosity, implicit-les, dg]
-timestamp: 2026-10-27T20:36:00Z
+timestamp: 2026-10-28T07:03:00Z
 ---
 
 # Spectral eddy viscosity
@@ -157,7 +157,7 @@ form they cite from Canuto & Dubovikov, printed as (Eq. 11)
 $$\nu^{\mathrm{RNG}}_t(k)=\Big(\nu^2-C_\nu\int_k^\infty q^{-2}E(q)\,dq\Big)^{1/2}-\nu,$$
 
 with $\nu^{\mathrm{RNG}}_t$ and $C_\nu$ page-local, $C_\nu=2/5$ the
-analytical value (0.4 in their standard set-up) and $q$ a dummy
+analytical value (0.4 in what they call their "standard setup") and $q$ a dummy
 wavenumber. It is spatially uniform and acts on each Fourier mode of the
 subgrid velocity like the molecular viscosity, through a damping
 $-(\nu+\nu^{\mathrm{RNG}}_t)\lvert\boldsymbol k_m\rvert^2$ on the mode

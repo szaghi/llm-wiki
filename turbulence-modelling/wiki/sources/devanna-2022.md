@@ -9,7 +9,7 @@ year: 2022
 venue: "Int. J. Heat Fluid Flow 98:109071"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_International_Journal_of_Heat_and_Fluid_Flow_De_Wall-modeled_LES_of_shock-waveboundary_layer_interaction.pdf"
 tags: [wmles, shock-boundary-layer-interaction, compressible, wall-model, les]
-timestamp: 2026-10-27T15:30:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -62,13 +62,13 @@ this version.
 # Key claims
 
 Page-local symbols: $\mu^w_{\mathrm{sgs}}$, $\lambda^w_{\mathrm{sgs}}$ the
-wall subgrid viscosity and conductivity; $\mu_{\mathrm{eff}}$,
+wall subgrid viscosity and conductivity (registry §11); $\mu_{\mathrm{eff}}$,
 $\lambda_{\mathrm{eff}}$ the effective wall viscosity and conductivity;
 $\lambda_{\mathrm{th}}$ the thermal conductivity; $\theta_{\mathrm{WM}}$
 the wall-model activation flag (1 modelled, 0 resolved);
 $\mu_r=|\tau_w^{\mathrm{WM}}/\tau_w^{\mathrm{WR}}|$ the effective viscosity
 ratio; $\theta_{\mathrm D}$ the modified Ducros sensor; $L_{\mathrm{int}}$
-the interaction length (nominal impingement to reflected-shock foot);
+the interaction length (registry §11; nominal impingement to reflected-shock foot);
 $x^*=(x-x_{\mathrm{sh}})/\delta_r$ with $\delta_r$ the inflow 99%
 thickness; WMLES and WRLES wall-modelled and wall-resolved LES.
 
@@ -119,7 +119,7 @@ thickness; WMLES and WRLES wall-modelled and wall-resolved LES.
 | $\bar\tau_{ij}$ | $\sigma_{ij}$ | filtered viscous stress; **collision** with the SGS stress |
 | $\tilde g_{ij}$, $\tilde S_{ij}$ | $\partial_j\tilde u_i$, $\tilde S_{ij}$ | |
 | $\lambda$, $\lambda_{SGS}$, $\lambda_w$ | $\lambda_{\mathrm{th}}$, $\lambda_{\mathrm{th},t}$, $\lambda_{\mathrm{th},w}$ (page-local) | **collision** with the Taylor microscale |
-| $\mu^w_{SGS}$, $\lambda^w_{SGS}$, $\mu_{eff}$, $\lambda_{eff}$ | $\mu^w_{\mathrm{sgs}}$, $\lambda^w_{\mathrm{sgs}}$, $\mu_{\mathrm{eff}}$, $\lambda_{\mathrm{eff}}$ (page-local) | |
+| $\mu^w_{SGS}$, $\lambda^w_{SGS}$, $\mu_{eff}$, $\lambda_{eff}$ | $\mu^w_{\mathrm{sgs}}$, $\lambda^w_{\mathrm{sgs}}$ (registry §11), $\mu_{\mathrm{eff}}$, $\lambda_{\mathrm{eff}}$ (page-local) | |
 | $h_{wall}$ | $h_{\mathrm{wm}}$ | dynamic matching height |
 | $u_{/\!/LES}$ | $U_{\mathrm{LES}}$ | |
 | $\mu_{t,wm}=\kappa\rho_{wm}u_\tau yD$, $A^+=17$, $\kappa=0.41$ | (wall-model eddy viscosity), $A^+$, $\kappa$ | |
@@ -127,7 +127,7 @@ thickness; WMLES and WRLES wall-modelled and wall-resolved LES.
 | $\theta$, $\bar\theta=0.1$, $\varepsilon=(u_\infty/\delta_0)^2$ | $\theta_{\mathrm D}$, (threshold), $\epsilon_{\mathrm D}$ (page-local) | **collision:** $\varepsilon$ is not the dissipation rate |
 | $\theta_{WM}$, $\mu^{SGS}_r$ | $\theta_{\mathrm{WM}}$, $\mu_r$ (page-local) | |
 | $\delta_0$, $Re_{\tau,0}$ | $\delta_r$, $Re_\tau$ at the inflow | |
-| $l^*$ | $L_{\mathrm{int}}$ (page-local) | not the scaled $L_{\mathrm{sc}}$ of the registry |
+| $l^*$ | $L_{\mathrm{int}}$ (registry §11) | not the scaled $L_{\mathrm{sc}}$ of the registry |
 | $\phi=8°$ | (shock-generator deflection) | |
 | $c_f$, $c_p$ | $C_f$, $C_p$ | **collision:** $c_p$ is also the specific heat |
 | $\Delta x^+_w$, $\Delta y^+_w$, $\Delta z^+_w$ | $\Delta x^+$, $\Delta y^+$, $\Delta z^+$ | from the resolved wall stress |

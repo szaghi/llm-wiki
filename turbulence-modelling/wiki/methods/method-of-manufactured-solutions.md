@@ -5,7 +5,7 @@ description: "The method of manufactured solutions verifies a flow solver by cho
 status: established
 aliases: [MMS, manufactured solution, manufactured solutions, code verification by manufactured solutions]
 tags: [verification, dg, rans, software]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Method of manufactured solutions
@@ -193,7 +193,7 @@ the estimated truncation error is the bottleneck (§4.2, §5).
   channel the rates of all variables stay near $N+1$ from 30 to 150 cells
   across the channel and then degrade because of the wall singularity of
   $\omega$, which makes the global rate "first-order accurate at most", a
-  property they recall for second-order finite volumes too (§5.2.1,
+  property they state for second-order finite volumes too (§5.2.1,
   Table 2); an algebraic mixing-length model, without that singularity,
   recovers order $N+1$ (Eqs. 93–94, Fig. 16). The MMS order does not carry
   over to the singular problem.

@@ -9,7 +9,7 @@ year: 2023
 venue: "Aerosp. Sci. Technol. 141:108503"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Aerospace_Science_and_Technology_Fureby_Large_Eddy_Simulation_of_cavity_stabilized_ramjet_combustion.pdf"
 tags: [les, combustion, compressible, sgs-model, shock-boundary-layer-interaction]
-timestamp: 2026-10-27T21:11:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -61,13 +61,14 @@ of this version.
 
 # Key claims
 
-Page-local symbols: $T_0$ the air stagnation temperature (cases A–E:
-1080, 1130, 1240, 1300, 1370 K), $c_k$ and $c_\varepsilon$ the coefficients
-of the $k$-equation model, $Sc_t$ the turbulent Schmidt number,
-$\gamma^*_{\mathrm{PaSR}}$ the PaSR reacting volume fraction, $\tau_{\mathrm{ch}}$ and
-$\tau_{\mathrm{mix}}$ chemical and mixing time scales, $\tau_\Delta=\Delta/u'_\Delta$ the
-subgrid shear time with $u'_\Delta$ a subgrid velocity scale, $s_u$ and $\delta_u$ the laminar flame speed and
-thickness.
+Symbols: $T_0$ the air stagnation temperature (cases A–E: 1080, 1130,
+1240, 1300, 1370 K), $Sc_t$ the turbulent Schmidt number,
+$\tau_\Delta=\Delta/u'_\Delta$ the subgrid shear time and $\delta_u$ the
+laminar flame thickness (page-local); $c_k$ and $c_\varepsilon$ the
+coefficients of the $k$-equation model, $\gamma^*_{\mathrm{PaSR}}$ the PaSR
+reacting volume fraction, $\tau_{\mathrm{ch}}$ and $\tau_{\mathrm{mix}}$ chemical
+and mixing time scales, $u'_\Delta$ a subgrid velocity scale and
+$s_{\mathrm L}$ the laminar flame speed (registry §11).
 
 1. With Z22, LES gives cavity-stabilised combustion anchored at the cavity leading edge for case A (1080 K), jet-wake-stabilised combustion for case E (1370 K), and oscillation between the modes for case C (1240 K) (Abstract, §6.3–6.4, Figs. 2a, 5–7). **Shown**
 2. The mechanism decides the predicted mode: for case A, D7 gives jet-wake stabilisation, J20 "virtually no combustion", Z22 cavity stabilisation; for case E all three give jet-wake stabilisation (§6.1, Fig. 4). **Shown**
@@ -100,7 +101,7 @@ with $c_k$, $c_\varepsilon$ "dynamically evaluated from scale similarity"
 (no values printed), $Pr_t\approx0.7$, $Sc_t\approx0.85$. The PaSR
 filtered rate multiplies the forward and backward rates at the filtered
 state by $\gamma^*_{\mathrm{PaSR}}=\tau_{\mathrm{ch}}/(\tau_{\mathrm{mix}}+\tau_{\mathrm{ch}})$, with
-$\tau_{\mathrm{ch}}\approx\delta_u/s_u$ and $\tau_{\mathrm{mix}}\approx\sqrt{\tau_\eta\tau_\Delta}$
+$\tau_{\mathrm{ch}}\approx\delta_u/s_{\mathrm L}$ and $\tau_{\mathrm{mix}}\approx\sqrt{\tau_\eta\tau_\Delta}$
 (Eq. 4).
 
 # Printed slips
@@ -129,15 +130,15 @@ $\tau_{\mathrm{ch}}\approx\delta_u/s_u$ and $\tau_{\mathrm{mix}}\approx\sqrt{\ta
 | $\boldsymbol S\approx2\mu\boldsymbol D_D$ | $\sigma_{ij}$ | **collision:** the source's $\boldsymbol S$ is the viscous stress |
 | $k$ | $k_{\mathrm{sgs}}$ | also an index in Eqs. 2–4 |
 | $\mu_k$ | $\mu_t$ | subgrid viscosity |
-| $c_k$, $c_\varepsilon$ | $c_k$, $c_\varepsilon$ (page-local) | as on the [one-equation model page](/methods/subgrid-kinetic-energy-equation-model.md); not the DES length-scale factor $C_k$ |
+| $c_k$, $c_\varepsilon$ | $c_k$, $c_\varepsilon$ (registry §11) | as on the [one-equation model page](/methods/subgrid-kinetic-energy-equation-model.md); not the DES length-scale factor $C_k$ |
 | $\mathrm{Pr_t}$, $Sc_t$ | $Pr_t$, $Sc_t$ | |
 | $\boldsymbol b_i$, $\boldsymbol b_E$ | (subgrid species and energy fluxes) | |
 | $E$ | (total sensible energy per unit mass, page-local) | not the registry's $E$ per unit volume |
 | $\kappa$ | (thermal conductivity, page-local) | **collision** with the von Kármán constant |
-| $\gamma^*$ | $\gamma^*_{\mathrm{PaSR}}$ (page-local) | **collision** with $\gamma$ |
-| $\tau_c$, $\tau_m$ | $\tau_{\mathrm{ch}}$, $\tau_{\mathrm{mix}}$ (page-local) | chemical and mixing time scales |
-| $\tau_K$, $\tau_\Delta=\Delta/v'$ | $\tau_\eta$, $\tau_\Delta=\Delta/u'_\Delta$ | $u'_\Delta$ page-local; $v$ is the registry's wall-normal velocity |
-| $\delta_u$, $s_u$ | $\delta_u$, $s_u$ (page-local) | laminar flame thickness and speed; $s_u$ is not the Lundquist number $S_L$ |
+| $\gamma^*$ | $\gamma^*_{\mathrm{PaSR}}$ (registry §11) | **collision** with $\gamma$ |
+| $\tau_c$, $\tau_m$ | $\tau_{\mathrm{ch}}$, $\tau_{\mathrm{mix}}$ (registry §11) | chemical and mixing time scales |
+| $\tau_K$, $\tau_\Delta=\Delta/v'$ | $\tau_\eta$, $\tau_\Delta=\Delta/u'_\Delta$ | $u'_\Delta$ registry §11, $\tau_\Delta$ page-local; $v$ is the registry's wall-normal velocity |
+| $\delta_u$, $s_u$ | $\delta_u$ (page-local), $s_{\mathrm L}$ (registry §11) | laminar flame thickness and speed; $s_{\mathrm L}$ is not the Lundquist number $S_L$ |
 | $\lambda_2$ | (vortex criterion, page-local) | **collision** with the Taylor microscale |
 | $T_0$, $p_0$ | (stagnation values) | $T_0$ is also the reference temperature of $E$ |
 | $\zeta$, $\zeta_M$, $z$, $z_{st}$ | $\zeta$, $\zeta_M$, $Z$, $Z_{\mathrm{st}}$ (page-local) | Takeno indices; mixture fraction and its stoichiometric value, as on [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md) |

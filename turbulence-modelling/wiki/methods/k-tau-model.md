@@ -5,7 +5,7 @@ description: "Two-equation RANS eddy-viscosity model transporting the turbulent 
 status: established
 aliases: [k-tau, k-τ RANS model, k–τ, Speziale k-τ, Kalitzin k-τ, Kok–Spekreijse k-τ]
 tags: [rans, eddy-viscosity, spectral-element, boundary-layer]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-28T07:03:00Z
 ---
 
 # The k-τ model
@@ -77,7 +77,7 @@ and Menter's production limiter $\rho P_k\leftarrow\min(\rho P_k,10\rho\beta^*k/
 and production coefficients of the $\omega$ equation (the source's $\beta$
 and $\alpha$). The $\tau_t$ equation follows from the $\omega$ equation of
 the Wilcox model by $\omega=1/\tau_t$: multiplying the $\omega$ cross
-diffusion $\rho(\sigma_d/\omega)\max(\nabla k\cdot\nabla\omega,0)$ by
+diffusion $\rho(\sigma_d/\omega)\max(\nabla k\cdot\nabla\omega,0)$ (Eq. 11) by
 $-\tau_t^2$ gives $C_{D\tau}$ *(compiler check, not in the sources)*, and
 the authors note that the $\tau_t$ and $\omega$ transport equations are
 equivalent (§3.1).

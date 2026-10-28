@@ -5,7 +5,7 @@ description: "Buoyancy-driven mixing of a heavy fluid placed above a light one: 
 status: established
 aliases: [Rayleigh-Taylor instability, RT mixing layer, Rayleigh–Taylor flow, variable-density mixing layer]
 tags: [benchmark, pans, hybrid-rans-les, rans]
-timestamp: 2026-10-27T15:37:00Z
+timestamp: 2026-10-28T06:42:00Z
 ---
 
 # Rayleigh–Taylor mixing
@@ -147,6 +147,32 @@ reports no resolution study; see
 interface in a magnetized, stratified plasma, not the two-fluid mixing
 layer of this page.
 
+## Rayleigh–Taylor mixing in reviews of other methods
+
+Two reviews name the flow only as the target of a model extension or of a
+discretization tool; neither reports a result for it.
+
+- **Buoyant eddies of one-dimensional turbulence.** In the
+  [one-dimensional turbulence](/methods/one-dimensional-turbulence.md)
+  model, an eddy is accepted with a rate built from an eddy-energy
+  estimate. [Chen et al. (2024b)](/sources/chen-2024-c.md), §2.2.2,
+  Table 1, Eq. (8), record that McDermott, "considering the
+  Rayleigh-Taylor instability at the horizontal interface of density
+  stratification", added the gravitational potential energy and the
+  baroclinic torque to the eddy energy of Ashurst & Kerstein, with two
+  mutually orthogonal gravity components satisfying $g^2+g_c^2=(9.8)^2$
+  and an empirical parameter $B=2.2$ multiplying the baroclinic term
+  (page-local symbols, as printed there). The review's Table 1 lists the
+  same model under "constant property free shear flow"; it gives no
+  Rayleigh–Taylor result.
+- **Adaptive refinement of high-order discontinuous schemes.**
+  [Lv & Ekaterinaris (2023)](/sources/lv-2023.md), §4.6, list
+  "modeling scalar mixing driven by Rayleigh–Taylor instability" among
+  the applications of adaptive mesh refinement in discontinuous Galerkin
+  frameworks, where a scalar range or a scalar gradient identifies the
+  interface to refine; they add that most such examples are
+  two-dimensional. See [mesh adaptation](/methods/mesh-adaptation.md).
+
 ## Qualifications
 
 - Only one ingested source runs the turbulent mixing case; the page
@@ -183,3 +209,5 @@ layer of this page.
 - [Huang et al. (2025)](/sources/huang-2025.md) — §5.7, Fig. 8 (same).
 - [Kumar & Ghosh (2022)](/sources/kumar-2022-b.md) — §3.1.7, Figs. 19–22 (same, bandwidth-optimized WENO against WENO-JS, WENO-BS, TENO6 and TENO8).
 - [Svärd (2022)](/sources/svard-2022.md) — Abstract; §1, §5 (Rayleigh–Taylor test announced in the abstract, not run).
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — §2.2.2, Table 1, Eq. (8) (McDermott's buoyant eddy energy in one-dimensional turbulence).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.6 (adaptive refinement of discontinuous schemes for Rayleigh–Taylor scalar mixing, named only).

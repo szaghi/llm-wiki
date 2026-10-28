@@ -5,7 +5,7 @@ description: "Clark's gradient model truncates the Taylor expansion of the filte
 status: established
 aliases: [Clark model, gradient model, nonlinear gradient model, tensor-diffusivity model, optimal clipping, standard clipping, GM-OC, GM-SC, NGM2, NGM4, NGM6, higher-order gradient model, velocity gradient model, VGM, spatial gradient model, SGM-7-19, ANNSGM, density-unweighted gradient model]
 tags: [les, sgs-model, filtering, eddy-viscosity]
-timestamp: 2026-10-28T02:14:00Z
+timestamp: 2026-10-28T11:50:00Z
 ---
 
 # Gradient (Clark) model and the clipping of structural SGS models
@@ -417,8 +417,8 @@ $\nu^{\mathrm a}=-\tau^{\mathrm a}_{ij}\bar S_{ij}/(2\bar S_{kl}\bar S_{kl})$
 $$\tau^{\mathrm{ani}}_{ij}=\tau_{\ell\ell}\,\frac{\tau^{\mathrm a\,d}_{ij}+2\nu^{\mathrm a}\bar S_{ij}}{\tau^{\mathrm a}_{mm}},$$
 
 the construction of the stabilized mixed model above with the gradient
-term in place of the similarity stress. The text recalls the Taylor
-relation with the factor $\tfrac1{12}$; Eq. (20) omits it, which the
+term in place of the similarity stress. Inagaki & Kobayashi (§IV B)
+state the Taylor relation with the factor $\tfrac1{12}$; Eq. (20) omits it, which the
 normalization by $\tau^{\mathrm a}_{mm}$ makes immaterial *(compiler
 check, not in the sources)*. A priori, on
 channel DNS at $Re_\tau=400$ filtered at $(\Delta x^+,\Delta z^+)=(105,52.4)$
@@ -618,7 +618,7 @@ higher-order structural terms rather than an eddy viscosity or clipping.
 [Wang et al. (2022)](/sources/wang-2022-j.md) start from the same series.
 For the Gaussian filter they print (Eq. 15)
 $\tau_{ij}=\sum_{n\ge1}\frac{(2\alpha_{\mathrm G})^n}{n!}\,\partial^n\bar u_i\cdot\partial^n\bar u_j$
-with $\alpha_{\mathrm G}=\Delta^2/24$ (page-local; $\partial^n\bar u_i\cdot\partial^n\bar u_j$
+with $\alpha_{\mathrm G}=\Delta^2/24$ (registry §11; $\partial^n\bar u_i\cdot\partial^n\bar u_j$
 the $n$-fold contracted product of derivatives), whose first two terms are
 $\tfrac{\Delta^2}{12}\partial_k\bar u_i\partial_k\bar u_j+\tfrac{\Delta^4}{288}\partial_k\partial_l\bar u_i\,\partial_k\partial_l\bar u_j$
 (Eq. A1): the NGM2 and NGM4 coefficients of Jakhar et al. above, since
@@ -631,7 +631,7 @@ local point $L=0$ and its six neighbours $L=1,\dots,6$ along the axes
 $$\tau_{ij}=\Delta^2\sum_{k=1}^3\sum_{L_1,L_2=0}^{6}g^{L_1L_2}\,\big(\partial_k\bar u_i\big)_{L_1}\big(\partial_k\bar u_j\big)_{L_2},$$
 
 with $(\cdot)_L$ the value at stencil point $L$ and $g^{L_1L_2}$
-(page-local) 49 dimensionless coefficients. Using only first-order
+(registry §11) 49 dimensionless coefficients. Using only first-order
 gradients "automatically guarantees the Galilean invariance" (§II C). The
 authors' earlier artificial-neural-network version (cited; ANNSGM) supplied
 the coefficients by regression on filtered DNS of forced isotropic
@@ -753,6 +753,23 @@ Clark's formulation" (both cited; see
 The sparse regression of Jakhar et al. above and the network of Wang et
 al. (2022) make the same point in incompressible flow.
 
+## Origin in Leonard's filtered equations (history)
+
+[Kim & Leonard (2024)](/sources/kim-2024-b.md) (§3.1), a history of DNS
+and LES written by two of its early participants, state that Leonard's
+formal filtering of the Navier–Stokes equations (1973, 1974, cited) yielded "an additional, deterministic stress-like term that
+would account for some of the SGS stresses without modeling", now called
+the tensor-diffusivity model (Leonard 2015, cited) and "the first term of
+the deconvolution method" of Stolz et al. (2001, cited; see
+[approximate deconvolution](/methods/scale-similarity-model.md)). The same
+review credits Clark et al. (1979) with the first evaluation of subgrid
+models on a DNS database, the first a priori test (§3.1; see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+No equation of the term is printed, and the review does not relate it to
+Clark's model. "Tensor-diffusivity model" is among this page's aliases,
+as on the [scale-similarity page](/methods/scale-similarity-model.md), but
+no ingested source states that it is the same model as Clark's.
+
 ## Gradient term as a coefficient estimator in a one-equation model
 
 [Qi et al. (2022)](/sources/qi-2022-b.md) (§3.2, Eqs. 3.8–3.12) reach the
@@ -783,6 +800,12 @@ with $\tau_{12}$ and $\tau_{22}$ (Fig. 2c); a posteriori $C_0$ peaks near
 0.08 (Fig. 10), close to the fixed $1/12\approx0.083$.
 
 ## Qualifications
+
+- **Attribution.** The sources of this page attribute the model to Clark
+  et al. (1979); Kim & Leonard (2024, §3.1) attribute the deterministic
+  stress-like term now called the tensor-diffusivity model to Leonard
+  (1973, 1974) and credit Clark et al. with the a priori test. Both are
+  attributions of cited work, not a disagreement about the model.
 
 - **Two printed magnitudes of the learned coefficients.** Wang et al.
   (2022) print the off-local coefficients of ANNSGM-7-19 as
@@ -849,3 +872,4 @@ with $\tau_{12}$ and $\tau_{22}$ (Fig. 2c); a posteriori $C_0$ peaks near
 - [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §III B, Eqs. (22)–(26); §IV A, Fig. 1; §IV B, Figs. 5–10, Table III.
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.4, Eq. (74), Fig. 30.
 - [Xu et al. (2023)](/sources/xu-2023.md) — §1; §3.1, Eqs. (3.20)–(3.25); §4.1, Figs. 18–20.
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §3.1.

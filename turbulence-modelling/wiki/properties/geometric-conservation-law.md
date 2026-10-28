@@ -5,7 +5,7 @@ description: "On curvilinear grids a discretization preserves a uniform flow onl
 status: established
 aliases: [GCL, geometric conservation law, free-stream preservation, freestream preservation, metric identities, discrete metric identities]
 tags: [dg, gas-kinetic, flux-reconstruction, high-order, compressible, implicit-les]
-timestamp: 2026-10-28T02:15:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Geometric conservation law and free-stream preservation
@@ -13,7 +13,7 @@ timestamp: 2026-10-28T02:15:00Z
 When a conservation law $\partial_tU+\nabla\cdot F=0$ is solved on a
 curvilinear grid, each element or cell is the image of a reference
 (computational) element under a map $\boldsymbol x(\boldsymbol\xi)$ with
-Jacobian determinant $\mathcal J$ (page-local), and the equation is
+Jacobian determinant $\mathcal J$ (registry §11), and the equation is
 transformed to
 $$\mathcal J\,\partial_tU+\sum_{i=1}^{3}\frac{\partial}{\partial\xi^i}\big(\mathcal J\boldsymbol a^i\cdot F\big)=0,$$
 with $\mathcal J\boldsymbol a^i$ the contravariant (metric) vectors (Krais et
@@ -108,6 +108,11 @@ works) and run it on the curvilinear grids, up to 27 million cells, of
 the [30P30N high-lift airfoil](/benchmarks/30p30n-high-lift-airfoil.md);
 they print neither the metric form nor a free-stream test. The scheme is
 on [weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md).
+The same statement, with the same two citations, returns in the group's
+SATES-σ paper, [Wu et al. (2024)](/sources/wu-2024.md), §2.3, whose
+PHengLEI runs use the linear fourth-order WCNS on multi-block grids of a
+supercritical cylinder and of the 30P30N airfoil (12.8 and 26.4 million
+cells); again no metric form or free-stream test is printed.
 
 ## Curved elements as a source of aliasing
 
@@ -125,6 +130,16 @@ after Abe et al. and Trojak et al., cited), and find the results
 similar to those on the undistorted mesh (§4.3, Eqs. 50–52,
 Figs. 15–18). The test addresses stability and accuracy of the filtered
 scheme on curved elements, not free-stream preservation.
+
+The same group's incompressible flux-reconstruction implicit LES,
+[Vermeire (2024)](/sources/vermeire-2024.md), §3, Eqs. (8)–(9), maps each
+element with a polynomial of degree $N_m$ (page-local, the source's $p_m$;
+quadratic, except linear when the solution degree is $N=1$) and states,
+citing two earlier works, that cross-product-form metrics are
+free-stream preserving with Gauss solution points and the DG-recovering
+correction function provided $N_m\le N$. The condition is stated, not
+tested in the paper, whose cases are the Taylor–Green vortex, a
+turbulent channel and the [SD7003 airfoil](/benchmarks/sd7003-airfoil.md).
 
 ## Moving and deforming grids: the temporal identity
 
@@ -159,6 +174,17 @@ quadrilaterals split into triangles, observed orders 3.1–3.2, against
 by an algebraic quintic blending of the boundary displacement (§2.5). All
 their flows are laminar ($Re=100$–1000); turbulence models are named as
 future work (§4).
+
+The review of high-order discontinuous schemes for multiphase flow of
+[Lv & Ekaterinaris (2023)](/sources/lv-2023.md), §4.5, states the same
+requirement for Lagrangian and ALE DG that track material interfaces with
+element edges (all cited): the discretization must first be cast in ALE
+form, the GCL (Thomas & Lombard) must hold, and the most consistent route
+to a fully conservative ALE formulation is a space–time DG formulation,
+which satisfies the GCL automatically when all space–time integrations
+are exact. A marker-point front tracking on a fixed mesh avoids moving
+the mesh but loses geometric exactness: corners erode and the enclosed
+mass drifts (§4.5, Fig. 7). None of these is run on a turbulent flow.
 
 [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) avoid grid
 deformation altogether. Their hierarchical Cartesian grid moves rigidly
@@ -244,3 +270,6 @@ solver for an aerothermoelastic fin without discussing a GCL.
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §1, §2.2.1 (GCL of the fourth-order WCNS in PHengLEI, cited); §2.3 (multi-block grids of the 30P30N airfoil).
 - [Gao et al. (2023)](/sources/gao-2023.md) — §3.1, Eqs. (16)–(39) (ALE DGSEM, mesh velocity in reference space, GCL flux, strong-form discretization); §3.3 (RBF mesh deformation, subcycling).
 - [Thawait et al. (2023)](/sources/thawait-2023.md) — §II A, Eq. (5); §II D, Eqs. (16)–(17) (ALE transport and diffusion-based mesh smoothing; no GCL discussed).
+- [Wu et al. (2024)](/sources/wu-2024.md) — §2.3 (GCL of the WCNS in PHengLEI, cited; passing).
+- [Vermeire (2024)](/sources/vermeire-2024.md) — §3, Eqs. (8)–(9) (cross-product metrics free-stream preserving with Gauss points and FRDG when the mapping degree does not exceed the solution degree, cited).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.5, Fig. 7 (GCL for Lagrangian and ALE DG, space–time DG, fixed-mesh front tracking; review).

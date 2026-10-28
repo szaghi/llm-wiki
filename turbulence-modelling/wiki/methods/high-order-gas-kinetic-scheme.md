@@ -5,7 +5,7 @@ description: "A high-order gas-kinetic scheme is a finite-volume Navier–Stokes
 status: established
 aliases: [HGKS, HGKS-cur, high-order GKS, gas-kinetic scheme, GKS, BGK finite-volume scheme]
 tags: [gas-kinetic, dns, implicit-les, compressible, numerical-dissipation, gpu]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # High-order gas-kinetic schemes for turbulence simulation
@@ -87,8 +87,8 @@ dissipation of the scheme lives in the collision time.
 
 **Inherent bulk viscosity.** The BGK model carries a bulk viscosity
 $\mu_b=\frac{2K_{\mathrm{int}}}{3(K_{\mathrm{int}}+3)}\mu$ (Cao et al. 2022,
-§3.1, citing Xu), which is $\mu_b=\tfrac{4}{15}\mu$ for a diatomic gas
-*(compiler check, not in the sources)*. It enters the dissipation budget
+§3.1, citing Xu), which is $\mu_b=\tfrac{4}{15}\mu$ for $K_{\mathrm{int}}=2$
+($\gamma=1.4$) *(compiler check, not in the sources)*. It enters the dissipation budget
 below; see [bulk viscosity](/definitions/bulk-viscosity.md).
 
 ## Reconstruction and time stepping

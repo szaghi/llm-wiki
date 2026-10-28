@@ -5,7 +5,7 @@ description: "The triply periodic vortex flow that transitions from a single-mod
 status: established
 aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex, laminar Taylor–Green vortex, Brachet Taylor–Green vortex, High-Order CFD Workshop case C3.5]
 tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible, filtering, kinetic-energy-preserving]
-timestamp: 2026-10-28T01:57:00Z
+timestamp: 2026-10-28T11:50:00Z
 ---
 
 # Taylor–Green vortex
@@ -123,6 +123,8 @@ to the fully turbulent state.
 | [Shi & Yan (2023)](/sources/shi-2023.md) | [flux reconstruction](/methods/flux-reconstruction.md) (in-house NFR), $N=3$, Roe flux, BR2, Mach 0.1 | $32^3$, $64^3$, $96^3$ elements (128 to 384 degrees of freedom per direction) | $512^3$ spectral solution |
 | [Tonicello et al. (2023)](/sources/tonicello-2023.md) | [spectral difference](/methods/spectral-difference-method.md), sixth order ($N=5$), Roe flux, third-order Runge–Kutta at 50%, 90% and 95% of the stability limit; inviscid, Mach 0.1 | $32^3$ elements | none |
 | [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) | [pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md) (subgrid stress from a database of DNS on representative volume elements) against a dynamic $k$-equation LES; domain of side $2\pi$, to $\hat t=20$ | $64^3$, $32^3$, $16^3$ | $512^3$ DNS, cited from [Wang et al. (2013)](/sources/wang-2013.md) |
+| [Vermeire (2024)](/sources/vermeire-2024.md) | incompressible [flux reconstruction](/methods/flux-reconstruction.md) recovering nodal DG on Gauss points, Rusanov and BR2, with entropically damped artificial compressibility (incompressibility factor $1/5$ to $1/40$); implicit LES, classical RK4, to $t=20$ | nominally $64^3$ and $128^3$ DOF (a quarter and a half of the reference DNS per direction), $N=1$ to 6 | spectral DNS of van Rees et al. |
+| [Wei et al. (2023)](/sources/wei-2023.md) | compressible finite volumes in OpenFOAM: the in-house scramjetFoam (discretely energy-preserving split convective flux, Ducros-switched AUSM diffusion) against reactingFoam and rhoCentralFoam; inviscid, no model, to $t=10$ | $64^3$ | approximate analytical enstrophy of Brachet et al. |
 
 **The workshop case definition.** The $Re=1600$ case as most of these
 sources run it is case C3.5 of the first International Workshop on
@@ -348,6 +350,44 @@ $32^3$, $64^3$ and $96^3$ elements: the kinetic energy and its decay rate
 converge under refinement toward the $512^3$ spectral solution. They then
 use the solver for implicit LES of a
 [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+
+**Incompressible flux reconstruction with artificial compressibility.**
+[Vermeire (2024)](/sources/vermeire-2024.md), §4.1, Figs. 1–8, runs the
+case at $Re=1600$ with the entropically damped artificial compressibility
+formulation of Clausen, which adds a pressure-diffusion term to the
+artificial-compressibility pressure equation, $\partial_tp+\boldsymbol u\cdot\nabla p+M_{\mathrm{AC}}^{-2}\nabla\cdot\boldsymbol u=Re^{-1}\nabla^2p$
+(Eq. 1; kinematic $p$; $M_{\mathrm{AC}}$ the incompressibility factor,
+page-local, not the Mach number; the dimensional flux form, Eqs. 4–5,
+carries $\nu$ in place of $Re^{-1}$),
+and so gives a fully explicit incompressible solver with no Poisson solve
+or pseudo-time iteration (§2), discretized by
+[flux reconstruction](/methods/flux-reconstruction.md) as an
+[implicit LES](/definitions/implicit-les.md). At fixed degrees of freedom
+accuracy improves strongly with $N$: $N=1$ over-predicts the dissipation
+rate while under-predicting the enstrophy, so most of its dissipation is
+numerical; $N=4$ agrees with the DNS; on the coarse mesh $N=5$ oscillates
+after the dissipation peak and $N=6$ becomes unstable at
+$M_{\mathrm{AC}}=1/5$ and $1/10$, with an enstrophy above the DNS, while on the
+medium mesh accuracy keeps improving up to $N=6$ without instability
+(Figs. 3–6). Lowering $M_{\mathrm{AC}}$ raises the numerical dissipation at
+$N=1$ and lowers it at higher $N$. The volume-averaged divergence error
+falls about linearly with $M_{\mathrm{AC}}$ and also with $N$, so that $N=6$ at
+$M_{\mathrm{AC}}=1/5$ has less divergence error than $N=1$ at $1/40$
+(Figs. 7–8). The author recommends $N\le4$ for this framework (§5); the
+channel and the [SD7003 airfoil](/benchmarks/sd7003-airfoil.md) of the same
+paper agree (see [numerical dissipation](/properties/numerical-dissipation.md)).
+
+**Second-order finite volumes of a reacting-flow solver.**
+[Wei et al. (2023)](/sources/wei-2023.md), §III A, Fig. 4, validate their
+scramjetFoam LES solver on the inviscid TGV at $64^3$: with its discretely
+energy-preserving split flux the volume-averaged kinetic energy stays
+constant "over a long duration", while the second-order reactingFoam and
+rhoCentralFoam dissipate it "to 65% and 30% of the initial value"; their
+solver "can reasonably track the growth trend" of the Brachet et al.
+enstrophy, which the two other solvers do not, and the authors add that an
+enstrophy-conserving scheme is harder to build in finite volumes and that
+part of the error is resolution (see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
 
 **The time step in an under-resolved spectral-difference run.**
 [Tonicello et al. (2023)](/sources/tonicello-2023.md), §4.3.1, Fig. 25,
@@ -758,7 +798,7 @@ et al.; coarse runs: $11^3$ elements at $N=4$ and $7^3$ at $N=10$.
   the authors call it "not a suitable option" (Figs. 13–14).
 - The self-tuning filter, whose cut-off follows the local ratio of grid
   spacing to Kolmogorov length and the strain and rotation invariants, is
-  closest to the DNS with one constant ($c=0.25$) at both degrees,
+  closest to the DNS with one constant ($c_{\mathrm{st}}=0.25$, page-local, as on [explicit modal filtering](/methods/explicit-modal-filtering.md)) at both degrees,
   slightly under-predicting near $t=8$–12; it costs 1.31% more wall time at
   $N=10$ (§III.B, §III.D.3).
 - Joint distributions on the coarse runs tie energy accumulation in the
@@ -983,6 +1023,22 @@ sources)*.
 
 ## Qualifications
 
+- [Vermeire (2024)](/sources/vermeire-2024.md) prints the initial pressure
+  (Eq. 17) as $\tfrac1{16}\cos(2z+2)[\cos2x+\cos2y]$ plus a constant with
+  an undefined $\gamma$ and $Ma=0.08$; the form
+  $\tfrac1{16}(\cos2z+2)(\cos2x+\cos2y)$ used by the sources above solves
+  the pressure Poisson equation of the printed velocity, the printed one
+  does not *(compiler check, not in the sources)*. The author labels the
+  incompressibility factor a "compressibility factor" in §4.3.
+  [Wei et al. (2023)](/sources/wei-2023.md) print the initial pressure as
+  $p_0+\tfrac{u_0^2}{16}[\cos2z+2(\cos2x+\cos2y)-2]$ (Eq. 29), without
+  the product terms of the form above, with $p_0=101325$ and
+  $\rho_0=u_0=1$, and they do not state the Mach number. Their Eq. 27
+  prints $v=u_0\cos(k_0x)\sin(k_0y)\cos(k_0z)$ without the minus sign of
+  the other sources; with it the printed field has divergence
+  $2u_0k_0\cos(k_0x)\cos(k_0y)\cos(k_0z)$, not zero *(compiler check, not
+  in the sources)*.
+
 - [Cao et al. (2022b)](/sources/cao-2022-c.md) state that the solenoidal
   dissipation is "approximately 20 times larger" than the a priori SGS
   production; their Table I gives ratios of about 68, 32, 22 and 35 at
@@ -1050,10 +1106,9 @@ sources)*.
   of claims. Duan & Wang do not state the model coefficients
   used.
 - [Wang (2024)](/sources/wang-2024-b.md) sets $V_0=0.1\sqrt{p/\rho}$ and
-  calls the case Mach 0.1; with the sound speed $\sqrt{\gamma p/\rho}$ that
-  is Mach $0.1/\sqrt{1.4}\approx0.085$ *(compiler check, not in the
-  sources)*. The initial field (Eq. 23) is printed without the amplitude
-  $V_0$.
+  calls the case Mach 0.1. The initial field (Eq. 23) is printed without the amplitude
+  $V_0$ and with the pressure term $\tfrac1{16}(\cos2x+\cos2y)\cos(2z+2)$,
+  the same parenthesization as Vermeire (2024) above.
 - [Wang et al. (2024)](/sources/wang-2024.md) do not state the Mach number
   of their inviscid run; the comparison involves schemes of different order
   (second and sixth) as well as different dissipation.
@@ -1213,3 +1268,5 @@ sources)*.
 - [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §2, Eqs. 3–6; §3–4; §6.2, Table 2, Eqs. 74–82, Figs. 7–13.
 - [Shi & Yan (2023)](/sources/shi-2023.md) — §III.A, Eq. 27, Figs. 1–2.
 - [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §4.3.1, Eqs. 27–28, Fig. 25; §5.
+- [Vermeire (2024)](/sources/vermeire-2024.md) — §2, Eqs. 1–5; §3; §4.1, Eqs. 14–20, Table 1, Figs. 1–8; §5.
+- [Wei et al. (2023)](/sources/wei-2023.md) — §III A, Eqs. 25–33, Fig. 4 (inviscid TGV as solver validation).

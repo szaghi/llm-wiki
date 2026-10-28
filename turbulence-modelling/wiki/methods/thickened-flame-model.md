@@ -5,7 +5,7 @@ description: "The thickened flame model of LES combustion widens the flame front
 status: established
 aliases: [TF model, TFLES, thickened-flame LES, dynamically thickened flame, DTF, DTFLES, artificially thickened flame, thickening factor, non-premixed thickened flame, flame sensor, minor-species correction, wrinkling factor]
 tags: [combustion, les, numerical-dissipation, thickened-flame]
-timestamp: 2026-10-28T02:13:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Thickened flame model
@@ -80,7 +80,7 @@ called a "thermal diffusion rate"), $Sc_t=0.7$ the turbulent Schmidt
 number, $\Xi_\Delta$ the subgrid wrinkling factor, $\Omega_{\mathrm{fs}}$
 the flame sensor (not the registry's rotation tensor), $l^0_{\mathrm F}$ and
 $s_{\mathrm L}$ the laminar thermal thickness and flame speed (registry §11
-for $s_{\mathrm L}$), $\Delta$ the cube root of the cell volume. The thickened
+for $\Xi_\Delta$, $\Omega_{\mathrm{fs}}$ and $s_{\mathrm L}$), $\Delta$ the cube root of the cell volume. The thickened
 progress-variable equation is (Eq. 9)
 $$\partial_t(\bar\rho\tilde Y_c)+\nabla\cdot(\bar\rho\tilde{\boldsymbol u}\tilde Y_c)=\nabla\cdot\Big[\Big(F\,\Xi_\Delta\bar D_{\mathrm{th}}+(1-\Omega_{\mathrm{fs}})\frac{\mu_t}{Sc_t}\Big)\nabla\tilde Y_c\Big]+\frac{\Xi_\Delta}{F}\,\bar{\dot\omega}_{Y_c},$$
 and the mixture fraction and the additionally transported CO and H$_2$
@@ -250,12 +250,13 @@ the linear-eddy model, all as cited there, and choose the LES PaSR of
 Sabelnikov & Fureby for an LES of a cavity-stabilized hydrogen ramjet
 combustor (Eq. 4): each reaction rate is evaluated at the filtered state
 and multiplied by a reacting volume fraction
-$$\gamma^*_{\mathrm{PaSR}}=\frac{\tau_{\mathrm{ch}}}{\tau_{\mathrm{mix}}+\tau_{\mathrm{ch}}},\qquad \tau_{\mathrm{ch}}\approx\frac{\delta_u}{s_u},\qquad \tau_{\mathrm{mix}}\approx\sqrt{\tau_\eta\,\tau_\Delta},\qquad \tau_\Delta=\frac{\Delta}{u'_\Delta},$$
-with $\delta_u$, $s_u$ the laminar flame thickness and speed, $\tau_\eta$ the
-Kolmogorov time, $u'_\Delta$ a subgrid velocity scale and
-$\delta_u$, $s_u$, $\gamma^*_{\mathrm{PaSR}}$, $\tau_{\mathrm{ch}}$, $\tau_{\mathrm{mix}}$,
-$\tau_\Delta$, $u'_\Delta$ page-local (the source's $\gamma^*$, $\tau_c$,
-$\tau_m$, $\tau_\Delta$, $v'$; $s_u$ is not the registry's Lundquist
+$$\gamma^*_{\mathrm{PaSR}}=\frac{\tau_{\mathrm{ch}}}{\tau_{\mathrm{mix}}+\tau_{\mathrm{ch}}},\qquad \tau_{\mathrm{ch}}\approx\frac{\delta_u}{s_{\mathrm L}},\qquad \tau_{\mathrm{mix}}\approx\sqrt{\tau_\eta\,\tau_\Delta},\qquad \tau_\Delta=\frac{\Delta}{u'_\Delta},$$
+with $\delta_u$, $s_{\mathrm L}$ the laminar flame thickness and speed,
+$\tau_\eta$ the Kolmogorov time and $u'_\Delta$ a subgrid velocity scale;
+$\gamma^*_{\mathrm{PaSR}}$, $\tau_{\mathrm{ch}}$, $\tau_{\mathrm{mix}}$,
+$u'_\Delta$ and $s_{\mathrm L}$ as in registry §11, $\delta_u$ and
+$\tau_\Delta$ page-local (the source's $\gamma^*$, $\tau_c$, $\tau_m$,
+$\tau_\Delta$, $v'$, $s_u$; $s_{\mathrm L}$ is not the registry's Lundquist
 number $S_L$). The flow closure is a one-equation
 [subgrid kinetic energy model](/methods/subgrid-kinetic-energy-equation-model.md)
 with gradient-diffusion scalar fluxes ($Pr_t\approx0.7$, turbulent Schmidt
@@ -278,6 +279,23 @@ thermal thickness spans five points of a grid six times coarser than the
 DNS grid, five being "a typical number of points in the thermal thickness
 of a LES calculation" (§3.3, footnote 9). Their stretch results are on
 [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md).
+
+**Thickening with a high-order discontinuous Galerkin solver.** In their
+review of high-order discontinuous schemes,
+[Lv & Ekaterinaris (2023)](/sources/lv-2023.md), §6.3, Fig. 14, show a
+discontinuous Galerkin LES of the Volvo bluff-body premixed flame
+(propane/air at equivalence ratio 0.65 and 288 K, bulk velocity 17.3 m/s,
+equilateral-triangle V-gutter of side $L=0.04$ m; taken from the first
+author's earlier work) with a five-species two-step mechanism and the
+thickened flame model of Colin et al. that they cite, on 10,000 hexahedra
+with polynomial degree $N=3$ (64 degrees of freedom per element). They
+report that "the reaction zone is captured by only one or two elements
+thanks to the high-order representation", against "more than ten cells"
+usually needed by second-order schemes, and mean streamwise velocities at
+$x/L=0.375$, 0.95, 1.53 and 3.75 that "compare well" with the
+experiment. The thickening factor and the efficiency function used are
+not printed; the comparison with second-order schemes is stated, not run
+in the paper. See the [discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md) for the element discretization.
 
 ## Qualifications
 
@@ -341,3 +359,4 @@ of a LES calculation" (§3.3, footnote 9). Their stretch results are on
 - [Coulon et al. (2023)](/sources/coulon-2023.md) — §1 (flame-thickness scales out of reach of LES meshes); §3.3, footnote 9 (five points per thermal thickness of an LES).
 - [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2–3.4, Table 1 (MRB26b, LES-FGM in OpenFOAM, cases); §3.3, Eqs. (9)–(16), Fig. 5, App. A (thickened equations, thickening and wrinkling factors, piecewise flame sensor); §4.1.1, Fig. 6 (outer-zone over-consumption); §4.2.1, Figs. 12–15 (minor-species over-prediction, wrinkling loss); §4.2.2, Eqs. (17)–(19), Figs. 16–17 (minor-species correction, Gruhlke et al. with $a=1$, $b=0$).
 - [Agostinelli et al. (2021)](/sources/agostinelli-2021.md) — §2 (DTFLES with Charlette efficiency function, $\beta_{\mathrm{Ch}}=0.5$, ARC chemistry, mesh); §3.1–3.3 (thermoacoustic outcome under two thermal wall treatments).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §6.3, Fig. 14 (DG LES with $N=3$ of the Volvo bluff-body flame with the thickened flame model; one or two elements across the reaction zone).

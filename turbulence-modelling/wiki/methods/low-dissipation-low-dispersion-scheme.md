@@ -5,7 +5,7 @@ description: "The LD2 scheme pairs an energy-preserving central flux with much-r
 status: established
 aliases: [LD2, LD2C, LD2-Compressible, low-dissipation low-dispersion scheme, Kok flux with JST dissipation, OPT6, optimized upwind scheme, approximate dispersion relation, dispersion-relation-preserving scheme, optimized selective filter, FDo11p, RFo11p]
 tags: [numerical-dissipation, hybrid-rans-les, des, compressible, kinetic-energy-preserving]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Low-dissipation low-dispersion schemes with shock sensor
@@ -191,6 +191,29 @@ differences (§3.2, Table 2; §4):
 - a non-dissipative scheme that removes the cause instead, by
   [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md),
   which keeps the runs stable with no artificial dissipation (§4.2).
+
+**Compact differences with a compact filter in a DNS.** The historical
+review of DNS and LES of [Kim & Leonard (2024)](/sources/kim-2024-b.md),
+§4.8, records that high-order compact finite-difference schemes (Lele
+1992) were developed to minimize numerical dispersion error, for
+computational aeroacoustics at NASA Ames. A DNS solver of that family is
+the one of [Kang & Lee (2024)](/sources/kang-2024.md), §II.B,
+Eqs. (8)–(9), for a Mach 2.9 compression-ramp interaction: the
+sixth-order tridiagonal compact first derivative
+$\tfrac13\phi'_{i-1}+\phi'_i+\tfrac13\phi'_{i+1}=\tfrac{14}{9}\frac{\phi_{i+1}-\phi_{i-1}}{2h}+\tfrac19\frac{\phi_{i+2}-\phi_{i-2}}{6h}$
+on curvilinear grids, with sixth-order one-sided compact closures at the
+boundaries, stabilized by an eighth-order tridiagonal compact low-pass
+filter of parameter $0.47$ applied to the solution at every final
+Runge–Kutta stage (coefficients of Gaitonde & Visbal; a parameter closer
+to $0.5$ filters less), lowered to a second-order filter of parameter
+$0.49$ at shocks flagged by a Ducros-type sensor, plus a localized
+artificial diffusivity (see
+[shock sensors](/definitions/shock-sensor.md) and
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
+With the printed filter coefficients the right-hand-side weights sum to
+$1+2\times0.47$ and their alternating sum is zero, so the transfer
+function is one at zero wavenumber and zero at the grid Nyquist
+wavenumber *(compiler check, not in the sources)*.
 
 **Optimized high-order upwind reconstruction.**
 [Wang et al. (2024)](/sources/wang-2024.md) take the opposite route to LD2:
@@ -467,8 +490,7 @@ band.
 
 Bernades et al. distinguish *numerical* dissipation (an undesired property
 of the method) from *artificial* dissipation (deliberately added) (§1,
-footnote 1); in these terms the JST matrix dissipation of LD2 and LD2C is
-artificial dissipation *(compiler check, not in the sources)*.
+footnote 1).
 
 ## Qualifications
 
@@ -491,7 +513,7 @@ artificial dissipation *(compiler check, not in the sources)*.
   central scheme, against the RANS-level coefficient $1/128$ of their
   solver; Wang et al. vary order and dissipation together (second-order
   central against sixth-order upwind). Neither runs the other's
-  comparison, so the entry is recorded as a qualification.
+  comparison.
 - Wang et al. (2024, §2.3) state that the KGP form follows from the
   general combination of five convective forms with "$\xi=1/2$,
   $\alpha=\beta=\delta=1/4$, and $\varepsilon=0$"; $\xi$ is not defined and
@@ -527,7 +549,7 @@ artificial dissipation *(compiler check, not in the sources)*.
   the $128^3$ isotropic-turbulence grid, while the under-resolved $64^3$
   runs use $\lambda_{\mathrm{AD}}\ge0.65$ (§4.15), and they themselves cite that "a small
   amount of dissipation is needed" against instabilities of under-resolved
-  scales (§1). Their ADR claims are read from figures.
+  scales (§1). Their ADR claims are shown in figures only, without tabulated values.
 - Ma et al.'s (2022) resolving ratios are linear analyses of the
   interpolations; their WCNS-T costs 5–7 times WCNS-E per grid point on the
   same grid ($1.26\times10^4$ against $1.83\times10^3$ CPU time units at
@@ -563,3 +585,5 @@ artificial dissipation *(compiler check, not in the sources)*.
 - [Deng et al. (2022)](/sources/deng-2022.md) — §1 (MDCD cited; dissipation for under-resolved scales); §3.2, Eq. (21), Remarks 1–2 (dissipation-adjusting parameter); §4.1, Figs. 1–2 (approximate dispersion relation against linear upwind and WENO-M); §4.2, Table 1.
 - [Ma et al. (2022)](/sources/ma-2022.md) — §1 (CRWENO); §2.3, Table 1, Fig. 1 (Fourier and ADR resolving ratios of WCNS-E and WCNS-T); §2.3.1–2.3.2, Fig. 2, Table 2 (shock–entropy wave; cost and order).
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.2.1–2.2.2, Eqs. (12)–(15) (fourth-order WCNS with near-linear and Z-type weights, blended central/upwind interpolation with $\sigma_b=0.02$); §3.3, Table 2, Fig. 11 (scheme dissipation and lift of the 30P30N airfoil); §4.
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §4.8 (compact finite differences developed to minimize dispersion error; historical, passing).
+- [Kang & Lee (2024)](/sources/kang-2024.md) — §II.B, Eqs. (8)–(9) (sixth-order compact differences with eighth-order compact filter, adaptive second-order filter at shocks).

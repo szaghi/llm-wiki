@@ -9,7 +9,7 @@ year: 2025
 venue: "Appl. Math. Model. 142:115984"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2025_Crossref_Applied_Mathematical_Modelling_Fanizza_Adjoint-based_optimization_for_non-linear_inverse_problems_w.pdf"
 tags: [rans, field-inversion, spalart-allmaras, dg, compressible, separated-flow]
-timestamp: 2026-10-26T15:57:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -66,7 +66,7 @@ identity, and there is no identity problem.
 Page-local symbols: $\boldsymbol f_{\mathrm{DA}}$ is the momentum and energy
 correction source (multiplied by $\rho$). $\varphi$ is the eddy-viscosity
 multiplier, entering as $(1+\varphi)\mu_t$ (the source's $\chi_h$).
-$g_{\tilde\nu}$ is the proportional SA source, entering as
+$g_{\tilde\nu}$ (registry §11) is the proportional SA source, entering as
 $\rho\tilde\nu g_{\tilde\nu}$ (the source's $f_{\tilde\nu}$; Cato et al.'s
 $g_{\tilde\nu}$). $\beta$ is the production multiplier with prior 1 (the
 source's $1+\beta$). These labels follow the field-inversion page. $\alpha_p$
@@ -131,7 +131,7 @@ is the penalty weight.
 | $N_p=(p+d)!/(p!d!)$, $N_g=(p+1)^d$ | (page-local) | modal basis size, quadrature points |
 | $\mathbf f_{\rm DA}=(0,\mathbf f_{xyz},f_e+\mathbf v^\top\mathbf f_{xyz},0)^\top$ | $\boldsymbol f_{\mathrm{DA}}$ (page-local) | **collision:** not the body force $f_i$ alone |
 | $\chi_h$, $(1+\chi_h)\mu_t$ | $\varphi$, $(1+\varphi)\mu_t$ (page-local) | as on the field-inversion page |
-| $\rho\tilde\nu f_{\tilde\nu}$ | $\rho\tilde\nu g_{\tilde\nu}$ (page-local) | Cato et al.'s proportional source |
+| $\rho\tilde\nu f_{\tilde\nu}$ | $\rho\tilde\nu g_{\tilde\nu}$ (registry §11) | Cato et al.'s proportional source |
 | $(1+\beta)c_{b1}\tilde S\rho\tilde\nu$ | $\beta\,c_{b1}\tilde S\rho\tilde\nu$ | the source's $\beta$ is the registry's $\beta-1$ (prior 0 against prior 1) |
 | $\mathcal J_h$, $\mathcal M$, $\mathcal P$, $\alpha_p$ | $\mathcal L$, (measurement and penalty operators), $\alpha_p$ | cost function (Eq. 18) |
 | $\mathbf Z$, $\mathbf M=\mathbf L^\top\mathbf L$, $\tilde{\boldsymbol\Theta}$ | (adjoint state, mass matrix, scaled control) | page-local |

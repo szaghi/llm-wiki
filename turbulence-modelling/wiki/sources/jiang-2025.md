@@ -9,7 +9,7 @@ year: 2025
 venue: "Acta Mech. Sin. 41:324174"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Acta_Mechanica_Sinica_Jiang_Efficient_implementation_of_the_k-sqrtk_L_turbulence_model_w.pdf"
 tags: [rans, hybrid-rans-les, dg, eddy-viscosity, shock-capturing]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-28T07:11:00Z
 ---
 
 # Summary
@@ -115,8 +115,8 @@ $$\psi=\begin{cases}0.02\log\big(1+e^{50\chi_\Phi}\big),&\chi_\Phi\le5,\\ \chi_\
 
 | Source | Registry ([notation](/notation.md)) | Note |
 |---|---|---|
-| $\Phi$ | $\Phi_L$ (KSKL length-scale variable, page-local) | **collision** with the Ducros factor $\Phi_i$ |
-| $\chi=\Phi/\upsilon$, $\psi$ | $\chi_\Phi$, $\psi$ (page-local) | **collision** with the SA $\chi=\tilde\nu/\nu$ |
+| $\Phi$ | $\Phi_L$ (KSKL length-scale variable, registry §11) | **collision** with the Ducros factor $\Phi_i$ |
+| $\chi=\Phi/\upsilon$, $\psi$ | $\chi_\Phi$, $\psi$ (registry §11) | **collision** with the SA $\chi=\tilde\nu/\nu$ |
 | $\upsilon=\mu/\rho$ | $\nu$ | kinematic viscosity |
 | $C_u$ (Eqs. 4, 11, A1, A2) | $C_\mu$ | printed slip |
 | $\tau_{ij}$ (A2) $=\mu_t(2S_{ij}-\tfrac23\partial_ku_k\delta_{ij})-\tfrac23\rho k\delta_{ij}$ | $-\langle\rho u_i''u_j''\rangle$ | **sign:** negative of the registry's positive-trace Reynolds stress |
@@ -125,7 +125,7 @@ $$\psi=\begin{cases}0.02\log\big(1+e^{50\chi_\Phi}\big),&\chi_\Phi\le5,\\ \chi_\
 | $\kappa$ (A3, A5) | $\kappa$ | 0.41 |
 | $U'=\sqrt{2S_{ij}S_{ij}}$ | $\lvert S\rvert$ | with the factor two |
 | $U''$ | $\lvert\nabla^2\boldsymbol u\rvert$ | two-dimensional Laplacian magnitude |
-| $L_{vK}$ | $L_{\mathrm{vK}}$ (page-local) | von Kármán length |
+| $L_{vK}$ | $L_{\mathrm{vK}}$ (registry §11) | von Kármán length |
 | $P$, $P_k$ | $P_k$ (unlimited), $\min(P_k,\dots)$ | production and its limited form |
 | $\xi$, $f_\phi$, $C_{d1}$, $C_{11}$, $C_{12}$, $\zeta_{1,2,3}$, $C_{\phi1}$, $C_{\phi2}$, $\sigma_\phi$ | same (page-local) | **collision:** $\xi$ is not the reference coordinate |
 | $d$, $\mu_t$, $\sigma_k$ | $d$, $\mu_t$, $\sigma_k$ | |

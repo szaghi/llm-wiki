@@ -9,7 +9,7 @@ year: 2023
 venue: "Proc. Combust. Inst. 39:2055-2076"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Proceedings_of_the_Combustion_Institute_Domingo_Recent_developments_in_DNS_of_turbulent_combustion.pdf"
 tags: [dns, review, combustion, les, a-priori-a-posteriori, data-driven]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T11:46:00Z
 ---
 
 # Summary
@@ -18,8 +18,8 @@ Domingo & Vervisch (2023) review [direct numerical simulation](/definitions/dire
 of turbulent flames, mostly the literature of 2017–2022. The bundle reads it at its periphery:
 turbulent combustion is the subject, and turbulence enters as an ingredient. The authors first
 state the resolution limits. A mesh spacing $h=2\eta$ resolves the dissipative range, so a box of
-side $L_o$ needs $N_{\mathrm{pts}}=(L_o/2L)^3Re_T^{9/4}$ points. With $Da\,Ka\approx Re_T^{1/2}$ this
-becomes $N_{\mathrm{pts}}=(L_o/2L)^3\,Da\,Ka\,Re_T^{7/4}$, so high $Re_T$, $Da$ and $Ka$ cannot be
+side $L_d$ needs $N_{\mathrm{pts}}=(L_d/2L)^3Re_T^{9/4}$ points. With $Da\,Ka\approx Re_T^{1/2}$ this
+becomes $N_{\mathrm{pts}}=(L_d/2L)^3\,Da\,Ka\,Re_T^{7/4}$, so high $Re_T$, $Da$ and $Ka$ cannot be
 reached together and a DNS box spans only a few integral scales (the grid-count side of
 [grid-point requirements](/results/les-grid-point-requirements.md)). A census follows (about 80, 140
 and 200 flame-DNS papers in 2007–2011, 2012–2016 and 2017–2021), together with a list of DNS codes
@@ -55,10 +55,10 @@ manuscript.
 
 # Key claims
 
-1. A mesh resolution $h=2\eta$ suffices to capture the dissipative range (citing Moin & Mahesh). The number of points in a volume $L_o^3$ is $N_{\mathrm{pts}}=(L_o/2\eta)^3=(L_o/2L)^3Re_T^{9/4}$, with $Re_T=k^{1/2}L/\nu\approx(L/\eta)^{4/3}$ (§2, Eqs. 1–2). **Stated** ($h=2\eta$) / **Derived** (scaling).
-2. A gas-turbine swirl burner with $Re_T\sim1500$ and $L\sim5$ mm needs "more than 10 billon mesh points" to resolve $10^3$ cm³ of shear layer (§2). **Derived**. *(Compiler check, not in the sources: Eq. 2 with $L_o=10$ cm gives $10^3\times1500^{9/4}\approx1.4\times10^{10}$, consistent.)*
-3. $Da\,Ka\approx Re_T^{1/2}$ (Eq. 5), hence $N_{\mathrm{pts}}=(L_o/2L)^3\,Da\,Ka\,Re_T^{7/4}$ (Eq. 6). DNS cannot explore high $Da$ and high $Ka$ together. At fixed $Da$, $Re_T\approx Ka^2$, so raising $Ka$ by a factor $a$ requires raising $Re_T$ by $a^2$ (§2). **Derived**.
-4. Canonical DNS (planar flames in homogeneous or shear turbulence) spans only a few integral scales ($L_o\simeq L$), which limits the range of flame-wrinkling lengths. Many DNS are at low Reynolds number with $L$ of the order of the flame thickness, which "may partially" explain why few DNS-derived closures have reached engineering codes (§1, §2). **Stated**.
+1. A mesh resolution $h=2\eta$ suffices to capture the dissipative range (citing Moin & Mahesh). The number of points in a volume $L_d^3$ is $N_{\mathrm{pts}}=(L_d/2\eta)^3=(L_d/2L)^3Re_T^{9/4}$, with $Re_T=k^{1/2}L/\nu\approx(L/\eta)^{4/3}$ (§2, Eqs. 1–2). **Stated** ($h=2\eta$) / **Derived** (scaling).
+2. A gas-turbine swirl burner with $Re_T\sim1500$ and $L\sim5$ mm needs "more than 10 billon mesh points" to resolve $10^3$ cm³ of shear layer (§2). **Derived**. *(Compiler check, not in the sources: Eq. 2 with $L_d=10$ cm gives $10^3\times1500^{9/4}\approx1.4\times10^{10}$, consistent.)*
+3. $Da\,Ka\approx Re_T^{1/2}$ (Eq. 5), hence $N_{\mathrm{pts}}=(L_d/2L)^3\,Da\,Ka\,Re_T^{7/4}$ (Eq. 6). DNS cannot explore high $Da$ and high $Ka$ together. At fixed $Da$, $Re_T\approx Ka^2$, so raising $Ka$ by a factor $a$ requires raising $Re_T$ by $a^2$ (§2). **Derived**.
+4. Canonical DNS (planar flames in homogeneous or shear turbulence) spans only a few integral scales ($L_d\simeq L$), which limits the range of flame-wrinkling lengths. Many DNS are at low Reynolds number with $L$ of the order of the flame thickness, which "may partially" explain why few DNS-derived closures have reached engineering codes (§1, §2). **Stated**.
 5. A priori tests (models fed exact, frozen DNS inputs) "cannot always allow for reaching definitive conclusions", because they miss error accumulation and error compensation in time (§1). **Stated**.
 6. The number of published gaseous-flame DNS papers grew roughly linearly: about 80 (2007–2011), 140 (2012–2016), 200 (2017–2021) (§1). **Stated** (the authors' census).
 7. DNS codes and their orders, as listed: SENGA, DINO, S3D, FK³, KARFS and HOLOMAC are 6th to 10th order; Nek5000 uses spectral elements; NGA, PsiPhi, AVBP and OpenFOAM are 4th or 2nd order (§1). **Stated**.
@@ -102,7 +102,7 @@ manuscript.
 | $\langle\cdot\rangle$ | $\langle\cdot\rangle$ | Reynolds average, used only in the definition of $k$ |
 | $h$ | $h$ | mesh spacing; in Eq. (12) the LES mesh size |
 | $N$ | $N_{\mathrm{pts}}$ (local) | **collision:** registry $N$ is the polynomial degree; here a total point count, and in Eq. (11) the number of stencil points |
-| $L_o$ | $L_o$ (local) | side of the computational box |
+| $L_o$ | $L_d$ (page-local, as on [grid-point requirements](/results/les-grid-point-requirements.md)) | side of the computational box |
 | $Re_T=k^{1/2}\ell_T/\nu$ | $Re_T$ (local) | turbulent Reynolds number on $k^{1/2}$ and $L$ |
 | $Da$, $Ka$ | $Da$, $Ka$ (local) | Damköhler $\tau_T/\tau_c$, Karlovitz $\tau_c/\tau_\eta$ |
 | $\tau_T$, $\tau_k$ | $k/\varepsilon$, $\tau_\eta$ | integral and Kolmogorov times; $\tau_T$ also reused for the micro-mixing time $\Delta^2/(24D_\phi)$ |
@@ -125,8 +125,8 @@ manuscript.
 284 printed references in numbered style, in order of first citation, all merged into the
 [bibliography](/bibliography.md) with `citedby` this slug. Four works are printed twice under two
 numbers ([28]=[219], [148]=[231], [159]=[226], [168]=[228]) and are folded into one entry each.
-Ref. [167] (Liu & Wang, Combust. Flame 238, 2022) is a different work from the bundle's planned
-source of slug `liu-2022` and takes a disambiguated key. Undated web items (SENGA, FK³, AVBP,
+Ref. [167] (Liu & Wang, Combust. Flame 238, 2022) is a different work from the ingested
+[liu-2022](/sources/liu-2022.md) and takes a disambiguated key. Undated web items (SENGA, FK³, AVBP,
 Nek5000, OpenFOAM, Green Algorithms) carry the printed "(2021)". Odd author strings ([25], [281],
 [283]) are kept as printed; no item is unparseable.
 

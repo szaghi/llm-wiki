@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Fluid Mech. 935:A31"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Journal_of_Fluid_Mechanics_Tonicello_Turbulence_kinetic_energy_transfers_in_direct_numerical_simu.pdf"
 tags: [dns, shock-boundary-layer-interaction, backscatter, a-priori-a-posteriori, compressible, spectral-difference]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -134,10 +134,10 @@ $N=5$. The resolved pressure-dilatation work is $K_1=\bar p\,\partial_j\tilde u_
 | $\langle\cdot\rangle$ (Eq. 2.10) | $\{\cdot\}_e$ (element average) | **collision** with the Reynolds average |
 | $S^d_{ij}$, $\tilde S^d_{ij}$ | $S^d_{ij}$, $\tilde S^d_{ij}$ | agree |
 | $\sigma_{ij}$ | $\sigma_{ij}$ plus the artificial bulk term | |
-| $\beta_{AV}$ | $\mu_{b,\mathrm{AV}}$ (page-local artificial bulk viscosity) | elementwise constant |
+| $\beta_{AV}$ | $\mu_{b,\mathrm{AV}}$ (artificial bulk viscosity, registry §11) | elementwise constant |
 | $\beta$ (Eqs. 5.4–5.5) | $\mu_b$ | generic bulk viscosity |
 | $\kappa$, $\kappa_{AV}$ | (thermal conductivity, artificial conductivity) | **collision** with the von Kármán constant; $\kappa$ is also the wavenumber in Fig. 7 |
-| $Pr_\beta$, $Ma_{thr}$ | (artificial Prandtl number, threshold Mach number 3) | page-local |
+| $Pr_\beta$, $Ma_{thr}$ | $Pr_{\mathrm{AV}}$ (artificial Prandtl number, registry §11), (threshold Mach number 3) | |
 | $s_{modal}$, $s_e$, $s_0$, $l$, $\varepsilon_0$, $C_\varepsilon$ | (modal sensor, Ducros-modified sensor, threshold, width, maximum artificial viscosity, its constant) | page-local |
 | $\omega_i$ | $\omega_i$ | vorticity, agree |
 | $\delta^+=\delta u_\tau/\nu_w$ | $Re_\tau$ | Kármán number |

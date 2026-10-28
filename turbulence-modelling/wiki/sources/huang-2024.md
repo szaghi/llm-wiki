@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Methods Appl. Mech. Engrg. 421:116795"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Computer_Methods_in_Applied_Mechanics_and_Engineering_Huang_A_new_troubled_cell_indicator_and_a_new_limiter_based_on_TEN.pdf"
 tags: [shock-capturing, dg, high-order, numerical-dissipation, weno]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -65,7 +65,7 @@ smoothness measure, $\chi^{\mathrm T}_k$ its normalized value,
 $\delta^{\mathrm T}_k$ the 0/1 cut-off flag, $d_k$ optimal linear weights,
 $\mathsf w_k$ nonlinear weights, $t_k$ stencil-favouring factor, with $k$ the
 candidate (stencil or cell) index, and $N_x$ number of cells (see the Notation
-map; the TENO symbols other than $\mathrm{IS}_k$, $\mathsf w_k$ are
+map; all of them are registry §11 symbols except $t_k$, which is
 page-local).
 
 1. TVB minmod and KXRCF indicators rely on a critical parameter ($M$, or the KXRCF threshold) that depends on the solution and needs case-by-case tuning (§1, §4.1–4.2). **Stated**
@@ -110,13 +110,13 @@ page-local).
 | $N$, $N_x\times N_y$ (cells) | $N_x$, $N_x\times N_y$ | **collision** with the polynomial degree $N$ |
 | $\Delta x$, $\Delta y$ | $h$ (cell size) | $\Delta$ is the filter width in the registry |
 | $\beta_n$, $\beta_{n,r}$, $\beta_n^{(l)}$ | $\mathrm{IS}_k$, $\mathrm{IS}_k^{(l)}$ | the source's stencil index $n$ is written $k$ throughout (the source's $k$, the DG degree, is $N$ here); **collision** with the field-inversion $\beta(\boldsymbol x)$ |
-| $\gamma_n$ | $\gamma^{\mathrm T}_k$ (TENO smoothness measure, page-local) | **collision** with the ratio of specific heats $\gamma=1.4$ used in §6 |
-| $\chi_n$ | $\chi^{\mathrm T}_k$ (page-local) | **collision** with the SA ratio $\chi=\tilde\nu/\nu$ |
-| $\delta_n$ | $\delta^{\mathrm T}_k$ (0/1 cut-off flag, page-local) | **collision** with the boundary-layer thickness |
+| $\gamma_n$ | $\gamma^{\mathrm T}_k$ (TENO smoothness measure, registry §11) | **collision** with the ratio of specific heats $\gamma=1.4$ used in §6 |
+| $\chi_n$ | $\chi^{\mathrm T}_k$ (registry §11) | **collision** with the SA ratio $\chi=\tilde\nu/\nu$ |
+| $\delta_n$ | $\delta^{\mathrm T}_k$ (0/1 cut-off flag, registry §11) | **collision** with the boundary-layer thickness |
 | $C_T$ | $C_T$ (TENO cut-off) | $10^{-4}$ here; "usually $10^{-5}$" for finite-volume TENO5 (§2) |
 | $C$, $q$, $\tau_K$, $\tau_5$ | (TENO constants, exponent, global smoothness reference) | $q=6$; $\tau_K$ **collides** with the SGS stress |
 | $\varepsilon$, $\varepsilon_1$, $\varepsilon_2$ | $\epsilon$ (regularisers, page-local) | $10^{-40}$, $10^{-3}$, $10^{-10}$; **collision** with the dissipation rate $\varepsilon$ |
-| $d_n$, $d_n^{(l)}$; $w_n$ | $d_k$, $d_k^{(l)}$ (page-local); $\mathsf w_k$ | optimal linear and nonlinear weights |
+| $d_n$, $d_n^{(l)}$; $w_n$ | $d_k$, $d_k^{(l)}$ (registry §11); $\mathsf w_k$ | optimal linear and nonlinear weights |
 | $t_n$ | $t_k$ (page-local) | 1 or 10 |
 | $u_i^{(l)}$, $u_{ij}^{(l)}$; $v_l^{(i)}$; $c_l$, $a_l$ | (DG moments, scaled Legendre basis, basis norms) | modal DG; $a_l$ unrelated to split-form weights |
 | $p_n$, $q$ | $p_k$, $q$ (candidate and target reconstruction polynomials, page-local) | $q$ also the exponent 6 |

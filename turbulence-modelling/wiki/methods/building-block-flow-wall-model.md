@@ -5,7 +5,7 @@ description: "Supervised wall-stress model for wall-modelled LES that classifies
 status: established
 aliases: [BFWM, building-block flow wall model, machine-learning building-block-flow wall model]
 tags: [wall-model, wmles, data-driven, neural-network]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-28T06:44:00Z
 ---
 
 # Building-block-flow wall model
@@ -237,6 +237,18 @@ performance is controlled mainly by the physical assumptions, not by the
 network architecture, the chosen networks being accurate "but may be far from
 optimal" (§5(5), §6).
 
+The same diagnosis comes from a different direction in
+[Zhou & Bae (2024)](/sources/zhou-2024-b.md), who remove the wall-model
+error altogether on the [Gaussian bump](/benchmarks/gaussian-bump.md) at
+$Re_L=2\times10^6$ ($L$ the bump width, page-local) by imposing the DNS mean
+wall stress through idealized wall conditions. The separation bubble still
+depends strongly on the SGS model (Vreman, dynamic Smagorinsky, AMD,
+mixed-similarity), on the mesh and on cell anisotropy, and the wall
+condition has "a less dominant effect on the simulation compared to the SGS
+model" (§3.2, §4). Among the remedies they call for are unified SGS/wall
+models "such as the building-block flow model" (§4, their refs. [29],
+[52]); they do not run the BFWM.
+
 ## Cost
 
 Each network took about 12 h to train on four A100 GPUs (40 GB); WMLES with
@@ -283,3 +295,4 @@ and cases differ, so no ratio to the figure above is formed here.
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — §IV.B (arXiv v1).
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — §1 (arXiv v2).
 - [Nuca et al. (2025)](/sources/nuca-2025.md) — §I; §VI.
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §3.2; §4 (SGS model dominating the idealized wall condition; unified SGS/wall models proposed).

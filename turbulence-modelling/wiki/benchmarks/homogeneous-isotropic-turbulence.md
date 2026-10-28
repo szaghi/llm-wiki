@@ -5,7 +5,7 @@ description: "Turbulence in a triply periodic box, decaying or forced: a priori 
 status: established
 aliases: [HIT, DHIT, HID, DIT, Comte-Bellot–Corrsin experiment, CBC experiment, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation, supersonic isothermal turbulence, driven supersonic turbulence, exascale DNS of isotropic turbulence]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-28T01:58:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -533,9 +533,9 @@ artificial-dissipation coefficient of RANS practice ($1/128$) the spectra
 decay too steeply at high wavenumbers on all three grids; the
 [low-dissipation low-dispersion scheme](/methods/low-dissipation-low-dispersion-scheme.md)
 with $1/512$ or $1/1024$ matches the measured spectra, $1/512$ being only
-slightly more dissipative. With it the standard constants $C_{DES}=0.65$
-(Spalart–Allmaras) and 0.61 (the $k$-$\varepsilon$ branch of SST) need no
-recalibration; 0.78 for the $k$-$\omega$ branch gives nearly identical
+slightly more dissipative. With it the constants $C_{DES}=0.65$
+(Spalart–Allmaras) and 0.61 (the $k$-$\varepsilon$ branch of SST), which the
+authors call standard, need no recalibration; 0.78 for the $k$-$\omega$ branch gives nearly identical
 results (not shown). The authors conclude that in this case the numerical
 dissipation of the convection scheme dominates the decay of turbulent
 kinetic energy (§5). See [numerical dissipation](/properties/numerical-dissipation.md).
@@ -547,7 +547,7 @@ the coefficients of the length-scale equation and on $C_s$: with $C_s=0.18$
 it is 0.805 for the $\omega$ branch and 0.630 for the $\varepsilon$ branch,
 the same for the LRR and SSG
 [Reynolds-stress models](/methods/reynolds-stress-model.md) as for SST,
-against the calibrated SST-DES values 0.78 and 0.61 they recall. They state
+against the calibrated SST-DES values 0.78 and 0.61 that they cite. They state
 that the theoretical value "only provides a reference" because numerical
 dissipation shifts it, and calibrate on the Comte-Bellot–Corrsin decay
 ($64^3$ cells, spectra at $t^*=2.0$) with the adaptive-dissipation Roe
@@ -959,16 +959,59 @@ of a slot-burner flame DNS; neither runs a periodic box, and both are
 recorded on their Source pages (see also
 [shock-generated turbulence](/results/shock-generated-turbulence.md)).
 
+**The first simulations of turbulence.**
+[Kim & Leonard (2024)](/sources/kim-2024-b.md) date numerical turbulence
+simulation from this case: Orszag & Patterson (1971, 1972) computed
+decaying HIT with a pseudospectral method on $16^3$ and $32^3$ meshes at
+initial $Re_\lambda=35$ on a CDC 6600 of 3 megaflops peak, 30 s per time
+step at $32^3$, 200 steps in 1.5 h, and compared the velocity-derivative
+skewness with direct-interaction theory and experiments (§2.2, Fig. 2a).
+Aliasing was removed by spherical truncation with six shifted transforms
+(Patterson & Orszag 1971), later more cheaply by the 2/3 rule with phase
+shifts (Rogallo 1981; §2.2, §3.3). In an LES of isotropic turbulence and
+irrotational plane strain, Kwak et al. (1975) obtained the Smagorinsky constant 0.206 by matching the decay
+of Comte-Bellot & Corrsin (1971); the authors set it beside Lilly's 0.17
+from consistency with the $k^{-5/3}$ law and Deardorff's 0.10 in the
+channel (§2.5, §3.1; see [Smagorinsky model](/methods/smagorinsky-model.md)).
+Clark et al. (1979) made the first a priori test of SGS models on a DNS
+database of this flow (§3.1; see
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)).
+Forcing was introduced by Siggia & Patterson (1978) and Siggia (1981):
+in the authors' words it models the large scales and computes the small
+ones, "the opposite of the LES approach", and gives a statistically
+steady state for small-scale statistics, intermittency and vortex tubes
+(§4.3). They close with the $4096^3$ run of Kaneda et al. (2003), at 40%
+of peak on the Earth Simulator, and the $8192^3$ run of Yeung et al.
+(2015), at $Re_\lambda=1200$–1300, against a peak-speed growth of about
+$10^{12}$ from the CDC 6600 to Frontier (§5); the later record runs are
+those of [Yeung et al. (2025)](/sources/yeung-2025.md) above.
+
+**One-dimensional turbulence on the case.** In the review of
+[Chen et al. (2024b)](/sources/chen-2024-c.md) decaying HIT is one of the
+first targets of the stochastic
+[one-dimensional turbulence](/methods/one-dimensional-turbulence.md) model:
+Kerstein's 1999 eddy-energy closure is printed for "decaying homogeneous
+turbulence and shear flow" (Table 1, Eq. 4), McDermott's 2005 closure for
+free shear flow and decaying isotropic turbulence (Eq. 8), and the
+finite-volume LES-ODT coupling of McDermott is reported on decaying
+isotropic turbulence, the finite-difference coupling of Echekki and
+coworkers on autoignition in isotropic turbulence (§2.4.1); particle-laden
+forced HIT is named among the applications. The review reproduces no HIT
+result.
+
 **Closure constants.**
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) cite the decay rates of grid
 turbulence (Comte-Bellot & Corrsin 1966) as a constraint on the coefficients of RANS
 closures (the coefficient layer of their taxonomy of
 [model-form uncertainty](/definitions/model-form-uncertainty.md)).
 [Agrawal et al. (2022)](/sources/agrawal-2022.md), §II.A, cite Lilly's derivation of
-$C_s\approx0.17$ for isotropic turbulence with an inertial-range cutoff;
+$C_s\approx0.17$ for isotropic turbulence with an inertial-range cutoff, as
+do [Kim & Leonard (2024)](/sources/kim-2024-b.md), §2.5 (above);
 [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md), §6.5,
 quote Lilly's analytical value $C_s=\pi^{-1}(3C_K/2)^{-3/4}=0.18$ with
-Kolmogorov constant $C_K=1.4$. The Chollet–Lesieur spectral eddy viscosity,
+Kolmogorov constant $C_K=1.4$. The two printed values of Lilly's constant
+are recorded side by side; neither source states the Kolmogorov constant
+behind 0.17. The Chollet–Lesieur spectral eddy viscosity,
 whose plateau 0.267 holds for an infinite Kolmogorov spectrum, is the
 spectral reference used with HIT in both
 [Flad & Gassner (2017)](/sources/flad-2017.md), App. C, and
@@ -1210,3 +1253,5 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Coulon et al. (2023)](/sources/coulon-2023.md) — §2.2 (synthetic inlet turbulence; not a periodic box).
 - [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — Abstract; §6.1, Fig. 6 (Comte-Bellot–Corrsin decay with approximate deconvolution on unstructured finite elements).
 - [Iwata et al. (2023)](/sources/iwata-2023.md) — §II C, Eq. 1, Table I (decaying compressible precursor as detonation inflow).
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.2, Fig. 2a; §2.5; §3.1; §3.3; §4.3; §5 (historical).
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — §2.2.2, Table 1, Eqs. 4, 8; §2.4.1 (ODT and LES-ODT on isotropic turbulence, cited).

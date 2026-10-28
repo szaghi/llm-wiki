@@ -9,7 +9,7 @@ year: 2024
 venue: "Flow Turbul. Combust. 113:891–922"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Flow_Turbulence_and_Combustion_Volpiani_A_Comprehensive_Study_About_ImplicitExplicit_Large-Eddy_Simu.pdf"
 tags: [implicit-les, filtering, kinetic-energy-preserving, numerical-dissipation, sgs-model, compressible]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -122,14 +122,14 @@ $N_p$ half-stencil, $c_j$ and $d_j$ derivative and filter coefficients
 | $\rho e$ | $E$ | total energy per unit volume |
 | $\lambda$ (conductivity), $r$ (gas constant) | page-local | $\lambda$ **collides** with the Taylor microscale |
 | $\nu_t$, $C_s$, $\lvert\tilde S\rvert=(2\tilde S_{ij}\tilde S_{ij})^{1/2}$ | $\nu_t$, $C_s$, $\lvert\tilde S\rvert$ | factor two included |
-| $C_i$, $C_I$ | $C_I$ (Yoshizawa isotropic coefficient, page-local) | 0.0066 static |
+| $C_i$, $C_I$ | $C_I$ (Yoshizawa isotropic coefficient, registry §11) | 0.0066 static |
 | $C_d$ | $C_s^2$ (dynamic) | |
 | $T_{ij}$, $\mathcal L_{ij}$, $\mathcal M_{ij}$ | (test-level stress), $L_{ij}$ (Favre form), $M_{ij}$ | $T_{ij}$ **collides** with the integrity basis $T^{(n)}$ |
 | $u_>$, $u_<$, prime | $\phi^{\mathrm L}$, $\phi^{\mathrm S}$ (large and small resolved scales, page-local) | multiscale models; not the registry's $\phi^>$, $\phi^<$ (resolved and subfilter parts): both are *resolved* scales here |
 | $E_k$, $\zeta$ | $\mathcal K$, $\mathcal E_\omega$ (page-local) | $\zeta$ **collides** with the feature vector $\boldsymbol\zeta$ |
 | $\epsilon(E_k)$, $\epsilon(\zeta)$, $\epsilon_t=\epsilon_1+\epsilon_2+\epsilon_3$ | $\varepsilon_K$, $\varepsilon_\omega$, $\varepsilon_t$ (page-local) | $\epsilon_2$ the bulk-viscous part |
 | $\mu_b$, $\theta=u_{i,i}$ | $\mu_b$, $\nabla\cdot\boldsymbol u$ | $\theta$ **collides** with the momentum thickness |
-| $\chi$ | $\chi_f$ (relaxation-filter strength, page-local) | **collision** with the SA $\chi$ |
+| $\chi$ | $\chi_f$ (relaxation-filter strength, registry §11) | **collision** with the SA $\chi$ |
 | $N_p$, $a_j$, $d_j$, $D$, $D_k$, $k^*$ | $N_p$, $c_j$, $d_j$, $D$, $D_k$, $k^*$ (page-local) | half-stencil, derivative coefficients ($c_j$ as on the low-dissipation page), filter coefficients ($d_j$ as on the explicit-filtering page, $e_j$ on the low-dissipation page), filter operator, damping function, effective wavenumber; $a_j$ **collides** with the unnormalized WENO weight $a_k$ |
 | $\alpha$, $\beta$ (Eq. 14) | $\alpha_{\mathrm{KG}}$, $\beta_{\mathrm{KG}}$ (page-local) | Kennedy–Gruber; **collisions** with the DG blending factor and the field-inversion multiplier |
 | $C^D$, $C^\phi$, $C^u$, $C^\rho$ | page-local | divergence and split forms |
@@ -141,10 +141,11 @@ $N_p$ half-stencil, $c_j$ and $d_j$ derivative and filter coefficients
 65 printed references in Springer author–year style, alphabetical; merged
 complete into the [bibliography](/bibliography.md) with `citedby` this slug.
 The cited Cao et al. (2022, Phys. Fluids, implicit LES analysis) is the
-planned source `cao-2022-c`, not `cao-2022`; Bernades et al. (2023) and
-Wang (2013) are the ingested sources [Bernades et al. (2023)](/sources/bernades-2023.md)
-and [Wang et al. (2013)](/sources/wang-2013.md), and Kiris et al. (2023) is
-the same work as the planned source of that key. Items printed without volume or pages: Asada et al. (2023), Cao
+ingested [Cao et al. (2022b)](/sources/cao-2022-c.md), not `cao-2022`;
+Bernades et al. (2023) and Wang (2013) are the ingested sources
+[Bernades et al. (2023)](/sources/bernades-2023.md) and
+[Wang et al. (2013)](/sources/wang-2013.md), and Kiris et al. (2023) is the
+ingested [Kiris et al. (2023)](/sources/kiris-2023.md). Items printed without volume or pages: Asada et al. (2023), Cao
 et al. (2022), Cook (2007), Kiris et al. (2023). Boris (1990) is a book
 chapter; Feiereisen et al. (1981), Kraft (1988) and Larsson et al. (2007) are
 reports. Text labels that differ from the list are recorded under Printed

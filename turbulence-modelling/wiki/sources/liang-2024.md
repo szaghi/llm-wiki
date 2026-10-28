@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Phys. Commun. 302:109236"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2024_Crossref_Computer_Physics_Communications_Liang_A_new_high-order_shock-capturing_TENO_scheme_combined_with_s.pdf"
 tags: [shock-capturing, kinetic-energy-preserving, numerical-dissipation, implicit-les, compressible, weno]
-timestamp: 2026-10-27T06:09:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -76,7 +76,7 @@ A C++ implementation of Algorithm 1 is printed as public.
 
 Notation: $\gamma^{\mathrm T}_k$ TENO smoothness measure, $\chi^{\mathrm T}_k$ its
 normalized value, $\delta^{\mathrm T}_k$ the cut-off flag, $\mathrm{IS}_k$
-smoothness indicators, $d_k$ optimal weights, $c_\ell$ centred-derivative coefficients, $e_0$
+smoothness indicators, $d_k$ optimal weights (registry §11), $c_\ell$ centred-derivative coefficients, $e_0$
 dissipative coefficient,
 $\mathcal K(t)$ and $\mathcal E_\omega(t)$ volume-integrated kinetic energy
 and enstrophy (page-local; Notation map).
@@ -121,11 +121,11 @@ and enstrophy (page-local; Notation map).
 |---|---|---|
 | $\mathbf U=[\rho,\rho u,\rho v,\rho w,E]$, $E$ | $\rho$, $\rho\boldsymbol u$, $E$ (total energy per unit volume) | |
 | $\gamma$ | $\gamma$ | 1.4; 5/3 in the Rayleigh–Taylor case |
-| $\gamma_k$ | $\gamma^{\mathrm T}_k$ (TENO smoothness measure, page-local) | **collision** with $\gamma$ |
-| $\chi_k$; $\delta_k$ | $\chi^{\mathrm T}_k$; $\delta^{\mathrm T}_k$ (page-local) | **collisions** with the SA $\chi$ and the boundary-layer thickness |
+| $\gamma_k$ | $\gamma^{\mathrm T}_k$ (TENO smoothness measure, registry §11) | **collision** with $\gamma$ |
+| $\chi_k$; $\delta_k$ | $\chi^{\mathrm T}_k$; $\delta^{\mathrm T}_k$ (registry §11) | **collisions** with the SA $\chi$ and the boundary-layer thickness |
 | $\beta_{k,r}$ | $\mathrm{IS}_k$ | smoothness indicator of stencil $k$, width $r$ |
 | $w_k$, $\alpha_k$, $d_k$ | $\mathsf w_k$, $a_k$, $d_k$ | nonlinear, unnormalized, optimal weights; $\alpha_k$ **collides** with the modelled-energy fraction |
-| $C_T$, $C_{T2}$ | (TENO cut-off; indicator cut-off) | $10^{-10}$–$10^{-7}$ adaptive; $10^{-6}$ |
+| $C_T$, $C_{T2}$ | $C_T$ (TENO cut-off, registry §11); (indicator cut-off) | $10^{-10}$–$10^{-7}$ adaptive; $10^{-6}$ |
 | $\tau_K$ | (global smoothness reference) | **collision** with the SGS stress |
 | $K$ (points of the reconstruction) | $n_{\mathrm{pt}}$ (page-local) | eight points; **collision** with the spectral-page kinetic energy |
 | $\varepsilon$ | $\epsilon$ (regularisers, page-local) | $10^{-40}$, $10^{-4}$/$10^{-2}$, Eq. 48 form; **collision** with the dissipation rate |

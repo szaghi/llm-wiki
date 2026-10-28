@@ -5,7 +5,7 @@ description: "A shock sensor or troubled-cell indicator is the switch that decid
 status: established
 aliases: [shock sensor, shock indicator, troubled-cell indicator, troubled-cell detector, discontinuity indicator, Ducros sensor, Jameson pressure sensor, Persson–Peraire indicator, KXRCF indicator, TVB minmod indicator, TENO troubled-cell indicator, filtered shock indicator]
 tags: [shock-capturing, numerical-dissipation, compressible, dg, implicit-les, boundary-layer]
-timestamp: 2026-10-28T02:15:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Shock sensors and troubled-cell indicators
@@ -29,13 +29,13 @@ Symbols: $\Psi_i$ the Jameson pressure sensor and $\Phi_i$ the Ducros
 factor of registry §11; $s_e$ the Persson–Peraire indicator of an element
 and $s_0$ its threshold (as on the subcell page);
 $\mathrm{IS}_k$ the Jiang–Shu-type smoothness indicator of stencil or
-polynomial $k$ (registry §11). Page-local, shared with the
+polynomial $k$ (registry §11). Also registry §11, shared with the
 [WENO](/methods/weno-scheme.md) page: $\gamma^{\mathrm T}_k$ the
 scale-separated smoothness measure of TENO and
 $\chi^{\mathrm T}_k=\gamma^{\mathrm T}_k/\sum_l\gamma^{\mathrm T}_l$ its
 normalized form (the sources' $\gamma_k$, $\chi_k$, marked because
 $\gamma$ is the ratio of specific heats and $\chi$ the Spalart–Allmaras
-ratio), $C_T$ the cut-off threshold; $q$ an exponent, $\epsilon$ a small
+ratio), $C_T$ the cut-off threshold. Page-local: $q$ an exponent, $\epsilon$ a small
 regularizer; $U_\infty$ and $\delta_0$ the free-stream velocity and inflow
 boundary-layer thickness.
 
@@ -60,6 +60,21 @@ runs a two-member hybrid instead, a sixth-order monotonicity-preserving
 optimized scheme (OMP6) where the pressure gradient is low and a
 seventh-order WENO where it is high: "the pressure gradient is used as the
 shock recognizer"; neither the sensor formula nor its threshold is printed.
+Two later DNS with the code family return to the three-member hybrid:
+[Zhang et al. (2024b)](/sources/zhang-2024-b.md), §2.1, in OpenCFD-SCU for
+Mach 6 compression ramps at three wall temperatures, and
+[Tang et al. (2024)](/sources/tang-2024.md), §2.1, in the CPU parent code
+OpenCFD-SC for a Mach 5, 30° ramp. Both describe a modified
+Jameson–Schmidt–Turkel pressure-gradient sensor with two thresholds that
+selects the seventh-order linear upwind scheme in smooth regions, the
+seventh-order WENO in non-smooth and the fifth-order WENO in "extremely
+non-smooth" ones, and print neither the formula nor the thresholds
+(Zhang et al. refer to Dang et al. 2022 for them). Zhang et al. state that
+the linear seventh-order scheme and the seventh-order WENO each "lack
+robustness" in the reattachment region of their interaction and cannot
+keep it stable, while the fifth-order WENO alone is "significantly more
+dissipative"; the three-way switch is their answer (stated from their
+runs, no comparison shown).
 
 **The same sensor in a DG element.** [Gao et al. (2022)](/sources/gao-2022.md),
 §3.2, Eqs. (12)–(13), adapt it to the DGSEM: at each node, with
@@ -79,6 +94,17 @@ WENO finite-volume scheme: HLLC away from shocks, for its lower numerical
 diffusion, and Lax–Friedrichs around them, for robustness; the formula and
 threshold are not printed. The run is a detonation propagating into
 isotropic turbulence.
+
+**Gradient sensor plus a bound sensor in a detonation LES.** The
+unstructured finite-volume LES of a rotating detonation rocket engine of
+[Vignat et al. (2024)](/sources/vignat-2024.md), §3.5, runs two sensors
+that drop the reconstruction to first order: one built from pressure and
+density gradients, for detonations, shocks and flames, with thresholds
+set by a sensitivity study "for minimum activation with stability"
+(values not printed), and one that fires where a mass fraction leaves
+$[0,1]$ or the temperature falls below 260 K. Away from both the
+reconstruction is fourth order on uniform and third order on non-uniform
+meshes.
 
 **Pressure ratio of a Riemann solver.** In a real-gas hybrid,
 [Xu et al. (2026)](/sources/xu-2026.md), Eq. (18), flag a compressive jump
@@ -134,6 +160,15 @@ modified Ducros sensor with threshold 0.15 between an eighth-order
 energy-preserving flux and seventh-order WENO only in their $M_\infty=8$
 boundary layers, and apply the energy-preserving flux throughout at
 $M_\infty=0.5$ and 2, where no shocklets are expected.
+[Yu et al. (2023b)](/sources/yu-2023-b.md), §II, Eq. (6), print the
+modified Ducros sensor of their STREAmS DNS of Mach 5 oblique
+shock/boundary-layer interactions (14°, 10° and 6° wedges),
+$$s=\frac{-\nabla\cdot\boldsymbol u}{\sqrt{(\nabla\cdot\boldsymbol u)^2+|\nabla\times\boldsymbol u|^2+(U_\infty/\delta_0)^2}}$$
+($s$ page-local; $\delta_0$ their inflow boundary-layer thickness,
+the source's $\delta_{\mathrm{in}}$): the sixth-order
+kinetic-energy-preserving scheme gives way to fifth-order WENO where
+$s\ge0.1$. It is the signed, unsquared form, with Pirozzoli's
+regularization written inside the root.
 
 The Ducros sensor also switches the scheme in the in-house finite-volume
 code of [Zangeneh (2021)](/sources/zangeneh-2021.md), §II.D, for
@@ -177,6 +212,23 @@ interfaces; above $0.1$ the cell is "shocked" and WENO-Z replaces the
 energy-preserving flux in it and in its neighbours. The square root makes
 it the unsquared form, and the maximum discards expansions as Gao et al.'s
 signed variants do.
+The same form, with threshold $0.05$ and $\delta_0$ the boundary-layer
+thickness of the case, switches on the AUSM-type numerical diffusion of
+the split energy-preserving finite-volume flux of the OpenFOAM-based
+solver scramjetFoam, in the wall-resolved LES of supersonic film cooling
+of [Wei et al. (2023)](/sources/wei-2023.md), §II C, Eq. (19); no
+artificial diffusion is added to the species equations (flux on
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)).
+
+**Switching a filter instead of a flux.** In the sixth-order compact
+finite-difference DNS of a Mach 2.9, 24° compression ramp of
+[Kang & Lee (2024)](/sources/kang-2024.md), §II.B, "a modified version of
+the Ducros-type sensor" (formula and threshold not printed) drops the
+eighth-order compact low-pass filter applied at every final Runge–Kutta
+stage to a second-order one at shocks, with the filter parameter raised
+from 0.47 to 0.49 (the source's $\alpha_f$); a localized artificial
+diffusivity acts in addition (on
+[artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)).
 
 [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.3, Eq. (9), blend
 a fourth-order kinetic-energy- and entropy-preserving central flux with a
@@ -200,7 +252,7 @@ DNS of a compression–expansion ramp with the Persson–Peraire-type modal
 sensor $s_{\mathrm{modal}}$ (truncation to degree $N-1$, characteristic
 variables after Lodato; thresholds self-calibrated on a manufactured
 solution) multiplied by a Ducros-type factor built from element averages
-$\{\cdot\}_e$ (page-local):
+$\{\cdot\}_e$ (registry §11):
 $$s_e^{\mathrm D}=s_{\mathrm{modal}}\times\frac{\big[\tfrac12\big(|\{\nabla\cdot\boldsymbol u\}_e|-\{\nabla\cdot\boldsymbol u\}_e\big)\big]^2}{\{\nabla\cdot\boldsymbol u\}_e^2+\{\omega_k\omega_k\}_e+\epsilon},$$
 with $\epsilon$ "of order machine epsilon squared". The numerator is
 non-zero only in compression; the authors state that the factor keeps the
@@ -403,6 +455,23 @@ characteristics that do not counteract numerical diffusion, so that
 interface smearing is unavoidable without corrections to the governing
 equations (§IV A).
 
+**The review of Lv & Ekaterinaris.** In their review of high-order
+discontinuous schemes for multiphase and multicomponent flows,
+[Lv & Ekaterinaris (2023)](/sources/lv-2023.md), §4.2, list the
+indicators that localize DG artificial viscosity after Persson & Peraire:
+inter-element jumps, entropy residuals, intra-element pressure jumps,
+pressure gradients and a neural network (all cited); the minmod limiter
+of TVB Runge–Kutta DG carries its own built-in detector. They add two
+cautions for LES: under-resolved turbulence can be mistaken for shocks,
+so the sensor must confine the dissipation, and even with a good sensor
+limiting stays "too intrusive" for high-order solutions; as an instance
+of confinement they cite a limiter-assisted flux-reconstruction LES of
+the NASA CRM in which "only 0.3% of elements have the limiter
+activated". The a posteriori subcell correction removes the ad hoc choice
+of what to do in a troubled element but keeps troubled-cell detection,
+with its problem-dependent parameters (§4.2; see
+[subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)).
+
 ## Switches inside WENO reconstructions (finite differences and volumes)
 
 **Relative total-variation limiter.** The bandwidth-optimized WENO schemes
@@ -598,7 +667,12 @@ the hybrid scheme (§3.2, §5.3.1). The resulting interaction is on
   Potluri et al. (§3.1.1) print the modal expansion as $\sum_{i=0}^Nm_jP_j$,
   with mismatched indices.
 - The Jameson threshold of Gao et al. (2022) is not printed, nor is
-  Fernandez et al.'s sensor formula in Klose et al. (2025).
+  Fernandez et al.'s sensor formula in Klose et al. (2025). Neither the
+  formula nor the thresholds of the OpenCFD-SC/SCU sensor are printed by
+  Zhang et al. (2024b) or Tang et al. (2024), nor the modified Ducros
+  sensor of Kang & Lee (2024), nor the threshold values of Vignat et al.
+  (2024); the forms above for these sources are the descriptions they
+  print.
 - **Printed form of van Noordt et al. (2022), Eq. (9).** As printed, the
   vorticity sits in the numerator together with the dilatation and the
   shielding term $(U_\infty/\delta_0)^2$ in the denominator. Where
@@ -659,3 +733,10 @@ the hybrid scheme (§3.2, §5.3.1). The resulting interaction is on
 - [Iwata et al. (2023)](/sources/iwata-2023.md) — §II B (pressure sensor switching HLLC and Lax–Friedrichs fluxes).
 - [Yu et al. (2023)](/sources/yu-2023.md) — §2 (Ducros switch in STREAmS, same database as Yu et al. 2022).
 - [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §2.2 (ROUND reconstruction, no sensor; passing).
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.1 (two-threshold modified Jameson sensor selecting UDL7/WENO7/WENO5 in OpenCFD-SCU; robustness statement).
+- [Tang et al. (2024)](/sources/tang-2024.md) — §2.1 (the same hybrid and sensor in OpenCFD-SC; passing).
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II, Eq. (6) (signed modified Ducros sensor, threshold 0.1, KEP to WENO5 in STREAmS).
+- [Wei et al. (2023)](/sources/wei-2023.md) — §II C, Eq. (19) (compression-only Ducros sensor, threshold 0.05, switching AUSM-type diffusion).
+- [Kang & Lee (2024)](/sources/kang-2024.md) — §II.B (modified Ducros sensor switching the compact filter from eighth to second order).
+- [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.5 (pressure/density-gradient sensor and scalar-bound sensor, first-order reconstruction).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2 (indicators for DG artificial viscosity, cautions for LES, troubled-cell detection in subcell correction; review).

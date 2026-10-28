@@ -9,7 +9,7 @@ year: 2023
 venue: "Combust. Flame 256:112933"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Combustion_and_Flame_Coulon_Direct_numerical_simulations_of_methane_ammonia-hydrogen_and.pdf"
 tags: [combustion, dns, tabulated-chemistry, isotropic-turbulence]
-timestamp: 2026-10-27T21:11:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -64,7 +64,7 @@ on it are marked **Stated**.
 # Key claims
 
 Page-local symbols: $\phi_{\mathrm{eq}}$ the equivalence ratio (global or
-local); $Le_f$ the fuel Lewis number; $S_L^0$, $\delta_L^0=(T_b-T_u)/\max|\nabla T|$
+local); $Le_f$ the fuel Lewis number; $s_{\mathrm L}^0$, $\delta_L^0=(T_b-T_u)/\max|\nabla T|$
 the unstretched laminar flame speed and thermal thickness; $Ka$, $Re_t=(L/\eta)^{4/3}$
 the Karlovitz and turbulent Reynolds numbers; $N_c=\delta_L^0/\Delta x$
 points per thermal thickness; $c$, $c^*$ the progress variable and its
@@ -80,12 +80,12 @@ stretch factor (global, from $S_d^*$, from counterflow flamelets);
 $S_c^{1D}$ the counterflow consumption speed; $t_{\mathrm{ft}}=L_x/U_{\mathrm{bulk}}$
 the flow-through time; HRR the heat release rate.
 
-1. The three mixtures share $S_L^0\approx0.38$ m/s and $\delta_L^0\approx450\,\mu$m at $T_u=300$ K, $P=1$ bar (§2.2, Table 1). **Stated** (laminar values from Cantera)
+1. The three mixtures share $s_{\mathrm L}^0\approx0.38$ m/s and $\delta_L^0\approx450\,\mu$m at $T_u=300$ K, $P=1$ bar (§2.2, Table 1). **Stated** (laminar values from Cantera)
 2. All three flames are in the thin-reaction-zones regime of the Borghi–Peters diagram, $Ka=7.8$, 7.8, 7.7 and $Re_t=355$, 313, 271; the classification "should be interpreted with care" (Table 1, Fig. 2). **Stated**
 3. The CH4 and NH3–H2 flames have the same flame surface $A_T$ over time; the H2 flame is significantly shorter with less surface ("twice as short", abstract) (Fig. 4). **Shown**
 4. Once stationary, $I_0$ (computed as Attili et al.) tends to one for CH4 and NH3–H2 and exceeds one for H2 (Fig. 5). **Shown**
 5. For H2, $I_0$ grows from about 1 at the flame foot to about 2.5 at the tip, "more than the flame wrinkling factor" (§3.3, Fig. 13c). **Shown**
-6. $I_0^*=\langle S_d^*\rangle_S/S_L^0$ on the $c=c^*$ isosurface is close to the global $I_0$ in all three cases (§3.2, Fig. 12). **Shown**
+6. $I_0^*=\langle S_d^*\rangle_S/s_{\mathrm L}^0$ on the $c=c^*$ isosurface is close to the global $I_0$ in all three cases (§3.2, Fig. 12). **Shown**
 7. CH4: for $x/H\le7$ positive and negative curvatures balance and surface production is strain-controlled; beyond, negative curvature (cusps, detachments) dominates and the curvature term drives surface destruction (§3.2, Figs. 6–7). **Shown**
 8. Flame–flame interactions in cusps strongly increase $S_d$ ("kinematic restoration") in all three flames by modifying the heat and species diffusive fluxes (§3.2, Figs. 7a, 8, 11). **Shown** (attribution **Stated**, citing Lagrangian studies)
 9. NH3–H2: weaker flame–flame interactions at trailing edges, and negative displacement speeds where small negative curvature lets diffusion outweigh a small reactivity (§3.2, Figs. 8b–c, 9c). **Shown**
@@ -100,8 +100,8 @@ the flow-through time; HRR the heat release rate.
 18. Conditional heat release: CH4 never exceeds the flamelet maximum; NH3–H2 lower in the reaction zone; H2 widely scattered and deviating in the preheat zone, while $c^*=0.85$ almost matches the maximum of its conditional mean, explaining $I_0^*\approx I_0$ (§3.3, Fig. 19). **Shown**
 19. The stable stoichiometric NH3–H2 flame contrasts with the thermo-diffusively unstable lean ($\phi_{\mathrm{eq}}=0.45$), preheated (750 K) NH3–H2–N2 flame of Wiseman et al. and Rieth et al. ($I_0\approx2$); the authors attribute the difference to fuel proportions and operating conditions (§3.3). **Stated**
 20. The strong stretch effect of lean H2 at $\phi_{\mathrm{eq}}=0.45$ was "not observed in calculations performed at richer conditions with $\phi=0.7$" (Song et al.); Berger et al. report even higher $I_0$ in leaner conditions ([berger-2022](/sources/berger-2022.md)) (§3.1, §3.3). **Stated**
-21. Counterflow flamelets ($0.3<\phi_{\mathrm{eq}}<0.7$, strain $a_{\mathrm{cf}}$ from 0 to twice the isosurface mean $\langle K_s\rangle|_{c^*}=2436$ s$^{-1}$) give $1<S_c^{1D}/S_L^0<3$ for points sampled on the DNS isosurface, matching the DNS stretch factors (§3.4, Fig. 20). **Shown**
-22. Near-flat DNS elements ($|\kappa_{\mathrm f}\delta_L^0|<0.01$) map to $S_c^{1D}/S_L^0\approx2$ except near the inlet: strain controls consumption where preferential diffusion is weak; positively curved rich elements give 2–3 irrespective of strain (§3.4, Fig. 20). **Shown**
+21. Counterflow flamelets ($0.3<\phi_{\mathrm{eq}}<0.7$, strain $a_{\mathrm{cf}}$ from 0 to twice the isosurface mean $\langle K_s\rangle|_{c^*}=2436$ s$^{-1}$) give $1<S_c^{1D}/s_{\mathrm L}^0<3$ for points sampled on the DNS isosurface, matching the DNS stretch factors (§3.4, Fig. 20). **Shown**
+22. Near-flat DNS elements ($|\kappa_{\mathrm f}\delta_L^0|<0.01$) map to $S_c^{1D}/s_{\mathrm L}^0\approx2$ except near the inlet: strain controls consumption where preferential diffusion is weak; positively curved rich elements give 2–3 irrespective of strain (§3.4, Fig. 20). **Shown**
 23. As $\phi_{\mathrm{eq}}$ decreases, strain affects the counterflow consumption much less, so highly strained cusps are less affected than leading edges (§3.4). **Shown** (1-D flamelets)
 24. Counterflow flamelets in strain–equivalence-ratio space can approximate stretch effects on lean H2 propagation in addition to wrinkling modelled by a flame-surface-density approach (§3.4, Conclusion). **Stated** (proposal, not implemented in LES)
 25. Shear turbulence from the jet and coflow has no time to develop because the flames add viscous dissipation; the flames are controlled by the injected isotropic turbulence (§2.2; supplementary Section D). **Stated**
@@ -115,7 +115,7 @@ $U_{\mathrm{bulk}}=25$ m/s with burnt-gas coflows at 0.1 m/s. Meshes:
 $1601\times401\times201$ ($\Delta x=64\,\mu$m, CH4),
 $2191\times627\times314$ (41 μm, NH3–H2), $1281\times641\times321$
 (40 μm, H2). The turbulent consumption speed and surface
-(Eqs. 7–9): $S_T/S_L^0=I_0A_T/A_0$, $S_T=-(\rho_uY_{f,u}A_0)^{-1}\int_\Omega\dot\omega_f\,dV$,
+(Eqs. 7–9): $S_T/s_{\mathrm L}^0=I_0A_T/A_0$, $S_T=-(\rho_uY_{f,u}A_0)^{-1}\int_\Omega\dot\omega_f\,dV$,
 $A_T=\int_\Omega|\nabla c|\,dV$; the flame surface density
 $\Sigma=\langle|\nabla c|\,\delta(c-c^*)\rangle$ obeys
 $\partial_t\Sigma+\nabla\cdot(\langle\boldsymbol u+S_d\boldsymbol n\rangle_S\Sigma)=\langle K_{\mathrm f}\rangle_S\Sigma$.
@@ -134,7 +134,7 @@ $\partial_t\Sigma+\nabla\cdot(\langle\boldsymbol u+S_d\boldsymbol n\rangle_S\Sig
 | Source | Registry ([notation](/notation.md)) | Note |
 |---|---|---|
 | $\phi$ | $\phi_{\mathrm{eq}}$ (page-local) | equivalence ratio |
-| $S_L^0$, $\delta_L^0$ | $S_L^0$, $\delta_L^0$ (page-local) | **collision:** the registry's $S_L$ is the Lundquist number; concept pages write $s_{\mathrm L}$ |
+| $S_L^0$, $\delta_L^0$ | $s_{\mathrm L}^0$ (registry §11 $s_{\mathrm L}$, unstretched), $\delta_L^0$ (page-local) | **collision:** the registry's $S_L$ is the Lundquist number |
 | $u'$, $l_t$, $k_e$ | $u'$ (rms), $L$, $k_e$ | integral length $L=\sqrt{2\pi}/k_e$ |
 | $\eta_k$ | $\eta$ | Kolmogorov length |
 | $E(k)$ | $E(k)$ | Passot–Pouquet spectrum |

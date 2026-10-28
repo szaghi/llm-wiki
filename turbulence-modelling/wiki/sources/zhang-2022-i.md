@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Fluids 34:065123"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physics_of_Fluids_Zhang_Large-eddy_simulation_of_wind-turbine_wakes_over_two-dimensi.pdf"
 tags: [les, wmles, wall-model, immersed-boundary, wind-energy, separated-flow]
-timestamp: 2026-10-27T21:07:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -127,8 +127,8 @@ positive (the paper's "loss in MKE").
 | $\tau^d_{ij}=-2\nu_t\tilde S_{ij}$ | $\tau^d_{ij}=-2\nu_t\bar S_{ij}$ | same sign convention |
 | $\lvert\tilde S\rvert=\sqrt{2\tilde S_{ij}\tilde S_{ij}}$ | $\lvert\bar S\rvert$ | factor two present |
 | $\tilde p^*=\tilde p/\rho+\tfrac13\tau_{kk}$ | $\bar p^*$ (page-local) | kinematic modified pressure |
-| $\lambda=C_s\Delta$, $\lambda_0=C_0\Delta$ | $\ell_s$, $\ell_0=C_{\mathrm{MT}}\Delta$ (page-local) | **collision** with the Taylor microscale $\lambda$; $\lambda_0(x)$ of App. B (B4) is another quantity |
-| $z_0$ | $y_{0,\mathrm r}$ (page-local) | roughness length |
+| $\lambda=C_s\Delta$, $\lambda_0=C_0\Delta$ | $\ell_s$, $\ell_0$ (page-local), $\ell_0=C_{\mathrm{MT}}\Delta$ with $C_{\mathrm{MT}}$ of registry §11 | **collision** with the Taylor microscale $\lambda$; $\lambda_0(x)$ of App. B (B4) is another quantity |
+| $z_0$ | $y_{0,\mathrm r}$ (registry §11) | roughness length |
 | $u_*$, $L_z$ | $u_\tau$, $H_{\mathrm{dom}}$ (page-local) | |
 | $\overline{u'w'}$ | $\langle u'v'\rangle$ | vertical turbulent flux |
 | $\overline{u_i'u_j'}$ | $R_{ij}$ (resolved) | positive convention |

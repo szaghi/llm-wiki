@@ -5,7 +5,7 @@ description: "WENO, TENO, weighted compact nonlinear and bounded normalized-vari
 status: established
 aliases: [WENO, TENO, targeted ENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-Z+, WENO-Z+M, WENO-ZQ, WENO-SYMBO, HWENO, Hermite WENO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme, TENO-THINC, TENO-S, TENOA, THINC, TENO limiter, boundary variation diminishing, BVD-AD, WCNS, weighted compact nonlinear scheme, WCNS-T, ROUND, OMP6 hybrid]
 tags: [shock-capturing, numerical-dissipation, dns, compressible, implicit-les, gpu]
-timestamp: 2026-10-28T02:15:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # WENO and hybrid shock-capturing schemes in scale-resolving simulation
@@ -76,6 +76,10 @@ in turbulence (see [numerical dissipation](/properties/numerical-dissipation.md)
 | P-weighted compact WENO limiter of the troubled cells of flux reconstruction (Li, Wang & Ren), modified linear weights and a mode-truncation rule, then a positivity-preserving scaling | implicit LES of a Mach 2.9, 24° compression ramp | [Shi & Yan (2023)](/sources/shi-2023.md), §II.B |
 | Fifth-order finite-difference and "alternative" finite-volume WENO-JS and WENO-Z as comparisons, characteristic-wise finite-volume WENO-JS on 160 cells per half-reaction length as reference | one-dimensional overdriven detonations against an a posteriori subcell-limited flux reconstruction, no turbulence | [Liu & Yuan (2023)](/sources/liu-2023-b.md), §5.5–5.8 |
 | Sixth-order kinetic-energy-preserving convection switched to fifth-order WENO by the Ducros criterion (STREAmS), same database as Yu et al. (2022) | analysis of the post-shock recovery of an oblique shock/boundary-layer interaction at $M_\infty=2.28$ | [Yu et al. (2023)](/sources/yu-2023.md), §2 |
+| Sixth-order kinetic-energy-preserving convection switched to fifth-order WENO by a signed modified Ducros sensor, threshold 0.1 (STREAmS); fifth-order WENO convection for the RANS runs | DNS of Mach 5 oblique shock/boundary-layer interactions (14°, 10°, 6° wedges) as data for a modified SST model | [Yu et al. (2023b)](/sources/yu-2023-b.md), §II, Eq. (6); §V |
+| Seventh-order linear upwind (UDL7), seventh-order WENO and fifth-order WENO selected by a two-threshold modified Jameson sensor, Steger–Warming splitting, eighth-order central viscous terms (OpenCFD-SCU) | DNS of Mach 6, 34° compression ramps at $T_w/T_r=0.50$, 0.75, 1.0, and of Mach 2.9, 24° ramps | [Zhang et al. (2024b)](/sources/zhang-2024-b.md), §2.1, §3.3 |
+| The same three-member hybrid with sixth-order central viscous terms (OpenCFD-SC, the CPU parent code) | DNS of a Mach 5, 30° compression ramp with a cold wall, $1.63\times10^8$ points | [Tang et al. (2024)](/sources/tang-2024.md), §2.1–2.2 |
+| WENO and Hermite-WENO reconstructions as DG limiters (Qiu & Shu, Zhong & Shu, Li et al., Luo et al.); fifth-order WENO with re-initialization as the comparator of a DG level set | review of high-order discontinuous schemes for multiphase and multicomponent flows, no turbulence | [Lv & Ekaterinaris (2023)](/sources/lv-2023.md), §4.2, Table 1; §4.4, Fig. 5 |
 
 The upwind schemes act on split fluxes or on characteristic variables.
 [OpenCFD-SCU](/software/opencfd-scu.md) splits the flux with Steger–Warming
@@ -403,6 +407,28 @@ prevent over-sharpening, whereas the MUSCL-THINC/QQ boundary-variation
 selection with only second-order candidates gave less error than
 third-order WENO (§IV, §IV A–B; THINC hybrids of TENO are below).
 
+**WENO limiters for DG, and WENO against a DG level set.** The review of
+high-order discontinuous schemes for multiphase and multicomponent flows
+of [Lv & Ekaterinaris (2023)](/sources/lv-2023.md), §4.2, Table 1, lists
+the WENO and Hermite-WENO limiters that replace the polynomial of a
+troubled DG cell (all cited): Qiu & Shu's WENO and HWENO reconstructions;
+Zhong & Shu's WENO-weighted sum of the local and adjacent DG polynomials
+(up to $N=2$); the p-weighted limiter of Li et al. in characteristic
+space, the highest degree in the table ($N=5$); Luo et al.'s HWENO,
+widely validated but limited to $N=1$; HWENO is the more compact because
+it also uses derivatives. They state that in multiphase and
+multicomponent applications the limiters actually adopted are the
+algorithmically simple ones, and that WENO limiters applied blindly
+produce pressure oscillations at interfaces with variable thermodynamics,
+which the limiter of de Frahan et al. avoids by limiting density,
+momentum, pressure and the thermal property and rebuilding the energy
+from them (see
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)).
+In Zalesak's disk a DG level set at $N=3$ without re-initialization keeps
+the interface topology better than fifth-order WENO with
+re-initialization, more so on coarser meshes (§4.4, Fig. 5; qualitative,
+grids and norms not printed).
+
 ## Hybrid schemes
 
 **Sensor-switched upwind/WENO (OpenCFD-SCU).** Dang et al. (2022, §2.2.3,
@@ -431,6 +457,35 @@ recognizer's formula and threshold are not printed (see
 pressure is converged while peak skin friction and heat flux are 7–10%
 lower on the coarser one (§II C). The interaction is on
 [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+
+The three-member hybrid returns in two later compression-ramp DNS of the
+code family. [Zhang et al. (2024b)](/sources/zhang-2024-b.md), §2.1, run
+it in OpenCFD-SCU for Mach 6, 34° ramps at three wall-to-recovery
+temperature ratios and state why all three members are needed: the
+linear seventh-order scheme and the seventh-order WENO each "lack
+robustness" in the reattachment region and cannot keep the run stable,
+while the fifth-order WENO is robust but "significantly more dissipative"
+than the seventh-order one (stated from their runs; no comparison shown).
+Replicating Mach 2.9, 24° ramp DNS of Zhu et al. that they cite, they find
+the van Driest-transformed velocity about 5% off in the wake and attribute
+it to Zhu et al.'s fourth-order bandwidth-optimized WENO being more
+dissipative than the hybrid, which they call close to the linear
+seventh-order scheme inside the boundary layer (§3.3). Their coarse and
+fine meshes ($\Delta x^+$, $\Delta y^+$, $\Delta z^+$ from about 4.9, 0.48,
+4.8 to 3.5, 0.35, 3.5) give almost identical mean wall pressure and skin
+friction near the corner (Fig. 3, Table 2).
+[Tang et al. (2024)](/sources/tang-2024.md), §2.1–2.2, run the same
+hybrid in the CPU parent code OpenCFD-SC for a Mach 5, 30° cold-wall ramp
+and refine the wall-normal grid over four meshes (first-cell
+$\Delta y^+$ from 1.31 to 0.16 at the reference station) and the span in
+a fifth ($\Delta z^+$ from 6.6 to 4.4, which raises the Stanton number
+slightly only after its peak): skin friction
+and Stanton number converge at the third mesh (wall-normal grid Reynolds
+number 7, $\Delta y^+=0.33$), wall pressure is insensitive, and the wall
+gradients are more grid-sensitive than the turbulence-statistics profiles
+(Table 2, Figs. 5–9). Both interactions are on
+[shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md),
+the sensor on [shock sensors](/definitions/shock-sensor.md).
 
 **Energy-preserving central/WENO (STREAmS).** Cogo et al. (2022, §2) apply
 "consolidated, high-order, energy-preserving schemes" in shock-free regions,
@@ -470,6 +525,15 @@ energy-preserving convection with fifth-order WENO-Z applied in a
 [De Vanna et al. (2022)](/sources/devanna-2022.md), §3.1.1–3.1.2, with a
 compression-only Ducros sensor of threshold 0.1 (see
 [shock sensors](/definitions/shock-sensor.md)).
+[Yu et al. (2023b)](/sources/yu-2023-b.md), §II, run the STREAmS switch
+(sixth-order kinetic-energy-preserving convection after Pirozzoli,
+fifth-order WENO where a signed modified Ducros sensor reaches 0.1,
+sixth-order central viscous terms, Wray's Runge–Kutta) for DNS of Mach 5
+oblique shock/boundary-layer interactions, whose statistics then
+calibrate a pressure-gradient-dependent modification of
+[$k$-$\omega$ SST](/methods/k-omega-sst-model.md); their RANS runs use
+fifth-order WENO for the convective and fourth-order central
+differences for the viscous terms (§V).
 
 **Blended central/WENO flux at an immersed boundary (CHAMPS).**
 [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.3, blend a
@@ -730,7 +794,7 @@ is seventh order (Eq. 16). Ma et al. write it as a convex combination of
 four fourth-order compact sub-interpolations, each containing interface
 unknowns (Eq. 18), with optimal weights $d_k=(1,18,30,7)/56$, and replace
 these by Z-type nonlinear weights (Eq. 21)
-$$\mathsf w_k=\frac{a_k}{\sum_la_l},\qquad a_k=d_k\Big(1+\frac{|\mathrm{IS}_0+3\mathrm{IS}_1-3\mathrm{IS}_2-\mathrm{IS}_3|}{\mathrm{IS}_k+\epsilon}\Big),\qquad \epsilon=10^{-6},$$
+$$\mathsf w_k=\frac{a_k}{\sum_la_l},\qquad a_k=d_k\Big(1+\frac{|\mathrm{IS}_0+3\mathrm{IS}_1-3\mathrm{IS}_2-\mathrm{IS}_3|}{\mathrm{IS}_k+\epsilon_{\mathrm Z}}\Big),\qquad \epsilon_{\mathrm Z}=10^{-6},$$
 with smoothness indicators built from first, second and third derivative
 estimates on the four-point stencil $\{x_{j-3+k},\dots,x_{j+k}\}$ (Eqs.
 22–25). The result is a solution-dependent tri-diagonal system (Eq. 26),
@@ -757,12 +821,13 @@ with $\alpha_{\mathrm W}=9/8$, $b_{\mathrm W}=-1/24$ (page-local; $E^*$
 the numerical flux, the source's $\hat E$), cell-edge fluxes only, a Roe flux,
 and a fifth-order weighted interpolation from three third-order
 candidates, as in WCNS-E above, with Z-type weights
-$a_k=d_k\big(1+|\mathrm{IS}_0-\mathrm{IS}_2|/(\mathrm{IS}_k+\epsilon)\big)$
-(Eqs. 12–14; the optimal weights and indicators are not printed).
-Setting $\epsilon=100$ (WCNS-L) "neglect[s] the nonlinear weight", setting
-$\epsilon=10^{-6}$ (WCNS-Z) keeps it; the shock-free airfoil results,
+$a_k=d_k\big(1+|\mathrm{IS}_0-\mathrm{IS}_2|/(\mathrm{IS}_k+\epsilon_{\mathrm Z})\big)$
+(Eqs. 12–14; the optimal weights and indicators are not printed;
+$\epsilon_{\mathrm Z}$ the regularizer, registry §11).
+Setting $\epsilon_{\mathrm Z}=100$ (WCNS-L) "neglect[s] the nonlinear weight", setting
+$\epsilon_{\mathrm Z}=10^{-6}$ (WCNS-Z) keeps it; the shock-free airfoil results,
 which favour WCNS-L, are under "Dissipation in turbulence" above. The
-WCNS family, its two sources and the open questions are collected on
+WCNS family, its sources (with the linear WCNS-E-4 of [Wu et al. 2024](/sources/wu-2024.md), §2.3) and the open questions are collected on
 [weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md).
 
 ## Bounded normalized-variable reconstruction on unstructured meshes
@@ -1066,12 +1131,12 @@ profiled; Tables 2–3).
   turbulence. Chapelier et al. (2024) compare one TENO scheme and one
   central/upwind hybrid with element methods on one turbulent flow, not
   two WENO variants.
-- **Low dissipation of TENO.** Chapelier et al. (2024) recall that TENO has
-  "considerably lower numerical dissipation" than WENO (§II.C) and find, in
+- **Low dissipation of TENO.** Chapelier et al. (2024, §II.C), citing Fu,
+  Hu & Adams, state that TENO has
+  "considerably lower numerical dissipation" than WENO and find, in
   their own comparison, that TENO yields "more small-scale dissipation" than
   the element methods and lower solenoidal dissipation on coarse grids
-  (§IV.A, §V). The two statements compare TENO with different schemes, so
-  they do not conflict.
+  (§IV.A, §V). The two statements compare TENO with different schemes.
 - Chapelier et al.'s conclusions group SPADE with the "sharp but
   oscillating" order-lowering schemes, while their §IV.A ranks it among the
   strongest shock-capturing solvers and §IV.B does not describe its Mach
@@ -1263,3 +1328,8 @@ profiled; Tables 2–3).
 - [Liu & Yuan (2023)](/sources/liu-2023-b.md) — abstract; §5.5–5.8, Figs. 9, 12, 15, 17 (WENO-JS and WENO-Z comparisons and reference); §6.
 - [Yu et al. (2023)](/sources/yu-2023.md) — §2 (STREAmS KEP/WENO5 hybrid).
 - [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §1 (unstructured high-order reconstruction, explicit subgrid models at shocks); §2.1–2.2, Eqs. (2.5)–(2.14) (AUSM+-up, ROUND operator and limiter form, parameter sets); §3.1–3.7, Figs. 2–17 (tests; deep-cavity Reynolds stresses); Eq. (3.3).
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §II, Eq. (6) (STREAmS KEP6/WENO5 switch in Mach 5 oblique-shock DNS); §V (fifth-order WENO in the RANS runs).
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.1 (UDL7/WENO7/WENO5 hybrid in OpenCFD-SCU, robustness statement); §3.3 (wake deviation attributed to a more dissipative WENO); Fig. 3, Table 2 (grid independence).
+- [Tang et al. (2024)](/sources/tang-2024.md) — §2.1 (the hybrid in OpenCFD-SC); §2.2, Table 2, Figs. 5–9 (wall-normal grid convergence of skin friction and heat flux).
+- [Wu et al. (2024)](/sources/wu-2024.md) — §2.3 (linear WCNS-E-4 in PHengLEI, pointer only).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.2, Table 1 (WENO and HWENO limiters for DG, interface oscillations); §4.4, Fig. 5 (DG level set against WENO5; review).

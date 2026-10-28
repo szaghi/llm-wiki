@@ -5,7 +5,7 @@ description: "Several RANS models, each trained for one flow class, are combined
 status: established
 aliases: [model aggregation, space-dependent model aggregation, XMA, mixture of experts, model blending, internal model blending, M_blend, expert models]
 tags: [rans, data-driven, symbolic-regression, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-27T15:47:00Z
+timestamp: 2026-10-28T07:07:00Z
 ---
 
 # Aggregation and blending of data-driven turbulence models
@@ -71,8 +71,9 @@ corrections, extracted from high-fidelity data by the $k$-corrective
 frozen-RANS method (of Schmelzer et al. 2020, as cited there) and
 regressed as symbolic models (see
 [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
-In registry notation, with page-local $b^\Delta_{ij}$ (extra anisotropy)
-and $\mathcal R_k$ (residual of the $k$ equation):
+In registry notation, with $b^\Delta_{ij}$ (extra anisotropy) and
+$b^R_{ij}$ as in registry §11 and page-local $\mathcal R_k$ (residual of
+the $k$ equation):
 
 $$b_{ij}=-\frac{\nu_t}{k}\langle S_{ij}\rangle+b^\Delta_{ij},\qquad \mathcal R_k=2k\,b^R_{ij}\,\partial_j\langle u_i\rangle,$$
 
@@ -83,10 +84,11 @@ becomes $\min\{2(\nu_t\langle S_{ij}\rangle-kb^\Delta_{ij})\partial_j\langle u_i
 "has the benefit of enhanced numerical stability" (§2, citing earlier work; see
 [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)). Both
 corrections use the 2-D form of Pope's basis with three tensors and two
-invariants, built from $S_{ij}/\omega$ and $\Omega_{ij}/\omega$ (Eqs. 7–10;
+invariants, built from $\mathsf S^\omega_{ij}=\langle S_{ij}\rangle/\omega$ and
+$\mathsf W^\omega_{ij}=\langle\Omega_{ij}\rangle/\omega$ (registry §11; Eqs. 7–10;
 see [tensor-basis neural network](/methods/tensor-basis-neural-network.md)).
-Since $\omega=\varepsilon/(\beta^*k)$, $S_{ij}/\omega=\beta^*\mathsf S_{ij}$
-with the registry-style $\mathsf S_{ij}=\tfrac{k}{\varepsilon}\langle S_{ij}\rangle$
+Since $\omega=\varepsilon/(\beta^*k)$, $\mathsf S^\omega_{ij}=\beta^*\mathsf S_{ij}$
+with the registry-§11 $\mathsf S_{ij}=\tfrac{k}{\varepsilon}\langle S_{ij}\rangle$
 *(compiler check, not in the sources)*.
 
 **Experts (Table 1).** Coefficients from SBL-SpaRTA, sparse Bayesian
@@ -200,7 +202,7 @@ Neither paper compares the two routes.
 
 ## Qualifications
 
-- **"Generally outperforms" is stronger than the tables.** Oulghelou et
+- **"Generally outperforms" against the tables.** Oulghelou et
   al. (2025, p. 20) summarize that the blend "generally outperforms the
   specialized models". In their Tables 6–7 $M_{\mathrm{SEP}}$ is closer to
   the DNS bubble in the converging–diverging channel (0.83 against 2.05 for

@@ -5,7 +5,7 @@ description: "The attached-eddy hypothesis models the logarithmic region of wall
 status: established
 aliases: [attached eddy model, attached-eddy model, Townsend's attached eddies, wall-attached eddies, inactive motions, uniform momentum zones]
 tags: [boundary-layer, dns, compressible, hypersonic]
-timestamp: 2026-10-28T02:18:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Attached-eddy hypothesis
@@ -184,6 +184,47 @@ are not resolved. They set this against the conclusion of Mizuno & Jiménez
 (2013, as cited) that log-region structures do not depend on seeding from
 the wall (§6.2). The paper does not name the attached-eddy hypothesis.
 
+## Attached eddies as the argument for WMLES grid convergence
+
+[Hu et al. (2024)](/sources/hu-2024.md) build a proposition on the
+grid convergence of [wall-modelled LES](/methods/wall-modelled-les.md) on
+the attached-eddy notion that eddy size scales with wall distance (§3,
+Fig. 2). A wall-stress model takes LES data at the matching height
+$h_{\mathrm{wm}}$ and returns the wall stress; once the attached eddies at
+$y=h_{\mathrm{wm}}$ are resolved, the model input, and with it the wall
+stress, stops changing with refinement, so convergence should start at a
+grid spacing $\Delta_i=C_{\mathrm H}h_{\mathrm{wm},i}$ for matching height
+$h_{\mathrm{wm},i}$, with a ratio $C_{\mathrm H}$ (page-local; the source's
+$C$) that "could potentially be the same" for all matching heights. On a
+channel at $Re_\tau=1000$, Spalart's boundary layer under a rotating
+free stream and a channel with a sudden spanwise pressure gradient, the
+mean wall stress, mean velocity and mean flow direction indeed collapse
+better against $\Delta/h_{\mathrm{wm}}$ than against $\Delta/\delta$, with
+onset near $\Delta/h_{\mathrm{wm}}\approx0.3$–$0.4$ (§6.1–6.2, Figs. 3–11).
+The streamwise r.m.s. velocity does not: "the matching location has no
+control over convergence of the Reynolds stress" (§6.2).
+
+To explain the difference they decompose the premultiplied streamwise
+spectrum of the channel after Hu, Yang & Zheng (2020, as they cite it) into
+three eddy classes (§6.2, Eq. 13, Figs. 13–14): attached eddies occupy
+$\alpha_{\mathrm A}y<\lambda_x<\beta_{\mathrm A}\delta$ for $y^+>100$, with
+$\alpha_{\mathrm A}=5.7$, $\beta_{\mathrm A}=2$ (page-local names for the
+source's $\alpha$, $\beta$; the source's third constant $\gamma=100$ is the
+lower bound of $y^+$), small-scale eddies the region of shorter wavelengths,
+and large-scale wall-detached eddies the third class; the energy of each
+class is summed from the discrete spectrum (Parseval) over
+$100\le y^+\le350$, where the mean log law also holds. Over cases with
+$h_{\mathrm{wm}}=0.2\delta$ the attached-eddy energy is grid-converged while
+the small-scale-eddy energy is not and grows with refinement. The authors
+conclude that the small-scale eddies, which do not scale with wall
+distance but contribute non-negligibly to the Reynolds stress, are why the
+attached-eddy-based proposition holds for mean quantities and fails for
+fluctuations. Assuming four cells per scale, they estimate from DNS spectra
+that grid spacings of 80 to 30 viscous units capture 70 to 90% of the
+small-scale-eddy energy, and take about 80%, $\Delta^+\approx50$ at
+$Re_\tau=1000$, as the requirement for converging the streamwise normal
+stress, a resolution at which WMLES "starts to approach WRLES" (§6.2, §7).
+
 ## Departures under strong wall cooling
 
 Huang et al. (2022) find that the Mach 10.9 boundary layer with
@@ -204,9 +245,12 @@ are in the cooled Mach 2 and 5.86 cases of Cogo et al. (2022, §3.1).
 
 ## Qualifications
 
-- Neither source tests the hypothesis itself; both report DNS features they
-  call consistent or inconsistent with it, at $Re_\tau$ up to about 2000
-  (Cogo et al.) and 1200 (Huang et al.).
+- Neither Cogo et al. (2022) nor Huang et al. (2022) test the hypothesis
+  itself; both report DNS features they call consistent or inconsistent
+  with it, at $Re_\tau$ up to about 2000
+  (Cogo et al.) and 1200 (Huang et al.). Hu et al. (2024) use it as the
+  premise of a grid-convergence proposition for WMLES, tested on LES at
+  $Re_\tau\approx1000$, not as an object of test.
 - Cogo et al. (2022) print Eqs. (5.9)–(5.10) as
   $l_{12}^*\sim(u_\tau\delta)(\partial\tilde u/\partial y)^{-1/2}$; as
   printed the right-hand side is not a length, which requires the factor
@@ -224,3 +268,4 @@ are in the cooled Mach 2 and 5.86 cases of Cogo et al. (2022, §3.1).
 - [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §2.2, Figs. 4–6 (predictions of the hypothesis, inactive motion, inner-peak growth, coherent-structure families); Marusic & Perry eddy types for APG history.
 - [Yu et al. (2023)](/sources/yu-2023.md) — §3, Fig. 6 (attached and detached variables after a shock interaction); §5.1, Fig. 12 (superposition footprints in the $u$, $w$ spectra, none in $v$).
 - [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §6.1–6.2, Figs. 19–22; App. C (outer peak missed by WMLES; inner–outer interaction speculation; Mizuno & Jiménez 2013 as cited).
+- [Hu et al. (2024)](/sources/hu-2024.md) — §3, Fig. 2 (matching-height proposition); §6.2, Eq. (13), Figs. 13–14 (attached, small-scale and detached eddy energies; $\Delta^+\approx50$ estimate); §7.

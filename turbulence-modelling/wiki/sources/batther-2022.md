@@ -9,7 +9,7 @@ year: 2022
 venue: "Comput. Fluids 249:105691"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Computers_amp_Fluids_Batther_Numerical_investigation_of_a_pitching_airfoil_undergoing_dyn.pdf"
 tags: [des, hybrid-rans-les, transition, separated-flow, rans]
-timestamp: 2026-10-27T05:48:00Z
+timestamp: 2026-10-28T11:47:00Z
 ---
 
 # Summary
@@ -104,7 +104,7 @@ this version.
 | Batther & Lee | Registry ([notation](/notation.md)) | Note |
 |---|---|---|
 | $\alpha$ | $\alpha$ (page-local: angle of attack) | **collision** with the registry's DG blending factor; page-local as on the [NACA 0012 page](/benchmarks/naca-0012-airfoil.md) |
-| $\dot\alpha(t^*)=\psi_\circ^+(1-e^{-4.6t^*/t_\circ})$ | (pitch rate; $\psi_\circ^+=0.05$, $t_\circ=0.5$) | Eq. 1, page-local |
+| $\dot\alpha(t^*)=\psi_\circ^+(1-e^{-4.6t^*/t_\circ})$ | pitch rate with $\dot\alpha_0^+=0.05$, $t_0=0.5$ (page-local, as on [dynamic stall](/definitions/dynamic-stall.md)) | Eq. 1 |
 | $t^*=tU_\infty/c$, $\Delta t^*=0.000256$ | (convective time, time step) | |
 | $Re$ | $Re_c$ | chord Reynolds number, $2\times10^5$ |
 | $M$ | $M$ | 0.1 |

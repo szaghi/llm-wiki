@@ -5,7 +5,7 @@ description: "Exact laws relate the energy cascade rate of MHD turbulence to two
 status: established
 aliases: [exact law, third-order law, Politano–Pouquet law, Kolmogorov–Yaglom law, energy cascade rate, A18 law, F21 law, compressible Hall MHD exact law]
 tags: [mhd, plasma, astrophysics, dns, compressible]
-timestamp: 2026-10-27T15:51:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Exact laws of (Hall-)MHD turbulence
@@ -234,7 +234,7 @@ dissipated" (§6).
   $\boldsymbol d_\eta/\sqrt{\mu_0\rho}$ the printed $\mathcal D_{A18}$ of
   Eq. 24 follows.)*
 - **Viscosity.** On this page $\nu$ is the source's coefficient, which it
-  calls "the dynamic viscosity" (§2.1), consistent with its place in the
+  calls "the dynamic viscosity" (§2.1) and places in the
   $\rho$-weighted momentum equation (Eq. 2); the Alfvén-speed form (Eq. 16)
   adds $\boldsymbol d_\nu$ to $\partial_t\boldsymbol u$ without a factor
   $1/\rho$, and §3.1 sets $Re=1/\nu$ "due to the normalization of the

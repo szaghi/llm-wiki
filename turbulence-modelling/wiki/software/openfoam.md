@@ -5,7 +5,7 @@ description: "OpenFOAM is the open-source unstructured finite-volume toolbox tha
 status: established
 aliases: [OpenFOAM, simpleFoam, pimpleFoam, DAFoam, libWallModelledLES, foam-extend, pUCoupledFoam, rhoCentralFoam, detonationFoam]
 tags: [software, rans, les, data-driven, numerical-dissipation, combustion]
-timestamp: 2026-10-28T01:57:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # OpenFOAM
@@ -41,6 +41,8 @@ these is a default of the code.
 | [Zhang et al. (2023)](/sources/zhang-2023-c.md), §3.4 | low-Mach reacting LES with flamelet-generated manifolds, presumed-PDF or [thickened-flame](/methods/thickened-flame-model.md) closure, [dynamic Smagorinsky](/methods/dynamic-procedure.md) | PISO; second-order backward time, second-order TVD convection and diffusion; fixed $\Delta t=0.32$ µs (CFL about 0.4) | not printed |
 | [Sun et al. (2023)](/sources/sun-2023.md), §2.2 | detonationFoam: compressible multi-component reacting Navier–Stokes or Euler with detailed chemistry, no turbulence model | derived from the density-based `rhoCentralFoam`; HLLC-P flux with second-order MUSCL, central diffusion, first-order implicit Euler for the non-reactive step, operator-split stiff chemistry (seulex); 2D adaptive refinement and dynamic load balancing | not printed |
 | [Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §3.4 | P-DNS with a continuous particle method; DPMFoam as Lagrangian reference | PIMPLE; first order in time, second-order FV in space | not printed |
+| [Wei et al. (2023)](/sources/wei-2023.md), §II | scramjetFoam: compressible reacting wall-resolved LES, dynamic one-equation [subgrid kinetic-energy model](/methods/subgrid-kinetic-energy-equation-model.md), laminar chemistry closure; `reactingFoam` and `rhoCentralFoam` as comparators | energy-preserving split convective flux with AUSM-type diffusion switched on by a Ducros sensor (threshold 0.05); Jameson-style four-stage Runge–Kutta | 7 |
+| [Zhang et al. (2024)](/sources/zhang-2024.md), §2.3 | Spalart–Allmaras-based DDES of a compressor tandem cascade | second-order central convection with least-squares weighting of the flux, second-order backward time, $\Delta t=10^{-6}$ s, mean Courant number 0.65 | not printed |
 
 ## Roles in the bundle
 
@@ -126,7 +128,7 @@ time" and give no grid-convergence study. Their maximum Courant number is
 about 10 in a few cells near the blade tips, with an average of about 0.017
 (§2.1, §2.3).
 
-**Compressible in-house solvers.** Two chunk-11 sources build compressible
+**Compressible in-house solvers.** Two sources build compressible
 scale-resolving solvers inside OpenFOAM.
 
 - [Cheng et al. (2023)](/sources/cheng-2023-b.md) state that OpenFOAM's
@@ -160,8 +162,49 @@ scale-resolving solvers inside OpenFOAM.
   diffusivity and hybrid schemes as alternatives for discontinuities and
   use neither (§3.4).
 
+**An energy-preserving supersonic film-cooling solver.**
+[Wei et al. (2023)](/sources/wei-2023.md) build scramjetFoam on OpenFOAM 7
+for wall-resolved LES of the Burrows–Kurkov supersonic hydrogen film
+(Mach 2.44 vitiated mainstream, sonic tangential slot), with an implicit
+grid filter $\Delta=(\Delta_x\Delta_y\Delta_z)^{1/3}$. Its convective flux
+is split into a convective and a pressure part, discretized in the
+discretely energy-preserving form of Pirozzoli and of Modesti & Pirozzoli
+(which they cite), and AUSM-type numerical diffusion is added only where a
+Ducros sensor exceeds 0.05 (§II C, Eqs. 16–19; see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
+and [shock sensors](/definitions/shock-sensor.md)). The subgrid closure is
+the dynamic one-equation $k_{\mathrm{sgs}}$ model with constant subgrid
+$Pr_t=0.85$ and $Sc_t=0.7$ (§II B; see
+[turbulent Prandtl number](/definitions/turbulent-prandtl-number.md)), and
+the inflow uses synthetic eddies on a RANS precursor
+([inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
+
+- *Against the shipped solvers.* On the inviscid
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) on a $64^3$
+  mesh without subgrid model, scramjetFoam keeps the volume-averaged
+  kinetic energy constant "over a long duration", while `reactingFoam` and
+  `rhoCentralFoam`, both configured second order, dissipate it "to 65% and
+  30% of the initial value"; scramjetFoam "can reasonably track the growth
+  trend of enstrophy" of the Brachet et al. solution and the two shipped
+  solvers do not (§III A, Fig. 4). The authors call the dissipation of
+  these second-order solvers possibly "unacceptable for LES application";
+  see [numerical dissipation](/properties/numerical-dissipation.md).
+- *Resolution.* About $7.4\times10^6$ structured cells with a first cell at
+  $y^+\approx0.6$, $\Delta x^+=120$, $\Delta z^+=40$, $\Delta y^+<60$; 99.5%
+  of the cells of a boundary-layer test resolve more than 80% of the
+  turbulent kinetic energy by Pope's criterion, the rest lying in the
+  viscous sublayer (§II E, §III B, Fig. 6).
+
+**A compressor-cascade DDES.** [Zhang et al. (2024)](/sources/zhang-2024.md)
+run Spalart–Allmaras-based
+[delayed DES](/methods/detached-eddy-simulation.md) of the tip-leakage flow
+of a NACA 65-K48 tandem
+[compressor cascade](/benchmarks/compressor-cascade.md) in OpenFOAM, on
+about 6.65 million cells over half the span with a mid-span symmetry plane
+(§2.2–2.3); the schemes are in the table above.
+
 **Reacting flows: a turbulent-flame LES and a laminar detonation solver.**
-Two chunk-12 sources build reacting-flow solvers in OpenFOAM.
+Two sources build reacting-flow solvers in OpenFOAM.
 
 - [Zhang et al. (2023)](/sources/zhang-2023-c.md) run an LES of the
   Darmstadt multi-regime burner (stratified methane/air, flame MRB26b) with
@@ -305,6 +348,10 @@ first-order time integration and second-order finite volumes in space (see
   due to the very small time step in the order of $10^{-9}$ s" (§2.2.1).
   [Zhang et al. (2023)](/sources/zhang-2023-c.md) give no OpenFOAM version
   and no Reynolds number of the burner.
+- Wei et al. (2023) attribute part of the enstrophy error of all three
+  solvers to grid resolution and add that an enstrophy-conserving scheme is
+  harder to implement in finite volume (§III A). Zhang et al. (2024) name
+  neither the OpenFOAM solver application nor the version.
 
 # Citations
 
@@ -330,3 +377,5 @@ first-order time integration and second-order finite volumes in space (see
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §3.4 (OpenFOAM as P-DNS core library, DPMFoam reference, PIMPLE, discretization orders).
 - [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2 (mesh, Pope criterion); §3.4 (OpenFOAM LES-FGM solver, schemes, time step, averaging).
 - [Sun et al. (2023)](/sources/sun-2023.md) — §1 (rhoCentralFoam-based solvers, OpenFOAM AMR); §2.2, Table 1 (detonationFoam numerics, 2D AMR, load balancing); §3.3, Fig. 5 (HLLC-P against KNP and HLLC); §3.9, Figs. 15–16 (AMR and load-balancing efficiency); §4.
+- [Wei et al. (2023)](/sources/wei-2023.md) — §II A–C, Eqs. (12)–(19) (scramjetFoam: subgrid model, split flux, Ducros-switched AUSM diffusion); §II E (grid); §III A, Fig. 4 (inviscid Taylor–Green against reactingFoam and rhoCentralFoam); §III B, Fig. 6 (resolved-energy fraction).
+- [Zhang et al. (2024)](/sources/zhang-2024.md) — §2.2–2.3 (OpenFOAM DDES set-up, schemes, time step).

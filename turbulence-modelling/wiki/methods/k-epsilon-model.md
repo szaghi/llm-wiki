@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "k-ε models"
-description: "Two-equation RANS eddy-viscosity models transporting the turbulent kinetic energy and its dissipation rate: the standard high-Reynolds form, its constants and log-law calibration, the realizable variant with a two-layer wall treatment, low-Reynolds and elliptic-relaxation relatives, and evidence on bluff-body wakes, periodic hills and learned non-linear corrections."
+description: "Two-equation RANS eddy-viscosity models transporting the turbulent kinetic energy and its dissipation rate: the standard high-Reynolds form, its constants and log-law calibration, the realizable variant with a two-layer wall treatment, low-Reynolds and elliptic-relaxation relatives, and evidence on bluff-body wakes, periodic hills, shock interactions and learned non-linear corrections."
 status: established
 aliases: [k-epsilon, standard k-ε, Launder–Sharma k-ε, realizable k-ε, RKE, Shih k-ε, enhanced wall treatment, EWT, two-layer k-ε]
 tags: [rans, eddy-viscosity, separated-flow, boundary-layer]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # k-ε models
@@ -57,7 +57,7 @@ fluctuating fields inside a hybrid simulation; see
 [hybrid RANS/LES](/definitions/hybrid-rans-les.md)
 ([Haering et al. (2022)](/sources/haering-2022.md), §II D, Eqs. 1–2).
 
-**Near-wall integration.** Elzaabalawy et al. (2023) recall that
+**Near-wall integration.** Elzaabalawy et al. (2023, §1) state that
 wall-resolved versions of the model need ad hoc damping functions near the
 wall "that increase the stiffness of the model and can present problems",
 so that wall functions are usually employed with $k$-$\varepsilon$, whereas
@@ -67,7 +67,7 @@ with $\omega\to\infty$ there
 [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md) and
 [RANS wall functions](/methods/rans-wall-function.md)). Tomboulides et al.
 (2025) make the same comparison from the side of a high-order
-spectral-element code: they recall that the $k$-$\varepsilon$ model needs
+spectral-element code: they state (§1) that the $k$-$\varepsilon$ model needs
 wall damping functions that depend on the wall distance (citing Lam &
 Bremhorst) and lacks a natural wall boundary condition for $\varepsilon$
 (citing Patel et al.), and they motivate the
@@ -285,9 +285,9 @@ the recirculation length "in most of the cases" (§4.1.1).
 
 ## Evidence
 
-**Bluff-body wakes.** On the 25° Ahmed body Delassaux et al. recall from
-their earlier calibration that the realizable model gives no separation on
-the slant, SST a massive one, and only the scale-resolving models the
+**Bluff-body wakes.** On the 25° Ahmed body Delassaux et al. (§5) cite
+their earlier calibration, in which the realizable model gives no separation on
+the slant, SST a massive one, and only the scale-resolving models capture the
 separation and reattachment (§5; see [Ahmed body](/benchmarks/ahmed-body.md)).
 On a full-scale estate car (Peugeot 308 SW, $Re_L=1.3\times10^7$ on the car
 length, 115 million cells, 20 prism layers at $y^+\approx1$) they compare it
@@ -336,7 +336,7 @@ App. A; arXiv v2). Against a spanwise-periodic WALE LES, the baseline
 completely misses the second one", gives a reattachment length of
 $5.61h$ against $9.10h$, and "severely under/over-estimates" the magnitude
 of the Reynolds stress and "misrepresents its spatial variability" (§3.4,
-Figs. 7–8, Table 5). The authors recall that their tensor-basis closure
+Figs. 7–8, Table 5). The authors state that their tensor-basis closure
 reduces to this model for $g^{(1)}=-0.09$ and all other coefficients zero
 (§2.2.1, Eq. 15); with the Boussinesq closure and $\nu_t=C_\mu k^2/\varepsilon$
 the coefficient of $T^{(1)}=\mathsf S$ in the registry's $b_{ij}$ is
@@ -376,7 +376,7 @@ extrapolation failure at $Re_\tau=4200$ (2.3% to 14.0%) (§5, Table 3; details
 on [field inversion and machine learning](/methods/field-inversion-machine-learning.md)
 and [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
 
-**Lattice Boltzmann hosts.** Mozaffari et al. (2024) recall
+**Lattice Boltzmann hosts.** Mozaffari et al. (2024, §1) cite
 $k$-$\varepsilon$ implementations in lattice Boltzmann solvers, including
 a $k$-$\varepsilon$-based hybrid RANS/LES of Sajjadi et al., as the
 precedent of their SST implementation in a standard lattice Boltzmann
@@ -405,8 +405,33 @@ as "ensemble averaged solutions cannot predict turbulence modulation". In
 sources depending only on the Stokes number predict non-realistic rates (see
 [pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md)).
 
+**Shock/boundary-layer interaction, a priori.** On their DNS of Mach 5
+oblique-shock/boundary-layer interactions (wedges of $14^\circ$, $10^\circ$,
+$6^\circ$, run with [STREAmS](/software/streams.md)), Yu et al. (2023b)
+evaluate the two-equation estimate $\mu_t=C_\mu\langle\rho\rangle k^2/\varepsilon$
+with $C_\mu=0.09$ against the best-fit eddy viscosity of the DNS stresses
+([Yu et al. (2023b)](/sources/yu-2023-b.md), §IV, Eq. 20, Fig. 18a). It
+matches upstream but "severely" overestimates the eddy viscosity downstream
+of the interaction (at $y/\delta_r=0.5$ in the strongest case), as Morgan et
+al. (2013) also found (as cited). A wall-pressure-dependent coefficient
+
+$$C_\mu(x)=\frac{0.09}{1+C_{\mu,1}\big(\langle p_w\rangle(x)/\langle p_w\rangle_r-1\big)},\qquad C_{\mu,1}=1,$$
+
+($C_{\mu,1}$ page-local, fitted to the DNS; $\langle p_w\rangle_r$ the wall
+pressure at the reference station) restores the downstream eddy viscosity
+and the reconstructed shear stress except where separation begins (Eq. 21,
+Figs. 18b, 19). The authors transfer it to the
+[$k$-$\omega$ SST model](/methods/k-omega-sst-model.md) as a variable
+$\beta^*$, which they call equivalent to $C_\mu$ (§V); the a posteriori
+results are on that page and on
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+
 ## Qualifications
 
+- Yu et al. (2023b) justify $\langle p_w\rangle$ as the variable of their
+  $C_\mu(x)$ "by simple reasoning and data fitting" (§IV) and note that model
+  constants such as $C_{\mu,1}$ in RANS can differ from DNS-fitted values
+  (§V).
 - Delassaux et al. print neither the realizable model nor the Wolfshtein
   length scales; the statements above are their description.
 - Tang et al. attribute the constants to Launder & Sharma while printing the
@@ -457,3 +482,4 @@ sources depending only on the Stokes number predict non-realistic rates (see
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §3.1, §3.2.2, Fig. 28.
 - [Mays et al. (2023)](/sources/mays-2023.md) — §2.1.1 Eqs. 1–8, App. Eqs. 16–21, §3.2.1–§3.2.2 Tables 4–6, Fig. 6.
 - [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §2.2 Eqs. 5–8, Fig. 1, §5 Table 3, §6.
+- [Yu et al. (2023b)](/sources/yu-2023-b.md) — §IV, Eqs. (20)–(21), Figs. 18–19 (two-equation eddy viscosity against DNS in shock interactions, wall-pressure-dependent $C_\mu$); §V.

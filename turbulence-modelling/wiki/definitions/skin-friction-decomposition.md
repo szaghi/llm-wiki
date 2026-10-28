@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Skin-friction decomposition"
-description: "Integral identities that split the mean skin friction of a wall-bounded flow into viscous-dissipation, turbulence-production, pressure-gradient and spatial-growth contributions; the compressible Renard–Deck form, its canonical/mixing-layer split downstream of a shock interaction, and the bound on the growth term."
+description: "Integral identities that split the mean skin friction of a wall-bounded flow into viscous-dissipation, turbulence-production, pressure-gradient and spatial-growth contributions; the compressible Renard–Deck form, its canonical/non-canonical split downstream of a shock interaction and in a reacting supersonic boundary layer, and the bound on the growth term."
 status: established
 aliases: [Renard–Deck decomposition, RD decomposition, mean-kinetic-energy decomposition of skin friction, skin-friction budget]
 tags: [boundary-layer, compressible, dns, separated-flow]
-timestamp: 2026-10-28T02:18:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Skin-friction decomposition
@@ -120,13 +120,55 @@ Mach 2.28 boundary layer with mild separation, the database of
 
 They conclude that the strong outer large-scale motions of the hidden mixing
 layer make a small ("trivial") net contribution to the skin friction (§4.2,
-§7). The negative $C_G$ is consistent with the stated bound: downstream of
-the interaction the total shear stress is not non-increasing in $y$
-(Fig. 8), so the hypothesis of the bound fails. In the same region $\delta$
+§7). Yu et al. state that downstream of the interaction the total shear
+stress is not non-increasing in $y$ (Fig. 8), so the hypothesis of the bound
+fails there and a negative $C_G$ is possible (§4.2). In the same region $\delta$
 grows quickly while the displacement and kinetic-energy thicknesses stay
 almost constant, which the authors read as wall-normal redistribution of
 mean kinetic energy by mean convection without significant dissipation
 (Eq. 4.10, Fig. 11).
+
+## Results in a reacting supersonic boundary layer
+
+[Wang & Xu (2024)](/sources/wang-2024-h.md) (§4.3, Eqs. 4.3–4.5) apply the
+same identity to the DNS of a Mach 2.33 spatially developing boundary layer
+with a sonic hydrogen film and finite-rate combustion, at $Re_\tau\approx1000$
+over an adiabatic, non-catalytic wall, and to its chemistry-frozen companion
+run. Their form differs from that of Yu et al. (2023) in two conventions,
+recorded in words: the prefactor is $2/(\rho_\infty u_\infty^3)$ with
+free-stream rather than edge values, and no separate pressure-gradient term
+$C_P$ is printed, the growth term $C_{f,G}$ (the page's $C_G$) holding the
+mean advection and the streamwise derivative of the normal stresses; the
+same paper reports that the mean pressure varies by less than 4% across the
+layer (App. A). Their subscripts $V$, $T$, $G$ map onto $C_V$, $C_T$, $C_G$.
+
+- At $x/h_0=150$ ($h_0=4$ mm the hydrogen-stream height, page-local), the
+  reacting case has $C_{f,G}\approx18\%$ and $C_{f,V}\approx C_{f,T}\approx41\%$
+  of $C_f$; both $C_{f,V}$ and $C_{f,T}$ are lower than in the non-reacting
+  case, the turbulent part showing the larger difference (Fig. 13a).
+- The reacting $C_f$ there is about 80% of the non-reacting one, a reduction
+  carried by a lower wall shear strain despite a higher wall viscosity (from
+  a higher wall temperature) (§4.3, Fig. 12).
+- The turbulent part is split, after Yu et al. (2023), into a canonical part
+  $C_{f,Tc}$ built from the Reynolds shear stress of the adiabatic Mach 2,
+  $Re_\tau=1000$ DNS of Pirozzoli & Bernardini (2011, as Wang & Xu cite it)
+  and a non-canonical part $C_{f,Tn}$ (Eq. 4.5). The canonical shear stress in
+  inner units is taken as constant along $x$, because $Re_\tau$ varies little,
+  and mapped back with the local wall quantities. At $x/h_0=30$ the
+  mixing-layer-induced (non-canonical) portion is about half; it nearly
+  vanishes by $x/h_0=70$; at $x/h_0=150$, $C_{f,Tn}$ is $-24\%$ of $C_{f,T}$
+  in the reacting and $-5\%$ in the non-reacting case (Fig. 13b).
+
+The authors read the negative non-canonical part as the modulation of the
+Reynolds stress by non-canonical mean density and viscosity profiles (the
+cold hydrogen layer, then heat release), quantified by the local friction
+Reynolds number of Patel, Boersma & Pecnik (2016, as cited)
+(§4.2; see [compressible velocity transformations](/definitions/compressible-velocity-transformation.md)).
+Where Yu et al. (2023) find the non-canonical remainder compensated by a
+negative growth term behind a shock interaction, Wang & Xu find a positive
+growth term (18%) and a negative non-canonical turbulent part; the two flows
+differ (shock recovery against wall-jet transition and combustion), and
+neither paper compares the other's case.
 
 ## Qualifications
 
@@ -140,11 +182,21 @@ mean kinetic energy by mean convection without significant dissipation
   stress taken as the same function of $y/\delta$ at every station, an
   assumption Yu et al. (2023, §4.2) base on the self-similarity of
   flat-plate boundary layers (Kumar & Mahesh 2021, as they cite it).
-- The bundle's only source for the decomposition is Yu et al. (2023); the
-  original derivations (Renard & Deck 2016; Fan, Li & Pirozzoli 2019) are
-  cited there, not ingested.
+- The bundle's sources for the decomposition are Yu et al. (2023) and
+  [Wang & Xu (2024)](/sources/wang-2024-h.md), who take the compressible form
+  from Renard & Deck (2016) and Fan, Li & Pirozzoli (2019) and the canonical
+  split from Yu et al. (2023); the original derivations are cited there, not
+  ingested.
+- Wang & Xu (2024) print slips in the split: §4.3 says the modulation gives
+  "a negative contribution to $C_{f,Tc}$" and that the mixing-layer-induced
+  portion at $x/h_0=30$ is "approximately half of the $C_{f,Tc}$", while the
+  next clause and Fig. 13(b) assign the $-24\%$ to the non-canonical
+  $C_{f,Tn}$; Fig. 14(c) labels the non-canonical stress $\bar\tau_{m,xy}$; and
+  the inner-scaled Reynolds shear stress is normalized by the wall density
+  in §4.2 but by the local mean density in Eq. (4.4).
 
 # Citations
 
 - [Yu et al. (2023)](/sources/yu-2023.md) — §4.1, Eq. (4.1); §4.2, Eqs. (4.2)–(4.10), Figs. 8, 10, 11; §7.
 - [Yu et al. (2022)](/sources/yu-2022-e.md) — §2 (the DNS database analysed by Yu et al. 2023).
+- [Wang & Xu (2024)](/sources/wang-2024-h.md) — §4.2, Eq. (4.2); §4.3, Eqs. (4.3)–(4.5), Figs. 12–14; App. A.

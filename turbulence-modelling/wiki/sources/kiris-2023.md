@@ -156,8 +156,9 @@ duplicates.
 
 # Pages created or updated
 
-Chunk 12 (2026-10-28). This source is cited on:
+Chunk 12 (2026-10-28), cited further in chunk 13. This source is cited on:
 
+- [Gaussian (Boeing) bump](/benchmarks/gaussian-bump.md)
 - [JAXA Standard Model high-lift configuration](/benchmarks/jaxa-standard-model.md)
 - [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)
 - [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md)

@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Fluids 34:035104"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physics_of_Fluids_Seyedi_A_data-driven_dynamic_nonlocal_subgrid-scale_model_for_turbu.pdf"
 tags: [les, sgs-model, data-driven, energy-cascade, a-priori-a-posteriori]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Summary
@@ -64,7 +64,7 @@ Page-local symbols, as on the [fractional SGS model](/methods/fractional-sgs-mod
 page: $s$ the fractional order (the paper's $\alpha$); $(-\nabla^2)^s$ the
 fractional Laplacian; $C_{\mathrm{fr}}$, $F(s)$, $\nu_s=C_{\mathrm{fr}}F(s)$
 the model coefficient, its Gamma-function factor and their product;
-$\ell_\Delta$ the filter width in units of DNS grid spacings (see the
+$\ell_\Delta$ the filter width in units of DNS grid spacings (registry §11; see the
 notation map); $\mathcal T_{ij}$ the subtest-scale stress; $Q_i$ the nonlocal
 contraction term.
 
@@ -121,7 +121,7 @@ contraction term.
 | $G_{ij}=\widehat{\bar u_i\bar u_j}-\hat{\bar u}_i\hat{\bar u}_j$ | $L_{ij}$ | resolved stress of the Germano identity |
 | $\nu_t=C_s\mathcal L^2\lvert\bar S\rvert$ | $\nu_t=(C_s\Delta)^2\lvert\bar S\rvert$ | **collision:** the source's $C_s$ is the registry's $C_s^2$; value not printed |
 | $\mathcal L$ | $\Delta$ | "effective grid scale"; **collision** with the registry loss $\mathcal L$ |
-| $\mathcal L_\delta=\mathcal L/(2\delta_X)$, $\delta_X=2\pi/N$ | $\ell_\Delta$ (page-local) | filter size in DNS grid spacings, factor 2 as printed |
+| $\mathcal L_\delta=\mathcal L/(2\delta_X)$, $\delta_X=2\pi/N$ | $\ell_\Delta$ (registry §11) | filter size in DNS grid spacings, factor 2 as printed |
 | $N$ | $N_x$ | DNS points per direction (320, 520, 1024) |
 | $(-\Delta^\alpha)$, $(-\Delta)^\alpha$ | $(-\nabla^2)^s$ (page-local) | **collision:** the source's $\Delta$ is the Laplacian, not the filter width |
 | $\alpha$, $\alpha^{opt}$ | $s$, $s^{\mathrm{opt}}$ (page-local) | fractional order; renamed because the registry's $\alpha$ is the DG/FV blending factor |

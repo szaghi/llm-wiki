@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Fluids 34:115135"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physics_of_Fluids_Hausmann_An_efficient_model_for_subgrid-scale_velocity_enrichment_for.pdf"
 tags: [sgs-velocity-reconstruction, spectral-eddy-viscosity, isotropic-turbulence, rapid-distortion-theory, kinematic-simulation]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T11:47:00Z
 ---
 
 # Summary
@@ -62,7 +62,7 @@ this page is that of this version.
 
 The source's tilde (LES filter) is the registry overbar; its subgrid
 velocity $u'$ is $u^<_i$, its RNG viscosity $\nu'_t(k)$ is written
-$\nu^{\mathrm{RNG}}_t(k)$ (page-local), its $K_{desired}$, $K_{actual}$ are $k^{\mathrm{tgt}}_{\mathrm{sgs}}$, $k^{\mathrm{act}}_{\mathrm{sgs}}$,
+$\nu^{\mathrm{RNG}}_t(k)$ (registry §11), its $K_{desired}$, $K_{actual}$ are $k^{\mathrm{tgt}}_{\mathrm{sgs}}$, $k^{\mathrm{act}}_{\mathrm{sgs}}$,
 and $Q$ (second invariant of the velocity gradient) is $Q_A$.
 
 1. Existing reconstructions (fractal interpolation, kinematic simulation, deconvolution and estimation, dynamic deconvolution, spectral enrichment of Bassenne et al., variational multiscale and multilevel methods, Gabor modes of Ghate & Lele) are limited in efficiency, applicability or accuracy; Bassenne et al. cost "of the order of a DNS", Ghate & Lele need mode quenching for long times (§I). **Stated**
@@ -112,7 +112,7 @@ and $Q$ (second invariant of the velocity gradient) is $Q_A$.
 | $\tau_{ij}=\widetilde{u_iu_j}-\tilde u_i\tilde u_j$ | $\tau_{ij}$ | positive trace, agree |
 | $\lvert\tilde S_{ij}\rvert=\sqrt{2\tilde S_{ij}\tilde S_{ij}}$ | $\lvert\bar S\rvert$ | factor two included |
 | $C_S$, $C_V$, $C_I$ | $C_s$, (Vreman coefficient), $C_I$ | 0.1, 0.025, 0.0826 |
-| $\nu'_t(k)$, $C_\nu$ | $\nu^{\mathrm{RNG}}_t(k)$, $C_\nu$ | page-local RNG viscosity of the subgrid equation and its constant; compare $\nu_t(k\mid k_c)$ |
+| $\nu'_t(k)$, $C_\nu$ | $\nu^{\mathrm{RNG}}_t(k)$, $C_\nu$ | registry-§11 RNG viscosity of the subgrid equation and its constant; compare $\nu_t(k\mid k_c)$ |
 | $K_{desired}$, $K_{actual}$, $K_{est}$ | $k^{\mathrm{tgt}}_{\mathrm{sgs}}$, $k^{\mathrm{act}}_{\mathrm{sgs}}$, $k_{\mathrm{sgs}}$ (target, present, Yoshizawa estimate) | page-local superscripts, as on the enrichment page |
 | $K$ (total), $u_{rms}=\sqrt{2K/3}$ | $k$, $u_{\mathrm{rms}}$ | |
 | $A_m$, $B_m$, $k_m$, $N_m$ | (Fourier coefficients, wavevector, mode count) | page-local |

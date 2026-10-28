@@ -9,7 +9,7 @@ year: 2023
 venue: "Combust. Flame 257:113001"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Combustion_and_Flame_Zhang_Large-eddy_simulation_of_the_Darmstadt_multi-regime_turbulen.pdf"
 tags: [combustion, les, tabulated-chemistry, dynamic-procedure]
-timestamp: 2026-10-28T02:13:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Summary
@@ -120,9 +120,9 @@ $Z_v$, $Y_{c,v}$; $\langle\cdot\rangle$ is a time average.
 | $\alpha$ (variance model, 1/12) | $\alpha_{\mathrm v}$ (page-local) | **collision** with the DG blending factor $\alpha$ |
 | $\alpha$ (Eq. 21) | $\alpha_{\mathrm{fp}}$ (page-local) | alignment angle of $\nabla\tilde Z$ and $\nabla\tilde Y_c$; second meaning of $\alpha$ in the source |
 | $F$, $F_{max}$, $n$ | $F$, $F_{\max}$, $n$ | thickening factor (registry §11), its maximum, points across the front (5) |
-| $\Xi_\Delta$ | $\Xi_\Delta$ (page-local) | subgrid wrinkling factor, as on the thickened-flame page |
+| $\Xi_\Delta$ | $\Xi_\Delta$ (registry §11) | subgrid wrinkling factor, as on the thickened-flame page |
 | $\beta$ (Eq. 12) | $\beta_{\mathrm{Ch}}$ (page-local) | wrinkling exponent 0.5; **collision** with the field-inversion $\beta(\boldsymbol x)$ |
-| $\Omega$, $\Omega_1$, $\Omega_2$, $\Omega_3$ | $\Omega_{\mathrm{fs}}$, $\Omega_1$, $\Omega_2$, $\Omega_3$ (page-local) | flame sensors; **collision** with the rotation-rate tensor $\Omega_{ij}$ |
+| $\Omega$, $\Omega_1$, $\Omega_2$, $\Omega_3$ | $\Omega_{\mathrm{fs}}$ (registry §11), $\Omega_1$, $\Omega_2$, $\Omega_3$ (page-local) | flame sensors; **collision** with the rotation-rate tensor $\Omega_{ij}$ |
 | $\Gamma_\Delta$, $f_u$, $f_\Delta$, $f_{Re}$, $Re_\Delta$ | (efficiency function and its parts, subgrid Reynolds number) | page-local |
 | $u'_\Delta$ | $u'_\Delta$ | subgrid velocity scale (registry §11) |
 | $C_k$, $a$, $b$ (App. A) | (efficiency-function constants) | page-local; **collision** with the DES length factor $C_k$; Gruhlke's $a$, $b$ are other constants |

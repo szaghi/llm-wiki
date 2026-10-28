@@ -5,7 +5,7 @@ description: "Scale-similarity and deconvolution models build the subgrid stress
 status: established
 aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, approximate deconvolution model, ADM, D3M, DIAD, DDM, direct deconvolution model, Layton–Lewandowski model, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model, dynamic iterative approximate deconvolution, DIAD_W]
 tags: [les, sgs-model, filtering, combustion]
-timestamp: 2026-10-28T02:14:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Scale-similarity and mixed subgrid-scale models
@@ -27,7 +27,7 @@ the structural part lacks.
 ## Forms
 
 [Abe (2021)](/sources/abe-2021.md) (§II B, Eqs. 6–11) prints two forms with
-a top-hat test filter $\hat\cdot$ of twice the grid-filter width. Recalling
+a top-hat test filter $\hat\cdot$ of twice the grid-filter width. Citing
 the Bardina concept $(\bar u_i-\bar{\bar u}_i)(\bar u_j-\bar{\bar u}_j)$
 (Eq. 6), the author's **Bardina-type model** (BRD, from the author's
 earlier work) is
@@ -102,9 +102,8 @@ model as a similarity-type model, the one link between the two classes.
   $\Pi=-\tau_{ij}\bar S_{ij}$ can be negative locally without the numerical
   instability of a negative eddy viscosity (Vela-Martín 2022, §2.2). In the
   author's view, eliminating backscatter "may be unnecessary or undesirable"
-  for such models (§8). This is a difference of emphasis with the two
-  sources above, which treat model backscatter as a stability risk to be
-  removed.
+  for such models (§8). Prakash et al. (2022, §II), above, treat model
+  backscatter instead as a stability risk.
 - **Limits of a priori correlation.** Agrawal et al. (2022, §V) note that
   component-wise correlations do not measure alignment, and Vela-Martín
   (2022, §6.3, §8) shows that equivalent stress representations correlate
@@ -380,6 +379,39 @@ et al. and Liu et al. for the statement that similarity and deconvolution
 models fail in actual LES; the paper runs no LES with the similarity
 stress itself as the closure (§3).
 
+### Mixed similarity model in wall-modelled LES of a separated flow
+
+[Zhou & Bae (2024)](/sources/zhou-2024-b.md) (§2.1, Eq. 1) use the mixed
+similarity model of Bardina et al. and Sarghini, Piomelli & Balaras
+(cited), with explicit filtering,
+
+$$\tau_{ij}=-2(C_s\Delta)^2\lvert\bar S\rvert\bar S_{ij}+\big(\widehat{\bar u_i\bar u_j}-\hat{\bar u}_i\hat{\bar u}_j\big),$$
+
+that is a Smagorinsky term with $C_s=0.13$ ("without undergoing any
+optimization") and the similarity term $L_{ij}$ with unit coefficient, the
+secondary filter $\hat\cdot$ "chosen here as Gaussian filtering" (width
+not printed) and $\Delta$ the cube root of the cell volume. They call it
+"a nonlinear model capable of accounting for the anisotropy of SGS
+stress". In wall-modelled LES of the spanwise-periodic
+[Gaussian bump](/benchmarks/gaussian-bump.md) at $Re_L=2\times10^6$ with
+the reference mean wall stress imposed:
+
+- **Larger bubble, consistent across meshes** (§3.1, Figs. 4, 8, 9). The
+  model over-predicts the separation bubble ("significantly larger" than
+  the reference on the baseline mesh) and the leeward boundary-layer
+  thickness, but gives bubble sizes consistent across four isotropic
+  meshes, which the authors read as a possible benefit of the stress
+  anisotropy.
+- **Highest dissipation** (§3.1, Figs. 7, 10–11). It gives the highest
+  subgrid dissipation $-\tau_{ij}\bar S_{ij}$ at all stations and the
+  lowest first-cell velocity ("strong near-wall dissipation"), and
+  subgrid dissipation dominates the viscous one throughout the boundary
+  layer.
+- **Anisotropic cells** (§3.3, Fig. 17). On cells of aspect ratio
+  $4:1:2$ the bubble is enlarged on the two coarsest meshes and strongly
+  reduced on the baseline one, so the mesh consistency seen on isotropic
+  meshes is lost; the authors attribute this to the cube-root filter width.
+
 ## Velocity-gradient (nonlinear) form
 
 Agrawal et al. (2022, App. C, Eq. C3) show that their
@@ -392,6 +424,20 @@ added Smagorinsky term, whereas their dynamic coefficients supply enough
 dissipation without one (§I, §VII.A).
 
 ## Approximate deconvolution
+
+**Historical origin, as recounted.** [Kim & Leonard (2024)](/sources/kim-2024-b.md)
+(§3.1, §2.2) recall that Leonard's formal derivation of the filtered
+equations (1973, 1974) produced, beside the stresses to be modelled, "an
+additional, deterministic stress-like term that would account for some of
+the SGS stresses without modeling", now called the tensor-diffusivity
+model (Leonard 2015) and "the first term of the deconvolution method"
+(Stolz et al. 2001), all cited. With the Orszag–Patterson spectral code,
+Leonard and Patterson (unpublished, 1973) found that about 40% of the
+total nonlinear transfer to the subgrid scales was due to the filtered
+nonlinear term. No equation is printed; the tensor-diffusivity model is
+an alias of the [gradient model](/methods/gradient-model.md) in this
+bundle.
+
 
 [Domingo & Vervisch (2023)](/sources/domingo-2023.md) (§3.1) describe
 approximate deconvolution of a resolved scalar $\bar\phi$ in LES of premixed
@@ -512,7 +558,7 @@ truncation" that captures the leading nonlocal effects (see
 write the same van Cittert iteration, $u^{(j+1)}=u^{(j)}+(\bar u-Gu^{(j)})$
 from $u^{(0)}=\bar u$, whose truncation after $N_{\mathrm{AD}}$ terms
 recovers $u$ up to an error of order $\delta_{\mathrm G}^{2(N_{\mathrm{AD}}+1)}$
-or higher in the filter radius $\delta_{\mathrm G}$ (page-local), and
+or higher in the filter radius $\delta_{\mathrm G}$ (registry §11), and
 close the nonlinear terms by $\overline{uu}\approx\overline{u^*u^*}$. They
 note that ADM represents the interactions among scales above the grid
 cut-off and the dissipative effect of the subgrid scales, while the
@@ -659,9 +705,8 @@ parameter and that compensating for the explicit filter is "a requirement
 fulfilled exclusively by deconvolution-based approaches" (§VI). This rests
 on a priori correlation in isotropic turbulence; they defer a posteriori
 stability, wall-bounded and shock-laden flows and non-uniform grids to
-future work (§V C, §VI). The a posteriori record above (Caban et al. 2026:
-ADM needs numerical dissipation and does not beat implicit LES) is the
-other half of the question; see
+future work (§V C, §VI). A posteriori, Caban et al. (2026, above) find
+that ADM needs numerical dissipation and does not beat implicit LES; see
 [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
 
 ## Iterative deconvolution in compressible LES, a posteriori
@@ -788,8 +833,7 @@ injection the similarity variance is higher over almost the whole jet
 wake, which the authors link to over-intense combustion and an upstream
 boundary-layer separation; the transport equation matches the wall
 pressure better (§3.2, Figs. 12–16). They recommend the transport
-equation "if computing resources allow" (§4). The evidence is visual
-comparison on two cases.
+equation "if computing resources allow" (§4).
 
 ## Mixed explicit–implicit model
 
@@ -822,6 +866,9 @@ does not improve.
   $64^3$ grid" (§6.2); their "relaxation factor" 0.8 is not placed in an
   equation.
 
+- Zhou & Bae (2024) print the similarity term with unit coefficient and
+  do not print the width of the Gaussian secondary filter; their eddy
+  viscosity of Fig. 5 is the Smagorinsky part only.
 - Abe's (2021) a priori reference is a fine LES with an SGS model, not DNS;
   the author justifies it by the small SGS share of its statistics (§IV B,
   Fig. 5). The a priori comparison projects the stresses on $\bar S_{ij}$
@@ -858,3 +905,5 @@ does not improve.
 - [Wang et al. (2022)](/sources/wang-2022-j.md) — §II B; §IV, Fig. 2; §V, Figs. 9, 16, Table V; App. B, Figs. 18–20.
 - [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §I.
 - [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §2, Eqs. (3)–(6), Algorithm 1; §6.1, Fig. 6; §6.2, Figs. 10–13.
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.1, Eq. (1); §3.1, Figs. 4–5, 7–11; §3.3, Fig. 17.
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.2; §3.1.

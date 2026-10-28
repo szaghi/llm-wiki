@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 483:112059"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2023_Crossref_Journal_of_Computational_Physics_Elzaabalawy_Assessment_of_solving_the_RANS_equations_with_two-equation_e.pdf"
 tags: [k-omega, rans, dg, high-order, verification]
-timestamp: 2026-10-26T20:47:00Z
+timestamp: 2026-10-28T07:08:00Z
 ---
 
 # Summary
@@ -51,7 +51,7 @@ $\omega$ at the boundary-layer edge and in the wake, a consequence of low
 comparison with ReFRESCO shows far smaller numerical error per degree of
 freedom for HDG. SST is dropped for robustness. The outlook names a $k$-$kl$
 model and coarse-mesh [transition modelling](/methods/local-correlation-based-transition-model.md),
-and recalls why wall-resolved [$k$-$\varepsilon$](/methods/k-epsilon-model.md)
+and states why wall-resolved [$k$-$\varepsilon$](/methods/k-epsilon-model.md)
 models are stiff. The plate profile is compared with Coles'
 [law of the wall](/definitions/law-of-the-wall.md).
 
@@ -93,11 +93,11 @@ pp. 5–13 and 17–18 checked visually. Page 1 agrees with Crossref.
 The model form, translated (Eqs. 1–5, 38–39, 44): with kinematic mean
 quantities,
 $$-R_{ij}+2\nu S_{ij}=2(\nu+\nu_t)S_{ij}-\tfrac23k\delta_{ij},\qquad \nu_t=k/\omega\ \ (\text{except SST}),$$
-$$\nabla\cdot\big(k\boldsymbol u-(\nu+\sigma_k\nu_t)\nabla k\big)+\beta^*\omega k=\nu_t|S|^2,\qquad \nabla\cdot\big(\omega\boldsymbol u-(\nu+\sigma_\omega\nu_t)\nabla\omega\big)+\beta\omega^2=\alpha|S|^2+\frac{F_\omega}{\omega}\nabla k\cdot\nabla\omega .$$
+$$\nabla\cdot\big(k\boldsymbol u-(\nu+\sigma_k\nu_t)\nabla k\big)+\beta^*\omega k=\nu_t|S|^2,\qquad \nabla\cdot\big(\omega\boldsymbol u-(\nu+\sigma_\omega\nu_t)\nabla\omega\big)+\beta\omega^2=\alpha|S|^2+\frac{\sigma_d}{\omega}\nabla k\cdot\nabla\omega .$$
 Constants: Wilcox 1998 $\sigma_k=0.5$, $\beta^*=0.09$, $\sigma_\omega=0.5$,
-$\beta=0.072$, $\alpha=13/25$, $F_\omega=0$; TNT $\sigma_k=2/3$, $\beta^*=0.09$,
+$\beta=0.072$, $\alpha=13/25$, $\sigma_d=0$; TNT $\sigma_k=2/3$, $\beta^*=0.09$,
 $\sigma_\omega=0.5$, $\beta=0.075$, $\alpha=\beta/\beta^*-\sigma_\omega\kappa^2/\sqrt{\beta^*}$,
-$F_\omega=0$ or $0.5$ by the sign of $\nabla k\cdot\nabla\omega$; BSL/SST as
+$\sigma_d=0$ or $0.5$ by the sign of $\nabla k\cdot\nabla\omega$; BSL/SST as
 printed in §3.2 (Menter 2003, $\beta_1$ see Printed slips), SST
 $\nu_t=a_1k/\max(a_1\omega,F_2|S|)$ with $a_1=0.43$ as printed.
 
@@ -127,7 +127,7 @@ $\nu_t=a_1k/\max(a_1\omega,F_2|S|)$ with $a_1=0.43$ as printed.
 | $P=2S_{ij}S_{ij}$ | $\lvert S\rvert^2$ | production $\nu_t\lvert S\rvert^2$ |
 | $S$ (Eq. 71) | $\lvert S\rvert$ | not defined in the source |
 | $\zeta$, $\zeta_1$, $\zeta_2$ | $\alpha$, $\alpha_1$, $\alpha_2$ | production coefficient of the $\omega$ equation |
-| $F_\omega$ | $F_\omega$ (page-local) | cross-diffusion coefficient; not the PANS ratio $f_\omega$ |
+| $F_\omega$ | $\sigma_d$ (page-local, as on the [Wilcox $k$-$\omega$ page](/methods/k-omega-model.md)) | cross-diffusion coefficient; not the PANS ratio $f_\omega$ |
 | $\sigma_k$, $\sigma_\omega$, $\beta^*$, $\beta$, $\kappa$, $F_1$, $F_2$, $a_1$, $CD_{k\omega}$ | same | |
 | $y_{wall}$, $y^+_{elem}$, $x^+$ | $y$, (wall units of the second element), (streamwise wall unit) | |
 | $m$, $m_{int}$ | $N$, (quadrature order) | $m=3$, fourth order |

@@ -5,7 +5,7 @@ description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an e
 status: established
 aliases: [unsteady residual indicator, smoothness indicator, adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation, Hessian scaling, error transport equations, ETE]
 tags: [mesh-adaptation, hybrid-rans-les, rans, dg, numerical-dissipation, wmles]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Mesh adaptation for turbulent-flow simulation
@@ -67,6 +67,21 @@ coarsening. Combined with dynamic load balancing of the chemistry, it
 cuts the cell count of an oblique-detonation case to about 1/6 and the CPU
 time to about 1/5 of the uniform mesh with nearly identical steady
 structure (Figs. 15–16; see [OpenFOAM](/software/openfoam.md)).
+[Lv & Ekaterinaris (2023)](/sources/lv-2023.md) (§4.6, Fig. 8; §6.2,
+Figs. 12–13), reviewing high-order discontinuous schemes for multiphase
+and reacting flows, show the same gradient criterion in DG: isotropic
+h-refinement with hanging nodes, five refinement and derefinement levels
+driven by $\lvert\nabla\rho\rvert$ for a Mach 4 step (from the second
+author's earlier work, as cited), and, for a reacting Mach 8 flow over a
+capsule-like body, isotropic h-refinement at the bow shock combined with
+p-enrichment near the wall; for multiphase flows the cited criteria are a
+range or gradient of the interface scalar. Neither case is turbulent and
+no reference data are shown. In the one-dimensional turbulence model
+reviewed by [Chen et al. (2024b)](/sources/chen-2024-c.md) (§3.1) the
+line itself is adapted in space and time (Lignell et al. 2013, as cited),
+avoiding excessive adaptation, which would add numerical transport, and
+easing the load imbalance between regions with many and few eddy events
+(see [one-dimensional turbulence](/methods/one-dimensional-turbulence.md)).
 
 ## Hessian and metric criteria
 
@@ -295,7 +310,7 @@ measures of LES resolution:
 - local spectra, valid for isotropic flows only.
 
 They call the Toosi–Larsson residual "the most well-grounded approach to
-date". Mozaffari et al. (2022, §3.3) recall the same authors' criterion as
+date". Mozaffari et al. (2022, §3.3) describe the same authors' criterion as
 "almost identical" to their own Hessian criterion. The two approaches
 differ in flow, discretization and in whether adaptation runs during the
 computation. The modelling residual is also a different object
@@ -994,8 +1009,8 @@ node-centred finite volume or finite elements (§4.3).
     With the pointwise density $\sqrt{\det H_K}$ of their Eq. 14 that
     product is $H_K$; with $d_K$ as defined it is $\lvert K\rvert^{2/d}H_K$.
     Eq. 21 is then a definition, $e_K\lvert K\rvert^{-2/d}$ times the
-    orientation–quotient factor; whether the factor $\lvert K\rvert^{-2/d}$
-    is intended is not stated *(compiler check, not in the sources)*.
+    orientation–quotient factor *(compiler check, not in the sources)*;
+    the paper does not comment on the factor $\lvert K\rvert^{-2/d}$.
   - *RAE2822 drag.* §4.3 states that the adapted strategies "always
     provide a higher $C_l$ and lower $C_d$" than the finite-volume
     results, while Table 4 prints $C_D=0.01893$ ($N=1$) and 0.01894
@@ -1042,3 +1057,5 @@ node-centred finite volume or finite elements (§4.3).
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §1 (EPIC shared by BCFD and GGNS); §4.2 (CAD projection); §4.3, Figs. 7–9 (output-based against Hessian adaptation, method comparison of Michal et al., loop, unsteady memory, chaotic adjoints); §4.4, Fig. 4 (adaptive higher-order finite elements); §5.
 - [Ims & Wang (2023)](/sources/ims-2023.md) — §1 (adjoint impractical for LES, h against p); §2 (FR/CPR implicit LES); §3.1–3.3, Eqs. 7–22 (three indicators); §4 (marking, splitting, mortars); §5–6, Figs. 5–34 (cascades, random control, recommendations).
 - [Sun et al. (2023)](/sources/sun-2023.md) — §2.2.2, Table 1, Fig. 2 (2-D density-gradient AMR in OpenFOAM); §3.9, Figs. 15–16 (cell and CPU savings).
+- [Lv & Ekaterinaris (2023)](/sources/lv-2023.md) — §4.6, Fig. 8 (isotropic h-AMR with hanging nodes in DG, $\lvert\nabla\rho\rvert$ criterion); §6.2, Figs. 12–13 (h at the shock, p near the wall).
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — §3.1 (adaptive-mesh one-dimensional turbulence, cited).

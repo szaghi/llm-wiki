@@ -1,16 +1,17 @@
 ---
 type: Software
 title: "CharLES"
-description: "CharLES is Cascade Technologies' compressible, low-dissipation, second-order finite-volume LES code on Voronoi grids; this page records its scheme, meshing, GPU cost and the wall-modelled LES of aircraft (including its HLPW-4 high-lift submission), juncture flows, bumps and compressible channels, and machine-learning wall models trained in it."
+description: "CharLES is Cascade Technologies' compressible, low-dissipation, second-order finite-volume LES code on Voronoi grids; this page records its scheme, meshing, GPU cost and the wall-modelled LES of aircraft (including its HLPW-4 high-lift submission), juncture flows, bumps, compressible channels and a wall-modelled LES grid-convergence study, machine-learning wall models trained in it, and the CharlesX variant of a detonation-engine LES."
 status: established
 aliases: [charLES, Cascade charLES]
 tags: [software, les, wmles, kinetic-energy-preserving, gpu]
-timestamp: 2026-10-28T02:13:00Z
+timestamp: 2026-10-28T07:04:00Z
 ---
 
 # CharLES
 
-**CharLES** (printed "charLES" in all five sources) is a massively parallel,
+**CharLES** (printed "charLES" by Goc et al. 2021 and most later sources,
+"CharLES" by Hu et al. 2024) is a massively parallel,
 compressible, unstructured finite-volume LES code of Cascade Technologies. It is
 the solver of the aircraft [wall-modelled LES](/methods/wall-modelled-les.md) of
 [Goc et al. (2021)](/sources/goc-2021.md), of the boundary-layer-conforming
@@ -20,6 +21,11 @@ the compressible-channel runs of [Griffin et al. (2023)](/sources/griffin-2023.m
 and the solver in which [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md)
 train and test their
 [building-block-flow wall model](/methods/building-block-flow-wall-model.md).
+[Hu et al. (2024)](/sources/hu-2024.md) run their grid-convergence study of
+wall-modelled LES in it ("Cascade Technologies Inc. and Cadence", §4), and
+[Vignat et al. (2024)](/sources/vignat-2024.md) name "CharlesX" as the
+unstructured compressible code of their reacting LES of a rotating
+detonation engine (see the section on CharlesX below).
 
 ## Discretization
 
@@ -61,12 +67,23 @@ train and test their
   equilibrium model (Eq. 3.1, same constants, the velocity taken at the
   second off-wall grid point) or their neural-network wall model, which
   reads a two-point wall-normal stencil (§2.4).
+  Hu et al. (2024, §4, Eq. 5) close the SGS stress and heat flux with the
+  Vreman model and use the same algebraic law of the wall (linear–quadratic
+  below $y^+=23$, log law with $\kappa=0.41$, $B=5.2$ above), which returns
+  only the magnitude of the wall stress, its direction aligned with the LES
+  velocity at $h_{\mathrm{wm}}$ (§6.1).
 - **Matching location.** Lozano-Durán et al. (2022, §II.B) match at the first
   off-wall cell centre with no temporal filtering; Agrawal et al. (2022, §VIII)
   also match at the first point on Voronoi grids and report no
   [log-layer mismatch](/definitions/log-layer-mismatch.md) in their earlier
   tests; Griffin et al. (2023, §4) match at $0.3\delta$ with 12 points per
-  channel half-height.
+  channel half-height. Hu et al. (2024, §5) place $h_{\mathrm{wm}}$ at a
+  cell centre of isotropic grids, at $h_{\mathrm{wm}}=0.1\delta$ and
+  $0.2\delta$ in the channel and $0.05\delta$ to $0.15\delta$ in a
+  three-dimensional boundary layer; the channel grids of Table 1 put it at
+  the first to the ninth cell centre, $\Delta/h_{\mathrm{wm}}=2$ down to
+  $0.118$ *(compiler check, not in the sources: ratio of the printed
+  $\Delta^+$ to $h_{\mathrm{wm}}^+$)*.
 
 **Solver-consistent training data.** Because the subgrid stress of an
 implicitly filtered LES is not the stress obtained by filtering the
@@ -137,6 +154,49 @@ code (implementation not optimized, no hardware stated).
   $M_\infty=0.20$), and better juncture predictions on the
   [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md) with a
   boundary-layer-conforming grid of 5 points per boundary-layer thickness.
+- Grid convergence of wall-modelled LES (Hu et al. 2024, §6): in a channel
+  at $Re_\tau=1000$, Spalart's boundary layer under a rotating free stream
+  and a channel at $Re_\tau=934$ with a sudden spanwise pressure gradient,
+  the mean wall stress, mean velocity and mean flow direction converge at
+  coarser grids for larger $h_{\mathrm{wm}}$, with onset near
+  $\Delta/h_{\mathrm{wm}}\approx0.3$–$0.4$; the streamwise rms velocity
+  converges more slowly, with errors an order of magnitude larger than the
+  mean velocity's, and is not controlled by $h_{\mathrm{wm}}$. Details on
+  [wall-modelled LES](/methods/wall-modelled-les.md).
+
+## CharlesX in a rotating detonation engine
+
+Vignat et al. (2024, §3, Table 1) describe the code of their LES of the
+AFRL methane–oxygen rotating detonation rocket engine as a fully
+compressible unstructured finite-volume solver, citing two papers of the
+Stanford group (Khalighi et al.; Ma et al.), and name it "CharlesX" in
+their survey table. The configuration they print differs from the
+second-order scheme above:
+
+- a "combination of centered and upwind-biased Riemann flux", with a
+  high-order polynomial reconstruction that is fourth order on uniform and
+  third order on non-uniform meshes outside sensor regions (Table 1
+  summary: "3rd order central"), and first-order reconstruction in cells
+  flagged by a pressure- and density-gradient sensor (detonations, shocks,
+  flames) or a sensor on unphysical mass fractions or temperatures below
+  260 K (§3.5);
+- an operator splitting with a fourth-order Rosenbrock–Krylov integrator
+  for the stiff chemistry (FFCMy-12, 12 species, 38 reactions, no
+  turbulence–chemistry closure) and third-order strong-stability-preserving
+  Runge–Kutta for advection and diffusion, with a typical convective time
+  step of 4.3 ns (§3.4);
+- the [Vreman model](/methods/vreman-model.md) with $C=0.07$, "as
+  specified in the original paper", and turbulent Prandtl and Schmidt
+  numbers of 0.7 ([turbulent Prandtl number](/definitions/turbulent-prandtl-number.md));
+  no-slip adiabatic walls without a wall model, boundary layers unresolved
+  (§3.3, §3.6);
+- 54 million cells, 50–100 μm in the detonation region (§3.1).
+
+The LES gives two co-rotating detonation waves where the experiment shows
+three, a wave speed 24% below the measured one (the other groups'
+LES of this case under-predict it by up to 30%), and thrust within 3.1% of
+the measurement (§3.9, Table 2). The paper does not state how CharlesX
+relates to Cascade Technologies' charLES.
 
 ## In the HLPW-4 wall-modelled LES summary
 
@@ -219,7 +279,7 @@ on aerospace CFD, do not run the code but cite it at three places:
   Agrawal et al. 2022, Griffin et al. 2023) include Moin among the authors,
   three of them Bose (Cascade Technologies, the code's developer); Lozano-Durán & Bae
   (2023) do not, but Lozano-Durán co-authored Lozano-Durán et al. (2022). No
-  source outside this author group uses the code so far; Mani & Dorgan
+  source before Hu et al. (2024, below) outside this author group runs the code; Mani & Dorgan
   (2023) only relay results of Goc et al. and Lehmkuhl et al. in a review.
 - Mani & Dorgan (2023, §4.5.2) report lift over-prediction at lower angles
   of attack in the JSM WMLES of Goc et al. (2020, Fig. 12b); Goc et al.
@@ -237,6 +297,18 @@ on aerospace CFD, do not run the code but cite it at three places:
   (the W-021 refinement study). None of the authors of Kiris et al. is
   affiliated with Stanford or Cascade Technologies (page 1); they
   summarize the W-021 submission in a workshop report.
+- Hu et al. (2024; University of Pennsylvania and Pennsylvania State
+  University) run the code outside the Moin–Bose author group of the
+  earlier item; Park, their corresponding author, co-authored the
+  Park & Moin wall-model papers they cite. Vignat et al. (2024) are of
+  Stanford University (page 1).
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) compute the Gaussian bump in
+  a different, incompressible finite-volume code (You, Ham & Moin) and find
+  no separation with the dynamic Smagorinsky model, citing Agrawal et al.
+  (2022), whose bump runs above are charLES runs, among the studies in
+  which it did separate; they attribute the difference possibly to
+  clipping, filtering, mesh topology and numerics (§3.1). See
+  [Gaussian bump](/benchmarks/gaussian-bump.md).
 
 # Citations
 
@@ -247,3 +319,6 @@ on aerospace CFD, do not run the code but cite it at three places:
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.4–2.6 (stencil, solver-consistent training, cost); §3.1–3.2, Eq. (3.1) (scheme, Voronoi grids, closures); §4 (results); §5.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §3 (GPU potential); §4.4 (KEEP scheme in charLES); §4.1.2, Fig. 6; §4.5.2, Fig. 12 (WMLES of HiLiftPW-3 and JSM, industrial needs).
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — Tables 1–2 (W-021 configuration); §II.2, §II.4; §III, Fig. 6 (refinement); §IV.2–IV.3, Figs. 14–17, 23–25 (pressure sensitivity, topology A); §V, Figs. 27–36 (in-tunnel pitch break); §VI.4 (GPUs, cost).
+- [Hu et al. (2024)](/sources/hu-2024.md) — §4, Eq. (5) (solver, Vreman model, algebraic wall model); §5, Tables 1–2 (grids, matching heights); §6 (convergence results).
+- [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.1, §3.3–§3.6, Table 1 (CharlesX configuration); §3.9, Table 2 (validation).
+- [Zhou & Bae (2024)](/sources/zhou-2024-b.md) — §2.1 (solver), §3.1 (dynamic Smagorinsky separation against Agrawal et al., cited).

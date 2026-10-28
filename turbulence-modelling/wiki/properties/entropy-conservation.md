@@ -5,7 +5,7 @@ description: "A discretization is entropy conservative when its convective terms
 status: established
 aliases: [EC, entropy-conservative scheme, entropy-conserving flux, entropy-stable discretization, entropy stability, Ismail–Roe flux, Chandrashekar flux, EC-TP scheme, nonlinear stability, entropy-stable RANS]
 tags: [entropy-stable, kinetic-energy-preserving, compressible, dg, dns, numerical-dissipation]
-timestamp: 2026-10-28T02:15:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Entropy conservation and entropy stability
@@ -237,8 +237,8 @@ equations closed by the
 [Spalart–Allmaras model](/methods/spalart-allmaras-model.md), whose
 working variable $\rho\tilde\nu$ is a sixth conserved component; to the
 authors' knowledge no earlier work had derived entropy-stable DGSEM schemes
-for RANS systems (§1). Page-local: $[\![\phi]\!]=\phi_R-\phi_L$ the jump
-across a face; $P_{\tilde\nu}$, $D_{\tilde\nu}$ the production and
+for RANS systems (§1). Notation: $[\![\phi]\!]=\phi_R-\phi_L$ the jump
+across a face (registry §11); page-local: $P_{\tilde\nu}$, $D_{\tilde\nu}$ the production and
 destruction of the SA equation; $\nu_{\mathrm{SA}}$ its diffusion
 coefficient ($\nu+\tilde\nu$ for $\tilde\nu\ge0$; the source's
 $\hat\sigma$); $\boldsymbol Q$ the conserved state; $\sigma$, $c_{b2}$ the
@@ -378,8 +378,8 @@ show that a solution approximates the true one (§3).
 
 The proposed one-dimensional flux (§4, Eqs. 20–23) modifies Chandrashekar's
 EC and KEP flux only in the mass flux. With $[\![\phi]\!]=\phi_{i+1}-\phi_i$
-the jump, $\beta_{\mathrm C}=1/(2RT)$ the inverse-temperature variable
-and $a^\rho$ the mass-flux diffusion coefficient (all page-local),
+the jump (registry §11), $\beta_{\mathrm C}=1/(2RT)$ the inverse-temperature variable
+and $a^\rho$ the mass-flux diffusion coefficient (both page-local),
 $$\begin{aligned}
 f^\rho&=\{\!\{\rho\}\!\}\{\!\{u\}\!\}-a^\rho[\![\rho]\!],\qquad a^\rho=\tfrac12|\{\!\{u\}\!\}|+\tfrac14|[\![u]\!]|,\\
 f^m&=\frac{\{\!\{\rho\}\!\}}{2\{\!\{\beta_{\mathrm C}\}\!\}}+\{\!\{u\}\!\}f^\rho,\qquad
@@ -394,7 +394,7 @@ terms contribute
 $\tfrac{8\mu}{3h}\{\!\{\beta_{\mathrm C}\}\!\}[\![u]\!]^2+\tfrac{\kappa_h}{Rh}\tfrac{[\![T]\!]^2}{T_iT_{i+1}}\ge0$
 (§4, Eqs. 26–33). Proposition 4.1 states that the scheme satisfies
 Conditions A–E; the mass flux is $\{\!\{\rho u\}\!\}-(a^\rho+\tfrac14[\![u]\!])[\![\rho]\!]$
-with a non-negative coefficient, a standard artificial diffusion (Eq. 25).
+with a non-negative coefficient, the form of an artificial diffusion (Eq. 25).
 
 On a two-dimensional Kelvin–Helmholtz instability ($\mu=\kappa_h=10^{-4}$,
 $N^2$ grids, box means of the conserved variables over

@@ -9,7 +9,7 @@ year: 2021
 venue: "Phys. Fluids 33:125102"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2021_Crossref_Physics_of_Fluids_Zhao_High-order_gas-kinetic_scheme_for_large_eddy_simulation_of_t.pdf"
 tags: [gas-kinetic, implicit-les, sgs-model, numerical-dissipation, les]
-timestamp: 2026-10-27T16:02:00Z
+timestamp: 2026-10-28T07:11:00Z
 ---
 
 # Summary
@@ -64,7 +64,7 @@ Page-local symbols: $f$, $g$, $g_0$ the gas distribution, the Maxwellian
 and the interface equilibrium; $\tau_{\mathrm{col}}$ the collision time
 (as on the [gas-kinetic](/methods/high-order-gas-kinetic-scheme.md) page);
 $\tau_{\mathrm{col},t}$ its turbulent enlargement; $C$ the dynamic
-Smagorinsky coefficient ($C=C_s^2$); $C_v$ the Vreman constant (as on
+Smagorinsky coefficient ($C=C_s^2$); $c=2.5C_s^2$ the Vreman prefactor (as on
 the [Vreman](/methods/vreman-model.md) page); $C_w$ the WALE constant;
 $C_d$ the dynamic Clark coefficient; $H=\delta=1$ the half-height,
 $U_c=1$ the centreline velocity; iLES and V, D, W, DC the implicit LES and
@@ -88,7 +88,7 @@ Eqs. (7) and (8).
 15. Flux 1 suffices at $Re_\tau=180$ because velocity gradients and interface discontinuities are small and the central character of the scheme keeps numerical dissipation low; at $Re_\tau=395$ interface discontinuities appear and the upwind part must be improved (§IV). **Stated**, Appendix A **Shown**
 16. Appendix A: at $Re_\tau=180$ flux 1 is better than flux 2; at $Re_\tau=395$ flux 2 gives better turbulence intensities, flux 1 a slightly closer mean velocity, flux 2 being "a little larger" in dissipation; overall flux 2 is better at 395 (Figs. 22–27). **Shown**
 17. Appendix B: refining the $Re_\tau=180$ grid ($64^3$, $64\times96\times64$, $96^3$) improves mean velocity, rms and Reynolds stress; "when the grids are refined, the numerical dissipation decreases" (Table VIII, Figs. 28–30). **Shown** / mechanism **Stated**
-18. Vreman constant: $C_v$ from 0.01 to 0.1 tested at $Re_\tau=180$, best 0.01 used; $C_v=0.07$ at $Re_\tau=395$ after Vreman (2004) (§IV); the model is written $\mu_t=\bar\rho C_v\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$, $C_v=2.5C_s^2$ (Eq. 17). **Shown** (tuning results not displayed)
+18. Vreman constant: $c$ from 0.01 to 0.1 tested at $Re_\tau=180$, best 0.01 used; $c=0.07$ at $Re_\tau=395$ after Vreman (2004) (§IV); the model is written $\mu_t=\bar\rho c\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$, $c=2.5C_s^2$ (Eq. 17). **Shown** (tuning results not displayed)
 19. WALE: $C_w=0.5$ after the Weickert et al. (2010) calibration for $Re_\tau=395$ channel flow, also recommended for pipe flow by Nicoud & Ducros; $C_w^2\approx10.6C_s^2$ in isotropic turbulence (§III C, §IV). **Stated**
 20. Transition from laminar flow takes about $400H/U_c$, statistics are averaged over $200H/U_c$, with constant flow rate kept by a body force (§IV). **Stated**
 21. High- and low-speed streaks at $y^+=70$ ($Re_\tau=180$) and $y^+=100$ ($Re_\tau=395$) are elongated streamwise and finer at higher $Re_\tau$ (§V D, Figs. 20–21). **Shown** (qualitative)
@@ -121,7 +121,7 @@ Eqs. (7) and (8).
 | $\bar S_{ij}$, $\lvert\bar S\rvert=(2\bar S_{ij}\bar S_{ij})^{1/2}$, $\bar\Omega_{ij}$ | same | factor two included; agrees |
 | $\bar S^d_{ij}$ (Eq. 18) | (WALE traceless square of the velocity gradient) | **collision:** not the registry's deviatoric strain $S^d_{ij}$ |
 | $C(y,t)$, $C_s$ | $C=C_s^2$, $C_s$ | dynamic coefficient without the square split |
-| $c$ | $C_v$ | Vreman constant, as on the Vreman page |
+| $c$ | $c$ | Vreman prefactor $2.5C_s^2$, as on the Vreman page |
 | $L_{ij}$, $M_{ij}$ | $L_{ij}$ (with $\hat\phi$), $M_{ij}$ | |
 | $\tau_{ij}$ (Eq. 19), $\tau^r_{ij}$ | $\tau_{ij}$ | positive convention; agrees |
 | $\mu$, $\mu_t$, $\nu_t$ | same | |

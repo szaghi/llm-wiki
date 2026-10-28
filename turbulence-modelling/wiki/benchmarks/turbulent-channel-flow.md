@@ -5,7 +5,7 @@ description: "Pressure-driven flow between two parallel walls, periodic in the w
 status: established
 aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow, minimal channel, rough-wall channel]
 tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns, data-driven, compressible, immersed-boundary, rans, spectral-element]
-timestamp: 2026-10-28T02:01:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Turbulent channel flow
@@ -75,6 +75,9 @@ closures.
 | [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §3.1, Tables 4–5 | immersed-boundary WMLES, Mach 0.2 | 5200 (bulk $Re=125{,}000$) | $12.8\delta\times2\delta\times4.8\delta$ | Cartesian with two refinement levels; finest 1.9M cells ($\Delta^+=270\times68\times270$) and 8.9M ($173\times41\times156$) |
 | [Huang et al. (2022c)](/sources/huang-2022-c.md), §III A, Table I | wall-modelled spectral-vanishing-viscosity implicit LES (Nektar++), incompressible, body-force driven | 550, 950, 2000 | $2\pi\delta\times2\delta\times\pi\delta$ | $12\times6\times10$ elements, "polynomial order $N_p=7$" as printed ($\Delta x^+\times\Delta y_1^+\times\Delta z^+=48\times20\times29$ at 550, $175\times75\times105$ at 2000); $14\times8\times12$ elements at $N_p=6$ (550) |
 | [Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.1, §3.2.2 | pseudo-DNS with RVE databases on very coarse meshes | bulk $Re=1.65\times10^5$ (1-D Poiseuille), $4\times10^4$ (Couette), $1.5\times10^5$ (2-D Poiseuille); particle-laden duct at $Re=57{,}000$ | 1-D and 2-D; duct $1.5\times0.5\times0.5$ m | 4 cells (Poiseuille), 3 cells (Couette); $36\times12\times12$ cells against a $300\times150\times50$ DNS (duct) |
+| [Hu et al. (2024)](/sources/hu-2024.md), §5, Table 1 | grid convergence of WMLES with an algebraic equilibrium wall model (CharLES, Vreman SGS) | 1000 (constant mass flow); 934 with a sudden spanwise pressure gradient | $2\pi\delta\times2\delta\times\pi\delta$ | isotropic, six grids per matching height: $\Delta^+=400$ to 23.5 ($h_{\mathrm{wm}}=0.2\delta$) and 200 to 11.8 ($0.1\delta$), $h_{\mathrm{wm}}$ at cell centres |
+| [Vermeire (2024)](/sources/vermeire-2024.md), §4.2, Table 2 | implicit LES by flux reconstruction with entropically damped artificial compressibility (incompressible) | 395 | $2\pi\delta\times2\delta\times\pi\delta$ | one quarter and one half of the DNS degrees of freedom per direction: $32\times24\times24$ to $13\times10\times10$ elements ($N=1$–4, low) and $64\times48\times48$ to $26\times20\times20$ (medium), first solution point at $y^+=1$ |
+| [Wu et al. (2024)](/sources/wu-2024.md), §3.1a, Table 2 | validation of the SATES-$\sigma$ hybrid in PHengLEI, Mach 0.15, constant mass flow | 395 ($Re_b=6153$) | $2\pi\delta\times2\delta\times\pi\delta$ | $64\times96\times64$ (first $y^+=0.6$) and $128\times120\times64$ (first $y^+=0.3$) |
 
 Reference DNS named by the sources: Kim, Moin & Moser at $Re_\tau=180$
 (Cao et al.); Moser, Kim & Mansour at $Re_\tau=590$ (Flad & Gassner;
@@ -588,6 +591,29 @@ exceeds $0.03Re_\tau$, as the review cites them; the review proposes the
 inner-scaled spanwise gradient instead as the parameter for boundary layers
 (see [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)).
 The same kind of forcing is the test of Lozano-Durán & Bae (2023) below.
+[Hu et al. (2024)](/sources/hu-2024.md) (§5, §6) use the Lozano-Durán et
+al. channel at $Re_\tau=934$ with a spanwise-to-streamwise pressure-gradient
+ratio of 10, run to $tu_\tau/\delta=1$, as a test of WMLES grid convergence:
+on the grids of their $Re_\tau=1000$ channel, the time-integrated wall
+stress converges at about $\Delta=0.08\delta$ for $h_{\mathrm{wm}}=0.2\delta$
+while the $0.1\delta$ error still decreases there, the flow direction
+converges from about $\Delta=0.03\delta$ and $0.015\delta$ respectively, and
+both collapse better against $\Delta/h_{\mathrm{wm}}$; the streamwise r.m.s.
+velocity is still converging on the two finest grids and collapses better
+against $\Delta/\delta$ (Figs. 5, 11–12; errors averaged over five DNS
+instants up to $tu_\tau/\delta=1.02$).
+
+**Matching height and grid convergence of WMLES.** In the canonical
+channel at $Re_\tau=1000$ (JHTDB reference) the same authors find the
+wall-stress error of an algebraic [equilibrium wall model](/methods/equilibrium-wall-model.md)
+plateauing from $\Delta/\delta=0.08$ for $h_{\mathrm{wm}}=0.2\delta$, with
+onset near $\Delta/h_{\mathrm{wm}}\approx0.4$ for both matching heights, and
+the mean velocity above $h_{\mathrm{wm}}$ converging first; the streamwise
+r.m.s. error is an order of magnitude larger and not controlled by
+$h_{\mathrm{wm}}$, and a spectral split shows the attached-eddy energy
+grid-converged and the small-scale energy not, about 80 % of it needing
+$\Delta^+\approx50$ (§6, Figs. 3, 6–8, 13–14; see
+[wall-modelled LES](/methods/wall-modelled-les.md)).
 
 **Wall models beyond the canonical channel.**
 [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) build their
@@ -951,8 +977,9 @@ $R_{33}^+$, which the authors attribute to the minimal domain (Figs.
 **Residual-based VMS as implicit LES.**
 [Chen et al. (2022)](/sources/chen-2022-g.md) treat the residual-based
 [variational multiscale method](/methods/variational-multiscale-method.md)
-(small scales $-\tau_m$ times the momentum residual and $-\tau_c$ times
-the continuity residual, page-local stabilization parameters) as an
+(small scales $-\tau_{\mathrm M}$ times the momentum residual and
+$-\tau_{\mathrm C}$ times the continuity residual, the stabilization
+parameters of registry §11) as an
 [implicit LES](/definitions/implicit-les.md) and split its contribution to
 the resolved kinetic-energy budget into four terms: the SUPG-type
 cross-stress term, a second cross-stress term, the "Reynolds-stress" term
@@ -1003,7 +1030,7 @@ $10<y^+<40$, with the streamwise peak at $y^+\approx12$ (Fig. 25a).
 unmodelled run over-predicts all r.m.s. velocities and keeps non-zero wall
 fluctuations, from the weak imposition of the wall condition; an
 [explicit modal filter](/methods/explicit-modal-filtering.md) drives them
-to zero, and its self-tuning form ($c=0.5$) gives the closest r.m.s.
+to zero, and its self-tuning form ($c_{\mathrm{st}}=0.5$, page-local) gives the closest r.m.s.
 profiles; Smagorinsky is unstable for $C_s<0.15$ and inaccurate at 0.2
 (no data shown); the filter costs 0.96% to 2.5% more wall time (Fig. 15,
 §III.D.3).
@@ -1150,6 +1177,76 @@ log-region deviation from DNS "has almost completely vanished" (see
 [log-layer mismatch](/definitions/log-layer-mismatch.md)); the Reynolds
 stresses agree with a reference WMLES but poorly with the DNS in the inner
 region, especially $\langle u'u'\rangle$.
+
+**Implicit LES with artificial compressibility.** [Vermeire (2024)](/sources/vermeire-2024.md)
+(§4.2, Figs. 9–18) runs wall-resolved implicit LES of the channel at
+$Re_\tau=395$ with [flux reconstruction](/methods/flux-reconstruction.md)
+(Rusanov interface flux, no SGS model) and the entropically damped
+artificial-compressibility form of the incompressible equations, which
+needs neither a pressure Poisson solve nor pseudo-time stepping, at one
+quarter and one half of the DNS degrees of freedom per direction (reference
+Moser, Kim & Mansour, as cited), with $N=1$–4 and incompressibility
+factors $M_{\mathrm{AC}}=1/5$ to $1/40$ (page-local, not the Mach number).
+After $2760t_\delta$ of start-up and $1380t_\delta$ of averaging ($t_\delta$
+the paper's time unit, as printed) $Re_\tau$ is within 1 % of the target in
+all cases. $N=1$ over-predicts the mean velocity, especially towards the
+centreline, and degrades as $M_{\mathrm{AC}}$ is reduced to
+$1/20$; $N=2$ over-predicts less and is insensitive to it; $N=3$ agrees well
+at the medium resolution and $N=4$ slightly under-predicts at both. The
+r.m.s. profiles are accurate for $N=3$ and 4 at all $M_{\mathrm{AC}}$,
+while $N=1$ over-predicts the streamwise and spanwise components and
+under-predicts the wall-normal one near the wall. The author attributes the
+higher velocities of low-order runs to damped turbulent structures that
+inhibit momentum transport to the walls. Most runs at $N=5$ and 6, and the
+coarse $N=4$ run at $M_{\mathrm{AC}}=1/5$, were unstable, which the author
+attributes to insufficient numerical dissipation for implicit LES (§4.2;
+see [implicit LES](/definitions/implicit-les.md)).
+
+**A hybrid that runs in LES mode near the centre.** [Wu et al. (2024)](/sources/wu-2024.md)
+(§3.1a, Figs. 2–4) validate their [self-adaptive turbulence eddy simulation](/methods/self-adaptive-turbulence-eddy-simulation.md)
+with a $\sigma$-model-based cut-off coefficient in the structured solver
+[PHengLEI](/software/phenglei.md) at $Re_\tau=395$ against Moser, Kim &
+Mansour: the mean velocity agrees with the DNS, a small shift on the coarser
+grid disappearing on the finer; the resolution control function is 1 (URANS
+mode) near the wall and decreases away from it; the ordering
+$R_{11}>R_{33}>R_{22}$ is captured, with a considerable resolved shear
+stress.
+
+**One-dimensional turbulence in the channel.** The review of
+[Chen et al. (2024b)](/sources/chen-2024-c.md) (§3.1–3.3, Figs. 11, 13–16)
+collects channel results of [one-dimensional turbulence](/methods/one-dimensional-turbulence.md):
+ODT as a near-wall closure of LES (Schmidt et al. 2003) validated against
+DNS for $Re_\tau$ from 395 to 10 000 (mean velocity, Reynolds stresses and
+the budget of the streamwise stress at $Re_\tau=590$); ODTLES with an
+implicit–explicit time scheme agreeing with DNS up to $Re_\tau=2040$ on a
+single-board computer (Glawe et al.); ODTLES of a no-slip channel, a channel
+with a free-slip wall, a lid-driven cavity and a square duct (Gonzalez-Juez
+et al. 2011); and the authors' conservative compressible ODT, whose mean
+velocity in supersonic channels agrees with DNS in the viscous sublayer,
+buffer and log layers (Chen et al. 2022, as reproduced; parameters not
+given in the review). All are reproduced figures of the cited works.
+
+**The channel in the history of turbulence simulation.** In the account
+of [Kim & Leonard (2024)](/sources/kim-2024-b.md) (§2.5, §3.1, §3.4, §4.5,
+§4.7–4.8) the channel is where LES and DNS met walls: Deardorff's (1970) LES
+with 6,720 grid points and a log-law wall condition, Schumann's (1975) with
+up to 65 K volumes, an SGS energy equation and wall conditions, the first
+LES with the wall region computed (Moin et al. 1978), and the Moin & Kim
+(1982) LES with Van Driest-like damping of the Smagorinsky model, which
+removed the excessive near-wall dissipation and reached a statistically
+steady state. Kim, Moin & Moser (1987) aimed at $Re_\tau=194$, the oil-channel
+experiment of Kreplin & Eckelmann, and obtained $Re_\tau=180$, "a standard
+reference point" since; their near-wall disagreement with the experiment
+was traced to an experimental error (heat conduction near the wall),
+confirmed by new measurements, which the authors call "probably the first
+incident in which a numerical simulation prompted a reexamination of the
+experimental data". They add that the curved-channel DNS of Moser & Moin
+(1984, 1987) "preceded Kim et al. (1987), and it was probably the first DNS
+of a wall-bounded turbulent flow"; that Kim et al. switched from
+second-order Adams–Bashforth to third-order Runge–Kutta after publication
+while "many investigators still use" the former; that the minimal channel
+(Jiménez & Moin 1991) isolated a near-wall flow unit; and that Coleman et
+al. (1995) ran the first supersonic channel DNS (all as cited).
 
 **The channel in data-driven RANS.** The review of
 [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md), §2.1, notes that
@@ -1464,3 +1561,8 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
 - [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §5.4, footnote 6, Figs. 37–42 (review; cited channel DNS).
 - [Xu et al. (2023)](/sources/xu-2023.md) — §2.1–2.2; §3.2; §4.1–4.3, Tables 3–7, Figs. 13–28.
 - [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §2.1–2.2, Table 1; §5, Tables 2–3.
+- [Hu et al. (2024)](/sources/hu-2024.md) — §5, Table 1; §6.1–6.2, Figs. 3, 5–8, 11–14.
+- [Vermeire (2024)](/sources/vermeire-2024.md) — §4.2, Table 2, Figs. 9–18.
+- [Wu et al. (2024)](/sources/wu-2024.md) — §3.1a, Table 2, Figs. 2–4.
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — §3.1–3.3, Figs. 11, 13–16 (review; reproduced figures).
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.5; §3.1; §3.4; §4.5; §4.7–4.8 (history).

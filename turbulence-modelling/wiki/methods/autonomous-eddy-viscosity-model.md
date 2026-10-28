@@ -5,7 +5,7 @@ description: "Domaradzki's autonomous LES derives the eddy viscosity at every st
 status: established
 aliases: [autonomous LES, autonomous large-eddy simulation, similarity-derived eddy viscosity]
 tags: [les, sgs-model, eddy-viscosity, backscatter]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Autonomous eddy-viscosity model
@@ -33,9 +33,9 @@ graded filter applied to it is written as the test filter, a hat, with
 width $\hat\Delta=2\Delta x$. The paper's sign convention for the subgrid
 dissipation, $\epsilon_{SGS}=\tau_{ij}\bar S_{ij}$, negative for forward
 transfer, is the opposite of the registry's $\Pi=-\tau_{ij}\bar S_{ij}$;
-every formula below is translated to $\Pi$. Page-local symbols: $C_{\mathrm A}$
+every formula below is translated to $\Pi$. $C_{\mathrm A}$ (registry §11) is
 the non-dimensional constant of the constant variant (the paper's $C$, Eq.
-3.3; not the Smagorinsky $C_s$), $u_{\mathrm{rms}}$ the rms velocity (the
+3.3; not the Smagorinsky $C_s$). Page-local symbols: $u_{\mathrm{rms}}$ the rms velocity (the
 paper's $u'$), $U_0t/M$ the time of the Comte-Bellot–Corrsin experiment in
 units of the grid-mesh size $M$ over the tunnel speed $U_0$.
 
@@ -150,7 +150,7 @@ observed effects are those of the model (§3.3; see
 - **Correlation and backscatter.** The planar correlation between the
   subgrid transfer of the eddy-viscosity model and that of the similarity
   stress is 0.81 (above 0.8 in 3-D), against "around 0.4" quoted for the
-  standard Smagorinsky model (§3.1, Fig. 6). The derived viscosity has
+  Smagorinsky model (§3.1, Fig. 6). The derived viscosity has
   negative regions, local [backscatter](/definitions/energy-backscatter.md),
   yet no run showed "any hints of instability"; the forward transfer
   exceeded backscatter by at least an order of magnitude, which the author

@@ -158,7 +158,7 @@ is unparseable.
 
 # Pages created or updated
 
-Chunk 9 (2026-10-27), cited further in chunk 10. This source is cited on:
+Chunk 9 (2026-10-27), cited further in chunks 10, 13. This source is cited on:
 
 - [Compressor cascades](/benchmarks/compressor-cascade.md)
 - [Shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
@@ -170,6 +170,7 @@ Chunk 9 (2026-10-27), cited further in chunk 10. This source is cited on:
 - [Laminar separation bubble](/definitions/laminar-separation-bubble.md)
 - [Large-eddy simulation: filtering and the subgrid-scale stress](/definitions/large-eddy-simulation.md)
 - [Spectral gap](/definitions/spectral-gap.md)
+- [Turbulent Prandtl number and turbulent heat-flux models](/definitions/turbulent-prandtl-number.md)
 - [Explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)
 - [Field inversion and machine learning](/methods/field-inversion-machine-learning.md)
 - [Inflow turbulence generation](/methods/inflow-turbulence-generation.md)

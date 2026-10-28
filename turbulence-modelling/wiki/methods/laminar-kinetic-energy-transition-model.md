@@ -5,7 +5,7 @@ description: "RANS transition closures that transport the energy of pre-transiti
 status: established
 aliases: [LKE model, laminar kinetic energy model, k-kL-ω, k-kl-ω, three-equation transition model, LKE-SST]
 tags: [rans, transition, eddy-viscosity, turbomachinery, separated-flow, boundary-layer]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-28T07:04:00Z
 ---
 
 # Laminar kinetic energy transition models
@@ -424,8 +424,8 @@ All from Ghidoni & Noventa (2026), §IV–§V:
 
 ## Coupling to other host models
 
-Liu et al. (2024) recall the $k$-$k_L$-$\omega$ LKE model of Walters &
-Cokljat as calibrated on a $k$-$\omega$ closure "with numerous trigger
+Liu et al. (2024, Introduction) describe the $k$-$k_L$-$\omega$ LKE model of
+Walters & Cokljat as calibrated on a $k$-$\omega$ closure "with numerous trigger
 functions and empirical coefficients", hard to couple to a
 [Reynolds-stress model](/methods/reynolds-stress-model.md), and prefer
 Menter's intermittency model for that purpose

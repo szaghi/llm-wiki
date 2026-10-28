@@ -5,7 +5,7 @@ description: "Closures whose model terms are explicit algebraic expressions foun
 status: established
 aliases: [symbolic regression, PySR, SBL-SpaRTA, SR-CLS, SR-CND, deep symbolic regression, DSR, gene-expression programming, GEP, sparse regression, SpaRTA, explicit algebraic closure discovery, DSRRANS, relevance vector machine, RVM, NGM4, NGM6, equation discovery]
 tags: [symbolic-regression, rans, les, sgs-model, data-driven, separated-flow]
-timestamp: 2026-10-27T21:12:00Z
+timestamp: 2026-10-28T07:06:00Z
 ---
 
 # Symbolic-regression turbulence closures
@@ -67,7 +67,7 @@ the Reynolds stress is
 $$R_{ij}=\tfrac23k\delta_{ij}-2\nu_t\langle S_{ij}\rangle+2k\,b^\perp_{ij},\qquad b^\perp_{ij}=\frac{\beta_T}{20}\sum_{m=1}^{3}G^m(I_1,I_2)\,T^{(m)}_{ij},\quad\beta_T=7,$$
 
 with $\nu_t=C_\mu k^2/\varepsilon$, $b^\perp_{ij}$ the non-linear part of
-the registry anisotropy (page-local) and $\beta_T$ the paper's damping
+the registry anisotropy (registry §11) and $\beta_T$ the paper's damping
 factor (page-local; the registry $\beta$ is the field-inversion
 multiplier). The paper normalizes the anisotropy as $R_{ij}/k-\tfrac23\delta_{ij}$,
 twice the registry $b_{ij}$ (Eq. 10), and prints the prefactor $\beta/10$;
@@ -268,7 +268,7 @@ $\overline{fg}-\bar f\bar g=\sum_{n\ge1}\frac1{n!}(\Delta^2/12)^n\,\partial^n\ba
 for a Gaussian filter of transfer function $\hat G(k)=\exp(-k^2\Delta^2/24)$
 *(compiler check, not in the sources)*. No coefficient is fitted: only
 $\Delta$ enters, which is the authors' argument that NGM4 is
-"generalizable" (p. 4). In their reading the closures are truncations of
+"generalizable" (p. 4). The authors describe the closures as truncations of
 the non-local deconvolution operator, NGM4 "the minimal local truncation"
 that meets their criteria (p. 5; see
 [scale-similarity model](/methods/scale-similarity-model.md)).
@@ -338,7 +338,7 @@ training objective".
 on Pope's ten-tensor basis of the filtered strain and rotation, scaled by
 $\Delta$ and the strain magnitude (details and the normalization on
 [tensor-basis neural network](/methods/tensor-basis-neural-network.md)).
-In registry notation, with page-local $\mathsf s_{ij}=\sqrt2\,\bar S_{ij}/\lvert\bar S\rvert$
+In registry notation, with the registry-§11 $\mathsf s_{ij}=\sqrt2\,\bar S_{ij}/\lvert\bar S\rvert$
 and $\mathsf w_{ij}=\sqrt2\,\bar\Omega_{ij}/\lvert\bar S\rvert$ (the paper
 normalizes by $\sqrt{\bar S_{mn}\bar S_{mn}}=\lvert\bar S\rvert/\sqrt2$),
 
@@ -438,9 +438,11 @@ $b^\Delta_{ij}$, $b^R_{ij}$):
 $$R_{ij}=2k\Big(\tfrac13\delta_{ij}-\frac{\nu_t}{k}\langle S_{ij}\rangle+b^\Delta_{ij}\Big),\qquad P_k\ \to\ P_k+2k\,b^R_{ij}\,\partial_j\langle u_i\rangle,$$
 
 each a sum over the three 2-D basis tensors $T^{(1)}$–$T^{(3)}$ built from
-the mean strain and rotation divided by $\omega$, with coefficients that
-are functions of the two invariants $I_1$, $I_2$ (page-local: the squared
-norms of the $\omega$-scaled strain and rotation) (Eqs. 7–8, 13). The
+the mean strain and rotation divided by $\omega$ (registry-§11
+$\mathsf S^\omega_{ij}$, $\mathsf W^\omega_{ij}$), with coefficients that
+are functions of the two invariants $I_1$, $I_2$ (page-local here: the
+squared norms of $\mathsf S^\omega$ and $\mathsf W^\omega$, not those of
+Tang et al. above) (Eqs. 7–8, 13). The
 production term is written here in the form the source prints; its sign
 convention is discussed under Qualifications.
 
@@ -562,8 +564,8 @@ alternatives to black-box corrections, without using them
 Table 1) use three SST models whose corrections were regressed with
 SBL-SpaRTA, citing Cherroud et al. (2022, 2025): an
 additive anisotropy $b^\Delta_{ij}$ and a $k$-equation term
-$2k\,b^R_{ij}\partial_j\langle u_i\rangle$ (page-local), each a sum over the
-three 2-D basis tensors built from $S_{ij}/\omega$ and $\Omega_{ij}/\omega$,
+$2k\,b^R_{ij}\partial_j\langle u_i\rangle$ (registry §11), each a sum over the
+three 2-D basis tensors built from $\mathsf S^\omega_{ij}$ and $\mathsf W^\omega_{ij}$,
 with coefficients selected from a dictionary of monomials of the two
 invariants and Gaussian posteriors (§2.1). The printed models are
 

@@ -9,7 +9,7 @@ year: 2026
 venue: "Flow Turbul. Combust. 117:8"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2026_Crossref_Flow_Turbulence_and_Combustion_Aiello_Impact_of_Structure-Preserving_Discretizations_on_Compressib.pdf"
 tags: [dns, compressible, hypersonic, kinetic-energy-preserving, entropy-stable, gpu]
-timestamp: 2026-10-27T15:51:00Z
+timestamp: 2026-10-28T07:11:00Z
 ---
 
 # Summary
@@ -98,7 +98,7 @@ Crossref. Locators are those of the published article.
 | Aiello et al. | Registry ([notation](/notation.md)) | Note |
 |---|---|---|
 | $\overline\phi=(\phi^i+\phi^{i+1})/2$ | $\{\!\{\phi\}\!\}$ | **collision:** the overbar is a two-point mean, not the LES filter |
-| $\overline\phi^{\log}$ | $\phi^{\ln}$ (logarithmic mean, page-local as on [entropy conservation](/properties/entropy-conservation.md)) | |
+| $\overline\phi^{\log}$ | $\phi^{\ln}$ (logarithmic mean, registry §11) | |
 | $\overline{\overline{(u,p)}}$ | (product mean $(u^ip^{i+1}+u^{i+1}p^i)/2$) | page-local |
 | $\overline{\overline T}^m$, $\widetilde{\widetilde T}^m$ | $\mathcal T_m$ (generalized two-point averages, page-local as on [entropy conservation](/properties/entropy-conservation.md)) | at equal states both reduce to $T^{m+1}$, not $T^m$ *(compiler check, not in the sources)*; **collision:** the tildes are not Favre filters |
 | $\mathcal F^c_{\rho\phi}$, $\mathcal P_{\rho\phi}$ | $\mathcal F_{\rho\phi}$ (convective face flux, page-local as on [entropy conservation](/properties/entropy-conservation.md)), (pressure term) | |

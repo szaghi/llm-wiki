@@ -5,7 +5,7 @@ description: "The residual-based dynamic SGS model sets the eddy viscosity from 
 status: established
 aliases: [DSGS, Dyn-SGS, dynamic sub-grid scale model, R-DSGS, T-DSGS, residual-based eddy viscosity, residual-based artificial viscosity]
 tags: [les, sgs-model, eddy-viscosity, spectral-element, numerical-dissipation]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Residual-based dynamic subgrid-scale model
@@ -18,7 +18,7 @@ of the inviscid filtered equations. The viscosity is large where the
 resolved solution fails to satisfy the equations, at fronts and
 discontinuities, and small where the flow is smooth. It is capped by a
 bound of first-order-upwind type. The model was not built as an LES
-closure: [Reddy et al. (2026)](/sources/reddy-2026.md) recall (§1) that it
+closure: [Reddy et al. (2026)](/sources/reddy-2026.md) state (§1) that it
 was designed to stabilize high-order continuous- and discontinuous-Galerkin
 spectral-element solvers and capture sharp gradients, and that "as a
 by-product" it is effective for turbulence modelling. They cite its
@@ -160,7 +160,7 @@ density-current front positions.
     gives the most dissipated one.
   - The authors attribute Vreman's divergence to the single coefficient
     shared by both equations. The paper reports no DSGS run with a single
-    shared coefficient on this test *(compiler check, not in the sources)*.
+    shared coefficient on this test.
 - **[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)** (§7,
   Figs. 7–8). The domain is a $(2\pi)^3$ box with $32^3$ elements.
   - The elemental DSGS variants are the most dissipative of the six models.

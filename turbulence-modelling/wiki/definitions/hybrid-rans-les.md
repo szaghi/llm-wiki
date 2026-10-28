@@ -5,7 +5,7 @@ description: "Scale-resolving approaches that model all turbulence with RANS in 
 status: established
 aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES, self-adaptive turbulence eddy simulation, SATES, very-large eddy simulation, VLES, scale-resolving hybrid model, SRH, hybrid temporal LES, HTLES]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Hybrid RANS/LES
@@ -253,7 +253,7 @@ $\chi^3/(\chi^3+F^{20}c_{v1}^3)$, "for the sake of fast transition"; the
 subgrid constants are $C_\mu=0.02075$, $C_d=1.0$, $Pr_t=0.9$, and the scalar
 fluxes use the blended viscosity
 $\mu_t^{\mathrm{bl}}=F\mu_t^{\mathrm{RANS}}+(1-F)\mu_t^{\mathrm{LES}}$ (Eqs. 9, 14;
-page-local $\mu_t^{\mathrm{bl}}$, $\mu_t^{\mathrm{RANS}}$, $\mu_t^{\mathrm{LES}}$, a
+$\mu_t^{\mathrm{bl}}$ registry §11, $\mu_t^{\mathrm{RANS}}$, $\mu_t^{\mathrm{LES}}$ page-local, a
 wall-distance blend, not the constrained-LES $\nu_t^{\mathrm{hyb}}$ of registry
 §11 below). The Yoshizawa part also carries terms from a spatially varying
 filter width (Eq. 4). The interface height is prescribed by the wall
@@ -271,7 +271,7 @@ of $C_{DES}$ from the coefficients of the length-scale equation
 the [DES page](/methods/detached-eddy-simulation.md)). They list PANS, PITM,
 DES and zonal DES as the main hybrid strategies (§1). Li et al. (2022) make
 the LES branch of the same construction dynamic: with
-$C_{DES}=C_kC_s$ ($C_k$ a page-local factor of the length-scale-equation coefficients) and $C_s$ from the dynamic procedure, the hybrid needs no
+$C_{DES}=C_kC_s$ ($C_k$ the registry §11 factor of the length-scale-equation coefficients) and $C_s$ from the dynamic procedure, the hybrid needs no
 calibration of $C_{DES}$ on decaying turbulence, and on the same
 Reynolds-stress host it improves resolved stresses and pressure
 fluctuations while leaving mean quantities nearly unchanged
@@ -286,7 +286,7 @@ rename *self-adaptive turbulence eddy simulation* (SATES)
 ([Wu et al. (2023)](/sources/wu-2023-b.md), §1, §2.1.1). The transport
 equations of Menter's BSL $k$-$\omega$ model are kept unchanged (see the
 [SST page](/methods/k-omega-sst-model.md)) and only the eddy viscosity is
-multiplied by a resolution control function $F_r$ (page-local symbols
+multiplied by a resolution control function $F_r$ (registry §11 symbols
 throughout this subsection):
 
 $$\mu_t=F_r\frac{\rho k}{\omega},\qquad
@@ -321,6 +321,16 @@ dominant even on the coarse grid, with modelled energy significant near
 walls where $F_r\approx1$ (§3.2, Eq. 16, Figs. 9–10); no integrated fraction
 is reported.
 
+Wu et al. (2024) name this constant-coefficient version SATES-SM and make
+the cut-off coefficient local in a variant SATES-σ, $C_x=\max(C_{x,\mathrm{base}}F_\sigma,0.15)$, $C_{x,\mathrm{base}}=0.61$,
+with $F_\sigma$ (page-local, as on the SATES page) the ratio of the [sigma-model](/methods/sigma-model.md) to the
+Smagorinsky eddy viscosity ($C_\sigma=3.0$, $C_s=0.1$), so that the model
+lowers the eddy viscosity in pure-shear and laminar regions and captures
+transition without a transition model ([Wu et al. (2024)](/sources/wu-2024.md),
+§2.2, Eqs. 8–11). Both variants, their numerics and their results (channel,
+square and supercritical cylinders, a stall sweep of the MD-30P30N) are on
+the [SATES page](/methods/self-adaptive-turbulence-eddy-simulation.md).
+
 **Zonal and unified, in turbomachinery usage.** Sandberg & Michelassi
 (2022) divide hybrids into *zonal* approaches with predetermined RANS and
 LES regions, "like in detached eddy simulations", and *unified* approaches
@@ -330,7 +340,13 @@ state that the difficulty of defining a robust URANS/LES blend has so far
 limited hybrids in industrial design
 ([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §2.2.2.2). The
 placement of DES differs from that of Haering et al. above and of Bose &
-Park, see Qualifications.
+Park, see Qualifications. Li et al. (2024b) use the opposite labels for
+the DES family: DES, DDES and IDDES are "seamless" hybrids, and for the
+geometric complexity of high-lift transport configurations a zonal method
+is "intractable to use" ([Li et al. (2024b)](/sources/li-2024-f.md), §I),
+whereas the zonal DES applications on the
+[DES page](/methods/detached-eddy-simulation.md) include a fan–outlet-guide-vane
+stage and a subsonic jet.
 
 ### Hybrid temporal LES: the scale-resolving hybrid model
 
@@ -358,7 +374,7 @@ size and time step, $\beta_\psi=0.69$ calibrated on decaying isotropic
 turbulence and assumed constant, $\mathrm{CFL}_H$ a filtered CFL number,
 $U_s$ a sweeping velocity, $\Delta$ the cube root of the cell volume and
 $f_s$ the shielding function of the
-[DES page](/methods/detached-eddy-simulation.md) (all page-local; the
+[DES page](/methods/detached-eddy-simulation.md) ($\psi_H$ registry §11, the others page-local; the
 printed $\varepsilon$ in $\mathrm{CFL}_H$ is not further specified). The form gives
 $r_K=\min(1,\beta_\psi\mathrm{CFL}_H^{2/3})$, and $\psi_H=1$ where $f_s=0$
 *(compiler check, not in the sources)*. The time means use exponential
@@ -572,14 +588,14 @@ own submitted work; the Chen et al. paper is the same Reynolds-stress-constraine
 LES work that Haering et al. cite for RSC-SGS: both reference lists resolve
 to one bibliography entry *(compiler check, not in the sources)*. In registry notation, with
 $\langle\cdot\rangle$ a time average, $\tilde u_i$ the Favre-filtered velocity
-and the page-local resolved Reynolds stress
+and the resolved Reynolds stress (registry §11)
 $R^{\mathrm{res}}_{ij}=\langle\tilde u_i\tilde u_j\rangle-\langle\tilde u_i\rangle\langle\tilde u_j\rangle$,
 
 $$\nu_t^{\mathrm{hyb}}=\frac{2\nu_t^{\mathrm{RANS}}\langle\tilde S_{ij}\rangle\langle\tilde S_{ij}\rangle+R^{\mathrm{res}}_{ij}\langle\tilde S_{ij}\rangle}{2\langle\tilde S_{ij}\rangle\langle\tilde S_{ij}\rangle},\qquad
 \frac{\nu_t^{\mathrm{RANS}}}{\nu}=\kappa y^+\big(1-e^{-y^+/19}\big)^2,$$
 
 ([Cai et al. (2022)](/sources/cai-2022.md), §II C 1, Eq. 27; $\nu_t^{\mathrm{hyb}}$,
-$\nu_t^{\mathrm{RANS}}$ page-local, the latter a mixing-length viscosity, $\kappa$
+$\nu_t^{\mathrm{RANS}}$ registry §11, the latter a mixing-length viscosity, $\kappa$
 not given a value). Contracting the condition
 $-2\nu_t^{\mathrm{hyb}}\langle\tilde S_{ij}\rangle+R^{\mathrm{res}}_{ij}=-2\nu_t^{\mathrm{RANS}}\langle\tilde S_{ij}\rangle$
 with $\langle\tilde S_{ij}\rangle$ gives the formula: modelled plus resolved
@@ -641,6 +657,15 @@ formulations.
    concerns single-model unified methods, DES, PANS and PITM among them,
    and its symptoms are masked by numerical dissipation, coefficient tuning
    or averaging (§II D, Eqs. 1–2).
+
+**An empirical interface and lost high frequencies.** In their review of
+one-dimensional turbulence, Chen et al. (2024b) call hybrid RANS/LES a
+trade of accuracy for cost whose RANS–LES interface is "considerably
+empirical" and which loses high-frequency information under Reynolds
+averaging near walls; they offer stochastic one-dimensional near-wall
+closures instead ([Chen et al. (2024b)](/sources/chen-2024-c.md), §4.1; see
+[one-dimensional turbulence](/methods/one-dimensional-turbulence.md)). The
+review runs no hybrid simulation.
 
 **No feedback from the resolved motion.** Heinz (2020) concludes that the
 classical hybrids, wall-modelled LES and DES, feed no information about the
@@ -1005,6 +1030,30 @@ large time steps that A-stable BDF2 allows; see
   nonlinear weights or the scheme by a second-order blended scheme lowers
   it by 6.7% and 11.0% (§3.1–§3.3, Table 2; see
   [numerical dissipation](/properties/numerical-dissipation.md)).
+- **Stall of a three-element airfoil and a supercritical cylinder.** Wu et
+  al. (2024) compare SATES-SM, SATES-σ and SST-IDDES on the MD-30P30N at
+  $Re_C=9\times10^6$, $M=0.2$, $\alpha=8$–$24^\circ$, where SATES-σ keeps the total
+  lift error "always less than 6.5%, even at post-stall conditions", and on a
+  cylinder at $Re_D=3\times10^6$, where SATES-SM predicts a subcritical
+  topology ($C_D=1.39$), SATES-σ a supercritical one ($C_D=0.55$) and IDDES
+  $C_D=0.62$ (§3.2–§3.3, Table 3; details on the
+  [SATES page](/methods/self-adaptive-turbulence-eddy-simulation.md)).
+- **High-lift aircraft vortex system.** SA-IDDES of the NASA CRM high-lift
+  configuration resolves vortex structures that SA-RANS does not and gives
+  $C_D=0.1843$ against 0.1868 measured (SA-RANS 0.1867) on one
+  276-million-cell grid (Li et al. 2024b, §III.D; on the [DES page](/methods/detached-eddy-simulation.md)
+  and [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)).
+- **Compressor tip-leakage flow.** Zhang et al. (2024) choose SA-DDES for the
+  tip flow of a compressor tandem cascade because RANS has "inherent defects
+  in predicting the strong anisotropic and unsteady characteristics", its
+  models being "based on the isotropic hypothesis" (as cited from Tucker)
+  ([Zhang et al. (2024)](/sources/zhang-2024.md), §1,
+  §2.3; on the [DES page](/methods/detached-eddy-simulation.md) and
+  [compressor cascades](/benchmarks/compressor-cascade.md)).
+- **Supersonic combustors.** In passing, Wang & Xu (2024) list LES and
+  hybrid LES/RANS studies of the Burrows–Kurkov hydrogen combustor as the
+  motivation of their DNS of a reacting supersonic boundary layer
+  ([Wang & Xu (2024)](/sources/wang-2024-h.md), §1).
 - **Dynamic Reynolds-stress IDDES.** On the periodic hill and the
   [hammerhead launch-vehicle buffet](/benchmarks/hammerhead-launch-vehicle-buffet.md),
   the dynamic RSM-IDDES of Li et al. (2022) keeps the mean results of
@@ -1199,3 +1248,8 @@ large time steps that A-stable BDF2 allows; see
 - [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.4, §VI 1c, §VI 1e Fig. 37, §VI 5.
 - [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §1.
 - [Thawait et al. (2023)](/sources/thawait-2023.md) — §I, §II B, §VI.
+- [Wu et al. (2024)](/sources/wu-2024.md) — §2.2, Eqs. (8)–(11) (SATES-SM and SATES-σ); §3.2–§3.3, Table 3 (cylinder and MD-30P30N comparisons).
+- [Li et al. (2024b)](/sources/li-2024-f.md) — §I (seamless and zonal hybrids); §III.D (CRM-HL with SA-IDDES).
+- [Chen et al. (2024b)](/sources/chen-2024-c.md) — §4.1 (critique of hybrid RANS/LES).
+- [Zhang et al. (2024)](/sources/zhang-2024.md) — §1, §2.3 (DDES chosen over RANS for tip-leakage flow).
+- [Wang & Xu (2024)](/sources/wang-2024-h.md) — §1 (LES and hybrid literature of the Burrows–Kurkov combustor; passing).

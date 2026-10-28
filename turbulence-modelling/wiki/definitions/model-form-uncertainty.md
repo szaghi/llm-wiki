@@ -5,7 +5,7 @@ description: "The uncertainty that comes from the structure of a turbulence clos
 status: established
 aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, aleatoric model uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation, stochastic discrepancy closure]
 tags: [uncertainty-quantification, rans, data-driven, field-inversion]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:09:00Z
 ---
 
 # Model-form uncertainty in turbulence closures
@@ -771,7 +771,7 @@ been studied but "rarely have they provided general improvements", and name the
 macroscopic forcing method of Mani & Park as a direction that "avoids
 model-form inaccuracies" by not resting on the Boussinesq approximation,
 isotropy or scale separation and by avoiding tuning constants; it is not
-ready for industrial use (§4.5.1). Standard uncertainty-quantification
+ready for industrial use (§4.5.1). Uncertainty-quantification
 practice is one of their requirements for certification by analysis
 (§5). The review gives no equations or new data.
 
@@ -816,10 +816,7 @@ practice is one of their requirements for certification by analysis
 - Agrawal & Koutsourelakis print the Reynolds stress with a minus sign,
   $-\langle u_i'u_j'\rangle$, and $k=-\tfrac12\mathrm{tr}$ of it (Eqs. 9–10),
   while their Eqs. 10, 14 and 17 write the positive isotropic part
-  $\tfrac23kI$; the registry form above follows Eqs. 14 and 17. They call
-  the marginal of their sparsity prior "a light-tailed, Student's
-  t-distribution" (§2.2.2); a Student-t has polynomially decaying, i.e.
-  heavy, tails *(compiler check, not in the sources)*. Their 10%
+  $\tfrac23kI$; the registry form above follows Eqs. 14 and 17. Their 10%
   Bernoulli selection of nodes is said to yield about 8% of the nodes
   (§3.2).
 - Cato et al. rate the production multiplier $\beta$ in their middle class

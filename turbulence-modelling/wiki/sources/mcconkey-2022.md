@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Fluids 34:035110"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_Physics_of_Fluids_McConkey_Deep_structured_neural_networks_for_turbulence_closure_model.pdf"
 tags: [rans, data-driven, neural-network, eddy-viscosity, separated-flow, a-priori-a-posteriori]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Summary
@@ -61,9 +61,10 @@ on this page are those of the preprint.
 # Key claims
 
 Page-local symbols: $a_{ij}=R_{ij}-\tfrac23k\delta_{ij}=2kb_{ij}$ (dimensional
-anisotropy), $\nu_t^*$ and $\nu_t^\dagger$ (unconstrained and non-negative
-optimal eddy viscosity), $a^\perp_{ij}$ (non-linear part), $\varphi=\langle v'^2\rangle/k$,
-subscript $_{\mathrm{DNS}}$ for DNS-derived quantities. $\langle S_{ij}\rangle$
+anisotropy), $\varphi=\langle v'^2\rangle/k$,
+subscript $_{\mathrm{DNS}}$ for DNS-derived quantities. $\nu_t^*$ and
+$\nu_t^\dagger$ (unconstrained and non-negative optimal eddy viscosity) and
+$a^\perp_{ij}$ (non-linear part) are registry §11 symbols. $\langle S_{ij}\rangle$
 is the mean strain rate.
 
 1. The unconstrained optimal eddy viscosity $\nu_t^*=-\tfrac12a_{ij}\langle S_{ij}\rangle/(\langle S_{kl}\rangle\langle S_{kl}\rangle)$ (Eq. 6, closed form of the least-squares problem Eq. 5) can be negative, "especially when the eigenframes of $a$ and $S$ are poorly aligned"; treated implicitly it can give a negative effective viscosity and destabilize the solution (§II A). **Stated**
@@ -130,8 +131,8 @@ first-order convection for the turbulence equations, $y^+\le1$.
 | $R$ | $\langle\Omega_{ij}\rangle$ | **collision:** $R$ is the rotation-rate tensor, not the Reynolds stress |
 | $\lVert S\rVert$, $\lVert\tau\rVert$ | $\lvert S\rvert/\sqrt2$, Frobenius norm | no factor two |
 | $A:B$ | $A_{ij}B_{ij}$ | |
-| $\nu_t^*$, $\nu_t^\dagger$ | $\nu_t^*$, $\nu_t^\dagger$ (page-local) | Eqs. 6, 7 |
-| $a^\perp$ | $a^\perp_{ij}$ (page-local) | Eq. 9 |
+| $\nu_t^*$, $\nu_t^\dagger$ | $\nu_t^*$, $\nu_t^\dagger$ (registry §11) | Eqs. 6, 7 |
+| $a^\perp$ | $a^\perp_{ij}$ (registry §11) | Eq. 9 |
 | tilde ($\tilde\nu_t^\dagger$, $\tilde a$) | (network prediction) | **collision:** neither a Favre filter nor the SA variable |
 | subscript $\theta$, $\psi$ | subscript $_{\mathrm{DNS}}$, (base RANS) | **collision** with the registry's momentum thickness $\theta$ and parameters $\boldsymbol\theta$ |
 | $P$ | $P_k$ | |

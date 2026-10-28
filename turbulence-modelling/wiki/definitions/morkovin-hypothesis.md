@@ -5,7 +5,7 @@ description: "Morkovin's hypothesis holds that, while density fluctuations stay 
 status: established
 aliases: [Morkovin hypothesis, Morkovin scaling, Morkovin's scaling, strong Reynolds analogy, SRA, HSRA, Reynolds analogy factor, turbulent Prandtl number]
 tags: [compressible, boundary-layer, dns, hypersonic, rans]
-timestamp: 2026-10-28T02:18:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Morkovin's hypothesis and Reynolds analogies
@@ -31,7 +31,14 @@ undermine their accuracy, especially at large heat fluxes. The DNS of
 [Huang et al. (2022)](/sources/huang-2022.md) test them on spatially
 developing zero-pressure-gradient [boundary layers](/benchmarks/turbulent-boundary-layer.md)
 from Mach 2 to 14, with adiabatic and cooled walls, at $Re_\tau$ up to about
-2000 and 1200 respectively.
+2000 and 1200 respectively. In the historical account of
+[Kim & Leonard (2024)](/sources/kim-2024-b.md) (§4.5), the first compressible
+wall-bounded DNS (Buell's 1990 Couette flow; the supersonic channel of
+Coleman et al. 1995; the supersonic boundary layer of Rai et al. 1995, as
+cited) "shed light on" the hypothesis and the strong Reynolds analogy, and
+Coleman et al.'s "nonphysical" experiment, with different Mach numbers in
+the energy and momentum equations, found the direct compressibility effects
+small at Mach 1.5 and 3.
 
 Notation: Huang et al. write $z$ for the wall-normal coordinate and $y$ for
 the spanwise one; both are swapped here to the registry's $y$ wall-normal.
@@ -89,6 +96,22 @@ Coleman & Bradshaw 1995, cited by both sources; see
   Fig. 4). The near-wall streak spacing is $\lambda_z^*\approx100$ in all
   six cases, which they call in accordance with Huang et al. (§4,
   Figs. 10–11).
+- As a validation of the incoming layer of shock interactions:
+  [Kang & Lee (2024)](/sources/kang-2024.md) (§III, Fig. 5) find the
+  density-scaled intensities of a Mach 2.9 layer ($Re_\theta=2400$,
+  $T_w/T_\infty=2.87$) in agreement with incompressible DNS (Wu & Moin) and
+  compressible DNS (Tong et al., $Re_\theta=2300$), with the streamwise peak
+  at $y^+\approx12$; [Tang et al. (2024)](/sources/tang-2024.md) (§2.3,
+  Fig. 12) find the scaled $u_{\mathrm{rms}}$ of a Mach 5 cold-wall layer
+  ($T_w/T_r=0.5$, $Re_\tau=700$) collapsed on incompressible data for
+  $y/\delta<0.4$ and slightly above Spalart's (1988) data beyond, as
+  Pirozzoli et al. (2004) also observed, closer to the higher-$Re$ data of
+  Sillero et al. (2013) and within 5 % of Huang et al. (2022) at the edge
+  (all as cited); and [Wei et al. (2023)](/sources/wei-2023.md) (§III B,
+  Fig. 11) find the density-scaled stresses of a Mach 2.44 wall-resolved
+  LES in agreement with experiments, in the ratio
+  $\sqrt{R_{11}}:\sqrt{R_{33}}:\sqrt{R_{22}}\approx4:3:2$ that they cite from
+  Wilcox (without naming Morkovin).
 
 **Where it breaks.**
 
@@ -145,6 +168,14 @@ Coleman & Bradshaw 1995, cited by both sources; see
   should be considered when modelling high-Mach-number wall-bounded
   turbulence" (§7).
 
+- **Hypersonic cold walls as a stated limit.** [Zhang et al. (2024b)](/sources/zhang-2024-b.md)
+  (§1, §3.1, Fig. 5b) state that the hypothesis holds at moderate Mach
+  number ($M<5$) on adiabatic walls (Maeder et al. 2001; Pirozzoli et al.
+  2004, as cited) but "is not necessarily valid under non-adiabatic
+  hypersonic conditions"; in their Mach 6 layers at $T_w/T_r=0.50$, 0.75 and
+  1.0 the peak of the density-scaled fluctuations moves closer to the wall
+  as the wall is cooled, as Duan et al. (2010, as cited) found.
+
 Matching $T_w/T_r$ does not match wall-cooling effects: Cogo et al. (2022,
 §2, §3.1) use the Eckert number $Ec=(\gamma-1)M_e^2T_e/(T_r-T_w)$, 3.9 at
 Mach 2 and 8.0 at Mach 5.86, and find the Mach 2 cases behave as more
@@ -185,13 +216,13 @@ Zhang et al. The relation used in compressible wall models is on
 
 **Reynolds analogy factor.** With the Stanton number
 $C_h=q_w/(\rho_eU_ec_p(T_r-T_w))$ (registry §11), Huang et al. (2022, §3.2,
-Fig. 4) find $R_{af}=2C_h/C_f$ nearly constant over their range for all
-hypersonic cold-wall cases, $1.1<R_{af}<1.2$, decreasing for the Mach 10.9
+Fig. 4) find the Reynolds analogy factor $s_{\mathrm{RA}}=2C_h/C_f$ (registry §11; the source's $R_{af}$) nearly constant over their range for all
+hypersonic cold-wall cases, $1.1<s_{\mathrm{RA}}<1.2$, decreasing for the Mach 10.9
 case from about 1.19 at $Re_\tau\lesssim400$ to 1.16 at $Re_\tau\approx1172$
 (the value that they cite as recommended by Chi & Spalding and by
 Hopkins & Inouye). They call this range "consistent with the usual approximation
 $R_{af}=Pr^{-2/3}\approx1.256$" (§3.2, §6), although the printed range lies
-below that value.
+below that value *(compiler check, not in the sources)*.
 For their three cooled layers at $Re_\tau\approx650$,
 [Zhang et al. (2022)](/sources/zhang-2022-b.md), Table 3, find
 $2C_h/C_f=1.16$, 1.14 and 1.11 at Mach 0.5, 2 and 8 (Stanton number
@@ -226,6 +257,38 @@ Huang et al. (2022, §4.3.2, Figs. 17–18) find:
   HSRA collapses all cases to a value close to unity in the outer layer,
   so that $T''_{\mathrm{rms}}$ can be estimated from $u''_{\mathrm{rms}}$
   with $Pr_t\approx1$.
+
+**A boundary layer with a non-monotonic temperature profile.**
+[Wang & Xu (2024)](/sources/wang-2024-h.md) (§5.4, Eqs. 5.4–5.5,
+Figs. 20–22) test the SRA amplitude relation, its variable-$c_p$ form
+$\tilde c_p T''_{\mathrm{rms}}/(u''_{\mathrm{rms}}\langle u\rangle_\rho)=1$ (assuming
+$\tilde c_pT''_{\mathrm{rms}}\gg c_p''\langle T\rangle_\rho$; $\tilde c_p$ the mean specific heat,
+page-local) and the extensions of Cebeci (ESRA), Gaviglio (GSRA), Rubesin
+(RSRA) and Huang, Coleman & Bradshaw (HSRA) on the DNS of a Mach 2.33
+boundary layer under a sonic cold hydrogen film, with and without
+combustion, at $Re_\tau\approx1000$ over an adiabatic wall. The SRA and its
+variable-$c_p$ form are nearly constant over $10<y^+<200$, the latter
+closer to one, and both deviate strongly in the outer layer; GSRA, RSRA and
+HSRA deviate severely and ESRA falls outside the plotted range. The authors
+trace the failures to the assumptions: the total-temperature–velocity
+similarity behind ESRA is far from satisfied, and the mixing-length
+proportionality $u''\,\partial_y\langle T\rangle_\rho\propto T''\,\partial_y\langle u\rangle_\rho$ behind
+GSRA, RSRA and HSRA is not constant (Fig. 21). The linear coherence between
+$u$ and $T$ is about 0.5 for $y^+<200$ and is lost above, which they
+attribute to large-scale temperature and hydrogen fluctuations that do not
+drive velocity fluctuations at the same scales (Fig. 22). Where Huang et
+al. (2022) find the HSRA close to one in the outer layer of
+zero-pressure-gradient layers of uniform composition, Wang & Xu's layer has
+a non-monotonic mean temperature across the cold film; the papers do not
+compare each other's flows.
+
+The turbulent Prandtl and Schmidt numbers of these and of other
+flows are collected on the
+[turbulent Prandtl number](/definitions/turbulent-prandtl-number.md) page:
+Wang & Xu (2024, §5.2) find $Pr_t\approx1.1$ in the log region and 0.5–0.9
+in the outer layer, discontinuous where the wall-normal turbulent heat flux
+changes sign, and [Wei et al. (2023)](/sources/wei-2023.md) (§IV F) find
+$Pr_t$ and $Sc_t$ between 0 and 2 in a supersonic film-cooling LES.
 
 ## Across separated hypersonic interactions
 
@@ -272,6 +335,22 @@ written $y$ here.
   accurate for the attached Mach 7 interaction", over-predicts heat transfer
   at separation and in the recovering layer and misses the steep rise past
   the corner; it was derived for attached interactions (§IV E, §V, Fig. 28b).
+
+The same factor collapses in a cold-wall compression-ramp DNS at Mach 5
+($30^\circ$, $T_w/T_r=0.5$, $Re_\tau=700$, incipient separation):
+[Tang et al. (2024)](/sources/tang-2024.md) (§4.1, Fig. 21b) find
+$C_f/(2C_h)=1/s_{\mathrm{RA}}$ (their $S$, with their Stanton number on the recovery-to-wall enthalpy
+difference) at 0.86 upstream, the turbulent-boundary-layer value of Qu et
+al. (2001, as cited), drastically changing in the recirculation region and
+constant at 0.5 downstream instead of recovering, as Helm & Martín (2022)
+also report and call "not well understood"; Helm & Martín's own downstream
+level is about 0.7 (above), in a different flow. Tang et al. replace the
+pressure–heat-transfer law with exponent 0.85, which they find to
+over-predict recent data by up to 72 %, with a correlation derived from
+boundary-layer heat-transfer theory and oblique-shock relations (35 %
+maximum error) and explain its trend with a budget of mean and turbulent
+compression and dissipation heat (§3; see
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
 
 Morkovin's hypothesis also serves as a construction tool: the Mach 9 DNS of
 Helm & Martín (2022, §II) was initialized with incompressible DNS
@@ -473,6 +552,13 @@ inlet, and one of them declines Morkovin's assumption downstream.
   (Mach 2.91 compression/expansion ramp) from the strong Reynolds analogy,
   with van Driest-transformed mean profiles (see
   [inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
+- [Wei et al. (2023)](/sources/wei-2023.md), §II D, Eq. (24), do the same for
+  the synthetic-eddy inflow of a Mach 2.44 film-cooling LES, with
+  $T'/\langle T\rangle=-(\gamma-1)M^2u'/\langle u\rangle$ and, as printed,
+  $\rho'/\langle\rho\rangle=T'/\langle T\rangle$ (see Qualifications).
+- [Kang & Lee (2024)](/sources/kang-2024.md) (§IV) use Morkovin-scaled
+  intensities only to validate the incoming layer of their Mach 2.9 ramp
+  DNS (above), not inside the interaction.
 
 ## Thermodynamic fluctuations for a hypersonic inflow library
 
@@ -485,7 +571,7 @@ and recovery lengths are on
 [inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
 Notation: $\langle\cdot\rangle$ is the time and spanwise average, primes
 are Reynolds fluctuations, $(\cdot)_e$ edge values, and $s_{\mathrm{RA}}$
-(page-local) the Reynolds analogy factor of the generalized Reynolds
+(registry §11) the Reynolds analogy factor of the generalized Reynolds
 analogy (GRA).
 
 **Velocity scaling.** The rescaling keeps
@@ -640,6 +726,15 @@ the van Driest-transformed mean velocity of the same station is on
   read carries the AIP notice that an erratum to the paper has been
   published; the erratum is not in the file and its content is not known
   here.
+- Wei et al. (2023, Eq. 24) print $\rho'/\langle\rho\rangle=+T'/\langle T\rangle$;
+  linearizing their own equation of state (Eq. 8), $p=\rho TR_u\sum_sY_s/W_s$, at
+  fixed composition with $p'=0$ gives $\rho'/\langle\rho\rangle=-T'/\langle T\rangle$
+  *(compiler check, not in the sources; $p'=0$ is not stated by the authors)*.
+- Wang & Xu (2024, App. A) attribute the non-proportionality of mean
+  temperature and density to "the non-ideal gas law employed", while their
+  Eq. (2.5) is Dalton's law for an ideal-gas mixture; the
+  non-proportionality comes from the variable mixture molar mass in that
+  law.
 - Printed inconsistencies of the two papers that do not bear on these
   scalings (shape factors, Reynolds-number tables) are recorded on their
   Source pages.
@@ -669,3 +764,9 @@ the van Driest-transformed mean velocity of the same station is on
 - [Gao et al. (2023)](/sources/gao-2023.md) — §5.2, Fig. 18 (Morkovin-scaled stresses against DNS in a DG implicit LES).
 - [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II B (free-stream and wall temperatures, recovery factor); §II C, Eq. (3), Fig. 6b (density-scaled Reynolds-averaged fluctuations at the inflow station of a Mach 6 DNS).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §2.5, Eq. (17) (equilibrium thermal wall model, strong Reynolds analogy $C_h=C_f/2$, its range and failure near separation); §4.4 (Morkovin-type scaling of closures for $M_t\lesssim0.2$).
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §4.5 (early compressible DNS; Coleman et al. 1995 as cited).
+- [Kang & Lee (2024)](/sources/kang-2024.md) — §III, Fig. 5 (Morkovin-scaled intensities of the incoming Mach 2.9 layer).
+- [Tang et al. (2024)](/sources/tang-2024.md) — §2.3, Fig. 12; §3; §4.1, Fig. 21 (Morkovin scaling; Reynolds-analogy factor through a Mach 5 ramp interaction).
+- [Wang & Xu (2024)](/sources/wang-2024-h.md) — §5.2; §5.4, Eqs. (5.4)–(5.6), Figs. 20–22; App. A (SRA and extensions, coherence, $Pr_t$).
+- [Wei et al. (2023)](/sources/wei-2023.md) — §II D, Eq. (24); §III B, Fig. 11; §IV F.
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §1; §3.1, Eq. (3.3), Fig. 5b.

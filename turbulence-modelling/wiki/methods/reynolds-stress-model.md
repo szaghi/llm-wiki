@@ -5,7 +5,7 @@ description: "Second-moment RANS closures that transport the six Reynolds stress
 status: established
 aliases: [Reynolds-stress model, RSM, DRSM, differential Reynolds-stress model, second-moment closure, Reynolds stress transport model, RSTM, SSG/LRR-ω, SSG/LRR-ω-γ, ATAAC DRSM, RSM-IDDES, RSM-DynIDDES]
 tags: [rans, reynolds-stress-model, transition, turbomachinery, separated-flow]
-timestamp: 2026-10-28T02:16:00Z
+timestamp: 2026-10-28T07:10:00Z
 ---
 
 # Differential Reynolds-stress models
@@ -377,20 +377,52 @@ alignment and partly to the choice of turbulence model
 **Strong adverse pressure gradient.** Ghidoni et al. (2026) use
 SSG/LRR-$\omega$ solutions of Knopp et al., with an adverse-pressure-gradient
 modification as cited, as the computed reference for the skin friction of
-the DLR/UniBw DM2 and DM3 plates ($25<\beta_{RH}<45$, $\beta_{RH}$ the
-pressure-gradient parameter, page-local), beside the experiment, when
+the DLR/UniBw DM2 and DM3 plates ($25<\beta_{RC}<45$, $\beta_{RC}$ the
+Rotta–Clauser pressure-gradient parameter, registry §11; the source's
+$\beta_{RH}$), beside the experiment, when
 assessing their $k$-$\omega$ [wall function](/methods/rans-wall-function.md)
 ([Ghidoni et al. (2026)](/sources/ghidoni-2026.md), §4.2, Fig. 8; see
 [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)).
 
+**Corner flows in shock interactions.** In their review of
+three-dimensional shock/boundary-layer interactions, Sabnis & Babinsky
+(2023) state that corner regions are "generally more prone to separation"
+because they hold low-momentum fluid, shaped by streamwise counter-rotating
+corner vortices driven by turbulent-stress anisotropy, which computations
+must capture for a quantitatively correct corner separation
+([Sabnis & Babinsky (2023)](/sources/sabnis-2023.md), §4, as cited). They
+conclude that "when RANS simulations are unable to predict interactions with
+corner effects, it is usually not because the flow is inherently three
+dimensional but because an accurate simulation of the wider flow field
+requires the displacement effect of the corner separation to be correctly
+captured", and that current RANS effort aims at reproducing the
+stress-generated corner vortices, citing quadratic-constitutive-relation
+work and a Reynolds-stress-model computation of a duct interaction (Boychev
+et al.) (§5); the review prints no model. Sandberg & Zhao (2022) likewise place the
+stress-induced secondary flow of square ducts "clearly beyond the scope of
+linear eddy-viscosity models" (§2.1; see the
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)
+and [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+
+**Wall fluxes under boundary-layer combustion.** After finding that SST RAS
+of a supersonic hydrogen film misses the combustion-induced friction
+reduction and overpredicts the heat flux, Wei et al. (2023) blame isotropic
+eddy-viscosity modelling, the variation of the turbulent Prandtl and Schmidt
+numbers and the flux–gradient misalignment, and propose anisotropic RAS
+models "such as v2f or RSM" for engineering prediction of such wall fluxes
+([Wei et al. (2023)](/sources/wei-2023.md), §IV F, Conclusions); they run
+none. See the [turbulent Prandtl number](/definitions/turbulent-prandtl-number.md).
+
 ## Qualifications
 
+- Sabnis & Babinsky (2023) and Wei et al. (2023) recommend or cite
+  Reynolds-stress closures without running one.
 - Wang et al. (2021) call the Favre average "the hat" while printing a
   tilde (§2.2).
 
-- Liu et al. (2024) print several values the model needs without giving
-  them: $\gamma_\omega$, $\beta_\omega$, $\sigma_\omega$, $\sigma_d$ and their
-  blending, so the model is not reproducible from that paper alone.
+- Liu et al. (2024) do not print several values the model needs:
+  $\gamma_\omega$, $\beta_\omega$, $\sigma_\omega$, $\sigma_d$ and their
+  blending.
 - In their Table 1 the caption defines $c_2^{(\mathrm{LRR})}=0.52$, while the
   LRR row lists $c_2=0$ and the expressions in $c_2^{(\mathrm{LRR})}$ for
   $c_4$, $c_5$ sit in the SSG row; judged from the table's own labels the
@@ -439,10 +471,12 @@ assessing their $k$-$\omega$ [wall function](/methods/rans-wall-function.md)
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1, §3.2.3.
 - [Heinz (2020)](/sources/heinz-2020.md) — §5.4.
 - [Wang et al. (2013)](/sources/wang-2013.md) — §5.4, Table V.
-- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.2.
+- [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.1 (square-duct secondary flow); §3.2.
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — App. C.
 - [He et al. (2022)](/sources/he-2022-b.md) — abstract, §5.3, §6.
 - [Li et al. (2022)](/sources/li-2022-k.md) — §II B–C Eqs. 2–5, 9, §III A–C Fig. 18.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.2.
 - [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §2.2 Eqs. 2.38–2.42, §4.1, §5.1, §5.4 Figs. 37–42.
 - [Mays et al. (2023)](/sources/mays-2023.md) — §2.1.1, App. Eqs. 16–21, §3.2.1.
+- [Sabnis & Babinsky (2023)](/sources/sabnis-2023.md) — §4 (stress-induced corner vortices, as cited); §5 (RANS of corner-affected interactions).
+- [Wei et al. (2023)](/sources/wei-2023.md) — §IV F, Conclusions (v2f or RSM recommended after the SST failure).

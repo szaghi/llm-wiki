@@ -9,7 +9,7 @@ year: 2022
 venue: "AIAA J. 60:6897-6909"
 local_file: "/home/stefano/papers/mosaic/turbulence_modelling/2022_Crossref_AIAA_Journal_Prakash_Optimal_Clipping_of_Structural_Subgrid_Stress_Closures_for_L.pdf"
 tags: [les, sgs-model, eddy-viscosity, a-priori-a-posteriori, energy-cascade]
-timestamp: 2026-10-27T16:00:00Z
+timestamp: 2026-10-28T07:05:00Z
 ---
 
 # Summary
@@ -28,9 +28,9 @@ correlation with the exact stress. Mixed models with a tuned or
 
 *Optimal clipping* replaces the model stress by the symmetric tensor nearest
 to it in the Frobenius norm among the tensors without local backscatter. The
-KKT conditions give a closed form, $\tau^{\mathrm{OC}}_{ij}=\tau^M_{ij}-\lambda\bar S_{ij}$
-with $\lambda=\max(\tau^M_{kl}\bar S_{kl}/\bar S_{mn}\bar S_{mn},0)$. This is a
-mixed model whose eddy viscosity $\lambda/2$ is evaluated pointwise, with no
+KKT conditions give a closed form, $\tau^{\mathrm{OC}}_{ij}=\tau^M_{ij}-\lambda_{\mathrm{oc}}\bar S_{ij}$
+with $\lambda_{\mathrm{oc}}=\max(\tau^M_{kl}\bar S_{kl}/\bar S_{mn}\bar S_{mn},0)$. This is a
+mixed model whose eddy viscosity $\lambda_{\mathrm{oc}}/2$ is evaluated pointwise, with no
 test filter, no averaging and no parameter. The authors offer it as a
 mathematical justification of the mixed-model form.
 
@@ -72,8 +72,8 @@ equation, figure and table numbers on this page are those of the arXiv v2.
 5. Fixed-coefficient mixed models (Clark plus Smagorinsky, Eq. 7) need a tuned $C_G$: too large is over-dissipative and inaccurate in transition, too small is unstable; the dynamic mixed model addresses this (§II). **Stated**
 6. Standard clipping (Eq. 9) raises model dissipation at the cost of the correlation between true and modelled stresses (§II). **Stated** (shown a priori in Figs. 1–3)
 7. Optimal clipping (Eqs. 10–11) is the Frobenius-nearest symmetric tensor to $\tau^M$ in $\mathcal S=\{\tilde\tau\in\mathrm{Sym}(3):\tilde\tau_{ij}\bar S_{ij}\le0\}$; if $\tau^M\notin\mathcal S$ the minimizer is unique and solves the linear $7\times7$ KKT system of Eq. 12 (§II). **Derived** (uniqueness asserted, not proved in detail)
-8. Closed form: $\lambda=\tau^M_{ij}\bar S_{ij}/(\bar S_{kl}\bar S_{kl})$ (Eq. 13), $\tau^{\mathrm{OC}}_{ij}=\tau^M_{ij}-\lambda\bar S_{ij}$ (Eq. 14), valid in both cases with $\lambda=-\min\{-\tau^M_{ij}\bar S_{ij}/(\bar S_{kl}\bar S_{kl}),0\}$ (Eq. 15). **Derived**
-9. The optimally clipped model is a mixed model whose eddy viscosity is half the Lagrange multiplier, exactly what removes the model backscatter; it reverts to the structural model where there is none. This gives "some mathematical justification for the use of mixed SGS models" (§II, after Eq. 15). **Derived**. Where $\lambda>0$, Eqs. 13–14 give $\tau^{\mathrm{OC}}_{ij}\bar S_{ij}=0$, the local model flux that standard clipping also gives, so the two clippings have the same pointwise model flux *(compiler check, not in the sources)*.
+8. Closed form: $\lambda_{\mathrm{oc}}=\tau^M_{ij}\bar S_{ij}/(\bar S_{kl}\bar S_{kl})$ (Eq. 13), $\tau^{\mathrm{OC}}_{ij}=\tau^M_{ij}-\lambda_{\mathrm{oc}}\bar S_{ij}$ (Eq. 14), valid in both cases with $\lambda_{\mathrm{oc}}=-\min\{-\tau^M_{ij}\bar S_{ij}/(\bar S_{kl}\bar S_{kl}),0\}$ (Eq. 15). **Derived**
+9. The optimally clipped model is a mixed model whose eddy viscosity is half the Lagrange multiplier, exactly what removes the model backscatter; it reverts to the structural model where there is none. This gives "some mathematical justification for the use of mixed SGS models" (§II, after Eq. 15). **Derived**. Where $\lambda_{\mathrm{oc}}>0$, Eqs. 13–14 give $\tau^{\mathrm{OC}}_{ij}\bar S_{ij}=0$, the local model flux that standard clipping also gives, so the two clippings have the same pointwise model flux *(compiler check, not in the sources)*.
 10. Optimal clipping needs no additional filtering or homogeneous averaging, unlike a dynamic mixed model, which "significantly reduces the model evaluation cost"; it is parameter-free (Abstract, §II). **Stated** (no timings)
 11. Like other mixed formulations [21], optimal clipping keeps the near-wall scaling of the underlying structural model (§II). **Stated**
 12. Optimal clipping applies unchanged to Bardina's model, ADM or a data-driven model; the authors tested it with Bardina's model and the data-driven model of [22], with similar trends (§II, §IV). **Stated** (results not shown)

@@ -5,7 +5,7 @@ description: "Eddy-viscosity LES closures that transport the subgrid kinetic ene
 status: established
 aliases: [k-equation model, one-equation SGS model, subgrid kinetic energy equation model, LDKM, localized dynamic k-equation model, dynamic k-equation model, DKSGS, dk-equation model, Yoshizawa one-equation model, quasi-dynamic SGS kinetic energy equation model, QKM]
 tags: [les, sgs-model, eddy-viscosity, compressible, combustion]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T07:04:00Z
 ---
 
 # One-equation subgrid kinetic-energy models
@@ -21,11 +21,11 @@ so that $\tau_{kk}=2\bar\rho k_{\mathrm{sgs}}$ is a solved quantity, and
 
 $$\tau_{ij}=\tfrac23\bar\rho k_{\mathrm{sgs}}\delta_{ij}-2\mu_t\tilde S^d_{ij},\qquad \mu_t=c_k\,\bar\rho\,\Delta\sqrt{k_{\mathrm{sgs}}},$$
 
-with $c_k$ (page-local) the viscosity coefficient. The transport equation
+with $c_k$ (registry §11) the viscosity coefficient. The transport equation
 is driven by the local subgrid energy flux $\Pi=-\tau_{ij}\tilde S_{ij}$
 (registry §3; a gain for $k_{\mathrm{sgs}}$ when the cascade is forward)
 and drained by a dissipation modelled as $c_\varepsilon\bar\rho k_{\mathrm{sgs}}^{3/2}/\Delta$
-($c_\varepsilon$ page-local). Because $k_{\mathrm{sgs}}$ is transported, the
+($c_\varepsilon$, registry §11). Because $k_{\mathrm{sgs}}$ is transported, the
 model carries history and non-local effects that an algebraic closure such
 as the [Smagorinsky model](/methods/smagorinsky-model.md) lacks, at the
 price of one more equation and of closures for its unclosed terms.
@@ -116,6 +116,32 @@ Idelsohn et al. read these as a limitation of LES on coarse meshes; the
 comparison is a single coarse-mesh LES per case. In their particle-laden
 examples the LES comparator is static Smagorinsky instead (§3.2).
 
+### Dynamic $k$-equation model in supersonic film-cooling LES
+
+[Wei et al. (2023)](/sources/wei-2023.md) (§II B, Eqs. 9–15) close their
+wall-resolved LES of supersonic hydrogen film cooling (Burrows–Kurkov
+configuration, Mach 2.44, in the OpenFOAM-based solver scramjetFoam; see
+[OpenFOAM](/software/openfoam.md)) with the same model family: Yoshizawa's
+one-equation model with the dynamic procedure of Kim & Menon and Germano
+et al. (all cited),
+
+$$\partial_t(\bar\rho k_{\mathrm{sgs}})+\partial_i(\bar\rho\tilde u_ik_{\mathrm{sgs}})=-\tau_{ij}\partial_j\tilde u_i-c_\varepsilon\frac{\bar\rho k_{\mathrm{sgs}}^{3/2}}{\Delta}+\partial_j\big(\bar\rho\nu_t\,\partial_jk_{\mathrm{sgs}}\big),\qquad \nu_t=c_k\sqrt{k_{\mathrm{sgs}}}\,\Delta,$$
+
+with the deviatoric stress closed by $-2\bar\rho\nu_t\tilde S^d_{ij}$,
+$\Delta=(\Delta_x\Delta_y\Delta_z)^{1/3}$ the implicit (grid) filter width,
+and $c_k$, $c_\varepsilon$ computed dynamically (no values printed). The
+paper's $\tau^{sgs}_{ij}=\overline{\rho u_iu_j}-\bar\rho\tilde u_i\tilde u_j$
+carries the density, as the compressible registry form does. The subgrid
+heat and species fluxes are gradient-diffusion closures with constant
+subgrid turbulent Prandtl and Schmidt numbers 0.85 and 0.7, and the
+subgrid viscous-work flux is neglected. The authors choose the model
+because it "accounts for history effects" and depends little on model
+parameters; they report that 99.5% of the cells resolve more than 80% of
+the turbulent kinetic energy (§III B, Fig. 6). Their a posteriori
+analysis of the resolved turbulent Prandtl and Schmidt numbers, which vary
+between 0 and 2 although the subgrid values are constant, is on
+[turbulent Prandtl number](/definitions/turbulent-prandtl-number.md).
+
 ## Dynamic and quasi-dynamic compressible variants
 
 [Qi et al. (2022)](/sources/qi-2022-b.md) (§3.1, Eqs. 3.1–3.7) solve the
@@ -171,6 +197,19 @@ CPUs, Table 5).
   [subgrid turbulent dynamo model](/methods/subgrid-turbulent-dynamo-model.md);
   its equation is not printed in that source.
 
+- **Origin, as told in a history of LES.** [Kim & Leonard (2024)](/sources/kim-2024-b.md)
+  (§2.5) credit Schumann (1975, cited) with extending subgrid modelling to
+  anisotropic grids and adding a transport equation for the subgrid
+  turbulent energy, in LES of plane channels and annuli with up to 65 000
+  grid volumes and special wall boundary conditions instead of no-slip;
+  no equation is printed.
+- **Detonation-engine LES.** [Vignat et al. (2024)](/sources/vignat-2024.md)
+  (§3.3, Table 1) list one-equation eddy-viscosity and one-equation
+  turbulent-kinetic-energy closures (the latter in
+  [ANSYS Fluent](/software/ansys-fluent.md)) among the subgrid treatments
+  of earlier LES of the same rotating detonation rocket engine; their own
+  LES uses the [Vreman model](/methods/vreman-model.md).
+
 ## Qualifications
 
 - **Two values of Yoshizawa's $C_I$, side by side.** Both sources cite
@@ -198,6 +237,9 @@ CPUs, Table 5).
 # Citations
 
 - [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.2; §6; §6.2.
+- [Wei et al. (2023)](/sources/wei-2023.md) — §II B, Eqs. (9)–(15); §III B, Fig. 6.
+- [Kim & Leonard (2024)](/sources/kim-2024-b.md) — §2.5.
+- [Vignat et al. (2024)](/sources/vignat-2024.md) — §3.3, Table 1.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.10.3–2.10.6, Figs. 12, 13, 16, Table 2; §3.2.
 - [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §II D, §II F, Eq. (28), Fig. 3.
 - [Qi et al. (2022)](/sources/qi-2022-b.md) — §1; §3.1, Eqs. (3.1)–(3.7); §3.2, Eqs. (3.11)–(3.26); §4.1, Tables 2–5.
