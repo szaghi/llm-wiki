@@ -3,9 +3,9 @@ type: Method
 title: "Lattice Boltzmann methods for turbulent flow"
 description: "Lattice Boltzmann methods advance particle populations on a discrete velocity lattice by local collision and streaming, recovering weakly compressible Navier–Stokes; this page gives the scheme, regularized, central-moment and MRT collisions, eddy viscosities in the relaxation time, temporal LES closed in the collision, immersed boundaries, a Hall-MHD extension, and accuracy."
 status: established
-aliases: [LBM, lattice Boltzmann, LB, lattice Boltzmann equation, LBE, HRR collision, central-moment collision, MRT collision, lattice Boltzmann MHD, FLAME, ZDES-LBM, temporal LES with lattice Boltzmann, TLES-LBM, OpenLB]
+aliases: [LBM, lattice Boltzmann, LB, lattice Boltzmann equation, LBE, HRR collision, central-moment collision, MRT collision, lattice Boltzmann MHD, FLAME, ZDES-LBM, PowerFLOW, VLES, temporal LES with lattice Boltzmann, TLES-LBM, OpenLB]
 tags: [lattice-boltzmann, les, dns, hybrid-rans-les, gpu, mhd, immersed-boundary]
-timestamp: 2026-10-27T21:11:00Z
+timestamp: 2026-10-28T01:53:00Z
 ---
 
 # Lattice Boltzmann methods for turbulent flow
@@ -457,6 +457,45 @@ whistlers, the authors state that the GPU lattice code gives "significantly
 smaller" turnaround times than pseudo-spectral codes; no side-by-side timing
 is given.
 
+## A lattice Boltzmann submission in a high-lift workshop
+
+The one lattice Boltzmann entry of the wall-modelled LES group of the
+fourth AIAA High-Lift Prediction Workshop is summarized by
+[Kiris et al. (2023)](/sources/kiris-2023.md) on the
+[NASA CRM high-lift model](/benchmarks/nasa-crm-high-lift.md)
+($Re=5.5\times10^6$ on the mean aerodynamic chord, Mach 0.2). Kiris et al.
+(§I) cite a PowerFLOW submission to the previous workshop, with a
+proprietary very-large-eddy-simulation (VLES) closure, as free of the
+spurious outboard separation of steady RANS, its surface flow patterns
+showing "very close similarity" with oil-flow photographs. In HLPW-4 the
+participant W-032 (PowerFLOW 6-2021) solved "a proprietary
+non-isothermal variant of the Lattice–Boltzmann equations" with explicit
+time stepping ($\Delta t=3.7\times10^{-5}$ nondimensional) on a 475-million-point
+isotropic Cartesian lattice, the geometry entering through an
+[immersed boundary](/methods/immersed-boundary-method.md) formulation,
+with a wall-normal spacing of about 10 mm at full scale (7 m chord) and a
+proprietary "pressure-aware" wall model, the only non-equilibrium one of
+the group (§II, Tables 1–2; see
+[non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
+Its closure is a RANS model ($k$-$\varepsilon$ based, "HRLBM" in the participant table)
+that switches to an LES-type closure through an indicator function, so the
+authors align it with the philosophy of
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md), but group it with the
+[wall-modelled LES](/methods/wall-modelled-les.md) entries because it uses
+$y^+\gg1$ grids with a wall model; "the Lattice–Boltzmann aspect of this
+submission should be interpreted as a numerical method instead of a
+distinct near-wall turbulence treatment" (§I, §II.4–5).
+
+The submission meets the down-selection on outboard suction peaks, all of
+whose members used more than 250 million degrees of freedom (§IV), and
+its inboard stall grows from the wing–pylon juncture, the authors'
+topology B (§IV; see Qualifications). It is one of three submissions in
+the wind-tunnel case: there it predicts a strong pitch break between
+$\alpha=17.9^\circ$ and $18.9^\circ$ followed by a rise of $C_L$ and pitching
+moment to $19.9^\circ$, which the authors call "slightly abnormal" and
+relate partly to differences in the tunnel floor boundary layer; its
+boundary-layer profiles were not provided (§V).
+
 ## Limits stated by other sources
 
 Simonis et al. (2022, §3.4, App. B) state that under diffusive scaling
@@ -522,6 +561,11 @@ multiphase models still at an early stage.
   "$2.6\cdot10^9$ nodes" (p. 15) and "$2700\cdot10^6$ nodes" (p. 18). The
   version read is the version of record.
 
+- **Kiris et al. (2023)** list W-032 under both stall topologies in §IV
+  (topology A: "W-020, W-021, W-032, W-047, and W-050"; topology B: "W-031,
+  W-032, and W-049") and later state that it "falls under topology B".
+  The paper prints no equation, constant or cost of the lattice Boltzmann
+  scheme or of its closure, which are proprietary.
 - **Relaxation factor (Simonis et al.).** Simonis et al. print the
   collision with the factor $\Delta t/(\tau_{\mathrm{LB}}+\Delta t/2)$
   (Eq. 14) together with $\nu=c_s^2(\tau_{\mathrm{LB}}-\Delta t/2)$
@@ -548,4 +592,5 @@ multiphase models still at an early stage.
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III E, Eqs. (80)–(92) (BGK, low-Mach limits, multiphase and compressible variants, hybrid LB–FV); §V (conclusions).
 - [Simonis et al. (2022)](/sources/simonis-2022.md) — §1; §2.1–2.4, Eqs. (1)–(19), (28) (time filter, direct deconvolution, filtered BGK, MRT with residual-stress forcing); §3.2–3.4, Table 1, Figs. 2–9 (Taylor–Green calibration, comparison with spectral elements, subgrid activity, error plateau); §4; App. A–B, Tables 2–3, Fig. 10.
 - [Stanly et al. (2022)](/sources/stanly-2022.md) — §1 (actuator lines in lattice Boltzmann solvers, cited).
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §I (HLPW-3 PowerFLOW VLES, lattice Boltzmann as a numerical method); §II.2–5, Tables 1–2 (W-032: non-isothermal LB, Cartesian immersed-boundary lattice, VLES closure, pressure-aware wall model); §IV (suction-peak subset, stall topology); §V (in-tunnel pitch break).
 - [Ghidoni et al. (2026)](/sources/ghidoni-2026.md) — §1; §3.3, Eqs. (12)–(14); reference [11] (the explicit power-law wall model of Wilhelm et al., devised for lattice Boltzmann RANS, reused in a DG solver).

@@ -5,7 +5,7 @@ description: "Artificial-viscosity shock capturing adds a dissipative term, swit
 status: established
 aliases: [artificial viscosity, localized artificial diffusivity, LAD, von Neumann–Richtmyer artificial viscosity, viscous pressure, Persson–Peraire artificial viscosity, entropy-stable artificial viscosity]
 tags: [shock-capturing, numerical-dissipation, dg, compressible, implicit-les, entropy-stable]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T02:15:00Z
 ---
 
 # Artificial-viscosity shock capturing
@@ -279,11 +279,32 @@ use a nonlinear compact interpolation; and
 dissipation competitive with filtering in cost but in need of a sensor, and
 stabilize under-resolved flux reconstruction with an optimized modal filter
 ([explicit modal filtering](/methods/explicit-modal-filtering.md)).
-Two chunk-11 sources add no artificial viscosity:
+Two sources add no artificial viscosity:
 [Cheng et al. (2023)](/sources/cheng-2023-b.md), §2.2, capture shocks
 with a bounded (TVD) reconstruction alone (see [WENO](/methods/weno-scheme.md)),
 and [Fureby & Nilsson (2023)](/sources/fureby-2023.md), §3.4, name
 localized artificial diffusivity only as an alternative they do not use.
+Three further sources on discontinuous high-order methods review
+artificial viscosity and choose another route:
+
+- [Liu & Yuan (2023)](/sources/liu-2023-b.md), §1, object that local
+  artificial dissipation for flux reconstruction needs an extra
+  reconstruction of the solution gradient and problem-dependent empirical
+  parameters, and use an a posteriori
+  [subcell finite-volume](/methods/subcell-finite-volume-shock-capturing.md)
+  limiter for one-dimensional detonations;
+- [Potluri et al. (2023)](/sources/potluri-2023.md), §1, survey for
+  hypersonic finite-element and DG solvers the streamline-upwind
+  (SUPG) stabilization with artificial viscosity and the smooth PDE-based
+  artificial viscosities (Barter & Darmofal and later work, Ching et al.
+  among them), and adopt the subcell blending of Hennemann et al. for
+  laminar hypersonic interactions;
+- [Shi & Yan (2023)](/sources/shi-2023.md), §I, cite the
+  Persson–Peraire viscosity and the comparison of physical (bulk) and
+  Laplacian viscosities by Tonicello et al. (2022) for a ramp interaction,
+  and limit their flux-reconstruction implicit LES of a Mach 2.9 ramp with
+  a WENO limiter and a positivity-preserving limiter instead (see
+  [WENO](/methods/weno-scheme.md)).
 
 ## Shock-capturing tests
 
@@ -389,6 +410,9 @@ Fig. 6). Findings:
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1 (same).
 - [Ruggeri et al. (2022)](/sources/ruggeri-2022.md) — §VI, Fig. 7 (Haga–Kawai LAD in fourth-order flux reconstruction; interface fluxes at high order).
 - [Wang et al. (2013)](/sources/wang-2013.md) — §2, Q5; §5.2; §6 (shock capturing as a pacing item; artificial viscosity against limiting).
+- [Liu & Yuan (2023)](/sources/liu-2023-b.md) — §1 (objections to local artificial dissipation in flux reconstruction).
+- [Potluri et al. (2023)](/sources/potluri-2023.md) — §1 (SUPG with artificial viscosity and PDE-based smooth artificial viscosity for hypersonic DG and finite elements, reviewed).
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §I (Persson–Peraire and physical against Laplacian viscosity, cited).
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.2, Eqs. (2.6)–(2.10), App. B–C (bulk artificial viscosity, Mach-dependent artificial Prandtl number, modal sensor with Ducros factor, positivity limiter); §3.2, Figs. 12–13; §4.1, Eq. (4.13), Fig. 18 (AV term of the resolved kinetic-energy budget).
 - [Svärd (2022)](/sources/svard-2022.md) — §3.1 (upwind artificial viscosity as a subgrid model, cell Reynolds number); §4, Eqs. (20)–(25), Proposition 4.1 (mass-flux artificial diffusion); §5.1–5.2, Fig. 1, Table 4.
 - [Deng et al. (2022)](/sources/deng-2022.md) — §1 (artificial viscosity among hybrid shock-capturing options).

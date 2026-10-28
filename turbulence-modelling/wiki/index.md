@@ -20,7 +20,7 @@ $u_\tau$, $y^+$ and $h_{\mathrm{wm}}$ the wall quantities, $N$ the polynomial
 degree of element methods, $\boldsymbol Z^\pm$ the Elsasser fields), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–11 ingested (220 of the 307 sources planned in 16
+**Corpus:** chunks 1–12 ingested (240 of the 307 sources planned in 16
 chunks; the archive is still growing). Chunk 1 holds the reviews and the
 papers that fix the vocabulary: the data-driven modelling reviews of
 [Duraisamy et al. (2019)](/sources/duraisamy-2019.md) and
@@ -130,6 +130,19 @@ boundary layers, machine learning in combustion and industrial CFD,
 neural-network RANS closures, numerical subgrid stress in implicit LES,
 ROUND schemes in OpenFOAM, hypersonic swept-ramp DNS, scramjet combustion
 LES, premixed-flame DNS and turbulent deflagration-to-detonation transition.
+Chunk 12 (2023–2024 papers): the HLPW-4 wall-modelled LES summary on the
+CRM high-lift configuration, wall-modelled LES with semi-local scaling
+including the SGS viscosity, neural-network nonlinear algebraic SGS models,
+van Cittert deconvolution with differential filters, field inversion for
+compressible channel RANS, eigensolution analysis of spectral difference
+and flux reconstruction, mesh-refinement indicators for implicit LES,
+shock capturing by subcell, positivity-preserving and a posteriori
+limiters, skin-friction decomposition and mixing-layer analysis of a
+shock/boundary-layer interaction, hypersonic inflow generation and the
+generalized Reynolds analogy, scale-resolving hybrid RANS/LES of cylinder
+flow, fluid–structure interaction with shock-induced panel loading,
+dynamically thickened flames, principal-component transport, and
+detonation codes and detonation–turbulence DNS.
 
 ## Reading guide
 
@@ -146,6 +159,7 @@ LES, premixed-flame DNS and turbulent deflagration-to-detonation transition.
 [k-ε models](/methods/k-epsilon-model.md),
 [k-τ model](/methods/k-tau-model.md),
 [differential Reynolds-stress models](/methods/reynolds-stress-model.md),
+[barycentric anisotropy map](/definitions/barycentric-anisotropy-map.md),
 [explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md),
 [Baldwin–Lomax model](/methods/baldwin-lomax-model.md),
 [local-correlation-based transition models](/methods/local-correlation-based-transition-model.md),
@@ -193,6 +207,7 @@ LES, premixed-flame DNS and turbulent deflagration-to-detonation transition.
 [wall functions for RANS](/methods/rans-wall-function.md);
 [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md),
 [log-layer mismatch](/definitions/log-layer-mismatch.md),
+[skin-friction decomposition](/definitions/skin-friction-decomposition.md),
 [boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md).
 
 **5. Hybrid RANS/LES.**
@@ -232,6 +247,7 @@ LES, premixed-flame DNS and turbulent deflagration-to-detonation transition.
 [geometric conservation law](/properties/geometric-conservation-law.md),
 [entropy conservation](/properties/entropy-conservation.md),
 [spectral difference method](/methods/spectral-difference-method.md),
+[eigensolution analysis](/methods/eigensolution-analysis.md),
 [method of manufactured solutions](/methods/method-of-manufactured-solutions.md),
 [multi-resolution independent simulations](/methods/multi-resolution-independent-simulations.md),
 [high-order gas-kinetic schemes](/methods/high-order-gas-kinetic-scheme.md),
@@ -254,7 +270,8 @@ codes [FLEXI](/software/flexi.md), [CharLES](/software/charles.md),
 [HORSES3D](/software/horses3d.md), [Nektar++](/software/nektar-plus-plus.md),
 [ProLB](/software/prolb.md), [GALÆXI](/software/galaexi.md),
 [TRACE](/software/trace.md), [OpenFOAM](/software/openfoam.md),
-[COOLFluiD](/software/coolfluid.md);
+[COOLFluiD](/software/coolfluid.md), [hpMusic](/software/hpmusic.md),
+[ANSYS Fluent](/software/ansys-fluent.md);
 [Ffowcs Williams–Hawkings acoustic analogy](/methods/ffowcs-williams-hawkings-acoustic-analogy.md). Compressible wall turbulence:
 [Morkovin's hypothesis and Reynolds analogies](/definitions/morkovin-hypothesis.md),
 [attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md),

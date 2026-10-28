@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Flamelet-based tabulated chemistry"
-description: "Flamelet-based tabulated chemistry stores the thermochemical state of one-dimensional flames in a table indexed by mixture fraction, progress variables and enthalpy; this page gives manifold construction and coupling, extensions for curvature, stretch, ignition, wall quenching and exhaust-gas recirculation, subgrid variance in supersonic LES, neural-network tabulation, assessments, and non-tabulated finite-rate closures as contrast."
+description: "Flamelet-based tabulated chemistry stores the thermochemical state of one-dimensional flames in a table indexed by mixture fraction, progress variables and enthalpy; this page gives manifold construction and coupling, premixed against counterflow tables, extensions for curvature, stretch, ignition and wall quenching, subgrid variance, neural-network and principal-component reduction, assessments, and non-tabulated closures."
 status: established
-aliases: [eddy dissipation concept, EDC, tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, FPV-h, composition space model, ignition source-term patch, optimal estimator, premixed flamelet tabulation, subgrid mixture-fraction variance, scalar variance model, neural-network tabulation, stretch factor, extended Takeno flame index]
+aliases: [eddy dissipation concept, EDC, tabulated chemistry, flamelet manifold, flamelet/progress variable, FPV, flamelet-generated manifold, FGM, QFM, quenching flamelet-generated manifold, QFM-EGR, FPV-κ, FPV-h, composition space model, ignition source-term patch, optimal estimator, premixed flamelet tabulation, subgrid mixture-fraction variance, scalar variance model, neural-network tabulation, stretch factor, extended Takeno flame index, principal-component transport, PC transport, counterflow flamelet database, partially premixed flamelet tabulation]
 tags: [combustion, dns, tabulated-chemistry, flame-wall-interaction, hybrid-rans-les]
-timestamp: 2026-10-27T21:11:00Z
+timestamp: 2026-10-28T02:13:00Z
 ---
 
 # Flamelet-based tabulated chemistry
@@ -66,6 +66,9 @@ The sources build their tables from different flame families:
 | Steinhausen et al. (2023), QFM-EGR (§4, contribution) | 63 transient head-on quenching flames with cold exhaust-gas dilution $0\le Y_{\mathrm{EGR}}\le0.3$, plus preheated flames 300–750 K | $(c,c_2,h_t)$, $c$ from $\mathrm{CO_2}$, $c_2$ from $\mathrm{CO}$ |
 | Tang et al. (2022), FPV of Pierce & Moin (§2.2) | laminar counterflow (non-premixed) flamelets, all three branches, 9-species 19-step H$_2$–air mechanism, unity Lewis number, at 1.1 and 1.9 bar | $(\tilde Z,Z_v,\tilde c)$, presumed $\beta$-PDF in $Z$ and $\delta$-PDF in $c$ |
 | [Böttler et al. (2022)](/sources/bottler-2022.md), §2.2 (the FPV-$h$ of Böttler et al. 2023) | composition-space-model solutions blending unstretched premixed flames with constant-pressure homogeneous ignition, over $0.35\le\phi_{\mathrm{eq}}\le2.0$ and fresh-gas temperatures 300–3500 K, plus exhaust-diluted flames for the low-enthalpy bound; Li et al. hydrogen mechanism, mixture-averaged diffusion | $(Z,H_{\mathrm n},c)$, $H_{\mathrm n}$ the normalized enthalpy |
+| [Zhang et al. (2023)](/sources/zhang-2023-c.md), FGM "FP" (§3.2) | freely propagating premixed methane–air flamelets, $0.4\le\phi_{\mathrm{eq}}\le2.6$ in steps of 0.02, GRI-Mech 3.0, unity Lewis number, interpolated to air below the lean limit | $(Z,Y_c)$, $Y_c=Y_{\mathrm{CO_2}}+Y_{\mathrm{H_2O}}$, on $500\times200$ points; $Z_v$ added for the presumed PDF |
+| Zhang et al. (2023), "CF-Diff" (§3.2) | steady counterflow diffusion flamelets (air against methane) from strain 0.1 s⁻¹ to extinction, plus unsteady flamelets obtained by imposing a strain far above extinction | as FP |
+| Zhang et al. (2023), "CF-PaPre" (§3.2) | as CF-Diff with a rich premixed fuel side at $\phi_{\mathrm{eq}}=2.6$ (the partially premixed flamelet tabulation of Wen et al., as cited there, with the boundary equivalence ratio fixed) | as FP |
 
 ## Construction
 
@@ -191,6 +194,24 @@ $$\partial_t(\bar\rho Z_v)+\partial_j(\bar\rho\tilde u_jZ_v)=\partial_j\Big[\Big
 
 The authors describe the scale-similarity estimate as having no transport
 or dissipation of the variance, "no historical effects" (§3.1).
+
+Zhang et al. (2023, §3.3, Eq. 8) close the filtered source term of their
+FGM table with a $\beta$-PDF in $Z$ and a top-hat PDF in $Y_c$, the two
+taken as statistically independent, and obtain both subgrid variances
+algebraically from the resolved gradients under local equilibrium,
+$Z_v=\alpha_v\Delta(\nabla\tilde Z)^2$ and likewise for $Y_c$, with
+$\alpha_v=1/12$ (page-local) and $\Delta$ the cube root of the cell
+volume (printed form in Qualifications). Eleven points in $Z_v$ make the
+table three-dimensional, about 591 Mb.
+
+**Transported minor species.** A table built from premixed flamelets
+carries the CO and H$_2$ of those flamelets. Zhang et al. (2023, §3.1,
+Eq. 7), after earlier work they cite, also transport CO and H$_2$ with a
+split source: the production rate is read from the table, the
+consumption rate is made proportional to the transported mass fraction,
+$\overline{(\dot\omega_{k,\mathrm c}/Y_k^{\mathrm{tab}})}\,\tilde Y_k$ with
+$Y_k^{\mathrm{tab}}$ the tabulated value (page-local symbols), so that only
+consumption adapts locally.
 
 ## Assessment
 
@@ -382,6 +403,59 @@ which the authors take as support for a non-premixed flamelet model there
 resources allow (§4). The evidence is visual comparison of contours,
 scatter plots and profiles; no error norm is given.
 
+**Premixed against counterflow tables in a multi-regime flame**
+([Zhang et al. 2023](/sources/zhang-2023-c.md)). The Darmstadt
+multi-regime burner flame MRB26b, a stratified methane–air flame with a
+multi-regime inner reaction zone and a lean premixed outer zone, is
+computed by LES in [OpenFOAM](/software/openfoam.md) (about 3.87 million
+hexahedra, dynamic [Smagorinsky](/methods/smagorinsky-model.md) eddy
+viscosity, second-order TVD convection, PISO, $\Delta t=0.32$ µs at CFL
+about 0.4, 20 flow-through times of statistics; §2, §3.4). On the cold
+flow the time-averaged ratio of subgrid to total kinetic energy is
+generally below 0.2 in the flame region, so at least 80% of the
+turbulent kinetic energy is resolved (Pope's criterion, as cited; §2,
+Eqs. 1–2; see [large-eddy simulation](/definitions/large-eddy-simulation.md)).
+Four cases combine the three tables above with the presumed PDF and, for
+the premixed table only, the
+[dynamically thickened flame](/methods/thickened-flame-model.md) (Table 1).
+Against the Raman/Rayleigh measurements (§4.1, Figs. 6–11):
+
+- all tables and both closures give very similar mean velocity,
+  temperature, mixture fraction and major species (CH$_4$, O$_2$,
+  CO$_2$, H$_2$O), in good agreement with experiment;
+- the premixed table over-predicts CO and H$_2$ in the inner reaction
+  zone, most downstream; the two counterflow tables, which give nearly the
+  same results, match the experiment better. Scatter plots of $\tilde Z$
+  against $\tilde Y_c$ are alike for the premixed and the partially
+  premixed table while the conditional CO and H$_2$ differ, so the
+  authors locate the error in the tabulation, not in the control-variable
+  field; the counterflow flamelets contain species diffusion along $Z$
+  (fuel–air mixing), which lowers CO and H$_2$ on the rich side, and
+  strain, which a study they cite shows to reduce CO and H$_2$
+  production (Fig. 11);
+- transporting CO and H$_2$ with the linearized consumption source repairs
+  the premixed table, bringing its conditional means close to the
+  counterflow tables (Figs. 7, 9, 10, 12);
+- in the outer premixed zone the minor species are nearly the same in all
+  tables and are predicted well; even there the counterflow tables work,
+  which the authors explain by similar control-variable bounds and
+  near-premixed burning at low strain.
+
+A Takeno-type flame index of fuel and oxidizer gradients,
+$\nabla\tilde Y_{\mathrm{CH_4}}\cdot\nabla\tilde Y_{\mathrm{O_2}}/(\lvert\nabla\tilde Y_{\mathrm{CH_4}}\rvert\lvert\nabla\tilde Y_{\mathrm{O_2}}\rvert)$
+(Eq. 20, after Yamashita et al. as cited), is binned into premixed
+($>0.99$), dominantly premixed (0.8–0.99), multi-regime ($-0.8$ to 0.8),
+dominantly non-premixed and non-premixed classes (Table 2). In the inner
+zone the three tables give similar distributions: non-premixed burning is
+rare, as in the experiment, and multi-regime burning dominates, but
+downstream the simulations give more premixed than multi-regime burning,
+unlike the experiment, which the authors read as too fast dilution of the
+rich mixture (§4.3, Fig. 18). The angle between $\nabla\tilde Z$ and
+$\nabla\tilde Y_c$ shows back-supported propagation (toward leaner
+mixture) upstream and front-supported downstream, as in the experiment
+(Eq. 21, Fig. 19). Tang et al. (2022) and Fureby & Nilsson (2023), here,
+use the same kind of index for hydrogen.
+
 ## Stretch beyond the unstretched flamelet
 
 [Coulon et al. (2023)](/sources/coulon-2023.md) test the assumption that
@@ -455,6 +529,41 @@ there:
   in a rocket-combustor LES, which cut cost by 20% "with good agreement"
   with finite-rate-chemistry LES; its error is "limited by the predictive
   capability of the lowest-performing submodel" (§4.1.4, Fig. 34).
+
+**Transporting principal components instead of species.**
+[Kumar et al. (2023)](/sources/kumar-2023.md) apply the
+principal-component route in a [DNS](/definitions/direct-numerical-simulation.md)
+of turbulent premixed combustion (contribution: the three-dimensional
+validation; the method is background they cite, §1–2). The temperature
+and seven representative species (H$_2$, H, O$_2$, H$_2$O, CH$_4$, CO,
+CO$_2$; the major species above a mass fraction of $10^{-2}$ plus the H
+radical for curvature and differential diffusion) form a normalized state
+$\boldsymbol\psi_r$ whose covariance eigenvectors $\mathsf Q$ give the
+components $\boldsymbol\Psi=\mathsf Q^{\mathsf T}\boldsymbol\psi_r$
+(page-local symbols; Eq. 8). Each retained component obeys a
+transport equation with source $\dot{\boldsymbol\omega}_\Psi=\mathsf Q^{\mathsf T}\dot{\boldsymbol\omega}_{\psi}$
+and diffusion matrix $\mathsf Q^{\mathsf T}\mathsf D_\psi\mathsf Q$, which is
+diagonalized by a constant rotation of the components to one coefficient
+each (Eqs. 9–11). Four of eight components carry more than 99% of the
+variance; the third and fourth, about 2% together, carry H$_2$ and H and
+are, the authors state, essential for curvature and differential
+diffusion (§3.4, Figs. 3–4). The closure terms (component sources and
+diffusivities, viscosity, ratio of specific heats, temperature, mixture
+molecular weight) are small networks trained by Levenberg–Marquardt on
+stacked snapshots of a two-dimensional species DNS, an architecture
+[4 15 10 4] for the sources with correlation at least 99.9% against the
+training data; larger networks fit better but are, they state, "very
+sensitive to input fluctuations" (§3.4, Fig. 5). Non-transported species
+such as HO$_2$ are recovered from the components by further networks.
+Training on one-dimensional laminar flames is rejected because such
+flames do not reach the states of the turbulent flame (§3.1, Fig. 2), and
+the two-dimensional training data span the states reached by all
+three-dimensional runs in the first two components (§3.7, Fig. 13).
+Results and costs are on the
+[DNS](/definitions/direct-numerical-simulation.md) page; the authors call
+the choice of training data and representative species "largely domain
+expert dependent" (§4). They list ISAT tabulation, PRISM, ILDM, CSP, adaptive chemistry and
+network tabulation of chemistry as competing accelerations (§1).
 
 The review's general caution, that learned closures are mostly tested
 a priori, is on
@@ -567,6 +676,13 @@ reacting zone of their two scramjet combustors and take it as support for
 a non-premixed flamelet table; the combustors, injection and operating
 points differ, so the two findings are recorded side by side.
 
+**Detailed chemistry without a table in a detonation code.**
+[Sun et al. (2023)](/sources/sun-2023.md), §2.1–2.2, integrate detailed
+finite-rate chemistry with the stiff extrapolation solver seulex in an
+operator-splitting step in the [OpenFOAM](/software/openfoam.md) solver
+detonationFoam, without a table; the code has no turbulence–chemistry
+closure and its validation cases are laminar or inviscid (§3).
+
 ## Qualifications
 
 - **Printed forms in Mardani & Nazari (2022)** *(compiler checks, not in
@@ -619,6 +735,23 @@ points differ, so the two findings are recorded side by side.
   divides a ratio of sums by the number of samples $N$; the ratio of sums
   is already independent of the sample count, so as printed the error
   scales with $1/N$ *(compiler check, not in the sources)*.
+- **Printed forms in Zhang et al. (2023).** §2 defines the central jet
+  at $\phi_{\mathrm{eq}}=2.6$ and the first slot at $\phi_{\mathrm{eq}}=0$
+  (air), while §3.2 bounds the premixed flamelets and the rich side of
+  CF-PaPre by "$\phi_{slot1}=2.6$" and writes "$Z_{slot1}\approx0.132$"
+  (§4.1.2 prints $Z\approx0.0446$ at the lean slot's 0.8; no relation
+  between $Z$ and $\phi_{\mathrm{eq}}$ is printed). The variance model is
+  printed with $\Delta$ to the first power, $Z_v=\alpha_v\Delta(\nabla\tilde Z)^2$
+  ($\alpha_v=1/12$, page-local), whose right-hand side has the dimension
+  of an inverse length for a dimensionless variance; $\Delta^2$ makes it
+  dimensionless *(compiler check, not in the sources)*. Eleven points in
+  $Z_v$ are said to increase the table "10 times". The attribution of the
+  recirculation-zone discrepancies to the unity Lewis number rests on the
+  authors' earlier work, not on a test in the paper (§4.1.1).
+- **Kumar et al. (2023)** state that the semi-implicit pressure update
+  does not impact accuracy without a run that isolates it (§2.2); the
+  coverage of the composition space by the training data is shown in
+  the first two components only (Fig. 13), for one fuel and mechanism.
 - The versions read are arXiv preprints (Böttler et al. 2301.06780v1;
   Steinhausen et al. 2212.03762v1) and the HAL author manuscript of Domingo
   & Vervisch.
@@ -653,4 +786,7 @@ points differ, so the two findings are recorded side by side.
 - [Coulon et al. (2023)](/sources/coulon-2023.md) — §2.2, Table 1 (three flames of equal laminar speed and thickness); Eqs. (7)–(9) (stretch factor); §3.1, Fig. 5 ($I_0\approx1$ assumption tested); §3.3, Figs. 13, 16 (lean hydrogen $I_0$ up to 2.5); §3.4, Eq. (13), Fig. 20 (counterflow flamelets in strain–equivalence-ratio space).
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.3, Eqs. (69)–(70), Fig. 29 (manifold memory scaling, neural-network and PCA tabulation, cited works); §4.1.4, Fig. 34 (random-forest submodel assignment).
 - [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.3 (finite-rate chemistry preferred to flamelets); §6.1, Fig. 4 (mechanism dependence of the stabilization mode); §6.6, Fig. 12 (extended Takeno index).
+- [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2, Eqs. (1)–(2), Fig. 2 (burner, mesh, resolved-energy criterion); §3.1, Eqs. (3)–(7) (control variables, transported CO and H$_2$ with linearized consumption); §3.2, Figs. 3–4, 11 (FP, CF-Diff, CF-PaPre tables); §3.3, Eq. (8) (presumed PDF, gradient variances); §3.4, Table 1; §4.1, Figs. 6–12 (assessment of the tables); §4.3, Eqs. (20)–(21), Tables 2–3, Figs. 18–19 (flame index, propagation direction).
+- [Kumar et al. (2023)](/sources/kumar-2023.md) — §1 (competing chemistry accelerations); §2.1, Eqs. (8)–(11) (principal-component transport); §3.1, Fig. 2 (training data); §3.4, Figs. 3–5 (retained components, network closures); §3.7, Fig. 13 (composition-space coverage); §4.
+- [Sun et al. (2023)](/sources/sun-2023.md) — §2.1–2.2 (detailed chemistry by operator splitting and seulex, no tabulation); §3 (laminar and inviscid validation only).
 - [Domingo & Vervisch (2023)](/sources/domingo-2023.md) — HAL author manuscript: §3.1, Figs. 5–6 (LES-embedded DNS with premixed flamelet tabulation, flamelet deconvolution); §3.2 (flame-resolved bluff-body burner, flamelet-hypothesis test proposed).

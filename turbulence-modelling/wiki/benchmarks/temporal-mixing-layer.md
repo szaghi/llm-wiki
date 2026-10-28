@@ -5,7 +5,7 @@ description: "A periodic shear layer between two counter-flowing streams that tr
 status: established
 aliases: [temporal mixing layer, temporally evolving mixing layer, TML, free-shear mixing layer, temporally evolving free-shear layer]
 tags: [benchmark, les, sgs-model, data-driven, neural-network, dns]
-timestamp: 2026-10-27T20:40:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Temporally developing mixing layer
@@ -202,6 +202,28 @@ against sharp spectral at ratio 2, different networks, data and
 viscosity), so the difference is recorded as one of set-up, and their LES
 errors are not comparable.
 
+**Mixing-layer statistics as a reference elsewhere.** Statistics of free
+shear layers also serve as a reference outside this configuration.
+[Yu et al. (2023)](/sources/yu-2023.md) identify a mixing layer embedded
+in the boundary layer recovering behind an impinging shock (see
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md))
+and compare its stress ratios $\langle v'v'\rangle/\langle u'u'\rangle$ and
+$-\langle u'v'\rangle/\langle u'u'\rangle$ (Favre-weighted in the source)
+with measurements and simulations of free compressible mixing layers
+against the convective Mach number, adapted as the maximum velocity
+defect over the sum of the sound speeds at the wall and at the layer edge
+(§5.1, Eq. 5.1, Fig. 14). Over their range, 0.32 down to 0, the ratios
+match the free-layer data and they see no compressibility effect; the
+anisotropy of the embedded layer (0.49, 0.23, 0.28, 0.15 for the $uu$,
+$vv$, $ww$, $-uv$ stresses over $2k$) lies on the axisymmetric-expansion
+line of the Lumley triangle, which they call the typical mixing-layer state
+(App. A, Fig. 19); [Helm & Martín (2022)](/sources/helm-2022.md) give
+another side of the triangle as typical of mixing layers (an open
+contradiction on the
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+page). None of the incompressible LES configurations above
+enters their comparison.
+
 ## Qualifications
 
 - The dynamic models of [Li et al. (2024)](/sources/li-2024.md) average
@@ -241,3 +263,4 @@ errors are not comparable.
 - [Li et al. (2024)](/sources/li-2024.md) — arXiv v2: §II, Eqs. 7–11; §V B, Eqs. 33–35, Table II, Figs. 14–21.
 - [Zhao et al. (2025)](/sources/zhao-2025.md) — arXiv v3: §3.2, Table 3, Eqs. 18, 23, Figs. 11–14; §5.1, Table 6.
 - [Wang et al. (2022)](/sources/wang-2022-j.md) — §V, Eqs. 28–33, Table IV, Figs. 8–16; §VI, Table V; App. B, Figs. 17–20.
+- [Yu et al. (2023)](/sources/yu-2023.md) — §5.1, Eq. 5.1, Fig. 14; App. A, Fig. 19 (free-mixing-layer data as reference for a mixing layer embedded in a boundary layer).

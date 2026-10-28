@@ -269,13 +269,14 @@ al. 2017, Weatheritt & Sandberg 2017).
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2, 4, 5. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4, 5, 12. This source is cited on:
 
 - [Backward-facing step](/benchmarks/backward-facing-step.md)
 - [Homogeneous isotropic turbulence (decaying and forced)](/benchmarks/homogeneous-isotropic-turbulence.md)
 - [Periodic hill](/benchmarks/periodic-hill.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+- [Barycentric anisotropy map](/definitions/barycentric-anisotropy-map.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Model-form uncertainty in turbulence closures](/definitions/model-form-uncertainty.md)
 - [Ensemble Kalman filter calibration of turbulence closures](/methods/ensemble-kalman-closure-calibration.md)

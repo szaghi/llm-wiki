@@ -126,7 +126,7 @@ volume or pages; none is unparseable and no printed duplicate was found.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-25), cited further in chunks 2, 4, 5, 7. This source is cited on:
+Chunk 1 (2026-10-25), cited further in chunks 2, 4, 5, 7, 12. This source is cited on:
 
 - [Eppler 387 airfoil](/benchmarks/eppler-387-airfoil.md)
 - [ERCOFTAC T3 flat-plate transition cases](/benchmarks/ercoftac-t3-flat-plate.md)
@@ -135,3 +135,4 @@ Chunk 1 (2026-10-25), cited further in chunks 2, 4, 5, 7. This source is cited o
 - [k-ω SST model](/methods/k-omega-sst-model.md)
 - [Local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)
 - [Spalart–Allmaras model and its corrections](/methods/spalart-allmaras-model.md)
+- [ANSYS Fluent](/software/ansys-fluent.md)

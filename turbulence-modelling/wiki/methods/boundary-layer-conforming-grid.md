@@ -5,7 +5,7 @@ description: "Grids whose local isotropic cell size follows the local boundary-l
 status: established
 aliases: [BL-conforming grid, boundary-layer-conforming mesh, delta-conforming grid]
 tags: [wmles, mesh-adaptation, boundary-layer, wall-model]
-timestamp: 2026-10-27T15:54:00Z
+timestamp: 2026-10-28T02:18:00Z
 ---
 
 # Boundary-layer-conforming grids for wall-modelled LES
@@ -197,6 +197,47 @@ scheme used. This sufficed for $C_{L,\max}$ within five lift counts; the
 coarsest grid under-predicts the outboard slat and main-element suction,
 which they link to under-resolved leading-edge acceleration (§3.2, Fig. 9).
 
+## Workshop practice on a full high-lift aircraft
+
+In the HLPW-4 wall-modelled LES focus group on the
+[NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md) configuration,
+summarized by [Kiris et al. (2023)](/sources/kiris-2023.md), the grids
+were structured
+overset curvilinear (W-020), isotropic Voronoi (W-021, [CharLES](/software/charles.md)),
+unstructured anisotropic with very low wall-normal spacing near leading
+edges (W-034), Cartesian isotropic with immersed boundaries (W-032,
+W-049), and unstructured with aspect ratios from 1 to 71 (Table 2,
+aspect ratio as the tangential-to-wall-normal spacing). The authors
+(§I.2) frame the choice of grid isotropy as an open question: off-body
+vorticity (chine vortex, slat and flap tip vortices) has no preferred
+direction and suits isotropic grids, while thin leading-edge boundary
+layers favour anisotropic cells. They set this against the larger
+requirement the workshop found:
+
+- **Inviscid curvature, not wall-layer resolution, set the leading-order
+  grid requirement.** The suction peaks on the outboard slats and
+  main-element leading edges ($C_p$ down to $-16$) must be resolved to
+  predict the pitching moment, and "this curvature imposes a minimum
+  requirement for grid spacing to accurately predict the inviscid potential
+  flow effects" (§I.3). W-021's refinement from 12 M to 362 M degrees of
+  freedom converged largely monotonically, which the authors read as a
+  kinematic leading-order effect, curvature-induced acceleration (§III,
+  Fig. 6). Every submission that met the outboard suction criterion had
+  more than 250 M degrees of freedom (§IV, Fig. 12; see
+  [grid-point requirements](/results/les-grid-point-requirements.md)).
+- **Isotropic against anisotropic: no clear answer.** W-034 found that
+  anisotropic grids with finer near-wall spacing, at a small cost in
+  aspect ratio, gave more accurate outboard $C_p$ on coarser grids than
+  unity-aspect-ratio Voronoi grids with larger wall-normal spacing. They
+  also predicted a large-scale wing-root separation not seen on the
+  Voronoi grids (§III, §IV.3, Figs. 8, 16, 21). W-020's off-wall
+  refinement (275 M to 360 M) resolved the chine vortex better and delayed
+  the onset of corner separation by more than 1.5° (§III, Fig. 7). The
+  summary concludes that "no clear answer can be provided" (§VI.2).
+
+Goc et al. (2021) cluster points at the slat leading edge for the inviscid
+acceleration (below).
+
 ## Contrast: automatic anisotropic adaptation
 
 A different route to resolving boundary layers without designing the mesh by
@@ -311,3 +352,4 @@ RANS needs, the opposite of the isotropic $\delta$-sized cells of this page.
 - [Huang et al. (2022b)](/sources/huang-2022-d.md) — §1; §2.3, Eqs. (19)–(25); §2.4, Eqs. (26)–(51), Tables 1–3, Figs. 7–8; §3.2, Tables 4–6.
 - [Bose & Park (2018)](/sources/bose-2018.md) — §3, Eq. (2), Fig. 5.
 - [Lv et al. (2021)](/sources/lv-2021.md) — §IV B 2, Figs. 15–16; §V.
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §I.2–I.3; Table 2; §III, Figs. 6–8; §IV, Figs. 12, 16, 21; §VI.2.

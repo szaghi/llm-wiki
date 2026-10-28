@@ -5,7 +5,7 @@ description: "A closed region of reversed flow formed when a laminar boundary la
 status: established
 aliases: [LSB, separation-induced transition, laminar separation, transitional separation bubble]
 tags: [transition, separated-flow, boundary-layer, rans, implicit-les, turbomachinery]
-timestamp: 2026-10-27T15:55:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Laminar separation bubble
@@ -335,6 +335,25 @@ layer, which thickens it and produces intermittent oblique compression
 waves (§7, §8). See
 [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
+**Bubbles and the drag crisis of a cylinder.** Mays et al. (2023) state
+that in the critical and super-critical regimes of a smooth circular
+cylinder the boundary layer transitions right after laminar separation and
+reattaches, so that separation is delayed and the drag drops, as cited from
+Zdravkovich and Rodríguez et al.; in the critical regime the shedding is
+disrupted and the mean lift is an order of magnitude larger, and the LES of
+Lehmkuhl et al. which they cite found three configurations, one-bubble
+asymmetric, two-bubble asymmetric and two-bubble symmetric (super-critical)
+([Mays et al. (2023)](/sources/mays-2023.md), §1). They list four physical
+aspects that decide whether a model reproduces the free-shear-layer
+transition: the onset of the Kelvin–Helmholtz instability, the spread of the
+Kelvin–Helmholtz vortices, the descent into turbulence, and roll-up and
+shedding (§1). Their scale-resolving hybrid reproduces the one-bubble
+asymmetric state at $Re_D=2.5\times10^5$, with an asymmetric $C_p$, an
+upward-deflected recirculation and a mean lift an order of magnitude
+larger than at the other Reynolds numbers, and the return to symmetry in
+the super-critical regime (§3.2.2, Figs. 6, 8). See
+[circular-cylinder wake](/benchmarks/circular-cylinder-wake.md).
+
 ## Resolution in scale-resolving simulation
 
 Wall-resolved LES resolves the bubble directly but is sensitive to
@@ -398,6 +417,37 @@ advantage of a low-dissipation discretization that preserves the laminar
 instabilities leading to transition (§4.1, §5, Table 2; see
 [implicit LES](/definitions/implicit-les.md)).
 
+**Bubble size in a hybrid model on coarse meshes.** On the drag-crisis
+cylinder, the scale-resolving hybrid RANS/LES of Mays et al. (2023), with
+URANS shielding near the wall and first-cell $y^+<1$ on meshes about five
+times coarser than the reference LES, matches the reference drag closely
+($C_D=0.292$ on the finer grid against 0.296 at $Re_D=5.3\times10^5$) but captures the bubble
+sizes and the mean lift less well: agreement around the $C_p$ plateau that
+marks the bubble is weaker at $Re_D=2.5$ and $3.8\times10^5$, which the
+authors attribute to small variations in the separation and reattachment
+points (§3.2.2, Table 4). URANS with the same Lag elliptic-blending
+$k$-$\varepsilon$ model partly captures the bubble, through a slight
+inflection of $C_p$ near separation and a non-zero mean lift, while missing
+the drag crisis (§3.2.1; see [k-ε models](/methods/k-epsilon-model.md)).
+The authors conclude that near-wall resolution must remain high, because
+under-resolution there "is fatal" to the prediction of transition and
+separation (§4; see [hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+
+**Bubbles as targets of mesh adaptation.** Ims & Wang (2023) adapt the
+meshes of flux-reconstruction implicit LES of the T106c ($Re=80\,000$, $N=2$)
+and T106a ($Re=60\,000$, $N=1$) cascades with three error indicators; on the
+T106a the coarse starting mesh leaves the laminar flow unresolved, which the
+authors call "less challenging for the flow solver but more challenging for
+the error indicators", and none of the indicators refines much at the
+leading edge, which the authors put down, with a "possibly", to the
+laminar flow there being already resolved
+([Ims & Wang (2023)](/sources/ims-2023.md), §5.1–§5.2). The indicators
+mark cells along the suction-side bubble from separation into the wake,
+the smoothness indicator favouring small boundary-layer cells on both
+surfaces (§5.1, Figs. 9–12); details on
+[mesh adaptation](/methods/mesh-adaptation.md) and
+[turbine cascades](/benchmarks/turbine-cascade.md).
+
 ## Qualifications
 
 - Slaughter et al. print the pressure coefficient as "$C_p=\frac12\rho V^2$"
@@ -435,3 +485,5 @@ instabilities leading to transition (§4.1, §5, Table 2; see
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §3.3.2, §3.3.3, §3.3.3.3–§3.3.3.4, Fig. 6.
 - [Wang et al. (2013)](/sources/wang-2013.md) — §4.13 (case C3.3).
 - [Fidkowski (2022)](/sources/fidkowski-2022.md) — §6.1–6.2, Table 2, Figs. 10, 12.
+- [Mays et al. (2023)](/sources/mays-2023.md) — §1, §3.2.1, §3.2.2 Table 4 Figs. 6, 8, §4.
+- [Ims & Wang (2023)](/sources/ims-2023.md) — §5.1 Figs. 9–12, §5.2.

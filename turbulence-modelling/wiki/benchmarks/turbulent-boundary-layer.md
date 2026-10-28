@@ -5,7 +5,7 @@ description: "Spatially developing turbulent boundary layers on flat walls: zero
 status: established
 aliases: [TBL, flat-plate boundary layer, ZPG boundary layer, APG boundary layer, Wieghardt flat plate, Samuel–Joubert boundary layer, DLR/UniBw APG boundary layer, compressible turbulent boundary layer, hypersonic boundary layer, shock/boundary-layer interaction, STBLI]
 tags: [benchmark, boundary-layer, compressible, hypersonic, dns, wmles, data-driven, rans, dg, flux-reconstruction, des, lattice-boltzmann]
-timestamp: 2026-10-27T20:42:00Z
+timestamp: 2026-10-28T02:18:00Z
 ---
 
 # Turbulent boundary layers: zero and adverse pressure gradient, compressible
@@ -589,6 +589,41 @@ performance index 94% above the code's baseline, which the authors
 attribute to load imbalance of the synthetic-eddy method, the forcing
 (5–10%) and statistics collection.
 
+The same group repeats the validation for the shock-free layer of their
+elastic-panel interaction ([Gao et al. (2023)](/sources/gao-2023.md),
+§5.2, Figs. 18–19). The set-up is again split-form DGSEM implicit LES at
+$N=6$ in FLEXI, Mach 2, $Re_{\theta}=2188$ at the reference station,
+$\Delta x^+=30$, $\Delta y^+=1.6$ at the wall, $\Delta z^+=16$, with the
+synthetic-eddy inflow and anisotropic linear forcing over $7\delta_r$–$11\delta_r$.
+Statistics are taken after about 268 convective times, over a further 255.
+At $17\delta_r$ and $35\delta_r$ the van Driest velocity follows the
+sublayer for $y^+\le5$ and the log law for $30\le y^+\le100$. The van
+Driest velocity and the Morkovin-scaled Reynolds stresses match the DNS of
+Wenzel et al. (as cited) "despite a much coarser mesh". The transformed
+skin friction and the shape factor approach the DNS and the correlation
+quickly after the forcing zone, and the layer is in equilibrium ahead of
+the interaction.
+
+**Supersonic layers at $Re_\tau$ up to 14 000 in wall-modelled LES.**
+[Maeyama & Kawai (2023)](/sources/maeyama-2023.md) (§3, Tables 1–3) run
+zero-pressure-gradient adiabatic layers at $M_\infty=2.28$ with
+rescaling–reintroduction inflow (Urbin & Knight, as cited, recycle station at
+$35\delta_0$) and take statistics at $x=30\delta_0$, where $\delta\approx1.5\delta_0$.
+The domain is $40\delta_0\times10\delta_0\times6\delta_0$ in $(x,y,z)$ (see
+Qualifications). Their own DNS is the reference: $Re_\tau=715$, 1280 and
+2407 ($Re_\theta=4852$, 8988, 17 035) on $2001\times198\times601$ to
+$6701\times420\times2001$ points (0.2 to 5.6 billion) with
+$\Delta x^+\lesssim10$, $\Delta z^+\lesssim5$, $\Delta y^+_w\lesssim1$. It
+is validated against the incompressible DNS of Schlatter & Örlü (as cited)
+at $Re_\tau\approx700$ and 1250, with "slight differences" (App. A). The
+DNS database is released. Wall-modelled LES on a fixed $801\times127\times121$
+grid (about 12 M points, $\delta/\Delta x\approx26$–29) covers
+$Re_\tau=677$ to 13 958 ($\Delta x^+=23$–546). Mean velocity, shear stress
+and turbulent-kinetic-energy budget agree with the DNS above the matching
+height. The Reynolds-number growth of the log-region streamwise stress and
+of the outer spectral peak is missed (§4, §6; details on
+[wall-modelled LES](/methods/wall-modelled-les.md)).
+
 **A supersonic layer in wall-modelled LES with a learned correction.**
 [Zangeneh (2021)](/sources/zangeneh-2021.md), §III.A, Table I, Figs. 4,
 6–9, runs SST-based improved delayed DES as a wall-modelled LES (an inner
@@ -654,6 +689,49 @@ term agrees with the one fixed by $k_{\mathrm{sgs}}$ (Fig. 15).
 [Ghidoni & Noventa (2026)](/sources/ghidoni-2026-b.md) (above) also take a
 spatially developing Mach 2.25 DNS of Pirozzoli et al. as transitional
 reference; neither paper relates its case to the other's.
+[Xu et al. (2023)](/sources/xu-2023.md) (§4.4, Table 8, Figs. 30–31) use
+the same configuration as the out-of-sample test of a
+[neural-network SGS model](/methods/neural-network-sgs-model.md) trained in
+a compressible channel. The domain is $6\times0.3\times0.175$ inches, the
+wall trip is blowing and suction of amplitude 0.02, and the reference is a
+DNS of $10\,000\times90\times320$ points ($\Delta x^+=5.77$,
+$\Delta y^+_w=0.58$, $\Delta z^+=5.26$) filtered to the LES grid
+$1000\times90\times80$ ($\Delta x^+\approx52$–57, $\Delta z^+\approx19$–21
+across models). At $x/L_x=0.8$ the no-model LES and the eddy-viscosity
+models (dynamic Smagorinsky, Vreman, WALE) give much larger rms peaks than
+the filtered DNS. The learned model matches the spanwise rms velocity and
+the shear stress but slightly over-estimates the streamwise and wall-normal
+rms velocities and the temperature statistics. Both papers are LES on grids
+of similar size; neither compares with the other.
+
+**Hypersonic layers from a turbulence fluctuation library.**
+[Mo et al. (2023)](/sources/mo-2023.md) (§II–IV, Tables I–IV) run DNS of
+three flat-plate layers in a finite-difference code (seventh-order WENO-Z,
+fourth-order central viscous fluxes, third-order Runge–Kutta), each feeding
+the next:
+
+| Case | Conditions | Wall | Grid ($N_x\times N_y\times N_z$) | Wall units | Reference |
+|---|---|---|---|---|---|
+| Mach 2.25 precursor | Pirozzoli et al. conditions, $Re=2.5\times10^7$/m, blowing–suction transition | isothermal, 322 K | 601 + 2401 + 121 streamwise $\times$ 77 $\times$ 600 | $\Delta x^+=8.1$, $\Delta y^+=0.96$, $\Delta z^+=2.8$ at $x=0.224$ m ($Re_\tau\approx770$) | Pirozzoli's DNS |
+| Mach 2.9 | $Re=5.75\times10^6$/m, $T_e=114.3$ K | adiabatic | $1009\times127\times150$ | $7\times0.3\times6$ | experiment of Ringuette et al. |
+| Mach 7.25 | $Re=1.81\times10^7$/m, $T_e=64.4$ K | isothermal, 562 K (cold) | $1345\times131\times151$ | $6.0\times0.6\times3.2$ | experiment of Williams et al. |
+
+The inflow adds rescaled velocity planes stored from the Mach 2.25 run to
+Spalart–Allmaras mean profiles (see
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md)),
+and new thermodynamic laws supply temperature and density (see
+[Morkovin's hypothesis](/definitions/morkovin-hypothesis.md)). At the Mach
+2.9 reference station ($\delta=6.7$ mm) the DNS gives $\delta^*=2.46$ mm,
+$\theta=0.48$ mm, shape factor 5.13, $10^3C_f=2.14$, $u_\tau=31.2$ m/s,
+against the experimental 2.36, 0.43, 5.49, 2.17 and 32.9 (Table II). The
+Mach 7.25 layer at $\delta=9.5$ mm agrees with the experiment in $C_f$, van
+Driest velocity and Morkovin-scaled streamwise intensity (Figs. 12–14). The
+recovery distance after the inflow, measured to the peak of $C_f$, is about
+$10\delta_{\mathrm{in}}$ at Mach 2.9 and $24\delta_{\mathrm{in}}$ at Mach
+7.25 with a library at $Re_\tau\approx770$ (§IV B; §IV C prints
+$22.7\delta_{\mathrm{in}}$ for the same run). It shortens to about
+$11\delta_{\mathrm{in}}$ with libraries at $Re_\tau=350$ or 186, closer to
+the target (§III C, §IV B–C).
 
 [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §3.2, Tables 6–8,
 run a Mach 6 transitional plate (unit Reynolds number $2.2\times10^7$,
@@ -671,7 +749,7 @@ wall model; refinement changes the peak $C_f$ less than the dissipation
 settings and delays transition, because the forcing was tuned on the
 coarse grid (Figs. 15–17).
 
-**Incoming layers of shock interactions.** Three sources validate the
+**Incoming layers of shock interactions.** Several sources validate the
 supersonic layer that feeds their
 [shock interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md):
 
@@ -695,7 +773,40 @@ supersonic layer that feeds their
   reference plane of their Mach 2.28 DNS, $Re_\tau=201$, $Re_\theta=982$,
   $C_f=3.104\times10^{-3}$, shape factor 3.70 (1.54 incompressible); the van
   Driest velocity and the Reynolds stresses agree with the Mach 2 DNS of
-  Pirozzoli & Bernardini at $Re_\tau\approx200$.
+  Pirozzoli & Bernardini at $Re_\tau\approx200$. [Yu et al. (2023)](/sources/yu-2023.md)
+  (§2, Table 1) reuse this database. They take its reference-station
+  statistics as the canonical layer against which the post-shock recovery
+  is measured, through a composite canonical profile
+  ([law of the wall](/definitions/law-of-the-wall.md)) and a
+  [skin-friction decomposition](/definitions/skin-friction-decomposition.md).
+  Upstream of the interaction viscous dissipation and turbulence production
+  each give about half of $C_f$.
+- [Shi & Yan (2023)](/sources/shi-2023.md), §IV.B, Table III, Figs. 8–10: at
+  $x^*=-5.4$ upstream of a Mach 2.9, 24° ramp ($T_w=307$ K isothermal,
+  $Re_\infty=5.966\times10^6$/m, digital-filter inlet), their
+  flux-reconstruction implicit LES gives $\delta=6.43$, 6.39 and 6.36 mm,
+  $\delta^*=2.41$, 2.41 and 2.36 mm, $\theta=0.41$–0.42 mm and
+  $C_f=2.31$, 2.28 and $2.33\times10^{-3}$ on three grids. The references
+  are the experiment of Bookey et al. ($2.25\times10^{-3}$) and three DNS
+  (2.17, 2.56 and $2.56\times10^{-3}$), as cited. The mean velocity falls
+  between two of the DNS, and the Reynolds stresses agree with the DNS of
+  Pirozzoli et al. at Mach 3, $Re_\theta=3311$ (as cited).
+- [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md), §IV D,
+  Figs. 10–13: in an implicit LES of a Mach 1.94 layer over a statically
+  deformed panel (incoming thickness about 4.7 mm from correlations; no
+  $Re_\tau$ printed), the deformations leave the anisotropy state of the
+  Reynolds stresses unchanged but bend its topology. This is read on the
+  [barycentric anisotropy map](/definitions/barycentric-anisotropy-map.md)
+  at $y^+=4.8$, 24, 192 and 2063. Near the wall the turbulence is mostly
+  two-component, and shock and expansion impingement push it toward one
+  component. At $y^+=24$ and 192 the componentality contours bend concave
+  where the surface moves toward the flow and convex where it moves away.
+  At $y^+=2063$ the deformations have little to no effect, and "the TBL
+  quickly recovers". The production grid has $\Delta x^+=717$,
+  $\Delta z^+=634$ and a first point at $y^+=4.8$; the wall-resolved LES
+  guidance the paper quotes is $\Delta x^+\approx50$–130,
+  $\Delta z^+\approx15$–30 (§III B 2; see
+  [grid-point requirements](/results/les-grid-point-requirements.md)).
 
 **Inflow and domain length.** Both use recycling–rescaling inflow, at
 $80\delta_{\mathrm{in}}$ from the inlet in Cogo et al. Huang et al. measure
@@ -1075,6 +1186,29 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
   $y^+=1.7$ from $y=1.4$ to $3\delta$" (as printed); the
   averaging time is not printed, and the comparison is of plotted curves
   without error norms.
+- **Printed items of Maeyama & Kawai (2023).** §3 prints the domain as
+  "[40.0, 6.0, 10.0] × δ0 in the streamwise (x), wall-normal (y) and
+  spanwise (z) directions", while their Fig. 2 labels the vertical extent
+  $10\delta_0$ and the spanwise $6\delta_0$. With the WMLES $N_z=121$ the
+  wall spacing $0.05\delta_0$ in $x$ and $z$ printed in the Fig. 15 caption
+  needs $L_z=6\delta_0$ ($N_x=801$ gives $0.05\delta_0$ with $L_x=40\delta_0$), so the extents above are
+  given as $L_y=10\delta_0$, $L_z=6\delta_0$ *(compiler check, not in the
+  sources)*. In their Table 1, $\delta/\Delta x$ and $\delta/\Delta z$ equal
+  $Re_\tau/\Delta x^+$ and $Re_\tau/\Delta z^+$ to rounding for DNS2 and
+  every WMLES row, but not for DNS1 ($715/9.5=75.3$ against 77) or DNS3
+  ($2407/10.0=240.7$ against 250), a 3–4% difference *(compiler check, not
+  in the sources)*.
+- **Printed items of Mo et al. (2023).** The boundary-layer thickness at
+  the library plane is 2.08 mm in §III A and Table IV and 2.06 mm in §III C.
+  The recovery distance of the Mach 7.25 run with the first library is
+  $24\delta_{\mathrm{in}}$ in §IV B and $22.7\delta_{\mathrm{in}}$ in §IV C.
+  The Mach 2.25 precursor wall is isothermal at 322 K in §II B and called
+  adiabatic in §III B. The file carries the notice of a published erratum
+  that it does not contain.
+- [Xu et al. (2023)](/sources/xu-2023.md) (§4.4) place the boundary-layer
+  station at $x/L_x=0.8$, "i.e. $x=8.8$ in Pirozzoli et al. (2004)", with
+  $L_x=6$ in their units, where $0.8L_x=4.8$; the offset between the two
+  coordinates is not stated *(compiler check, not in the sources)*.
 
 # Citations
 
@@ -1116,3 +1250,10 @@ DNS and wall-resolved LES are too costly at the experimental Reynolds number
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.1.1, Fig. 5 (reproduced TMR verification).
 - [Li et al. (2022)](/sources/li-2022-k.md) — App. 2, Fig. 24.
 - [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II B–C, Tables I–II, Eqs. (2)–(3), Fig. 6.
+- [Gao et al. (2023)](/sources/gao-2023.md) — §5.2, Figs. 18–19.
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §3, Tables 1–3, Fig. 2; §4; §6; App. A.
+- [Xu et al. (2023)](/sources/xu-2023.md) — §4.4, Table 8, Figs. 30–31.
+- [Mo et al. (2023)](/sources/mo-2023.md) — §II A–B, Figs. 2–4; §III A–C, Tables I–II, Figs. 7–8; §IV B–C, Tables III–IV, Figs. 11–14, 19.
+- [Yu et al. (2023)](/sources/yu-2023.md) — §2, Table 1; §4.2, Fig. 10.
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §IV.B, Table III, Figs. 8–10.
+- [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — §III, Tables I, III; §IV D, Figs. 10–13.

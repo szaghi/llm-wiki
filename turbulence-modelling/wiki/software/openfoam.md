@@ -3,9 +3,9 @@ type: Software
 title: "OpenFOAM"
 description: "OpenFOAM is the open-source unstructured finite-volume toolbox that bundle sources use as baseline RANS solver for data-driven closures, as second-order LES solver, as host of in-house compressible, reacting and two-scale solvers and of a wall-model library, and as reference for high-order codes; this page records the solvers, schemes and versions they report."
 status: established
-aliases: [OpenFOAM, simpleFoam, pimpleFoam, DAFoam, libWallModelledLES, foam-extend, pUCoupledFoam]
-tags: [software, rans, les, data-driven, numerical-dissipation]
-timestamp: 2026-10-27T21:07:00Z
+aliases: [OpenFOAM, simpleFoam, pimpleFoam, DAFoam, libWallModelledLES, foam-extend, pUCoupledFoam, rhoCentralFoam, detonationFoam]
+tags: [software, rans, les, data-driven, numerical-dissipation, combustion]
+timestamp: 2026-10-28T01:57:00Z
 ---
 
 # OpenFOAM
@@ -38,6 +38,8 @@ these is a default of the code.
 | [Böttler et al. (2022)](/sources/bottler-2022.md), §2.3 | laminar low-Mach reacting flow with a [flamelet/progress-variable](/methods/flamelet-tabulated-chemistry.md) table (transported H$_2$, O$_2$, H$_2$O and enthalpy); detailed-chemistry reference coupled with Cantera | second order in time and space | not printed |
 | [Cheng et al. (2023)](/sources/cheng-2023-b.md), §2 | compressible [implicit LES](/definitions/implicit-les.md) of shock–vortex and shock–turbulence problems (no explicit subgrid model) | AUSM+-up flux; ROUND reconstruction of primitive variables cast as a flux limiter on a compact stencil, against the van Leer and MUSCL limiters; central viscous terms; time integrator not stated | not printed |
 | [Fureby & Nilsson (2023)](/sources/fureby-2023.md), §3 | compressible reacting LES, LDKM subgrid model, PaSR finite-rate chemistry | density-based; second-order Kurganov central(-upwind) convective flux, linear diffusive fluxes; operator split, inviscid step explicit, viscous step iterative (Gauss–Seidel); second-order multi-step time integration; Rosenbrock chemistry | not printed |
+| [Zhang et al. (2023)](/sources/zhang-2023-c.md), §3.4 | low-Mach reacting LES with flamelet-generated manifolds, presumed-PDF or [thickened-flame](/methods/thickened-flame-model.md) closure, [dynamic Smagorinsky](/methods/dynamic-procedure.md) | PISO; second-order backward time, second-order TVD convection and diffusion; fixed $\Delta t=0.32$ µs (CFL about 0.4) | not printed |
+| [Sun et al. (2023)](/sources/sun-2023.md), §2.2 | detonationFoam: compressible multi-component reacting Navier–Stokes or Euler with detailed chemistry, no turbulence model | derived from the density-based `rhoCentralFoam`; HLLC-P flux with second-order MUSCL, central diffusion, first-order implicit Euler for the non-reactive step, operator-split stiff chemistry (seulex); 2D adaptive refinement and dynamic load balancing | not printed |
 | [Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §3.4 | P-DNS with a continuous particle method; DPMFoam as Lagrangian reference | PIMPLE; first order in time, second-order FV in space | not printed |
 
 ## Roles in the bundle
@@ -158,6 +160,42 @@ scale-resolving solvers inside OpenFOAM.
   diffusivity and hybrid schemes as alternatives for discontinuities and
   use neither (§3.4).
 
+**Reacting flows: a turbulent-flame LES and a laminar detonation solver.**
+Two chunk-12 sources build reacting-flow solvers in OpenFOAM.
+
+- [Zhang et al. (2023)](/sources/zhang-2023-c.md) run an LES of the
+  Darmstadt multi-regime burner (stratified methane/air, flame MRB26b) with
+  tabulated flamelet-generated manifolds in an OpenFOAM LES-FGM solver, on
+  about 3.87 million hexahedra, a mesh coarser than that of the earlier
+  LES of Popp et al., who provided it with the boundary conditions, with 20
+  flow-through times after ignition and 20 more for statistics (§2, §3.4).
+  The cold-flow mesh resolves at least 80% of the turbulent kinetic energy
+  by the Pope criterion (§2). Their flame sensor and minor-species
+  correction are on the [thickened flame model](/methods/thickened-flame-model.md);
+  the chemistry tables on
+  [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md).
+- [Sun et al. (2023)](/sources/sun-2023.md) present detonationFoam, an
+  open-source (GPLv3) OpenFOAM solver for gaseous detonation, built on
+  `rhoCentralFoam` with five changes: species transport with detailed
+  finite-rate chemistry, a mixture-averaged transport model (Wilke and
+  Mathur mixing rules, thermal diffusion), the HLLC-P approximate Riemann
+  solver with MUSCL reconstruction, two-dimensional adaptive mesh
+  refinement and the dynamic load balancing of DLBFoam (§1, §2.2, §4). They
+  state that the earlier `rhoCentralFoam`-based detonation solvers use the
+  Sutherland law, so that multi-species transport "cannot be accurately
+  predicted" (§1), and that OpenFOAM's own adaptive refinement supports only
+  hexahedra in 3D and is "not appropriate for 2D detonation simulation";
+  their 2D version refines a cell into four on a threshold of the density
+  gradient and coarsens with conservative averaging (§2.2.2, Table 1; see
+  [mesh adaptation](/methods/mesh-adaptation.md)). On a wedge-stabilized
+  oblique detonation the refinement cuts the cell count to about 1/6 and
+  refinement with load balancing the CPU time to about 1/5 of a uniform
+  mesh without balancing, with nearly identical steady structures (§3.9,
+  Figs. 15–16; no hardware or core count printed). The HLLC-P flux is
+  shown less dissipative at a shock than the KNP and HLLC fluxes of
+  OpenFOAM on a 1D shock tube (§3.3, Fig. 5). All test cases are laminar
+  or inviscid; the paper contains no turbulence modelling.
+
 **Wall-modelled LES with libWallModelledLES.** [Nuca et al. (2025)](/sources/nuca-2025.md)
 implement their explicit (non-iterative) forms of the Spalding, Reichardt
 and equilibrium-ODE wall models in libWallModelledLES, the OpenFOAM
@@ -262,6 +300,12 @@ first-order time integration and second-order finite volumes in space (see
   set-up (mesh, schemes, model). None isolates OpenFOAM from its
   configuration.
 
+- [Sun et al. (2023)](/sources/sun-2023.md) state, without showing it,
+  that second-order time schemes have "little influence on the results
+  due to the very small time step in the order of $10^{-9}$ s" (§2.2.1).
+  [Zhang et al. (2023)](/sources/zhang-2023-c.md) give no OpenFOAM version
+  and no Reynolds number of the burner.
+
 # Citations
 
 - [Rismondo et al. (2025)](/sources/rismondo-2025.md) — §2.1, Eqs. (2.1)–(2.2) (LES solver and schemes); §2.3 (mesh, Courant number).
@@ -284,3 +328,5 @@ first-order time integration and second-order finite volumes in space (see
 - [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §1 (limits of OpenFOAM's shipped solvers); §2.1–2.2, Eqs. (2.7)–(2.14) (AUSM+-up, ROUND as flux limiter, primitive-variable reconstruction); §3.6, Figs. 9–14 (deep cavity).
 - [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.2–3.4, Eqs. (5)–(8) (density-based FVM in OpenFOAM, LDKM, PaSR, Kurganov flux, operator split, Rosenbrock); §6.2 (grids, resolved kinetic energy).
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §3.4 (OpenFOAM as P-DNS core library, DPMFoam reference, PIMPLE, discretization orders).
+- [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2 (mesh, Pope criterion); §3.4 (OpenFOAM LES-FGM solver, schemes, time step, averaging).
+- [Sun et al. (2023)](/sources/sun-2023.md) — §1 (rhoCentralFoam-based solvers, OpenFOAM AMR); §2.2, Table 1 (detonationFoam numerics, 2D AMR, load balancing); §3.3, Fig. 5 (HLLC-P against KNP and HLLC); §3.9, Figs. 15–16 (AMR and load-balancing efficiency); §4.

@@ -5,7 +5,7 @@ description: "Spectral vanishing viscosity concentrates an added viscosity on th
 status: established
 aliases: [SVV, implicit SVV, ISVV, implicit spectral vanishing viscosity, spectral viscosity, SVV-LES, entropy-stable SVV, modal SVV filter]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg, entropy-stable]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T02:15:00Z
 ---
 
 # Spectral vanishing viscosity
@@ -296,7 +296,11 @@ an added term $\epsilon_{\mathrm{svv}}\partial_j\big(Q\star\partial_ju_i\big)$
 on the incompressible momentum equation with no explicit subgrid model
 (their "SVV-iLES"). They describe the "DG kernel" of Moura et al., a
 kernel redesigned mode by mode so that continuous Galerkin with SVV
-mimics the dissipation of upwind DG, calibrated by spatial eigenanalysis,
+mimics the dissipation of upwind DG, calibrated by spatial eigenanalysis
+([Tonicello et al. (2023)](/sources/tonicello-2023.md), §1, cite these
+semi-discrete spatial analyses of Moura, Mengaldo and co-workers and
+extend the analysis to a fully-discrete form, without discussing SVV; see
+[eigensolution analysis](/methods/eigensolution-analysis.md)),
 and cite Wang et al.'s (2021) finding that an optimized SVV implicit LES
 does "at least as well as" a subgrid model in wall-resolved separated
 flow. Their contribution is to replace the inner layer by an equilibrium
@@ -479,3 +483,4 @@ simulation of turbulent and supersonic flows", citing the group's work.
 - [Mukha et al. (2025)](/sources/mukha-2025.md) — arXiv v1: §I; §II.A, Eq. (4); §III.B.3; §III.C, Fig. 8.
 - [Ranjbar et al. (2026)](/sources/ranjbar-2026.md) — arXiv v1: §I; §II.B.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §1.
+- [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §1 (semi-discrete spatial eigenanalyses of Moura et al. and Mengaldo et al., extended to fully discrete; passing).

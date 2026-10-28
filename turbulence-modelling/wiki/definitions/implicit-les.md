@@ -3,9 +3,9 @@ type: Definition
 title: "Implicit large-eddy simulation"
 description: "Implicit LES drops the explicit subgrid model and lets the discretization's own dissipation and filtering act as the closure; the sources use the term in at least three senses and report where it works, where it fails, and what it misses."
 status: established
-aliases: [ILES, iLES, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
+aliases: [ILES, iLES, coarse-grained simulation, CGS, implicitly filtered LES, no-model LES, under-resolved DNS, URDNS, MILES]
 tags: [les, implicit-les, numerical-dissipation, sgs-model, dg]
-timestamp: 2026-10-27T21:12:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Implicit large-eddy simulation
@@ -227,6 +227,70 @@ can carry.
      cite implicit LES of dense-gas flows (Hoarau et al.) as one LES
      family, against which they set an explicit deconvolution closure of
      the real-gas subgrid terms.
+   - **Coarse-grained simulation, finite volume.**
+     [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) (§I, §III B)
+     place ILES and explicit-model LES under one umbrella,
+     "coarse-grained simulation" (CGS): resolve the energy-containing
+     structures, filter the smaller ones and model their effect, in ILES
+     through "physics-capturing numerical algorithms, i.e.,
+     shock-capturing schemes typically employed in finite volume methods"
+     (citing Grinstein et al.). Their block-structured code CNS3D runs a
+     Mach 1.94 shock/boundary-layer interaction over deformed panels with a
+     Godunov-type upwind method, the HLLC Riemann solver, WENO
+     reconstruction of up to eleventh order, second-order central viscous
+     terms, digital-filter inflow and no explicit model (see
+     [WENO schemes](/methods/weno-scheme.md)).
+   - **Split-form DGSEM with moving meshes.** [Gao et al. (2023)](/sources/gao-2023.md)
+     (§1, §3.1) run wall-resolved iLES in the arbitrary Lagrangian–Eulerian
+     split-form DGSEM of [FLEXI](/software/flexi.md) (Pirozzoli's
+     kinetic-energy-preserving two-point flux, BR1), with no SGS model and
+     the interface Riemann solvers as the only dissipation, citing Flad &
+     Gassner (2017). They state that a minimum-entropy adaptive filter
+     applied everywhere in a standard DG scheme "is found to be
+     unreliable" against the aliasing of under-resolved turbulence, since
+     the filter aims at minimal dissipation while under-resolved
+     turbulence needs dissipation for the cut-off eddies (§3.1.3, citing
+     Flad et al.); they confine the filter to shock elements (see
+     [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)).
+   - **Flux reconstruction with a WENO limiter.** [Shi & Yan (2023)](/sources/shi-2023.md)
+     (§I–II) run a Mach 2.9 compression-ramp interaction with $N=2$ FR/CPR
+     (Roe flux, BR2, SSP-RK3) in their solver NFR, as ILES without an
+     explicit SGS model, which they justify by numerical tests of DG, SD
+     and FR ILES (citing Li & Wang 2016) and call "wall-resolved large
+     eddy simulation"; shocks are handled by a troubled-cell sensor, a
+     WENO limiter and a positivity-preserving limiter (see
+     [flux reconstruction](/methods/flux-reconstruction.md)).
+   - **Flux reconstruction for mesh adaptation and high lift.**
+     [Ims & Wang (2023)](/sources/ims-2023.md) (§2) "apply no subgrid
+     scale model" in FR/CPR LES of turbine cascades in
+     [hpMusic](/software/hpmusic.md), with an accuracy-preserving limiter
+     in severely under-resolved areas, and adapt the mesh with indicators
+     computed from the ILES itself (see
+     [mesh adaptation](/methods/mesh-adaptation.md)). In the wall-modelled
+     LES group of the fourth high-lift workshop, the hpMusic submission
+     (W-047, $N=2$ FR, 13 million degrees of freedom) is the one entry
+     without an SGS model, "relying on artificial dissipation of the
+     inviscid flux discretization", combined with an equilibrium wall
+     model ([Kiris et al. (2023)](/sources/kiris-2023.md), §II, Table 1).
+   - **Inviscid ILES with slip walls.** Another workshop submission
+     (W-030) solves the Euler equations with implicit LES in the limit
+     $Re\to\infty$, slip walls with zero wall shear stress and adaptive
+     finite elements, 3 million degrees of freedom; its participant
+     "emphatically argued the validity of its approach", which Kiris et
+     al. (2023, §II) dispute (below).
+   - **Central differences without a model.** [Xu et al. (2023)](/sources/xu-2023.md)
+     (§4.1) call "ILES" "the LES with no SGS model" with sixth-order
+     central differences and third-order Runge–Kutta, as a baseline for
+     their [neural-network SGS model](/methods/neural-network-sgs-model.md);
+     no explicit filter or dealiasing is mentioned.
+   - **Under-resolved inviscid flows as ILES proxies.**
+     [Tonicello et al. (2023)](/sources/tonicello-2023.md) (§4.3) take the
+     inviscid [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+     ($M=0.1$, $32^3$ elements, sixth-order spectral difference, RK3) and
+     a two-dimensional inviscid duct with an oscillating inlet as
+     representatives of under-resolved, ILES-like flow, in which the
+     scheme's dissipation is the only one (see
+     [eigensolution analysis](/methods/eigensolution-analysis.md)).
 2. **Designed numerical regularization.** The numerical dissipation is
    built to act as a model. Vicente Cruz & Lamballais (2023, §5.1) use the
    [implicit spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md),
@@ -364,6 +428,15 @@ can carry.
    projection order (thresholds, reversion to standard upwinding, update
    every tenth step); the two settings are versions of the method, listed
    on the HOPU page.
+
+   **Explicit filter with deconvolution as the only dissipation.**
+   [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) (§1–2, §5)
+   run compressible LES on unstructured continuous finite elements with no
+   eddy viscosity: a differential filter, built element by element to
+   remove the grid cutoff completely, and van Cittert approximate
+   deconvolution supply all the stabilization and the subgrid effect. The
+   method is on [scale-similarity model](/methods/scale-similarity-model.md)
+   and [explicit modal filtering](/methods/explicit-modal-filtering.md).
 3. **Implicitly filtered LES.** The filter is the one induced by grid and
    discrete operator, whatever closure is added. Beck & Kurz (2023, §I)
    use the term in this sense: the filter width and shape are
@@ -737,6 +810,22 @@ interpretation they flag as needing further work).
   only at sufficient resolution, on a much coarser grid ($N=6$, about
   93 million degrees of freedom); see
   [shock–turbulent boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+  With the moving-mesh version of the same split-form DGSEM, Gao et al.
+  (2023, §5.2, Figs. 18–19) validate a shock-free supersonic boundary
+  layer at the interaction conditions: the van Driest velocity follows
+  the viscous-sublayer and log laws ($y^+\le5$, $30\le y^+\le100$), and
+  the van Driest velocity and density-scaled Reynolds stresses match the
+  DNS of Wenzel et al. at $17\delta_r$ and $35\delta_r$ "despite a much
+  coarser mesh"; skin friction approaches the DNS and the correlation
+  $C_{f}=0.024Re_\theta^{-0.25}$ (incompressible-transformed) quickly
+  after the forcing zone.
+- **Flux reconstruction on a compression ramp.** In the Mach 2.9, $24^\circ$
+  ramp ILES of Shi & Yan (2023, §IV, Figs. 8–10), the mean velocity
+  upstream of the interaction falls between two DNS profiles and the
+  Reynolds stresses agree with a DNS at $M=3$, $Re_\theta=3311$; the
+  grids reach $\Delta y_1^+=0.28$–0.50, $\Delta x^+_{\min}=2.78$–5.01 and
+  $\Delta z^+=4.69$ (Table II), against $\Delta x^+=3.4$–4.5 and
+  $\Delta z^+=4.1$–5.0 of the DNS they compare with (Table I).
 - **Supersonic jets.** The MILES of Ahn et al. (2023, §IV D, Fig. 22,
   Table II) reproduces the far-field overall sound pressure level and the
   screech frequency (7928 Hz against 8172 Hz measured) through a
@@ -859,6 +948,37 @@ interpretation they flag as needing further work).
   lower-order elements (§III E).
 
 ## Evidence: when it fails
+
+- **Inviscid ILES of a high-lift aircraft.** Kiris et al. (2023, §II)
+  judge the $Re\to\infty$ submission unable to predict loads "within
+  desired accuracy": in the experiments the lift changes by more than 5%
+  between the lowest and the highest two Reynolds numbers, at $7.05^\circ$
+  skin-friction drag is about 10% of the total drag (checked by RANS and
+  WMLES), and the corner-flow separation is a viscous effect; they leave
+  readers to judge the approach themselves (see
+  [NASA CRM high lift](/benchmarks/nasa-crm-high-lift.md)). The viscous FR
+  ILES with a wall model (W-047, 13 million degrees of freedom) gives
+  "reasonably accurate" integrated loads at $C_{L,\max}$ but misses the
+  outboard slat-bracket-wake separation (§VI 1a); the paper separately
+  finds that accurate outboard suction peaks needed more than 250 million
+  spatial degrees of freedom (§IV).
+- **Non-dissipative central scheme without a model.** In the compressible
+  channels of Xu et al. (2023, §4.1–4.4, Figs. 13–31), the unmodelled
+  sixth-order central run gives a slightly lower van Driest velocity in
+  the log region than filtered DNS, which the authors read as too little
+  SGS dissipation, and, like the eddy-viscosity models, overpredicts the
+  r.m.s. velocity peaks and places them further from the wall; in the
+  $M=2.25$ boundary layer it gives much larger r.m.s. peaks than filtered
+  DNS. The neural-network model on the same grid does not (see
+  [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+- **Flux reconstruction against explicit filtering with deconvolution.**
+  Najafiyazdi et al. (2023, §6.2, Fig. 10) report their approximate
+  deconvolution LES of the $Re=1600$
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) on $64^3$
+  nodes more accurate in both the energy-based and the vorticity-based
+  dissipation rate than the FR-DG, FR-OFR and FR-SD LES of Bull & Jameson,
+  as cited, printed as "128 degrees of freedom, i.e. p 1 Legendre
+  polynomials on a $64^3$ grid" ($N=1$).
 
 - **Split forms without dissipation.** Volpiani (2024, §5, Figs. 11–13)
   finds that kinetic-energy-preserving split forms without a model are
@@ -1258,6 +1378,26 @@ dissipation is imparted by the SGS model". Details on
 
 ## Qualifications
 
+- **Resolution of the coarse-grained runs of Kokkinakis et al. (2023).**
+  The production mesh has $\Delta x^+=717$, $\Delta z^+=634$ and
+  $y^+=4.8$ at the first point (Table III), and the paper quotes
+  $\Delta x^+\approx50$–130, $\Delta z^+\approx15$–30 and 10–30 points
+  across the boundary layer as wall-resolved LES guidance (§III B 2); its
+  adequacy is judged by a four-mesh study against the finest mesh
+  ($\Delta x^+=268$, $\Delta z^+=100$), the selected "medium 2" mesh (9.4 M cells) being called
+  "adequately accurate, at least concerning the flow properties of
+  interest" (§IV A). A wall-resolved ILES of the full span would cost
+  "$\sim175$ times" more, as stated (§III B 2).
+- **Time step in under-resolved flow.** Tonicello et al. (2023, §4.3)
+  find the numerical dissipation of the under-resolved inviscid
+  Taylor–Green vortex "almost indistinguishable" for time steps at 0.5,
+  0.9 and 0.95 of the stability limit, although their linear
+  fully-discrete analysis predicts a decrease of high-frequency
+  dissipation with the time step; in ILES-like flows the spatial errors
+  overshadow the temporal ones, while in well-resolved (DNS-like) flows
+  the time step limits convergence near the stability limit (§4.2, §5;
+  see [eigensolution analysis](/methods/eigensolution-analysis.md)).
+
 - The plateau threshold of Flad & Gassner (2017) and the plateau-dissipation
   shares of Vicente Cruz & Lamballais (2023) come from one canonical flow
   each (DHIT, Taylor–Green vortex) and different schemes (DG, sixth-order
@@ -1481,3 +1621,11 @@ dissipation is imparted by the SGS model". Details on
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I (eddy-viscosity wall-model corrections inapplicable to implicit LES); §II B–C, Eqs. 8–13, 20 (SVV implicit LES, Neumann wall-stress coupling); §III A–E, Table I, Figs. 3–9.
 - [Wang et al. (2022)](/sources/wang-2022-j.md) — §IV, Figs. 2–4 (hyperviscosity-stabilized implicit LES of isotropic turbulence); §V, Figs. 9–12 (mixing layer).
 - [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §I (dense-gas implicit LES cited, in passing).
+- [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — §I (coarse-grained simulation, ILES through shock capturing); §III B, Table III (CNS3D numerics, meshes, wall-resolved guidance and cost); §IV A.
+- [Gao et al. (2023)](/sources/gao-2023.md) — §1, §3.1 (split-form ALE DGSEM iLES, adaptive filter on standard DG); §5.2, Figs. 18–19 (boundary-layer validation).
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §I–II (FR/CPR ILES with limiters); §IV, Tables I–II, Figs. 8–10 (grids, validation).
+- [Ims & Wang (2023)](/sources/ims-2023.md) — §2 (FR/CPR LES with no SGS model).
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §II, Table 1 (W-047 FR ILES with wall model, W-030 inviscid ILES and the authors' objection); §VI.
+- [Xu et al. (2023)](/sources/xu-2023.md) — §4.1–4.4, Figs. 13–31 (unmodelled central-difference baseline).
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §1–2, §5 (filter and deconvolution as the only dissipation); §6.2, Fig. 10 (against FR LES of Bull & Jameson).
+- [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §4.2–4.3, Figs. 23–28 (time step in well- and under-resolved flows); §5.

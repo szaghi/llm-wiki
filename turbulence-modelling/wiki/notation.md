@@ -305,3 +305,13 @@ that uses one still says what it means.
 | $k_s$, $k_g$, $\Delta U^+$ | equivalent sand-grain and geometric roughness heights; roughness function | law of the wall, RANS wall functions, turbulent boundary layer |
 | $\alpha_{\mathrm G}$, $g^{L_1L_2}$ | gradient-model filter-moment coefficient and the coefficients of the spatial gradient model (not the basis-tensor $g^{(n)}$) | gradient model |
 | $\eta_{\mathrm{DA}}$ | fraction of data-assimilation samples in training | field inversion and machine learning |
+| $\lambda^b_i$, $C_{1c}$, $C_{2c}$, $C_{3c}$, $X_{ic}$ | eigenvalues of the anisotropy tensor $b_{ij}$; barycentric weights of the one-, two- and three-component limiting states; vertex coordinates of the barycentric map | barycentric anisotropy map |
+| $\delta_{\mathrm G}$, $a_{\mathrm D}$, $b_{\mathrm D}$ | radius of Germano's differential filter; coefficients of the explicit differential filter of Najafiyazdi et al. | explicit modal filtering, scale-similarity model, large-eddy simulation |
+| $\delta^{*,\mathrm{sgs}}_\nu$ | semi-local viscous length with the SGS viscosity added to the molecular one | compressible velocity transformations, numerical dissipation, large-eddy simulation |
+| $s_{\mathrm{RA}}$, $b_{\mathrm{wk}}$ | Reynolds-analogy factor; wake coefficient of the outer-layer velocity law | Morkovin's hypothesis, compressible velocity transformations, inflow turbulence generation, law of the wall |
+| $F_{\mathrm{DES}}$, $F_{\mathrm{DDES}}$, $d_{\mathrm{DDES}}$, $f_d$, $r_d$ | length-scale switch functions and DDES length of SST-based DES/DDES; DDES shielding function and its argument | detached-eddy simulation, $k$-$\omega$ SST, ANSYS Fluent |
+| $\alpha_{\mathrm T}$, $k_h$, $\omega_{\mathrm f}$ | upwinding parameter of flux reconstruction ($\lambda_{\mathrm{up}}=1-2\alpha_{\mathrm T}$); numerical wavenumber and frequency of eigensolution analysis | eigensolution analysis, flux reconstruction, spectral difference method |
+| $C_{\mathrm{KX}}$ | threshold of the KXRCF troubled-cell indicator (not the DES factor $C_k$) | shock sensors, flux reconstruction |
+| $\tau^{\mathrm{sh}}$ | total shear stress in the Renard–Deck skin-friction decomposition | skin-friction decomposition |
+| $\psi_H$, $\varphi_{\mathrm L}$, $\alpha_{\mathrm{EB}}$ | dissipation factor of the scale-resolving hybrid (hybrid temporal LES); reduced-stress function and elliptic-blending variable of the Lag EB $k$-$\varepsilon$ model | hybrid RANS/LES, detached-eddy simulation, $k$-$\varepsilon$ models, circular-cylinder wake |
+| $\Xi_\Delta$, $\Omega_{\mathrm{fs}}$ | subgrid flame-wrinkling factor; flame sensor of the dynamically thickened flame | thickened flame model, flamelet-based tabulated chemistry |

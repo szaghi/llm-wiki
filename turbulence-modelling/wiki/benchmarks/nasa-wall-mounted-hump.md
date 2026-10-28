@@ -5,7 +5,7 @@ description: "The NASA wall-mounted hump at chord Reynolds number 936,000 and Ma
 status: established
 aliases: [wall-mounted hump, NASA hump, WMH]
 tags: [benchmark, separated-flow, rans, field-inversion, data-driven, hybrid-rans-les, wmles]
-timestamp: 2026-10-27T15:47:00Z
+timestamp: 2026-10-28T01:52:00Z
 ---
 
 # NASA wall-mounted hump
@@ -146,6 +146,19 @@ separation bubble and the recovery region. Both reviews compile results;
 neither runs the hump. See also
 [detached-eddy simulation](/methods/detached-eddy-simulation.md).
 
+**A reference resolution for aircraft WMLES.**
+[Kiris et al. (2023)](/sources/kiris-2023.md), §I, cite the WMLES of the
+hump by Park (2017) among the academic WMLES of nonequilibrium boundary
+layers in spanwise-periodic domains, with the Gaussian bump, canonical
+shock/boundary-layer interactions and airfoil buffet, whose grid spacing
+per unit span is substantially finer than that of full-airframe WMLES
+with fewer than $10^9$ degrees of freedom, which they therefore call
+coarse-grid simulations. Because none of the high-lift submissions they
+review had the resolution needed for smooth-body separation on the flaps,
+they call for continued WMLES research on the hump and the Gaussian bump
+(§VI 1f; see [NASA CRM-HL](/benchmarks/nasa-crm-high-lift.md)). They run
+no hump case.
+
 **What the sources share.** Both shorten the SST separation by a
 correction aimed at the separated shear layer: Wu et al. by a learned
 $\omega$-destruction multiplier, Oulghelou et al. by a separated-flow expert,
@@ -196,3 +209,4 @@ non-baseline experts; see
 - [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) — arXiv v2: §5.1, Fig. 10; §5.1.2, Tables 10–11, Figs. 12–14.
 - [Heinz (2020)](/sources/heinz-2020.md) — §5.2, Tables 2–3, Figs. 9–11 (compiled results).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §4.3 (cited results).
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §I; §VI 1f (cited as a resolution reference and recommended case; not run).

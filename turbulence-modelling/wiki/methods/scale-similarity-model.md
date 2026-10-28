@@ -5,7 +5,7 @@ description: "Scale-similarity and deconvolution models build the subgrid stress
 status: established
 aliases: [similarity model, Bardina model, mixed model, structural SGS model, approximate deconvolution, approximate deconvolution model, ADM, D3M, DIAD, DDM, direct deconvolution model, Layton–Lewandowski model, non-Boussinesq SGS model, modified Leonard stress model, stabilized mixed model, dynamic mixed model, dynamic iterative approximate deconvolution, DIAD_W]
 tags: [les, sgs-model, filtering, combustion]
-timestamp: 2026-10-27T20:43:00Z
+timestamp: 2026-10-28T02:14:00Z
 ---
 
 # Scale-similarity and mixed subgrid-scale models
@@ -507,6 +507,62 @@ deconvolution operator, their fourth-order one being "the minimal local
 truncation" that captures the leading nonlocal effects (see
 [gradient model](/methods/gradient-model.md)).
 
+**Compressible ADM with a differential filter on unstructured grids.**
+[Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) (§2, Eqs. 3–6)
+write the same van Cittert iteration, $u^{(j+1)}=u^{(j)}+(\bar u-Gu^{(j)})$
+from $u^{(0)}=\bar u$, whose truncation after $N_{\mathrm{AD}}$ terms
+recovers $u$ up to an error of order $\delta_{\mathrm G}^{2(N_{\mathrm{AD}}+1)}$
+or higher in the filter radius $\delta_{\mathrm G}$ (page-local), and
+close the nonlinear terms by $\overline{uu}\approx\overline{u^*u^*}$. They
+note that ADM represents the interactions among scales above the grid
+cut-off and the dissipative effect of the subgrid scales, while the
+interactions below the cut-off need a functional model or a
+regularization (§2, citing Stolz et al.). They adopt the form of Mathew et
+al. (cited), in which all equations are solved for deconvolved variables,
+$\partial_tu^*+\partial_jF_j(u^{**})\approx0$, "to avoid using the penalty
+regularization method" (Eq. 6), and add no eddy viscosity: at each step
+the Favre-filtered conserved variables are filtered by the
+[differential filter](/methods/explicit-modal-filtering.md) of the paper
+and deconvolved again (Algorithm 1), on a continuous-Galerkin
+finite-element discretization with RK4. Filtering and deconvolution are
+thus the only closure. The order $N_{\mathrm{AD}}=8$ follows the
+literature they cite (§6.1); runs use orders 5, 7, 8 and 10 and a
+"relaxation factor" of 0.8, whose place in the equations is not printed
+(§6.2). The approximate velocity $u\approx Q\bar u$ is used for all
+reported statistics (§6.2). Results:
+
+- **Decaying isotropic turbulence** of Comte-Bellot & Corrsin on $64^3$
+  Cartesian, 20%-perturbed and tetrahedral meshes ($N_{\mathrm{AD}}=8$):
+  the energy spectrum follows the $-5/3$ range with complete suppression
+  at the grid cut-off; the tetrahedral mesh is slightly more dissipative
+  but keeps some energy beyond the structured cut-off, because the filter
+  follows the smaller local element size (§6.1, Fig. 6; see
+  [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)).
+- **[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)** at
+  $Re=1600$, $M=0.1$, on $64^3$ (274 625 nodes): the energy-based
+  dissipation rates of all orders coincide up to $t^*\approx4$, so
+  filtering and deconvolution leave the laminar stage alone; between
+  $t^*=4$ and 7 a higher order dissipates less, and the vorticity-based
+  dissipation becomes more accurate with increasing order because scales
+  near the cut-off are kept. $N_{\mathrm{AD}}=10$ stays stable but its
+  energy-based rate oscillates and slightly over-predicts the peak, which
+  the authors attribute, as a conjecture, to a temporary energy pile-up
+  near the cut-off or to aliasing (§6.2, Fig. 10). No energy pile-up at
+  the grid cut-off appears in any LES spectrum (Fig. 13).
+- **Against flux reconstruction.** The authors report their $64^3$
+  results as more accurate in both dissipation measures than the
+  flux-reconstruction LES of Bull & Jameson (cited), printed as having
+  "128 degrees of freedom, i.e. p1 Legendre polynomials on a $64^3$ grid"
+  (§6.2, Fig. 10).
+- **Grid quality.** A 10% grid perturbation changes the dissipation only
+  after the peak ($t^*\approx9$); a 20% perturbation under-estimates it
+  before the peak, over-estimates it after and delays the peak to
+  $t^*\approx10$, and the authors conjecture ("merely conjectures") that
+  grid anisotropy delays the breakdown of anisotropic vortices. On the
+  unstructured mesh the peak comes earlier ($t^*\approx7.6$ and 8.5 for
+  orders 8 and 10) and lower, which they attribute to the stronger filter
+  on linear tetrahedra (§6.2, Figs. 11–12).
+
 ## Deconvolution models under explicit filtering: an a priori ranking
 
 [Valencia et al. (2026)](/sources/valencia-2026.md) compare four
@@ -760,6 +816,12 @@ does not improve.
   improvement" of the classical models. The DSM and DMM formulas,
   constants and test filter are not printed.
 
+- Najafiyazdi et al. (2023) compare their S64 finite-element LES
+  ($64^3$ elements, 274 625 nodes, Table 2) with flux-reconstruction runs
+  printed as "128 degrees of freedom, i.e. p1 Legendre polynomials on a
+  $64^3$ grid" (§6.2); their "relaxation factor" 0.8 is not placed in an
+  equation.
+
 - Abe's (2021) a priori reference is a fine LES with an SGS model, not DNS;
   the author justifies it by the small SGS share of its statistics (§IV B,
   Fig. 5). The a priori comparison projects the stresses on $\bar S_{ij}$
@@ -795,3 +857,4 @@ does not improve.
 - [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §I; §II, Eqs. (18)–(23); §III B, Eqs. (25)–(32), Algorithm 1; §IV A, Figs. 1–2; §IV B, Figs. 3–18, Table VI; §V.
 - [Wang et al. (2022)](/sources/wang-2022-j.md) — §II B; §IV, Fig. 2; §V, Figs. 9, 16, Table V; App. B, Figs. 18–20.
 - [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §I.
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §2, Eqs. (3)–(6), Algorithm 1; §6.1, Fig. 6; §6.2, Figs. 10–13.

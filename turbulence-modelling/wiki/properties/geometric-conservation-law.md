@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Geometric conservation law and free-stream preservation"
-description: "On curvilinear grids a discretization preserves a uniform flow only if its discrete metric terms satisfy the metric identities, and on moving grids also a temporal identity; the sources meet this geometric conservation law with curl-form DGSEM metrics, conservative finite-difference and gas-kinetic metric forms and GCL error compensation in moving-grid flux reconstruction, and note curved elements as an aliasing source."
+description: "On curvilinear grids a discretization preserves a uniform flow only if its discrete metric terms satisfy the metric identities, and on moving grids a temporal identity too; the sources meet this geometric conservation law with curl-form DGSEM metrics, conservative finite-difference and gas-kinetic metrics, moving-grid flux reconstruction and moving-mesh DGSEM, and note curved elements as an aliasing source."
 status: established
 aliases: [GCL, geometric conservation law, free-stream preservation, freestream preservation, metric identities, discrete metric identities]
 tags: [dg, gas-kinetic, flux-reconstruction, high-order, compressible, implicit-les]
-timestamp: 2026-10-27T20:41:00Z
+timestamp: 2026-10-28T02:15:00Z
 ---
 
 # Geometric conservation law and free-stream preservation
@@ -181,6 +181,33 @@ step 15,000. They call the differences "in the order of machine zero",
 and $C_p$, $C_f$ and eddy-viscosity profiles are identical (§3.1, Table 3,
 Figs. 5–8).
 
+**The temporal identity discretized in the DGSEM.** For deforming
+meshes in [FLEXI](/software/flexi.md), [Gao et al. (2023)](/sources/gao-2023.md),
+§3.1, Eqs. (16)–(39), write the arbitrary Lagrangian–Eulerian DGSEM on a
+fixed reference time with the mesh velocity $\boldsymbol w=\partial_\tau\boldsymbol x$
+and its contravariant components $W^i=\mathcal J\boldsymbol a^i\cdot\boldsymbol w$
+(page-local; $\tau$ the reference time, not a stress), so that the
+convective flux becomes $\mathcal J\boldsymbol a^i\cdot F-W^iU$, and the
+GCL in reference space reads
+$$\partial_\tau\mathcal J+\sum_{i=1}^3\frac{\partial(-W^i)}{\partial\xi^i}=0,$$
+with $-W^i$ the "GCL flux" (Eq. 28). Free-stream preservation needs both
+the metric identities (citing Kopriva) and this law. They discretize the
+GCL in strong form with the same tensor-product Lagrange basis on LGL nodes
+as the flow variables, interpolating $\mathcal J$, $\boldsymbol w$ and
+$-W^i$ in that basis (Eqs. 31–39); its surface flux needs no Riemann
+solver because the mesh velocity is continuous, the interface mesh
+velocity being interpolated from the geometric mesh. The interior mesh
+moves by radial-basis-function interpolation of the interface
+displacement, and the fluid is subcycled with a cubic-in-time
+interpolation of the mesh position and velocity at each Runge–Kutta stage
+(§3.3). The scheme carries the implicit LES of a Mach 2 shock/boundary-layer
+interaction over an elastic panel (see the
+[DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) page);
+no free-stream test on the deforming mesh is shown, while
+[Thawait et al. (2023)](/sources/thawait-2023.md), §II A, D, run the
+arbitrary Lagrangian–Eulerian transport of a commercial finite-volume
+solver for an aerothermoelastic fin without discussing a GCL.
+
 ## Qualifications
 
 - **Printed metric formula (Cao et al. 2024, arXiv v1, Eq. 11).** The
@@ -196,6 +223,9 @@ Figs. 5–8).
   metric evaluation (Krais et al. 2021; Kurz et al. 2025) and show no
   free-stream test on curved meshes (Krais et al.'s free-stream runs are
   Cartesian scaling tests, §5.8); Cao et al. (2024) test it.
+- Gao et al. (2023) show the order and free-stream behaviour of their
+  ALE DGSEM by citation of the group's earlier work (Krais et al.;
+  Schnücke et al.), not by a test in the paper.
 - Liu et al. (2022b) do not print the error-compensation terms, and give
   no free-stream test on the deforming grid; the deforming-grid result
   they show is the order of accuracy of Table 1.
@@ -212,3 +242,5 @@ Figs. 5–8).
 - [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §2.2, Eqs. (19)–(21) (curved-element Jacobian as a geometric aliasing source); §4.3, Eqs. (50)–(52), Figs. 15–18 (Taylor–Green vortex on a sinusoidally perturbed mesh).
 - [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §1 (rigid against deformable moving grids); §2.1, Eqs. (1)–(9) (moving-grid flux); §3.1, Table 3, Figs. 5–8 (stationary against moving grid).
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §1, §2.2.1 (GCL of the fourth-order WCNS in PHengLEI, cited); §2.3 (multi-block grids of the 30P30N airfoil).
+- [Gao et al. (2023)](/sources/gao-2023.md) — §3.1, Eqs. (16)–(39) (ALE DGSEM, mesh velocity in reference space, GCL flux, strong-form discretization); §3.3 (RBF mesh deformation, subcycling).
+- [Thawait et al. (2023)](/sources/thawait-2023.md) — §II A, Eq. (5); §II D, Eqs. (16)–(17) (ALE transport and diffusion-based mesh smoothing; no GCL discussed).

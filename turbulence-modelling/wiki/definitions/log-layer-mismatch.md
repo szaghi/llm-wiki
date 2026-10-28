@@ -5,7 +5,7 @@ description: "The shift, in wall units, between the mean velocity of a wall-mode
 status: established
 aliases: [LLM, log-layer shift, super-buffer layer error]
 tags: [wmles, wall-model, hybrid-rans-les, boundary-layer]
-timestamp: 2026-10-27T21:08:00Z
+timestamp: 2026-10-28T02:18:00Z
 ---
 
 # Log-layer mismatch
@@ -173,6 +173,29 @@ under-resolved first cells of the LES, not to the log law itself.
   — LES equations produce fluctuations, RANS equations are not designed to
   deal with them — "is known to be the reason" that hybrid methods fail to
   obtain the logarithmic law of the wall.
+- **Thin shielding in a hybrid temporal-filtering model.**
+  [Mays et al. (2023)](/sources/mays-2023.md) (§3.1.1, §3.2.2, §4) run the
+  scale-resolving hybrid (SRH) model on the Lag elliptic-blending
+  [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md) (see
+  [hybrid RANS/LES](/definitions/hybrid-rans-les.md)) with a shielding
+  function calibrated to fall away at $y^+=100$ in channel flow, so that
+  LES mode reaches into the outer boundary layer. They note, citing the
+  original formulation (Manceau 2018), that this shielding "can be
+  insufficient such as in channel flows where it produces a significant
+  log-layer mismatch", with errors in the boundary-layer edge velocity and
+  in the wall shear stress. They add a second cause: the SRH modification
+  interacts with the base model and spuriously reduces its reduced-stress
+  function in the free stream, which has given "very poor results" in
+  high-Reynolds-number channel flow, and "combined, these effects can
+  produce a substantial log-layer mismatch". They run no channel flow
+  themselves. For their circular-cylinder wake at $Re_D$ from
+  $2.5\times10^5$ to $7.2\times10^5$ they keep the thin shielding, because
+  it lets the separated shear layers break down. They judge the mismatch
+  "secondary" there, since pressure drag dominates, and conclude that "it
+  is likely that there is no ideal universal shielding function". They place their model among
+  those that resolve the outer boundary layer, against the total
+  shielding of the boundary layer in the original conception of
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md) (§3.1.1).
 - **Modelled-stress depletion in hybrid methods.** [Haering et al. (2022)](/sources/haering-2022.md)
   (§II.A) argue that a hybrid RANS/LES method which reduces the modelled
   stress and waits for resolved turbulence to grow passively must have regions
@@ -213,6 +236,7 @@ under-resolved first cells of the LES, not to the log law itself.
 | Third-point matching, $\Delta y/h_{\mathrm{wm}}\lesssim0.3$ (Kawai & Larsson 2012); adjusting the SGS eddy-viscosity coefficient from the turbulent-kinetic-energy budget (Wu & Meyers 2013); filtering the input (Bou-Zeid et al.) | cited by Bose & Park (2018, §2.1), who note that in concave junctions a matching point a few cells off the wall is hard to combine with a fixed $h_{\mathrm{wm}}/\delta$ (Park & Moin 2016c, as cited) |
 | Random-forest correction of the modelled wall stress and heat flux, fed back through corrected $\mu_t$ and $Pr_t$ | [Zangeneh (2021)](/sources/zangeneh-2021.md) (§II.F–G, §III.A, Fig. 6): removes the mismatch of an SST-IDDES WMLES of a Mach 1.69 flat plate at $Re_\theta=50\,000$ (below) |
 | Stochastic forcing at the RANS/LES interface (Piomelli et al.) | cited by Haering et al. (2022, §II): removes LLM but is problem-dependent; the SAS-F forcing of Menter et al. still showed LLM in channel flow |
+| Match at the tenth grid point off the wall, $h_{\mathrm{wm}}=y_{10}$, "to avoid the large discretization error and the resultant log-layer mismatch" (following Kawai & Larsson 2012); $h^+_{\mathrm{wm}}\approx54$–1287 for $Re_\tau\approx700$–14 000 | [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) (§2.3), equilibrium ODE wall model in a Mach 2.28 boundary layer; mean velocity and Reynolds shear stress match DNS above $h_{\mathrm{wm}}$ (§4.1, Fig. 4) |
 | Several cells below the matching height: $h_{\mathrm{wm}}=0.1\delta_0$ with four uniform cells below it ($\Delta y=0.25h_{\mathrm{wm}}$), "to reduce numerical errors from the LES transferred to the wall model (Kawai & Larsson, 2012) and avoid the log-layer mismatch" | [Hoy & Bermejo-Moreno (2022)](/sources/hoy-2022.md) (§3), Mach 3 shock/boundary-layer interaction |
 | Impose the wall stress through a wall eddy viscosity, $\nu_t\rvert_w=\tau^{\mathrm m}_w/\big(\rho\,(\partial u/\partial y)_w\big)-\nu$ with no slip kept ("viscosity augmentation"), instead of a Neumann condition | [Bae & Koumoutsakos (2022)](/sources/bae-2022.md) (Methods, Eq. 10), stated, citing earlier work, to be "better at resolving the so-called log-layer mismatch"; $\tau^{\mathrm m}_w$ the modelled wall stress (page-local). In a continuous spectral-element code the same condition fails: Mukha et al. (2025, §III.D, Table IV, Figs. 9–10) find the mean velocity strongly under-predicted for $y^+\lesssim2500$ and over-predicted in the core, which they attribute to the lack of global momentum conservation of the discretization, not to a mismatch mechanism (see [wall-modelled LES](/methods/wall-modelled-les.md)) |
 | Short exponential moving average of the wall-model input in time | [Gillyns et al. (2022)](/sources/gillyns-2022.md) (§3, §5, Eq. 4), who cite Yang et al. (2017) and Fowler et al. (2022) for time filtering; without it ($C_t=0$) their wall model diverged, which they attribute "most likely" to Gibbs oscillations at the element boundary, not to the mismatch. Mukha et al. (2025, §III.B.3, Table III, Figs. 4–5), in the same code, see no mismatch without averaging and no systematic gain a posteriori from averaging lengths of 5 to 500 time steps, although a priori the averaging reduces the wall-stress error; they call this "at odds with" Yang et al. (see [equilibrium wall model](/methods/equilibrium-wall-model.md)) |
@@ -387,3 +411,5 @@ geometry at lower Reynolds number.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §3.1, Table 5, Figs. 12–14.
 - [Li et al. (2022)](/sources/li-2022-k.md) — App. 2, Fig. 24 (flat-plate check of the IDDES length).
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I (Wu & Meyers remedy inapplicable to iLES); §II C; §III B, Figs. 4–6.
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §2.3 (tenth-point matching); §4.1, Fig. 4.
+- [Mays et al. (2023)](/sources/mays-2023.md) — §3.1.1; §3.2.2; §4 (SRH shielding and mismatch in channel flow, Manceau 2018 as cited).

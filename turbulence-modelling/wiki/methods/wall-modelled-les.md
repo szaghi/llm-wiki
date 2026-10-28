@@ -5,7 +5,7 @@ description: "LES that resolves the outer-layer eddies and replaces the near-wal
 status: established
 aliases: [WMLES, wall-modeled LES, wall-stress-modelled LES, LES with approximate boundary conditions, IBMLES, immersed boundary-modelled LES]
 tags: [wmles, les, wall-model, boundary-layer, separated-flow]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T01:59:00Z
 ---
 
 # Wall-modelled large-eddy simulation
@@ -562,6 +562,14 @@ imposed on the slant, because the flow topology changes between the grids.
   in-tunnel grids is suppressed on the finest one, cite a similar collapse
   under refinement by Iyer & Malik (2021) for a Gaussian bump, and leave cause
   and remedy open.
+- **High-lift aircraft.** [Kiris et al. (2023)](/sources/kiris-2023.md)
+  (§I.1a) expect grid convergence of wall-bounded LES to be non-monotonic in
+  time-averaged velocity profiles, as in the channel above (as cited). They
+  add that numerically induced transition shifts the virtual origin of the
+  boundary layers with the grid. The HLPW-4 focus group therefore judged
+  grid convergence on time-averaged static pressure only. Of its
+  refinement studies, W-021's sequence from 12 M to 362 M degrees of
+  freedom converged "largely monotonically" (§III, Fig. 6).
 - **Pipe flow.** Lozano-Durán & Bae (2023, §4.4, Fig. 10) observe
   non-monotonic grid convergence in pipe flow at $Re_\tau\approx40\,000$ on
   grids $\Delta/R=1/5$ to $1/40$ ($R$ the radius), with both the equilibrium
@@ -614,10 +622,91 @@ streamwise fluctuations, at $y/\delta\sim Re_\tau^{-1/2}$, is unclear; with
 the resolution of Choi & Moin ($\delta/\Delta x_i\sim10$) it is, they
 write, likely unresolved (§4.1).
 
+## Near-wall structures below the matching height
+
+[Maeyama & Kawai (2023)](/sources/maeyama-2023.md) ask what the LES
+contains below $h_{\mathrm{wm}}$, where the grid does not resolve streaks
+or quasi-streamwise vortices. They define WMLES as the wall-stress kind
+only. Hybrids that blend RANS and SGS eddy viscosities are a separate
+category, and slip-type models are out of scope (§1; see
+[slip-wall models](/methods/slip-wall-model.md)). Their set-up is a Mach 2.28
+zero-pressure-gradient boundary layer in an in-house code: sixth-order
+compact differences, an eighth-order low-pass filter, third-order TVD
+Runge–Kutta, and the selective mixed-scale (SMS) SGS model of Lenormand,
+Sagaut & Ta Phuoc (as cited). In the SMS model
+$\nu_t=C_m\lvert\tilde S\rvert^{\alpha}(q_c^2)^{(1-\alpha)/2}\Delta^{1+\alpha}$,
+with $C_m=0.06$, $\alpha=0.5$, $q_c^2$ the kinetic energy of the test-filtered
+fluctuation, and a structural selection function of the angle between the
+filtered and test-filtered vorticity (threshold $20^\circ$, exponent 2). The
+wall model is the [equilibrium ODE model](/methods/equilibrium-wall-model.md)
+of Kawai & Larsson matched at the 10th point. DNS at $Re_\tau\approx700$,
+1250 and 2300 is set against WMLES of about 12 M points at the same
+$Re_\tau$ and at 4100, 7800 and 14 000 (§2–3, Eqs. 2.8–2.16; page-local
+$C_m$, $\alpha$, $q_c^2$). Their findings:
+
+- **Statistics above $h_{\mathrm{wm}}$ are right.** The van Driest mean
+  velocity, the Reynolds shear stress and the turbulent-kinetic-energy
+  budget match the DNS above $h_{\mathrm{wm}}$. The total shear stress
+  (molecular, SGS and resolved) stays near $\tau_w$ even below it, with
+  oscillations (§4, Figs. 4–5, 7). Quadrant analysis keeps the dominance
+  of ejections (Q2) over sweeps (Q4) near the wall. The individual
+  quadrant contributions above $h_{\mathrm{wm}}$, however, are under-predicted
+  at $Re_\tau\approx1250$ and 2300, and the DNS Q2 peak at $y^+\approx40$ is
+  missed even at 700; the total is right because of the stress balance
+  (§4.2, Fig. 6).
+- **Coherent but numerical structures below $h_{\mathrm{wm}}$.** The near-wall
+  region "is not composed of disordered random structures, but streak-like
+  coherent structures". A conditional average of side-by-side intense Q2–Q4
+  pairs at $y^+\approx15$ (hyperbolic hole 1.75) shows low- and high-speed
+  streaks with a quasi-streamwise vortex between them. The Q2 and Q4
+  centres are about 4 grid points apart at every $Re_\tau$, i.e. about 8
+  grid points per spanwise wavelength (§5.2–5.3, Figs. 14–16). The
+  structures are non-physically wide and not elongated in the streamwise
+  direction relative to the spanwise one. The authors read this as
+  support for Jiménez's view, as cited, that long streaks are not
+  necessary for the self-sustaining cycle. Spanwise spectra at
+  $y^+\approx15$ peak at $\lambda_z^+\approx100$ in the DNS, and in the
+  WMLES at a fixed $\lambda_z/\delta$ (Fig. 10).
+- **The SGS viscosity sets their width.** Scaled by a semi-local viscous
+  length that adds the SGS eddy viscosity to the molecular one, their
+  spanwise length collapses to $O(100)$ from $Re_\tau=700$ to 14 000. In
+  wall or ordinary semi-local units it grows almost linearly with $Re_\tau$
+  (§5.4, Eq. 5.5, Fig. 17; formula on
+  [compressible velocity transformations](/definitions/compressible-velocity-transformation.md)).
+  The collapse holds on grids $\sqrt2$ coarser and finer in the wall-parallel
+  directions, with half the wall-normal resolution, with the KEEP scheme with
+  and without the filter, and with the [Smagorinsky model](/methods/smagorinsky-model.md)
+  ($C_s=0.1$, no damping). The SGS dissipation dominates the low-pass-filter
+  dissipation (App. C–D, Figs. 27–28, 32; see
+  [numerical dissipation](/properties/numerical-dissipation.md)). Halving the
+  wall-normal resolution "has little effect"; refining the wall-parallel
+  grid shrinks the structures. Near-wall turbulence of the WMLES is, they
+  suggest, "maintained by the numerically elongated near-wall coherent
+  structures" (§5.3, §7).
+- **The outer peak does not grow.** Up to $Re_\tau\approx14\,000$ the WMLES
+  reproduces neither the appearance and growth of the outer peak of the
+  premultiplied spanwise spectrum of $u$ near $y/\delta\approx0.15$ nor the
+  growth of the log-region streamwise stress. The spanwise and wall-normal
+  stresses agree at every $Re_\tau$ (§6.1, Figs. 18–20). A sharp spanwise
+  cut-off at $\lambda_z/\delta=0.7$ shows that the small scales are
+  reproduced and that the missing growth lies in the large scales, which the
+  grid is designed to resolve (§6.2, Fig. 22). A wall-parallel grid
+  $\sqrt2$ finer begins to show the peak (App. C). The authors speculate
+  that the outer peak grows through interaction with the unresolved inner
+  peak (see [attached-eddy hypothesis](/definitions/attached-eddy-hypothesis.md)).
+  They cite the review of Bose & Park (2018), whose doubt about the outer
+  peak is quoted above, as calling WMLES predictability of it "highly
+  questionable", and claim to be the first to address it (§1, §6.1).
+
 ## Interaction with the SGS model
 
 The wall model and the SGS model ([large-eddy simulation](/definitions/large-eddy-simulation.md)) act on the
 same under-resolved first cells.
+
+- Maeyama & Kawai (2023, §5.4, App. D) find that the SGS eddy viscosity,
+  not the low-pass filter, sets the width of the near-wall structures that
+  form below $h_{\mathrm{wm}}$, for the SMS and the Smagorinsky models alike
+  (section above).
 
 - Both dynamic models of Agrawal et al. (2022, §VII.D) under-predict the SGS
   stress there; the [dynamic procedure](/methods/dynamic-procedure.md) needed
@@ -812,6 +901,45 @@ $\tau_w$ and $\delta_{99}$ within four grids (§4).
   2000 CPU cores, 48 min on 96 V100 GPUs), comparable to a steady RANS run of
   the workshop; the authors judge WMLES of high-lift aircraft "on the threshold
   of readiness for industrial use" (§4–5).
+- **High-lift aircraft in a workshop** (Kiris et al. 2023): the HLPW-4
+  wall-modelled LES and lattice Boltzmann focus group, nine submissions on the
+  [NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md) configuration at
+  $Re=5.5\times10^6$ (mean aerodynamic chord) and Mach 0.2, in free air and,
+  for three participants, in the QinetiQ wind tunnel. All used grids with
+  $y^+\gg1$ and a wall model: equilibrium models with adiabatic walls,
+  except a proprietary pressure-aware model in PowerFLOW and inviscid slip
+  walls in one inviscid implicit LES (Tables 1–2). Most used the
+  constant-coefficient [Vreman model](/methods/vreman-model.md);
+  [CharLES](/software/charles.md) used dynamic Smagorinsky and reported
+  "little sensitivity" against Vreman on intermediate grids; hpMusic ran
+  implicit LES with [flux reconstruction](/methods/flux-reconstruction.md)
+  ($N=2$) (§II.4). Findings:
+  - most participants predict $C_{L,\max}$ between 2.48 and 2.57, with small
+    pitching-moment scatter at $C_{L,\max}$ and larger scatter at 7° and
+    21.4° (§III, Fig. 4);
+  - accurate outboard suction peaks, and hence pitching moments at high
+    angle of attack, needed more than 250 M degrees of freedom, which the
+    authors attribute to inviscid curvature-induced acceleration (§IV; see
+    [grid-point requirements](/results/les-grid-point-requirements.md) and
+    [boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md));
+  - among the finer submissions the remaining scatter at 21.47° comes from
+    the predicted onset of inboard stall, in two surface-flow topologies:
+    corner separation from the wing–body juncture, or separation from the
+    inboard wing–pylon juncture (§IV.3, Figs. 23–25);
+  - WMLES predicts the wedge-shaped outboard separation seen in oil flow,
+    without the excess outboard separation of steady RANS (§IV, Fig. 33).
+    All WMLES predicted a nacelle-lip separation for $\alpha>17.05^\circ$
+    that the experiment does not show (§IV, §VI.1d);
+  - three teams with different grids, discretizations and SGS models
+    reproduce in the tunnel the pitch break and the wing-root stall, and
+    two give essentially identical wing-root topology at 19.99° (§V, §VI.3);
+  - best-practice WMLES cost about 5–10 times a representative steady RANS
+    (§VI.4).
+
+  The inviscid $Re\to\infty$ implicit LES of one participant is judged
+  unable to predict the loads, because the experiment shows more than 5%
+  lift sensitivity to Reynolds number and corner separation is viscous
+  (§II). Further details are on the benchmark page.
 - **High-lift configurations in an industrial review** ([Mani & Dorgan 2023](/sources/mani-2023.md),
   §4.1.2, §4.5.2, Figs. 6, 12; reproduced results). On the HiLiftPW-3
   configuration the Alya finite-element WMLES at 10 M and 65 M degrees of
@@ -1184,6 +1312,12 @@ implicit-LES coupling.
 - Locators of Blind et al. (2023) refer to the arXiv v1 preprint read
   (titled "Grid-Adaptation for Wall-Modeled Large Eddy Simulation Using
   Unstructured High-Order Methods"), not the Computers & Fluids version.
+- Kiris et al. (2023, §IV) list submission W-032 in both stall
+  topologies (A: "W-020, W-021, W-032, W-047, and W-050"; B: "W-031, W-032,
+  and W-049") and later write that W-032 "falls under topology B". They
+  print the free-air high angle as 21.4° and 21.47° and the in-tunnel
+  angles as 17.9°, 18.9°, 19.9° and 17.98°, 19.98°, 19.99°. W-020's finest
+  grid appears as "1.2B" in the text and "1100M" in the Fig. 3 legend.
 
 # Citations
 
@@ -1235,3 +1369,5 @@ implicit-LES coupling.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.1.2, Fig. 6; §4.5.2, Fig. 12 (review; reproduced results).
 - [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §5 (wall treatment).
 - [Li et al. (2022)](/sources/li-2022-k.md) — §III B (periodic-hill WMLES reference).
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §1; §2.2–2.3, Eqs. (2.8)–(2.20); §3, Table 1; §4.1–4.3, Figs. 4–7; §5.2–5.4, Eq. (5.5), Figs. 10, 14–17; §6.1–6.2, Figs. 18–22; §7; Apps. C–D, Figs. 27–28, 32–33.
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §I.1a; §II, Tables 1–2; §III, Figs. 4, 6; §IV, Figs. 12, 23–25, 33; §V; §VI.1, §VI.3–VI.4.

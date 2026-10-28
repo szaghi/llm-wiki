@@ -5,7 +5,7 @@ description: "Vreman's static eddy-viscosity model builds the subgrid viscosity 
 status: established
 aliases: [Vreman eddy-viscosity model, Vreman (2004) model, static-coefficient Vreman model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T02:14:00Z
 ---
 
 # Vreman model
@@ -72,6 +72,7 @@ not print the value of $C_v$ used in their runs.
 | $\approx0.063$ ($c=2.5C_s^2=0.01$) and $\approx0.167$ ($c=0.07$) | gas-kinetic channel LES at $Re_\tau=180$ (best of $c=0.01$–0.1) and 395 (after Vreman 2004) | [Zhao et al. (2021)](/sources/zhao-2021-c.md), §III.B, §IV |
 | 0.1 ($c=2.5C_s^2=0.025$) | gas-kinetic implicit-versus-explicit LES of the compressible Taylor–Green vortex | [Cao et al. (2022b)](/sources/cao-2022-c.md), §III, Eqs. (10)–(11) |
 | 0.1 (prefactor $C_V=0.025$ printed) | finite-volume LES of a sinusoidally forced periodic shear flow on $16^3$ | [Hausmann et al. (2022)](/sources/hausmann-2022.md), §III B, Eqs. (42)–(45) |
+| 0.1 (prefactor printed as $2.5C_s^2$, with $C_s=0.1$ after Sayadi & Moin and Yu et al., cited) | sixth-order finite-difference LES of compressible channels and a supersonic boundary layer, baseline against a learned model | [Xu et al. (2023)](/sources/xu-2023.md), §2.2 |
 
 Cao et al. (2022b, Eqs. 10–11) print the dynamic viscosity
 $\mu_t=\bar\rho\,c\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}$ in the index
@@ -99,6 +100,14 @@ $-2C_v\sqrt{B_\beta/(\alpha_{lm}\alpha_{lm})}\,\bar S_{ij}$ with
 $C_v=2.5C_s^2$, i.e. $C_v=0.025$ for their $C_s=0.1$ *(compiler check, not
 in the sources)*.
 
+[Xu et al. (2023)](/sources/xu-2023.md) (§2.2) print the form of Kim et
+al., $\alpha_{ij}=\partial_i\tilde u_j$ and
+$\beta_{ij}=\sum_m\Delta_m^2\alpha_{mi}\alpha_{mj}$ with the local grid
+widths, for the compressible (Favre-filtered) velocity, and complete it
+with an isotropic part $\tau_{kk}=2C_I\sqrt{B_\beta/(\alpha_{ij}\alpha_{ij})}\,\lvert\tilde S\rvert$
+whose coefficient they set to $C_I=0$, and a subgrid heat flux with
+$Pr_t=0.9$, both after Sayadi & Moin (cited).
+
 [Blind et al. (2023)](/sources/blind-2023.md) (§2.3, §3, §3.3) use "the
 Vreman model constant" 0.03 for wall-resolved channels, the value of
 Toosi & Larsson (cited), and 0.11 for the wall-modelled channel,
@@ -119,6 +128,16 @@ $N$ (the paper's $P$), with $N=5$.
   curve, $C_{L,\max}$ and stall onset are captured reasonably; the in-tunnel
   cases switch to the dynamic Smagorinsky model. See
   [JAXA Standard Model](/benchmarks/jaxa-standard-model.md).
+  In the wall-modelled LES technology focus group of the fourth AIAA
+  High-Lift Prediction Workshop, summarized by
+  [Kiris et al. (2023)](/sources/kiris-2023.md) (§II.4, Table 2), four of
+  the nine submissions on the
+  [CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)
+  (NASA LAVA, Boeing BCFD, Alya, NASA FUN3D) close the subgrid stress with
+  the constant-coefficient Vreman model and an equilibrium wall model; the
+  charLES team, which uses the dynamic Smagorinsky model, "reported little
+  sensitivity" between the two on its intermediate grids. No constant is
+  printed.
 - **Burner LES.** In the LES zones around the embedded DNS box of a premixed
   Bunsen jet, the SGS momentum fluxes "are modeled" with a citation of
   Vreman's paper, the model not being named in the text
@@ -268,6 +287,19 @@ $N$ (the paper's $P$), with $N=5$.
   correlations deviate from the DNS, most in the normal components
   (§IV B, Figs. 6, 12a). The LES is the carrier of their
   [subgrid velocity enrichment](/methods/subgrid-velocity-enrichment.md).
+- **Compressible wall-bounded LES against a learned model.** Xu et al.
+  (2023) test Vreman beside the dynamic Smagorinsky and
+  [WALE](/methods/wale-model.md) models against filtered DNS of a
+  compressible channel at $Re=3000$, $M=1.5$: a priori, the correlation
+  coefficients of all three with the true subgrid stress are "almost lower
+  than 0.6" and the relative errors near 1.0 (§2.2, Figs. 1–3). A
+  posteriori (sixth-order central differences, untrained grid
+  $64\times65\times64$) Vreman overpredicts the van Driest log-region
+  velocity and the r.m.s. peaks, transfers energy only forward, and
+  underestimates the mean subgrid fluxes of kinetic energy and temperature
+  variance (§4.1, Figs. 13–20); it is the cheapest of the explicit models,
+  0.28 of the dynamic Smagorinsky cost per step (Table 4). See
+  [neural-network SGS models](/methods/neural-network-sgs-model.md).
 - **Listed only.** [Qi et al. (2022)](/sources/qi-2022-b.md) (§1) list the
   Vreman model as "a low dissipation eddy-viscosity model … for turbulent
   shear flows" that "can also predict transitional flow well", among
@@ -417,3 +449,5 @@ computed and subtracted from the mean-stress model.
 - [Qi et al. (2022)](/sources/qi-2022-b.md) — §1.
 - [Cao et al. (2022b)](/sources/cao-2022-c.md) — §III, Eqs. (10)–(11); §IV A, §IV C, Figs. 2–3, 8, Table II; App. B.
 - [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §III A–B, Eqs. (42)–(45); §IV B, Figs. 6, 12a.
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.4, Table 2.
+- [Xu et al. (2023)](/sources/xu-2023.md) — §2.2, Eqs. (2.15)–(2.31), Figs. 1–3; §4.1, Figs. 13–20, Table 4.

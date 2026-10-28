@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Spectral difference method"
-description: "The spectral difference method is a nodal high-order element scheme that interpolates the solution on N+1 points and the flux on N+2 points per direction, made continuous by Riemann fluxes and differentiated at the solution points; this page covers its formulation, its place in the flux-reconstruction family, and its DNS uses with immersed boundaries, shock/boundary-layer interaction and shock capturing."
+description: "The spectral difference method is a nodal high-order element scheme that interpolates the solution on N+1 points and the flux on N+2 points per direction, made continuous by Riemann fluxes; this page covers its formulation, its place in the flux-reconstruction family, its fully-discrete dispersion–dissipation behaviour, and its DNS and implicit-LES uses."
 status: established
 aliases: [SD, SD method, spectral difference, staggered-grid Chebyshev multidomain method]
 tags: [flux-reconstruction, dns, compressible, immersed-boundary, implicit-les, numerical-dissipation]
-timestamp: 2026-10-27T15:50:00Z
+timestamp: 2026-10-28T02:13:00Z
 ---
 
 # Spectral difference method
@@ -65,7 +65,16 @@ one-dimensional SD scheme "linearly stable for any degree" (§2.2, citing
 Van den Abeele, Lacor & Wang for the first statement and Jameson's
 stability proof for the second). Linear and non-linear stability and the
 dissipation and dispersion properties of the method are cited as
-established (§1).
+established (§1). [Liu & Yuan (2023)](/sources/liu-2023-b.md), §1, cite
+the same result in its energy form: Jameson proved the SD schemes energy
+stable for one-dimensional linear advection "by using energy estimates and
+a norm of Sobolev type", and Vincent et al. used the same technique to
+identify the energy-stable flux-reconstruction family; Liu & Yuan list nodal
+DG and SD among the methods that flux reconstruction casts in one
+framework, as do [Shi & Yan (2023)](/sources/shi-2023.md), §I, who add that
+numerical tests support DG, SD and FR/CPR as dissipative methods for
+[implicit LES](/definitions/implicit-les.md) without an explicit subgrid
+model.
 
 **Several dimensions.** On quadrilaterals and hexahedra the
 one-dimensional procedure is repeated direction by direction with tensor
@@ -188,6 +197,74 @@ trilinear interpolation, plus positivity preservation. Findings (§IV, §V):
 - with the DG and DGSEM codes it belongs to the element methods that
   "capture small scales well on coarse grids" (§V).
 
+## Fully-discrete dispersion and dissipation of SD
+
+[Tonicello et al. (2023)](/sources/tonicello-2023.md) extend the spatial
+[eigensolution analysis](/methods/eigensolution-analysis.md) of high-order
+element methods (a real frequency is prescribed and complex numerical
+wavenumbers are sought, as for inflow–outflow problems) from the
+semi-discrete setting to the fully-discrete one with explicit Runge–Kutta
+time integration, for the SD and DG members of the
+[flux-reconstruction](/methods/flux-reconstruction.md) family applied to
+one-dimensional linear advection with an upwind-parameterized interface
+flux. They then test the predictions with the "improved" SD method of
+Liang et al. and Jameson (the Stanford SD solver, Roe flux). Findings that
+concern SD itself (the general theory is on the eigensolution page):
+
+- **SD against DG.** With upwind fluxes, FR-SD has a less restrictive CFL
+  limit than FR-DG and is spatially more dissipative; the SD dissipation
+  curves are "moderately shifted up … and to the left" of the DG ones
+  (§3, Fig. 7; App., Figs. 29–30), consistent with earlier semi-discrete
+  analyses they cite.
+- **Superconvergence and the time scheme.** For fifth-order FR-SD
+  ($N=4$) the expected spatial superconvergence of order $2N+1=9$ is
+  preserved only in an intermediate range of wavenumbers and frequencies;
+  at small ones the three-stage RK33 reduces the convergence to fourth
+  order, and smaller time steps extend the order-9 range downward (§3,
+  Fig. 8).
+- **Time step against dissipation.** For SD with the upwind flux, larger
+  time steps reduce the dissipation of the physical mode at high
+  frequencies until anti-dissipation (convective instability) at the CFL
+  limit, and increase it at low frequencies; with explicit Euler, SD of
+  fifth order is anti-dissipative at low frequencies, which a 1D test with
+  an oscillating inlet confirms (spatial growth beyond a predicted switch
+  near $\Delta t\approx1.0\times10^{-4}$ for $h=0.01$) (§3, §4.1, Figs. 1,
+  16–21).
+- **Well-resolved vortex.** On an inlet–outlet isentropic vortex at sixth
+  and eighth order with RK33, time steps close to the CFL limit slow the
+  error convergence, eventually to the order of the time scheme, and on
+  deformed meshes this happens at smaller grid sizes; spurious entropy
+  oscillations appear only very close to the CFL limit, in agreement with
+  the fully-discrete temporal analysis of Vermeire & Vincent (§4.2.1,
+  Figs. 23–24).
+- **Under-resolved turbulence.** On the inviscid
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $M=0.1$ on
+  $32^3$ elements of sixth-order SD ($N=5$) with third-order Runge–Kutta,
+  the numerical dissipation obtained from the kinetic-energy balance at
+  $\Delta t/\Delta t_{\max}=0.5$, 0.9 and 0.95 is "almost
+  indistinguishable", and "the gradual decrease of numerical dissipation
+  observed in the theoretical framework does not manifest" (§4.3.1,
+  Fig. 25); a 2D inviscid duct with an oscillating inlet behaves alike
+  below about 0.95 of the CFL limit (§4.3.2, Fig. 28). The authors conclude
+  that in under-resolved, implicit-LES-like simulations spatial errors
+  overshadow the time-integration errors, so the time step matters more
+  for DNS-like resolution (abstract, §5); see
+  [numerical dissipation](/properties/numerical-dissipation.md) and
+  [implicit LES](/definitions/implicit-les.md).
+
+## SD as a comparison target for explicitly filtered LES
+
+[Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md), §6.2, compare
+their approximate-deconvolution LES (linear finite elements with an
+explicit differential filter, see
+[scale-similarity models](/methods/scale-similarity-model.md)) on the
+Taylor–Green vortex at $Re=1600$ with the flux-reconstruction LES of Bull &
+Jameson in three variants, nodal DG, OFR and SD, at $N=1$ on $64^3$
+elements (printed as "128 degrees of freedom, i.e. p 1 Legendre polynomials on a 64³ grid"). On their $64^3$ grid
+(S64, 274,625 nodes) the deconvolution LES is "more accurate" in both the
+energy-based and the vorticity-based dissipation rate (Fig. 10). The SD
+results are taken from Bull & Jameson, not recomputed.
+
 ## The SD correction parameter in RANS, and SD shock limiting
 
 **$c_{\mathrm{SD}}$ as the default of an implicit FR-RANS solver.**
@@ -249,6 +326,9 @@ Four further sources mention SD only through the works they cite:
   number) rather than the SD scheme itself, Chapelier et al. compare
   complete codes, so scheme and shock-capturing effects are not separated,
   and Tonicello et al. (2022) validate one supersonic ramp DNS.
+  Tonicello et al. (2023) add a linear fully-discrete analysis with
+  inviscid tests (vortex, Taylor–Green, 2D duct), none of them a
+  turbulence-model assessment.
 - **Order convention and node sets.** Tonicello et al. (2022) count $N$ as
   the order (solution degree $N-1$ on $N$ points, flux on $N+1$), D'Ayer
   et al. as the degree; this page writes the degree. Tonicello et al. place
@@ -273,6 +353,19 @@ Four further sources mention SD only through the works they cite:
   accepted manuscript. The equivalence of $c_{\mathrm{SD}}$ FR with SD is
   cited by Brillon & Nadarajah from the literature, not derived.
 
+- **Order convention (Tonicello et al. 2023).** §2.1 calls $N$ "the
+  order of the solution polynomial", while the paper's "5th-order" scheme
+  has $N=4$ and superconvergence $2N+1=9$ (App.: "3rd order" with $N=2$),
+  so its $N$ is the polynomial degree, as on this page *(compiler check,
+  not in the sources)*; Tonicello et al. (2022) above count $N$ as the
+  order. Their fully-discrete analysis is linear; the authors state that
+  it "is not always representative of more complex nonlinear dynamics"
+  (§4.3.2, §5).
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) compare a grid
+  of 274,625 nodes (65 per direction *(compiler check, not in the
+  sources)*) with SD runs printed as "128 degrees of freedom, i.e. p 1
+  Legendre polynomials on a 64³ grid".
+
 # Citations
 
 - [D'Ayer et al. (2026)](/sources/dayer-2026.md) — HAL hal-05075852v1: §1 (SD stability, cost against FR, purpose); §2.1–2.2, Eqs. (1)–(10), Fig. 1 (equations, SD formulation, nodes, Roe flux, BR1, JAGUAR); §2.4 (time integration); §3.1, Tables 1–2, Figs. 3–5 (cylinder); §3.2, Table 3, Figs. 7–10 (rough minimal channel); §4.
@@ -285,3 +378,7 @@ Four further sources mention SD only through the works they cite:
 - [Bose & Park (2018)](/sources/bose-2018.md) — §3 (wall-model implementation with SD, cited; cost of wall modelling).
 - [Liu et al. (2022b)](/sources/liu-2022-g.md) — §2.1 (GCL error compensation, SD on dynamic grids cited).
 - [Wang et al. (2013)](/sources/wang-2013.md) — §1 (SD cited among unstructured high-order methods); Tables II–VII (participants).
+- [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §2.1–2.2 (FR-SD semi- and fully-discrete spatial analysis); §3, Figs. 1–9, App. Figs. 29–32 (SD against DG, superconvergence, time-step effects); §4.1–4.3, Figs. 10–28 (improved SD tests: linear advection, isentropic vortex, inviscid Taylor–Green vortex, 2D duct); §5.
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §6.2, Table 2, Fig. 10 (comparison with Bull & Jameson's FR-SD LES of the Taylor–Green vortex).
+- [Liu & Yuan (2023)](/sources/liu-2023-b.md) — §1 (FR casts nodal DG and SD in one framework; Jameson's energy-stability proof for SD, as cited).
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §I (FR/CPR unifies DG and SD; DG, SD and FR/CPR for implicit LES, as cited).

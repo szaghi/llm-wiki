@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Mesh adaptation for turbulent-flow simulation"
-description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an error estimate or refinement criterion in a turbulent-flow computation: Hessian and metric criteria for RANS, Hessians scaled by DG error estimators, time-averaged criteria for hybrid RANS/LES, LES modelling-residual and truncation-error estimators, error transport equations, output-based estimates for chaotic flows, and refinement as a dissipation control."
+description: "Changing the mesh (h, p or hp; isotropic or anisotropic) from an error estimate or refinement criterion in a turbulent-flow computation: Hessian and metric criteria for RANS, Hessians scaled by DG error estimators, time-averaged criteria for hybrid RANS/LES, LES modelling-residual, small-scale-energy, residual and truncation-error estimators, error transport equations, output-based estimates for chaotic flows, and refinement as a dissipation control."
 status: established
-aliases: [adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation, Hessian scaling, error transport equations, ETE]
+aliases: [unsteady residual indicator, smoothness indicator, adaptive mesh refinement, AMR, adaptive grid refinement, AGR, anisotropic mesh adaptation, metric-based mesh adaptation, hp-adaptation, average-based mesh adaptation, goal-oriented mesh adaptation, grid adaptation for LES, LES modelling residual, Toosi–Larsson residual estimator, tau-estimation, p-adaptation, Hessian scaling, error transport equations, ETE]
 tags: [mesh-adaptation, hybrid-rans-les, rans, dg, numerical-dissipation, wmles]
-timestamp: 2026-10-27T21:12:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Mesh adaptation for turbulent-flow simulation
@@ -30,12 +30,12 @@ from an estimate of $\delta$, not adapted from the solution.
 
 Every adaptive procedure in the sources has the same four parts.
 
-| Part | Mozaffari et al. (2022) | Alauzet et al. (2022) | Basile et al. (2023) | Blind et al. (2023) | Ferrer et al. (2023) | Martin-Alvarez et al. (2022) | Schotte et al. (2026) |
-|---|---|---|---|---|---|---|---|
-| Flow and model | incompressible hybrid RANS/LES (IDDES, DDES-SST) and RANS, ISIS-CFD | steady compressible RANS, Spalart–Allmaras without $f_{t2}$, Wolf | compressible ZDES on the negative Spalart–Allmaras model, modal DG (CODA) | wall-resolved and wall-modelled LES with the Vreman model, DGSEM ([FLEXI](/software/flexi.md)) | compressible and multiphase flows, DGSEM ([HORSES3D](/software/horses3d.md)) | ideal MHD, cosmological galaxy formation, RAMSES | steady compressible RANS, negative Spalart–Allmaras, modal DG with $N=1$–3 (CODA) |
-| Criterion | Hessians of $p$ and $u_i$, time-averaged | $L^4$ Mach-number interpolation error or adjoint-weighted goal-oriented estimate | modal small-scale energy plus inter-element jumps; modal-decay smoothness | directional LES modelling residual from a modal test filter, time- and element-averaged | truncation error ($\tau$-estimation); interface tracking for multiphase | mass per cell (quasi-Lagrangian) or a density threshold (quasi-Eulerian) | $L^4$ Mach-number Hessian for the anisotropy, a DG small-scale estimator for the size |
-| Operation | anisotropic h-refinement and derefinement of hexahedra by cell division | anisotropic remeshing of tetrahedra to a metric (Feflo.a) | isotropic remeshing (MMG) plus p-enrichment, $N\in\{1,2,3\}$; prism layer frozen | anisotropic hexahedral grids built by hand to the target spacing, 2-to-1 mortars | anisotropic p-adaptation, a degree per element and direction, mortar faces | octree refinement, at most one level jump | anisotropic remeshing of triangles and tetrahedra to a metric (Tucanos) |
-| Driver | refinement every 25 steps (backward-facing step) | mesh-convergence loop at doubled complexity | static steps, dof count doubled per step | post-processing between full LES runs, about four times the elements per step | one step on a converged moderate-degree solution (steady) or at fixed intervals (unsteady) | every step, on the running flow | fixed-complexity loop of 5–20 iterations, then a higher complexity |
+| Part | Mozaffari et al. (2022) | Alauzet et al. (2022) | Basile et al. (2023) | Blind et al. (2023) | Ferrer et al. (2023) | Martin-Alvarez et al. (2022) | Schotte et al. (2026) | Ims & Wang (2023) |
+|---|---|---|---|---|---|---|---|---|
+| Flow and model | incompressible hybrid RANS/LES (IDDES, DDES-SST) and RANS, ISIS-CFD | steady compressible RANS, Spalart–Allmaras without $f_{t2}$, Wolf | compressible ZDES on the negative Spalart–Allmaras model, modal DG (CODA) | wall-resolved and wall-modelled LES with the Vreman model, DGSEM ([FLEXI](/software/flexi.md)) | compressible and multiphase flows, DGSEM ([HORSES3D](/software/horses3d.md)) | ideal MHD, cosmological galaxy formation, RAMSES | steady compressible RANS, negative Spalart–Allmaras, modal DG with $N=1$–3 (CODA) | compressible implicit LES (no SGS model), FR/CPR ([hpMusic](/software/hpmusic.md)) |
+| Criterion | Hessians of $p$ and $u_i$, time-averaged | $L^4$ Mach-number interpolation error or adjoint-weighted goal-oriented estimate | modal small-scale energy plus inter-element jumps; modal-decay smoothness | directional LES modelling residual from a modal test filter, time- and element-averaged | truncation error ($\tau$-estimation); interface tracking for multiphase | mass per cell (quasi-Lagrangian) or a density threshold (quasi-Eulerian) | $L^4$ Mach-number Hessian for the anisotropy, a DG small-scale estimator for the size | unsteady residual at degree $N+1$; modal smoothness (Persson–Peraire); directional small-scale energy (Toosi–Larsson variant); all time-averaged |
+| Operation | anisotropic h-refinement and derefinement of hexahedra by cell division | anisotropic remeshing of tetrahedra to a metric (Feflo.a) | isotropic remeshing (MMG) plus p-enrichment, $N\in\{1,2,3\}$; prism layer frozen | anisotropic hexahedral grids built by hand to the target spacing, 2-to-1 mortars | anisotropic p-adaptation, a degree per element and direction, mortar faces | octree refinement, at most one level jump | anisotropic remeshing of triangles and tetrahedra to a metric (Tucanos) | isotropic h-refinement of curved cells into equal sub-cells following the parent's curvature, fixed $N$, mortar faces |
+| Driver | refinement every 25 steps (backward-facing step) | mesh-convergence loop at doubled complexity | static steps, dof count doubled per step | post-processing between full LES runs, about four times the elements per step | one step on a converged moderate-degree solution (steady) or at fixed intervals (unsteady) | every step, on the running flow | fixed-complexity loop of 5–20 iterations, then a higher complexity | top 20% of cells per round plus size and clumping constraints, restart from interpolated fields |
 
 The models and codes have their own pages:
 [detached-eddy simulation](/methods/detached-eddy-simulation.md) (the
@@ -57,7 +57,16 @@ cells below 100 km in a 100 Mm box; they too state no refinement
 criterion. The scheme is HLL with a third-order limiter on the coarse
 levels and the second-order van Leer limiter on the fine levels in
 high-gradient regions; no SGS model is used, and the paper does not
-discuss numerical dissipation.
+discuss numerical dissipation. [Sun et al. (2023)](/sources/sun-2023.md)
+(§2.2.2, §3.9) adapt OpenFOAM's hexahedral refinement library to 2-D
+quadrilaterals for laminar and inviscid detonation computations: a cell
+is split into four when the face-centre $\lvert\nabla\rho\rvert$ exceeds a
+refinement threshold and recombined below a lower coarsening threshold,
+with parent values copied to the children and children averaged on
+coarsening. Combined with dynamic load balancing of the chemistry, it
+cuts the cell count of an oblique-detonation case to about 1/6 and the CPU
+time to about 1/5 of the uniform mesh with nearly identical steady
+structure (Figs. 15–16; see [OpenFOAM](/software/openfoam.md)).
 
 ## Hessian and metric criteria
 
@@ -325,6 +334,99 @@ The illustrations are a sphere at $Re=200$ (Fig. 1) and multiphase flows;
 a wind-turbine immersed-boundary case uses degree 3 near the rotor and
 wake and 2 elsewhere (§4.7, Fig. 14). The paper shows no adapted turbulent
 case.
+
+## Three indicators for adaptive implicit LES with flux reconstruction (Ims & Wang 2023)
+
+[Ims & Wang (2023)](/sources/ims-2023.md) compare three per-cell
+indicators for h-adaptation at fixed polynomial degree $N$ of
+[implicit LES](/definitions/implicit-les.md) with the
+[flux reconstruction](/methods/flux-reconstruction.md) (FR/CPR) method in
+[hpMusic](/software/hpmusic.md). They argue (§1) that output-adjoint
+adaptation, "the most efficient" for steady RANS, is "simply impractical"
+for LES: the unsteady adjoint runs backward in time, the mesh would have
+to adapt at different times, and chaos pervades even the mean quantities.
+They call the new approaches, among them Fidkowski (2022, below), which
+they describe as machine-learning models trained "to approximate the
+adjoint from a time-averaged primal", "encouraging" but not yet
+"time-tested" (§1). They also
+prefer h to p alone, because p-enrichment can fail on shocks, shear layers
+and contacts, and name hp "the ultimate approach" (§1).
+
+**The indicators (§3).** With $Q_N$ the degree-$N$ solution,
+$\mathrm{Res}_N$ the FR/CPR spatial residual operator and $\Pi_N$ the
+projection onto degree $N$ (page-local):
+
+- *unStdE, the unsteady residual at one degree higher* (an unsteady
+  extension of the steady criterion of Gao & Wang, as cited). Since the
+  unsteady residual vanishes at degree $N$ by construction, its value at
+  $N+1$ is
+  $$\epsilon=\mathrm{Res}_{N+1}\big(\Pi_{N+1}[Q_N]\big)-\Pi_{N+1}\big[\mathrm{Res}_N(Q_N)\big]$$
+  (Eqs. 8–12; page-local $\epsilon$, not the dissipation rate
+  $\varepsilon$), whose absolute value is cell-averaged for density, momentum
+  and energy, each normalized by its domain mean, averaged over the three
+  and over time (Eqs. 13–14).
+- *smthE, the Persson–Peraire smoothness indicator*, called a "spectral
+  decay indicator" by Naddei et al. as cited: the squared difference
+  between $Q_N$ and its projection to degree $N-1$, relative to
+  $\lVert Q_N\rVert^2$, per variable, averaged over the three variables,
+  the cell and time (Eqs. 15–17). It is a
+  [shock sensor](/definitions/shock-sensor.md) repurposed. For
+  comparison, the small-scale energy of Basile et al. (2023, above,
+  Eqs. 8–10) is the energy of the highest modal level of the momentum per
+  element volume, with no division by the solution norm.
+- *T.L.errE, a variant of the Toosi–Larsson small-scale energy*: the
+  directional high-pass filter $-\tfrac{h_\xi^2}{4}\partial^2\boldsymbol u/\partial\xi^2$
+  applied along each reference coordinate $\xi$ of the curved cell, with
+  $h_\xi=1/(N+1)$ so that the physical width adapts to the local cell size
+  and curvature; its squared magnitude is cell- and time-averaged per
+  direction and the indicator is the square root of the maximum over
+  directions (Eqs. 18–22). Transforming the physical-space directional
+  derivative instead (Eqs. 19–20) would add a metric term, which the
+  authors drop on the argument that the polynomials live in computational
+  space and the term is nearly constant unless the mesh is unevenly
+  curved (§3.3). This quantity is the small-scale velocity energy of
+  Toosi & Larsson, not the modelling residual of Blind et al. (above).
+
+**Procedure (§4).** Indicators are computed during the run; the top 20%
+of cells are marked, plus cells forced by a one-level size constraint and
+by a clumping rule (a cell at least 50% flanked by marked neighbours),
+iterated until the marking stops changing. Marked cells are split
+isotropically into equal children that follow the parent's high-order
+curvature; the flow is interpolated and the run restarted. Hanging nodes
+use mortar faces; the face geometry must be taken from the coarse side
+when its polynomial is linear and should be taken from the fine side
+otherwise, or the under-integrated coarse side makes the computation
+unstable (an implementation observation, no data shown).
+
+**Results (§5, Figs. 5–34).** On the
+[T106c and T106a turbine cascades](/benchmarks/turbine-cascade.md)
+($N=2$ at $M_{is}=0.65$, $Re_{is}=80\,000$ against an hpMusic DNS; $N=1$
+at $M_{is}=0.4$, $Re_{is}=60\,000$ against an $N=4$ run on a uniformly
+refined mesh), with the same budget for every indicator, the evidence is
+visual (entropy snapshots, marked-cell maps, the $uv$ Reynolds stress and
+power spectral densities of the turbulent kinetic energy at a wake point):
+
+- all three improve the solution and none refines much at the leading
+  edge, "possibly" because the laminar flow is already resolved there, in
+  the authors' reading;
+- smthE favours small boundary-layer cells on both surfaces, T.L.errE
+  large wake cells (refining once even at the domain exit), unStdE lies in
+  between;
+- smthE converges slowest; unStdE and T.L.errE converge "nearly in
+  lockstep", T.L.errE slightly ahead;
+- on T106a a random marking with the same budget improves the solution
+  "at a pace almost equal to" smthE, and moves the low-frequency spectral
+  peaks toward the reference faster than the two better indicators, which
+  the authors read as those indicators de-emphasizing laminar convergence;
+  the hanging-node boundaries at random locations do not disturb the flow.
+
+The authors attribute the ranking to vortex sensitivity, recommend
+T.L.errE when vortex activity matters most and unStdE as easier to
+implement (it needs only a projection and the residual at $N+1$, "freely
+available" in an hp-aware solver) and possibly "the more truthful
+estimate of the physics errors"; T.L.errE is hard to make efficient
+across MPI, threads and SIMD (§5.3, §6). No error norms, cell counts or
+costs are reported.
 
 ## Adaptation in scale-resolving simulation
 
@@ -787,6 +889,17 @@ node-centred finite volume or finite elements (§4.3).
 
 ## Qualifications
 
+- **Ims & Wang (2023)** rank their indicators by visual comparison of
+  fields and spectra on two cascades at one marking fraction, with no
+  error norm, degree-of-freedom count or cost; the claim that unStdE is
+  the more truthful estimate is argued from its definition. The round
+  counting differs between the text and the captions of §5.1 and §5.2
+  (two rounds plus a reference marking in the text, rounds 1–3 in the Fig.
+  9 caption; the Fig. 21 caption says "second" where the text says
+  third). After Eq. 12 the text refers to the error generation rate "from
+  equation (12)", which is defined in Eq. 11; in Eq. 22 the pointwise
+  product is equated with $A_\xi^2$, which Eq. 21c defines as an average.
+
 - **Scope of each criterion.** Mozaffari et al. test their Hessian
   criterion for hybrid RANS/LES only indirectly (threshold convergence and
   the refinement-box test), and it misses low-velocity recirculation;
@@ -927,3 +1040,5 @@ node-centred finite volume or finite elements (§4.3).
 - [Fidkowski (2022)](/sources/fidkowski-2022.md) — §2.1–2.3, Eqs. 2–9 (DG, simplified DES, augmented system, adjoint); §4, Eqs. 14–23 (time-averaged adjoint-weighted residual, E1 and E2); §5.1–5.3, Eq. 24, Fig. 2 (indicators, $p$-adaptation, MOESS, loop); §6, Tables 1–3, Figs. 4–19; §7.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §3.3.2, Fig. 24 (octree coarse–fine interfaces reflect acoustic waves).
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §1 (EPIC shared by BCFD and GGNS); §4.2 (CAD projection); §4.3, Figs. 7–9 (output-based against Hessian adaptation, method comparison of Michal et al., loop, unsteady memory, chaotic adjoints); §4.4, Fig. 4 (adaptive higher-order finite elements); §5.
+- [Ims & Wang (2023)](/sources/ims-2023.md) — §1 (adjoint impractical for LES, h against p); §2 (FR/CPR implicit LES); §3.1–3.3, Eqs. 7–22 (three indicators); §4 (marking, splitting, mortars); §5–6, Figs. 5–34 (cascades, random control, recommendations).
+- [Sun et al. (2023)](/sources/sun-2023.md) — §2.2.2, Table 1, Fig. 2 (2-D density-gradient AMR in OpenFOAM); §3.9, Figs. 15–16 (cell and CPU savings).

@@ -145,10 +145,11 @@ References [7] and [8] are the ingested sources
 
 # Pages created or updated
 
-Chunk 5 (2026-10-26), cited further in chunk 6. This source is cited on:
+Chunk 5 (2026-10-26), cited further in chunks 6, 12. This source is cited on:
 
 - [Backward-facing step](/benchmarks/backward-facing-step.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+- [Barycentric anisotropy map](/definitions/barycentric-anisotropy-map.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Model-form uncertainty in turbulence closures](/definitions/model-form-uncertainty.md)
 - [Field inversion and machine learning](/methods/field-inversion-machine-learning.md)

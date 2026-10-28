@@ -5,7 +5,7 @@ description: "Turbulence in a triply periodic box, decaying or forced: a priori 
 status: established
 aliases: [HIT, DHIT, HID, DIT, Comte-Bellot–Corrsin experiment, CBC experiment, forced HIT, decaying isotropic turbulence, forced isotropic turbulence, periodic box turbulence, compressible isotropic turbulence, turbulent box simulation, supersonic isothermal turbulence, driven supersonic turbulence, exascale DNS of isotropic turbulence]
 tags: [benchmark, les, sgs-model, data-driven, dns, compressible]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T01:58:00Z
 ---
 
 # Homogeneous isotropic turbulence (decaying and forced)
@@ -67,6 +67,8 @@ notation registry.)
 | [Deng et al. (2022)](/sources/deng-2022.md), §4.15 | decaying, compressible, "with eddy shocklets" | 100 (initial) | $256^3$ DNS of Johnsen et al. | no model: finite-volume $P_nT_m$-BVD-AD schemes (polynomial and THINC candidates selected by boundary-variation diminishing, with adjustable dissipation), 6th to 10th order, and ninth-order WENO-M, $64^3$ and $128^3$ | $E(k)\propto u_{\mathrm{rms},0}^2k^4k_0^{-5}\exp(-2k^2/k_0^2)$, $k_0=4$, $M_t=0.6$, uniform initial density and pressure, power-law viscosity; spectra at $t/\tau=4$ ($\tau$ the initial eddy time of the case) |
 | [Valencia et al. (2026)](/sources/valencia-2026.md), §IV, §V A | decaying, compressible | 100 (initial, with the Taylor microscale set to $2/k_0$) | finite-volume DNS in PeleC (Godunov, PPM with seventh-order WENO-Z), $512^3$, CFL 0.5, run to four initial eddy-turnover times $2/(k_0u_{\mathrm{rms},0})$; verified against the Motheau–Wakefield data | a priori only: top-hat filter and downsampling to $128^3$, $64^3$, $32^3$, then a Gaussian filter of width $\Delta=4h$, $2h$, $h$ (all $\Delta=16$ DNS spacings) | $E(k)\propto k^4\exp[-2(k/k_0)^2]$, $k_0=4$, $M_t=0.6$ (with $\sqrt{\langle u_iu_i\rangle}$), $T_0=1200$ K, $p_0=101.3$ kPa, $Pr=0.71$, constant viscosity and conductivity |
 | [Kuya et al. (2018)](/sources/kuya-2018.md), §5.1, §5.3, App. C | decaying, compressible, inviscid (Euler) | infinite (no viscosity) | none; the de-aliased spectral run of Honein & Moin is the comparison at $M_{t0}=0.07$ | no model: second-order central split-form fluxes, $32^3$, classical fourth-order Runge–Kutta at CFL about 0.1, run to $t/T_E=180$ | $E(k)=A(k/k_0)^4e^{-2(k/k_0)^2}$, $k_0=6$, $A$ set by the initial turbulent Mach number $M_{t0}=0.07$ or 0.3; uniform initial $T$ and $\rho$; set-up of Honein & Moin except the CFL |
+| [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md), §6.1 | decaying (grid turbulence of Comte-Bellot & Corrsin) | not given; $U_0M_g/\nu=34{,}000$ (§6.1) | experiment | continuous Galerkin finite elements, van Cittert approximate deconvolution of order 8 with an explicit differential filter, no eddy viscosity: $64^3$ hexahedra, the same with 20% node perturbation, and a tetrahedral mesh of 64 edge segments per side | method of Kwak et al. on $512^3$, interpolated to the LES meshes; compressible at reference Mach 0.1 |
+| [Iwata et al. (2023)](/sources/iwata-2023.md), §II C, Table I | decaying, compressible, as the inflow of a detonation DNS | 240 | none (the field itself is a DNS) | DNS on a 4 µm grid in a 1.92 mm periodic cube ($480^3$); $k_{\max}\eta=2.31$ and 4.25 in the two gas mixtures | $E(k)\propto(u'^2_{\mathrm{rms}}/k_e)(k/k_e)^4\exp[-2(k/k_e)^2]$ ($k_e$ page-local, the energy-peak wavenumber), decayed until the velocity-derivative skewness lies between $-0.6$ and $-0.4$; turbulent Mach number 0.30 |
 | [Li et al. (2021)](/sources/li-2021.md), §II A, §III A, §III C, §III E | forced, incompressible | about 260 (training and main tests); 180 and 250 (generalization) | pseudo-spectral, $1024^3$ (data of Xie et al.), second-order Adams–Bashforth, 2/3 de-aliasing | pseudo-spectral LES, $128^3$, top-hat filter $\Delta=16$ DNS spacings (filter-to-grid ratio 2); also $64^3$ and $32^3$ ($\Delta=32$, 64 DNS spacings) | energy spectrum held fixed in the two lowest wavenumbers; a "high-order dissipative numerical method" carries the energy flux at the highest wavenumbers |
 
 The beck-2023 DNS used 16,384 cores of the HAWK system for almost two hours
@@ -437,7 +439,7 @@ The author states that the de-aliased spectral code makes numerical
 dissipation negligible, so the observed effects are those of the model
 (§3.3).
 
-**Decaying grid turbulence of Comte-Bellot and Corrsin.** Six sources use
+**Decaying grid turbulence of Comte-Bellot and Corrsin.** Seven sources use
 this experiment. Three start a simulation from the measured spectrum at
 $tU_0/M_g=42$ ($M_g$ the grid mesh size, 5.08 cm, and $U_0=10$ m/s in
 Domaradzki, Duan & Wang and Brillon & Nadarajah; $U_0M_g/\nu=34{,}000$ in
@@ -494,6 +496,20 @@ use the case to set the dissipation of hybrid RANS/LES:
   Taylor–Green tests show is needed to avoid an apparent energy pile-up
   near $k_c$ (§3.1.1, Table 4; see
   [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)).
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md), §6.1,
+  Fig. 6, test their approximate deconvolution with an explicit differential
+  filter on unstructured finite elements (order 8; hexahedral filter set
+  for a cut-off of about $3\pi/4$ in units of the local grid spacing; see
+  [scale-similarity and mixed models](/methods/scale-similarity-model.md)
+  and [explicit modal filtering](/methods/explicit-modal-filtering.md)):
+  on the $64^3$ Cartesian, the 20%-perturbed and the tetrahedral meshes
+  the spectrum follows a $-5/3$ range below $k=8/\Delta x$ and is
+  suppressed completely at the grid cut-off. The tetrahedral mesh is
+  slightly more dissipative but keeps some energy beyond the structured
+  cut-off, because the filter adapts to the smaller local element size.
+  The spectra are compared at $t^*=48.3$, a time the text does not relate
+  to the measured stations. Their Taylor–Green tests are on
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md).
 - [Carlsson et al. (2023)](/sources/carlsson-2023.md), §4.2 (below): the
   case measures the scheme dissipation of hybrid RANS/LES.
 - [Wang et al. (2021)](/sources/wang-2021-l.md), §3.1 (below): the case
@@ -921,6 +937,18 @@ is accurate at $32^3$ and departs as the mesh coarsens. The constants
 $C_1=6.8$ and $C_2=4.0$ of the method's memory model are calibrated on this
 case in an earlier paper (§2.9).
 
+**A decaying box as the inflow of a reacting shock.**
+[Iwata et al. (2023)](/sources/iwata-2023.md), §II C, decay a compressible
+isotropic field in a periodic cube of the lateral size of their detonation
+domain, on the same 4 µm grid, until the skewness of the velocity
+derivative lies between $-0.6$ and $-0.4$, which they call "a reasonable
+range for turbulence observed in actual systems", and feed it in at
+$Re_\lambda=240$ and turbulent Mach number 0.30 around the detonation speed.
+The resolution criterion $k_{\max}\eta\ge1.5$ ($k_{\max}$ page-local, the
+largest resolved wavenumber) holds with 2.31 and 4.25 in the two mixtures
+(Table I). What the turbulence does to the detonation is on
+[shock-generated turbulence](/results/shock-generated-turbulence.md).
+
 **Not this case: isotropic turbulence ahead of a flame.**
 [Chambers et al. (2022)](/sources/chambers-2022.md) generate nominally
 isotropic turbulence in a shock tube by passing a leading shock through a
@@ -1101,6 +1129,15 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
   network is trained on HIT and channel data together.
 - [Caban et al. (2026)](/sources/caban-2026.md) do not say whether their
   $Re_\lambda=100$ DNS is forced or decaying.
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) print the
+  Reynolds number of the case as 3,400 in the abstract and
+  $Re_M=34{,}000$ in §6.1, and the mean velocity of the experiment as
+  "$U_0=10$ cm/s" (§6.1), where Domaradzki, Duan & Wang and Brillon &
+  Nadarajah, above, give 10 m/s; the grid mesh 5.08 cm is common to all.
+  They give the filter cut-off as about $3\pi/4$ in §6.1, and the
+  parameter-to-cut-off mapping only for the values they use.
+- [Iwata et al. (2023)](/sources/iwata-2023.md) do not print the
+  definition of their turbulent Mach number.
 - [Kuya et al. (2018)](/sources/kuya-2018.md) compare $M_{t0}=0.3$ with
   "$M_{t0}=0.05$ shown in Fig. 9(a)" (§5.3), but Fig. 9 is the
   $M_{t0}=0.07$ run (0.05 is the Mach number of their Taylor–Green
@@ -1171,3 +1208,5 @@ to $f_\varepsilon=1$ for $f_k\ge0.20$.
 - [Li et al. (2022)](/sources/li-2022-k.md) — §II C; §III A, Figs. 2–3.
 - [Chambers et al. (2022)](/sources/chambers-2022.md) — §II (shock-tube turbulence; not a periodic box).
 - [Coulon et al. (2023)](/sources/coulon-2023.md) — §2.2 (synthetic inlet turbulence; not a periodic box).
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — Abstract; §6.1, Fig. 6 (Comte-Bellot–Corrsin decay with approximate deconvolution on unstructured finite elements).
+- [Iwata et al. (2023)](/sources/iwata-2023.md) — §II C, Eq. 1, Table I (decaying compressible precursor as detonation inflow).

@@ -5,7 +5,7 @@ description: "Two-equation RANS eddy-viscosity models transporting the turbulent
 status: established
 aliases: [k-epsilon, standard k-ε, Launder–Sharma k-ε, realizable k-ε, RKE, Shih k-ε, enhanced wall treatment, EWT, two-layer k-ε]
 tags: [rans, eddy-viscosity, separated-flow, boundary-layer]
-timestamp: 2026-10-27T21:07:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # k-ε models
@@ -230,6 +230,53 @@ the recirculation length "in most of the cases" (§4.1.1).
   10–16; see
   [periodic hill](/benchmarks/periodic-hill.md) and the
   [Boussinesq page](/definitions/boussinesq-hypothesis.md)).
+- **Lag elliptic-blending model.** Mays et al. (2023) use the three-equation
+  Lag elliptic-blending (EB) $k$-$\varepsilon$ model of Lardeau & Billard, as
+  implemented in Simcenter STAR-CCM+, as the base of their hybrid RANS/LES and
+  as their URANS comparator
+  ([Mays et al. (2023)](/sources/mays-2023.md), §2.1.1, Eqs. 1–8, App. Eqs.
+  16–21). With page-local symbols $\varphi_{\mathrm L}$ for the reduced stress
+  function, $\alpha_{\mathrm{EB}}$ for the elliptic blending variable and
+  $L=k^{3/2}/\varepsilon$ for the integral length, the eddy viscosity and the
+  elliptic equation are
+  $$\nu_t=C_\mu\varphi_{\mathrm L}\frac{k^2}{\varepsilon},\qquad
+  \partial_j\big(L^2\partial_j\alpha_{\mathrm{EB}}\big)=\alpha_{\mathrm{EB}}-1,$$
+  and $k$, $\varepsilon$ and $\varphi_{\mathrm L}$ are transported with the
+  diffusivities $\nu/2+\nu_t/\sigma_k$, $\nu/2+\nu_t/\sigma_\varepsilon$,
+  $\nu/2+\nu_t/\sigma_\varphi$ as printed (Eqs. 5–7). The reduced stress function
+  "acts to reduce the viscosity usually over-predicted by failing to account
+  for the lag between the stress and strain"; its equation is "reconstructed
+  by analogy with a Reynolds Stress Model", which gives sensitivity to
+  transition and non-linear effects, and its production (App. Eqs. 16–21)
+  blends a near-wall and a homogeneous source with $\alpha_{\mathrm{EB}}^3$
+  and contains the Reynolds-stress anisotropy of an algebraic relation and
+  the Spalart–Shur rotation tensor (see the
+  [Reynolds-stress page](/methods/reynolds-stress-model.md)). No constant is
+  printed: they are "found in the STAR-CCM+ documentation". The authors chose
+  it because their preliminary study found it the most appropriate available
+  model for separated bluff-body flow (§2.1.1).
+- **Myong–Kasagi with semi-local damping.** Diez Sanhueza et al. (2023) use
+  the low-Reynolds Myong–Kasagi model in the form of Otero Rodriguez et al.,
+  which replaces $y^+$ by the semi-locally scaled wall distance
+  $y^*=y^+\sqrt{\langle\rho\rangle/\rho_w}\,\mu_w/\langle\mu\rangle$ in the damping functions,
+  for fully developed channels with strong property variations
+  ([Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md), §2.2, Eqs. 5–8).
+  In the one-dimensional channel form, with $\mu_t$ the dynamic eddy
+  viscosity and $Re_t=\rho k^2/(\mu\varepsilon)$ (page-local),
+  $$\begin{aligned}
+  0&=\mu_t\Big(\frac{\partial u}{\partial y}\Big)^2-\rho\varepsilon+\partial_y\Big[\Big(\mu+\frac{\mu_t}{\sigma_k}\Big)\partial_yk\Big],\\
+  0&=C_{\varepsilon1}P_k\frac{\varepsilon}{k}-C_{\varepsilon2}f_\varepsilon\rho\frac{\varepsilon^2}{k}+\partial_y\Big[\Big(\mu+\frac{\mu_t}{\sigma_\varepsilon}\Big)\partial_y\varepsilon\Big],\\
+  f_\varepsilon&=\Big(1-\tfrac29e^{-(Re_t/6)^2}\Big)\big(1-e^{-y^*/5}\big)^2,\qquad
+  f_\mu=\big(1-e^{-y^*/70}\big)\Big(1+\frac{3.45}{\sqrt{Re_t}}\Big),\qquad
+  \mu_t=C_\mu f_\mu\rho\frac{k^2}{\varepsilon},
+  \end{aligned}$$
+  with $C_{\varepsilon1}=1.4$, $C_{\varepsilon2}=1.8$, $C_\mu=0.09$,
+  $\sigma_k=1.4$, $\sigma_\varepsilon=1.3$ and $Pr_t=1$. The original model,
+  they state, uses $y^+$ in the damping functions, replaced here by $y^*$
+  (§2.2). The integrated-gradients ranking places the same semi-local $y^*$
+  above $\langle\rho\rangle/\rho_w$ and $\langle\mu\rangle/\mu_w$ as an input of their
+  learned correction (§5, §6; see
+  [compressible velocity transformations](/definitions/compressible-velocity-transformation.md)).
 - Inside SST the outer branch is a $k$-$\varepsilon$ model written in
   $\omega$; its detached-eddy constant is $C_{\mathrm{DES}}=0.61$ against
   0.78 for the inner branch, blended through $F_1$ (Delassaux et al. 2023,
@@ -298,6 +345,37 @@ $-C_\mu=-0.09$ *(compiler check, not in the sources)*; see the
 [model-form uncertainty](/definitions/model-form-uncertainty.md) and
 [backward-facing step](/benchmarks/backward-facing-step.md).
 
+**Drag crisis of a circular cylinder.** URANS with the Lag EB model fails
+to capture the drag crisis of a smooth cylinder: on meshes of 7.65–16.64
+million cells with first-cell $y^+<1$, it gives $C_D=0.436$, 0.354, 0.204 and
+0.156 at $Re_D=2.5$, 3.8, 5.3 and $7.2\times10^5$, against 0.833, 0.481, 0.296
+and 0.213 from the reference wall-resolved LES, and recirculation lengths
+of 1.107–1.339$D$ against 0.559–0.727$D$ (Mays et al. 2023, §3.2.1, Tables
+4–5, Fig. 6). The authors attribute the failure to an over-predicted eddy
+viscosity in the shear layers, which keeps them stable, consistent with
+earlier linear-eddy-viscosity URANS they cite; the URANS eddy viscosity is
+"typically on the order of ten times greater at least" than the maximum
+subgrid viscosity ratio of their hybrid, 9.4–18.3 (§3.2.2, Table 6). URANS
+still partly captures the laminar separation bubble, through a slight
+inflection near separation and a non-zero mean lift (§3.2.1; see
+[laminar separation bubble](/definitions/laminar-separation-bubble.md),
+[circular-cylinder wake](/benchmarks/circular-cylinder-wake.md) and
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md)).
+
+**Variable-property channels.** Fed with the DNS density and viscosity
+profiles, the semi-local Myong–Kasagi model deviates strongly in channels
+with strong property variations: over a database of 16 heated low-Mach,
+nine supersonic ideal-gas (Mach 0.7–4) and five incompressible channels,
+the $L^\infty$ error of the mean velocity reaches 23.4% in the hardest
+low-Mach case (JFM.CRe$^\star_\tau$), 11.6% at Mach 4 and 2.3–3.0% in the
+incompressible cases (Diez Sanhueza et al. 2023, §2.2, Fig. 1, Table 3).
+Field-inversion multipliers on the dissipation terms of both equations and
+a neural network that predicts the correction of the $k$ equation reduce the
+error in almost all held-out cases, to 4.0% in that case, with one
+extrapolation failure at $Re_\tau=4200$ (2.3% to 14.0%) (§5, Table 3; details
+on [field inversion and machine learning](/methods/field-inversion-machine-learning.md)
+and [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
+
 **Lattice Boltzmann hosts.** Mozaffari et al. (2024) recall
 $k$-$\varepsilon$ implementations in lattice Boltzmann solvers, including
 a $k$-$\varepsilon$-based hybrid RANS/LES of Sajjadi et al., as the
@@ -345,6 +423,17 @@ sources depending only on the Stokes number predict non-realistic rates (see
   constants (Eqs. 27–33) uses the second, the evaluation (Eq. 34) the
   first.
 - Brenner et al. (2022) do not print the model constants.
+- Mays et al. (2023) print the Boussinesq closure of their base model as
+  $T_{ij}=2\nu_t\langle S_{ij}\rangle-\tfrac13k\delta_{ij}$ (Eq. 3, $T_{ij}$ the
+  negative kinematic Reynolds stress); with $\langle S_{ii}\rangle=0$ from their
+  continuity equation (Eq. 1) the trace is $-k$, whereas a stress of trace
+  $-2k$ needs $\tfrac23k\delta_{ij}$ *(compiler check, not in the sources)*.
+  They print the production as $P_k=\nu_tS^2$ in §2.1.1 and as $2\mu_tS^2$ in
+  the subfilter $k$ equation (Eq. 9), without defining the modulus $S$; the
+  page records both as printed.
+- Diez Sanhueza et al. (2023) give the baseline error of the hardest case as
+  22.8% in §2.2 and 23.4% in Table 3, the abstract and §6, without stating two
+  error definitions.
 
 # Citations
 
@@ -366,3 +455,5 @@ sources depending only on the Stokes number predict non-realistic rates (see
 - [Mardani & Nazari (2022)](/sources/mardani-2022.md) — §2 Eqs. 4–6, §4 Eqs. 18–20, 27–34, §5, §6.3 Fig. 7.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.2, §4.2.1 Eq. 9.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §3.1, §3.2.2, Fig. 28.
+- [Mays et al. (2023)](/sources/mays-2023.md) — §2.1.1 Eqs. 1–8, App. Eqs. 16–21, §3.2.1–§3.2.2 Tables 4–6, Fig. 6.
+- [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §2.2 Eqs. 5–8, Fig. 1, §5 Table 3, §6.

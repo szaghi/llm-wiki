@@ -3,9 +3,9 @@ type: Result
 title: "Shock-generated turbulence and turbulent shock jump relations"
 description: "A strong shock crossing a medium with order-one density fluctuations generates turbulence whose velocity dispersion scales with shock speed times a pre-shock Atwood number and whose Reynolds stress lowers post-shock pressure and density; conversely, shocks form inside supersonic turbulence and the supersonic Taylor–Green vortex, where they test shock capturing."
 status: established
-aliases: [shock–inhomogeneity interaction, shock through a non-uniform medium, turbulent Rankine–Hugoniot relations, turbulent jump conditions, shock-driven turbulence, shocklets, shock networks, shock–turbulence interaction, supersonic isothermal turbulence, sonic scale]
-tags: [compressible, implicit-les, plasma, astrophysics, dg, numerical-dissipation]
-timestamp: 2026-10-27T21:09:00Z
+aliases: [shock–inhomogeneity interaction, shock through a non-uniform medium, turbulent Rankine–Hugoniot relations, turbulent jump conditions, shock-driven turbulence, shocklets, shock networks, shock–turbulence interaction, supersonic isothermal turbulence, sonic scale, detonation–turbulence interaction]
+tags: [compressible, implicit-les, plasma, astrophysics, dg, numerical-dissipation, combustion]
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Shock-generated turbulence and turbulent shock jump relations
@@ -28,7 +28,10 @@ peripheral to closure modelling, and its "model" content is the scaling and
 jump relations. The converse process, shocks formed by the turbulence itself,
 is the subject of the last section: driven supersonic turbulence and the
 supersonic [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), used
-by three further sources as tests of shock-capturing discretizations.
+by three further sources as tests of shock-capturing discretizations. A
+detonation running into isotropic turbulence and a boundary layer
+amplified through a ramp interaction are added there as reacting and
+wall-bounded counterparts.
 
 **Page notation** (page-local unless in the registry): $x$ is the
 shock-normal direction (the shock moves toward $-x$), $y$, $z$ the
@@ -349,6 +352,56 @@ waves the limiters damp (§3.3–3.4, Figs. 4–5); their one turbulent
 validation is a transonic deep cavity without a shock–turbulence
 interaction (§3.6). See [numerical dissipation](/properties/numerical-dissipation.md).
 
+**A reacting shock meeting isotropic turbulence.**
+[Iwata et al. (2023)](/sources/iwata-2023.md) run a DNS of a cellular
+detonation propagating into isotropic turbulence, with a 19-step hydrogen
+mechanism, in two stoichiometric hydrogen–oxygen–argon mixtures of the
+same cell width (1.92 mm) but different cell regularity (§II). The
+inflow turbulence comes from a decaying
+[isotropic-turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)
+precursor at $Re_\lambda=240$ and turbulent Mach number 0.30, fed in
+around the detonation speed in a detonation-fixed frame; the code uses
+fifth-order WENO, HLLC switched to Lax–Friedrichs near shocks by a
+pressure sensor, and a 4 µm grid of $1200\times480\times480$ cells, with
+$k_{\max}\eta=2.31$ and 4.25 for the two mixtures ($k_{\max}$ page-local,
+the largest resolved wavenumber) (§II B–C, Table I). Findings on the
+shock–turbulence side (§IV A–C):
+
+- behind the shock the Taylor microscales are about 25 µm along the
+  propagation direction and 50 µm across it in all cases, an anisotropy
+  the authors attribute to shock compression, as in inert
+  shock–turbulence interaction (Fig. 9);
+- the post-shock turbulent velocity scale, about 480 and 670 m/s for the
+  two mixtures, is comparable to the post-shock mean velocity and comes
+  mainly from the detonation itself (slip lines behind the triple points):
+  the contribution of the incoming turbulence is "quite minor" (Fig. 10);
+- turbulent fluxes of hydrogen and enthalpy along the propagation
+  direction exceed molecular transport by two orders of magnitude or more
+  (Figs. 11–12);
+- the incoming turbulence broadens the distribution of the local shock
+  Mach number; in the less diluted, irregular mixture this raises the
+  share of high post-shock temperatures and shortens the mean induction
+  length from 0.321 to 0.295 mm, which ZND solutions started from the DNS
+  post-shock states reproduce qualitatively; the authors name "creation of
+  different shock strength" the main effect of turbulence and expect the
+  turbulent Mach number to be an important indicator (Figs. 14–15, §V).
+
+The mean detonation speed stays at 0.98 and 0.95 of the Chapman–Jouguet
+value with or without turbulence (§III C, Table I). The reaction proceeds
+faster with turbulence in the irregular mixture and unchanged in the
+regular one, against the delay that Jin et al. found with one-step
+chemistry, as Iwata et al. cite them (§III D). The detonation-structure
+results are on the Source page.
+
+**Amplification over a compression ramp.** In the wall-bounded
+interaction of a Mach 2.9 boundary layer with a 24° ramp,
+[Shi & Yan (2023)](/sources/shi-2023.md) find the turbulent kinetic
+energy amplified 3.34 times and the spanwise normal stress 4.23 times,
+the streamwise stress peaking upstream of the others, and attribute the
+amplification near separation to deceleration by the separation shock
+rather than to shear (§IV.C, Table IV); detail on
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+
 **Not this mechanism: turbulence behind a perforated plate.** In the
 shock tube of [Chambers et al. (2022)](/sources/chambers-2022.md) a leading
 shock of Mach 2 to 3 passes through a perforated plate, and the choked jets
@@ -393,6 +446,17 @@ judge discretizations by how they resolve or smear them.
   [Cao et al. (2022)](/sources/cao-2022.md) (Notation map) on
   [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md);
   values from the two definitions are not compared by any source.
+  [Iwata et al. (2023)](/sources/iwata-2023.md) give their inflow
+  turbulence a turbulent Mach number of 0.30 without printing its
+  definition (Table I).
+- [Iwata et al. (2023)](/sources/iwata-2023.md) print a ZND induction
+  length of 124 µm (§IV A) and mean DNS induction lengths of 0.321 and
+  0.295 mm, the DNS one measured from the shock to the half-reacted
+  hydrogen iso-surface (§IV C); the two are defined differently and the
+  paper does not compare them. They state the resolution of the incoming
+  turbulence by the $k_{\max}\eta$ criterion and of the reaction zone by
+  the half-reaction length, "resolved by 30 grids" (§II C); the shocks are
+  captured by the WENO scheme.
 
 - **Printed slips in the shock-network sources.** Cernetic et al. (2024)
   state that doubling the Mach number needs a tripled driving strength
@@ -423,3 +487,5 @@ judge discretizations by how they resolve or smear them.
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.2; §3.2, Figs. 7–8, 11 (spectra and Mach-conditioned PDFs downstream of a compression/expansion ramp); §4.1–4.2, Eq. (4.14), Figs. 14, 20–26 (compression, expansion and subgrid Mach number in the energy transfer).
 - [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §1; §3.3–3.4, Figs. 4–5 (implicit LES framing; inviscid shock–vortex and shock–entropy-wave tests).
 - [Chambers et al. (2022)](/sources/chambers-2022.md) — §II A–B (perforated-plate turbulence behind a shock; a different mechanism, passing mention).
+- [Iwata et al. (2023)](/sources/iwata-2023.md) — §II A–C, Eq. 1, Table I; §III C–D; §IV A–C, Figs. 9–15; §V (detonation–turbulence interaction DNS).
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §IV.C, Table IV, Figs. 23–32 (turbulence amplification through a ramp interaction).

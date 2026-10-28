@@ -5,7 +5,7 @@ description: "The bulk (volume) viscosity multiplies the velocity divergence in 
 status: established
 aliases: [volume viscosity, dilatational viscosity, second viscosity, bulk viscous Reynolds number, viscous Prandtl number, Stokes hypothesis]
 tags: [compressible, dns, implicit-les, numerical-dissipation, mhd]
-timestamp: 2026-10-27T20:36:00Z
+timestamp: 2026-10-28T01:51:00Z
 ---
 
 # Bulk viscosity
@@ -24,7 +24,12 @@ related to the "second viscosity coefficient" $\lambda_{\mathrm v}$
 $\mu_b=\lambda_{\mathrm v}+\tfrac23\mu$, as stated by
 [Beattie et al. (2025)](/sources/beattie-2025.md), footnote 2, who vary
 $\nu_b$ at fixed $\nu$, "equivalent to changing $\lambda$ for fixed
-$\nu_{\rm shear}$". The sources use it in three ways: as a physical property
+$\nu_{\rm shear}$". The name is not used uniformly:
+[Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md), §III A, write
+the stress as $\lambda_b(\nabla\cdot\boldsymbol u)\delta_{ij}+2\mu S_{ij}$
+and call the coefficient $\lambda_b$ of the divergence (the second
+viscosity $\lambda_{\mathrm v}$ of this page) the "bulk viscosity" (see
+Qualifications for the value they print). The sources use it in three ways: as a physical property
 of molecular gases, as an inherent property of a kinetic discretization, and
 as an artificial dissipation for shocks.
 
@@ -373,6 +378,15 @@ similar configuration with a spectral-element dynamic model gave
   compression the authors restrict it to. Their conclusion that the trace
   carries the mean backscatter depends on $k_{\mathrm{sgs}}>0$, which they
   note holds for non-spectral filters (Vreman et al., cited) (§5).
+- **Second viscosity printed as "bulk viscosity" (Kokkinakis et al.
+  2023).** §III A prints "$\lambda_b=-4\mu/3$ according to Stokes'
+  hypothesis" for the stress $\lambda_b(\nabla\cdot\boldsymbol u)\delta_{ij}+2\mu S_{ij}$
+  of their implicit LES of a shock/boundary-layer interaction. The trace of
+  that stress is $(3\lambda_b+2\mu)\nabla\cdot\boldsymbol u$, so the
+  Stokes hypothesis (traceless stress, $\mu_b=\lambda_b+\tfrac23\mu=0$)
+  requires $\lambda_b=-\tfrac23\mu$, and the printed value corresponds to
+  $\mu_b=-\tfrac23\mu$ *(compiler check, not in the sources)*. The paper
+  does not say which value the CNS3D code uses.
 - **Inconsistent description in Chapelier et al. (2024).** §III.B.h calls
   the SD3DvisP operator "a Laplacian operator impacting all conservative
   variables", which disagrees with the bulk-viscosity-and-thermal-diffusivity
@@ -392,3 +406,4 @@ similar configuration with a spectral-element dynamic model gave
 - [Volpiani (2024)](/sources/volpiani-2024.md) — §2.1, Eq. (2); §3.2, Eqs. (24)–(25) (bulk term in the compressible dissipation budget of the Taylor–Green vortex, Stokes hypothesis).
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.2, Eqs. (2.6)–(2.10), App. B, Fig. 12 (artificial bulk viscosity with a Ducros-modified modal sensor); §4.1, Eq. (4.13), Fig. 18 (its budget term); §5, Eqs. (5.1)–(5.5), Figs. 27–29; §6 (bulk viscosity proposed for the subgrid-stress trace).
 - [Svärd (2022)](/sources/svard-2022.md) — §1, Eq. (1); §5.3 (bulk viscosity set to zero).
+- [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — §III A, Eq. (2) and the stress definition below it (second viscosity named "bulk viscosity", printed Stokes value).

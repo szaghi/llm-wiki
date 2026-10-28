@@ -5,7 +5,7 @@ description: "The uncertainty that comes from the structure of a turbulence clos
 status: established
 aliases: [model-form uncertainty, structural uncertainty, epistemic uncertainty, aleatoric model uncertainty, model discrepancy, RANS uncertainty quantification, eigenspace perturbation, stochastic discrepancy closure]
 tags: [uncertainty-quantification, rans, data-driven, field-inversion]
-timestamp: 2026-10-27T21:12:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Model-form uncertainty in turbulence closures
@@ -372,6 +372,29 @@ training set "is far from being representative" of the flow physics
 the paper cites discrepancy-modelling work on Reynolds stresses (Xiao et
 al. 2016; Wang et al. 2017) only as background (§I).
 
+A $k$-$\varepsilon$ inversion makes the opposite choice to correcting
+production. [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md)
+(§3.1, Eqs. 9–16) multiply the **dissipation** terms of both equations of
+a low-Reynolds-number $k$-$\varepsilon$ model, $P_k-\beta_kD_k+T_k=0$ and
+$P_\varepsilon-\beta_\varepsilon D_\varepsilon+T_\varepsilon=0$
+(page-local $D$ for the destruction and $T$ for the diffusion terms,
+$\beta_k$, $\beta_\varepsilon$ two fields of the registry's
+$\beta(\boldsymbol x)$), "contrary to Parish and Duraisamy", as cited.
+Their reasons: production appears with opposite sign in the mean kinetic
+energy equation, so the choice "adhere[s] to energy conservation", and it
+is active in a smaller part of the boundary layer. The cost regularizes
+the additive discrepancy $\delta_k=D_k(\beta_k-1)$, $\delta_\varepsilon=D_\varepsilon(\beta_\varepsilon-1)$
+normalized by the largest budget term of its equation, which the authors
+describe as a fourth budget term free to follow patterns the baseline
+terms do not have (§3.3). Different weightings, and inversions with only
+$\delta_k$ or only $\delta_\varepsilon$, give corrections of the same
+shape with different peak magnitudes (§4, Fig. 6); the normalized
+$\delta_\varepsilon$ carries gradients up to 83.5% higher than the maximum
+gradients of the normalized $\delta_k$, so only $\delta_k$ is learned (§4). Introducing $\beta_k$ can unbalance production and
+dissipation in the log layer, which is why results with $\beta_\varepsilon$
+alone are also given (§3.1). Details are on the
+[field-inversion page](/methods/field-inversion-machine-learning.md).
+
 ## Generalizability and the attached boundary layer
 
 Wu et al. (2025) grade the generalizability of field-inversion corrections
@@ -410,6 +433,17 @@ the separated test flows the two reach comparable L3 accuracy (§4.1–4.4).
 The construction rests on an assumption the authors state: "the baseline
 model accurately calculates the attached boundary layer and requires no
 modification in this region" (§1).
+
+Diez Sanhueza et al. (2023, §5, Table 3, Fig. 9) report the K-fold
+spread of a learned $k$-$\varepsilon$ correction for variable-property
+channels: the error falls in almost every held-out case, and for the
+hardest case, held out in six trials, the maximum–minimum envelope of the
+six predictions, which the authors call an "uncertainty quantification
+process", shows every prediction more accurate than the baseline (L∞
+velocity errors 4.0–10.2% against 23.4%). The one large
+degradation, 2.3% to 14.0% on an incompressible channel at
+$Re_\tau=4200$, they attribute to extrapolation: the nearest training
+case is at $Re_\tau=2000$ (§5).
 
 ## Blending specialized corrections
 
@@ -859,3 +893,4 @@ practice is one of their requirements for certification by analysis
 - [Shan et al. (2023)](/sources/shan-2023.md) — §IV (four layers; only coefficients reduced); §III.C, Table B1 (case-dependent calibrated SA coefficients).
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §2.5–2.7, Eq. 34, Figs. 7, 9 (bias–variance, epistemic and aleatoric uncertainty, dataset shift); §4.1.4, Fig. 34 (classifier-based submodel assignment); §5.3–5.4 (Gaussian processes, Bayesian networks, out-of-distribution gauges).
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.1 (uncertainty in V&V, closure-coefficient UQ cited); §4.5.1 (RANS workhorses, macroscopic forcing method); §5 (UQ for certification by analysis).
+- [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §3.1, Eqs. 9–16 (multipliers on the dissipation terms, additive discrepancy in the cost); §3.3; §4, Fig. 6 (similar shapes); §5, Table 3, Fig. 9 (K-fold spread, extrapolation in $Re_\tau$).

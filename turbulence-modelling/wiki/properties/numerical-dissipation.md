@@ -5,7 +5,7 @@ description: "Numerical dissipation is the kinetic-energy loss a discretization 
 status: established
 aliases: [artificial dissipation, scheme dissipation, upwind dissipation, Riemann-solver dissipation, numerical viscosity]
 tags: [numerical-dissipation, implicit-les, les, dg, kinetic-energy-preserving]
-timestamp: 2026-10-27T21:12:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Numerical dissipation in scale-resolving simulation
@@ -170,6 +170,25 @@ model ([kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
   the largest stable value), with similar spectra.
   The largest value raises the stable CFL number from 0.26 to 0.36, against
   0.14 for over-integrated strong DG. See [flux reconstruction](/methods/flux-reconstruction.md).
+- **Time integration in the dissipation curves.**
+  [Tonicello et al. (2023)](/sources/tonicello-2023.md) (§2–3, Figs. 1–9)
+  add explicit Runge–Kutta errors to the spatial eigenanalysis of
+  flux-reconstruction recoveries of DG and spectral difference for linear
+  advection (see [eigensolution analysis](/methods/eigensolution-analysis.md)).
+  With upwind interface fluxes, a larger time step makes the physical mode
+  more dissipative at low frequency and less dissipative at high
+  frequency, until the dissipation touches zero at the stability limit and
+  turns into anti-dissipation (convective instability) beyond it;
+  explicit Euler is anti-dissipative at low frequency already for small
+  steps. For nearly centred fluxes the non-monotone "dissipative bubbles"
+  of the semi-discrete curves become smoother as the step grows; the
+  authors warn that non-monotone dissipation in frequency "might
+  potentially lead to undesirable non-smooth features" in broadband flows
+  (§3). Spatially, FR-SD is more dissipative than FR-DG and has the less
+  restrictive time-step limit (§3, Fig. 7, App.). Oscillating-inlet
+  advection tests reproduce the predicted trends, including the switch
+  from decay to spatial growth with explicit Euler near a normalized step
+  of 0.01 (§4.1, Figs. 10–21).
 - **Filters induced by central derivatives and interpolation.**
   [Caban et al. (2026)](/sources/caban-2026.md) (§3.2.1, Eqs. 24–29) write
   a discrete derivative as the exact one convolved with a
@@ -412,6 +431,23 @@ and better Reynolds stresses in a transonic cavity (§3, Figs. 2–14; see
 [implicit LES](/definitions/implicit-les.md)). All comparisons are
 figures; no table, time integrator or cost is given.
 
+**Dissipation over dispersion in wall-modelled LES of an aircraft.**
+[Kiris et al. (2023)](/sources/kiris-2023.md) (§II.2), summarizing the
+wall-modelled LES group of the fourth high-lift prediction workshop,
+write that "it is widely accepted that LES (especially in wall-bounded
+turbulence) is far more affected by dissipation errors of the
+discretization compared to the dispersion errors", as cited. Every group
+minimized numerical dissipation: midpoint flux evaluation with blended
+upwinding (three entries, W-020, W-031 and W-050), kinetic-energy- and
+entropy-consistent discretizations (W-021, W-049; see
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)),
+and, for the flux-reconstruction entry, the dissipation of the inviscid
+flux as the only subgrid term ([implicit LES](/definitions/implicit-les.md)).
+Time stepping adds dissipation too: citing a hybrid RANS/LES time-step
+study, the paper states that the large time steps allowed by A-stable
+BDF2 give large inaccuracies in the wing-root separation at $21.47^\circ$
+through their dissipative nature (§VI 1c).
+
 ## Dissipation of RANS-type schemes in hybrid RANS/LES
 
 [Carlsson et al. (2023)](/sources/carlsson-2023.md) quantify the
@@ -529,6 +565,19 @@ LES region and near one in the RANS region:
   influence of the numerics on the transition-model predictions as an
   open question; they do not measure it (see
   [dynamic stall](/definitions/dynamic-stall.md)).
+
+**A shielding-driven upwind/central blend.**
+[Mays et al. (2023)](/sources/mays-2023.md) (§2.2, Eqs. 14–15) run their
+scale-resolving hybrid model of the drag-crisis
+[circular cylinder](/benchmarks/circular-cylinder-wake.md) in STAR-CCM+
+with a "Hybrid-BCD" convective scheme, a blend of second-order upwind and
+bounded central differencing whose weight equals the model's near-wall
+shielding function, so that, as the text states, the scheme is upwind in
+the enforced RANS zones and centred in the LES-like zones. A further
+parameter, 0.01, "introduc[es] some upwinding" in the bounded central
+branch, chosen to remove checkerboarding upstream of the cylinder without
+harming energy conservation; URANS runs use plain second-order upwind
+(see Qualifications for the printed weights).
 
 ## Where it acts in the element
 
@@ -687,6 +736,32 @@ dissipation (Fig. 11).
   wavenumber where a spectral-element run of the same resolution piles up
   energy, and the choice of relaxation rates changes the dissipation enough
   to lower the observed order of convergence (§3.3.1; App. B, Table 3).
+- **Energy-based against vorticity-based dissipation.**
+  [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) (§6.2, Eqs.
+  79–82, Figs. 10–12) take, in the Taylor–Green vortex, the energy-based
+  rate $-\mathrm dE_k/\mathrm dt$ ("dynamic": physical plus numerical) and
+  the vorticity-based rate from the volume-averaged enstrophy
+  ("kinematic": resolved physical dissipation), and use their difference
+  as the error measure of an LES. In their explicitly filtered
+  approximate-deconvolution LES at $Re=1600$ on $64^3$ nodes, a higher
+  deconvolution order gives less dissipation for $4<t^*<7$ and a more
+  accurate vorticity-based rate; the strongest one stays stable but its
+  energy-based rate oscillates. A 20% random perturbation of the grid
+  under-estimates the dissipation before the peak, over-estimates it after
+  and delays the peak from $t^*\approx9$ to about 10; a tetrahedral mesh
+  peaks earlier ($t^*\approx7.6$ and 8.5 for deconvolution orders 8 and
+  10) with a lower peak, which the authors attribute to the stronger
+  filter on linear tetrahedra than on hexahedra.
+- **Dissipation of an inviscid run.** Tonicello et al. (2023, §4.3.1, Eq.
+  28, Fig. 25) obtain the numerical dissipation of the inviscid
+  Taylor–Green vortex ($M=0.1$, $32^3$ elements, sixth-order spectral
+  difference) as the kinetic-energy decay rate minus the
+  pressure–dilatation work, which is negligible at this Mach number. It
+  peaks near $t/T=10$ and is "almost indistinguishable" for time steps at
+  0.5, 0.9 and 0.95 of the stability limit, although their linear theory
+  predicts a decrease with the time step: "the gradual decrease of
+  numerical dissipation observed in the theoretical framework does not
+  manifest".
 - **Closing a budget.** [Tonicello et al. (2022)](/sources/tonicello-2022.md)
   (§4.1, Figs. 17–18) evaluate the resolved kinetic-energy budget of a
   spectral-difference DNS of a supersonic ramp at $y^+\approx30$; it closes
@@ -861,6 +936,16 @@ measuring it:
   also argues that upwind dissipation, $\nu_t\sim h\lvert u\rvert$, gives a
   turbulent cell Reynolds number of order one and cannot be ruled out as a
   subgrid model (§3.1); see [implicit LES](/definitions/implicit-les.md).
+
+**Periodic high-order filters in DNS and LES codes.** Two finite-difference
+codes damp spurious high-wavenumber content with an explicit filter rather
+than with upwinding: the S3D DNS of [Kumar et al. (2023)](/sources/kumar-2023.md)
+(§3.2) combines eighth-order explicit differencing with a tenth-order
+filter applied periodically, and the wall-modelled LES code of
+[Maeyama & Kawai (2023)](/sources/maeyama-2023.md) (§2) applies an
+eighth-order low-pass filter to the conservative variables "at regular
+intervals to eliminate aliasing errors" on top of sixth-order compact
+differences; neither paper prints the filtering interval.
 
 ## Interaction with the subgrid model
 
@@ -1107,6 +1192,23 @@ measuring it:
   half-staggered algorithms (§6). See
   [scale-similarity models](/methods/scale-similarity-model.md) and
   [implicit LES](/definitions/implicit-les.md).
+- **Subgrid viscosity over filter dissipation near a modelled wall.**
+  Maeyama & Kawai (2023, §5.4, App. D, Table 3, Figs. 31–33) rerun their
+  wall-modelled LES of a supersonic boundary layer at $Re_\tau\approx2300$
+  with the non-dissipative second-order KEEP scheme with and without the
+  low-pass filter, and with the [Smagorinsky model](/methods/smagorinsky-model.md)
+  ($C_s=0.1$, no damping) instead of the selective mixed-scale model. In
+  every case the spanwise size of the near-wall Q2–Q4 structures scales
+  to $O(100)$ in a semi-local viscous length that adds the SGS eddy
+  viscosity to the molecular one,
+  $\delta^{*,\mathrm{sgs}}_\nu=(\nu+\nu_t)/u^*_\tau$ (page-local, their
+  Eq. 5.5, as on
+  [compressible velocity transformations](/definitions/compressible-velocity-transformation.md)), from which they
+  conclude that "the dissipation introduced by the SGS model is dominant
+  over the dissipation by the low-pass filtering to determine the length
+  scale of the near-wall coherent structures", with slight differences in
+  the structures between filter and model choices (see
+  [wall-modelled LES](/methods/wall-modelled-les.md)).
 - **The numerics shape what a learned model meets.** [Wu & Lele (2026)](/sources/wu-2026.md)
   (§1, §3.2.2, §5–6, Tables 3–4) state that the LES filter is "a product of
   both the grid and the numerical method" and test the same neural-network
@@ -1228,6 +1330,26 @@ turbulent scales by design:
   laminar interaction than second-order finite volume, and reaches the
   converged separation length with 182,000 degrees of freedom against
   409,500, at 7680 against 10,368 CPU-minutes (§4.1–4.2).
+- **Filter dissipation confined to shock elements.** [Gao et al. (2023)](/sources/gao-2023.md)
+  (§3.1.3, §4.2, Figs. 14, 16) confine the minimum-entropy adaptive
+  modal filter of Dzanic & Witherden, as cited, to elements flagged by a
+  shock indicator, so that it adds "no extra dissipation" elsewhere and
+  keeps the resolution of under-resolved turbulence; with the same entropy
+  tolerance the confined filter shows "much less dissipation in smooth flow
+  areas, especially in those complex vortical structures", than the filter
+  applied everywhere (a Schlieren comparison). They state that a single
+  tolerance for the whole field can over-dissipate at high polynomial
+  degree or on coarse meshes, "according to our experiments" (see
+  [explicit modal filtering](/methods/explicit-modal-filtering.md)).
+- **Limiters for flux reconstruction.** [Shi & Yan (2023)](/sources/shi-2023.md)
+  (§I) recall that the TVD limiter carried over from finite volumes
+  stabilizes troubled cells "but with excessive dissipation", and use a
+  WENO limiter with a troubled-cell sensor and a positivity-preserving
+  limiter instead in their FR/CPR implicit LES; the added dissipation is
+  not measured (see [WENO schemes](/methods/weno-scheme.md)).
+  [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) (§I, §III B) let
+  the dissipation of WENO reconstruction with an HLLC solver act as the
+  subgrid model of their finite-volume interaction runs.
 - **Sensor-switched artificial dissipation as the closure.** In the
   supersonic-jet [implicit LES](/definitions/implicit-les.md) of
   [Ahn et al. (2023)](/sources/ahn-2023.md) (§III, Eqs. 1–6) a modified
@@ -1547,6 +1669,19 @@ evidence is one-dimensional and laminar.
 
 ## Qualifications
 
+- **Mays et al. (2023), printed blend.** Eq. 14 writes the face flux as
+  $\sigma_b\phi_{\mathrm{SOU}}+(1-\sigma_b)\phi_{\mathrm{BCD}}$ (registry
+  upwind fraction $\sigma_b$, the source's $\sigma_{HU}$; SOU second-order
+  upwind, BCD bounded central) with $\sigma_b$ equal to the shielding
+  function of Eq. 13, $1-\tanh[(45\,\nu^{3/4}/(\varepsilon^{1/4}d))^8]$.
+  That function tends to zero as $d\to0$ and to one far from the wall, so
+  the printed blend is pure bounded central differencing in the shielded
+  RANS zone and pure second-order upwind in the LES-like zone, the
+  reverse of the stated intent; and the bounded branch of Eq. 15, as
+  printed, weights central differencing by 0.01 and upwind by 0.99,
+  whereas the text says 0.01 "introduc[es] some upwinding" *(compiler
+  check, not in the sources)*.
+
 - The quantitative statements above come from canonical periodic flows
   (DHIT, forced HIT, Taylor–Green vortex), one bluff body (cylinder at
   $Re_D=3900$) and the periodic hill, each with one scheme family. The
@@ -1739,3 +1874,12 @@ evidence is one-dimensional and laminar.
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §II B, §III B (SVV dissipation named, not measured).
 - [Stanly et al. (2022)](/sources/stanly-2022.md) — §2.1, Eq. 1 (artificial-dissipation operator as implicit closure).
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.4 (reduced-dissipation fluxes, KEEP scheme in charLES, cited).
+- [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §2–3, Eqs. 10–25, Figs. 1–9, App. (fully-discrete dissipation curves); §4.1, Figs. 10–21 (advection tests); §4.3.1, Eq. 28, Fig. 25 (inviscid Taylor–Green dissipation insensitive to the time step).
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.2 (dissipation over dispersion, discretizations of the workshop entries); §VI 1c (BDF2 time step, cited).
+- [Mays et al. (2023)](/sources/mays-2023.md) — §2.2, Eqs. 13–15 (Hybrid-BCD blend, boundedness parameter).
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §6.2, Eqs. 79–82, Figs. 10–12 (energy- and vorticity-based dissipation, deconvolution order, grid perturbation, tetrahedra).
+- [Kumar et al. (2023)](/sources/kumar-2023.md) — §3.2 (tenth-order filter of S3D).
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §2 (eighth-order low-pass filter); §5.4, App. D, Table 3, Figs. 31–33 (SGS viscosity against filter dissipation).
+- [Gao et al. (2023)](/sources/gao-2023.md) — §3.1.3, §4.2, Figs. 14, 16 (adaptive filter confined to shock elements).
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §I (TVD limiter dissipation, WENO and positivity limiters).
+- [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — §I, §III B (WENO–HLLC dissipation as the subgrid model).

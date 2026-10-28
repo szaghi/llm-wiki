@@ -5,7 +5,7 @@ description: "LES closures in which a neural network maps resolved-field feature
 status: established
 aliases: [ANN-SGS model, GAN SGS model, fusion network, T-SR-FU, energy-conserving neural closure, structure-preserving closure, ANN-SGS mixed model, deep-learning LES closure, DL-LES, neural-network LES closure, data-driven SGS model, S-106H, SL-106H, SL-180C, DL-AR1, DL-AR2, multi-filter training, TBNN-GNN]
 tags: [neural-network, sgs-model, les, data-driven]
-timestamp: 2026-10-27T21:12:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Neural-network subgrid-scale models
@@ -41,6 +41,7 @@ errors in the momentum equation".
 | [Kim et al. (2024)](/sources/kim-2024.md) | 6 components of $\tau_{ij}$ | single point: $\bar S_{ij}$ or $\partial_j\bar u_i$, alone (G) or with their test-filtered copies (T) | fully connected; "fusion" variant with two 64-node branches subtracted | supervised on box-filtered DNS of a cylinder wake |
 | [Maejima & Kawai (2025)](/sources/maejima-2025.md) | a velocity field 8 times finer in $x$ and $z$, from which $\tau_{ij}$ is filtered | wall-parallel planes of $(u,v,w)$ of a very coarse LES | 2-D CNNs: CycleGAN generator, then conditional Wasserstein GAN | unsupervised on unpaired LES/filtered-DNS planes, then supervised on filtered-DNS/DNS pairs |
 | [Wu & Lele (2026)](/sources/wu-2026.md) | 8 coefficients of a tensor basis for $\tau_{ij}$ | invariants and magnitudes of the resolved velocity gradient on a mesh stencil | graph network front end, tensor-basis output, about 24,000 parameters | supervised on DNS filtered with one to three filter shapes |
+| [Xu et al. (2023)](/sources/xu-2023.md) | coefficients of a nonlinear tensor basis for the deviatoric stress, its trace and the SGS heat flux (compressible) | single point: invariants of grid-width-normalized resolved strain, rotation and temperature gradient, and a local Reynolds number | ten networks, two hidden layers of 10 neurons each in the final model, tensor-basis merge layer | supervised on filtered DNS of one channel |
 | [van Gastelen et al. (2024)](/sources/vangastelen-2024.md) | skew-symmetric and dissipative operators acting on the coarse solution and auxiliary SGS variables (1D) | coarse solution, SGS variables, coarse right-hand side | CNN, two hidden layers, kernel 5 | hybrid derivative and trajectory fitting |
 
 Agdestein & Sanderse (2025) train a CNN on the discrete commutator error
@@ -148,6 +149,14 @@ Their example of a remedy is a knowledge-guided loss (see
 [super-resolution SGS models](/methods/super-resolution-sgs-model.md)),
 and they state that most combustion applications to date are a priori
 tests on idealized problems (§6).
+
+Networks also regress thermochemistry with no subgrid stress involved:
+in passing, [Kumar et al. (2023)](/sources/kumar-2023.md) (§3.4, Fig. 5)
+close the source terms and diffusivities of transported principal
+components in a DNS of a turbulent premixed flame with small networks
+trained on a two-dimensional species DNS; the method is described on
+[flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md)
+and on its Source page.
 
 Two non-learned closures of compressible LES position themselves against
 learned ones: [Zhang et al. (2022d)](/sources/zhang-2022-h.md) (§I) state
@@ -260,6 +269,97 @@ $Re_\lambda=122.9$ instead of 164; the deterministic forcing of Machiels
 (1997) gives 164.7 and reproduces the reported statistics, and is used
 for all analyses (Table 14; see
 [homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)).
+
+## Nonlinear algebraic network for compressible wall-bounded LES (Xu et al. 2023)
+
+[Xu et al. (2023)](/sources/xu-2023.md) close both the SGS stress and the
+SGS heat flux of Favre-filtered compressible LES, page-local
+$Q_j=\widetilde{u_jT}-\tilde u_j\tilde T$, with a network that returns
+the coefficients of an algebraic tensor expansion rather than the
+stresses (the expansion, its invariants and the grid-width normalization
+are on [tensor-basis neural network](/methods/tensor-basis-neural-network.md)).
+The viscous unclosed terms are neglected and the subgrid turbulent
+diffusion is approximated through $\tau_{ij}$, so only $\tau_{ij}$ and
+$Q_j$ are modelled (§2.1).
+
+**Four variants (§3).** The coefficients come from the
+[Germano identity](/methods/dynamic-procedure.md) (ODNA, MDNA) or from a
+network (OANA, MANA), with the original gradients (O) or with every
+gradient multiplied by the local grid width in its direction, $\Delta_k$
+(registry §11), and $\Delta$ replaced by one (M, "modified"). The authors
+motivate the modification by the near-wall grid anisotropy
+$\Delta_y\ll\Delta_x,\Delta_z$, which the isotropic
+$\Delta=(\Delta_x\Delta_y\Delta_z)^{1/3}$ ignores (§3.2), and the network
+coefficients by the ad hoc averaging and clipping of the dynamic
+procedure (§1).
+
+**Network and training (§3.1, Tables 1–2, Eqs. 3.19–3.26).** One network
+per output component: six for the deviatoric stress, one for its trace,
+three for $Q_j$, ten in all. Each has two hidden layers of $N_h$ neurons
+(MANA-1: $N_h=10$; 20 and 40 change little a priori, Figs. 9, 11), a
+leaky-ReLU activation, a coefficient layer and a merge layer that
+multiplies the coefficients by the basis tensors, so the loss, the mean
+squared error over mini-batches of 1000, acts on the SGS term itself.
+Inputs are four dimensionless invariants of the resolved strain and
+rotation (six for the heat flux) and the local Reynolds number
+$\bar\rho\lvert\tilde{\boldsymbol u}\rvert d/\tilde\mu$ with $d$ the wall
+distance, standardized in each wall-parallel plane; targets and basis
+tensors are divided by the plane r.m.s. of the
+[gradient-model](/methods/gradient-model.md) estimate of the same term.
+The data are about $1.8\times10^7$ samples of one filtered DNS (channel at
+$Re=3000$, $M=1.5$, isothermal walls; top-hat filter ratios 8 and 4 in
+$x$ and $z$), split 60/15/25%, trained with Adam at an initial learning
+rate $10^{-3}$ for 2000 epochs. Adam beat Adadelta and Adagrad, and
+leaky ReLU beat sigmoid, ReLU and ELU (App., Figs. 32–33).
+
+**A priori (§2.2, §3, Figs. 1–12).** The dynamic Smagorinsky, Vreman and
+WALE models have plane-wise correlations $C$ "almost lower than 0.6" (metrics defined on [a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)) and relative errors $E_r$
+near 1.0, which the authors attribute to the linear stress–strain
+alignment of eddy-viscosity models (see
+[Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)). OANA-2
+reaches $C>0.6$ for most components with $E_r\approx0.8$, "still not a
+well-performing model"; the grid-width normalization lifts the dynamic
+model most below $y^+=50$; MANA-1 reaches $C>0.91$ and $E_r<0.4$ for all
+components and reproduces the plane-averaged SGS fluxes of kinetic energy
+and temperature variance, which the eddy-viscosity models and MDNA
+"significantly underestimate". The authors credit all three ingredients:
+the nonlinear form, the normalization and the network (§3.3).
+
+**A posteriori (§4, Tables 3–8).** Sixth-order central differences and
+third-order Runge–Kutta; [implicit LES](/definitions/implicit-les.md)
+here means the same scheme with no model. Against DNS filtered at the LES
+resolution:
+
+- *Training channel, untrained grid* ($64\times65\times64$, filter ratios 6
+  and 2; $\Delta x^+\approx43$, $\Delta y_w^+\approx0.9$,
+  $\Delta z^+\approx14$). MANA's van Driest velocity in the log region is
+  "fully consistent" with filtered DNS; the eddy-viscosity models give a
+  larger and the unmodelled run a slightly lower one, which the authors
+  read as excessive and insufficient SGS dissipation. MANA matches the
+  r.m.s. velocities, Reynolds shear stress, r.m.s. temperature and
+  streamwise heat flux; the other runs overpredict the r.m.s. peaks and
+  place them further from the wall (Figs. 13–16).
+- *Untrained flows.* Channels at $Re=4880$, $M=3.0$ and $Re=7000$,
+  $M=1.0$ (an "extremely sparse" grid, $\Delta x^+\approx78$–81), a
+  near-incompressible channel at $M=0.2$, and a spatially developing
+  adiabatic boundary layer at $M=2.25$: MANA stays closest to filtered
+  DNS, with slightly larger buffer-layer peaks of $\tilde v_{\mathrm{rms}}$
+  and the Reynolds shear stress in the first two and a slight
+  overestimation of $u$, $v$ and temperature fluctuations in the boundary
+  layer (§4.2–4.4).
+- *Backscatter.* The eddy-viscosity models give only positive SGS fluxes;
+  MANA gives both signs, as filtered DNS does, without clipping, and its
+  PDFs of both fluxes at $y^+=15$ collapse on filtered DNS (Figs. 18–20;
+  see [energy backscatter](/definitions/energy-backscatter.md)). The
+  dynamic model "strongly overestimates" the mean SGS kinetic-energy flux
+  and Vreman and WALE underestimate it (Fig. 17).
+
+The authors attribute the transfer to untrained grids to the grid-width
+information "inherently embedded in the input and tensor bases", and
+contrast it with "black box" networks that map filtered quantities to SGS
+terms directly (Park & Choi 2021; Xie et al. 2019, as cited), which in
+their view "cannot have a good performance in untrained cases" (§4.1,
+§5).
 
 ## Fusion network for a cylinder wake (Kim et al. 2024)
 
@@ -565,6 +665,11 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
   Galilean-invariant input, following Novati et al.; they trained slower
   and ended worse than the element's raw momentum field (§4.3).
 - Kang et al. (2023) state no invariance property of their network.
+- Xu et al. (2023, §3) take invariants of the resolved strain and
+  rotation (and of a temperature-gradient vector) as inputs and return the
+  coefficients of a tensor basis; the grid-width normalization multiplies
+  each gradient component by the spacing in its direction, a choice tied
+  to the grid axes.
 - Kim et al. (2024, §3.1) use pointwise inputs normalized by $U$ and $D$;
   no invariance property is stated.
 - van Gastelen et al. (2024, §3.3) build translation equivariance into
@@ -584,6 +689,8 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 | Kang et al. (2023, §1), cited | earlier ANN-SGS models | 1.3 (Park & Choi 2021), 1.8 (Wang et al. 2018), 2.4 (Yuan et al. 2020), 15 (Xie & Wang 2019), 256 (Xie et al. 2020a) |
 | Kim et al. (2024, App. E, Table 6) | 18 cores, cylinder LES at $Re_D=3900$, training grid | SGS-stress evaluation about 10 (G-SR) and 6.5 (T-SR-FU); whole time step about 2.5 and 2 |
 | Kim et al. (2024, App. E) | T-SR-FU on the coarser grid against dynamic Smagorinsky on the finer grid, similar accuracy | 2.113 s against 2.986 s per time step, about half the grid points |
+| Xu et al. (2023, §4.1, Table 4) | 1000 time steps of the whole LES, 80 CPU cores (Intel Xeon Gold 6148), dynamic Smagorinsky about 15.4 s | MANA 0.79; Vreman 0.28, WALE 0.29, no model 0.26; the dynamic nonlinear model MDNA about 2.54 |
+| Xu et al. (2023, §1), cited | earlier ANN-SGS models | 1.3 (Park & Choi 2021), 1.8 (Wang et al. 2018), 2.4 (Yuan et al. 2020), 15 (Xie et al. 2019), 256 (Xie et al. 2020), the same figures as Kang et al. cite |
 | Kurz et al. (2023, §4.2) | policy evaluation against the dynamic procedure, one CPU core, 48 DOF, unoptimized | about 1.1 |
 | Li et al. (2021, §III F, Fig. 13) | time per iteration, 16 cores (Intel Xeon E5-2670), several grids; network of Xie et al. (2020) against GEP, dynamic Smagorinsky and dynamic mixed models | not printed: the network "much more expensive" than all others, more so on larger grids; GEP slightly above the dynamic Smagorinsky model and below the dynamic mixed one |
 
@@ -595,6 +702,14 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
   negative arguments is $\max[0.02x,x]$ *(compiler check, not in the
   sources)*. Whether the code
   used the printed form cannot be told from the paper.
+- **Printed activation (Xu et al.).** Xu et al. (2023, §3.1, p. A4-15)
+  print the leaky ReLU as $\sigma(x)=\max[-0.1x,x]$, citing Ling et al.
+  (2016) and Xie et al. (2020).
+- **Scope of Xu et al.'s generalization claim.** MANA is trained on one
+  channel at one Reynolds number, Mach number and filter (§3.1); the
+  untrained tests are four channels and one boundary layer, all with the
+  same sixth-order central solver (§4). Their trained weights are in the
+  supplementary material, not read here.
 - **Printed Reynolds number.** The caption of Kang et al.'s Fig. 10 gives
   $Re_\lambda=106$, 168 and 286; the DNS cases are at 106, 164 and 286
   (Table 1).
@@ -670,3 +785,5 @@ near zero (§4.2, Figs. 8–9). Training and drag results are on
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.4, Eq. 72, Fig. 31 (learned reacting-flow closures reviewed; a priori against a posteriori caution); §6.
 - [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §I (data-driven models and real-gas subgrid terms).
 - [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §I (neural-network models surveyed, in passing).
+- [Xu et al. (2023)](/sources/xu-2023.md) — §1 (cited costs, black-box networks); §2.1–2.2, Figs. 1–3 (equations, baselines); §3.1–3.3, Tables 1–2, Eqs. 3.19–3.43, Figs. 4–12 (variants, network, training, a priori); §4, Tables 3–8, Figs. 13–31 (a posteriori, backscatter, cost); §5; App., Figs. 32–33.
+- [Kumar et al. (2023)](/sources/kumar-2023.md) — §3.4, Fig. 5 (passing: networks for principal-component thermochemistry terms, not a subgrid closure).

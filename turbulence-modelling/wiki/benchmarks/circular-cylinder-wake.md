@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Circular-cylinder wake"
-description: "Flow past circular cylinders, chiefly at Re_D=3900, with separation, shear-layer roll-up and a turbulent wake: it tests neural-network SGS models, PANS, implicit LES with compact schemes, VMS LES with immersed boundaries and 2D URANS time integration; tandem cylinders test hybrid RANS/LES, and laminar cylinders validate solver numerics."
+description: "Flow past circular cylinders, chiefly at Re_D=3900, with separation, shear-layer roll-up and a turbulent wake: it tests neural-network SGS models, PANS, implicit LES, VMS LES and 2D URANS; the drag crisis and tandem cylinders test hybrid RANS/LES, and laminar cylinders validate solver numerics."
 status: established
-aliases: [cylinder wake, flow over a circular cylinder, flow past a circular cylinder, cylinder at Re_D=3900, tandem cylinders, tandem cylinder benchmark]
-tags: [benchmark, separated-flow, les, implicit-les, neural-network, pans, immersed-boundary, field-inversion, des, aeroacoustics]
-timestamp: 2026-10-27T15:50:00Z
+aliases: [cylinder wake, flow over a circular cylinder, flow past a circular cylinder, cylinder at Re_D=3900, tandem cylinders, tandem cylinder benchmark, drag crisis, critical cylinder flow]
+tags: [benchmark, separated-flow, les, implicit-les, neural-network, pans, immersed-boundary, field-inversion, des, hybrid-rans-les, aeroacoustics]
+timestamp: 2026-10-28T02:13:00Z
 ---
 
 # Circular-cylinder wake
@@ -370,6 +370,82 @@ fails; observed temporal orders on the turbulent cylinder from 1.8 for
 the fifth-order peer scheme to 5.4 for ROD5_1) belong to the numerics and
 are summarized on the Source page.
 
+**The drag crisis with a temporal-filtering hybrid RANS/LES.**
+[Mays et al. (2023)](/sources/mays-2023.md) run the smooth cylinder in the
+critical and super-critical regimes, $Re_D=2.5\times10^5$, $3.8\times10^5$,
+$5.3\times10^5$ and $7.2\times10^5$, where transition right after laminar
+separation lets the flow reattach, separation moves aft and $C_D$ falls.
+They cite Zdravkovich for a fall to about 0.2 and Rodríguez et al. for a
+value that settles at 0.24, and Lehmkuhl et al. for three successive states:
+one-bubble asymmetric, two-bubble asymmetric and two-bubble symmetric
+(§1; see [laminar separation bubble](/definitions/laminar-separation-bubble.md)).
+The model is the scale-resolving hybrid (SRH) of Duffal et al., a
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md) obtained by formally
+applying a temporal filter: the dissipation term of the modelled
+$k$ equation is multiplied by a factor $\psi_H\ge1$ (page-local) that
+depends on the time-averaged total turbulent kinetic energy, modelled plus
+resolved, and on a theoretical modelled-to-total energy ratio computed from
+the cell size and time step, with a shielding function of wall distance
+over a Kolmogorov length enforcing URANS near the wall (§2.1.2, Eqs. 9–13).
+The base RANS is the three-equation lag elliptic-blending
+[$k$-$\varepsilon$ model](/methods/k-epsilon-model.md) of Lardeau & Billard,
+in Simcenter STAR-CCM+ 2022.1 (segregated incompressible finite volume,
+second-order backward time, a hybrid of second-order upwind and bounded
+central convection blended by the shielding function; §2.1.1, §2.2).
+
+*Set-up* (§3, Tables 1, 3): a $20D\times20D$ domain with the cylinder $5D$
+from the inlet (5% blockage), spanwise periodic over $1.6D$ (grids A, B) or
+$1.0D$ (C, D), no inlet turbulence, first-cell $y^+<1$ everywhere,
+initialization from RANS, statistics over at least 25 shedding cycles. The
+grids have 7.65, 9.72, 12.43 and 16.64 million cells, about five times fewer
+than the wall-resolved [WALE](/methods/wale-model.md) LES of Rodríguez et
+al. used as reference (38.4–89.4 million).
+
+*Results* (Tables 2, 4–5):
+
+| $Re_D$ | case | $C_D$ | $C_{L,\mathrm{rms}}$ | $-C_{pb}$ | $L_r$ | $St$ |
+|---|---|---|---|---|---|---|
+| $2.5\times10^5$ | URANS (A) | 0.436 | 0.187 | 0.95 | 1.107 | 0.35 |
+| | SRH (A) | 0.743 | 0.238 | 0.73 | 0.611 | 0.24 |
+| | SRH (B) | 0.781 | 0.311 | 0.80 | — | — |
+| | WALE LES (A) / (C) | 1.247 / 0.812 | 0.008 / 0.491 | 0.55 / 0.90 | — | — |
+| | reference LES | 0.833 | 0.486 | 0.99 | 0.559 | 0.25 |
+| $3.8\times10^5$ | URANS (B) | 0.354 | 0.082 | 0.94 | 1.311 | 0.40 |
+| | SRH (B) | 0.456 | 0.159 | 0.39 | 0.603 | 0.28 |
+| | reference LES | 0.481 | 0.217 | 0.48 | 0.641 | 0.23 |
+| $5.3\times10^5$ | URANS (C) | 0.204 | 0.0396 | 0.95 | 1.339 | 0.43 |
+| | SRH (C) / (D) | 0.252 / 0.292 | 0.0569 / 0.0628 | 0.35 / 0.31 | 0.676 (C) | 0.35 (C) |
+| | reference LES | 0.296 | 0.0705 | 0.305 | 0.727 | 0.38 |
+| $7.2\times10^5$ | URANS (D) | 0.156 | 0.0294 | 0.93 | 1.184 | 0.52 |
+| | SRH (C) / (D) | 0.301 / 0.276 | 0.0365 / 0.0552 | 0.44 / 0.31 | 0.595 (D) | 0.43 (D) |
+| | reference LES | 0.213 | 0.0752 | 0.224 | 0.569 | 0.45 |
+
+The authors' reading:
+
+- URANS with the same base model misses the drag crisis: the eddy
+  viscosity in the separated shear layers, which they put at least ten
+  times the SRH subgrid value (maximum SRH ratio $\nu_t/\nu=9.4$–18.3,
+  Table 6), keeps the shear layers stable and the recirculation far too
+  long, as Palkin et al. found for linear eddy-viscosity URANS (§3.2.1).
+- SRH gives near-LES mean drag, Strouhal number and recirculation length on
+  meshes five times coarser than the reference; on the coarse grid A the
+  in-house WALE LES over-predicts the drag ($C_D=1.247$) where SRH gives
+  0.743 (§3.1, §3.2.2, §4).
+- Force fluctuations are damped by the near-wall URANS region, and the
+  $C_p$ plateau of the separation bubble is matched less well at the two
+  lower $Re_D$; the one-bubble asymmetric state at $2.5\times10^5$, with a
+  mean lift an order of magnitude larger than at the other $Re_D$, and the
+  return to symmetry at super-critical $Re_D$ are reproduced (§3.2.2,
+  Figs. 6, 8).
+- Following the criteria of Heinz, the resolved fraction rises under
+  refinement while the total turbulent kinetic energy stays nearly
+  constant, and the predicted energy ratio approximately matches the
+  realized one in turbulent regions (§3.1.1, §3.2.2, Figs. 4, 10).
+- SRH on grid A costs 4695 CPU hours, about 39% of WALE on grid C and 51%
+  of WALE on grid B at $Re_D=2.5\times10^5$ (Table 3).
+- Near-wall resolution must stay high, because under-resolution there is
+  fatal to the prediction of transition and separation (§4).
+
 **What the sources share.** In both scale-resolving studies at
 $Re_D=3900$ the recirculation length is the measure most sensitive to the
 model and the resolution: the SGS model and grid in
@@ -449,6 +525,28 @@ both lean on Parnaudeau et al. for reference data.
   cylinder sits in the wake of the upstream one, so its pressure loads are
   set by vortex impingement rather than by its own separation.
 
+- [Mays et al. (2023)](/sources/mays-2023.md) print the recirculation
+  length in "(m)" for a non-dimensional set-up ($D=1$), the fourth Reynolds
+  number as $7.8\times10^5$ in Table 6 and as $7.2\times10^5$ everywhere
+  else, and a first-cell thickness $\Delta r_1/D=1.0\times10^{-6}$ for grid
+  D against $3.0$, $2.0$ and $1.5\times10^{-5}$ for grids A–C (Table 1).
+  §3.1 calls the time step of grid A "half that of Grid C's", while Table 1
+  gives $\Delta tU_\infty/D=1.0\times10^{-3}$ for A and $7.5\times10^{-4}$
+  for C, so A's step is 1.33 times C's *(compiler check, not in the
+  sources)*. The reference LES has $C_L=-0.903$ at $Re_D=2.5\times10^5$
+  against $+0.822$ and $+0.857$ for SRH (Table 4); the text speaks of "a
+  positive value for the lift coefficient" and does not discuss the sign
+  difference. The model is
+  credited to Manceau (2018) in the abstract and to Duffal et al. (2019) in
+  §1 and §2.1.2.
+- The drag-crisis cylinders ($Re_D=2.5$–$7.2\times10^5$) lie above all
+  other cylinders of this page, including the tandem configuration
+  ($1.6\times10^5$). Mays et al. describe this regime as one in which
+  transition occurs in the boundary layer just after laminar separation
+  and the flow reattaches (§1); their $L_r$ (0.559–0.727 in the reference
+  LES, Table 5) is recorded beside the $Re_D=3900$ values above, not
+  compared with them.
+
 # Citations
 
 - [Kim et al. (2024)](/sources/kim-2024.md) — §1; §2.1–2.2; §3.1–3.3, Table 2, Fig. 5; §4.1, Figs. 6–7; §4.2.1–4.2.3, Tables 1, 3–4, Figs. 8–13; App. C, Table 5; App. E, Table 6.
@@ -463,3 +561,4 @@ both lean on Parnaudeau et al. for reference data.
 - [Ma et al. (2022)](/sources/ma-2022.md) — §3.2, Figs. 7–9 (implicit LES at $Re_D=3900$ with WCNS-E and WCNS-T).
 - [Kang & Masud (2022)](/sources/kang-2022.md) — §5.1, Table 3, Figs. 7–16 (VMIB with residual-based VMS LES at $Re_D=3900$).
 - [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §6.1, Table 9 ($Re_D=3900$); §6.2, Table 12 ($Re_D=1.4\times10^5$); §6.3 (tandem cylinders, $Re_D=1.66\times10^5$).
+- [Mays et al. (2023)](/sources/mays-2023.md) — §1 (drag-crisis regimes, as cited); §2.1–2.2, Eqs. (1)–(15) (SRH model, lag elliptic-blending base, convection scheme); §3.1, Tables 1–3, Fig. 4 (grids, cost, resolved fraction); §3.2.1–3.2.2, Tables 4–6, Figs. 6–10 (forces, recirculation, Strouhal number, energy ratio); §4.

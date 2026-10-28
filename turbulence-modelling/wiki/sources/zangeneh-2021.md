@@ -152,11 +152,12 @@ is keyed from the in-text "Kawai et al.". No item is unparseable.
 
 # Pages created or updated
 
-Chunk 9 (2026-10-27). This source is cited on:
+Chunk 9 (2026-10-27), cited further in chunk 12. This source is cited on:
 
 - [Shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
 - [Turbulent boundary layers: zero and adverse pressure gradient, compressible](/benchmarks/turbulent-boundary-layer.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+- [Barycentric anisotropy map](/definitions/barycentric-anisotropy-map.md)
 - [Compressible velocity transformations](/definitions/compressible-velocity-transformation.md)
 - [Hybrid RANS/LES](/definitions/hybrid-rans-les.md)
 - [Law of the wall](/definitions/law-of-the-wall.md)

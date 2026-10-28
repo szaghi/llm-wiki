@@ -5,7 +5,7 @@ description: "The JAXA Standard Model, a half-span civil transport in landing co
 status: established
 aliases: [JSM, JAXA high-lift model, HLPW3 JSM]
 tags: [benchmark, wmles, separated-flow, gpu, software]
-timestamp: 2026-10-27T20:38:00Z
+timestamp: 2026-10-28T01:51:00Z
 ---
 
 # JAXA Standard Model high-lift configuration
@@ -141,6 +141,31 @@ and that establishing the validity and limitations of a new code "takes
 multiple years and multiple engineers", which slows its replacement of an
 established one (§4.1.2, §4.5.2).
 
+## As a precedent for the CRM-HL
+
+[Kiris et al. (2023)](/sources/kiris-2023.md), summarizing the
+wall-modelled LES focus group of the next workshop on the
+[NASA CRM-HL](/benchmarks/nasa-crm-high-lift.md), call this configuration
+the "JAXA-CRM" and present it as the motivation of their focus group
+(§I): early WMLES of it at the Stanford CTR summer program of 2018
+(Lehmkuhl et al.) agreed promisingly with the integrated loads on grids
+"substantially coarser" than had been thought necessary, and their
+surface-flow patterns matched the oil flow, in contrast with RANS
+submissions on much larger grids; the assessment of
+[Goc et al. (2021)](/sources/goc-2021.md) then confirmed the prediction
+of the surface-flow topology near $C_{L,\max}$. The success of Cartesian
+(PowerFLOW) and Voronoi grids here suggested to them that grids of
+aspect ratio near one are needed near $C_{L,\max}$ (§I.2). On the CRM-HL,
+however, accurate outboard loading needed more than 250 million degrees
+of freedom, which the authors call "somewhat contradictory to the
+requirements from the JAXA-CRM" and attribute, from coarse-grid runs of
+CharLES, to inviscid flow acceleration on the outboard wing and slats
+rather than to the wall layer (§VI 1a). They report best-practice WMLES
+of the CRM-HL at 5–10 times the cost of a steady RANS (§VI 4), against
+the parity of a medium-grid LES with an HLPW3 RANS run that Goc et al.
+report here; the two cost statements concern different configurations,
+grids and codes, and neither source compares them.
+
 ## Qualifications
 
 - The caption of Table 2 places the Alya grid sequence, including the
@@ -162,4 +187,5 @@ established one (§4.1.2, §4.5.2).
 # Citations
 
 - [Goc et al. (2021)](/sources/goc-2021.md) — §1–5, Eqs. (2.1)–(2.6), Tables 1–2, Figs. 1–15.
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §I, §I.2; §VI 1a, 4 (the configuration as precedent of the CRM-HL focus group; cited results of Lehmkuhl et al. 2018 and Goc et al. 2021).
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.1.2, Fig. 6; §4.5.2, Fig. 12 (reproduced results of HLPW3 and of Goc et al. 2020).

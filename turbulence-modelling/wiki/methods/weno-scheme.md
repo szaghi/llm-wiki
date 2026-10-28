@@ -5,7 +5,7 @@ description: "WENO, TENO, weighted compact nonlinear and bounded normalized-vari
 status: established
 aliases: [WENO, TENO, targeted ENO, weighted essentially non-oscillatory scheme, WENO-Z, WENO-Z+, WENO-Z+M, WENO-ZQ, WENO-SYMBO, HWENO, Hermite WENO, bandwidth-optimized WENO, limiter-optimized WENO, hybrid upwind/WENO scheme, hybrid central/WENO scheme, TENO-THINC, TENO-S, TENOA, THINC, TENO limiter, boundary variation diminishing, BVD-AD, WCNS, weighted compact nonlinear scheme, WCNS-T, ROUND, OMP6 hybrid]
 tags: [shock-capturing, numerical-dissipation, dns, compressible, implicit-les, gpu]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T02:15:00Z
 ---
 
 # WENO and hybrid shock-capturing schemes in scale-resolving simulation
@@ -70,6 +70,12 @@ in turbulence (see [numerical dissipation](/properties/numerical-dissipation.md)
 | The same hybrid (Lele's compact scheme, Balsara–Shu seventh-order WENO), second-order TVD Runge–Kutta | $512^3$ DNS of decaying isotropic turbulence of a dense gas, reference of an LES study | [Zhang et al. (2022d)](/sources/zhang-2022-h.md), §III A |
 | Fourth-order weighted compact nonlinear scheme with Z-type weights, regularizer 100 (near-linear, WCNS-L) or $10^{-6}$ (WCNS-Z), Roe flux; second-order blended central/upwind interpolation as comparison | SATES hybrid RANS/LES, Smagorinsky LES and IDDES of the 30P30N high-lift airfoil (PHengLEI) | [Wu et al. (2023)](/sources/wu-2023-b.md), §2.2, §3.3 |
 | ROUND: bounded (TVD) normalized-variable reconstruction cast as a flux limiter, AUSM+-up flux, unstructured finite volumes (OpenFOAM); van Leer and MUSCL limiters as comparisons, fifth-order WENO as a reference | implicit LES of shock–vortex and shock–turbulence problems, a Mach 0.8 deep cavity | [Cheng et al. (2023)](/sources/cheng-2023-b.md), §2–3 |
+| Fifth-order WENO (Jiang–Shu) of the conserved variables, HLLC flux away from shocks and Lax–Friedrichs flux near them (pressure-sensor switch), second-order central viscous fluxes (code FK3) | DNS of a detonation propagating into isotropic turbulence with detailed hydrogen chemistry, 4 µm grid, $2.76\times10^8$ cells | [Iwata et al. (2023)](/sources/iwata-2023.md), §II B–C |
+| "Augmented 11th-order WENO" (Balsara–Shu monotonicity-preserving family cited) of primitive variables, HLLC flux, five-stage fourth-order SSP Runge–Kutta (CNS3D) | implicit LES of a Mach 1.94 oblique-shock interaction over statically deformed panels | [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md), §III B |
+| Seventh-order WENO-Z for the inviscid fluxes, fourth-order central viscous fluxes (ACANS) | DNS of hypersonic boundary layers with recycled and library inflow, up to Mach 7.25 | [Mo et al. (2023)](/sources/mo-2023.md), §II B |
+| P-weighted compact WENO limiter of the troubled cells of flux reconstruction (Li, Wang & Ren), modified linear weights and a mode-truncation rule, then a positivity-preserving scaling | implicit LES of a Mach 2.9, 24° compression ramp | [Shi & Yan (2023)](/sources/shi-2023.md), §II.B |
+| Fifth-order finite-difference and "alternative" finite-volume WENO-JS and WENO-Z as comparisons, characteristic-wise finite-volume WENO-JS on 160 cells per half-reaction length as reference | one-dimensional overdriven detonations against an a posteriori subcell-limited flux reconstruction, no turbulence | [Liu & Yuan (2023)](/sources/liu-2023-b.md), §5.5–5.8 |
+| Sixth-order kinetic-energy-preserving convection switched to fifth-order WENO by the Ducros criterion (STREAmS), same database as Yu et al. (2022) | analysis of the post-shock recovery of an oblique shock/boundary-layer interaction at $M_\infty=2.28$ | [Yu et al. (2023)](/sources/yu-2023.md), §2 |
 
 The upwind schemes act on split fluxes or on characteristic variables.
 [OpenCFD-SCU](/software/opencfd-scu.md) splits the flux with Steger–Warming
@@ -863,6 +869,41 @@ disturbances that their low dissipation fails to damp (Huang & Fu 2024,
 §6.6; Huang et al. 2025, §5.7), whereas Takagi et al. (2022, §4.7–4.8) keep
 the symmetry with the symmetry-preserving technique of Fleischmann et al.
 
+## WENO limiting in flux reconstruction for implicit LES
+
+[Shi & Yan (2023)](/sources/shi-2023.md), §II.B, limit their third-order
+($N=2$) flux-reconstruction implicit LES of a Mach 2.9, 24° compression
+ramp in three steps: a KXRCF-type sensor flags troubled cells (on
+[shock sensors](/definitions/shock-sensor.md)); a P-weighted compact WENO
+limiter (Li, Wang & Ren 2020) replaces the troubled polynomial by a
+convex combination of its own modal parts and of the two neighbour
+polynomials, each projected to a linear polynomial with the cell mean of
+the troubled cell, so that conservation is kept (Eqs. 8–10); the
+Zhang–Shu positivity-preserving scaling of density and pressure on the
+LGL points follows (Eqs. 17–18). The smoothness indicator of polynomial
+$l$ weights the $s$-th derivative by $\Delta x^s/((s-1)!\,2^s)$, which
+"weakens" the higher derivatives against the Jiang–Shu form (Eq. 13); the
+linear weights are $10^{l+1}$ for the modes $l\ge2$, 10 for $l=1$ and 1
+for the neighbours, and the regularizer of the neighbours and of $l=1$ is
+$K_\varepsilon(\mathrm{IS}_L^2+\mathrm{IS}_R^2)/2+10^{-16}$ (Eq. 14),
+which strengthen the higher modes. Their added **truncation rule** sets
+to zero the linear weights of the neighbours and of the modes below $s$
+when the mean smoothness indicator of the low modes exceeds
+$K_{\mathrm{Trunc}}/(s-1)$ times the sum of the components of the
+indicator of mode $s$ (Eqs. 15–16). The parameters are $K_\varepsilon=0.01$,
+$K_{\mathrm{Trunc}}=1$ in §II and $K_\varepsilon=0.1$, $K_{\mathrm{Trunc}}=10$
+for the ramp ($K_\varepsilon$, $K_{\mathrm{Trunc}}$ page-local, §IV.A).
+They state that the WENO limiter alone does not guarantee positivity and
+that non-physical states crash the high-order interaction runs, hence the
+positivity step. On the double Mach reflection the combination does "not
+completely remove the numerical oscillations" (§III.B). On the ramp the
+incoming boundary layer lies within the range of the experiment and of
+the fourth-order WENO DNS of Wu & Martín, Tong et al. and Zhu et al., the
+corner skin friction and wall pressure on the two finer grids agree with
+those DNS, and a low-frequency unsteadiness of the separation shock at
+$St\approx0.01$ is captured (§IV.B, Table III, Figs. 11–12, 17–18; see
+[shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+
 ## WENO limiting of turbulence variables in DG RANS
 
 High-order DG solutions of RANS turbulence variables oscillate where the
@@ -993,6 +1034,26 @@ profiled; Tables 2–3).
   higher thresholds give higher dissipation, whereas by their own rule higher
   thresholds send more points to the low-dissipation upwind scheme
   *(compiler check, not in the sources)*.
+- **WENO as the comparison of a flux-reconstruction limiter (Liu & Yuan
+  2023).** The abstract and §6 state that the $N=2$ flux reconstruction
+  with MUSCL subcells "has higher resolution than the WENO-Z5 scheme under
+  same degree of freedoms"; for the stable detonation §5.5 says its shock
+  resolution is "close to those of the WENO-JS and WENO-Z schemes", the
+  advantage shown there being the absence of the spurious oscillations that
+  WENO-JS and WENO-Z produce behind the front (Fig. 9). For the unstable
+  detonations the comparisons are figures against one WENO-JS reference
+  solution (Figs. 12, 15, 17).
+- **Resolution of an implicit LES with 11th-order WENO.** Kokkinakis et
+  al. (2023) quote wall-resolved LES guidance of $\Delta x^+\approx50$–130
+  and $\Delta z^+\approx15$–30 (§III B 2) and run their production mesh at
+  $\Delta x^+=717$, $\Delta z^+=634$, $y^+=4.8$, judged adequate against a
+  finer mesh at $\Delta x^+=268$, $\Delta z^+=100$ (§IV A, Table III).
+  Both values are printed; the paper judges the mesh "adequately
+  accurate, at least concerning the flow properties of interest". §III B
+  introduces the scheme with the sentence "The DNS compression ramp data
+  used here were obtained using an augmented 11th-order WENO scheme",
+  while the paper's runs are implicit LES of a panel interaction and no
+  compression-ramp DNS data are presented.
 - Dang et al. (2022) print 216 floating-point operations for the WENO-SYMBO
   kernel in Table 6 and 262 manually counted operations in §5.4. The version
   read is an author manuscript.
@@ -1195,4 +1256,10 @@ profiled; Tables 2–3).
 - [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §III (compact/WENO hybrid of the reference DNS).
 - [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — §III A (compact/WENO hybrid of the dense-gas reference DNS).
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.2.1, Eqs. (10)–(14) (fourth-order WCNS, Z-type weights, WCNS-L and WCNS-Z); §3.3, Table 2, Fig. 11; §4 (linear interpolation recommended for shock-free flow).
+- [Iwata et al. (2023)](/sources/iwata-2023.md) — §II B–C (WENO5 of conserved variables with HLLC/Lax–Friedrichs switch in FK3).
+- [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — §III B, Table III (augmented 11th-order WENO with HLLC in CNS3D; mesh spacings); §IV A.
+- [Mo et al. (2023)](/sources/mo-2023.md) — §II B (seventh-order WENO-Z in ACANS).
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §II.B, Eqs. (8)–(18) (P-weighted WENO limiter, truncation rule, positivity scaling); §III.B, Fig. 3; §IV.A–B.
+- [Liu & Yuan (2023)](/sources/liu-2023-b.md) — abstract; §5.5–5.8, Figs. 9, 12, 15, 17 (WENO-JS and WENO-Z comparisons and reference); §6.
+- [Yu et al. (2023)](/sources/yu-2023.md) — §2 (STREAmS KEP/WENO5 hybrid).
 - [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §1 (unstructured high-order reconstruction, explicit subgrid models at shocks); §2.1–2.2, Eqs. (2.5)–(2.14) (AUSM+-up, ROUND operator and limiter form, parameter sets); §3.1–3.7, Figs. 2–17 (tests; deep-cavity Reynolds stresses); Eq. (3.3).

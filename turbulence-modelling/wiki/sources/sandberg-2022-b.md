@@ -178,7 +178,7 @@ print no pages. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 10 (2026-10-27). This source is cited on:
+Chunk 10 (2026-10-27), cited further in chunk 12. This source is cited on:
 
 - [Backward-facing step](/benchmarks/backward-facing-step.md)
 - [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md)
@@ -186,6 +186,7 @@ Chunk 10 (2026-10-27). This source is cited on:
 - [Turbine cascades (T106, T161, VKI LS89)](/benchmarks/turbine-cascade.md)
 - [Turbulent channel flow](/benchmarks/turbulent-channel-flow.md)
 - [A priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md)
+- [Barycentric anisotropy map](/definitions/barycentric-anisotropy-map.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
 - [Model-form uncertainty in turbulence closures](/definitions/model-form-uncertainty.md)
 - [Spectral gap](/definitions/spectral-gap.md)

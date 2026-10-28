@@ -5,7 +5,7 @@ description: "Energy backscatter is a negative local subgrid energy flux, energy
 status: established
 aliases: [backscatter, inverse energy transfer, subgrid-scale energy flux, interscale energy flux, local SGS dissipation]
 tags: [les, sgs-model, eddy-viscosity, filtering]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T02:14:00Z
 ---
 
 # Energy backscatter and the subgrid energy flux
@@ -338,6 +338,39 @@ The sources reach different design choices from different questions.
   authors write that it "predicts backscatter accurately" and that
   "consequently" the LES is stable (§3.1). See
   [neural-network SGS models](/methods/neural-network-sgs-model.md).
+- **Backscatter of kinetic energy and of temperature variance, without
+  clipping, in compressible wall-bounded LES.** [Xu et al. (2023)](/sources/xu-2023.md)
+  (§3.2, §4.1) measure two fluxes, $\Pi=-\tau_{ij}\partial_j\tilde u_i$
+  (equal to $-\tau_{ij}\tilde S_{ij}$ for the symmetric stress, *compiler
+  check, not in the sources*; their stress is per unit mass) and the
+  subgrid flux of temperature variance $\Pi_Q=-Q_j\partial_j\tilde T$,
+  with $Q_j=\widetilde{u_jT}-\tilde u_j\tilde T$ the subgrid heat flux
+  ($Q_j$, $\Pi_Q$ page-local), both normalized in wall units. Their learned
+  nonlinear algebraic model (see
+  [neural-network SGS models](/methods/neural-network-sgs-model.md))
+  differs from the eddy-viscosity baselines in sign structure:
+  - **A priori** (filtered DNS of a channel at $Re=3000$, $M=1.5$), the
+    plane-averaged fluxes of the learned model "almost collapse" on
+    filtered DNS, while the [Vreman](/methods/vreman-model.md), dynamic
+    Smagorinsky and [WALE](/methods/wale-model.md) models and the dynamic
+    version of the same nonlinear model "significantly underestimate" them
+    (§3.2, Fig. 12).
+  - **A posteriori** (untrained grid), the eddy-viscosity models give only
+    $\Pi>0$ and $\Pi_Q>0$, no inverse transfer, whereas the learned model
+    produces both signs at $y^+=15$, as filtered DNS does, and its
+    probability densities of both fluxes collapse on filtered DNS, with no
+    clipping (§4.1, Figs. 18–20). In the plane averages Vreman and WALE
+    underestimate both fluxes, the dynamic Smagorinsky model "strongly
+    overestimates" the kinetic-energy flux and underestimates the
+    temperature-variance flux, and the learned model is accurate except
+    for slightly larger values in the buffer layer (Fig. 17).
+
+  The authors (§1) set this against the multi-point network of Park &
+  Choi (cited), which needs backscatter clipping. In the same paper the
+  dynamic Smagorinsky model underestimates the mean flux a priori (model
+  evaluated on filtered DNS, §3.2, Fig. 12) and "strongly overestimates"
+  it a posteriori (model run in the LES on an untrained grid, §4.1,
+  Fig. 17).
 - **Backscatter bounded by design.** In the reinforcement-learning closure
   of [Kurz et al. (2023)](/sources/kurz-2023.md) (§3.4) the learned
   Smagorinsky coefficient is restricted to $C_s\in[0,0.5]$ (negative values
@@ -769,3 +802,4 @@ contradiction is recorded.
 - [Wang et al. (2022)](/sources/wang-2022-j.md) — §IV.
 - [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §IV B, Fig. 9.
 - [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — Eqs. (19), (33); §IV B, Fig. 8.
+- [Xu et al. (2023)](/sources/xu-2023.md) — §1; §3.2, Fig. 12; §4.1, Figs. 17–20.

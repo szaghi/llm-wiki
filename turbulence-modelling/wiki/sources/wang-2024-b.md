@@ -151,7 +151,7 @@ no page or article number, recorded as printed. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-26), cited further in chunks 7–8. This source is cited on:
+Chunk 5 (2026-10-26), cited further in chunks 7, 8, 12. This source is cited on:
 
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Turbine cascades (T106, T161, VKI LS89)](/benchmarks/turbine-cascade.md)
@@ -166,3 +166,4 @@ Chunk 5 (2026-10-26), cited further in chunks 7–8. This source is cited on:
 - [Subcell finite-volume shock capturing for DG](/methods/subcell-finite-volume-shock-capturing.md)
 - [Numerical dissipation in scale-resolving simulation](/properties/numerical-dissipation.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)
+- [hpMusic](/software/hpmusic.md)

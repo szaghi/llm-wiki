@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Inflow turbulence generation"
-description: "How a scale-resolving simulation is fed with turbulence at its inflow or in its initial field: recycling–rescaling and precursor planes, digital-filter and Fourier-mode synthetic turbulence built from prescribed statistics (also from a RANS solution), forcing, wall blowing and suction, geometric tripping, or laminar inflow by choice, with the recovery each needs and the errors each leaves."
+description: "How a scale-resolving simulation is fed with turbulence at its inflow or in its initial field: recycling–rescaling, precursor planes and stored fluctuation libraries with compressible scaling laws, digital-filter and Fourier-mode synthetic turbulence, forcing, wall blowing and suction, geometric tripping, or laminar inflow by choice, with the recovery each needs and the errors each leaves."
 status: established
-aliases: [turbulent inflow generation, synthetic inflow turbulence, synthetic turbulence generator, STG, recycling–rescaling inflow, recycling inflow, digital filter inflow, precursor inflow, MDSRFG, random flow generation]
+aliases: [turbulent inflow generation, synthetic inflow turbulence, synthetic turbulence generator, STG, recycling–rescaling inflow, recycling inflow, digital filter inflow, precursor inflow, MDSRFG, random flow generation, turbulence fluctuation library, TFL, rescaling–reintroduction]
 tags: [les, dns, boundary-layer, wmles, compressible]
-timestamp: 2026-10-27T21:11:00Z
+timestamp: 2026-10-28T02:13:00Z
 ---
 
 # Inflow turbulence generation
@@ -19,7 +19,13 @@ where the fluctuations come from: from the simulation itself
 (**recycling–rescaling**, auxiliary or precursor boxes), from a stochastic
 construction with prescribed statistics (**synthetic turbulence**: digital
 filters, Fourier modes, forcing), or from a disturbance that triggers
-transition inside the domain (**blowing and suction**). Every method leaves
+transition inside the domain (**blowing and suction**).
+[Mo et al. (2023)](/sources/mo-2023.md), §I, sort the methods into four
+classes, transition-inducing, recycling–rescaling, synthetic generation and
+turbulence libraries (stored precursor fluctuations), each with its own
+shortcomings, and state, citing Mullenix et al., that the
+transition-inducing route needs at least 50 boundary-layer thicknesses to
+reach a developed state. Every method leaves
 an adaptation ("induction" or "recovery") region downstream of the inlet in
 which the flow is not yet the target state, and the sources measure it.
 
@@ -44,6 +50,13 @@ the target thickness at the inlet and fed back.
   Pirozzoli–Bernardini–Grasso method in [STREAmS](/software/streams.md)
   for six layers from Mach 0.5 to 8, chosen because it is "less noisy
   than a synthetic inflow like the digital filtering method".
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md), §3, use the
+  rescaling–reintroduction of Urbin & Knight, which they cite, with the
+  recycle station at $35\delta_0$ ($\delta_0$ about the inlet 99%
+  thickness) for a [wall-modelled LES](/methods/wall-modelled-les.md) of a
+  Mach 2.28 boundary layer under adverse pressure gradient, judge domain and
+  extraction location sufficient by the criteria of Morgan et al. (as cited),
+  and check the outcome by $C_f(Re_\theta)$ (Fig. 3).
 - An **auxiliary box**: [Helm & Martín (2022)](/sources/helm-2022.md), §II,
   run a separate boundary layer with recycling–rescaling over a long box and
   interpolate its rescaling plane, in time and space, onto the inlet of the
@@ -66,6 +79,22 @@ the target thickness at the inlet and fed back.
   half-widths, 60 million cells, wall spacing at $y^+=0.24$) and write
   inflow planes every 3 µs for a reacting simulation of flame–wall
   interaction in the same channel; no recovery length is reported.
+- **Precursor pipe flows for a burner**: [Zhang et al. (2023)](/sources/zhang-2023-c.md),
+  §2, feed the LES of a multi-regime burner flame with inlet turbulence
+  from computed fully developed pipe and annular-pipe flows for the jet and
+  the outer slot, and prescribe a laminar annular profile for the inner
+  slot, whose Reynolds number is much lower.
+- **Precursor isotropic turbulence through the inlet of a moving frame**:
+  [Iwata et al. (2023)](/sources/iwata-2023.md), §II C, Eq. (1), run a
+  detonation in a detonation-fixed frame (inlet velocity equal to the
+  detonation speed plus the fluctuations) and take the fluctuations from a
+  decaying compressible [isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md)
+  in a periodic 1.92 mm cube on the same 4 µm grid, initialized with the
+  spectrum $E(k)=16\sqrt{2/\pi}\,(u'^2/k_e)(k/k_e)^4\exp[-2(k/k_e)^2]$ (the
+  form used by Coulon et al. 2023, below) and run until the
+  velocity-derivative skewness lies between $-0.6$ and $-0.4$, giving
+  $Re_\lambda=240$ and $M_t=0.30$ at the inlet (Table I); see
+  [direct numerical simulation](/definitions/direct-numerical-simulation.md).
 - **Stored precursor planes reused cyclically**:
   [Mukha et al. (2025)](/sources/mukha-2025.md) (read in arXiv v1), §IV.A,
   feed wall-modelled LES of a zero-pressure-gradient boundary layer in
@@ -91,6 +120,80 @@ the target thickness at the inlet and fed back.
   velocity variances and the shear stress of the wind-tunnel inflow
   (Eq. 13, Fig. 3); see [actuator line and disk models](/methods/actuator-line-model.md).
 
+## Turbulence fluctuation libraries for compressible boundary layers
+
+A **turbulence fluctuation library** stores a time series of velocity
+planes from a precursor DNS and, at the inflow of the target simulation,
+adds the rescaled fluctuations to a mean profile.
+[Mo et al. (2023)](/sources/mo-2023.md) build one in the finite-difference
+code ACANS (seventh-order WENO-Z, fourth-order central viscous fluxes,
+third-order Runge–Kutta; §II A) from a Mach 2.25 flat-plate DNS with
+blowing–suction transition: 65,536 planes at the DNS step of 5 ns at a
+station with $\delta=2.08$ mm and $Re_\tau\approx770$, a span of about 4.4
+$\delta/u_\tau$, storing velocity only, with $u_\tau$ and the mean density
+profile (§III A, Table IV). Mean profiles at the target come from a
+[Spalart–Allmaras](/methods/spalart-allmaras-model.md) RANS. Page-local
+symbols: subscripts $w$, $e$, $r$ for wall, edge and recovery values,
+$s_{\mathrm{RA}}=1.16$ the Reynolds analogy factor.
+
+**Velocity** (Eqs. 15–17, generalizing Martin 2007 as cited): the
+density-scaled fluctuation $\sqrt{\langle\rho\rangle/\rho_w}\,u_i'/u_\tau$
+is the same in library and target at equal scaled position, the spanwise
+coordinate scaled by $\delta_\nu$, the wall-normal one by $\delta_\nu$ in
+the inner layer and by $\delta$ in the outer layer, the two blended by a
+tanh function between $0.2\delta$ and $0.5\delta$ (an application of
+[Morkovin's hypothesis](/definitions/morkovin-hypothesis.md); Mo et al.
+cite Duan et al. for its validity below Mach 12 and above a
+wall-to-recovery temperature ratio of 0.12).
+
+**Thermodynamics.** Martin's laws, from the strong Reynolds analogy,
+$$\frac{T'}{\langle T\rangle}\approx-(\gamma-1)M^2\frac{u'}{\langle u\rangle},\qquad \frac{\rho'}{\langle\rho\rangle}=-\frac{T'}{\langle T\rangle}$$
+(Eqs. 18–19), assume $Pr=1$, negligible total-temperature fluctuation and
+an adiabatic wall. Mo et al. (§IV A) replace them by the instantaneous
+form of Gaviglio's analogy due to Yu & Xu (as cited),
+$T'\approx(\partial\langle T\rangle/\partial\langle u\rangle)\,u'$, with the
+derivative taken from the generalized Reynolds analogy of Zhang et al.
+(as cited, Eqs. 11–13),
+$$\frac{\langle T\rangle}{T_e}=\frac{T_w}{T_e}+\frac{T_r-T_w}{T_e}\,f\Big(\frac{\langle u\rangle}{u_e}\Big)+\frac{T_e-T_r}{T_e}\Big(\frac{\langle u\rangle}{u_e}\Big)^2,\qquad f(q)=(1-s_{\mathrm{RA}}Pr)\,q^2+s_{\mathrm{RA}}Pr\,q,$$
+with $Pr=0.72$ (printed form of the derivative in Qualifications), and by a
+density law from the equation of state that keeps the $\rho'T'$
+correlation and drops only $p'$ (Eqs. 24–25),
+$$\frac{\rho'}{\langle\rho\rangle}=-\frac{T'/\langle T\rangle}{1+T'/\langle T\rangle},$$
+of which Eq. (19) is the linearization; it keeps $\rho'/\langle\rho\rangle>-1$,
+so the density stays positive whenever $T'/\langle T\rangle>-1$. At the
+Mach 7.25 inflow Eq. (19) gives $\rho'/\langle\rho\rangle<-1$ near
+$y/\delta=0.8$, a negative density (Fig. 10c), and Martin's remedy of
+multiplying the analogy by a factor below 0.8 distorts the positive tail of
+the density PDF (§IV B).
+
+**Tests** (§III C, §IV B–C; recovery distance $L_r$ defined from the
+inlet to the peak of the averaged $C_f$ that follows its initial drop):
+
+- a Mach 2.9 adiabatic layer (Ringuette et al. experiment, inflow
+  $Re_\tau=340$) with Martin's thermodynamic laws recovers in
+  $L_r\approx10\delta_{\mathrm{in}}$ ($\delta_{\mathrm{in}}$ the inflow
+  thickness, page-local) and matches the measured $C_f$, mean velocity and
+  streamwise fluctuation (Table II, Figs. 7–8);
+- a Mach 7.25 cold-wall layer ($T_w=562$ K, Williams et al. experiment,
+  inflow $Re_\tau=155$) with the new laws runs stably and matches the
+  measured $C_f$, van Driest velocity and Morkovin-scaled fluctuations; the
+  total-temperature fluctuation reaches about 10%, the RMS ratio of the
+  two sides of Eq. (18) is about 0.8 over most of the layer, that of the new
+  law about 1, and the $\rho'T'$ term exceeds the density and temperature
+  fluctuations at $y^+=100$ while $\lvert p'/\langle p\rangle\rvert<0.2$
+  with high probability (Figs. 11–17);
+- the recovery there is $L_r\approx24\delta_{\mathrm{in}}$ with the
+  $Re_\tau=770$ library and about $11\delta_{\mathrm{in}}$ with libraries at
+  $Re_\tau=350$ and 186, built by lowering the free-stream density of the
+  precursor (Fig. 19). The authors locate the cause in the mapping: the
+  spanwise coordinate is scaled by $\delta_\nu$ everywhere but the
+  wall-normal one by $\delta$ in the outer layer, and since
+  $Re_\tau=\delta/\delta_\nu$, the two stretchings agree only for matched
+  $Re_\tau$; otherwise outer-layer structures are distorted in span (mass-flux
+  autocorrelations at $y/\delta=0.3$, Figs. 21–22), the outer stresses decay
+  one $\delta$ downstream and $C_f$ drops (Fig. 23). They recommend a library
+  at a friction Reynolds number close to the target (§V).
+
 ## Synthetic turbulence
 
 A stochastic field with prescribed one-point statistics and length scales is
@@ -109,6 +212,27 @@ superimposed on the mean inflow.
   $Re_h=5000$ on a 142,000-cell mesh, for their
   [pseudo-DNS](/methods/pseudo-direct-numerical-simulation.md) and a
   one-equation LES.
+- **The filter coefficients.** [Shi & Yan (2023)](/sources/shi-2023.md),
+  §II.C, Eqs. (19)–(26), print the implementation of Touber & Sandham's
+  form of the filter (as cited) for a flux-reconstruction implicit LES:
+  zero-mean unit-variance random numbers are filtered with
+  $b_k=\tilde b_k/(\sum_j\tilde b_j^2)^{1/2}$, $\tilde b_k=\exp(-\pi k/n)$,
+  $n$ the integral length in grid units and the stencil half-width at least
+  $2n$, which reproduces an exponential correlation
+  $\exp(-\pi x/(2I_x))$ ($I_x$ the integral length, page-local), "not the
+  same as the two-point correlation in the wall-bounded turbulence, but
+  still a valid approximation"; the inflow plane is split into three
+  wall-normal zones of uniform spacing for the two-dimensional filter, and
+  the streamwise correlation is replaced by a temporal one,
+  $v^{\mathrm{new}}=v^{\mathrm{old}}\exp(-\pi\Delta t/(2\tau_I))+v\sqrt{1-\exp(-\pi\Delta t/\tau_I)}$,
+  $\tau_I=I_x/U$ (page-local). The paper does not state how the filtered
+  signals become velocity fluctuations (no prescribed stress profiles are
+  printed).
+  [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md), §III B, use the
+  filter of Klein et al. developed by Touber & Sandham (as cited), filtered
+  in two dimensions only for speed, for an implicit LES of a shock/boundary-layer
+  interaction over a flexible panel, with an inlet thickness of about 4.7 mm
+  estimated from laminar and turbulent growth correlations.
 - **Digital filters for shock interactions.** Three sources feed
   supersonic shock/boundary-layer interactions with the filter of Klein,
   Sadiki & Janicka, each with its own mean state:
@@ -120,7 +244,9 @@ superimposed on the mean inflow.
   [Yu et al. (2022)](/sources/yu-2022-e.md), §2.1, with a Musker mean
   velocity and the mean temperature and temperature fluctuations from the
   generalized Reynolds analogy of Zhang et al. (2014), for a DNS of the
-  same interaction at $Re_\tau=201$ on the reference plane; and
+  same interaction at $Re_\tau=201$ on the reference plane (the DNS that
+  [Yu et al. (2023)](/sources/yu-2023.md), §2, reuse for post-shock
+  recovery); and
   [Tonicello et al. (2022)](/sources/tonicello-2022.md), §2.1, in a form
   generalized to their spectral-difference discretization, with mean
   profiles from closed-form relations built on the van Driest-transformed
@@ -167,7 +293,12 @@ superimposed on the mean inflow.
   intensity is a tenth of the bulk velocity (2.5 m/s against 25 m/s) and
   the integral length a quarter of the jet width (2.1 mm), identical for
   the three fuels of the comparison, which places all three flames at
-  one point of the combustion regime diagram. They state that the shear
+  one point of the combustion regime diagram.
+  [Kumar et al. (2023)](/sources/kumar-2023.md), §3.2, impose turbulence
+  in the initial field and feed it continuously at the hard inlet of a
+  lean methane slot-burner DNS, "by specifying a turbulent length scale and
+  RMS velocity fluctuations and by prescribing a turbulent energy
+  spectrum", without printing the generator. They state that the shear
   turbulence of the jet has no time to develop because the flame adds
   viscous dissipation, so the flames are controlled by the injected
   turbulence; the supporting spectral analysis is in supplementary
@@ -223,6 +354,12 @@ superimposed on the mean inflow.
   introduces extra frequencies that contaminate the separation-induced
   unsteadiness, and, citing Pamiès et al. and Roidl et al., that SEMs
   recover faster than digital filters.
+  [Gao et al. (2023)](/sources/gao-2023.md), §5.1, use the same
+  combination for the same Mach 2 interaction over an elastic panel, the
+  forcing zone at $7\delta_r$–$11\delta_r$ streamwise and
+  $0.1\delta_r$–$1.2\delta_r$ wall-normal, and find the van Driest II
+  skin friction and the shape factor close to DNS and to the correlation
+  quickly after the forcing zone (Fig. 19).
 - **Forcing.** [Krais et al. (2021)](/sources/krais-2021.md), §7.3,
   generate inflow turbulence by anisotropic linear forcing (de Laage de Meux
   et al.), combined with recycling–rescaling, for a zonal LES with low
@@ -327,6 +464,20 @@ $0.024Re_\theta^{-0.25}$ (in transformed variables) after the forcing
 zone, and the wall-pressure spectra of the interaction show no extra
 low-frequency content from the SEM, with the interaction peak at
 $St\approx0.03$ based on the interaction length.
+
+Three sources state adaptation distances for the digital filter
+and the library. [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md),
+§III B, state, citing earlier work, that the digital filter needs about
+$5\delta_0$ for the velocity autocorrelation to approach zero, and place
+the shock generator about $21.1\delta_0$ from the inlet. In
+[Shi & Yan (2023)](/sources/shi-2023.md), §IV.B, the inlet at
+$x/\delta=-18.4$ generates weak compression waves from the mismatch with a
+true turbulent state, and the layer becomes a true turbulent boundary
+layer at around $x/\delta=-8$ (the source's $x^*$), about $10\delta$
+downstream of the inlet
+*(compiler arithmetic, not in the sources)*. Mo et al. (2023) define
+$L_r$ by the $C_f$ peak and find 10 to 24 inflow thicknesses, governed by
+the Reynolds-number mismatch of the library (section above).
 
 [Tonicello et al. (2022)](/sources/tonicello-2022.md), §2.1, place the
 digital-filter inlet $12\delta$ upstream of the reference station
@@ -495,6 +646,26 @@ compiles (§5.2).
   turbulent Reynolds number are "the same" for the three flames (§3),
   while their Table 1 prints turbulent Reynolds numbers of 355, 313 and
   271.
+- **Printed forms in Mo et al. (2023).** Differentiating their Eq. (11)
+  with Eq. (12) gives
+  $\partial\langle T\rangle/\partial\langle u\rangle=(T_r-T_w)\big[2(1-s_{\mathrm{RA}}Pr)\langle u\rangle/u_e^2+s_{\mathrm{RA}}Pr/u_e\big]+2(T_e-T_r)\langle u\rangle/u_e^2$;
+  the printed Eq. (22) lacks the term $(T_r-T_w)s_{\mathrm{RA}}Pr/u_e$, and
+  Eq. (23) and the ratio of Eq. (27) inherit it *(compiler check, not in
+  the sources)*. The cover page of the file announces a published erratum
+  that the file does not contain. Eq. (23) carries $+2$ where the
+  denominator of Eq. (27) carries $-2$. The recovery of the same Mach 7.25
+  run is printed as $24\delta_{\mathrm{in}}$ (§IV B) and $22.7\delta_{\mathrm{in}}$
+  (§IV C); the library thickness as 2.08 mm (§III A, Table IV) and 2.06 mm
+  (§III C); the precursor wall as isothermal at 322 K (§II B) and
+  adiabatic (§III B). All three libraries come from one Mach 2.25
+  precursor and are tested on one Mach 7.25 target, and the $C_f$-peak
+  criterion differs from the criteria of Huang et al. (2022) and the
+  other sources above.
+- **Shi & Yan (2023)** print the flat-plate length as
+  $L_{x,1}=117.76$ mm with "$L^*_{x,1}=52.3$"; $117.76/6.4=18.4$, the
+  inlet position in reference thicknesses, while 52.3 is the value of the
+  earlier set-up of Tong et al. they quote next ($335/6.4$) *(compiler
+  check, not in the sources)*.
 - Inflow generation is a boundary condition, not a closure, but it sets
   the state that the closure is tested on; the benchmarks where it matters
   are [turbulent boundary layers](/benchmarks/turbulent-boundary-layer.md)
@@ -532,4 +703,13 @@ compiles (§5.2).
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.10.5 (digital-filter inflow of a backward-facing step).
 - [Coulon et al. (2023)](/sources/coulon-2023.md) — §2.2, Eqs. (2)–(3), Table 1 (Kraichnan-type Fourier modes with a Passot–Pouquet spectrum through an NSCBC inlet); §3.
 - [Wang et al. (2022)](/sources/wang-2022-j.md) — §V, Figs. 8–13 (digital-filter initial perturbations of a temporal mixing layer, perturbation scale against LES filter width); Conclusions.
+- [Mo et al. (2023)](/sources/mo-2023.md) — §I (four classes of inflow methods); §II A–B (ACANS, Mach 2.25 precursor); §III A–C, Eqs. (14)–(19), Tables I–II, IV, Figs. 5–8 (library, velocity and strong-Reynolds-analogy scalings, Mach 2.9 test); §IV A, Eqs. (20)–(25) (new temperature and density laws); §IV B–C, Eqs. (26)–(28), Figs. 10–23 (Mach 7.25 tests, friction-Reynolds-number matching); §V.
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §3, Fig. 3 (rescaling–reintroduction at $35\delta_0$).
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §II.C, Eqs. (19)–(26) (digital-filter coefficients, temporal correlation); §IV.A–B (inlet position and adaptation).
+- [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — §III B (two-dimensional digital filter, inlet thickness, $5\delta_0$ adaptation).
+- [Gao et al. (2023)](/sources/gao-2023.md) — §5.1–5.2, Fig. 19 (synthetic eddies with anisotropic linear forcing over an elastic panel).
+- [Yu et al. (2023)](/sources/yu-2023.md) — §2 (reuse of the digital-filter DNS of Yu et al. 2022).
+- [Iwata et al. (2023)](/sources/iwata-2023.md) — §II C, Eq. (1), Table I (precursor decaying isotropic turbulence through the inlet of a detonation-fixed frame).
+- [Kumar et al. (2023)](/sources/kumar-2023.md) — §3.2 (prescribed inlet turbulence of a slot-burner DNS).
+- [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2 (precursor pipe and annular-pipe inflows).
 - [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II B–C, Fig. 6 (laminar inlet and wall disturbance at Mach 6, incoming-layer check); §III C (spectral peaks of the trip).

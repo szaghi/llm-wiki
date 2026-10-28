@@ -5,7 +5,7 @@ description: "Immersed boundary methods impose walls on non-conforming grids by 
 status: established
 aliases: [IBM, moving Cartesian grid, volume penalization immersed boundary method, VP-IBM, fluid resistance, immersed boundary, ghost-point forcing, volume penalization, Brinkman penalization, IB wall model, direct-forcing immersed boundary, Lagrangian weight, modelling height, ghost-cell direct forcing, volume-filtering immersed boundary method, VMIB, variational multiscale immersed boundary, weak Dirichlet immersed boundary, single ghost cell, IBMLES, immersed boundary-modelled LES, wall-slip model, slip-length model]
 tags: [immersed-boundary, wall-model, lattice-boltzmann, les, dns, rans]
-timestamp: 2026-10-27T20:40:00Z
+timestamp: 2026-10-28T01:53:00Z
 ---
 
 # Immersed boundary methods
@@ -26,7 +26,9 @@ neural-network LES of a cylinder wake on a staggered finite-volume mesh
 Boltzmann code ([Mozaffari et al. 2024](/sources/mozaffari-2024.md);
 [Husson et al. 2024](/sources/husson-2024.md)) and
 steady wall-function RANS of high-lift aircraft on octree Cartesian grids
-([Constant et al. 2024](/sources/constant-2024.md)), RANS and DDES of
+([Constant et al. 2024](/sources/constant-2024.md)) and two wall-modelled
+LES submissions of a high-lift workshop
+([Kiris et al. 2023](/sources/kiris-2023.md)), RANS and DDES of
 pitching airfoils and a hovering rotor on Cartesian grids that move
 rigidly with the body ([Sugaya & Imamura 2021](/sources/sugaya-2021.md)), DNS of a heated
 rough-wall channel in a spectral difference code
@@ -686,6 +688,28 @@ transition location (§3.2, Eq. 58). Findings (§3, §4):
   wall-normal Reynolds stress though negligible in the means (§3.3.2,
   Fig. 24; see [mesh adaptation](/methods/mesh-adaptation.md)).
 
+**Immersed boundaries in a multi-code high-lift assessment.**
+[Kiris et al. (2023)](/sources/kiris-2023.md) summarize the wall-modelled
+LES group of the fourth AIAA High-Lift Prediction Workshop on the
+[NASA CRM high-lift model](/benchmarks/nasa-crm-high-lift.md). Two of its
+nine submissions "utilized Cartesian isotropic grids with the geometry
+represented via their respective immersed boundary formulations" (§II.1):
+the [lattice Boltzmann](/methods/lattice-boltzmann-method.md) code
+PowerFLOW (W-032; 475 million points, a proprietary pressure-aware wall
+model) and the finite-difference code FFVHC-ACE (W-049; 11.2 billion
+points, a second-order kinetic-energy- and entropy-preserving scheme, the
+CSM subgrid model and an equilibrium wall model, wall-normal spacing
+3.2 mm at a 7 m full-scale chord; Tables 1–2). The authors note that W-049
+"could be perceived as an outlier since it utilizes an immersed boundary
+formulation, although its models are nonproprietary" (§II.5). Both
+predict inboard stall from the wing–pylon juncture (their topology B,
+§IV). Kiris et al. (§I) take the success of Cartesian grids, as they cite
+from the previous workshop, and of Voronoi grids as a suggestion that
+near-unity aspect ratios are needed near maximum lift, at the price of a
+larger wall-normal spacing, and point to the off-body vortices that
+isotropic grids suit; they reach no conclusion on isotropic against
+anisotropic grids (§VI; see [wall-modelled LES](/methods/wall-modelled-les.md)).
+
 ## Moving bodies on rigidly moving Cartesian grids
 
 [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) extend the
@@ -1173,6 +1197,7 @@ late and does not reattach, attributed to $y^+\approx100$–150 on the slant. Se
 # Citations
 
 - [Cai et al. (2022)](/sources/cai-2022.md) — §I; §II.A, Eqs. (1)–(15) (lattice Boltzmann, HRR collision, Vreman model); §II.B.1, Eqs. (16)–(20) (boundary-point reconstruction); §II.C.1, Eqs. (24)–(27), Fig. 1 (wall model on the IBM, constrained LES); §III, Tables I–II, Eq. (28); §IV, Table III, Figs. 4–9 (Ahmed body).
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §I (Cartesian and Voronoi grids at the previous workshop, aspect ratio); §II.1–2, §II.5, Tables 1–2 (two immersed-boundary Cartesian submissions, W-049 as outlier); §IV (stall topology B); §VI (grid isotropy).
 - [Placco et al. (2023)](/sources/placco-2023.md) — §2 (ghost-point-forcing IBM in STREAmS); §3 (grid).
 - [Ferrer et al. (2023)](/sources/ferrer-2023.md) — §4.7, Eqs. (27)–(29), Fig. 14 (volume penalization, ray tracing, wind turbine).
 - [Vicente Cruz & Lamballais (2023)](/sources/vicentecruz-2023.md) — §2.1; §3, footnote 6 (reconstruction inside the solid, soft no-slip); §7.1, Fig. 24 (pipe DNS and LES).

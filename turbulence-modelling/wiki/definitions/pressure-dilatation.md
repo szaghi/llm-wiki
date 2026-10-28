@@ -5,7 +5,7 @@ description: "The pressure dilatation, the product of pressure and velocity dive
 status: established
 aliases: [pressure-dilatation, pressure–dilatation correlation, pressure dilatation work, pressure-dilatation work, pressure-dilatation term, SGS pressure dilatation, subgrid pressure dilatation, pressure dilatation dissipation rate]
 tags: [compressible, dns, les, rans, numerical-dissipation]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T01:51:00Z
 ---
 
 # Pressure dilatation
@@ -122,7 +122,15 @@ and shock interactions agree that it is small away from shocks:
   $x^*\approx-1.5$ ($x^*$ the streamwise distance from the impingement over
   the reference thickness) (§6.2, Fig. 11a). Their caveat: near the shocks
   the shock-capturing dissipation makes the spectral budget unreliable
-  (§7). See
+  (§7). In the follow-up study of the same DNS database, which follows
+  the turbulence recovery downstream of the interaction,
+  [Yu et al. (2023)](/sources/yu-2023.md), §5.2, Eq. (5.2), write the same
+  Favre budget and drop both the pressure-dilatation and the mass-flux
+  terms at $M_\infty=2.28$, citing earlier interaction studies (Li et al.
+  2010, Jammalamadaka et al. 2014, Tong et al. 2017) rather than their own
+  budget; the retained production, dissipation, advection and turbulent
+  transport then carry the recovery, with dissipation about $0.8$ of the
+  production in magnitude for $0.2\le y/\delta\le1$. See
   [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 - **Separated hypersonic interactions.** In the turbulent-kinetic-energy
   budgets of two hypersonic compression-ramp LES (Mach 7.2 over a 33° ramp,
@@ -228,7 +236,8 @@ protocol on
   Fig. 3 caption, for the same symbol defined by their Eq. (3.6). Yu et
   al. (2022) write the term $\Pi_K$ in Eq. (4.1) and $\Pi_k$ in the text.
 - **Evidence.** All findings above are from single configurations: one
-  shock-interaction DNS each (Yu et al.; Tonicello et al.), two LES of
+  shock-interaction DNS each (Yu et al., whose 2023 study neglects the
+  term in the recovery region by citation; Tonicello et al.), two LES of
   ramp interactions (Helm & Martín), one family of decaying runs (Cao et
   al.), one dense gas in one decaying configuration (Zhang et al. 2022d). Tonicello et al.'s correlations are a priori, with no LES run.
 - **What a "small" term means.** Yu et al. and Helm & Martín judge the
@@ -240,6 +249,7 @@ protocol on
 
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §4, Eqs. (4.1)–(4.10) (resolved pressure-dilatation work $K_1$); §4.2, Table 4, Figs. 23–24; §5, Eqs. (5.1)–(5.3), Table 6 (correlation with the subgrid transfer, spherical part).
 - [Yu et al. (2022)](/sources/yu-2022-e.md) — §4, Eq. (4.1), Fig. 6 (turbulent pressure dilatation in an oblique shock interaction); §6.2, Fig. 11a (spectral pressure dilatation); §7.
+- [Yu et al. (2023)](/sources/yu-2023.md) — §5.2, Eq. (5.2), Fig. 15 (pressure dilatation and mass-flux terms neglected at $M_\infty=2.28$ by citation; $D_K/P_K\approx-0.8$ in the outer layer).
 - [Qi et al. (2022)](/sources/qi-2022-b.md) — §3.1, Eqs. (3.1), (3.6); §3.2, Eq. (3.24), Fig. 3 (subgrid pressure dilatation and its model).
 - [Cao et al. (2022)](/sources/cao-2022.md) — §3.1, Fig. 5; §3.4, Fig. 14 (volume-averaged pressure dilatation in the Taylor–Green vortex and in compressible decay).
 - [Cao et al. (2022b)](/sources/cao-2022-c.md) — §IV A, Eq. (16), Fig. 3 (negligible $\varepsilon_3$ at $M=0.1$); §IV B, Eq. (17) (subgrid pressure dilatation in the a priori $k_{\mathrm{sgs}}$ equation).

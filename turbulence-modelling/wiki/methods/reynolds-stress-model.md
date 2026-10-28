@@ -5,7 +5,7 @@ description: "Second-moment RANS closures that transport the six Reynolds stress
 status: established
 aliases: [Reynolds-stress model, RSM, DRSM, differential Reynolds-stress model, second-moment closure, Reynolds stress transport model, RSTM, SSG/LRR-ω, SSG/LRR-ω-γ, ATAAC DRSM, RSM-IDDES, RSM-DynIDDES]
 tags: [rans, reynolds-stress-model, transition, turbomachinery, separated-flow]
-timestamp: 2026-10-27T20:38:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Differential Reynolds-stress models
@@ -86,6 +86,19 @@ the algebraic and explicit algebraic stress models among the most advanced
 of them, before judging RANS as a whole unsuitable for transient features
 such as transition ([Idelsohn et al. (2024)](/sources/idelsohn-2024.md),
 §1.2).
+
+**An eddy-viscosity model built by analogy.** Mays et al. (2023, §3.2.1)
+state that earlier studies, their own and those of the literature, found
+linear eddy-viscosity models generally unable to capture the flow physics
+of the critical-regime cylinder, "with mixed results for Reynolds Stress
+Models" (citing Palkin et al. 2016). Their base model is the Lag elliptic-blending
+[$k$-$\varepsilon$ model](/methods/k-epsilon-model.md), whose equation for
+the reduced stress function is "reconstructed by analogy with a Reynolds
+Stress Model" and whose production contains an algebraic Reynolds-stress
+anisotropy tensor and the Spalart–Shur rotation tensor; the analogy, they
+state, gives the model sensitivity to transition and non-linear effects
+([Mays et al. (2023)](/sources/mays-2023.md), §2.1.1, App. Eqs. 16–21,
+§3.2.1; see [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)).
 
 **Three-dimensional boundary layers.** Devenport & Lowe (2022) give a
 physical reason for the stress-transport level in skewed boundary layers.
@@ -432,3 +445,4 @@ assessing their $k$-$\omega$ [wall function](/methods/rans-wall-function.md)
 - [Li et al. (2022)](/sources/li-2022-k.md) — §II B–C Eqs. 2–5, 9, §III A–C Fig. 18.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.2.
 - [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §2.2 Eqs. 2.38–2.42, §4.1, §5.1, §5.4 Figs. 37–42.
+- [Mays et al. (2023)](/sources/mays-2023.md) — §2.1.1, App. Eqs. 16–21, §3.2.1.

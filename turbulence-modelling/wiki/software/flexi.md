@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "FLEXI"
-description: "FLEXI is an open-source high-order DGSEM framework for compressible scale-resolving simulation, with the HOPR mesh generator and POSTI post-processing; this page records its numerics, turbulence features, parallel performance and the LES studies run with it."
+description: "FLEXI is an open-source high-order DGSEM framework for compressible scale-resolving simulation, with the HOPR mesh generator and POSTI post-processing; this page records its numerics, turbulence features, parallel performance and the LES studies run with it, including a high-order fluid–structure coupling."
 status: established
 aliases: [FLEXI framework, HOPR, POSTI]
 tags: [software, dg, les, kinetic-energy-preserving, reinforcement-learning]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T02:13:00Z
 ---
 
 # FLEXI
@@ -241,6 +241,43 @@ and super-samples high-order data to linear output (Krais et al. 2021, §2.3,
   reaches the grid-converged separation length with 182,000 degrees of
   freedom (512 cores, 15 min) where second-order finite volume needs
   409,500 (1152 cores, 9 min) (§4.2).
+- **Shock/boundary-layer interaction over an elastic panel**
+  ([Gao et al. 2023](/sources/gao-2023.md); University of Stuttgart): FLEXI
+  extended to a loosely coupled, partitioned fluid–structure interaction in
+  which both solvers are high order. The fluid side is the split-form
+  arbitrary Lagrangian–Eulerian DGSEM with the kinetic-energy-preserving
+  two-point flux of Pirozzoli on LGL nodes, BR1 lifting and the five-stage
+  fourth-order Runge–Kutta of Carpenter & Kennedy, with the
+  [geometric conservation law](/properties/geometric-conservation-law.md)
+  discretized in the same basis; wall-resolved
+  [implicit LES](/definitions/implicit-les.md) with no subgrid model
+  (§1, §3.1). The structure is a Timoshenko beam in a Legendre spectral
+  finite-element method with Newmark time stepping, on a mesh matching the
+  fluid one at the interface; the interior mesh moves by radial-basis-function
+  interpolation, and the fluid is subcycled with cubic-in-time interpolation
+  of the mesh motion (§3.2–3.3). Shocks are captured by the
+  positivity-preserving, minimum-entropy adaptive modal filter of Dzanic &
+  Witherden, confined to the elements flagged by a shock indicator (an
+  improved Ducros indicator in the turbulent case, plus the region above
+  $2\delta_r$ of the initial field); the authors argue that the confinement
+  keeps filter dissipation out of the smooth turbulent field and makes
+  hyperbolic–parabolic splitting unnecessary (§3.1.3, §5.3; see
+  [explicit modal filtering](/methods/explicit-modal-filtering.md),
+  [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)
+  and [shock sensors](/definitions/shock-sensor.md)). The Mach 2, $8^\circ$
+  interaction ($Re_{\theta}=2188$ at the reference station) runs at $N=6$ on
+  $223\times89\times26$ elements (about 177 million degrees of freedom) on
+  16,384 cores of HAWK, 48.0 h of wall time and $8.0\times10^5$ CPU hours;
+  the PID is $3.26\times10^{-6}$ s, about 55.7% above the split-form ALE
+  DGSEM with prescribed mesh motion in free stream (§5.1, Table 4). The
+  shock-free boundary layer at the same conditions runs at a PID of about
+  1.74 µs, about 34.6% above a zonal-LES baseline of Kempf et al., mainly
+  through the communication overhead of statistics collection (§5.2).
+  Against the rigid panel of Gao et al. (2022) the separation area is
+  "49.0% larger" and a low-frequency unsteadiness appears at the panel frequency
+  (3225 Hz, $St\approx0.01$), while the separation-induced frequency
+  $St\approx0.03$ is essentially unchanged (§5.3–5.4; see
+  [shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
 - **NASA Rotor 37 cascade, CPU reference** for GALÆXI (Kurz et al. 2025,
   §6.3, Table 3): $2.6\times10^8$ degrees of freedom at $N=5$ on 32 768
   cores (about 7900 per core), PID $1.02\times10^{-6}$ s, 7538 s of wall
@@ -291,6 +328,19 @@ Flad & Gassner (2017) ran their study of kinetic-energy-preserving DG LES in an
   values give 25.9% less, 35% being the excess of the finite-volume cost
   over the DG one *(compiler check, not in the sources)*.
 
+- Gao et al. (2023) cite FLEXI as "Krais et al. (2020a)", the work read
+  here as Krais et al. (2021). Their rigid-panel reference (Gao et al.
+  2022) used the subcell finite-volume scheme with an improved Jameson
+  indicator, the elastic case the confined adaptive filter with an improved
+  Ducros indicator; the authors believe the change has no influence near
+  the wall because no shock capturing is active there (§5), without a run
+  that isolates it. The boundary-layer PID of 1.74 µs (about 10,800
+  degrees of freedom per core, 34.6% above the baseline of Kempf et al.)
+  and that of Gao et al. (2022), 1.55 µs at about 5687 per core ("about
+  94.0% larger" than the baseline of Krais et al.), come from runs at
+  different loads per core against different baselines and are recorded
+  side by side.
+
 # Citations
 
 - [Krais et al. (2021)](/sources/krais-2021.md) — §1–§2 (framework, HOPR, POSTI, features); §3–§4 (numerics); §5.6–5.8, Eq. (68), Tables 3–4, Fig. 20 (cost and scaling); §6 (reproducibility); §7.1–7.3 (applications).
@@ -302,3 +352,4 @@ Flad & Gassner (2017) ran their study of kinetic-energy-preserving DG LES in an
 - [Chapelier et al. (2024)](/sources/chapelier-2024.md) — HAL accepted manuscript: §III.B.f, Tables I–II (FLEXI configuration, scaling claim); §IV.A–B, Figs. 5–8 (supersonic Taylor–Green results); App. A, Fig. 9.
 - [Gao et al. (2022)](/sources/gao-2022.md) — §1, §3.1 (FLEXI DGSEM, implicit LES); §3.2 (subcell scheme, positivity limiter, filtered indicator); §4.2 (laminar interaction cost); §5.1–5.3, Eq. (19), Tables 1–2 (set-up, PID, cost, separation).
 - [Kurz et al. (2025)](/sources/kurz-2025.md) — arXiv v2: §1, §3.1 (GALÆXI as a FLEXI port, MPI strategy); §4.4 (CPU optimum per core); §5.2 (identical Taylor–Green results); §6.3, Table 3 (Rotor 37 CPU reference, energy).
+- [Gao et al. (2023)](/sources/gao-2023.md) — §1, §3.1–3.3 (split-form ALE DGSEM in FLEXI, confined adaptive filter, beam solver, coupling, mesh motion); §5.1–5.4, Table 4, Eq. (68) (set-up, PID, cost, separation and spectra).

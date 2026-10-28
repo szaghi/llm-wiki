@@ -5,7 +5,7 @@ description: "The attached-eddy hypothesis models the logarithmic region of wall
 status: established
 aliases: [attached eddy model, attached-eddy model, Townsend's attached eddies, wall-attached eddies, inactive motions, uniform momentum zones]
 tags: [boundary-layer, dns, compressible, hypersonic]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T02:18:00Z
 ---
 
 # Attached-eddy hypothesis
@@ -141,6 +141,49 @@ prohibitive (see [wall-modelled LES](/methods/wall-modelled-les.md) and
 [grid-point requirements](/results/les-grid-point-requirements.md)). The
 review does not name the attached-eddy hypothesis.
 
+## Attached and detached variables as a recovery diagnostic
+
+Downstream of an oblique
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+at Mach 2.28, [Yu et al. (2023)](/sources/yu-2023.md) (§3, Fig. 6) use the
+attached-eddy classification (Townsend 1976; Hwang 2015, as cited) to decide
+which near-wall statistics measure recovery. Below $y^+\approx30$ the
+wall-normal stress and the Reynolds shear stress in wall scaling collapse
+on the reference-station profiles from $x^*=10$ ($x^*$ the distance from
+impingement in reference thicknesses, page-local). They call these
+"detached variables": the outer large-scale motions leave no strong
+footprint on them near the wall because of the no-penetration condition.
+The streamwise and spanwise stresses are "wall-attached variables". The
+streamwise one collapses below $y^+\approx40$ but stays above the reference
+value; the spanwise one keeps decreasing and has not converged by the last
+station ($x^*=16.7$). The authors conjecture two competing effects: the
+growing Reynolds number intensifies the wall-attached near-wall
+fluctuations, while the decaying outer large-scale motions weaken their
+footprints. They therefore judge near-wall recovery by the detached
+variables. The spanwise spectra support the same split (§5.1, Fig. 12).
+The mixing-layer-induced outer peak penetrates to the wall in the $u$ and
+$w$ spectra (a "superposition effect", stronger and wider in scale for
+$w$), but not in the $v$ spectrum, "the wall-normal velocity is not a
+wall-attached variable".
+
+## Inner–outer interaction in wall-modelled LES
+
+[Maeyama & Kawai (2023)](/sources/maeyama-2023.md) (§6, App. C) find that
+[wall-modelled LES](/methods/wall-modelled-les.md) of a Mach 2.28 boundary
+layer at $Re_\tau$ up to about 14 000 does not reproduce the Reynolds-number
+growth of the outer peak of the premultiplied spanwise spectrum of $u$ at
+$y/\delta\approx0.15$, nor that of the log-region streamwise stress. A
+spanwise cut-off at $\lambda_z/\delta=0.7$ places the deficit in the large
+scales, which the grid nominally resolves (§6.2, Fig. 22). They
+speculate (their word, "just speculation as of now") that the outer peak
+grows through the inner–outer interaction with the inner peak, which the
+modulation of the near-wall cycle by the outer motions raises with
+Reynolds number (Hutchins & Marusic 2007; Mathis et al. 2009, as cited).
+On this reading the outer peak cannot grow when the near-wall structures
+are not resolved. They set this against the conclusion of Mizuno & Jiménez
+(2013, as cited) that log-region structures do not depend on seeding from
+the wall (§6.2). The paper does not name the attached-eddy hypothesis.
+
 ## Departures under strong wall cooling
 
 Huang et al. (2022) find that the Mach 10.9 boundary layer with
@@ -179,3 +222,5 @@ are in the cooled Mach 2 and 5.86 cases of Cogo et al. (2022, §3.1).
 - [Huang et al. (2022)](/sources/huang-2022.md) — §4.1, Fig. 11; §4.2, Eq. (4.8), Figs. 13–14 (logarithmic stresses, plateaus, inactive modes); §5, Figs. 21–26 (spectra, scale separation under cooling).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §1, Fig. 1 (eddy size and WMLES resolution; passing mention).
 - [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §2.2, Figs. 4–6 (predictions of the hypothesis, inactive motion, inner-peak growth, coherent-structure families); Marusic & Perry eddy types for APG history.
+- [Yu et al. (2023)](/sources/yu-2023.md) — §3, Fig. 6 (attached and detached variables after a shock interaction); §5.1, Fig. 12 (superposition footprints in the $u$, $w$ spectra, none in $v$).
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §6.1–6.2, Figs. 19–22; App. C (outer peak missed by WMLES; inner–outer interaction speculation; Mizuno & Jiménez 2013 as cited).

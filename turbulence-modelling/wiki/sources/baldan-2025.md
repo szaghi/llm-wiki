@@ -138,7 +138,7 @@ No printed duplicates.
 
 # Pages created or updated
 
-Chunk 6 (2026-10-26), cited further in chunk 8. This source is cited on:
+Chunk 6 (2026-10-26), cited further in chunks 8, 12. This source is cited on:
 
 - [NACA 0012 airfoil](/benchmarks/naca-0012-airfoil.md)
 - [Dynamic stall](/definitions/dynamic-stall.md)
@@ -151,3 +151,4 @@ Chunk 6 (2026-10-26), cited further in chunk 8. This source is cited on:
 - [Local-correlation-based transition models](/methods/local-correlation-based-transition-model.md)
 - [WALE model](/methods/wale-model.md)
 - [Grid-point requirements of LES and DNS](/results/les-grid-point-requirements.md)
+- [ANSYS Fluent](/software/ansys-fluent.md)

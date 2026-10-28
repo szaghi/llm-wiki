@@ -5,7 +5,7 @@ description: "Wall-stress models of wall-modelled LES that keep unsteadiness, co
 status: established
 aliases: [NEQWM, non-equilibrium wall model, nonequilibrium wall model, TBLE wall model, thin-boundary-layer-equation wall model, two-layer zonal wall model, integral wall model, wall-model integrated LES, integrated wall model]
 tags: [wall-model, wmles, boundary-layer, separated-flow]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T02:18:00Z
 ---
 
 # Non-equilibrium wall models
@@ -331,6 +331,26 @@ equilibrium channel flow and leave non-equilibrium flows to future work
 §2.5) use the HyWall library, which supports non-equilibrium models through
 data at the surface-triangle centroids, but run only its equilibrium model.
 
+**Equilibrium models on a strongly non-equilibrium aircraft flow.** In the
+HLPW-4 wall-modelled LES focus group on the
+[NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md) configuration
+summarized by [Kiris et al. (2023)](/sources/kiris-2023.md) (§II.5,
+Table 2), "all groups utilized equilibrium models with adiabatic thermal
+conditions" with the exception of one (Table 2 lists no wall model for the
+Euler submission W-030). The exception (W-032, PowerFLOW, a
+[lattice Boltzmann](/methods/lattice-boltzmann-method.md) code) used a
+proprietary "pressure-aware" formulation listed as a non-equilibrium wall
+model; no formula is printed. The authors call the ODE-versus-algebraic
+variants of the equilibrium model "of no consequence for the present flow".
+They suggest that a larger source of discrepancy may be whether the wall
+stress is applied at nodes or at cell centres. For the use of equilibrium
+modelling in "strongly nonequilibrium flows such as the one being studied
+here" they refer to the reviews of Bose & Park (2018) and Larsson et al.
+(2016). The workshop does not isolate the effect of the non-equilibrium
+model: the remaining load scatter at high angle of attack is attributed to
+grid resolution and to the predicted onset of inboard stall (see
+[wall-modelled LES](/methods/wall-modelled-les.md)).
+
 ## Cost
 
 Bose & Park (2018, §3) put the full non-equilibrium TBLE at about twice the
@@ -397,3 +417,4 @@ solver"; no timing of the integrated model is shown. On the equilibrium page,
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.5; §3.4.
 - [Li et al. (2022)](/sources/li-2022-k.md) — §III B, Table I, Figs. 7–11 (periodic-hill WMLES reference with the Park–Moin model).
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I; §II C; §IV.
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.5, Table 2 (equilibrium models in HLPW-4; the pressure-aware model of W-032).

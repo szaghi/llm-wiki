@@ -5,7 +5,7 @@ description: "The NASA Juncture Flow wing–fuselage model, with smooth-body cor
 status: established
 aliases: [Juncture Flow experiment, NASA JF, wing-body juncture flow]
 tags: [benchmark, wmles, separated-flow, boundary-layer, data-driven]
-timestamp: 2026-10-27T20:48:00Z
+timestamp: 2026-10-28T01:52:00Z
 ---
 
 # NASA Juncture Flow
@@ -130,6 +130,29 @@ classifier-plus-predictor machine-learning wall model of Lozano-Durán & Bae
 was tested on this case and performed poorly in the separation zones (see
 [machine-learning wall models](/methods/machine-learning-wall-model.md)).
 
+## As a precedent in an aircraft-workshop assessment
+
+[Kiris et al. (2023)](/sources/kiris-2023.md), summarizing the
+wall-modelled LES of the [NASA CRM-HL](/benchmarks/nasa-crm-high-lift.md)
+at the Fourth High-Lift Prediction Workshop, use this case as the
+precedent for judging scale-resolving simulations by pressure rather than
+by velocity profiles (§I). For the Juncture Flow experiment, whose laser
+Doppler velocimetry gives velocity profiles, LES needed substantial grid
+resolution to approach the measurements (they cite the LAVA and CharLES
+studies of their refs. [9]–[11], [23]), and the LDV data encouraged WMLES
+on grids "at least 4× finer" in some cases to study convergence in
+velocity (§VI 5a). Corner-flow RANS closures (the QCR improvements of
+their ref. [24]) left errors of order one in the mean velocity inside the
+juncture separation, yet captured the surface topology of the separation
+and gave very accurate mean $C_p$ (§I). They also cite juncture-flow
+WMLES in which grids of aspect ratio one at the juncture gave the most
+accurate corner flow (their ref. [11], §I.2), and recommend LDV- and
+PIV-type velocity measurements "as was done in experiments like wing–body
+juncture flow" for future high-lift tests (§VI 5a). This agrees with
+Lozano-Durán et al. (2022) above, whose $C_p$ is within 5% on all grids
+while the velocity error at the juncture is about 15% and in the
+separation about 100%.
+
 ## Junction flows as a RANS modelling challenge
 
 The Juncture Flow model belongs to a wider class:
@@ -194,3 +217,4 @@ review shows no Juncture Flow data.
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.3; §4.8, Table 1, Fig. 18.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.1 (junction flows as a class; passing mention, the NASA model is not discussed); §4.1.
 - [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §5.1, §5.4, Figs. 39, 41 (pressure-driven 3D boundary layers; Juncture Flow cited as an example).
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §I, §I.2; §VI 5a (cited results; the case as precedent for pressure-based assessment).

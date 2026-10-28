@@ -5,7 +5,7 @@ description: "The triply periodic vortex flow that transitions from a single-mod
 status: established
 aliases: [TGV, Taylor-Green vortex, 2D Taylor–Green vortex, inviscid Taylor–Green vortex, supersonic Taylor–Green vortex, laminar Taylor–Green vortex, Brachet Taylor–Green vortex, High-Order CFD Workshop case C3.5]
 tags: [benchmark, les, implicit-les, sgs-model, dns, numerical-dissipation, compressible, filtering, kinetic-energy-preserving]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T01:57:00Z
 ---
 
 # Taylor–Green vortex
@@ -119,6 +119,9 @@ to the fully turbulent state.
 | [Svärd (2022)](/sources/svard-2022.md) | finite volumes, Chandrashekar's entropy-conservative flux with artificial diffusion on the mass flux only (entropy stable, positivity preserving), first-order viscous terms, forward Euler; Mach 0.1, zero bulk viscosity | $32^3$, $64^3$, $128^3$ | second-order energy-stable finite differences of van der Weide et al. ($65^3$, $129^3$), as quoted; reference enstrophy peak about 10.3 |
 | [Cao et al. (2022b)](/sources/cao-2022-c.md) | fourth-order two-stage [high-order gas-kinetic scheme](/methods/high-order-gas-kinetic-scheme.md), no model against Smagorinsky ($C_s=0.1$), Vreman and dynamic Smagorinsky imposed through the collision time; Mach 0.1, $Pr=1$ | $256^3$ cells; $128^3$ and $384^3$ (App. B) | the $1024^3$ DNS of [Cao et al. (2022)](/sources/cao-2022.md) |
 | [Cheng et al. (2023)](/sources/cheng-2023-b.md) | OpenFOAM finite volumes, AUSM+-up flux, ROUND reconstructions (two parameter sets) against the van Leer and MUSCL limiters, no model; inviscid, $p_\infty=100$, to $t=10$ | $128^3$ | a solution taken from a cited work |
+| [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) | continuous Galerkin finite elements (hexahedra, linear tetrahedra), RK4, van Cittert approximate deconvolution of order 5 to 10 with an explicit differential filter, no eddy viscosity; Mach 0.1; DNS at $Re=200$ | LES: $64^3$ and $128^3$ hexahedra, $64^3$ with 10% and 20% node perturbation, a tetrahedral mesh with 64 edge segments per side; DNS: $256^3$ and a mesh of 29.6 million tetrahedra | $Re=1600$: DNS of Jammy et al. ($512^3$, fourth-order finite differences); $Re=200$: Brachet et al.; LES of Bull & Jameson |
+| [Shi & Yan (2023)](/sources/shi-2023.md) | [flux reconstruction](/methods/flux-reconstruction.md) (in-house NFR), $N=3$, Roe flux, BR2, Mach 0.1 | $32^3$, $64^3$, $96^3$ elements (128 to 384 degrees of freedom per direction) | $512^3$ spectral solution |
+| [Tonicello et al. (2023)](/sources/tonicello-2023.md) | [spectral difference](/methods/spectral-difference-method.md), sixth order ($N=5$), Roe flux, third-order Runge–Kutta at 50%, 90% and 95% of the stability limit; inviscid, Mach 0.1 | $32^3$ elements | none |
 | [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) | [pseudo-direct numerical simulation](/methods/pseudo-direct-numerical-simulation.md) (subgrid stress from a database of DNS on representative volume elements) against a dynamic $k$-equation LES; domain of side $2\pi$, to $\hat t=20$ | $64^3$, $32^3$, $16^3$ | $512^3$ DNS, cited from [Wang et al. (2013)](/sources/wang-2013.md) |
 
 **The workshop case definition.** The $Re=1600$ case as most of these
@@ -298,6 +301,69 @@ $64^3$ all solutions are close to the DNS; at $32^3$ the LES
 under-predicts the energy decay, while P-DNS over-predicts it between
 $\hat t=5$ and 8 and agrees over most of the final phase; $16^3$ is also
 run. §2.10.4 does not state the Reynolds number.
+
+**Approximate deconvolution with an explicit differential filter on
+unstructured grids.** [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md),
+§6.2, Figs. 7–13, close the compressible equations with the van Cittert
+[approximate deconvolution](/methods/scale-similarity-model.md) model in
+the form in which all equations are solved for the deconvolved variables,
+with no eddy viscosity and no regularization term; the filter is an
+elliptic differential filter discretized element by element so that it
+removes the grid cut-off completely (see
+[explicit modal filtering](/methods/explicit-modal-filtering.md)). The
+hexahedral filter is set for a cut-off of about $\pi/2$ and the
+tetrahedral one about $3\pi/5$ (in units of the local grid spacing). Their
+DNS at $Re=200$ on $256^3$ and on the tetrahedral mesh, with the filter
+used only for de-aliasing, is "nearly identical" to Brachet et al. At
+$Re=1600$:
+
+- on $64^3$ hexahedra the energy-based dissipation rates of deconvolution
+  orders 5, 7, 8 and 10 (relaxation factor 0.8) coincide to $t\approx4$,
+  then higher order dissipates less, and the vorticity-based dissipation
+  approaches the DNS as the order grows; order 10 stays stable but its
+  energy-based rate oscillates and slightly over-predicts the peak, which
+  the authors attribute, conjecturally, to a temporary pile-up near the
+  cut-off (Fig. 10);
+- the deconvolution LES on $64^3$ is more accurate in both rates than the
+  $N=1$ flux-reconstruction LES of Bull & Jameson with 128 degrees of
+  freedom per direction (Fig. 10);
+- perturbing the nodes by 10% changes little until the dissipation peak
+  ($t\approx9$) and over-predicts after it; 20% under-predicts before the
+  peak, over-predicts after it and delays it to $t\approx10$; the authors'
+  "merely conjectures" link this to grid anisotropy delaying the breakdown
+  of anisotropic vortices (Fig. 11);
+- on the tetrahedral mesh the peak comes earlier ($t\approx7.6$ at order 8,
+  8.5 at order 10) and lower, which the authors attribute to the stronger
+  filter on linear tetrahedra (Fig. 12);
+- no LES spectrum piles energy near the grid cut-off $k_c=32$, and the
+  one-dimensional vorticity spectra decay rapidly there (Fig. 13).
+
+The companion decaying-turbulence test is on
+[homogeneous isotropic turbulence](/benchmarks/homogeneous-isotropic-turbulence.md).
+
+**Flux reconstruction as a scale-resolving solver.**
+[Shi & Yan (2023)](/sources/shi-2023.md), §III.A, Figs. 1–2, validate
+their flux-reconstruction solver at $Re=1600$, Mach 0.1 with $N=3$ on
+$32^3$, $64^3$ and $96^3$ elements: the kinetic energy and its decay rate
+converge under refinement toward the $512^3$ spectral solution. They then
+use the solver for implicit LES of a
+[shock–turbulent boundary layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
+
+**The time step in an under-resolved spectral-difference run.**
+[Tonicello et al. (2023)](/sources/tonicello-2023.md), §4.3.1, Fig. 25,
+test what their fully discrete
+[eigensolution analysis](/methods/eigensolution-analysis.md) predicts for
+an implicit-LES-like flow: the inviscid TGV at Mach 0.1 on $32^3$
+elements of sixth-order spectral difference with third-order Runge–Kutta,
+at time steps of 50%, 90% and 95% of the stability limit. They take the
+numerical dissipation as the kinetic-energy decay rate minus the
+pressure–dilatation work (Eq. 28; see
+[numerical dissipation](/properties/numerical-dissipation.md)). The three
+runs are "almost indistinguishable", with a peak near $t=10\,L/U_0$, and
+the gradual fall of numerical dissipation with the time step that the
+linear analysis predicts "does not manifest": in under-resolved flows the
+spatial error dominates, while for the well-resolved vortex transport of
+the same paper the linear prediction holds (§4.2.1, §4.3.2, §5).
 
 **GPU timing and compressibility.** [Wang et al. (2023b)](/sources/wang-2023-b.md)
 (read in arXiv v1), §4.1, use the TGV at $Re=1600$, Mach 0.1, $Pr=1$ over
@@ -1089,6 +1155,19 @@ sources)*.
   width as "$\Theta=10$" where the calibrated quantity is the
   dimensionless $\Theta/\Delta t=10$ (§3.3, Fig. 6), and word the
   numerical convergence of §3.4 as "the present work proves".
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) state a filter
+  cut-off of about $\pi/2$ (hexahedra) and $3\pi/5$ (tetrahedra) in §6.2
+  and "$\kappa_f\approx0.8\pi$" for all runs in the Fig. 13 caption, and
+  point to Fig. 9b for $t\approx3.2$, which the caption places in panel
+  (a). Their comparison with Bull & Jameson sets their $64^3$-element
+  linear finite elements (274,625 nodes, Table 2) against $N=1$ flux
+  reconstruction on $64^3$ elements, 128 degrees of freedom per
+  direction; the role of the relaxation factor in the fully deconvolved
+  form is not specified. Their time unit is not defined.
+- [Tonicello et al. (2023)](/sources/tonicello-2023.md) print the initial
+  pressure with $\rho_0U_0/16$ (Eq. 27), where the other sources have
+  $\rho_0V_0^2/16$; with $U_0=1$ the value is unchanged. Their run has no
+  reference solution: the comparison is among time steps only.
 - [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) write the
   polynomial degree $\mathcal P$ (here $N$). Their time-step independence
   holds exactly for repeated application of a diagonal modal operator;
@@ -1131,3 +1210,6 @@ sources)*.
 - [Cao et al. (2022b)](/sources/cao-2022-c.md) — §I; §III, Eqs. 7–8, 12–13; §IV A–C, Eqs. 20–21, Tables I–II, Figs. 1–8; §V; App. B, Figs. 9–12.
 - [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §3.5, Figs. 6–7.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.10.4, Fig. 13.
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §2, Eqs. 3–6; §3–4; §6.2, Table 2, Eqs. 74–82, Figs. 7–13.
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §III.A, Eq. 27, Figs. 1–2.
+- [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §4.3.1, Eqs. 27–28, Fig. 25; §5.

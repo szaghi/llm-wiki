@@ -5,7 +5,7 @@ description: "The linear closure that aligns the deviatoric Reynolds or subgrid 
 status: established
 aliases: [Boussinesq approximation, linear eddy-viscosity hypothesis, eddy-viscosity assumption, linear constitutive relation, stress-strain alignment]
 tags: [eddy-viscosity, rans, sgs-model, les, data-driven]
-timestamp: 2026-10-27T21:07:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Boussinesq eddy-viscosity hypothesis
@@ -371,6 +371,35 @@ and treatments of the trace; translated to the registry they agree.
   neural network, and $k$ appears only in this isotropic term
   ([Shan et al. (2023)](/sources/shan-2023.md), §II.A, Eqs. 1–2; see
   Qualifications for the printed derivative).
+- **LES, compressible, per unit mass, with a dynamic trace.** Xu et al.
+  (2023) define $\tau_{ij}=\widetilde{u_iu_j}-\tilde u_i\tilde u_j$ per unit mass,
+  entering the momentum equation as $-\partial_j(\bar\rho\tau_{ij})$, and write
+  the eddy-viscosity baselines as
+  $\tau^d_{ij}=-2\mu_{\mathrm{SGS}}\tilde S^d_{ij}$,
+  $\tau_{kk}=2\mu_{I,\mathrm{SGS}}\lvert\tilde S\rvert$ and
+  $Q_j=-(\mu_{\mathrm{SGS}}/Pr_t)\partial_j\tilde T$ for the subgrid heat flux
+  $Q_j=\widetilde{u_jT}-\tilde u_j\tilde T$ (page-local $\mu_{\mathrm{SGS}}$,
+  $\mu_{I,\mathrm{SGS}}$, $Q_j$; kinematic quantities despite the $\mu$, since
+  $\tau_{ij}$ carries no density), with the trace coefficient $C_I$ in
+  $\mu_{I,\mathrm{SGS}}=C_I\Delta^2\lvert\tilde S\rvert$ solved dynamically in
+  the dynamic Smagorinsky model and set to zero in the Vreman and WALE
+  models ([Xu et al. (2023)](/sources/xu-2023.md), §2.1–2.2, Eqs.
+  2.10–2.17). With $\mu_{\mathrm{SGS}}=C_s^2\Delta^2\lvert\tilde S\rvert$ this is the
+  Yoshizawa trace $\tau_{kk}=2C_I\Delta^2\lvert\tilde S\rvert^2$ of Volpiani
+  (2024) and Qi et al. (2022) without the density *(compiler check, not in the
+  sources)*.
+- **RANS, variable-property channel.** Diez Sanhueza et al. (2023) close
+  the turbulent shear stress, the turbulent heat flux and the turbulent
+  dissipation of the one-dimensional mean momentum and energy equations of
+  heated and supersonic channels with the Boussinesq approximation and the
+  strong Reynolds analogy, with a dynamic eddy viscosity $\mu_t$ from a
+  Myong–Kasagi $k$-$\varepsilon$ model and $Pr_t=1$
+  ([Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md), §2.2, Eqs.
+  2–4). Their field-inversion multipliers act on the dissipation terms of
+  the $k$ and $\varepsilon$ equations, and the learned correction enters the
+  $k$ equation as an explicit source; of fourteen input features,
+  $\mu_t/\mu_w$ ranks most important (§3, §5, Fig. 10, §6; see [k-ε models](/methods/k-epsilon-model.md) and
+  [field inversion](/methods/field-inversion-machine-learning.md)).
 
 ### A traceless Reynolds stress
 
@@ -464,6 +493,24 @@ most of all near the wall, while the two models have identical dissipation
 correlations, because only the isotropic part of the coefficient tensor
 dissipates ([Agrawal et al. (2022)](/sources/agrawal-2022.md), §V, Figs. 1–2).
 The authors add that these correlations do not measure alignment.
+
+**Misalignment blamed for low correlations, compressible walls.** Xu et
+al. (2023) test the dynamic Smagorinsky, Vreman and WALE models a priori
+against filtered DNS of a compressible isothermal-wall channel at
+$Re=3000$, $M=1.5$ (top-hat filter in the wall-parallel directions, filter
+ratios 8 and 4): their correlation coefficients with the exact stress and
+heat flux are "almost lower than 0.6" (§2.2; "mostly smaller than 0.4" in
+§3.1) and their relative errors "almost equal to 1.0", which the authors
+attribute to the "unphysical linear alignment assumptions" between the
+subgrid stress and the filtered strain and between the heat flux and the
+temperature gradient, citing Anderson & Meneveau and Da Silva & Métais
+(§2.2, §3.3, Figs. 1–3). The dynamic model has slightly larger correlations
+for the diagonal components, which they attribute to its dynamic $C_I$.
+The eddy-viscosity models produce only forward fluxes of kinetic energy
+and temperature variance, while the filtered DNS and their non-linear
+model also give inverse fluxes (§4.1, Figs. 18–20; see
+[energy backscatter](/definitions/energy-backscatter.md)). The non-linear
+replacement is below.
 
 **Isotropy blamed for lost anisotropy and unsteadiness.** Yang & Ma (2022)
 state that "the isotropic hypothesis of the eddy viscosity model" ignores
@@ -916,6 +963,31 @@ as Sandberg & Michelassi (2022) do for four tensors (§3.2, Eqs. 2–4). Both
 are on the [explicit algebraic Reynolds-stress model](/methods/explicit-algebraic-reynolds-stress-model.md)
 page.
 
+**An LES counterpart on the Lund–Novikov basis.** Xu et al. (2023, §3.1–3.2,
+Eqs. 3.1–3.43) replace the eddy-viscosity closure of the compressible
+subgrid stress by the non-linear algebraic expansion of Lund & Novikov in
+the resolved strain and rotation, in registry notation (the source's norm
+$\sqrt{\operatorname{tr}\tilde S^2}$ written $\lvert\tilde S\rvert/\sqrt2$;
+page-local $C^A_m$, $T^A_m$)
+$$\tau^d_{ij}=\Delta^2\Big(C^A_1\frac{\lvert\tilde S\rvert}{\sqrt2}T^A_1+C^A_2T^A_2+C^A_3T^A_3+C^A_4T^A_4+C^A_5\frac{\sqrt2}{\lvert\tilde S\rvert}T^A_5\Big),$$
+$$T^A_1=\tilde S^d,\quad T^A_2=\tilde S\tilde\Omega-\tilde\Omega\tilde S,\quad T^A_3=(\tilde S^2)^d,\quad T^A_4=(\tilde\Omega^2)^d,\quad T^A_5=\tilde\Omega\tilde S^2-\tilde S^2\tilde\Omega,$$
+with a four-term expansion of the trace and a four-vector expansion of the
+heat flux in $\partial_j\tilde T$; only the $T^A_1$ term is the Boussinesq
+one, $C^A_1\lvert\tilde S\rvert/\sqrt2=-2C_s^2\lvert\tilde S\rvert$ for the
+Smagorinsky viscosity *(compiler check, not in the sources)*. The
+coefficients come from the dynamic procedure or from small networks fed
+with invariants, and the "modified" form multiplies each velocity and
+temperature gradient by the local grid width in its direction, with
+$\Delta=1$ after normalization, to carry the near-wall grid anisotropy. A
+priori, the dynamic coefficients give correlations above 0.4 only for
+$y^+>50$; with network coefficients and normalized gradients every
+component reaches correlations above 0.91 and relative errors below 0.4
+(§3.1–3.2, Figs. 4, 8, 10). The authors conclude that the non-linear form,
+the grid-width normalization and the learned coefficients each contribute
+(§3.3). Details on
+[neural-network SGS models](/methods/neural-network-sgs-model.md) and the
+[tensor-basis neural network](/methods/tensor-basis-neural-network.md).
+
 ## The best-fit eddy viscosity
 
 If a reference stress is known, the scalar $\nu_t$ that brings the
@@ -1127,6 +1199,10 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - Tonicello et al. (2022) define the stress with the sign opposite to the
   registry's and include $\bar\rho$; their $K_3<0$ is forward transfer.
   Translated, their $\nu_t$ (Eq. 5.3) keeps its sign.
+- Xu et al. (2023) print the isotropic expansion of the scalar trace
+  $\tau_{kk}$ with the tensor terms $I\operatorname{tr}(\tilde S)$,
+  $I\operatorname{tr}(\tilde S^2)$, $I\operatorname{tr}(\tilde\Omega^2)$ (Eqs. 3.11,
+  3.37), a scalar equated to tensors as printed.
 
 # Citations
 
@@ -1189,3 +1265,5 @@ Duraisamy et al. (2019) make the same point for the dissipation rate
 - [Shan et al. (2023)](/sources/shan-2023.md) — §II.A Eqs. 1–2, §II.C, §IV.
 - [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §5.1, §5.3, §5.4, Figs. 37–39.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.5.1.
+- [Xu et al. (2023)](/sources/xu-2023.md) — §2.1–2.2 Eqs. 2.10–2.17 Figs. 1–3, §3.1–3.3 Eqs. 3.1–3.43 Figs. 4, 8, 10, §4.1 Figs. 18–20.
+- [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §2.2 Eqs. 2–4, §3, §5 Fig. 10, §6.

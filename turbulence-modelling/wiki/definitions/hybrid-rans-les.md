@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Hybrid RANS/LES"
-description: "Scale-resolving approaches that model all turbulence with RANS in some regions or limits and resolve part of it as in LES elsewhere; the distinction from wall-modelled LES, operating modes, continuous eddy simulation, self-adaptive turbulence eddy simulation and sequential RANS-to-LES coupling, the deficiencies the sources identify, and applications."
+description: "Scale-resolving approaches that model all turbulence with RANS in some regions or limits and resolve part of it as in LES elsewhere; the distinction from wall-modelled LES, operating modes, continuous eddy simulation, self-adaptive turbulence eddy simulation, hybrid temporal LES and sequential RANS-to-LES coupling, the deficiencies the sources identify, and applications."
 status: established
-aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES, self-adaptive turbulence eddy simulation, SATES, very-large eddy simulation, VLES]
+aliases: [HRL, hybrid RANS-LES, RANS/LES hybrid, bridging model, hybrid turbulence model, scale-resolving simulation, SRS, continuous eddy simulation, CES, sequential RANS-LES, stress-blended eddy simulation, SBES, self-adaptive turbulence eddy simulation, SATES, very-large eddy simulation, VLES, scale-resolving hybrid model, SRH, hybrid temporal LES, HTLES]
 tags: [hybrid-rans-les, rans, les, des, pans]
-timestamp: 2026-10-27T21:07:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Hybrid RANS/LES
@@ -110,6 +110,25 @@ hybrid RANS–implicit-LES on a high-order flux-reconstruction method as a
 precedent for wall modelling of implicit LES; their own wall model belongs
 to the first category ([Huang et al. (2022c)](/sources/huang-2022-c.md), §I;
 see [implicit LES](/definitions/implicit-les.md)).
+Maeyama & Kawai (2023) take the narrow reading: near-wall modelling falls
+into LES/RANS hybrids that blend RANS and subgrid eddy viscosities, DES
+among them, with the switching location set explicitly or implicitly, and
+wall-stress models that run the LES down to the wall, and they call only
+the second "wall-modelled LES"
+([Maeyama & Kawai (2023)](/sources/maeyama-2023.md), §1). The
+summary of the wall-modelled-LES and lattice-Boltzmann group of the Fourth
+High-Lift Prediction Workshop groups by grid instead: the very-large-eddy
+simulation of the lattice Boltzmann code PowerFLOW, a $k$-$\varepsilon$-based
+closure that switches to an LES-type closure through an indicator function,
+follows "a hybrid RANS/LES philosophy" but is grouped with the wall-modelled
+LES submissions because it runs on $y^+\gg1$ grids
+([Kiris et al. (2023)](/sources/kiris-2023.md), §II.4; see
+[NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md)). Thawait et al.
+(2023) motivate their choice of DES by the two failures it avoids: RANS
+models "not suitable" for unsteady shocks, separation and
+shock/boundary-layer interaction, and the near-wall cost that restricts LES
+to moderate Reynolds numbers
+([Thawait et al. (2023)](/sources/thawait-2023.md), §I).
 
 Where the whole boundary layer stays in RANS, the grid need only resolve
 the free shear regions. François et al. (2022) use this argument for a
@@ -312,6 +331,56 @@ limited hybrids in industrial design
 ([Sandberg & Michelassi (2022)](/sources/sandberg-2022.md), §2.2.2.2). The
 placement of DES differs from that of Haering et al. above and of Bose &
 Park, see Qualifications.
+
+### Hybrid temporal LES: the scale-resolving hybrid model
+
+Mays et al. (2023) assess the scale-resolving hybrid (SRH) model of Duffal
+et al., a hybrid temporal-LES approach derived by formally applying a
+temporal filter to the Navier–Stokes equations, so that the temporal filter
+width moves the model from LES to RANS, "a theoretically unified model
+smoothly transitioning from RANS to LES"
+([Mays et al. (2023)](/sources/mays-2023.md), §1, §2.1.2, Eqs. 9–13). The
+host RANS model, the Lag elliptic-blending $k$-$\varepsilon$ model, is kept
+in subfilter form and only the dissipation of the modelled kinetic energy is
+multiplied, in registry symbols (subfilter quantities $k_{\mathrm{sgs}}$,
+$\varepsilon_{\mathrm{sgs}}$; time-mean total $k_{\mathrm{tot}}$, the sum of the
+time-mean modelled and resolved parts):
+
+$$\varepsilon_{\mathrm{sgs}}\to\psi_H\,\varepsilon_{\mathrm{sgs}},\qquad
+\psi_H=1-f_s+\frac{f_s}{r_K}\Big(\frac43-\frac13r_K^{3/4}\Big)\frac{k_{\mathrm{sgs}}}{k_{\mathrm{tot}}},$$
+
+$$r_K=1-\max\big(0,\;1-\beta_\psi\mathrm{CFL}_H^{2/3}\big),\qquad
+\mathrm{CFL}_H=\frac{\varepsilon}{k_{\mathrm{tot}}^{3/2}}\max(\Delta t\,U_s,\Delta),\qquad U_s=|\langle\boldsymbol u\rangle|+\sqrt{k_{\mathrm{tot}}},$$
+
+with $\psi_H\ge1$ the SRH factor, $r_K$ the "SRH energy ratio", the
+theoretical modelled-to-total energy ratio attainable with the given cell
+size and time step, $\beta_\psi=0.69$ calibrated on decaying isotropic
+turbulence and assumed constant, $\mathrm{CFL}_H$ a filtered CFL number,
+$U_s$ a sweeping velocity, $\Delta$ the cube root of the cell volume and
+$f_s$ the shielding function of the
+[DES page](/methods/detached-eddy-simulation.md) (all page-local; the
+printed $\varepsilon$ in $\mathrm{CFL}_H$ is not further specified). The form gives
+$r_K=\min(1,\beta_\psi\mathrm{CFL}_H^{2/3})$, and $\psi_H=1$ where $f_s=0$
+*(compiler check, not in the sources)*. The time means use exponential
+weighting over 300 time steps, fixed by STAR-CCM+; the $r_K$ derivation
+assumes an inertial-range spectrum (§2.1.2, §3.2.2). Because $\psi_H$
+contains the time-mean resolved energy through $k_{\mathrm{tot}}$, the model
+responds to the resolved content; the authors, after Heinz, call this a
+"major difference from DES formulations" and test the model against
+Heinz's two questions: under refinement the resolved fraction rises while
+the total kinetic energy stays roughly constant, and in turbulent regions
+the realised modelled-to-total ratio approximately matches $r_K$, diverging
+in weakly turbulent or irrotational regions where the spectral assumption
+fails (§3.1.1, §3.2.2, Figs. 4, 10c). The realised ratio flags
+under-resolved regions a posteriori (a patch with about 40% modelled energy
+at $Re_D=7.2\times10^5$), and $r_K$ from a RANS initialization gives a simple
+a priori measure (§3.2.2, Fig. 13). The convective flux blends second-order
+upwind and bounded central differencing with the shielding function as the
+blending weight, described as upwind in the enforced RANS zones and
+centred in LES-like zones (§2.2, Eqs. 14–15; see Qualifications). The
+introduction cites Spalart et al. (1997) and Girimaji (2006), the
+[PANS](/methods/partially-averaged-navier-stokes.md) paper, for the hybrid
+approach (§1).
 
 ### A four-group classification and the mode relations
 
@@ -681,6 +750,30 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
 [DES page](/methods/detached-eddy-simulation.md) and the
 [transition-model page](/methods/local-correlation-based-transition-model.md).
 
+**Grey area and shielding in a temporal hybrid.** In the SRH runs of Mays
+et al. (2023, §3.1.1, Fig. 5) the grey area, bounded by the isolines
+$r_K=0.99$ and 0.2 (taking 80% resolution as LES), is about $0.05D$ wide on
+the coarsest grid and intersects the free shear layer; its inner edge is
+set by the shielding and does not move with the grid, its outer edge moves
+closer to the wall and narrows on the finest grid. The factor $\psi_H$ grows
+rapidly away from the wall, which the authors credit with mitigating
+grey-area effects (§3.2.2, Fig. 9). The thin shielding needed for the
+breakdown of the separated shear layers costs log-layer mismatch in channel
+flow, which the original authors of the model reported, and the interaction
+of SRH with the Lag elliptic-blending host spuriously reduces the reduced
+stress function in the free stream, giving "very poor results" in
+high-Reynolds channel flow (§3.2.2; see
+[log-layer mismatch](/definitions/log-layer-mismatch.md)). The authors
+argue that "it is likely that there is no ideal universal shielding
+function" (§3.2.2).
+
+**Time step and dissipation in a workshop.** Kiris et al. (2023, §VI 1c)
+cite a hybrid RANS/LES time-step study of the Fourth High-Lift Prediction
+Workshop that attributes large inaccuracies in the wing-root separation of
+the NASA CRM high-lift model at $21.47^\circ$ from the dissipation of the
+large time steps that A-stable BDF2 allows; see
+[numerical dissipation](/properties/numerical-dissipation.md).
+
 ## Evidence from applications
 
 - **Four separated flows, compiled.** Heinz (2020) runs no simulation and
@@ -919,6 +1012,41 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
   fluctuations, its $C_p$-RMS at the experimental maximum being 0.0554
   against 0.0719 (RSM-IDDES), 0.0897 (SST-IDDES) and 0.0454 measured (§III
   B–C, Fig. 18; details on the [DES page](/methods/detached-eddy-simulation.md)).
+- **Drag crisis of a circular cylinder.** The SRH model above, on
+  unstructured meshes of 7.65–16.64 million cells with $y^+<1$, about five
+  times fewer than the reference wall-resolved LES (38.4–89.4 million),
+  gives $C_D=0.743$, 0.456, 0.252 and 0.276 at $Re_D=2.5$, 3.8, 5.3 and
+  $7.2\times10^5$ on its representative grids (0.292 on the finer grid at
+  $5.3\times10^5$) against 0.833, 0.481, 0.296 and
+  0.213 from the reference LES, where URANS with the same host gives 0.436,
+  0.354, 0.204 and 0.156; Strouhal numbers are 0.24/0.28/0.35/0.43 against
+  0.25/0.23/0.38/0.45 (Mays et al. 2023, §3.2, Tables 4–5). Force
+  fluctuations are damped by the near-wall URANS layer ($C_{L,\mathrm{rms}}$
+  0.238–0.339 against 0.486 at $Re_D=2.5\times10^5$). On the coarsest grid
+  WALE LES gives $C_D=1.247$ where SRH gives 0.743; SRH on that grid costs
+  about 39% of WALE on the finest grid and 51% of WALE on the intermediate one
+  (4695 against 12 150 and 9270 CPU hours; §3.1, Tables 2–3). The authors
+  claim "near-LES quality results" on meshes five times coarser than the
+  reference LES, which they argue "most likely could have achieved similar
+  quantitative results" on a smaller mesh, since it deliberately resolved the
+  far wake (§3.2.2, §4). See
+  [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md) and
+  [laminar separation bubble](/definitions/laminar-separation-bubble.md).
+- **High-lift aircraft, wall-modelled LES against hybrids.** In the Fourth
+  High-Lift Prediction Workshop the scale-resolving submissions, both
+  wall-modelled LES and hybrid RANS/LES, underpredict the outboard flap
+  suction peak relative to steady RANS at $21.47^\circ$, which explains the
+  excessive nose-up pitching moment of all wall-modelled LES above
+  $17^\circ$; the cause is unclear (Kiris et al. 2023, §VI 1e, Fig. 37). The
+  authors recommend unsteady surface-pressure measurements, because
+  wall-modelled LES gives reasonably accurate second-order surface-pressure
+  correlations, an advantage over hybrid RANS/LES they cite (§VI 5). See
+  [NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md) and
+  [wall-modelled LES](/methods/wall-modelled-les.md).
+- **High-speed fin.** An SST-DDES in ANSYS Fluent carries the flow side of a
+  coupled aerothermoelastic analysis of a deployable fin at Mach 3–6, with no
+  assessment of the hybrid behaviour (Thawait et al. 2023, §II B, §VI;
+  details on the [DES page](/methods/detached-eddy-simulation.md)).
 
 ## Qualifications
 
@@ -1007,6 +1135,20 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
   turbulent flows") and on hybrids stand in their introduction (§1.2); the
   paper's only RANS computation is a URANS $k$-$\varepsilon$ run of a
   particle-laden channel (§3.2.2), and it runs no hybrid.
+- Mays et al. (2023) set the blending weight of their hybrid upwind/central
+  flux equal to the shielding function $f_s$ (§2.2), which by their Eq. 13
+  vanishes at the wall; with the printed Eq. 14 this gives the bounded
+  central reconstruction in the shielded RANS zone and second-order upwind
+  in LES-like zones, the reverse of the stated intent *(compiler check, not
+  in the sources)*. The bounded branch (Eq. 15) weights the central
+  reconstruction by $\sigma=0.01$, while the text says $\sigma$ introduces
+  "some upwinding". They state that the grid-A time step is "half" that of
+  grid C, while Table 1 prints $\Delta t\,U_\infty/D=1.0\times10^{-3}$ and
+  $7.5\times10^{-4}$; and Table 6 heads the fourth case $Re=7.8\times10^5$,
+  elsewhere $7.2\times10^5$. Their reference LES has a mean lift of $-0.903$
+  at $Re_D=2.5\times10^5$ against $+0.822$ and $+0.857$ from SRH (Table 4);
+  the paper discusses the sign only as "a positive value for the lift
+  coefficient".
 
 # Citations
 
@@ -1053,3 +1195,7 @@ $C_f$ alone "may lead to wrong conclusions" (§III.B.2, p. 21). Details on the
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.5.2.
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.2.
+- [Mays et al. (2023)](/sources/mays-2023.md) — §1, §2.1.2 Eqs. 9–13, §2.2 Eqs. 14–15, §3.1–§3.1.1 Tables 1–3 Figs. 4–5, §3.2–§3.2.2 Tables 4–6 Figs. 9–10, 13, §4.
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.4, §VI 1c, §VI 1e Fig. 37, §VI 5.
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §1.
+- [Thawait et al. (2023)](/sources/thawait-2023.md) — §I, §II B, §VI.

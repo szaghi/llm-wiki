@@ -5,7 +5,7 @@ description: "Wall-modelled LES boundary conditions that let the filtered veloci
 status: established
 aliases: [slip wall, dynamic slip wall, dynamic slip-wall model, Robin slip condition, wall-slip model, slip-length model, Van Driest slip model]
 tags: [wall-model, wmles, filtering, immersed-boundary]
-timestamp: 2026-10-27T20:37:00Z
+timestamp: 2026-10-28T01:52:00Z
 ---
 
 # Slip-wall models
@@ -211,6 +211,35 @@ al., Bose & Moin and Yang et al.). They choose the Neumann type for their spectr
 implicit LES (see [wall-modelled LES](/methods/wall-modelled-les.md)), so
 the slip wall is only named there.
 
+[Maeyama & Kawai (2023)](/sources/maeyama-2023.md) (§1) restrict their
+study of near-wall structures in wall-stress WMLES to models that supply
+$\tau_w$ as a flux boundary condition, and leave the slip-type model of
+Bose & Moin (2014) out of scope. They write that it "solves the equations of
+the LES down to the wall", but views the problem "purely mathematically and
+should be discussed in a different context", and that the near-wall
+structures they find "could change with a different wall model". Their own
+code uses a slip-wall condition with extrapolation from interior nodes only
+to evaluate the SGS model and the low-pass filter at the wall, following
+Kawai & Larsson (2012). The momentum equations keep no slip and take
+$\tau_w$ from an [equilibrium wall model](/methods/equilibrium-wall-model.md)
+(§2.2).
+
+## Zero-shear slip walls are not slip-wall models
+
+An inviscid slip wall, with only no penetration and zero wall shear stress,
+is a different condition: it drops the viscous wall stress instead of
+modelling the filtered slip. In the HLPW-4 wall-modelled LES focus group
+summarized by [Kiris et al. (2023)](/sources/kiris-2023.md) (§II), one
+participant (W-030) ran an inviscid implicit LES in the $Re\to\infty$ limit
+with such slip walls on the [NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md)
+configuration. The authors reject the approach for load prediction: the
+experiment shows more than 5% lift sensitivity across its Reynolds
+numbers; at 7.05° skin-friction drag is about 10% of total drag; and corner
+separation is a viscous effect. Another participant (W-020) treated only
+the wind-tunnel walls as inviscid slip walls in the in-tunnel case. The
+onset of the pitch break was sensitive to the floor boundary layer, but
+the stalled state at 19.9° was largely invariant to it (§V, Figs. 35–36).
+
 ## Qualifications
 
 - The formulation of the dynamic slip wall here is the review's
@@ -241,3 +270,5 @@ the slip wall is only named there.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.6, Eqs. (41)–(42).
 - [De Vanna et al. (2022)](/sources/devanna-2022.md) — §2.2, Eqs. (7a)–(7b).
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I, Eq. (6) (Robin condition among the wall-model boundary-condition types; passing).
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §1 (slip-type modelling out of scope); §2.2 (slip-wall extrapolation for the SGS model and filter only).
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §II (W-030 inviscid slip walls); §V, Figs. 35–36 (slip tunnel walls).

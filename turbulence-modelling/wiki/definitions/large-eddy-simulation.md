@@ -5,7 +5,7 @@ description: "Large-eddy simulation resolves the filtered velocity and models th
 status: established
 aliases: [LES, filtered Navier–Stokes equations, subgrid-scale stress, SGS stress, subfilter stress, coarse-grained equations]
 tags: [les, filtering, sgs-model, compressible]
-timestamp: 2026-10-27T20:47:00Z
+timestamp: 2026-10-28T02:14:00Z
 ---
 
 # Large-eddy simulation: filtering and the subgrid-scale stress
@@ -239,6 +239,23 @@ the closure is set "not entirely by the physics of the problem" but by the
 filter width (§4.2, Table 4; see
 [energy backscatter](/definitions/energy-backscatter.md)).
 
+[Xu et al. (2023)](/sources/xu-2023.md) (§2.1, Eqs. 2.1–2.14) write the
+Favre-filtered equations for wall-bounded LES with the stress per unit
+mass, $\tau_{ij}=\widetilde{u_iu_j}-\tilde u_i\tilde u_j$, entering the
+momentum equation as $-\partial_j(\bar\rho\tau_{ij})$, a subgrid heat flux
+$Q_j=\widetilde{u_jT}-\tilde u_j\tilde T$ (page-local) and a subgrid
+turbulent diffusion
+$\tfrac12\bar\rho(\widetilde{u_ju_iu_i}-\tilde u_j\widetilde{u_iu_i})$ in
+the energy equation. The filtered total energy keeps
+$\tfrac12\bar\rho\tau_{ii}$, and the temperature is recovered from it with
+$\tau_{ii}$ subtracted (Eqs. 2.13–2.14). The two viscous unclosed terms
+are neglected, citing several LES studies and "justified by the inviscid
+criterion" of Aluie and of Zhao & Aluie, and the turbulent diffusion is
+approximated by $\bar\rho\tau_{ij}\tilde u_i$ (after Martin et al. and
+others, cited), so that only $\tau_{ij}$ and $Q_j$ are modelled; the
+density $\bar\rho$ multiplies the stress inside the divergence, not
+inside the definition of $\tau_{ij}$.
+
 **Density-unweighted filtering.** Favre filtering is a choice, not a
 requirement. [Zhang et al. (2022b)](/sources/zhang-2022-f.md) (§II,
 Eqs. 8–20) filter the compressible equations with the plain filter
@@ -467,6 +484,25 @@ backward-facing-step flow in the two homogeneous-spacing directions only,
 and checks with a three-point trapezoidal filter
 $\bar\phi_i=\tfrac14(\phi_{i+1}+2\phi_i+\phi_{i-1})$ that filtering also in
 the wall-normal direction changes the subgrid values little.
+Xu et al. (2023, §2.2, Eq. 2.32) also filter channel DNS in the two
+homogeneous directions only, with the discrete top-hat
+$\bar f_i=\tfrac1{4n}\big(f_{i-n}+2\sum_{j=i-n+1}^{i+n-1}f_j+f_{i+n}\big)$
+of width $2n$ DNS spacings (the integers $n$, and the filter-to-DNS
+spacing ratios $n_x$, $n_z$, which "need to be even numbers", page-local),
+$n_x=8$, $n_z=4$ for training.
+[Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) (§3, Eqs. 7–17)
+use elliptic **differential filters** solved on the grid: Germano's
+$\bar\phi-\delta_{\mathrm G}^2\partial_i\partial_i\bar\phi=\phi$, with
+transfer function $1/(1+\delta_{\mathrm G}^2k^2)$ ($\delta_{\mathrm G}$ the filter radius, page-local), which never vanishes,
+and their own filter with a second-derivative term on both sides, whose
+right-hand coefficient gives complete attenuation at the grid cut-off
+(page-local symbols and the design on unstructured elements are on
+[explicit modal filtering](/methods/explicit-modal-filtering.md)). They
+list the properties an LES filter must have: linearity, conservation of
+constants, positivity of the kernel and commutation with differentiation
+(Eqs. 14–17, the last two after the reference they cite). Positivity of
+their discrete filter is reduced to a phase condition that they leave
+open (§4.2).
 
 [Kim et al. (2022)](/sources/kim-2022.md) (§III E) filter channel DNS
 with a cut-off filter in the two homogeneous directions only.
@@ -619,6 +655,9 @@ LES is approximated by the super-Gaussian above.
 | [Li et al. (2021)](/sources/li-2021.md), §III A, Eq. (17) | discrete top-hat of width $\Delta=16$ DNS spacings ($1024^3$ isotropic DNS, about 5% of the kinetic energy filtered); a posteriori LES spacing $\Delta/2$, so that LES–filtered-DNS differences are "mainly due to" the SGS model |
 | [Zhao et al. (2021)](/sources/zhao-2021-c.md), §III.A–B | $(\Delta x_1\Delta x_2\Delta x_3)^{1/3}$, test filter twice the grid filter; directional cell widths in the Vreman model, where "the grids themselves act as the filter" |
 | [Pan & Zhang (2023)](/sources/pan-2023.md), §II.B–D | "grid filter scale", not defined beyond the DES grid length $\max(\Delta x,\Delta y,\Delta z)$ of the same paper |
+| [Xu et al. (2023)](/sources/xu-2023.md), §2.2, §3.2 | $(\Delta_x\Delta_y\Delta_z)^{1/3}$ in the eddy-viscosity baselines and the original nonlinear model; the learned model replaces it by $\Delta^*=1$ after scaling each gradient by the local grid width in its direction (below) |
+| [Maeyama & Kawai (2023)](/sources/maeyama-2023.md), §2.2, Eqs. (2.9)–(2.11) | $f_{\mathrm{an}}(\Delta x\Delta y\Delta z)^{1/3}$ with an anisotropy factor $f_{\mathrm{an}}\ge1$ (the source's $C_w$, not the WALE constant) (below), in the selective mixed-scale model |
+| [Zhang et al. (2023)](/sources/zhang-2023-c.md), §3.3 | cube root of the cell volume, also the length of the gradient model of the subgrid scalar variances |
 
 In implicitly filtered LES the filter width and the grid spacing $h$
 coincide approximately, $h\approx\Delta$, whereas in explicitly filtered LES
@@ -703,6 +742,30 @@ their dynamic mixed model, since "the optimal definition of $\Delta$ for
 anisotropic grids is not yet known". The two zonal-DES sources above choose the cube root in
 LES regions without a comparison of definitions.
 
+Two sources correct for the anisotropy instead of choosing a
+different length. Maeyama & Kawai (2023, §2.2, Eqs. 2.9–2.11) multiply
+the cube root by a factor
+$f_{\mathrm{an}}=\cosh\sqrt{\tfrac4{27}(c_1^2-c_1c_2+c_2^2)}$ with
+$c_1=\log(\Delta_{\max}/\Delta_{\mathrm{med}})$,
+$c_2=\log(\Delta_{\mathrm{med}}/\Delta_{\min})$ (all page-local; the
+largest, middle and smallest spacings of the cell), in the selective
+mixed-scale model of Lenormand, Sagaut & Ta Phuoc (as cited). $f_{\mathrm{an}}=1$ on
+a cube; reading $\log$ as the natural logarithm, for a cell with two
+spacings ten times the third it is about 1.42, which lifts the width
+from $4.64\Delta_{\min}$ to about $6.59\Delta_{\min}$, still below the
+largest spacing $10\Delta_{\min}$ *(compiler check, not in the sources)*. [Xu et al. (2023)](/sources/xu-2023.md)
+(§3.2, Eqs. 3.27–3.30) blame the near-wall weakness of their
+nonlinear algebraic model on the isotropic cube root, since
+$\Delta_y\ll\Delta_x,\Delta_z$ near the wall, and instead multiply each
+velocity and temperature gradient by the local grid width in its
+direction, $\partial/\partial(x_j/\Delta_j)$, building the strain,
+rotation and invariants from these normalized gradients with a unit
+length scale. A priori, the normalization raises the correlation of the
+dynamic version most for $y^+<50$ (Fig. 8), and the learned version
+generalizes to untrained grids, which the authors attribute to the grid
+information "inherently embedded" in its inputs (§4.1, §5; see
+[neural-network SGS models](/methods/neural-network-sgs-model.md)).
+
 ### Element methods
 
 In discontinuous Galerkin LES, Basile et al. (2023, §3.2) note two cutoff
@@ -766,6 +829,12 @@ The price is a closure tied to the compression factor between the grids
 Haering et al. (2022, §II A, §IV) treat their active forcing term as a model
 of the commutator between the implicit filter and the substantial
 derivative.
+Najafiyazdi et al. (2023, §3.1, Eq. 18) state that any differential
+filter discretized on a non-uniform or unstructured grid loses the
+commutation property, even in one dimension, because the filter width
+varies in space; the commutation error vanishes only for a constant
+width, so the filter commutes only in its continuous form on uniform
+grids.
 
 **Filters induced by derivatives and interpolation.** Caban et al. (2026,
 §3.2, Eqs. 24–35, Fig. 3) write the discrete $r$-th derivative as a filter
@@ -904,6 +973,15 @@ resolved fraction of the turbulent kinetic energy as their grid criterion:
 90%, 94% and 96% on 7.3, 24.6 and 57.8 million cells, "rendering all grids
 appropriate for LES" by the criteria they cite from Pope and from Matheou
 & Chung, whose thresholds they do not print.
+[Zhang et al. (2023)](/sources/zhang-2023-c.md) (§2, Eqs. 1–2, Fig. 2b)
+qualify the 3.87-million-cell mesh of a stratified-burner LES with the
+time-averaged modelled fraction
+$M_E=\big\langle k_{\mathrm{sgs}}/(k_{\mathrm{sgs}}+k_{\mathrm{res}})\big\rangle$
+($M_E$ page-local, named the Pope criterion and defined after Boudier et
+al., cited), $k_{\mathrm{res}}$ built from the resolved fluctuation about
+the time mean and $k_{\mathrm{sgs}}$ from the dynamic Smagorinsky model.
+On the cold flow $M_E$ is "generally below 0.2" in the region of
+interest, so "at least 80%" of the turbulent kinetic energy is resolved.
 
 **Activity parameter.** [Löhrer & Fröhlich (2025)](/sources/lohrer-2025.md)
 (App. C, Eqs. C1–C3, Figs. 28–29) rate their canopy LES with the subgrid
@@ -960,6 +1038,28 @@ $\Delta x^+=30$, $\Delta y^+_{\min}=1.6$, $\Delta z^+=16$ at the reference
 station, "in combination with $N=6$", without saying whether the
 spacings are per element or per degree of freedom.
 
+**Coarse-grained simulation, and the label "wall-resolved".**
+[Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) (§I) use
+coarse-grained simulation (after the volume edited by Grinstein, cited) as
+the umbrella term: the large energy-containing structures are resolved,
+the smaller ones filtered and their effect modelled, either by an explicit
+subgrid model or by the shock-capturing scheme of an
+[implicit LES](/definitions/implicit-les.md). Their production mesh for a
+shock-induced panel-buckling interaction has $\Delta x^+=717$,
+$\Delta z^+=634$ and a first point at $y^+=4.8$, while the wall-resolved
+guidance they quote is $\Delta x^+\approx50$–130, $\Delta z^+\approx15$–30,
+10–30 points across the boundary layer and a first point at $y^+\lesssim1$
+(§III B 2); they judge it "adequately accurate, at least concerning the
+flow properties of interest", against a finer mesh at $\Delta x^+=268$,
+$\Delta z^+=100$ (see [LES grid-point requirements](/results/les-grid-point-requirements.md)).
+At the other end, [Shi & Yan (2023)](/sources/shi-2023.md) (§I, §IV,
+Table I) call their no-model flux-reconstruction run of a Mach 2.9
+compression ramp a "wall-resolved large eddy simulation" within the
+implicit-LES framework, on grids with $\Delta y_1^+=0.33$–0.50,
+$\Delta x^+_{\min}=3.3$–5.0 and $\Delta z^+=4.69$, against
+$0.2$/$3.4$/$4.1$ for the DNS of Wu & Martin that they tabulate beside
+them (counted in degrees of freedom).
+
 **Very coarse LES.** [Maejima & Kawai (2025)](/sources/maejima-2025.md)
 (§1, §4.1, §5.3) define very-coarse-grid LES as LES in which even the
 energy-containing near-wall eddies are under-resolved. In channel flow at
@@ -970,6 +1070,20 @@ non-physical, and its statistics differ from filtered DNS
 different input distribution in the LES. Their pipeline first maps the LES
 field to a filtered-DNS-like field without paired data; see
 [super-resolution SGS models](/methods/super-resolution-sgs-model.md).
+
+**What the subgrid viscosity does below the matching height.**
+[Maeyama & Kawai (2023)](/sources/maeyama-2023.md) (§5.3–5.4, Eq. 5.5,
+Fig. 17; Apps. C–D) show that the wall-stress-modelled LES of a
+supersonic boundary layer, whose grid does not resolve the near-wall
+streaks, still holds coherent streak-like ejection–sweep pairs below the
+matching height, about eight grid points per spanwise wavelength and
+fixed in outer units. Their spanwise length scale collapses at
+$Re_\tau\approx700$–14 000 only when the viscous length of semi-local
+scaling is built with the molecular plus the subgrid eddy viscosity,
+$\delta^{*,\mathrm{sgs}}_\nu=(\nu+\nu_t)/u_\tau^*$ (page-local), so that "the diffusion introduced by the SGS eddy
+viscosity dominantly determines" it; the collapse holds for other grids,
+another scheme and the [Smagorinsky](/methods/smagorinsky-model.md)
+model. See [wall-modelled LES](/methods/wall-modelled-les.md).
 
 ## Other uses of the filter idea
 
@@ -1301,6 +1415,17 @@ upwind dissipation as ILES, and [Ma et al. (2022)](/sources/ma-2022.md)
 (§1) motivate ILES by the difficulty, which they cite from earlier work, of
 subgrid modelling in compressible and especially wall-bounded flow.
 
+**Plane-wise a priori metrics.** In wall-bounded flow [Xu et al. (2023)](/sources/xu-2023.md)
+(§2.2, Eqs. 2.33–2.34) measure a model term $H$ against filtered DNS by
+the correlation coefficient and the relative error computed over each
+wall-parallel plane, the relative error being the plane r.m.s. of
+$H^{\mathrm{real}}-H^{\mathrm{model}}$ over the plane r.m.s. of
+$H^{\mathrm{real}}$, with 95% confidence intervals of the correlation from
+the Fisher transformation (citing Bonett & Wright). Their a posteriori
+references are filtered DNS with the filter ratio equal to the LES-to-DNS
+grid ratio (§4). See
+[a priori and a posteriori testing](/definitions/a-priori-and-a-posteriori-testing.md).
+
 ## Qualifications
 
 - Zhang et al. (2022b, §IV A) call the $\mathcal H$ term at $M_t=0.8$ "two
@@ -1466,3 +1591,9 @@ subgrid modelling in compressible and especially wall-bounded flow.
 - [Stanly et al. (2022)](/sources/stanly-2022.md) — §6.
 - [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §1.4; §4.
+- [Xu et al. (2023)](/sources/xu-2023.md) — §2.1, Eqs. (2.1)–(2.14); §2.2, Eqs. (2.32)–(2.34); §3.2, Eqs. (3.27)–(3.30), Fig. 8; §4.1; §5.
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §3, Eqs. (7)–(18); §3.1; §4.2.
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §2.2, Eqs. (2.8)–(2.11); §5.3–5.4, Eq. (5.5), Fig. 17; Apps. C–D.
+- [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2, Eqs. (1)–(2), Fig. 2b; §3.3.
+- [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — §I; §III B 2, Table III.
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §I; §IV, Table I.

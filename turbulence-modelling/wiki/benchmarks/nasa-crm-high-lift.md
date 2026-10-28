@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "NASA CRM high-lift configuration"
-description: "The NASA High-Lift Common Research Model (CRM-HL), a half-span transport in landing configuration at Mach 0.2: at mean-chord Reynolds number 5.49 million it tests a learned wall model in WMLES and immersed-boundary wall-function RANS, and its wing-body form at root-chord Reynolds number 5.6 million tests anisotropic mesh adaptation for DG RANS."
+description: "The NASA High-Lift Common Research Model (CRM-HL), a half-span transport in landing configuration at Mach 0.2: at mean-chord Reynolds number about 5.5 million nine HLPW-4 codes test wall-modelled LES of maximum lift and stall, a learned wall model and immersed-boundary wall-function RANS are tested, and its wing-body form tests DG mesh adaptation."
 status: established
-aliases: [CRM-HL, HL-CRM, NASA High-Lift Common Research Model, NASA CRM-HL, HLPW-4 CRM-HL, CRM-HL wing-body, HLPW-5 CRM-HL]
+aliases: [CRM-HL, HL-CRM, NASA High-Lift Common Research Model, NASA CRM-HL, HLPW-4 CRM-HL, CRM-HL wing-body, HLPW-5 CRM-HL, HLPW-4 case 2]
 tags: [benchmark, wmles, wall-model, rans, immersed-boundary, data-driven, mesh-adaptation, dg]
-timestamp: 2026-10-27T20:38:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # NASA CRM high-lift configuration
@@ -14,17 +14,19 @@ The NASA High-Lift Common Research Model (CRM-HL) is the half model of a
 civil transport with deployed slats and flaps, a nacelle and pylon,
 used as the test case of the Fourth AIAA High-Lift Prediction Workshop
 (HLPW-4), and in a wing-body form without nacelle and pylon in the fifth
-workshop (HLPW-5). The two HLPW-4 sources run it at freestream Mach number
+workshop (HLPW-5). The HLPW-4 sources run it at freestream Mach number
 $M_\infty=0.20$ and $Re=5.49\times10^6$ based on the mean aerodynamic
-chord; the HLPW-5 source runs the wing-body at $M_\infty=0.2$ and
+chord ($5.5\times10^6$ as printed by
+[Kiris et al. (2023)](/sources/kiris-2023.md)); the HLPW-5 source runs the wing-body at $M_\infty=0.2$ and
 $Re=5.6\times10^6$ based on the root chord. The flow combines
 thin leading-edge boundary layers on slats, main wing and flaps, wakes
 merging over the flaps, and separation that spreads with incidence until
 maximum lift. The quantities compared are the lift, drag and pitching-moment
 coefficients $C_L$, $C_D$ and $C_M$ against incidence $\alpha$ (page-local:
 angle of attack), and $C_p$ and $C_f$ on spanwise sections. In this bundle
-it tests near-wall modelling at aircraft scale: a learned wall model in
-[wall-modelled LES](/methods/wall-modelled-les.md) and a wall function at an
+it tests near-wall modelling at aircraft scale: a nine-code comparison of
+[wall-modelled LES](/methods/wall-modelled-les.md) of maximum lift and
+stall, a learned wall model in WMLES and a wall function at an
 [immersed boundary](/methods/immersed-boundary-method.md) in RANS, and
 [mesh adaptation](/methods/mesh-adaptation.md) for high-order
 discontinuous Galerkin RANS. A
@@ -51,6 +53,141 @@ solver CODA, remeshed by the Tucanos library from an initial mesh of
 $N=1$ and $1.2\times10^5$ to $4.8\times10^5$ at $N=2$ (Table 5);
 references are the finite-volume solvers FUN3D, USM3D, CHAMPS and CODA FV
 under uniform refinement.
+
+## The HLPW-4 wall-modelled LES focus group
+
+[Kiris et al. (2023)](/sources/kiris-2023.md) summarize the Wall-Modeled
+LES and Lattice–Boltzmann Technology Focus Group of HLPW-4: nine
+participants simulated the NASA 10%-scale semispan CRM-HL of the
+experiment of Evans et al. in the QinetiQ 5 m low-speed wind tunnel
+(Farnborough), at $Re=5.5\times10^6$ on the mean aerodynamic chord and
+$M=0.2$ (§I). Workshop case 2a is the model in free air, compared with
+loads corrected to free air at five angles of attack (7.05°, 11.29°,
+17.05°, 19.57°, 21.47°); case 2b, run by three participants (W-020,
+W-021, W-032), is the model inside the tunnel, compared with uncorrected
+data, the reference Mach number held between 0.195 and 0.205 by the
+tunnel back-pressure (§I, §V). All submissions used $y^+\gg1$ grids with a
+wall model. Every participant but two used an
+[equilibrium wall model](/methods/equilibrium-wall-model.md) with an
+adiabatic wall; PowerFLOW used a proprietary pressure-aware
+[nonequilibrium wall model](/methods/nonequilibrium-wall-model.md), and
+W-030 an inviscid slip wall without viscous terms (§II.5, Fig. 2). The
+paper prints no model equations or constants. The submissions (Tables 1–2;
+$\Delta t$ non-dimensional, the exchange location in multiples of the
+wall-normal spacing $h$, the source's $\Delta$):
+
+| ID | Code | Discretization, time integration | SGS closure | Wall-model exchange | $\Delta t$ | Grid |
+|---|---|---|---|---|---|---|
+| W-020 | LAVA | 4th/2nd-order finite differences, structured overset, RK3 | [Vreman](/methods/vreman-model.md) | 2nd off-wall point | $3.3\times10^{-5}$ | 360 M |
+| W-021 | [CharLES](/software/charles.md) | 2nd-order finite volume, Voronoi, RK3 | dynamic Smagorinsky ([dynamic procedure](/methods/dynamic-procedure.md)) | 1st off-wall point, $0.5h$ | $5.7\times10^{-5}$ | 362 M |
+| W-030 | Real Flight Simulator | adaptive finite elements, implicit | none (Euler, [implicit LES](/definitions/implicit-les.md)) | not applicable | $2.1\times10^{-2}$ | 3 M |
+| W-031 | BCFD | blended 2nd-order finite volume, BDF2 | Vreman | 4th off-wall cell, $3.5h$ | $5.8\times10^{-4}$ | 296 M |
+| W-032 | PowerFLOW | [lattice Boltzmann](/methods/lattice-boltzmann-method.md), Cartesian, explicit | VLES ($k$-$\varepsilon$ based) | $0.5h$ | $3.7\times10^{-5}$ | 475 M |
+| W-034 | Alya | 2nd-order finite elements, RK3 convection, Crank–Nicolson viscous terms | Vreman | 2nd (Voronoi) or 3rd (hexahedra) off-wall point | $2.9\times10^{-5}$ | 273 M |
+| W-047 | [hpMusic](/software/hpmusic.md) | [flux reconstruction](/methods/flux-reconstruction.md) $N=2$, BDF2 | none (implicit LES) | interface of 1st and 2nd elements | $9.7\times10^{-5}$ | 13 M |
+| W-049 | FFVHC-ACE | 2nd-order kinetic-energy- and entropy-preserving, Cartesian, RK3 | CSM | $3.5h$ | $3.6\times10^{-5}$ | 11.2 B |
+| W-050 | FUN3D | 2nd-order finite volume, BDF2 | Vreman | 1st off-wall point, $1h$ | $5\times10^{-4}$ | 419 M |
+
+PowerFLOW's closure is a RANS-based model switched to an LES-type closure
+by an indicator function, a [hybrid RANS/LES](/definitions/hybrid-rans-les.md)
+philosophy that the authors group with WMLES because of its $y^+\gg1$ grid
+(§II.4). The Cartesian codes W-032 and W-049 use immersed boundaries
+(§II). The wall-normal spacings at the 7 m full-scale mean aerodynamic
+chord range from 0.8 mm (W-034 hexahedra) to about 10 mm (W-032) (Table 2).
+
+**Loads.** Except for W-030 and W-031, the participants predict
+$C_{L,\max}$ between 2.48 and 2.57; at $C_{L,\max}$ the pitching-moment
+scatter is small, which the authors read as a correct prediction of the
+flow topology, and it is large at the extreme angles 7° and 21.4° (§III,
+Fig. 4). RANS submissions of the other focus groups that obtain
+$C_{L,\max}$ "invariably predict far-too-high nose-up pitching moments",
+which the authors read as error cancellation between inboard excess lift
+and outboard loss of lift (§III, citing the LAVA comparison of their
+ref. [5]). Scale-resolving simulations (WMLES and hybrid RANS/LES)
+under-predict the suction peak on the outboard flap (stations E and F)
+against steady RANS at 21.47°, which the authors take to explain the
+excessive nose-up pitching moment of all WMLES above $\alpha=17^\circ$ in
+free air; the cause is left open (§VI 1e, Fig. 37).
+
+**Resolution.** The submissions are down-selected by three criteria:
+best practice; $C_{L,\max}$ within 2% at 17.05° or 19.57°; and outboard
+suction peaks (stations G and H, spanwise fractions 0.82 and 0.91) at
+19.57° above the measured peaks at 17.05° (§IV, Figs. 4, 9, 12). Only
+submissions with more than 250 M spatial degrees of freedom pass the
+third criterion, and the authors conclude that this many are needed for
+the outboard slat and main-element loading, and so for the pitching moment
+above $\alpha=17^\circ$ (Abstract; §IV; §VI 1a). They attribute the
+requirement to inviscid, curvature-induced acceleration, not to the wall
+layer: W-021's refinement from 12 M to 362 M Voronoi cells converges
+largely monotonically with that kinematic effect at leading order (§III,
+Fig. 6). W-020's off-wall refinement from 275 M to 360 M improves the
+chine vortex and delays the onset of corner-flow separation by more than
+1.5° (§III, Fig. 7); its refinement toward about 1.2 B degrees of freedom
+changes the outboard skin friction and wedge-shaped separations while the
+static pressure changes little (§VI 1a). Anisotropic grids with finer
+near-wall spacing (W-034) give more accurate outboard $C_p$ on coarser
+grids than unit-aspect-ratio Voronoi grids with larger wall-normal
+spacing (§III, Figs. 8, 16, 21), while W-020 shows the need to resolve
+off-body vorticity above 19°, which favours isotropic grids; the
+authors give no answer to the isotropic-versus-anisotropic question
+(§VI 2). W-047, the high-order run with 13 M degrees of freedom, obtains
+reasonably accurate integrated loads at $C_{L,\max}$ but no outboard
+separation from the slat-bracket wakes (§VI 1a). Grid convergence is
+judged on time-averaged static pressure only, because the convergence of
+wall-bounded LES in mean velocity profiles is non-monotonic and
+numerically induced transition shifts the virtual origins of the boundary
+layers with the grid (§I.1a). Further grid requirements are on
+[grid-point requirements](/results/les-grid-point-requirements.md).
+
+**Stall topologies.** Among the submissions above 250 M, most of the
+pitching-moment scatter at 21.47° comes from the predicted onset of
+inboard stall, which falls into two surface-flow topologies (§IV,
+Figs. 23–25): A, a corner separation growing from the wing–body
+juncture, with a pitch break between 20.5° and 21.47° (or $21.47^\circ$
+plus less than 0.3°); and B, a separation from the inboard side of the
+wing–pylon juncture, with no pitch break near 21.47°. The two resemble the
+two stall mechanisms that Evans et al. observed in the QinetiQ 5 m and
+the Langley 14×22 tunnels; because both appear in free-air WMLES, the
+authors doubt that the tunnel-floor boundary layer explains them and
+propose separation at the nacelle lip instead (§IV). All WMLES
+predict nacelle-lip separation above 17.05° near $C_{L,\max}$, absent in
+the experiment; trip dots twice the experimental size (W-020) do not
+remove it, and the authors attribute it to under-resolution combined with
+a non-optimal cowl design (§IV; §VI 1d). WMLES does not show the excess
+outboard separation of steady RANS, and most submissions predict
+wedge-shaped outboard separations consistent with the oil flow (Abstract;
+§IV; Fig. 33).
+
+**In the tunnel.** No team reproduces the thick floor boundary layer
+measured by the rake ahead of the model, despite artificial roughness and
+tripping (§V, Fig. 27). W-021 predicts the pitch break between 18.9° and
+19.9°, "in perfect agreement with the experiment", and all three teams
+show wedge-shaped outboard separation and a massive wing-root separation
+at 19.9° that RANS does not capture (§V, Figs. 27–33). With slip tunnel
+walls (W-020) the onset of the pitch break is sensitive to the floor
+boundary layer but the stalled state at 19.9° is largely invariant to it,
+verified by W-020 and W-021 (§V.4, Figs. 35–36).
+
+**Inviscid implicit LES rejected.** W-030 runs implicit LES at
+$Re\to\infty$ with slip walls on 3 M adaptive degrees of freedom. The
+authors reject it: the experiments show more than 5% lift sensitivity
+between the lowest and highest two Reynolds numbers, skin-friction drag
+is about 10% of the total drag at 7.05° (by RANS and WMLES), and the
+corner separation is a viscous effect (§II). The participant "emphatically
+argued the validity of its approach" (§II).
+
+**Time step and cost.** The authors argue that explicit time stepping
+suits near-unit-aspect-ratio grids for compressible solvers at
+$M\ge0.2$, since the decorrelation time of inertial-range eddies scales as
+$k^{-2/3}$ and the acoustic CFL limit as $k^{-1}$, with $k$ (page-local)
+the Nyquist wavenumber of the grid (§II.3). A hybrid RANS/LES time-step
+study they cite finds large errors in the wing-root separation at 21.47°
+from the dissipation of the large time steps allowed by A-stable BDF2
+(§VI 1c). Best-practice WMLES cost about 5–10 times a representative
+steady RANS at this Reynolds number, W-021 and W-047 report a substantial
+reduction of wall time on GPUs, and no cost scaling of WMLES with
+Reynolds number exists for such a configuration (§VI 4; cost details
+withheld).
 
 ## What the case tests
 
@@ -195,6 +332,12 @@ relative to the grid: the low confidence of the learned wall model there in
 [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md), and the
 leading-edge wall-function error that the modelling-height adaptation
 addresses in [Constant et al. (2024)](/sources/constant-2024.md).
+[Kiris et al. (2023)](/sources/kiris-2023.md) also find the outboard
+slat and main-element leading edges decisive, but trace the grid demand
+there to inviscid curvature-induced acceleration, not to the wall layer
+(§IV; §VI 1a). Lozano-Durán & Bae run CharLES, the code of W-021, on
+30 million points against W-021's 12 M to 362 M; no source compares the
+two runs.
 
 ## Qualifications
 
@@ -219,9 +362,30 @@ addresses in [Constant et al. (2024)](/sources/constant-2024.md).
 - The 30P/30N and Common Research Model results of
   [Bose & Park (2018)](/sources/bose-2018.md) are cited from the works
   they review; the review prints no force coefficients for them.
+- [Kiris et al. (2023)](/sources/kiris-2023.md) is the journal version
+  of the focus-group summary presented as AIAA Paper 2022-3294; it
+  prints $Re=5.5\times10^6$, the other HLPW-4 sources $5.49\times10^6$,
+  for the same mean-chord Reynolds number. Its printed slips: W-032 is
+  listed in both stall topologies in §IV and then placed in topology B;
+  §II.3 counts six explicit and three implicit participants, while
+  Table 1 shows five explicit (counting W-034, with implicit viscous
+  terms) and four implicit (W-030, W-031, W-047, W-050) *(compiler check,
+  not in the sources)*; the implicit time steps "only about 10× larger"
+  (§VI 1c) are 9–20 times the explicit ones of Table 2 for W-031 and
+  W-050 but 1.7–3.3 times for W-047 *(compiler check, not in the
+  sources)*; W-020's finest grid is "1.2B" in the text and "1100M" in the
+  Fig. 3 legend; the high angle is printed 21.4° and 21.47°, the in-tunnel
+  angles 17.9°, 18.9°, 19.9° and 17.98°, 19.98°, 19.99°; and "spatial
+  degrees of freedom", "grid cells" and "points" are used for the 250 M
+  threshold interchangeably, though they differ for $N=2$ flux
+  reconstruction and nodal finite elements.
+- The focus-group findings rest on the submitted data; the RANS and
+  hybrid RANS/LES comparisons come from other focus groups and from the
+  LAVA study that Kiris et al. cite (their ref. [5]).
 
 # Citations
 
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §I; §II.2–II.5, Tables 1–2, Fig. 2; §III, Figs. 4–8; §IV, Figs. 9, 12, 23–25, 33; §V, Figs. 27–36; §VI 1a–1e, 2, 4, Fig. 37.
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.3; §4.7, Figs. 14–16; §5(4); §6.
 - [Constant et al. (2024)](/sources/constant-2024.md) — §6.3, Tables 7–9, Figs. 35–39; §7.
 - [Schotte et al. (2026)](/sources/schotte-2026.md) — §1; §3.2; §4.4, Table 5, Figs. 18–22.

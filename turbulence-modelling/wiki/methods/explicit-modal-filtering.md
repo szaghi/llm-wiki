@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Explicit modal filtering as an LES closure"
-description: "Explicit filtering of the solution, in the modal space of a high-order element or by compact physical-space filters, damps the highest resolved modes in place of a subgrid stress. The sources gate it by a sensor, tie its cutoff to local flow characteristics, normalize its strength by the time step, optimize it, and compare it with Smagorinsky and implicit LES."
+description: "Explicit filtering, in the modal space of a high-order element or by compact and differential physical-space filters, damps the highest resolved modes in place of a subgrid stress. The sources gate it by sensors or an entropy bound, tie its cutoff to local flow characteristics, normalize it by the time step, and compare it with Smagorinsky and implicit LES."
 status: established
-aliases: [explicit modal filter, modal filtering, solution filtering, dynamic explicit modal filter, DEMF, self-tuning dynamic explicit modal filter, STDEMF, local modal filter, LMF, explicit filtering regularization, relaxation filtering]
+aliases: [explicit modal filter, modal filtering, solution filtering, dynamic explicit modal filter, DEMF, self-tuning dynamic explicit modal filter, STDEMF, local modal filter, LMF, explicit filtering regularization, relaxation filtering, explicit differential filter, Najafi-Yazdi filter, entropy-adaptive filter, improved adaptive filter]
 tags: [les, filtering, implicit-les, dg, numerical-dissipation, sgs-model]
-timestamp: 2026-10-27T16:02:00Z
+timestamp: 2026-10-28T02:14:00Z
 ---
 
 # Explicit modal filtering as an LES closure
@@ -257,6 +257,127 @@ and cites Aubard et al. (2013) for the finding that the solution becomes
 independent of the finite-difference stencil beyond seven points while
 the filter shape strongly affects the LES (§2.2.2, §5).
 
+## Differential filters on unstructured grids
+
+[Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) filter in
+physical space by solving an elliptic equation, so that the filter is
+implicit in space and works on any element shape. They cite Germano's
+differential filter (§3, Eq. 7),
+$\bar\phi-\delta_{\mathrm G}^2\,\partial_i\partial_i\bar\phi=\phi$, with
+transfer function $\hat G(k)=1/(1+\delta_{\mathrm G}^2k^2)$ (Eq. 11;
+$\delta_{\mathrm G}$ the filter radius, page-local): it attenuates every
+wavenumber but never removes one completely, and the single parameter
+$\delta_{\mathrm G}$ fixes roll-off, cut-off and attenuation at the grid
+cut-off together. Their filter, an extension of the one-dimensional
+Najafi-Yazdi filter (cited) to two- and three-dimensional unstructured
+grids, adds a second-derivative term on the right-hand side, written in
+each element's reference coordinates $\xi_i$ (§3.1, Eqs. 9–10),
+
+$$\bar\phi+\frac{\partial}{\partial\xi_i}\Big(a_{\mathrm D}\frac{\partial\bar\phi}{\partial\xi_i}\Big)=\phi+\frac{\partial}{\partial\xi_i}\Big(b_{\mathrm D}\frac{\partial\phi}{\partial\xi_i}\Big),\qquad \hat G(k)=\frac{1-b_{\mathrm D}k^2}{1-a_{\mathrm D}k^2}\ \text{(continuous, constant coefficients)},$$
+
+with $a_{\mathrm D}$, $b_{\mathrm D}$ (page-local; the source's $\alpha$,
+$\beta$) interpolated from nodal values $a_{\mathrm D,k}$,
+$b_{\mathrm D,k}$. The right-hand coefficient is chosen for complete
+attenuation at the grid cut-off ("unconditional numerical stability as
+well as strong anti-aliasing"), the left-hand one sets the shape and the
+cut-off wavenumber. The value of $b_{\mathrm D}$ that gives
+$\hat G(\pi/h)=0$ depends on the discretization: $1/\pi^2$ for the
+continuous filter, $1/4$ for a second-order central difference, whose
+transfer function is
+$[1-2b_{\mathrm D}(1-\cos kh)]/[1-2a_{\mathrm D}(1-\cos kh)]$, and $1/12$
+for a finite-element form (§3.1, Eq. 13). The parameters must therefore
+be fixed after discretization.
+
+**Design on an unstructured stencil.** A Galerkin discretization gives the
+sparse system $\mathbf M\bar\Phi=\mathbf N\Phi$ for the nodal values
+(§3.2, Eqs. 27–29; $\mathbf M$, $\mathbf N$ page-local). For design the
+authors define a "generalized" Z-transform on the local stencil of a node,
+with exponents equal to coordinate differences normalized by the minimum
+spacing in each direction (App. A, Eq. A.8), and impose element by element
+(§4.1–4.6):
+
+- conservation of constants, transfer function equal to one at zero
+  wavenumber (Eqs. 32–34);
+- complete attenuation of the grid-to-grid wave along every element edge,
+  which fixes the nodal $b_{\mathrm D,k}$: $(1,-\tfrac23,2,-\tfrac23)$ on
+  the bilinear quadrilateral, "exactly the same values as were obtained for
+  structured grids" (App. B.1, Eq. B.18); $(1,-\tfrac79,\tfrac43,-\tfrac79,-\tfrac79,\tfrac43,\tfrac{14}9,\tfrac43)$
+  on the bilinear hexahedron (Eqs. B.45–B.46); $1/12$ on the linear
+  triangle and $3/40$ on the linear tetrahedron (Eqs. B.26–B.27, B.55–B.56).
+  On linear triangles and tetrahedra complete attenuation holds along the
+  reference axes or along their diagonal, not both, while bilinear and
+  higher elements attenuate completely in all directions (App. B.2);
+- a sufficient element-wise stability condition $|\hat G|\le1$, written
+  as a non-negative stability index (Eqs. 41–42), which bounds the ratios
+  $a_{\mathrm D,k}/b_{\mathrm D,k}$ (Table 1): for the quadrilateral
+  $a_{\mathrm D,2}/b_{\mathrm D,2}>1$ and
+  $a_{\mathrm D,3}/b_{\mathrm D,3}<a_{\mathrm D,2}/b_{\mathrm D,2}$
+  (Eq. 46), for triangles and tetrahedra $a_{\mathrm D,1}/b_{\mathrm D,1}=1$
+  and the other ratios below one. Being only
+  sufficient, it can be more dissipative than necessary (§4.5);
+- a cut-off wavenumber, where $|\hat G|=1/2$ on the assembled (not the
+  element-wise) transfer function; it varies from node to node and is set
+  in practice by choosing the ratios (§4.6, Eqs. 47–48). On a Cartesian
+  quadrilateral grid, ratios 1.2 and 1.05 give a cut-off of at least
+  $3\pi/4$ and $|\hat G|\ge0.9$ for $kh\le\pi/2$; for aeroacoustics a
+  cut-off of at least $\pi/2$ is called customary and $3\pi/4$ ideal.
+
+Positivity is reduced to a phase condition that the authors leave open
+("further investigations are needed", §4.2); Galilean invariance and
+orientation independence are argued, "No mathematical proof will be
+attempted here" (§4.3, §4.7). Any differential filter discretized on a
+non-uniform or unstructured grid loses commutation with differentiation,
+because its width varies in space (§3.1, Eq. 18). Repeated application
+equals one application with a larger radius, though not necessarily
+within the same filter family (§4.8). The filter is the basis of a van
+Cittert [approximate deconvolution model](/methods/scale-similarity-model.md)
+with no eddy viscosity on a continuous-Galerkin finite-element solver; the
+LES results are on that page. In decaying isotropic turbulence the
+hexahedral filter (ratios 1, 1.2, 1.1, 1.05) gives a cut-off of about
+$3\pi/4$ relative to the local spacing, and on tetrahedra the filter
+follows the smaller local element size (§6.1, Fig. 6); for the
+Taylor–Green LES the ratios (1.1, 1.05, 1.025) are said to give about
+$\pi/2$ on hexahedra, and a tetrahedral ratio of 0.95 about $3\pi/5$ (§6.2; see
+Qualifications).
+
+## Entropy-bounded adaptive filter confined to shocks
+
+[Gao et al. (2023)](/sources/gao-2023.md) (§3.1.3, Eqs. 40–48) use the
+Vandermonde form $\mathcal F=\mathcal V\Lambda\mathcal V^{-1}$ with the
+exponential kernel $\exp(-\alpha_f\vartheta_m^{s_f})$, $\vartheta_m=i/N$
+for mode $i$, with $s_f=2$ and only the strength $\alpha_f$ varied, as in
+the adaptive filter of Dzanic & Witherden (cited). That filter chooses
+$\alpha_f$ in each element so that density and pressure stay above
+minima and a minimum-entropy condition holds,
+$s_{\mathrm{ent}}(\boldsymbol U^{n+1})\ge\min_{\Omega_e}s_{\mathrm{ent}}(\boldsymbol U^n)-\epsilon_{\mathrm{ent}}$,
+with $s_{\mathrm{ent}}=\rho\ln(p\rho^{-\gamma})$, $\Omega_e$ the element
+and its direct neighbours and $\epsilon_{\mathrm{ent}}$ a tolerance (all
+page-local; the source's $s$, $\epsilon_s$); Gao et al. state that
+Dzanic & Witherden split the hyperbolic and parabolic operators and
+suggest one tolerance, $10^{-4}$, for the whole field. Gao et al.'s
+change, used in the split-form DGSEM of [FLEXI](/software/flexi.md), is
+to apply the filter only in elements flagged by a
+[shock sensor](/definitions/shock-sensor.md) (Jameson, Persson–Peraire
+or a modified Ducros indicator, per case). The authors' arguments
+(§3.1.3): one tolerance can over-dissipate complex flows, especially at
+high $N$ or on coarse meshes; the confinement leaves the smooth and
+under-resolved turbulent regions to the
+[implicit LES](/definitions/implicit-les.md) of the split form, makes
+$\epsilon_{\mathrm{ent}}$ a single knob between shock sharpness (larger)
+and post-shock oscillation (smaller), and removes the operator splitting.
+They also report that the unconfined filter on a standard DG scheme was
+"found to be unreliable" against aliasing in under-resolved turbulence,
+because it aims at minimal dissipation where the cut-off eddies need
+some (results not shown). With the same tolerance, the confined filter
+adds "much less dissipation in smooth flow areas" than the original on a
+shock–panel test (§4.2, Schlieren of Figs. 14 and 16), and it captures
+the shock of the elastic-panel
+[shock–boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
+at $N=6$ (§5). Compare the unconfined use of the same Dzanic–Witherden
+filter by Wang (2024) in the results below, and the subcell alternative
+on the [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)
+page.
+
 ## Results
 
 **Relaxation filtering against split forms and subgrid models.** Volpiani
@@ -426,6 +547,22 @@ page.
   caption reads "after $200T_{char}$". The $\alpha_f$ of the "strength"
   labels is not monotone: at $N=3$ the $M=0.3$ filter has a smaller
   $\alpha_f$ than the $M=0.2$ one at the same $\vartheta^{\mathrm t}_c$ (Table 4).
+- Najafiyazdi et al. (2023) print the Taylor–Green filter cut-off as
+  about $\pi/2$ (hexahedra) and $3\pi/5$ (tetrahedra) in §6.2, and as
+  "$\kappa_f\approx0.8\pi$" for all runs in the Fig. 13 caption. Of their
+  three printed conditions for the quadrilateral coefficients (App. B.1),
+  the stated solution $b_{\mathrm D}=(1,-\tfrac23,2,-\tfrac23)$ satisfies
+  Eq. (B.16) but gives 10, not 8, in Eq. (B.17) as printed, and the
+  difference of the two printed equations would force
+  $b_{\mathrm D,2}=0$; Eq. (B.42) is printed without the factor $1/432$
+  that its sibling coefficients carry, and with it the stated hexahedron
+  values give the $1/8$ of Eq. (B.46) (bracket 54) *(compiler check, not
+  in the sources)*. The positivity condition of §4.2 is printed as
+  "$|\theta_n|\le-\pi/2$".
+- Gao et al. (2023) print the entropy tolerance once as
+  "$\epsilon_\sigma=10^{-4}$" (§5) and otherwise as $\epsilon_s$. The
+  comparison of the confined and unconfined filters is a qualitative
+  Schlieren comparison on one case.
 
 # Citations
 
@@ -434,3 +571,5 @@ page.
 - [Caban et al. (2026)](/sources/caban-2026.md) — §3.1, Eqs. (13)–(17), Table 1, Fig. 2; §5.1, Figs. 10–11; §5.3.1, Table 4, Fig. 19; §5.
 - [Volpiani (2024)](/sources/volpiani-2024.md) — §1; §2.2.2, Eqs. (7)–(8), Table 3; §4, Table 1; §5, Figs. 6–10, 15–18; §6; App. 1, Fig. 20.
 - [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §1; §2.1; §3.1–3.4, Eqs. (27)–(32), Algorithms 1–4, Tables 4–6; §4.1–4.3, Table 1, Figs. 9–18; §5.1–5.2, Tables 2–3, Figs. 19–30; §6.
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §3, Eqs. (7)–(18); §3.2, Eqs. (27)–(29); §4.1–4.8, Eqs. (31)–(48), Table 1; §6.1, Fig. 6; §6.2, Fig. 13; App. A, Eq. (A.8); App. B, Eqs. (B.15)–(B.56).
+- [Gao et al. (2023)](/sources/gao-2023.md) — §3.1.3, Eqs. (40)–(48); §4.1–4.2, Figs. 14, 16; §5.

@@ -5,7 +5,7 @@ description: "Morkovin's hypothesis holds that, while density fluctuations stay 
 status: established
 aliases: [Morkovin hypothesis, Morkovin scaling, Morkovin's scaling, strong Reynolds analogy, SRA, HSRA, Reynolds analogy factor, turbulent Prandtl number]
 tags: [compressible, boundary-layer, dns, hypersonic, rans]
-timestamp: 2026-10-27T20:37:00Z
+timestamp: 2026-10-28T02:18:00Z
 ---
 
 # Morkovin's hypothesis and Reynolds analogies
@@ -335,15 +335,12 @@ $$\langle T\rangle_\rho=T_w+C_{\mathrm{DM}}(T_r-T_w)\Big(1-\frac{\langle u\rangl
 (Eq. 3.17; page-local: $U_{\mathrm m}$, $T_{\mathrm m}$ the mean velocity
 and temperature at $y_{\mathrm{mT}}$, $U_\delta$ the edge velocity; $C_{\mathrm{DM}}$ the
 relation's constant, registry §11), with $C_{\mathrm{DM}}=0.8259$ (Duan & Martín), recast by Zhang et
-al. as $sPr$ with the Reynolds analogy factor $s=1.14$, and the recovery
+al. as $s_{\mathrm{RA}}Pr$ with the Reynolds analogy factor $s_{\mathrm{RA}}=1.14$, and the recovery
 factor $r=Pr^{1/3}$ (§3.3, Eq. 3.16; Cogo et al. and Huang et al. take
 $r=0.89$). This is one of the quadratic relations of the
 "Mean temperature" section, written in two-layer form after Griffin et
 al., whom they cite, and results change little for $y^*_{\mathrm{mT}}$ from
-50 to 150 (App. A, Fig. 15). The value $s=1.14$ lies inside the range
-$1.1<R_{af}<1.2$ that Huang et al. (2022) measure for $2C_h/C_f$
-*(compiler check, not in the sources; Chen et al. do not print the
-definition of $s$)*.
+50 to 150 (App. A, Fig. 15).
 
 **Results.** The implied $Pr_t$ of the modified model reproduces the DNS
 singularity a posteriori (at $y^*\approx8$ for the Mach 7.87 case; §4,
@@ -477,6 +474,101 @@ inlet, and one of them declines Morkovin's assumption downstream.
   with van Driest-transformed mean profiles (see
   [inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
 
+## Thermodynamic fluctuations for a hypersonic inflow library
+
+[Mo et al. (2023)](/sources/mo-2023.md) need the analogies as working
+relations. Their DNS inflow takes stored velocity planes from a Mach 2.25
+precursor (a turbulence fluctuation library), rescales them with
+Morkovin's density scaling, and must then supply temperature and density
+fluctuations that the library does not store (§III; the velocity mapping
+and recovery lengths are on
+[inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
+Notation: $\langle\cdot\rangle$ is the time and spanwise average, primes
+are Reynolds fluctuations, $(\cdot)_e$ edge values, and $s_{\mathrm{RA}}$
+(page-local) the Reynolds analogy factor of the generalized Reynolds
+analogy (GRA).
+
+**Velocity scaling.** The rescaling keeps
+$\sqrt{\langle\rho\rangle/\rho_w}\,u_i'/u_\tau$ equal between library and
+target at matched coordinates: spanwise in wall units, wall-normal in wall
+units near the wall and in $\delta$ in the outer layer, blended by a tanh
+function between $0.2\delta$ and $0.5\delta$ (Eqs. 15–17). The authors
+justify it by Morkovin's hypothesis that compressibility and heat transfer
+act mainly through the mean density, and cite Duan et al. for its validity
+below Mach 12 and above a wall-to-recovery temperature ratio of 0.12
+(§III B).
+
+**The SRA laws that fail.** For the Mach 2.9 adiabatic case they use
+Morkovin's SRA in the form (Eqs. 18–19)
+$$\frac{T'}{\langle T\rangle}\approx-(\gamma-1)M^2\frac{u'}{\langle u\rangle},\qquad \frac{\rho'}{\langle\rho\rangle}=-\frac{T'}{\langle T\rangle},$$
+the second from the equation of state with $p'$ and the $\rho'T'$
+correlation neglected. They state that the first assumes $Pr=1$,
+negligible total-temperature fluctuations and an adiabatic wall, all
+violated in a cold-wall hypersonic layer (§IV A). In their Mach 7.25
+cold-wall inflow ($T_w=562$ K, $T_e=64.4$ K) the maximum relative
+temperature fluctuation from the SRA exceeds one near $y/\delta=0.8$. The
+density law then gives $\rho'/\langle\rho\rangle<-1$, a negative
+instantaneous density (§IV B, Fig. 10c). Martin's remedy (2007, as cited),
+multiplying the SRA right-hand side by a factor below 0.8, is said to
+distort the PDF of positive density fluctuations.
+
+**Replacement laws.** For temperature they combine the instantaneous form
+of Gaviglio's extension, $T'\approx(\partial\langle T\rangle/\partial\langle u\rangle)\,u'$
+(Yu & Xu 2022, as cited; Eq. 21), with the GRA of Zhang et al. (2013, as
+cited), Eqs. (11)–(13),
+$$\frac{\langle T\rangle}{T_e}=\frac{T_w}{T_e}+\frac{T_r-T_w}{T_e}\,f\!\left(\frac{\langle u\rangle}{u_e}\right)+\frac{T_e-T_r}{T_e}\left(\frac{\langle u\rangle}{u_e}\right)^2,\qquad f(\xi)=(1-s_{\mathrm{RA}}Pr)\,\xi^2+s_{\mathrm{RA}}Pr\,\xi,$$
+with $s_{\mathrm{RA}}=1.16$ and $Pr=0.72$, so that
+$f=0.165\xi^2+0.835\xi$ (Eq. 13). They print the resulting law as
+$$T'=2\frac{\langle u\rangle}{u_e^2}\left[T_e-(1-s_{\mathrm{RA}}Pr)\,T_w-s_{\mathrm{RA}}Pr\,T_r\right]u'\approx2\frac{\langle u\rangle}{u_e^2}\left[T_e-0.165\,T_w-0.835\,T_r\right]u'$$
+(Eqs. 22–23; see Qualifications). For density they keep the correlation
+term of the decomposed equation of state,
+$p'/\langle p\rangle=\rho'/\langle\rho\rangle+T'/\langle T\rangle+\rho'T'/(\langle\rho\rangle\langle T\rangle)$
+(Eq. 24), and drop only $p'$:
+$$\frac{\rho'}{\langle\rho\rangle}=-\frac{T'/\langle T\rangle}{1+T'/\langle T\rangle}\qquad(\text{Eq. 25}),$$
+whose linearization is the SRA density law. The relation is a hyperbola
+with asymptotes $\rho'/\langle\rho\rangle=-1$ and $T'/\langle T\rangle=-1$,
+so the density stays positive whenever $T'/\langle T\rangle>-1$.
+
+**A posteriori check in the Mach 7.25 DNS** (§IV B, Figs. 15–17):
+
+- the rms of the total-temperature fluctuations reaches about 10%, so the
+  SRA assumption of negligible total-temperature fluctuations fails;
+- the ratio of the rms sides of the SRA temperature law (their
+  $\Gamma_1$, Eq. 26) is about 0.8 over most of the layer, while that of
+  the new law ($\Gamma_2$, Eq. 27) is close to one;
+- at $y^+=10$, 20 and 100 the PDFs show that the correlation term
+  $\rho'T'/(\langle\rho\rangle\langle T\rangle)$ grows with $y^+$. At
+  $y^+=100$ it exceeds the temperature and density fluctuations in
+  magnitude, so it cannot be dropped. $|p'/\langle p\rangle|<0.2$ is the
+  high-probability event at all three heights, which justifies dropping
+  $p'$;
+- the SRA density law deviates increasingly from the DNS with $y^+$ and
+  produces $\rho'/\langle\rho\rangle<-1$ at $y^+=20$ and 100, while
+  Eq. (25) avoids these values and collapses better with the DNS over the
+  whole PDF (Fig. 17).
+
+The same DNS reproduces the GRA mean temperature–velocity relation at
+Mach 2.25, 2.9 and 7.25 (§II B, §III C, §IV B), in agreement with the
+mean-temperature findings of Cogo et al. (2022) and Huang et al. (2022)
+above.
+
+## Variable-property channels in a RANS closure
+
+[Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) (§2.1–2.2) build
+their [field-inversion](/methods/field-inversion-machine-learning.md)
+database of 30 channel DNS on Morkovin's hypothesis as a working premise.
+The database holds low-Mach channels with strong property variations
+(volumetric heating, isothermal walls), the ideal-gas channels of
+Trettel & Larsson up to Mach 4, and incompressible channels. They state,
+citing Patel et al., that the hypothesis applies to all the
+variable-property cases. Their one-dimensional RANS models the turbulent
+shear stress, heat flux and dissipation in the energy equation with the
+Boussinesq approximation and the strong Reynolds analogy, with $Pr_t=1$.
+For the high-Mach cases "a detailed analysis showed that $Pr_t\approx1$ in
+the buffer layer", and Patel found the same for the low-Mach cases (as
+cited). The semi-local damping of their base model is on
+[compressible velocity transformations](/definitions/compressible-velocity-transformation.md).
+
 ## As working tools in a supersonic LES
 
 [Gao et al. (2022)](/sources/gao-2022.md) use both relations as tools, not
@@ -496,7 +588,13 @@ velocity and "Morkovin's density scaled Reynolds stress profiles", which
 "match each other well" despite the much coarser LES grid (§5.2, Fig. 16).
 The scaling formula is not printed; Morkovin scaling serves here only to
 compare the LES with a reference DNS of the same layer, not to test the
-hypothesis across Mach numbers.
+hypothesis across Mach numbers. The same group repeats the check for the
+shock-free layer of their elastic-panel interaction
+([Gao et al. (2023)](/sources/gao-2023.md), §5.2, Fig. 18): the van Driest
+velocity and the Morkovin density-scaled Reynolds stresses match the DNS of
+Wenzel et al. (2018, as cited) at $17\delta_r$ and $35\delta_r$ "despite a
+much coarser mesh", with the same synthetic-eddy inflow and an anisotropic
+linear forcing zone.
 
 The same use appears in a hypersonic DNS.
 [Zhang et al. (2022c)](/sources/zhang-2022-g.md) validate the incoming
@@ -532,6 +630,16 @@ the van Driest-transformed mean velocity of the same station is on
   value $B=6.0$ is fitted to their entropy-conservative runs. Their
   Table 3 differences are taken relative to their own entropy-conservative
   scheme (Table 3 caption), not to an independent reference.
+- **Derivative in the temperature law of Mo et al. (2023).** Their
+  Eq. (22) prints
+  $\partial\langle T\rangle/\partial\langle u\rangle=2(T_r-T_w)(1-s_{\mathrm{RA}}Pr)\langle u\rangle/u_e^2+2(T_e-T_r)\langle u\rangle/u_e^2$.
+  Differentiating their own Eqs. (11)–(12) gives an additional term
+  $(T_r-T_w)\,s_{\mathrm{RA}}Pr/u_e$ from the linear part of $f$. The
+  second line of Eq. (22), Eq. (23) and the ratio $\Gamma_2$ (Eq. 27)
+  inherit the omission *(compiler check, not in the sources)*. The file
+  read carries the AIP notice that an erratum to the paper has been
+  published; the erratum is not in the file and its content is not known
+  here.
 - Printed inconsistencies of the two papers that do not bear on these
   scalings (shape factors, Reynolds-number tables) are recorded on their
   Source pages.
@@ -556,5 +664,8 @@ the van Driest-transformed mean velocity of the same station is on
 - [Zhang et al. (2022)](/sources/zhang-2022-b.md) — §2, Table 1; §3, Eqs. (3.1)–(3.3), Table 3, Figs. 4–5, 8 (Morkovin density scaling, Walz and generalized Reynolds analogy, Reynolds analogy factor, turbulent Mach number under wall cooling, Mach 0.5–8); §4, Figs. 10–12; §5, Fig. 13 (wall-pressure fluctuations); §7.
 - [Yu et al. (2022)](/sources/yu-2022-e.md) — §1.2 (Morkovin-based spectral formulation rejected near shocks); §2.1 (generalized Reynolds analogy at the inflow).
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — §2.1 (strong Reynolds analogy for inflow thermodynamic fluctuations).
+- [Mo et al. (2023)](/sources/mo-2023.md) — §II B, Eqs. (11)–(13) (GRA); §III B, Eqs. (15)–(19) (Morkovin velocity scaling, SRA laws, validity limits of Duan et al. as cited); §IV A, Eqs. (20)–(25) (GSRA, new temperature and density laws); §IV B, Eqs. (26)–(27), Figs. 10, 15–17 (a posteriori tests at Mach 7.25).
+- [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §2.1–2.2 (Morkovin's hypothesis for variable-property channels, SRA, $Pr_t=1$).
+- [Gao et al. (2023)](/sources/gao-2023.md) — §5.2, Fig. 18 (Morkovin-scaled stresses against DNS in a DG implicit LES).
 - [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II B (free-stream and wall temperatures, recovery factor); §II C, Eq. (3), Fig. 6b (density-scaled Reynolds-averaged fluctuations at the inflow station of a Mach 6 DNS).
 - [Bose & Park (2018)](/sources/bose-2018.md) — §2.5, Eq. (17) (equilibrium thermal wall model, strong Reynolds analogy $C_h=C_f/2$, its range and failure near separation); §4.4 (Morkovin-type scaling of closures for $M_t\lesssim0.2$).

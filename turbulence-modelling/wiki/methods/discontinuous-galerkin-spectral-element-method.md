@@ -5,7 +5,7 @@ description: "The DGSEM is a collocated nodal discontinuous Galerkin scheme on t
 status: established
 aliases: [DGSEM, DG-SEM, modal DG, nodal discontinuous Galerkin, collocation DG, DG spectral element method, hybridizable discontinuous Galerkin, HDG]
 tags: [dg, numerical-dissipation, kinetic-energy-preserving, entropy-stable, les, dns, flux-reconstruction]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-28T02:15:00Z
 ---
 
 # Discontinuous Galerkin spectral element method
@@ -401,6 +401,21 @@ discontinuous Galerkin approach is recovered", with LDG viscous fluxes
 the Riemann solvers and the indicator-switched filters are on the
 flux-reconstruction page and on
 [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md).
+[Liu & Yuan (2023)](/sources/liu-2023-b.md), §2.2, choose the VCJH
+correction-function parameter that recovers collocation nodal DG, with
+Gauss–Legendre solution points (to limit aliasing, citing Witherden &
+Vincent), as the base of their a posteriori subcell limiter for
+one-dimensional detonations.
+
+**Fully-discrete spatial eigenanalysis of FR-DG.**
+[Tonicello et al. (2023)](/sources/tonicello-2023.md), §3, Fig. 7,
+App. Figs. 29–30, analyse the DG recovery of flux reconstruction (FR-DG)
+beside the spectral-difference recovery (FR-SD) for 1D linear advection
+with explicit Runge–Kutta time integration: with upwind fluxes FR-DG has
+the more restrictive CFL limit, so its dissipation curves extend to
+higher frequencies, and it is spatially less dissipative than FR-SD
+overall. The method and its findings are on
+[eigensolution analysis](/methods/eigensolution-analysis.md).
 
 **DG in the first High-Order CFD Workshop.** The workshop summary of
 [Wang et al. (2013)](/sources/wang-2013.md) compares DG submissions (BR2,
@@ -1062,6 +1077,47 @@ switched by a filtered [shock sensor](/definitions/shock-sensor.md); the
 two runs cost about 46,173 and 196,608 CPU hours (§5.2–5.3, Eq. 19). See
 [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md).
 
+**The same interaction over an elastic panel (ALE DGSEM).**
+[Gao et al. (2023)](/sources/gao-2023.md) repeat a Mach 2 oblique-shock
+interaction (8° deflection, $Re_{\theta}=2188$ at the reference station)
+over a panel that deforms, with FLEXI's split-form arbitrary
+Lagrangian–Eulerian DGSEM (Pirozzoli kinetic-energy-preserving two-point
+flux, LGL nodes, BR1, five-stage fourth-order Runge–Kutta) coupled loosely
+to a Legendre spectral finite-element Timoshenko beam of the same degree,
+so that fluid and structure meshes match at the interface (§2–3). The
+geometric conservation law is discretized with the same polynomial basis
+(see [geometric conservation law](/properties/geometric-conservation-law.md)).
+Turbulence is wall-resolved implicit LES, "no explicit SGS model" (§1).
+At $N=6$ on $223\times89\times26$ elements (about 177 million degrees of
+freedom; $\Delta x^+=30$, $\Delta y^+=1.6$ at the wall, $\Delta z^+=16$
+at the reference station) the run takes $8.0\times10^5$ CPU hours on
+16,384 cores at $3.26\times10^{-6}$ s per degree of freedom, stage and
+core, which they put 55.7% above the split-form ALE DGSEM with prescribed
+mesh motion in free stream (§5.1, Table 4, Eq. 68); the shock-free
+boundary layer at the same conditions runs at about 1.74 µs, 34.6% above
+the baseline of Kempf et al. (§5.2). Against the rigid-panel run of Gao et
+al. (2022) the separated area is 49.0% larger, a new unsteadiness
+appears at the panel frequency ($St\approx0.01$), and the
+separation-induced low frequency $St\approx0.03$ is essentially unchanged
+(§5.3–5.4). The shock capturing changed between the two runs (see
+[subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)).
+
+**Laminar hypersonic interactions with the DGSEM.**
+[Potluri et al. (2023)](/sources/potluri-2023.md) use a strong-form
+collocated LGL DGSEM, its SBP subcell flux-difference form and the split
+form with the Chandrashekar two-point flux (§3.1, Eqs. 4–7), with BR1 in
+entropy or conservative variables (§3.2), for laminar hypersonic
+shock/boundary-layer interactions; there is no turbulence in the paper.
+On a Mach 2.15 laminar interaction, $N=2,3,4$ at about $150\times108$
+degrees of freedom give "virtually indistinguishable" wall pressure but
+different skin friction, $N=2$ being lower before separation and less
+smooth in the bubble (§4.3, Table 2, Figs. 6–7); on a Mach 8.1 cylinder at
+equal degrees of freedom $N=2$ oscillates in the stagnation heat flux and
+$N=1$ overshoots it, so that heat flux "can depend significantly on the
+$N$, even if the DoF count is kept constant" (§4.7, Fig. 15). Their
+subcell blending with a hypersonic wall modification is on the subcell
+page.
+
 **Supersonic isothermal turbulence with modal DG.**
 [Cernetic et al. (2024)](/sources/cernetic-2024.md) use their GPU modal DG
 code (Legendre basis on Cartesian cells, truncated to total degree $N$, so
@@ -1148,6 +1204,15 @@ fine one (§3). See
 - **The log basis of Lv et al. (2021).** Eq. (3) writes the basis function
   $\kappa^{-1}\log((y+y_0)/y_0)$, Eq. (8) $\log((y-y_0)/y_0)$. The paper
   does not say how $y_0$ is set in the runs.
+
+- **Two performance figures of the same shock-free boundary layer.**
+  Gao et al. (2022) report about 1.55 µs per degree of freedom, stage and
+  core, 94.0% above the FLEXI baseline of Krais et al.; Gao et al. (2023,
+  §5.2) report about 1.74 µs for the shock-free boundary layer at their
+  conditions, 34.6% above the baseline of Kempf et al. The runs differ
+  (moving-mesh framework, conditions, statistics collection, which they
+  name as the main overhead) and the baselines differ, so the values are
+  recorded side by side, not as a contradiction.
 
 - **Memory per degree of freedom.** Krais et al. (2021, Table 4) report for
   CPU FLEXI 1.47 KiB at $N=1$ and 0.567 KiB at $N=12$; Kurz et al. (2025,
@@ -1314,3 +1379,7 @@ fine one (§3). See
 - [Wang et al. (2013)](/sources/wang-2013.md) — §3.2 (work units); §5.1–5.6, Figs. 15–27 (DG against finite volumes and differences; Taylor–Green; RAE 2822); §6 (RANS robustness, memory of line-implicit solvers).
 - [Lv et al. (2021)](/sources/lv-2021.md) — §II A–C, Eqs. (3)–(12) (log-law basis, wall shear from coefficients); §III, Eqs. (13)–(20) (SUPES DG with PPM finite volumes).
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III B–C, §V (modal and reconstructed DG for multi-material flow, passing mention).
+- [Gao et al. (2023)](/sources/gao-2023.md) — §1; §3.1, Eqs. (16)–(39) (split-form ALE DGSEM, GCL); §5.1–5.4, Table 4, Eq. (68), Figs. 18–30 (implicit LES of the interaction over an elastic panel, performance).
+- [Potluri et al. (2023)](/sources/potluri-2023.md) — §3.1–3.2, Eqs. (4)–(14) (strong, subcell and split forms; BR1); §4.3, Table 2, Figs. 6–7; §4.7, Fig. 15, Table 3 (dependence on $N$ at fixed degrees of freedom).
+- [Liu & Yuan (2023)](/sources/liu-2023-b.md) — §2.2 (VCJH flux reconstruction recovering collocation nodal DG on Gauss–Legendre points).
+- [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §3, Fig. 7, App. Figs. 29–30 (FR-DG against FR-SD eigencurves, CFL limits).

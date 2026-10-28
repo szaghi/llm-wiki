@@ -5,7 +5,7 @@ description: "A shock sensor or troubled-cell indicator is the switch that decid
 status: established
 aliases: [shock sensor, shock indicator, troubled-cell indicator, troubled-cell detector, discontinuity indicator, Ducros sensor, Jameson pressure sensor, Persson–Peraire indicator, KXRCF indicator, TVB minmod indicator, TENO troubled-cell indicator, filtered shock indicator]
 tags: [shock-capturing, numerical-dissipation, compressible, dg, implicit-les, boundary-layer]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T02:15:00Z
 ---
 
 # Shock sensors and troubled-cell indicators
@@ -72,6 +72,14 @@ becomes finite volume. The JST-type indicator is also one of the a priori
 indicators of the FLEXI switching scheme of
 [Krais et al. (2021)](/sources/krais-2021.md), §4.3, §7.2.
 
+**Flux switch in a detonation DNS.** In the code FK3 of
+[Iwata et al. (2023)](/sources/iwata-2023.md), §II B, a pressure sensor
+(Quirk and Kim et al. cited) selects the convective flux of a fifth-order
+WENO finite-volume scheme: HLLC away from shocks, for its lower numerical
+diffusion, and Lax–Friedrichs around them, for robustness; the formula and
+threshold are not printed. The run is a detonation propagating into
+isotropic turbulence.
+
 **Pressure ratio of a Riemann solver.** In a real-gas hybrid,
 [Xu et al. (2026)](/sources/xu-2026.md), Eq. (18), flag a compressive jump
 when the interface pressure ratio given by the primitive-variable Riemann
@@ -120,7 +128,8 @@ two further STREAmS DNS: [Yu et al. (2022)](/sources/yu-2022-e.md),
 §2.1, switch a sixth-order kinetic-energy-preserving scheme to fifth-order
 WENO near strong compressions detected by the Ducros criterion in an
 oblique shock/boundary-layer interaction at $M_\infty=2.28$ (threshold not
-printed); [Zhang et al. (2022)](/sources/zhang-2022-b.md), §2, use a
+printed), and [Yu et al. (2023)](/sources/yu-2023.md), §2, restate the
+same solver set-up for the same database; [Zhang et al. (2022)](/sources/zhang-2022-b.md), §2, use a
 modified Ducros sensor with threshold 0.15 between an eighth-order
 energy-preserving flux and seventh-order WENO only in their $M_\infty=8$
 boundary layers, and apply the energy-preserving flux throughout at
@@ -150,7 +159,13 @@ the source's case-dependent vorticity scaling $\alpha$). The positive
 dilatation of an expansion fan then gives negative values, whereas the
 squared form flags expansion fans as it flags weak shocks; the scaled
 variant is "not easy to be generalized for different cases". Neither is
-used in their final runs.
+used in their final runs. The same group's later DG simulation of the
+interaction over an elastic panel uses instead the "improved Ducros
+indicator" of Gao et al. (2022a), with the parameter value 10.0, to
+confine an adaptive filter to troubled elements, and keeps the filter
+always active above $y=2\delta_r$ ([Gao et al. 2023](/sources/gao-2023.md),
+§3.1.3, §5.1; the other two indicators of that paper are in the next
+section).
 
 [De Vanna et al. (2022)](/sources/devanna-2022.md), §3.1.2, Eq. (8), run a
 compression-only form in the hybrid energy-preserving/WENO-Z solver URANOS
@@ -216,6 +231,50 @@ indicator (Persson–Peraire cited) and replace their polynomial by a
 Hermite-WENO reconstruction: the indicator here targets a turbulence
 variable, not a shock.
 
+**Confining an adaptive filter.** [Gao et al. (2023)](/sources/gao-2023.md),
+§3.1.3, apply the positivity-preserving, minimum-entropy adaptive modal
+filter of Dzanic & Witherden only in elements that an indicator flags
+(method on [explicit modal filtering](/methods/explicit-modal-filtering.md)
+and [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)).
+They change the indicator with the case: a Jameson indicator above 0.0008
+for supersonic panel flutter, a Persson–Peraire indicator with threshold
+$-4.5$ for a shock hitting a cantilever panel, and the improved Ducros
+indicator for the turbulent interaction (§4.1–4.2, §5.1). They report
+that the confined filter introduces "much less dissipation in smooth flow
+areas, especially in those complex vortical structures", than the
+unconfined one, from a qualitative Schlieren comparison (§4.2, Figs. 14,
+16).
+
+**Modal energy of $\rho p$ and a logistic blender.** In the subcell
+blending of [Potluri et al. (2023)](/sources/potluri-2023.md), §3.1.1,
+Eqs. (11)–(12), the indicator variable is the product $\rho p$, expanded
+in Legendre modes with coefficients $m_j$. Two modal-energy ratios are
+used: the Persson–Peraire form $\mathbb E_{\mathrm P}=m_N^2/\sum_{i=0}^Nm_i^2$
+and the form of Hennemann et al.,
+$\mathbb E_{\mathrm H}=\max\{m_N^2/\sum_{i=0}^Nm_i^2,\ m_{N-1}^2/\sum_{i=0}^{N-1}m_i^2\}$
+($m_j$, $\mathbb E_{\mathrm P}$, $\mathbb E_{\mathrm H}$ page-local). The
+ratio is mapped to the blending factor $\alpha$ by a logistic function of
+$\mathbb E/\mathbb T(N)-1$ with sharpness $9.21024$ and threshold
+$\mathbb T(N)=0.5\times10^{-1.8(N+1)^{0.25}}$, clipped to
+$[\alpha_{\min},\alpha_{\max}]$ with $\alpha_{\min}=10^{-3}$, and smoothed
+over neighbours. $\mathbb E_{\mathrm P}$ is used for $N\le2$ and, for
+$N>2$, in supersonic cases; $\mathbb E_{\mathrm H}$ in hypersonic cases
+with $N>2$. Their cases are laminar; they report a limitation: shock detectors "cannot be expected to detect the high
+gradients which show-up in the initial transient of hypersonic boundary
+layers", where the blending factor is non-zero at first but "diminishes
+very quickly", so they impose it at the wall instead (§3.3; the wall
+modification is on the subcell page).
+
+**The smoothness indicator as a refinement indicator.**
+[Ims & Wang (2023)](/sources/ims-2023.md), §3.2, Eqs. (15)–(17), reuse the
+Persson–Peraire smoothness ratio, averaged over density, momentum and total
+energy, over the cell and in time, as one of three indicators for
+h-refinement of implicit LES with flux reconstruction. On two turbine
+cascades it concentrates refinement in the boundary layers and converges
+the wake statistics more slowly than the two alternatives; on the T106a
+cascade it is no better than random refinement (§5.1–5.3, visual
+comparisons; see [mesh adaptation](/methods/mesh-adaptation.md)).
+
 **Density gradient.** The entropy-stable artificial viscosity of
 [HORSES3D](/software/horses3d.md) is switched by an element-wise
 density-gradient sensor, $\int_{\mathrm{el}}\mathcal J|\nabla_\xi\rho|^2$
@@ -252,6 +311,43 @@ indicators (Huang & Fu 2024, §4.1–4.2, Eqs. 27–31):
 
 They state that both need a critical parameter tied to the solution and
 tuned case by case (§1).
+
+**KXRCF in flux reconstruction.** Two flux-reconstruction sources change
+the normalization of KXRCF:
+
+- [Shi & Yan (2023)](/sources/shi-2023.md), §II.B.1, Eqs. (6)–(7), drop
+  the factor $h^{(N+1)/2}$ "based on the non-dimensionalization analysis",
+  so that the indicator measures the inflow-face jump of density as a
+  fraction of the cell's own maximum, and flag a cell above $C_{\mathrm{KX}}=0.01$
+  (page-local, the source's $C_k$; the original threshold is 1). On the double Mach
+  reflection the sensor marks the shocks and also parts of the shear layer
+  and the vortex, and density contours keep "wrinkles", which they read as
+  oscillations the sensor–limiter pair does not remove (§III.B, Fig. 3).
+  The sensor then drives a WENO limiter in an implicit LES of a Mach 2.9
+  compression-ramp interaction (see [WENO schemes](/methods/weno-scheme.md)).
+- [Liu & Yuan (2023)](/sources/liu-2023-b.md), §3.3, Eqs. (30)–(32), use
+  the larger of the two interface jumps of the cell,
+  $I_i=\max(|u_{i,L}-u_{i-1,R}|,|u_{i,R}-u_{i+1,L}|)$, which is
+  $O(h^{N+1})$ in smooth regions and $O(1)$ at a discontinuity, and its
+  normalized form $I^{\mathrm{KXRCF}}_i=I_i/(h^{(N+1)/2}\{u\}_i)$ with the cell mean
+  $\{u\}_i$ ($I_i$ page-local; the source's $I^*_i$). A cell with
+  $I^{\mathrm{KXRCF}}_i<c_{\mathrm{sm}}=10^{-3}$ is accepted, one with
+  $I^{\mathrm{KXRCF}}_i>c_{\mathrm{dc}}=1$ is troubled ($c_{\mathrm{sm}}$,
+  $c_{\mathrm{dc}}$ page-local, the source's $C_S$, $C_D$), and only the cells in
+  between go to a relaxed discrete maximum principle on the cell means
+  ($N=2,3$) or on subcell means ($N\ge4$), with relaxation
+  $\max(10^{-4},10^{-3}\times\text{local range})$ (Eqs. 26–29); a cell whose
+  density or pressure becomes non-positive, or NaN, is troubled in any
+  case, and the two neighbours of a troubled cell are marked too (§3.2,
+  §3.4). This is an *a posteriori* test of the unlimited candidate
+  solution (the route of the subcell page), with pressure as the detection
+  variable. Without the KXRCF pre-detection the shock cell of a steady
+  detonation switches between the high-order and the subcell scheme every
+  few steps, which they attribute to Runge-type perturbations of the
+  transfer between the two representations, and with first-order subcells
+  the peak-pressure history does not converge to $10^{-4}$; with it the
+  time-averaged number of troubled cells per step falls from 14–85 to
+  5–7 (Table 2; one-dimensional inviscid tests only).
 
 **TENO-based troubled-cell indicator.** Huang & Fu (2024, §4.3, Eqs. 32–35)
 transfer the stencil selection of TENO to the DG polynomials $p_{i-1}$,
@@ -485,6 +581,22 @@ the hybrid scheme (§3.2, §5.3.1). The resulting interaction is on
   the printed ratio is not the normalized sum of differences
   $|\sum_k(p_k-p_0)|/\sum_k(p_k+p_0)$ of the JST sensor above
   *(compiler check, not in the sources)*.
+- **Indicators that miss or overreach.** Potluri et al. (2023) find that
+  modal shock detectors miss the transient wall gradients of laminar
+  hypersonic boundary layers (§3.3); Shi & Yan (2023) find that their
+  KXRCF variant also flags shear layers and vortices (§III.B); Ims & Wang
+  (2023) find the Persson–Peraire ratio biased towards boundary layers when
+  it ranks cells for refinement (§5.1). The three findings come from
+  different uses (blending, limiting, refinement); none of the three
+  papers compares indicators on one turbulent case.
+- **Printed forms in Liu & Yuan (2023) and Potluri et al. (2023).** Liu &
+  Yuan (Eq. 30) write the interface jumps at time level $n$, while their
+  Algorithm 1 applies the pre-detection together with the test of the
+  candidate solution at $n+1$; Eq. (32) divides by the cell mean as
+  printed, without an absolute value (the detection variable of all their
+  tests is pressure).
+  Potluri et al. (§3.1.1) print the modal expansion as $\sum_{i=0}^Nm_jP_j$,
+  with mismatched indices.
 - The Jameson threshold of Gao et al. (2022) is not printed, nor is
   Fernandez et al.'s sensor formula in Klose et al. (2025).
 - **Printed form of van Noordt et al. (2022), Eq. (9).** As printed, the
@@ -539,4 +651,11 @@ the hybrid scheme (§3.2, §5.3.1). The resulting interaction is on
 - [Deng et al. (2022)](/sources/deng-2022.md) — §1 (dependence of hybrid schemes on the indicator); §3.2, Eqs. (17)–(25) (BVD selection instead of a sensor).
 - [Ma et al. (2022)](/sources/ma-2022.md) — §2.2, Eqs. (21)–(29) (nonlinear weights and decoupling of the compact system at a discontinuity).
 - [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II A (pressure-gradient recognizer of the OMP6/WENO7 hybrid in OpenCFD-SCU).
+- [Gao et al. (2023)](/sources/gao-2023.md) — §3.1.3 (Jameson, Persson–Peraire and improved Ducros indicators confining the adaptive filter, values 0.0008, $-4.5$, 10.0); §4.1–4.2, Figs. 14, 16; §5.1.
+- [Potluri et al. (2023)](/sources/potluri-2023.md) — §3.1.1, Eqs. (11)–(12) (modal energy of $\rho p$, threshold, logistic blender); §3.3 (detectors miss transient wall gradients).
+- [Ims & Wang (2023)](/sources/ims-2023.md) — §3.2, Eqs. (15)–(17) (Persson–Peraire ratio as refinement indicator); §5.1–5.3.
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §II.B.1, Eqs. (6)–(7) (KXRCF without grid scaling, $C_{\mathrm{KX}}=0.01$, density); §III.B, Fig. 3 (double Mach reflection).
+- [Liu & Yuan (2023)](/sources/liu-2023-b.md) — §3.2–3.5, Eqs. (26)–(32), Algorithm 1 (physical and relaxed maximum-principle detection, KXRCF pre-detection, neighbour marking); §5.5, Table 2, Figs. 6–7, 10.
+- [Iwata et al. (2023)](/sources/iwata-2023.md) — §II B (pressure sensor switching HLLC and Lax–Friedrichs fluxes).
+- [Yu et al. (2023)](/sources/yu-2023.md) — §2 (Ducros switch in STREAmS, same database as Yu et al. 2022).
 - [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §2.2 (ROUND reconstruction, no sensor; passing).

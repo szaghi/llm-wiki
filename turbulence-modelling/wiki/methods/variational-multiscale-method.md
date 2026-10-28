@@ -5,7 +5,7 @@ description: "The variational multiscale method splits the finite-element soluti
 status: established
 aliases: [VMS, residual-based VMS, residual-based variational multiscale method, RB-VMS, VMS-LES, residual-based LES, modified VMS, multiscale Smagorinsky model, CG-VMSD]
 tags: [les, implicit-les, sgs-model, numerical-dissipation, immersed-boundary]
-timestamp: 2026-10-27T20:36:00Z
+timestamp: 2026-10-28T02:14:00Z
 ---
 
 # Variational multiscale method
@@ -239,6 +239,11 @@ scales from residuals:
   runs an [actuator line](/methods/actuator-line-model.md) inside a VMS
   framework (Ravensbergen et al. 2020); the VMS formulation is cited, not
   used.
+- **Blended with RANS for the drag crisis (cited only).** [Mays et al. (2023)](/sources/mays-2023.md)
+  (§1) list Moussaed et al. (2014), a RANS/VMS-LES blend by its
+  reference-list title, among earlier studies of the supercritical
+  [circular cylinder](/benchmarks/circular-cylinder-wake.md); VMS is not
+  used in the paper.
 
 ## Qualifications
 
@@ -276,3 +281,4 @@ scales from residuals:
 - [Hausmann et al. (2022)](/sources/hausmann-2022.md) — §I.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.4, Fig. 4.
 - [Stanly et al. (2022)](/sources/stanly-2022.md) — §5.3.1, Fig. 15.
+- [Mays et al. (2023)](/sources/mays-2023.md) — §1 and reference list.

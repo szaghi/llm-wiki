@@ -5,7 +5,7 @@ description: "Clark's gradient model truncates the Taylor expansion of the filte
 status: established
 aliases: [Clark model, gradient model, nonlinear gradient model, tensor-diffusivity model, optimal clipping, standard clipping, GM-OC, GM-SC, NGM2, NGM4, NGM6, higher-order gradient model, velocity gradient model, VGM, spatial gradient model, SGM-7-19, ANNSGM, density-unweighted gradient model]
 tags: [les, sgs-model, filtering, eddy-viscosity]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T02:14:00Z
 ---
 
 # Gradient (Clark) model and the clipping of structural SGS models
@@ -320,6 +320,16 @@ first of these grids the result resembles that of the next finer grid, on
 the coarsest it is "not good". Clipping is used only to stabilize these
 two grids.
 
+The opposite case is reported by [Xu et al. (2023)](/sources/xu-2023.md)
+(§1, §4.1, Figs. 18–20): their learned nonlinear algebraic model of
+compressible wall-bounded LES runs a posteriori **without clipping** and
+produces both signs of the subgrid fluxes of kinetic energy and
+temperature variance at $y^+=15$, with probability densities that
+collapse on filtered DNS, while the eddy-viscosity baselines give only
+forward transfer. They note that the multi-point network of Park & Choi
+(cited) needs backscatter clipping. See
+[energy backscatter](/definitions/energy-backscatter.md).
+
 ## Clipping with a backscatter floor
 
 [Maejima & Kawai (2025)](/sources/maejima-2025.md) (§3.2, Eq. 3.2;
@@ -446,6 +456,22 @@ three roles (§3.2–3.3, App. C, Figs. 10, 19, 21):
   only with averaging and clipping, 1.68 times the DSM cost of evaluating
   the stress; a posteriori in forced isotropic turbulence its energy
   spectrum is nearly identical to that of the learned mixed model.
+
+[Xu et al. (2023)](/sources/xu-2023.md) (§3.1, Eqs. 3.21–3.25) use the
+gradient model only as a **normalizing scale in compressible channel
+flow**, with the directional widths of the anisotropic form above and
+Favre-filtered fields: deviatoric part
+$\tfrac1{12}\Delta_l^2\partial_l\tilde u_i\partial_l\tilde u_j-\tfrac13\delta_{ij}\tfrac1{12}\Delta_l^2\partial_l\tilde u_k\partial_l\tilde u_k$,
+trace $\tfrac1{12}\Delta_l^2\partial_l\tilde u_k\partial_l\tilde u_k$ and
+subgrid heat flux $\tfrac1{12}\Delta_l^2\partial_l\tilde u_j\partial_l\tilde T$
+(summed over $l$, $\Delta_l$ the local grid width in direction $l$). The
+targets and the tensor bases of their
+[neural-network SGS model](/methods/neural-network-sgs-model.md) are
+divided by the r.m.s. of these gradient-model terms over each
+wall-parallel plane before training. Kang et al. (above) avoid the
+gradient term as a normalization in channel flow because of its near-wall
+scaling; Xu et al. use it there, with direction-dependent widths, as the
+scale of the training targets and bases.
 
 The eddy viscosity of the
 [anisotropic minimum-dissipation model](/methods/anisotropic-minimum-dissipation-model.md)
@@ -822,3 +848,4 @@ with $\tau_{12}$ and $\tau_{22}$ (Fig. 2c); a posteriori $C_0$ peaks near
 - [Wang et al. (2022)](/sources/wang-2022-j.md) — §II C, Eqs. (11)–(14), Table I; §III, Eqs. (15)–(23), Table II; App. A, Eqs. (A1)–(A6); §IV, Figs. 2–6; §V, Figs. 9–16, Table V; App. B, Figs. 17–20; Conclusions.
 - [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — §III B, Eqs. (22)–(26); §IV A, Fig. 1; §IV B, Figs. 5–10, Table III.
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §4.1.4, Eq. (74), Fig. 30.
+- [Xu et al. (2023)](/sources/xu-2023.md) — §1; §3.1, Eqs. (3.20)–(3.25); §4.1, Figs. 18–20.

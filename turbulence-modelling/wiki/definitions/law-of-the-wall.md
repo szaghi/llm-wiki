@@ -5,7 +5,7 @@ description: "The inner-layer mean-velocity profile of wall-bounded turbulence �
 status: established
 aliases: [logarithmic law, log law, law-of-the-wall profile, inner-layer profile]
 tags: [boundary-layer, wall-model, wmles, rans]
-timestamp: 2026-10-27T21:08:00Z
+timestamp: 2026-10-28T01:57:00Z
 ---
 
 # Law of the wall
@@ -86,6 +86,11 @@ and the choice is part of the model.
 | [Devenport & Lowe (2022)](/sources/devenport-2022.md), §2.1, Eq. (2.25) | "often" 0.41; 0.38–0.39 reported for zero-pressure-gradient boundary layers; 0.384 (Monkewitz et al., as cited) | 5.0; 4.17 with $\kappa=0.384$ | roughness function, Coles wake $\Pi\approx0.51$ (below) | review of incompressible boundary-layer physics |
 | [Huang et al. (2022c)](/sources/huang-2022-c.md), §II C, Eqs. (14), (17) | 0.41 | 5.2 | Reichardt's law with $D=9.8$, $E=1/11$, $F=1/3$ (below) | algebraic wall model of a spectral/hp implicit LES in [Nektar++](/software/nektar-plus-plus.md) |
 | [Zhang et al. (2022e)](/sources/zhang-2022-i.md), §II A, Eq. (3) | not printed | — | rough-wall form $\kappa^{-1}\ln(y/y_{0,\mathrm r})$, roughness length $y_{0,\mathrm r}$ (page-local; $0.004$ mm in the matched wind tunnel) | wall stress of atmospheric LES over hills in [LESGO](/software/lesgo.md) |
+| [Mo et al. (2023)](/sources/mo-2023.md), §II B, Eqs. (9)–(10) | 0.41 | 5.1 | sublayer $u^+=y^+$ for $y^+<6$ | reference for van Driest-transformed DNS of Mach 2.25, 2.9 and 7.25 flat plates |
+| [Shi & Yan (2023)](/sources/shi-2023.md), Fig. 9 | 0.41 | 5.0 | | reference for the van Driest velocity of the Mach 2.9 incoming layer of a ramp implicit LES |
+| [Gao et al. (2023)](/sources/gao-2023.md), §5.2, Fig. 18 | not printed | not printed | sublayer matched for $y^+\le5$, log law for $30\le y^+\le100$ | reference "derived from incompressible flow" for a Mach 2 DG implicit LES |
+| [Yu et al. (2023)](/sources/yu-2023.md), §4.1, Eq. (4.1) | $1/2.55$ | 5 | reference-station buffer layer below $y^+=30$; cosine wake with a coefficient linear in $Re_\tau$ (below) | composite canonical profile in van Driest form after a shock interaction |
+| [Maeyama & Kawai (2023)](/sources/maeyama-2023.md), §2.3, Eqs. (2.19)–(2.20) | 0.41 | — | $A^+=17$, $Pr_{t}=0.9$ in the wall model | mixing length of the compressible ODE [equilibrium wall model](/methods/equilibrium-wall-model.md) of a Mach 2.28 WMLES |
 | [Zhang et al. (2022c)](/sources/zhang-2022-g.md), §II C, Fig. 6a | not printed | 5.7 (measured) | van Driest-transformed DNS profile on a cold wall | log-law intercept of the inflow layer of a Mach 6 ramp DNS, "higher than" incompressible, attributed to the wall temperature |
 
 Zhao et al. (2023a) attribute $\kappa=0.40$, $B=5.5$ to the channel DNS of
@@ -422,6 +427,27 @@ A wall model sampled in the buffer layer needs a single smooth $f(y^+)$.
   (page-local $U_e$, $g$, $W$, $\Pi$, the last not the SGS flux). An adverse
   gradient lowers the log region and a favourable one raises it (see the
   [wall law in adverse pressure gradient](/definitions/adverse-pressure-gradient-wall-law.md)).
+- **A composite canonical profile as a reference after a shock.**
+  [Yu et al. (2023)](/sources/yu-2023.md) (§4.1, Eq. 4.1) need a canonical
+  mean velocity to measure the defect left by a separated oblique-shock
+  interaction at Mach 2.28. In van Driest form (see
+  [compressible velocity transformations](/definitions/compressible-velocity-transformation.md))
+  they take the reference station's own profile below $y^+=30$,
+  $2.55\ln y^++5$ above it up to $y/\delta=0.3$, the same log law plus
+  $2.55\,b_{\mathrm{wk}}\big(\cos(0.3\pi)-\cos(\pi y/\delta)\big)$ for
+  $0.3<y/\delta<1$, and the constant edge value
+  $2.55\ln\delta^++5+2.55\,b_{\mathrm{wk}}(\cos(0.3\pi)+1)$ beyond. Here
+  $b_{\mathrm{wk}}$ (page-local, the source's $\beta$) is a wake coefficient
+  fitted linearly in $Re_\tau$, $b_{\mathrm{wk}}=0.0005Re_\tau-0.411$, from the
+  reference station and the last station, where recovery is postulated.
+  The log law is called "standard" after Pirozzoli & Bernardini (2011, as
+  cited). The four branches are continuous at $y/\delta=0.3$ and 1, and the
+  slope 2.55 corresponds to $\kappa\approx0.392$ *(compiler check, not in
+  the sources)*. The log-law intercept serves as a recovery indicator: just
+  downstream of the interaction it is "much lower than 5.0" with a raised
+  wake and an inflection near $y/\delta\approx0.3$, and it returns to 5.0
+  at $13.3\delta_r$ downstream of impingement (§3, Fig. 5). The defect is
+  used in the [skin-friction decomposition](/definitions/skin-friction-decomposition.md).
 - **Three-dimensional boundary layers.** The review's §5.3 (Eq. 5.11)
   presents van den Berg's three-dimensional law of the wall, with
   pressure-gradient and wall-stress-rotation terms added to both velocity
@@ -849,3 +875,8 @@ on a uniform mesh with $\Delta x^+=\Delta y^+\approx9$.
 - [Tonicello et al. (2022)](/sources/tonicello-2022.md) — Fig. 5.
 - [De Vanna et al. (2022)](/sources/devanna-2022.md) — §2.2, Eq. (6).
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.5, Eq. (35).
+- [Mo et al. (2023)](/sources/mo-2023.md) — §II B, Eqs. (9)–(10).
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §IV.B, Fig. 9.
+- [Gao et al. (2023)](/sources/gao-2023.md) — §5.2, Fig. 18.
+- [Yu et al. (2023)](/sources/yu-2023.md) — §3, Fig. 5; §4.1, Eq. (4.1).
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §2.3, Eqs. (2.19)–(2.20).

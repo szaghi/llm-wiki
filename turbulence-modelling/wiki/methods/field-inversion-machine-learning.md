@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Field inversion and machine learning"
-description: "Field inversion infers a spatial correction field of a RANS model from data by solving a PDE-constrained inverse problem; FIML learns that field from local flow features and embeds it in the solver. Sources compare which term to correct, show non-unique and over-fitted inversions, gate corrections, use discrete adjoints and high-order DG, and train single-use surrogates."
+description: "Field inversion infers a spatial correction field of a RANS model from data by solving a PDE-constrained inverse problem; FIML learns that field from local flow features and embeds it in the solver. Sources compare which term to correct, show non-unique and over-fitted inversions, gate or relax corrections, use discrete adjoints and high-order DG, and train single-use surrogates."
 status: established
 aliases: [FIML, field inversion, field-inversion and machine-learning, inference before learning, variational data assimilation, non-parametric correction, Reynolds-force vector]
 tags: [field-inversion, data-driven, rans, uncertainty-quantification, separated-flow]
-timestamp: 2026-10-27T21:12:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Field inversion and machine learning
@@ -896,6 +896,97 @@ FIML networks by their a posteriori lift error (above); Shan et al.
 compare their drag with the FIML result of Singh et al. (Fig. 15b),
 noting slightly different training data.
 
+## Dissipation multipliers for variable-property channels (Diez Sanhueza et al. 2023)
+
+[Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) apply FIML to
+the Myong–Kasagi low-Reynolds-number
+[$k$-$\varepsilon$ model](/methods/k-epsilon-model.md) with its damping
+functions written in the semi-local wall distance
+$y^*=y^+\sqrt{\langle\rho\rangle/\rho_w}\,\mu_w/\langle\mu\rangle$
+(registry $(\cdot)^*$, after Otero Rodriguez et al., as cited), for fully
+developed channels with strong variations of density and viscosity
+(§2.2, Eqs. 5–8). The data are 30 DNS: 16 heated low-Mach channels with
+temperature-dependent properties, nine ideal-gas channels at $M=0.7$–4
+(Trettel & Larsson, as cited) and five incompressible channels at
+$Re_\tau=180$–4200 (Table 1; see
+[turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
+
+**Inversion (§3.1, Eqs. 9–18).** Two multiplier fields act on the
+destruction terms, $P_k-\beta_kD_k+T_k=0$ and
+$P_\varepsilon-\beta_\varepsilon D_\varepsilon+T_\varepsilon=0$
+(page-local $D$, $T$ for destruction and diffusion), "contrary to Parish
+and Duraisamy" who multiply production; the reasons are on
+[model-form uncertainty](/definitions/model-form-uncertainty.md). The cost
+sums the squared velocity error normalized by the maximum DNS velocity and
+the squared additive discrepancies $\delta_k=D_k(\beta_k-1)$,
+$\delta_\varepsilon=D_\varepsilon(\beta_\varepsilon-1)$, each normalized
+by the largest budget term of its equation, with weights chosen by the
+elbow method (a common velocity weight 100; Fig. 5). During inversion the
+DNS density and viscosity profiles are imposed. Gradients come from a
+discrete adjoint whose Jacobian entries are generated as closed-form
+sparse expressions with SymPy. Because the Hessian is not invertible at
+the channel centre, a gradient method is used: bold drive with momentum
+("gradient inertia", expansion 1.2, contraction 0.5, momentum 0.9, the
+momentum reset after a rejected step), three times faster than plain bold
+drive and run automatically for more than 450 inversions (§3.1.1,
+Algorithm 1; no timings printed).
+
+**Learning (§3.2–3.3, Fig. 4, Eq. 19).** A network of 77 trainable
+parameters takes 14 features computed from the uncorrected RANS solution
+(among them $y^*$, the normalized velocity, $k$, $\varepsilon$, the
+density, viscosity and eddy-viscosity ratios to the wall values, the three
+normalized $k$-budget terms and the semi-local friction Reynolds number)
+and returns $\delta_k$ normalized by its budget scale; $\delta_\varepsilon$
+is not learned because the normalized $\delta_\varepsilon$ has gradients up
+to 83.5% higher than the maximum gradients of the normalized $\delta_k$ (§4). Its
+first layer holds three logarithmic neurons, which the authors say find
+the relevant parameter groups "even in the absence of previous modeling
+knowledge", followed by tanh layers; the loss is the mean squared error
+plus an $L_2$ penalty on the weights, whose weight is also set by the
+elbow method on training data only. The network is the smallest that
+fits the training data of trial K-1, the trial that holds out the most
+extreme cases (§3.2.1).
+
+**Weighted relaxation (§3.2.2, Eqs. 20–29).** Before use, the raw
+prediction $\delta_{\mathrm{ini}}$ is filtered by writing the applied
+correction as a multiple of the production, $\delta_{\mathrm{ML}}=\beta_PP$
+(page-local $\beta_P$), and fitting $\beta_P$ with a penalty on its square:
+
+$$\min_{\beta_P}\sum_i\big(P_i\beta_{P,i}-\delta_{\mathrm{ini},i}\big)^2+\lambda_\delta\beta_{P,i}^2\quad\Rightarrow\quad\delta_{\mathrm{ML}}=\frac{\delta_{\mathrm{ini}}P^2}{\lambda_\delta+P^2},$$
+
+with the page-local weight $\lambda_\delta$ fixed by Newton iteration so
+that $\lVert\delta_{\mathrm{ML}}\rVert=\alpha_r\lVert\delta_{\mathrm{ini}}\rVert$,
+$\alpha_r=0.95$ (page-local). The penalty suppresses spurious corrections
+where the model is inactive (small $P$), which would otherwise give large
+oscillations of the multiplier. On a synthetic test, a perturbation
+$0.6\,y^3\sin(8\pi y)$ added to an inverted correction is filtered to a
+shape close to the hidden one (Fig. 2). With $\alpha_r=0.95$ every coupled
+run was stable "without modifying the $\delta$ corrections significantly"
+(§5).
+
+**Prediction (§3.3, Fig. 3b).** The corrected model is solved in a loop
+with the energy equation and the equation of state: solve, update
+temperature, density and viscosity, recompute features and correction,
+until convergence.
+
+**Results (§5, Table 3, Figs. 9–10).** Over ten K-fold trials with five
+or six held-out cases each, the $L_\infty$ error of the mean velocity
+falls in almost every held-out case; the hardest case (the low-Mach
+channel JFM.CRe$^*_\tau$, density $\propto T^{-1}$, viscosity $\propto T^{-0.5}$,
+Table 1) goes from 23.4% to 4.0%
+in one trial and to 4.0–10.2% across the six trials that hold it out. It
+rises in three cases: 4.8% to 5.8%, 2.4% to 2.5%, and 2.3% to 14.0% on
+the incompressible channel at $Re_\tau=4200$, which the authors attribute
+to extrapolation (nearest training case $Re_\tau=2000$). By integrated
+gradients the eddy-viscosity ratio is the most important feature, and
+$y^*$ outranks the density and viscosity ratios, whose variation the
+authors say it already carries. They describe the network as "an
+excellent non-linear interpolator" between well-represented cases and the
+coupled solver as stable in all cases tested, and state that the
+methodology improves RANS models "without introducing prior modeling
+assumptions into the system" (abstract); the baseline model, $Pr_t=1$ and
+the normalized features are the authors' stated choices (§2.2, §3.2).
+
 ## Generalization across flow classes
 
 [Oulghelou et al. (2025)](/sources/oulghelou-2025.md) (§1) state that
@@ -998,6 +1089,22 @@ is used:
   [symbolic-regression closures](/methods/symbolic-regression-closure.md)).
 
 ## Qualifications
+
+- **Diez Sanhueza et al. (2023), printed values.** §2.2 gives the
+  baseline maximum error of the hardest case as 22.8%, while Table 3, the
+  abstract and §6 give 23.4%; no second error definition is stated. §6
+  gives an "average error of only 6.2%" over the trials holding that case
+  out; the six values of Table 3 (4.0, 6.3, 5.2, 10.2, 4.2, 8.6) average
+  6.42% *(compiler check, not in the sources)*, and the paper does not say
+  how its average was formed. From Eqs. 9 and 12,
+  $P_k-\beta_kD_k+T_k=P_k-D_k-\delta_k+T_k$, so the inverted $\delta_k$
+  enters the $k$ equation with a minus sign, while §3.3 describes the
+  learned correction as inserted as an explicit source "$(+\delta_{ML}(y))$"
+  *(compiler check, not in the sources)*. The §4 text names the case of
+  Fig. 6 without the prefix that the caption and §2.2 give it. The
+  multiplier symbol $\beta$ denotes a dissipation multiplier in Eqs. 9–13
+  and a production multiplier in Eqs. 22–26 (here $\beta_k$,
+  $\beta_\varepsilon$ and $\beta_P$).
 
 - **Identifiability.** Duraisamy (2021, §VII, Fig. 4) shows a
   model-consistent inference in channel flow. An anisotropy perturbation is
@@ -1177,3 +1284,4 @@ is used:
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §3.4, §4.3, §4.5 (FIML among model-consistent frameworks, cost, transition, coupled closures).
 - [Cherroud et al. (2022)](/sources/cherroud-2022.md) — §1 (field inversion cited; the corrected model stays linear).
 - [Shan et al. (2023)](/sources/shan-2023.md) — Abstract; §I; §II.A, Fig. 1 (framework, iterative and frozen coupling); §II.B–D, Eqs. 2–12, Table 1 (calibration, features, output, network, loss); §III.A–F, Tables 3, 5, Figs. 9–25 (solver, hyperparameters, sample ratio, two generalization cases); §IV (residual uncertainties); §V.
+- [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §2.2, Eqs. 2–8, Table 1 (baseline, data); §3.1–3.1.2, Eqs. 9–18, Algorithm 1 (inversion, optimizer, adjoint); §3.2–3.3, Eqs. 19–30, Figs. 2–4 (network, weighted relaxation, feedback loop); §4, Figs. 5–7; §5–6, Table 3, Figs. 9–10.

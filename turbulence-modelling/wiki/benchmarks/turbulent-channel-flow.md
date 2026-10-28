@@ -5,7 +5,7 @@ description: "Pressure-driven flow between two parallel walls, periodic in the w
 status: established
 aliases: [plane channel flow, channel flow, half-channel flow, compressible channel flow, minimal channel, rough-wall channel]
 tags: [benchmark, wall-model, wmles, hybrid-rans-les, boundary-layer, dns, data-driven, compressible, immersed-boundary, rans, spectral-element]
-timestamp: 2026-10-27T21:07:00Z
+timestamp: 2026-10-28T02:01:00Z
 ---
 
 # Turbulent channel flow
@@ -70,6 +70,8 @@ closures.
 | [Chen et al. (2022)](/sources/chen-2022-g.md), §4, Table 1 | residual-based VMS LES against classical LES; energy budget of the stabilization terms | 180 | $2\pi\delta\times2\delta\times\tfrac43\pi\delta$ | $32\times64\times32$ trilinear hexahedra, $\Delta y^+_{\min}=0.88$; same mesh for the finite-difference LES |
 | [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md), §5.1, Table 2 | flux reconstruction with and without an optimized modal filter, Mach 0.3 | 395 (bulk $Re=6800$) | $2\pi\delta\times2\delta\times\pi\delta$ | $24\times18\times18$ elements at $N=3$, $20\times15\times15$ at $N=4$, $16\times12\times12$ at $N=5$ (about 0.5 million DOF, 3/8 of the DNS resolution); $\Delta x^+\approx25$, $\Delta y^+\approx0.9$, $\Delta z^+\approx17$ |
 | [Qi et al. (2022)](/sources/qi-2022-b.md), §4.1, Tables 1, 6 | a priori and a posteriori test of a quasi-dynamic $k_{\mathrm{sgs}}$-equation model; compressible, isothermal walls | 220 (bulk $Re=3000$, Mach 1.5); about 450 (bulk $Re=4880$, Mach 3.0) | $4\pi\delta\times2\delta\times\tfrac43\pi\delta$ | DNS $900\times201\times300$; LES $64\times87\times64$, $48\times65\times48$, $48\times49\times48$ ($\Delta x^+=42.2$–57.5) at Mach 1.5; $86\times97\times86$ at Mach 3.0 |
+| [Xu et al. (2023)](/sources/xu-2023.md), §2.1, §4, Tables 3, 5–7 | a priori training and a posteriori test of a neural-network SGS stress and heat-flux model; compressible, isothermal walls | bulk $Re=3000$ at Mach 1.5 (training; R1M15), $Re=4880$ at Mach 3.0, $Re=7000$ at Mach 1.0, $Re=3000$ at Mach 0.2 (tests) | $4\pi\times2\times\tfrac43\pi$ (R1M15) | DNS $384\times193\times128$ ($\Delta x^+=\Delta z^+=7.13$, $\Delta y^+_w=0.30$) to $768\times385\times256$; LES $64\times65\times64$ ($\Delta x^+\approx41$–43 at R1M15, 78–81 at Mach 1.0) and $100\times101\times80$ (Mach 3.0) |
+| [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md), §2.1, Table 1 | field inversion and learned correction of a low-Reynolds-number $k$-$\varepsilon$ model, 1-D RANS | 150–950 (16 low-Mach variable-property cases), 322–1876 (9 ideal-gas cases at Mach 0.7–4, wall-based), 180–4200 (5 incompressible) | fully developed, 1-D in $y$ | RANS grid not printed; DNS from the Pecnik/Patel group, Trettel & Larsson and Jiménez & Hoyas, as cited |
 | [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §3.1, Tables 4–5 | immersed-boundary WMLES, Mach 0.2 | 5200 (bulk $Re=125{,}000$) | $12.8\delta\times2\delta\times4.8\delta$ | Cartesian with two refinement levels; finest 1.9M cells ($\Delta^+=270\times68\times270$) and 8.9M ($173\times41\times156$) |
 | [Huang et al. (2022c)](/sources/huang-2022-c.md), §III A, Table I | wall-modelled spectral-vanishing-viscosity implicit LES (Nektar++), incompressible, body-force driven | 550, 950, 2000 | $2\pi\delta\times2\delta\times\pi\delta$ | $12\times6\times10$ elements, "polynomial order $N_p=7$" as printed ($\Delta x^+\times\Delta y_1^+\times\Delta z^+=48\times20\times29$ at 550, $175\times75\times105$ at 2000); $14\times8\times12$ elements at $N_p=6$ (550) |
 | [Idelsohn et al. (2024)](/sources/idelsohn-2024.md), §2.10.1, §3.2.2 | pseudo-DNS with RVE databases on very coarse meshes | bulk $Re=1.65\times10^5$ (1-D Poiseuille), $4\times10^4$ (Couette), $1.5\times10^5$ (2-D Poiseuille); particle-laden duct at $Re=57{,}000$ | 1-D and 2-D; duct $1.5\times0.5\times0.5$ m | 4 cells (Poiseuille), 3 cells (Couette); $36\times12\times12$ cells against a $300\times150\times50$ DNS (duct) |
@@ -1073,6 +1075,64 @@ used.
   (dynamic $k_{\mathrm{sgs}}$) and $4.13\times10^{-2}$ s (dynamic
   Smagorinsky) on 112 CPUs (Table 5).
 
+**A learned SGS model for compressible channels on untrained grids.**
+[Xu et al. (2023)](/sources/xu-2023.md) train a
+[neural-network SGS model](/methods/neural-network-sgs-model.md) (MANA,
+tensor-basis coefficients of the SGS stress and heat flux, with gradients
+normalized by the local grid width) on filtered DNS of one compressible
+isothermal-wall channel. The channel is that of Coleman, Kim & Moser (as
+cited) at bulk $Re=3000$ and Mach 1.5, with a top-hat filter of 8 and 4
+DNS spacings in $x$ and $z$. A priori, eddy-viscosity models have
+correlation coefficients mostly below 0.6 and relative errors near 1.0,
+while MANA exceeds 0.91 with errors below 0.4 for every component (§2.2,
+§3.2). A posteriori, with sixth-order central differences, the reference is
+DNS filtered to the LES grid (§4, Tables 3, 5–7):
+
+- on an untrained grid of the training channel ($n_x=6$, $n_z=2$ DNS
+  spacings per LES cell) MANA's van Driest velocity in the log region is
+  "fully consistent" with the filtered DNS. The Vreman, dynamic
+  Smagorinsky and WALE models give a larger transformed velocity and the
+  no-model LES a slightly lower one. The eddy-viscosity and no-model runs
+  over-predict the rms peaks and place them farther from the wall, while
+  MANA matches the velocity and temperature fluctuations and the shear
+  stress and heat flux (§4.1, Figs. 13–16);
+- the eddy-viscosity models give only forward SGS energy and
+  temperature-variance transfer, while MANA reproduces both signs at
+  $y^+=15$, as the filtered DNS does (see
+  [energy backscatter](/definitions/energy-backscatter.md)); the dynamic
+  model "strongly overestimates" the mean SGS kinetic-energy flux (§4.1,
+  Figs. 17–20);
+- in the untrained channels at Mach 3.0 ($Re=4880$), Mach 1.0 ($Re=7000$,
+  an "extremely sparse grid resolution", $\Delta x^+\approx80$) and Mach 0.2,
+  MANA stays the most accurate, with slightly high buffer-layer peaks of the
+  wall-normal rms velocity and the shear stress (§4.2–4.3, Figs. 21–28);
+- per 1000 steps MANA costs 0.79 of dynamic Smagorinsky, against 0.26–0.29
+  for the no-model, Vreman and WALE runs (Table 4).
+
+Its first two channels have the bulk Reynolds and Mach numbers and the
+domain of the two channels of Qi et al. (2022) above; neither paper refers
+to the other's model.
+
+**A variable-property channel database for data-driven RANS.**
+[Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) (§2, Tables 1–3)
+assemble 30 DNS of fully developed channels as truth for
+[field inversion and machine learning](/methods/field-inversion-machine-learning.md)
+of the Myong–Kasagi [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md)
+with semi-local damping. There are 16 low-Mach channels with isothermal
+walls, volumetric heating and prescribed laws of density, viscosity and
+conductivity in temperature (mostly $Re_{\tau,w}=395$; 150 and 950 for some
+cases), the nine ideal-gas channels of Trettel & Larsson at Mach 0.7 to 4,
+and five incompressible channels at $Re_\tau=180$ to 4200. The cases are
+characterized by the semi-local $Re_\tau^*$ (see
+[compressible velocity transformations](/definitions/compressible-velocity-transformation.md)).
+The error measure is the $L_\infty$ norm of the mean-velocity difference
+from the DNS. The baseline errors reach 23.4% (case JFM.CRe$^*_\tau$, a
+low-Mach case with $\rho\propto T^{-1}$, $\mu\propto T^{-0.5}$) and 11.6% at
+Mach 4. In ten K-fold trials with 5–6 held-out cases each the correction
+lowers almost every held-out error, e.g. 23.4% to 4.0–10.2% for the hardest
+case. The exception is the incompressible $Re_\tau=4200$ channel (2.3% to
+14.0%), which the authors attribute to extrapolation in $Re_\tau$ (Table 3).
+
 **Immersed-boundary WMLES at $Re_\tau=5200$.**
 [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §3.1, Figs. 12–14,
 use the channel to tune the dissipation of a Cartesian
@@ -1339,6 +1399,9 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
   while at $Re_\tau=5200$ these spacings give 260 and 65; the fine row
   (173.3, 40.6, 156) is consistent with 5200 *(compiler check, not in the
   sources)*. Their averaging time is not printed.
+- Diez Sanhueza et al. (2023) give the baseline error of their hardest case
+  as 22.8% in §2.2 and as 23.4% in Table 3 and the abstract; the value above
+  is the table's.
 
 # Citations
 
@@ -1399,3 +1462,5 @@ several Reynolds numbers (Sotgiu et al., §4.2.2).
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §II C; §III A, Eqs. (18)–(19), Table I; §III B–E, Figs. 3–9; §IV.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.10.1, Table 1, Figs. 6–7; §3.2.2, Fig. 28.
 - [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §5.4, footnote 6, Figs. 37–42 (review; cited channel DNS).
+- [Xu et al. (2023)](/sources/xu-2023.md) — §2.1–2.2; §3.2; §4.1–4.3, Tables 3–7, Figs. 13–28.
+- [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §2.1–2.2, Table 1; §5, Tables 2–3.

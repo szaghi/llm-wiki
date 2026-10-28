@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Tensor-basis neural network and the integrity basis"
-description: "A neural network that predicts the scalar coefficients of Pope's ten-tensor integrity basis from invariants of the mean strain and rotation, so the learned Reynolds-stress anisotropy is objective by construction; other regressors learn the same expansion, larger bases supply invariant features, and an eight-term basis carries the idea to LES subgrid stresses."
+description: "A neural network that predicts the scalar coefficients of Pope's ten-tensor integrity basis from invariants of the mean strain and rotation, so the learned Reynolds-stress anisotropy is objective by construction; other regressors learn the same expansion, larger bases supply invariant features, and eight-term and Lund–Novikov bases carry the idea to LES subgrid stresses and heat fluxes."
 status: established
-aliases: [TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features, LES tensor basis]
+aliases: [Lund–Novikov basis, nonlinear algebraic SGS model, MANA, TBNN, tensor basis neural network, integrity basis, Pope tensor basis, general effective-viscosity hypothesis, minimal integrity basis, invariant input features, LES tensor basis]
 tags: [neural-network, data-driven, rans, symbolic-regression]
-timestamp: 2026-10-27T20:36:00Z
+timestamp: 2026-10-28T01:53:00Z
 ---
 
 # Tensor-basis neural network and the integrity basis
@@ -173,6 +173,7 @@ are represented.
 | sparse regression, SpaRTA (Schmelzer et al.) | sparse linear combination of tensor-polynomial candidate functions of the invariants | Duraisamy (2021, §III.A, §IV.A); Sandberg & Zhao (2022, §3.4, Eq. 8); Cherroud et al. (2022, App. B, which print three SpaRTA models) |
 | deep symbolic regression (an LSTM expression generator trained by a risk-seeking policy gradient) | explicit polynomial-type expressions in two normalized invariants, on the 2D three-tensor basis | read directly: Tang et al. (2023) |
 | gene-expression programming for the LES subgrid stress | constant coefficients of $T^{(1)}$–$T^{(4)}$ of the $\lvert\bar S\rvert$-normalized basis | read directly: Li et al. (2021) |
+| neural network for the compressible LES stress and heat flux (Xu et al. 2023) | network of four (heat flux: six) invariants and a local Reynolds number, on the Lund–Novikov five-tensor basis plus four trace terms and a four-vector heat-flux basis | read directly: Xu et al. (2023) |
 | gene-expression programming on phase-locked turbine data (Akolekar et al. 2019) | functions of two invariants on four basis tensors | Sandberg & Michelassi (2022, §4.3, Eq. 2) |
 | sparse Bayesian regression, SBL-SpaRTA (Cherroud et al. 2022) | sparse selection from monomials of $I_1$, $I_2$ with Gaussian posteriors, on the 2D three-tensor basis normalized by $\omega$; used for an additive anisotropy and a $k$-equation correction of SST | read directly: Cherroud et al. (2022); used by Oulghelou et al. (2025) |
 
@@ -313,6 +314,51 @@ architectures, because higher powers of the velocity gradient "suffer
 more from numerical artifacts such as aliasing" (§5.1.3, §7). Details are
 on [neural-network SGS models](/methods/neural-network-sgs-model.md).
 
+## A nonlinear basis for compressible subgrid stress and heat flux (Xu et al. 2023)
+
+[Xu et al. (2023)](/sources/xu-2023.md) (§3.1, Eqs. 3.1–3.18) expand
+the SGS stress of Favre-filtered compressible LES in the five-tensor basis
+of Lund & Novikov (1992), as cited, built from the resolved strain
+$\tilde S_{ij}$ and rotation $\tilde\Omega_{ij}$, plus four scalar terms
+for the trace, and the SGS heat flux in four vectors after Vollant et al.
+(2017) and Wang et al. (2007), as cited. In matrix notation, with
+$\lVert\tilde S\rVert=\sqrt{\operatorname{tr}(\tilde S^2)}=\lvert\tilde S\rvert/\sqrt2$,
+page-local basis tensors $\mathsf A^{(m)}$ and coefficients
+$C^{\mathrm A}_m$, $C^{\mathrm I}_m$, $C^{\mathrm Q}_m$, and the paper's
+stress per unit mass written $\tau_{ij}/\bar\rho$ in the registry's
+compressible convention:
+
+$$\begin{aligned}\frac{\tau^d_{ij}}{\bar\rho}&=\Delta^2\Big(C^{\mathrm A}_1\lVert\tilde S\rVert\mathsf A^{(1)}+C^{\mathrm A}_2\mathsf A^{(2)}+C^{\mathrm A}_3\mathsf A^{(3)}+C^{\mathrm A}_4\mathsf A^{(4)}+\frac{C^{\mathrm A}_5}{\lVert\tilde S\rVert}\mathsf A^{(5)}\Big)_{ij},\\\mathsf A^{(1)}&=\tilde S^d,\quad\mathsf A^{(2)}=\tilde S\tilde\Omega-\tilde\Omega\tilde S,\quad\mathsf A^{(3)}=\tilde S^2-\tfrac13\operatorname{tr}(\tilde S^2)\mathbf I,\\\mathsf A^{(4)}&=\tilde\Omega^2-\tfrac13\operatorname{tr}(\tilde\Omega^2)\mathbf I,\quad\mathsf A^{(5)}=\tilde\Omega\tilde S^2-\tilde S^2\tilde\Omega,\\\frac{\tau_{kk}}{\bar\rho}&=\Delta^2\Big(C^{\mathrm I}_0\lVert\tilde S\rVert^2+C^{\mathrm I}_1\lVert\tilde S\rVert\operatorname{tr}\tilde S+C^{\mathrm I}_2\operatorname{tr}(\tilde S^2)+C^{\mathrm I}_3\operatorname{tr}(\tilde\Omega^2)\Big),\\Q_j&=\Delta^2\Big(C^{\mathrm Q}_1\lvert\tilde S\rvert\partial_j\tilde T+C^{\mathrm Q}_2\tilde S_{jk}\partial_k\tilde T+C^{\mathrm Q}_3\tilde\Omega_{jk}\partial_k\tilde T+C^{\mathrm Q}_4\frac{\tilde S_{jk}\tilde S_{kl}}{\lvert\tilde S\rvert}\partial_l\tilde T\Big),\end{aligned}$$
+
+with $Q_j=\widetilde{u_jT}-\tilde u_j\tilde T$ (page-local) and
+$\Delta=(\Delta_x\Delta_y\Delta_z)^{1/3}$. The stress coefficients
+depend on four dimensionless invariants built from
+$\operatorname{tr}(\tilde S^2)$, $\operatorname{tr}(\tilde\Omega^2)$,
+$\operatorname{tr}(\tilde S^3)$, $\operatorname{tr}(\tilde\Omega^2\tilde S)$
+and $\operatorname{tr}(\tilde\Omega^2\tilde S^2)$ (Pope 1975; Lund &
+Novikov 1992, as cited), the heat-flux coefficients on six invariants of
+$\tilde S_{ij}$ and of the vector $\Delta^2\lvert\tilde S\rvert\partial_i\tilde T$
+(Eqs. 3.16, 3.18); a local Reynolds number is added to both input sets
+(Table 1).
+
+**Grid-width normalization (§3.2, Eqs. 3.27–3.43).** In the "modified"
+models every velocity and temperature gradient is multiplied by the local
+grid spacing in its direction, $\partial/\partial(x_k/\Delta_k)$ with
+$\Delta_k$ as in registry §11, the starred strain and rotation built from
+these gradients replace the original ones in both the basis and the
+invariants, and $\Delta$ is set to one. The authors argue that this
+"inherently embed[s]" the grid anisotropy near the wall in the inputs and
+the basis.
+
+**Coefficients.** The Germano identity (ODNA, MDNA) or ten small networks
+whose merge layer multiplies the coefficients by the basis, so the loss
+acts on the SGS term (OANA, MANA). With the dynamic procedure the
+normalized model is "sometimes unstable" a posteriori on coarse grids;
+with the network it reaches a priori correlations above 0.91 and is
+stable a posteriori without clipping (§3.2, §4.1). The network, training
+and results are on
+[neural-network SGS models](/methods/neural-network-sgs-model.md).
+
 ## Integrity bases as sources of invariant features
 
 An integrity basis can also serve the input side of a learned closure. Its
@@ -424,6 +470,11 @@ a priori and a posteriori results are on
   results that are stable across architectures once inputs are simple and
   training uses several filters (above); unlike Kim et al. (2022), they do
   not compare against a network without a basis.
+- **Basis plus grid information in a compressible LES closure.** Xu et
+  al. (2023, §3.3) credit the a priori gain of their model to three
+  ingredients together: the nonlinear basis, the grid-width normalization
+  and network coefficients; each variant missing one of them is weaker a
+  priori (Figs. 4, 6–8, 10).
 - **Invariance by construction (turbomachinery review).** Sandberg &
   Michelassi (2022, §4.3) cite Ling et al. (2016) and Weatheritt &
   Sandberg (2016) for combining the Cayley–Hamilton theorem with machine
@@ -545,6 +596,13 @@ eigen-decomposition, or the integrity basis itself. See
   (page-local $b^\Delta_{ij}$), and a second expansion feeds a
   production-like term of the $k$ equation; the blending of such models
   is on [model aggregation](/methods/turbulence-model-aggregation.md).
+- Xu et al. (2023, Eqs. 3.11, 3.37) print the scalar trace $\tau_{kk}$
+  as a sum that contains the identity, $T^I_1=I\cdot\mathrm{Tr}(\tilde S)$
+  and the like; the scalar form above drops the identity, since a scalar
+  cannot equal a tensor sum *(compiler check, not in the sources)*. Their
+  Table 2 labels the coefficients of the modified models without the star
+  that the text uses. The paper writes the basis $T^A_m$, $T^I_m$; this
+  page writes $\mathsf A^{(m)}$ to keep $T^{(n)}$ for Pope's basis.
 - Tang et al. (2023) write the coefficients $G^m$ and the basis
   $\boldsymbol T^m$ (labelled $\lambda_i$, $T^i$ in their Fig. 11); this page
   writes $G^m$, $T^{(m)}$. Their $\boldsymbol R$ is the normalized rotation
@@ -601,3 +659,4 @@ eigen-decomposition, or the integrity basis itself. See
 - [He et al. (2022)](/sources/he-2022-b.md) — §1 (TBNN as an L2 correction, in passing).
 - [Ihme et al. (2022)](/sources/ihme-2022.md) — §3.5.1 (TBNN as an architecture-level knowledge-guided model).
 - [Shan et al. (2023)](/sources/shan-2023.md) — §I (TBNN variants reviewed); §II.C (scalar eddy-viscosity network instead); §IV (linear representation left as an uncertainty).
+- [Xu et al. (2023)](/sources/xu-2023.md) — §3.1, Eqs. 3.1–3.18, Table 1 (Lund–Novikov basis, trace terms, heat-flux basis, invariants); §3.2, Eqs. 3.27–3.43, Table 2 (grid-width normalization); §3.3; §4.1 (MDNA unstable).

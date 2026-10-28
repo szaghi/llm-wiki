@@ -5,7 +5,7 @@ description: "A discretization is kinetic-energy preserving when its convective 
 status: established
 aliases: [KEP, KEEP, kinetic-energy and entropy preserving scheme, kinetic energy preserving scheme, kinetic-energy-conserving discretization, skew-symmetric form, split-form DG, flux differencing, energy-preserving scheme, entropy-stable discretization]
 tags: [kinetic-energy-preserving, entropy-stable, numerical-dissipation, dg, les]
-timestamp: 2026-10-27T20:41:00Z
+timestamp: 2026-10-28T02:15:00Z
 ---
 
 # Kinetic-energy preservation and split forms
@@ -87,7 +87,9 @@ paper does not discuss its energy-preservation properties.
 Two further DNS use the same STREAmS construction: [Yu et al. (2022)](/sources/yu-2022-e.md),
 §2.1, the sixth-order kinetic-energy-preserving scheme of Pirozzoli (2010)
 with fifth-order WENO switched in by the Ducros criterion, for an oblique
-shock/boundary-layer interaction at $M_\infty=2.28$; and
+shock/boundary-layer interaction at $M_\infty=2.28$, a database that
+[Yu et al. (2023)](/sources/yu-2023.md), §2, analyse again for the
+post-shock recovery; and
 [Zhang et al. (2022)](/sources/zhang-2022-b.md), §2, the eighth-order
 energy-preserving scheme of Pirozzoli (2010), applied throughout at
 $M_\infty=0.5$ and 2 and hybridized with seventh-order WENO only at
@@ -132,6 +134,21 @@ approximate Riemann solver and BR1, for an implicit LES of an oblique
 shock/turbulent-boundary-layer interaction, with finite-volume subcells at
 the shocks (see
 [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)).
+The same group's arbitrary Lagrangian–Eulerian version for a deforming
+panel keeps Pirozzoli's flux, which they call "a good compromise between
+computational efficiency and non-linear stability" (citing Krais), as the
+baseline of the split-form ALE DGSEM, again without a subgrid model
+([Gao et al. 2023](/sources/gao-2023.md), §3.1.2); shocks are there
+captured by an adaptive filter confined to troubled elements, which the
+authors run on the split form because the filter on a standard DG scheme
+is "unreliable" against the aliasing of under-resolved turbulence
+(§3.1.3; see [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)).
+In the laminar hypersonic DGSEM of [Potluri et al. (2023)](/sources/potluri-2023.md),
+§3.1.2, the volume flux is the Chandrashekar flux, which they call
+entropy conservative and kinetic-energy preserving (formula on
+[entropy conservation](/properties/entropy-conservation.md)), and the
+dissipation matrix of the interface flux blends a Rusanov form with a
+kinetic-energy-stable one by the DG/finite-volume blending factor.
 
 **Energy-preserving central flux in an unstructured finite-volume code.**
 In the node-based solver M-Edge the convective face flux is Kok's
@@ -338,6 +355,28 @@ blend with a third-order WENO flux whose weight is set by hand (interior
 value 0.0125 in channel flow, 0.02 in hypersonic cases; see
 [WENO](/methods/weno-scheme.md)); below 0.0125 the channel run produces
 significant noise (§3.1, Fig. 12).
+[Maeyama & Kawai (2023)](/sources/maeyama-2023.md), App. D, repeat their
+wall-modelled LES of adverse-pressure-gradient boundary layers, run with
+sixth-order compact differences and an eighth-order low-pass filter, with
+the second-order KEEP scheme with and without the filter: the
+non-physically wide near-wall "numerical coherent structures" and their
+collapse under a semi-local scaling that adds the subgrid eddy viscosity
+to the molecular one persist, and they conclude that the subgrid-model
+dissipation, not the filter, sets their spanwise size (App. D, Figs. 32–33;
+see [wall-modelled LES](/methods/wall-modelled-les.md)). In the HLPW-4
+wall-modelled LES summary of [Kiris et al. (2023)](/sources/kiris-2023.md),
+§II.2, Table 1, two of the nine participants use kinetic-energy- and
+entropy-consistent discretizations: the second-order finite-volume
+charLES (Voronoi grids, dynamic Smagorinsky) and a second-order KEEP
+scheme on a Cartesian grid of 11.2 billion degrees of freedom (FFVHC-ACE,
+with a subgrid model abbreviated "CSM", whose Table 2 footnote reads
+"Chalmers ship Model"); three others (LAVA, BCFD, FUN3D) reduce aliasing
+with midpoint flux evaluations and blended upwinding. The summary states that "it is widely
+accepted that LES (especially in wall-bounded turbulence) is far more
+affected by dissipation errors of the discretization compared to the
+dispersion errors" and that every group minimized numerical dissipation
+(§II.2); it attributes no result to the choice of a KEEP scheme (see
+[NASA CRM high lift](/benchmarks/nasa-crm-high-lift.md)).
 
 **Three split forms against relaxation filtering on central differences.**
 [Volpiani (2024)](/sources/volpiani-2024.md), §2.2.3, Eqs. (9)–(17),
@@ -573,7 +612,7 @@ preserving in the inviscid limit, carries the machine-learning wall model of
 industrial review of [Mani & Dorgan (2023)](/sources/mani-2023.md), §4.4,
 makes the same point for aerospace practice: scale-resolving simulation
 benefits from reduced inviscid-flux dissipation, obtained either by
-modifying the usual upwind flux (Winkler et al.; Nishikawa & Liu, cited)
+modifying the upwind flux (Winkler et al.; Nishikawa & Liu, cited)
 or by KEP fluxes (Honein & Moin; Jameson, cited) and the kinetic-energy-
 and entropy-preserving (KEEP) algorithm, citing the KEEP scheme with which
 Goc et al. (2021) predicted the maximum lift of a High-Lift Prediction
@@ -830,3 +869,8 @@ the under-resolved Taylor–Green vortex (§3.1.3, Fig. 11).
 - [Svärd (2022)](/sources/svard-2022.md) — §3, Condition C; §4, Eq. (34) (KEP-diffusive requirement, internal-energy balance).
 - [Cheng et al. (2023)](/sources/cheng-2023-b.md) — §3.5, Figs. 6–7 (exact kinetic-energy preservation of central fluxes, cited; kinetic energy and enstrophy as dissipation measures).
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.4 (reduced-dissipation, KEP and KEEP fluxes for scale-resolving simulation, cited).
+- [Gao et al. (2023)](/sources/gao-2023.md) — §3.1.2–3.1.3 (Pirozzoli flux in the split-form ALE DGSEM; adaptive filter on split against standard DG).
+- [Potluri et al. (2023)](/sources/potluri-2023.md) — §3.1.2 (Chandrashekar volume flux; kinetic-energy-stable dissipation matrix blended with Rusanov).
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §2; App. D, Figs. 32–33 (second-order KEEP with and without low-pass filter in WMLES).
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.2, Table 1 (kinetic-energy- and entropy-consistent discretizations among the HLPW-4 WMLES participants; dissipation against dispersion errors).
+- [Yu et al. (2023)](/sources/yu-2023.md) — §2 (STREAmS sixth-order KEP scheme, same database as Yu et al. 2022).

@@ -5,7 +5,7 @@ description: "Menter's two-equation shear-stress-transport eddy-viscosity model,
 status: established
 aliases: [SST, k-omega SST, shear stress transport model, Menter SST, SST k-ω, SST-IDDES, SST-DDES, BSL k-ω, baseline k-ω model]
 tags: [rans, eddy-viscosity, transition, pans, hybrid-rans-les]
-timestamp: 2026-10-27T21:07:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # k-ω SST model
@@ -347,7 +347,25 @@ is an inconsistent laminar one with negative lift (§3.4, Table 4).
   largest cell edge, $F_2$ serving as shielding against grid-induced
   separation and modelled-stress depletion
   ([Yang & Ma (2022)](/sources/yang-2022-b.md), §2.1, Eqs. 1–5; page-local
-  $L_t$). Zangeneh (2021) runs SST-IDDES (after Gritskevich et al. 2012)
+  $L_t$). Thawait et al. (2023) print the SST-DDES of ANSYS Fluent with the
+  same structure and the DDES shielding function in place of $F_2$: the
+  $k$ destruction is $\rho\beta^*k\omega F_{\mathrm{DES}}$ with
+  $$F_{\mathrm{DES}}=\max\Big(\frac{L_t}{C_{\mathrm{DES}}\Delta_{\max}}(1-F_{\mathrm{DDES}}),1\Big),\qquad
+  F_{\mathrm{DDES}}=\tanh\big[(C_{d1}r_d)^{C_{d2}}\big],\qquad
+  r_d=\frac{\nu_t+\nu}{\kappa^2d^2\sqrt{0.5(S^2+\Omega^2)}},$$
+  $C_{\mathrm{DES}}=0.61$, $C_{d1}=20$, $C_{d2}=3$, $\kappa=0.41$, $\Delta_{\max}$
+  "the grid spacing" and $S$, $\Omega$ the strain-rate and vorticity
+  magnitudes, whose normalization is not stated (page-local
+  $F_{\mathrm{DES}}$, $F_{\mathrm{DDES}}$, $\Delta_{\max}$; [Thawait et al. (2023)](/sources/thawait-2023.md),
+  §II B, Eqs. 6–13). Their eddy viscosity is written
+  $\mu_t=(\rho k/\omega)/\max[1/\alpha^*,SF_2/(a_1\omega)]$ (Eq. 8), with
+  $\alpha^*$ and $a_1$ not given and $\beta^*$ "calculated using $\rho$, $k$,
+  $\mu$, and $\omega$"; the authors state, from the Fluent theory guide,
+  that SST "accounts for the transport of the turbulent shear stress and is
+  more accurate than the standard version", and that the limiter is applied
+  because standard $k$-$\omega$ "overpredicts the eddy viscosity". With
+  $F_{\mathrm{DDES}}\to1$ the factor is $F_{\mathrm{DES}}=1$, the SST
+  destruction *(compiler check, not in the sources)*. See [ANSYS Fluent](/software/ansys-fluent.md). Zangeneh (2021) runs SST-IDDES (after Gritskevich et al. 2012)
   as a wall-modelled LES of supersonic flows, solving the RANS inner
   layer on an auxiliary wall grid embedded in the coarse LES mesh; in the
   printed $k$ equation the destruction is $\rho\sqrt{k^3}/l_{\mathrm{IDDES}}$,
@@ -778,6 +796,19 @@ operational role and need not match their DNS counterparts
   $\mathbb P^5$ and $\mathbb P^6$ solutions match the finer-mesh $\mathbb P^4$
   one without wall functions (§4.1, Figs. 9–10; see
   [turbulent boundary layer](/benchmarks/turbulent-boundary-layer.md)).
+- **Hypersonic fluid–thermal–structure interaction.** Thawait et al.
+  (2023) run the Fluent SST-DDES above, with AUSM+ fluxes, dual time
+  stepping and a density-based implicit solver, strongly coupled to a
+  thermoelastic finite-element model of a deployable control fin with joint
+  freeplay at Mach 3–6 (15 km altitude; Reynolds numbers printed as
+  12.2–24.3 $\times10^6$ in Table I, without a reference length), on a
+  2.7-million-cell tetrahedral grid (the validations on hexahedral grids of
+  one million cells with first-layer $y^+<1$; §II, §V, §VI A). The validations test the structural
+  response (a Mach 3 flutter velocity within 5%, time-averaged deflections of
+  a heated panel at Mach 4 within 3.18% and 0.12%), not the turbulence model,
+  and the paper compares DDES with no RANS run (§V–§VI); the turbulent
+  kinetic energy it reports is the modelled $k$ (§VI B, Fig. 10). See
+  [detached-eddy simulation](/methods/detached-eddy-simulation.md).
 - **Aircraft wake precursor.** Bouhafid et al. (2024) use an SST RANS on an
   adapted mesh as the precursor of a temporal LES of a NACA 0012 wing with a
   jet ([Bouhafid et al. (2024)](/sources/bouhafid-2024.md), §2.2, §3; see
@@ -937,3 +968,4 @@ version read (arXiv v1):
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §2.1.1 Eqs. 1–4 Table 1, §3.4 Table 2.
 - [Li et al. (2022)](/sources/li-2022-k.md) — §III C, Figs. 15–18.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.5.1–4.5.2, Figs. 6, 12.
+- [Thawait et al. (2023)](/sources/thawait-2023.md) — §II B Eqs. 6–14, §V, §VI A–B Table I Fig. 10.

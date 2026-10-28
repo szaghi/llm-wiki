@@ -5,7 +5,7 @@ description: "The one-equation eddy-viscosity RANS model transporting the workin
 status: established
 aliases: [SA model, Spalart-Allmaras, SA-noft2, SA-neg, negative SA, SA-noft2-QCR2000, β-augmented SA, SA-RC, SARC, SA-R, SA-Helicity, SA-QCR, QCR2000, QCR2013, quadratic constitutive relation]
 tags: [rans, eddy-viscosity, turbomachinery, separated-flow, field-inversion]
-timestamp: 2026-10-27T21:07:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Spalart–Allmaras model and its corrections
@@ -810,6 +810,18 @@ meshes as future work (§9).
   medium-grid wall-modelled LES of Goc et al.
   ([Goc et al. (2021)](/sources/goc-2021.md), §1, Fig. 1, §4; see
   [JAXA Standard Model](/benchmarks/jaxa-standard-model.md)).
+- The summary of the wall-modelled-LES group of the Fourth High-Lift
+  Prediction Workshop compares its submissions with RANS results of the
+  workshop's other groups, without naming their models
+  ([Kiris et al. (2023)](/sources/kiris-2023.md), §III; see
+  [NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md)).
+- Mo et al. (2023) take the mean inflow profiles of DNS of supersonic and
+  hypersonic flat-plate boundary layers from SA RANS, at $\delta=6$ mm
+  ($Re_\tau=340$) for an adiabatic Mach 2.9 case and $\delta=7.5$ mm
+  ($Re_\tau=155$) for a cold-wall Mach 7.25 case, and add rescaled
+  fluctuations from a stored library
+  ([Mo et al. (2023)](/sources/mo-2023.md), §II, §III C, §IV B; see
+  [inflow turbulence generation](/methods/inflow-turbulence-generation.md)).
 - HORSES3D runs negative-SA RANS of the NASA Common Research Model at
   $M=0.85$, $Re=5\times10^6$, $2.3^\circ$ incidence on a third-order ($N=2$)
   hexahedral mesh with split-form inviscid fluxes; only surface pressure
@@ -1095,3 +1107,5 @@ computed at high order:
 - [Ghidoni et al. (2022)](/sources/ghidoni-2022.md) — §6.2, Table 12.
 - [Shan et al. (2023)](/sources/shan-2023.md) — §II.A–D Eqs. 3, 6, 8, 10–13, §III.A–F Tables 3, 5, B1 Figs. 4, 9–11, 24, §IV, App. A Eqs. A1–A7.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.1.1 Fig. 5, §4.5.1–4.5.2.
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §III.
+- [Mo et al. (2023)](/sources/mo-2023.md) — §II, §III C, §IV B.

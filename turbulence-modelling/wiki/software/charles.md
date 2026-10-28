@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "CharLES"
-description: "CharLES is Cascade Technologies' compressible, low-dissipation, second-order finite-volume LES code on Voronoi grids; this page records its scheme, meshing, GPU cost and the wall-modelled LES of aircraft, juncture flows, bumps and compressible channels run with it, including machine-learning wall models trained in it."
+description: "CharLES is Cascade Technologies' compressible, low-dissipation, second-order finite-volume LES code on Voronoi grids; this page records its scheme, meshing, GPU cost and the wall-modelled LES of aircraft (including its HLPW-4 high-lift submission), juncture flows, bumps and compressible channels, and machine-learning wall models trained in it."
 status: established
 aliases: [charLES, Cascade charLES]
 tags: [software, les, wmles, kinetic-energy-preserving, gpu]
-timestamp: 2026-10-27T21:07:00Z
+timestamp: 2026-10-28T02:13:00Z
 ---
 
 # CharLES
@@ -138,6 +138,43 @@ code (implementation not optimized, no hardware stated).
   [NASA Juncture Flow](/benchmarks/nasa-juncture-flow.md) with a
   boundary-layer-conforming grid of 5 points per boundary-layer thickness.
 
+## In the HLPW-4 wall-modelled LES summary
+
+[Kiris et al. (2023)](/sources/kiris-2023.md) summarize the wall-modelled
+LES and lattice-Boltzmann focus group of the 4th AIAA High-Lift Prediction
+Workshop on the [NASA CRM high-lift configuration](/benchmarks/nasa-crm-high-lift.md)
+($Re=5.5\times10^6$ on the mean aerodynamic chord, Mach 0.2), where
+charLES is submission W-021 (Stanford and Cascade Technologies). As
+tabulated (Tables 1–2): explicit RK3, second-order finite volumes on
+self-made Voronoi grids of aspect ratio 1, the dynamic Smagorinsky model
+with an equilibrium wall model fed from the first off-wall point
+($0.5\Delta$), non-dimensional $\Delta t=5.7\times10^{-5}$, a best-practice
+grid of 362M degrees of freedom, wall-normal spacing 6.8 mm up to 25% chord
+and 13.6 mm after it at full scale (7 m mean aerodynamic chord); free-air
+(case 2a) and in-tunnel (case 2b) runs. Kiris et al. group W-021 with the
+kinetic-energy- and entropy-consistent discretizations (§II.2). Findings:
+
+- **Grid refinement.** From 12M to 40M, 146M and 362M degrees of freedom
+  the loads converged "largely monotonically", the leading-order effect
+  being kinematic: the inviscid, curvature-induced acceleration on the
+  outboard wing and slats (§III, Fig. 6). Below 300M the W-021 pressure
+  distributions remain sensitive to refinement, unlike those of the
+  structured-overset W-020 above 300M (§IV.2, Figs. 14–17).
+- **Subgrid model.** W-021 "reported little sensitivity" between the
+  dynamic Smagorinsky and Vreman models on intermediate grids (§II.4).
+- **Stall topology.** In free air W-021 falls in topology A, inboard stall
+  growing from the wing–body juncture, with a pitch break between 20.5°
+  and 21.47° (§IV.3).
+- **In tunnel.** W-021 predicts the pitch break between 18.9° and 19.9°
+  "in perfect agreement with the experiment"; W-020 and W-021 give
+  essentially identical wing-root topologies, and the stalled state at
+  19.9° is largely invariant to the tunnel-floor boundary layer, which no
+  team reproduced (§V, Figs. 27–36).
+- **GPUs.** W-021 and W-047 ([hpMusic](/software/hpmusic.md)) showed
+  "substantial" reductions of wall-clock hours on GPUs; the authors give no
+  figures and call best-practice WMLES 5–10 times as expensive as a
+  representative steady RANS (§VI.4).
+
 ## In an industrial review
 
 [Mani & Dorgan (2023)](/sources/mani-2023.md), an MIT–Boeing perspective
@@ -192,6 +229,15 @@ on aerospace CFD, do not run the code but cite it at three places:
   off-wall cell centre; the one of Lozano-Durán & Bae (2023, Eq. 3.1) the
   second off-wall point.
 
+- Kiris et al. (2023, abstract, §IV) find more than 250M degrees of
+  freedom necessary for the outboard suction peaks and the pitching moment
+  at high angle of attack, which they call "somewhat contradictory" to the
+  coarse-grid success on the JAXA-CRM of Goc et al. (2021) above; they
+  attribute the extra need to inviscid acceleration on the outboard wing
+  (the W-021 refinement study). None of the authors of Kiris et al. is
+  affiliated with Stanford or Cascade Technologies (page 1); they
+  summarize the W-021 submission in a workshop report.
+
 # Citations
 
 - [Goc et al. (2021)](/sources/goc-2021.md) — §2.1, Eq. (2.6); §2.3 (scheme, meshes, GPUs); §4, Tables 1–2, Fig. 15 (cost, scaling, meshing).
@@ -200,3 +246,4 @@ on aerospace CFD, do not run the code but cite it at three places:
 - [Griffin et al. (2023)](/sources/griffin-2023.md) — §4 (WMLES set-up, artificial bulk viscosity, cost).
 - [Lozano-Durán & Bae (2023)](/sources/lozanoduran-2023.md) — §2.4–2.6 (stencil, solver-consistent training, cost); §3.1–3.2, Eq. (3.1) (scheme, Voronoi grids, closures); §4 (results); §5.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §3 (GPU potential); §4.4 (KEEP scheme in charLES); §4.1.2, Fig. 6; §4.5.2, Fig. 12 (WMLES of HiLiftPW-3 and JSM, industrial needs).
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — Tables 1–2 (W-021 configuration); §II.2, §II.4; §III, Fig. 6 (refinement); §IV.2–IV.3, Figs. 14–17, 23–25 (pressure sensitivity, topology A); §V, Figs. 27–36 (in-tunnel pitch break); §VI.4 (GPUs, cost).

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Thickened flame model"
-description: "The thickened flame model of LES combustion widens the flame front over the grid by scaling diffusion and reaction while keeping the flame speed; this page gives the premixed and dynamically thickened forms, the counterflow analysis showing that diffusion flames need only diffusivity scaling, the grid-correction factor, the proposed LES model, and the partially stirred reactor as a finite-rate contrast."
+description: "The thickened flame model of LES combustion widens the flame front over the grid by scaling diffusion and reaction while keeping the flame speed; this page gives the premixed and dynamically thickened forms, flame sensors and the minor-species correction in stratified flames, the counterflow analysis of diffusion flames, the grid-correction factor, and the partially stirred reactor contrast."
 status: established
-aliases: [TF model, TFLES, thickened-flame LES, dynamically thickened flame, DTF, DTFLES, artificially thickened flame, thickening factor, non-premixed thickened flame]
+aliases: [TF model, TFLES, thickened-flame LES, dynamically thickened flame, DTF, DTFLES, artificially thickened flame, thickening factor, non-premixed thickened flame, flame sensor, minor-species correction, wrinkling factor]
 tags: [combustion, les, numerical-dissipation, thickened-flame]
-timestamp: 2026-10-27T21:11:00Z
+timestamp: 2026-10-28T02:13:00Z
 ---
 
 # Thickened flame model
@@ -31,9 +31,12 @@ ignition and extinction, and pollutants (works cited by Cuenot et al.
 viscosity-based (ILES) methods". The pre-tabulated alternative is
 [flamelet-based tabulated chemistry](/methods/flamelet-tabulated-chemistry.md).
 
-The bundle's sources hold two developments: the **dynamically thickened**
+The bundle's sources hold three developments: the **dynamically thickened**
 form used in a wall-resolved LES of a swirl combustor
-([Agostinelli et al. (2021)](/sources/agostinelli-2021.md)), and the
+([Agostinelli et al. (2021)](/sources/agostinelli-2021.md)); the same form
+in a stratified **multi-regime** flame, with a new flame sensor and a
+correction of the minor species that thickening distorts
+([Zhang et al. (2023)](/sources/zhang-2023-c.md)); and the
 analysis of what thickening means for **non-premixed** flames, where the
 premixed transformation does not apply (Cuenot et al. 2022).
 
@@ -59,6 +62,85 @@ surface the LES predicts a self-excited limit cycle at 224 Hz with about
 transfer it predicts a stable flame with correct length and angle
 (§3.1–3.3). The combustion model is held fixed in all their runs; the
 paper does not vary the thickening or the efficiency coefficient.
+
+## Dynamic thickening of a stratified flame: sensor and minor species
+
+Zhang et al. (2023) run the dynamically thickened flame (DTF) in an
+[OpenFOAM](/software/openfoam.md) LES of the Darmstadt multi-regime burner
+flame MRB26b (stratified methane–air: rich central jet at equivalence
+ratio 2.6, air slot, lean slot at 0.8, air coflow), with
+[flamelet-generated manifold](/methods/flamelet-tabulated-chemistry.md)
+chemistry built from freely propagating premixed flamelets and a dynamic
+[Smagorinsky](/methods/smagorinsky-model.md) eddy viscosity (§2–3). They
+compare it with a presumed-PDF closure of the same table, run without
+thickening. Page-local symbols in this section: $Y_c=Y_{\mathrm{CO_2}}+Y_{\mathrm{H_2O}}$
+the (non-normalized) progress variable, $\bar D_{\mathrm{th}}$ the
+unity-Lewis-number diffusivity (printed without a density factor and
+called a "thermal diffusion rate"), $Sc_t=0.7$ the turbulent Schmidt
+number, $\Xi_\Delta$ the subgrid wrinkling factor, $\Omega_{\mathrm{fs}}$
+the flame sensor (not the registry's rotation tensor), $l^0_{\mathrm F}$ and
+$s_{\mathrm L}$ the laminar thermal thickness and flame speed (registry §11
+for $s_{\mathrm L}$), $\Delta$ the cube root of the cell volume. The thickened
+progress-variable equation is (Eq. 9)
+$$\partial_t(\bar\rho\tilde Y_c)+\nabla\cdot(\bar\rho\tilde{\boldsymbol u}\tilde Y_c)=\nabla\cdot\Big[\Big(F\,\Xi_\Delta\bar D_{\mathrm{th}}+(1-\Omega_{\mathrm{fs}})\frac{\mu_t}{Sc_t}\Big)\nabla\tilde Y_c\Big]+\frac{\Xi_\Delta}{F}\,\bar{\dot\omega}_{Y_c},$$
+and the mixture fraction and the additionally transported CO and H$_2$
+are thickened in the same way, because, as Zhang et al. (§3.3) cite from
+Kuenne et al., thickening both the progress variable and the mixture
+fraction is needed to reproduce the structure of a stratified flame. The
+thickening factor follows Proch & Kempf as cited there (Eqs. 10–11),
+$$F=1+\Omega_{\mathrm{fs}}(F_{\max}-1),\qquad F_{\max}=\max\Big(\frac{n\Delta}{l^0_{\mathrm F}},1\Big),\qquad n=5,$$
+so that five cells span the thickened flamelet, with $l^0_{\mathrm F}(Z)$,
+$s_{\mathrm L}(Z)$ and the sensor tabulated from the one-dimensional
+flamelets. The wrinkling factor is the power-law form of Wang et al.
+(Charlette type) with exponent $\beta_{\mathrm{Ch}}=0.5$ (Eq. 12), with the
+efficiency function and the subgrid velocity $u'_\Delta$ (registry §11)
+given in Appendix A. The DTF is used only with the premixed database, for
+which it was derived (§3.3).
+
+**A piecewise flame sensor** (contribution, §3.3, Eqs. 13–16, Fig. 5). On a
+one-dimensional premixed flame at equivalence ratio 0.8 the authors
+compare three sensors (page-local $\Omega_1$–$\Omega_3$), $\Omega_1=16\,[Y_c(1-Y_c)]^2$, the normalized
+progress-variable gradient $\Omega_2$ and the normalized source term
+$\Omega_3$, and state that $\Omega_1$ and $\Omega_2$ cover the reaction
+region only partly while $\Omega_2$ thickens strongly near the unburned
+side. Their sensor takes $\Omega_1$ up to the position $x_1$ of its
+maximum, the value 1 between $x_1$ and the position $x_2$ of the maximum
+of $\Omega_3$, and $\Omega_3$ beyond $x_2$, so as to cover both the
+preheat zone and the heat-release zone; they call it "more stringent" than
+a sensor of Popp et al. with the same aim, without a quantitative
+comparison.
+
+**Minor species under thickening** (contribution, §4.2, Eqs. 17–19,
+Figs. 12–17). The DTF over-predicts CO and H$_2$ near the outer (lean
+premixed) reaction zone, as Popp et al. also observed for this flame
+(as cited there), and with the premixed table it over-consumes reactants
+around the outer zone at $x=30$ and 60 mm, which the authors attribute to
+an over-predicted turbulent flame speed (§4.1.1). Means and fluctuations
+of the mixture fraction and the mean progress variable agree between DTF
+and the presumed-PDF closure, but the RMS of $\tilde Y_c$ is lower with
+DTF, much lower upstream, and the resolved reaction layers are less
+wrinkled; the authors read this as **loss of resolved wrinkling** caused
+by the thickening, and note that downstream, where the two RMS values
+approach, the CO and H$_2$ deviations shrink. They state that the error is
+a combined effect of thickening and wrinkling loss, where earlier work
+(as cited there) addressed one or the other. Conserving species mass
+between the thickened resolved front (thickness $Fl^0_{\mathrm F}$,
+area $A_{\mathrm{res}}$) and the thin wrinkled laminar front (thickness
+$l^0_{\mathrm F}$, area $\Xi_\Delta A_{\mathrm{res}}$), with a front-mean
+mass fraction $Y^*_{\mathrm{CO}}$ that is the same in both (page-local
+symbols), gives
+$$Y^*_{\mathrm{CO}}\,l^0_{\mathrm F}\,\Xi_\Delta A_{\mathrm{res}}=\Big(Y^*_{\mathrm{CO}}\frac{\Xi_\Delta}{F}\Big)Fl^0_{\mathrm F}A_{\mathrm{res}}\quad\Rightarrow\quad Y^{\mathrm c}_{\mathrm{CO}}=Y_{\mathrm{CO}}\,\frac{\Xi_\Delta}{F},$$
+and likewise for H$_2$ (Eqs. 18–19). The authors identify it with the
+correction $Y^{\mathrm c}_{\mathrm{CO}}=Y_{\mathrm{CO}}(a\,\Xi_\Delta+b)/F$ of
+Gruhlke et al., which they cite, taken with $a=1$, $b=0$ where Gruhlke
+et al. obtain $a$, $b$ from a filtered wrinkled flamelet model. Applied to
+the DTF results, the correction brings CO and H$_2$ in the outer premixed
+zone close to the presumed-PDF closure; in the inner multi-regime
+zone the gain is slight, the correction being premixed-based (Fig. 17).
+The major species are not corrected; the authors cite Gruhlke et al. for
+the correction affecting them little and do not test it. The DTF also
+under-predicts the temperature and major-species RMS at $x=6$ mm in the
+outer zone while their means are unaffected (Fig. 15).
 
 ## Non-premixed flames: the counterflow analysis
 
@@ -236,6 +318,17 @@ of a LES calculation" (§3.3, footnote 9). Their stretch results are on
   printed formula $\sqrt{\tau_\eta\tau_\Delta}$ is their geometric mean;
   the coefficients of the one-equation model are said to be "dynamically
   evaluated from scale similarity" with no further detail.
+- **Zhang et al. (2023).** The constants $C_k$ and $b$ of the efficiency
+  function (Eqs. A.1–A.4) are given no values in the paper. The DTF is
+  run only with the premixed table: Table 1 lists four cases, the FP,
+  CF-Diff and CF-PaPre databases with the presumed PDF and the FP
+  database with the DTF. The correction factor is
+  derived for the front-mean $Y^*_{\mathrm{CO}}$ (Eq. 18) and written for the
+  local $Y_{\mathrm{CO}}$ (Eq. 19); the paper does not say whether it is
+  applied to instantaneous fields before averaging or to the averaged
+  fields. The over-consumption attributed to the turbulent flame speed is
+  not tested separately; the authors mention a dynamic wrinkling exponent,
+  which they cite, as an alternative to the fixed $\beta_{\mathrm{Ch}}=0.5$.
 - Agostinelli et al. and Cuenot et al. do not overlap in configuration:
   Agostinelli et al. apply the premixed dynamic form to a technically premixed swirl flame
   without studying it, and Cuenot et al. analyse non-premixed flames
@@ -246,4 +339,5 @@ of a LES calculation" (§3.3, footnote 9). Their stretch results are on
 - [Cuenot et al. (2022)](/sources/cuenot-2022.md) — §1 (premixed TF, efficiency function, DTF, earlier non-premixed uses); §2, Eqs. (1)–(4) (counterflow diffusion flame, mixture-fraction space); §2.1–2.2, Eqs. (5)–(11) (consumption speed, thickness, thickening rule); §3–4, Eqs. (12)–(14), Tables 1–2, Figs. 2–7 (two-step grid tests, correction factor); §5, Table 3, Figs. 9–11 (reduced chemistry at 54 bar, inner structure); §6, Eq. (15) (proposed LES model); §7.
 - [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.2 (one-equation subgrid model, gradient-diffusion fluxes); §3.3, Eqs. (2)–(4) (finite-rate LES models listed, LES PaSR, choice against flamelets); §6 (model combination).
 - [Coulon et al. (2023)](/sources/coulon-2023.md) — §1 (flame-thickness scales out of reach of LES meshes); §3.3, footnote 9 (five points per thermal thickness of an LES).
+- [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2–3.4, Table 1 (MRB26b, LES-FGM in OpenFOAM, cases); §3.3, Eqs. (9)–(16), Fig. 5, App. A (thickened equations, thickening and wrinkling factors, piecewise flame sensor); §4.1.1, Fig. 6 (outer-zone over-consumption); §4.2.1, Figs. 12–15 (minor-species over-prediction, wrinkling loss); §4.2.2, Eqs. (17)–(19), Figs. 16–17 (minor-species correction, Gruhlke et al. with $a=1$, $b=0$).
 - [Agostinelli et al. (2021)](/sources/agostinelli-2021.md) — §2 (DTFLES with Charlette efficiency function, $\beta_{\mathrm{Ch}}=0.5$, ARC chemistry, mesh); §3.1–3.3 (thermoacoustic outcome under two thermal wall treatments).

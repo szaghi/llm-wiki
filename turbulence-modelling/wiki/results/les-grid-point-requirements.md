@@ -5,7 +5,7 @@ description: "How the grid-point and time-step counts of DNS, wall-resolved and 
 status: established
 aliases: [grid-point estimates, resolution requirements, LES cost scaling, Chapman estimate, Choi–Moin estimate, WMLES cost]
 tags: [les, wmles, dns, boundary-layer]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T02:18:00Z
 ---
 
 # Grid-point requirements of LES and DNS
@@ -62,6 +62,9 @@ $Re^{13/7}$ for wall-resolved and $Re$ for wall-modelled LES
 ($37/14\approx2.64$ *(compiler check, not in the sources)*), and from
 Piomelli (2014) that above $Re=O(10^5)$ more than 90 % of the points of a
 wall-resolved LES resolve less than 10 % of the domain.
+[Maeyama & Kawai (2023)](/sources/maeyama-2023.md) (§1) quote the same three
+Choi–Moin exponents ($Re^{37/14}$, $Re^{13/7}$, $Re$; after Chapman 1979 and
+with Yang & Griffin 2021, as cited).
 [De Vanna et al. (2022)](/sources/devanna-2022.md) (§1) quote the same
 $Re_L^{13/7}$ for wall-resolved LES after Choi & Moin (2012), calling the
 growth "mostly quadratic", and [van Noordt et al. (2022)](/sources/vannoordt-2022.md)
@@ -206,6 +209,21 @@ the part of the SGS stress that transfers no energy carries a mean shear
 stress comparable to the eddy-viscosity part (§III C, Fig. 3); see
 [energy backscatter](/definitions/energy-backscatter.md).
 
+[Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) (§III B 2), citing
+the literature, give a typical fine wall-resolved LES mesh as
+$\Delta x^+\approx50$–130 and $\Delta z^+\approx15$–30, with 10–30 points
+across the boundary layer and the first point at $y^+\lesssim1$. Their own
+implicit LES of a Mach 1.94 oblique shock interaction on a compliant panel
+(production grid "medium 2", $384\times128\times192$ cells, full 152 mm span)
+runs at $\Delta x^+=717$, $\Delta z^+=634$, $y^+=4.8$ with 37 points across
+the incoming layer. The other grids of their study range from
+$\Delta x^+=1076$, $\Delta z^+=551$ (coarse) to $268$, $100$, $y^+=2.7$
+(fine, 33 mm span) (Table III). They judge the medium 2 grid "adequately
+accurate, at least concerning the flow properties of interest" (mean and
+rms wall pressure, against their fine grid; §IV A, Fig. 4). They estimate a
+wall-resolved implicit LES at about 175 times its cost (see
+Qualifications).
+
 Other sources cite stricter wall-resolved targets:
 [Baldan & Guardone (2025)](/sources/baldan-2025.md) (§1.1, §2.1, Fig. 7),
 after Piomelli & Balaras (2002) and Georgiadis et al. (2010) as they cite
@@ -314,6 +332,50 @@ Choi & Moin resolution, $\delta/\Delta x_i\sim10$.
   inviscid: the leading-edge acceleration at high angle of attack (§1, §3.2).
 - **Wall pressure at fewer.** Lozano-Durán et al. (2022, §V.E) find $C_p$
   errors below 5 % with 0–1 points per $\delta$.
+- **More than 250 M degrees of freedom for the pitching moment of a
+  high-lift aircraft.** In the HLPW-4 wall-modelled LES focus group on the
+  [NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md) configuration
+  ($Re=5.5\times10^6$ on the mean aerodynamic chord, Mach 0.2),
+  [Kiris et al. (2023)](/sources/kiris-2023.md) find that every submission
+  that resolves the outboard slat and main-element suction peaks at
+  $\alpha=19.57^\circ$ has more than 250 M spatial degrees of freedom, and
+  that this resolution is needed to predict pitching moments at high angle
+  of attack (Abstract, §IV, Fig. 12). The submitted grids ranged from 3 M
+  to 11.2 B (Table 2). They attribute the requirement to inviscid
+  curvature-induced acceleration, not to wall-layer resolution (§III, §VI.1a;
+  see [boundary-layer-conforming grids](/methods/boundary-layer-conforming-grid.md)).
+  This "appears to be somewhat contradictory" to the coarse JAXA-model
+  result of Goc et al. (2021) above, which the authors reconcile by the same
+  inviscid argument (§VI.1a). Below $10^9$ degrees of freedom they still
+  call full-airframe WMLES "coarse-grid simulations", since their spacing
+  per unit span is much coarser than that of academic WMLES of
+  non-equilibrium boundary layers (§I.1). They add that grid convergence of
+  wall-bounded LES in mean-velocity profiles is likely non-monotonic, and
+  assess convergence on static pressure only (§I.1a). The high-order
+  flux-reconstruction submission (W-047, [hpMusic](/software/hpmusic.md),
+  $N=2$, 13 M degrees of freedom) obtained reasonably accurate loads at
+  $C_{L,\max}$ but missed the outboard slat-bracket-wake separation (§VI.1a).
+- **WMLES at a fixed number of points per $\delta$ across a decade of
+  $Re_\tau$.** [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) (§3,
+  Table 1) run a Mach 2.28 zero-pressure-gradient boundary layer with about
+  12 M points at $Re_\tau\approx700$ to 14 000, with
+  $\delta/\Delta x=\delta/\Delta z=25.6$–29.4 (the Kawai–Larsson criterion
+  $\delta/\Delta x\gtrsim25$, as cited). In wall units this is
+  $\Delta x^+=\Delta z^+$ from 23 to 546, with 56–61 points across $\delta$
+  and the 10th point as matching height. The DNS references at
+  $Re_\tau\approx715$, 1280 and 2407 need 0.2, 1.4 and 5.6 billion points
+  ($\Delta x^+\lesssim10$, $\Delta z^+\lesssim5$, $\Delta y_w^+\lesssim1$).
+  The mean velocity, Reynolds shear stress and turbulent-kinetic-energy
+  budget match the DNS above the matching height (§4). Two things are
+  missed: the Reynolds-number growth of the log-region streamwise stress
+  and that of the outer spectral peak. A spanwise cut-off places the
+  deficit in scales larger than $0.7\delta$, which the grid nominally
+  resolves (§6). A wall-parallel grid $\sqrt2$ finer ($\delta/\Delta x=37.8$)
+  begins to show the outer peak, and the authors expect it to "appear more
+  clearly as increasing the grid resolution towards that used in the WRLES"
+  (App. C). They cite Bose & Park (2018) for the view that the WMLES
+  predictability of the outer peak is "highly questionable" (§1, §6.1; see
+  [wall-modelled LES](/methods/wall-modelled-les.md)).
 - **Mean velocity and separation need more.** The mean-velocity error
   decreases linearly with $\Delta/\delta$ in developed layers and more slowly in
   corners and separation (Lozano-Durán et al. 2022, §V.B); in the Gaussian bump
@@ -641,6 +703,23 @@ same as a steady RANS run of the workshop (about $60\times10^3$); the fine grid
 core-hours for 6–174 M cells on the Juncture Flow. Uniform refinement by two
 halves the explicit time step (Goc et al. 2021, §4).
 
+Kiris et al. (2023, §VI.4), from cost numbers reported by participants,
+put most best-practice WMLES of the CRM high-lift configuration at about
+5–10 times the cost of a representative steady RANS at $Re=5.5\times10^6$.
+This assumes runs long enough for statistically stationary loads, which is
+ambiguous at the angles with large-scale separation, where steady RANS
+fails to converge or is "dramatically inaccurate". Two participants (W-021,
+W-047) report substantial wall-time reductions on GPUs. The authors withhold
+the detailed costs and state that no WMLES cost scaling with Reynolds
+number exists for such a configuration. They also argue for explicit time
+stepping (§II.3): eddy decorrelation times in the inertial range scale as
+$k^{-2/3}$ and acoustic CFL limits as $k^{-1}$, with $k$ the grid Nyquist
+wavenumber. Explicit schemes thus suit near-unity-aspect-ratio grids for
+compressible solvers at Mach $\ge0.2$, and the implicit codes used time
+steps only "about 10×" larger (§VI.1c; see Qualifications). The thin
+geometric features (trailing edges about 2.5 mm thick on a 7 m chord at
+full scale) dominate the cost of the explicit codes (§VI.1c).
+
 For hybrid RANS/LES of a ship hull at 10° drift (DDES-SST), Mozaffari et al.
 (2022, §5.1) report about 160 000 CPU-hours on a 154 M cell adapted mesh
 against about 250 000 on a 163 M cell hand-designed mesh, and for steady RANS
@@ -783,6 +862,26 @@ it, without breakdown).
 - Heinz (2020, §3.1) writes, citing the literature, that an adequate
   resolution of the boundary-layer thickness makes WM-LES "orders of
   magnitude more expensive than original DES"; no estimate is printed.
+- **Cost factor of Kokkinakis et al. (2023, §III B 2).** They state that
+  refining the $x$ and $z$ cells to a third costs "almost an order of
+  magnitude" and that the full 152 mm width instead of 33 mm adds "$\sim4.6$
+  times", and conclude "$\sim175$ times greater compared to the medium 2
+  mesh". A third of the cell size in $x$ and $z$ is $3\times3=9$ times the
+  cells, $152/33=4.61$, and $9\times4.6\approx41$ *(compiler check, not in
+  the sources)*. Their Table III lists the medium 2 mesh with the full
+  152 mm span and the coarse, medium 1 and fine meshes with 33 mm.
+- **Time steps of Kiris et al. (2023).** §VI.1c states that the implicit
+  codes used time steps "only about 10× larger" than the explicit ones. In
+  Table 2 the explicit steps are $2.9\times10^{-5}$–$5.7\times10^{-5}$ and
+  the implicit ones $5.8\times10^{-4}$ (W-031), $5\times10^{-4}$ (W-050) and
+  $9.7\times10^{-5}$ (W-047), besides $2.1\times10^{-2}$ for the inviscid
+  W-030, ratios of about 9–20 for the first two and
+  1.7–3.3 for W-047 *(compiler check, not in the sources)*. The same paper
+  counts six explicit and three implicit participants in §II.3, while its
+  Table 1 lists five explicit (one with implicit viscous terms) and four
+  implicit time integrations. It writes the 250 M threshold as degrees of
+  freedom (Abstract), grid cells (§VI.1a) and points (§IV), which differ
+  for the $N=2$ flux-reconstruction and nodal finite-element submissions.
 
 # Citations
 
@@ -833,3 +932,6 @@ it, without breakdown).
 - [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §6.2 (resolved-energy grid check).
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §1; §2.1.1; §3.2, Table 2.
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I; §III A, Table I; §III E, Fig. 9.
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — Abstract; §I.1; §II.3; Tables 1–2; §III, Fig. 6; §IV, Fig. 12; §VI.1a, §VI.1c, §VI.4.
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §1; §3, Table 1; §4; §6; App. C, Table 2.
+- [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — §III B 2, Table III; §IV A, Fig. 4.

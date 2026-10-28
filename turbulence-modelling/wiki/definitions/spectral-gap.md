@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Spectral gap"
-description: "Separation in frequency between deterministic unsteadiness (rotor–stator interaction, wake passing, vortex shedding) and the turbulence spectrum; its presence is what makes Reynolds averaging and URANS legitimate, and its absence decides how data-driven URANS closures must be trained (phase-locked against triple-decomposed data)."
+description: "Separation in frequency between deterministic unsteadiness (rotor–stator interaction, wake passing, vortex shedding) and the turbulence spectrum; its presence is what makes Reynolds averaging and URANS legitimate, and its absence decides how data-driven URANS closures must be trained; the term also names the integral–viscous scale separation behind coarse-grained LES."
 status: established
-aliases: [spectral gap between deterministic and stochastic unsteadiness, scale separation of URANS]
-tags: [rans, turbomachinery, hybrid-rans-les, data-driven, symbolic-regression]
-timestamp: 2026-10-27T15:55:00Z
+aliases: [spectral gap between deterministic and stochastic unsteadiness, scale separation of URANS, scale separation of LES]
+tags: [rans, turbomachinery, hybrid-rans-les, data-driven, symbolic-regression, les]
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Spectral gap
@@ -107,6 +107,22 @@ model. Sandberg & Zhao (2022, §4.4) review two routes, both with
   [model-consistent](/methods/model-consistent-training.md) training
   (Sandberg & Zhao 2022, §4.4.2, Fig. 11).
 
+## A second usage: scale separation in coarse-grained simulation
+
+[Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) (§I) use the
+term in another sense. Introducing coarse-grained simulation, which
+resolves the large energy-containing structures, filters the smaller
+ones and models their effect, either with an explicit subgrid model or
+implicitly through the shock-capturing scheme (see
+[implicit LES](/definitions/implicit-les.md)), they write that
+"understanding of this so-called spectral gap, or scale separation,
+between the large (integral) and the small (viscous) turbulence scales
+has further improved over the last decade, particularly about CGS
+modeling", citing George & Tutkun (2009). Here the gap separates scales
+of the turbulence itself, the resolved from the modelled ones of an LES,
+not deterministic unsteadiness from turbulence; the paper uses the term
+only in this sentence and gives no criterion for it.
+
 ## Qualifications
 
 - Both reviews summarize published work; the statements above are the
@@ -118,6 +134,12 @@ model. Sandberg & Zhao (2022, §4.4) review two routes, both with
   The two statements concern different settings (steady RANS of the
   time-averaged wake against URANS resolving the shedding), and Sandberg &
   Zhao state each in its own context.
+- The two usages above are different concepts under one name: the
+  turbomachinery reviews separate deterministic from stochastic
+  unsteadiness as the condition of Reynolds averaging, while Kokkinakis
+  et al. (2023) name the separation of integral from viscous turbulence
+  scales when introducing coarse-grained simulation. Neither source
+  relates its usage to the other's.
 - Neither review gives a quantitative measure of the gap (a spectral
   overlap criterion or a frequency ratio); the definition is qualitative
   in both.
@@ -126,3 +148,4 @@ model. Sandberg & Zhao (2022, §4.4) review two routes, both with
 
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — §2.2.2.1, §3.1.2, §3.2.3, §4.3, Figs. 1, 7.
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — §2.3, §2.5 Fig. 8, §4.1, §4.4.1 Fig. 10, §4.4.2 Fig. 11.
+- [Kokkinakis et al. (2023)](/sources/kokkinakis-2023.md) — §I (spectral gap as integral–viscous scale separation in coarse-grained simulation, citing George & Tutkun).

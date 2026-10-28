@@ -5,7 +5,7 @@ description: "STREAmS is an open-source multi-GPU finite-difference solver for c
 status: established
 aliases: [STREAmS-2.0, STREAmS 2.1, STREAMS]
 tags: [software, gpu, dns, compressible, implicit-les, immersed-boundary, boundary-layer]
-timestamp: 2026-10-27T15:52:00Z
+timestamp: 2026-10-28T01:57:00Z
 ---
 
 # STREAmS
@@ -151,6 +151,23 @@ given.
   Bernardini; the scale-by-scale energy analysis is on
   [shock/turbulent boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)
   (§2, Figs. 2–3).
+- **Recovery downstream of the impinging-shock interaction**
+  ([Yu et al. 2023](/sources/yu-2023.md), §2): a second analysis of the
+  same STREAmS database, which the authors state "has been validated in
+  our previous study (Yu et al. 2022)", with the same numerics, domain and
+  grid. They add the boundary conditions: a Musker mean-velocity profile
+  with digital-filter synthetic fluctuations at the inflow and
+  temperature from a generalized Reynolds analogy, non-reflecting top and
+  outflow boundaries with the Rankine–Hugoniot jump imposed at the top, and
+  an isothermal wall at the recovery temperature, $T_w=1.92T_\infty$, "to
+  mimic an adiabatic wall". Statistics are spanwise averages over 900
+  fields in $t=351$–$959\,\delta_{\mathrm{in}}/U_\infty$, plus streamwise
+  averaging over 11 grid points. The database serves a decomposition of
+  the downstream boundary layer into a canonical part and a part induced by
+  the hidden mixing layer of the separation bubble, and a decomposition of
+  the skin friction (see
+  [skin-friction decomposition](/definitions/skin-friction-decomposition.md)
+  and [shock/turbulent boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
 - **DNS of cooled-wall boundary layers** (Zhang et al. 2022, §2, Tables
   1–3): six spatially developing zero-pressure-gradient
   [boundary layers](/benchmarks/turbulent-boundary-layer.md) at
@@ -192,3 +209,4 @@ given.
 - [Yu et al. (2022)](/sources/yu-2022-e.md) — §2, Figs. 2–3 (STREAmS numerics, impinging-shock DNS set-up and validation).
 - [Zhang et al. (2022)](/sources/zhang-2022-b.md) — §2, Tables 1–3 (STREAmS numerics, boundary conditions, six boundary-layer DNS); §6.1, Table 4.
 - [Aiello et al. (2026)](/sources/aiello-2026.md) — §3.3 (STREAmS 2.1, sixth-order central schemes, Wray Runge–Kutta, WENO transient, KEEP baseline, ghost-node removal, conservative viscous terms); §2, §4, Tables 2–3, Figs. 1–3 (thermally perfect CO$_2$ channel DNS); acknowledgements (CINECA).
+- [Yu et al. (2023)](/sources/yu-2023.md) — §2 (reuse of the STREAmS database of Yu et al. 2022, numerics, boundary conditions, statistics).

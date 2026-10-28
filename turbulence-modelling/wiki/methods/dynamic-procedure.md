@@ -5,7 +5,7 @@ description: "The dynamic procedure computes subgrid-model coefficients from the
 status: established
 aliases: [dynamic Smagorinsky model, DSM, Germano identity, Germano–Lilly procedure, dynamic SGS model, Lagrangian dynamic model]
 tags: [les, sgs-model, eddy-viscosity, wmles]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T02:14:00Z
 ---
 
 # Dynamic procedure and the Germano identity
@@ -93,6 +93,8 @@ only input is the ratio $\hat\Delta/\Delta$, set to 2 by Agrawal et al.
 | [Zhang et al. (2022b)](/sources/zhang-2022-f.md), App., Eqs. (A1)–(A24) | density-unweighted DSM with dynamic coefficients for the deviatoric stress, the Yoshizawa trace, the subgrid mass flux, heat flux and density–temperature correlation; density-unweighted two-coefficient dynamic mixed model for the same terms | $\hat\Delta=2\Delta$ (a filter of width $4\Delta$ for the mixed model's test-level structural terms); averages over the domain |
 | [Zhang et al. (2022d)](/sources/zhang-2022-h.md), Eqs. (33)–(36) | Favre DSM with a dynamic Yoshizawa coefficient $C_I$ for the isotropic part, thermodynamic subgrid terms of a dense gas neglected; baseline of iterative deconvolution | $\hat\Delta=2\Delta$; averages over the domain |
 | [Li et al. (2022)](/sources/li-2022-k.md), §II C, Eqs. (10)–(15) | compressible DSM of Moin et al. (cited) with Lilly's least squares, used to make the constant of a Reynolds-stress-model-based IDDES dynamic (below) | volume-weighted average over the direct face neighbours of a cell on hybrid unstructured meshes, $\hat\Delta=a\Delta$ with $a=2$ "in general"; the same neighbour average for numerator and denominator; negative $C_s^2$ clipped to zero |
+| [Xu et al. (2023)](/sources/xu-2023.md), §2.2, §3.1 | compressible DSM (Moin et al.; Lilly; Germano et al., cited) with dynamic $C_s^2$, Yoshizawa coefficient $C_I$ of $\tau_{kk}=2C_I\Delta^2\lvert\tilde S\rvert^2$ and subgrid heat-flux ratio $\nu_t/Pr_t$; the same identity also solves the nine stress and four heat-flux coefficients of a Lund–Novikov nonlinear algebraic model (after Yuan et al., cited), the paper's dynamic baselines of a learned model | $\Delta=(\Delta_x\Delta_y\Delta_z)^{1/3}$; test filter and averaging not printed |
+| [Zhang et al. (2023)](/sources/zhang-2023-c.md), §2, §3.3 | dynamic Smagorinsky model (cited to Martín, Piomelli & Candler) in an OpenFOAM flamelet LES of a stratified burner; its $k_{\mathrm{sgs}}$ enters the resolved-fraction check of the mesh | not printed |
 
 Fowler et al. (2022, §4.2) borrow the Lagrangian averaging of the dynamic
 model for the time integration of their wall model (semi-Lagrangian upstream
@@ -522,6 +524,29 @@ filter-width question.
   vorticity too narrow, against iterative deconvolution (see
   [scale-similarity models](/methods/scale-similarity-model.md)).
 
+- **Compressible wall-bounded LES, a priori and a posteriori.** Against
+  filtered DNS of a compressible isothermal-wall channel ($Re=3000$,
+  $M=1.5$), Xu et al. (2023, §2.2, Figs. 1–3) find DSM correlations with
+  the true stress smaller near the wall than those of the
+  [Vreman](/methods/vreman-model.md) and [WALE](/methods/wale-model.md)
+  models, but slightly larger for the diagonal components, which they
+  attribute to the dynamic $C_I$ (zero in the other two). The dynamic
+  nonlinear algebraic model (ODNA) correlates above 0.4 for $y^+>50$ but
+  poorly near the wall, with relative errors near 0.98, which the authors
+  ascribe to "the neglect of the anisotropy of the grid widths"; with
+  grid-width-normalized gradients (MDNA) the near-wall correlation rises
+  most for $y^+<50$ (§3.1–3.2, Figs. 4, 8). A posteriori MDNA is
+  "sometimes unstable" when the homogeneous directions have few grid points
+  and costs about 2.54 times DSM, so it is not shown (§4.1). DSM itself
+  gives a larger log-region van Driest velocity than filtered DNS (read by
+  the authors as excessive dissipation) and "strongly overestimates" the
+  mean subgrid kinetic-energy flux while underestimating the
+  temperature-variance flux (§4.1, Figs. 13, 17); it takes about 15.4 s
+  per 1000 steps on "80 2.40 GHz Intel Xeon Gold 6148 CPUs", the reference of the cost table (Table 4).
+  The authors give the averaging and clipping that the dynamic approach
+  needs as one motivation for computing the coefficients with a network
+  instead (§1; see [neural-network SGS models](/methods/neural-network-sgs-model.md)).
+
 ## Dynamic coefficient of a hybrid RANS/LES length scale
 
 [Li et al. (2022)](/sources/li-2022-k.md) apply the procedure to a
@@ -791,3 +816,5 @@ squares from a 6×4 system; see the
 - [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — App., Eqs. (A1)–(A24); §IV B, Figs. 5–17.
 - [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — Eqs. (33)–(36); §IV B, Figs. 6–15.
 - [Li et al. (2022)](/sources/li-2022-k.md) — §I; §II C, Eqs. (6)–(15); §III A, Fig. 3; §III B, Figs. 9–11; §III C, Figs. 16, 18.
+- [Xu et al. (2023)](/sources/xu-2023.md) — §1; §2.2, Figs. 1–3; §3.1–3.2, Figs. 4, 8; §4.1, Figs. 13, 17, Table 4.
+- [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2, Eqs. (1)–(2); §3.3.

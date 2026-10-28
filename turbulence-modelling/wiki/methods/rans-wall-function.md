@@ -5,7 +5,7 @@ description: "The near-wall closure of RANS that imposes a law of the wall at th
 status: established
 aliases: [wall function, WF, adaptive wall function, two-velocity-scale wall function, explicit wall function, RANS wall law]
 tags: [rans, wall-model, boundary-layer, dg]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T01:54:00Z
 ---
 
 # Wall functions for RANS
@@ -402,6 +402,19 @@ Table 1). In the particle-laden part of the same paper a URANS
 [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md) with standard wall
 functions is run as a comparator in a channel at $Re=57\,000$ (§3.2.2).
 
+## A resolved mean velocity with sublayer wall functions
+
+A commercial "all-$y^+$" treatment combines both routes. For a hybrid
+RANS/LES of the circular cylinder on the Lag elliptic-blending
+[$k$-$\varepsilon$ model](/methods/k-epsilon-model.md) with first cells at
+$y^+<1$, [Mays et al. (2023)](/sources/mays-2023.md) (§2.1) use the
+"All $Y^+$ wall treatment" of STAR-CCM+, noting that the low-$y^+$ option
+"would be equally appropriate". At low $y^+$ the option resolves the
+near-wall velocity explicitly and applies "the usual wall functions
+applicable to the viscous layer" for the dissipation rate and for the
+production of turbulent kinetic energy. The paper prints no formula for
+these viscous-layer functions.
+
 ## Wall-resolved alternatives in high-order RANS
 
 Five high-order sources resolve the wall instead, and say what it takes:
@@ -498,3 +511,4 @@ Five high-order sources resolve the wall instead, and say what it takes:
 - [Sugaya & Imamura (2021)](/sources/sugaya-2021.md) — §1; §2.2, Eqs. (10)–(15), Table 1; §3.1–3.2, Figs. 4–13; §4.
 - [Devenport & Lowe (2022)](/sources/devenport-2022.md) — §2.1, Eqs. (2.27)–(2.29); §4.1; §4.3; §4.4, Fig. 25; §5.1; §5.4; §6.
 - [Idelsohn et al. (2024)](/sources/idelsohn-2024.md) — §2.8, Fig. 4; §2.10.1, Table 1; §2.11; §2.12.2, Figs. 24–25; §3.2.2.
+- [Mays et al. (2023)](/sources/mays-2023.md) — §2.1 (all-$y^+$ wall treatment of STAR-CCM+ at $y^+<1$; passing).

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Flux reconstruction"
-description: "Flux reconstruction (FR/CPR) corrects a degree-N discontinuous flux polynomial per element with Riemann-solver interface corrections; its correction functions recover nodal DG or spectral difference. This page covers its formulation, the correction parameter as a filter, nonlinearly stable split-form FR, implicit FR for transitional RANS, its use as implicit LES, explicit SGS models and filter width, and its stabilization."
+description: "Flux reconstruction (FR/CPR) corrects a degree-N discontinuous flux polynomial per element with Riemann-solver interface corrections; its correction functions recover nodal DG or spectral difference. The page covers formulation, the correction parameter as a filter, nonlinearly stable split-form FR, implicit transitional RANS, fully discrete eigenanalysis, implicit LES, explicit SGS models, stabilization and shock limiting."
 status: established
 aliases: [FR, flux reconstruction method, correction procedure via reconstruction, CPR, FR/CPR, lifting collocation penalty, Huynh flux reconstruction, ESFR, energy-stable flux reconstruction, VCJH schemes, NSFR, nonlinearly stable flux reconstruction]
 tags: [flux-reconstruction, dg, implicit-les, numerical-dissipation, entropy-stable, wmles]
-timestamp: 2026-10-27T15:49:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Flux reconstruction
@@ -76,6 +76,41 @@ face area, $\mathcal J$ the mapping Jacobian, and the lifting coefficients
 $c_{q,f,l}$ depend only on the element shape. Duan & Wang state that the
 normal fluxes "must be continuous across element interfaces at the flux
 points to ensure conservation".
+Ims & Wang (2023, §2, Eqs. 1–6) and Shi & Yan (2023, §II.A, Eqs. 2–5)
+print the same CPR form as a correction field $\delta$ of degree $N$ added
+to the projection of the flux divergence onto the degree-$N$ space,
+$\partial_tU+\Pi_N[\nabla\cdot F]+\delta=0$, with $\delta$ at solution point
+$j$ of element $i$ lifted from the face jumps by the shape-dependent
+coefficients and the face areas, divided by the element volume ($\Pi_N$
+page-local; [Ims & Wang (2023)](/sources/ims-2023.md);
+[Shi & Yan (2023)](/sources/shi-2023.md)); Shi & Yan add that FR/CPR
+"unifies" DG and spectral difference.
+
+**One-dimensional correction functions.** Liu & Yuan (2023, §2.1–2.2,
+Eqs. 8–21) print Huynh's one-dimensional scheme on the reference element
+$[-1,1]$ with degree-$(N+1)$ correction functions
+$g_L(\xi)=g_R(-\xi)$, $g_L(-1)=1$, $g_L(1)=0$, in the
+Vincent–Castonguay–Jameson–Huynh (VCJH) family
+$$g_L=\frac{(-1)^N}{2}\Big[L_N-\frac{c_{\mathrm{FR}}L_{N-1}+L_{N+1}}{1+c_{\mathrm{FR}}}\Big],\qquad
+g_R=\frac12\Big[L_N+\frac{c_{\mathrm{FR}}L_{N-1}+L_{N+1}}{1+c_{\mathrm{FR}}}\Big],$$
+with $L_N$ the Legendre polynomial of degree $N$ and
+$-1<c_{\mathrm{FR}}<\infty$ the correction parameter in Liu & Yuan's
+normalization (the source's $\eta$), which affects dispersion and
+dissipation, order and CFL limit; $c_{\mathrm{FR}}=c_{\mathrm{DG}}=0$
+recovers collocation nodal DG, which they use on Gauss–Legendre solution
+points, chosen, after Witherden & Vincent, to minimize aliasing from the
+collocated nonlinear flux ([Liu & Yuan (2023)](/sources/liu-2023-b.md);
+energy stability for linear fluxes holds for any solution points, as
+cited). Tonicello et al. (2023, §2.1, Eqs. 4–11) write the same
+one-dimensional scheme for linear advection with an interface flux that
+weights the upwind and downwind traces by $1-\alpha_{\mathrm T}$ and
+$\alpha_{\mathrm T}$ (page-local, the source's $\alpha$; $\alpha_{\mathrm T}=0$
+upwind, 0.5 centred; the upwinding parameter of
+[eigensolution analysis](/methods/eigensolution-analysis.md) is
+$\lambda_{\mathrm{up}}=1-2\alpha_{\mathrm T}$),
+"mimicking" the upwinding of Riemann solvers, and recover DG and spectral
+difference only through the correction-function matrices
+([Tonicello et al. (2023)](/sources/tonicello-2023.md)).
 
 **Node sets.** The sources place the solution points differently: Gauss
 points ("usually", Duan & Wang 2024, §3), Legendre–Gauss–Lobatto points for
@@ -92,6 +127,9 @@ not disagreements.
 | Duan & Wang (2024), §3 | hpMusic | Roe | common solution and gradients, face gradients by BR2 | explicit SSP-RK3, or optimized BDF2 with (block) LU-SGS | $N=2$–$5$ |
 | Wang (2024), §2.2, §3 | ATHOS | Rusanov at no-slip walls, Roe or HLLC inside | LDG, penalty $0$, directional parameter $\pm0.5$ | explicit low-storage five-stage fourth-order Runge–Kutta, CFL $0.85/(2N+1)$ | up to $N=3$ |
 | Vandenhoeck et al. (2022), §2–3 | COOLFluiD | AUSM$^+$-up (Roe named as an option) | BR2 | implicit backward Euler, Newton linearization, GMRES (PETSc); CFL ramped up to 1250 | $N=0$–$6$ |
+| Ims & Wang (2023), §2 | hpMusic | common flux from a local Riemann problem | BR2 | explicit SSP-RK3 or implicit BDF2OPT | $N=1$, 2, reference at 4 |
+| Shi & Yan (2023), §II.A, §IV.A | NFR (in-house) | Roe | BR2 | explicit SSP-RK3 | $N=2$ (ramp), 3 (Taylor–Green) |
+| Liu & Yuan (2023), §2, §5 | 1-D research code | local Lax–Friedrichs | none (Euler) | SSP-RK3, CFL $1/(2N+1)$ | $N=2$–$5$ |
 
 Wang (2024, §2.2) reads the Rusanov flux as a central flux with scalar
 dissipation (the largest local wave speed) and the Roe flux as a central flux
@@ -314,6 +352,38 @@ T3A skin friction at $N=5$ is nearly identical for the correction
 parameters $c_{\mathrm{SD}}$, $c_{\mathrm{DG}}$ and $c_{g2}$ (Fig. 14; see
 [spectral difference method](/methods/spectral-difference-method.md)).
 
+## Linear eigenanalysis of FR and its time integration
+
+Tonicello et al. (2023) extend the spatial eigenanalysis of FR (a real
+frequency prescribed, complex numerical wavenumbers solved for, as in
+inflow–outflow problems) from the semi-discrete setting to the fully
+discrete one with explicit Runge–Kutta schemes of one to five stages
+(§2.2, Eqs. 13–23; method and results on
+[eigensolution analysis](/methods/eigensolution-analysis.md)). For the
+FR family the findings are:
+
+- with upwind fluxes the number of transmitted eigenmodes equals the
+  number of Runge–Kutta stages, one of them physical; non-upwind fluxes
+  double it with reflected modes (§3, Figs. 2, 4–5);
+- in its DG recovery FR has a more restrictive CFL limit than in its
+  spectral-difference recovery (both upwind), so its dissipation curves
+  extend to higher frequencies, and it is spatially less dissipative
+  overall (§3, Fig. 7; App. Figs. 29–30; see
+  [spectral difference method](/methods/spectral-difference-method.md));
+- for fifth-order FR-SD with three-stage Runge–Kutta the spatial
+  superconvergence of order $2N+1=9$ falls to fourth order at small
+  wavenumbers, set by the time scheme, and is kept in an intermediate
+  range that smaller time steps widen (§3, Fig. 8);
+- larger time steps reduce the high-frequency dissipation of upwind FR
+  until anti-dissipation at the CFL limit, and smooth the "dissipative
+  bubbles" of nearly centred fluxes (§3, Fig. 9).
+
+On under-resolved inviscid Taylor–Green and duct flows the time step has
+almost no effect until very close to the CFL limit, so that in implicit
+LES "temporal errors are more likely overshadowed by spatial errors",
+while in well-resolved flows the time-integration order limits the
+convergence (§4.2–§4.3, §5; see [numerical dissipation](/properties/numerical-dissipation.md)).
+
 ## FR as implicit LES
 
 Duan & Wang (2024, §3) state that projecting a solution onto the
@@ -356,6 +426,28 @@ amounts to extra dissipative flux terms. Evidence in the sources:
   a pile-up of kinetic energy in high-frequency modes"; they call their
   unfiltered runs ILES and their filtered runs "LES", the filter being the
   only model.
+- **ILES on adapted meshes.** Ims & Wang (2023) run FR/CPR as implicit
+  LES ("we apply no subgrid scale model") with an accuracy-preserving
+  limiter in severely under-resolved areas, and adapt the mesh by
+  isotropic splitting of curved cells with mortar faces at hanging nodes
+  (§2, §4). In three dimensions the geometry vectors of a mortar face must
+  come from the coarse side if its polynomial is linear and, "possible and
+  advisable", from the fine side otherwise, or the calculation turns
+  unstable through under-integration of the coarse side (§4; no data
+  shown). Of three refinement indicators, the unsteady residual evaluated at
+  degree $N+1$ is "literally the instantaneous flaw in the simulated flow
+  field", a map of where the discrete equations depart from Navier–Stokes
+  (§3.1, §5.3); details on [mesh adaptation](/methods/mesh-adaptation.md).
+- **ILES of a shock/boundary-layer interaction.** Shi & Yan (2023) run
+  $N=2$ FR/CPR as wall-resolved implicit LES of the Mach 2.9 flow over a
+  $24^\circ$ compression ramp, citing evidence that dissipative
+  discontinuous methods (DG, SD, FR/CPR) support implicit LES without an
+  explicit model, and state that FR/CPR simulations of shock-dominated
+  supersonic turbulence are rare, the configuration having been computed
+  mainly with high-order finite differences (§I). Their solver reproduces
+  the Taylor–Green vortex at $Re=1600$ with $N=3$ on $32^3$, $64^3$ and
+  $96^3$ cells (128–384 degrees of freedom per direction), converging to the
+  spectral $512^3$ reference (§III.A, Figs. 1–2).
 - **Cost against finite volumes**, as relayed by
   [Saini et al. (2023)](/sources/saini-2023.md), §1, from earlier studies:
   fifth-order PyFR was more accurate than a commercial finite-volume code but
@@ -495,6 +587,29 @@ and, on curved elements, a non-constant mapping Jacobian, a
 "geometrical-aliasing source" (§2.2; see
 [geometric conservation law](/properties/geometric-conservation-law.md)).
 
+**Shock capturing by sensor and limiter.** For shock-dominated flows the
+sources add a troubled-cell sensor and a limiter to FR. Shi & Yan (2023,
+§II.B, Eqs. 6–18) use the KXRCF sensor of Krivodonova et al. rewritten
+without its grid-length scaling, on density, with threshold $C_{\mathrm{KX}}=0.01$ (page-local), the
+P-weighted compact WENO limiter of Li, Wang & Ren with modified linear
+weights and a rule that zeroes the weights of lower modes when they
+oscillate more than higher ones, and the Zhang–Shu positivity-preserving
+limiter on the Gauss–Lobatto points, because the WENO limiter does not keep
+density and pressure positive and non-physical states crash the runs;
+on the double Mach reflection the sensor also marks parts of the shear
+layer and vortex, and the combination does "not completely remove the
+numerical oscillations" (§III.B, Fig. 3). Liu & Yuan (2023, §3) extend the
+a posteriori subcell finite-volume limiter of Dumbser et al. from DG to FR,
+recompute troubled cells on $N+1$ subcells and precede the relaxed
+maximum-principle test by a KXRCF-type pre-detection, which stops the shock
+cell of a steady detonation from switching between FR and finite volume
+and lets the solution converge (Table 2); details and both sensors on
+[subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)
+and [shock sensors](/definitions/shock-sensor.md). At equal degrees of
+freedom their $N=2$ FR with second-order subcells resolves one-dimensional
+detonations without the oscillations behind the front that fifth-order
+WENO-JS and WENO-Z show (§5.5, Fig. 9); the flows are inviscid and laminar.
+
 **Wall units on high-order grids.** Wang (2024, §4.2, Eq. 26, after Jia et
 al.) divides the first-cell $y^+$ computed from the cell height by $N+1$;
 the [PANS](/methods/partially-averaged-navier-stokes.md) wall value of
@@ -556,6 +671,38 @@ first-point distance.
   (see [NACA 0012](/benchmarks/naca-0012-airfoil.md)); Huynh's
   flux-reconstruction paper appears only in the §1 list of high-order
   methods for unstructured meshes.
+- **Adaptive turbine-cascade ILES** (Ims & Wang 2023, §5): T106c at
+  $Re=80\,000$ ($N=2$), compared with an hpMusic DNS, and T106a at
+  $Re=60\,000$ ($N=1$), compared with an $N=4$ run on a uniformly refined
+  mesh; three indicators each refine the top 20% of cells per round, and the
+  small-scale-energy and unsteady-residual indicators converge fastest,
+  judged visually (see [turbine cascades](/benchmarks/turbine-cascade.md)
+  and [hpMusic](/software/hpmusic.md)).
+- **High-lift aircraft** (Kiris et al. 2023, Table 1, §III, §VI 1a): in the
+  Fourth High-Lift Prediction Workshop the hpMusic submission ran $N=2$ FR
+  as implicit LES with an equilibrium wall model taking its input at the
+  interface of the first and second elements, implicit BDF2, 13 million
+  degrees of freedom and aspect ratios up to 71; it obtained "reasonably
+  accurate" integrated loads at maximum lift but lacked the outboard
+  slat-bracket-wake separation, and its solutions switched between vastly
+  different states with transients over more than 40 convective time units
+  ([Kiris et al. (2023)](/sources/kiris-2023.md); see
+  [NASA CRM high-lift](/benchmarks/nasa-crm-high-lift.md)).
+- **Compression-ramp interaction** (Shi & Yan 2023, §IV): the $24^\circ$
+  ramp at $M_\infty=2.9$, $Re_\infty=5.966\times10^6\,\mathrm m^{-1}$, with
+  digital-filter inflow; the incoming boundary layer is converged on three
+  grids and the corner $C_f$ and wall pressure converge on the two finer
+  ones to the WENO DNS references; the maximum amplification of the
+  turbulent kinetic energy is 3.34 (§IV.B–C, Table IV; see
+  [shock/boundary-layer interaction](/benchmarks/shock-turbulent-boundary-layer-interaction.md)).
+- **A comparison target for explicit-filter LES** (Najafiyazdi et al.
+  2023, §6.2, Fig. 10): the $N=1$ FR-DG, FR-OFR and FR-SD implicit LES of
+  Bull & Jameson, printed as "128 degrees of freedom, i.e. p 1 Legendre polynomials on a 64³ grid",
+  are less accurate in both energy- and vorticity-based dissipation than an
+  approximate-deconvolution LES on a $64^3$ linear finite-element grid of
+  the Taylor–Green vortex at $Re=1600$, as the source prints the two
+  resolutions ([Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md);
+  see [scale-similarity model](/methods/scale-similarity-model.md)).
 
 ## Low-order FR and the spectral-difference relative in a shock–turbulence comparison
 
@@ -645,6 +792,22 @@ laminar circular cylinder, with errors they call similar (§3.1).
   not in the sources)*. The paper does not name the solver that ran the
   simulations, and its filters are tied to the DG-recovering correction
   function and the Rusanov flux (§3.4).
+- Liu & Yuan (2023, §2.2) state, citing the VCJH literature, that the
+  energy-stable schemes have "$(2K-1)$th order of super-accuracy with
+  $K+1$ solution points" for linear advection ($K$ the degree), while
+  Tonicello et al. (2023, §3) state a spatial superconvergence of order
+  $2N+1$ for their fifth-order FR-SD; both are reported as printed. Liu & Yuan print the
+  sum of Eq. 17 over $k$ with the coefficient indexed $j$; Tonicello et al.
+  print $\mathbf C^0$ with $-(\alpha_{\mathrm T}-1)$ on the left correction
+  term, where their preceding unnumbered equation gives
+  $+(\alpha_{\mathrm T}-1)$ *(compiler check, not in the sources)*.
+- Kiris et al. (2023, §VI 1c) say the implicit codes used time steps "only
+  about 10× larger" than the explicit ones; from their Table 2 the hpMusic
+  step ($9.7\times10^{-5}$) is 1.7–3.3 times the explicit steps
+  ($2.9$–$5.7\times10^{-5}$) *(compiler check, not in the sources)*.
+- Ims & Wang (2023) report no error norms, cell counts, time steps or
+  timings; their ranking of indicators rests on visual comparison of
+  fields and spectra.
 
 # Citations
 
@@ -661,3 +824,9 @@ laminar circular cylinder, with errors they call similar (§3.1).
 - [Wang et al. (2013)](/sources/wang-2013.md) — §1 (Huynh cited); §5, Tables II–IV, VII (CPR–DG submissions to the first High-Order CFD Workshop).
 - [Vandenhoeck et al. (2022)](/sources/vandenhoeck-2022.md) — Abstract, §1–1.1 (first FR-RANS with transition, $\ln\omega$ SST); §2, Eqs. (47)–(61) (FR, VCJH, BR2, AUSM$^+$-up); §3.2, Eqs. (62)–(87), Figs. 5–7 (implicit solver, semi-analytical and source Jacobians); §3.3.1, Eq. (88); §4.1–4.3, Figs. 9–17 (Wieghardt plate, T3 cases, VCJH parameters, $O(N^2)$ cost).
 - [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §1, §2.1–2.2 (DG-recovering FR, LCP, geometric aliasing, dissipation as SGS model); §3.2–3.4 (time-step-independent modal filter, optimization, scope); §4.1–4.3, Table 1; §5.1–5.2, Tables 2–3, Figs. 23–25; Eq. 44.
+- [Ims & Wang (2023)](/sources/ims-2023.md) — §2 Eqs. 1–6 (FR/CPR, BR2, limiter, SSP-RK3/BDF2OPT, ILES); §3.1, §4 (indicators, mortar faces); §5.1–§5.3.
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §I; §II.A Eqs. 2–5; §II.B Eqs. 6–18 (KXRCF, P-weighted WENO, positivity); §III.A–B Figs. 1–3; §IV.A–C Table IV.
+- [Liu & Yuan (2023)](/sources/liu-2023-b.md) — §2.1–2.2 Eqs. 8–21 (1-D FR, VCJH); §3 (a posteriori subcell limiter, KXRCF pre-detection); §5, §5.5 Table 2 Fig. 9.
+- [Tonicello et al. (2023)](/sources/tonicello-2023.md) — §2.1 Eqs. 4–11; §2.2 Eqs. 13–23; §3 Figs. 2, 4–9; §4.2–§4.3; §5; App. Figs. 29–30.
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — Table 1, Table 2, §III, §VI 1a, §VI 1c.
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §6.2, Fig. 10.

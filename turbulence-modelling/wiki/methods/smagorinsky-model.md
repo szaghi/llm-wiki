@@ -5,7 +5,7 @@ description: "The Smagorinsky model closes the deviatoric subgrid stress with an
 status: established
 aliases: [Smagorinsky eddy-viscosity model, static Smagorinsky model, SSM, constant-coefficient Smagorinsky]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T02:14:00Z
 ---
 
 # Smagorinsky model
@@ -81,6 +81,10 @@ are variants of the same eddy-viscosity idea.
 | 0.1 "in the present wall-bounded turbulent flows", $\Delta$ the cube root of the cell volume, no wall damping mentioned | LES of the 30P30N three-element airfoil | [Wu et al. (2023)](/sources/wu-2023-b.md), §2.1, Eq. (8) |
 | 0.16 far from the wall ($C_{\mathrm{MT}}$ in the damping below) | LES of a neutral atmospheric boundary layer over a hill, with Mason–Thomson wall damping | [Zhang et al. (2022e)](/sources/zhang-2022-i.md), §II A–B, Eqs. (4)–(6) |
 | 0.18, calibration value giving $C_{\mathrm{DES}}=0.3$ and 0.5 | LES branch of a Reynolds-stress-model IDDES, before making it dynamic | [Li et al. (2022)](/sources/li-2022-k.md), §III A |
+| 0.1, no wall damping, "because the near-wall grid resolution in the WMLES is very coarse whereas the eddy viscosity at the wall is set to zero" | alternative subgrid model of a compressible wall-modelled LES of a flat-plate boundary layer at $M_\infty=2.28$ (sixth-order compact differences) | [Maeyama & Kawai (2023)](/sources/maeyama-2023.md), App. D, Eq. (D1) |
+| 0.1, used only to fix the [Vreman](/methods/vreman-model.md) and [WALE](/methods/wale-model.md) constants ($2.5C_s^2$, $10.6C_s^2$); the Smagorinsky baseline itself is dynamic | compressible channel and boundary-layer LES, baselines of a learned model | [Xu et al. (2023)](/sources/xu-2023.md), §2.2 |
+| dynamic (charLES submission) | wall-modelled LES of the CRM high-lift aircraft in the fourth High-Lift Prediction Workshop | [Kiris et al. (2023)](/sources/kiris-2023.md), §II.4, Table 2 |
+| dynamic (cited to Martín, Piomelli & Candler) | OpenFOAM flamelet LES of a stratified burner | [Zhang et al. (2023)](/sources/zhang-2023-c.md), §2, §3.3 |
 
 Wang et al. (2021, §3.1), citing earlier work, relate the coefficient to
 the Kolmogorov constant by $C_s\approx C_\Delta^{-1}(1.5C_K)^{-3/4}$
@@ -810,6 +814,37 @@ methods (Hou et al., cited).
   [Zhang et al. 2022b](/sources/zhang-2022-f.md);
   [Zhang et al. 2022d](/sources/zhang-2022-h.md); see the
   [dynamic procedure](/methods/dynamic-procedure.md)).
+- **Compressible form with an isotropic part and a heat flux.**
+  [Xu et al. (2023)](/sources/xu-2023.md) (§2.2, Eqs. 2.15–2.17) print the
+  compressible eddy-viscosity family as
+  $\tau^d_{ij}=-2\nu_t\tilde S^d_{ij}$, $\tau_{kk}=2C_I\Delta^2\lvert\tilde S\rvert^2$
+  and a subgrid heat flux $-(\nu_t/Pr_t)\partial_j\tilde T$, with
+  $\nu_t=(C_s\Delta)^2\lvert\tilde S\rvert$ for the Smagorinsky member and
+  $C_s^2$, $C_I$ and $Pr_t$ computed dynamically ($C_I$ the Yoshizawa
+  coefficient, registry §11; their stress is per unit mass). Its a priori
+  and a posteriori behaviour against a learned model is on the
+  [dynamic procedure](/methods/dynamic-procedure.md) page.
+- **Low sensitivity to the choice against Vreman on aircraft grids.** In
+  the High-Lift Prediction Workshop summary of Kiris et al. (2023, §II.4),
+  the charLES team "reported little sensitivity" between the dynamic
+  Smagorinsky and the Vreman models on its intermediate grids; four other
+  submissions use the constant-coefficient Vreman model (Table 2). See
+  [wall-modelled LES](/methods/wall-modelled-les.md).
+- **Near-wall structures of wall-modelled LES.** Maeyama & Kawai (2023,
+  App. D, Figs. 32–33) repeat their analysis of the spurious near-wall
+  streaks of wall-stress-modelled LES with the Smagorinsky model in place
+  of the selective mixed-scale model: the spanwise length of the
+  structures again collapses in a semi-local scaling that adds the subgrid
+  eddy viscosity to the molecular one, so the subgrid diffusion sets it,
+  and the outer peak of the streamwise energy spectrum is again missing.
+  See [wall-modelled LES](/methods/wall-modelled-les.md) and
+  [compressible velocity transformations](/definitions/compressible-velocity-transformation.md).
+- **Laminar instability modes.** [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md)
+  (§6.2) cite the Smagorinsky and structure-function models as
+  eddy-viscosity models that "do not preserve the integrity of the laminar
+  instability modes" of the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md),
+  which motivates their deconvolution closure without eddy viscosity (see
+  [scale-similarity models](/methods/scale-similarity-model.md)).
 
 ## Qualifications
 
@@ -856,6 +891,10 @@ methods (Hou et al., cited).
   stated.
 - Jakhar et al. (2026, App. D) write $\tau_{ij}=-2\nu_e\bar S_{ij}$ for the
   full (not deviatoric) two-dimensional stress.
+
+- Maeyama & Kawai (2023, Eq. D1) print $\nu_t=(C_s\Delta)^2\tilde S$
+  without the modulus bars of the $\lvert\tilde S\rvert$ of their Eq. (2.8);
+  the filter width of their Smagorinsky runs is not restated in App. D.
 
 - Heinz (2020, §2.3 and App. C) prints $C_+=(0.876,1.0,1.074)$ for
   $C_K=(1.3,1.43,1.5)$; the printed formula $C_+=(3C_K/2)^{3/2}/\pi$
@@ -932,3 +971,8 @@ methods (Hou et al., cited).
 - [Wang et al. (2022)](/sources/wang-2022-j.md) — §II B; §IV–V.
 - [Zhang et al. (2022b)](/sources/zhang-2022-f.md) — App.; §IV B.
 - [Zhang et al. (2022d)](/sources/zhang-2022-h.md) — Eqs. (33)–(36); §IV B.
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — App. D, Eq. (D1), Figs. 32–33.
+- [Xu et al. (2023)](/sources/xu-2023.md) — §2.2, Eqs. (2.15)–(2.17).
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.4, Table 2.
+- [Zhang et al. (2023)](/sources/zhang-2023-c.md) — §2; §3.3.
+- [Najafiyazdi et al. (2023)](/sources/najafiyazdi-2023.md) — §6.2.

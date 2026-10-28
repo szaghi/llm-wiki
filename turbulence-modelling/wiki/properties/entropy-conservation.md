@@ -5,7 +5,7 @@ description: "A discretization is entropy conservative when its convective terms
 status: established
 aliases: [EC, entropy-conservative scheme, entropy-conserving flux, entropy-stable discretization, entropy stability, Ismail–Roe flux, Chandrashekar flux, EC-TP scheme, nonlinear stability, entropy-stable RANS]
 tags: [entropy-stable, kinetic-energy-preserving, compressible, dg, dns, numerical-dissipation]
-timestamp: 2026-10-27T21:10:00Z
+timestamp: 2026-10-28T02:15:00Z
 ---
 
 # Entropy conservation and entropy stability
@@ -109,6 +109,23 @@ averaging, a low-dissipation Roe flux and BR1 or BR2 viscous fluxes.
 [HORSES3D](/software/horses3d.md) offers entropy-conserving and Chandrashekar
 split forms beside the kinetic-energy-preserving ones
 ([Ferrer et al. 2023](/sources/ferrer-2023.md), §3.5).
+
+**The Chandrashekar flux printed.** [Potluri et al. (2023)](/sources/potluri-2023.md),
+§3.1.2, print it in the $x$ direction, with $\beta_{\mathrm C}=\rho/(2p)$
+(page-local, the source's $\beta$) and the arithmetic and logarithmic
+means of registry §6 and §11:
+$$f^{\#}_{\mathrm{Ch}}=\begin{pmatrix}\rho^{\ln}\{\!\{u\}\!\}\\ \rho^{\ln}\{\!\{u\}\!\}^2+\{\!\{\rho\}\!\}/(2\{\!\{\beta_{\mathrm C}\}\!\})\\ \rho^{\ln}\{\!\{u\}\!\}\{\!\{v\}\!\}\\ \rho^{\ln}\{\!\{u\}\!\}\{\!\{w\}\!\}\\ \rho^{\ln}\{\!\{u\}\!\}\Big(\dfrac{1}{2\beta_{\mathrm C}^{\ln}(\gamma-1)}+\dfrac{\{\!\{\rho\}\!\}}{2\rho^{\ln}\{\!\{\beta_{\mathrm C}\}\!\}}+\sum_i\big[\{\!\{u_i\}\!\}^2-\tfrac12\{\!\{u_i^2\}\!\}\big]\Big)\end{pmatrix},$$
+with the logarithmic means computed by the stable procedure of Ismail &
+Roe, and call it entropy conservative and kinetic-energy preserving. Their
+interface flux adds to it a matrix dissipation
+$-\tfrac12K|\Lambda|K^{-1}[\![U]\!]$ (Roe eigenvectors $K$, page-local)
+whose eigenvalue matrix blends a Rusanov form and the
+kinetic-energy-stable form $\mathrm{diag}(|u|+c,|u|,|u|,|u|,|u|+c)$ ($u$ and $c$ the Roe-averaged normal velocity and sound speed, page-local) by the
+DG/finite-volume blending factor $\alpha$; BR1 is computed on the
+gradients of the entropy variables for entropy stability (citing Gassner
+et al.), or of the conservative variables, which their hypersonic cases
+use because they "are observed to perform better" (§3.2, §4). The cases
+are laminar.
 
 ## Entropy through consistent energy fluxes (KEEP)
 
@@ -431,6 +448,13 @@ global entropy although it is not entropy preserving.
   faces between elements of different polynomial degree "does not retain
   entropy stability" (Ferrer et al. 2023, §3.6), and the split forms need
   Gauss–Lobatto nodes (§3.3).
+- **Walls and hypersonic transients.** Potluri et al. (2023, §1) note,
+  citing earlier work, that entropy-stable wall boundary conditions cannot
+  accommodate isothermal walls; their entropy-conservative split-form
+  DGSEM with subcell blending crashes in the initial transient of laminar
+  hypersonic boundary layers at $M_\infty\ge6$ until the viscous residual
+  is limited near the wall (§3.3; see
+  [subcell finite-volume shock capturing](/methods/subcell-finite-volume-shock-capturing.md)).
 - **Time integration** adds entropy errors, "typically less significant in
   practice" than the spatial ones (Aiello et al. 2026, §3.3); the
   properties on this page are semi-discrete. Kuya et al. (2018, App. C,
@@ -524,4 +548,5 @@ global entropy although it is not entropy preserving.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.3 (KE/EP central component of the blended flux).
 - [Hamedi & Vermeire (2022)](/sources/hamedi-2022.md) — §1 (entropy-stable schemes as a costly alternative to filtering).
 - [Lodares et al. (2022)](/sources/lodares-2022.md) — §1; §2, Eqs. (13)–(17) (compressible SA, negative variant, clipped diffusion); §3.1–3.2, Eqs. (29)–(50) (SA entropy, split analysis); §4.3–4.5, Eqs. (68)–(77) (two-point flux, interface flux, walls); §5, Eqs. (83)–(118) (semi-discrete entropy laws); §7.1–7.2, Figs. 3–6.
+- [Potluri et al. (2023)](/sources/potluri-2023.md) — §1 (entropy-stable wall conditions and isothermal walls, cited); §3.1.2 (Chandrashekar volume flux, blended matrix-dissipation surface flux); §3.2 (BR1 in entropy variables); §3.3.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.4 (KEP and KEEP fluxes for scale-resolving simulation, cited; CharLES KEEP at high lift, cited).

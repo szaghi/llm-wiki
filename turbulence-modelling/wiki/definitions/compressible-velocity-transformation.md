@@ -5,7 +5,7 @@ description: "Maps that turn the mean velocity of a variable-property compressib
 status: established
 aliases: [velocity transformation, compressible law of the wall, total-stress-based transformation, van Driest transformation, Trettel–Larsson transformation, semi-local scaling, generalized Reynolds analogy]
 tags: [compressible, boundary-layer, wall-model, hypersonic]
-timestamp: 2026-10-27T21:08:00Z
+timestamp: 2026-10-28T02:18:00Z
 ---
 
 # Compressible velocity transformations
@@ -45,6 +45,41 @@ find that it collapses the peak positions of the Reynolds stresses (§3,
 Fig. 4), the peaks of the pressure-fluctuation intensity at about $y^*=30$
 (§5, Fig. 13) and the near-wall streak spacing at about 100 in semi-local
 units for all cases (§4).
+
+In RANS, [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) (§1.1,
+§2.2, Eqs. 1, 7–8) use the semi-local friction Reynolds number in the form
+$Re_\tau^*=Re_\tau\sqrt{\rho^+}/\mu^+$ (after Huang et al. and Patel et al.,
+as cited) to characterize variable-property channels. They replace $y^+$
+by $y^*=y^+\sqrt{\rho^+}/\mu^+$ in the damping functions of the
+Myong–Kasagi [$k$-$\varepsilon$ model](/methods/k-epsilon-model.md),
+following Otero Rodriguez et al. (as cited). They also state that the
+velocity transformation of Patel et al. "is equivalent to the one
+proposed by Trettel and Larsson" (§1.1). In their learned correction
+(see [field inversion and machine learning](/methods/field-inversion-machine-learning.md))
+$y^*$ ranks above $\rho^+$ and $\mu^+$ as an input feature, which they
+read as the property variation being already contained in $y^*$ (§5, §6).
+
+**Semi-local scaling with the subgrid viscosity.** In wall-modelled LES the
+near-wall region carries a large SGS eddy viscosity. [Maeyama & Kawai (2023)](/sources/maeyama-2023.md)
+(§5.4, Eqs. 5.3–5.5) therefore add it to the molecular viscosity in the
+semi-local viscous length,
+
+$$\delta^{*,\mathrm{sgs}}_\nu=\frac{\langle\nu\rangle+\nu_t}{u_\tau^*}=\frac{\langle\mu\rangle+\mu_t}{\langle\rho\rangle u_\tau^*},$$
+
+with $\nu_t$ the SGS eddy viscosity at height $y$ and
+$\delta^{*,\mathrm{sgs}}_\nu$ page-local, against $\delta_\nu=\nu_w/u_\tau$
+and the semi-local $\langle\nu\rangle/u_\tau^*$. They measure the spanwise
+length of the near-wall streak-like structures of a Mach 2.28 WMLES from
+the spanwise correlation of $u$ near $y^+\approx15$, or at the first grid
+point. In wall units or in semi-local units this length grows almost
+linearly with $Re_\tau$ from 700 to 14 000. Scaled by
+$\delta^{*,\mathrm{sgs}}_\nu$ it collapses to $O(100)$, the order of the
+DNS streak spacing in wall units, on every grid, scheme and SGS model they
+tried (App. C–D, Figs. 17b, 28, 32). They conclude that "the diffusion
+introduced by the SGS eddy viscosity dominantly determines the spanwise
+length scale" of these numerical structures (see
+[wall-modelled LES](/methods/wall-modelled-les.md)). The exact definition of
+the length taken from the correlation is not printed.
 
 ## General form
 
@@ -146,24 +181,24 @@ temperature. Griffin et al. (2023, §2.2) cite the Walz (modified
 Crocco–Busemann) relation with recovery factor $r=Pr^{1/3}$, accurate for
 adiabatic walls but degraded by heat transfer, and its recasting by Zhang et
 al. (2014) as the generalized Reynolds analogy (GRA), with Reynolds-analogy
-factor $s=1.14$ (Eq. 2.3; page-local $r$, $s$):
+factor $s_{\mathrm{RA}}=1.14$ (Eq. 2.3; page-local $r$; $s_{\mathrm{RA}}$ as on the Morkovin page):
 
-$$T=T_w+s\,Pr\,(T_r-T_w)\frac{U}{U_e}\left(1-\frac{U}{U_e}\right)+\left(\frac{U}{U_e}\right)^2(T_e-T_w),\qquad T_r=T_e+\frac{rU_e^2}{2c_p}.$$
+$$T=T_w+s_{\mathrm{RA}}\,Pr\,(T_r-T_w)\frac{U}{U_e}\left(1-\frac{U}{U_e}\right)+\left(\frac{U}{U_e}\right)^2(T_e-T_w),\qquad T_r=T_e+\frac{rU_e^2}{2c_p}.$$
 
 It is equivalently a quadratic $T=b_0+b_1U+b_2U^2/2$ (Eq. 2.4) with $b_0=T_w$,
 $b_1$ the wall slope from the Reynolds analogy and $b_2$ fixed by the edge
 temperature. Griffin et al. fix $b_2$ instead by the matching-height
 temperature $T_m$ at velocity $U_m$ (Eq. 2.5),
 
-$$T=T_w+s\,Pr\,(T_r-T_w)\frac{U}{U_e}\left(1-\frac{U}{U_m}\right)+\left(\frac{U}{U_m}\right)^2(T_m-T_w),$$
+$$T=T_w+s_{\mathrm{RA}}\,Pr\,(T_r-T_w)\frac{U}{U_e}\left(1-\frac{U}{U_m}\right)+\left(\frac{U}{U_m}\right)^2(T_m-T_w),$$
 
-which ties the wall heat flux to the wall stress, $q_w=s\,\tau_wc_p(T_w-T_r)/U_e$.
+which ties the wall heat flux to the wall stress, $q_w=s_{\mathrm{RA}}\tau_wc_p(T_w-T_r)/U_e$.
 They judge the constant-$Pr_t$ energy equation of the classical model less
 accurate than the GRA (citing Zhang et al. 2014).
 
 Chen et al. (2024, §3.3, Eqs. 3.16–3.17) write the same quadratic with
-the constant $C_{\mathrm{DM}}=0.8259$ of Duan & Martín (2011), recast as $s\,Pr$ with
-$s=1.14$ after Zhang et al. (2014) as they cite them, and use the
+the constant $C_{\mathrm{DM}}=0.8259$ of Duan & Martín (2011), recast as $s_{\mathrm{RA}}\,Pr$ with
+$s_{\mathrm{RA}}=1.14$ after Zhang et al. (2014) as they cite them, and use the
 matching-anchored form below $y^*_{mT}=100$ inside an algebraic RANS model;
 they do not re-examine the relation against their DNS (details on the
 [inverse-velocity-transformation wall model](/methods/inverse-velocity-transformation-wall-model.md)
@@ -175,6 +210,17 @@ that point and the wall in the three cold-wall cases shown, so a constant $Pr_t=
 temperature and no monotone wall-distance formula can follow it (§3.3,
 Fig. 6; see the [Morkovin hypothesis](/definitions/morkovin-hypothesis.md)
 page for $Pr_t$).
+
+[Mo et al. (2023)](/sources/mo-2023.md) (§II B, Eqs. 11–13) print the GRA
+of Zhang et al. (2013, as cited) in the form
+$T/T_e=T_w/T_e+\big((T_r-T_w)/T_e\big)f(U/U_e)+\big((T_e-T_r)/T_e\big)(U/U_e)^2$
+with $f(\xi)=(1-s_{\mathrm{RA}}\,Pr)\xi^2+s_{\mathrm{RA}}\,Pr\,\xi$, $s_{\mathrm{RA}}=1.16$ and $Pr=0.72$, giving
+$f=0.165\xi^2+0.835\xi$. Expanded, this is the first relation above
+term by term, with $s_{\mathrm{RA}}=1.16$ in place of Griffin et al.'s 1.14 *(compiler
+check, not in the sources)*. Their DNS reproduces it at Mach 2.25 (isothermal
+wall), 2.9 (adiabatic) and 7.25 (cold wall, $T_w=562$ K), and they
+differentiate it to obtain a temperature-fluctuation law for a hypersonic
+inflow (see [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md)).
 
 ## Ranking by the sources
 
@@ -431,6 +477,48 @@ judge, initialize or close a simulation.
   intercept mismatch of van Driest, Zhang et al. (2022, above) report that
   van Driest fails for their cooled cases, and Carlsson et al. call van
   Driest inaccurate for non-adiabatic walls.
+- **Further incoming layers of shock interactions.** [Shi & Yan (2023)](/sources/shi-2023.md)
+  (§IV.B, Eq. 29, Figs. 8–9) validate the Mach 2.9 incoming layer of a 24°
+  ramp computed by flux-reconstruction implicit LES ($T_w=307$ K
+  isothermal) with the closed Crocco–Busemann-based form of the van Driest
+  velocity,
+  $$U_{\mathrm{vD}}=\frac{U_\infty}{a_{\mathrm{vD}}}\left[\sin^{-1}\!\left(\frac{2a_{\mathrm{vD}}^2U/U_\infty-b_{\mathrm{vD}}}{Q_{\mathrm{vD}}}\right)+\sin^{-1}\!\frac{b_{\mathrm{vD}}}{Q_{\mathrm{vD}}}\right],$$
+  $a_{\mathrm{vD}}=\big(\tfrac{\gamma-1}2M_\infty^2T_\infty/T_w\big)^{1/2}$,
+  $b_{\mathrm{vD}}=T_{aw}/T_w-1$, $Q_{\mathrm{vD}}=\sqrt{b_{\mathrm{vD}}^2+4a_{\mathrm{vD}}^2}$
+  ($T_{aw}$ the adiabatic-wall temperature; all page-local). The profile is
+  converged on three grids and lies between two reference DNS, with the
+  log law $\ln(y^+)/0.41+5.0$. [Gao et al. (2023)](/sources/gao-2023.md)
+  (§5.2, Fig. 18) validate the shock-free Mach 2 layer of their DG implicit
+  LES with the van Driest velocity against the DNS of Wenzel et al. (as
+  cited): it follows the sublayer for $y^+\le5$ and the log law for
+  $30\le y^+\le100$. The van Driest II transformed $C_f$ approaches the DNS
+  and the correlation $0.024Re_\theta^{-0.25}$ (transformed quantities)
+  soon after the forcing zone (Fig. 19). [Yu et al. (2023)](/sources/yu-2023.md)
+  (§3, §4.1, Eq. 3.1) use the van Driest transform of an adiabatic-like
+  Mach 2.28 layer ($T_w=1.92T_\infty$, the recovery temperature) in both
+  directions. Forward, they show that just behind an oblique-shock
+  interaction the log-law intercept falls well below 5.0 and returns to
+  5.0 about $13\delta_r$ downstream of impingement. Inverted, they map a
+  composite canonical profile back to physical velocity to extract a
+  mixing-layer defect (see [skin-friction decomposition](/definitions/skin-friction-decomposition.md)).
+- **Hypersonic inflow DNS.** [Mo et al. (2023)](/sources/mo-2023.md)
+  (Eqs. 9–10; Figs. 9, 13) check their Mach 2.25, 2.9 and 7.25 flat
+  plates with $dU^+_{\mathrm{vD}}=\sqrt{\langle\rho\rangle/\rho_w}\,dU^+$
+  against $U^+_{\mathrm{vD}}=y^+$ ($y^+<6$) and $\ln(y^+)/0.41+5.1$. The
+  Mach 7.25 cold-wall case ($T_w=562$ K, $T_e=64.4$ K) agrees with the
+  experiment it reproduces at $\delta=9.5$ mm. No other transformation is
+  tested.
+- **Wall-modelled and learned-SGS LES.** [Maeyama & Kawai (2023)](/sources/maeyama-2023.md)
+  (§4.1, Eq. 4.1, Fig. 4) compare WMLES and DNS of an adiabatic Mach 2.28
+  layer through the van Driest velocity: they agree above the matching
+  height at $Re_\tau\approx700$–2300. [Xu et al. (2023)](/sources/xu-2023.md)
+  (§4.1, Eq. 4.1, Fig. 13a) compare their a posteriori LES of an
+  isothermal-wall Mach 1.5 channel with filtered DNS through the van Driest
+  velocity. In the log region their neural-network SGS model is "fully
+  consistent" with the filtered DNS. The Vreman, dynamic Smagorinsky and
+  WALE models give a larger transformed velocity and the no-model LES a
+  slightly lower one, which they read as too much and too little SGS
+  dissipation (see [turbulent channel flow](/benchmarks/turbulent-channel-flow.md)).
 - **Inside equilibrium wall models.** [De Vanna et al. (2022)](/sources/devanna-2022.md)
   (§2.2, Eq. 6) and [van Noordt et al. (2022)](/sources/vannoordt-2022.md)
   (§2.5, Eq. 35) write the van Driest damping of the mixing-length eddy
@@ -451,7 +539,7 @@ judge, initialize or close a simulation.
 Cogo et al. (2022, §4, Fig. 9) compare Walz's relation with the generalized
 relation of Zhang et al. (2014), which they parametrize by a generalized
 recovery factor $r_g=2c_p(T_w-T_\infty)/U_\infty^2-2Pr\,q_w/(U_\infty\tau_w)$ in
-place of the analogy factor $s$ above (page-local $r_g$; a different
+place of the analogy factor $s_{\mathrm{RA}}$ above (page-local $r_g$; a different
 parametrization of the same relation). Zhang et al.'s relation is more
 accurate at both Reynolds numbers; Walz stays within 3 % of the DNS, which
 they attribute to wall cooling too mild to stress it. Huang et al. (2022,
@@ -483,7 +571,7 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 - Zhang et al. (2022) call the generalized relation of Zhang et al. (2014)
   the "generalized Reynolds analogy" in the text (§3) and the "modified
   strong Reynolds analogy" in the caption of their Fig. 5.
-- The GRA with fixed $s=1.14$ and $r=Pr^{1/3}$ is validated, in the works
+- The GRA with fixed $s_{\mathrm{RA}}=1.14$ and $r=Pr^{1/3}$ is validated, in the works
   Griffin et al. cite, for channels, pipes and boundary layers with and without
   heat transfer; Griffin et al. (§5) state that complex flows (for example
   blunt-body boundary layers behind curved shocks) remain untested.
@@ -535,3 +623,10 @@ the [Morkovin's hypothesis](/definitions/morkovin-hypothesis.md) page.
 - [Zhang et al. (2022c)](/sources/zhang-2022-g.md) — §II B, Table II; §II C, Eq. (2), Fig. 6a.
 - [De Vanna et al. (2022)](/sources/devanna-2022.md) — §2.2, Eq. (6); §4.1.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §1; §2.5, Eq. (35).
+- [Diez Sanhueza et al. (2023)](/sources/sanhueza-2023.md) — §1.1, Eq. (1); §2.2, Eqs. (7)–(8); §5–6 (semi-local $Re_\tau^*$ and $y^*$ in RANS damping; Patel and Trettel–Larsson equivalence as stated).
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §4.1, Eq. (4.1), Fig. 4; §5.4, Eqs. (5.3)–(5.5), Fig. 17; Apps. C–D, Figs. 28, 32.
+- [Mo et al. (2023)](/sources/mo-2023.md) — §II B, Eqs. (9)–(13); Figs. 9, 13.
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §IV.B, Eq. (29), Table III, Figs. 8–9.
+- [Gao et al. (2023)](/sources/gao-2023.md) — §5.2, Figs. 18–19.
+- [Yu et al. (2023)](/sources/yu-2023.md) — §3, Eq. (3.1), Fig. 5; §4.1, Eq. (4.1).
+- [Xu et al. (2023)](/sources/xu-2023.md) — §4.1, Eq. (4.1), Fig. 13a.

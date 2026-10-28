@@ -140,7 +140,7 @@ unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-25), cited further in chunks 3, 6, 7, 8. This source is cited on:
+Chunk 2 (2026-10-25), cited further in chunks 3, 6, 7, 8, 12. This source is cited on:
 
 - [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
 - [Boussinesq eddy-viscosity hypothesis](/definitions/boussinesq-hypothesis.md)
@@ -149,6 +149,7 @@ Chunk 2 (2026-10-25), cited further in chunks 3, 6, 7, 8. This source is cited o
 - [Shock sensors and troubled-cell indicators](/definitions/shock-sensor.md)
 - [Artificial-viscosity shock capturing](/methods/artificial-viscosity-shock-capturing.md)
 - [Discontinuous Galerkin spectral element method](/methods/discontinuous-galerkin-spectral-element-method.md)
+- [Eigensolution (dispersion–dissipation) analysis](/methods/eigensolution-analysis.md)
 - [Smagorinsky model](/methods/smagorinsky-model.md)
 - [Spectral vanishing viscosity](/methods/spectral-vanishing-viscosity.md)
 - [Subcell finite-volume shock capturing for DG](/methods/subcell-finite-volume-shock-capturing.md)

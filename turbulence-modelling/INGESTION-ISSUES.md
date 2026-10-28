@@ -6,6 +6,111 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 12 — 2023–2024 papers: HLPW-4 WMLES summary, semi-local WMLES, ANN algebraic SGS models, differential-filter deconvolution, eigensolution analysis, refinement indicators, shock limiters, STBLI decompositions, FSI panels, thickened flames, detonations (2026-10-28)
+
+Sources (20): kumar-2023, zhang-2023-c, sun-2023, sanhueza-2023,
+tonicello-2023, mays-2023, kiris-2023, ims-2023, najafiyazdi-2023,
+potluri-2023, maeyama-2023, xu-2023, yu-2023, gao-2023, liu-2023-b,
+iwata-2023, kokkinakis-2023, mo-2023, shi-2023, thawait-2023. 240 of 307
+ingested, 170 concept pages plus the registry, 10882 bibliography
+entries. Deep lint A1–A8 over the chunk-12 content done. Compiled
+overnight under the temporary night protocol.
+
+### Decisions for the human
+
+1. **Bibliography calls left by the resolver:**
+   - An earlier chunk folded lodares-2022's citation of the published BR1
+     paper (J. Sci. Comput. 77:154, 2018) into `gassner-2017` (the
+     "submitted" form); under the preprint rule it belongs on
+     `gassner-2018`. Move the `citedby`?
+   - tonicello-2023's `manzanero-2017` (no venue printed) folded into
+     `manzanero-2018` on the title; split back out if it is the arXiv
+     version.
+   - potluri-2023's `cockburn-2012` (chapter, no title printed) folded on
+     the volume.
+   - potluri-2023 prints for `gassner-2018` a DOI that resolves to another
+     paper; the master DOI is kept, with a note.
+   - Eight SICI-style DOIs in the bibliography contain angle brackets
+     (the site build tolerates them in the DOI field; a note with `<url>`
+     broke it in chunk 11).
+2. **Single-source page:** `definitions/skin-friction-decomposition.md`
+   rests on yu-2023 alone (husson-2024 dropped: no decomposition there);
+   keep, or fold into the boundary-layer pages?
+3. **Candidate pages that now qualify:** the selective mixed-scale SGS
+   model (maeyama-2023, maejima-2025); also the chunk-10 and chunk-11
+   lists. Single-source and kept inline: principal-component transport,
+   detonation–turbulence interaction, the Lag EB $k$-$\varepsilon$ model,
+   the scale-resolving hybrid (hybrid temporal LES), the entropy-adaptive
+   filter, a posteriori limiting, positivity-preserving limiters.
+4. **Author forms taken from page 1:** sanhueza-2023 ("Diez Sanhueza R."),
+   potluri-2023 ("Bodi K.V.R."), ims-2023 ("Wang Z.J."), against the
+   Crossref forms.
+5. **Still open from earlier chunks:** the chunk-11, chunk-10 and earlier
+   lists.
+
+### Contradictions
+
+Two opened, verified in the PDFs, *Open.*, on
+shock-turbulent-boundary-layer-interaction:
+- **Separation length of the same Mach 2.28 DNS:** $1.87\delta_0$
+  (yu-2022-e §2.2: separation −2.60, reattachment −0.73) against
+  $1.65\delta_r$ (yu-2023 §2), same reference plane, both with
+  interaction length 3.27.
+- **Lumley-triangle branch typical of mixing layers:** axisymmetric
+  compression (helm-2022 §IV D) against axisymmetric expansion (yu-2023
+  §5.1, App. A), both citing Pope.
+Nine open in all. Side by side, not conflicts: ims-2023 vs fidkowski-2022
+on adjoint adaptation for LES; basile-2023 vs ims-2023 on the
+small-scale-energy indicator; kiris-2023's >250 M requirement vs goc's
+coarse JAXA grid; gao-2023 vs gao-2022 timing figures; najafiyazdi's
+$U_0=10$ cm/s vs 10 m/s elsewhere; xu-2023's dynamic Smagorinsky flux a
+priori vs a posteriori; liu-2023-b vs tonicello-2023 superconvergence
+orders.
+
+### Printed slips (recorded on the Source pages)
+
+- kokkinakis-2023: $\lambda_b=-4\mu/3$ called the Stokes value (its stress
+  needs $-2\mu/3$); "~175×" cost from factors giving ~41.
+- mays-2023: Eq. 3 trace 1/3; $P_k$ factor; "half" time step against
+  Table 1; σ_HU blend reversed against the text; model credited to two
+  works.
+- mo-2023: Eq. 22 omits $(T_r-T_w)s_{\mathrm{RA}}Pr/u_e$ (an erratum is
+  announced but not in the file); δ 2.08/2.06 mm; recovery 24/22.7.
+- tonicello-2023: $\mathbf C^0$ sign; Taylor–Green pressure $\rho_0U_0$.
+- najafiyazdi-2023: Eqs. B.17, B.42; abstract Re 3,400 vs 34,000;
+  $\kappa_f$ text vs caption.
+- maeyama-2023: domain extents swapped; Table 1 rows off by 3–4%.
+- kiris-2023: W-032 in both topologies; 6/3 vs 5/4 explicit/implicit;
+  "~10×" time step; 1.2B vs 1100M.
+- shi-2023: $L^*_{x,1}=52.3$ (Tong's value; its own numbers give 18.4);
+  domain length; Eq. 37 "×".
+- thawait-2023: Table II errors (24.36% vs 2.7863%, 12.87% vs 12.2836);
+  grid order; kg/m².
+- sanhueza-2023: 22.8% vs 23.4%; average 6.2% vs 6.42%; δ sign.
+- liu-2023-b: Eq. 17 index; $A$ for $f=1.6$ (231.16 vs 230.75).
+- yu-2023: $Re_{\tau r}$ with $\theta_r$; Pirozzoli & Grasso Mach number.
+- xu-2023: identity tensor in a scalar trace; $x=8.8$ for $0.8L_x$.
+- zhang-2023-c: first slot φ; 11 points "10 times"; variance model Δ¹.
+- sun-2023, ims-2023, iwata-2023, kumar-2023, potluri-2023, gao-2023:
+  cross-reference, label and unit slips.
+
+### Bibliography
+
+10358 → 10882 entries, `FLAGS: 0`, 255 aliases, 115 verified silences;
+printed duplicates folded (vanharen-2017, stolz-2002-b, godunov-1959).
+Re-keyed: `sun-2023-b`, `dzanic-2022-b`, `liu-2022-l`, `yu-2022-f`,
+`kiris-2022-c` (briefing slides; `kiris-2022-b` stays the conference
+paper). `krais-2020-b` printed for the FLEXI paper = `krais-2021`.
+
+### Bundle fit (D17 candidates, no copy made)
+
+sun-2023 (detonation code), iwata-2023 (detonation–turbulence DNS),
+liu-2023-b (FR shock capturing, no turbulence), potluri-2023 (laminar
+hypersonic SBLI) and the FSI papers (kokkinakis-2023, gao-2023,
+thawait-2023) have marginal turbulence-modelling content; the numerics
+papers fit `high-order-capturing-schemes` as well. Here they sit only on
+the pages they bear on.
+
 ## Chunk 11 — 2022–2024 papers: one-equation SGS models, subgrid velocity enrichment, pseudo-DNS, compressible and real-gas SGS tests, RSM-IDDES buffet, SATES on 30P30N, actuator lines, TBL and ML-combustion reviews (2026-10-27)
 
 Sources (20): stanly-2022, cao-2022-c, chambers-2022, hausmann-2022,

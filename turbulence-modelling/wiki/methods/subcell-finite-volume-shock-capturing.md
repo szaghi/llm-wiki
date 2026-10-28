@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Subcell finite-volume shock capturing for DG"
-description: "Troubled DG elements are recomputed as (N+1)^3 finite-volume subcells with the same degrees of freedom, switched by an indicator or blended convexly with the DG operator (the blend also learned as an implicit subgrid model); indicator-switched modal and entropy filters are the alternative that keeps the polynomial."
+description: "Troubled DG elements are recomputed as (N+1)^3 finite-volume subcells with the same degrees of freedom, switched by an indicator, blended convexly with the DG operator (the blend also learned as an implicit subgrid model) or recomputed a posteriori; indicator-switched modal and entropy filters are the alternative that keeps the polynomial."
 status: established
 aliases: [hybrid DG/FV, DG/FV subcell scheme, finite-volume subcell limiting, DG/FV blending, RL-Blend, local modal filter, LMF, entropy filter]
 tags: [shock-capturing, dg, numerical-dissipation, implicit-les, reinforcement-learning, compressible, flux-reconstruction]
-timestamp: 2026-10-27T15:51:00Z
+timestamp: 2026-10-28T02:15:00Z
 ---
 
 # Subcell finite-volume shock capturing for DG
@@ -92,6 +92,37 @@ dissipation distribution is not measured. The agent lowers $\alpha$ for $N=3$ an
 (Figs. 13–14). See [discretization-consistent closure](/definitions/discretization-consistent-closure.md)
 and [numerical dissipation](/properties/numerical-dissipation.md).
 
+**The blend with viscous terms at hypersonic speed.**
+[Potluri et al. (2023)](/sources/potluri-2023.md), §3.1–3.3, extend the
+Hennemann blend to the Navier–Stokes equations in their deal.II-based code
+PLENS: the advective residual is blended as above, with the
+entropy-conservative, kinetic-energy-preserving Chandrashekar volume flux
+in the DG part, and the viscous residual of BR1 is added unblended,
+$$\mathcal J\dot U+(1-\alpha)R^{\mathrm{HO}}(F_a)+\alpha R^{\mathrm{LO}}(F_a)+R_{\mathrm{BR1}}(F_d)=0$$
+($\mathcal J$ the 1D element Jacobian, the source's $J$, $F_a$, $F_d$ the advective and diffusive
+fluxes, $R$ the residuals; page-local), with $\alpha$ from the modal
+indicator of [shock sensors](/definitions/shock-sensor.md) and
+$\alpha_{\max}=0.5$ (supersonic) or 1 (hypersonic). This scheme "crashes
+when applied directly to viscous hypersonic flows ($M_\infty\ge6$)" within
+$O(1)$ time steps: a wall-adjacent velocity overshoot drives the
+temperature to zero in the initial transient, which the indicator does
+not flag (§3.3, Fig. 2). Their "hypersonic modification" has two parts:
+the viscous residual is scaled by $1-\alpha_d$ near walls, with
+$\alpha_d=\alpha/\alpha_{\max}$, and the wall-cell blending factor is held
+at about $0.95\alpha_{\max}$ until $t_w\sim5\Delta y_w^2/\nu_\infty$ and
+ramped linearly to zero by $2t_w$ ($\alpha_d$, $t_w$, $\Delta y_w$ the
+first-cell height, page-local). At a sharp leading edge $\alpha_d$ stays
+non-zero in the converged solution, and setting it to zero there crashes
+the run. All their cases are **laminar** (flat plates, compression
+corners, a hollow-cylinder flare and a ramp from Mach 2 to Mach 14.1, a
+Mach 8.1 cylinder, mostly $N=2$). On refined meshes the Mach 11 and 14
+cases develop large oscillations of the separation bubble and diverge,
+which neither a lower CFL, a higher Runge–Kutta order nor the Rusanov flux
+cures; the authors attribute it to explicit local time stepping where the
+stable step varies by $O(10^{-3})$ between leading edge and free stream,
+and recommend, without testing it, implicit time integration (§4.5–4.6,
+§5).
+
 ## Alternatives that keep the polynomial
 
 Not every DG code uses subcells. [HORSES3D](/software/horses3d.md) captures
@@ -156,6 +187,38 @@ and positivity $\rho\ge\rho_{\min}$, $p\ge p_{\min}$ hold, the minimum
 taken over the element and its immediate neighbours (the domain of influence
 for CFL below one); $\epsilon_{\mathcal S}=10^{-4}$,
 $\rho_{\min}=p_{\min}=10^{-8}$, and $\alpha_f=0$ means no filtering.
+
+**The entropy filter confined to troubled elements.**
+[Gao et al. (2023)](/sources/gao-2023.md), §1, §3.1.3, motivate a change
+of method in FLEXI by two drawbacks they state for the group's arbitrary
+Lagrangian–Eulerian subcell scheme: it is computationally expensive, and "a
+new stability problem might appear due to the frequent switching between
+the DG and FV grid cells" in a shock/boundary-layer interaction. They keep
+the adaptive filter above but apply it only in elements flagged by an
+indicator (the indicators and thresholds are on
+[shock sensors](/definitions/shock-sensor.md)), with filter order 2 and
+the domain of influence taken as the direct neighbours. They state that a
+single tolerance $\epsilon_{\mathcal S}=10^{-4}$ for the whole field, as
+suggested by Dzanic & Witherden, can over-dissipate complex flows,
+especially at high $N$ or on coarse meshes, "according to our
+experiments"; that confinement removes the filter's dissipation from
+smooth and under-resolved turbulent regions; that $\epsilon_{\mathcal S}$
+then trades shock sharpness (larger values) against post-shock oscillation
+(smaller values); and that the splitting of hyperbolic and parabolic
+operators of the original method becomes unnecessary. In supersonic panel
+flutter $\epsilon_{\mathcal S}=0$ balances a sharp shock and little
+post-shock noise, $10^{-4}$ gives a sharper shock with more oscillation
+(§4.1, Figs. 5, 7); in a shock–panel impact the confined filter dissipates
+"much less" in vortical regions than the original at equal tolerance
+(§4.2, Schlieren images only). They also state that the original filter
+on a standard (non-split) DG scheme is "unreliable" against the aliasing
+of under-resolved turbulence, because it aims at minimal dissipation, and
+therefore run it on the split-form DGSEM (§3.1.3; not shown). The method
+is the shock capturing of their wall-resolved implicit LES of a Mach 2
+interaction over an elastic panel at $N=6$, compared with a rigid-panel
+run of the same group that used the subcell scheme; they state, without
+showing it, that the change of shock capturing does not affect the
+near-wall flow because neither method is active there (§5).
 
 **Comparison** (Wang 2024, §4):
 
@@ -308,7 +371,51 @@ third-order modal DG ($N=2$) on uniform Cartesian grids and inviscid
 tests only; the TENO-based indicator is on
 [shock sensors](/definitions/shock-sensor.md), the TENO and TENO-THINC
 limiters on [WENO](/methods/weno-scheme.md). No source of this bundle
-compares the two routes on the same flow.
+compares the two routes on the same flow. The indicator–limiter route also
+runs a turbulent case: [Shi & Yan (2023)](/sources/shi-2023.md),
+§II.B, limit the troubled cells of their flux-reconstruction implicit LES
+of a Mach 2.9, 24° compression ramp with a WENO limiter and then a
+Zhang–Shu positivity-preserving scaling, citing the subcell limiting of
+Sonntag & Munz and its use by Gao et al. as the alternative (§I).
+
+## A posteriori subcell limiting in flux reconstruction
+
+[Liu & Yuan (2023)](/sources/liu-2023-b.md) transfer the a posteriori
+subcell limiter of Dumbser et al. (2014) to one-dimensional
+[flux reconstruction](/methods/flux-reconstruction.md) with VCJH
+correction functions at the parameter value that recovers collocation
+nodal DG on Gauss–Legendre points (§2.2). The order of operations is the
+reverse of the a priori schemes above:
+
+1. advance the unlimited high-order solution from $t^n$ to a candidate at
+   $t^{n+1}$;
+2. test the candidate: physical admissibility (positive density and
+   pressure, no NaN) and numerical admissibility (a relaxed discrete
+   maximum principle), preceded by a KXRCF smooth/discontinuous
+   classification (detector details on
+   [shock sensors](/definitions/shock-sensor.md));
+3. recompute each troubled cell and its two neighbours from $t^n$ on $N+1$
+   equidistant subcells with a first-order Godunov or a second-order
+   MUSCL–minmod finite-volume scheme, and map the subcell means back to the
+   polynomial (§3.1, §3.4–3.5, Algorithm 1).
+
+With $N+1$ subcells the projection matrix
+$P_{mj}=\frac{1}{|S_m|}\int_{S_m}\ell_j\,d\xi$ ($S_m$ the subcells,
+page-local) is square and non-singular, so the reconstruction is
+$P^{-1}$ exactly and conservation between subcell means and the cell mean
+holds (§3.1, Eqs. 22–25); the equispaced subcells are those of the FLEXI
+switching scheme, not the LGL-weighted ones of the blend. Results: the
+limiter is inactive on smooth advection (third order kept by the $N=2$
+scheme, $L^2$ error $3.47\times10^{-10}$ on 1280 cells, Table 1); without
+the KXRCF pre-detection the shock cell of a steady overdriven detonation
+flips between the two representations and, with Godunov subcells, the
+peak pressure does not converge, while with it all variants from $N=2$ to
+5 converge; at equal degrees of freedom the $N=2$ scheme with MUSCL
+subcells has no spurious oscillations behind the detonation front, which
+fifth-order WENO-JS and WENO-Z show (§5.5–5.8, Table 2, Figs. 6–12). The
+authors call this the first FR detonation computation. There is no
+turbulence in the paper; it is cited here as the FR member of the
+subcell family.
 
 ## A posteriori subcell correction in multi-material DG
 
@@ -375,6 +482,20 @@ on the right.
   sources)*. The laminar comparison uses the classic Jameson indicator on
   a two-dimensional case and says nothing about the subcells' share of the
   cost.
+- **Claims without runs.** Gao et al. (2023) state the stability problem
+  of frequent DG/FV switching and the unreliability of the unconfined
+  filter on standard DG without a run that shows either; Liu & Yuan (2023)
+  show DG/FV switching of the shock cell on a one-dimensional steady
+  detonation (Fig. 6b), with an a posteriori trigger and no turbulence.
+  Potluri et al. (2023) recommend implicit time integration without
+  testing it.
+- **Printed slips.** Potluri et al. (2023, §3.3) print the low-order term
+  of the modified equation as $R^{\mathrm{LO}}_{sf}$, defined in Eqs. (9)–(10)
+  as $R^{\mathrm{LO}}_{sc}$; they set $\alpha_{\max}=0.5$ for "supersonic"
+  and 1 for "hypersonic" cases (§3.1.1) yet run the Mach 6 case with
+  $\alpha_{\max}=0.5$ (§4.4.1). Liu & Yuan (2023, Eq. 17) print
+  $\hat f_j\,d\ell_k/dr$ under a sum over $k$. Gao et al. (2023, §5) print
+  the entropy tolerance once as $\epsilon_\sigma$.
 - Chapelier et al. (2024) attribute the oscillations of FLEXI's dilatational
   dissipation to DG/FV switching without a run that isolates it; Klose et
   al. (2025) do not show the distribution of $\alpha$.
@@ -393,4 +514,8 @@ on the right.
 - [Gao et al. (2022)](/sources/gao-2022.md) — §3.2, Figs. 1–2, 5–7 (Sonntag–Munz subcells, filtered indicator, positivity-preserving limiter); §4.1–4.2, Figs. 9, 13 (laminar interaction, DG against FV cost); §5.3.1, Eq. (19) (performance index of the hybrid).
 - [Huang et al. (2025)](/sources/huang-2025.md) — §1 (subcell approaches cited; polynomial limiting chosen).
 - [Huang & Fu (2024)](/sources/huang-2024.md) — §1, §4 (indicator–limiter route of RKDG).
+- [Potluri et al. (2023)](/sources/potluri-2023.md) — §3.1–3.3, Eqs. (4)–(14) (Hennemann blend with BR1, hypersonic modification, imposed wall blender); §4.4–4.7, Figs. 9–15; §5 (fine-grid divergence, local time stepping).
+- [Gao et al. (2023)](/sources/gao-2023.md) — §1 (drawbacks of the ALE subcell scheme); §3.1.3, Eqs. (40)–(48) (adaptive filter confined to troubled elements); §4.1–4.2, Figs. 5, 7, 14, 16; §5.
+- [Liu & Yuan (2023)](/sources/liu-2023-b.md) — §2.2; §3.1–3.5, Eqs. (22)–(33), Algorithm 1 (a posteriori subcell limiter for flux reconstruction); §5.1, Table 1; §5.5–5.8, Table 2, Figs. 6–12.
+- [Shi & Yan (2023)](/sources/shi-2023.md) — §I; §II.B, Eqs. (6)–(18) (indicator, WENO and positivity limiters in flux reconstruction).
 - [Maltsev et al. (2022)](/sources/maltsev-2022.md) — §III C, §IV C, §V (a posteriori subcell limiting and reconstructed DG in multi-material DG, cited).

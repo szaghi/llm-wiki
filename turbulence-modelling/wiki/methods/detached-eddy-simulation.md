@@ -5,7 +5,7 @@ description: "The single-model hybrid RANS/LES in which a RANS model's length sc
 status: established
 aliases: [DES, DDES, delayed detached-eddy simulation, IDDES, improved delayed DES, ZDES, zonal detached-eddy simulation, DDES-SST, SST-IDDES, SA-DDES, ZDES mode 2, ZDES mode 0+1, shear-layer-adapted length scale, grey area, DDES-γ, transitional DDES, RSM-IDDES, RSM-DynIDDES, dynamic IDDES, modelled-stress depletion, grid-induced separation]
 tags: [des, hybrid-rans-les, rans, les, turbomachinery, mesh-adaptation]
-timestamp: 2026-10-27T21:07:00Z
+timestamp: 2026-10-28T02:16:00Z
 ---
 
 # Detached-eddy simulation and its delayed and zonal forms
@@ -293,6 +293,51 @@ function $F_2$ shields the attached boundary layer against grid-induced
 separation and modelled-stress depletion and "can offer essentially
 asymptotic shielding" ([Yang & Ma (2022)](/sources/yang-2022-b.md), §2.1,
 Eqs. 1–5). The paper calls the method DES, DES-type, hybrid DES and DDES interchangeably.
+
+**SST-DDES in ANSYS Fluent.** Thawait et al. (2023) print the Fluent form
+as a multiplier of the $k$-destruction, $\rho\beta^*k\omega\to\rho\beta^*k\omega F_{\mathrm{DES}}$,
+
+$$F_{\mathrm{DES}}=\max\Big(\frac{L_t}{C_{\mathrm{DES}}\Delta_{\max}}(1-F_{\mathrm{DDES}}),1\Big),\qquad L_t=\frac{\sqrt k}{\beta^*\omega},\qquad F_{\mathrm{DDES}}=\tanh\big[(C_{d1}r_d)^{C_{d2}}\big],$$
+
+with $C_{\mathrm{DES}}=0.61$, $C_{d1}=20$, $C_{d2}=3$, $\kappa=0.41$ and the $r_d$ of
+Mozaffari et al. (2024) above (page-local $F_{\mathrm{DES}}$, $F_{\mathrm{DDES}}$;
+[Thawait et al. (2023)](/sources/thawait-2023.md), §II B, Eqs. 9–13). Where
+Yang & Ma's CFX form carries $1-F_2$, this form carries $1-F_{\mathrm{DDES}}$,
+which has the printed form of the $f_d$ of Delassaux et al.; with
+$F_{\mathrm{DDES}}\to1$ the factor is $F_{\mathrm{DES}}=1$ and the
+$k$-destruction is that of SST *(compiler check, not in the sources)*. The
+paper also prints the length
+$d_{\mathrm{DDES}}=d-f_d\max(0,d-C_{\mathrm{DES}}\Delta_{\max})$ (the source's
+$\tilde d$) with $f_d=1-F_{\mathrm{DDES}}$ as "the length scale for the DDES
+model" (Eq. 14), the SA-based DDES length that Pan & Zhang print for ANSYS
+Fluent (above), without saying where it enters the SST equations. The authors motivate DDES, citing Spalart (1997) and Strelets
+(2001), by the modelled-stress depletion of DES when LES activates in cells
+smaller than the boundary-layer thickness; DDES "preserves RANS in the
+boundary layer" (§II B). See [ANSYS Fluent](/software/ansys-fluent.md).
+
+**A thinner shield in a temporal-filtering hybrid.** Mays et al. (2023)
+compare DDES with the scale-resolving hybrid (SRH) model of Duffal et al.,
+which also modifies only the dissipation of the modelled $k$ equation,
+multiplying it by a factor $\psi_H\ge1$ derived from a formal temporal
+filter, "like DDES alters the destruction term"; the major difference is
+how the factor is set: it depends on the time-mean resolved kinetic
+energy, so the model responds to the resolved content, which the authors,
+after Heinz, call a "major difference from DES formulations"
+([Mays et al. (2023)](/sources/mays-2023.md), §1, §2.1.2, Eqs. 9–13). Its
+shielding has the same form as that of DDES, written with page-local
+$f_s$ (zero at the wall),
+$$f_s=1-\tanh\Big[\Big(45\,\frac{\nu^{3/4}}{\varepsilon^{1/4}d}\Big)^8\Big],$$
+the ratio of the wall distance to a Kolmogorov length, calibrated to fall
+away at $y^+=100$ in channel flow; on the drag-crisis cylinder its shield
+front ($f_s=0.01$) lies inside the boundary layer and is nearly
+grid-invariant, whereas the DDES shielded zone "is generally much broader,
+producing a RANS-like solution", as the authors found in their earlier
+study (§3.1.1, §3.2.2, Figs. 5, 10a). They judge the thin shield necessary
+for the breakdown of the separated shear layers, note that it leaves the
+model with log-layer mismatch in channel flow, and conclude that "it is
+likely that there is no ideal universal shielding function" (§3.2.2; see
+[hybrid RANS/LES](/definitions/hybrid-rans-les.md) and
+[log-layer mismatch](/definitions/log-layer-mismatch.md)).
 
 **DDES-p for Cartesian grids.** Sugaya & Imamura (2021) run DDES-p, an
 SA-based DDES variant of Tamaki, Imamura & Kawai that "introduces a simple
@@ -1058,6 +1103,31 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
   [NASA wall-mounted hump](/benchmarks/nasa-wall-mounted-hump.md),
   [NACA 4412 airfoil](/benchmarks/naca-4412-airfoil.md) and the
   compilation on the [hybrid RANS/LES page](/definitions/hybrid-rans-les.md)).
+- **High-speed fin with joint freeplay** (Thawait et al. 2023). The Fluent
+  SST-DDES above, with AUSM+ fluxes, second-order upwind convection and dual
+  time stepping, carries the flow side of a strongly coupled
+  fluid–thermal–structure analysis of a deployable cropped-delta fin at
+  Mach 3–6 (15 km altitude), on a 2.7-million-cell tetrahedral grid chosen
+  by a three-grid convergence index on wall pressure and temperature (§II,
+  §VI A, Table II). The authors adopt DES because RANS models are "not
+  suitable" for shock and separation unsteadiness and shock/boundary-layer
+  interaction, citing Sartor & Timme (§I). The paper shows no shielding
+  field, resolution argument for the LES branch or RANS comparison; its
+  validations test the structural response (§V), and the turbulent kinetic
+  energy it discusses is the modelled $k$ (§VI B, Fig. 10).
+- **Drag crisis of a cylinder** (Mays et al. 2023). The SRH model above,
+  not a DES, on the Lag elliptic-blending $k$-$\varepsilon$ host, gives drag
+  close to a wall-resolved LES at $Re_D=2.5$–$7.2\times10^5$ on meshes about
+  five times coarser, and on the coarsest grid at $Re_D=2.5\times10^5$
+  $C_D=0.743$ where WALE LES on the same grid gives 1.247 (reference 0.833),
+  at about 39% of the CPU cost of WALE on the finest grid (§3.1, Tables 2–4;
+  see [circular-cylinder wake](/benchmarks/circular-cylinder-wake.md)).
+- **Near-wall model taxonomy** (Maeyama & Kawai 2023). Maeyama & Kawai
+  class DES (Spalart 1997, 2009) among the LES/RANS hybrids that blend RANS
+  and subgrid eddy viscosities, with the switching location set explicitly
+  or implicitly, and restrict "wall-modelled LES" to wall-stress models
+  ([Maeyama & Kawai (2023)](/sources/maeyama-2023.md), §1; see
+  [wall-modelled LES](/methods/wall-modelled-les.md)).
 
 ## Qualifications
 
@@ -1188,6 +1258,12 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
   successful IDDES of the airfoil by Ashton et al. without discussing the
   difference (see the [30P30N](/benchmarks/30p30n-high-lift-airfoil.md)
   page for the two set-ups).
+- Thawait et al. (2023) give no value or formula for $\beta^*$ ("calculated
+  using $\rho$, $k$, $\mu$, and $\omega$"), $\alpha^*$, $a_1$ or $F_2$ and
+  define $\Delta_{\max}$ only as "the grid spacing"; their wall distance is
+  $y$ in $r_d$ (Eq. 13) and $d$ in $d_{\mathrm{DDES}}$ (Eq. 14).
+- Mays et al. (2023) attribute the SRH model to Manceau (2018) in the
+  abstract and to Duffal et al. (2019) in the introduction and §2.1.2.
 
 # Citations
 
@@ -1227,3 +1303,6 @@ Table 3, Fig. 18; see [mesh adaptation](/methods/mesh-adaptation.md)).
 - [Li et al. (2022)](/sources/li-2022-k.md) — Abstract, §I, §II B–C Eqs. 5–15 Fig. 1, §III A Figs. 2–3, §III B Table I Figs. 7–12, §III C Figs. 15–22, §IV, App. 1–2 Figs. 23–24.
 - [Mani & Dorgan (2023)](/sources/mani-2023.md) — §4.5.2, Fig. 11.
 - [Wu et al. (2023)](/sources/wu-2023-b.md) — §1, §2.1.3 Eq. 9, §3.4 Table 2 Figs. 17–25.
+- [Thawait et al. (2023)](/sources/thawait-2023.md) — §I, §II B Eqs. 9–14, §V, §VI A–B Table II Fig. 10.
+- [Mays et al. (2023)](/sources/mays-2023.md) — Abstract, §1, §2.1.2 Eqs. 9–13, §3.1–§3.2.2 Tables 2–4 Figs. 5, 10a.
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §1.

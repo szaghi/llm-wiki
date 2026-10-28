@@ -5,7 +5,7 @@ description: "The wall-stress model of wall-modelled LES that assumes a locally 
 status: established
 aliases: [EQWM, EWM, wall-stress model, equilibrium wall-stress model, ODE wall model, algebraic wall model]
 tags: [wall-model, wmles, boundary-layer, rans]
-timestamp: 2026-10-27T21:09:00Z
+timestamp: 2026-10-28T02:18:00Z
 ---
 
 # Equilibrium wall model
@@ -124,7 +124,18 @@ Kawai & Larsson (2012), with a mixing-length eddy viscosity, solved on a
 separate one-dimensional grid from the wall to $h_{\mathrm{wm}}$, with the
 instantaneous LES velocity, pressure and temperature at $h_{\mathrm{wm}}$ as
 top condition and an adiabatic no-slip wall; equations and constants are not
-printed.
+printed. [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) (§2.3,
+Eqs. 2.17–2.20) print the Kawai–Larsson pair as the total-energy form above,
+with the wall-parallel velocity magnitude and the mixing length
+$\mu_t=\kappa\rho y\sqrt{\tau_w/\rho}\,[1-\exp(-y^+/A^+)]^2$, where
+$\sqrt{\tau_w/\rho}$ is "the velocity scale with varying density".
+Constants are $\kappa=0.41$, $A^+=17$ and $Pr_t=0.9$. The wall is adiabatic
+no slip, and the instantaneous LES velocity and temperature are imposed at
+$h_{\mathrm{wm}}$. The ODEs are solved on a stretched 39-point grid that
+resolves the viscous sublayer, and $\tau_w$ and $q_w$ return to the LES as
+flux boundary conditions. They place $h_{\mathrm{wm}}$ at the 10th LES grid
+point "to avoid the large discretization error and the resultant log-layer
+mismatch", following Kawai & Larsson (2012).
 
 De Vanna et al. (2022, §2.2, Eqs. 6a–b) and van Noordt et al. (2022, §2.5,
 Eqs. 34, 37) print the same pair in the split form
@@ -381,6 +392,8 @@ $u_\tau$ at $y^+_{\mathrm{wm}}=h_{\mathrm{wm}}u_\tau/\nu$.
 | van Noordt et al. (2022, §2.6, §3.1, §3.4) | CHAMPS, Cartesian octree, immersed boundary | far point of a ray from each surface-triangle centroid at a fixed outer-unit distance: about $0.05\delta$, varied over 3–4 minimum grid spacings (channel); $0.11\delta_r$ (ramp) | none stated; insensitive to the exchange distance (channel) |
 | Huang et al. (2022c, §II C, §III A, §III D) | [Nektar++](/software/nektar-plus-plus.md), spectral/hp elements, "polynomial order $N_p=7$" as printed, $12\times6\times10$ elements | top of the first wall-adjacent element, $0.224\delta$ (about $y^+=123$, 213 and 448 at $Re_\tau=550$, 950, 2000 *(compiler check, not in the sources)*); "first layer grid" where $y^+>30$ | instantaneous by default; exponential moving average $\bar u^n=a u^n+(1-a)\bar u^{n-1}$, $a=0.01$, tested |
 | Zhang et al. (2022e, §II A) | LESGO, uniform $192\times64\times97$, immersed terrain | first grid point | local average at $2\Delta$ (test filter) |
+| Maeyama & Kawai (2023, §2.3, Table 1) | in-house sixth-order compact differences, eighth-order filter, stretched in $y$ | 10th grid point, $h^+_{\mathrm{wm}}\approx54$, 101, 191, 357, 677, 1287 at $Re_\tau\approx700$–14 000 (all in the log region) | instantaneous LES velocity and temperature |
+| HLPW-4 participants, [Kiris et al. (2023)](/sources/kiris-2023.md) (Table 2, §II.5) | nine codes on the CRM high-lift configuration (structured overset, Voronoi, unstructured, Cartesian immersed boundary, $N=2$ flux reconstruction) | from the first off-wall point ($0.5\Delta$ in CharLES, $1\Delta$ in FUN3D) to the fourth off-wall cell ($3.5\Delta$); between the first and second elements in hpMusic | not stated; nodal (W-020, W-034, W-050) against cell-centred (W-021, W-031, W-047) application of the wall stress named as "perhaps a large source of discrepancy", the model variants being "of no consequence" |
 | Constant et al. (2024, §3.1, §4.2), RANS | FastS finite volume, octree Cartesian grid, immersed boundary | modelling height $H_{\mathrm{mod}}$ from a flat-plate estimate of a target $y^+$ (50–500), then lowered locally after a first converged run (see below) | steady RANS, no filtering |
 
 Gillyns et al. (2022, §5) find that without the moving average ($C_t=0$) the
@@ -635,6 +648,29 @@ further hardware detail).
 
 ## Limits shown by the sources
 
+- **Correct statistics, numerical near-wall structures.** In Mach 2.28
+  boundary layers at $Re_\tau\approx700$–14 000, [Maeyama & Kawai (2023)](/sources/maeyama-2023.md)
+  find that with the Kawai–Larsson model the mean velocity, Reynolds shear
+  stress and turbulent-kinetic-energy budget match the DNS above
+  $h_{\mathrm{wm}}$. The total shear stress stays near $\tau_w$ even below
+  it, with oscillations (§4.1–4.3, Figs. 4–5, 7). They read the accuracy
+  through the inner-layer stress balance of Kawai & Larsson,
+  $\tau_w\approx\langle\mu\,du/dy\rangle+\langle\mu_t\,du/dy\rangle-\langle\rho u''v''\rangle$
+  (Eqs. 1.1, 4.2), which does not constrain the normal stresses. Below
+  $h_{\mathrm{wm}}$ the LES grows streak-like ejection–sweep pairs with
+  about 8 grid points per spanwise wavelength. They are wider than the
+  physical streaks, and their width is set by the SGS eddy viscosity (§5;
+  see [wall-modelled LES](/methods/wall-modelled-les.md)). The streamwise
+  stress in the log region and the outer spectral peak do not grow with
+  $Re_\tau$ as in the DNS (§6).
+- **Variants on a high-lift aircraft.** In the HLPW-4 focus group summarized
+  by Kiris et al. (2023, §II.5), "with the exception of one participant
+  (W-032, who used a proprietary pressure-aware formulation), all groups
+  utilized equilibrium models with adiabatic thermal conditions" (Table 2
+  lists no wall model, "Not applicable", for the Euler submission W-030),
+  on a flow the authors call strongly nonequilibrium. They judge the ODE-versus-algebraic variants "of no
+  consequence for the present flow" (see
+  [non-equilibrium wall models](/methods/nonequilibrium-wall-model.md)).
 - **Separation in the review.** Bose & Park (2018, §2.1) state that neither
   presumed profiles nor eddy-viscosity closures handle separation reliably:
   $u_\tau\to0$ there, and with it the mixing-length eddy viscosity. Earlier
@@ -986,3 +1022,5 @@ profile lies above the DNS).
 - [Huang et al. (2022c)](/sources/huang-2022-c.md) — §I, Eqs. (1)–(5); §II C, Eqs. (14), (17), (20); §III A, Table I; §III B, Figs. 4–6; §III C, Fig. 7; §III D, Eqs. (21)–(22), Fig. 8; §IV.
 - [Zhang et al. (2022e)](/sources/zhang-2022-i.md) — §II A, Eq. (3); §III A, Fig. 4b.
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.4–2.6, Eqs. (33)–(37); §3.1, Fig. 13; §3.2, Eq. (58); §3.4, Figs. 26–27; §4.
+- [Maeyama & Kawai (2023)](/sources/maeyama-2023.md) — §1; §2.3, Eqs. (2.17)–(2.20); §4.1–4.3, Eqs. (1.1), (4.2), Figs. 4–5, 7; §5; §6; Table 1.
+- [Kiris et al. (2023)](/sources/kiris-2023.md) — §II.5, Table 2.

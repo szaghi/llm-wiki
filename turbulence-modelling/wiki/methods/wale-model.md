@@ -5,7 +5,7 @@ description: "The wall-adapting local eddy-viscosity (WALE) model builds a stati
 status: established
 aliases: [WALE, wall-adapting local eddy-viscosity model, Nicoud–Ducros model]
 tags: [les, sgs-model, eddy-viscosity, numerical-dissipation]
-timestamp: 2026-10-27T20:36:00Z
+timestamp: 2026-10-28T02:14:00Z
 ---
 
 # WALE model
@@ -76,6 +76,8 @@ channel LES, which all their cases capture accurately.
 | 0.5, after the channel calibration of Weickert et al. at $Re_\tau=395$ and the pipe recommendation of Nicoud & Ducros (cited); $C_w^2\approx10.6C_s^2$ stated for isotropic turbulence | $(\Delta x_1\Delta x_2\Delta x_3)^{1/3}$ | gas-kinetic finite-volume LES of channel flow at $Re_\tau=180$ | [Zhao et al. (2021)](/sources/zhao-2021-c.md), §III.C, §IV |
 | 0.325 | $(\Delta x_1\Delta x_2\Delta x_3)^{1/3}$ | compressible finite-difference wall-modelled and wall-resolved LES of an impinging-shock boundary-layer interaction at $M_\infty=2.28$ (URANOS) | [De Vanna et al. (2022)](/sources/devanna-2022.md), §2.1, Eqs. (2)–(4) |
 | 0.55 | "usually $\Delta\approx3\Delta x_{\min}$" | compressible immersed-boundary wall-modelled LES up to Mach 7.2, finite differences on block-structured adaptive Cartesian grids (CHAMPS) | [van Noordt et al. (2022)](/sources/vannoordt-2022.md), §2.2, Eq. (7) |
+| printed as the coefficient of $\Delta^2$, $C_w^2=10.6\,C_s^2$ with $C_s=0.1$, i.e. 0.106, so $C_w\approx0.326$ *(compiler check, not in the sources)*; isotropic part zero, subgrid Prandtl number 0.9 | $(\Delta_x\Delta_y\Delta_z)^{1/3}$ | sixth-order central finite-difference LES of compressible channels and a supersonic boundary layer, baseline against a learned model | [Xu et al. (2023)](/sources/xu-2023.md), §2.2, Eqs. (2.15)–(2.31) |
+| not printed | not printed (cell-based, STAR-CCM+) | incompressible finite-volume LES of a cylinder in the drag crisis, comparison for a hybrid RANS/LES model | [Mays et al. (2023)](/sources/mays-2023.md), §3.1, Table 2 |
 
 The printed constants belong to different codes, filter widths and
 uses (a small-scale VMS viscosity against a classical LES model); no
@@ -219,6 +221,41 @@ instead (below).
   correction; the model is not varied, and the paper's sensitivity study
   concerns the numerical dissipation of the convective flux (§3.1–3.2; see
   [numerical dissipation](/properties/numerical-dissipation.md)).
+- **A priori and a posteriori against a learned nonlinear model.**
+  [Xu et al. (2023)](/sources/xu-2023.md) print WALE with the
+  Duan & Wang quotient (their $D_w$, built from the traceless symmetric
+  part of the squared gradient) and the compressible companions of the
+  model: a zero isotropic part and a subgrid heat flux
+  $-(\nu_t/Pr_t)\partial_j\tilde T$ with $Pr_t=0.9$ (§2.2, after Sayadi &
+  Moin, cited). Against filtered DNS of a compressible channel
+  ($Re=3000$, $M=1.5$, top-hat filter of 8 and 4 DNS spacings in $x$ and
+  $z$), WALE, Vreman and the dynamic Smagorinsky model give correlation
+  coefficients "almost lower than 0.6" and relative errors "almost equal
+  to 1.0", which the authors attribute to the linear stress–strain
+  alignment of every eddy-viscosity model (§2.2, Figs. 1–3; see
+  [Boussinesq hypothesis](/definitions/boussinesq-hypothesis.md)). A
+  posteriori on an untrained $64\times65\times64$ grid, WALE gives a
+  larger van Driest velocity in the log region than filtered DNS, which
+  the authors read as excessive dissipation, overpredicts the r.m.s.
+  velocity peaks, transfers energy only forward, and underestimates the
+  mean subgrid fluxes of kinetic energy and temperature variance (§4.1,
+  Figs. 13–20); the learned model of the paper does better on all of these
+  (see [neural-network SGS models](/methods/neural-network-sgs-model.md),
+  [energy backscatter](/definitions/energy-backscatter.md)). WALE costs
+  0.29 of the dynamic Smagorinsky model per step, against 0.28 for Vreman
+  and 0.26 with no model (Table 4).
+- **Coarse-grid LES beside a hybrid model.** [Mays et al. (2023)](/sources/mays-2023.md)
+  (§3.1, Tables 2–3) run WALE LES of the
+  [circular cylinder](/benchmarks/circular-cylinder-wake.md) at
+  $Re_D=2.5\times10^5$ (critical regime) on the three grids of their
+  scale-resolving hybrid model (7.65, 9.72 and 12.43 million cells, first
+  cell below $y^+=1$). The WALE drag coefficient is 1.247, 0.896 and 0.812
+  on grids A, B and C, against 0.833 for the wall-resolved WALE reference
+  LES of Rodríguez et al. (cited, 38.4 million cells) and 0.743, 0.781 and
+  0.791 for the hybrid model on the same grids; WALE thus over-predicts
+  drag on the coarsest grid, where the hybrid does not. The WALE runs cost
+  4455, 9270 and 12150 CPU hours, against 4695 for the hybrid on grid A
+  (Table 3). See [hybrid RANS/LES](/definitions/hybrid-rans-les.md).
 - **Lattice Boltzmann LES.** [Simonis et al. (2022)](/sources/simonis-2022.md)
   (§1) list WALE among the subgrid models already combined with lattice
   Boltzmann methods (cited).
@@ -280,3 +317,5 @@ instead (below).
 - [van Noordt et al. (2022)](/sources/vannoordt-2022.md) — §2.2, Eq. (7); §3.1–3.2.
 - [Simonis et al. (2022)](/sources/simonis-2022.md) — §1.
 - [Fureby & Nilsson (2023)](/sources/fureby-2023.md) — §3.2.
+- [Xu et al. (2023)](/sources/xu-2023.md) — §2.2, Eqs. (2.15)–(2.31), Figs. 1–3; §4.1, Figs. 13–20, Table 4.
+- [Mays et al. (2023)](/sources/mays-2023.md) — §3.1, Tables 2–3.

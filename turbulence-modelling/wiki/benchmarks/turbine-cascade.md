@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Turbine cascades (T106, T161, VKI LS89)"
-description: "Linear turbine cascades as transition, loss and vortex benchmarks: the high-lift low-pressure T106A, T106C, T108 and T161 cascades with laminar separation near exit Reynolds number 10⁵, the transonic VKI LS89 vane with bypass transition and heat transfer, and a transonic rotor cascade with tip clearance whose tip-leakage vortex a hybrid RANS/LES resolves."
+description: "Linear turbine cascades as transition, loss, vortex and mesh-adaptation benchmarks: the high-lift low-pressure T106A, T106C, T108 and T161 cascades with laminar separation near exit Reynolds number 10⁵, the transonic VKI LS89 vane with bypass transition and heat transfer, and a transonic rotor cascade whose tip-leakage vortex a hybrid RANS/LES resolves."
 status: established
 aliases: [turbine cascade, linear turbine cascade, LPT cascade, T106A, T106C, T106c, T108, T161, MTU T161, VKI LS89, LS89 vane, Pak-B cascade, Pack B, L2F, tip-leakage turbine cascade, Arts transonic turbine cascade]
-tags: [benchmark, turbomachinery, transition, implicit-les, rans, boundary-layer, des]
-timestamp: 2026-10-27T15:51:00Z
+tags: [benchmark, turbomachinery, transition, implicit-les, rans, boundary-layer, des, mesh-adaptation]
+timestamp: 2026-10-28T02:13:00Z
 ---
 
 # Turbine cascades (T106, T161, VKI LS89)
@@ -38,6 +38,8 @@ exit state, $Re_{2,is}$ and $M_{2,is}$ (page-local), on the chord.
 |---|---|---|---|
 | T106C (aft-loaded LPT) | [Wang (2024)](/sources/wang-2024-b.md), §4.2, Table 3 | exit $Re=8\times10^4$, exit Mach 0.65, no free-stream turbulence, pitch/chord 0.95, inlet angle 32.7° (HiOCFD-4 workshop case) | implicit LES, flux reconstruction recovering nodal DG, $N=3$, $1.23\times10^5$ hexahedra, $7.87\times10^6$ degrees of freedom per equation, local modal filter |
 | T106C | [Pacciani et al. (2025)](/sources/pacciani-2025.md), §6.2, Table 5 | $Re_{2,is}=0.8$, 1.2, $1.6\times10^5$, $M_{2,is}=0.6$, $Tu=0.8\%$ | steady 2D RANS, [laminar kinetic energy model](/methods/laminar-kinetic-energy-transition-model.md) on [$k$-$\omega$ SST](/methods/k-omega-sst-model.md) |
+| T106c | [Ims & Wang (2023)](/sources/ims-2023.md), §5.1 | $M_{is}=0.65$, $Re_{is}=80{,}000$ (chord; isentropic values, subscript as printed), pitch $0.95C$, span $0.1C$, inflow angle 32.7° (HiOCFD4/5 workshops; page-local $C$ the chord) | implicit LES, flux reconstruction ([hpMusic](/software/hpmusic.md)), $N=2$, adaptive h-refinement by three error indicators; reference: hpMusic DNS of Alhawwary & Wang |
+| T106a | [Ims & Wang (2023)](/sources/ims-2023.md), §5.2 | $M_{is}=0.4$, $Re_{is}=60{,}000$, pitch $0.798C$, span $0.1C$, blade angle 46.1° ("differing slightly from the workshop's version") | as above at $N=1$ from a coarser start mesh; reference: $N=4$ on the uniformly refined base mesh; random-refinement control |
 | T108 (front-loaded LPT) | [Pacciani et al. (2025)](/sources/pacciani-2025.md), §6.2 | as T106C, pitch/chord 1.1 | as above |
 | T161 (high-lift LPT between diverging end walls) | [Morsbach et al. (2024)](/sources/morsbach-2024.md), §3.1–3.2, Tables 1–2 | $Re_{2,is}=9\times10^4$, $M_{2,is}=0.6$, inflow angle 41°, synthetic turbulent end-wall layers and free-stream turbulence | implicit LES, [DGSEM](/methods/discontinuous-galerkin-spectral-element-method.md) $N=5$ with kinetic-energy-preserving split form, $1.89\times10^8$ degrees of freedom; RANS with SST and SSG/LRR-ω plus γ-$Re_\theta$ |
 | T106A (LPT) | [Ma et al. (2022)](/sources/ma-2022.md), §3.3 | $Re\approx6\times10^4$ on exit velocity and axial chord; single passage, pitchwise and spanwise periodic; geometry and boundary conditions from Wang et al.; Mach number and inflow turbulence not printed | implicit LES with weighted compact nonlinear schemes (WCNS-E, WCNS-T, linear WCNS-E), block-structured grid of about $1.2\times10^7$ points |
@@ -283,6 +285,49 @@ URANS once the deterministic part is resolved (§4.4.2). The closure forms are o
 [explicit algebraic Reynolds-stress models](/methods/explicit-algebraic-reynolds-stress-model.md)
 and [symbolic-regression closures](/methods/symbolic-regression-closure.md).
 
+**Adaptive implicit LES on T106c and T106a.**
+[Ims & Wang (2023)](/sources/ims-2023.md) use the two HiOCFD cascades to
+compare three cell-wise error indicators that drive isotropic
+h-refinement of an implicit LES at fixed polynomial degree: the unsteady
+residual evaluated at degree $N+1$, the Persson–Peraire smoothness
+indicator and a curvilinear variant of the Toosi–Larsson small-scale-energy
+indicator (see [mesh adaptation](/methods/mesh-adaptation.md)). Each round
+marks the 20% of cells with the largest time-averaged indicator, plus the
+cells forced by size and clumping constraints (§4). Evidence is visual: entropy snapshots,
+maps of the marked cells, the $uv$ Reynolds-stress field and spectra of the
+turbulent kinetic energy at a wake monitor point; no error norm, cell count
+or cost is printed.
+
+- On T106c all three indicators improve vortex resolution and refine
+  roughly the same regions, near the blade surface and in the active wake,
+  and none refines much at the leading edge, "possibly", the authors
+  write, because the laminar flow there is already resolved (§5.1,
+  Figs. 5–12). The smoothness
+  indicator favours small boundary-layer cells on both surfaces, the
+  small-scale-energy indicator large wake cells (once even at the domain
+  exit), the residual indicator lies between (§5.1). Indicators also
+  refine along the edge of the suction-side separation bubble into the
+  wake ([laminar separation bubble](/definitions/laminar-separation-bubble.md)).
+- Against the DNS, the $uv$ field and the high-frequency part of the
+  wake spectrum converge fastest with the small-scale-energy and residual
+  indicators, "nearly in lockstep", the former slightly ahead; the
+  smoothness indicator lags at both refinements; the low-frequency peaks
+  are already aligned on the base mesh (§5.1, Figs. 13–16).
+- T106a, with a coarser start mesh, $N=1$ and unresolved laminar flow, is
+  "less challenging for the flow solver but more challenging for the error
+  indicators"; the ranking is the same (§5.2, Figs. 18–30). Random
+  refinement with the same budget improves the solution "at a pace almost
+  equal to" the smoothness indicator, does not disturb the flow at the
+  random hanging-node boundaries, and moves the low-frequency peaks toward
+  the reference faster than the two vortex-sensitive indicators, which the
+  authors read as those indicators de-emphasizing the laminar flow (§5.2.1,
+  Figs. 31–34).
+
+The T106c DNS reference of Ims & Wang is the hpMusic DNS of Alhawwary &
+Wang (their ref. [26]); [Wang (2024)](/sources/wang-2024-b.md) compares its
+T106C implicit LES with the CPR $N=3$ results of Alhawwary & Wang and with
+the experiment of Michálek et al. (§4.2, Table 4, Fig. 8).
+
 **What the sources share.** Steady RANS with transition models captures
 the onset of separated-flow and bypass transition on these blades but not
 its extent: transition develops too quickly on LS89 and sets in too early
@@ -342,6 +387,15 @@ and [grid-point requirements](/results/les-grid-point-requirements.md).
   degrees of freedom for the coarse mesh, whose element count and $N=5$
   give 67.5 million *(compiler check, not in the sources)*.
 
+- [Ims & Wang (2023)](/sources/ims-2023.md) count their adaptation rounds
+  differently in text and captions: §5.1 describes two refinements and a
+  third marking "as reference only", the Fig. 9 caption speaks of rounds
+  #1–#3, and in §5.2 Figs. 19 and 20 show the T106a wake "after the third
+  refinement" while the Fig. 21 caption says "after the second
+  refinement". Their T106a blade angle (46.1°) differs slightly from the
+  workshop's, as they state, and the $uv$ stress is plotted without its
+  sign or normalization.
+
 # Citations
 
 - [Wang (2024)](/sources/wang-2024-b.md) — §2.3–2.4; §4.2, Tables 3–4, Figs. 6–8; §4.3, Tables 5–8, Figs. 12–17; §4.4, Figs. 18–21; §5.
@@ -353,3 +407,4 @@ and [grid-point requirements](/results/les-grid-point-requirements.md).
 - [Ma et al. (2022)](/sources/ma-2022.md) — §3.3, Figs. 10–13 (T106A implicit LES).
 - [Sandberg & Zhao (2022)](/sources/sandberg-2022-b.md) — review: §2.5, Fig. 8; §4.1; §4.3; §4.4.1–4.4.2, Fig. 10.
 - [Sandberg & Michelassi (2022)](/sources/sandberg-2022.md) — review: §3.1.2, Fig. 1 (spectral gap); §3.2.1–3.2.3, Fig. 4 (inflow turbulence, wakes, shedding, Boussinesq misalignment); §3.3.1, Eq. 1; §3.3.3, Figs. 5–6 (bypass and wake-induced transition); §4.2 (entropy loss on LS89); §4.3, Eq. 2, Fig. 7 (data-driven closures).
+- [Ims & Wang (2023)](/sources/ims-2023.md) — §3–§4 (indicators, marking, constraints); §5.1, Figs. 5–16 (T106c); §5.2, Figs. 18–30 (T106a); §5.2.1, Figs. 31–34 (random refinement); §5.3, §6.
