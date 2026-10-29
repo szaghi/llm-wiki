@@ -96,7 +96,7 @@ independent of every other bundle and agnostic of every other repository
 
 ## Status
 
-**Chunk 7 staged 2026-10-29:** ten founding papers added to the archive by
+**Chunk 7 committed 2026-10-29 (8e6c0e5):** ten founding papers added to the archive by
 the human (Curtiss & Hirschfelder 1952, Dahlquist 1963, Butcher 1964,
 Dormand & Prince 1980, Shu & Osher 1988, Ascher et al. 1997, Gottlieb et
 al. 2001, Kennedy & Carpenter 2003, Hochbruck & Ostermann 2010, Ketcheson
